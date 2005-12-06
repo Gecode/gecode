@@ -1,0 +1,273 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Linear {
+
+  /*
+   * Base-class
+   *
+   */
+  template <class View>
+  LinBool<View>::LinBool(Space* home, ViewArray<BoolView>& x0, int n0, View y0)
+    :  Propagator(home), x(x0), n(n0), y(y0) {
+    x.subscribe(home,this,PC_INT_VAL);
+    y.subscribe(home,this,PC_INT_BND);
+  }
+
+  template <class View>
+  LinBool<View>::~LinBool(void) {
+    x.cancel(this,PC_INT_VAL);
+    y.cancel(this,PC_INT_BND);
+  }
+
+  template <class View>
+  forceinline
+  LinBool<View>::LinBool(Space* home, bool share, LinBool& p)
+    : Propagator(home,share,p), n(p.n) {
+    x.update(home,share,p.x);
+    y.update(home,share,p.y);
+  }
+
+  template <class View>
+  PropCost
+  LinBool<View>::cost(void) const {
+    return cost_lo(x.size(),PC_LINEAR_LO);
+  }
+
+  template <class View>
+  void
+  LinBool<View>::eliminate(void) {
+    int e = 0;
+    int m = x.size();
+    for (int i = m; i--; )
+      if (x[i].assigned()) {
+	e+=x[i].val(); x[i]=x[--m];
+      }
+    x.size(m);
+    n -= e;
+  }
+
+  template <class View>
+  void
+  LinBool<View>::all_one(Space* home) {
+    for (int i = x.size(); i--; )
+      x[i].t_one_none(home);
+  }
+
+  template <class View>
+  void
+  LinBool<View>::all_zero(Space* home) {
+    for (int i = x.size(); i--; )
+      x[i].t_zero_none(home);
+  }
+
+
+  /*
+   * Equality propagator
+   *
+   */
+  template <class View>
+  forceinline
+  EqBool<View>::EqBool(Space* home, ViewArray<BoolView>& x, int n, View y)
+    : LinBool<View>(home,x,n,y) {}
+
+  template <class View>
+  ExecStatus
+  EqBool<View>::post(Space* home, ViewArray<BoolView>& x, int n, View y) {
+    (void) new (home) EqBool<View>(home,x,n,y);
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline
+  EqBool<View>::EqBool(Space* home, bool share, EqBool<View>& p)
+    : LinBool<View>(home,share,p) {}
+
+  template <class View>
+  Actor*
+  EqBool<View>::copy(Space* home, bool share) {
+    return new (home) EqBool<View>(home,share,*this);
+  }
+
+  template <class View>
+  ExecStatus
+  EqBool<View>::propagate(Space* home) {
+    this->eliminate();
+    GECODE_ME_CHECK(y.lq(home,x.size() - n));
+    GECODE_ME_CHECK(y.gq(home,-n));
+    if (x.size() == 0)
+      return ES_SUBSUMED;
+    if (y.min()+n == x.size()) {
+      assert(y.assigned());
+      this->all_one(home); return ES_SUBSUMED;
+    }
+    if (y.max()+n == 0) {
+      assert(y.assigned());
+      this->all_zero(home); return ES_SUBSUMED;
+    }
+    return ES_FIX;
+  }
+
+
+  /*
+   * Disequality propagator
+   *
+   */
+  template <class View>
+  forceinline
+  NqBool<View>::NqBool(Space* home, ViewArray<BoolView>& x, int n, View y)
+    : LinBool<View>(home,x,n,y) {}
+
+  template <class View>
+  ExecStatus
+  NqBool<View>::post(Space* home, ViewArray<BoolView>& x, int n, View y) {
+    (void) new (home) NqBool<View>(home,x,n,y);
+    return ES_OK;
+  }
+
+
+  template <class View>
+  forceinline
+  NqBool<View>::NqBool(Space* home, bool share, NqBool<View>& p)
+    : LinBool<View>(home,share,p) {}
+
+  template <class View>
+  Actor*
+  NqBool<View>::copy(Space* home, bool share) {
+    return new (home) NqBool<View>(home,share,*this);
+  }
+
+
+  template <class View>
+  ExecStatus
+  NqBool<View>::propagate(Space* home) {
+    this->eliminate();
+    if ((x.size()-n < y.min() ) || (-n > y.max()))
+      return ES_SUBSUMED;
+    if (x.size() == 0) {
+      GECODE_ME_CHECK(y.nq(home,-n));
+      return ES_SUBSUMED;
+    }
+    if ((x.size() == 1) && y.assigned()) {
+      if (y.val()+n == 1) {
+	x[0].t_zero_none(home);
+      } else {
+	assert(y.val()+n == 0);
+	x[0].t_one_none(home);
+      }
+      return ES_SUBSUMED;
+    }
+    return ES_FIX;
+  }
+
+
+
+  /*
+   * Less or equal propagator
+   *
+   */
+
+  template <class View>
+  forceinline
+  LqBool<View>::LqBool(Space* home, ViewArray<BoolView>& x, int n, View y)
+    : LinBool<View>(home,x,n,y) {}
+
+  template <class View>
+  ExecStatus
+  LqBool<View>::post(Space* home, ViewArray<BoolView>& x, int n, View y) {
+    (void) new (home) LqBool<View>(home,x,n,y);
+    return ES_OK;
+  }
+
+
+  template <class View>
+  forceinline
+  LqBool<View>::LqBool(Space* home, bool share, LqBool<View>& p)
+    : LinBool<View>(home,share,p) {}
+
+  template <class View>
+  Actor*
+  LqBool<View>::copy(Space* home, bool share) {
+    return new (home) LqBool<View>(home,share,*this);
+  }
+
+
+  template <class View>
+  ExecStatus
+  LqBool<View>::propagate(Space* home) {
+    this->eliminate();
+    GECODE_ME_CHECK(y.gq(home,-n));
+    if (x.size() <= y.min()+n)
+      return ES_SUBSUMED;
+    if (y.max()+n == 0) {
+      this->all_zero(home); return ES_SUBSUMED;
+    }
+    return ES_FIX;
+  }
+
+
+
+  /*
+   * Greater or equal propagator
+   *
+   */
+  template <class View>
+  forceinline
+  GqBool<View>::GqBool(Space* home, ViewArray<BoolView>& x, int n, View y)
+    : LinBool<View>(home,x,n,y) {}
+
+  template <class View>
+  ExecStatus
+  GqBool<View>::post(Space* home, ViewArray<BoolView>& x, int n, View y) {
+    (void) new (home) GqBool<View>(home,x,n,y);
+    return ES_OK;
+  }
+
+
+  template <class View>
+  forceinline
+  GqBool<View>::GqBool(Space* home, bool share, GqBool<View>& p)
+    : LinBool<View>(home,share,p) {}
+
+  template <class View>
+  Actor*
+  GqBool<View>::copy(Space* home, bool share) {
+    return new (home) GqBool<View>(home,share,*this);
+  }
+
+
+  template <class View>
+  ExecStatus
+  GqBool<View>::propagate(Space* home) {
+    this->eliminate();
+    GECODE_ME_CHECK(y.lq(home,x.size() - n));
+    if (-n >= y.max())
+      return ES_SUBSUMED;
+    if (y.min()+n == x.size()) {
+      this->all_one(home); return ES_SUBSUMED;
+    }
+    return ES_FIX;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

@@ -1,0 +1,96 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Contributing authors:
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *     Gabor Szokoli, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set { namespace Sequence {
+
+  forceinline
+  ExecStatus propagateSeq(Space* home,
+		 bool& modified, ViewArray<SetView>& x) {
+
+    int lastElem = x.size()-1;
+    int cur_max = BndSet::MAX_OF_EMPTY;
+    int cur_min = BndSet::MIN_OF_EMPTY;
+
+    for (int i=0; i<lastElem; i++) {
+      if (x[i].glbSize() > 0) {
+	int glbMax = x[i].glbMax();
+	cur_max = std::max(cur_max, glbMax);
+      }
+      if (cur_max>=Limits::Set::int_min)
+	GECODE_ME_CHECK_B(modified,
+			  x[i+1].exclude(home, Limits::Set::int_min, cur_max));
+
+      if (x[lastElem-i].lubSize() > 0) {
+	int glbMin = x[lastElem-i].glbMin();
+	cur_min = std::min(cur_min, glbMin);
+      }
+      if (Limits::Set::int_max>=cur_min)
+	GECODE_ME_CHECK_B(modified,
+			  x[lastElem-i-1].exclude(home, cur_min,
+						  Limits::Set::int_max));
+    }
+    return ES_FIX;
+  }
+
+  forceinline
+  ExecStatus propagateSeqUnion(Space* home,
+		      bool& modified, ViewArray<SetView>& x, SetView& y) {
+
+    GECODE_AUTOARRAY(GlbRanges<SetView>, XLBs,x.size());
+    for (int i=x.size(); i--; ){
+      GlbRanges<SetView> lb(x[i]);
+      XLBs[i]=lb;
+    }
+    Iter::Ranges::NaryAppend<GlbRanges<SetView> > u(XLBs,x.size());
+    GECODE_ME_CHECK_B(modified, y.includeI(home,u));
+    return ES_FIX;
+  }
+
+  /* TODO:
+   * This functionality is needed by the sequenced union propagator to be
+   * able to eliminate determined variables from its variable vector without
+   * reordering the remaining variables.
+   * Proof of concept implementation here,
+   * let's see if it makes it into a method in the array class.
+   * (as a more optimised version of course, I'm trying to break the abstraction
+   * as little as possible here.)
+   */
+
+  forceinline void eliminateFromArrayPreservingOrder(ViewArray<SetView>& x,
+						     unsigned int n) {
+    assert(n < (unsigned int)x.size());
+    SetView temp = x[n];
+    for (int i=n; i < x.size()-1;i++) {
+      x[i]=x[i+1];
+    }
+    x[x.size()-1] = temp;
+    x.move_lst(x.size()-1);
+  }
+
+}}}
+
+// STATISTICS: set-prop

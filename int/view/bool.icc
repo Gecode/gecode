@@ -1,0 +1,261 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2002
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { 
+
+  namespace Int {
+
+    /*
+     * Constructors and initialization
+     *
+     */
+    forceinline
+    BoolView::BoolView(void) {}
+    forceinline
+    BoolView::BoolView(const BoolVar& b) : IntView(b) {}
+    forceinline
+    BoolView::BoolView(const IntVar& x) : IntView(x) {
+      assert((variable()->min() >= 0) && (variable()->max() <= 1));
+    }
+    forceinline
+    BoolView::BoolView(const IntView& x) : IntView(x) {
+      assert((variable()->min() >= 0) && (variable()->max() <= 1));
+    }
+    
+
+    /*
+     * Boolean domain tests
+     *
+     */
+    forceinline bool
+    BoolView::zero(void) const {
+      return var->max() == 0;
+    }
+    forceinline bool
+    BoolView::one(void) const {
+      return var->min() != 0;
+    }
+    forceinline bool
+    BoolView::none(void) const {
+      return ((var->min()+var->max()) == 1);
+    }
+    
+    
+    /*
+     * Boolean assignment operations
+     *
+     */
+    forceinline void
+    BoolView::t_zero_none(Space* home) {
+      var->t_zero_none(home);
+    }
+    forceinline void
+    BoolView::t_one_none(Space* home) {
+      var->t_one_none(home);
+    }
+    
+    forceinline ModEvent
+    BoolView::t_zero(Space* home) {
+      if (one())  return ME_INT_FAILED;
+      if (zero()) return ME_INT_NONE;
+      t_zero_none(home);
+      return ME_INT_VAL;
+    }
+    forceinline ModEvent
+    BoolView::t_one(Space* home) {
+      if (zero()) return ME_INT_FAILED;
+      if (one())  return ME_INT_NONE;
+      t_one_none(home);
+      return ME_INT_VAL;
+    }
+
+
+
+    /*
+     * Negated Boolean views
+     *
+     */
+
+    /*
+     * Constructors and initialization
+     *
+     */
+    forceinline
+    NegBoolView::NegBoolView(void) {}
+    forceinline
+    NegBoolView::NegBoolView(const BoolView& b)
+      : DerivedViewBase<BoolView>(b) {}
+    forceinline void
+    NegBoolView::init(const BoolView& b) {
+      view = b;
+    }
+
+
+    /*
+     * Boolean domain tests
+     *
+     */
+    forceinline bool
+    NegBoolView::zero(void) const {
+      return view.one();
+    }
+    forceinline bool
+    NegBoolView::one(void) const {
+      return view.zero();
+    }
+    forceinline bool
+    NegBoolView::none(void) const {
+      return view.none();
+    }
+    
+    
+    /*
+     * Boolean assignment operations
+     *
+     */
+    forceinline void
+    NegBoolView::t_zero_none(Space* home) {
+      view.t_one_none(home);
+    }
+    forceinline void
+    NegBoolView::t_one_none(Space* home) {
+      view.t_zero_none(home);
+    }
+    
+    forceinline ModEvent
+    NegBoolView::t_zero(Space* home) {
+      return view.t_one(home);
+    }
+    forceinline ModEvent
+    NegBoolView::t_one(Space* home) {
+      return view.t_zero(home);
+    }
+
+
+    /*
+     * Value access
+     *
+     */
+    forceinline int
+    NegBoolView::min(void) const { 
+      return view.max(); 
+    }
+    forceinline int
+    NegBoolView::max(void) const { 
+      return view.min(); 
+    }
+    forceinline int
+    NegBoolView::val(void) const { 
+      return 1-view.val(); 
+    }
+
+
+    /*
+     * Domain tests
+     *
+     */
+    forceinline bool
+    NegBoolView::assigned(void) const { 
+      return view.assigned(); 
+    }
+
+    /*
+     * Propagator modification events
+     *
+     */
+    forceinline ModEvent
+    NegBoolView::pme(const Propagator* p) {
+      return BoolView::pme(p);
+    }
+    forceinline PropModEvent
+    NegBoolView::pme(ModEvent me) {
+      return BoolView::pme(me);
+    }
+
+
+    /*
+     * Dependencies
+     *
+     */
+    forceinline void
+    NegBoolView::subscribe(Space* home, Propagator* p, PropCond pc) {
+      view.subscribe(home,p,pc);
+    }
+    forceinline void
+    NegBoolView::cancel(Propagator* p, PropCond pc) {
+      view.cancel(p,pc);
+    }
+
+
+    /*
+     * Cloning
+     *
+     */
+    forceinline void
+    NegBoolView::update(Space* home, bool share, NegBoolView& b) {
+      view.update(home,share,b.view);
+    }
+
+  }
+
+
+  /*
+   * View comparison
+   *
+   */
+  forceinline bool
+  same(const Int::NegBoolView& x, const Int::NegBoolView& y) {
+    return same(x.base(),y.base());
+  }
+  forceinline bool
+  before(const Int::NegBoolView& x, const Int::NegBoolView& y) {
+    return before(x.base(),y.base());
+  }
+
+  namespace Int {
+
+    /*
+     * Test sharing between Boolean and negated Boolean views
+     * 
+     */
+    forceinline BoolTest 
+    bool_test(const BoolView& b0, const BoolView& b1) {
+      return same(b0,b1) ? BT_SAME : BT_NONE;
+    }
+    forceinline BoolTest 
+    bool_test(const BoolView& b0, const NegBoolView& b1) {
+      return same(b0,b1.base()) ? BT_COMP : BT_NONE;
+    }
+    forceinline BoolTest 
+    bool_test(const NegBoolView& b0, const BoolView& b1) {
+      return same(b0.base(),b1) ? BT_COMP : BT_NONE;
+    }
+    /// Test whether views \a b0 and \a b1 are the same
+    forceinline BoolTest 
+    bool_test(const NegBoolView& b0, const NegBoolView& b1) {
+      return same(b0,b1) ? BT_SAME : BT_NONE;
+    }
+
+  }
+
+}
+
+// STATISTICS: int-var

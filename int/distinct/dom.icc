@@ -1,0 +1,598 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2003
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#include <climits>
+
+#include "support/dynamic-array.hh"
+#include "support/static-stack.hh"
+
+#include "iter.hh"
+
+namespace Gecode { namespace Int { namespace Distinct {
+
+  /**
+   * \brief Class for combining two pointers with a flag
+   *
+   * When one pointer is given, this other can be retrieved.
+   *
+   */
+
+  template <class T>
+  class CombPtrFlag {
+  private:
+    /// Store pointer and flag
+    ptrdiff_t cpf;
+  public:
+    /// Initialize with pointer \a p1 and \a p2
+    CombPtrFlag(T* p1, T* p2);
+    /// Initialize with pointer \a p1 and \a p2
+    void init(T* p1, T* p2);
+    /// Return the other pointer when \a p is given
+    T* ptr(T* p) const;
+    /// Check whether flag is set
+    int is_set(void) const;
+    /// Set flag
+    void set(void);
+    /// Clear flag
+    void unset(void);
+  };
+
+  /**
+   * \brief Bidirectional links for both edges and anchors in nodes of view-value graph
+   *
+   */
+  class BiLink {
+  private:
+    BiLink* _prev; BiLink* _next;
+  public:
+    BiLink(void);
+
+    BiLink* prev(void) const; void prev(BiLink*);
+    BiLink* next(void) const; void next(BiLink*);
+
+    void add(BiLink*);
+    void unlink(void);
+
+    void mark(void);
+    bool marked(void) const;
+
+    bool empty(void) const;
+  };
+
+  template <class View> class Edge;
+
+  /**
+   * \brief Base-class for nodes (both view and value nodes)
+   *
+   * Note: the obvious ill-design to have also nodes and edges
+   * parametric wrt View is because the right design (having template
+   * function members) gets miscompiled (and actually not even compiled
+   * with some C++ compilers). Duh!
+   *
+   */
+  template <class View>
+  class Node : public BiLink {
+  public:
+    unsigned int pre, low, comp;
+
+    Node(void);
+
+    Edge<View>* edge_fst(void) const;
+    Edge<View>* edge_lst(void) const;
+
+    static void* operator new(size_t, void*);
+  };
+
+  /**
+   * \brief Value nodes in view-value graph
+   *
+   */
+  template <class View>
+  class ValNode : public Node<View> {
+  protected:
+    const int _val; Edge<View>* _matching;
+  public:
+    ValNode(int);
+    int val(void) const;
+    void matching(Edge<View>*);
+    Edge<View>* matching(void) const;
+  };
+
+  /**
+   * \brief View nodes in view-value graph
+   *
+   */
+  template <class View>
+  class ViewNode : public Node<View> {
+  protected:
+    Edge<View>* _val_edges; View _view;
+  public:
+    ViewNode(View);
+    Edge<View>*  val_edges(void) const;
+    Edge<View>** val_edges_ref(void);
+
+    View view(void) const;
+  };
+
+  /**
+   * \brief Edges in view-value graph
+   *
+   */
+  template <class View>
+  class Edge : public BiLink {
+  protected:
+    Edge<View>*              _next_edge;
+    CombPtrFlag<Node<View> > sd;
+  public:
+    Edge(Node<View>*, Node<View>*);
+
+    Node<View>* dst(Node<View>*) const;
+
+    ViewNode<View>* view(ValNode<View>*) const;
+    ValNode<View>* val(ViewNode<View>*) const;
+
+    bool used(Node<View>*) const;
+    void use(void);
+    void free(void);
+
+    void revert(Node<View>*);
+
+    Edge<View>*  next_edge(void) const;
+    Edge<View>** next_edge_ref(void);
+
+    Edge<View>* next(void) const;
+    static void* operator new(size_t, void*);
+  };
+
+}}}
+
+#include "int/distinct/combptr.icc"
+#include "int/distinct/bilink.icc"
+#include "int/distinct/node.icc"
+#include "int/distinct/edge.icc"
+
+namespace Gecode { namespace Int { namespace Distinct {
+
+  /**
+   * \brief View-value graph for propagating domain-consistent distinct
+   *
+   */
+  template <class View>
+  class Dom<View>::ViewValGraph {
+  protected:
+    ViewNode<View>** view; int n_view;
+    ValNode<View>** val; int n_val;
+    char* mem;
+    unsigned int count;
+    unsigned int cnt0;
+    unsigned int cnt1;
+    Support::StaticStack<Node<View>*> n_s;
+  public:
+    ViewValGraph(ViewArray<View>&, const int*, int, unsigned int);
+    ~ViewValGraph(void);
+
+    size_t size;
+
+    bool initial_match(void);
+
+    void mark(void);
+    bool tell(Space*);
+
+    bool overflow(void) const;
+
+    bool sync(void);
+
+  protected:
+    bool search_match(ViewNode<View>*);
+    bool match(ViewNode<View>*);
+    void scc(Node<View>*);
+
+  public:
+    // Memory management
+    static void* operator new(size_t);
+    static void  operator delete(void*);
+  };
+
+
+  template <class View>
+  Dom<View>::ViewValGraph::ViewValGraph(ViewArray<View>& x, const int* val_inf,
+				int n_val0, unsigned int n_edges)
+    :  n_view(x.size()), n_val(n_val0),
+       count(0), cnt0(0), cnt1(0), n_s(n_view+n_val)
+  {
+    size_t edge_size  = sizeof(Edge<View>) * n_edges;
+    size_t views_size = sizeof(ViewNode<View>) * n_view;
+    size_t view_size  = sizeof(ViewNode<View>*) * n_view;
+    size_t vals_size  = sizeof(ValNode<View>) * n_val;
+    size_t val_size   = sizeof(ValNode<View>*) * n_val;
+    size_t size = edge_size +
+      views_size + view_size + vals_size + val_size;
+    mem = reinterpret_cast<char*>(Memory::malloc(size));
+    Edge<View>*     edges      = reinterpret_cast<Edge<View>*>(mem);
+    ViewNode<View>* view_nodes = reinterpret_cast<ViewNode<View>*>
+      (mem+edge_size);
+    ValNode<View>*  val_nodes  = reinterpret_cast<ValNode<View>*>
+      (mem+edge_size+views_size);
+    view = reinterpret_cast<ViewNode<View>**>
+      (mem+edge_size+views_size+vals_size);
+    val  = reinterpret_cast<ValNode<View>**>
+      (mem+edge_size+views_size+vals_size+view_size);
+
+    // Init value nodes
+    for (int i = n_val; i--; )
+      val[i] = new (val_nodes + i) ValNode<View>(val_inf[i]);
+
+    // Init view nodes
+    for (int i = n_view; i--; ) {
+      view[i] = new (view_nodes + i) ViewNode<View>(x[i]);
+      Edge<View>** edge_p = view[i]->val_edges_ref();
+      ViewValues<View> x_i(x[i]);
+      int j = 0;
+      while (x_i()) {
+	while (val_inf[j] < x_i.val())
+	  j++;
+	*edge_p = new (edges++) Edge<View>(val_nodes+j,view_nodes+i);
+	edge_p = (*edge_p)->next_edge_ref();
+	++x_i;
+      }
+      *edge_p = NULL;
+    }
+  }
+
+  template <class View>
+  bool
+  Dom<View>::ViewValGraph::search_match(ViewNode<View>* x) {
+    for (Edge<View>* e = x->val_edges(); e; e = e->next_edge())
+      if (!e->val(x)->matching()) {
+	e->revert(x); e->val(x)->matching(e);
+	return true;
+      }
+    x->comp = count;
+    for (Edge<View>* e = x->val_edges(); e; e = e->next_edge()) {
+      ValNode<View>* n = e->val(x);
+      ViewNode<View>* y = n->matching()->view(n);
+      if ((y->comp < count) && search_match(y)) {
+	n->matching()->revert(n);
+	e->revert(x); n->matching(e);
+	return true;
+      }
+    }
+    return false;
+  }
+
+  template <class View>
+  forceinline bool
+  Dom<View>::ViewValGraph::match(ViewNode<View>* x) {
+    assert(x->edge_fst() == x->edge_lst());
+    count++;
+    return search_match(x);
+  }
+
+  template <class View>
+  bool
+  Dom<View>::ViewValGraph::initial_match(void) {
+    for (int i = n_view; i--; )
+      if (!match(view[i]))
+	return false;
+    return true;
+  }
+
+  template <class View>
+  void
+  Dom<View>::ViewValGraph::scc(Node<View>* w) {
+    w->pre = cnt0;
+    w->low = cnt0;
+    unsigned int min = cnt0++;
+    n_s.push(w);
+    for (Edge<View>* e = w->edge_fst(); e != w->edge_lst(); e = e->next()) {
+      Node<View>* v = e->dst(w);
+      if (v->pre < count)
+	scc(v);
+      if (v->low < min)
+	min = v->low;
+    }
+    if (min < w->low) {
+      w->low = min;
+      return;
+    }
+    do {
+      Node<View>* v = n_s.pop();
+      v->comp = cnt1;
+      v->low  = UINT_MAX;
+    } while (n_s.last() != w);
+    cnt1++;
+  }
+
+  template <class View>
+  forceinline void
+  Dom<View>::ViewValGraph::mark(void) {
+    // Marks all edges as used that are on simple paths in the graph
+    // that start from a free (unmatched node) by depth-first-search
+    n_s.reset();
+    // Insert all free nodes: they can be only value nodes as we
+    // have a maximum matching covering all view nodes
+    count++;
+    for (int i = n_val; i--; )
+      if (!val[i]->matching())
+	// Is it orphaned?
+	if (val[i]->empty()) {
+	  val[i] = val[--n_val];
+	} else {
+	  val[i]->comp = count;
+	  n_s.push(val[i]);
+	}
+
+    // Invariant: only value nodes are on the stack!
+    while (!n_s.empty()) {
+      ValNode<View>* n = static_cast<ValNode<View>*>(n_s.pop());
+      for (Edge<View>* e = n->edge_fst(); e != n->edge_lst(); e = e->next()) {
+	// Get the value node
+	e->use();
+	ViewNode<View>* x = e->view(n);
+	if (x->comp < count) {
+	  x->comp = count;
+	  assert(x->edge_fst()->next() == x->edge_lst());
+	  ValNode<View>* m = x->edge_fst()->val(x);
+	  x->edge_fst()->use();
+	  if (m->comp < count) {
+	    m->comp = count;
+	    n_s.push(m);
+	  }
+	}
+      }
+    }
+
+    count++;
+    cnt0 = count;
+    cnt1 = count;
+    n_s.reset();
+    for (int i = n_view; i--; )
+      if (view[i]->comp < count)
+	scc(view[i]);
+    count = cnt0+1;
+  }
+
+  template <class View>
+  forceinline bool
+  Dom<View>::ViewValGraph::tell(Space* home) {
+    bool shared = false;
+    // Tell constraints and also eliminate nodes and edges
+    for (int i = n_view; i--; )
+      if (!view[i]->edge_fst()->used(view[i])) {
+	shared |= view[i]->view().modified();
+	view[i]->view().eq(home,view[i]->edge_fst()->val(view[i])->val());
+	view[i]->edge_fst()->val(view[i])->matching(NULL);
+	view[i] = view[--n_view];
+      } else {
+	for (Edge<View>* e = view[i]->val_edges(); e; e = e->next_edge())
+	  if (!e->used(view[i])) {
+	    shared |= view[i]->view().modified();
+	    view[i]->view().nq(home,e->val(view[i])->val());
+	  }
+      }
+    return shared;
+  }
+
+  template <class View>
+  forceinline bool
+  Dom<View>::ViewValGraph::overflow(void) const {
+    return count > (UINT_MAX >> 1);
+  }
+
+  template <class View>
+  bool
+  Dom<View>::ViewValGraph::sync(void) {
+    // Stack for view nodes to be rematched
+    GECODE_AUTOARRAY(ViewNode<View>*,re,n_view);
+    int n_re = 0;
+    // Synchronize nodes
+    for (int i = n_view; i--; ) {
+      ViewNode<View>* x = view[i];
+      if (x->view().assigned()) {
+	x->edge_fst()->val(x)->matching(NULL);
+	for (Edge<View>* e = x->val_edges(); e; e = e->next_edge())
+	  e->unlink();
+	view[i] = view[--n_view];
+      } else {
+	ViewValues<View> n(x->view());
+	Edge<View>*  m = x->edge_fst();      // Matching edge
+	Edge<View>** p = x->val_edges_ref();
+	Edge<View>*  e = *p;
+	do {
+	  while (e->val(x)->val() < n.val()) {
+	    // Skip edge
+	    e->unlink(); e->mark();
+	    e = e->next_edge();
+	    *p = e;
+	  }
+	  assert(n.val() == e->val(x)->val());
+	  // This edge must be kept
+	  e->free();
+	  ++n;
+	  p = e->next_edge_ref();
+	  e = e->next_edge();
+	} while (n());
+	*p = NULL;
+	while (e) {
+	  e->unlink(); e->mark();
+	  e = e->next_edge();
+	}
+	if (m->marked()) {
+	  // Matching has been deleted!
+	  m->val(x)->matching(NULL);
+	  re[n_re++] = x;
+	}
+      }
+    }
+    while (n_re--)
+      if (!match(re[n_re]))
+	return false;
+    return true;
+  }
+
+  template <class View>
+  Dom<View>::ViewValGraph::~ViewValGraph(void) {
+    Memory::free(mem);
+  }
+
+  template <class View>
+  forceinline void*
+  Dom<View>::ViewValGraph::operator new(size_t s) {
+    return Memory::malloc(s);
+  }
+  template <class View>
+  forceinline void
+  Dom<View>::ViewValGraph::operator delete(void* p) {
+    Memory::free(p);
+  }
+
+
+
+  /*
+   * The propagator proper
+   *
+   */
+
+  template <class View>
+  forceinline
+  Dom<View>::Dom(Space* home, ViewArray<View>& x)
+    : NaryPropagator<View,PC_INT_DOM>(home,x,true),
+      vvg(NULL) {}
+
+  template <class View>
+  ExecStatus
+  Dom<View>::post(Space* home, ViewArray<View>& x) {
+    if (x.size() == 2)
+      return Rel::Nq<View>::post(home,x[0],x[1]);
+    if (x.size() > 2) {
+      if (x.same())
+	return ES_FAILED;
+      // Do bounds propagation to make view-value graph smaller
+      if (prop_bnd<View,false>(home,x) == ES_FAILED)
+      	return ES_FAILED;
+      (void) new (home) Dom<View>(home,x);
+    }
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline
+  Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
+    : NaryPropagator<View,PC_INT_DOM>(home,share,p), vvg(NULL) {}
+
+  template <class View>
+  Dom<View>::~Dom(void) {
+    delete vvg;
+  }
+
+  template <class View>
+  void
+  Dom<View>::flush(void) {
+    delete vvg; vvg = NULL;
+  }
+
+  template <class View>
+  size_t
+  Dom<View>::size(void) const {
+    return (vvg != NULL) ? vvg->size : 0;
+  }
+
+  template <class View>
+  PropCost
+  Dom<View>::cost(void) const {
+    return cost_lo(x.size(),
+		   (View::pme(this) == ME_INT_VAL)
+		   ? PC_LINEAR_LO : PC_CUBIC_LO);
+  }
+
+  template <class View>
+  Actor*
+  Dom<View>::copy(Space* home, bool share) {
+    return new (home) Dom<View>(home,share,*this);
+  }
+
+  template <class View>
+  ExecStatus
+  Dom<View>::propagate(Space* home) {
+    if (View::pme(this) == ME_INT_VAL) {
+      ExecStatus es = prop_val<View,false>(home,x);
+      if ((es == ES_FAILED) || (es == ES_SUBSUMED))
+	return es;
+      if (es == ES_FIX)
+	return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
+      if (prop_bnd<View,false>(home,x) == ES_FAILED)
+	return ES_FAILED;
+      es = prop_val<View,true>(home,x);
+      if ((es == ES_FAILED) || (es == ES_SUBSUMED))
+	return es;
+      return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));      
+    }
+
+    if (x.size() == 2) {
+      GECODE_ES_CHECK(Rel::Nq<View>::post(home,x[0],x[1]));
+      return ES_SUBSUMED;
+    }
+
+    if ((vvg != NULL) && vvg->overflow()) {
+      delete vvg;
+      vvg = NULL;
+    }
+    
+    if (vvg == NULL) {
+      // Find value information for construction of view value graph
+      Support::DynamicArray<int> val_inf(64);
+      int          n_val = 0;
+      unsigned int size  = 0;
+      // Fill value array
+      {
+	GECODE_AUTOARRAY(ViewRanges<View>,x_r,x.size());
+	for (int i = x.size(); i--; ) {
+	  ViewRanges<View> r(x[i]); x_r[i] = r;
+	  size += x[i].size();
+	}
+	Iter::Ranges::NaryUnion<ViewRanges<View> > xu(x_r, x.size());
+	while (xu()) {
+	  for (int v = xu.min(); v <= xu.max(); v++)
+	    val_inf[n_val++] = v;
+	  ++xu;
+	}
+      }
+
+      if (n_val < x.size())
+	return ES_FAILED;
+
+      vvg = new ViewValGraph(x,val_inf,n_val,size);
+      if (!vvg->initial_match())
+	return ES_FAILED;
+    } else {
+      if (!vvg->sync())
+	return ES_FAILED;
+    }
+
+    vvg->mark();
+    return vvg->tell(home) ? ES_NOFIX : ES_FIX;
+
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

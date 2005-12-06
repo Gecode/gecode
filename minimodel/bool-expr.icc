@@ -1,0 +1,191 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *
+ *  Last modified:
+ *     $Date: 2005-08-03 17:17:11 +0200 (Wed, 03 Aug 2005) $ by $Author: schulte $
+ *     $Revision: 2126 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace MiniModel {
+
+  /*
+   * Operations for nodes
+   *
+   */
+  forceinline void*
+  BoolExpr::Node::operator new(size_t size) {
+    return Memory::malloc(size);
+  }
+
+  forceinline void
+  BoolExpr::Node::operator delete(void* p, size_t) {
+    Memory::free(p);
+  }
+
+  forceinline
+  BoolExpr::Node::Node(void) : use(1) {};
+
+  /*
+   * Operations for expressions
+   *
+   */
+  
+  forceinline
+  BoolExpr::BoolExpr(const BoolExpr& e) : n(e.n) {
+    n->use++;
+  }
+
+  forceinline
+  BoolExpr::BoolExpr(const BoolVar& x) : n(new Node) {
+    n->same = 1;
+    n->t    = BT_VAR;
+    n->l    = NULL;
+    n->r    = NULL;
+    n->x    = x;
+  }
+
+  forceinline
+  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r) 
+    : n(new Node) {
+    unsigned int ls = ((l.n->t == t) || l.n->t == BT_VAR) ? l.n->same : 0;
+    unsigned int rs = ((r.n->t == t) || r.n->t == BT_VAR) ? r.n->same : 0;
+    n->same = ls+rs;
+    n->t    = t;
+    n->l    = l.n;
+    n->l->use++;
+    n->r    = r.n;
+    n->r->use++;
+  }
+
+  forceinline
+  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t) 
+    : n(new Node) {
+    assert(t == BT_NOT);
+    n->same = 1;
+    n->t    = BT_NOT;
+    n->l    = l.n;
+    n->l->use++;
+    n->r    = NULL;
+  }
+
+  forceinline
+  BoolExpr::BoolExpr(const LinRel& rl) 
+    : n(new Node) {
+    n->same = 1;
+    n->t    = BT_RLIN;
+    n->l    = NULL;
+    n->r    = NULL;
+    n->rl   = rl;
+  }
+
+
+  inline const BoolExpr&
+  BoolExpr::operator=(const BoolExpr& e) {
+    if (this != &e) {
+      if (n->decrement())
+	delete n;
+      n = e.n;
+      n->use++;
+    }
+    return *this;
+  }
+
+  forceinline
+  BoolExpr::~BoolExpr(void) {
+    if (n->decrement())
+      delete n;
+  }
+
+  forceinline BoolVar
+  BoolExpr::post(Space* home) const {
+    return n->post(home);
+  }
+
+  forceinline void
+  BoolExpr::post(Space* home, bool t) const {
+    n->post(home,t);
+  }
+
+}}
+
+forceinline Gecode::MiniModel::BoolExpr
+operator&&(const Gecode::MiniModel::BoolExpr& l,
+	   const Gecode::MiniModel::BoolExpr& r) {
+  return Gecode::MiniModel::BoolExpr(l,
+				     Gecode::MiniModel::BoolExpr::BT_AND,
+				     r);
+}
+
+forceinline Gecode::MiniModel::BoolExpr
+operator||(const Gecode::MiniModel::BoolExpr& l,
+	   const Gecode::MiniModel::BoolExpr& r) {
+  return Gecode::MiniModel::BoolExpr(l,
+				     Gecode::MiniModel::BoolExpr::BT_OR,
+				     r);
+}
+
+forceinline Gecode::MiniModel::BoolExpr
+operator^(const Gecode::MiniModel::BoolExpr& l,
+	  const Gecode::MiniModel::BoolExpr& r) {
+  return Gecode::MiniModel::BoolExpr(l,
+				     Gecode::MiniModel::BoolExpr::BT_XOR,
+				     r);
+}
+
+forceinline Gecode::MiniModel::BoolExpr
+operator~(const Gecode::MiniModel::LinRel& rl) {
+  return Gecode::MiniModel::BoolExpr(rl);
+}
+
+forceinline Gecode::MiniModel::BoolExpr
+operator!(const Gecode::MiniModel::BoolExpr& e) {
+  return Gecode::MiniModel::BoolExpr(e,
+				     Gecode::MiniModel::BoolExpr::BT_NOT);
+}
+
+namespace Gecode {
+
+  forceinline MiniModel::BoolExpr
+  eqv(const MiniModel::BoolExpr& l,
+      const MiniModel::BoolExpr& r) {
+    return MiniModel::BoolExpr(l,
+			       MiniModel::BoolExpr::BT_EQV,
+			       r);
+  }
+
+  forceinline MiniModel::BoolExpr
+  imp(const MiniModel::BoolExpr& l,
+      const MiniModel::BoolExpr& r) {
+    return MiniModel::BoolExpr(l,
+			       MiniModel::BoolExpr::BT_IMP,
+			       r);
+  }
+
+
+  forceinline BoolVar
+  post(Space* home, const MiniModel::BoolExpr& e) {
+    return e.post(home);
+  }
+
+  forceinline BoolVar
+  post(Space* home, const BoolVar& b) {
+    return b;
+  }
+
+
+}
+
+// STATISTICS: minimodel-any

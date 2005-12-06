@@ -1,0 +1,1213 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Contributing authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *     Gabor Szokoli, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#include "support/shared-array.hh"
+
+#include <iostream>
+#include "iter.hh"
+
+namespace Gecode { namespace Set {
+
+  /**
+   * \defgroup TaskActorSetMEPC Set modification events and propagation conditions
+   * \ingroup TaskActorSet
+   */
+
+  //@{
+
+  /// Domain operation has resulted in failure
+  const ModEvent ME_SET_FAILED = ME_GEN_FAILED;
+  /// Domain operation has not changed domain
+  const ModEvent ME_SET_NONE  = ME_GEN_NONE;
+  /// Domain operation has resulted in a value (assigned variable)
+  const ModEvent ME_SET_VAL   = ME_GEN_ASSIGNED;
+
+  /**
+   * \brief Domain operation has changed the variable cardinality
+   *
+   * Note that this implies that the domain has not resulted in a value.
+   */
+  const ModEvent ME_SET_CARD  = ME_SET_VAL + 1;
+  /**
+   * \brief Domain operation has changed the least upper bound
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also neither cardinality nor the greatest lower bound
+   * have changed.
+   */
+  const ModEvent ME_SET_LUB   = ME_SET_CARD + 1;
+  /**
+   * \brief Domain operation has changed the greatest lower bound
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also neither cardinality nor the least upper bound
+   * have changed.
+   */
+  const ModEvent ME_SET_GLB   = ME_SET_LUB + 1;
+  /**
+   * \brief Domain operation has changed both greatest lower and least
+   * upper bound
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also the cardinality has not changed.
+   */
+  const ModEvent ME_SET_BB    = ME_SET_GLB + 1;
+  /**
+   * \brief Domain operation has changed the least upper bound and the cardinality
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also the greatest lower bound has not changed.
+   */
+  const ModEvent ME_SET_CLUB  = ME_SET_BB + 1;
+  /**
+   * \brief Domain operation has changed the greatest lower bound and the cardinality
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also the least upper bound has not changed.
+   */
+  const ModEvent ME_SET_CGLB  = ME_SET_CLUB + 1;
+  /**
+   * \brief Domain operation has changed both the greatest lower bound and
+   * the least upper bound, as well as the cardinality
+   *
+   * Note that this implies that the domain has not resulted in a value.
+   */
+  const ModEvent ME_SET_CBB   = ME_SET_CGLB + 1;
+
+
+
+  /**
+   * \brief Propagate when a view becomes assigned (single value)
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_SET_VAL, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_SET_VAL.
+   */
+  const PropCond PC_SET_VAL  = PC_GEN_ASSIGNED;
+  /**
+   * \brief Propagate when the cardinality of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_SET_CARD, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_SET_VAL,
+   * ME_SET_CARD, ME_SET_CGLB, ME_SET_CLUB, or ME_SET_CBB.
+   */
+  const PropCond PC_SET_CARD = PC_SET_VAL + 1;
+  /**
+   * \brief Propagate when the cardinality or the greatest lower bound
+   * of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_SET_CGLB, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_SET_VAL,
+   * ME_SET_GLB, ME_SET_BB, ME_SET_CARD, ME_SET_CGLB, ME_SET_CLUB,
+   * or ME_SET_CBB.
+   */
+  const PropCond PC_SET_CGLB = PC_SET_CARD + 1;
+  /**
+   * \brief Propagate when the cardinality or the least upper bound
+   * of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_SET_CLUB, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_SET_VAL,
+   * ME_SET_LUB, ME_SET_BB, ME_SET_CARD, ME_SET_CGLB, ME_SET_CLUB,
+   * or ME_SET_CBB.
+   */
+  const PropCond PC_SET_CLUB = PC_SET_CGLB + 1;
+  /**
+   * \brief Propagate when any bound or the cardinality
+   * of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_SET_ANY, then \a p is propagated when a domain
+   * update operation on \a x returns any modification event but ME_SET_FAILED
+   * and ME_SET_NONE.
+   */
+  const PropCond PC_SET_ANY  = PC_SET_CLUB + 1;
+  //@}
+
+
+  /**
+   * \brief Lists of ranges (intervals)
+   *
+   */
+  class RangeList : public FreeList {
+  protected:
+    /// Minimum of range
+    int        _min;
+    /// Maximum of range
+    int        _max;
+  public:
+    /// \name Constructors
+    //@{
+    /// Default constructor (noop)
+    RangeList(void);
+    /// Initialize with minimum \a min and maximum \a max and predecessor \a p and successor \a n
+    RangeList(int min, int max, RangeList* p, RangeList* n);
+    //@}
+
+    /// \name Access
+    //@{
+    /// Return minimum
+    int min(void) const;
+    /// Return maximum
+    int max(void) const;
+    /// Return width (distance between maximum and minimum)
+    unsigned int width(void) const;
+
+    /// Return next element (from previous \a p)
+    RangeList* next(const RangeList* p) const;
+    /// Return previous element (from next \a n)
+    RangeList* prev(const RangeList* n) const;
+    //@}
+
+    /// \name Update
+    //@{
+    /// Set minimum to \a n
+    void min(int n);
+    /// Set maximum to \a n
+    void max(int n);
+
+    /// Set previous element to \a p and next element to \a n
+    void prevnext(RangeList* p, RangeList* n);
+    /// Set next element from \a o to \a n
+    void next(RangeList* o, RangeList* n);
+    /// Set previous element from \a o to \a n
+    void prev(RangeList* o, RangeList* n);
+    /// Restore simple link to next element (so that it becomes a true free list)
+    void fix(RangeList* n);
+    //@}
+
+    /// \name Memory management
+    //@{
+    /**
+     * \brief Free memory for all elements between this and \a l (inclusive)
+     *
+     * \a p must be the pointer to the previous element of \c this.
+     */
+    void dispose(Space* home, RangeList* p, RangeList* l);
+    
+    /// Allocate memory from space
+    static void* operator new(size_t s, Space* home);
+    /// No-op (for exceptions)
+    static void  operator delete(void*);
+    /// No-op (use dispose instead)
+    static void  operator delete(void*, Space* home);
+    //@}
+  };
+
+
+  /**
+   * \brief Sets of integers
+   */
+  class BndSet  {
+  private:
+    RangeList* first;
+    RangeList* last;
+  protected:
+    /// The size of this set
+    unsigned int _size;
+    /// Set first range to \a r
+    void fst(RangeList* r);
+    /// Set last range to \a r
+    void lst(RangeList* r);
+
+    /// Return first range
+    RangeList* fst(void) const;
+    /// Return last range
+    RangeList* lst(void) const;
+
+  public:
+    /// Returned by empty sets when asked for their maximum element
+    static const int MAX_OF_EMPTY = Limits::Set::int_min-1;
+    /// Returned by empty sets when asked for their minimum element
+    static const int MIN_OF_EMPTY = Limits::Set::int_max+1;
+
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor. Creates an empty set.
+    BndSet(void);
+    /// Initialize as the set \f$ \{i,\dots,j\}\f$
+    BndSet(Space* home, int i, int j);
+    /// Initialize as the set represented by \a s
+    BndSet(Space* home, const IntSet& s);
+    //@}
+
+    /// \name Memory management
+    //@{
+    /// Free memory used by this set
+    void dispose(Space* home);
+    //@}
+
+    /// \name Value access
+    //@{
+    /// Return smallest element
+    int min(void) const;
+    /// Return greatest element
+    int max(void) const;
+    /// Return \a n -th smallest element
+    int minN(unsigned int n) const;
+    /// Return \a n -th greatest element
+    int maxN(unsigned int n) const;
+    /// Return size
+    unsigned int size(void) const;
+    //@}
+
+    /// \name Tests
+    //@{
+    /// Test whether this set is empty
+    bool empty(void) const;
+    /// Test whether \a i is an element of this set
+    bool in(int i) const;
+    //@}
+
+    /// \name Update operations
+    //@{
+    /// Make this set equal to \a s
+    void linkTo(Space* home, const BndSet& s);
+    //@}
+    
+    /// \name Range list access for iteration
+    //@{
+    /// Return range list for iteration
+    RangeList* ranges(void) const;
+    //@}
+
+  protected:
+    /// Overwrite the ranges with those represented by \a i
+    template <class I> bool overwrite(Space* home,I& i);
+
+  public:
+    /// \name Cloning
+    //@{
+    /// Update this set to be a clone of set \a x
+    void update(Space* home, BndSet& x);
+    //@}
+
+#ifndef NDEBUG
+    /// Check whether internal invariants hold
+    GECODE_SET_EXPORT bool isConsistent(void) const;
+#endif
+  };
+
+  /**
+   * \brief Range iterator for integer sets
+   *
+   */
+  class BndSetRanges {
+  private:
+    /// Previous range
+    const RangeList* p;
+    /// Current range
+    const RangeList* c;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    BndSetRanges(void);
+    /// Initialize with BndSet \a s
+    BndSetRanges(const BndSet& s);
+    /// Initialize with BndSet \a s
+    void init(const BndSet& s);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a range or done
+    bool operator()(void) const;
+    /// Move iterator to next range (if possible)
+    void operator++(void);
+    //@}
+
+    /// \name Range access
+    //@{
+    /// Return smallest value of range
+    int min(void) const;
+    /// Return largest value of range
+    int max(void) const;
+    /// Return width of range (distance between minimum and maximum)
+    unsigned int width(void) const;
+    //@}
+  };
+
+  /**
+   * \brief Growing sets of integers
+   *
+   * These sets provide operations for monotonically growing the set.
+   * Growing sets are used for implementing the greatest lower bound of
+   * set variables.
+   */
+  class GLBndSet : public BndSet {
+  private:
+    /// Include the set \f$\{i,\dots,j\}\f$ in this set
+    GECODE_SET_EXPORT bool include_full(Space* home,int,int);
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor. Creates an empty set.
+    GLBndSet(Space* =NULL);
+    /// Initialize as the set \f$ \{i,\dots,j\}\f$
+    GLBndSet(Space* home, int i, int j);
+    /// Initialize as the set represented by \a s
+    GLBndSet(Space* home, const IntSet& s);
+    /// Initialize as the empty set
+    void init(Space* home);
+    //@}
+
+    /// \name Update operations
+    //@{
+    /// Include the set \f$\{i,\dots,j\}\f$ in this set
+    bool include(Space* home,int i,int j);
+    /// Include the set represented by \a i in this set
+    template <class I> bool includeI(Space* home,I& i);
+    //@}
+  private:
+    GLBndSet(const GLBndSet&);
+    const GLBndSet& operator=(const GLBndSet&);
+  };
+
+  /**
+   * \brief Shrinking sets of integers
+   *
+   * These sets provide operations for monotonically shrinking the set.
+   * Shrinking sets are used for implementing the least upper bound of
+   * set variables.
+   */
+  class LUBndSet: public BndSet{
+  private:
+    GECODE_SET_EXPORT bool exclude_full(Space* home, int, int);
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor. Creates an empty set.
+    LUBndSet(void);
+    /// Initialize as the full set including everything between Limits::Set::int_min and Limits::Set::int_max
+    LUBndSet(Space* home);
+    /// Initialize as the set \f$ \{i,\dots,j\}\f$
+    LUBndSet(Space* home, int i, int j);
+    /// Initialize as the set represented by \a s
+    LUBndSet(Space* home, const IntSet& s);
+    /// Initialize as the full set including everything between Limits::Set::int_min and Limits::Set::int_max
+    void init(Space* home);
+    //@}
+
+    /// \name Update operations
+    //@{
+    /// Exclude the set \f$\{i,\dots,j\}\f$ from this set
+    bool exclude(Space* home, int i, int j);
+    /// Exclude all elements not in the set represented by \a i from this set
+    template <class I> bool intersectI(Space* home, I& i);
+    /// Exclude all elements in the set represented by \a i from this set
+    template <class I> bool excludeI(Space* home, I& i);
+    //@}
+  private:
+    LUBndSet(const LUBndSet&);
+    const LUBndSet& operator=(const LUBndSet&);
+  };
+
+  /*
+   * Iterators
+   *
+   */
+
+
+  /**
+   * \brief A complement iterator spezialized for the BndSet limits
+   *
+   * \ingroup TaskActorSet
+   */
+  template <class I>
+  class RangesCompl :
+    public Iter::Ranges::Compl<Limits::Set::int_min, Limits::Set::int_max, I> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    RangesCompl(void);
+    /// Initialize with iterator \a i
+    RangesCompl(I& i);
+    /// Initialize with iterator \a i
+    void init(I& i);
+    //@}
+  };
+
+  /**
+   * \brief Range iterator for the least upper bound
+   *
+   * This class provides (by specialization) a range iterator 
+   * for the least upper bounds of all set views.
+   *
+   * Note that this template class serves only as a specification
+   * of the interface of the various specializations.
+   *
+   * \ingroup TaskActorSet
+   */
+  template <class T> class LubRanges {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    LubRanges(void);
+    /// Initialize with least upper bound ranges for set variable \a x
+    LubRanges(const T& x);
+    /// Initialize with least upper bound ranges for set variable \a x
+    void init(const T& x);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a range or done
+    bool operator()(void) const;
+    /// Move iterator to next range (if possible)
+    void operator++(void);
+    //@}
+
+    /// \name Range access
+    //@{
+    /// Return smallest value of range
+    int min(void) const;
+    /// Return largest value of range
+    int max(void) const;
+    /// Return width of range (distance between minimum and maximum)
+    unsigned int width(void) const;
+    //@}
+  };
+  
+  /**
+   * \brief Range iterator for the greatest lower bound
+   *
+   * This class provides (by specialization) a range iterator 
+   * for the greatest lower bounds of all set views.
+   *
+   * Note that this template class serves only as a specification
+   * of the interface of the various specializations.
+   *
+   * \ingroup TaskActorSet
+   */
+  template <class T> class GlbRanges {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    GlbRanges(void);
+    /// Initialize with greatest lower bound ranges for set variable \a x
+    GlbRanges(const T& x);
+    /// Initialize with greatest lower bound ranges for set variable \a x
+    void init(const T& x);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a range or done
+    bool operator()(void) const;
+    /// Move iterator to next range (if possible)
+    void operator++(void);
+    //@}
+
+    /// \name Range access
+    //@{
+    /// Return smallest value of range
+    int min(void) const;
+    /// Return largest value of range
+    int max(void) const;
+    /// Return width of range (distance between minimum and maximum)
+    unsigned int width(void) const;
+    //@}
+  };
+
+  /**
+   * \brief Range iterator for the unknown set
+   *
+   * This class provides a range iterator 
+   * for the unknown set of all set views. The unknown set is the
+   * difference between least upper and greatest lower bound, i.e.
+   * those elements which still may be in the set, but are not yet
+   * known to be in.
+   *
+   * \ingroup TaskActorSet
+   */
+  template <class T>
+  class UnknownRanges : public Iter::Ranges::Diff<LubRanges<T>, GlbRanges<T> >{
+  private:
+    LubRanges<T> i1;
+    GlbRanges<T> i2;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    UnknownRanges(void);
+    /// Initialize with unknown set ranges for set variable \a x
+    UnknownRanges(const T& x);
+    /// Initialize with unknown set ranges for set variable \a x
+    void init(const T& x);
+    //@}
+  };
+  
+}}
+
+#include "set/var/integerset.icc"
+#include "set/var/iter.icc"
+
+namespace Gecode { namespace Set {
+
+  /**
+   * \brief Finite integer set variable implementation
+   *
+   * \ingroup Other
+   */  
+  class SetVarImp : public Variable<VTI_SET,PC_SET_ANY> {
+    friend class LubRanges<SetVarImp*>;
+    friend class GlbRanges<SetVarImp*>;
+  private:
+    /// The least upper bound of the domain
+    LUBndSet lub;
+    /// The greatest lower bound of the domain
+    GLBndSet glb;
+    /// The minimum cardinality
+    unsigned int _cardMin;
+    /// The maximum cardinality
+    unsigned int _cardMax;
+
+    /// Set variable processor for modified variables
+    class Processor : public VarTypeProcessor<VTI_SET,PC_SET_ANY> {
+    public:
+      /// Initialize and register
+      Processor(void);
+    };
+    /// The processor
+    GECODE_SET_EXPORT static Processor svp;
+
+  protected:
+    /// Constructor for cloning \a x
+    SetVarImp(Space* home, bool share, SetVarImp& x);
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Initialize with empty lower and full upper bound
+    SetVarImp(Space* home);
+    /**
+     * \brief Initialize with given bounds and cardinality
+     *
+     * Creates a set variable \f$s\f$ with
+     * \f$\mathit{glb}(s)=\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+     * \f$\mathit{lub}(s)=\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
+     * \f$\mathit{cardMin}\leq |s|\leq\mathit{cardMax}\f$
+     */
+    SetVarImp(Space* home,int glbMin,int glbMax,int lubMin,int lubMax,
+	       unsigned int cardMin = 0,
+	       unsigned int cardMax = Limits::Set::card_max);
+    /**
+     * \brief Initialize with given bounds and cardinality
+     *
+     * Creates a set variable \f$s\f$ with
+     * \f$\mathit{glb}(s)=\mathit{glbD}\f$,
+     * \f$\mathit{lub}(s)=\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
+     * \f$\mathit{cardMin}\leq |s|\leq\mathit{cardMax}\f$
+     */
+    SetVarImp(Space* home,const IntSet& glbD,int lubMin,int lubMax,
+	      unsigned int cardMin,unsigned int cardMax);
+    /**
+     * \brief Initialize with given bounds and cardinality
+     *
+     * Creates a set variable \f$s\f$ with
+     * \f$\mathit{glb}(s)=\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+     * \f$\mathit{lub}(s)=\mathit{lubD}\f$, and
+     * \f$\mathit{cardMin}\leq |s|\leq\mathit{cardMax}\f$
+     */
+    SetVarImp(Space* home,int glbMin,int glbMax,const IntSet& lubD,
+	      unsigned int cardMin,unsigned int cardMax);
+    /**
+     * \brief Initialize with given bounds and cardinality
+     *
+     * Creates a set variable \f$s\f$ with
+     * \f$\mathit{glb}(s)=\mathit{glbD}\f$,
+     * \f$\mathit{lub}(s)=\mathit{lubD}\f$, and
+     * \f$\mathit{cardMin}\leq |s|\leq\mathit{cardMax}\f$
+     */
+    SetVarImp(Space* home,const IntSet& glbD,const IntSet& lubD,
+	      unsigned int cardMin,unsigned int cardMax);
+    //@}
+
+    /// \name Value access
+    //@{
+    /// Return current cardinality minimum
+    unsigned int cardMin(void) const;
+    /// Return current cardinality maximum
+    unsigned int cardMax(void) const;
+    /// Return minimum of the least upper bound
+    int lubMin(void) const;
+    /// Return maximum of the least upper bound
+    int lubMax(void) const;
+    /// Return \a n -th smallest element in the least upper bound
+    int lubMinN(int n) const;
+    /// Return \a n -th largest element in the least upper bound
+    int lubMaxN(int n) const;
+    /// Return minimum of the greatest lower bound
+    int glbMin(void) const;
+    /// Return maximum of the greatest lower bound
+    int glbMax(void) const;
+    /// Return the size of the greatest lower bound
+    unsigned int glbSize(void) const;
+    /// Return the size of the least upper bound
+    unsigned int lubSize(void) const;
+    //@}
+
+    /// \name Domain tests
+    //@{
+    /// Test whether variable is assigned
+    bool assigned(void) const;
+    /// Test whether \a n is contained in greatest lower bound
+    bool knownIn(int n) const;
+    /// Test whether \a n is not contained in least upper bound
+    bool knownOut(int) const;
+    //@}
+
+  private:
+    /// \name Common methods for the tell operations
+    //@{
+    /// Computes ModEvent that resulted from updating the least upper bound
+    GECODE_SET_EXPORT ModEvent processLubChange(Space* home);
+    /// Computes ModEvent that resulted from updating the greatest lower bound
+    GECODE_SET_EXPORT ModEvent processGlbChange(Space* home);
+    /** \brief Check whether least upper and minimum cardinality agree
+     * If the minimum cardinality is still smaller than the lub size, \a me
+     * is returned. If minimum cardinality and lub size are the same, the
+     * variable is assigned, and ME_SET_VAL is returned. Otherwise
+     * returns ME_SET_FAILED.
+     */
+    ModEvent checkLubCardAssigned(Space* home,ModEvent me);
+    /** \brief Check whether greatest lower bound and maximum cardinality agree
+     * If the maximum cardinality is still greater than the glb size, \a me
+     * is returned. If maximum cardinality and glb size are the same, the
+     * variable is assigned, and ME_SET_VAL is returned. Otherwise
+     * returns ME_SET_FAILED.
+     */
+    ModEvent checkGlbCardAssigned(Space* home,ModEvent me);
+    //@}
+
+    /// \name Cardinality update implementation
+    //@{
+    /// Restrict cardinality to be at least n
+    GECODE_SET_EXPORT ModEvent cardMin_full(Space* home,unsigned int n);
+    /// Restrict cardinality to be at most n
+    GECODE_SET_EXPORT ModEvent cardMax_full(Space* home,unsigned int n);
+    //@}
+
+    /// Test whether glb is a subset of lub
+    bool boundsConsistent(void) const;
+  public:
+
+    /// \name Domain update by value
+    //@{
+    /// Include \a n in the greatest lower bound
+    ModEvent include(Space* home,int n);
+    /// Include the range \f$\{i,\dots,j\}\f$ in the greatest lower bound
+    ModEvent include(Space* home,int i,int j);
+    /// Exclude \a n from the least upper bound
+    ModEvent exclude(Space* home,int n);
+    /// Exclude the range \f$\{i,\dots,j\}\f$ from the least upper bound
+    ModEvent exclude(Space* home,int i,int j);
+    /// Exclude everything but \a n from the least upper bound
+    ModEvent intersect(Space* home,int n);
+    /// Exclude everything but the range \f$\{i,\dots,j\}\f$ from the least upper bound
+    ModEvent intersect(Space* home,int i,int j);
+    /// Restrict cardinality to be at least n
+    ModEvent cardMin(Space* home,unsigned int n);
+    /// Restrict cardinality to be at most n
+    ModEvent cardMax(Space* home,unsigned int n);
+    //@}
+
+    /// \name Domain update by range iterator
+    //@{
+    /// Include set described by \a i in the greatest lower bound
+    template <class I> ModEvent includeI(Space* home,I& i);
+    /// Exclude set described by \a i from the least upper bound
+    template <class I> ModEvent excludeI(Space* home,I& i);
+    /// Exclude everything but set described by \a i from the least upper bound
+    template <class I> ModEvent intersectI(Space* home,I& i);
+    //@}
+
+  public:
+    /// \name Dependencies
+    //@{
+    /// Subscribe propagator \a p with propagation condition \a pc to variable
+    GECODE_SET_EXPORT void subscribe(Space* home,Propagator* p,PropCond pc);
+    //@}
+
+  private:
+    /// Return copy of not-yet copied variable
+    GECODE_SET_EXPORT SetVarImp* perform_copy(Space* home, bool share);
+
+  public:
+    /// \name Cloning
+    //@{
+    /// Return copy of this variable
+    SetVarImp* copy(Space* home, bool share);
+    //@}
+
+  };
+
+}}
+
+#include "set/var/imp.icc"
+
+namespace Gecode {
+
+  /**
+   * \brief %Set variables
+   * 
+   * \ingroup TaskIntSetVars
+   */
+  class SetVar {
+  private:
+    /// Finite set variable implementation used
+    Set::SetVarImp* x;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    GECODE_SET_EXPORT SetVar(void);
+
+    /// Initialize variable with empty greatest lower and full least upper bound
+    GECODE_SET_EXPORT SetVar(Space* home);
+    /// Initialize variable with empty greatest lower and full least upper bound
+    void init(Space* home);
+
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+     * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    GECODE_SET_EXPORT 
+    SetVar(Space* home,int glbMin,int glbMax,int lubMin,int lubMax,
+	   unsigned int cardMin = 0,
+	   unsigned int cardMax = Limits::Set::card_max);
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+     * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    void init(Space* home,int glbMin,int glbMax,int lubMin,int lubMax,
+	      unsigned int cardMin = 0,
+	      unsigned int cardMax = Limits::Set::card_max);
+
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \a glbD,
+     * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    GECODE_SET_EXPORT 
+    SetVar(Space* home,const IntSet& glbD,int lubMin,int lubMax,
+	   unsigned int cardMin = 0,
+	   unsigned int cardMax = Limits::Set::card_max);
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \a glbD,
+     * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    void init(Space* home,const IntSet& glbD,int lubMin,int lubMax,
+	      unsigned int cardMin = 0,
+	      unsigned int cardMax = Limits::Set::card_max);
+
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+     * least upper bound \a lubD, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    GECODE_SET_EXPORT 
+    SetVar(Space* home,int glbMin,int glbMax,const IntSet& lubD,
+	   unsigned int cardMin = 0,
+	   unsigned int cardMax = Limits::Set::card_max);
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+     * least upper bound \a lubD, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    void init(Space* home,int glbMin,int glbMax,const IntSet& lubD,
+	      unsigned int cardMin = 0,
+	      unsigned int cardMax = Limits::Set::card_max);
+
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \a glbD,
+     * least upper bound \a lubD, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    GECODE_SET_EXPORT 
+    SetVar(Space* home,const IntSet& glbD,const IntSet& lubD,
+	   unsigned int cardMin = 0,
+	   unsigned int cardMax = Limits::Set::card_max);
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \a glbD,
+     * least upper bound \a lubD, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    void init(Space* home,const IntSet& glbD,const IntSet& lubD,
+	      unsigned int cardMin = 0,
+	      unsigned int cardMax = Limits::Set::card_max);
+    //@}
+
+    /// \name Variable implementation access
+    //@{
+    /// Return set variable implementation
+    Set::SetVarImp* variable(void) const;
+    ///@}
+    
+    /// \name Value access
+    //@{
+    /// Return number of elements in the greatest lower bound
+    unsigned int glbSize(void) const;
+    /// Return number of elements in the least upper bound
+    unsigned int lubSize(void) const;
+    /// Return number of unknown elements (elements in lub but not in glb)
+    unsigned int unknownSize(void) const;
+    /// Return cardinality minimum
+    unsigned int cardMin(void) const;
+    /// Return cardinality maximum
+    unsigned int cardMax(void) const;
+    /// Return minimum element of least upper bound
+    int lubMin(void) const;
+    /// Return maximum element of least upper bound
+    int lubMax(void) const;
+    /// Return minimum element of greatest lower bound
+    int glbMin(void) const;
+    /// Return maximum of greatest lower bound
+    int glbMax(void) const;
+    //@}
+
+    /// \name Domain tests
+    //@{
+    /// Test whether \a i is in greatest lower bound
+    bool contains(int i) const;
+    /// Test whether \a i is not in the least upper bound
+    bool notContains(int i) const;
+    /// Test whether this variable is assigned
+    bool assigned(void) const;
+
+    /// \name Cloning
+    //@{
+    /// Update this variable to be a clone of variable \a x
+    void update(Space* home, bool, SetVar& x);
+    //@}
+  };
+
+  /**
+   * \defgroup TaskIntSetIter Range and value iterators for set variables
+   * \ingroup TaskIntSet
+   */
+  //@{
+
+  /// Iterator for the greatest lower bound ranges of a set variable
+  class SetVarGlbRanges {
+  private:
+    Set::GlbRanges<Set::SetVarImp*> iter;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    SetVarGlbRanges(void);
+    /// Initialize to iterate ranges of variable \a x
+    SetVarGlbRanges(const SetVar& x);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a range or done
+    bool operator()(void) const;
+    /// Move iterator to next range (if possible)
+    void operator++(void);
+    //@}
+
+    /// \name Range access
+    //@{
+    /// Return smallest value of range
+    int min(void) const;
+    /// Return largest value of range
+    int max(void) const;
+    /// Return width of range (distance between minimum and maximum)
+    unsigned int width(void) const;
+    //@}
+  };
+
+  /// Iterator for the least upper bound ranges of a set variable
+  class SetVarLubRanges {
+  private:
+    Set::LubRanges<Set::SetVarImp*> iter;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    SetVarLubRanges(void);
+    /// Initialize to iterate ranges of variable \a x
+    SetVarLubRanges(const SetVar& x);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a range or done
+    bool operator()(void) const;
+    /// Move iterator to next range (if possible)
+    void operator++(void);
+    //@}
+
+    /// \name Range access
+    //@{
+    /// Return smallest value of range
+    int min(void) const;
+    /// Return largest value of range
+    int max(void) const;
+    /// Return width of range (distance between minimum and maximum)
+    unsigned int width(void) const;
+    //@}
+  };
+
+  /// Iterator for the unknown ranges of a set variable
+  class SetVarUnknownRanges {
+  private:
+    Set::UnknownRanges<Set::SetVarImp*> iter;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    SetVarUnknownRanges(void);
+    /// Initialize to iterate ranges of variable \a x
+    SetVarUnknownRanges(const SetVar& x);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a range or done
+    bool operator()(void) const;
+    /// Move iterator to next range (if possible)
+    void operator++(void);
+    //@}
+
+    /// \name Range access
+    //@{
+    /// Return smallest value of range
+    int min(void) const;
+    /// Return largest value of range
+    int max(void) const;
+    /// Return width of range (distance between minimum and maximum)
+    unsigned int width(void) const;
+    //@}
+  };
+  
+  /// Iterator for the values in the greatest lower bound of a set variable
+  class SetVarGlbValues {
+  private:
+    Iter::Ranges::ToValues<SetVarGlbRanges> iter;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    SetVarGlbValues(void);
+    /// Initialize to iterate values of variable \a x
+    SetVarGlbValues(const SetVar& x);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a value or done
+    bool operator()(void) const;
+    /// Move iterator to next value (if possible)
+    void operator++(void);
+    //@}
+
+    /// \name Value access
+    //@{
+    /// Return current value
+    int  val(void) const;
+    //@}
+  };
+
+  /// Iterator for the values in the least upper bound of a set variable
+  class SetVarLubValues {
+  private:
+    Iter::Ranges::ToValues<SetVarLubRanges> iter;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    SetVarLubValues(void);
+    /// Initialize to iterate values of variable \a x
+    SetVarLubValues(const SetVar& x);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a value or done
+    bool operator()(void) const;
+    /// Move iterator to next value (if possible)
+    void operator++(void);
+    //@}
+
+    /// \name Value access
+    //@{
+    /// Return current value
+    int  val(void) const;
+    //@}
+  };
+
+  /// Iterator for the values in the unknown set of a set variable
+  class SetVarUnknownValues {
+  private:
+    Iter::Ranges::ToValues<SetVarUnknownRanges> iter;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    SetVarUnknownValues(void);
+    /// Initialize to iterate values of variable \a x
+    SetVarUnknownValues(const SetVar& x);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a value or done
+    bool operator()(void) const;
+    /// Move iterator to next value (if possible)
+    void operator++(void);
+    //@}
+
+    /// \name Value access
+    //@{
+    /// Return current value
+    int  val(void) const;
+    //@}
+  };
+
+  //@}
+}
+
+#include "set/var/set.icc"
+
+/**
+ * \brief Print set variable \a x
+ * \relates Gecode::SetVar
+ */
+GECODE_SET_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::SetVar& x);
+
+// STATISTICS: set-var
+

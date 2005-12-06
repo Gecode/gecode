@@ -1,0 +1,52 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set { namespace Distinct {
+
+  /*
+   * n-ary distinct with fixed cardinalities propagator
+   *
+   */
+
+  forceinline
+  Distinct::Distinct(Space* home, ViewArray<SetView>& x, unsigned int _c)
+    : NaryPropagator<SetView, PC_SET_ANY>(home,x), bin(10), c(_c) {}
+
+  forceinline
+  Distinct::Distinct(Space* home, bool share, Distinct& p)
+    : NaryPropagator<SetView, PC_SET_ANY>(home,share,p), bin(0), c(p.c) {
+    bin.update(share, p.bin);
+  }
+
+  forceinline ExecStatus
+  Distinct::post(Space* home, ViewArray<SetView> x, unsigned int c) {
+    for (int i=x.size(); i--;) {
+      GECODE_ES_CHECK(x[i].cardMin(home, c));
+      GECODE_ES_CHECK(x[i].cardMax(home, c));
+    }
+
+    (void) new (home) Distinct(home,x,c);
+    return ES_OK;
+  }
+
+}}}
+
+// STATISTICS: set-prop

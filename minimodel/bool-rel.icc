@@ -1,0 +1,66 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2005
+ *
+ *  Last modified:
+ *     $Date: 2005-08-03 17:17:11 +0200 (Wed, 03 Aug 2005) $ by $Author: schulte $
+ *     $Revision: 2126 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { 
+
+  namespace MiniModel {
+    
+    /*
+     * Operations for Boolean relations
+     *
+     */
+    forceinline
+    BoolRel::BoolRel(const BoolExpr& e0, bool t0)
+      : e(e0), t(t0) {}
+
+    forceinline void
+    BoolRel::post(Space* home) const {
+      e.post(home,t);
+    }
+    
+  }
+
+  /*
+   * Construction of linear relations
+   *
+   */
+  forceinline MiniModel::BoolRel
+  tt(const MiniModel::BoolExpr& e) {
+    return MiniModel::BoolRel(e,true);
+  }
+  forceinline MiniModel::BoolRel
+  ff(const MiniModel::BoolExpr& e) {
+    return MiniModel::BoolRel(e,false);
+  }
+
+  /*
+   * Posting
+   *
+   */
+  forceinline void 
+  post(Space* home, const MiniModel::BoolRel& r) {
+    if (home->failed()) return;
+    r.post(home);
+  }
+
+}
+
+// STATISTICS: minimodel-any

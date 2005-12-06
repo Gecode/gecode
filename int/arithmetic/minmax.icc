@@ -1,0 +1,152 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Arithmetic {
+
+  /*
+   * Ternary bounds-consistent maximum
+   *
+   */
+
+  template <class View>
+  forceinline
+  Max<View>::Max(Space* home, View x0, View x1, View x2)
+    : TernaryPropagator<View,PC_INT_BND>(home,x0,x1,x2) {}
+
+  template <class View>
+  ExecStatus
+  Max<View>::post(Space* home, View x0, View x1, View x2) {
+    if (same(x0,x1))
+      return Rel::EqBnd<View>::post(home,x0,x2);
+    (void) new (home) Max<View>(home,x0,x1,x2);
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline
+  Max<View>::Max(Space* home, bool share, Max<View>& p)
+    : TernaryPropagator<View,PC_INT_BND>(home,share,p) {}
+
+  template <class View>
+  Actor*
+  Max<View>::copy(Space* home, bool share) {
+    return new (home) Max<View>(home,share,*this);
+  }
+
+  template <class View>
+  ExecStatus
+  Max<View>::propagate(Space* home) {
+    GECODE_ME_CHECK(x2.lq(home,std::max(x0.max(),x1.max())));
+    GECODE_ME_CHECK(x2.gq(home,std::max(x0.min(),x1.min())));
+    ExecStatus es = (x0.modified() || x1.modified()) ? ES_NOFIX : ES_FIX;
+    GECODE_ME_CHECK(x0.lq(home,x2.max()));
+    GECODE_ME_CHECK(x1.lq(home,x2.max()));
+    if (x0.max() <= x1.min()) {
+      GECODE_ES_CHECK(Rel::EqBnd<View>::post(home,x1,x2)); 
+      return ES_SUBSUMED;
+    }
+    if (x1.max() <= x0.min()) {
+      GECODE_ES_CHECK(Rel::EqBnd<View>::post(home,x0,x2)); 
+      return ES_SUBSUMED;
+    }
+    return x0.assigned() && x1.assigned() && x2.assigned() ? ES_SUBSUMED : es;
+  }
+
+
+
+
+  /*
+   * Nary bounds-consistent maximum
+   *
+   */
+
+  template <class View>
+  forceinline
+  NaryMax<View>::NaryMax(Space* home, ViewArray<View>& x, View y)
+    : NaryOnePropagator<View,PC_INT_BND>(home,x,y) {}
+
+  template <class View>
+  ExecStatus
+  NaryMax<View>::post(Space* home, ViewArray<View>& x, View y) {
+    assert(x.size() > 0);
+    x.unique();
+    if (x.size() == 1)
+      return Rel::EqBnd<View>::post(home,x[0],y);
+    if (x.size() == 2)
+      return Max<View>::post(home,x[0],x[1],y);
+    (void) new (home) NaryMax<View>(home,x,y);
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline
+  NaryMax<View>::NaryMax(Space* home, bool share, NaryMax<View>& p)
+    : NaryOnePropagator<View,PC_INT_BND>(home,share,p) {}
+
+  template <class View>
+  Actor*
+  NaryMax<View>::copy(Space* home, bool share) {
+    return new (home) NaryMax<View>(home,share,*this);
+  }
+
+  template <class View>
+  ExecStatus
+  NaryMax<View>::propagate(Space* home) {
+    int maxmax = Limits::Int::int_min-1;
+    int maxmin = Limits::Int::int_min-1;
+    for (int i = x.size(); i--; ) {
+      maxmax = std::max(x[i].max(),maxmax);
+      maxmin = std::max(x[i].min(),maxmin);
+    }
+    GECODE_ME_CHECK(y.lq(home,maxmax)); 
+    GECODE_ME_CHECK(y.gq(home,maxmin));
+    ExecStatus es = ES_FIX;
+    maxmin = y.min();
+    maxmax = y.max();
+    bool assigned = true;
+    for (int i = x.size(); i--; ) {
+      if (x[i].modified())
+	es = ES_NOFIX;
+      ModEvent me = x[i].lq(home,maxmax);
+      if (me == ME_INT_FAILED)
+	return ES_FAILED;
+      if (x[i].max() < maxmin) {
+	x.move_lst(i,this,PC_INT_BND);
+      } else {
+	if (me_modified(me) && (x[i].max() != maxmax))
+	  es = ES_NOFIX;
+	if (!x[i].assigned())
+	  assigned = false;
+      }
+    }
+    if (x.size() == 0)
+      return ES_FAILED;
+    if (x.size() == 1) {
+      GECODE_ES_CHECK(Rel::EqBnd<View>::post(home,x[0],y));
+      return ES_SUBSUMED;
+    }
+    return (assigned && y.assigned()) ? ES_SUBSUMED : es;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

@@ -1,0 +1,103 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Contributing authors:
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *     Gabor Szokoli, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set { namespace Rel {
+
+#define GECODE_ME_CHECK_B(modified, tell)       \
+  {						\
+    ModEvent me = (tell);			\
+    modified |= me_modified(me);		\
+    GECODE_ME_CHECK(me);			\
+  }
+
+  forceinline
+  bool subsumesME(ModEvent me0, ModEvent me1, ModEvent me2, ModEvent me) {
+    ModEvent cme = SetView::combine(me0,SetView::combine(me1, me2));
+    return SetView::combine(cme, me)==cme;
+  }
+  forceinline
+  bool subsumesME(ModEvent me0, ModEvent me1, ModEvent me) {
+    ModEvent cme = SetView::combine(me0, me1);
+    return SetView::combine(cme, me)==cme;
+  }
+  forceinline
+  bool subsumesME(ModEvent me0, ModEvent me) {
+    return SetView::combine(me0, me)==me0;
+  }
+
+  forceinline
+  bool testSetEventLB(ModEvent me0, ModEvent me1, ModEvent me2) {
+    return subsumesME(me0, me1, me2, ME_SET_GLB);
+  }
+  forceinline
+  bool testSetEventUB(ModEvent me0, ModEvent me1, ModEvent me2) {
+    return subsumesME(me0, me1, me2, ME_SET_LUB);
+  }
+  forceinline
+  bool testSetEventAnyB(ModEvent me0, ModEvent me1, ModEvent me2) {
+    return ( me0!=ME_SET_CARD || me1!=ME_SET_CARD || me2!=ME_SET_CARD );
+  }
+  forceinline
+  bool testSetEventCard(ModEvent me0, ModEvent me1, ModEvent me2) {
+    return subsumesME(me0, me1, me2, ME_SET_CARD);
+  }
+  forceinline
+  bool testSetEventLB(ModEvent me0, ModEvent me1) {
+    return subsumesME(me0, me1, ME_SET_GLB);
+  }
+  forceinline
+  bool testSetEventUB(ModEvent me0, ModEvent me1) {
+    return subsumesME(me0, me1, ME_SET_LUB);
+  }
+  forceinline
+  bool testSetEventAnyB(ModEvent me0, ModEvent me1) {
+    return ( me0!=ME_SET_CARD || me1!=ME_SET_CARD );
+  }
+  forceinline
+  bool testSetEventCard(ModEvent me0, ModEvent me1) {
+    return subsumesME(me0, me1, ME_SET_CARD);
+  }
+  forceinline
+  bool testSetEventLB(ModEvent me0) {
+    return subsumesME(me0, ME_SET_GLB);
+  }
+  forceinline
+  bool testSetEventUB(ModEvent me0) {
+    return subsumesME(me0, ME_SET_LUB);
+  }
+  forceinline
+  bool testSetEventAnyB(ModEvent me0) {
+    return ( me0!=ME_SET_CARD );
+  }
+  forceinline
+  bool testSetEventCard(ModEvent me0) {
+    return subsumesME(me0, ME_SET_CARD);
+  }
+
+}}}
+
+// STATISTICS: set-prop

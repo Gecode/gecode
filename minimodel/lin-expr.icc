@@ -1,0 +1,192 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *
+ *  Last modified:
+ *     $Date: 2005-08-03 17:17:11 +0200 (Wed, 03 Aug 2005) $ by $Author: schulte $
+ *     $Revision: 2126 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace MiniModel {
+
+  /*
+   * Operations for nodes
+   *
+   */
+  forceinline void*
+  LinExpr::Node::operator new(size_t size) {
+    return Memory::malloc(size);
+  }
+
+  forceinline void
+  LinExpr::Node::operator delete(void* p, size_t) {
+    Memory::free(p);
+  }
+
+
+  forceinline void
+  LinExpr::Node::increment(void) { 
+    ++use; 
+  }
+
+  forceinline
+  LinExpr::Node::Node(int a, const IntVar& x) :
+    use(1),
+    left(NULL), right(NULL), signLeft(0), signRight(0),
+    a(a), x(x) {}
+
+  forceinline
+  LinExpr::Node::Node(Node* l, int sL, Node* r, int sR) :
+    use(1),
+    left(l), right(r), signLeft(sL), signRight(sR) {
+    left->increment();
+    right->increment();
+  }
+
+  /*
+   * Operations for expressions
+   *
+   */
+  
+  forceinline
+  LinExpr::LinExpr(void) 
+    : ax(NULL), n(0) {}
+
+  forceinline
+  LinExpr::LinExpr(const IntVar& x, int a, int c0) :
+    ax(new Node(a, x)), n(1), c(c0), sign(1) {
+  }
+
+  forceinline
+  LinExpr::LinExpr(const LinExpr& t1, const LinExpr& t2, int m) :
+    ax(new Node(t1.ax, t1.sign, t2.ax, t2.sign*m)),
+    n(t1.n+t2.n),
+    c(t1.c+m*t2.c), sign(1) {}
+
+  forceinline
+  LinExpr::LinExpr(const LinExpr& t, int c0, int sign) :
+    ax(t.ax), n(t.n), c(sign*t.c+c0), sign(t.sign*sign) {
+    ax->increment();
+  }
+
+  forceinline
+  LinExpr::LinExpr(int a, const LinExpr& t) :
+    ax(t.ax), n(t.n), c(a*t.c), sign(a*t.sign) {
+    ax->increment();
+  }
+
+  inline const LinExpr&
+  LinExpr::operator=(const LinExpr& t) {
+    if (this != &t) {
+      if ((ax != NULL) && ax->decrement())
+	delete ax;
+      n    = t.n;
+      ax   = t.ax;
+      c    = t.c;
+      sign = t.sign;
+      ax->increment();
+    }
+    return *this;
+  }
+
+  forceinline
+  LinExpr::~LinExpr(void) {
+    if ((ax != NULL) && ax->decrement())
+      delete ax;
+  }
+
+}}
+
+forceinline Gecode::MiniModel::LinExpr
+operator+(int c,
+	  const Gecode::MiniModel::LinExpr& t) {
+  return Gecode::MiniModel::LinExpr(t,c,1);
+}
+forceinline Gecode::MiniModel::LinExpr
+operator+(const Gecode::MiniModel::LinExpr& t,
+	  int c) {
+  return Gecode::MiniModel::LinExpr(t,c,1);
+}
+forceinline Gecode::MiniModel::LinExpr
+operator+(const Gecode::MiniModel::LinExpr& t1,
+	  const Gecode::MiniModel::LinExpr& t2) {
+  return Gecode::MiniModel::LinExpr(t1,t2,1);
+}
+
+
+forceinline Gecode::MiniModel::LinExpr
+operator-(int c,
+	  const Gecode::MiniModel::LinExpr& t) {
+  return Gecode::MiniModel::LinExpr(t, c, -1);
+}
+forceinline Gecode::MiniModel::LinExpr
+operator-(const Gecode::MiniModel::LinExpr& t,
+	  int c) {
+  return Gecode::MiniModel::LinExpr(t, -c, 1);
+}
+forceinline Gecode::MiniModel::LinExpr
+operator-(const Gecode::MiniModel::LinExpr& t1,
+	  const Gecode::MiniModel::LinExpr& t2) {
+  return Gecode::MiniModel::LinExpr(t1, t2, -1);
+}
+
+
+forceinline Gecode::MiniModel::LinExpr
+operator-(const Gecode::MiniModel::LinExpr& t) {
+  return Gecode::MiniModel::LinExpr(t,0,-1);
+}
+
+
+forceinline Gecode::MiniModel::LinExpr
+operator*(int a, const Gecode::IntVar& x) {
+  return Gecode::MiniModel::LinExpr(x,a);
+}
+forceinline Gecode::MiniModel::LinExpr
+operator*(const Gecode::IntVar& x, int a) {
+  return Gecode::MiniModel::LinExpr(x,a);
+}
+forceinline Gecode::MiniModel::LinExpr
+operator*(const Gecode::MiniModel::LinExpr& t, int a) {
+  return Gecode::MiniModel::LinExpr(a,t);
+}
+forceinline Gecode::MiniModel::LinExpr
+operator*(int a, const Gecode::MiniModel::LinExpr& t) {
+  return Gecode::MiniModel::LinExpr(a,t);
+}
+
+namespace Gecode {
+
+  forceinline IntVar
+  post(Space* home, const IntVar& x) {
+    return x;
+  }
+
+  forceinline IntVar
+  post(Space* home, int n) {
+    IntVar x(home, n, n);
+    return x;
+  }
+
+  forceinline IntVar 
+  post(Space* home, const MiniModel::LinExpr& e) {
+    if (!home->failed())
+      return e.post(home);
+    IntVar x;
+    return x;
+  }
+    
+}
+
+// STATISTICS: minimodel-any

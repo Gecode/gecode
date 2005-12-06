@@ -1,0 +1,220 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Contributing authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *     Gabor Szokoli, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set {
+
+  /*
+   * Constructors and access
+   *
+   */
+
+  forceinline
+  SetView::SetView(void) {}
+  forceinline
+  SetView::SetView(const SetVar& y)
+    : VariableViewBase<SetVarImp>(y.variable()) {}
+
+
+  /*
+   * Variable information
+   *
+   */
+
+  forceinline bool
+  SetView::assigned(void)  const { return var->assigned(); }
+
+  forceinline unsigned int
+  SetView::glbSize(void) const { return var->glbSize(); }
+
+  forceinline unsigned int
+  SetView::lubSize(void) const { return var->lubSize(); }
+
+  forceinline unsigned int
+  SetView::unknownSize(void) const { return var->lubSize() - var->glbSize(); }
+
+  forceinline bool
+  SetView::contains(int i) const { return (var->knownIn(i)); }
+
+  forceinline bool
+  SetView::notContains(int i) const { return (var->knownOut(i)); }
+
+  forceinline unsigned int
+  SetView::cardMin(void) const { return var->cardMin(); }
+
+  forceinline unsigned int
+  SetView::cardMax(void) const { return var->cardMax(); }
+
+  forceinline int
+  SetView::lubMin(void) const { return var->lubMin(); }
+
+  forceinline int
+  SetView::lubMax(void) const { return var->lubMax(); }
+
+  forceinline int
+  SetView::lubMinN(int n) const { return var->lubMinN(n); }
+
+  forceinline int
+  SetView::lubMaxN(int n) const { return var->lubMaxN(n); }
+
+  forceinline int
+  SetView::glbMin(void) const { return var->glbMin(); }
+
+  forceinline int
+  SetView::glbMax(void) const { return var->glbMax(); }
+
+  /*
+   * Tells
+   *
+   */
+
+  forceinline ModEvent
+  SetView::cardMin(Space* home, unsigned int m) {
+    return var-> cardMin(home, m);
+  }
+
+  forceinline ModEvent
+  SetView::cardMax(Space* home, unsigned int m) {
+    return var-> cardMax(home, m);
+  }
+
+  forceinline ModEvent
+  SetView::include (Space* home,int from, int to)
+  { return (var->include(home,from,to)); }
+
+  forceinline ModEvent
+  SetView::include (Space* home,int n)
+  { return (var->include(home,n)); }
+
+  forceinline ModEvent
+  SetView::exclude (Space* home,int n)
+  { return (var->exclude(home, n)); }
+
+  forceinline ModEvent
+  SetView::intersect (Space* home,int from, int to)
+  { return (var->intersect(home,from,to)); }
+
+  forceinline ModEvent
+  SetView::intersect (Space* home,int n)
+  { return (var->intersect(home,n)); }
+
+  template <class I> ModEvent
+  SetView::includeI (Space* home, I& iter)
+  { return (var->includeI(home, iter)); }
+
+  forceinline ModEvent
+  SetView::exclude (Space* home,int from, int to)
+  { return (var->exclude(home,from,to)); }
+
+  template <class I> ModEvent
+  SetView::excludeI(Space* home, I& iter) {
+    return var->excludeI(home, iter);
+  }
+
+  template <class I> ModEvent
+  SetView::intersectI(Space* home, I& iter) {
+    return var->intersectI(home, iter);
+  }
+
+
+
+  /*
+   * Cloning
+   *
+   */
+
+  forceinline void
+  SetView::update(Space* home, bool share, SetView& y) {
+    var = y.var->copy(home,share);
+  }
+
+  forceinline bool
+  SetView::destruct(void) { return false; }
+
+  /**
+   * \brief %Range iterator for least upper bound of set variable views
+   * \ingroup TaskActorSetView
+   */
+  template <>
+  class LubRanges<SetView> : public LubRanges<SetVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    LubRanges(void);
+    /// Initialize with ranges for view \a x
+    LubRanges(const SetView& x);
+    /// Initialize with ranges for view \a x
+    void init(const SetView& x);
+    //@}
+  };
+
+  forceinline
+  LubRanges<SetView>::LubRanges(void) {}
+
+  forceinline
+  LubRanges<SetView>::LubRanges(const SetView& x)
+    : LubRanges<SetVarImp*>(x.variable()) {}
+
+  forceinline void
+  LubRanges<SetView>::init(const SetView& x) {
+    LubRanges<SetVarImp*>::init(x.variable());
+  }
+
+
+  /**
+   * \brief %Range iterator for greatest lower bound of set variable views
+   * \ingroup TaskActorSetView
+   */
+  template <>
+  class GlbRanges<SetView> : public GlbRanges<SetVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    GlbRanges(void);
+    /// Initialize with ranges for view \a x
+    GlbRanges(const SetView& x);
+    /// Initialize with ranges for view \a x
+    void init(const SetView& x);
+  };
+
+  forceinline
+  GlbRanges<SetView>::GlbRanges(void) {}
+
+  forceinline
+  GlbRanges<SetView>::GlbRanges(const SetView& x)
+    : GlbRanges<SetVarImp*>(x.variable()) {}
+
+  forceinline void
+  GlbRanges<SetView>::init(const SetView& x) {
+    GlbRanges<SetVarImp*>::init(x.variable());
+  }
+
+}}
+
+// STATISTICS: set-var
+

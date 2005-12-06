@@ -1,0 +1,205 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { 
+
+  /// Heap and automatic memory management
+  namespace Memory {
+
+    /**
+     * \defgroup FuncMemHeap Heap-memory management
+     *
+     * All routines throw an exception of MemoryExhausted, if request
+     * cannot be fulfilled.
+     * \ingroup FuncMem
+     */
+
+    //@{
+    /// Allocate \a s bytes from heap.
+    void* malloc(size_t s);
+    /// Try to change memory-block starting at \a p to size \a s
+    void* realloc(void* p, size_t s);
+    /// Free memory block starting at \a p
+    void  free(void* p);
+
+    /// Allocate block of \a n objects of type \a T from heap
+    template <class T>
+    T* bmalloc(size_t n);
+    /// Reallocate block of \a n object starting at \a b to \a m objects of type \a T from heap
+    template <class T>
+    T* brealloc(T* b, size_t n);
+    /// Copy \a n objects starting at \a s to \a d
+    template <class T>
+    T* bcopy(T* d, const T* s, size_t n);
+
+    //@}
+    
+
+    /*
+     * Implementations
+     *
+     */
+    
+    forceinline void*
+    malloc(size_t s) {
+      void* p = ::malloc(s);
+      if (p != NULL)
+	return p;
+      throw MemoryExhausted();
+    }
+    
+    forceinline void*
+    realloc(void *p, size_t s) {
+      p = ::realloc(p,s);
+      if (p != NULL)
+	return p;
+      throw MemoryExhausted();
+    }
+    
+    forceinline void
+    free(void* p) {
+      ::free(p);
+    }
+    
+    
+    template <class T>
+    forceinline T*
+    bmalloc(size_t n) {
+      return reinterpret_cast<T*>(Memory::malloc(sizeof(T)*n));
+    }
+    
+    template <class T>
+    forceinline T*
+    brealloc(T* b, size_t, size_t m) {
+      return reinterpret_cast<T*>(Memory::realloc(b,m*sizeof(T)));
+    }
+    
+    template <class T>
+    forceinline T*
+    bcopy(T* d, const T* s, size_t n) {
+      return reinterpret_cast<T*>(memcpy(d,s,n*sizeof(T)));
+    }
+    
+  }
+
+}
+
+/**
+ * \defgroup FuncMemAuto Automatic memory management
+ * \ingroup FuncMem
+ */
+
+//@{
+
+/**
+ * \def GECODE_AUTOARRAY(T,X,N)
+ * \brief Automatic (stack allocation) of memory
+ *
+ * Allocates automatic memory for \a N objects of type \a T and
+ * declares and initializes the pointer \a X to \a T to that
+ * block.
+ *
+ * As soon as the current scope is left, the memory is freed.
+ *
+ * Tries to allocate small blocks on the stack, bigger ones are
+ * allocated from the heap (however, management is still automatic).
+ */
+
+//@}
+
+/*
+ * Automatic stack memory management
+ *
+ */
+
+#if defined(__GNUC__)
+
+#define GECODE_AUTOARRAY(T,X,N)					\
+char __GECODE__ ## X ## __LINE__ [(N)*sizeof(T)];		\
+T* X = reinterpret_cast<T*>(__GECODE__ ## X ## __LINE__);
+
+#elif defined(_MSC_VER)
+
+#include <cstdlib>
+#include <malloc.h>
+
+namespace Gecode { namespace Memory {
+
+  /**
+   *  \brief Helper class for large memory chunks obtained from heap
+   */
+  class ManageMemory {
+  private:
+    void* _x;
+  public:
+    ManageMemory(void) {}
+    void init(void* p) { _x = p; }
+    ~ManageMemory(void) {
+      if (_x != NULL)
+	::free(_x);
+    }
+  };
+
+}}
+
+
+#define GECODE_AUTOARRAY(T,X,N)					\
+T* X;								\
+::Gecode::Memory::ManageMemory __GECODE__ ## X ## __LINE__;	\
+if ((sizeof(T)*(N)) <= 2048) {					\
+   X = reinterpret_cast<T*>(_alloca(sizeof(T)*(N)));		\
+   __GECODE__ ## X ## __LINE__ .init(NULL);			\
+} else {							\
+   X = reinterpret_cast<T*>(::malloc(sizeof(T)*(N)));		\
+   __GECODE__ ## X ## __LINE__ .init(X);			\
+}
+
+#else
+
+#include <cstdlib>
+
+namespace Gecode { namespace Memory {
+
+  /** 
+   *  \brief Helper class for large automatic memory chunks
+   */
+  template <class T>
+  class AutoArray {
+  private:
+    T* _x;
+  public:
+    AutoArray(const int n) {
+      _x = reinterpret_cast<T*>(::malloc(sizeof(T)*n));
+    }
+    ~AutoArray(void) {
+      ::free(_x);
+    }
+    T &operator [](const int i){ return _x[i]; }
+    operator T*(void) { return _x; }
+  };
+
+}}
+
+#define GECODE_AUTOARRAY(T,X,N) ::Gecode::Memory::AutoArray< T > X(N)
+
+#endif
+
+// STATISTICS: kernel-core

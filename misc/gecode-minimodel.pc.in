@@ -1,0 +1,12 @@
+# Package Information for pkg-config
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@/gecode
+
+Name: Gecode Minimodel
+Description: Generic Constraint Development Environment Minimodel
+Version: @VERSION@
+Libs: -L${libdir} -lgecodekernel -lgecodeminimodel
+Cflags: -I${includedir} @PKG_CONFIG_CXXFLAGS@

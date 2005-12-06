@@ -1,0 +1,80 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Contributing authors:
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *     Gabor Szokoli, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set { namespace Rel {
+
+  template <class View0, class View1>
+  forceinline
+  SubSet<View0,View1>::SubSet(Space* home, View0 y0, View1 y1)
+    : InhomBinaryPropagator<View0,PC_SET_CGLB,
+			    View1,PC_SET_CLUB>(home,y0,y1) {}
+
+  template <class View0, class View1>
+  forceinline
+  SubSet<View0,View1>::SubSet(Space* home, bool share, SubSet& p)
+    : InhomBinaryPropagator<View0,PC_SET_CGLB,
+			    View1,PC_SET_CLUB>(home,share,p) {}
+
+  template <class View0, class View1>
+  ExecStatus SubSet<View0,View1>::post(Space* home, View0 x, View1 y) {
+    (void) new (home) SubSet(home,x,y);
+    return ES_OK;
+  }
+
+  template <class View0, class View1>
+  Actor*
+  SubSet<View0,View1>::copy(Space* home, bool share) {
+    return new (home) SubSet(home,share,*this);
+  }
+
+  template <class View0, class View1>
+  ExecStatus
+  SubSet<View0,View1>::propagate(Space* home) {
+    bool oneassigned = x0.assigned() || x1.assigned();
+    unsigned int x0glbsize;
+    do {
+      GlbRanges<View0> x0lb(x0);
+      GECODE_ME_CHECK ( x1.includeI(home,x0lb) );
+      GECODE_ME_CHECK ( x1.cardMin(home,x0.cardMin()) );
+      LubRanges<View1> x1ub(x1);
+      x0glbsize = x0.glbSize();
+      GECODE_ME_CHECK ( x0.intersectI(home,x1ub) );
+      GECODE_ME_CHECK ( x0.cardMax(home,x1.cardMax()) );
+    } while (x0.glbSize() > x0glbsize);
+    if (x0.cardMin()==x1.cardMax()) {
+      GECODE_ES_CHECK((Eq<View0,View1>::post(home,x0,x1)));
+      return ES_SUBSUMED;
+    }
+    if (shared(x0,x1)) {
+      return oneassigned ? ES_SUBSUMED : ES_NOFIX;
+    }
+    return (x0.assigned() || x1.assigned()) ? ES_SUBSUMED : ES_FIX;
+  }
+
+}}}
+
+// STATISTICS: set-prop

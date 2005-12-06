@@ -1,0 +1,126 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  /**
+   * \brief %Exception: Base-class for exceptions
+   * \ingroup FuncThrow
+   */
+  class Exception {
+  private:
+    const char* l;
+    const char* i;
+  public:
+    /// Initialize with location \a l and information \a i
+    Exception(const char* l, const char* i);
+    /// Return location
+    const char* location(void) const;
+    /// Return information
+    const char* info(void) const;
+  };
+    
+
+  /**
+   * \defgroup FuncThrowKernel Kernel exceptions
+   * \ingroup FuncThrow
+   */
+
+  //@{
+
+  /// %Exception: %Memory exhausted
+  class MemoryExhausted : public Exception {
+  public:
+    /// Initialize
+    MemoryExhausted(void);
+  };
+
+  /// %Exception: Operation on failed space invoked
+  class SpaceFailed : public Exception {
+  public:
+    /// Initialize with location \a l
+    SpaceFailed(const char* l);
+  };
+
+  /// %Exception: Commit when no branching present
+  class SpaceNoBranching : public Exception {
+  public:
+    /// Initialize
+    SpaceNoBranching(void);
+  };
+
+  /// %Exception: Commit with illegal alternative
+  class SpaceIllegalAlternative : public Exception {
+  public:
+    /// Initialize
+    SpaceIllegalAlternative(void);
+  };
+
+  //@}
+
+  /*
+   * Implementations
+   *
+   */
+
+  /*
+   * Base class for exceptions
+   *
+   */
+  forceinline
+  Exception::Exception(const char* l0, const char* i0)
+    : l(l0), i(i0) {}
+  forceinline const char*
+  Exception::location(void) const {
+    return l;
+  }
+  forceinline const char*
+  Exception::info(void) const {
+    return i;
+  }
+
+
+  /*
+   * Classes for exceptions raised by kernel
+   *
+   */
+
+  inline
+  MemoryExhausted::MemoryExhausted(void) 
+    : Exception("Memory","Heap memory exhausted") {}
+
+  inline
+  SpaceFailed::SpaceFailed(const char* l)
+    : Exception(l,"Attempt to invoke operation on failed space") {}
+
+  inline
+  SpaceNoBranching::SpaceNoBranching(void)
+    : Exception("Space::commit",
+		"Attempt to commit with no branching") {}
+
+  inline
+  SpaceIllegalAlternative::SpaceIllegalAlternative(void)
+    : Exception("Space::commit",
+		"Attempt to commit with illegal alternative") {}
+  
+}
+
+// STATISTICS: kernel-other

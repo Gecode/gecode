@@ -1,0 +1,224 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2003
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Linear {
+
+  /*
+   * Ternary linear propagators
+   *
+   */
+  template <class Val, class A, class B, class C, PropCond pc>
+  forceinline
+  LinTer<Val,A,B,C,pc>::LinTer(Space* home, A y0, B y1, C y2, Val c0)
+    : Propagator(home), x0(y0), x1(y1), x2(y2), c(c0) {
+    x0.subscribe(home,this,pc); 
+    x1.subscribe(home,this,pc); 
+    x2.subscribe(home,this,pc);
+  }
+
+  template <class Val, class A, class B, class C, PropCond pc>
+  forceinline
+  LinTer<Val,A,B,C,pc>::LinTer(Space* home, bool share,
+			       LinTer<Val,A,B,C,pc>& p)
+    : Propagator(home,share,p), c(p.c) {
+    x0.update(home,share,p.x0);
+    x1.update(home,share,p.x1);
+    x2.update(home,share,p.x2);
+  }
+
+  template <class Val, class A, class B, class C, PropCond pc>
+  PropCost
+  LinTer<Val,A,B,C,pc>::cost(void) const {
+    return PC_TERNARY_LO;
+  }
+
+  template <class Val, class A, class B, class C, PropCond pc>
+  inline
+  LinTer<Val,A,B,C,pc>::~LinTer(void) {
+    x0.cancel(this,pc); 
+    x1.cancel(this,pc); 
+    x2.cancel(this,pc);
+  }
+
+  /*
+   * Equality propagator
+   *
+   */
+
+  template <class Val, class A, class B, class C>
+  forceinline
+  EqTer<Val,A,B,C>::EqTer(Space* home, A x0, B x1, C x2, Val c)
+    : LinTer<Val,A,B,C,PC_INT_BND>(home,x0,x1,x2,c) {}
+
+  template <class Val, class A, class B, class C>
+  ExecStatus
+  EqTer<Val,A,B,C>::post(Space* home, A x0, B x1, C x2, Val c) {
+    (void) new (home) EqTer<Val,A,B,C>(home,x0,x1,x2,c);
+    return ES_OK;
+  }
+
+
+  template <class Val, class A, class B, class C>
+  forceinline
+  EqTer<Val,A,B,C>::EqTer(Space* home, bool share, EqTer<Val,A,B,C>& p)
+    : LinTer<Val,A,B,C,PC_INT_BND>(home,share,p) {}
+
+  template <class Val, class A, class B, class C>
+  Actor*
+  EqTer<Val,A,B,C>::copy(Space* home, bool share) {
+    return new (home) EqTer<Val,A,B,C>(home,share,*this);
+  }
+
+#define BM_X0_MIN 1
+#define BM_X0_MAX 2
+#define BM_X1_MIN 4
+#define BM_X1_MAX 8
+#define BM_X2_MIN 16
+#define BM_X2_MAX 32
+#define BM_ALL (BM_X0_MIN|BM_X0_MAX|BM_X1_MIN|BM_X1_MAX|BM_X2_MIN|BM_X2_MAX)
+
+#define PV(CASE,TELL,UPDATE)			\
+  if (bm & (CASE)) {				\
+    bm -= (CASE); 				\
+    ModEvent me = (TELL);			\
+    if (me_failed(me))   return ES_FAILED;	\
+    if (me_modified(me)) bm |= (UPDATE);	\
+  }
+
+  template <class Val, class A, class B, class C>
+  ExecStatus
+  EqTer<Val,A,B,C>::propagate(Space* home) {
+    int bm = BM_ALL;
+    do {
+      PV(BM_X0_MIN, x0.gq(home,c-x1.max()-x2.max()), BM_X1_MAX | BM_X2_MAX);
+      PV(BM_X1_MIN, x1.gq(home,c-x0.max()-x2.max()), BM_X0_MAX | BM_X2_MAX);
+      PV(BM_X2_MIN, x2.gq(home,c-x0.max()-x1.max()), BM_X0_MAX | BM_X1_MAX);
+      PV(BM_X0_MAX, x0.lq(home,c-x1.min()-x2.min()), BM_X1_MIN | BM_X2_MIN);
+      PV(BM_X1_MAX, x1.lq(home,c-x0.min()-x2.min()), BM_X0_MIN | BM_X2_MIN);
+      PV(BM_X2_MAX, x2.lq(home,c-x0.min()-x1.min()), BM_X0_MIN | BM_X1_MIN);
+    } while (bm);
+    return (x0.assigned() && x1.assigned()) ? ES_SUBSUMED : ES_FIX;
+  }
+
+#undef BM_X0_MIN
+#undef BM_X0_MAX
+#undef BM_X1_MIN
+#undef BM_X1_MAX
+#undef BM_X2_MIN
+#undef BM_X2_MAX
+#undef BM_ALL
+
+#undef PV
+
+
+
+  /*
+   * Disequality propagator
+   *
+   */
+
+  template <class Val, class A, class B, class C>
+  forceinline
+  NqTer<Val,A,B,C>::NqTer(Space* home, A x0, B x1, C x2, Val c)
+    : LinTer<Val,A,B,C,PC_INT_VAL>(home,x0,x1,x2,c) {}
+
+  template <class Val, class A, class B, class C>
+  ExecStatus
+  NqTer<Val,A,B,C>::post(Space* home, A x0, B x1, C x2, Val c) {
+    (void) new (home) NqTer<Val,A,B,C>(home,x0,x1,x2,c);
+    return ES_OK;
+  }
+
+
+  template <class Val, class A, class B, class C>
+  forceinline
+  NqTer<Val,A,B,C>::NqTer(Space* home, bool share, NqTer<Val,A,B,C>& p)
+    : LinTer<Val,A,B,C,PC_INT_VAL>(home,share,p) {}
+
+  template <class Val, class A, class B, class C>
+  Actor*
+  NqTer<Val,A,B,C>::copy(Space* home, bool share) {
+    return new (home) NqTer<Val,A,B,C>(home,share,*this);
+  }
+
+
+  template <class Val, class A, class B, class C>
+  ExecStatus
+  NqTer<Val,A,B,C>::propagate(Space* home) {
+    if (x0.assigned() && x1.assigned()) {
+      GECODE_ME_CHECK(x2.nq(home,c-x0.val()-x1.val()));
+      return ES_SUBSUMED;
+    }
+    if (x0.assigned() && x2.assigned()) {
+      GECODE_ME_CHECK(x1.nq(home,c-x0.val()-x2.val()));
+      return ES_SUBSUMED;
+    }
+    if (x1.assigned() && x2.assigned()) {
+      GECODE_ME_CHECK(x0.nq(home,c-x1.val()-x2.val()));
+      return ES_SUBSUMED;
+    }
+    return ES_FIX;
+  }
+
+
+
+  /*
+   * Inequality propagator
+   *
+   */
+
+  template <class Val, class A, class B, class C>
+  forceinline
+  LqTer<Val,A,B,C>::LqTer(Space* home, A x0, B x1, C x2, Val c)
+    : LinTer<Val,A,B,C,PC_INT_BND>(home,x0,x1,x2,c) {}
+
+  template <class Val, class A, class B, class C>
+  ExecStatus
+  LqTer<Val,A,B,C>::post(Space* home, A x0, B x1, C x2, Val c) {
+    (void) new (home) LqTer<Val,A,B,C>(home,x0,x1,x2,c);
+    return ES_OK;
+  }
+
+
+  template <class Val, class A, class B, class C>
+  forceinline
+  LqTer<Val,A,B,C>::LqTer(Space* home, bool share, LqTer<Val,A,B,C>& p)
+    : LinTer<Val,A,B,C,PC_INT_BND>(home,share,p) {}
+
+  template <class Val, class A, class B, class C>
+  Actor*
+  LqTer<Val,A,B,C>::copy(Space* home, bool share) {
+    return new (home) LqTer<Val,A,B,C>(home,share,*this);
+  }
+
+  template <class Val, class A, class B, class C>
+  ExecStatus
+  LqTer<Val,A,B,C>::propagate(Space* home) {
+    GECODE_ME_CHECK(x0.lq(home,c-x1.min()-x2.min()));
+    GECODE_ME_CHECK(x1.lq(home,c-x0.min()-x2.min()));
+    GECODE_ME_CHECK(x2.lq(home,c-x0.min()-x1.min()));
+    return (x0.max()+x1.max()+x2.max() <= c) ? ES_SUBSUMED : ES_FIX;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

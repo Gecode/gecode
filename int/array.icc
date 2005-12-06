@@ -1,0 +1,264 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2005
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+  
+  // Forward declaration.
+  class BoolVarArray;
+
+  /**
+   * \defgroup TaskIntIntArgs Argument arrays
+   * 
+   * Argument arrays are just good enough for passing arguments
+   * with automatic memory management.
+   * \ingroup TaskIntInt
+   */
+
+  //@{
+  /// Passing integer arguments
+  typedef PrimArgArray<int>    IntArgs;
+  /// Passing integer variables
+  typedef VarArgArray<IntVar>  IntVarArgs;
+  /// Passing Boolean variables
+  class BoolVarArgs : public IntVarArgs {
+  public:
+    /// \name Creation and initialization
+    //@{
+    /// Allocate argument array for \a n Boolean variables
+    BoolVarArgs(int n);
+    /// Initialize from Boolean variable array \a a (copy elements)
+    BoolVarArgs(const BoolVarArgs& a);
+    /// Initialize from Boolean variable array \a a (copy elements)
+    explicit BoolVarArgs(const BoolVarArray& a);
+    //@}
+
+    /// \name Array elements
+    //@{
+    /// Return variable at position \a i
+    BoolVar& operator[](int i);
+    /// Return variable at position \a i
+    const BoolVar& operator[](int i) const;
+    //@}
+  };
+
+  //@}
+
+  /**
+   * \defgroup TaskIntIntVarArrays Variable arrays
+   * 
+   * Variable arrays can store variables. They are typically used
+   * for storing the variables being part of a solution (script). However,
+   * they can also be used for temporary purposes (even though
+   * memory is not reclaimed until the space it is created for
+   * is deleted).
+   * \ingroup TaskIntInt
+   */
+  
+  /**
+   * \brief Integer variable array
+   * \ingroup TaskIntIntVarArrays
+   */
+  class IntVarArray : public VarArray<IntVar> {
+  public:
+    /// \name Creation and initialization
+    //@{
+    /// Default constructor (array of size 0)
+    IntVarArray(void);
+    /// Allocate array for \a n integer variables (variables are uninitialized)
+    IntVarArray(Space* home, int n);
+    /// Initialize from integer variable array \a a (share elements)
+    IntVarArray(const IntVarArray& a);
+    /**
+     * \brief Initialize array with \a n new variables
+     *
+     * The variables are created with a domain ranging from \a min 
+     * to \a max. The following execptions might be thrown:
+     *  - If \a min is greater than \a max, an exception of type
+     *    Gecode::Int::VariableEmptyDomain is thrown.
+     *  - If \a min or \a max exceed the limits for integers as defined
+     *    in Gecode::Limits::Int, an exception of type
+     *    Gecode::Int::VariableOutOfDomain is thrown.
+     */
+    GECODE_INT_EXPORT 
+    IntVarArray(Space* home, int n, int min, int max);
+    /**
+     * \brief Initialize array with \a n new variables
+     *
+     * The variables are created with a domain described by \a s.
+     * The following execptions might be thrown:
+     *  - If \a s is empty, an exception of type
+     *    Gecode::Int::VariableEmptyDomain is thrown.
+     *  - If \a s contains values that exceed the limits for integers 
+     *    as defined in Gecode::Limits::Int, an exception of type
+     *    Gecode::Int::VariableOutOfDomain is thrown.
+     */
+    GECODE_INT_EXPORT 
+    IntVarArray(Space* home, int n, const IntSet& s);
+    //@}
+  };
+  /**
+   * \brief Boolean variable array
+   * \ingroup TaskIntIntVarArrays
+   */
+  class BoolVarArray : public IntVarArray {
+  public:
+    /// \name Creation and initialization
+    //@{
+    /// Default constructor (array of size 0)
+    BoolVarArray(void);
+    /// Allocate array for \a n Boolean variables (variables are uninitialized)
+    BoolVarArray(Space* home, int n);
+    /// Initialize from Boolean variable array \a a (share elements)
+    BoolVarArray(const BoolVarArray& a);
+    /**
+     * \brief Initialize array with \a n new variables
+     *
+     * The variables are created with a domain ranging from \a min 
+     * to \a max. The following execptions might be thrown:
+     *  - If \a min is greater than \a max, an exception of type
+     *    Gecode::Int::VariableEmptyDomain is thrown.
+     *  - If \a min is less than 0 or \a max is greater than 1, 
+     *    an exception of type
+     *    Gecode::Int::VariableOutOfDomain is thrown.
+     */
+    GECODE_INT_EXPORT 
+    BoolVarArray(Space* home, int n, int min, int max);
+    //@}
+
+    /// \name Array elements
+    //@{
+    /// Return variable at position \a i
+    BoolVar& operator[](int i);
+    /// Return variable at position \a i
+    const BoolVar& operator[](int i) const;
+    //@}
+  };
+
+  /// Traits of IntVarArray
+  template <>
+  class ArrayTraits<IntVarArray> {
+  public:
+    typedef IntVarArgs   storage_type;
+    typedef IntVar       value_type;
+    typedef IntVarArgs   args_type;
+  };
+  /// Traits of IntVarArgs
+  template <>
+  class ArrayTraits<IntVarArgs> {
+  public:
+    typedef IntVarArgs storage_type;
+    typedef IntVar     value_type;
+    typedef IntVarArgs args_type;
+  };
+  /// Traits of IntArgs
+  template <>
+  class ArrayTraits<IntArgs> {
+  public:
+    typedef IntArgs storage_type;
+    typedef int     value_type;
+    typedef IntArgs args_type;
+  };
+  /// Traits of BoolVarArray
+  template <>
+  class ArrayTraits<BoolVarArray> {
+  public:
+    typedef BoolVarArgs   storage_type;
+    typedef BoolVar       value_type;
+    typedef BoolVarArgs   args_type;
+  };
+  /// Traits of BoolVarArgs
+  template <>
+  class ArrayTraits<BoolVarArgs> {
+  public:
+    typedef BoolVarArgs storage_type;
+    typedef BoolVar     value_type;
+    typedef BoolVarArgs args_type;
+  };
+
+  /*
+   * Implementation
+   *
+   */
+
+  forceinline
+  BoolVarArgs::BoolVarArgs(const BoolVarArgs& a)
+    : IntVarArgs(a) {}
+
+  forceinline
+  BoolVarArgs::BoolVarArgs(const BoolVarArray& a)
+    : IntVarArgs(a) {}
+
+  forceinline
+  BoolVarArgs::BoolVarArgs(int n)
+    : IntVarArgs(n) {}
+
+
+  forceinline BoolVar&
+  BoolVarArgs::operator[](int i) {
+    BoolVar* b = static_cast<BoolVar*>(&a[i]);
+    return *b;
+  }
+
+  forceinline const BoolVar&
+  BoolVarArgs::operator[](int i) const {
+    const BoolVar* b = static_cast<BoolVar*>(&a[i]);
+    return *b;
+  }
+
+  forceinline
+  IntVarArray::IntVarArray(void) {}
+
+  forceinline
+  IntVarArray::IntVarArray(Space* home, int n)
+    : VarArray<IntVar>(home,n) {}
+
+  forceinline
+  IntVarArray::IntVarArray(const IntVarArray& a)
+    : VarArray<IntVar>(a) {}
+
+
+  forceinline
+  BoolVarArray::BoolVarArray(void) {}
+
+  forceinline
+  BoolVarArray::BoolVarArray(const BoolVarArray& a)
+    : IntVarArray(a) {}
+
+  forceinline
+  BoolVarArray::BoolVarArray(Space* home, int n)
+    : IntVarArray(home,n) {}
+
+
+  forceinline BoolVar&
+  BoolVarArray::operator[](int i) {
+    BoolVar* b = static_cast<BoolVar*>(&x[i]);
+    return *b;
+  }
+
+  forceinline const BoolVar&
+  BoolVarArray::operator[](int i) const {
+    const BoolVar* b = static_cast<BoolVar*>(&x[i]);
+    return *b;
+  }
+
+}
+
+// STATISTICS: int-other

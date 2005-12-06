@@ -1,0 +1,152 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Contributing authors:
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *     Gabor Szokoli, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set { namespace RelOp {
+
+  /*
+   * "Nary partition" propagator
+   *
+   */
+
+  template <class View0, class View1>
+  forceinline
+  PartitionN<View0,View1>::PartitionN(Space* home, ViewArray<View0>& x, View1 y)
+    : InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home, x, y) {
+    shared = x.shared() || viewarrayshared(x,y);
+  }
+
+  template <class View0, class View1>
+  forceinline
+  PartitionN<View0,View1>::PartitionN(Space* home, bool share, PartitionN& p)
+    : InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,share,p),
+      shared(p.shared) {
+    unionOfDets.update(home,p.unionOfDets);
+  }
+
+  template <class View0, class View1>
+  Actor*
+  PartitionN<View0,View1>::copy(Space* home, bool share) {
+    return new (home) PartitionN(home,share,*this);
+  }
+
+  template <class View0, class View1>
+  ExecStatus PartitionN<View0,View1>::post(Space* home, ViewArray<View0>& x,
+					   View1 y) {
+    switch (x.size()) {
+    case 0:
+      GECODE_ME_CHECK(y.cardMax(home, 0));
+      return ES_OK;
+    case 1:
+      return Rel::Eq<View0,View1>::post(home, x[0], y);
+    default:
+      (void) new (home) PartitionN<View0,View1>(home,x,y);
+      return ES_OK;
+    }
+  }
+
+  template <class View0, class View1>
+  PropCost PartitionN<View0,View1>::cost(void) const {
+    return PC_QUADRATIC_LO;
+  }
+
+  template <class View0, class View1>
+  ExecStatus
+  PartitionN<View0,View1>::propagate(Space* home) {
+
+    ModEvent myMe0 = View0::pme(this);
+    ModEvent myMe1 = View1::pme(this);
+    bool ubevent =
+      (myMe0==ME_SET_LUB || myMe0==ME_SET_BB || myMe0==ME_SET_CLUB ||
+       myMe0==ME_SET_CBB || myMe0==ME_SET_VAL) ||
+      (myMe1==ME_SET_LUB || myMe1==ME_SET_BB || myMe1==ME_SET_CLUB ||
+       myMe1==ME_SET_CBB || myMe1==ME_SET_VAL);
+
+    bool lbevent =
+      (myMe0==ME_SET_GLB || myMe0==ME_SET_BB || myMe0==ME_SET_CGLB ||
+       myMe0==ME_SET_CBB || myMe0==ME_SET_VAL) ||
+      (myMe1==ME_SET_GLB || myMe1==ME_SET_BB || myMe1==ME_SET_CGLB ||
+       myMe1==ME_SET_CBB || myMe1==ME_SET_VAL);
+
+    bool anybevent =
+      (myMe0==ME_SET_LUB || myMe0==ME_SET_GLB || myMe0==ME_SET_BB ||
+       myMe0==ME_SET_CLUB || myMe0==ME_SET_CGLB || myMe0==ME_SET_CBB ||
+       myMe0==ME_SET_VAL) ||
+      (myMe1==ME_SET_LUB || myMe1==ME_SET_GLB || myMe1==ME_SET_BB ||
+       myMe1==ME_SET_CLUB || myMe1==ME_SET_CGLB || myMe1==ME_SET_CBB ||
+       myMe1==ME_SET_VAL);
+
+    bool cardevent =
+      (myMe0==ME_SET_CARD || myMe0==ME_SET_CLUB ||
+       myMe0==ME_SET_CGLB || myMe0==ME_SET_CBB) ||
+      (myMe1==ME_SET_CARD || myMe1==ME_SET_CLUB ||
+       myMe1==ME_SET_CGLB || myMe1==ME_SET_CBB);
+
+    bool modified = false;
+    bool oldModified = false;
+
+    do {
+      oldModified = modified;
+      modified = false;
+      if (modified || anybevent)
+        GECODE_ME_CHECK(partitionNXiUB(home,modified, x, y,unionOfDets));
+      if (modified || oldModified || anybevent)
+        GECODE_ME_CHECK(partitionNXiLB(home,modified, x, y,unionOfDets));
+      if (modified || oldModified || ubevent)
+        GECODE_ME_CHECK(partitionNYUB(home,modified, x, y,unionOfDets));
+      if (modified || oldModified || lbevent)
+        GECODE_ME_CHECK(partitionNYLB(home,modified, x, y,unionOfDets));
+      if (modified || oldModified || ubevent)
+        GECODE_ME_CHECK(unionNXiUB(home,modified, x, y,unionOfDets));
+      if (modified || oldModified || cardevent)
+        GECODE_ME_CHECK(partitionNCard(home,modified, x, y,unionOfDets));
+    } while (modified);
+
+    //removing assigned sets from x, accumulating the value:
+    for(int i=0;i<x.size();i++){
+      //Do not reverse! Eats away the end of the array!
+      while (i<x.size() && x[i].assigned()) {
+        GlbRanges<View0> det(x[i]);
+        unionOfDets.includeI(home,det);
+        x.move_lst(i);
+      }
+    }
+    // When we run out of variables, make a final check and disolve:
+    if (x.size()==0) {
+      BndSetRanges all1(unionOfDets);
+      GECODE_ME_CHECK( y.intersectI(home,all1) );
+      BndSetRanges all2(unionOfDets);
+      GECODE_ME_CHECK( y.includeI(home,all2) );
+      unionOfDets.dispose(home);
+      return ES_SUBSUMED;
+    }
+
+    return shared ? ES_NOFIX : ES_FIX;
+  }
+
+}}}
+
+// STATISTICS: set-prop

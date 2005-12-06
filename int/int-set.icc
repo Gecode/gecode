@@ -1,0 +1,151 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2003
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { 
+
+  /*
+   * Integer sets
+   *
+   */
+
+  forceinline
+  IntSet::IntSet(void) {}
+
+  forceinline
+  IntSet::IntSet(const IntSet& s) : sar(s.sar) {}
+
+  template <class I>
+  forceinline
+  IntSet::IntSet(I& i) {
+    int j=0;
+    while (i()) {
+      sar.ensure(j+1);
+      sar[j].min = i.min(); sar[j].max = i.max();
+      ++j; ++i;
+    }
+    sar.size(j);
+  }
+
+  forceinline
+  IntSet::IntSet(const int r[][2], int n) : sar(n) { init(r,n); }
+
+  forceinline
+  IntSet::IntSet(const int r[], int n) : sar(n) { init(r,n); }
+
+  forceinline
+  IntSet::IntSet(int n, int m) : sar(1) { init(n,m); }
+
+  forceinline void
+  IntSet::update(bool share, IntSet& s) {
+    sar.update(share, s.sar);
+  }
+
+  forceinline int
+  IntSet::min(int i) const {
+    return sar[i].min;
+  }
+
+  forceinline int
+  IntSet::max(int i) const {
+    return sar[i].max;
+  }
+
+  forceinline unsigned int
+  IntSet::width(int i) const {
+    return sar[i].max-sar[i].min+1;
+  }
+
+  forceinline int
+  IntSet::size(void) const {
+    return sar.size();
+  }
+
+  forceinline int
+  IntSet::min(void) const {
+    return sar[0].min;
+  }
+
+  forceinline int
+  IntSet::max(void) const {
+    return sar[sar.size()-1].max;
+  }
+
+
+  /*
+   * Range iterator for integer sets
+   *
+   */
+
+  forceinline
+  IntSetRanges::IntSetRanges(void) {}
+  forceinline
+  IntSetRanges::IntSetRanges(const IntSet& s)
+    : i(&s.sar[0]), e(&s.sar[s.size()]) {}
+  forceinline void
+  IntSetRanges::init(const IntSet& s) {
+    i = &s.sar[0]; e = &s.sar[s.size()];
+  }
+  
+  forceinline void
+  IntSetRanges::operator++(void) {
+    i++;
+  }
+  forceinline bool
+  IntSetRanges::operator()(void) const {
+    return i<e;
+  }
+  
+  forceinline int
+  IntSetRanges::min(void) const {
+    return i->min;
+  }
+  forceinline int
+  IntSetRanges::max(void) const {
+    return i->max;
+  }
+  forceinline unsigned int
+  IntSetRanges::width(void) const {
+    return i->max - i->min +1;
+  }
+  
+  /*
+   * Value iterator for integer sets
+   *
+   */
+  forceinline
+  IntSetValues::IntSetValues(void) {}
+
+  forceinline
+  IntSetValues::IntSetValues(const IntSet& s) {
+    IntSetRanges r(s);
+    Iter::Ranges::ToValues<IntSetRanges>::init(r);
+  }
+
+  forceinline void
+  IntSetValues::init(const IntSet& s) {
+    IntSetRanges r(s); 
+    Iter::Ranges::ToValues<IntSetRanges>::init(r);
+  }
+  
+}
+
+// STATISTICS: int-var
+

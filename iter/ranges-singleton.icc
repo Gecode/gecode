@@ -1,0 +1,71 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Iter { namespace Ranges {
+
+  /**
+   * \brief Range iterator for singleton range
+   *
+   * Requires \code #include "iter.hh" \endcode
+   * \ingroup FuncIterRanges
+   */
+
+  class Singleton : public MinMax {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    Singleton(void);
+    /// Initialize with range \a min to \a max
+    Singleton(int min, int max);
+    /// Initialize with range \a min to \a max
+    void init(int min, int max);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Move iterator to next range (if possible)
+    void operator++(void);
+    //@}
+  };
+
+
+  forceinline
+  Singleton::Singleton(void) {}
+
+  forceinline
+  Singleton::Singleton(int min, int max)
+    : MinMax(min,max) {}
+
+  forceinline void
+  Singleton::init(int min, int max) {
+    mi = min; ma = max;
+  }
+
+  forceinline void
+  Singleton::operator++(void) {
+    mi=1; ma=0;
+  }
+
+}}}
+
+// STATISTICS: iter-any
+

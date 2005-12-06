@@ -1,0 +1,47 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Gabor Szokoli, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set {
+
+  template <class T>
+  forceinline
+  UnknownRanges<T>::UnknownRanges(void) {}
+
+  template <class T>
+  forceinline
+  UnknownRanges<T>::UnknownRanges(const T& v) : i1(v), i2(v) {
+    Iter::Ranges::Diff<LubRanges<T>, GlbRanges<T> >::init(i1,i2);
+  }
+
+  template <class T>
+  forceinline void
+  UnknownRanges<T>::init(const T& v) {
+    i1.init(v);
+    i2.init(v);
+    Iter::Ranges::Diff<LubRanges<T>, GlbRanges<T> >::init(i1,i2);
+  }
+
+}}
+
+// STATISTICS: set-var
+

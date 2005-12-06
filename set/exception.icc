@@ -1,0 +1,121 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004,2005
+ *     Guido Tack, 2005
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set {
+
+  /**
+   * \defgroup FuncThrowSet Set exceptions
+   * \ingroup FuncThrow
+   */
+
+
+  //@{
+
+  /// %Exception: %Variable created with values too large for domain
+  class VariableOutOfRangeDomain : public Exception {
+  public:
+    /// Initialize with location \a l
+    VariableOutOfRangeDomain(const char* l);
+  };
+
+  /// %Exception: %Variable created with wrong cardinality
+  class VariableOutOfRangeCardinality : public Exception {
+  public:
+    /// Initialize with location \a l
+    VariableOutOfRangeCardinality(const char* l);
+  };
+
+  /// %Exception: %Variable created with failed domain
+  class VariableFailedDomain : public Exception {
+  public:
+    /// Initialize with location \a l
+    VariableFailedDomain(const char* l);
+  };
+
+  /// %Exception: No arguments available in argument array
+  class ArgumentEmpty : public Exception {
+  public:
+    /// Initialize with location \a l
+    ArgumentEmpty(const char* l);
+  };
+  
+  /// %Exception: Arguments are of different size
+  class ArgumentSizeMismatch : public Exception  {
+  public:
+    /// Initialize with location \a l
+    ArgumentSizeMismatch(const char* l);
+  };
+
+  /// %Exception: Invalid relation passed as argument
+  class InvalidRelation : public Exception  {
+  public:
+    /// Initialize with location \a l
+    InvalidRelation(const char* l);
+  };
+
+  /// %Exception: Unknown value or variable selection passed as argument
+  class UnknownBranching : public Exception {
+  public:
+    /// Initialize with location \a l
+    UnknownBranching(const char* l);
+  };
+
+  //@}
+
+  /**
+   * Classes for exceptions raised by set module
+   *
+   */
+
+  inline
+  VariableOutOfRangeDomain::VariableOutOfRangeDomain(const char* l)
+    : Exception(l,"Attempt to create variable with wrong values") {}
+
+  inline
+  VariableOutOfRangeCardinality::VariableOutOfRangeCardinality(const char* l)
+    : Exception(l,"Attempt to create variable with wrong cardinality") {}
+
+  inline
+  VariableFailedDomain::VariableFailedDomain(const char* l)
+    : Exception(l,"Attempt to create variable with initially failed domain") {}
+
+  inline
+  ArgumentEmpty::ArgumentEmpty(const char* l)
+    : Exception(l,"Passed argument array has no elements") {}
+
+  inline
+  ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l)
+    : Exception(l,"Sizes of argument arrays mismatch") {}
+
+  inline
+  InvalidRelation::InvalidRelation(const char* l)
+    : Exception(l,"Invalid relation type") {}
+
+  inline
+  UnknownBranching::UnknownBranching(const char* l)
+    : Exception(l,"Unknown branching type") {}
+
+}}
+
+// STATISTICS: set-other
+

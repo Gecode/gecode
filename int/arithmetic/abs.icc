@@ -1,0 +1,90 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#include <algorithm>
+
+namespace Gecode { namespace Int { namespace Arithmetic {
+
+  template <class View>
+  forceinline
+  Abs<View>::Abs(Space* home, View x0, View x1)
+    : BinaryPropagator<View,PC_INT_BND>(home,x0,x1) {}
+
+  template <class View>
+  ExecStatus
+  Abs<View>::post(Space* home, View x0, View x1) {
+    GECODE_ME_CHECK(x1.gq(home,0));
+    if (!same(x0,x1)) {
+      (void) new (home) Abs<View>(home,x0,x1);
+    }
+    return ES_OK;
+  }
+
+
+  template <class View>
+  forceinline
+  Abs<View>::Abs(Space* home, bool share, Abs<View>& p)
+    : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
+
+  template <class View>
+  Actor*
+  Abs<View>::copy(Space* home,bool share) {
+    return new (home) Abs<View>(home,share,*this);
+  }
+
+#define GECODE_CM(TELL)			        \
+{ 						\
+  ModEvent me = (TELL);				\
+  if (me_failed(me))    return ES_FAILED;	\
+  if (me_modified(me)) mod = true;		\
+}
+
+  template <class View>
+  ExecStatus
+  Abs<View>::propagate(Space* home) {
+    if (x0.min() >= 0) {
+      GECODE_ES_CHECK(Rel::EqBnd<View>::post(home,x0,x1));
+      return ES_SUBSUMED;
+    }
+    if (x0.max() <= 0) {
+      return (Linear::EqBin<int,View,View>::post(home,x0,x1,0) == ES_FAILED)
+	? ES_FAILED : ES_SUBSUMED;
+    }
+    bool mod = false;
+    do {
+      mod = false;
+      GECODE_CM(x1.lq(home,std::max(x0.max(),-x0.min())));
+      GECODE_CM(x0.lq(home,x1.max()));
+      GECODE_CM(x0.gq(home,-x1.max()));
+    } while (mod);
+    if (x0.assigned()) {
+      GECODE_ME_CHECK(x1.eq(home,(x0.val() < 0) ? -x0.val() : x0.val()));
+      return ES_SUBSUMED;
+    }
+    return ES_FIX;
+  }
+
+#undef GECODE_CM
+
+}}}
+
+// STATISTICS: int-prop
+

@@ -1,0 +1,137 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int {
+
+  /**
+   * \defgroup FuncThrowInt Integer exceptions
+   * \ingroup FuncThrow
+   */
+
+  //@{
+
+  /// %Exception: %Variable created with empty domain
+  class VariableEmptyDomain : public Exception {
+  public:
+    /// Initialize with location \a l
+    VariableEmptyDomain(const char* l);
+  };
+
+  /// %Exception: %Variable created with values too large for domain
+  class VariableOutOfRangeDomain : public Exception {
+  public:
+    /// Initialize with location \a l
+    VariableOutOfRangeDomain(const char* l);
+  };
+
+
+  /// %Exception: Numerical overflow
+  class NumericalOverflow : public Exception {
+  public:
+    /// Initialize with location \a l
+    NumericalOverflow(const char* l);
+  };
+
+
+  /// %Exception: No arguments available in argument array
+  class ArgumentEmpty : public Exception  {
+  public:
+    /// Initialize with location \a l
+    ArgumentEmpty(const char* l);
+  };
+  
+  /// %Exception: Arguments are of different size
+  class ArgumentSizeMismatch : public Exception  {
+  public:
+    /// Initialize with location \a l
+    ArgumentSizeMismatch(const char* l);
+  };
+
+  /// %Exception: Only inequality relations are supported
+  class OnlyInequalityRelations : public Exception  {
+  public:
+    /// Initialize with location \a l
+    OnlyInequalityRelations(const char* l);
+  };
+
+  /// %Exception: Unknown relation passed as argument
+  class UnknownRelation : public Exception  {
+  public:
+    /// Initialize with location \a l
+    UnknownRelation(const char* l);
+  };
+
+  /// %Exception: Unknown value or variable selection passed as argument
+  class UnknownBranching : public Exception {
+  public:
+    /// Initialize with location \a l
+    UnknownBranching(const char* l);
+  };
+
+  //@}
+
+
+
+
+
+  /*
+   * Classes for exceptions raised by integer module
+   *
+   */
+
+  inline
+  VariableEmptyDomain::VariableEmptyDomain(const char* l)
+    : Exception(l,"Attempt to create variable with empty domain") {}
+
+  inline
+  VariableOutOfRangeDomain::VariableOutOfRangeDomain(const char* l)
+    : Exception(l,"Attempt to create variable with wrong values") {}
+
+  inline
+  NumericalOverflow::NumericalOverflow(const char* l)
+    : Exception(l,"Integer overflow") {}
+
+
+  inline
+  ArgumentEmpty::ArgumentEmpty(const char* l)
+    : Exception(l,"Passed argument array has no elements") {}
+  
+  inline
+  ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l)
+    : Exception(l,"Sizes of argument arrays mismatch") {}
+
+
+  inline
+  OnlyInequalityRelations::OnlyInequalityRelations(const char* l)
+    : Exception(l,"Only inequality relations are allowed") {}
+
+  inline
+  UnknownRelation::UnknownRelation(const char* l)
+    : Exception(l,"Unknown relation type") {}
+  
+  inline
+  UnknownBranching::UnknownBranching(const char* l)
+    : Exception(l,"Unknown branching type") {}
+  
+}}
+
+// STATISTICS: int-other
+

@@ -1,0 +1,59 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set { namespace Select {
+
+  forceinline
+  SelectDisjoint::SelectDisjoint(Space* home,
+				 IdxViewArray<SetView>& iv0,
+				 SetView y1)
+    : Propagator(home), iv(iv0), x1(y1) {
+
+    x1.subscribe(home,this, PC_SET_ANY);
+    iv.subscribe(home,this, PC_SET_ANY);
+  }
+
+  forceinline
+  SelectDisjoint::SelectDisjoint(Space* home, bool share, SelectDisjoint& p)
+    : Propagator(home,share,p) {
+    x1.update(home,share,p.x1);
+    iv.update(home,share,p.iv);
+  }
+
+  forceinline ExecStatus
+  SelectDisjoint::post(Space* home, IdxViewArray<SetView>& xs,
+                       SetView x1) {
+    int n = xs.size();
+
+    // s2 \subseteq {0,...,n-1}
+    Iter::Ranges::Singleton s(0, n-1);
+    GECODE_ME_CHECK(x1.intersectI(home,s));
+    (void) new (home)
+      SelectDisjoint(home,xs,x1);
+    return ES_OK;
+  }
+
+
+}}}
+
+// STATISTICS: set-prop

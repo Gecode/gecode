@@ -1,0 +1,146 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2002
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  forceinline
+  IntVar::IntVar(void) {}
+
+  forceinline void
+  IntVar::init(Space* home, int min, int max) {
+    var = new (home) Int::IntVarImp(home,min,max);
+  }
+
+  forceinline void
+  IntVar::init(Space* home, const IntSet& ds) {
+    var = new (home) Int::IntVarImp(home,ds);
+  }
+
+
+
+  inline
+  IntVar::IntVar(const IntVar& x)
+    : var(x.var) {}
+  inline
+  IntVar::IntVar(const Int::IntView& x)
+    : var(x.variable()) {}
+
+
+
+  forceinline Int::IntVarImp*
+  IntVar::variable(void) const {
+    return var;
+  }
+
+
+  forceinline int
+  IntVar::val(void) const {
+    return var->val();
+  }
+  forceinline int
+  IntVar::min(void) const {
+    return var->min();
+  }
+  forceinline int
+  IntVar::med(void) const {
+    return var->med();
+  }
+  forceinline int
+  IntVar::max(void) const {
+    return var->max();
+  }
+
+
+  forceinline unsigned int
+  IntVar::degree(void) const {
+    return var->degree();
+  }
+  forceinline unsigned int
+  IntVar::width(void) const {
+    return var->width();
+  }
+  forceinline unsigned int
+  IntVar::size(void) const {
+    return var->size();
+  }
+
+
+
+  forceinline bool
+  IntVar::assigned(void) const {
+    return var->assigned();
+  }
+  forceinline bool
+  IntVar::range(void) const {
+    return var->range();
+  }
+  forceinline bool
+  IntVar::in(int n) const {
+    return var->in(n);
+  }
+
+
+  forceinline void
+  IntVar::update(Space* home, bool share, IntVar& x) {
+    var = x.var->copy(home,share);
+  }
+
+  /*
+   * Range iterator
+   *
+   */
+  forceinline
+  IntVarRanges::IntVarRanges(void) {}
+
+  forceinline
+  IntVarRanges::IntVarRanges(const IntVar& x)
+    : Int::IntVarImpFwd(x.variable()) {}
+
+  forceinline void
+  IntVarRanges::init(const IntVar& x) {
+    Int::IntVarImpFwd::init(x.variable());
+  }
+  
+
+  /*
+   * Value iterator
+   *
+   */
+
+  forceinline
+  IntVarValues::IntVarValues(void) {}
+
+  forceinline
+  IntVarValues::IntVarValues(const IntVar& x) {
+    IntVarRanges r(x);
+    Iter::Ranges::ToValues<IntVarRanges>::init(r);
+  }
+
+  forceinline void
+  IntVarValues::init(const IntVar& x) {
+    IntVarRanges r(x);
+    Iter::Ranges::ToValues<IntVarRanges>::init(r);
+  }
+
+}
+
+// STATISTICS: int-var
+

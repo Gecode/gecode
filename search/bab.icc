@@ -1,0 +1,95 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Contributing authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *     Guido Tack, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { 
+
+  namespace Search {
+    
+    /*
+     * Memory management for engines
+     *
+     */
+    
+    forceinline
+    BabEngine::BabEngine(size_t sz)
+      : FullStatistics(sz) {}
+
+    forceinline void*
+    BabEngine::operator new(size_t s) {
+      return Memory::malloc(s);
+    }
+    
+    forceinline void
+    BabEngine::operator delete(void* p, size_t) {
+      Memory::free(p);
+    }
+    
+    forceinline
+    BabEngine::~BabEngine(void) {
+    }
+    
+  }
+    
+  /*
+   * Control for bab search engine
+   *
+   */
+  
+  template <class T>
+  forceinline
+  BAB<T>::BAB(T* s, unsigned int c_d, unsigned int a_d)
+    : Search::BAB(s,c_d,a_d,sizeof(T)) {}
+
+  template <class T>
+  forceinline T*
+  BAB<T>::next(void) {
+    Space *s1, *s2;
+    while (!e->explore(s1,s2))
+      static_cast<T*>(s1)->constrain(static_cast<T*>(s2));
+    return static_cast<T*>(s1);
+  }
+
+
+
+
+  /*
+   * BAB convenience
+   *
+   */
+
+  template <class T>
+  T*
+  bab(T* s, unsigned int c_d, unsigned int a_d) {
+    BAB<T> b(s,c_d,a_d);
+    T* l = NULL;
+    while (T* n = b.next()) {
+      delete l; l = n;
+    }
+    return l;
+  }
+
+}
+
+// STATISTICS: search-any

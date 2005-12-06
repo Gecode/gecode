@@ -1,0 +1,1538 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2002
+ *     Guido Tack, 2003
+ *
+ *  Bugfixes provided by:
+ *     Alexander Samoilov <alexander_samoilov@yahoo.com>
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  /**
+   * \defgroup TaskVarMEPC Generic modification events and propagation conditions
+   *
+   * Predefined modification events must be taken into account
+   * by variable types.
+   * \ingroup TaskVar
+   */
+  //@{
+  /// Type for modification events
+  typedef int ModEvent;
+
+  /// Generic modification event: failed variable
+  const ModEvent ME_GEN_FAILED   = -1;
+  /// Generic modification event: no modification
+  const ModEvent ME_GEN_NONE     =  0;
+  /// Generic modification event: variable is assigned a value
+  const ModEvent ME_GEN_ASSIGNED =  1;
+  /// Generic modification event: maximal modification event
+  const ModEvent ME_GEN_MAX      = 15;
+
+  /// Type for propagation conditions
+  typedef int PropCond;
+  /// Propagation condition for an assigned variable
+  const PropCond PC_GEN_ASSIGNED = 0;
+  /// Propagation conditions must be between 0 and 15
+  const PropCond PC_GEN_MAX      = 15;
+  //@}
+
+
+  /**
+   * \brief %Variable type identifiers
+   *
+   * Each variable type must have a unique variable type identifier. The
+   * kernel supports at most eight different variable type identifiers.
+   *
+   * If you want to add your own variable type, you have to make sure that 
+   * file is created in the subdirectory vti. The names of the file defines
+   * the name of the variable type identifier (for example, if the name of
+   * the file is INT, it defines the identifier VTI_INT).
+   * \ingroup TaskVar
+   */
+  enum VarTypeId {
+#include "vti.icc"
+    VTI_LAST ///< Maximal variable type identifier plus one
+  };
+
+
+  /*
+   * These are the classes of interest
+   *
+   */
+  class Actor;
+  class Propagator;
+  class Space;
+  template <VarTypeId VTI, PropCond PC> class Variable;
+
+
+  /*
+   * Variables
+   *
+   */
+
+  /**
+   * \brief Base-class for variable implementations
+   *
+   * Serves as base-class that can be used without having to know any 
+   * template arguments.
+   * \ingroup TaskVar
+   */
+  class VarBase {};
+
+  /**
+   * \brief Base-class for variable type processor
+   *
+   * Serves as base-class that can be used without having to know any 
+   * template arguments.
+   * \ingroup TaskVar
+   */
+  class VarTypeProcessorBase {
+  public:
+    /// Process modified variables linked from \a x
+    virtual void process(Space* home, VarBase* x) = 0;
+    /// Update copied variables linked from \a x
+    virtual void update(Space* home, VarBase* x)  = 0;
+    /// Destructor (not really used)
+    GECODE_KERNEL_EXPORT virtual ~VarTypeProcessorBase(void);
+  };
+
+  /**
+   * \brief %Variable type processor
+   * 
+   * Base class for variable type processor for variable type index \a VTI
+   * and maximum propagation condition \a PC.
+   * \ingroup TaskVar
+   */
+  template <VarTypeId VTI, PropCond PC>
+  class VarTypeProcessor : public VarTypeProcessorBase {
+  private:
+    /// Table for combining modification events
+    ModEvent met[ME_GEN_MAX+1][ME_GEN_MAX+1];
+    /** \brief Mapping between modification event and propagation conditions
+     *
+     * Used during set up of processor. If propagators with propagation
+     * condition \a pc must be processed for the modification event
+     * \a me, then \code (pcs[me] & (1 << pc)) != 0 \endcode
+     */
+    PropCond pcs[ME_GEN_MAX+1];
+  public:
+    /// Constructor
+    VarTypeProcessor(void);
+    /** \brief Store combinations of modification events
+     *
+     * The combination of \a me1 with \a me2 (and of \a me2 with \a me1)
+     * is stored to be \a me3.
+     *
+     * Note that the following combinations are predefined
+     *  - Combination with ME_GEN_ASSIGNED is ME_GEN_ASSIGNED.
+     *  - Combination of an event with itself yields that event.
+     *  - Combination with ME_GEN_NONE yields the event itself.
+     */
+    void mec(ModEvent me1, ModEvent me2, ModEvent me3);
+    /** \brief Store mapping between modification event and propagation condition
+     *
+     * Execute propagators with propagation condition \a pc if
+     * a variable is modified with modification event \a me.
+     */
+    void mepc(ModEvent me, PropCond pc);
+    /** \brief Register variable type processor with kernel
+     *
+     * Transfers the combinations of modification events also to the kernel
+     */
+    void enter(void);
+    /// Process modified variables linked from \a x
+    virtual void process(Space* home, VarBase* x);
+    /// Update copied variables linked from \a x
+    virtual void update(Space* home, VarBase* x);
+  };
+
+  /**
+   * \brief Propagator modification events
+   *
+   * Propagator modification events are used by propagators. A
+   * propagator stores a modification event for each variable type.
+   * They can be accessed through a variable or a view from a given
+   * propagator. They can be constructed from a given modevent by
+   * a variable or view.
+   * \ingroup TaskActor
+   */
+  typedef int PropModEvent;
+
+
+  /**
+   * \brief Base-class for variable implementations
+   *
+   * Implements variable implementation for variable type identifier
+   * \a VTI and largest possible propagation condition \a PC.
+   * \ingroup TaskVar
+   */
+  template <VarTypeId VTI, PropCond PC>
+  class Variable : public VarBase {
+    friend class Space;
+    friend class Propagator;
+    friend class VarTypeProcessor<VTI,PC>;
+  private:
+    Variable* _next; ///< Either next modified or copied variable
+    /**
+     * \brief Combines the number of free entries with modification events
+     * 
+     * The least for bits are reserved for the modification events, the
+     * remaining 28 bits are for the number of free entries.
+     *
+     */
+    unsigned int free_me;   
+    Propagator** idx[PC+2]; ///< Stores where entries start (idx[pc]}
+
+    /// Cancel subscription of propagator \a p with propagation condition \a pc
+    void perform_cancel(Propagator* p, PropCond pc);
+
+    /// Manage number of free entries internally
+    unsigned int free(void) const;
+    /// Manage number of free entries internally
+    void free(unsigned int n);
+    /// Manage number of free entries internally
+    void free_inc(void);
+    /// Manage number of free entries internally
+    void free_dec(void);
+
+    /// Update variable (dependencies) in second stage of cloning
+    void update(Space* home, Variable* x);
+
+    /// \name Processing modified variables
+    //@{
+    /// Return next modified variable and reset (during processing)
+    Variable* next(void);
+    /// Return current modification event of variable 
+    ModEvent modevent(void) const;
+    /// Set modification event to \a me
+    void modevent(ModEvent me);
+    //@}
+
+  public:
+    /// Creation
+    Variable(Space* home);
+
+    /// \name Dependencies
+    //@{
+    /** \brief Subscribe propagator \a p with propagation condition \a pc to variable
+     *
+     * In case the variable is assigned (that is, \a assigned is true),
+     * the subscribing propagator is processed for execution.
+     * Otherwise, the propagator subscribes and is processed for execution
+     * with modification event \a me provided that \a pc is different
+     * from \a PC_GEN_ASSIGNED.
+     */
+    void subscribe(Space* home, Propagator* p, PropCond pc,
+		   bool assigned, ModEvent me);
+    /// Cancel subscription of propagator \a p with propagation condition \a pc
+    void cancel(Propagator* p, PropCond pc);
+    /// Return degree (number of subscribed propagators)
+    unsigned int degree(void) const;
+    /// Notify that variable implementation has been modified with \a me
+    void notify(Space* home, ModEvent me);
+    /// Notify that unmodified variable implementation has been modified with \a me
+    void notify_unmodified(Space* home, ModEvent me);
+    //@}
+
+    /// \name Processing modified variables
+    //@{
+    /// Check whether variable has been modified during propagation
+    bool modified(void) const;
+    //@}
+
+    /// \name Cloning variables
+    //@{
+    /// Constructor for cloning
+    Variable(Space* home, bool share, Variable& x);
+    /// Is variable already copied
+    bool copied(void) const;
+    /// Use forward pointer if variable already copied
+    Variable* forward(void) const;
+    //@}
+
+    /// \name Propagator modification events
+    //@{
+    /// Return modification event for variable from propagator \a p
+    static ModEvent     pme(const Propagator* p);
+    /// Translate modification event \a me into propagator modification event
+    static PropModEvent pme(ModEvent me);
+    /// Combine modifications events \a me1 and \a me2
+    static ModEvent     combine(ModEvent me1, ModEvent me2);
+    //@}
+
+    /// \name Memory management
+    //@{
+    /// Allocate memory from space
+    static void* operator new(size_t,Space*);
+    /// Return memory to space
+    static void  operator delete(void*,Space*);
+    /// Needed for exceptions
+    static void  operator delete(void*);
+    //@}
+  };
+
+
+
+
+  /**
+   * \brief Status of constraint propagation and branching commit
+   * \ingroup TaskActor
+   */
+  enum ExecStatus {
+    ES_FAILED          = -1, ///< Execution has resulted in failure
+    ES_NOFIX           =  0, ///< Propagation has not computed fixpoint
+    ES_OK              =  0, ///< Execution is okay
+    ES_FIX             =  1, ///< Propagation has computed fixpoint
+    ES_SUBSUMED        =  2, ///< %Propagator is subsumed (entailed)
+    __ES_FIX_PARTIAL   =  3, ///< Internal: do not use
+    __ES_NOFIX_PARTIAL =  4  ///< Internal: do not use
+  };
+
+  /**
+   * \brief Classification of propagation cost
+   * \ingroup TaskActor
+   */
+  enum PropCost {
+    PC_CRAZY_LO     = 0, ///< Exponential complexity, cheap
+    PC_CRAZY_HI     = 0, ///< Exponential complexity, expensive
+    PC_CUBIC_LO     = 1, ///< Cubic complexity, cheap
+    PC_CUBIC_HI     = 1, ///< Cubic complexity, expensive
+    PC_QUADRATIC_LO = 2, ///< Quadratic complexity, cheap
+    PC_QUADRATIC_HI = 2, ///< Quadratic complexity, expensive
+    PC_LINEAR_HI    = 3, ///< Linear complexity, expensive
+    PC_LINEAR_LO    = 4, ///< Linear complexity, cheap
+    PC_TERNARY_HI   = 5, ///< Three variables, expensive
+    PC_BINARY_HI    = 6, ///< Two variables, expensive
+    PC_TERNARY_LO   = 6, ///< Three variables, cheap
+    PC_BINARY_LO    = 7, ///< Two variables, cheap
+    PC_UNARY_LO     = 7, ///< Only single variable, cheap
+    PC_UNARY_HI     = 7, ///< Only single variable, expensive
+    PC_MAX          = 7  ///< Maximal cost value
+  };
+
+  /**
+   * \brief Double-linked list for actors
+   *
+   * Used to maintain which actors belong to a space and also 
+   * (for propagators) to organize actors in the queue of 
+   * waiting propagators.
+   */
+  class ActorLink {
+    friend class Actor;
+    friend class Space;
+    template <VarTypeId VTI, PropCond PC> friend class Variable;
+  private:
+    ActorLink* _next; ActorLink* _prev;
+  public:
+    //@{
+    /// Routines for double-linked list
+    ActorLink* prev(void) const; void prev(ActorLink*);
+    ActorLink* next(void) const; void next(ActorLink*);
+    //@}
+
+    
+    /// Initialize links (self-linked)
+    void init(void);
+    /// Remove from predecessor and successor
+    void unlink(void);
+    /// Insert \a al directly after this
+    void head(ActorLink* al);
+    /// Insert \a al directly before this
+    void tail(ActorLink* al);
+  };
+
+
+  /**
+   * \brief Double-linked list for deleting actors
+   *
+   * Used for actors that must be deleted (forced deletion) when a space 
+   * is deleted (even if the space is failed).
+   *
+   * The reason why it is not conjoined with ActorLink is that the array
+   * of propagator queues just need the normal linkage, but not the linkage
+   * for deletion.
+   */
+  class ActorDeleteLink : public ActorLink {
+    friend class Actor;
+    friend class Space;
+    template <VarTypeId VTI, PropCond PC> friend class Variable;
+  private:
+    ActorDeleteLink* _next_d; ActorDeleteLink* _prev_d;
+  public:
+    ActorDeleteLink* next_delete(void) const;
+    void next_delete(ActorDeleteLink*);
+    ActorDeleteLink* prev_delete(void) const;
+    void prev_delete(ActorDeleteLink*);
+
+    /// Initialize links (self-linked)
+    void init_delete(void);
+    void unlink_delete(void);
+    void insert_delete(ActorDeleteLink*,bool);
+  };
+
+
+
+  /**
+   * \brief Base-class for both propagators and branchings
+   * \ingroup TaskActor
+   */
+  class Actor : private ActorDeleteLink {
+    friend class Space;
+    template <VarTypeId VTI, PropCond PC> friend class Variable;
+  public:
+    /// Create copy
+    virtual Actor* copy(Space*,bool) = 0;
+    /// Delete actor
+    GECODE_KERNEL_EXPORT virtual ~Actor(void);
+
+    /// \name Memory management
+    //@{
+    /// Flush cache datastructures
+    GECODE_KERNEL_EXPORT virtual void flush(void);
+    /// Report size occupied by cached datastructures
+    GECODE_KERNEL_EXPORT virtual size_t cached(void) const;
+    /// Allocate memory from space
+    static void* operator new(size_t s, Space* home);
+    /// No-op for exceptions
+    static void  operator delete(void* p, Space* home);
+    /// Used for reclaiming memory
+    static void  operator delete(void* p, size_t s);
+    //@}
+  };
+
+
+
+  /**
+   * \brief Base-class for propagators
+   * \ingroup TaskActor
+   */
+  class Propagator : public Actor {
+    friend class Space;
+    template <VarTypeId VTI, PropCond PC> friend class Variable;
+  private:
+    PropModEvent pme;
+  protected:
+    /**
+     * \brief Constructor for creation
+     *
+     * Force deletion, if \a fd is true
+     */
+    Propagator(Space* home, bool fd=false);
+    /// Constructor for cloning \a p
+    Propagator(Space* home, bool share, Propagator& p);
+
+    /// \name Partial fixpoints
+    //@{
+    /**
+     * \brief %Propagator has computed partial fixpoint
+     *
+     * %Set propagator modification events after processing of 
+     * variables to \a pme.
+     * \warning Has a side-effect on the propagator. Overwrites
+     *          the propagator modification events of a propagator.
+     *          Use only directly with returning from propagation.
+     * \ingroup TaskActor
+     */
+    ExecStatus ES_FIX_PARTIAL(PropModEvent pme);
+    /**
+     * \brief %Propagator has not computed partial fixpoint
+     *
+     * %Set propagator modification events before processing of
+     * variables to \a pme.
+     * \warning Has a side-effect on the propagator. Overwrites
+     *          the propagator modification events of a propagator.
+     *          Use only directly with returning from propagation.
+     * \ingroup TaskActor
+     */
+    ExecStatus ES_NOFIX_PARTIAL(PropModEvent pme);
+    //@}
+  public:
+    /// \name Propagation
+    //@{
+    /// Propagation function
+    virtual ExecStatus propagate(Space*) = 0;
+    /// Cost function
+    virtual PropCost cost(void) const  = 0;
+    //@}
+  };
+
+
+
+  /*
+   * Branchings
+   *
+   */
+
+  class Branching;
+
+  /**
+   * \brief Branch description for batch recomputation
+   *
+   * Must be refined by inheritance such that the information stored
+   * inside a branching description is sufficient to redo a tell 
+   * performed by a particular branching.
+   * \ingroup TaskActor
+   */
+  class BranchingDesc {
+    friend class Space;
+  private:
+    unsigned int id; ///< Identity to match creating branching
+  protected:
+    /// Initialize for particular branching \a b
+    BranchingDesc(Branching* b);
+  public:
+    /// Destructor
+    GECODE_KERNEL_EXPORT
+    virtual ~BranchingDesc(void);
+
+    /// Report size occupied by branching description
+    virtual size_t size(void) const = 0;
+    /// Allocate memory from heap
+    static void* operator new(size_t);
+    /// Return memory to heap
+    static void  operator delete(void*);
+  };
+
+  /**
+   * \brief Base-class for branchings
+   * \ingroup TaskActor
+   */
+  class Branching : public Actor {
+    friend class Space;
+    friend class BranchingDesc;
+  private:
+    unsigned int id; ///< Unique identity (to match to branching descriptions)
+  protected:
+    /// Constructor for creation, force deletion if \a fd is true
+    Branching(Space* home, bool fd=false);
+    /// Constructor for cloning \a b
+    Branching(Space* home, bool share, Branching& b);
+
+  public:
+    /// \name Branching
+    //@{
+    /// Perform branching, return number of alternatives
+    virtual unsigned int branch(void) = 0;
+    /**
+     * \brief Perform commit for alternative \a a
+     * 
+     * If \a d is different from NULL, replay commit from information
+     * stored in the branching description \a d. Otherwise, let the branching
+     * decide how to commit to alternative \a a.
+     */
+    virtual ExecStatus commit(Space*,unsigned int a, BranchingDesc* d) = 0;
+    /// Return branching description (if NULL, no batch recomputation is used)
+    virtual BranchingDesc* description(void)                               = 0;
+    //@}
+  };
+
+
+  /** 
+   * \brief %Space status
+   * \ingroup TaskSearch
+   */
+  enum SpaceStatus {
+    SS_FAILED, ///< %Space is failed
+    SS_SOLVED, ///< %Space is solved (no branching left)
+    SS_BRANCH  ///< %Space must be branched (at least one branching left)
+  };
+
+  /**
+   * \brief Computation spaces
+   */
+  class Space {
+    friend class Propagator;
+    friend class Branching;
+    template <VarTypeId VTI, PropCond PC> friend class Variable;
+    template <VarTypeId VTI, PropCond PC> friend class VarTypeProcessor;
+  private:
+    MemoryManager   mm; ///< Performs memory management for space
+
+    /** 
+     * \name Processing variables
+     */
+    //@{
+    /// Collects all data relevant to processing variables and propagators
+    class VarTypeData {
+    public:
+      /// Registered variable type processor
+      VarTypeProcessorBase* proc;
+      /// Information for combining modification events
+      ModEvent mec[ME_GEN_MAX+1][ME_GEN_MAX+1];
+      /// Ranges of propagation conditions for processing propagators
+      PropCond pcr[ME_GEN_MAX+1][PC_GEN_MAX+3];
+    };
+    /// Collects all data relevant to processing variables and propagators
+    GECODE_KERNEL_EXPORT static VarTypeData vtd[VTI_LAST];
+    /// Array of all modified or copied variables (entry points)
+    VarBase* vars[VTI_LAST];
+    /// Process all modified variables by delegating to registered processors
+    void process(void);
+    //@}
+
+    /** 
+     * \name Pool of waiting propagators
+     */
+    //@{
+    /// Waiting propagators according to cost
+    ActorLink pool[PC_MAX+1];
+    /// Next cost level to check
+    int pool_next;
+    /// Put propagator \a p to pool
+    void pool_put(Propagator* p);
+    /// Get propagator \a p from pool
+    bool pool_get(Propagator*& p);
+    //@}
+
+    /** 
+     * \brief Doubly linked list of all actors
+     * 
+     * Propagators are stored at the beginning, branchings (if any) at
+     * the end.
+     */
+    ActorDeleteLink a_actors;
+    /**
+     * \brief Points to the first branching
+     *
+     * If equal to actors, no branching does exist. If it is NULL,
+     * the space is failed.
+     */
+    Branching*      b_fst;
+    /// Id of next branching to be created
+    unsigned int    branch_id;
+
+    /// Used for default arguments
+    GECODE_KERNEL_EXPORT static unsigned long int unused;
+
+    /// Perform propagation, return number of propagation steps
+    unsigned long int propagators(void);
+    /// Perform first step of branching, return number of alternatives
+    unsigned int branchings(void);
+
+    /// Add new propagator \a p to space (force deletion, if \a fd is true)
+    void propagator(Propagator* p, bool fd);
+    /// Readd propagator \a p (after performing propagation)
+    void propagator(Propagator*);
+    /// Add new branching \a b to space (force deletion, if \a fd is true)
+    void branching(Branching* b, bool fd);
+    /// Add variable \a x to space (modified or copied)
+    template <VarTypeId VTI, PropCond PC>
+    void variable(Variable<VTI,PC>* x);
+
+    /**
+     * \name Processing propagators
+     */
+    //@{
+    /// Process propagator \a p with modification event \a me
+    void process(VarTypeId VTI, Propagator* p, const ModEvent* mec);
+    /// Process propagator \a p with modification event ME_GEN_ASSIGNED
+    void process(VarTypeId VTI, Propagator* p);
+    //@}
+
+
+  public:
+    /**
+     * \brief Default constructor
+     * \ingroup TaskIntScript
+     */
+    GECODE_KERNEL_EXPORT Space(void);
+    /**
+     * \brief Destructor
+     * \ingroup TaskIntScript
+     */
+    GECODE_KERNEL_EXPORT virtual ~Space(void);
+    /**
+     * \brief Constructor for cloning
+     *
+     * Must copy and update all data structures (such as variables
+     * and variable arrays) required by the subclass of Space.
+     *
+     * If \a share is true, share all data structures among copies.
+     * Otherwise, make independent copies.
+     * \ingroup TaskIntScript
+     */
+    GECODE_KERNEL_EXPORT Space(bool share, Space& s);
+    /**
+     * \brief Copying member function
+     * 
+     * Must create a new object using the constructor for cloning.
+     * \ingroup TaskIntScript
+     */
+    virtual Space* copy(bool share) = 0;
+    /** 
+     * \brief Allocate memory from heap for new space
+     * \ingroup TaskIntScript
+     */
+    static void* operator new(size_t);
+    /** 
+     * \brief Free memory allocated from heap
+     * \ingroup TaskIntScript
+     */
+    static void  operator delete(void*);
+
+
+
+
+    /*
+     * Member functions for search engines
+     *
+     */
+
+    /** 
+     * \brief Query space status
+     *
+     * Propagates the space until fixpoint or failure and
+     * increments \a pn by the number of propagator executions.
+     *  - if the space is failed, SpaceStatus::SS_FAILED is returned.
+     *  - if the space is not failed but the space has no branching left,
+     *    SpaceStatus::SS_SOLVED is returned and \a a is assigned 0.
+     *  - otherwise, SpaceStatus::SS_BRANCH is returned and \a a is 
+     *    assigned the number of alternatives of the branching.
+     * \ingroup TaskSearch
+     */
+    GECODE_KERNEL_EXPORT
+    SpaceStatus status(unsigned int& a,
+		       unsigned long int& pn =unused);
+
+    /** 
+     * \brief Clone space 
+     *
+     * Propagates the space until fixpoint and increments \a pn by the
+     * number of propagator executions. If propagation results in
+     * a failed space, an exception of type SpaceFailed is thrown.
+     *
+     * Otherwise, a clone of the space is returned. If \a shared is true,
+     * all shared datastructures are shared among the clone on the original
+     * space. If \a shared is false, independent copies of the shared
+     * datastructures must be created. This means that a clone with no
+     * sharing can be used in a different thread without any interaction
+     * with the original space.
+     * \ingroup TaskSearch
+     */
+    GECODE_KERNEL_EXPORT
+    Space* clone(bool share=true, unsigned long int& pn =unused);
+
+    /** 
+     * \brief Commit space to alternative
+     *
+     * Computes according to whether a branching description \a d is
+     * passed (\a d == NULL means no branching description).
+     *  - if no branching description is provided, the space is propagated
+     *    until fixpoint and \a pn is incremented by the number of
+     *    propagator executions performed. Then the current branching is
+     *    committed to alternative \a a.
+     *  - if a branching description is provided, no propagation is
+     *    perfomed (to support batch recomputation) and the current
+     *    branching is commited to alternative \a a with branching
+     *    description \a d.
+     *    Note that committing with branching descriptions must be carried
+     *    out in the same order as the branch descriptions have been
+     *    obtained.
+     *
+     * Committing throws the following exceptions:
+     *  - SpaceFailed, if the space is failed (or becomes failed through
+     *    propagation).
+     *  - SpaceNoBranching, if the space has no current branching (it is
+     *    already solved).
+     *  - SpaceIllegalAlternative, if \a a is not smaller than the number
+     *    of laternatives provided by the branching.
+     *
+     * \ingroup TaskSearch
+     */
+    GECODE_KERNEL_EXPORT
+    void commit(unsigned int a, BranchingDesc* d =NULL,
+		unsigned long int& pn =unused);
+    /** 
+     * \brief Get branching description for current branching
+     *
+     * If applied to a space with no current branching, the system
+     * will crash.
+     * \ingroup TaskSearch
+     */
+    BranchingDesc* description(void) const;
+    /** 
+     * \brief Flush cache datastructures in actors
+     *
+     * Flushes caches of actors in the space. This is useful to free
+     * memory (in particular when considering a space to be stored
+     * for later use such as during search). Even better is to make a
+     * clone of the space.
+     * \ingroup TaskSearch
+     */
+    GECODE_KERNEL_EXPORT
+    void flush(void);
+
+
+    /*
+     * Status checking and failing outside actors
+     *
+     */
+
+    /** 
+     * \brief Fail space
+     *
+     * This is useful for failing outside of actors. Never use inside
+     * a propagate or commit member function. The system will crash!
+     * \ingroup TaskActor
+     */
+    void fail(void);
+    /** 
+     * \brief Check whether space is failed
+     *
+     * Note that this does not perform propagation. This is useful
+     * for posting actors: only if a space is not yet failed, new
+     * actors are allowed to be created.
+     * \ingroup TaskActor
+     */
+    bool failed(void) const;
+    /**
+     * \brief Check whether space has actors left
+     *
+     */
+    bool actors(void) const;
+
+
+
+    /**
+     * \defgroup FuncMemSpace Space-memory management
+     * \ingroup FuncMem
+     */
+    //@{
+    /// Allocate memory on space heap
+    void* alloc(size_t);
+    /// Attempt to reuse memory previously allocated with alloc
+    void  reuse(void*,size_t);
+    /// Allocate from freelist-managed memory
+    template <size_t> void* fl_alloc(void);
+    /**
+     * \brief Return freelist-managed memory to freelist
+     * 
+     * The first list element to be retuned is \a f, the last is \a l.
+     */
+    template <size_t> void  fl_dispose(FreeList* f, FreeList* l);
+    /**
+     * \brief Return how much heap memory is allocated by this space
+     *
+     * Note that is excludes the memory for the space object itself.
+     */
+    size_t allocated(void) const;
+    /// Return how much memory is used by caches for actors
+    GECODE_KERNEL_EXPORT size_t cached(void) const;    
+    //@}
+  };
+
+
+
+
+  /***
+   *** MEMORY MANAGEMENT
+   ***
+   ***/
+
+  /*
+   * Heap allocated: Space, BranchDesc
+   *
+   */
+
+  forceinline void*
+  Space::operator new(size_t s) {
+    return Memory::malloc(s);
+  }
+  forceinline void
+  Space::operator delete(void* p) {
+    Memory::free(p);
+  }
+
+  forceinline void
+  BranchingDesc::operator delete(void* p) {
+    Memory::free(p);
+  }
+  forceinline void*
+  BranchingDesc::operator new(size_t s) {
+    return Memory::malloc(s);
+  }
+
+  /*
+   * Space allocation: general space heaps and free lists
+   *
+   */
+
+  forceinline void*
+  Space::alloc(size_t s) {
+    return mm.alloc(s);
+  }
+  forceinline void
+  Space::reuse(void* p, size_t s) {
+    return mm.reuse(p,s);
+  }
+
+  template <size_t s>
+  forceinline void*
+  Space::fl_alloc(void) {
+    return mm.template fl_alloc<s>();
+  }
+  template <size_t s>
+  forceinline void
+  Space::fl_dispose(FreeList* f, FreeList* l) {
+    mm.template fl_dispose<s>(f,l);
+  }
+
+  forceinline size_t
+  Space::allocated(void) const {
+    return mm.allocated();
+  }
+
+
+  /*
+   * Space allocated entities: Actors and Variables
+   *
+   */
+
+  forceinline void
+  Actor::operator delete(void* p, size_t s) {
+    static_cast<MemoryManager::ReuseChunk*>(p)->size = s;
+  }
+  forceinline void
+  Actor::operator delete(void*,Space*) {}
+  forceinline void*
+  Actor::operator new(size_t s, Space* home) {
+    return home->alloc(s);
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline void
+  Variable<VTI,PC>::operator delete(void*) {}
+  template <VarTypeId VTI, PropCond PC>
+  forceinline void
+  Variable<VTI,PC>::operator delete(void*, Space*) {}
+  template <VarTypeId VTI, PropCond PC>
+  forceinline void*
+  Variable<VTI,PC>::operator new(size_t s, Space* home) {
+    return home->alloc(s);
+  }
+
+
+
+  /*
+   * ActorLinks as common subclass for propagators and branchings
+   *
+   */
+
+  forceinline ActorLink*
+  ActorLink::prev(void) const { return _prev; }
+  forceinline ActorLink*
+  ActorLink::next(void) const { return _next; }
+  forceinline void
+  ActorLink::prev(ActorLink* al) { _prev = al; }
+  forceinline void
+  ActorLink::next(ActorLink* al) { _next = al; }
+
+  forceinline void
+  ActorLink::unlink(void) {
+    ActorLink* p = _prev; ActorLink* n = _next;
+    p->_next = n; n->_prev = p;
+  }
+  forceinline void
+  ActorLink::init(void) {
+    _next = this; _prev =this;
+  }
+  forceinline void
+  ActorLink::head(ActorLink* a) {
+    // Inserts al at head of link-chain (that is, after this)
+    ActorLink* n = _next;
+    this->_next = a; a->_prev = this;
+    a->_next = n; n->_prev = a;
+  }
+  forceinline void
+  ActorLink::tail(ActorLink* a) {
+    // Inserts al at tail of link-chain (that is, before this)
+    ActorLink* p = _prev;
+    a->_next = this; this->_prev = a;
+    p->_next = a; a->_prev = p;
+  }
+
+
+
+  forceinline ActorDeleteLink*
+  ActorDeleteLink::next_delete(void) const { return _next_d; }
+  forceinline ActorDeleteLink*
+  ActorDeleteLink::prev_delete(void) const { return _prev_d; }
+  forceinline void
+  ActorDeleteLink::next_delete(ActorDeleteLink* adl) { _next_d = adl; }
+  forceinline void
+  ActorDeleteLink::prev_delete(ActorDeleteLink* adl) { _prev_d = adl; }
+
+  forceinline void
+  ActorDeleteLink::unlink_delete(void) {
+    ActorDeleteLink* p = _prev_d;
+    ActorDeleteLink* n = _next_d;
+    p->_next_d = n; n->_prev_d = p;
+  }
+
+  forceinline void
+  ActorDeleteLink::insert_delete(ActorDeleteLink* a, bool fd) {
+    if (fd) {
+      // Link a after this
+      ActorDeleteLink* n = _next_d;
+      this->_next_d = a; a->_prev_d = this;
+      a->_next_d = n; n->_prev_d = a;
+    } else {
+      // Just link to itself
+      a->_prev_d = a; a->_next_d = a;
+    }
+  }
+
+  forceinline void
+  ActorDeleteLink::init_delete(void) {
+    _next_d = this; _prev_d = this;
+  }
+
+
+
+
+  forceinline
+  Actor::~Actor(void) {}
+
+
+
+
+  /*
+   * Spaces
+   *
+   */
+
+  forceinline BranchingDesc*
+  Space::description(void) const {
+    return b_fst->description();
+  }
+
+
+
+  /*
+   * Variables
+   *
+   */
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline
+  Variable<VTI,PC>::Variable(Space*) :
+    _next(reinterpret_cast<Variable<VTI,PC>*>(1)), free_me(0) {
+    for (int i=PC+2; i--; )
+      idx[i] = NULL;
+  }
+
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline unsigned int
+  Variable<VTI,PC>::degree(void) const {
+    return idx[PC+1] - idx[0];
+  }
+
+
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline ModEvent
+  Variable<VTI,PC>::modevent(void) const {
+    return free_me & 15;
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline void
+  Variable<VTI,PC>::modevent(ModEvent me) {
+    free_me = (free_me & ~15) | me;
+  }
+  template <VarTypeId VTI, PropCond PC>
+  forceinline unsigned int
+  Variable<VTI,PC>::free(void) const {
+    return free_me >> 4;
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline void
+  Variable<VTI,PC>::free(unsigned int n) {
+    free_me = (free_me & 15) | (n << 4);
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline void
+  Variable<VTI,PC>::free_inc(void) {
+    free_me += (1 << 4);
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline void
+  Variable<VTI,PC>::free_dec(void) {
+    free_me -= (1 << 4);
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline bool
+  Variable<VTI,PC>::modified(void) const {
+    return _next != reinterpret_cast<Variable<VTI,PC>*>(1);
+  }
+
+
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline Variable<VTI,PC>*
+  Variable<VTI,PC>::next(void) {
+    Variable<VTI,PC>* n = _next;
+    _next = reinterpret_cast<Variable<VTI,PC>*>(1);
+    return n;
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline bool
+  Variable<VTI,PC>::copied(void) const {
+    return _next != reinterpret_cast<Variable<VTI,PC>*>(1);
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline void
+  Space::variable(Variable<VTI,PC>* x) {
+    x->_next = static_cast<Variable<VTI,PC>*>(vars[VTI]);
+    vars[VTI] = x;
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline
+  Variable<VTI,PC>::Variable(Space* home, bool, Variable<VTI,PC>& x)
+    : _next(reinterpret_cast<Variable<VTI,PC>*>(1)) {
+    // Recover original value in copy
+    idx[0] = x.idx[0];
+    // Use first entry as forwarding pointer
+    x.idx[0] = reinterpret_cast<Propagator**>(this);
+    // Register original
+    home->variable(&x);
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline Variable<VTI,PC>*
+  Variable<VTI,PC>::forward(void) const {
+    return reinterpret_cast<Variable<VTI,PC>*>(idx[0]);
+  }
+
+  /*
+   * Propagator modification events
+   *
+   */
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline ModEvent
+  Variable<VTI,PC>::pme(const Propagator* p) {
+    return static_cast<ModEvent>((p->pme >> (VTI << 2)) & 15);
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline PropModEvent
+  Variable<VTI,PC>::pme(ModEvent me) {
+    return static_cast<PropModEvent>(me << (VTI << 2));
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline ModEvent
+  Variable<VTI,PC>::combine(ModEvent me1, ModEvent me2) {
+    return me2^Space::vtd[VTI].mec[me1][me2];
+  }
+
+  /*
+   * Propagators
+   *
+   */
+
+  forceinline void
+  Space::propagator(Propagator* p, bool fd) {
+    // Propagators are put at the front of the link of actors
+    a_actors.head(p);
+    a_actors.insert_delete(p,fd);
+  }
+
+  forceinline void
+  Space::propagator(Propagator* p) {
+    a_actors.head(p);
+  }
+
+  forceinline void
+  Space::branching(Branching* b, bool fd) {
+    // Propagators are put at the tail of the link of actors
+    b->id = branch_id++;
+    // If no branching available, make it the first one
+    if (b_fst == &a_actors)
+      b_fst = b;
+    a_actors.tail(b);
+    a_actors.insert_delete(b,fd);
+  }
+
+
+
+
+
+  forceinline
+  Propagator::Propagator(Space* home, bool fd)
+    : pme(0) {
+    home->propagator(this,fd);
+  }
+
+  forceinline
+  Propagator::Propagator(Space*, bool, Propagator&)
+    : pme(0) {}
+
+
+  /*
+   * Branchings
+   *
+   */
+
+  forceinline
+  Branching::Branching(Space* home, bool fd) {
+    home->branching(this,fd);
+  }
+
+  forceinline
+  Branching::Branching(Space*, bool, Branching& b)
+    : id(b.id)  {}
+
+
+
+  /*
+   * Branching descriptions
+   *
+   */
+
+  forceinline
+  BranchingDesc::BranchingDesc(Branching* b)
+    : id(b->id) {}
+
+  forceinline
+  BranchingDesc::~BranchingDesc(void) {}
+
+
+
+
+
+  /*
+   * Propagator pools
+   *
+   */
+
+  forceinline void
+  Space::pool_put(Propagator* p) {
+    int c = p->cost();
+    pool[c].tail(p);
+    if (c > pool_next)
+      pool_next = c;
+  }
+
+  forceinline void
+  Space::fail(void) {
+    b_fst = NULL;
+  }
+
+  forceinline bool
+  Space::failed(void) const {
+    return b_fst == NULL;
+  }
+
+  forceinline bool
+  Space::actors(void) const {
+    return  &a_actors != a_actors.next();
+  }
+
+  forceinline void
+  Space::process(VarTypeId VTI, Propagator* p) {
+    // The new event is ME_GEN_ASSIGNED
+    PropModEvent old_pme = p->pme;
+    // Compute old modification event
+    ModEvent old_me = old_pme & (ME_GEN_MAX << (VTI << 2));
+    // Check whether old event is already ME_GEN_ASSIGNED
+    if (old_me == (ME_GEN_ASSIGNED << (VTI << 2)))
+      return;
+    // Update event
+    p->pme ^= old_me ^ (ME_GEN_ASSIGNED << (VTI << 2));
+    // Put propagator into right queue
+    p->unlink();
+    pool_put(p);
+  }
+
+  forceinline void
+  Space::process(VarTypeId VTI, Propagator* p, const ModEvent* mec) {
+    PropModEvent old_pme = p->pme;
+    // Compute the old modification event
+    ModEvent old_me = ((old_pme >> (VTI << 2)) & ME_GEN_MAX);
+    // Get the new modification event (xor-ed with the old one)
+    ModEvent com_me = mec[old_me];
+    // Event has not changed, do not nothing
+    if (com_me == 0)
+      return;
+    // Update modification event for propagator (use xor)
+    p->pme ^= (com_me << (VTI << 2));
+    // Put propagator into right queue
+    p->unlink();
+    pool_put(p);
+  }
+
+  forceinline ExecStatus
+  Propagator::ES_FIX_PARTIAL(PropModEvent pme) {
+    this->pme = pme; return __ES_FIX_PARTIAL;
+  }
+
+  forceinline ExecStatus
+  Propagator::ES_NOFIX_PARTIAL(PropModEvent pme) {
+    this->pme = pme; return __ES_NOFIX_PARTIAL;
+  }
+
+
+  /*
+   * Subscribing to a variable
+   *
+   */
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline void
+  Variable<VTI,PC>::subscribe(Space* home, Propagator* p, PropCond pc,
+			      bool assigned, ModEvent me) {
+    if (assigned) {
+      // Do not subscribe, just process the propagator
+      home->process(VTI,p);
+    } else {
+      if (free() == 0) {
+	if (idx[0] == NULL) {
+	  // Create fresh dependency array
+	  free(3);
+	  Propagator** prop = reinterpret_cast<Propagator**>
+	    (home->alloc(4*sizeof(Propagator*))) + 4;
+	  for (PropCond i = PC+2; i--; )
+	    idx[i] = prop;
+	} else {
+	  // Resize dependency array
+	  ptrdiff_t n = idx[PC+1] - idx[0];
+	  Propagator** prop = reinterpret_cast<Propagator**>
+	    (home->alloc(2*n*sizeof(Propagator*))) + n;
+	  free(n-1);
+	  // Copy entries
+	  memcpy(prop, idx[0], n*sizeof(Propagator*));
+	  home->reuse(idx[0], n*sizeof(Propagator*));
+	  // Update index pointers
+	  ptrdiff_t o = prop - idx[0];
+	  idx[0] = prop;
+	  for (PropCond i = PC+1; i > 0; i--)
+	    idx[i] += o;
+	}
+      } else {
+	free_dec();
+      }
+      // Enter propagator
+      --idx[0];
+      for (PropCond i = 0; i < pc; i++)
+	*(idx[i]) = *(--idx[i+1]);
+      *idx[pc]=p;
+      // Process propagator
+      if (pc != PC_GEN_ASSIGNED) {
+	ModEvent* mec = &home->vtd[VTI].mec[me][0];
+	home->process(VTI,p,mec);
+      }
+    }
+  }
+
+
+  /*
+   * Cancelling a subscription
+   *
+   */
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline void
+  Variable<VTI,PC>::cancel(Propagator* p, PropCond pc) {
+    if (idx[0] != NULL)
+      perform_cancel(p,pc);
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  void
+  Variable<VTI,PC>::perform_cancel(Propagator* p, PropCond pc) {
+    Propagator** f = idx[pc];
+    while (*f != p) f++;
+    *f=*idx[pc];
+    for (PropCond i=pc; i>0; i--)
+      *(idx[i]++)=*(idx[i-1]);
+    idx[0]++;
+    free_inc();
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline void
+  Variable<VTI,PC>::notify(Space* home, ModEvent new_me) {
+    if (modified()) {
+      free_me ^= home->vtd[VTI].mec[new_me][modevent()];
+    } else {
+      home->variable(this);
+      modevent(new_me);
+    }
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline void
+  Variable<VTI,PC>::notify_unmodified(Space* home, ModEvent new_me) {
+    assert(!modified());
+    home->variable(this);
+    modevent(new_me);
+  }
+
+
+  /*
+   * PROCESSING
+   *
+   */
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline
+  VarTypeProcessor<VTI,PC>::VarTypeProcessor(void) {
+    // Initialize combination table with pre-defined entries
+    for (ModEvent i = ME_GEN_MAX+1; i--; )
+      for (ModEvent j = ME_GEN_MAX+1; j--; )
+	met[i][j] = ME_GEN_NONE;
+    for (ModEvent i = ME_GEN_MAX+1; i--; ) {
+      // Combination with ME_GEN_ASSIGNED is ME_GEN_ASSIGNED
+      met[i][ME_GEN_ASSIGNED] = ME_GEN_ASSIGNED;
+      met[ME_GEN_ASSIGNED][i] = ME_GEN_ASSIGNED;
+      // Combination with ME_GEN_NONE is the event
+      met[i][ME_GEN_NONE] = i;
+      met[ME_GEN_NONE][i] = i;
+      // Combination of event with itself is the event itself
+      met[i][i] = i;
+      // Initialize mapping table
+      pcs[i] = 0;
+    }
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline void
+  VarTypeProcessor<VTI,PC>::mec(ModEvent me1, ModEvent me2, ModEvent me3) {
+    met[me1][me2] = met[me2][me1] = me3;
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline void
+  VarTypeProcessor<VTI,PC>::mepc(ModEvent me, PropCond pc) {
+    pcs[me] |= (1 << pc);
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  void
+  VarTypeProcessor<VTI,PC>::enter(void) {
+    Space::vtd[VTI].proc = this;
+    // Initialize the combination table used by the kernel
+    for (ModEvent i = ME_GEN_MAX+1; i--; )
+      for (ModEvent j = ME_GEN_MAX+1; j--; )
+	// The assumption is that i is the new ModEvent and j the old
+	Space::vtd[VTI].mec[i][j] = j^met[i][j];
+    // Initialize the mapping table used by the kernel
+    for (ModEvent me = ME_GEN_MAX+1; me--; ) {
+      int i = 0;
+      for (PropCond pc=PC+1; pc--; )
+	if (pcs[me] & (1 << pc)) {
+	  // Found initial entry (plus one for stopping)
+	  Space::vtd[VTI].pcr[me][i+1] = pc+1;
+	  // Look for all connected entries
+	  while (pcs[me] & (1 << (pc-1)))
+	    pc--;
+	  // Found last entry
+	  Space::vtd[VTI].pcr[me][i+0] = pc;
+	  i += 2;
+	}
+      Space::vtd[VTI].pcr[me][i+0] = -1;
+    }
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline void
+  Variable<VTI,PC>::update(Space* home, Variable<VTI,PC>* x) {
+    // this refers to the variable to be updated (clone)
+    // x refers to the original
+    Propagator** f = idx[0];
+    x->idx[0] = f;
+    if (f == NULL) {
+      free_me = 0;
+      for (int i=1; i<PC+2; i++)
+	idx[i] = NULL;
+    } else {
+      free_me = 1 << 4;
+      ptrdiff_t n = x->idx[PC+1] - f;
+      Propagator** t = reinterpret_cast<Propagator**>
+	(home->alloc((n+1)*sizeof(Propagator*))) + 1;
+      idx[0] = t;
+      ptrdiff_t o = t - f;
+      for (PropCond i = PC+1; i>0; i--)
+	idx[i] = x->idx[i]+o;
+      if (n & 1)
+	t[0] = static_cast<Propagator*>(f[0]->prev());
+      for (int i = n-1; i>0; i -= 2) {
+	t[i-1] = static_cast<Propagator*>(f[i-1]->prev());;
+	t[i-0] = static_cast<Propagator*>(f[i-0]->prev());;
+      }
+    }
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  void
+  VarTypeProcessor<VTI,PC>::update(Space* home, VarBase* vb) {
+    Variable<VTI,PC>* x = static_cast<Variable<VTI,PC>*>(vb);
+    do {
+      x->forward()->update(home,x);
+      x = x->next();
+    } while (x != NULL);
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  void
+  VarTypeProcessor<VTI,PC>::process(Space* home, VarBase* vb) {
+    Variable<VTI,PC>* x = static_cast<Variable<VTI,PC>*>(vb);
+    do {
+      ModEvent me = x->modevent();
+      if (me != ME_GEN_ASSIGNED) {
+	ModEvent* mec = &home->vtd[VTI].mec[me][0];
+	PropCond* pcr = &home->vtd[VTI].pcr[me][0];
+	do {
+	  Propagator** b = x->idx[*pcr]; pcr++;
+	  Propagator** p = x->idx[*pcr]; pcr++;
+	  while (p-- > b)
+	    home->process(VTI,*p,mec);
+	} while (*pcr >= 0);
+      } else {
+	// Entries in index structure are disabled. However they
+	// must still work for cloning (idx[0]) and degree (idx[PC+1])
+	Propagator** b = x->idx[0];    x->idx[0] = NULL;
+	Propagator** p = x->idx[PC+1]; x->idx[PC+1] = NULL;
+	// Information needed to release the dependency array
+	unsigned int n = x->free() + (p-b);
+	Propagator** s = p-n;
+	while (p-- > b)
+	  home->process(VTI,*p);
+	home->reuse(s,n*sizeof(Propagator*));
+      }
+      x = x->next();
+    } while (x != NULL);
+  }
+
+
+}
+
+// STATISTICS: kernel-core

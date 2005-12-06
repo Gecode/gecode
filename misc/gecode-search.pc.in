@@ -1,0 +1,12 @@
+# Package Information for pkg-config
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@/gecode
+
+Name: Gecode Search Engines
+Description: Generic Constraint Development Environment Search Engines
+Version: @VERSION@
+Libs: -L${libdir} -lgecodekernel -lgecodesearch
+Cflags: -I${includedir} @PKG_CONFIG_CXXFLAGS@

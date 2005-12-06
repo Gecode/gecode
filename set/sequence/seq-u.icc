@@ -1,0 +1,65 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Contributing authors:
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *     Gabor Szokoli, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#include "set/rel.hh"
+
+namespace Gecode { namespace Set { namespace Sequence {
+
+  /*
+   * "Sequenced union" propagator
+   *
+   */
+
+  forceinline
+  SeqU::SeqU(Space* home, ViewArray<SetView>& x, SetView y)
+    : NaryOnePropagator<SetView,PC_SET_ANY>(home,x, y) {}
+
+  forceinline
+  SeqU::SeqU(Space* home, bool share, SeqU& p)
+    : NaryOnePropagator<SetView,PC_SET_ANY>(home,share,p) {
+    unionOfDets.update(home, p.unionOfDets);
+  }
+
+  forceinline ExecStatus
+  SeqU::post(Space* home, ViewArray<SetView> x, SetView y) {
+    switch (x.size()) {
+    case 0:
+      GECODE_ME_CHECK(y.cardMax(home, 0));
+      return ES_OK;
+    case 1:
+      return Rel::Eq<SetView,SetView>::post(home, x[0], y);
+    default:
+      if (x.shared() || x.shared(y))
+	return ES_FAILED;
+      (void) new (home) SeqU(home,x,y);
+      return ES_OK;
+    }
+  }
+
+}}}
+
+// STATISTICS: set-prop

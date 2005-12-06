@@ -1,0 +1,108 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2002
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Branch {
+
+  forceinline int
+  ValMin::val(IntView x) {
+    return x.min();
+  }
+  forceinline ModEvent
+  ValMin::tell(Space* home, unsigned int a, IntView x, int n) {
+    assert((a == 0) || (a == 1));
+    return (a == 0) ? x.eq(home,n) : x.gr(home,n);
+  }
+
+
+  forceinline int
+  ValMed::val(IntView x) {
+    return x.med();
+  }
+  forceinline ModEvent
+  ValMed::tell(Space* home, unsigned int a, IntView x, int n) {
+    assert((a == 0) || (a == 1));
+    return (a == 0) ? x.eq(home,n) : x.nq(home,n);
+  }
+
+
+  forceinline int
+  ValMax::val(IntView x) {
+    return x.max();
+  }
+  forceinline ModEvent
+  ValMax::tell(Space* home, unsigned int a, IntView x, int n) {
+    return (a == 0) ? x.eq(home,n) : x.le(home,n);
+  }
+
+
+  forceinline int
+  ValSplitMin::val(IntView x) {
+    return (x.width() == 2) ? x.min() : ((x.min()+x.max()) / 2);
+  }
+  forceinline ModEvent
+  ValSplitMin::tell(Space* home, unsigned int a, IntView x, int n) {
+    assert((a == 0) || (a == 1));
+    return (a == 0) ? x.lq(home,n) : x.gr(home,n);
+  }
+
+
+  forceinline int
+  ValSplitMax::val(IntView x) {
+    return (x.width() == 2) ? x.min() : ((x.min()+x.max()) / 2);
+  }
+  forceinline ModEvent
+  ValSplitMax::tell(Space* home, unsigned int a, IntView x, int n) {
+    assert((a == 0) || (a == 1));
+    return (a == 0) ? x.gr(home,n) : x.lq(home,n);
+  }
+
+
+  template <class SelView>
+  void
+  create(Space* home, ViewArray<IntView>& x, BvalSel vals) {
+    switch (vals) {
+    case BVAL_MIN:
+      (void) new (home) ViewValBranching<IntView,int,SelView,ValMin>(home,x);
+      break;
+    case BVAL_MED:
+      (void) new (home) ViewValBranching<IntView,int,SelView,ValMed>(home,x);
+      break;
+    case BVAL_MAX:
+      (void) new (home) ViewValBranching<IntView,int,SelView,ValMax>(home,x);
+      break;
+    case BVAL_SPLIT_MIN:
+      (void) new (home) 
+	ViewValBranching<IntView,int,SelView,ValSplitMin>(home,x);
+      break;
+    case BVAL_SPLIT_MAX:
+      (void) new (home) 
+	ViewValBranching<IntView,int,SelView,ValSplitMax>(home,x);
+      break;
+    default:
+      throw UnknownBranching("Int::branch");
+    }
+  }
+
+}}}
+
+
+// STATISTICS: int-branch
+

@@ -1,0 +1,97 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date: 2005-10-23 16:23:09 +0200 (Sun, 23 Oct 2005) $ by $Author: schulte $
+ *     $Revision: 2403 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Bool {
+
+  /*
+   * Binary Boolean propagators
+   *
+   */
+  template<class BVA, class BVB>
+  forceinline
+  BoolBinary<BVA,BVB>::BoolBinary(Space* home, BVA b0, BVB b1)
+    : Propagator(home), x0(b0), x1(b1) {
+    x0.subscribe(home,this,PC_INT_VAL);
+    x1.subscribe(home,this,PC_INT_VAL);
+  }
+
+  template<class BVA, class BVB>
+  forceinline
+  BoolBinary<BVA,BVB>::BoolBinary(Space* home, bool share, 
+				  BoolBinary<BVA,BVB>& p) 
+    : Propagator(home,share,p) {
+    x0.update(home,share,p.x0);
+    x1.update(home,share,p.x1);
+  }
+
+  template<class BVA, class BVB>
+  PropCost
+  BoolBinary<BVA,BVB>::cost(void) const {
+    return PC_UNARY_LO;
+  }
+
+  template<class BVA, class BVB>
+  BoolBinary<BVA,BVB>::~BoolBinary(void) {
+    x0.cancel(this,PC_INT_VAL);
+    x1.cancel(this,PC_INT_VAL);
+  }
+
+  /*
+   * Ternary Boolean propagators
+   *
+   */
+  template<class BVA, class BVB, class BVC>
+  forceinline
+  BoolTernary<BVA,BVB,BVC>::BoolTernary
+  (Space* home, BVA b0, BVB b1, BVC b2)
+    : Propagator(home), x0(b0), x1(b1), x2(b2) {
+    x0.subscribe(home,this,PC_INT_VAL);
+    x1.subscribe(home,this,PC_INT_VAL);
+    x2.subscribe(home,this,PC_INT_VAL);
+  }
+
+  template<class BVA, class BVB, class BVC>
+  forceinline
+  BoolTernary<BVA,BVB,BVC>::BoolTernary(Space* home, bool share, 
+					BoolTernary<BVA,BVB,BVC>& p) 
+    : Propagator(home,share,p) {
+    x0.update(home,share,p.x0);
+    x1.update(home,share,p.x1);
+    x2.update(home,share,p.x2);
+  }
+
+  template<class BVA, class BVB, class BVC>
+  PropCost
+  BoolTernary<BVA,BVB,BVC>::cost(void) const {
+    return PC_BINARY_LO;
+  }
+
+  template<class BVA, class BVB, class BVC>
+  BoolTernary<BVA,BVB,BVC>::~BoolTernary(void) {
+    x0.cancel(this,PC_INT_VAL);
+    x1.cancel(this,PC_INT_VAL);
+    x2.cancel(this,PC_INT_VAL);
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

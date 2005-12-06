@@ -1,0 +1,212 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2003
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Rel {
+
+  template <class View>
+  inline
+  Lex<View>::Lex(Space* home,
+		 ViewArray<ViewTuple<View,2> >& xy, bool s)
+    : NaryPropagator<ViewTuple<View,2>,PC_INT_BND>(home,xy), strict(s) {}
+
+  template <class View>
+  forceinline
+  Lex<View>::Lex(Space* home, bool share, Lex<View>& p)
+    : NaryPropagator<ViewTuple<View,2>,PC_INT_BND>(home,share,p), 
+      strict(p.strict) {}
+
+  template <class View>
+  Actor*
+  Lex<View>::copy(Space* home, bool share) {
+    return new (home) Lex<View>(home,share,*this);
+  }
+
+  template <class View>
+  ExecStatus
+  Lex<View>::propagate(Space* home) {
+    /*
+     * State 1
+     *
+     */
+    {
+      int i = 0;
+      int n = x.size();
+
+      while ((i < n) && (x[i][0].min() == x[i][1].max())) { 
+	// case: =, >=
+	GECODE_ME_CHECK(x[i][0].lq(home,x[i][1].max()));
+	GECODE_ME_CHECK(x[i][1].gq(home,x[i][0].min()));
+	i++;
+      }
+
+      if (i == n) // case: $
+	return strict ? ES_FAILED : ES_SUBSUMED;
+
+      // Possible cases left: <, <=, > (yields failure), ?
+      GECODE_ME_CHECK(x[i][0].lq(home,x[i][1].max()));
+      GECODE_ME_CHECK(x[i][1].gq(home,x[i][0].min()));
+
+      if (x[i][0].max() < x[i][1].min()) // case: < (after tell)
+	return ES_SUBSUMED;
+
+      // x[i][0] can never be equal to x[i][1] (otherwise: >=)
+      assert(!(x[i][0].assigned() && x[i][1].assigned() &&
+	       x[i][0].val() == x[i][1].val()));
+      // Remove all elements between 0...i-1 as they are assigned and equal
+      x.drop_fst(i);
+      // After this, execution continues at [1]
+    }
+
+    /*
+     * State 2
+     *   prefix: (?|<=)
+     *
+     */
+    {
+      int i = 1;
+      int n = x.size();
+
+      while ((i < n) &&
+	     (x[i][0].min() == x[i][1].max()) &&
+	     (x[i][0].max() == x[i][1].min())) { // case: =
+	assert(x[i][0].assigned() && x[i][1].assigned() && 
+	       (x[i][0].val() == x[i][1].val()));
+	i++;
+      }
+
+      if (i == n) { // case: $
+	if (strict)
+	  goto rewrite_le;
+	else
+	  goto rewrite_lq;
+      }
+
+      if (x[i][0].max() < x[i][1].min()) // case: <
+	goto rewrite_lq;
+
+      if (x[i][0].min() > x[i][1].max()) // case: >
+	goto rewrite_le;
+
+      if (i > 1) {
+	// Remove equal elements [1...i-1], keep element [0]
+	x[i-1]=x[0]; x.drop_fst(i-1);
+      }
+    }
+
+    if (x[1][0].max() <= x[1][1].min()) { 
+      // case: <= (invariant: not =, <)
+      /*
+       * State 3
+       *   prefix: (?|<=),<=
+       *
+       */
+      int i = 2;
+      int n = x.size();
+
+      while ((i < n) && (x[i][0].max() == x[i][1].min())) // case: <=, =
+	i++;
+
+      if (i == n) { // case: $
+	if (strict)
+	  return ES_FIX;
+	else
+	  goto rewrite_lq;
+      }
+
+      if (x[i][0].max() < x[i][1].min()) // case: <
+	goto rewrite_lq;
+
+      if (x[i][0].min() > x[i][1].max()) { // case: >
+	// Eliminate [i]...[n-1]
+	for (int j=i; j<n; j++)
+	  x[j].cancel(this,PC_INT_BND);
+	x.size(i);
+	strict = true;
+      }
+
+      return ES_FIX;
+    }
+
+    if (x[1][0].min() >= x[1][1].max()) { 
+      // case: >= (invariant: not =, >)
+      /*
+       * State 4
+       *   prefix: (?|<=) >=
+       *
+       */
+      int i = 2;
+      int n = x.size();
+
+      while ((i < n) && (x[i][0].min() == x[i][1].max())) 
+	// case: >=, =
+	i++;
+
+      if (i == n) { // case: $
+	if (strict)
+	  goto rewrite_le;
+	else
+	  return ES_FIX;
+      }
+
+      if (x[i][0].min() > x[i][1].max()) // case: >
+	goto rewrite_le;
+
+      if (x[i][0].max() < x[i][1].min()) { // case: <
+	// Eliminate [i]...[n-1]
+	for (int j=i; j<n; j++)
+	  x[j].cancel(this,PC_INT_BND);
+	x.size(i);
+	strict = false;
+      }
+
+      return ES_FIX;
+    }
+
+    return ES_FIX;
+
+  rewrite_le:
+    GECODE_ES_CHECK(Le<View>::post(home,x[0][0],x[0][1]));
+    return ES_SUBSUMED;
+
+  rewrite_lq:
+    GECODE_ES_CHECK(Lq<View>::post(home,x[0][0],x[0][1]));
+    return ES_SUBSUMED;
+  }
+
+  template <class View>
+  ExecStatus
+  Lex<View>::post(Space* home,
+		  ViewArray<ViewTuple<View,2> >& xy, bool strict){
+    if (xy.size() == 0)
+      return strict ? ES_FAILED : ES_OK;
+    if (xy.size() == 1)
+      if (strict)
+	return Le<View>::post(home,xy[0][0],xy[0][1]);
+      else
+	return Lq<View>::post(home,xy[0][0],xy[0][1]);
+    (void) new (home) Lex<View>(home,xy,strict);
+    return ES_OK;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

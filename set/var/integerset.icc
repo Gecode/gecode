@@ -1,0 +1,510 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *     Gabor Szokoli, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set {
+
+  /*
+   * Range lists
+   *
+   */
+
+#define RL2PD(r) reinterpret_cast<ptrdiff_t>(r)
+#define PD2RL(p) reinterpret_cast<RangeList*>(p)
+
+  forceinline
+  RangeList::RangeList(void) {}
+
+  forceinline
+  RangeList::RangeList(int min, int max, RangeList* p, RangeList* n)
+    : _min(min), _max(max) {
+    _next = PD2RL(RL2PD(p)^RL2PD(n));     
+  }
+
+  forceinline RangeList*
+  RangeList::next(const RangeList* p) const {
+    return PD2RL(RL2PD(_next)^RL2PD(p));
+  }
+  forceinline RangeList*
+  RangeList::prev(const RangeList* n) const {
+    return PD2RL(RL2PD(_next)^RL2PD(n));
+  }
+  forceinline void
+  RangeList::prevnext(RangeList* p, RangeList* n) {
+    _next = PD2RL(RL2PD(p)^RL2PD(n));
+  }
+  forceinline void
+  RangeList::next(RangeList* o, RangeList* n) {
+    _next = PD2RL(RL2PD(_next)^(RL2PD(o)^RL2PD(n)));
+  }
+  forceinline void
+  RangeList::prev(RangeList* o, RangeList* n) {
+    _next = PD2RL(RL2PD(_next)^(RL2PD(o)^RL2PD(n)));
+  }
+  forceinline void
+  RangeList::fix(RangeList* n) {
+    _next = n;
+  }
+
+  forceinline void
+  RangeList::min(int n) {
+    _min = n;
+  }
+  forceinline void
+  RangeList::max(int n) {
+    _max = n;
+  }
+
+  forceinline int
+  RangeList::min(void) const {
+    return _min;
+  }
+  forceinline int
+  RangeList::max(void) const {
+    return _max;
+  }
+  forceinline unsigned int
+  RangeList::width(void) const {
+    return _max - _min + 1;
+  }
+
+
+  forceinline void
+  RangeList::operator delete(void*) {}
+
+  forceinline void
+  RangeList::operator delete(void*, Space* home) {
+    assert(false);
+  }
+
+  forceinline void*
+  RangeList::operator new(size_t s, Space* home) {
+    assert(s == sizeof(RangeList));
+    return home->fl_alloc<sizeof(RangeList)>();
+  }
+
+  forceinline void
+  RangeList::dispose(Space* home, RangeList* p, RangeList* l) {
+    RangeList* c = this;
+    while (c != l) {
+      RangeList* n = c->next(p);
+      c->fix(n);
+      p=c; c=n;
+    }
+    home->fl_dispose<sizeof(RangeList)>(this,l);
+  }
+
+#undef RL2PD
+#undef PD2RL
+
+
+  /*
+   * BndSet
+   *
+   */
+
+  forceinline
+  BndSet::BndSet(void) :
+    first(NULL), last(NULL), _size(0) {}
+
+  forceinline RangeList*
+  BndSet::fst(void) const {
+    return first;
+  }
+
+  forceinline RangeList*
+  BndSet::lst(void) const {
+    return last;
+  }
+
+  forceinline void
+  BndSet::dispose(Space* home) {
+    if (fst()!=NULL)
+      fst()->dispose(home,NULL,lst());
+  }
+
+  forceinline void
+  BndSet::fst(RangeList* f) {
+    first = f;
+  }
+
+  forceinline void
+  BndSet::lst(RangeList* l) {
+    last = l;
+  }
+
+  forceinline
+  BndSet::BndSet(Space* home, int mn, int mx) {
+    RangeList* p = 
+      new (home) RangeList(mn,mx,NULL,NULL);
+    fst(p); lst(p);
+    _size = mx-mn+1;
+  }
+
+  forceinline RangeList*
+  BndSet::ranges(void) const {
+    return fst();
+  }
+
+  forceinline unsigned int
+  BndSet::size(void) const {
+    return _size;
+  }
+
+  forceinline bool
+  BndSet::empty(void) const {
+    return (_size==0);
+  }
+
+  forceinline int
+  BndSet::min(void) const {
+    if (fst()==NULL) { return MIN_OF_EMPTY; }
+    else { return fst()->min(); }
+  }
+
+  forceinline int
+  BndSet::max(void) const {
+    if (lst()==NULL) { return MAX_OF_EMPTY; }
+    else { return lst()->max(); }
+  }
+
+  // nth smallest element
+  forceinline int
+  BndSet::minN(unsigned int n) const {
+    RangeList* p=NULL;
+    RangeList* c=fst();
+    while (c!=NULL){
+      if (c->width() >= n){
+	return(c->min()+n);
+      } else {
+	n-=c->width();
+	RangeList* nc=c->next(p);
+	p=c; c=nc;
+      }
+    }
+    return MIN_OF_EMPTY;
+  }
+
+  // nth largest element
+  forceinline int
+  BndSet::maxN(unsigned int n) const {
+    RangeList* p=NULL;
+    RangeList* c=lst();
+    while (c!=NULL){
+      if (c->width() >= n){
+	return(c->max()-n);
+      } else {
+	n-=c->width();
+	RangeList* nc=c->next(p);
+	p=c; c=nc;
+      }
+    }
+    return MAX_OF_EMPTY;
+  }
+
+  forceinline void
+  BndSet::update(Space* home, BndSet& d) {
+    if ( d.fst() == fst()) { return; }
+    if (fst()!=NULL) { fst()->dispose(home,NULL,lst()); }
+    _size = d.size();
+    if (_size==0) { fst(NULL); lst(NULL); return ; }
+
+    int n=0;
+    {
+      RangeList* p = NULL;
+      RangeList* c = d.fst();
+      while (c!=NULL) {
+	RangeList* nc=c->next(p);
+	p=c; c=nc; n++;
+      }
+    }
+
+    RangeList* r = reinterpret_cast<RangeList*>
+      (home->alloc(sizeof(RangeList)*n));
+    fst(r); lst(r+n-1);
+
+    {
+      RangeList* p = NULL;
+      RangeList* c = d.lst();
+      for (int i=n; i--; ) {
+	r[i].min(c->min());
+	r[i].max(c->max());
+	r[i].prevnext(&r[i-1],&r[i+1]);
+
+	RangeList* nc=c->next(p);
+	p=c; c=nc;
+      }
+      r[0].prev(&r[-1],NULL); 
+      r[n-1].next(&r[n],NULL);
+    }
+
+  }
+
+  template <class I> forceinline bool
+  BndSet::overwrite(Space* home, I& ri) {
+    // Is new domain empty?
+    if (!ri()) {
+      //Was it empty?
+      if (fst()==NULL)
+	return false;
+      fst()->dispose(home,NULL,lst());
+      _size=0; fst(NULL); lst(NULL);
+      return true;
+    }
+
+    RangeList* f =
+      new (home) RangeList(ri.min(),ri.max(),NULL,NULL);
+    RangeList* l = f;
+    unsigned int s = ri.width();
+
+    ++ri;
+    
+    while (ri()){
+      RangeList *n = new (home) RangeList(ri.min(),ri.max(),l,NULL);
+      l->next(NULL,n);
+      l=n;
+      s += ri.width();
+      ++ri;
+    }
+
+    if (fst() != NULL)
+      fst()->dispose(home,NULL,lst());
+    fst(f); lst(l);
+
+    // If the size did not change, nothing changed, as overwriting
+    // must not at the same time include and exclude elements.
+    if (size() == s)
+      return false;
+
+    _size = s;
+    return true;
+  }
+
+  forceinline void
+  BndSet::linkTo(Space* home, const BndSet& that){
+    if (fst()!=NULL){
+      assert(lst()!=NULL);
+      assert(fst()!= that.fst());
+      fst()->dispose(home,NULL,lst());
+    }
+    fst(that.fst());
+    lst(that.lst());
+    _size = that.size();
+    assert(isConsistent());
+  }
+
+  forceinline bool
+  BndSet::in(int i) const {
+    RangeList *p = NULL;
+    RangeList *c = fst();
+    while (c) {
+      if (c->min() <= i && c->max() >= i)
+	return true;
+      if (c->min() > i)
+	return false;
+      RangeList* nc = c->next(p);
+      p=c; c=nc;
+    }
+    return false;
+  }
+
+  /*
+   * Forward range iterator for BndSets
+   *
+   */
+
+  forceinline
+  BndSetRanges::BndSetRanges(void) {}
+
+  forceinline
+  BndSetRanges::BndSetRanges(const BndSet& s) :
+    p(NULL), c(s.ranges()) {}
+
+  forceinline void
+  BndSetRanges::init(const BndSet& s) {
+    p = NULL;
+    c = s.ranges();
+  }
+
+  forceinline bool
+  BndSetRanges::operator()(void) const {
+    return c != NULL;
+  }
+  forceinline void
+  BndSetRanges::operator++(void) {
+    const RangeList* n=c->next(p); p=c; c=n;
+  }
+
+  forceinline int
+  BndSetRanges::min(void) const {
+    return c->min();
+  }
+  forceinline int
+  BndSetRanges::max(void) const {
+    return c->max();
+  }
+  forceinline unsigned int
+  BndSetRanges::width(void) const {
+    return c->width();
+  }
+
+  /*
+   * GLBndSet
+   *
+   */
+
+  forceinline
+  GLBndSet::GLBndSet(Space* home) {}
+
+  forceinline
+  GLBndSet::GLBndSet(Space* home, int mi, int ma)
+    : BndSet(home,mi,ma) { assert(mi<=ma); }
+
+  forceinline
+  GLBndSet::GLBndSet(Space* home, const IntSet& s)
+    : BndSet(home,s) {}
+
+  forceinline void
+  GLBndSet::init(Space* home) { fst(NULL); lst(NULL); _size = 0; }
+
+  forceinline bool
+  GLBndSet::include(Space* home, int mi, int ma) {
+    assert(ma >= mi);
+    if (fst()==NULL) {
+      RangeList* p = new (home) RangeList(mi,ma,NULL,NULL);
+      fst(p);
+      lst(p);
+      _size=ma-mi+1;
+      return true;
+    }
+    bool ret = include_full(home, mi, ma);
+    assert(isConsistent());
+    return ret;
+  }
+
+  template <class I> bool
+  GLBndSet::includeI(Space* home, I& i) {
+    if (!i())
+      return false;
+    BndSetRanges j(*this);
+    Iter::Ranges::Union<BndSetRanges,I> ij(j,i);
+    bool me = overwrite(home, ij);
+    assert(isConsistent());
+    return me;
+  }
+
+
+  /*
+   * LUBndSet
+   *
+   */
+
+  forceinline
+  LUBndSet::LUBndSet(void) {}
+
+  forceinline
+  LUBndSet::LUBndSet(Space* home)
+    : BndSet(home,Limits::Set::int_min,Limits::Set::int_max) {}
+
+  forceinline
+  LUBndSet::LUBndSet(Space* home, int mi, int ma)
+    : BndSet(home,mi,ma) { assert(mi<=ma); }
+
+  forceinline
+  LUBndSet::LUBndSet(Space* home, const IntSet& s)
+    : BndSet(home,s) {}
+
+  forceinline void
+  LUBndSet::init(Space* home) {
+    RangeList *p =
+      new (home) RangeList(Limits::Set::int_min,
+			   Limits::Set::int_max,
+			   NULL,NULL);
+    fst(p);
+    lst(p);
+    _size = Limits::Set::card_max;
+  }
+
+  forceinline bool
+  LUBndSet::exclude(Space* home, int mi, int ma) {
+    assert(ma >= mi);
+    if ((mi > max()) || (ma < min())) { return false; }
+    if (mi <= min() && ma >= max() ) { //the range covers the whole set
+      fst()->dispose(home,NULL,lst()); fst(NULL); lst(NULL);
+      _size=0;
+      return true;
+    }
+    bool ret =  exclude_full(home, mi, ma);
+    assert(isConsistent());
+    return ret;
+  }
+
+  template <class I> bool
+  LUBndSet::intersectI(Space* home, I& i) {
+    if (fst()==NULL) { return false; }
+    if (!i()) {
+      fst()->dispose(home,NULL,lst()); fst(NULL); lst(NULL);
+      _size=0;
+      return true;
+    }
+    BndSetRanges j(*this);
+    Iter::Ranges::Inter<BndSetRanges,I> ij(j,i);
+    bool ret = overwrite(home, ij);
+    assert(isConsistent());
+    return ret;
+  }
+
+  template <class I> bool
+  LUBndSet::excludeI(Space* home, I& i) {
+    if (!i()) { return false; }
+    BndSetRanges j(*this);
+    Iter::Ranges::Diff<BndSetRanges,I> ij(j,i);
+    bool ret = overwrite(home, ij);
+    assert(isConsistent());
+    return ret;
+  }
+
+  /*
+   * A complement iterator spezialized for the BndSet limits
+   *
+   */
+  template <class I>
+  RangesCompl<I>::RangesCompl(void) {}
+
+  template <class I>
+  RangesCompl<I>::RangesCompl(I& i)
+    : Iter::Ranges::Compl<Limits::Set::int_min,
+			  Limits::Set::int_max,
+			  I>(i) {}
+
+  template <class I> void
+  RangesCompl<I>::init(I& i) {
+    Iter::Ranges::Compl<Limits::Set::int_min,
+      Limits::Set::int_max,I>::init(i);
+  }
+
+}}
+
+// STATISTICS: set-var
+

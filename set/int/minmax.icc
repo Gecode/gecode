@@ -1,0 +1,63 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *     Gabor Szokoli, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+
+
+#include "set.hh"
+#include "int.hh"
+
+namespace Gecode { namespace Set { namespace Int {
+
+  forceinline
+  MinElement::MinElement(Space* home, SetView y0, Gecode::Int::IntView y1)
+    : IntSetPropagator<SetView,PC_SET_ANY,
+		       Gecode::Int::PC_INT_BND> (home, y0, y1) {}
+
+  forceinline ExecStatus
+  MinElement::post(Space* home, SetView x0,
+		   Gecode::Int::IntView x1) {
+    GECODE_ME_CHECK(x0.cardMin(home,1));
+    (void) new (home) MinElement(home,x0,x1);
+    return ES_OK;
+  }
+
+  forceinline
+  MinElement::MinElement(Space* home, bool share, MinElement& p)
+    : IntSetPropagator<SetView,PC_SET_ANY,
+		       Gecode::Int::PC_INT_BND> (home, share, p) {}
+
+  forceinline
+  MaxElement::MaxElement(Space* home, SetView y0, Gecode::Int::IntView y1)
+    : IntSetPropagator<SetView,PC_SET_ANY,
+		       Gecode::Int::PC_INT_BND> (home, y0, y1) {}
+
+  forceinline
+  MaxElement::MaxElement(Space* home, bool share, MaxElement& p)
+    : IntSetPropagator<SetView,PC_SET_ANY,
+		       Gecode::Int::PC_INT_BND> (home, share, p) {}
+
+}}}
+
+// STATISTICS: set-prop

@@ -1,0 +1,136 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+inline
+Options::Options(const char* n)
+  : icl(ICL_DEF),
+    c_d(1),
+    a_d(1),
+    mode(EM_SOLUTION),
+    samples(1),
+    iterations(1),
+    solutions(1),
+    naive(false),
+    size(0),
+    name(n) {}
+
+
+template <class Script, template<class> class Engine>
+void
+Example::run(const Options& o) {
+  using namespace std;
+  try {
+    switch (o.mode) {
+    case EM_SOLUTION:
+      {
+	cout << o.name << endl;
+	Timer t;
+	int i = o.solutions;
+	t.start();
+	Script* s = new Script(o);
+	Engine<Script> e(s,o.c_d,o.a_d);
+	delete s;
+	do {
+	  Example* ex = e.next();
+	  if (ex == NULL)
+	    break;
+	  ex->print();
+	  delete ex;
+	} while (--i != 0);
+	Search::Statistics stat = e.statistics();
+	cout << endl;
+	cout << "Summary" << endl
+	     << "\truntime:      " << t.stop() << endl
+	     << "\tsolutions:    " << abs(static_cast<int>(o.solutions) - i) << endl
+	     << "\tpropagations: " << stat.propagate << endl
+	     << "\tfailures:     " << stat.fail << endl
+	     << "\tclones:       " << stat.clone << endl
+	     << "\tcommits:      " << stat.commit << endl
+	     << "\tpeak memory:  " 
+	     << static_cast<int>((stat.memory+1023) / 1024) << " KB"
+	     << endl;
+      }
+      break;
+    case EM_STAT:
+      {
+	cout << "%%% " << o.name << endl;
+	int i = o.solutions;
+	Script* s = new Script(o);
+	Engine<Script> e(s,o.c_d,o.a_d);
+	delete s;
+	do {
+	  Example* ex = e.next();
+	  if (ex == NULL)
+	    break;
+	  delete ex;
+	} while (--i != 0);
+	Search::Statistics stat = e.statistics();
+	cout << endl
+	     << "\tsolutions:    " << abs(static_cast<int>(o.solutions) - i) << endl
+	     << "\tpropagations: " << stat.propagate << endl
+	     << "\tfailures:     " << stat.fail << endl
+	     << "\tclones:       " << stat.clone << endl
+	     << "\tcommits:      " << stat.commit << endl
+	     << "\tpeak memory:  " 
+	     << static_cast<int>((stat.memory+1023) / 1024) << " KB"
+	     << endl;
+      }
+      break;
+    case EM_TIME:
+      {
+	cout << o.name << endl;
+	Timer t;
+	GECODE_AUTOARRAY(double,ts,o.samples);
+	for (int s = o.samples; s--; ) {
+	  t.start();
+	  for (int k = o.iterations; k--; ) {
+	    unsigned int i = o.solutions;
+	    Script* s = new Script(o);
+	    Engine<Script> e(s,o.c_d,o.a_d);
+	    delete s;
+	    do {
+	      Example* ex = e.next();
+	      if (ex == NULL)
+		break;
+	      delete ex;
+	    } while (--i != 0);
+	  }
+	  ts[s] = t.stop() / o.iterations;
+	}
+	double m = am(ts,o.samples);
+	double d = dev(ts,o.samples) * 100.0;
+	cout << "\tRuntime: "
+	     << setw(20) << right
+	     << showpoint << fixed
+	     << setprecision(6) << m << "ms"
+	     << setprecision(2) << " (" << d << "% deviation)"
+	     << endl;
+      }
+      break;
+    }
+  } catch (Exception e) {
+    cout << "Exception in \"Gecode::" << e.location() 
+	 << "\": " << e.info() << "." << endl
+	 << "Stopping..." << endl;
+  }
+}
+
+// STATISTICS: example-any

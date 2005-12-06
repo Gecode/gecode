@@ -1,0 +1,115 @@
+/*
+ *  Main authors:
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *
+ *  Copyright:
+ *     Mikael Lagerkvist, 2005
+ *
+ *  Last modified:
+ *     $Date: 2005-07-28 22:52:19 +0200 (Thu, 28 Jul 2005) $ by $Author: schulte $
+ *     $Revision: 2072 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace MiniModel {
+
+  template <class A>
+  inline 
+  Matrix<A>::Slice::Slice(Matrix<A>& a, 
+			  unsigned int fc, unsigned int tc, 
+			  unsigned int fr, unsigned int tr)
+    : _r((tc-fc)*(tr-fr)), _fc(fc), _tc(tc), _fr(fr), _tr(tr) {
+    if (tc > a.width() || tr > a.height())
+      throw ArgumentOutOfRange("Arguments out of range");
+    if (fc >= tc || fr >= tr)
+      return;
+
+    int i = 0;
+    for (unsigned int w = fc; w < tc; ++w) {
+      for (unsigned int h = fr; h < tr; ++h) {
+	_r[i++] = a(w, h);
+      }
+    }
+  }
+  
+  template <class A>
+  forceinline 
+  Matrix<A>::Slice::operator typename Matrix<A>::args_type(void) { 
+    return _r; 
+  }
+  template <class A>
+  forceinline 
+  Matrix<A>::Slice::operator Matrix<typename Matrix<A>::args_type>(void) { 
+    return Matrix<args_type>(_r, _tc-_fc, _tr-_fr);
+  }
+
+
+  template <class A>
+  forceinline 
+  Matrix<A>::Matrix(A a, unsigned int w, unsigned int h) 
+    : _a(a), _w(w), _h(h) {
+    if(_w * _h != static_cast<unsigned int>(_a.size()))
+      throw ArgumentSizeMismatch("Size w*h is not compatible with"
+				 " array length.");
+  }
+  
+  template <class A>
+  forceinline 
+  Matrix<A>::Matrix(A a, unsigned int n) 
+    : _a(a), _w(n), _h(n) {
+    if(n*n != static_cast<unsigned int>(_a.size()))
+      throw ArgumentSizeMismatch("Size n*n are not compatible with"
+				 " array length.");
+  }
+  
+  template <class A>
+  forceinline unsigned int const
+  Matrix<A>::width(void)  { return _w; }
+  template <class A>
+  forceinline unsigned int const
+  Matrix<A>::height(void) { return _h; }
+  template <class A>
+  forceinline typename Matrix<A>::args_type const
+  Matrix<A>::get_array(void) {
+    return args_type(_a);
+  }
+  
+  template <class A>
+  forceinline typename Matrix<A>::value_type& 
+  Matrix<A>::operator()(unsigned int c, unsigned int r) {
+    if(c > _w || r > _h)
+      throw ArgumentOutOfRange("Arguments out of range");
+    
+    return _a[r*_w + c]; 
+  }
+  
+  template <class A>
+  forceinline typename Matrix<A>::Slice 
+  Matrix<A>::slice(unsigned int fc, unsigned int tc, 
+	      unsigned int fr, unsigned int tr) {
+    return Slice(*this, fc, tc, fr, tr);
+  }
+  
+  template <class A>
+  forceinline typename Matrix<A>::args_type 
+  Matrix<A>::row(int r) {
+    return slice(0, width(), r, r+1);
+  }
+  
+  template <class A>
+  forceinline typename Matrix<A>::args_type 
+  Matrix<A>::col(int c) {
+    return slice(c, c+1, 0, height());
+  }
+
+}}
+
+// STATISTICS: minimodel-any

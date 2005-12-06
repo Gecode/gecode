@@ -1,0 +1,41 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Contributing authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *     Guido Tack, 2004
+ *
+ *  Last modified:
+ *     $Date: 2005-10-23 16:23:09 +0200 (Sun, 23 Oct 2005) $ by $Author: schulte $
+ *     $Revision: 2403 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+/* Whether no debugging assertions are compiled */
+#undef NDEBUG
+
+/* How to tell the compiler to really, really inline */
+#undef forceinline
+
+/* Memory alignment */
+#undef GECODE_MEMORY_ALIGNMENT
+
+/* Whether integer variables are buit */
+#undef GECODE_HAVE_INT_VARS
+
+/* Whether set variables are buit */
+#undef GECODE_HAVE_SET_VARS
+
+// STATISTICS: kernel-other

@@ -1,0 +1,221 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2002
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int {
+
+  /*
+   * Constructors and initialization
+   *
+   */
+  forceinline
+  IntView::IntView(void) {}
+  forceinline
+  IntView::IntView(const IntVar& x)
+    : VariableViewBase<IntVarImp>(x.variable()) {}
+
+
+  /*
+   * Value access
+   *
+   */
+  forceinline int
+  IntView::min(void) const { 
+    return var->min(); 
+  }
+  forceinline int
+  IntView::max(void) const { 
+    return var->max(); 
+  }
+  forceinline int
+  IntView::med(void) const { 
+    return var->med(); 
+  }
+  forceinline int
+  IntView::val(void) const { 
+    return var->val(); 
+  }
+
+  forceinline unsigned int
+  IntView::size(void) const { 
+    return var->size(); 
+  }
+  forceinline unsigned int
+  IntView::width(void) const { 
+    return var->width(); 
+  }
+  forceinline unsigned int
+  IntView::regret_min(void) const { 
+    return var->regret_min(); 
+  }
+  forceinline unsigned int
+  IntView::regret_max(void) const { 
+    return var->regret_max(); 
+  }
+
+
+  /*
+   * Domain tests
+   *
+   */
+  forceinline bool
+  IntView::range(void) const { 
+    return var->range(); 
+  }
+  forceinline bool
+  IntView::assigned(void) const { 
+    return var->assigned(); 
+  }
+
+  forceinline bool
+  IntView::in(int n) const { 
+    return var->in(n); 
+  }
+  forceinline bool
+  IntView::in(double n) const { 
+    return var->in(n); 
+  }
+
+
+  /*
+   * Domain update by value
+   *
+   */
+  forceinline ModEvent
+  IntView::lq(Space* home, int n) { 
+    return var->lq(home,n); 
+  }
+  forceinline ModEvent
+  IntView::lq(Space* home, double n) { 
+    return var->lq(home,n); 
+  }
+
+  forceinline ModEvent
+  IntView::le(Space* home, int n) { 
+    return var->lq(home,n-1); 
+  }
+  forceinline ModEvent
+  IntView::le(Space* home, double n) { 
+    return lq(home,n-1.0); 
+  }
+
+  forceinline ModEvent
+  IntView::gq(Space* home, int n) { 
+    return var->gq(home,n); 
+  }
+  forceinline ModEvent
+  IntView::gq(Space* home, double n) { 
+    return var->gq(home,n); 
+  }
+
+  forceinline ModEvent
+  IntView::gr(Space* home, int n) { 
+    return var->gq(home,n+1); 
+  }
+  forceinline ModEvent
+  IntView::gr(Space* home, double n) { 
+    return gq(home,n+1.0); 
+  }
+
+  forceinline ModEvent
+  IntView::nq(Space* home, int n) { 
+    return var->nq(home,n); 
+  }
+  forceinline ModEvent
+  IntView::nq(Space* home, double n) { 
+    return var->nq(home,n); 
+  }
+
+  forceinline ModEvent
+  IntView::eq(Space* home, int n) { 
+    return var->eq(home,n); 
+  }
+  forceinline ModEvent
+  IntView::eq(Space* home, double n) { 
+    return var->eq(home,n); 
+  }
+
+
+  /*
+   * Domain update by range iterator
+   *
+   */
+  template <class I>
+  forceinline ModEvent
+  IntView::narrow(Space* home, I& i) { 
+    return var->narrow(home,i); 
+  }
+  template <class I>
+  forceinline ModEvent
+  IntView::inter(Space* home, I& i) { 
+    return var->inter(home,i); 
+  }
+  template <class I>
+  forceinline ModEvent
+  IntView::minus(Space* home, I& i) { 
+    return var->minus(home,i); 
+  }
+
+
+  /*
+   * Cloning
+   *
+   */
+  forceinline void
+  IntView::update(Space* home, bool share, IntView& x) {
+    var = x.var->copy(home,share);
+  }
+
+
+
+  /**
+   * \brief %Range iterator for integer variable views
+   * \ingroup TaskActorIntView
+   */
+  template <>
+  class ViewRanges<IntView> : public IntVarImpFwd {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    ViewRanges(void);
+    /// Initialize with ranges for view \a x
+    ViewRanges(const IntView& x);
+    /// Initialize with ranges for view \a x
+    void init(const IntView& x);
+    //@}
+  };
+
+  forceinline
+  ViewRanges<IntView>::ViewRanges(void) {}
+
+  forceinline
+  ViewRanges<IntView>::ViewRanges(const IntView& x)
+    : IntVarImpFwd(x.variable()) {}
+
+  forceinline void
+  ViewRanges<IntView>::init(const IntView& x) {
+    IntVarImpFwd::init(x.variable());
+  }
+
+}}
+
+// STATISTICS: int-var
+

@@ -1,0 +1,81 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Bool {
+
+  template<class BVA, class BVB>
+  forceinline
+  Eq<BVA,BVB>::Eq(Space* home, BVA b0, BVB b1)
+    : BoolBinary<BVA,BVB>(home,b0,b1) {}
+
+  template<class BVA, class BVB>
+  forceinline ExecStatus
+  Eq<BVA,BVB>::post(Space* home, BVA b0, BVB b1) {
+    switch (bool_test(b0,b1)) {
+    case BT_SAME: return ES_OK;
+    case BT_COMP: return ES_FAILED;
+    case BT_NONE:
+      if (b0.zero()) {
+	GECODE_ME_CHECK(b1.t_zero(home));
+      } else if (b0.one()) {
+	GECODE_ME_CHECK(b1.t_one(home));
+      } else if (b1.zero()) {
+	GECODE_ME_CHECK(b0.t_zero(home));
+      } else if (b1.one()) {
+	GECODE_ME_CHECK(b0.t_one(home));
+      } else {
+	(void) new (home) Eq<BVA,BVB>(home,b0,b1);
+      }
+    }
+    return ES_OK;
+  }
+
+  template<class BVA, class BVB>
+  forceinline
+  Eq<BVA,BVB>::Eq(Space* home, bool share, Eq<BVA,BVB>& p) 
+    : BoolBinary<BVA,BVB>(home,share,p) {}
+
+  template<class BVA, class BVB>
+  Actor*
+  Eq<BVA,BVB>::copy(Space* home, bool share) {
+    return new (home) Eq<BVA,BVB>(home,share,*this);
+  }
+
+  template<class BVA, class BVB>
+  ExecStatus
+  Eq<BVA,BVB>::propagate(Space* home) {
+    if (x0.zero()) {
+      GECODE_ME_CHECK(x1.t_zero(home));
+    } else if (x0.one()) {
+      GECODE_ME_CHECK(x1.t_one(home));
+    } else if (x1.zero()) {
+      x0.t_zero_none(home);
+    } else {
+      assert(x1.one());
+      x0.t_one_none(home);
+    }
+    return ES_SUBSUMED;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

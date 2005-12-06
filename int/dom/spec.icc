@@ -1,0 +1,83 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Dom {
+
+  template <class View>
+  forceinline
+  ReIntSet<View>::ReIntSet
+  (Space* home, View x, const IntSet& s, BoolView b)
+    : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,x,b,true), is(s) {}
+
+  template <class View>
+  ExecStatus
+  ReIntSet<View>::post(Space* home, View x, const IntSet& s, BoolView b) {
+    if (s.size() == 0) {
+      GECODE_ME_CHECK(b.t_zero(home));
+    } else if (s.size() == 1) {
+      return ReRange<View>::post(home,x,s.min(),s.max(),b);
+    } else {
+      (void) new (home) ReIntSet<View>(home,x,s,b);
+    }
+    return ES_OK;
+  }
+
+
+  template <class View>
+  forceinline
+  ReIntSet<View>::ReIntSet(Space* home, bool share, ReIntSet& p)
+    : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,share,p) {
+    is.update(share,p.is);
+  }
+
+  template <class View>
+  Actor*
+  ReIntSet<View>::copy(Space* home, bool share) {
+    return new (home) ReIntSet(home,share,*this);
+  }
+
+  template <class View>
+  ExecStatus
+  ReIntSet<View>::propagate(Space* home) {
+    IntSetRanges i_is(is);
+    if (b.one()) {
+      GECODE_ME_CHECK(x0.inter(home,i_is)); return ES_SUBSUMED;
+    }
+    if (b.zero()) {
+      GECODE_ME_CHECK(x0.minus(home,i_is)); return ES_SUBSUMED;
+    }
+
+    ViewRanges<View> i_x(x0);
+
+    switch (Iter::Ranges::subsumes(i_is,i_x)) {
+    case Iter::Ranges::SS_SUBSUMED:
+      b.t_one_none(home); return ES_SUBSUMED;
+    case Iter::Ranges::SS_EMPTY:
+      b.t_zero_none(home); return ES_SUBSUMED;
+    default: ;
+    }
+    return ES_FIX;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

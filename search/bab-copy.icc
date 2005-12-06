@@ -1,0 +1,30 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Search {
+
+  forceinline
+  BabCopyEngine::BabCopyEngine(Space* s, size_t sz)
+    : BabEngine(sz), mark(0), cur(s), b(NULL) {}
+
+}}
+
+// STATISTICS: search-any

@@ -1,0 +1,346 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *
+ *  Contributing authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *     Gabor Szokoli, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set {
+
+  /*
+   * Creation of new variable implementations
+   *
+   */
+
+  forceinline
+  SetVarImp::SetVarImp(Space* home)
+    : Variable<VTI_SET,PC_SET_ANY>(home), lub(home), glb(home) {
+    _cardMin = 0;
+    _cardMax = Limits::Set::card_max;
+    assert(_cardMax==lub.size());
+  }
+
+  forceinline
+  SetVarImp::SetVarImp(Space* home,int lbMin,int lbMax,int ubMin,int ubMax,
+		       unsigned int cardMin, unsigned int cardMax)
+    : Variable<VTI_SET,PC_SET_ANY>(home),
+      lub(home,ubMin,ubMax), glb(home,lbMin,lbMax) {
+    _cardMin = std::max(cardMin, glb.size() );
+    _cardMax = std::min(cardMax, lub.size() );
+  }
+
+  forceinline
+  SetVarImp::SetVarImp(Space* home,
+		       const IntSet& theGlb,int ubMin,int ubMax,
+		       unsigned int cardMin, unsigned int cardMax)
+    : Variable<VTI_SET,PC_SET_ANY>(home),
+      lub(home,ubMin,ubMax), glb(home,theGlb) {
+    _cardMin = std::max(cardMin, glb.size() );
+    _cardMax = std::min(cardMax, lub.size() );
+  }
+
+  forceinline
+  SetVarImp::SetVarImp(Space* home,
+		       int lbMin,int lbMax,const IntSet& theLub,
+		       unsigned int cardMin, unsigned int cardMax)
+    : Variable<VTI_SET,PC_SET_ANY>(home),
+      lub(home,theLub), glb(home,lbMin,lbMax) {
+    _cardMin = std::max(cardMin, glb.size() );
+    _cardMax = std::min(cardMax, lub.size() );
+  }
+  
+  forceinline
+  SetVarImp::SetVarImp(Space* home,
+		       const IntSet& theGlb,const IntSet& theLub,
+		       unsigned int cardMin, unsigned int cardMax)
+    : Variable<VTI_SET,PC_SET_ANY>(home), lub(home,theLub), glb(home,theGlb) {
+    _cardMin = std::max(cardMin, glb.size() );
+    _cardMax = std::min(cardMax, lub.size() );
+  }
+
+
+#define GECODE_CHECK_LUB(home,changed) {        \
+    if (changed)				\
+      return processLubChange(home);		\
+    return ME_SET_NONE;				\
+  }
+
+#define GECODE_CHECK_GLB(home,changed) {        \
+    if (changed)				\
+      return processGlbChange(home);		\
+    return ME_SET_NONE;				\
+  }
+
+  forceinline  bool
+  SetVarImp::assigned(void) const {
+    return ( glb.size() == lub.size() );
+  }
+
+  forceinline unsigned int
+  SetVarImp::cardMin(void) const { return _cardMin; }
+
+  forceinline unsigned int
+  SetVarImp::cardMax(void) const { return _cardMax; }
+
+  forceinline bool
+  SetVarImp::knownIn(int i) const { return (glb.in(i)); }
+
+  forceinline bool
+  SetVarImp::knownOut(int i) const { return !(lub.in(i)); }
+
+  forceinline int
+  SetVarImp::lubMin(void) const { return lub.min(); }
+
+  forceinline int
+  SetVarImp::lubMax(void) const { return lub.max(); }
+
+  forceinline int
+  SetVarImp::lubMinN(int n) const { return lub.minN(n); }
+
+  forceinline int
+  SetVarImp::lubMaxN(int n) const { return lub.maxN(n); }
+
+  forceinline int
+  SetVarImp::glbMin(void) const { return glb.min(); }
+
+  forceinline int
+  SetVarImp::glbMax(void) const { return glb.max(); }
+
+  forceinline unsigned int
+  SetVarImp::glbSize() const { return glb.size(); }
+
+  forceinline unsigned int
+  SetVarImp::lubSize() const { return lub.size(); }
+
+  //Determines consistency of lower and upper bounds, signals fail
+  forceinline bool
+  SetVarImp::boundsConsistent() const {
+    //Don't optimise fail at a cost to the common case!
+    //  if (lubSize()<glbSize()){ return false; }
+    BndSetRanges ub(lub);
+    BndSetRanges lb(glb);
+    return (Iter::Ranges::subset(lb,ub)) ;
+  }
+
+  forceinline ModEvent
+  SetVarImp::cardMin(Space* home,unsigned int newMin) {
+    if (_cardMin >= newMin)
+      return ME_SET_NONE;
+    _cardMin=newMin;
+    if (_cardMin > _cardMax)
+      return ME_SET_FAILED;
+    return cardMin_full(home, newMin);
+  }
+
+  forceinline ModEvent
+  SetVarImp::cardMax(Space* home,unsigned int newMax) {
+    if (_cardMax <= newMax)
+      return ME_SET_NONE;
+    _cardMax=newMax;
+    if (_cardMin > _cardMax)
+      return ME_SET_FAILED;
+    return cardMax_full(home, newMax);
+  }
+
+  template <class I> ModEvent
+  SetVarImp::excludeI(Space* home, I& iterator) {
+    if (assigned()) {
+      BndSetRanges ubi(lub);
+      Iter::Ranges::Inter<BndSetRanges,I> probe(ubi,iterator);
+      return probe() ? ME_SET_FAILED : ME_SET_NONE;
+    }
+    GECODE_CHECK_LUB(home, lub.excludeI(home, iterator));
+  }
+
+  template <class I> forceinline ModEvent
+  SetVarImp::intersectI(Space* home, I& iterator) {
+    if (assigned()) {
+      BndSetRanges ubi(lub);
+      Iter::Ranges::Diff<BndSetRanges,I> probe(ubi,iterator);
+      return probe() ? ME_SET_FAILED : ME_SET_NONE;
+    }
+    GECODE_CHECK_LUB(home, lub.intersectI(home, iterator));
+  }
+
+  forceinline ModEvent
+  SetVarImp::intersect(Space* home,int i, int j) {
+    bool changed =
+      lub.exclude(home, Limits::Set::int_min, i-1);
+    changed |=
+      lub.exclude(home, j+1, Limits::Set::int_max);      
+    if (changed)
+      return processLubChange(home);
+    return ME_SET_NONE;
+  }
+
+  forceinline ModEvent
+  SetVarImp::intersect(Space* home,int i) {
+    return intersect(home, i, i);
+  }
+
+  template <class I> forceinline ModEvent
+  SetVarImp::includeI(Space* home, I& iterator) {
+    if (assigned()) {
+      BndSetRanges lbi(glb);
+      Iter::Ranges::Diff<I,BndSetRanges>
+	probe(iterator,lbi);
+      return probe() ? ME_SET_FAILED : ME_SET_NONE;
+    }
+    GECODE_CHECK_GLB(home, glb.includeI(home, iterator));
+  }
+
+  forceinline ModEvent
+  SetVarImp::include(Space* home, int i) {
+    GECODE_CHECK_GLB(home,glb.include(home, i, i)) ;
+  }
+
+  forceinline ModEvent
+  SetVarImp::include(Space* home, int i, int j) {
+    GECODE_CHECK_GLB(home,glb.include(home,i,j)) ;
+  }
+
+  forceinline ModEvent
+  SetVarImp::exclude(Space* home,int i) {
+    GECODE_CHECK_LUB(home,lub.exclude(home,i,i));
+  }
+
+  forceinline ModEvent
+  SetVarImp::exclude(Space* home,int i, int j) {
+    GECODE_CHECK_LUB(home,lub.exclude(home,i,j)) ;
+  }
+
+  forceinline ModEvent
+  SetVarImp::checkGlbCardAssigned(Space* home,ModEvent me){
+    if (_cardMax > glb.size())
+      return me;
+    if (_cardMax == glb.size()) {
+      lub.linkTo(home,glb);
+      _cardMin=_cardMax;
+      return ME_SET_VAL;
+    }
+    return ME_SET_FAILED;
+  }
+
+  forceinline ModEvent
+  SetVarImp::checkLubCardAssigned(Space* home,ModEvent me){
+    if (_cardMin < lub.size())
+      return me;
+    if (_cardMin == lub.size()) {
+      glb.linkTo(home,lub);
+      _cardMax=_cardMin;
+      return ME_SET_VAL;
+    }
+    return ME_SET_FAILED;
+  }
+
+  /*
+   * Copying a variable
+   *
+   */
+
+  forceinline SetVarImp*
+  SetVarImp::copy(Space* home, bool share) {
+    return copied() ?
+      static_cast<SetVarImp*>(forward()) :
+      perform_copy(home,share);
+  }
+
+  /*
+   * Iterator specializations
+   *
+   */
+
+  /**
+   * \brief Range iterator for the least upper bound of a set variable implementation
+   *
+   * This class provides (by specialization) a range iterator 
+   * for the least upper bounds of set variable implementations.
+   *
+   * \ingroup TaskActorSet
+   */  
+  template <>
+  class LubRanges<SetVarImp*> : public BndSetRanges {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    LubRanges(void);
+    /// Initialize with ranges for variable implementation \a x
+    LubRanges(const SetVarImp*);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const SetVarImp*);
+    //@}
+  };
+
+  forceinline
+  LubRanges<SetVarImp*>::LubRanges(void) {}
+
+  forceinline
+  LubRanges<SetVarImp*>::LubRanges(const SetVarImp* x)
+    : BndSetRanges(x->lub) {}
+
+  forceinline void
+  LubRanges<SetVarImp*>::init(const SetVarImp* x) {
+    BndSetRanges::init(x->lub);
+  }
+
+  /**
+   * \brief Range iterator for the greatest lower bound of a set variable implementation
+   *
+   * This class provides (by specialization) a range iterator 
+   * for the greatest lower bounds of set variable implementations.
+   *
+   * \ingroup TaskActorSet
+   */  
+  template <>
+  class GlbRanges<SetVarImp*> : public BndSetRanges {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    GlbRanges(void);
+    /// Initialize with ranges for variable implementation \a x
+    GlbRanges(const SetVarImp* x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const SetVarImp*);
+    //@}
+  };
+
+  forceinline
+  GlbRanges<SetVarImp*>::GlbRanges(void) {}
+
+  forceinline
+  GlbRanges<SetVarImp*>::GlbRanges(const SetVarImp* x)
+    : BndSetRanges(x->glb) {}
+
+  forceinline void
+  GlbRanges<SetVarImp*>::init(const SetVarImp* x) {
+    BndSetRanges::init(x->glb);
+  }
+
+
+}}
+
+// STATISTICS: set-var
+
+

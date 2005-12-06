@@ -1,0 +1,75 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  /*
+   * Control for restart best solution search engine
+   *
+   */
+
+  template <class T>
+  Restart<T>::Restart(T* s, unsigned int c_d, unsigned int a_d) :
+    DFS<T>(s,c_d,a_d), root(s->clone()), best(NULL) {}
+
+  template <class T>
+  forceinline
+  Restart<T>::~Restart(void) {
+    delete best;
+    delete root;
+  }
+
+  template <class T>
+  forceinline T*
+  Restart<T>::next(void) {
+    if (best != NULL) {
+      static_cast<T*>(root)->constrain(static_cast<T*>(best));
+      this->e->clone++;
+      this->e->reset(root->clone(true,this->e->propagate));
+    }
+    Space* b = this->e->explore();
+    delete best;
+    best = (b != NULL) ? b->clone() : NULL;
+    return static_cast<T*>(b);
+  }
+
+
+
+
+  /*
+   * Restart convenience
+   *
+   */
+
+  template <class T>
+  T*
+  restart(T* s, unsigned int c_d, unsigned int a_d) {
+    Restart<T> b(s,c_d,a_d);
+    T* l = NULL;
+    while (T* n = b.next()) {
+      delete l; l = n;
+    }
+    return l;
+  }
+
+}
+
+// STATISTICS: search-any

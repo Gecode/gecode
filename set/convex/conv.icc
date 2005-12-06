@@ -1,0 +1,51 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Contributing authors:
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *     Gabor Szokoli, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set { namespace Convex {
+
+  /*
+   * "Convex" propagator
+   *
+   */
+
+  forceinline
+  Convex::Convex(Space* home, SetView x)
+    : UnaryPropagator<SetView, PC_SET_ANY>(home,x) {}
+
+  forceinline
+  Convex::Convex(Space* home, bool share, Convex& p)
+    : UnaryPropagator<SetView, PC_SET_ANY>(home,share,p) {}
+
+  forceinline ExecStatus
+  Convex::post(Space* home, SetView x) {
+    (void) new (home) Convex(home,x);
+    return ES_OK;
+  }
+
+}}}
+
+// STATISTICS: set-prop

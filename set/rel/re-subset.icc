@@ -1,0 +1,119 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set { namespace Rel {
+
+  template <class View0, class View1>
+  forceinline
+  ReSubset<View0,View1>::ReSubset(Space* home, View0 y0,
+				View1 y1, Gecode::Int::BoolView y2)
+    : Propagator(home, View0::destruct() || View1::destruct()),
+      x0(y0), x1(y1), b(y2) {
+
+    b.subscribe(home,this, Gecode::Int::PC_INT_VAL);
+    x0.subscribe(home,this, PC_SET_ANY);
+    x1.subscribe(home,this, PC_SET_ANY);
+  }
+
+  template <class View0, class View1>
+  forceinline
+  ReSubset<View0,View1>::ReSubset(Space* home, bool share, ReSubset& p)
+    : Propagator(home,share,p) {
+    x0.update(home,share,p.x0);
+    x1.update(home,share,p.x1);
+    b.update(home,share,p.b);
+  }
+
+  template <class View0, class View1>
+  PropCost
+  ReSubset<View0,View1>::cost(void) const {
+    return PC_TERNARY_LO;
+  }
+
+  template <class View0, class View1>
+  ReSubset<View0,View1>::~ReSubset(void) {
+    b.cancel(this, Gecode::Int::PC_INT_VAL);
+    x0.cancel(this, PC_SET_ANY);
+    x1.cancel(this, PC_SET_ANY);
+  }
+
+  template <class View0, class View1>
+  ExecStatus
+  ReSubset<View0,View1>::post(Space* home, View0 x0, View1 x1,
+			     Gecode::Int::BoolView b) {
+    (void) new (home) ReSubset<View0,View1>(home,x0,x1,b);
+    return ES_OK;
+  }
+
+  template <class View0, class View1>
+  Actor*
+  ReSubset<View0,View1>::copy(Space* home, bool share) {
+    return new (home) ReSubset<View0,View1>(home,share,*this);
+  }
+
+  template <class View0, class View1>
+  ExecStatus
+  ReSubset<View0,View1>::propagate(Space* home) {
+
+    if (b.one()) {
+      GECODE_ES_CHECK((SubSet<View0,View1>::post(home,x0,x1)));
+      return ES_SUBSUMED;
+    }
+    if (b.zero()) {
+      GECODE_ES_CHECK((NoSubSet<View0,View1>::post(home,x0,x1)));
+      return ES_SUBSUMED;
+    }
+
+    // check whether cardinalities still allow subset
+    if (x0.cardMin() > x1.cardMax()) {
+      b.t_zero_none(home);
+      return ES_SUBSUMED;
+    }
+
+    // check lub(x0) subset glb(x1)
+    LubRanges<View0> x0ub(x0);
+    GlbRanges<View1> x1lb(x1);
+    Iter::Ranges::Diff<LubRanges<View0>,GlbRanges<View1> > diff1(x0ub, x1lb);
+    if ( !(diff1()) ) {
+      b.t_one_none(home);
+      return ES_SUBSUMED;
+    }
+
+    // check glb(x0) subset lub(x1)
+    GlbRanges<View0> x0lb(x0);
+    LubRanges<View1> x1ub(x1);
+    Iter::Ranges::Diff<GlbRanges<View0>,LubRanges<View1> > diff2(x0lb, x1ub);
+    if ( diff2() ) {
+      b.t_zero_none(home);
+      return ES_SUBSUMED;
+    } else if (x0.assigned() && x1.assigned()) {
+      b.t_one_none(home);
+      return ES_SUBSUMED;
+    } else {
+      return ES_FIX;
+    }
+  }
+
+}}}
+
+// STATISTICS: set-prop

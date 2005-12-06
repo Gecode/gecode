@@ -1,0 +1,458 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Contributing authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2002
+ *     Guido Tack, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  namespace Memory {
+    /**
+     * \brief Parameters defining memory management policy for spaces
+     * \ingroup FuncMemSpace
+     */
+    namespace Config {
+      /** 
+       * \brief Minimal size of a heap chunk requested from the OS
+       */
+      const size_t hcsz_min =  1 * 1024;
+      /**
+       * \brief Maximal size of a heap chunk requested from the OS
+       *
+       * Maximal is not strictly true, if a contigues memory chunk is
+       * requested that exceeds \a hcsz_max, a chunk will be allocated
+       * that fits that request.
+       */
+      const size_t hcsz_max = 64 * 1024;
+      /**
+       * \brief Increment ratio for chunk size
+       *
+       * If a space has requested \a hcsz_inc_ratio chunks of heap memory,
+       * the chunk size is doubled.
+       */
+      const int hcsz_inc_ratio = 8;
+      /**
+       * \brief Decrement ratio for chunk size
+       *
+       * When a space is cloned, the new clone normally inherits the 
+       * current chunk size from the original space. However, if the
+       * original space has requested less than \a hcsz_dec_ratio 
+       * heap chunks of the current chunk size, the current chunk size
+       * for the clone is halfed.
+       */
+      const int hcsz_dec_ratio = 4;
+      
+      /**
+       * \brief Unit size for free lists
+       * 
+       * The unit size (given as binary logarithm) defines how big
+       * a unit of memory for free lists is. Also, it defines the
+       * alignment. Sizes of free list objects must be multiples of
+       * the unit size.
+       *
+       * Currently, for 32 bit machines, the unit size is 4 bytes.
+       * For 64 bit machines, it is 8 bytes.
+       */
+      const int fl_unit_size = ((sizeof(void*) == 4) ? 2 : 3);
+      /**
+       * \brief Minimal size for free list element
+       * 
+       * The minimal size is given in the number of free list units.
+       *
+       * Currently, for 32 bit machines, the minimal size is 12 bytes.
+       * For 64 bit machines, it is 16 bytes.
+       */
+      const int fl_size_min  = ((sizeof(void*) == 4) ? 3 : 2);
+      /**
+       * \brief Maximal size for free list element
+       * 
+       * The maximal size is given in the number of free list units.
+       *
+       * Currently, for 32 bit machines, the maximal size is 12 bytes.
+       * For 64 bit machines, it is 16 bytes.
+       */
+      const int fl_size_max  = ((sizeof(void*) == 4) ? 3 : 2);
+      /**
+       * \brief Number of free lists elements to allocate
+       *
+       * When a request for a free list element can not be fulfilled, as
+       * the free list is empty and there is also no reusable memory
+       * available, allocate \a fl_refill free list elements.
+       */
+      const int fl_refill = 8;
+      /**
+       * \brief Memory alignment
+       *
+       * Memory alignment is controlled by the macro GECODE_MEMORY_ALIGNMENT.
+       * If it is not defined, it assumed to be 8. Otherwise, the defined
+       * value is used.
+       */
+#ifndef GECODE_MEMORY_ALIGNMENT
+#define GECODE_MEMORY_ALIGNMENT 8
+#endif
+    }
+  }
+
+  /**
+   * \brief Base-class for freelist-managed objects
+   *
+   * Freelist-managed object must inherit from this class. The size
+   * of objects of subclasses is defined by the parameters in
+   * Gecode::Memory::Config.
+   * \ingroup FuncMemSpace
+   */
+  class FreeList {
+  protected:
+    FreeList* _next;
+  public:
+    FreeList(void);
+    FreeList(FreeList*);
+    FreeList* next(void) const;
+    void next(FreeList*);
+  };
+  
+  /// Manage memory for space
+  class MemoryManager {
+  private:
+    /// Memory-chunks allocated from heap
+    class HeapChunk {
+    public:
+      /// Next heap chunk already allocated
+      HeapChunk* next;
+      /// Start of memory area inside chunk
+      double area[1];
+    };
+  private:
+    /// Initialize and allocate first heap chunk
+    void init(void);
+  public:
+    /// Constructor initialization
+    MemoryManager(void);
+    /// Constructor during cloning \a mm
+    MemoryManager(MemoryManager& mm);
+    /// Release all allocated heap chunks
+    ~MemoryManager(void);
+
+  private:
+    size_t     cur_hcsz;  ///< Current heap chunk size
+    HeapChunk* cur_hc;    ///< Current heap chunk
+    size_t     requested; ///< Total amount of heap memory requested
+
+    char*  start; ///< Start of current heap area used for allocation
+    size_t lsz;   ///< Size left for allocation
+
+    /// Refill current heap area (outlined) issued by request of size \a s
+    GECODE_KERNEL_EXPORT 
+    void alloc_refill(size_t s);
+    /// Do the real work for refilling
+    void alloc_fill(size_t s);
+
+  public:
+    /// Allocate memory of size \a s
+    void* alloc(size_t s);
+    /// Return how much memory has been allocated
+    size_t allocated(void) const;
+
+  private:
+    /// Start of free lists
+    FreeList* fl[Memory::Config::fl_size_max-Memory::Config::fl_size_min+1];
+    /// Refill free list
+    template <size_t> void fl_refill(void);
+    /// Translate size to index in free list
+    static size_t sz2i(size_t);
+    /// Translate index in free list to size
+    static size_t i2sz(size_t);
+
+  public:
+    /// Allocate free list element of size \a s
+    template <size_t s> 
+    void* fl_alloc(void);
+    /// Release all free list elements of size \a s between f and l (inclusive)
+    template <size_t> void  fl_dispose(FreeList* f, FreeList* l);
+
+  public:
+    /// Memory-chunks for reusing slack memory
+    class ReuseChunk {
+    public:
+      /// Size of chunk
+      size_t      size;
+      /// Next chunk for reusal
+      ReuseChunk* next;
+    };
+  private:
+    /// Slack memory chunks
+    ReuseChunk* slack;
+  public:
+    /// Store for reusal, if of sufficient size for free list
+    void reuse(void* p, size_t s);
+    /// Store for reusal
+    void reuse(ReuseChunk *rc);
+    /// Try to allocate from slack
+    void* reusealloc(size_t s);
+  };
+
+
+  /*
+   * Freelists
+   *
+   */
+
+  forceinline
+  FreeList::FreeList(void) {}
+
+  forceinline
+  FreeList::FreeList(FreeList* n)
+    : _next(n) {}
+
+  forceinline FreeList*
+  FreeList::next(void) const {
+    return _next;
+  }
+
+  forceinline void
+  FreeList::next(FreeList* n) {
+    _next = n;
+  }
+
+  forceinline size_t
+  MemoryManager::sz2i(size_t s) {
+    assert((s % (1 << Memory::Config::fl_unit_size)) == 0);
+    assert(s >= (Memory::Config::fl_size_min << Memory::Config::fl_unit_size));
+    assert(s <= (Memory::Config::fl_size_max << Memory::Config::fl_unit_size));
+    return (s >> Memory::Config::fl_unit_size) - Memory::Config::fl_size_min;
+  }
+
+  forceinline size_t
+  MemoryManager::i2sz(size_t i) {
+    return (i + Memory::Config::fl_size_min) << Memory::Config::fl_unit_size;
+  }
+
+
+  /*
+   * The active memory manager
+   *
+   */
+
+  forceinline size_t
+  MemoryManager::allocated(void) const {
+    return requested;
+  }
+
+  forceinline void*
+  MemoryManager::alloc(size_t sz) {
+    // Size must be a multiple of four
+    assert((sz > 0) && ((sz % 4) == 0));
+#if GECODE_MEMORY_ALIGNMENT == 8
+    // Performs alignment to 8 bytes
+    sz += sz & 4;
+#endif
+    // Check whether sufficient memory left
+    if (sz > lsz)
+      alloc_refill(sz);
+    lsz -= sz;
+    return start + lsz;
+  }
+
+  forceinline void
+  MemoryManager::alloc_fill(size_t sz) {
+    // Adjust current heap chunk size
+    if (((requested > Memory::Config::hcsz_inc_ratio*cur_hcsz) || 
+	 (sz > cur_hcsz)) && 
+	(cur_hcsz < Memory::Config::hcsz_max)) {
+      cur_hcsz <<= 1;
+    }
+
+    // Round size to next multiple of current heap chunk size
+    lsz = ((sz > cur_hcsz) ?
+	   (((size_t) (sz / cur_hcsz)) + 1) * cur_hcsz : cur_hcsz);
+
+    // Request as close as possible a chunk with lsz sizes free
+#if GECODE_MEMORY_ALIGNMENT == 4
+    requested += lsz;
+    HeapChunk* hc = reinterpret_cast<HeapChunk*>
+      (Memory::malloc(sizeof(HeapChunk)+lsz-sizeof(double)));
+    start = reinterpret_cast<char*>(&(hc->area[0]));
+#endif
+#if GECODE_MEMORY_ALIGNMENT == 8
+    // Leave room for adjusting alignment by 4
+    requested += lsz+sizeof(double);
+    HeapChunk* hc = reinterpret_cast<HeapChunk*>
+      (Memory::malloc(sizeof(HeapChunk)+lsz));
+    start = reinterpret_cast<char*>(&(hc->area[0]));
+    // This is four if it is only four aligned
+    size_t size_adj = reinterpret_cast<size_t>(start) & 4;
+    start += size_adj;
+    lsz += sizeof(double) - size_adj;
+#endif
+    // Link heap chunk
+    hc->next = cur_hc; cur_hc = hc;
+#ifdef GECODE_MEMORY_CHECK
+    for (char* c = start; c < (start+lsz); c++)
+      *c = 0;
+#endif
+  }
+
+  forceinline void
+  MemoryManager::init(void) {
+    cur_hc    = NULL;
+    requested = 0;
+    alloc_fill(cur_hcsz);
+    for (size_t i = Memory::Config::fl_size_max-Memory::Config::fl_size_min+1;
+	 i--; )
+      fl[i] = NULL;
+  }
+
+  forceinline
+  MemoryManager::MemoryManager(void)
+    : cur_hcsz(Memory::Config::hcsz_min), slack(NULL) {
+    init();
+  }
+
+  forceinline
+  MemoryManager::MemoryManager(MemoryManager& mm)
+    : cur_hcsz(mm.cur_hcsz), slack(NULL) {
+    if ((mm.requested < Memory::Config::hcsz_dec_ratio*mm.cur_hcsz) && 
+	(mm.cur_hcsz > Memory::Config::hcsz_min))
+      cur_hcsz >>= 1;
+    init();
+  }
+
+  forceinline
+  MemoryManager::~MemoryManager(void) {
+    // Release all allocated heap chunks
+    HeapChunk* hc = cur_hc;
+    do {
+      HeapChunk* t = hc; hc = hc->next;
+      Memory::free(t);
+    } while (hc != NULL);
+  }
+
+
+  /*
+   * Slack memory management
+   *
+   */
+  forceinline void
+  MemoryManager::reuse(void* p, size_t s) {
+#ifdef GECODE_MEMORY_CHECK
+    {
+      char* c = reinterpret_cast<char*>(p);
+      char* e = c + s;
+      while (c < e) {
+	*c = 0; c++;
+      }
+    }
+#endif
+    if (s >= (Memory::Config::fl_size_max<<Memory::Config::fl_unit_size)) {
+      ReuseChunk* rc = reinterpret_cast<ReuseChunk*>(p);
+      rc->next = slack;
+      rc->size = s;
+      slack = rc;
+    }
+  }
+
+  forceinline void
+  MemoryManager::reuse(ReuseChunk* rc) {
+#ifdef GECODE_MEMORY_CHECK
+    {
+      size_t s = rc->size;
+      char* c = reinterpret_cast<char*>(rc);
+      char* e = c + s;
+      while (c < e) {
+	*c = 0; c++;
+      }
+      rc->size = s;
+    }
+#endif
+    assert(rc->size >= 
+	   (Memory::Config::fl_size_max<<Memory::Config::fl_unit_size));
+    rc->next = slack;
+    slack = rc;
+  }
+
+
+  /*
+   * Freelist management
+   *
+   */
+
+  template <size_t s>
+  forceinline void*
+  MemoryManager::fl_alloc(void) {
+    size_t i = sz2i(s);
+    FreeList* f = fl[i];
+    if (f == NULL) {
+      fl_refill<s>(); f = fl[i];
+    }
+    FreeList* n = f->next();
+    fl[i] = n;
+    return f;
+  }
+
+  template <size_t s>
+  forceinline void
+  MemoryManager::fl_dispose(FreeList* f, FreeList* l) {
+    size_t i = sz2i(s);
+    l->next(fl[i]); fl[i] = f;
+  }
+
+#define GECODE_PTR2FL(p) (reinterpret_cast<FreeList*>(p))
+#define GECODE_PTR2CH(p) (reinterpret_cast<char*>(p))
+
+  template <size_t sz>
+  void
+  MemoryManager::fl_refill(void) {
+    // Try to acquire memory from slack
+    if (slack != NULL) {
+      ReuseChunk* m = slack; 
+      slack = NULL;
+      do {
+	char*  block = GECODE_PTR2CH(m);
+	size_t s     = m->size;
+	assert(s >= sz);
+	m = m->next;
+	fl[sz2i(sz)] = GECODE_PTR2FL(block);
+	while (s >= 2*sz) {
+	  GECODE_PTR2FL(block)->next(GECODE_PTR2FL(block+sz));
+	  block += sz;
+	  s     -= sz;
+	}
+	GECODE_PTR2FL(block)->next(NULL);
+      } while (m != NULL);
+    } else {
+      char* block = GECODE_PTR2CH(alloc(Memory::Config::fl_refill*sz));
+      fl[sz2i(sz)] = GECODE_PTR2FL(block);
+      int i = Memory::Config::fl_refill-2;
+      do {
+	GECODE_PTR2FL(block+i*sz)->next(GECODE_PTR2FL(block+(i+1)*sz));
+      } while (--i >= 0);
+      GECODE_PTR2FL(block+(Memory::Config::fl_refill-1)*sz)->next
+	(GECODE_PTR2FL(NULL));
+    }
+  }
+
+#undef GECODE_PTR2FL
+#undef GECODE_PTR2CH
+
+}
+
+// STATISTICS: kernel-core

@@ -1,0 +1,372 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2002
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { 
+
+  namespace Int {
+
+    /*
+     * Support functions for division
+     *
+     */
+    template <class Val, class UnsVal>
+    forceinline int
+    ScaleView<Val,UnsVal>::floor_div(double x) {
+      return static_cast<int>(floor(x / a));
+    }
+
+    template <class Val, class UnsVal>
+    forceinline int
+    ScaleView<Val,UnsVal>::ceil_div(double x) {
+      return static_cast<int>(ceil(x / a));
+    }
+
+    template <class Val, class UnsVal>
+    forceinline int
+    ScaleView<Val,UnsVal>::exact_div(double x, bool& exact) {
+      double xa = x / a;
+      if (ceil(xa) == xa) {
+	exact = true;  return static_cast<int>(xa);
+      } else {
+	exact = false; return 0;
+      }
+    }
+
+#if GECODE_INT_RND_TWDS_ZERO
+
+    template <class Val, class UnsVal>
+    forceinline int
+    ScaleView<Val,UnsVal>::floor_div(int x) {
+      return ((x >= 0) ? x : (x-a+1))/a;
+    }
+
+    template <class Val, class UnsVal>
+    forceinline int
+    ScaleView<Val,UnsVal>::ceil_div(int x) {
+      return ((x >= 0) ? (x+a-1) : x)/a;
+    }
+
+    template <class Val, class UnsVal>
+    forceinline int
+    ScaleView<Val,UnsVal>::exact_div(int x, bool& exact) {
+      int xa = x / a;
+      if (a * xa == x) {
+	exact = true;  return xa;
+      } else {
+	exact = false; return 0;
+      }
+    }
+
+#endif
+
+
+    /*
+     * Constructors and initialization
+     *
+     */
+    template <class Val, class UnsVal>
+    forceinline
+    ScaleView<Val,UnsVal>::ScaleView(void) {}
+
+    template <class Val, class UnsVal>
+    forceinline
+    ScaleView<Val,UnsVal>::ScaleView(int b, const IntView& x)
+      : DerivedViewBase<IntView>(x), a(b) {}
+
+    template <class Val, class UnsVal>
+    forceinline void
+    ScaleView<Val,UnsVal>::init(int b, const IntView& x) {
+      view=x; a=b;
+    }
+
+    template <class Val, class UnsVal>
+    forceinline int
+    ScaleView<Val,UnsVal>::scale(void) const {
+      return a;
+    }
+
+
+
+    /*
+     * Value access
+     *
+     */
+    template <class Val, class UnsVal>
+    forceinline Val
+    ScaleView<Val,UnsVal>::min(void) const {
+      Val c = view.min(); c *= a; return c;
+    }
+
+    template <class Val, class UnsVal>
+    forceinline Val
+    ScaleView<Val,UnsVal>::max(void) const {
+      Val c = view.max(); c *= a; return c;
+    }
+
+    template <class Val, class UnsVal>
+    forceinline Val
+    ScaleView<Val,UnsVal>::med(void) const {
+      Val c = view.med(); c *= a; return c;
+    }
+
+    template <class Val, class UnsVal>
+    forceinline Val
+    ScaleView<Val,UnsVal>::val(void) const {
+      Val c = view.val(); c *= a; return c;
+    }
+
+    template <class Val, class UnsVal>
+    forceinline UnsVal
+    ScaleView<Val,UnsVal>::size(void) const {
+      return static_cast<UnsVal>(view.size());
+    }
+
+    template <class Val, class UnsVal>
+    forceinline UnsVal
+    ScaleView<Val,UnsVal>::width(void) const {
+      UnsVal c = view.width(); c *= a; return c;
+    }
+
+    template <class Val, class UnsVal>
+    forceinline UnsVal
+    ScaleView<Val,UnsVal>::regret_min(void) const {
+      UnsVal c = view.regret_min(); c *= a; return c;
+    }
+
+    template <class Val, class UnsVal>
+    forceinline UnsVal
+    ScaleView<Val,UnsVal>::regret_max(void) const {
+      UnsVal c = view.regret_max(); c *= a; return c;
+    }
+
+
+    /*
+     * Domain tests
+     *
+     */
+    template <class Val, class UnsVal>
+    forceinline bool
+    ScaleView<Val,UnsVal>::range(void) const {
+      return view.range();
+    }
+
+    template <class Val, class UnsVal>
+    forceinline bool
+    ScaleView<Val,UnsVal>::assigned(void) const {
+      return view.assigned();
+    }
+
+    template <class Val, class UnsVal>
+    forceinline bool
+    ScaleView<Val,UnsVal>::in(Val n) const {
+      bool exact;
+      int nda = exact_div(n, exact);
+      return exact && view.in(nda);
+    }
+
+
+
+
+    /*
+     * Domain update by value
+     *
+     */
+    template <class Val, class UnsVal>
+    forceinline ModEvent
+    ScaleView<Val,UnsVal>::lq(Space* home, Val n) {
+      return (n >= max()) ? ME_INT_NONE : view.lq(home,floor_div(n));
+    }
+
+    template <class Val, class UnsVal>
+    forceinline ModEvent
+    ScaleView<Val,UnsVal>::le(Space* home, Val n) {
+      return (n > max()) ? ME_INT_NONE : view.le(home,floor_div(n));
+    }
+
+    template <class Val, class UnsVal>
+    forceinline ModEvent
+    ScaleView<Val,UnsVal>::gq(Space* home, Val n) {
+      return (n <= min()) ? ME_INT_NONE : view.gq(home,ceil_div(n));
+    }
+    template <class Val, class UnsVal>
+    forceinline ModEvent
+    ScaleView<Val,UnsVal>::gr(Space* home, Val n) {
+      return (n < min()) ? ME_INT_NONE : view.gr(home,ceil_div(n));
+    }
+
+    template <class Val, class UnsVal>
+    forceinline ModEvent
+    ScaleView<Val,UnsVal>::nq(Space* home, Val n) {
+      bool exact;
+      int nda = exact_div(n,exact);
+      return exact ? view.nq(home,nda) :  ME_INT_NONE;
+    }
+
+    template <class Val, class UnsVal>
+    forceinline ModEvent
+    ScaleView<Val,UnsVal>::eq(Space* home, Val n) {
+      bool exact;
+      int nda = exact_div(n,exact);
+      return exact ? view.eq(home,nda) : ME_INT_FAILED;
+    }
+
+
+    /*
+     * Propagator modification events
+     *
+     */
+    template <class Val, class UnsVal>
+    forceinline ModEvent
+    ScaleView<Val,UnsVal>::pme(const Propagator* p) {
+      return IntView::pme(p);
+    }
+
+    template <class Val, class UnsVal>
+    forceinline PropModEvent
+    ScaleView<Val,UnsVal>::pme(ModEvent me) {
+      return IntView::pme(me);
+    }
+
+
+
+    /*
+     * Dependencies
+     *
+     */
+    template <class Val, class UnsVal>
+    forceinline void
+    ScaleView<Val,UnsVal>::subscribe(Space* home, Propagator* p, PropCond pc) {
+      view.subscribe(home,p,pc);
+    }
+    template <class Val, class UnsVal>
+    forceinline void
+    ScaleView<Val,UnsVal>::cancel(Propagator* p, PropCond pc) {
+      view.cancel(p,pc);
+    }
+
+
+    /*
+     * Cloning
+     *
+     */
+    template <class Val, class UnsVal>
+    forceinline void
+    ScaleView<Val,UnsVal>::update(Space* home, bool share,
+				  ScaleView<Val,UnsVal>& x) {
+      a=x.a; view.update(home,share,x.view);
+    }
+
+
+    /**
+     * \brief %Range iterator for integer-precision scale integer views
+     * \ingroup TaskActorIntView
+     */
+    template <>
+    class ViewRanges<IntScaleView>
+      : public Iter::Ranges::ScaleUp<int,unsigned int,ViewRanges<IntView> > {
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      ViewRanges(void);
+      /// Initialize with ranges for view \a x
+      ViewRanges(const IntScaleView& x);
+      /// Initialize with ranges for view \a x
+      void init(const IntScaleView& x);
+      //@}
+    };
+
+    forceinline
+    ViewRanges<IntScaleView>::ViewRanges(void) {}
+    forceinline
+    ViewRanges<IntScaleView>::ViewRanges(const IntScaleView& x) {
+      ViewRanges<IntView> xi(x.base());
+      Iter::Ranges::ScaleUp<int,unsigned int,ViewRanges<IntView> >::init
+	(xi,x.scale());
+    }
+    forceinline void
+    ViewRanges<IntScaleView>::init(const IntScaleView& x) {
+      ViewRanges<IntView> xi(x.base());
+      Iter::Ranges::ScaleUp<int,unsigned int,ViewRanges<IntView> >::init
+	(xi,x.scale());
+    }
+
+
+    /**
+     * \brief %Range iterator for double-precision scale integer views
+     * \ingroup TaskActorIntView
+     */
+    template <>
+    class ViewRanges<DoubleScaleView>
+      : public Iter::Ranges::ScaleUp<double,double,ViewRanges<IntView> > {
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      ViewRanges(void);
+      /// Initialize with ranges for view \a x
+      ViewRanges(const DoubleScaleView& x);
+      /// Initialize with ranges for view \a x
+      void init(const DoubleScaleView& x);
+      //@}
+    };
+
+    forceinline
+    ViewRanges<DoubleScaleView>::ViewRanges(void) {}
+    forceinline
+    ViewRanges<DoubleScaleView>::ViewRanges(const DoubleScaleView& x) {
+      ViewRanges<IntView> xi(x.base());
+      Iter::Ranges::ScaleUp<double,double,ViewRanges<IntView> >::init
+	(xi,x.scale());
+    }
+    forceinline void
+    ViewRanges<DoubleScaleView>::init(const DoubleScaleView& x) {
+      ViewRanges<IntView> xi(x.base());
+      Iter::Ranges::ScaleUp<double,double,ViewRanges<IntView> >::init
+	(xi,x.scale());
+    }
+
+  }
+
+
+
+  /*
+   * View comparison
+   *
+   */
+  template <class Val, class UnsVal>
+  forceinline bool
+  same(const Int::ScaleView<Val,UnsVal>& x, 
+       const Int::ScaleView<Val,UnsVal>& y) {
+    return same(x.base(),y.base()) && (x.scale() == y.scale());
+  }
+  template <class Val, class UnsVal>
+  forceinline bool
+  before(const Int::ScaleView<Val,UnsVal>& x, 
+	 const Int::ScaleView<Val,UnsVal>& y) {
+    return before(x.base(),y.base())
+      || (same(x.base(),y.base()) && (x.scale() < y.scale()));
+  }
+
+}
+
+// STATISTICS: int-var
+

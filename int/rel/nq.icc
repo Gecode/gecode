@@ -1,0 +1,80 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Rel {
+
+  /*
+   * Disequality
+   *
+   */
+
+  template <class View>
+  forceinline
+  Nq<View>::Nq(Space* home, View x0, View x1)
+    : BinaryPropagator<View,PC_INT_VAL>(home,x0,x1) {}
+
+  template <class View>
+  ExecStatus
+  Nq<View>::post(Space* home, View x0, View x1){
+    if (x0.assigned()) {
+      GECODE_ME_CHECK(x1.nq(home,x0.val()));
+    } else if (x1.assigned()) {
+      GECODE_ME_CHECK(x0.nq(home,x1.val()));
+    } else if (same(x0,x1)) {
+      return ES_FAILED;
+    } else {
+      (void) new (home) Nq<View>(home,x0,x1);
+    }
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline
+  Nq<View>::Nq(Space* home, bool share, Nq<View>& p)
+    : BinaryPropagator<View,PC_INT_VAL>(home,share,p) {}
+
+  template <class View>
+  Actor*
+  Nq<View>::copy(Space* home, bool share) {
+    return new (home) Nq<View>(home,share,*this);
+  }
+
+  template <class View>
+  PropCost
+  Nq<View>::cost(void) const {
+    return PC_UNARY_LO;
+  }
+
+  template <class View>
+  ExecStatus
+  Nq<View>::propagate(Space* home) {
+    if (x0.assigned()) {
+      GECODE_ME_CHECK(x1.nq(home,x0.val()));
+    } else {
+      GECODE_ME_CHECK(x0.nq(home,x1.val()));
+    }
+    return ES_SUBSUMED;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

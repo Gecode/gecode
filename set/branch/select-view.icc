@@ -1,0 +1,112 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Contributing authors:
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *     Gabor Szokoli, 2004
+ *
+ *  Last modified:
+ *     $Date: 2005-08-05 09:40:23 +0200 (Fri, 05 Aug 2005) $ by $Author: tack $
+ *     $Revision: 2138 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set { namespace Branch {
+
+  forceinline ViewSelStatus
+  ByNone::init(SetView) {
+    return VSS_COMMIT;
+  }
+  forceinline ViewSelStatus
+  ByNone::select(SetView) {
+    assert(false);
+    return VSS_NONE;
+  }
+
+  forceinline ViewSelStatus
+  ByMinCard::init(SetView x) { 
+    minCard = x.unknownSize();
+    return (minCard == 1) ? VSS_COMMIT : VSS_SELECT;
+  }
+  forceinline ViewSelStatus
+  ByMinCard::select(SetView x) {
+    unsigned int us = x.unknownSize();
+    if (us < minCard) {
+      minCard = us;
+      return (minCard == 1) ? VSS_COMMIT : VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+
+  forceinline ViewSelStatus
+  ByMaxCard::init(SetView x) { 
+    maxCard = x.unknownSize();
+    return VSS_SELECT;
+  }
+  forceinline ViewSelStatus
+  ByMaxCard::select(SetView x) {
+    unsigned int us = x.unknownSize();
+    if (us > maxCard) {
+      maxCard = us; return VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+
+  forceinline ViewSelStatus
+  ByMinUnknown::init(SetView x) {
+    UnknownRanges<SetView> unknown(x);
+    minUnknown = unknown.min();
+    return VSS_SELECT;
+  }
+  forceinline ViewSelStatus
+  ByMinUnknown::select(SetView x) {
+    UnknownRanges<SetView> unknown(x);
+    int um = unknown.min();
+    if (um < minUnknown) {
+      minUnknown = um; return VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+
+  forceinline ViewSelStatus
+  ByMaxUnknown::init (SetView x) {
+    UnknownRanges<SetView> unknown(x);
+    do {
+      maxUnknown = unknown.max();
+      ++unknown;
+    } while(unknown());
+    return VSS_SELECT;
+  }
+  forceinline ViewSelStatus
+  ByMaxUnknown::select(SetView x) {
+    UnknownRanges<SetView> unknown(x);
+    int um = 0;
+    assert(unknown());
+    do {
+      um = unknown.max();
+      ++unknown;
+    } while(unknown());
+    if (um > maxUnknown) {
+      maxUnknown = um; return VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+
+}}}
+
+// STATISTICS: set-branch
+

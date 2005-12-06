@@ -1,0 +1,222 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *     Guido Tack, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  /**
+   * \defgroup TaskBranchViewVal Generic branching based on view and value selection
+   * 
+   * Implements view-based branching for an array of views and value.
+   * \ingroup TaskActor
+   */
+
+  //@{
+  /// Status returned by member functions of view selection class
+  enum ViewSelStatus {
+    VSS_NONE,   ///< Current view is not better
+    VSS_SELECT, ///< Current view is better
+    VSS_COMMIT  ///< Current view is known to be a best one
+  };
+
+  /**
+   * \brief Generic branching
+   *
+   * Implements view-based branching for an array of views (of type
+   * \a View) and value (of type \a Val). The behaviour is defined by
+   * the class \a ViewSel (which view is selected for branching)
+   * and the class \a ValSel (which value is selected for branching).
+   *
+   * The class \a ViewSel must implement two member functions:
+   *  - Gecode::ViewSelStatus init(\a View \a x)
+   *    Initializes view selection with the \a View \x. If \a x
+   *    is known to be a best one, VSS_COMMIT should be returned.
+   *    Otherwise, either VSS_NONE or VSS_SELECT should be returned.
+   *  - Gecode::ViewSelStatus select(\a View \a x)
+   *    If \a x is not better that the previously selected view, 
+   *    return VSS_NONE. If it is better, return VSS_SELECT. If
+   *    it is a best view, return VSS_COMMIT.
+   *
+   * The class \a VarSel must implement two member functions:
+   *  - \a Val val(View)
+   *    returns the value to branch with.
+   *  - Gecode::ModEvent tell(Space*, unsigned int \a a, \a View \a x, \a Val \a n)
+   *    performs a tell for alternative \a a on \a x with value \a n.
+   *
+   * For examples, see \link int/branch.hh integer branchings \endlink.
+   */
+  template <class View, class Val, class ViewSel, class ValSel>
+  class ViewValBranching : public Branching {
+  protected:
+    ViewArray<View> x; ///< Views to branch on
+    int start;         ///< Unassigned variables start at x[start]
+    int next;          ///< Next variable to branch is x[next]
+    /// Constructor for cloning \a b
+    ViewValBranching(Space* home, bool share, ViewValBranching& b);
+  public:
+    /// Constructor for creation
+    ViewValBranching(Space* home, ViewArray<View>& x);
+    /// Perform branching (selects view)
+    virtual unsigned int   branch(void);
+    /// Return branching description (of type Gecode::PosValDesc)
+    virtual BranchingDesc* description(void);
+    /// Perform commit for alternative \a a and branching description \a d
+    virtual ExecStatus commit(Space* home, unsigned int a, BranchingDesc* d);
+    /// Perform cloning
+    virtual Actor* copy(Space* home, bool share);
+  };
+
+  /**
+   * \brief %Branching descriptions storing position and value
+   *
+   */
+  template <class Val>
+  class PosValDesc : public BranchingDesc {
+  protected:
+    const int _pos;
+    const Val _val;
+  public:
+    /// Initialize decsription
+    PosValDesc(Branching*,int,Val);
+    /// Return position in array
+    int pos(void) const;
+    /// Return value to branch with
+    Val val(void) const;
+    /// Report size occupied
+    virtual size_t size(void) const;
+  };
+
+  //@}
+
+
+
+
+
+
+  /*
+   * Branching descriptions with position and value
+   *
+   */
+
+  template <class Val>
+  forceinline
+  PosValDesc<Val>::PosValDesc(Branching* b, int pos, Val val)
+    : BranchingDesc(b), _pos(pos), _val(val) {}
+
+  template <class Val>
+  forceinline int
+  PosValDesc<Val>::pos(void) const {
+    return _pos;
+  }
+
+  template <class Val>
+  forceinline Val
+  PosValDesc<Val>::val(void) const {
+    return _val;
+  }
+
+  template <class Val>
+  size_t
+  PosValDesc<Val>::size(void) const {
+    return sizeof(PosValDesc<Val>);
+  }
+
+
+  /*
+   * Generic branching based on variable/value selection
+   *
+   */
+
+  template <class View, class Val, class ViewSel, class ValSel>
+  forceinline
+  ViewValBranching<View,Val,ViewSel,ValSel>::ViewValBranching
+  (Space* home, ViewArray<View>& x0)
+    : Branching(home), x(x0), start(0) {}
+
+
+  template <class View, class Val, class ViewSel, class ValSel>
+  forceinline
+  ViewValBranching<View,Val,ViewSel,ValSel>::ViewValBranching
+  (Space* home, bool share, ViewValBranching& b)
+    : Branching(home,share,b), start(b.start), next(b.next) {
+    x.update(home,share,b.x);
+  }
+
+  template <class View, class Val, class ViewSel, class ValSel>
+  Actor*
+  ViewValBranching<View,Val,ViewSel,ValSel>::copy(Space* home, bool share) {
+    return new (home)
+      ViewValBranching<View,Val,ViewSel,ValSel>(home,share,*this);
+  }
+
+  template <class View, class Val, class ViewSel, class ValSel>
+  unsigned int
+  ViewValBranching<View,Val,ViewSel,ValSel>::branch(void) {
+    for (int i=start; i < x.size(); i++)
+      if (!x[i].assigned()) {
+	start = i;
+	int b = i++;
+	ViewSel vs;
+	if (vs.init(x[b]) == VSS_COMMIT)
+	  goto commit;
+	for (; i < x.size(); i++)
+	  if (!x[i].assigned()) {
+	    ViewSelStatus vss = vs.select(x[i]);
+	    if (vss != VSS_NONE) {
+	      b = i;
+	      if (vss == VSS_COMMIT)
+		goto commit;
+	    }
+	  }
+      commit:
+	next = b;
+	return 2;
+      }
+    return 0;
+  }
+
+  template <class View, class Val, class ViewSel, class ValSel>
+  BranchingDesc*
+  ViewValBranching<View,Val,ViewSel,ValSel>::description(void) {
+    ValSel vl;
+    return new PosValDesc<Val>(this,next,vl.val(x[next]));
+  }
+
+  template <class View, class Val, class ViewSel, class ValSel>
+  ExecStatus
+  ViewValBranching<View,Val,ViewSel,ValSel>::commit
+  (Space* home, unsigned int a, BranchingDesc* d) {
+    PosValDesc<Val>* pvd = static_cast<PosValDesc<Val>*>(d);
+    ValSel vs;
+    int p;
+    Val v;
+    if (pvd == NULL) {
+      p = next; v = vs.val(x[p]);
+    } else {
+      p = pvd->pos(); v = pvd->val();
+    }
+    return me_failed(vs.tell(home,a,x[p],v)) ? ES_FAILED : ES_OK;
+  }
+
+}
+
+// STATISTICS: kernel-other

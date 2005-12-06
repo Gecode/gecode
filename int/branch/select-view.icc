@@ -1,0 +1,219 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2002
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Branch {
+
+  // Select first variable
+  forceinline ViewSelStatus
+  ByNone::init(IntView) {
+    return VSS_COMMIT;
+  }
+  forceinline ViewSelStatus
+  ByNone::select(IntView) {
+    assert(false);
+    return VSS_NONE;
+  }
+
+  // Select variable with smallest min
+  forceinline ViewSelStatus
+  ByMinMin::init(IntView x) {
+    min = x.min();
+    return VSS_SELECT;
+  }
+  forceinline ViewSelStatus
+  ByMinMin::select(IntView x) {
+    if (x.min() < min) {
+      min = x.min(); return VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+
+  // Select variable with largest min
+  forceinline ViewSelStatus
+  ByMinMax::init(IntView x) { 
+    min = x.min();
+    return VSS_SELECT;
+  }
+  forceinline ViewSelStatus
+  ByMinMax::select(IntView x) {
+    if (x.min() > min) {
+      min = x.min(); return VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+
+  // Select variable with smallest max
+  forceinline ViewSelStatus
+  ByMaxMin::init(IntView x) { 
+    max = x.max();
+    return VSS_SELECT;
+  }
+  forceinline ViewSelStatus
+  ByMaxMin::select(IntView x) {
+    if (x.max() < max) {
+      max = x.max(); return VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+
+  // Select variable with largest max
+  forceinline ViewSelStatus
+  ByMaxMax::init(IntView x) {
+    max = x.max();
+    return VSS_SELECT;
+  }
+  forceinline ViewSelStatus
+  ByMaxMax::select(IntView x) {
+    if (x.max() > max) {
+      max = x.max(); return VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+
+  // Select variable with smallest size
+  forceinline ViewSelStatus
+  BySizeMin::init(IntView x) { 
+    size = x.size();
+    return (size == 2) ? VSS_COMMIT : VSS_SELECT;
+  }
+  forceinline ViewSelStatus
+  BySizeMin::select(IntView x) {
+    if (x.size() < size) {
+      size = x.size(); 
+      return (size == 2) ? VSS_COMMIT : VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+
+  // Select variable with largest size
+  forceinline ViewSelStatus
+  BySizeMax::init(IntView x) { 
+    size = x.size();
+    return VSS_SELECT;
+  }
+  forceinline ViewSelStatus
+  BySizeMax::select(IntView x) {
+    if (x.size() > size) {
+      size = x.size(); return VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+
+  // Select variable with smallest degree (and smallest size in case of ties)
+  forceinline ViewSelStatus
+  ByDegreeMin::init(IntView x) { 
+    degree = x.degree(); size = x.size();
+    return VSS_SELECT;
+  }
+  forceinline ViewSelStatus
+  ByDegreeMin::select(IntView x) {
+    if (x.degree() < degree) {
+      degree = x.degree();
+      size   = x.size();
+      return VSS_SELECT;
+    } else if ((x.degree() == degree) && (x.size() < size)) {
+      size = x.size();
+      return VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+
+  // Select variable with smallest degree (and smallest size in case of ties)
+  forceinline ViewSelStatus
+  ByDegreeMax::init(IntView x) { 
+    degree = x.degree(); size = x.size();
+    return VSS_SELECT;
+  }
+  forceinline ViewSelStatus
+  ByDegreeMax::select(IntView x) {
+    if (x.degree() > degree) {
+      degree = x.degree();
+      size   = x.size();
+      return VSS_SELECT;
+    } else if ((x.degree() == degree) && (x.size() < size)) {
+      size = x.size();
+      return VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+
+  // Select variable with smallest min-regret
+  forceinline ViewSelStatus
+  ByRegretMinMin::init(IntView x) { 
+    regret = x.regret_min();
+    return (regret == 1) ? VSS_COMMIT : VSS_SELECT;
+  }
+  forceinline ViewSelStatus
+  ByRegretMinMin::select(IntView x) {
+    if (x.regret_min() < regret) {
+      regret = x.regret_min();
+      return (regret == 1) ? VSS_COMMIT : VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+
+  // Select variable with largest min-regret
+  forceinline ViewSelStatus
+  ByRegretMinMax::init(IntView x) { 
+    regret = x.regret_min();
+    return VSS_SELECT;
+  }
+  forceinline ViewSelStatus
+  ByRegretMinMax::select(IntView x) {
+    if (x.regret_min() > regret) {
+      regret = x.regret_min(); return VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+
+  // Select variable with smallest max-regret
+  forceinline ViewSelStatus
+  ByRegretMaxMin::init(IntView x) { 
+    regret = x.regret_max();
+    return (regret == 1) ? VSS_COMMIT : VSS_SELECT;
+  }
+  forceinline ViewSelStatus
+  ByRegretMaxMin::select(IntView x) {
+    if (x.regret_max() < regret) {
+      regret = x.regret_max();
+      return (regret == 1) ? VSS_COMMIT : VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+
+  // Select variable with smallest min-regret
+  forceinline ViewSelStatus
+  ByRegretMaxMax::init(IntView x) { 
+    regret = x.regret_max();
+    return VSS_SELECT;
+  }
+  forceinline ViewSelStatus
+  ByRegretMaxMax::select(IntView x) {
+    if (x.regret_max() > regret) {
+      regret = x.regret_max(); return VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+
+}}}
+
+// STATISTICS: int-branch
+

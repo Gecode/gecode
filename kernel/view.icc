@@ -1,0 +1,568 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2005
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#include <iostream>
+
+namespace Gecode {
+
+  /**
+   * \brief Base-class for constant views
+   * \ingroup TaskVarView
+   */
+  class ConstantViewBase {
+  public:
+    /// \name Generic view information
+    //@{
+    /// Test whether view has been modified during propagation
+    bool modified(void) const;
+    /// Return degree (number of subscribed propagators)
+    unsigned int degree(void) const;
+    /// Return whether this view is derived from a VariableViewBase
+    static bool varderived(void);
+    /// Return dummy variable implementation of view
+    VarBase* variable(void) const;
+    //@}
+
+  private:
+    static void* operator new(size_t);
+    static void operator delete(void*);
+  };
+
+
+
+  /**
+   * \brief Base-class for variable views
+   * \ingroup TaskVarView
+   */
+  template <class Var>
+  class VariableViewBase {
+  protected:
+    /// Pointer to variable implementation
+    Var* var;
+    /// Default constructor
+    VariableViewBase(void);
+    /// Initialize with variable implementation x
+    VariableViewBase(Var* x);
+
+  public:
+    /// \name Generic view information
+    //@{
+    /// Return whether this view is derived from a VariableViewBase
+    static bool varderived(void);
+    /// Return variable implementation of view
+    Var* variable(void) const;
+    /// Test whether view has been modified during propagation
+    bool modified(void) const;
+    /// Return degree (number of subscribed propagators)
+    unsigned int degree(void) const;
+    //@}
+
+    /// \name Propagator modification events
+    //@{
+    /// Return modification event of propagator \a p for view
+    static ModEvent     pme(const Propagator* p);
+    /// Translate modification event \a me to propagator modification event for view
+    static PropModEvent pme(ModEvent me);
+    /// Combine modifications events \a me1 and \a me2
+    static ModEvent     combine(ModEvent me1, ModEvent me2);
+    //@}
+
+    /// \name Dependencies
+    //@{
+    /// Subscribe propagator \a p with propagation condition \a pc to view
+    void subscribe(Space*, Propagator* p, PropCond pc);
+    /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+    void cancel(Propagator* p, PropCond pc);
+    //@}
+  private:
+    static void* operator new(size_t);
+    static void operator delete(void*);
+  };
+
+  /** \name View comparison
+   *  \relates VariableViewBase
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  template <class Var>
+  bool same(const VariableViewBase<Var>& x, const VariableViewBase<Var>& y);
+  /// Test whether view \a x comes before \a y (arbitrary order)
+  template <class Var>
+  bool before(const VariableViewBase<Var>& x, const VariableViewBase<Var>& y);
+  //@}
+
+
+
+  /**
+   * \brief Traits class for views and variable implementations
+   *
+   * Each view must specialize this traits class and add a \code typedef for
+   * the variable implementation belonging to this view.
+   * \ingroup TaskVarView
+   */
+  template <class View>
+  class ViewVarTraits {};
+
+  /**
+   * \brief Base-class for derived views
+   * \ingroup TaskVarView
+   */
+  template <class View>
+  class DerivedViewBase {
+  protected:
+    /// View from which this view is derived
+    View view;
+    /// Default constructor
+    DerivedViewBase(void);
+    /// Initialize with view x
+    DerivedViewBase(const View& x);
+
+  public:
+    /// The variable type belonging to the \a View
+    typedef typename ViewVarTraits<View>::Var Var;
+
+    /// \name Generic view information
+    //@{
+    /// Return whether this view is derived from a VariableViewBase
+    static bool varderived(void);
+    /// Return variable implementation of view
+    Var* variable(void) const;
+    /// Return view from which this view is derived
+    View base(void) const;
+    /// Test whether view been modified during propagation
+    bool modified(void) const;
+    /// Return degree (number of subscribed propagators)
+    unsigned int degree(void) const;
+    //@}
+
+  private:
+    static void* operator new(size_t);
+    static void operator delete(void*);
+  };
+
+
+  /**
+   * \brief Test whether views share same variable
+   * \ingroup TaskVarView
+   */
+  bool shared(const ConstantViewBase&, const ConstantViewBase&);
+  /**
+   * \brief Test whether views share same variable
+   * \ingroup TaskVarView
+   */
+  template <class Var>
+  bool shared(const VariableViewBase<Var>&, const ConstantViewBase&);
+  /**
+   * \brief Test whether views share same variable
+   * \ingroup TaskVarView
+   */
+  template <class ViewA>
+  bool shared(const DerivedViewBase<ViewA>&, const ConstantViewBase&);
+  /**
+   * \brief Test whether views share same variable
+   * \ingroup TaskVarView
+   */
+  template <class Var>
+  bool shared(const ConstantViewBase&, const VariableViewBase<Var>&);
+  /**
+   * \brief Test whether views share same variable
+   * \ingroup TaskVarView
+   */
+  template <class ViewA>
+  bool shared(const ConstantViewBase&, const DerivedViewBase<ViewA>&);
+  /**
+   * \brief Test whether views share same variable
+   * \ingroup TaskVarView
+   */
+  template <class VarA, class VarB>
+  bool shared(const VariableViewBase<VarA>&, 
+	      const VariableViewBase<VarB>&);
+  /**
+   * \brief Test whether views share same variable
+   * \ingroup TaskVarView
+   */
+  template <class VarA, class ViewB>
+  bool shared(const VariableViewBase<VarA>&, 
+	      const DerivedViewBase<ViewB>&);
+  /**
+   * \brief Test whether views share same variable
+   * \ingroup TaskVarView
+   */
+  template <class ViewA, class VarB>
+  bool shared(const DerivedViewBase<ViewA>&, 
+	      const VariableViewBase<VarB>&);
+  /**
+   * \brief Test whether views share same variable
+   * \ingroup TaskVarView
+   */
+  template <class ViewA, class ViewB>
+  bool shared(const DerivedViewBase<ViewA>&, 
+	      const DerivedViewBase<ViewB>&);
+
+
+  /**
+   * \brief Tuple of views
+   *
+   * Note that when tuples of views are stored inside
+   * ViewArrays, then operations that check for sharing or equality
+   * on these arrays do not work like expected.
+   * \ingroup TaskVarView
+   */
+  template <class View, unsigned int n>
+  class ViewTuple {
+  private:
+    /// The views
+    View x[n];
+  public:
+    /// \name Initialization
+    //@{
+    /// Default constructor
+    ViewTuple(void);
+    //@}
+     
+    /// \name Component access
+    //@{
+    /// Return \a i-th component of tuple
+    View& operator[](unsigned int i);
+    /// Return \a i-th component of tuple
+    const View& operator[](unsigned int i) const;
+    //@}
+
+    /// \name Dependencies
+    //@{
+    /// Subscribe propagator \a p with propagation condition \a pc to all views
+    void subscribe(Space* home, Propagator* p, PropCond pc);
+    /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+    void cancel(Propagator* p, PropCond pc);
+    //@}
+
+    /// \name Cloning
+    //@{
+    /// Update this view to be a clone of view tuple \a xs
+    void update(Space* home, bool share, ViewTuple& xs);
+    //@}
+
+  private:
+    static void* operator new(size_t);
+    static void operator delete(void*);
+  };
+
+  /**
+   * \name View comparison
+   * \relates ViewTuple
+   */
+  //@{
+  /// Test whether tuples \a x and \a y are the same
+  template <class View, unsigned int n>
+  bool same(const ViewTuple<View,n>& x, const ViewTuple<View,n>& y);
+  /// Test whether tuple \a x is before \a y (arbitrary order)
+  template <class View, unsigned int n>
+  bool before(const ViewTuple<View,n>& x, const ViewTuple<View,n>& y);
+  //@}
+
+}
+
+/**
+ * \brief Print tuple of views \a xs
+ * \relates ViewTuple
+ */
+template <class View, unsigned int n>
+std::ostream&
+operator<<(std::ostream& os, const Gecode::ViewTuple<View,n>& xy);
+  
+
+namespace Gecode {  
+
+  /*
+   * Constant view: has no variable implementation
+   *
+   */
+  forceinline bool
+  ConstantViewBase::modified(void) const {
+    return true;
+  }
+  forceinline unsigned int
+  ConstantViewBase::degree(void) const {
+    return 0;
+  }
+  forceinline bool
+  ConstantViewBase::varderived(void) {
+    return false;
+  }
+  forceinline VarBase*
+  ConstantViewBase::variable(void) const {
+    return NULL;
+  }
+
+
+  /*
+   * Variable view: contains a pointer to a variable implementation
+   *
+   */
+  template <class Var>
+  forceinline
+  VariableViewBase<Var>::VariableViewBase(void) {}
+  template <class Var>
+  forceinline
+  VariableViewBase<Var>::VariableViewBase(Var* x)
+    : var(x) {}
+  template <class Var>
+  forceinline bool
+  VariableViewBase<Var>::varderived(void) {
+    return true;
+  }
+  template <class Var>
+  forceinline Var*
+  VariableViewBase<Var>::variable(void) const {
+    return var;
+  }
+  template <class Var>
+  forceinline bool
+  VariableViewBase<Var>::modified(void) const {
+    return var->modified();
+  }
+  template <class Var>
+  forceinline unsigned int
+  VariableViewBase<Var>::degree(void) const {
+    return var->degree();
+  }
+  template <class Var>
+  forceinline void
+  VariableViewBase<Var>::subscribe(Space* home, Propagator* p, PropCond pc) {
+    var->subscribe(home,p,pc);
+  }
+  template <class Var>
+  forceinline void
+  VariableViewBase<Var>::cancel(Propagator* p, PropCond pc) {
+    var->cancel(p,pc);
+  }
+  template <class Var>
+  forceinline ModEvent
+  VariableViewBase<Var>::pme(const Propagator* p) {
+    return Var::pme(p);
+  }
+  template <class Var>
+  forceinline PropModEvent
+  VariableViewBase<Var>::pme(ModEvent me) {
+    return Var::pme(me);
+  }
+  template <class Var>
+  forceinline ModEvent
+  VariableViewBase<Var>::combine(ModEvent me1, ModEvent me2) {
+    return Var::combine(me1,me2);
+  }
+
+  template <class Var>
+  forceinline bool 
+  same(const VariableViewBase<Var>& x, const VariableViewBase<Var>& y) {
+    return x.variable() == y.variable();
+  }
+  template <class Var>
+  forceinline bool 
+  before(const VariableViewBase<Var>& x, const VariableViewBase<Var>& y) {
+    return x.variable() < y.variable();    
+  }
+
+  /*
+   * Derived view: contain the base view from which they are derived
+   *
+   */
+
+  template <class View>
+  forceinline
+  DerivedViewBase<View>::DerivedViewBase(void) {}
+
+  template <class View>
+  forceinline
+  DerivedViewBase<View>::DerivedViewBase(const View& x)
+    : view(x) {}
+
+  template <class View>
+  forceinline bool
+  DerivedViewBase<View>::varderived(void) {
+    return View::varderived();
+  }
+
+  template <class View>
+  forceinline typename ViewVarTraits<View>::Var*
+  DerivedViewBase<View>::variable(void) const {
+    return view.variable();
+  }
+
+  template <class View>
+  forceinline View
+  DerivedViewBase<View>::base(void) const {
+    return view;
+  }
+
+  template <class View>
+  forceinline bool
+  DerivedViewBase<View>::modified(void) const {
+    return view.modified();
+  }
+
+  template <class View>
+  forceinline unsigned int
+  DerivedViewBase<View>::degree(void) const {
+    return view.degree();
+  }
+
+
+  /*
+   * Testing whether two views share the same variable
+   *
+   */
+
+  forceinline bool
+  shared(const ConstantViewBase&, const ConstantViewBase&) {
+    return false;
+  }
+
+  template <class Var>
+  forceinline bool
+  shared(const VariableViewBase<Var>&, const ConstantViewBase&) {
+    return false;
+  }
+
+  template <class View>
+  forceinline bool
+  shared(const DerivedViewBase<View>&, const ConstantViewBase&) {
+    return false;
+  }
+
+  template <class Var>
+  forceinline bool
+  shared(const ConstantViewBase&, const VariableViewBase<Var>&) {
+    return false;
+  }
+
+  template <class View>
+  forceinline bool
+  shared(const ConstantViewBase&, const DerivedViewBase<View>&) {
+    return false;
+  }
+
+  template <class VarA, class VarB>
+  forceinline bool
+  shared(const VariableViewBase<VarA>& x, 
+	 const VariableViewBase<VarB>& y) {
+    return (static_cast<VarBase*>(x.variable()) ==
+	    static_cast<VarBase*>(y.variable()));
+  }
+  template <class VarA, class ViewB>
+  forceinline bool
+  shared(const VariableViewBase<VarA>& x, 
+	 const DerivedViewBase<ViewB>& y) {
+    return (ViewB::varderived() &&
+	    static_cast<VarBase*>(x.variable()) ==
+	    static_cast<VarBase*>(y.variable()));
+  }
+  template <class ViewA, class VarB>
+  forceinline bool
+  shared(const DerivedViewBase<ViewA>& x, 
+	 const VariableViewBase<VarB>& y) {
+    return (ViewA::varderived() &&
+	    static_cast<VarBase*>(x.variable()) ==
+	    static_cast<VarBase*>(y.variable()));
+  }
+  template <class ViewA, class ViewB>
+  forceinline bool
+  shared(const DerivedViewBase<ViewA>& x, 
+	 const DerivedViewBase<ViewB>& y) {
+    return (ViewA::varderived() && ViewB::varderived() &&
+	    static_cast<VarBase*>(x.variable()) ==
+	    static_cast<VarBase*>(y.variable()));
+  }
+
+
+  /*
+   * Tuple of views
+   *
+   */
+  template <class View, unsigned int n>
+  forceinline
+  ViewTuple<View,n>::ViewTuple(void) {}
+
+  template <class View, unsigned int n>
+  forceinline const View&
+  ViewTuple<View,n>::operator[](unsigned int i) const {
+    assert((i>=0)&&(i<n));
+    return x[i];
+  }
+  template <class View, unsigned int n>
+  forceinline View&
+  ViewTuple<View,n>::operator[](unsigned int i) {
+    assert((i>=0)&&(i<n));
+    return x[i];
+  }
+
+  template <class View, unsigned int n>
+  forceinline void
+  ViewTuple<View,n>::subscribe(Space* home, Propagator* p, PropCond pc) {
+    for (unsigned int i=0; i<n; i++)
+      x[i].subscribe(home,p,pc);
+  }
+  template <class View, unsigned int n>
+  forceinline void
+  ViewTuple<View,n>::cancel(Propagator* p, PropCond pc) {
+    for (unsigned int i=0; i<n; i++)
+      x[i].cancel(p,pc);
+  }
+  template <class View, unsigned int n>
+  forceinline void
+  ViewTuple<View,n>::update(Space* home, bool share, ViewTuple& xs) {
+    for (unsigned int i=0; i<n; i++)
+      x[i].update(home,share,xs.x[i]);
+  }
+
+  template <class View, unsigned int n>
+  forceinline bool
+  same(const ViewTuple<View,n>& x, const ViewTuple<View,n>& y) {
+    for (unsigned int i=0; i<n; i++)
+      if (!same(x[i],y[i]))
+	return false;
+    return true;
+  }
+  template <class View, unsigned int n>
+  forceinline bool
+  before(const ViewTuple<View,n>& x, const ViewTuple<View,n>& y){
+    for (unsigned int i=0; i<n; i++)
+      if (before(x[i],y[i])) {
+	return true;
+      } else if (before(y[i],x[i])) {
+	return false;
+      }
+    return false;
+  }
+
+}
+
+template <class View, unsigned int n>
+inline std::ostream&
+operator<<(std::ostream& os, const Gecode::ViewTuple<View,n>& xs) {
+  os << "[";
+  for (unsigned int i=0; i<n-1; i++)
+    os << xs[i] << ",";
+  return os << xs[n-1] << "]";
+}
+  
+
+// STATISTICS: kernel-other

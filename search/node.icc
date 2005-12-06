@@ -1,0 +1,98 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2003
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Search {
+
+  /*
+   * Node information
+   *
+   */
+
+  forceinline
+  CopyNode::CopyNode(Space*, Space* c, unsigned int alt)
+    : _space(c), _alt(0), _last(alt-1) {}
+
+  forceinline
+  CopyNode::CopyNode(Space* s, unsigned int alt)
+    : _space(s->clone()), _alt(1), _last(alt-1) {}
+
+  forceinline Space*
+  CopyNode::space(void) const {
+    return _space;
+  }
+  forceinline void
+  CopyNode::space(Space* s) {
+    _space = s;
+  }
+
+  forceinline unsigned int
+  CopyNode::alt(void) const {
+    return _alt;
+  }
+  forceinline void
+  CopyNode::alt(unsigned int a) {
+    _alt = a;
+  }
+
+  forceinline bool
+  CopyNode::rightmost(void) const {
+    return _alt == _last;
+  }
+  forceinline void
+  CopyNode::next(void) {
+    _alt++;
+  }
+
+  forceinline void
+  CopyNode::dispose(void) {
+    delete space();
+  }
+
+
+  forceinline
+  ReCoNode::ReCoNode(Space* s, Space* c, unsigned int alt)
+    : CopyNode(s,c,alt), _desc(s->description()) {}
+
+  forceinline BranchingDesc*
+  ReCoNode::desc(void) const {
+    return _desc;
+  }
+  forceinline void
+  ReCoNode::desc(BranchingDesc* d) {
+    _desc = d;
+  }
+
+  forceinline void
+  ReCoNode::dispose(void) {
+    delete space();
+    delete desc();
+  }
+
+  forceinline unsigned int
+  CopyNode::share(void) {
+    unsigned int t = _last;
+    _last--;
+    return t;
+  }
+
+}}
+
+// STATISTICS: search-any

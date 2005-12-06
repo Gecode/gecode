@@ -1,0 +1,233 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */	
+
+#include "support/sort.hh"
+
+namespace Gecode { namespace Int { namespace Sortedness {
+
+  /**
+   *  \brief Build \f$\sigma\f$ 
+   *
+   *  Creates a sorting permutation \f$\sigma\f$ by sorting the 
+   *  views in \a x according to their lower bounds
+   */
+
+  template <class View, class Tuple, bool Perm>
+  forceinline void 
+  sort_sigma(ViewArray<Tuple>& xz, bool fixed) {
+    int xs = xz.size();
+
+    if (fixed) {
+      TupleMinIncPerm<Tuple> min_inc;
+      Support::quicksort<Tuple, TupleMinIncPerm<Tuple> >
+	(&xz[0], xs, min_inc);
+    } else {
+      TupleMinInc<Tuple> min_inc;
+      Support::quicksort<Tuple, TupleMinInc<Tuple> >(&xz[0], xs, min_inc);
+    }
+  }
+
+  /**
+   *  \brief Build \f$\tau\f$
+   * 
+   *  Creates a sorting permutation \f$\tau\f$ by sorting 
+   *  a given array of indices in \a tau according to the upper bounds 
+   *  of the views in \a x
+   */
+
+  template <class View, class Tuple, bool Perm>
+  forceinline void 
+  sort_tau(ViewArray<Tuple>& xz, int tau[]) {
+    int xs = xz.size();
+    TupleMaxInc<Tuple> ltmax(xz);
+    Support::quicksort(&(*tau), xs, ltmax);
+  }
+
+  /**
+   * \brief Performing normalization on the views in \a y
+   * 
+   * The views in \a y are called normalized if 
+   * \f$\forall i\in\{0,\dots, n-1\}: min(y_0) \leq \dots \leq min(y_{n-1}) \wedge 
+   *  max(y_0) \leq \dots \leq max(y_{n-1})\f$ holds. 
+   */
+  template <class View, class Tuple, bool shared>
+  forceinline bool
+  normalize(Space* home, 
+	    ViewArray<View>& y, 
+	    ViewArray<Tuple>& xz,
+	    bool& nofix) {
+
+    int ys = y.size();
+    for (int i = 1; i < ys; i++) {
+      if (shared && y[i].modified()) {
+	nofix = true;
+	return true;
+      }
+      ModEvent me_lb = y[i].gq(home, y[i - 1].min()); 
+      if (me_failed(me_lb)) {
+	return false;
+      }
+      nofix |= (me_modified(me_lb) && y[i - 1].min() != y[i].min());
+    }
+    
+    for (int i = ys - 1; i--; ) {
+      if (shared && y[i].modified()) {
+	nofix = true;
+	return true;
+      }
+
+      ModEvent me_ub = y[i].lq(home, y[i + 1].max());
+      if (me_failed(me_ub)) {
+	return false;
+      }
+      nofix |= (me_modified(me_ub) && y[i + 1].max() != y[i].max());
+    }
+
+    int xs = xz.size();
+    for (int i = xs; i--; ) {
+      if (shared && xz[i][0].modified()) {
+	nofix = true;
+	return true;
+      }
+
+      ModEvent me = xz[i][0].lq(home, y[xs - 1].max()); 
+      if (me_failed(me)) {
+	return false;
+      }
+      nofix |= (me_modified(me) && xz[i][0].max() != y[xs - 1].max());
+    }
+    return true;
+  }
+
+  /**
+   *  \brief Bounds consistency on the permutation views
+   * 
+   *  Check, whether the permutation view are bounds consistent.
+   *  This function tests, whether there are "crossing edges", i.e. 
+   *  whether the current domains permit matchings between unsorted views
+   *  \a x and the sorted variables \a y violating the property
+   *  that \a y is sorted. 
+   */
+  template<class View, class Tuple, bool Perm, bool shared>
+  forceinline bool
+  perm_bc(Space* home, int tau[], 
+	  ViewArray<Tuple>& xz, 
+	  bool& crossingedge, 
+	  bool& nofix) {
+
+    int ps        = xz.size();
+    bool edge_up  = false;
+    for (int i = 1; i < ps; i++) {
+      // if there are "crossed edges"
+      if (xz[i][0].min() > xz[i - 1][0].max()) {
+	if (xz[i][1].min() < xz[i - 1][1].min()) {
+	  edge_up = true; 
+	  break;
+	}
+      }
+    }
+
+    bool edge_low = false;
+    for (int i = ps - 1; i--; ) {
+      if (xz[tau[i]][0].max() < xz[tau[i + 1]][0].min()) {
+	if (xz[tau[i]][1].max() > xz[tau[i + 1]][1].max()) {
+	  edge_low = true;
+	  break;
+	}
+      }
+    }
+
+    if (edge_up && edge_low) {
+      for (int i = 1; i < ps; i++) {
+	// if there are "crossed edges"
+	if (xz[i][0].min() > xz[i - 1][0].max()) {
+	  if (xz[i][1].min() < xz[i - 1][1].min()) {
+	    // std::cout <<"ce found low ..";
+	    crossingedge = true;
+	    // and the permutation can still be changed
+	    if (!xz[i][1].assigned() && !xz[i - 1][1].assigned()) {
+	      // fix the permutation, i.e. modify z
+	      // std::cout <<"fixed perm\n";
+	      ModEvent me_z = xz[i][1].gq(home, xz[i - 1][1].min());
+	      if (me_failed(me_z)) {
+		return false;
+	      }
+	      nofix |= ( me_modified(me_z) &&
+			 xz[i - 1][1].min() != xz[i][1].min());
+	    } else {
+	      // std::cout <<"fixed sigma\n";
+	      // if the permutation is already determined at this index
+	      // try to fix the sigma sorting, i.e. modify x
+	      if (shared && xz[i - 1][0].modified()) {
+		nofix = true;
+		return true;
+	      }
+
+	      ModEvent me_x = xz[i - 1][0].gq(home,xz[i][0].min());
+	      if (me_failed(me_x)) {
+		return false;
+	      }
+	      nofix |= (me_modified(me_x) &&
+			xz[i][0].min() != xz[i - 1][0].min());
+	    }
+	  }
+	}
+      }
+
+      // the same check as above for the upper bounds
+      for (int i = ps - 1; i--; ) {
+	if (xz[tau[i]][0].max() < xz[tau[i + 1]][0].min()) {
+	  if (xz[tau[i]][1].max() > xz[tau[i + 1]][1].max()) {
+	    // std::cout <<"ce found up ..";
+	    crossingedge = true;
+	    if (!xz[tau[i]][1].assigned() && !xz[tau[i + 1]][1].assigned()) {
+	      // std::cout <<"fixed perm\n";
+	      ModEvent me_z = xz[tau[i]][1].lq(home, xz[tau[i + 1]][1].max());
+	      if (me_failed(me_z)) {
+		return false;
+	      }
+	      nofix |= (me_modified(me_z) &&
+			xz[tau[i + 1]][1].max() != xz[tau[i]][1].max());
+	    } else {
+	      // std::cout <<"fixed tau\n";
+	      if (shared && xz[tau[i + 1]][0].modified()) {
+		nofix = true;
+		return true;
+	      }
+
+	      ModEvent me_x = xz[tau[i + 1]][0].lq(home,xz[tau[i]][0].max());
+	      if (me_failed(me_x)) {
+		return false;
+	      }
+	      nofix |= (me_modified(me_x) &&
+			xz[tau[i]][0].max() != xz[tau[i + 1]][0].max());
+	    }
+	  }
+	}
+      }
+    }
+    return true;
+  }    
+
+}}}
+
+// STATISTICS: int-prop
+

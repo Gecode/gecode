@@ -1,0 +1,445 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace GCC {
+
+  /*
+   * Analogously to "gcc/bnd.icc" we split the algorithm
+   * in two parts:
+   *   1) the UBC (Upper Bound Constraint) stating that there are
+   *      at most k[i].max() occurences of the value v_i
+   *   2) the LBC (Lower Bound Constraint) stating that there are
+   *      at least k[i].min() occurences of the value v_i
+   *
+   * The algorithm proceeds in 5 STEPS:
+   *
+   * STEP 1:
+   *    Build the bipartite value-graph G=(<X,D>,E),
+   *    with X = all variable nodes (each variable forms a node)
+   *         D = all value nodes (union over all domains of the variables)
+   *    and (x_i,v) is an edge in G iff value v is in the domain D_i of x_i
+   *
+   * STEP 2:   Compute a matching in the value graph.
+   * STEP 3:   Compute all even alternating paths from unmatched  nodes
+   * STEP 4:   Compute strongly connected components in the merged graph
+   * STEP 5:   Update the Domains according to the computed edges
+   *
+   */
+
+  template <class View, class Card, bool isView>
+  forceinline
+  Dom<View, Card, isView>::Dom(Space* home, ViewArray<View>& x0, Card& k0)
+    : Propagator(home, true), x(x0),  y(home, x0),
+      k(k0), l(home, k0), vvg(NULL) {
+    // y is used for bounds propagation since prop_bnd needs all variables
+    // l is used for bounds propagation since prop_bnd considers only
+    // values within the domain bounds
+    x.subscribe(home, this, PC_INT_DOM);
+    k.subscribe(home, this, PC_INT_DOM);
+  }
+
+  template <class View, class Card, bool isView>
+  forceinline
+  Dom<View, Card, isView>::Dom(Space* home, bool share, Dom<View, VarCard, isView>& p)
+    : Propagator(home, share, p), vvg(NULL) {
+    x.update(home, share, p.x);
+    y.update(home, share, p.y);
+    k.update(home, share, p.k);
+    l.update(home, share, p.l);
+  }
+
+  template <class View, class Card, bool isView>
+  forceinline
+  Dom<View, Card, isView>::Dom(Space* home, bool share, Dom<View, FixCard, isView>& p)
+    : Propagator(home, share, p), k(p.k.size()), l(p.l.size()), vvg(NULL) {
+    x.update(home, share, p.x);
+    y.update(home, share, p.y);
+    k.update(home, share, p.k);
+    l.update(home, share, p.l);
+  }
+  
+  template <class View, class Card, bool isView>
+  Dom<View, Card, isView>::~Dom(void) {
+    x.cancel(this, PC_INT_DOM);
+    k.cancel(this, PC_INT_DOM);
+    delete vvg; 
+  }
+
+  template <class View, class Card, bool isView>
+  forceinline void
+  Dom<View, Card, isView>::flush(void) {
+    delete vvg; 
+    vvg = NULL;
+  }
+  
+  template <class View, class Card, bool isView>
+  forceinline Actor* 
+  Dom<View, Card, isView>::copy(Space* home, bool share) {
+    return new (home) Dom<View, Card, isView>(home, share, *this);
+  }
+
+  template <class View, class Card, bool isView>
+  forceinline PropCost    
+  Dom<View, Card, isView>::cost (void) const {
+    /* 
+     * The domain consistent version of the Global Cardinality constraint
+     * has a theoretical complexity of
+     *   O(n * d) with
+     *   n = number of variables
+     *   d = the cardinality of the largest domain
+     *       or as a larger bound the cardinality of the union of all domains
+     *
+     */
+    PropCost pc;
+    switch (View::pme(this)) {
+    case ME_INT_VAL: 
+      pc = PC_LINEAR_LO; break;
+    case ME_INT_BND:
+      pc = PC_LINEAR_HI; break;
+    default: 
+      pc = PC_CUBIC_LO; break;
+    }
+
+    return cost_lo(x.size(), pc);
+  }
+
+  template <class View, class Card, bool isView>
+  ExecStatus 
+  Dom<View, Card, isView>::propagate(Space* home) {
+
+    if (View::pme(this) == ME_INT_VAL) {
+      
+      ExecStatus es = prop_val<View, Card, isView>(home, x, k);
+      if ((es == ES_FAILED) || (es == ES_SUBSUMED)) {
+	return es;
+      }
+      if (es == ES_FIX) {
+	return ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
+      }
+      if (es == ES_NOFIX) {
+	return ES_NOFIX;
+      }
+    }
+
+    if (View::pme(this) == ME_INT_BND) {
+      
+      for (int i = 0; i < l.size(); i++) {
+	int kidx = 0;
+	while (k[kidx].card() != l[i].card()) {
+	  kidx++;
+	}
+	int max = std::max(k[kidx].counter(), l[i].counter());
+	k[kidx].counter(max);
+	l[i].counter(max);
+      }
+
+      int cmin = y[y.size() - 1].min();
+      int cmax = y[y.size() - 1].max();
+      
+      for (int i = y.size() - 1; i--; ) {
+	if (y[i].min() < cmin) {
+	  cmin = y[i].min();
+	  }
+	if (y[i].max() > cmax) {
+	  cmax = y[i].max();
+	}
+      }
+
+      reduce_card(cmin, cmax, l);
+
+      PartialSum<Card>* lps = new PartialSum<Card>(cmin, l.size(), l, false);
+      PartialSum<Card>* ups = new PartialSum<Card>(cmin, l.size(), l, true);
+
+      ExecStatus es = 
+	prop_bnd<View, Card, false, isView>(home, y, l, lps, ups);
+
+      delete lps; 
+      lps = NULL;
+      delete ups; 
+      ups = NULL;
+
+      for (int i = 0; i < l.size(); i++) {
+	int kidx = 0;
+	while (k[kidx].card() != l[i].card()) {
+	  kidx++;
+	}
+	int max = std::max(k[kidx].counter(), l[i].counter());
+	k[kidx].counter(max);
+	l[i].counter(max);
+      }
+
+      if ((es == ES_FAILED) || (es == ES_SUBSUMED)) {
+	return es;
+      }
+      if (es == ES_FIX) {
+	return ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
+      }
+    }
+
+    GECODE_AUTOARRAY(int, count, k.size());
+    for (int i = k.size(); i--; ) {
+      count[i] = 0;
+    }
+	  
+    bool all_assigned = true;
+    // total number of assigned views
+    int noa = 0; 
+    for (int i = y.size(); i--; ) {
+      bool b = y[i].assigned();
+      all_assigned &= b;
+      if (b) {
+	noa++;
+	int idx = k.lookup(y[i].val());
+	if (idx == -1) {
+	  return ES_FAILED;
+	}
+	count[idx]++;
+      }
+    }
+	  
+    if (all_assigned) {
+      for (int i = k.size(); i--; ) {
+	int ci = count[i];
+	if (!(k[i].min() <= ci && ci <= k[i].max())) {
+	  return ES_FAILED;
+	}
+	// the solution contains ci occurences of value k[i].card();
+	if (isView) {
+	  ModEvent me = k[i].eq(home, ci);
+	  if (me_failed(me)) {
+	    return ES_FAILED;
+	  }
+	}
+      }
+      return ES_SUBSUMED;
+    }
+	  
+    // before propagation performs inferences on cardinality variables:
+    if (isView) {      
+      int n  = y.size();
+      int ks = k.size();
+      
+      for (int i = ks; i--; ) {
+	if (!k[i].assigned()) {
+	  ModEvent melq = k[i].lq(home, n - (noa - count[i]));
+	  if (me_failed(melq)) {
+	    return ES_FAILED;
+	  }
+
+	  ModEvent megq = k[i].gq(home, count[i]);
+	  if (me_failed(megq)) {
+	    return ES_FAILED;
+	  }
+	}
+      }
+    }
+
+    if (x.size() < 2) {
+      assert(x.size() >= 0);
+      if (x.size() == 0) {
+	for (int j = k.size(); j--; ) {
+	  if (k[j].min() > k[j].counter() || k[j].max() < k[j].counter()) {
+	    return ES_FAILED;
+	  }
+	}
+	return ES_SUBSUMED;
+      } else {
+	if (x.size() == 1) {
+	  if (x[0].assigned()) {
+	    int v = x[0].val();
+	    int idx = k.lookup(v);
+	    if (idx == -1) {
+	      return ES_FAILED;
+	    }
+	    ModEvent me = k[idx].inc();
+	    if (me_failed(me)) {
+	      return ES_FAILED;
+	    }
+	    for (int j = k.size(); j--; ) {
+	      if (k[j].min() > k[j].counter() || k[j].max() < k[j].counter()) {
+		return ES_FAILED;
+	      }
+	    }
+	    return ES_SUBSUMED;
+	  }
+	}
+      }
+    }
+
+
+    bool min_req_mod = false;
+    int noe     = 0;
+    int smin    = 0;
+    int smax    = 0;
+    for (int i = x.size(); i--; ) {
+      noe +=x[i].size();
+    }
+      
+    for (int i = k.size(); i--; ) {
+      int ci = k[i].counter();
+      if (ci > k[i].max() ) {
+	return ES_FAILED;
+      } else {
+	smax += (k[i].max() - ci);
+	if (ci < k[i].min()) {
+	  smin += (k[i].min() - ci);
+	}
+      }
+    }
+
+    if (smin > x.size() || x.size() > smax ) {
+      return ES_FAILED;
+    } 
+
+
+    if (vvg == NULL) {
+
+      vvg = new VarValGraph<View, Card, isView> (x, y, k, noe, smin, smax);
+
+      min_req_mod = vvg->min_require(home);
+
+      bool init_ubm = vvg->template maximum_matching<UBC>();
+      if (!init_ubm) {
+	return ES_FAILED;
+      }
+      
+      bool init_lbm = vvg->template maximum_matching<LBC>();
+      if (!init_lbm) {
+	return ES_FAILED;
+      }
+    } else {    
+      if (!vvg->sync()) {
+	return ES_FAILED;
+      }
+    }
+
+    vvg->template free_alternating_paths<UBC>();
+    vvg->template strongly_connected_components<UBC>();
+
+    bool filter_ubc = vvg->template narrow<UBC>(home);
+    if (vvg->failed()) {
+      return ES_FAILED;
+    }
+
+    if (!vvg->sync()) {
+      return ES_FAILED;
+    }
+
+    vvg->template free_alternating_paths<LBC>();
+    vvg->template strongly_connected_components<LBC>();
+
+    bool filter_lbc = vvg->template narrow<LBC>(home);
+    if (vvg->failed()) {
+      return ES_FAILED;
+    }
+   
+    if (x.size() < 2) {
+      assert(x.size() >= 0);
+      if (x.size() == 0) {
+	for (int j = k.size(); j--; ) {
+	  if (k[j].min() > k[j].counter() || 
+	      k[j].max() < k[j].counter()) {
+	    return ES_FAILED;
+	  }
+	}
+	return ES_SUBSUMED;
+      } else {
+	if (x.size() == 1) {
+	  if (x[0].assigned()) {
+	    int v = x[0].val();
+	    int idx = k.lookup(v);
+	    if (idx == -1) {
+	      return ES_FAILED;
+	    }
+
+	    ModEvent me = k[idx].inc();
+	    if (me_failed(me)) {
+	      return ES_FAILED;
+	    }
+	    for (int j = k.size(); j--; ) {
+	      if (k[j].min() > k[j].counter() || 
+		  k[j].max() < k[j].counter()) {
+		return ES_FAILED;
+	      }
+	    }
+	    return ES_SUBSUMED;
+	  }
+	}
+      }
+    }
+
+    for (int i = k.size(); i--; ) {
+      count[i] = 0;
+    }
+
+    all_assigned = true;
+    // total number of assigned views
+    for (int i = y.size(); i--; ) {
+      bool b = y[i].assigned();
+      all_assigned &= b;
+      if (b) {
+	int idx = k.lookup(y[i].val());
+	if (idx == -1) {
+	  return ES_FAILED;
+	}
+	count[idx]++;
+      }
+    }
+
+    if (all_assigned) {
+      for (int i = k.size(); i--; ) {
+	int ci = count[i];
+	if (!(k[i].min() <= ci && ci <= k[i].max())) {
+	  return ES_FAILED;
+	}
+	// the solution contains ci occurences of value k[i].card();
+	if (isView) {
+	  ModEvent me = k[i].eq(home, ci);
+	  if (me_failed(me)) {
+	    return ES_FAILED;
+	  }
+	}
+      }
+      return ES_SUBSUMED;
+    }
+
+    if (filter_ubc || filter_lbc || min_req_mod) {
+      return ES_NOFIX;
+    } else {
+      return ES_FIX;
+    }
+  }
+
+  template <class View, class Card, bool isView>
+  forceinline
+  ExecStatus  Dom<View, Card, isView>:: post(Space* home,
+					     ViewArray<View>& x0, Card& k0){
+
+    (void) new (home) Dom<View, Card, isView>(home, x0, k0);
+    return ES_OK;
+  }
+
+}}}
+
+
+
+// STATISTICS: int-prop
+

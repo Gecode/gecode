@@ -1,0 +1,172 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  /**
+   * \brief Iterator for transitions (sorted by symbols/values)
+   *
+   */
+  class DFA::Transitions {
+  private:
+    /// Current transition
+    const Transition* c_trans;
+    /// End of transitions
+    const Transition* e_trans;
+  public:
+    /// Initialize to transitions of DFA \a d
+    Transitions(const DFA& d);
+    /// Test whether iterator still at a transition
+    bool operator()(void) const;
+    /// Move iterator to next transition
+    void operator++(void);
+    /// Return pointer to transition
+    const Transition* transition(void) const;
+  };
+
+  /**
+   * \brief Data stored for a DFA
+   *
+   */
+  class DFA::DFAI {
+  public:
+    /// How often is the DFA implementation referred to
+    unsigned int use_cnt;
+    /// Number of states
+    unsigned int n_states;
+    /// Number of transitions
+    unsigned int n_trans;
+    /// First final state
+    int          final_fst;
+    /// Last final state
+    int          final_lst;
+    /// The transitions (actual size depends on number of transitions)
+    Transition   trans[1]; 
+    /// Create a copy
+    GECODE_INT_EXPORT DFAI* copy(void);
+  };
+
+
+  forceinline
+  DFA::DFA(void) {}
+
+  forceinline
+  DFA::DFA(int start, Transition t_spec[], int f_spec[], bool minimize) {
+    init(start,t_spec,f_spec,minimize);
+  }
+
+
+  forceinline
+  DFA::DFA(const DFA& d)
+    : dfai(d.dfai) {
+    dfai->use_cnt++;
+  }
+
+  inline void
+  DFA::update(bool share, DFA& d) {
+    if (share) {
+      dfai = d.dfai;
+      dfai->use_cnt++;
+    } else {
+      dfai = d.dfai->copy();
+    }
+  }
+
+  forceinline
+  DFA::~DFA(void) {
+    if (--dfai->use_cnt == 0)
+      Memory::free(dfai);
+  }
+
+  forceinline const DFA&
+  DFA::operator=(const DFA& d) {
+    if (&d != this) {
+      if (--dfai->use_cnt == 0)
+	Memory::free(dfai);
+      dfai = d.dfai;
+      dfai->use_cnt++;
+    }
+    return *this;
+  }
+
+  forceinline unsigned int
+  DFA::n_states(void) const {
+    return dfai->n_states;
+  }
+
+  forceinline unsigned int
+  DFA::n_transitions(void) const {
+    return dfai->n_trans;
+  }
+
+  forceinline int
+  DFA::final_fst(void) const {
+    return dfai->final_fst;
+  }
+
+  forceinline int
+  DFA::final_lst(void) const {
+    return dfai->final_lst;
+  }
+
+  forceinline int
+  DFA::symbol_min(void) const {
+    int n = dfai->n_trans;
+    return (n > 0) ? dfai->trans[0].symbol : Limits::Int::int_min;
+  }
+
+  forceinline int
+  DFA::symbol_max(void) const {
+    int n = dfai->n_trans;
+    return (n > 0) ? dfai->trans[n-1].symbol : Limits::Int::int_max;
+  }
+
+
+
+  /*
+   * Iterating over all transitions
+   *
+   */
+
+  forceinline
+  DFA::Transitions::Transitions(const DFA& d)
+    : c_trans(&d.dfai->trans[0]), e_trans(c_trans+d.dfai->n_trans) {}
+
+  forceinline bool
+  DFA::Transitions::operator()(void) const {
+    return c_trans < e_trans;
+  }
+
+  forceinline void
+  DFA::Transitions::operator++(void) {
+    c_trans++;
+  }
+
+  forceinline const DFA::Transition*
+  DFA::Transitions::transition(void) const {
+    return c_trans;
+  }
+
+}
+
+
+// STATISTICS: int-prop
+

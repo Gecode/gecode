@@ -1,0 +1,158 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Bool {
+
+  template <class BVA, class BVB, class BVC>
+  forceinline
+  And<BVA,BVB,BVC>::And(Space* home, BVA b0, BVB b1, BVC b2)
+    : BoolTernary<BVA,BVB,BVC>(home,b0,b1,b2) {}
+  
+  template <class BVA, class BVB, class BVC>
+  forceinline
+  And<BVA,BVB,BVC>::And(Space* home, bool share, And<BVA,BVB,BVC>& p) 
+    : BoolTernary<BVA,BVB,BVC>(home,share,p) {}
+
+  template <class BVA, class BVB, class BVC>
+  forceinline ExecStatus
+  And<BVA,BVB,BVC>::post(Space* home, BVA b0, BVB b1, BVC b2) {
+    switch (bool_test(b0,b1)) {
+    case BT_SAME: 
+      return Eq<BVA,BVC>::post(home,b0,b2);
+    case BT_COMP:
+      GECODE_ME_CHECK(b2.t_zero(home));
+      break;
+    case BT_NONE:
+      if (b0.zero() || b1.zero()) {
+	GECODE_ME_CHECK(b2.t_zero(home));
+      } else if (b0.one()) {
+	return Eq<BVB,BVC>::post(home,b1,b2);
+      } else if (b1.one()) {
+	return Eq<BVA,BVC>::post(home,b0,b2);
+      } else if (b2.one()) {
+	assert(b0.none() && b1.none());
+	b0.t_one_none(home); b1.t_one_none(home);
+      } else {
+	(void) new (home) And<BVA,BVB,BVC>(home,b0,b1,b2);
+      }
+      break;
+    }
+    return ES_OK;
+  }
+
+  template <class BVA, class BVB, class BVC>
+  Actor*
+  And<BVA,BVB,BVC>::copy(Space* home, bool share) {
+    return new (home) And<BVA,BVB,BVC>(home,share,*this);
+  }
+
+  template <class BVA, class BVB, class BVC>
+  ExecStatus
+  And<BVA,BVB,BVC>::propagate(Space* home) {
+    if (x0.zero() || x1.zero()) {
+      GECODE_ES_CHECK(x2.t_zero(home));
+    } else if (x2.one()) {
+      GECODE_ES_CHECK(x0.t_one(home));
+      GECODE_ES_CHECK(x1.t_one(home));
+    } else if (x2.zero()) {
+      if (x0.one()) {
+	GECODE_ES_CHECK(x1.t_zero(home));
+      } else if (x1.one()) {
+	GECODE_ES_CHECK(x0.t_zero(home));
+      } else {
+	return ES_FIX;
+      }	
+    } else if (x0.one() && x1.one()) {
+      GECODE_ES_CHECK(x2.t_one(home));
+    } else {
+      return ES_FIX;
+    }
+    return ES_SUBSUMED;
+  }
+
+
+  template<class View>
+  forceinline
+  NaryAnd<View>::NaryAnd(Space* home, ViewArray<View>& b, View c)
+    : NaryOnePropagator<View,PC_INT_VAL>(home,b,c) {}
+
+  template<class View>
+  forceinline
+  NaryAnd<View>::NaryAnd(Space* home, bool share, NaryAnd<View>& p)
+    : NaryOnePropagator<View,PC_INT_VAL>(home,share,p) {}
+
+  template<class View>
+  forceinline ExecStatus
+  NaryAnd<View>::post(Space* home, ViewArray<View>& b, View c) {
+    if (b.size() > 0) {
+      b.unique();
+      if (b.size() == 1)
+	return Eq<View,View>::post(home,b[0],c);
+      if (b.size() == 2)
+       	return And<View,View,View>::post(home,b[0],b[1],c);
+      (void) new (home) NaryAnd(home,b,c);
+    }
+    return ES_OK;
+  }
+
+  template<class View>
+  Actor*
+  NaryAnd<View>::copy(Space* home, bool share) {
+    return new (home) NaryAnd<View>(home,share,*this);
+  }
+
+  template<class View>
+  ExecStatus
+  NaryAnd<View>::propagate(Space* home) {
+    if (y.one()) {
+      for (int i = x.size(); i--; )
+	GECODE_ME_CHECK(x[i].t_one(home));
+      return ES_SUBSUMED;
+    }
+    if (y.zero()) {
+      bool none = false;
+      for (int i = x.size(); i--; ) {
+	if (x[i].zero())
+	  return ES_SUBSUMED;
+	if (!x[i].one())
+	  none = true;
+      }
+      return none ? ES_FIX : ES_FAILED;
+    }
+    for (int i = x.size(); i--; ) {
+      if (x[i].zero()) {
+	y.t_zero_none(home);
+	return ES_SUBSUMED;
+      }
+      if (x[i].one())
+	x.move_lst(i);
+    }
+    if (x.size() == 0) {
+      y.t_one_none(home);
+      return ES_SUBSUMED;
+    }
+    return ES_FIX;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

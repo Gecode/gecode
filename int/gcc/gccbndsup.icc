@@ -1,0 +1,610 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+
+namespace Gecode { namespace Int { namespace GCC {
+
+  /// \name GCC-Bnd-Support
+  //@{
+
+  /**
+   * \brief Maps domain bounds to their position in hall[].bounds.
+   */
+  class Rank {
+  public:
+    /**
+     * \brief \f$ rank[i].min = z 
+     * \Leftrightarrow min(x_i) = hall[z].bounds \f$
+     */
+    int min;
+    /**
+     * \brief \f$ rank[i].max = z 
+     * \Leftrightarrow max(x_i) = hall[z].bounds \f$
+     */
+    int max;
+  };
+
+  /**
+   * \brief Compares two indeces \a i, \a j of two views 
+   * \a \f$ x_i \f$ \f$ x_j\f$ according to the
+   * ascending order of the views upper bounds
+   *
+   */
+  
+  template <class View>
+  class MaxInc {
+  protected:
+    ViewArray<View> x;
+  public:
+    MaxInc(const ViewArray<View>& x0) : x(x0) {}
+    forceinline bool
+    operator()(const int i, const int j) {
+      return x[i].max() < x[j].max();
+    }
+  };
+
+  /**
+   * \brief Compares two indeces \a i, \a j of two views 
+   * \a \f$ x_i \f$ \f$ x_j\f$ according to the
+   * ascending order of the views lower bounds
+   *
+   */
+
+  template <class View>
+  class MinInc {
+  protected:
+    ViewArray<View> x;
+  public:
+    MinInc(const ViewArray<View>& x0) : x(x0) {}
+    forceinline bool
+    operator()(const int i, const int j) {
+      return x[i].min() < x[j].min();
+    }
+  };
+
+
+  /**
+   * \brief Partial sum structure for constant 
+   *  time computation of the maximal capacity of an interval.
+   *
+   */
+  template <class Card>
+  class PartialSum {
+  private:
+    /// memory allocation
+    char* mem;
+    // sum[i] contains the partial sum from 0 to i
+    int* sum;  
+    /**
+     *  marks indices with 0 that can be skipped
+     *  and can be compared to doublet control
+     */
+    int* ds;   
+    /// the size of the sum
+    int size;
+  public:    
+    /// \name Constructors and destructors
+    //@{
+    PartialSum( int, int, Card& , bool);
+    ~PartialSum(void);
+    //@}
+    /// \name Access
+    //@{
+    int firstValue;
+    int lastValue;
+    int sumup(int, int);
+    int minValue(void);
+    int maxValue(void);
+    int skipNonNullElementsRight(int);
+    int skipNonNullElementsLeft(int);
+    void* operator new(size_t s);
+    void operator delete(void* p);
+    void print(void);
+    bool check_update_max(Card& k);
+    bool check_update_min(Card& k);
+    int getsize(void);
+    //@}
+  };
+
+  template <class Card>
+  forceinline 
+  PartialSum<Card>::~PartialSum(void){
+    assert(mem != NULL);
+    Memory::free(mem);
+  }
+
+  template <class Card>
+  forceinline void*
+  PartialSum<Card>::operator new(size_t t){
+    void* allocated = Memory::malloc(t);
+    return allocated;
+  }
+  
+  template <class Card>
+  forceinline void
+  PartialSum<Card>::operator delete(void* p){
+      Memory::free(p);
+  }
+
+  /** 
+   * \brief Default initialization 
+   *
+   * \param first is the miminum value the variables can take
+   * \param count is equal to \f$ |k| \f$
+   * \param elements contains the upper and lower cardinalities for every value
+   * \param up denotes the direction whether we sumup the lower or upper cardinality bounds
+   * 
+   */
+  template <class Card>
+  forceinline 
+  PartialSum<Card>::PartialSum(int first,
+			       int count, 
+			       Card& elements, 
+			       bool up) {
+    int i = 0;
+    int j = 0;
+    // for the partial sum we add 3 elements at the beginning
+    // and two at the end
+    size  = count + 5;
+    // memory allocation
+    size_t sum_size = (size) * sizeof(int);
+    size_t ds_size  = (size) * sizeof(int);
+    size_t total    = sum_size + ds_size;
+
+    mem = reinterpret_cast<char*> (Memory::malloc(total));
+    sum = reinterpret_cast<int*> (mem);
+    ds  = reinterpret_cast<int*> (mem + sum_size);
+
+    for (int z = 0; z < size; z++) {
+      sum[z] = 0;
+      ds[z]  = 0;
+    }
+
+    /* 
+     * firstValue and lastValue are sentinels
+     * indicating whether an end of the sum has been reached
+     *
+     */
+    // we added three elements at the beginning
+    firstValue = first - 3; 
+    lastValue  = first + count + 1;
+
+
+    // the first three elements
+    for (i = 3; i--; ){
+      sum[i] = i;
+    }
+
+    int shift  = count + 2;
+    
+    // copy the bounds into sum
+    // optimization only those values being indeed variable bounds
+    for (i = 2; i < shift; i++){
+      if (up) {
+	sum[i + 1] = sum[i] + elements[i - 2].max();
+      } else {
+	sum[i + 1] = sum[i] + elements[i - 2].min();
+      }
+    }
+    sum[i + 1] = sum[i] + 1;
+    sum[i + 2] = sum[i + 1] + 1;
+
+    
+    // check for doublets
+    i = count + 3;
+    j = i + 1;
+    for ( ; i > 0; ){
+      while(sum[i] == sum[i - 1]) {
+	ds[i] = j;
+	i--;
+      }
+      ds[j] = i;
+      i--;
+      j = ds[j];
+    }
+    ds[j] = 0;
+    // just for the sake of having no seg fault
+    ds[0] = 0;
+  }
+
+  /**
+   * \brief Compute the maximum capacity of an interval I
+   */
+  template <class Card>
+  forceinline int 
+  PartialSum<Card>::sumup(int from, int to){
+    int result = 0;
+    if (from <= to) {
+      result = sum[to - firstValue] - sum[from - firstValue - 1];
+    }
+    else {
+      result = sum[to - firstValue - 1] - sum[from - firstValue];
+    }
+    return result;
+  }
+
+  /**
+   * \brief Returns the index of the first cardinality in the
+   * partial sum structure.
+   *
+   */
+  template <class Card>
+  forceinline int 
+  PartialSum<Card>::minValue(void){
+    return firstValue + 3;
+  }
+
+  /**
+   * \brief Returns the index of the last cardinality in the
+   * partial sum structure.
+   *
+   */
+  
+  template <class Card>
+  forceinline int 
+  PartialSum<Card>::maxValue(void){
+    return lastValue - 2;
+  }
+
+
+  /**
+   * \brief If neigboured array entries do not differ in 
+   *
+   */
+  template <class Card>
+  forceinline int 
+  PartialSum<Card>::skipNonNullElementsRight(int value) {
+    value -= firstValue;
+    return (ds[value] < value ? value : ds[value]) + firstValue;
+  }
+
+  template <class Card>
+  forceinline int 
+  PartialSum<Card>::skipNonNullElementsLeft(int value) {
+    value -= firstValue;
+    return (ds[value] > value ? ds[ds[value]] : value) + firstValue;
+  }
+
+  /// \brief for debugging purposes
+  template <class Card>
+  forceinline void
+  PartialSum<Card>::print(void){
+    std::cout << "fsv: "<< firstValue <<" lsv: " << lastValue 
+	      << " size = "<< size << "\n";
+    std::cout << "number of elements = "<< size - 5<<"\n";
+    std::cout << "elements: ";
+    for (int i = 3; i < size - 2; i++) {
+      std::cout << sum[i] - sum[i-1] << " ";
+    }
+    std::cout <<"\n";
+
+    std::cout << "sum: ";
+    for (int i = 0; i < size; i++) {
+      std::cout <<sum[i] << " ";
+    }
+    std::cout <<"\n";
+    std::cout << "ds: ";
+    for (int i = 0; i < size; i++) {
+      std::cout <<sum[i] << " ";
+    }
+    std::cout <<"\n";
+
+  }
+
+  template <class Card>
+  forceinline bool
+  PartialSum<Card>::check_update_max(Card& k){
+    if (k.size() <= size - 5) {
+      return true; 
+    } else {
+      for (int i = 3; i < size - 2; i++) {
+	if ((sum[i] - sum[i - 1]) != k[i - 3].max()) {
+	  return true;
+	}
+      }
+      return false;
+    }
+  }
+
+  template <class Card>
+  forceinline bool
+  PartialSum<Card>::check_update_min(Card& k){
+    if (k.size() <= size - 5) {
+      return true; 
+    } else {
+      for (int i = 3; i < size - 2; i++) {
+	if ((sum[i] - sum[i - 1]) != k[i - 3].min()) {
+	  return true;
+	}
+      }
+      return false;
+    }
+  }
+  
+  template <class Card>
+  forceinline int
+  PartialSum<Card>::getsize(void){
+    return size;
+  }
+
+
+  /**
+   * \brief Container class provding information about the Hall
+   *  structure of the problem variables. 
+   *
+   *  This class is used to 
+   *  keep the number of different arrays small, that is
+   *  an array of type %HallInfo replaces integer arrays for each
+   *  of the class members. 
+   *   
+   */
+  class HallInfo {
+  public:
+    /// Represents the union of all lower and upper domain bounds
+    int bounds;   
+    /**
+     * \brief critical capacity pointer 
+     * t represents a predecessor function where \f$ t_i \f$ denotes the
+     * predecessor of i in bounds
+     */
+    int t;
+    /**
+     * \brief difference between critical capacities
+     *
+     * d_i is the difference between the capacities of hall[i].bounds 
+     * and its predecessor in bounds hall[t[i]].bounds
+     *
+     */
+    int d;
+    /**
+     * \brief Hall set pointer
+     *
+     * If hall[i].h < i then the half-open interval
+     * [hall[h[i]].bounds,hall[i].bounds) is containd in a Hall
+     * set. 
+     * Otherwise holds a pointer to the Hall intervall it belongs to.
+     */
+    int h;
+    /**
+     * \brief Stable Set pointer
+     *
+     */
+    int s;    
+    /**
+     * \brief Potentially Stable Set pointer
+     *
+     */
+    int ps;
+    /**
+     * \brief Bound update
+     *
+     * If propagation applied newBound contains a narrowed domain bound
+     * otherwise is stores the old domain bound.
+     */
+    int newBound; 
+  };
+
+
+  /** 
+   * \name Path compression
+   *
+   * Each of the nodes on the path from \a start to \a end 
+   * becomes a direct child of \a to. 
+   *
+   */
+
+  //@{
+  /// \brief Path compression for potentially stable set structure
+  inline void
+  pathset_ps(HallInfo hall[], int start, int end, int to) {
+    int k = 0;
+    int l = start;
+    for ( ; (k = l) != end; hall[k].ps = to) {
+      l = hall[k].ps;
+
+    }
+  }
+  /// \brief Path compression for stable set structure
+  inline void
+  pathset_s(HallInfo hall[], int start, int end, int to) {
+    int k = 0;
+    int l = start;
+    for ( ; (k = l) != end; hall[k].s = to) {
+      l = hall[k].s;
+    }
+  }
+
+  /// \brief Path compression for capacity pointer structure
+  inline void
+  pathset_t(HallInfo hall[], int start, int end, int to) {
+    int k = 0;
+    int l = start;
+    for ( ; (k = l) != end; hall[k].t = to) {
+      l = hall[k].t;
+    }
+  }
+
+  /// \brief Path compression for hall pointer structure
+  inline void
+  pathset_h(HallInfo hall[], int start, int end, int to) {
+    int k = 0;
+    int l = start;
+    for ( ; (k = l) != end; hall[k].h = to) {
+      l = hall[k].h;
+    }
+  }
+  //@}
+  
+  /**
+   *  \name Path minimum 
+   *
+   *  returns the smalles reachable index starting from i
+   *
+   */
+  //@{
+  /// \brief Path minimum for hall pointer structure
+  forceinline int
+  pathmin_h(const HallInfo hall[], int i) {
+    while (hall[i].h < i)
+      i = hall[i].h;
+    return i;
+  }
+  /// \brief Path minimum for capacity pointer structure
+  forceinline int
+  pathmin_t(const HallInfo hall[], int i) {
+    while (hall[i].t < i)
+      i = hall[i].t;
+    return i;
+  }
+  //@}
+
+  /**
+   *  \name Path maximum
+   *
+   *  returns the greatest reachable index starting from i  
+   */
+  //@{
+  /// \brief Path maximum for hall pointer structure  
+  forceinline int
+  pathmax_h(const HallInfo hall[], int i) {
+    while (hall[i].h > i)
+      i = hall[i].h;
+    return i;
+  }
+
+
+  /// \brief Path maximum for capacity pointer structure  
+  forceinline int
+  pathmax_t(const HallInfo hall[], int i) {
+    while (hall[i].t > i)
+      i = hall[i].t;
+    return i;
+  }
+
+  /// \brief Path maximum for stable set pointer structure  
+  forceinline int
+  pathmax_s(const HallInfo hall[], int i) {
+    while (hall[i].s > i)
+      i = hall[i].s;
+    return i;
+  }
+
+  /// \brief Path maximum for potentially stable set pointer structure  
+  forceinline int
+  pathmax_ps(const HallInfo hall[], int i) {
+    while (hall[i].ps > i)
+      i = hall[i].ps;
+    return i;
+  }
+  //@}
+  //@}
+
+  /** \brief Assert consistency in the cardinality specification 
+   *         for bounds propagation.
+   *
+   *         This is done by ensuring that only those values are specified with
+   *         cardinalities, which are not smaller
+   *         than the smallest value of all variable domains and not greater 
+   *         than the greatest value of all variable domains. 
+   */
+
+  template <class Card>
+  void reduce_card(int cmin, int cmax, Card& k) {
+
+    if (cmin == cmax) {
+      int idx = 0;
+      while (k[idx].card() != cmax) {
+	idx++;
+      }
+      k[0] = k[idx];
+      k.size(1);
+    } else {
+
+      GECODE_AUTOARRAY(bool, zero, k.size());
+      int ks = k.size();
+      int zc = 0;
+      for (int i = 0; i < ks; i++) {
+	bool impossible  = ( (k[i].counter() == 0) &&
+			     (k[i].card() < cmin ||
+			      k[i].card() > cmax));
+	
+	if (impossible) {
+	  zero[i] = true;
+	  zc++;
+	} else {
+	  zero[i] = false;
+	}
+      }      
+
+      if (zero[ks - 1]) {
+	int m = ks;
+	while(zero[m - 1]) {
+	  m--;
+	  zc--;
+	}
+	k.size(m);
+      }
+
+      int start_size = k.size();
+      if (zc > 0) {
+	int ks = k.size();
+	// if there are still zero entries left
+	for (int i = 0; i < ks; i++) {
+	  assert(0 <= i && i < ks);
+	  if  (zero[i]) {
+	    if (i == ks - 1) {
+	      break;
+	    }
+	    // this cardinality does not occur
+	    // remove it
+	    // we need the next non-null entry
+	    int j = i + 1;
+	    assert(0 <= j && j < ks);
+	    if (j < ks) {
+	      while (zero[j]) {
+		j++;
+	      }
+	    }
+	    if (j > ks - 1) {
+	      break;
+	    }
+	    k[i] = k[j];
+	    zero[j] = true;
+	  }
+	}
+	k.size(ks - zc);
+      }
+
+
+      int end_size = k.size();
+      assert(start_size == end_size + zc);
+    }
+    
+    // validty check
+//     for (int i = 1; i < k.size(); i++) {
+//       assert(k[i].card() > k[i - 1].card());
+//     }
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

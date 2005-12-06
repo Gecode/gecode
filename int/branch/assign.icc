@@ -1,0 +1,59 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2002
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Branch {
+
+  forceinline
+  Assign::Assign(Space* home, bool share, Assign& b)
+    : Branching(home,share,b), pos(b.pos) {
+    x.update(home,share,b.x);
+  }
+  forceinline
+  Assign::Assign(Space* home, ViewArray<IntView>& x1)
+    : Branching(home), x(x1), pos(0) {}
+
+
+  forceinline
+  AssignMin::AssignMin(Space* home, bool share, AssignMin& b)
+    : Assign(home,share,b) {}
+  forceinline
+  AssignMin::AssignMin(Space* home, ViewArray<IntView>& x)
+    : Assign(home,x) {}
+
+  forceinline
+  AssignMed::AssignMed(Space* home, bool share, AssignMed& b)
+    : Assign(home,share,b) {}
+  forceinline
+  AssignMed::AssignMed(Space* home, ViewArray<IntView>& x)
+    : Assign(home,x) {}
+
+
+  forceinline
+  AssignMax::AssignMax(Space* home, bool share, AssignMax& b)
+    : Assign(home,share,b) {}
+  forceinline
+  AssignMax::AssignMax(Space* home, ViewArray<IntView>& x)
+    : Assign(home,x) {}
+
+}}}
+
+// STATISTICS: int-branch
+

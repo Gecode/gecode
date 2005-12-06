@@ -1,0 +1,162 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#ifndef __GECODE_SET_DISTINCT_BINOMIAL_ICC
+#define __GECODE_SET_DISTINCT_BINOMIAL_ICC
+
+namespace Gecode { namespace Set { namespace Distinct {
+
+  /**
+   * \brief Computing binomial coefficients using dynamic programming
+   */
+  class Binomial {
+  private:
+    /// The array holding the precomputed binomial coefficients
+    Support::SharedArray<int> sar;
+    /// The maximum binomial coefficient computed so far
+    unsigned int nmax;
+    
+    /**
+     * \brief Compute array index of binomial coefficient \f$C(i,j)\f$
+     *
+     * The index \a i must be at least 4. The index \a j must be
+     * between 2 and i/2.
+     *
+     */
+    unsigned int index(unsigned int i, unsigned int j);
+    /// Access the binomial coefficient \f$C(i,j)\f$, where \f$j\leq i\f$
+    unsigned int y(unsigned int i, unsigned int j);
+    /// Set the binomial coefficient \f$C(i,j)=c\f$, where \f$j\leq i\f$
+    void y(unsigned int i, unsigned int j, unsigned int c);
+    /// Initialize the array up to \f$C(n,n)\f$
+    GECODE_SET_EXPORT void init(unsigned int n);
+    
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    Binomial(void);
+    /// Copy constructor
+    Binomial(const Binomial& b);
+    /// Initialize with maximum precomputed binomial coefficient \f$C(\mathrm{nmax},\mathrm{nmax})\f$
+    Binomial(unsigned int nmax);
+    //@}
+    
+    /// \name Value access
+    //@{
+    /// Return binomial coefficient \f$C(n,m)\f$, where \f$m\leq n\f$
+    unsigned int c(unsigned int n, unsigned int m);
+    //@}
+
+    /// \name Cloning
+    //@{
+    /** \brief Update this binomial table to be a copy of \a b
+     * 
+     * If \a share is true, the copy is identical. Otherwise an independent
+     * copy is created.
+     */
+    void update(bool share, Binomial& b);
+    //@}
+  };
+  
+
+  /*
+   * Only half of the lower half of the matrix is represented, as only
+   * binomial coefficients with m<=n are defined, and the lower triangle
+   * is symmetric.
+   *
+   */
+  forceinline unsigned int
+  Binomial::index(unsigned int n, unsigned int m) {
+    assert(n >= 4);
+    assert(m >= 2);
+    assert(m <= n/2);
+    int n2 = (n-2)/2;
+    int nn = n2*(n2-1);
+    if (n % 2 == 1)
+      nn += n2;
+    return nn + m - 2;
+  }
+
+  forceinline unsigned int
+  Binomial::y(unsigned int n, unsigned int m) {
+    if (n==m || m==0)
+      return 1;
+    if (m==1 || m==n-1)
+      return n;
+    if (m > (n/2))
+      m = n-m;
+
+    return sar[ index(n,m) ];
+  }
+
+  forceinline void
+  Binomial::y(unsigned int n, unsigned int m, unsigned int c) {
+    if (n==m || m==0) {
+      assert(c==1);
+      return;
+    }
+    if (m==1 || m==n-1) {
+      assert(c==n);
+      return;
+    }
+    if (m > (n/2)) {
+      assert(c==y(n, n-m));
+      return;
+    }
+
+    sar[ index(n,m) ] = c;
+  }
+
+  forceinline
+  Binomial::Binomial(void) : sar(1), nmax(0) {
+    init(10);
+  }
+  
+  forceinline
+  Binomial::Binomial(const Binomial& b)
+    : sar(b.sar), nmax(b.nmax) {}
+  
+  forceinline
+  Binomial::Binomial(unsigned int _nmax)
+    : sar(1), nmax(0) {
+    init(_nmax);
+  }
+
+  forceinline unsigned int
+  Binomial::c(unsigned int n, unsigned int m) {
+    if (m>n)
+      return 0;
+    if (n>nmax)
+      init(n);
+    return y(n,m);
+  }
+
+  forceinline void
+  Binomial::update(bool share, Binomial& b) {
+    nmax = b.nmax;
+    sar.update(share, b.sar);
+  }
+}}}
+
+#endif
+
+// STATISTICS: set-prop

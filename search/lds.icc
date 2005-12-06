@@ -1,0 +1,57 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  /*
+   * Control for LDS engine
+   *
+   */
+
+  template <class T>
+  forceinline
+  LDS<T>::LDS(T* s, unsigned int d)
+    : Search::LDS(s,d,sizeof(T)) {}
+
+
+  template <class T>
+  forceinline T*
+  LDS<T>::next(void) {
+    return static_cast<T*>(Search::LDS::next());
+  }
+
+
+
+  /*
+   * Convenience for LDS
+   *
+   */
+
+  template <class T>
+  T*
+  lds(T* s, unsigned int d) {
+    LDS<T> lds(s,d);
+    return static_cast<T*>(lds.next());
+  }
+
+}
+
+// STATISTICS: search-any

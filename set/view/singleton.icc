@@ -1,0 +1,350 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Contributing authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { 
+
+  namespace Set {
+
+    forceinline
+    SingletonView::SingletonView(void) {}
+
+    forceinline
+    SingletonView::SingletonView(Gecode::Int::IntView& i0)
+      : DerivedViewBase<Gecode::Int::IntView>(i0) {}
+
+    forceinline PropCond
+    SingletonView::pc_settoint(PropCond pc) {
+      switch(pc) {
+      case PC_SET_VAL:
+      case PC_SET_CGLB:
+      case PC_SET_CARD:
+	return Gecode::Int::PC_INT_VAL;
+      default:
+	return Gecode::Int::PC_INT_DOM;
+      }
+    }
+
+    forceinline ModEvent
+    SingletonView::me_inttoset(ModEvent me) {
+      switch(me) {
+      case Gecode::Int::ME_INT_FAILED: 
+	return ME_SET_FAILED;
+      case Gecode::Int::ME_INT_NONE: 
+	return ME_SET_NONE;
+      case Gecode::Int::ME_INT_VAL: 
+	return ME_SET_VAL;
+      case Gecode::Int::ME_INT_DOM: 
+	return ME_SET_LUB;
+      default:
+	return ME_SET_LUB;
+      }
+    }
+
+    forceinline bool
+    SingletonView::assigned(void) const { return view.assigned(); }
+
+    forceinline unsigned int
+    SingletonView::glbSize(void) const { return view.assigned() ? 1 : 0; }
+
+    forceinline unsigned int
+    SingletonView::lubSize(void) const { return view.size(); }
+
+    forceinline unsigned int
+    SingletonView::unknownSize(void) const {
+      return lubSize() - glbSize();
+    }
+
+    forceinline bool
+    SingletonView::contains(int n) const { return view.assigned() ?
+					     (view.val()==n) : false; }
+
+    forceinline bool
+    SingletonView::notContains(int n) const { return !view.in(n); }
+
+    forceinline unsigned int
+    SingletonView::cardMin() const { return 1; }
+
+    forceinline unsigned int
+    SingletonView::cardMax() const { return 1; }
+
+    forceinline int
+    SingletonView::lubMin() const { return view.min(); }
+
+    forceinline int
+    SingletonView::lubMax() const { return view.max(); }
+
+    forceinline int
+    SingletonView::glbMin() const { return view.assigned() ?
+				      view.val() : BndSet::MIN_OF_EMPTY; }
+
+    forceinline int
+    SingletonView::glbMax() const { return view.assigned() ?
+				      view.val() : BndSet::MAX_OF_EMPTY; }
+
+    forceinline ModEvent
+    SingletonView::cardMin(Space* home,unsigned int c) {
+      return c<=1 ? ME_SET_NONE : ME_SET_FAILED;
+    }
+
+    forceinline ModEvent
+    SingletonView::cardMax(Space* home,unsigned int c) {
+      return c<1 ? ME_SET_FAILED : ME_SET_NONE;
+    }
+
+    forceinline ModEvent
+    SingletonView::include(Space* home,int c) { 
+      return me_inttoset(view.eq(home,c)); 
+    }
+
+    forceinline ModEvent
+    SingletonView::intersect(Space* home,int c) { 
+      return me_inttoset(view.eq(home,c)); 
+    }
+
+    forceinline ModEvent
+    SingletonView::intersect(Space* home,int i, int j) { 
+      ModEvent me1 = me_inttoset(view.gq(home,i));
+      ModEvent me2 = me_inttoset(view.lq(home,j));
+      if (me_failed(me1) || me_failed(me2))
+	return ME_SET_FAILED;
+      switch (me1) {
+      case ME_SET_NONE:
+      case ME_SET_LUB:
+	return me2;
+      case ME_SET_VAL:
+	return ME_SET_VAL;
+      default:
+	assert(false);
+	return ME_SET_VAL;
+      }
+    }
+
+    forceinline ModEvent
+    SingletonView::exclude(Space* home,int c) { 
+      return me_inttoset(view.nq(home,c)); 
+    }
+
+    forceinline ModEvent
+    SingletonView::include(Space* home, int j, int k) {
+      return j==k ? me_inttoset(view.eq(home,j)) : ME_SET_FAILED ;
+    }
+
+    forceinline ModEvent
+    SingletonView::exclude(Space* home, int j, int k) {
+      ModEvent me1 = me_inttoset(view.gr(home,j));
+      ModEvent me2 = me_inttoset(view.le(home,k));
+      if (me_failed(me1) || me_failed(me2))
+	return ME_SET_FAILED;
+      switch (me1) {
+      case ME_SET_NONE:
+      case ME_SET_LUB:
+	return me2;
+      case ME_SET_VAL:
+	return ME_SET_VAL;
+      default:
+	assert(false);
+	return ME_SET_VAL;
+      }
+    }
+
+    template <class I> ModEvent
+    SingletonView::excludeI(Space* home, I& iter) {
+      return me_inttoset(view.minus(home,iter));
+    }
+
+    template <class I> ModEvent
+    SingletonView::includeI(Space* home, I& iter) {
+      if (!iter())
+	return ME_SET_NONE;
+
+      if (iter.min()!=iter.max())
+	return ME_SET_FAILED;
+
+      int val = iter.min();
+      ++iter;
+      if ( iter() )
+	return ME_SET_FAILED;
+
+      return me_inttoset(view.eq(home, val));
+    }
+
+    template <class I> ModEvent
+    SingletonView::intersectI(Space* home, I& iter) {
+      return me_inttoset(view.inter(home,iter));
+    }
+
+    forceinline void
+    SingletonView::subscribe(Space* home, Propagator* p, PropCond pc) {
+      view.subscribe(home,p,pc_settoint(pc));
+    }
+    forceinline void
+    SingletonView::cancel(Propagator* p, PropCond pc) {
+      view.cancel(p,pc_settoint(pc));
+    }
+
+
+    forceinline ModEvent
+    SingletonView::pme(const Propagator* p) {
+      return me_inttoset(Int::IntView::pme(p));
+    }
+    forceinline PropModEvent
+    SingletonView::pme(ModEvent me) {
+      // CHECK THIS
+      return SetView::pme(me);
+    }
+
+    forceinline void
+    SingletonView::update(Space* home, bool share, SingletonView& y) {
+      view.update(home,share,y.view);
+    }
+
+    forceinline bool
+    SingletonView::destruct(void) { return false; }
+
+    /*
+     * Iterators
+     *
+     */
+
+    /**
+     * \brief %Range iterator for least upper bound of singleton set view
+     * \ingroup TaskActorSetView
+     */
+    template <>
+    class LubRanges<SingletonView> : public Gecode::Int::IntVarImpFwd {
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      LubRanges(void);
+      /// Initialize with ranges for view \a x
+      LubRanges(const SingletonView& x);
+      /// Initialize with ranges for view \a x
+      void init(const SingletonView& x);
+      //@}
+    };
+
+    forceinline
+    LubRanges<SingletonView>::LubRanges(void) {}
+
+    forceinline
+    LubRanges<SingletonView>::LubRanges(const SingletonView& s) :
+      Gecode::Int::IntVarImpFwd(s.base().variable()) {}
+
+    forceinline void
+    LubRanges<SingletonView>::init(const SingletonView& s) {
+      Gecode::Int::IntVarImpFwd::init(s.base().variable());
+    }
+
+    /**
+     * \brief %Range iterator for greatest lower bound of singleton set view
+     * \ingroup TaskActorSetView
+     */
+    template <>
+    class GlbRanges<SingletonView> {
+    private:
+      int  val;
+      bool flag;
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      GlbRanges(void);
+      /// Initialize with ranges for view \a x
+      GlbRanges(const SingletonView& x);
+      /// Initialize with ranges for view \a x
+      void init(const SingletonView& x);
+
+      /// \name Iteration control
+      //@{
+      /// Test whether iterator is still at a range or done
+      bool operator()(void) const;
+      /// Move iterator to next range (if possible)
+      void operator++(void);
+      //@}
+
+      /// \name Range access
+      //@{
+      /// Return smallest value of range
+      int min(void) const;
+      /// Return largest value of range
+      int max(void) const;
+      /// Return width of ranges (distance between minimum and maximum)
+      unsigned int width(void) const;
+      //@}
+    };
+
+    forceinline
+    GlbRanges<SingletonView>::GlbRanges(void) {}
+
+    forceinline void
+    GlbRanges<SingletonView>::init(const SingletonView& s) {
+      if (s.base().assigned()) {
+	val = s.base().val();
+	flag = true;
+      } else {
+	val = 0;
+	flag = false;
+      }
+    }
+
+    forceinline
+    GlbRanges<SingletonView>::GlbRanges(const SingletonView& s) {
+      init(s);
+    }
+
+    forceinline bool
+    GlbRanges<SingletonView>::operator()(void) const { return flag; }
+
+    forceinline void
+    GlbRanges<SingletonView>::operator++(void) { flag=false; }
+
+    forceinline int
+    GlbRanges<SingletonView>::min(void) const { return val; }
+    forceinline int
+    GlbRanges<SingletonView>::max(void) const { return val; }
+    forceinline unsigned int
+    GlbRanges<SingletonView>::width(void) const { return 1; }
+
+  }
+
+  /*
+   * Testing
+   *
+   */
+  forceinline bool
+  same(const Set::SingletonView& x, const Set::SingletonView& y) {
+    return same(x.base(),y.base());
+  }
+  forceinline bool
+  before(const Set::SingletonView& x, const Set::SingletonView& y) {
+    return before(x.base(),y.base());
+  }
+
+
+}
+
+// STATISTICS: set-var
+

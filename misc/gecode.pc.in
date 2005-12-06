@@ -1,0 +1,12 @@
+# Package Information for pkg-config
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@/gecode
+
+Name: Gecode
+Description: Generic Constraint Development Environment
+Version: @VERSION@
+Libs: -L${libdir} -lgecodekernel -lgecodeint -lgecodeset
+Cflags: -I${includedir} @PKG_CONFIG_CXXFLAGS@

@@ -1,0 +1,759 @@
+#  -*-Makefile-*-
+#
+#  Main authors:
+#     Christian Schulte <schulte@gecode.org>
+#     Guido Tack <tack@gecode.org>
+#
+#  Copyright:
+#     Christian Schulte, 2005
+#     Guido Tack, 2005
+#
+#  Last modified:
+#     $Date$ by $Author$
+#     $Revision$
+#
+#  This file is part of Gecode, the generic constraint
+#  development environment:
+#     http://www.gecode.org
+#
+#  See the file "LICENSE" for information on usage and
+#  redistribution of this file, and for a
+#     DISCLAIMER OF ALL WARRANTIES.
+#
+
+#
+# General Settings
+#
+
+export prefix = @prefix@
+export exec_prefix = @exec_prefix@
+export bindir = @bindir@
+export libdir = @libdir@
+export sharedlibdir = @sharedlibdir@
+export includedir = @includedir@
+export pkgincludedir = $(includedir)/gecode
+export srcdir = @srcdir@
+export datadir = @datadir@
+export docdir= @docdir@
+export top_srcdir = @top_srcdir@
+export top_builddir = .
+
+export subdirs = @subdirs@
+
+export VERSION		= @VERSION@
+export DATE		:= $(shell date "+%Y%m%d")
+export STAMP		= $(VERSION)-$(DATE)
+
+export CXX = @CXX@
+export CPPFLAGS = -I$(top_srcdir) -I$(top_builddir)
+export CXXFLAGS = $(CPPFLAGS) @CXXFLAGS@ $(CXXUSR)
+export EXAMPLES_EXTRA_CXXFLAGS = @EXAMPLES_EXTRA_CXXFLAGS@
+
+export LINKFLAGS = @LDFLAGS@
+export DLLFLAGS = @DLLFLAGS@
+export DLLPATH = @DLLPATH@
+
+export RANLIB = @RANLIB@
+export TAR = tar
+
+#
+# Use suffixes to get consistent treatment of dots
+#
+export OBJSUFFIX	= .@OBJEXT@
+export SBJSUFFIX	= .@SBJEXT@
+export DLLSUFFIX	= .@DLLEXT@
+export LIBSUFFIX	= .@LIBEXT@
+export STATICLIBSUFFIX	= .@STATICLIBEXT@
+export EXESUFFIX	= @EXEEXT@
+
+export LIBPREFIX 	= @LIBPREFIX@
+export LINKPREFIX	= @LINKPREFIX@
+export LINKSUFFIX	= @LINKSUFFIX@
+
+#
+# Programs
+#
+export RMF		= rm -rf
+export MV		= mv
+
+#
+# KERNEL COMPONENTS
+#
+
+KERNELSRC0 = \
+	core.cc memory-manager.cc
+KERNELHDR0 = \
+	array.icc branching.icc core.icc exception.icc \
+	macros.icc memory-manager.icc memory.icc modevent.icc \
+	propagator.icc view.icc
+
+KERNELSRC	= $(KERNELSRC0:%=kernel/%)
+KERNELHDR	= limits.hh kernel.hh $(KERNELHDR0:%=kernel/%)
+KERNELOBJ	= $(KERNELSRC:%.cc=%$(OBJSUFFIX))
+
+export KERNELDLL	= $(LIBPREFIX)@KERNEL@$(DLLSUFFIX)
+export KERNELLIB	= $(LIBPREFIX)@KERNEL@$(LIBSUFFIX)
+export KERNELSTATICLIB	= $(LIBPREFIX)@KERNEL@$(STATICLIBSUFFIX)
+export LINKKERNEL      = $(LINKPREFIX)@KERNEL@$(LINKSUFFIX)
+KERNELBUILDDIRS = kernel
+
+EXTRA_HEADERS   = vti.icc config.icc
+
+#
+# SEARCH COMPONENTS
+#
+
+SEARCHSRC0 = \
+	stack.cc dfs-copy.cc dfs-reco.cc dfs.cc \
+	lds.cc bab-copy.cc bab-reco.cc bab.cc
+SEARCHHDR0 = \
+	bab-copy.hh bab-copy.icc bab-reco.hh bab-reco.icc \
+	bab.icc dfs-copy.hh dfs-copy.icc dfs-reco.hh \
+	dfs-reco.icc dfs.icc lds.icc node.hh \
+	node.icc plain.icc restart.icc stack.hh \
+	stack.icc statistics.icc
+
+SEARCHSRC	= $(SEARCHSRC0:%=search/%)
+SEARCHHDR	= search.hh $(SEARCHHDR0:%=search/%)
+SEARCHOBJ	= $(SEARCHSRC:%.cc=%$(OBJSUFFIX))
+
+ifeq "@enable_search@" "yes"
+export SEARCHDLL	= $(LIBPREFIX)@SEARCH@$(DLLSUFFIX)
+export SEARCHSTATICLIB	= $(LIBPREFIX)@SEARCH@$(STATICLIBSUFFIX)
+else
+export SEARCHDLL	=
+export SEARCHSTATICLIB	=
+endif
+export SEARCHLIB	= $(LIBPREFIX)@SEARCH@$(LIBSUFFIX)
+export LINKSEARCH      = $(LINKPREFIX)@SEARCH@$(LINKSUFFIX)
+SEARCHBUILDDIRS = search
+
+#
+# INTEGER COMPONENTS
+#
+
+INTSRC0 = \
+	int-set.cc var/imp.cc var/int.cc \
+	view/print.cc array.cc bool.cc \
+	regular/reg.cc regular/dfa.cc regular.cc \
+	dom.cc rel.cc element.cc count.cc arithmetic.cc \
+	linear/post.cc linear.cc \
+	branch.cc branch/assign.cc \
+	distinct.cc cumulatives.cc \
+	sortedness.cc gcc.cc	
+INTHDR0 = \
+	arithmetic/abs.icc arithmetic/minmax.icc arithmetic/mult.icc \
+	bool/and.icc bool/eq.icc bool/eqv.icc bool/base.icc \
+	branch/assign.icc branch/select-val.icc branch/select-view.icc \
+	count/count.icc count/rel.icc \
+	cumulatives/val.icc \
+	distinct/bilink.icc distinct/bnd.icc distinct/combptr.icc \
+	distinct/dom.icc distinct/edge.icc distinct/node.icc \
+	distinct/val.icc \
+	dom/range.icc dom/spec.icc \
+	element/int.icc element/view.icc \
+	gcc/bnd.icc gcc/dom.icc gcc/gccbndsup.icc gcc/graphsup.icc \
+	gcc/lbc.icc gcc/ubc.icc gcc/val.icc gcc/occur.icc\
+	linear/binary.icc linear/bool.icc linear/nary.icc \
+	linear/noview.icc linear/ternary.icc \
+	regular/dfa.icc regular/dom.icc \
+	rel/eq.icc rel/lex.icc rel/lq-le.icc rel/nq.icc \
+	sortedness/matching.icc sortedness/narrowing.icc \
+	sortedness/order.icc sortedness/sortedness.icc sortedness/sortsup.icc \
+	int-set.icc var/bool.icc var/imp.icc var/int.icc \
+	view/bool.icc view/constint.icc view/int.icc view/minus.icc \
+	view/offset.icc view/rtest.icc view/scale.icc view/iter.icc \
+	arithmetic.hh array.icc bool.hh branch.hh \
+	count.hh cumulatives.hh distinct.hh dom.hh \
+	element.hh exception.icc gcc.hh linear.hh \
+	propagator.icc regular.hh rel.hh \
+	sortedness.hh var.icc view.icc
+
+INTSRC		= $(INTSRC0:%=int/%)
+INTHDR		= int.hh $(INTHDR0:%=int/%)
+INTOBJ		= $(INTSRC:%.cc=%$(OBJSUFFIX))
+
+ifeq "@enable_int_vars@" "yes"
+export INTDLL		= $(LIBPREFIX)@INT@$(DLLSUFFIX)
+export INTSTATICLIB	= $(LIBPREFIX)@INT@$(STATICLIBSUFFIX)
+else
+export INTDLL		=
+export INTSTATICLIB	=
+endif
+export INTLIB		= $(LIBPREFIX)@INT@$(LIBSUFFIX)
+export LINKINT      	= $(LINKPREFIX)@INT@$(LINKSUFFIX)
+INTBUILDDIRS	= \
+	int int/var int/view int/regular int/linear int/bool int/branch
+
+#
+# SET COMPONENTS
+#
+
+SETSRC0 =								 \
+	branch.cc cardinality.cc convex.cc convex/conv.cc convex/hull.cc \
+	dom.cc rel.cc rel-op.cc rel-op-const.cc				 \
+	int/card.cc int.cc int/channelVarVal.cc int/match.cc		 \
+	int/minmax.cc int/weights.cc					 \
+	select.cc select/disjoint.cc sequence.cc			 \
+	distinct.cc distinct/binomial.cc				 \
+	distinct/atmostOne.cc distinct/distinct.cc			 \
+	sequence/seq.cc sequence/seq-u.cc array.cc var/imp.cc		 \
+	var/integerset.cc var/set.cc view/print.cc
+SETHDR0 =								     \
+	view.icc exception.icc int.hh select.hh var.icc int/card.icc	     \
+	int/match.icc int/channelVarVal.icc int/minmax.icc int/weights.icc   \
+	select/idxarray.hh						     \
+	select/idxarray.icc select/inter.icc				     \
+	select/disjoint.icc array.icc var/imp.icc var/integerset.icc	     \
+	var/iter.icc var/set.icc					     \
+	view/complement.icc view/const.icc view/set.icc view/singleton.icc   \
+	rel/subset.icc rel/re-subset.icc rel/eq.icc rel/nq.icc rel/re-eq.icc \
+	rel/common.icc rel/nosubset.icc sequence.hh			     \
+	rel-op/union.icc rel-op/partition.icc rel-op/subofunion.icc	     \
+	rel-op/inter.icc rel-op/superofinter.icc 			     \
+	rel-op/post.icc rel-op/common.icc rel.hh			     \
+	distinct/binomial.icc distinct/distinct.icc			     \
+	distinct.hh distinct/atmostOne.icc				     \
+	sequence/seq.icc sequence/seq-u.icc				     \
+	sequence/common.icc convex/conv.icc convex/hull.icc convex.hh	     \
+	propagator.icc rel-op.hh					     \
+	branch.hh branch/select-val.icc branch/select-view.icc
+
+SETSRC		= $(SETSRC0:%=set/%)
+SETHDR		= set.hh $(SETHDR0:%=set/%)
+SETOBJ		= $(SETSRC:%.cc=%$(OBJSUFFIX))
+
+ifeq "@enable_set_vars@" "yes"
+export SETDLL		= $(LIBPREFIX)@SET@$(DLLSUFFIX)
+export SETSTATICLIB	= $(LIBPREFIX)@SET@$(STATICLIBSUFFIX)
+else
+export SETDLL		=
+export SETSTATICLIB	=
+endif
+export SETLIB		= $(LIBPREFIX)@SET@$(LIBSUFFIX)
+export LINKSET      	= $(LINKPREFIX)@SET@$(LINKSUFFIX)
+SETBUILDDIRS	=						\
+	set set/convex set/distinct set/int set/rel set/rel-op	\
+	set/select set/sequence set/var set/view
+
+#
+# MINIMODEL COMPONENTS
+#
+
+MMSRC0 = \
+	lin-expr.cc scheduling.cc bool-expr.cc
+MMHDR0 = \
+	lin-expr.icc lin-rel.icc exception.icc matrix.icc \
+	bool-expr.icc bool-rel.icc
+
+MMSRC 		= $(MMSRC0:%=minimodel/%)
+MMHDR 		= minimodel.hh $(MMHDR0:%=minimodel/%)
+MMOBJ		= $(MMSRC:%.cc=%$(OBJSUFFIX))
+MMSBJ		= $(MMSRC:%.cc=%$(SBJSUFFIX))
+
+ifeq "@enable_minimodel@" "yes"
+export MMDLL		= $(LIBPREFIX)@MM@$(DLLSUFFIX)
+export MMSTATICLIB	= $(LIBPREFIX)@MM@$(STATICLIBSUFFIX)
+else
+export MMDLL		=
+export MMSTATICLIB	=
+endif
+export MMLIB		= $(LIBPREFIX)@MM@$(LIBSUFFIX)
+export LINKMM      	= $(LINKPREFIX)@MM@$(LINKSUFFIX)
+MMBUILDDIRS	= minimodel
+
+#
+# OTHER HEADERS
+#
+
+SUPPORTHDR0 = \
+	block-allocator.hh dynamic-array.hh dynamic-stack.hh \
+	shared-array.hh sort.hh \
+	static-pqueue.hh static-stack.hh
+ITERHDR0 = \
+	ranges-add.icc ranges-append.icc ranges-cache.icc \
+	ranges-compl.icc ranges-diff.icc ranges-empty.icc \
+	ranges-inter.icc ranges-minmax.icc ranges-minus.icc \
+	ranges-offset.icc ranges-operations.icc ranges-scale.icc \
+	ranges-singleton.icc ranges-union.icc ranges-values.icc \
+	values-ranges.icc
+OTHERHDR = iter.hh \
+	$(SUPPORTHDR0:%=support/%) $(ITERHDR0:%=iter/%)
+
+#
+# EXAMPLES
+#
+
+INTEXAMPLESRC0 = \
+	alpha bibd cars donald \
+	eq20 golomb \
+	graph-color grocery ind-set knights \
+	magic-sequence magic-square \
+	money ortho-latin packing \
+	partition photo queens \
+	sudoku picture-puzzle  \
+	crowded-chess \
+	sports-league all-interval langfordnum \
+	warehouses
+INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cc)
+INTEXAMPLEOBJ  = $(INTEXAMPLESRC:%.cc=%$(OBJSUFFIX))
+INTEXAMPLESBJ  = $(INTEXAMPLESRC:%.cc=%$(SBJSUFFIX))
+INTEXAMPLEEXE  = $(INTEXAMPLESRC:%.cc=%$(EXESUFFIX))
+
+SETEXAMPLESRC0 = \
+	crew golf hamming steiner sudoku-set sudoku-set sudoku-mixed
+SETEXAMPLESRC  = $(SETEXAMPLESRC0:%=examples/%.cc)
+SETEXAMPLEOBJ  = $(SETEXAMPLESRC:%.cc=%$(OBJSUFFIX))
+SETEXAMPLESBJ  = $(SETEXAMPLESRC:%.cc=%$(SBJSUFFIX))
+SETEXAMPLEEXE  = $(SETEXAMPLESRC:%.cc=%$(EXESUFFIX))
+
+EXAMPLEBUILDDIRS = examples
+
+ifeq "@enable_set_vars@" "yes"
+EXAMPLEEXE = $(INTEXAMPLEEXE) $(SETEXAMPLEEXE)
+else
+ifeq "@enable_int_vars@" "yes"
+EXAMPLEEXE = $(INTEXAMPLEEXE)
+else
+EXAMPLEEXE =
+endif
+endif
+
+SUPPORTSRC0 = \
+	support timer
+SUPPORTSRC = $(SUPPORTSRC0:%=examples/%.cc)
+INTEXAMPLEHDR0 = support.hh support.icc timer.hh
+INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%)
+export SUPPORTOBJ = $(SUPPORTSRC:%.cc=%$(OBJSUFFIX))
+SUPPORTSBJ = $(SUPPORTSRC:%.cc=%$(SBJSUFFIX))
+
+
+#
+# COLLECTING ALL
+#
+
+ALLSRC =						\
+	$(KERNELSRC) $(SEARCHSRC) $(INTSRC) $(SETSRC)	\
+	$(MMSRC) $(SUPPORTSRC) $(INTEXAMPLESRC) $(SETEXAMPLESRC)
+ALLHDR = $(KERNELHDR) $(SEARCHHDR) $(INTHDR) $(SETHDR) $(MMHDR) $(OTHERHDR)
+ALLOBJ = $(ALLSRC:%.cc=%$(OBJSUFFIX))
+ALLSBJ = $(ALLSRC:%.cc=%$(SBJSUFFIX))
+
+
+export LINKALL = $(LINKMM) $(LINKSET) $(LINKINT) $(LINKSEARCH) $(LINKKERNEL)
+
+ifeq "@BUILDDLL@" "yes"
+export LIBTARGETS = \
+	$(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(SETDLL) $(MMDLL)
+export ALLLIB = $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) $(MMLIB)
+else
+export LIBTARGETS = \
+	$(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
+	$(INTSTATICLIB) $(SETSTATICLIB) $(MMSTATICLIB)
+export ALLLIB = $(LIBTARGETS)
+endif
+
+ifeq "@INSTALLLIBS@" "yes"
+LIBLIBTARGETS = $(ALLLIB)
+else
+LIBLIBTARGETS =
+endif
+
+#
+# Testing
+#
+
+INTTESTSRC0 = \
+	arithmetic basic bool count dom distinct element regular rel linear \
+	scheduling minimodel gcc sortedness
+SETTESTSRC0 = \
+	dom rel rel-op convex sequence int select distinct
+STRESSTESTSRC0 = \
+	exec minsort domain distinct regular 
+TESTSRC0 = \
+	test log random int set stress intset \
+	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) $(STRESSTESTSRC0:%=stress/%)
+TESTSRC	= $(TESTSRC0:%=test/%.cc)
+TESTHDR0 = \
+	test int set stress
+TESTHDR = $(TESTHDR0:%=test/%.hh)
+TESTOBJ	= $(TESTSRC:%.cc=%$(OBJSUFFIX))
+TESTSBJ	= $(TESTSRC:%.cc=%$(SBJSUFFIX))
+TESTEXE	= test/test$(EXESUFFIX)
+TESTBUILDDIRS = test test/int test/set test/stress
+
+BUILDDIRS = $(KERNELBUILDDIRS) $(SEARCHBUILDDIRS) $(INTBUILDDIRS) \
+	$(SETBUILDDIRS) $(MMBUILDDIRS) $(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
+
+ifeq "@enable_examples@" "yes"
+all: compilelib compileexamples
+else
+all: compilelib
+endif
+compilelib: mkcompiledirs $(LIBTARGETS) compilesubdirs
+compileexamples: $(EXAMPLEEXE)
+
+test: mkcompiledirs $(TESTEXE)
+
+ifeq "@top_srcdir@" "."
+mkcompiledirs:
+else
+mkcompiledirs:
+	for f in $(BUILDDIRS); do \
+	  (test -z "$(top_builddir)"/$$f || mkdir -p "$(top_builddir)"/$$f); \
+	done
+endif
+
+
+
+# ugly hack by Grégoire Dooms to call a target on a contribs after evaluating all the variables in this Makefile.
+# used as make contribs:cpgraph:doc or make contribs:cpgraph:Makefile.in
+.PHONY: contribs\:%
+contribs\:%:
+	$(MAKE) -C $(shell echo $@ | sed 's/\(contribs:[^:]*\):.*/\1/;s+:+/+') $(shell echo $@ | sed 's/contribs:[^:]*:\(.*\)/\1/;s+:+/+')
+
+# less ugly hack by Guido Tack to call a target
+# Just give ICD (in-contrib-dir) and ICT (in-contrib-target) as arguments
+# to make incontrib
+ICT=
+ICD=
+.PHONY: incontrib
+incontrib:
+	$(MAKE) -C contribs/$(ICD) $(ICT)
+
+compilesubdirs:
+	@for i in $(subdirs); do \
+	  if test -f $$i/Makefile; then \
+	    echo "Making in directory $$i"; \
+	    $(MAKE) -C $$i; \
+	  fi; \
+	done
+
+#
+# Object targets
+#
+
+kernel/%$(OBJSUFFIX): $(top_srcdir)/kernel/%.cc
+	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_KERNEL \
+	@COMPILEOBJ@$@ @COMPILERIN@ $<
+kernel/%$(SBJSUFFIX): $(top_srcdir)/kernel/%.cc
+	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_KERNEL \
+	@COMPILESBJ@$@ @COMPILERIN@ $<
+
+search/%$(OBJSUFFIX): $(top_srcdir)/search/%.cc
+	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_SEARCH \
+	@COMPILEOBJ@$@ @COMPILERIN@ $<
+search/%$(SBJSUFFIX): $(top_srcdir)/search/%.cc
+	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_SEARCH \
+	@COMPILESBJ@$@ @COMPILERIN@ $<
+
+int/%$(OBJSUFFIX): $(top_srcdir)/int/%.cc
+	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_INT \
+	@COMPILEOBJ@$@ @COMPILERIN@ $<
+int/%$(SBJSUFFIX): $(top_srcdir)/int/%.cc
+	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_INT \
+	@COMPILESBJ@$@ @COMPILERIN@ $<
+
+set/%$(OBJSUFFIX): $(top_srcdir)/set/%.cc
+	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_SET \
+	@COMPILEOBJ@$@ @COMPILERIN@ $<
+set/%$(SBJSUFFIX): $(top_srcdir)/set/%.cc
+	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_SET \
+	@COMPILESBJ@$@ @COMPILERIN@ $<
+
+minimodel/%$(OBJSUFFIX): $(top_srcdir)/minimodel/%.cc
+	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_MINIMODEL \
+	@COMPILEOBJ@$@ @COMPILERIN@ $<
+minimodel/%$(SBJSUFFIX): $(top_srcdir)/minimodel/%.cc
+	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_MINIMODEL \
+	@COMPILESBJ@$@ @COMPILERIN@ $<
+
+examples/%$(OBJSUFFIX): $(top_srcdir)/examples/%.cc
+	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
+	@COMPILEOBJ@$@ @COMPILERIN@ $<
+examples/%$(SBJSUFFIX): $(top_srcdir)/examples/%.cc
+	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
+	@COMPILESBJ@$@ @COMPILERIN@ $<
+
+
+test/%$(OBJSUFFIX): $(top_srcdir)/test/%.cc
+	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
+		@COMPILEOBJ@$@ @COMPILERIN@ $<
+test/%$(SBJSUFFIX): $(top_srcdir)/test/%.cc
+	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
+		@COMPILESBJ@$@ @COMPILERIN@ $<
+
+
+#
+# DLL Targets
+#
+
+ifeq "$(DLLSUFFIX)" "$(LIBSUFFIX)"
+$(KERNELDLL): $(KERNELOBJ)
+	$(CXX) $(DLLFLAGS) $(KERNELOBJ) \
+		@LINKOUTPUT@$(KERNELDLL)
+$(SEARCHDLL): $(SEARCHOBJ) $(KERNELDLL)
+	$(CXX) $(DLLFLAGS) $(SEARCHOBJ) \
+		@DLLPATH@ $(LINKKERNEL) \
+		@LINKOUTPUT@$(SEARCHDLL)
+$(INTDLL): $(INTOBJ) $(KERNELDLL)
+	$(CXX) $(DLLFLAGS) $(INTOBJ) \
+		@DLLPATH@ $(LINKKERNEL) \
+		@LINKOUTPUT@$(INTDLL)
+$(SETDLL): $(SETOBJ) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(SETOBJ) \
+		@DLLPATH@ $(LINKKERNEL) $(LINKINT) \
+		@LINKOUTPUT@$(SETDLL)
+$(MMDLL): $(MMOBJ) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(MMOBJ) \
+		@DLLPATH@ $(LINKKERNEL) $(LINKINT) \
+		@LINKOUTPUT@$(MMDLL)
+else
+$(KERNELDLL) $(KERNELLIB): $(KERNELOBJ)
+	$(CXX) $(DLLFLAGS) $(KERNELOBJ) \
+		@LINKOUTPUT@$(KERNELDLL)
+$(SEARCHDLL) $(SEARCHLIB): $(SEARCHOBJ) $(KERNELDLL)
+	$(CXX) $(DLLFLAGS) $(SEARCHOBJ) \
+		@DLLPATH@ $(LINKKERNEL) \
+		@LINKOUTPUT@$(SEARCHDLL)
+$(INTDLL) $(INTLIB): $(INTOBJ) $(KERNELDLL)
+	$(CXX) $(DLLFLAGS) $(INTOBJ) \
+		@DLLPATH@ $(LINKKERNEL) \
+		@LINKOUTPUT@$(INTDLL)
+$(SETDLL) $(SETLIB): $(SETOBJ) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(SETOBJ) \
+		@DLLPATH@ $(LINKKERNEL) $(LINKINT) \
+		@LINKOUTPUT@$(SETDLL)
+$(MMDLL) $(MMLIB): $(MMOBJ) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(MMOBJ) \
+		@DLLPATH@ $(LINKKERNEL) $(LINKINT) \
+		@LINKOUTPUT@$(MMDLL)
+endif
+
+#
+# Static libraries
+#
+
+$(KERNELSTATICLIB): $(KERNELOBJ)
+	$(AR) $(ARFLAGS) $@ $(KERNELOBJ)
+	$(RANLIB) $@
+$(SEARCHSTATICLIB): $(SEARCHOBJ)
+	$(AR) $(ARFLAGS) $@ $(SEARCHOBJ)
+	$(RANLIB) $@
+$(INTSTATICLIB): $(INTOBJ)
+	$(AR) $(ARFLAGS) $@ $(INTOBJ)
+	$(RANLIB) $@
+$(SETSTATICLIB): $(SETOBJ)
+	$(AR) $(ARFLAGS) $@ $(SETOBJ)
+	$(RANLIB) $@
+$(MMSTATICLIB): $(MMOBJ)
+	$(AR) $(ARFLAGS) $@ $(MMOBJ)
+	$(RANLIB) $@
+
+#
+# EXE Targets
+#
+
+.PRECIOUS: examples/%$(OBJSUFFIX)
+examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) $(SUPPORTOBJ) $(ALLLIB)
+	$(CXX) -o $@ $< $(SUPPORTOBJ) $(DLLPATH) $(CXXFLAGS) \
+	$(LINKFLAGS) $(LINKALL)
+
+$(TESTEXE): $(TESTOBJ) $(ALLLIB) 
+	$(CXX) -o $@ $(TESTOBJ) $(DLLPATH) $(CXXFLAGS) \
+	$(LINKFLAGS) $(LINKALL)
+
+
+
+#
+# Autoconf
+#
+
+$(top_srcdir)/configure: $(top_srcdir)/configure.ac
+	(cd $(top_srcdir) && autoconf)
+config.status: $(top_srcdir)/configure
+	./config.status --recheck
+Makefile: $(top_srcdir)/Makefile.in config.status
+	./config.status --file $@:$<
+doxygen.hh: $(top_srcdir)/doxygen.hh.in config.status
+	./config.status --file $@:$<
+
+#
+# Documentation
+#
+
+export ENABLEDOCCHM	= @ENABLEDOCCHM@
+ENABLEDOCSEARCH = @ENABLEDOCSEARCH@
+
+.PHONY: doc
+
+DOCSRC_NOTGENERATED = \
+	misc/doxygen/back.png misc/doxygen/footer.html \
+	misc/doxygen/gecode-logo-100.png \
+	misc/doxygen/stylesheet.css \
+	misc/genlicense.perl misc/genstatistics.perl misc/getrevision.perl
+DOCSRC = $(DOCSRC_NOTGENERATED:%=$(top_srcdir)/%) \
+	doxygen.conf.use header.html \
+	doxygen.hh license.hh stat.hh \
+
+license.hh: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%)
+	perl $(top_srcdir)/misc/genlicense.perl $^ > license.hh
+
+stat.hh: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) \
+	$(TESTHDR:%=$(top_srcdir)/%) $(TESTSRC:%=$(top_srcdir)/%)
+	perl $(top_srcdir)/misc/genstatistics.perl $^ > stat.hh
+
+
+ifeq "@ENABLEDOCCHM@" "yes"
+
+header.html: $(top_srcdir)/misc/doxygen/header.html
+	grep -v '<form.*form>' < $< > $@
+doxygen.conf.use: doxygen.conf
+	echo -e "GENERATE_HTMLHELP = YES\nSEARCHENGINE = NO\n" | \
+		cat $< - > $@
+
+doc: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) $(DOCSRC)
+	mkdir -p doc/html
+	cp -f $(top_srcdir)/misc/doxygen/back.png \
+	$(top_srcdir)/misc/doxygen/gecode-logo-100.png doc/html
+	doxygen doxygen.conf.use
+	mv doc/html/GecodeReference.chm GecodeReference.chm
+
+else
+ifeq "@ENABLEDOCSEARCH@" "yes"
+
+header.html: $(top_srcdir)/misc/doxygen/header.html
+	cat < $< > $@
+doxygen.conf.use: doxygen.conf
+	echo -e "GENERATE_HTMLHELP = NO\nSEARCHENGINE = YES\n" | \
+		cat $< - > $@
+else
+
+header.html: $(top_srcdir)/misc/doxygen/header.html
+	grep -v '<form.*form>' < $< > $@
+doxygen.conf.use: doxygen.conf
+	echo -e "GENERATE_HTMLHELP = NO\nSEARCHENGINE = NO\n" | \
+		cat $< - > $@
+
+endif
+
+doc: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) $(DOCSRC)
+	mkdir -p doc/html
+	cp -f $(top_srcdir)/misc/doxygen/back.png \
+	$(top_srcdir)/misc/doxygen/gecode-logo-100.png doc/html
+	doxygen doxygen.conf.use
+
+endif
+
+
+#
+# Installation
+#
+
+ifeq "@HAVE_PKGCONFIG@" "yes"
+PKGCONFIGFILES = gecode.pc gecode-search.pc gecode-minimodel.pc
+else
+PKGCONFIGFILES =
+endif
+
+.PHONY: install
+
+ifeq "@enable_examples@" "yes"
+install: installlib installexamples
+else
+install: installlib
+endif
+doinstalllib: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
+	mkdir -p $(sharedlibdir) && \
+	mkdir -p $(libdir) && \
+	mkdir -p $(pkgincludedir) && \
+	for f in $(LIBTARGETS); do cp $$f $(sharedlibdir); done && \
+	for f in $(LIBLIBTARGETS); do cp $$f $(libdir); done && \
+	(cd $(top_srcdir) && tar cf - $(ALLHDR)) | \
+	(cd $(pkgincludedir) && tar xf -) && \
+	for f in $(EXTRA_HEADERS); do cp $$f $(pkgincludedir); done && \
+	for f in $(PKGCONFIGFILES); do \
+		mkdir -p $(libdir)/pkgconfig; \
+		cp misc/$$f $(libdir)/pkgconfig; \
+	done
+
+
+ifeq "@BUILDDLL@" "yes"
+ranliblib:
+else
+ranliblib:
+	for f in $(LIBTARGETS); do $(RANLIB) $(sharedlibdir)/$$f; done
+endif
+
+installlib: compilelib doinstalllib ranliblib installsubdirs
+
+installexamples: compileexamples
+	mkdir -p $(bindir); \
+	for f in $(EXAMPLEEXE); do cp $$f $(bindir); done \
+
+installdoc: doc
+	mkdir -p $(docdir); \
+	cp -r $(DOCTARGET) $(docdir)
+
+installsubdirs:
+	@for i in $(subdirs); do \
+	  cd $$i && if test -f Makefile; then \
+	    echo "Making install in directory $$i"; \
+	    $(MAKE) install; \
+	  fi; \
+	done
+
+#
+# Source Distribution
+#
+
+.PHONY: distdoc
+
+ifeq "@ENABLEDOCSEARCH@" "yes"
+DOCSUFFIX = search-$(STAMP)
+else
+DOCSUFFIX = $(STAMP)
+endif
+
+distdoc: doc
+	rm -rf gecode-doc-$(DOCSUFFIX) && \
+	cp -r doc/html . && mv html gecode-doc-$(DOCSUFFIX) && \
+	$(TAR) cf - gecode-doc-$(DOCSUFFIX) | \
+		gzip -9 > gecode-doc-$(DOCSUFFIX).tar.gz && \
+	zip -q -9 -r gecode-doc-$(DOCSUFFIX).zip gecode-doc-$(DOCSUFFIX) && \
+	$(RMF) gecode-doc-$(DOCSUFFIX) && \
+	if test -f doc/gecode-doc.tag; then \
+		mv doc/gecode-doc.tag gecode-doc-$(DOCSUFFIX).tag && \
+		gzip -9 gecode-doc-$(DOCSUFFIX).tag; \
+	fi
+
+#
+# Maintenance targets
+#
+
+clean:
+	$(RMF) *.stackdump core gmon.out vc70.pdb vc80.pdb
+	$(RMF) doxygen.log doxygen.hh doxygen.conf.use stat.hh license.hh header.html
+	$(RMF) $(ALLOBJ) $(ALLSBJ)
+	$(RMF) $(TESTOBJ) $(TESTSBJ)
+
+veryclean: clean
+	$(RMF) $(LIBTARGETS)
+	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%.exp) $(LIBTARGETS:%$(DLLSUFFIX)=%.lib)
+	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%.ilk) $(LIBTARGETS:%$(DLLSUFFIX)=%.pdb)
+	$(RMF) $(EXAMPLEEXE:%.exe=%.pdb)
+	$(RMF) doc GecodeReference.chm install Makefile.dep
+	$(RMF) $(EXAMPLEEXE)
+
+distclean: veryclean
+	$(RMF) misc/gecode.pc misc/gecode-search.pc misc/gecode-minimodel.pc
+	$(RMF) vti.icc doxygen.conf doxygen.hh Makefile
+	$(RMF) config.log config.status
+
+depend: 	
+	perl $(top_srcdir)/misc/makedepend.perl \
+	$(top_srcdir) \
+	$(ALLSRC) \
+	$(TESTSRC) > Makefile.dep
+
+-include Makefile.dep

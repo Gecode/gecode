@@ -1,0 +1,65 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+/**
+ * \brief Check whether modification event \a me is failed, and forward failure.
+ *
+ * To be used inside the propagate member function of a propagator 
+ * or the commit member function of a branching.
+ * \ingroup TaskActor
+ */ 
+#define GECODE_ME_CHECK(me)			\
+  if (::Gecode::me_failed(me))			\
+    return ::Gecode::ES_FAILED;
+
+/**
+ * \brief Check whether modification event \a me is failed, and fail space \a home.
+ *
+ * To be used inside post functions.
+ * \ingroup TaskActor
+ */ 
+#define GECODE_ME_FAIL(home,me)			\
+  if (::Gecode::me_failed(me)) {			\
+    (home)->fail();				\
+    return;					\
+  }
+
+
+
+/**
+ * \brief Check whether execution status \a es is failed, and forward failure.
+ * \ingroup TaskActor
+ */ 
+#define GECODE_ES_CHECK(es)			\
+  if ((es) == ::Gecode::ES_FAILED)		\
+    return ::Gecode::ES_FAILED;
+
+/**
+ * \brief Check whether execution status \a es is failed, and fail space \a home.
+ * \ingroup TaskActor
+ */ 
+#define GECODE_ES_FAIL(home,es)			\
+  if ((es) == ::Gecode::ES_FAILED) {		\
+    (home)->fail();				\
+    return;					\
+  }
+
+// STATISTICS: kernel-other

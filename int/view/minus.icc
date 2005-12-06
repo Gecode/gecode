@@ -1,0 +1,284 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2003
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { 
+
+  namespace Int {
+
+    /*
+     * Constructors and initialization
+     *
+     */
+    forceinline
+    MinusView::MinusView(void) {}
+    forceinline
+    MinusView::MinusView(const IntView& x)
+      : DerivedViewBase<IntView>(x) {}
+    forceinline void
+    MinusView::init(const IntView& x) {
+      view = x;
+    }
+
+
+
+    /*
+     * Value access
+     *
+     */
+    forceinline int
+    MinusView::min(void) const { 
+      return -view.max(); 
+    }
+    forceinline int
+    MinusView::max(void) const { 
+      return -view.min(); 
+    }
+    forceinline int
+    MinusView::med(void) const { 
+      return -view.med(); 
+    }
+    forceinline int
+    MinusView::val(void) const { 
+      return -view.val(); 
+    }
+
+    forceinline unsigned int
+    MinusView::width(void) const { 
+      return view.width(); 
+    }
+    forceinline unsigned int
+    MinusView::size(void) const { 
+      return view.size(); 
+    }
+    forceinline unsigned int
+    MinusView::regret_min(void) const { 
+      return view.regret_max(); 
+    }
+    forceinline unsigned int
+    MinusView::regret_max(void) const { 
+      return view.regret_min(); 
+    }
+
+
+    /*
+     * Domain tests
+     *
+     */
+    forceinline bool
+    MinusView::range(void) const { 
+      return view.range(); 
+    }
+    forceinline bool
+    MinusView::assigned(void) const { 
+      return view.assigned(); 
+    }
+    forceinline bool
+    MinusView::in(int n) const { 
+      return view.in(-n); 
+    }
+    forceinline bool
+    MinusView::in(double n) const { 
+      return view.in(-n); 
+    }
+
+
+    /*
+     * Domain update by value
+     *
+     */
+    forceinline ModEvent
+    MinusView::lq(Space* home, int n) { 
+      return view.gq(home,-n); 
+    }
+    forceinline ModEvent
+    MinusView::lq(Space* home, double n) { 
+      return view.gq(home,-n); 
+    }
+    forceinline ModEvent
+    MinusView::le(Space* home, int n) { 
+      return view.gr(home,-n); 
+    }
+    forceinline ModEvent
+    MinusView::le(Space* home, double n) { 
+      return view.gr(home,-n); 
+    }
+    forceinline ModEvent
+    MinusView::gq(Space* home, int n) { 
+      return view.lq(home,-n); 
+    }
+    forceinline ModEvent
+    MinusView::gq(Space* home, double n) { 
+      return view.lq(home,-n); 
+    }
+    forceinline ModEvent
+    MinusView::gr(Space* home, int n) { 
+      return view.le(home,-n); 
+    }
+    forceinline ModEvent
+    MinusView::gr(Space* home, double n) { 
+      return view.le(home,-n); 
+    }
+    forceinline ModEvent
+    MinusView::nq(Space* home, int n) { 
+      return view.nq(home,-n); 
+    }
+    forceinline ModEvent
+    MinusView::nq(Space* home, double n) { 
+      return view.nq(home,-n); 
+    }
+    forceinline ModEvent
+    MinusView::eq(Space* home, int n) { 
+      return view.eq(home,-n); 
+    }
+    forceinline ModEvent
+    MinusView::eq(Space* home, double n) { 
+      return view.eq(home,-n); 
+    }
+
+
+
+    /*
+     * Domain update by range iterator
+     *
+     */
+    template <class I>
+    ModEvent
+    MinusView::narrow(Space* home, I& i) {
+      Iter::Ranges::Minus<I> mi(i); return view.narrow(home,mi);
+    }
+    template <class I>
+    ModEvent
+    MinusView::inter(Space* home, I& i) {
+      Iter::Ranges::Minus<I> mi(i); return view.inter(home,mi);
+    }
+    template <class I>
+    ModEvent
+    MinusView::minus(Space* home, I& i) {
+      Iter::Ranges::Minus<I> mi(i); return view.minus(home,mi);
+    }
+
+
+    /*
+     * Propagator modification events
+     *
+     */
+    forceinline ModEvent
+    MinusView::pme(const Propagator* p) {
+      return IntView::pme(p);
+    }
+    forceinline PropModEvent
+    MinusView::pme(ModEvent me) {
+      return IntView::pme(me);
+    }
+
+
+    /*
+     * Dependencies
+     *
+     */
+    forceinline void
+    MinusView::subscribe(Space* home, Propagator* p, PropCond pc) {
+      view.subscribe(home,p,pc);
+    }
+    forceinline void
+    MinusView::cancel(Propagator* p, PropCond pc) {
+      view.cancel(p,pc);
+    }
+
+
+    /*
+     * Cloning
+     *
+     */
+
+    forceinline void
+    MinusView::update(Space* home, bool share, MinusView& x) {
+      view.update(home,share,x.view);
+    }
+
+
+    /**
+     * \brief %Range iterator for minus integer views
+     * \ingroup TaskActorIntView
+     */
+    template <>
+    class ViewRanges<MinusView> : public IntVarImpBwd {
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      ViewRanges(void);
+      /// Initialize with ranges for view \a x
+      ViewRanges(const MinusView& x);
+      /// Initialize with ranges for view \a x
+      void init(const MinusView& x);
+      //@}
+
+      /// \name Range access
+      //@{
+      /// Return smallest value of range
+      int min(void) const;
+      /// Return largest value of range
+      int max(void) const;
+      //@}
+    };
+
+    forceinline
+    ViewRanges<MinusView>::ViewRanges(void) {}
+
+    forceinline
+    ViewRanges<MinusView>::ViewRanges(const MinusView& x)
+      : IntVarImpBwd(x.base().variable()) {}
+
+    forceinline void
+    ViewRanges<MinusView>::init(const MinusView& x) {
+      IntVarImpBwd::init(x.base().variable());
+    }
+
+    forceinline int
+    ViewRanges<MinusView>::min(void) const {
+      return -IntVarImpBwd::max();
+    }
+    forceinline int
+    ViewRanges<MinusView>::max(void) const {
+      return -IntVarImpBwd::min();
+    }
+
+  }
+
+
+  /*
+   * View comparison
+   *
+   */
+  forceinline bool
+  same(const Int::MinusView& x, const Int::MinusView& y) {
+    return same(x.base(),y.base());
+  }
+  forceinline bool
+  before(const Int::MinusView& x, const Int::MinusView& y) {
+    return before(x.base(),y.base());
+  }
+
+}
+
+// STATISTICS: int-var
+

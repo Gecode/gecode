@@ -1,0 +1,565 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Contributing authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2003
+ *     Guido Tack, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int {
+
+  /*
+   * Range lists
+   *
+   */
+
+#define RL2PD(r) reinterpret_cast<ptrdiff_t>(r)
+#define PD2RL(p) reinterpret_cast<RangeList*>(p)
+
+  forceinline
+  IntVarImp::RangeList::RangeList(void) {}
+
+  forceinline
+  IntVarImp::RangeList::RangeList(int min, int max)
+    : _min(min), _max(max) {}
+
+  forceinline
+  IntVarImp::RangeList::RangeList(int min, int max, RangeList* p, RangeList* n)
+    : _min(min), _max(max) {
+    _next = PD2RL(RL2PD(p)^RL2PD(n)); 
+  }
+
+  forceinline IntVarImp::RangeList*
+  IntVarImp::RangeList::next(const RangeList* p) const {
+    return PD2RL(RL2PD(_next)^RL2PD(p));
+  }
+  forceinline IntVarImp::RangeList*
+  IntVarImp::RangeList::prev(const RangeList* n) const {
+    return PD2RL(RL2PD(_next)^RL2PD(n));
+  }
+  forceinline void
+  IntVarImp::RangeList::prevnext(RangeList* p, RangeList* n) {
+    _next = PD2RL(RL2PD(p)^RL2PD(n));
+  }
+  forceinline void
+  IntVarImp::RangeList::next(RangeList* o, RangeList* n) {
+    _next = PD2RL(RL2PD(_next)^(RL2PD(o)^RL2PD(n)));
+  }
+  forceinline void
+  IntVarImp::RangeList::prev(RangeList* o, RangeList* n) {
+    _next = PD2RL(RL2PD(_next)^(RL2PD(o)^RL2PD(n)));
+  }
+  forceinline void
+  IntVarImp::RangeList::fix(RangeList* n) {
+    _next = n;
+  }
+
+  forceinline void
+  IntVarImp::RangeList::min(int n) {
+    _min = n;
+  }
+  forceinline void
+  IntVarImp::RangeList::max(int n) {
+    _max = n;
+  }
+
+  forceinline int
+  IntVarImp::RangeList::min(void) const {
+    return _min;
+  }
+  forceinline int
+  IntVarImp::RangeList::max(void) const {
+    return _max;
+  }
+  forceinline unsigned int
+  IntVarImp::RangeList::width(void) const {
+    return _max - _min + 1;
+  }
+
+
+  forceinline void
+  IntVarImp::RangeList::operator delete(void*) {}
+
+  forceinline void
+  IntVarImp::RangeList::operator delete(void*, Space*) {
+    assert(false);
+  }
+
+  forceinline void*
+  IntVarImp::RangeList::operator new(size_t s, Space* home) {
+    assert(s == sizeof(RangeList));
+    return home->fl_alloc<sizeof(RangeList)>();
+  }
+
+  forceinline void
+  IntVarImp::RangeList::dispose(Space* home, RangeList* p, RangeList* l) {
+    RangeList* c = this;
+    while (c != l) {
+      RangeList* n = c->next(p);
+      c->fix(n);
+      p=c; c=n;
+    }
+    home->fl_dispose<sizeof(RangeList)>(this,l);
+  }
+
+  forceinline void
+  IntVarImp::RangeList::dispose(Space* home, RangeList* l) {
+    home->fl_dispose<sizeof(RangeList)>(this,l);
+  }
+
+  forceinline void
+  IntVarImp::RangeList::dispose(Space* home) {
+    home->fl_dispose<sizeof(RangeList)>(this,this);
+  }
+
+#undef RL2PD
+#undef PD2RL
+
+  /*
+   * Mainitaining range lists for variable domain
+   *
+   */
+
+  forceinline IntVarImp::RangeList*
+  IntVarImp::fst(void) const {
+    return dom.next(NULL);
+  }
+
+  forceinline void
+  IntVarImp::fst(IntVarImp::RangeList* f) {
+    dom.prevnext(NULL,f);
+  }
+
+  forceinline IntVarImp::RangeList*
+  IntVarImp::lst(void) const {
+    return _lst;
+  }
+
+  forceinline void
+  IntVarImp::lst(IntVarImp::RangeList* l) {
+    _lst = l;
+  }
+
+  /*
+   * Creation of new variable implementations
+   *
+   */
+
+  forceinline
+  IntVarImp::IntVarImp(Space* home, int min, int max)
+    : Variable<VTI_INT,PC_INT_DOM>(home),
+      dom(min,max,NULL,NULL), holes(0) {}
+
+  forceinline
+  IntVarImp::IntVarImp(Space* home, const IntSet& d)
+    : Variable<VTI_INT,PC_INT_DOM>(home),
+      dom(d.min(),d.max()) {
+    if (d.size() > 1) {
+      int n = d.size();
+      RangeList* r = reinterpret_cast<RangeList*>
+	(home->alloc(sizeof(RangeList)*n));
+      fst(r); lst(r+n-1);
+      unsigned int h = d.max()-d.min()+1;
+      for (int i = n; i--; ) {
+	h -= d.width(i);
+	r[i].min(d.min(i)); r[i].max(d.max(i));
+	r[i].prevnext(&r[i-1],&r[i+1]);
+      }
+      r[0].prev(&r[-1],NULL); 
+      r[n-1].next(&r[n],NULL);
+      holes = h;
+    } else {
+      fst(NULL); holes = 0;
+    }
+  }
+
+
+  /*
+   * Operations on integer variable implementations
+   *
+   */
+
+  forceinline int
+  IntVarImp::min(void) const {
+    return dom.min();
+  }
+  forceinline int
+  IntVarImp::max(void) const {
+    return dom.max();
+  }
+  forceinline int
+  IntVarImp::val(void) const {
+    assert(dom.min() == dom.max());
+    return dom.min();
+  }
+
+  forceinline bool
+  IntVarImp::range(void) const {
+    return fst() == NULL;
+  }
+  forceinline bool
+  IntVarImp::assigned(void) const {
+    return dom.min() == dom.max();
+  }
+
+
+  forceinline unsigned int
+  IntVarImp::width(void) const {
+    return dom.width();
+  }
+
+  forceinline unsigned int
+  IntVarImp::size(void) const {
+    return dom.width() - holes;
+  }
+
+  forceinline unsigned int
+  IntVarImp::regret_min(void) const {
+    if (fst() == NULL) {
+      return (dom.min() == dom.max()) ? 0 : 1;
+    } else if (dom.min() == fst()->max()) {
+      return fst()->next(NULL)->min()-dom.min();
+    } else {
+      return 1;
+    }
+  }
+  forceinline unsigned int
+  IntVarImp::regret_max(void) const {
+    if (lst() == NULL) {
+      return (dom.min() == dom.max()) ? 0 : 1;
+    } else if (dom.max() == lst()->min()) {
+      return dom.max()-lst()->prev(NULL)->max();
+    } else {
+      return 1;
+    }
+  }
+
+
+
+  /*
+   * Tests
+   *
+   */
+
+  forceinline bool
+  IntVarImp::in(int n) const {
+    if ((n < dom.min()) || (n > dom.max()))
+      return false;
+    return (fst() == NULL) || in_full(n);
+  }
+  forceinline bool
+  IntVarImp::in(double n) const {
+    if ((n < dom.min()) || (n > dom.max()))
+      return false;
+    return (fst() == NULL) || in_full(static_cast<int>(n));
+  }
+
+
+  /*
+   * Accessing rangelists for iteration
+   *
+   */
+
+  forceinline const IntVarImp::RangeList*
+  IntVarImp::ranges_fwd(void) const {
+    return (fst() == NULL) ? &dom : fst();
+  }
+
+  forceinline const IntVarImp::RangeList*
+  IntVarImp::ranges_bwd(void) const {
+    return (fst() == NULL) ? &dom : lst();
+  }
+
+
+
+  /*
+   * Tell operations (to be inlined: performing bounds checks first)
+   *
+   */
+
+  forceinline ModEvent
+  IntVarImp::gq(Space* home, int n) {
+    if (n <= dom.min()) return ME_INT_NONE;
+    if (n > dom.max())  return ME_INT_FAILED;
+    gq_full(home,n);
+    if (assigned())
+      return ME_INT_VAL;
+    return ME_INT_BND;
+  }
+  forceinline ModEvent
+  IntVarImp::gq(Space* home, double n) {
+    if (n <= dom.min()) return ME_INT_NONE;
+    if (n > dom.max())  return ME_INT_FAILED;
+    gq_full(home,static_cast<int>(n));
+    if (assigned())
+      return ME_INT_VAL;
+    return ME_INT_BND;
+  }
+
+
+  forceinline ModEvent
+  IntVarImp::lq(Space* home, int n) {
+    if (n >= dom.max()) return ME_INT_NONE;
+    if (n < dom.min())  return ME_INT_FAILED;
+    lq_full(home,n);
+    if (dom.min() == n)
+      return ME_INT_VAL;
+    return ME_INT_BND;
+  }
+  forceinline ModEvent
+  IntVarImp::lq(Space* home, double n) {
+    if (n >= dom.max()) return ME_INT_NONE;
+    if (n < dom.min())  return ME_INT_FAILED;
+    lq_full(home,static_cast<int>(n));
+    if (dom.max() == n)
+      return ME_INT_VAL;
+    return ME_INT_BND;
+  }
+
+
+  forceinline ModEvent
+  IntVarImp::eq(Space* home, int n) {
+    if ((n < dom.min()) || (n > dom.max())) 
+      return ME_INT_FAILED;
+    if ((n == dom.min()) && (n == dom.max()))
+      return ME_INT_NONE;
+    eq_full(home,n);
+    if (dom.min() == Limits::Int::int_max+1)
+      return ME_INT_FAILED;
+    return ME_INT_VAL;
+  }
+  forceinline ModEvent
+  IntVarImp::eq(Space* home, double n) {
+    if ((n < dom.min()) || (n > dom.max())) 
+      return ME_INT_FAILED;
+    if ((n == dom.min()) && (n == dom.max()))
+      return ME_INT_NONE;
+    eq_full(home,static_cast<int>(n));
+    if (dom.min() == Limits::Int::int_max+1)
+      return ME_INT_FAILED;
+    return ME_INT_VAL;
+  }
+
+
+  forceinline ModEvent
+  IntVarImp::nq(Space* home, int n) {
+    if ((n < dom.min()) || (n > dom.max())) return ME_INT_NONE;
+    return nq_full(home,n);
+  }
+  forceinline ModEvent
+  IntVarImp::nq(Space* home, double d) {
+    if ((d < dom.min()) || (d > dom.max())) return ME_INT_NONE;
+    return nq_full(home,static_cast<int>(d));
+  }
+
+
+  /*
+   * Tell operations with respect to iterators
+   *
+   */
+
+  template <class I>
+  forceinline ModEvent
+  IntVarImp::narrow(Space* home, I& ri) {
+    // Is new domain empty?
+    if (!ri())
+      return ME_INT_FAILED;
+    int min0 = ri.min();
+    int max0 = ri.max();
+    ++ri;
+    // Is new domain range?
+    if (!ri()) {
+      // Remove possible rangelist (if it was not a range, the domain
+      // must have been narrowed!)
+      if (fst()) {
+	fst()->dispose(home,NULL,lst());
+	fst(NULL); holes = 0;
+      }
+      const int min1 = dom.min(); dom.min(min0);
+      const int max1 = dom.max(); dom.max(max0);
+      if ((min0 == min1) && (max0 == max1))
+	return ME_INT_NONE;
+      if (min0 == max0) {
+	notify(home,ME_INT_VAL);
+	return ME_INT_VAL;
+      }
+    } else {
+      // Construct new rangelist
+      RangeList*   f = new (home) RangeList(min0,max0,NULL,NULL);
+      RangeList*   l = f;
+      unsigned int s = max0-min0+1;
+      do {
+	RangeList* n = new (home) RangeList(ri.min(),ri.max(),l,NULL);
+	l->next(NULL,n);
+	l = n;
+	s += ri.width();
+	++ri;
+      } while (ri());
+      if (fst() != NULL)
+	fst()->dispose(home,NULL,lst());
+      fst(f); lst(l);
+      // Check for modification
+      if (size() == s)
+	return ME_INT_NONE;
+      const int min1 = dom.min(); min0 = f->min(); dom.min(min0);
+      const int max1 = dom.max(); max0 = l->max(); dom.max(max0);
+      holes = width() - s;
+      if ((min0 == min1) && (max0 == max1)) {
+	notify(home,ME_INT_DOM);
+	return ME_INT_DOM;
+      }
+    }
+    notify(home,ME_INT_BND);
+    return ME_INT_BND;
+  }
+
+  /*
+   * Copying a variable
+   *
+   */
+
+  forceinline IntVarImp*
+  IntVarImp::copy(Space* home, bool share) {
+    return copied() ? static_cast<IntVarImp*>(forward())
+      : perform_copy(home,share);
+  }
+
+
+
+  /*
+   * Boolean tell operations (assume not yet assigned 0/1 variable)
+   *
+   */
+
+  forceinline void
+  IntVarImp::t_zero_none(Space* home) {
+    assert((dom.min() == 0) && (dom.max() == 1));
+    dom.max(0);
+    notify_unmodified(home,ME_INT_VAL);
+  }
+
+  forceinline void
+  IntVarImp::t_one_none(Space* home) {
+    assert((dom.min() == 0) && (dom.max() == 1));
+    dom.min(1);
+    notify_unmodified(home,ME_INT_VAL);
+  }
+
+
+  /*
+   * Forward range iterator for rangelists
+   *
+   */
+
+  forceinline
+  IntVarImpFwd::IntVarImpFwd(void) {}
+  forceinline
+  IntVarImpFwd::IntVarImpFwd(const IntVarImp* x) 
+    : p(NULL), c(x->ranges_fwd()) {}
+  forceinline void
+  IntVarImpFwd::init(const IntVarImp* x) {
+    p=NULL; c=x->ranges_fwd();
+  }
+
+  forceinline bool
+  IntVarImpFwd::operator()(void) const {
+    return c != NULL;
+  }
+  forceinline void
+  IntVarImpFwd::operator++(void) {
+    const IntVarImp::RangeList* n=c->next(p); p=c; c=n;
+  }
+
+  forceinline int
+  IntVarImpFwd::min(void) const {
+    return c->min();
+  }
+  forceinline int
+  IntVarImpFwd::max(void) const {
+    return c->max();
+  }
+  forceinline unsigned int
+  IntVarImpFwd::width(void) const {
+    return c->width();
+  }
+
+
+  /*
+   * Backward range iterator for rangelists
+   *
+   */
+
+  forceinline
+  IntVarImpBwd::IntVarImpBwd(void) {}
+  forceinline
+  IntVarImpBwd::IntVarImpBwd(const IntVarImp* x) 
+    : n(NULL), c(x->ranges_bwd()) {}
+  forceinline void
+  IntVarImpBwd::init(const IntVarImp* x) {
+    n=NULL; c=x->ranges_bwd();
+  }
+
+  forceinline bool
+  IntVarImpBwd::operator()(void) const {
+    return c != NULL;
+  }
+  forceinline void
+  IntVarImpBwd::operator++(void) {
+    const IntVarImp::RangeList* p=c->prev(n); n=c; c=p;
+  }
+
+  forceinline int
+  IntVarImpBwd::min(void) const {
+    return c->min();
+  }
+  forceinline int
+  IntVarImpBwd::max(void) const {
+    return c->max();
+  }
+  forceinline unsigned int
+  IntVarImpBwd::width(void) const {
+    return c->width();
+  }
+
+
+  /*
+   * More domain operations
+   *
+   */
+  template <class I>
+  forceinline ModEvent
+  IntVarImp::inter(Space* home, I& i) {
+    IntVarImpFwd j(this);
+    Iter::Ranges::Inter<I,IntVarImpFwd> ij(i,j);
+    return narrow(home,ij);
+  }
+
+  template <class I>
+  forceinline ModEvent
+  IntVarImp::minus(Space* home, I& i) {
+    IntVarImpFwd j(this);
+    Iter::Ranges::Diff<IntVarImpFwd,I> ij(j,i);
+    return narrow(home,ij);
+  }
+
+}}
+
+// STATISTICS: int-var
+

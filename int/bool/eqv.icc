@@ -1,0 +1,131 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Bool {
+
+  template <class BVA, class BVB, class BVC>
+  forceinline
+  Eqv<BVA,BVB,BVC>::Eqv(Space* home, BVA b0, BVB b1, BVC b2)
+    : BoolTernary<BVA,BVB,BVC>(home,b0,b1,b2) {}
+
+  template <class BVA, class BVB, class BVC>
+  forceinline
+  Eqv<BVA,BVB,BVC>::Eqv(Space* home, bool share, Eqv<BVA,BVB,BVC>& p) 
+    : BoolTernary<BVA,BVB,BVC>(home,share,p) {}
+
+  template <class BVA, class BVB, class BVC>
+  forceinline ExecStatus
+  Eqv<BVA,BVB,BVC>::post(Space* home, BVA b0, BVB b1, BVC b2){
+    switch (bool_test(b0,b1)) {
+    case BT_SAME:
+      GECODE_ME_CHECK(b2.t_one(home)); 
+      break;
+    case BT_COMP:
+      GECODE_ME_CHECK(b2.t_zero(home)); 
+      break;
+    case BT_NONE:
+      if (b2.one())
+	return Eq<BVA,BVB>::post(home,b0,b1);
+      if (b0.one()) {
+	if (b1.one()) {
+	  GECODE_ME_CHECK(b2.t_one(home));
+	  return ES_OK;
+	} else if (b2.zero()) {
+	  GECODE_ME_CHECK(b2.t_zero(home));
+	  return ES_OK;
+	}
+      }
+      if (b0.zero()) {
+	if (b1.one()) {
+	  GECODE_ME_CHECK(b2.t_zero(home));
+	  return ES_OK;
+	} else if (b2.zero()) {
+	  GECODE_ME_CHECK(b2.t_one(home));
+	  return ES_OK;
+	}
+      } 
+      (void) new (home) Eqv(home,b0,b1,b2);
+      break;
+    }
+    return ES_OK;
+  }
+
+  template <class BVA, class BVB, class BVC>
+  Actor*
+  Eqv<BVA,BVB,BVC>::copy(Space* home, bool share) {
+    return new (home) Eqv<BVA,BVB,BVC>(home,share,*this);
+  }
+
+  template <class BVA, class BVB, class BVC>
+  ExecStatus
+  Eqv<BVA,BVB,BVC>::propagate(Space* home) {
+    if (x0.zero()) {
+      if (x1.zero()) {
+	GECODE_ES_CHECK(x2.t_one(home));
+      } else if (x1.one()) {
+	GECODE_ES_CHECK(x2.t_zero(home));
+      } else if (x2.zero()) {
+	x1.t_one_none(home);
+      } else if (x2.one()) {
+	x1.t_zero_none(home);
+      } else {
+	return ES_FIX;
+      }
+    } else if (x0.one()) {
+      if (x1.zero()) {
+	GECODE_ES_CHECK(x2.t_zero(home));
+      } else if (x1.one()) {
+	GECODE_ES_CHECK(x2.t_one(home));
+      } else if (x2.zero()) {
+	x1.t_zero_none(home);
+      } else if (x2.one()) {
+	x1.t_one_none(home);
+      } else {
+	return ES_FIX;
+      }
+    } else if (x1.zero()) {
+      assert(!x0.zero() && !x0.one());
+      if (x2.zero()) {
+	x0.t_one_none(home);
+      } else if (x2.one()) {
+	x0.t_zero_none(home);
+      } else {
+	return ES_FIX;
+      }
+    } else if (x1.one()) {
+      assert(!x0.zero() && !x0.one());
+      if (x2.zero()) {
+	x0.t_zero_none(home);
+      } else if (x2.one()) {
+	x0.t_one_none(home);
+      } else {
+	return ES_FIX;
+      }
+    } else {
+      return ES_FIX;
+    }
+    return ES_SUBSUMED;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

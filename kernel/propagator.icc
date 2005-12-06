@@ -1,0 +1,357 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2002
+ *     Guido Tack, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  /**
+   * \brief Dynamic low-propagation cost computation
+   *
+   * If \a n is less than 4, use constant low-costs, otherwise use \a pc.
+   * \ingroup TaskActor
+   */
+  PropCost cost_lo(int n, PropCost pc);
+  /**
+   * \brief Dynamic high-propagation cost computation
+   *
+   * If \a n is less than 4, use constant hight-costs, otherwise use \a pc.
+   * \ingroup TaskActor
+   */
+  PropCost cost_hi(int n, PropCost pc);
+
+
+  /**
+   * \defgroup TaskPropPat Propagator patterns
+   *
+   * The optional last Boolean argument (\a fd) to the constructor for creation
+   * defines whether deletion must be forced.
+   * \ingroup TaskActor
+   */
+
+  //@{
+  /**
+   * \brief Unary propagator
+   *
+   * Stores single view of type \a View with propagation condition \a pc.
+   */
+  template <class View, PropCond pc>
+  class UnaryPropagator : public Propagator {
+  protected:
+    /// Single view
+    View x0;
+    /// Constructor for cloning \a p
+    UnaryPropagator(Space* home, bool share, UnaryPropagator& p);
+    /// Constructor for creation
+    UnaryPropagator(Space* home, View x0, bool fd=false);
+  public:
+    /// Cost function (defined as PC_UNARY_LO)
+    virtual PropCost cost(void) const;
+    /// Destructor
+    virtual ~UnaryPropagator(void);
+  };
+
+  /**
+   * \brief Binary propagator
+   *
+   * Stores two views of type \a View with propagation condition \a pc.
+   */
+  template <class View, PropCond pc>
+  class BinaryPropagator : public Propagator {
+  protected:
+    /// Two views
+    View x0, x1;
+    /// Constructor for cloning \a p
+    BinaryPropagator(Space* home, bool share, BinaryPropagator& p);
+    /// Constructor for creation
+    BinaryPropagator(Space* home, View x0, View x1, bool fd=false);
+  public:
+    /// Cost function (defined as PC_BINARY_LO)
+    virtual PropCost cost(void) const;
+    /// Destructor
+    virtual ~BinaryPropagator(void);
+  };
+
+  /**
+   * \brief Ternary propagator
+   *
+   * Stores three views of type \a View with propagation condition \a pc.
+   */
+  template <class View, PropCond pc>
+  class TernaryPropagator : public Propagator {
+  protected:
+    /// Three views
+    View x0, x1, x2;
+    /// Constructor for cloning \a p
+    TernaryPropagator(Space* home, bool share, TernaryPropagator& p);
+    /// Constructor for creation
+    TernaryPropagator(Space* home, View x0, View x1, View x2, bool fd=false);
+  public:
+    /// Cost function (defined as PC_TERNARY_LO)
+    virtual PropCost cost(void) const;
+    /// Destructor
+    virtual ~TernaryPropagator(void);
+  };
+
+  /**
+   * \brief n-ary propagator
+   *
+   * Stores array of views of type \a View with propagation condition \a pc.
+   */
+  template <class View, PropCond pc>
+  class NaryPropagator : public Propagator {
+  protected:
+    /// Array of views
+    ViewArray<View> x;
+    /// Constructor for cloning \a p
+    NaryPropagator(Space* home, bool share, NaryPropagator& p);
+    /// Constructor for creation
+    NaryPropagator(Space* home, ViewArray<View>& x, bool fd=false);
+  public:
+    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    virtual PropCost cost(void) const;
+    /// Destructor
+    virtual ~NaryPropagator(void);
+  };
+
+  /**
+   * \brief (n+1)-ary propagator
+   *
+   * Stores array of views and single view of type \a View with propagation 
+   * condition \a pc.
+   */
+  template <class View, PropCond pc>
+  class NaryOnePropagator : public Propagator {
+  protected:
+    /// Array of views
+    ViewArray<View> x; 
+    /// Single view
+    View y;
+    /// Constructor for cloning \a p
+    NaryOnePropagator(Space* home, bool share, NaryOnePropagator& p);
+    /// Constructor for creation
+    NaryOnePropagator(Space* home, ViewArray<View>& x, View y, bool fd=false);
+  public:
+    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    virtual PropCost cost(void) const;
+    /// Destructor
+    virtual ~NaryOnePropagator(void);
+  };
+  //@}
+
+
+
+
+
+
+  /*
+   * Dynamic cost computation
+   *
+   */
+
+  forceinline PropCost
+  cost_lo(int n, PropCost c) {
+    if (n > 3) return c;
+    if (n < 2) return PC_UNARY_LO;
+    return (n > 2) ? PC_TERNARY_LO : PC_BINARY_LO;
+  }
+
+  forceinline PropCost
+  cost_hi(int n, PropCost c) {
+    if (n > 3) return c;
+    if (n < 2) return PC_UNARY_HI;
+    return (n > 2) ? PC_TERNARY_HI : PC_BINARY_HI;
+  }
+
+  /*
+   * Unary propagators
+   *
+   */
+
+  template <class View, PropCond pc>
+  UnaryPropagator<View,pc>::UnaryPropagator
+  (Space* home, View y0, bool fd)
+    : Propagator(home,fd), x0(y0) {
+    x0.subscribe(home,this,pc);
+  }
+
+  template <class View, PropCond pc>
+  forceinline
+  UnaryPropagator<View,pc>::UnaryPropagator
+  (Space* home, bool share, UnaryPropagator<View,pc>& p)
+    : Propagator(home,share,p) {
+    x0.update(home,share,p.x0);
+  }
+
+  template <class View, PropCond pc>
+  PropCost
+  UnaryPropagator<View,pc>::cost(void) const {
+    return PC_UNARY_LO;
+  }
+
+  template <class View, PropCond pc>
+  UnaryPropagator<View,pc>::~UnaryPropagator(void) {
+    x0.cancel(this,pc);
+  }
+
+
+  /*
+   * Binary propagators
+   *
+   */
+
+  template <class View, PropCond pc>
+  BinaryPropagator<View,pc>::BinaryPropagator
+  (Space* home, View y0, View y1, bool fd)
+    : Propagator(home,fd), x0(y0), x1(y1) {
+    x0.subscribe(home,this,pc);
+    x1.subscribe(home,this,pc);
+  }
+
+  template <class View, PropCond pc>
+  forceinline
+  BinaryPropagator<View,pc>::BinaryPropagator
+  (Space* home, bool share, BinaryPropagator<View,pc>& p)
+    : Propagator(home,share,p) {
+    x0.update(home,share,p.x0);
+    x1.update(home,share,p.x1);
+  }
+
+  template <class View, PropCond pc>
+  PropCost
+  BinaryPropagator<View,pc>::cost(void) const {
+    return PC_BINARY_LO;
+  }
+
+  template <class View, PropCond pc>
+  BinaryPropagator<View,pc>::~BinaryPropagator(void) {
+    x0.cancel(this,pc);
+    x1.cancel(this,pc);
+  }
+
+
+  /*
+   * Ternary propagators
+   *
+   */
+
+  template <class View, PropCond pc>
+  TernaryPropagator<View,pc>::TernaryPropagator
+  (Space* home, View y0, View y1, View y2, bool fd)
+    : Propagator(home,fd), x0(y0), x1(y1), x2(y2) {
+    x0.subscribe(home,this,pc);
+    x1.subscribe(home,this,pc);
+    x2.subscribe(home,this,pc);
+  }
+
+  template <class View, PropCond pc>
+  forceinline
+  TernaryPropagator<View,pc>::TernaryPropagator
+  (Space* home, bool share, TernaryPropagator<View,pc>& p)
+    : Propagator(home,share,p) {
+    x0.update(home,share,p.x0);
+    x1.update(home,share,p.x1);
+    x2.update(home,share,p.x2);
+  }
+
+  template <class View, PropCond pc>
+  PropCost
+  TernaryPropagator<View,pc>::cost(void) const {
+    return PC_TERNARY_LO;
+  }
+
+  template <class View, PropCond pc>
+  TernaryPropagator<View,pc>::~TernaryPropagator(void) {
+    x0.cancel(this,pc);
+    x1.cancel(this,pc);
+    x2.cancel(this,pc);
+  }
+
+
+  /*
+   * Nary propagators
+   *
+   */
+
+  template <class View, PropCond pc>
+  NaryPropagator<View,pc>::NaryPropagator
+  (Space* home, ViewArray<View>& y, bool fd)
+    : Propagator(home,fd), x(y) {
+    x.subscribe(home,this,pc);
+  }
+
+  template <class View, PropCond pc>
+  forceinline
+  NaryPropagator<View,pc>::NaryPropagator
+  (Space* home, bool share, NaryPropagator<View,pc>& p)
+    : Propagator(home,share,p) {
+    x.update(home,share,p.x);
+  }
+
+  template <class View, PropCond pc>
+  PropCost
+  NaryPropagator<View,pc>::cost(void) const {
+    return cost_lo(x.size(), PC_LINEAR_LO);
+  }
+
+  template <class View, PropCond pc>
+  NaryPropagator<View,pc>::~NaryPropagator(void) {
+    x.cancel(this,pc);
+  }
+
+
+  /*
+   * NaryOne (one additional variable) propagators
+   *
+   */
+
+  template <class View, PropCond pc>
+  NaryOnePropagator<View,pc>::NaryOnePropagator
+  (Space* home, ViewArray<View>& x0, View y0, bool fd)
+    : Propagator(home,fd), x(x0), y(y0) {
+    x.subscribe(home,this,pc);
+    y.subscribe(home,this,pc);
+  }
+
+  template <class View, PropCond pc>
+  forceinline
+  NaryOnePropagator<View,pc>::NaryOnePropagator
+  (Space* home, bool share, NaryOnePropagator<View,pc>& p)
+    : Propagator(home,share,p) {
+    x.update(home,share,p.x);
+    y.update(home,share,p.y);
+  }
+
+  template <class View, PropCond pc>
+  PropCost
+  NaryOnePropagator<View,pc>::cost(void) const {
+    return cost_lo(x.size()+1, PC_LINEAR_LO);
+  }
+
+  template <class View, PropCond pc>
+  NaryOnePropagator<View,pc>::~NaryOnePropagator(void) {
+    x.cancel(this,pc);
+    y.cancel(this,pc);
+  }
+
+}
+
+// STATISTICS: kernel-other

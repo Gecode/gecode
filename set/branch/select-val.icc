@@ -1,0 +1,72 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Contributing authors:
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *     Gabor Szokoli, 2004
+ *
+ *  Last modified:
+ *     $Date: 2005-08-05 09:40:23 +0200 (Fri, 05 Aug 2005) $ by $Author: tack $
+ *     $Revision: 2138 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set { namespace Branch {
+
+  forceinline int
+  ValMin::val(SetView x) {
+    UnknownRanges<SetView> unknown(x);
+    return unknown.min();
+  }
+  forceinline ModEvent
+  ValMin::tell(Space* home, unsigned int a, SetView x, int v) {
+    return (a == 0) ? x.include(home,v) : x.exclude(home,v);
+  }
+
+  forceinline int
+  ValMax::val(SetView x) {
+    int maxElem = 0;
+    UnknownRanges<SetView> unknown(x);
+    while (unknown()) {
+      maxElem = unknown.max();
+      ++unknown;
+    }
+    return maxElem;
+  }
+  forceinline ModEvent
+  ValMax::tell(Space* home, unsigned int a, SetView x, int v) {
+    return (a == 0) ? x.include(home,v) : x.exclude(home,v);
+  }
+
+  template <class SelView>
+  static void
+  create(Space* home, ViewArray<SetView>& x, SetBvalSel vals) {
+    switch (vals) {
+    case SETBVAL_MIN:
+      (void) new (home) ViewValBranching<SetView,int,SelView,ValMin>(home,x);
+      break;
+    case SETBVAL_MAX:
+      (void) new (home) ViewValBranching<SetView,int,SelView,ValMax>(home,x);
+      break;
+    default:
+      throw UnknownBranching("Int::branch");
+    }
+  }
+
+}}}
+
+// STATISTICS: set-branch

@@ -1,0 +1,175 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *     Gabor Szokoli, 2004
+ *
+ *  Last modified:
+ *     $Date: 2005-10-25 13:10:13 +0200 (Tue, 25 Oct 2005) $ by $Author: tack $
+ *     $Revision: 2407 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+
+
+#include "set.hh"
+#include "int.hh"
+
+namespace Gecode { namespace Set { namespace Int {
+
+  /// Value Iterator for values above a certain weight
+  template <class I>
+  class OverweightValues {
+  private:
+    /// The threshold above which values should be iterated
+    int threshold;
+    /// The value iterator
+    I iter;
+    /// A superset of the elements found in the iterator
+    const Support::SharedArray<int> elements;
+    /// Weights for all the possible elements
+    const Support::SharedArray<int> weights;
+    /// The current index into the elements and weights
+    int index;
+    /// Move to the next element
+    void next(void);
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    OverweightValues(void);
+    /// Initialize with elements/weights pairs, threshold \a t and iterator \a i
+    OverweightValues(int t,
+		     Support::SharedArray<int>& elements0,
+		     Support::SharedArray<int>& weights0,
+		     I& i);
+    /// Initialize with elements/weights pairs, threshold \a t and iterator \a i
+    void init(int t,
+	      Support::SharedArray<int>& elements0,
+	      Support::SharedArray<int>& weights0,
+	      I& i);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a value or done
+    bool operator()(void) const;
+    /// Move iterator to next value (if possible)
+    void operator++(void);
+    //@}
+    /// \name Value access
+    //@{
+    /// Return current value
+    int  val(void) const;
+    //@}
+  };
+
+  template <class I>
+  forceinline void
+  OverweightValues<I>::next(void) {
+    while (iter()) {
+      while (elements[index]<iter.val()) index++;
+      assert(elements[index]==iter.val());
+      if (weights[index] > threshold) {
+	return;
+      }
+      ++iter;
+    }
+  }
+
+  template <class I>
+  forceinline
+  OverweightValues<I>::OverweightValues(void) {}
+
+  template <class I>
+  forceinline
+  OverweightValues<I>::OverweightValues(int t,
+					Support::SharedArray<int>& elements0,
+					Support::SharedArray<int>& weights0,
+					I& i) : threshold(t),
+						iter(i),
+						elements(elements0),
+						weights(weights0),
+						index(0) {
+    next();
+  }
+
+  template <class I>
+  forceinline void
+  OverweightValues<I>::init(int t,
+			    Support::SharedArray<int>& elements0,
+			    Support::SharedArray<int>& weights0,
+			    I& i) {
+    threshold = t; iter = i;
+    elements = elements0; weights = weights0;
+    index = 0;
+    next();
+  }
+
+  template <class I>
+  forceinline bool
+  OverweightValues<I>::operator()(void) const { return iter(); }
+
+  template <class I>
+  forceinline void
+  OverweightValues<I>::operator++(void) { ++iter; next(); }
+
+  template <class I>
+  forceinline int
+  OverweightValues<I>::val(void) const { return elements[index]; }
+
+  forceinline
+  Weights::Weights(Space* home,
+		   const IntArgs& elements0, const IntArgs& weights0,
+		   SetView x0, Gecode::Int::IntView y0)
+    : Propagator(home), elements(elements0.size()), weights(weights0.size()),
+      x(x0), y(y0) {
+    x.subscribe(home,this, PC_SET_ANY);
+    y.subscribe(home,this, Gecode::Int::PC_INT_BND);
+    for (int i=elements0.size(); i--;) {
+      elements[i] = elements0[i];
+      weights[i] = weights0[i];
+    }
+  }
+
+  forceinline
+  Weights::Weights(Space* home, bool share, Weights& p)
+    : Propagator(home,share,p) {
+    x.update(home,share,p.x);
+    y.update(home,share,p.y);
+    elements.update(share,p.elements);
+    weights.update(share,p.weights);
+  }
+
+  forceinline ExecStatus
+  Weights::post(Space* home, const IntArgs& elements, const IntArgs& weights,
+		SetView x, Gecode::Int::IntView y) {
+    if (elements.size() != weights.size()) {
+      throw ArgumentSizeMismatch("Weights");
+    }
+    GECODE_AUTOARRAY(int, els_arr, elements.size());
+    for (int i=elements.size(); i--;)
+      els_arr[i] = elements[i];
+    IntSet els(els_arr, elements.size());
+    IntSetRanges er(els);
+    GECODE_ME_CHECK(x.intersectI(home, er));
+    (void) new (home) Weights(home,elements,weights,x,y);
+    return ES_OK;
+  }
+
+}}}
+
+// STATISTICS: set-prop

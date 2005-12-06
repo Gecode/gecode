@@ -1,0 +1,107 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2003
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Distinct {
+
+  /*
+   * Nodes
+   *
+   */
+
+  template <class View>
+  forceinline
+  Node<View>::Node(void)
+    : pre(0), low(0), comp(0) {}
+  template <class View>
+  forceinline Edge<View>*
+  Node<View>::edge_fst(void) const {
+    return static_cast<Edge<View>*>(BiLink::next());
+  }
+  template <class View>
+  forceinline Edge<View>*
+  Node<View>::edge_lst(void) const {
+    return static_cast<Edge<View>*>(static_cast<BiLink*>(const_cast<Node<View>*>(this)));
+  }
+  template <class View>
+  forceinline void*
+  Node<View>::operator new(size_t, void* p) {
+    return p;
+  }
+
+
+
+  /*
+   * Value nodes
+   *
+   */
+
+
+  template <class View>
+  forceinline
+  ValNode<View>::ValNode(int v)
+    : _val(v), _matching(NULL) {}
+  template <class View>
+  forceinline int
+  ValNode<View>::val(void) const {
+    return _val;
+  }
+  template <class View>
+  forceinline void
+  ValNode<View>::matching(Edge<View>* e) {
+    _matching = e;
+  }
+  template <class View>
+  forceinline Edge<View>*
+  ValNode<View>::matching(void) const {
+    return _matching;
+  }
+
+
+
+  /*
+   * View nodes
+   *
+   */
+
+  template <class View>
+  forceinline
+  ViewNode<View>::ViewNode(View x)
+    : _view(x) {}
+  template <class View>
+  forceinline Edge<View>*
+  ViewNode<View>::val_edges(void) const {
+    return _val_edges;
+  }
+  template <class View>
+  forceinline Edge<View>**
+  ViewNode<View>::val_edges_ref(void) {
+    return &_val_edges;
+  }
+  template <class View>
+  forceinline View
+  ViewNode<View>::view(void) const {
+    return _view;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+
