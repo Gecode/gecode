@@ -41,8 +41,6 @@ export top_builddir = .
 export subdirs = @subdirs@
 
 export VERSION		= @VERSION@
-export DATE		:= $(shell date "+%Y%m%d")
-export STAMP		= $(VERSION)-$(DATE)
 
 export CXX = @CXX@
 export CPPFLAGS = -I$(top_srcdir) -I$(top_builddir)
@@ -710,9 +708,9 @@ installsubdirs:
 .PHONY: distdoc
 
 ifeq "@ENABLEDOCSEARCH@" "yes"
-DOCSUFFIX = search-$(STAMP)
+DOCSUFFIX = search-$(VERSION)
 else
-DOCSUFFIX = $(STAMP)
+DOCSUFFIX = $(VERSION)
 endif
 
 distdoc: doc
