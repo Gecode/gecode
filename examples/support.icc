@@ -25,6 +25,7 @@ Options::Options(const char* n)
     c_d(1),
     a_d(1),
     mode(EM_SOLUTION),
+    oz_output(false),
     samples(1),
     iterations(1),
     solutions(1),
@@ -96,7 +97,16 @@ Example::run(const Options& o) {
       break;
     case EM_TIME:
       {
-	cout << o.name << endl;
+	if (o.oz_output) {
+	  GECODE_AUTOARRAY(char, dest, strlen(o.name)+1);
+	  for (unsigned int i=0; i<strlen(o.name); i++)
+	    dest[i] = tolower(o.name[i]);
+	  dest[strlen(o.name)] = 0;
+	  cout << dest << ":[" << endl;
+	}
+	else {
+	  cout << o.name << endl;
+	}
 	Timer t;
 	GECODE_AUTOARRAY(double,ts,o.samples);
 	for (int s = o.samples; s--; ) {
@@ -115,14 +125,22 @@ Example::run(const Options& o) {
 	  }
 	  ts[s] = t.stop() / o.iterations;
 	}
-	double m = am(ts,o.samples);
-	double d = dev(ts,o.samples) * 100.0;
-	cout << "\tRuntime: "
-	     << setw(20) << right
-	     << showpoint << fixed
-	     << setprecision(6) << m << "ms"
-	     << setprecision(2) << " (" << d << "% deviation)"
-	     << endl;
+	if (o.oz_output) {
+	  for (int s = o.samples; s--; ) {
+	    cout << "time(wall:" << ts[s] << ")" << endl;
+	  }
+	  cout << "]" << endl;
+	} else {
+
+	  double m = am(ts,o.samples);
+	  double d = dev(ts,o.samples) * 100.0;
+	  cout << "\tRuntime: "
+	       << setw(20) << right
+	       << showpoint << fixed
+	       << setprecision(6) << m << "ms"
+	       << setprecision(2) << " (" << d << "% deviation)"
+	       << endl;
+	}
       }
       break;
     }
