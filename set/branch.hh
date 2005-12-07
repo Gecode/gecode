@@ -31,6 +31,11 @@
 #include "set.hh"
 #include "iter.hh"
 
+/**
+ * \namespace Gecode::Set::Branch
+ * \brief %Set branchings
+ */
+
 namespace Gecode { namespace Set { namespace Branch {
 
   /*
