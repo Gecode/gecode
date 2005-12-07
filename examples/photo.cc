@@ -95,8 +95,12 @@ public:
 
     // Break some symmetries
     rel(this, pos[0], IRT_LE, pos[1]);
-
-    branch(this, pos, BVAR_DEGREE_MAX, BVAL_MIN);
+    
+    if (opt.naive) {
+      branch(this, pos, BVAR_NONE, BVAL_MIN);
+    } else {
+      branch(this, pos, BVAR_DEGREE_MAX, BVAL_MIN);
+    }
   }
 
   /// Constructor for cloning \a s
