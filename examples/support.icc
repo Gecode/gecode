@@ -97,14 +97,7 @@ Example::run(const Options& o) {
       break;
     case EM_TIME:
       {
-	if (o.oz_output) {
-	  GECODE_AUTOARRAY(char, dest, strlen(o.name)+1);
-	  for (unsigned int i=0; i<strlen(o.name); i++)
-	    dest[i] = tolower(o.name[i]);
-	  dest[strlen(o.name)] = 0;
-	  cout << dest << ":[" << endl;
-	}
-	else {
+	if (!o.oz_output) {
 	  cout << o.name << endl;
 	}
 	Timer t;
@@ -129,7 +122,6 @@ Example::run(const Options& o) {
 	  for (int s = o.samples; s--; ) {
 	    cout << "time(wall:" << ts[s] << ")" << endl;
 	  }
-	  cout << "]" << endl;
 	} else {
 
 	  double m = am(ts,o.samples);
