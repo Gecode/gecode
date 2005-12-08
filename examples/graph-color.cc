@@ -322,7 +322,11 @@ public:
     IntVarArgs ma(1);
     ma[0] = m;
     branch(this, ma, BVAR_NONE, BVAL_MIN);
-    branch(this, v, BVAR_DEGREE_MAX, BVAL_MIN);
+    if (opt.naive) {
+      branch(this, v, BVAR_SIZE_MIN, BVAL_MIN);
+    } else {
+      branch(this, v, BVAR_DEGREE_MAX, BVAL_MIN);
+    }
   }
   /// Constructor for cloning \a s
   GraphColor(bool share, GraphColor& s) : Example(share,s), g(s.g) {
@@ -355,6 +359,7 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("GraphColor");
+  opt.naive      = false;
   opt.icl        = ICL_DOM;
   opt.iterations = 5;
   opt.c_d        = 10;
