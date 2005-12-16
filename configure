@@ -313,7 +313,7 @@ ac_includes_default="\
 #endif"
 
 ac_subdirs_all="$ac_subdirs_all "
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT RANLIB ac_ct_RANLIB PKGCONFIG ac_ct_PKGCONFIG HAVE_PKGCONFIG CXXCPP CC CFLAGS ac_ct_CC BUILDDLL CPP EGREP DLLPATH DLLFLAGS DLLEXT sharedlibdir docdir SBJEXT LIBEXT LIBPREFIX STATICLIBEXT COMPILEOBJ COMPILESBJ COMPILERIN EXAMPLES_EXTRA_CXXFLAGS INSTALLLIBS LINKPREFIX LINKSUFFIX LINKOUTPUT KERNEL SEARCH INT SET MM ENABLEDOCSEARCH GECODE_DOXYGEN_TAGFILE ENABLEDOCCHM enable_set_vars enable_int_vars enable_examples enable_minimodel enable_search subdirs PKG_CONFIG_CXXFLAGS VERSION LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT RANLIB ac_ct_RANLIB PKGCONFIG ac_ct_PKGCONFIG HAVE_PKGCONFIG CXXCPP CC CFLAGS ac_ct_CC BUILDDLL CPP EGREP DLLPATH DLLFLAGS DLLEXT sharedlibdir docdir SBJEXT LIBEXT LIBPREFIX STATICLIBEXT MINUSLDIR LINKLIBDIR COMPILEOBJ COMPILESBJ COMPILERIN EXAMPLES_EXTRA_CXXFLAGS INSTALLLIBS LINKPREFIX LINKSUFFIX LINKOUTPUT KERNEL SEARCH INT SET MM ENABLEDOCSEARCH GECODE_DOXYGEN_TAGFILE ENABLEDOCCHM enable_set_vars enable_int_vars enable_examples enable_minimodel enable_search subdirs PKG_CONFIG_CXXFLAGS VERSION LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -4835,6 +4835,10 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
   STATICLIBEXT="a"
 
+  MINUSLDIR="-L${libdir}"
+
+  LINKLIBDIR=""
+
 
   COMPILEOBJ="-c -o "
 
@@ -5401,6 +5405,10 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
 
   LINKSUFFIX=".lib"
 
+  MINUSLDIR=""
+
+  LINKLIBDIR="${libdir}/"
+
 
     COMPILEOBJ="-c -Fo"
 
@@ -5744,6 +5752,10 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
   LIBPREFIX="libgecode"
 
   STATICLIBEXT="a"
+
+  MINUSLDIR="-L${libdir}"
+
+  LINKLIBDIR=""
 
 
   COMPILEOBJ="-c -o "
@@ -6107,6 +6119,10 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
   LINKPREFIX="Gecode"
 
   LINKSUFFIX=".lib"
+
+  MINUSLDIR=""
+
+  LINKLIBDIR="${libdir}/"
 
 
     COMPILEOBJ="-c -Fo"
@@ -7038,6 +7054,8 @@ s,@SBJEXT@,$SBJEXT,;t t
 s,@LIBEXT@,$LIBEXT,;t t
 s,@LIBPREFIX@,$LIBPREFIX,;t t
 s,@STATICLIBEXT@,$STATICLIBEXT,;t t
+s,@MINUSLDIR@,$MINUSLDIR,;t t
+s,@LINKLIBDIR@,$LINKLIBDIR,;t t
 s,@COMPILEOBJ@,$COMPILEOBJ,;t t
 s,@COMPILESBJ@,$COMPILESBJ,;t t
 s,@COMPILERIN@,$COMPILERIN,;t t

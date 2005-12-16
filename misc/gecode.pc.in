@@ -8,5 +8,5 @@ includedir=@includedir@/gecode
 Name: Gecode
 Description: Generic Constraint Development Environment
 Version: @VERSION@
-Libs: -L${libdir} -lgecodekernel -lgecodeint -lgecodeset
+Libs: @MINUSLDIR@ @LINKLIBDIR@@LINKPREFIX@@KERNEL@@LINKSUFFIX@ @LINKLIBDIR@@LINKPREFIX@@INT@@LINKSUFFIX@ @LINKLIBDIR@@LINKPREFIX@@SET@@LINKSUFFIX@
 Cflags: -I${includedir} @PKG_CONFIG_CXXFLAGS@

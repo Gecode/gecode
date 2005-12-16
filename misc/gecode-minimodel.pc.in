@@ -8,5 +8,5 @@ includedir=@includedir@/gecode
 Name: Gecode Minimodel
 Description: Generic Constraint Development Environment Minimodel
 Version: @VERSION@
-Libs: -L${libdir} -lgecodekernel -lgecodeminimodel
+Libs: @MINUSLDIR@ @LINKLIBDIR@@LINKPREFIX@@KERNEL@@LINKSUFFIX@ @LINKLIBDIR@@LINKPREFIX@@MM@@LINKSUFFIX@
 Cflags: -I${includedir} @PKG_CONFIG_CXXFLAGS@
