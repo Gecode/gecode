@@ -387,6 +387,8 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   AC_SUBST(MINUSLDIR, "-L${libdir}")
   AC_SUBST(LINKLIBDIR, "")
 
+  AC_SUBST(cygpathprefix, "${prefix}")
+
   AC_SUBST(COMPILEOBJ, "-c -o ")
   AC_SUBST(COMPILESBJ, "-S -o ")
   AC_SUBST(COMPILERIN, "")
@@ -487,6 +489,13 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_SUBST(LINKSUFFIX, ".lib")
   AC_SUBST(MINUSLDIR, "")
   AC_SUBST(LINKLIBDIR, "${libdir}/")
+
+  cygpathprefix=$prefix
+  test "x$cygpathprefix" = xNONE && cygpathprefix=$ac_default_prefix
+  cygpathprefix=`cygpath -m ${cygpathprefix}`
+  echo "cp: ${cygpathprefix}"
+
+  AC_SUBST(cygpathprefix, "${cygpathprefix}")
 
   dnl compiler options
   AC_SUBST(COMPILEOBJ, "-c -Fo")

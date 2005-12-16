@@ -1,6 +1,6 @@
 # Package Information for pkg-config
 
-prefix=@prefix@
+prefix=@cygpathprefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@/gecode
