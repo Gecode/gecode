@@ -5415,7 +5415,7 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
 
   cygpathprefix=$prefix
   test "x$cygpathprefix" = xNONE && cygpathprefix=$ac_default_prefix
-  cygpathprefix=`cygpath -w ${cygpathprefix}`
+  cygpathprefix=`cygpath -m ${cygpathprefix}`
   echo "cp: ${cygpathprefix}"
 
   cygpathprefix="${cygpathprefix}"
@@ -6141,7 +6141,7 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
 
   cygpathprefix=$prefix
   test "x$cygpathprefix" = xNONE && cygpathprefix=$ac_default_prefix
-  cygpathprefix=`cygpath -w ${cygpathprefix}`
+  cygpathprefix=`cygpath -m ${cygpathprefix}`
   echo "cp: ${cygpathprefix}"
 
   cygpathprefix="${cygpathprefix}"
