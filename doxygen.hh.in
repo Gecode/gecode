@@ -797,11 +797,3 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * compiling Gecode on other platforms.
  */
 
-/**
- * \page PageChange Changelog
- *
- * A changelog will only be available after the first release.
- *
- * 
- */
-

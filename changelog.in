@@ -1,0 +1,60 @@
+#
+#  Main authors:
+#     Christian Schulte <schulte@gecode.org>
+#
+#  Copyright:
+#     Christian Schulte, 2005
+#
+#  Last modified:
+#     $Date: 2005-11-01 16:01:21 +0100 (Tue, 01 Nov 2005) $ by $Author: zayenz $
+#     $Revision: 2465 $
+#
+#  This file is part of Gecode, the generic constraint
+#  development environment:
+#     http://www.gecode.org
+#
+#  See the file "LICENSE" for information on usage and
+#  redistribution of this file, and for a
+#     DISCLAIMER OF ALL WARRANTIES.
+#
+
+# 
+# This file contains entries for changelogs
+#
+# There are two kinds of entries: one marking releases and the others 
+# being actual entries.
+#
+# All the lines for decsribing entries must start at the beginning.
+#
+# A release is described as follows:
+#   [RELEASE]
+#   Version: <version string>
+#   Info:    <some additional infor about release>
+#
+# An entry is described as follows:
+#   [ENTRY]
+#   Module: kernel|search|int|set|example|minimodel|iter|support|test
+#   What:   bug|documentation|performance|new|change
+#   Rank:   minor|major
+#   Bug:    <optional, for number from bugzilla>
+#   [DESCRIPTION]
+#   ... All the text up to the next [ENTRY] or [RELEASE] is included 
+#   as description
+#
+
+[RELEASE]
+Version:	1.0.1
+Info:		Upcoming
+
+[ENTRY]
+Module:		example
+What:		change
+Rank:		minor
+[DESCRIPTION]
+Examples now use per default the recomputation settings as
+defined in the search module.
+
+[RELEASE]
+Version:	1.0.0
+Info:		Initial
+

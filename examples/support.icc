@@ -22,8 +22,8 @@
 inline
 Options::Options(const char* n)
   : icl(ICL_DEF),
-    c_d(1),
-    a_d(1),
+    c_d(Search::Config::c_d),
+    a_d(Search::Config::a_d),
     mode(EM_SOLUTION),
     oz_output(false),
     samples(1),
