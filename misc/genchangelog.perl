@@ -136,6 +136,11 @@ while ($l = <>) {
     }
     $text{"$mod-$what"} = 
       ($text{"$mod-$what"} . "      - $desc (" . $rb . ")\n");
+    $desc = "";
+    $bug = "";
+    $rank = "";
+    $what = "";
+    $mod = "";
     goto LINE;
   }
 }

@@ -24,7 +24,7 @@
 # There are two kinds of entries: one marking releases and the others 
 # being actual entries.
 #
-# All the lines for decsribing entries must start at the beginning.
+# All the lines for describing entries must start at the beginning.
 #
 # A release is described as follows:
 #   [RELEASE]
