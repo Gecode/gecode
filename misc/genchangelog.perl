@@ -45,6 +45,7 @@ $modclear{"iter"} = "Range and value iterators";
 $modclear{"support"} = "Support algorithms and datastructures";
 $modclear{"example"} = "\%Example scripts";
 $modclear{"test"} = "Systematic tests";
+$modclear{"other"} = "Other";
 
 $whatclear{"bug"} = "Bug fixes";
 $whatclear{"performance"} = "Performance improvements";
