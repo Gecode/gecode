@@ -301,17 +301,31 @@ AC_DEFUN([AC_GECODE_ENABLE_CONTRIB],
 AC_DEFUN([AC_GECODE_STATICLIBS],
 	 [AC_ARG_ENABLE([static],
 	   AC_HELP_STRING([--enable-static],
-	     [build static instead of shared libraries @<:@default=no@:>@]))
-	 AC_MSG_CHECKING(whether to build static instead of shared libraries)
-	 if test "${enable_static:-no}" = "yes"; then
-	    AC_GECODE_ADD_TO_CXXFLAGS(-DGECODE_STATIC_LIBS)
-	    AC_GECODE_ADD_TO_PKG_CXXFLAGS(-DGECODE_STATIC_LIBS)
-	    AC_SUBST(BUILDDLL, "no")
-	    AC_MSG_RESULT(yes)
-	 else
-	    AC_SUBST(BUILDDLL, "yes")
-	    AC_MSG_RESULT(no)
-	 fi])
+	     [build static libraries @<:@default=no@:>@]))
+	  AC_MSG_CHECKING(whether to build static libraries)
+ 	  if test "${enable_static:-no}" = "yes"; then
+ 	     AC_DEFINE(GECODE_STATIC_LIBS)
+ 	     AC_SUBST(BUILDSTATIC, "yes")
+ 	     AC_MSG_RESULT(yes)
+ 	  else
+ 	     AC_SUBST(BUILDSTATIC, "no")
+ 	     AC_MSG_RESULT(no)
+ 	  fi
+	  AC_ARG_ENABLE([shared],
+	   AC_HELP_STRING([--enable-shared],
+	     [build shared libraries @<:@default=yes@:>@]))
+	  AC_MSG_CHECKING(whether to build shared libraries)
+ 	  if test "${enable_shared:-yes}" = "yes"; then
+ 	     AC_SUBST(BUILDDLL, "yes")
+ 	     AC_MSG_RESULT(yes)
+ 	  else
+ 	     AC_SUBST(BUILDDLL, "no")
+ 	     if test "${enable_static:-no}" = "no"; then
+ 	       AC_MSG_ERROR([One of --enable-static or --enable-shared must be given])
+ 	     fi
+ 	     AC_MSG_RESULT(no)
+ 	  fi
+	  ])
 
 
 AC_DEFUN([AC_GECODE_DEBUG],
@@ -397,7 +411,7 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   dnl Do not install stub .lib files (required for msvc)
   AC_SUBST(INSTALLLIBS, "no")
 
-  if test "${enable_static:-no}" = "no"; then
+  if test "${enable_shared:-yes}" = "yes"; then
      AC_SUBST(LINKPREFIX, "-lgecode")
      AC_SUBST(LINKSUFFIX, "")
   else
@@ -434,6 +448,10 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
        AC_SUBST(sharedlibdir, "${libdir}")
        ;;
      windows*)
+       if test "${enable_static:-no}"  = "yes" &&
+	       "${enable_shared:-yes}" = "yes"; then
+         AC_MSG_ERROR([Only either static or shared libraries can be built.])
+       fi
        AC_SUBST(DLLFLAGS, "-shared")
        AC_SUBST(DLLEXT, "dll")
        if test "${enable_static:-no}" = "no"; then

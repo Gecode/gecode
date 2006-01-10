@@ -74,8 +74,6 @@ gnu)
     AC_GECODE_GCC_OPTIMIZED_SWITCHES
 
     AC_GECODE_CHECK_CXXFLAG([-finline-limit=3000])
-dnl    AC_GECODE_CHECK_CXXFLAG([--param inline-unit-growth=300])
-dnl    AC_GECODE_CHECK_CXXFLAG([--param large-function-growth=3000])
     AC_GECODE_CHECK_CXXFLAG([-ffast-math])
     AC_GECODE_CHECK_CXXFLAG([-mthreads])
   else

@@ -38,4 +38,7 @@
 /* Whether set variables are buit */
 #undef GECODE_HAVE_SET_VARS
 
+/* Whether we are compiling static libraries */
+#undef GECODE_STATIC_LIBS
+
 // STATISTICS: kernel-other

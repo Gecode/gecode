@@ -340,16 +340,27 @@ ALLSBJ = $(ALLSRC:%.cc=%$(SBJSUFFIX))
 
 export LINKALL = $(LINKMM) $(LINKSET) $(LINKINT) $(LINKSEARCH) $(LINKKERNEL)
 
+
 ifeq "@BUILDDLL@" "yes"
-export LIBTARGETS = \
+DLLTARGETS= \
 	$(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(SETDLL) $(MMDLL)
 export ALLLIB = $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) $(MMLIB)
 else
-export LIBTARGETS = \
+DLLTARGETS=
+export ALLLIB = \
 	$(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) $(MMSTATICLIB)
-export ALLLIB = $(LIBTARGETS)
 endif
+
+ifeq "@BUILDSTATIC@" "yes"
+STATICTARGETS = \
+	$(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
+	$(INTSTATICLIB) $(SETSTATICLIB) $(MMSTATICLIB)
+else
+STATICTARGETS=
+endif
+
+export LIBTARGETS = $(DLLTARGETS) $(STATICTARGETS)
 
 ifeq "@INSTALLLIBS@" "yes"
 LIBLIBTARGETS = $(ALLLIB)
@@ -680,11 +691,11 @@ doinstalllib: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
 	done
 
 
-ifeq "@BUILDDLL@" "yes"
+ifeq "@BUILDSTATIC@" "yes"
 ranliblib:
+	for f in $(STATICTARGETS); do $(RANLIB) $(sharedlibdir)/$$f; done
 else
 ranliblib:
-	for f in $(LIBTARGETS); do $(RANLIB) $(sharedlibdir)/$$f; done
 endif
 
 installlib: compilelib doinstalllib ranliblib installsubdirs
