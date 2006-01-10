@@ -1,0 +1,26 @@
+                      GECODE CONTRIBUTIONS
+======================================================================
+
+1. External contributions
+This directory contains external contributions to the Gecode
+system. Please see our web pages for more information about the
+contributors:
+
+http://www.gecode.org/contributions.html
+
+2. Installation
+The contributions are distributed together with Gecode to ease
+compilation and installation. They are not enabled by default. Please
+refer to the installation instructions in the individual
+subdirectories if you want to use these contributions.
+
+3. License issues
+The external contributions may be distributed under a license that is
+different from the Gecode license. Please see the individual LICENSE
+files in the contributed subdirectories.
+
+4. Bugs
+Please do not use the Gecode bugtracking system to report bugs in
+external contributions. If you find bugs in contributed code, please
+see the contributors' web pages for information on how to contact
+them.
