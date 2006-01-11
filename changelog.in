@@ -50,6 +50,16 @@ Info:		Upcoming
 Module:		other
 What:		change
 Rank:		minor
+Bug:		24
+[DESCRIPTION]
+The soname for libraries on Linux is now set properly, as well as the
+version information on Darwin (Mac OS).
+
+[ENTRY]
+Module:		other
+What:		change
+Rank:		minor
+Bug:		25
 [DESCRIPTION]
 The build system has been updated to support building both static and
 shared libraries at the same time on Unix-like systems.

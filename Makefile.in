@@ -68,11 +68,22 @@ export LIBPREFIX 	= @LIBPREFIX@
 export LINKPREFIX	= @LINKPREFIX@
 export LINKSUFFIX	= @LINKSUFFIX@
 
+export SOLINKSUFFIX     = @SOLINKSUFFIX@
+export SOSUFFIX         = @SOSUFFIX@
+
 #
 # Programs
 #
 export RMF		= rm -rf
 export MV		= mv
+
+ifeq "@need_soname@" "yes"
+export CREATELINK       = ln -fs
+else
+export CREATELINK       = @echo >/dev/null
+endif
+
+LDCONFIG = @LDCONFIG@
 
 #
 # KERNEL COMPONENTS
@@ -91,6 +102,12 @@ KERNELOBJ	= $(KERNELSRC:%.cc=%$(OBJSUFFIX))
 
 export KERNELDLL	= $(LIBPREFIX)@KERNEL@$(DLLSUFFIX)
 export KERNELLIB	= $(LIBPREFIX)@KERNEL@$(LIBSUFFIX)
+ifeq "@need_soname@" "yes"
+export KERNELSONAME     = \
+	@WLSONAME@$(LIBPREFIX)@KERNEL@$(SOSUFFIX)
+else
+export KERNELSONAME     = 
+endif
 export KERNELSTATICLIB	= $(LIBPREFIX)@KERNEL@$(STATICLIBSUFFIX)
 export LINKKERNEL      = $(LINKPREFIX)@KERNEL@$(LINKSUFFIX)
 KERNELBUILDDIRS = kernel
@@ -118,6 +135,12 @@ SEARCHOBJ	= $(SEARCHSRC:%.cc=%$(OBJSUFFIX))
 ifeq "@enable_search@" "yes"
 export SEARCHDLL	= $(LIBPREFIX)@SEARCH@$(DLLSUFFIX)
 export SEARCHSTATICLIB	= $(LIBPREFIX)@SEARCH@$(STATICLIBSUFFIX)
+ifeq "@need_soname@" "yes"
+export SEARCHSONAME     = \
+	@WLSONAME@$(LIBPREFIX)@SEARCH@$(SOSUFFIX)
+else
+export SEARCHSONAME     = 
+endif
 else
 export SEARCHDLL	=
 export SEARCHSTATICLIB	=
@@ -174,6 +197,12 @@ INTOBJ		= $(INTSRC:%.cc=%$(OBJSUFFIX))
 ifeq "@enable_int_vars@" "yes"
 export INTDLL		= $(LIBPREFIX)@INT@$(DLLSUFFIX)
 export INTSTATICLIB	= $(LIBPREFIX)@INT@$(STATICLIBSUFFIX)
+ifeq "@need_soname@" "yes"
+export INTSONAME     = \
+	@WLSONAME@$(LIBPREFIX)@INT@$(SOSUFFIX)
+else
+export INTSONAME     = 
+endif
 else
 export INTDLL		=
 export INTSTATICLIB	=
@@ -224,6 +253,12 @@ SETOBJ		= $(SETSRC:%.cc=%$(OBJSUFFIX))
 ifeq "@enable_set_vars@" "yes"
 export SETDLL		= $(LIBPREFIX)@SET@$(DLLSUFFIX)
 export SETSTATICLIB	= $(LIBPREFIX)@SET@$(STATICLIBSUFFIX)
+ifeq "@need_soname@" "yes"
+export SETSONAME     = \
+	@WLSONAME@$(LIBPREFIX)@SET@$(SOSUFFIX)
+else
+export SETSONAME     = 
+endif
 else
 export SETDLL		=
 export SETSTATICLIB	=
@@ -252,6 +287,12 @@ MMSBJ		= $(MMSRC:%.cc=%$(SBJSUFFIX))
 ifeq "@enable_minimodel@" "yes"
 export MMDLL		= $(LIBPREFIX)@MM@$(DLLSUFFIX)
 export MMSTATICLIB	= $(LIBPREFIX)@MM@$(STATICLIBSUFFIX)
+ifeq "@need_soname@" "yes"
+export MMSONAME     = \
+	@WLSONAME@$(LIBPREFIX)@MM@$(SOSUFFIX)
+else
+export MMSONAME     = 
+endif
 else
 export MMDLL		=
 export MMSTATICLIB	=
@@ -362,6 +403,14 @@ endif
 
 export LIBTARGETS = $(DLLTARGETS) $(STATICTARGETS)
 
+ifeq "@need_soname@" "yes"
+export LIBLINKTARGETS = \
+	$(DLLTARGETS:%$(DLLSUFFIX)=%$(SOSUFFIX)) \
+	$(DLLTARGETS:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
+else
+export LIBLINKTARGETS =
+endif
+
 ifeq "@INSTALLLIBS@" "yes"
 LIBLIBTARGETS = $(ALLLIB)
 else
@@ -399,7 +448,7 @@ all: compilelib compileexamples
 else
 all: compilelib
 endif
-compilelib: mkcompiledirs $(LIBTARGETS) compilesubdirs
+compilelib: mkcompiledirs $(LIBTARGETS) ldconfig compilesubdirs
 compileexamples: $(EXAMPLEEXE)
 
 test: mkcompiledirs $(TESTEXE)
@@ -413,7 +462,13 @@ mkcompiledirs:
 	done
 endif
 
-
+.PHONY: ldconfig
+ifeq "@need_soname@" "yes"
+ldconfig:
+	$(LDCONFIG) "$(top_builddir)"
+else
+ldconfig:
+endif
 
 # ugly hack by Grégoire Dooms to call a target on a contribs after evaluating all the variables in this Makefile.
 # used as make contribs:cpgraph:doc or make contribs:cpgraph:Makefile.in
@@ -499,24 +554,29 @@ test/%$(SBJSUFFIX): $(top_srcdir)/test/%.cc
 
 ifeq "$(DLLSUFFIX)" "$(LIBSUFFIX)"
 $(KERNELDLL): $(KERNELOBJ)
-	$(CXX) $(DLLFLAGS) $(KERNELOBJ) \
-		@LINKOUTPUT@$(KERNELDLL)
+	$(CXX) $(DLLFLAGS) $(KERNELOBJ) $(KERNELSONAME) \
+		@LINKOUTPUT@$(KERNELDLL) && \
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 $(SEARCHDLL): $(SEARCHOBJ) $(KERNELDLL)
-	$(CXX) $(DLLFLAGS) $(SEARCHOBJ) \
+	$(CXX) $(DLLFLAGS) $(SEARCHOBJ) $(SEARCHSONAME) \
 		@DLLPATH@ $(LINKKERNEL) \
-		@LINKOUTPUT@$(SEARCHDLL)
+		@LINKOUTPUT@$(SEARCHDLL) && \
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 $(INTDLL): $(INTOBJ) $(KERNELDLL)
-	$(CXX) $(DLLFLAGS) $(INTOBJ) \
+	$(CXX) $(DLLFLAGS) $(INTOBJ) $(INTSONAME) \
 		@DLLPATH@ $(LINKKERNEL) \
-		@LINKOUTPUT@$(INTDLL)
+		@LINKOUTPUT@$(INTDLL) && \
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 $(SETDLL): $(SETOBJ) $(KERNELDLL) $(INTDLL)
-	$(CXX) $(DLLFLAGS) $(SETOBJ) \
+	$(CXX) $(DLLFLAGS) $(SETOBJ) $(SETSONAME) \
 		@DLLPATH@ $(LINKKERNEL) $(LINKINT) \
-		@LINKOUTPUT@$(SETDLL)
+		@LINKOUTPUT@$(SETDLL) && \
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 $(MMDLL): $(MMOBJ) $(KERNELDLL) $(INTDLL)
-	$(CXX) $(DLLFLAGS) $(MMOBJ) \
+	$(CXX) $(DLLFLAGS) $(MMOBJ) $(MMSONAME) \
 		@DLLPATH@ $(LINKKERNEL) $(LINKINT) \
-		@LINKOUTPUT@$(MMDLL)
+		@LINKOUTPUT@$(MMDLL) && \
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 else
 $(KERNELDLL) $(KERNELLIB): $(KERNELOBJ)
 	$(CXX) $(DLLFLAGS) $(KERNELOBJ) \
@@ -681,6 +741,7 @@ doinstalllib: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
 	mkdir -p $(libdir) && \
 	mkdir -p $(pkgincludedir) && \
 	for f in $(LIBTARGETS); do cp $$f $(sharedlibdir); done && \
+	for f in $(LIBLINKTARGETS); do cp -a $$f $(sharedlibdir); done &&\
 	for f in $(LIBLIBTARGETS); do cp $$f $(libdir); done && \
 	(cd $(top_srcdir) && tar cf - $(ALLHDR)) | \
 	(cd $(pkgincludedir) && tar xf -) && \

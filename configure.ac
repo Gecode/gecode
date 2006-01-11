@@ -30,6 +30,8 @@ AC_INIT(GECODE, 1.0.1, users@gecode.org)
 AC_CONFIG_HEADERS([config.icc])
 AC_CONFIG_SRCDIR(kernel.hh)
 
+ac_gecode_soversion=2
+
 # checks for programs
 
 : ${CXXFLAGS=""} dnl we do not want autoconf's default
