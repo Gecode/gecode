@@ -83,8 +83,6 @@ else
 export CREATELINK       = @echo >/dev/null
 endif
 
-LDCONFIG = @LDCONFIG@
-
 #
 # KERNEL COMPONENTS
 #
@@ -448,7 +446,7 @@ all: compilelib compileexamples
 else
 all: compilelib
 endif
-compilelib: mkcompiledirs $(LIBTARGETS) ldconfig compilesubdirs
+compilelib: mkcompiledirs $(LIBTARGETS) compilesubdirs
 compileexamples: $(EXAMPLEEXE)
 
 test: mkcompiledirs $(TESTEXE)
@@ -460,14 +458,6 @@ mkcompiledirs:
 	for f in $(BUILDDIRS); do \
 	  (test -z "$(top_builddir)"/$$f || mkdir -p "$(top_builddir)"/$$f); \
 	done
-endif
-
-.PHONY: ldconfig
-ifeq "@need_soname@" "yes"
-ldconfig:
-	$(LDCONFIG) "$(top_builddir)"
-else
-ldconfig:
 endif
 
 # ugly hack by Grégoire Dooms to call a target on a contribs after evaluating all the variables in this Makefile.
@@ -556,27 +546,32 @@ ifeq "$(DLLSUFFIX)" "$(LIBSUFFIX)"
 $(KERNELDLL): $(KERNELOBJ)
 	$(CXX) $(DLLFLAGS) $(KERNELOBJ) $(KERNELSONAME) \
 		@LINKOUTPUT@$(KERNELDLL) && \
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX)) && \
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(SEARCHDLL): $(SEARCHOBJ) $(KERNELDLL)
 	$(CXX) $(DLLFLAGS) $(SEARCHOBJ) $(SEARCHSONAME) \
 		@DLLPATH@ $(LINKKERNEL) \
 		@LINKOUTPUT@$(SEARCHDLL) && \
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX)) && \
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(INTDLL): $(INTOBJ) $(KERNELDLL)
 	$(CXX) $(DLLFLAGS) $(INTOBJ) $(INTSONAME) \
 		@DLLPATH@ $(LINKKERNEL) \
 		@LINKOUTPUT@$(INTDLL) && \
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX)) && \
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(SETDLL): $(SETOBJ) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(SETOBJ) $(SETSONAME) \
 		@DLLPATH@ $(LINKKERNEL) $(LINKINT) \
 		@LINKOUTPUT@$(SETDLL) && \
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX)) && \
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(MMDLL): $(MMOBJ) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) $(MMSONAME) \
 		@DLLPATH@ $(LINKKERNEL) $(LINKINT) \
 		@LINKOUTPUT@$(MMDLL) && \
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX)) && \
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 else
 $(KERNELDLL) $(KERNELLIB): $(KERNELOBJ)
 	$(CXX) $(DLLFLAGS) $(KERNELOBJ) \

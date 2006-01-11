@@ -448,9 +448,8 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
        AC_SUBST(DLLEXT, "${ac_gecode_soversion}.0.dylib")
        AC_SUBST(SOSUFFIX, ".${ac_gecode_soversion}.dylib")
        AC_SUBST(SOLINKSUFFIX, ".dylib")
-       AC_SUBST(WLSONAME, "-compatibility_version ${ac_gecode_soversion}.0 -current_version ${ac_gecode_soversion}.0 -installname ")
-       AC_SUBST(LDCONFIG, ["@echo >/dev/null"])
        AC_SUBST(sharedlibdir, "${libdir}")
+       AC_SUBST(WLSONAME, "-compatibility_version ${ac_gecode_soversion}.0 -current_version ${ac_gecode_soversion}.0 -install_name ${libdir}/")
        ;;
      windows*)
        AC_SUBST(need_soname, "no")
@@ -463,7 +462,6 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
        AC_SUBST(SOSUFFIX, "")
        AC_SUBST(SOLINKSUFFIX, "")
        AC_SUBST(WLSONAME, "")
-       AC_SUBST(LDCONFIG, ["@echo >/dev/null"])
        if test "${enable_static:-no}" = "no"; then
 	  AC_SUBST(sharedlibdir, "${bindir}")
        else
@@ -477,7 +475,6 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
        AC_SUBST(SOSUFFIX, ".so.${ac_gecode_soversion}")
        AC_SUBST(SOLINKSUFFIX, ".so")
        AC_SUBST(WLSONAME, ["-Wl,-soname="])
-       AC_SUBST(LDCONFIG, ["/sbin/ldconfig -n"])
        AC_SUBST(sharedlibdir, "${libdir}")
        ;;
   esac])
@@ -519,7 +516,6 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_SUBST(SOSUFFIX, "")
   AC_SUBST(SOLINKSUFFIX, "")
   AC_SUBST(WLSONAME, "")
-  AC_SUBST(LDCONFIG, ["@echo >/dev/null"])
   AC_SUBST(LIBEXT, "lib")
   AC_SUBST(LIBPREFIX, "Gecode")
   AC_SUBST(LINKPREFIX, "Gecode")
