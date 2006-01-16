@@ -110,6 +110,28 @@ public:
 	return false;
     return true;
   }
+  void prune() {
+    // Select variable to be pruned
+    int i = random(x.size());
+    while (x[i].assigned()) {
+      i = (i+1) % x.size();
+    }
+    // Prune value
+    int v;
+    Int::ViewRanges<Int::IntView> it(x[i]);
+    unsigned int skip = random(x[i].size()-1);
+    while (true) {
+      if (it.width() > skip) {
+	v = it.min() + skip;
+	break;
+      }
+      skip -= it.width();
+      ++it;
+    }
+    Log::prune(x[i], Log::mk_name("x", i), IRT_NQ, v);
+    rel(this, x[i], IRT_NQ, v);
+    Log::prune_result(x[i]);
+  }
   void prune(const Assignment& a) {
     // Select variable to be pruned
     int i = random(x.size());
@@ -183,6 +205,7 @@ bool
 IntTest::run(const Options& opt) {
   const char* test    = "NONE";
   const char* problem = "NONE";
+  bool has_assignment = true;
   // Set up assignments
   Assignment* ap = make_assignment();
   Assignment& a = *ap;
@@ -308,13 +331,28 @@ IntTest::run(const Options& opt) {
       goto failed;
     }
   }
+  if (domain) {
+    has_assignment = false;
+    test = "Full domain consistency";
+    Log::reset();
+    IntTestSpace* s = new IntTestSpace(arity,dom,opt);
+    post(s,s->x);
+    while (!s->is_failed() && !s->assigned()) {
+      s->prune();
+    }
+    CHECK(!s->is_failed(), "Failed");
+    CHECK(!s->actors(), "No subsumtion");
+    delete s;
+    has_assignment = true;
+  }
   delete ap;
   return true;
  failed:
-  std::cout << "FAILURE" << std::endl
-	    << "\t" << "Test:       " << test << std::endl
-	    << "\t" << "Problem:    " << problem << std::endl
-	    << "\t" << "Assignment: " << a << std::endl;
+  std::cout   << "FAILURE" << std::endl
+	      << "\t" << "Test:       " << test << std::endl
+	      << "\t" << "Problem:    " << problem << std::endl;
+  if (has_assignment)
+    std::cout << "\t" << "Assignment: " << a << std::endl;
   delete ap;
   return false;
 }

@@ -61,13 +61,15 @@ protected:
   int    arity;
   IntSet dom;
   bool   reified;
+  bool   domain;
 
   virtual Assignment* make_assignment();
   virtual bool do_search_test() { return true; }
 public:
   IntTest(const char* t, 
-	  int a, const IntSet& d, bool r=false, int cost = 1) 
-    : Test("Int",t,cost), arity(a), dom(d), reified(r)  {
+	  int a, const IntSet& d, bool r=false, int cost = 1,
+	  bool dom=false) 
+    : Test("Int",t,cost), arity(a), dom(d), reified(r), domain(dom)  {
   }
   /// Check for solution
   virtual bool solution(const Assignment&) const = 0;

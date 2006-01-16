@@ -20,13 +20,14 @@
  */
 
 #include "test/int.hh"
+#include "test/log.hh"
 
 static IntSet ds_22(-2,2);
 
 class RegularA : public IntTest {
 public:
   RegularA(const char* t) 
-    : IntTest(t,4,ds_22,false) {}
+    : IntTest(t,4,ds_22,false, 1, true) {}
   virtual bool solution(const Assignment& x) const {
     return (((x[0] == 0) || (x[0] == 2)) &&
 	    ((x[1] == -1) || (x[1] == 1)) &&
@@ -47,7 +48,7 @@ public:
 class RegularB : public IntTest {
 public:
   RegularB(const char* t) 
-    : IntTest(t,4,ds_22,false) {}
+    : IntTest(t,4,ds_22,false, 1, true) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0]<x[1]) && (x[1]<x[2]) && (x[2]<x[3]);
   }
@@ -66,7 +67,7 @@ public:
 class RegularShared : public IntTest {
 public:
   RegularShared(const char* t) 
-    : IntTest(t,2,ds_22,false) {}
+    : IntTest(t,2,ds_22,false, 1, true) {}
   virtual bool solution(const Assignment& x) const {
     return (((x[0] == 0) || (x[0] == 2)) &&
 	    ((x[1] == -1) || (x[1] == 1)) &&
@@ -74,6 +75,16 @@ public:
 	    ((x[1] == 0) || (x[1] == 1)));
   }
   virtual void post(Space* home, IntVarArray& x) {
+    Log::log("post regular: x[0]x[1]x[0]x[1] in (0|2)(-1|1)(7|0|1)(0|1)",
+	     "\tREG r = \n"
+	     "\t  (REG(0) | REG(2)) +\n"
+	     "\t  (REG(-1) | REG(1)) +\n"
+	     "\t  (REG(7) | REG(0) | REG(1)) +\n"
+	     "\t  (REG(0) | REG(1));\n"
+	     "\tDFA d(r);\n"
+	     "\tIntVarArgs y(4);\n"
+	     "\ty[0]=x[0]; y[1]=x[1]; y[2]=x[0]; y[3]=x[1];\n"
+	     "\tregular(home, y, d);\n");
     REG r = 
       (REG(0) | REG(2)) +
       (REG(-1) | REG(1)) +
