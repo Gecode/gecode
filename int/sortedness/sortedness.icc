@@ -94,6 +94,89 @@ namespace Gecode { namespace Int { namespace Sortedness {
     }
 
     if (Perm) {
+
+      // normalized and sorted
+      // collect all bounds
+      int mib = y[0].min();
+      int mab = y[n - 1].max();
+      int ivs = (mab - mib + 1);
+      GECODE_AUTOARRAY(Rank, allbnd, ivs);
+      int iter = mib;
+      int idx = 0;
+      while(iter <= mab && idx < n) {
+	if (y[idx].min() > iter) {
+	  // idx cannot be zero because consisteny in posting
+	  assert(idx > 0);
+	  allbnd[iter - mib].min = idx;
+	  allbnd[iter - mib].max = idx - 1;
+	  iter++;
+	} else {
+	  if (y[idx].min() <= iter && iter <= y[idx].max() ) {
+	    allbnd[iter - mib].min = idx;
+	    allbnd[iter - mib].max = idx;
+	    iter++;
+	  } else {
+	    idx++;
+	  }
+	}
+      }
+
+      iter = mab;
+      idx = n -1;
+      while(iter >= mib && idx >= 0) {
+	if (y[idx].min() > iter) {
+	  // idx cannot be zero because consisteny in posting
+	  assert(idx > 0);
+	  allbnd[iter - mib].max = idx - 1;
+	  iter--;
+	} else {
+	  if (y[idx].min() <= iter && iter <= y[idx].max() ) {
+	    allbnd[iter - mib].max = idx;
+	    iter--;
+	  } else {
+	    idx--;
+	  }
+	}
+      }
+
+      for (int i = n; i--; ) {
+	// first reachable y bound
+	if (shared && xz[i][0].modified()) {
+	  return ES_NOFIX;
+	}
+	// minimum reachable y-variable
+	int minr = allbnd[xz[i][0].min() - mib].min;
+	int maxr = allbnd[xz[i][0].max() - mib].max;
+
+	ModEvent me = xz[i][0].gq(home, y[minr].min());
+	if (me_failed(me)) {
+	  return ES_FAILED;
+	}
+	nofix |= (me_modified(me) && 
+		  xz[i][0].min() != y[minr].min());
+
+	me = xz[i][0].lq(home, y[maxr].max());
+	if (me_failed(me)) {
+	  return ES_FAILED;
+	}
+	nofix |= (me_modified(me) && 
+		  xz[i][0].min() != y[maxr].max());
+
+	me = xz[i][1].gq(home, minr);
+	if (me_failed(me)) {
+	  return ES_FAILED;
+	}
+	nofix |= (me_modified(me) &&  xz[i][1].min() != minr);
+
+	me = xz[i][1].lq(home, maxr);
+	if (me_failed(me)) {
+	  return ES_FAILED;
+	}
+	nofix |= (me_modified(me) &&  xz[i][1].max() != maxr);
+
+      }
+      // x vars and z vars are consistent
+
       for (int i = n; i--; ) {
 	if (xz[i][1].assigned()) {
 
@@ -164,80 +247,33 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	  // if the permutation variable is undetermined
 	  int l = xz[i][1].min();
 	  int r = xz[i][1].max();
-	  if (xz[i][0].assigned()) {
-	    // if the x variable is determined
-	    int v = xz[i][0].val();
-	    
-	    while (y[l].max() < v) {
-	      ModEvent me = xz[i][1].gr(home, l);
-	      if (me_failed(me)) {
-		return ES_FAILED;
-	      }
-	      nofix  |= ( me_modified(me) && xz[i][1].min() != l + 1);
-	      l = xz[i][1].min();
-	    }
-
-	    while (y[r].min() > v) {
-	      ModEvent me = xz[i][1].le(home, r);
-	      if (me_failed(me)) {
-		return ES_FAILED;
-	      }
-	      nofix  |= ( me_modified(me) && xz[i][1].max() != r - 1);
-	      r = xz[i][1].max();
-	    }
-	  } else {
-	    // if the x variable is undetermined
-	    // upper bound
-	    if (shared && xz[i][0].modified()) {
-	      return ES_NOFIX;
-	    }
-
-	    ModEvent me = xz[i][0].lq(home, y[r].max());
-	    if (me_failed(me)) {
-	      return ES_FAILED;
-	    }
-	    nofix |= (me_modified(me) && xz[i][0].max() != y[r].max());
-
-	    // lower bound
-	    if (shared && xz[i][0].modified()) {
-	      return ES_NOFIX;
-	    }
-	    
-	    me = xz[i][0].gq(home, y[l].min());
-	    if (me_failed(me)) {
-	      return ES_FAILED;
-	    }
-	    nofix |= (me_modified(me) && xz[i][0].min() != y[l].min());
+	 
+	  // upper bound
+	  if (shared && xz[i][0].modified()) {
+	    return ES_NOFIX;
 	  }
+
+	  ModEvent me = xz[i][0].lq(home, y[r].max());
+	  if (me_failed(me)) {
+	    return ES_FAILED;
+	  }
+	  nofix |= (me_modified(me) && xz[i][0].max() != y[r].max());
+
+	  // lower bound
+	  if (shared && xz[i][0].modified()) {
+	    return ES_NOFIX;
+	  }
+	    
+	  me = xz[i][0].gq(home, y[l].min());
+	  if (me_failed(me)) {
+	    return ES_FAILED;
+	  }
+	  nofix |= (me_modified(me) && xz[i][0].min() != y[l].min());
 	}
       }
-    }
-
-    // if bounds have changed we have to recreate sigma to restore
-    // optimized dropping of variables
-
-    if (!match_fixed) {
-      sort_sigma<View, Tuple, Perm>(xz, match_fixed);
-    }
-
-
-    bool subsumed   = true;
-    bool array_subs = false;
-    int  dropfst  = 0;
-
-    if (!(check_subsumption<View, Tuple, Perm>
-	  (home, xz, y, subsumed, dropfst)) ||
-	!(array_assigned<View, Tuple, Perm, shared>
-	  (home, xz, y, array_subs, match_fixed, nofix))) {
-      return ES_FAILED;
-    }
-
-    if (shared && nofix) {
-      return ES_NOFIX;
-    }
-
-    if (subsumed || array_subs) {
-      return ES_SUBSUMED; 
+      if (nofix) {
+	return ES_NOFIX;
+      }
     }
 
     /* 
@@ -256,6 +292,34 @@ namespace Gecode { namespace Int { namespace Sortedness {
     if (shared && nofix) {
       return ES_NOFIX;
     }
+
+    // if bounds have changed we have to recreate sigma to restore
+    // optimized dropping of variables
+
+    if (!match_fixed) {
+      sort_sigma<View, Tuple, Perm>(xz, match_fixed);
+    }
+
+    bool subsumed   = true;
+    bool array_subs = false;
+    int  dropfst  = 0;
+    bool noperm_bc = false;
+
+    if (!(check_subsumption<View, Tuple, Perm>
+	  (home, xz, y, subsumed, dropfst)) ||
+	!(array_assigned<View, Tuple, Perm, shared>
+	  (home, xz, y, array_subs, match_fixed, nofix, noperm_bc))) {
+      return ES_FAILED;
+    }
+
+    if (shared && nofix) {
+      return ES_NOFIX;
+    }
+
+    if (subsumed || array_subs) {
+      return ES_SUBSUMED; 
+    }
+
 
     /*
      * STEP 2: creating tau 
@@ -371,17 +435,19 @@ namespace Gecode { namespace Int { namespace Sortedness {
       return ES_NOFIX;
     }
     
-
     if (Perm) {
-      if (!perm_bc<View, Tuple, Perm, shared>
-	  (home, tau, xz, repairpass, nofix)) {
-	return ES_FAILED;
-      }
+      if (!noperm_bc) {
+	if (!perm_bc<View, Tuple, Perm, shared>
+	    (home, tau, sinfo, scclist, xz, repairpass, nofix)) {
+	  // std::cout << "perm bc failed\n";
+	  return ES_FAILED;
+	}
 
-      if (shared && nofix) {
-	return ES_NOFIX;
-      }
+	if (shared && nofix) {
+	  return ES_NOFIX;
+	}
       
+      }
     }
 
     return nofix ? ES_NOFIX : ES_FIX;
@@ -435,20 +501,21 @@ namespace Gecode { namespace Int { namespace Sortedness {
     bool array_subs  = false;
     bool match_fixed = false;
 
-    // create sigma sorting
-    sort_sigma<View, Tuple, Perm>(xz, match_fixed);
-
     // normalization of x and y
     if (!normalize<View, Tuple, shared>(home, y, xz, nofix)) {
       return ES_FAILED;
     }
 
+    // create sigma sorting
+    sort_sigma<View, Tuple, Perm>(xz, match_fixed);
+
+
     if (shared && nofix) {
       return ES_NOFIX;
     }
-    
+    bool noperm_bc = false;
     if (!array_assigned<View, Tuple, Perm, shared>
-	(home, xz, y, array_subs, match_fixed, nofix)) {
+	(home, xz, y, array_subs, match_fixed, nofix, noperm_bc)) {
       return ES_FAILED;
     }
 
@@ -597,14 +664,14 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
     subsumed   = true;
     array_subs = false;
-
+    noperm_bc  = false;
     // creating sorting anew
     if (!match_fixed) {
       sort_sigma<View, Tuple, Perm>(xz, match_fixed);
     } 
 
     if (!array_assigned<View, Tuple, Perm, shared>
-	(home, xz, y, array_subs, match_fixed, nofix)) {
+	(home, xz, y, array_subs, match_fixed, nofix, noperm_bc)) {
       return ES_FAILED;
     }
 

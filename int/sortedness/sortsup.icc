@@ -21,6 +21,56 @@
 
 namespace Gecode { namespace Int { namespace Sortedness {
 
+  /// Debugging: Print a View
+  template <class View>
+  void pview(View& v){
+    if (v.min() == v.max()) {
+      std::cout << v.min() <<" ";
+    } else {
+      if (v.range()){
+	std::cout << "["<<v.min() <<".."<<v.max()<<"] ";
+      } else {
+	std::cout << "{";
+	ViewValues<View> iter(v);
+	while(iter()){
+	  std::cout << iter.val() <<",";
+	  ++iter;
+	}     
+	std::cout << "} ";
+      }
+    }
+  }
+
+
+  /**
+   * \brief Storage class for mininmum and maximum of a variable.
+   */
+  class Rank {
+  public:
+    // stores the mininmum of a variable
+    int min;
+    // stores the mininmum of a variable
+    int max;
+  };
+
+  /**
+   *  \brief Representation of a strongly connected component 
+   *  
+   *  Used with the implicit array representation of the 
+   *  bipartite oriented intersection graph. 
+   */
+  class SccComponent {
+  public:
+    /// Leftmost y-node in a scc
+    int leftmost;   
+    /// Direct left neighbour of an y-node in a scc
+    int left;       
+    /// Direct right neighbour of an y-node in a scc
+    int right;    
+    /// Rightmost reachable y-node in a scc
+    int rightmost;  
+  };
+
   /**
    * \brief Subsumption test
    * 
@@ -249,7 +299,11 @@ namespace Gecode { namespace Int { namespace Sortedness {
   public:
     TupleMaxInc(const ViewArray<Tuple>& x0) : x(x0) {}
     bool operator()(const int i, const int j) {
+      if (x[i][0].max() == x[j][0].max()) {
+	return x[i][0].min() < x[j][0].min();
+      } else {
 	return x[i][0].max() < x[j][0].max();
+      }
     }
   };
 
@@ -266,7 +320,11 @@ namespace Gecode { namespace Int { namespace Sortedness {
   class TupleMinInc {
   public:
     bool operator()(const View& x, const View& y) {
+      if (x[0].min() == y[0].min()) {
+	return x[0].max() < y[0].max();
+      } else {
 	return x[0].min() < y[0].min();
+      }
     }
   };
 
@@ -282,7 +340,31 @@ namespace Gecode { namespace Int { namespace Sortedness {
   class TupleMinIncPerm {
   public:
     bool operator()(const View& x, const View& y) {
-      return x[1].min() < y[1].min();
+      if (x[1].min() == y[1].min()) {
+	return x[1].max() < y[1].max();
+      } else {
+	return x[1].min() < y[1].min();
+      }
+    }
+  };
+
+  /**
+   * \brief View comparison on ViewTuples 
+   *
+   * Checks whether the upper domain bound of the second component
+   * of \a x (the upper bound on the permutation variable) is smaller 
+   * than the upper domain bound of the second component of \a y.
+   */
+
+  template <class View>
+  class TupleMaxIncPerm {
+  public:
+    bool operator()(const View& x, const View& y) {
+      if (x[1].max() == y[1].max()) {
+	return x[1].min() < y[1].min();
+      } else {
+	return x[1].max() < y[1].max();
+      }
     }
   };
 
@@ -300,7 +382,8 @@ namespace Gecode { namespace Int { namespace Sortedness {
 		 ViewArray<View>& y, 
 		 bool& subsumed, 
 		 bool& match_fixed, 
-		 bool& nofix) {
+		 bool& nofix, 
+		 bool& noperm_bc) {
 
     bool x_complete = true;
     bool y_complete = true;
@@ -353,6 +436,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	} else {
 	  subsumed = true;
 	}
+	noperm_bc = true;
       }
     }
 

@@ -35,10 +35,23 @@ namespace Gecode { namespace Int { namespace Sortedness {
   sort_sigma(ViewArray<Tuple>& xz, bool fixed) {
     int xs = xz.size();
 
-    if (fixed) {
-      TupleMinIncPerm<Tuple> min_inc;
-      Support::quicksort<Tuple, TupleMinIncPerm<Tuple> >
-	(&xz[0], xs, min_inc);
+    // test for equal bounds
+
+    if (Perm) {
+      bool eqbnd = true;
+      for (int i = xs - 1; i--; ) {
+	eqbnd &= ( (xz[i][0].min() == xz[i + 1][0].min()) &&
+		   (xz[i][0].max() == xz[i + 1][0].max()));
+      }
+      
+      if (eqbnd || fixed) {
+	TupleMinIncPerm<Tuple> min_inc;
+	Support::quicksort<Tuple, TupleMinIncPerm<Tuple> >
+	  (&xz[0], xs, min_inc);
+      } else {
+	TupleMinInc<Tuple> min_inc;
+	Support::quicksort<Tuple, TupleMinInc<Tuple> >(&xz[0], xs, min_inc);
+      }
     } else {
       TupleMinInc<Tuple> min_inc;
       Support::quicksort<Tuple, TupleMinInc<Tuple> >(&xz[0], xs, min_inc);
@@ -57,8 +70,27 @@ namespace Gecode { namespace Int { namespace Sortedness {
   forceinline void 
   sort_tau(ViewArray<Tuple>& xz, int tau[]) {
     int xs = xz.size();
-    TupleMaxInc<Tuple> ltmax(xz);
-    Support::quicksort(&(*tau), xs, ltmax);
+
+    if (Perm) {
+      bool eqbnd = true;
+      for (int i = xs - 1; i--;) {
+	eqbnd &= ( (xz[i][0].min() == xz[i + 1][0].min()) &&
+		   (xz[i][0].max() == xz[i + 1][0].max()));
+      }
+      
+      if (eqbnd) {
+	TupleMaxIncPerm<Tuple> max_inc;
+	Support::quicksort<Tuple, TupleMaxIncPerm<Tuple> >
+	  (&xz[0], xs, max_inc);
+      } else {
+	TupleMaxInc<Tuple> ltmax(xz);
+	Support::quicksort(&(*tau), xs, ltmax);
+      }
+      
+    } else {
+      TupleMaxInc<Tuple> ltmax(xz);
+      Support::quicksort(&(*tau), xs, ltmax);
+    }
   }
 
   /**
@@ -108,7 +140,14 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	return true;
       }
 
-      ModEvent me = xz[i][0].lq(home, y[xs - 1].max()); 
+      ModEvent me = xz[i][0].gq(home, y[0].min()); 
+      if (me_failed(me)) {
+	return false;
+      }
+      nofix |= (me_modified(me) && xz[i][0].min() != y[0].min());
+      
+
+      me = xz[i][0].lq(home, y[xs - 1].max()); 
       if (me_failed(me)) {
 	return false;
       }
@@ -126,106 +165,73 @@ namespace Gecode { namespace Int { namespace Sortedness {
    *  \a x and the sorted variables \a y violating the property
    *  that \a y is sorted. 
    */
+
   template<class View, class Tuple, bool Perm, bool shared>
   forceinline bool
   perm_bc(Space* home, int tau[], 
+	  SccComponent sinfo[],	  
+	  int scclist[],
 	  ViewArray<Tuple>& xz, 
 	  bool& crossingedge, 
 	  bool& nofix) {
 
-    int ps        = xz.size();
-    bool edge_up  = false;
+    int ps = xz.size();
+
     for (int i = 1; i < ps; i++) {
       // if there are "crossed edges"
-      if (xz[i][0].min() > xz[i - 1][0].max()) {
-	if (xz[i][1].min() < xz[i - 1][1].min()) {
-	  edge_up = true; 
-	  break;
-	}
-      }
-    }
-
-    bool edge_low = false;
-    for (int i = ps - 1; i--; ) {
-      if (xz[tau[i]][0].max() < xz[tau[i + 1]][0].min()) {
-	if (xz[tau[i]][1].max() > xz[tau[i + 1]][1].max()) {
-	  edge_low = true;
-	  break;
-	}
-      }
-    }
-
-    if (edge_up && edge_low) {
-      for (int i = 1; i < ps; i++) {
-	// if there are "crossed edges"
-	if (xz[i][0].min() > xz[i - 1][0].max()) {
-	  if (xz[i][1].min() < xz[i - 1][1].min()) {
-	    // std::cout <<"ce found low ..";
-	    crossingedge = true;
-	    // and the permutation can still be changed
-	    if (!xz[i][1].assigned() && !xz[i - 1][1].assigned()) {
+      if (xz[i - 1][0].min() < xz[i][0].min()) {
+	if (xz[i - 1][1].min() > xz[i][1].min()) {
+	  if (xz[i][1].min() != sinfo[scclist[i]].leftmost) {
+	    // edge does not take part in solution
+	    if (xz[i][1].assigned()) { // vital edge do not remove it
+	      if (xz[i - 1][0].max() < xz[i][0].min()) {
+		// invalid permutation
+		// the upper bound sorting cannot fix this
+		return false;
+	      }
+	    } else {
+	      crossingedge = true;
+	      // and the permutation can still be changed
 	      // fix the permutation, i.e. modify z
-	      // std::cout <<"fixed perm\n";
 	      ModEvent me_z = xz[i][1].gq(home, xz[i - 1][1].min());
 	      if (me_failed(me_z)) {
 		return false;
 	      }
-	      nofix |= ( me_modified(me_z) &&
+	      nofix |= ( me_modified(me_z) && 
 			 xz[i - 1][1].min() != xz[i][1].min());
-	    } else {
-	      // std::cout <<"fixed sigma\n";
-	      // if the permutation is already determined at this index
-	      // try to fix the sigma sorting, i.e. modify x
-	      if (shared && xz[i - 1][0].modified()) {
-		nofix = true;
-		return true;
-	      }
-
-	      ModEvent me_x = xz[i - 1][0].gq(home,xz[i][0].min());
-	      if (me_failed(me_x)) {
-		return false;
-	      }
-	      nofix |= (me_modified(me_x) &&
-			xz[i][0].min() != xz[i - 1][0].min());
 	    }
 	  }
 	}
       }
+    }
 
-      // the same check as above for the upper bounds
-      for (int i = ps - 1; i--; ) {
-	if (xz[tau[i]][0].max() < xz[tau[i + 1]][0].min()) {
-	  if (xz[tau[i]][1].max() > xz[tau[i + 1]][1].max()) {
-	    // std::cout <<"ce found up ..";
-	    crossingedge = true;
-	    if (!xz[tau[i]][1].assigned() && !xz[tau[i + 1]][1].assigned()) {
-	      // std::cout <<"fixed perm\n";
+    // the same check as above for the upper bounds
+    for (int i = ps - 1; i--; ) {
+      if (xz[tau[i]][0].max() < xz[tau[i + 1]][0].max()) {
+	if (xz[tau[i]][1].max() > xz[tau[i + 1]][1].max()) {
+	  if (xz[tau[i]][1].max() != sinfo[scclist[tau[i]]].rightmost) {
+	    // edge does not take part in solution
+	    if (xz[tau[i]][1].assigned()) {
+	      if (xz[tau[i + 1]][0].min() > xz[tau[i]][0].max()) {
+		// invalid permutation
+		return false;
+	      }
+	    } else {
+	      crossingedge = true;
 	      ModEvent me_z = xz[tau[i]][1].lq(home, xz[tau[i + 1]][1].max());
 	      if (me_failed(me_z)) {
 		return false;
 	      }
 	      nofix |= (me_modified(me_z) &&
 			xz[tau[i + 1]][1].max() != xz[tau[i]][1].max());
-	    } else {
-	      // std::cout <<"fixed tau\n";
-	      if (shared && xz[tau[i + 1]][0].modified()) {
-		nofix = true;
-		return true;
-	      }
-
-	      ModEvent me_x = xz[tau[i + 1]][0].lq(home,xz[tau[i]][0].max());
-	      if (me_failed(me_x)) {
-		return false;
-	      }
-	      nofix |= (me_modified(me_x) &&
-			xz[tau[i]][0].max() != xz[tau[i + 1]][0].max());
 	    }
 	  }
 	}
       }
     }
+
     return true;
-  }    
+  }
 
 }}}
 

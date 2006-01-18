@@ -24,26 +24,6 @@
 namespace Gecode { namespace Int { namespace Sortedness {
 
   /**
-   *  \brief Representation of a strongly connected component 
-   *  
-   *  Used with the implicit array representation of the 
-   *  bipartite oriented intersection graph. 
-   */
-  class SccComponent {
-  public:
-    /// Leftmost y-node in a scc
-    int leftmost;   
-    /// Direct left neighbour of an y-node in a scc
-    int left;       
-    /// Direct right neighbour of an y-node in a scc
-    int right;    
-    /// Rightmost reachable y-node in a scc
-    int rightmost;  
-  };
-
-
-
-  /**
    *   \brief Compute the sccs of the oriented intersection-graph
    *   
    *   An y-node \f$y_j\f$ and its corresponding matching mate 
@@ -74,7 +54,6 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
     //select an y node from the graph
     for (int j = 0; j < xs; j++) {
-      
       int yjmin      = y[j].min();    // the processed min
       while (!cs.empty() && xz[phi[sinfo[cs.top()].rightmost]][0].max() < yjmin) {
 	// the topmost scc cannot "reach" y_j or a node to the right of it
@@ -104,6 +83,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
     }
     cs.reset();
 
+
     // now we mark all components with the respective scc-number
     // labeling is bound by O(k) which is bound by O(n) 
 
@@ -131,10 +111,10 @@ namespace Gecode { namespace Int { namespace Sortedness {
    *   assignments for the Sortedness constraint the new domain bounds for 
    *   views in \a x are computed as 
    *      - lower bounds: 
-   *        \f$ S_i = max(D_i, E_l) \f$
+   *        \f$ S_i \geq E_l \f$
    *        where \f$y_l\f$ is the leftmost neighbour of \f$x_i\f$
    *      - upper bounds:
-   *        \f$ S_i = min(D_i, E_h) \f$
+   *        \f$ S_i \leq  E_h \f$
    *        where \f$y_h\f$ is the rightmost neighbour of \f$x_i\f$
    */
 
@@ -157,8 +137,9 @@ namespace Gecode { namespace Int { namespace Sortedness {
       int xmin = xz[i][0].min();
       /* 
        * take the scc-list for the current x node 
-       * start from the leftmost reachable y node and check which 
-       * Y node in the scc is the rightmost reachable node, i.e.
+       * start from the leftmost reachable y node of the scc 
+       * and check which Y node in the scc is 
+       * really the rightmost node intersecting x, i.e.
        * search for the greatest lower bound of x
        */
       int start = sinfo[scclist[i]].leftmost;
@@ -166,7 +147,6 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	start = sinfo[start].right;
       }
 	
-      sinfo[scclist[i]].leftmost = start; //remember iterator position
       if (Perm) {
 	// start is the leftmost-position for x_i 
 	// that denotes the lower bound on p_i
@@ -194,7 +174,8 @@ namespace Gecode { namespace Int { namespace Sortedness {
       /* 
        * take the scc-list for the current x node 
        * start from the rightmost reachable node and check which 
-       * y node in the scc is the leftmost reachable node, i.e. 
+       * y node in the scc is 
+       * really the rightmost node intersecting x, i.e. 
        * search for the smallest upper bound of x
        */
       start = sinfo[scclist[ptau]].rightmost;
@@ -202,8 +183,6 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	start = sinfo[start].left;
       }
 
-      sinfo[scclist[ptau]].rightmost = start; //remember iterator position
-	
       if (Perm) {
 	//start is the rightmost-position for x_i 
 	//that denotes the upper bound on p_i
