@@ -47,6 +47,16 @@ Version:	1.0.1
 Info:		Upcoming
 
 [ENTRY]
+Module:		int
+What:		change
+Rank:		major
+Bug:		27
+[DESCRIPTION]
+The strongly connected components represented by the permutation variables
+in the extended version of Sortedness has been fixed restoring bounds consistency 
+on the permutation variables. 
+
+[ENTRY]
 Module:		other
 What:		change
 Rank:		minor
