@@ -48,7 +48,7 @@ Info:		Upcoming
 
 [ENTRY]
 Module:		int
-What:		change
+What:		bug
 Rank:		major
 Bug:		27
 [DESCRIPTION]
