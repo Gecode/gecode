@@ -37,6 +37,7 @@
 #   What:   bug|documentation|performance|new|change
 #   Rank:   minor|major
 #   Bug:    <optional, for number from bugzilla>
+#   Thanks: <optional, who reported etc>
 #   [DESCRIPTION]
 #   ... All the text up to the next [ENTRY] or [RELEASE] is included 
 #   as description
@@ -45,6 +46,14 @@
 [RELEASE]
 Version:	1.0.1
 Info:		Upcoming
+
+[ENTRY]
+Module:		other
+What:		bug
+Rank:		minor
+Thanks:		Filip Konvicka
+[DESCRIPTION]
+Removed some compiler warnings for the Microsoft compiler with -W3.
 
 [ENTRY]
 Module:		int

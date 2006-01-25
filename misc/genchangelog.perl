@@ -111,7 +111,13 @@ while ($l = <>) {
     goto LINE;
   }
   if ($l =~ /^\[ENTRY\]/) {
-    my $mod, $what, $rank, $bug, $desc;
+    my $mod, $what, $rank, $bug, $desc, $thanks;
+    $desc = "";
+    $bug = "";
+    $rank = "";
+    $what = "";
+    $mod = "";
+    $thanks = "";
     while (($l = <>) && !($l =~ /\[DESCRIPTION\]/)) {
       if ($l =~ /Module:[\t ]*(.*)$/) {
 	$mod  = $1;
@@ -121,6 +127,8 @@ while ($l = <>) {
 	$rank = $1;
       } elsif ($l =~ /Bug:[\t ]*(.*)$/) {
 	$bug  = $1;
+      } elsif ($l =~ /Thanks:[\t ]*(.*)$/) {
+	$thanks  = $1;
       }
     }
     
@@ -131,17 +139,15 @@ while ($l = <>) {
     }
     $hastext{$mod} = 1;
     $rb = $rankclear{$rank};
-    if ($bug) {
+    if (!($bug eq "")) {
       $rb = $rb . ", <a href=\"http://www.gecode.org/bugzilla/show_bug.cgi?id="
 	. $bug . "\">bugzilla entry</a>";
     }
+    if (!($thanks eq "")) {
+      $rb = $rb . ", thanks to $thanks";
+    }
     $text{"$mod-$what"} = 
       ($text{"$mod-$what"} . "      - $desc (" . $rb . ")\n");
-    $desc = "";
-    $bug = "";
-    $rank = "";
-    $what = "";
-    $mod = "";
     goto LINE;
   }
 }
