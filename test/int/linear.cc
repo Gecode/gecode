@@ -21,7 +21,7 @@
 
 #include "test/int.hh"
 
-static inline int 
+static inline bool
 compare(double x, IntRelType r, double y) {
   switch (r) {
   case IRT_EQ: return x == y;

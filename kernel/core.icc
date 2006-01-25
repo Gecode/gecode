@@ -1043,7 +1043,7 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC>
   forceinline unsigned int
   Variable<VTI,PC>::degree(void) const {
-    return idx[PC+1] - idx[0];
+    return static_cast<unsigned int>(idx[PC+1] - idx[0]);
   }
 
 
@@ -1323,7 +1323,7 @@ namespace Gecode {
 	    idx[i] = prop;
 	} else {
 	  // Resize dependency array
-	  ptrdiff_t n = idx[PC+1] - idx[0];
+	  int n = static_cast<int>(idx[PC+1] - idx[0]);
 	  Propagator** prop = reinterpret_cast<Propagator**>
 	    (home->alloc(2*n*sizeof(Propagator*))) + n;
 	  free(n-1);
@@ -1475,7 +1475,7 @@ namespace Gecode {
 	idx[i] = NULL;
     } else {
       free_me = 1 << 4;
-      ptrdiff_t n = x->idx[PC+1] - f;
+      int n = static_cast<int>(x->idx[PC+1] - f);
       Propagator** t = reinterpret_cast<Propagator**>
 	(home->alloc((n+1)*sizeof(Propagator*))) + 1;
       idx[0] = t;

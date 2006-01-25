@@ -88,7 +88,7 @@ namespace Gecode {
 	min = Limits::Int::int_min;
       if (max > Limits::Int::int_max)
 	max = Limits::Int::int_max;
-      IntVar x(home, min, max);
+      IntVar x(home, static_cast<int>(min), static_cast<int>(max));
       ts[n].x = x;
       ts[n].a = -1;
       Int::Linear::post(home, ts, n+1, IRT_EQ, -c);

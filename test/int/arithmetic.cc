@@ -31,9 +31,9 @@ static const int s1r[7] = {
   Limits::Int::int_max-1, Limits::Int::int_max
 }; 
 static const int s2r[9] = {
-  -sqrt(static_cast<double>(-Limits::Int::int_min)),
+  static_cast<int>(-sqrt(static_cast<double>(-Limits::Int::int_min))),
   -4,-2,-1,0,1,2,4,
-  sqrt(static_cast<double>(Limits::Int::int_max))
+  static_cast<int>(sqrt(static_cast<double>(Limits::Int::int_max)))
 }; 
 static IntSet s1(s1r,7);
 static IntSet s2(s2r,9);
