@@ -56,7 +56,6 @@ public:
       IntVar t0(this,0,Limits::Int::int_max);
       IntVar t1(this,0,Limits::Int::int_max);
       IntVar t2(this,0,Limits::Int::int_max);
-      IntVar t3(this,0,Limits::Int::int_max);
       rel(this, t2, IRT_EQ, s*100*100*100);
       mult(this, x[0], x[1], t0);
       mult(this, x[2], x[3], t1);
