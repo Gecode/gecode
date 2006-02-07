@@ -530,7 +530,7 @@ namespace Gecode { namespace Int { namespace Linear {
   ExecStatus
   ReLq<Val,P,N>::propagate(Space* home) {
     if (b.zero())
-      return (Lq<Val,N,P>::post(home,y,x,-c+1) == ES_FAILED)
+      return (Lq<Val,N,P>::post(home,y,x,-c-1) == ES_FAILED)
 	? ES_FAILED : ES_SUBSUMED;
     if (b.one())
       return (Lq<Val,P,N>::post(home,x,y,c) == ES_FAILED)

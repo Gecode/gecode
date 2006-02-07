@@ -48,6 +48,15 @@ Version:	1.0.1
 Info:		Upcoming
 
 [ENTRY]
+Module:		int
+What:		bug
+Rank:		major
+Bug:		29
+Thanks:		Dominik Brill
+[DESCRIPTION]
+Fixed a serious bug in the reified linear inequality propagator.
+
+[ENTRY]
 Module:		other
 What:		bug
 Rank:		minor
@@ -61,9 +70,9 @@ What:		bug
 Rank:		major
 Bug:		27
 [DESCRIPTION]
-The strongly connected components represented by the permutation variables
-in the extended version of Sortedness has been fixed restoring bounds consistency 
-on the permutation variables. 
+The strongly connected components represented by the permutation
+variables in the extended version of Sortedness has been fixed
+restoring bounds consistency on the permutation variables.
 
 [ENTRY]
 Module:		other
