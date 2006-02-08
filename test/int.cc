@@ -257,7 +257,7 @@ IntTest::run(const Options& opt) {
       delete s;
     }
     if (reified) {
-      test = "Assignment reified (immediate rewrite)";
+      test = "Assignment reified (rewrite after post)";
       Log::reset();
       IntTestSpace* s = new IntTestSpace(arity,dom,opt);
       BoolVar b(s,0,1);
@@ -267,6 +267,22 @@ IntTest::run(const Options& opt) {
       } else {
 	rel(s, b, IRT_EQ, 0);
       }
+      s->assign(a); 
+      CHECK(!s->is_failed(), "Failed");
+      CHECK(!s->actors(), "No subsumtion");
+      delete s;
+    }
+    if (reified) {
+      test = "Assignment reified (immediate rewrite)";
+      Log::reset();
+      IntTestSpace* s = new IntTestSpace(arity,dom,opt);
+      BoolVar b(s,0,1);
+      if (is_sol) {
+	rel(s, b, IRT_EQ, 1);
+      } else {
+	rel(s, b, IRT_EQ, 0);
+      }
+      post(s,s->x,b);
       s->assign(a); 
       CHECK(!s->is_failed(), "Failed");
       CHECK(!s->actors(), "No subsumtion");
