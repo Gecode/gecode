@@ -114,13 +114,11 @@ public:
     // A warehouse is open, if it supplies to a shop
     for (int i=0; i<n_suppliers; i++) {
       BoolVarArgs store_by_supplier(n_stores);
-      IntVar n_supplied(this, 0, n_stores);
       for (int j=0; j<n_stores; j++)
 	store_by_supplier[j] = post(this, ~(supplier[j] == i));
-      linear(this, store_by_supplier, IRT_EQ, n_supplied);
       BoolVar b(this, 0, 1);
       rel(this, open[i], IRT_EQ, 1, b);
-      rel(this, n_supplied, IRT_GR, 0, b);
+      linear(this, store_by_supplier, IRT_GR, 0, b);
     }
 
     branch(this, cost, BVAR_REGRET_MIN_MAX, BVAL_MIN);
