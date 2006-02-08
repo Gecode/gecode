@@ -796,6 +796,32 @@ distdoc: doc
 		gzip -9 gecode-doc-$(DOCSUFFIX).tag; \
 	fi
 
+
+#
+# Binary Distribution
+#
+
+.PHONY: distzip
+
+BINPKG = gecode-$(VERSION)-bin
+
+disttodir:
+	$(RMF) $(BINPKG) && \
+	$(MAKE) install \
+	prefix=$(BINPKG) execprefix=$(BINPKG) bindir=$(BINPKG)/bin \
+	libdir=$(BINPKG)/lib sharedlibdir=$(BINPKG)/lib \
+	includedir=$(BINPKG)/include && \
+	cp LICENSE $(BINPKG)/
+
+distzip: disttodir
+	zip -q -9 -r $(BINPKG).zip $(BINPKG) && \
+	$(RMF) $(BINPKG)
+
+disttgz: disttodir
+	$(TAR) cf - $(BINPKG) | \
+	  gzip -9 > $(BINPKG).tar.gz && \
+	$(RMF) $(BINPKG)
+
 #
 # Maintenance targets
 #
