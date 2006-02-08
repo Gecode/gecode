@@ -43,15 +43,40 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Abs : public BinaryPropagator<View,PC_INT_BND> {
+  class AbsBnd : public BinaryPropagator<View,PC_INT_BND> {
   protected:
     using BinaryPropagator<View,PC_INT_BND>::x0;
     using BinaryPropagator<View,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
-    Abs(Space* home, bool share, Abs& p);
+    AbsBnd(Space* home, bool share, AbsBnd& p);
     /// Constructor for posting
-    Abs(Space* home, View x0, View x1);
+    AbsBnd(Space* home, View x0, View x1);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus  propagate(Space* home);
+    /// Post propagator \f$ |x_0|=x_1\f$ 
+    static  ExecStatus  post(Space* home, View x0, View x1);
+  };
+
+  /**
+   * \brief Domain-consistent absolute value propagator
+   *
+   * Requires \code #include "int/arithmetic.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class View>
+  class AbsDom : public BinaryPropagator<View,PC_INT_DOM> {
+  protected:
+    using BinaryPropagator<View,PC_INT_DOM>::x0;
+    using BinaryPropagator<View,PC_INT_DOM>::x1;
+
+    /// Constructor for cloning \a p
+    AbsDom(Space* home, bool share, AbsDom& p);
+    /// Constructor for posting
+    AbsDom(Space* home, View x0, View x1);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);

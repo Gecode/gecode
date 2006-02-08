@@ -26,9 +26,17 @@ namespace Gecode {
   using namespace Int;
 
   void
-  abs(Space* home, IntVar x0, IntVar x1, IntConLevel) {
+  abs(Space* home, IntVar x0, IntVar x1, IntConLevel cl) {
     if (home->failed()) return;
-    GECODE_ES_FAIL(home,Arithmetic::Abs<IntView>::post(home,x0,x1));
+	switch (cl) {
+	case ICL_DOM:
+    	GECODE_ES_FAIL(home,Arithmetic::AbsDom<IntView>::post(home,x0,x1));
+		break;
+	default:
+    	GECODE_ES_FAIL(home,Arithmetic::AbsBnd<IntView>::post(home,x0,x1));
+		break;
+	}
+
   }
 
 

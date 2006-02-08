@@ -48,11 +48,18 @@ Version:	1.0.1
 Info:		Upcoming
 
 [ENTRY]
+Module:		int
+What:		new
+Rank:		minor
+[DESCRIPTION]
+Added domain-consistent version of the absolute value propagator.
+
+[ENTRY]
 Module:		other
 What:		performance
 Rank:		minor
 [DESCRIPTION]
-Switch assertions off in optimized builds with Microsoft's C++ compiler
+Switch assertions off in optimized builds with Microsoft's C++ compiler.
 
 [ENTRY]
 Module:		int
