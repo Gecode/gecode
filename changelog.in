@@ -48,6 +48,13 @@ Version:	1.0.1
 Info:		Upcoming
 
 [ENTRY]
+Module:		other
+What:		performance
+Rank:		minor
+[DESCRIPTION]
+Switch assertions off in optimized builds with Microsoft's C++ compiler
+
+[ENTRY]
 Module:		int
 What:		bug
 Rank:		major
