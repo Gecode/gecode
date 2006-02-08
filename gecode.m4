@@ -489,7 +489,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
 
   if test "${enable_debug:-no}" = "no"; then
     dnl compiler flags for an optimized build
-    AC_GECODE_ADD_TO_CXXFLAGS([-Ox])
+    AC_GECODE_ADD_TO_CXXFLAGS([-Ox -DNDEBUG])
 
     dnl flags for creating optimized dlls
     AC_SUBST(DLLFLAGS, "${CXXFLAGS} -LD")
