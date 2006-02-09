@@ -21,7 +21,6 @@
 
 #include "test/int.hh"
 #include "test/log.hh"
-#include "../../int/gcc.hh"
 #include "../../support/sort.hh"
 
 static IntSet ds_12(1,2);

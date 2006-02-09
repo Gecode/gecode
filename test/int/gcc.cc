@@ -31,32 +31,43 @@ static IntSet ds_14(1,4);
 static IntSet ds_18(1,8);
 
 class GCCAssignment : public Assignment {
+  int problow;
+  int probup;
+  int cardlow;
+  int cardup;
+  int xsize;
 public:
-  GCCAssignment(int n0, const IntSet& d0) 
-    : Assignment(n0, d0){ 
+  GCCAssignment(int xlow, int xup, 
+		int clow, int cup,
+		int xs,
+		int n0, const IntSet& d0) 
+    : Assignment(n0, d0), 
+      problow(xlow), probup(xup), 
+      cardlow(clow), cardup(cup), 
+      xsize(xs) {
     reset();
   }
+  
   void GCCAssignment::reset(void) {
     done = false;
-    int v = n/3;
-    IntSet perm_dom(0, v - 1);
-    IntSet var_dom(1, v);
-    for (int i = 2*n; i < n; i++) {
-      dsv[i].init(perm_dom);
+    IntSet card_dom(cardlow, cardup);
+    IntSet var_dom(problow, probup);
+    for (int i = xsize; i < n; i++) {
+      dsv[i].init(card_dom);
     }
-    for (int i=n; i--; )
+    for (int i = 0; i < xsize; i++ )
       dsv[i].init(var_dom);
   }
   void GCCAssignment::operator++(void) {
-    IntSet perm_dom(0, (n/3) - 1);
-    IntSet var_dom(1, n/3);
+    IntSet card_dom(cardlow, cardup);
+    IntSet var_dom(problow, probup);
     int i = n-1;
     while (true) {
       ++dsv[i];
       if (dsv[i]())
 	return;
-      if (i >= 2*(n/3) && i < n) {
-	dsv[i].init(perm_dom);
+      if (i >= xsize && i < n) {
+	dsv[i].init(card_dom);
       } else {
 	dsv[i].init(var_dom);
       }
@@ -318,6 +329,12 @@ private:
   static const int minocc = 0;
   static const int maxocc = 2;
 
+
+  Assignment* make_assignment() {
+    return new GCCAssignment(lb, rb, minocc, maxocc, ve, xs, dom);
+  }
+
+
 public:
   GCC_VC_AllLbUb(const char* t, IntConLevel icl0) 
     : IntTest(t, xs, ds_02, false,1,icl0==ICL_DOM), icl(icl0) {}
@@ -384,8 +401,8 @@ public:
     IntVarArgs y(xs - ve);
     for (int i = ve; i < xs; i++) {
       y[i - ve] = x[i];
-      rel(home, y[i - ve], IRT_LQ, maxocc);
-      rel(home, y[i - ve], IRT_GQ, minocc);
+//       rel(home, y[i - ve], IRT_LQ, maxocc);
+//       rel(home, y[i - ve], IRT_GQ, minocc);
     }
     
     IntVarArgs z(ve);
@@ -411,6 +428,11 @@ private:
 
   static const int minocc = 0;
   static const int maxocc = 2;
+
+  Assignment* make_assignment() {
+    return new GCCAssignment(lb, rb, minocc, maxocc, ve, xs, dom);
+  }
+
 
 public:
   GCC_VC_AllTriple(const char* t, IntConLevel icl0) 
@@ -501,6 +523,10 @@ private:
 
   static const int minocc = 0;
   static const int maxocc = 2;
+
+  Assignment* make_assignment() {
+    return new GCCAssignment(lb, rb, minocc, maxocc, ve, xs, dom);
+  }
 
 public:
   GCC_VC_SomeTriple(const char* t, IntConLevel icl0) 
@@ -646,48 +672,50 @@ public:
 
 
 // Testing with Fixed Cardinalities
+// FixCard::\(\(Shared::\)*\(All\|Some\)::\([lubv,()]+\)\)::\(Bnd\|Dom\|Val\)
+// VarCard::\(\(Shared::\)*\(All\|Some\)::\([lubv,()]+\)\)::\(Bnd\|Dom\|Val\)
 
-GCC_FC_AllLbUb _gccbnd_all("GCC::FixCard::SetAllValues::(lb,ub)::Bnd",ICL_BND);
-GCC_FC_AllLbUb _gccdom_all("GCC::FixCard::SetAllValues::(lb,ub)::Dom",ICL_DOM);
-GCC_FC_AllLbUb _gccval_all("GCC::FixCard::SetAllValues::(lb,ub)::Val",ICL_VAL);
+GCC_FC_AllLbUb _gccbnd_all("GCC::FixCard::Bnd::All::(lb,ub)",ICL_BND);
+GCC_FC_AllLbUb _gccdom_all("GCC::FixCard::Dom::All::(lb,ub)",ICL_DOM);
+GCC_FC_AllLbUb _gccval_all("GCC::FixCard::Val::All::(lb,ub)",ICL_VAL);
 
-GCC_FC_AllEqUb _gccbnd_alleq("GCC::FixCard::SetAllValues::ub::Bnd",ICL_BND);
-GCC_FC_AllEqUb _gccdom_alleq("GCC::FixCard::SetAllValues::ub::Dom",ICL_DOM);
-GCC_FC_AllEqUb _gccval_alleq("GCC::FixCard::SetAllValues::ub::Val",ICL_VAL);
+GCC_FC_AllEqUb _gccbnd_alleq("GCC::FixCard::Bnd::All::ub",ICL_BND);
+GCC_FC_AllEqUb _gccdom_alleq("GCC::FixCard::Dom::All::ub",ICL_DOM);
+GCC_FC_AllEqUb _gccval_alleq("GCC::FixCard::Val::All::ub",ICL_VAL);
 
-GCC_FC_AllTriple _gccbnd_alltrip("GCC::FixCard::SetAllValues::(v,lb,ub)::Bnd",ICL_BND);
-GCC_FC_AllTriple _gccdom_alltrip("GCC::FixCard::SetAllValues::(v,lb,ub)::Dom",ICL_DOM);
-GCC_FC_AllTriple _gccval_alltrip("GCC::FixCard::SetAllValues::(v,lb,ub)::Val",ICL_VAL);
+GCC_FC_AllTriple _gccbnd_alltrip("GCC::FixCard::Bnd::All::(v,lb,ub)",ICL_BND);
+GCC_FC_AllTriple _gccdom_alltrip("GCC::FixCard::Dom::All::(v,lb,ub)",ICL_DOM);
+GCC_FC_AllTriple _gccval_alltrip("GCC::FixCard::Val::All::(v,lb,ub)",ICL_VAL);
 
-GCC_FC_SomeTriple _gccbnd_sometrip("GCC::FixCard::SetSomeValues::(v,lb,ub)::Bnd",ICL_BND);
-GCC_FC_SomeTriple _gccdom_sometrip("GCC::FixCard::SetSomeValues::(v,lb,ub)::Dom",ICL_DOM);
-GCC_FC_SomeTriple _gccval_sometrip("GCC::FixCard::SetSomeValues::(v,lb,ub)::Val",ICL_VAL);
+GCC_FC_SomeTriple _gccbnd_sometrip("GCC::FixCard::Bnd::Some::(v,lb,ub)",ICL_BND);
+GCC_FC_SomeTriple _gccdom_sometrip("GCC::FixCard::Dom::Some::(v,lb,ub)",ICL_DOM);
+GCC_FC_SomeTriple _gccval_sometrip("GCC::FixCard::Val::Some::(v,lb,ub)",ICL_VAL);
 
-GCC_FC_Shared_AllLbUb _gccbnd_shared_all("GCC::FixCard::Shared::SetAllValues::(lb,ub)::Bnd",ICL_BND);
-GCC_FC_Shared_AllLbUb _gccdom_shared_all("GCC::FixCard::Shared::SetAllValues::(lb,ub)::Dom",ICL_DOM);
-GCC_FC_Shared_AllLbUb _gccval_shared_all("GCC::FixCard::Shared::SetAllValues::(lb,ub)::Val",ICL_VAL);
+GCC_FC_Shared_AllLbUb _gccbnd_shared_all("GCC::FixCard::Bnd::Shared::All::(lb,ub)",ICL_BND);
+GCC_FC_Shared_AllLbUb _gccdom_shared_all("GCC::FixCard::Dom::Shared::All::(lb,ub)",ICL_DOM);
+GCC_FC_Shared_AllLbUb _gccval_shared_all("GCC::FixCard::Val::Shared::All::(lb,ub)",ICL_VAL);
 
-GCC_FC_Shared_SomeTrip _gccbnd_shared_tripsome("GCC::FixCard::Shared::SetSomeValues::(v,lb,ub)::Bnd",ICL_BND);
-GCC_FC_Shared_SomeTrip _gccdom_shared_tripsome("GCC::FixCard::Shared::SetSomeValues::(v,lb,ub)::Dom",ICL_DOM);
-GCC_FC_Shared_SomeTrip _gccval_shared_tripsome("GCC::FixCard::Shared::SetSomeValues::(v,lb,ub)::Val",ICL_VAL);
+GCC_FC_Shared_SomeTrip _gccbnd_shared_tripsome("GCC::FixCard::Bnd::Shared::Some::(v,lb,ub)",ICL_BND);
+GCC_FC_Shared_SomeTrip _gccdom_shared_tripsome("GCC::FixCard::Dom::Shared::Some::(v,lb,ub)",ICL_DOM);
+GCC_FC_Shared_SomeTrip _gccval_shared_tripsome("GCC::FixCard::Val::Shared::Some::(v,lb,ub)",ICL_VAL);
 
 // Testing with Cardinality Variables
 
-GCC_VC_AllLbUb _gccbnd_all_var("GCC::VarCard::SetAllValues::(lb,ub)::Bnd",ICL_BND);
-GCC_VC_AllLbUb _gccdom_all_var("GCC::VarCard::SetAllValues::(lb,ub)::Dom",ICL_DOM);
-GCC_VC_AllLbUb _gccval_all_var("GCC::VarCard::SetAllValues::(lb,ub)::Val",ICL_VAL);
+GCC_VC_AllLbUb _gccbnd_all_var("GCC::VarCard::Bnd::All::(lb,ub)",ICL_BND);
+GCC_VC_AllLbUb _gccdom_all_var("GCC::VarCard::Dom::All::(lb,ub)",ICL_DOM);
+GCC_VC_AllLbUb _gccval_all_var("GCC::VarCard::Val::All::(lb,ub)",ICL_VAL);
 
-GCC_VC_AllTriple _gccbnd_alltrip_var("GCC::VarCard::SetAllValues::(v,lb,ub)::Bnd",ICL_BND);
-GCC_VC_AllTriple _gccdom_alltrip_var("GCC::VarCard::SetAllValues::(v,lb,ub)::Dom",ICL_DOM);
-GCC_VC_AllTriple _gccval_alltrip_var("GCC::VarCard::SetAllValues::(v,lb,ub)::Val",ICL_VAL);
+GCC_VC_AllTriple _gccbnd_alltrip_var("GCC::VarCard::Bnd::All::(v,lb,ub)",ICL_BND);
+GCC_VC_AllTriple _gccdom_alltrip_var("GCC::VarCard::Dom::All::(v,lb,ub)",ICL_DOM);
+GCC_VC_AllTriple _gccval_alltrip_var("GCC::VarCard::Val::All::(v,lb,ub)",ICL_VAL);
 
-GCC_VC_SomeTriple _gccbnd_sometrip__var("GCC::VarCard::SetSomeValues::(v,lb,ub)::Bnd",ICL_BND);
-GCC_VC_SomeTriple _gccdom_sometrip__var("GCC::VarCard::SetSomeValues::(v,lb,ub)::Dom",ICL_DOM);
-GCC_VC_SomeTriple _gccval_sometrip__var("GCC::VarCard::SetSomeValues::(v,lb,ub)::Val",ICL_VAL);
+GCC_VC_SomeTriple _gccbnd_sometrip__var("GCC::VarCard::Bnd::Some::(v,lb,ub)",ICL_BND);
+GCC_VC_SomeTriple _gccdom_sometrip__var("GCC::VarCard::Dom::Some::(v,lb,ub)",ICL_DOM);
+GCC_VC_SomeTriple _gccval_sometrip__var("GCC::VarCard::Val::Some::(v,lb,ub)",ICL_VAL);
 
-GCC_VC_Shared_SomeTriple _gccbnd_shared_sometrip_var("GCC::VarCard::Shared::SetSomeValues::(lb,ub)::Bnd",ICL_BND);
-GCC_VC_Shared_SomeTriple _gccdom_shared_sometrip_var("GCC::VarCard::Shared::SetSomeValues::(lb,ub)::Dom", ICL_DOM);
-GCC_VC_Shared_SomeTriple _gccval_shared_sometrip_var("GCC::VarCard::Shared::SetSomeValues::(lb,ub)::Val", ICL_VAL);
+GCC_VC_Shared_SomeTriple _gccbnd_shared_sometrip_var("GCC::VarCard::Bnd::Shared::Some::(lb,ub)",ICL_BND);
+GCC_VC_Shared_SomeTriple _gccdom_shared_sometrip_var("GCC::VarCard::Dom::Shared::Some::(lb,ub)", ICL_DOM);
+GCC_VC_Shared_SomeTriple _gccval_shared_sometrip_var("GCC::VarCard::Val::Shared::Some::(lb,ub)", ICL_VAL);
 
 
 
