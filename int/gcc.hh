@@ -46,11 +46,16 @@ typedef Gecode::ViewArray<Gecode::Int::GCC::IdxView> GccIdxView;
 namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool shared, bool isView>
-  ExecStatus prop_bnd(Space* home, 
+  ExecStatus prop_bnd(Space* home, ViewArray<View>&, Card&,
+		      PartialSum<Card>*, PartialSum<Card>*, 
+		      bool, bool, int);
+
+  template <class View, class Card, bool isView>
+  ExecStatus prop_dom(Space* home, 
 		      ViewArray<View>&,
-		      Card&,
-		      PartialSum<Card>*,
-		      PartialSum<Card>*);
+		      ViewArray<View>&,
+		      Card&, bool, bool, 
+		      VarValGraph<View, Card, isView>* vvg);
 
   template <class View, class Card, bool isView>
   ExecStatus prop_val(Space* home, ViewArray<View>&, Card&);
@@ -111,7 +116,7 @@ namespace Gecode { namespace Int { namespace GCC {
   class Bnd{
   public:
     /// Post the bounds consistent propagator
-    static  ExecStatus  post(Space* home, ViewArray<View>&, Card&);
+    static  ExecStatus  post(Space* home, ViewArray<View>&, Card&, bool);
   };
 
   /** 
@@ -127,9 +132,12 @@ namespace Gecode { namespace Int { namespace GCC {
     Card k;
     PartialSum<Card>* lps;
     PartialSum<Card>* ups;
+    bool card_fixed;
+    bool card_all;
+    int minpost;
     BndImp(Space* home, bool, BndImp<View, VarCard, isView, shared>&);
     BndImp(Space* home, bool, BndImp<View, FixCard, isView, shared>&);
-    BndImp(Space* home, ViewArray<View>&, Card&);
+    BndImp(Space* home, ViewArray<View>&, Card&, bool, bool,int);
 
   public:
     virtual ~BndImp(void);
@@ -143,6 +151,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Domain-consistent global cardinality propagator
    * \par [Reference] 
    *  The algorithm is taken from: \n
+   * \anchor CardVarNPCompl
    \verbatim
      @PROCEEDINGS{improvedgcc,
      title     = {Improved Algorithms for the 
@@ -170,11 +179,12 @@ namespace Gecode { namespace Int { namespace GCC {
     ViewArray<View> x; 
     ViewArray<View> y; 
     Card k;
-    Card l;
     VarValGraph<View, Card, isView>* vvg;
+    bool card_fixed;
+    bool card_all;
     Dom(Space* home, bool, Dom<View, VarCard, isView>&);
     Dom(Space* home, bool, Dom<View, FixCard, isView>&);
-    Dom(Space* home, ViewArray<View>&, Card&);
+    Dom(Space* home, ViewArray<View>&, Card&, bool, bool);
 
   public:
     virtual ~Dom(void);
@@ -182,9 +192,7 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual Actor* copy(Space* home, bool share);
     virtual PropCost    cost (void) const;
     virtual ExecStatus  propagate(Space* home);
-    static  ExecStatus  post(Space* home, 
-			     ViewArray<View>&, 
-			     Card&);
+    static  ExecStatus  post(Space* home, ViewArray<View>&, Card&, bool);
   };
 
   /**
@@ -200,16 +208,17 @@ namespace Gecode { namespace Int { namespace GCC {
   protected:
     ViewArray<View> x;
     Card k;
+    bool card_all;
     Val(Space* home, bool, Val<View, VarCard, isView>&);
     Val(Space* home, bool, Val<View, FixCard, isView>&);
-    Val(Space* home, ViewArray<View>&, Card&);
+    Val(Space* home, ViewArray<View>&, Card&, bool);
 
   public:
     virtual ~Val(void);
     virtual Actor* copy(Space* home, bool share);
     virtual PropCost    cost (void) const;
     virtual ExecStatus  propagate(Space* home);
-    static  ExecStatus  post(Space* home, ViewArray<View>&, Card&);
+    static  ExecStatus  post(Space* home, ViewArray<View>&, Card&, bool);
   };
 
 }}}

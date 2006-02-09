@@ -44,6 +44,8 @@ namespace Gecode { namespace Int { namespace GCC {
     ModEvent gq(Space* home, int n); 
     ModEvent eq(Space* home, int n); 
     bool assigned(void);
+    bool modified(void);
+    bool range(void);
     T& operator=(const T& o);
     int card(void);
     void card(int c);
@@ -129,6 +131,19 @@ namespace Gecode { namespace Int { namespace GCC {
     return x[0] == x[1];
   }
 
+  template <class T, unsigned int n>
+  forceinline bool
+  OccurBnds<T,n>::modified(void) {
+    return false;
+  }
+
+  template <class T, unsigned int n>
+  forceinline bool
+  OccurBnds<T,n>::range(void) {
+    return true;
+  }
+
+
   template <class T, unsigned int n> // template <class I>
   forceinline ModEvent 
   OccurBnds<T,n>::lq(Space* home, int i){
@@ -136,12 +151,7 @@ namespace Gecode { namespace Int { namespace GCC {
     if (x[0] > i) {
       return ME_GEN_FAILED;
     } else {
-      if (x[1] <= i) {
-	return ME_GEN_NONE;
-      } else {
-	x[1] = i;
-	return 2;
-      }
+      return ME_GEN_NONE;
     }
   }
 
@@ -149,6 +159,9 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline ModEvent 
   OccurBnds<T,n>::gq(Space* home, int i){
     // this bound is fix
+    if (x[1] < i) {
+      return ME_GEN_FAILED;
+    }
     return ME_GEN_NONE;
   }
 
@@ -158,9 +171,7 @@ namespace Gecode { namespace Int { namespace GCC {
     if (x[0] > i || x[1] < i) {
       return ME_GEN_FAILED;
     } else {
-      x[0] = i;
-      x[1] = i;
-      return 2;
+      return ME_GEN_NONE;
     }
   }
 

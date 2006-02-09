@@ -1,7 +1,6 @@
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
- *
  *  Copyright:
  *     Patrick Pekczynski, 2004
  *
@@ -86,7 +85,9 @@ namespace Gecode { namespace Int { namespace GCC {
   x_setidx(ViewArray<View>& x) {
     for (int i = x.size(); i--; ) {
       x[i].index(i);
+      assert(0 <= x[i].index() && x[i].index() < x.size());
       x[i].oldindex(i);
+      assert(0 <= x[i].oldindex() && x[i].oldindex() < x.size());
     }
   }
 
@@ -189,16 +190,39 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template<class Card, bool isView>
   forceinline ExecStatus
-  card_cons(Space* home, Card& k, int n) {
-    for (int i = k.size(); i--; ) {
+  card_cons(Space* home, Card& k, int n, bool all) {
+    int smin = 0;
+    int smax = 0;
+    int m    = k.size();
+    for (int i = m; i--; ) {
+      int ci = k[i].counter();
+      if (ci > k[i].max() ) {
+	return ES_FAILED;
+      } else {
+	smax += (k[i].max() - ci);
+	if (ci < k[i].min()) {
+	  smin += (k[i].min() - ci);
+	}
+      }
       if (k[i].min() > n) {
 	return ES_FAILED;
       }
-      ModEvent me = k[i].lq(home, n);
-      if (me_failed(me)) {
-	return ES_FAILED;
+      if (!k[i].assigned()) {
+	ModEvent me = k[i].lq(home, n);
+	if (me_failed(me)) {
+	  return ES_FAILED;
+	}
       }
     }
+
+    if (n < smin) {
+      return ES_FAILED;
+    } 
+
+    if (all && smax < n) {
+      return ES_FAILED;
+    }
+
     return ES_OK;
   }
 
@@ -209,15 +233,15 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template<class View, class Card, bool isView>
   forceinline void
-  post_template(Space* home, ViewArray<View>& x, Card& k, IntConLevel& icl){ 
+  post_template(Space* home, ViewArray<View>& x, Card& k, 
+		IntConLevel& icl, bool all){ 
 
     int  n        = x_card(x);
     bool rewrite  = false; 
     if (!isView) {
      rewrite = check_alldiff(n, k);
     }
-
-    GECODE_ES_FAIL(home, (card_cons<Card, isView>(home, k, x.size())));
+    GECODE_ES_FAIL(home, (card_cons<Card, isView>(home, k, x.size(), all)));
 
     if (!isView && rewrite) {
       switch (icl) {
@@ -233,13 +257,13 @@ namespace Gecode { namespace Int { namespace GCC {
     } else {
       switch (icl) {
       case ICL_BND:
-      GECODE_ES_FAIL(home, (GCC::Bnd<View, Card, isView>::post(home, x, k)));
+      GECODE_ES_FAIL(home, (GCC::Bnd<View, Card, isView>::post(home, x, k, all)));
       break;
       case ICL_DOM:
-	GECODE_ES_FAIL(home, (GCC::Dom<View, Card, isView>::post(home, x, k)));
+	GECODE_ES_FAIL(home, (GCC::Dom<View, Card, isView>::post(home, x, k, all)));
 	break;
       default:
-	GECODE_ES_FAIL(home, (GCC::Val<View, Card, isView>::post(home, x, k)));
+	GECODE_ES_FAIL(home, (GCC::Val<View, Card, isView>::post(home, x, k, all)));
       }
     }
   }
@@ -274,6 +298,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
 
+    bool all = (m == (max) - (min - 1));
     // if there are zero entries
     if (z > 0) {
 
@@ -300,9 +325,9 @@ namespace Gecode { namespace Int { namespace GCC {
       for (int i = n; i--; ) {
 	GECODE_ME_FAIL(home, xv[i].minus(home, remzero));
       }
-      GCC::post_template<GCC::IdxView, FixCard, false>(home, xv, red, icl);
+      GCC::post_template<GCC::IdxView, FixCard, false>(home, xv, red, icl, all);
     } else { 
-      GCC::post_template<GCC::IdxView, FixCard, false>(home, xv, cv, icl);
+      GCC::post_template<GCC::IdxView, FixCard, false>(home, xv, cv, icl, all);
     }
   }
 
@@ -324,14 +349,15 @@ namespace Gecode { namespace Int { namespace GCC {
     int values = x_card(xv);
     FixCard c(home, values);
     GCC::initcard(home, xv, c, lb, ub);
-    GCC::post_template<GCC::IdxView, FixCard, false>(home, xv, c, icl);
+    GCC::post_template<GCC::IdxView, FixCard, false>(home, xv, c, icl, true);
   }
 
-  // Interfacing gcc with cardinality variables
 
   void gcc(Space* home, const IntVarArgs& x, int ub, IntConLevel icl) {
     gcc(home, x, ub, ub, icl);
   }
+
+  // Interfacing gcc with cardinality variables
 
   void gcc(Space* home, const IntVarArgs& x, const IntVarArgs& c, 
 	   int min, int max, IntConLevel icl) {
@@ -380,7 +406,17 @@ namespace Gecode { namespace Int { namespace GCC {
     GCC::setcard<VarCard, Gecode::Int::GCC::IdxView, true>
       (home, xv, cv, min, max);
 
-    GCC::post_template<GCC::IdxView, VarCard, true>(home, xv, cv, icl);
+    
+    int sum_min = 0;
+    int sum_max = 0;
+    IntArgs dx(cv.size());
+    for (int i = 0; i < cv.size(); i++) {
+      dx[i] = cv[i].card();
+      sum_min += cv[i].card() * cv[i].min();
+      sum_max += cv[i].card() * cv[i].max();
+    }
+
+    GCC::post_template<GCC::IdxView, VarCard, true>(home, xv, cv, icl, true);
   }
 
   void gcc(Space* home, const IntVarArgs& x, const IntArgs& v, 
@@ -429,9 +465,12 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     if (all) {
+      linear(home, c, IRT_EQ, xv.size());
       for (int i = 0; i < interval; i++) {
 	done[i] = true;
       }
+    } else {
+      linear(home, c, IRT_LQ, xv.size());
     }
 
     // iterating over cardinality variables
@@ -492,15 +531,15 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
 
-    linear(home, c, IRT_LQ, xv.size());
+
     VarCard cardv(home, cv);
 
     GCC::setcard<VarCard, Gecode::Int::GCC::IdxView, true>
       (home, xv, cardv, xmin, xmax);
-    GCC::post_template<GCC::IdxView, VarCard, true>(home, xv, cardv, icl);
+    
+    GCC::post_template<GCC::IdxView, VarCard, true>(home, xv, cardv, icl, true);
   }
 }
 
 
 // STATISTICS: int-post
-

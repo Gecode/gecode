@@ -19,6 +19,15 @@
  *
  */
 
+#ifdef NDEBUG
+#define GECODE_ASSERTION_VARIABLE(c)
+#define GECODE_ASSERT(a)
+#else
+#define GECODE_ASSERTION_VARIABLE(c) c
+#define GECODE_ASSERT(a) assert(!me_failed(a));
+#endif
+
+
 namespace Gecode { namespace Int { namespace GCC {
 
   /// Debugging: Print a View
@@ -189,8 +198,8 @@ namespace Gecode { namespace Int { namespace GCC {
     int _kcount;
 
 
-    /// mark as conflicting
-    bool conflict;
+    /// store numbre of conflicting matching edges
+    int noc;
     
     /**
      * \brief Minimal capacity of the value node
@@ -237,9 +246,11 @@ namespace Gecode { namespace Int { namespace GCC {
     
 
     /// Mark the value node as conflicting in case of variable cardinalities
-    void card_conflict(bool c);
+    void card_conflict(int c);
     /// Check whether the value node is conflicting 
-    bool card_conflict(void);
+    int card_conflict(void);
+    /// Reduce the conflict counter
+    void red_conflict(void);
     
     /// check for removal from graph
     bool removed(void);
@@ -436,6 +447,25 @@ namespace Gecode { namespace Int { namespace GCC {
     //@}
   };
 
+
+  void pvar(VarNode* v) {
+    std::cout << v->var<<":{";
+    for (Edge* e = v->first(); e != NULL; e = e->next()) {
+      std::cout << e->getVal()->val<<",";
+    }
+    std::cout << "}(";
+    std::cout << v->xindex << ") ";
+  }
+
+  void pval(ValNode* v) {
+    std::cout << v->val<<":{";
+    for (Edge* e = v->first(); e != NULL; e = e->vnext()) {
+      std::cout << e->getVar()->var<<",";
+    }
+    std::cout << "} ";
+  }
+
+
   /** 
    * \brief Variable-value-graph used during propagation
    *
@@ -525,6 +555,8 @@ namespace Gecode { namespace Int { namespace GCC {
      * variable domains. 
      */
     bool sync(void);
+
+    bool stagedsync(Space* home);
     /// Print graph information for debugging 
     void print_graph(void);
     /// Print matching information for debugging 
@@ -550,6 +582,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     template <BC>
     bool narrow(Space*);
+
     /** \brief Compute a maximum matching M on the graph
      *
      * If BC=UBC then \f$|M|= |X|\f$
@@ -746,6 +779,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   forceinline void 
   ValNode::set_maxlow(int i){
+    assert(i >= lb);
     ublow = i;
   }
 
@@ -760,13 +794,19 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   forceinline void 
-  ValNode::card_conflict(bool c){
-    conflict = c;
+  ValNode::card_conflict(int c){
+    noc = c;
   }
 
-  forceinline bool
+  forceinline void
+  ValNode::red_conflict(void){
+    noc--;
+    assert(noc >= 0);
+  }
+
+  forceinline int
   ValNode::card_conflict(void){
-    return conflict;
+    return noc;
   }
   
   forceinline bool
@@ -875,7 +915,7 @@ namespace Gecode { namespace Int { namespace GCC {
   ValNode::ValNode(int min, int max, int value, 
 		   int kidx, int kshift, int count) :
     _klb(min), _kub(max), _kidx(kidx), _kcount(count),
-    conflict(false),
+    noc(0),
     lb(min), ublow(max), ub(max), 
     val(value), idx(kshift), noe(0) {
     first(NULL);
@@ -893,7 +933,7 @@ namespace Gecode { namespace Int { namespace GCC {
       ub = c;
     } else {
       lb = c;
-      ublow = c;
+//       ublow = c;
     }
   }
 
@@ -937,8 +977,10 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline int
   ValNode::incid_match(void){
     if (direction == LBC) {
+      // std::cout << "LBC: "<< _kub <<"-"<<ublow <<"+"<<_kcount<<"\n";
       return _kub - ublow + _kcount;
     } else {
+      // std::cout << "UBC: "<< _kub <<"-"<<ub <<"+"<<_kcount<<"\n";
       return _kub - ub + _kcount;
     }
   }
@@ -1127,11 +1169,13 @@ namespace Gecode { namespace Int { namespace GCC {
   }
   forceinline VarNode* 
   Edge::getVar(void){
+    assert(x != NULL);
     return x;
   }
 
   forceinline ValNode* 
   Edge::getVal(void){
+    assert(v != NULL);
     return v;
   }
 
@@ -1183,7 +1227,9 @@ namespace Gecode { namespace Int { namespace GCC {
       lm = true;
       x->template match<direction>();
       x->template set_match<direction>(this);
+      assert(x->template matched<direction>());
       v->template match<direction>();
+//       assert(v->template matched<direction>());
     }
   }
 
@@ -1344,10 +1390,11 @@ namespace Gecode { namespace Int { namespace GCC {
     fail = b;
   }
 
+
+
   template <class View, class Card, bool isView>
   forceinline bool 
   VarValGraph<View, Card, isView>::min_require(Space* home){
-
     bool modified = false;
     for (int i = n_val; i--; ) {
       ValNode* vln = vals[i];
@@ -1366,10 +1413,12 @@ namespace Gecode { namespace Int { namespace GCC {
 		f->unlink();
 	      }
 	    }
-
+	    assert(vrn->noe == 1);
 	    modified |= x[vi].modified();
-	    x[vi].eq(home, vln->val);
 
+	    GECODE_ASSERTION_VARIABLE(ModEvent me =)
+	      x[vi].eq(home, vln->val);
+	    GECODE_ASSERT(me);
 	    vars[vi] = vars[--n_var];
 	    vars[vi]->set_info(vi);
 
@@ -1382,15 +1431,47 @@ namespace Gecode { namespace Int { namespace GCC {
 	    vln->noe--;
 	  }
 	  
-	  k[i].eq(home, k[i].min());
-	  k[i].counter(k[i].min());
+
+	  int vidx = vln->kindex();
+	  if (isView) {
+	    GECODE_ASSERTION_VARIABLE(ModEvent me =)
+	    k[vidx].eq(home, k[vidx].min());
+	    GECODE_ASSERT(me);
+	  }
+	  k[vidx].counter(k[vidx].min());
+	  modified |= k[vidx].modified();
+	    
 	  vln->template set_cap<UBC>(0);
 	  vln->template set_cap<LBC>(0);
 	  vln->set_maxlow(0);
-	  sum_min -= k[i].min();
-	  sum_max -= k[i].max();
 
+	  if (sum_min && sum_min >= k[vidx].min()) {
+	    sum_min -= k[vidx].min();
+	  }
+	  assert(sum_min >=0);
+
+	  if (sum_max && sum_max >= k[vidx].max()) {
+	    sum_max -= k[vidx].max();
+	  }
+	  assert(sum_max >=0);
 	}
+      } else {
+	vals[i]->template set_cap<UBC>(0);
+	vals[i]->template set_cap<LBC>(0);
+	vals[i]->set_maxlow(0);
+	vals[i]->set_kmax(0);
+	vals[i]->set_kmin(0);
+
+      }
+
+      if (isView) {
+	if (k[i].counter() == 0) {
+	  ModEvent klq = k[i].lq(home, vals[i]->noe);
+	  if (me_failed(klq)) {
+	    failed(true);
+	  }
+	}
+	modified |= k[i].modified() && k[i].max() != vals[i]->noe;
       }
     }
 
@@ -1404,28 +1485,30 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   forceinline bool 
   VarValGraph<View, Card, isView>::sync(void){
-
     GECODE_AUTOARRAY(VVGNode*, re, node_size);
-    GECODE_AUTOARRAY(BC, re_direct, node_size);
-    GECODE_AUTOARRAY(Edge*, cre, node_size);
     int n_re = 0;
 
+    // synchronize cardinality variables
     if (isView) {
       for (int i = n_val; i--; ) {
-
-	ValNode* v = vals[i];
+	ValNode* v  = vals[i];
 	int inc_ubc = v->template incid_match<UBC>();
 	int inc_lbc = v->template incid_match<LBC>();
-
+	if (v->noe == 0) {
+	  inc_ubc = 0;
+	  inc_lbc = 0;
+	}
+	int rm = v->kmax() - k[i].max();
 	// the cardinality bounds have been modified
 	if (k[i].max() < v->kmax() || k[i].min() > v->kmin()) {
-	  if (!k[i].max() == k[i].counter()) {
+	  if (k[i].max() != k[i].counter() || k[i].max() == 0) {
 	    // update the bounds
 	    v->set_kmax(k[i].max());
 	    v->set_kmin(k[i].min());
 
 	    //everything is fine 
 	    if (inc_ubc <= k[i].max()) {
+	      // adjust capacities
 	      v->template set_cap<UBC>(k[i].max() - (inc_ubc));
 	      v->set_maxlow(k[i].max() - (inc_lbc));
 	      if (v->kmin() == v->kmax()) {
@@ -1434,21 +1517,21 @@ namespace Gecode { namespace Int { namespace GCC {
 	    } else {
 	      // set cap to max and resolve conflicts on view side
 	      // set to full capacity for later rescheduling
-	      v->template set_cap<UBC>(k[i].max());
+	      if (v->template cap<UBC>()) {
+		v->template set_cap<UBC>(k[i].max());
+	      }
 	      v->set_maxlow(k[i].max() - (inc_lbc));
 	      if (v->kmin() == v->kmax()) {
 		v->set_cap<LBC>(k[i].max() - (inc_lbc));
 	      }
-	      v->card_conflict(true);
+	      v->card_conflict(rm);
 	    }
 	  }
 	}
-
-	if (inc_lbc < k[i].min()) {
+	if (inc_lbc < k[i].min() && v->noe > 0) {
+	  
 	  v->template set_cap<LBC>(k[i].min() - inc_lbc);
-	  cre[n_re]       = NULL;
-	  re[n_re]        = v;
-	  re_direct[n_re] = LBC;
+	  re[n_re] = v;
 	  n_re++;
 	}
       }
@@ -1459,129 +1542,20 @@ namespace Gecode { namespace Int { namespace GCC {
 	  ValNode* vu = mub->getVal();
 	  if (! (vars[i]->noe == 1) ) {
 	    if (vu->card_conflict()) {
+	      vu->red_conflict();
 	      mub->template unmatch<UBC>(vars[i]->get_type());
-	      cre[n_re]       = mub;
-	      re[n_re]        = vars[i];
-	      re_direct[n_re] = UBC;
+	      re[n_re] = vars[i];
 	      n_re++;
 	    }
 	  }
 	}
       }
-
-      for (int i = n_val; i--; ) {
-	if (vals[i]->card_conflict()) {
-	  vals[i]->card_conflict(false);
-	}
-      }
-    }
-    
-    // because of value propagation it is possible that
-    // x.size < n_var => hence graphnodes have to be eliminated
-    // variable size
-    int xs = x.size();
-    // graph size (variable partition) 
-    int gs = n_var;   
-    if (gs > xs) {
-      GECODE_AUTOARRAY(bool, idx_used, gs);
-      // init idx_use
-      for (int i = gs; i--; ) {
-	idx_used[i] = false;
-      }
-      // mark remaining indices in x 
-      for (int i = xs; i--; ) {
-	idx_used[x[i].index()] = true;
-      }
-
-      int j = 0;
-      for (int i = 0; i < gs && j < x.size(); i++) {
-	if (i != x[j].index()) {
-	  std::swap(vars[i], vars[x[j].index()]);
-	}
-	j++;
-      }
-
-      for (int i = gs; i--; ) {
-	if (!idx_used[vars[i]->get_info()]) {
-	  // the node to remove
-	  VarNode* rm = vars[i];
-	  // the value node it is assigned to 
-	  ValNode* rv = NULL;   
-	  Edge* mub = rm->template get_match<UBC>();
-	  Edge* mlb = rm->template get_match<LBC>();
-	  
-	  assert(y[rm->xindex].assigned());
-	  int v = y[rm->xindex].val();
-	  for (Edge* e = rm->first(); e != NULL; e = e->next()) {
-	    ValNode* w = e->getVal();
-	    if (e->getVal()->val == v) {
-	      rv = e->getVal();
-	    }
-	    rm->noe--;
-	    w->noe--;
-	    e->del_edge();
-	    e->unlink();
-	  }
-
-	  // repair upper bound matching
-	  if (mub != NULL) {
-	    if (mub->getVal()->val != v) {
-	      mub->template unmatch<UBC>();
-	      if (!rv->is_matched(UBC)) {
-		rv->template dec<UBC>();
-	      } else {
-		// find a blocking variable node
-		for (Edge* f = rv->first(); f != NULL; f = f->vnext()) {
-		  if (mub != f && f->template matched<UBC>()) {
-		    f->template unmatch<UBC>(rm->get_type());
-		    cre[n_re]       = f;
-		    re[n_re]        = f->getVar();
-		    re_direct[n_re] = UBC;
-		    n_re++;
-		    break;
-		  }
-		}
-	      }
-	    }
-	  }
-	  if (mlb != NULL) {
-	    // repair lower bound matching
-	    if (mlb->getVal()->val != v) {
-	      mlb->template unmatch<LBC>();
-	      ValNode* w = mlb->getVal();
-	      if (!w->template matched<LBC>()) {
-		cre[n_re]       = NULL;
-		re[n_re]        = w;
-		re_direct[n_re] = LBC;
-		n_re++;
-	      }
-	      if (!rv->is_matched(LBC)) {
-		rv->template dec<LBC>();
-	      } else {
-		// find a blocking variable node
-		for (Edge* f = rv->first(); f != NULL; f = f->vnext()) {
-		  if (mlb != f && f->template matched<LBC>()) {
-		    f->template unmatch<LBC>(rm->get_type());
-		    break;
-		  }
-		}
-	      }
-	    }
-	  }
-	  node_size--;
-	  vars[i] = vars[--n_var];
-	}
-      }
-    }
-   
-    // adjust value information
-    for (int i = n_val; i--; ) {
-      vals[i]->set_info(n_var + i);
     }
 
     // go on with synchronization
     assert(x.size() == n_var);
     for (int i = n_var; i--; ) {
+
       VarNode* vrn = vars[i];      
       if(x[i].size() != vrn->noe){
 	// if the variable is already assigned
@@ -1593,9 +1567,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	  if (mub != NULL) {
 	    if (v != mub->getVal()->val) {
 	      mub->template unmatch<UBC>();
-	      cre[n_re] = NULL;
-	      re[n_re] = vrn;
-	      re_direct[n_re] = UBC;
+	      re[n_re] = vars[i];
 	      n_re++;
 	    }
 	  }
@@ -1609,10 +1581,8 @@ namespace Gecode { namespace Int { namespace GCC {
 	      // less values than required
 	      bool cond = nom < vln->kmin(); 
 	      if (cond) {
-		cre[n_re] = NULL;
-		re[n_re]        = vln;
-		re_direct[n_re] = LBC;
-		n_re++;
+		re[n_re] = vln;
+		n_re++;		
 	      }
 	    }
 	  }
@@ -1648,6 +1618,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	      e = e ->next();
 	      *p = e;
 	    }
+
 	    assert(xiter.val() == e->getVal()->val);
 
 	    // This edge must be kept
@@ -1669,11 +1640,8 @@ namespace Gecode { namespace Int { namespace GCC {
 	  if (mub != NULL){
 	    if (mub->is_deleted()) { 
 	      mub->template unmatch<UBC>();
-	      cre[n_re]       = NULL;
-	      re[n_re]        = mub->getVar();
-	      re_direct[n_re] = UBC;
+	      re[n_re] = vars[i];
 	      n_re++;
-
 	    } 
 	  }
 
@@ -1685,59 +1653,266 @@ namespace Gecode { namespace Int { namespace GCC {
 	      int nom   = vln->template incid_match<LBC>();
 	      bool cond = nom < vln->kmin();
 	      if (cond) {
-		cre[n_re]       = NULL;
-		re[n_re]        = vln;
-		re_direct[n_re] = LBC;
+		re[n_re] = vln;
 		n_re++;
 	      }
 	    }
 	  }
 	}
       }
-    }
-    
-    for (int i = n_var; i--; ) {
       vars[i]->set_info(i);
       x[i].index(i);
     }
     
     for (int i = n_val; i--; ) {
+      if (k[i].min() > vals[i]->noe && k[i].counter() == 0) {
+	failed(true);
+	return false;
+      }
       vals[i]->set_info(n_var + i);
     }
 
-    // std::cout << "before end\n";
-
     if (n_re == 0) {
       // no repair needed
-      // std::cout << "no repair\n";
+      return true;
+    } else {
+      // start repair
+
+      bool repaired = true;
+      while (n_re ) {
+	n_re--;
+	assert(re[n_re] != NULL);
+	if (!(re[n_re]->removed())) {
+	  if (!(re[n_re]->get_type())) {
+	    VarNode* vrn = reinterpret_cast<VarNode*> (re[n_re]);
+	    if (!vrn->template matched<UBC>()) {
+	      repaired &= augmenting_path<UBC>(vrn);
+	    }
+	  } else {
+	    assert(re[n_re]->get_type());
+	    ValNode* vln = reinterpret_cast<ValNode*> (re[n_re]);
+	    while(!vln->template matched<LBC>()) {
+	      repaired &= augmenting_path<LBC>(vln);
+	      if (!repaired) {
+		break;
+	      }
+	    }
+	  }
+	}
+      }      
+      return repaired;
+    }
+  }
+
+  /**
+   * \brief Graph synchronization needed to keep the variable order
+   *        consistent in case that the propagator is used with 
+   *        staging. 
+   */
+  
+  template <class View, class Card, bool isView> 
+  forceinline bool
+  VarValGraph<View, Card, isView>::stagedsync(Space* home){
+    // nodes to repair
+    GECODE_AUTOARRAY(VVGNode*, re, node_size);
+
+    int n_re = 0;
+    int xs   = x.size();
+
+    // value propagation removed assigned variables
+    // and the information has not yet been propagated to the graph
+    if (n_var > xs) {
+      // variables not removed by value propagation 
+      GECODE_AUTOARRAY(bool, idx_used, y.size());
+      // initializing idx_used
+      for (int i = y.size(); i--; ) {
+	idx_used[i] = false;
+      }
+
+      // mark remaining indices in x 
+      for (int i = xs; i--; ) {
+	assert(0 <= x[i].index() && x[i].index() < y.size());
+	idx_used[x[i].oldindex()] = true;
+      }
+
+      // synchronize variable vertices
+      for (int i = n_var; i--; ) {
+	// the node to remove
+	VarNode* rm = vars[i];
+	assert(0 <= rm->xindex &&  rm->xindex < (unsigned int) y.size());
+	if (!idx_used[rm->xindex]) {
+
+	  ValNode* rv = NULL;   
+	  Edge* mub = rm->template get_match<UBC>();
+	  Edge* mlb = rm->template get_match<LBC>();
+	  
+	  assert(y[rm->xindex].assigned());
+	  
+	  int v = y[rm->xindex].val();
+	  // value that is assigned to rm 
+	  // delete all 
+	  for (Edge* e = rm->first(); e != NULL; e = e->next()) {
+	    ValNode* w = e->getVal();
+	    if (w->val == v) {
+	      rv = w;
+	    } 
+	      rm->noe--;
+	      w->noe--;
+	      e->del_edge();
+	      e->unlink();
+	  }
+	  
+	  // repair upper bound matching
+	  if (mub != NULL) {
+	    if (mub->getVal()->val != v) {
+	      // a value node d != rv was previously matched by rm
+	      // so we unmatch the value side to reuse it
+	      ValNode* d = mub->getVal();	      
+	      // only unmatch the value node
+	      // the value node is not needed just free him for possible reuse
+	      mub->template unmatch<UBC>(d->get_type());
+	    }
+	    // find a blocking variable node matching rv but not taking the value
+	    if (rv!= NULL) {
+	      for (Edge* f = rv->first(); f != NULL; f = f->vnext()) {
+		if (f->getVar()->noe > 1 && f->template matched<UBC>()) {
+		  f->template unmatch<UBC>();
+		  re[n_re] = f->getVar();
+		  n_re++;
+		  break;
+		}
+	      }
+	    }
+	  }
+
+	  // repair lower bound matching
+	  if (mlb != NULL) {
+	    if (mlb->getVal()->val != v) {
+	      // other value node
+	      ValNode* d = mlb->getVal();	      
+	      mlb->template unmatch<LBC>(d->get_type());
+	      if (!d->template matched<LBC>()) {
+		// schedule for repair
+		re[n_re] = d;
+		n_re++;
+	      }
+	      // find a blocking variable node
+	      if (rv != NULL) {
+		for (Edge* f = rv->first(); f != NULL; f = f->vnext()) {
+		  if (f->getVar()->noe > 1 && f->template matched<LBC>()) {
+		    f->template unmatch<LBC>(f->getVar()->get_type());
+		  }
+		}
+	      }
+	    }
+	  }
+	  
+	  if (rv != NULL) {
+	    assert(rv != NULL);
+	    // remove corresponding value
+	    for (Edge* e = rv->first(); e != NULL; e = e->vnext()) {
+	      VarNode* w = e->getVar();
+	      if (e->template matched<LBC>()) {
+		  e->template unmatch<LBC>(w->get_type());
+	      } 
+	      if (e->template matched<UBC>()) {
+		e->template unmatch<UBC>();
+		re[n_re]        = w;
+		n_re++;
+	      }
+	      rv->noe--;
+	      w->noe--;
+	      e->del_edge();
+	      e->unlink();	    
+	    }
+	  }
+	  if(rv != NULL) {	    
+	    int vidx = rv->kindex();
+	    if (isView) {
+	      GECODE_ASSERTION_VARIABLE(ModEvent me =)
+		k[vidx].eq(home, k[vidx].max());
+	      GECODE_ASSERT(me);
+	    }
+
+	    k[vidx].counter(k[vidx].max());
+	    rv->template set_cap<UBC>(0);
+	    rv->template set_cap<LBC>(0);
+	    rv->set_maxlow(0);
+
+	    if (sum_min && sum_min >= k[vidx].min()) {
+	      sum_min -= k[vidx].min();
+	    }
+	    assert(sum_min >= 0);
+
+	    if (sum_max && sum_max >= k[vidx].max()) {
+	      sum_max -= k[vidx].max();
+	    }
+	    assert(sum_max >= 0);
+	  }
+
+	  node_size--;
+	  assert(node_size >= 0);
+	  vars[i] = vars[--n_var];
+	  vars[i]->set_info(i);
+	}
+      }
+    }
+
+  
+    // adjust value information
+    for (int i = n_val; i--; ) {
+      if (k[i].counter() == 0) {
+	ModEvent klq = k[i].lq(home, vals[i]->noe);
+	if (me_failed(klq)) {
+	  failed(true);
+	  return false;
+	}
+      }
+
+      if (vals[i]->noe == 0) {
+	vals[i]->template set_cap<UBC>(0);
+	vals[i]->template set_cap<LBC>(0);
+	vals[i]->set_maxlow(0);
+	vals[i]->set_kmax(0);
+	vals[i]->set_kmax(0);
+      }
+      vals[i]->set_info(n_var + i);
+    }
+
+    for (int i = n_var; i--;) {
+      vars[i]->set_info(i);
+      x[i].index(i);
+    }
+
+    assert(x.size() == n_var);
+    if (n_re == 0) {
+//       no repair needed
       return true;
     } else {
       // start repair
       
-      // resolve conflicts
-      for (int i = n_re; i--; ) {
-	if ( (cre[i] !=  NULL && cre[i]->is_deleted()) ||
-	     (re[i]->removed()) ) {
-	  // the conflict exists no more
-	  cre[i] = cre[--n_re];
-	  re[i]  = re[n_re];
-	  re_direct[i] = re_direct[n_re];
-	}
-      }
-
       bool repaired = true;
-      while (n_re > 0) {
+      while (n_re ) {
 	n_re--;
-	if (!re[n_re]->is_matched(re_direct[n_re])) {
-	  if (re_direct[n_re] == UBC) {
-	    repaired &= augmenting_path<UBC>(re[n_re]);
+	assert(re[n_re] != NULL);
+	if (!(re[n_re]->removed())) {
+	  if (!(re[n_re]->get_type())) {
+	    VarNode* vrn = reinterpret_cast<VarNode*> (re[n_re]);
+	    if (!vrn->template matched<UBC>()) {
+	      repaired &= augmenting_path<UBC>(vrn);
+	    }
 	  } else {
-	    repaired &= augmenting_path<LBC>(re[n_re]);
+	    assert(re[n_re]->get_type());
+	    ValNode* vln = reinterpret_cast<ValNode*> (re[n_re]);
+	    while(!vln->template matched<LBC>()) {
+	      repaired &= augmenting_path<LBC>(vln);
+	      if (!repaired) {
+		break;
+	      }
+	    }
 	  }
 	}
-      }
-
-
+      }      
       return repaired;
     }
   }
@@ -1754,13 +1929,24 @@ namespace Gecode { namespace Int { namespace GCC {
 	shared |= x[i].modified();
 	ValNode* v = e->getVal();
 	e->template free<direction>();	
-	x[i].eq(home, v->val);
+	GECODE_ASSERTION_VARIABLE(ModEvent me=)
+	  x[i].eq(home, v->val);
+	GECODE_ASSERT(me);
 	v->inc();
       }
     }
-
     for (int i = n_val; i--; ) {
       ValNode* v = vals[i];
+      if (isView) {
+	if (k[i].counter() == 0) {
+	  ModEvent klq = k[i].lq(home, v->noe);
+	  if (me_failed(klq)) {
+	    failed(true);
+	    return false;
+	  }
+	}
+      }
+      
       if (v->noe > 0) {
 
 	if (isView) {
@@ -1771,29 +1957,31 @@ namespace Gecode { namespace Int { namespace GCC {
 	  }
 	}
 	
-	
 	// If the maximum number of occurences of a value is reached
 	// it cannot be consumed by another view
 	
 	if (v->kcount() == v->kmax()) {
+	  int vidx = v->kindex();
+
 	  k[i].counter(v->kcount());
-// 	  std::cout << "eq on : " << v->val<<"\n";
+	  	  // std::cout << "eq on : " << v->val<<"\n";
 	  if (isView) {
-	    ModEvent me = k[i].eq(home, k[i].counter());
-	    if (me_failed(me)) {
-	      failed(true);
-	      return false;
+	    if (!k[i].assigned()) {
+	      ModEvent me = k[i].eq(home, k[i].counter());
+	      if (me_failed(me)) {
+		failed(true);
+		return false;
+	      }
 	    }
 	  }
 
 	  bool delall = false;
 	  if (v->card_conflict() && 
-	      v->kmax() == v->kcount() && 
 	      v->noe > v->kmax()) {
 	    delall = true;
-// 	  std::cout << "delall : " << v->val<<"\n";
-	  }
 
+	  }
+	  
 	  for (Edge* e = v->last(); e != NULL; e = e->vprev()) {
 	    VarNode* vrn = e->getVar();
 	    if (vrn->noe == 1) {
@@ -1811,16 +1999,32 @@ namespace Gecode { namespace Int { namespace GCC {
 	      node_size--;
 	      e->del_edge();
 	      e->unlink();
+
 	    } else {
 	      if (delall) {
-		x[vrn->get_info()].nq(home, v->val);
-		vrn->noe--;
+		GECODE_ASSERTION_VARIABLE(ModEvent me=)
+		  x[vrn->get_info()].nq(home, v->val);
+		GECODE_ASSERT(me)
+		  vrn->noe--;
 		v->noe--;
 		e->del_edge();
 		e->unlink();
 	      }
 	    }
 	  }
+	  v->template set_cap<UBC>(0);
+	  v->template set_cap<LBC>(0);
+	  v->set_maxlow(0);
+	  if (sum_min && sum_min >= k[vidx].min()) {
+	    sum_min -= k[vidx].min();
+	  }
+	  assert(sum_min >=0);
+
+	  if (sum_max && sum_max >= k[vidx].max()) {
+	    sum_max -= k[vidx].max();
+	  }
+
+	  assert(sum_max >=0);
 
 	} else {
 	  int cur = v->kcount();
@@ -1830,13 +2034,17 @@ namespace Gecode { namespace Int { namespace GCC {
 	}
       }
     }
-
     for (int i = n_var; i--; ) {
       vars[i]->set_info(i);
       x[i].index(i);
     }
       
     for (int i = n_val; i--; ) {
+      if (vals[i]->noe == 0) {
+	vals[i]->template set_cap<UBC>(0);
+	vals[i]->template set_cap<LBC>(0);
+	vals[i]->set_maxlow(0);
+      }
       vals[i]->set_info(n_var + i);
     }
 
@@ -1849,22 +2057,22 @@ namespace Gecode { namespace Int { namespace GCC {
 	  if (!keepedge) {
 	    ValNode* v = e->getVal();
 	    shared |= x[i].modified();
-	    x[i].nq(home, v->val);
-	  } else {
-	    e->template free<direction>();	
-	  }
+	    GECODE_ASSERTION_VARIABLE(ModEvent me=)
+	      x[i].nq(home, v->val);
+	    GECODE_ASSERT(me)
+	      } else {
+		e->template free<direction>();	
+	      }
 	}
       }
     }
-
-
-//     min_require(home);
     return shared;
   }
 
   template <class View, class Card, bool isView>  template <BC direction>
   forceinline bool 
   VarValGraph<View, Card, isView>::maximum_matching(void){
+
     int required_size = 0;
     int card_match    = 0;
 
@@ -1937,7 +2145,6 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView> template<BC direction>
   forceinline bool
   VarValGraph<View, Card, isView>::augmenting_path(VVGNode* v){
-
     Support::StaticStack<VVGNode*> ns(node_size);
     GECODE_AUTOARRAY(bool, visited, node_size);
     GECODE_AUTOARRAY(Edge*, start, node_size);
@@ -2047,7 +2254,6 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView> template<BC direction>
   forceinline void
   VarValGraph<View, Card, isView>::free_alternating_paths(void){
-
     Support::StaticStack<VVGNode*> ns(node_size);
     GECODE_AUTOARRAY(bool, visited, node_size);
     // keep track of the nodes that have already been visited
@@ -2066,6 +2272,14 @@ namespace Gecode { namespace Int { namespace GCC {
 	  visited[vars[i]->get_info()] = true;
 	}
       }
+      for (int i = n_val; i--; ){
+	if(!vals[i]->is_matched(LBC)){ 
+	  // unmatched val-node
+	  ns.push(vals[i]);
+	  visited[vals[i]->get_info()] = true;
+	}
+      }
+
     } else {
       // clearly, after a maximum matching on the x variables 
       // corresponding to a set cover on x there are NO free var nodes
@@ -2226,7 +2440,6 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView> template <BC direction>
   forceinline void
   VarValGraph<View, Card, isView>::strongly_connected_components(void){
-
     GECODE_AUTOARRAY(bool, inscc, node_size);
     GECODE_AUTOARRAY(bool, in_unfinished,  node_size);
     GECODE_AUTOARRAY(int,  dfsnum, node_size);
@@ -2262,11 +2475,26 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = 0; i < n_var; i++) {
       std::cout << vars[i]->var<<": ";
       for (Edge* e = vars[i]->first(); e != NULL; e = e->next()) {
-	std::cout << e->getVal()->val<<"("
-		  << e->template matched<LBC>() << ","
-		  << e->template matched<UBC>() << ","
-		  << e->template used<LBC>() << ","
-		  << e->template used<UBC>() <<") ";
+	bool ml = e->template matched<LBC>();
+	bool ul = e->template used<LBC>();
+	bool mu = e->template matched<UBC>();
+	bool uu = e->template used<UBC>();
+	bool condition = (ml || ul || mu || uu);
+	if (ml) {
+	  std::cout << e->getVal()->val<<" mL, ";
+	}
+	if (ul) {
+	  std::cout << e->getVal()->val<<" uL, ";
+	}
+	if (mu) {
+	  std::cout << e->getVal()->val<<" mU, ";
+	}
+	if (uu) {
+	  std::cout << e->getVal()->val<<" uU, ";
+	}
+	if (!condition) {
+	  std::cout << e->getVal()->val<<" x ";
+	}
       }
       std::cout <<"\n";
     }
@@ -2292,18 +2520,27 @@ namespace Gecode { namespace Int { namespace GCC {
 	  std::cout << vars[i]->template get_match<direction>() << " ";
 	  std::cout << vars[i]->template get_match<direction>()->getVal()->val << "  ";
 	}
-      } else {
-	// is not matched
-	std::cout << "%  ";
-      }
+      } 
+      std::cout << " <==";
+      pvar(vars[i]);
       std::cout <<"\n";
     }
     std::cout <<"\n";
 
     for (int i = 0; i < n_val; i++ ){
-      (vals[i]->template matched<direction>())? std::cout << "X  " : std::cout << "-  ";
+      if (vals[i]->template matched<direction>()) {
+	std::cout << "X  ";
+      } else {
+	std::cout << "-  ";
+      }
       std::cout << vals[i]->template cap<direction>()  << "  ";
-      std::cout << vals[i]->val  << "  ";
+      std::cout << vals[i]->get_maxlow()  << "  ";
+      std::cout << vals[i]->val  << "  <==";
+      for (Edge* e = vals[i]->first(); e != NULL; e = e->vnext()) {
+	if (e->template matched<direction>()) {
+	  std::cout << e->getVar()->var << ",";
+	}
+      }
       std::cout <<"\n";
     }
     std::cout <<"\n";
@@ -2323,6 +2560,8 @@ namespace Gecode { namespace Int { namespace GCC {
       std::cout << "|"<<vrn->noe <<"|";
       std::cout << "{";
       for (Edge* e = vrn->first(); e != NULL; e = e->next()){
+	assert(e != NULL);
+	assert(e->getVal() != NULL);
 	std::cout << e->getVal()->val<<",";
       }
       std::cout <<"}\t";
@@ -2330,7 +2569,7 @@ namespace Gecode { namespace Int { namespace GCC {
       std::cout <<"\n";
     }
     std::cout <<"\n";
-
+    
     std::cout << "V-Partition: \n";
     for (int i = 0; i < n_val; i++) {
       ValNode* vln = vals[i];
@@ -2346,6 +2585,8 @@ namespace Gecode { namespace Int { namespace GCC {
 	std::cout << "EMPTY";
       } else {
 	for(Edge* c = vln->first(); c != NULL; c = c->vnext()){
+	  assert(c != NULL);
+	  assert(c->getVar() != NULL);
 	  std::cout << c->getVar()->var << ",";
 	}
       }
@@ -2380,6 +2621,9 @@ namespace Gecode { namespace Int { namespace GCC {
     Memory::free(p);
   }
 
+
 }}}
 
 // STATISTICS: int-prop
+
+

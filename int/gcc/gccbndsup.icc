@@ -19,11 +19,148 @@
  *
  */
 
+#ifdef NDEBUG
+#define START_SIZE
+#define END_SIZE
+#else
+#define START_SIZE  int start_size = k.size();
+#define END_SIZE    int end_size = k.size();
+#endif
+
+
 
 namespace Gecode { namespace Int { namespace GCC {
 
   /// \name GCC-Bnd-Support
   //@{
+
+  // support structures
+  /** \brief Support Class for computing unreachable values in the 
+   * value GCC propagator
+   *
+   */
+  class UnReachable {
+  public:
+    unsigned int minb;
+    unsigned int maxb;
+    unsigned int eq;
+    unsigned int le;
+    unsigned int gr;
+  };
+
+  /** \brief Bounds consistency check for the case cardinality variables.
+   */
+
+  template <class View, class Card>
+  forceinline ExecStatus 
+  prop_card(Space* home, ViewArray<View>& x, Card& k, bool& mod) {
+    int n = x.size();
+    int m = k.size();
+    GECODE_AUTOARRAY(UnReachable, rv, m);
+    for(int i = m; i--; ) {
+      rv[i].minb    = 0;
+      rv[i].maxb    = 0;
+      rv[i].le = 0;
+      rv[i].gr = 0;
+      rv[i].eq = 0;
+    }
+
+    for (int i = n; i--; ) {
+      int b = x[i].assigned();
+      int min_idx = 0;
+      int max_idx = 0;
+      min_idx = k.lookup(x[i].min());
+      if (min_idx == -1) {
+	return ES_FAILED;
+      }
+      if (b) {
+	rv[min_idx].minb++;
+	rv[min_idx].maxb++;
+	rv[min_idx].eq++;
+      } else {
+	max_idx = k.lookup(x[i].max());
+	if (max_idx == -1) {
+	  return ES_FAILED;
+	}
+	// count the number of variables 
+	// with lower bound k[min_idx].card()
+	rv[min_idx].minb++;
+
+	// count the number of variables 
+	// with upper bound k[max_idx].card()
+	rv[max_idx].maxb++;
+      }      
+    }
+    
+    rv[0].le = 0;
+    int c_min = 0;
+    for (int i = 1; i < m; i++) {
+      rv[i].le = c_min + rv[i - 1].maxb;
+      c_min += rv[i - 1].maxb;
+    }
+
+    rv[m-1].gr = 0;
+    int c_max = 0;
+    for (int i = m-1; i--; ) {
+      rv[i].gr = c_max + rv[i + 1].minb;
+      c_max += rv[i + 1].minb;
+    }
+    
+    for (int i = m; i--; ) {
+      int reachable = (int) (x.size() - rv[i].le - rv[i].gr);
+      if (!k[i].assigned()) {
+	ModEvent me = k[i].lq(home, reachable);
+	if (me_failed(me)) {
+	  return ES_FAILED;
+	}
+	mod |= (k[i].modified() && (k[i].max() != reachable));
+	  
+	if (rv[i].eq > 0) {
+	  ModEvent me = k[i].gq(home, (int) rv[i].eq);
+	  if (me_failed(me)) {
+	    return ES_FAILED;
+	  }
+	  mod |= (k[i].modified() && (k[i].min() != (int) rv[i].eq));
+	}
+      } else {
+	// check validity of the cardinality value
+	int v = k[i].max();
+	if ( !( (int) rv[i].eq <= v && v <= reachable) ) {
+	  return ES_FAILED;
+	}
+      }
+    }
+    return ES_OK;
+  }
+
+
+  /** \brief Consistency check, whether the cardinality values are feasible.
+   */
+
+  template <class View, class Card>
+  forceinline ExecStatus 
+  card_consistent(int& smin, int& smax, ViewArray<View>& x, Card& k, bool& all) {
+    
+    int m = k.size();
+    int n = x.size();
+    for (int i = m; i--; ) {
+      smax += k[i].max();
+      smin += k[i].min();
+    }
+
+    // not enough variables to satifsy cardinality requirements
+    if (n < smin) {
+      return ES_FAILED;
+    } 
+
+    // if we use all variables
+    // not all variables can be assigned
+    if (all && smax < n) {
+      return ES_FAILED;
+    }
+        
+    return ES_OK;
+  }
 
   /**
    * \brief Maps domain bounds to their position in hall[].bounds.
@@ -415,19 +552,17 @@ namespace Gecode { namespace Int { namespace GCC {
   /// \brief Path compression for potentially stable set structure
   inline void
   pathset_ps(HallInfo hall[], int start, int end, int to) {
-    int k = 0;
-    int l = start;
-    for ( ; (k = l) != end; hall[k].ps = to) {
+    int k, l;
+    for (l=start; (k=l) != end; hall[k].ps=to) {
       l = hall[k].ps;
-
     }
   }
+
   /// \brief Path compression for stable set structure
   inline void
   pathset_s(HallInfo hall[], int start, int end, int to) {
-    int k = 0;
-    int l = start;
-    for ( ; (k = l) != end; hall[k].s = to) {
+    int k, l;
+    for (l=start; (k=l) != end; hall[k].s=to) {
       l = hall[k].s;
     }
   }
@@ -435,9 +570,8 @@ namespace Gecode { namespace Int { namespace GCC {
   /// \brief Path compression for capacity pointer structure
   inline void
   pathset_t(HallInfo hall[], int start, int end, int to) {
-    int k = 0;
-    int l = start;
-    for ( ; (k = l) != end; hall[k].t = to) {
+    int k, l;
+    for (l=start; (k=l) != end; hall[k].t=to) {
       l = hall[k].t;
     }
   }
@@ -445,9 +579,8 @@ namespace Gecode { namespace Int { namespace GCC {
   /// \brief Path compression for hall pointer structure
   inline void
   pathset_h(HallInfo hall[], int start, int end, int to) {
-    int k = 0;
-    int l = start;
-    for ( ; (k = l) != end; hall[k].h = to) {
+    int k, l;
+    for (l=start; (k=l) != end; hall[k].h=to) {
       l = hall[k].h;
     }
   }
@@ -494,8 +627,9 @@ namespace Gecode { namespace Int { namespace GCC {
   /// \brief Path maximum for capacity pointer structure  
   forceinline int
   pathmax_t(const HallInfo hall[], int i) {
-    while (hall[i].t > i)
+    while (hall[i].t > i) {
       i = hall[i].t;
+    }
     return i;
   }
 
@@ -563,7 +697,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	k.size(m);
       }
 
-      int start_size = k.size();
+      START_SIZE
       if (zc > 0) {
 	int ks = k.size();
 	// if there are still zero entries left
@@ -593,13 +727,12 @@ namespace Gecode { namespace Int { namespace GCC {
 	k.size(ks - zc);
       }
 
-
-      int end_size = k.size();
+      END_SIZE
       assert(start_size == end_size + zc);
     }
     
     // validty check
-//     for (int i = 1; i < k.size(); i++) {
+    // for (int i = 1; i < k.size(); i++) {
 //       assert(k[i].card() > k[i - 1].card());
 //     }
   }

@@ -18,7 +18,6 @@
  *     DISCLAIMER OF ALL WARRANTIES.
  *
  */
-
 namespace Gecode { namespace Int { namespace GCC {
 
   /**
@@ -48,7 +47,6 @@ namespace Gecode { namespace Int { namespace GCC {
       HallInfo hall[], Rank rank[],
       PartialSum<Card>* ups,
       int mu[], int nu[]){
-
     ExecStatus es = ES_FIX;
 
     int rightmost = nb + 1; // rightmost accesible value in bounds
@@ -74,20 +72,8 @@ namespace Gecode { namespace Int { namespace GCC {
       hall[i].d = ups->sumup(hall[pred].bounds, hall[i].bounds - 1);
     }
 
-    //TESTOUT
-//         for (int c = 0; c < bsize; c++)
-//           std::cout << hall[c].bounds << " ";
-//         std::cout << "<<---bounds\n";
-//         for (int c = 1; c < bsize; c++)
-//           std::cout << hall[c].t << " ";
-//         std::cout << "<<---t\n";
-//         for (int c = 1; c < bsize; c++)
-//           std::cout << hall[c].h << " ";
-//         std::cout << "<<---h\n";
-//         for (int c = 1; c < bsize; c++)
-//           std::cout << hall[c].d << " ";
-//         std::cout << "<<---d\n";
     int n          = x.size();
+
     for (int i = 0; i < n; i++) {
       // visit intervals in increasing max order
       int x0   = rank[mu[i]].min;
@@ -95,7 +81,6 @@ namespace Gecode { namespace Int { namespace GCC {
       int y    = rank[mu[i]].max;
       int z    = pathmax_t(hall, succ);
       int j    = hall[z].t;
-
       /* DOMINATION:
        *     v^i_j denotes
        *     unused values in the current interval. If the difference d
@@ -114,10 +99,12 @@ namespace Gecode { namespace Int { namespace GCC {
       if (--hall[z].d == 0){
 	hall[z].t = z + 1;
 	z         = pathmax_t(hall, hall[z].t);
+	if (z >= bsize) {
+	  z--;
+	}
 	hall[z].t = j;
       }
       pathset_t(hall, succ, z, z); // path compression
-
       /* NEGATIVE CAPACITY:
        *     A negative capacity results in a failure.Since a
        *     negative capacity signals that the number of variables
@@ -125,6 +112,7 @@ namespace Gecode { namespace Int { namespace GCC {
        *     the maximum capacity of S => UBC is not satisfiable,
        *     i.e. there are more variables than values to instantiate them
        */
+
       if (hall[z].d < ups->sumup(hall[y].bounds, hall[z].bounds - 1)){
 	return ES_FAILED;
       }
@@ -143,12 +131,15 @@ namespace Gecode { namespace Int { namespace GCC {
 	  es = ES_NOFIX;
 	}
 	ModEvent me = x[mu[i]].gq(home, m);
-	GECODE_ME_CHECK(me);
+	if (me_failed(me)) {
+	  return ES_FAILED;
+	}
 	if (me_modified(me) && (m != x[mu[i]].min())) {
 	  es = ES_NOFIX;
 	}
 	pathset_h(hall, x0, w, w); // path compression
       }
+
       /* ZEROTEST:
        *     (using the difference between capacity pointers)
        *     zero capacity => the difference between critical capacity
@@ -164,6 +155,7 @@ namespace Gecode { namespace Int { namespace GCC {
        *                   <=> d = z-1-y
        *    if this equation holds the interval [j,z-1] is a hall intervall
        */
+
       if (hall[z].d == ups->sumup(hall[y].bounds, hall[z].bounds - 1)) {
 	/* mark hall interval [j,z-1]
 	 * hall pointers form a path to the upper bound of the interval
@@ -173,13 +165,6 @@ namespace Gecode { namespace Int { namespace GCC {
 	hall[y].h = predj;
       }
     }
-
-
-    // FORCE resorting the lower bound permutation
-    // Create sorting permutation nu according to the variables lower bounds
-    MinInc<View> min_inc(x);
-    Support::quicksort<int, MinInc<View> >(nu, n, min_inc);
-
 
     /* Narrow upper bounds (UBC)
      * symmetric to the narrowing of the lower bounds
@@ -224,7 +209,9 @@ namespace Gecode { namespace Int { namespace GCC {
 	  es = ES_NOFIX;
 	}
 	ModEvent me = x[nu[i]].lq(home, m);
-	GECODE_ME_CHECK(me);
+	if (me_failed(me)) {
+	  return ES_FAILED;
+	}
 	if (me_modified(me) && (m != x[nu[i]].max())) {
 	  es = ES_NOFIX;
 	}

@@ -24,12 +24,212 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool shared, bool isView>
   inline ExecStatus
   prop_bnd(Space* home, ViewArray<View>& x, Card& k, 
-	   PartialSum<Card>* lps, PartialSum<Card>* ups){		
-  
+	   PartialSum<Card>* lps, PartialSum<Card>* ups, 
+	   bool card_fixed, bool card_all, int minpost){		
+
+    bool all_assigned = true;
+    bool mod          = false;
+
+    int smin = 0;
+    int smax = 0;
+    ExecStatus es = ES_NOFIX;
+ 
+    GECODE_AUTOARRAY(int, count, k.size());
+    for (int i = k.size(); i--; ) {
+      count[i] = 0;
+    }
+
+    int noa = 0;
+    int xlb = 0;
+    int xub = 0;
+    for (int i = x.size(); i--; ) {
+      bool b = x[i].assigned();
+      xlb += x[i].min();
+      xub += x[i].max();
+      all_assigned &= b;
+      if (b) {
+	noa++;
+	int idx = k.lookup(x[i].val());
+	// reduction is essential for order on value nodes in dom
+	// hence introduce test for failed lookup
+	if (idx == -1) {
+	  return ES_FAILED;
+	}
+	count[idx]++;
+      }
+    }
+
+
+    if (isView) {
+
+      es = card_consistent<View, Card>(smin, smax, x, k, card_all);
+      if (es == ES_FAILED) {
+	return es;
+      }
+      es = prop_card<View, Card>(home, x, k, mod);
+      if (es == ES_FAILED) {
+	return ES_FAILED;
+      }
+      
+        // mimicking linear constraint
+	int smax = 0;
+	int smin = 0;
+	int total_min = 0;
+	int total_max = 0;
+	for (int i = k.size(); i--; ) {
+	  smax += k[i].max();
+	  total_min += k[i].card() * k[i].min();
+	  total_max += k[i].card() * k[i].max();
+	}
+	int xsmax = x.size() - smax;
+	int xsmin = x.size() - smin;
+	smax = 0;
+	smin = 0;
+	bool card_ass = true;
+	for (int i = k.size(); i--; ) {
+	  int lb = xsmax + k[i].max(); 
+	  int ub = xsmin + k[i].min();
+	  ModEvent me = k[i].gq(home, lb);
+	  if (me_failed(me)) {
+	    return ES_FAILED;
+	  }
+
+	  mod |= k[i].modified();
+	  smax += k[i].max();
+
+	  me = k[i].lq(home, ub);
+	  if (me_failed(me)) {
+	    return ES_FAILED;
+	  }
+	  mod |= k[i].modified();	
+	  card_ass &= k[i].assigned();
+	}
+	if (card_ass) {
+	  if (smax < x.size() || smax > x.size()) {
+	    return ES_FAILED;
+	  }
+
+	  // redundant linear constraint
+	  for (int i = x.size(); i--; ) {
+	    if (!x[i].assigned()) {
+	      int xmin = xub - x[i].max();
+	      int xgq  = total_max - xmin;
+
+	      int xmax = xlb - x[i].min();
+	      int xlq  = total_max - xmax;
+
+	      ModEvent me = x[i].gq(home, xgq);
+	      if (me_failed(me)) {
+		return ES_FAILED;
+	      }
+
+	      me = x[i].lq(home, xlq);
+	      if (me_failed(me)) {
+		return ES_FAILED;
+	      }
+	    }
+	  }
+	}
+    }
+
+    if (all_assigned) {
+      for (int i = k.size(); i--; ) {
+	int ci = count[i];
+	if (! (k[i].min() <= ci && ci <= k[i].max())) {
+	  return ES_FAILED;
+	} else {
+	  if (isView) {
+	    if (!k[i].assigned()) {
+	      ModEvent me = k[i].eq(home, ci);
+	      if (me_failed(me)) {
+		return ES_FAILED;
+	      }
+	      mod |= k[i].modified();
+	    }	      
+	    all_assigned &= k[i].assigned();
+	  }
+	}
+      }
+
+      if (all_assigned) {
+	return ES_SUBSUMED;
+      } 
+    }
+
+
+
+    // before propagation performs inferences on cardinality variables:
+    if (isView) {
+      smin    = 0;
+      smax    = 0;
+      es = card_consistent<View, Card>(smin, smax, x, k, card_all);
+      if (es == ES_FAILED) {
+	return es;
+      }
+      
+      if (noa > 0) {      
+	int n  = x.size();
+	int ks = k.size();
+      
+	for (int i = ks; i--; ) {
+	  if (!k[i].assigned()) {
+	    int ub = n - (noa - count[i]);
+	    int lb = count[i];
+	    ModEvent melq = k[i].lq(home, ub);
+	    if (me_failed(melq)) {
+	      return ES_FAILED;
+	    }
+	    mod |= k[i].modified();
+
+	    ModEvent megq = k[i].gq(home, lb);
+	    if (me_failed(megq)) {
+	      return ES_FAILED;
+	    }
+	    mod |= k[i].modified();
+	  }
+	}
+      }
+    }
+
+    // ensure that only values are considered lying in the variable domain
+    
+    if (lps == NULL) {
+      assert (ups == NULL);
+      lps = new PartialSum<Card>(minpost,  k.size(), k, false);
+      ups = new PartialSum<Card>(minpost,  k.size(), k, true);
+    } 
+
+    if (isView) {
+      // if there has been a change to the cardinality variables
+      // reconstruction of the partial sum structure is necessary
+      if (lps->check_update_min(k)) {
+	delete lps;
+	lps = new PartialSum<Card>(minpost,  k.size(), k, false);
+      }
+      
+      if (ups->check_update_max(k)) {
+	delete ups;
+	ups = new PartialSum<Card>(minpost,  k.size(), k, true);
+      }
+    }
+
+    bool minima_equal = lps->minValue() == ups->minValue();
+    bool maxima_equal = lps->maxValue() == ups->maxValue();
+
+    if (!minima_equal || !maxima_equal ) {
+      delete lps; 
+      lps = new PartialSum<Card>(minpost, k.size(), k, false);
+      delete ups;
+      ups = new PartialSum<Card>(minpost, k.size(), k, true);
+    }
+
+    assert(lps->minValue() == ups->minValue());
+    assert(lps->maxValue() == ups->maxValue());
+
     ExecStatus es_ubc = ES_FIX;
     ExecStatus es_lbc = ES_FIX;
     int n = x.size();  
-
+    
     GECODE_AUTOARRAY(int, mu, n);
     GECODE_AUTOARRAY(int, nu, n);
 
@@ -44,8 +244,6 @@ namespace Gecode { namespace Int { namespace GCC {
     // Create sorting permutation nu according to the variables lower bounds
     MinInc<View> min_inc(x);
     Support::quicksort<int, MinInc<View> >(nu, n, min_inc);
-
-
     assert(lps->minValue() == ups->minValue());
     assert(lps->maxValue() == ups->maxValue());
     assert(lps->minValue() <= x[nu[0]].min());
@@ -107,36 +305,76 @@ namespace Gecode { namespace Int { namespace GCC {
     int rightmost = nb + 1; // rightmost accesible value in bounds
     hall[rightmost].bounds = ups->lastValue + 1 ;    
 
-    GECODE_ES_CHECK(es_lbc = (lbc<View, Card, shared>(home, x, nb, hall, rank,
-						      lps, mu, nu)));
-    if (es_lbc == ES_NOFIX) {
-      return ES_NOFIX;
+    if (!card_fixed) {
+      es_lbc = lbc<View, Card, shared>(home, x, nb, hall, rank,lps, mu, nu);
+      if (es_lbc == ES_FAILED || es_lbc == ES_SUBSUMED) {
+	return es_lbc;
+      }
+      mod |= (es_lbc == ES_NOFIX);
     }
 
-    // FORCE resorting after possible bound modification
-    MaxInc<View> newmax(x);
-    Support::quicksort<int, MaxInc<View> >(mu, n, newmax);
-
-    MinInc<View> newmin(x);
-    Support::quicksort<int, MinInc<View> >(nu, n, newmin);
-
-    GECODE_ES_CHECK(es_ubc = (ubc<View, Card, shared>(home, x, nb, hall, rank,
-						      ups, mu, nu)));
-
-    if (es_ubc == ES_NOFIX || es_lbc == ES_NOFIX) {
-      return ES_NOFIX;
-    } else {
-      return ES_FIX;
+    es_ubc = ubc<View, Card, shared>(home, x, nb, hall, rank, ups, mu, nu);
+    if (es_ubc == ES_FAILED || es_ubc == ES_SUBSUMED) {
+      return es_ubc;
     }
+    mod |= (es_ubc == ES_NOFIX);
+
+    if (isView) {
+      es = prop_card<View, Card>(home, x, k, mod);
+      if (es == ES_FAILED) {
+	return ES_FAILED;
+      }
+    }
+
+    all_assigned = true;
+
+    for (int i = k.size(); i--; ) {
+      count[i] = 0;
+    }
+      
+    for (int i = x.size(); i--; ) {
+      bool b = x[i].assigned();
+      all_assigned &= b;
+      if (b) {
+	int idx = k.lookup(x[i].val());
+	count[idx]++;
+      }
+    }
+
+    if (all_assigned) {
+      for (int i = k.size(); i--; ) {
+	int ci = count[i];
+	if (! (k[i].min() <= ci && ci <= k[i].max())) {
+	  return ES_FAILED;
+	} else {
+	  if (isView) {
+	    if (!k[i].assigned()) {
+	      ModEvent me = k[i].eq(home, ci);
+	      if (me_failed(me)) {
+		return ES_FAILED;
+	      }
+	      mod |= k[i].modified();
+	    }
+	    all_assigned &= k[i].assigned();
+	  }
+	}
+      }
+      if (all_assigned) {
+	return ES_SUBSUMED;
+      }
+    }
+
+    return mod ? ES_NOFIX : ES_FIX;
+    
   }
 
   // for posting
   template <class View, class Card, bool isView, bool shared>
   forceinline
   BndImp<View, Card, isView, shared>::
-  BndImp(Space* home, ViewArray<View>& x0, Card& k0)
+  BndImp(Space* home, ViewArray<View>& x0, Card& k0, bool cf, bool all, int pmin)
     : Propagator(home, true), x(x0), y(home,x0), k(k0),
-      lps(NULL), ups(NULL){
+      lps(NULL), ups(NULL), card_fixed(cf), card_all(all), minpost(pmin){
     //copy of the problem variables to perform value propagation
     y.subscribe(home, this, PC_INT_BND);
     k.subscribe(home, this, PC_INT_BND);
@@ -147,7 +385,8 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline
   BndImp<View, Card, isView, shared>::
   BndImp(Space* home, bool share, BndImp<View, VarCard, isView, shared>& p)
-    : Propagator(home, share, p), lps(NULL), ups(NULL)  {
+    : Propagator(home, share, p), lps(NULL), ups(NULL), 
+      card_fixed(p.card_fixed), card_all(p.card_all), minpost(p.minpost) {
     x.update(home, share, p.x);
     y.update(home, share, p.y);
     k.update(home, share, p.k);
@@ -158,7 +397,8 @@ namespace Gecode { namespace Int { namespace GCC {
   BndImp<View, Card, isView, shared>::
   BndImp(Space* home, bool share, BndImp<View, FixCard, isView, shared>& p)  
     : Propagator(home, share, p), k(p.k.size()), 
-      lps(NULL), ups(NULL){ 
+      lps(NULL), ups(NULL), 
+      card_fixed(p.card_fixed), card_all(p.card_all), minpost(p.minpost) { 
     x.update(home, share, p.x);
     y.update(home, share, p.y);
     k.update(home, share, p.k);
@@ -191,158 +431,37 @@ namespace Gecode { namespace Int { namespace GCC {
      *   n = number of variables
      *   t = time needed to sort the domain bounds of the variables
      */
-    return (View::pme(this) == ME_INT_VAL)
-      ? cost_lo(y.size(),PC_LINEAR_LO)
-      : cost_hi(x.size(),PC_LINEAR_HI);
+    PropCost pc = PC_LINEAR_HI;
+    return cost_hi(x.size(),pc);
   }
 
   template <class View, class Card, bool isView, bool shared>
   forceinline ExecStatus 
   BndImp<View, Card, isView, shared>::propagate(Space* home) {  
-
-    bool all_assigned = true;
-    bool mod          = false;
-
-    GECODE_AUTOARRAY(int, count, k.size());
-    for (int i = k.size(); i--; ) {
-      count[i] = 0;
-    }
-      
-    for (int i = x.size(); i--; ) {
-      bool b = x[i].assigned();
-      all_assigned &= b;
-      if (b) {
-	int idx = k.lookup(x[i].val());
-	// reduction is essential for order on value nodes in dom
-	// hence introduce test for failed lookup
-	if (idx == -1) {
-	  return ES_FAILED;
-	}
-	count[idx]++;
-      }
-    }
-
-    if (all_assigned) {
-      for (int i = k.size(); i--; ) {
-	int ci = count[i];
-	if (! (k[i].min() <= ci && ci <= k[i].max())) {
-	  return ES_FAILED;
-	} else {
-	  if (isView) {
-	    ModEvent me = k[i].eq(home, ci);
-	    GECODE_ME_CHECK(me);
-	    mod |= k[i].assigned();
-	  }
-	}
-      }
-      return ES_SUBSUMED;
-    }
-
-
-    ExecStatus es = 
-      prop_val<View, Card, isView>(home, y, k);
-    if (es == ES_FAILED || es == ES_SUBSUMED) {
-      return es;
-    }
-
-    int cmin = x[x.size() - 1].min();
-    int cmax = x[x.size() - 1].max();
-    
-    for (int i = x.size() - 1; i--; ) {
-      if (x[i].min() < cmin) {
-	cmin = x[i].min();
-      }
-      if (x[i].max() > cmax) {
-	cmax = x[i].max();
-      }
-    }
-
-    // ensure that only values are considered lying in the variable domain
-    reduce_card(cmin, cmax, k); 
-
-    if (lps == NULL) {
-      assert (ups == NULL);
-      lps = new PartialSum<Card>(cmin,  k.size(), k, false);
-      ups = new PartialSum<Card>(cmin,  k.size(), k, true);
-    } 
-
-    if (isView) {
-      // if there has been a change to the cardinality variables
-      // reconstruction of the partial sum structure is necessary
-      if (lps->check_update_min(k)) {
-	delete lps;
-	lps = new PartialSum<Card>(cmin,  k.size(), k, false);
-      }
-      
-      if (ups->check_update_max(k)) {
-	delete ups;
-	ups = new PartialSum<Card>(cmin,  k.size(), k, true);
-      }
-    }
-
-    bool minima_equal = lps->minValue() == ups->minValue();
-    bool maxima_equal = lps->maxValue() == ups->maxValue();
-    bool min_is_valid = lps->minValue() <= cmin;
-    bool max_is_valid = cmax >= ups->maxValue();
-
-    if (!minima_equal || 
-	!maxima_equal || 
-	!min_is_valid ||
-	!max_is_valid) {
-      delete lps; 
-      lps = new PartialSum<Card>(cmin, k.size(), k, false);
-      delete ups;
-      ups = new PartialSum<Card>(cmin, k.size(), k, true);
-    }
-
-    assert(lps->minValue() == ups->minValue());
-    assert(lps->maxValue() == ups->maxValue());
-    assert(lps->minValue() <= cmin);
-    assert(cmax>= ups->maxValue());
-
-    GECODE_ES_CHECK((prop_bnd<View, Card, shared, isView>(home, x, k, lps, ups)));
-
-    all_assigned = true;
-
-    for (int i = k.size(); i--; ) {
-      count[i] = 0;
-    }
-      
-    for (int i = x.size(); i--; ) {
-      bool b = x[i].assigned();
-      all_assigned &= b;
-      if (b) {
-	int idx = k.lookup(x[i].val());
-	count[idx]++;
-      }
-    }
-
-    if (all_assigned) {
-      for (int i = k.size(); i--; ) {
-      int ci = count[i];
-	if (! (k[i].min() <= ci && ci <= k[i].max())) {
-	  return ES_FAILED;
-	} else {
-	  if (isView) {
-	    ModEvent me = k[i].eq(home, ci);
-	    GECODE_ME_CHECK(me);
-	    mod |= k[i].assigned();
-	  }
-	}
-      }
-      return ES_SUBSUMED;
-    }
-
-    return (mod) ? ES_NOFIX : ES_FIX;
+    return prop_bnd<View, Card, shared, isView>
+      (home, x, k, lps, ups, card_fixed, card_all, minpost);
   }
 
   template <class View, class Card, bool isView>
   inline ExecStatus
-  Bnd<View, Card, isView>::post(Space* home, ViewArray<View>& x0, Card& k0) {
+  Bnd<View, Card, isView>::post(Space* home, ViewArray<View>& x0, Card& k0, 
+				bool all) {
+
+    bool cardfix = true;
+    for (int i = k0.size(); i--; ) {
+      cardfix &= k0[i].assigned();
+    }
+    int xmin = x0[x0.size() - 1].min();
+    for (int i = x0.size(); i--; ) {
+      if (x0[i].min() < xmin) {
+	xmin = x0[i].min();
+      }
+    }
+
     if (x0.shared()) {
-      new (home) BndImp<View, Card, isView, true>(home, x0, k0);
+      new (home) BndImp<View, Card, isView, true>(home, x0, k0, cardfix, all, xmin);
     } else {
-      new (home) BndImp<View, Card, isView, false>(home, x0, k0);
+      new (home) BndImp<View, Card, isView, false>(home, x0, k0, cardfix, all, xmin);
     }
     return ES_OK;
   }

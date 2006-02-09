@@ -123,20 +123,6 @@ namespace Gecode { namespace Int { namespace GCC {
      * they are considered as FAILURE SETS
      */
 
-//     TESTOUT
-//         for (int c = 0; c < bsize; c++)
-//           std::cout << hall[c].bounds << " ";
-//         std::cout << "<<---bounds\n";
-//         for (int c = 1; c < bsize; c++)
-//           std::cout << hall[c].t << " ";
-//         std::cout << "<<---t\n";
-//         for (int c = 1; c < bsize; c++)
-//           std::cout << hall[c].h << " ";
-//         std::cout << "<<---h\n";
-//         for (int c = 1; c < bsize; c++)
-//           std::cout << hall[c].d << " ";
-//         std::cout << "<<---d\n";
-
     for (i = 0; i < n; i++) {
       // visit intervals in increasing max order
       int x0   = rank[mu[i]].min;
@@ -275,11 +261,6 @@ namespace Gecode { namespace Int { namespace GCC {
 	}
       }
     }
-
-
-    // FORCE resorting
-    MinInc<View> min_inc(x);
-    Support::quicksort<int, MinInc<View> >(nu, n, min_inc);
 
     //LBC narrow upper bounds
     
