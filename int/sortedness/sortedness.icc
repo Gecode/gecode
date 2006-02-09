@@ -485,7 +485,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
   template<class View, class Tuple, bool Perm, bool shared>
   PropCost Sortedness<View, Tuple, Perm, shared>::cost(void) const {
-    return PC_LINEAR_LO;
+    return cost_hi(xz.size(), PC_LINEAR_HI);
   }
 
   template<class View, class Tuple, bool Perm, bool shared>
