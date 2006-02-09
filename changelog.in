@@ -29,7 +29,7 @@
 # A release is described as follows:
 #   [RELEASE]
 #   Version: <version string>
-#   Info:    <some additional infor about release>
+#   Info:    <some additional info about release>
 #
 # An entry is described as follows:
 #   [ENTRY]
@@ -45,14 +45,7 @@
 
 [RELEASE]
 Version:	1.0.1
-Info:		Upcoming
-
-[ENTRY]
-Module: test
-What:   change
-Rank:   minor
-[DESCRIPTION]
-Test for Global Cardinality now use their own assignment. 
+Info:		Minor maintenance release
 
 [ENTRY]
 Module: int
@@ -72,7 +65,7 @@ The Global Cardinality propagators changed to a non-staged version.
 Further inferences for the case of cardinality variables have been added.
 Parts of the graph structure for the domain consistent propagator have been
 revised now avoiding unnecessary propagation in case of fixed cardinalities
-and allowing a better staging for the propagators. Revision of propagation 
+and allowing abetter staging for the propagators. Revision of propagation 
 for fixed cardinalities has also been applied for the bounds consistent 
 propagator.
 
@@ -86,7 +79,7 @@ Added domain-consistent version of the absolute value propagator.
 [ENTRY]
 Module:		other
 What:		performance
-Rank:		minor
+Rank:		major
 [DESCRIPTION]
 Switch assertions off in optimized builds with Microsoft's C++ compiler.
 

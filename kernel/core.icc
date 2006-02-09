@@ -720,7 +720,7 @@ namespace Gecode {
      * a failed space, an exception of type SpaceFailed is thrown.
      *
      * Otherwise, a clone of the space is returned. If \a shared is true,
-     * all shared datastructures are shared among the clone on the original
+     * sharable datastructures are shared among the clone and the original
      * space. If \a shared is false, independent copies of the shared
      * datastructures must be created. This means that a clone with no
      * sharing can be used in a different thread without any interaction
