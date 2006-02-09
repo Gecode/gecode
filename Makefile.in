@@ -455,7 +455,7 @@ ifeq "@top_srcdir@" "."
 mkcompiledirs:
 else
 mkcompiledirs:
-	for f in $(BUILDDIRS); do \
+	for_builddirs="$(BUILDDIRS)"; for f in $$for_builddirs; do \
 	  (test -z "$(top_builddir)"/$$f || mkdir -p "$(top_builddir)"/$$f); \
 	done
 endif
@@ -476,7 +476,7 @@ incontrib:
 	$(MAKE) -C contribs/$(ICD) $(ICT)
 
 compilesubdirs:
-	@for i in $(subdirs); do \
+	@for_subdirs="$(subdirs)"; for i in $$for_subdirs; do \
 	  if test -f $$i/Makefile; then \
 	    echo "Making in directory $$i"; \
 	    $(MAKE) -C $$i; \
@@ -735,13 +735,18 @@ doinstalllib: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
 	mkdir -p $(sharedlibdir) && \
 	mkdir -p $(libdir) && \
 	mkdir -p $(pkgincludedir) && \
-	for f in $(LIBTARGETS); do cp $$f $(sharedlibdir); done && \
-	for f in $(LIBLINKTARGETS); do cp -a $$f $(sharedlibdir); done &&\
-	for f in $(LIBLIBTARGETS); do cp $$f $(libdir); done && \
+	for_libtargets="$(LIBTARGETS)" && \
+	  for f in $$for_libtargets; do cp $$f $(sharedlibdir); done && \
+	for_liblinktargets="$(LIBLINKTARGETS)" && \
+	  for f in $$for_liblinktargets; do cp -a $$f $(sharedlibdir); done &&\
+	for_liblibtargets="$(LIBLIBTARGETS)" && \
+	  for f in $$for_liblibtargets; do cp $$f $(libdir); done && \
 	(cd $(top_srcdir) && tar cf - $(ALLHDR)) | \
 	(cd $(pkgincludedir) && tar xf -) && \
-	for f in $(EXTRA_HEADERS); do cp $$f $(pkgincludedir); done && \
-	for f in $(PKGCONFIGFILES); do \
+	for_extraheaders="$(EXTRA_HEADERS)" && \
+	  for f in $$for_extraheaders; do cp $$f $(pkgincludedir); done && \
+	for_pkgconfigfiles="$(PKGCONFIGFILES)" && \
+	  for f in $$for_pkgconfigfiles; do \
 		mkdir -p $(libdir)/pkgconfig; \
 		cp misc/$$f $(libdir)/pkgconfig; \
 	done
@@ -749,7 +754,8 @@ doinstalllib: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
 
 ifeq "@BUILDSTATIC@" "yes"
 ranliblib:
-	for f in $(STATICTARGETS); do $(RANLIB) $(sharedlibdir)/$$f; done
+	for_static="$(STATICTARGETS)" ; \
+	  for f in $$for_static; do $(RANLIB) $(sharedlibdir)/$$f; done
 else
 ranliblib:
 endif
@@ -758,14 +764,15 @@ installlib: compilelib doinstalllib ranliblib installsubdirs
 
 installexamples: compileexamples
 	mkdir -p $(bindir); \
-	for f in $(EXAMPLEEXE); do cp $$f $(bindir); done \
+	for_exampleexe="$(EXAMPLEEXE)" ; \
+	for f in $$for_exampleexe; do cp $$f $(bindir); done \
 
 installdoc: doc
 	mkdir -p $(docdir); \
 	cp -r $(DOCTARGET) $(docdir)
 
 installsubdirs:
-	@for i in $(subdirs); do \
+	@for_subdirs="$(subdirs)" ; for i in $$for_subdirs; do \
 	  cd $$i && if test -f Makefile; then \
 	    echo "Making install in directory $$i"; \
 	    $(MAKE) install; \
