@@ -697,28 +697,44 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *
  * \subsection CompConfExamples Example configurations
  *
- * To compile %Gecode on a Windows machine using the Microsoft compiler, use
+ * To compile %Gecode on a <b>Windows machine using the Microsoft compiler</b>, use
  *
  * <code>./configure CC=cl CXX=cl</code>
  *
- * To compile only the %Gecode library without examples on a Unix machine, use
+ * To compile only the %Gecode library <b>without examples</b> on a Unix machine, use
  *
  * <code>./configure --disable-examples</code>
  *
- * To compile on a Unix machine using a different than the default
+ * To compile on a <b>Unix machine</b> using a different than the default
  * <code>gcc</code> compiler, and install under <code>/opt/gecode</code>, use
  *
  * <code>./configure --prefix=/opt/gecode CC=gcc-4.0 CXX=g++-4.0</code>
  *
- * To compile a debug build on Unix, turning on all assertions and not
+ * To compile a <b>debug build</b> on Unix, turning on all assertions and not
  * inlining anything, use
  *
  * <code>./configure --enable-debug</code>
  *
- * To compile on Cygwin, but linking against the Windows libraries instead
+ * To compile on <b>Cygwin</b>, but linking against the <b>Windows libraries</b> instead
  * of the Cygwin libraries, use
  *
  * <code>./configure CC="gcc -mno-cygwin" CXX="g++ -mno-cygwin"</code>
+ *
+ * To compile on a system using a different than the default compiler,
+ * and a <code>/bin/sh</code> that is not bash compatible (e.g. a
+ * <b>Solaris machine</b>), use
+ *
+ * <code>./configure --with-host-os=linux \ </code><br>
+ * <code>&nbsp;&nbsp;&nbsp;CC="gcc-4.0" CXX="g++-4.0" \ </code><br>
+ * <code>&nbsp;&nbsp;&nbsp;SHELL="/bin/bash"</code><br>
+ * <code>make SHELL="/bin/bash"</code>
+ *
+ * You can compile as <b>"universal binary" on a Mac OS
+ * machine</b>. Note that the x86 part has not been tested yet. Configure
+ * with (all in one line)
+ *
+ * <code>./configure CXXUSR="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
+ * DLLFLAGS="-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -dynamiclib"</code>
  *
  * \subsection CompConfUsr Passing options for compilation
  *
