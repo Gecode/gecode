@@ -48,6 +48,35 @@ Version:	1.0.1
 Info:		Upcoming
 
 [ENTRY]
+Module: test
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Test for Global Cardinality now use their own assignment. 
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The computation of the propagation costs for the Sortedness propagator 
+has been changed from static to dynamic now taking into account 
+the variable reduction the propagator can perform.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+The Global Cardinality propagators changed to a non-staged version.
+Further inferences for the case of cardinality variables have been added.
+Parts of the graph structure for the domain consistent propagator have been
+revised now avoiding unnecessary propagation in case of fixed cardinalities
+and allowing a better staging for the propagators. Revision of propagation 
+for fixed cardinalities has also been applied for the bounds consistent 
+propagator.
+
+[ENTRY]
 Module:		int
 What:		new
 Rank:		minor
