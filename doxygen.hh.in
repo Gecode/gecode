@@ -641,7 +641,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * the following programs:
  *
  *  - a bash-compatible shell
- *  - make
+ *  - GNU make
  *  - sed
  *  - cp
  *  - tar
