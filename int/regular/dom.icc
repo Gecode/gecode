@@ -127,7 +127,6 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View>
   class Dom<View>::LayeredGraph {
   private:
-    unsigned int  n_unassigned;
     EdgeAllocator ea;
     size_t        state_size;
     State*        state_mem;
@@ -227,8 +226,7 @@ namespace Gecode { namespace Int { namespace Regular {
 
   template <class View>
   forceinline
-  Dom<View>::LayeredGraph::LayeredGraph(ViewArray<View> x, const DFA& dfa)
-    : n_unassigned(x.size()) {
+  Dom<View>::LayeredGraph::LayeredGraph(ViewArray<View> x, const DFA& dfa) {
     int n = x.size();
     unsigned int n_states = dfa.n_states();
 
@@ -319,10 +317,11 @@ namespace Gecode { namespace Int { namespace Regular {
       // Initialize size and modification data
       layers[i].modified = MOD_NONE;
       layers[i].size     = x[i].size();
-      if (layers[i].size == 1)
-	n_unassigned--;
     }
-    return (n_unassigned == 0) ? ES_SUBSUMED : es;
+    for (int i=x.size(); i--; )
+      if (!x[i].assigned())
+	return es;
+    return ES_SUBSUMED;
   }
 
   template <class View>
@@ -333,8 +332,6 @@ namespace Gecode { namespace Int { namespace Regular {
     for (int i = 0; i < n; i++)
       if (layers[i].size != x[i].size()) {
 	layers[i].size = x[i].size();
-	if (layers[i].size == 1)
-	  n_unassigned--;
 	Edge** p = &layers[i].edges;
 	Edge*  e = *p;
 	ViewRanges<View> rx(x[i]);
@@ -355,7 +352,7 @@ namespace Gecode { namespace Int { namespace Regular {
 	  }
 	}
 	*p = NULL;
-	// Remove all remainign edges
+	// Remove all remaining edges
 	while (e != NULL) {
 	  // Adapt states
 	  if (--e->i_state->o_deg == 0)
@@ -422,13 +419,12 @@ namespace Gecode { namespace Int { namespace Regular {
 	} else {
 	  x[i].narrow(home,er);
 	}
-	if (layers[i].size != x[i].size()) {
-	  layers[i].size = x[i].size();
-	  if (layers[i].size == 1)
-	    n_unassigned--;
-	}
+	layers[i].size = x[i].size();
       }
-    return (n_unassigned == 0) ? ES_SUBSUMED : es;
+    for (int i=x.size(); i--; )
+      if (!x[i].assigned())
+	return es;
+    return ES_SUBSUMED;
   }
 
   template <class View>

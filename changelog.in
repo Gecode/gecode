@@ -49,6 +49,13 @@ Info:		Minor maintenance release
 
 [ENTRY]
 Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed subsumtion detection for regular.
+
+[ENTRY]
+Module: int
 What:   change
 Rank:   minor
 [DESCRIPTION]
