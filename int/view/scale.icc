@@ -29,19 +29,19 @@ namespace Gecode {
      */
     template <class Val, class UnsVal>
     forceinline int
-    ScaleView<Val,UnsVal>::floor_div(double x) {
+    ScaleView<Val,UnsVal>::floor_div(double x) const {
       return static_cast<int>(floor(x / a));
     }
 
     template <class Val, class UnsVal>
     forceinline int
-    ScaleView<Val,UnsVal>::ceil_div(double x) {
+    ScaleView<Val,UnsVal>::ceil_div(double x) const {
       return static_cast<int>(ceil(x / a));
     }
 
     template <class Val, class UnsVal>
     forceinline int
-    ScaleView<Val,UnsVal>::exact_div(double x, bool& exact) {
+    ScaleView<Val,UnsVal>::exact_div(double x, bool& exact) const {
       double xa = x / a;
       if (ceil(xa) == xa) {
 	exact = true;  return static_cast<int>(xa);
@@ -54,19 +54,19 @@ namespace Gecode {
 
     template <class Val, class UnsVal>
     forceinline int
-    ScaleView<Val,UnsVal>::floor_div(int x) {
+    ScaleView<Val,UnsVal>::floor_div(int x) const {
       return ((x >= 0) ? x : (x-a+1))/a;
     }
 
     template <class Val, class UnsVal>
     forceinline int
-    ScaleView<Val,UnsVal>::ceil_div(int x) {
+    ScaleView<Val,UnsVal>::ceil_div(int x) const {
       return ((x >= 0) ? (x+a-1) : x)/a;
     }
 
     template <class Val, class UnsVal>
     forceinline int
-    ScaleView<Val,UnsVal>::exact_div(int x, bool& exact) {
+    ScaleView<Val,UnsVal>::exact_div(int x, bool& exact) const {
       int xa = x / a;
       if (a * xa == x) {
 	exact = true;  return xa;

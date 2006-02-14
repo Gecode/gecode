@@ -563,18 +563,18 @@ namespace Gecode {
       /// \name Support functions for division
       //@{
       /// Return \f$\lfloor x/a\rfloor\f$
-      int floor_div(double x);
+      int floor_div(double x) const;
       /// Return \f$\lceil x/a\rceil\f$
-      int ceil_div(double x);
+      int ceil_div(double x) const;
       /// Return \f$x/a\f$ and set \a exact to true if \a x is multiple of \a a
-      int exact_div(double x, bool& exact);
+      int exact_div(double x, bool& exact) const;
 #if GECODE_INT_RND_TWDS_ZERO
       /// Return \f$\lfloor x/a\rfloor\f$
-      int floor_div(int);
+      int floor_div(int) const;
       /// Return \f$\lceil x/a\rceil\f$
-      int ceil_div(int);
+      int ceil_div(int) const;
       /// Return \f$x/a\f$ and set \a exact to true if \a x is multiple of \a a
-      int exact_div(int, bool&);
+      int exact_div(int, bool&) const;
 #endif
       //@}
 
