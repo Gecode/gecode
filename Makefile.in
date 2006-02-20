@@ -134,6 +134,7 @@ ifeq "@enable_search@" "yes"
 export SEARCHDLL	= $(LIBPREFIX)@SEARCH@$(DLLSUFFIX)
 export SEARCHSTATICLIB	= $(LIBPREFIX)@SEARCH@$(STATICLIBSUFFIX)
 export SEARCHLIB	= $(LIBPREFIX)@SEARCH@$(LIBSUFFIX)
+export LINKSEARCH       = $(LINKPREFIX)@SEARCH@$(LINKSUFFIX)
 ifeq "@need_soname@" "yes"
 export SEARCHSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@SEARCH@$(SOSUFFIX)
@@ -144,8 +145,8 @@ else
 export SEARCHDLL	=
 export SEARCHSTATICLIB	=
 export SEARCHLIB	=
+export LINKSEARCH       =
 endif
-export LINKSEARCH      = $(LINKPREFIX)@SEARCH@$(LINKSUFFIX)
 SEARCHBUILDDIRS = search
 
 #
@@ -197,6 +198,7 @@ ifeq "@enable_int_vars@" "yes"
 export INTDLL		= $(LIBPREFIX)@INT@$(DLLSUFFIX)
 export INTSTATICLIB	= $(LIBPREFIX)@INT@$(STATICLIBSUFFIX)
 export INTLIB		= $(LIBPREFIX)@INT@$(LIBSUFFIX)
+export LINKINT      	= $(LINKPREFIX)@INT@$(LINKSUFFIX)
 ifeq "@need_soname@" "yes"
 export INTSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@INT@$(SOSUFFIX)
@@ -207,8 +209,8 @@ else
 export INTDLL		=
 export INTSTATICLIB	=
 export INTLIB		=
+export LINKINT      	=
 endif
-export LINKINT      	= $(LINKPREFIX)@INT@$(LINKSUFFIX)
 INTBUILDDIRS	= \
 	int int/var int/view int/regular int/linear int/bool int/branch
 
@@ -254,6 +256,7 @@ ifeq "@enable_set_vars@" "yes"
 export SETDLL		= $(LIBPREFIX)@SET@$(DLLSUFFIX)
 export SETSTATICLIB	= $(LIBPREFIX)@SET@$(STATICLIBSUFFIX)
 export SETLIB		= $(LIBPREFIX)@SET@$(LIBSUFFIX)
+export LINKSET      	= $(LINKPREFIX)@SET@$(LINKSUFFIX)
 ifeq "@need_soname@" "yes"
 export SETSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@SET@$(SOSUFFIX)
@@ -264,8 +267,8 @@ else
 export SETDLL		=
 export SETSTATICLIB	=
 export SETLIB		=
+export LINKSET      	=
 endif
-export LINKSET      	= $(LINKPREFIX)@SET@$(LINKSUFFIX)
 SETBUILDDIRS	=						\
 	set set/convex set/distinct set/int set/rel set/rel-op	\
 	set/select set/sequence set/var set/view
@@ -289,6 +292,7 @@ ifeq "@enable_minimodel@" "yes"
 export MMDLL		= $(LIBPREFIX)@MM@$(DLLSUFFIX)
 export MMSTATICLIB	= $(LIBPREFIX)@MM@$(STATICLIBSUFFIX)
 export MMLIB		= $(LIBPREFIX)@MM@$(LIBSUFFIX)
+export LINKMM      	= $(LINKPREFIX)@MM@$(LINKSUFFIX)
 ifeq "@need_soname@" "yes"
 export MMSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@MM@$(SOSUFFIX)
@@ -299,8 +303,8 @@ else
 export MMDLL		=
 export MMSTATICLIB	=
 export MMLIB		=
+export LINKMM      	=
 endif
-export LINKMM      	= $(LINKPREFIX)@MM@$(LINKSUFFIX)
 MMBUILDDIRS	= minimodel
 
 #
@@ -426,13 +430,24 @@ endif
 INTTESTSRC0 = \
 	arithmetic basic bool count dom distinct element regular rel linear \
 	scheduling minimodel gcc sortedness
+ifeq "@enable_set_vars@" "yes"
 SETTESTSRC0 = \
 	dom rel rel-op convex sequence int select distinct
+else
+SETTESTSRC0 =
+endif
+
 STRESSTESTSRC0 = \
 	exec minsort domain distinct regular 
+ifeq "@enable_set_vars@" "yes"
 TESTSRC0 = \
 	test log random int set stress intset \
 	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) $(STRESSTESTSRC0:%=stress/%)
+else
+TESTSRC0 = \
+	test log random int stress intset \
+	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) $(STRESSTESTSRC0:%=stress/%)
+endif
 TESTSRC	= $(TESTSRC0:%=test/%.cc)
 TESTHDR0 = \
 	test int set stress

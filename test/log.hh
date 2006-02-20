@@ -23,7 +23,10 @@
 
 #include "kernel.hh"
 #include "int.hh"
+
+#ifdef GECODE_HAVE_SET_VARS
 #include "set.hh"
+#endif
 
 namespace Log {
   void logging(bool val);
@@ -35,18 +38,21 @@ namespace Log {
   std::string mk_name(const char* arr, int idx);
 
   void initial(const IntVarArray& a, const char*name);
-  void initial(const SetVarArray& a, const char*name);
   void log(std::string hlog, const std::string clog);
   void assign(std::string name, int val);
   void assign(std::string name, const IntSet& val);
   void prune(const IntVar& v, std::string name, IntRelType irt, int val);
+  void prune_result(const IntVar& v);
+  void flush();
+  void fixpoint();
+
+#ifdef GECODE_HAVE_SET_VARS
+  void initial(const SetVarArray& a, const char*name);
   void prune(const SetVar& v, std::string name, SetRelType irt, int val);
   void prune(const SetVar& v, std::string name,
 	     unsigned int cardMin, unsigned int cardMax);
-  void prune_result(const IntVar& v);
   void prune_result(const SetVar& v);
-  void flush();
-  void fixpoint();
+#endif
 }
 
 #endif /* __GECODE_LOG_HH__ */

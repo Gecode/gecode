@@ -210,6 +210,7 @@ namespace Log {
     }
   }
 
+#ifdef GECODE_HAVE_SET_VARS
   void initial(const SetVarArray& a, const char* name) {
     if (!do_logging) return;
     // Display
@@ -260,6 +261,7 @@ namespace Log {
       cinit.push_back(init.str());
     }
   }
+#endif
 
   void log(const std::string hlog, const std::string clog = "") {
     if (!do_logging) return;
@@ -336,6 +338,7 @@ namespace Log {
     cops.push_back(c.str());
   }
 
+#ifdef GECODE_HAVE_SET_VARS
   void prune(const SetVar& v, std::string name, SetRelType srt, int val) {
     if(!do_logging) return;
     std::ostringstream h;
@@ -376,6 +379,7 @@ namespace Log {
       << cardMin << ", " << cardMax << ");";
     cops.push_back(c.str());
   }
+#endif
 
   void prune_result(const IntVar& v) {
     if (!do_logging) return;
@@ -384,12 +388,14 @@ namespace Log {
     hops.push_back(h.str());
   }
 
+#ifdef GECODE_HAVE_SET_VARS
   void prune_result(const SetVar& v) {
     if (!do_logging) return;
     std::ostringstream h;
     h << "\tPruning resulted in domain " << v;
     hops.push_back(h.str());
   }
+#endif
 
   void flush() {
     if (!do_logging) return;
