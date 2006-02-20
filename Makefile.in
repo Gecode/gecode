@@ -133,6 +133,7 @@ SEARCHOBJ	= $(SEARCHSRC:%.cc=%$(OBJSUFFIX))
 ifeq "@enable_search@" "yes"
 export SEARCHDLL	= $(LIBPREFIX)@SEARCH@$(DLLSUFFIX)
 export SEARCHSTATICLIB	= $(LIBPREFIX)@SEARCH@$(STATICLIBSUFFIX)
+export SEARCHLIB	= $(LIBPREFIX)@SEARCH@$(LIBSUFFIX)
 ifeq "@need_soname@" "yes"
 export SEARCHSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@SEARCH@$(SOSUFFIX)
@@ -142,8 +143,8 @@ endif
 else
 export SEARCHDLL	=
 export SEARCHSTATICLIB	=
+export SEARCHLIB	=
 endif
-export SEARCHLIB	= $(LIBPREFIX)@SEARCH@$(LIBSUFFIX)
 export LINKSEARCH      = $(LINKPREFIX)@SEARCH@$(LINKSUFFIX)
 SEARCHBUILDDIRS = search
 
@@ -195,6 +196,7 @@ INTOBJ		= $(INTSRC:%.cc=%$(OBJSUFFIX))
 ifeq "@enable_int_vars@" "yes"
 export INTDLL		= $(LIBPREFIX)@INT@$(DLLSUFFIX)
 export INTSTATICLIB	= $(LIBPREFIX)@INT@$(STATICLIBSUFFIX)
+export INTLIB		= $(LIBPREFIX)@INT@$(LIBSUFFIX)
 ifeq "@need_soname@" "yes"
 export INTSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@INT@$(SOSUFFIX)
@@ -204,8 +206,8 @@ endif
 else
 export INTDLL		=
 export INTSTATICLIB	=
+export INTLIB		=
 endif
-export INTLIB		= $(LIBPREFIX)@INT@$(LIBSUFFIX)
 export LINKINT      	= $(LINKPREFIX)@INT@$(LINKSUFFIX)
 INTBUILDDIRS	= \
 	int int/var int/view int/regular int/linear int/bool int/branch
@@ -251,6 +253,7 @@ SETOBJ		= $(SETSRC:%.cc=%$(OBJSUFFIX))
 ifeq "@enable_set_vars@" "yes"
 export SETDLL		= $(LIBPREFIX)@SET@$(DLLSUFFIX)
 export SETSTATICLIB	= $(LIBPREFIX)@SET@$(STATICLIBSUFFIX)
+export SETLIB		= $(LIBPREFIX)@SET@$(LIBSUFFIX)
 ifeq "@need_soname@" "yes"
 export SETSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@SET@$(SOSUFFIX)
@@ -260,8 +263,8 @@ endif
 else
 export SETDLL		=
 export SETSTATICLIB	=
+export SETLIB		=
 endif
-export SETLIB		= $(LIBPREFIX)@SET@$(LIBSUFFIX)
 export LINKSET      	= $(LINKPREFIX)@SET@$(LINKSUFFIX)
 SETBUILDDIRS	=						\
 	set set/convex set/distinct set/int set/rel set/rel-op	\
@@ -285,6 +288,7 @@ MMSBJ		= $(MMSRC:%.cc=%$(SBJSUFFIX))
 ifeq "@enable_minimodel@" "yes"
 export MMDLL		= $(LIBPREFIX)@MM@$(DLLSUFFIX)
 export MMSTATICLIB	= $(LIBPREFIX)@MM@$(STATICLIBSUFFIX)
+export MMLIB		= $(LIBPREFIX)@MM@$(LIBSUFFIX)
 ifeq "@need_soname@" "yes"
 export MMSONAME     = \
 	@WLSONAME@$(LIBPREFIX)@MM@$(SOSUFFIX)
@@ -294,8 +298,8 @@ endif
 else
 export MMDLL		=
 export MMSTATICLIB	=
+export MMLIB		=
 endif
-export MMLIB		= $(LIBPREFIX)@MM@$(LIBSUFFIX)
 export LINKMM      	= $(LINKPREFIX)@MM@$(LINKSUFFIX)
 MMBUILDDIRS	= minimodel
 
