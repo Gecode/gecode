@@ -45,7 +45,14 @@
 
 [RELEASE]
 Version:	1.0.1
-Info:		Minor maintenance release
+Info:		Maintenance release
+
+[ENTRY]
+Module: int
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added domain-consistent linear equalities.
 
 [ENTRY]
 Module: int
@@ -67,27 +74,27 @@ Module: int
 What:   change
 Rank:   minor
 [DESCRIPTION]
-The computation of the propagation costs for the Sortedness propagator 
-has been changed from static to dynamic now taking into account 
-the variable reduction the propagator can perform.
+Cost computation for sortedness has been changed from static to
+dynamic (taking into account the variable reduction the
+propagator can perform).
 
 [ENTRY]
 Module: int
 What:   change
 Rank:   major
 [DESCRIPTION]
-The Global Cardinality propagators changed to a non-staged version.
-Further inferences for the case of cardinality variables have been added.
-Parts of the graph structure for the domain consistent propagator have been
-revised now avoiding unnecessary propagation in case of fixed cardinalities
-and allowing abetter staging for the propagators. Revision of propagation 
-for fixed cardinalities has also been applied for the bounds consistent 
-propagator.
+Global cardinality changed to non-staged version.  Further
+inference for cardinality variables added.  Parts of the graph
+structure for the domain-consistent propagator have been revised
+so as to avoid unnecessary propagation in case of fixed
+cardinalities and to allow better staging for the
+propagator. Revision of propagation for fixed cardinalities has
+also been applied to bounds-consistent propagator.
 
 [ENTRY]
 Module:		int
 What:		new
-Rank:		minor
+Rank:		major
 [DESCRIPTION]
 Added domain-consistent version of the absolute value propagator.
 
@@ -105,7 +112,7 @@ Rank:		major
 Bug:		29
 Thanks:		Dominik Brill
 [DESCRIPTION]
-Fixed a serious bug in the reified linear inequality propagator.
+Fixed a very serious bug in the reified linear inequality propagator.
 
 [ENTRY]
 Module:		other
