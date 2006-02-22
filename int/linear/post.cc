@@ -332,14 +332,19 @@ namespace Gecode { namespace Int { namespace Linear {
 	post_nary<int,IntView>(home,x,y,r,c);
       }
     } else {
-      if (is_ip && (icl != ICL_DOM)) {
+      if (is_ip) {
 	ViewArray<IntScaleView> x(home,n_p);
 	for (int i = n_p; i--; )
 	  x[i].init(e[i].a,e[i].x);
 	ViewArray<IntScaleView> y(home,n_n);
 	for (int i = n_n; i--; )
 	  y[i].init(-e[i+n_p].a,e[i+n_p].x);
-	post_nary<int,IntScaleView>(home,x,y,r,c);
+	if ((icl == ICL_DOM) && (r == IRT_EQ)) {
+	  if (DomEq<int,IntScaleView>::post(home,x,y,c) == ES_FAILED)
+	    home->fail();
+	} else {
+	  post_nary<int,IntScaleView>(home,x,y,r,c);
+	}
       } else {
 	ViewArray<DoubleScaleView> x(home,n_p);
 	for (int i = n_p; i--; )
@@ -348,7 +353,7 @@ namespace Gecode { namespace Int { namespace Linear {
 	for (int i = n_n; i--; )
 	  y[i].init(-e[i+n_p].a,e[i+n_p].x);
 	if ((icl == ICL_DOM) && (r == IRT_EQ)) {
-	  if (DomEq::post(home,x,y,c) == ES_FAILED)
+	  if (DomEq<double,DoubleScaleView>::post(home,x,y,c) == ES_FAILED)
 	    home->fail();
 	} else {
 	  post_nary<double,DoubleScaleView>(home,x,y,r,c);

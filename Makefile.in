@@ -158,7 +158,7 @@ INTSRC0 = \
 	view/print.cc array.cc bool.cc \
 	regular/reg.cc regular/dfa.cc regular.cc \
 	dom.cc rel.cc element.cc count.cc arithmetic.cc \
-	linear/post.cc linear/dom.cc linear.cc \
+	linear/post.cc linear.cc \
 	branch.cc branch/assign.cc \
 	distinct.cc cumulatives.cc \
 	sortedness.cc gcc.cc	

@@ -553,23 +553,26 @@ namespace Gecode { namespace Int { namespace Linear {
   /**
    * \brief %Propagator for domain-consistent n-ary linear equality
    *
+   * The type \a Val can be either \c double or \c int, defining the
+   * numerical precision during propagation. The types \a View
+   * give the type of the view.
+   *
    * Requires \code #include "int/linear.hh" \endcode
    * \ingroup FuncIntProp
    */
+  template <class Val, class View>
   class DomEq 
-    : public Lin<double,DoubleScaleView,DoubleScaleView,PC_INT_DOM> {
+    : public Lin<Val,View,View,PC_INT_DOM> {
   protected:
-    using Lin<double,DoubleScaleView,DoubleScaleView,PC_INT_DOM>::x;
-    using Lin<double,DoubleScaleView,DoubleScaleView,PC_INT_DOM>::y;
-    using Lin<double,DoubleScaleView,DoubleScaleView,PC_INT_DOM>::c;
+    using Lin<Val,View,View,PC_INT_DOM>::x;
+    using Lin<Val,View,View,PC_INT_DOM>::y;
+    using Lin<Val,View,View,PC_INT_DOM>::c;
 
     /// Constructor for cloning \a p
     DomEq(Space* home, bool share, DomEq& p);
   public:
     /// Constructor for creation
-    DomEq(Space* home, 
-	  ViewArray<DoubleScaleView>& x, ViewArray<DoubleScaleView>& y, 
-	  double c);
+    DomEq(Space* home, ViewArray<View>& x, ViewArray<View>& y, Val c);
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Propagation cost
@@ -577,10 +580,8 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\f$
-    static ExecStatus
-    post(Space* home, 
-	 ViewArray<DoubleScaleView>& x, ViewArray<DoubleScaleView>& y, 
-	 double c);
+    static ExecStatus 
+    post(Space* home, ViewArray<View>& x, ViewArray<View>& y, Val c);
   };
 
   /**
