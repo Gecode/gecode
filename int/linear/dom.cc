@@ -436,7 +436,8 @@ namespace Gecode { namespace Int { namespace Linear {
       if (me_failed(me)) {
 	es = ES_FAILED; goto dispose;
       }
-      if (me != ME_INT_VAL)
+      //      if (me != ME_INT_VAL)
+      if (!x[i].assigned())
 	es = ES_FIX;
     }
     for (int j=m; j--; ) {
@@ -444,7 +445,8 @@ namespace Gecode { namespace Int { namespace Linear {
       if (me_failed(me)) {
 	es = ES_FAILED; goto dispose;
       }
-      if (me != ME_INT_VAL)
+      if (!y[i].assigned())
+	//      if (me != ME_INT_VAL)
 	es = ES_FIX;
     }
     

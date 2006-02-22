@@ -39,11 +39,13 @@ class LinearInt : public IntTest {
 private:
   const int* c;
   const IntRelType irt;
+  const IntConLevel icl;
 public:
   LinearInt(const char* t, 
 	    const IntSet& is,
-	    const int* c0, int n, IntRelType irt0, int cost = 1) 
-    : IntTest(t,n,is,true, cost), c(c0), irt(irt0) {}
+	    const int* c0, int n, IntRelType irt0, IntConLevel icl0,
+	    int cost = 1) 
+    : IntTest(t,n,is, icl0 != ICL_DOM, cost), c(c0), irt(irt0), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     double e = 0.0;
     for (int i=0; i<x.size(); i++)
@@ -54,7 +56,7 @@ public:
     IntArgs ca(x.size());
     for (int i=0; i<x.size(); i++)
       ca[i]=c[i];
-    linear(home, ca, x, irt, 0);
+    linear(home, ca, x, irt, 0, icl);
   }
   virtual void post(Space* home, IntVarArray& x, BoolVar b) {
     IntArgs ca(x.size());
@@ -73,105 +75,122 @@ const int c0[5] = {1,1,1,1,1};
 const int c1[5] = {1,-1,-1,1,-1};
 const int c2[5] = {-2,3,-5,7,-11};
 
-LinearInt _li_000_eq("Linear::Int::Eq::000",d0,c00,1,IRT_EQ);
-LinearInt _li_000_nq("Linear::Int::Nq::000",d0,c00,1,IRT_NQ);
-LinearInt _li_000_lq("Linear::Int::Lq::000",d0,c00,1,IRT_LQ);
-LinearInt _li_000_le("Linear::Int::Le::000",d0,c00,1,IRT_LE);
-LinearInt _li_000_gq("Linear::Int::Gq::000",d0,c00,1,IRT_GQ);
-LinearInt _li_000_gr("Linear::Int::Gr::000",d0,c00,1,IRT_GR);
+LinearInt _li_000_eq_b("Linear::Int::Bnd::Eq::000",d0,c00,1,IRT_EQ,ICL_DEF);
+LinearInt _li_000_nq_b("Linear::Int::Bnd::Nq::000",d0,c00,1,IRT_NQ,ICL_DEF);
+LinearInt _li_000_lq_b("Linear::Int::Bnd::Lq::000",d0,c00,1,IRT_LQ,ICL_DEF);
+LinearInt _li_000_le_b("Linear::Int::Bnd::Le::000",d0,c00,1,IRT_LE,ICL_DEF);
+LinearInt _li_000_gq_b("Linear::Int::Bnd::Gq::000",d0,c00,1,IRT_GQ,ICL_DEF);
+LinearInt _li_000_gr_b("Linear::Int::Bnd::Gr::000",d0,c00,1,IRT_GR,ICL_DEF);
 
-LinearInt _li_001_eq("Linear::Int::Eq::001",d0,c0,1,IRT_EQ);
-LinearInt _li_001_nq("Linear::Int::Nq::001",d0,c0,1,IRT_NQ);
-LinearInt _li_001_lq("Linear::Int::Lq::001",d0,c0,1,IRT_LQ);
-LinearInt _li_001_le("Linear::Int::Le::001",d0,c0,1,IRT_LE);
-LinearInt _li_001_gq("Linear::Int::Gq::001",d0,c0,1,IRT_GQ);
-LinearInt _li_001_gr("Linear::Int::Gr::001",d0,c0,1,IRT_GR);
+LinearInt _li_001_eq_b("Linear::Int::Bnd::Eq::001",d0,c0,1,IRT_EQ,ICL_DEF);
+LinearInt _li_001_nq_b("Linear::Int::Bnd::Nq::001",d0,c0,1,IRT_NQ,ICL_DEF);
+LinearInt _li_001_lq_b("Linear::Int::Bnd::Lq::001",d0,c0,1,IRT_LQ,ICL_DEF);
+LinearInt _li_001_le_b("Linear::Int::Bnd::Le::001",d0,c0,1,IRT_LE,ICL_DEF);
+LinearInt _li_001_gq_b("Linear::Int::Bnd::Gq::001",d0,c0,1,IRT_GQ,ICL_DEF);
+LinearInt _li_001_gr_b("Linear::Int::Bnd::Gr::001",d0,c0,1,IRT_GR,ICL_DEF);
 
-LinearInt _li_002_eq("Linear::Int::Eq::002",d0,c0,2,IRT_EQ);
-LinearInt _li_002_nq("Linear::Int::Nq::002",d0,c0,2,IRT_NQ);
-LinearInt _li_002_lq("Linear::Int::Lq::002",d0,c0,2,IRT_LQ);
-LinearInt _li_002_le("Linear::Int::Le::002",d0,c0,2,IRT_LE);
-LinearInt _li_002_gq("Linear::Int::Gq::002",d0,c0,2,IRT_GQ);
-LinearInt _li_002_gr("Linear::Int::Gr::002",d0,c0,2,IRT_GR);
+LinearInt _li_002_eq_b("Linear::Int::Bnd::Eq::002",d0,c0,2,IRT_EQ,ICL_DEF);
+LinearInt _li_002_nq_b("Linear::Int::Bnd::Nq::002",d0,c0,2,IRT_NQ,ICL_DEF);
+LinearInt _li_002_lq_b("Linear::Int::Bnd::Lq::002",d0,c0,2,IRT_LQ,ICL_DEF);
+LinearInt _li_002_le_b("Linear::Int::Bnd::Le::002",d0,c0,2,IRT_LE,ICL_DEF);
+LinearInt _li_002_gq_b("Linear::Int::Bnd::Gq::002",d0,c0,2,IRT_GQ,ICL_DEF);
+LinearInt _li_002_gr_b("Linear::Int::Bnd::Gr::002",d0,c0,2,IRT_GR,ICL_DEF);
 
-LinearInt _li_003_eq("Linear::Int::Eq::003",d0,c0,3,IRT_EQ);
-LinearInt _li_003_nq("Linear::Int::Nq::003",d0,c0,3,IRT_NQ);
-LinearInt _li_003_lq("Linear::Int::Lq::003",d0,c0,3,IRT_LQ);
-LinearInt _li_003_le("Linear::Int::Le::003",d0,c0,3,IRT_LE);
-LinearInt _li_003_gq("Linear::Int::Gq::003",d0,c0,3,IRT_GQ);
-LinearInt _li_003_gr("Linear::Int::Gr::003",d0,c0,3,IRT_GR);
+LinearInt _li_003_eq_b("Linear::Int::Bnd::Eq::003",d0,c0,3,IRT_EQ,ICL_DEF);
+LinearInt _li_003_nq_b("Linear::Int::Bnd::Nq::003",d0,c0,3,IRT_NQ,ICL_DEF);
+LinearInt _li_003_lq_b("Linear::Int::Bnd::Lq::003",d0,c0,3,IRT_LQ,ICL_DEF);
+LinearInt _li_003_le_b("Linear::Int::Bnd::Le::003",d0,c0,3,IRT_LE,ICL_DEF);
+LinearInt _li_003_gq_b("Linear::Int::Bnd::Gq::003",d0,c0,3,IRT_GQ,ICL_DEF);
+LinearInt _li_003_gr_b("Linear::Int::Bnd::Gr::003",d0,c0,3,IRT_GR,ICL_DEF);
 
-LinearInt _li_004_eq("Linear::Int::Eq::004",d0,c0,4,IRT_EQ, 2);
-LinearInt _li_004_nq("Linear::Int::Nq::004",d0,c0,4,IRT_NQ, 2);
-LinearInt _li_004_lq("Linear::Int::Lq::004",d0,c0,4,IRT_LQ, 2);
-LinearInt _li_004_le("Linear::Int::Le::004",d0,c0,4,IRT_LE, 2);
-LinearInt _li_004_gq("Linear::Int::Gq::004",d0,c0,4,IRT_GQ, 2);
-LinearInt _li_004_gr("Linear::Int::Gr::004",d0,c0,4,IRT_GR, 2);
-
-
-LinearInt _li_012_eq("Linear::Int::Eq::012",d0,c1,2,IRT_EQ);
-LinearInt _li_012_nq("Linear::Int::Nq::012",d0,c1,2,IRT_NQ);
-LinearInt _li_012_lq("Linear::Int::Lq::012",d0,c1,2,IRT_LQ);
-LinearInt _li_012_le("Linear::Int::Le::012",d0,c1,2,IRT_LE);
-LinearInt _li_012_gq("Linear::Int::Gq::012",d0,c1,2,IRT_GQ);
-LinearInt _li_012_gr("Linear::Int::Gr::012",d0,c1,2,IRT_GR);
-
-LinearInt _li_013_eq("Linear::Int::Eq::013",d0,c1,3,IRT_EQ);
-LinearInt _li_013_nq("Linear::Int::Nq::013",d0,c1,3,IRT_NQ);
-LinearInt _li_013_lq("Linear::Int::Lq::013",d0,c1,3,IRT_LQ);
-LinearInt _li_013_le("Linear::Int::Le::013",d0,c1,3,IRT_LE);
-LinearInt _li_013_gq("Linear::Int::Gq::013",d0,c1,3,IRT_GQ);
-LinearInt _li_013_gr("Linear::Int::Gr::013",d0,c1,3,IRT_GR);
-
-LinearInt _li_014_eq("Linear::Int::Eq::014",d0,c1,4,IRT_EQ, 2);
-LinearInt _li_014_nq("Linear::Int::Nq::014",d0,c1,4,IRT_NQ, 2);
-LinearInt _li_014_lq("Linear::Int::Lq::014",d0,c1,4,IRT_LQ, 2);
-LinearInt _li_014_le("Linear::Int::Le::014",d0,c1,4,IRT_LE, 2);
-LinearInt _li_014_gq("Linear::Int::Gq::014",d0,c1,4,IRT_GQ, 2);
-LinearInt _li_014_gr("Linear::Int::Gr::014",d0,c1,4,IRT_GR, 2);
-
-LinearInt _li_015_eq("Linear::Int::Eq::015",d0,c1,5,IRT_EQ, 6);
-LinearInt _li_015_nq("Linear::Int::Nq::015",d0,c1,5,IRT_NQ, 6);
-LinearInt _li_015_lq("Linear::Int::Lq::015",d0,c1,5,IRT_LQ, 6);
-LinearInt _li_015_le("Linear::Int::Le::015",d0,c1,5,IRT_LE, 6);
-LinearInt _li_015_gq("Linear::Int::Gq::015",d0,c1,5,IRT_GQ, 6);
-LinearInt _li_015_gr("Linear::Int::Gr::015",d0,c1,5,IRT_GR, 6);
+LinearInt _li_004_eq_b("Linear::Int::Bnd::Eq::004",d0,c0,4,IRT_EQ,ICL_DEF,2);
+LinearInt _li_004_nq_b("Linear::Int::Bnd::Nq::004",d0,c0,4,IRT_NQ,ICL_DEF,2);
+LinearInt _li_004_lq_b("Linear::Int::Bnd::Lq::004",d0,c0,4,IRT_LQ,ICL_DEF,2);
+LinearInt _li_004_le_b("Linear::Int::Bnd::Le::004",d0,c0,4,IRT_LE,ICL_DEF,2);
+LinearInt _li_004_gq_b("Linear::Int::Bnd::Gq::004",d0,c0,4,IRT_GQ,ICL_DEF,2);
+LinearInt _li_004_gr_b("Linear::Int::Bnd::Gr::004",d0,c0,4,IRT_GR,ICL_DEF,2);
 
 
-LinearInt _li_121_eq("Linear::Int::Eq::121",d1,c2,1,IRT_EQ);
-LinearInt _li_121_nq("Linear::Int::Nq::121",d1,c2,1,IRT_NQ);
-LinearInt _li_121_lq("Linear::Int::Lq::121",d1,c2,1,IRT_LQ);
-LinearInt _li_121_le("Linear::Int::Le::121",d1,c2,1,IRT_LE);
-LinearInt _li_121_gq("Linear::Int::Gq::121",d1,c2,1,IRT_GQ);
-LinearInt _li_121_gr("Linear::Int::Gr::121",d1,c2,1,IRT_GR);
+LinearInt _li_012_eq_b("Linear::Int::Bnd::Eq::012",d0,c1,2,IRT_EQ,ICL_DEF);
+LinearInt _li_012_nq_b("Linear::Int::Bnd::Nq::012",d0,c1,2,IRT_NQ,ICL_DEF);
+LinearInt _li_012_lq_b("Linear::Int::Bnd::Lq::012",d0,c1,2,IRT_LQ,ICL_DEF);
+LinearInt _li_012_le_b("Linear::Int::Bnd::Le::012",d0,c1,2,IRT_LE,ICL_DEF);
+LinearInt _li_012_gq_b("Linear::Int::Bnd::Gq::012",d0,c1,2,IRT_GQ,ICL_DEF);
+LinearInt _li_012_gr_b("Linear::Int::Bnd::Gr::012",d0,c1,2,IRT_GR,ICL_DEF);
 
-LinearInt _li_122_eq("Linear::Int::Eq::122",d1,c2,2,IRT_EQ);
-LinearInt _li_122_nq("Linear::Int::Nq::122",d1,c2,2,IRT_NQ);
-LinearInt _li_122_lq("Linear::Int::Lq::122",d1,c2,2,IRT_LQ);
-LinearInt _li_122_le("Linear::Int::Le::122",d1,c2,2,IRT_LE);
-LinearInt _li_122_gq("Linear::Int::Gq::122",d1,c2,2,IRT_GQ);
-LinearInt _li_122_gr("Linear::Int::Gr::122",d1,c2,2,IRT_GR);
+LinearInt _li_013_eq_b("Linear::Int::Bnd::Eq::013",d0,c1,3,IRT_EQ,ICL_DEF);
+LinearInt _li_013_nq_b("Linear::Int::Bnd::Nq::013",d0,c1,3,IRT_NQ,ICL_DEF);
+LinearInt _li_013_lq_b("Linear::Int::Bnd::Lq::013",d0,c1,3,IRT_LQ,ICL_DEF);
+LinearInt _li_013_le_b("Linear::Int::Bnd::Le::013",d0,c1,3,IRT_LE,ICL_DEF);
+LinearInt _li_013_gq_b("Linear::Int::Bnd::Gq::013",d0,c1,3,IRT_GQ,ICL_DEF);
+LinearInt _li_013_gr_b("Linear::Int::Bnd::Gr::013",d0,c1,3,IRT_GR,ICL_DEF);
 
-LinearInt _li_123_eq("Linear::Int::Eq::123",d1,c2,3,IRT_EQ);
-LinearInt _li_123_nq("Linear::Int::Nq::123",d1,c2,3,IRT_NQ);
-LinearInt _li_123_lq("Linear::Int::Lq::123",d1,c2,3,IRT_LQ);
-LinearInt _li_123_le("Linear::Int::Le::123",d1,c2,3,IRT_LE);
-LinearInt _li_123_gq("Linear::Int::Gq::123",d1,c2,3,IRT_GQ);
-LinearInt _li_123_gr("Linear::Int::Gr::123",d1,c2,3,IRT_GR);
+LinearInt _li_014_eq_b("Linear::Int::Bnd::Eq::014",d0,c1,4,IRT_EQ,ICL_DEF,2);
+LinearInt _li_014_nq_b("Linear::Int::Bnd::Nq::014",d0,c1,4,IRT_NQ,ICL_DEF,2);
+LinearInt _li_014_lq_b("Linear::Int::Bnd::Lq::014",d0,c1,4,IRT_LQ,ICL_DEF,2);
+LinearInt _li_014_le_b("Linear::Int::Bnd::Le::014",d0,c1,4,IRT_LE,ICL_DEF,2);
+LinearInt _li_014_gq_b("Linear::Int::Bnd::Gq::014",d0,c1,4,IRT_GQ,ICL_DEF,2);
+LinearInt _li_014_gr_b("Linear::Int::Bnd::Gr::014",d0,c1,4,IRT_GR,ICL_DEF,2);
 
-LinearInt _li_124_eq("Linear::Int::Eq::124",d1,c2,4,IRT_EQ, 3);
-LinearInt _li_124_nq("Linear::Int::Nq::124",d1,c2,4,IRT_NQ, 3);
-LinearInt _li_124_lq("Linear::Int::Lq::124",d1,c2,4,IRT_LQ, 3);
-LinearInt _li_124_le("Linear::Int::Le::124",d1,c2,4,IRT_LE, 3);
-LinearInt _li_124_gq("Linear::Int::Gq::124",d1,c2,4,IRT_GQ, 3);
-LinearInt _li_124_gr("Linear::Int::Gr::124",d1,c2,4,IRT_GR, 3);
+LinearInt _li_015_eq_b("Linear::Int::Bnd::Eq::015",d0,c1,5,IRT_EQ,ICL_DEF,6);
+LinearInt _li_015_nq_b("Linear::Int::Bnd::Nq::015",d0,c1,5,IRT_NQ,ICL_DEF,6);
+LinearInt _li_015_lq_b("Linear::Int::Bnd::Lq::015",d0,c1,5,IRT_LQ,ICL_DEF,6);
+LinearInt _li_015_le_b("Linear::Int::Bnd::Le::015",d0,c1,5,IRT_LE,ICL_DEF,6);
+LinearInt _li_015_gq_b("Linear::Int::Bnd::Gq::015",d0,c1,5,IRT_GQ,ICL_DEF,6);
+LinearInt _li_015_gr_b("Linear::Int::Bnd::Gr::015",d0,c1,5,IRT_GR,ICL_DEF,6);
 
-LinearInt _li_125_eq("Linear::Int::Eq::125",d1,c2,5,IRT_EQ, 6);
-LinearInt _li_125_nq("Linear::Int::Nq::125",d1,c2,5,IRT_NQ, 6);
-LinearInt _li_125_lq("Linear::Int::Lq::125",d1,c2,5,IRT_LQ, 6);
-LinearInt _li_125_le("Linear::Int::Le::125",d1,c2,5,IRT_LE, 6);
-LinearInt _li_125_gq("Linear::Int::Gq::125",d1,c2,5,IRT_GQ, 6);
-LinearInt _li_125_gr("Linear::Int::Gr::125",d1,c2,5,IRT_GR, 6);
+
+LinearInt _li_121_eq_b("Linear::Int::Bnd::Eq::121",d1,c2,1,IRT_EQ,ICL_DEF);
+LinearInt _li_121_nq_b("Linear::Int::Bnd::Nq::121",d1,c2,1,IRT_NQ,ICL_DEF);
+LinearInt _li_121_lq_b("Linear::Int::Bnd::Lq::121",d1,c2,1,IRT_LQ,ICL_DEF);
+LinearInt _li_121_le_b("Linear::Int::Bnd::Le::121",d1,c2,1,IRT_LE,ICL_DEF);
+LinearInt _li_121_gq_b("Linear::Int::Bnd::Gq::121",d1,c2,1,IRT_GQ,ICL_DEF);
+LinearInt _li_121_gr_b("Linear::Int::Bnd::Gr::121",d1,c2,1,IRT_GR,ICL_DEF);
+
+LinearInt _li_122_eq_b("Linear::Int::Bnd::Eq::122",d1,c2,2,IRT_EQ,ICL_DEF);
+LinearInt _li_122_nq_b("Linear::Int::Bnd::Nq::122",d1,c2,2,IRT_NQ,ICL_DEF);
+LinearInt _li_122_lq_b("Linear::Int::Bnd::Lq::122",d1,c2,2,IRT_LQ,ICL_DEF);
+LinearInt _li_122_le_b("Linear::Int::Bnd::Le::122",d1,c2,2,IRT_LE,ICL_DEF);
+LinearInt _li_122_gq_b("Linear::Int::Bnd::Gq::122",d1,c2,2,IRT_GQ,ICL_DEF);
+LinearInt _li_122_gr_b("Linear::Int::Bnd::Gr::122",d1,c2,2,IRT_GR,ICL_DEF);
+
+LinearInt _li_123_eq_b("Linear::Int::Bnd::Eq::123",d1,c2,3,IRT_EQ,ICL_DEF);
+LinearInt _li_123_nq_b("Linear::Int::Bnd::Nq::123",d1,c2,3,IRT_NQ,ICL_DEF);
+LinearInt _li_123_lq_b("Linear::Int::Bnd::Lq::123",d1,c2,3,IRT_LQ,ICL_DEF);
+LinearInt _li_123_le_b("Linear::Int::Bnd::Le::123",d1,c2,3,IRT_LE,ICL_DEF);
+LinearInt _li_123_gq_b("Linear::Int::Bnd::Gq::123",d1,c2,3,IRT_GQ,ICL_DEF);
+LinearInt _li_123_gr_b("Linear::Int::Bnd::Gr::123",d1,c2,3,IRT_GR,ICL_DEF);
+
+LinearInt _li_124_eq_b("Linear::Int::Bnd::Eq::124",d1,c2,4,IRT_EQ,ICL_DEF,3);
+LinearInt _li_124_nq_b("Linear::Int::Bnd::Nq::124",d1,c2,4,IRT_NQ,ICL_DEF,3);
+LinearInt _li_124_lq_b("Linear::Int::Bnd::Lq::124",d1,c2,4,IRT_LQ,ICL_DEF,3);
+LinearInt _li_124_le_b("Linear::Int::Bnd::Le::124",d1,c2,4,IRT_LE,ICL_DEF,3);
+LinearInt _li_124_gq_b("Linear::Int::Bnd::Gq::124",d1,c2,4,IRT_GQ,ICL_DEF,3);
+LinearInt _li_124_gr_b("Linear::Int::Bnd::Gr::124",d1,c2,4,IRT_GR,ICL_DEF,3);
+
+LinearInt _li_125_eq_b("Linear::Int::Bnd::Eq::125",d1,c2,5,IRT_EQ,ICL_DEF,6);
+LinearInt _li_125_nq_b("Linear::Int::Bnd::Nq::125",d1,c2,5,IRT_NQ,ICL_DEF,6);
+LinearInt _li_125_lq_b("Linear::Int::Bnd::Lq::125",d1,c2,5,IRT_LQ,ICL_DEF,6);
+LinearInt _li_125_le_b("Linear::Int::Bnd::Le::125",d1,c2,5,IRT_LE,ICL_DEF,6);
+LinearInt _li_125_gq_b("Linear::Int::Bnd::Gq::125",d1,c2,5,IRT_GQ,ICL_DEF,6);
+LinearInt _li_125_gr_b("Linear::Int::Bnd::Gr::125",d1,c2,5,IRT_GR,ICL_DEF,6);
+
+
+
+LinearInt _li_000_eq_d("Linear::Int::Dom::Eq::000",d0,c00,1,IRT_EQ,ICL_DOM);
+LinearInt _li_001_eq_d("Linear::Int::Dom::Eq::001",d0,c0,1,IRT_EQ,ICL_DOM);
+LinearInt _li_002_eq_d("Linear::Int::Dom::Eq::002",d0,c0,2,IRT_EQ,ICL_DOM);
+LinearInt _li_003_eq_d("Linear::Int::Dom::Eq::003",d0,c0,3,IRT_EQ,ICL_DOM);
+LinearInt _li_004_eq_d("Linear::Int::Dom::Eq::004",d0,c0,4,IRT_EQ,ICL_DOM,2);
+LinearInt _li_012_eq_d("Linear::Int::Dom::Eq::012",d0,c1,2,IRT_EQ,ICL_DOM);
+LinearInt _li_013_eq_d("Linear::Int::Dom::Eq::013",d0,c1,3,IRT_EQ,ICL_DOM);
+LinearInt _li_014_eq_d("Linear::Int::Dom::Eq::014",d0,c1,4,IRT_EQ,ICL_DOM,2);
+LinearInt _li_015_eq_d("Linear::Int::Dom::Eq::015",d0,c1,5,IRT_EQ,ICL_DOM,6);
+LinearInt _li_121_eq_d("Linear::Int::Dom::Eq::121",d1,c2,1,IRT_EQ,ICL_DOM);
+LinearInt _li_122_eq_d("Linear::Int::Dom::Eq::122",d1,c2,2,IRT_EQ,ICL_DOM);
+LinearInt _li_123_eq_d("Linear::Int::Dom::Eq::123",d1,c2,3,IRT_EQ,ICL_DOM);
+LinearInt _li_124_eq_d("Linear::Int::Dom::Eq::124",d1,c2,4,IRT_EQ,ICL_DOM,3);
+LinearInt _li_125_eq_d("Linear::Int::Dom::Eq::125",d1,c2,5,IRT_EQ,ICL_DOM,6);
 
 
 IntSet db(0,1);
