@@ -421,7 +421,6 @@ namespace Gecode { namespace Int { namespace Linear {
 	j--;
       }
     prev_i:
-      assert((j == 0) && (i == n));
       // Try iterating to next assignment: positive views
       while (i>0) {
 	if (xp[i-1].adjust(d)) goto next_i;
@@ -445,7 +444,7 @@ namespace Gecode { namespace Int { namespace Linear {
       if (me_failed(me)) {
 	es = ES_FAILED; goto dispose;
       }
-      if (!y[i].assigned())
+      if (!y[j].assigned())
 	//      if (me != ME_INT_VAL)
 	es = ES_FIX;
     }
