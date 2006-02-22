@@ -21,6 +21,7 @@
 
 #include "int/linear.hh"
 #include "iter.hh"
+#include "support/sort.hh"
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -146,7 +147,7 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline void 
   SupportSet::init(unsigned int n) {
     bits = Memory::bmalloc<unsigned int>((n / bpui) + 1);
-    for (int i = (n / bpui) + 1; i--; )
+    for (unsigned int i = (n / bpui) + 1; i--; )
       bits[i] = 0;
   }
   forceinline void 
@@ -188,13 +189,27 @@ namespace Gecode { namespace Int { namespace Linear {
 
   ModEvent 
   SupportSet::tell(Space* home, IntView x) {
-    /*
-	ExecStatus es = ES_OK;
-      if (size == x.size())
-	return ES_OK;
-      if (size == 0)
-	return ES_FAILED;
-      */
+    const unsigned int none = 0;
+    const unsigned int full = ~static_cast<unsigned int>(0);
+    unsigned int n = x.size() / bpui;
+    if (bits[0] == none) {
+      // Maybe all bits are zero
+      for (unsigned int i=n+1; i-- > 1; )
+	if (bits[i] != none)
+	  goto tell;
+      return ME_INT_FAILED;
+    }
+    if (bits[0] == full) {
+      // Maybe all bits are one
+      for (unsigned int i=n; i-- > 1; )
+	if (bits[i] != full)
+	  goto tell;
+      for (unsigned int i=n*bpui; i<x.size(); i++)
+	if (!supported(i))
+	  goto tell;
+      return ME_INT_NONE;
+    }
+  tell:
     ResultIter i;
     i.init(this,x);
     Iter::Values::ToRanges<ResultIter> r;
@@ -390,6 +405,7 @@ namespace Gecode { namespace Int { namespace Linear {
       }
     }
     
+    unsigned int iter = 0;
     // Collect support information by iterating assignments
     {
       // Force reset of all iterators in first round
@@ -408,6 +424,7 @@ namespace Gecode { namespace Int { namespace Linear {
 	if (!yp[j].reset(d)) goto prev_j;
 	j++;
       }
+      iter++;
       // Check whether current assignment is solution
       if (d == 0) {
 	// Record support
@@ -427,7 +444,8 @@ namespace Gecode { namespace Int { namespace Linear {
 	i--;
       }
     }
-
+    
+    //    std::cout << iter << ", ";
     // Tell back new variable domains
     ExecStatus es = ES_SUBSUMED;
     for (int i=n; i--; ) {
