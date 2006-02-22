@@ -521,10 +521,10 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief %Propagator for bounds-consistent n-ary linear equality
    *
    * The type \a Val can be either \c double or \c int, defining the
-   * numerical precision during propagation. The types \a A, \a B, 
-   * and \a C give the types of the views.
+   * numerical precision during propagation. The types \a P and \a N
+   * give the types of the views.
    *
-   * The propagation condition \a pc refers to all three views.
+   * The propagation condition \a pc refers to both views.
    *
    * Requires \code #include "int/linear.hh" \endcode
    * \ingroup FuncIntProp
@@ -551,13 +551,46 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
+   * \brief %Propagator for domain-consistent n-ary linear equality
+   *
+   * Requires \code #include "int/linear.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  class DomEq 
+    : public Lin<double,DoubleScaleView,DoubleScaleView,PC_INT_DOM> {
+  protected:
+    using Lin<double,DoubleScaleView,DoubleScaleView,PC_INT_DOM>::x;
+    using Lin<double,DoubleScaleView,DoubleScaleView,PC_INT_DOM>::y;
+    using Lin<double,DoubleScaleView,DoubleScaleView,PC_INT_DOM>::c;
+
+    /// Constructor for cloning \a p
+    DomEq(Space* home, bool share, DomEq& p);
+  public:
+    /// Constructor for creation
+    DomEq(Space* home, 
+	  ViewArray<DoubleScaleView>& x, ViewArray<DoubleScaleView>& y, 
+	  double c);
+    /// Create copy during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Propagation cost
+    virtual PropCost cost(void) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\f$
+    static ExecStatus
+    post(Space* home, 
+	 ViewArray<DoubleScaleView>& x, ViewArray<DoubleScaleView>& y, 
+	 double c);
+  };
+
+  /**
    * \brief %Propagator for reified bounds-consistent n-ary linear equality
    *
    * The type \a Val can be either \c double or \c int, defining the
-   * numerical precision during propagation. The types \a A, \a B, 
-   * and \a C give the types of the views.
+   * numerical precision during propagation. The types \a P and \a N
+   * give the types of the views.
    *
-   * The propagation condition \a pc refers to all three views.
+   * The propagation condition \a pc refers to both views.
    *
    * Requires \code #include "int/linear.hh" \endcode
    * \ingroup FuncIntProp
@@ -588,10 +621,10 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief %Propagator for bounds-consistent n-ary linear disequality
    *
    * The type \a Val can be either \c double or \c int, defining the
-   * numerical precision during propagation. The types \a A, \a B, 
-   * and \a C give the types of the views.
+   * numerical precision during propagation. The types \a P and \a N
+   * give the types of the views.
    *
-   * The propagation condition \a pc refers to all three views.
+   * The propagation condition \a pc refers to both views.
    *
    * Requires \code #include "int/linear.hh" \endcode
    * \ingroup FuncIntProp
@@ -621,10 +654,10 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief %Propagator for bounds-consistent n-ary linear less or equal
    *
    * The type \a Val can be either \c double or \c int, defining the
-   * numerical precision during propagation. The types \a A, \a B, 
-   * and \a C give the types of the views.
+   * numerical precision during propagation. The types \a P and \a N
+   * give the types of the views.
    *
-   * The propagation condition \a pc refers to all three views.
+   * The propagation condition \a pc refers to both views.
    *
    * Requires \code #include "int/linear.hh" \endcode
    * \ingroup FuncIntProp
@@ -654,10 +687,10 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief %Propagator for reified bounds-consistent n-ary linear less or equal
    *
    * The type \a Val can be either \c double or \c int, defining the
-   * numerical precision during propagation. The types \a A, \a B, 
-   * and \a C give the types of the views.
+   * numerical precision during propagation. The types \a P and \a N
+   * give the types of the views.
    *
-   * The propagation condition \a pc refers to all three views.
+   * The propagation condition \a pc refers to both views.
    *
    * Requires \code #include "int/linear.hh" \endcode
    * \ingroup FuncIntProp
@@ -687,6 +720,7 @@ namespace Gecode { namespace Int { namespace Linear {
 }}}
 
 #include "int/linear/nary.icc"
+#include "int/linear/dom.icc"
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -884,7 +918,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space* home, Term t[], int n, IntRelType r, int c);
+  post(Space* home, Term t[], int n, IntRelType r, int c, IntConLevel=ICL_DEF);
 
   /**
    * \brief Post reified propagator for linear constraint

@@ -32,18 +32,18 @@ namespace Gecode {
 
   void
   linear(Space* home,
-	 const IntVarArgs& x, IntRelType r, int c, IntConLevel) {
+	 const IntVarArgs& x, IntRelType r, int c, IntConLevel icl) {
     if (home->failed()) return;
     GECODE_AUTOARRAY(Linear::Term, t, x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
-    Linear::post(home,t,x.size(),r,c);
+    Linear::post(home,t,x.size(),r,c,icl);
   }
 
   void
   linear(Space* home,
-	 const IntVarArgs& x, IntRelType r, int c, BoolVar b, IntConLevel) {
+	 const IntVarArgs& x, IntRelType r, int c, BoolVar b, IntConLevel icl) {
     if (home->failed()) return;
     GECODE_AUTOARRAY(Linear::Term, t, x.size());
     for (int i = x.size(); i--; ) {
@@ -55,7 +55,7 @@ namespace Gecode {
   void
   linear(Space* home,
 	 const IntArgs& a, const IntVarArgs& x, IntRelType r, int c, 
-	 IntConLevel) {
+	 IntConLevel icl) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) return;
@@ -63,7 +63,7 @@ namespace Gecode {
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
-    Linear::post(home,t,x.size(),r,c);
+    Linear::post(home,t,x.size(),r,c,icl);
   }
 
   void
@@ -82,14 +82,14 @@ namespace Gecode {
 
   void
   linear(Space* home,
-	 const IntVarArgs& x, IntRelType r, IntVar y, IntConLevel) {
+	 const IntVarArgs& x, IntRelType r, IntVar y, IntConLevel icl) {
     if (home->failed()) return;
     GECODE_AUTOARRAY(Linear::Term, t, x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
     t[x.size()].a=-1; t[x.size()].x=y;
-    Linear::post(home,t,x.size()+1,r,0);
+    Linear::post(home,t,x.size()+1,r,0,icl);
   }
 
   void
@@ -108,7 +108,7 @@ namespace Gecode {
   void
   linear(Space* home,
 	 const IntArgs& a, const IntVarArgs& x, IntRelType r, IntVar y, 
-	 IntConLevel) {
+	 IntConLevel icl) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) return;
@@ -117,7 +117,7 @@ namespace Gecode {
       t[i].a=a[i]; t[i].x=x[i];
     }
     t[x.size()].a=-1; t[x.size()].x=y;
-    Linear::post(home,t,x.size()+1,r,0);
+    Linear::post(home,t,x.size()+1,r,0,icl);
   }
 
   void
@@ -134,6 +134,7 @@ namespace Gecode {
     t[x.size()].a=-1; t[x.size()].x=y;
     Linear::post(home,t,x.size()+1,r,0,b);
   }
+
 
   void
   linear(Space* home, const BoolVarArgs& x, IntRelType r, int c,

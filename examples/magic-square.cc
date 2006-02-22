@@ -51,8 +51,8 @@ public:
     MiniModel::Matrix<IntVarArray> m(x, n, n);
 
     for (int i = n; i--; ) {
-	linear(this, m.row(i), IRT_EQ, s);
-	linear(this, m.col(i), IRT_EQ, s);
+	linear(this, m.row(i), IRT_EQ, s, opt.icl);
+	linear(this, m.col(i), IRT_EQ, s, opt.icl);
     }
     // Both diagonals must have sum s
     {
@@ -62,8 +62,8 @@ public:
 	d1y[i] = m(i,i);
 	d2y[i] = m(n-i-1,i);
       }
-      linear(this, d1y, IRT_EQ, s);
-      linear(this, d2y, IRT_EQ, s);
+      linear(this, d1y, IRT_EQ, s, opt.icl);
+      linear(this, d2y, IRT_EQ, s, opt.icl);
     }
 
     // All fields must be distinct

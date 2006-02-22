@@ -114,13 +114,13 @@ namespace Gecode {
       const LinExpr& operator=(const LinExpr& e);
       /// Post propagator
       GECODE_MINIMODEL_EXPORT
-      void post(Space* home, IntRelType irt) const;
+      void post(Space* home, IntRelType irt, IntConLevel icl) const;
       /// Post reified propagator
       GECODE_MINIMODEL_EXPORT
       void post(Space* home, IntRelType irt, const BoolVar& b) const;
       /// Post propagator and return variable for value
       GECODE_MINIMODEL_EXPORT
-      IntVar post(Space* home) const;
+      IntVar post(Space* home, IntConLevel icl) const;
       /// Destructor
       ~LinExpr(void);
     };
@@ -144,7 +144,7 @@ namespace Gecode {
       /// Create linear relation for integer \a l and expression \a r
       LinRel(int l, IntRelType irt, const LinExpr& r);
       /// Post propagator for relation (if \a t is false for negated relation)
-      void post(Space* home, bool t=true) const;
+      void post(Space* home, bool t, IntConLevel icl) const;
       /// Post refied propagator for relation
       void post(Space* home, const BoolVar& b) const;
     };
@@ -461,23 +461,31 @@ namespace Gecode {
    */
   //@{
   /// Post linear expression and return its value
-  IntVar post(Space* home, const MiniModel::LinExpr& e);
+  IntVar post(Space* home, const MiniModel::LinExpr& e, 
+	      IntConLevel icl=ICL_DEF);
   /// Post linear expression (special case for variable) and return its value
-  IntVar post(Space* home, const IntVar& x);
+  IntVar post(Space* home, const IntVar& x,
+	      IntConLevel icl=ICL_DEF);
   /// Post linear expression (special case for constant) and return its value
-  IntVar post(Space* home, int n);
+  IntVar post(Space* home, int n,
+	      IntConLevel icl=ICL_DEF);
 
   /// Post linear relation
-  void post(Space* home, const MiniModel::LinRel& r);
+  void post(Space* home, const MiniModel::LinRel& r,
+	    IntConLevel icl=ICL_DEF);
   /// Make it work for special integer only-case
-  void post(Space* home, bool r);
+  void post(Space* home, bool r,
+	    IntConLevel icl=ICL_DEF);
 
   /// Post Boolean expression and return its value
-  BoolVar post(Space* home, const MiniModel::BoolExpr& e);
+  BoolVar post(Space* home, const MiniModel::BoolExpr& e,
+	       IntConLevel icl=ICL_DEF);
   /// Post Boolean expression (special case for variable) and return its value
-  BoolVar post(Space* home, const BoolVar& b);
+  BoolVar post(Space* home, const BoolVar& b,
+	       IntConLevel icl=ICL_DEF);
   /// Post Boolean relation
-  void post(Space* home, const MiniModel::BoolRel& r);
+  void post(Space* home, const MiniModel::BoolRel& r,
+	    IntConLevel icl=ICL_DEF);
   //@}
   
 }

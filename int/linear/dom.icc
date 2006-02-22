@@ -1,0 +1,37 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2006
+ *
+ *  Last modified:
+ *     $Date: 2005-11-04 15:30:42 +0100 (Fri, 04 Nov 2005) $ by $Author: schulte $
+ *     $Revision: 2499 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Linear {
+
+  inline
+  DomEq::DomEq(Space* home,
+	       ViewArray<DoubleScaleView >& x, 
+	       ViewArray<DoubleScaleView >& y, 
+	       double c)
+    : Lin<double,DoubleScaleView,DoubleScaleView,PC_INT_DOM>(home,x,y,c) {}
+
+
+  forceinline
+  DomEq::DomEq(Space* home, bool share, DomEq& p) 
+    : Lin<double,DoubleScaleView,DoubleScaleView,PC_INT_DOM>(home,share,p) {}
+
+}}}
+
