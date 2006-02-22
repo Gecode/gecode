@@ -134,54 +134,18 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
 
-  /*
-   * Bound consistent linear equation
-   *
-   */
-
-  template <class Val, class P, class N>
-  forceinline
-  Eq<Val,P,N>::Eq(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c)
-    : Lin<Val,P,N,PC_INT_BND>(home,x,y,c) {}
-
   template <class Val, class P, class N>
   ExecStatus
-  Eq<Val,P,N>::post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c) {
-    ViewArray<NoView> nva;
-    if (y.size() == 0) {
-      (void) new (home) Eq<Val,P,NoView>(home,x,nva,c);
-    } else if (x.size() == 0) {
-      (void) new (home) Eq<Val,N,NoView>(home,y,nva,-c);
-    } else {
-      (void) new (home) Eq<Val,P,N>(home,x,y,c);
-    }
-    return ES_OK;
-  }
-
-
-  template <class Val, class P, class N>
-  forceinline
-  Eq<Val,P,N>::Eq(Space* home, bool share, Eq<Val,P,N>& p)
-    : Lin<Val,P,N,PC_INT_BND>(home,share,p) {}
-
-  template <class Val, class P, class N>
-  Actor*
-  Eq<Val,P,N>::copy(Space* home, bool share) {
-    return new (home) Eq<Val,P,N>(home,share,*this);
-  }
-
-
-  template <class Val, class P, class N>
-  ExecStatus
-  Eq<Val,P,N>::propagate(Space* home) {
+  prop_bnd(const Propagator* p, Space* home,
+	   ViewArray<P>& x, ViewArray<N>& y, Val& c) {
     // Eliminate singletons
     Val sl = 0;
     Val su = 0;
 
-    bounds_p<Val,P>(this, x, c, sl, su);
-    bounds_n<Val,N>(this, y, c, sl, su);
+    bounds_p<Val,P>(p, x, c, sl, su);
+    bounds_n<Val,N>(p, y, c, sl, su);
 
-    if ((IntView::pme(this) == ME_INT_VAL) && ((x.size() + y.size()) <= 1)) {
+    if ((IntView::pme(p) == ME_INT_VAL) && ((x.size() + y.size()) <= 1)) {
       if (x.size() == 1) {
 	GECODE_ME_CHECK(x[0].eq(home,c)); return ES_SUBSUMED;
       }
@@ -252,6 +216,49 @@ namespace Gecode { namespace Int { namespace Linear {
     } while (mod);
 
     return (sl == su) ? ES_SUBSUMED : ES_FIX;
+  }
+
+  /*
+   * Bound consistent linear equation
+   *
+   */
+
+  template <class Val, class P, class N>
+  forceinline
+  Eq<Val,P,N>::Eq(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c)
+    : Lin<Val,P,N,PC_INT_BND>(home,x,y,c) {}
+
+  template <class Val, class P, class N>
+  ExecStatus
+  Eq<Val,P,N>::post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c) {
+    ViewArray<NoView> nva;
+    if (y.size() == 0) {
+      (void) new (home) Eq<Val,P,NoView>(home,x,nva,c);
+    } else if (x.size() == 0) {
+      (void) new (home) Eq<Val,N,NoView>(home,y,nva,-c);
+    } else {
+      (void) new (home) Eq<Val,P,N>(home,x,y,c);
+    }
+    return ES_OK;
+  }
+
+
+  template <class Val, class P, class N>
+  forceinline
+  Eq<Val,P,N>::Eq(Space* home, bool share, Eq<Val,P,N>& p)
+    : Lin<Val,P,N,PC_INT_BND>(home,share,p) {}
+
+  template <class Val, class P, class N>
+  Actor*
+  Eq<Val,P,N>::copy(Space* home, bool share) {
+    return new (home) Eq<Val,P,N>(home,share,*this);
+  }
+
+
+  template <class Val, class P, class N>
+  ExecStatus
+  Eq<Val,P,N>::propagate(Space* home) {
+    return prop_bnd<Val,P,N>(this,home,x,y,c);
   }
 
   /*

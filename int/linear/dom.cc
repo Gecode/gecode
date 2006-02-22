@@ -367,7 +367,9 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   PropCost 
   DomEq::cost(void) const {
-    return PC_CRAZY_HI;
+    return (DoubleScaleView::pme(this) != ME_INT_DOM)
+      ? cost_hi(x.size()+y.size(),PC_LINEAR_LO)
+      : cost_hi(x.size()+y.size(),PC_CRAZY_HI);
   }
   
   ExecStatus 
@@ -381,6 +383,14 @@ namespace Gecode { namespace Int { namespace Linear {
    
   ExecStatus 
   DomEq::propagate(Space* home) {
+    if (DoubleScaleView::pme(this) != ME_INT_DOM) {
+      ExecStatus es = prop_bnd<double,DoubleScaleView,DoubleScaleView>(this,home,x,y,c);
+    
+      if ((es == ES_SUBSUMED) || (es == ES_FAILED))
+	return es;
+      return ES_FIX_PARTIAL(DoubleScaleView::pme(ME_INT_DOM));
+    }
+
     // Value of equation for partial assignment
     double d = -c;
 
@@ -405,7 +415,6 @@ namespace Gecode { namespace Int { namespace Linear {
       }
     }
     
-    unsigned int iter = 0;
     // Collect support information by iterating assignments
     {
       // Force reset of all iterators in first round
@@ -424,7 +433,6 @@ namespace Gecode { namespace Int { namespace Linear {
 	if (!yp[j].reset(d)) goto prev_j;
 	j++;
       }
-      iter++;
       // Check whether current assignment is solution
       if (d == 0) {
 	// Record support
@@ -445,7 +453,6 @@ namespace Gecode { namespace Int { namespace Linear {
       }
     }
     
-    //    std::cout << iter << ", ";
     // Tell back new variable domains
     ExecStatus es = ES_SUBSUMED;
     for (int i=n; i--; ) {
@@ -453,7 +460,6 @@ namespace Gecode { namespace Int { namespace Linear {
       if (me_failed(me)) {
 	es = ES_FAILED; goto dispose;
       }
-      //      if (me != ME_INT_VAL)
       if (!x[i].assigned())
 	es = ES_FIX;
     }
@@ -463,16 +469,13 @@ namespace Gecode { namespace Int { namespace Linear {
 	es = ES_FAILED; goto dispose;
       }
       if (!y[j].assigned())
-	//      if (me != ME_INT_VAL)
 	es = ES_FIX;
     }
     
     // Release memory
   dispose:
-    for (int i=n; i--; )
-      xp[i].dispose();
-    for (int j=m; j--; )
-      yp[j].dispose();
+    for (int i=n; i--; ) xp[i].dispose();
+    for (int j=m; j--; ) yp[j].dispose();
     return es;
   }
     
