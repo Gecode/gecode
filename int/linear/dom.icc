@@ -507,3 +507,4 @@ namespace Gecode { namespace Int { namespace Linear {
     
 }}}
 
+// STATISTICS: int-prop
