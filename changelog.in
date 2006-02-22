@@ -51,8 +51,16 @@ Info:		Minor maintenance release
 Module: int
 What:   bug
 Rank:   minor
+Bug:	30
 [DESCRIPTION]
-Fixed subsumtion detection for regular.
+Fixed fixpoint detection for ternary min and max.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed subsumtion detection for regular with multiple variable occurences.
 
 [ENTRY]
 Module: int

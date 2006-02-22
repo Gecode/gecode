@@ -51,14 +51,25 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return new (home) Max<View>(home,share,*this);
   }
 
+  /// Performs \a TELL operation and sets \a mod, if modified
+#define GECODE_CM(TELL)			        \
+{ 						\
+  ModEvent me = (TELL);				\
+  if (me_failed(me))   return ES_FAILED;	\
+  if (me_modified(me)) mod = true;		\
+}
+
   template <class View>
   ExecStatus
   Max<View>::propagate(Space* home) {
-    GECODE_ME_CHECK(x2.lq(home,std::max(x0.max(),x1.max())));
-    GECODE_ME_CHECK(x2.gq(home,std::max(x0.min(),x1.min())));
-    ExecStatus es = (x0.modified() || x1.modified()) ? ES_NOFIX : ES_FIX;
-    GECODE_ME_CHECK(x0.lq(home,x2.max()));
-    GECODE_ME_CHECK(x1.lq(home,x2.max()));
+    bool mod = false;
+    do {
+      mod = false;
+      GECODE_CM(x2.lq(home,std::max(x0.max(),x1.max())));
+      GECODE_CM(x2.gq(home,std::max(x0.min(),x1.min())));
+      GECODE_CM(x0.lq(home,x2.max()));
+      GECODE_CM(x1.lq(home,x2.max()));
+    } while (mod);
     if (x0.max() <= x1.min()) {
       GECODE_ES_CHECK(Rel::EqBnd<View>::post(home,x1,x2)); 
       return ES_SUBSUMED;
@@ -67,9 +78,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_ES_CHECK(Rel::EqBnd<View>::post(home,x0,x2)); 
       return ES_SUBSUMED;
     }
-    return x0.assigned() && x1.assigned() && x2.assigned() ? ES_SUBSUMED : es;
+    return x0.assigned() && x1.assigned() && x2.assigned() ? ES_SUBSUMED : ES_FIX;
   }
 
+#undef GECODE_CM
 
 
 
