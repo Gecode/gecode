@@ -58,11 +58,11 @@ namespace Gecode {
     }
 
     forceinline void
-    LinRel::post(Space* home, bool t) const {
+    LinRel::post(Space* home, bool t, IntConLevel icl) const {
       if (t) {
-	e.post(home,irt);
+	e.post(home,irt,icl);
       } else {
-	e.post(home,neg(irt));
+	e.post(home,neg(irt),icl);
       }
     }
     
@@ -184,12 +184,12 @@ namespace Gecode {
    */
 
   forceinline void 
-  post(Space* home, const MiniModel::LinRel& r) {
+  post(Space* home, const MiniModel::LinRel& r, IntConLevel icl) {
     if (home->failed()) return;
-    r.post(home);
+    r.post(home,true,icl);
   }
   forceinline void 
-  post(Space* home, bool r) {
+  post(Space* home, bool r, IntConLevel) {
     if (home->failed()) return;
     if (!r)
       home->fail();

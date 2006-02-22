@@ -57,10 +57,10 @@ namespace Gecode {
     }
 
     void
-    LinExpr::post(Space* home, IntRelType irt) const {
+    LinExpr::post(Space* home, IntRelType irt, IntConLevel icl) const {
       GECODE_AUTOARRAY(Int::Linear::Term, ts, n);
       (void) ax->fill(ts,0,1);
-      Int::Linear::post(home, ts, n, irt, -c);
+      Int::Linear::post(home, ts, n, irt, -c, icl);
     }
     
     void
@@ -71,7 +71,7 @@ namespace Gecode {
     }
     
     IntVar
-    LinExpr::post(Space* home) const {
+    LinExpr::post(Space* home, IntConLevel icl) const {
       GECODE_AUTOARRAY(Int::Linear::Term, ts, n+1);
       (void) ax->fill(ts,0,1);
       double min = -c;
@@ -91,7 +91,7 @@ namespace Gecode {
       IntVar x(home, static_cast<int>(min), static_cast<int>(max));
       ts[n].x = x;
       ts[n].a = -1;
-      Int::Linear::post(home, ts, n+1, IRT_EQ, -c);
+      Int::Linear::post(home, ts, n+1, IRT_EQ, -c, icl);
       return x;
     }
     

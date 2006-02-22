@@ -176,12 +176,12 @@ namespace Gecode {
 
 
   forceinline BoolVar
-  post(Space* home, const MiniModel::BoolExpr& e) {
+  post(Space* home, const MiniModel::BoolExpr& e, IntConLevel) {
     return e.post(home);
   }
 
   forceinline BoolVar
-  post(Space* home, const BoolVar& b) {
+  post(Space* home, const BoolVar& b, IntConLevel) {
     return b;
   }
 

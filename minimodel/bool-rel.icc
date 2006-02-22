@@ -56,7 +56,7 @@ namespace Gecode {
    *
    */
   forceinline void 
-  post(Space* home, const MiniModel::BoolRel& r) {
+  post(Space* home, const MiniModel::BoolRel& r, IntConLevel) {
     if (home->failed()) return;
     r.post(home);
   }

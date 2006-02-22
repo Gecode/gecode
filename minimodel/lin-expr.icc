@@ -169,20 +169,20 @@ operator*(int a, const Gecode::MiniModel::LinExpr& t) {
 namespace Gecode {
 
   forceinline IntVar
-  post(Space* home, const IntVar& x) {
+  post(Space* home, const IntVar& x, IntConLevel) {
     return x;
   }
 
   forceinline IntVar
-  post(Space* home, int n) {
+  post(Space* home, int n, IntConLevel) {
     IntVar x(home, n, n);
     return x;
   }
 
   forceinline IntVar 
-  post(Space* home, const MiniModel::LinExpr& e) {
+  post(Space* home, const MiniModel::LinExpr& e, IntConLevel icl) {
     if (!home->failed())
-      return e.post(home);
+      return e.post(home,icl);
     IntVar x;
     return x;
   }

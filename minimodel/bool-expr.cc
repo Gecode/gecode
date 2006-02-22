@@ -130,7 +130,7 @@ namespace Gecode {
 	  }
 	  break;
 	case BT_RLIN:
-	  rl.post(home,true);
+	  rl.post(home,true,ICL_DEF);
 	  break;
 	default:
 	  {
@@ -170,7 +170,7 @@ namespace Gecode {
 	  }
 	  break;
 	case BT_RLIN:
-	  rl.post(home,false);
+	  rl.post(home,false,ICL_DEF);
 	  break;
 	default: 
 	  {
