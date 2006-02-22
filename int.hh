@@ -1068,7 +1068,12 @@ namespace Gecode {
    * \ingroup TaskIntInt
    * 
    * All variants for linear constraints share the following properties:
-   *  - Only bounds-consistency is supported.
+   *  - Bounds-consistency (over the real numbers) is supported for 
+   *    all constraints. Domain-consistency is supported for all
+   *    non-reified constraints (as bounds-consistency for inequalities
+   *    and disequalities coincides with domain-consistency, the only
+   *    real variation is for linear equations). Domain-consistent
+   *    linear equations are exponential, so use it with care!
    *  - Variables occurring multiply in the argument arrays are replaced
    *    by a single occurrence: for example, \f$ax+bx\f$ becomes 
    *    \f$(a+b)x\f$.
