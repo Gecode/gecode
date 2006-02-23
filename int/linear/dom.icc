@@ -48,30 +48,22 @@ namespace Gecode { namespace Int { namespace Linear {
 
   private:
     /// Support-based iterator
-    class ResultIter {
+    class ResultIter : public ViewValues<IntView> {
     protected:
       /// The support set used
-      SupportSet* s;
-      /// The values of the integer view
-      Iter::Ranges::ToValues<ViewRanges<IntView> > i;
+      const SupportSet* s;
       /// The current position of the value
       unsigned int p;
     public:
-      /// Default constructor
-      ResultIter(void);
       /// Initialize iterator
-      void init(SupportSet* s0, IntView& x);
-      /// Test whether more values are left
-      bool operator()(void) const;
+      ResultIter(const SupportSet* s0, const IntView& x);
       /// Increment to next supported value
       void operator++(void);
-      /// Return current value
-      int val(void) const;
     };
     
   public:
     /// Perform tell according to recorded support information on \arg x
-    ModEvent tell(Space* home, IntView x);
+    ModEvent tell(Space* home, IntView& x) const;
     /// Release memory
     void dispose(void);
   };
@@ -99,7 +91,7 @@ namespace Gecode { namespace Int { namespace Linear {
     Val           u;
   public:
     /// Initialize view
-    void init(int a0, const IntView& x0, Val l0, Val u0);
+    void init(int a, const IntView& x, Val l, Val u);
     /// Record value at current position as supported
     void support(void);
     /// Tell back new variable domain according to support found
@@ -118,7 +110,7 @@ namespace Gecode { namespace Int { namespace Linear {
   private:
     /// Iterate ranges of integer view in increasing order
     IntVarImpFwd i;
-    // Using-declarations for dependant names.
+    // Using-declarations for dependant names
     using SupportIter<Val>::a;
     using SupportIter<Val>::x;
     using SupportIter<Val>::s;
@@ -143,7 +135,7 @@ namespace Gecode { namespace Int { namespace Linear {
   private:
     /// Iterate ranges of integer view in decreasing order
     IntVarImpBwd i;
-    // Using-declarations for dependant names.
+    // Using-declarations for dependant names
     using SupportIter<Val>::a;
     using SupportIter<Val>::x;
     using SupportIter<Val>::s;
@@ -181,59 +173,44 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   forceinline
-  SupportSet::ResultIter::ResultIter(void) {}
-  forceinline void 
-  SupportSet::ResultIter::init(SupportSet* s0, IntView& x) {
-    s = s0; 
-    ViewRanges<IntView> r(x);
-    i.init(r); p = 0;
-    while (i() && !s->supported(p)) {
-      ++i; ++p;
+  SupportSet::ResultIter::ResultIter(const SupportSet* s0, const IntView& x) 
+    : ViewValues<IntView>(x), s(s0), p(0) {
+    while (ViewValues<IntView>::operator()() && !s->supported(p)) {
+      ViewValues<IntView>::operator++(); ++p;
     } 
-  }
-  forceinline bool 
-  SupportSet::ResultIter::operator()(void) const {
-    return i();
   }
   forceinline void 
   SupportSet::ResultIter::operator++(void) {
     do {
-      ++i; ++p;
-    } while (i() && !s->supported(p));
-  }
-  forceinline int 
-  SupportSet::ResultIter::val(void) const {
-    return i.val();
+      ViewValues<IntView>::operator++(); ++p;
+    } while (ViewValues<IntView>::operator()() && !s->supported(p));
   }
 
+
   inline ModEvent 
-  SupportSet::tell(Space* home, IntView x) {
-    const unsigned int none = 0;
-    const unsigned int full = ~static_cast<unsigned int>(0);
+  SupportSet::tell(Space* home, IntView& x) const {
     unsigned int n = x.size() / bpui;
-    if (bits[0] == none) {
-      // Maybe all bits are zero
-      for (unsigned int i=n+1; i-- > 1; )
-	if (bits[i] != none)
-	  goto tell;
-      return ME_INT_FAILED;
-    }
-    if (bits[0] == full) {
-      // Maybe all bits are one
-      for (unsigned int i=n; i-- > 1; )
-	if (bits[i] != full)
-	  goto tell;
-      for (unsigned int i=n*bpui; i<x.size(); i++)
-	if (!supported(i))
-	  goto tell;
-      return ME_INT_NONE;
-    }
+    // Check whether all bits are zero: failure
+    for (unsigned int i=n+1; i--; )
+      if (bits[i] != 0)
+	goto all;
+    return ME_INT_FAILED;
+  all:
+    // Check whether all bits are one: nothing changed
+    for (unsigned int i=n; i--; )
+      if (bits[i] != ~0U)
+	goto tell;
+    // Now check the bits in the last word
+    for (unsigned int i=n*bpui; i<x.size(); i++)
+      if (!supported(i))
+	goto tell;
+    return ME_INT_NONE;
   tell:
-    ResultIter i;
-    i.init(this,x);
-    Iter::Values::ToRanges<ResultIter> r;
-    r.init(i);
-    return x.narrow(home,r);
+    {
+      ResultIter i(this,x);
+      Iter::Values::ToRanges<ResultIter> r(i);
+      return x.narrow(home,r);
+    }
   }
 
   forceinline void 
