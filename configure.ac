@@ -119,7 +119,6 @@ AC_GECODE_DOC_SWITCHES
 
 dnl ------------------------------------------------------------------
 dnl Enabling of non-variable contribs
-AC_ENABLE()
 dnl @CONTRIBS@
 
 dnl ------------------------------------------------------------------
