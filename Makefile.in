@@ -333,13 +333,14 @@ INTEXAMPLESRC0 = \
 	alpha bibd cars donald \
 	eq20 golomb \
 	graph-color grocery ind-set knights \
-	magic-sequence magic-square \
+	magic-sequence magic-sequence-gcc magic-square \
 	money ortho-latin packing \
 	partition photo queens \
 	sudoku picture-puzzle  \
 	crowded-chess \
 	sports-league all-interval langfordnum \
-	warehouses
+	warehouses \
+	stress-domain stress-failure stress-search
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cc)
 INTEXAMPLEOBJ  = $(INTEXAMPLESRC:%.cc=%$(OBJSUFFIX))
 INTEXAMPLESBJ  = $(INTEXAMPLESRC:%.cc=%$(SBJSUFFIX))
