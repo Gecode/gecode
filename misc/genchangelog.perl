@@ -74,12 +74,12 @@ while ($l = <>) {
   if ($l =~ /^\[RELEASE\]/) {
     # Print previous
     if (!$first) {
-      if (!($info eq "")) {
-	$info = " ($info)";
-      }
       $sid = "Change$version";
       $sid =~ s|\.|_|g;
-      print "\\section $sid Changes in Version $version$info\n\n";
+      print "\\section $sid Changes in Version $version ($date)\n\n";
+
+      print "$info\n\n";
+
       foreach $mod (@modorder) {
 	if ($hastext{$mod}) {
 	  print " - " . $modclear{$mod} . "\n";
@@ -100,13 +100,17 @@ while ($l = <>) {
     $first   = 0;
     $version = "";
     $info    = "";
-    while (($l = <>) && 
-	   !(($l =~ /\[ENTRY\]/) || ($l =~ /\[RELEASE\]/))) {
+    $date    = "";
+    while (($l = <>) && !($l =~ /\[DESCRIPTION\]/)) {
       if ($l =~ /Version:[\t ]*(.*)$/) {
 	$version = $1;
-      } elsif ($l =~ /Info:[\t ]*(.*)$/) {
-	$info    = $1;
+      } elsif ($l =~ /Date:[\t ]*(.*)$/) {
+	$date    = $1;
       }
+    }
+    while (($l = <>) && !($l =~ /\[ENTRY\]/)) {
+      chop $l;
+      $info = $info . " " . $l;
     }
     goto LINE;
   }
@@ -151,5 +155,14 @@ while ($l = <>) {
     goto LINE;
   }
 }
+
+print <<EOF
+
+\\section Change1_0_0 Initial release (2005-12-06)
+
+No changes, of course.
+
+EOF
+;
 
 print "\n\n*/\n";

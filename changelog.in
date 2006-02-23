@@ -29,7 +29,10 @@
 # A release is described as follows:
 #   [RELEASE]
 #   Version: <version string>
-#   Info:    <some additional info about release>
+#   Date:    <when release>
+#   [DESCRIPTION]
+#   ... All the text up to the next [ENTRY] is included 
+#   as description
 #
 # An entry is described as follows:
 #   [ENTRY]
@@ -45,7 +48,19 @@
 
 [RELEASE]
 Version:	1.0.1
-Info:		Maintenance release
+Date:		2006-02-24
+[DESCRIPTION]
+Maintenance release including some additions of domain-consistent
+propagators and a fix for a serious bug in reified linear
+inequalities.
+
+[ENTRY]
+Module: minimodel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+The post functions for linear expressions and relations also take
+an integer consistency level as optional argument.
 
 [ENTRY]
 Module: int
@@ -160,5 +175,7 @@ defined in the search module.
 
 [RELEASE]
 Version:	1.0.0
-Info:		Initial
+Date:		2005-12-06
+[DESCRIPTION]
+Initial release.
 
