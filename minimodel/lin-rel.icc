@@ -40,7 +40,7 @@ namespace Gecode {
     
     forceinline
     LinRel::LinRel(int l, IntRelType irt0, const LinExpr& r) 
-      : e(r,l,-1), irt(irt0) {}
+      : e(r,-l,1), irt(irt0) {}
     
     forceinline IntRelType
     LinRel::neg(IntRelType irt) {
