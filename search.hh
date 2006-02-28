@@ -60,7 +60,7 @@ namespace Gecode {
      */
     namespace Config {
       /// Create a clone after every \a c_d commits
-      const unsigned int c_d = 5;
+      const unsigned int c_d = 8;
       /// Create a clone during recomputation if distance is greater than \a a_d
       const unsigned int a_d = 2;
     }
