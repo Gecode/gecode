@@ -23,9 +23,6 @@
  *
  */
 
-/* Whether no debugging assertions are compiled */
-#undef NDEBUG
-
 /* How to tell the compiler to really, really inline */
 #undef forceinline
 

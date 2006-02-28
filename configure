@@ -3350,10 +3350,7 @@ echo "${ECHO_T}yes" >&6
 	 else
 	    echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
-	    cat >>confdefs.h <<\_ACEOF
-#define NDEBUG 1
-_ACEOF
-
+       	    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-DNDEBUG"
 	 fi
 
 # Check whether --enable-profile or --disable-profile was given.
@@ -5390,7 +5387,7 @@ _ACEOF
 
 
   if test "${enable_debug:-no}" = "no"; then
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox -DNDEBUG"
+        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox"
 
         DLLFLAGS="${CXXFLAGS} -LD"
 
@@ -6144,7 +6141,7 @@ _ACEOF
 
 
   if test "${enable_debug:-no}" = "no"; then
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox -DNDEBUG"
+        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox"
 
         DLLFLAGS="${CXXFLAGS} -LD"
 

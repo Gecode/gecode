@@ -55,6 +55,16 @@ propagators and a fix for a serious bug in reified linear
 inequalities.
 
 [ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+Bug:    31
+[DESCRIPTION]
+The preprocessor macro NDEBUG for disabling assertions is no longer
+put into config.icc. Without this fix, user programs could not use
+assert if Gecode was compiled with NDEBUG.
+
+[ENTRY]
 Module: minimodel
 What:   new
 Rank:   minor
