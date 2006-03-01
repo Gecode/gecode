@@ -47,6 +47,19 @@
 #
 
 [RELEASE]
+Version:	1.x.y
+Date:		upcoming
+[DESCRIPTION]
+Next release.
+
+[ENTRY]
+Module: example
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Added redundant constraint to social golfers example.
+
+[RELEASE]
 Version:	1.0.1
 Date:		2006-03-01
 [DESCRIPTION]

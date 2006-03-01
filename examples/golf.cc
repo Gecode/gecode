@@ -126,6 +126,10 @@ public:
  	  linear(this, bs, IRT_EQ, 1);
  	}
        }
+
+      // Redundant constraint:
+      // any two groups has at most one player in common
+      atmostOne(this, groupsS, playersInGroup);
       
       // Symmetry breaking: order groups
       for (int w=0; w<weeks; w++) {
@@ -139,7 +143,7 @@ public:
 	  rel(this, minG1, IRT_LE, minG2);
 	}
       }
-      
+
       // Symmetry breaking: order weeks
       // minElem(group(w,0)\{0}) < minElem(group(w+1,0)\{0})
       for (int w=0; w<weeks-1; w++) {
