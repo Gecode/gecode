@@ -63,7 +63,7 @@ Thanks: Olof Sivertsson
 (In-)Equations with an int on the left hand side (like 9==x) were
 translated with a wrong sign (as -9==x).
 
-[Entry]
+[ENTRY]
 Module: other
 What:   bug
 Rank:   minor
