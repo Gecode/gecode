@@ -55,6 +55,13 @@ propagators and a fix for a serious bug in reified linear
 inequalities.
 
 [ENTRY]
+Module: search
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Changed default copying recomputation distance to 8.
+
+[ENTRY]
 Module: minimodel
 What:   bug
 Rank:   minor
