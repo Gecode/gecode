@@ -48,7 +48,7 @@
 
 [RELEASE]
 Version:	1.0.1
-Date:		2006-02-24
+Date:		2006-03-01
 [DESCRIPTION]
 Maintenance release including some additions of domain-consistent
 propagators and a fix for a serious bug in reified linear
