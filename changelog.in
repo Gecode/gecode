@@ -53,6 +53,15 @@ Date:		upcoming
 Next release.
 
 [ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+Bug:    32
+Thanks: Olof Sivertsson
+[DESCRIPTION]
+Possible array-out-of bounds access fixed for MiniModel::Matrix.
+
+[ENTRY]
 Module: example
 What:   performance
 Rank:   minor
