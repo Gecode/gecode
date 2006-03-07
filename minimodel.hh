@@ -2,10 +2,12 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *     Guido Tack <tack@gecode.org>
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
  *  Copyright:
  *     Christian Schulte, 2004
  *     Guido Tack, 2004
+ *     Mikael Lagerkvist, 2005
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -640,7 +642,8 @@ namespace Gecode { namespace MiniModel {
   
   /** \brief Matrix-interface for arrays
    *
-   * This class allows for wrapping some array and accessing it as a matrix.
+   * This class allows for wrapping some array and accessing it as a
+   * matrix.
    *
    * \note This is a light-weight wrapper, and is not intended for
    * storing variables directly instead of in an array.
@@ -690,6 +693,9 @@ namespace Gecode { namespace MiniModel {
      * Constructs a Matrix from the array \a a, using \a w and \a h as
      * the width and height of the matrix.
      *
+     * The elements in the wrapped array \a a are accessed in
+     * row-major order.
+     *
      * \exception MiniModel::ArgumentSizeMismatch Raised if the
      *            parameters \a w and \a h doesn't match the size 
      *            of the array \a a.
@@ -700,6 +706,9 @@ namespace Gecode { namespace MiniModel {
      *
      * Constructs a square Matrix from the array \a a, using \a n as
      * the length of the sides.
+     *
+     * The elements in the wrapped array \a a are accessed in
+     * row-major order.
      *
      * \exception MiniModel::ArgumentSizeMismatch Raised if the
      *            parameter \a n doesn't match the size 

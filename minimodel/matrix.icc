@@ -5,6 +5,9 @@
  *  Copyright:
  *     Mikael Lagerkvist, 2005
  *
+ *  Bugfixes provided by:
+ *     Olof Sivertsson <olof@olofsivertsson.com>
+ *
  *  Last modified:
  *     $Date: 2005-07-28 22:52:19 +0200 (Thu, 28 Jul 2005) $ by $Author: schulte $
  *     $Revision: 2072 $
@@ -33,8 +36,8 @@ namespace Gecode { namespace MiniModel {
       return;
 
     int i = 0;
-    for (unsigned int w = fc; w < tc; ++w) {
-      for (unsigned int h = fr; h < tr; ++h) {
+    for (unsigned int h = fr; h < tr; ++h) {
+      for (unsigned int w = fc; w < tc; ++w) {
 	_r[i++] = a(w, h);
       }
     }

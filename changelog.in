@@ -56,6 +56,15 @@ Next release.
 Module: minimodel
 What:   bug
 Rank:   minor
+Bug:    33
+Thanks: Olof Sivertsson
+[DESCRIPTION]
+Slice-operation now returns elements in the right order.
+
+[ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
 Bug:    32
 Thanks: Olof Sivertsson
 [DESCRIPTION]
