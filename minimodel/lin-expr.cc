@@ -59,8 +59,8 @@ namespace Gecode {
     void
     LinExpr::post(Space* home, IntRelType irt, IntConLevel icl) const {
       GECODE_AUTOARRAY(Int::Linear::Term, ts, n);
-      (void) ax->fill(ts,0,1);
-      Int::Linear::post(home, ts, n, irt, -c, icl);
+      (void) ax->fill(ts,0,sign);
+      Int::Linear::post(home, ts, n, irt, sign*-c, icl);
     }
     
     void

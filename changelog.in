@@ -56,6 +56,14 @@ Next release.
 Module: minimodel
 What:   bug
 Rank:   minor
+Thanks: Olof Sivertsson
+[DESCRIPTION]
+(In-)Equations were still not correct with respect to the sign.
+
+[ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
 Bug:    33
 Thanks: Olof Sivertsson
 [DESCRIPTION]
