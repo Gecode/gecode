@@ -74,12 +74,12 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Eq20::Eq20(bool share, Eq20& s) : Example(share,s) {
+  Eq20(bool share, Eq20& s) : Example(share,s) {
     x.update(this, share, s.x);
   }
   /// Perform copying during cloning
   virtual Space*
-  Eq20::copy(bool share) {
+  copy(bool share) {
     return new Eq20(share,*this);
   }
   /// Print solution
