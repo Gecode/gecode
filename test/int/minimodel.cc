@@ -88,6 +88,54 @@ public:
 };
 MmLinEqD _mmlineqd;
 
+class MmLinEqE : public IntTest {
+public:
+  MmLinEqE(void)
+    : IntTest("MiniModel::Lin::Eq::E",1,is,true) {}
+  virtual bool solution(const Assignment& x) const {
+    return 1>x[0];
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    Gecode::post(home, 1>x[0]);
+  }
+  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
+    Gecode::post(home, tt(eqv(1>x[0],b)));
+  }
+};
+MmLinEqE _mmlineqe;
+
+class MmLinEqF : public IntTest {
+public:
+  MmLinEqF(void)
+    : IntTest("MiniModel::Lin::Eq::F",1,is,true) {}
+  virtual bool solution(const Assignment& x) const {
+    return 1<x[0];
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    Gecode::post(home, 1<x[0]);
+  }
+  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
+    Gecode::post(home, tt(eqv(1<x[0],b)));
+  }
+};
+MmLinEqF _mmlineqf;
+
+class MmLinEqG : public IntTest {
+public:
+  MmLinEqG(void)
+    : IntTest("MiniModel::Lin::Eq::G",1,is,true) {}
+  virtual bool solution(const Assignment& x) const {
+    return -1==x[0];
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    Gecode::post(home, -1==x[0]);
+  }
+  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
+    Gecode::post(home, tt(eqv(-1==x[0],b)));
+  }
+};
+MmLinEqG _mmlineqg;
+
 class MmLinExprA : public IntTest {
 public:
   MmLinExprA(void)
