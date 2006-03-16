@@ -42,6 +42,15 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, PropCond pc>
+  forceinline
+  LinBin<Val,A,B,pc>::LinBin(Space* home, bool share, Propagator& p,
+			     A y0, B y1, Val c0)
+    : Propagator(home,share,p), c(c0) {
+    x0.update(home,share,y0);
+    x1.update(home,share,y1);
+  }
+
+  template <class Val, class A, class B, PropCond pc>
   PropCost
   LinBin<Val,A,B,pc>::cost(void) const {
     return PC_BINARY_LO;
@@ -115,6 +124,12 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline
   EqBin<Val,A,B>::EqBin(Space* home, bool share, EqBin<Val,A,B>& p)
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p) {}
+
+  template <class Val, class A, class B>
+  forceinline
+  EqBin<Val,A,B>::EqBin(Space* home, bool share, Propagator& p,
+			A x0, B x1, Val c)
+    : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
 
   template <class Val, class A, class B>
   Actor*

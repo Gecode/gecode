@@ -58,6 +58,8 @@ namespace Gecode { namespace Int { namespace Linear {
     Val c;
     /// Constructor for cloning \a p
     LinBin(Space* home, bool share, LinBin& p);
+    /// Constructor for rewriting \a p during cloning
+    LinBin(Space* home, bool share, Propagator& p, A x0, B x1, Val c);
     /// Constructor for creation
     LinBin(Space* home, A x0, B x1, Val c);
   public:
@@ -122,6 +124,8 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     EqBin(Space* home, A x0, B x1, Val c);
   public:
+    /// Constructor for rewriting \a p during cloning
+    EqBin(Space* home, bool share, Propagator& p, A x0, B x1, Val c);
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
@@ -329,6 +333,8 @@ namespace Gecode { namespace Int { namespace Linear {
     LinTer(Space* home, bool share, LinTer& p);
     /// Constructor for creation
     LinTer(Space* home, A x0, B x1, C x2, Val c);
+    /// Constructor for rewriting \a p during cloning
+    LinTer(Space* home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
   public:
     /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(void) const;
@@ -361,6 +367,8 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     EqTer(Space* home, A x0, B x1, C x2, Val c);
   public:
+    /// Constructor for rewriting \a p during cloning
+    EqTer(Space* home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation

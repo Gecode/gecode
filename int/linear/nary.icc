@@ -248,9 +248,116 @@ namespace Gecode { namespace Int { namespace Linear {
   Eq<Val,P,N>::Eq(Space* home, bool share, Eq<Val,P,N>& p)
     : Lin<Val,P,N,PC_INT_BND>(home,share,p) {}
 
+  /**
+   * \brief Test if only unit-coefficient arrays used
+   *
+   */
+  template <class P, class N>
+  forceinline bool 
+  isunit(ViewArray<P>& x, ViewArray<N>& y) { return false; }
+  template <>
+  forceinline bool 
+  isunit(ViewArray<IntView>& x, ViewArray<IntView>& y) { return true; }
+  template <>
+  forceinline bool 
+  isunit(ViewArray<IntView>& x, ViewArray<NoView>& y) { return true; }
+  template <>
+  forceinline bool 
+  isunit(ViewArray<NoView>& x, ViewArray<IntView>& y) { return true; }
+  
+  /**
+   * \brief Rewriting of equality to binary propagators
+   *
+   */
+  template <class Val, class P, class N>
+  forceinline Actor*
+  eqtobin(Space* home, bool share, Propagator& p, 
+	  ViewArray<P>& x, ViewArray<N>& y, Val c) {
+    return NULL;
+  }
+  template <class Val>
+  forceinline Actor*
+  eqtobin(Space* home, bool share, Propagator& p,
+	  ViewArray<IntView>& x, ViewArray<NoView>& y, Val c) {
+    assert(x.size() == 2);
+    return new (home) EqBin<Val,IntView,IntView>
+      (home,share,p,x[0],x[1],c);
+  }
+  template <class Val>
+  forceinline Actor*
+  eqtobin(Space* home, bool share, Propagator& p,
+	  ViewArray<NoView>& x, ViewArray<IntView>& y, Val c) {
+    assert(y.size() == 2);
+    return new (home) EqBin<Val,IntView,IntView>
+      (home,share,p,y[0],y[1],-c);
+  }
+  template <class Val>
+  forceinline Actor*
+  eqtobin(Space* home, bool share, Propagator& p,
+	  ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
+    if (x.size() == 2)
+      return new (home) EqBin<Val,IntView,IntView>
+	(home,share,p,x[0],x[1],c);
+    if (x.size() == 1)
+      return new (home) EqBin<Val,IntView,MinusView>
+	(home,share,p,x[0],y[0],c);
+    return new (home) EqBin<Val,IntView,IntView>
+      (home,share,p,y[0],y[1],-c);
+  }
+
+  /**
+   * \brief Rewriting of equality to ternary propagators
+   *
+   */
+  template <class Val, class P, class N>
+  forceinline Actor*
+  eqtoter(Space* home, bool share, Propagator& p, 
+	  ViewArray<P>& x, ViewArray<N>& y, Val c) {
+    return NULL;
+  }
+  template <class Val>
+  forceinline Actor*
+  eqtoter(Space* home, bool share, Propagator& p,
+	  ViewArray<IntView>& x, ViewArray<NoView>& y, Val c) {
+    assert(x.size() == 3);
+    return new (home) EqTer<Val,IntView,IntView,IntView>
+      (home,share,p,x[0],x[1],x[2],c);
+  }
+  template <class Val>
+  forceinline Actor*
+  eqtoter(Space* home, bool share, Propagator& p,
+	  ViewArray<NoView>& x, ViewArray<IntView>& y, Val c) {
+    assert(y.size() == 3);
+    return new (home) EqTer<Val,IntView,IntView,IntView>
+      (home,share,p,y[0],y[1],y[2],-c);
+  }
+  template <class Val>
+  forceinline Actor*
+  eqtoter(Space* home, bool share, Propagator& p,
+	  ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
+    if (x.size() == 3)
+      return new (home) EqTer<Val,IntView,IntView,IntView>
+	(home,share,p,x[0],x[1],x[2],c);
+    if (x.size() == 2)
+      return new (home) EqTer<Val,IntView,IntView,MinusView>
+	(home,share,p,x[0],x[1],y[0],c);
+    if (x.size() == 1)
+      return new (home) EqTer<Val,IntView,IntView,MinusView>
+	(home,share,p,y[0],y[1],x[0],-c);
+    return new (home) EqTer<Val,IntView,IntView,IntView>
+      (home,share,p,y[0],y[1],y[2],-c);
+  }
+
   template <class Val, class P, class N>
   Actor*
   Eq<Val,P,N>::copy(Space* home, bool share) {
+    if (isunit(x,y)) {
+      // Check whether rewriting is possible
+      if (x.size() + y.size() == 2)
+	return eqtobin(home,share,*this,x,y,c);
+      if (x.size() + y.size() == 3)
+	return eqtoter(home,share,*this,x,y,c);
+    }
     return new (home) Eq<Val,P,N>(home,share,*this);
   }
 
