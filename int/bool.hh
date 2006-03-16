@@ -48,6 +48,9 @@ namespace Gecode { namespace Int { namespace Bool {
     BoolBinary(Space* home, BVA b0, BVB b1);
     /// Constructor for cloning
     BoolBinary(Space* home, bool share, BoolBinary& p);
+    /// Constructor for rewriting \a p during cloning
+    BoolBinary(Space* home, bool share, Propagator& p,
+	       BVA b0, BVB b1);
   public:
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(void) const;
@@ -67,6 +70,9 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for cloning
     BoolTernary(Space* home, bool share, BoolTernary& p);
   public:
+    /// Constructor for rewriting \a p during cloning
+    BoolTernary(Space* home, bool share, Propagator& p,
+		BVA b0, BVB b1, BVC b2);
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
     /// Destructor
@@ -89,6 +95,9 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for cloning \a p
     Eq(Space* home, bool share, Eq& p);
   public:
+    /// Constructor for rewriting \a p during cloning
+    Eq(Space* home, bool share, Propagator& p,
+       BVA b0, BVB b1);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
@@ -115,6 +124,9 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for cloning \a p
     And(Space* home, bool share, And& p);
   public:
+    /// Constructor for rewriting \a p during cloning
+    And(Space* home, bool share, Propagator& p,
+	BVA b0, BVB b1, BVC b2);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation

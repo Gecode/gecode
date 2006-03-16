@@ -43,6 +43,15 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BVA, class BVB>
+  forceinline
+  BoolBinary<BVA,BVB>::BoolBinary(Space* home, bool share, Propagator& p,
+				  BVA b0, BVB b1) 
+    : Propagator(home,share,p) {
+    x0.update(home,share,b0);
+    x1.update(home,share,b1);
+  }
+
+  template<class BVA, class BVB>
   PropCost
   BoolBinary<BVA,BVB>::cost(void) const {
     return PC_UNARY_LO;
@@ -76,6 +85,16 @@ namespace Gecode { namespace Int { namespace Bool {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
     x2.update(home,share,p.x2);
+  }
+
+  template<class BVA, class BVB, class BVC>
+  forceinline
+  BoolTernary<BVA,BVB,BVC>::BoolTernary(Space* home, bool share, Propagator& p,
+					BVA b0, BVB b1, BVC b2) 
+    : Propagator(home,share,p) {
+    x0.update(home,share,b0);
+    x1.update(home,share,b1);
+    x2.update(home,share,b2);
   }
 
   template<class BVA, class BVB, class BVC>

@@ -54,6 +54,12 @@ namespace Gecode { namespace Int { namespace Bool {
     : BoolBinary<BVA,BVB>(home,share,p) {}
 
   template<class BVA, class BVB>
+  forceinline
+  Eq<BVA,BVB>::Eq(Space* home, bool share, Propagator& p,
+		  BVA b0, BVB b1) 
+    : BoolBinary<BVA,BVB>(home,share,p,b0,b1) {}
+
+  template<class BVA, class BVB>
   Actor*
   Eq<BVA,BVB>::copy(Space* home, bool share) {
     return new (home) Eq<BVA,BVB>(home,share,*this);

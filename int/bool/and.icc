@@ -32,6 +32,12 @@ namespace Gecode { namespace Int { namespace Bool {
     : BoolTernary<BVA,BVB,BVC>(home,share,p) {}
 
   template <class BVA, class BVB, class BVC>
+  forceinline
+  And<BVA,BVB,BVC>::And(Space* home, bool share, Propagator& p,
+			BVA b0, BVB b1, BVC b2) 
+    : BoolTernary<BVA,BVB,BVC>(home,share,p,b0,b1,b2) {}
+
+  template <class BVA, class BVB, class BVC>
   forceinline ExecStatus
   And<BVA,BVB,BVC>::post(Space* home, BVA b0, BVB b1, BVC b2) {
     switch (bool_test(b0,b1)) {
@@ -116,6 +122,12 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class View>
   Actor*
   NaryAnd<View>::copy(Space* home, bool share) {
+    if (x.size() == 1)
+      return new (home) Eq<View,View>(home,share,*this,
+				      x[0],y);
+    if (x.size() == 2)
+      return new (home) And<View,View,View>(home,share,*this,
+					    x[0],x[1],y);
     return new (home) NaryAnd<View>(home,share,*this);
   }
 
