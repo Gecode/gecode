@@ -195,7 +195,7 @@ namespace Gecode { namespace Set {
     RangeList* p=NULL;
     RangeList* c=fst();
     while (c!=NULL){
-      if (c->width() >= n){
+      if (c->width() > n){
 	return(c->min()+n);
       } else {
 	n-=c->width();
@@ -212,7 +212,7 @@ namespace Gecode { namespace Set {
     RangeList* p=NULL;
     RangeList* c=lst();
     while (c!=NULL){
-      if (c->width() >= n){
+      if (c->width() > n){
 	return(c->max()-n);
       } else {
 	n-=c->width();

@@ -53,6 +53,14 @@ Date:		upcoming
 Next release.
 
 [ENTRY]
+Module: set
+What: bug
+Rank: minor
+Thanks: Patrick Pekczynski
+[DESCRIPTION]
+Fixed off-by-one bug in SetVarImp::lubMinN and SetVarImp::lubMaxN.
+
+[ENTRY]
 Module: minimodel
 What:   bug
 Rank:   minor
