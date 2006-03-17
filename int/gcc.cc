@@ -19,7 +19,6 @@
  */	
 
 #include "int/gcc.hh"
-#include "int/linear.hh"
 #include "int/distinct.hh"
 
 namespace Gecode { namespace Int { namespace GCC {
