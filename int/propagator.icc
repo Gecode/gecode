@@ -45,6 +45,9 @@ namespace Gecode {
     CtrlView b;
     /// Constructor for cloning \a p
     ReUnaryPropagator(Space* home, bool share, ReUnaryPropagator& p);
+    /// Constructor for rewriting \a p during cloning
+    ReUnaryPropagator(Space* home, bool share, Propagator& p,
+		      View x0, CtrlView b);
     /// Constructor for creation
     ReUnaryPropagator(Space* home, View x0, CtrlView b, bool fd=false);
   public:
@@ -69,6 +72,9 @@ namespace Gecode {
     CtrlView b;
     /// Constructor for cloning \a p
     ReBinaryPropagator(Space* home, bool share, ReBinaryPropagator& p);
+    /// Constructor for rewriting \a p during cloning
+    ReBinaryPropagator(Space* home, bool share, Propagator& p,
+		       View x0, View x1, CtrlView b);
     /// Constructor for creation
     ReBinaryPropagator(Space* home, View x0, View x1,
 		       CtrlView b, bool fd=false);
@@ -101,6 +107,15 @@ namespace Gecode {
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     b.update(home,share,p.b);
+  }
+
+  template <class View, PropCond pc, class CtrlView>
+  forceinline
+  ReUnaryPropagator<View,pc,CtrlView>::ReUnaryPropagator
+  (Space* home, bool share, Propagator& p, View y0, CtrlView b0)
+    : Propagator(home,share,p) {
+    x0.update(home,share,y0);
+    b.update(home,share,b0);
   }
 
   template <class View, PropCond pc, class CtrlView>
@@ -138,6 +153,16 @@ namespace Gecode {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
     b.update(home,share,p.b);
+  }
+
+  template <class View, PropCond pc, class CtrlView>
+  forceinline
+  ReBinaryPropagator<View,pc,CtrlView>::ReBinaryPropagator
+  (Space* home, bool share, Propagator& p, View y0, View y1, CtrlView b0)
+    : Propagator(home,share,p) {
+    x0.update(home,share,y0);
+    x1.update(home,share,y1);
+    b.update(home,share,b0);
   }
 
   template <class View, PropCond pc, class CtrlView>

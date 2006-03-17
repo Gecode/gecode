@@ -104,6 +104,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Constructor for posting
     Max(Space* home, View x0, View x1, View x2);
   public:
+    /// Constructor for rewriting \a p during cloning
+    Max(Space* home, bool share, Propagator& p, View x0, View x1, View x2);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation

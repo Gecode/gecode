@@ -50,6 +50,12 @@ namespace Gecode { namespace Int { namespace Rel {
     : BinaryPropagator<View,PC_INT_BND>(home,share,p) {}
 
   template <class View>
+  forceinline
+  EqBnd<View>::EqBnd(Space* home, bool share, Propagator& p,
+		     View x0, View x1)
+    : BinaryPropagator<View,PC_INT_BND>(home,share,p,x0,x1) {}
+
+  template <class View>
   Actor*
   EqBnd<View>::copy(Space* home, bool share) {
     return new (home) EqBnd<View>(home,share,*this);

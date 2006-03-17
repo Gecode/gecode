@@ -46,6 +46,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     : TernaryPropagator<View,PC_INT_BND>(home,share,p) {}
 
   template <class View>
+  forceinline
+  Max<View>::Max(Space* home, bool share, Propagator& p,
+		 View x0, View x1, View x2)
+    : TernaryPropagator<View,PC_INT_BND>(home,share,p,x0,x1,x2) {}
+
+  template <class View>
   Actor*
   Max<View>::copy(Space* home, bool share) {
     return new (home) Max<View>(home,share,*this);
@@ -116,6 +122,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   Actor*
   NaryMax<View>::copy(Space* home, bool share) {
+    if (x.size() == 1)
+      return new (home) Rel::EqBnd<View>(home,share,*this,x[0],y);
+    if (x.size() == 2)
+      return new (home) Max<View>(home,share,*this,x[0],x[1],y);
     return new (home) NaryMax<View>(home,share,*this);
   }
 
@@ -151,10 +161,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
     if (x.size() == 0)
       return ES_FAILED;
-    if (x.size() == 1) {
-      GECODE_ES_CHECK(Rel::EqBnd<View>::post(home,x[0],y));
-      return ES_SUBSUMED;
-    }
     return (assigned && y.assigned()) ? ES_SUBSUMED : es;
   }
 

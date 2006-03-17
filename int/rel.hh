@@ -97,6 +97,8 @@ namespace Gecode { namespace Int { namespace Rel {
     /// Constructor for posting
     EqBnd(Space* home, View x0, View x1);
   public:
+    /// Constructor for rewriting \a p during cloning
+    EqBnd(Space* home, bool share, Propagator& p, View x0, View x1);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
