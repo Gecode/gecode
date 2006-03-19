@@ -161,7 +161,8 @@ INTSRC0 = \
 	linear/post.cc linear.cc \
 	branch.cc branch/assign.cc \
 	distinct.cc cumulatives.cc \
-	sortedness.cc gcc.cc	
+	sortedness.cc gcc.cc \
+	channel.cc
 INTHDR0 = \
 	arithmetic/abs.icc arithmetic/minmax.icc arithmetic/mult.icc \
 	bool/and.icc bool/eq.icc bool/eqv.icc bool/base.icc \
@@ -188,7 +189,8 @@ INTHDR0 = \
 	count.hh cumulatives.hh distinct.hh dom.hh \
 	element.hh exception.icc gcc.hh linear.hh \
 	propagator.icc regular.hh rel.hh \
-	sortedness.hh var.icc view.icc
+	sortedness.hh var.icc view.icc \
+	channel.hh channel/dom.icc
 
 INTSRC		= $(INTSRC0:%=int/%)
 INTHDR		= int.hh $(INTHDR0:%=int/%)

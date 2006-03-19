@@ -1,0 +1,60 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2006
+ *
+ *  Last modified:
+ *     $Date: 2005-10-23 16:23:09 +0200 (Sun, 23 Oct 2005) $ by $Author: schulte $
+ *     $Revision: 2403 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#include "iter.hh"
+
+namespace Gecode { namespace Int { namespace Channel {
+
+  template <class View>
+  forceinline
+  Dom<View>::Dom(Space* home, ViewArray<ViewTuple<View,2> >& xy)
+    : NaryPropagator<ViewTuple<View,2>,PC_INT_DOM>(home,xy) {}
+
+  template <class View>
+  forceinline
+  Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
+    : NaryPropagator<ViewTuple<View,2>,PC_INT_DOM>(home,share,p) {}
+
+  template <class View>
+  Actor*
+  Dom<View>::copy(Space* home, bool share) {
+    return new (home) Dom<View>(home,share,*this);
+  }
+
+  template <class View>
+  ExecStatus
+  Dom<View>::propagate(Space* home) {
+    return ES_FAILED;
+  }
+
+  template <class View>
+  ExecStatus
+  Dom<View>::post(Space* home, ViewArray<ViewTuple<View,2> >& xy){
+    if (xy.size() == 0)
+      return ES_OK;
+    (void) new (home) Dom<View>(home,xy);
+    return ES_OK;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

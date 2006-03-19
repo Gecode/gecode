@@ -464,6 +464,22 @@ namespace Gecode {
 
 
   /**
+   * \defgroup TaskIntIntChannel Channel constraints
+   * \ingroup TaskIntInt
+   */
+
+  //@{
+  /** \brief Post propagator for \f$ x_i = j\leftrightarrow y_j=i\f$ for all \f$0\leq i<|x|\f$
+   *
+   * Only supports domain-consistency (\a icl = ICL_DOM).
+   */
+  GECODE_INT_EXPORT void
+  channel(Space* home, const IntVarArgs& x, const IntVarArgs& y,
+	   IntConLevel icl=ICL_DEF);
+  //@}
+
+
+  /**
    * \defgroup TaskIntIntScheduling Scheduling constraints
    * \ingroup TaskIntInt
    */

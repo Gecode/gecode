@@ -26,13 +26,13 @@
 /* How to tell the compiler to really, really inline */
 #undef forceinline
 
-/* Memory alignment */
+/* Heap memory alignment */
 #undef GECODE_MEMORY_ALIGNMENT
 
-/* Whether integer variables are buit */
+/* Whether integer variables are built */
 #undef GECODE_HAVE_INT_VARS
 
-/* Whether set variables are buit */
+/* Whether set variables are built */
 #undef GECODE_HAVE_SET_VARS
 
 /* Whether we are compiling static libraries */
