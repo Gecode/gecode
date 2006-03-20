@@ -31,25 +31,25 @@
 namespace Gecode { namespace Set { namespace Int {
 
   forceinline
-  ChannelVarVal::ChannelVarVal(Space* home,
-			       ViewArray< Gecode::Int::IntView >& xs0,
-			       ViewArray< SetView >& ys0)
+  Channel::Channel(Space* home,
+		   ViewArray< Gecode::Int::IntView >& xs0,
+		   ViewArray< SetView >& ys0)
     : Propagator(home), xs(xs0), ys(ys0) {
     xs.subscribe(home,this, Gecode::Int::PC_INT_DOM);
     ys.subscribe(home,this, PC_SET_ANY);
   }
 
   forceinline
-  ChannelVarVal::ChannelVarVal(Space* home, bool share,
-			       ChannelVarVal& p)
+  Channel::Channel(Space* home, bool share,
+		   Channel& p)
     : Propagator(home,share,p) {
     xs.update(home,share,p.xs);
     ys.update(home,share,p.ys);
   }
 
   forceinline ExecStatus
-  ChannelVarVal::post(Space* home, ViewArray<Gecode::Int::IntView>& xs,
-		      ViewArray<SetView>& ys) {
+  Channel::post(Space* home, ViewArray<Gecode::Int::IntView>& xs,
+		ViewArray<SetView>& ys) {
     // Sharing of ys is taken care of in the propagator:
     // The ys are propagated to be disjoint, so shared variables
     // result in failure.
@@ -66,7 +66,7 @@ namespace Gecode { namespace Set { namespace Int {
       GECODE_ME_CHECK(xs[i].le(home, static_cast<int>(yssize)));
     }
 
-    (void) new (home) ChannelVarVal(home,xs,ys);
+    (void) new (home) Channel(home,xs,ys);
     return ES_OK;
   }
 

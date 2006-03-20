@@ -105,6 +105,8 @@ public:
     }
 
     if (!o.naive) {
+
+      //      atmostOne(this, groupsS, playersInGroup);
       
       /*
        * Redundant constraints and static symmetry breaking from
@@ -138,8 +140,8 @@ public:
 	  IntVar minG2(this, 0, players-1);
 	  SetVar g1 = group(w,g);
 	  SetVar g2 = group(w,g+1);
-	  minElement(this, g1, minG1);
-	  minElement(this, g2, minG2);
+	  min(this, g1, minG1);
+	  min(this, g2, minG2);
 	  rel(this, minG1, IRT_LE, minG2);
 	}
       }
@@ -155,8 +157,8 @@ public:
 	rel(this, g2, SOT_DUNION, zero2, SRT_EQ, group(w+1,0));
 	IntVar minG1(this, 0, players-1);
 	IntVar minG2(this, 0, players-1);
-	minElement(this, g1, minG1);
-	minElement(this, g2, minG2);
+	min(this, g1, minG1);
+	min(this, g2, minG2);
 	rel(this, minG1, IRT_LE, minG2);
       }
       

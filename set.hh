@@ -294,11 +294,11 @@ namespace Gecode {
 
   /// Post propagator that propagates that \a x is the minimal element of \a s 
   GECODE_SET_EXPORT void
-  minElement(Space* home, SetVar s, IntVar x);
+  min(Space* home, SetVar s, IntVar x);
   
   /// Post propagator that propagates that \a x is the maximal element of \a s 
   GECODE_SET_EXPORT void
-  maxElement(Space* home, SetVar s, IntVar x);
+  max(Space* home, SetVar s, IntVar x);
   
   /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order 
   GECODE_SET_EXPORT void
@@ -306,7 +306,7 @@ namespace Gecode {
   
   /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
   GECODE_SET_EXPORT void
-  channelVarVal(Space* home, const IntVarArgs& x,const SetVarArgs& y);
+  channel(Space* home, const IntVarArgs& x,const SetVarArgs& y);
   
   /// Post propagator for \f$ |s|=x \f$ 
   GECODE_SET_EXPORT void

@@ -100,12 +100,12 @@ namespace Gecode {
   }
 
   void
-  minElement(Space* home, SetVar s, IntVar x){
+  min(Space* home, SetVar s, IntVar x){
     if (home->failed()) return;
     GECODE_ES_FAIL(home,Set::Int::MinElement::post(home,s,x));
   }
   void
-  maxElement(Space* home, SetVar s, IntVar x){
+  max(Space* home, SetVar s, IntVar x){
     if (home->failed()) return;
     GECODE_ES_FAIL(home,Set::Int::MaxElement::post(home,s,x));
   }
@@ -118,11 +118,11 @@ namespace Gecode {
   }
 
   void
-  channelVarVal(Space* home, const IntVarArgs& x, const SetVarArgs& y) {
+  channel(Space* home, const IntVarArgs& x, const SetVarArgs& y) {
     if (home->failed()) return;
     ViewArray<Int::IntView> xa(home,x);
     ViewArray<Set::SetView> ya(home,y);
-    GECODE_ES_FAIL(home,Set::Int::ChannelVarVal::post(home,xa,ya));
+    GECODE_ES_FAIL(home,Set::Int::Channel::post(home,xa,ya));
   }
 
   void weights(Space* home, const IntArgs& elements, const IntArgs& weights,

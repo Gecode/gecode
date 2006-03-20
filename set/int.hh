@@ -148,7 +148,7 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include "set/int.hh" \endcode
    * \ingroup FuncSetProp
    */
-  class ChannelVarVal : public Propagator {
+  class Channel : public Propagator {
   protected:
     /// IntViews, \f$x_i\f$ reflects which set contains element \f$i\f$
     ViewArray< Gecode::Int::IntView > xs;
@@ -156,17 +156,17 @@ namespace Gecode { namespace Set { namespace Int {
     ViewArray< SetView > ys;
 
     /// Constructor for cloning \a p
-    ChannelVarVal(Space* home, bool share,ChannelVarVal& p);
+    Channel(Space* home, bool share,Channel& p);
     /// Constructor for posting
-    ChannelVarVal(Space* home,ViewArray< Gecode::Int::IntView >&,
-		       ViewArray< SetView >&);
+    Channel(Space* home,ViewArray< Gecode::Int::IntView >&,
+	    ViewArray< SetView >&);
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*   copy(Space* home,bool);
     /// Cost function (defined as PC_QUADRATIC_LO)
     GECODE_SET_EXPORT virtual PropCost cost(void) const;
     /// Destructor
-    GECODE_SET_EXPORT virtual ~ChannelVarVal(void);
+    GECODE_SET_EXPORT virtual ~Channel(void);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
@@ -217,7 +217,7 @@ namespace Gecode { namespace Set { namespace Int {
 #include "set/int/minmax.icc"
 #include "set/int/card.icc"
 #include "set/int/match.icc"
-#include "set/int/channelVarVal.icc"
+#include "set/int/channel.icc"
 #include "set/int/weights.icc"
 
 #endif

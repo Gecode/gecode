@@ -49,23 +49,23 @@ public:
 };
 Card _card("Int::Card");
 
-class MinElem : public SetTest {
+class Min : public SetTest {
 public:
-  MinElem(const char* t) 
+  Min(const char* t) 
     : SetTest(t,1,ds_33,false,1) {}
   virtual bool solution(const SetAssignment& x) const {    
     CountableSetRanges xr0(x.lub, x[0]);
     return xr0() && xr0.min()==x.intval();
   }
   virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
-    Gecode::minElement(home, x[0], y[0]);
+    Gecode::min(home, x[0], y[0]);
   }
 };
-MinElem _minelem("Int::MinElem");
+Min _min("Int::Min");
 
-class MaxElem : public SetTest {
+class Max : public SetTest {
 public:
-  MaxElem(const char* t) 
+  Max(const char* t) 
     : SetTest(t,1,ds_33,false,1) {}
   virtual bool solution(const SetAssignment& x) const {    
     CountableSetRanges xr0(x.lub, x[0]);
@@ -73,11 +73,10 @@ public:
     return x0.size() > 0 && x0.max()==x.intval();
   }
   virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
-    Log::log("Gecode::maxElement(home, x[0], y[0]);","Gecode::maxElement(home, x[0], y[0]);");
-    Gecode::maxElement(home, x[0], y[0]);
+    Gecode::max(home, x[0], y[0]);
   }
 };
-MaxElem _maxelem("Int::MaxElem");
+Max _max("Int::Max");
 
 class Elem : public SetTest {
 public:
@@ -236,7 +235,7 @@ public:
     return true;
   }
   virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
-    Gecode::channelVarVal(home, y, x);
+    Gecode::channel(home, y, x);
   }
 };
 

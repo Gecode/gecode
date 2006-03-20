@@ -223,7 +223,7 @@ INTBUILDDIRS	= \
 SETSRC0 =								 \
 	branch.cc cardinality.cc convex.cc convex/conv.cc convex/hull.cc \
 	dom.cc rel.cc rel-op.cc rel-op-const.cc				 \
-	int/card.cc int.cc int/channelVarVal.cc int/match.cc		 \
+	int/card.cc int.cc int/channel.cc int/match.cc		 	 \
 	int/minmax.cc int/weights.cc					 \
 	select.cc select/disjoint.cc sequence.cc			 \
 	distinct.cc distinct/binomial.cc				 \
@@ -232,7 +232,7 @@ SETSRC0 =								 \
 	var/integerset.cc var/set.cc view/print.cc
 SETHDR0 =								     \
 	view.icc exception.icc int.hh select.hh var.icc int/card.icc	     \
-	int/match.icc int/channelVarVal.icc int/minmax.icc int/weights.icc   \
+	int/match.icc int/channel.icc int/minmax.icc int/weights.icc	     \
 	select/idxarray.hh						     \
 	select/idxarray.icc select/inter.icc				     \
 	select/disjoint.icc array.icc var/imp.icc var/integerset.icc	     \
@@ -241,7 +241,7 @@ SETHDR0 =								     \
 	rel/subset.icc rel/re-subset.icc rel/eq.icc rel/nq.icc rel/re-eq.icc \
 	rel/common.icc rel/nosubset.icc sequence.hh			     \
 	rel-op/union.icc rel-op/partition.icc rel-op/subofunion.icc	     \
-	rel-op/inter.icc rel-op/superofinter.icc 			     \
+	rel-op/inter.icc rel-op/superofinter.icc			     \
 	rel-op/post.icc rel-op/common.icc rel.hh			     \
 	distinct/binomial.icc distinct/distinct.icc			     \
 	distinct.hh distinct/atmostOne.icc				     \

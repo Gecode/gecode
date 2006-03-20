@@ -54,6 +54,14 @@ Next release.
 
 [ENTRY]
 Module: set
+What: change
+Rank: minor
+[DESCRIPTION]
+Renamed the set propagators minElement to min, maxElement to max,
+and channelVarVal to channel.
+
+[ENTRY]
+Module: set
 What: bug
 Rank: minor
 Thanks: Patrick Pekczynski

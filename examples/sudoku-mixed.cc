@@ -148,7 +148,7 @@ public:
     for (int i=0; i<nn*nn; i++)
       ys[i+1] = y[i];
 
-    channelVarVal(this, ys, xs);
+    channel(this, ys, xs);
 
     gcc(this, y, 9, ICL_DOM);
 

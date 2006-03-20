@@ -36,22 +36,22 @@
 namespace Gecode { namespace Set { namespace Int {
 
   PropCost
-  ChannelVarVal::cost(void) const {
+  Channel::cost(void) const {
     return PC_QUADRATIC_LO;
   }
 
-  ChannelVarVal::~ChannelVarVal(void) {
+  Channel::~Channel(void) {
     xs.cancel(this, Gecode::Int::PC_INT_DOM);
     ys.cancel(this, PC_SET_ANY);
   }
 
   Actor*
-  ChannelVarVal::copy(Space* home, bool share) {
-    return new (home) ChannelVarVal(home,share,*this);
+  Channel::copy(Space* home, bool share) {
+    return new (home) Channel(home,share,*this);
   }
 
   ExecStatus
-  ChannelVarVal::propagate(Space* home) {
+  Channel::propagate(Space* home) {
     int assigned = 0;
     for (int v=xs.size(); v--;) {
       if (xs[v].assigned()) {
