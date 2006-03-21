@@ -65,6 +65,13 @@ namespace Gecode { namespace Int {
     ArgumentSizeMismatch(const char* l);
   };
 
+  /// %Exception: Arguments contain same variable multiply
+  class ArgumentSame : public Exception  {
+  public:
+    /// Initialize with location \a l
+    ArgumentSame(const char* l);
+  };
+
   /// %Exception: Only inequality relations are supported
   class OnlyInequalityRelations : public Exception  {
   public:
@@ -117,6 +124,10 @@ namespace Gecode { namespace Int {
   inline
   ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l)
     : Exception(l,"Sizes of argument arrays mismatch") {}
+
+  inline
+  ArgumentSame::ArgumentSame(const char* l)
+    : Exception(l,"Argument array contains same variable multiply") {}
 
 
   inline

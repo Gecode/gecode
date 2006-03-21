@@ -354,6 +354,11 @@ namespace Gecode {
   class VarArgArray : public ArgArrayBase<Var> {
   protected:
     using ArgArrayBase<Var>::a;
+    /// Sort order for variables
+    class VarLess {
+    public:
+      bool operator()(const Var&, const Var&);
+    };
   public:
     using ArgArrayBase<Var>::size;
     /// \name Constructors and initialization
@@ -364,6 +369,13 @@ namespace Gecode {
     VarArgArray(const VarArgArray<Var>& a);
     /// Initialize from variable array \a a (copy elements)
     VarArgArray(const VarArray<Var>& a);
+    //@}
+    /// \name Variable equality
+    //@{
+    /// Test whether array contains same variable multiply
+    bool same(void) const;
+    /// Test whether array contains variable \a y
+    bool same(const Var& y) const;
     //@}
   };
 
@@ -853,6 +865,38 @@ namespace Gecode {
     for (int i = x.size(); i--; )
       a[i] = x[i];
   }
+
+  template <class Var>
+  forceinline bool
+  VarArgArray<Var>::VarLess::operator()(const Var& a, const Var& b) {
+    return a.variable() < b.variable();
+  }
+
+  template <class Var>
+  bool
+  VarArgArray<Var>::same(void) const {
+    if (n < 2)
+      return false;
+    GECODE_AUTOARRAY(Var,y,n);
+    for (int i = n; i--; )
+      y[i] = a[i];
+    VarLess vl;
+    Support::quicksort<Var,VarLess>(y,n,vl);
+    for (int i = n-1; i--; )
+      if (y[i+1].variable() == y[i].variable())
+	return true;
+    return false;
+  }
+
+  template <class Var>
+  bool
+  VarArgArray<Var>::same(const Var& y) const {
+    for (int i = n; i--; )
+      if (a[i].variable() == y.variable())
+	return true;
+    return false;
+  }
+
 
 
 

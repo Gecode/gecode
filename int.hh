@@ -444,6 +444,9 @@ namespace Gecode {
    *
    * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
    * and domain-consistency (\a icl = ICL_DOM).
+   *
+   * Throws an exception of type Int::ArgumentSame, if \a x contains
+   * the same variable multiply.
    */
   GECODE_INT_EXPORT void
   distinct(Space* home, const IntVarArgs& x, 
@@ -456,6 +459,8 @@ namespace Gecode {
    *     the integers in \a n exceed the limits in Limits::Int.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a n are of different size.
+   * \li Throws an exception of type Int::ArgumentSame, if \a x contains
+   *     the same variable multiply.
    */
   GECODE_INT_EXPORT void
   distinct(Space* home, const IntArgs& n, const IntVarArgs& x,
