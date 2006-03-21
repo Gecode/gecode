@@ -70,28 +70,5 @@ DistinctOffset _domo("Distinct::Dom::Offset",ICL_DOM);
 DistinctOffset _bndo("Distinct::Bnd::Offset",ICL_BND);
 DistinctOffset _valo("Distinct::Val::Offset",ICL_VAL);
 
-class DistinctShared : public IntTest {
-private:
-  IntConLevel icl;
-public:
-  DistinctShared(const char* t, IntConLevel icl0) 
-    : IntTest(t,1,ds_22,false), icl(icl0) {}
-  virtual bool solution(const Assignment& x) const {
-    return true;
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    IntArgs c(4); IntVarArgs y(4);
-    for (int i=0; i<4; i++) {
-      c[i]=i; y[i]=x[0];
-    }
-    distinct(home, c, y, icl);
-  }
-};
-
-DistinctShared _doms("Distinct::Dom::Shared",ICL_DOM);
-DistinctShared _bnds("Distinct::Bnd::Shared",ICL_BND);
-DistinctShared _vals("Distinct::Val::Shared",ICL_VAL);
-
-
 // STATISTICS: test-int
 
