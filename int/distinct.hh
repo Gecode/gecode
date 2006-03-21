@@ -48,33 +48,21 @@ namespace Gecode { namespace Int { namespace Distinct {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Val {
-  public:
-    /// Post propagator for view array \a x
-    static ExecStatus post(Space* home, ViewArray<View>& x);
-  };
-
-  /**
-   * \brief Implementation of naive value distinct propagator
-   *
-   * The actual implementation of naive value distinct. If \a shared
-   * is true, the propagator takes into account that some views are shared.
-   */
-  template <class View, bool shared>
-  class ValImp : public NaryPropagator<View,PC_INT_VAL> {
-    friend class Val<View>;
+  class Val : public NaryPropagator<View,PC_INT_VAL> {
   protected:
     using NaryPropagator<View,PC_INT_VAL>::x;
 
     /// Constructor for posting
-    ValImp(Space* home, ViewArray<View>& x);
+    Val(Space* home, ViewArray<View>& x);
     /// Constructor for cloning \a p
-    ValImp(Space* home, bool share, ValImp<View,shared>& p);
+    Val(Space* home, bool share, Val<View>& p);
   public:
     /// Copy propagator during cloning
     virtual Actor*     copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Post propagator for view array \a x
+    static ExecStatus post(Space* home, ViewArray<View>& x);
   };
 
   /**
@@ -89,11 +77,8 @@ namespace Gecode { namespace Int { namespace Distinct {
    * compute fixpoint. This can be helpful when used together with
    * bounds or domain propagation to protect from pathological cases
    * which can be handled more efficiently with bounds propagation.
-   *
-   * If \a shared is true, takes into account that some views are shared.
-   * \relates Gecode::Distinct::Val
    */
-  template <class View, bool complete, bool shared>
+  template <class View, bool complete>
   ExecStatus prop_val(Space* home, ViewArray<View>&);
 
 
@@ -120,38 +105,23 @@ namespace Gecode { namespace Int { namespace Distinct {
    * and uses a more efficient layout of datastructures (keeping the number
    * of different arrays small).
    *
-   * The Bnd class only posts propagators, the actual implementation
-   * is BndImp which handles shared views.
-   *
    * Requires \code #include "int/distinct.hh" \endcode
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Bnd {
-  public:
-    /// Post propagator for view array \a x
-    static ExecStatus post(Space* home, ViewArray<View>& x);
-  };
-
-  /**
-   * \brief Implementation of bounds-consistent distinct propagator
-   *
-   * The actual implementation of bounds-consistent distinct. If \a shared
-   * is true, the propagator takes into account that some views are shared.
-   */
-  template <class View, bool shared>
-  class BndImp : public Propagator {
-    friend class Bnd<View>;
+  class Bnd : public Propagator {
   protected:
     /// Views on which to perform bounds-propagation
     ViewArray<View> x; 
     /// Views on which to perform value-propagation (subset of \c x) 
     ViewArray<View> y;
     /// Constructor for posting
-    BndImp(Space* home, ViewArray<View>& x);
+    Bnd(Space* home, ViewArray<View>& x);
     /// Constructor for cloning \a p
-    BndImp(Space* home, bool share, BndImp<View,shared>& p);
+    Bnd(Space* home, bool share, Bnd<View>& p);
   public:
+    /// Post propagator for view array \a x
+    static ExecStatus post(Space* home, ViewArray<View>& x);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /**
@@ -164,21 +134,18 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Destructor
-    virtual ~BndImp(void);
+    virtual ~Bnd(void);
   };
 
   /**
    * \brief Perform bounds-consistent distinct propagation
    *
-   * This is actually the propagation algorithm for Distinct::BndImp.
+   * This is actually the propagation algorithm for Distinct::Bnd.
    * It is available as separate function as it is reused for
    * both bounds-consistent and domain-consistent distinct
    * propagators.
-   *
-   * If \a shared is true, propagation takes into account that 
-   * some views are shared.
    */
-  template <class View, bool shared>
+  template <class View>
   ExecStatus prop_bnd(Space* home, ViewArray<View>& x);
 
 

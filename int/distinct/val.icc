@@ -25,7 +25,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * Eliminating singleton variables
    *
    */
-  template <class View, bool complete, bool shared>
+  template <class View, bool complete>
   ExecStatus
   prop_val(Space* home, ViewArray<View>& x) {
     assert(x.size() > 1);
@@ -122,9 +122,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       }
     } while (c_n > 0);
     x.size(n);
-    if (n < 2) 
-      return ES_SUBSUMED;
-    return shared ? ES_NOFIX : ES_FIX;
+    return (n < 2) ? ES_SUBSUMED : ES_FIX;
   failed:
     x.size(0);
     return ES_FAILED;
@@ -135,27 +133,26 @@ namespace Gecode { namespace Int { namespace Distinct {
    * The propagator proper
    *
    */
-
-  template <class View, bool shared>
+  template <class View>
   forceinline
-  ValImp<View,shared>::ValImp(Space* home, ViewArray<View>& x)
+  Val<View>::Val(Space* home, ViewArray<View>& x)
     : NaryPropagator<View,PC_INT_VAL>(home,x) {}
 
-  template <class View, bool shared>
+  template <class View>
   forceinline
-  ValImp<View,shared>::ValImp(Space* home, bool share, ValImp<View,shared>& p)
+  Val<View>::Val(Space* home, bool share, Val<View>& p)
     : NaryPropagator<View,PC_INT_VAL>(home,share,p) {}
 
-  template <class View, bool shared>
+  template <class View>
   Actor*
-  ValImp<View,shared>::copy(Space* home, bool share) {
-    return new (home) ValImp<View,shared>(home,share,*this);
+  Val<View>::copy(Space* home, bool share) {
+    return new (home) Val<View>(home,share,*this);
   }
 
-  template <class View, bool shared>
+  template <class View>
   ExecStatus
-  ValImp<View,shared>::propagate(Space* home) {
-    return prop_val<View,true,shared>(home,x);
+  Val<View>::propagate(Space* home) {
+    return prop_val<View,true>(home,x);
   }
 
   template <class View>
@@ -164,13 +161,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     if (x.size() == 2)
       return Rel::Nq<View>::post(home,x[0],x[1]);
     if (x.size() > 2)
-      if (x.shared())
-	if (x.same())
-	  return ES_FAILED;
-	else
-	  (void) new (home) ValImp<View,true>(home,x);
-      else
-	(void) new (home) ValImp<View,false>(home,x);
+      (void) new (home) Val<View>(home,x);
     return ES_OK;
   }
 

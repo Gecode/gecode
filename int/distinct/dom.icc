@@ -216,6 +216,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
 
   template <class View>
+  forceinline
   Dom<View>::ViewValGraph::ViewValGraph(ViewArray<View>& x, 
 					int n_val0, 
 					unsigned int n_edges, int min)
@@ -263,6 +264,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
+  forceinline
   Dom<View>::ViewValGraph::ViewValGraph(ViewArray<View>& x, const int* val_inf,
 					int n_val0, unsigned int n_edges)
     :  n_view(x.size()), n_val(n_val0),
@@ -576,10 +578,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     if (x.size() == 2)
       return Rel::Nq<View>::post(home,x[0],x[1]);
     if (x.size() > 2) {
-      if (x.same())
-	return ES_FAILED;
       // Do bounds propagation to make view-value graph smaller
-      if (prop_bnd<View,false>(home,x) == ES_FAILED)
+      if (prop_bnd<View>(home,x) == ES_FAILED)
       	return ES_FAILED;
       (void) new (home) Dom<View>(home,x);
     }
@@ -626,14 +626,14 @@ namespace Gecode { namespace Int { namespace Distinct {
   ExecStatus
   Dom<View>::propagate(Space* home) {
     if (View::pme(this) == ME_INT_VAL) {
-      ExecStatus es = prop_val<View,false,false>(home,x);
+      ExecStatus es = prop_val<View,false>(home,x);
       if ((es == ES_FAILED) || (es == ES_SUBSUMED))
 	return es;
       if (es == ES_FIX)
 	return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
-      if (prop_bnd<View,false>(home,x) == ES_FAILED)
+      if (prop_bnd<View>(home,x) == ES_FAILED)
 	return ES_FAILED;
-      es = prop_val<View,true,false>(home,x);
+      es = prop_val<View,true>(home,x);
       if ((es == ES_FAILED) || (es == ES_SUBSUMED))
 	return es;
       return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));      

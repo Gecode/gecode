@@ -54,10 +54,11 @@ Next release.
 
 [ENTRY]
 Module: int
-What:	nug
+What:	change
 Rank:	minor
 [DESCRIPTION]
-Improved fixpoint detection in naive value distinct.
+All distinct propagators raise an exception if a variable occurs
+multiply in its arguments.
 
 [ENTRY]
 Module: set
