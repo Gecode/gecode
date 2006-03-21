@@ -54,16 +54,24 @@ Next release.
 
 [ENTRY]
 Module: set
-What: change
-Rank: minor
+What:	change
+Rank:	major
 [DESCRIPTION]
 Renamed the set propagators minElement to min, maxElement to max,
 and channelVarVal to channel.
 
 [ENTRY]
+Module: int
+What: 	performace
+Rank: 	major
+[DESCRIPTION]
+Improved initialization of domain-consistent distinct propagator,
+in common cases for distinct this can save up to 10% runtime.
+
+[ENTRY]
 Module: set
-What: bug
-Rank: minor
+What:	bug
+Rank:	minor
 Thanks: Patrick Pekczynski
 [DESCRIPTION]
 Fixed off-by-one bug in SetVarImp::lubMinN and SetVarImp::lubMaxN.
@@ -83,7 +91,7 @@ Rank:   minor
 Bug:    33
 Thanks: Olof Sivertsson
 [DESCRIPTION]
-Slice-operation now returns elements in the right order.
+Slice-operation now returns elements in right order.
 
 [ENTRY]
 Module: minimodel

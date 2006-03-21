@@ -32,8 +32,9 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::channel");
     if (home->failed()) return;
 
-    ViewArray<ViewTuple<IntView,2> > xy(home,x.size());
-    if (Channel::Dom<IntView>::post(home,xy) == ES_FAILED)
+    ViewArray<IntView> xv(home,x);
+    ViewArray<IntView> yv(home,x);
+    if (Channel::Dom<IntView>::post(home,xv,yv) == ES_FAILED)
       home->fail();
   }
 

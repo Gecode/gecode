@@ -25,18 +25,36 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View>
   forceinline
-  Dom<View>::Dom(Space* home, ViewArray<ViewTuple<View,2> >& xy)
-    : NaryPropagator<ViewTuple<View,2>,PC_INT_DOM>(home,xy) {}
+  Dom<View>::Dom(Space* home, ViewArray<View>& x0, ViewArray<View>& y0)
+    : Propagator(home), x(x0), y(y0), 
+      ci(reinterpret_cast<CardInfo*>(home->alloc(x.size()*sizeof(CardInfo)))) {
+    for (int i=x.size(); i--; ) {
+      x[i].subscribe(home,this,PC_INT_DOM); ci[i].x = 0;
+      y[i].subscribe(home,this,PC_INT_DOM); ci[i].y = 0;
+    }
+  }
 
   template <class View>
   forceinline
   Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
-    : NaryPropagator<ViewTuple<View,2>,PC_INT_DOM>(home,share,p) {}
+    : Propagator(home,share,p),
+      ci(reinterpret_cast<CardInfo*>(home->alloc(x.size()*sizeof(CardInfo)))) {
+    x.update(home,share,p.x);
+    y.update(home,share,p.y);
+    for (int i=x.size(); i--; )
+      ci[i] = p.ci[i];
+  }
 
   template <class View>
   Actor*
   Dom<View>::copy(Space* home, bool share) {
     return new (home) Dom<View>(home,share,*this);
+  }
+
+  template <class View>
+  PropCost
+  Dom<View>::cost(void) const {
+    return PC_CUBIC_LO;
   }
 
   template <class View>
@@ -47,12 +65,19 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View>
   ExecStatus
-  Dom<View>::post(Space* home, ViewArray<ViewTuple<View,2> >& xy){
-    if (xy.size() == 0)
+  Dom<View>::post(Space* home, ViewArray<View>& x, ViewArray<View>& y) {
+    if (x.size() == 0)
       return ES_OK;
-    (void) new (home) Dom<View>(home,xy);
+    (void) new (home) Dom<View>(home,x,y);
     return ES_OK;
   }
+
+  template <class View>
+  Dom<View>::~Dom(void) {
+    x.cancel(this,PC_INT_DOM);
+    y.cancel(this,PC_INT_DOM);
+  }
+
 
 }}}
 

@@ -38,21 +38,32 @@ namespace Gecode { namespace Int { namespace Channel {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Dom : public NaryPropagator<ViewTuple<View,2>,PC_INT_DOM> {
+  class Dom : public Propagator {
   protected:
-    using NaryPropagator<ViewTuple<View,2>,PC_INT_DOM>::x;
+    ViewArray<View> x;
+    ViewArray<View> y;
+    class CardInfo {
+    public:
+      unsigned int x;
+      unsigned int y;
+    };
+    CardInfo* ci;
     /// Constructor for cloning \a p
     Dom(Space* home, bool share, Dom& p);
     /// Constructor for posting
-    Dom(Space* home, ViewArray<ViewTuple<View,2> >& xy);
+    Dom(Space* home, ViewArray<View>& x, ViewArray<View>& y);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
+    /// Propagation cost
+    virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for channeling on \a xy
     static  ExecStatus post(Space* home, 
-			    ViewArray<ViewTuple<View,2> >& xy);
+			    ViewArray<View>& x, ViewArray<View>& y);
+    /// Destructor
+    ~Dom(void);
   };
 
 }}}

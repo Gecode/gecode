@@ -187,9 +187,12 @@ namespace Gecode { namespace Int { namespace Distinct {
     Support::StaticStack<Node<View>*> n_s;
   public:
     ViewValGraph(ViewArray<View>&, const int*, int, unsigned int);
+    ViewValGraph(ViewArray<View>& x, int, unsigned int, int);
     ~ViewValGraph(void);
 
     size_t size;
+
+    static ViewValGraph* init(ViewArray<View>&);
 
     bool initial_match(void);
 
@@ -213,8 +216,55 @@ namespace Gecode { namespace Int { namespace Distinct {
 
 
   template <class View>
+  Dom<View>::ViewValGraph::ViewValGraph(ViewArray<View>& x, 
+					int n_val0, 
+					unsigned int n_edges, int min)
+    :  n_view(x.size()), n_val(n_val0),
+       count(0), cnt0(0), cnt1(0), n_s(n_view+n_val)
+  {
+    size_t edge_size  = sizeof(Edge<View>) * n_edges;
+    size_t views_size = sizeof(ViewNode<View>) * n_view;
+    size_t view_size  = sizeof(ViewNode<View>*) * n_view;
+    size_t vals_size  = sizeof(ValNode<View>) * n_val;
+    size_t val_size   = sizeof(ValNode<View>*) * n_val;
+    size_t size = edge_size +
+      views_size + view_size + vals_size + val_size;
+    mem = reinterpret_cast<char*>(Memory::malloc(size));
+    Edge<View>*     edges      = reinterpret_cast<Edge<View>*>(mem);
+    ViewNode<View>* view_nodes = reinterpret_cast<ViewNode<View>*>
+      (mem+edge_size);
+    ValNode<View>*  val_nodes  = reinterpret_cast<ValNode<View>*>
+      (mem+edge_size+views_size);
+    view = reinterpret_cast<ViewNode<View>**>
+      (mem+edge_size+views_size+vals_size);
+    val  = reinterpret_cast<ValNode<View>**>
+      (mem+edge_size+views_size+vals_size+view_size);
+
+    // Init value nodes
+    {
+      int v = min+n_val;
+      for (int i = n_val; i--; )
+	val[i] = new (val_nodes + i) ValNode<View>(--v);
+    }
+
+    // Init view nodes and edges
+    for (int i = n_view; i--; ) {
+      view[i] = new (view_nodes + i) ViewNode<View>(x[i]);
+      Edge<View>** edge_p = view[i]->val_edges_ref();
+      ViewValues<View> x_i(x[i]);
+      while (x_i()) {
+	*edge_p = new (edges++) Edge<View>(val_nodes+x_i.val()-min,
+					   view_nodes+i);
+	edge_p = (*edge_p)->next_edge_ref();
+	++x_i;
+      }
+      *edge_p = NULL;
+    }
+  }
+
+  template <class View>
   Dom<View>::ViewValGraph::ViewValGraph(ViewArray<View>& x, const int* val_inf,
-				int n_val0, unsigned int n_edges)
+					int n_val0, unsigned int n_edges)
     :  n_view(x.size()), n_val(n_val0),
        count(0), cnt0(0), cnt1(0), n_s(n_view+n_val)
   {
@@ -255,6 +305,49 @@ namespace Gecode { namespace Int { namespace Distinct {
       }
       *edge_p = NULL;
     }
+  }
+
+  template <class View>
+  typename Dom<View>::ViewValGraph*
+  Dom<View>::ViewValGraph::init(ViewArray<View>& x) {
+    int n_view = x.size();
+    // Find value information for construction of view value graph
+    int min = x[n_view-1].min();
+    int max = x[n_view-1].max();
+    unsigned int size = x[n_view-1].size();
+    for (int i=n_view-1; i--; ) {
+      size += x[i].size();
+      min = std::min(min,x[i].min());
+      max = std::max(max,x[i].max());
+    }
+    
+    unsigned int width = max-min+1;
+
+    // Definitly not enough values
+    if (width < static_cast<unsigned int>(n_view))
+      return NULL;
+
+    // Test whether the values are dense or sparse
+    if (static_cast<unsigned int>(n_view)*2 >= width)
+      return new ViewValGraph(x,static_cast<int>(width),size,min);
+
+    Support::DynamicArray<int> val_inf(64);
+    // Compute set of values
+    int n_val = 0;
+    GECODE_AUTOARRAY(ViewRanges<View>,x_r,n_view);
+    for (int i = n_view; i--; ) {
+      ViewRanges<View> r(x[i]); x_r[i] = r;
+    }
+    Iter::Ranges::NaryUnion<ViewRanges<View> > xu(x_r, n_view);
+    // Fill array of values
+    while (xu()) {
+      for (int v = xu.min(); v <= xu.max(); v++)
+	val_inf[n_val++] = v;
+      ++xu;
+    }
+    if (n_val < n_view)
+      return NULL;
+    return new ViewValGraph(x,val_inf,n_val,size);
   }
 
   template <class View>
@@ -557,30 +650,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     }
     
     if (vvg == NULL) {
-      // Find value information for construction of view value graph
-      Support::DynamicArray<int> val_inf(64);
-      int          n_val = 0;
-      unsigned int size  = 0;
-      // Fill value array
-      {
-	GECODE_AUTOARRAY(ViewRanges<View>,x_r,x.size());
-	for (int i = x.size(); i--; ) {
-	  ViewRanges<View> r(x[i]); x_r[i] = r;
-	  size += x[i].size();
-	}
-	Iter::Ranges::NaryUnion<ViewRanges<View> > xu(x_r, x.size());
-	while (xu()) {
-	  for (int v = xu.min(); v <= xu.max(); v++)
-	    val_inf[n_val++] = v;
-	  ++xu;
-	}
-      }
-
-      if (n_val < x.size())
-	return ES_FAILED;
-
-      vvg = new ViewValGraph(x,val_inf,n_val,size);
-      if (!vvg->initial_match())
+      vvg = ViewValGraph::init(x);
+      if ((vvg == NULL) || !vvg->initial_match())
 	return ES_FAILED;
     } else {
       if (!vvg->sync())
@@ -588,6 +659,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     }
 
     vvg->mark();
+
     return vvg->tell(home) ? ES_NOFIX : ES_FIX;
 
   }
