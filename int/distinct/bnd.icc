@@ -249,7 +249,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       if (hall[x0].h < x0) {
 	int w = pathmin_h(hall, hall[x0].h);
 	int m = hall[w].bounds - 1;
-	// Test again for sharing: this is quite inaccurate as there
+	// Test again for shared: this is quite inaccurate as there
 	// are two opreations perfomed per variable: hence if both
 	// lower and upper bound are changed, and shared is true,
 	// the propagator will report to be not at fixpoint.
@@ -280,7 +280,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     assert(x.size() > 1);
 
     if (View::pme(this) == ME_INT_VAL) {
-      ExecStatus es = prop_val<View,false>(home,y);
+      ExecStatus es = prop_val<View,false,shared>(home,y);
       if ((es == ES_FAILED) || (es == ES_SUBSUMED))
 	return es;
       if (es == ES_FIX)

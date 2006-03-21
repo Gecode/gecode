@@ -53,6 +53,13 @@ Date:		upcoming
 Next release.
 
 [ENTRY]
+Module: int
+What:	nug
+Rank:	minor
+[DESCRIPTION]
+Improved fixpoint detection in naive value distinct.
+
+[ENTRY]
 Module: set
 What:	change
 Rank:	major

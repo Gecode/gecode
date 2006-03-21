@@ -626,14 +626,14 @@ namespace Gecode { namespace Int { namespace Distinct {
   ExecStatus
   Dom<View>::propagate(Space* home) {
     if (View::pme(this) == ME_INT_VAL) {
-      ExecStatus es = prop_val<View,false>(home,x);
+      ExecStatus es = prop_val<View,false,false>(home,x);
       if ((es == ES_FAILED) || (es == ES_SUBSUMED))
 	return es;
       if (es == ES_FIX)
 	return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
       if (prop_bnd<View,false>(home,x) == ES_FAILED)
 	return ES_FAILED;
-      es = prop_val<View,true>(home,x);
+      es = prop_val<View,true,false>(home,x);
       if ((es == ES_FAILED) || (es == ES_SUBSUMED))
 	return es;
       return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));      

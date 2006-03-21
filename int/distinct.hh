@@ -48,21 +48,33 @@ namespace Gecode { namespace Int { namespace Distinct {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Val : public NaryPropagator<View,PC_INT_VAL> {
+  class Val {
+  public:
+    /// Post propagator for view array \a x
+    static ExecStatus post(Space* home, ViewArray<View>& x);
+  };
+
+  /**
+   * \brief Implementation of naive value distinct propagator
+   *
+   * The actual implementation of naive value distinct. If \a shared
+   * is true, the propagator takes into account that some views are shared.
+   */
+  template <class View, bool shared>
+  class ValImp : public NaryPropagator<View,PC_INT_VAL> {
+    friend class Val<View>;
   protected:
     using NaryPropagator<View,PC_INT_VAL>::x;
 
     /// Constructor for posting
-    Val(Space* home, ViewArray<View>& x);
+    ValImp(Space* home, ViewArray<View>& x);
     /// Constructor for cloning \a p
-    Val(Space* home, bool share, Val<View>& p);
+    ValImp(Space* home, bool share, ValImp<View,shared>& p);
   public:
     /// Copy propagator during cloning
     virtual Actor*     copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator for view array \a y
-    static  ExecStatus post(Space* home, ViewArray<View>& y);
   };
 
   /**
@@ -77,9 +89,11 @@ namespace Gecode { namespace Int { namespace Distinct {
    * compute fixpoint. This can be helpful when used together with
    * bounds or domain propagation to protect from pathological cases
    * which can be handled more efficiently with bounds propagation.
+   *
+   * If \a shared is true, takes into account that some views are shared.
    * \relates Gecode::Distinct::Val
    */
-  template <class View, bool complete>
+  template <class View, bool complete, bool shared>
   ExecStatus prop_val(Space* home, ViewArray<View>&);
 
 
