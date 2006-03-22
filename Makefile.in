@@ -332,7 +332,7 @@ OTHERHDR = iter.hh \
 #
 
 INTEXAMPLESRC0 = \
-	alpha bibd cars donald \
+	test alpha bibd cars donald \
 	eq20 golomb \
 	graph-color grocery ind-set knights \
 	magic-sequence magic-sequence-gcc magic-square \

@@ -33,7 +33,7 @@ namespace Gecode {
     if (home->failed()) return;
 
     ViewArray<IntView> xv(home,x);
-    ViewArray<IntView> yv(home,x);
+    ViewArray<IntView> yv(home,y);
     if (Channel::Dom<IntView>::post(home,xv,yv) == ES_FAILED)
       home->fail();
   }

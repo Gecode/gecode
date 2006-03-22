@@ -60,7 +60,44 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View>
   ExecStatus
   Dom<View>::propagate(Space* home) {
-    return ES_FAILED;
+    int n = x.size();
+    GECODE_AUTOARRAY(int, assigned, n);
+    int n_assigned = 0;
+    for (int i=n; i--; )
+      if (((ci[i].x != 1) && x[i].assigned()) ||
+	  ((ci[i].y != 1) && y[i].assigned()))
+	assigned[n_assigned++] = i;
+    while (n_assigned > 0) {
+      int v = assigned[--n_assigned];
+      int i, j;
+      if ((ci[v].x != 1) && x[v].assigned()) {
+	i = v; j = x[v].val();
+	GECODE_ME_CHECK(y[j].eq(home,i));
+	ci[i].x = 1; ci[j].y = 1;
+	for (int k=0; k<i; k++)
+	  GECODE_ME_CHECK(x[k].nq(home,j));
+	for (int k=i+1; k<n; k++)
+	  GECODE_ME_CHECK(x[k].nq(home,j));
+	for (int k=0; k<j; k++)
+	  GECODE_ME_CHECK(y[k].nq(home,i));
+	for (int k=j+1; k<n; k++)
+	  GECODE_ME_CHECK(y[k].nq(home,i));
+      }
+      if ((ci[v].y != 1) && y[v].assigned()) {
+	i = y[v].val(); j = v;
+	GECODE_ME_CHECK(x[i].eq(home,j));
+	ci[i].y = 1; ci[j].x = 1;
+	for (int k=0; k<i; k++)
+	  GECODE_ME_CHECK(x[k].nq(home,j));
+	for (int k=i+1; k<n; k++)
+	  GECODE_ME_CHECK(x[k].nq(home,j));
+	for (int k=0; k<j; k++)
+	  GECODE_ME_CHECK(y[k].nq(home,i));
+	for (int k=j+1; k<n; k++)
+	  GECODE_ME_CHECK(y[k].nq(home,i));
+      }
+    }
+    return ES_FIX;
   }
 
   template <class View>
@@ -68,6 +105,13 @@ namespace Gecode { namespace Int { namespace Channel {
   Dom<View>::post(Space* home, ViewArray<View>& x, ViewArray<View>& y) {
     if (x.size() == 0)
       return ES_OK;
+    int n = x.size();
+    for (int i=x.size(); i--; ) {
+      GECODE_ME_CHECK(x[i].gq(home,0));
+      GECODE_ME_CHECK(x[i].le(home,n));
+      GECODE_ME_CHECK(y[i].gq(home,0));
+      GECODE_ME_CHECK(y[i].le(home,n));
+    }
     (void) new (home) Dom<View>(home,x,y);
     return ES_OK;
   }
