@@ -28,13 +28,24 @@ namespace Gecode {
   void
   channel(Space* home, const IntVarArgs& x, const IntVarArgs& y,
 	  IntConLevel) {
+    using namespace Channel;
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::channel");
+    if (x.same(y))
+      throw ArgumentSame("Int::channel");
     if (home->failed()) return;
+    if (x.size() == 0)
+      return;
 
-    ViewArray<IntView> xv(home,x);
-    ViewArray<IntView> yv(home,y);
-    if (Channel::Dom<IntView>::post(home,xv,yv) == ES_FAILED)
+    ViewCardBnds<IntView>* xvc 
+      = ViewCardBnds<IntView>::allocate(home,x.size());
+    ViewCardBnds<IntView>* yvc 
+      = ViewCardBnds<IntView>::allocate(home,x.size());
+    for (int i=x.size(); i--; ) {
+      xvc[i].view = x[i];
+      yvc[i].view = y[i];
+    }
+    if (Dom<IntView>::post(home,x.size(),xvc,yvc) == ES_FAILED)
       home->fail();
   }
 

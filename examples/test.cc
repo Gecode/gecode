@@ -38,8 +38,9 @@ public:
   /// Actual model
   Alpha(const Options& opt) : x(this,4,-4,4), y(this,4,-8,8) {
     channel(this, x, y);
-    //    rel(this, x[1], IRT_EQ, 2);
-    rel(this, y[0], IRT_EQ, 3);
+    rel(this, x[1], IRT_EQ, 2);
+    rel(this, y[1], IRT_NQ, 2);
+    rel(this, x[0], IRT_NQ, 1);
   }
 
   /// Constructor for cloning \a s

@@ -32,6 +32,23 @@
 namespace Gecode { namespace Int { namespace Channel {
 
   /**
+   * \brief Combine view together with cardinality and bounds information
+   *
+   */
+  template <class View>
+  class ViewCardBnds {
+  public:
+    View         view;
+    unsigned int card;
+    int          min;
+    int          max;
+    /// Allocate memory from space \a home for \a n elements
+    static ViewCardBnds<View>* allocate(Space* home, int n);
+    /// Update the cardinality and bounds information
+    void update(void);
+  };
+
+  /**
    * \brief Naive domain-consistent channel propagator
    *
    * Requires \code #include "int/channel.hh" \endcode
@@ -40,18 +57,18 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View>
   class Dom : public Propagator {
   protected:
-    ViewArray<View> x;
-    ViewArray<View> y;
-    class CardInfo {
-    public:
-      unsigned int x;
-      unsigned int y;
-    };
-    CardInfo* ci;
+    /// Number of views (actually twice as many for both x and y)
+    int n;
+    /// Total number of not assigned views (not known to be assigned)
+    int n_na;
+    /// View and information for \a x
+    ViewCardBnds<View>* x;
+    /// View and information for \a y
+    ViewCardBnds<View>* y;
     /// Constructor for cloning \a p
     Dom(Space* home, bool share, Dom& p);
     /// Constructor for posting
-    Dom(Space* home, ViewArray<View>& x, ViewArray<View>& y);
+    Dom(Space* home, int n, ViewCardBnds<View>* x, ViewCardBnds<View>* y);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
@@ -59,9 +76,9 @@ namespace Gecode { namespace Int { namespace Channel {
     virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator for channeling on \a xy
-    static  ExecStatus post(Space* home, 
-			    ViewArray<View>& x, ViewArray<View>& y);
+    /// Post propagator for channeling on between \a x and \ ay
+    static  ExecStatus post(Space* home, int n, 
+			    ViewCardBnds<View>* x, ViewCardBnds<View>* y);
     /// Destructor
     ~Dom(void);
   };

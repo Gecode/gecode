@@ -376,6 +376,8 @@ namespace Gecode {
     bool same(void) const;
     /// Test whether array contains variable \a y
     bool same(const Var& y) const;
+    /// Test whether all elements from array and \a y contains same variable multiply
+    bool same(const VarArgArray<Var>& y) const;
     //@}
   };
 
@@ -884,6 +886,25 @@ namespace Gecode {
     Support::quicksort<Var,VarLess>(y,n,vl);
     for (int i = n-1; i--; )
       if (y[i+1].variable() == y[i].variable())
+	return true;
+    return false;
+  }
+
+  template <class Var>
+  bool
+  VarArgArray<Var>::same(const VarArgArray<Var>& y) const {
+    int m = n + y.n;
+    if (m < 2)
+      return false;
+    GECODE_AUTOARRAY(Var,z,m);
+    for (int i = n; i--; )
+      z[i] = a[i];
+    for (int i = y.n; i--; )
+      z[i+n] = y.a[i];
+    VarLess vl;
+    Support::quicksort<Var,VarLess>(z,m,vl);
+    for (int i = m-1; i--; )
+      if (z[i+1].variable() == z[i].variable())
 	return true;
     return false;
   }

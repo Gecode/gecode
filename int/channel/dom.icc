@@ -2,8 +2,12 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
+ *  Contributing authors:
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *
  *  Copyright:
  *     Christian Schulte, 2006
+ *     Mikael Lagerkvist, 2006
  *
  *  Last modified:
  *     $Date: 2005-10-23 16:23:09 +0200 (Sun, 23 Oct 2005) $ by $Author: schulte $
@@ -24,25 +28,47 @@
 namespace Gecode { namespace Int { namespace Channel {
 
   template <class View>
+  forceinline ViewCardBnds<View>*
+  ViewCardBnds<View>::allocate(Space* home, int n) {
+    return reinterpret_cast<ViewCardBnds<View>*>
+      (home->alloc(n*sizeof(ViewCardBnds<View>)));
+  }
+ 
+  template <class View>
+  forceinline void
+  ViewCardBnds<View>::update(void) {
+    card = view.size();
+    min  = view.min();
+    max  = view.max();
+  }
+ 
+  template <class View>
   forceinline
-  Dom<View>::Dom(Space* home, ViewArray<View>& x0, ViewArray<View>& y0)
-    : Propagator(home), x(x0), y(y0), 
-      ci(reinterpret_cast<CardInfo*>(home->alloc(x.size()*sizeof(CardInfo)))) {
-    for (int i=x.size(); i--; ) {
-      x[i].subscribe(home,this,PC_INT_DOM); ci[i].x = 0;
-      y[i].subscribe(home,this,PC_INT_DOM); ci[i].y = 0;
+  Dom<View>::Dom(Space* home, int n0, 
+		 ViewCardBnds<View>* x0, ViewCardBnds<View>* y0)
+    : Propagator(home), n(n0), n_na(2*n), x(x0), y(y0) {
+    for (int i=n; i--; ) {
+      x[i].view.subscribe(home,this,PC_INT_DOM);
+      y[i].view.subscribe(home,this,PC_INT_DOM);
     }
   }
 
   template <class View>
   forceinline
   Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
-    : Propagator(home,share,p),
-      ci(reinterpret_cast<CardInfo*>(home->alloc(x.size()*sizeof(CardInfo)))) {
-    x.update(home,share,p.x);
-    y.update(home,share,p.y);
-    for (int i=x.size(); i--; )
-      ci[i] = p.ci[i];
+    : Propagator(home,share,p), n(p.n), n_na(p.n_na),
+      x(ViewCardBnds<View>::allocate(home,n)), 
+      y(ViewCardBnds<View>::allocate(home,n)) {
+    for (int i=n; i--; ) {
+      x[i].view.update(home,share,p.x[i].view);
+      x[i].card = p.x[i].card;
+      x[i].min  = p.x[i].min;
+      x[i].max  = p.x[i].max;
+      y[i].view.update(home,share,p.y[i].view);
+      y[i].card = p.y[i].card;
+      y[i].min  = p.y[i].min;
+      y[i].max  = p.y[i].max;
+    }
   }
 
   template <class View>
@@ -59,67 +85,205 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View>
   ExecStatus
-  Dom<View>::propagate(Space* home) {
-    int n = x.size();
-    GECODE_AUTOARRAY(int, assigned, n);
-    int n_assigned = 0;
-    for (int i=n; i--; )
-      if (((ci[i].x != 1) && x[i].assigned()) ||
-	  ((ci[i].y != 1) && y[i].assigned()))
-	assigned[n_assigned++] = i;
-    while (n_assigned > 0) {
-      int v = assigned[--n_assigned];
-      int i, j;
-      if ((ci[v].x != 1) && x[v].assigned()) {
-	i = v; j = x[v].val();
-	GECODE_ME_CHECK(y[j].eq(home,i));
-	ci[i].x = 1; ci[j].y = 1;
-	for (int k=0; k<i; k++)
-	  GECODE_ME_CHECK(x[k].nq(home,j));
-	for (int k=i+1; k<n; k++)
-	  GECODE_ME_CHECK(x[k].nq(home,j));
-	for (int k=0; k<j; k++)
-	  GECODE_ME_CHECK(y[k].nq(home,i));
-	for (int k=j+1; k<n; k++)
-	  GECODE_ME_CHECK(y[k].nq(home,i));
+  prop_val(Space* home, int n, ViewCardBnds<View>* x, ViewCardBnds<View>* y,
+	   int& n_na, int*& xa, int*& ya) {
+    // Propagate assigned views for x
+    while (*(xa-1) >= 0) {
+      int i = *(--xa);
+      int j = x[i].view.val();
+      x[i].card = 1; n_na--;
+      // Assign the y variable to i (or test if already assigned!)
+      {
+	ModEvent me = y[j].view.eq(home,i);
+	if (me_failed(me))
+	  return ES_FAILED;
+	if (me_modified(me)) {
+	  // Record that y[j] has been assigned and must be propagated
+	  assert(me == ME_INT_VAL);
+	  // Otherwise the modification event would not be ME_INT_VAL
+	  assert(y[j].card != 1);
+	  *(ya++) = j;
+	}
       }
-      if ((ci[v].y != 1) && y[v].assigned()) {
-	i = y[v].val(); j = v;
-	GECODE_ME_CHECK(x[i].eq(home,j));
-	ci[i].y = 1; ci[j].x = 1;
-	for (int k=0; k<i; k++)
-	  GECODE_ME_CHECK(x[k].nq(home,j));
-	for (int k=i+1; k<n; k++)
-	  GECODE_ME_CHECK(x[k].nq(home,j));
-	for (int k=0; k<j; k++)
-	  GECODE_ME_CHECK(y[k].nq(home,i));
-	for (int k=j+1; k<n; k++)
-	  GECODE_ME_CHECK(y[k].nq(home,i));
+      // Prune the value j from all x variables
+      for (int k=i; k--; ) {
+	ModEvent me = x[k].view.nq(home,j);
+	if (me_failed(me))
+	  return ES_FAILED;
+	if (me_modified(me))
+	  if (me == ME_INT_VAL) {
+	    // Record that x[k] has been assigned and must be propagated
+	    assert(x[k].card != 1);
+	    *(xa++) = k;
+	  } else {
+	    // One value has been removed and this removal does not need
+	    // to be propagated again: after all y[j] = i, so it holds
+	    // that y[j] != k.
+	    // FIXME MAYBE: Update bounds information
+	    x[k].card--;
+	  }
+      }
+      // The same for the other views
+      for (int k=i+1; k<n; k++) {
+	ModEvent me = x[k].view.nq(home,j);
+	if (me_failed(me))
+	  return ES_FAILED;
+	if (me_modified(me))
+	  if (me == ME_INT_VAL) {
+	    // Record that x[k] has been assigned and must be propagated
+	    assert(x[k].card != 1);
+	    *(xa++) = k;
+	  } else {
+	    // One value has been removed and this removal does not need
+	    // to be propagated again: after all y[j] = i, so it holds
+	    // that y[j] != k.
+	    // FIXME MAYBE: Update bounds information
+	    x[k].card--;
+	  }
       }
     }
-    return ES_FIX;
+    return ES_OK;
   }
 
   template <class View>
   ExecStatus
-  Dom<View>::post(Space* home, ViewArray<View>& x, ViewArray<View>& y) {
-    if (x.size() == 0)
-      return ES_OK;
-    int n = x.size();
-    for (int i=x.size(); i--; ) {
-      GECODE_ME_CHECK(x[i].gq(home,0));
-      GECODE_ME_CHECK(x[i].le(home,n));
-      GECODE_ME_CHECK(y[i].gq(home,0));
-      GECODE_ME_CHECK(y[i].le(home,n));
+  prop_dom(Space* home, int n, ViewCardBnds<View>* x, ViewCardBnds<View>* y,
+	   int*& ya) {
+    for (int i = n; i--; ) 
+      // Only views with not yet propagated missing values
+      if (x[i].card != x[i].view.size()) {
+	// Iterate the values in the complement of x[i]
+	ViewRanges<IntView> 
+	  xir(x[i].view);
+	Iter::Ranges::ComplVal<ViewRanges<IntView> > 
+	  xirc(x[i].min,x[i].max,xir);
+	Iter::Ranges::ToValues<Iter::Ranges::ComplVal<ViewRanges<IntView> > >
+	  jv(xirc);
+	while (jv()) {
+	  // j is not in the domain of x[i], so prune i from y[j]
+	  int j = jv.val();
+	  ModEvent me = y[j].view.nq(home,i);
+	  if (me_failed(me))
+	    return ES_FAILED;
+	  if (me_modified(me))
+	    if (me == ME_INT_VAL) {
+	      // Record that y[j] has been assigned and must be propagated
+	      assert(y[j].card != 1);
+	      *(ya++) = j;
+	    } else {
+	      // Obvious as x[i] is different from j
+	      // FIXME MAYBE: Update bounds information
+	      y[j].card--;
+	    }
+	  ++jv;
+	}
+	// Update which values have been propagated and what are the new bounds
+	x[i].update();
+      }
+    return ES_OK;
+  }
+
+  template <class View>
+  void print(const char* s, int n, ViewCardBnds<View>* x, ViewCardBnds<View>* y) {
+    std::cout << s << std::endl;
+    std::cout << "\tx = ";
+    for (int i = 0; i<n; i++)
+      std::cout << x[i].view << "@" << x[i].card << ", ";
+    std::cout << std::endl;
+    std::cout << "\ty = ";
+    for (int i = 0; i<n; i++)
+      std::cout << y[i].view << "@" << y[i].card << ", ";
+    std::cout << std::endl << std::endl;
+  }
+
+  template <class View>
+  ExecStatus
+  Dom<View>::propagate(Space* home) {
+    GECODE_AUTOARRAY(int, xa, n+1);
+    GECODE_AUTOARRAY(int, ya, n+1);
+    // Use -1 as sentinel for stacks xa, ya
+    *(xa++) = -1; *(ya++) = -1;
+
+    //    print("Initial",n,x,y);
+
+    // Scan x and y for assigned but not yet propagated views
+    for (int i = n; i--; ) {
+      if ((x[i].card != 1) && x[i].view.assigned())
+	*(xa++) = i;
+      if ((y[i].card != 1) && y[i].view.assigned())
+	*(ya++) = i;
     }
-    (void) new (home) Dom<View>(home,x,y);
+
+    do {
+      // Propagate assigned views for x
+      if (prop_val(home,n,x,y,n_na,xa,ya) == ES_FAILED)
+	return ES_FAILED;
+      // Propagate assigned views for y
+      if (prop_val(home,n,y,x,n_na,ya,xa) == ES_FAILED)
+	return ES_FAILED;
+      assert(*(ya-1) < 0);
+    } while (*(xa-1) >= 0);
+      
+    //    print("PROP_VAL (1)",n,x,y);
+
+    // Process changed views for x
+    if (prop_dom(home,n,x,y,ya) == ES_FAILED)
+      return ES_FAILED;
+    // Process changed views for y
+    if (prop_dom(home,n,y,x,xa) == ES_FAILED)
+      return ES_FAILED;
+
+    // We do not have to iterate, as either: views got assigned 
+    // and will be dealt with later, or we have all cardinality
+    // exact on all views!
+    //    print("PROP_DOM",n,x,y);
+
+    // Process assigned view again (some might have been found above)
+    while ((*(xa-1) >= 0) || (*(ya-1) >= 0)) {
+      // Process assigned views for x
+      if (prop_val(home,n,x,y,n_na,xa,ya) == ES_FAILED)
+	return ES_FAILED;
+      // Process assigned views for y
+      if (prop_val(home,n,y,x,n_na,ya,xa) == ES_FAILED)
+	return ES_FAILED;
+    };
+      
+    //    print("PROP_VAL (2)",n,x,y);
+
+    //    std::cout << "Unassigned: " << n_na << std::endl;
+    return (n_na == 0) ? ES_SUBSUMED : ES_FIX;
+  }
+
+  template <class View>
+  ExecStatus
+  Dom<View>::post(Space* home, int n, 
+		  ViewCardBnds<View>* x, ViewCardBnds<View>* y) {
+    assert(n > 0);
+    if (n == 1) {
+      GECODE_ME_CHECK(x[0].view.eq(home,0));
+      GECODE_ME_CHECK(y[0].view.eq(home,0));
+      return ES_OK;
+    }
+    for (int i=n; i--; ) {
+      GECODE_ME_CHECK(x[i].view.gq(home,0));
+      GECODE_ME_CHECK(x[i].view.le(home,n));
+      GECODE_ME_CHECK(y[i].view.gq(home,0));
+      GECODE_ME_CHECK(y[i].view.le(home,n));
+      x[i].card = static_cast<unsigned int>(n);
+      x[i].min = 0; x[i].max = n-1;
+      y[i].card = static_cast<unsigned int>(n);
+      y[i].min = 0; y[i].max = n-1;
+    }
+    (void) new (home) Dom<View>(home,n,x,y);
     return ES_OK;
   }
 
   template <class View>
   Dom<View>::~Dom(void) {
-    x.cancel(this,PC_INT_DOM);
-    y.cancel(this,PC_INT_DOM);
+    for (int i=n; i--; ) {
+      x[i].view.cancel(this,PC_INT_DOM);
+      y[i].view.cancel(this,PC_INT_DOM);
+    }
   }
 
 

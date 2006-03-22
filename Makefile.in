@@ -431,8 +431,8 @@ endif
 #
 
 INTTESTSRC0 = \
-	arithmetic basic bool count dom distinct element regular rel linear \
-	scheduling minimodel gcc sortedness
+	channel arithmetic basic bool count dom distinct element regular \
+	rel linear scheduling minimodel gcc sortedness
 ifeq "@enable_set_vars@" "yes"
 SETTESTSRC0 = \
 	dom rel rel-op convex sequence int select distinct
