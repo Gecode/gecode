@@ -172,7 +172,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Check whether a view-value graph is available
     bool available(void);
     /// Initialize view-value graph for views \a x
-    ExecStatus init(ViewArray<View>& x);
+    ExecStatus init(int n, View* x);
     /// Synchronize available view-value graph
     ExecStatus sync(void);
     /// Perform propagation

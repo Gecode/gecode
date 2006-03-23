@@ -46,7 +46,7 @@ public:
   }
 };
 
-// Channel _dom("Channel::Dom",ICL_DOM);
+Channel _dom("Channel::Dom",ICL_DOM);
 Channel _val("Channel::Val",ICL_VAL);
 
 // STATISTICS: test-int

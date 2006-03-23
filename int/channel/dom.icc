@@ -1,4 +1,4 @@
-/*
+a/*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
@@ -27,20 +27,72 @@
 
 namespace Gecode { namespace Int { namespace Channel {
 
+  /*
+   * For mainting domain information
+   *
+   */
+
   template <class View>
-  forceinline ViewCardBnds<View>*
-  ViewCardBnds<View>::allocate(Space* home, int n) {
-    return reinterpret_cast<ViewCardBnds<View>*>
-      (home->alloc(n*sizeof(ViewCardBnds<View>)));
+  forceinline DomInfo<View>*
+  DomInfo<View>::allocate(Space* home, int n) {
+    return reinterpret_cast<DomInfo<View>*>
+      (home->alloc(n*sizeof(DomInfo<View>)));
   }
  
   template <class View>
   forceinline void
-  ViewCardBnds<View>::update(void) {
+  DomInfo<View>::init(View x, int n) {
+    view = x;
+    card = static_cast<unsigned int>(n);
+    min  = 0; 
+    max  = n-1;
+  }
+
+  template <class View>
+  forceinline void
+  DomInfo<View>::update(Space* home, bool share, DomInfo<View>& vcb) {
+    view.update(home,share,vcb.view);
+    card = vcb.card;
+    min  = vcb.min;
+    max  = vcb.max;
+  }
+
+  template <class View>
+  forceinline bool
+  DomInfo<View>::doval(void) const {
+    return (card != 1) && view.assigned();
+  }
+
+  template <class View>
+  forceinline bool
+  DomInfo<View>::dodom(void) const {
+    return card != view.size();
+  }
+
+  template <class View>
+  forceinline void
+  DomInfo<View>::assigned(void) {
+    card = 1;
+  }
+
+  template <class View>
+  forceinline void
+  DomInfo<View>::removed(int i) {
+    card--;
+    if (i == min)
+      min++;
+    else if (i == max)
+      max--;
+  }
+
+  template <class View>
+  forceinline void
+  DomInfo<View>::done(void) {
     card = view.size();
     min  = view.min();
     max  = view.max();
   }
+
  
   /**
    * \brief A simple integer stack for tracking which views are assigned
@@ -74,69 +126,23 @@ namespace Gecode { namespace Int { namespace Channel {
   ProcessStack::push(int i) {
     *(p++) = i;
   }
-    
-  template <class View>
-  forceinline
-  Dom<View>::Dom(Space* home, int n0, 
-		 ViewCardBnds<View>* x0, ViewCardBnds<View>* y0)
-    : Propagator(home), n(n0), n_na(2*n), x(x0), y(y0) {
-    for (int i=n; i--; ) {
-      x[i].view.subscribe(home,this,PC_INT_DOM);
-      y[i].view.subscribe(home,this,PC_INT_DOM);
-    }
-  }
 
-  template <class View>
-  forceinline
-  Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
-    : Propagator(home,share,p), n(p.n), n_na(p.n_na),
-      x(ViewCardBnds<View>::allocate(home,n)), 
-      y(ViewCardBnds<View>::allocate(home,n)) {
-    for (int i=n; i--; ) {
-      x[i].view.update(home,share,p.x[i].view);
-      x[i].card = p.x[i].card;
-      x[i].min  = p.x[i].min;
-      x[i].max  = p.x[i].max;
-      y[i].view.update(home,share,p.y[i].view);
-      y[i].card = p.y[i].card;
-      y[i].min  = p.y[i].min;
-      y[i].max  = p.y[i].max;
-    }
-  }
-
-  template <class View>
-  Actor*
-  Dom<View>::copy(Space* home, bool share) {
-    return new (home) Dom<View>(home,share,*this);
-  }
-
-  template <class View>
-  PropCost
-  Dom<View>::cost(void) const {
-    return PC_CUBIC_LO;
-  }
-
+  // Propagate assigned views for x
   template <class View>
   ExecStatus
-  prop_val(Space* home, int n, ViewCardBnds<View>* x, ViewCardBnds<View>* y,
+  prop_val(Space* home, int n, DomInfo<View>* x, DomInfo<View>* y,
 	   int& n_na, ProcessStack& xa, ProcessStack& ya) {
-    // Propagate assigned views for x
     while (!xa.empty()) {
       int i = xa.pop();
       int j = x[i].view.val();
-      x[i].card = 1; n_na--;
       // Assign the y variable to i (or test if already assigned!)
       {
 	ModEvent me = y[j].view.eq(home,i);
 	if (me_failed(me))
 	  return ES_FAILED;
-	if (me_modified(me)) {
-	  // Record that y[j] has been assigned and must be propagated
-	  assert(me == ME_INT_VAL);
-	  // Otherwise the modification event would not be ME_INT_VAL
-	  assert(y[j].card != 1);
+	// Record that y[j] has been assigned and must be propagated
+	if (me_modified(me))
 	  ya.push(j);
-	}
       }
       // Prune the value j from all x variables
       for (int k=i; k--; ) {
@@ -146,14 +152,12 @@ namespace Gecode { namespace Int { namespace Channel {
 	if (me_modified(me))
 	  if (me == ME_INT_VAL) {
 	    // Record that x[k] has been assigned and must be propagated
-	    assert(x[k].card != 1);
 	    xa.push(k);
 	  } else {
 	    // One value has been removed and this removal does not need
 	    // to be propagated again: after all y[j] = i, so it holds
 	    // that y[j] != k.
-	    // FIXME MAYBE: Update bounds information
-	    x[k].card--;
+	    x[k].removed(j);
 	  }
       }
       // The same for the other views
@@ -164,27 +168,27 @@ namespace Gecode { namespace Int { namespace Channel {
 	if (me_modified(me))
 	  if (me == ME_INT_VAL) {
 	    // Record that x[k] has been assigned and must be propagated
-	    assert(x[k].card != 1);
 	    xa.push(k);
 	  } else {
 	    // One value has been removed and this removal does not need
 	    // to be propagated again: after all y[j] = i, so it holds
 	    // that y[j] != k.
-	    // FIXME MAYBE: Update bounds information
-	    x[k].card--;
+	    x[k].removed(j);
 	  }
       }
+      x[i].assigned(); n_na--;
     }
     return ES_OK;
   }
 
+  // Propagate domain information from x to y
   template <class View>
   ExecStatus
-  prop_dom(Space* home, int n, ViewCardBnds<View>* x, ViewCardBnds<View>* y,
+  prop_dom(Space* home, int n, DomInfo<View>* x, DomInfo<View>* y,
 	   ProcessStack& ya) {
     for (int i = n; i--; ) 
       // Only views with not yet propagated missing values
-      if (x[i].card != x[i].view.size()) {
+      if (x[i].dodom()) {
 	// Iterate the values in the complement of x[i]
 	ViewRanges<IntView> 
 	  xir(x[i].view);
@@ -201,23 +205,59 @@ namespace Gecode { namespace Int { namespace Channel {
 	  if (me_modified(me))
 	    if (me == ME_INT_VAL) {
 	      // Record that y[j] has been assigned and must be propagated
-	      assert(y[j].card != 1);
 	      ya.push(j);
 	    } else {
 	      // Obvious as x[i] is different from j
-	      // FIXME MAYBE: Update bounds information
-	      y[j].card--;
+	      y[j].removed(i);
 	    }
 	  ++jv;
 	}
 	// Update which values have been propagated and what are the new bounds
-	x[i].update();
+	x[i].done();
       }
     return ES_OK;
   }
 
+  /*
+   * The actual propagator
+   *
+   */
   template <class View>
-  void print(const char* s, int n, ViewCardBnds<View>* x, ViewCardBnds<View>* y) {
+  forceinline
+  Dom<View>::Dom(Space* home, int n0, 
+		 DomInfo<View>* x0, DomInfo<View>* y0)
+    : Propagator(home,true), n(n0), n_na(2*n), x(x0), y(y0) {
+    for (int i=n; i--; ) {
+      x[i].view.subscribe(home,this,PC_INT_DOM);
+      y[i].view.subscribe(home,this,PC_INT_DOM);
+    }
+  }
+
+  template <class View>
+  forceinline
+  Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
+    : Propagator(home,share,p), n(p.n), n_na(p.n_na),
+      x(DomInfo<View>::allocate(home,2*n)), y(x+n) {
+    for (int i=n; i--; ) {
+      x[i].update(home,share,p.x[i]);
+      y[i].update(home,share,p.y[i]);
+    }
+  }
+
+  template <class View>
+  Actor*
+  Dom<View>::copy(Space* home, bool share) {
+    return new (home) Dom<View>(home,share,*this);
+  }
+
+  template <class View>
+  PropCost
+  Dom<View>::cost(void) const {
+    return PC_CUBIC_LO;
+  }
+
+  template <class View>
+  void print(const char* s, int n, DomInfo<View>* x, DomInfo<View>* y) {
     std::cout << s << std::endl;
     std::cout << "\tx = ";
     for (int i = 0; i<n; i++)
@@ -236,14 +276,13 @@ namespace Gecode { namespace Int { namespace Channel {
     GECODE_AUTOARRAY(int, __ya, n+1);
     ProcessStack xa(__xa);
     ProcessStack ya(__ya);
+
     //    print("Initial",n,x,y);
 
     // Scan x and y for assigned but not yet propagated views
     for (int i = n; i--; ) {
-      if ((x[i].card != 1) && x[i].view.assigned())
-	xa.push(i);
-      if ((y[i].card != 1) && y[i].view.assigned())
-	ya.push(i);
+      if (x[i].doval()) xa.push(i);
+      if (y[i].doval()) ya.push(i);
     }
 
     do {
@@ -256,19 +295,64 @@ namespace Gecode { namespace Int { namespace Channel {
       assert(ya.empty());
     } while (!xa.empty());
       
-    //    print("PROP_VAL (1)",n,x,y);
+    //    print("PROP_VAL X,Y",n,x,y);
 
-    // Process changed views for x
-    if (prop_dom(home,n,x,y,ya) == ES_FAILED)
-      return ES_FAILED;
     // Process changed views for y
+    // This propagates from y to x and possibly records xs that
+    // got assigned
     if (prop_dom(home,n,y,x,xa) == ES_FAILED)
       return ES_FAILED;
 
-    // We do not have to iterate, as either: views got assigned 
-    // and will be dealt with later, or we have all cardinality
-    // exact on all views!
-    //    print("PROP_DOM",n,x,y);
+    //    print("PROP_DOM Y->X",n,x,y);
+
+    // Process assigned views for x
+    if (prop_val(home,n,x,y,n_na,xa,ya) == ES_FAILED)
+      return ES_FAILED;
+
+    //    print("PROP_VAL X",n,x,y);
+
+    // Perform domain consistent propagation for distinct on the x views
+    if (dc.available()) {
+      GECODE_ES_CHECK(dc.sync());
+    } else {
+      GECODE_AUTOARRAY(View,xv,n);
+      for (int i=n; i--; )
+	xv[i] = x[i].view;
+      GECODE_ES_CHECK(dc.init(n,&xv[0]));
+    }
+    dc.propagate(home);
+    // This might assign some more views in x which goes unnoticed
+    // (that is, not recorded in xa). This must be checked and propagated
+    // to the y views, however the distinctness on x is already
+    // propagated.
+
+    //    print("PROP_DISTINCT",n,x,y);
+
+    for (int i=n; i--; )
+      if (x[i].doval()) {
+	int j = x[i].view.val();
+	// Assign the y variable to i (or test if already assigned!)
+	ModEvent me = y[j].view.eq(home,i);
+	if (me_failed(me))
+	  return ES_FAILED;
+	if (me_modified(me)) {
+	  // Record that y[j] has been assigned and must be propagated
+	  assert(me == ME_INT_VAL);
+	  // Otherwise the modification event would not be ME_INT_VAL
+	  ya.push(j);
+	}
+	x[i].assigned(); n_na--;
+      }
+
+    //    print("PROP_ASSIGNED AFTER DISTINCT",n,x,y);
+
+    // Process changed views for x
+    // This propagates from x to y and possibly records ys that
+    // got assigned
+    if (prop_dom(home,n,x,y,ya) == ES_FAILED)
+      return ES_FAILED;
+
+    //    print("PROP_DOM X->Y",n,x,y);
 
     // Process assigned view again (some might have been found above)
     while (!xa.empty() || !ya.empty()) {
@@ -280,7 +364,7 @@ namespace Gecode { namespace Int { namespace Channel {
 	return ES_FAILED;
     };
       
-    //    print("PROP_VAL (2)",n,x,y);
+    //    print("PROP_VAL FINAL",n,x,y);
 
     //    std::cout << "Unassigned: " << n_na << std::endl;
     return (n_na == 0) ? ES_SUBSUMED : ES_FIX;
@@ -288,8 +372,7 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View>
   ExecStatus
-  Dom<View>::post(Space* home, int n, 
-		  ViewCardBnds<View>* x, ViewCardBnds<View>* y) {
+  Dom<View>::post(Space* home, int n, DomInfo<View>* x, DomInfo<View>* y) {
     assert(n > 0);
     if (n == 1) {
       GECODE_ME_CHECK(x[0].view.eq(home,0));
@@ -301,13 +384,21 @@ namespace Gecode { namespace Int { namespace Channel {
       GECODE_ME_CHECK(x[i].view.le(home,n));
       GECODE_ME_CHECK(y[i].view.gq(home,0));
       GECODE_ME_CHECK(y[i].view.le(home,n));
-      x[i].card = static_cast<unsigned int>(n);
-      x[i].min = 0; x[i].max = n-1;
-      y[i].card = static_cast<unsigned int>(n);
-      y[i].min = 0; y[i].max = n-1;
     }
     (void) new (home) Dom<View>(home,n,x,y);
     return ES_OK;
+  }
+
+  template <class View>
+  void
+  Dom<View>::flush(void) {
+    dc.flush();
+  }
+
+  template <class View>
+  size_t
+  Dom<View>::size(void) const {
+    return dc.size();
   }
 
   template <class View>

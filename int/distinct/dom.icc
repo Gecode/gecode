@@ -186,13 +186,13 @@ namespace Gecode { namespace Int { namespace Distinct {
     unsigned int cnt1;
     Support::StaticStack<Node<View>*> n_s;
   public:
-    ViewValGraph(ViewArray<View>&, const int*, int, unsigned int);
-    ViewValGraph(ViewArray<View>& x, int, unsigned int, int);
+    ViewValGraph(int, View*, const int*, int, unsigned int);
+    ViewValGraph(int, View*, int, unsigned int, int);
     ~ViewValGraph(void);
 
     size_t size;
 
-    static ViewValGraph* init(ViewArray<View>&);
+    static ViewValGraph* init(int,View*);
 
     bool initial_match(void);
 
@@ -217,10 +217,10 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline
-  DomCtrl<View>::ViewValGraph::ViewValGraph(ViewArray<View>& x, 
-					int n_val0, 
-					unsigned int n_edges, int min)
-    :  n_view(x.size()), n_val(n_val0),
+  DomCtrl<View>::ViewValGraph::ViewValGraph(int n_view0, View* x,
+					    int n_val0, 
+					    unsigned int n_edges, int min)
+    :  n_view(n_view0), n_val(n_val0),
        count(0), cnt0(0), cnt1(0), n_s(n_view+n_val)
   {
     size_t edge_size  = sizeof(Edge<View>) * n_edges;
@@ -265,9 +265,10 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline
-  DomCtrl<View>::ViewValGraph::ViewValGraph(ViewArray<View>& x, const int* val_inf,
-					int n_val0, unsigned int n_edges)
-    :  n_view(x.size()), n_val(n_val0),
+  DomCtrl<View>::ViewValGraph::ViewValGraph(int n_view0, View* x, 
+					    const int* val_inf,
+					    int n_val0, unsigned int n_edges)
+    :  n_view(n_view0), n_val(n_val0),
        count(0), cnt0(0), cnt1(0), n_s(n_view+n_val)
   {
     size_t edge_size  = sizeof(Edge<View>) * n_edges;
@@ -311,8 +312,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   typename DomCtrl<View>::ViewValGraph*
-  DomCtrl<View>::ViewValGraph::init(ViewArray<View>& x) {
-    int n_view = x.size();
+  DomCtrl<View>::ViewValGraph::init(int n_view, View* x) {
     // Find value information for construction of view value graph
     int min = x[n_view-1].min();
     int max = x[n_view-1].max();
@@ -331,7 +331,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     // Test whether the values are dense or sparse
     if (static_cast<unsigned int>(n_view)*2 >= width)
-      return new ViewValGraph(x,static_cast<int>(width),size,min);
+      return new ViewValGraph(n_view,x,static_cast<int>(width),size,min);
 
     Support::DynamicArray<int> val_inf(64);
     // Compute set of values
@@ -349,7 +349,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     }
     if (n_val < n_view)
       return NULL;
-    return new ViewValGraph(x,val_inf,n_val,size);
+    return new ViewValGraph(n_view,x,val_inf,n_val,size);
   }
 
   template <class View>
@@ -575,9 +575,9 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline ExecStatus
-  DomCtrl<View>::init(ViewArray<View>& x) {
+  DomCtrl<View>::init(int n, View* x) {
     assert(vvg == NULL);
-    vvg = ViewValGraph::init(x);
+    vvg = ViewValGraph::init(n,x);
     if ((vvg == NULL) || !vvg->initial_match())
       return ES_FAILED;
     return ES_OK;
@@ -696,7 +696,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     if (dc.available()) {
       GECODE_ES_CHECK(dc.sync());
     } else {
-      GECODE_ES_CHECK(dc.init(x));
+      GECODE_ES_CHECK(dc.init(x.size(),&x[0]));
     }
     dc.propagate(home);
     return ES_FIX;
