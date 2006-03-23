@@ -48,30 +48,30 @@ namespace Gecode { namespace Int { namespace Channel {
    * Constructed such that temporary memory can be used. Requires that
    * only positive numbers are pushed (uses -1 as sentinel element).
    */
-  class Stack {
+  class ProcessStack {
   private:
     int* p;
   public:
-    Stack(int* p);
+    ProcessStack(int* p);
     bool empty(void) const;
     int pop(void);
     void push(int i);
   };
 
   forceinline
-  Stack::Stack(int* p0) : p(p0) {
+  ProcessStack::ProcessStack(int* p0) : p(p0) {
     *(p++) = -1;
   }
   forceinline bool
-  Stack::empty(void) const {
+  ProcessStack::empty(void) const {
     return *(p-1) < 0;
   }
   forceinline int
-  Stack::pop(void) {
+  ProcessStack::pop(void) {
     return *(--p);
   }
   forceinline void
-  Stack::push(int i) {
+  ProcessStack::push(int i) {
     *(p++) = i;
   }
     
@@ -119,7 +119,7 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View>
   ExecStatus
   prop_val(Space* home, int n, ViewCardBnds<View>* x, ViewCardBnds<View>* y,
-	   int& n_na, Stack& xa, Stack& ya) {
+	   int& n_na, ProcessStack& xa, ProcessStack& ya) {
     // Propagate assigned views for x
     while (!xa.empty()) {
       int i = xa.pop();
@@ -181,7 +181,7 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View>
   ExecStatus
   prop_dom(Space* home, int n, ViewCardBnds<View>* x, ViewCardBnds<View>* y,
-	   Stack& ya) {
+	   ProcessStack& ya) {
     for (int i = n; i--; ) 
       // Only views with not yet propagated missing values
       if (x[i].card != x[i].view.size()) {
@@ -234,8 +234,8 @@ namespace Gecode { namespace Int { namespace Channel {
   Dom<View>::propagate(Space* home) {
     GECODE_AUTOARRAY(int, __xa, n+1);
     GECODE_AUTOARRAY(int, __ya, n+1);
-    Stack xa(__xa);
-    Stack ya(__ya);
+    ProcessStack xa(__xa);
+    ProcessStack ya(__ya);
     //    print("Initial",n,x,y);
 
     // Scan x and y for assigned but not yet propagated views

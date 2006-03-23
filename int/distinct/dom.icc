@@ -176,7 +176,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    *
    */
   template <class View>
-  class Dom<View>::ViewValGraph {
+  class DomCtrl<View>::ViewValGraph {
   protected:
     ViewNode<View>** view; int n_view;
     ValNode<View>** val; int n_val;
@@ -197,7 +197,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     bool initial_match(void);
 
     void mark(void);
-    bool tell(Space*);
+    void tell(Space*);
 
     bool overflow(void) const;
 
@@ -217,7 +217,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline
-  Dom<View>::ViewValGraph::ViewValGraph(ViewArray<View>& x, 
+  DomCtrl<View>::ViewValGraph::ViewValGraph(ViewArray<View>& x, 
 					int n_val0, 
 					unsigned int n_edges, int min)
     :  n_view(x.size()), n_val(n_val0),
@@ -265,7 +265,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline
-  Dom<View>::ViewValGraph::ViewValGraph(ViewArray<View>& x, const int* val_inf,
+  DomCtrl<View>::ViewValGraph::ViewValGraph(ViewArray<View>& x, const int* val_inf,
 					int n_val0, unsigned int n_edges)
     :  n_view(x.size()), n_val(n_val0),
        count(0), cnt0(0), cnt1(0), n_s(n_view+n_val)
@@ -310,8 +310,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  typename Dom<View>::ViewValGraph*
-  Dom<View>::ViewValGraph::init(ViewArray<View>& x) {
+  typename DomCtrl<View>::ViewValGraph*
+  DomCtrl<View>::ViewValGraph::init(ViewArray<View>& x) {
     int n_view = x.size();
     // Find value information for construction of view value graph
     int min = x[n_view-1].min();
@@ -354,7 +354,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   bool
-  Dom<View>::ViewValGraph::search_match(ViewNode<View>* x) {
+  DomCtrl<View>::ViewValGraph::search_match(ViewNode<View>* x) {
     for (Edge<View>* e = x->val_edges(); e; e = e->next_edge())
       if (!e->val(x)->matching()) {
 	e->revert(x); e->val(x)->matching(e);
@@ -375,7 +375,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline bool
-  Dom<View>::ViewValGraph::match(ViewNode<View>* x) {
+  DomCtrl<View>::ViewValGraph::match(ViewNode<View>* x) {
     assert(x->edge_fst() == x->edge_lst());
     count++;
     return search_match(x);
@@ -383,7 +383,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   bool
-  Dom<View>::ViewValGraph::initial_match(void) {
+  DomCtrl<View>::ViewValGraph::initial_match(void) {
     for (int i = n_view; i--; )
       if (!match(view[i]))
 	return false;
@@ -392,7 +392,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   void
-  Dom<View>::ViewValGraph::scc(Node<View>* w) {
+  DomCtrl<View>::ViewValGraph::scc(Node<View>* w) {
     w->pre = cnt0;
     w->low = cnt0;
     unsigned int min = cnt0++;
@@ -418,7 +418,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline void
-  Dom<View>::ViewValGraph::mark(void) {
+  DomCtrl<View>::ViewValGraph::mark(void) {
     // Marks all edges as used that are on simple paths in the graph
     // that start from a free (unmatched node) by depth-first-search
     n_s.reset();
@@ -466,35 +466,30 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  forceinline bool
-  Dom<View>::ViewValGraph::tell(Space* home) {
-    bool shared = false;
+  forceinline void
+  DomCtrl<View>::ViewValGraph::tell(Space* home) {
     // Tell constraints and also eliminate nodes and edges
     for (int i = n_view; i--; )
       if (!view[i]->edge_fst()->used(view[i])) {
-	shared |= view[i]->view().modified();
 	view[i]->view().eq(home,view[i]->edge_fst()->val(view[i])->val());
 	view[i]->edge_fst()->val(view[i])->matching(NULL);
 	view[i] = view[--n_view];
       } else {
 	for (Edge<View>* e = view[i]->val_edges(); e; e = e->next_edge())
-	  if (!e->used(view[i])) {
-	    shared |= view[i]->view().modified();
+	  if (!e->used(view[i]))
 	    view[i]->view().nq(home,e->val(view[i])->val());
-	  }
       }
-    return shared;
   }
 
   template <class View>
   forceinline bool
-  Dom<View>::ViewValGraph::overflow(void) const {
+  DomCtrl<View>::ViewValGraph::overflow(void) const {
     return count > (UINT_MAX >> 1);
   }
 
   template <class View>
   bool
-  Dom<View>::ViewValGraph::sync(void) {
+  DomCtrl<View>::ViewValGraph::sync(void) {
     // Stack for view nodes to be rematched
     GECODE_AUTOARRAY(ViewNode<View>*,re,n_view);
     int n_re = 0;
@@ -544,21 +539,81 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  Dom<View>::ViewValGraph::~ViewValGraph(void) {
+  DomCtrl<View>::ViewValGraph::~ViewValGraph(void) {
     Memory::free(mem);
   }
 
   template <class View>
   forceinline void*
-  Dom<View>::ViewValGraph::operator new(size_t s) {
+  DomCtrl<View>::ViewValGraph::operator new(size_t s) {
     return Memory::malloc(s);
   }
   template <class View>
   forceinline void
-  Dom<View>::ViewValGraph::operator delete(void* p) {
+  DomCtrl<View>::ViewValGraph::operator delete(void* p) {
     Memory::free(p);
   }
 
+  /*
+   * The propagation controller
+   *
+   */
+
+  template <class View>
+  forceinline
+  DomCtrl<View>::DomCtrl(void) : vvg(NULL) {}
+
+  template <class View>
+  forceinline bool
+  DomCtrl<View>::available(void) {
+    if ((vvg != NULL) && vvg->overflow()) {
+      delete vvg;
+      vvg = NULL;
+    }
+    return vvg != NULL;
+  }
+
+  template <class View>
+  forceinline ExecStatus
+  DomCtrl<View>::init(ViewArray<View>& x) {
+    assert(vvg == NULL);
+    vvg = ViewValGraph::init(x);
+    if ((vvg == NULL) || !vvg->initial_match())
+      return ES_FAILED;
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline ExecStatus
+  DomCtrl<View>::sync(void) {
+    return vvg->sync() ? ES_OK : ES_FAILED;
+  }
+
+  template <class View>
+  forceinline void
+  DomCtrl<View>::propagate(Space* home) {
+    vvg->mark();
+    vvg->tell(home);
+  }
+
+  template <class View>
+  forceinline void
+  DomCtrl<View>::flush(void) {
+    delete vvg; vvg = NULL;
+  }
+
+  template <class View>
+  forceinline size_t
+  DomCtrl<View>::size(void) const {
+    return (vvg != NULL) ? vvg->size : 0;
+  }
+
+  template <class View>
+  forceinline
+  DomCtrl<View>::~DomCtrl(void) {
+    delete vvg;
+  }
+  
 
 
   /*
@@ -569,8 +624,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline
   Dom<View>::Dom(Space* home, ViewArray<View>& x)
-    : NaryPropagator<View,PC_INT_DOM>(home,x,true),
-      vvg(NULL) {}
+    : NaryPropagator<View,PC_INT_DOM>(home,x,true) {}
 
   template <class View>
   ExecStatus
@@ -589,23 +643,18 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline
   Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
-    : NaryPropagator<View,PC_INT_DOM>(home,share,p), vvg(NULL) {}
-
-  template <class View>
-  Dom<View>::~Dom(void) {
-    delete vvg;
-  }
+    : NaryPropagator<View,PC_INT_DOM>(home,share,p) {}
 
   template <class View>
   void
   Dom<View>::flush(void) {
-    delete vvg; vvg = NULL;
+    dc.flush();
   }
 
   template <class View>
   size_t
   Dom<View>::size(void) const {
-    return (vvg != NULL) ? vvg->size : 0;
+    return dc.size();
   }
 
   template <class View>
@@ -644,24 +693,13 @@ namespace Gecode { namespace Int { namespace Distinct {
       return ES_SUBSUMED;
     }
 
-    if ((vvg != NULL) && vvg->overflow()) {
-      delete vvg;
-      vvg = NULL;
-    }
-    
-    if (vvg == NULL) {
-      vvg = ViewValGraph::init(x);
-      if ((vvg == NULL) || !vvg->initial_match())
-	return ES_FAILED;
+    if (dc.available()) {
+      GECODE_ES_CHECK(dc.sync());
     } else {
-      if (!vvg->sync())
-	return ES_FAILED;
+      GECODE_ES_CHECK(dc.init(x));
     }
-
-    vvg->mark();
-
-    return vvg->tell(home) ? ES_NOFIX : ES_FIX;
-
+    dc.propagate(home);
+    return ES_FIX;
   }
 
 }}}

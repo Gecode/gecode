@@ -149,6 +149,41 @@ namespace Gecode { namespace Int { namespace Distinct {
   ExecStatus prop_bnd(Space* home, ViewArray<View>& x);
 
 
+  /**
+   * \brief Propagation controller for domain-consistent distinct
+   *
+   * The propagation controller provides convenient access to
+   * performing incremental domain-consistent distinct propagation
+   * so that the routines can be reused easily.
+   *
+   * Requires \code #include "int/distinct.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class View>
+  class DomCtrl {
+  protected:
+    /// View-value graph for propagation
+    class ViewValGraph;
+    /// Propagation is performed on a view-value graph (used as cache)
+    ViewValGraph* vvg;
+  public:
+    /// Initialize with non-existing view-value graph
+    DomCtrl(void);
+    /// Check whether a view-value graph is available
+    bool available(void);
+    /// Initialize view-value graph for views \a x
+    ExecStatus init(ViewArray<View>& x);
+    /// Synchronize available view-value graph
+    ExecStatus sync(void);
+    /// Perform propagation
+    void propagate(Space* home);
+    /// Returns size of view-value graph
+    size_t size(void) const;
+    /// Flush view-value graph
+    void flush(void);
+    /// Deallocate view-value graph
+    ~DomCtrl(void);
+  };
 
   /**
    * \brief Domain-consistent distinct propagator
@@ -170,10 +205,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   protected:
     using NaryPropagator<View,PC_INT_DOM>::x;
 
-    /// View-value graph for propagation
-    class ViewValGraph;
-    /// Propagation is performed on a view-value graph (used as cache)
-    ViewValGraph* vvg;
+    /// Propagation controller
+    DomCtrl<View> dc;
     /// Constructor for cloning \a p
     Dom(Space* home, bool share, Dom<View>& p);
     /// Constructor for posting
@@ -190,8 +223,6 @@ namespace Gecode { namespace Int { namespace Distinct {
     virtual PropCost cost(void) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
-    /// Destructor
-    virtual ~Dom(void);
     /// Flush view-value graph
     virtual void flush(void);
     /// Returns size of view-value graph
