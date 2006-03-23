@@ -42,6 +42,39 @@ namespace Gecode { namespace Int { namespace Channel {
     max  = view.max();
   }
  
+  /**
+   * \brief A simple integer stack for tracking which views are assigned
+   *
+   * Constructed such that temporary memory can be used. Requires that
+   * only positive numbers are pushed (uses -1 as sentinel element).
+   */
+  class Stack {
+  private:
+    int* p;
+  public:
+    Stack(int* p);
+    bool empty(void) const;
+    int pop(void);
+    void push(int i);
+  };
+
+  forceinline
+  Stack::Stack(int* p0) : p(p0) {
+    *(p++) = -1;
+  }
+  forceinline bool
+  Stack::empty(void) const {
+    return *(p-1) < 0;
+  }
+  forceinline int
+  Stack::pop(void) {
+    return *(--p);
+  }
+  forceinline void
+  Stack::push(int i) {
+    *(p++) = i;
+  }
+    
   template <class View>
   forceinline
   Dom<View>::Dom(Space* home, int n0, 
@@ -86,10 +119,10 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View>
   ExecStatus
   prop_val(Space* home, int n, ViewCardBnds<View>* x, ViewCardBnds<View>* y,
-	   int& n_na, int*& xa, int*& ya) {
+	   int& n_na, Stack& xa, Stack& ya) {
     // Propagate assigned views for x
-    while (*(xa-1) >= 0) {
-      int i = *(--xa);
+    while (!xa.empty()) {
+      int i = xa.pop();
       int j = x[i].view.val();
       x[i].card = 1; n_na--;
       // Assign the y variable to i (or test if already assigned!)
@@ -102,7 +135,7 @@ namespace Gecode { namespace Int { namespace Channel {
 	  assert(me == ME_INT_VAL);
 	  // Otherwise the modification event would not be ME_INT_VAL
 	  assert(y[j].card != 1);
-	  *(ya++) = j;
+	  ya.push(j);
 	}
       }
       // Prune the value j from all x variables
@@ -114,7 +147,7 @@ namespace Gecode { namespace Int { namespace Channel {
 	  if (me == ME_INT_VAL) {
 	    // Record that x[k] has been assigned and must be propagated
 	    assert(x[k].card != 1);
-	    *(xa++) = k;
+	    xa.push(k);
 	  } else {
 	    // One value has been removed and this removal does not need
 	    // to be propagated again: after all y[j] = i, so it holds
@@ -132,7 +165,7 @@ namespace Gecode { namespace Int { namespace Channel {
 	  if (me == ME_INT_VAL) {
 	    // Record that x[k] has been assigned and must be propagated
 	    assert(x[k].card != 1);
-	    *(xa++) = k;
+	    xa.push(k);
 	  } else {
 	    // One value has been removed and this removal does not need
 	    // to be propagated again: after all y[j] = i, so it holds
@@ -148,7 +181,7 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View>
   ExecStatus
   prop_dom(Space* home, int n, ViewCardBnds<View>* x, ViewCardBnds<View>* y,
-	   int*& ya) {
+	   Stack& ya) {
     for (int i = n; i--; ) 
       // Only views with not yet propagated missing values
       if (x[i].card != x[i].view.size()) {
@@ -169,7 +202,7 @@ namespace Gecode { namespace Int { namespace Channel {
 	    if (me == ME_INT_VAL) {
 	      // Record that y[j] has been assigned and must be propagated
 	      assert(y[j].card != 1);
-	      *(ya++) = j;
+	      ya.push(j);
 	    } else {
 	      // Obvious as x[i] is different from j
 	      // FIXME MAYBE: Update bounds information
@@ -199,19 +232,18 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View>
   ExecStatus
   Dom<View>::propagate(Space* home) {
-    GECODE_AUTOARRAY(int, xa, n+1);
-    GECODE_AUTOARRAY(int, ya, n+1);
-    // Use -1 as sentinel for stacks xa, ya
-    *(xa++) = -1; *(ya++) = -1;
-
+    GECODE_AUTOARRAY(int, __xa, n+1);
+    GECODE_AUTOARRAY(int, __ya, n+1);
+    Stack xa(__xa);
+    Stack ya(__ya);
     //    print("Initial",n,x,y);
 
     // Scan x and y for assigned but not yet propagated views
     for (int i = n; i--; ) {
       if ((x[i].card != 1) && x[i].view.assigned())
-	*(xa++) = i;
+	xa.push(i);
       if ((y[i].card != 1) && y[i].view.assigned())
-	*(ya++) = i;
+	ya.push(i);
     }
 
     do {
@@ -221,8 +253,8 @@ namespace Gecode { namespace Int { namespace Channel {
       // Propagate assigned views for y
       if (prop_val(home,n,y,x,n_na,ya,xa) == ES_FAILED)
 	return ES_FAILED;
-      assert(*(ya-1) < 0);
-    } while (*(xa-1) >= 0);
+      assert(ya.empty());
+    } while (!xa.empty());
       
     //    print("PROP_VAL (1)",n,x,y);
 
@@ -239,7 +271,7 @@ namespace Gecode { namespace Int { namespace Channel {
     //    print("PROP_DOM",n,x,y);
 
     // Process assigned view again (some might have been found above)
-    while ((*(xa-1) >= 0) || (*(ya-1) >= 0)) {
+    while (!xa.empty() || !ya.empty()) {
       // Process assigned views for x
       if (prop_val(home,n,x,y,n_na,xa,ya) == ES_FAILED)
 	return ES_FAILED;
