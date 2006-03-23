@@ -1,4 +1,4 @@
-a/*
+/*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *
@@ -28,9 +28,33 @@ a/*
 namespace Gecode { namespace Int { namespace Channel {
 
   /*
-   * For mainting domain information
+   * Combine view with information for domain propagation
    *
    */
+  template <class View>
+  class DomInfo {
+  public:
+    View         view;
+    unsigned int card;
+    int          min;
+    int          max;
+    /// Allocate memory from space \a home for \a n elements
+    static DomInfo<View>* allocate(Space* home, int n);
+    /// Initialize
+    void init(View x, int n);
+    /// Update during cloning
+    void update(Space* home, bool share, DomInfo<View>& vcb);
+    /// Check whether propagation for assignment is to be done
+    bool doval(void) const;
+    /// Check whether propagation for domain is to be done
+    bool dodom(void) const;
+    /// Record that view got assigned
+    void assigned(void);
+    /// Record that one value got removed
+    void removed(int i);
+    /// Update the cardinality and bounds information after pruning
+    void done(void);
+  };
 
   template <class View>
   forceinline DomInfo<View>*
@@ -50,11 +74,11 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View>
   forceinline void
-  DomInfo<View>::update(Space* home, bool share, DomInfo<View>& vcb) {
-    view.update(home,share,vcb.view);
-    card = vcb.card;
-    min  = vcb.min;
-    max  = vcb.max;
+  DomInfo<View>::update(Space* home, bool share, DomInfo<View>& di) {
+    view.update(home,share,di.view);
+    card = di.card;
+    min  = di.min;
+    max  = di.max;
   }
 
   template <class View>
@@ -91,94 +115,6 @@ namespace Gecode { namespace Int { namespace Channel {
     card = view.size();
     min  = view.min();
     max  = view.max();
-  }
-
- 
-  /**
-   * \brief A simple integer stack for tracking which views are assigned
-   *
-   * Constructed such that temporary memory can be used. Requires that
-   * only positive numbers are pushed (uses -1 as sentinel element).
-   */
-  class ProcessStack {
-  private:
-    int* p;
-  public:
-    ProcessStack(int* p);
-    bool empty(void) const;
-    int pop(void);
-    void push(int i);
-  };
-
-  forceinline
-  ProcessStack::ProcessStack(int* p0) : p(p0) {
-    *(p++) = -1;
-  }
-  forceinline bool
-  ProcessStack::empty(void) const {
-    return *(p-1) < 0;
-  }
-  forceinline int
-  ProcessStack::pop(void) {
-    return *(--p);
-  }
-  forceinline void
-  ProcessStack::push(int i) {
-    *(p++) = i;
-  }
-
-  // Propagate assigned views for x
-  template <class View>
-  ExecStatus
-  prop_val(Space* home, int n, DomInfo<View>* x, DomInfo<View>* y,
-	   int& n_na, ProcessStack& xa, ProcessStack& ya) {
-    while (!xa.empty()) {
-      int i = xa.pop();
-      int j = x[i].view.val();
-      // Assign the y variable to i (or test if already assigned!)
-      {
-	ModEvent me = y[j].view.eq(home,i);
-	if (me_failed(me))
-	  return ES_FAILED;
-	// Record that y[j] has been assigned and must be propagated
-	if (me_modified(me))
-	  ya.push(j);
-      }
-      // Prune the value j from all x variables
-      for (int k=i; k--; ) {
-	ModEvent me = x[k].view.nq(home,j);
-	if (me_failed(me))
-	  return ES_FAILED;
-	if (me_modified(me))
-	  if (me == ME_INT_VAL) {
-	    // Record that x[k] has been assigned and must be propagated
-	    xa.push(k);
-	  } else {
-	    // One value has been removed and this removal does not need
-	    // to be propagated again: after all y[j] = i, so it holds
-	    // that y[j] != k.
-	    x[k].removed(j);
-	  }
-      }
-      // The same for the other views
-      for (int k=i+1; k<n; k++) {
-	ModEvent me = x[k].view.nq(home,j);
-	if (me_failed(me))
-	  return ES_FAILED;
-	if (me_modified(me))
-	  if (me == ME_INT_VAL) {
-	    // Record that x[k] has been assigned and must be propagated
-	    xa.push(k);
-	  } else {
-	    // One value has been removed and this removal does not need
-	    // to be propagated again: after all y[j] = i, so it holds
-	    // that y[j] != k.
-	    x[k].removed(j);
-	  }
-      }
-      x[i].assigned(); n_na--;
-    }
-    return ES_OK;
   }
 
   // Propagate domain information from x to y
@@ -253,20 +189,7 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View>
   PropCost
   Dom<View>::cost(void) const {
-    return PC_CUBIC_LO;
-  }
-
-  template <class View>
-  void print(const char* s, int n, DomInfo<View>* x, DomInfo<View>* y) {
-    std::cout << s << std::endl;
-    std::cout << "\tx = ";
-    for (int i = 0; i<n; i++)
-      std::cout << x[i].view << "@" << x[i].card << ", ";
-    std::cout << std::endl;
-    std::cout << "\ty = ";
-    for (int i = 0; i<n; i++)
-      std::cout << y[i].view << "@" << y[i].card << ", ";
-    std::cout << std::endl << std::endl;
+    return (View::pme(this) == ME_INT_VAL) ? PC_QUADRATIC_LO : PC_CUBIC_HI;
   }
 
   template <class View>
@@ -277,39 +200,34 @@ namespace Gecode { namespace Int { namespace Channel {
     ProcessStack xa(__xa);
     ProcessStack ya(__ya);
 
-    //    print("Initial",n,x,y);
-
-    // Scan x and y for assigned but not yet propagated views
-    for (int i = n; i--; ) {
-      if (x[i].doval()) xa.push(i);
-      if (y[i].doval()) ya.push(i);
-    }
-
-    do {
-      // Propagate assigned views for x
-      if (prop_val(home,n,x,y,n_na,xa,ya) == ES_FAILED)
-	return ES_FAILED;
-      // Propagate assigned views for y
-      if (prop_val(home,n,y,x,n_na,ya,xa) == ES_FAILED)
-	return ES_FAILED;
-      assert(ya.empty());
-    } while (!xa.empty());
+    if (View::pme(this) == ME_INT_VAL) {
+      // Scan x and y for assigned but not yet propagated views
+      for (int i = n; i--; ) {
+	if (x[i].doval()) xa.push(i);
+	if (y[i].doval()) ya.push(i);
+      }
       
-    //    print("PROP_VAL X,Y",n,x,y);
-
+      do {
+	// Propagate assigned views for x
+	if (prop_val<View,DomInfo<View> >(home,n,x,y,n_na,xa,ya) == ES_FAILED)
+	  return ES_FAILED;
+	// Propagate assigned views for y
+	if (prop_val<View,DomInfo<View> >(home,n,y,x,n_na,ya,xa) == ES_FAILED)
+	  return ES_FAILED;
+	assert(ya.empty());
+      } while (!xa.empty());
+      this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
+    }
+      
     // Process changed views for y
     // This propagates from y to x and possibly records xs that
     // got assigned
     if (prop_dom(home,n,y,x,xa) == ES_FAILED)
       return ES_FAILED;
 
-    //    print("PROP_DOM Y->X",n,x,y);
-
     // Process assigned views for x
-    if (prop_val(home,n,x,y,n_na,xa,ya) == ES_FAILED)
+    if (prop_val<View,DomInfo<View> >(home,n,x,y,n_na,xa,ya) == ES_FAILED)
       return ES_FAILED;
-
-    //    print("PROP_VAL X",n,x,y);
 
     // Perform domain consistent propagation for distinct on the x views
     if (dc.available()) {
@@ -325,9 +243,6 @@ namespace Gecode { namespace Int { namespace Channel {
     // (that is, not recorded in xa). This must be checked and propagated
     // to the y views, however the distinctness on x is already
     // propagated.
-
-    //    print("PROP_DISTINCT",n,x,y);
-
     for (int i=n; i--; )
       if (x[i].doval()) {
 	int j = x[i].view.val();
@@ -344,29 +259,22 @@ namespace Gecode { namespace Int { namespace Channel {
 	x[i].assigned(); n_na--;
       }
 
-    //    print("PROP_ASSIGNED AFTER DISTINCT",n,x,y);
-
     // Process changed views for x
     // This propagates from x to y and possibly records ys that
     // got assigned
     if (prop_dom(home,n,x,y,ya) == ES_FAILED)
       return ES_FAILED;
 
-    //    print("PROP_DOM X->Y",n,x,y);
-
     // Process assigned view again (some might have been found above)
     while (!xa.empty() || !ya.empty()) {
       // Process assigned views for x
-      if (prop_val(home,n,x,y,n_na,xa,ya) == ES_FAILED)
+      if (prop_val<View,DomInfo<View> >(home,n,x,y,n_na,xa,ya) == ES_FAILED)
 	return ES_FAILED;
       // Process assigned views for y
-      if (prop_val(home,n,y,x,n_na,ya,xa) == ES_FAILED)
+      if (prop_val<View,DomInfo<View> >(home,n,y,x,n_na,ya,xa) == ES_FAILED)
 	return ES_FAILED;
     };
       
-    //    print("PROP_VAL FINAL",n,x,y);
-
-    //    std::cout << "Unassigned: " << n_na << std::endl;
     return (n_na == 0) ? ES_SUBSUMED : ES_FIX;
   }
 
@@ -408,7 +316,6 @@ namespace Gecode { namespace Int { namespace Channel {
       y[i].view.cancel(this,PC_INT_DOM);
     }
   }
-
 
 }}}
 

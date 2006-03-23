@@ -47,10 +47,18 @@
 #
 
 [RELEASE]
-Version:	1.x.y
+Version:	1.1.0
 Date:		upcoming
 [DESCRIPTION]
 Next release.
+
+[ENTRY]
+Module: int
+What:	new
+Rank:	major
+[DESCRIPTION]
+Added new constraint channel for variable/value channeling
+between to variable arrays.
 
 [ENTRY]
 Module: int

@@ -190,7 +190,7 @@ INTHDR0 = \
 	element.hh exception.icc gcc.hh linear.hh \
 	propagator.icc regular.hh rel.hh \
 	sortedness.hh var.icc view.icc \
-	channel.hh channel/dom.icc
+	channel.hh channel/dom.icc channel/val.icc channel/stack.icc
 
 INTSRC		= $(INTSRC0:%=int/%)
 INTHDR		= int.hh $(INTHDR0:%=int/%)
@@ -332,7 +332,7 @@ OTHERHDR = iter.hh \
 #
 
 INTEXAMPLESRC0 = \
-	test alpha bibd cars donald \
+	alpha bibd cars donald \
 	eq20 golomb \
 	graph-color grocery ind-set knights \
 	magic-sequence magic-sequence-gcc magic-square \

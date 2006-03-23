@@ -476,7 +476,12 @@ namespace Gecode {
   //@{
   /** \brief Post propagator for \f$ x_i = j\leftrightarrow y_j=i\f$ for all \f$0\leq i<|x|\f$
    *
-   * Only supports domain-consistency (\a icl = ICL_DOM).
+   * \li Supports value (\a icl = ICL_VAL) and domain propagation (all other
+   *     values for \a icl).
+   * \li Throws an exception of type Int::ArgumentSizeMismatch, if
+   *     \a x and \a n are of different size.
+   * \li Throws an exception of type Int::ArgumentSame, if \a x together
+   *     with \a y contains the same variable multiply.
    */
   GECODE_INT_EXPORT void
   channel(Space* home, const IntVarArgs& x, const IntVarArgs& y,
@@ -521,9 +526,9 @@ namespace Gecode {
    *                = true) or greater than the limit (\a at_most = false)
    * \param icl Supports value-consistency only (\a icl = ICL_VAL, default).
    *
-   * \exception Int::ArgumentSizeMismatch Raised if the sizes of the arguments
+   * \exception Int::ArgumentSizeMismatch thrown if the sizes of the arguments
    *            representing tasks does not match.
-   * \exception Int::NumericalOverflow Raised if any numerical argument is 
+   * \exception Int::NumericalOverflow thrown if any numerical argument is 
    *            larger than Limits::Int::int_max or less than 
    *            Limits::Int::int_min.
    */

@@ -1,0 +1,59 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2006
+ *
+ *  Last modified:
+ *     $Date: 2005-10-23 16:23:09 +0200 (Sun, 23 Oct 2005) $ by $Author: schulte $
+ *     $Revision: 2403 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Channel {
+
+  /**
+   * \brief A simple integer stack for tracking which views are assigned
+   *
+   * Constructed such that temporary memory can be used. Requires that
+   * only positive numbers are pushed (uses -1 as sentinel element).
+   */
+  class ProcessStack {
+  private:
+    int* p;
+  public:
+    ProcessStack(int* p);
+    bool empty(void) const;
+    int pop(void);
+    void push(int i);
+  };
+
+  forceinline
+  ProcessStack::ProcessStack(int* p0) : p(p0) {
+    *(p++) = -1;
+  }
+  forceinline bool
+  ProcessStack::empty(void) const {
+    return *(p-1) < 0;
+  }
+  forceinline int
+  ProcessStack::pop(void) {
+    return *(--p);
+  }
+  forceinline void
+  ProcessStack::push(int i) {
+    *(p++) = i;
+  }
+
+}}}
+
+// STATISTICS: int-prop

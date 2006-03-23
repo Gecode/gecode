@@ -27,7 +27,7 @@ namespace Gecode {
 
   void
   channel(Space* home, const IntVarArgs& x, const IntVarArgs& y,
-	  IntConLevel) {
+	  IntConLevel icl) {
     using namespace Channel;
     int n = x.size();
     if (n != y.size())
@@ -38,13 +38,23 @@ namespace Gecode {
     if (n == 0)
       return;
 
-    DomInfo<IntView>* di
-      = DomInfo<IntView>::allocate(home,2*n);
-    for (int i=n; i--; ) {
-      di[i].init(x[i],n); di[i+n].init(y[i],n);
+    if (icl == ICL_VAL) {
+      ValInfo<IntView>* vi
+	= ValInfo<IntView>::allocate(home,2*n);
+      for (int i=n; i--; ) {
+	vi[i].init(x[i],n); vi[i+n].init(y[i],n);
+      }
+      if (Val<IntView>::post(home,n,vi,vi+n) == ES_FAILED)
+	home->fail();
+    } else {
+      DomInfo<IntView>* di
+	= DomInfo<IntView>::allocate(home,2*n);
+      for (int i=n; i--; ) {
+	di[i].init(x[i],n); di[i+n].init(y[i],n);
+      }
+      if (Dom<IntView>::post(home,n,di,di+n) == ES_FAILED)
+	home->fail();
     }
-    if (Dom<IntView>::post(home,n,di,di+n) == ES_FAILED)
-      home->fail();
   }
 
 }
