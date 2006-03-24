@@ -731,9 +731,9 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *
  * You can compile as <b>"universal binary" on a Mac OS
  * machine</b>. Note that the x86 part has not been tested yet. Configure
- * with (all in one line)
+ * as usual, then compile with (all in one line)
  *
- * <code>./configure CXXUSR="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
+ * <code>make CXXUSR="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
  * DLLFLAGS="-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -dynamiclib"</code>
  *
  * \subsection CompConfUsr Passing options for compilation
