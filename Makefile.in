@@ -686,6 +686,9 @@ DOCSRC = $(DOCSRC_NOTGENERATED:%=$(top_srcdir)/%) \
 changelog.hh: $(top_srcdir)/changelog.in
 	perl $(top_srcdir)/misc/genchangelog.perl < $^ > changelog.hh
 
+ChangeLog: $(top_srcdir)/changelog.in
+	perl $(top_srcdir)/misc/gentxtchangelog.perl < $^ > ChangeLog
+
 license.hh: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%)
 	perl $(top_srcdir)/misc/genlicense.perl $^ > license.hh
 
@@ -840,7 +843,8 @@ disttodir:
 	prefix=$(BINPKG) execprefix=$(BINPKG) bindir=$(BINPKG)/bin \
 	libdir=$(BINPKG)/lib sharedlibdir=$(BINPKG)/lib \
 	includedir=$(BINPKG)/include && \
-	cp LICENSE $(BINPKG)/
+	$(MAKE) ChangeLog && \
+	cp LICENSE ChangeLog $(BINPKG)/
 
 distzip: disttodir
 	zip -q -9 -r $(BINPKG).zip $(BINPKG) && \
