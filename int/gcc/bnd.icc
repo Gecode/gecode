@@ -247,7 +247,7 @@ namespace Gecode { namespace Int { namespace GCC {
     assert(lps->minValue() == ups->minValue());
     assert(lps->maxValue() == ups->maxValue());
     assert(lps->minValue() <= x[nu[0]].min());
-    assert(x[mu[x.size() - 1]].max()>= ups->maxValue());
+    assert(x[mu[x.size() - 1]].max() <= ups->maxValue());
 
     /*  
      *  Setup rank and bounds info

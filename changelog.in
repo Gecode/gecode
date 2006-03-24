@@ -55,6 +55,14 @@ Next release.
 [ENTRY]
 Module: int
 What:   bug
+Rank:   minor
+Thanks: Stefano Gualandi
+[DESCRIPTION]
+Fixed wrong assertion in gcc-bnd propagator.
+
+[ENTRY]
+Module: int
+What:   bug
 Rank:   major
 Thanks: Jean-Christophe Godart
 [DESCRIPTION]
