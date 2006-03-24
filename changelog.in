@@ -54,6 +54,15 @@ Next release.
 
 [ENTRY]
 Module: int
+What:   bug
+Rank:   major
+Thanks: Jean-Christophe Godart
+[DESCRIPTION]
+Fixed indexing bug in SupportSet (part of the domain consistent linear
+equation propagator). 
+
+[ENTRY]
+Module: int
 What:	new
 Rank:	major
 [DESCRIPTION]
