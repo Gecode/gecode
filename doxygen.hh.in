@@ -734,7 +734,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * as usual, then compile with (all in one line)
  *
  * <code>make CXXUSR="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
- * DLLFLAGS="-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -dynamiclib"</code>
+ * DLLFLAGS="-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -dynamiclib -arch i386 -arch ppc"</code>
  *
  * \subsection CompConfUsr Passing options for compilation
  *
