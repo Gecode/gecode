@@ -354,6 +354,7 @@ namespace Gecode {
   class VarArgArray : public ArgArrayBase<Var> {
   protected:
     using ArgArrayBase<Var>::a;
+    using ArgArrayBase<Var>::n;
     /// Sort order for variables
     class VarLess {
     public:
