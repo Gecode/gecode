@@ -763,7 +763,7 @@ doinstalllib: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
 	for_libtargets="$(LIBTARGETS)" && \
 	  for f in $$for_libtargets; do cp $$f $(sharedlibdir); done && \
 	for_liblinktargets="$(LIBLINKTARGETS)" && \
-	  for f in $$for_liblinktargets; do cp -a $$f $(sharedlibdir); done &&\
+	  for f in $$for_liblinktargets; do cp -dp $$f $(sharedlibdir); done &&\
 	for_liblibtargets="$(LIBLIBTARGETS)" && \
 	  for f in $$for_liblibtargets; do cp $$f $(libdir); done && \
 	(cd $(top_srcdir) && tar cf - $(ALLHDR)) | \
