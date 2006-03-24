@@ -448,7 +448,8 @@ namespace Gecode { namespace Int { namespace GCC {
   };
 
 
-  void pvar(VarNode* v) {
+  forceinline void
+  pvar(VarNode* v) {
     std::cout << v->var<<":{";
     for (Edge* e = v->first(); e != NULL; e = e->next()) {
       std::cout << e->getVal()->val<<",";
@@ -457,7 +458,8 @@ namespace Gecode { namespace Int { namespace GCC {
     std::cout << v->xindex << ") ";
   }
 
-  void pval(ValNode* v) {
+  forceinline void
+  pval(ValNode* v) {
     std::cout << v->val<<":{";
     for (Edge* e = v->first(); e != NULL; e = e->vnext()) {
       std::cout << e->getVar()->var<<",";
