@@ -188,7 +188,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template <class I>
   inline
   NaryUnion<I>::NaryUnion(I* r0, int n)
-    : r(n,order) {
+    : order(), r(n,order) {
     for (int i = n; i--; )
       if (r0[i]())
 	r.insert(r0[i]);
