@@ -363,7 +363,7 @@ IntTest::run(const Options& opt) {
       goto failed;
     }
   }
-  if (domain) {
+  if (icl == ICL_DOM) {
     has_assignment = false;
     test = "Full domain consistency";
     Log::reset();

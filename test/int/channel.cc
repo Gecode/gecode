@@ -24,11 +24,9 @@
 static IntSet ds_03(0,3);
 
 class Channel : public IntTest {
-private:
-  IntConLevel icl;
 public:
-  Channel(const char* t, IntConLevel icl0) 
-    : IntTest(t,8,ds_03,false,icl0==ICL_DOM), icl(icl0) {}
+  Channel(const char* t, IntConLevel icl) 
+    : IntTest(t,8,ds_03,false,icl) {}
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<4; i++)
       if (x[4+x[i]] != i)

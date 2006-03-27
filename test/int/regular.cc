@@ -27,7 +27,7 @@ static IntSet ds_22(-2,2);
 class RegularA : public IntTest {
 public:
   RegularA(const char* t) 
-    : IntTest(t,4,ds_22,false,true) {}
+    : IntTest(t,4,ds_22,false,ICL_DOM) {}
   virtual bool solution(const Assignment& x) const {
     return (((x[0] == 0) || (x[0] == 2)) &&
 	    ((x[1] == -1) || (x[1] == 1)) &&
@@ -48,7 +48,7 @@ public:
 class RegularB : public IntTest {
 public:
   RegularB(const char* t) 
-    : IntTest(t,4,ds_22,false,true) {}
+    : IntTest(t,4,ds_22,false,ICL_DOM) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0]<x[1]) && (x[1]<x[2]) && (x[2]<x[3]);
   }
@@ -67,7 +67,7 @@ public:
 class RegularShared : public IntTest {
 public:
   RegularShared(const char* t) 
-    : IntTest(t,2,ds_22,false,true) {}
+    : IntTest(t,2,ds_22,false,ICL_DOM) {}
   virtual bool solution(const Assignment& x) const {
     return (((x[0] == 0) || (x[0] == 2)) &&
 	    ((x[1] == -1) || (x[1] == 1)) &&

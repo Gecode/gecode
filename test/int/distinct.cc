@@ -24,11 +24,9 @@
 static IntSet ds_22(-2,2);
 
 class Distinct : public IntTest {
-private:
-  IntConLevel icl;
 public:
-  Distinct(const char* t, IntConLevel icl0) 
-    : IntTest(t,4,ds_22,false,icl0==ICL_DOM), icl(icl0) {}
+  Distinct(const char* t, IntConLevel icl) 
+    : IntTest(t,4,ds_22,false,icl) {}
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<4; i++)
       for (int j=i+1; j<4; j++)
@@ -46,11 +44,9 @@ Distinct _bnd("Distinct::Bnd",ICL_BND);
 Distinct _val("Distinct::Val",ICL_VAL);
 
 class DistinctOffset : public IntTest {
-private:
-  IntConLevel icl;
 public:
-  DistinctOffset(const char* t, IntConLevel icl0) 
-    : IntTest(t,4,ds_22,false,icl0==ICL_DOM), icl(icl0) {}
+  DistinctOffset(const char* t, IntConLevel icl) 
+    : IntTest(t,4,ds_22,false,icl) {}
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<4; i++)
       for (int j=i+1; j<4; j++)

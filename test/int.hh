@@ -69,15 +69,15 @@ protected:
   /// Does the constraint also exist as reified constraint
   bool reified;
   /// Consistency level of the propagator
-  bool domain;
+  IntConLevel icl;
 
   virtual Assignment* make_assignment(void);
   virtual bool do_search_test(void) { return true; }
 public:
   /// Constructor
-  IntTest(const char* t, 
-	  int a, const IntSet& d, bool r=false, bool dom=false) 
-    : Test("Int",t), arity(a), dom(d), reified(r), domain(dom)  {
+  IntTest(const char* t, int a, const IntSet& d, 
+	  bool r=false, IntConLevel i=ICL_DEF) 
+    : Test("Int",t), arity(a), dom(d), reified(r), icl(i)  {
   }
   /// Check for solution
   virtual bool solution(const Assignment&) const = 0;

@@ -39,12 +39,11 @@ class LinearInt : public IntTest {
 private:
   const int* c;
   const IntRelType irt;
-  const IntConLevel icl;
 public:
   LinearInt(const char* t, 
 	    const IntSet& is,
-	    const int* c0, int n, IntRelType irt0, IntConLevel icl0) 
-    : IntTest(t,n,is, icl0 != ICL_DOM), c(c0), irt(irt0), icl(icl0) {}
+	    const int* c0, int n, IntRelType irt0, IntConLevel icl) 
+    : IntTest(t,n,is,icl != ICL_DOM,icl), c(c0), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     double e = 0.0;
     for (int i=0; i<x.size(); i++)

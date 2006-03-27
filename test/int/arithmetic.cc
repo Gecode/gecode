@@ -99,7 +99,7 @@ static AbsBnd _absbndmin("Arithmetic::AbsBnd::C",s3);
 class AbsDom : public IntTest {
 public:
   AbsDom(const char* t, const IntSet& is) 
-    : IntTest(t,2,is,false,true) {}
+    : IntTest(t,2,is,false,ICL_DOM) {}
   virtual bool solution(const Assignment& x) const {
     double d0 = static_cast<double>(x[0]);
     double d1 = static_cast<double>(x[1]);
