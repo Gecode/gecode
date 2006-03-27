@@ -53,14 +53,13 @@ public:
 
 class Test {
 private:
-  const char*  m;
-  const char*  t;
-  const int cost;
+  const char* m;
+  const char* t;
   Test* n;
   static Test* all;
 public:
-  Test(const char* module, const char* test, int c = 1)
-    : m(module), t(test), cost(c) {
+  Test(const char* module, const char* test)
+    : m(module), t(test) {
     if (all == NULL) {
       all = this; n = NULL;
     } else {
@@ -93,14 +92,8 @@ public:
   const char* test(void) const {
     return t;
   }
-  virtual int iter(int iter) const {
-    if (cost < 0) return -cost;
-    int res = iter/cost;
-    return res < 1 ? 1 : res;
-  }
   virtual bool run(const Options& opt) = 0;
-
-  virtual ~Test() {}
+  virtual ~Test(void) {}
 };
 
 /// Return number between 0..m-1

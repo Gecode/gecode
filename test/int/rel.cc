@@ -235,7 +235,7 @@ private:
   bool strict;
 public:
   Lex(const char* t, int m, bool _strict) 
-    : IntTest(t,m*2,ds_22,false,5), n(m), strict(_strict) {}
+    : IntTest(t,m*2,ds_22), n(m), strict(_strict) {}
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<n; i++)
       if (x[i]<x[n+i]) {

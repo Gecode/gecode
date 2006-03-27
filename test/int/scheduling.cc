@@ -163,8 +163,8 @@ protected:
     return new CumulativeAssignment(arity, dom);
   }
 public:
-  Cumulatives(const char* t, int nt, bool am, int l, int cost = 5) 
-    : IntTest(t,nt*4,ds_12,false,cost), ntasks(nt), at_most(am), limit(l) {}
+  Cumulatives(const char* t, int nt, bool am, int l) 
+    : IntTest(t,nt*4,ds_12), ntasks(nt), at_most(am), limit(l) {}
 
   virtual bool solution(const Assignment& x) const {
     eventv e;
@@ -224,24 +224,24 @@ public:
   }
 };
 
-Cumulatives _cumu1t1("Cumulatives::1t1", 1,  true, 1, 2);
-Cumulatives _cumu1f1("Cumulatives::1f1", 1, false, 1, 2);
-Cumulatives _cumu1t2("Cumulatives::1t2", 1,  true, 2, 2);
-Cumulatives _cumu1f2("Cumulatives::1f2", 1, false, 2, 2);
-Cumulatives _cumu1t3("Cumulatives::1t3", 1,  true, 3, 2);
-Cumulatives _cumu1f3("Cumulatives::1f3", 1, false, 3, 1);
+Cumulatives _cumu1t1("Cumulatives::1t1", 1,  true, 1);
+Cumulatives _cumu1f1("Cumulatives::1f1", 1, false, 1);
+Cumulatives _cumu1t2("Cumulatives::1t2", 1,  true, 2);
+Cumulatives _cumu1f2("Cumulatives::1f2", 1, false, 2);
+Cumulatives _cumu1t3("Cumulatives::1t3", 1,  true, 3);
+Cumulatives _cumu1f3("Cumulatives::1f3", 1, false, 3);
 Cumulatives _cumu2t1("Cumulatives::2t1", 2,  true, 1);
 Cumulatives _cumu2f1("Cumulatives::2f1", 2, false, 1);
 Cumulatives _cumu2t2("Cumulatives::2t2", 2,  true, 2);
 Cumulatives _cumu2f2("Cumulatives::2f2", 2, false, 2);
 Cumulatives _cumu2t3("Cumulatives::2t3", 2,  true, 3);
 Cumulatives _cumu2f3("Cumulatives::2f3", 2, false, 3);
-Cumulatives _cumu3t1("Cumulatives::3t1", 3,  true, 1, 30);
-Cumulatives _cumu3f1("Cumulatives::3f1", 3, false, 1, 30);
-Cumulatives _cumu3t2("Cumulatives::3t2", 3,  true, 2, 30);
-Cumulatives _cumu3f2("Cumulatives::3f2", 3, false, 2, 30);
-Cumulatives _cumu3t3("Cumulatives::3t3", 3,  true, 3, 30);
-Cumulatives _cumu3f3("Cumulatives::3f3", 3, false, 3, 30);
+Cumulatives _cumu3t1("Cumulatives::3t1", 3,  true, 1);
+Cumulatives _cumu3f1("Cumulatives::3f1", 3, false, 1);
+Cumulatives _cumu3t2("Cumulatives::3t2", 3,  true, 2);
+Cumulatives _cumu3f2("Cumulatives::3f2", 3, false, 2);
+Cumulatives _cumu3t3("Cumulatives::3t3", 3,  true, 3);
+Cumulatives _cumu3f3("Cumulatives::3f3", 3, false, 3);
 //Cumulatives _cumu4t1("Cumulatives::4t1", 4,  true, 1, 60);
 //Cumulatives _cumu4f1("Cumulatives::4f1", 4, false, 1, 60);
 //Cumulatives _cumu4t2("Cumulatives::4t2", 4,  true, 2, 60);

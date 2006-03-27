@@ -26,7 +26,7 @@ static IntSet ds(0,1);
 class BoolEq : public IntTest {
 public:
   BoolEq(const char* t) 
-    : IntTest(t,2,ds,false) {}
+    : IntTest(t,2,ds) {}
   virtual bool solution(const Assignment& x) const {
     return x[0]==x[1];
   }
@@ -42,7 +42,7 @@ BoolEq _booleq("Bool::Eq");
 class BoolNot : public IntTest {
 public:
   BoolNot(const char* t) 
-    : IntTest(t,2,ds,false) {}
+    : IntTest(t,2,ds) {}
   virtual bool solution(const Assignment& x) const {
     return x[0]!=x[1];
   }
@@ -58,7 +58,7 @@ BoolNot _boolnot("Bool::Not");
 class BoolAnd : public IntTest {
 public:
   BoolAnd(const char* t) 
-    : IntTest(t,3,ds,false) {}
+    : IntTest(t,3,ds) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0]&x[1])==x[2];
   }
@@ -74,7 +74,7 @@ BoolAnd _booland("Bool::And::Binary");
 class BoolOr : public IntTest {
 public:
   BoolOr(const char* t) 
-    : IntTest(t,3,ds,false) {}
+    : IntTest(t,3,ds) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0]|x[1])==x[2];
   }
@@ -90,7 +90,7 @@ BoolOr _boolor("Bool::Or::Binary");
 class BoolImp : public IntTest {
 public:
   BoolImp(const char* t) 
-    : IntTest(t,3,ds,false) {}
+    : IntTest(t,3,ds) {}
   virtual bool solution(const Assignment& x) const {
     return ((x[0] == 0 ? 1 : 0)|x[1])==x[2];
   }
@@ -106,7 +106,7 @@ BoolImp _boolimp("Bool::Imp");
 class BoolEqv : public IntTest {
 public:
   BoolEqv(const char* t) 
-    : IntTest(t,3,ds,false) {}
+    : IntTest(t,3,ds) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0] == x[1])==x[2];
   }
@@ -122,7 +122,7 @@ BoolEqv _booleqv("Bool::Eqv");
 class BoolXor : public IntTest {
 public:
   BoolXor(const char* t) 
-    : IntTest(t,3,ds,false) {}
+    : IntTest(t,3,ds) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0] != x[1])==x[2];
   }
@@ -139,7 +139,7 @@ BoolXor _boolxor("Bool::Xor");
 class BoolAndNary : public IntTest {
 public:
   BoolAndNary(const char* t) 
-    : IntTest(t,6,ds,false) {}
+    : IntTest(t,6,ds) {}
   virtual bool solution(const Assignment& x) const {
     for (int i = x.size()-1; i--; )
       if (x[i] == 0)
@@ -163,7 +163,7 @@ BoolAndNary _boolandnary("Bool::And::Nary");
 class BoolOrNary : public IntTest {
 public:
   BoolOrNary(const char* t) 
-    : IntTest(t,6,ds,false) {}
+    : IntTest(t,6,ds) {}
   virtual bool solution(const Assignment& x) const {
     for (int i = x.size()-1; i--; )
       if (x[i] == 1)

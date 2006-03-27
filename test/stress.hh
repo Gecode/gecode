@@ -54,9 +54,8 @@ class StressTest : public Test {
 protected:
   IntSetValues param;
 public:
-  StressTest(const char* t, const IntSet& p, int cost = -1) 
-    : Test("Stress", t, cost), param(p) {
-  }
+  StressTest(const char* t, const IntSet& p) 
+    : Test("Stress", t), param(p) {}
   // Check for solution
   virtual CheckResult check(const StressTestSpace *s) const = 0;
   // Run test-space

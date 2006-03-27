@@ -35,7 +35,7 @@ static bool gflag = false;
 struct Exec : public StressTest {
   bool flag;
   Exec()
-    : StressTest("Exec", _p, -2), flag(gflag) {
+    : StressTest("Exec", _p), flag(gflag) {
     gflag = !gflag;
   }
   virtual CheckResult check(const StressTestSpace *s) const {

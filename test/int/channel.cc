@@ -28,7 +28,7 @@ private:
   IntConLevel icl;
 public:
   Channel(const char* t, IntConLevel icl0) 
-    : IntTest(t,8,ds_03,false,1,icl0==ICL_DOM), icl(icl0) {}
+    : IntTest(t,8,ds_03,false,icl0==ICL_DOM), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<4; i++)
       if (x[4+x[i]] != i)

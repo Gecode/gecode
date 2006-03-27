@@ -43,7 +43,7 @@ private:
   IntRelType irt;
 public:
   CountIntInt(const char* t, IntRelType irt0) 
-    : IntTest(t,4,ds_22,false), irt(irt0) {}
+    : IntTest(t,4,ds_22), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<4; i++)
@@ -68,7 +68,7 @@ private:
   IntRelType irt;
 public:
   CountIntIntDup(const char* t, IntRelType irt0) 
-    : IntTest(t,4,ds_22,false), irt(irt0) {}
+    : IntTest(t,4,ds_22), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<4; i++)
@@ -97,7 +97,7 @@ private:
   IntRelType irt;
 public:
   CountIntVar(const char* t, IntRelType irt0) 
-    : IntTest(t,5,ds_22,false), irt(irt0) {}
+    : IntTest(t,5,ds_22), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<4; i++)
@@ -126,7 +126,7 @@ private:
   IntRelType irt;
 public:
   CountIntVarShared(const char* t, IntRelType irt0) 
-    : IntTest(t,4,ds_22,false), irt(irt0) {}
+    : IntTest(t,4,ds_22), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<4; i++)
@@ -155,7 +155,7 @@ private:
   IntRelType irt;
 public:
   CountVarVar(const char* t, IntRelType irt0) 
-    : IntTest(t,5,ds_22,false), irt(irt0) {}
+    : IntTest(t,5,ds_22), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<3; i++)
@@ -183,7 +183,7 @@ private:
   IntRelType irt;
 public:
   CountVarVarSharedA(const char* t, IntRelType irt0) 
-    : IntTest(t,5,ds_22,false), irt(irt0) {}
+    : IntTest(t,5,ds_22), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<4; i++)
@@ -211,7 +211,7 @@ private:
   IntRelType irt;
 public:
   CountVarVarSharedB(const char* t, IntRelType irt0) 
-    : IntTest(t,5,ds_22,false), irt(irt0) {}
+    : IntTest(t,5,ds_22), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<4; i++)
@@ -239,7 +239,7 @@ private:
   IntRelType irt;
 public:
   CountVarVarSharedC(const char* t, IntRelType irt0) 
-    : IntTest(t,4,ds_22,false), irt(irt0) {}
+    : IntTest(t,4,ds_22), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<4; i++)

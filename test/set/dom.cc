@@ -49,7 +49,7 @@ DomEqRange _domeqrange("Dom::EqRange");
 class DomEqDom : public SetTest {
 public:
   DomEqDom(const char* t) 
-    : SetTest(t,1,d1,true,false) {}
+    : SetTest(t,1,d1,true) {}
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr(x.lub, x[0]);
     IntSetRanges dr(d1);

@@ -93,7 +93,7 @@ private:
 
 public:
   Sortedness_NoVar(const char* t, IntConLevel icl0) 
-    : IntTest(t, xs, ds_13, false), icl(icl0) {}
+    : IntTest(t, xs, ds_13), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     GECODE_AUTOARRAY(int, sortx, ve);
     for (int i = 0; i < ve; i++) {
@@ -166,7 +166,7 @@ private:
 
 public:
   Sortedness_PermVar(const char* t, IntConLevel icl0) 
-    : IntTest(t, xs, ds_03, false), icl(icl0) {}
+    : IntTest(t, xs, ds_03), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
 
 

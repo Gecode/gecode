@@ -60,16 +60,17 @@ unsigned int random(unsigned int m) {
 }
 
 namespace {
+
   void report_error(const Options& o, std::string name) {
     std::cout << "Options: -seed " << o.seed;
-    if(o.iter != o.defiter)
+    if (o.iter != o.defiter)
       std::cout << "  -iter " << o.iter;
-    if(o.fixprob != o.deffixprob)
+    if (o.fixprob != o.deffixprob)
       std::cout << "  -fixprob " << o.fixprob;
-    if(o.flushprob != o.defflushprob)
+    if (o.flushprob != o.defflushprob)
       std::cout << "  -flushprob " << o.flushprob;
     std::cout << "  -test " << name << std::endl;
-    if(o.log)
+    if (o.log)
       Log::print(o.display);
   }
 }
@@ -101,7 +102,7 @@ main(int argc, char** argv) {
       }
       std::cout << name << ": ";
       std::cout.flush();
-      for (int i = t->iter(o.iter); i--; ) {
+      for (int i = o.iter; i--; ) {
 	o.seed = test_seed();
 	if (t->run(o)) {
 	  std::cout << "+";

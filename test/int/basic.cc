@@ -30,7 +30,7 @@ static IntSet s(-3,3);
 class Basic : public IntTest {
 public:
   Basic(void) 
-    : IntTest("Basic",3,s,false) {}
+    : IntTest("Basic",3,s) {}
   virtual bool solution(const Assignment& x) const {
     return true;
   }

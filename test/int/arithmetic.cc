@@ -43,7 +43,7 @@ static IntSet s4(-3,3);
 class Mult : public IntTest {
 public:
   Mult(const char* t, const IntSet& is) 
-    : IntTest(t,3,is,false) {}
+    : IntTest(t,3,is) {}
   virtual bool solution(const Assignment& x) const {
     double d0 = static_cast<double>(x[0]);
     double d1 = static_cast<double>(x[1]);
@@ -63,7 +63,7 @@ static Mult _multmin("Arithmetic::Mult::C",s3);
 class Square : public IntTest {
 public:
   Square(const char* t, const IntSet& is) 
-    : IntTest(t,2,is,false) {}
+    : IntTest(t,2,is) {}
   virtual bool solution(const Assignment& x) const {
     double d0 = static_cast<double>(x[0]);
     double d1 = static_cast<double>(x[1]);
@@ -80,7 +80,7 @@ static Square _squaremin("Arithmetic::Square::C",s3);
 class AbsBnd : public IntTest {
 public:
   AbsBnd(const char* t, const IntSet& is) 
-    : IntTest(t,2,is,false) {}
+    : IntTest(t,2,is) {}
   virtual bool solution(const Assignment& x) const {
     double d0 = static_cast<double>(x[0]);
     double d1 = static_cast<double>(x[1]);
@@ -99,7 +99,7 @@ static AbsBnd _absbndmin("Arithmetic::AbsBnd::C",s3);
 class AbsDom : public IntTest {
 public:
   AbsDom(const char* t, const IntSet& is) 
-    : IntTest(t,2,is,false,1,true) {}
+    : IntTest(t,2,is,false,true) {}
   virtual bool solution(const Assignment& x) const {
     double d0 = static_cast<double>(x[0]);
     double d1 = static_cast<double>(x[1]);
@@ -117,8 +117,8 @@ static AbsDom _absdommin("Arithmetic::AbsDom::C",s3);
 
 class Min : public IntTest {
 public:
-  Min(const char* t, const IntSet& is, int cost = 1) 
-    : IntTest(t,3,is,false,cost) {}
+  Min(const char* t, const IntSet& is) 
+    : IntTest(t,3,is) {}
   virtual bool solution(const Assignment& x) const {
     return std::min(x[0],x[1]) == x[2];
   }
@@ -126,14 +126,14 @@ public:
     min(home, x[0], x[1], x[2]);
   }
 };
-static Min _minmax("Arithmetic::Min::Bin::A",s1,2);
-static Min _minmed("Arithmetic::Min::Bin::B",s2,2);
-static Min _minmin("Arithmetic::Min::Bin::C",s3,4);
+static Min _minmax("Arithmetic::Min::Bin::A",s1);
+static Min _minmed("Arithmetic::Min::Bin::B",s2);
+static Min _minmin("Arithmetic::Min::Bin::C",s3);
 
 class Max : public IntTest {
 public:
-  Max(const char* t, const IntSet& is, int cost = 1) 
-    : IntTest(t,3,is,false,cost) {}
+  Max(const char* t, const IntSet& is) 
+    : IntTest(t,3,is) {}
   virtual bool solution(const Assignment& x) const {
     return std::max(x[0],x[1]) == x[2];
   }
@@ -141,14 +141,14 @@ public:
     max(home, x[0], x[1], x[2]);
   }
 };
-static Max _maxmax("Arithmetic::Max::Bin::A",s1,2);
-static Max _maxmed("Arithmetic::Max::Bin::B",s2,2);
-static Max _maxmin("Arithmetic::Max::Bin::C",s3,4);
+static Max _maxmax("Arithmetic::Max::Bin::A",s1);
+static Max _maxmed("Arithmetic::Max::Bin::B",s2);
+static Max _maxmin("Arithmetic::Max::Bin::C",s3);
 
 class MinNary : public IntTest {
 public:
   MinNary(const char* t, const IntSet& is) 
-    : IntTest(t,4,is,false,3) {}
+    : IntTest(t,4,is) {}
   virtual bool solution(const Assignment& x) const {
     return std::min(std::min(x[0],x[1]),
 		    x[2]) == x[3];
@@ -167,7 +167,7 @@ static MinNary _minnary("Arithmetic::Min::Nary",s4);
 class MaxNary : public IntTest {
 public:
   MaxNary(const char* t, const IntSet& is) 
-    : IntTest(t,4,is,false,3) {}
+    : IntTest(t,4,is) {}
   virtual bool solution(const Assignment& x) const {
     return std::max(std::max(x[0],x[1]),
 		    x[2]) == x[3];

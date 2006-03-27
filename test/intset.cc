@@ -26,7 +26,7 @@ using namespace Gecode;
 
 class IntSetTest : public Test {
 public:
-  IntSetTest() : Test("IntSet","Test",1) {}
+  IntSetTest(void) : Test("IntSet","Test") {}
   bool run(const Options&)  {
     IntSet bi2(1,1);
     IntSet ci2;

@@ -56,20 +56,28 @@ public:
 std::ostream&
 operator<<(std::ostream&, const Assignment&);
 
+/**
+ * \brief Base class for tests with integer constraints
+ *
+ */
 class IntTest : public Test {
 protected:
-  int    arity;
+  /// Number of variables
+  int arity;
+  /// Domain of variables
   IntSet dom;
-  bool   reified;
-  bool   domain;
+  /// Does the constraint also exist as reified constraint
+  bool reified;
+  /// Consistency level of the propagator
+  bool domain;
 
-  virtual Assignment* make_assignment();
-  virtual bool do_search_test() { return true; }
+  virtual Assignment* make_assignment(void);
+  virtual bool do_search_test(void) { return true; }
 public:
+  /// Constructor
   IntTest(const char* t, 
-	  int a, const IntSet& d, bool r=false, int cost = 1,
-	  bool dom=false) 
-    : Test("Int",t,cost), arity(a), dom(d), reified(r), domain(dom)  {
+	  int a, const IntSet& d, bool r=false, bool dom=false) 
+    : Test("Int",t), arity(a), dom(d), reified(r), domain(dom)  {
   }
   /// Check for solution
   virtual bool solution(const Assignment&) const = 0;

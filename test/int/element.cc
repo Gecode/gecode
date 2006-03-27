@@ -28,7 +28,7 @@ private:
   const int n;
 public:
   ElementInt(const char* t, const IntSet& is, const int* c0, int n0) 
-    : IntTest(t,2,is,false), c(c0), n(n0) {}
+    : IntTest(t,2,is), c(c0), n(n0) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0]>= 0) && (x[0]<n) && c[x[0]]==x[1];
   }
@@ -53,7 +53,7 @@ private:
   const int n;
 public:
   ElementShareInt(const char* t, const IntSet& is, const int* c0, int n0) 
-    : IntTest(t,1,is,false), c(c0), n(n0) {}
+    : IntTest(t,1,is), c(c0), n(n0) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0]>= 0) && (x[0]<n) && c[x[0]]==x[0];
   }
@@ -73,7 +73,7 @@ private:
   IntConLevel icl;
 public:
   ElementVar(const char* t, const IntSet& is, int n0, IntConLevel icl0) 
-    : IntTest(t,n0+2,is,false,1,icl0==ICL_DOM), n(n0), icl(icl0) {}
+    : IntTest(t,n0+2,is,false,icl0==ICL_DOM), n(n0), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0]>= 0) && (x[0]<n) && x[2+x[0]]==x[1];
   }
@@ -100,7 +100,9 @@ private:
   IntConLevel icl;
 public:
   ElementShareVar(const char* t, const IntSet& is, int n0, IntConLevel icl0) 
-    : IntTest(t,n0+1,is,false,1,false/*icl0==ICL_DOM*/), n(n0), icl(icl0) {}
+    : IntTest(t,n0+1,is,false,false
+	      // FIXME: icl0==ICL_DOM
+	      ), n(n0), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0]>= 0) && (x[0]<n) && x[1+x[0]]==x[0];
   }

@@ -86,7 +86,7 @@ private:
   IntConLevel icl;
 public:
   GCC_FC_AllLbUb(const char* t, IntConLevel icl0) 
-    : IntTest(t, 4, ds_14, false,1,icl0==ICL_DOM), icl(icl0) {}
+    : IntTest(t, 4, ds_14, false,icl0==ICL_DOM), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     
     FixCard fc(4);
@@ -119,7 +119,7 @@ private:
   IntConLevel icl;
 public:
   GCC_FC_AllTriple(const char* t, IntConLevel icl0) 
-    : IntTest(t, 4, ds_14, false,1,icl0==ICL_DOM), icl(icl0) {}
+    : IntTest(t, 4, ds_14, false,icl0==ICL_DOM), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     FixCard fc(4);
     for (int i = 0; i < 4; i++) {
@@ -160,7 +160,7 @@ private:
   IntConLevel icl;
 public:
   GCC_FC_SomeTriple(const char* t, IntConLevel icl0) 
-    : IntTest(t, 4, ds_14, false,1,icl0==ICL_DOM), icl(icl0) {}
+    : IntTest(t, 4, ds_14, false,icl0==ICL_DOM), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
 //     std::cout << "\n Solution \n";
     FixCard fc(4);
@@ -213,7 +213,7 @@ private:
   IntConLevel icl;
 public:
   GCC_FC_AllEqUb(const char* t, IntConLevel icl0) 
-    : IntTest(t, 4, ds_12, false,1,icl0==ICL_DOM), icl(icl0) {}
+    : IntTest(t, 4, ds_12, false,icl0==ICL_DOM), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
 //     std::cout << "\n Solution \n";
     FixCard fc(2);
@@ -271,7 +271,7 @@ private:
   IntConLevel icl;
 public:
   GCC_FC_Shared_AllLbUb(const char* t, IntConLevel icl0) 
-    : IntTest(t,2,ds_14,false,1,icl0==ICL_DOM), icl(icl0) {}
+    : IntTest(t,2,ds_14,false,icl0==ICL_DOM), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     if (x[0] != x[1]) {
       return true;
@@ -297,7 +297,7 @@ private:
   IntConLevel icl;
 public:
   GCC_FC_Shared_SomeTrip(const char* t, IntConLevel icl0) 
-    : IntTest(t,1,ds_14,false,1,icl0==ICL_DOM), icl(icl0) {}
+    : IntTest(t,1,ds_14,false,icl0==ICL_DOM), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     if (x[0] == 1) {
       return true;
@@ -337,7 +337,7 @@ private:
 
 public:
   GCC_VC_AllLbUb(const char* t, IntConLevel icl0) 
-    : IntTest(t, xs, ds_02, false,1,icl0==ICL_DOM), icl(icl0) {}
+    : IntTest(t, xs, ds_02, false,icl0==ICL_DOM), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
 //     std::cout << "GCC-Sol: ";
 //     for (int i = 0; i < xs; i++) {
@@ -436,7 +436,7 @@ private:
 
 public:
   GCC_VC_AllTriple(const char* t, IntConLevel icl0) 
-    : IntTest(t, xs, ds_02, false,1,icl0==ICL_DOM), icl(icl0) {}
+    : IntTest(t, xs, ds_02, false,icl0==ICL_DOM), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
 //     std::cout << "GCC-Sol: ";
 //     for (int i = 0; i < xs; i++) {
@@ -530,7 +530,7 @@ private:
 
 public:
   GCC_VC_SomeTriple(const char* t, IntConLevel icl0) 
-    : IntTest(t, xs, ds_02, false,1,icl0==ICL_DOM), icl(icl0) {}
+    : IntTest(t, xs, ds_02, false,icl0==ICL_DOM), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
 //     std::cout << "GCC-Sol: ";
 //     for (int i = 0; i < xs; i++) {
@@ -609,7 +609,7 @@ private:
   IntConLevel icl;
 public:
   GCC_VC_Shared_SomeTriple(const char* t, IntConLevel icl0) 
-    : IntTest(t,3,ds_04,false,1,icl0==ICL_DOM), icl(icl0) {}
+    : IntTest(t,3,ds_04,false,icl0==ICL_DOM), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     
 //     for (int i = 0; i < 3; i++) {

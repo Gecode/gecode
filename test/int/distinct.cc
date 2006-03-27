@@ -28,7 +28,7 @@ private:
   IntConLevel icl;
 public:
   Distinct(const char* t, IntConLevel icl0) 
-    : IntTest(t,4,ds_22,false,1,icl0==ICL_DOM), icl(icl0) {}
+    : IntTest(t,4,ds_22,false,icl0==ICL_DOM), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<4; i++)
       for (int j=i+1; j<4; j++)
@@ -50,7 +50,7 @@ private:
   IntConLevel icl;
 public:
   DistinctOffset(const char* t, IntConLevel icl0) 
-    : IntTest(t,4,ds_22,false,1,icl0==ICL_DOM), icl(icl0) {}
+    : IntTest(t,4,ds_22,false,icl0==ICL_DOM), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<4; i++)
       for (int j=i+1; j<4; j++)
