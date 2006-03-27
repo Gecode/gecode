@@ -259,6 +259,13 @@ namespace Gecode { namespace Int { namespace Linear {
     return new (home) NqBin<Val,A,B>(home,share,*this);
   }
 
+  template <class Val, class A, class B>
+  forceinline
+  NqBin<Val,A,B>::NqBin(Space* home, bool share, Propagator& p,
+			A x0, B x1, Val c)
+    : LinBin<Val,A,B,PC_INT_VAL>(home,share,p,x0,x1,c) {}
+
+
 
   template <class Val, class A, class B>
   PropCost
@@ -310,6 +317,13 @@ namespace Gecode { namespace Int { namespace Linear {
     return new (home) LqBin<Val,A,B>(home,share,*this);
   }
 
+  template <class Val, class A, class B>
+  forceinline
+  LqBin<Val,A,B>::LqBin(Space* home, bool share, Propagator& p,
+			A x0, B x1, Val c)
+    : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
+
+
 
   template <class Val, class A, class B>
   ExecStatus
@@ -350,6 +364,13 @@ namespace Gecode { namespace Int { namespace Linear {
   GqBin<Val,A,B>::copy(Space* home, bool share) {
     return new (home) GqBin<Val,A,B>(home,share,*this);
   }
+
+  template <class Val, class A, class B>
+  forceinline
+  GqBin<Val,A,B>::GqBin(Space* home, bool share, Propagator& p,
+			A x0, B x1, Val c)
+    : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
+
 
 
   template <class Val, class A, class B>

@@ -189,8 +189,10 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     NqBin(Space* home, bool share, NqBin& p);
     /// Constructor for creation
-    NqBin(Space* home,A,B,Val);
+    NqBin(Space* home, A x0, B x1, Val c);
   public:
+    /// Constructor for rewriting \a p during cloning
+    NqBin(Space* home, bool share, Propagator& p, A x0, B x1, Val c);
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
@@ -225,6 +227,8 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     LqBin(Space* home, A x0, B x1, Val c);
   public:
+    /// Constructor for rewriting \a p during cloning
+    LqBin(Space* home, bool share, Propagator& p, A x0, B x1, Val c);
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
@@ -257,6 +261,8 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     GqBin(Space* home, A x0, B x1, Val c);
   public:
+    /// Constructor for rewriting \a p during cloning
+    GqBin(Space* home, bool share, Propagator& p, A x0, B x1, Val c);
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
@@ -402,6 +408,8 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     NqTer(Space* home, A x0, B x1, C x2, Val c);
   public:
+    /// Constructor for rewriting \a p during cloning
+    NqTer(Space* home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
@@ -435,6 +443,8 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     LqTer(Space* home, A x0, B x1, C x2, Val c);
   public:
+    /// Constructor for rewriting \a p during cloning
+    LqTer(Space* home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation

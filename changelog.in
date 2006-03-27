@@ -54,6 +54,14 @@ Next release.
 
 [ENTRY]
 Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Rewrite n-ary linear, min/max, and Boolean propagators to binary/ternary
+variants during cloning if possible (saves memory).
+
+[ENTRY]
+Module: int
 What:   bug
 Rank:   minor
 Thanks: Stefano Gualandi
