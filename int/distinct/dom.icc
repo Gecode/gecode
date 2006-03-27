@@ -337,16 +337,17 @@ namespace Gecode { namespace Int { namespace Distinct {
     // Compute set of values
     int n_val = 0;
     GECODE_AUTOARRAY(ViewRanges<View>,x_r,n_view);
-    for (int i = n_view; i--; ) {
-      ViewRanges<View> r(x[i]); x_r[i] = r;
-    }
+    for (int i = n_view; i--; )
+      x_r[i].init(x[i]);
     Iter::Ranges::NaryUnion<ViewRanges<View> > xu(x_r, n_view);
+    // Of course, the union of non-empty iterators is non-empty
+    assert(xu());
     // Fill array of values
-    while (xu()) {
+    do {
       for (int v = xu.min(); v <= xu.max(); v++)
 	val_inf[n_val++] = v;
       ++xu;
-    }
+    } while (xu());
     if (n_val < n_view)
       return NULL;
     return new ViewValGraph(n_view,x,val_inf,n_val,size);
@@ -355,20 +356,33 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   bool
   DomCtrl<View>::ViewValGraph::search_match(ViewNode<View>* x) {
-    for (Edge<View>* e = x->val_edges(); e; e = e->next_edge())
-      if (!e->val(x)->matching()) {
-	e->revert(x); e->val(x)->matching(e);
-	return true;
-      }
     x->comp = count;
-    for (Edge<View>* e = x->val_edges(); e; e = e->next_edge()) {
-      ValNode<View>* n = e->val(x);
-      ViewNode<View>* y = n->matching()->view(n);
-      if ((y->comp < count) && search_match(y)) {
-	n->matching()->revert(n);
-	e->revert(x); n->matching(e);
-	return true;
-      }
+    // Try to find matching edge cheaply: is there a free edge around?
+    {
+      Edge<View>* e = x->val_edges();
+      // This holds true as domains are never empty
+      assert(e != NULL);
+      do {
+	if (!e->val(x)->matching()) {
+	  e->revert(x); e->val(x)->matching(e);
+	  return true;
+	}
+	e = e->next_edge();
+      } while (e != NULL);
+    }
+    // No, find matching edge by augmenting path method
+    {
+      Edge<View>* e = x->val_edges();
+      do {
+	ValNode<View>*  n = e->val(x);
+	ViewNode<View>* y = n->matching()->view(n);
+	if ((y->comp < count) && search_match(y)) {
+	  n->matching()->revert(n);
+	  e->revert(x); n->matching(e);
+	  return true;
+	}
+	e = e->next_edge();
+      } while (e != NULL);
     }
     return false;
   }
@@ -475,7 +489,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 	view[i]->edge_fst()->val(view[i])->matching(NULL);
 	view[i] = view[--n_view];
       } else {
-	for (Edge<View>* e = view[i]->val_edges(); e; e = e->next_edge())
+	for (Edge<View>* e = view[i]->val_edges(); e!=NULL; e = e->next_edge())
 	  if (!e->used(view[i]))
 	    view[i]->view().nq(home,e->val(view[i])->val());
       }
@@ -498,30 +512,32 @@ namespace Gecode { namespace Int { namespace Distinct {
       ViewNode<View>* x = view[i];
       if (x->view().assigned()) {
 	x->edge_fst()->val(x)->matching(NULL);
-	for (Edge<View>* e = x->val_edges(); e; e = e->next_edge())
+	for (Edge<View>* e = x->val_edges(); e != NULL; e = e->next_edge())
 	  e->unlink();
 	view[i] = view[--n_view];
       } else {
-	ViewValues<View> n(x->view());
+	ViewRanges<View> r(x->view());
 	Edge<View>*  m = x->edge_fst();      // Matching edge
 	Edge<View>** p = x->val_edges_ref();
 	Edge<View>*  e = *p;
 	do {
-	  while (e->val(x)->val() < n.val()) {
+	  while (e->val(x)->val() < r.min()) {
 	    // Skip edge
 	    e->unlink(); e->mark();
 	    e = e->next_edge();
 	    *p = e;
 	  }
-	  assert(n.val() == e->val(x)->val());
-	  // This edge must be kept
-	  e->free();
-	  ++n;
-	  p = e->next_edge_ref();
-	  e = e->next_edge();
-	} while (n());
+	  assert(r.min() == e->val(x)->val());
+	  // This edges must be kept
+	  for (unsigned int i=r.width(); i--; ) {
+	    e->free(); 
+	    p = e->next_edge_ref();
+	    e = e->next_edge();
+	  }
+	  ++r;
+	} while (r());
 	*p = NULL;
-	while (e) {
+	while (e != NULL) {
 	  e->unlink(); e->mark();
 	  e = e->next_edge();
 	}
