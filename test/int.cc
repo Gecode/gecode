@@ -132,7 +132,7 @@ public:
     rel(this, x[i], IRT_NQ, v);
     Log::prune_result(x[i]);
   }
-  void prune(const Assignment& a) {
+  bool prune(const Assignment& a, IntTest& it, bool r) {
     // Select variable to be pruned
     int i = random(x.size());
     while (x[i].assigned()) {
@@ -177,8 +177,43 @@ public:
       rel(this, x[i], IRT_NQ, v);
       Log::prune_result(x[i]);
     }
-
-    FORCE_FIXFLUSH;
+    if (random(opt.fixprob) == 0) {		
+      unsigned int alt;				
+      Log::fixpoint();				
+      if (status(alt) == SS_FAILED) 
+	return true;
+      IntTestSpace* c = static_cast<IntTestSpace*>(clone());
+      if (!r) {
+	it.post(c,c->x);
+	if (c->status(alt) == SS_FAILED)
+	  return false;
+	for (int i=x.size(); i--; )
+	  if (x[i].size() != c->x[i].size()) {
+	    for (int j=0; j<x.size(); j++) {
+	      //	      std::cout << "\t" << x[j] << " - " << c->x[j] << std::endl;
+	    }
+	    return false;
+	  }
+      } else {
+	BoolVar b(c,0,1);
+	it.post(c,c->x,b);
+	if (c->status(alt) == SS_FAILED)
+	  return false;
+	for (int i=x.size(); i--; )
+	  if (x[i].size() != c->x[i].size()) {
+	    for (int j=0; j<x.size(); j++) {
+	      //	      std::cout << "\t" << x[j] << " - " << c->x[j] << std::endl;
+	    }
+	    return false;
+	  }
+      }
+      
+    }						
+    if (random(opt.flushprob) == 0) {		
+      flush();					
+      Log::flush();				
+    }		
+    return true;
   }
   
 };
@@ -326,7 +361,11 @@ IntTest::run(const Options& opt) {
       IntTestSpace* s = new IntTestSpace(arity,dom,opt);
       post(s,s->x);
       while (!s->failed() && !s->assigned())
-	s->prune(a);
+	if (!s->prune(a,*this,false)) {
+	  problem = "No fixpoint";
+	  delete s;
+	  goto failed;
+	}
       s->assign(a);
       if (is_sol) {
 	CHECK(!s->is_failed(), "Failed on solution");
@@ -343,7 +382,7 @@ IntTest::run(const Options& opt) {
       BoolVar b(s,0,1);
       post(s,s->x,b);
       while (!s->failed() && !s->assigned() && !b.assigned())
-	s->prune(a);
+	s->prune(a,*this,true);
       CHECK(!s->is_failed(), "Failed");
       CHECK(!s->actors(), "No subsumtion");
       CHECK(b.assigned(), "Control variable unassigned");
