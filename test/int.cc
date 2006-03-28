@@ -110,7 +110,7 @@ public:
 	return false;
     return true;
   }
-  void prune() {
+  void prune(void) {
     // Select variable to be pruned
     int i = random(x.size());
     while (x[i].assigned()) {

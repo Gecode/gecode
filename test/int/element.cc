@@ -96,11 +96,11 @@ public:
 class ElementShareVar : public IntTest {
 private:
   const int n;
+  IntConLevel icl;
 public:
-  ElementShareVar(const char* t, const IntSet& is, int n0, IntConLevel icl) 
-    : IntTest(t,n0+1,is,false,ICL_DEF
-	      // FIXME: icl0==ICL_DOM
-	      ), n(n0) {}
+  // This is actually not domain consistent!
+  ElementShareVar(const char* t, const IntSet& is, int n0, IntConLevel icl0) 
+    : IntTest(t,n0+1,is,false), n(n0), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0]>= 0) && (x[0]<n) && x[1+x[0]]==x[0];
   }
