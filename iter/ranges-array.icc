@@ -1,0 +1,123 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2006
+ *
+ *  Last modified:
+ *     $Date: 2005-07-29 21:55:06 +0200 (Fri, 29 Jul 2005) $ by $Author: schulte $
+ *     $Revision: 2085 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Iter { namespace Ranges {
+
+  /**
+   * \brief %Range iterator for array of ranges
+   *
+   * Allows to iterate the ranges as defined by an array.
+   * The ranges can be iterated several times provided the iterator 
+   * is %reset by the reset member function.
+   *
+   * Requires \code #include "iter.hh" \endcode
+   * \ingroup FuncIterRanges
+   */
+  class Array  {
+  public:
+    /// %Ranges for array
+    class Range {
+    public:
+      int min; int max;
+    };
+  protected:
+    /// Array for ranges
+    Range* r;
+    /// Current range
+    int c;
+    /// Number of ranges in array
+    int n;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    Array(void);
+    /// Initialize with \a n ranges from \a r
+    Array(Range* r, int n);
+    /// Initialize with \a n ranges from \a r
+    void init(Range* r, int n);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a range or done
+    bool operator()(void) const;
+    /// Move iterator to next range (if possible)
+    void operator++(void);
+    /// Reset iterator to start from beginning
+    void reset(void);
+    //@}
+
+    /// \name %Range access
+    //@{
+    /// Return smallest value of range
+    int min(void) const;
+    /// Return largest value of range
+    int max(void) const;
+    /// Return width of range (distance between minimum and maximum)
+    unsigned int width(void) const;
+    //@}
+  };
+
+
+  forceinline
+  Array::Array(void) {}
+
+  forceinline
+  Array::Array(Range* r0, int n0) 
+    : r(r0), c(0), n(n0) {}
+
+  forceinline void
+  Array::init(Range* r0, int n0) {
+    r=r0; c=0; n=n0;
+  }
+
+  forceinline void
+  Array::operator++(void) {
+    c++;
+  }
+  forceinline bool
+  Array::operator()(void) const {
+    return c < n;
+  }
+
+  forceinline void
+  Array::reset(void) {
+    c=0;
+  }
+
+  forceinline int
+  Array::min(void) const {
+    return r[c].min;
+  }
+  forceinline int
+  Array::max(void) const {
+    return r[c].max;
+  }
+  forceinline unsigned int
+  Array::width(void) const {
+    return r[c].max-r[c].min+1;
+  }
+
+}}}
+
+// STATISTICS: iter-any
+

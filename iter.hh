@@ -36,6 +36,7 @@ namespace Gecode {
 #include "./iter/ranges-minmax.icc"
 
 #include "./iter/ranges-append.icc"
+#include "./iter/ranges-array.icc"
 #include "./iter/ranges-cache.icc"
 #include "./iter/ranges-compl.icc"
 #include "./iter/ranges-diff.icc"

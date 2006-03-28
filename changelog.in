@@ -54,6 +54,14 @@ Next release.
 
 [ENTRY]
 Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed bug in fixpoint detection of bounds-consistent abs
+propagator.
+
+[ENTRY]
+Module: int
 What:   performance
 Rank:   minor
 [DESCRIPTION]
@@ -149,6 +157,9 @@ What:   performance
 Rank:   minor
 [DESCRIPTION]
 Added redundant constraint to social golfers example.
+
+
+
 
 [RELEASE]
 Version:	1.0.1

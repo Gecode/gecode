@@ -77,10 +77,10 @@ static Square _squaremax("Arithmetic::Square::A",s1);
 static Square _squaremed("Arithmetic::Square::B",s2);
 static Square _squaremin("Arithmetic::Square::C",s3);
 
-class AbsBnd : public IntTest {
+class Abs : public IntTest {
 public:
-  AbsBnd(const char* t, const IntSet& is) 
-    : IntTest(t,2,is) {}
+  Abs(const char* t, IntConLevel icl, const IntSet& is) 
+    : IntTest(t,2,is,false,icl) {}
   virtual bool solution(const Assignment& x) const {
     double d0 = static_cast<double>(x[0]);
     double d1 = static_cast<double>(x[1]);
@@ -88,32 +88,16 @@ public:
   }
   virtual void post(Space* home, IntVarArray& x) {
     Log::log("post abs(x0, x1)",
-	     "\tabs(this, x[0], x[1], ICL_BND);");
-    abs(home, x[0], x[1], ICL_BND);
+	     "\tabs(this, x[0], x[1], icl);");
+    abs(home, x[0], x[1], icl);
   }
 };
-static AbsBnd _absbndmax("Arithmetic::AbsBnd::A",s1);
-static AbsBnd _absbndmed("Arithmetic::AbsBnd::B",s2);
-static AbsBnd _absbndmin("Arithmetic::AbsBnd::C",s3);
-
-class AbsDom : public IntTest {
-public:
-  AbsDom(const char* t, const IntSet& is) 
-    : IntTest(t,2,is,false,ICL_DOM) {}
-  virtual bool solution(const Assignment& x) const {
-    double d0 = static_cast<double>(x[0]);
-    double d1 = static_cast<double>(x[1]);
-    return (d0<0 ? -d0 : d0) == d1;
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    Log::log("post abs(x0, x1)",
-	     "\tabs(this, x[0], x[1], ICL_DOM);");
-    abs(home, x[0], x[1], ICL_DOM);
-  }
-};
-static AbsDom _absdommax("Arithmetic::AbsDom::A",s1);
-static AbsDom _absdommed("Arithmetic::AbsDom::B",s2);
-static AbsDom _absdommin("Arithmetic::AbsDom::C",s3);
+static Abs _absbndmax("Arithmetic::Abs::Bnd::A",ICL_BND,s1);
+static Abs _absbndmed("Arithmetic::Abs::Bnd::B",ICL_BND,s2);
+static Abs _absbndmin("Arithmetic::Abs::Bnd::C",ICL_BND,s3);
+static Abs _absdommax("Arithmetic::Abs::Dom::A",ICL_DOM,s1);
+static Abs _absdommed("Arithmetic::Abs::Dom::B",ICL_DOM,s2);
+static Abs _absdommin("Arithmetic::Abs::Dom::C",ICL_DOM,s3);
 
 class Min : public IntTest {
 public:

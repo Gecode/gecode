@@ -191,9 +191,11 @@ public:
 	}
 	for (int i=x.size(); i--; )
 	  if (x[i].size() != c->x[i].size()) {
+	    std::cout << std::endl << "\tNo fixpoint:" << std::endl;
 	    for (int j=0; j<x.size(); j++) {
-	      //	      std::cout << "\t" << x[j] << " - " << c->x[j] << std::endl;
+	      std::cout << "\t\tx[" << j << "]: " << x[j] << " - " << c->x[j] << std::endl;
 	    }
+	    std::cout << std::endl;
 	    delete c;
 	    return false;
 	  }

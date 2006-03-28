@@ -319,7 +319,7 @@ SUPPORTHDR0 = \
 	shared-array.hh sort.hh \
 	static-pqueue.hh static-stack.hh
 ITERHDR0 = \
-	ranges-add.icc ranges-append.icc ranges-cache.icc \
+	ranges-add.icc ranges-append.icc ranges-array.icc ranges-cache.icc \
 	ranges-compl.icc ranges-diff.icc ranges-empty.icc \
 	ranges-inter.icc ranges-minmax.icc ranges-minus.icc \
 	ranges-offset.icc ranges-operations.icc ranges-scale.icc \
