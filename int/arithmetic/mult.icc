@@ -151,7 +151,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   forceinline ExecStatus
   Square<View>::post(Space* home, View x0, View x1) {
     GECODE_ME_CHECK(x1.gq(home,0));
-    GECODE_ME_CHECK(x0.lq(home,floor(sqrt(static_cast<double>(Limits::Int::int_max)))));
+    GECODE_ME_CHECK(x0.lq(home,floor(sqrt(static_cast<double>
+					  (Limits::Int::int_max)))));
+    //    GECODE_ME_CHECK(x0.gq(home,floor(-sqrt(static_cast<double>
+    //					   (-Limits::Int::int_min)))));
     if (x0.min() >= 0)
       return SquarePlus<IntView,IntView>::post(home,x0,x1);
     if (x0.max() <= 0)
@@ -189,15 +192,18 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return (SquarePlus<MinusView,IntView>::post(home,x0,x1) 
 	      == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
 
-    bool mod;
-    do {
-      mod = false;
-      GECODE_CM(x1.lq(home,std::max(x0.min()*x0.min(),x0.max()*x0.max())));
-      int s = static_cast<int>(floor(sqrt(static_cast<double>(x1.max()))));
-      GECODE_CM(x0.gq(home,-s));
-      GECODE_CM(x0.lq(home,s));
-    } while (mod);
-    return x0.assigned() && x1.assigned() ? ES_SUBSUMED : ES_FIX;
+    GECODE_ME_CHECK(x1.lq(home,std::max(x0.min()*x0.min(),
+					x0.max()*x0.max())));
+
+    int s = static_cast<int>(floor(sqrt(static_cast<double>(x1.max()))));
+
+    GECODE_ME_CHECK(x0.gq(home,-s));
+    GECODE_ME_CHECK(x0.lq(home,s));
+
+    if (x0.assigned() && x1.assigned())
+      return (x0.val()*x0.val() == x1.val()) ? ES_SUBSUMED : ES_FAILED;
+
+    return ES_NOFIX;
   }
 
 
