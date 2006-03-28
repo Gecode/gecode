@@ -172,36 +172,18 @@ namespace Gecode { namespace Int { namespace Channel {
    */
   template <class View>
   forceinline
-  Val<View>::Val(Space* home, int n0, 
-		 ValInfo<View>* x0, ValInfo<View>* y0)
-    : Propagator(home), n(n0), n_na(2*n), x(x0), y(y0) {
-    for (int i=n; i--; ) {
-      x[i].view.subscribe(home,this,PC_INT_VAL);
-      y[i].view.subscribe(home,this,PC_INT_VAL);
-    }
-  }
+  Val<View>::Val(Space* home, int n, ValInfo<View>* xy)
+    : Base<ValInfo<View>,PC_INT_VAL>(home,n,xy) {}
 
   template <class View>
   forceinline
   Val<View>::Val(Space* home, bool share, Val<View>& p)
-    : Propagator(home,share,p), n(p.n), n_na(p.n_na),
-      x(ValInfo<View>::allocate(home,2*n)), y(x+n) {
-    for (int i=n; i--; ) {
-      x[i].update(home,share,p.x[i]);
-      y[i].update(home,share,p.y[i]);
-    }
-  }
+    : Base<ValInfo<View>,PC_INT_VAL>(home,share,p) {}
 
   template <class View>
   Actor*
   Val<View>::copy(Space* home, bool share) {
     return new (home) Val<View>(home,share,*this);
-  }
-
-  template <class View>
-  PropCost
-  Val<View>::cost(void) const {
-    return PC_QUADRATIC_LO;
   }
 
   template <class View>
@@ -211,6 +193,9 @@ namespace Gecode { namespace Int { namespace Channel {
     GECODE_AUTOARRAY(int, __ya, n+1);
     ProcessStack xa(__xa);
     ProcessStack ya(__ya);
+
+    ValInfo<View>* x = xy;
+    ValInfo<View>* y = xy+n;
 
     // Scan x and y for assigned but not yet propagated views
     for (int i = n; i--; ) {
@@ -233,31 +218,20 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View>
   ExecStatus
-  Val<View>::post(Space* home, int n, ValInfo<View>* x, ValInfo<View>* y) {
+  Val<View>::post(Space* home, int n, ValInfo<View>* xy) {
     assert(n > 0);
     if (n == 1) {
-      GECODE_ME_CHECK(x[0].view.eq(home,0));
-      GECODE_ME_CHECK(y[0].view.eq(home,0));
+      GECODE_ME_CHECK(xy[0].view.eq(home,0));
+      GECODE_ME_CHECK(xy[1].view.eq(home,0));
       return ES_OK;
     }
-    for (int i=n; i--; ) {
-      GECODE_ME_CHECK(x[i].view.gq(home,0));
-      GECODE_ME_CHECK(x[i].view.le(home,n));
-      GECODE_ME_CHECK(y[i].view.gq(home,0));
-      GECODE_ME_CHECK(y[i].view.le(home,n));
+    for (int i=2*n; i--; ) {
+      GECODE_ME_CHECK(xy[i].view.gq(home,0));
+      GECODE_ME_CHECK(xy[i].view.le(home,n));
     }
-    (void) new (home) Val<View>(home,n,x,y);
+    (void) new (home) Val<View>(home,n,xy);
     return ES_OK;
   }
-
-  template <class View>
-  Val<View>::~Val(void) {
-    for (int i=n; i--; ) {
-      x[i].view.cancel(this,PC_INT_VAL);
-      y[i].view.cancel(this,PC_INT_VAL);
-    }
-  }
-
 
 }}}
 

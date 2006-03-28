@@ -42,17 +42,19 @@ namespace Gecode {
       ValInfo<IntView>* vi
 	= ValInfo<IntView>::allocate(home,2*n);
       for (int i=n; i--; ) {
-	vi[i].init(x[i],n); vi[i+n].init(y[i],n);
+	vi[i  ].init(x[i],n); 
+	vi[i+n].init(y[i],n);
       }
-      if (Val<IntView>::post(home,n,vi,vi+n) == ES_FAILED)
+      if (Val<IntView>::post(home,n,vi) == ES_FAILED)
 	home->fail();
     } else {
       DomInfo<IntView>* di
 	= DomInfo<IntView>::allocate(home,2*n);
       for (int i=n; i--; ) {
-	di[i].init(x[i],n); di[i+n].init(y[i],n);
+	di[i  ].init(x[i],n); 
+	di[i+n].init(y[i],n);
       }
-      if (Dom<IntView>::post(home,n,di,di+n) == ES_FAILED)
+      if (Dom<IntView>::post(home,n,di) == ES_FAILED)
 	home->fail();
     }
   }

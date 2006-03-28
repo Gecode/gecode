@@ -33,6 +33,31 @@
 namespace Gecode { namespace Int { namespace Channel {
 
   /**
+   * \brief Base-class for channel propagators
+   *
+   */
+  template <class Info, PropCond pc>
+  class Base : public Propagator {
+  protected:
+    /// Number of views (actually twice as many for both x and y)
+    int n;
+    /// Total number of not assigned views (not known to be assigned)
+    int n_na;
+    /// View and information for both \a x and \a y
+    Info* xy;
+    /// Constructor for cloning \a p
+    Base(Space* home, bool share, Base<Info,pc>& p);
+    /// Constructor for posting
+    Base(Space* home, int n, Info* xy, bool fd=false);
+  public:
+    /// Propagation cost
+    virtual PropCost cost(void) const;
+    /// Destructor
+    ~Base(void);
+  };
+
+
+  /**
    * \brief Combine view with information for value propagation
    *
    */
@@ -47,32 +72,22 @@ namespace Gecode { namespace Int { namespace Channel {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Val : public Propagator {
-  protected:
-    /// Number of views (actually twice as many for both x and y)
-    int n;
-    /// Total number of not assigned views (not known to be assigned)
-    int n_na;
-    /// View and information for \a x
-    ValInfo<View>* x;
-    /// View and information for \a y
-    ValInfo<View>* y;
+  class Val : public Base<ValInfo<View>,PC_INT_VAL> {
+ protected:
+    using Base<ValInfo<View>,PC_INT_VAL>::n;
+    using Base<ValInfo<View>,PC_INT_VAL>::n_na;
+    using Base<ValInfo<View>,PC_INT_VAL>::xy;
     /// Constructor for cloning \a p
     Val(Space* home, bool share, Val& p);
     /// Constructor for posting
-    Val(Space* home, int n, ValInfo<View>* x, ValInfo<View>* y);
+    Val(Space* home, int n, ValInfo<View>* xy);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
-    /// Propagation cost
-    virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator for channeling on between \a x and \ ay
-    static  ExecStatus post(Space* home, int n, 
-			    ValInfo<View>* x, ValInfo<View>* y);
-    /// Destructor
-    ~Val(void);
+    /// Post propagator for channeling on \a xy
+    static  ExecStatus post(Space* home, int n, ValInfo<View>* xy);
   };
 
   /**
@@ -88,22 +103,17 @@ namespace Gecode { namespace Int { namespace Channel {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Dom : public Propagator {
+  class Dom : public Base<DomInfo<View>,PC_INT_DOM> {
   protected:
-    /// Number of views (actually twice as many for both x and y)
-    int n;
-    /// Total number of not assigned views (not known to be assigned)
-    int n_na;
-    /// View and information for \a x
-    DomInfo<View>* x;
-    /// View and information for \a y
-    DomInfo<View>* y;
+    using Base<DomInfo<View>,PC_INT_DOM>::n;
+    using Base<DomInfo<View>,PC_INT_DOM>::n_na;
+    using Base<DomInfo<View>,PC_INT_DOM>::xy;
     /// Propagation controller for propagating distinct
     Distinct::DomCtrl<View> dc;
     /// Constructor for cloning \a p
     Dom(Space* home, bool share, Dom& p);
     /// Constructor for posting
-    Dom(Space* home, int n, DomInfo<View>* x, DomInfo<View>* y);
+    Dom(Space* home, int n, DomInfo<View>* xy);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
@@ -111,19 +121,17 @@ namespace Gecode { namespace Int { namespace Channel {
     virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator for channeling on between \a x and \ ay
-    static  ExecStatus post(Space* home, int n, 
-			    DomInfo<View>* x, DomInfo<View>* y);
+    /// Post propagator for channeling on \a xy
+    static  ExecStatus post(Space* home, int n, DomInfo<View>* xy);
     /// Flush propagation controller
     virtual void flush(void);
     /// Returns size of propagation controller
     virtual size_t size(void) const;
-    /// Destructor
-    ~Dom(void);
   };
 
 }}}
 
+#include "int/channel/base.icc"
 #include "int/channel/stack.icc"
 #include "int/channel/val.icc"
 #include "int/channel/dom.icc"

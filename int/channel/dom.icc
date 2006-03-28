@@ -160,25 +160,13 @@ namespace Gecode { namespace Int { namespace Channel {
    */
   template <class View>
   forceinline
-  Dom<View>::Dom(Space* home, int n0, 
-		 DomInfo<View>* x0, DomInfo<View>* y0)
-    : Propagator(home,true), n(n0), n_na(2*n), x(x0), y(y0) {
-    for (int i=n; i--; ) {
-      x[i].view.subscribe(home,this,PC_INT_DOM);
-      y[i].view.subscribe(home,this,PC_INT_DOM);
-    }
-  }
+  Dom<View>::Dom(Space* home, int n, DomInfo<View>* xy)
+    : Base<DomInfo<View>,PC_INT_DOM>(home,n,xy,true) {}
 
   template <class View>
   forceinline
   Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
-    : Propagator(home,share,p), n(p.n), n_na(p.n_na),
-      x(DomInfo<View>::allocate(home,2*n)), y(x+n) {
-    for (int i=n; i--; ) {
-      x[i].update(home,share,p.x[i]);
-      y[i].update(home,share,p.y[i]);
-    }
-  }
+    : Base<DomInfo<View>,PC_INT_DOM>(home,share,p) {}
 
   template <class View>
   Actor*
@@ -199,6 +187,9 @@ namespace Gecode { namespace Int { namespace Channel {
     GECODE_AUTOARRAY(int, __ya, n+1);
     ProcessStack xa(__xa);
     ProcessStack ya(__ya);
+
+    DomInfo<View>* x = xy;
+    DomInfo<View>* y = xy+n;
 
     if (View::pme(this) == ME_INT_VAL) {
       // Scan x and y for assigned but not yet propagated views
@@ -280,20 +271,18 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View>
   ExecStatus
-  Dom<View>::post(Space* home, int n, DomInfo<View>* x, DomInfo<View>* y) {
+  Dom<View>::post(Space* home, int n, DomInfo<View>* xy) {
     assert(n > 0);
     if (n == 1) {
-      GECODE_ME_CHECK(x[0].view.eq(home,0));
-      GECODE_ME_CHECK(y[0].view.eq(home,0));
+      GECODE_ME_CHECK(xy[0].view.eq(home,0));
+      GECODE_ME_CHECK(xy[1].view.eq(home,0));
       return ES_OK;
     }
-    for (int i=n; i--; ) {
-      GECODE_ME_CHECK(x[i].view.gq(home,0));
-      GECODE_ME_CHECK(x[i].view.le(home,n));
-      GECODE_ME_CHECK(y[i].view.gq(home,0));
-      GECODE_ME_CHECK(y[i].view.le(home,n));
+    for (int i=2*n; i--; ) {
+      GECODE_ME_CHECK(xy[i].view.gq(home,0));
+      GECODE_ME_CHECK(xy[i].view.le(home,n));
     }
-    (void) new (home) Dom<View>(home,n,x,y);
+    (void) new (home) Dom<View>(home,n,xy);
     return ES_OK;
   }
 
@@ -307,14 +296,6 @@ namespace Gecode { namespace Int { namespace Channel {
   size_t
   Dom<View>::size(void) const {
     return dc.size();
-  }
-
-  template <class View>
-  Dom<View>::~Dom(void) {
-    for (int i=n; i--; ) {
-      x[i].view.cancel(this,PC_INT_DOM);
-      y[i].view.cancel(this,PC_INT_DOM);
-    }
   }
 
 }}}
