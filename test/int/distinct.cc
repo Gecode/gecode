@@ -21,12 +21,14 @@
 
 #include "test/int.hh"
 
-static IntSet ds_22(-2,2);
+static IntSet ds_dense(-2,2);
+static const int v_sparse[5] = {-100,-10,0,10,100};
+static IntSet ds_sparse(v_sparse,5);
 
 class Distinct : public IntTest {
 public:
-  Distinct(const char* t, IntConLevel icl) 
-    : IntTest(t,4,ds_22,false,icl) {}
+  Distinct(const char* t, const IntSet& ds, IntConLevel icl) 
+    : IntTest(t,4,ds,false,icl) {}
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<4; i++)
       for (int j=i+1; j<4; j++)
@@ -39,14 +41,17 @@ public:
   }
 };
 
-Distinct _dom("Distinct::Dom",ICL_DOM);
-Distinct _bnd("Distinct::Bnd",ICL_BND);
-Distinct _val("Distinct::Val",ICL_VAL);
+Distinct _dist_dom_d("Distinct::Dom::Dense",ds_dense,ICL_DOM);
+Distinct _dist_bnd_d("Distinct::Bnd::Dense",ds_dense,ICL_BND);
+Distinct _dist_val_d("Distinct::Val::Dense",ds_dense,ICL_VAL);
+Distinct _dist_dom_s("Distinct::Dom::Sparse",ds_sparse,ICL_DOM);
+Distinct _dist_bnd_s("Distinct::Bnd::Sparse",ds_sparse,ICL_BND);
+Distinct _dist_val_s("Distinct::Val::Sparse",ds_sparse,ICL_VAL);
 
 class DistinctOffset : public IntTest {
 public:
-  DistinctOffset(const char* t, IntConLevel icl) 
-    : IntTest(t,4,ds_22,false,icl) {}
+  DistinctOffset(const char* t, const IntSet& ds, IntConLevel icl) 
+    : IntTest(t,4,ds,false,icl) {}
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<4; i++)
       for (int j=i+1; j<4; j++)
@@ -62,9 +67,12 @@ public:
   }
 };
 
-DistinctOffset _domo("Distinct::Dom::Offset",ICL_DOM);
-DistinctOffset _bndo("Distinct::Bnd::Offset",ICL_BND);
-DistinctOffset _valo("Distinct::Val::Offset",ICL_VAL);
+DistinctOffset _disto_dom_d("Distinct::Dom::Offset::Dense",ds_dense,ICL_DOM);
+DistinctOffset _disto_bnd_d("Distinct::Bnd::Offset::Dense",ds_dense,ICL_BND);
+DistinctOffset _disto_val_d("Distinct::Val::Offset::Dense",ds_dense,ICL_VAL);
+DistinctOffset _disto_dom_s("Distinct::Dom::Offset::Sparse",ds_sparse,ICL_DOM);
+DistinctOffset _disto_bnd_s("Distinct::Bnd::Offset::Sparse",ds_sparse,ICL_BND);
+DistinctOffset _disto_val_s("Distinct::Val::Offset::Sparse",ds_sparse,ICL_VAL);
 
 // STATISTICS: test-int
 
