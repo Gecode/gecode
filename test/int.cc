@@ -185,29 +185,35 @@ public:
       IntTestSpace* c = static_cast<IntTestSpace*>(clone());
       if (!r) {
 	it.post(c,c->x);
-	if (c->status(alt) == SS_FAILED)
+	if (c->status(alt) == SS_FAILED) {
+	  delete c;
 	  return false;
+	}
 	for (int i=x.size(); i--; )
 	  if (x[i].size() != c->x[i].size()) {
 	    for (int j=0; j<x.size(); j++) {
 	      //	      std::cout << "\t" << x[j] << " - " << c->x[j] << std::endl;
 	    }
+	    delete c;
 	    return false;
 	  }
       } else {
 	BoolVar b(c,0,1);
 	it.post(c,c->x,b);
-	if (c->status(alt) == SS_FAILED)
+	if (c->status(alt) == SS_FAILED) {
+	  delete c;
 	  return false;
+	}
 	for (int i=x.size(); i--; )
 	  if (x[i].size() != c->x[i].size()) {
 	    for (int j=0; j<x.size(); j++) {
 	      //	      std::cout << "\t" << x[j] << " - " << c->x[j] << std::endl;
 	    }
+	    delete c;
 	    return false;
 	  }
       }
-      
+      delete c;
     }						
     if (random(opt.flushprob) == 0) {		
       flush();					
