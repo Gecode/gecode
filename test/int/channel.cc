@@ -22,10 +22,11 @@
 #include "test/int.hh"
 
 static IntSet ds_03(0,3);
+static IntSet ds_05(0,5);
 
-class Channel : public IntTest {
+class ChannelFull : public IntTest {
 public:
-  Channel(const char* t, IntConLevel icl) 
+  ChannelFull(const char* t, IntConLevel icl) 
     : IntTest(t,8,ds_03,false,icl) {}
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<4; i++)
@@ -44,8 +45,35 @@ public:
   }
 };
 
-Channel _channeldom("Channel::Dom",ICL_DOM);
-Channel _channelval("Channel::Val",ICL_VAL);
+ChannelFull _channel_full_dom("Channel::Full::Dom",ICL_DOM);
+ChannelFull _channel_full_val("Channel::Full::Val",ICL_VAL);
+
+class ChannelHalf : public IntTest {
+public:
+  ChannelHalf(const char* t, IntConLevel icl) 
+    : IntTest(t,6,ds_05,false,icl) {}
+  virtual bool solution(const Assignment& x) const {
+    for (int i=0; i<6; i++)
+      for (int j=i+1; j<6; j++)
+	if (x[i] == x[j])
+	  return false;
+    return true;
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    IntVarArray y(home,6,dom);
+    for (int i=0; i<6; i++) {
+      for (int j=0; j<6; j++) {
+	BoolVar b(home,0,1);
+	rel(home, x[i], IRT_EQ, j, b);
+	rel(home, y[j], IRT_EQ, i, b);
+      }
+    }
+    channel(home, x, y, icl);
+  }
+};
+
+ChannelHalf _channel_half_dom("Channel::Half::Dom",ICL_DOM);
+ChannelHalf _channel_half_val("Channel::Half::Val",ICL_VAL);
 
 // STATISTICS: test-int
 
