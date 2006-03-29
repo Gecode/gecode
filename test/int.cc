@@ -132,7 +132,11 @@ public:
     rel(this, x[i], IRT_NQ, v);
     Log::prune_result(x[i]);
   }
-  bool prune(const Assignment& a, IntTest& it, bool r) {
+
+  static BoolVar unused;
+
+  bool prune(const Assignment& a, IntTest& it, 
+	     bool r, BoolVar& b = unused) {
     // Select variable to be pruned
     int i = random(x.size());
     while (x[i].assigned()) {
@@ -199,17 +203,24 @@ public:
 	    return false;
 	  }
       } else {
-	BoolVar b(c,0,1);
-	it.post(c,c->x,b);
+	BoolVar cb(c,0,1);
+	it.post(c,c->x,cb);
 	Log::fixpoint();
 	if (c->status(alt) == SS_FAILED) {
 	  Log::print(c->x, "x");
 	  delete c;
 	  return false;
 	}
+	if (cb.size() != b.size()) {
+	  Log::print(c->x, "x");
+	  //	  Log::print(c->b, "b");
+	  delete c;
+	  return false;
+	}
 	for (int i=x.size(); i--; )
 	  if (x[i].size() != c->x[i].size()) {
 	    Log::print(c->x, "x");
+	    //	    Log::print(c->b, "b");
 	    delete c;
 	    return false;
 	  }
@@ -224,6 +235,9 @@ public:
   }
   
 };
+
+BoolVar IntTestSpace::unused;
+
 
 
 Assignment* 
@@ -389,7 +403,11 @@ IntTest::run(const Options& opt) {
       BoolVar b(s,0,1);
       post(s,s->x,b);
       while (!s->failed() && !s->assigned() && !b.assigned())
-	s->prune(a,*this,true);
+	if (!s->prune(a,*this,true,b)) {
+	  problem = "No fixpoint";
+	  delete s;
+	  goto failed;
+	}
       CHECK(!s->is_failed(), "Failed");
       CHECK(!s->actors(), "No subsumtion");
       CHECK(b.assigned(), "Control variable unassigned");
