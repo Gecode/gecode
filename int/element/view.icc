@@ -27,12 +27,6 @@
 
 #include "iter.hh"
 
-#ifdef NDEBUG
-#define GECODE_ASSERTION_VARIABLE(c)
-#else
-#define GECODE_ASSERTION_VARIABLE(c) c
-#endif
-
 namespace Gecode { namespace Int { namespace Element {
 
   /**
@@ -251,15 +245,11 @@ namespace Gecode { namespace Int { namespace Element {
       return;
 
     if (n == 1) {
-      GECODE_ASSERTION_VARIABLE(ModEvent me = )
-	x0.eq(home,iv[0].idx);
-      assert(!me_failed(me));
+      (void) x0.eq(home,iv[0].idx);
     } else if (adjust) {
       IterIdxView<ViewA> i(&iv[0],&iv[n]);
       Iter::Values::ToRanges<IterIdxView<ViewA> > ri(i);
-      GECODE_ASSERTION_VARIABLE(ModEvent me = )
-	x0.narrow(home,ri);
-      assert(!me_failed(me));
+      (void) x0.narrow(home,ri);
       assert(x0.size() == static_cast<unsigned int>(n));
     }
   }
@@ -327,7 +317,7 @@ namespace Gecode { namespace Int { namespace Element {
       min = std::min(iv[i].view.min(),min);
       max = std::max(iv[i].view.max(),max);
     }
-    ExecStatus es = x1.modified() ? ES_NOFIX : ES_FIX;
+    ExecStatus es = shared(x0,x1) ? ES_NOFIX : ES_FIX;
     { 
      ModEvent me = x1.lq(home,max);
      if (me_failed(me))
@@ -443,8 +433,6 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
 }}}
-
-#undef GECODE_ASSERTION_VARIABLE
 
 // STATISTICS: int-prop
 
