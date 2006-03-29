@@ -35,7 +35,7 @@ namespace Gecode { namespace Set { namespace Convex {
   forceinline
   ConvexHull::ConvexHull(Space* home, SetView y0, SetView y1)
     : Propagator(home), x0(y0), x1(y1) {
-    x0.subscribe(home,this,PC_SET_CGLB);
+    x0.subscribe(home,this,PC_SET_ANY);
     x1.subscribe(home,this,PC_SET_ANY);
   }
 

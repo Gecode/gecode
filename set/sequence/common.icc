@@ -29,7 +29,8 @@ namespace Gecode { namespace Set { namespace Sequence {
 
   forceinline
   ExecStatus propagateSeq(Space* home,
-		 bool& modified, ViewArray<SetView>& x) {
+			  bool& modified, bool& assigned,
+			  ViewArray<SetView>& x) {
 
     int lastElem = x.size()-1;
     int cur_max = BndSet::MAX_OF_EMPTY;
@@ -41,17 +42,20 @@ namespace Gecode { namespace Set { namespace Sequence {
 	cur_max = std::max(cur_max, glbMax);
       }
       if (cur_max>=Limits::Set::int_min)
-	GECODE_ME_CHECK_B(modified,
-			  x[i+1].exclude(home, Limits::Set::int_min, cur_max));
+	GECODE_ME_CHECK_VAL_B(modified,
+			      x[i+1].exclude(home, Limits::Set::int_min,
+					     cur_max),
+			      assigned);
 
       if (x[lastElem-i].lubSize() > 0) {
 	int glbMin = x[lastElem-i].glbMin();
 	cur_min = std::min(cur_min, glbMin);
       }
       if (Limits::Set::int_max>=cur_min)
-	GECODE_ME_CHECK_B(modified,
-			  x[lastElem-i-1].exclude(home, cur_min,
-						  Limits::Set::int_max));
+	GECODE_ME_CHECK_VAL_B(modified,
+			      x[lastElem-i-1].exclude(home, cur_min,
+						      Limits::Set::int_max),
+			      assigned);
     }
     return ES_FIX;
   }
@@ -68,27 +72,6 @@ namespace Gecode { namespace Set { namespace Sequence {
     Iter::Ranges::NaryAppend<GlbRanges<SetView> > u(XLBs,x.size());
     GECODE_ME_CHECK_B(modified, y.includeI(home,u));
     return ES_FIX;
-  }
-
-  /* TODO:
-   * This functionality is needed by the sequenced union propagator to be
-   * able to eliminate determined variables from its variable vector without
-   * reordering the remaining variables.
-   * Proof of concept implementation here,
-   * let's see if it makes it into a method in the array class.
-   * (as a more optimised version of course, I'm trying to break the abstraction
-   * as little as possible here.)
-   */
-
-  forceinline void eliminateFromArrayPreservingOrder(ViewArray<SetView>& x,
-						     unsigned int n) {
-    assert(n < (unsigned int)x.size());
-    SetView temp = x[n];
-    for (int i=n; i < x.size()-1;i++) {
-      x[i]=x[i+1];
-    }
-    x[x.size()-1] = temp;
-    x.move_lst(x.size()-1);
   }
 
 }}}

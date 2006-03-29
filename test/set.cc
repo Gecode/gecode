@@ -190,7 +190,69 @@ public:
     Log::prune_result(x);      
   }
 
-  void prune(const SetAssignment& a) {
+  bool fixprob(SetTest& st, bool r, BoolVar& b) {
+    unsigned int alt;				
+    Log::fixpoint();				
+    if (status(alt) == SS_FAILED) 
+      return true;
+    SetTestSpace* c = static_cast<SetTestSpace*>(clone());
+    Log::print(c->x, "x");
+    if (c->y.size() > 0) Log::print(c->y, "y");
+    if (!r) {
+      st.post(c,c->x,c->y);
+      Log::fixpoint();
+      if (c->status(alt) == SS_FAILED) {
+	Log::print(c->x, "x");
+	if (c->y.size() > 0) Log::print(c->y, "y");
+	delete c;
+	return false;
+      }
+      for (int i=x.size(); i--; ) {
+	if (x[i].glbSize() != c->x[i].glbSize() ||
+	    x[i].lubSize() != c->x[i].lubSize() ||
+	    x[i].cardMin() != c->x[i].cardMin() ||
+	    x[i].cardMax() != c->x[i].cardMax()) {
+	  Log::print(c->x, "x");
+	  if (c->y.size() > 0) Log::print(c->y, "y");
+	  delete c;
+	  return false;
+	}
+      }
+    } else {
+      BoolVar cb(c,0,1);
+      st.post(c,c->x,c->y,cb);
+      Log::fixpoint();
+      if (c->status(alt) == SS_FAILED) {
+	Log::print(c->x, "x");
+	if (c->y.size() > 0) Log::print(c->y, "y");
+	delete c;
+	return false;
+      }
+      if (cb.size() != b.size()) {
+	Log::print(c->x, "x");
+	if (c->y.size() > 0) Log::print(c->y, "y");
+	delete c;
+	return false;
+      }
+      for (int i=x.size(); i--; )
+	if (x[i].glbSize() != c->x[i].glbSize() ||
+	    x[i].lubSize() != c->x[i].lubSize() ||
+	    x[i].cardMin() != c->x[i].cardMin() ||
+	    x[i].cardMax() != c->x[i].cardMax() ) {
+	  Log::print(c->x, "x");
+	  if (c->y.size() > 0) Log::print(c->y, "y");
+	  delete c;
+	  return false;
+	}
+    }
+    delete c;
+    return true;
+  }
+
+  static BoolVar unused;
+
+  bool prune(const SetAssignment& a, SetTest& st,
+	     bool r, BoolVar& b=unused) {
     bool setsAssigned = true;
     for (int j=x.size(); j--; )
       if (!x[j].assigned()) {
@@ -264,8 +326,13 @@ public:
 	rel(this, y[i], IRT_NQ, v);
 	Log::prune_result(y[i]);
       }
-      FORCE_FIXFLUSH;
-      return;
+      if (random(opt.fixprob) == 0 && !fixprob(st, r, b))
+	return false;
+      if (random(opt.flushprob) == 0) {		
+	flush();					
+	Log::flush();				
+      }		
+      return true;
     }
     while (x[i].assigned()) {
       i = (i+1) % x.size();
@@ -313,11 +380,19 @@ public:
 	removeFromLub(v, x[i], i, a);
       }
     }
+    if (random(opt.fixprob) == 0 && !fixprob(st, r, b))
+      return false;
+    if (random(opt.flushprob) == 0) {		
+      flush();					
+      Log::flush();				
+    }		
 
-    FORCE_FIXFLUSH;
+    return true;
   }
   
 };
+
+BoolVar SetTestSpace::unused;
 
 
 #define CHECK(T,M) 				\
@@ -405,7 +480,11 @@ SetTest::run(const Options& opt) {
       SetTestSpace* s = new SetTestSpace(arity,lub,withInt,opt);
       post(s,s->x,s->y);
       while (!s->failed() && !s->assigned())
-	s->prune(a);
+ 	if (!s->prune(a,*this,false)) {
+ 	  problem = "No fixpoint";
+ 	  delete s;
+ 	  goto failed;
+ 	}
       s->assign(a);
       if (is_sol) {
 	CHECK(!s->failed(), "Failed on solution");
@@ -422,7 +501,11 @@ SetTest::run(const Options& opt) {
       BoolVar b(s,0,1);
       post(s,s->x,s->y,b);
       while (!s->assigned() && !b.assigned())
-	s->prune(a);
+ 	if (!s->prune(a,*this,true,b)) {
+ 	  problem = "No fixpoint";
+ 	  delete s;
+ 	  goto failed;
+ 	}
       CHECK(!s->failed(), "Failed");
       CHECK(!s->actors(), "No subsumtion");
       CHECK(b.assigned(), "Control variable unassigned");
@@ -438,11 +521,11 @@ SetTest::run(const Options& opt) {
   delete ap;
   return true;
  failed:
-  delete ap;
   std::cout << "FAILURE" << std::endl
 	    << "\t" << "Test:       " << test << std::endl
 	    << "\t" << "Problem:    " << problem << std::endl
 	    << "\t" << "SetAssignment: " << a << std::endl;
+  delete ap;
   return false;
 }
 

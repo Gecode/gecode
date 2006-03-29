@@ -241,70 +241,31 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1>
   ExecStatus
   UnionN<View0,View1>::propagate(Space* home) {
-    bool xiubmod = false;
-    bool yubmod = false;
-    bool xilbmod = false;
-    bool ylbmod = false;
+    ModEvent me0 = View0::pme(this);
+    ModEvent me1 = View1::pme(this);
+    bool ubevent = Rel::testSetEventUB(me0, me1);
+    bool lbevent = Rel::testSetEventLB(me0, me1);
+    bool anybevent = Rel::testSetEventAnyB(me0, me1);
+    bool cardevent = Rel::testSetEventCard(me0, me1);
+
     bool modified = false;
-
-    ModEvent myMe0 = View0::pme(this);
-    ModEvent myMe1 = View1::pme(this);
-    bool ubevent =
-      (myMe0==ME_SET_LUB || myMe0==ME_SET_BB || myMe0==ME_SET_CLUB ||
-       myMe0==ME_SET_CBB || myMe0==ME_SET_VAL) ||
-      (myMe1==ME_SET_LUB || myMe1==ME_SET_BB || myMe1==ME_SET_CLUB ||
-       myMe1==ME_SET_CBB || myMe1==ME_SET_VAL);
-
-    bool lbevent =
-      (myMe0==ME_SET_GLB || myMe0==ME_SET_BB || myMe0==ME_SET_CGLB ||
-       myMe0==ME_SET_CBB || myMe0==ME_SET_VAL) ||
-      (myMe1==ME_SET_GLB || myMe1==ME_SET_BB || myMe1==ME_SET_CGLB ||
-       myMe1==ME_SET_CBB || myMe1==ME_SET_VAL);
-
-    bool anybevent =
-      (myMe0==ME_SET_LUB || myMe0==ME_SET_GLB || myMe0==ME_SET_BB ||
-       myMe0==ME_SET_CLUB || myMe0==ME_SET_CGLB || myMe0==ME_SET_CBB ||
-       myMe0==ME_SET_VAL) ||
-      (myMe1==ME_SET_LUB || myMe1==ME_SET_GLB || myMe1==ME_SET_BB ||
-       myMe1==ME_SET_CLUB || myMe1==ME_SET_CGLB || myMe1==ME_SET_CBB ||
-       myMe1==ME_SET_VAL);
-
-    bool cardevent =
-      (myMe0==ME_SET_CARD || myMe0==ME_SET_CLUB ||
-       myMe0==ME_SET_CGLB || myMe0==ME_SET_CBB) ||
-      (myMe1==ME_SET_CARD || myMe1==ME_SET_CLUB ||
-       myMe1==ME_SET_CGLB || myMe1==ME_SET_CBB);
+    bool oldModified = false;
 
     do {
+      oldModified = modified;
       modified = false;
-
-      do {
-        if (yubmod || ubevent) {
-          GECODE_ME_CHECK(unionNXiUB(home,xiubmod, x, y,unionOfDets));
-        }
-        yubmod = false;
-        if (xiubmod || ubevent) {
-          GECODE_ME_CHECK(partitionNYUB(home,yubmod, x, y,unionOfDets));
-        }
-      } while (yubmod);
-
-      do {
-        if (xiubmod || ylbmod || anybevent) {
-          GECODE_ME_CHECK(partitionNXiLB(home,xilbmod, x, y,unionOfDets));
-        }
-        ylbmod = false;
-        if (xilbmod || lbevent) {
-          GECODE_ME_CHECK(partitionNYLB(home,ylbmod, x, y,unionOfDets));
-        }
-        xilbmod = false;
-      } while (ylbmod);
-
-      if ( xiubmod || cardevent || ubevent)
-        GECODE_ME_CHECK(unionNCard(home,modified, x, y, unionOfDets));
+      if (modified || oldModified || ubevent)
+	GECODE_ME_CHECK(unionNXiUB(home, modified, x, y,unionOfDets));
+      if (modified || oldModified || ubevent)
+	GECODE_ME_CHECK(partitionNYUB(home, modified, x, y,unionOfDets));
+      if (modified || oldModified || anybevent)
+	GECODE_ME_CHECK(partitionNXiLB(home, modified, x, y,unionOfDets));
+      if (modified || oldModified || lbevent)
+	GECODE_ME_CHECK(partitionNYLB(home, modified, x, y,unionOfDets));
+      if (modified || oldModified || cardevent || ubevent)
+	GECODE_ME_CHECK(unionNCard(home, modified, x, y, unionOfDets));
     } while (modified);
-    //TODO: We might be able to detect VAL events and disperse this
-    //functionality:
-    //removing ground sets from x, accumulating the value:
+
     for(int i=0;i<x.size();i++){
       //Do not reverse! Eats away the end of the array!
       while (i<x.size() && x[i].assigned()) {

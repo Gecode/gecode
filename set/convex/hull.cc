@@ -41,7 +41,7 @@ namespace Gecode { namespace Set { namespace Convex {
   }
 
   ConvexHull::~ConvexHull(void) {
-    x0.cancel(this,PC_SET_CGLB);
+    x0.cancel(this,PC_SET_ANY);
     x1.cancel(this,PC_SET_ANY);
   }
 
@@ -102,7 +102,7 @@ namespace Gecode { namespace Set { namespace Convex {
       return ES_SUBSUMED;
     }
 
-    return shared(x0,x1) ? ES_NOFIX : ES_FIX;
+    return ES_NOFIX;
   }
 
 }}}

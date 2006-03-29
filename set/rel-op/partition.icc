@@ -77,33 +77,12 @@ namespace Gecode { namespace Set { namespace RelOp {
   ExecStatus
   PartitionN<View0,View1>::propagate(Space* home) {
 
-    ModEvent myMe0 = View0::pme(this);
-    ModEvent myMe1 = View1::pme(this);
-    bool ubevent =
-      (myMe0==ME_SET_LUB || myMe0==ME_SET_BB || myMe0==ME_SET_CLUB ||
-       myMe0==ME_SET_CBB || myMe0==ME_SET_VAL) ||
-      (myMe1==ME_SET_LUB || myMe1==ME_SET_BB || myMe1==ME_SET_CLUB ||
-       myMe1==ME_SET_CBB || myMe1==ME_SET_VAL);
-
-    bool lbevent =
-      (myMe0==ME_SET_GLB || myMe0==ME_SET_BB || myMe0==ME_SET_CGLB ||
-       myMe0==ME_SET_CBB || myMe0==ME_SET_VAL) ||
-      (myMe1==ME_SET_GLB || myMe1==ME_SET_BB || myMe1==ME_SET_CGLB ||
-       myMe1==ME_SET_CBB || myMe1==ME_SET_VAL);
-
-    bool anybevent =
-      (myMe0==ME_SET_LUB || myMe0==ME_SET_GLB || myMe0==ME_SET_BB ||
-       myMe0==ME_SET_CLUB || myMe0==ME_SET_CGLB || myMe0==ME_SET_CBB ||
-       myMe0==ME_SET_VAL) ||
-      (myMe1==ME_SET_LUB || myMe1==ME_SET_GLB || myMe1==ME_SET_BB ||
-       myMe1==ME_SET_CLUB || myMe1==ME_SET_CGLB || myMe1==ME_SET_CBB ||
-       myMe1==ME_SET_VAL);
-
-    bool cardevent =
-      (myMe0==ME_SET_CARD || myMe0==ME_SET_CLUB ||
-       myMe0==ME_SET_CGLB || myMe0==ME_SET_CBB) ||
-      (myMe1==ME_SET_CARD || myMe1==ME_SET_CLUB ||
-       myMe1==ME_SET_CGLB || myMe1==ME_SET_CBB);
+    ModEvent me0 = View0::pme(this);
+    ModEvent me1 = View1::pme(this);
+    bool ubevent = Rel::testSetEventUB(me0, me1);
+    bool lbevent = Rel::testSetEventLB(me0, me1);
+    bool anybevent = Rel::testSetEventAnyB(me0, me1);
+    bool cardevent = Rel::testSetEventCard(me0, me1);
 
     bool modified = false;
     bool oldModified = false;

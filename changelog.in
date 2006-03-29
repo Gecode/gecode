@@ -53,6 +53,14 @@ Date:		upcoming
 Next release.
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed bugs in fixpoint detection of several set propagators (match,
+convexity, sequence, n-ary (disjoint) union).
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor

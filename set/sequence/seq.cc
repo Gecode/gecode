@@ -43,14 +43,17 @@ namespace Gecode { namespace Set { namespace Sequence {
   ExecStatus
   Seq::propagate(Space* home) {
     bool modified = false;
-    GECODE_ES_CHECK(propagateSeq(home, modified, x));
-    bool assigned = true;
+    bool assigned;
+    do {
+      assigned = false;
+      GECODE_ES_CHECK(propagateSeq(home, modified, assigned, x));
+    } while (assigned);
+
     for (int i=x.size(); i--;) {
-      if (!x[i].assigned()) {
-	assigned = false; break;
-      }
+      if (!x[i].assigned())
+	return ES_FIX;
     }
-    return assigned ? ES_SUBSUMED : ES_FIX;
+    return ES_SUBSUMED;
   }
 
 }}}

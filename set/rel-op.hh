@@ -48,15 +48,15 @@ namespace Gecode { namespace Set { namespace RelOp {
   
    template <class View0, class View1, class View2>
    class SuperOfInter :
-    public InhomTernaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_ANY,
-				  View2,PC_SET_ANY> {
+    public InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+				  View2,PC_SET_CLUB> {
    protected:
-     using InhomTernaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_ANY,
-				  View2,PC_SET_ANY>::x0;
-     using InhomTernaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_ANY,
-				  View2,PC_SET_ANY>::x1;
-     using InhomTernaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_ANY,
-				  View2,PC_SET_ANY>::x2;
+     using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+				  View2,PC_SET_CLUB>::x0;
+     using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+				  View2,PC_SET_CLUB>::x1;
+     using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+				  View2,PC_SET_CLUB>::x2;
      /// Constructor for cloning \a p
      SuperOfInter(Space* home, bool share,SuperOfInter& p);
      /// Constructor for posting

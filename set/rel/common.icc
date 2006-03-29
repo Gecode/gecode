@@ -25,14 +25,29 @@
  *
  */
 
-namespace Gecode { namespace Set { namespace Rel {
-
-#define GECODE_ME_CHECK_B(modified, tell)       \
+#define GECODE_ME_CHECK_B(modified, tell)	\
   {						\
     ModEvent me = (tell);			\
-    modified |= me_modified(me);		\
-    GECODE_ME_CHECK(me);			\
+    if (me_modified(me))			\
+      modified = true; 				\
+    else					\
+      GECODE_ME_CHECK(me);			\
   }
+
+#define GECODE_ME_CHECK_VAL(p,f) {				\
+    ModEvent __me__ ## __LINE__ = (p);				\
+    if (me_failed(__me__ ## __LINE__)) return ES_FAILED;	\
+    if (ME_GEN_ASSIGNED==(__me__ ## __LINE__))f=true; }
+
+#define GECODE_ME_CHECK_VAL_B(modified, tell, f)        \
+  {							\
+    ModEvent me = (tell);				\
+    modified |= me_modified(me);			\
+    if (ME_GEN_ASSIGNED==(me))f=true;			\
+    GECODE_ME_CHECK(me);				\
+  }
+
+namespace Gecode { namespace Set { namespace Rel {
 
   forceinline
   bool subsumesME(ModEvent me0, ModEvent me1, ModEvent me2, ModEvent me) {

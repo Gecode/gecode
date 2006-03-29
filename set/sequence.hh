@@ -86,6 +86,7 @@ namespace Gecode { namespace Set { namespace Sequence {
 
 }}}
 
+#include "set/rel.hh"
 #include "set/rel-op/common.icc"
 #include "set/sequence/common.icc"
 #include "set/sequence/seq.icc"

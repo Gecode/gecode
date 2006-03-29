@@ -57,60 +57,43 @@ namespace Gecode { namespace Set { namespace Int {
 
     do {
       loopFlag = false;
-
+      
       // Order int vars in xs
       GECODE_ME_CHECK(xs[0].gq(home,x0.lubMin()));
       for (int i=xs_size-1; i--; ) {
-        GECODE_ME_CHECK(xs[i+1].gq(home,xs[i].min() + 1));
+	GECODE_ME_CHECK_B(loopFlag, xs[i+1].gq(home,xs[i].min() + 1));
       }
-
-      GECODE_ME_CHECK(xs[xs_size-1].lq(home,x0.lubMax()));
+      
+      GECODE_ME_CHECK_B(loopFlag, xs[xs_size-1].lq(home,x0.lubMax()));
       for (int i=xs_size-2; i--; ) {
-        GECODE_ME_CHECK(xs[i].lq(home,xs[i+1].max() - 1));
+	GECODE_ME_CHECK_B(loopFlag, xs[i].lq(home,xs[i+1].max() - 1));
       }
 
       // if y from xs is assigned, add to glb(x0)
       for (int i=xs_size; i--; ) {
-        if (xs[i].assigned())
-          GECODE_ME_CHECK(x0.include(home,xs[i].val()));
+        if (xs[i].assigned()) {
+	  GECODE_ME_CHECK_B(loopFlag, x0.include(home,xs[i].val()));
+	}
       }
 
       // intersect every y in xs with lub(x0)
       for (int i=xs_size; i--; ) {
         LubRanges<SetView> ub(x0);
-        ModEvent me = xs[i].inter(home,ub);
-        if (me_modified(me)) {
-          loopFlag = true;
-        } else {
-          GECODE_ME_CHECK(me);
-        }
+        GECODE_ME_CHECK_B(loopFlag, xs[i].inter(home,ub));
       }
 
       // remove gaps between vars in xs from lub(x0)
-      ModEvent me1 =
-        x0.exclude(home,Limits::Set::int_min,xs[0].min()-1);
-      ModEvent me2 =
-        x0.exclude(home,xs[xs_size-1].max()+1,Limits::Set::int_max);
-      if (me_modified(me1)) {
-        loopFlag = true;
-      } else {
-        GECODE_ME_CHECK(me1);
-      }
-      if (me_modified(me2)) {
-        loopFlag = true;
-      } else {
-        GECODE_ME_CHECK(me2);
-      }
+      GECODE_ME_CHECK_B(loopFlag,
+			x0.exclude(home,Limits::Set::int_min,xs[0].min()-1));
+      GECODE_ME_CHECK_B(loopFlag,
+			x0.exclude(home,xs[xs_size-1].max()+1,
+				   Limits::Set::int_max));
+
       for (int i=xs_size-1; i--; ) {
         int start = xs[i].max() + 1;
         int end   = xs[i+1].min() - 1;
         if (start<=end) {
-          ModEvent me = x0.exclude(home,start,end);
-          if (me_modified(me)) {
-            loopFlag = true;
-          } else {
-            GECODE_ME_CHECK(me);
-          }
+          GECODE_ME_CHECK_B(loopFlag, x0.exclude(home,start,end));
         }
       }
 
@@ -125,12 +108,7 @@ namespace Gecode { namespace Set { namespace Int {
         int i=0;
         for (; ubv() && lbv() && ubv.val()==lbv.val();
             ++ubv, ++lbv, i++) {
-          ModEvent me = (xs[i].eq(home,lbv.val()));
-          if (me_modified(me)) {
-            loopFlag = true;
-          } else {
-            GECODE_ME_CHECK(me);
-          }
+          GECODE_ME_CHECK_B(loopFlag, xs[i].eq(home,lbv.val()));
         }
 
         if (i<xs_size-1 && x0.lubMax()==x0.glbMax()) {
@@ -148,12 +126,7 @@ namespace Gecode { namespace Set { namespace Int {
 
 	  int i=xs_size-1;
 	  for (int j=to; j>=from;j--,i--) {
-            ModEvent me = xs[i].eq(home,j);
-            if (me_modified(me)) {
-              loopFlag = true;
-            } else {
-              GECODE_ME_CHECK(me);
-            }
+            GECODE_ME_CHECK_B(loopFlag, xs[i].eq(home,j));
 	  }
         }
       }
