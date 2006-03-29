@@ -219,18 +219,22 @@ public:
 	}
       }
     } else {
+      Log::print(b, "b");
       BoolVar cb(c,0,1);
+      Log::initial(cb, "cb");
       st.post(c,c->x,c->y,cb);
       Log::fixpoint();
       if (c->status(alt) == SS_FAILED) {
 	Log::print(c->x, "x");
 	if (c->y.size() > 0) Log::print(c->y, "y");
+	Log::print(cb, "cb");
 	delete c;
 	return false;
       }
       if (cb.size() != b.size()) {
 	Log::print(c->x, "x");
 	if (c->y.size() > 0) Log::print(c->y, "y");
+	Log::print(cb, "cb");
 	delete c;
 	return false;
       }
@@ -241,6 +245,7 @@ public:
 	    x[i].cardMax() != c->x[i].cardMax() ) {
 	  Log::print(c->x, "x");
 	  if (c->y.size() > 0) Log::print(c->y, "y");
+	  Log::print(cb, "cb");
 	  delete c;
 	  return false;
 	}
