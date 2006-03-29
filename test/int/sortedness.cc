@@ -258,6 +258,7 @@ public:
       rel(home, y[i], IRT_GQ, 1);
       rel(home, p[i], IRT_LQ, 2);
     }
+    Log::log("Post sortedness", "\tsortedness(this, ...);");
     // std::cout << "post sort constraint\n";
     sortedness(home, z, y, p, icl);
   }

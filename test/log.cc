@@ -33,6 +33,7 @@ namespace {
   std::vector<std::string> cinit;
   std::vector<std::string> cupdate;
   std::vector<std::string> cops;
+  std::vector<std::string> cnames;
 
   std::string space = ""
   "#include \"kernel.hh\" \n"
@@ -58,6 +59,9 @@ namespace {
   "    virtual Space* copy(bool share) { \n"
   "      return new ErrorSpace(share,*this); \n"
   "    } \n"
+  "    void print() {\n"
+  "PRINTOPS"
+  "    }\n"
   "    void run() { \n"
   "OPERATIONS"
   "    } \n"
@@ -77,6 +81,14 @@ namespace {
   "      break; \n"
   "    } \n"
   "  } \n";
+
+  std::string printloop = ""
+  "\tstd::cout << \"NAME[] = {\";\n"
+  "\tfor (int i = 0; i < NAME.size(); ++i) {\n"
+  "\t\tstd::cout << NAME[i];\n"
+  "\t\tif (i != NAME.size()-1) std::cout << \", \";\n"
+  "\t}\n"
+  "\tstd::cout << \"}\" << std::endl;\n";
 
   bool do_logging = false;
 }
@@ -100,6 +112,7 @@ namespace Log {
     cinit.clear();
     cupdate.clear();
     cops.clear();
+    cnames.clear();
   }
 
   void print(/*std::ostream& o, */bool for_display) {
@@ -155,6 +168,17 @@ namespace Log {
       error_space.replace(error_space.find("OPERATIONS"), 10,
 			  operations.str(), 0, operations.str().length());
 
+      std::ostringstream printops;
+      for (unsigned int i = 0; i < cnames.size(); ++i) {
+	std::string pop = printloop,
+	  name = cnames[i];
+	while (pop.find("NAME") != std::string::npos)
+	  pop.replace(pop.find("NAME"), 4, name, 0, name.length());
+	printops << pop;
+      }
+      error_space.replace(error_space.find("PRINTOPS"), 8,
+			  printops.str(), 0, printops.str().length());
+
       std::cout << error_space;
     }
     
@@ -194,6 +218,8 @@ namespace Log {
     std::ostringstream update;
     update << "\t" <<  name << ".update(this, share, s." << name << ");";
     cupdate.push_back(update.str());    
+
+    cnames.push_back(name);
 
     for (int i = 0; i < a.size(); ++i) {
       std::ostringstream init;
@@ -237,6 +263,8 @@ namespace Log {
     std::ostringstream update;
     update << "\t" <<  name << ".update(this, share, s." << name << ");";
     cupdate.push_back(update.str());    
+
+    cnames.push_back(name);
 
     for (int i = 0; i < a.size(); ++i) {
       std::ostringstream init;
@@ -408,6 +436,34 @@ namespace Log {
     hops.push_back("Compute fixpoint");
     cops.push_back("\tstatus(tmp);");
   }
+
+  void print(const IntVarArray& a, const char* name) {
+    if (!do_logging) return;
+    std::ostringstream h;
+    if (name) h << name << "[] = ";
+    h << "{";
+    for (int i = 0; i < a.size(); ++i) {
+      h << a[i];
+      if (i != a.size()-1) h << ", ";
+    }
+    hops.push_back(h.str());
+    cops.push_back("\tprint();");
+  }
+
+#ifdef GECODE_HAVE_SET_VARS
+  void print(const SetVarArray& a, const char* name) {
+    if (!do_logging) return;
+    std::ostringstream h;
+    if (name) h << name << "[] = ";
+    h << "{";
+    for (int i = 0; i < a.size(); ++i) {
+      h << a[i];
+      if (i != a.size()-1) h << ", ";
+    }
+    hops.push_back(h.str());
+    cops.push_back("\tprint();");
+  }
+#endif
 
 }
 

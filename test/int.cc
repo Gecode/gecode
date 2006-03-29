@@ -179,38 +179,37 @@ public:
     }
     if (random(opt.fixprob) == 0) {		
       unsigned int alt;				
-      Log::fixpoint();				
+      Log::fixpoint();
       if (status(alt) == SS_FAILED) 
 	return true;
       IntTestSpace* c = static_cast<IntTestSpace*>(clone());
+      Log::print(c->x, "x");
       if (!r) {
 	it.post(c,c->x);
+	Log::fixpoint();
 	if (c->status(alt) == SS_FAILED) {
+	  Log::print(c->x, "x");
 	  delete c;
 	  return false;
 	}
 	for (int i=x.size(); i--; )
 	  if (x[i].size() != c->x[i].size()) {
-	    std::cout << std::endl << "\tNo fixpoint:" << std::endl;
-	    for (int j=0; j<x.size(); j++) {
-	      std::cout << "\t\tx[" << j << "]: " << x[j] << " - " << c->x[j] << std::endl;
-	    }
-	    std::cout << std::endl;
+	    Log::print(c->x, "x");
 	    delete c;
 	    return false;
 	  }
       } else {
 	BoolVar b(c,0,1);
 	it.post(c,c->x,b);
+	Log::fixpoint();
 	if (c->status(alt) == SS_FAILED) {
+	  Log::print(c->x, "x");
 	  delete c;
 	  return false;
 	}
 	for (int i=x.size(); i--; )
 	  if (x[i].size() != c->x[i].size()) {
-	    for (int j=0; j<x.size(); j++) {
-	      //	      std::cout << "\t" << x[j] << " - " << c->x[j] << std::endl;
-	    }
+	    Log::print(c->x, "x");
 	    delete c;
 	    return false;
 	  }
