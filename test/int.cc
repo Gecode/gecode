@@ -203,24 +203,27 @@ public:
 	    return false;
 	  }
       } else {
+	Log::print(b, "b");
 	BoolVar cb(c,0,1);
+	Log::initial(cb, "cb");
 	it.post(c,c->x,cb);
 	Log::fixpoint();
 	if (c->status(alt) == SS_FAILED) {
 	  Log::print(c->x, "x");
+	  Log::print(cb, "cb");
 	  delete c;
 	  return false;
 	}
 	if (cb.size() != b.size()) {
 	  Log::print(c->x, "x");
-	  //	  Log::print(c->b, "b");
+	  Log::print(cb, "cb");
 	  delete c;
 	  return false;
 	}
 	for (int i=x.size(); i--; )
 	  if (x[i].size() != c->x[i].size()) {
 	    Log::print(c->x, "x");
-	    //	    Log::print(c->b, "b");
+	    Log::print(cb, "cb");
 	    delete c;
 	    return false;
 	  }
@@ -244,12 +247,7 @@ Assignment*
 IntTest::make_assignment() {
   return new Assignment(arity, dom);
 }
-/*
-bool
-IntTest::do_search_test() {
-  return true;
-}
-*/
+
 #define CHECK(T,M) 				\
 if (!(T)) { 					\
   problem = (M); 				\
@@ -317,6 +315,7 @@ IntTest::run(const Options& opt) {
       Log::reset();
       IntTestSpace* s = new IntTestSpace(arity,dom,opt);
       BoolVar b(s,0,1);
+      Log::initial(b, "b");
       post(s,s->x,b);
       if (is_sol) {
 	rel(s, b, IRT_EQ, 1);
@@ -333,6 +332,7 @@ IntTest::run(const Options& opt) {
       Log::reset();
       IntTestSpace* s = new IntTestSpace(arity,dom,opt);
       BoolVar b(s,0,1);
+      Log::initial(b, "b");
       if (is_sol) {
 	rel(s, b, IRT_EQ, 1);
       } else {
@@ -349,6 +349,7 @@ IntTest::run(const Options& opt) {
       Log::reset();
       IntTestSpace* s = new IntTestSpace(arity,dom,opt);
       BoolVar b(s,0,1); 
+      Log::initial(b, "b");
       s->assign(a); post(s,s->x,b);
       CHECK(!s->is_failed(), "Failed");
       CHECK(!s->actors(), "No subsumtion");
@@ -365,6 +366,7 @@ IntTest::run(const Options& opt) {
       Log::reset();
       IntTestSpace* s = new IntTestSpace(arity,dom,opt);
       BoolVar b(s,0,1);
+      Log::initial(b, "b");
       post(s,s->x,b); s->assign(a);
       CHECK(!s->is_failed(), "Failed");
       CHECK(!s->actors(), "No subsumtion");
@@ -401,6 +403,7 @@ IntTest::run(const Options& opt) {
       Log::reset();
       IntTestSpace* s = new IntTestSpace(arity,dom,opt);
       BoolVar b(s,0,1);
+      Log::initial(b, "b");
       post(s,s->x,b);
       while (!s->failed() && !s->assigned() && !b.assigned())
 	if (!s->prune(a,*this,true,b)) {

@@ -24,18 +24,21 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <utility>
 
 namespace {
-  std::vector<std::string> hinitial;
-  std::vector<std::string> hops;
-  std::vector<std::string> cdecla;
-  std::vector<std::string> cinitlist;
-  std::vector<std::string> cinit;
-  std::vector<std::string> cupdate;
-  std::vector<std::string> cops;
-  std::vector<std::string> cnames;
+  using namespace std;
+  vector<string> hinitial;
+  vector<string> hops;
+  vector<string> cdecla;
+  vector<string> cinitlist;
+  vector<string> cinit;
+  vector<string> cupdate;
+  vector<string> cops;
+  typedef pair<string, bool> psb;
+  vector<psb> cnames;
 
-  std::string space = ""
+  string space = ""
   "#include \"kernel.hh\" \n"
   "#include \"int.hh\" \n"
   "#include \"set.hh\" \n"
@@ -82,7 +85,7 @@ namespace {
   "    } \n"
   "  } \n";
 
-  std::string printloop = ""
+  string printloop = ""
   "\tstd::cout << \"NAME[] = {\";\n"
   "\tfor (int i = 0; i < NAME.size(); ++i) {\n"
   "\t\tstd::cout << NAME[i];\n"
@@ -90,11 +93,15 @@ namespace {
   "\t}\n"
   "\tstd::cout << \"}\" << std::endl;\n";
 
+  string printcmd = ""
+  "\tstd::cout << \"NAME = \" << NAME << std::endl;\n";
+
   bool do_logging = false;
 }
 
 
 namespace Log {
+  using namespace std;
   void logging(bool val) {
     do_logging = val;
   }
@@ -115,31 +122,31 @@ namespace Log {
     cnames.clear();
   }
 
-  void print(/*std::ostream& o, */bool for_display) {
+  void print(/*ostream& o, */bool for_display) {
     if (!do_logging) return;
     if (for_display) {
-      std::cout << "Initial configuration" << std::endl;
+      cout << "Initial configuration" << endl;
       for (unsigned int i = 0; i < hinitial.size(); ++i) {
-	std::cout << hinitial[i] << std::endl;
+	cout << hinitial[i] << endl;
       }
-      std::cout << std::endl;
+      cout << endl;
       
-      std::cout << "Operations" << std::endl;
+      cout << "Operations" << endl;
       for (unsigned int i = 0; i < hops.size(); ++i) {
-	std::cout << hops[i] << std::endl;
+	cout << hops[i] << endl;
       }
-      std::cout << std::endl;
+      cout << endl;
     } else {
-      std::string error_space = space;
+      string error_space = space;
 
-      std::ostringstream decl;
+      ostringstream decl;
       for (unsigned int i = 0; i < cdecla.size(); ++i) {
-	decl << cdecla[i] << std::endl;
+	decl << cdecla[i] << endl;
       }
       error_space.replace(error_space.find("DECL"), 4,
 			  decl.str(), 0, decl.str().length());
 
-      std::ostringstream initlist;
+      ostringstream initlist; initlist << "\t";
       for (unsigned int i = 0; i < cinitlist.size(); ++i) {
 	initlist << cinitlist[i];
 	if (i+1 != cinitlist.size()) initlist << ", ";
@@ -147,46 +154,50 @@ namespace Log {
       error_space.replace(error_space.find("INITLIST"), 9,
 			  initlist.str(), 0, initlist.str().length());
 
-      std::ostringstream init;
+      ostringstream init;
       for (unsigned int i = 0; i < cinit.size(); ++i) {
-	init << cinit[i] << std::endl;
+	init << cinit[i] << endl;
       }
       error_space.replace(error_space.find("INIT"), 4,
 			  init.str(), 0, init.str().length());
 
-      std::ostringstream update;
+      ostringstream update;
       for (unsigned int i = 0; i < cupdate.size(); ++i) {
-	update << cupdate[i] << std::endl;
+	update << cupdate[i] << endl;
       }
       error_space.replace(error_space.find("UPDATE"), 6,
 			  update.str(), 0, update.str().length());
 
-      std::ostringstream operations;
+      ostringstream operations;
       for (unsigned int i = 0; i < cops.size(); ++i) {
-	operations << cops[i] << std::endl;
+	if (cops[i].size() > 0) {
+	  if (cops[i][0] != '\t' && cops[i][0] != ' ')
+	    operations << '\t';
+	  operations << cops[i] << endl;
+	}
       }
       error_space.replace(error_space.find("OPERATIONS"), 10,
 			  operations.str(), 0, operations.str().length());
 
-      std::ostringstream printops;
+      ostringstream printops;
       for (unsigned int i = 0; i < cnames.size(); ++i) {
-	std::string pop = printloop,
-	  name = cnames[i];
-	while (pop.find("NAME") != std::string::npos)
+	string pop = cnames[i].second ? printloop : printcmd,
+	  name = cnames[i].first;
+	while (pop.find("NAME") != string::npos)
 	  pop.replace(pop.find("NAME"), 4, name, 0, name.length());
 	printops << pop;
       }
       error_space.replace(error_space.find("PRINTOPS"), 8,
 			  printops.str(), 0, printops.str().length());
 
-      std::cout << error_space;
+      cout << error_space;
     }
     
   }
 
   std::string mk_name(const char* arr, int idx) {
-    if (!do_logging) return std::string("");
-    std::ostringstream res;
+    if (!do_logging) return string("");
+    ostringstream res;
     res << arr << "[" << idx << "]";
     return res.str();
   }
@@ -195,34 +206,34 @@ namespace Log {
   void initial(const IntVarArray& a, const char* name) {
     if (!do_logging) return;
     // Display
-    std::ostringstream hiva;
+    ostringstream hiva;
     hiva << "IntVarArray " << name << " = ";
     hinitial.push_back(hiva.str());
 
     for (int i = 0; i < a.size(); ++i) {
-      std::ostringstream ai;
+      ostringstream ai;
       ai << "\t" << name << "[" << i << "]="
 	 << a[i];
       hinitial.push_back(ai.str());
     }
 
     // Execution
-    std::ostringstream civa;
+    ostringstream civa;
     civa << "\tIntVarArray " << name << ";";
     cdecla.push_back(civa.str());
 
-    std::ostringstream initlist;
-    initlist << "\t" << name << "(this," << a.size() << ")";
+    ostringstream initlist;
+    initlist << name << "(this," << a.size() << ")";
     cinitlist.push_back(initlist.str());
 
-    std::ostringstream update;
+    ostringstream update;
     update << "\t" <<  name << ".update(this, share, s." << name << ");";
     cupdate.push_back(update.str());    
 
-    cnames.push_back(name);
+    cnames.push_back(psb(name, true));
 
     for (int i = 0; i < a.size(); ++i) {
-      std::ostringstream init;
+      ostringstream init;
       init << "\tconst int arr" << i << "[][2] = {";
       int n = 0;
       for (IntVarRanges it(a[i]); it(); ++it, ++n) {
@@ -236,38 +247,62 @@ namespace Log {
     }
   }
 
+
+  void initial(const BoolVar& a, const char* name) {
+    if (!do_logging) return;
+    // Display
+    ostringstream hiva;
+    hiva << "BoolVar " << name << " = " << a;
+    hinitial.push_back(hiva.str());
+
+    // Execution
+    ostringstream civa;
+    civa << "\tBoolVar " << name << ";";
+    cdecla.push_back(civa.str());
+
+    ostringstream initlist;
+    initlist << name << "(this," << a.size() << ", 0, 1)";
+    cinitlist.push_back(initlist.str());
+
+    ostringstream update;
+    update << "\t" <<  name << ".update(this, share, s." << name << ");";
+    cupdate.push_back(update.str());    
+
+    cnames.push_back(psb(name, false));
+  }
+
 #ifdef GECODE_HAVE_SET_VARS
   void initial(const SetVarArray& a, const char* name) {
     if (!do_logging) return;
     // Display
-    std::ostringstream hiva;
+    ostringstream hiva;
     hiva << "SetVarArray " << name << " = ";
     hinitial.push_back(hiva.str());
 
     for (int i = 0; i < a.size(); ++i) {
-      std::ostringstream ai;
+      ostringstream ai;
       ai << "\t" << name << "[" << i << "]="
 	 << a[i];
       hinitial.push_back(ai.str());
     }
 
     // Execution
-    std::ostringstream civa;
+    ostringstream civa;
     civa << "\tSetVarArray " << name << ";";
     cdecla.push_back(civa.str());
 
-    std::ostringstream initlist;
-    initlist << "\t" << name << "(this," << a.size() << ")";
+    ostringstream initlist;
+    initlist << name << "(this," << a.size() << ")";
     cinitlist.push_back(initlist.str());
 
-    std::ostringstream update;
+    ostringstream update;
     update << "\t" <<  name << ".update(this, share, s." << name << ");";
     cupdate.push_back(update.str());    
 
-    cnames.push_back(name);
+    cnames.push_back(psb(name, true));
 
     for (int i = 0; i < a.size(); ++i) {
-      std::ostringstream init;
+      ostringstream init;
       init << "\tconst int arrGlb" << i << "[][2] = {";
       int n = 0;
       for (SetVarGlbRanges it(a[i]); it(); ++it, ++n) {
@@ -300,22 +335,22 @@ namespace Log {
 
   void assign(std::string name, int val) {
     if (!do_logging) return;
-    std::ostringstream h;
+    ostringstream h;
     h << "Assign val=" << val << " to " << name;
     hops.push_back(h.str());
 
-    std::ostringstream c;
+    ostringstream c;
     c << "\trel(this, " << name << ", IRT_EQ, " << val << ");";
     cops.push_back(c.str());
   }
 
   void assign(std::string name, const IntSet& val) {
     if (!do_logging) return;
-    std::ostringstream h;
+    ostringstream h;
     h << "Assign val=" << val << " to " << name;
     hops.push_back(h.str());
 
-    std::ostringstream c;
+    ostringstream c;
 
     c << "\t{ const int arr[][2] = {";
     int n = 0;
@@ -335,7 +370,7 @@ namespace Log {
 
   void prune(const IntVar& v, std::string name, IntRelType irt, int val) {
     if (!do_logging) return;
-    std::ostringstream h;
+    ostringstream h;
     switch (irt) {
     case IRT_NQ:
       h << "Prune val=" << val << " from " << name << " =" << v;
@@ -350,7 +385,7 @@ namespace Log {
     }
     hops.push_back(h.str());
 
-    std::ostringstream c;
+    ostringstream c;
     switch (irt) {
     case IRT_NQ:
       c << "\trel(this, " << name << ", IRT_NQ, " << val << ");";
@@ -369,7 +404,7 @@ namespace Log {
 #ifdef GECODE_HAVE_SET_VARS
   void prune(const SetVar& v, std::string name, SetRelType srt, int val) {
     if(!do_logging) return;
-    std::ostringstream h;
+    ostringstream h;
     switch(srt) {
     case SRT_SUP:
       h << "Include val=" << val << " in " << name << " =" << v;
@@ -381,7 +416,7 @@ namespace Log {
     }
     hops.push_back(h.str());
 
-    std::ostringstream c;
+    ostringstream c;
     switch(srt) {
     case SRT_SUP:
       c << "\tdom(this, " << name << ", SRT_SUP, " << val << ");";
@@ -397,12 +432,12 @@ namespace Log {
   void prune(const SetVar& v, std::string name,
 	     unsigned int cardMin, unsigned int cardMax) {
     if(!do_logging) return;
-    std::ostringstream h;
+    ostringstream h;
     h << "Prune cardinality of " << name << " to "
       << cardMin << "/" << cardMax;
     hops.push_back(h.str());
 
-    std::ostringstream c;
+    ostringstream c;
     c << "\tcardinality(this, " << name << ", "
       << cardMin << ", " << cardMax << ");";
     cops.push_back(c.str());
@@ -411,7 +446,7 @@ namespace Log {
 
   void prune_result(const IntVar& v) {
     if (!do_logging) return;
-    std::ostringstream h;
+    ostringstream h;
     h << "\tPruning resulted in domain " << v;
     hops.push_back(h.str());
   }
@@ -419,7 +454,7 @@ namespace Log {
 #ifdef GECODE_HAVE_SET_VARS
   void prune_result(const SetVar& v) {
     if (!do_logging) return;
-    std::ostringstream h;
+    ostringstream h;
     h << "\tPruning resulted in domain " << v;
     hops.push_back(h.str());
   }
@@ -439,13 +474,23 @@ namespace Log {
 
   void print(const IntVarArray& a, const char* name) {
     if (!do_logging) return;
-    std::ostringstream h;
+    ostringstream h;
     if (name) h << name << "[] = ";
     h << "{";
     for (int i = 0; i < a.size(); ++i) {
       h << a[i];
       if (i != a.size()-1) h << ", ";
     }
+    h << "}";
+    hops.push_back(h.str());
+    cops.push_back("\tprint();");
+  }
+
+  void print(const BoolVar& a, const char* name) {
+    if (!do_logging) return;
+    ostringstream h;
+    if (name) h << name << " = ";
+    h << a;
     hops.push_back(h.str());
     cops.push_back("\tprint();");
   }
@@ -453,7 +498,7 @@ namespace Log {
 #ifdef GECODE_HAVE_SET_VARS
   void print(const SetVarArray& a, const char* name) {
     if (!do_logging) return;
-    std::ostringstream h;
+    ostringstream h;
     if (name) h << name << "[] = ";
     h << "{";
     for (int i = 0; i < a.size(); ++i) {

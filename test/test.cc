@@ -63,8 +63,6 @@ namespace {
 
   void report_error(const Options& o, std::string name) {
     std::cout << "Options: -seed " << o.seed;
-    if (o.iter != o.defiter)
-      std::cout << "  -iter " << o.iter;
     if (o.fixprob != o.deffixprob)
       std::cout << "  -fixprob " << o.fixprob;
     if (o.flushprob != o.defflushprob)

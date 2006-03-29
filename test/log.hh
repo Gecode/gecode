@@ -38,6 +38,7 @@ namespace Log {
   std::string mk_name(const char* arr, int idx);
 
   void initial(const IntVarArray& a, const char* name);
+  void initial(const BoolVar& a, const char* name);
   void log(std::string hlog, const std::string clog);
   void assign(std::string name, int val);
   void assign(std::string name, const IntSet& val);
@@ -46,6 +47,7 @@ namespace Log {
   void flush();
   void fixpoint();
   void print(const IntVarArray& a, const char* name=NULL);
+  void print(const BoolVar& a, const char* name=NULL);
 
 #ifdef GECODE_HAVE_SET_VARS
   void initial(const SetVarArray& a, const char*name);
