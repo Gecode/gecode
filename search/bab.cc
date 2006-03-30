@@ -37,7 +37,7 @@ namespace Gecode { namespace Search {
   forceinline
   BabEngine::BabEngine(unsigned int c_d0, unsigned int a_d,
 		       size_t sz)
-    : FullStatistics(sz), ds(a_d), mark(0), cur(NULL), best(NULL), 
+    : FullStatistics(sz), ds(a_d), cur(NULL), mark(0), best(NULL), 
       c_d(c_d0), d(0) {}
   
 

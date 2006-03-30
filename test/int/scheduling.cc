@@ -68,7 +68,7 @@ namespace {
   // Class for generating reasonable assignements (i.e. s+d=e)
   class CumulativeAssignment : public Assignment {
     Ass *cur, *nxt;
-    DFS<Ass> e;
+    DFS<Ass> *e;
   public:
     CumulativeAssignment(int, const IntSet&);
     virtual void reset(void);
@@ -78,23 +78,23 @@ namespace {
     virtual ~CumulativeAssignment() {
       if (cur) delete cur;
       if (nxt) delete nxt;
+      if (e  ) delete e;
     }
   };
   
   CumulativeAssignment::CumulativeAssignment(int n0, const IntSet& d0)
-    : Assignment(n0, d0), cur(new Ass(n,d)), nxt(NULL), e(cur)
+    : Assignment(n0, d0), cur(NULL), nxt(NULL), e(NULL)
   {
-    delete cur;
-    nxt = cur = e.next();
-    if (cur != NULL) nxt = e.next();
+    reset();
   }
   void 
   CumulativeAssignment::reset(void) {
     Ass *a = new Ass(n, d);
-    e = DFS<Ass>(a);
+    delete e;
+    e = new DFS<Ass>(a);
     delete a;
-    nxt = cur = e.next();
-    if (cur != NULL) nxt = e.next();
+    nxt = cur = e->next();
+    if (cur != NULL) nxt = e->next();
   }
   int 
   CumulativeAssignment::operator[](int i) const {
@@ -105,7 +105,7 @@ namespace {
   CumulativeAssignment::operator++(void) {
     if(cur) delete cur;
     cur = nxt;
-    if (nxt != NULL) nxt = e.next();
+    if (nxt != NULL) nxt = e->next();
   }
   bool 
   CumulativeAssignment::operator()(void) const {
