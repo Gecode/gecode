@@ -25,33 +25,6 @@
 
 namespace Gecode { 
 
-  namespace Search {
-    
-    /*
-     * Memory management for engines
-     *
-     */
-    
-    forceinline
-    BabEngine::BabEngine(size_t sz)
-      : FullStatistics(sz) {}
-
-    forceinline void*
-    BabEngine::operator new(size_t s) {
-      return Memory::malloc(s);
-    }
-    
-    forceinline void
-    BabEngine::operator delete(void* p, size_t) {
-      Memory::free(p);
-    }
-    
-    forceinline
-    BabEngine::~BabEngine(void) {
-    }
-    
-  }
-    
   /*
    * Control for bab search engine
    *
@@ -66,7 +39,7 @@ namespace Gecode {
   forceinline T*
   BAB<T>::next(void) {
     Space *s1, *s2;
-    while (!e->explore(s1,s2))
+    while (!e.explore(s1,s2))
       static_cast<T*>(s1)->constrain(static_cast<T*>(s2));
     return static_cast<T*>(s1);
   }

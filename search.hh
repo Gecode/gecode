@@ -335,7 +335,7 @@ namespace Gecode {
     /**
      * \brief Limited discrepancy search engine
      */
-    class LDS {
+    class GECODE_SEARCH_EXPORT LDS {
     protected:
       Space*       root;        ///< Root node for problem
       unsigned int d_cur;       ///< Current discrepancy
@@ -348,13 +348,13 @@ namespace Gecode {
        * \param d maximal discrepancy
        * \param sz size of space
        */
-      GECODE_SEARCH_EXPORT LDS(Space* s, unsigned int d, size_t sz);
-      /// Destructor
-      GECODE_SEARCH_EXPORT ~LDS(void);
-      /// Return statistics
-      GECODE_SEARCH_EXPORT Statistics statistics(void) const;
+      LDS(Space* s, unsigned int d, size_t sz);
       /// Return next solution (NULL, if none exists)
-      GECODE_SEARCH_EXPORT Space* next(void);
+      Space* next(void);
+      /// Return statistics
+      Statistics statistics(void) const;
+      /// Destructor
+      ~LDS(void);
     };
 
   }
@@ -396,14 +396,32 @@ namespace Gecode {
   namespace Search {
 
     /**
-     * \brief Interface for depth-first branch-and-bound search engines
+     * \brief Implementation of depth-first branch-and-bound search engines
      */
     class BabEngine : public FullStatistics {
+    private:
+      /// Recomputation stack of nodes
+      ReCoStack          ds;
+      /// Current space being explored
+      Space*             cur;
+      /// Number of entries not yet constrained to be better
+      unsigned int       mark;
+      /// Best solution found so far
+      Space*             best;
+      /// Copying recomputation distance
+      const unsigned int c_d;
+      /// Distance until next clone
+      unsigned int       d;
     public:
-      /// Constructor
-      BabEngine(size_t sz);
-      /// Destructor
-      GECODE_SEARCH_EXPORT virtual ~BabEngine(void);
+      /**
+       * \brief Initialize engine
+       * \param c_d minimal recomputation distance
+       * \param a_d adaptive recomputation distance
+       * \param sz size of one space
+       */
+      BabEngine(unsigned int c_d, unsigned int a_d, size_t sz);
+      /// Initialize engine to start at space \a s
+      void init(Space* s);
       /**
        * \brief %Search for next better solution
        *
@@ -414,13 +432,12 @@ namespace Gecode {
        * is constrained to be better by the so-far best solution \a s2.
        *
        */
-      virtual bool explore(Space*& s1, Space*& s2) = 0;
+      GECODE_SEARCH_EXPORT 
+      bool explore(Space*& s1, Space*& s2);
       /// Return stack size used by engine
-      virtual size_t stacksize(void) const = 0;
-      /// Allocate space from heap
-      static void* operator new(size_t);
-      /// Release space to heap
-      static void  operator delete(void*,size_t);
+      size_t stacksize(void) const;
+      /// Destructor
+      ~BabEngine(void);
     };
 
     /**
@@ -435,7 +452,7 @@ namespace Gecode {
     class GECODE_SEARCH_EXPORT BAB {
     protected:
       /// Engine used for exploration
-      BabEngine* e;
+      BabEngine e;
     public:
       /**
        * \brief Initialize engine
@@ -445,8 +462,6 @@ namespace Gecode {
        * \param sz size of one space
        */
       BAB(Space* s, unsigned int c_d, unsigned int a_d, size_t sz);
-      /// Destructor
-      ~BAB(void);
       /// Return statistics
       Statistics statistics(void) const;
     };
@@ -555,11 +570,8 @@ namespace Gecode {
 
 #include "search/reco-stack.icc"
 
-#include "search/dfs-reco.icc"
 #include "search/dfs.icc"
-
 #include "search/lds.icc"
-
 #include "search/bab.icc"
 #include "search/restart.icc"
 
