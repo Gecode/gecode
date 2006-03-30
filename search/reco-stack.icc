@@ -22,7 +22,7 @@
 namespace Gecode { namespace Search {
 
   /*
-   * Depth-first node
+   * Node for recomputation
    *
    */
 
@@ -69,20 +69,18 @@ namespace Gecode { namespace Search {
 
   forceinline void
   ReCoNode::dispose(void) {
-    delete space();
-    delete desc();
+    delete _space;
+    delete _desc;
   }
 
   forceinline unsigned int
   ReCoNode::share(void) {
-    unsigned int t = _last;
-    _last--;
-    return t;
+    return _last--;
   }
 
 
   /*
-   * Depth-first stack
+   * Depth-first stack with recomputation
    *
    */
 

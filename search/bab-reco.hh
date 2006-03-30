@@ -23,7 +23,7 @@
 #define __GECODE_SEARCH_BAB_RECO_HH__
 
 #include "search.hh"
-#include "search/stack.hh"
+#include "search/reco-stack.hh"
 
 namespace Gecode { namespace Search {
 

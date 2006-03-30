@@ -108,7 +108,7 @@ namespace Gecode { namespace Search {
 
 }}
 
-#include "search/stack.icc"
+#include "search/reco-stack.icc"
 
 #endif
 
