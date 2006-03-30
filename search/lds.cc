@@ -62,8 +62,8 @@ namespace Gecode { namespace Search {
    */
 
   forceinline
-  ProbeEngine::ProbeEngine(size_t sz) 
-    : FullStatistics(sz) {}
+  ProbeEngine::ProbeEngine(Stop* st, size_t sz) 
+    : EngineCtrl(st,sz) {}
 
   forceinline void
   ProbeEngine::init(Space* s, unsigned int d0) {
@@ -77,7 +77,7 @@ namespace Gecode { namespace Search {
     assert(ds.empty());
     cur = s;
     d   = d0;
-    FullStatistics::reset(s);
+    EngineCtrl::reset(s);
   }
 
   forceinline size_t
@@ -95,6 +95,8 @@ namespace Gecode { namespace Search {
   forceinline Space*
   ProbeEngine::explore(void) {
     while (true) {
+      if (stop(stacksize()))
+	return NULL;
       if (cur == NULL) {
       backtrack:
 	if (ds.empty())
@@ -102,24 +104,27 @@ namespace Gecode { namespace Search {
 	unsigned int a = ds.top().alt();
 	if (a == 0) {
 	  cur = ds.pop().space();
-	  FullStatistics::pop(cur);
+	  EngineCtrl::pop(cur);
 	} else {
 	  ds.top().alt(a-1);
 	  cur = ds.top().space()->clone();
 	  clone++;
 	}
 	cur->commit(a,NULL,propagate);
-	FullStatistics::current(cur);
+	EngineCtrl::current(cur);
 	d++;
       }
     check_discrepancy:
       if (d == 0) {
 	Space* s = cur;
-	cur = NULL;
-	FullStatistics::current(NULL);
 	unsigned int alt;
-	while (s->status(alt) == SS_BRANCH)
+	while (s->status(alt) == SS_BRANCH) {
+	  if (stop(stacksize()))
+	    return NULL;
 	  s->commit(0,NULL,propagate);
+	}
+	cur = NULL;
+	EngineCtrl::current(NULL);
 	if (s->failed()) {
 	  delete s;
 	  goto backtrack;
@@ -133,14 +138,14 @@ namespace Gecode { namespace Search {
       case SS_SOLVED:	
 	delete cur;
 	cur = NULL;
-	FullStatistics::current(NULL);
+	EngineCtrl::current(NULL);
 	goto backtrack;
       case SS_BRANCH:
 	{
 	  if (alt > 1) {
 	    unsigned int d_a = (d >= alt-1) ? alt-1 : d;
 	    Space* cc = cur->clone();
-	    FullStatistics::push(cc);
+	    EngineCtrl::push(cc);
 	    ProbeNode sn(cc,d_a-1);
 	    clone++;
 	    ds.push(sn);
@@ -163,8 +168,8 @@ namespace Gecode { namespace Search {
    *
    */
 
-  LDS::LDS(Space* s, unsigned int d, size_t sz)
-    : d_cur(0), d_max(d), no_solution(true), e(sz) {
+  LDS::LDS(Space* s, unsigned int d, Stop* st, size_t sz)
+    : d_cur(0), d_max(d), no_solution(true), e(st,sz) {
     unsigned int alt;
     if (s->status(alt) == SS_FAILED) {
       root = NULL;

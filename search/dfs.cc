@@ -25,8 +25,8 @@ namespace Gecode { namespace Search {
 
   forceinline
   DfsEngine::DfsEngine(unsigned int c_d0, unsigned int a_d0,
-		       size_t sz)
-    : FullStatistics(sz), ds(a_d0), cur(NULL), c_d(c_d0), d(0) {}
+		       Stop* st, size_t sz)
+    : EngineCtrl(st,sz), ds(a_d0), cur(NULL), c_d(c_d0), d(0) {}
 
   
   forceinline void
@@ -40,7 +40,7 @@ namespace Gecode { namespace Search {
     ds.reset();
     cur = s;
     d   = 0;
-    FullStatistics::reset(s);
+    EngineCtrl::reset(s);
   }
 
   forceinline size_t
@@ -52,19 +52,21 @@ namespace Gecode { namespace Search {
   DfsEngine::explore(void) {
     while (true) {
       while (cur) {
+	if (stop(stacksize()))
+	  return NULL;
 	unsigned int alt;
 	switch (cur->status(alt,propagate)) {
 	case SS_FAILED:
 	  fail++;
 	  delete cur;
 	  cur = NULL;
-	  FullStatistics::current(NULL);
+	  EngineCtrl::current(NULL);
 	  break;
 	case SS_SOLVED:
 	  {
 	    Space* s = cur;
 	    cur = NULL;
-	    FullStatistics::current(NULL);
+	    EngineCtrl::current(NULL);
 	    return s;
 	  }
 	case SS_BRANCH:
@@ -80,7 +82,7 @@ namespace Gecode { namespace Search {
 		d++;
 	    }
 	    BranchingDesc* desc = ds.push(cur,c,alt);
-	    FullStatistics::push(c,desc);
+	    EngineCtrl::push(c,desc);
 	    commit++;
 	    cur->commit(0, desc);
 	    break;
@@ -90,7 +92,7 @@ namespace Gecode { namespace Search {
       if (!ds.next(*this))
 	return NULL;
       cur = ds.recompute(d,*this);
-      FullStatistics::current(cur);
+      EngineCtrl::current(cur);
     }
     return NULL;
   }
@@ -106,8 +108,8 @@ namespace Gecode { namespace Search {
    *
    */
 
-  DFS::DFS(Space* s, unsigned int c_d, unsigned int a_d, size_t sz) 
-    : e(c_d,a_d,sz) {
+  DFS::DFS(Space* s, unsigned int c_d, unsigned int a_d, Stop* st, size_t sz) 
+    : e(c_d,a_d,st,sz) {
     unsigned int alt;
     unsigned long int p = 0;
     Space* c = (s->status(alt,p) == SS_FAILED) ? NULL : s->clone();

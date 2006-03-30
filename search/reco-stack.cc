@@ -24,7 +24,7 @@
 namespace Gecode { namespace Search {
 
   Space*
-  ReCoStack::recompute(unsigned int& d, FullStatistics& stat) {
+  ReCoStack::recompute(unsigned int& d, EngineCtrl& stat) {
     // Recompute space according to path
     // Also say distance to copy (d == 0) requires immediate copying
 

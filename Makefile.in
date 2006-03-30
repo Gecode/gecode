@@ -120,7 +120,8 @@ SEARCHSRC0 = \
 	reco-stack.cc dfs.cc lds.cc bab.cc
 SEARCHHDR0 = \
 	bab.icc dfs.icc lds.icc restart.icc \
-	reco-stack.icc statistics.icc
+	reco-stack.icc statistics.icc \
+	engine-ctrl.icc stop.icc
 
 SEARCHSRC	= $(SEARCHSRC0:%=search/%)
 SEARCHHDR	= search.hh $(SEARCHHDR0:%=search/%)

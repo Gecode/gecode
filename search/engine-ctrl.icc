@@ -1,0 +1,93 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date: 2005-08-10 20:28:01 +0200 (Wed, 10 Aug 2005) $ by $Author: schulte $
+ *     $Revision: 2202 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Search {
+
+  forceinline
+  EngineCtrl::EngineCtrl(Stop* st0, size_t sz) 
+    : st(st0), mem_space(sz), mem_cur(0), mem_total(0) {
+    memory = 0;
+  }
+
+  forceinline bool
+  EngineCtrl::stop(size_t sz) {
+    if (st == NULL)
+      return false;
+    memory += sz;
+    bool b = st->stop(*this);
+    memory -= sz;
+    return b;
+  }
+
+  forceinline void
+  EngineCtrl::push(const Space* s) {
+    mem_total += mem_space + s->allocated();
+    if (mem_total > memory)
+      memory = mem_total;
+  }
+
+  forceinline void
+  EngineCtrl::push(const Space* s, const BranchingDesc* d) {
+    if (s != NULL)
+      mem_total += mem_space + s->allocated();
+    if (d != NULL)
+      mem_total += d->size();      
+    if (mem_total > memory)
+      memory = mem_total;
+  }
+
+  forceinline void
+  EngineCtrl::pop(const Space* s) {
+    mem_total -= mem_space + s->allocated();
+  }
+
+  forceinline void
+  EngineCtrl::pop(const Space* s, const BranchingDesc* d) {
+    if (s != NULL)
+      mem_total -= mem_space + s->allocated();
+    if (d != NULL)
+      mem_total -= d->size();      
+  }
+
+  forceinline void
+  EngineCtrl::current(const Space* s) {
+    if (s == NULL) {
+      mem_total -= mem_cur;
+      mem_cur = 0;
+    } else {
+      mem_cur = mem_space + s->allocated() + s->cached();
+      mem_total += mem_cur;
+      if (mem_total > memory)
+	memory = mem_total;
+    }
+  }
+
+  forceinline void
+  EngineCtrl::reset(const Space* s) {
+    mem_cur   = mem_space+s->allocated()+s->cached();
+    mem_total = mem_cur;
+    if (mem_total > memory)
+      memory = mem_total;
+  }
+
+}}
+
+// STATISTICS: search-any

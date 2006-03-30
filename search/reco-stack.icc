@@ -95,7 +95,7 @@ namespace Gecode { namespace Search {
   }
 
   forceinline bool
-  ReCoStack::next(FullStatistics& stat) {
+  ReCoStack::next(EngineCtrl& stat) {
     // Generate path for next node and return whether node exists.
     while (!empty()) {
       if (top().rightmost()) {

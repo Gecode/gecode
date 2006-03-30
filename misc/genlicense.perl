@@ -32,7 +32,7 @@ while ($l = <>) {
     while (($l = <>) && ($l =~ /([A-Z].*) <(.*)>/)) {
       $main{$1} = $2;
     }
-  } elsif ($l =~ /Bugfixes provided by:/) {
+  } elsif ($l =~ /provided by:/) {
     while (($l = <>) && ($l =~ /([A-Z].*) <(.*)>/)) {
       $fix{$1} = $2;
     }

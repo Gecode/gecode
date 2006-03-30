@@ -28,8 +28,8 @@ namespace Gecode {
 
   template <class T>
   forceinline
-  DFS<T>::DFS(T* s, unsigned int c_d, unsigned int a_d)
-    : Search::DFS(s,c_d,a_d,sizeof(T)) {}
+  DFS<T>::DFS(T* s, unsigned int c_d, unsigned int a_d, Search::Stop* st)
+    : Search::DFS(s,c_d,a_d,st,sizeof(T)) {}
 
   template <class T>
   forceinline T*
@@ -46,8 +46,8 @@ namespace Gecode {
 
   template <class T>
   forceinline T*
-  dfs(T* s, unsigned int c_d, unsigned int a_d) {
-    DFS<T> d(s,c_d,a_d);
+  dfs(T* s, unsigned int c_d, unsigned int a_d, Search::Stop* st) {
+    DFS<T> d(s,c_d,a_d,st);
     return static_cast<T*>(d.next());
   }
 

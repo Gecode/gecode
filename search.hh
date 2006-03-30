@@ -24,6 +24,8 @@
 #ifndef __GECODE_SEARCH_HH__
 #define __GECODE_SEARCH_HH__
 
+#include <ctime>
+
 #include "./kernel.hh"
 
 /*
@@ -85,20 +87,116 @@ namespace Gecode {
       Statistics(void);
     };
     
-    
+
     /**
-     * \brief %Full search engine statistics including memory information
+     * \defgroup TaskIntSearchStop %Stop-objects for stopping search
+     * \ingroup TaskIntSearch
+     *
+     * Allows to specify various criteria when a search engine should
+     * stop exploration. Only exploration but neither recomputation 
+     * nor propagation will be interrupted.
+     *
      */
-    class FullStatistics : public Statistics {
+
+    /**
+     * \brief Base-class for %Stop-object
+     * \ingroup TaskIntSearchStop
+     */
+    class Stop {
     public:
+      /// Default constructor
+      Stop(void);
+      /// Stop search, if returns true (can be based on statistics \a s)
+      virtual bool stop(const Statistics& s) = 0;
+      /// Destructor
+      virtual ~Stop(void);
+    };
+
+    /**
+     * \brief %Stop-object based on memory consumption
+     *
+     * \ingroup TaskIntSearchStop
+     */
+    class MemoryStop : public Stop {
+    protected:
+      /// Size limit
+      size_t l;
+    public:
+      /// Stop if memory limit \a l (in bytes) is exceeded 
+      MemoryStop(size_t l);
+      /// Return current limit
+      size_t limit(void) const;
+      /// Set current limit to \a l (in bytes)
+      void limit(size_t l);
+      /// Return true if memory limit is exceeded 
+      virtual bool stop(const Statistics& s);
+    };
+
+    /**
+     * \brief %Stop-object based on number of failures
+     *
+     * The number of failures reported (by the statistics) is the
+     * number since the engine started exploration. It is not the
+     * number since the last stop!
+     * \ingroup TaskIntSearchStop
+     */
+    class FailStop : public Stop {
+    protected:
+      /// Failure limit
+      unsigned long int l;
+    public:
+      /// Stop if failure limit \a l is exceeded 
+      FailStop(unsigned long int l);
+      /// Return current limit
+      unsigned long int limit(void) const;
+      /// Set current limit to \a l failures
+      void limit(unsigned long int l);
+      /// Return true if failure limit is exceeded 
+      virtual bool stop(const Statistics& s);
+    };
+
+    /**
+     * \brief %Stop-object based on time
+     * \ingroup TaskIntSearchStop
+     */
+    class TimeStop : public Stop {
+    protected:
+      /// Clock when execution should stop
+      clock_t s;
+      /// Current limit in milliseconds
+      unsigned long int l;
+    public:
+      /// Stop if search exceeds \a l milliseconds (from creation of this object)
+      TimeStop(unsigned long int t);
+      /// Return current limit in milliseconds
+      unsigned long int limit(void) const;
+      /// Set current limit to \a l milliseconds
+      void limit(unsigned long int l);
+      /// Reset time to zero
+      void reset(void);
+      /// Return true if time limit is exceeded 
+      virtual bool stop(const Statistics& s);
+    };
+
+
+    /**
+     * \brief %Search engine control including memory information
+     */
+    class EngineCtrl : public Statistics {
+    protected:
+      /// %Stop-object to be used
+      Stop* st;
       /// Memory required for a single space
       size_t mem_space;
       /// Memory for the current space (including memory for caching)
       size_t mem_cur;
       /// Current total memory
       size_t mem_total;
-      /// Initialize with space size \a sz
-      FullStatistics(size_t sz);
+    public:
+      /// Initialize with stop-object \a st and space size \a sz
+      EngineCtrl(Stop* st, size_t sz);
+      /// Check whether engine must be stopped (with additional stackspace \a sz)
+      bool stop(size_t sz);
       /// New space \a s gets pushed on stack
       void push(const Space* s);
       /// New space \a s and branching description \a d get pushed on stack
@@ -176,10 +274,10 @@ namespace Gecode {
       /// Push space \a c (a clone of \a a or NULL) with alternatives \a a
       BranchingDesc* push(Space* s, Space* c, unsigned int a);
       /// Generate path for next node and return whether a next node exists
-      bool next(FullStatistics& s);
+      bool next(EngineCtrl& s);
       /// Recompute space according to path with copying distance \a d
       Space* recompute(unsigned int& d, 
-		       FullStatistics& s);
+		       EngineCtrl& s);
       /// Reset stack
       void reset(void);
     };
@@ -188,7 +286,7 @@ namespace Gecode {
      * \brief Depth-first search engine implementation
      *
      */
-    class DfsEngine : public FullStatistics {
+    class DfsEngine : public EngineCtrl {
     private:
       /// Recomputation stack of nodes
       ReCoStack          ds;
@@ -203,9 +301,10 @@ namespace Gecode {
        * \brief Initialize engine
        * \param c_d minimal recomputation distance
        * \param a_d adaptive recomputation distance
+       * \param st %Stop-object
        * \param sz size of one space
        */
-      DfsEngine(unsigned int c_d, unsigned int a_d, size_t sz);
+      DfsEngine(unsigned int c_d, unsigned int a_d, Stop* st, size_t sz);
       /// Initialize engine to start at space \a s
       void init(Space* s);
       /// Reset engine to restart at space \a s
@@ -236,9 +335,10 @@ namespace Gecode {
        * \param s root node (subclass of Space)
        * \param c_d minimal recomputation distance
        * \param a_d adaptive recomputation distance
+       * \param st %Stop-object
        * \param sz size of one space
        */
-      DFS(Space* s, unsigned int c_d, unsigned int a_d, size_t sz);
+      DFS(Space* s, unsigned int c_d, unsigned int a_d, Stop* st, size_t sz);
       /// Return next solution (NULL, if none exists)
       Space* next(void);
       /// Return statistics
@@ -262,11 +362,13 @@ namespace Gecode {
      * \param s root node (subclass of Space)
      * \param c_d minimal recomputation distance
      * \param a_d adaptive recomputation distance
+     * \param st %Stop-object
      */ 
     DFS(T* s, 
 	unsigned int c_d=Search::Config::c_d, 
-	unsigned int a_d=Search::Config::a_d);
-    /// Return next solution (NULL, if none exists)
+	unsigned int a_d=Search::Config::a_d,
+	Search::Stop* st=NULL);
+    /// Return next solution (NULL, if none exists or engine stopped)
     T* next(void);
   };
 
@@ -275,12 +377,14 @@ namespace Gecode {
    * \param s root node (subclass \a T of Space)
    * \param c_d minimal recomputation distance
    * \param a_d adaptive recomputation distance
+   * \param st %Stop-object
    * \ingroup TaskIntSearch
    */
   template <class T>
   T* dfs(T* s,
 	 unsigned int c_d=Search::Config::c_d,
-	 unsigned int a_d=Search::Config::a_d);
+	 unsigned int a_d=Search::Config::a_d,
+	 Search::Stop* st=NULL);
 
 
 
@@ -290,7 +394,7 @@ namespace Gecode {
      * \brief Probing engine for %LDS
      *
      */
-    class ProbeEngine : public FullStatistics {
+    class ProbeEngine : public EngineCtrl {
     protected:
       /// %Node in the search tree for %LDS
       class ProbeNode {
@@ -319,7 +423,7 @@ namespace Gecode {
       unsigned int d;
     public:
       /// Initialize for spaces of size \a s
-      ProbeEngine(size_t s);
+      ProbeEngine(Stop* st, size_t s);
       /// Initialize with space \a s and discrepancy \a d
       void init(Space* s, unsigned int d);
       /// Reset with space \a s and discrepancy \a d
@@ -346,9 +450,10 @@ namespace Gecode {
       /** Initialize engine
        * \param s root node
        * \param d maximal discrepancy
+       * \param st %Stop-object
        * \param sz size of space
        */
-      LDS(Space* s, unsigned int d, size_t sz);
+      LDS(Space* s, unsigned int d, Stop* st, size_t sz);
       /// Return next solution (NULL, if none exists)
       Space* next(void);
       /// Return statistics
@@ -369,8 +474,9 @@ namespace Gecode {
     /** \brief Initialize engine
      * \param s root node (subclass \a T of Space)
      * \param d maximal discrepancy
+     * \param st %Stop-object
      */
-    LDS(T* s, unsigned int d);
+    LDS(T* s, unsigned int d, Search::Stop* st=NULL);
     /// Return next solution (NULL, if none exists)
     T* next(void);
   };
@@ -379,10 +485,11 @@ namespace Gecode {
    * \brief Invoke limited-discrepancy search
    * \param s root node (subclass \a T of Space)
    * \param d maximum number of discrepancies
+   * \param st %Stop-object
    * \ingroup TaskIntSearch
    */
   template <class T>
-  T* lds(T* s,unsigned int d);
+  T* lds(T* s,unsigned int d, Search::Stop* st=NULL);
 
 
 
@@ -398,7 +505,7 @@ namespace Gecode {
     /**
      * \brief Implementation of depth-first branch-and-bound search engines
      */
-    class BabEngine : public FullStatistics {
+    class BabEngine : public EngineCtrl {
     private:
       /// Recomputation stack of nodes
       ReCoStack          ds;
@@ -417,9 +524,10 @@ namespace Gecode {
        * \brief Initialize engine
        * \param c_d minimal recomputation distance
        * \param a_d adaptive recomputation distance
+       * \param st %Stop-object
        * \param sz size of one space
        */
-      BabEngine(unsigned int c_d, unsigned int a_d, size_t sz);
+      BabEngine(unsigned int c_d, unsigned int a_d, Stop* st, size_t sz);
       /// Initialize engine to start at space \a s
       void init(Space* s);
       /**
@@ -459,9 +567,10 @@ namespace Gecode {
        * \param s root node 
        * \param c_d minimal recomputation distance
        * \param a_d adaptive recomputation distance
+       * \param st %Stop-object
        * \param sz size of one space
        */
-      BAB(Space* s, unsigned int c_d, unsigned int a_d, size_t sz);
+      BAB(Space* s, unsigned int c_d, unsigned int a_d, Stop* st, size_t sz);
       /// Return statistics
       Statistics statistics(void) const;
     };
@@ -486,10 +595,12 @@ namespace Gecode {
      *          best solution.
      * \param c_d Minimal recomputation distance
      * \param a_d Adaptive recomputation distance
+     * \param st %Stop-object
      */
     BAB(T* s,
 	unsigned int c_d=Search::Config::c_d,
-	unsigned int a_d=Search::Config::a_d);
+	unsigned int a_d=Search::Config::a_d,
+	Search::Stop* st=NULL);
     /// Return next better solution (NULL, if none exists)
     T* next(void);
   };
@@ -505,12 +616,14 @@ namespace Gecode {
    *          best solution.
    * \param c_d minimal recomputation distance
    * \param a_d adaptive recomputation distance
+   * \param st %Stop-object
    * \ingroup TaskIntSearch
    */
   template <class T>
   T* bab(T* s,
 	 unsigned int c_d=Search::Config::c_d,
-	 unsigned int a_d=Search::Config::a_d);
+	 unsigned int a_d=Search::Config::a_d,
+	 Search::Stop* st=NULL);
 
 
 
@@ -537,10 +650,12 @@ namespace Gecode {
      *          best solution.
      * \param c_d minimal recomputation distance
      * \param a_d adaptive recomputation distance
+     * \param st %Stop-object
      */
     Restart(T* s, 
 	    unsigned int c_d=Search::Config::c_d, 
-	    unsigned int a_d=Search::Config::a_d);
+	    unsigned int a_d=Search::Config::a_d,
+	    Search::Stop* st=NULL);
     /// Destructor
     ~Restart(void);
     /// Return next better solution (NULL, if none exists)
@@ -558,15 +673,19 @@ namespace Gecode {
    *          best solution.
    * \param c_d minimal recomputation distance
    * \param a_d adaptive recomputation distance
+   * \param st %Stop-object
    */
   template <class T>
   T* restart(T* s,
 	     unsigned int c_d=Search::Config::c_d,
-	     unsigned int a_d=Search::Config::a_d);
+	     unsigned int a_d=Search::Config::a_d,
+	     Search::Stop* st=NULL);
 
 }
 
 #include "search/statistics.icc"
+#include "search/stop.icc"
+#include "search/engine-ctrl.icc"
 
 #include "search/reco-stack.icc"
 

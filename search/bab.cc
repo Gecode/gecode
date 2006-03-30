@@ -36,8 +36,8 @@ namespace Gecode { namespace Search {
 
   forceinline
   BabEngine::BabEngine(unsigned int c_d0, unsigned int a_d,
-		       size_t sz)
-    : FullStatistics(sz), ds(a_d), cur(NULL), mark(0), best(NULL), 
+		       Stop* st, size_t sz)
+    : EngineCtrl(st,sz), ds(a_d), cur(NULL), mark(0), best(NULL), 
       c_d(c_d0), d(0) {}
   
 
@@ -66,13 +66,17 @@ namespace Gecode { namespace Search {
      *
      */
     while (true) {
+      if (stop(stacksize())) {
+	s1 = NULL;
+	return true;
+      }
       if (cur == NULL) {
 	if (!ds.next(*this)) {
 	  s1 = NULL;
 	  return true;
 	}
 	cur = ds.recompute(d,*this);
-	FullStatistics::current(cur);
+	EngineCtrl::current(cur);
 	if (ds.entries() <= mark) {
 	  // Next space needs to be constrained
 	  mark = ds.entries();
@@ -88,7 +92,7 @@ namespace Gecode { namespace Search {
 	fail++;
 	delete cur;
 	cur = NULL;
-	FullStatistics::current(NULL);
+	EngineCtrl::current(NULL);
 	break;
       case SS_SOLVED:
 	delete best;
@@ -97,7 +101,7 @@ namespace Gecode { namespace Search {
 	s1 = best->clone();
 	clone++;
 	cur = NULL;
-	FullStatistics::current(NULL);
+	EngineCtrl::current(NULL);
 	return true;
       case SS_BRANCH:
 	{
@@ -112,7 +116,7 @@ namespace Gecode { namespace Search {
 	      d++;
 	  }
 	  BranchingDesc* desc = ds.push(cur,c,alt);
-	  FullStatistics::push(c,desc);
+	  EngineCtrl::push(c,desc);
 	  cur->commit(0,desc,propagate);
 	  commit++;
 	  break;
@@ -130,8 +134,8 @@ namespace Gecode { namespace Search {
 
 
 
-  BAB::BAB(Space* s, unsigned int c_d, unsigned int a_d, size_t sz) 
-    : e(c_d,a_d,sz) {
+  BAB::BAB(Space* s, unsigned int c_d, unsigned int a_d, Stop* st, size_t sz) 
+    : e(c_d,a_d,st,sz) {
     unsigned int alt;
     unsigned long int p = 0;
     Space* c = (s->status(alt,p) == SS_FAILED) ? NULL : s->clone();

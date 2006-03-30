@@ -28,8 +28,8 @@ namespace Gecode {
 
   template <class T>
   forceinline
-  LDS<T>::LDS(T* s, unsigned int d)
-    : Search::LDS(s,d,sizeof(T)) {}
+  LDS<T>::LDS(T* s, unsigned int d, Search::Stop* st)
+    : Search::LDS(s,d,st,sizeof(T)) {}
 
 
   template <class T>
@@ -47,8 +47,8 @@ namespace Gecode {
 
   template <class T>
   T*
-  lds(T* s, unsigned int d) {
-    LDS<T> lds(s,d);
+  lds(T* s, unsigned int d, Search::Stop* st) {
+    LDS<T> lds(s,d,st);
     return static_cast<T*>(lds.next());
   }
 

@@ -32,8 +32,8 @@ namespace Gecode {
   
   template <class T>
   forceinline
-  BAB<T>::BAB(T* s, unsigned int c_d, unsigned int a_d)
-    : Search::BAB(s,c_d,a_d,sizeof(T)) {}
+  BAB<T>::BAB(T* s, unsigned int c_d, unsigned int a_d, Search::Stop* st)
+    : Search::BAB(s,c_d,a_d,st,sizeof(T)) {}
 
   template <class T>
   forceinline T*
@@ -54,8 +54,8 @@ namespace Gecode {
 
   template <class T>
   T*
-  bab(T* s, unsigned int c_d, unsigned int a_d) {
-    BAB<T> b(s,c_d,a_d);
+  bab(T* s, unsigned int c_d, unsigned int a_d, Search::Stop* st) {
+    BAB<T> b(s,c_d,a_d,st);
     T* l = NULL;
     while (T* n = b.next()) {
       delete l; l = n;

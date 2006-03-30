@@ -3,11 +3,11 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2004
+ *     Christian Schulte, 2006
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2005-08-10 20:28:01 +0200 (Wed, 10 Aug 2005) $ by $Author: schulte $
+ *     $Revision: 2202 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -20,10 +20,6 @@
  */
 
 namespace Gecode { namespace Search {
-
-  forceinline
-  Statistics::Statistics(void)
-    : propagate(0), fail(0), clone(0), commit(0), memory(0) {}
 
 }}
 
