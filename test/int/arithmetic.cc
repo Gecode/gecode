@@ -25,20 +25,22 @@
 #include <cmath>
 #include <algorithm>
 
-static const int s1r[7] = {
-  Limits::Int::int_min, Limits::Int::int_min+1, 
-  -1,0,1,
-  Limits::Int::int_max-1, Limits::Int::int_max
-}; 
-static const int s2r[9] = {
-  static_cast<int>(-sqrt(static_cast<double>(-Limits::Int::int_min))),
-  -4,-2,-1,0,1,2,4,
-  static_cast<int>(sqrt(static_cast<double>(Limits::Int::int_max)))
-}; 
-static IntSet s1(s1r,7);
-static IntSet s2(s2r,9);
-static IntSet s3(-8,8);
-static IntSet s4(-3,3);
+namespace {
+  const int s1r[7] = {
+    Limits::Int::int_min, Limits::Int::int_min+1, 
+    -1,0,1,
+    Limits::Int::int_max-1, Limits::Int::int_max
+  }; 
+  const int s2r[9] = {
+    static_cast<int>(-sqrt(static_cast<double>(-Limits::Int::int_min))),
+    -4,-2,-1,0,1,2,4,
+    static_cast<int>(sqrt(static_cast<double>(Limits::Int::int_max)))
+  }; 
+  IntSet s1(s1r,7);
+  IntSet s2(s2r,9);
+  IntSet s3(-8,8);
+  IntSet s4(-3,3);
+}
 
 class Mult : public IntTest {
 public:
@@ -56,9 +58,11 @@ public:
     mult(home, x[0], x[1], x[2]);
   }
 };
-static Mult _multmax("Arithmetic::Mult::A",s1);
-static Mult _multmed("Arithmetic::Mult::B",s2);
-static Mult _multmin("Arithmetic::Mult::C",s3);
+namespace {
+  Mult _multmax("Arithmetic::Mult::A",s1);
+  Mult _multmed("Arithmetic::Mult::B",s2);
+  Mult _multmin("Arithmetic::Mult::C",s3);
+}
 
 class Square : public IntTest {
 public:
@@ -73,9 +77,11 @@ public:
     mult(home, x[0], x[0], x[1]);
   }
 };
-static Square _squaremax("Arithmetic::Square::A",s1);
-static Square _squaremed("Arithmetic::Square::B",s2);
-static Square _squaremin("Arithmetic::Square::C",s3);
+namespace {
+  Square _squaremax("Arithmetic::Square::A",s1);
+  Square _squaremed("Arithmetic::Square::B",s2);
+  Square _squaremin("Arithmetic::Square::C",s3);
+}
 
 class Abs : public IntTest {
 public:
@@ -92,12 +98,14 @@ public:
     abs(home, x[0], x[1], icl);
   }
 };
-static Abs _absbndmax("Arithmetic::Abs::Bnd::A",ICL_BND,s1);
-static Abs _absbndmed("Arithmetic::Abs::Bnd::B",ICL_BND,s2);
-static Abs _absbndmin("Arithmetic::Abs::Bnd::C",ICL_BND,s3);
-static Abs _absdommax("Arithmetic::Abs::Dom::A",ICL_DOM,s1);
-static Abs _absdommed("Arithmetic::Abs::Dom::B",ICL_DOM,s2);
-static Abs _absdommin("Arithmetic::Abs::Dom::C",ICL_DOM,s3);
+namespace {
+  Abs _absbndmax("Arithmetic::Abs::Bnd::A",ICL_BND,s1);
+  Abs _absbndmed("Arithmetic::Abs::Bnd::B",ICL_BND,s2);
+  Abs _absbndmin("Arithmetic::Abs::Bnd::C",ICL_BND,s3);
+  Abs _absdommax("Arithmetic::Abs::Dom::A",ICL_DOM,s1);
+  Abs _absdommed("Arithmetic::Abs::Dom::B",ICL_DOM,s2);
+  Abs _absdommin("Arithmetic::Abs::Dom::C",ICL_DOM,s3);
+}
 
 class Min : public IntTest {
 public:
@@ -110,9 +118,11 @@ public:
     min(home, x[0], x[1], x[2]);
   }
 };
-static Min _minmax("Arithmetic::Min::Bin::A",s1);
-static Min _minmed("Arithmetic::Min::Bin::B",s2);
-static Min _minmin("Arithmetic::Min::Bin::C",s3);
+namespace {
+  Min _minmax("Arithmetic::Min::Bin::A",s1);
+  Min _minmed("Arithmetic::Min::Bin::B",s2);
+  Min _minmin("Arithmetic::Min::Bin::C",s3);
+}
 
 class Max : public IntTest {
 public:
@@ -125,9 +135,11 @@ public:
     max(home, x[0], x[1], x[2]);
   }
 };
-static Max _maxmax("Arithmetic::Max::Bin::A",s1);
-static Max _maxmed("Arithmetic::Max::Bin::B",s2);
-static Max _maxmin("Arithmetic::Max::Bin::C",s3);
+namespace {
+  Max _maxmax("Arithmetic::Max::Bin::A",s1);
+  Max _maxmed("Arithmetic::Max::Bin::B",s2);
+  Max _maxmin("Arithmetic::Max::Bin::C",s3);
+}
 
 class MinNary : public IntTest {
 public:
@@ -146,7 +158,9 @@ public:
     min(home, m, x[3]);
   }
 };
-static MinNary _minnary("Arithmetic::Min::Nary",s4);
+namespace {
+  MinNary _minnary("Arithmetic::Min::Nary",s4);
+}
 
 class MaxNary : public IntTest {
 public:
@@ -165,6 +179,8 @@ public:
     max(home, m, x[3]);
   }
 };
-static MaxNary _maxnary("Arithmetic::Max::Nary",s4);
+namespace {
+  MaxNary _maxnary("Arithmetic::Max::Nary",s4);
+}
 
 // STATISTICS: test-int

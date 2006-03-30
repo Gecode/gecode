@@ -1,9 +1,11 @@
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
  *  Copyright:
  *     Christian Schulte, 2005
+ *     Mikael Lagerkvist, 2006
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -50,6 +52,28 @@ public:
   }
   virtual ~Assignment(void) {
     delete [] dsv;
+  }
+};
+
+class RandomAssignment : public Assignment {
+protected:
+  int *vals;
+  int count;
+  int left;
+  virtual int randval(void);
+public:
+  RandomAssignment(int, const IntSet&, int);
+  virtual void reset(void);
+  virtual bool operator()(void) const {
+    return left > 0;
+  }
+  virtual int  operator[](int i) const {
+    assert((i>=0) && (i<n));
+    return vals[i];
+  }
+  virtual void operator++(void);
+  virtual ~RandomAssignment(void) {
+    delete [] vals;
   }
 };
 

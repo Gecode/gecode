@@ -53,6 +53,42 @@ Assignment::operator++(void) {
   }
 }
 
+RandomAssignment::RandomAssignment(int n0, const IntSet& d0, int count0)
+  : Assignment(n0, d0), vals(new int[n0]),
+    count(count0), left(count0) {
+  reset();
+}
+
+void 
+RandomAssignment::reset(void) {
+  left = count;
+  for (int i=n; i--; )
+    vals[i] = randval();
+}
+
+void 
+RandomAssignment::operator++(void) {
+  for (int i = n; i--; ) 
+    vals[i] = randval();
+  --left;
+}
+
+int 
+RandomAssignment::randval(void) {
+  int v;
+  IntSetRanges it(d);
+  unsigned int skip = random(d.size());
+  while (true) {
+    if (it.width() > skip) {
+      v = it.min() + skip;
+      break;
+    }
+    skip -= it.width();
+    ++it;
+  }
+  return v;
+}
+
 std::ostream&
 operator<<(std::ostream& os, const Assignment& a) {
   int n = a.size();
@@ -116,21 +152,23 @@ public:
     while (x[i].assigned()) {
       i = (i+1) % x.size();
     }
-    // Prune value
-    int v;
-    Int::ViewRanges<Int::IntView> it(x[i]);
-    unsigned int skip = random(x[i].size()-1);
-    while (true) {
-      if (it.width() > skip) {
-	v = it.min() + skip;
-	break;
+    // Prune values
+    for (int vals = random(x[i].size()-1)+1; vals--; ) {
+      int v;
+      Int::ViewRanges<Int::IntView> it(x[i]);
+      unsigned int skip = random(x[i].size()-1);
+      while (true) {
+	if (it.width() > skip) {
+	  v = it.min() + skip;
+	  break;
+	}
+	skip -= it.width();
+	++it;
       }
-      skip -= it.width();
-      ++it;
+      Log::prune(x[i], Log::mk_name("x", i), IRT_NQ, v);
+      rel(this, x[i], IRT_NQ, v);
+      Log::prune_result(x[i]);
     }
-    Log::prune(x[i], Log::mk_name("x", i), IRT_NQ, v);
-    rel(this, x[i], IRT_NQ, v);
-    Log::prune_result(x[i]);
   }
 
   static BoolVar unused;

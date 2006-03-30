@@ -35,8 +35,8 @@ namespace {
   int x = 1;
 
   void seed(unsigned int val) {
-    if(val) x = val % m;
-    else    val = 1;
+    x = val % m;
+    if (x == 0) x = 1;
   }
   
   unsigned int randimp() {
