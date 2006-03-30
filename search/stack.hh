@@ -23,10 +23,50 @@
 #define __GECODE_SEARCH_RECO_STACK_HH__
 
 #include "search.hh"
-#include "search/node.hh"
 #include "support/dynamic-stack.hh"
 
 namespace Gecode { namespace Search {
+
+  /**
+   * \brief %Search tree node for copying
+   *
+   */
+  class CopyNode {
+  protected:
+    Space*       _space;
+    unsigned int _alt;
+    unsigned int _last;
+  public:
+    CopyNode(Space*, unsigned int);
+    CopyNode(Space*, Space*, unsigned int);
+
+    Space* space(void) const; void space(Space*);
+    unsigned int alt(void) const; void alt(unsigned int);
+
+    bool rightmost(void) const;
+    void next(void);
+
+    void dispose(void);
+	
+	  unsigned int share(void);
+  };
+
+
+  /**
+   * \brief %Search tree node for recomputation
+   *
+   */
+  class Node : public CopyNode {
+  protected:
+    BranchingDesc* _desc;
+  public:
+    Node(Space*, Space*, unsigned int);
+
+    BranchingDesc* desc(void) const; void desc(BranchingDesc*);
+
+    void dispose(void);
+  };
+
 
   /**
    * \brief Stack of nodes supporting recomputation

@@ -30,26 +30,26 @@ namespace Gecode { namespace Search {
    */
 
   forceinline
-  ProbeEngine::Node::Node(Space* s, unsigned int a)
+  ProbeEngine::ProbeNode::ProbeNode(Space* s, unsigned int a)
     : _space(s), _alt(a) {}
 
   forceinline Space*
-  ProbeEngine::Node::space(void) const {
+  ProbeEngine::ProbeNode::space(void) const {
     return _space;
   }
 
   forceinline void
-  ProbeEngine::Node::space(Space* s) {
+  ProbeEngine::ProbeNode::space(Space* s) {
     _space = s;
   }
 
   forceinline unsigned int
-  ProbeEngine::Node::alt(void) const {
+  ProbeEngine::ProbeNode::alt(void) const {
     return _alt;
   }
 
   forceinline void
-  ProbeEngine::Node::alt(unsigned int a) {
+  ProbeEngine::ProbeNode::alt(unsigned int a) {
     _alt = a;
   }
 
@@ -141,7 +141,7 @@ namespace Gecode { namespace Search {
 	    unsigned int d_a = (d >= alt-1) ? alt-1 : d;
 	    Space* cc = cur->clone();
 	    FullStatistics::push(cc);
-	    Node sn(cc,d_a-1);
+	    ProbeNode sn(cc,d_a-1);
 	    clone++;
 	    ds.push(sn);
 	    cur->commit(d_a,NULL,propagate);

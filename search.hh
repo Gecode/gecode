@@ -215,7 +215,7 @@ namespace Gecode {
     class ProbeEngine : public FullStatistics {
     protected:
       /// %Node in the search tree for %LDS
-      class Node {
+      class ProbeNode {
       private:
 	/// %Space of current node
 	Space*       _space;
@@ -223,7 +223,7 @@ namespace Gecode {
 	unsigned int _alt;
       public:
 	/// Initialize with node \a s and next alternative \a a
-	Node(Space* s, unsigned int a);
+	ProbeNode(Space* s, unsigned int a);
 	/// Return space
 	Space* space(void) const; 
 	/// Set space to \a s
@@ -234,7 +234,7 @@ namespace Gecode {
 	void alt(unsigned int a);
       };
       /// %Stack storing current path in search tree
-      Support::DynamicStack<Node> ds;
+      Support::DynamicStack<ProbeNode> ds;
       /// Current space
       Space* cur;
       /// Current discrepancy

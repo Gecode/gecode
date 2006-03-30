@@ -21,6 +21,84 @@
 
 namespace Gecode { namespace Search {
 
+  /*
+   * Depth-first node
+   *
+   */
+
+  forceinline
+  CopyNode::CopyNode(Space*, Space* c, unsigned int alt)
+    : _space(c), _alt(0), _last(alt-1) {}
+
+  forceinline
+  CopyNode::CopyNode(Space* s, unsigned int alt)
+    : _space(s->clone()), _alt(1), _last(alt-1) {}
+
+  forceinline Space*
+  CopyNode::space(void) const {
+    return _space;
+  }
+  forceinline void
+  CopyNode::space(Space* s) {
+    _space = s;
+  }
+
+  forceinline unsigned int
+  CopyNode::alt(void) const {
+    return _alt;
+  }
+  forceinline void
+  CopyNode::alt(unsigned int a) {
+    _alt = a;
+  }
+
+  forceinline bool
+  CopyNode::rightmost(void) const {
+    return _alt == _last;
+  }
+  forceinline void
+  CopyNode::next(void) {
+    _alt++;
+  }
+
+  forceinline void
+  CopyNode::dispose(void) {
+    delete space();
+  }
+
+
+  forceinline
+  Node::Node(Space* s, Space* c, unsigned int alt)
+    : CopyNode(s,c,alt), _desc(s->description()) {}
+
+  forceinline BranchingDesc*
+  Node::desc(void) const {
+    return _desc;
+  }
+  forceinline void
+  Node::desc(BranchingDesc* d) {
+    _desc = d;
+  }
+
+  forceinline void
+  Node::dispose(void) {
+    delete space();
+    delete desc();
+  }
+
+  forceinline unsigned int
+  CopyNode::share(void) {
+    unsigned int t = _last;
+    _last--;
+    return t;
+  }
+
+
+  /*
+   * Depth-first stack
+   *
+   */
+
   forceinline
   NodeStack::NodeStack(unsigned int a_d0) : a_d(a_d0) {}
 

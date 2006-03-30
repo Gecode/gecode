@@ -122,8 +122,8 @@ SEARCHSRC0 = \
 SEARCHHDR0 = \
 	bab-reco.hh bab-reco.icc \
 	bab.icc dfs-reco.hh \
-	dfs-reco.icc dfs.icc lds.icc node.hh \
-	node.icc plain.icc restart.icc stack.hh \
+	dfs-reco.icc dfs.icc lds.icc \
+	plain.icc restart.icc stack.hh \
 	stack.icc statistics.icc
 
 SEARCHSRC	= $(SEARCHSRC0:%=search/%)
