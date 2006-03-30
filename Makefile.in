@@ -119,8 +119,7 @@ EXTRA_HEADERS   = vti.icc config.icc
 SEARCHSRC0 = \
 	reco-stack.cc dfs.cc lds.cc bab.cc
 SEARCHHDR0 = \
-	bab.icc dfs.icc lds.icc \
-	restart.icc \
+	bab.icc dfs.icc lds.icc restart.icc \
 	reco-stack.icc statistics.icc
 
 SEARCHSRC	= $(SEARCHSRC0:%=search/%)
