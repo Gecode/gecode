@@ -19,7 +19,6 @@
  *
  */
 
-#include "search/dfs-copy.hh"
 #include "search/dfs-reco.hh"
 
 namespace Gecode { namespace Search {
@@ -33,11 +32,7 @@ namespace Gecode { namespace Search {
     unsigned int alt;
     unsigned long int p = 0;
     Space* c = (s->status(alt,p) == SS_FAILED) ? NULL : s->clone();
-    if (c_d == 1) {
-      e = new DfsCopyEngine(c,sz);
-    } else {
-      e = new DfsReCoEngine(c,c_d,a_d,sz);
-    }
+    e = new DfsReCoEngine(c,c_d,a_d,sz);
     e->propagate += p;
     e->current(s);
     e->current(NULL);

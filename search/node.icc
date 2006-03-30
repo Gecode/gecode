@@ -68,20 +68,20 @@ namespace Gecode { namespace Search {
 
 
   forceinline
-  ReCoNode::ReCoNode(Space* s, Space* c, unsigned int alt)
+  Node::Node(Space* s, Space* c, unsigned int alt)
     : CopyNode(s,c,alt), _desc(s->description()) {}
 
   forceinline BranchingDesc*
-  ReCoNode::desc(void) const {
+  Node::desc(void) const {
     return _desc;
   }
   forceinline void
-  ReCoNode::desc(BranchingDesc* d) {
+  Node::desc(BranchingDesc* d) {
     _desc = d;
   }
 
   forceinline void
-  ReCoNode::dispose(void) {
+  Node::dispose(void) {
     delete space();
     delete desc();
   }

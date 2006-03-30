@@ -60,11 +60,11 @@ namespace Gecode { namespace Search {
    * \brief %Search tree node for recomputation
    *
    */
-  class ReCoNode : public CopyNode {
+  class Node : public CopyNode {
   protected:
     BranchingDesc* _desc;
   public:
-    ReCoNode(Space*, Space*, unsigned int);
+    Node(Space*, Space*, unsigned int);
 
     BranchingDesc* desc(void) const; void desc(BranchingDesc*);
 

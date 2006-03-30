@@ -117,11 +117,11 @@ EXTRA_HEADERS   = vti.icc config.icc
 #
 
 SEARCHSRC0 = \
-	stack.cc dfs-copy.cc dfs-reco.cc dfs.cc \
-	lds.cc bab-copy.cc bab-reco.cc bab.cc
+	stack.cc dfs-reco.cc dfs.cc \
+	lds.cc bab-reco.cc bab.cc
 SEARCHHDR0 = \
-	bab-copy.hh bab-copy.icc bab-reco.hh bab-reco.icc \
-	bab.icc dfs-copy.hh dfs-copy.icc dfs-reco.hh \
+	bab-reco.hh bab-reco.icc \
+	bab.icc dfs-reco.hh \
 	dfs-reco.icc dfs.icc lds.icc node.hh \
 	node.icc plain.icc restart.icc stack.hh \
 	stack.icc statistics.icc

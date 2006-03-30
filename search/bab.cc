@@ -19,7 +19,6 @@
  *
  */
 
-#include "search/bab-copy.hh"
 #include "search/bab-reco.hh"
 
 namespace Gecode { namespace Search {
@@ -28,11 +27,7 @@ namespace Gecode { namespace Search {
     unsigned int alt;
     unsigned long int p = 0;
     Space* c = (s->status(alt,p) == SS_FAILED) ? NULL : s->clone();
-    if (c_d == 1) {
-      e = new BabCopyEngine(c,sz);
-    } else {
-      e = new BabReCoEngine(c,c_d,a_d,sz);
-    }
+    e = new BabReCoEngine(c,c_d,a_d,sz);
     e->propagate += p;
     e->current(s);
     e->current(NULL);

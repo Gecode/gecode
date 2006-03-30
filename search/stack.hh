@@ -29,31 +29,7 @@
 namespace Gecode { namespace Search {
 
   /**
-   * \brief Stack of nodes in search tree base-class
-   *
-   */
-  template <class Node>
-  class BaseStack : public Support::DynamicStack<Node> {
-  public:
-    void reset(void);
-  };
-
-  /**
-   * \brief Stack of nodes for copying
-   *
-   * Maintains the invariant that it contains
-   * the path to the next node to be explored.
-   *
-   */
-  class CopyStack : public BaseStack<CopyNode> {
-  public:
-    CopyStack(void);
-    void push(Space*, unsigned int);
-  };
-
-
-  /**
-   * \brief Stack of nodes for recomputation
+   * \brief Stack of nodes supporting recomputation
    *
    * Maintains the invariant that it contains
    * the path of the node being currently explored. This
@@ -65,15 +41,26 @@ namespace Gecode { namespace Search {
    * clone is created.
    *
    */
-  class ReCoStack : public BaseStack<ReCoNode> {
+  class NodeStack : public Support::DynamicStack<Node> {
   private:
+    /// Adaptive recomputation distance
     const unsigned int a_d;
   public:
-    ReCoStack(unsigned int);
+    /// Initialize with adaptive recomputation distance \a a_d
+    NodeStack(unsigned int a_d);
+    
+    /// Push space \a c (a clone of \a a or NULL) with alternatives \a a
+    BranchingDesc* push(Space* s, Space* c, unsigned int a);
 
-    BranchingDesc* push(Space*, Space*, unsigned int);
-    bool next(FullStatistics&);
-    Space* recompute(unsigned int&,FullStatistics&);
+    /// Generate path for next node and return whether a next node exists
+    bool next(FullStatistics& s);
+
+    /// Recompute space according to path with copying distance \a d
+    Space* recompute(unsigned int& d, 
+		     FullStatistics& s);
+
+    /// Reset stack
+    void reset(void);
   };
 
 }}

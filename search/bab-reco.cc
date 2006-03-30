@@ -19,8 +19,6 @@
  *
  */
 
-
-
 #include "search/bab-reco.hh"
 
 namespace Gecode { namespace Search {

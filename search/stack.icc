@@ -21,53 +21,18 @@
 
 namespace Gecode { namespace Search {
 
-  /*
-   * Base stack class
-   *
-   */
-
-  template <class Node>
-  void
-  BaseStack<Node>::reset(void) {
-    while (!this->empty())
-      this->pop().dispose();
-  }
-
-
-
-  /*
-   * Copying stack class
-   *
-   */
-
   forceinline
-  CopyStack::CopyStack(void) {}
-
-  forceinline void
-  CopyStack::push(Space* s, unsigned int alt) {
-    CopyNode sn(s,alt);
-    Support::DynamicStack<CopyNode>::push(sn);
-  }
-
-
-
-  /*
-   * Recomputation stack class
-   *
-   */
-
-  forceinline
-  ReCoStack::ReCoStack(unsigned int a_d0) : a_d(a_d0) {}
+  NodeStack::NodeStack(unsigned int a_d0) : a_d(a_d0) {}
 
   forceinline BranchingDesc*
-  ReCoStack::push(Space* s, Space* c, unsigned int alt) {
-    ReCoNode sn(s,c,alt);
-    Support::DynamicStack<ReCoNode>::push(sn);
+  NodeStack::push(Space* s, Space* c, unsigned int alt) {
+    Node sn(s,c,alt);
+    Support::DynamicStack<Node>::push(sn);
     return sn.desc();
   }
 
   forceinline bool
-  ReCoStack::next(FullStatistics& stat) {
+  NodeStack::next(FullStatistics& stat) {
     // Generate path for next node and return whether node exists.
     while (!empty()) {
       if (top().rightmost()) {
@@ -79,6 +44,12 @@ namespace Gecode { namespace Search {
       }
     }
     return false;
+  }
+
+  inline void
+  NodeStack::reset(void) {
+    while (!this->empty())
+      this->pop().dispose();
   }
 
 }}
