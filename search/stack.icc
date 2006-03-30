@@ -27,67 +27,54 @@ namespace Gecode { namespace Search {
    */
 
   forceinline
-  CopyNode::CopyNode(Space*, Space* c, unsigned int alt)
-    : _space(c), _alt(0), _last(alt-1) {}
+  ReCoNode::ReCoNode(Space* s, Space* c, unsigned int a)
+    : _space(c), _alt(0), _last(a-1), _desc(s->description()) {}
 
-  forceinline
-  CopyNode::CopyNode(Space* s, unsigned int alt)
-    : _space(s->clone()), _alt(1), _last(alt-1) {}
 
   forceinline Space*
-  CopyNode::space(void) const {
+  ReCoNode::space(void) const {
     return _space;
   }
   forceinline void
-  CopyNode::space(Space* s) {
+  ReCoNode::space(Space* s) {
     _space = s;
   }
 
   forceinline unsigned int
-  CopyNode::alt(void) const {
+  ReCoNode::alt(void) const {
     return _alt;
   }
   forceinline void
-  CopyNode::alt(unsigned int a) {
+  ReCoNode::alt(unsigned int a) {
     _alt = a;
   }
 
   forceinline bool
-  CopyNode::rightmost(void) const {
+  ReCoNode::rightmost(void) const {
     return _alt == _last;
   }
   forceinline void
-  CopyNode::next(void) {
+  ReCoNode::next(void) {
     _alt++;
   }
 
-  forceinline void
-  CopyNode::dispose(void) {
-    delete space();
-  }
-
-
-  forceinline
-  Node::Node(Space* s, Space* c, unsigned int alt)
-    : CopyNode(s,c,alt), _desc(s->description()) {}
-
   forceinline BranchingDesc*
-  Node::desc(void) const {
+  ReCoNode::desc(void) const {
     return _desc;
   }
   forceinline void
-  Node::desc(BranchingDesc* d) {
+  ReCoNode::desc(BranchingDesc* d) {
     _desc = d;
   }
 
   forceinline void
-  Node::dispose(void) {
+  ReCoNode::dispose(void) {
     delete space();
     delete desc();
   }
 
   forceinline unsigned int
-  CopyNode::share(void) {
+  ReCoNode::share(void) {
     unsigned int t = _last;
     _last--;
     return t;
@@ -100,17 +87,17 @@ namespace Gecode { namespace Search {
    */
 
   forceinline
-  NodeStack::NodeStack(unsigned int a_d0) : a_d(a_d0) {}
+  ReCoStack::ReCoStack(unsigned int a_d0) : a_d(a_d0) {}
 
   forceinline BranchingDesc*
-  NodeStack::push(Space* s, Space* c, unsigned int alt) {
-    Node sn(s,c,alt);
-    Support::DynamicStack<Node>::push(sn);
+  ReCoStack::push(Space* s, Space* c, unsigned int alt) {
+    ReCoNode sn(s,c,alt);
+    Support::DynamicStack<ReCoNode>::push(sn);
     return sn.desc();
   }
 
   forceinline bool
-  NodeStack::next(FullStatistics& stat) {
+  ReCoStack::next(FullStatistics& stat) {
     // Generate path for next node and return whether node exists.
     while (!empty()) {
       if (top().rightmost()) {
@@ -125,9 +112,9 @@ namespace Gecode { namespace Search {
   }
 
   inline void
-  NodeStack::reset(void) {
-    while (!this->empty())
-      this->pop().dispose();
+  ReCoStack::reset(void) {
+    while (!empty())
+      pop().dispose();
   }
 
 }}

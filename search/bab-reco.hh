@@ -33,7 +33,7 @@ namespace Gecode { namespace Search {
    */
   class BabReCoEngine : public BabEngine {
   private:
-    NodeStack          ds;
+    ReCoStack          ds;
     unsigned int       mark;
     Space*             cur;
     Space*             best;

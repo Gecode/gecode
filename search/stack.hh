@@ -28,42 +28,45 @@
 namespace Gecode { namespace Search {
 
   /**
-   * \brief %Search tree node for copying
-   *
-   */
-  class CopyNode {
-  protected:
-    Space*       _space;
-    unsigned int _alt;
-    unsigned int _last;
-  public:
-    CopyNode(Space*, unsigned int);
-    CopyNode(Space*, Space*, unsigned int);
-
-    Space* space(void) const; void space(Space*);
-    unsigned int alt(void) const; void alt(unsigned int);
-
-    bool rightmost(void) const;
-    void next(void);
-
-    void dispose(void);
-	
-	  unsigned int share(void);
-  };
-
-
-  /**
    * \brief %Search tree node for recomputation
    *
    */
-  class Node : public CopyNode {
+  class ReCoNode {
   protected:
+    /// Space corresponding to this node (might be NULL)
+    Space*         _space;
+    /// Current alternative 
+    unsigned int   _alt;
+    /// Last alternative
+    unsigned int   _last;
+    /// Braching description
     BranchingDesc* _desc;
   public:
-    Node(Space*, Space*, unsigned int);
+    /// Node for space \a s with clone \a c (possibly NULL) and alternatives \a alt
+    ReCoNode(Space* s, Space* c, unsigned int alt);
 
-    BranchingDesc* desc(void) const; void desc(BranchingDesc*);
+    /// Return space for node
+    Space* space(void) const; 
+    /// Return number for alternatives
+    unsigned int alt(void) const; 
+    /// Return branching description
+    BranchingDesc* desc(void) const; 
 
+    /// Set space to \a s
+    void space(Space* s);
+    /// Set number of alternatives to \a a
+    void alt(unsigned int a);
+    /// Set branching description to \a d
+    void desc(BranchingDesc* d);
+
+    /// Test whether current alternative is rightmost
+    bool rightmost(void) const;
+    /// Movre to next alternative
+    void next(void);
+    /// Return the rightmost alternative and remove it
+    unsigned int share(void);
+
+    /// Delete space for node
     void dispose(void);
   };
 
@@ -81,13 +84,13 @@ namespace Gecode { namespace Search {
    * clone is created.
    *
    */
-  class NodeStack : public Support::DynamicStack<Node> {
+  class ReCoStack : public Support::DynamicStack<ReCoNode> {
   private:
     /// Adaptive recomputation distance
     const unsigned int a_d;
   public:
     /// Initialize with adaptive recomputation distance \a a_d
-    NodeStack(unsigned int a_d);
+    ReCoStack(unsigned int a_d);
     
     /// Push space \a c (a clone of \a a or NULL) with alternatives \a a
     BranchingDesc* push(Space* s, Space* c, unsigned int a);

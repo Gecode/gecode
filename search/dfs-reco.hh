@@ -33,7 +33,7 @@ namespace Gecode { namespace Search {
    */
   class DfsReCoEngine : public PlainEngine {
   private:
-    NodeStack          ds;
+    ReCoStack          ds;
     Space*             cur;
     const unsigned int c_d;
     unsigned int       d;
