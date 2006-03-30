@@ -19,7 +19,7 @@
  *
  */
 
-#include "search/reco-stack.hh"
+#include "search.hh"
 
 namespace Gecode { namespace Search {
 

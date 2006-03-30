@@ -113,30 +113,110 @@ namespace Gecode {
       void reset(const Space* s);
     };
     
-    
     /**
-     * \brief Interface for depth-first search engines
+     * \brief %Search tree node for recomputation
+     *
      */
-    class PlainEngine : public FullStatistics {
+    class ReCoNode {
+    protected:
+      /// Space corresponding to this node (might be NULL)
+      Space*         _space;
+      /// Current alternative 
+      unsigned int   _alt;
+      /// Last alternative
+      unsigned int   _last;
+      /// Braching description
+      BranchingDesc* _desc;
     public:
-      /// Constructor
-      PlainEngine(size_t sz);
-      /// Destructor
-      GECODE_SEARCH_EXPORT
-      virtual ~PlainEngine(void);
-      /// Reset engine to restart a space \a s
-      virtual void reset(Space* s) = 0;
-      /// %Search for next solution
-      virtual Space* explore(void) = 0;
-      /// Return stack size used by engine
-      virtual size_t stacksize(void) const = 0;
-      /// Allocate memory from heap
-      static void* operator new(size_t);
-      /// Release memory to heap
-      static void  operator delete(void*,size_t);
+      /// Node for space \a s with clone \a c (possibly NULL) and alternatives \a alt
+      ReCoNode(Space* s, Space* c, unsigned int alt);
+      /// Return space for node
+      Space* space(void) const; 
+      /// Return number for alternatives
+      unsigned int alt(void) const; 
+      /// Return branching description
+      BranchingDesc* desc(void) const; 
+      /// Set space to \a s
+      void space(Space* s);
+      /// Set number of alternatives to \a a
+      void alt(unsigned int a);
+      /// Set branching description to \a d
+      void desc(BranchingDesc* d);
+      /// Test whether current alternative is rightmost
+      bool rightmost(void) const;
+      /// Movre to next alternative
+      void next(void);
+      /// Return the rightmost alternative and remove it
+      unsigned int share(void);
+      /// Free memory for node
+      void dispose(void);
     };
-    
-    
+
+
+    /**
+     * \brief Stack of nodes supporting recomputation
+     *
+     * Maintains the invariant that it contains
+     * the path of the node being currently explored. This
+     * is required to support recomputation, of course.
+     *
+     * The stack supports adaptive recomputation controlled
+     * by the value of a_d: only if the recomputation
+     * distance is at least this large, an additional
+     * clone is created.
+     *
+     */
+    class ReCoStack : public Support::DynamicStack<ReCoNode> {
+    private:
+      /// Adaptive recomputation distance
+      const unsigned int a_d;
+    public:
+      /// Initialize with adaptive recomputation distance \a a_d
+      ReCoStack(unsigned int a_d);
+      /// Push space \a c (a clone of \a a or NULL) with alternatives \a a
+      BranchingDesc* push(Space* s, Space* c, unsigned int a);
+      /// Generate path for next node and return whether a next node exists
+      bool next(FullStatistics& s);
+      /// Recompute space according to path with copying distance \a d
+      Space* recompute(unsigned int& d, 
+		       FullStatistics& s);
+      /// Reset stack
+      void reset(void);
+    };
+
+    /**
+     * \brief Depth-first search engine implementation
+     *
+     */
+    class DfsEngine : public FullStatistics {
+    private:
+      /// Recomputation stack of nodes
+      ReCoStack          ds;
+      /// Current space being explored
+      Space*             cur;
+      /// Copying recomputation distance
+      const unsigned int c_d;
+      /// Distance until next clone
+      unsigned int       d;
+    public:
+      /**
+       * \brief Initialize engine
+       * \param c_d minimal recomputation distance
+       * \param a_d adaptive recomputation distance
+       * \param sz size of one space
+       */
+      DfsEngine(unsigned int c_d, unsigned int a_d, size_t sz);
+      /// Initialize engine to start at space \a s
+      void init(Space* s);
+      /// Reset engine to restart at space \a s
+      void reset(Space* s);
+      /// %Search for next solution
+      Space* explore(void);
+      /// Return stack size used by engine
+      size_t stacksize(void) const;
+      /// Destructor
+      ~DfsEngine(void);
+    };
 
     /**
      * \brief Depth-first search engine
@@ -149,7 +229,7 @@ namespace Gecode {
     class GECODE_SEARCH_EXPORT DFS {
     protected:
       /// Engine used for exploration
-      PlainEngine* e;
+      DfsEngine e;
     public:
       /**
        * \brief Initialize search engine
@@ -159,12 +239,10 @@ namespace Gecode {
        * \param sz size of one space
        */
       DFS(Space* s, unsigned int c_d, unsigned int a_d, size_t sz);
-      /// Destructor
-      ~DFS(void);
-      /// Return statistics
-      Statistics statistics(void) const;
       /// Return next solution (NULL, if none exists)
       Space* next(void);
+      /// Return statistics
+      Statistics statistics(void) const;
     };
 
   }
@@ -474,9 +552,14 @@ namespace Gecode {
 }
 
 #include "search/statistics.icc"
-#include "search/plain.icc"
+
+#include "search/reco-stack.icc"
+
+#include "search/dfs-reco.icc"
 #include "search/dfs.icc"
+
 #include "search/lds.icc"
+
 #include "search/bab.icc"
 #include "search/restart.icc"
 

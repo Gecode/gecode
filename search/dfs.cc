@@ -19,7 +19,7 @@
  *
  */
 
-#include "search/dfs-reco.hh"
+#include "search.hh"
 
 namespace Gecode { namespace Search {
 
@@ -28,32 +28,29 @@ namespace Gecode { namespace Search {
    *
    */
 
-  DFS::DFS(Space* s, unsigned int c_d, unsigned int a_d, size_t sz) {
+  DFS::DFS(Space* s, unsigned int c_d, unsigned int a_d, size_t sz) 
+    : e(c_d,a_d,sz) {
     unsigned int alt;
     unsigned long int p = 0;
     Space* c = (s->status(alt,p) == SS_FAILED) ? NULL : s->clone();
-    e = new DfsReCoEngine(c,c_d,a_d,sz);
-    e->propagate += p;
-    e->current(s);
-    e->current(NULL);
-    e->current(c);
+    e.init(c);
+    e.propagate += p;
+    e.current(s);
+    e.current(NULL);
+    e.current(c);
     if (c == NULL)
-      e->fail += 1;
+      e.fail += 1;
   }
-
-  DFS::~DFS(void) {
-    delete e;
-  }
-
+  
   Space*
   DFS::next(void) {
-    return e->explore();
+    return e.explore();
   }
 
   Statistics
   DFS::statistics(void) const {
-    Statistics s = *e;
-    s.memory += e->stacksize();
+    Statistics s = e;
+    s.memory += e.stacksize();
     return s;
   }
 
