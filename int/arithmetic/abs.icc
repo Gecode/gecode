@@ -54,6 +54,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
+  PropCost
+  AbsBnd<View>::cost(void) const {
+    if (View::pme(this) == ME_INT_VAL)
+      return PC_UNARY_LO;
+    return PC_BINARY_LO;
+  }
+
+  template <class View>
   ExecStatus
   AbsBnd<View>::propagate(Space* home) {
     if (x0.assigned()) {

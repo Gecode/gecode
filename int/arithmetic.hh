@@ -55,6 +55,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
+    /**
+     * \brief Cost function
+     *
+     * If a view has been assigned, the cost is PC_UNARY_LO. 
+     * Otherwise it is PC_BINARY_LO.
+     */
+    virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home);
     /// Post propagator \f$ |x_0|=x_1\f$ 
