@@ -151,9 +151,6 @@ namespace Gecode { namespace Set {
     var = y.var->copy(home,share);
   }
 
-  forceinline bool
-  SetView::destruct(void) { return false; }
-
   /**
    * \brief %Range iterator for least upper bound of set variable views
    * \ingroup TaskActorSetView

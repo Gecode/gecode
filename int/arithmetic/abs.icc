@@ -133,41 +133,45 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   AbsDom<View>::propagate(Space* home) {
     if (x0.min() >= 0) {
-      GECODE_ES_CHECK(Rel::EqDom<View>::post(home,x0,x1));
+      GECODE_ES_CHECK((Rel::EqDom<View,View>::post(home,x0,x1)));
+      return ES_SUBSUMED;
+    } else if (x0.max() <= 0) {
+      MinusView mx0(x0);
+      GECODE_ES_CHECK((Rel::EqDom<MinusView,View>::post(home,mx0,x1)));
       return ES_SUBSUMED;
     }
 
-	Iter::Ranges::Singleton positive(0, Limits::Int::int_max);
-	Iter::Ranges::Singleton negative(Limits::Int::int_min, 0);
+    Iter::Ranges::Singleton positive(0, Limits::Int::int_max);
+    Iter::Ranges::Singleton negative(Limits::Int::int_min, 0);
 
-	IntVarRanges xr1(x0);
-	IntVarRanges xr2(x0);
-
-	Iter::Ranges::Inter<Iter::Ranges::Singleton,
-						IntVarRanges> posInter(positive, xr1);
-	Iter::Ranges::Inter<Iter::Ranges::Singleton,
-						IntVarRanges> negInter(negative, xr2);
-	Iter::Ranges::Minus<Iter::Ranges::Inter<Iter::Ranges::Singleton,
-											IntVarRanges> > mneg(negInter);
-	Iter::Ranges::Union<Iter::Ranges::Inter<Iter::Ranges::Singleton,
-											IntVarRanges>,
-						Iter::Ranges::Minus<Iter::Ranges::Inter<
-						  Iter::Ranges::Singleton,
-						  IntVarRanges> > >
-						u(posInter, mneg);
-
-	GECODE_ME_CHECK(x1.inter(home, u));
-
-	IntVarRanges x1r1(x1);
-	IntVarRanges x1r2(x1);
-
-	Iter::Ranges::Minus<IntVarRanges> x1m(x1r2);
-	Iter::Ranges::Union<IntVarRanges,
-						Iter::Ranges::Minus<IntVarRanges> > u2(x1r1,x1m);
-	GECODE_ME_CHECK(x0.inter(home, u2));
-
-	if (x1.assigned())
-		return ES_SUBSUMED;
+    IntVarRanges xr1(x0);
+    IntVarRanges xr2(x0);
+    
+    Iter::Ranges::Inter<Iter::Ranges::Singleton,
+      IntVarRanges> posInter(positive, xr1);
+    Iter::Ranges::Inter<Iter::Ranges::Singleton,
+      IntVarRanges> negInter(negative, xr2);
+    Iter::Ranges::Minus<Iter::Ranges::Inter<Iter::Ranges::Singleton,
+      IntVarRanges> > mneg(negInter);
+    Iter::Ranges::Union<Iter::Ranges::Inter<Iter::Ranges::Singleton,
+      IntVarRanges>,
+      Iter::Ranges::Minus<Iter::Ranges::Inter<
+      Iter::Ranges::Singleton,
+      IntVarRanges> > >
+      u(posInter, mneg);
+    
+    GECODE_ME_CHECK(x1.inter(home, u));
+    
+    IntVarRanges x1r1(x1);
+    IntVarRanges x1r2(x1);
+    
+    Iter::Ranges::Minus<IntVarRanges> x1m(x1r2);
+    Iter::Ranges::Union<IntVarRanges,
+      Iter::Ranges::Minus<IntVarRanges> > u2(x1r1,x1m);
+    GECODE_ME_CHECK(x0.inter(home, u2));
+    
+    if (x1.assigned())
+      return ES_SUBSUMED;
 
     return ES_FIX;
   }

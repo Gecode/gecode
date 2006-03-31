@@ -30,7 +30,7 @@ namespace Gecode { namespace Set { namespace Rel {
   forceinline
   ReEq<View0,View1>::ReEq(Space* home, View0 y0, View1 y1,
 			      Gecode::Int::BoolView y2)
-    : Propagator(home, View0::destruct() || View1::destruct()),
+    : Propagator(home, View0::needdestruction() || View1::needdestruction()),
       x0(y0), x1(y1), b(y2) {
 
     b.subscribe(home,this, Gecode::Int::PC_INT_VAL);

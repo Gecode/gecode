@@ -170,6 +170,75 @@ namespace Gecode {
     /// Destructor
     virtual ~NaryOnePropagator(void);
   };
+
+  /**
+   * \brief Inhomogeneous binary propagator
+   *
+   * Stores two views of type \a View0 and \a View1 with propagation
+   * conditions \a pc0 and \a pc1.
+   */
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  class InhomBinaryPropagator : public Propagator {
+  protected:
+    View0 x0;
+    View1 x1;
+    /// Constructor for cloning
+    InhomBinaryPropagator(Space* home,bool,InhomBinaryPropagator&);
+    /// Constructor for creation
+    InhomBinaryPropagator(Space* home,View0,View1,bool=false);
+  public:
+    /// Cost function (defined as PC_BINARY_LO)
+    virtual PropCost cost(void) const;
+    virtual ~InhomBinaryPropagator(void);
+  };
+
+  /**
+   * \brief Inhomogeneous ternary propagator
+   *
+   * Stores three views of type \a View0, \a View1, and \a View2
+   * with propagation conditions \a pc0, \a pc1, and \a pc2.
+   */
+  template <class View0, PropCond pc0, class View1, PropCond pc1,
+	    class View2, PropCond pc2>
+  class InhomTernaryPropagator : public Propagator {
+  protected:
+    View0 x0;
+    View1 x1;
+    View2 x2;
+    /// Constructor for cloning
+    InhomTernaryPropagator(Space* home,bool,InhomTernaryPropagator&);
+    /// Constructor for creation
+    InhomTernaryPropagator(Space* home,View0,View1,View2,bool=false);
+  public:
+    /// Cost function (defined as PC_TERNARY_LO)
+    virtual PropCost cost(void) const;
+    virtual ~InhomTernaryPropagator(void);
+  };
+
+  /**
+   * \brief Inhomogeneous (n+1)-ary propagator
+   *
+   * Stores array of views of type \a View0 with propagation condition \a pc0
+   * and a single view of type \a View1 with propagation condition \a pc1.
+   */
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  class InhomNaryOnePropagator : public Propagator {
+  protected:
+    /// Array of views
+    ViewArray<View0> x; 
+    /// Single view
+    View1 y;
+    /// Constructor for cloning \a p
+    InhomNaryOnePropagator(Space* home, bool share, InhomNaryOnePropagator& p);
+    /// Constructor for creation
+    InhomNaryOnePropagator(Space* home, ViewArray<View0>& x, View1 y,
+			   bool fd=false);
+  public:
+    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    virtual PropCost cost(void) const;
+    /// Destructor
+    virtual ~InhomNaryOnePropagator(void);
+  };
   //@}
 
 
@@ -204,7 +273,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   UnaryPropagator<View,pc>::UnaryPropagator
   (Space* home, View y0, bool fd)
-    : Propagator(home,fd), x0(y0) {
+    : Propagator(home,fd || View::needdestruction()), x0(y0) {
     x0.subscribe(home,this,pc);
   }
 
@@ -244,7 +313,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   BinaryPropagator<View,pc>::BinaryPropagator
   (Space* home, View y0, View y1, bool fd)
-    : Propagator(home,fd), x0(y0), x1(y1) {
+    : Propagator(home,fd || View::needdestruction()), x0(y0), x1(y1) {
     x0.subscribe(home,this,pc);
     x1.subscribe(home,this,pc);
   }
@@ -288,7 +357,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   TernaryPropagator<View,pc>::TernaryPropagator
   (Space* home, View y0, View y1, View y2, bool fd)
-    : Propagator(home,fd), x0(y0), x1(y1), x2(y2) {
+    : Propagator(home,fd || View::needdestruction()), x0(y0), x1(y1), x2(y2) {
     x0.subscribe(home,this,pc);
     x1.subscribe(home,this,pc);
     x2.subscribe(home,this,pc);
@@ -336,7 +405,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   NaryPropagator<View,pc>::NaryPropagator
   (Space* home, ViewArray<View>& y, bool fd)
-    : Propagator(home,fd), x(y) {
+    : Propagator(home,fd || View::needdestruction()), x(y) {
     x.subscribe(home,this,pc);
   }
 
@@ -376,7 +445,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   NaryOnePropagator<View,pc>::NaryOnePropagator
   (Space* home, ViewArray<View>& x0, View y0, bool fd)
-    : Propagator(home,fd), x(x0), y(y0) {
+    : Propagator(home,fd || View::needdestruction()), x(x0), y(y0) {
     x.subscribe(home,this,pc);
     y.subscribe(home,this,pc);
   }
@@ -409,6 +478,127 @@ namespace Gecode {
   NaryOnePropagator<View,pc>::~NaryOnePropagator(void) {
     x.cancel(this,pc);
     y.cancel(this,pc);
+  }
+
+
+  /*
+   * Inhomogeneous binary propagators
+   *
+   */
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  InhomBinaryPropagator<View0,pc0,View1,pc1>::InhomBinaryPropagator
+  (Space* home, View0 y0, View1 y1, bool fd)
+    : Propagator(home,
+		 fd || View0::needdestruction() || View1::needdestruction()),
+      x0(y0), x1(y1) {
+    x0.subscribe(home,this,pc0);
+    x1.subscribe(home,this,pc1);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  forceinline
+  InhomBinaryPropagator<View0,pc0,View1,pc1>::InhomBinaryPropagator
+  (Space* home, bool share, InhomBinaryPropagator<View0,pc0,View1,pc1>& p)
+    : Propagator(home,share,p) {
+    x0.update(home,share,p.x0);
+    x1.update(home,share,p.x1);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  PropCost
+  InhomBinaryPropagator<View0,pc0,View1,pc1>::cost(void) const {
+    return PC_BINARY_LO;
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  InhomBinaryPropagator<View0,pc0,View1,pc1>::~InhomBinaryPropagator(void) {
+    x0.cancel(this,pc0);
+    x1.cancel(this,pc1);
+  }
+
+
+  /*
+   * Inhomogeneous ternary propagators
+   *
+   */
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1,
+	    class View2, PropCond pc2>
+  InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
+  InhomTernaryPropagator(Space* home, View0 y0, View1 y1, View2 y2, bool fd)
+    : Propagator(home,
+		 fd || View0::needdestruction() || View1::needdestruction() || 
+		 View2::needdestruction()), x0(y0), x1(y1), x2(y2) {
+    x0.subscribe(home,this,pc0);
+    x1.subscribe(home,this,pc1);
+    x2.subscribe(home,this,pc2);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1,
+	    class View2, PropCond pc2>
+  forceinline
+  InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
+  InhomTernaryPropagator(Space* home, bool share,
+			 InhomTernaryPropagator<View0,pc0,View1,pc1,
+			 View2,pc2>& p)
+    : Propagator(home,share,p) {
+    x0.update(home,share,p.x0);
+    x1.update(home,share,p.x1);
+    x2.update(home,share,p.x2);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1,
+	    class View2, PropCond pc2>
+  PropCost
+  InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::cost(void) const {
+    return PC_BINARY_LO;
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1,
+	    class View2, PropCond pc2>
+  InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
+  ~InhomTernaryPropagator(void) {
+    x0.cancel(this,pc0);
+    x1.cancel(this,pc1);
+    x2.cancel(this,pc2);
+  }
+
+
+  /*
+   * InhomNaryOne (one additional variable) propagators
+   *
+   */
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  InhomNaryOnePropagator<View0,pc0,View1,pc1>::InhomNaryOnePropagator
+  (Space* home, ViewArray<View0>& x0, View1 y0, bool fd)
+    : Propagator(home,
+		 fd || View0::needdestruction() || View1::needdestruction()),
+      x(x0), y(y0) {
+    x.subscribe(home,this,pc0);
+    y.subscribe(home,this,pc1);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  forceinline
+  InhomNaryOnePropagator<View0,pc0,View1,pc1>::InhomNaryOnePropagator
+  (Space* home, bool share, InhomNaryOnePropagator<View0,pc0,View1,pc1>& p)
+    : Propagator(home,share,p) {
+    x.update(home,share,p.x);
+    y.update(home,share,p.y);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  PropCost
+  InhomNaryOnePropagator<View0,pc0,View1,pc1>::cost(void) const {
+    return cost_lo(x.size()+1, PC_LINEAR_LO);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  InhomNaryOnePropagator<View0,pc0,View1,pc1>::~InhomNaryOnePropagator(void) {
+    x.cancel(this,pc0);
+    y.cancel(this,pc1);
   }
 
 }

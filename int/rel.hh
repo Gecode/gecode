@@ -53,16 +53,17 @@ namespace Gecode { namespace Int { namespace Rel {
    * Requires \code #include "int/rel.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
-  class EqDom : public BinaryPropagator<View,PC_INT_DOM> {
+  template <class View0,class View1>
+  class EqDom : 
+    public InhomBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM> {
   protected:
-    using BinaryPropagator<View,PC_INT_DOM>::x0;
-    using BinaryPropagator<View,PC_INT_DOM>::x1;
+    using InhomBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM>::x0;
+    using InhomBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM>::x1;
 
     /// Constructor for cloning \a p
-    EqDom(Space* home, bool share, EqDom<View>& p);
+    EqDom(Space* home, bool share, EqDom<View0,View1>& p);
     /// Constructor for posting
-    EqDom(Space* home, View x0, View x1);
+    EqDom(Space* home, View0 x0, View1 x1);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
@@ -77,7 +78,7 @@ namespace Gecode { namespace Int { namespace Rel {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post domain-consistent propagator \f$ x_0 = x_1\f$
-    static  ExecStatus post(Space* home, View x0, View x1);
+    static  ExecStatus post(Space* home, View0 x0, View1 x1);
   };
 
   /**

@@ -254,7 +254,9 @@ namespace Gecode { namespace Set {
 
   template <class View>
   forceinline bool
-  ComplementView<View>::destruct(void) { return View::destruct(); }
+  ComplementView<View>::needdestruction(void) {
+    return View::needdestruction();
+  }
 
   /*
    * Specialization for double negation

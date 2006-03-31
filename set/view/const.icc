@@ -237,7 +237,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline bool
-  ConstantView::destruct(void) { return true; }
+  ConstantView::needdestruction(void) { return true; }
 
   forceinline
   EmptyView::EmptyView(void) {}
@@ -340,10 +340,6 @@ namespace Gecode { namespace Set {
 
   forceinline void
   EmptyView::update(Space* home, bool, EmptyView&) {}
-
-  forceinline bool
-  EmptyView::destruct(void) { return false; }
-
 
 
 
@@ -454,10 +450,6 @@ namespace Gecode { namespace Set {
 
   forceinline void
   UniverseView::update(Space* home, bool, UniverseView&) {}
-
-  forceinline bool
-  UniverseView::destruct(void) { return false; }
-
 
 
 

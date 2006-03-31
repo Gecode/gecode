@@ -59,7 +59,7 @@ namespace Gecode {
       if (icl == ICL_BND) {
 	GECODE_ES_FAIL(home,Rel::EqBnd<IntView>::post(home,x0,x1));
       } else {
-	GECODE_ES_FAIL(home,Rel::EqDom<IntView>::post(home,x0,x1));
+	GECODE_ES_FAIL(home,(Rel::EqDom<IntView,IntView>::post(home,x0,x1)));
       }
       break;
     case IRT_NQ:
@@ -184,7 +184,7 @@ namespace Gecode {
     if (icl == ICL_BND) {
       GECODE_ES_FAIL(home,Rel::EqBnd<IntView>::post(home,x0,x1));
     } else {
-      GECODE_ES_FAIL(home,Rel::EqDom<IntView>::post(home,x0,x1));
+      GECODE_ES_FAIL(home,(Rel::EqDom<IntView,IntView>::post(home,x0,x1)));
     }
   }
 

@@ -139,8 +139,6 @@ namespace Gecode {
       //@{
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, SetView& x);
-      /// Whether this view needs to be destructed
-      static bool destruct(void);
       //@}
     };
 
@@ -292,7 +290,7 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, ConstantView& x);
       /// Whether this view needs to be destructed
-      static bool destruct(void);
+      static bool needdestruction(void);
       //@}
     };
 
@@ -439,8 +437,6 @@ namespace Gecode {
       //@{
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, EmptyView& x);
-      /// Whether this view needs to be destructed
-      static bool destruct(void);
       //@}
     };
 
@@ -587,8 +583,6 @@ namespace Gecode {
       //@{
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, UniverseView& x);
-      /// Whether this view needs to be destructed
-      static bool destruct(void);
       //@}
     };
 
@@ -749,8 +743,6 @@ namespace Gecode {
       //@{
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, SingletonView& x);
-      /// Whether this view needs to be destructed
-      static bool destruct(void);
       //@}
     };
 
@@ -913,7 +905,7 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, ComplementView& x);
       /// Whether this view needs to be destructed
-      static bool destruct(void);
+      static bool needdestruction(void);
       //@}
     };
 

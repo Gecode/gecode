@@ -220,9 +220,6 @@ namespace Gecode {
       view.update(home,share,y.view);
     }
 
-    forceinline bool
-    SingletonView::destruct(void) { return false; }
-
     /*
      * Iterators
      *
