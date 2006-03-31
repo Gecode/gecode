@@ -276,6 +276,7 @@ namespace Gecode {
       /// Generate path for next node and return whether a next node exists
       bool next(EngineCtrl& s);
       /// Recompute space according to path with copying distance \a d
+      GECODE_SEARCH_EXPORT
       Space* recompute(unsigned int& d, 
 		       EngineCtrl& s);
       /// Reset stack
