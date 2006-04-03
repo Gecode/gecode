@@ -573,7 +573,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	if (xz[0][0].max() < y[0].min() || y[0].max() < xz[0][0].min()) {
 	  return ES_FAILED;
 	} else {
-	  Rel::EqBnd<View>::post(home, xz[0][0], y[0]);
+	  Rel::EqBnd<View,View>::post(home, xz[0][0], y[0]);
 
 	  // in this case xz[0] is the rightmost problem variable
 	  if (shared && xz[0][1].modified()) {
@@ -649,7 +649,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	if (xz[0][0].max() < y[0].min() || y[0].max() < xz[0][0].min()) {
 	  return ES_FAILED;
 	} else {
-	  Rel::EqBnd<View>::post(home, xz[0][0], y[0]);
+	  Rel::EqBnd<View,View>::post(home, xz[0][0], y[0]);
 	  return ES_SUBSUMED;
 	}
       }
@@ -700,7 +700,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
       if ((xz0[0][0].max() < y0[0].min()) || (y0[0].max() < xz0[0][0].min())) {
 	return ES_FAILED;
       } else {
-	Rel::EqBnd<View>::post(home, xz0[0][0], y0[0]);
+	Rel::EqBnd<View,View>::post(home, xz0[0][0], y0[0]);
 	if (Perm) {
 	  GECODE_ME_CHECK(xz0[0][1].eq(home, 0));
 	}

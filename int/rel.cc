@@ -57,7 +57,7 @@ namespace Gecode {
     switch (r) {
     case IRT_EQ:
       if (icl == ICL_BND) {
-	GECODE_ES_FAIL(home,Rel::EqBnd<IntView>::post(home,x0,x1));
+	GECODE_ES_FAIL(home,(Rel::EqBnd<IntView,IntView>::post(home,x0,x1)));
       } else {
 	GECODE_ES_FAIL(home,(Rel::EqDom<IntView,IntView>::post(home,x0,x1)));
       }
@@ -182,7 +182,7 @@ namespace Gecode {
   eq(Space* home, IntVar x0, IntVar x1, IntConLevel icl) {
     if (home->failed()) return;
     if (icl == ICL_BND) {
-      GECODE_ES_FAIL(home,Rel::EqBnd<IntView>::post(home,x0,x1));
+      GECODE_ES_FAIL(home,(Rel::EqBnd<IntView,IntView>::post(home,x0,x1)));
     } else {
       GECODE_ES_FAIL(home,(Rel::EqDom<IntView,IntView>::post(home,x0,x1)));
     }

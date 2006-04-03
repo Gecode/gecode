@@ -87,25 +87,26 @@ namespace Gecode { namespace Int { namespace Rel {
    * Requires \code #include "int/rel.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
-  class EqBnd : public BinaryPropagator<View,PC_INT_BND> {
+  template <class View0, class View1>
+  class EqBnd :
+    public InhomBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND> {
   protected:
-    using BinaryPropagator<View,PC_INT_BND>::x0;
-    using BinaryPropagator<View,PC_INT_BND>::x1;
+    using InhomBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND>::x0;
+    using InhomBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
-    EqBnd(Space* home, bool share, EqBnd<View>& p);
+    EqBnd(Space* home, bool share, EqBnd<View0,View1>& p);
     /// Constructor for posting
-    EqBnd(Space* home, View x0, View x1);
+    EqBnd(Space* home, View0 x0, View1 x1);
   public:
     /// Constructor for rewriting \a p during cloning
-    EqBnd(Space* home, bool share, Propagator& p, View x0, View x1);
+    EqBnd(Space* home, bool share, Propagator& p, View0 x0, View1 x1);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post bounds-consistent propagator \f$ x_0 = x_1\f$
-    static  ExecStatus post(Space* home, View x0, View x1);
+    static  ExecStatus post(Space* home, View0 x0, View1 x1);
   };
 
   /**

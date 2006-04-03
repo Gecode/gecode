@@ -35,7 +35,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   ExecStatus
   Max<View>::post(Space* home, View x0, View x1, View x2) {
     if (same(x0,x1))
-      return Rel::EqBnd<View>::post(home,x0,x2);
+      return Rel::EqBnd<View,View>::post(home,x0,x2);
     (void) new (home) Max<View>(home,x0,x1,x2);
     return ES_OK;
   }
@@ -77,11 +77,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       GECODE_CM(x1.lq(home,x2.max()));
     } while (mod);
     if (x0.max() <= x1.min()) {
-      GECODE_ES_CHECK(Rel::EqBnd<View>::post(home,x1,x2)); 
+      GECODE_ES_CHECK((Rel::EqBnd<View,View>::post(home,x1,x2)));
       return ES_SUBSUMED;
     }
     if (x1.max() <= x0.min()) {
-      GECODE_ES_CHECK(Rel::EqBnd<View>::post(home,x0,x2)); 
+      GECODE_ES_CHECK((Rel::EqBnd<View,View>::post(home,x0,x2)));
       return ES_SUBSUMED;
     }
     return x0.assigned() && x1.assigned() && x2.assigned() ? ES_SUBSUMED : ES_FIX;
@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     assert(x.size() > 0);
     x.unique();
     if (x.size() == 1)
-      return Rel::EqBnd<View>::post(home,x[0],y);
+      return Rel::EqBnd<View,View>::post(home,x[0],y);
     if (x.size() == 2)
       return Max<View>::post(home,x[0],x[1],y);
     (void) new (home) NaryMax<View>(home,x,y);
@@ -123,7 +123,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   Actor*
   NaryMax<View>::copy(Space* home, bool share) {
     if (x.size() == 1)
-      return new (home) Rel::EqBnd<View>(home,share,*this,x[0],y);
+      return new (home) Rel::EqBnd<View,View>(home,share,*this,x[0],y);
     if (x.size() == 2)
       return new (home) Max<View>(home,share,*this,x[0],x[1],y);
     return new (home) NaryMax<View>(home,share,*this);

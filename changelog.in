@@ -53,6 +53,21 @@ Date:		upcoming
 Next release.
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Staged propagation for domain-consistent absolute value propagator
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+EqBnd and EqDom now take two template parameters for their views types. This
+allows using different views, e.g. to express x0=-x1 using a MinusView.
+
+[ENTRY]
 Module: search
 What:   new
 Rank:   major
@@ -86,6 +101,7 @@ The status member function now also allows the first
 argument to be optional.
 
 [ENTRY]
+>>>>>>> .r3149
 Module: set
 What:   bug
 Rank:   minor

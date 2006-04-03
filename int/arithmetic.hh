@@ -53,6 +53,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /// Constructor for posting
     AbsBnd(Space* home, View x0, View x1);
   public:
+
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /**
@@ -64,9 +65,19 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home);
-    /// Post propagator \f$ |x_0|=x_1\f$ 
+    /// Post bounds-consistent propagator \f$ |x_0|=x_1\f$ 
     static  ExecStatus  post(Space* home, View x0, View x1);
   };
+
+  /**
+   * \brief Perform bounds-consistent absolute value propagation
+   *
+   * This is actually the propagation algorithm for AbsBnd.
+   * It is available as separate function as it is reused for
+   * domain-consistent distinct propagators.
+   */
+  template <class View>
+  ExecStatus prop_bnd(Space* home, ViewArray<View>&);
 
   /**
    * \brief Domain-consistent absolute value propagator
@@ -87,9 +98,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
+    /**
+     * \brief Cost function
+     *
+     * If a view has been assigned, the cost is PC_UNARY_LO. 
+     * If in stage for bounds propagation, the cost is
+     * PC_BINARY_LO. Otherwise it is PC_BINARY_HI.
+     */
+    virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home);
-    /// Post propagator \f$ |x_0|=x_1\f$ 
+    /// Post domain-consistent propagator \f$ |x_0|=x_1\f$ 
     static  ExecStatus  post(Space* home, View x0, View x1);
   };
 

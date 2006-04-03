@@ -186,6 +186,9 @@ namespace Gecode {
     InhomBinaryPropagator(Space* home,bool,InhomBinaryPropagator&);
     /// Constructor for creation
     InhomBinaryPropagator(Space* home,View0,View1,bool=false);
+    /// Constructor for rewriting \a p during cloning
+    InhomBinaryPropagator(Space* home, bool share, Propagator& p,
+			  View0 x0, View1 x1);
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
@@ -209,6 +212,9 @@ namespace Gecode {
     InhomTernaryPropagator(Space* home,bool,InhomTernaryPropagator&);
     /// Constructor for creation
     InhomTernaryPropagator(Space* home,View0,View1,View2,bool=false);
+    /// Constructor for rewriting \a p during cloning
+    InhomTernaryPropagator(Space* home, bool share, Propagator& p,
+			   View0 x0, View1 x1, View2 x2);
   public:
     /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(void) const;
@@ -233,6 +239,9 @@ namespace Gecode {
     /// Constructor for creation
     InhomNaryOnePropagator(Space* home, ViewArray<View0>& x, View1 y,
 			   bool fd=false);
+    /// Constructor for rewriting \a p during cloning
+    InhomNaryOnePropagator(Space* home, bool share, Propagator& p,
+			   ViewArray<View0>& x, View1 y);
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
@@ -506,6 +515,15 @@ namespace Gecode {
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
+  forceinline
+  InhomBinaryPropagator<View0,pc0,View1,pc1>::InhomBinaryPropagator
+  (Space* home, bool share, Propagator& p, View0 y0, View1 y1)
+    : Propagator(home,share,p) {
+    x0.update(home,share,y0);
+    x1.update(home,share,y1);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
   PropCost
   InhomBinaryPropagator<View0,pc0,View1,pc1>::cost(void) const {
     return PC_BINARY_LO;
@@ -550,6 +568,17 @@ namespace Gecode {
 
   template <class View0, PropCond pc0, class View1, PropCond pc1,
 	    class View2, PropCond pc2>
+  forceinline
+  InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::InhomTernaryPropagator
+  (Space* home, bool share, Propagator& p, View0 y0, View1 y1, View2 y2)
+    : Propagator(home,share,p) {
+    x0.update(home,share,y0);
+    x1.update(home,share,y1);
+    x2.update(home,share,y2);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1,
+	    class View2, PropCond pc2>
   PropCost
   InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::cost(void) const {
     return PC_BINARY_LO;
@@ -587,6 +616,15 @@ namespace Gecode {
     : Propagator(home,share,p) {
     x.update(home,share,p.x);
     y.update(home,share,p.y);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  forceinline
+  InhomNaryOnePropagator<View0,pc0,View1,pc1>::InhomNaryOnePropagator
+  (Space* home, bool share, Propagator& p, ViewArray<View0>& x0, View1 y0)
+    : Propagator(home,share,p) {
+    x.update(home,share,x0);
+    y.update(home,share,y0);
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
