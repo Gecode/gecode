@@ -19,32 +19,24 @@
  *
  */
 
+#include "search.hh"
+
 namespace Gecode { namespace Search {
 
   /*
    * Base class
    *
    */
-  forceinline
-  Stop::Stop(void) {}
+  Stop::~Stop(void) {}
 
 
   /*
    * Stopping for memory limit
    *
    */
-
-  forceinline
-  MemoryStop::MemoryStop(size_t l0) : l(l0) {}
-
-  forceinline size_t
-  MemoryStop::limit(void) const {
-    return l;
-  }
-
-  forceinline void
-  MemoryStop::limit(size_t l0) {
-    l=l0;
+  bool
+  MemoryStop::stop(const Statistics& s) {
+    return s.memory > l;
   }
 
   
@@ -52,18 +44,9 @@ namespace Gecode { namespace Search {
    * Stopping for memory limit
    *
    */
-
-  forceinline
-  FailStop::FailStop(unsigned long int l0) : l(l0) {}
-
-  forceinline unsigned long int
-  FailStop::limit(void) const {
-    return l;
-  }
-
-  forceinline void
-  FailStop::limit(unsigned long int l0) {
-    l=l0;
+  bool
+  FailStop::stop(const Statistics& s) {
+    return s.fail > l;
   }
 
   
@@ -71,24 +54,10 @@ namespace Gecode { namespace Search {
    * Stopping for memory limit
    *
    */
-
-  forceinline
-  TimeStop::TimeStop(unsigned long int l0) 
-    : s(clock()), l(l0) {}
-
-  forceinline unsigned long int
-  TimeStop::limit(void) const {
-    return l;
-  }
-
-  forceinline void
-  TimeStop::limit(unsigned long int l0) {
-    l=l0;
-  }
-
-  forceinline void
-  TimeStop::reset(void) {
-    s=clock();
+  bool
+  TimeStop::stop(const Statistics&) {
+    return static_cast<unsigned long int>
+      ((static_cast<double>(clock()-s)/CLOCKS_PER_SEC) * 1000.0) > l; 
   }
 
 }}

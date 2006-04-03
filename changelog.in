@@ -53,6 +53,23 @@ Date:		upcoming
 Next release.
 
 [ENTRY]
+Module: search
+What:   new
+Rank:   major
+Thanks:	Rafael Meneses
+[DESCRIPTION]
+Added functionality to interrupt search engines (introduced
+a Search::Stop class).
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   major
+[DESCRIPTION]
+Removed search engines optimizing for copying only (after
+all, one should always use some recomputation).
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
