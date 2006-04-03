@@ -53,6 +53,14 @@ Date:		upcoming
 Next release.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The status member function now also allows the first
+argument to be optional.
+
+[ENTRY]
 Module: set
 What:   bug
 Rank:   minor

@@ -23,7 +23,8 @@
 
 namespace Gecode {
 
-  unsigned long int Space::unused;
+  unsigned long int Space::unused_uli;
+  unsigned int Space::unused_ui;
 
   /*
    * Spaces

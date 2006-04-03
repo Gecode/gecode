@@ -101,9 +101,8 @@ operator<<(std::ostream& os, const Assignment& a) {
 #define FORCE_FIXFLUSH				\
 do {						\
   if (random(opt.fixprob) == 0) {		\
-    unsigned int alt;				\
     Log::fixpoint();				\
-    if (status(alt) == SS_FAILED) return;	\
+    if (status() == SS_FAILED) return;	        \
   }						\
   if (random(opt.flushprob) == 0) {		\
     flush();					\
@@ -129,9 +128,8 @@ public:
     return new IntTestSpace(share,*this);
   }
   bool is_failed(void) {
-    unsigned int alt;
     Log::fixpoint();
-    return status(alt) == SS_FAILED;
+    return status() == SS_FAILED;
   }
   void assign(const Assignment& a) {
     for (int i=a.size(); i--; ) {
@@ -220,16 +218,15 @@ public:
       Log::prune_result(x[i]);
     }
     if (random(opt.fixprob) == 0) {		
-      unsigned int alt;				
       Log::fixpoint();
-      if (status(alt) == SS_FAILED) 
+      if (status() == SS_FAILED) 
 	return true;
       IntTestSpace* c = static_cast<IntTestSpace*>(clone());
       Log::print(c->x, "x");
       if (!r) {
 	it.post(c,c->x);
 	Log::fixpoint();
-	if (c->status(alt) == SS_FAILED) {
+	if (c->status() == SS_FAILED) {
 	  Log::print(c->x, "x");
 	  delete c;
 	  return false;
@@ -246,7 +243,7 @@ public:
 	Log::initial(cb, "cb");
 	it.post(c,c->x,cb);
 	Log::fixpoint();
-	if (c->status(alt) == SS_FAILED) {
+	if (c->status() == SS_FAILED) {
 	  Log::print(c->x, "x");
 	  Log::print(cb, "cb");
 	  delete c;

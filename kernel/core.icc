@@ -619,8 +619,10 @@ namespace Gecode {
     /// Id of next branching to be created
     unsigned int    branch_id;
 
+    /// Used for default arguments 
+    GECODE_KERNEL_EXPORT static unsigned long int unused_uli;
     /// Used for default arguments
-    GECODE_KERNEL_EXPORT static unsigned long int unused;
+    GECODE_KERNEL_EXPORT static unsigned int unused_ui;
 
     /// Perform propagation, return number of propagation steps
     unsigned long int propagators(void);
@@ -709,8 +711,8 @@ namespace Gecode {
      * \ingroup TaskSearch
      */
     GECODE_KERNEL_EXPORT
-    SpaceStatus status(unsigned int& a,
-		       unsigned long int& pn =unused);
+    SpaceStatus status(unsigned int& a=unused_ui,
+		       unsigned long int& pn=unused_uli);
 
     /** 
      * \brief Clone space 
@@ -728,7 +730,7 @@ namespace Gecode {
      * \ingroup TaskSearch
      */
     GECODE_KERNEL_EXPORT
-    Space* clone(bool share=true, unsigned long int& pn =unused);
+    Space* clone(bool share=true, unsigned long int& pn=unused_uli);
 
     /** 
      * \brief Commit space to alternative
@@ -758,8 +760,8 @@ namespace Gecode {
      * \ingroup TaskSearch
      */
     GECODE_KERNEL_EXPORT
-    void commit(unsigned int a, BranchingDesc* d =NULL,
-		unsigned long int& pn =unused);
+    void commit(unsigned int a, BranchingDesc* d=NULL,
+		unsigned long int& pn=unused_uli);
     /** 
      * \brief Get branching description for current branching
      *
