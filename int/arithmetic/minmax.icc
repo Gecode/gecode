@@ -150,14 +150,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       ModEvent me = x[i].lq(home,maxmax);
       if (me == ME_INT_FAILED)
 	return ES_FAILED;
+      if (me_modified(me) && (x[i].max() != maxmax))
+	es = ES_NOFIX;
       if (x[i].max() < maxmin) {
 	x.move_lst(i,this,PC_INT_BND);
-      } else {
-	if (me_modified(me) && (x[i].max() != maxmax))
-	  es = ES_NOFIX;
-	if (!x[i].assigned())
-	  assigned = false;
-      }
+      } else if (!x[i].assigned())
+	assigned = false;
     }
     if (x.size() == 0)
       return ES_FAILED;

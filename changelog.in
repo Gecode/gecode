@@ -53,6 +53,14 @@ Date:		upcoming
 Next release.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed bug in fixpoint detection of nary maximum/minimum
+propagator.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor
