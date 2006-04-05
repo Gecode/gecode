@@ -1514,7 +1514,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	      v->template set_cap<UBC>(k[i].max() - (inc_ubc));
 	      v->set_maxlow(k[i].max() - (inc_lbc));
 	      if (v->kmin() == v->kmax()) {
-		v->set_cap<LBC>(k[i].max() - (inc_lbc));
+		v->template set_cap<LBC>(k[i].max() - (inc_lbc));
 	      }
 	    } else {
 	      // set cap to max and resolve conflicts on view side
@@ -1524,7 +1524,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	      }
 	      v->set_maxlow(k[i].max() - (inc_lbc));
 	      if (v->kmin() == v->kmax()) {
-		v->set_cap<LBC>(k[i].max() - (inc_lbc));
+		v->template set_cap<LBC>(k[i].max() - (inc_lbc));
 	      }
 	      v->card_conflict(rm);
 	    }
