@@ -245,8 +245,8 @@ namespace Gecode { namespace Set {
       nc=c->next(p);
       p=c; c=nc;
     }
-    return true;
 #endif
+    return true;
   }
 
 
