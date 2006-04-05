@@ -498,6 +498,46 @@ namespace Gecode {
 #include "minimodel/bool-rel.icc"
 
 namespace Gecode {
+
+  /**
+   * \defgroup TaskMiniModelArith Arithmetic functions
+   *
+   * \ingroup TaskMiniModel
+   */
+  //@{
+  /// Return variable constrained to \f$|x|\f$
+  GECODE_MINIMODEL_EXPORT IntVar 
+  abs(Space* home, const IntVar& x, IntConLevel icl=ICL_DEF);
+  /// Return variable constrained to \f$\min(x,y)\f$
+  GECODE_MINIMODEL_EXPORT IntVar 
+  min(Space* home, const IntVar& x, const IntVar& y, IntConLevel icl=ICL_DEF);
+  /// Return variable constrained to \f$\min(x)\f$
+  GECODE_MINIMODEL_EXPORT IntVar 
+  min(Space* home, const IntVarArgs& x, IntConLevel icl=ICL_DEF);
+  /// Return variable constrained to \f$\max(x,y)\f$
+  GECODE_MINIMODEL_EXPORT IntVar
+  max(Space* home, const IntVar& x, const IntVar& y, IntConLevel icl=ICL_DEF);
+  /// Return variable constrained to \f$\max(x)\f$
+  GECODE_MINIMODEL_EXPORT IntVar 
+  max(Space* home, const IntVarArgs& x, IntConLevel icl=ICL_DEF);
+  /// Return variable constrained to \f$x\cdot y\f$
+  GECODE_MINIMODEL_EXPORT IntVar
+  mult(Space* home, const IntVar& x, const IntVar& y, IntConLevel icl=ICL_DEF);
+  /// Return variable constrained to \f$x^2\f$
+  GECODE_MINIMODEL_EXPORT IntVar
+  sqr(Space* home, const IntVar& x, IntConLevel icl=ICL_DEF);
+  /// Return variable constrained to \f$x+y\f$
+  GECODE_MINIMODEL_EXPORT IntVar
+  plus(Space* home, const IntVar& x, const IntVar& y, IntConLevel icl=ICL_DEF);
+  /// Return variable constrained to \f$x-y\f$
+  GECODE_MINIMODEL_EXPORT IntVar
+  minus(Space* home, const IntVar& x, const IntVar& y, 
+	IntConLevel icl=ICL_DEF);
+  //@}
+  
+}
+
+namespace Gecode {
   
   /**
    * \defgroup TaskMiniModelScheduling Alternative interfaces to scheduling constraints
