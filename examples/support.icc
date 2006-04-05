@@ -47,8 +47,7 @@ Example::run(const Options& o) {
 	int i = o.solutions;
 	t.start();
 	Script* s = new Script(o);
-	Search::FailStop* fs = new Search::FailStop(100);
-	Engine<Script> e(s,o.c_d,o.a_d,fs);
+	Engine<Script> e(s,o.c_d,o.a_d);
 	delete s;
 	do {
 	  Example* ex = e.next();
@@ -57,14 +56,6 @@ Example::run(const Options& o) {
 	  ex->print();
 	  delete ex;
 	} while (--i != 0);
-	{
-	  std::cout << "AFTER" << std::endl;
-	  fs->limit(200);
-	  Example* ex = e.next();
-	  if (ex != NULL)
-	    ex->print();
-	  delete ex;
-	}
 	Search::Statistics stat = e.statistics();
 	cout << endl;
 	cout << "Summary" << endl
