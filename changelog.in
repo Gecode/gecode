@@ -53,6 +53,16 @@ Date:		upcoming
 Next release.
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+Bug:	36
+Thanks: Javier Mena
+[DESCRIPTION]
+A non-debug version of Gecode could not be linked to a program compiled with
+assertions switched on, as BndSet::isConsistent was missing from the library.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   minor

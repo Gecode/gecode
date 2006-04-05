@@ -189,9 +189,11 @@ namespace Gecode { namespace Set {
 
 #ifndef NDEBUG
   using namespace Gecode::Int;
+#endif
 
   bool
   BndSet::isConsistent(void) const {
+#ifndef NDEBUG
     if (fst()==NULL) {
       if (lst()!=NULL || size()!=0) {
         std::cout<<"Strange empty set.\n";
@@ -244,9 +246,9 @@ namespace Gecode { namespace Set {
       p=c; c=nc;
     }
     return true;
+#endif
   }
 
-#endif
 
 }}
 
