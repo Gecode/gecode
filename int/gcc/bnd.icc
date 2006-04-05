@@ -21,37 +21,55 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  template <class View, class Card, bool isView>
+  template <class View, class Card, bool isView, bool shared>
   inline ExecStatus
   prop_bnd(Space* home, ViewArray<View>& x, Card& k, 
 	   PartialSum<Card>* lps, PartialSum<Card>* ups, 
 	   bool card_fixed, bool card_all, bool nolbc){		
 
+    ExecStatus es = ES_NOFIX;
+
+    bool all_assigned = true;
+    bool mod          = false;
+    int  smin         = 0;
+    int  smax         = 0;
+
     if (isView) {
       // if a cardinality of first or last value is 
       // out of the variable bounds (cardvar == 0)
       // reduce cardinality variables
-      if (k[0].max() == 0) {
+
+      int m = k.size(); 
+      bool locut = k[0].max() == 0;
+      bool hicut = k[m - 1].max() == 0;
+      
+      if (locut) {
 	int low = k[0].card();
 	for (int i = 0; i < x.size(); i++) {
-	  GECODE_ME_CHECK(x[i].gr(home, low));
+	  ModEvent me = x[i].gr(home, low);
+	  GECODE_ME_CHECK(me);
+	  mod |= me_modified(me) && (x[i].min() != low + 1);   
+	  mod |= shared && me_modified(me);
 	}
       }
-      if (k[k.size() - 1].max() == 0) {
-	int hi = k[k.size() - 1].card();
+      if (hicut) {
+	int hi = k[m - 1].card();
 	for (int i = 0; i < x.size(); i++) {
-	  GECODE_ME_CHECK(x[i].le(home, hi));
+	  ModEvent me = x[i].le(home, hi);
+	  GECODE_ME_CHECK(me);
+	  mod |= me_modified(me) && (x[i].max() != hi - 1);   
+	  mod |= shared && me_modified(me);
 	}
       }
 
-      if (k[0].max() == 0 || k[k.size() - 1].max() == 0) {
+      if (locut || hicut) {
 	int cmin = k[0].card();
-	int cmax = k[k.size() - 1].card();
+	int cmax = k[m - 1].card();
 	if (k[0].max() == 0) {
 	  cmin = k[1].card();
 	}
-	if (k[k.size() - 1].max() == 0) {
-	  cmax = k[k.size() - 2].card();
+	if (k[m - 1].max() == 0) {
+	  cmax = k[m - 2].card();
 	}
 	reduce_card<Card>(cmin, cmax, k);
     
@@ -62,13 +80,6 @@ namespace Gecode { namespace Int { namespace GCC {
 	}
       }
     }
-
-    ExecStatus es = ES_NOFIX;
-
-    bool all_assigned = true;
-    bool mod          = false;
-    int  smin         = 0;
-    int  smax         = 0;
 
     GECODE_AUTOARRAY(int, count, k.size());
     for (int i = k.size(); i--; ) {
@@ -99,9 +110,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
 
-
     if (isView) {
-
       // before propagation performs inferences on cardinality variables:
       if (noa > 0) {      
 	int n  = x.size();
@@ -112,29 +121,24 @@ namespace Gecode { namespace Int { namespace GCC {
 	    int ub = n - (noa - count[i]);
 	    int lb = count[i];
 	    ModEvent melq = k[i].lq(home, ub);
-	    if (me_failed(melq)) {
-	      return ES_FAILED;
-	    }
-	    mod |= (k[i].modified() && k[i].max() != ub);
+	    GECODE_ME_CHECK(melq);
+	    mod |= me_modified(melq) && (k[i].max() != ub);
+	    mod |= shared && me_modified(melq);
 
 	    ModEvent megq = k[i].gq(home, lb);
-	    if (me_failed(megq)) {
-	      return ES_FAILED;
-	    }
-	    mod |= (k[i].modified() && k[i].min() != lb);
+	    GECODE_ME_CHECK(megq);
+	    mod |= me_modified(megq) && (k[i].min() != lb);
+	    mod |= shared && me_modified(megq);
 	  }
 	}
       }
 
-      es = card_consistent<View, Card>(smin, smax, x, k, card_all);
-      if (es == ES_FAILED) {
-	return es;
-      }
-      // can only modified cardinality variables
-      es = prop_card<View, Card>(home, x, k, mod);
-      if (es == ES_FAILED) {
+      if (!card_consistent<View, Card>(smin, smax, x, k, card_all)) {
 	return ES_FAILED;
       }
+
+      // can only modified cardinality variables
+      GECODE_ES_CHECK((prop_card<View, Card, shared>(home, x, k, mod)));
      
       // mimicking linear constraint
       int smax = 0;
@@ -155,17 +159,15 @@ namespace Gecode { namespace Int { namespace GCC {
 	int lb = xsmax + k[i].max(); 
 	int ub = xsmin + k[i].min();
 	ModEvent me = k[i].gq(home, lb);
-	if (me_failed(me)) {
-	  return ES_FAILED;
-	}
-	mod |= (k[i].modified() && k[i].min() != lb);
+	GECODE_ME_CHECK(me);
+	mod |= me_modified(me) && (k[i].min() != lb);
+	mod |= shared && me_modified(me);
 	smax += k[i].max();
 
 	me = k[i].lq(home, ub);
-	if (me_failed(me)) {
-	  return ES_FAILED;
-	}
-	mod |= (k[i].modified() && k[i].max() != ub);
+	GECODE_ME_CHECK(me);
+	mod |= me_modified(me) && (k[i].max() != ub);
+	mod |= shared && me_modified(me);
 	card_ass &= k[i].assigned();
       }
       if (card_ass) {
@@ -183,16 +185,14 @@ namespace Gecode { namespace Int { namespace GCC {
 	    int xlq  = total_max - xmax;
 
 	    ModEvent me = x[i].gq(home, xgq);
-	    mod |= (x[i].modified() && x[i].min() != xgq);
-	    if (me_failed(me)) {
-	      return ES_FAILED;
-	    }
+	    GECODE_ME_CHECK(me);
+	    mod |= me_modified(me) && (x[i].min() != xgq);
+	    mod |= shared && me_modified(me);
 
 	    me = x[i].lq(home, xlq);
-	    mod |= (x[i].modified() && x[i].max() != xlq);
-	    if (me_failed(me)) {
-	      return ES_FAILED;
-	    }
+	    GECODE_ME_CHECK(me);
+	    mod |= me_modified(me) && (x[i].max() != xlq);
+	    mod |= shared && me_modified(me);
 	  }
 	}
       }
@@ -234,52 +234,60 @@ namespace Gecode { namespace Int { namespace GCC {
 	  if (isView) {
 	    if (!k[i].assigned()) {
 	      ModEvent me = k[i].eq(home, ci);
-	      if (me_failed(me)) {
-		return ES_FAILED;
-	      }
+	      GECODE_ME_CHECK(me);
 	      mod |= k[i].assigned();
 	    }	      
 	    all_assigned &= k[i].assigned();
 	  }
 	}
       }
-
       if (all_assigned) {
 	return ES_SUBSUMED;
       } 
     }
-
     
     if (isView) {
       // check again for zero entries at first or last position
-      if (k[0].max() == 0) {
+      int m = k.size(); 
+      bool locut = k[0].max() == 0;
+      bool hicut = k[m - 1].max() == 0;
+
+      if (locut) {
 	int low = k[0].card();
 	for (int i = 0; i < x.size(); i++) {
-	  GECODE_ME_CHECK(x[i].gr(home, low));
+	  ModEvent me = x[i].gr(home, low);
+	  GECODE_ME_CHECK(me);
+	  mod |= me_modified(me) && (x[i].min() != low + 1);
+	  mod |= shared && me_modified(me);
 	}
       }
-      if (k[k.size() - 1].max() == 0) {
-	int hi = k[k.size() - 1].card();
+      if (hicut) {
+	int hi = k[m - 1].card();
 	for (int i = 0; i < x.size(); i++) {
-	  GECODE_ME_CHECK(x[i].le(home, hi));
+	  ModEvent me = x[i].le(home, hi);
+	  GECODE_ME_CHECK(me);
+	  mod |= me_modified(me) && (x[i].max() != hi - 1);
+	  mod |= shared && me_modified(me);
 	}
       }
 
-      if (k[0].max() == 0 || k[k.size() - 1].max() == 0) {
+      if (locut || hicut) {
 	int cmin = k[0].card();
-	int cmax = k[k.size() - 1].card();
+	int cmax = k[m - 1].card();
 	if (k[0].max() == 0) {
 	  cmin = k[1].card();
 	}
-	if (k[k.size() - 1].max() == 0) {
-	  cmax = k[k.size() - 2].card();
+	if (k[m - 1].max() == 0) {
+	  cmax = k[m - 2].card();
 	}
 	reduce_card<Card>(cmin, cmax, k);
     
 	if (lps != NULL) {
-	  delete lps; lps = NULL;
+	  delete lps; 
+	  lps = NULL;
 	  assert(ups != NULL);
-	  delete ups; ups = NULL;
+	  delete ups; 
+	  ups = NULL;
 	}
       }
     }
@@ -413,24 +421,21 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     if (!card_fixed && !nolbc) {
-      es_lbc = lbc<View, Card>(home, x, nb, hall, rank,lps, mu, nu);
+      es_lbc = lbc<View, Card, shared>(home, x, nb, hall, rank,lps, mu, nu);
       if (es_lbc == ES_FAILED || es_lbc == ES_SUBSUMED) {
 	return es_lbc;
       }
       mod |= (es_lbc == ES_NOFIX);
     }
 
-    es_ubc = ubc<View, Card>(home, x, nb, hall, rank, ups, mu, nu);
+    es_ubc = ubc<View, Card, shared>(home, x, nb, hall, rank, ups, mu, nu);
     if (es_ubc == ES_FAILED || es_ubc == ES_SUBSUMED) {
       return es_ubc;
     }
     mod |= (es_ubc == ES_NOFIX);
 
     if (isView) {
-      es = prop_card<View, Card>(home, x, k, mod);
-      if (es == ES_FAILED) {
-	return ES_FAILED;
-      }
+      GECODE_ES_CHECK((prop_card<View, Card, shared>(home, x, k, mod)));
     }
 
     all_assigned = true;
@@ -461,9 +466,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	  if (isView) {
 	    if (!k[i].assigned()) {
 	      ModEvent me = k[i].eq(home, ci);
-	      if (me_failed(me)) {
-		return ES_FAILED;
-	      }
+	      GECODE_ME_CHECK(me);
 	      mod |= k[i].assigned();
 	    }
 	    all_assigned &= k[i].assigned();
@@ -479,10 +482,10 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   // for posting
-  template <class View, class Card, bool isView>
+  template <class View, class Card, bool isView, bool shared>
   forceinline
-  Bnd<View, Card, isView>::
-  Bnd(Space* home, ViewArray<View>& x0, Card& k0, 
+  BndImp<View, Card, isView, shared>::
+  BndImp(Space* home, ViewArray<View>& x0, Card& k0, 
 	 bool cf,  bool all, bool nolbc) : 
     Propagator(home, true), x(x0), y(home,x0), k(k0), lps(NULL), ups(NULL), 
     card_fixed(cf), card_all(all), skip_lbc(nolbc) {
@@ -492,10 +495,10 @@ namespace Gecode { namespace Int { namespace GCC {
   }
   
   // for cloning
-  template <class View, class Card, bool isView>
+  template <class View, class Card, bool isView, bool shared>
   forceinline
-  Bnd<View, Card, isView>::
-  Bnd(Space* home, bool share, Bnd<View, VarCard, isView>& p)
+  BndImp<View, Card, isView, shared>::
+  BndImp(Space* home, bool share, BndImp<View, VarCard, isView, shared>& p)
     : Propagator(home, share, p), lps(NULL), ups(NULL), 
       card_fixed(p.card_fixed), card_all(p.card_all), 
       skip_lbc(p.skip_lbc) {
@@ -504,10 +507,10 @@ namespace Gecode { namespace Int { namespace GCC {
     k.update(home, share, p.k);
   }
 
-  template <class View, class Card, bool isView>
+  template <class View, class Card, bool isView, bool shared>
   forceinline
-  Bnd<View, Card, isView>::
-  Bnd(Space* home, bool share, Bnd<View, FixCard, isView>& p)  
+  BndImp<View, Card, isView, shared>::
+  BndImp(Space* home, bool share, BndImp<View, FixCard, isView, shared>& p)  
     : Propagator(home, share, p), k(p.k.size()), lps(NULL), ups(NULL), 
       card_fixed(p.card_fixed), card_all(p.card_all), skip_lbc(p.skip_lbc) {
     x.update(home, share, p.x);
@@ -515,9 +518,9 @@ namespace Gecode { namespace Int { namespace GCC {
     k.update(home, share, p.k);
   }
 
-  template <class View, class Card, bool isView>
+  template <class View, class Card, bool isView, bool shared>
   forceinline
-  Bnd<View, Card, isView>::~Bnd(void){
+  BndImp<View, Card, isView, shared>::~BndImp(void){
     y.cancel(this, PC_INT_BND);
     k.cancel(this, PC_INT_BND);
     delete lps;
@@ -526,15 +529,16 @@ namespace Gecode { namespace Int { namespace GCC {
     ups = NULL;
   }
 
-  template <class View, class Card, bool isView>
+  template <class View, class Card, bool isView, bool shared>
   forceinline Actor* 
-  Bnd<View, Card, isView>::copy(Space* home, bool share){
-    return new (home) Bnd<View, Card, isView>(home, share, *this);
+  BndImp<View, Card, isView, shared>::copy(Space* home, bool share){
+    return new (home) BndImp<View, Card, isView, shared>
+      (home, share, *this);
   }
 
-  template <class View, class Card, bool isView>
+  template <class View, class Card, bool isView, bool shared>
   forceinline PropCost
-  Bnd<View, Card, isView>::cost (void) const {
+  BndImp<View, Card, isView, shared>::cost (void) const {
     /* 
      * The bounds consistent version of the Global Cardinality constraint
      * has a theoretical complexity of
@@ -546,17 +550,20 @@ namespace Gecode { namespace Int { namespace GCC {
     return cost_hi(x.size(),pc);
   }
 
-  template <class View, class Card, bool isView>
+  template <class View, class Card, bool isView, bool shared>
   forceinline ExecStatus 
-  Bnd<View, Card, isView>::propagate(Space* home) {  
-    return prop_bnd<View, Card, isView>
+  BndImp<View, Card, isView, shared>::propagate(Space* home) {  
+    return prop_bnd<View, Card, isView, shared>
       (home, x, k, lps, ups, card_fixed, card_all, skip_lbc);
   }
 
   template <class View, class Card, bool isView>
   inline ExecStatus
-  Bnd<View, Card, isView>::post(Space* home, ViewArray<View>& x0, Card& k0, 
-				bool all) {
+  Bnd<View, Card, isView>::post(Space* home, 
+				 ViewArray<View>& x0, VarCard& k0, 
+				 bool all) {
+    assert(isView);
+    
     bool cardfix = true;
     bool nolbc = true;
     for (int i = k0.size(); i--; ) {
@@ -564,13 +571,48 @@ namespace Gecode { namespace Int { namespace GCC {
       nolbc &= (k0[i].min() == 0);
     }
 
-    new (home) Bnd<View, Card, isView>(home, x0, k0, cardfix, all, nolbc);
+    int p = x0.size();
+    int q = k0.size();
+    int w = p + q;
+      
+    ViewArray<View> xc(home, w);
+    for (int i = 0; i < p; i++) {
+      xc[i] = x0[i].intview();
+    }
+    for (int i = p; i < w; i++) {
+      xc[i] = k0[i - p].intview();
+    }
+    if (xc.shared()) {
+      new (home) BndImp<View, Card, isView, true>
+	(home, x0, k0, cardfix, all, nolbc);
+    } else {
+      new (home) BndImp<View, Card, isView, false>
+	(home, x0, k0, cardfix, all, nolbc);
+    }
     return ES_OK;
   }
 
   template <class View, class Card, bool isView>
+  inline ExecStatus
+  Bnd<View, Card, isView>::post(Space* home, 
+				ViewArray<View>& x0, FixCard& k0, 
+				bool all) {
+    assert(!isView);
+
+    bool cardfix = true;
+    bool nolbc = true;
+    for (int i = k0.size(); i--; ) {
+      cardfix &= k0[i].assigned();
+      nolbc &= (k0[i].min() == 0);
+    }
+    new (home) BndImp<View, Card, isView, false>
+      (home, x0, k0, cardfix, all, nolbc);
+    return ES_OK;
+  }
+
+  template <class View, class Card, bool isView, bool shared>
   void
-  Bnd<View, Card, isView>::flush(void){
+  BndImp<View, Card, isView, shared>::flush(void){
     delete lps; 
     lps = NULL;
     delete ups;

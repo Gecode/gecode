@@ -209,16 +209,15 @@ namespace Gecode { namespace Int { namespace GCC {
 	}
       }
       
-      es = prop_card<View, Card>(home, y, k, card_mod);
+      es = prop_card<View, Card, true>(home, y, k, card_mod);
       if (es == ES_FAILED) {
 	return es;
       }
 
       int smin = 0;
       int smax = 0;
-      es = card_consistent<View, Card>(smin, smax, y, k, card_all);
-      if (es == ES_FAILED) {
-	return es;
+      if (!card_consistent<View, Card>(smin, smax, y, k, card_all)) {
+	return ES_FAILED;
       }
     }
 
@@ -345,7 +344,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     bool card_assigned = true;
     if (isView) {
-      es = prop_card<View, Card>(home, y, k, card_mod);
+      es = prop_card<View, Card, true>(home, y, k, card_mod);
       if (es == ES_FAILED) {
 	return ES_FAILED;
       }
@@ -416,7 +415,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     if (isView) {
-      es = prop_card<View, Card>(home, y, k, card_mod);
+      es = prop_card<View, Card, true>(home, y, k, card_mod);
       if (es == ES_FAILED) {
 	return es;
       }

@@ -420,12 +420,6 @@ namespace Gecode { namespace Int { namespace GCC {
     if (home->failed()) {
       return;
     }
-    int p = x.size();
-    int q = c.size();
-    int w = p + q;
-
-
-//     std::cout << "post card Var\n";
 
     GccIdxView xv(home, x);
     x_setidx(xv);
@@ -433,17 +427,6 @@ namespace Gecode { namespace Int { namespace GCC {
     linear(home, c, IRT_EQ, xv.size());
 
     VarCard cv(home, c);
-
-    ViewArray<IntView> xc(home, w);
-    for (int i = 0; i < p; i++) {
-      xc[i] = xv[i].intview();
-    }
-    for (int i = p; i < w; i++) {
-      xc[i] = cv[i - p].intview();
-    }
-    if (xc.shared()) {
-      throw ArgumentSame("Int::GCC");
-    }
 
     int interval = max - min + 1;
 
@@ -476,7 +459,6 @@ namespace Gecode { namespace Int { namespace GCC {
 	}
       }
     }
-//     std::cout << "NOT failed!\n";
 
     GCC::setcard<VarCard, Gecode::Int::GCC::IdxView, true>
       (home, xv, cv, min, max);
@@ -513,13 +495,6 @@ namespace Gecode { namespace Int { namespace GCC {
 
     GccIdxView xv(home, x);
     x_setidx(xv);
-
-//     std::cout << "post card:\n";
-//     for (int i = 0; i < xv.size(); i++) {
-//       std::cout << xv[i] << " ";
-//     }
-//     std::cout << "\n";
-
 
     int interval = xmax - (xmin - 1);
 
@@ -614,23 +589,6 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
     VarCard cardv(home, cv);
-
-
-    int p = x.size();
-    int q = c.size();
-    int w = p + q;
-
-    ViewArray<IntView> xc(home, w);
-    for (int i = 0; i < p; i++) {
-      xc[i] = xv[i].intview();
-    }
-    for (int i = p; i < w; i++) {
-      xc[i] = cardv[i - p].intview();
-    }
-    if (xc.shared()) {
-      throw ArgumentSame("Int::GCC");
-    }
-
 
     GCC::setcard<VarCard, Gecode::Int::GCC::IdxView, true>
       (home, xv, cardv, xmin, xmax);

@@ -51,7 +51,7 @@ namespace Gecode { namespace Int { namespace GCC {
   /** \brief Bounds consistency check for the case cardinality variables.
    */
 
-  template <class View, class Card>
+  template <class View, class Card, bool shared>
   forceinline ExecStatus 
   prop_card(Space* home, ViewArray<View>& x, Card& k, bool& mod) {
     int n = x.size();
@@ -114,6 +114,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	  return ES_FAILED;
 	}
 	mod |= (k[i].modified() && (k[i].max() != reachable));
+	mod |= shared && k[i].modified();
 	  
 	if (rv[i].eq > 0) {
 	  ModEvent me = k[i].gq(home, (int) rv[i].eq);
@@ -121,6 +122,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	    return ES_FAILED;
 	  }
 	  mod |= (k[i].modified() && (k[i].min() != (int) rv[i].eq));
+	  mod |= shared && k[i].modified();
 	}
       } else {
 	// check validity of the cardinality value
@@ -139,7 +141,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
 
   template <class View, class Card>
-  forceinline ExecStatus 
+  forceinline bool
   card_consistent(int& smin, int& smax, ViewArray<View>& x, Card& k, bool& all) {
     
     int m = k.size();
@@ -151,16 +153,16 @@ namespace Gecode { namespace Int { namespace GCC {
 
     // not enough variables to satifsy cardinality requirements
     if (n < smin) {
-      return ES_FAILED;
+      return false;
     } 
 
     // if we use all variables
     // not all variables can be assigned
     if (all && smax < n) {
-      return ES_FAILED;
+      return false;
     }
         
-    return ES_OK;
+    return true;
   }
 
   /**

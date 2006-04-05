@@ -32,7 +32,8 @@
 /**
  * \namespace Gecode::Int::GCC
  * \brief Global cardinality propagators
- * \note The global cardinality propagators do not support sharing!
+ * \note The global cardinality propagator with fixed cardinalities does not
+ *       not support sharing!
  *
  */
 
@@ -46,7 +47,7 @@ typedef Gecode::ViewArray<Gecode::Int::GCC::IdxView> GccIdxView;
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  template <class View, class Card, bool isView>
+  template <class View, class Card, bool isView, bool shared>
   ExecStatus prop_bnd(Space* home, ViewArray<View>&, Card&,
 		      PartialSum<Card>*, PartialSum<Card>*, 
 		      bool, bool, bool);
@@ -105,12 +106,24 @@ namespace Gecode { namespace Int { namespace GCC {
    * and uses a more efficient layout of datastructures (keeping the 
    * number of different arrays small).
    *
+   * The Bnd class is used to post the propagator and BndImp 
+   * is the actual implementation taking shared variables into account.
+   *
    * Requires \code #include "int/gcc.hh" \endcode
    * \ingroup FuncIntProp
    */
 
   template <class View, class Card, bool isView>
-  class Bnd : public Propagator {
+  class Bnd{
+  public:
+    /// Post the bounds consistent propagator
+    static  ExecStatus  post(Space* home, ViewArray<View>&, VarCard&, bool);
+    static  ExecStatus  post(Space* home, ViewArray<View>&, FixCard&, bool);
+  };
+
+  template <class View, class Card, bool isView, bool shared>
+  class BndImp : public Propagator {
+    friend class Bnd<View, Card, isView>;
   protected:
     ViewArray<View> x; 
     ViewArray<View> y; 
@@ -121,18 +134,16 @@ namespace Gecode { namespace Int { namespace GCC {
     bool card_all;
     bool skip_lbc;
     /// Constructor for posting
-    Bnd(Space* home, ViewArray<View>&, Card&, bool, bool, bool);
-    Bnd(Space* home, bool, Bnd<View, VarCard, isView>&);
-    Bnd(Space* home, bool, Bnd<View, FixCard, isView>&);
+    BndImp(Space* home, ViewArray<View>&, Card&, bool, bool, bool);
+    BndImp(Space* home, bool, BndImp<View, VarCard, isView, shared>&);
+    BndImp(Space* home, bool, BndImp<View, FixCard, isView, shared>&);
 
   public:
-    virtual ~Bnd(void);
+    virtual ~BndImp(void);
     virtual void flush(void);
     virtual Actor* copy(Space* home, bool share);
     virtual PropCost    cost (void) const;
     virtual ExecStatus  propagate(Space* home);
-    /// Post the bounds consistent propagator
-    static  ExecStatus  post(Space* home, ViewArray<View>&, Card&, bool);
   };
 
   /**

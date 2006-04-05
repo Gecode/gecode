@@ -72,8 +72,9 @@ Module: int
 What:   change
 Rank:   minor
 [DESCRIPTION]
-Support for shared views in sortedness and
-global cardinality propagator has been removed. 
+Support for shared views has been removed in 
+sortedness propagator and in the propagator 
+for global cardinality with fixed cardinalities. 
 
 [ENTRY]
 Module: int

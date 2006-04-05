@@ -709,9 +709,9 @@ GCC_VC_SomeTriple _gccbnd_sometrip__var("GCC::VarCard::Bnd::Some::(v,lb,ub)",ICL
 GCC_VC_SomeTriple _gccdom_sometrip__var("GCC::VarCard::Dom::Some::(v,lb,ub)",ICL_DOM);
 GCC_VC_SomeTriple _gccval_sometrip__var("GCC::VarCard::Val::Some::(v,lb,ub)",ICL_VAL);
 
-// GCC_VC_Shared_SomeTriple _gccbnd_shared_sometrip_var("GCC::VarCard::Bnd::Shared::Some::(lb,ub)",ICL_BND);
-// GCC_VC_Shared_SomeTriple _gccdom_shared_sometrip_var("GCC::VarCard::Dom::Shared::Some::(lb,ub)", ICL_DOM);
-// GCC_VC_Shared_SomeTriple _gccval_shared_sometrip_var("GCC::VarCard::Val::Shared::Some::(lb,ub)", ICL_VAL);
+GCC_VC_Shared_SomeTriple _gccbnd_shared_sometrip_var("GCC::VarCard::Bnd::Shared::Some::(lb,ub)",ICL_BND);
+GCC_VC_Shared_SomeTriple _gccdom_shared_sometrip_var("GCC::VarCard::Dom::Shared::Some::(lb,ub)", ICL_DOM);
+GCC_VC_Shared_SomeTriple _gccval_shared_sometrip_var("GCC::VarCard::Val::Shared::Some::(lb,ub)", ICL_VAL);
 
 
 
