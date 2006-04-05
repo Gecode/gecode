@@ -53,6 +53,21 @@ Date:		upcoming
 Next release.
 
 [ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added all-interval series using distinct.
+
+[ENTRY]
+Module: minimodel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added functions returning variables for arithmetic 
+(min, max, abs, mult, plus, minus).
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   minor

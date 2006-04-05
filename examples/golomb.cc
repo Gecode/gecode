@@ -52,8 +52,10 @@ public:
     : n(opt.size), m(this,n,0,n*n) {
     const int nn = n*n;
     const int dn = (n*n-n)/2;
-    IntVarArray d(this,dn,0,nn);
 
+    IntVarArgs d(dn);
+
+    // Assume first mark to be zero
     rel(this, m[0], IRT_EQ, 0);
 
     // Setup difference constraints
@@ -61,7 +63,7 @@ public:
       d[diag(0,j)] = m[j];
     for (int i=1; i<n-1; i++)
       for (int j=i+1; j<n; j++)
-	post(this, m[j]-m[i] == d[diag(i,j)]);
+	d[diag(i,j)] = minus(this, m[j], m[i]);
 
     // Order marks
     for (int i=1; i<n; i++)

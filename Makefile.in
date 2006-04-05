@@ -278,7 +278,7 @@ SETBUILDDIRS	=						\
 #
 
 MMSRC0 = \
-	lin-expr.cc scheduling.cc bool-expr.cc
+	lin-expr.cc scheduling.cc bool-expr.cc arithmetic.cc
 MMHDR0 = \
 	lin-expr.icc lin-rel.icc exception.icc matrix.icc \
 	bool-expr.icc bool-rel.icc
@@ -338,7 +338,7 @@ INTEXAMPLESRC0 = \
 	partition photo queens \
 	sudoku picture-puzzle  \
 	crowded-chess \
-	sports-league all-interval langfordnum \
+	sports-league all-interval all-interval-sort langfordnum \
 	warehouses \
 	stress-domain stress-failure stress-search baseline
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cc)
