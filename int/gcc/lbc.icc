@@ -21,7 +21,7 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  template <class View, class Card, bool shared>
+  template <class View, class Card>
   forceinline ExecStatus 
   lbc(Space* home, ViewArray<View>& x, int& nb,
       HallInfo hall[],
@@ -31,6 +31,23 @@ namespace Gecode { namespace Int { namespace GCC {
     
     ExecStatus es = ES_FIX;
     int n = x.size();
+
+//     for (int i = 0; i < x.size(); i++) {
+//       pview(x[i]); std::cout << " ";
+//     }
+//     std::cout << "\n";
+
+//     for (int i = 0; i < x.size(); i++) {
+//       pview(x[nu[i]]); std::cout << " ";
+//     }
+//     std::cout << "\n";
+
+//     for (int i = 0; i < x.size(); i++) {
+//       pview(x[mu[i]]); std::cout << " ";
+//     }
+//     std::cout << "\n";
+
+//     lps->print();
 
     /*
      *  Let I(S) denote the number of variables whose domain intersects
@@ -102,14 +119,28 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     w = rightmost;
+//     for (i = bsize; i--; ) { // i can be zero
+//       std::cout << "loop i=" << i << " ";
+//       if (hall[i].d == 0) {
+// 	hall[i].t = w;
+//       } else {
+// 	hall[w].t = i;
+// 	w = i;
+//       }
+//     }
+
     for (i = bsize; i--; ) { // i can be zero
+//       std::cout << "loop i=" << i << " ";
+      hall[i].t = i - 1;
       if (hall[i].d == 0) {
 	hall[i].t = w;
       } else {
 	hall[w].t = i;
-	w         = i;
+	w = i;
       }
     }
+
+
 
     /*
      * The algorithm assigns to each value v in bounds
@@ -123,6 +154,33 @@ namespace Gecode { namespace Int { namespace GCC {
      * they are considered as FAILURE SETS
      */
 
+//     std::cout << "start structure\n";
+//       for (int ti = 0; ti < bsize; ti++) {
+// 	if (ti > 0) {
+// 	  std::cout << "<-" << hall[ti].d<<"-p("<<hall[ti].t<<")--";
+
+// 	}
+// 	std::cout <<hall[ti].bounds << " ";
+	
+//       }
+//       std::cout << "\n";
+
+//       std::cout << "x :";
+//     for (i = 0; i < n; i++) {
+//       std::cout << x[i] << " ";
+//     }
+//       std::cout << "\n";
+//       std::cout << "minx :";
+//     for (i = 0; i < n; i++) {
+//       std::cout << x[nu[i]] << " ";
+//     }
+//       std::cout << "\n";
+//       std::cout << "maxx :";
+//     for (i = 0; i < n; i++) {
+//       std::cout << x[mu[i]] << " ";
+//     }
+//       std::cout << "\n";
+
     for (i = 0; i < n; i++) {
       // visit intervals in increasing max order
       int x0   = rank[mu[i]].min;
@@ -131,6 +189,7 @@ namespace Gecode { namespace Int { namespace GCC {
       z        = pathmax_t(hall, succ);
       j        = hall[z].t;
 
+//       std::cout << "processing: [" << x0 << ".."<< (y-1) << "]\n";
       /*
        * POTENTIALLY STABLE SET:
        *  z \neq succ \Leftrigharrow z>succ, i.e. 
@@ -139,6 +198,7 @@ namespace Gecode { namespace Int { namespace GCC {
        */
 
       if (z != succ) {
+// 	std::cout << "potentially stable\n";
 	w = pathmax_ps(hall, succ);
 	v = hall[w].ps; 
 	pathset_ps(hall, succ, w, w); 
@@ -155,6 +215,7 @@ namespace Gecode { namespace Int { namespace GCC {
        */
 
       if (hall[z].d <= lps->sumup(hall[y].bounds, hall[z].bounds - 1)) {
+// 	std::cout << "stable set\n";
 	w = pathmax_s(hall, hall[y].ps);
 	pathset_s(hall, hall[y].ps, w, w);
 	// Path compression
@@ -172,6 +233,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	 * see DOMINATION in "gcc/ubc.icc"
 	 */
 	if (--hall[z].d == 0) {
+// 	  std::cout << "failure set\n";
 	  hall[z].t = z + 1;
 	  z         = pathmax_t(hall, hall[z].t);
 	  hall[z].t = j;
@@ -184,6 +246,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	 * in case the variable doesn't belong to a stable set.
 	 */
 	if (hall[x0].h > x0) {
+// 	  std::cout << "new lower bound\n";
 	  hall[i].newBound = pathmax_h(hall, x0);
 	  w                = hall[i].newBound;
 	  pathset_h(hall, x0, w, w); // path compression
@@ -201,7 +264,8 @@ namespace Gecode { namespace Int { namespace GCC {
 	// CLEARLY THIS WAS NOT STABLE == UNSTABLE 
 	if (hall[z].d == lps->sumup(hall[y].bounds, hall[z].bounds - 1)) {
 	  if (hall[y].h > y)
-	    /* y is not the end of the potentially stable set
+	    /* 
+	     * y is not the end of the potentially stable set
 	     * thus ensure that the potentially stable superset is marked
 	     */
 	    y = hall[y].h;
@@ -209,10 +273,21 @@ namespace Gecode { namespace Int { namespace GCC {
 	  int predj = j - 1;
 	  pathset_h(hall, hall[y].h, predj, y);
 	  // mark the new unstable set [j,y]
+// 	  std::cout << "unstab: ["<< j << ","<<y << "]";
 	  hall[y].h = predj;
 	}
       }
       pathset_t(hall, succ, z, z); // path compression
+
+
+//       for (int ti = 0; ti < bsize; ti++) {
+// 	if (ti > 0) {
+// 	  std::cout << "<-" << hall[ti].d<<"-p("<<hall[ti].t<<")--";
+// 	}
+// 	std::cout << hall[ti].bounds << " ";
+//       }
+//       std::cout << "\n";
+
     }
 
     /* If there is a FAILURE SET left the minimum occurences of the values
@@ -251,9 +326,7 @@ namespace Gecode { namespace Int { namespace GCC {
       if ((hall[x0].s <= x0) || (y > hall[x0].s)) {
 	//still have to check this out, how skipping works (consider dominated indices)
 	int m = lps->skipNonNullElementsRight(hall[hall[i].newBound].bounds);
-	if (shared && x[mu[i]].modified()) {
-	  es = ES_NOFIX;
-	}
+// 	std::cout << mu[i] << " " << x[mu[i]] << ">=" << m<< "\n";
 	ModEvent me = x[mu[i]].gq(home, m);
 	GECODE_ME_CHECK(me);
 	if (me_modified(me) && m != x[mu[i]].min()) {
@@ -261,6 +334,12 @@ namespace Gecode { namespace Int { namespace GCC {
 	}
       }
     }
+
+//     std::cout << "test before LBC -upper bound\n";
+//     for (int i = 0; i < x.size(); i++) {
+//       std::cout << x[i] << " ";
+//     }
+//     std::cout << "\n";
 
     //LBC narrow upper bounds
     
@@ -334,9 +413,6 @@ namespace Gecode { namespace Int { namespace GCC {
       int y  =  rank[nu[i]].max;
       if ((hall[x0].s <= x0) || (y > hall[x0].s)){
 	int m = lps->skipNonNullElementsLeft(hall[hall[i].newBound].bounds - 1);
-	if (shared && x[nu[i]].modified()) {
-	  es = ES_NOFIX;
-	}
 	ModEvent me = x[nu[i]].lq(home, m);
 	GECODE_ME_CHECK(me);
 	if (me_modified(me) && m != x[nu[i]].max()) {

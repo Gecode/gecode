@@ -184,19 +184,27 @@ public:
 //       std::cout <<x[i] << " ";
 // 	}
 //     std::cout <<"...";
+
+    // ys have to be sorted
+    for (int i = ve1; i < ve2 - 1; i++) {
+      if ( !(x[i] <= x[i + 1]) ) {
+// 	std::cout << "y not sorted\n";
+	return false;
+      }
+    }
     
 
     // assert correct domains
     for (int i = 0; i < ve2; i++) {
       if (!(x[i] > 0)) {
-	// std::cout << "false domain\n";
+// 	std::cout << "false domain\n";
 	return false;
       }
     }
 
     for (int i = ve2; i < xs; i++) {
       if (! (x[i] < 3)) {
-	// std::cout << "false domain 2\n";
+// 	std::cout << "false domain 2\n";
 	return false;
       }
     }
@@ -204,7 +212,7 @@ public:
     // perm index
     for (int i = 0; i < ve1; i++) {
       if (x[i] != x[ve1 + x[i + ve2]]) {
-	// std::cout << "wrong index\n";
+// 	std::cout << "wrong index\n";
 	return false;
       }
     }
@@ -213,28 +221,21 @@ public:
     for (int i = ve2; i < xs - 1; i++) {
       for (int j = i + 1; j < xs; j++) {
 	if (x[i] == x[j]) {
-	  // std::cout << "no perm\n";
+// 	  std::cout << "no perm\n";
 	  return false;
 	}
       }
     }
 
-    // ys have to be sorted
-    for (int i = ve1; i < ve2 - 1; i++) {
-      if ( !(x[i] <= x[i + 1]) ) {
-	// std::cout << "y not sorted\n";
-	return false;
-      }
-    }
 
     for (int i = ve1; i < ve2; i++) {
       if (sortx[i - ve1] != x[i]) {
-	// std::cout << "no sorting poss\n";
+// 	std::cout << "no sorting poss\n";
 	return false;
       }
     }
 
-    // std::cout << "valid\n";
+//     std::cout << "valid\n";
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -259,205 +260,13 @@ public:
       rel(home, p[i], IRT_LQ, 2);
     }
     Log::log("Post sortedness", "\tsortedness(this, ...);");
-    // std::cout << "post sort constraint\n";
-    sortedness(home, z, y, p, icl);
-  }
-};
-
-
-
-class Sortedness_NoVar_Shared : public IntTest {
-private:
-  IntConLevel icl;
-  static const int xs = 4;
-  static const int ve = xs /2;
-  
-public:
-  Sortedness_NoVar_Shared(const char* t, IntConLevel icl0) 
-    : IntTest(t, xs, ds_13, false), icl(icl0) {}
-  virtual bool solution(const Assignment& x) const {
-    GECODE_AUTOARRAY(int, sortx, ve);
-    for (int i = 0; i < ve; i++) {
-      sortx[i] = x[i];
-    }
-    IntSortMin min_inc;
-    Support::quicksort<int, IntSortMin> (&sortx[0], ve, min_inc);
-
-//     std::cout << "defined sol: ";
-//     for (int i = 0; i < xs; i++) {
-//       if (i == ve) std::cout << "||";
-//       if (i < ve) {
-// 	std::cout << sortx[i]<<" ";
-//       } else {
-// 	std::cout <<x[i] << " ";
-//       }
-//     }
-//     std::cout <<"...";
-    
-
-    for (int i = ve; i < xs - 1; i++) {
-      if ( !(x[i] <= x[i + 1]) ) {
-	// std::cout << "y not sorted\n";
-	return false;
-      }
-    }
-    
-    for (int i = ve; i < xs; i++) {
-      if (sortx[i - ve] != x[i]) {
-	// std::cout << "no sorting poss\n";
-	return false;
-      }
-    }
-    
-    // std::cout << "valid\n";
-    return true;
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    IntVarArgs z(ve);
-    for (int i = 0; i < ve; i++) {
-      if (i < ve /2) {
-	z[i] = x[0]; 
-      } else {
-	z[i] = x[1]; 
-      }
-    }
-    
-    IntVarArgs y(ve);
-    for (int i = ve; i < xs; i++) {
-      if (i < ve + ((xs - ve) /2)) {
-	y[i - ve] = x[2]; 
-      } else {
-	y[i - ve] = x[3]; 
-      }
-    }
-    sortedness(home, z, y, icl);
-  }
-};
-
-
-class Sortedness_PermVar_Shared_Perm : public IntTest {
-private:
-  IntConLevel icl;
-  static const int xs = 7;
-  static const int ve1 = xs / 2;
-  static const int ve2 = 2 * ve1;
-
-  Assignment* make_assignment() {
-    return new SortPermAssignment(1, 3, 0, 2, 3, arity, dom);
-  }
-
-public:
-  Sortedness_PermVar_Shared_Perm(const char* t, IntConLevel icl0) 
-    : IntTest(t, xs, ds_03, false), icl(icl0) {}
-  virtual bool solution(const Assignment& x) const {
-    return false;
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    IntVarArgs z(ve1);
-    for (int i = 0; i < ve1; i++) {
-      z[i] = x[i]; 
-    }
-
-    IntVarArgs y(ve1);
-    for (int i = ve1; i < ve2; i++) {
-      y[i - ve1] = x[i]; 
-    }
-
-    IntVarArgs p(ve1);
-    for (int i = ve2; i < 9; i++) {
-      p[i - ve2] = x[6]; 
-    }
-    
-    for (int i = 0; i < ve1; i++) {
-      rel(home, z[i], IRT_GQ, 1);
-      rel(home, y[i], IRT_GQ, 1);
-      rel(home, p[i], IRT_LQ, 2);
-    }
-    // std::cout << "post sort constraint\n";
-    sortedness(home, z, y, p, icl);
-  }
-};
-
-
-class Sortedness_PermVar_Shared_Prob : public IntTest {
-private:
-  IntConLevel icl;
-  static const int xs = 5;
-  static const int ve1 = 1;
-  static const int ve2 = 2;
-
-  Assignment* make_assignment() {
-    return new SortPermAssignment(1, 3, 0, 2, 1, arity, dom);
-  }
-
-public:
-  Sortedness_PermVar_Shared_Prob(const char* t, IntConLevel icl0) 
-    : IntTest(t, xs, ds_03, false), icl(icl0) {}
-  virtual bool solution(const Assignment& x) const {
-
-    for (int i = 0; i < ve2; i++) {
-      if (!(x[i] > 0)) {
-	// std::cout << "false domain\n";
-	return false;
-      }
-    }
-
-    for (int i = ve2; i < xs; i++) {
-      if (! (x[i] < 3)) {
-	// std::cout << "false domain 2\n";
-	return false;
-      }
-    }
-
-    // perm index
-    if (x[0] != x[1]) {
-      // std::cout << "wrong index\n";
-      return false;
-    }
-
-    // perm distinct
-    for (int i = ve2; i < xs - 1; i++) {
-      for (int j = i + 1; j < xs; j++) {
-	if (x[i] == x[j]) {
-	  // std::cout << "no perm\n";
-	  return false;
-	}
-      }
-    }
-
-
-    // std::cout << "valid\n";
-    return true;
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    IntVarArgs z(3);
-    IntVarArgs y(3);
-    for (int i = 0; i < 3; i++) {
-      z[i] = x[0]; 
-      y[i] = x[1];
-    }
-
-    IntVarArgs p(3);
-    for (int i = ve2; i < xs; i++) {
-      p[i - ve2] = x[i]; 
-    }
-    
-    for (int i = 0; i < ve1; i++) {
-      rel(home, z[i], IRT_GQ, 1);
-      rel(home, y[i], IRT_GQ, 1);
-      rel(home, p[i], IRT_LQ, 2);
-    }
-    // std::cout << "post sort constraint\n";
     sortedness(home, z, y, p, icl);
   }
 };
 
 
 Sortedness_NoVar  _sort_novar("Sortedness::NoPermutationVariables::Bnd",ICL_BND);
-Sortedness_NoVar_Shared  _sort_novar_shared("Sortedness::NoPermutationVariables::Shared::Bnd",ICL_BND);
 Sortedness_PermVar  _sort_permvar("Sortedness::WithPermutationVariables::Bnd",ICL_BND);
-Sortedness_PermVar_Shared_Prob  _sort_permvar_shareprob("Sortedness::WithPermutationVariables::SharedProblemVars::Bnd",ICL_BND);
-Sortedness_PermVar_Shared_Perm  _sort_permvar_shareperm("Sortedness::WithPermutationVariables::SharedPermVars::Bnd",ICL_BND);
 
 // STATISTICS: test-int
 

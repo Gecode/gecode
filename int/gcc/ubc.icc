@@ -41,7 +41,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *        min(x_{\mu(i)}) \leq min(x_{\mu(i+1)})\f$
    */
 
-  template <class View, class Card, bool shared>
+  template <class View, class Card>
   forceinline ExecStatus 
   ubc(Space* home, ViewArray<View>& x, int& nb,
       HallInfo hall[], Rank rank[],
@@ -52,15 +52,18 @@ namespace Gecode { namespace Int { namespace GCC {
     int rightmost = nb + 1; // rightmost accesible value in bounds
     int bsize     = nb + 2; // number of unique bounds including sentinels
 
+
+//     std::cout << "cur ups:"; ups->print();
+
     //Narrow lower bounds (UBC)
 
-    /* Initializing tree structure with the values from bounds
+    /* 
+     * Initializing tree structure with the values from bounds
      * and the interval capacities of neighboured values
      * from left to right
      */
 
-    // test
-    // unused but unitialized
+
     hall[0].h = 0;
     hall[0].t = 0;
     hall[0].d = 0;
@@ -70,17 +73,44 @@ namespace Gecode { namespace Int { namespace GCC {
       hall[i].h = pred;
       hall[i].t = pred;
       hall[i].d = ups->sumup(hall[pred].bounds, hall[i].bounds - 1);
+//       assert(hall[i].d > 0);
     }
+//     std::cout << "visit interval in increasing max\n";
+//     std::cout << "Ptr-structure\n";
+//     for (int ti = 0; ti < bsize; ti++) {
+//       if (ti > 0) {
+// 	std::cout << "<-(" << hall[ti].d<<","<<hall[ti].t<<")- ";
+//       }
+//       std::cout <<hall[ti].bounds << " ";
+//     }
+//     std::cout << "\n";
+
+//     std::cout << "Hall-structure\n";
+//     for (int ti = 0; ti < bsize; ti++) {
+//       if (ti > 0) {
+// 	std::cout << "<~(" << hall[ti].d<<","<<hall[ti].h<<")~ ";
+//       }
+//       std::cout <<hall[ti].bounds << " ";
+//     }
+//     std::cout << "\n";
+      
+
 
     int n          = x.size();
 
     for (int i = 0; i < n; i++) {
+
       // visit intervals in increasing max order
       int x0   = rank[mu[i]].min;
       int succ = x0 + 1;
       int y    = rank[mu[i]].max;
       int z    = pathmax_t(hall, succ);
       int j    = hall[z].t;
+
+//       std::cout << "processing: "<< mu[i]<<" ["<<x0 <<".."<<(y - 1)<<"]\n";
+
+
+
       /* DOMINATION:
        *     v^i_j denotes
        *     unused values in the current interval. If the difference d
@@ -114,6 +144,7 @@ namespace Gecode { namespace Int { namespace GCC {
        */
 
       if (hall[z].d < ups->sumup(hall[y].bounds, hall[z].bounds - 1)){
+// 	std::cout << "neg cap 161\n";
 	return ES_FAILED;
       }
 
@@ -126,10 +157,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	int w       = pathmax_h(hall, hall[x0].h);
 	int m       = hall[w].bounds;
 
-	// check for tells to shared variables
-	if (shared && x[mu[i]].modified()) {
-	  es = ES_NOFIX;
-	}
+// 	std::cout << "UBC-LBU: "<<mu[i] << " "<<x[mu[i]] << ">="<< m<< "\n";
 	ModEvent me = x[mu[i]].gq(home, m);
 	if (me_failed(me)) {
 	  return ES_FAILED;
@@ -157,35 +185,99 @@ namespace Gecode { namespace Int { namespace GCC {
        */
 
       if (hall[z].d == ups->sumup(hall[y].bounds, hall[z].bounds - 1)) {
-	/* mark hall interval [j,z-1]
+// 	std::cout << "mark hall iv: ["<<j<<".."<< (z-1) << "]\n";
+	/* 
+	 *mark hall interval [j,z-1]
 	 * hall pointers form a path to the upper bound of the interval
 	 */
 	int predj = j - 1;
 	pathset_h(hall, hall[y].h, predj, y);
 	hall[y].h = predj;
       }
+
+//     for (int ti = 0; ti < bsize; ti++) {
+//       if (ti > 0) {
+// 	std::cout << "<-(" << hall[ti].d<<","<<hall[ti].t<<")- ";
+//       }
+//       std::cout <<hall[ti].bounds << " ";
+//     }
+//     std::cout << "\n";
+
+//     for (int ti = 0; ti < bsize; ti++) {
+//       if (ti > 0) {
+// 	std::cout << "<~(" << hall[ti].d<<","<<hall[ti].h<<")~ ";
+//       }
+//       std::cout <<hall[ti].bounds << " ";
+//     }
+//     std::cout << "\n";
+
     }
+
+
+//     std::cout << "test in between\n";
+//     for (int i = 0; i < x.size(); i++) {
+//       pview(x[i]); std::cout << " ";
+//     }
+//     std::cout << "\n";
+//     for (int i = 0; i < x.size(); i++) {
+//       pview(x[nu[i]]); std::cout << " ";
+//     }
+//     std::cout << "\n";
+//     for (int i = 0; i < x.size(); i++) {
+//       pview(x[mu[i]]); std::cout << " ";
+//     }
+//     std::cout << "\n";
+
 
     /* Narrow upper bounds (UBC)
      * symmetric to the narrowing of the lower bounds
      */
-
+//     std::cout << "star narrow up\n";
     for (int i = 0; i < rightmost; i++) {
       int succ  = i + 1;
       hall[i].h = succ;
       hall[i].t = succ;
       hall[i].d = ups->sumup(hall[i].bounds, hall[succ].bounds - 1);
+//       assert(hall[i].d > 0);
     }
+//     std::cout << "visit interval in decreasing min\n";
+//     std::cout << "start for the structure\n";
+//       for (int ti = 0; ti < bsize; ti++) {
+// 	std::cout << hall[ti].bounds;
+// 	if (ti < rightmost) {
+// 	  std::cout << " -(" << hall[ti].d<<","<<hall[ti].t<<")--> ";
+// 	}
+//       }
+//       std::cout << "\n";
+
+//     for (int ti = 0; ti < bsize; ti++) {
+//       if (ti > 0) {
+// 	std::cout << " ~(" << hall[ti].d<<","<<hall[ti].h<<")~> ";
+//       }
+//       std::cout <<hall[ti].bounds << " ";
+//     }
+//     std::cout << "\n";
+
+
+
+
     for (int i = n; i--; ) {
       // visit intervals in decreasing min order
+//       std::cout << "processing: "<< x[nu[i]] <<"\n";
       int x0   = rank[nu[i]].max;
       int pred = x0 - 1;
       int y    = rank[nu[i]].min;
       int z    = pathmin_t(hall, pred);
       int j    = hall[z].t;
 
+//       for (int up = 0; up < rightmost; up++) 
+// 	std::cout << hall[up].h << " ";
+//       std::cout << "\n";
+
+//       std::cout << "x0="<<x0<<" p(x0)="<< pred << " y="<<y << " z="<< z<<" j="<< j << "\n";
       // DOMINATION:
       if (--hall[z].d == 0){
+	// std::cout << "dominated\n";
 	hall[z].t = z - 1;
 	z         = pathmin_t(hall, hall[z].t);
 	hall[z].t = j;
@@ -194,6 +286,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
       // NEGATIVE CAPACITY:
       if (hall[z].d < ups->sumup(hall[z].bounds,hall[y].bounds-1)){
+// 	std::cout << "neg cap\n";
 	return ES_FAILED;
       }
 
@@ -203,11 +296,10 @@ namespace Gecode { namespace Int { namespace GCC {
        *   max_i is set to  max_i := a-1
        */
       if (hall[x0].h < x0) {
+	// std::cout << "x0 inside hall iv\n";
 	int w       = pathmin_h(hall, hall[x0].h);
 	int m       = hall[w].bounds - 1;
-	if (shared && x[nu[i]].modified()) {
-	  es = ES_NOFIX;
-	}
+// 	std::cout << nu[i] << " "<<x[nu[i]]<< "<="<< m<< "\n";
 	ModEvent me = x[nu[i]].lq(home, m);
 	if (me_failed(me)) {
 	  return ES_FAILED;
@@ -219,11 +311,29 @@ namespace Gecode { namespace Int { namespace GCC {
       }
       // ZEROTEST
       if (hall[z].d == ups->sumup(hall[z].bounds, hall[y].bounds - 1)) {
+// 	std::cout << "zero test mark hall iv: ["<<y<<".."<<(j-1)<<"]\n";
 	//mark hall interval [y,j]
 	int succj = j + 1;
 	pathset_h(hall, hall[y].h, succj, y);
 	hall[y].h = succj;
       }
+
+//       for (int ti = 0; ti < bsize; ti++) {
+// 	std::cout << hall[ti].bounds;
+// 	if (ti < rightmost) {
+// 	  std::cout << " -(" << hall[ti].d<<","<<hall[ti].t<<")--> ";
+// 	}
+//       }
+//       std::cout << "\n";
+
+//     for (int ti = 0; ti < bsize; ti++) {
+//       if (ti > 0) {
+// 	std::cout << " ~(" << hall[ti].d<<","<<hall[ti].h<<")~> ";
+//       }
+//       std::cout <<hall[ti].bounds << " ";
+//     }
+//     std::cout << "\n";
+
     }
     return es;
   }

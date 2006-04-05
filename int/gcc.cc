@@ -19,7 +19,6 @@
  */	
 
 #include "int/gcc.hh"
-#include "int/distinct.hh"
 
 namespace Gecode { namespace Int { namespace GCC {
 
@@ -96,7 +95,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template <class View>
   forceinline int
-  x_card(ViewArray<View>& x) {
+  x_card(ViewArray<View>& x, IntConLevel icl) {
 
     int n = x.size();
 
@@ -108,9 +107,20 @@ namespace Gecode { namespace Int { namespace GCC {
     
     Gecode::Iter::Ranges::NaryUnion<ViewRanges<View> > drl(&xrange[0], x.size());
     int r = 0;
-    for ( ; drl(); ++drl){
-      for (int v = drl.min(); v <=drl.max(); v++) {
-	r ++;
+    if (icl == ICL_BND) {
+      int fstv = drl.min();
+      int lstv = 0;
+      for ( ; drl(); ++drl){
+	lstv = drl.max();
+      }
+      r = lstv - fstv + 1;
+
+    } else {
+
+      for ( ; drl(); ++drl){
+	for (int v = drl.min(); v <=drl.max(); v++) {
+	  r ++;
+	}
       }
     }
     return r;
@@ -123,7 +133,8 @@ namespace Gecode { namespace Int { namespace GCC {
   
   template <class Card, class View>
   forceinline void
-  initcard(Space* home, ViewArray<View>& x, Card& k, int lb, int ub) {
+  initcard(Space* home, ViewArray<View>& x, Card& k, int lb, int ub, 
+	   IntConLevel icl) {
     GECODE_AUTOARRAY(ViewRanges<View>, xrange, x.size());
     for (int i = x.size(); i--; ){
       ViewRanges<View> iter(x[i]);
@@ -131,14 +142,26 @@ namespace Gecode { namespace Int { namespace GCC {
     }
     
     Iter::Ranges::NaryUnion<ViewRanges<View> > drl(&xrange[0], x.size());
-    int idx = 0;
-    for ( ; drl(); ++drl){
-      for (int v = drl.min(); v <= drl.max(); v++){
-	k[idx].init(home, lb, ub, v);
-	idx++;
+    if (icl == ICL_BND) {
+      int fstv = drl.min();
+      int lstv = 0;
+      for ( ; drl(); ++drl){
+	lstv = drl.max();
+      }
+      for (int i = fstv; i <= lstv; i++) {
+	k[i - fstv].init(home, lb, ub, i);
+      }
+    } else {
+      int idx = 0;
+      for ( ; drl(); ++drl){
+	for (int v = drl.min(); v <= drl.max(); v++){
+	  k[idx].init(home, lb, ub, v);
+	  idx++;
+	}
       }
     }
   }
+
 
   /**
    * \brief Reset already existing cardinalities to zero. 
@@ -190,12 +213,15 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class Card, bool isView>
   forceinline ExecStatus
   card_cons(Space* home, Card& k, int n, bool all) {
+    // this should be the required min and allowed max
     int smin = 0;
     int smax = 0;
     int m    = k.size();
     for (int i = m; i--; ) {
       int ci = k[i].counter();
       if (ci > k[i].max() ) {
+// 	std::cout << "more occurrences of "<<k[i].card()
+// 		  << " than allowed\n";
 	return ES_FAILED;
       } else {
 	smax += (k[i].max() - ci);
@@ -204,21 +230,32 @@ namespace Gecode { namespace Int { namespace GCC {
 	}
       }
       if (k[i].min() > n) {
+// 	std::cout << "cannot satisfy requiremnts for " << k[i].card() << "!\n";
 	return ES_FAILED;
       }
       if (!k[i].assigned()) {
 	ModEvent me = k[i].lq(home, n);
 	if (me_failed(me)) {
+// 	  std::cout << "invalid\n";
 	  return ES_FAILED;
 	}
       }
     }
 
+//     std::cout << "mi:" << smin << " x: "<< n << " ma:" << smax<<"\n";
     if (n < smin) {
+//       std::cout << "not enough variables to satisfy min req\n";
       return ES_FAILED;
     } 
 
+
+//     for (int i = 0; i < k.size(); i++) {
+//       std::cout << k[i] << " ";
+//     }
+
+
     if (all && smax < n) {
+//       std::cout << "the maximal occurrence for the cardinalities cannot be satisfied\n";
       return ES_FAILED;
     }
 
@@ -233,26 +270,33 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class View, class Card, bool isView>
   forceinline void
   post_template(Space* home, ViewArray<View>& x, Card& k, 
-		IntConLevel& icl, bool all){ 
+		IntConLevel& icl, bool& all){ 
 
-    int  n        = x_card(x);
+    int  n        = x_card(x, icl);
     bool rewrite  = false; 
     if (!isView) {
      rewrite = check_alldiff(n, k);
     }
+//     std::cout << "card cons...";
     GECODE_ES_FAIL(home, (card_cons<Card, isView>(home, k, x.size(), all)));
-
+//     std::cout << "is ok\n";
     if (!isView && rewrite) {
-      switch (icl) {
-      case ICL_BND:
-	GECODE_ES_FAIL(home,Distinct::Bnd<View>::post(home, x));
-	break;
-      case ICL_DOM:
-	GECODE_ES_FAIL(home,Distinct::Dom<View>::post(home, x));
-	break;
-      default:
-	GECODE_ES_FAIL(home,Distinct::Val<View>::post(home, x));
+//       switch (icl) {
+//       case ICL_BND:
+// 	GECODE_ES_FAIL(home,Distinct::Bnd<View>::post(home, x));
+// 	break;
+//       case ICL_DOM:
+// 	GECODE_ES_FAIL(home,Distinct::Dom<View>::post(home, x));
+// 	break;
+//       default:
+// 	GECODE_ES_FAIL(home,Distinct::Val<View>::post(home, x));
+//       }
+      IntVarArgs xv(x.size());
+      for (int i = 0; i < x.size(); i++) {
+	IntVar iv(x[i].intview());
+	xv[i] = iv;
       }
+      distinct(home, xv, icl);
     } else {
       switch (icl) {
       case ICL_BND:
@@ -277,10 +321,15 @@ namespace Gecode { namespace Int { namespace GCC {
   void gcc(Space* home, const IntVarArgs& x, const IntArgs& c, 
 	   int m, int unspec_low, int unspec_up, int min, int max,
 	   IntConLevel icl) {
-
     if (home->failed()) {
       return;
     }
+
+    ViewArray<IntView> x0(home, x);
+    if (x0.shared()) {
+      throw ArgumentSame("Int::GCC");
+    }
+
     
     GccIdxView xv(home, x);
 
@@ -341,14 +390,21 @@ namespace Gecode { namespace Int { namespace GCC {
     if (home->failed()) {
       return;
     }
+
+    ViewArray<IntView> x0(home, x);
+    if (x0.shared()) {
+      throw ArgumentSame("Int::GCC");
+    }
    
     GccIdxView xv(home,x);
     x_setidx(xv);
 
-    int values = x_card(xv);
+    int values = x_card(xv, icl);
+
     FixCard c(home, values);
-    GCC::initcard(home, xv, c, lb, ub);
-    GCC::post_template<GCC::IdxView, FixCard, false>(home, xv, c, icl, true);
+    GCC::initcard(home, xv, c, lb, ub, icl);
+    bool all = true;
+    GCC::post_template<GCC::IdxView, FixCard, false>(home, xv, c, icl, all);
   }
 
 
@@ -360,10 +416,16 @@ namespace Gecode { namespace Int { namespace GCC {
 
   void gcc(Space* home, const IntVarArgs& x, const IntVarArgs& c, 
 	   int min, int max, IntConLevel icl) {
-    
+
     if (home->failed()) {
       return;
     }
+    int p = x.size();
+    int q = c.size();
+    int w = p + q;
+
+
+//     std::cout << "post card Var\n";
 
     GccIdxView xv(home, x);
     x_setidx(xv);
@@ -372,7 +434,18 @@ namespace Gecode { namespace Int { namespace GCC {
 
     VarCard cv(home, c);
 
-    int interval = max - (min - 1);
+    ViewArray<IntView> xc(home, w);
+    for (int i = 0; i < p; i++) {
+      xc[i] = xv[i].intview();
+    }
+    for (int i = p; i < w; i++) {
+      xc[i] = cv[i - p].intview();
+    }
+    if (xc.shared()) {
+      throw ArgumentSame("Int::GCC");
+    }
+
+    int interval = max - min + 1;
 
     GECODE_AUTOARRAY(bool, done, interval);
     for (int i = 0; i < interval; i++) {
@@ -398,14 +471,16 @@ namespace Gecode { namespace Int { namespace GCC {
 
     for (int i = 0; i < interval; i++) {
       if (!done[i]) {
-	GECODE_ME_FAIL(home, cv[i].eq(home, 0));
+	if (icl == ICL_DOM) {
+	  GECODE_ME_FAIL(home, cv[i].eq(home, 0));
+	}
       }
     }
+//     std::cout << "NOT failed!\n";
 
     GCC::setcard<VarCard, Gecode::Int::GCC::IdxView, true>
       (home, xv, cv, min, max);
 
-    
     int sum_min = 0;
     int sum_max = 0;
     IntArgs dx(cv.size());
@@ -414,8 +489,8 @@ namespace Gecode { namespace Int { namespace GCC {
       sum_min += cv[i].card() * cv[i].min();
       sum_max += cv[i].card() * cv[i].max();
     }
-
-    GCC::post_template<GCC::IdxView, VarCard, true>(home, xv, cv, icl, true);
+    bool all = true;
+    GCC::post_template<GCC::IdxView, VarCard, true>(home, xv, cv, icl, all);
   }
 
   void gcc(Space* home, const IntVarArgs& x, const IntArgs& v, 
@@ -438,6 +513,13 @@ namespace Gecode { namespace Int { namespace GCC {
 
     GccIdxView xv(home, x);
     x_setidx(xv);
+
+//     std::cout << "post card:\n";
+//     for (int i = 0; i < xv.size(); i++) {
+//       std::cout << xv[i] << " ";
+//     }
+//     std::cout << "\n";
+
 
     int interval = xmax - (xmin - 1);
 
@@ -533,10 +615,26 @@ namespace Gecode { namespace Int { namespace GCC {
 
     VarCard cardv(home, cv);
 
+
+    int p = x.size();
+    int q = c.size();
+    int w = p + q;
+
+    ViewArray<IntView> xc(home, w);
+    for (int i = 0; i < p; i++) {
+      xc[i] = xv[i].intview();
+    }
+    for (int i = p; i < w; i++) {
+      xc[i] = cardv[i - p].intview();
+    }
+    if (xc.shared()) {
+      throw ArgumentSame("Int::GCC");
+    }
+
+
     GCC::setcard<VarCard, Gecode::Int::GCC::IdxView, true>
       (home, xv, cardv, xmin, xmax);
-    
-    GCC::post_template<GCC::IdxView, VarCard, true>(home, xv, cardv, icl, true);
+    GCC::post_template<GCC::IdxView, VarCard, true>(home, xv, cardv, icl, all);
   }
 }
 

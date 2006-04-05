@@ -86,7 +86,6 @@ public:
   GCC_FC_AllLbUb(const char* t, IntConLevel icl) 
     : IntTest(t, 4, ds_14, false, icl) {}
   virtual bool solution(const Assignment& x) const {
-    
     FixCard fc(4);
     for (int i = 0; i < 4; i++) {
       fc[i][0] = 0;
@@ -98,13 +97,27 @@ public:
       fc[fc.lookup(x[i])].inc();
     }
 
+    
+//     for (int i = 0; i < 4; i++) {
+//       std::cout << x[i] << " ";
+//     }
+//     std::cout << "\t";
+//     for (int i = 0; i < 4; i++) {
+//       std::cout << fc[i].card() << "("
+// 		<< fc[i].counter() << ") "
+// 	"["<<fc[i].min()<<","<<fc[i].max()<<"] ";
+//     }
+//     std::cout << "\t";
+    
     for (int i = 0; i < 4; i++) {
       int vi = fc.lookup(x[i]);
       if (! (fc[vi].min() <= fc[vi].counter() &&
 	     fc[vi].counter() <=fc[vi].max())) {
+// 	std::cout << " NO \n";
 	return false;
       }
     }
+//     std::cout << " YES \n";
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -335,7 +348,7 @@ public:
 
     for (int i = 0; i < ve; i++) {
       if ( x[i] < lb || x[i] > rb) {
-	// std::cout << "wrong bounds\n";
+// 	std::cout << "wrong bounds\n";
 	return false;
       }
     }
@@ -344,7 +357,7 @@ public:
     for (int i = ve; i < xs; i++) {
       count[i - ve] = 0;
       if (x[i] < minocc || x[i] > maxocc) {
-	// std::cout << "min-max-occ\n";
+// 	std::cout << "min-max-occ\n";
 	return false;
       }
     }
@@ -355,12 +368,12 @@ public:
 
     for (int i = 0; i < xs - ve; i++) {
       if (count[i] != x[i + ve]) {
-	// std::cout << "counting failed\n";
+// 	std::cout << "counting failed\n";
 	return false;
       }
     }
 
-    // std::cout << "valid\n";
+//     std::cout << "valid\n";
     return true;
   }
 
@@ -526,7 +539,7 @@ public:
 
     for (int i = 0; i < ve; i++) {
       if ( x[i] < lb || x[i] > rb) {
-	// std::cout << "wrong bounds\n";
+// 	std::cout << "wrong bounds\n";
 	return false;
       }
     }
@@ -535,7 +548,7 @@ public:
     for (int i = ve; i < xs; i++) {
       count[i - ve] = 0;
       if (x[i] < minocc || x[i] > maxocc) {
-	// std::cout << "min-max-occ\n";
+// 	std::cout << "min-max-occ\n";
 	return false;
       }
     }
@@ -549,23 +562,23 @@ public:
       }
     }
 
-    // std::cout << "count: ";
     for (int i = 0; i < ve; i++) {
       if (x[i] == 2) {
+// 	std::cout << "2 not allowed!\n";
 	return false;
       }
     }
-    // std::cout << "\n";
+//     std::cout << "\n";
     
     for (int i = 0; i < xs - ve; i++) {
-      // std::cout << "comp: "<< count[i] <<" & "<<x[i + ve] << "\n";
+//       std::cout << "comp: "<< count[i] <<" & "<<x[i + ve] << "\n";
       if (count[i] != x[i + ve]) {
-	// std::cout << "count not met\n";
+// 	std::cout << "count not met\n";
 	return false;
       }
     }
 
-    // std::cout << "valid\n";
+//     std::cout << "valid\n";
     return true;
   }
 
@@ -674,13 +687,13 @@ GCC_FC_SomeTriple _gccbnd_sometrip("GCC::FixCard::Bnd::Some::(v,lb,ub)",ICL_BND)
 GCC_FC_SomeTriple _gccdom_sometrip("GCC::FixCard::Dom::Some::(v,lb,ub)",ICL_DOM);
 GCC_FC_SomeTriple _gccval_sometrip("GCC::FixCard::Val::Some::(v,lb,ub)",ICL_VAL);
 
-GCC_FC_Shared_AllLbUb _gccbnd_shared_all("GCC::FixCard::Bnd::Shared::All::(lb,ub)",ICL_BND);
-GCC_FC_Shared_AllLbUb _gccdom_shared_all("GCC::FixCard::Dom::Shared::All::(lb,ub)",ICL_DOM);
-GCC_FC_Shared_AllLbUb _gccval_shared_all("GCC::FixCard::Val::Shared::All::(lb,ub)",ICL_VAL);
+// GCC_FC_Shared_AllLbUb _gccbnd_shared_all("GCC::FixCard::Bnd::Shared::All::(lb,ub)",ICL_BND);
+// GCC_FC_Shared_AllLbUb _gccdom_shared_all("GCC::FixCard::Dom::Shared::All::(lb,ub)",ICL_DOM);
+// GCC_FC_Shared_AllLbUb _gccval_shared_all("GCC::FixCard::Val::Shared::All::(lb,ub)",ICL_VAL);
 
-GCC_FC_Shared_SomeTrip _gccbnd_shared_tripsome("GCC::FixCard::Bnd::Shared::Some::(v,lb,ub)",ICL_BND);
-GCC_FC_Shared_SomeTrip _gccdom_shared_tripsome("GCC::FixCard::Dom::Shared::Some::(v,lb,ub)",ICL_DOM);
-GCC_FC_Shared_SomeTrip _gccval_shared_tripsome("GCC::FixCard::Val::Shared::Some::(v,lb,ub)",ICL_VAL);
+// GCC_FC_Shared_SomeTrip _gccbnd_shared_tripsome("GCC::FixCard::Bnd::Shared::Some::(v,lb,ub)",ICL_BND);
+// GCC_FC_Shared_SomeTrip _gccdom_shared_tripsome("GCC::FixCard::Dom::Shared::Some::(v,lb,ub)",ICL_DOM);
+// GCC_FC_Shared_SomeTrip _gccval_shared_tripsome("GCC::FixCard::Val::Shared::Some::(v,lb,ub)",ICL_VAL);
 
 // Testing with Cardinality Variables
 
@@ -696,9 +709,9 @@ GCC_VC_SomeTriple _gccbnd_sometrip__var("GCC::VarCard::Bnd::Some::(v,lb,ub)",ICL
 GCC_VC_SomeTriple _gccdom_sometrip__var("GCC::VarCard::Dom::Some::(v,lb,ub)",ICL_DOM);
 GCC_VC_SomeTriple _gccval_sometrip__var("GCC::VarCard::Val::Some::(v,lb,ub)",ICL_VAL);
 
-GCC_VC_Shared_SomeTriple _gccbnd_shared_sometrip_var("GCC::VarCard::Bnd::Shared::Some::(lb,ub)",ICL_BND);
-GCC_VC_Shared_SomeTriple _gccdom_shared_sometrip_var("GCC::VarCard::Dom::Shared::Some::(lb,ub)", ICL_DOM);
-GCC_VC_Shared_SomeTriple _gccval_shared_sometrip_var("GCC::VarCard::Val::Shared::Some::(lb,ub)", ICL_VAL);
+// GCC_VC_Shared_SomeTriple _gccbnd_shared_sometrip_var("GCC::VarCard::Bnd::Shared::Some::(lb,ub)",ICL_BND);
+// GCC_VC_Shared_SomeTriple _gccdom_shared_sometrip_var("GCC::VarCard::Dom::Shared::Some::(lb,ub)", ICL_DOM);
+// GCC_VC_Shared_SomeTriple _gccval_shared_sometrip_var("GCC::VarCard::Val::Shared::Some::(lb,ub)", ICL_VAL);
 
 
 

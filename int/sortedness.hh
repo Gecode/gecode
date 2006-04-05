@@ -26,7 +26,6 @@
 
 #include "int.hh"
 #include "int/rel.hh"
-#include "int/distinct.hh"
 
 /**
  * \namespace Gecode::Int::Sortedness
@@ -48,9 +47,10 @@ namespace Gecode { namespace Int { namespace Sortedness {
    * The latter is required for the extended version of sortedness 
    * including permutation views. 
    * \ingroup FuncIntProp
+   * \note The sortedness propagator does not support sharing!
    */
 
-  template<class View, class Tuple, bool Perm, bool shared>
+  template<class View, class Tuple, bool Perm>
   class Sortedness : public Propagator {
   protected:
     
@@ -75,35 +75,21 @@ namespace Gecode { namespace Int { namespace Sortedness {
     /// connection to dropped view
     int reachable;
     /// Constructor for posting
-    Sortedness(Space*, 
-	       ViewArray<Tuple>&, 
-	       ViewArray<View>&);
-
+    Sortedness(Space*, ViewArray<Tuple>&, ViewArray<View>&);
     /// Constructor for cloning 
-    Sortedness(Space* home, 
-	       bool share, 
-	       Sortedness<View, Tuple, Perm, shared>& p);
+    Sortedness(Space* home, bool share, Sortedness<View, Tuple, Perm>& p);
 
   public:
     /// Destructor
     virtual ~Sortedness(void);
-    
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
-    
-    /**
-     * \brief Cost function returning PC_LINEAR_HI
-     */
+    /// Cost function returning PC_LINEAR_HI
     virtual PropCost cost (void) const;
-    
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    
     /// Post propagator for the views \a xz and \a y
-    static  ExecStatus post(Space*, 
-			    ViewArray<Tuple>&, 
-			    ViewArray<View>&);
-
+    static  ExecStatus post(Space*, ViewArray<Tuple>&, ViewArray<View>&);
   };
 
   

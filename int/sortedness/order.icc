@@ -43,15 +43,21 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	eqbnd &= ( (xz[i][0].min() == xz[i + 1][0].min()) &&
 		   (xz[i][0].max() == xz[i + 1][0].max()));
       }
-      
-      if (eqbnd || fixed) {
-	TupleMinIncPerm<Tuple> min_inc;
-	Support::quicksort<Tuple, TupleMinIncPerm<Tuple> >
-	  (&xz[0], xs, min_inc);
-      } else {
-	TupleMinInc<Tuple> min_inc;
-	Support::quicksort<Tuple, TupleMinInc<Tuple> >(&xz[0], xs, min_inc);
-      }
+//       std::cout << "what sort\n";
+//       if (eqbnd || fixed) {
+// 	std::cout << "eqbnd & fixed";
+// 	TupleMinIncPerm<Tuple> min_inc;
+// 	Support::quicksort<Tuple, TupleMinIncPerm<Tuple> >
+// 	  (&xz[0], xs, min_inc);
+//       } else {
+// 	std::cout << "normal sort";
+// 	TupleMinInc<Tuple> min_inc;
+// 	Support::quicksort<Tuple, TupleMinInc<Tuple> >(&xz[0], xs, min_inc);
+//       }
+//       std::cout << "\n";
+	TupleMinIncExt<Tuple> min_inc;
+	Support::quicksort<Tuple, TupleMinIncExt<Tuple> >(&xz[0], xs, min_inc);
+
     } else {
       TupleMinInc<Tuple> min_inc;
       Support::quicksort<Tuple, TupleMinInc<Tuple> >(&xz[0], xs, min_inc);
@@ -72,20 +78,22 @@ namespace Gecode { namespace Int { namespace Sortedness {
     int xs = xz.size();
 
     if (Perm) {
-      bool eqbnd = true;
-      for (int i = xs - 1; i--;) {
-	eqbnd &= ( (xz[i][0].min() == xz[i + 1][0].min()) &&
-		   (xz[i][0].max() == xz[i + 1][0].max()));
-      }
+//       bool eqbnd = true;
+//       for (int i = xs - 1; i--;) {
+// 	eqbnd &= ( (xz[i][0].min() == xz[i + 1][0].min()) &&
+// 		   (xz[i][0].max() == xz[i + 1][0].max()));
+//       }
       
-      if (eqbnd) {
-	TupleMaxIncPerm<Tuple> max_inc;
-	Support::quicksort<Tuple, TupleMaxIncPerm<Tuple> >
-	  (&xz[0], xs, max_inc);
-      } else {
-	TupleMaxInc<Tuple> ltmax(xz);
+//       if (eqbnd) {
+// 	TupleMaxIncPerm<Tuple> max_inc;
+// 	Support::quicksort<Tuple, TupleMaxIncPerm<Tuple> >
+// 	  (&xz[0], xs, max_inc);
+//       } else {
+// 	TupleMaxInc<Tuple> ltmax(xz);
+// 	Support::quicksort(&(*tau), xs, ltmax);
+//       }
+	TupleMaxIncExt<Tuple> ltmax(xz);
 	Support::quicksort(&(*tau), xs, ltmax);
-      }
       
     } else {
       TupleMaxInc<Tuple> ltmax(xz);
@@ -100,7 +108,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
    * \f$\forall i\in\{0,\dots, n-1\}: min(y_0) \leq \dots \leq min(y_{n-1}) \wedge 
    *  max(y_0) \leq \dots \leq max(y_{n-1})\f$ holds. 
    */
-  template <class View, class Tuple, bool shared>
+  template <class View, class Tuple>
   forceinline bool
   normalize(Space* home, 
 	    ViewArray<View>& y, 
@@ -109,10 +117,6 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
     int ys = y.size();
     for (int i = 1; i < ys; i++) {
-      if (shared && y[i].modified()) {
-	nofix = true;
-	return true;
-      }
       ModEvent me_lb = y[i].gq(home, y[i - 1].min()); 
       if (me_failed(me_lb)) {
 	return false;
@@ -121,11 +125,6 @@ namespace Gecode { namespace Int { namespace Sortedness {
     }
     
     for (int i = ys - 1; i--; ) {
-      if (shared && y[i].modified()) {
-	nofix = true;
-	return true;
-      }
-
       ModEvent me_ub = y[i].lq(home, y[i + 1].max());
       if (me_failed(me_ub)) {
 	return false;
@@ -135,17 +134,11 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
     int xs = xz.size();
     for (int i = xs; i--; ) {
-      if (shared && xz[i][0].modified()) {
-	nofix = true;
-	return true;
-      }
-
       ModEvent me = xz[i][0].gq(home, y[0].min()); 
       if (me_failed(me)) {
 	return false;
       }
       nofix |= (me_modified(me) && xz[i][0].min() != y[0].min());
-      
 
       me = xz[i][0].lq(home, y[xs - 1].max()); 
       if (me_failed(me)) {
@@ -166,7 +159,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
    *  that \a y is sorted. 
    */
 
-  template<class View, class Tuple, bool Perm, bool shared>
+  template<class View, class Tuple, bool Perm>
   forceinline bool
   perm_bc(Space* home, int tau[], 
 	  SccComponent sinfo[],	  

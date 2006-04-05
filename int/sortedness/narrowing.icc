@@ -118,7 +118,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
    *        where \f$y_h\f$ is the rightmost neighbour of \f$x_i\f$
    */
 
-  template<class View, class Tuple, bool Perm, bool shared>
+  template<class View, class Tuple, bool Perm>
   forceinline bool
   narrow_domx(Space* home, 
 	      ViewArray<Tuple>& xz, 
@@ -158,10 +158,6 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	nofix |= (me_modified(me_plb) && start != xz[i][1].min()); 
       }
 
-      if (shared && xz[i][0].modified()) {
-	nofix = true;
-	return true;
-      }
       ModEvent me_lb = xz[i][0].gq(home, y[start].min());
       if (me_failed(me_lb)) {
 	return false;
@@ -193,11 +189,6 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	nofix |= (me_modified(me_pub) && start != xz[ptau][1].max());
       }
 
-      if (shared && xz[ptau][0].modified()) {
-	nofix = true;
-	return true;
-      }
-      
       ModEvent me_ub = xz[ptau][0].lq(home, y[start].max());
       if (me_failed(me_ub)) {
 	return false;
@@ -218,7 +209,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
    *      and update the new lower bound by \f$T_j=max(E_j, D_{\phi'(j)})\f$
    */
   
-  template<class View, class Tuple, bool Perm, bool shared>
+  template<class View, class Tuple, bool Perm>
   forceinline bool
   narrow_domy(Space* home, 
 	      ViewArray<Tuple>& xz, 
@@ -229,21 +220,12 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
     int xs = xz.size();
     for (int i = xs; i--; ) {
-      if (shared && y[i].modified()) {
-	nofix = true;
-	return true;
-      }
       ModEvent me_lb = y[i].gq(home, xz[phiprime[i]][0].min()); 
       if (me_failed(me_lb)) {
 	return false;
       }
       nofix |= (me_modified(me_lb) && 
 		xz[phiprime[i]][0].min() != y[i].min());
-
-      if (shared && y[i].modified()) {
-	nofix = true;
-	return true;
-      }
 
       ModEvent me_ub = y[i].lq(home, xz[phi[i]][0].max());
       if (me_failed(me_ub)) {

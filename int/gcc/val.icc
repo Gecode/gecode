@@ -22,7 +22,7 @@ namespace Gecode { namespace Int { namespace GCC {
   
   template <class View, class Card, bool isView>
   forceinline ExecStatus
-  prop_val(Space* home, ViewArray<View>& x, Card& k){
+  prop_val(Space* home, ViewArray<View>& x, Card& k, bool& _cardall){
 
     bool mod = false;
     int  n   = x.size();
@@ -112,9 +112,9 @@ namespace Gecode { namespace Int { namespace GCC {
     int single = 0; 
 
     for (int i = m; i--; ) {
-      int ci = count[i] + k[i].counter();
+      int ci = count[i] + k[i].counter();  
       t_noa += ci;
-      if (ci == 0) {
+      if (ci == 0) { // this works
 	req += k[i].min();
 	n_r++;
 	single = i;
@@ -261,6 +261,41 @@ namespace Gecode { namespace Int { namespace GCC {
       return ES_SUBSUMED;
     } 
 
+    if (isView) {
+      // check again consistnecy of cardinalities
+      int reqmin = 0;
+      int allmax = 0;
+      m    = k.size();
+      n    = x.size();
+      for (int i = m; i--; ) {
+	int ci = k[i].counter();
+	if (ci > k[i].max() ) {
+	  return ES_FAILED;
+	} else {
+	  allmax += (k[i].max() - ci);
+	  if (ci < k[i].min()) {
+	    reqmin += (k[i].min() - ci);
+	  }
+	}
+	if (k[i].min() > n) {
+	  return ES_FAILED;
+	}
+	if (!k[i].assigned()) {
+	  ModEvent me = k[i].lq(home, n);
+	  if (me_failed(me)) {
+	    return ES_FAILED;
+	  }
+	}
+      }
+
+      if (n < reqmin) {
+	return ES_FAILED;
+      } 
+
+      if (_cardall && allmax < n) {
+	return ES_FAILED;
+      }
+    }
     return mod ? ES_NOFIX : ES_FIX;
   }
 
@@ -347,7 +382,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
     
-    return prop_val<View, Card, isView>(home, x, k);
+    return prop_val<View, Card, isView>(home, x, k, card_all);
   }
 
 }}}

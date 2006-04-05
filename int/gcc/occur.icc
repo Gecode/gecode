@@ -54,9 +54,9 @@ namespace Gecode { namespace Int { namespace GCC {
     int counter(void);
   };
 
-  template <class T, unsigned int n>
-  std::ostream&
-  operator<<(std::ostream& os, const OccurBnds<T,n>& xy);
+//   template <class T, unsigned int n>
+//   std::ostream&
+//   operator<<(std::ostream& os, const OccurBnds<T,n>& xy);
 
   template <class T, unsigned int n>
   forceinline
@@ -195,11 +195,13 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class T, unsigned int n>
   inline std::ostream&
-  operator<<(std::ostream& os, const OccurBnds<T,n>& xs) {
-    os << "[";
-    for (unsigned int i=0; i<n-1; i++)
+  operator<<(std::ostream& os, OccurBnds<T,n>& xs) {
+    os << xs.card() << "("<< xs.counter() <<")[";
+    for (unsigned int i=0; i<n-1; i++) {
       os << xs[i] << ",";
-    return os << xs[n-1] << "]";
+    }
+    os << xs[n-1] << "]";
+    return os;
   }
 
   /**
@@ -396,21 +398,20 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class T>
   forceinline void
   OccurArray<T>::update(Space* home, bool share, OccurArray<T>& o) {
+    
     for (int i = this->size(); i--; ) {
       (*this)[i] = o[i];
     }
+    assert(this->size() == o.size());
   }
 
   template <class T>
   forceinline void
-  OccurArray<T>::cancel(Propagator* p, PropCond pc ) {
-    
-  }
+  OccurArray<T>::cancel(Propagator* p, PropCond pc ) {}
 
   template <class T>
   forceinline void
-  OccurArray<T>::subscribe(Space* home, Propagator* p, PropCond pc ) {
-  }
+  OccurArray<T>::subscribe(Space* home, Propagator* p, PropCond pc ) {}
 
   /**
    * \brief Return the index of v in the array
@@ -508,7 +509,8 @@ namespace Gecode { namespace Int { namespace GCC {
     int med(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;
-
+    /// Return used IntView
+    IntView intview(void);
     /// Return size (cardinality) of domain
     unsigned int size(void) const;
     /// Return width of domain (distance between maximum and minimum)
@@ -604,6 +606,14 @@ namespace Gecode { namespace Int { namespace GCC {
     ///@}
   };
 
+  std::ostream&
+  operator<<(std::ostream& os, CardView cv) {
+    os << cv.card() << "("<< cv.counter()<<")";
+    os << "["<< cv.min() << ".." << cv.max() << "]";
+    return os;
+  }
+
+
   /*
    * Constructors and initialization
    *
@@ -693,10 +703,17 @@ namespace Gecode { namespace Int { namespace GCC {
   CardView::med(void) const { 
     return view.med(); 
   }
+
   forceinline int
   CardView::val(void) const { 
     return view.val(); 
   }
+
+  forceinline IntView
+  CardView::intview(void){ 
+    return view;
+  }
+
 
   forceinline unsigned int
   CardView::width(void) const { 
@@ -997,7 +1014,8 @@ namespace Gecode { namespace Int { namespace GCC {
     int med(void) const;
     /// Return assigned value (only if assigned)
     int val(void) const;
-
+    /// Return used IntView
+    IntView intview(void);
     /// Return size (cardinality) of domain
     unsigned int size(void) const;
     /// Return width of domain (distance between maximum and minimum)
@@ -1153,9 +1171,15 @@ namespace Gecode { namespace Int { namespace GCC {
   IdxView::med(void) const { 
     return view.med(); 
   }
+
   forceinline int
   IdxView::val(void) const { 
     return view.val(); 
+  }
+
+  forceinline IntView
+  IdxView::intview(void){ 
+    return view;
   }
 
   forceinline unsigned int
@@ -1389,6 +1413,26 @@ namespace Gecode { namespace Int { namespace GCC {
       || (same(x.base(),y.base()) && (x.index() < y.index()));
   }
 
+
+  std::ostream&
+  operator<<(std::ostream& os, GCC::IdxView v) {
+    if (v.min() == v.max()) {
+      os << v.min() <<" ";
+    } else {
+      if (v.range()){
+	os << "["<<v.min() <<".."<<v.max()<<"] ";
+      } else {
+	os << "{";
+	ViewValues<GCC::IdxView> iter(v);
+	while(iter()){
+	  os << iter.val() <<",";
+	  ++iter;
+	}     
+	os << "} ";
+      }
+    }
+    return os;
+  }
 
 }}
 

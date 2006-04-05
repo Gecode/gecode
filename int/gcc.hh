@@ -32,6 +32,7 @@
 /**
  * \namespace Gecode::Int::GCC
  * \brief Global cardinality propagators
+ * \note The global cardinality propagators do not support sharing!
  *
  */
 
@@ -45,10 +46,10 @@ typedef Gecode::ViewArray<Gecode::Int::GCC::IdxView> GccIdxView;
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  template <class View, class Card, bool shared, bool isView>
+  template <class View, class Card, bool isView>
   ExecStatus prop_bnd(Space* home, ViewArray<View>&, Card&,
 		      PartialSum<Card>*, PartialSum<Card>*, 
-		      bool, bool, int);
+		      bool, bool, bool);
 
   template <class View, class Card, bool isView>
   ExecStatus prop_dom(Space* home, 
@@ -58,7 +59,7 @@ namespace Gecode { namespace Int { namespace GCC {
 		      VarValGraph<View, Card, isView>* vvg);
 
   template <class View, class Card, bool isView>
-  ExecStatus prop_val(Space* home, ViewArray<View>&, Card&);
+  ExecStatus prop_val(Space* home, ViewArray<View>&, Card&, bool&);
 
   /**
    * \brief Bounds-consistent global cardinality propagator
@@ -104,28 +105,12 @@ namespace Gecode { namespace Int { namespace GCC {
    * and uses a more efficient layout of datastructures (keeping the 
    * number of different arrays small).
    *
-   * The Bnd class is used to post the propagator and BndImp 
-   * is the actual implementation taking shared variables into account.
-   *
    * Requires \code #include "int/gcc.hh" \endcode
    * \ingroup FuncIntProp
    */
 
-
   template <class View, class Card, bool isView>
-  class Bnd{
-  public:
-    /// Post the bounds consistent propagator
-    static  ExecStatus  post(Space* home, ViewArray<View>&, Card&, bool);
-  };
-
-  /** 
-   * \brief Implementation of bounds-consistent global cardinality propagator.
-   * 
-   */
-  template <class View, class Card, bool isView, bool shared>
-  class BndImp : public Propagator {
-    friend class Bnd<View, Card, isView>;
+  class Bnd : public Propagator {
   protected:
     ViewArray<View> x; 
     ViewArray<View> y; 
@@ -134,17 +119,20 @@ namespace Gecode { namespace Int { namespace GCC {
     PartialSum<Card>* ups;
     bool card_fixed;
     bool card_all;
-    int minpost;
-    BndImp(Space* home, bool, BndImp<View, VarCard, isView, shared>&);
-    BndImp(Space* home, bool, BndImp<View, FixCard, isView, shared>&);
-    BndImp(Space* home, ViewArray<View>&, Card&, bool, bool,int);
+    bool skip_lbc;
+    /// Constructor for posting
+    Bnd(Space* home, ViewArray<View>&, Card&, bool, bool, bool);
+    Bnd(Space* home, bool, Bnd<View, VarCard, isView>&);
+    Bnd(Space* home, bool, Bnd<View, FixCard, isView>&);
 
   public:
-    virtual ~BndImp(void);
+    virtual ~Bnd(void);
     virtual void flush(void);
     virtual Actor* copy(Space* home, bool share);
     virtual PropCost    cost (void) const;
     virtual ExecStatus  propagate(Space* home);
+    /// Post the bounds consistent propagator
+    static  ExecStatus  post(Space* home, ViewArray<View>&, Card&, bool);
   };
 
   /**

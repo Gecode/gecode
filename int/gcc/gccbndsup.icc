@@ -130,6 +130,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	}
       }
     }
+
     return ES_OK;
   }
 
@@ -298,8 +299,7 @@ namespace Gecode { namespace Int { namespace GCC {
 			       bool up) {
     int i = 0;
     int j = 0;
-    // for the partial sum we add 3 elements at the beginning
-    // and two at the end
+    // we add three elements at the beginning and two at the end
     size  = count + 5;
     // memory allocation
     size_t sum_size = (size) * sizeof(int);
@@ -320,7 +320,6 @@ namespace Gecode { namespace Int { namespace GCC {
      * indicating whether an end of the sum has been reached
      *
      */
-    // we added three elements at the beginning
     firstValue = first - 3; 
     lastValue  = first + count + 1;
 
@@ -332,8 +331,11 @@ namespace Gecode { namespace Int { namespace GCC {
 
     int shift  = count + 2;
     
-    // copy the bounds into sum
-    // optimization only those values being indeed variable bounds
+    /*
+     * copy the bounds into sum
+     * optimization only those values being indeed 
+     * variable bounds
+     */
     for (i = 2; i < shift; i++){
       if (up) {
 	sum[i + 1] = sum[i] + elements[i - 2].max();
@@ -358,7 +360,7 @@ namespace Gecode { namespace Int { namespace GCC {
       j = ds[j];
     }
     ds[j] = 0;
-    // just for the sake of having no seg fault
+    // for the sake of having no seg fault
     ds[0] = 0;
   }
 
@@ -379,8 +381,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   /**
-   * \brief Returns the index of the first cardinality in the
-   * partial sum structure.
+   * \brief Returns the smallest bound of the variables in \a x
    *
    */
   template <class Card>
@@ -390,8 +391,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   /**
-   * \brief Returns the index of the last cardinality in the
-   * partial sum structure.
+   * \brief Returns the largest bound of the variables in \a x
    *
    */
   
@@ -424,6 +424,9 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class Card>
   forceinline void
   PartialSum<Card>::print(void){
+    std::cout << "----------\n";
+    std::cout << "smallest elem = "<< minValue() << " - "
+	      << "largest  elem = "<< maxValue() << "\n";
     std::cout << "fsv: "<< firstValue <<" lsv: " << lastValue 
 	      << " size = "<< size << "\n";
     std::cout << "number of elements = "<< size - 5<<"\n";
@@ -662,7 +665,6 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class Card>
   void reduce_card(int cmin, int cmax, Card& k) {
-
     if (cmin == cmax) {
       int idx = 0;
       while (k[idx].card() != cmax) {
@@ -686,8 +688,9 @@ namespace Gecode { namespace Int { namespace GCC {
 	} else {
 	  zero[i] = false;
 	}
-      }      
+      } 
 
+      
       if (zero[ks - 1]) {
 	int m = ks;
 	while(zero[m - 1]) {
