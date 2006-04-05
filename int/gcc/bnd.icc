@@ -27,8 +27,6 @@ namespace Gecode { namespace Int { namespace GCC {
 	   PartialSum<Card>* lps, PartialSum<Card>* ups, 
 	   bool card_fixed, bool card_all, bool nolbc){		
 
-    ExecStatus es = ES_NOFIX;
-
     bool all_assigned = true;
     bool mod          = false;
     int  smin         = 0;
