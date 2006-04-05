@@ -1035,7 +1035,7 @@ namespace Gecode {
   //@}
 
   /**
-   * \defgroup TaskIntIntNumerical Numerical constraints
+   * \defgroup TaskIntIntArith Arithmetic constraints
    * \ingroup TaskIntInt
    */
 
