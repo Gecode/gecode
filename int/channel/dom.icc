@@ -27,8 +27,8 @@
 
 namespace Gecode { namespace Int { namespace Channel {
 
-  /*
-   * Combine view with information for domain propagation
+  /**
+   * \brief Combine view with information for domain propagation
    *
    */
   template <class View>

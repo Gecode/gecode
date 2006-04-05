@@ -89,7 +89,7 @@ namespace Gecode {
     
 
     /**
-     * \defgroup TaskIntSearchStop %Stop-objects for stopping search
+     * \defgroup TaskIntSearchStop Stop-objects for stopping search
      * \ingroup TaskIntSearch
      *
      * Allows to specify various criteria when a search engine should
