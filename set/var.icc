@@ -309,10 +309,8 @@ namespace Gecode { namespace Set {
     void update(Space* home, BndSet& x);
     //@}
 
-#ifndef NDEBUG
     /// Check whether internal invariants hold
     GECODE_SET_EXPORT bool isConsistent(void) const;
-#endif
   };
 
   /**
