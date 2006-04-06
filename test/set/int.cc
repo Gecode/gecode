@@ -22,7 +22,7 @@
 #include "test/set.hh"
 #include "test/log.hh"
 
-namespace SetTest {
+namespace TestsForSetsAndInts {
 
   static const int d1r[4][2] = {
     {-4,-3},{-1,-1},{1,1},{3,5}
