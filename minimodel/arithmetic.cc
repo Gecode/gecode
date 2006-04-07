@@ -31,7 +31,7 @@ if (home->failed()) {				\
 }
 
   IntVar 
-  abs(Space* home, const IntVar& x, IntConLevel icl) {
+  abs(Space* home, IntVar x, IntConLevel icl) {
     GECODE_RETURN_FAILED;
     if (x.min() >= 0)
       return x;
@@ -43,7 +43,7 @@ if (home->failed()) {				\
   }
 
   IntVar 
-  min(Space* home, const IntVar& x, const IntVar& y, IntConLevel icl) {
+  min(Space* home, IntVar x, IntVar y, IntConLevel icl) {
     GECODE_RETURN_FAILED;
     IntVar z(home,
 	     std::min(x.min(),y.min()),
@@ -67,7 +67,7 @@ if (home->failed()) {				\
   }
 
   IntVar
-  max(Space* home, const IntVar& x, const IntVar& y, IntConLevel icl) {
+  max(Space* home, IntVar x, IntVar y, IntConLevel icl) {
     GECODE_RETURN_FAILED;
     IntVar z(home,
 	     std::max(x.min(),y.min()),
@@ -91,7 +91,7 @@ if (home->failed()) {				\
   }
 
   IntVar
-  mult(Space* home, const IntVar& x, const IntVar& y, IntConLevel icl) {
+  mult(Space* home, IntVar x, IntVar y, IntConLevel icl) {
     GECODE_RETURN_FAILED;
     IntVar z(home, Limits::Int::int_min, Limits::Int::int_max);
     mult(home, x, y, z, icl);
@@ -99,7 +99,7 @@ if (home->failed()) {				\
   }
 
   IntVar
-  sqr(Space* home, const IntVar& x, IntConLevel icl) {
+  sqr(Space* home, IntVar x, IntConLevel icl) {
     GECODE_RETURN_FAILED;
     IntVar y(home, 0, Limits::Int::int_max);
     mult(home, x, x, y, icl);
@@ -107,7 +107,7 @@ if (home->failed()) {				\
   }
 
   IntVar
-  plus(Space* home, const IntVar& x, const IntVar& y, IntConLevel icl) {
+  plus(Space* home, IntVar x, IntVar y, IntConLevel icl) {
     GECODE_RETURN_FAILED;
     IntVar z(home,x.min()+y.min(),x.max()+y.max());
     Int::Linear::Term ts[3];
@@ -119,7 +119,7 @@ if (home->failed()) {				\
   }
 
   IntVar
-  minus(Space* home, const IntVar& x, const IntVar& y, IntConLevel icl) {
+  minus(Space* home, IntVar x, IntVar y, IntConLevel icl) {
     GECODE_RETURN_FAILED;
     IntVar z(home,x.min()-y.max(),x.max()-y.min());
     Int::Linear::Term ts[3];
