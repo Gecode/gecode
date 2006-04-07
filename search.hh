@@ -340,7 +340,7 @@ namespace Gecode {
        * \param sz size of one space
        */
       DFS(Space* s, unsigned int c_d, unsigned int a_d, Stop* st, size_t sz);
-      /// Return next solution (NULL, if none exists)
+      /// Return next solution (NULL, if none exists or search has been stopped)
       Space* next(void);
       /// Return statistics
       Statistics statistics(void) const;
@@ -369,7 +369,7 @@ namespace Gecode {
 	unsigned int c_d=Search::Config::c_d, 
 	unsigned int a_d=Search::Config::a_d,
 	Search::Stop* st=NULL);
-    /// Return next solution (NULL, if none exists or engine stopped)
+    /// Return next solution (NULL, if none exists or search has been stopped)
     T* next(void);
   };
 
@@ -455,7 +455,7 @@ namespace Gecode {
        * \param sz size of space
        */
       LDS(Space* s, unsigned int d, Stop* st, size_t sz);
-      /// Return next solution (NULL, if none exists)
+      /// Return next solution (NULL, if none exists or search has been stopped)
       Space* next(void);
       /// Return statistics
       Statistics statistics(void) const;
@@ -478,7 +478,7 @@ namespace Gecode {
      * \param st %Stop-object
      */
     LDS(T* s, unsigned int d, Search::Stop* st=NULL);
-    /// Return next solution (NULL, if none exists)
+    /// Return next solution (NULL, if none exists or search has been stopped)
     T* next(void);
   };
 
@@ -602,7 +602,7 @@ namespace Gecode {
 	unsigned int c_d=Search::Config::c_d,
 	unsigned int a_d=Search::Config::a_d,
 	Search::Stop* st=NULL);
-    /// Return next better solution (NULL, if none exists)
+    /// Return next better solution (NULL, if none exists or search has been stopped)
     T* next(void);
   };
 
@@ -659,7 +659,7 @@ namespace Gecode {
 	    Search::Stop* st=NULL);
     /// Destructor
     ~Restart(void);
-    /// Return next better solution (NULL, if none exists)
+    /// Return next better solution (NULL, if none exists or search has been stopped)
     T* next(void);
   };
 
