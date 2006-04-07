@@ -52,7 +52,7 @@ public:
       xsize(xs) {
     reset();
   }
-  void SortPermAssignment::reset(void) {
+  void reset(void) {
     done = false;
     IntSet perm_dom(permlow, permup);
     IntSet var_dom(problow, probup);
@@ -62,7 +62,7 @@ public:
     for (int i=0; i < 2*xsize; i++)
       dsv[i].init(var_dom);
   }
-  void SortPermAssignment::operator++(void) {
+  void operator++(void) {
     IntSet perm_dom(permlow, permup);
     IntSet var_dom(problow, probup);
     int i = n-1;

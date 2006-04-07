@@ -48,7 +48,7 @@ public:
     reset();
   }
   
-  void GCCAssignment::reset(void) {
+  void reset(void) {
     done = false;
     IntSet card_dom(cardlow, cardup);
     IntSet var_dom(problow, probup);
@@ -58,7 +58,7 @@ public:
     for (int i = 0; i < xsize; i++ )
       dsv[i].init(var_dom);
   }
-  void GCCAssignment::operator++(void) {
+  void operator++(void) {
     IntSet card_dom(cardlow, cardup);
     IntSet var_dom(problow, probup);
     int i = n-1;
