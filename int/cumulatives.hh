@@ -86,7 +86,6 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     ViewArray<ViewH>  height;
     Support::SharedArray<int>  limit;
     const bool        at_most;
-    const bool        cd_option;
 
     Val(Space* home, bool share, Val<ViewM, ViewD, ViewH, View>& p);
     Val(Space* home, const ViewArray<ViewM>&, const ViewArray<View>&,
