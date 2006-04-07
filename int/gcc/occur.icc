@@ -54,10 +54,6 @@ namespace Gecode { namespace Int { namespace GCC {
     int counter(void);
   };
 
-//   template <class T, unsigned int n>
-//   std::ostream&
-//   operator<<(std::ostream& os, const OccurBnds<T,n>& xy);
-
   template <class T, unsigned int n>
   forceinline
   OccurBnds<T,n>::OccurBnds(void) {}
@@ -194,7 +190,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class T, unsigned int n>
-  inline std::ostream&
+  forceinline std::ostream&
   operator<<(std::ostream& os, OccurBnds<T,n>& xs) {
     os << xs.card() << "("<< xs.counter() <<")[";
     for (unsigned int i=0; i<n-1; i++) {
@@ -606,14 +602,6 @@ namespace Gecode { namespace Int { namespace GCC {
     ///@}
   };
 
-  std::ostream&
-  operator<<(std::ostream& os, CardView cv) {
-    os << cv.card() << "("<< cv.counter()<<")";
-    os << "["<< cv.min() << ".." << cv.max() << "]";
-    return os;
-  }
-
-
   /*
    * Constructors and initialization
    *
@@ -689,6 +677,14 @@ namespace Gecode { namespace Int { namespace GCC {
     view  = x.view; 
     c     = x.c; 
     count = x.count;
+  }
+
+  forceinline
+  std::ostream&
+  operator<<(std::ostream& os, CardView cv) {
+    os << cv.card() << "("<< cv.counter()<<")";
+    os << "["<< cv.min() << ".." << cv.max() << "]";
+    return os;
   }
 
   forceinline int
@@ -1339,8 +1335,6 @@ namespace Gecode { namespace Int { namespace GCC {
     view.update(home,share,x.view);
   }
 
-
-
   /*
    * View comparison
    *
@@ -1387,6 +1381,28 @@ namespace Gecode { namespace Int { namespace GCC {
   };
 
   forceinline
+  std::ostream&
+  operator<<(std::ostream& os, GCC::IdxView v) {
+    if (v.min() == v.max()) {
+      os << v.min() <<" ";
+    } else {
+      if (v.range()){
+	os << "["<<v.min() <<".."<<v.max()<<"] ";
+      } else {
+	os << "{";
+	ViewValues<GCC::IdxView> iter(v);
+	while(iter()){
+	  os << iter.val() <<",";
+	  ++iter;
+	}     
+	os << "} ";
+      }
+    }
+    return os;
+  }
+
+
+  forceinline
   ViewRanges<GCC::IdxView>::ViewRanges(void) : 
     Gecode::Int::ViewRanges<IntView>()  {}
 
@@ -1411,27 +1427,6 @@ namespace Gecode { namespace Int { namespace GCC {
   before(const GCC::IdxView& x, const GCC::IdxView& y) {
     return before(x.base(),y.base())
       || (same(x.base(),y.base()) && (x.index() < y.index()));
-  }
-
-
-  std::ostream&
-  operator<<(std::ostream& os, GCC::IdxView v) {
-    if (v.min() == v.max()) {
-      os << v.min() <<" ";
-    } else {
-      if (v.range()){
-	os << "["<<v.min() <<".."<<v.max()<<"] ";
-      } else {
-	os << "{";
-	ViewValues<GCC::IdxView> iter(v);
-	while(iter()){
-	  os << iter.val() <<",";
-	  ++iter;
-	}     
-	os << "} ";
-      }
-    }
-    return os;
   }
 
 }}

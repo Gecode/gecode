@@ -359,7 +359,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	// two x variables are in the same scc of size 2
 	if (xz[tau[i]][1].min() == xz[tau[i+1]][1].min() &&
 	    xz[tau[i]][1].max() == xz[tau[i+1]][1].max() &&
-	    xz[tau[i]][1].size() == 2) {
+	    xz[tau[i]][1].size() == 2 && xz[tau[i]][1].range()) {
 	  // if bounds are strictly smaller
 	  if (xz[tau[i]][0].max() < xz[tau[i+1]][0].max()) {
 	    ModEvent me = y[xz[tau[i]][1].min()].lq(home, xz[tau[i]][0].max());
@@ -609,7 +609,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	// two x variables are in the same scc of size 2
 	if (xz[i][1].min() == xz[i+1][1].min() &&
 	    xz[i][1].max() == xz[i+1][1].max() &&
-	    xz[i][1].size() == 2) {
+	    xz[i][1].size() == 2 && xz[i][1].range()) {
 	  if (xz[i][0].min() < xz[i+1][0].min()) {
 	    ModEvent me = y[xz[i][1].min()].gq(home, xz[i][0].min());
 	    if (me_failed(me)) {
