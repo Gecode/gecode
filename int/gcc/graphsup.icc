@@ -30,7 +30,7 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  /// Debugging: Print a View
+  /// Debugging: print a view
   template <class View>
   void pview(View& v){
     if (v.min() == v.max()) {
@@ -447,26 +447,28 @@ namespace Gecode { namespace Int { namespace GCC {
     //@}
   };
 
-
-  forceinline void
-  pvar(VarNode* v) {
-    std::cout << v->var<<":{";
+  /// Debugging: print a variable node
+  forceinline std::ostream&
+  operator<<(std::ostream& os, VarNode* v) {
+    os << v->var<<":{";
     for (Edge* e = v->first(); e != NULL; e = e->next()) {
-      std::cout << e->getVal()->val<<",";
+      os << e->getVal()->val<<",";
     }
-    std::cout << "}(";
-    std::cout << v->xindex << ") ";
+    os << "}(";
+    os << v->xindex << ") ";
+    return os;
   }
 
-  forceinline void
-  pval(ValNode* v) {
-    std::cout << v->val<<":{";
+  /// Debugging: print a value node
+  forceinline std::ostream&
+  operator<<(std::ostream& os, ValNode* v) {
+    os << v->val<<":{";
     for (Edge* e = v->first(); e != NULL; e = e->vnext()) {
-      std::cout << e->getVar()->var<<",";
+      os << e->getVar()->var<<",";
     }
-    std::cout << "} ";
+    os << "} ";
+    return os;
   }
-
 
   /** 
    * \brief Variable-value-graph used during propagation
@@ -576,9 +578,9 @@ namespace Gecode { namespace Int { namespace GCC {
     void operator delete(void* p);	
 
     /**
-     * \brief Narrow the variable domains
-     * Remove all those edges from the graph that do not belong
-     * to any possible maximum matching on the graph
+     * \brief Remove all those edges from the graph 
+     *        that do not belong
+     *        to any possible maximum matching on the graph
      *
      */
 
@@ -587,9 +589,9 @@ namespace Gecode { namespace Int { namespace GCC {
 
     /** \brief Compute a maximum matching M on the graph
      *
-     * If BC=UBC then \f$|M|= |X|\f$
-     * If BC=LBC then \f$|M|= \sum_{i\in \{ 0, \dots, |X|-1\}} 
-     * k[i].min()\f$
+     *  - If BC=UBC then \f$|M|= |X|\f$
+     *  - If BC=LBC then \f$|M|= \sum_{i\in \{ 0, \dots, |X|-1\}} 
+     *    k[i].min()\f$
      */
     template <BC>
     bool maximum_matching(void);
@@ -610,7 +612,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   protected:  
     /**
-     * \brief DFS on the graph
+     * \brief Perform depth-first search on the graph
      * 
      * Depth first search used to compute the 
      * strongly connected components of the graph. 
@@ -1007,7 +1009,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
   
   /// Edge
-
+  /// Debugging: print an edge 
   forceinline std::ostream&
   operator<<(std::ostream& os, Edge* e){
     if (e== NULL) {
@@ -1266,8 +1268,8 @@ namespace Gecode { namespace Int { namespace GCC {
    * 
    * The variable parition is initialized with the variables from \a x,
    * the value partition is initialized with the values from \a v, 
-   * where \f$ \forall v_i\in V: val_idx[i] is the 
-   * index of v_i in k \f$. \a nov denotes the cardinality of the 
+   * where \f$ \forall v_i\in V:\f$ \a val_idx[i] is the 
+   * index of \f$ v_i\f$ in \f$ k \f$. \a nov denotes the cardinality of the 
    * value partition in the graph, \a noe the number of edges in the 
    * graph, \a min_occ the sum over the minimal occurences 
    * of all values and \a max_occ the sum over the maximal occurences
@@ -1707,7 +1709,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   /**
-   * \brief Graph synchronization needed to keep the variable order
+   * \brief %Graph synchronization needed to keep the variable order
    *        consistent in case that the propagator is used with 
    *        staging. 
    */

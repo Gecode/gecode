@@ -189,6 +189,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return x[n - 1];
   }
 
+  /// \brief Debugging: print a fixed cardinality
   template <class T, unsigned int n>
   forceinline std::ostream&
   operator<<(std::ostream& os, OccurBnds<T,n>& xs) {
@@ -679,8 +680,8 @@ namespace Gecode { namespace Int { namespace GCC {
     count = x.count;
   }
 
-  forceinline
-  std::ostream&
+  /// \brief Debugging: print a cardinality variable
+  forceinline std::ostream&
   operator<<(std::ostream& os, CardView cv) {
     os << cv.card() << "("<< cv.counter()<<")";
     os << "["<< cv.min() << ".." << cv.max() << "]";
@@ -1380,8 +1381,8 @@ namespace Gecode { namespace Int { namespace GCC {
     ///@}
   };
 
-  forceinline
-  std::ostream&
+  /// \brief Debugging: print an index view
+  forceinline std::ostream&
   operator<<(std::ostream& os, GCC::IdxView v) {
     if (v.min() == v.max()) {
       os << v.min() <<" ";

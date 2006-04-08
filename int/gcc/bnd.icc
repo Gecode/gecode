@@ -21,6 +21,7 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
+  /// \brief Perform bounds propagation
   template <class View, class Card, bool isView, bool shared>
   inline ExecStatus
   prop_bnd(Space* home, ViewArray<View>& x, Card& k, 

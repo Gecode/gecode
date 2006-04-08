@@ -21,6 +21,27 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
+  /**
+   * \brief Lower Bounds constraint (LBC) stating 
+   * \f$ \forall j \in \{0, \dots, |k|-1\}: 
+   * \#\{i\in\{0, \dots, |x| - 1\} | x_i = card(k_j)\} \geq min(k_j)\f$
+   * Hence the lbc constraints the variables such that every value occurs
+   * at least as often as specified by its lower cardinality bound. 
+   * \param home current space
+   * \param x  the problem variables
+   * \param nb denotes number of unique bounds
+   * \param hall contains information about the hall structure of the problem
+   *        (cf. HallInfo)
+   * \param rank ranking information about the variable bounds (cf. Rank)
+   * \param lps partial sum structure for the lower cardinality bounds (cf. PartialSum)
+   * \param mu permutation \f$ \mu \f$ such that 
+   *        \f$ \forall i\in \{0, \dots, |x|-2\}: 
+   *        max(x_{\mu(i)}) \leq max(x_{\mu(i+1)})\f$
+   * \param nu permutation \f$ \nu \f$ such that
+   *        \f$ \forall i\in \{0, \dots, |x|-2\}: 
+   *        min(x_{\mu(i)}) \leq min(x_{\mu(i+1)})\f$
+   */
+
   template <class View, class Card, bool shared>
   forceinline ExecStatus 
   lbc(Space* home, ViewArray<View>& x, int& nb, 

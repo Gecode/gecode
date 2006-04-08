@@ -277,20 +277,9 @@ namespace Gecode { namespace Int { namespace GCC {
     if (!isView) {
      rewrite = check_alldiff(n, k);
     }
-//     std::cout << "card cons...";
+
     GECODE_ES_FAIL(home, (card_cons<Card, isView>(home, k, x.size(), all)));
-//     std::cout << "is ok\n";
     if (!isView && rewrite) {
-//       switch (icl) {
-//       case ICL_BND:
-// 	GECODE_ES_FAIL(home,Distinct::Bnd<View>::post(home, x));
-// 	break;
-//       case ICL_DOM:
-// 	GECODE_ES_FAIL(home,Distinct::Dom<View>::post(home, x));
-// 	break;
-//       default:
-// 	GECODE_ES_FAIL(home,Distinct::Val<View>::post(home, x));
-//       }
       IntVarArgs xv(x.size());
       for (int i = 0; i < x.size(); i++) {
 	IntVar iv(x[i].intview());

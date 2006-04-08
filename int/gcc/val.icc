@@ -19,7 +19,7 @@
  */
 
 namespace Gecode { namespace Int { namespace GCC {
-  
+  /// \brief Perform value propagation.  
   template <class View, class Card, bool isView>
   forceinline ExecStatus
   prop_val(Space* home, ViewArray<View>& x, Card& k, bool& _cardall){

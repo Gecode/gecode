@@ -53,13 +53,6 @@ namespace Gecode { namespace Int { namespace GCC {
 		      bool, bool, bool);
 
   template <class View, class Card, bool isView>
-  ExecStatus prop_dom(Space* home, 
-		      ViewArray<View>&,
-		      ViewArray<View>&,
-		      Card&, bool, bool, 
-		      VarValGraph<View, Card, isView>* vvg);
-
-  template <class View, class Card, bool isView>
   ExecStatus prop_val(Space* home, ViewArray<View>&, Card&, bool&);
 
   /**
@@ -121,6 +114,10 @@ namespace Gecode { namespace Int { namespace GCC {
     static  ExecStatus  post(Space* home, ViewArray<View>&, FixCard&, bool);
   };
 
+  /**
+   * \brief Implementation of the bounds consistent 
+   * global cardinality propagator
+   */
   template <class View, class Card, bool isView, bool shared>
   class BndImp : public Propagator {
     friend class Bnd<View, Card, isView>;

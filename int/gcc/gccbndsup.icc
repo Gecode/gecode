@@ -34,9 +34,9 @@ namespace Gecode { namespace Int { namespace GCC {
   /// \name GCC-Bnd-Support
   //@{
 
-  // support structures
-  /** \brief Support Class for computing unreachable values in the 
-   * value GCC propagator
+  /** 
+   * \brief Class for computing unreachable values in the 
+   *  value GCC propagator
    *
    */
   class UnReachable {
@@ -48,7 +48,8 @@ namespace Gecode { namespace Int { namespace GCC {
     unsigned int gr;
   };
 
-  /** \brief Bounds consistency check for the case cardinality variables.
+  /** 
+   * \brief Bounds consistency check for cardinality variables.
    */
 
   template <class View, class Card, bool shared>
@@ -183,7 +184,7 @@ namespace Gecode { namespace Int { namespace GCC {
   };
 
   /**
-   * \brief Compares two indeces \a i, \a j of two views 
+   * \brief Compares two indices \a i, \a j of two views 
    * \a \f$ x_i \f$ \f$ x_j\f$ according to the
    * ascending order of the views upper bounds
    *
@@ -202,7 +203,7 @@ namespace Gecode { namespace Int { namespace GCC {
   };
 
   /**
-   * \brief Compares two indeces \a i, \a j of two views 
+   * \brief Compares two indices \a i, \a j of two views 
    * \a \f$ x_i \f$ \f$ x_j\f$ according to the
    * ascending order of the views lower bounds
    *
@@ -231,7 +232,7 @@ namespace Gecode { namespace Int { namespace GCC {
   private:
     /// memory allocation
     char* mem;
-    // sum[i] contains the partial sum from 0 to i
+    /// sum[i] contains the partial sum from 0 to i
     int* sum;  
     /**
      *  marks indices with 0 that can be skipped
@@ -264,6 +265,7 @@ namespace Gecode { namespace Int { namespace GCC {
     //@}
   };
 
+  /// \brief Default destructor
   template <class Card>
   forceinline 
   PartialSum<Card>::~PartialSum(void){
@@ -271,6 +273,7 @@ namespace Gecode { namespace Int { namespace GCC {
     Memory::free(mem);
   }
 
+  /// \brief Memory allocation for the partial sum structure
   template <class Card>
   forceinline void*
   PartialSum<Card>::operator new(size_t t){
@@ -278,6 +281,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return allocated;
   }
   
+  /// \brief Free memory used by partial sum structure
   template <class Card>
   forceinline void
   PartialSum<Card>::operator delete(void* p){
@@ -288,9 +292,12 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Default initialization 
    *
    * \param first is the miminum value the variables can take
-   * \param count is equal to \f$ |k| \f$
+   * \param count is equal to the size \f$ |k| \f$, 
+   *        where \a k denotes the array of cardinalities used
+   *        in the global cardinality propagator
    * \param elements contains the upper and lower cardinalities for every value
    * \param up denotes the direction whether we sumup the lower or upper cardinality bounds
+   *        If \a up is true we sumup the upper bounds, otherwise the lower bounds.
    * 
    */
   template <class Card>
@@ -405,7 +412,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   /**
-   * \brief If neigboured array entries do not differ in 
+   * \brief Skip neigboured array entries if their values do 
+   *        not differ.
    *
    */
   template <class Card>
@@ -415,6 +423,11 @@ namespace Gecode { namespace Int { namespace GCC {
     return (ds[value] < value ? value : ds[value]) + firstValue;
   }
 
+  /**
+   * \brief Skip neigboured array entries if their values do 
+   *        not differ.
+   *
+   */
   template <class Card>
   forceinline int 
   PartialSum<Card>::skipNonNullElementsLeft(int value) {
@@ -422,7 +435,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return (ds[value] > value ? ds[ds[value]] : value) + firstValue;
   }
 
-  /// \brief for debugging purposes
+  /// \brief Debugging: print a partial sum structure
   template <class Card>
   forceinline void
   PartialSum<Card>::print(void){
@@ -451,6 +464,14 @@ namespace Gecode { namespace Int { namespace GCC {
 
   }
 
+  /**
+   * \brief Check whether the values in the 
+   *        partial sum structure containting
+   *        the upper cardinality bounds differ
+   *        from the actual upper bounds of the
+   *        cardinalities. 
+   */
+
   template <class Card>
   forceinline bool
   PartialSum<Card>::check_update_max(Card& k){
@@ -465,6 +486,14 @@ namespace Gecode { namespace Int { namespace GCC {
       return false;
     }
   }
+
+  /**
+   * \brief Check whether the values in the 
+   *        partial sum structure containting
+   *        the lower cardinality bounds differ
+   *        from the actual lower bounds of the
+   *        cardinalities. 
+   */
 
   template <class Card>
   forceinline bool
@@ -481,6 +510,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
   
+  /// \brief Return the size of the partial sum structure.
   template <class Card>
   forceinline int
   PartialSum<Card>::getsize(void){
@@ -538,8 +568,8 @@ namespace Gecode { namespace Int { namespace GCC {
     /**
      * \brief Bound update
      *
-     * If propagation applied newBound contains a narrowed domain bound
-     * otherwise is stores the old domain bound.
+     * \a newBound contains either a narrowed domain bound
+     * or is stores the old domain bound of a variable.
      */
     int newBound; 
   };

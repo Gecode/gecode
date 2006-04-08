@@ -129,6 +129,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   }
 
+  /// \brief Perform domain propagation.  
   template <class View, class Card, bool isView>
   ExecStatus 
   Dom<View, Card, isView>::propagate(Space* home) {

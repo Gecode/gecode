@@ -759,30 +759,41 @@ namespace Gecode {
 
   
   //@{
-  /** \brief Post propagator \f$\exists\pi:\forall i\in\{0,\dots,n-1\}: 
-   *         y_0 \leq\dots\leq y_{n-1} \wedge  x_i=y_{\pi(i)}\f$ 
+  /** 
+   *  \brief Post propagator \f$\exists\pi:\forall i\in\{0,\dots,|x|-1\}: 
+   *         y_0 \leq\dots\leq y_{|x|-1} \wedge  x_i=y_{\pi(i)}\f$ 
    *  
    *  \anchor SortednessSemantics
+   *
+   *  \exception Int::ArgumentSizeMismatch thrown if \a x and \a y 
+   *             differ in size.
+   *  \exception Int::ArgumentSame thrown if \a x or \a y contain 
+   *             shared variables.
+   *
    *  Taking only two arguments, this interface for Sortedness leaves 
    *  the sorting permutation \f$\pi\f$ implicit.
    *
-   *  Throws an exception of type Int::ArgumentSizeMismatch, if
-   *  \a x and \a y are of different size.
    */
   GECODE_INT_EXPORT void 
   sortedness(Space* home, const IntVarArgs& x, const IntVarArgs& y,
 	     IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator \f$\forall i\in\{0,\dots,n-1\}: 
-   *         y_0 \leq\dots\leq y_{n-1} \wedge x_i=y_{z_i} \f$ \n
+
+  /** 
+   *  \brief Post propagator \f$\forall i\in\{0,\dots,|x|-1\}: 
+   *         y_0 \leq\dots\leq y_{|x|-1} \wedge x_i=y_{z_i} \f$ \n
    *
-   * Providing a third argument \f$z_0, \dots, z_{n-1} \f$, this 
+   *  \exception Int::ArgumentSizeMismatch thrown if \a x, \a y or \a z
+   *             differ in size.
+   *  \exception Int::ArgumentSame thrown if \a x, \a y or \a z contain 
+   *             shared variables.
+   *
+   * Providing a third argument \f$z_0, \dots, z_{|x|-1} \f$, this 
    * interface for Sortedness models the sorting permutation 
    * \f$\pi\f$ explicitly, such that 
-   * \f$\forall i\in\{0,\dots,n-1\}:\pi(i) = z_i\f$ holds. 
+   * \f$\forall i\in\{0,\dots,|x|-1\}:\pi(i) = z_i\f$ holds. 
    *
-   * Throws an exception of type Int::ArgumentSizeMismatch, if
-   * \a x, \a y and \a z are of different size.
    */
+
   GECODE_INT_EXPORT void 
   sortedness(Space*, const IntVarArgs& x, const IntVarArgs& y,
 	     const IntVarArgs& z,  
@@ -798,7 +809,8 @@ namespace Gecode {
    *    the Global Cardinality Propagator is only obtained if they are bounds 
    *    consistent, otherwise the problem of enforcing domain consistency
    *    on the cardinality variables is NP-complete as proved by 
-   *    \ref CardVarNPCompl "Qumiper et. al. in Improved Algorithms for the Global Cardinality Constraint"
+   *    \ref CardVarNPCompl "Qumiper et. al. in 
+   *    Improved Algorithms for the Global Cardinality Constraint"
    */
 
   //@{
@@ -838,25 +850,32 @@ namespace Gecode {
   /**
    *  \brief Post propagator for 
    *  \f{eqnarray*}
-          \forall t=(v, lb, ub) \in c: & & 
-	  lb \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq ub \\
-	  \forall t=(v, 0, unspec) \not\in c: & & 
-	  0 \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq unspec 
-      \f}
+   *      \forall t=(v, lb, ub) \in c: & & 
+   *      lb \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq ub \\
+   *	  \forall t=(v, 0, unspec) \not\in c: & & 
+   *	  0 \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq unspec 
+   *  \f}
    *
-   *  \param m denotes the size of c 
+   *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
+   *  and domain-consistency (\a icl = ICL_DOM).
+   *
+   *  \exception Int::ArgumentSame thrown if \a x contains shared variables. 
+   *
+   *  \param m denotes the size of \a c 
    *  \param unspec denotes the upper bound for those values 
-   *         not specified in c
+   *         not specified in \a c
    *
    *  Let \f$ D:=\displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} dom(x_i)\f$ and  
-   *  \f$ V \f$ the set of values represented by \a c. Then this progator allows 
-   *  sets \f$ V\subset D\f$ as well as \f$ V=D\f$. 
+   *  \f$ V \f$ the set of values represented by \a c. Then this interface allows
+   *  to specify sets \f$ V\subset D\f$ as well as \f$ V=D\f$. 
    *
    *  In this interface values \f$ v\f$ and their cardinality bounds 
-   *  have to specified such that \a c looks as follows (for example): 
+   *  have to be specified such that \a c looks as follows (for example): 
    *  \f$ c=[ (1,0,1), (2,1,3), \dots, (10,4,5)]\f$, where the value 1 may occur
    *  zero times or once, the value 2 must occur at least once at most three times
    *  and the value 10 must occur at least 4 times and at most 5 times.
+   *
+   *
    */
 
   GECODE_INT_EXPORT void 
@@ -867,11 +886,16 @@ namespace Gecode {
   /**
    *  \brief Post propagator for 
    *  \f{eqnarray*} 
-           \forall t=(v, lb, ub) \in c: & &
-	   lb \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq ub \\
-	   \forall t=(v, unspec_{low}, unspec_{up}) \not\in c: & &
-	   unspec_{low} \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq unspec_{up}
-      \f}
+   *       \forall t=(v, lb, ub) \in c: & &
+   *       lb \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq ub \\
+   *	   \forall t=(v, unspec_{low}, unspec_{up}) \not\in c: & &
+   *	   unspec_{low} \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq unspec_{up}
+   *  \f}
+   *
+   *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
+   *  and domain-consistency (\a icl = ICL_DOM).
+   *
+   *  \exception Int::ArgumentSame thrown if \a x contains shared variables.
    *
    *  \param m denotes the size of c 
    *  \param unspec_low denotes the lower bound for those values 
@@ -891,7 +915,7 @@ namespace Gecode {
    *
    *  Furthermore, this interface requires that 
    *  \f$ \forall {i\in\{0, \dots, |x|-1\}}: dom(x_i) 
-   *  \subseteq [min, \dots, max]\f$.
+   *  \subseteq I=[min;max]\f$.
    *
    */
 
@@ -905,12 +929,19 @@ namespace Gecode {
    *         \in \displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} dom(x_i): 
    *         lb = \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} = ub \f$
    *
+   *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
+   *  and domain-consistency (\a icl = ICL_DOM).
+   *
+   *  \exception Int::ArgumentSame thrown if \a x contains shared variables.
+   *
    *  \param ub denotes the upper bound for all values specified 
    *            in the array \a c, where this interface 
    *            allows only value sets 
    *            \f$ V=D \displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} 
    *            dom(x_i)\f$
+   *
    */
+
   GECODE_INT_EXPORT void 
   gcc(Space* home, const IntVarArgs& x, int ub, IntConLevel cl);
 
@@ -919,6 +950,11 @@ namespace Gecode {
    *         \in \displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} dom(x_i):
    *         lb \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq ub \f$
    *
+   *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
+   *  and domain-consistency (\a icl = ICL_DOM).
+   *
+   *  \exception Int::ArgumentSame thrown if \a x contains shared variables.
+   *
    *  \param lb denotes the lower bound for all values 
    *         specified in the array \a c, 
    *  \param ub denotes the upper bound for all values 
@@ -926,20 +962,27 @@ namespace Gecode {
    *         where this interface allows only value sets 
    *         \f$ V=D \displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} 
    *         dom(x_i)\f$
+   *
    */
 
   GECODE_INT_EXPORT void 
   gcc(Space* home, const IntVarArgs& x, int lb, int ub, IntConLevel cl);
 
   /**
-   *  \brief Post propagator for \f$ \forall j \in 
-   *         \{0, \dots, |[min;max]| - 1\}:
-   *         \#\{i\in\{0, \dots, |x| - 1\} | x_i = v_j\} = c_j 
-   *         \wedge v_j \in [min;max]\f$
+   *  \brief Post propagator for
+   *  \f{eqnarray*} 
+   *    v_j \in I=[min;max] & & \\
+   *    \forall j \in \{0, \dots, |I| - 1\}: & &
+   *    \#\{i\in\{0, \dots, |x| - 1\} | x_i = v_j\} = c_j 
+   *  \f}    
+   *
+   *
+   *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
+   *  and domain-consistency (\a icl = ICL_DOM).
    *
    *  This interface requires that 
    *  \f$ \forall {i\in\{0, \dots, |x|-1\}}: dom(x_i) 
-   *  \subseteq [min, \dots, max]\f$.
+   *  \subseteq I=[min;max]\f$.
    */
 
   GECODE_INT_EXPORT void 
@@ -951,11 +994,15 @@ namespace Gecode {
    *  \brief Post propagator for \f$ \forall j \in \{0, \dots, |v| - 1\}:
    *  \#\{i\in\{0, \dots, |x| - 1\} | x_i = v_j\} = c_j \f$
    *
+   *
+   *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
+   *  and domain-consistency (\a icl = ICL_DOM).
+   *
    *  This interface requires that 
-   *  \f$ \forall {i\in\{0, \dots, |x|-1\}} dom(x_i) 
+   *  \f$ \forall {i\in\{0, \dots, |x|-1\}}: dom(x_i) 
    *  \subseteq [min, \dots, max]\f$.
    *  If \a all is set to true, every value from the interval 
-   *  \f$ [min, \dots, max]\f$ is specified with cardinalities. 
+   *  \f$ I=[min;max]\f$ is specified with cardinalities. 
    *  Otherwise, only specified values in \a v are used and unspecified values
    *  may occur between 0 and \a unspec times.
    */
@@ -968,11 +1015,15 @@ namespace Gecode {
    *  \brief Post propagator for \f$ \forall j \in \{0, \dots, |v| - 1\}:
    *  \#\{i\in\{0, \dots, |x| - 1\} | x_i = v_j\} = c_j \f$
    *
+   *
+   *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
+   *  and domain-consistency (\a icl = ICL_DOM).
+   *
    *  This interface requires that 
-   *  \f$ \forall {i\in\{0, \dots, |x|-1\}} dom(x_i) 
-   *  \subseteq [min, \dots, max]\f$.
+   *  \f$ \forall {i\in\{0, \dots, |x|-1\}}: dom(x_i) 
+   *  \subseteq I=[min;max]\f$.
    *  If \a all is set to true, every value from the interval 
-   *  \f$ [min, \dots, max]\f$ is specified with cardinalities. 
+   *  \f$ I=[min;max]\f$ is specified with cardinalities. 
    *  Otherwise, only specified values in \a v are used and unspecified values
    *  may occur between \a unspec_low and \a unspec_up times.
    */
