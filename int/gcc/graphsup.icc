@@ -2525,9 +2525,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	  std::cout << vars[i]->template get_match<direction>()->getVal()->val << "  ";
 	}
       } 
-      std::cout << " <==";
-      pvar(vars[i]);
-      std::cout <<"\n";
+      std::cout << " <==" << vars[i] <<"\n";
     }
     std::cout <<"\n";
 
