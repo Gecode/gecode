@@ -30,7 +30,7 @@ AC_INIT(GECODE, 1.1.0, users@gecode.org)
 AC_CONFIG_HEADERS([config.icc])
 AC_CONFIG_SRCDIR(kernel.hh)
 
-ac_gecode_soversion=2
+ac_gecode_soversion=3
 
 # checks for programs
 
@@ -119,7 +119,7 @@ AC_GECODE_DOC_SWITCHES
 
 dnl ------------------------------------------------------------------
 dnl Enabling of non-variable contribs
-AC_GECODE_ENABLE_CONTRIB(graph,"graph variables",[]) AC_GECODE_ENABLE_CONTRIB(map,"map variable",[]) dnl @CONTRIBS@
+dnl @CONTRIBS@
 
 dnl ------------------------------------------------------------------
 dnl Definition of variable types
@@ -156,7 +156,7 @@ AC_GECODE_ENABLE_MODULE(search, yes,
 
 dnl Configure contributions
 AC_CONFIG_SUBDIRS()
-AC_CONFIG_SUBDIRS(contribs/graph) AC_CONFIG_SUBDIRS(contribs/map) dnl @SUBDIRS@
+dnl @SUBDIRS@
 
 AC_SUBST(PKG_CONFIG_CXXFLAGS, ${ac_gecode_pkg_cxxflags})
 AC_SUBST(VERSION, ${PACKAGE_VERSION})
