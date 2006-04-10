@@ -700,7 +700,9 @@ ifeq "@ENABLEDOCCHM@" "yes"
 header.html: $(top_srcdir)/misc/doxygen/header.html
 	grep -v '<form.*form>' < $< > $@
 doxygen.conf.use: doxygen.conf
-	echo -e "GENERATE_HTMLHELP = YES\nSEARCHENGINE = NO\n" | \
+	(echo "GENERATE_HTMLHELP = YES"; \
+	 echo "SEARCHENGINE = NO";\
+	 echo "HAVE_DOT = @GECODE_DOXYGEN_DOT@") | \
 		cat $< - > $@
 
 doc: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) $(DOCSRC)
@@ -716,14 +718,18 @@ ifeq "@ENABLEDOCSEARCH@" "yes"
 header.html: $(top_srcdir)/misc/doxygen/header.html
 	cat < $< > $@
 doxygen.conf.use: doxygen.conf
-	echo -e "GENERATE_HTMLHELP = NO\nSEARCHENGINE = YES\n" | \
+	(echo "GENERATE_HTMLHELP = NO"; \
+	 echo "SEARCHENGINE = YES"; \
+	 echo "HAVE_DOT = @GECODE_DOXYGEN_DOT@") | \
 		cat $< - > $@
 else
 
 header.html: $(top_srcdir)/misc/doxygen/header.html
 	grep -v '<form.*form>' < $< > $@
 doxygen.conf.use: doxygen.conf
-	echo -e "GENERATE_HTMLHELP = NO\nSEARCHENGINE = NO\n" | \
+	(echo "GENERATE_HTMLHELP = NO"; \
+	 echo "SEARCHENGINE = NO"; \
+	 echo "HAVE_DOT = @GECODE_DOXYGEN_DOT@") | \
 		cat $< - > $@
 
 endif

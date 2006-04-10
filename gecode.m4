@@ -560,7 +560,30 @@ dnl
 dnl Authors:
 dnl   Guido Tack <tack@gecode.org>
 AC_DEFUN([AC_GECODE_DOC_SWITCHES],
-  [AC_ARG_ENABLE([doc-search],
+  [dnl check if we can use dot for generating graphs in the documentation
+   AC_ARG_ENABLE([doc-dot],
+     AC_HELP_STRING([--enable-doc-dot],
+	[enable graphs in documentation @<:@default=yes@:>@]))
+   AC_CHECK_PROG(DOT, dot, dot)
+   AC_MSG_CHECKING(whether to enable graphs in the documentation)
+   if test "${enable_doc_dot:-yes}" = "yes"; then
+     if test x$DOT = x; then
+        if test x"${enable_doc_dot}" = x; then
+	  AC_MSG_RESULT(no)
+     	  AC_SUBST(GECODE_DOXYGEN_DOT, NO)
+	else
+          AC_MSG_ERROR(you need the dot tool from graphviz to generate graphs in the documentation)
+	fi
+     else
+        AC_MSG_RESULT(yes)
+	AC_SUBST(GECODE_DOXYGEN_DOT, YES)
+     fi
+   else
+     AC_MSG_RESULT(no)
+     AC_SUBST(GECODE_DOXYGEN_DOT, NO)
+   fi
+
+   AC_ARG_ENABLE([doc-search],
      AC_HELP_STRING([--enable-doc-search],
 	[enable documentation search engine @<:@default=no@:>@]))
    AC_MSG_CHECKING(whether to enable the documentation search engine)

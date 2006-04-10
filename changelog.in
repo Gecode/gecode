@@ -53,6 +53,16 @@ Date:		upcoming
 Next release.
 
 [ENTRY]
+Module: other
+What:   bug
+Bug:    37
+Rank:   minor
+Thanks: Kari Pahula
+[DESCRIPTION]
+Added a configure switch --enable-doc-dot. If enabled, this checks for
+presence of the dot tool (used for generating graphs in the documentation)
+	
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor
@@ -206,7 +216,7 @@ What:	new
 Rank:	major
 [DESCRIPTION]
 Added new constraint channel for variable/value channeling
-between to variable arrays.
+between two variable arrays.
 
 [ENTRY]
 Module: int
