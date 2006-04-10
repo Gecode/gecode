@@ -60,6 +60,16 @@ by the test infrastructure). This has lead to many small fixes.
 [ENTRY]
 Module: other
 What:   bug
+Bug:    35
+Rank:   minor
+Thanks: Kari Pahula
+[DESCRIPTION]
+Support for parallel search has been removed from this release
+(it has not been enabled anyway, and the licensing is unclear).
+	
+[ENTRY]
+Module: other
+What:   bug
 Bug:    37
 Rank:   minor
 Thanks: Kari Pahula
