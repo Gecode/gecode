@@ -48,7 +48,7 @@
 
 [RELEASE]
 Version:	1.1.0
-Date:		upcoming
+Date:		2006-04-10
 [DESCRIPTION]
 This minor release adds some new constraints (see below), adds support
 for stopping search engines based on definable criterias, and some other
