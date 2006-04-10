@@ -26,7 +26,7 @@ dnl
 
 AC_REVISION([$Id: configure.ac 2434 2005-10-31 11:59:38Z tack $])
 AC_PREREQ(2.53)
-AC_INIT(GECODE, 1.0.1, users@gecode.org)
+AC_INIT(GECODE, 1.1.0, users@gecode.org)
 AC_CONFIG_HEADERS([config.icc])
 AC_CONFIG_SRCDIR(kernel.hh)
 
@@ -119,7 +119,7 @@ AC_GECODE_DOC_SWITCHES
 
 dnl ------------------------------------------------------------------
 dnl Enabling of non-variable contribs
-dnl @CONTRIBS@
+AC_GECODE_ENABLE_CONTRIB(graph,"graph variables",[]) AC_GECODE_ENABLE_CONTRIB(map,"map variable",[]) dnl @CONTRIBS@
 
 dnl ------------------------------------------------------------------
 dnl Definition of variable types
@@ -156,7 +156,7 @@ AC_GECODE_ENABLE_MODULE(search, yes,
 
 dnl Configure contributions
 AC_CONFIG_SUBDIRS()
-dnl @SUBDIRS@
+AC_CONFIG_SUBDIRS(contribs/graph) AC_CONFIG_SUBDIRS(contribs/map) dnl @SUBDIRS@
 
 AC_SUBST(PKG_CONFIG_CXXFLAGS, ${ac_gecode_pkg_cxxflags})
 AC_SUBST(VERSION, ${PACKAGE_VERSION})
