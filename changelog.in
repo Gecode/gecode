@@ -50,7 +50,12 @@
 Version:	1.1.0
 Date:		upcoming
 [DESCRIPTION]
-Next release.
+This minor release adds some new constraints (see below), adds support
+for stopping search engines based on definable criterias, and some other
+small fixes. Most notably, the test infrastructure has been extended to
+also check whether propagators correctly claim that they have computed
+a fixpoint (now all invariants a propagator must obey in Gecode are covered
+by the test infrastructure). This has lead to many small fixes.
 
 [ENTRY]
 Module: other
@@ -153,7 +158,6 @@ The status member function now also allows the first
 argument to be optional.
 
 [ENTRY]
->>>>>>> .r3149
 Module: set
 What:   bug
 Rank:   minor
