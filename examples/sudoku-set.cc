@@ -35,12 +35,13 @@
  */
 class SudokuSet : public Example {
 protected:
-  static const int n = 3;
+  const int n;
   SetVarArray x;
 public:
   /// Actual model
   SudokuSet(const Options& opt)
-    : x(this,n*n,IntSet::empty,1,n*n*n*n,9,9) {
+    : n(static_cast<int>(sqrt(example_size(examples[opt.size])))), 
+    x(this,n*n,IntSet::empty,1,n*n*n*n,9,9) {
 
     const int nn = n*n;
 
@@ -92,16 +93,14 @@ public:
     // Fill-in predefined fields
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++)
-	if (examples[opt.size][i][j] != 0) {
-	  int idx = examples[opt.size][i][j]-1;
-	  dom(this, x[idx], SRT_SUP, (i+1)+(j*nn) );
-	}
+	if (int idx = value_at(examples[opt.size], nn, i, j))
+	  dom(this, x[idx-1], SRT_SUP, (i+1)+(j*nn) );
     
     branch(this, x, SETBVAR_NONE, SETBVAL_MIN);
   }
   
   /// Constructor for cloning \a s
-  SudokuSet(bool share, SudokuSet& s) : Example(share,s) {
+  SudokuSet(bool share, SudokuSet& s) : Example(share,s), n(s.n) {
     x.update(this, share, s.x);
   }
   
@@ -118,7 +117,10 @@ public:
     for (int i = 0; i<n*n*n*n; i++) {
       for (int j=0; j<n*n; j++) {
 	if (x[j].contains(i+1)) {
-	  std::cout << j+1 << " ";
+	  if (j+1<10)
+	    std::cout << j+1 << " ";
+	  else
+	    std::cout << (char)(j+1+'A'-10) << " ";	  
 	  break;
 	}
       }
@@ -146,6 +148,11 @@ main(int argc, char** argv) {
     std::cerr << "Error: size must be between 0 and " 
 	      << n_examples-1 << std::endl;
     return 1;
+  }
+  if (example_size(examples[opt.size]) != 9) {
+    std::cerr << "Set-based version only available with exmples of size 9*9"
+	      << std::endl;
+    return 2;
   }
   Example::run<SudokuSet,DFS>(opt);
   return 0;

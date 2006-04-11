@@ -30,20 +30,23 @@
 // include the example specifications
 #include "examples/sudoku.icc"
 
-IntVarArgs unionOfArgs(const IntVarArgs as, const IntVarArgs bs) {
-  IntVarArgs res(as.size() + bs.size());
-  for (int i=as.size(); i--;)
-    res[i] = as[i];
-  for (int i=bs.size(); i--;)
-    res[as.size()+i] = bs[i];
-  return res;
+#ifdef GECODE_HAVE_SET_VARS
+void same(Space* home, int nn, IntVarArgs a, IntVarArgs b) {
+  SetVar u(home, IntSet::empty, 1, nn);
+  rel(home, SOT_DUNION, a, u);
+  rel(home, SOT_DUNION, b, u);
 }
 
-#ifdef GECODE_HAVE_SET_VARS
-void same(Space* home, IntVarArgs as, IntVarArgs bs) {
-  SetVar u(home, IntSet::empty, 1, 81);
-  rel(home, SOT_DUNION, as, u);
-  rel(home, SOT_DUNION, bs, u);
+MiniModel::Matrix<IntVarArray>::Slice
+block_col(MiniModel::Matrix<IntVarArray> m,
+	  int n, int bc, int i, int j) {
+  return m.slice(bc*n+i, bc*n+i+1, j*n, (j+1)*n);
+}
+ 
+MiniModel::Matrix<IntVarArray>::Slice
+block_row(MiniModel::Matrix<IntVarArray> m,
+	  int n, int br, int i, int j) {
+  return m.slice(j*n, (j+1)*n, br*n+i, br*n+i+1);
 }
 #endif
 
@@ -57,12 +60,14 @@ void same(Space* home, IntVarArgs as, IntVarArgs bs) {
  */
 class Sudoku : public Example {
 protected:
-  static const int n = 3;
+  const int n;
   IntVarArray x;
 public:
+
   /// Actual model
   Sudoku(const Options& opt)
-    : x(this,n*n*n*n,1,n*n) {
+    : n(static_cast<int>(sqrt(example_size(examples[opt.size])))), 
+      x(this,n*n*n*n,1,n*n) {
     const int nn = n*n;
     MiniModel::Matrix<IntVarArray> m(x, nn, nn);
 
@@ -80,54 +85,55 @@ public:
 
 #ifdef GECODE_HAVE_SET_VARS
     if (!opt.naive) {
-
       // Implied constraints linking squares and rows
-      for (int i=0; i<nn; i+=n)
-	for (int j=0; j<nn; j+=n) {
-	  MiniModel::Matrix<IntVarArgs> block = m.slice(i, i+n, j, j+n);
-	  for (int r1=0; r1<2; r1++)
-	    for (int r2=r1+1; r2<3; r2++) {
-	      IntVarArgs b1 = unionOfArgs(block.col(r1), block.col(r2));
-	      IntVarArgs b2 = unionOfArgs(block.row(r1), block.row(r2));
-	      IntVarArgs r(0);
-	      IntVarArgs c(0);
-	      switch (r1+r2) {
-	      case 1:
-		r = unionOfArgs(m.slice(0,i,j+2,j+3), m.slice(i+n,nn,j+2,j+3));
-		c = unionOfArgs(m.slice(i+2,i+3,0,j), m.slice(i+2,i+3,j+n,nn));
-		assert(r.size()==6);
-		break;
-	      case 2:
-		r = unionOfArgs(m.slice(0,i,j+1,j+2), m.slice(i+n,nn,j+1,j+2));
-		c = unionOfArgs(m.slice(i+1,i+2,0,j), m.slice(i+1,i+2,j+n,nn));
-		assert(r.size()==6);
-		break;
-	      case 3:
-		r = unionOfArgs(m.slice(0,i,j+0,j+1), m.slice(i+n,nn,j+0,j+1));
-		c = unionOfArgs(m.slice(i+0,i+1,0,j), m.slice(i+0,i+1,j+n,nn));
-		assert(r.size()==6);
-		break;
-	      default:
-		assert(false);
+      for (int b=0; b<n; b++) {
+	int b1c = 0;
+	int b2c = 0;
+	IntVarArgs bc1(nn-n);
+	IntVarArgs bc2(nn-n);
+ 	IntVarArgs br1(nn-n);
+ 	IntVarArgs br2(nn-n);
+	for (int i=0; i<n; i++)
+	  for (int j=0; j<n; j++) {
+	    b1c = 0; b2c = 0;
+	    for (int k=0; k<n; k++) {
+	      if (k != j) {
+		IntVarArgs bc1s = block_col(m, n, b, i, k);
+		IntVarArgs br1s = block_row(m, n, b, i, k);
+		for (int count=0; count<n; count++) {
+		  bc1[b1c] = bc1s[count];
+		  br1[b1c] = br1s[count];
+		  ++b1c;
+		}
 	      }
-	      same(this, r, b1);
-	      same(this, c, b2);
+	      if (k != i) {
+		IntVarArgs bc2s = block_col(m, n, b, k, j);
+		IntVarArgs br2s = block_row(m, n, b, k, j);
+		for (int count=0; count<n; count++) {
+		  bc2[b2c] = bc2s[count];
+		  br2[b2c] = br2s[count];
+		  ++b2c;
+		}
+	      }
 	    }
-	}
+	    same(this, nn, bc1, bc2);
+	    same(this, nn, br1, br2);
+	  }
+      }
     }
 #endif
 
     // Fill-in predefined fields
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++)
-	if (examples[opt.size][i][j] != 0)
-	  rel(this, m(i,j), IRT_EQ, examples[opt.size][i][j]);
-    
-    branch(this, x, BVAR_MIN_MIN, BVAL_SPLIT_MIN);
+	if (int v = value_at(examples[opt.size], nn, i, j))
+	  rel(this, m(i,j), IRT_EQ, v );
+
+    branch(this, x, BVAR_SIZE_MIN, BVAL_SPLIT_MIN);
   }
   
   /// Constructor for cloning \a s
-  Sudoku(bool share, Sudoku& s) : Example(share,s) {
+  Sudoku(bool share, Sudoku& s) : Example(share,s), n(s.n) {
     x.update(this, share, s.x);
   }
   
@@ -140,11 +146,18 @@ public:
   /// Print solution
   virtual void
   print(void) {
-    std::cout << '\t';
+    std::cout << "  ";
     for (int i = 0; i<n*n*n*n; i++) {
-      std::cout << x[i] << " ";
+      if (x[i].assigned()) {
+	if (x[i].val()<10)
+	  std::cout << x[i] << " ";
+	else
+	  std::cout << (char)(x[i].val()+'A'-10) << " ";	  
+      }
+      else
+	std::cout << ". ";
       if((i+1)%(n*n) == 0)
-	std::cout << std::endl << '\t';
+	std::cout << std::endl << "  ";
     }
     std::cout << std::endl;
   }
@@ -157,7 +170,6 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("Sudoku");
-  opt.iterations = 1000;
   opt.size       = 0;
   opt.icl        = ICL_DOM;
   opt.solutions  = 1;
@@ -172,5 +184,5 @@ main(int argc, char** argv) {
   return 0;
 }
 
-// STATISTICS: example-any
 
+// STATISTICS: example-any

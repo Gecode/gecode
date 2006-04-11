@@ -25,25 +25,28 @@
 
 #include "examples/sudoku.icc"
 
-/// Concatenates two argument arrays
-IntVarArgs unionOfArgs(const IntVarArgs as, const IntVarArgs bs) {
-  IntVarArgs res(as.size() + bs.size());
-  for (int i=as.size(); i--;)
-    res[i] = as[i];
-  for (int i=bs.size(); i--;)
-    res[as.size()+i] = bs[i];
-  return res;
-}
-
 /**
  * \brief Implements the "same" constraint
  *
  * Posts the constraint \f$\biguplus_i \{a_i\}=\biguplus_i \{b_i\}\f$
+ * where both are a subset of \f$1\dots\mathit{nn}\f$
  */
-void same(Space* home, IntVarArgs a, IntVarArgs b) {
-  SetVar u(home, IntSet::empty, 1, 81);
+void same(Space* home, int nn, IntVarArgs a, IntVarArgs b) {
+  SetVar u(home, IntSet::empty, 1, nn);
   rel(home, SOT_DUNION, a, u);
   rel(home, SOT_DUNION, b, u);
+}
+
+MiniModel::Matrix<IntVarArray>::Slice
+block_col(MiniModel::Matrix<IntVarArray> m,
+	  int n, int bc, int i, int j) {
+  return m.slice(bc*n+i, bc*n+i+1, j*n, (j+1)*n);
+}
+ 
+MiniModel::Matrix<IntVarArray>::Slice
+block_row(MiniModel::Matrix<IntVarArray> m,
+	  int n, int br, int i, int j) {
+  return m.slice(j*n, (j+1)*n, br*n+i, br*n+i+1);
 }
 
 /**
@@ -59,12 +62,13 @@ void same(Space* home, IntVarArgs a, IntVarArgs b) {
  */
 class SudokuMixed : public Example {
 protected:
-  static const int n = 3;
+  const int n;
   SetVarArray x;
 public:
   /// Actual model
   SudokuMixed(const Options& opt)
-    : x(this,n*n,IntSet::empty,1,n*n*n*n,9,9) {
+    : n(static_cast<int>(sqrt(example_size(examples[opt.size])))), 
+      x(this,n*n,IntSet::empty,1,n*n*n*n,9,9) {
 
     const int nn = n*n;
 
@@ -92,42 +96,43 @@ public:
     // Fill-in predefined fields
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++)
-	if (examples[opt.size][i][j] != 0)
-	  rel(this, m(i,j), IRT_EQ, examples[opt.size][i][j]);    
+	if (int v = value_at(examples[opt.size], nn, i, j))
+	  rel(this, m(i,j), IRT_EQ, v );
 
     // Implied constraints linking squares and rows
-    for (int i=0; i<nn; i+=n) {
-      for (int j=0; j<nn; j+=n) {
-	MiniModel::Matrix<IntVarArgs> block = m.slice(i, i+n, j, j+n);
-	for (int r1=0; r1<2; r1++)
-	  for (int r2=r1+1; r2<3; r2++) {
-	    IntVarArgs b1 = unionOfArgs(block.col(r1), block.col(r2));
-	    IntVarArgs b2 = unionOfArgs(block.row(r1), block.row(r2));
-	    IntVarArgs r(0);
-	    IntVarArgs c(0);
-	    switch (r1+r2) {
-	    case 1:
-	      r = unionOfArgs(m.slice(0,i,j+2,j+3), m.slice(i+n,nn,j+2,j+3));
-	      c = unionOfArgs(m.slice(i+2,i+3,0,j), m.slice(i+2,i+3,j+n,nn));
-	      assert(r.size()==6);
-	      break;
-	    case 2:
-	      r = unionOfArgs(m.slice(0,i,j+1,j+2), m.slice(i+n,nn,j+1,j+2));
-	      c = unionOfArgs(m.slice(i+1,i+2,0,j), m.slice(i+1,i+2,j+n,nn));
-	      assert(r.size()==6);
-	      break;
-	    case 3:
-	      r = unionOfArgs(m.slice(0,i,j+0,j+1), m.slice(i+n,nn,j+0,j+1));
-	      c = unionOfArgs(m.slice(i+0,i+1,0,j), m.slice(i+0,i+1,j+n,nn));
-	      assert(r.size()==6);
-	      break;
-	    default:
-	      assert(false);
+    for (int b=0; b<n; b++) {
+      int b1c = 0;
+      int b2c = 0;
+      IntVarArgs bc1(nn-n);
+      IntVarArgs bc2(nn-n);
+      IntVarArgs br1(nn-n);
+      IntVarArgs br2(nn-n);
+      for (int i=0; i<n; i++)
+	for (int j=0; j<n; j++) {
+	  b1c = 0; b2c = 0;
+	  for (int k=0; k<n; k++) {
+	    if (k != j) {
+	      IntVarArgs bc1s = block_col(m, n, b, i, k);
+	      IntVarArgs br1s = block_row(m, n, b, i, k);
+	      for (int count=0; count<n; count++) {
+		bc1[b1c] = bc1s[count];
+		br1[b1c] = br1s[count];
+		++b1c;
+	      }
 	    }
-	    same(this, r, b1);
-	    same(this, c, b2);
+	    if (k != i) {
+	      IntVarArgs bc2s = block_col(m, n, b, k, j);
+	      IntVarArgs br2s = block_row(m, n, b, k, j);
+	      for (int count=0; count<n; count++) {
+		bc2[b2c] = bc2s[count];
+		br2[b2c] = br2s[count];
+		++b2c;
+	      }
+	    }
 	  }
-      }
+	  same(this, nn, bc1, bc2);
+	  same(this, nn, br1, br2);
+	}
     }
 
     /********************************************************
@@ -207,16 +212,14 @@ public:
     // Fill-in predefined fields
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++)
-	if (examples[opt.size][i][j] != 0) {
-	  int idx = examples[opt.size][i][j]-1;
-	  dom(this, x[idx], SRT_SUP, (i+1)+(j*nn) );
-	}
+	if (int idx = value_at(examples[opt.size], nn, i, j))
+	  dom(this, x[idx-1], SRT_SUP, (i+1)+(j*nn) );
     
     branch(this, x, SETBVAR_NONE, SETBVAL_MIN);
   }
   
   /// Constructor for cloning \a s
-  SudokuMixed(bool share, SudokuMixed& s) : Example(share,s) {
+  SudokuMixed(bool share, SudokuMixed& s) : Example(share,s), n(s.n) {
     x.update(this, share, s.x);
   }
   
@@ -225,7 +228,7 @@ public:
   copy(bool share) {
     return new SudokuMixed(share,*this);
   }
-  
+
   /// Print solution
   virtual void
   print(void) {
@@ -233,7 +236,10 @@ public:
     for (int i = 0; i<n*n*n*n; i++) {
       for (int j=0; j<n*n; j++) {
 	if (x[j].contains(i+1)) {
-	  std::cout << j+1 << " ";
+	  if (j+1<10)
+	    std::cout << j+1 << " ";
+	  else
+	    std::cout << (char)(j+1+'A'-10) << " ";	  
 	  break;
 	}
       }
@@ -242,6 +248,7 @@ public:
     }
     std::cout << std::endl;
   }
+  
 };
 
 
@@ -261,6 +268,11 @@ main(int argc, char** argv) {
     std::cerr << "Error: size must be between 0 and " 
 	      << n_examples-1 << std::endl;
     return 1;
+  }
+  if (example_size(examples[opt.size]) != 9) {
+    std::cerr << "Set-based version only available with exmples of size 9*9"
+	      << std::endl;
+    return 2;
   }
   Example::run<SudokuMixed,DFS>(opt);
   return 0;
