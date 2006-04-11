@@ -674,9 +674,10 @@ const unsigned int n_examples = sizeof(examples)/sizeof(char*);
 
 int example_size(const char *s) {
   int l = std::strlen(s);
-  int res = static_cast<int>(std::sqrt(l));
+  int res = static_cast<int>(std::sqrt(static_cast<float>(l)));
   assert(res*res == l);
-  assert(static_cast<int>(std::sqrt(res))*static_cast<int>(std::sqrt(res))
+  assert(static_cast<int>(std::sqrt(static_cast<float>(res)))*
+	 static_cast<int>(std::sqrt(static_cast<float>(res)))
 	 == res);
   return res;
 }
