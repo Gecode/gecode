@@ -47,8 +47,14 @@
 #
 
 [RELEASE]
-Version:	1.1.0
+Version:	1.1.x
 Date:		upcoming
+[DESCRIPTION]
+The next release
+	
+[RELEASE]
+Version:	1.1.0
+Date:		2006-04-10
 [DESCRIPTION]
 This minor release adds some new constraints (see below), adds support
 for stopping search engines based on definable criterias, and some other
@@ -56,7 +62,7 @@ small fixes. Most notably, the test infrastructure has been extended to
 also check whether propagators correctly claim that they have computed
 a fixpoint (now all invariants a propagator must obey in Gecode are covered
 by the test infrastructure). This has lead to many small fixes.
-
+	
 [ENTRY]
 Module: other
 What:   bug
