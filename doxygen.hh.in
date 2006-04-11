@@ -80,7 +80,7 @@
  * recomputation performs propagation only once for an entire path
  * used in recomputation.
  *
- * Requires \code #include "search.hh" \endcode
+ * Requires \code #include "gecode/search.hh" \endcode
  * \ingroup TaskInt
  */
 
@@ -172,7 +172,7 @@
  * width of the current range by \c min(), \c max(), and \c width()
  * respectively.
  * 
- * Requires \code #include "iter.hh" \endcode
+ * Requires \code #include "gecode/iter.hh" \endcode
  * \ingroup Func
  */
 
@@ -182,7 +182,7 @@
  * A range iterator provides incremental access to a sequence of increasing
  * ranges.
  *
- * Requires \code #include "iter.hh" \endcode
+ * Requires \code #include "gecode/iter.hh" \endcode
  * \ingroup FuncIter
  */
 
@@ -192,7 +192,7 @@
  * A value iterator provides incremental access to a sequence of increasing
  * values. 
  *
- * Requires \code #include "iter.hh" \endcode
+ * Requires \code #include "gecode/iter.hh" \endcode
  * \ingroup FuncIter
  */
 
@@ -219,7 +219,7 @@
  * branching class Gecode::ViewValBranching (argument \a ViewSel).
  *
  * All view selection classes require 
- * \code #include "int/branch.hh" \endcode
+ * \code #include "gecode/int/branch.hh" \endcode
  * \ingroup Other
  */
 
@@ -231,7 +231,7 @@
  * branching class Gecode::ViewValBranching (argument \a ValSel).
  *
  * All value selection classes require 
- * \code #include "int/branch.hh" \endcode
+ * \code #include "gecode/int/branch.hh" \endcode
  * \ingroup Other
  */
 
@@ -253,7 +253,7 @@
  * branching class Gecode::ViewValBranching (argument \a ViewSel).
  *
  * All view selection classes require 
- * \code #include "set/branch.hh" \endcode
+ * \code #include "gecode/set/branch.hh" \endcode
  * \ingroup Other
  */
 
@@ -265,7 +265,7 @@
  * branching class Gecode::ViewValBranching (argument \a ValSel).
  *
  * All value selection classes require 
- * \code #include "set/branch.hh" \endcode
+ * \code #include "gecode/set/branch.hh" \endcode
  * \ingroup Other
  */
 
