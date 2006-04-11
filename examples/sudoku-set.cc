@@ -19,9 +19,9 @@
  *
  */
 
-#include "set.hh"
+#include "gecode/set.hh"
 #include "examples/support.hh"
-#include "minimodel.hh"
+#include "gecode/minimodel.hh"
 
 #include "examples/sudoku.icc"
 

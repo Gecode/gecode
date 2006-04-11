@@ -26,8 +26,8 @@
 #ifndef __GECODE_TEST_TEST_HH__
 #define __GECODE_TEST_TEST_HH__
 
-#include "kernel.hh"
-#include "search.hh"
+#include "gecode/kernel.hh"
+#include "gecode/search.hh"
 
 using namespace Gecode;
 

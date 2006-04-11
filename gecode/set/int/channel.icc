@@ -1,0 +1,75 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *     Gabor Szokoli, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+
+
+#include "gecode/set.hh"
+#include "gecode/int.hh"
+
+namespace Gecode { namespace Set { namespace Int {
+
+  forceinline
+  Channel::Channel(Space* home,
+		   ViewArray< Gecode::Int::IntView >& xs0,
+		   ViewArray< SetView >& ys0)
+    : Propagator(home), xs(xs0), ys(ys0) {
+    xs.subscribe(home,this, Gecode::Int::PC_INT_DOM);
+    ys.subscribe(home,this, PC_SET_ANY);
+  }
+
+  forceinline
+  Channel::Channel(Space* home, bool share,
+		   Channel& p)
+    : Propagator(home,share,p) {
+    xs.update(home,share,p.xs);
+    ys.update(home,share,p.ys);
+  }
+
+  forceinline ExecStatus
+  Channel::post(Space* home, ViewArray<Gecode::Int::IntView>& xs,
+		ViewArray<SetView>& ys) {
+    // Sharing of ys is taken care of in the propagator:
+    // The ys are propagated to be disjoint, so shared variables
+    // result in failure.
+    unsigned int xssize = xs.size();
+    for (int i=ys.size(); i--;) {
+      GECODE_ME_CHECK(ys[i].exclude(home, xssize, Limits::Set::int_max));
+      GECODE_ME_CHECK(ys[i].exclude(home, Limits::Set::int_min, -1));
+    }
+    unsigned int yssize = ys.size();
+    if (yssize > static_cast<unsigned int>(Limits::Int::int_max))
+      return ES_FAILED;
+    for (int i=xs.size(); i--;) {
+      GECODE_ME_CHECK(xs[i].gq(home, 0));
+      GECODE_ME_CHECK(xs[i].le(home, static_cast<int>(yssize)));
+    }
+
+    (void) new (home) Channel(home,xs,ys);
+    return ES_OK;
+  }
+
+}}}
+
+// STATISTICS: set-prop

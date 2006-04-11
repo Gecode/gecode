@@ -21,14 +21,17 @@
 #ifndef __GECODE_LOG_HH__
 #define __GECODE_LOG_HH__
 
-#include "kernel.hh"
-#include "int.hh"
+#include "gecode/kernel.hh"
+#include "gecode/int.hh"
 
 #ifdef GECODE_HAVE_SET_VARS
-#include "set.hh"
+#include "gecode/set.hh"
 #endif
 
 namespace Log {
+
+  using namespace Gecode;
+
   void logging(bool val);
   bool logging();
   void reset();

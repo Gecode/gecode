@@ -94,8 +94,10 @@ KERNELHDR0 = \
 	macros.icc memory-manager.icc memory.icc modevent.icc \
 	propagator.icc view.icc
 
-KERNELSRC	= $(KERNELSRC0:%=kernel/%)
-KERNELHDR	= limits.hh kernel.hh $(KERNELHDR0:%=kernel/%)
+KERNELSRC	= $(KERNELSRC0:%=gecode/kernel/%)
+KERNELHDR	= \
+	gecode/limits.hh gecode/kernel.hh \
+	$(KERNELHDR0:%=gecode/kernel/%)
 KERNELOBJ	= $(KERNELSRC:%.cc=%$(OBJSUFFIX))
 
 export KERNELDLL	= $(LIBPREFIX)@KERNEL@$(DLLSUFFIX)
@@ -110,7 +112,7 @@ export KERNELSTATICLIB	= $(LIBPREFIX)@KERNEL@$(STATICLIBSUFFIX)
 export LINKKERNEL      = $(LINKPREFIX)@KERNEL@$(LINKSUFFIX)
 KERNELBUILDDIRS = kernel
 
-EXTRA_HEADERS   = vti.icc config.icc
+EXTRA_HEADERS   = gecode/vti.icc gecode/config.icc
 
 #
 # SEARCH COMPONENTS
@@ -123,8 +125,8 @@ SEARCHHDR0 = \
 	reco-stack.icc statistics.icc \
 	engine-ctrl.icc stop.icc
 
-SEARCHSRC	= $(SEARCHSRC0:%=search/%)
-SEARCHHDR	= search.hh $(SEARCHHDR0:%=search/%)
+SEARCHSRC	= $(SEARCHSRC0:%=gecode/search/%)
+SEARCHHDR	= gecode/search.hh $(SEARCHHDR0:%=gecode/search/%)
 SEARCHOBJ	= $(SEARCHSRC:%.cc=%$(OBJSUFFIX))
 
 ifeq "@enable_search@" "yes"
@@ -190,8 +192,8 @@ INTHDR0 = \
 	channel.hh channel/dom.icc channel/val.icc channel/stack.icc \
 	channel/base.icc
 
-INTSRC		= $(INTSRC0:%=int/%)
-INTHDR		= int.hh $(INTHDR0:%=int/%)
+INTSRC		= $(INTSRC0:%=gecode/int/%)
+INTHDR		= gecode/int.hh $(INTHDR0:%=gecode/int/%)
 INTOBJ		= $(INTSRC:%.cc=%$(OBJSUFFIX))
 
 ifeq "@enable_int_vars@" "yes"
@@ -248,8 +250,8 @@ SETHDR0 =								     \
 	propagator.icc rel-op.hh					     \
 	branch.hh branch/select-val.icc branch/select-view.icc
 
-SETSRC		= $(SETSRC0:%=set/%)
-SETHDR		= set.hh $(SETHDR0:%=set/%)
+SETSRC		= $(SETSRC0:%=gecode/set/%)
+SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%)
 SETOBJ		= $(SETSRC:%.cc=%$(OBJSUFFIX))
 
 ifeq "@enable_set_vars@" "yes"
@@ -283,8 +285,8 @@ MMHDR0 = \
 	lin-expr.icc lin-rel.icc exception.icc matrix.icc \
 	bool-expr.icc bool-rel.icc
 
-MMSRC 		= $(MMSRC0:%=minimodel/%)
-MMHDR 		= minimodel.hh $(MMHDR0:%=minimodel/%)
+MMSRC 		= $(MMSRC0:%=gecode/minimodel/%)
+MMHDR 		= gecode/minimodel.hh $(MMHDR0:%=gecode/minimodel/%)
 MMOBJ		= $(MMSRC:%.cc=%$(OBJSUFFIX))
 MMSBJ		= $(MMSRC:%.cc=%$(SBJSUFFIX))
 
@@ -322,8 +324,8 @@ ITERHDR0 = \
 	ranges-offset.icc ranges-operations.icc ranges-scale.icc \
 	ranges-singleton.icc ranges-union.icc ranges-values.icc \
 	values-ranges.icc
-OTHERHDR = iter.hh \
-	$(SUPPORTHDR0:%=support/%) $(ITERHDR0:%=iter/%)
+OTHERHDR = gecode/iter.hh \
+	$(SUPPORTHDR0:%=gecode/support/%) $(ITERHDR0:%=gecode/iter/%)
 
 #
 # EXAMPLES
@@ -507,38 +509,38 @@ compilesubdirs:
 # Object targets
 #
 
-kernel/%$(OBJSUFFIX): $(top_srcdir)/kernel/%.cc
+gecode/kernel/%$(OBJSUFFIX): $(top_srcdir)/gecode/kernel/%.cc
 	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_KERNEL \
 	@COMPILEOBJ@$@ @COMPILERIN@ $<
-kernel/%$(SBJSUFFIX): $(top_srcdir)/kernel/%.cc
+gecode/kernel/%$(SBJSUFFIX): $(top_srcdir)/gecode/kernel/%.cc
 	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_KERNEL \
 	@COMPILESBJ@$@ @COMPILERIN@ $<
 
-search/%$(OBJSUFFIX): $(top_srcdir)/search/%.cc
+gecode/search/%$(OBJSUFFIX): $(top_srcdir)/gecode/search/%.cc
 	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_SEARCH \
 	@COMPILEOBJ@$@ @COMPILERIN@ $<
-search/%$(SBJSUFFIX): $(top_srcdir)/search/%.cc
+gecode/search/%$(SBJSUFFIX): $(top_srcdir)/gecode/search/%.cc
 	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_SEARCH \
 	@COMPILESBJ@$@ @COMPILERIN@ $<
 
-int/%$(OBJSUFFIX): $(top_srcdir)/int/%.cc
+gecode/int/%$(OBJSUFFIX): $(top_srcdir)/gecode/int/%.cc
 	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_INT \
 	@COMPILEOBJ@$@ @COMPILERIN@ $<
-int/%$(SBJSUFFIX): $(top_srcdir)/int/%.cc
+gecode/int/%$(SBJSUFFIX): $(top_srcdir)/gecode/int/%.cc
 	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_INT \
 	@COMPILESBJ@$@ @COMPILERIN@ $<
 
-set/%$(OBJSUFFIX): $(top_srcdir)/set/%.cc
+gecode/set/%$(OBJSUFFIX): $(top_srcdir)/gecode/set/%.cc
 	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_SET \
 	@COMPILEOBJ@$@ @COMPILERIN@ $<
-set/%$(SBJSUFFIX): $(top_srcdir)/set/%.cc
+gecode/set/%$(SBJSUFFIX): $(top_srcdir)/gecode/set/%.cc
 	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_SET \
 	@COMPILESBJ@$@ @COMPILERIN@ $<
 
-minimodel/%$(OBJSUFFIX): $(top_srcdir)/minimodel/%.cc
+gecode/minimodel/%$(OBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cc
 	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_MINIMODEL \
 	@COMPILEOBJ@$@ @COMPILERIN@ $<
-minimodel/%$(SBJSUFFIX): $(top_srcdir)/minimodel/%.cc
+gecode/minimodel/%$(SBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cc
 	$(CXX) $(CXXFLAGS) -DGECODE_BUILD_MINIMODEL \
 	@COMPILESBJ@$@ @COMPILERIN@ $<
 
@@ -763,7 +765,7 @@ endif
 doinstalllib: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
 	mkdir -p $(sharedlibdir) && \
 	mkdir -p $(libdir) && \
-	mkdir -p $(pkgincludedir) && \
+	mkdir -p $(includedir) && \
 	for_libtargets="$(LIBTARGETS)" && \
 	  for f in $$for_libtargets; do cp $$f $(sharedlibdir); done && \
 	for_liblinktargets="$(LIBLINKTARGETS)" && \
@@ -771,7 +773,7 @@ doinstalllib: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
 	for_liblibtargets="$(LIBLIBTARGETS)" && \
 	  for f in $$for_liblibtargets; do cp $$f $(libdir); done && \
 	(cd $(top_srcdir) && tar cf - $(ALLHDR)) | \
-	(cd $(pkgincludedir) && tar xf -) && \
+	(cd $(includedir) && tar xf -) && \
 	for_extraheaders="$(EXTRA_HEADERS)" && \
 	  for f in $$for_extraheaders; do cp $$f $(pkgincludedir); done && \
 	for_pkgconfigfiles="$(PKGCONFIGFILES)" && \
@@ -879,7 +881,7 @@ veryclean: clean
 
 distclean: veryclean
 	$(RMF) misc/gecode.pc misc/gecode-search.pc misc/gecode-minimodel.pc
-	$(RMF) vti.icc doxygen.conf doxygen.hh Makefile
+	$(RMF) gecode/vti.icc doxygen.conf doxygen.hh Makefile
 	$(RMF) config.log config.status
 
 depend: 	

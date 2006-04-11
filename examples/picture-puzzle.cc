@@ -20,7 +20,7 @@
  */
 
 #include "examples/support.hh"
-#include "minimodel.hh"
+#include "gecode/minimodel.hh"
 
 extern const int *specs[];
 extern const unsigned int n_examples;

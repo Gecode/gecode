@@ -19,7 +19,7 @@
  *
  */
 
-#include "../int.hh"
+#include "gecode/int.hh"
 #include "test.hh"
 
 using namespace Gecode;

@@ -22,10 +22,10 @@
 #include "examples/support.hh"
 
 #ifdef GECODE_HAVE_SET_VARS
-#include "set.hh"
+#include "gecode/set.hh"
 #endif
 
-#include "minimodel.hh"
+#include "gecode/minimodel.hh"
 
 // include the example specifications
 #include "examples/sudoku.icc"

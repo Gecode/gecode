@@ -25,7 +25,7 @@
 
 #include "test/set.hh"
 #include "test/log.hh"
-#include "iter.hh"
+#include "gecode/iter.hh"
 #include <algorithm>
 
 CountableSet::CountableSet(const IntSet& d0) : d(d0), //curd(IntSet::empty),

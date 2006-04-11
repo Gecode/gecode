@@ -1,0 +1,143 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#include "gecode/support/shared-array.hh"
+
+namespace Gecode { namespace Iter { namespace Ranges {
+
+  /**
+   * \brief %Range iterator cache
+   *
+   * Allows to iterate the ranges as defined by the input iterator
+   * several times provided the Cache is %reset by the reset member
+   * function.
+   *
+   * Requires \code #include "gecode/iter.hh" \endcode
+   * \ingroup FuncIterRanges
+   */
+  template <class I>
+  class Cache  {
+  protected:
+    /// %Ranges stored in cache
+    class Range {
+    public:
+      int min; int max;
+    };
+    /// Array for ranges
+    Support::SharedArray<Range> r;
+    /// Current range
+    int c;
+    /// Number of ranges in cache
+    int n;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    Cache(void);
+    /// Initialize with ranges from \a i
+    Cache(I& i);
+    /// Initialize with ranges from \a i
+    void init(I& i);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a range or done
+    bool operator()(void) const;
+    /// Move iterator to next range (if possible)
+    void operator++(void);
+    /// Reset iterator to start from beginning
+    void reset(void);
+    //@}
+
+    /// \name %Range access
+    //@{
+    /// Return smallest value of range
+    int min(void) const;
+    /// Return largest value of range
+    int max(void) const;
+    /// Return width of range (distance between minimum and maximum)
+    unsigned int width(void) const;
+    //@}
+  };
+
+
+  template <class I>
+  forceinline
+  Cache<I>::Cache(void)
+    : r(8) {}
+
+  template <class I>
+  inline void
+  Cache<I>::init(I& i) {
+    int j = 0;
+    while (i()) {
+      r.ensure(j);
+      r[j].min = i.min(); r[j].max = i.max();
+      ++j; ++i;
+    }
+    c = 0;
+    n = j;
+  }
+
+  template <class I>
+  inline
+  Cache<I>::Cache(I& i) : r(8) {
+    init(i);
+  }
+
+  template <class I>
+  forceinline void
+  Cache<I>::operator++(void) {
+    c++;
+  }
+  template <class I>
+  forceinline bool
+  Cache<I>::operator()(void) const {
+    return c < n;
+  }
+
+  template <class I>
+  forceinline void
+  Cache<I>::reset(void) {
+    c = 0;
+  }
+
+  template <class I>
+  forceinline int
+  Cache<I>::min(void) const {
+    return r[c].min;
+  }
+  template <class I>
+  forceinline int
+  Cache<I>::max(void) const {
+    return r[c].max;
+  }
+  template <class I>
+  forceinline unsigned int
+  Cache<I>::width(void) const {
+    return r[c].max-r[c].min+1;
+  }
+
+}}}
+
+// STATISTICS: iter-any
+

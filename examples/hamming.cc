@@ -21,9 +21,9 @@
  *
  */
 
-#include "set.hh"
+#include "gecode/set.hh"
 #include "examples/support.hh"
-#include "minimodel.hh"
+#include "gecode/minimodel.hh"
 
 /**
  * \brief %Example: Generating hamming codes

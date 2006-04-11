@@ -1,0 +1,96 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Iter { namespace Ranges {
+
+  /**
+   * \brief Range iterator for empty range
+   *
+   * Requires \code #include "gecode/iter.hh" \endcode
+   * \ingroup FuncIterRanges
+   */
+
+  class Empty {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    Empty(void);
+    /// Initialize
+    void init(void);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a range or done
+    bool operator()(void) const;
+    /// Move iterator to next range (if possible)
+    void operator++(void);
+    //@}
+
+    /// \name Range access
+    //@{
+    /// Return smallest value of range
+    int min(void) const;
+    /// Return largest value of range
+    int max(void) const;
+    /// Return width of range (distance between minimum and maximum)
+    unsigned int width(void) const;
+    //@}
+  };
+
+
+  forceinline
+  Empty::Empty(void) {}
+
+  forceinline void
+  Empty::init(void) {}
+
+  forceinline void
+  Empty::operator++(void) {
+    assert(false);
+  }
+
+  forceinline bool
+  Empty::operator()(void) const {
+    return false;
+  }
+
+  forceinline int
+  Empty::min(void) const {
+    assert(false);
+    return 0;
+  }
+  forceinline int
+  Empty::max(void) const {
+    assert(false);
+    return 0;
+  }
+  forceinline unsigned int
+  Empty::width(void) const {
+    assert(false);
+    return 0;
+  }
+
+}}}
+
+// STATISTICS: iter-any
+

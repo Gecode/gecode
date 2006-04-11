@@ -25,7 +25,7 @@
 #include "test/int.hh"
 #include "test/log.hh"
 
-#include "search.hh"
+#include "gecode/search.hh"
 
 StressTestSpace::StressTestSpace(int n, IntSet dom, const Options& o) 
   : x(this, n, dom), opt(o) {

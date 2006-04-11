@@ -21,7 +21,7 @@
 
 #include "test/int.hh"
 #include "test/log.hh"
-#include "minimodel.hh"
+#include "gecode/minimodel.hh"
 
 static IntSet is(-2,2);
 

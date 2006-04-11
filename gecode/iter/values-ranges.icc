@@ -1,0 +1,91 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Iter { namespace Values {
+
+  /**
+   * \brief Range iterator from value iterator
+   *
+   * The iterator only requires that the value iterator
+   * iterates values in increasing order. Duplicates in the
+   * iterated value sequence are okay.
+   *
+   * Requires \code #include "gecode/iter.hh" \endcode
+   * \ingroup FuncIterRanges
+   */
+  template <class I>
+  class ToRanges : public Ranges::MinMax {
+  protected:
+    /// Value iterator used
+    I i;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    ToRanges(void);
+    /// Initialize with value iterator \a i
+    ToRanges(I& i);
+    /// Initialize with value iterator \a i
+    void init(I& i);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Move iterator to next range (if possible)
+    void operator++(void);
+    //@}
+  };
+
+  template <class I>
+  forceinline
+  ToRanges<I>::ToRanges(void) {}
+
+  template <class I>
+  forceinline void
+  ToRanges<I>::operator++(void) {
+    if (!i()) {
+      finish(); return;
+    }
+    mi = i.val(); ma = i.val();
+    ++i;
+    while (i() && (ma+1 >= i.val())) {
+      ma = i.val(); ++i;
+    }
+  }
+
+  template <class I>
+  forceinline
+  ToRanges<I>::ToRanges(I& i0)
+    : i(i0) {
+    operator++();
+  }
+
+  template <class I>
+  forceinline void
+  ToRanges<I>::init(I& i0) {
+    i = i0;
+    operator++();
+  }
+
+}}}
+
+// STATISTICS: iter-any
+

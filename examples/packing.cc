@@ -22,7 +22,7 @@
  */
 
 #include "examples/support.hh"
-#include "minimodel.hh"
+#include "gecode/minimodel.hh"
 
 /**
  * \name Specifications for packing problems

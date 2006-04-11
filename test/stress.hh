@@ -24,8 +24,8 @@
 #ifndef __GECODE_TEST_STRESS_HH__
 #define __GECODE_TEST_STRESS_HH__
 
-#include "kernel.hh"
-#include "../int.hh"
+#include "gecode/kernel.hh"
+#include "gecode/int.hh"
 #include "test.hh"
 
 using namespace Gecode;

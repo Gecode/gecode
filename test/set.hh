@@ -24,7 +24,7 @@
 #ifndef __GECODE_TEST_SET_HH__
 #define __GECODE_TEST_SET_HH__
 
-#include "../set.hh"
+#include "gecode/set.hh"
 #include "test.hh"
 #include "int.hh"
 

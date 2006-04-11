@@ -20,7 +20,7 @@
  */
 
 #include "examples/support.hh"
-#include "minimodel.hh"
+#include "gecode/minimodel.hh"
 
 /// Number of warehouses
 static const int n_suppliers = 5;

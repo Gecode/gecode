@@ -22,7 +22,7 @@
  */
 
 #include "examples/support.hh"
-#include "minimodel.hh"
+#include "gecode/minimodel.hh"
 
 /// The maximum number of knights placeable
 const int kval[] = {

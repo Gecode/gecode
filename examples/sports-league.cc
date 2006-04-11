@@ -19,9 +19,8 @@
  *
  */	
 
-#include "int.hh"
 #include "examples/support.hh"
-#include "minimodel.hh"
+#include "gecode/minimodel.hh"
 
 /**
  * \brief Triple forming an entry in the round robin schedule

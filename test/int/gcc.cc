@@ -21,7 +21,7 @@
 
 #include "test/int.hh"
 #include "test/log.hh"
-#include "../../int/gcc.hh"
+#include "gecode/int/gcc.hh"
 
 static IntSet ds_02(0,2);
 static IntSet ds_03(0,3);

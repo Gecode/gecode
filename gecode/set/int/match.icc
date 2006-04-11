@@ -1,0 +1,67 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
+ *     Gabor Szokoli <szokoli@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *     Gabor Szokoli, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+
+
+#include "gecode/set.hh"
+#include "gecode/int.hh"
+#include "gecode/set/rel.hh"
+
+namespace Gecode { namespace Set { namespace Int {
+
+  forceinline
+  Match::Match(Space* home, SetView y0, ViewArray< Gecode::Int::IntView >& ys)
+    : Propagator(home), x0(y0), xs(ys) {
+    x0.subscribe(home,this, PC_SET_ANY);
+    xs.subscribe(home,this, Gecode::Int::PC_INT_BND);
+  }
+
+  forceinline
+  Match::Match(Space* home, bool share, Match& p)
+    : Propagator(home,share,p) {
+    x0.update(home,share,p.x0);
+    xs.update(home,share,p.xs);
+  }
+
+  forceinline ExecStatus
+  Match::post(Space* home, SetView x0, ViewArray<Gecode::Int::IntView>& xs) {
+    unsigned int xs_size = xs.size();
+    GECODE_ME_CHECK(x0.cardMin(home,xs_size));
+    GECODE_ME_CHECK(x0.cardMax(home,xs_size));
+    if (xs_size==1) {
+      SingletonView sv(xs[0]);
+      GECODE_ES_CHECK((Rel::Eq<SetView,
+		       SingletonView>::post(home,x0, sv)));
+    } else {
+      // Sharing in xs is handled correctly in the propagator:
+      // if two views in xs are shared, this leads to failure.
+      (void) new (home) Match(home,x0,xs);
+    }
+    return ES_OK;
+  }
+
+}}}
+
+// STATISTICS: set-prop

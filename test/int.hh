@@ -24,7 +24,7 @@
 #ifndef __GECODE_TEST_INT_HH__
 #define __GECODE_TEST_INT_HH__
 
-#include "../int.hh"
+#include "gecode/int.hh"
 #include "test.hh"
 
 using namespace Gecode;

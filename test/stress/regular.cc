@@ -22,7 +22,7 @@
  */
 
 #include "test/stress.hh"
-#include "support/dynamic-array.hh"
+#include "gecode/support/dynamic-array.hh"
 
 static int vals[] = {3, 4, 5, 6, 7, 8};
 static IntSet _p(vals, sizeof(vals)/sizeof(int));

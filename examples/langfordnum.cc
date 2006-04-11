@@ -20,7 +20,7 @@
  */	
 
 #include "examples/support.hh"
-#include "minimodel.hh"
+#include "gecode/minimodel.hh"
 
 /**
  * \brief Extended Options taking two parameters instead of only one

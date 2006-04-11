@@ -3,7 +3,7 @@
 prefix=@cygpathprefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
-includedir=@includedir@/gecode
+includedir=@includedir@
 
 Name: Gecode
 Description: Generic Constraint Development Environment

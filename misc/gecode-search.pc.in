@@ -3,7 +3,7 @@
 prefix=@cygpathprefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
-includedir=@includedir@/gecode
+includedir=@includedir@
 
 Name: Gecode Search Engines
 Description: Generic Constraint Development Environment Search Engines

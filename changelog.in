@@ -51,7 +51,23 @@ Version:	1.1.x
 Date:		upcoming
 [DESCRIPTION]
 The next release
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   major
+[DESCRIPTION]
+Moved library source code into gecode subdirectory. Facilitates cleaner
+installation. Programs compiling against Gecode now need to include
+e.g. "gecode/int.hh".
 	
+[ENTRY]
+Module: example
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Sudoku example generalized to arbitrarily sized Sudokus.
+
 [RELEASE]
 Version:	1.1.0
 Date:		2006-04-10

@@ -20,7 +20,7 @@
  */	
 
 #include "examples/support.hh"
-#include "minimodel.hh"
+#include "gecode/minimodel.hh"
 
 #include <cstdlib>
 

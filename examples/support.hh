@@ -28,9 +28,9 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "kernel.hh"
-#include "int.hh"
-#include "search.hh"
+#include "gecode/kernel.hh"
+#include "gecode/int.hh"
+#include "gecode/search.hh"
 
 #include "examples/timer.hh"
 

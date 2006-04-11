@@ -1,0 +1,1052 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Contributing authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#include <iostream>
+#include "gecode/iter.hh"
+
+namespace Gecode { 
+
+  namespace Set {
+
+    /**
+     * \defgroup TaskActorSetView Set views
+     *
+     * Set propagators and branchings compute with set views.
+     * Set views provide views on set variable implementations,
+     * set constants, and integer variable implementations.
+     * \ingroup TaskActorSet
+     */
+
+    /**
+     * \brief %Set view for set variables
+     * \ingroup TaskActorSetView
+     */
+
+    class SetView : public VariableViewBase<SetVarImp> {
+    protected:
+      using VariableViewBase<SetVarImp>::var;
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      SetView(void);
+      /// Initialize from set variable \a x
+      SetView(const SetVar& x);
+      //@}
+
+      /// \name Value access
+      //@{
+
+      /// Return minimum cardinality
+      unsigned int cardMin(void) const;
+      /// Return maximum cardinality
+      unsigned int cardMax(void) const;
+      /// Return minimum of the least upper bound
+      int lubMin(void) const;
+      /// Return maximum of the least upper bound
+      int lubMax(void) const;
+      /// Return n-th smallest element of the least upper bound
+      int lubMinN(int n) const;
+      /// Return the n-th largest element of the least upper bound
+      int lubMaxN(int n) const;
+      /// Return minimum of the greatest lower bound
+      int glbMin(void) const;
+      /// Return maximum of the greatest lower bound
+      int glbMax(void) const;
+
+      /// Return the number of elements in the greatest lower bound
+      unsigned int glbSize(void) const;
+      /// Return the number of elements in the least upper bound
+      unsigned int lubSize(void) const;
+      /// Return the number of unknown elements
+      unsigned int unknownSize(void) const;
+      //@}
+
+      /// \name Domain tests
+      //@{
+      /// Test whether view is assigned
+      bool assigned(void) const;
+      /// Test whether \a i is in the greatest lower bound
+      bool contains(int i) const;
+      /// Test whether \a i is not in the least upper bound
+      bool notContains(int i) const;
+      //@}
+
+
+      /// \name Domain update by value
+      //@{
+      /// Restrict cardinality to be greater than or equal to \a m
+      ModEvent cardMin(Space* home, unsigned int m);
+      /// Restrict cardinality to be less than or equal to \a m
+      ModEvent cardMax(Space* home, unsigned int m);
+      /**
+       * \brief Update greatest lower bound to include all elements
+       * between and including \a i and \a j
+       */
+      ModEvent include(Space* home,int i,int j);
+      /**
+       * \brief Restrict least upper bound to not contain all elements
+       * between and including \a i and \a j
+       */
+      ModEvent exclude(Space* home,int i,int j);
+      /// Update greatest lower bound to contain \a i
+      ModEvent include(Space* home,int i);
+      /// Restrict least upper bound to not contain \a i
+      ModEvent exclude(Space* home,int i);
+      /**
+       * \brief Update least upper bound to contain at most all elements
+       * between and including \a i and \a j
+       */
+      ModEvent intersect(Space* home,int i,int j);
+      /// Update least upper bound to contain at most the element \a i
+      ModEvent intersect(Space* home,int i);
+      //@}
+
+      /// \name Domain update by range iterator
+      //@{
+
+      /// Remove range sequence described by \a i from least upper bound
+      template <class I> ModEvent excludeI(Space* home, I& i);
+      /// Include range sequence described by \a i in greatest lower bound
+      template <class I> ModEvent includeI(Space* home, I& i);
+      /// Intersect least upper bound with range sequence described by \a i
+      template <class I> ModEvent intersectI(Space* home, I& iter);
+      //@}
+
+      /// \name Cloning
+      //@{
+      /// Update this view to be a clone of view \a x
+      void update(Space* home, bool share, SetView& x);
+      //@}
+    };
+
+  }
+
+  /**
+   * \brief Traits class for views and variable implementations
+   *
+   * This class specializes the ViewVarTraits for SetView.
+   * \ingroup TaskActorSetView
+   */
+  template<>
+  class ViewVarTraits<Set::SetView> {
+  public:
+    /// The variable type of a SetView
+    typedef Set::SetVarImp Var;
+  };
+
+  // Forward declarations for friends
+  namespace Set { class ConstantView;  }
+  bool same(const Set::ConstantView&, const Set::ConstantView&);
+  bool before(const Set::ConstantView&, const Set::ConstantView&);
+
+  namespace Set {
+    
+    /**
+     * \brief Constant view
+     *
+     * A constant set view \f$x\f$ for a set \f$s\f$ provides operations such
+     * that \f$x\f$ behaves like \f$s\f$.
+     * \ingroup TaskActorSetView
+     */
+    class ConstantView : public ConstantViewBase {
+      friend class LubRanges<ConstantView>;
+      friend class GlbRanges<ConstantView>;
+      friend bool Gecode::same(const Gecode::Set::ConstantView&, 
+			       const Gecode::Set::ConstantView&);
+      friend bool Gecode::before(const Gecode::Set::ConstantView&, 
+				 const Gecode::Set::ConstantView&);
+    private:
+      int *ranges;
+      unsigned int size;
+      unsigned int domSize;
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      ConstantView(void);
+      /// Construct with \a s as the domain
+      ConstantView(Space* home, const IntSet& s);
+      //@}
+
+      /// \name Value access
+      //@{
+      /// Return minimum cardinality
+      unsigned int cardMin(void) const;
+      /// Return maximum cardinality
+      unsigned int cardMax(void) const;
+      /// Return minimum of the least upper bound
+      int lubMin(void) const;
+      /// Return maximum of the least upper bound
+      int lubMax(void) const;
+      /// Return n-th smallest element of the least upper bound
+      int lubMinN(int n) const;
+      /// Return the n-th largest element of the least upper bound
+      int lubMaxN(int n) const;
+      /// Return minimum of the greatest lower bound
+      int glbMin(void) const;
+      /// Return maximum of the greatest lower bound
+      int glbMax(void) const;
+
+      /// Return the number of elements in the greatest lower bound
+      unsigned int glbSize(void) const;
+      /// Return the number of elements in the least upper bound
+      unsigned int lubSize(void) const;
+      /// Return the number of unknown elements
+      unsigned int unknownSize(void) const;
+      //@}
+
+      /// \name Domain tests
+      //@{
+      /// Test whether view is assigned
+      bool assigned(void) const;
+      /// Test whether \a i is in the greatest lower bound
+      bool contains(int i) const;
+      /// Test whether \a i is not in the least upper bound
+      bool notContains(int i) const;
+      //@}
+
+
+      /// \name Domain update by value
+      //@{
+      /// Restrict cardinality to be greater than or equal to \a m
+      ModEvent cardMin(Space* home, unsigned int m);
+      /// Restrict cardinality to be less than or equal to \a m
+      ModEvent cardMax(Space* home, unsigned int m);
+      /**
+       * \brief Update greatest lower bound to include all elements
+       * between and including \a i and \a j
+       */
+      ModEvent include(Space* home,int i,int j);
+      /**
+       * \brief Restrict least upper bound to not contain all elements
+       * between and including \a i and \a j
+       */
+      ModEvent exclude(Space* home,int i,int j);
+      /// Update greatest lower bound to contain \a i
+      ModEvent include(Space* home,int i);
+      /// Restrict least upper bound to not contain \a i
+      ModEvent exclude(Space* home,int i);
+      /**
+       * \brief Update least upper bound to contain at most all elements
+       * between and including \a i and \a j
+       */
+      ModEvent intersect(Space* home,int i,int j);
+      /// Update least upper bound to contain at most the element \a i
+      ModEvent intersect(Space* home,int i);
+      //@}
+
+      /// \name Domain update by range iterator
+      //@{
+
+      /// Remove range sequence described by \a i from least upper bound
+      template <class I> ModEvent excludeI(Space* home, I& i);
+      /// Include range sequence described by \a i in greatest lower bound
+      template <class I> ModEvent includeI(Space* home, I& i);
+      /// Intersect least upper bound with range sequence described by \a i
+      template <class I> ModEvent intersectI(Space* home, I& iter);
+      //@}
+
+      /// \name Propagator modification events
+      //@{
+      /// Return modification event of propagator \a p for view
+      static ModEvent     pme(const Propagator* p);
+      /// Translate modification event \a me to propagator modification event for view
+      static PropModEvent pme(ModEvent);
+      //@}
+
+      /// \name Dependencies
+      //@{
+      /// Subscribe propagator \a p with propagation condition \a pc to view
+      void subscribe(Space* home, Propagator* p, PropCond pc);
+      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+      void cancel(Propagator* p, PropCond pc);
+      //@}
+
+      /// \name Cloning
+      //@{
+      /// Update this view to be a clone of view \a x
+      void update(Space* home, bool share, ConstantView& x);
+      /// Whether this view needs to be destructed
+      static bool needdestruction(void);
+      //@}
+    };
+
+  }
+
+  /** \name View comparison
+   *  \relates Gecode::Set::ConstantView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  bool same(const Set::ConstantView& x, const Set::ConstantView& y);
+  /// Test whether view \a x comes before \a y (arbitrary order)
+  bool before(const Set::ConstantView& x, const Set::ConstantView& y);
+  //@}
+
+  /**
+   * \brief Traits class for views and variable implementations
+   *
+   * This class specializes the ViewVarTraits for ConstantView.
+   * \ingroup TaskActorSetView
+   */
+  template<>
+  class ViewVarTraits<Set::ConstantView> {
+  public:
+    /// The variable type of a ConstantView
+    typedef VarBase Var;
+  };
+
+
+  namespace Set {
+
+    /**
+     * \brief Constant view for the empty set
+     *
+     * A constant set view \f$x\f$ for the empty set provides operations such
+     * that \f$x\f$ behaves like the empty set.
+     * \ingroup TaskActorSetView
+     */
+
+    class EmptyView : public ConstantViewBase {
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      EmptyView(void);
+      //@}
+
+      /// \name Value access
+      //@{
+
+      /// Return minimum cardinality
+      unsigned int cardMin(void) const;
+      /// Return maximum cardinality
+      unsigned int cardMax(void) const;
+      /// Return minimum of the least upper bound
+      int lubMin(void) const;
+      /// Return maximum of the least upper bound
+      int lubMax(void) const;
+      /// Return n-th smallest element of the least upper bound
+      int lubMinN(int n) const;
+      /// Return the n-th largest element of the least upper bound
+      int lubMaxN(int n) const;
+      /// Return minimum of the greatest lower bound
+      int glbMin(void) const;
+      /// Return maximum of the greatest lower bound
+      int glbMax(void) const;
+
+      /// Return the number of elements in the greatest lower bound
+      unsigned int glbSize(void) const;
+      /// Return the number of elements in the least upper bound
+      unsigned int lubSize(void) const;
+      /// Return the number of unknown elements
+      unsigned int unknownSize(void) const;
+      //@}
+
+      /// \name Domain tests
+      //@{
+      /// Test whether view is assigned
+      bool assigned(void) const;
+      /// Test whether \a i is in the greatest lower bound
+      bool contains(int i) const;
+      /// Test whether \a i is not in the least upper bound
+      bool notContains(int i) const;
+      //@}
+
+
+      /// \name Domain update by value
+      //@{
+      /// Restrict cardinality to be greater than or equal to \a m
+      ModEvent cardMin(Space* home, unsigned int m);
+      /// Restrict cardinality to be less than or equal to \a m
+      ModEvent cardMax(Space* home, unsigned int m);
+      /**
+       * \brief Update greatest lower bound to include all elements
+       * between and including \a i and \a j
+       */
+      ModEvent include(Space* home,int i,int j);
+      /**
+       * \brief Restrict least upper bound to not contain all elements
+       * between and including \a i and \a j
+       */
+      ModEvent exclude(Space* home,int i,int j);
+      /// Update greatest lower bound to contain \a i
+      ModEvent include(Space* home,int i);
+      /// Restrict least upper bound to not contain \a i
+      ModEvent exclude(Space* home,int i);
+      /**
+       * \brief Update least upper bound to contain at most all elements
+       * between and including \a i and \a j
+       */
+      ModEvent intersect(Space* home,int i,int j);
+      /// Update least upper bound to contain at most the element \a i
+      ModEvent intersect(Space* home,int i);
+      //@}
+
+      /// \name Domain update by range iterator
+      //@{
+
+      /// Remove range sequence described by \a i from least upper bound
+      template <class I> ModEvent excludeI(Space* home, I& i);
+      /// Include range sequence described by \a i in greatest lower bound
+      template <class I> ModEvent includeI(Space* home, I& i);
+      /// Intersect least upper bound with range sequence described by \a i
+      template <class I> ModEvent intersectI(Space* home, I& iter);
+      //@}
+
+      /// \name Propagator modification events
+      //@{
+      /// Return modification event of propagator \a p for view
+      static ModEvent     pme(const Propagator* p);
+      /// Translate modification event \a me to propagator modification event for view
+      static PropModEvent pme(ModEvent);
+      //@}
+
+      /// \name Dependencies
+      //@{
+      /// Subscribe propagator \a p with propagation condition \a pc to view
+      void subscribe(Space* home, Propagator* p, PropCond pc);
+      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+      void cancel(Propagator* p, PropCond pc);
+      //@}
+
+      /// \name Cloning
+      //@{
+      /// Update this view to be a clone of view \a x
+      void update(Space* home, bool share, EmptyView& x);
+      //@}
+    };
+
+  }
+
+  /** \name View comparison
+   *  \relates Gecode::Set::EmptyView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  bool same(const Set::EmptyView& x, const Set::EmptyView& y);
+  /// Test whether view \a x comes before \a y (arbitrary order)
+  bool before(const Set::EmptyView& x, const Set::EmptyView& y);
+  //@}
+
+  /**
+   * \brief Traits class for views and variable implementations
+   *
+   * This class specializes the ViewVarTraits for EmptyView.
+   * \ingroup TaskActorSetView
+   */
+  template<>
+  class ViewVarTraits<Set::EmptyView> {
+  public:
+    /// The variable type of an EmptyView
+    typedef VarBase Var;
+  };
+
+  namespace Set {
+
+
+    /**
+     * \brief Constant view for the universe
+     *
+     * A constant set view \f$x\f$ for the universe provides operations such
+     * that \f$x\f$ behaves like the universe.
+     * \ingroup TaskActorSetView
+     */
+
+    class UniverseView : public ConstantViewBase {
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      UniverseView(void);
+      //@}
+
+      /// \name Value access
+      //@{
+
+      /// Return minimum cardinality
+      unsigned int cardMin(void) const;
+      /// Return maximum cardinality
+      unsigned int cardMax(void) const;
+      /// Return minimum of the least upper bound
+      int lubMin(void) const;
+      /// Return maximum of the least upper bound
+      int lubMax(void) const;
+      /// Return n-th smallest element of the least upper bound
+      int lubMinN(int n) const;
+      /// Return the n-th largest element of the least upper bound
+      int lubMaxN(int n) const;
+      /// Return minimum of the greatest lower bound
+      int glbMin(void) const;
+      /// Return maximum of the greatest lower bound
+      int glbMax(void) const;
+
+      /// Return the number of elements in the greatest lower bound
+      unsigned int glbSize(void) const;
+      /// Return the number of elements in the least upper bound
+      unsigned int lubSize(void) const;
+      /// Return the number of unknown elements
+      unsigned int unknownSize(void) const;
+      //@}
+
+      /// \name Domain tests
+      //@{
+      /// Test whether view is assigned
+      bool assigned(void) const;
+      /// Test whether \a i is in the greatest lower bound
+      bool contains(int i) const;
+      /// Test whether \a i is not in the least upper bound
+      bool notContains(int i) const;
+      //@}
+
+
+      /// \name Domain update by value
+      //@{
+      /// Restrict cardinality to be greater than or equal to \a m
+      ModEvent cardMin(Space* home, unsigned int m);
+      /// Restrict cardinality to be less than or equal to \a m
+      ModEvent cardMax(Space* home, unsigned int m);
+      /**
+       * \brief Update greatest lower bound to include all elements
+       * between and including \a i and \a j
+       */
+      ModEvent include(Space* home,int i,int j);
+      /**
+       * \brief Restrict least upper bound to not contain all elements
+       * between and including \a i and \a j
+       */
+      ModEvent exclude(Space* home,int i,int j);
+      /// Update greatest lower bound to contain \a i
+      ModEvent include(Space* home,int i);
+      /// Restrict least upper bound to not contain \a i
+      ModEvent exclude(Space* home,int i);
+      /**
+       * \brief Update least upper bound to contain at most all elements
+       * between and including \a i and \a j
+       */
+      ModEvent intersect(Space* home,int i,int j);
+      /// Update least upper bound to contain at most the element \a i
+      ModEvent intersect(Space* home,int i);
+      //@}
+
+      /// \name Domain update by range iterator
+      //@{
+
+      /// Remove range sequence described by \a i from least upper bound
+      template <class I> ModEvent excludeI(Space* home, I& i);
+      /// Include range sequence described by \a i in greatest lower bound
+      template <class I> ModEvent includeI(Space* home, I& i);
+      /// Intersect least upper bound with range sequence described by \a i
+      template <class I> ModEvent intersectI(Space* home, I& iter);
+      //@}
+
+      /// \name Propagator modification events
+      //@{
+      /// Return modification event of propagator \a p for view
+      static ModEvent     pme(const Propagator* p);
+      /// Translate modification event \a me to propagator modification event for view
+      static PropModEvent pme(ModEvent);
+      //@}
+
+      /// \name Dependencies
+      //@{
+      /// Subscribe propagator \a p with propagation condition \a pc to view
+      void subscribe(Space* home, Propagator* p, PropCond pc);
+      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+      void cancel(Propagator* p, PropCond pc);
+      //@}
+
+      /// \name Cloning
+      //@{
+      /// Update this view to be a clone of view \a x
+      void update(Space* home, bool share, UniverseView& x);
+      //@}
+    };
+
+  }
+
+  /** \name View comparison
+   *  \relates Gecode::Set::UniverseView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  bool same(const Set::UniverseView& x, const Set::UniverseView& y);
+  /// Test whether view \a x comes before \a y (arbitrary order)
+  bool before(const Set::UniverseView& x, const Set::UniverseView& y);
+  //@}
+
+  /**
+   * \brief Traits class for views and variable implementations
+   *
+   * This class specializes the ViewVarTraits for UniverseView.
+   * \ingroup TaskActorSetView
+   */
+  template<>
+  class ViewVarTraits<Set::UniverseView> {
+  public:
+    /// The variable type of a UniverseView
+    typedef VarBase Var;
+  };
+
+
+  namespace Set {
+
+
+
+    /**
+     * \brief Singleton set view
+     *
+     * A singleton set view \f$s\f$ for an integer view \f$x\f$ provides
+     * operations such that \f$s\f$ behaves like the singleton set \f$\{x\}\f$.
+     * \ingroup TaskActorSetView
+     */
+
+    class SingletonView :
+      public DerivedViewBase<Gecode::Int::IntView> {
+    protected:
+      using DerivedViewBase<Gecode::Int::IntView>::view;;
+
+      /// Convert set variable PropCond \a pc to a PropCond for integer variables
+      static PropCond pc_settoint(PropCond pc);
+      /// Convert integer variable ModEvent \a me to a ModEvent for set variables
+      static ModEvent me_inttoset(ModEvent me);
+
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      SingletonView(void);
+      /// Initialize with integer view \a x
+      SingletonView(Gecode::Int::IntView& x);
+      //@}
+
+      /// \name Value access
+      //@{
+
+      /// Return minimum cardinality
+      unsigned int cardMin(void) const;
+      /// Return maximum cardinality
+      unsigned int cardMax(void) const;
+      /// Return minimum of the least upper bound
+      int lubMin(void) const;
+      /// Return maximum of the least upper bound
+      int lubMax(void) const;
+      /// Return n-th smallest element of the least upper bound
+      int lubMinN(int n) const;
+      /// Return the n-th largest element of the least upper bound
+      int lubMaxN(int n) const;
+      /// Return minimum of the greatest lower bound
+      int glbMin(void) const;
+      /// Return maximum of the greatest lower bound
+      int glbMax(void) const;
+
+      /// Return the number of elements in the greatest lower bound
+      unsigned int glbSize(void) const;
+      /// Return the number of elements in the least upper bound
+      unsigned int lubSize(void) const;
+      /// Return the number of unknown elements
+      unsigned int unknownSize(void) const;
+      //@}
+
+      /// \name Domain tests
+      //@{
+      /// Test whether view is assigned
+      bool assigned(void) const;
+      /// Test whether \a i is in the greatest lower bound
+      bool contains(int i) const;
+      /// Test whether \a i is not in the least upper bound
+      bool notContains(int i) const;
+      //@}
+
+
+      /// \name Domain update by value
+      //@{
+      /// Restrict cardinality to be greater than or equal to \a m
+      ModEvent cardMin(Space* home, unsigned int m);
+      /// Restrict cardinality to be less than or equal to \a m
+      ModEvent cardMax(Space* home, unsigned int m);
+      /**
+       * \brief Update greatest lower bound to include all elements
+       * between and including \a i and \a j
+       */
+      ModEvent include(Space* home,int i,int j);
+      /**
+       * \brief Restrict least upper bound to not contain all elements
+       * between and including \a i and \a j
+       */
+      ModEvent exclude(Space* home,int i,int j);
+      /// Update greatest lower bound to contain \a i
+      ModEvent include(Space* home,int i);
+      /// Restrict least upper bound to not contain \a i
+      ModEvent exclude(Space* home,int i);
+      /**
+       * \brief Update least upper bound to contain at most all elements
+       * between and including \a i and \a j
+       */
+      ModEvent intersect(Space* home,int i,int j);
+      /// Update least upper bound to contain at most the element \a i
+      ModEvent intersect(Space* home,int i);
+      //@}
+
+      /// \name Domain update by range iterator
+      //@{
+
+      /// Remove range sequence described by \a i from least upper bound
+      template <class I> ModEvent excludeI(Space* home, I& i);
+      /// Include range sequence described by \a i in greatest lower bound
+      template <class I> ModEvent includeI(Space* home, I& i);
+      /// Intersect least upper bound with range sequence described by \a i
+      template <class I> ModEvent intersectI(Space* home, I& iter);
+      //@}
+
+      /// \name Propagator modification events
+      //@{
+      /// Return modification event of propagator \a p for view
+      static ModEvent     pme(const Propagator* p);
+      /// Translate modification event \a me to propagator modification event for view
+      static PropModEvent pme(ModEvent);
+      //@}
+
+      /// \name Dependencies
+      //@{
+      /// Subscribe propagator \a p with propagation condition \a pc to view
+      void subscribe(Space* home, Propagator* p, PropCond pc);
+      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+      void cancel(Propagator* p, PropCond pc);
+      //@}
+
+
+      /// \name Cloning
+      //@{
+      /// Update this view to be a clone of view \a x
+      void update(Space* home, bool share, SingletonView& x);
+      //@}
+    };
+
+  }
+
+  /** \name View comparison
+   *  \relates Gecode::Set::SingletonView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  bool same(const Set::SingletonView& x, const Set::SingletonView& y);
+  /// Test whether view \a x comes before \a y (arbitrary order)
+  bool before(const Set::SingletonView& x, const Set::SingletonView& y);
+  //@}
+
+  /**
+   * \brief Traits class for views and variable implementations
+   *
+   * This class specializes the ViewVarTraits for SingletonView.
+   * \ingroup TaskActorSetView
+   */
+  template<>
+  class ViewVarTraits<Set::SingletonView> {
+  public:
+    /// The variable type of a SingletonView
+    typedef Int::IntVarImp Var;
+  };
+
+
+  namespace Set {
+
+
+    /**
+     * \brief Complement set view
+     *
+     * A complement set view \f$s\f$ for a set view \f$t\f$ provides
+     * operations such that \f$s\f$ behaves like the complement of \f$\{t\}\f$.
+     * The complement is defined in terms of the set universe.
+     * \ingroup TaskActorSetView
+     */
+
+    template <class View>
+    class ComplementView 
+      : public DerivedViewBase<View> {
+    protected:
+      using DerivedViewBase<View>::view;
+
+      /// Negate the propagation condition \a pc
+      static PropCond pc_negateset(PropCond pc);
+      /// Negate the modification event \a me
+      static ModEvent me_negateset(ModEvent me);
+
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      ComplementView(void);
+      /// Initialize with set view x
+      ComplementView(View& x);
+      //@}
+
+      /// \name Value access
+      //@{
+
+      /// Return minimum cardinality
+      unsigned int cardMin(void) const;
+      /// Return maximum cardinality
+      unsigned int cardMax(void) const;
+      /// Return minimum of the least upper bound
+      int lubMin(void) const;
+      /// Return maximum of the least upper bound
+      int lubMax(void) const;
+      /// Return n-th smallest element of the least upper bound
+      int lubMinN(int n) const;
+      /// Return the n-th largest element of the least upper bound
+      int lubMaxN(int n) const;
+      /// Return minimum of the greatest lower bound
+      int glbMin(void) const;
+      /// Return maximum of the greatest lower bound
+      int glbMax(void) const;
+
+      /// Return the number of elements in the greatest lower bound
+      unsigned int glbSize(void) const;
+      /// Return the number of elements in the least upper bound
+      unsigned int lubSize(void) const;
+      /// Return the number of unknown elements
+      unsigned int unknownSize(void) const;
+      //@}
+
+      /// \name Domain tests
+      //@{
+      /// Test whether view is assigned
+      bool assigned(void) const;
+      /// Test whether \a i is in the greatest lower bound
+      bool contains(int i) const;
+      /// Test whether \a i is not in the least upper bound
+      bool notContains(int i) const;
+      //@}
+
+
+      /// \name Domain update by value
+      //@{
+      /// Restrict cardinality to be greater than or equal to \a m
+      ModEvent cardMin(Space* home, unsigned int m);
+      /// Restrict cardinality to be less than or equal to \a m
+      ModEvent cardMax(Space* home, unsigned int m);
+      /**
+       * \brief Update greatest lower bound to include all elements
+       * between and including \a i and \a j
+       */
+      ModEvent include(Space* home,int i,int j);
+      /**
+       * \brief Restrict least upper bound to not contain all elements
+       * between and including \a i and \a j
+       */
+      ModEvent exclude(Space* home,int i,int j);
+      /// Update greatest lower bound to contain \a i
+      ModEvent include(Space* home,int i);
+      /// Restrict least upper bound to not contain \a i
+      ModEvent exclude(Space* home,int i);
+      /**
+       * \brief Update least upper bound to contain at most all elements
+       * between and including \a i and \a j
+       */
+      ModEvent intersect(Space* home,int i,int j);
+      /// Update least upper bound to contain at most the element \a i
+      ModEvent intersect(Space* home,int i);
+      //@}
+
+      /// \name Domain update by range iterator
+      //@{
+
+      /// Remove range sequence described by \a i from least upper bound
+      template <class I> ModEvent excludeI(Space* home, I& i);
+      /// Include range sequence described by \a i in greatest lower bound
+      template <class I> ModEvent includeI(Space* home, I& i);
+      /// Intersect least upper bound with range sequence described by \a i
+      template <class I> ModEvent intersectI(Space* home, I& iter);
+      //@}
+
+      /// \name Propagator modification events
+      //@{
+      /// Return modification event of propagator \a p for view
+      static ModEvent     pme(const Propagator* p);
+      /// Translate modification event \a me to propagator modification event for view
+      static PropModEvent pme(ModEvent);
+      //@}
+
+      /// \name Dependencies
+      //@{
+      /// Subscribe propagator \a p with propagation condition \a pc to view
+      void subscribe(Space* home, Propagator* p, PropCond pc);
+      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+      void cancel(Propagator* p, PropCond pc);
+      //@}
+
+
+      /// \name Cloning
+      //@{
+      /// Update this view to be a clone of view \a x
+      void update(Space* home, bool share, ComplementView& x);
+      /// Whether this view needs to be destructed
+      static bool needdestruction(void);
+      //@}
+    };
+
+  }
+
+  /** \name View comparison
+   *  \relates Gecode::Set::ComplementView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  template <class View>
+  bool same(const Set::ComplementView<View>& x, 
+	    const Set::ComplementView<View>& y);
+  /// Test whether view \a x comes before \a y (arbitrary order)
+  template <class View>
+  bool before(const Set::ComplementView<View>& x, 
+	      const Set::ComplementView<View>& y);
+  //@}
+
+
+  /**
+   * \brief Traits class for views and variable implementations
+   *
+   * This class specializes the ViewVarTraits for ComplementView.
+   * \ingroup TaskActorSetView
+   */
+  template <class View>
+  class ViewVarTraits<Set::ComplementView<View> > {
+  public:
+    /// The variable type of a ComplementView
+    typedef typename ViewVarTraits<View>::Var Var;
+  };
+
+  namespace Set {
+
+    /**
+     * \brief Complement set view specialized for complement set views
+     *
+     * A complement set view \f$s\f$ for a complement set view for a set
+     * view \f$t\f$ provides operations such that \f$s\f$ behaves like
+     * \f$\{t\}\f$. This eliminates double negation.
+     * \ingroup TaskActorSetView
+     */
+    template <class View>
+    class ComplementView<ComplementView<View> > : public View {
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      ComplementView(void);
+      /// Initialize with set view x
+      ComplementView(ComplementView<View>& x);
+      //@}
+    };
+
+  }
+
+  /** \name View comparison
+   *  \relates Gecode::Set::ComplementView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  template <class View>
+  bool same(const Set::ComplementView<Set::ComplementView<View> >& x, 
+	    const Set::ComplementView<Set::ComplementView<View> >& y);
+  /// Test whether view \a x comes before \a y (arbitrary order)
+  template <class View>
+  bool before(const Set::ComplementView<Set::ComplementView<View> >& x, 
+	      const Set::ComplementView<Set::ComplementView<View> >& y);
+  //@}
+
+
+  /**
+   * \brief Traits class for views and variable implementations
+   *
+   * This class specializes the ViewVarTraits for double-negated
+   * ComplementView.
+   * \ingroup TaskActorSetView
+   */
+  template <class View>
+  class ViewVarTraits<Set::ComplementView<Set::ComplementView<View> > > {
+  public:
+    /// The variable type of a ComplementView
+    typedef typename ViewVarTraits<View>::Var Var;
+  };
+
+}
+
+#include "gecode/set/view/set.icc"
+#include "gecode/set/view/const.icc"
+#include "gecode/set/view/singleton.icc"
+#include "gecode/set/view/complement.icc"
+
+/**
+ * \brief Print set variable view
+ * \relates Gecode::Set::SetView
+ */
+GECODE_SET_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::Set::SetView&);
+
+
+/**
+ * \brief Print empty set view
+ * \relates Gecode::Set::EmptyView
+ */
+GECODE_SET_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::Set::EmptyView&);
+
+/**
+ * \brief Print universe set view
+ * \relates Gecode::Set::UniverseView
+ */
+GECODE_SET_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::Set::UniverseView&);
+
+/**
+ * \brief Print set constant view
+ * \relates Gecode::Set::ConstantView
+ */
+GECODE_SET_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::Set::ConstantView&);
+
+/**
+ * \brief Print singelton set view
+ * \relates Gecode::Set::SingletonView
+ */
+GECODE_SET_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::Set::SingletonView&);
+
+/**
+ * \brief Print set complement view
+ * \relates Gecode::Set::ComplementView
+ */
+template <class View>
+std::ostream&
+operator<<(std::ostream&, const Gecode::Set::ComplementView<View>&);
+
+inline std::ostream&
+operator<<(std::ostream& os, const Gecode::SetVar& x) {
+  Gecode::Set::SetView vx(x);
+  return os << vx;
+}
+
+// STATISTICS: set-var
