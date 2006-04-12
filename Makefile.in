@@ -875,6 +875,8 @@ veryclean: clean
 	$(RMF) $(LIBTARGETS)
 	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%.exp) $(LIBTARGETS:%$(DLLSUFFIX)=%.lib)
 	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%.ilk) $(LIBTARGETS:%$(DLLSUFFIX)=%.pdb)
+	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
+	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%$(SOSUFFIX))
 	$(RMF) $(EXAMPLEEXE:%.exe=%.pdb)
 	$(RMF) doc GecodeReference.chm install Makefile.dep
 	$(RMF) $(EXAMPLEEXE)
