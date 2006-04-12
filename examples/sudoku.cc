@@ -37,13 +37,13 @@ void same(Space* home, int nn, IntVarArgs a, IntVarArgs b) {
   rel(home, SOT_DUNION, b, u);
 }
 
-MiniModel::Matrix<IntVarArray>::Slice
+IntVarArgs
 block_col(MiniModel::Matrix<IntVarArray> m,
 	  int n, int bc, int i, int j) {
   return m.slice(bc*n+i, bc*n+i+1, j*n, (j+1)*n);
 }
  
-MiniModel::Matrix<IntVarArray>::Slice
+IntVarArgs
 block_row(MiniModel::Matrix<IntVarArray> m,
 	  int n, int br, int i, int j) {
   return m.slice(j*n, (j+1)*n, br*n+i, br*n+i+1);
@@ -66,7 +66,7 @@ public:
 
   /// Actual model
   Sudoku(const Options& opt)
-    : n(static_cast<int>(sqrt(example_size(examples[opt.size])))), 
+    : n(example_size(examples[opt.size])), 
       x(this,n*n*n*n,1,n*n) {
     const int nn = n*n;
     MiniModel::Matrix<IntVarArray> m(x, nn, nn);

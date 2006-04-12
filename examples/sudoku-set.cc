@@ -40,7 +40,7 @@ protected:
 public:
   /// Actual model
   SudokuSet(const Options& opt)
-    : n(static_cast<int>(sqrt(example_size(examples[opt.size])))), 
+    : n(example_size(examples[opt.size])), 
     x(this,n*n,IntSet::empty,1,n*n*n*n,9,9) {
 
     const int nn = n*n;
