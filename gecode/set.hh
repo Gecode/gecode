@@ -169,11 +169,11 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   rel(Space* home, IntVar x, SetRelType r, SetVar s, BoolVar b);
 
-  /// Post propagator for \f$ s \sim_r \{x\}\f$
+  /// Post propagator for \f$\forall i\in s:\ i \sim_r x\f$
   GECODE_SET_EXPORT void
   rel(Space* home, SetVar s, IntRelType r, IntVar x);
 
-  /// Post propagator for \f$\{x\} \sim_r s\f$
+  /// Post propagator for \f$\forall i\in s:\ x \sim_r i\f$
   GECODE_SET_EXPORT void
   rel(Space* home, IntVar x, IntRelType r, SetVar s);
 
