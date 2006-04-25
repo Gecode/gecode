@@ -28,57 +28,58 @@ using namespace Gecode::Set;
 namespace Gecode {
 
   void
-  selectUnion(Space* home, const SetVarArgs& sn, SetVar s2, SetVar s1) {
+  selectUnion(Space* home, const SetVarArgs& x, SetVar y, SetVar z) {
     if (home->failed()) return;
-    Set::Select::IdxViewArray<ComplementView<SetView> > iv(home, sn);
+    Set::Select::IdxViewArray<ComplementView<SetView> > iv(home, x);
     IntSet universe(Limits::Set::int_min,
-                     Limits::Set::int_max);
-    SetView s1v(s1);
-    ComplementView<SetView> cs1(s1v);
+		    Limits::Set::int_max);
+    SetView zv(z);
+    ComplementView<SetView> cz(zv);
     GECODE_ES_FAIL(home,(Select::SelectIntersection<ComplementView<SetView>,
-			 SetView>::post(home,cs1,iv,s2,universe)));
+			 SetView>::post(home,cz,iv,y,universe)));
   }
 
   void
-  selectInter(Space* home, const SetVarArgs& sn, SetVar s2, SetVar s1) {
+  selectInter(Space* home, const SetVarArgs& x, SetVar y, SetVar z) {
     if (home->failed()) return;
-    Set::Select::IdxViewArray<SetView> iv(home, sn);
+    Set::Select::IdxViewArray<SetView> iv(home, x);
     IntSet universe(Limits::Set::int_min,
-                     Limits::Set::int_max);
+		    Limits::Set::int_max);
     GECODE_ES_FAIL(home,
                    (Select::SelectIntersection<SetView,SetView>::
-		    post(home,s1,iv,s2,universe)));
+		    post(home,z,iv,y,universe)));
   }
 
   void
-  selectInterIn(Space* home, const SetVarArgs& sn, SetVar s2, SetVar s1,
+  selectInterIn(Space* home, const SetVarArgs& x, SetVar y, SetVar z,
                 const IntSet& universe) {
     if (home->failed()) return;
-    Set::Select::IdxViewArray<SetView> iv(home, sn);
+    Set::Select::IdxViewArray<SetView> iv(home, x);
     GECODE_ES_FAIL(home,
                    (Select::SelectIntersection<SetView,SetView>::
-		    post(home,s1,iv,s2,universe)));
+		    post(home,z,iv,y,universe)));
   }
 
   void
-  selectSets(Space* home, const SetVarArgs& sn, IntVar i, SetVar s) {
+  selectSet(Space* home, const SetVarArgs& x, IntVar y, SetVar z) {
     if (home->failed()) return;
-    Set::Select::IdxViewArray<ComplementView<SetView> > iv(home, sn);
-    Int::IntView ii(i);
-    SingletonView single(ii);
-    SetView sv(s);
-    ComplementView<SetView> cs(sv);
+    Set::Select::IdxViewArray<ComplementView<SetView> > iv(home, x);
+    Int::IntView yv(y);
+    SingletonView single(yv);
+    SetView zv(z);
+    ComplementView<SetView> cz(zv);
     IntSet universe(Limits::Set::int_min,
-                     Limits::Set::int_max);
+		    Limits::Set::int_max);
     GECODE_ES_FAIL(home,(Select::SelectIntersection<ComplementView<SetView>,
-			 SingletonView>::post(home, cs, iv, single, universe)));
+			 SingletonView>::post(home, cz, iv,
+					      single, universe)));
   }
 
   void
-  selectDisjoint(Space* home, const SetVarArgs& sn, SetVar s) {
+  selectDisjoint(Space* home, const SetVarArgs& x, SetVar y) {
     if (home->failed()) return;
-    Set::Select::IdxViewArray<SetView> iv(home, sn);
-    GECODE_ES_FAIL(home,Select::SelectDisjoint::post(home,iv,s));
+    Set::Select::IdxViewArray<SetView> iv(home, x);
+    GECODE_ES_FAIL(home,Select::SelectDisjoint::post(home,iv,y));
   }
   
 }

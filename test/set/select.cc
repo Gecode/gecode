@@ -85,9 +85,9 @@ public:
 };
 SelectInter _selectinter("Select::Inter");
 
-class SelectSets : public SetTest {
+class SelectSet : public SetTest {
 public:
-  SelectSets(const char* t) 
+  SelectSet(const char* t) 
     : SetTest(t,4,ds_012,false,true) {}
   virtual bool solution(const SetAssignment& x) const {
     if (x.intval() < 0 || x.intval() > 2)
@@ -100,9 +100,9 @@ public:
     SetVarArgs xs(x.size()-1);
     for (int i=x.size()-1; i--;)
       xs[i]=x[i];
-    Gecode::selectSets(home, xs, y[0], x[x.size()-1]);
+    Gecode::selectSet(home, xs, y[0], x[x.size()-1]);
   }
 };
-SelectSets _selectsets("Select::Sets");
+SelectSet _selectset("Select::Set");
 
 // STATISTICS: test-set

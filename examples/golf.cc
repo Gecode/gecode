@@ -170,7 +170,7 @@ public:
 	  SetVarArgs thisWeek(groups);
 	  for (int g=0; g<groups; g++)
 	    thisWeek[g] = group(w,g);
-	  selectSets(this, thisWeek, groupInv(w,p), thisPlayer);
+	  selectSet(this, thisWeek, groupInv(w,p), thisPlayer);
 	}
       }
 

@@ -370,11 +370,11 @@ namespace Gecode {
 
   /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
   GECODE_SET_EXPORT void
-  selectDisjoint(Space* home, const SetVarArgs& xs, SetVar y);
+  selectDisjoint(Space* home, const SetVarArgs& x, SetVar y);
 
   /// Post propagator for \f$ z=\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
   GECODE_SET_EXPORT void
-  selectSets(Space* home, const SetVarArgs& x, IntVar y, SetVar z);
+  selectSet(Space* home, const SetVarArgs& x, IntVar y, SetVar z);
 
   //@}
 
