@@ -456,7 +456,7 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
        ;;
      windows*)
        AC_SUBST(need_soname, "no")
-       if test "${enable_static:-no}"  = "yes" &&
+       if test "${enable_static:-no}"  = "yes" -a \
 	       "${enable_shared:-yes}" = "yes"; then
          AC_MSG_ERROR([Only either static or shared libraries can be built.])
        fi

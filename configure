@@ -4566,7 +4566,7 @@ gnu)
      windows*)
        need_soname="no"
 
-       if test "${enable_static:-no}"  = "yes" &&
+       if test "${enable_static:-no}"  = "yes" -a \
 	       "${enable_shared:-yes}" = "yes"; then
          { { echo "$as_me:$LINENO: error: Only either static or shared libraries can be built." >&5
 echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
@@ -5531,7 +5531,7 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
      windows*)
        need_soname="no"
 
-       if test "${enable_static:-no}"  = "yes" &&
+       if test "${enable_static:-no}"  = "yes" -a \
 	       "${enable_shared:-yes}" = "yes"; then
          { { echo "$as_me:$LINENO: error: Only either static or shared libraries can be built." >&5
 echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
@@ -6661,9 +6661,10 @@ for ac_i in : $LIBOBJS; do test "x$ac_i" = x: && continue
   # 1. Remove the extension, and $U if already installed.
   ac_i=`echo "$ac_i" |
 	 sed 's/\$U\././;s/\.o$//;s/\.obj$//'`
-  # 2. Add them.
-  ac_libobjs="$ac_libobjs $ac_i\$U.$ac_objext"
-  ac_ltlibobjs="$ac_ltlibobjs $ac_i"'$U.lo'
+  # 2. Prepend LIBOBJDIR.  When used with automake>=1.10 LIBOBJDIR
+  #    will be set to the directory where LIBOBJS objects are built.
+  ac_libobjs="$ac_libobjs \${LIBOBJDIR}$ac_i\$U.$ac_objext"
+  ac_ltlibobjs="$ac_ltlibobjs \${LIBOBJDIR}$ac_i"'$U.lo'
 done
 LIBOBJS=$ac_libobjs
 
