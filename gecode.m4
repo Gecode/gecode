@@ -414,13 +414,8 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   dnl Do not install stub .lib files (required for msvc)
   AC_SUBST(INSTALLLIBS, "no")
 
-  if test "${enable_shared:-yes}" = "yes"; then
-     AC_SUBST(LINKPREFIX, "-lgecode")
-     AC_SUBST(LINKSUFFIX, "")
-  else
-     AC_SUBST(LINKPREFIX, "libgecode")
-     AC_SUBST(LINKSUFFIX, ".a")
-  fi
+  AC_SUBST(LINKPREFIX, "-lgecode")
+  AC_SUBST(LINKSUFFIX, "")
 
   dnl how to tell the compiler to output an object file
   AC_SUBST(LINKOUTPUT, "-o ")

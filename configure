@@ -4910,17 +4910,10 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
     INSTALLLIBS="no"
 
 
-  if test "${enable_shared:-yes}" = "yes"; then
-     LINKPREFIX="-lgecode"
+  LINKPREFIX="-lgecode"
 
-     LINKSUFFIX=""
+  LINKSUFFIX=""
 
-  else
-     LINKPREFIX="libgecode"
-
-     LINKSUFFIX=".a"
-
-  fi
 
     LINKOUTPUT="-o "
 
@@ -5875,17 +5868,10 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
     INSTALLLIBS="no"
 
 
-  if test "${enable_shared:-yes}" = "yes"; then
-     LINKPREFIX="-lgecode"
+  LINKPREFIX="-lgecode"
 
-     LINKSUFFIX=""
+  LINKSUFFIX=""
 
-  else
-     LINKPREFIX="libgecode"
-
-     LINKSUFFIX=".a"
-
-  fi
 
     LINKOUTPUT="-o "
 

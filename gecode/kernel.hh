@@ -31,6 +31,8 @@
 #include <cstring>
 #include <cassert>
 
+#include "gecode/config.icc"
+
 /*
  * Support for DLLs under Windows
  *
@@ -50,8 +52,6 @@
 #define GECODE_KERNEL_EXPORT
 
 #endif
-
-#include "gecode/config.icc"
 
 /**
  * \namespace Gecode
