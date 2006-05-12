@@ -31,7 +31,9 @@
 CountableSet::CountableSet(const IntSet& d0) : d(d0), //curd(IntSet::empty),
 					       cur(0) {
   IntSetRanges isr(d);
-  lubmax = (int)pow(2, Iter::Ranges::size(isr));
+  lubmax =
+    static_cast<unsigned int>(pow(static_cast<double>(2.0),
+				  static_cast<int>(Iter::Ranges::size(isr))));
 }
 
 void CountableSet::operator++(void) {
@@ -42,7 +44,9 @@ void CountableSet::init(const IntSet& d0) {
   d = d0;
   cur = 0;
   IntSetRanges isr(d);
-  lubmax = (int)pow(2, Iter::Ranges::size(isr));
+  lubmax =
+    static_cast<unsigned int>(pow(static_cast<double>(2.0),
+				  static_cast<int>(Iter::Ranges::size(isr))));
 }
 
 int CountableSet::val(void) const {
