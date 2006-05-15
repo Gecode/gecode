@@ -53,6 +53,14 @@ Date:		upcoming
 The next release
 
 [ENTRY]
+Module: int
+What:   documentation
+Rank:   minor
+Thanks:	Martin Mann
+[DESCRIPTION]
+Fixed bug in description of PC_INT_DOM.
+	
+[ENTRY]
 Module: other
 What:   change
 Rank:   major
