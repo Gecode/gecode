@@ -47,6 +47,11 @@ namespace Gecode { namespace Search {
     return e.explore();
   }
 
+  bool
+  DFS::stopped(void) const {
+    return e.stopped();
+  }
+
   Statistics
   DFS::statistics(void) const {
     Statistics s = e;

@@ -54,6 +54,7 @@ namespace Gecode {
 
     forceinline Space*
     DfsEngine::explore(void) {
+      start();
       while (true) {
 	while (cur) {
 	  if (stop(stacksize()))

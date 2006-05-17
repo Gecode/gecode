@@ -94,6 +94,7 @@ namespace Gecode { namespace Search {
 
   forceinline Space*
   ProbeEngine::explore(void) {
+    start();
     while (true) {
       if (stop(stacksize()))
 	return NULL;
@@ -210,6 +211,11 @@ namespace Gecode { namespace Search {
       }
     }
     return NULL;
+  }
+
+  bool
+  LDS::stopped(void) const {
+    return e.stopped();
   }
 
   Statistics

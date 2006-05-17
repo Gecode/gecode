@@ -54,6 +54,7 @@ namespace Gecode { namespace Search {
 
   bool
   BabEngine::explore(Space*& s1, Space*& s2) {
+    start();
     /*
      * Upon entry, cur can be either NULL (after a solution
      * has been returned) or set to a space that has been
@@ -146,6 +147,11 @@ namespace Gecode { namespace Search {
     e.current(c);
     if (c == NULL)
       e.fail += 1;
+  }
+
+  bool
+  BAB::stopped(void) const {
+    return e.stopped();
   }
 
   Statistics

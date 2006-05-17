@@ -186,6 +186,8 @@ namespace Gecode {
     protected:
       /// %Stop-object to be used
       Stop* st;
+      /// Whether engine has been stopped
+      bool _stopped;
       /// Memory required for a single space
       size_t mem_space;
       /// Memory for the current space (including memory for caching)
@@ -195,8 +197,12 @@ namespace Gecode {
     public:
       /// Initialize with stop-object \a st and space size \a sz
       EngineCtrl(Stop* st, size_t sz);
+      /// Reset stop information
+      void start(void);
       /// Check whether engine must be stopped (with additional stackspace \a sz)
       bool stop(size_t sz);
+      /// Check whether engine has been stopped
+      bool stopped(void) const;
       /// New space \a s gets pushed on stack
       void push(const Space* s);
       /// New space \a s and branching description \a d get pushed on stack
@@ -344,6 +350,8 @@ namespace Gecode {
       Space* next(void);
       /// Return statistics
       Statistics statistics(void) const;
+      /// Check whether engine has been stopped
+      bool stopped(void) const;
     };
 
   }
@@ -459,6 +467,8 @@ namespace Gecode {
       Space* next(void);
       /// Return statistics
       Statistics statistics(void) const;
+      /// Check whether engine has been stopped
+      bool stopped(void) const;
       /// Destructor
       ~LDS(void);
     };
@@ -572,6 +582,8 @@ namespace Gecode {
        * \param sz size of one space
        */
       BAB(Space* s, unsigned int c_d, unsigned int a_d, Stop* st, size_t sz);
+      /// Check whether engine has been stopped
+      bool stopped(void) const;
       /// Return statistics
       Statistics statistics(void) const;
     };

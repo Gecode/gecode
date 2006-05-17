@@ -23,8 +23,13 @@ namespace Gecode { namespace Search {
 
   forceinline
   EngineCtrl::EngineCtrl(Stop* st0, size_t sz) 
-    : st(st0), mem_space(sz), mem_cur(0), mem_total(0) {
+    : st(st0), _stopped(false), mem_space(sz), mem_cur(0), mem_total(0) {
     memory = 0;
+  }
+
+  forceinline void
+  EngineCtrl::start(void) {
+    _stopped = false;
   }
 
   forceinline bool
@@ -32,9 +37,14 @@ namespace Gecode { namespace Search {
     if (st == NULL)
       return false;
     memory += sz;
-    bool b = st->stop(*this);
+    _stopped |= st->stop(*this);
     memory -= sz;
-    return b;
+    return _stopped;
+  }
+
+  forceinline bool
+  EngineCtrl::stopped(void) const {
+    return _stopped;
   }
 
   forceinline void

@@ -53,6 +53,13 @@ Date:		upcoming
 The next release
 
 [ENTRY]
+Module: search
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Search engines can now be checked whether they have been stopped.
+	
+[ENTRY]
 Module: int
 What:   documentation
 Rank:   minor
