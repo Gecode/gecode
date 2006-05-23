@@ -417,6 +417,9 @@ namespace Gecode {
     /// Used for reclaiming memory
     static void  operator delete(void* p, size_t s);
     //@}
+#ifdef __GNUC__
+    virtual ~Actor(void) {}
+#endif
   };
 
 
