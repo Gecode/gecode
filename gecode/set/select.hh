@@ -61,7 +61,8 @@ namespace Gecode { namespace Set { namespace Select {
     /// Copy propagator during cloning
     virtual Actor*      copy(Space* home,bool);
     virtual PropCost    cost(void) const;
-    virtual ~SelectIntersection(void);
+    /// Delete propagator
+    virtual void finalize(Space* home);
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home);
     /** Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \a u as universe
@@ -93,7 +94,8 @@ namespace Gecode { namespace Set { namespace Select {
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space* home,bool);
     GECODE_SET_EXPORT virtual PropCost    cost(void) const;
-    GECODE_SET_EXPORT virtual ~SelectDisjoint(void);
+    /// Delete propagator
+    GECODE_SET_EXPORT virtual void finalize(Space* home);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus  propagate(Space* home);
     /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 

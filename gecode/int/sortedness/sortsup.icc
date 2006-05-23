@@ -195,14 +195,13 @@ namespace Gecode { namespace Int { namespace Sortedness {
    *  Used to compute the perfect matching between the unsorted views 
    *  \a x and the sorted views \a y. 
    */
-  class OfflineMin{
+  class OfflineMin {
   private:
     OfflineMinItem* sequence;
     int* vertices;
     int  n;
   public:
     OfflineMin(void);
-    ~OfflineMin(void);
     OfflineMin(OfflineMinItem[], int[], int);
     /**
      *  Find the set x belongs to 
@@ -233,11 +232,6 @@ namespace Gecode { namespace Int { namespace Sortedness {
     n = size;
     sequence = &s[0];
     vertices = &v[0];
-  }
-
-  OfflineMin::~OfflineMin(void){
-    sequence = NULL;
-    vertices = NULL;
   }
 
   forceinline int 

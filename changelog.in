@@ -54,6 +54,16 @@ The next release
 
 [ENTRY]
 Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+Actors (propagators and branchings) do not any longer use destructors
+but a "dispose" member function that takes a home space as argument.
+Important: this requires that dispose member functions from super-classes
+and class members are called explicitly!
+	
+[ENTRY]
+Module: kernel
 What:   new
 Rank:   minor
 [DESCRIPTION]

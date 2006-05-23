@@ -308,7 +308,7 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline
   Val<View, Card, isView>::Val(Space* home, ViewArray<View>& x0, Card& k0, 
 			       bool all)
-    :Propagator(home, true), x(x0), k(k0), card_all(all){
+    :Propagator(home,true), x(x0), k(k0), card_all(all){
     x.subscribe(home, this, PC_INT_VAL);
     k.subscribe(home, this, PC_INT_VAL);
   }
@@ -332,9 +332,11 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView>
-  Val<View, Card, isView>::~Val(void){
+  void
+  Val<View, Card, isView>::finalize(Space* home) {
     x.cancel(this, PC_INT_VAL);
     k.cancel(this, PC_INT_VAL);
+    Propagator::finalize(home);
   }
 
   template <class View, class Card, bool isView>
@@ -344,9 +346,10 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView>
-  ExecStatus Val<View, Card, isView>::post(Space* home, 
-					   ViewArray<View>& x0,
-					   Card& k0, bool all) {
+  ExecStatus 
+  Val<View, Card, isView>::post(Space* home, 
+				ViewArray<View>& x0,
+				Card& k0, bool all) {
     new (home) Val<View, Card, isView>(home, x0, k0, all);
     return ES_OK;
   }
@@ -357,13 +360,13 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   template <class View, class Card, bool isView>
-  forceinline PropCost    
+  PropCost    
   Val<View, Card, isView>::cost (void) const {
     return PC_LINEAR_HI; 
   }
 
   template <class View, class Card, bool isView>
-  forceinline ExecStatus 
+  ExecStatus 
   Val<View, Card, isView>::propagate(Space* home) {
     assert(x.size() > 0);
 

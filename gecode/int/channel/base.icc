@@ -45,9 +45,11 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   template <class Info, PropCond pc>
-  Base<Info,pc>::~Base(void) {
+  void
+  Base<Info,pc>::finalize(Space* home) {
     for (int i=2*n; i--; )
       xy[i].view.cancel(this,pc);
+    Propagator::finalize(home);
   }
 
 }}}

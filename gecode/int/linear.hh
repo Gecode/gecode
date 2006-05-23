@@ -65,8 +65,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
-    /// Destructor
-    virtual ~LinBin(void);
+    /// Delete propagator
+    virtual void finalize(Space* home);
   };
 
   /**
@@ -96,8 +96,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
-    /// Destructor
-    virtual ~ReLinBin(void);
+    /// Delete propagator
+    virtual void finalize(Space* home);
   };
 
   /**
@@ -344,8 +344,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(void) const;
-    /// Destructor
-    virtual ~LinTer(void);
+    /// Delete propagator
+    virtual void finalize(Space* home);
   };
 
   /**
@@ -490,8 +490,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
-    /// Destructor
-    virtual ~Lin(void);
+    /// Delete propagator
+    virtual void finalize(Space* home);
   };
 
   /**
@@ -513,8 +513,8 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     ReLin(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
   public:
-    /// Destructor
-    virtual ~ReLin(void);
+    /// Delete propagator
+    virtual void finalize(Space* home);
   };
 
   /**
@@ -776,8 +776,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
-    /// Destructor
-    virtual ~LinBool(void);
+    /// Delete propagator
+    virtual void finalize(Space* home);
   };
 
 

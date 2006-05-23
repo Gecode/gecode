@@ -79,27 +79,29 @@ namespace Gecode { namespace Int { namespace GCC {
   }
   
   template <class View, class Card, bool isView>
-  Dom<View, Card, isView>::~Dom(void) {
+  void
+  Dom<View, Card, isView>::finalize(Space* home) {
     x.cancel(this, PC_INT_DOM);
     k.cancel(this, PC_INT_DOM);
     delete vvg; 
+    Propagator::finalize(home);
   }
 
   template <class View, class Card, bool isView>
-  forceinline void
+  void
   Dom<View, Card, isView>::flush(void) {
     delete vvg; 
     vvg = NULL;
   }
   
   template <class View, class Card, bool isView>
-  forceinline Actor* 
+  Actor* 
   Dom<View, Card, isView>::copy(Space* home, bool share) {
     return new (home) Dom<View, Card, isView>(home, share, *this);
   }
 
   template <class View, class Card, bool isView>
-  forceinline PropCost    
+  PropCost    
   Dom<View, Card, isView>::cost(void) const {
     
     unsigned int n = x.size();

@@ -40,9 +40,11 @@ namespace Gecode { namespace Set { namespace Int {
     return PC_LINEAR_LO;
   }
 
-  Weights::~Weights(void) {
+  void
+  Weights::finalize(Space* home) {
     x.cancel(this, PC_SET_ANY);
     y.cancel(this, Gecode::Int::PC_INT_BND);
+    Propagator::finalize(home);
   }
 
   Actor*

@@ -401,7 +401,8 @@ namespace Gecode {
     /// Create copy
     virtual Actor* copy(Space*,bool) = 0;
     /// Delete actor
-    GECODE_KERNEL_EXPORT virtual ~Actor(void);
+    GECODE_KERNEL_EXPORT 
+    virtual void finalize(Space* home);
 
     /// \name Memory management
     //@{
@@ -1028,8 +1029,8 @@ namespace Gecode {
 
 
 
-  forceinline
-  Actor::~Actor(void) {}
+  forceinline void
+  Actor::finalize(Space*) {}
 
 
 

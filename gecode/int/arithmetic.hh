@@ -190,8 +190,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus propagate(Space* home);
     /// Cost function (defined as PC_TERNARY_HI)
     virtual PropCost cost(void) const;
-    /// Destructor
-    virtual ~SquarePlus(void);
+    /// Delete propagator
+    virtual void finalize(Space* home);
   };
 
   /**
@@ -243,8 +243,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus propagate(Space* home);
     /// Cost function (defined as PC_TERNARY_HI)
     virtual PropCost cost(void) const;
-    /// Destructor
-    virtual ~MultPlus(void);
+    /// Delete propagator
+    virtual void finalize(Space* home);
   };
 
   /**

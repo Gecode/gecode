@@ -310,10 +310,13 @@ namespace Gecode { namespace Int { namespace Element {
 
 
   template <class ViewA, class ViewB>
-  Int<ViewA,ViewB>::~Int(void) {
+  void
+  Int<ViewA,ViewB>::finalize(Space* home) {
     x0.cancel(this,PC_INT_DOM);
     x1.cancel(this,PC_INT_DOM);
+    c.~IntSharedArray();
     delete ivm;
+    Propagator::finalize(home);
   }
 
   template <class ViewA, class ViewB>

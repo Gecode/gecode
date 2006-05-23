@@ -61,11 +61,12 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, class C, PropCond pc>
-  inline
-  LinTer<Val,A,B,C,pc>::~LinTer(void) {
+  void
+  LinTer<Val,A,B,C,pc>::finalize(Space* home) {
     x0.cancel(this,pc); 
     x1.cancel(this,pc); 
     x2.cancel(this,pc);
+    Propagator::finalize(home);
   }
 
   /*

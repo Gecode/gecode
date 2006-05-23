@@ -26,55 +26,6 @@
 
 namespace Gecode { namespace Int { namespace Regular {
 
-  template <class View>
-  forceinline
-  Dom<View>::Dom(Space* home, ViewArray<View>& x, DFA& d)
-    : NaryPropagator<View,PC_INT_DOM>(home,x,true),
-      dfa(d), lg(NULL) {
-  }
-
-  template <class View>
-  ExecStatus
-  Dom<View>::post(Space* home, ViewArray<View>& x, DFA& d) {
-    (void) new (home) Dom<View>(home,x,d);
-    return ES_OK;
-  }
-
-  template <class View>
-  forceinline
-  Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
-    : NaryPropagator<View,PC_INT_DOM>(home,share,p), lg(NULL) {
-    dfa.update(share,p.dfa);
-  }
-
-  template <class View>
-  Dom<View>::~Dom(void) {
-    delete lg;
-  }
-
-  template <class View>
-  void
-  Dom<View>::flush(void) {
-    delete lg; lg = NULL;
-  }
-
-  template <class View>
-  size_t
-  Dom<View>::size(void) const {
-    return (lg != NULL) ? lg->size() : 0;
-  }
-
-  template <class View>
-  PropCost
-  Dom<View>::cost(void) const {
-    return cost_hi(this->x.size(), PC_LINEAR_HI);
-  }
-
-  template <class View>
-  Actor*
-  Dom<View>::copy(Space* home, bool share) {
-    return new (home) Dom<View>(home,share,*this);
-  }
 
   /*
    * Classes for the layered graph
@@ -467,6 +418,59 @@ namespace Gecode { namespace Int { namespace Regular {
     } else {
       return lg->prune(home,this->x);
     }
+  }
+
+  template <class View>
+  forceinline
+  Dom<View>::Dom(Space* home, ViewArray<View>& x, DFA& d)
+    : NaryPropagator<View,PC_INT_DOM>(home,x,true),
+      dfa(d), lg(NULL) {
+  }
+
+  template <class View>
+  ExecStatus
+  Dom<View>::post(Space* home, ViewArray<View>& x, DFA& d) {
+    (void) new (home) Dom<View>(home,x,d);
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline
+  Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
+    : NaryPropagator<View,PC_INT_DOM>(home,share,p), lg(NULL) {
+    dfa.update(share,p.dfa);
+  }
+
+  template <class View>
+  void
+  Dom<View>::finalize(Space* home) {
+    dfa.~DFA();
+    delete lg;
+    NaryPropagator<View,PC_INT_DOM>::finalize(home);
+  }
+
+  template <class View>
+  void
+  Dom<View>::flush(void) {
+    delete lg; lg = NULL;
+  }
+
+  template <class View>
+  size_t
+  Dom<View>::size(void) const {
+    return (lg != NULL) ? lg->size() : 0;
+  }
+
+  template <class View>
+  PropCost
+  Dom<View>::cost(void) const {
+    return cost_hi(this->x.size(), PC_LINEAR_HI);
+  }
+
+  template <class View>
+  Actor*
+  Dom<View>::copy(Space* home, bool share) {
+    return new (home) Dom<View>(home,share,*this);
   }
 
 }}}

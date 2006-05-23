@@ -298,6 +298,14 @@ namespace Gecode { namespace Int { namespace Channel {
     return dc.size();
   }
 
+  template <class View>
+  void
+  Dom<View>::finalize(Space* home) {
+    dc.finalize();
+    Base<DomInfo<View>,PC_INT_DOM>::finalize(home);
+  }
+
+
 }}}
 
 // STATISTICS: int-prop

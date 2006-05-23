@@ -111,8 +111,10 @@ namespace Gecode { namespace Set { namespace Rel {
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space* home,bool);
+    /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(void) const;
-    virtual ~ReSubset(void);
+    /// Delete propagator
+    virtual void finalize(Space* home);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$ (x\subseteq y) \Leftrightarrow b \f$ 
@@ -167,8 +169,10 @@ namespace Gecode { namespace Set { namespace Rel {
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space* home,bool);
+    /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(void) const;
-    virtual ~ReEq(void);
+    /// Delete propagator
+    virtual void finalize(Space* home);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
   /// Post propagator for \f$ (x=y) \Leftrightarrow b\f$ 

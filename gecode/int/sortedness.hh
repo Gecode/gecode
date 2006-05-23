@@ -80,8 +80,8 @@ namespace Gecode { namespace Int { namespace Sortedness {
     Sortedness(Space* home, bool share, Sortedness<View, Tuple, Perm>& p);
 
   public:
-    /// Destructor
-    virtual ~Sortedness(void);
+    /// Delete propagator
+    virtual void finalize(Space* home);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Cost function returning PC_LINEAR_HI

@@ -56,10 +56,12 @@ namespace Gecode { namespace Set { namespace Select {
   }
 
   template <class SView, class RView>
-  SelectIntersection<SView,RView>::~SelectIntersection(void) {
+  void
+  SelectIntersection<SView,RView>::finalize(Space* home) {
     x0.cancel(this, PC_SET_ANY);
     x1.cancel(this, PC_SET_ANY);
     iv.cancel(this,PC_SET_ANY);
+    Propagator::finalize(home);
   }
 
   template <class SView, class RView>

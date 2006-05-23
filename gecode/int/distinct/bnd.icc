@@ -36,8 +36,10 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  Bnd<View>::~Bnd(void) {
+  void
+  Bnd<View>::finalize(Space* home) {
     y.cancel(this,PC_INT_BND);
+    Propagator::finalize(home);
   }
 
   template <class View>

@@ -52,11 +52,12 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, class Rel, bool shr>
-  inline
-  Base<VX,VY,VZ,Rel,shr>::~Base(void) {
+  inline void
+  Base<VX,VY,VZ,Rel,shr>::finalize(Space* home) {
     x.cancel(this,r.cond());
     y.cancel(this,r.cond());
     z.cancel(this,PC_INT_BND);
+    Propagator::finalize(home);
   }
 
   template <class VX, class VY, class VZ, class Rel, bool shr>

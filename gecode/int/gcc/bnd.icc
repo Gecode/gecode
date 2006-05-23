@@ -518,25 +518,24 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView, bool shared>
-  forceinline
-  BndImp<View, Card, isView, shared>::~BndImp(void){
+  void
+  BndImp<View, Card, isView, shared>::finalize(Space* home){
     y.cancel(this, PC_INT_BND);
     k.cancel(this, PC_INT_BND);
     delete lps;
-    lps = NULL;
     delete ups;
-    ups = NULL;
+    Propagator::finalize(home);
   }
 
   template <class View, class Card, bool isView, bool shared>
-  forceinline Actor* 
+  Actor* 
   BndImp<View, Card, isView, shared>::copy(Space* home, bool share){
     return new (home) BndImp<View, Card, isView, shared>
       (home, share, *this);
   }
 
   template <class View, class Card, bool isView, bool shared>
-  forceinline PropCost
+  PropCost
   BndImp<View, Card, isView, shared>::cost (void) const {
     /* 
      * The bounds consistent version of the Global Cardinality constraint
@@ -550,7 +549,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView, bool shared>
-  forceinline ExecStatus 
+  ExecStatus 
   BndImp<View, Card, isView, shared>::propagate(Space* home) {  
     return prop_bnd<View, Card, isView, shared>
       (home, x, k, lps, ups, card_fixed, card_all, skip_lbc);
@@ -559,8 +558,8 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   inline ExecStatus
   Bnd<View, Card, isView>::post(Space* home, 
-				 ViewArray<View>& x0, VarCard& k0, 
-				 bool all) {
+				ViewArray<View>& x0, VarCard& k0, 
+				bool all) {
     assert(isView);
     
     bool cardfix = true;

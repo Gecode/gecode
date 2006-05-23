@@ -93,7 +93,7 @@ namespace Gecode {
     while (a != e) {
       Actor* d = static_cast<Actor*>(a);
       a = a->next_delete();
-      d->~Actor();
+      d->finalize(this);
     }
   }
 
@@ -185,6 +185,7 @@ namespace Gecode {
 	  p->pme = PME_ASSIGNED;
 	  process();
 	  p->unlink_delete();
+	  p->finalize(this);
 	  delete p;
 	  mm.reuse(reinterpret_cast<MemoryManager::ReuseChunk*>(p));
 	}
@@ -229,6 +230,7 @@ namespace Gecode {
       b_fst = static_cast<Branching*>(b->next());
       b->unlink();
       b->unlink_delete();
+      b->finalize(this);
       delete b;
       mm.reuse(reinterpret_cast<MemoryManager::ReuseChunk*>(b));
     }
@@ -293,7 +295,7 @@ namespace Gecode {
 	b_fst = static_cast<Branching*>(b_fst->next());
 	b->unlink();
 	b->unlink_delete();
-	delete b;
+	b->finalize(this);
       }
       if (b_fst->commit(this,a,d) == ES_FAILED)
 	fail();

@@ -136,11 +136,13 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class ViewA, class ViewB, PropCond pcb>
-  View<ViewA,ViewB,pcb>::~View(void) {
+  void
+  View<ViewA,ViewB,pcb>::finalize(Space* home) {
     x0.cancel(this,PC_INT_DOM);
     x1.cancel(this,pcb);
     for (int i=n; i--;)
       iv[i].view.cancel(this,pcb);
+    Propagator::finalize(home);
   }
 
 

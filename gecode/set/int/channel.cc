@@ -40,9 +40,11 @@ namespace Gecode { namespace Set { namespace Int {
     return PC_QUADRATIC_LO;
   }
 
-  Channel::~Channel(void) {
+  void
+  Channel::finalize(Space* home) {
     xs.cancel(this, Gecode::Int::PC_INT_DOM);
     ys.cancel(this, PC_SET_ANY);
+    Propagator::finalize(home);
   }
 
   Actor*

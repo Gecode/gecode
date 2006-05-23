@@ -33,9 +33,11 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class View>
-  LinBool<View>::~LinBool(void) {
+  void
+  LinBool<View>::finalize(Space* home) {
     x.cancel(this,PC_INT_VAL);
     y.cancel(this,PC_INT_BND);
+    Propagator::finalize(home);
   }
 
   template <class View>
