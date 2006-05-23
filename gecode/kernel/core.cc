@@ -134,7 +134,7 @@ namespace Gecode {
   }
 
   unsigned long int
-  Space::propagators(void) {
+  Space::_propagate(void) {
     if (failed())
       return 0;
     const PropModEvent PME_NONE = 0;
@@ -220,7 +220,7 @@ namespace Gecode {
    */
 
   unsigned int
-  Space::branchings(void) {
+  Space::_branch(void) {
     while (b_fst != &a_actors) {
       unsigned int alt = b_fst->branch();
       if (alt > 0)
@@ -251,12 +251,12 @@ namespace Gecode {
   SpaceStatus
   Space::status(unsigned int& a, unsigned long int& pn) {
     // Perform propagation and do not continue when failed
-    pn += propagators();
+    pn += _propagate();
     if (failed())
       return SS_FAILED;
     // Find out how many alternatives the next branching provides
     // No alternatives means that the space is solved
-    a = branchings();
+    a = _branch();
     return (a > 0) ? SS_BRANCH : SS_SOLVED;
   }
 
@@ -267,10 +267,10 @@ namespace Gecode {
       // If no branching description is provided, the first step
       // is to perform propagation and also run the branchings
       // in order to find out whether committing is actually possible
-      pn += propagators();
+      pn += _propagate();
       if (failed())
 	throw SpaceFailed("Space::commit");
-      unsigned int alt = branchings();
+      unsigned int alt = _branch();
       if (alt == 0)
 	throw SpaceNoBranching();
       if (a >= alt)
@@ -369,7 +369,7 @@ namespace Gecode {
 
   Space*
   Space::clone(bool share, unsigned long int& pn) {
-    pn += propagators();
+    pn += _propagate();
     if (failed())
       throw SpaceFailed("Space::clone");
     // Start stage one
@@ -389,6 +389,22 @@ namespace Gecode {
     }
     assert(a->prev() == p);
     return c;
+  }
+
+  unsigned int
+  Space::propagators(void) const {
+    unsigned int n = 0;
+    for (const ActorLink* a = a_actors.next(); a != b_fst; a = a->next())
+      n++;
+    return n;
+  }
+
+  unsigned int
+  Space::branchings(void) const {
+    unsigned int n = 0;
+    for (const ActorLink* a = b_fst; a != &a_actors; a = a->next())
+      n++;
+    return n;
   }
 
 }

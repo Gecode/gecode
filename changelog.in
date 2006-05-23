@@ -53,6 +53,13 @@ Date:		upcoming
 The next release
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Spaces can be queried for number of propagators and branchings.
+	
+[ENTRY]
 Module: search
 What:   new
 Rank:   minor

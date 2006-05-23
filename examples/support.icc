@@ -47,6 +47,9 @@ Example::run(const Options& o) {
 	int i = o.solutions;
 	t.start();
 	Script* s = new Script(o);
+	s->status();
+	unsigned int p = s->propagators();
+	unsigned int b = s->branchings();	 
 	Engine<Script> e(s,o.c_d,o.a_d);
 	delete s;
 	do {
@@ -58,7 +61,11 @@ Example::run(const Options& o) {
 	} while (--i != 0);
 	Search::Statistics stat = e.statistics();
 	cout << endl;
-	cout << "Summary" << endl
+	cout << "Initial" << endl
+	     << "\tpropagators:  " << p << endl
+	     << "\tbranchings:   " << b << endl
+	     << endl
+	     << "Summary" << endl
 	     << "\truntime:      " << t.stop() << endl
 	     << "\tsolutions:    " << abs(static_cast<int>(o.solutions) - i) << endl
 	     << "\tpropagations: " << stat.propagate << endl
@@ -75,6 +82,9 @@ Example::run(const Options& o) {
 	cout << "%%% " << o.name << endl;
 	int i = o.solutions;
 	Script* s = new Script(o);
+	s->status();
+	unsigned int p = s->propagators();
+	unsigned int b = s->branchings();	 
 	Engine<Script> e(s,o.c_d,o.a_d);
 	delete s;
 	do {
@@ -85,6 +95,8 @@ Example::run(const Options& o) {
 	} while (--i != 0);
 	Search::Statistics stat = e.statistics();
 	cout << endl
+	     << "\tpropagators:  " << p << endl
+	     << "\tbranchings:   " << b << endl
 	     << "\tsolutions:    " << abs(static_cast<int>(o.solutions) - i) << endl
 	     << "\tpropagations: " << stat.propagate << endl
 	     << "\tfailures:     " << stat.fail << endl
