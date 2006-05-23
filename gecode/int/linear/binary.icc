@@ -58,10 +58,10 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B, PropCond pc>
   inline void
-  LinBin<Val,A,B,pc>::finalize(Space* home) {
+  LinBin<Val,A,B,pc>::dispose(Space* home) {
     x0.cancel(this,pc); 
     x1.cancel(this,pc);
-    Propagator::finalize(home);
+    Propagator::dispose(home);
   }
 
 
@@ -96,11 +96,11 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B, PropCond pc, class Ctrl>
   inline void
-  ReLinBin<Val,A,B,pc,Ctrl>::finalize(Space* home) {
+  ReLinBin<Val,A,B,pc,Ctrl>::dispose(Space* home) {
     x0.cancel(this,pc); 
     x1.cancel(this,pc);
     b.cancel(this,PC_INT_VAL);
-    Propagator::finalize(home);
+    Propagator::dispose(home);
   }
 
 

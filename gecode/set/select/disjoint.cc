@@ -38,10 +38,10 @@ namespace Gecode { namespace Set { namespace Select {
   }
 
   void
-  SelectDisjoint::finalize(Space* home) {
+  SelectDisjoint::dispose(Space* home) {
     x1.cancel(this, PC_SET_ANY);
     iv.cancel(this,PC_SET_ANY);
-    Propagator::finalize(home);
+    Propagator::dispose(home);
   }
 
   Actor*

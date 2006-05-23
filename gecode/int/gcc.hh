@@ -136,7 +136,7 @@ namespace Gecode { namespace Int { namespace GCC {
     BndImp(Space* home, bool, BndImp<View, FixCard, isView, shared>&);
 
   public:
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
     virtual void flush(void);
     virtual Actor* copy(Space* home, bool share);
     virtual PropCost    cost (void) const;
@@ -183,7 +183,7 @@ namespace Gecode { namespace Int { namespace GCC {
     Dom(Space* home, ViewArray<View>&, Card&, bool, bool);
 
   public:
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
     virtual void flush(void);
     virtual Actor* copy(Space* home, bool share);
     virtual PropCost    cost (void) const;
@@ -210,7 +210,7 @@ namespace Gecode { namespace Int { namespace GCC {
     Val(Space* home, ViewArray<View>&, Card&, bool);
 
   public:
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
     virtual Actor* copy(Space* home, bool share);
     virtual PropCost    cost (void) const;
     virtual ExecStatus  propagate(Space* home);

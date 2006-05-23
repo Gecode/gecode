@@ -188,7 +188,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   public:
     ViewValGraph(int, View*, const int*, int, unsigned int);
     ViewValGraph(int, View*, int, unsigned int, int);
-    void finalize(void);
+    void dispose(void);
 
     size_t size;
 
@@ -556,7 +556,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline void
-  DomCtrl<View>::ViewValGraph::finalize(void) {
+  DomCtrl<View>::ViewValGraph::dispose(void) {
     Memory::free(mem);
   }
 
@@ -627,7 +627,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline void
-  DomCtrl<View>::finalize(void) {
+  DomCtrl<View>::dispose(void) {
     delete vvg;
   }
   
@@ -721,9 +721,9 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   void
-  Dom<View>::finalize(Space* home) {
-    dc.finalize();
-    NaryPropagator<View,PC_INT_DOM>::finalize(home);
+  Dom<View>::dispose(Space* home) {
+    dc.dispose();
+    NaryPropagator<View,PC_INT_DOM>::dispose(home);
   }
 
 }}}

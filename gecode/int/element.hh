@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Return size of index-value map
     virtual size_t size(void) const;
     /// Delete propagator
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
   };
 
 
@@ -119,7 +119,7 @@ namespace Gecode { namespace Int { namespace Element {
     // Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
     /// Delete propagator
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
   };
 
 

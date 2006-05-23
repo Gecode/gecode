@@ -402,7 +402,7 @@ namespace Gecode {
     virtual Actor* copy(Space*,bool) = 0;
     /// Delete actor
     GECODE_KERNEL_EXPORT 
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
 
     /// \name Memory management
     //@{
@@ -418,6 +418,7 @@ namespace Gecode {
     static void  operator delete(void* p, size_t s);
     //@}
 #ifdef __GNUC__
+    /// To avoid warnings from GCC
     virtual ~Actor(void) {}
 #endif
   };
@@ -1033,7 +1034,7 @@ namespace Gecode {
 
 
   forceinline void
-  Actor::finalize(Space*) {}
+  Actor::dispose(Space*) {}
 
 
 

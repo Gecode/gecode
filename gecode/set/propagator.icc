@@ -49,7 +49,7 @@ namespace Gecode {
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
     /// Delete propagator
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
   };
 
   //@}
@@ -79,10 +79,10 @@ namespace Gecode {
 
   template <class View, PropCond pcs, PropCond pci>
   void
-  IntSetPropagator<View,pcs,pci>::finalize(Space* home) {
+  IntSetPropagator<View,pcs,pci>::dispose(Space* home) {
     x0.cancel(this,pcs);
     x1.cancel(this,pci);
-    Propagator::finalize(home);
+    Propagator::dispose(home);
   }
 
 }

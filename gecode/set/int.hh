@@ -123,7 +123,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Cost function (defined as PC_LINEAR_LO)
     GECODE_SET_EXPORT virtual PropCost cost(void) const;
     /// Delete Propagator
-    GECODE_SET_EXPORT virtual void finalize(Space* home);
+    GECODE_SET_EXPORT virtual void dispose(Space* home);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order 
@@ -166,7 +166,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Cost function (defined as PC_QUADRATIC_LO)
     GECODE_SET_EXPORT virtual PropCost cost(void) const;
     /// Delete propagator
-    GECODE_SET_EXPORT virtual void finalize(Space* home);
+    GECODE_SET_EXPORT virtual void dispose(Space* home);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
@@ -203,7 +203,7 @@ namespace Gecode { namespace Set { namespace Int {
     /// Cost function (defined as PC_LINEAR_LO)
     GECODE_SET_EXPORT virtual PropCost cost(void) const;
     /// Delete propagator
-    GECODE_SET_EXPORT virtual void finalize(Space* home);
+    GECODE_SET_EXPORT virtual void dispose(Space* home);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\sum_{i\in x} weights_i = y \f$

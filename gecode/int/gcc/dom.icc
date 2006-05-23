@@ -80,11 +80,11 @@ namespace Gecode { namespace Int { namespace GCC {
   
   template <class View, class Card, bool isView>
   void
-  Dom<View, Card, isView>::finalize(Space* home) {
+  Dom<View, Card, isView>::dispose(Space* home) {
     x.cancel(this, PC_INT_DOM);
     k.cancel(this, PC_INT_DOM);
     delete vvg; 
-    Propagator::finalize(home);
+    Propagator::dispose(home);
   }
 
   template <class View, class Card, bool isView>

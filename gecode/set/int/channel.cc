@@ -41,10 +41,10 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
   void
-  Channel::finalize(Space* home) {
+  Channel::dispose(Space* home) {
     xs.cancel(this, Gecode::Int::PC_INT_DOM);
     ys.cancel(this, PC_SET_ANY);
-    Propagator::finalize(home);
+    Propagator::dispose(home);
   }
 
   Actor*

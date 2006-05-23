@@ -81,7 +81,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
   public:
     /// Delete propagator
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Cost function returning PC_LINEAR_HI

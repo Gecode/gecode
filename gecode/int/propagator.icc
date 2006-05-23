@@ -54,7 +54,7 @@ namespace Gecode {
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(void) const;
     /// Delete propagator
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
   };
 
   /**
@@ -82,7 +82,7 @@ namespace Gecode {
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
     /// Delete propagator
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
   };
   //@}
 
@@ -126,10 +126,10 @@ namespace Gecode {
 
   template <class View, PropCond pc, class CtrlView>
   void
-  ReUnaryPropagator<View,pc,CtrlView>::finalize(Space* home) {
+  ReUnaryPropagator<View,pc,CtrlView>::dispose(Space* home) {
     x0.cancel(this,pc);
     b.cancel(this,Int::PC_INT_VAL);
-    Propagator::finalize(home);
+    Propagator::dispose(home);
   }
 
 
@@ -175,11 +175,11 @@ namespace Gecode {
 
   template <class View, PropCond pc, class CtrlView>
   void
-  ReBinaryPropagator<View,pc,CtrlView>::finalize(Space* home) {
+  ReBinaryPropagator<View,pc,CtrlView>::dispose(Space* home) {
     x0.cancel(this,pc);
     x1.cancel(this,pc);
     b.cancel(this,Int::PC_INT_VAL);
-    Propagator::finalize(home);
+    Propagator::dispose(home);
   }
 
 }

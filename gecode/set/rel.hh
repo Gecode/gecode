@@ -114,7 +114,7 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(void) const;
     /// Delete propagator
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$ (x\subseteq y) \Leftrightarrow b \f$ 
@@ -172,7 +172,7 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(void) const;
     /// Delete propagator
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
   /// Post propagator for \f$ (x=y) \Leftrightarrow b\f$ 

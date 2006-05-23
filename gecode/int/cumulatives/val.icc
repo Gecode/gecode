@@ -102,14 +102,14 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   template <class ViewM, class ViewD, class ViewH, class View>
   void
-  Val<ViewM,ViewD,ViewH,View>::finalize(Space* home) {
+  Val<ViewM,ViewD,ViewH,View>::dispose(Space* home) {
     machine.cancel(this,PC_INT_DOM);
     start.cancel(this,PC_INT_BND);
     duration.cancel(this,PC_INT_BND);
     end.cancel(this,PC_INT_BND);
     height.cancel(this,PC_INT_BND);
     limit.~SharedArray<int>();
-    Propagator::finalize(home);
+    Propagator::dispose(home);
   }
   
   template <class ViewM, class ViewD, class ViewH, class View>

@@ -59,10 +59,10 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   void
-  BoolBinary<BVA,BVB>::finalize(Space* home) {
+  BoolBinary<BVA,BVB>::dispose(Space* home) {
     x0.cancel(this,PC_INT_VAL);
     x1.cancel(this,PC_INT_VAL);
-    Propagator::finalize(home);
+    Propagator::dispose(home);
   }
 
   /*
@@ -107,11 +107,11 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB, class BVC>
   void
-  BoolTernary<BVA,BVB,BVC>::finalize(Space* home) {
+  BoolTernary<BVA,BVB,BVC>::dispose(Space* home) {
     x0.cancel(this,PC_INT_VAL);
     x1.cancel(this,PC_INT_VAL);
     x2.cancel(this,PC_INT_VAL);
-    Propagator::finalize(home);
+    Propagator::dispose(home);
   }
 
 }}}

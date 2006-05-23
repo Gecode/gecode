@@ -62,7 +62,7 @@ namespace Gecode { namespace Set { namespace Select {
     virtual Actor*      copy(Space* home,bool);
     virtual PropCost    cost(void) const;
     /// Delete propagator
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home);
     /** Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \a u as universe
@@ -95,7 +95,7 @@ namespace Gecode { namespace Set { namespace Select {
     GECODE_SET_EXPORT virtual Actor*      copy(Space* home,bool);
     GECODE_SET_EXPORT virtual PropCost    cost(void) const;
     /// Delete propagator
-    GECODE_SET_EXPORT virtual void finalize(Space* home);
+    GECODE_SET_EXPORT virtual void dispose(Space* home);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus  propagate(Space* home);
     /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 

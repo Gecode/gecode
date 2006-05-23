@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(void) const;
     /// Delete propagator
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
   };
 
   /// Base-class for ternary Boolean propagators
@@ -76,7 +76,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
     /// Delete propagator
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
   };
 
   /**

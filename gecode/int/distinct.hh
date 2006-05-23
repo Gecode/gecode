@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Destructor
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
   };
 
   /**
@@ -182,7 +182,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Flush view-value graph
     void flush(void);
     /// Deallocate view-value graph
-    void finalize(void);
+    void dispose(void);
   };
 
   /**
@@ -230,7 +230,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Post propagator for views \a x
     static  ExecStatus post(Space* home, ViewArray<View>& x);
     /// Delete propagator
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
   };
 
 }}}

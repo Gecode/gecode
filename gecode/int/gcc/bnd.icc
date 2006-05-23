@@ -519,12 +519,12 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView, bool shared>
   void
-  BndImp<View, Card, isView, shared>::finalize(Space* home){
+  BndImp<View, Card, isView, shared>::dispose(Space* home){
     y.cancel(this, PC_INT_BND);
     k.cancel(this, PC_INT_BND);
     delete lps;
     delete ups;
-    Propagator::finalize(home);
+    Propagator::dispose(home);
   }
 
   template <class View, class Card, bool isView, bool shared>

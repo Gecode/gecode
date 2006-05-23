@@ -443,10 +443,10 @@ namespace Gecode { namespace Int { namespace Regular {
 
   template <class View>
   void
-  Dom<View>::finalize(Space* home) {
+  Dom<View>::dispose(Space* home) {
     dfa.~DFA();
     delete lg;
-    NaryPropagator<View,PC_INT_DOM>::finalize(home);
+    NaryPropagator<View,PC_INT_DOM>::dispose(home);
   }
 
   template <class View>

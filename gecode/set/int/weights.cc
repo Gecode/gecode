@@ -41,10 +41,10 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
   void
-  Weights::finalize(Space* home) {
+  Weights::dispose(Space* home) {
     x.cancel(this, PC_SET_ANY);
     y.cancel(this, Gecode::Int::PC_INT_BND);
-    Propagator::finalize(home);
+    Propagator::dispose(home);
   }
 
   Actor*

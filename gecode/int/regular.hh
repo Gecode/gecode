@@ -68,7 +68,7 @@ namespace Gecode { namespace Int { namespace Regular {
     /// Returns size of layered graph
     virtual size_t size(void) const;
     /// Delete propagator
-    virtual void finalize(Space* home);
+    virtual void dispose(Space* home);
     /// Post propagator on views \a x and DFA \a d
     static ExecStatus post(Space* home, ViewArray<View>& x, DFA& d);
   };

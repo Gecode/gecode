@@ -403,10 +403,10 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
   template<class View, class Tuple, bool Perm>
   void
-  Sortedness<View, Tuple, Perm>::finalize(Space* home) {
+  Sortedness<View, Tuple, Perm>::dispose(Space* home) {
     xz.cancel(this, PC_INT_BND);
     y.cancel(this, PC_INT_BND);
-    Propagator::finalize(home);
+    Propagator::dispose(home);
   }
 
   template<class View, class Tuple, bool Perm>

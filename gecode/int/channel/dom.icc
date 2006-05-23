@@ -300,9 +300,9 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class View>
   void
-  Dom<View>::finalize(Space* home) {
-    dc.finalize();
-    Base<DomInfo<View>,PC_INT_DOM>::finalize(home);
+  Dom<View>::dispose(Space* home) {
+    dc.dispose();
+    Base<DomInfo<View>,PC_INT_DOM>::dispose(home);
   }
 
 

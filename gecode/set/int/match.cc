@@ -39,10 +39,10 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
   void
-  Match::finalize(Space* home) {
+  Match::dispose(Space* home) {
     x0.cancel(this, PC_SET_ANY);
     xs.cancel(this, Gecode::Int::PC_INT_BND);
-    Propagator::finalize(home);
+    Propagator::dispose(home);
   }
 
   Actor*

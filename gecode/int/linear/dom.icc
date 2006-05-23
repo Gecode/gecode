@@ -65,7 +65,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform tell according to recorded support information on \arg x
     ModEvent tell(Space* home, IntView& x) const;
     /// Release memory
-    void finalize(void);
+    void dispose(void);
   };
 
   /**
@@ -97,7 +97,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Tell back new variable domain according to support found
     ModEvent tell(Space* home);
     /// Finalize memory for support set
-    void finalize(void);
+    void dispose(void);
   };
 
 
@@ -214,7 +214,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   forceinline void 
-  SupportSet::finalize(void) {
+  SupportSet::dispose(void) {
     Memory::free(bits);
   }
 
@@ -241,8 +241,8 @@ namespace Gecode { namespace Int { namespace Linear {
   }
   template <class Val>
   forceinline void 
-  SupportIter<Val>::finalize(void) {
-    s.finalize();
+  SupportIter<Val>::dispose(void) {
+    s.dispose();
   }
 
 
@@ -477,7 +477,7 @@ namespace Gecode { namespace Int { namespace Linear {
     for (int i=n; i--; ) {
       ModEvent me = xp[i].tell(home);
       if (me_failed(me)) {
-	es = ES_FAILED; goto finalize;
+	es = ES_FAILED; goto dispose;
       }
       if (!x[i].assigned())
 	es = ES_FIX;
@@ -485,16 +485,16 @@ namespace Gecode { namespace Int { namespace Linear {
     for (int j=m; j--; ) {
       ModEvent me = yp[j].tell(home);
       if (me_failed(me)) {
-	es = ES_FAILED; goto finalize;
+	es = ES_FAILED; goto dispose;
       }
       if (!y[j].assigned())
 	es = ES_FIX;
     }
     
     // Release memory
-  finalize:
-    for (int i=n; i--; ) xp[i].finalize();
-    for (int j=m; j--; ) yp[j].finalize();
+  dispose:
+    for (int i=n; i--; ) xp[i].dispose();
+    for (int j=m; j--; ) yp[j].dispose();
     return es;
   }
     
