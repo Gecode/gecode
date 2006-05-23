@@ -730,8 +730,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * <code>make SHELL="/bin/bash"</code>
  *
  * You can compile as <b>"universal binary" on a Mac OS
- * machine</b>. Note that the x86 part has not been tested yet. Configure
- * as usual, then compile with (all in one line)
+ * machine</b>. Configure as usual, then compile with (all in one line)
  *
  * <code>make CXXUSR="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
  * DLLFLAGS="-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -dynamiclib -arch i386 -arch ppc"</code>
@@ -811,5 +810,29 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * <code>gcc</code>, the Microsoft compiler <code>cl</code>, or the Intel
  * compiler <code>icl</code>. Please let us know of any successfull attempt at
  * compiling Gecode on other platforms.
+ *
+ * \section Useful Makefile targets
+ *
+ * The main %Gecode Makefile supports the following useful targets:
+ *
+ *  - <code>all</code> compiles all parts of the library that were enabled
+ *                     during <code>configure</code>, and the examples if
+ *                     enabled
+ *  - <code>install</code> installs library, headers and examples (if enabled)
+ *                         into the <code>prefix</code> given at
+ *                         <code>configure</code>
+ *  - <code>clean</code> removes object files
+ *  - <code>veryclean</code> removes object files and libraries
+ *  - <code>distclean</code> removes object files, libraries, and all
+ *                           generated files
+ *  - <code>depend</code> computes dependencies between source files
+ *  - <code>test</code> compiles the test suite
+ *  - <code>doc</code> generates this reference documentation using doxygen
+ *  - <code>installdoc</code> installs the documentation
+ *  - <code>distdoc</code> creates tgz and zip archives of the documentation
+ *  - <code>distzip</code> creates a binary distribution as a zip archive
+ *  - <code>disttgz</code> creates a binary distribution as a tgz archive
+ *
+ *
  */
 
