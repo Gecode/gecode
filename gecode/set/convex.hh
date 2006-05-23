@@ -47,9 +47,9 @@ namespace Gecode { namespace Set { namespace Convex {
   class Convex : public UnaryPropagator<SetView,PC_SET_ANY> {
   protected:
     /// Constructor for cloning \a p
-    Convex(Space* home, bool share,Convex& p);
+    Convex(Space* home, bool share, Convex& p);
     /// Constructor for posting
-    Convex(Space* home,SetView);
+    Convex(Space* home, SetView);
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space* home,bool);
@@ -66,22 +66,17 @@ namespace Gecode { namespace Set { namespace Convex {
    * \ingroup FuncSetProp
    */
 
-  class ConvexHull : public Propagator {
+  class ConvexHull : public BinaryPropagator<SetView,PC_SET_ANY> {
   protected:
-    SetView x0;
-    SetView x1;
     /// Constructor for cloning \a p
-    ConvexHull(Space* home, bool share,ConvexHull&);
+    ConvexHull(Space* home, bool share, ConvexHull&);
     /// Constructor for posting
-    ConvexHull(Space* home,SetView,SetView);
+    ConvexHull(Space* home, SetView, SetView);
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*  copy(Space* home,bool);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus  propagate(Space* home);
-    GECODE_SET_EXPORT virtual PropCost    cost(void) const;
-    /// Destructor
-    GECODE_SET_EXPORT virtual ~ConvexHull(void);
     /// Post propagator that propagates that \a y is the convex hull of \a x
     static  ExecStatus  post(Space* home,SetView x,SetView y);
   };

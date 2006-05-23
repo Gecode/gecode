@@ -35,16 +35,6 @@ namespace Gecode { namespace Set { namespace Convex {
     return new (home) ConvexHull(home,share,*this);
   }
 
-  PropCost
-  ConvexHull::cost(void) const {
-    return PC_BINARY_HI;
-  }
-
-  ConvexHull::~ConvexHull(void) {
-    x0.cancel(this,PC_SET_ANY);
-    x1.cancel(this,PC_SET_ANY);
-  }
-
   ExecStatus
   ConvexHull::propagate(Space* home) {
     //x1 is the convex hull of x0
