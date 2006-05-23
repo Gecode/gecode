@@ -463,8 +463,9 @@ TESTSBJ	= $(TESTSRC:%.cc=%$(SBJSUFFIX))
 TESTEXE	= test/test$(EXESUFFIX)
 TESTBUILDDIRS = test test/int test/set test/stress
 
-BUILDDIRS = $(KERNELBUILDDIRS) $(SEARCHBUILDDIRS) $(INTBUILDDIRS) \
-	$(SETBUILDDIRS) $(MMBUILDDIRS) $(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
+BUILDDIRS = $(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
+	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
+	$(MMBUILDDIRS:%=gecode/%) $(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
 
 ifeq "@enable_examples@" "yes"
 all: compilelib compileexamples
