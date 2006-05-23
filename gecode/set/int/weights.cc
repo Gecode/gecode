@@ -42,8 +42,8 @@ namespace Gecode { namespace Set { namespace Int {
 
   void
   Weights::dispose(Space* home) {
-    x.cancel(this, PC_SET_ANY);
-    y.cancel(this, Gecode::Int::PC_INT_BND);
+    x.cancel(home,this, PC_SET_ANY);
+    y.cancel(home,this, Gecode::Int::PC_INT_BND);
     Propagator::dispose(home);
   }
 

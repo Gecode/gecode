@@ -57,6 +57,15 @@ Module: kernel
 What:   change
 Rank:   major
 [DESCRIPTION]
+Cancelling subscriprions on views and variable implementations now
+require also a home space (this has become possible due to not using
+destructors but ordinary "dispose" member functions).
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
 Actors (propagators and branchings) do not any longer use destructors
 but a "dispose" member function that takes a home space as argument.
 Important: this requires that dispose member functions from super-classes

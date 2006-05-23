@@ -199,8 +199,8 @@ namespace Gecode {
       view.subscribe(home,p,pc);
     }
     forceinline void
-    MinusView::cancel(Propagator* p, PropCond pc) {
-      view.cancel(p,pc);
+    MinusView::cancel(Space* home, Propagator* p, PropCond pc) {
+      view.cancel(home,p,pc);
     }
 
 

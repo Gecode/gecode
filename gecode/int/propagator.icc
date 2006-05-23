@@ -127,8 +127,8 @@ namespace Gecode {
   template <class View, PropCond pc, class CtrlView>
   void
   ReUnaryPropagator<View,pc,CtrlView>::dispose(Space* home) {
-    x0.cancel(this,pc);
-    b.cancel(this,Int::PC_INT_VAL);
+    x0.cancel(home,this,pc);
+    b.cancel(home,this,Int::PC_INT_VAL);
     Propagator::dispose(home);
   }
 
@@ -176,9 +176,9 @@ namespace Gecode {
   template <class View, PropCond pc, class CtrlView>
   void
   ReBinaryPropagator<View,pc,CtrlView>::dispose(Space* home) {
-    x0.cancel(this,pc);
-    x1.cancel(this,pc);
-    b.cancel(this,Int::PC_INT_VAL);
+    x0.cancel(home,this,pc);
+    x1.cancel(home,this,pc);
+    b.cancel(home,this,Int::PC_INT_VAL);
     Propagator::dispose(home);
   }
 

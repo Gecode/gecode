@@ -54,9 +54,9 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY, class VZ, class Rel, bool shr>
   inline void
   Base<VX,VY,VZ,Rel,shr>::dispose(Space* home) {
-    x.cancel(this,r.cond());
-    y.cancel(this,r.cond());
-    z.cancel(this,PC_INT_BND);
+    x.cancel(home,this,r.cond());
+    y.cancel(home,this,r.cond());
+    z.cancel(home,this,PC_INT_BND);
     Propagator::dispose(home);
   }
 
@@ -124,11 +124,11 @@ namespace Gecode { namespace Int { namespace Count {
     for (int i = x.size(); i--; )
       switch (r.holds(x[i],y)) {
       case RT_FALSE:
-	x.move_lst(i,this,r.cond());
+	x.move_lst(i,home,this,r.cond());
 	if (z.min() == atmost()) goto decided;
 	break;
       case RT_TRUE:
-	x.move_lst(i,this,r.cond()); c++;
+	x.move_lst(i,home,this,r.cond()); c++;
 	if (z.max() == atleast()) goto decided;
 	break;
       default: ;
@@ -186,9 +186,9 @@ namespace Gecode { namespace Int { namespace Count {
     for (int i = x.size(); i--; )
       switch (r.holds(x[i],y)) {
       case RT_FALSE:
-	x.move_lst(i,this,r.cond()); break;
+	x.move_lst(i,home,this,r.cond()); break;
       case RT_TRUE:
-	x.move_lst(i,this,r.cond()); c++; break;
+	x.move_lst(i,home,this,r.cond()); c++; break;
       default: ;
       }
     if (atleast() == atmost()) {
@@ -244,9 +244,9 @@ namespace Gecode { namespace Int { namespace Count {
     for (int i = x.size(); i--; )
       switch (r.holds(x[i],y)) {
       case RT_FALSE:
-	x.move_lst(i,this,r.cond()); break;
+	x.move_lst(i,home,this,r.cond()); break;
       case RT_TRUE:
-	x.move_lst(i,this,r.cond()); c++;
+	x.move_lst(i,home,this,r.cond()); c++;
 	if (z.max() == atleast()) goto decided;
 	break;
       default: ;
@@ -302,11 +302,11 @@ namespace Gecode { namespace Int { namespace Count {
     for (int i = x.size(); i--; )
       switch (r.holds(x[i],y)) {
       case RT_FALSE:
-	x.move_lst(i,this,r.cond());
+	x.move_lst(i,home,this,r.cond());
 	if (z.min() == atmost()) goto decided;
 	break;
       case RT_TRUE:
-	x.move_lst(i,this,r.cond()); c++;
+	x.move_lst(i,home,this,r.cond()); c++;
 	break;
       default: ;
       }

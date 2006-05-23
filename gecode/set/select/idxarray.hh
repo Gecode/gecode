@@ -77,7 +77,7 @@ namespace Gecode { namespace Set { namespace Select {
      * Cancel subscription of propagator \a p with propagation condition \a pc
      * for all elements of the array.
      */
-    void cancel(Propagator* p, PropCond pc);
+    void cancel(Space* home, Propagator* p, PropCond pc);
 
     /// Cloning
     void update(Space* home, bool share, IdxViewArray<View>& x);

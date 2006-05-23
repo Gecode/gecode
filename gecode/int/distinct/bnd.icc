@@ -38,7 +38,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   void
   Bnd<View>::dispose(Space* home) {
-    y.cancel(this,PC_INT_BND);
+    y.cancel(home,this,PC_INT_BND);
     Propagator::dispose(home);
   }
 

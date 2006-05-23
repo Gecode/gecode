@@ -137,7 +137,7 @@ namespace Gecode { namespace Int { namespace Rel {
       if (x[i][0].min() > x[i][1].max()) { // case: >
 	// Eliminate [i]...[n-1]
 	for (int j=i; j<n; j++)
-	  x[j].cancel(this,PC_INT_BND);
+	  x[j].cancel(home,this,PC_INT_BND);
 	x.size(i);
 	strict = true;
       }
@@ -172,7 +172,7 @@ namespace Gecode { namespace Int { namespace Rel {
       if (x[i][0].max() < x[i][1].min()) { // case: <
 	// Eliminate [i]...[n-1]
 	for (int j=i; j<n; j++)
-	  x[j].cancel(this,PC_INT_BND);
+	  x[j].cancel(home,this,PC_INT_BND);
 	x.size(i);
 	strict = false;
       }

@@ -138,10 +138,10 @@ namespace Gecode { namespace Int { namespace Element {
   template <class ViewA, class ViewB, PropCond pcb>
   void
   View<ViewA,ViewB,pcb>::dispose(Space* home) {
-    x0.cancel(this,PC_INT_DOM);
-    x1.cancel(this,pcb);
+    x0.cancel(home,this,PC_INT_DOM);
+    x1.cancel(home,this,pcb);
     for (int i=n; i--;)
-      iv[i].view.cancel(this,pcb);
+      iv[i].view.cancel(home,this,pcb);
     Propagator::dispose(home);
   }
 
@@ -220,7 +220,7 @@ namespace Gecode { namespace Int { namespace Element {
     int j = 0;
     while (vx0() && (i < n)) {
       if (iv[i].idx < vx0.val()) {
-	iv[i].view.cancel(p,pcb);
+	iv[i].view.cancel(home,p,pcb);
 	++i;
       } else if (iv[i].idx > vx0.val()) {
 	++vx0;
@@ -228,7 +228,7 @@ namespace Gecode { namespace Int { namespace Element {
 	assert(iv[i].idx == vx0.val());
 	switch (rt(iv[i].view,x1)) {
 	case RT_FALSE:
-	  iv[i].view.cancel(p,pcb);
+	  iv[i].view.cancel(home,p,pcb);
 	  break;
 	case RT_TRUE:
 	case RT_MAYBE:
@@ -239,7 +239,7 @@ namespace Gecode { namespace Int { namespace Element {
       }
     }
     while (i < n)
-      iv[i++].view.cancel(p,pcb);
+      iv[i++].view.cancel(home,p,pcb);
     bool adjust = (j<n);
     n = j;
 

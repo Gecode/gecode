@@ -39,8 +39,8 @@ namespace Gecode { namespace Set { namespace Select {
 
   void
   SelectDisjoint::dispose(Space* home) {
-    x1.cancel(this, PC_SET_ANY);
-    iv.cancel(this,PC_SET_ANY);
+    x1.cancel(home,this, PC_SET_ANY);
+    iv.cancel(home,this,PC_SET_ANY);
     Propagator::dispose(home);
   }
 
@@ -75,7 +75,7 @@ namespace Gecode { namespace Set { namespace Select {
         // Cancel all elements that are no longer in the upper bound
         while (vx1ub()) {
           if (iv[i].idx < vx1ub.val()) {
-            iv[i].var.cancel(this, PC_SET_ANY);
+            iv[i].var.cancel(home,this, PC_SET_ANY);
             i++;
             continue;
           }
@@ -87,7 +87,7 @@ namespace Gecode { namespace Set { namespace Select {
         // cancel the variables with index greater than
         // max of lub(x1)
         for (int k=i; k<n; k++) {
-          iv[k].var.cancel(this, PC_SET_ANY);
+          iv[k].var.cancel(home,this, PC_SET_ANY);
         }
         n = j;
 	iv.size(n);
@@ -119,7 +119,7 @@ namespace Gecode { namespace Set { namespace Select {
           fix_flag |= me_modified(me);
           GECODE_ME_CHECK(me);
 
-          candidate.cancel(this, PC_SET_ANY);
+          candidate.cancel(home,this, PC_SET_ANY);
           ++i;
           ++vx1u;
           continue;

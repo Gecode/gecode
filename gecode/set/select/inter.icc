@@ -58,9 +58,9 @@ namespace Gecode { namespace Set { namespace Select {
   template <class SView, class RView>
   void
   SelectIntersection<SView,RView>::dispose(Space* home) {
-    x0.cancel(this, PC_SET_ANY);
-    x1.cancel(this, PC_SET_ANY);
-    iv.cancel(this,PC_SET_ANY);
+    x0.cancel(home,this, PC_SET_ANY);
+    x1.cancel(home,this, PC_SET_ANY);
+    iv.cancel(home,this,PC_SET_ANY);
     Propagator::dispose(home);
   }
 
@@ -120,7 +120,7 @@ namespace Gecode { namespace Set { namespace Select {
 
         // Remove vars at indices not in the upper bound
         if (iv[i].idx < vx1ub.val()) {
-          iv[i].var.cancel(this, PC_SET_ANY);
+          iv[i].var.cancel(home,this, PC_SET_ANY);
           ++i;
           continue;
         }
@@ -148,7 +148,7 @@ namespace Gecode { namespace Set { namespace Select {
           loopVar |= me_modified(me);
           GECODE_ME_CHECK(me);
 
-          iv[j].var.cancel(this, PC_SET_ANY);
+          iv[j].var.cancel(home,this, PC_SET_ANY);
           ++i;
           ++vx1ub;
           continue;
@@ -181,7 +181,7 @@ namespace Gecode { namespace Set { namespace Select {
       // cancel the variables with index greater than
       // max of lub(x1)
       for (int k=i; k<n; k++) {
-        iv[k].var.cancel(this, PC_SET_ANY);
+        iv[k].var.cancel(home,this, PC_SET_ANY);
       }
       n = j;
       iv.size(n);

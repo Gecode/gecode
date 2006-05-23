@@ -112,7 +112,7 @@ namespace Gecode {
       /// Subscribe propagator \a p with propagation condition \a pc to view
       void subscribe(Space* home, Propagator* p, PropCond pc) {}
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Propagator* p, PropCond pc) {}
+      void cancel(Space* home, Propagator* p, PropCond pc) {}
       //@}
       
       /// \name Cloning
@@ -177,7 +177,7 @@ namespace Gecode {
     /// Subscribe propagator \a p with propagation condition \a pc to all views
     void subscribe(Space*, Propagator* p, PropCond pc) {}
     /// Cancel subscription of propagator \a p with propagation condition \a pc to all views
-    void cancel(Propagator* p, PropCond pc) {}
+    void cancel(Space* home, Propagator* p, PropCond pc) {}
     //@}
 
     /// \name Cloning

@@ -48,7 +48,7 @@ namespace Gecode { namespace Int { namespace Channel {
   void
   Base<Info,pc>::dispose(Space* home) {
     for (int i=2*n; i--; )
-      xy[i].view.cancel(this,pc);
+      xy[i].view.cancel(home,this,pc);
     Propagator::dispose(home);
   }
 

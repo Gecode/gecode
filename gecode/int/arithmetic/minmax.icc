@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       if (me_modified(me) && (x[i].max() != maxmax))
 	es = ES_NOFIX;
       if (x[i].max() < maxmin) {
-	x.move_lst(i,this,PC_INT_BND);
+	x.move_lst(i,home,this,PC_INT_BND);
       } else if (!x[i].assigned())
 	assigned = false;
     }

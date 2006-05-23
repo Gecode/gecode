@@ -404,8 +404,8 @@ namespace Gecode { namespace Int { namespace Sortedness {
   template<class View, class Tuple, bool Perm>
   void
   Sortedness<View, Tuple, Perm>::dispose(Space* home) {
-    xz.cancel(this, PC_INT_BND);
-    y.cancel(this, PC_INT_BND);
+    xz.cancel(home,this, PC_INT_BND);
+    y.cancel(home,this, PC_INT_BND);
     Propagator::dispose(home);
   }
 
@@ -474,8 +474,8 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	}
 
 	if (unreachable) {
-	  xz.drop_fst(dropfst, this, PC_INT_BND);
-	  y.drop_fst (dropfst, this, PC_INT_BND);
+	  xz.drop_fst(dropfst, home, this, PC_INT_BND);
+	  y.drop_fst (dropfst, home, this, PC_INT_BND);
 	} else {
 	  dropfst = 0;
 	}
@@ -546,8 +546,8 @@ namespace Gecode { namespace Int { namespace Sortedness {
     } else {
       // dropping has no consequences
       if (dropfst) {
-	xz.drop_fst(dropfst, this, PC_INT_BND);
-	y.drop_fst (dropfst, this, PC_INT_BND);
+	xz.drop_fst(dropfst, home, this, PC_INT_BND);
+	y.drop_fst (dropfst, home, this, PC_INT_BND);
       }
 
       n = xz.size();

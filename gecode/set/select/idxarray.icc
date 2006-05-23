@@ -87,9 +87,9 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class View>
   void
-  IdxViewArray<View>::cancel(Propagator* p, PropCond pc) {
+  IdxViewArray<View>::cancel(Space* home, Propagator* p, PropCond pc) {
     for (int i = n; i--; )
-      xs[i].var.cancel(p,pc);
+      xs[i].var.cancel(home,p,pc);
   }
 
   template <class View>

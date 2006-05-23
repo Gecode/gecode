@@ -203,8 +203,8 @@ namespace Gecode {
       view.subscribe(home,p,pc);
     }
     forceinline void
-    OffsetView::cancel(Propagator* p, PropCond pc) {
-      view.cancel(p,pc);
+    OffsetView::cancel(Space* home, Propagator* p, PropCond pc) {
+      view.cancel(home,p,pc);
     }
 
 

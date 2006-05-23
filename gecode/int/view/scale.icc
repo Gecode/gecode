@@ -258,8 +258,8 @@ namespace Gecode {
     }
     template <class Val, class UnsVal>
     forceinline void
-    ScaleView<Val,UnsVal>::cancel(Propagator* p, PropCond pc) {
-      view.cancel(p,pc);
+    ScaleView<Val,UnsVal>::cancel(Space* home, Propagator* p, PropCond pc) {
+      view.cancel(home,p,pc);
     }
 
 

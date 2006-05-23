@@ -202,7 +202,7 @@ namespace Gecode {
     Propagator** idx[PC+2]; ///< Stores where entries start (idx[pc]}
 
     /// Cancel subscription of propagator \a p with propagation condition \a pc
-    void perform_cancel(Propagator* p, PropCond pc);
+    void perform_cancel(Space* home, Propagator* p, PropCond pc);
 
     /// Manage number of free entries internally
     unsigned int free(void) const;
@@ -243,7 +243,7 @@ namespace Gecode {
     void subscribe(Space* home, Propagator* p, PropCond pc,
 		   bool assigned, ModEvent me);
     /// Cancel subscription of propagator \a p with propagation condition \a pc
-    void cancel(Propagator* p, PropCond pc);
+    void cancel(Space* home, Propagator* p, PropCond pc);
     /// Return degree (number of subscribed propagators)
     unsigned int degree(void) const;
     /// Notify that variable implementation has been modified with \a me
@@ -1385,14 +1385,14 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC>
   forceinline void
-  Variable<VTI,PC>::cancel(Propagator* p, PropCond pc) {
+  Variable<VTI,PC>::cancel(Space* home, Propagator* p, PropCond pc) {
     if (idx[0] != NULL)
-      perform_cancel(p,pc);
+      perform_cancel(home,p,pc);
   }
 
   template <VarTypeId VTI, PropCond PC>
   void
-  Variable<VTI,PC>::perform_cancel(Propagator* p, PropCond pc) {
+  Variable<VTI,PC>::perform_cancel(Space*, Propagator* p, PropCond pc) {
     Propagator** f = idx[pc];
     while (*f != p) f++;
     *f=*idx[pc];

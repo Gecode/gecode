@@ -40,8 +40,8 @@ namespace Gecode { namespace Set { namespace Int {
 
   void
   Match::dispose(Space* home) {
-    x0.cancel(this, PC_SET_ANY);
-    xs.cancel(this, Gecode::Int::PC_INT_BND);
+    x0.cancel(home,this, PC_SET_ANY);
+    xs.cancel(home,this, Gecode::Int::PC_INT_BND);
     Propagator::dispose(home);
   }
 

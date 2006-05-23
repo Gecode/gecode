@@ -334,8 +334,8 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   void
   Val<View, Card, isView>::dispose(Space* home) {
-    x.cancel(this, PC_INT_VAL);
-    k.cancel(this, PC_INT_VAL);
+    x.cancel(home,this, PC_INT_VAL);
+    k.cancel(home,this, PC_INT_VAL);
     Propagator::dispose(home);
   }
 

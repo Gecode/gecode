@@ -94,7 +94,7 @@ namespace Gecode {
     /// Subscribe propagator \a p with propagation condition \a pc to view
     void subscribe(Space*, Propagator* p, PropCond pc);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-    void cancel(Propagator* p, PropCond pc);
+    void cancel(Space* home, Propagator* p, PropCond pc);
     //@}
   private:
     static void* operator new(size_t);
@@ -263,7 +263,7 @@ namespace Gecode {
     /// Subscribe propagator \a p with propagation condition \a pc to all views
     void subscribe(Space* home, Propagator* p, PropCond pc);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-    void cancel(Propagator* p, PropCond pc);
+    void cancel(Space* home, Propagator* p, PropCond pc);
     //@}
 
     /// \name Cloning
@@ -372,8 +372,8 @@ namespace Gecode {
   }
   template <class Var>
   forceinline void
-  VariableViewBase<Var>::cancel(Propagator* p, PropCond pc) {
-    var->cancel(p,pc);
+  VariableViewBase<Var>::cancel(Space* home, Propagator* p, PropCond pc) {
+    var->cancel(home,p,pc);
   }
   template <class Var>
   forceinline ModEvent
@@ -555,9 +555,9 @@ namespace Gecode {
   }
   template <class View, unsigned int n>
   forceinline void
-  ViewTuple<View,n>::cancel(Propagator* p, PropCond pc) {
+  ViewTuple<View,n>::cancel(Space* home, Propagator* p, PropCond pc) {
     for (unsigned int i=0; i<n; i++)
-      x[i].cancel(p,pc);
+      x[i].cancel(home,p,pc);
   }
   template <class View, unsigned int n>
   forceinline void

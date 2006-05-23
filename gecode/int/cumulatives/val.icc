@@ -103,11 +103,11 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   template <class ViewM, class ViewD, class ViewH, class View>
   void
   Val<ViewM,ViewD,ViewH,View>::dispose(Space* home) {
-    machine.cancel(this,PC_INT_DOM);
-    start.cancel(this,PC_INT_BND);
-    duration.cancel(this,PC_INT_BND);
-    end.cancel(this,PC_INT_BND);
-    height.cancel(this,PC_INT_BND);
+    machine.cancel(home,this,PC_INT_DOM);
+    start.cancel(home,this,PC_INT_BND);
+    duration.cancel(home,this,PC_INT_BND);
+    end.cancel(home,this,PC_INT_BND);
+    height.cancel(home,this,PC_INT_BND);
     limit.~SharedArray<int>();
     Propagator::dispose(home);
   }
