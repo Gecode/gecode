@@ -703,6 +703,8 @@ stat.hh: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) \
 
 ifeq "@ENABLEDOCCHM@" "yes"
 
+DOCTARGET=GecodeReference.chm
+
 header.html: $(top_srcdir)/misc/doxygen/header.html
 	grep -v '<form.*form>' < $< > $@
 doxygen.conf.use: doxygen.conf
@@ -719,6 +721,8 @@ doc: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) $(DOCSRC)
 	mv doc/html/GecodeReference.chm GecodeReference.chm
 
 else
+
+DOCTARGET=doc/html
 ifeq "@ENABLEDOCSEARCH@" "yes"
 
 header.html: $(top_srcdir)/misc/doxygen/header.html
