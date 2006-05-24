@@ -35,6 +35,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class View>
   void
   LinBool<View>::dispose(Space* home) {
+    assert(!home->failed());
     x.cancel(home,this,PC_INT_VAL);
     y.cancel(home,this,PC_INT_BND);
     Propagator::dispose(home);

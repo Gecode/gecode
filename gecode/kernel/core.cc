@@ -87,6 +87,8 @@ namespace Gecode {
   }
 
   Space::~Space(void) {
+    // Mark space as failed
+    fail();
     // Delete actors that must be deleted
     ActorDeleteLink* e = &a_actors;
     ActorDeleteLink* a = e->next_delete();

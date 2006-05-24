@@ -133,6 +133,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class VA, class VB>
   void
   SquarePlus<VA,VB>::dispose(Space* home) {
+    assert(!home->failed());
     x0.cancel(home,this,PC_INT_BND);
     x1.cancel(home,this,PC_INT_BND);
     Propagator::dispose(home);
@@ -273,6 +274,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class VA, class VB, class VC>
   void
   MultPlus<VA,VB,VC>::dispose(Space* home) {
+    assert(!home->failed());
     x0.cancel(home,this,PC_INT_BND);
     x1.cancel(home,this,PC_INT_BND);
     x2.cancel(home,this,PC_INT_BND);

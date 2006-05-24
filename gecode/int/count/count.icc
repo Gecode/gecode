@@ -54,6 +54,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY, class VZ, class Rel, bool shr>
   inline void
   Base<VX,VY,VZ,Rel,shr>::dispose(Space* home) {
+    assert(!home->failed());
     x.cancel(home,this,r.cond());
     y.cancel(home,this,r.cond());
     z.cancel(home,this,PC_INT_BND);

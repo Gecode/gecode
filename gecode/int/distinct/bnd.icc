@@ -38,6 +38,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   void
   Bnd<View>::dispose(Space* home) {
+    assert(!home->failed());
     y.cancel(home,this,PC_INT_BND);
     Propagator::dispose(home);
   }

@@ -53,9 +53,11 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   void
   ReSubset<View0,View1>::dispose(Space* home) {
-    b.cancel(home,this, Gecode::Int::PC_INT_VAL);
-    x0.cancel(home,this, PC_SET_ANY);
-    x1.cancel(home,this, PC_SET_ANY);
+    if (!home->failed()) {
+      b.cancel(home,this, Gecode::Int::PC_INT_VAL);
+      x0.cancel(home,this, PC_SET_ANY);
+      x1.cancel(home,this, PC_SET_ANY);
+    }
     Propagator::dispose(home);
   }
 

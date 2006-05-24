@@ -313,7 +313,8 @@ namespace Gecode {
   template <class View, PropCond pc>
   void
   UnaryPropagator<View,pc>::dispose(Space* home) {
-    x0.cancel(home,this,pc);
+    if (!home->failed())
+      x0.cancel(home,this,pc);
     Propagator::dispose(home);
   }
 
@@ -358,8 +359,10 @@ namespace Gecode {
   template <class View, PropCond pc>
   void
   BinaryPropagator<View,pc>::dispose(Space* home) {
-    x0.cancel(home,this,pc);
-    x1.cancel(home,this,pc);
+    if (!home->failed()) {
+      x0.cancel(home,this,pc);
+      x1.cancel(home,this,pc);
+    }
     Propagator::dispose(home);
   }
 
@@ -407,9 +410,11 @@ namespace Gecode {
   template <class View, PropCond pc>
   void
   TernaryPropagator<View,pc>::dispose(Space* home) {
-    x0.cancel(home,this,pc);
-    x1.cancel(home,this,pc);
-    x2.cancel(home,this,pc);
+    if (!home->failed()) {
+      x0.cancel(home,this,pc);
+      x1.cancel(home,this,pc);
+      x2.cancel(home,this,pc);
+    }
     Propagator::dispose(home);
   }
 
@@ -451,7 +456,8 @@ namespace Gecode {
   template <class View, PropCond pc>
   void
   NaryPropagator<View,pc>::dispose(Space* home) {
-    x.cancel(home,this,pc);
+    if (!home->failed())
+      x.cancel(home,this,pc);
     Propagator::dispose(home);
   }
 
@@ -496,8 +502,10 @@ namespace Gecode {
   template <class View, PropCond pc>
   void
   NaryOnePropagator<View,pc>::dispose(Space* home) {
-    x.cancel(home,this,pc);
-    y.cancel(home,this,pc);
+    if (!home->failed()) {
+      x.cancel(home,this,pc);
+      y.cancel(home,this,pc);
+    }
     Propagator::dispose(home);
   }
 
@@ -544,8 +552,10 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   void
   InhomBinaryPropagator<View0,pc0,View1,pc1>::dispose(Space* home) {
-    x0.cancel(home,this,pc0);
-    x1.cancel(home,this,pc1);
+    if (!home->failed()) {
+      x0.cancel(home,this,pc0);
+      x1.cancel(home,this,pc1);
+    }
     Propagator::dispose(home);
   }
 
@@ -603,9 +613,11 @@ namespace Gecode {
   void
   InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
   dispose(Space* home) {
-    x0.cancel(home,this,pc0);
-    x1.cancel(home,this,pc1);
-    x2.cancel(home,this,pc2);
+    if (!home->failed()) {
+      x0.cancel(home,this,pc0);
+      x1.cancel(home,this,pc1);
+      x2.cancel(home,this,pc2);
+    }
     Propagator::dispose(home);
   }
 
@@ -652,8 +664,10 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   void
   InhomNaryOnePropagator<View0,pc0,View1,pc1>::dispose(Space* home) {
-    x.cancel(home,this,pc0);
-    y.cancel(home,this,pc1);
+    if (!home->failed()) {
+      x.cancel(home,this,pc0);
+      y.cancel(home,this,pc1);
+    }
     Propagator::dispose(home);
   }
 

@@ -383,7 +383,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
   }
   
   template<class View, class Tuple, bool Perm>
-  Sortedness<View, Tuple, Perm>::
+  forceinline Sortedness<View, Tuple, Perm>::
   Sortedness(Space* home, bool share, Sortedness<View, Tuple, Perm>& p):
     Propagator(home, share, p), 
     reachable(p.reachable) {
@@ -395,7 +395,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
   template<class View, class Tuple, bool Perm>
   Sortedness<View, Tuple, Perm>::
   Sortedness(Space* home, ViewArray<Tuple>& xz0, ViewArray<View>& y0):
-    Propagator(home,true), xz(xz0), y(y0), w(home, y0), reachable(-1) {
+    Propagator(home), xz(xz0), y(y0), w(home, y0), reachable(-1) {
     xz.subscribe(home, this, PC_INT_BND);
     y.subscribe(home, this, PC_INT_BND);
     
@@ -404,6 +404,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
   template<class View, class Tuple, bool Perm>
   void
   Sortedness<View, Tuple, Perm>::dispose(Space* home) {
+    assert(!home->failed());
     xz.cancel(home,this, PC_INT_BND);
     y.cancel(home,this, PC_INT_BND);
     Propagator::dispose(home);

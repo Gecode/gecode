@@ -62,7 +62,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 				   const ViewArray<ViewH>& _height, 
 				   const IntArgs& _limit, 
 				   bool _at_most) :
-    Propagator(home), machine(_machine), start(_start), duration(_duration), 
+    Propagator(home,true), 
+    machine(_machine), start(_start), duration(_duration), 
     end(_end), height(_height), limit(_limit.size()), at_most(_at_most) {
     for(int i = _limit.size(); i--; ) {
       limit[i] = _limit[i];
@@ -77,13 +78,14 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   template <class ViewM, class ViewD, class ViewH, class View>
   ExecStatus
-  Val<ViewM,ViewD,ViewH,View>::post(Space* home, const ViewArray<ViewM>& machine, 
-		  const ViewArray<View>& start, const ViewArray<ViewD>& duration, 
-		  const ViewArray<View>& end, const ViewArray<ViewH>& height, 
-		  const IntArgs& limit, bool at_most) {
+  Val<ViewM,ViewD,ViewH,View>
+  ::post(Space* home, const ViewArray<ViewM>& machine, 
+	 const ViewArray<View>& start, const ViewArray<ViewD>& duration, 
+	 const ViewArray<View>& end, const ViewArray<ViewH>& height, 
+	 const IntArgs& limit, bool at_most) {
     (void) new (home) Val(home, machine, start, duration, 
 			  end, height, limit, at_most);
-
+    
     return ES_OK;
   }
 
@@ -103,11 +105,13 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   template <class ViewM, class ViewD, class ViewH, class View>
   void
   Val<ViewM,ViewD,ViewH,View>::dispose(Space* home) {
-    machine.cancel(home,this,PC_INT_DOM);
-    start.cancel(home,this,PC_INT_BND);
-    duration.cancel(home,this,PC_INT_BND);
-    end.cancel(home,this,PC_INT_BND);
-    height.cancel(home,this,PC_INT_BND);
+    if (!home->failed()) {
+      machine.cancel(home,this,PC_INT_DOM);
+      start.cancel(home,this,PC_INT_BND);
+      duration.cancel(home,this,PC_INT_BND);
+      end.cancel(home,this,PC_INT_BND);
+      height.cancel(home,this,PC_INT_BND);
+    }
     limit.~SharedArray<int>();
     Propagator::dispose(home);
   }

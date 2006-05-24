@@ -58,9 +58,12 @@ namespace Gecode { namespace Set { namespace Select {
   template <class SView, class RView>
   void
   SelectIntersection<SView,RView>::dispose(Space* home) {
-    x0.cancel(home,this, PC_SET_ANY);
-    x1.cancel(home,this, PC_SET_ANY);
-    iv.cancel(home,this,PC_SET_ANY);
+    if (!home->failed()) {
+      x0.cancel(home,this, PC_SET_ANY);
+      x1.cancel(home,this, PC_SET_ANY);
+      iv.cancel(home,this,PC_SET_ANY);
+    }
+    universe.~IntSet();
     Propagator::dispose(home);
   }
 

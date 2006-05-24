@@ -42,6 +42,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   void
   Channel::dispose(Space* home) {
+    assert(!home->failed());
     xs.cancel(home,this, Gecode::Int::PC_INT_DOM);
     ys.cancel(home,this, PC_SET_ANY);
     Propagator::dispose(home);

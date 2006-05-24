@@ -39,6 +39,7 @@ namespace Gecode { namespace Set { namespace Select {
 
   void
   SelectDisjoint::dispose(Space* home) {
+    assert(!home->failed());
     x1.cancel(home,this, PC_SET_ANY);
     iv.cancel(home,this,PC_SET_ANY);
     Propagator::dispose(home);

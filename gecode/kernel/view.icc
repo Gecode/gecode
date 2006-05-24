@@ -42,7 +42,6 @@ namespace Gecode {
     /// Return dummy variable implementation of view
     VarBase* variable(void) const;
     //@}
-
   private:
     static void* operator new(size_t);
     static void operator delete(void*);

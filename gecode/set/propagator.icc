@@ -80,8 +80,10 @@ namespace Gecode {
   template <class View, PropCond pcs, PropCond pci>
   void
   IntSetPropagator<View,pcs,pci>::dispose(Space* home) {
-    x0.cancel(home,this,pcs);
-    x1.cancel(home,this,pci);
+    if (!home->failed()) {
+      x0.cancel(home,this,pcs);
+      x1.cancel(home,this,pci);
+    }
     Propagator::dispose(home);
   }
 
