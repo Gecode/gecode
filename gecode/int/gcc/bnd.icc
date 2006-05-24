@@ -482,7 +482,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   // for posting
   template <class View, class Card, bool isView, bool shared>
-  forceinline
+  inline
   BndImp<View, Card, isView, shared>::
   BndImp(Space* home, ViewArray<View>& x0, Card& k0, 
 	 bool cf,  bool all, bool nolbc) : 
@@ -507,7 +507,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView, bool shared>
-  forceinline
+  inline
   BndImp<View, Card, isView, shared>::
   BndImp(Space* home, bool share, BndImp<View, FixCard, isView, shared>& p)  
     : Propagator(home, share, p), k(p.k.size()), lps(NULL), ups(NULL), 
@@ -556,7 +556,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView>
-  inline ExecStatus
+  ExecStatus
   Bnd<View, Card, isView>::post(Space* home, 
 				ViewArray<View>& x0, VarCard& k0, 
 				bool all) {

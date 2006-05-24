@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
 
   template <class View, class Card, bool isView>
-  forceinline
+  inline
   Dom<View, Card, isView>::Dom(Space* home, ViewArray<View>& x0, 
 			       Card& k0, bool cf, bool all)
     : Propagator(home, true), x(x0),  y(home, x0),
@@ -59,7 +59,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   forceinline
-  Dom<View, Card, isView>::Dom(Space* home, bool share, Dom<View, VarCard, isView>& p)
+  Dom<View, Card, isView>::Dom(Space* home, bool share, 
+			       Dom<View, VarCard, isView>& p)
     : Propagator(home, share, p), vvg(NULL), 
       card_fixed(p.card_fixed), card_all(p.card_all) {
     x.update(home, share, p.x);
@@ -490,9 +491,9 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView>
-  forceinline 
-  ExecStatus Dom<View, Card, isView>::post(Space* home, ViewArray<View>& x0, 
-					    Card& k0, bool all){
+  inline ExecStatus 
+  Dom<View, Card, isView>::post(Space* home, ViewArray<View>& x0, 
+				Card& k0, bool all){
 
     bool cardfix = true;
     for (int i = k0.size(); i--; ) {

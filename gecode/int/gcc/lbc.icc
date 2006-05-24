@@ -43,7 +43,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
 
   template <class View, class Card, bool shared>
-  forceinline ExecStatus 
+  inline ExecStatus 
   lbc(Space* home, ViewArray<View>& x, int& nb, 
       HallInfo hall[], Rank rank[],
       PartialSum<Card>* lps,

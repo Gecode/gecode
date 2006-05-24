@@ -21,7 +21,7 @@
 namespace Gecode { namespace Int { namespace GCC {
   /// \brief Perform value propagation.  
   template <class View, class Card, bool isView>
-  forceinline ExecStatus
+  inline ExecStatus
   prop_val(Space* home, ViewArray<View>& x, Card& k, bool& _cardall){
 
     bool mod = false;
@@ -305,7 +305,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
 
   template <class View, class Card, bool isView>
-  forceinline
+  inline
   Val<View, Card, isView>::Val(Space* home, ViewArray<View>& x0, Card& k0, 
 			       bool all)
     :Propagator(home,true), x(x0), k(k0), card_all(all){

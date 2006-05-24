@@ -142,7 +142,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
 
   template <class View, class Card>
-  forceinline bool
+  inline bool
   card_consistent(int& smin, int& smax, ViewArray<View>& x, Card& k, bool& all) {
     
     int m = k.size();
@@ -301,7 +301,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * 
    */
   template <class Card>
-  forceinline 
+  inline 
   PartialSum<Card>::PartialSum(int first,
 			       int count, 
 			       Card& elements, 
@@ -379,14 +379,11 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class Card>
   forceinline int 
   PartialSum<Card>::sumup(int from, int to){
-    int result = 0;
     if (from <= to) {
-      result = sum[to - firstValue] - sum[from - firstValue - 1];
+      return sum[to - firstValue] - sum[from - firstValue - 1];
+    } else {
+      return sum[to - firstValue - 1] - sum[from - firstValue];
     }
-    else {
-      result = sum[to - firstValue - 1] - sum[from - firstValue];
-    }
-    return result;
   }
 
   /**
@@ -437,7 +434,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /// \brief Debugging: print a partial sum structure
   template <class Card>
-  forceinline void
+  void
   PartialSum<Card>::print(void){
     std::cout << "----------\n";
     std::cout << "smallest elem = "<< minValue() << " - "
@@ -473,7 +470,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
 
   template <class Card>
-  forceinline bool
+  inline bool
   PartialSum<Card>::check_update_max(Card& k){
     if (k.size() <= size - 5) {
       return true; 
@@ -496,7 +493,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
 
   template <class Card>
-  forceinline bool
+  inline bool
   PartialSum<Card>::check_update_min(Card& k){
     if (k.size() <= size - 5) {
       return true; 
@@ -696,7 +693,8 @@ namespace Gecode { namespace Int { namespace GCC {
    */
 
   template <class Card>
-  void reduce_card(int cmin, int cmax, Card& k) {
+  void 
+  reduce_card(int cmin, int cmax, Card& k) {
     if (cmin == cmax) {
       int idx = 0;
       while (k[idx].card() != cmax) {

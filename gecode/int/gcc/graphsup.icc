@@ -32,7 +32,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /// Debugging: print a view
   template <class View>
-  void pview(View& v){
+  void 
+  pview(View& v){
     if (v.min() == v.max()) {
       std::cout << v.min() <<" ";
     } else {
@@ -448,7 +449,7 @@ namespace Gecode { namespace Int { namespace GCC {
   };
 
   /// Debugging: print a variable node
-  forceinline std::ostream&
+  inline std::ostream&
   operator<<(std::ostream& os, VarNode* v) {
     os << v->var<<":{";
     for (Edge* e = v->first(); e != NULL; e = e->next()) {
@@ -460,7 +461,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   /// Debugging: print a value node
-  forceinline std::ostream&
+  inline std::ostream&
   operator<<(std::ostream& os, ValNode* v) {
     os << v->val<<":{";
     for (Edge* e = v->first(); e != NULL; e = e->vnext()) {
@@ -1010,7 +1011,7 @@ namespace Gecode { namespace Int { namespace GCC {
   
   /// Edge
   /// Debugging: print an edge 
-  forceinline std::ostream&
+  inline std::ostream&
   operator<<(std::ostream& os, Edge* e){
     if (e== NULL) {
       os << "(N)";
@@ -1397,7 +1398,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   template <class View, class Card, bool isView>
-  forceinline bool 
+  inline bool 
   VarValGraph<View, Card, isView>::min_require(Space* home){
     bool modified = false;
     for (int i = n_val; i--; ) {
@@ -1487,7 +1488,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView>
-  forceinline bool 
+  inline bool 
   VarValGraph<View, Card, isView>::sync(void){
     GECODE_AUTOARRAY(VVGNode*, re, node_size);
     int n_re = 0;
@@ -1715,7 +1716,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   
   template <class View, class Card, bool isView> 
-  forceinline bool
+  inline bool
   VarValGraph<View, Card, isView>::stagedsync(Space* home){
     // nodes to repair
     GECODE_AUTOARRAY(VVGNode*, re, node_size);
@@ -1922,7 +1923,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView> template <BC direction>
-  forceinline bool 
+  inline bool 
   VarValGraph<View, Card, isView>::narrow(Space* home){
 
     bool shared  = false;
@@ -2074,7 +2075,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView>  template <BC direction>
-  forceinline bool 
+  inline bool 
   VarValGraph<View, Card, isView>::maximum_matching(void){
 
     int required_size = 0;
@@ -2147,7 +2148,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView> template<BC direction>
-  forceinline bool
+  inline bool
   VarValGraph<View, Card, isView>::augmenting_path(VVGNode* v){
     Support::StaticStack<VVGNode*> ns(node_size);
     GECODE_AUTOARRAY(bool, visited, node_size);
@@ -2256,7 +2257,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
     
   template <class View, class Card, bool isView> template<BC direction>
-  forceinline void
+  inline void
   VarValGraph<View, Card, isView>::free_alternating_paths(void){
     Support::StaticStack<VVGNode*> ns(node_size);
     GECODE_AUTOARRAY(bool, visited, node_size);
@@ -2364,7 +2365,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView> template <BC direction>
-  forceinline void
+  inline void
   VarValGraph<View, Card, isView>::dfs(VVGNode* v, 
 				       bool inscc[], 
 				       bool in_unfinished[], 
@@ -2442,7 +2443,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
   
   template <class View, class Card, bool isView> template <BC direction>
-  forceinline void
+  inline void
   VarValGraph<View, Card, isView>::strongly_connected_components(void){
     GECODE_AUTOARRAY(bool, inscc, node_size);
     GECODE_AUTOARRAY(bool, in_unfinished,  node_size);
@@ -2466,7 +2467,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   template <class View, class Card, bool isView> 
-  forceinline void
+  void
   VarValGraph<View, Card, isView>::print_match(void) {
     print_matching<UBC>();
     print_matching<LBC>();
@@ -2474,7 +2475,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   template <class View, class Card, bool isView> 
-  forceinline void
+  void
   VarValGraph<View, Card, isView>::print_edges(void) {
     for (int i = 0; i < n_var; i++) {
       std::cout << vars[i]->var<<": ";
@@ -2507,7 +2508,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   // for debugging purposes
   template <class View, class Card, bool isView> template <BC direction>
-  forceinline void
+  void
   VarValGraph<View, Card, isView>::print_matching(void) {
     if (direction == UBC) {
       std::cout << "UBM - check:\n";
@@ -2549,7 +2550,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView>
-  forceinline void
+  void
   VarValGraph<View, Card, isView>::print_graph(void) {
     std::cout << "Graph-size = "<<node_size<<" ";
     std::cout << "sum_min ="<<sum_min << " & "
