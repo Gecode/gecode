@@ -289,8 +289,6 @@ namespace Gecode {
       //@{
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, ConstantView& x);
-      /// Whether this view needs to be destructed
-      static bool needdestruction(void);
       //@}
     };
 
@@ -318,7 +316,6 @@ namespace Gecode {
     /// The variable type of a ConstantView
     typedef VarBase Var;
   };
-
 
   namespace Set {
 
@@ -611,7 +608,6 @@ namespace Gecode {
     typedef VarBase Var;
   };
 
-
   namespace Set {
 
 
@@ -771,7 +767,6 @@ namespace Gecode {
     typedef Int::IntVarImp Var;
   };
 
-
   namespace Set {
 
 
@@ -904,8 +899,6 @@ namespace Gecode {
       //@{
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, ComplementView& x);
-      /// Whether this view needs to be destructed
-      static bool needdestruction(void);
       //@}
     };
 

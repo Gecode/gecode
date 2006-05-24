@@ -252,12 +252,6 @@ namespace Gecode { namespace Set {
     view.update(home,share,y.view);
   }
 
-  template <class View>
-  forceinline bool
-  ComplementView<View>::needdestruction(void) {
-    return View::needdestruction();
-  }
-
   /*
    * Specialization for double negation
    *

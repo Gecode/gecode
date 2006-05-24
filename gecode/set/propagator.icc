@@ -30,6 +30,8 @@ namespace Gecode {
    */
 
   //@{
+
+
   /**
    * \brief Set/Int connection propagator
    *
@@ -57,7 +59,7 @@ namespace Gecode {
   template <class View, PropCond pcs, PropCond pci>
   IntSetPropagator<View,pcs,pci>::IntSetPropagator
   (Space* home, View y0, Gecode::Int::IntView y1, bool fd)
-    : Propagator(home,fd || View::needdestruction()), x0(y0), x1(y1) {
+    : Propagator(home,fd), x0(y0), x1(y1) {
     x0.subscribe(home,this,pcs);
     x1.subscribe(home,this,pci);
   }

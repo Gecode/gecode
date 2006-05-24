@@ -37,8 +37,6 @@ namespace Gecode {
     unsigned int degree(void) const;
     /// Return whether this view is derived from a VariableViewBase
     static bool varderived(void);
-    /// Return whether this view needs destruction
-    static bool needdestruction(void);
     /// Return dummy variable implementation of view
     VarBase* variable(void) const;
     //@}
@@ -68,8 +66,6 @@ namespace Gecode {
     //@{
     /// Return whether this view is derived from a VariableViewBase
     static bool varderived(void);
-    /// Return whether this view needs destruction
-    static bool needdestruction(void);
     /// Return variable implementation of view
     Var* variable(void) const;
     /// Test whether view has been modified during propagation
@@ -146,8 +142,6 @@ namespace Gecode {
     //@{
     /// Return whether this view is derived from a VariableViewBase
     static bool varderived(void);
-    /// Return whether this view needs destruction
-    static bool needdestruction(void);
     /// Return variable implementation of view
     Var* variable(void) const;
     /// Return view from which this view is derived
@@ -243,12 +237,6 @@ namespace Gecode {
     ViewTuple(void);
     //@}
      
-    /// \name Generic view information
-    //@{
-    /// Return whether this view needs destruction
-    static bool needdestruction(void);
-    //@}
-
     /// \name Component access
     //@{
     /// Return \a i-th component of tuple
@@ -318,10 +306,6 @@ namespace Gecode {
   ConstantViewBase::varderived(void) {
     return false;
   }
-  forceinline bool
-  ConstantViewBase::needdestruction(void) {
-    return false;
-  }
   forceinline VarBase*
   ConstantViewBase::variable(void) const {
     return NULL;
@@ -343,11 +327,6 @@ namespace Gecode {
   forceinline bool
   VariableViewBase<Var>::varderived(void) {
     return true;
-  }
-  template <class Var>
-  forceinline bool
-  VariableViewBase<Var>::needdestruction(void) {
-    return false;
   }
   template <class Var>
   forceinline Var*
@@ -419,12 +398,6 @@ namespace Gecode {
   forceinline bool
   DerivedViewBase<View>::varderived(void) {
     return View::varderived();
-  }
-
-  template <class View>
-  forceinline bool
-  DerivedViewBase<View>::needdestruction(void) {
-    return View::needdestruction();
   }
 
   template <class View>
@@ -538,12 +511,6 @@ namespace Gecode {
   ViewTuple<View,n>::operator[](unsigned int i) {
     assert((i>=0)&&(i<n));
     return x[i];
-  }
-
-  template <class View, unsigned int n>  
-  forceinline bool
-  ViewTuple<View,n>::needdestruction(void) {
-    return View::needdestruction();
   }
 
   template <class View, unsigned int n>

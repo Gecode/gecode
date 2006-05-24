@@ -284,7 +284,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   UnaryPropagator<View,pc>::UnaryPropagator
   (Space* home, View y0, bool fd)
-    : Propagator(home,fd || View::needdestruction()), x0(y0) {
+    : Propagator(home,fd), x0(y0) {
     x0.subscribe(home,this,pc);
   }
 
@@ -327,7 +327,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   BinaryPropagator<View,pc>::BinaryPropagator
   (Space* home, View y0, View y1, bool fd)
-    : Propagator(home,fd || View::needdestruction()), x0(y0), x1(y1) {
+    : Propagator(home,fd), x0(y0), x1(y1) {
     x0.subscribe(home,this,pc);
     x1.subscribe(home,this,pc);
   }
@@ -375,7 +375,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   TernaryPropagator<View,pc>::TernaryPropagator
   (Space* home, View y0, View y1, View y2, bool fd)
-    : Propagator(home,fd || View::needdestruction()), x0(y0), x1(y1), x2(y2) {
+    : Propagator(home,fd), x0(y0), x1(y1), x2(y2) {
     x0.subscribe(home,this,pc);
     x1.subscribe(home,this,pc);
     x2.subscribe(home,this,pc);
@@ -427,7 +427,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   NaryPropagator<View,pc>::NaryPropagator
   (Space* home, ViewArray<View>& y, bool fd)
-    : Propagator(home,fd || View::needdestruction()), x(y) {
+    : Propagator(home,fd), x(y) {
     x.subscribe(home,this,pc);
   }
 
@@ -470,7 +470,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   NaryOnePropagator<View,pc>::NaryOnePropagator
   (Space* home, ViewArray<View>& x0, View y0, bool fd)
-    : Propagator(home,fd || View::needdestruction()), x(x0), y(y0) {
+    : Propagator(home,fd), x(x0), y(y0) {
     x.subscribe(home,this,pc);
     y.subscribe(home,this,pc);
   }
@@ -518,9 +518,7 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   InhomBinaryPropagator<View0,pc0,View1,pc1>::InhomBinaryPropagator
   (Space* home, View0 y0, View1 y1, bool fd)
-    : Propagator(home,
-		 fd || View0::needdestruction() || View1::needdestruction()),
-      x0(y0), x1(y1) {
+    : Propagator(home,fd), x0(y0), x1(y1) {
     x0.subscribe(home,this,pc0);
     x1.subscribe(home,this,pc1);
   }
@@ -569,9 +567,7 @@ namespace Gecode {
 	    class View2, PropCond pc2>
   InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
   InhomTernaryPropagator(Space* home, View0 y0, View1 y1, View2 y2, bool fd)
-    : Propagator(home,
-		 fd || View0::needdestruction() || View1::needdestruction() || 
-		 View2::needdestruction()), x0(y0), x1(y1), x2(y2) {
+    : Propagator(home,fd), x0(y0), x1(y1), x2(y2) {
     x0.subscribe(home,this,pc0);
     x1.subscribe(home,this,pc1);
     x2.subscribe(home,this,pc2);
@@ -630,9 +626,7 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   InhomNaryOnePropagator<View0,pc0,View1,pc1>::InhomNaryOnePropagator
   (Space* home, ViewArray<View0>& x0, View1 y0, bool fd)
-    : Propagator(home,
-		 fd || View0::needdestruction() || View1::needdestruction()),
-      x(x0), y(y0) {
+    : Propagator(home,fd), x(x0), y(y0) {
     x.subscribe(home,this,pc0);
     y.subscribe(home,this,pc1);
   }
