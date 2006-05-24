@@ -394,7 +394,7 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
      AC_GECODE_ADD_TO_CXXFLAGS(-ggdb),
      AC_GECODE_CHECK_CXXFLAG(-g))
 
-  AC_SUBST(docdir, "${datadir}/doc")
+  AC_SUBST(docdir, "${datadir}/doc/gecode")
 
   dnl file extensions
   AC_SUBST(SBJEXT, "s")
