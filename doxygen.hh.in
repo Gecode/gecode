@@ -654,8 +654,8 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *
  * We currently support
  *   - the Microsoft Visual C++ compilers for Windows. The Microsoft
- *     Visual C++ toolkit is available free of charge from
- *     <a href="http://msdn.microsoft.com/visualc/vctoolkit2003/">the MSDN
+ *     Visual C++ 2005 Express Edition is available free of charge from
+ *     <a href="http://msdn.microsoft.com/vstudio/express/visualc/">the MSDN
  *     web pages</a>. 
  *   - the GNU Compiler Collection (gcc) for Windows and Unix flavors such as
  *     Linux and MacOS X. The GNU gcc is open source software and available
