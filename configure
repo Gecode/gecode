@@ -4879,7 +4879,7 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
-  docdir="${datadir}/doc"
+  docdir="${datadir}/doc/gecode"
 
 
     SBJEXT="s"
@@ -5419,7 +5419,7 @@ _ACEOF
 
 
   if test "${enable_debug:-no}" = "no"; then
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox"
+        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox -fp:fast"
 
         DLLFLAGS="${CXXFLAGS} -LD"
 
@@ -5837,7 +5837,7 @@ ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ex
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 
 
-  docdir="${datadir}/doc"
+  docdir="${datadir}/doc/gecode"
 
 
     SBJEXT="s"
@@ -6174,7 +6174,7 @@ _ACEOF
 
 
   if test "${enable_debug:-no}" = "no"; then
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox"
+        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox -fp:fast"
 
         DLLFLAGS="${CXXFLAGS} -LD"
 
