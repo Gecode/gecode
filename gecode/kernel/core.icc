@@ -415,8 +415,12 @@ namespace Gecode {
     /// No-op for exceptions
     static void  operator delete(void* p, Space* home);
   private:
+#ifndef __GNUC__
     /// Not used (uses dispose instead)
     static void  operator delete(void* p, size_t s);
+#endif
+    /// Not used
+    static void* operator new(size_t s);
     /// Destruct: unlink, dispose, and reclaim memory
     void destruct(Space* home);
     //@}
@@ -424,6 +428,8 @@ namespace Gecode {
   public:
     /// To avoid warnings from GCC
     virtual ~Actor(void) {}
+    /// Not used (uses dispose instead)
+    static void  operator delete(void* p, size_t s);
 #endif
   };
 
