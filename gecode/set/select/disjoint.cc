@@ -37,12 +37,13 @@ namespace Gecode { namespace Set { namespace Select {
     return PC_QUADRATIC_LO;
   }
 
-  void
+  size_t
   SelectDisjoint::dispose(Space* home) {
     assert(!home->failed());
     x1.cancel(home,this, PC_SET_ANY);
     iv.cancel(home,this,PC_SET_ANY);
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
   Actor*

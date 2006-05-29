@@ -400,9 +400,9 @@ namespace Gecode {
   public:
     /// Create copy
     virtual Actor* copy(Space*,bool) = 0;
-    /// Delete actor
+    /// Delete actor and return its size
     GECODE_KERNEL_EXPORT 
-    virtual void dispose(Space* home);
+    virtual size_t dispose(Space* home);
 
     /// \name Memory management
     //@{
@@ -414,10 +414,14 @@ namespace Gecode {
     static void* operator new(size_t s, Space* home);
     /// No-op for exceptions
     static void  operator delete(void* p, Space* home);
-    /// Used for reclaiming memory
+  private:
+    /// Not used (uses dispose instead)
     static void  operator delete(void* p, size_t s);
+    /// Destruct: unlink, dispose, and reclaim memory
+    void destruct(Space* home);
     //@}
 #ifdef __GNUC__
+  public:
     /// To avoid warnings from GCC
     virtual ~Actor(void) {}
 #endif
@@ -823,6 +827,8 @@ namespace Gecode {
      * Note that this function takes linear time in the number of 
      * propagators. The number is only accurate when the space is
      * stable (that is, at fixpoint and all propagation is done).
+     *
+     * Throws an exception of type SpaceFailed, if the space is failed.
      */
     GECODE_KERNEL_EXPORT
     unsigned int propagators(void) const;
@@ -830,6 +836,8 @@ namespace Gecode {
      * \brief Return number of branchings
      *
      * Note that this function takes linear time in the number of branchings.
+     *
+     * Throws an exception of type SpaceFailed, if the space is failed.
      */
     GECODE_KERNEL_EXPORT
     unsigned int branchings(void) const;
@@ -932,9 +940,7 @@ namespace Gecode {
    */
 
   forceinline void
-  Actor::operator delete(void* p, size_t s) {
-    static_cast<MemoryManager::ReuseChunk*>(p)->size = s;
-  }
+  Actor::operator delete(void* p, size_t s) {}
   forceinline void
   Actor::operator delete(void*,Space*) {}
   forceinline void*
@@ -1033,8 +1039,17 @@ namespace Gecode {
 
 
 
+  forceinline size_t
+  Actor::dispose(Space*) {
+    return sizeof(*this);
+  }
+
   forceinline void
-  Actor::dispose(Space*) {}
+  Actor::destruct(Space* home) {
+    unlink_delete();
+    size_t s = dispose(home);
+    home->reuse(this,s);
+  }
 
 
 

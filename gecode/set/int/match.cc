@@ -38,12 +38,13 @@ namespace Gecode { namespace Set { namespace Int {
     return PC_LINEAR_LO;
   }
 
-  void
+  size_t
   Match::dispose(Space* home) {
     assert(!home->failed());
     x0.cancel(home,this, PC_SET_ANY);
     xs.cancel(home,this, Gecode::Int::PC_INT_BND);
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
   Actor*

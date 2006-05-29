@@ -67,7 +67,8 @@ What:   change
 Rank:   major
 [DESCRIPTION]
 Actors (propagators and branchings) do not any longer use destructors
-but a "dispose" member function that takes a home space as argument.
+but a "dispose" member function that takes a home space as argument
+and must return the size of the actor.
 Important: this requires that dispose member functions from super-classes
 and class members are called explicitly!
 	

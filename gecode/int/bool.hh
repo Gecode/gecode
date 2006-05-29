@@ -54,8 +54,8 @@ namespace Gecode { namespace Int { namespace Bool {
   public:
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(void) const;
-    /// Delete propagator
-    virtual void dispose(Space* home);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
 
   /// Base-class for ternary Boolean propagators
@@ -75,8 +75,8 @@ namespace Gecode { namespace Int { namespace Bool {
 		BVA b0, BVB b1, BVC b2);
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
-    /// Delete propagator
-    virtual void dispose(Space* home);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
 
   /**

@@ -58,12 +58,13 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BVA, class BVB>
-  void
+  size_t
   BoolBinary<BVA,BVB>::dispose(Space* home) {
     assert(!home->failed());
     x0.cancel(home,this,PC_INT_VAL);
     x1.cancel(home,this,PC_INT_VAL);
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
   /*
@@ -107,13 +108,14 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BVA, class BVB, class BVC>
-  void
+  size_t
   BoolTernary<BVA,BVB,BVC>::dispose(Space* home) {
     assert(!home->failed());
     x0.cancel(home,this,PC_INT_VAL);
     x1.cancel(home,this,PC_INT_VAL);
     x2.cancel(home,this,PC_INT_VAL);
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
 }}}

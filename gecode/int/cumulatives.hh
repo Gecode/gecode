@@ -97,7 +97,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 		     const std::vector<int>& contribution, 
 		     std::list<int>& prune_tasks);
   public:
-    virtual void dispose(Space* home);
+    virtual size_t dispose(Space* home);
     virtual Actor*     copy(Space* home, bool share);
     virtual PropCost   cost(void) const;
     virtual ExecStatus propagate(Space* home);

@@ -299,10 +299,11 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   template <class View>
-  void
+  size_t
   Dom<View>::dispose(Space* home) {
     dc.dispose();
-    Base<DomInfo<View>,PC_INT_DOM>::dispose(home);
+    (void) Base<DomInfo<View>,PC_INT_DOM>::dispose(home);
+    return sizeof(*this);
   }
 
 

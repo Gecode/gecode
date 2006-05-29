@@ -103,7 +103,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   } 
 
   template <class ViewM, class ViewD, class ViewH, class View>
-  void
+  size_t
   Val<ViewM,ViewD,ViewH,View>::dispose(Space* home) {
     if (!home->failed()) {
       machine.cancel(home,this,PC_INT_DOM);
@@ -113,7 +113,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
       height.cancel(home,this,PC_INT_BND);
     }
     limit.~SharedArray<int>();
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
   
   template <class ViewM, class ViewD, class ViewH, class View>

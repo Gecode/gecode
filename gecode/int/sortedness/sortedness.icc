@@ -402,12 +402,13 @@ namespace Gecode { namespace Int { namespace Sortedness {
   }
 
   template<class View, class Tuple, bool Perm>
-  void
+  size_t
   Sortedness<View, Tuple, Perm>::dispose(Space* home) {
     assert(!home->failed());
     xz.cancel(home,this, PC_INT_BND);
     y.cancel(home,this, PC_INT_BND);
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
   template<class View, class Tuple, bool Perm>

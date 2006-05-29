@@ -27,8 +27,7 @@ namespace Gecode { namespace Set { namespace Rel {
   forceinline
   ReSubset<View0,View1>::ReSubset(Space* home, View0 y0,
 				  View1 y1, Gecode::Int::BoolView y2)
-    : Propagator(home, false), x0(y0), x1(y1), b(y2) {
-
+    : Propagator(home), x0(y0), x1(y1), b(y2) {
     b.subscribe(home,this, Gecode::Int::PC_INT_VAL);
     x0.subscribe(home,this, PC_SET_ANY);
     x1.subscribe(home,this, PC_SET_ANY);
@@ -50,14 +49,14 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template <class View0, class View1>
-  void
+  size_t
   ReSubset<View0,View1>::dispose(Space* home) {
-    if (!home->failed()) {
-      b.cancel(home,this, Gecode::Int::PC_INT_VAL);
-      x0.cancel(home,this, PC_SET_ANY);
-      x1.cancel(home,this, PC_SET_ANY);
-    }
-    Propagator::dispose(home);
+    assert(!home->failed());
+    b.cancel(home,this, Gecode::Int::PC_INT_VAL);
+    x0.cancel(home,this, PC_SET_ANY);
+    x1.cancel(home,this, PC_SET_ANY);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
   template <class View0, class View1>

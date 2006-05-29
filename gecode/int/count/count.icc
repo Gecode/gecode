@@ -52,13 +52,14 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, class Rel, bool shr>
-  inline void
+  size_t
   Base<VX,VY,VZ,Rel,shr>::dispose(Space* home) {
     assert(!home->failed());
     x.cancel(home,this,r.cond());
     y.cancel(home,this,r.cond());
     z.cancel(home,this,PC_INT_BND);
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
   template <class VX, class VY, class VZ, class Rel, bool shr>

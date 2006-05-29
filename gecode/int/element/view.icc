@@ -136,14 +136,15 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class ViewA, class ViewB, PropCond pcb>
-  void
+  size_t
   View<ViewA,ViewB,pcb>::dispose(Space* home) {
     assert(!home->failed());
     x0.cancel(home,this,PC_INT_DOM);
     x1.cancel(home,this,pcb);
     for (int i=n; i--;)
       iv[i].view.cancel(home,this,pcb);
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
 

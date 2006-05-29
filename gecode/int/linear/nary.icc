@@ -67,12 +67,13 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N, PropCond pc>
-  void
+  forceinline size_t
   Lin<Val,P,N,pc>::dispose(Space* home) {
     assert(!home->failed());
     x.cancel(home,this,pc);
     y.cancel(home,this,pc);
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
 
@@ -97,11 +98,12 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N, PropCond pc, class Ctrl>
-  inline void
+  size_t
   ReLin<Val,P,N,pc,Ctrl>::dispose(Space* home) {
     assert(!home->failed());
     b.cancel(home,this,PC_INT_VAL);
-    Lin<Val,P,N,pc>::dispose(home);
+    (void) Lin<Val,P,N,pc>::dispose(home);
+    return sizeof(*this);
   }
 
 

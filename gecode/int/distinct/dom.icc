@@ -720,10 +720,11 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  void
+  size_t
   Dom<View>::dispose(Space* home) {
     dc.dispose();
-    NaryPropagator<View,PC_INT_DOM>::dispose(home);
+    (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
+    return sizeof(*this);
   }
 
 }}}

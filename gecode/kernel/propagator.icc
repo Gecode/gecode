@@ -68,8 +68,8 @@ namespace Gecode {
   public:
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(void) const;
-    /// Delete propagator
-    virtual void dispose(Space* home);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
 
   /**
@@ -92,8 +92,8 @@ namespace Gecode {
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
-    /// Delete propagator
-    virtual void dispose(Space* home);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
 
   /**
@@ -116,8 +116,8 @@ namespace Gecode {
   public:
     /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(void) const;
-    /// Delete propagator
-    virtual void dispose(Space* home);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
 
   /**
@@ -140,8 +140,8 @@ namespace Gecode {
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
-    /// Delete propagator
-    virtual void dispose(Space* home);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
 
   /**
@@ -167,8 +167,8 @@ namespace Gecode {
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
-    /// Delete propagator
-    virtual void dispose(Space* home);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
 
   /**
@@ -192,8 +192,8 @@ namespace Gecode {
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
-    /// Delete propagator
-    virtual void dispose(Space* home);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
 
   /**
@@ -219,8 +219,8 @@ namespace Gecode {
   public:
     /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(void) const;
-    /// Delete propagator
-    virtual void dispose(Space* home);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
 
   /**
@@ -247,8 +247,8 @@ namespace Gecode {
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
-    /// Delete propagator
-    virtual void dispose(Space* home);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
   //@}
 
@@ -311,11 +311,12 @@ namespace Gecode {
   }
 
   template <class View, PropCond pc>
-  void
+  size_t
   UnaryPropagator<View,pc>::dispose(Space* home) {
     if (!home->failed())
       x0.cancel(home,this,pc);
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
 
@@ -357,13 +358,14 @@ namespace Gecode {
   }
 
   template <class View, PropCond pc>
-  void
+  size_t
   BinaryPropagator<View,pc>::dispose(Space* home) {
     if (!home->failed()) {
       x0.cancel(home,this,pc);
       x1.cancel(home,this,pc);
     }
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
 
@@ -408,14 +410,15 @@ namespace Gecode {
   }
 
   template <class View, PropCond pc>
-  void
+  size_t
   TernaryPropagator<View,pc>::dispose(Space* home) {
     if (!home->failed()) {
       x0.cancel(home,this,pc);
       x1.cancel(home,this,pc);
       x2.cancel(home,this,pc);
     }
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
 
@@ -454,11 +457,12 @@ namespace Gecode {
   }
 
   template <class View, PropCond pc>
-  void
+  size_t
   NaryPropagator<View,pc>::dispose(Space* home) {
     if (!home->failed())
       x.cancel(home,this,pc);
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
 
@@ -500,13 +504,14 @@ namespace Gecode {
   }
 
   template <class View, PropCond pc>
-  void
+  size_t
   NaryOnePropagator<View,pc>::dispose(Space* home) {
     if (!home->failed()) {
       x.cancel(home,this,pc);
       y.cancel(home,this,pc);
     }
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
 
@@ -548,13 +553,14 @@ namespace Gecode {
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
-  void
+  size_t
   InhomBinaryPropagator<View0,pc0,View1,pc1>::dispose(Space* home) {
     if (!home->failed()) {
       x0.cancel(home,this,pc0);
       x1.cancel(home,this,pc1);
     }
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
 
@@ -606,7 +612,7 @@ namespace Gecode {
 
   template <class View0, PropCond pc0, class View1, PropCond pc1,
 	    class View2, PropCond pc2>
-  void
+  size_t
   InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
   dispose(Space* home) {
     if (!home->failed()) {
@@ -614,7 +620,8 @@ namespace Gecode {
       x1.cancel(home,this,pc1);
       x2.cancel(home,this,pc2);
     }
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
 
@@ -656,13 +663,14 @@ namespace Gecode {
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
-  void
+  size_t
   InhomNaryOnePropagator<View0,pc0,View1,pc1>::dispose(Space* home) {
     if (!home->failed()) {
       x.cancel(home,this,pc0);
       y.cancel(home,this,pc1);
     }
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
 }

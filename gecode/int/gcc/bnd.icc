@@ -518,7 +518,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView, bool shared>
-  void
+  size_t
   BndImp<View, Card, isView, shared>::dispose(Space* home){
     if (!home->failed()) {
       y.cancel(home,this, PC_INT_BND);
@@ -526,7 +526,8 @@ namespace Gecode { namespace Int { namespace GCC {
     }
     delete lps;
     delete ups;
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
   template <class View, class Card, bool isView, bool shared>

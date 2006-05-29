@@ -310,7 +310,7 @@ namespace Gecode { namespace Int { namespace Element {
 
 
   template <class ViewA, class ViewB>
-  void
+  size_t
   Int<ViewA,ViewB>::dispose(Space* home) {
     if (!home->failed()) {
       x0.cancel(home,this,PC_INT_DOM);
@@ -318,7 +318,8 @@ namespace Gecode { namespace Int { namespace Element {
     }
     c.~IntSharedArray();
     delete ivm;
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
   template <class ViewA, class ViewB>

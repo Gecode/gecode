@@ -50,8 +50,8 @@ namespace Gecode {
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
-    /// Delete propagator
-    virtual void dispose(Space* home);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
 
   //@}
@@ -80,13 +80,14 @@ namespace Gecode {
   }
 
   template <class View, PropCond pcs, PropCond pci>
-  void
+  size_t
   IntSetPropagator<View,pcs,pci>::dispose(Space* home) {
     if (!home->failed()) {
       x0.cancel(home,this,pcs);
       x1.cancel(home,this,pci);
     }
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
 }

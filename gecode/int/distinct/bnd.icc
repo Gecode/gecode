@@ -36,11 +36,12 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  void
+  size_t
   Bnd<View>::dispose(Space* home) {
     assert(!home->failed());
     y.cancel(home,this,PC_INT_BND);
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
   template <class View>

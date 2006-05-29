@@ -56,7 +56,7 @@ namespace Gecode { namespace Set { namespace Select {
   }
 
   template <class SView, class RView>
-  void
+  size_t
   SelectIntersection<SView,RView>::dispose(Space* home) {
     if (!home->failed()) {
       x0.cancel(home,this, PC_SET_ANY);
@@ -64,7 +64,8 @@ namespace Gecode { namespace Set { namespace Select {
       iv.cancel(home,this,PC_SET_ANY);
     }
     universe.~IntSet();
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
   template <class SView, class RView>

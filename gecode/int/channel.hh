@@ -52,8 +52,8 @@ namespace Gecode { namespace Int { namespace Channel {
   public:
     /// Propagation cost
     virtual PropCost cost(void) const;
-    /// Delete propagator
-    virtual void dispose(Space* home);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
 
 
@@ -127,8 +127,8 @@ namespace Gecode { namespace Int { namespace Channel {
     virtual void flush(void);
     /// Returns size of propagation controller
     virtual size_t size(void) const;
-    /// Delete propagator
-    virtual void dispose(Space* home);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
 
 }}}

@@ -40,12 +40,13 @@ namespace Gecode { namespace Set { namespace Int {
     return PC_QUADRATIC_LO;
   }
 
-  void
+  size_t
   Channel::dispose(Space* home) {
     assert(!home->failed());
     xs.cancel(home,this, Gecode::Int::PC_INT_DOM);
     ys.cancel(home,this, PC_SET_ANY);
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
   Actor*

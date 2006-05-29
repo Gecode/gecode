@@ -332,13 +332,14 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView>
-  void
+  size_t
   Val<View, Card, isView>::dispose(Space* home) {
     if (!home->failed()) {
       x.cancel(home,this, PC_INT_VAL);
       k.cancel(home,this, PC_INT_VAL);
     }
-    Propagator::dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
   }
 
   template <class View, class Card, bool isView>

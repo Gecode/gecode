@@ -55,8 +55,8 @@ namespace Gecode { namespace Int { namespace Count {
     /// Constructor for creation
     Base(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
   public:
-    /// Delete propagator
-    virtual void dispose(Space* home);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
   protected:
