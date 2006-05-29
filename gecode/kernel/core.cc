@@ -186,10 +186,7 @@ namespace Gecode {
 	  // Prevent that propagator gets rescheduled (turn on all events)
 	  p->pme = PME_ASSIGNED;
 	  process();
-	  p->unlink_delete();
-	  p->dispose(this);
-	  delete p;
-	  mm.reuse(reinterpret_cast<MemoryManager::ReuseChunk*>(p));
+	  p->destruct(this);
 	}
 	break;
       case __ES_FIX_PARTIAL:
@@ -231,10 +228,7 @@ namespace Gecode {
       Branching* b = b_fst;
       b_fst = static_cast<Branching*>(b->next());
       b->unlink();
-      b->unlink_delete();
-      b->dispose(this);
-      delete b;
-      mm.reuse(reinterpret_cast<MemoryManager::ReuseChunk*>(b));
+      b->destruct(this);
     }
     return 0;
   }
@@ -296,8 +290,7 @@ namespace Gecode {
 	Branching* b = b_fst;
 	b_fst = static_cast<Branching*>(b_fst->next());
 	b->unlink();
-	b->unlink_delete();
-	b->dispose(this);
+	b->destruct(this);
       }
       if (b_fst->commit(this,a,d) == ES_FAILED)
 	fail();
@@ -397,6 +390,8 @@ namespace Gecode {
 
   unsigned int
   Space::propagators(void) const {
+    if (failed())
+      throw SpaceFailed("Space::propagators");
     unsigned int n = 0;
     for (const ActorLink* a = a_actors.next(); a != b_fst; a = a->next())
       n++;
@@ -405,6 +400,8 @@ namespace Gecode {
 
   unsigned int
   Space::branchings(void) const {
+    if (failed())
+      throw SpaceFailed("Space::branchings");
     unsigned int n = 0;
     for (const ActorLink* a = b_fst; a != &a_actors; a = a->next())
       n++;
