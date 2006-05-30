@@ -435,6 +435,21 @@ AC_DEFUN([AC_GECODE_GCC_DEBUG_SWITCHES],
   [AC_GECODE_CHECK_CXXFLAG([-fno-inline-functions])
    AC_GECODE_CHECK_CXXFLAG([-fimplement-inlines])])
 
+AC_DEFUN([AC_GECODE_NO_BUILDFLAGS],
+  [AC_SUBST(GECODE_BUILD_KERNEL_FLAG, "")
+   AC_SUBST(GECODE_BUILD_SEARCH_FLAG, "")
+   AC_SUBST(GECODE_BUILD_INT_FLAG, "")
+   AC_SUBST(GECODE_BUILD_SET_FLAG, "")
+   AC_SUBST(GECODE_BUILD_MINIMODEL_FLAG, "")])
+
+AC_DEFUN([AC_GECODE_BUILDFLAGS],
+  [AC_SUBST(GECODE_BUILD_KERNEL_FLAG, "-DGECODE_BUILD_KERNEL")
+   AC_SUBST(GECODE_BUILD_SEARCH_FLAG, "-DGECODE_BUILD_SEARCH")
+   AC_SUBST(GECODE_BUILD_INT_FLAG, "-DGECODE_BUILD_INT")
+   AC_SUBST(GECODE_BUILD_SET_FLAG, "-DGECODE_BUILD_SET")
+   AC_SUBST(GECODE_BUILD_MINIMODEL_FLAG, "-DGECODE_BUILD_MINIMODEL")])
+
+
 AC_DEFUN([AC_GECODE_UNIX_PATHS],
  [AC_SUBST(DLLPATH, [-L.])
   dnl flags for creating dlls
@@ -447,6 +462,7 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
        AC_SUBST(SOLINKSUFFIX, ".dylib")
        AC_SUBST(sharedlibdir, "${libdir}")
        AC_SUBST(WLSONAME, "-compatibility_version ${ac_gecode_soversion}.0 -current_version ${ac_gecode_soversion}.0 -install_name ${libdir}/")
+       AC_GECODE_NO_BUILDFLAGS
        ;;
      windows*)
        AC_SUBST(need_soname, "no")
@@ -464,6 +480,7 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
        else
           AC_SUBST(sharedlibdir, "${libdir}")
        fi
+       AC_GECODE_BUILDFLAGS
        ;;
      *)
        AC_SUBST(need_soname, "yes")
@@ -473,6 +490,7 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
        AC_SUBST(SOLINKSUFFIX, ".so")
        AC_SUBST(WLSONAME, ["-Wl,-soname="])
        AC_SUBST(sharedlibdir, "${libdir}")
+       AC_GECODE_NO_BUILDFLAGS
        ;;
   esac])
 
@@ -526,6 +544,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   echo "cp: ${cygpathprefix}"
 
   AC_SUBST(cygpathprefix, "${cygpathprefix}")
+  AC_GECODE_BUILDFLAGS
 
   dnl compiler options
   AC_SUBST(COMPILEOBJ, "-c -Fo")
