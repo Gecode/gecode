@@ -313,7 +313,7 @@ ac_includes_default="\
 #endif"
 
 ac_subdirs_all="$ac_subdirs_all "
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT RANLIB ac_ct_RANLIB PKGCONFIG ac_ct_PKGCONFIG HAVE_PKGCONFIG CXXCPP CC CFLAGS ac_ct_CC BUILDSTATIC BUILDDLL CPP EGREP DLLPATH need_soname DLLFLAGS DLLEXT SOSUFFIX SOLINKSUFFIX sharedlibdir WLSONAME docdir SBJEXT LIBEXT LIBPREFIX STATICLIBEXT MINUSLDIR LINKLIBDIR cygpathprefix COMPILEOBJ COMPILESBJ COMPILERIN EXAMPLES_EXTRA_CXXFLAGS INSTALLLIBS LINKPREFIX LINKSUFFIX LINKOUTPUT KERNEL SEARCH INT SET MM DOT GECODE_DOXYGEN_DOT ENABLEDOCSEARCH GECODE_DOXYGEN_TAGFILE ENABLEDOCCHM enable_set_vars enable_int_vars enable_examples enable_minimodel enable_search subdirs PKG_CONFIG_CXXFLAGS VERSION LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT RANLIB ac_ct_RANLIB PKGCONFIG ac_ct_PKGCONFIG HAVE_PKGCONFIG CXXCPP CC CFLAGS ac_ct_CC BUILDSTATIC BUILDDLL CPP EGREP DLLPATH need_soname DLLFLAGS DLLEXT SOSUFFIX SOLINKSUFFIX sharedlibdir WLSONAME GECODE_BUILD_KERNEL_FLAG GECODE_BUILD_SEARCH_FLAG GECODE_BUILD_INT_FLAG GECODE_BUILD_SET_FLAG GECODE_BUILD_MINIMODEL_FLAG docdir SBJEXT LIBEXT LIBPREFIX STATICLIBEXT MINUSLDIR LINKLIBDIR cygpathprefix COMPILEOBJ COMPILESBJ COMPILERIN EXAMPLES_EXTRA_CXXFLAGS INSTALLLIBS LINKPREFIX LINKSUFFIX LINKOUTPUT KERNEL SEARCH INT SET MM DOT GECODE_DOXYGEN_DOT ENABLEDOCSEARCH GECODE_DOXYGEN_TAGFILE ENABLEDOCCHM enable_set_vars enable_int_vars enable_examples enable_minimodel enable_search subdirs PKG_CONFIG_CXXFLAGS VERSION LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -2031,6 +2031,11 @@ fi
 
 
 # Test for platform specific behaviour of arithmetic
+
+
+
+
+
 
 
 
@@ -4535,6 +4540,16 @@ gnu)
 
        WLSONAME="-compatibility_version ${ac_gecode_soversion}.0 -current_version ${ac_gecode_soversion}.0 -install_name ${libdir}/"
 
+       GECODE_BUILD_KERNEL_FLAG=""
+
+   GECODE_BUILD_SEARCH_FLAG=""
+
+   GECODE_BUILD_INT_FLAG=""
+
+   GECODE_BUILD_SET_FLAG=""
+
+   GECODE_BUILD_MINIMODEL_FLAG=""
+
        ;;
      windows*)
        need_soname="no"
@@ -4562,6 +4577,16 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
           sharedlibdir="${libdir}"
 
        fi
+       GECODE_BUILD_KERNEL_FLAG="-DGECODE_BUILD_KERNEL"
+
+   GECODE_BUILD_SEARCH_FLAG="-DGECODE_BUILD_SEARCH"
+
+   GECODE_BUILD_INT_FLAG="-DGECODE_BUILD_INT"
+
+   GECODE_BUILD_SET_FLAG="-DGECODE_BUILD_SET"
+
+   GECODE_BUILD_MINIMODEL_FLAG="-DGECODE_BUILD_MINIMODEL"
+
        ;;
      *)
        need_soname="yes"
@@ -4577,6 +4602,16 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
        WLSONAME="-Wl,-soname="
 
        sharedlibdir="${libdir}"
+
+       GECODE_BUILD_KERNEL_FLAG=""
+
+   GECODE_BUILD_SEARCH_FLAG=""
+
+   GECODE_BUILD_INT_FLAG=""
+
+   GECODE_BUILD_SET_FLAG=""
+
+   GECODE_BUILD_MINIMODEL_FLAG=""
 
        ;;
   esac
@@ -5370,6 +5405,16 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
 
   cygpathprefix="${cygpathprefix}"
 
+  GECODE_BUILD_KERNEL_FLAG="-DGECODE_BUILD_KERNEL"
+
+   GECODE_BUILD_SEARCH_FLAG="-DGECODE_BUILD_SEARCH"
+
+   GECODE_BUILD_INT_FLAG="-DGECODE_BUILD_INT"
+
+   GECODE_BUILD_SET_FLAG="-DGECODE_BUILD_SET"
+
+   GECODE_BUILD_MINIMODEL_FLAG="-DGECODE_BUILD_MINIMODEL"
+
 
     COMPILEOBJ="-c -Fo"
 
@@ -5416,6 +5461,16 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
 
        WLSONAME="-compatibility_version ${ac_gecode_soversion}.0 -current_version ${ac_gecode_soversion}.0 -install_name ${libdir}/"
 
+       GECODE_BUILD_KERNEL_FLAG=""
+
+   GECODE_BUILD_SEARCH_FLAG=""
+
+   GECODE_BUILD_INT_FLAG=""
+
+   GECODE_BUILD_SET_FLAG=""
+
+   GECODE_BUILD_MINIMODEL_FLAG=""
+
        ;;
      windows*)
        need_soname="no"
@@ -5443,6 +5498,16 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
           sharedlibdir="${libdir}"
 
        fi
+       GECODE_BUILD_KERNEL_FLAG="-DGECODE_BUILD_KERNEL"
+
+   GECODE_BUILD_SEARCH_FLAG="-DGECODE_BUILD_SEARCH"
+
+   GECODE_BUILD_INT_FLAG="-DGECODE_BUILD_INT"
+
+   GECODE_BUILD_SET_FLAG="-DGECODE_BUILD_SET"
+
+   GECODE_BUILD_MINIMODEL_FLAG="-DGECODE_BUILD_MINIMODEL"
+
        ;;
      *)
        need_soname="yes"
@@ -5458,6 +5523,16 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
        WLSONAME="-Wl,-soname="
 
        sharedlibdir="${libdir}"
+
+       GECODE_BUILD_KERNEL_FLAG=""
+
+   GECODE_BUILD_SEARCH_FLAG=""
+
+   GECODE_BUILD_INT_FLAG=""
+
+   GECODE_BUILD_SET_FLAG=""
+
+   GECODE_BUILD_MINIMODEL_FLAG=""
 
        ;;
   esac
@@ -6050,6 +6125,16 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
   echo "cp: ${cygpathprefix}"
 
   cygpathprefix="${cygpathprefix}"
+
+  GECODE_BUILD_KERNEL_FLAG="-DGECODE_BUILD_KERNEL"
+
+   GECODE_BUILD_SEARCH_FLAG="-DGECODE_BUILD_SEARCH"
+
+   GECODE_BUILD_INT_FLAG="-DGECODE_BUILD_INT"
+
+   GECODE_BUILD_SET_FLAG="-DGECODE_BUILD_SET"
+
+   GECODE_BUILD_MINIMODEL_FLAG="-DGECODE_BUILD_MINIMODEL"
 
 
     COMPILEOBJ="-c -Fo"
@@ -7042,6 +7127,11 @@ s,@SOSUFFIX@,$SOSUFFIX,;t t
 s,@SOLINKSUFFIX@,$SOLINKSUFFIX,;t t
 s,@sharedlibdir@,$sharedlibdir,;t t
 s,@WLSONAME@,$WLSONAME,;t t
+s,@GECODE_BUILD_KERNEL_FLAG@,$GECODE_BUILD_KERNEL_FLAG,;t t
+s,@GECODE_BUILD_SEARCH_FLAG@,$GECODE_BUILD_SEARCH_FLAG,;t t
+s,@GECODE_BUILD_INT_FLAG@,$GECODE_BUILD_INT_FLAG,;t t
+s,@GECODE_BUILD_SET_FLAG@,$GECODE_BUILD_SET_FLAG,;t t
+s,@GECODE_BUILD_MINIMODEL_FLAG@,$GECODE_BUILD_MINIMODEL_FLAG,;t t
 s,@docdir@,$docdir,;t t
 s,@SBJEXT@,$SBJEXT,;t t
 s,@LIBEXT@,$LIBEXT,;t t
