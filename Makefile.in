@@ -46,9 +46,10 @@ export subdirs = @subdirs@
 export VERSION		= @VERSION@
 
 export CXX = @CXX@
+ifeq "$(top_srcdir)" "$(top_builddir)"
 CPPFLAGS=-I$(top_srcdir)
-ifneq "$(top_srcdir)" "$(top_builddir)"
-CPPFLAGS=$(CPPFLAGS) -I$(top_builddir)
+else
+CPPFLAGS=-I$(top_srcdir) -I$(top_builddir)
 endif
 export CPPFLAGS
 export CXXFLAGS = $(CPPFLAGS) @CXXFLAGS@ $(CXXUSR)
