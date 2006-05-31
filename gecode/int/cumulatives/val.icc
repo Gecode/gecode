@@ -112,7 +112,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
       end.cancel(home,this,PC_INT_BND);
       height.cancel(home,this,PC_INT_BND);
     }
-    limit.~SharedArray<int>();
+    limit.~SharedArray();
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
