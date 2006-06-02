@@ -24,7 +24,7 @@
 namespace Gecode { namespace Int { namespace Branch {
 
   unsigned int
-  Assign::branch(void) {
+  Assign::branch(Space*) {
     for (int i = pos; i<x.size(); i++)
       if (!x[i].assigned()) {
 	pos = i;

@@ -362,7 +362,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Constructor for creation
     Assign(Space* home, ViewArray<IntView>& x);
     /// Perform branching (selects view)
-    virtual unsigned int branch(void);
+    virtual unsigned int branch(Space* home);
   };
 
 

@@ -222,7 +222,7 @@ namespace Gecode {
   unsigned int
   Space::_branch(void) {
     while (b_fst != &a_actors) {
-      unsigned int alt = b_fst->branch();
+      unsigned int alt = b_fst->branch(this);
       if (alt > 0)
 	return alt;
       Branching* b = b_fst;

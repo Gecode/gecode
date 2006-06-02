@@ -76,7 +76,7 @@ namespace Gecode {
     /// Constructor for creation
     ViewValBranching(Space* home, ViewArray<View>& x);
     /// Perform branching (selects view)
-    virtual unsigned int   branch(void);
+    virtual unsigned int   branch(Space* home);
     /// Return branching description (of type Gecode::PosValDesc)
     virtual BranchingDesc* description(void);
     /// Perform commit for alternative \a a and branching description \a d
@@ -170,7 +170,7 @@ namespace Gecode {
 
   template <class View, class Val, class ViewSel, class ValSel>
   unsigned int
-  ViewValBranching<View,Val,ViewSel,ValSel>::branch(void) {
+  ViewValBranching<View,Val,ViewSel,ValSel>::branch(Space*) {
     for (int i=start; i < x.size(); i++)
       if (!x[i].assigned()) {
 	start = i;

@@ -545,7 +545,7 @@ namespace Gecode {
     /// \name Branching
     //@{
     /// Perform branching, return number of alternatives
-    virtual unsigned int branch(void) = 0;
+    virtual unsigned int branch(Space* home) = 0;
     /**
      * \brief Perform commit for alternative \a a
      * 
@@ -553,7 +553,7 @@ namespace Gecode {
      * stored in the branching description \a d. Otherwise, let the branching
      * decide how to commit to alternative \a a.
      */
-    virtual ExecStatus commit(Space*,unsigned int a, BranchingDesc* d) = 0;
+    virtual ExecStatus commit(Space* home, unsigned int a, BranchingDesc* d) = 0;
     /// Return branching description (if NULL, no batch recomputation is used)
     virtual BranchingDesc* description(void)                               = 0;
     //@}
