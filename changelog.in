@@ -55,6 +55,14 @@ The next release
 [ENTRY]
 Module: kernel
 What:   change
+Rank:   minor
+[DESCRIPTION]
+The branch member function for branchings now also takes a home space
+as argument.
+
+[ENTRY]
+Module: kernel
+What:   change
 Rank:   major
 [DESCRIPTION]
 Cancelling subscriprions on views and variable implementations now
