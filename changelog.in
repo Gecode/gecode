@@ -53,6 +53,14 @@ Date:		upcoming
 The next release
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+Bug:	39
+[DESCRIPTION]
+Fixed linkage of BAB destructor under Cygwin.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

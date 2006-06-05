@@ -34,24 +34,6 @@ namespace Gecode { namespace Search {
    *
    */
 
-  forceinline
-  BabEngine::BabEngine(unsigned int c_d0, unsigned int a_d,
-		       Stop* st, size_t sz)
-    : EngineCtrl(st,sz), ds(a_d), cur(NULL), mark(0), best(NULL), 
-      c_d(c_d0), d(0) {}
-  
-
-  forceinline void
-  BabEngine::init(Space* s) {
-    cur = s;
-  }
-
-
-  forceinline size_t
-  BabEngine::stacksize(void) const {
-    return ds.size();
-  }
-
   bool
   BabEngine::explore(Space*& s1, Space*& s2) {
     start();
@@ -127,11 +109,6 @@ namespace Gecode { namespace Search {
     return true;
   }
 
-  BabEngine::~BabEngine(void) {
-    ds.reset();
-    delete best;
-    delete cur;
-  }
 
 
 
