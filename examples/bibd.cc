@@ -40,7 +40,12 @@ public:
   /// Class for BIBD parameters
   class Par {
   public:
-    int v, b, r, k, lambda;
+    int v, k, lambda, b, r;
+    Par(int v0, int k0, int l0)
+      : v(v0), k(k0), lambda(l0),
+	b((v*(v-1)*lambda)/(k*(k-1))),
+	r((lambda*(v-1)) / (k-1)) {}
+    Par(void) {}
   };
   static Par par;
 
@@ -105,8 +110,7 @@ public:
   virtual void
   print(void) {
     std::cout << "\tBIBD("
-	      << par.v << "," << par.b << ","
-	      << par.r << "," << par.k << ","
+	      << par.v << "," << par.k << ","
 	      << par.lambda << ")" << std::endl;
     for (int i = 0; i < par.v; i++) {
       std::cout << "\t\t";
@@ -142,28 +146,24 @@ main(int argc, char** argv) {
   Options opt("BIBD");
   opt.solutions  = 1;
   opt.iterations = 25;
-  opt.size       = 4;
+  opt.size       = 0;
   opt.c_d        = 10;
   opt.parse(argc,argv);
-  BIBD::Par p;
   switch (opt.size) {
-  case 0:
-    p.v=7; p.b=7; p.r=3; p.k=3; p.lambda=1; break;
-  case 1:
-    p.v=6; p.b=10; p.r=5; p.k=3; p.lambda=2; break;
-  case 2:
-    p.v=8; p.b=14; p.r=7; p.k=4; p.lambda=3; break;
-  case 3:
-    p.v=6; p.b=20; p.r=10; p.k=3; p.lambda=4; break;
-  case 4:
-    p.v=11; p.b=55; p.r=15; p.k=3; p.lambda=3; break;
-  case 5:
-    p.v=7; p.b=70; p.r=30; p.k=3; p.lambda=10; break;
+  case 0: { BIBD::Par p(7,3,1);  BIBD::par = p; break; }
+  case 1: { BIBD::Par p(6,3,2);  BIBD::par = p; break; }
+  case 2: { BIBD::Par p(8,4,3);  BIBD::par = p; break; }
+  case 3: { BIBD::Par p(7,3,20); BIBD::par = p; break; }
+  case 4: { BIBD::Par p(7,3,30); BIBD::par = p; break; }
+  case 5: { BIBD::Par p(7,3,40); BIBD::par = p; break; }
+  case 6: { BIBD::Par p(7,3,45); BIBD::par = p; break; }
+  case 7: { BIBD::Par p(7,3,50); BIBD::par = p; break; }
+  case 8: { BIBD::Par p(7,3,55); BIBD::par = p; break; }
+  case 9: { BIBD::Par p(7,3,60); BIBD::par = p; break; }
   default:
-    std::cerr << "Error: size must be between 0 and 5" << std::endl;
+    std::cerr << "Error: size must be between 0 and 9" << std::endl;
     return 1;
   }
-  BIBD::par = p;
   
   Example::run<BIBD,DFS>(opt);
   return 0;
