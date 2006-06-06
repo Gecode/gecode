@@ -38,4 +38,7 @@
 /* Whether we are compiling static libraries */
 #undef GECODE_STATIC_LIBS
 
+/* Whether we have mtrace for memory leak debugging*/
+#undef GECODE_HAVE_MTRACE
+
 // STATISTICS: kernel-other

@@ -53,11 +53,19 @@ Date:		upcoming
 This release makes quite some drastic changes to how propagators
 and branchings are deleted: instead of using destructors they use
 a dispose that allows to pass a home space during deletion (we
-will use this ifrastructure measure to speed up cloning
+will use this infrastructure measure to speed up cloning
 considerably a little later). Moreover the directory structure
 has changed on popular request so that all include files are to
 be found in a gecode subdirectory. Apart from that, some small
 fixes and extensions due to requests.
+
+[ENTRY]
+Module: test
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added --enable-leak-debug configure option. This option causes the test suite
+to call mtrace() under Linux, which can be used to test for memory leaks.
 
 [ENTRY]
 Module: kernel

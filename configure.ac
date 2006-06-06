@@ -59,6 +59,9 @@ AC_GECODE_STATICLIBS
 dnl check whether we want to have assertions and debuggin options
 AC_GECODE_DEBUG
 
+dnl check whether we want to have support for finding memory leaks
+AC_GECODE_LEAK_DEBUG
+
 dnl check whether we want to produce code suitable for profiling
 AC_GECODE_PROFILE
 

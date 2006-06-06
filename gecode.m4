@@ -343,6 +343,21 @@ AC_DEFUN([AC_GECODE_DEBUG],
        	    AC_GECODE_ADD_TO_CXXFLAGS(-DNDEBUG)
 	 fi])
 
+AC_DEFUN([AC_GECODE_LEAK_DEBUG],
+	[AC_ARG_ENABLE([leak-debug],
+	   AC_HELP_STRING([--enable-leak-debug],
+	     [build with support for finding memory leaks @<:@default=no@:>@]))
+	 AC_MSG_CHECKING(whether to build with support for finding memory leaks)
+	 if test "${enable_leak_debug:-no}" = "yes"; then
+	    AC_MSG_RESULT(yes)
+	    AC_CHECK_DECL(mtrace,
+			  [AC_DEFINE(GECODE_HAVE_MTRACE)],
+			  [AC_MSG_ERROR(mtrace not available.)],
+			  [[#include <mcheck.h>]])	    
+	 else
+	    AC_MSG_RESULT(no)
+	 fi])
+
 AC_DEFUN([AC_GECODE_PROFILE],
 	 [AC_ARG_ENABLE([profile],
 	   AC_HELP_STRING([--enable-profile],

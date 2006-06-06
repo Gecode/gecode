@@ -24,6 +24,10 @@
 #include "test/test.hh"
 #include "test/log.hh"
 
+#ifdef GECODE_HAVE_MTRACE
+#include <mcheck.h>
+#endif
+
 #include <iostream>
 
 #include <cstdlib>
@@ -75,6 +79,10 @@ namespace {
 
 int
 main(int argc, char** argv) {
+#ifdef GECODE_HAVE_MTRACE
+  mtrace();
+#endif
+
   Options o;
   o.parse(argc, argv);
   test_seed(o.seed);
