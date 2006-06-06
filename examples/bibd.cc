@@ -103,7 +103,7 @@ public:
       lex(this, col1, IRT_GQ, col2);
     }
 
-    branch(this, _p, BVAR_NONE, BVAL_MAX);
+    branch(this, _p, BVAR_NONE, BVAL_MIN);
   }
 
   /// Print solution

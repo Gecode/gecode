@@ -201,9 +201,6 @@ namespace Gecode {
     unsigned int free_me;   
     Propagator** idx[PC+2]; ///< Stores where entries start (idx[pc]}
 
-    /// Cancel subscription of propagator \a p with propagation condition \a pc
-    void perform_cancel(Space* home, Propagator* p, PropCond pc);
-
     /// Manage number of free entries internally
     unsigned int free(void) const;
     /// Manage number of free entries internally
@@ -1406,21 +1403,16 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC>
   forceinline void
-  Variable<VTI,PC>::cancel(Space* home, Propagator* p, PropCond pc) {
-    if (idx[0] != NULL)
-      perform_cancel(home,p,pc);
-  }
-
-  template <VarTypeId VTI, PropCond PC>
-  void
-  Variable<VTI,PC>::perform_cancel(Space*, Propagator* p, PropCond pc) {
-    Propagator** f = idx[pc];
-    while (*f != p) f++;
-    *f=*idx[pc];
-    for (PropCond i=pc; i>0; i--)
-      *(idx[i]++)=*(idx[i-1]);
-    idx[0]++;
-    free_inc();
+  Variable<VTI,PC>::cancel(Space*, Propagator* p, PropCond pc) {
+    if (idx[0] != NULL) {
+      Propagator** f = idx[pc];
+      while (*f != p) f++;
+      *f=*idx[pc];
+      for (PropCond i=pc; i>0; i--)
+	*(idx[i]++)=*(idx[i-1]);
+      idx[0]++;
+      free_inc();
+    }
   }
 
   template <VarTypeId VTI, PropCond PC>
