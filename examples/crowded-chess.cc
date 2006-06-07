@@ -112,11 +112,11 @@ protected:
    * be placed first.
    */
   enum 
-    {B,   ///< Bishop
+    {Q,   ///< Queen
+     R,   ///< Rook
+     B,   ///< Bishop
      K,   ///< Knight
      E,   ///< Empty square
-     Q,   ///< Queen
-     R,   ///< Rook
      PMAX ///< Number of pieces (including empty squares)
     } piece;
 
@@ -144,20 +144,6 @@ protected:
   }
 
   
-  /** Reified version of element since using element(...) 
-   * crashes the system currently
-   */
-  void connect(IntVarArgs& e, IntVar& p, int piece) {
-    IntArgs idx(n);
-    BoolVarArgs b(n);
-    for (int i = n; i--; ) {
-      idx[i] = i;
-      b[i] = post(this, ~(e[i] == piece));
-    }
-    linear(this, b, IRT_EQ, 1);
-    linear(this, idx, b, IRT_EQ, p);
-  }
-
 public:
   /// The model of the problem
   CrowdedChess(const Options& o)
@@ -182,7 +168,7 @@ public:
     count(this, s, K, IRT_EQ, k, o.icl);
     
     // Integer variables for use with the element constraint
-    //IntVar queen(this, Q, Q), rook(this, R, R);
+    IntVar queen(this, Q, Q), rook(this, R, R);
 
     // Collect rows and columns for handling rooks and queens.
     for (int i = 0; i < n; ++i) {
@@ -194,10 +180,8 @@ public:
       count(this, bb, R, IRT_EQ, 1, o.icl);
       
       //Connect (queens|rooks)[i] to the row it is in
-      //element(this, aa, queens[i], queen, ICL_BND);
-      //element(this, aa,  rooks[i],  rook, ICL_BND);
-      connect(aa, queens[i], Q);
-      connect(aa,  rooks[i], R);
+      element(this, aa, queens[i], queen, ICL_DOM);
+      element(this, aa,  rooks[i],  rook, ICL_DOM);
     }
     
     // N-queens constraints 
@@ -258,12 +242,8 @@ public:
     // ***********************
     // Branchings
     // ***********************
-    //First-fail for queens, with placement as far up as possible
-    branch(this, queens, BVAR_SIZE_MIN, BVAL_MIN);
-    //First-fail for rooks, with placement as far down as possible
-    branch(this,  rooks, BVAR_SIZE_MIN, BVAL_MAX);
     //Place each piece in turn
-    branch(this,      s, BVAR_MIN_MIN, BVAL_MIN);
+    branch(this, s, BVAR_MIN_MIN, BVAL_MIN);
   }
 
   /// Constructor for cloning e

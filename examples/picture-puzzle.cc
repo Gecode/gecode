@@ -34,6 +34,10 @@ extern const unsigned int n_examples;
  * unmarked spots) and their length. The objective is to find a valid
  * assignment, which incidentally may also produce a pretty picture.
  *
+ * Picture puzzles are also called Nonograms. 
+ *
+ * Problem 12 at http://www.csplib.org/.
+ *
  * \ingroup Example
  *
  */

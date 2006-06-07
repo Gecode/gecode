@@ -29,11 +29,13 @@ namespace Gecode { namespace MiniModel {
   Matrix<A>::Slice::Slice(Matrix<A>& a, 
 			  unsigned int fc, unsigned int tc, 
 			  unsigned int fr, unsigned int tr)
-    : _r((tc-fc)*(tr-fr)), _fc(fc), _tc(tc), _fr(fr), _tr(tr) {
+    : _r(0), _fc(fc), _tc(tc), _fr(fr), _tr(tr) {
     if (tc > a.width() || tr > a.height())
-      throw ArgumentOutOfRange("Arguments out of range");
+      throw ArgumentOutOfRange("MiniModel::Matrix::Slice::Slice");
     if (fc >= tc || fr >= tr)
-      return;
+      throw ArgumentOutOfRange("MiniModel::Matrix::Slice::Slice");
+
+    _r = args_type((tc-fc)*(tr-fr));
 
     int i = 0;
     for (unsigned int h = fr; h < tr; ++h) {
@@ -60,8 +62,7 @@ namespace Gecode { namespace MiniModel {
   Matrix<A>::Matrix(A a, unsigned int w, unsigned int h) 
     : _a(a), _w(w), _h(h) {
     if(_w * _h != static_cast<unsigned int>(_a.size()))
-      throw ArgumentSizeMismatch("Size w*h is not compatible with"
-				 " array length.");
+      throw ArgumentSizeMismatch("MiniModel::Matrix::Matrix(A, w, h)");
   }
   
   template <class A>
@@ -69,16 +70,15 @@ namespace Gecode { namespace MiniModel {
   Matrix<A>::Matrix(A a, unsigned int n) 
     : _a(a), _w(n), _h(n) {
     if(n*n != static_cast<unsigned int>(_a.size()))
-      throw ArgumentSizeMismatch("Size n*n is not compatible with"
-				 " array length.");
+      throw ArgumentSizeMismatch("MiniModel::Matrix::Matrix(A, n)");
   }
   
   template <class A>
-  forceinline unsigned int const
-  Matrix<A>::width(void)  { return _w; }
+  forceinline unsigned int
+  Matrix<A>::width(void) const  { return _w; }
   template <class A>
-  forceinline unsigned int const
-  Matrix<A>::height(void) { return _h; }
+  forceinline unsigned int
+  Matrix<A>::height(void) const { return _h; }
   template <class A>
   forceinline typename Matrix<A>::args_type const
   Matrix<A>::get_array(void) {
@@ -89,7 +89,7 @@ namespace Gecode { namespace MiniModel {
   forceinline typename Matrix<A>::value_type& 
   Matrix<A>::operator()(unsigned int c, unsigned int r) {
     if(c >= _w || r >= _h)
-      throw ArgumentOutOfRange("Arguments out of range");
+      throw ArgumentOutOfRange("MiniModel::Matrix::operator()");
     
     return _a[r*_w + c]; 
   }

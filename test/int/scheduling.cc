@@ -26,9 +26,10 @@
 #include "gecode/minimodel.hh"
 #include "gecode/search.hh"
 
-#include <stdio.h>
 #include <vector>
 #include <algorithm>
+#include <string>
+#include <sstream>
 
 static IntSet ds_12(-1,2);
 
@@ -195,10 +196,10 @@ public:
 
   virtual void post(Space* home, IntVarArray& x) {
     if (Log::logging()) {
-      char buf[256];
-      sprintf(buf, "\tint ntasks = %d, limit = %d;\n\tbool at_most=%d;", 
-	      ntasks, limit, at_most);
-      Log::log("", buf);
+      std::ostringstream buf;
+      buf << "\tint ntastks = " << ntasks << ", limit = " << limit 
+	  << ";\n\tbool at_most = " << at_most << ";";
+      Log::log("", buf.str().c_str());
       Log::log("post cumulatives",
 	       "\tIntArgs m(ntasks), l(1, limit);\n"
 	       "\tIntVarArgs s(ntasks), d(ntasks), e(ntasks), h(ntasks);\n"

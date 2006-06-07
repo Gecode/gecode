@@ -756,9 +756,9 @@ namespace Gecode { namespace MiniModel {
     Matrix(A a, unsigned int n);
     
     /// Return the width of the matrix
-    unsigned int const width(void);
+    unsigned int width(void) const;
     /// Return the height of the matrix
-    unsigned int const height(void);
+    unsigned int height(void) const;
     /// Return an Args-array of the contents of the matrix
     args_type const get_array(void);
 
