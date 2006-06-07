@@ -49,7 +49,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView, bool shared>
   ExecStatus prop_bnd(Space* home, ViewArray<View>&, Card&,
-		      PartialSum<Card>*, PartialSum<Card>*, 
+		      PartialSum<Card>*&, PartialSum<Card>*&, 
 		      bool, bool, bool);
 
   template <class View, class Card, bool isView>

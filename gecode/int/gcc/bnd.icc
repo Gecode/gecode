@@ -25,7 +25,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView, bool shared>
   inline ExecStatus
   prop_bnd(Space* home, ViewArray<View>& x, Card& k, 
-	   PartialSum<Card>* lps, PartialSum<Card>* ups, 
+	   PartialSum<Card>*& lps, PartialSum<Card>*& ups, 
 	   bool card_fixed, bool card_all, bool nolbc){		
 
     bool all_assigned = true;
@@ -524,8 +524,12 @@ namespace Gecode { namespace Int { namespace GCC {
       y.cancel(home,this, PC_INT_BND);
       k.cancel(home,this, PC_INT_BND);
     }
-    delete lps;
-    delete ups;
+    if (lps != NULL) {
+      delete lps;
+    }
+    if (ups != NULL) {
+      delete ups;
+    }
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
