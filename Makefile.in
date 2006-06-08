@@ -520,53 +520,53 @@ compilesubdirs:
 
 gecode/kernel/%$(OBJSUFFIX): $(top_srcdir)/gecode/kernel/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_KERNEL_FLAG@ \
-	@COMPILEOBJ@$@ @COMPILERIN@ $<
+	@COMPILEOBJ@$@ @COMPILERIN@$<
 gecode/kernel/%$(SBJSUFFIX): $(top_srcdir)/gecode/kernel/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_KERNEL_FLAG@ \
-	@COMPILESBJ@$@ @COMPILERIN@ $<
+	@COMPILESBJ@$@ @COMPILERIN@$<
 
 gecode/search/%$(OBJSUFFIX): $(top_srcdir)/gecode/search/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SEARCH_FLAG@ \
-	@COMPILEOBJ@$@ @COMPILERIN@ $<
+	@COMPILEOBJ@$@ @COMPILERIN@$<
 gecode/search/%$(SBJSUFFIX): $(top_srcdir)/gecode/search/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SEARCH_FLAG@ \
-	@COMPILESBJ@$@ @COMPILERIN@ $<
+	@COMPILESBJ@$@ @COMPILERIN@$<
 
 gecode/int/%$(OBJSUFFIX): $(top_srcdir)/gecode/int/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_INT_FLAG@ \
-	@COMPILEOBJ@$@ @COMPILERIN@ $<
+	@COMPILEOBJ@$@ @COMPILERIN@$<
 gecode/int/%$(SBJSUFFIX): $(top_srcdir)/gecode/int/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_INT_FLAG@ \
-	@COMPILESBJ@$@ @COMPILERIN@ $<
+	@COMPILESBJ@$@ @COMPILERIN@$<
 
 gecode/set/%$(OBJSUFFIX): $(top_srcdir)/gecode/set/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SET_FLAG@ \
-	@COMPILEOBJ@$@ @COMPILERIN@ $<
+	@COMPILEOBJ@$@ @COMPILERIN@$<
 gecode/set/%$(SBJSUFFIX): $(top_srcdir)/gecode/set/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SET_FLAG@ \
-	@COMPILESBJ@$@ @COMPILERIN@ $<
+	@COMPILESBJ@$@ @COMPILERIN@$<
 
 gecode/minimodel/%$(OBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_MINIMODEL_FLAG@ \
-	@COMPILEOBJ@$@ @COMPILERIN@ $<
+	@COMPILEOBJ@$@ @COMPILERIN@$<
 gecode/minimodel/%$(SBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_MINIMODEL_FLAG@ \
-	@COMPILESBJ@$@ @COMPILERIN@ $<
+	@COMPILESBJ@$@ @COMPILERIN@$<
 
 examples/%$(OBJSUFFIX): $(top_srcdir)/examples/%.cc
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
-	@COMPILEOBJ@$@ @COMPILERIN@ $<
+	@COMPILEOBJ@$@ @COMPILERIN@$<
 examples/%$(SBJSUFFIX): $(top_srcdir)/examples/%.cc
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
-	@COMPILESBJ@$@ @COMPILERIN@ $<
+	@COMPILESBJ@$@ @COMPILERIN@$<
 
 
 test/%$(OBJSUFFIX): $(top_srcdir)/test/%.cc
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
-		@COMPILEOBJ@$@ @COMPILERIN@ $<
+		@COMPILEOBJ@$@ @COMPILERIN@$<
 test/%$(SBJSUFFIX): $(top_srcdir)/test/%.cc
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
-		@COMPILESBJ@$@ @COMPILERIN@ $<
+		@COMPILESBJ@$@ @COMPILERIN@$<
 
 
 #
@@ -651,11 +651,11 @@ $(MMSTATICLIB): $(MMOBJ)
 
 .PRECIOUS: examples/%$(OBJSUFFIX)
 examples/%$(EXESUFFIX): examples/%$(OBJSUFFIX) $(SUPPORTOBJ) $(ALLLIB)
-	$(CXX) -o $@ $< $(SUPPORTOBJ) $(DLLPATH) $(CXXFLAGS) \
+	$(CXX) @EXEOUTPUT@$@ $< $(SUPPORTOBJ) $(DLLPATH) $(CXXFLAGS) \
 	$(LINKFLAGS) $(LINKALL)
 
 $(TESTEXE): $(TESTOBJ) $(ALLLIB) 
-	$(CXX) -o $@ $(TESTOBJ) $(DLLPATH) $(CXXFLAGS) \
+	$(CXX) @EXEOUTPUT@$@ $(TESTOBJ) $(DLLPATH) $(CXXFLAGS) \
 	$(LINKFLAGS) $(LINKALL)
 
 

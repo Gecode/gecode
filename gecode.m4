@@ -423,7 +423,7 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
 
   AC_SUBST(COMPILEOBJ, "-c -o ")
   AC_SUBST(COMPILESBJ, "-S -o ")
-  AC_SUBST(COMPILERIN, "")
+  AC_SUBST(COMPILERIN, " ")
   AC_SUBST(EXAMPLES_EXTRA_CXXFLAGS, "")
 
   dnl Do not install stub .lib files (required for msvc)
@@ -434,6 +434,8 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
 
   dnl how to tell the compiler to output an object file
   AC_SUBST(LINKOUTPUT, "-o ")
+  dnl how to tell the compiler to output an executable
+  AC_SUBST(EXEOUTPUT, "-o ")
 
   dnl the names of the generated dlls
   AC_SUBST(KERNEL,  "kernel")
@@ -573,6 +575,8 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
 
   dnl how to tell the compiler to output an object file
   AC_SUBST(LINKOUTPUT, "-Fe")
+  dnl how to tell the compiler to output an executable
+  AC_SUBST(EXEOUTPUT, "-Fe")
 
   dnl the names of the generated dlls
   AC_SUBST(KERNEL,  "Kernel")
