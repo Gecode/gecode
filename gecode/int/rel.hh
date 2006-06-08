@@ -313,7 +313,7 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator \f$x_0=x_1\f$
+    /// Post propagator \f$x_0\neq x_1\f$
     static  ExecStatus post(Space* home, View x0, View x1);
   };
 
