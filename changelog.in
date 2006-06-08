@@ -60,6 +60,15 @@ be found in a gecode subdirectory. Apart from that, some small
 fixes and extensions due to requests.
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+Thanks: Martin Mann
+[DESCRIPTION]
+Fixed bug in equality tests that could lead to reified (dis)equality
+propagators not achieving domain consistency.
+
+[ENTRY]
 Module: test
 What:   new
 Rank:   minor
