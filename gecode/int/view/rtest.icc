@@ -112,7 +112,7 @@ namespace Gecode { namespace Int {
   rtest_nq_dom(View x, View y) {
     RelTest rt = rtest_nq_bnd(x,y);
     if (rt != RT_MAYBE) return rt;
-    return (x.range() || y.range()) ? RT_MAYBE : rtest_nq_dom_check(x,y);
+    return (x.range() && y.range()) ? RT_MAYBE : rtest_nq_dom_check(x,y);
   }
 
 
