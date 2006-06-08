@@ -25,7 +25,8 @@
 /**
  * \brief %Example: SEND+MORE=MONEY puzzle
  *
- * Well-known cryptoarithmetic puzzle of unknown origin.
+ * Well-known cryptoarithmetic puzzle.
+ * Henry Dudeney, Strand Magazine, July 1924.
  *
  * \ingroup Example
  *
