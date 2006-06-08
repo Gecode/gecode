@@ -63,6 +63,13 @@ fixes and extensions due to requests.
 Module: int
 What:   bug
 Rank:   minor
+[DESCRIPTION]
+Fixed memory leak in global cardinality constraint.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
 Thanks: Martin Mann
 [DESCRIPTION]
 Fixed bug in equality tests that could lead to reified (dis)equality
