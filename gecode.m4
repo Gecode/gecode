@@ -44,7 +44,7 @@ AC_DEFUN([AC_GECODE_GET_OS],
    	 fi
 	 dnl Try to find out operating system
 	 case ${guess_host_os} in
-	   *inux*)
+	   GNU/kFreeBSD|*inux*)
 	   host_os=linux
 	   AC_MSG_RESULT([Linux])
 	   ;;
