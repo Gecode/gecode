@@ -372,22 +372,6 @@ namespace Gecode { namespace Int { namespace GCC {
   ExecStatus 
   Val<View, Card, isView>::propagate(Space* home) {
     assert(x.size() > 0);
-
-    int max = x[0].max();
-    for (int i = 1; i < x.size(); i++) {
-      if (x[i].max() > max) {
-	max = x[i].max();
-      }
-    }
-
-    for (int i = 0; i < k.size(); i++) {
-      if (k[i].card() > max && 
-	  k[i].min() > 0 &&
-	  k[i].max() != k[i].counter() ){
-	return ES_FAILED;
-      }
-    }
-    
     return prop_val<View, Card, isView>(home, x, k, card_all);
   }
 

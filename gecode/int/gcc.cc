@@ -357,9 +357,9 @@ namespace Gecode { namespace Int { namespace GCC {
       }
       
       IntSet zero(&rem[0], z);
-      IntSetRanges remzero(zero);
       int n = xv.size();
       for (int i = n; i--; ) {
+	IntSetRanges remzero(zero);
 	GECODE_ME_FAIL(home, xv[i].minus(home, remzero));
       }
       GCC::post_template<GCC::IdxView, FixCard, false>(home, xv, red, icl, all);

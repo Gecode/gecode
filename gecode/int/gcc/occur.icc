@@ -680,13 +680,6 @@ namespace Gecode { namespace Int { namespace GCC {
     count = x.count;
   }
 
-  /// \brief Debugging: print a cardinality variable
-  forceinline std::ostream&
-  operator<<(std::ostream& os, CardView cv) {
-    os << cv.card() << "("<< cv.counter()<<")";
-    os << "["<< cv.min() << ".." << cv.max() << "]";
-    return os;
-  }
 
   forceinline int
   CardView::min(void) const { 
@@ -884,6 +877,8 @@ namespace Gecode { namespace Int { namespace GCC {
 //   CardView::operator > (const CardView& x) const {
 //     return (view > x.view) || ((view == x.view) && (c > x.c));
 //   }
+
+
 
 
 
@@ -1383,7 +1378,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /// \brief Debugging: print an index view
   forceinline std::ostream&
-  operator<<(std::ostream& os, GCC::IdxView v) {
+  operator<<(std::ostream& os, GCC::IdxView& v) {
     if (v.min() == v.max()) {
       os << v.min() <<" ";
     } else {
@@ -1428,6 +1423,65 @@ namespace Gecode { namespace Int { namespace GCC {
   before(const GCC::IdxView& x, const GCC::IdxView& y) {
     return before(x.base(),y.base())
       || (same(x.base(),y.base()) && (x.index() < y.index()));
+  }
+
+
+
+
+  /**
+   * \brief %Range iterator for indexed problem variables
+   */
+  template <>
+  class ViewRanges<GCC::CardView>
+    : public Gecode::Int::ViewRanges<IntView> {
+  public:
+    /// \name Constructors and initialization
+    ///@{
+    /// Default constructor
+    ViewRanges(void);
+    /// Initialize with ranges for view \a x
+    ViewRanges(const GCC::CardView& x);
+    /// Initialize with ranges for view \a x
+    void init(const GCC::CardView& x);
+    ///@}
+  };
+
+
+  /// \brief Debugging: print a cardinality variable
+  forceinline std::ostream&
+  operator<<(std::ostream& os, GCC::CardView& v) {
+    os << "("<<v.card() << ","<< v.counter() <<",";
+    if (v.min() == v.max()) {
+      os << v.min() <<" ";
+    } else {
+      if (v.range()){
+	os << "["<<v.min() <<".."<<v.max()<<"] ";
+      } else {
+	os << "{";
+	ViewValues<GCC::CardView> iter(v);
+	while(iter()){
+	  os << iter.val() <<",";
+	  ++iter;
+	}     
+	os << "}";
+      }
+    }
+    os << ")";
+    return os;
+  }
+
+
+  forceinline
+  ViewRanges<GCC::CardView>::ViewRanges(void) : 
+    Gecode::Int::ViewRanges<IntView>()  {}
+
+  forceinline
+  ViewRanges<GCC::CardView>::ViewRanges (const GCC::CardView& x) 
+    : Gecode::Int::ViewRanges<IntView>(x.base())  {}
+
+  forceinline void
+  ViewRanges<GCC::CardView>::init(const GCC::CardView& x) {
+    Gecode::Int::ViewRanges<IntView> xi(x.base());
   }
 
 }}
