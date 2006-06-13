@@ -149,7 +149,7 @@ main(int argc, char** argv) {
 	      << n_examples-1 << std::endl;
     return 1;
   }
-  if (example_size(examples[opt.size]) != 9) {
+  if (example_size(examples[opt.size]) != 3) {
     std::cerr << "Set-based version only available with exmples of size 9*9"
 	      << std::endl;
     return 2;
