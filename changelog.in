@@ -111,7 +111,7 @@ Module: kernel
 What:   change
 Rank:   major
 [DESCRIPTION]
-Cancelling subscriprions on views and variable implementations now
+Cancelling subscriptions on views and variable implementations now
 require also a home space (this has become possible due to not using
 destructors but ordinary "dispose" member functions).
 
