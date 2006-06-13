@@ -86,38 +86,14 @@ public:
   GCC_FC_AllLbUb(const char* t, IntConLevel icl) 
     : IntTest(t, 4, ds_14, false, icl) {}
   virtual bool solution(const Assignment& x) const {
-    FixCard fc(4);
-    for (int i = 0; i < 4; i++) {
-      fc[i][0] = 0;
-      fc[i][1] = 2;
-      fc[i].card(i + 1);
-      fc[i].counter(0);
-    }
-    for (int i = 0; i < 4; i++) {
-      fc[fc.lookup(x[i])].inc();
-    }
-
-    
-//     for (int i = 0; i < 4; i++) {
-//       std::cout << x[i] << " ";
-//     }
-//     std::cout << "\t";
-//     for (int i = 0; i < 4; i++) {
-//       std::cout << fc[i].card() << "("
-// 		<< fc[i].counter() << ") "
-// 	"["<<fc[i].min()<<","<<fc[i].max()<<"] ";
-//     }
-//     std::cout << "\t";
-    
-    for (int i = 0; i < 4; i++) {
-      int vi = fc.lookup(x[i]);
-      if (! (fc[vi].min() <= fc[vi].counter() &&
-	     fc[vi].counter() <=fc[vi].max())) {
-// 	std::cout << " NO \n";
+    int n[4];
+    for (int i=4; i--; )
+      n[i] = 0;
+    for (int i=x.size(); i--; )
+      n[x[i] - 1]++;
+    for (int i=4; i--;)
+      if (n[i] > 2)
 	return false;
-      }
-    }
-//     std::cout << " YES \n";
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -130,32 +106,14 @@ public:
   GCC_FC_AllTriple(const char* t, IntConLevel icl) 
     : IntTest(t, 4, ds_14, false, icl) {}
   virtual bool solution(const Assignment& x) const {
-    FixCard fc(4);
-    for (int i = 0; i < 4; i++) {
-      fc[i][0] = 0;
-      fc[i][1] = 2;
-      fc[i].card(i + 1);
-      fc[i].counter(0);
-    }
-
-    for (int i = 0; i < 4; i++) {
-      fc[fc.lookup(x[i])].inc();
-    }
-    
-//     std::cout <<"count: ";
-//     for (int i = 0; i < 4; i++) {
-//       std::cout << fc[i].counter() << " ";
-//     }
-//     std::cout <<"\n";
-    
-    
-    for (int i = 0; i < 4; i++) {
-      int vi = fc.lookup(x[i]);
-      if (! (fc[vi].min() <= fc[vi].counter() &&
-	     fc[vi].counter() <=fc[vi].max())) {
+    int n[4];
+    for (int i=4; i--; )
+      n[i] = 0;
+    for (int i=x.size(); i--; )
+      n[x[i] - 1]++;
+    for (int i=4; i--;)
+      if (n[i] > 2)
 	return false;
-      }
-    }
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -169,107 +127,41 @@ public:
   GCC_FC_SomeTriple(const char* t, IntConLevel icl) 
     : IntTest(t, 4, ds_14, false, icl) {}
   virtual bool solution(const Assignment& x) const {
-//     std::cout << "\n Solution \n";
-    FixCard fc(4);
-    for (int i = 0; i < 4; i++) {
-      fc[i][0] = 0;
-      (i < 2) ? fc[i][1] = 2 : fc[i][1] = 0;
-      fc[i].card(i + 1);
-      fc[i].counter(0);
-    }
-
-//     std::cout << "defined sol: ";
-//     for (int i = 0; i < 4; i++) {
-//       std::cout << "["<<fc[i].min()<<","<<fc[i].max()<<"] ";
-//     }
-//     std::cout <<"\n";
-
-
-    for (int i = 0; i < 4; i++) {
-      fc[fc.lookup(x[i])].inc();
-    }
-
-//     std::cout <<"count: ";
-//     for (int i = 0; i < 4; i++) {
-//       std::cout << fc[i].counter() << " ";
-//     }
-//     std::cout <<"\n";
-    
-    
-    for (int i = 0; i < 4; i++) {
-      int vi = fc.lookup(x[i]);
-      if (! (fc[vi].min() <= fc[vi].counter() &&
-	     fc[vi].counter() <=fc[vi].max())) {
-	return false;
-      }
-    }
+    int n[4];
+    for (int i=4; i--; )
+      n[i] = 0;
+    for (int i=x.size(); i--; )
+      n[x[i] - 1]++;
+    if (n[0] < 2 || n[1] < 2 ||
+	n[2] > 0 || n[3] > 0) 
+      return false;
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
-//     std::cout << "\n Test post\n";
-//     IntArgs card(6, 1,0,2, 2,0,2);
     IntArgs card(6, 1,0,2, 2,0,2);
     gcc(home, x, card, 6, 0, false, 1, 4, icl);
   }
 };
-
-
 
 class GCC_FC_AllEqUb : public IntTest {
 public:
   GCC_FC_AllEqUb(const char* t, IntConLevel icl) 
     : IntTest(t, 4, ds_12, false, icl) {}
   virtual bool solution(const Assignment& x) const {
-//     std::cout << "\n Solution \n";
-    FixCard fc(2);
-    for (int i = 0; i < 2; i++) {
-      fc[i][0] = 2;
-      fc[i][1] = 2;
-      fc[i].card(i + 1);
-      fc[i].counter(0);
-    }
-
-//     std::cout << "x: ";
-//     for (int i = 0; i < 4; i++) {
-//       std::cout << x[i] << " ";
-//     }
-//     std::cout <<"\n";
-//     std::cout <<"count before: ";
-//     for (int i = 0; i < 2; i++) {
-//       std::cout << fc[i].counter() << " ";
-//     }
-//     std::cout <<"\n";
-
-    for (int i = 0; i < 4; i++) {
-      int idx = fc.lookup(x[i]);
-      if (idx != -1) {
-// 	std::cout << x[i] << "," <<idx <<"\n";
-	fc[idx].inc();
-      }
-    }
-
-//     std::cout <<"count after: ";
-//     for (int i = 0; i < 2; i++) {
-//       std::cout << fc[i].counter() << " ";
-//     }
-//     std::cout <<"\n";
-    
-    
-    for (int i = 0; i < 2; i++) {
-      if (! (fc[i].min() <= fc[i].counter() &&
-	     fc[i].counter() <=fc[i].max())) {
-// 	std::cout << "cur is false!\n";
-	return false;
-      }
-    }
-//     std::cout << "cur is true!\n";
+    int n[2];
+    for (int i=2; i--; )
+      n[i] = 0;
+    for (int i=x.size(); i--; )
+      n[x[i] - 1]++;
+    if (n[0] != 2 || n[1] != 2)
+      return false;
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
-//     std::cout << "\n Test post\n";
     gcc(home, x, 2, icl);
   }
 };
+
 
 class GCC_FC_Shared_AllLbUb : public IntTest {
 public:
@@ -607,39 +499,19 @@ public:
   GCC_VC_Shared_SomeTriple(const char* t, IntConLevel icl) 
     : IntTest(t,3,ds_04,false,icl) {}
   virtual bool solution(const Assignment& x) const {
-    
-//     for (int i = 0; i < 3; i++) {
-//       std::cout << x[0];
-//     }
-
-//     for (int i = 0; i < 3; i++) {
-//       std::cout << x[1];
-//     }
-//     std::cout << " || ";
-//     for (int i = 2; i < 4; i++) {
-//       std::cout << x[i];
-//     }
-//     std::cout << "..";
-
-
     if ( (x[0] != 1 && x[0] != 3) ||
 	 (x[1] != 1 && x[1] != 3)) {
       return false;
     }
     if (x[0] == x[1]) {
-      // std::cout << " non different\n";
       return false;
     }
     if (x[0] < 1 || x[1] < 1) {
-      // std::cout << " wrong index var\n";
       return false;
     }
     if (x[2] != 3) {
-      // std::cout << " not equal occ\n";
       return false;
     }
-
-    // std::cout << "valid\n";
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -686,6 +558,7 @@ GCC_FC_AllTriple _gccval_alltrip("GCC::FixCard::Val::All::(v,lb,ub)",ICL_VAL);
 GCC_FC_SomeTriple _gccbnd_sometrip("GCC::FixCard::Bnd::Some::(v,lb,ub)",ICL_BND);
 GCC_FC_SomeTriple _gccdom_sometrip("GCC::FixCard::Dom::Some::(v,lb,ub)",ICL_DOM);
 GCC_FC_SomeTriple _gccval_sometrip("GCC::FixCard::Val::Some::(v,lb,ub)",ICL_VAL);
+
 
 // GCC_FC_Shared_AllLbUb _gccbnd_shared_all("GCC::FixCard::Bnd::Shared::All::(lb,ub)",ICL_BND);
 // GCC_FC_Shared_AllLbUb _gccdom_shared_all("GCC::FixCard::Dom::Shared::All::(lb,ub)",ICL_DOM);

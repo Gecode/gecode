@@ -510,7 +510,7 @@ namespace Gecode { namespace Int { namespace GCC {
   inline
   BndImp<View, Card, isView, shared>::
   BndImp(Space* home, bool share, BndImp<View, FixCard, isView, shared>& p)  
-    : Propagator(home, share, p), k(p.k.size()), lps(NULL), ups(NULL), 
+    : Propagator(home, share, p), k(home, p.k.size()), lps(NULL), ups(NULL), 
       card_fixed(p.card_fixed), card_all(p.card_all), skip_lbc(p.skip_lbc) {
     x.update(home, share, p.x);
     y.update(home, share, p.y);

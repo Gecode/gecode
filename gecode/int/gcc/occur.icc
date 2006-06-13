@@ -206,19 +206,30 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   template <class T>
-  class OccurArray :public PrimArgArray<T>{
+  class OccurArray {
   private: 
     int l;
+    T* a;
   public:
-    OccurArray(int n);
+    OccurArray(void);
+    //     OccurArray(int n);
     OccurArray(Space* home, int n);
     OccurArray(const OccurArray<T>& o);
     OccurArray(Space* home, const OccurArray<T>& o);
     template <class View>
-    OccurArray(const IntArgs&, const ViewArray<View>&, 
+    OccurArray(Space* home, const IntArgs&, const ViewArray<View>&, 
 	       int, int, int, int, int, int, int);
     int  size(void);
     void size(int n);
+
+    /// \name Array elements
+    //@{
+    /// Return element at position \a i
+    T& operator[](int i);
+    /// Return element at position \a i
+    const T& operator[](int i) const;
+    //@}
+
     void update(Space*, bool, OccurArray<T>&);
     void cancel(Space* home, Propagator* , PropCond );
     void subscribe(Space*, Propagator* , PropCond);
@@ -227,10 +238,21 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   template <class T>
-  OccurArray<T>::OccurArray(int n) : PrimArgArray<T>(n), l(n){}
+  forceinline
+  OccurArray<T>::OccurArray(void) 
+    : l(0), a(NULL) {}
+
+
+// template <class T>
+//   OccurArray<T>::OccurArray(int n) : PrimArgArray<T>(n), l(n){}
+
+//   template <class T>
+//   OccurArray<T>::OccurArray(Space* home, int n) : PrimArgArray<T>(n), l(n){}
 
   template <class T>
-  OccurArray<T>::OccurArray(Space* home, int n) : PrimArgArray<T>(n), l(n){}
+  OccurArray<T>::OccurArray(Space* home, int n) 
+    : l(n), a(reinterpret_cast<T*>(home->alloc(n*sizeof(T)))) {}
+
 
   /**
    * \brief Construct an array with fix cardinalities
@@ -245,12 +267,14 @@ namespace Gecode { namespace Int { namespace GCC {
    * \param all checks whether all possible values are used or not
    */
   template <class T> template <class View>
-  OccurArray<T>::OccurArray(const IntArgs& ia, const ViewArray<View>& x,
+  OccurArray<T>::OccurArray(Space* home,
+			    const IntArgs& ia, const ViewArray<View>& x,
 			    int iasize, int val, int nov,
 			    int min, int max, 
 			    int unspec_low, int unspec_up) : 
-    PrimArgArray<T>(std::max(nov, val)), l(std::max(nov, val)) {
-    
+    l(std::max(nov, val)),
+    a(reinterpret_cast<T*>(home->alloc(l*sizeof(T)))) {
+   
     int n = x.size();
 
     GECODE_AUTOARRAY(ViewRanges<View>, xrange, n);
@@ -298,28 +322,28 @@ namespace Gecode { namespace Int { namespace GCC {
 	      throw ArgumentSizeMismatch("Int::gcc");
 	    }
 	    
-	    (*this)[c].card(v);
-	    (*this)[c].counter(0);
-	    (*this)[c][0] = ia[r + 1];
-	    (*this)[c][1] = ia[r + 2];
+	    a[c].card(v);
+	    a[c].counter(0);
+	    a[c][0] = ia[r + 1];
+	    a[c][1] = ia[r + 2];
 	    c++;
 	    r += 3;
 	  } else {
 	    // value is not specified with cardinalities
 	    // the value is unspecified
-	    (*this)[c].card(v);
-	    (*this)[c].counter(0);
-	    (*this)[c][0] = unspec_low;
-	    (*this)[c][1] = unspec_up;
+	    a[c].card(v);
+	    a[c].counter(0);
+	    a[c][0] = unspec_low;
+	    a[c][1] = unspec_up;
 	    c++;
 	  }
 	} else {
 	  // there are more values in the variable domains
 	  // than specified 
-	    (*this)[c].card(v);
-	    (*this)[c].counter(0);
-	    (*this)[c][0] = unspec_low;
-	    (*this)[c][1] = unspec_up;
+	    a[c].card(v);
+	    a[c].counter(0);
+	    a[c][0] = unspec_low;
+	    a[c][1] = unspec_up;
 	    c++;
 	}
       } else {
@@ -332,27 +356,27 @@ namespace Gecode { namespace Int { namespace GCC {
 	      throw ArgumentSizeMismatch("Int::gcc");
 	    }
 	    
-	    (*this)[c].card(v);
-	    (*this)[c].counter(0);
-	    (*this)[c][0] = ia[r + 1];
-	    (*this)[c][1] = ia[r + 2];
+	    a[c].card(v);
+	    a[c].counter(0);
+	    a[c][0] = ia[r + 1];
+	    a[c][1] = ia[r + 2];
 	    c++;
 	    r += 3;
 	  } else {
 	    // the value is unspecified
-	    (*this)[c].card(v);
-	    (*this)[c].counter(0);
-	    (*this)[c][0] = unspec_low;
-	    (*this)[c][1] = unspec_up;
+	    a[c].card(v);
+	    a[c].counter(0);
+	    a[c][0] = unspec_low;
+	    a[c][1] = unspec_up;
 	    c++;
 	  }
 	} else {
 	  // there are more values in the variable domains
 	  // than specified 
-	    (*this)[c].card(v);
-	    (*this)[c].counter(0);
-	    (*this)[c][0] = unspec_low;
-	    (*this)[c][1] = unspec_up;
+	    a[c].card(v);
+	    a[c].counter(0);
+	    a[c][0] = unspec_low;
+	    a[c][1] = unspec_up;
 	    c++;
 	}
       }
@@ -361,10 +385,10 @@ namespace Gecode { namespace Int { namespace GCC {
     if (c < l) {
       for ( ; r < iasize; r+=3) {
 	assert(0 <= c && c < l);
-	(*this)[c].card(ia[r]);
-	(*this)[c].counter(0);
-	(*this)[c][0] = unspec_low;
-	(*this)[c][1] = unspec_up;
+	a[c].card(ia[r]);
+	a[c].counter(0);
+	a[c][0] = unspec_low;
+	a[c][1] = unspec_up;
 	c++;
 	r+=3;
       }
@@ -374,11 +398,11 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class T>
   OccurArray<T>::OccurArray(const OccurArray<T>& o) 
-    : PrimArgArray<T>(o), l(o.l) {}
+    : l(o.l), a(o.a) {}
 
-  template <class T>
-  OccurArray<T>::OccurArray(Space* home, const OccurArray<T>& o) 
-    : PrimArgArray<T>(o), l(o.l) {}
+//   template <class T>
+//   OccurArray<T>::OccurArray(Space* home, const OccurArray<T>& o) 
+//     : PrimArgArray<T>(o), l(o.l) {}
 
   template <class T>
   forceinline int
@@ -393,13 +417,25 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class T>
+  forceinline T&
+  OccurArray<T>::operator[](int i) {
+    return a[i];
+  }
+
+  template <class T>
+  forceinline const T&
+  OccurArray<T>::operator[](int i) const {
+    return a[i];
+  }
+
+  template <class T>
   forceinline void
   OccurArray<T>::update(Space* home, bool share, OccurArray<T>& o) {
-    
-    for (int i = this->size(); i--; ) {
-      (*this)[i] = o[i];
+    l = o.l;
+    a = reinterpret_cast<T*>(home->alloc(l*sizeof(T)));
+    for (int i = l; i--; ) {
+      a[i] = o.a[i];
     }
-    assert(this->size() == o.size());
   }
 
   template <class T>
@@ -425,7 +461,7 @@ namespace Gecode { namespace Int { namespace GCC {
     int r  = this->size() - 1;
 
     if (r == 0) {
-      if ((*this)[0].card() == v) {
+      if (a[0].card() == v) {
 	return 0;
       } else {
 	return -1;
@@ -433,20 +469,20 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     while ( l < r ) {
-      if ( (*this)[l].card() == v) {
+      if ( a[l].card() == v) {
 	idx = l;
 	break;
       }
-      if ( (*this)[r].card() == v) {
+      if ( a[r].card() == v) {
 	idx = r;
 	break;
       }
       int p  = (l + r) / 2;
-      if ( v == (*this)[p].card()) {
+      if ( v == a[p].card()) {
 	idx = p;
 	break;
       } else {
-	if ( v < (*this)[p].card()) {
+	if ( v < a[p].card()) {
 	  r = p;
 	} else {
 	  l = p;

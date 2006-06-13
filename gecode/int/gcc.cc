@@ -324,7 +324,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     x_setidx(xv);
 
-    FixCard cv(c, xv, m, (m / 3), (max - (min - 1)), 
+    FixCard cv(home, c, xv, m, (m / 3), (max - (min - 1)), 
 	       min, max, unspec_low, unspec_up);
 
     // compute number of zero entries
@@ -340,7 +340,7 @@ namespace Gecode { namespace Int { namespace GCC {
     if (z > 0) {
 
       // reduce the occurences 
-      FixCard red(cv.size() - z);
+      FixCard red(home, cv.size() - z);
       IntArgs rem(z);
       z = 0;
       int c = 0;

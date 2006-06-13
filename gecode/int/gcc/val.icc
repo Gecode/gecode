@@ -326,7 +326,7 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline
   Val<View, Card, isView>::Val(Space* home, bool share, 
 			       Val<View, FixCard, isView>& p)
-    : Propagator(home,share,p), k(p.k.size()), card_all(p.card_all){
+    : Propagator(home,share,p), k(home, p.k.size()), card_all(p.card_all){
     x.update(home,share, p.x);
     k.update(home,share, p.k);
   }
