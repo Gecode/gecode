@@ -37,23 +37,16 @@
  *
  */
 
-/// Type definition for an array with fixed cardinalities
-typedef Gecode::Int::GCC::OccurArray<
-  Gecode::Int::GCC::OccurBnds<int, 2> >FixCard;
-/// Type definition for an arry of variable cardinalities
-typedef Gecode::Int::GCC::CardArray<Gecode::Int::GCC::CardView> VarCard;
-/// Type definition for indexed integer variables needed during propagation
-typedef Gecode::ViewArray<Gecode::Int::GCC::IdxView> GccIdxView;
-
 namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView, bool shared>
-  ExecStatus prop_bnd(Space* home, ViewArray<View>&, Card&,
+  ExecStatus prop_bnd(Space* home, ViewArray<View>&,
+		      ViewArray<Card>&,
 		      PartialSum<Card>*&, PartialSum<Card>*&, 
 		      bool, bool, bool);
 
   template <class View, class Card, bool isView>
-  ExecStatus prop_val(Space* home, ViewArray<View>&, Card&, bool&);
+  ExecStatus prop_val(Space* home, ViewArray<View>&, ViewArray<Card>&, bool&);
 
   /**
    * \brief Bounds-consistent global cardinality propagator
@@ -110,8 +103,8 @@ namespace Gecode { namespace Int { namespace GCC {
   class Bnd{
   public:
     /// Post the bounds consistent propagator
-    static  ExecStatus  post(Space* home, ViewArray<View>&, VarCard&, bool);
-    static  ExecStatus  post(Space* home, ViewArray<View>&, FixCard&, bool);
+    static  ExecStatus  post(Space* home, ViewArray<View>&,
+			     ViewArray<Card>&, bool);
   };
 
   /**
@@ -123,17 +116,15 @@ namespace Gecode { namespace Int { namespace GCC {
     friend class Bnd<View, Card, isView>;
   protected:
     ViewArray<View> x; 
-    ViewArray<View> y; 
-    Card k;
+    ViewArray<Card> k;
     PartialSum<Card>* lps;
     PartialSum<Card>* ups;
     bool card_fixed;
     bool card_all;
     bool skip_lbc;
     /// Constructor for posting
-    BndImp(Space* home, ViewArray<View>&, Card&, bool, bool, bool);
-    BndImp(Space* home, bool, BndImp<View, VarCard, isView, shared>&);
-    BndImp(Space* home, bool, BndImp<View, FixCard, isView, shared>&);
+    BndImp(Space* home, ViewArray<View>&, ViewArray<Card>&, bool, bool, bool);
+    BndImp(Space* home, bool, BndImp<View, Card, isView, shared>&);
 
   public:
     virtual size_t dispose(Space* home);
@@ -174,13 +165,12 @@ namespace Gecode { namespace Int { namespace GCC {
   protected:
     ViewArray<View> x; 
     ViewArray<View> y; 
-    Card k;
+    ViewArray<Card> k;
     VarValGraph<View, Card, isView>* vvg;
     bool card_fixed;
     bool card_all;
-    Dom(Space* home, bool, Dom<View, VarCard, isView>&);
-    Dom(Space* home, bool, Dom<View, FixCard, isView>&);
-    Dom(Space* home, ViewArray<View>&, Card&, bool, bool);
+    Dom(Space* home, bool, Dom<View, Card, isView>&);
+    Dom(Space* home, ViewArray<View>&, ViewArray<Card>&, bool, bool);
 
   public:
     virtual size_t dispose(Space* home);
@@ -188,7 +178,8 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual Actor* copy(Space* home, bool share);
     virtual PropCost    cost (void) const;
     virtual ExecStatus  propagate(Space* home);
-    static  ExecStatus  post(Space* home, ViewArray<View>&, Card&, bool);
+    static  ExecStatus  post(Space* home, ViewArray<View>&,
+			     ViewArray<Card>&, bool);
   };
 
   /**
@@ -203,18 +194,18 @@ namespace Gecode { namespace Int { namespace GCC {
   class Val : public Propagator {
   protected:
     ViewArray<View> x;
-    Card k;
+    ViewArray<Card> k;
     bool card_all;
-    Val(Space* home, bool, Val<View, VarCard, isView>&);
-    Val(Space* home, bool, Val<View, FixCard, isView>&);
-    Val(Space* home, ViewArray<View>&, Card&, bool);
+    Val(Space* home, bool, Val<View, Card, isView>&);
+    Val(Space* home, ViewArray<View>&, ViewArray<Card>&, bool);
 
   public:
     virtual size_t dispose(Space* home);
     virtual Actor* copy(Space* home, bool share);
     virtual PropCost    cost (void) const;
     virtual ExecStatus  propagate(Space* home);
-    static  ExecStatus  post(Space* home, ViewArray<View>&, Card&, bool);
+    static  ExecStatus  post(Space* home, ViewArray<View>&,
+			     ViewArray<Card>&, bool);
   };
 
 }}}

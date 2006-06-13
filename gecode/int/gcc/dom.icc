@@ -48,7 +48,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   inline
   Dom<View, Card, isView>::Dom(Space* home, ViewArray<View>& x0, 
-			       Card& k0, bool cf, bool all)
+			       ViewArray<Card>& k0, bool cf, bool all)
     : Propagator(home, true), x(x0),  y(home, x0),
       k(k0), vvg(NULL), card_fixed(cf), card_all(all) {
     // y is used for bounds propagation since prop_bnd needs all variables
@@ -60,20 +60,9 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   forceinline
   Dom<View, Card, isView>::Dom(Space* home, bool share, 
-			       Dom<View, VarCard, isView>& p)
+			       Dom<View, Card, isView>& p)
     : Propagator(home, share, p), vvg(NULL), 
       card_fixed(p.card_fixed), card_all(p.card_all) {
-    x.update(home, share, p.x);
-    y.update(home, share, p.y);
-    k.update(home, share, p.k);
-  }
-
-  template <class View, class Card, bool isView>
-  forceinline
-  Dom<View, Card, isView>::Dom(Space* home, bool share, 
-			       Dom<View, FixCard, isView>& p)
-    : Propagator(home, share, p), k(home, p.k.size()), 
-      vvg(NULL), card_fixed(p.card_fixed), card_all(p.card_all) {
     x.update(home, share, p.x);
     y.update(home, share, p.y);
     k.update(home, share, p.k);
@@ -155,7 +144,7 @@ namespace Gecode { namespace Int { namespace GCC {
       all_assigned &= b;
       if (b) {
 	noa++;
-	int idx = k.lookup(y[i].val());
+	int idx = lookupValue(k, y[i].val());
 	if (idx == -1) {
 	  return ES_FAILED;
 	}
@@ -241,7 +230,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	if (x.size() == 1) {
 	  if (x[0].assigned()) {
 	    int v = x[0].val();
-	    int idx = k.lookup(v);
+	    int idx = lookupValue(k,v);
 	    if (idx == -1) {
 	      return ES_FAILED;
 	    }
@@ -376,7 +365,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	  if (x.size() == 1) {
 	    if (x[0].assigned()) {
 	      int v = x[0].val();
-	      int idx = k.lookup(v);
+	      int idx = lookupValue(k,v);
 	      if (idx == -1) {
 		return ES_FAILED;
 	      }
@@ -408,7 +397,7 @@ namespace Gecode { namespace Int { namespace GCC {
       bool b = y[i].assigned();
       all_assigned &= b;
       if (b) {
-	int idx = k.lookup(y[i].val());
+	int idx = lookupValue(k,y[i].val());
 	if (idx == -1) {
 	  return ES_FAILED;
 	}
@@ -496,7 +485,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   inline ExecStatus 
   Dom<View, Card, isView>::post(Space* home, ViewArray<View>& x0, 
-				Card& k0, bool all){
+				ViewArray<Card>& k0, bool all){
 
     bool cardfix = true;
     for (int i = k0.size(); i--; ) {

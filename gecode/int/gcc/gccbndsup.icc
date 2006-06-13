@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool shared>
   forceinline ExecStatus 
-  prop_card(Space* home, ViewArray<View>& x, Card& k, bool& mod) {
+  prop_card(Space* home, ViewArray<View>& x, ViewArray<Card>& k, bool& mod) {
     int n = x.size();
     int m = k.size();
     GECODE_AUTOARRAY(UnReachable, rv, m);
@@ -70,7 +70,7 @@ namespace Gecode { namespace Int { namespace GCC {
       int b = x[i].assigned();
       int min_idx = 0;
       int max_idx = 0;
-      min_idx = k.lookup(x[i].min());
+      min_idx = lookupValue(k,x[i].min());
       if (min_idx == -1) {
 	return ES_FAILED;
       }
@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	rv[min_idx].maxb++;
 	rv[min_idx].eq++;
       } else {
-	max_idx = k.lookup(x[i].max());
+	max_idx = lookupValue(k,x[i].max());
 	if (max_idx == -1) {
 	  return ES_FAILED;
 	}
@@ -143,7 +143,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card>
   inline bool
-  card_consistent(int& smin, int& smax, ViewArray<View>& x, Card& k, bool& all) {
+  card_consistent(int& smin, int& smax, ViewArray<View>& x,
+		  ViewArray<Card>& k, bool& all) {
     
     int m = k.size();
     int n = x.size();
@@ -244,7 +245,7 @@ namespace Gecode { namespace Int { namespace GCC {
   public:    
     /// \name Constructors and destructors
     //@{
-    PartialSum( int, int, Card& , bool);
+    PartialSum( int, int, ViewArray<Card>& , bool);
     ~PartialSum(void);
     //@}
     /// \name Access
@@ -259,8 +260,8 @@ namespace Gecode { namespace Int { namespace GCC {
     void* operator new(size_t s);
     void operator delete(void* p);
     void print(void);
-    bool check_update_max(Card& k);
-    bool check_update_min(Card& k);
+    bool check_update_max(ViewArray<Card>& k);
+    bool check_update_min(ViewArray<Card>& k);
     int getsize(void);
     //@}
   };
@@ -304,7 +305,7 @@ namespace Gecode { namespace Int { namespace GCC {
   inline 
   PartialSum<Card>::PartialSum(int first,
 			       int count, 
-			       Card& elements, 
+			       ViewArray<Card>& elements, 
 			       bool up) {
     int i = 0;
     int j = 0;
@@ -471,7 +472,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class Card>
   inline bool
-  PartialSum<Card>::check_update_max(Card& k){
+  PartialSum<Card>::check_update_max(ViewArray<Card>& k){
     if (k.size() <= size - 5) {
       return true; 
     } else {
@@ -494,7 +495,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class Card>
   inline bool
-  PartialSum<Card>::check_update_min(Card& k){
+  PartialSum<Card>::check_update_min(ViewArray<Card>& k){
     if (k.size() <= size - 5) {
       return true; 
     } else {
@@ -694,7 +695,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class Card>
   void 
-  reduce_card(int cmin, int cmax, Card& k) {
+  reduce_card(int cmin, int cmax, ViewArray<Card>& k) {
     if (cmin == cmax) {
       int idx = 0;
       while (k[idx].card() != cmax) {

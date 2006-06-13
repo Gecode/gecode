@@ -487,7 +487,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Copy keeping track of removed variables
     ViewArray<View>& y;
     /// Occurences 
-    Card& k;
+    ViewArray<Card>& k;
     /// Variable partition representing the problem variables
     VarNode** vars;           
     /**
@@ -527,7 +527,8 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     /// \name Constructors and Destructors
     //@{
-    VarValGraph(ViewArray<View>&, ViewArray<View>&, Card& ,  int , int , int );
+    VarValGraph(ViewArray<View>&, ViewArray<View>&, ViewArray<Card>&,
+		int , int , int );
     /// Destructor
     ~VarValGraph(void);
     //@}
@@ -561,7 +562,6 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     bool sync(void);
 
-    bool stagedsync(Space* home);
     /// Print graph information for debugging 
     void print_graph(void);
     /// Print matching information for debugging 
@@ -1280,7 +1280,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   VarValGraph<View, Card, isView>::VarValGraph(ViewArray<View>& xref,  
 					       ViewArray<View>& yref,  
-					       Card& kref, 
+					       ViewArray<Card>& kref, 
 					       int noe, 
 					       int smin, int smax)
     : fail(false),
@@ -1339,7 +1339,7 @@ namespace Gecode { namespace Int { namespace GCC {
     
     for (int i = n_var; i--; ){
 
-      vars[i]          = new (vars_ptr + i) VarNode(i, x[i].oldindex());
+      vars[i]          = new (vars_ptr + i) VarNode(i, i);
       VarNode* vrn     = vars[i];
       // get the space for the edges of the varnode
       Edge** xadjacent = vrn->adj();        
@@ -1429,7 +1429,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
 	    int n = x.size();
 	    x[vi] = x[--n];
-	    x[vi].index(vi);
+	    //	    x[vi].index(vi);
 	    x.size(n);
 
 	    node_size--;
@@ -1666,7 +1666,6 @@ namespace Gecode { namespace Int { namespace GCC {
 	}
       }
       vars[i]->set_info(i);
-      x[i].index(i);
     }
     
     for (int i = n_val; i--; ) {
@@ -1683,219 +1682,6 @@ namespace Gecode { namespace Int { namespace GCC {
     } else {
       // start repair
 
-      bool repaired = true;
-      while (n_re ) {
-	n_re--;
-	assert(re[n_re] != NULL);
-	if (!(re[n_re]->removed())) {
-	  if (!(re[n_re]->get_type())) {
-	    VarNode* vrn = reinterpret_cast<VarNode*> (re[n_re]);
-	    if (!vrn->template matched<UBC>()) {
-	      repaired &= augmenting_path<UBC>(vrn);
-	    }
-	  } else {
-	    assert(re[n_re]->get_type());
-	    ValNode* vln = reinterpret_cast<ValNode*> (re[n_re]);
-	    while(!vln->template matched<LBC>()) {
-	      repaired &= augmenting_path<LBC>(vln);
-	      if (!repaired) {
-		break;
-	      }
-	    }
-	  }
-	}
-      }      
-      return repaired;
-    }
-  }
-
-  /**
-   * \brief %Graph synchronization needed to keep the variable order
-   *        consistent in case that the propagator is used with 
-   *        staging. 
-   */
-  
-  template <class View, class Card, bool isView> 
-  inline bool
-  VarValGraph<View, Card, isView>::stagedsync(Space* home){
-    // nodes to repair
-    GECODE_AUTOARRAY(VVGNode*, re, node_size);
-
-    int n_re = 0;
-    int xs   = x.size();
-
-    // value propagation removed assigned variables
-    // and the information has not yet been propagated to the graph
-    if (n_var > xs) {
-      // variables not removed by value propagation 
-      GECODE_AUTOARRAY(bool, idx_used, y.size());
-      // initializing idx_used
-      for (int i = y.size(); i--; ) {
-	idx_used[i] = false;
-      }
-
-      // mark remaining indices in x 
-      for (int i = xs; i--; ) {
-	assert(0 <= x[i].index() && x[i].index() < y.size());
-	idx_used[x[i].oldindex()] = true;
-      }
-
-      // synchronize variable vertices
-      for (int i = n_var; i--; ) {
-	// the node to remove
-	VarNode* rm = vars[i];
-	assert(0 <= rm->xindex &&  rm->xindex < (unsigned int) y.size());
-	if (!idx_used[rm->xindex]) {
-
-	  ValNode* rv = NULL;   
-	  Edge* mub = rm->template get_match<UBC>();
-	  Edge* mlb = rm->template get_match<LBC>();
-	  
-	  assert(y[rm->xindex].assigned());
-	  
-	  int v = y[rm->xindex].val();
-	  // value that is assigned to rm 
-	  // delete all 
-	  for (Edge* e = rm->first(); e != NULL; e = e->next()) {
-	    ValNode* w = e->getVal();
-	    if (w->val == v) {
-	      rv = w;
-	    } 
-	      rm->noe--;
-	      w->noe--;
-	      e->del_edge();
-	      e->unlink();
-	  }
-	  
-	  // repair upper bound matching
-	  if (mub != NULL) {
-	    if (mub->getVal()->val != v) {
-	      // a value node d != rv was previously matched by rm
-	      // so we unmatch the value side to reuse it
-	      ValNode* d = mub->getVal();	      
-	      // only unmatch the value node
-	      // the value node is not needed just free him for possible reuse
-	      mub->template unmatch<UBC>(d->get_type());
-	    }
-	    // find a blocking variable node matching rv but not taking the value
-	    if (rv!= NULL) {
-	      for (Edge* f = rv->first(); f != NULL; f = f->vnext()) {
-		if (f->getVar()->noe > 1 && f->template matched<UBC>()) {
-		  f->template unmatch<UBC>();
-		  re[n_re] = f->getVar();
-		  n_re++;
-		  break;
-		}
-	      }
-	    }
-	  }
-
-	  // repair lower bound matching
-	  if (mlb != NULL) {
-	    if (mlb->getVal()->val != v) {
-	      // other value node
-	      ValNode* d = mlb->getVal();	      
-	      mlb->template unmatch<LBC>(d->get_type());
-	      if (!d->template matched<LBC>()) {
-		// schedule for repair
-		re[n_re] = d;
-		n_re++;
-	      }
-	      // find a blocking variable node
-	      if (rv != NULL) {
-		for (Edge* f = rv->first(); f != NULL; f = f->vnext()) {
-		  if (f->getVar()->noe > 1 && f->template matched<LBC>()) {
-		    f->template unmatch<LBC>(f->getVar()->get_type());
-		  }
-		}
-	      }
-	    }
-	  }
-	  
-	  if (rv != NULL) {
-	    assert(rv != NULL);
-	    // remove corresponding value
-	    for (Edge* e = rv->first(); e != NULL; e = e->vnext()) {
-	      VarNode* w = e->getVar();
-	      if (e->template matched<LBC>()) {
-		  e->template unmatch<LBC>(w->get_type());
-	      } 
-	      if (e->template matched<UBC>()) {
-		e->template unmatch<UBC>();
-		re[n_re]        = w;
-		n_re++;
-	      }
-	      rv->noe--;
-	      w->noe--;
-	      e->del_edge();
-	      e->unlink();	    
-	    }
-	  }
-	  if(rv != NULL) {	    
-	    int vidx = rv->kindex();
-	    if (isView) {
-	      GECODE_ASSERTION_VARIABLE(ModEvent me =)
-		k[vidx].eq(home, k[vidx].max());
-	      GECODE_ASSERT(me);
-	    }
-
-	    k[vidx].counter(k[vidx].max());
-	    rv->template set_cap<UBC>(0);
-	    rv->template set_cap<LBC>(0);
-	    rv->set_maxlow(0);
-
-	    if (sum_min && sum_min >= k[vidx].min()) {
-	      sum_min -= k[vidx].min();
-	    }
-	    assert(sum_min >= 0);
-
-	    if (sum_max && sum_max >= k[vidx].max()) {
-	      sum_max -= k[vidx].max();
-	    }
-	    assert(sum_max >= 0);
-	  }
-
-	  node_size--;
-	  assert(node_size >= 0);
-	  vars[i] = vars[--n_var];
-	  vars[i]->set_info(i);
-	}
-      }
-    }
-
-  
-    // adjust value information
-    for (int i = n_val; i--; ) {
-      if (k[i].counter() == 0) {
-	ModEvent klq = k[i].lq(home, vals[i]->noe);
-	if (me_failed(klq)) {
-	  failed(true);
-	  return false;
-	}
-      }
-
-      if (vals[i]->noe == 0) {
-	vals[i]->template set_cap<UBC>(0);
-	vals[i]->template set_cap<LBC>(0);
-	vals[i]->set_maxlow(0);
-	vals[i]->set_kmax(0);
-	vals[i]->set_kmax(0);
-      }
-      vals[i]->set_info(n_var + i);
-    }
-
-    for (int i = n_var; i--;) {
-      vars[i]->set_info(i);
-      x[i].index(i);
-    }
-
-    assert(x.size() == n_var);
-    if (n_re == 0) {
-//       no repair needed
-      return true;
-    } else {
-      // start repair
-      
       bool repaired = true;
       while (n_re ) {
 	n_re--;
@@ -1996,7 +1782,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
 	      int n = x.size();
 	      x[vi] = x[--n];
-	      x[vi].index(vi);
+	      //	      x[vi].index(vi);
 	      x.size(n);
 
 	      vars[vi] = vars[--n_var];
@@ -2041,7 +1827,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
     for (int i = n_var; i--; ) {
       vars[i]->set_info(i);
-      x[i].index(i);
+      //      x[i].index(i);
     }
       
     for (int i = n_val; i--; ) {

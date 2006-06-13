@@ -22,7 +22,8 @@ namespace Gecode { namespace Int { namespace GCC {
   /// \brief Perform value propagation.  
   template <class View, class Card, bool isView>
   inline ExecStatus
-  prop_val(Space* home, ViewArray<View>& x, Card& k, bool& _cardall){
+  prop_val(Space* home, ViewArray<View>& x, ViewArray<Card>& k,
+	   bool& _cardall){
 
     bool mod = false;
     int  n   = x.size();
@@ -70,7 +71,7 @@ namespace Gecode { namespace Int { namespace GCC {
       bool b = x[i].assigned();
       all_assigned &= b;
       if (b) {
-	int idx = k.lookup(x[i].val());
+	int idx = lookupValue(k,x[i].val());
 	if (idx == -1) {
 	  return ES_FAILED;
 	}
@@ -202,13 +203,12 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = n; i--; ) {
       bool b = x[i].assigned();
       if (b) {
-	int idx = k.lookup(x[i].val());
+	int idx = lookupValue(k,x[i].val());
 	if (idx == -1) {
 	  return ES_FAILED;
 	}
 	if (onrem[idx]) {
 	  x[i] = x[--n];
-	  x[i].index(i);
 	  x.size(n);
 	}
       }
@@ -235,7 +235,7 @@ namespace Gecode { namespace Int { namespace GCC {
       bool b = x[i].assigned();
       all_assigned &= b;
       if (b) {
-	int idx = k.lookup(x[i].val());
+	int idx = lookupValue(k,x[i].val());
 	if (idx == -1) {
 	  return ES_FAILED;
 	}
@@ -306,7 +306,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   inline
-  Val<View, Card, isView>::Val(Space* home, ViewArray<View>& x0, Card& k0, 
+  Val<View, Card, isView>::Val(Space* home, ViewArray<View>& x0,
+			       ViewArray<Card>& k0, 
 			       bool all)
     :Propagator(home,true), x(x0), k(k0), card_all(all){
     x.subscribe(home, this, PC_INT_VAL);
@@ -316,17 +317,8 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   forceinline
   Val<View, Card, isView>::Val(Space* home, bool share, 
-			       Val<View, VarCard, isView>& p)
+			       Val<View, Card, isView>& p)
     : Propagator(home,share,p), card_all(p.card_all){
-    x.update(home,share, p.x);
-    k.update(home,share, p.k);
-  }
-
-  template <class View, class Card, bool isView>
-  forceinline
-  Val<View, Card, isView>::Val(Space* home, bool share, 
-			       Val<View, FixCard, isView>& p)
-    : Propagator(home,share,p), k(home, p.k.size()), card_all(p.card_all){
     x.update(home,share, p.x);
     k.update(home,share, p.k);
   }
@@ -352,7 +344,7 @@ namespace Gecode { namespace Int { namespace GCC {
   ExecStatus 
   Val<View, Card, isView>::post(Space* home, 
 				ViewArray<View>& x0,
-				Card& k0, bool all) {
+				ViewArray<Card>& k0, bool all) {
     new (home) Val<View, Card, isView>(home, x0, k0, all);
     return ES_OK;
   }

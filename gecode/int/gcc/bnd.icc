@@ -24,7 +24,7 @@ namespace Gecode { namespace Int { namespace GCC {
   /// \brief Perform bounds propagation
   template <class View, class Card, bool isView, bool shared>
   inline ExecStatus
-  prop_bnd(Space* home, ViewArray<View>& x, Card& k, 
+  prop_bnd(Space* home, ViewArray<View>& x, ViewArray<Card>& k, 
 	   PartialSum<Card>*& lps, PartialSum<Card>*& ups, 
 	   bool card_fixed, bool card_all, bool nolbc){		
 
@@ -97,7 +97,7 @@ namespace Gecode { namespace Int { namespace GCC {
       all_assigned &= b;
       if (b) {
 	noa++;
-	int idx = k.lookup(x[i].val());
+	int idx = lookupValue(k,x[i].val());
 	// reduction is essential for order on value nodes in dom
 	// hence introduce test for failed lookup
 	if (idx == -1) {
@@ -212,7 +212,7 @@ namespace Gecode { namespace Int { namespace GCC {
       all_assigned &= b;
       if (b) {
 	noa++;
-	int idx = k.lookup(x[i].val());
+	int idx = lookupValue(k,x[i].val());
 	// reduction is essential for order on value nodes in dom
 	// hence introduce test for failed lookup
 	if (idx == -1) {
@@ -449,7 +449,7 @@ namespace Gecode { namespace Int { namespace GCC {
       all_assigned &= b;
       if (b) {
 	noa++;
-	int idx = k.lookup(x[i].val());
+	int idx = lookupValue(k,x[i].val());
 	count[idx]++;
       } else {
 	single = i;
@@ -484,12 +484,11 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView, bool shared>
   inline
   BndImp<View, Card, isView, shared>::
-  BndImp(Space* home, ViewArray<View>& x0, Card& k0, 
+  BndImp(Space* home, ViewArray<View>& x0, ViewArray<Card>& k0, 
 	 bool cf,  bool all, bool nolbc) : 
-    Propagator(home, true), x(x0), y(home,x0), k(k0), lps(NULL), ups(NULL), 
+    Propagator(home, true), x(x0), k(k0), lps(NULL), ups(NULL), 
     card_fixed(cf), card_all(all), skip_lbc(nolbc) {
-    //copy of the problem variables to perform value propagation
-    y.subscribe(home, this, PC_INT_BND);
+    x.subscribe(home, this, PC_INT_BND);
     k.subscribe(home, this, PC_INT_BND);
   }
   
@@ -497,23 +496,11 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView, bool shared>
   forceinline
   BndImp<View, Card, isView, shared>::
-  BndImp(Space* home, bool share, BndImp<View, VarCard, isView, shared>& p)
+  BndImp(Space* home, bool share, BndImp<View, Card, isView, shared>& p)
     : Propagator(home, share, p), lps(NULL), ups(NULL), 
       card_fixed(p.card_fixed), card_all(p.card_all), 
       skip_lbc(p.skip_lbc) {
     x.update(home, share, p.x);
-    y.update(home, share, p.y);
-    k.update(home, share, p.k);
-  }
-
-  template <class View, class Card, bool isView, bool shared>
-  inline
-  BndImp<View, Card, isView, shared>::
-  BndImp(Space* home, bool share, BndImp<View, FixCard, isView, shared>& p)  
-    : Propagator(home, share, p), k(home, p.k.size()), lps(NULL), ups(NULL), 
-      card_fixed(p.card_fixed), card_all(p.card_all), skip_lbc(p.skip_lbc) {
-    x.update(home, share, p.x);
-    y.update(home, share, p.y);
     k.update(home, share, p.k);
   }
 
@@ -521,7 +508,7 @@ namespace Gecode { namespace Int { namespace GCC {
   size_t
   BndImp<View, Card, isView, shared>::dispose(Space* home){
     if (!home->failed()) {
-      y.cancel(home,this, PC_INT_BND);
+      x.cancel(home,this, PC_INT_BND);
       k.cancel(home,this, PC_INT_BND);
     }
     if (lps != NULL) {
@@ -562,13 +549,37 @@ namespace Gecode { namespace Int { namespace GCC {
       (home, x, k, lps, ups, card_fixed, card_all, skip_lbc);
   }
 
+  template <class View1, class View2>
+  class SharingTest {
+  public:
+    static bool shared(Space* home, ViewArray<View1>& x0,
+		       ViewArray<View2>& k0) {
+      ViewArray<View1> xc(home, x0.size()+k0.size());
+      for (int i = 0; i < x0.size(); i++) {
+	xc[i] = x0[i];
+      }
+      for (int i = x0.size(); i < x0.size()+k0.size(); i++) {
+	xc[i] = k0[i - x0.size()].intview();
+      }
+      return xc.shared();
+    }
+  };
+
+  template <>
+  class SharingTest<IntView,OccurBndsView> {
+  public:
+    static bool shared(Space* home,
+		       ViewArray<IntView>& xs, ViewArray<OccurBndsView>&) {
+      return xs.shared();
+    }
+  };
+
   template <class View, class Card, bool isView>
   ExecStatus
   Bnd<View, Card, isView>::post(Space* home, 
-				ViewArray<View>& x0, VarCard& k0, 
+				ViewArray<View>& x0,
+				ViewArray<Card>& k0, 
 				bool all) {
-    assert(isView);
-    
     bool cardfix = true;
     bool nolbc = true;
     for (int i = k0.size(); i--; ) {
@@ -576,42 +587,13 @@ namespace Gecode { namespace Int { namespace GCC {
       nolbc &= (k0[i].min() == 0);
     }
 
-    int p = x0.size();
-    int q = k0.size();
-    int w = p + q;
-      
-    ViewArray<View> xc(home, w);
-    for (int i = 0; i < p; i++) {
-      xc[i] = x0[i].intview();
-    }
-    for (int i = p; i < w; i++) {
-      xc[i] = k0[i - p].intview();
-    }
-    if (xc.shared()) {
+    if (SharingTest<View,Card>::shared(home,x0,k0)) {
       new (home) BndImp<View, Card, isView, true>
 	(home, x0, k0, cardfix, all, nolbc);
     } else {
       new (home) BndImp<View, Card, isView, false>
 	(home, x0, k0, cardfix, all, nolbc);
     }
-    return ES_OK;
-  }
-
-  template <class View, class Card, bool isView>
-  inline ExecStatus
-  Bnd<View, Card, isView>::post(Space* home, 
-				ViewArray<View>& x0, FixCard& k0, 
-				bool all) {
-    assert(!isView);
-
-    bool cardfix = true;
-    bool nolbc = true;
-    for (int i = k0.size(); i--; ) {
-      cardfix &= k0[i].assigned();
-      nolbc &= (k0[i].min() == 0);
-    }
-    new (home) BndImp<View, Card, isView, false>
-      (home, x0, k0, cardfix, all, nolbc);
     return ES_OK;
   }
 
