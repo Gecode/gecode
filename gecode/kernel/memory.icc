@@ -130,13 +130,13 @@ namespace Gecode {
  *
  */
 
-#if defined(__GNUC__) and not defined(_WIN32)
+#if defined(__GNUC__) && (! defined(_WIN32) )
 
 #define GECODE_AUTOARRAY(T,X,N)					\
 char __GECODE__ ## X ## __LINE__ [(N)*sizeof(T)];		\
 T* X = reinterpret_cast<T*>(__GECODE__ ## X ## __LINE__);
 
-#elif defined(_MSC_VER) or (defined(__GNUC__) and defined(_WIN32))
+#elif defined(_MSC_VER) || (defined(__GNUC__) && defined(_WIN32))
 
 #include <cstdlib>
 #include <malloc.h>
