@@ -47,9 +47,12 @@ Example::run(const Options& o) {
 	int i = o.solutions;
 	t.start();
 	Script* s = new Script(o);
-	s->status();
-	unsigned int p = s->propagators();
-	unsigned int b = s->branchings();	 
+	unsigned int p = 0;
+	unsigned int b = 0;
+	if (s->status() != SS_FAILED) {
+	  p = s->propagators();
+	  b = s->branchings();
+	}
 	Engine<Script> e(s,o.c_d,o.a_d);
 	delete s;
 	do {
@@ -82,9 +85,12 @@ Example::run(const Options& o) {
 	cout << "%%% " << o.name << endl;
 	int i = o.solutions;
 	Script* s = new Script(o);
-	s->status();
-	unsigned int p = s->propagators();
-	unsigned int b = s->branchings();	 
+	unsigned int p = 0;
+	unsigned int b = 0;
+	if (s->status() != SS_FAILED) {
+	  p = s->propagators();
+	  b = s->branchings();
+	}
 	Engine<Script> e(s,o.c_d,o.a_d);
 	delete s;
 	do {
