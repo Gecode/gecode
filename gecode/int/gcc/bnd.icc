@@ -549,9 +549,21 @@ namespace Gecode { namespace Int { namespace GCC {
       (home, x, k, lps, ups, card_fixed, card_all, skip_lbc);
   }
 
+  /**
+   * \brief Sharing test for the bounds-consistent global cardinality 
+   * propagator.
+   *
+   * Due to parametrization on the problem views, \a View1 and the
+   * cardinality views, \a View2 the test can be applied for both cases
+   * of fixed cardinalities and cardinality variables. 
+   */
   template <class View1, class View2>
   class SharingTest {
   public:
+    /**
+     * \brief Test whether the problem views in \a x0 or the 
+     *  cardinality views in \a k0 contain shared views. 
+     */
     static bool shared(Space* home, ViewArray<View1>& x0,
 		       ViewArray<View2>& k0) {
       ViewArray<View1> xc(home, x0.size()+k0.size());
@@ -565,9 +577,14 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   };
 
+  /**
+   * \brief Specialization of class SharingTest for the case of fixed
+   * cardinalities using IntView as \a View1 and OccurBndsView as \a View2
+   */
   template <>
   class SharingTest<IntView,OccurBndsView> {
   public:
+    /// Test whether the problem views in \a x0 contain shared views. 
     static bool shared(Space* home,
 		       ViewArray<IntView>& xs, ViewArray<OccurBndsView>&) {
       return xs.shared();

@@ -584,16 +584,17 @@ namespace Gecode { namespace Int { namespace GCC {
     GCC::post_template<IntView, CardView, true>(home, xv, cv, icl, all);
   }
 
-  void gcc(Space* home, const IntVarArgs& x, const IntArgs& v, 
-	   const IntVarArgs& c,int m, int unspec, bool all, 
-	   int xmin, int xmax, IntConLevel icl) {
-    gcc(home, x, v, c, m, 0, unspec, all, xmin, xmax, icl);
+  void gcc(Space* home, 
+	   const IntVarArgs& x, const IntArgs& v, const IntVarArgs& c,
+	   int m, int unspec, bool all, int min, int max, 
+	   IntConLevel icl) {
+    gcc(home, x, v, c, m, 0, unspec, all, min, max, icl);
   }
 
-  void gcc(Space* home, const IntVarArgs& x, const IntArgs& v, 
-	   const IntVarArgs& c,int m, 
-	   int unspec_low, int unspec_up, bool all, 
-	   int xmin, int xmax, IntConLevel icl) {
+  void gcc(Space* home, 
+	   const IntVarArgs& x, const IntArgs& v, const IntVarArgs& c,
+	   int m, int unspec_low, int unspec_up, bool all, int min, int max,
+	   IntConLevel icl) {
     
     if (m != c.size()) {
       throw ArgumentSizeMismatch("Int::gcc");
@@ -604,7 +605,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     ViewArray<IntView> xv(home, x);
 
-    int interval = xmax - (xmin - 1);
+    int interval = max - (min - 1);
 
     GECODE_AUTOARRAY(bool, done, interval);
     for (int i = 0; i < interval; i++) {
@@ -624,7 +625,7 @@ namespace Gecode { namespace Int { namespace GCC {
       NaryUnion<ViewRanges<IntView> > > crl(drl);
     for ( ; crl(); ++crl) {
       for (int v = crl.min(); v <= crl.max(); v++) {
-	done[v - xmin] = true;
+	done[v - min] = true;
       }
     }
 
@@ -642,9 +643,9 @@ namespace Gecode { namespace Int { namespace GCC {
     // iterating over the new cardvars
     int cvi = 0;  
     IntVarArgs cv(interval);
-    for (int i = xmin; i <= xmax; i++) {
+    for (int i = min; i <= max; i++) {
       // value in var domain
-      if (done[i - xmin]) {
+      if (done[i - min]) {
 	if (ci < m) {
 	  // specified wih cardinalities
 	  if (i == v[ci]) {
@@ -698,7 +699,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     ViewArray<CardView> cardv(home, cv);
 
-    GCC::setcard<CardView, IntView, true>(home, xv, cardv, xmin, xmax);
+    GCC::setcard<CardView, IntView, true>(home, xv, cardv, min, max);
     GCC::post_template<IntView, CardView, true>(home, xv, cardv, icl, all);
   }
 }
