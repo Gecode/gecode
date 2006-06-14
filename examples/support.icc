@@ -38,10 +38,10 @@ void
 Example::run(const Options& o) {
   using namespace std;
   try {
+    cout << o.name << endl;
     switch (o.mode) {
     case EM_SOLUTION:
       {
-	cout << o.name << endl;
 	Timer t;
 	int i = o.solutions;
 	t.start();
@@ -81,7 +81,6 @@ Example::run(const Options& o) {
       break;
     case EM_STAT:
       {
-	cout << "%%% " << o.name << endl;
 	int i = o.solutions;
 	Script* s = new Script(o);
 	unsigned int p = 0;
