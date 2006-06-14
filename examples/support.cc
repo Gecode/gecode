@@ -97,8 +97,6 @@ Options::parse(int argc, char** argv) {
     } else if (!strcmp(argv[i],"-a_d")) {
       if (++i == argc) goto missing;
       a_d = atoi(argv[i]);
-    } else if (!strcmp(argv[i],"-oz_output")) {
-      oz_output = true;
     } else if (!strcmp(argv[i],"-mode")) {
       if (++i == argc) goto missing;
       if (!strcmp(argv[i],"solution")) {

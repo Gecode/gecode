@@ -25,7 +25,6 @@ Options::Options(const char* n)
     c_d(Search::Config::c_d),
     a_d(Search::Config::a_d),
     mode(EM_SOLUTION),
-    oz_output(false),
     samples(1),
     iterations(1),
     solutions(1),
@@ -115,9 +114,6 @@ Example::run(const Options& o) {
       break;
     case EM_TIME:
       {
-	if (!o.oz_output) {
-	  cout << o.name << endl;
-	}
 	Timer t;
 	GECODE_AUTOARRAY(double,ts,o.samples);
 	for (int s = o.samples; s--; ) {
@@ -136,21 +132,14 @@ Example::run(const Options& o) {
 	  }
 	  ts[s] = t.stop() / o.iterations;
 	}
-	if (o.oz_output) {
-	  for (int s = o.samples; s--; ) {
-	    cout << "time(wall:" << ts[s] << ")" << endl;
-	  }
-	} else {
-
-	  double m = am(ts,o.samples);
-	  double d = dev(ts,o.samples) * 100.0;
-	  cout << "\tRuntime: "
-	       << setw(20) << right
-	       << showpoint << fixed
-	       << setprecision(6) << m << "ms"
-	       << setprecision(2) << " (" << d << "% deviation)"
-	       << endl;
-	}
+	double m = am(ts,o.samples);
+	double d = dev(ts,o.samples) * 100.0;
+	cout << "\tRuntime: "
+	     << setw(20) << right
+	     << showpoint << fixed
+	     << setprecision(6) << m << "ms"
+	     << setprecision(2) << " (" << d << "% deviation)"
+	     << endl;
       }
       break;
     }
