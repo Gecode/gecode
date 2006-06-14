@@ -25,6 +25,7 @@ Options::Options(const char* n)
     c_d(Search::Config::c_d),
     a_d(Search::Config::a_d),
     mode(EM_SOLUTION),
+    quiet(false),
     samples(1),
     iterations(1),
     solutions(1),
@@ -38,7 +39,8 @@ void
 Example::run(const Options& o) {
   using namespace std;
   try {
-    cout << o.name << endl;
+    if (!o.quiet)
+      cout << o.name << endl;
     switch (o.mode) {
     case EM_SOLUTION:
       {
@@ -133,12 +135,18 @@ Example::run(const Options& o) {
 	}
 	double m = am(ts,o.samples);
 	double d = dev(ts,o.samples) * 100.0;
-	cout << "\tRuntime: "
-	     << setw(20) << right
-	     << showpoint << fixed
-	     << setprecision(6) << m << "ms"
-	     << setprecision(2) << " (" << d << "% deviation)"
-	     << endl;
+	if (o.quiet) {
+	  cout << showpoint << setprecision(6) << m << " "
+	       << setprecision(2) << d
+	       << endl;
+	} else {
+	  cout << "\tRuntime: "
+	       << setw(20) << right
+	       << showpoint << fixed
+	       << setprecision(6) << m << "ms"
+	       << setprecision(2) << " (" << d << "% deviation)"
+	       << endl;
+	}
       }
       break;
     }

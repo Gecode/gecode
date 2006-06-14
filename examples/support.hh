@@ -55,6 +55,7 @@ public:
   unsigned int c_d;        ///< recomputation copy distance     
   unsigned int a_d;        ///< recomputation adaption distance 
   ExampleMode  mode;       ///< in which mode to run            
+  bool         quiet;      ///< quiet mode
   unsigned int samples;    ///< how many samples                
   unsigned int iterations; ///< how many iterations per sample  
   unsigned int solutions;  ///< how many solutions (0 == all)   
