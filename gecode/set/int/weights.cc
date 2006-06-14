@@ -83,7 +83,7 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
 
-
+  /// Sort order for integers
   class IntLt {
   public:
     bool operator()(int x, int y);
