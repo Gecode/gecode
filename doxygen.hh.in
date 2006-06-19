@@ -338,14 +338,17 @@
  * The part \ref Other documents existing propagators, variable 
  * implementations, and so on which serves as documentation of examples.
  *
+ * \section SecStart Getting started
+ *
+ * For your first steps with %Gecode, the following pages may be of interest:
+ *  - \ref PageNotation
+ *  - \ref PageGlossary
+ *  - \ref PageComp
+ *  - \ref PageUsage
+ *
  * \section SecMore More content
  *
  * Additionally, the documentation also features the following parts:
- *  - \ref PageNotation
- *  - \ref PageGlossary
- *  - \ref PageUsage
- *  - \ref PageComp
- *  - \ref PageInst
  *  - \ref PageLic
  *  - \ref PageChange
  *
@@ -617,19 +620,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
  */
  
 /**
- * \page PageInst Installation
- *
- * After a successful compilation, you can install the %Gecode library
- * and all header files necessary for compiling against it by invoking
- *
- * <code>make install</code>
- *
- * in the build directory.
- *
- */
-
-/**
- * \page PageComp Compiling Gecode
+ * \page PageComp Compiling and installing Gecode
  *
  * The %Gecode library, including examples and documentation, can be built
  * on all recent versions of Windows, Linux, and MacOS X. Porting to other
@@ -777,7 +768,21 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *
  * <code>./examples/golomb.exe</code>
  * 
+ * On some platforms, you may need to set environment variables like
+ * <code>LD_LIBRARY_PATH</code> (Linux) or <code>DYLD_LIBRARY_PATH</code>
+ * (Mac OS) to the toplevel compile directory (where the dynamic libraries
+ * are placed after compilation).
+ *
  * For more information on example scripts see \ref Example.
+ *
+ * \section Installation Installation
+ *
+ * After a successful compilation, you can install the %Gecode library
+ * and all header files necessary for compiling against it by invoking
+ *
+ * <code>make install</code>
+ *
+ * in the build directory.
  *
  * \section DepMngmt Dependency management
  *
