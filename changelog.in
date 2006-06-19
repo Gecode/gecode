@@ -60,6 +60,14 @@ be found in a gecode subdirectory. Apart from that, some small
 fixes and extensions due to requests.
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+Thanks: Luis Otero
+[DESCRIPTION]
+Fixed memory leak in finite set distinct propagator.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor

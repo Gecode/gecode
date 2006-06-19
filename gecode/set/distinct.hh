@@ -82,6 +82,8 @@ namespace Gecode { namespace Set { namespace Distinct {
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\forall 0\leq i\leq |x| : |x_i|=c\f$ and \f$\forall 0\leq i<j\leq |x| : |x_i\cap x_j|\leq 1\f$
     static ExecStatus post(Space* home,ViewArray<SetView> x,unsigned int c);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
 
 
