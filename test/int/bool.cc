@@ -139,7 +139,7 @@ BoolXor _boolxor("Bool::Xor");
 class BoolAndNary : public IntTest {
 public:
   BoolAndNary(const char* t) 
-    : IntTest(t,6,ds) {}
+    : IntTest(t,14,ds) {}
   virtual bool solution(const Assignment& x) const {
     for (int i = x.size()-1; i--; )
       if (x[i] == 0)
@@ -163,7 +163,7 @@ BoolAndNary _boolandnary("Bool::And::Nary");
 class BoolOrNary : public IntTest {
 public:
   BoolOrNary(const char* t) 
-    : IntTest(t,6,ds) {}
+    : IntTest(t,14,ds) {}
   virtual bool solution(const Assignment& x) const {
     for (int i = x.size()-1; i--; )
       if (x[i] == 1)
