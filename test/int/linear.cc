@@ -207,7 +207,12 @@ public:
     return compare(m, irt, static_cast<double>(rhs));
   }
   virtual void post(Space* home, IntVarArray& x) {
-    linear(home, x, irt, rhs);
+    BoolVarArgs b(x.size());
+    for (int i=x.size(); i--; ) {
+      BoolVar bx(x[i]);
+      b[i] = bx;
+    }
+    linear(home, b, irt, rhs);
   }
 };
 
