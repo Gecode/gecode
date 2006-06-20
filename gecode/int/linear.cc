@@ -140,52 +140,27 @@ namespace Gecode {
   linear(Space* home, const BoolVarArgs& x, IntRelType r, int c,
 	 IntConLevel) {
     if (home->failed()) return;
+    ViewArray<BoolView> xv(home,x);
+    ConstIntView cv(c);
     switch (r) {
     case IRT_EQ:
-      {
-	ViewArray<BoolView> xv(home,x);
-	GECODE_ES_FAIL(home,Linear::EqBoolInt<BoolView>::post(home,xv,c));
-	break;
-      }
+      GECODE_ES_FAIL(home,Linear::EqBool<ConstIntView>::post(home,xv,0,cv));
+      break;
     case IRT_NQ:
-      {
-	ConstIntView cv(c);
-	ViewArray<BoolView> xv(home,x);
-	GECODE_ES_FAIL(home,Linear::NqBool<ConstIntView>::post(home,xv,0,cv));
-	break;
-      }
-    case IRT_GQ:
-      {
-	ViewArray<BoolView> xv(home,x);
-	GECODE_ES_FAIL(home,Linear::GqBoolInt<BoolView>::post(home,xv,c));
-	break;
-      }
-    case IRT_GR:
-      {
-	ViewArray<BoolView> xv(home,x);
-	GECODE_ES_FAIL(home,Linear::GqBoolInt<BoolView>::post(home,xv,c+1));
-	break;
-      }
-    case IRT_LQ: 
-      {
-	ViewArray<NegBoolView> xv(home,x.size());
-	for (int i=x.size(); i--; ) {
-	  BoolView y(x[i]); xv[i] = y;
-	}
-	GECODE_ES_FAIL(home,Linear::GqBoolInt<NegBoolView>
-		       ::post(home,xv,x.size()-c));
-	break;
-      }
+      GECODE_ES_FAIL(home,Linear::NqBool<ConstIntView>::post(home,xv,0,cv));
+      break;
+    case IRT_LQ:
+      GECODE_ES_FAIL(home,Linear::LqBool<ConstIntView>::post(home,xv,0,cv));
+      break;
     case IRT_LE:
-      {
-	ViewArray<NegBoolView> xv(home,x.size());
-	for (int i=x.size(); i--; ) {
-	  BoolView y(x[i]); xv[i] = y;
-	}
-	GECODE_ES_FAIL(home,Linear::GqBoolInt<NegBoolView>
-		       ::post(home,xv,x.size()-c+1));
-	break;
-      }
+      GECODE_ES_FAIL(home,Linear::LqBool<ConstIntView>::post(home,xv,-1,cv));
+      break;
+    case IRT_GQ:
+      GECODE_ES_FAIL(home,Linear::GqBool<ConstIntView>::post(home,xv,0,cv));
+      break;
+    case IRT_GR:
+      GECODE_ES_FAIL(home,Linear::GqBool<ConstIntView>::post(home,xv,1,cv));
+      break;
     default:
       throw UnknownRelation("Int::linear");
     }
