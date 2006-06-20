@@ -48,7 +48,7 @@
 
 [RELEASE]
 Version:	1.2.0
-Date:		upcoming
+Date:		2006-06-20
 [DESCRIPTION]
 This release makes quite some drastic changes to how propagators
 and branchings are deleted: instead of using destructors they use
