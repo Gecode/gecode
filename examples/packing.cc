@@ -99,14 +99,19 @@ public:
     }
     // Squares do not overlap
     {
-      BoolVarArgs b(4);
       for (int i=0; i<s.n; i++) {
 	for (int j=i+1; j<s.n; j++) {
+	  post(this, tt(~(x[j]-x[i] >= s.s[i]) ||
+			~(x[i]-x[j] >= s.s[j]) ||
+			~(y[j]-y[i] >= s.s[i]) ||
+			~(y[i]-y[j] >= s.s[j])));
+	  /*
 	  b[0]=post(this, ~(x[j]-x[i] >= s.s[i]));
 	  b[1]=post(this, ~(x[i]-x[j] >= s.s[j]));
 	  b[2]=post(this, ~(y[j]-y[i] >= s.s[i]));
 	  b[3]=post(this, ~(y[i]-y[j] >= s.s[j]));
-	  linear(this, b, IRT_GQ, 1);
+	  bool_or(this,b,true);
+	  */
 	}
       }
     }

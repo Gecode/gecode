@@ -103,7 +103,8 @@ public:
       lex(this, col1, IRT_GQ, col2);
     }
 
-    branch(this, _p, BVAR_NONE, BVAL_MIN);
+    branch(this, _p, BVAR_NONE, 
+	   (opt.naive ? BVAL_MIN : BVAL_MAX));
   }
 
   /// Print solution
@@ -144,10 +145,9 @@ BIBD::Par BIBD::par;
 int
 main(int argc, char** argv) {
   Options opt("BIBD");
-  opt.solutions  = 1;
-  opt.iterations = 25;
-  opt.size       = 0;
-  opt.c_d        = 10;
+  opt.solutions = 1;
+  opt.size      = 9;
+  opt.naive     = true;
   opt.parse(argc,argv);
   switch (opt.size) {
   case 0: { BIBD::Par p(7,3,1);  BIBD::par = p; break; }
