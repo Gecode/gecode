@@ -90,31 +90,19 @@ public:
   /// Actual model
   Packing(const Options& opt)
     : s(*specs[opt.size]), 
-      x(this,s.n,0,s.x-1), 
-      y(this,s.n,0,s.y-1) {
+      x(this,s.n,0,s.x-1), y(this,s.n,0,s.y-1) {
+
     // Restrict position according to square size
     for (int i=s.n; i--; ) {
       rel(this, x[i], IRT_LQ, s.x-s.s[i]);
       rel(this, y[i], IRT_LQ, s.y-s.s[i]);
     }
+
     // Squares do not overlap
-    {
-      for (int i=0; i<s.n; i++) {
-	for (int j=i+1; j<s.n; j++) {
-	  post(this, tt(~(x[j]-x[i] >= s.s[i]) ||
-			~(x[i]-x[j] >= s.s[j]) ||
-			~(y[j]-y[i] >= s.s[i]) ||
-			~(y[i]-y[j] >= s.s[j])));
-	  /*
-	  b[0]=post(this, ~(x[j]-x[i] >= s.s[i]));
-	  b[1]=post(this, ~(x[i]-x[j] >= s.s[j]));
-	  b[2]=post(this, ~(y[j]-y[i] >= s.s[i]));
-	  b[3]=post(this, ~(y[i]-y[j] >= s.s[j]));
-	  bool_or(this,b,true);
-	  */
-	}
-      }
-    }
+    for (int i=0; i<s.n; i++)
+      for (int j=i+1; j<s.n; j++)
+	post(this, tt(~(x[j]-x[i] >= s.s[i]) || ~(x[i]-x[j] >= s.s[j]) ||
+		      ~(y[j]-y[i] >= s.s[i]) || ~(y[i]-y[j] >= s.s[j])));
 
     /*
      * Symmetry breaking

@@ -1100,32 +1100,60 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   bool_and(Space* home, BoolVar b0, BoolVar b1, BoolVar b2,
 	   IntConLevel=ICL_DEF);
+  /// Post propagator for \f$ b_0 \land b_1 = b_2 \f$
+  GECODE_INT_EXPORT void
+  bool_and(Space* home, BoolVar b0, BoolVar b1, bool b2,
+	   IntConLevel=ICL_DEF);
   /// Post propagator for \f$ \bigwedge_{i=0}^{|b|-1} b_i = c\f$
   GECODE_INT_EXPORT void
   bool_and(Space* home, const BoolVarArgs& b, BoolVar c,
+	   IntConLevel=ICL_DEF);
+  /// Post propagator for \f$ \bigwedge_{i=0}^{|b|-1} b_i = c\f$
+  GECODE_INT_EXPORT void
+  bool_and(Space* home, const BoolVarArgs& b, bool c,
 	   IntConLevel=ICL_DEF);
 
   /// Post propagator for \f$ b_0 \lor b_1 = b_2 \f$
   GECODE_INT_EXPORT void
   bool_or(Space* home, BoolVar b0, BoolVar b1, BoolVar b2,
 	  IntConLevel=ICL_DEF);
+  /// Post propagator for \f$ b_0 \lor b_1 = b_2 \f$
+  GECODE_INT_EXPORT void
+  bool_or(Space* home, BoolVar b0, BoolVar b1, bool b2,
+	  IntConLevel=ICL_DEF);
   /// Post propagator for \f$ \bigvee_{i=0}^{|b|-1} b_i = c\f$
   GECODE_INT_EXPORT void
   bool_or(Space* home, const BoolVarArgs& b, BoolVar c,
+	  IntConLevel=ICL_DEF);
+  /// Post propagator for \f$ \bigvee_{i=0}^{|b|-1} b_i = c\f$
+  GECODE_INT_EXPORT void
+  bool_or(Space* home, const BoolVarArgs& b, bool c,
 	  IntConLevel=ICL_DEF);
 
   /// Post propagator for \f$ b_0 \Rightarrow b_1 = b_2 \f$ (implication)
   GECODE_INT_EXPORT void
   bool_imp(Space* home, BoolVar b0, BoolVar b1, BoolVar b2,
 	   IntConLevel=ICL_DEF);
+  /// Post propagator for \f$ b_0 \Rightarrow b_1 = b_2 \f$ (implication)
+  GECODE_INT_EXPORT void
+  bool_imp(Space* home, BoolVar b0, BoolVar b1, bool b2,
+	   IntConLevel=ICL_DEF);
 
   /// Post propagator for \f$ b_0 \Leftrightarrow b_1 = b_2 \f$ (equivalence)
   GECODE_INT_EXPORT void
   bool_eqv(Space* home, BoolVar b0, BoolVar b1, BoolVar b2,
 	   IntConLevel=ICL_DEF);
+  /// Post propagator for \f$ b_0 \Leftrightarrow b_1 = b_2 \f$ (equivalence)
+  GECODE_INT_EXPORT void
+  bool_eqv(Space* home, BoolVar b0, BoolVar b1, bool b2,
+	   IntConLevel=ICL_DEF);
   /// Post propagator for \f$ b_1 \otimes b_2 = b_3 \f$ (exclusive or)
   GECODE_INT_EXPORT void
   bool_xor(Space* home, BoolVar b0, BoolVar b1, BoolVar b2,
+	   IntConLevel=ICL_DEF);
+  /// Post propagator for \f$ b_1 \otimes b_2 = b_3 \f$ (exclusive or)
+  GECODE_INT_EXPORT void
+  bool_xor(Space* home, BoolVar b0, BoolVar b1, bool b2,
 	   IntConLevel=ICL_DEF);
 
   //@}

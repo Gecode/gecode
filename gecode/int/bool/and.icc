@@ -21,6 +21,74 @@
 
 namespace Gecode { namespace Int { namespace Bool {
 
+  /*
+   * Boolean conjunction propagator (false)
+   *
+   */
+
+  template <class BVA, class BVB>
+  forceinline
+  AndFalse<BVA,BVB>::AndFalse(Space* home, BVA b0, BVB b1)
+    : BoolBinary<BVA,BVB>(home,b0,b1) {}
+  
+  template <class BVA, class BVB>
+  forceinline
+  AndFalse<BVA,BVB>::AndFalse(Space* home, bool share, AndFalse<BVA,BVB>& p) 
+    : BoolBinary<BVA,BVB>(home,share,p) {}
+
+  template <class BVA, class BVB>
+  forceinline
+  AndFalse<BVA,BVB>::AndFalse(Space* home, bool share, Propagator& p,
+			      BVA b0, BVB b1) 
+    : BoolBinary<BVA,BVB>(home,share,p,b0,b1) {}
+
+  template <class BVA, class BVB>
+  forceinline ExecStatus
+  AndFalse<BVA,BVB>::post(Space* home, BVA b0, BVB b1) {
+    switch (bool_test(b0,b1)) {
+    case BT_SAME:
+      GECODE_ME_CHECK(b0.t_zero(home));
+      break;
+    case BT_COMP:
+      break;
+    case BT_NONE:
+      if (b0.one()) {
+	GECODE_ES_CHECK(b1.t_zero(home));
+      } else if (b1.one()) {
+	GECODE_ES_CHECK(b0.t_zero(home));
+      } else if (!b0.zero() && !b1.zero()) {
+	(void) new (home) AndFalse<BVA,BVB>(home,b0,b1);
+      }
+      break;
+    }
+    return ES_OK;
+  }
+
+  template <class BVA, class BVB>
+  Actor*
+  AndFalse<BVA,BVB>::copy(Space* home, bool share) {
+    return new (home) AndFalse<BVA,BVB>(home,share,*this);
+  }
+
+  template <class BVA, class BVB>
+  ExecStatus
+  AndFalse<BVA,BVB>::propagate(Space* home) {
+    if (x0.one()) {
+      GECODE_ME_CHECK(x1.t_zero(home));
+    } else if (x1.one()) {
+      GECODE_ME_CHECK(x0.t_zero(home));
+    } else {
+      assert(x0.zero() || x1.zero());
+    }
+    return ES_SUBSUMED;
+  }
+
+
+  /*
+   * Boolean conjunction propagator
+   *
+   */
+
   template <class BVA, class BVB, class BVC>
   forceinline
   And<BVA,BVB,BVC>::And(Space* home, BVA b0, BVB b1, BVC b2)
@@ -40,26 +108,30 @@ namespace Gecode { namespace Int { namespace Bool {
   template <class BVA, class BVB, class BVC>
   forceinline ExecStatus
   And<BVA,BVB,BVC>::post(Space* home, BVA b0, BVB b1, BVC b2) {
-    switch (bool_test(b0,b1)) {
-    case BT_SAME: 
-      return Eq<BVA,BVC>::post(home,b0,b2);
-    case BT_COMP:
-      GECODE_ME_CHECK(b2.t_zero(home));
-      break;
-    case BT_NONE:
-      if (b0.zero() || b1.zero()) {
-	GECODE_ME_CHECK(b2.t_zero(home));
-      } else if (b0.one()) {
-	return Eq<BVB,BVC>::post(home,b1,b2);
-      } else if (b1.one()) {
+    if (b2.one()) {
+      GECODE_ME_CHECK(b0.t_one(home)); 
+      GECODE_ME_CHECK(b1.t_one(home));
+    } else if (b2.zero()) {
+      return AndFalse<BVA,BVB>::post(home,b0,b1);
+    } else {
+      switch (bool_test(b0,b1)) {
+      case BT_SAME: 
 	return Eq<BVA,BVC>::post(home,b0,b2);
-      } else if (b2.one()) {
-	assert(b0.none() && b1.none());
-	b0.t_one_none(home); b1.t_one_none(home);
-      } else {
-	(void) new (home) And<BVA,BVB,BVC>(home,b0,b1,b2);
+      case BT_COMP:
+	GECODE_ME_CHECK(b2.t_zero(home));
+	break;
+      case BT_NONE:
+	if (b0.zero() || b1.zero()) {
+	  GECODE_ME_CHECK(b2.t_zero(home));
+	} else if (b0.one()) {
+	  return Eq<BVB,BVC>::post(home,b1,b2);
+	} else if (b1.one()) {
+	  return Eq<BVA,BVC>::post(home,b0,b2);
+	} else {
+	  (void) new (home) And<BVA,BVB,BVC>(home,b0,b1,b2);
+	}
+	break;
       }
-      break;
     }
     return ES_OK;
   }
@@ -95,6 +167,103 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
 
+
+  /*
+   * N-ary Boolean conjunction propagator (false)
+   *
+   */
+
+  template<class View>
+  forceinline
+  NaryAndFalse<View>::NaryAndFalse(Space* home, ViewArray<View>& b)
+    : BinaryPropagator<View,PC_INT_VAL>(home,
+					b[b.size()-2],
+					b[b.size()-1]), x(b) {
+    assert(x.size() > 2);
+    x.size(x.size()-2);
+  }
+
+  template<class View>
+  forceinline
+  NaryAndFalse<View>::NaryAndFalse(Space* home, bool share, 
+				   NaryAndFalse<View>& p)
+    : BinaryPropagator<View,PC_INT_VAL>(home,share,p) {
+    x.update(home,share,p.x);
+  }
+
+  template<class View>
+  forceinline ExecStatus
+  NaryAndFalse<View>::post(Space* home, ViewArray<View>& b) {
+    for (int i=b.size(); i--; )
+      if (b[i].zero())
+	return ES_OK;
+      else if (b[i].one())
+	b.move_lst(i);
+    if (b.size() == 0)
+      return ES_FAILED;
+    b.unique();
+    if (b.size() == 1) {
+      GECODE_ME_CHECK(b[0].t_zero(home));
+    } else if (b.size() == 2) {
+      return AndFalse<View,View>::post(home,b[0],b[1]);
+    } else {
+      (void) new (home) NaryAndFalse(home,b);
+    }
+    return ES_OK;
+  }
+
+  template<class View>
+  Actor*
+  NaryAndFalse<View>::copy(Space* home, bool share) {
+    return new (home) NaryAndFalse<View>(home,share,*this);
+  }
+
+  template<class View>
+  forceinline ExecStatus
+  NaryAndFalse<View>::resubscribe(Space* home, View& x0, View x1) {
+    if (x0.one()) {
+      for (int i=x.size(); i--; )
+	if (x[i].zero()) {
+	  return ES_SUBSUMED;
+	} else if (x[i].one()) {
+	  x.move_lst(i);
+	} else {
+	  // New unassigned view found
+	  assert(!x[i].zero() && !x[i].one());
+	  // Rewrite if there is just one view left
+	  if (i == 0) {
+	    GECODE_ES_CHECK((AndFalse<View,View>::post(home,x1,x[0])));
+	    return ES_SUBSUMED;
+	  }
+	  // Move to x0 and subscribe
+	  x0 = x[i]; x.move_lst(i);
+	  x0.subscribe(home,this,PC_INT_VAL);
+	  return ES_FIX;
+	}
+      // All views have been assigned!
+      GECODE_ME_CHECK(x1.t_zero(home));
+      return ES_SUBSUMED;
+    }
+    return ES_FIX;
+  }
+  
+  template<class View>
+  ExecStatus
+  NaryAndFalse<View>::propagate(Space* home) {
+    if (x0.zero() || x1.zero())
+      return ES_SUBSUMED;
+    ExecStatus e = resubscribe(home,x0,x1);
+    if (e != ES_FIX)
+      return e;
+    return resubscribe(home,x1,x0);
+  }
+
+
+  /*
+   * N-ary Boolean conjunction propagator
+   *
+   */
+
   template<class View>
   forceinline
   NaryAnd<View>::NaryAnd(Space* home, ViewArray<View>& b, View c)
@@ -109,6 +278,13 @@ namespace Gecode { namespace Int { namespace Bool {
   forceinline ExecStatus
   NaryAnd<View>::post(Space* home, ViewArray<View>& b, View c) {
     if (b.size() > 0) {
+      if (c.one()) {
+	for (int i = b.size(); i--; )
+	  GECODE_ME_CHECK(b[i].t_one(home));
+	return ES_OK;
+      }
+      if (c.zero())
+	return NaryAndFalse<View>::post(home,b);
       b.unique();
       if (b.size() == 1)
 	return Eq<View,View>::post(home,b[0],c);
@@ -140,14 +316,8 @@ namespace Gecode { namespace Int { namespace Bool {
       return ES_SUBSUMED;
     }
     if (y.zero()) {
-      bool none = false;
-      for (int i = x.size(); i--; ) {
-	if (x[i].zero())
-	  return ES_SUBSUMED;
-	if (!x[i].one())
-	  none = true;
-      }
-      return none ? ES_FIX : ES_FAILED;
+      GECODE_ES_CHECK(NaryAndFalse<View>::post(home,x));
+      return ES_SUBSUMED;
     }
     for (int i = x.size(); i--; ) {
       if (x[i].zero()) {
@@ -164,6 +334,7 @@ namespace Gecode { namespace Int { namespace Bool {
     return ES_FIX;
   }
 
+  
 }}}
 
 // STATISTICS: int-prop

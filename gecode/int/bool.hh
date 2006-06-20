@@ -108,6 +108,33 @@ namespace Gecode { namespace Int { namespace Bool {
 
 
   /**
+   * \brief Boolean conjunction propagator (false)
+   *
+   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class BVA, class BVB>
+  class AndFalse : public BoolBinary<BVA,BVB> {
+  protected:
+    using BoolBinary<BVA,BVB>::x0;
+    using BoolBinary<BVA,BVB>::x1;
+    /// Constructor for posting
+    AndFalse(Space* home, BVA b0, BVB b1);
+    /// Constructor for cloning \a p
+    AndFalse(Space* home, bool share, AndFalse& p);
+  public:
+    /// Constructor for rewriting \a p during cloning
+    AndFalse(Space* home, bool share, Propagator& p,
+	     BVA b0, BVB b1);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator \f$ b_0 \land b_1 = 0 \f$
+    static  ExecStatus post(Space* home, BVA b0, BVB b1);
+  };
+
+  /**
    * \brief Boolean conjunction propagator
    *
    * Requires \code #include "gecode/int/bool.hh" \endcode
@@ -157,6 +184,35 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ \bigwedge_{i=0}^{|b|-1} b_i = c\f$
     static  ExecStatus post(Space* home, ViewArray<View>& b, View c);
+  };
+
+
+  /**
+   * \brief Boolean n-ary conjunction propagator (false)
+   *
+   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class View>
+  class NaryAndFalse : public BinaryPropagator<View,PC_INT_VAL> {
+  protected:
+    using BinaryPropagator<View,PC_INT_VAL>::x0;
+    using BinaryPropagator<View,PC_INT_VAL>::x1;
+    /// Variables not yet subscribed to
+    ViewArray<View> x;
+    /// Update subscription
+    ExecStatus resubscribe(Space* home, View& x0, View x1);
+    /// Constructor for posting
+    NaryAndFalse(Space* home,  ViewArray<View>& b);
+    /// Constructor for cloning \a p
+    NaryAndFalse(Space* home, bool share, NaryAndFalse<View>& p);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator \f$ \bigwedge_{i=0}^{|b|-1} b_i = 0\f$
+    static  ExecStatus post(Space* home, ViewArray<View>& b);
   };
 
 

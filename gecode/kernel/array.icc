@@ -119,11 +119,13 @@ namespace Gecode {
     /// Default constructor (array of size 0)
     ViewArray(void);
     /// Allocate array with \a m variables
-    ViewArray(Space*, int m);
+    ViewArray(Space* home, int m);
     /// Initialize from view array \a a (share elements)
     ViewArray(const ViewArray<View>& a);
+    /// Initialize from view array \a a with length \a n (share elements)
+    ViewArray(int n, View* a);
     /// Initialize from view array \a a (copy elements)
-    ViewArray(Space*,const ViewArray<View>& a);
+    ViewArray(Space* home, const ViewArray<View>& a);
     /// Initialize from view array \a a (share elements)
     const ViewArray<View>& operator=(const ViewArray<View>& a);
     /** 
@@ -507,6 +509,11 @@ namespace Gecode {
   forceinline
   ViewArray<View>::ViewArray(const ViewArray<View>& a)
     : n(a.n), x(a.x) {}
+
+  template <class View>
+  forceinline
+  ViewArray<View>::ViewArray(int n0, View* a)
+    : n(n0), x(a) {}
 
   template <class View>
   forceinline const ViewArray<View>&
