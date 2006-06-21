@@ -47,6 +47,47 @@
 #
 
 [RELEASE]
+Version:	1.2.1
+Date:		Upcoming
+[DESCRIPTION]
+Nothing to say yet.
+
+[ENTRY]
+Module: int
+What:   performance
+Rank:   major
+[DESCRIPTION]
+Make Boolean linear constraints with constant right hand sides
+more incremental (gives a 20-30% speedup).
+REMINDER: TO COMPLETE, Nq is missing, cleanup is missing.
+
+[ENTRY]
+Module: minimodel
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Take advantage of specialized Boolean propagators in Boolean
+expressions and relations.
+Reminder: TO DO!
+
+[ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Made n-ary Boolean conjunction and disjunction more incremental by
+using dynamic subscriptions.
+
+[ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Provide special versions of Boolean propagators optimizing cases
+where n-ary conjunctions (disjunctions) are false (true).
+
+
+[RELEASE]
 Version:	1.2.0
 Date:		2006-06-20
 [DESCRIPTION]
