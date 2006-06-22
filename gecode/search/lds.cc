@@ -108,10 +108,10 @@ namespace Gecode { namespace Search {
 	  EngineCtrl::pop(cur);
 	} else {
 	  ds.top().alt(a-1);
-	  cur = ds.top().space()->clone();
+	  cur = ds.top().space()->clone(true,propagate);
 	  clone++;
 	}
-	cur->commit(a,NULL,propagate);
+	cur->commit(a,NULL);
 	EngineCtrl::current(cur);
 	d++;
       }
@@ -119,10 +119,12 @@ namespace Gecode { namespace Search {
       if (d == 0) {
 	Space* s = cur;
 	unsigned int alt;
-	while (s->status(alt) == SS_BRANCH) {
+	while (s->status(alt,propagate) == SS_BRANCH) {
 	  if (stop(stacksize()))
 	    return NULL;
-	  s->commit(0,NULL,propagate);
+	  BranchingDesc* desc = s->description();
+	  s->commit(0,desc);
+	  delete desc;
 	}
 	cur = NULL;
 	EngineCtrl::current(NULL);
@@ -143,18 +145,20 @@ namespace Gecode { namespace Search {
 	goto backtrack;
       case SS_BRANCH:
 	{
+	  BranchingDesc* desc = cur->description();
 	  if (alt > 1) {
 	    unsigned int d_a = (d >= alt-1) ? alt-1 : d;
-	    Space* cc = cur->clone();
+	    Space* cc = cur->clone(true,propagate);
 	    EngineCtrl::push(cc);
 	    ProbeNode sn(cc,d_a-1);
 	    clone++;
 	    ds.push(sn);
-	    cur->commit(d_a,NULL,propagate);
+	    cur->commit(d_a,desc);
 	    d -= d_a;
 	  } else {
-	    cur->commit(0,NULL,propagate);
+	    cur->commit(0,desc);
 	  }
+	  delete desc;
 	  commit++;
 	  goto check_discrepancy;
 	}
@@ -179,7 +183,7 @@ namespace Gecode { namespace Search {
       e.current(s);
     } else {
       root = s;
-      Space* c = (d_max == 0) ? s : s->clone();
+      Space* c = (d_max == 0) ? s : s->clone(true,e.propagate);
       e.init(c,0);
       e.current(s);
       e.current(NULL);
@@ -207,7 +211,7 @@ namespace Gecode { namespace Search {
 	root = NULL;
       } else {
 	e.clone++;
-	e.reset(root->clone(),d_cur);
+	e.reset(root->clone(true,e.propagate),d_cur);
       }
     }
     return NULL;

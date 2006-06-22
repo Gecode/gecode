@@ -53,6 +53,25 @@ Date:		Upcoming
 Nothing to say yet.
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Search engines now correctly count the number of propagation steps
+including propagation that occurs when adaptive recomputation
+creates additional clones.
+
+[ENTRY]
+Module: search
+What:   change
+Rank:   major
+[DESCRIPTION]
+Branchings now must return branching descriptions and commit
+operations also insist on being provided with branching descriptions.
+This change reflects that batch recomputation is of vital importance
+for efficiency in Gecode.
+
+[ENTRY]
 Module: int
 What:   performance
 Rank:   major

@@ -43,7 +43,9 @@ namespace Gecode {
    * \defgroup TaskPropPat Propagator patterns
    *
    * The optional last Boolean argument (\a fd) to the constructor for creation
-   * defines whether deletion must be forced.
+   * defines whether disposal must be forced. That is, if \a fd is true
+   * the dispose member function of a propagator is called when the
+   * space containing the propagator is deleted.
    * \ingroup TaskActor
    */
 

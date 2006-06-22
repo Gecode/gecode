@@ -81,7 +81,7 @@ namespace Gecode { namespace Search {
 	delete best;
 	best = cur;
 	mark = ds.entries();
-	s1 = best->clone();
+	s1 = best->clone(true,propagate);
 	clone++;
 	cur = NULL;
 	EngineCtrl::current(NULL);
@@ -90,7 +90,7 @@ namespace Gecode { namespace Search {
 	{
 	  Space* c;
 	  if ((d == 0) || (d >= c_d)) {
-	    c = cur->clone();
+	    c = cur->clone(true,propagate);
 	    clone++;
 	    d = 1;
 	  } else {
@@ -100,7 +100,7 @@ namespace Gecode { namespace Search {
 	  }
 	  BranchingDesc* desc = ds.push(cur,c,alt);
 	  EngineCtrl::push(c,desc);
-	  cur->commit(0,desc,propagate);
+	  cur->commit(0,desc);
 	  commit++;
 	  break;
 	}
@@ -116,7 +116,7 @@ namespace Gecode { namespace Search {
     : e(c_d,a_d,st,sz) {
     unsigned int alt;
     unsigned long int p = 0;
-    Space* c = (s->status(alt,p) == SS_FAILED) ? NULL : s->clone();
+    Space* c = (s->status(alt,p) == SS_FAILED) ? NULL : s->clone(true,p);
     e.init(c);
     e.propagate += p;
     e.current(s);

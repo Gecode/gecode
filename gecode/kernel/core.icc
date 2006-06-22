@@ -533,7 +533,7 @@ namespace Gecode {
   private:
     unsigned int id; ///< Unique identity (to match to branching descriptions)
   protected:
-    /// Constructor for creation, force deletion if \a fd is true
+    /// Constructor for creation, force disposal if \a fd is true
     Branching(Space* home, bool fd=false);
     /// Constructor for cloning \a b
     Branching(Space* home, bool share, Branching& b);
@@ -544,15 +544,15 @@ namespace Gecode {
     /// Perform branching, return number of alternatives
     virtual unsigned int branch(Space* home) = 0;
     /**
-     * \brief Perform commit for alternative \a a
+     * \brief Commit for alternative \a a and branching description \a d
      * 
-     * If \a d is different from NULL, replay commit from information
-     * stored in the branching description \a d. Otherwise, let the branching
-     * decide how to commit to alternative \a a.
+     * The current branching in the space \a home performs a commit from
+     * the information provided by the branching description \a d
+     * and the alternative \a a.
      */
     virtual ExecStatus commit(Space* home, unsigned int a, BranchingDesc* d) = 0;
-    /// Return branching description (if NULL, no batch recomputation is used)
-    virtual BranchingDesc* description(void)                               = 0;
+    /// Return branching description
+    virtual BranchingDesc* description(void) = 0;
     //@}
   };
 
@@ -637,15 +637,13 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT static unsigned int unused_ui;
 
     /// Perform propagation, return number of propagation steps
-    unsigned long int _propagate(void);
-    /// Perform first step of branching, return number of alternatives
-    unsigned int _branch(void);
+    unsigned long int propagate(void);
 
-    /// Add new propagator \a p to space (force deletion, if \a fd is true)
+    /// Add new propagator \a p to space (force disposal, if \a fd is true)
     void propagator(Propagator* p, bool fd);
     /// Readd propagator \a p (after performing propagation)
     void propagator(Propagator*);
-    /// Add new branching \a b to space (force deletion, if \a fd is true)
+    /// Add new branching \a b to space (force disposal, if \a fd is true)
     void branching(Branching* b, bool fd);
     /// Add variable \a x to space (modified or copied)
     template <VarTypeId VTI, PropCond PC>
@@ -745,35 +743,28 @@ namespace Gecode {
     Space* clone(bool share=true, unsigned long int& pn=unused_uli);
 
     /** 
-     * \brief Commit space to alternative
+     * \brief Commit for alternative \a a and branching description \a d
+     * 
+     * The current branching in the space performs a commit from
+     * the information provided by the branching description \a d
+     * and the alternative \a a.
      *
-     * Computes according to whether a branching description \a d is
-     * passed (\a d == NULL means no branching description).
-     *  - if no branching description is provided, the space is propagated
-     *    until fixpoint and \a pn is incremented by the number of
-     *    propagator executions performed. Then the current branching is
-     *    committed to alternative \a a.
-     *  - if a branching description is provided, no propagation is
-     *    perfomed (to support batch recomputation) and the current
-     *    branching is commited to alternative \a a with branching
-     *    description \a d.
-     *    Note that committing with branching descriptions must be carried
-     *    out in the same order as the branch descriptions have been
-     *    obtained.
+     * Note that no propagation is perfomed (to support batch 
+     * Committing with branching descriptions must be carried
+     * out in the same order as the branch descriptions have been
+     * obtained.
      *
      * Committing throws the following exceptions:
-     *  - SpaceFailed, if the space is failed (or becomes failed through
-     *    propagation).
+     *  - SpaceFailed, if the space is failed.
      *  - SpaceNoBranching, if the space has no current branching (it is
      *    already solved).
      *  - SpaceIllegalAlternative, if \a a is not smaller than the number
-     *    of laternatives provided by the branching.
+     *    of alternatives provided by the branching.
      *
      * \ingroup TaskSearch
      */
     GECODE_KERNEL_EXPORT
-    void commit(unsigned int a, BranchingDesc* d=NULL,
-		unsigned long int& pn=unused_uli);
+    void commit(unsigned int a, BranchingDesc* d);
     /** 
      * \brief Get branching description for current branching
      *

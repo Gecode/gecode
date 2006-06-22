@@ -32,7 +32,7 @@ namespace Gecode { namespace Search {
     : e(c_d,a_d,st,sz) {
     unsigned int alt;
     unsigned long int p = 0;
-    Space* c = (s->status(alt,p) == SS_FAILED) ? NULL : s->clone();
+    Space* c = (s->status(alt,p) == SS_FAILED) ? NULL : s->clone(true,p);
     e.init(c);
     e.propagate += p;
     e.current(s);

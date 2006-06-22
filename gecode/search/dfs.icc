@@ -79,7 +79,7 @@ namespace Gecode {
 	      Space* c;
 	      if ((d == 0) || (d >= c_d)) {
 		clone++;
-		c = cur->clone();
+		c = cur->clone(true,propagate);
 		d = 1;
 	      } else {
 		c = NULL;

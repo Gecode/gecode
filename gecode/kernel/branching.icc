@@ -95,7 +95,7 @@ namespace Gecode {
     const int _pos;
     const Val _val;
   public:
-    /// Initialize decsription
+    /// Initialize description
     PosValDesc(Branching*,int,Val);
     /// Return position in array
     int pos(void) const;
@@ -207,14 +207,8 @@ namespace Gecode {
   (Space* home, unsigned int a, BranchingDesc* d) {
     PosValDesc<Val>* pvd = static_cast<PosValDesc<Val>*>(d);
     ValSel vs;
-    int p;
-    Val v;
-    if (pvd == NULL) {
-      p = next; v = vs.val(x[p]);
-    } else {
-      p = pvd->pos(); v = pvd->val();
-    }
-    return me_failed(vs.tell(home,a,x[p],v)) ? ES_FAILED : ES_OK;
+    return me_failed(vs.tell(home,a,x[pvd->pos()],pvd->val())) 
+      ? ES_FAILED : ES_OK;
   }
 
 }

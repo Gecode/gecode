@@ -136,7 +136,7 @@ namespace Gecode {
   }
 
   unsigned long int
-  Space::_propagate(void) {
+  Space::propagate(void) {
     if (failed())
       return 0;
     const PropModEvent PME_NONE = 0;
@@ -215,28 +215,6 @@ namespace Gecode {
 
 
   /*
-   * Performing branching after propagation
-   *
-   */
-
-  unsigned int
-  Space::_branch(void) {
-    while (b_fst != &a_actors) {
-      unsigned int alt = b_fst->branch(this);
-      if (alt > 0)
-	return alt;
-      Branching* b = b_fst;
-      b_fst = static_cast<Branching*>(b->next());
-      b->unlink();
-      b->destruct(this);
-    }
-    return 0;
-  }
-
-
-
-
-  /*
    * Main control for propagation and branching
    *  - a space only propagates and branches if requested by
    *    either a status, commit, ot clone operation
@@ -245,56 +223,45 @@ namespace Gecode {
    *    reference argument
    *
    */
-
   SpaceStatus
   Space::status(unsigned int& a, unsigned long int& pn) {
     // Perform propagation and do not continue when failed
-    pn += _propagate();
+    pn += propagate();
     if (failed())
       return SS_FAILED;
     // Find out how many alternatives the next branching provides
-    // No alternatives means that the space is solved
-    a = _branch();
-    return (a > 0) ? SS_BRANCH : SS_SOLVED;
+    // No alternatives means that the space is solved if no more
+    // branchings are available.
+    while (b_fst != &a_actors) {
+      a = b_fst->branch(this);
+      if (a > 0)
+	return SS_BRANCH;
+      Branching* b = b_fst;
+      b_fst = static_cast<Branching*>(b->next());
+      b->unlink();
+      b->destruct(this);
+    }
+    return SS_SOLVED;
   }
 
   void
-  Space::commit(unsigned int a, BranchingDesc* d,
-		unsigned long int& pn) {
-    if (d == NULL) {
-      // If no branching description is provided, the first step
-      // is to perform propagation and also run the branchings
-      // in order to find out whether committing is actually possible
-      pn += _propagate();
-      if (failed())
-	throw SpaceFailed("Space::commit");
-      unsigned int alt = _branch();
-      if (alt == 0)
-	throw SpaceNoBranching();
-      if (a >= alt)
-	throw SpaceIllegalAlternative();
-      assert(b_fst != NULL);
-      // Perform branching proper
-      if (b_fst->commit(this,a,NULL) == ES_FAILED)
-	fail();
-    } else {
-      if (failed())
-	throw SpaceFailed("Space::commit");
-      // Invariant for committing with BranchingDescs:
-      // * completeness: if there is more than one distributor,
-      //                 before committing to a description for the
-      //                 second distributor, you have to commit to as
-      //                 many descriptions of the first to make it disappear
-      // This might still be incorrect if propagators create new distributors.
-      while (d->id != b_fst->id) {
-	Branching* b = b_fst;
-	b_fst = static_cast<Branching*>(b_fst->next());
-	b->unlink();
-	b->destruct(this);
-      }
-      if (b_fst->commit(this,a,d) == ES_FAILED)
-	fail();
+  Space::commit(unsigned int a, BranchingDesc* d) {
+    if (failed())
+      throw SpaceFailed("Space::commit");
+    // Invariant for committing with BranchingDescs:
+    // * completeness: if there is more than one branching,
+    //                 before committing to a description for the
+    //                 second distributor, you have to commit to as
+    //                 many descriptions of the first to make it disappear
+    // This might still be incorrect if propagators create new branchings.
+    while (d->id != b_fst->id) {
+      Branching* b = b_fst;
+      b_fst = static_cast<Branching*>(b_fst->next());
+      b->unlink();
+      b->destruct(this);
     }
+    if (b_fst->commit(this,a,d) == ES_FAILED)
+      fail();
   }
 
 
@@ -366,7 +333,7 @@ namespace Gecode {
 
   Space*
   Space::clone(bool share, unsigned long int& pn) {
-    pn += _propagate();
+    pn += propagate();
     if (failed())
       throw SpaceFailed("Space::clone");
     // Start stage one
