@@ -73,6 +73,13 @@ namespace Gecode { namespace Set {
     InvalidRelation(const char* l);
   };
 
+  /// %Exception: Invalid projector passed as argument
+  class InvalidProjector : public Exception  {
+  public:
+    /// Initialize with location \a l
+    InvalidProjector(const char* l);
+  };
+
   /// %Exception: Unknown value or variable selection passed as argument
   class UnknownBranching : public Exception {
   public:
@@ -110,6 +117,10 @@ namespace Gecode { namespace Set {
   inline
   InvalidRelation::InvalidRelation(const char* l)
     : Exception(l,"Invalid relation type") {}
+
+  inline
+  InvalidProjector::InvalidProjector(const char* l)
+    : Exception(l,"Invalid projector specification") {}
 
   inline
   UnknownBranching::UnknownBranching(const char* l)

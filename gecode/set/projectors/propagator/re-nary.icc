@@ -1,0 +1,53 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-04-11 15:58:37 +0200 (Tue, 11 Apr 2006) $ by $Author: tack $
+ *     $Revision: 3188 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set { namespace Projection {
+
+  forceinline
+  ReNaryProjection::ReNaryProjection
+  (Space* home, ViewArray<SetView>& x0, Gecode::Int::BoolView b0,
+   ProjectorSet& ps0)
+    : Propagator(home,true), x(x0), b(b0), ps(ps0) {
+    x.subscribe(home, this, PC_SET_ANY);
+    b.subscribe(home,this,Gecode::Int::PC_INT_VAL);
+  }
+
+  forceinline
+  ReNaryProjection::ReNaryProjection
+  (Space* home, bool share, ReNaryProjection& p)
+    : Propagator(home,share,p), ps(p.ps) {
+    x.update(home,share,p.x);
+    b.update(home,share,p.b);
+  }
+
+  forceinline PropCost
+  ReNaryProjection::cost(void) const {
+    switch (x.size()) {
+    case 1: return PC_UNARY_HI;
+    case 2: return PC_BINARY_HI;
+    case 3: return PC_TERNARY_HI;
+    default: return PC_LINEAR_HI;
+    }
+  }
+
+}}}
+
+// STATISTICS: set-prop

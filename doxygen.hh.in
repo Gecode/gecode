@@ -158,7 +158,7 @@
  * \defgroup FuncIter Range and value iterators
  *
  * Both range and value iterators have a rather simple interface
- * for controlling iteration (which deviates what you might be
+ * for controlling iteration (which deviates from what you might be
  * used to from other iterators).
  *
  * The application operator (if \c i is an iterator, it is invoked by \c i() )
@@ -187,6 +187,18 @@
  */
 
 /**
+ * \defgroup FuncIterRangesVirt Range iterators with virtual member functions
+ *
+ * A range iterator provides incremental access to a sequence of increasing
+ * ranges. Iterators with virtual member functions have to be used when
+ * they are combined dynamically, and the actual types hence cannot be
+ * specified as template arguments.
+ *
+ * Requires \code #include "gecode/iter.hh" \endcode
+ * \ingroup FuncIterRanges
+ */
+
+/**
  * \defgroup FuncIterValues Value iterators
  *
  * A value iterator provides incremental access to a sequence of increasing
@@ -194,6 +206,18 @@
  *
  * Requires \code #include "gecode/iter.hh" \endcode
  * \ingroup FuncIter
+ */
+
+/**
+ * \defgroup FuncIterValuesVirt Value iterators with virtual member functions
+ *
+ * A value iterator provides incremental access to a sequence of increasing
+ * values. Iterators with virtual member functions have to be used when
+ * they are combined dynamically, and the actual types hence cannot be
+ * specified as template arguments.
+ *
+ * Requires \code #include "gecode/iter.hh" \endcode
+ * \ingroup FuncIterValues
  */
 
 /**

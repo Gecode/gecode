@@ -97,7 +97,9 @@ namespace Set { namespace RelOp {
 	LubRanges<View1> x1ub(x1);
 	Iter::Ranges::Union<LubRanges<View0>, LubRanges<View1> > u1(x0ub,x1ub);
 	unsigned int s1 = Iter::Ranges::size(u1);
-	GECODE_ME_CHECK_B(modified, x2.cardMax(home,s1) );
+	GECODE_ME_CHECK_B(modified, 
+			  x2.cardMax(home,
+				     std::min(x0.cardMax()+x1.cardMax(),s1)));
       }
 
       if (x2.cardMin() > x1.cardMax())

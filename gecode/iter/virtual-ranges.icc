@@ -1,0 +1,124 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-04-11 15:58:37 +0200 (Tue, 11 Apr 2006) $ by $Author: tack $
+ *     $Revision: 3188 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
+
+  /**
+   * \brief Abstract base class for range iterators
+   *
+   * Requires \code #include "gecode/iter.hh" \endcode
+   * \ingroup FuncIterRangesVirt
+   */
+  class Iterator {
+  public:
+    /// \name Iteration control
+    //@{
+    /// Move iterator to next range (if possible)
+    virtual void operator++(void) = 0;
+    /// Test whether iterator is still at a range or done
+    virtual bool operator()(void) = 0;
+    //@}
+    /// \name Range access
+    //@{
+    /// Return smallest value of range
+    virtual int min(void) const = 0;
+    /// Return largest value of range
+    virtual int max(void) const = 0;
+    /// Return width of range (distance between minimum and maximum)
+    virtual unsigned int width(void) const = 0;
+    //@}
+
+    /// Virtual destructor
+    virtual ~Iterator(void);
+  };
+
+  forceinline
+  Iterator::~Iterator(void) {}
+
+  /**
+   * \brief Adaptor class to virtualize any iterator
+   *
+   * Provides an iterator with virtual member functions for any template-based
+   * iterator.
+   *
+   * Requires \code #include "gecode/iter.hh" \endcode
+   * \ingroup FuncIterRangesVirt
+   */
+  template <class I>
+  class RangesTemplate : public Iterator {
+  private:
+    /// The template-based iterator
+    I i;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Initialize with iterator \a i
+    RangesTemplate(I& i);
+    /// Initialize with iterator \a i
+    void init(I& i);
+    //@}
+    /// \name Iteration control
+    //@{
+    /// Move iterator to next range (if possible)
+    virtual void operator++(void);
+    /// Test whether iterator is still at a range or done
+    virtual bool operator()(void);
+    //@}
+
+    /// \name Range access
+    //@{
+    /// Return smallest value of range
+    virtual int min(void) const;
+    /// Return largest value of range
+    virtual int max(void) const;
+    /// Return width of range (distance between minimum and maximum)
+    virtual unsigned int width(void) const;
+    //@}
+  };
+
+  template <class I>
+  RangesTemplate<I>::RangesTemplate(I& i0) : i(i0) {}
+
+  template <class I>
+  void
+  RangesTemplate<I>::init(I& i0) { i=i0; }
+
+  template <class I>
+  bool
+  RangesTemplate<I>::operator()(void) { return i(); }
+
+  template <class I>
+  void
+  RangesTemplate<I>::operator++(void) { ++i; }
+
+  template <class I>
+  int
+  RangesTemplate<I>::min(void) const { return i.min(); }
+
+  template <class I>
+  int
+  RangesTemplate<I>::max(void) const { return i.max(); }
+
+  template <class I>
+  unsigned int
+  RangesTemplate<I>::width(void) const { return i.width(); }
+
+}}}}

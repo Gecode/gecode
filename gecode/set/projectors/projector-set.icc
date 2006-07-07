@@ -1,0 +1,70 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-04-11 15:58:37 +0200 (Tue, 11 Apr 2006) $ by $Author: tack $
+ *     $Revision: 3188 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  forceinline
+  ProjectorSet::ProjectorSet(void) : _ps(0), _count(0), _arity(0) {
+    //    std::cerr << "construct " << this << "\n";
+  }
+
+  forceinline void
+  ProjectorSet::update(Space* home, bool share, ProjectorSet& p) {
+    _ps.update(share, p._ps);
+    _count = p._count;
+    _arity = p._arity;
+  }
+  
+  forceinline int
+  ProjectorSet::arity(void) const { return _arity; }
+
+  forceinline void
+  ProjectorSet::makeLast(int i) {
+    Projector p = _ps[_count-1];
+    _ps[_count-1] = _ps[i];
+    _ps[i] = p;
+  }
+
+  template <bool negated>
+  inline ExecStatus
+  ProjectorSet::propagate(Space* home, ViewArray<Set::SetView>& x) {
+    if (_count==0)
+      return ES_FIX;
+    for (int i=0; i<_count; i++) {
+      ExecStatus es = _ps[i].propagate<negated>(home, x);
+      switch (es) {
+      case ES_FAILED:
+	if (!negated)
+	  return ES_FAILED;
+	makeLast(i); i--; _count--;
+	break;
+      case ES_SUBSUMED:
+	return ES_SUBSUMED;
+      default:
+	break;
+      }
+    }
+    return _count==0 ? ES_FAILED : ES_NOFIX;
+  }
+
+}
+
+// STATISTICS: set-prop

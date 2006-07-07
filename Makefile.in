@@ -231,13 +231,17 @@ INTBUILDDIRS	= \
 SETSRC0 =								 \
 	branch.cc cardinality.cc convex.cc convex/conv.cc convex/hull.cc \
 	dom.cc rel.cc rel-op.cc rel-op-const.cc				 \
-	int/card.cc int.cc int/channel.cc int/match.cc		 	 \
+	int/card.cc int.cc int/channel.cc int/match.cc			 \
 	int/minmax.cc int/weights.cc					 \
 	select.cc select/disjoint.cc sequence.cc			 \
 	distinct.cc distinct/binomial.cc				 \
 	distinct/atmostOne.cc distinct/distinct.cc			 \
 	sequence/seq.cc sequence/seq-u.cc array.cc var/imp.cc		 \
-	var/integerset.cc var/set.cc view/print.cc
+	var/integerset.cc var/set.cc view/print.cc			 \
+	projectors.cc							 \
+	projectors/set-expr.cc projectors/projector.cc			 \
+	projectors/projector-set.cc					 \
+	projectors/propagator/re-nary.cc
 SETHDR0 =								     \
 	view.icc exception.icc int.hh select.hh var.icc int/card.icc	     \
 	int/match.icc int/channel.icc int/minmax.icc int/weights.icc	     \
@@ -256,7 +260,12 @@ SETHDR0 =								     \
 	sequence/seq.icc sequence/seq-u.icc				     \
 	sequence/common.icc convex/conv.icc convex/hull.icc convex.hh	     \
 	propagator.icc rel-op.hh					     \
-	branch.hh branch/select-val.icc branch/select-view.icc
+	branch.hh branch/select-val.icc branch/select-view.icc		     \
+	projectors.hh							     \
+	projectors/projector.icc					     \
+	projectors/projector-set.icc projectors/set-expr.icc		     \
+	projectors/propagator/nary.icc					     \
+	projectors/propagator/re-nary.icc
 
 SETSRC		= $(SETSRC0:%=gecode/set/%)
 SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%)
@@ -443,7 +452,7 @@ INTTESTSRC0 = \
 	rel linear scheduling minimodel gcc sortedness
 ifeq "@enable_set_vars@" "yes"
 SETTESTSRC0 = \
-	dom rel rel-op convex sequence int select distinct
+	dom rel rel-op convex sequence int select distinct projection
 else
 SETTESTSRC0 =
 endif
@@ -728,6 +737,7 @@ doc: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) $(DOCSRC)
 else
 
 DOCTARGET=doc/html
+
 ifeq "@ENABLEDOCSEARCH@" "yes"
 
 header.html: $(top_srcdir)/misc/doxygen/header.html

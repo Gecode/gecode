@@ -1,0 +1,156 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-04-11 15:58:37 +0200 (Tue, 11 Apr 2006) $ by $Author: tack $
+ *     $Revision: 3188 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  /*
+   * Operations for expressions
+   *
+   */
+
+  forceinline
+  SetExpr::SetExpr(void) : ax(NULL), sign(1) {}
+
+  forceinline SetExpr
+  operator-(const SetExpr& s) { return SetExpr(s, -1); }
+
+  forceinline SetExpr
+  operator||(const SetExpr& s, const SetExpr& t) {
+    return SetExpr(s, 1, SetExpr::REL_UNION, t, 1);
+  }
+
+  forceinline SetExpr
+  operator&&(const SetExpr& s, const SetExpr& t) {
+    return SetExpr(s, 1, SetExpr::REL_INTER, t, 1);
+  }
+
+  forceinline SetExpr
+  operator-(const SetExpr& s, const SetExpr& t) {
+    return SetExpr(s, 1, SetExpr::REL_INTER, t, -1);
+  }
+
+  /**
+   * \brief Range iterator for set expressions
+   */
+  class SetExprRanges {
+  private:
+    /// Reference-counted range iterators with virtual member functions
+    class Iter;
+    /// The actual iterator
+    Iter *i;
+    const SetExprRanges& operator=(const SetExprRanges&);
+  public:
+    /// \name Constructors and destructor
+    //@{    
+    /// Copy constructor
+    SetExprRanges(const SetExprRanges&);
+    /** Initialize with the views \a x, a set expression \a s,
+     *  and a flag whether \a s is to be interpreted in a monotone or
+     *  anti-monotone way
+     */
+    SetExprRanges(const ViewArray<Set::SetView>& x, SetExpr& s,
+		  bool monotone);
+    /// Destructor
+    ~SetExprRanges(void);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Move iterator to next range (if possible)
+    bool operator()(void);
+    /// Test whether iterator is still at a range or done
+    void operator++(void);
+    //@}
+
+    /// \name Range access
+    //@{
+    /// Return smallest value of range
+    int min(void) const;
+    /// Return largest value of range
+    int max(void) const;
+    /// Return width of range (distance between minimum and maximum)
+    unsigned int width(void) const;
+    //@}
+  };
+
+  /**
+   * \brief Reference-counted range iterators with virtual member functions
+   *
+   */
+  class SetExprRanges::Iter {
+  public:
+    /// The actual iterator
+    Gecode::Iter::Ranges::Virt::Iterator* i;
+    /// Reference count
+    int num;
+
+    /// Construct from iterator
+    Iter(Gecode::Iter::Ranges::Virt::Iterator*);
+    /// Destructor
+    ~Iter(void);
+    /// Increment reference count
+    void increment(void);
+    /// Decrement reference count
+    bool decrement(void);
+  };
+
+  forceinline
+  SetExprRanges::Iter::Iter(Gecode::Iter::Ranges::Virt::Iterator* i0)
+    : i(i0), num(1) {}
+  
+  forceinline
+  SetExprRanges::Iter::~Iter(void) { delete i; }
+
+  forceinline void
+  SetExprRanges::Iter::increment(void) { ++num; }
+
+  forceinline bool
+  SetExprRanges::Iter::decrement(void) { return --num==0; }
+
+  forceinline
+  SetExprRanges::SetExprRanges(const SetExprRanges& s) : i(s.i) {
+    i->increment();
+  }
+
+  forceinline
+  SetExprRanges::~SetExprRanges(void) {
+    if (i->decrement())
+      delete i;
+  }
+
+  forceinline bool
+  SetExprRanges::operator()(void) { return (*(i->i))(); }
+  
+  forceinline void
+  SetExprRanges::operator++(void) { ++(*(i->i)); }
+
+  forceinline int
+  SetExprRanges::min(void) const { return i->i->min(); }
+
+  forceinline int
+  SetExprRanges::max(void) const { return i->i->max(); }
+
+  forceinline unsigned int
+  SetExprRanges::width(void) const { return i->i->width(); }
+
+}
+
+// STATISTICS: set-prop

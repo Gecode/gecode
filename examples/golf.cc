@@ -42,7 +42,8 @@ struct Tournament {
 /// Tournaments
 static const Tournament t[]=
   { {8,4,9},
-    {5,3,7}
+    {5,3,7},
+    {4,3,2}
   };
 /// Number of tournaments
 static const unsigned int n_examples = sizeof(t) / sizeof(Tournament);

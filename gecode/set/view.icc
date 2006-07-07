@@ -785,12 +785,12 @@ namespace Gecode {
     protected:
       using DerivedViewBase<View>::view;
 
+    public:
       /// Negate the propagation condition \a pc
       static PropCond pc_negateset(PropCond pc);
       /// Negate the modification event \a me
       static ModEvent me_negateset(ModEvent me);
 
-    public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor

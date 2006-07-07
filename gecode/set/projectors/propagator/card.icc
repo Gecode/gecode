@@ -1,0 +1,99 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-04-11 15:58:37 +0200 (Tue, 11 Apr 2006) $ by $Author: tack $
+ *     $Revision: 3188 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set { namespace Projection {
+
+  forceinline
+  CardProjection::CardProjection
+  (Space* home, ViewArray<SetView>& x0, Gecode::Int::IntView i0, Projector& p0)
+    : Propagator(home,true), x(x0), i(i0), proj(p0) {
+    SetExpr::proj_scope scope = proj.scope();
+    pc.ensure(x.size());
+    for (int i=x0.size(); i--;) {
+      if (scope.find(i) == scope.end()) {
+	pc[i] = PC_SET_ANY + 1;
+      } else {
+	pc[i] = scope[i];
+	x[i].subscribe(home, this, pc[i]);
+      }
+    }
+  }
+
+  forceinline
+  CardProjection::CardProjection
+  (Space* home, bool share, CardProjection& p)
+    : Propagator(home,share,p), proj(p.proj) {
+    x.update(home,share,p.x);
+    i.update(home,share,p.i);
+    pc.update(share, p.pc);
+  }
+
+  forceinline PropCost
+  CardProjection::cost(void) const {
+    switch (x.size()) {
+    case 1: return PC_UNARY_HI;
+    case 2: return PC_BINARY_HI;
+    case 3: return PC_TERNARY_HI;
+    default: return PC_LINEAR_HI;
+    }
+  }
+
+  inline size_t
+  CardProjection::dispose(Space* home) {
+    if (!home->failed()) {
+      for (int i=x.size(); i--;)
+	if (pc[i] != PC_SET_ANY + 1)
+	  x[i].cancel(home, this, pc[i]);
+    }
+    proj.~Projector();
+    pc.~SharedArray();
+    Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  inline ExecStatus
+  CardProjection::post(Space* home,
+		       ViewArray<SetView>& x, Gecode::Int::IntView i,
+		       Projector& p) {
+    (void) new (home) CardProjection(home,x,i,p);
+    return ES_OK;
+  }
+
+  inline Actor*
+  CardProjection::copy(Space* home, bool share) {
+    return new (home) CardProjection(home,share,*this);
+  }
+
+  inline ExecStatus
+  CardProjection::propagate(Space* home) {
+    bool done = true;
+    for (int j=x.size(); j--;)
+      if (pc[j] != PC_SET_ANY + 1)
+	done = done && x[j].assigned();
+    
+    {
+      GECODE_ME_CHECK(i.gq(home, static_cast<int>(proj.glbSize(x))));
+      GECODE_ME_CHECK(i.lq(home, static_cast<int>(proj.lubSize(x))));
+    }
+    return done ? ES_SUBSUMED : ES_FIX;
+  }
+
+}}}

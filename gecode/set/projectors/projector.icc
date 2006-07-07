@@ -1,0 +1,69 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-04-11 15:58:37 +0200 (Tue, 11 Apr 2006) $ by $Author: tack $
+ *     $Revision: 3188 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  forceinline
+  Projector::Projector(void) : i(0), glb(), lub() {}
+  
+  forceinline
+  Projector::Projector(SetExpr::var_idx x,
+		       const SetExpr& sglb, const SetExpr& slub)
+    : i(x), glb(sglb), lub(slub) {}
+
+  template <bool negated>
+  inline ExecStatus
+  Projector::propagate(Space* home, ViewArray<Set::SetView>& x) {
+    if (negated) {
+      switch (ExecStatus es=check(home, x)) {
+      case ES_FAILED: return ES_SUBSUMED;
+      case ES_SUBSUMED: return ES_FAILED;
+      default: return es;
+      }
+    } else {
+      // Prune greatest lower and least upper bound according to given ranges
+      {
+	SetExprRanges glbranges(x,glb,false);
+	GECODE_ME_CHECK(x[i].includeI(home, glbranges));
+      }
+      {
+	SetExprRanges lubranges(x,lub,true);
+	GECODE_ME_CHECK(x[i].intersectI(home, lubranges));
+      }
+      return ES_NOFIX;
+    }
+  }
+
+  forceinline unsigned int
+  Projector::glbSize(ViewArray<Set::SetView>& x) {
+    SetExprRanges glbranges(x, glb, false);
+    return Iter::Ranges::size(glbranges);
+  }
+
+  forceinline unsigned int
+  Projector::lubSize(ViewArray<Set::SetView>& x) {
+    SetExprRanges lubranges(x, lub, true);
+    return Iter::Ranges::size(lubranges);
+  }
+
+}
+
+// STATISTICS: set-prop
