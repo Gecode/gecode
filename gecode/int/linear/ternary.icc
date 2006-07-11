@@ -106,18 +106,20 @@ namespace Gecode { namespace Int { namespace Linear {
     return new (home) EqTer<Val,A,B,C>(home,share,*this);
   }
 
-#define BM_X0_MIN 1
-#define BM_X0_MAX 2
-#define BM_X1_MIN 4
-#define BM_X1_MAX 8
-#define BM_X2_MIN 16
-#define BM_X2_MAX 32
-#define BM_ALL (BM_X0_MIN|BM_X0_MAX|BM_X1_MIN|BM_X1_MAX|BM_X2_MIN|BM_X2_MAX)
+  /// Describe which view has been modified how
+  enum TerMod {
+    TM_X0_MIN = 1<<0,
+    TM_X0_MAX = 1<<1,
+    TM_X1_MIN = 1<<2,
+    TM_X1_MAX = 1<<3,
+    TM_X2_MIN = 1<<4,
+    TM_X2_MAX = 1<<5,
+    TM_ALL    = TM_X0_MIN|TM_X0_MAX|TM_X1_MIN|TM_X1_MAX|TM_X2_MIN|TM_X2_MAX
+  };
 
-#define PV(CASE,TELL,UPDATE)			\
+#define GECODE_INT_PV(CASE,TELL,UPDATE)		\
   if (bm & (CASE)) {				\
-    bm -= (CASE); 				\
-    ModEvent me = (TELL);			\
+    bm -= (CASE); ModEvent me = (TELL);		\
     if (me_failed(me))   return ES_FAILED;	\
     if (me_modified(me)) bm |= (UPDATE);	\
   }
@@ -125,27 +127,25 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, class C>
   ExecStatus
   EqTer<Val,A,B,C>::propagate(Space* home) {
-    int bm = BM_ALL;
+    int bm = TM_ALL;
     do {
-      PV(BM_X0_MIN, x0.gq(home,c-x1.max()-x2.max()), BM_X1_MAX | BM_X2_MAX);
-      PV(BM_X1_MIN, x1.gq(home,c-x0.max()-x2.max()), BM_X0_MAX | BM_X2_MAX);
-      PV(BM_X2_MIN, x2.gq(home,c-x0.max()-x1.max()), BM_X0_MAX | BM_X1_MAX);
-      PV(BM_X0_MAX, x0.lq(home,c-x1.min()-x2.min()), BM_X1_MIN | BM_X2_MIN);
-      PV(BM_X1_MAX, x1.lq(home,c-x0.min()-x2.min()), BM_X0_MIN | BM_X2_MIN);
-      PV(BM_X2_MAX, x2.lq(home,c-x0.min()-x1.min()), BM_X0_MIN | BM_X1_MIN);
+      GECODE_INT_PV(TM_X0_MIN, x0.gq(home,c-x1.max()-x2.max()), 
+		    TM_X1_MAX | TM_X2_MAX);
+      GECODE_INT_PV(TM_X1_MIN, x1.gq(home,c-x0.max()-x2.max()), 
+		    TM_X0_MAX | TM_X2_MAX);
+      GECODE_INT_PV(TM_X2_MIN, x2.gq(home,c-x0.max()-x1.max()), 
+		    TM_X0_MAX | TM_X1_MAX);
+      GECODE_INT_PV(TM_X0_MAX, x0.lq(home,c-x1.min()-x2.min()), 
+		    TM_X1_MIN | TM_X2_MIN);
+      GECODE_INT_PV(TM_X1_MAX, x1.lq(home,c-x0.min()-x2.min()), 
+		    TM_X0_MIN | TM_X2_MIN);
+      GECODE_INT_PV(TM_X2_MAX, x2.lq(home,c-x0.min()-x1.min()), 
+		    TM_X0_MIN | TM_X1_MIN);
     } while (bm);
     return (x0.assigned() && x1.assigned()) ? ES_SUBSUMED : ES_FIX;
   }
 
-#undef BM_X0_MIN
-#undef BM_X0_MAX
-#undef BM_X1_MIN
-#undef BM_X1_MAX
-#undef BM_X2_MIN
-#undef BM_X2_MAX
-#undef BM_ALL
-
-#undef PV
+#undef GECODE_INT_PV
 
 
 

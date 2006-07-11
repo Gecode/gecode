@@ -394,8 +394,8 @@ namespace Gecode {
     l->next(fl[i]); fl[i] = f;
   }
 
-#define GECODE_PTR2FL(p) (reinterpret_cast<FreeList*>(p))
-#define GECODE_PTR2CH(p) (reinterpret_cast<char*>(p))
+#define GECODE_KERNEL_PTR2FL(p) (reinterpret_cast<FreeList*>(p))
+#define GECODE_KERNEL_PTR2CH(p) (reinterpret_cast<char*>(p))
 
   template <size_t sz>
   void
@@ -405,32 +405,33 @@ namespace Gecode {
       ReuseChunk* m = slack; 
       slack = NULL;
       do {
-	char*  block = GECODE_PTR2CH(m);
+	char*  block = GECODE_KERNEL_PTR2CH(m);
 	size_t s     = m->size;
 	assert(s >= sz);
 	m = m->next;
-	fl[sz2i(sz)] = GECODE_PTR2FL(block);
+	fl[sz2i(sz)] = GECODE_KERNEL_PTR2FL(block);
 	while (s >= 2*sz) {
-	  GECODE_PTR2FL(block)->next(GECODE_PTR2FL(block+sz));
+	  GECODE_KERNEL_PTR2FL(block)->next(GECODE_KERNEL_PTR2FL(block+sz));
 	  block += sz;
 	  s     -= sz;
 	}
-	GECODE_PTR2FL(block)->next(NULL);
+	GECODE_KERNEL_PTR2FL(block)->next(NULL);
       } while (m != NULL);
     } else {
-      char* block = GECODE_PTR2CH(alloc(Memory::Config::fl_refill*sz));
-      fl[sz2i(sz)] = GECODE_PTR2FL(block);
+      char* block = GECODE_KERNEL_PTR2CH(alloc(Memory::Config::fl_refill*sz));
+      fl[sz2i(sz)] = GECODE_KERNEL_PTR2FL(block);
       int i = Memory::Config::fl_refill-2;
       do {
-	GECODE_PTR2FL(block+i*sz)->next(GECODE_PTR2FL(block+(i+1)*sz));
+	GECODE_KERNEL_PTR2FL(block+i*sz)->next
+	  (GECODE_KERNEL_PTR2FL(block+(i+1)*sz));
       } while (--i >= 0);
-      GECODE_PTR2FL(block+(Memory::Config::fl_refill-1)*sz)->next
-	(GECODE_PTR2FL(NULL));
+      GECODE_KERNEL_PTR2FL(block+(Memory::Config::fl_refill-1)*sz)->next
+	(GECODE_KERNEL_PTR2FL(NULL));
     }
   }
 
-#undef GECODE_PTR2FL
-#undef GECODE_PTR2CH
+#undef GECODE_KERNEL_PTR2FL
+#undef GECODE_KERNEL_PTR2CH
 
 }
 

@@ -25,14 +25,14 @@
 
 namespace Gecode { 
 
-#define GECODE_RETURN_FAILED			\
+#define GECODE_MM_RETURN_FAILED			\
 if (home->failed()) {				\
   IntVar _x(home,0,0); return _x;		\
 }
 
   IntVar 
   abs(Space* home, IntVar x, IntConLevel icl) {
-    GECODE_RETURN_FAILED;
+    GECODE_MM_RETURN_FAILED;
     if (x.min() >= 0)
       return x;
     IntVar y(home,
@@ -44,7 +44,7 @@ if (home->failed()) {				\
 
   IntVar 
   min(Space* home, IntVar x, IntVar y, IntConLevel icl) {
-    GECODE_RETURN_FAILED;
+    GECODE_MM_RETURN_FAILED;
     IntVar z(home,
 	     std::min(x.min(),y.min()),
 	     std::min(x.max(),y.max()));
@@ -54,7 +54,7 @@ if (home->failed()) {				\
 
   IntVar 
   min(Space* home, const IntVarArgs& x, IntConLevel icl) {
-    GECODE_RETURN_FAILED;
+    GECODE_MM_RETURN_FAILED;
     int min = Limits::Int::int_max;
     int max = Limits::Int::int_max;
     for (int i=x.size(); i--; ) {
@@ -68,7 +68,7 @@ if (home->failed()) {				\
 
   IntVar
   max(Space* home, IntVar x, IntVar y, IntConLevel icl) {
-    GECODE_RETURN_FAILED;
+    GECODE_MM_RETURN_FAILED;
     IntVar z(home,
 	     std::max(x.min(),y.min()),
 	     std::max(x.max(),y.max()));
@@ -78,7 +78,7 @@ if (home->failed()) {				\
 
   IntVar 
   max(Space* home, const IntVarArgs& x, IntConLevel icl) {
-    GECODE_RETURN_FAILED;
+    GECODE_MM_RETURN_FAILED;
     int min = Limits::Int::int_min;
     int max = Limits::Int::int_min;
     for (int i=x.size(); i--; ) {
@@ -92,7 +92,7 @@ if (home->failed()) {				\
 
   IntVar
   mult(Space* home, IntVar x, IntVar y, IntConLevel icl) {
-    GECODE_RETURN_FAILED;
+    GECODE_MM_RETURN_FAILED;
     IntVar z(home, Limits::Int::int_min, Limits::Int::int_max);
     mult(home, x, y, z, icl);
     return z;
@@ -100,7 +100,7 @@ if (home->failed()) {				\
 
   IntVar
   sqr(Space* home, IntVar x, IntConLevel icl) {
-    GECODE_RETURN_FAILED;
+    GECODE_MM_RETURN_FAILED;
     IntVar y(home, 0, Limits::Int::int_max);
     mult(home, x, x, y, icl);
     return y;
@@ -108,7 +108,7 @@ if (home->failed()) {				\
 
   IntVar
   plus(Space* home, IntVar x, IntVar y, IntConLevel icl) {
-    GECODE_RETURN_FAILED;
+    GECODE_MM_RETURN_FAILED;
     IntVar z(home,x.min()+y.min(),x.max()+y.max());
     Int::Linear::Term ts[3];
     ts[0].a =  1; ts[0].x = x;
@@ -120,7 +120,7 @@ if (home->failed()) {				\
 
   IntVar
   minus(Space* home, IntVar x, IntVar y, IntConLevel icl) {
-    GECODE_RETURN_FAILED;
+    GECODE_MM_RETURN_FAILED;
     IntVar z(home,x.min()-y.max(),x.max()-y.min());
     Int::Linear::Term ts[3];
     ts[0].a =  1; ts[0].x = x;
@@ -130,7 +130,7 @@ if (home->failed()) {				\
     return z;
   }
 
-#undef GECODE_RETURN_FAILED
+#undef GECODE_MM_RETURN_FAILED
 
 }
 

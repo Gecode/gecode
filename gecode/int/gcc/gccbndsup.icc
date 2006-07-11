@@ -19,16 +19,6 @@
  *
  */
 
-#ifdef NDEBUG
-#define START_SIZE
-#define END_SIZE
-#else
-#define START_SIZE  int start_size = k.size();
-#define END_SIZE    int end_size = k.size();
-#endif
-
-
-
 namespace Gecode { namespace Int { namespace GCC {
 
   /// \name GCC-Bnd-Support
@@ -731,7 +721,6 @@ namespace Gecode { namespace Int { namespace GCC {
 	k.size(m);
       }
 
-      START_SIZE
       if (zc > 0) {
 	int ks = k.size();
 	// if there are still zero entries left
@@ -761,14 +750,8 @@ namespace Gecode { namespace Int { namespace GCC {
 	k.size(ks - zc);
       }
 
-      END_SIZE
-      assert(start_size == end_size + zc);
     }
     
-    // validty check
-    // for (int i = 1; i < k.size(); i++) {
-//       assert(k[i].card() > k[i - 1].card());
-//     }
   }
 
 }}}

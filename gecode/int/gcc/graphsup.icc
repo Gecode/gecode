@@ -19,37 +19,7 @@
  *
  */
 
-#ifdef NDEBUG
-#define GECODE_ASSERTION_VARIABLE(c)
-#define GECODE_ASSERT(a)
-#else
-#define GECODE_ASSERTION_VARIABLE(c) c
-#define GECODE_ASSERT(a) assert(!me_failed(a));
-#endif
-
-
 namespace Gecode { namespace Int { namespace GCC {
-
-  /// Debugging: print a view
-  template <class View>
-  void 
-  pview(View& v){
-    if (v.min() == v.max()) {
-      std::cout << v.min() <<" ";
-    } else {
-      if (v.range()){
-	std::cout << "["<<v.min() <<".."<<v.max()<<"] ";
-      } else {
-	std::cout << "{";
-	ViewValues<View> iter(v);
-	while(iter()){
-	  std::cout << iter.val() <<",";
-	  ++iter;
-	}     
-	std::cout << "} ";
-      }
-    }
-  }
 
   /**
    * \brief Bounds constraint (BC) type 
@@ -1421,9 +1391,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	    assert(vrn->noe == 1);
 	    modified |= x[vi].modified();
 
-	    GECODE_ASSERTION_VARIABLE(ModEvent me =)
-	      x[vi].eq(home, vln->val);
-	    GECODE_ASSERT(me);
+	    x[vi].eq(home, vln->val);
 	    vars[vi] = vars[--n_var];
 	    vars[vi]->set_info(vi);
 
@@ -1438,11 +1406,9 @@ namespace Gecode { namespace Int { namespace GCC {
 	  
 
 	  int vidx = vln->kindex();
-	  if (isView) {
-	    GECODE_ASSERTION_VARIABLE(ModEvent me =)
+	  if (isView)
 	    k[vidx].eq(home, k[vidx].min());
-	    GECODE_ASSERT(me);
-	  }
+
 	  k[vidx].counter(k[vidx].min());
 	  modified |= k[vidx].modified();
 	    
@@ -1720,9 +1686,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	shared |= x[i].modified();
 	ValNode* v = e->getVal();
 	e->template free<direction>();	
-	GECODE_ASSERTION_VARIABLE(ModEvent me=)
-	  x[i].eq(home, v->val);
-	GECODE_ASSERT(me);
+	x[i].eq(home, v->val);
 	v->inc();
       }
     }
@@ -1793,10 +1757,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
 	    } else {
 	      if (delall) {
-		GECODE_ASSERTION_VARIABLE(ModEvent me=)
-		  x[vrn->get_info()].nq(home, v->val);
-		GECODE_ASSERT(me)
-		  vrn->noe--;
+		x[vrn->get_info()].nq(home, v->val);
+		vrn->noe--;
 		v->noe--;
 		e->del_edge();
 		e->unlink();
@@ -1814,7 +1776,6 @@ namespace Gecode { namespace Int { namespace GCC {
 	  if (sum_max && sum_max >= k[vidx].max()) {
 	    sum_max -= k[vidx].max();
 	  }
-
 	  assert(sum_max >=0);
 
 	} else {
@@ -1825,10 +1786,8 @@ namespace Gecode { namespace Int { namespace GCC {
 	}
       }
     }
-    for (int i = n_var; i--; ) {
+    for (int i = n_var; i--; )
       vars[i]->set_info(i);
-      //      x[i].index(i);
-    }
       
     for (int i = n_val; i--; ) {
       if (vals[i]->noe == 0) {
@@ -1839,24 +1798,20 @@ namespace Gecode { namespace Int { namespace GCC {
       vals[i]->set_info(n_var + i);
     }
 
-    for (int i = n_var; i--; ) {
-      if (vars[i]->noe > 1){
-	for (Edge* e = vars[i]->first(); e != NULL; e = e->next()){
+    for (int i = n_var; i--; )
+      if (vars[i]->noe > 1)
+	for (Edge* e = vars[i]->first(); e != NULL; e = e->next()) {
 	  bool keepedge = false;
 	  keepedge =  (e->template matched<direction>() || 
 		       e->template used<direction>());
 	  if (!keepedge) {
 	    ValNode* v = e->getVal();
 	    shared |= x[i].modified();
-	    GECODE_ASSERTION_VARIABLE(ModEvent me=)
-	      x[i].nq(home, v->val);
-	    GECODE_ASSERT(me)
-	      } else {
-		e->template free<direction>();	
-	      }
+	    x[i].nq(home, v->val);
+	  } else {
+	    e->template free<direction>();	
+	  }
 	}
-      }
-    }
     return shared;
   }
 

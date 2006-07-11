@@ -30,8 +30,8 @@ namespace Gecode { namespace Set {
    *
    */
 
-#define RL2PD(r) reinterpret_cast<ptrdiff_t>(r)
-#define PD2RL(p) reinterpret_cast<RangeList*>(p)
+#define GECODE_SET_RL2PD(r) reinterpret_cast<ptrdiff_t>(r)
+#define GECODE_SET_PD2RL(p) reinterpret_cast<RangeList*>(p)
 
   forceinline
   RangeList::RangeList(void) {}
@@ -39,28 +39,30 @@ namespace Gecode { namespace Set {
   forceinline
   RangeList::RangeList(int min, int max, RangeList* p, RangeList* n)
     : _min(min), _max(max) {
-    _next = PD2RL(RL2PD(p)^RL2PD(n));     
+    _next = GECODE_SET_PD2RL(GECODE_SET_RL2PD(p)^GECODE_SET_RL2PD(n));     
   }
 
   forceinline RangeList*
   RangeList::next(const RangeList* p) const {
-    return PD2RL(RL2PD(_next)^RL2PD(p));
+    return GECODE_SET_PD2RL(GECODE_SET_RL2PD(_next)^GECODE_SET_RL2PD(p));
   }
   forceinline RangeList*
   RangeList::prev(const RangeList* n) const {
-    return PD2RL(RL2PD(_next)^RL2PD(n));
+    return GECODE_SET_PD2RL(GECODE_SET_RL2PD(_next)^GECODE_SET_RL2PD(n));
   }
   forceinline void
   RangeList::prevnext(RangeList* p, RangeList* n) {
-    _next = PD2RL(RL2PD(p)^RL2PD(n));
+    _next = GECODE_SET_PD2RL(GECODE_SET_RL2PD(p)^GECODE_SET_RL2PD(n));
   }
   forceinline void
   RangeList::next(RangeList* o, RangeList* n) {
-    _next = PD2RL(RL2PD(_next)^(RL2PD(o)^RL2PD(n)));
+    _next = GECODE_SET_PD2RL(GECODE_SET_RL2PD(_next)^
+			     (GECODE_SET_RL2PD(o)^GECODE_SET_RL2PD(n)));
   }
   forceinline void
   RangeList::prev(RangeList* o, RangeList* n) {
-    _next = PD2RL(RL2PD(_next)^(RL2PD(o)^RL2PD(n)));
+    _next = GECODE_SET_PD2RL(GECODE_SET_RL2PD(_next)^
+			     (GECODE_SET_RL2PD(o)^GECODE_SET_RL2PD(n)));
   }
   forceinline void
   RangeList::fix(RangeList* n) {
@@ -115,8 +117,8 @@ namespace Gecode { namespace Set {
     home->fl_dispose<sizeof(RangeList)>(this,l);
   }
 
-#undef RL2PD
-#undef PD2RL
+#undef GECODE_SET_RL2PD
+#undef GECODE_SET_PD2RL
 
 
   /*

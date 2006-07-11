@@ -79,13 +79,13 @@ namespace Gecode { namespace Set {
   }
 
 
-#define GECODE_CHECK_LUB(home,changed) {        \
+#define GECODE_SET_CHECK_LUB(home,changed) {        \
     if (changed)				\
       return processLubChange(home);		\
     return ME_SET_NONE;				\
   }
 
-#define GECODE_CHECK_GLB(home,changed) {        \
+#define GECODE_SET_CHECK_GLB(home,changed) {        \
     if (changed)				\
       return processGlbChange(home);		\
     return ME_SET_NONE;				\
@@ -169,7 +169,7 @@ namespace Gecode { namespace Set {
       Iter::Ranges::Inter<BndSetRanges,I> probe(ubi,iterator);
       return probe() ? ME_SET_FAILED : ME_SET_NONE;
     }
-    GECODE_CHECK_LUB(home, lub.excludeI(home, iterator));
+    GECODE_SET_CHECK_LUB(home, lub.excludeI(home, iterator));
   }
 
   template <class I> forceinline ModEvent
@@ -179,7 +179,7 @@ namespace Gecode { namespace Set {
       Iter::Ranges::Diff<BndSetRanges,I> probe(ubi,iterator);
       return probe() ? ME_SET_FAILED : ME_SET_NONE;
     }
-    GECODE_CHECK_LUB(home, lub.intersectI(home, iterator));
+    GECODE_SET_CHECK_LUB(home, lub.intersectI(home, iterator));
   }
 
   forceinline ModEvent
@@ -206,27 +206,27 @@ namespace Gecode { namespace Set {
 	probe(iterator,lbi);
       return probe() ? ME_SET_FAILED : ME_SET_NONE;
     }
-    GECODE_CHECK_GLB(home, glb.includeI(home, iterator));
+    GECODE_SET_CHECK_GLB(home, glb.includeI(home, iterator));
   }
 
   forceinline ModEvent
   SetVarImp::include(Space* home, int i) {
-    GECODE_CHECK_GLB(home,glb.include(home, i, i)) ;
+    GECODE_SET_CHECK_GLB(home,glb.include(home, i, i)) ;
   }
 
   forceinline ModEvent
   SetVarImp::include(Space* home, int i, int j) {
-    GECODE_CHECK_GLB(home,glb.include(home,i,j)) ;
+    GECODE_SET_CHECK_GLB(home,glb.include(home,i,j)) ;
   }
 
   forceinline ModEvent
   SetVarImp::exclude(Space* home,int i) {
-    GECODE_CHECK_LUB(home,lub.exclude(home,i,i));
+    GECODE_SET_CHECK_LUB(home,lub.exclude(home,i,i));
   }
 
   forceinline ModEvent
   SetVarImp::exclude(Space* home,int i, int j) {
-    GECODE_CHECK_LUB(home,lub.exclude(home,i,j)) ;
+    GECODE_SET_CHECK_LUB(home,lub.exclude(home,i,j)) ;
   }
 
   forceinline ModEvent

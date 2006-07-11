@@ -57,24 +57,32 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return new (home) Max<View>(home,share,*this);
   }
 
-  /// Performs \a TELL operation and sets \a mod, if modified
-#define GECODE_CM(TELL)			        \
-{ 						\
-  ModEvent me = (TELL);				\
-  if (me_failed(me))   return ES_FAILED;	\
-  if (me_modified(me)) mod = true;		\
-}
-
   template <class View>
   ExecStatus
   Max<View>::propagate(Space* home) {
     bool mod = false;
     do {
       mod = false;
-      GECODE_CM(x2.lq(home,std::max(x0.max(),x1.max())));
-      GECODE_CM(x2.gq(home,std::max(x0.min(),x1.min())));
-      GECODE_CM(x0.lq(home,x2.max()));
-      GECODE_CM(x1.lq(home,x2.max()));
+      {
+	ModEvent me = x2.lq(home,std::max(x0.max(),x1.max()));
+	if (me_failed(me)) return ES_FAILED;
+	mod |= me_modified(me);
+      }
+      {
+	ModEvent me = x2.gq(home,std::max(x0.min(),x1.min()));
+	if (me_failed(me)) return ES_FAILED;
+	mod |= me_modified(me);
+      }
+      {
+	ModEvent me = x0.lq(home,x2.max());
+	if (me_failed(me)) return ES_FAILED;
+	mod |= me_modified(me);
+      }
+      {
+	ModEvent me = x1.lq(home,x2.max());
+	if (me_failed(me)) return ES_FAILED;
+	mod |= me_modified(me);
+      }
     } while (mod);
     if (x0.max() <= x1.min()) {
       GECODE_ES_CHECK((Rel::EqBnd<View,View>::post(home,x1,x2)));
@@ -86,8 +94,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
     return x0.assigned() && x1.assigned() && x2.assigned() ? ES_SUBSUMED : ES_FIX;
   }
-
-#undef GECODE_CM
 
 
 

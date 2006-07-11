@@ -127,14 +127,13 @@ namespace Gecode { namespace Int { namespace Regular {
     StateGroup* lst;
   };
 
-  /// State is not reachable
-#define S_NONE       0
-  /// State is reachable from start state
-#define S_FROM_START 1
-  /// Final state is reachable from state
-#define S_TO_FINAL   2
-  /// State is final
-#define S_FINAL      4
+  /// Information about states
+  enum StateInfo {
+    SI_NONE       = 0, ///< State is not reachable
+    SI_FROM_START = 1, ///< State is reachable from start state
+    SI_TO_FINAL   = 2, ///< Final state is reachable from state
+    SI_FINAL      = 4, ///< State is final
+  };
 
 }}}
 
@@ -302,7 +301,7 @@ namespace Gecode {
     Support::StaticStack<int> visit(n_states);
     GECODE_AUTOARRAY(int, state, n_states);
     for (int i=n_states; i--; )
-      state[i] = S_NONE;
+      state[i] = SI_NONE;
 
     {
       // Sort all transitions according to i_state and create index structure
@@ -320,13 +319,13 @@ namespace Gecode {
 	assert(j == n_trans);
       }
 
-      state[start] = S_FROM_START;
+      state[start] = SI_FROM_START;
       visit.push(start);
       while (!visit.empty()) {
 	int s = visit.pop();
 	for (Transition* t = idx[s]; t < idx[s+1]; t++)
-	  if (!(state[t->o_state] & S_FROM_START)) {
-	    state[t->o_state] |= S_FROM_START;
+	  if (!(state[t->o_state] & SI_FROM_START)) {
+	    state[t->o_state] |= SI_FROM_START;
 	    visit.push(t->o_state);
 	  }
       }
@@ -350,14 +349,14 @@ namespace Gecode {
       }
 
       for (int i = n_finals; i--; ) {
-	state[final[i]] |= (S_TO_FINAL | S_FINAL);
+	state[final[i]] |= (SI_TO_FINAL | SI_FINAL);
 	visit.push(final[i]);
       }
       while (!visit.empty()) {
 	int s = visit.pop();
 	for (Transition* t = idx[s]; t < idx[s+1]; t++)
-	  if (!(state[t->i_state] & S_TO_FINAL)) {
-	    state[t->i_state] |= S_TO_FINAL;
+	  if (!(state[t->i_state] & SI_TO_FINAL)) {
+	    state[t->i_state] |= SI_TO_FINAL;
 	    visit.push(t->i_state);
 	  }
       }
@@ -375,16 +374,16 @@ namespace Gecode {
 
     // Renumber final states
     for (int i = n_states; i--; )
-      if ((state[i] == (S_FINAL | S_FROM_START | S_TO_FINAL)) && (re[i] < 0))
+      if ((state[i] == (SI_FINAL | SI_FROM_START | SI_TO_FINAL)) && (re[i] < 0))
 	re[i] = m_states++;
     // If start state is final, final states start from zero, otherwise from one
-    int final_fst = (state[start] & S_FINAL) ? 0 : 1;
+    int final_fst = (state[start] & SI_FINAL) ? 0 : 1;
     int final_lst = m_states;
     // final_fst...final_lst-1 are the final states
 
     // Renumber remaining states
     for (int i = n_states; i--; )
-      if ((state[i] == (S_FROM_START | S_TO_FINAL)) && (re[i] < 0))
+      if ((state[i] == (SI_FROM_START | SI_TO_FINAL)) && (re[i] < 0))
 	re[i] = m_states++;
 
     // Count number of remaining transitions

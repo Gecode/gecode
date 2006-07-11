@@ -89,7 +89,7 @@ namespace Set { namespace RelOp {
                                      0 : x1.cardMin()-s1),
                                     std::max(x0.cardMin(),
                                              x1.cardMin()));
-	GECODE_ME_CHECK_B(modified, x2.cardMin(home,res));
+	GECODE_SET_ME_CHECK_B(modified, x2.cardMin(home,res));
       }
 
       {
@@ -97,22 +97,22 @@ namespace Set { namespace RelOp {
 	LubRanges<View1> x1ub(x1);
 	Iter::Ranges::Union<LubRanges<View0>, LubRanges<View1> > u1(x0ub,x1ub);
 	unsigned int s1 = Iter::Ranges::size(u1);
-	GECODE_ME_CHECK_B(modified, 
+	GECODE_SET_ME_CHECK_B(modified, 
 			  x2.cardMax(home,
 				     std::min(x0.cardMax()+x1.cardMax(),s1)));
       }
 
       if (x2.cardMin() > x1.cardMax())
-	GECODE_ME_CHECK_B(modified,
+	GECODE_SET_ME_CHECK_B(modified,
 			  x0.cardMin(home,x2.cardMin() - x1.cardMax()));
 
       if (x2.cardMin() > x0.cardMax())
-	GECODE_ME_CHECK_B(modified,
+	GECODE_SET_ME_CHECK_B(modified,
 			  x1.cardMin(home,x2.cardMin() - x0.cardMax()));
 
-      GECODE_ME_CHECK_B(modified,
+      GECODE_SET_ME_CHECK_B(modified,
 			x0.cardMax(home,x2.cardMax()));
-      GECODE_ME_CHECK_B(modified,
+      GECODE_SET_ME_CHECK_B(modified,
 			x1.cardMax(home,x2.cardMax()));
     } while(modified);
     return ES_FIX;
@@ -130,11 +130,11 @@ namespace Set { namespace RelOp {
     for (int i=xsize; i--; ){
       cardMaxSum+=x[i].cardMax();
       if (cardMaxSum < x[i].cardMax()) { maxValid = false; } //overflow
-      GECODE_ME_CHECK_B(modified, y.cardMin(home,x[i].cardMin()) );
-      GECODE_ME_CHECK_B(modified, x[i].cardMax(home,y.cardMax()) );
+      GECODE_SET_ME_CHECK_B(modified, y.cardMin(home,x[i].cardMin()) );
+      GECODE_SET_ME_CHECK_B(modified, x[i].cardMax(home,y.cardMax()) );
     }
     if (maxValid) {
-      GECODE_ME_CHECK_B(modified, y.cardMax(home,cardMaxSum));
+      GECODE_SET_ME_CHECK_B(modified, y.cardMax(home,cardMaxSum));
     }
     //y.cardMin - Sum(Xj.cardMax) <= Xi.card
 
@@ -161,7 +161,7 @@ namespace Set { namespace RelOp {
 	unsigned int jsum = leftAcc+rightSum[i];
 	//If jsum did not overflow and is less than y.cardMin:
 	if (jsum >= leftAcc &&  jsum < y.cardMin()) {
-	  GECODE_ME_CHECK_B(modified, x[i].cardMin(home,y.cardMin()-jsum));
+	  GECODE_SET_ME_CHECK_B(modified, x[i].cardMin(home,y.cardMin()-jsum));
 	}
 	leftAcc += x[i].cardMax();
 	if (leftAcc < x[i].cardMax()) {leftAcc = Limits::Set::card_max;}
@@ -192,7 +192,7 @@ namespace Set { namespace RelOp {
 	  BndSetRanges> iter(left, right);
 	unsigned int unionSize = Iter::Ranges::size(iter);
 	if (y.cardMin() > unionSize) {
-	  GECODE_ME_CHECK_B(modified,
+	  GECODE_SET_ME_CHECK_B(modified,
 			    x[i].cardMin(home, y.cardMin() - unionSize) );
 	}
 	LubRanges<View0> xiub(x[i]);
@@ -222,7 +222,7 @@ namespace Set { namespace RelOp {
     int xsize = x.size();
     for (int i=xsize; i--; ) {
       LubRanges<View1> yub(y);
-      GECODE_ME_CHECK_B(modified, x[i].intersectI(home, yub));
+      GECODE_SET_ME_CHECK_B(modified, x[i].intersectI(home, yub));
     }
     return ES_FIX;
   }
@@ -243,7 +243,7 @@ namespace Set { namespace RelOp {
 	GECODE_ME_CHECK(ME_SET_FAILED);
       }
     }
-    GECODE_ME_CHECK_B(modified, y.cardMin(home,cardMinSum));
+    GECODE_SET_ME_CHECK_B(modified, y.cardMin(home,cardMinSum));
     for (int i=xsize; i--; ) {
       cardMaxSum+=x[i].cardMax();
       if (cardMaxSum < x[i].cardMax()) {
@@ -251,7 +251,7 @@ namespace Set { namespace RelOp {
 	goto overflow;
       }
     }
-    GECODE_ME_CHECK_B(modified, y.cardMax(home,cardMaxSum));
+    GECODE_SET_ME_CHECK_B(modified, y.cardMax(home,cardMaxSum));
   overflow:
 
     //Cardinality of each x[i] limited by cardinality of y minus all x[j]s:
@@ -288,7 +288,7 @@ namespace Set { namespace RelOp {
 	unsigned int minSum = leftMinAcc+rightMinSum[i];
 	//If maxSum did not overflow and is less than y.cardMin:
 	if (maxSum >= leftMaxAcc &&  maxSum < y.cardMin()) {
-	  GECODE_ME_CHECK_B(modified, x[i].cardMin(home,y.cardMin()-maxSum));
+	  GECODE_SET_ME_CHECK_B(modified, x[i].cardMin(home,y.cardMin()-maxSum));
 	}
 
 	//Overflow, fail.
@@ -296,7 +296,7 @@ namespace Set { namespace RelOp {
 	  GECODE_ME_CHECK(ME_SET_FAILED);
 	}
 	else {
-	  GECODE_ME_CHECK_B(modified, x[i].cardMax(home,y.cardMax()-minSum));
+	  GECODE_SET_ME_CHECK_B(modified, x[i].cardMax(home,y.cardMax()-minSum));
 	}
 
 	leftMaxAcc += x[i].cardMax();
@@ -348,7 +348,7 @@ namespace Set { namespace RelOp {
 	Iter::Ranges::Diff<LubRanges<View1>,
 	  Iter::Ranges::Union<BndSetRanges,
 	  BndSetRanges> > diff1(yub, xjlb);
-	GECODE_ME_CHECK_B(modified, x[i].intersectI(home,diff1));
+	GECODE_SET_ME_CHECK_B(modified, x[i].intersectI(home,diff1));
 
 	GlbRanges<View1> ylb(y);
 	BndSetRanges sub(sofarBeforeUB);
@@ -358,7 +358,7 @@ namespace Set { namespace RelOp {
 	Iter::Ranges::Diff<GlbRanges<View1>,
 	  Iter::Ranges::Union<BndSetRanges,
 	  BndSetRanges> > diff2(ylb, xjub);
-	GECODE_ME_CHECK_B(modified, x[i].includeI(home,diff2));
+	GECODE_SET_ME_CHECK_B(modified, x[i].includeI(home,diff2));
 
 	LubRanges<View0> xiub(x[i]);
 	GlbRanges<View0> xilb(x[i]);
@@ -409,7 +409,7 @@ namespace Set { namespace RelOp {
 	Iter::Ranges::Diff<LubRanges<View1>,
 	  Iter::Ranges::Union<BndSetRanges,
 	  BndSetRanges> > diff1(yub, xjlb);
-	GECODE_ME_CHECK_B(modified, x[i].intersectI(home,diff1));
+	GECODE_SET_ME_CHECK_B(modified, x[i].intersectI(home,diff1));
 
 	GlbRanges<View0> xilb(x[i]);
 	sofarBeforeLB.includeI(home,xilb);
@@ -454,7 +454,7 @@ namespace Set { namespace RelOp {
 	Iter::Ranges::Diff<GlbRanges<View1>,
 	  Iter::Ranges::Union<BndSetRanges,
 	  BndSetRanges> > diff2(ylb, xjub);
-	GECODE_ME_CHECK_B(modified, x[i].includeI(home,diff2));
+	GECODE_SET_ME_CHECK_B(modified, x[i].includeI(home,diff2));
 
 	LubRanges<View0> xiub(x[i]);
 	sofarBeforeUB.includeI(home,xiub);
@@ -490,7 +490,7 @@ namespace Set { namespace RelOp {
       Iter::Ranges::Union<Iter::Ranges::NaryUnion<GlbRanges<View0> >,
 	BndSetRanges>
 	allUnion(xLBUnion,dets);
-      GECODE_ME_CHECK_B(modified, y.includeI(home,allUnion));
+      GECODE_SET_ME_CHECK_B(modified, y.includeI(home,allUnion));
     }
     return ES_FIX;
   }
@@ -518,7 +518,7 @@ namespace Set { namespace RelOp {
       Iter::Ranges::Union<Iter::Ranges::NaryUnion<LubRanges<View0> >,
 	BndSetRanges>
 	fullUnion(xUBUnion, dets);
-      GECODE_ME_CHECK_B(modified, y.intersectI(home,fullUnion));
+      GECODE_SET_ME_CHECK_B(modified, y.intersectI(home,fullUnion));
     }
     return ES_FIX;
   }

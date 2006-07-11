@@ -68,14 +68,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
 
-  /// Performs \a TELL operation and sets \a mod, if modified
-#define GECODE_CM(TELL)			        \
-{ 						\
-  ModEvent me = (TELL);				\
-  if (me_failed(me))   return ES_FAILED;	\
-  if (me_modified(me)) mod = true;		\
-}
-
 
   /*
    * Positive bounds-consistent squaring
@@ -122,10 +114,26 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     bool mod;
     do {
       mod = false;
-      GECODE_CM(x0.lq(home,floor(sqrt(static_cast<double>(x1.max())))));
-      GECODE_CM(x0.gq(home,ceil(sqrt(static_cast<double>(x1.min())))));
-      GECODE_CM(x1.lq(home,x0.max()*x0.max()));
-      GECODE_CM(x1.gq(home,x0.min()*x0.min()));
+      {
+	ModEvent me = x0.lq(home,floor(sqrt(static_cast<double>(x1.max()))));
+	if (me_failed(me)) return ES_FAILED;
+	mod |= me_modified(me);
+      }
+      {
+	ModEvent me = x0.gq(home,ceil(sqrt(static_cast<double>(x1.min()))));
+	if (me_failed(me)) return ES_FAILED;
+	mod |= me_modified(me);
+      }
+      {
+	ModEvent me = x1.lq(home,x0.max()*x0.max());
+	if (me_failed(me)) return ES_FAILED;
+	mod |= me_modified(me);
+      }
+      {
+	ModEvent me = x1.gq(home,x0.min()*x0.min());
+	if (me_failed(me)) return ES_FAILED;
+	mod |= me_modified(me);
+      }
     } while (mod);
     return x0.assigned() ? ES_SUBSUMED : ES_FIX;
   }
@@ -157,8 +165,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(x1.gq(home,0));
     GECODE_ME_CHECK(x0.lq(home,floor(sqrt(static_cast<double>
 					  (Limits::Int::int_max)))));
-    //    GECODE_ME_CHECK(x0.gq(home,floor(-sqrt(static_cast<double>
-    //					   (-Limits::Int::int_min)))));
     if (x0.min() >= 0)
       return SquarePlus<IntView,IntView>::post(home,x0,x1);
     if (x0.max() <= 0)
@@ -262,12 +268,36 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     bool mod;
     do {
       mod = false;
-      GECODE_CM(x2.lq(home,m(x0.max(),x1.max())));
-      GECODE_CM(x2.gq(home,m(x0.min(),x1.min())));
-      GECODE_CM(x0.lq(home,f_d(x2.max(),x1.min())));
-      GECODE_CM(x0.gq(home,c_d(x2.min(),x1.max())));
-      GECODE_CM(x1.lq(home,f_d(x2.max(),x0.min())));
-      GECODE_CM(x1.gq(home,c_d(x2.min(),x0.max())));
+      {
+	ModEvent me = x2.lq(home,m(x0.max(),x1.max()));
+	if (me_failed(me)) return ES_FAILED;
+	mod |= me_modified(me);
+      }
+      {
+	ModEvent me = x2.gq(home,m(x0.min(),x1.min()));
+	if (me_failed(me)) return ES_FAILED;
+	mod |= me_modified(me);
+      }
+      {
+	ModEvent me = x0.lq(home,f_d(x2.max(),x1.min()));
+	if (me_failed(me)) return ES_FAILED;
+	mod |= me_modified(me);
+      }
+      {
+	ModEvent me = x0.gq(home,c_d(x2.min(),x1.max()));
+	if (me_failed(me)) return ES_FAILED;
+	mod |= me_modified(me);
+      }
+      {
+	ModEvent me = x1.lq(home,f_d(x2.max(),x0.min()));
+	if (me_failed(me)) return ES_FAILED;
+	mod |= me_modified(me);
+      }
+      {
+	ModEvent me = x1.gq(home,c_d(x2.min(),x0.max()));
+	if (me_failed(me)) return ES_FAILED;
+	mod |= me_modified(me);
+      }
     } while (mod);
     return x0.assigned() && x1.assigned() ? ES_SUBSUMED : ES_FIX;
   }
@@ -441,9 +471,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   post_npn:
     return MultPlus<MinusView,IntView,MinusView>::post(home,x0,x1,x2);
   }
-
-
-#undef GECODE_CM
 
 }}}
 

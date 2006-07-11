@@ -19,9 +19,6 @@
  *
  */
 
-#ifndef __GECODE_SET_DISTINCT_BINOMIAL_ICC
-#define __GECODE_SET_DISTINCT_BINOMIAL_ICC
-
 namespace Gecode { namespace Set { namespace Distinct {
 
   /**
@@ -156,7 +153,5 @@ namespace Gecode { namespace Set { namespace Distinct {
     sar.update(share, b.sar);
   }
 }}}
-
-#endif
 
 // STATISTICS: set-prop

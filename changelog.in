@@ -53,6 +53,14 @@ Date:		Upcoming
 Nothing to say yet.
 
 [ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+Bug:	42
+[DESCRIPTION]
+Renamed macros so as to avoid nameclashes (all macros start with GECODE_).
+
+[ENTRY]
 Module: search
 What:   bug
 Rank:   minor

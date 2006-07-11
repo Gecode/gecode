@@ -42,7 +42,7 @@ namespace Gecode { namespace Set { namespace Sequence {
 	cur_max = std::max(cur_max, glbMax);
       }
       if (cur_max>=Limits::Set::int_min)
-	GECODE_ME_CHECK_VAL_B(modified,
+	GECODE_SET_ME_CHECK_VAL_B(modified,
 			      x[i+1].exclude(home, Limits::Set::int_min,
 					     cur_max),
 			      assigned);
@@ -52,7 +52,7 @@ namespace Gecode { namespace Set { namespace Sequence {
 	cur_min = std::min(cur_min, glbMin);
       }
       if (Limits::Set::int_max>=cur_min)
-	GECODE_ME_CHECK_VAL_B(modified,
+	GECODE_SET_ME_CHECK_VAL_B(modified,
 			      x[lastElem-i-1].exclude(home, cur_min,
 						      Limits::Set::int_max),
 			      assigned);
@@ -70,7 +70,7 @@ namespace Gecode { namespace Set { namespace Sequence {
       XLBs[i]=lb;
     }
     Iter::Ranges::NaryAppend<GlbRanges<SetView> > u(XLBs,x.size());
-    GECODE_ME_CHECK_B(modified, y.includeI(home,u));
+    GECODE_SET_ME_CHECK_B(modified, y.includeI(home,u));
     return ES_FIX;
   }
 

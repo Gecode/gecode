@@ -143,18 +143,19 @@ namespace Gecode { namespace Int { namespace Linear {
     return new (home) EqBin<Val,A,B>(home,share,*this);
   }
 
+  /// Describe which view has been modified how
+  enum BinMod {
+    BM_X0_MIN = 1<<0,
+    BM_X0_MAX = 1<<1,
+    BM_X1_MIN = 1<<2,
+    BM_X1_MAX = 1<<3,
+    BM_ALL    = BM_X0_MIN|BM_X0_MAX|BM_X1_MIN|BM_X1_MAX
+  };
 
-#define BM_X0_MIN 1
-#define BM_X0_MAX 2
-#define BM_X1_MIN 4
-#define BM_X1_MAX 8
-#define BM_ALL    (BM_X0_MIN|BM_X0_MAX|BM_X1_MIN|BM_X1_MAX)
-
-#define PV(CASE,TELL,UPDATE)			\
+#define GECODE_INT_PV(CASE,TELL,UPDATE)		\
   if (bm & (CASE)) {				\
-    bm -= (CASE); 				\
-    ModEvent me = (TELL);			\
-    if (me_failed(me))    return ES_FAILED;	\
+    bm -= (CASE); ModEvent me = (TELL);	        \
+    if (me_failed(me))   return ES_FAILED;	\
     if (me_modified(me)) bm |= (UPDATE);	\
   }
 
@@ -163,21 +164,15 @@ namespace Gecode { namespace Int { namespace Linear {
   EqBin<Val,A,B>::propagate(Space* home) {
     int bm = BM_ALL;
     do {
-      PV(BM_X0_MIN, x0.gq(home,c-x1.max()), BM_X1_MAX);
-      PV(BM_X1_MIN, x1.gq(home,c-x0.max()), BM_X0_MAX);
-      PV(BM_X0_MAX, x0.lq(home,c-x1.min()), BM_X1_MIN);
-      PV(BM_X1_MAX, x1.lq(home,c-x0.min()), BM_X0_MIN);
+      GECODE_INT_PV(BM_X0_MIN, x0.gq(home,c-x1.max()), BM_X1_MAX);
+      GECODE_INT_PV(BM_X1_MIN, x1.gq(home,c-x0.max()), BM_X0_MAX);
+      GECODE_INT_PV(BM_X0_MAX, x0.lq(home,c-x1.min()), BM_X1_MIN);
+      GECODE_INT_PV(BM_X1_MAX, x1.lq(home,c-x0.min()), BM_X0_MIN);
     } while (bm);
     return x0.assigned() ? ES_SUBSUMED : ES_FIX;
   }
 
-#undef BM_X0_MIN
-#undef BM_X0_MAX
-#undef BM_X1_MIN
-#undef BM_X1_MAX
-#undef BM_ALL
-
-#undef PV
+#undef GECODE_INT_PV
 
 
 

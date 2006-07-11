@@ -146,8 +146,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     return i;
   }
 
-#define minsorted(i) (i)
-#define maxsorted(i) (_maxsorted[i])
+#define GECODE_INT_MINSORTED(i) (i)
+#define GECODE_INT_MAXSORTED(i) (_maxsorted[i])
 
   template <class View>
   ExecStatus
@@ -171,8 +171,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     int nb = 0;
     {
-      int min  = x[minsorted(0)].min();
-      int max  = x[maxsorted(0)].max() + 1;
+      int min  = x[GECODE_INT_MINSORTED(0)].min();
+      int max  = x[GECODE_INT_MAXSORTED(0)].max() + 1;
       int last = min - 2;
 
       hall[0].bounds = last;
@@ -183,16 +183,16 @@ namespace Gecode { namespace Int { namespace Distinct {
 	if (i < n && min < max) {
 	  if (min != last)
 	    hall[++nb].bounds = last = min;
-	  rank[minsorted(i)].min = nb;
+	  rank[GECODE_INT_MINSORTED(i)].min = nb;
 	  if (++i < n)
-	    min = x[minsorted(i)].min();
+	    min = x[GECODE_INT_MINSORTED(i)].min();
 	} else {
 	  if (max != last)
 	    hall[++nb].bounds = last = max;
-	  rank[maxsorted(j)].max = nb;
+	  rank[GECODE_INT_MAXSORTED(j)].max = nb;
 	  if (++j == n)
 	    break;
-	  max = x[maxsorted(j)].max() + 1;
+	  max = x[GECODE_INT_MAXSORTED(j)].max() + 1;
 	}
       }
       hall[nb+1].bounds = hall[nb].bounds + 2;
@@ -207,22 +207,22 @@ namespace Gecode { namespace Int { namespace Distinct {
       hall[i].d = hall[i].bounds - hall[i-1].bounds;
     }
     for (int i=0; i<n; i++) { // visit intervals in increasing max order
-      int x0 = rank[maxsorted(i)].min;
+      int x0 = rank[GECODE_INT_MAXSORTED(i)].min;
       int z = pathmax_t(hall, x0+1);
       int j = hall[z].t;
       if (--hall[z].d == 0)
 	hall[z = pathmax_t(hall, hall[z].t=z+1)].t = j;
       pathset_t(hall, x0+1, z, z); // path compression
-      int y = rank[maxsorted(i)].max;
+      int y = rank[GECODE_INT_MAXSORTED(i)].max;
       if (hall[z].d < hall[z].bounds-hall[y].bounds)
 	return ES_FAILED;
       if (hall[x0].h > x0) {
 	int w = pathmax_h(hall, hall[x0].h);
 	int m = hall[w].bounds;
-	ModEvent me = x[maxsorted(i)].gq(home,m);
+	ModEvent me = x[GECODE_INT_MAXSORTED(i)].gq(home,m);
 	if (me_failed(me))
 	  return ES_FAILED;
-	if (me_modified(me) && (m != x[maxsorted(i)].min()))
+	if (me_modified(me) && (m != x[GECODE_INT_MAXSORTED(i)].min()))
 	  es = ES_NOFIX;
 	pathset_h(hall, x0, w, w); // path compression
       }
@@ -238,22 +238,22 @@ namespace Gecode { namespace Int { namespace Distinct {
       hall[i].d = hall[i+1].bounds - hall[i].bounds;
     }
     for (int i=n; --i>=0; ) { // visit intervals in decreasing min order
-      int x0 = rank[minsorted(i)].max;
+      int x0 = rank[GECODE_INT_MINSORTED(i)].max;
       int z = pathmin_t(hall, x0-1);
       int j = hall[z].t;
       if (--hall[z].d == 0)
 	hall[z = pathmin_t(hall, hall[z].t=z-1)].t = j;
       pathset_t(hall, x0-1, z, z);
-      int y = rank[minsorted(i)].min;
+      int y = rank[GECODE_INT_MINSORTED(i)].min;
       if (hall[z].d < hall[y].bounds-hall[z].bounds)
 	return ES_FAILED;
       if (hall[x0].h < x0) {
 	int w = pathmin_h(hall, hall[x0].h);
 	int m = hall[w].bounds - 1;
-	ModEvent me = x[minsorted(i)].lq(home,m);
+	ModEvent me = x[GECODE_INT_MINSORTED(i)].lq(home,m);
 	if (me_failed(me))
 	  return ES_FAILED;
-	if (me_modified(me) && (m != x[minsorted(i)].max()))
+	if (me_modified(me) && (m != x[GECODE_INT_MINSORTED(i)].max()))
 	  es = ES_NOFIX;
 	pathset_h(hall, x0, w, w);
       }
@@ -266,8 +266,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     return es;
   }
 
-#undef minsorted
-#undef maxsorted
+#undef GECODE_INT_MINSORTED
+#undef GECODE_INT_MAXSORTED
 
   template <class View>
   ExecStatus
