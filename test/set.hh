@@ -8,8 +8,8 @@
  *     Christian Schulte, 2005
  *
  *  Last modified:
- *     $Date: 2005-10-31 14:43:20 +0100 (Mon, 31 Oct 2005) $ by $Author: zayenz $
- *     $Revision: 2440 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:

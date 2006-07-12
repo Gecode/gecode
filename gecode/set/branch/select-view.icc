@@ -12,8 +12,8 @@
  *     Gabor Szokoli, 2004
  *
  *  Last modified:
- *     $Date: 2005-08-05 09:40:23 +0200 (Fri, 05 Aug 2005) $ by $Author: tack $
- *     $Revision: 2138 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:

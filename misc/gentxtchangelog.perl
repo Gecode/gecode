@@ -9,8 +9,8 @@
 #     Guido Tack, 2006
 #
 #  Last modified:
-#     $Date: 2006-02-23 14:51:37 +0100 (Thu, 23 Feb 2006) $ by $Author: schulte $
-#     $Revision: 3018 $
+#     $Date$ by $Author$
+#     $Revision$
 #
 #  This file is part of Gecode, the generic constraint
 #  development environment:

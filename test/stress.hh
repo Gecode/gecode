@@ -8,8 +8,8 @@
  *     Mikael Lagerkvist, 2005
  *
  *  Last modified:
- *     $Date: 2005-11-07 11:52:03 +0100 (mån, 07 nov 2005) $ by $Author: zayenz $
- *     $Revision: 2511 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:

@@ -10,9 +10,9 @@ dnl Copyright:
 dnl   Guido Tack, 2004, 2005
 dnl
 dnl Last modified:
-dnl   $Date: 2005-10-31 12:59:38 +0100 (Mon, 31 Oct 2005) $
-dnl   by $Author: tack $
-dnl   $Revision: 2434 $
+dnl   $Date$
+dnl   by $Author$
+dnl   $Revision$
 dnl
 dnl This file is part of Gecode, the generic constraint
 dnl development environment:
@@ -24,7 +24,7 @@ dnl   DISCLAIMER OF ALL WARRANTIES.
 dnl
 dnl
 
-AC_REVISION([$Id: configure.ac 2434 2005-10-31 11:59:38Z tack $])
+AC_REVISION([$Id$])
 AC_PREREQ(2.53)
 AC_INIT(GECODE, 1.2.0, users@gecode.org)
 AC_CONFIG_HEADERS([gecode/config.icc])
