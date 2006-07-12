@@ -19,23 +19,23 @@
  *
  */
 
+#include <exception>
+
 namespace Gecode {
 
   /**
    * \brief %Exception: Base-class for exceptions
    * \ingroup FuncThrow
    */
-  class Exception {
+  class GECODE_KERNEL_EXPORT Exception : public std::exception {
   private:
-    const char* l;
-    const char* i;
+    static const int li_max = 128;
+    char li[li_max+1];
   public:
     /// Initialize with location \a l and information \a i
-    Exception(const char* l, const char* i);
-    /// Return location
-    const char* location(void) const;
+    Exception(const char* l, const char* i) throw ();
     /// Return information
-    const char* info(void) const;
+    virtual const char* what(void) const throw();
   };
     
 
@@ -75,28 +75,6 @@ namespace Gecode {
   };
 
   //@}
-
-  /*
-   * Implementations
-   *
-   */
-
-  /*
-   * Base class for exceptions
-   *
-   */
-  forceinline
-  Exception::Exception(const char* l0, const char* i0)
-    : l(l0), i(i0) {}
-  forceinline const char*
-  Exception::location(void) const {
-    return l;
-  }
-  forceinline const char*
-  Exception::info(void) const {
-    return i;
-  }
-
 
   /*
    * Classes for exceptions raised by kernel

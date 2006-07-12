@@ -96,7 +96,7 @@ endif
 #
 
 KERNELSRC0 = \
-	core.cc memory-manager.cc
+	exception.cc core.cc memory-manager.cc
 KERNELHDR0 = \
 	array.icc branching.icc core.icc exception.icc \
 	macros.icc memory-manager.icc memory.icc modevent.icc \

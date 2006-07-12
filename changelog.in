@@ -53,6 +53,14 @@ Date:		Upcoming
 Nothing to say yet.
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+Bug:	41
+[DESCRIPTION]
+Change exceptions thrown by Gecode compliant with C++ exceptions.
+
+[ENTRY]
 Module: other
 What:   bug
 Rank:   minor

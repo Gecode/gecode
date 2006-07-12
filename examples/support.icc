@@ -151,8 +151,7 @@ Example::run(const Options& o) {
       break;
     }
   } catch (Exception e) {
-    cout << "Exception in \"Gecode::" << e.location() 
-	 << "\": " << e.info() << "." << endl
+    cout << "Exception: " << e.what() << "." << endl
 	 << "Stopping..." << endl;
   }
 }
