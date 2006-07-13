@@ -749,13 +749,11 @@ namespace Gecode { namespace Int { namespace Linear {
    */
 
   /**
-   * \brief %Propagator for integer equal to Boolean sum (cardinality)
+   * \brief Baseclass for integer Boolean sum
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
-   * \ingroup FuncIntProp
    */
   template <class View>
-  class EqBoolInt : public Propagator {
+  class LinBoolInt : public Propagator {
   protected:
     /// Boolean views
     ViewArray<View> x;
@@ -764,55 +762,40 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Righthandside
     int c;
     /// Constructor for cloning \a p
+    LinBoolInt(Space* home, bool share, LinBoolInt& p);
+    /// Constructor for creation
+    LinBoolInt(Space* home, ViewArray<View>& x, int n_s, int c);
+  public:
+    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    virtual PropCost cost(void) const;
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
+  };
+
+  /**
+   * \brief %Propagator for integer equal to Boolean sum (cardinality)
+   *
+   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class View>
+  class EqBoolInt : public LinBoolInt<View> {
+  protected:
+    using LinBoolInt<View>::x;
+    using LinBoolInt<View>::n_s;
+    using LinBoolInt<View>::c;
+    /// Constructor for cloning \a p
     EqBoolInt(Space* home, bool share, EqBoolInt& p);
     /// Constructor for creation
     EqBoolInt(Space* home, ViewArray<View>& x, int n_s, int c);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = c\f$
     static ExecStatus post(Space* home, ViewArray<View>& x, int c);
   };
-
-  /**
-   * \brief %Propagator for integer disequality to Boolean sum (cardinality)
-   *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
-   * \ingroup FuncIntProp
-   */
-  /*
-  template <class View>
-  class NqBoolInt : public BinaryPropagator<View,PC_INT_VAL> {
-  protected:
-    using BinaryPropagator<View,PC_INT_VAL>::x0;
-    using BinaryPropagator<View,PC_INT_VAL>::x1;
-    /// Boolean views not subscribed to
-    ViewArray<View> x;
-    /// Righthandside
-    int c;
-    /// Constructor for cloning \a p
-    NqBoolInt(Space* home, bool share, NqBoolInt& p);
-    /// Constructor for creation
-    NqBoolInt(Space* home, ViewArray<View>& x, int c);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(void) const;
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
-    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \neq c\f$
-    static ExecStatus post(Space* home, ViewArray<View>& x, int c);
-  };
-  */
 
   /**
    * \brief %Propagator for integer less or equal to Boolean sum (cardinality)
@@ -821,14 +804,11 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class GqBoolInt : public Propagator {
+  class GqBoolInt : public LinBoolInt<View> {
   protected:
-    /// Boolean views
-    ViewArray<View> x;
-    /// Views from x[0] ... x[n_s-1] have subscriptions
-    int n_s;
-    /// Righthandside
-    int c;
+    using LinBoolInt<View>::x;
+    using LinBoolInt<View>::n_s;
+    using LinBoolInt<View>::c;
     /// Constructor for cloning \a p
     GqBoolInt(Space* home, bool share, GqBoolInt& p);
     /// Constructor for creation
@@ -836,12 +816,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq c\f$
     static ExecStatus post(Space* home, ViewArray<View>& x, int c);
   };
