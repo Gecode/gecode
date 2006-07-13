@@ -151,7 +151,8 @@ namespace Gecode {
       {
 	ConstIntView cv(c);
 	ViewArray<BoolView> xv(home,x);
-	GECODE_ES_FAIL(home,Linear::NqBool<ConstIntView>::post(home,xv,0,cv));
+	GECODE_ES_FAIL(home,(Linear::NqBoolView<BoolView,ConstIntView>
+			     ::post(home,xv,cv,0)));
 	break;
       }
     case IRT_GQ:
@@ -198,22 +199,28 @@ namespace Gecode {
     ViewArray<BoolView> xv(home,x);
     switch (r) {
     case IRT_EQ:
-      GECODE_ES_FAIL(home,Linear::EqBool<IntView>::post(home,xv,0,y));
+      GECODE_ES_FAIL(home,(Linear::EqBoolView<BoolView,IntView>
+			   ::post(home,xv,y,0)));
       break;
     case IRT_NQ:
-      GECODE_ES_FAIL(home,Linear::NqBool<IntView>::post(home,xv,0,y));
+      GECODE_ES_FAIL(home,(Linear::NqBoolView<BoolView,IntView>
+			   ::post(home,xv,y,0)));
       break;
     case IRT_LQ:
-      GECODE_ES_FAIL(home,Linear::LqBool<IntView>::post(home,xv,0,y));
+      GECODE_ES_FAIL(home,(Linear::LqBoolView<BoolView,IntView>
+			   ::post(home,xv,y,0)));
       break;
     case IRT_LE:
-      GECODE_ES_FAIL(home,Linear::LqBool<IntView>::post(home,xv,-1,y));
+      GECODE_ES_FAIL(home,(Linear::LqBoolView<BoolView,IntView>
+			   ::post(home,xv,y,-1)));
       break;
     case IRT_GQ:
-      GECODE_ES_FAIL(home,Linear::GqBool<IntView>::post(home,xv,0,y));
+      GECODE_ES_FAIL(home,(Linear::GqBoolView<BoolView,IntView>
+			   ::post(home,xv,y,0)));
       break;
     case IRT_GR:
-      GECODE_ES_FAIL(home,Linear::GqBool<IntView>::post(home,xv,1,y));
+      GECODE_ES_FAIL(home,(Linear::GqBoolView<BoolView,IntView>
+			   ::post(home,xv,y,1)));
       break;
     default:
       throw UnknownRelation("Int::linear");

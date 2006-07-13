@@ -1,0 +1,369 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date: 2006-07-13 10:39:21 +0200 (Thu, 13 Jul 2006) $ by $Author: schulte $
+ *     $Revision: 3355 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Linear {
+
+  /*
+   * Base-class
+   *
+   */
+  template <class XV, class YV>
+  LinBoolView<XV,YV>::LinBoolView(Space* home, 
+				  ViewArray<XV>& x0, YV y0, int c0)
+    :  Propagator(home), x(x0), y(y0), c(c0) {
+    x.subscribe(home,this,PC_INT_VAL);
+    y.subscribe(home,this,PC_INT_BND);
+  }
+
+  template <class XV, class YV>
+  size_t
+  LinBoolView<XV,YV>::dispose(Space* home) {
+    assert(!home->failed());
+    x.cancel(home,this,PC_INT_VAL);
+    y.cancel(home,this,PC_INT_BND);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class XV, class YV>
+  forceinline
+  LinBoolView<XV,YV>::LinBoolView(Space* home, bool share, LinBoolView& p)
+    : Propagator(home,share,p), c(p.c) {
+    x.update(home,share,p.x);
+    y.update(home,share,p.y);
+  }
+
+  template <class XV, class YV>
+  PropCost
+  LinBoolView<XV,YV>::cost(void) const {
+    return cost_lo(x.size(),PC_LINEAR_LO);
+  }
+
+
+
+  /*
+   * Equality propagator
+   *
+   */
+  template <class XV, class YV>
+  forceinline
+  EqBoolView<XV,YV>::EqBoolView(Space* home, ViewArray<XV>& x, YV y, int c)
+    : LinBoolView<XV,YV>(home,x,y,c) {}
+
+  template <class XV, class YV>
+  ExecStatus
+  EqBoolView<XV,YV>::post(Space* home, ViewArray<XV>& x, YV y, int c) {
+    if (y.assigned()) {
+      GECODE_ES_CHECK(EqBoolInt<XV>::post(home,x,y.val()+c));
+      return ES_OK;
+    }
+    int n = x.size();
+    for (int i = n; i--; )
+      if (x[i].one()) {
+	x[i]=x[--n]; c--;
+      } else if (x[i].zero()) {
+	x[i]=x[--n];
+      }
+    x.size(n);
+    GECODE_ME_CHECK(y.lq(home,n-c));
+    GECODE_ME_CHECK(y.gq(home,-c));
+    if (n == 0)
+      return ES_OK;
+    if (y.min()+c == n) {
+      assert(y.assigned());
+      for (int i = n; i--; )
+	x[i].t_one_none(home);
+      return ES_OK;
+    }
+    if (y.max()+c == 0) {
+      assert(y.assigned());
+      for (int i = n; i--; )
+	x[i].t_zero_none(home);
+      return ES_OK;
+    }
+    (void) new (home) EqBoolView<XV,YV>(home,x,y,c);
+    return ES_OK;
+  }
+
+  template <class XV, class YV>
+  forceinline
+  EqBoolView<XV,YV>::EqBoolView(Space* home, bool share, EqBoolView<XV,YV>& p)
+    : LinBoolView<XV,YV>(home,share,p) {}
+
+  template <class XV, class YV>
+  Actor*
+  EqBoolView<XV,YV>::copy(Space* home, bool share) {
+    return new (home) EqBoolView<XV,YV>(home,share,*this);
+  }
+
+  template <class XV, class YV>
+  ExecStatus
+  EqBoolView<XV,YV>::propagate(Space* home) {
+    int n = x.size();
+    for (int i = n; i--; )
+      if (x[i].one()) {
+	x[i]=x[--n]; c--;
+      } else if (x[i].zero()) {
+	x[i]=x[--n];
+      }
+    x.size(n);
+    GECODE_ME_CHECK(y.lq(home,n-c));
+    GECODE_ME_CHECK(y.gq(home,-c));
+    if (n == 0)
+      return ES_SUBSUMED;
+    if (y.min()+c == n) {
+      assert(y.assigned());
+      for (int i = n; i--; )
+	x[i].t_one_none(home);
+      return ES_SUBSUMED;
+    }
+    if (y.max()+c == 0) {
+      assert(y.assigned());
+      for (int i = n; i--; )
+	x[i].t_zero_none(home);
+      return ES_SUBSUMED;
+    }
+    if (y.assigned()) {
+      GECODE_ES_CHECK(EqBoolInt<XV>::post(home,x,y.val()+c));
+      return ES_SUBSUMED;
+    }
+    return ES_FIX;
+  }
+
+
+  /*
+   * Disequality propagator
+   *
+   */
+  template <class XV, class YV>
+  forceinline
+  NqBoolView<XV,YV>::NqBoolView(Space* home, ViewArray<XV>& x, YV y, int c)
+    : LinBoolView<XV,YV>(home,x,y,c) {}
+
+  template <class XV, class YV>
+  ExecStatus
+  NqBoolView<XV,YV>::post(Space* home, ViewArray<XV>& x, YV y, int c) {
+    int n = x.size();
+    for (int i = n; i--; )
+      if (x[i].one()) {
+	x[i]=x[--n]; c--;
+      } else if (x[i].zero()) {
+	x[i]=x[--n];
+      }
+    x.size(n);
+    if ((n-c < y.min() ) || (-c > y.max()))
+      return ES_OK;
+    if (n == 0) {
+      GECODE_ME_CHECK(y.nq(home,-c));
+      return ES_OK;
+    }
+    if ((n == 1) && y.assigned()) {
+      if (y.val()+c == 1) {
+	x[0].t_zero_none(home);
+      } else {
+	assert(y.val()+c == 0);
+	x[0].t_one_none(home);
+      }
+      return ES_OK;
+    }
+    (void) new (home) NqBoolView<XV,YV>(home,x,y,c);
+    return ES_OK;
+  }
+
+
+  template <class XV, class YV>
+  forceinline
+  NqBoolView<XV,YV>::NqBoolView(Space* home, bool share, NqBoolView<XV,YV>& p)
+    : LinBoolView<XV,YV>(home,share,p) {}
+
+  template <class XV, class YV>
+  Actor*
+  NqBoolView<XV,YV>::copy(Space* home, bool share) {
+    return new (home) NqBoolView<XV,YV>(home,share,*this);
+  }
+
+
+  template <class XV, class YV>
+  ExecStatus
+  NqBoolView<XV,YV>::propagate(Space* home) {
+    int n = x.size();
+    for (int i = n; i--; )
+      if (x[i].one()) {
+	x[i]=x[--n]; c--;
+      } else if (x[i].zero()) {
+	x[i]=x[--n];
+      }
+    x.size(n);
+    if ((n-c < y.min() ) || (-c > y.max()))
+      return ES_SUBSUMED;
+    if (n == 0) {
+      GECODE_ME_CHECK(y.nq(home,-c));
+      return ES_SUBSUMED;
+    }
+    if ((n == 1) && y.assigned()) {
+      if (y.val()+c == 1) {
+	x[0].t_zero_none(home);
+      } else {
+	assert(y.val()+c == 0);
+	x[0].t_one_none(home);
+      }
+      return ES_SUBSUMED;
+    }
+    return ES_FIX;
+  }
+
+
+
+
+  /*
+   * Less or equal propagator
+   *
+   */
+
+  template <class XV, class YV>
+  forceinline
+  LqBoolView<XV,YV>::LqBoolView(Space* home, ViewArray<XV>& x, YV y, int c)
+    : LinBoolView<XV,YV>(home,x,y,c) {}
+
+  template <class XV, class YV>
+  ExecStatus
+  LqBoolView<XV,YV>::post(Space* home, ViewArray<XV>& x, YV y, int c) {
+    (void) new (home) LqBoolView<XV,YV>(home,x,y,c);
+    return ES_OK;
+  }
+
+
+  template <class XV, class YV>
+  forceinline
+  LqBoolView<XV,YV>::LqBoolView(Space* home, bool share, LqBoolView<XV,YV>& p)
+    : LinBoolView<XV,YV>(home,share,p) {}
+
+  template <class XV, class YV>
+  Actor*
+  LqBoolView<XV,YV>::copy(Space* home, bool share) {
+    return new (home) LqBoolView<XV,YV>(home,share,*this);
+  }
+
+
+  template <class XV, class YV>
+  ExecStatus
+  LqBoolView<XV,YV>::propagate(Space* home) {
+    int n = x.size();
+    for (int i = n; i--; )
+      if (x[i].one()) {
+	x[i]=x[--n]; c--;
+      } else if (x[i].zero()) {
+	x[i]=x[--n];
+      }
+    x.size(n);
+    GECODE_ME_CHECK(y.gq(home,-c));
+    if (n <= y.min()+c)
+      return ES_SUBSUMED;
+    if (y.max()+c == 0) {
+      for (int i = n; i--; )
+	x[i].t_zero_none(home);
+      return ES_SUBSUMED;
+    }
+    return ES_FIX;
+  }
+
+
+
+  /*
+   * Greater or equal propagator
+   *
+   */
+  template <class XV, class YV>
+  forceinline
+  GqBoolView<XV,YV>::GqBoolView(Space* home, ViewArray<XV>& x, YV y, int c)
+    : LinBoolView<XV,YV>(home,x,y,c) {}
+
+  template <class XV, class YV>
+  ExecStatus
+  GqBoolView<XV,YV>::post(Space* home, ViewArray<XV>& x, YV y, int c) {
+    if (y.assigned()) {
+      GECODE_ES_CHECK(GqBoolInt<XV>::post(home,x,y.val()+c));
+      return ES_OK;
+    }
+    // Eliminate assigned views
+    int n = x.size();
+    for (int i = n; i--; )
+      if (x[i].one()) {
+	x[i]=x[--n]; c--;
+      } else if (x[i].zero()) {
+	x[i]=x[--n];
+      }
+    x.size(n);
+    GECODE_ME_CHECK(y.lq(home,n-c));
+    if (-c >= y.max())
+      return ES_OK;
+    if (y.min()+c == n) {
+      for (int i = n; i--; )
+	x[i].t_one_none(home);
+      return ES_OK;
+    }
+    (void) new (home) GqBoolView<XV,YV>(home,x,y,c);
+    return ES_OK;
+  }
+
+
+  template <class XV, class YV>
+  forceinline
+  GqBoolView<XV,YV>::GqBoolView(Space* home, bool share, GqBoolView<XV,YV>& p)
+    : LinBoolView<XV,YV>(home,share,p) {}
+
+  template <class XV, class YV>
+  Actor*
+  GqBoolView<XV,YV>::copy(Space* home, bool share) {
+    return new (home) GqBoolView<XV,YV>(home,share,*this);
+  }
+
+
+  template <class XV, class YV>
+  ExecStatus
+  GqBoolView<XV,YV>::propagate(Space* home) {
+    int n = x.size();
+    for (int i = n; i--; )
+      if (x[i].one()) {
+	x[i]=x[--n]; c--;
+      } else if (x[i].zero()) {
+	x[i]=x[--n];
+      }
+    x.size(n);
+    GECODE_ME_CHECK(y.lq(home,n-c));
+    if (-c >= y.max())
+      return ES_SUBSUMED;
+    if (y.min()+c == n) {
+      for (int i = n; i--; )
+	x[i].t_one_none(home);
+      return ES_SUBSUMED;
+    }
+    if (y.assigned()) {
+      GECODE_ES_CHECK(GqBoolInt<XV>::post(home,x,y.val()+c));
+      return ES_SUBSUMED;
+    }
+    return ES_FIX;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

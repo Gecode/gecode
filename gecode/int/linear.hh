@@ -752,11 +752,11 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief Baseclass for integer Boolean sum
    *
    */
-  template <class View>
+  template <class VX>
   class LinBoolInt : public Propagator {
   protected:
     /// Boolean views
-    ViewArray<View> x;
+    ViewArray<VX> x;
     /// Views from x[0] ... x[n_s-1] have subscriptions
     int n_s;
     /// Righthandside
@@ -764,7 +764,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for cloning \a p
     LinBoolInt(Space* home, bool share, LinBoolInt& p);
     /// Constructor for creation
-    LinBoolInt(Space* home, ViewArray<View>& x, int n_s, int c);
+    LinBoolInt(Space* home, ViewArray<VX>& x, int n_s, int c);
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
@@ -778,23 +778,23 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include "gecode/int/linear.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
-  class EqBoolInt : public LinBoolInt<View> {
+  template <class VX>
+  class EqBoolInt : public LinBoolInt<VX> {
   protected:
-    using LinBoolInt<View>::x;
-    using LinBoolInt<View>::n_s;
-    using LinBoolInt<View>::c;
+    using LinBoolInt<VX>::x;
+    using LinBoolInt<VX>::n_s;
+    using LinBoolInt<VX>::c;
     /// Constructor for cloning \a p
     EqBoolInt(Space* home, bool share, EqBoolInt& p);
     /// Constructor for creation
-    EqBoolInt(Space* home, ViewArray<View>& x, int n_s, int c);
+    EqBoolInt(Space* home, ViewArray<VX>& x, int n_s, int c);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = c\f$
-    static ExecStatus post(Space* home, ViewArray<View>& x, int c);
+    static ExecStatus post(Space* home, ViewArray<VX>& x, int c);
   };
 
   /**
@@ -803,51 +803,49 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include "gecode/int/linear.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
-  class GqBoolInt : public LinBoolInt<View> {
+  template <class VX>
+  class GqBoolInt : public LinBoolInt<VX> {
   protected:
-    using LinBoolInt<View>::x;
-    using LinBoolInt<View>::n_s;
-    using LinBoolInt<View>::c;
+    using LinBoolInt<VX>::x;
+    using LinBoolInt<VX>::n_s;
+    using LinBoolInt<VX>::c;
     /// Constructor for cloning \a p
     GqBoolInt(Space* home, bool share, GqBoolInt& p);
     /// Constructor for creation
-    GqBoolInt(Space* home, ViewArray<View>& x, int n_s, int c);
+    GqBoolInt(Space* home, ViewArray<VX>& x, int n_s, int c);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq c\f$
-    static ExecStatus post(Space* home, ViewArray<View>& x, int c);
+    static ExecStatus post(Space* home, ViewArray<VX>& x, int c);
   };
 
+
+}}}
+
+#include "gecode/int/linear/bool-int.icc"
+
+namespace Gecode { namespace Int { namespace Linear {
 
   /**
    * \brief Base-class for Boolean linear propagators
    *
    */
-  template <class View>
-  class LinBool : public Propagator {
+  template <class XV, class YV>
+  class LinBoolView : public Propagator {
   protected:
     /// Boolean views
-    ViewArray<BoolView> x;
-    /// Number of Boolean views assigned to 1
-    int n;
+    ViewArray<XV> x;
     /// View to compare number of assigned Boolean views to
-    View y;
-
-    /// Eliminate assigned Boolean views
-    void eliminate(void);
-    /// Post that all remaining Boolean views must be one
-    void all_one(Space* home);
-    /// Post that all remaining Boolean views must be zero
-    void all_zero(Space* home);
-
+    YV y;
+    /// Righthandside (constant part from Boolean views assigned to 1)
+    int c;
     /// Constructor for cloning \a p
-    LinBool(Space* home, bool share, LinBool& p);
+    LinBoolView(Space* home, bool share, LinBoolView& p);
     /// Constructor for creation
-    LinBool(Space* home, ViewArray<BoolView>& x, int n, View y);
+    LinBoolView(Space* home, ViewArray<XV>& x, YV y, int c);
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
@@ -862,24 +860,24 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include "gecode/int/linear.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
-  class EqBool : public LinBool<View> {
+  template <class XV, class YV>
+  class EqBoolView : public LinBoolView<XV,YV> {
   protected:
-    using LinBool<View>::x;
-    using LinBool<View>::n;
-    using LinBool<View>::y;
+    using LinBoolView<XV,YV>::x;
+    using LinBoolView<XV,YV>::y;
+    using LinBoolView<XV,YV>::c;
 
     /// Constructor for cloning \a p
-    EqBool(Space* home, bool share, EqBool& p);
+    EqBoolView(Space* home, bool share, EqBoolView& p);
     /// Constructor for creation
-    EqBool(Space* home, ViewArray<BoolView>& x, int n, View y);
+    EqBoolView(Space* home, ViewArray<XV>& x, YV y, int c);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n = y\f$
-    static ExecStatus post(Space* home, ViewArray<BoolView>& x, int n, View y);
+    static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c);
   };
 
   /**
@@ -888,24 +886,24 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include "gecode/int/linear.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
-  class NqBool : public LinBool<View> {
+  template <class XV, class YV>
+  class NqBoolView : public LinBoolView<XV,YV> {
   protected:
-    using LinBool<View>::x;
-    using LinBool<View>::n;
-    using LinBool<View>::y;
+    using LinBoolView<XV,YV>::x;
+    using LinBoolView<XV,YV>::y;
+    using LinBoolView<XV,YV>::c;
 
     /// Constructor for cloning \a p
-    NqBool(Space* home, bool share, NqBool& p);
+    NqBoolView(Space* home, bool share, NqBoolView& p);
     /// Constructor for creation
-    NqBool(Space* home, ViewArray<BoolView>& x, int n, View y);
+    NqBoolView(Space* home, ViewArray<XV>& x, YV y, int c);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n \neq y\f$
-    static ExecStatus post(Space* home, ViewArray<BoolView>& x, int n, View y);
+    static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c);
   };
 
   /**
@@ -914,24 +912,24 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include "gecode/int/linear.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
-  class LqBool : public LinBool<View> {
+  template <class XV, class YV>
+  class LqBoolView : public LinBoolView<XV,YV> {
   protected:
-    using LinBool<View>::x;
-    using LinBool<View>::n;
-    using LinBool<View>::y;
+    using LinBoolView<XV,YV>::x;
+    using LinBoolView<XV,YV>::y;
+    using LinBoolView<XV,YV>::c;
 
     /// Constructor for cloning \a p
-    LqBool(Space* home, bool share, LqBool& p);
+    LqBoolView(Space* home, bool share, LqBoolView& p);
     /// Constructor for creation
-    LqBool(Space* home, ViewArray<BoolView>& x, int n, View y);
+    LqBoolView(Space* home, ViewArray<XV>& x, YV y, int c);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n \leq y\f$
-    static ExecStatus post(Space* home, ViewArray<BoolView>& x, int n, View y);
+    static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c);
   };
 
   /**
@@ -940,29 +938,29 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include "gecode/int/linear.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
-  class GqBool : public LinBool<View> {
+  template <class XV, class YV>
+  class GqBoolView : public LinBoolView<XV,YV> {
   protected:
-    using LinBool<View>::x;
-    using LinBool<View>::n;
-    using LinBool<View>::y;
+    using LinBoolView<XV,YV>::x;
+    using LinBoolView<XV,YV>::y;
+    using LinBoolView<XV,YV>::c;
 
     /// Constructor for cloning \a p
-    GqBool(Space* home, bool share, GqBool& p);
+    GqBoolView(Space* home, bool share, GqBoolView& p);
     /// Constructor for creation
-    GqBool(Space* home, ViewArray<BoolView>& x, int n, View y);
+    GqBoolView(Space* home, ViewArray<XV>& x, YV y, int c);
   public:
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n \geq y\f$
-    static ExecStatus post(Space* home, ViewArray<BoolView>& x, int n, View y);
+    static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c);
   };
 
 }}}
 
-#include "gecode/int/linear/bool.icc"
+#include "gecode/int/linear/bool-view.icc"
 
 namespace Gecode { namespace Int { namespace Linear {
 

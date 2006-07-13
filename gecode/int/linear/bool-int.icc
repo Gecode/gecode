@@ -1,0 +1,258 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-07-13 10:39:21 +0200 (Thu, 13 Jul 2006) $ by $Author: schulte $
+ *     $Revision: 3355 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#include <algorithm>
+
+namespace Gecode { namespace Int { namespace Linear {
+
+  /*
+   * Baseclass for integer Boolean sum
+   *
+   */
+  template <class VX>
+  forceinline
+  LinBoolInt<VX>::LinBoolInt(Space* home, ViewArray<VX>& x0, 
+			     int n_s0, int c0)
+    : Propagator(home), x(x0), n_s(n_s0), c(c0) {
+    for (int i=n_s; i--; )
+      x[i].subscribe(home,this,PC_INT_VAL);
+  }
+
+  template <class VX>
+  size_t
+  LinBoolInt<VX>::dispose(Space* home) {
+    assert(!home->failed());
+    for (int i=n_s; i--; )
+      x[i].cancel(home,this,PC_INT_VAL);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class VX>
+  forceinline
+  LinBoolInt<VX>::LinBoolInt(Space* home, bool share, LinBoolInt<VX>& p)
+    : Propagator(home,share,p), n_s(p.n_s), c(p.c) {
+    x.update(home,share,p.x);
+  }
+
+  template <class VX>
+  PropCost
+  LinBoolInt<VX>::cost(void) const {
+    return cost_lo(x.size(),PC_LINEAR_LO);
+  }
+
+
+  /*
+   * Equal propagator (integer rhs)
+   *
+   */
+  template <class VX>
+  forceinline
+  EqBoolInt<VX>::EqBoolInt(Space* home, ViewArray<VX>& x, 
+			   int n_s, int c)
+    : LinBoolInt<VX>(home,x,n_s,c) {}
+
+  template <class VX>
+  ExecStatus
+  EqBoolInt<VX>::post(Space* home, ViewArray<VX>& x, int c) {
+    // Eliminate assigned views
+    int n_x = x.size();
+    for (int i=n_x; i--; )
+      if (x[i].zero()) {
+	x[i] = x[--n_x];
+      } else if (x[i].one()) {
+	x[i] = x[--n_x]; c--;
+      }
+    // RHS too small or too large
+    if ((c < 0) || (c > n_x))
+      return ES_FAILED;
+    // All views must be zero to satisfy equality
+    if (c == 0) {
+      for (int i=n_x; i--; )
+	x[i].t_zero_none(home);
+      return ES_OK;
+    }
+    // All views must be one to satisfy equality
+    if (c == n_x) {
+      for (int i=n_x; i--; )
+	x[i].t_one_none(home);
+      return ES_OK;
+    }
+    x.size(n_x);
+    // Compute how many subscriptions must be created
+    int n_s = std::max(c,n_x-c)+1;
+    assert(n_s <= n_x);
+    (void) new (home) EqBoolInt<VX>(home,x,n_s,c);
+    return ES_OK;
+  }
+
+  template <class VX>
+  forceinline
+  EqBoolInt<VX>::EqBoolInt(Space* home, bool share, EqBoolInt<VX>& p)
+    : LinBoolInt<VX>(home,share,p) {}
+
+  template <class VX>
+  Actor*
+  EqBoolInt<VX>::copy(Space* home, bool share) {
+    return new (home) EqBoolInt<VX>(home,share,*this);
+  }
+
+  template <class VX>
+  ExecStatus
+  EqBoolInt<VX>::propagate(Space* home) {
+    // Eliminate assigned views from subscribed views
+    int n_x = x.size();
+    for (int i=n_s; i--; )
+      if (x[i].zero()) {
+	x[i]=x[--n_s]; x[n_s]=x[--n_x];
+      } else if (x[i].one()) {
+	x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--;
+      }
+    // Eliminate assigned views from unsubscribed views
+    for (int i=n_x; i-- > n_s; )
+      if (x[i].zero()) {
+	x[i] = x[--n_x];
+      } else if (x[i].one()) {
+	x[i] = x[--n_x]; c--;
+      }
+    x.size(n_x);
+    if ((c < 0) || (c > n_x))
+      return ES_FAILED;
+    if (c == 0) {
+      // Fix number of subscriptions such that cancelling subscriptions work
+      n_s = 0;
+      for (int i=n_x; i--; )
+	x[i].t_zero_none(home);
+      return ES_SUBSUMED;
+    }
+    if (c == n_x) {
+      // Fix number of subscriptions such that cancelling subscriptions work
+      n_s = 0;
+      for (int i=n_x; i--; )
+	x[i].t_one_none(home);
+      return ES_SUBSUMED;
+    }
+    int m = std::max(c,n_x-c)+1;
+    if (n_s < m) {
+      // Now, there must be new subscriptions from x[n_s] up to x[m-1]
+      for (int i=n_s; i<m; i++)
+	x[i].subscribe(home,this,PC_INT_VAL);
+      n_s = m;
+    }
+    return ES_FIX;
+  }
+
+
+  /*
+   * Less or equal propagator (integer rhs)
+   *
+   */
+
+  template <class VX>
+  forceinline
+  GqBoolInt<VX>::GqBoolInt(Space* home, ViewArray<VX>& x, 
+			   int n_s, int c)
+    : LinBoolInt<VX>(home,x,n_s,c) {}
+
+  template <class VX>
+  ExecStatus
+  GqBoolInt<VX>::post(Space* home, ViewArray<VX>& x, int c) {
+    // Eliminate assigned views
+    int n_x = x.size();
+    for (int i=n_x; i--; )
+      if (x[i].zero()) {
+	x[i] = x[--n_x];
+      } else if (x[i].one()) {
+	x[i] = x[--n_x]; c--;
+      }
+    // RHS too large
+    if (n_x < c)
+      return ES_FAILED;
+    // Whatever the x[i] take for values, the inequality is subsumed
+    if (c <= 0)
+      return ES_OK;
+    // All views must be one to satisfy inequality
+    if (c == n_x) {
+      for (int i=n_x; i--; )
+	x[i].t_one_none(home);
+      return ES_OK;
+    }
+    // This is the needed invariant as c+1 subscriptions must be created
+    assert(n_x > c);
+    x.size(n_x);
+    (void) new (home) GqBoolInt<VX>(home,x,c+1,c);
+    return ES_OK;
+  }
+
+  template <class VX>
+  forceinline
+  GqBoolInt<VX>::GqBoolInt(Space* home, bool share, GqBoolInt<VX>& p)
+    : LinBoolInt<VX>(home,share,p) {}
+
+  template <class VX>
+  Actor*
+  GqBoolInt<VX>::copy(Space* home, bool share) {
+    return new (home) GqBoolInt<VX>(home,share,*this);
+  }
+
+  template <class VX>
+  ExecStatus
+  GqBoolInt<VX>::propagate(Space* home) {
+    // Eliminate assigned views from subscribed views
+    int n_x = x.size();
+    for (int i=n_s; i--; )
+      if (x[i].zero()) {
+	x[i]=x[--n_s]; x[n_s]=x[--n_x];
+      } else if (x[i].one()) {
+	x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--;
+      }
+    // Eliminate assigned views from unsubscribed views
+    for (int i=n_x; i-- > n_s; )
+      if (x[i].zero()) {
+	x[i] = x[--n_x];
+      } else if (x[i].one()) {
+	x[i] = x[--n_x]; c--;
+      }
+    x.size(n_x);
+    if (n_x < c)
+      return ES_FAILED;
+    if (c <= 0)
+      return ES_SUBSUMED;
+    if (c == n_x) {
+      // Fix number of subscriptions such that cancelling subscriptions work
+      n_s = 0;
+      for (int i=n_x; i--; )
+	x[i].t_one_none(home);
+      return ES_SUBSUMED;
+    }
+    if (n_s < c+1) {
+      // Now, there must be new subscriptions from x[n_s] up to x[c]
+      for (int i=n_s; i<c+1; i++)
+	x[i].subscribe(home,this,PC_INT_VAL);
+      n_s = c+1;
+    }
+    return ES_FIX;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

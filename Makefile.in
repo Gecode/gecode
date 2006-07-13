@@ -182,9 +182,9 @@ INTHDR0 = \
 	dom/range.icc dom/spec.icc \
 	element/int.icc element/view.icc \
 	gcc/bnd.icc gcc/dom.icc gcc/gccbndsup.icc gcc/graphsup.icc \
-	gcc/lbc.icc gcc/ubc.icc gcc/val.icc gcc/occur.icc\
-	linear/binary.icc linear/bool.icc linear/nary.icc \
-	linear/noview.icc linear/ternary.icc linear/dom.icc \
+	gcc/lbc.icc gcc/ubc.icc gcc/val.icc gcc/occur.icc \
+	linear/binary.icc linear/bool-int.icc linear/bool-view.icc \
+	linear/nary.icc linear/noview.icc linear/ternary.icc linear/dom.icc \
 	regular/dfa.icc regular/dom.icc \
 	rel/eq.icc rel/lex.icc rel/lq-le.icc rel/nq.icc \
 	sortedness/matching.icc sortedness/narrowing.icc \
