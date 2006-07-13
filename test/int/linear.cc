@@ -193,12 +193,12 @@ LinearInt _li_125_eq_d("Linear::Int::Dom::Eq::125",d1,c2,5,IRT_EQ,ICL_DOM);
 
 IntSet db(0,1);
 
-class LinearBool : public IntTest {
+class LinearBoolInt : public IntTest {
 private:
   const int rhs;
   const IntRelType irt;
 public:
-  LinearBool(const char* t, int n, int rhs0, IntRelType irt0) 
+  LinearBoolInt(const char* t, int n, int rhs0, IntRelType irt0) 
     : IntTest(t,n,db,false), rhs(rhs0), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     double m = 0;
@@ -216,48 +216,100 @@ public:
   }
 };
 
-LinearBool _lb_1_1_eq("Linear::Bool::Eq::1::1",1,1,IRT_EQ);
-LinearBool _lb_1_1_nq("Linear::Bool::Nq::1::1",1,1,IRT_NQ);
-LinearBool _lb_1_1_lq("Linear::Bool::Lq::1::1",1,1,IRT_LQ);
-LinearBool _lb_1_1_le("Linear::Bool::Le::1::1",1,1,IRT_LE);
-LinearBool _lb_1_1_gq("Linear::Bool::Gq::1::1",1,1,IRT_GQ);
-LinearBool _lb_1_1_gr("Linear::Bool::Gr::1::1",1,1,IRT_GR);
+LinearBoolInt _lb_i_1_1_eq("Linear::Bool::Int::Eq::1::1",1,1,IRT_EQ);
+LinearBoolInt _lb_i_1_1_nq("Linear::Bool::Int::Nq::1::1",1,1,IRT_NQ);
+LinearBoolInt _lb_i_1_1_lq("Linear::Bool::Int::Lq::1::1",1,1,IRT_LQ);
+LinearBoolInt _lb_i_1_1_le("Linear::Bool::Int::Le::1::1",1,1,IRT_LE);
+LinearBoolInt _lb_i_1_1_gq("Linear::Bool::Int::Gq::1::1",1,1,IRT_GQ);
+LinearBoolInt _lb_i_1_1_gr("Linear::Bool::Int::Gr::1::1",1,1,IRT_GR);
 
-LinearBool _lb_3_1_eq("Linear::Bool::Eq::3::1",3,1,IRT_EQ);
-LinearBool _lb_3_1_nq("Linear::Bool::Nq::3::1",3,1,IRT_NQ);
-LinearBool _lb_3_1_lq("Linear::Bool::Lq::3::1",3,1,IRT_LQ);
-LinearBool _lb_3_1_le("Linear::Bool::Le::3::1",3,1,IRT_LE);
-LinearBool _lb_3_1_gq("Linear::Bool::Gq::3::1",3,1,IRT_GQ);
-LinearBool _lb_3_1_gr("Linear::Bool::Gr::3::1",3,1,IRT_GR);
+LinearBoolInt _lb_i_3_1_eq("Linear::Bool::Int::Eq::3::1",3,1,IRT_EQ);
+LinearBoolInt _lb_i_3_1_nq("Linear::Bool::Int::Nq::3::1",3,1,IRT_NQ);
+LinearBoolInt _lb_i_3_1_lq("Linear::Bool::Int::Lq::3::1",3,1,IRT_LQ);
+LinearBoolInt _lb_i_3_1_le("Linear::Bool::Int::Le::3::1",3,1,IRT_LE);
+LinearBoolInt _lb_i_3_1_gq("Linear::Bool::Int::Gq::3::1",3,1,IRT_GQ);
+LinearBoolInt _lb_i_3_1_gr("Linear::Bool::Int::Gr::3::1",3,1,IRT_GR);
 
-LinearBool _lb_5_1_eq("Linear::Bool::Eq::5::1",5,1,IRT_EQ);
-LinearBool _lb_5_1_nq("Linear::Bool::Nq::5::1",5,1,IRT_NQ);
-LinearBool _lb_5_1_lq("Linear::Bool::Lq::5::1",5,1,IRT_LQ);
-LinearBool _lb_5_1_le("Linear::Bool::Le::5::1",5,1,IRT_LE);
-LinearBool _lb_5_1_gq("Linear::Bool::Gq::5::1",5,1,IRT_GQ);
-LinearBool _lb_5_1_gr("Linear::Bool::Gr::5::1",5,1,IRT_GR);
+LinearBoolInt _lb_i_5_1_eq("Linear::Bool::Int::Eq::5::1",5,1,IRT_EQ);
+LinearBoolInt _lb_i_5_1_nq("Linear::Bool::Int::Nq::5::1",5,1,IRT_NQ);
+LinearBoolInt _lb_i_5_1_lq("Linear::Bool::Int::Lq::5::1",5,1,IRT_LQ);
+LinearBoolInt _lb_i_5_1_le("Linear::Bool::Int::Le::5::1",5,1,IRT_LE);
+LinearBoolInt _lb_i_5_1_gq("Linear::Bool::Int::Gq::5::1",5,1,IRT_GQ);
+LinearBoolInt _lb_i_5_1_gr("Linear::Bool::Int::Gr::5::1",5,1,IRT_GR);
 
-LinearBool _lb_5_3_eq("Linear::Bool::Eq::5::3",5,3,IRT_EQ);
-LinearBool _lb_5_3_nq("Linear::Bool::Nq::5::3",5,3,IRT_NQ);
-LinearBool _lb_5_3_lq("Linear::Bool::Lq::5::3",5,3,IRT_LQ);
-LinearBool _lb_5_3_le("Linear::Bool::Le::5::3",5,3,IRT_LE);
-LinearBool _lb_5_3_gq("Linear::Bool::Gq::5::3",5,3,IRT_GQ);
-LinearBool _lb_5_3_gr("Linear::Bool::Gr::5::3",5,3,IRT_GR);
+LinearBoolInt _lb_i_5_3_eq("Linear::Bool::Int::Eq::5::3",5,3,IRT_EQ);
+LinearBoolInt _lb_i_5_3_nq("Linear::Bool::Int::Nq::5::3",5,3,IRT_NQ);
+LinearBoolInt _lb_i_5_3_lq("Linear::Bool::Int::Lq::5::3",5,3,IRT_LQ);
+LinearBoolInt _lb_i_5_3_le("Linear::Bool::Int::Le::5::3",5,3,IRT_LE);
+LinearBoolInt _lb_i_5_3_gq("Linear::Bool::Int::Gq::5::3",5,3,IRT_GQ);
+LinearBoolInt _lb_i_5_3_gr("Linear::Bool::Int::Gr::5::3",5,3,IRT_GR);
 
-LinearBool _lb_10_3_eq("Linear::Bool::Eq::10::3",10,3,IRT_EQ);
-LinearBool _lb_10_3_nq("Linear::Bool::Nq::10::3",10,3,IRT_NQ);
-LinearBool _lb_10_3_lq("Linear::Bool::Lq::10::3",10,3,IRT_LQ);
-LinearBool _lb_10_3_le("Linear::Bool::Le::10::3",10,3,IRT_LE);
-LinearBool _lb_10_3_gq("Linear::Bool::Gq::10::3",10,3,IRT_GQ);
-LinearBool _lb_10_3_gr("Linear::Bool::Gr::10::3",10,3,IRT_GR);
+LinearBoolInt _lb_i_10_3_eq("Linear::Bool::Int::Eq::10::3",10,3,IRT_EQ);
+LinearBoolInt _lb_i_10_3_nq("Linear::Bool::Int::Nq::10::3",10,3,IRT_NQ);
+LinearBoolInt _lb_i_10_3_lq("Linear::Bool::Int::Lq::10::3",10,3,IRT_LQ);
+LinearBoolInt _lb_i_10_3_le("Linear::Bool::Int::Le::10::3",10,3,IRT_LE);
+LinearBoolInt _lb_i_10_3_gq("Linear::Bool::Int::Gq::10::3",10,3,IRT_GQ);
+LinearBoolInt _lb_i_10_3_gr("Linear::Bool::Int::Gr::10::3",10,3,IRT_GR);
 
-LinearBool _lb_10_5_eq("Linear::Bool::Eq::10::5",10,5,IRT_EQ);
-LinearBool _lb_10_5_nq("Linear::Bool::Nq::10::5",10,5,IRT_NQ);
-LinearBool _lb_10_5_lq("Linear::Bool::Lq::10::5",10,5,IRT_LQ);
-LinearBool _lb_10_5_le("Linear::Bool::Le::10::5",10,5,IRT_LE);
-LinearBool _lb_10_5_gq("Linear::Bool::Gq::10::5",10,5,IRT_GQ);
-LinearBool _lb_10_5_gr("Linear::Bool::Gr::10::5",10,5,IRT_GR);
+LinearBoolInt _lb_i_10_5_eq("Linear::Bool::Int::Eq::10::5",10,5,IRT_EQ);
+LinearBoolInt _lb_i_10_5_nq("Linear::Bool::Int::Nq::10::5",10,5,IRT_NQ);
+LinearBoolInt _lb_i_10_5_lq("Linear::Bool::Int::Lq::10::5",10,5,IRT_LQ);
+LinearBoolInt _lb_i_10_5_le("Linear::Bool::Int::Le::10::5",10,5,IRT_LE);
+LinearBoolInt _lb_i_10_5_gq("Linear::Bool::Int::Gq::10::5",10,5,IRT_GQ);
+LinearBoolInt _lb_i_10_5_gr("Linear::Bool::Int::Gr::10::5",10,5,IRT_GR);
 
+
+IntSet dbv(0,5);
+
+class LinearBoolVar : public IntTest {
+private:
+  const IntRelType irt;
+public:
+  LinearBoolVar(const char* t, int n, IntRelType irt0) 
+    : IntTest(t,n+1,dbv,false), irt(irt0) {}
+  virtual bool solution(const Assignment& x) const {
+    for (int i=0; i<x.size()-1; i++) 
+      if ((x[i] != 0) && (x[i] != 1))
+	return false;
+    double m = 0;
+    for (int i=0; i<x.size()-1; i++) 
+      m += x[i];
+    return compare(m, irt, static_cast<double>(x[x.size()-1]));
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    BoolVarArgs b(x.size()-1);
+    for (int i=x.size()-1; i--; )
+      Gecode::dom(home,x[i],0,1);
+    if (home->failed())
+      return;
+    for (int i=x.size()-1; i--; ) {
+      BoolVar bx(x[i]);
+      b[i] = bx;
+    }
+    linear(home, b, irt, x[x.size()-1]);
+  }
+};
+
+LinearBoolVar _lb_v_1_eq("Linear::Bool::Var::Eq::1",1,IRT_EQ);
+LinearBoolVar _lb_v_1_nq("Linear::Bool::Var::Nq::1",1,IRT_NQ);
+LinearBoolVar _lb_v_1_lq("Linear::Bool::Var::Lq::1",1,IRT_LQ);
+LinearBoolVar _lb_v_1_le("Linear::Bool::Var::Le::1",1,IRT_LE);
+LinearBoolVar _lb_v_1_gq("Linear::Bool::Var::Gq::1",1,IRT_GQ);
+LinearBoolVar _lb_v_1_gr("Linear::Bool::Var::Gr::1",1,IRT_GR);
+
+LinearBoolVar _lb_v_3_eq("Linear::Bool::Var::Eq::3",3,IRT_EQ);
+LinearBoolVar _lb_v_3_nq("Linear::Bool::Var::Nq::3",3,IRT_NQ);
+LinearBoolVar _lb_v_3_lq("Linear::Bool::Var::Lq::3",3,IRT_LQ);
+LinearBoolVar _lb_v_3_le("Linear::Bool::Var::Le::3",3,IRT_LE);
+LinearBoolVar _lb_v_3_gq("Linear::Bool::Var::Gq::3",3,IRT_GQ);
+LinearBoolVar _lb_v_3_gr("Linear::Bool::Var::Gr::3",3,IRT_GR);
+
+LinearBoolVar _lb_v_5_eq("Linear::Bool::Var::Eq::5",5,IRT_EQ);
+LinearBoolVar _lb_v_5_nq("Linear::Bool::Var::Nq::5",5,IRT_NQ);
+LinearBoolVar _lb_v_5_lq("Linear::Bool::Var::Lq::5",5,IRT_LQ);
+LinearBoolVar _lb_v_5_le("Linear::Bool::Var::Le::5",5,IRT_LE);
+LinearBoolVar _lb_v_5_gq("Linear::Bool::Var::Gq::5",5,IRT_GQ);
+LinearBoolVar _lb_v_5_gr("Linear::Bool::Var::Gr::5",5,IRT_GR);
 
 // STATISTICS: test-int
 
