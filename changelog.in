@@ -54,11 +54,20 @@ Nothing to say yet.
 
 [ENTRY]
 Module: kernel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+As Boolean variables can be drived from integer variables, the
+assumption that a not yet assigned Boolean variable can nor be
+modified is wrong.
+
+[ENTRY]
+Module: kernel
 What:   change
 Rank:   minor
 Bug:	41
 [DESCRIPTION]
-Change exceptions thrown by Gecode compliant with C++ exceptions.
+Change exceptions thrown by Gecode to be compliant with C++ exceptions.
 
 [ENTRY]
 Module: other
