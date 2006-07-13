@@ -121,8 +121,8 @@ main(int argc, char** argv) {
       }
     std::cout << std::endl;
     } catch (Gecode::Exception e) {
-      std::cout << "Exception in \"Gecode::" << e.location() 
-		<< "\": " << e.info() << "." << std::endl
+      std::cout << "Exception in \"Gecode::" << e.what()
+		<< "." << std::endl
 		<< "Stopping..." << std::endl;
 	  report_error(o, name);
 	  if(o.stop_on_error) return 1;      
