@@ -245,8 +245,6 @@ namespace Gecode {
     unsigned int degree(void) const;
     /// Notify that variable implementation has been modified with \a me
     void notify(Space* home, ModEvent me);
-    /// Notify that unmodified variable implementation has been modified with \a me
-    void notify_unmodified(Space* home, ModEvent me);
     //@}
 
     /// \name Processing modified variables
@@ -1415,14 +1413,6 @@ namespace Gecode {
       home->variable(this);
       modevent(new_me);
     }
-  }
-
-  template <VarTypeId VTI, PropCond PC>
-  forceinline void
-  Variable<VTI,PC>::notify_unmodified(Space* home, ModEvent new_me) {
-    assert(!modified());
-    home->variable(this);
-    modevent(new_me);
   }
 
 

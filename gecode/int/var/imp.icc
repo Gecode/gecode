@@ -454,14 +454,14 @@ namespace Gecode { namespace Int {
   IntVarImp::t_zero_none(Space* home) {
     assert((dom.min() == 0) && (dom.max() == 1));
     dom.max(0);
-    notify_unmodified(home,ME_INT_VAL);
+    notify(home,ME_INT_VAL);
   }
 
   forceinline void
   IntVarImp::t_one_none(Space* home) {
     assert((dom.min() == 0) && (dom.max() == 1));
     dom.min(1);
-    notify_unmodified(home,ME_INT_VAL);
+    notify(home,ME_INT_VAL);
   }
 
 
