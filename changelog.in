@@ -103,7 +103,6 @@ Rank:   major
 [DESCRIPTION]
 Make Boolean linear constraints with constant right hand sides
 more incremental using dynamic subscriptions (gives a 20-30% speedup).
-REMINDER: TO COMPLETE, Nq is missing, cleanup is missing.
 
 [ENTRY]
 Module: minimodel

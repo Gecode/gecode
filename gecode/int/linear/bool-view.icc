@@ -231,62 +231,6 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
 
-
-
-  /*
-   * Less or equal propagator
-   *
-   */
-
-  template <class XV, class YV>
-  forceinline
-  LqBoolView<XV,YV>::LqBoolView(Space* home, ViewArray<XV>& x, YV y, int c)
-    : LinBoolView<XV,YV>(home,x,y,c) {}
-
-  template <class XV, class YV>
-  ExecStatus
-  LqBoolView<XV,YV>::post(Space* home, ViewArray<XV>& x, YV y, int c) {
-    (void) new (home) LqBoolView<XV,YV>(home,x,y,c);
-    return ES_OK;
-  }
-
-
-  template <class XV, class YV>
-  forceinline
-  LqBoolView<XV,YV>::LqBoolView(Space* home, bool share, LqBoolView<XV,YV>& p)
-    : LinBoolView<XV,YV>(home,share,p) {}
-
-  template <class XV, class YV>
-  Actor*
-  LqBoolView<XV,YV>::copy(Space* home, bool share) {
-    return new (home) LqBoolView<XV,YV>(home,share,*this);
-  }
-
-
-  template <class XV, class YV>
-  ExecStatus
-  LqBoolView<XV,YV>::propagate(Space* home) {
-    int n = x.size();
-    for (int i = n; i--; )
-      if (x[i].one()) {
-	x[i]=x[--n]; c--;
-      } else if (x[i].zero()) {
-	x[i]=x[--n];
-      }
-    x.size(n);
-    GECODE_ME_CHECK(y.gq(home,-c));
-    if (n <= y.min()+c)
-      return ES_SUBSUMED;
-    if (y.max()+c == 0) {
-      for (int i = n; i--; )
-	x[i].t_zero_none(home);
-      return ES_SUBSUMED;
-    }
-    return ES_FIX;
-  }
-
-
-
   /*
    * Greater or equal propagator
    *

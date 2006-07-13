@@ -907,32 +907,6 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
-   * \brief %Propagator for less or equal to Boolean sum (cardinality)
-   *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
-   * \ingroup FuncIntProp
-   */
-  template <class XV, class YV>
-  class LqBoolView : public LinBoolView<XV,YV> {
-  protected:
-    using LinBoolView<XV,YV>::x;
-    using LinBoolView<XV,YV>::y;
-    using LinBoolView<XV,YV>::c;
-
-    /// Constructor for cloning \a p
-    LqBoolView(Space* home, bool share, LqBoolView& p);
-    /// Constructor for creation
-    LqBoolView(Space* home, ViewArray<XV>& x, YV y, int c);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n \leq y\f$
-    static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c);
-  };
-
-  /**
    * \brief %Propagator for greater or equal to Boolean sum (cardinality)
    *
    * Requires \code #include "gecode/int/linear.hh" \endcode

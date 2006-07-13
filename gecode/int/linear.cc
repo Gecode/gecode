@@ -207,13 +207,29 @@ namespace Gecode {
 			   ::post(home,xv,y,0)));
       break;
     case IRT_LQ:
-      GECODE_ES_FAIL(home,(Linear::LqBoolView<BoolView,IntView>
-			   ::post(home,xv,y,0)));
-      break;
+      {
+	int n = x.size();
+	ViewArray<NegBoolView> xv(home,n);
+	for (int i=n; i--; ) {
+	  BoolView y(x[i]); xv[i]=y;
+	}
+	MinusView my(y);
+	GECODE_ES_FAIL(home,(Linear::GqBoolView<NegBoolView,MinusView>
+			     ::post(home,xv,my,n)));
+	break;
+      }
     case IRT_LE:
-      GECODE_ES_FAIL(home,(Linear::LqBoolView<BoolView,IntView>
-			   ::post(home,xv,y,-1)));
-      break;
+      {
+	int n = x.size();
+	ViewArray<NegBoolView> xv(home,n);
+	for (int i=n; i--; ) {
+	  BoolView y(x[i]); xv[i]=y;
+	}
+	MinusView my(y);
+	GECODE_ES_FAIL(home,(Linear::GqBoolView<NegBoolView,MinusView>
+			     ::post(home,xv,my,n+1)));
+	break;
+      }
     case IRT_GQ:
       GECODE_ES_FAIL(home,(Linear::GqBoolView<BoolView,IntView>
 			   ::post(home,xv,y,0)));
