@@ -122,3 +122,5 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
   RangesTemplate<I>::width(void) const { return i.width(); }
 
 }}}}
+
+// STATISTICS: iter-any

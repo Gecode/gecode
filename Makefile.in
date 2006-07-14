@@ -339,7 +339,7 @@ ITERHDR0 = \
 	ranges-compl.icc ranges-diff.icc ranges-empty.icc \
 	ranges-inter.icc ranges-minmax.icc ranges-minus.icc \
 	ranges-offset.icc ranges-operations.icc ranges-scale.icc \
-	ranges-singleton.icc ranges-size.icc ranges-union.icc 
+	ranges-singleton.icc ranges-size.icc ranges-union.icc \
 	ranges-values.icc values-ranges.icc virtual-ranges.icc \
 	virtual-ranges-union.icc virtual-ranges-inter.icc  \
 	virtual-ranges-compl.icc
