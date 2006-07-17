@@ -25,6 +25,7 @@ namespace Gecode { namespace Search {
 
   Space*
   ReCoStack::recompute(unsigned int& d, EngineCtrl& stat) {
+    assert(!empty());
     // Recompute space according to path
     // Also say distance to copy (d == 0) requires immediate copying
 
@@ -63,7 +64,7 @@ namespace Gecode { namespace Search {
 	s->commit(operator[](i).alt(),
 		  operator[](i).desc());
       // Skip over all rightmost branches
-      for (; operator[](i).rightmost() && (i < entries()); i++)
+      for (; (i < entries()) && operator[](i).rightmost(); i++)
 	s->commit(operator[](i).alt(),
 		  operator[](i).desc());
       // Is there any point to make a copy?

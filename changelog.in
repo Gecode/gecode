@@ -53,6 +53,17 @@ Date:		Upcoming
 Nothing to say yet.
 
 [ENTRY]
+Module: search
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Fixed a serious bug where during recomputation the search stack
+was always inspected behind the last element: the reason
+why recomputation never crashed has been that stacks always keep one element
+extra for optimization. So, serious bug but looks as if no one
+stumbled over this...
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   minor
