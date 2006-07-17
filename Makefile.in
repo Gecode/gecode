@@ -172,7 +172,7 @@ INTSRC0 = \
 	channel.cc
 INTHDR0 = \
 	arithmetic/abs.icc arithmetic/minmax.icc arithmetic/mult.icc \
-	bool/and.icc bool/eq.icc bool/eqv.icc bool/base.icc \
+	bool/or.icc bool/eq.icc bool/eqv.icc bool/base.icc \
 	branch/assign.icc branch/select-val.icc branch/select-view.icc \
 	count/count.icc count/rel.icc \
 	cumulatives/val.icc \

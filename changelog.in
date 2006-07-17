@@ -57,8 +57,8 @@ Module: kernel
 What:   bug
 Rank:   minor
 [DESCRIPTION]
-As Boolean variables can be drived from integer variables, the
-assumption that a not yet assigned Boolean variable can nor be
+As Boolean variables can be derived from integer variables, the
+assumption that a not yet assigned Boolean variable can not be
 modified is wrong.
 
 [ENTRY]
@@ -127,7 +127,16 @@ What:   performance
 Rank:   minor
 [DESCRIPTION]
 Provide special versions of Boolean propagators optimizing cases
-where n-ary conjunctions (disjunctions) are false (true).
+where n-ary disjunctions are true.
+
+[ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Change implementation of Boolean propagators from conjunction
+to disjunction so that disjunction can be used as special case
+for Boolean sum with inequalities.
 
 
 [RELEASE]

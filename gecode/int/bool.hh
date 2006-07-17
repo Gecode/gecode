@@ -108,93 +108,92 @@ namespace Gecode { namespace Int { namespace Bool {
 
 
   /**
-   * \brief Boolean conjunction propagator (false)
+   * \brief Boolean disjunction propagator (true)
    *
    * Requires \code #include "gecode/int/bool.hh" \endcode
    * \ingroup FuncIntProp
    */
   template<class BVA, class BVB>
-  class AndFalse : public BoolBinary<BVA,BVB> {
+  class OrTrue : public BoolBinary<BVA,BVB> {
   protected:
     using BoolBinary<BVA,BVB>::x0;
     using BoolBinary<BVA,BVB>::x1;
     /// Constructor for posting
-    AndFalse(Space* home, BVA b0, BVB b1);
+    OrTrue(Space* home, BVA b0, BVB b1);
     /// Constructor for cloning \a p
-    AndFalse(Space* home, bool share, AndFalse& p);
+    OrTrue(Space* home, bool share, OrTrue& p);
   public:
     /// Constructor for rewriting \a p during cloning
-    AndFalse(Space* home, bool share, Propagator& p,
+    OrTrue(Space* home, bool share, Propagator& p,
 	     BVA b0, BVB b1);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator \f$ b_0 \land b_1 = 0 \f$
+    /// Post propagator \f$ b_0 \lor b_1 = 0 \f$
     static  ExecStatus post(Space* home, BVA b0, BVB b1);
   };
 
   /**
-   * \brief Boolean conjunction propagator
+   * \brief Boolean disjunction propagator
    *
    * Requires \code #include "gecode/int/bool.hh" \endcode
    * \ingroup FuncIntProp
    */
   template<class BVA, class BVB, class BVC>
-  class And : public BoolTernary<BVA,BVB,BVC> {
+  class Or : public BoolTernary<BVA,BVB,BVC> {
   protected:
     using BoolTernary<BVA,BVB,BVC>::x0;
     using BoolTernary<BVA,BVB,BVC>::x1;
     using BoolTernary<BVA,BVB,BVC>::x2;
     /// Constructor for posting
-    And(Space* home, BVA b0, BVB b1, BVC b2);
+    Or(Space* home, BVA b0, BVB b1, BVC b2);
     /// Constructor for cloning \a p
-    And(Space* home, bool share, And& p);
+    Or(Space* home, bool share, Or& p);
   public:
     /// Constructor for rewriting \a p during cloning
-    And(Space* home, bool share, Propagator& p,
-	BVA b0, BVB b1, BVC b2);
+    Or(Space* home, bool share, Propagator& p, BVA b0, BVB b1, BVC b2);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator \f$ b_0 \land b_1 = b_2 \f$
+    /// Post propagator \f$ b_0 \lor b_1 = b_2 \f$
     static  ExecStatus post(Space* home, BVA b0, BVB b1, BVC b2);
   };
 
   /**
-   * \brief Boolean n-ary conjunction propagator
+   * \brief Boolean n-ary disjunction propagator
    *
    * Requires \code #include "gecode/int/bool.hh" \endcode
    * \ingroup FuncIntProp
    */
   template<class View>
-  class NaryAnd : public NaryOnePropagator<View,PC_INT_VAL> {
+  class NaryOr : public NaryOnePropagator<View,PC_INT_VAL> {
   protected:
     using NaryOnePropagator<View,PC_INT_VAL>::x;
     using NaryOnePropagator<View,PC_INT_VAL>::y;
     /// Constructor for posting
-    NaryAnd(Space* home,  ViewArray<View>& b, View c);
+    NaryOr(Space* home,  ViewArray<View>& b, View c);
     /// Constructor for cloning \a p
-    NaryAnd(Space* home, bool share, NaryAnd<View>& p);
+    NaryOr(Space* home, bool share, NaryOr<View>& p);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator \f$ \bigwedge_{i=0}^{|b|-1} b_i = c\f$
+    /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = c\f$
     static  ExecStatus post(Space* home, ViewArray<View>& b, View c);
   };
 
 
   /**
-   * \brief Boolean n-ary conjunction propagator (false)
+   * \brief Boolean n-ary disjunction propagator (true)
    *
    * Requires \code #include "gecode/int/bool.hh" \endcode
    * \ingroup FuncIntProp
    */
   template<class View>
-  class NaryAndFalse : public BinaryPropagator<View,PC_INT_VAL> {
+  class NaryOrTrue : public BinaryPropagator<View,PC_INT_VAL> {
   protected:
     using BinaryPropagator<View,PC_INT_VAL>::x0;
     using BinaryPropagator<View,PC_INT_VAL>::x1;
@@ -203,15 +202,15 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Update subscription
     ExecStatus resubscribe(Space* home, View& x0, View x1);
     /// Constructor for posting
-    NaryAndFalse(Space* home,  ViewArray<View>& b);
+    NaryOrTrue(Space* home,  ViewArray<View>& b);
     /// Constructor for cloning \a p
-    NaryAndFalse(Space* home, bool share, NaryAndFalse<View>& p);
+    NaryOrTrue(Space* home, bool share, NaryOrTrue<View>& p);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator \f$ \bigwedge_{i=0}^{|b|-1} b_i = 0\f$
+    /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = 0\f$
     static  ExecStatus post(Space* home, ViewArray<View>& b);
   };
 
@@ -245,7 +244,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
 #include "gecode/int/bool/base.icc"
 #include "gecode/int/bool/eq.icc"
-#include "gecode/int/bool/and.icc"
+#include "gecode/int/bool/or.icc"
 #include "gecode/int/bool/eqv.icc"
 
 #endif
