@@ -50,7 +50,6 @@ public:
   /// Actual model
   Golomb(const Options& opt)
     : n(opt.size), m(this,n,0,n*n) {
-    const int nn = n*n;
     const int dn = (n*n-n)/2;
 
     IntVarArgs d(dn);
