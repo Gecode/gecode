@@ -111,7 +111,6 @@ Rank:   minor
 [DESCRIPTION]
 Take advantage of specialized Boolean propagators in Boolean
 expressions and relations.
-Reminder: TO DO!
 
 [ENTRY]
 Module: int

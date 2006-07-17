@@ -111,6 +111,15 @@ namespace Gecode {
 	case BT_NOT:
 	  l->post(home,false);
 	  break;
+	case BT_OR:
+	  if (same > 2) {
+	    BoolVarArgs ba(same);
+	    (void) post(home,BT_OR,ba,0);
+	    bool_or(home, ba, true);
+	  } else {
+	    bool_or(home, l->post(home), r->post(home), true);
+	  }
+	  break;
 	case BT_AND:
 	  l->post(home,true);
 	  r->post(home,true);
@@ -150,6 +159,15 @@ namespace Gecode {
 	case BT_OR:
 	  l->post(home,false);
 	  r->post(home,false);
+	  break;
+	case BT_AND:
+	  if (same > 2) {
+	    BoolVarArgs ba(same);
+	    (void) post(home,BT_AND,ba,0);
+	    bool_and(home, ba, false);
+	  } else {
+	    bool_and(home, l->post(home), r->post(home), false);
+	  }
 	  break;
 	case BT_IMP:
 	  l->post(home,true);

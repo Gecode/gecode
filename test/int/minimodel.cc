@@ -258,6 +258,27 @@ public:
 };
 MmBoolE _mmboole;
 
+class MmBoolF : public IntTest {
+public:
+  MmBoolF(void)
+    : IntTest("MiniModel::Bool::F",4,b,false) {}
+  virtual bool solution(const Assignment& x) const {
+    for (int i=0; i<x.size(); i++)
+      if ((x[i] <0) || (x[i]>1))
+	return false;
+    return ((x[0]==1) || (x[1]==1)) || ((x[2]==1) || (x[3]==1));
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    BoolVarArgs b(4);
+    for (int i=x.size(); i--; ) {
+      Gecode::dom(home, x[i], 0, 1);
+      BoolVar bx(x[i]); b[i]=bx;
+    }
+    Gecode::post(home, tt(b[0] || b[1] || b[2] || b[3]));
+  }
+};
+MmBoolF _mmboolf;
+
 
 namespace {
   const int s1r[7] = {
