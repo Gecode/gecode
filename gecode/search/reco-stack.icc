@@ -27,9 +27,8 @@ namespace Gecode { namespace Search {
    */
 
   forceinline
-  ReCoNode::ReCoNode(Space* s, Space* c, unsigned int a)
-    : _space(c), _alt(0), _last(a-1), _desc(s->description()) {}
-
+  ReCoNode::ReCoNode(Space* s, Space* c)
+    : _space(c), _alt(0), _desc(s->description()) {}
 
   forceinline Space*
   ReCoNode::space(void) const {
@@ -46,7 +45,7 @@ namespace Gecode { namespace Search {
   }
   forceinline bool
   ReCoNode::rightmost(void) const {
-    return _alt == _last;
+    return _alt+1 == _desc->alternatives();
   }
   forceinline void
   ReCoNode::next(void) {
@@ -75,8 +74,8 @@ namespace Gecode { namespace Search {
   ReCoStack::ReCoStack(unsigned int a_d0) : a_d(a_d0) {}
 
   forceinline BranchingDesc*
-  ReCoStack::push(Space* s, Space* c, unsigned int alt) {
-    ReCoNode sn(s,c,alt);
+  ReCoStack::push(Space* s, Space* c) {
+    ReCoNode sn(s,c);
     Support::DynamicStack<ReCoNode>::push(sn);
     return sn.desc();
   }
@@ -84,7 +83,7 @@ namespace Gecode { namespace Search {
   forceinline bool
   ReCoStack::next(EngineCtrl& stat) {
     // Generate path for next node and return whether node exists.
-    while (!empty()) {
+    while (!empty())
       if (top().rightmost()) {
 	stat.pop(top().space(),top().desc());
 	pop().dispose();
@@ -92,7 +91,6 @@ namespace Gecode { namespace Search {
 	top().next();
 	return true;
       }
-    }
     return false;
   }
 

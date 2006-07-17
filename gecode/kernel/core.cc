@@ -24,7 +24,6 @@
 namespace Gecode {
 
   unsigned long int Space::unused_uli;
-  unsigned int Space::unused_ui;
 
   /*
    * Spaces
@@ -217,14 +216,14 @@ namespace Gecode {
   /*
    * Main control for propagation and branching
    *  - a space only propagates and branches if requested by
-   *    either a status, commit, ot clone operation
+   *    either a status, commit, or clone operation
    *  - for all of the operations the number of propagation
    *    steps performed is returned in the last (optional)
    *    reference argument
    *
    */
   SpaceStatus
-  Space::status(unsigned int& a, unsigned long int& pn) {
+  Space::status(unsigned long int& pn) {
     // Perform propagation and do not continue when failed
     pn += propagate();
     if (failed())
@@ -233,8 +232,7 @@ namespace Gecode {
     // No alternatives means that the space is solved if no more
     // branchings are available.
     while (b_fst != &a_actors) {
-      a = b_fst->branch(this);
-      if (a > 0)
+      if (b_fst->branch(this) > 0)
 	return SS_BRANCH;
       Branching* b = b_fst;
       b_fst = static_cast<Branching*>(b->next());

@@ -227,13 +227,11 @@ namespace Gecode {
       Space*         _space;
       /// Current alternative 
       unsigned int   _alt;
-      /// Last alternative
-      unsigned int   _last;
       /// Braching description
       BranchingDesc* _desc;
     public:
-      /// Node for space \a s with clone \a c (possibly NULL) and alternatives \a alt
-      ReCoNode(Space* s, Space* c, unsigned int alt);
+      /// Node for space \a s with clone \a c (possibly NULL)
+      ReCoNode(Space* s, Space* c);
 
       /// Return space for node
       Space* space(void) const; 
@@ -275,8 +273,8 @@ namespace Gecode {
     public:
       /// Initialize with adaptive recomputation distance \a a_d
       ReCoStack(unsigned int a_d);
-      /// Push space \a c (a clone of \a a or NULL) with alternatives \a a
-      BranchingDesc* push(Space* s, Space* c, unsigned int a);
+      /// Push space \a c (a clone of \a s or NULL)
+      BranchingDesc* push(Space* s, Space* c);
       /// Generate path for next node and return whether a next node exists
       bool next(EngineCtrl& s);
       /// Recompute space according to path with copying distance \a d

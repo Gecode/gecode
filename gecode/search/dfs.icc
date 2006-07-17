@@ -59,8 +59,7 @@ namespace Gecode {
 	while (cur) {
 	  if (stop(stacksize()))
 	    return NULL;
-	  unsigned int alt;
-	  switch (cur->status(alt,propagate)) {
+	  switch (cur->status(propagate)) {
 	  case SS_FAILED:
 	    fail++;
 	    delete cur;
@@ -83,13 +82,11 @@ namespace Gecode {
 		d = 1;
 	      } else {
 		c = NULL;
-		if (alt > 1)
-		  d++;
 	      }
-	      BranchingDesc* desc = ds.push(cur,c,alt);
+	      BranchingDesc* desc = ds.push(cur,c);
 	      EngineCtrl::push(c,desc);
 	      commit++;
-	      cur->commit(0, desc);
+	      cur->commit(0,desc);
 	      break;
 	    }
 	  }

@@ -69,8 +69,7 @@ namespace Gecode { namespace Search {
 	  return false;
 	}
       }
-      unsigned int alt;
-      switch (cur->status(alt,propagate)) {
+      switch (cur->status(propagate)) {
       case SS_FAILED:
 	fail++;
 	delete cur;
@@ -95,10 +94,8 @@ namespace Gecode { namespace Search {
 	    d = 1;
 	  } else {
 	    c = NULL;
-	    if (alt > 1)
-	      d++;
 	  }
-	  BranchingDesc* desc = ds.push(cur,c,alt);
+	  BranchingDesc* desc = ds.push(cur,c);
 	  EngineCtrl::push(c,desc);
 	  cur->commit(0,desc);
 	  commit++;
@@ -114,9 +111,8 @@ namespace Gecode { namespace Search {
 
   BAB::BAB(Space* s, unsigned int c_d, unsigned int a_d, Stop* st, size_t sz) 
     : e(c_d,a_d,st,sz) {
-    unsigned int alt;
     unsigned long int p = 0;
-    Space* c = (s->status(alt,p) == SS_FAILED) ? NULL : s->clone(true,p);
+    Space* c = (s->status(p) == SS_FAILED) ? NULL : s->clone(true,p);
     e.init(c);
     e.propagate += p;
     e.current(s);

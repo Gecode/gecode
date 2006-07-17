@@ -635,8 +635,6 @@ namespace Gecode {
 
     /// Used for default arguments 
     GECODE_KERNEL_EXPORT static unsigned long int unused_uli;
-    /// Used for default arguments
-    GECODE_KERNEL_EXPORT static unsigned int unused_ui;
 
     /// Perform propagation, return number of propagation steps
     unsigned long int propagate(void);
@@ -717,14 +715,12 @@ namespace Gecode {
      * increments \a pn by the number of propagator executions.
      *  - if the space is failed, SpaceStatus::SS_FAILED is returned.
      *  - if the space is not failed but the space has no branching left,
-     *    SpaceStatus::SS_SOLVED is returned and \a a is assigned 0.
-     *  - otherwise, SpaceStatus::SS_BRANCH is returned and \a a is 
-     *    assigned the number of alternatives of the branching.
+     *    SpaceStatus::SS_SOLVED is returned.
+     *  - otherwise, SpaceStatus::SS_BRANCH is returned.
      * \ingroup TaskSearch
      */
     GECODE_KERNEL_EXPORT
-    SpaceStatus status(unsigned int& a=unused_ui,
-		       unsigned long int& pn=unused_uli);
+    SpaceStatus status(unsigned long int& pn=unused_uli);
 
     /** 
      * \brief Clone space 

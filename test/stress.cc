@@ -39,9 +39,8 @@ Space* StressTestSpace::copy(bool share) {
   return new StressTestSpace(share,*this);
 }
 bool StressTestSpace::is_failed(void) {
-  unsigned int alt;
   Log::fixpoint();
-  return status(alt) == SS_FAILED;
+  return status() == SS_FAILED;
 }
 
 StressTestSpace *
