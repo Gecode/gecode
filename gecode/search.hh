@@ -234,24 +234,22 @@ namespace Gecode {
     public:
       /// Node for space \a s with clone \a c (possibly NULL) and alternatives \a alt
       ReCoNode(Space* s, Space* c, unsigned int alt);
+
       /// Return space for node
       Space* space(void) const; 
-      /// Return number for alternatives
-      unsigned int alt(void) const; 
-      /// Return branching description
-      BranchingDesc* desc(void) const; 
       /// Set space to \a s
       void space(Space* s);
-      /// Set number of alternatives to \a a
-      void alt(unsigned int a);
-      /// Set branching description to \a d
-      void desc(BranchingDesc* d);
+
+      /// Return branching description
+      BranchingDesc* desc(void) const; 
+
+      /// Return number for alternatives
+      unsigned int alt(void) const; 
       /// Test whether current alternative is rightmost
       bool rightmost(void) const;
-      /// Movre to next alternative
+      /// Move to next alternative
       void next(void);
-      /// Return the rightmost alternative and remove it
-      unsigned int share(void);
+
       /// Free memory for node
       void dispose(void);
     };

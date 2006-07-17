@@ -44,11 +44,6 @@ namespace Gecode { namespace Search {
   ReCoNode::alt(void) const {
     return _alt;
   }
-  forceinline void
-  ReCoNode::alt(unsigned int a) {
-    _alt = a;
-  }
-
   forceinline bool
   ReCoNode::rightmost(void) const {
     return _alt == _last;
@@ -62,10 +57,6 @@ namespace Gecode { namespace Search {
   ReCoNode::desc(void) const {
     return _desc;
   }
-  forceinline void
-  ReCoNode::desc(BranchingDesc* d) {
-    _desc = d;
-  }
 
   forceinline void
   ReCoNode::dispose(void) {
@@ -73,10 +64,6 @@ namespace Gecode { namespace Search {
     delete _desc;
   }
 
-  forceinline unsigned int
-  ReCoNode::share(void) {
-    return _last--;
-  }
 
 
   /*

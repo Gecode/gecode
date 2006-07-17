@@ -95,8 +95,8 @@ namespace Gecode {
     const int _pos;
     const Val _val;
   public:
-    /// Initialize description
-    PosValDesc(Branching*,int,Val);
+    /// Initialize description for branching \a b, position \a p and value \a n
+    PosValDesc(Branching* b, int p, Val n);
     /// Return position in array
     int pos(void) const;
     /// Return value to branch with
@@ -119,8 +119,8 @@ namespace Gecode {
 
   template <class Val>
   forceinline
-  PosValDesc<Val>::PosValDesc(Branching* b, int pos, Val val)
-    : BranchingDesc(b), _pos(pos), _val(val) {}
+  PosValDesc<Val>::PosValDesc(Branching* b, int p, Val n)
+    : BranchingDesc(b,2), _pos(p), _val(n) {}
 
   template <class Val>
   forceinline int
