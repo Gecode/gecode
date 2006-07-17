@@ -151,8 +151,8 @@ Date:		2006-06-20
 [DESCRIPTION]
 This release makes quite some drastic changes to how propagators
 and branchings are deleted: instead of using destructors they use
-a dispose that allows to pass a home space during deletion (we
-will use this infrastructure measure to speed up cloning
+a dispose method that allows to pass a home space during deletion
+(we will use this infrastructure measure to speed up cloning
 considerably a little later). Moreover the directory structure
 has changed on popular request so that all include files are to
 be found in a gecode subdirectory. Apart from that, some small
