@@ -570,15 +570,15 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *
  * Deciding which header files must be included when using %Gecode is
  * quite straightforward. There are the following header files for inclusion:
- *  - kernel.hh must always be included (the header files below
+ *  - gecode/kernel.hh must always be included (the header files below
  *    also always include kernel.hh).
- *  - search.hh must be included, if search engines are used 
+ *  - gecode/search.hh must be included, if search engines are used 
  *    (see for example \ref TaskIntSearch).
- *  - int.hh must be included, if any integer functionality is used
+ *  - gecode/int.hh must be included, if any integer functionality is used
  *    (see for example \ref TaskIntInt and \ref TaskActorInt).
- *  - set.hh must be included, if any finite set functionality is used
+ *  - gecode/set.hh must be included, if any finite set functionality is used
  *    (see for example \ref TaskIntSet and \ref TaskActorSet).
- *  - minimodel.hh must be included, if direct modelling support
+ *  - gecode/minimodel.hh must be included, if direct modelling support
  *    is used (see for example \ref TaskMiniModel).
  *
  * Other functionality is available through a set of header files. For example
@@ -591,12 +591,16 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * Setting the exact name for a library on a particular platform aside,
  * inclusion of header files basically coincides with against which
  * library must be linked. That is:
- *  - If kernel.hh is included, linking against the kernel library is required.
- *  - If search.hh is included, linking against the search library is required.
- *  - If int.hh is included, linking against the integer library is required.
- *  - If set.hh is included, linking against the set library is required.
- *  - If minimodel.hh is included, linking against the minimodel library 
- *    is required.
+ *  - If gecode/kernel.hh is included, linking against the kernel library is
+ *    required.
+ *  - If gecode/search.hh is included, linking against the search library is
+ *    required.
+ *  - If gecode/int.hh is included, linking against the integer library is
+ *    required.
+ *  - If gecode/set.hh is included, linking against the set library is
+ *    required.
+ *  - If gecode/minimodel.hh is included, linking against the minimodel
+ *    library is required.
  *
  * The functionality in \ref FuncSupport and \ref FuncIter require no
  * library for linking. Reusing integer or set propagators of course
