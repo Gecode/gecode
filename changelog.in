@@ -62,6 +62,13 @@ assumption that a not yet assigned Boolean variable can not be
 modified is wrong.
 
 [ENTRY]
+Module: other
+What:   documentation
+Rank:   minor
+[DESCRIPTION]
+Generate one page per version released in changelog.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

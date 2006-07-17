@@ -439,7 +439,7 @@
  * control.
  *
  * As examples for data structures which are sensitive to sharing, consider
- * Gecode::Support::SharedArray, Gecode::DomSpec, and Gecode::DFA.
+ * Gecode::Support::SharedArray, Gecode::IntSet, and Gecode::DFA.
  */
 
 /**

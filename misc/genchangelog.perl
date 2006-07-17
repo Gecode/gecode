@@ -22,7 +22,6 @@
 
 print <<EOF
 /**
-  \\page PageChange Changelog
 
 EOF
 ;
@@ -68,15 +67,18 @@ foreach $mod (@modorder) {
   }
 }
 
+$versions = "";
+
 while ($l = <>) {
  LINE:
   next if ($l =~ /^\#/);
   if ($l =~ /^\[RELEASE\]/) {
     # Print previous
     if (!$first) {
-      $sid = "Change$version";
+      $sid = "PageChanges_$version";
       $sid =~ s|\.|_|g;
-      print "\\section $sid Changes in Version $version ($date)\n\n";
+      $versions = $versions . "\n - \\ref $sid \"Gecode $version ($date)\"";
+      print "\\page $sid Changes in Version $version ($date)\n\n";
 
       print "$info\n\n";
 
@@ -158,9 +160,28 @@ while ($l = <>) {
 
 print <<EOF
 
-\\section Change1_0_0 Initial release (2005-12-06)
+\\page PageChanges_1_0_0 Changes in Version 1.0.0 (2005-12-06, initial release)
 
 No changes, of course.
+
+\\page PageChange Changelog
+
+\\section SectionChangeList Changes in Gecode Versions
+
+$versions
+ - \\ref PageChanges_1_0_0 "Gecode 1.0.0 (2005-12-06)"
+
+\\section SectionChangeWhat Gecode Version Numbers
+
+Gecode version numbers <em>x</em>.<em>y</em>.<em>z</em> change
+according to the following rules (of thumb):
+
+ - when \\e z changes, the programming interfaces for 
+   \\ref TaskInt, \\ref TaskMiniModel, and \\ref TaskSearch remain
+   stable and only minor additions or improvements are included.
+ - when \\e y changes, the above mentioned interfaces might have changed
+   and medium to major additions or improvements are included.
+ - the change of \\e x is reserved for radical changes to Gecode.
 
 EOF
 ;
