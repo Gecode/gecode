@@ -236,7 +236,7 @@ namespace Gecode { namespace Int { namespace Bool {
 	    return ES_SUBSUMED;
 	  }
 	  // Move to x0 and subscribe
-	  x0 = x[i]; x.move_lst(i);
+	  x0=x[i]; x[i]=x[x.size()-1]; x.size(x.size()-1);
 	  x0.subscribe(home,this,PC_INT_VAL);
 	  return ES_FIX;
 	}
