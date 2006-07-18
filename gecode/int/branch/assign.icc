@@ -26,7 +26,7 @@ namespace Gecode { namespace Int { namespace Branch {
    *
    */
   forceinline
-  AssignDesc::AssignDesc(Branching* b, int p, int n)
+  AssignDesc::AssignDesc(const Branching* b, const int p, const int n)
     : BranchingDesc(b,1), _pos(p), _val(n) {}
   forceinline int
   AssignDesc::pos(void) const {

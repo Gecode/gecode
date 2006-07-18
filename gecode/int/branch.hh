@@ -35,6 +35,7 @@ namespace Gecode { namespace Int { namespace Branch {
    * Value selection classes
    *
    */
+
   /**
    * \brief Class for selecting minimum value
    *
@@ -45,7 +46,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValMin {
   public:
     /// Return minimum value of view \a x
-    int val(IntView x);
+    int val(IntView x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, IntView x, int n);
   };
@@ -60,7 +61,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValMed {
   public:
     /// Return maximum value of view \a x
-    int val(IntView x);
+    int val(IntView x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, IntView x, int n);
   };
@@ -75,7 +76,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValMax {
   public:
     /// Return median value of view \a x
-    int val(IntView x);
+    int val(IntView x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, IntView x, int n);
   };
@@ -90,7 +91,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValSplitMin {
   public:
     /// Return minimum value of view \a x
-    int val(IntView x);
+    int val(IntView x) const;
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x >n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, IntView x, int n);
   };
@@ -105,7 +106,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValSplitMax {
   public:
     /// Return minimum value of view \a x
-    int val(IntView x);
+    int val(IntView x) const;
     /// Tell \f$x>n\f$ (\a a = 0) or \f$x\leq n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, IntView x, int n);
   };
@@ -354,7 +355,7 @@ namespace Gecode { namespace Int { namespace Branch {
     const int _val;
   public:
     /// Initialize description for branching \a b, position \a p and value \a n
-    AssignDesc(Branching* b, int p, int n);
+    AssignDesc(const Branching* b, const int p, const int n);
     /// Return position in array
     int pos(void) const;
     /// Return value to branch with
@@ -399,7 +400,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
     /// Return branching description (of type AssignDesc)
-    virtual BranchingDesc* description(const Space* home);
+    virtual BranchingDesc* description(const Space* home) const;
   };
 
   /// Median assignment (single-alternative branching)
@@ -413,7 +414,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
     /// Return branching description (of type AssignDesc)
-    virtual BranchingDesc* description(const Space* home);
+    virtual BranchingDesc* description(const Space* home) const;
   };
 
   /// Maximum assignment (single-alternative branching)
@@ -427,7 +428,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
     /// Return branching description (of type AssignDesc)
-    virtual BranchingDesc* description(const Space* home);
+    virtual BranchingDesc* description(const Space* home) const;
   };
 
 }}}
