@@ -26,58 +26,58 @@ namespace Gecode { namespace Int { namespace Count {
    *
    */
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
-  Base<VX,VY,VZ,Rel,shr>::Base(Space* home, 
+  template <class VX, class VY, class VZ, bool shr>
+  Base<VX,VY,VZ,shr>::Base(Space* home, 
 			       ViewArray<VX>& x0, VY y0, VZ z0, int c0)
     : Propagator(home), x(x0), y(y0), z(z0), c(c0) {
-    x.subscribe(home,this,r.cond());
-    y.subscribe(home,this,r.cond());
+    x.subscribe(home,this,PC_INT_DOM);
+    y.subscribe(home,this,PC_INT_DOM);
     z.subscribe(home,this,PC_INT_BND);
   }
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   inline
-  Base<VX,VY,VZ,Rel,shr>::Base(Space* home, bool share,
-			       Base<VX,VY,VZ,Rel,shr>& p)
+  Base<VX,VY,VZ,shr>::Base(Space* home, bool share,
+			       Base<VX,VY,VZ,shr>& p)
     : Propagator(home,shr,p), c(p.c) {
     x.update(home,share,p.x);
     y.update(home,share,p.y);
     z.update(home,share,p.z);
   }
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   PropCost
-  Base<VX,VY,VZ,Rel,shr>::cost(void) const {
+  Base<VX,VY,VZ,shr>::cost(void) const {
     return cost_lo(x.size()+1, PC_LINEAR_LO);
   }
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   size_t
-  Base<VX,VY,VZ,Rel,shr>::dispose(Space* home) {
+  Base<VX,VY,VZ,shr>::dispose(Space* home) {
     assert(!home->failed());
-    x.cancel(home,this,r.cond());
-    y.cancel(home,this,r.cond());
+    x.cancel(home,this,PC_INT_DOM);
+    y.cancel(home,this,PC_INT_DOM);
     z.cancel(home,this,PC_INT_BND);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   forceinline int
-  Base<VX,VY,VZ,Rel,shr>::atleast(void) const {
+  Base<VX,VY,VZ,shr>::atleast(void) const {
     return c;
   }
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   forceinline int
-  Base<VX,VY,VZ,Rel,shr>::atmost(void) const {
+  Base<VX,VY,VZ,shr>::atmost(void) const {
     return c+x.size();
   }
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   inline bool
-  Base<VX,VY,VZ,Rel,shr>::sharing(const ViewArray<VX>& x,
-				    const VY& y, const VZ& z) {
+  Base<VX,VY,VZ,shr>::sharing(const ViewArray<VX>& x,
+			      const VY& y, const VZ& z) {
     if (shared(y,z))
       return true;
     for (int i = x.size(); i--; )
@@ -91,46 +91,46 @@ namespace Gecode { namespace Int { namespace Count {
    *
    */
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   forceinline
-  Eq<VX,VY,VZ,Rel,shr>::Eq(Space* home, 
+  Eq<VX,VY,VZ,shr>::Eq(Space* home, 
 			       ViewArray<VX>& x, VY y, VZ z, int c)
-    : Base<VX,VY,VZ,Rel,shr>(home,x,y,z,c) {}
+    : Base<VX,VY,VZ,shr>(home,x,y,z,c) {}
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  Eq<VX,VY,VZ,Rel,shr>::post(Space* home, 
+  Eq<VX,VY,VZ,shr>::post(Space* home, 
 				ViewArray<VX>& x, VY y, VZ z, int c) {
     if (sharing(x,y,z))
-      (void) new (home) Eq<VX,VY,VZ,Rel,true>(home,x,y,z,c);
+      (void) new (home) Eq<VX,VY,VZ,true>(home,x,y,z,c);
     else
-      (void) new (home) Eq<VX,VY,VZ,Rel,false>(home,x,y,z,c);
+      (void) new (home) Eq<VX,VY,VZ,false>(home,x,y,z,c);
     return ES_OK;
   }
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   forceinline
-  Eq<VX,VY,VZ,Rel,shr>::Eq(Space* home, bool share,
-			       Eq<VX,VY,VZ,Rel,shr>& p)
-    : Base<VX,VY,VZ,Rel,shr>(home,share,p) {}
+  Eq<VX,VY,VZ,shr>::Eq(Space* home, bool share,
+			       Eq<VX,VY,VZ,shr>& p)
+    : Base<VX,VY,VZ,shr>(home,share,p) {}
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   Actor*
-  Eq<VX,VY,VZ,Rel,shr>::copy(Space* home, bool share) {
-    return new (home) Eq<VX,VY,VZ,Rel,shr>(home,share,*this);
+  Eq<VX,VY,VZ,shr>::copy(Space* home, bool share) {
+    return new (home) Eq<VX,VY,VZ,shr>(home,share,*this);
   }
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  Eq<VX,VY,VZ,Rel,shr>::propagate(Space* home) {
+  Eq<VX,VY,VZ,shr>::propagate(Space* home) {
     for (int i = x.size(); i--; )
-      switch (r.holds(x[i],y)) {
+      switch (holds(x[i],y)) {
       case RT_FALSE:
-	x.move_lst(i,home,this,r.cond());
+	x.move_lst(i,home,this,PC_INT_DOM);
 	if (z.min() == atmost()) goto decided;
 	break;
       case RT_TRUE:
-	x.move_lst(i,home,this,r.cond()); c++;
+	x.move_lst(i,home,this,PC_INT_DOM); c++;
 	if (z.max() == atleast()) goto decided;
 	break;
       default: ;
@@ -141,9 +141,9 @@ namespace Gecode { namespace Int { namespace Count {
 
     if (z.assigned()) {
       if (z.val() == atleast()) 
-	return r.post_false(home,x,y);
+	return post_false(home,x,y);
       if (z.val() == atmost())  
-	return r.post_true(home,x,y);
+	return post_true(home,x,y);
     }
     return shr ? ES_NOFIX : ES_FIX;
   }
@@ -156,41 +156,41 @@ namespace Gecode { namespace Int { namespace Count {
    *
    */
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   forceinline
-  Nq<VX,VY,VZ,Rel,shr>::Nq(Space* home, 
+  Nq<VX,VY,VZ,shr>::Nq(Space* home, 
 			       ViewArray<VX>& x, VY y, VZ z, int c)
-    : Base<VX,VY,VZ,Rel,shr>(home,x,y,z,c) {}
+    : Base<VX,VY,VZ,shr>(home,x,y,z,c) {}
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  Nq<VX,VY,VZ,Rel,shr>::post(Space* home, 
+  Nq<VX,VY,VZ,shr>::post(Space* home, 
 			     ViewArray<VX>& x, VY y, VZ z, int c) {
-    (void) new (home) Nq<VX,VY,VZ,Rel,shr>(home,x,y,z,c);
+    (void) new (home) Nq<VX,VY,VZ,shr>(home,x,y,z,c);
     return ES_OK;
   }
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   forceinline
-  Nq<VX,VY,VZ,Rel,shr>::Nq(Space* home, bool share,
-			       Nq<VX,VY,VZ,Rel,shr>& p)
-    : Base<VX,VY,VZ,Rel,shr>(home,share,p) {}
+  Nq<VX,VY,VZ,shr>::Nq(Space* home, bool share,
+			       Nq<VX,VY,VZ,shr>& p)
+    : Base<VX,VY,VZ,shr>(home,share,p) {}
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   Actor*
-  Nq<VX,VY,VZ,Rel,shr>::copy(Space* home, bool share) {
-    return new (home) Nq<VX,VY,VZ,Rel,shr>(home,share,*this);
+  Nq<VX,VY,VZ,shr>::copy(Space* home, bool share) {
+    return new (home) Nq<VX,VY,VZ,shr>(home,share,*this);
   }
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  Nq<VX,VY,VZ,Rel,shr>::propagate(Space* home) {
+  Nq<VX,VY,VZ,shr>::propagate(Space* home) {
     for (int i = x.size(); i--; )
-      switch (r.holds(x[i],y)) {
+      switch (holds(x[i],y)) {
       case RT_FALSE:
-	x.move_lst(i,home,this,r.cond()); break;
+	x.move_lst(i,home,this,PC_INT_DOM); break;
       case RT_TRUE:
-	x.move_lst(i,home,this,r.cond()); c++; break;
+	x.move_lst(i,home,this,PC_INT_DOM); c++; break;
       default: ;
       }
     if (atleast() == atmost()) {
@@ -211,44 +211,44 @@ namespace Gecode { namespace Int { namespace Count {
    *
    */
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   forceinline
-  Lq<VX,VY,VZ,Rel,shr>::Lq(Space* home, 
+  Lq<VX,VY,VZ,shr>::Lq(Space* home, 
 			       ViewArray<VX>& x, VY y, VZ z, int c)
-    : Base<VX,VY,VZ,Rel,shr>(home,x,y,z,c) {}
+    : Base<VX,VY,VZ,shr>(home,x,y,z,c) {}
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  Lq<VX,VY,VZ,Rel,shr>::post(Space* home, 
+  Lq<VX,VY,VZ,shr>::post(Space* home, 
 			     ViewArray<VX>& x, VY y, VZ z, int c) {
     if (sharing(x,y,z))
-      (void) new (home) Lq<VX,VY,VZ,Rel,true>(home,x,y,z,c);
+      (void) new (home) Lq<VX,VY,VZ,true>(home,x,y,z,c);
     else
-      (void) new (home) Lq<VX,VY,VZ,Rel,false>(home,x,y,z,c);
+      (void) new (home) Lq<VX,VY,VZ,false>(home,x,y,z,c);
     return ES_OK;
   }
   
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   forceinline
-  Lq<VX,VY,VZ,Rel,shr>::Lq(Space* home, bool share,
-			       Lq<VX,VY,VZ,Rel,shr>& p)
-    : Base<VX,VY,VZ,Rel,shr>(home,share,p) {}
+  Lq<VX,VY,VZ,shr>::Lq(Space* home, bool share,
+			       Lq<VX,VY,VZ,shr>& p)
+    : Base<VX,VY,VZ,shr>(home,share,p) {}
   
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   Actor*
-  Lq<VX,VY,VZ,Rel,shr>::copy(Space* home, bool share) {
-    return new (home) Lq<VX,VY,VZ,Rel,shr>(home,share,*this);
+  Lq<VX,VY,VZ,shr>::copy(Space* home, bool share) {
+    return new (home) Lq<VX,VY,VZ,shr>(home,share,*this);
   }
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  Lq<VX,VY,VZ,Rel,shr>::propagate(Space* home) {
+  Lq<VX,VY,VZ,shr>::propagate(Space* home) {
     for (int i = x.size(); i--; )
-      switch (r.holds(x[i],y)) {
+      switch (holds(x[i],y)) {
       case RT_FALSE:
-	x.move_lst(i,home,this,r.cond()); break;
+	x.move_lst(i,home,this,PC_INT_DOM); break;
       case RT_TRUE:
-	x.move_lst(i,home,this,r.cond()); c++;
+	x.move_lst(i,home,this,PC_INT_DOM); c++;
 	if (z.max() == atleast()) goto decided;
 	break;
       default: ;
@@ -256,7 +256,7 @@ namespace Gecode { namespace Int { namespace Count {
   decided:
     GECODE_ME_CHECK(z.gq(home,atleast()));
     if (z.max() == atleast())
-      return r.post_false(home,x,y);
+      return post_false(home,x,y);
     if (x.size() == 0)
       return ES_SUBSUMED;
     return shr ? ES_NOFIX : ES_FIX;
@@ -269,46 +269,46 @@ namespace Gecode { namespace Int { namespace Count {
    *
    */
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   forceinline
-  Gq<VX,VY,VZ,Rel,shr>::Gq(Space* home, 
+  Gq<VX,VY,VZ,shr>::Gq(Space* home, 
 			       ViewArray<VX>& x, VY y, VZ z, int c)
-    : Base<VX,VY,VZ,Rel,shr>(home,x,y,z,c) {}
+    : Base<VX,VY,VZ,shr>(home,x,y,z,c) {}
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  Gq<VX,VY,VZ,Rel,shr>::post(Space* home, 
+  Gq<VX,VY,VZ,shr>::post(Space* home, 
 			     ViewArray<VX>& x, VY y, VZ z, int c) {
     if (sharing(x,y,z))
-      (void) new (home) Gq<VX,VY,VZ,Rel,true>(home,x,y,z,c);
+      (void) new (home) Gq<VX,VY,VZ,true>(home,x,y,z,c);
     else
-      (void) new (home) Gq<VX,VY,VZ,Rel,false>(home,x,y,z,c);
+      (void) new (home) Gq<VX,VY,VZ,false>(home,x,y,z,c);
     return ES_OK;
   }
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   forceinline
-  Gq<VX,VY,VZ,Rel,shr>::Gq(Space* home, bool share,
-			       Gq<VX,VY,VZ,Rel,shr>& p)
-    : Base<VX,VY,VZ,Rel,shr>(home,share,p) {}
+  Gq<VX,VY,VZ,shr>::Gq(Space* home, bool share,
+			       Gq<VX,VY,VZ,shr>& p)
+    : Base<VX,VY,VZ,shr>(home,share,p) {}
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   Actor*
-  Gq<VX,VY,VZ,Rel,shr>::copy(Space* home, bool share) {
-    return new (home) Gq<VX,VY,VZ,Rel,shr>(home,share,*this);
+  Gq<VX,VY,VZ,shr>::copy(Space* home, bool share) {
+    return new (home) Gq<VX,VY,VZ,shr>(home,share,*this);
   }
 
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  Gq<VX,VY,VZ,Rel,shr>::propagate(Space* home) {
+  Gq<VX,VY,VZ,shr>::propagate(Space* home) {
     for (int i = x.size(); i--; )
-      switch (r.holds(x[i],y)) {
+      switch (holds(x[i],y)) {
       case RT_FALSE:
-	x.move_lst(i,home,this,r.cond());
+	x.move_lst(i,home,this,PC_INT_DOM);
 	if (z.min() == atmost()) goto decided;
 	break;
       case RT_TRUE:
-	x.move_lst(i,home,this,r.cond()); c++;
+	x.move_lst(i,home,this,PC_INT_DOM); c++;
 	break;
       default: ;
       }
@@ -316,7 +316,7 @@ namespace Gecode { namespace Int { namespace Count {
     GECODE_ME_CHECK(z.lq(home,atmost()));
 
     if (z.min() == atmost())
-      return r.post_true(home,x,y);
+      return post_true(home,x,y);
     if (x.size() == 0)
       return ES_SUBSUMED;
     return shr ? ES_NOFIX : ES_FIX;

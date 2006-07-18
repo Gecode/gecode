@@ -53,6 +53,14 @@ Date:		Upcoming
 Nothing to say yet.
 
 [ENTRY]
+Module: int
+What: 	removed
+Rank: 	minor
+[DESCRIPTION]
+Removed bounds-consistent propagation for count constraint (not worth
+the trouble, just use domain-consistent).
+
+[ENTRY]
 Module: kernel
 What: 	change
 Rank: 	minor

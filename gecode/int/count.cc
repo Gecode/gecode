@@ -23,14 +23,8 @@
 
 namespace Gecode {
 
-#define GECODE_INT_CREATE(VY,VZ,C)					\
-if (icl == ICL_BND) {							\
-  GECODE_ES_FAIL(home,(C<IntView,VY,VZ,Count::RelEqBnd<IntView>,true>	\
-		  ::post(home,x,y,z,c)));				\
-} else {								\
-  GECODE_ES_FAIL(home,(C<IntView,VY,VZ,Count::RelEqDom<IntView>,true>	\
-		  ::post(home,x,y,z,c)));				\
-}
+#define GECODE_INT_CREATE(VY,VZ,C) \
+  GECODE_ES_FAIL(home,(C<IntView,VY,VZ,true>::post(home,x,y,z,c)));
 
   void
   count(Space* home, const IntVarArgs& xa, int yn,

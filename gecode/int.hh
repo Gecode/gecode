@@ -816,32 +816,28 @@ namespace Gecode {
   //@{
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\sim_r m\f$
    * 
-   * Supports bounds (\a icl = ICL_BND)
-   * and domain-consistency (\a icl = ICL_DOM, default).
+   * Supports domain-consistent propagation only.
    */
   GECODE_INT_EXPORT void
   count(Space* home, const IntVarArgs& x, int n, IntRelType r, int m,   
 	IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r m\f$
    * 
-   * Supports bounds (\a icl = ICL_BND)
-   * and domain-consistency (\a icl = ICL_DOM, default).
+   * Supports domain-consistent propagation only.
    */
   GECODE_INT_EXPORT void
   count(Space* home, const IntVarArgs& x, IntVar y, IntRelType r, int m,   
 	IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\sim_r z\f$
    * 
-   * Supports bounds (\a icl = ICL_BND)
-   * and domain-consistency (\a icl = ICL_DOM, default).
+   * Supports domain-consistent propagation only.
    */
   GECODE_INT_EXPORT void
   count(Space* home, const IntVarArgs& x, int n, IntRelType r, IntVar z, 
 	IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r z\f$
    * 
-   * Supports bounds (\a icl = ICL_BND)
-   * and domain-consistency (\a icl = ICL_DOM, default).
+   * Supports domain-consistent propagation only.
    */
   GECODE_INT_EXPORT void
   count(Space* home, const IntVarArgs& x, IntVar y, IntRelType r, IntVar z, 

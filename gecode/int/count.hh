@@ -34,10 +34,41 @@
 namespace Gecode { namespace Int { namespace Count {
 
   /**
+   * \defgroup Relations for domain-consistent counting
+   *
+   */
+  //@{
+  /// Test whether \a x and \a y are equal
+  template <class VX>
+  RelTest holds(VX x, VX y);
+  /// Test whether \a x and \a y are equal
+  template <class VX>
+  RelTest holds(VX x, ConstIntView y);
+  /// Post that all views in \a x are equal to \a y
+  template <class VX>
+  ExecStatus post_true(Space* home, ViewArray<VX>& x, VX y);
+  /// Post that all views in \a x are equal to \a y
+  template <class VX>
+  ExecStatus post_true(Space* home, ViewArray<VX>& x, ConstIntView y);
+  /// Post that all views in \a x are not equal to \a y
+  template <class VX>
+  ExecStatus post_false(Space* home, ViewArray<VX>& x, VX y);
+  /// Post that all views in \a x are not equal to \a y
+  template <class VX>
+  ExecStatus post_false(Space* home, ViewArray<VX>& x, ConstIntView y);
+  //@}
+
+}}}
+
+#include "gecode/int/count/rel.icc"
+
+namespace Gecode { namespace Int { namespace Count {
+
+  /**
    * \brief Base-class for count propagators
    *
    */
-  template <class VX, class VY, class VZ, class Rel, bool shr>
+  template <class VX, class VY, class VZ, bool shr>
   class Base : public Propagator {
   protected:
     /// Views still to count
@@ -48,8 +79,6 @@ namespace Gecode { namespace Int { namespace Count {
     VZ z;
     /// Number of views which are equal and have been eliminated
     int   c;
-    /// Equality relation used in counting
-    Rel   r;
     /// Constructor for cloning \a p
     Base(Space* home, bool shr, Base& p);
     /// Constructor for creation
@@ -74,22 +103,18 @@ namespace Gecode { namespace Int { namespace Count {
    * Not all combinations of views are possible. The types \a VX
    * and \a VY must be either equal, or \a VY must be ConstIntView.
    *
-   * Can be used with RelEqBnd (bounds-consistent) or RelEqDom
-   * (domain-consistent) as type for \a Rel.
-   *
    * Requires \code #include "gecode/int/count.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class VX, class VY, class VZ, class Rel, bool shr>
-  class Eq : public Base<VX,VY,VZ,Rel,shr> {
+  template <class VX, class VY, class VZ, bool shr>
+  class Eq : public Base<VX,VY,VZ,shr> {
   protected:
-    using Base<VX,VY,VZ,Rel,shr>::x;
-    using Base<VX,VY,VZ,Rel,shr>::z;
-    using Base<VX,VY,VZ,Rel,shr>::c;
-    using Base<VX,VY,VZ,Rel,shr>::r;
-    using Base<VX,VY,VZ,Rel,shr>::y;
-    using Base<VX,VY,VZ,Rel,shr>::atleast;
-    using Base<VX,VY,VZ,Rel,shr>::atmost;
+    using Base<VX,VY,VZ,shr>::x;
+    using Base<VX,VY,VZ,shr>::z;
+    using Base<VX,VY,VZ,shr>::c;
+    using Base<VX,VY,VZ,shr>::y;
+    using Base<VX,VY,VZ,shr>::atleast;
+    using Base<VX,VY,VZ,shr>::atmost;
 
     /// Constructor for cloning \a p
     Eq(Space* home, bool shr, Eq& p);
@@ -110,22 +135,18 @@ namespace Gecode { namespace Int { namespace Count {
    * Not all combinations of views are possible. The types \a VX
    * and \a VY must be either equal, or \a VY must be ConstIntView.
    *
-   * Can be used with RelEqBnd (bounds-consistent) or RelEqDom
-   * (domain-consistent) as type for \a Rel.
-   *
    * Requires \code #include "gecode/int/count.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class VX, class VY, class VZ, class Rel, bool shr>
-  class Nq : public Base<VX,VY,VZ,Rel,shr> {
+  template <class VX, class VY, class VZ, bool shr>
+  class Nq : public Base<VX,VY,VZ,shr> {
   protected:
-    using Base<VX,VY,VZ,Rel,shr>::x;
-    using Base<VX,VY,VZ,Rel,shr>::z;
-    using Base<VX,VY,VZ,Rel,shr>::c;
-    using Base<VX,VY,VZ,Rel,shr>::r;
-    using Base<VX,VY,VZ,Rel,shr>::y;
-    using Base<VX,VY,VZ,Rel,shr>::atleast;
-    using Base<VX,VY,VZ,Rel,shr>::atmost;
+    using Base<VX,VY,VZ,shr>::x;
+    using Base<VX,VY,VZ,shr>::z;
+    using Base<VX,VY,VZ,shr>::c;
+    using Base<VX,VY,VZ,shr>::y;
+    using Base<VX,VY,VZ,shr>::atleast;
+    using Base<VX,VY,VZ,shr>::atmost;
 
     /// Constructor for cloning \a p
     Nq(Space* home, bool shr, Nq& p);
@@ -146,22 +167,18 @@ namespace Gecode { namespace Int { namespace Count {
    * Not all combinations of views are possible. The types \a VX
    * and \a VY must be either equal, or \a VY must be ConstIntView.
    *
-   * Can be used with RelEqBnd (bounds-consistent) or RelEqDom
-   * (domain-consistent) as type for \a Rel.
-   *
    * Requires \code #include "gecode/int/count.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class VX, class VY, class VZ, class Rel, bool shr>
-  class Lq : public Base<VX,VY,VZ,Rel,shr> {
+  template <class VX, class VY, class VZ, bool shr>
+  class Lq : public Base<VX,VY,VZ,shr> {
   protected:
-    using Base<VX,VY,VZ,Rel,shr>::x;
-    using Base<VX,VY,VZ,Rel,shr>::z;
-    using Base<VX,VY,VZ,Rel,shr>::c;
-    using Base<VX,VY,VZ,Rel,shr>::r;
-    using Base<VX,VY,VZ,Rel,shr>::y;
-    using Base<VX,VY,VZ,Rel,shr>::atleast;
-    using Base<VX,VY,VZ,Rel,shr>::atmost;
+    using Base<VX,VY,VZ,shr>::x;
+    using Base<VX,VY,VZ,shr>::z;
+    using Base<VX,VY,VZ,shr>::c;
+    using Base<VX,VY,VZ,shr>::y;
+    using Base<VX,VY,VZ,shr>::atleast;
+    using Base<VX,VY,VZ,shr>::atmost;
 
     /// Constructor for cloning \a p
     Lq(Space* home, bool shr, Lq& p);
@@ -182,22 +199,18 @@ namespace Gecode { namespace Int { namespace Count {
    * Not all combinations of views are possible. The types \a VX
    * and \a VY must be either equal, or \a VY must be ConstIntView.
    *
-   * Can be used with RelEqBnd (bounds-consistent) or RelEqDom
-   * (domain-consistent) as type for \a Rel.
-   *
    * Requires \code #include "gecode/int/count.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class VX, class VY, class VZ, class Rel, bool shr>
-  class Gq : public Base<VX,VY,VZ,Rel,shr> {
+  template <class VX, class VY, class VZ, bool shr>
+  class Gq : public Base<VX,VY,VZ,shr> {
   protected:
-    using Base<VX,VY,VZ,Rel,shr>::x;
-    using Base<VX,VY,VZ,Rel,shr>::z;
-    using Base<VX,VY,VZ,Rel,shr>::c;
-    using Base<VX,VY,VZ,Rel,shr>::r;
-    using Base<VX,VY,VZ,Rel,shr>::y;
-    using Base<VX,VY,VZ,Rel,shr>::atleast;
-    using Base<VX,VY,VZ,Rel,shr>::atmost;
+    using Base<VX,VY,VZ,shr>::x;
+    using Base<VX,VY,VZ,shr>::z;
+    using Base<VX,VY,VZ,shr>::c;
+    using Base<VX,VY,VZ,shr>::y;
+    using Base<VX,VY,VZ,shr>::atleast;
+    using Base<VX,VY,VZ,shr>::atmost;
 
     /// Constructor for cloning \a p
     Gq(Space* home, bool shr, Gq& p);
@@ -215,58 +228,6 @@ namespace Gecode { namespace Int { namespace Count {
 }}}
 
 #include "gecode/int/count/count.icc"
-
-namespace Gecode { namespace Int { namespace Count {
-
-  /**
-   * \brief Relation for bounds-consistent counting
-   *
-   */
-  template <class VX>
-  class RelEqBnd {
-  public:
-    /// Propagation condition (PC_INT_BND)
-    PropCond cond(void) const;
-    /// Test whether \a x and \a y are equal
-    RelTest holds(VX,VX);
-    /// Test whether \a x and \a y are equal
-    RelTest holds(VX x, ConstIntView y);
-    /// Post that all views in \a x are equal to \a y
-    ExecStatus post_true(Space* home, ViewArray<VX>& x, VX y);
-    /// Post that all views in \a x are equal to \a y
-    ExecStatus post_true(Space* home, ViewArray<VX>& x, ConstIntView y);
-    /// Post that all views in \a x are not equal to \a y
-    ExecStatus post_false(Space* home, ViewArray<VX>& x, VX y);
-    /// Post that all views in \a x are not equal to \a y
-    ExecStatus post_false(Space* home, ViewArray<VX>& x, ConstIntView y);
-  };
-
-  /**
-   * \brief Relation for domain-consistent counting
-   *
-   */
-  template <class VX>
-  class RelEqDom {
-  public:
-    /// Propagation condition (PC_INT_DOM)
-    PropCond cond(void) const;
-    /// Test whether \a x and \a y are equal
-    RelTest holds(VX x, VX y);
-    /// Test whether \a x and \a y are equal
-    RelTest holds(VX x, ConstIntView y);
-    /// Post that all views in \a x are equal to \a y
-    ExecStatus post_true(Space* home, ViewArray<VX>& x, VX y);
-    /// Post that all views in \a x are equal to \a y
-    ExecStatus post_true(Space* home, ViewArray<VX>& x, ConstIntView y);
-    /// Post that all views in \a x are not equal to \a y
-    ExecStatus post_false(Space* home, ViewArray<VX>& x, VX y);
-    /// Post that all views in \a x are not equal to \a y
-    ExecStatus post_false(Space* home, ViewArray<VX>& x, ConstIntView y);
-  };
-
-}}}
-
-#include "gecode/int/count/rel.icc"
 
 #endif
 

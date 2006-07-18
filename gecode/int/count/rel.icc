@@ -24,42 +24,37 @@
 namespace Gecode { namespace Int { namespace Count {
 
   /*
-   * Help functions for posting multiple constraints
+   * Counting domain-consistent equality
    *
    */
 
   template <class VX>
-  ExecStatus
-  post_eq(Space* home, ViewArray<VX>& x, int y) {
+  forceinline RelTest
+  holds(VX x, ConstIntView y) {
+    return rtest_eq_dom(x,y.val());
+  }
+  template <class VX>
+  forceinline RelTest
+  holds(VX x, VX y) {
+    return rtest_eq_dom(x,y);
+  }
+  template <class VX>
+  forceinline ExecStatus
+  post_true(Space* home, ViewArray<VX>& x, ConstIntView y) {
     for (int i = x.size(); i--; )
-      GECODE_ME_CHECK(x[i].eq(home,y));
+      GECODE_ME_CHECK(x[i].eq(home,y.val()));
     return ES_SUBSUMED;
   }
-
   template <class VX>
-  ExecStatus
-  post_nq(Space* home, ViewArray<VX>& x, int y) {
+  forceinline ExecStatus
+  post_false(Space* home, ViewArray<VX>& x, ConstIntView y) {
     for (int i = x.size(); i--; )
-      GECODE_ME_CHECK(x[i].nq(home,y));
+      GECODE_ME_CHECK(x[i].nq(home,y.val()));
     return ES_SUBSUMED;
   }
-
-
-
   template <class VX>
-  ExecStatus
-  post_eq_bnd(Space* home, ViewArray<VX>& x, VX y) {
-    ViewArray<VX> z(home,x.size()+1);
-    z[x.size()] = y;
-    for (int i = x.size(); i--; )
-      z[i] = x[i];
-    GECODE_ES_CHECK(Rel::NaryEqBnd<VX>::post(home,z));
-    return ES_SUBSUMED;
-  }
-
-  template <class VX>
-  ExecStatus
-  post_eq_dom(Space* home, ViewArray<VX>& x, VX y) {
+  forceinline ExecStatus
+  post_true(Space* home, ViewArray<VX>& x, VX y) {
     ViewArray<VX> z(home,x.size()+1);
     z[x.size()] = y;
     for (int i = x.size(); i--; )
@@ -67,100 +62,13 @@ namespace Gecode { namespace Int { namespace Count {
     GECODE_ES_CHECK(Rel::NaryEqDom<VX>::post(home,z));
     return ES_SUBSUMED;
   }
-
   template <class VX>
-  ExecStatus
-  post_nq(Space* home, ViewArray<VX>& x, VX y) {
+  forceinline ExecStatus
+  post_false(Space* home, ViewArray<VX>& x, VX y) {
     for (int i = x.size(); i--; )
       GECODE_ES_CHECK(Rel::Nq<VX>::post(home,x[i],y));
     return ES_SUBSUMED;
   }
-
-  /*
-   * Counting domain-consistent equality
-   *
-   */
-
-  template <class VX>
-  forceinline PropCond
-  RelEqDom<VX>::cond(void) const {
-    return PC_INT_DOM;
-  }
-  template <class VX>
-  forceinline RelTest
-  RelEqDom<VX>::holds(VX x, ConstIntView y) {
-    return rtest_eq_dom(x,y.val());
-  }
-  template <class VX>
-  forceinline RelTest
-  RelEqDom<VX>::holds(VX x, VX y) {
-    return rtest_eq_dom(x,y);
-  }
-  template <class VX>
-  forceinline ExecStatus
-  RelEqDom<VX>::post_true(Space* home, ViewArray<VX>& x, ConstIntView y) {
-    return post_eq(home,x,y.val());
-  }
-  template <class VX>
-  forceinline ExecStatus
-  RelEqDom<VX>::post_false(Space* home, ViewArray<VX>& x, ConstIntView y) {
-    return post_nq(home,x,y.val());
-  }
-  template <class VX>
-  forceinline ExecStatus
-  RelEqDom<VX>::post_true(Space* home, ViewArray<VX>& x, VX y) {
-    return post_eq_dom(home,x,y);
-  }
-  template <class VX>
-  forceinline ExecStatus
-  RelEqDom<VX>::post_false(Space* home, ViewArray<VX>& x, VX y) {
-    return post_nq(home,x,y);
-  }
-
-
-  /*
-   * Counting bound-consistent equality
-   *
-   */
-
-  template <class VX>
-  forceinline PropCond
-  RelEqBnd<VX>::cond(void) const {
-    return PC_INT_BND;
-  }
-  template <class VX>
-  forceinline RelTest
-  RelEqBnd<VX>::holds(VX x, ConstIntView y) {
-    return rtest_eq_bnd(x,y.val());
-  }
-  template <class VX>
-  forceinline RelTest
-  RelEqBnd<VX>::holds(VX x, VX y) {
-    return rtest_eq_bnd(x,y);
-  }
-  template <class VX>
-  forceinline ExecStatus
-  RelEqBnd<VX>::post_true(Space* home, ViewArray<VX>& x, ConstIntView y) {
-    return post_eq(home,x,y.val());
-  }
-  template <class VX>
-  forceinline ExecStatus
-  RelEqBnd<VX>::post_false(Space* home, ViewArray<VX>& x, ConstIntView y) {
-    return post_nq(home,x,y.val());
-  }
-  template <class VX>
-  forceinline ExecStatus
-  RelEqBnd<VX>::post_true(Space* home, ViewArray<VX>& x, VX y) {
-    return post_eq_bnd(home,x,y);
-  }
-  template <class VX>
-  forceinline ExecStatus
-  RelEqBnd<VX>::post_false(Space* home, ViewArray<VX>& x, VX y) {
-    return post_nq(home,x,y);
-  }
-
-
-
 
 }}}
 
