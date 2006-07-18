@@ -739,9 +739,16 @@ namespace Gecode {
     /** 
      * \brief Create new branching description for current branching
      *
-     * The method must be called directly after a call to Space::status,
-     * otherwise the system will crash. In particular, if applied to a space
-     * with no current branching, the system will crash.
+     * This member function can only be called after the member function
+     * Space::status on the same space has been called and in between
+     * no non-const member function has been called on this space.
+     *
+     * Note that the above invariant obly pertains to calls of member
+     * functions of the same space. If the invariant is violated, the
+     * system is likely to crash (hopefully it does). In particular, if 
+     * applied to a space with no current branching, the system will
+     * crash.
+     *
      * \ingroup TaskSearch
      */
     BranchingDesc* description(void);
@@ -759,29 +766,33 @@ namespace Gecode {
      * datastructures must be created. This means that a clone with no
      * sharing can be used in a different thread without any interaction
      * with the original space.
+     *
      * \ingroup TaskSearch
      */
     GECODE_KERNEL_EXPORT
     Space* clone(bool share=true, unsigned long int& pn=unused_uli);
 
     /** 
-     * \brief Commit for alternative \a a and branching description \a d
+     * \brief Commit branching description \a d and for alternative \a a
      * 
      * The current branching in the space performs a commit from
      * the information provided by the branching description \a d
      * and the alternative \a a.
      *
-     * Note that no propagation is perfomed (to support batch 
+     * Note that no propagation is perfomed (to support batch
+     * recomputation), in order to perform propagation the member
+     * function status must be used.
+     *
      * Committing with branching descriptions must be carried
      * out in the same order as the branch descriptions have been
-     * obtained.
+     * obtained by the member function Space::description().
      *
      * Committing throws the following exceptions:
      *  - SpaceFailed, if the space is failed.
      *  - SpaceNoBranching, if the space has no current branching (it is
      *    already solved).
      *  - SpaceIllegalAlternative, if \a a is not smaller than the number
-     *    of alternatives provided by the branching.
+     *    of alternatives supported by the branching description \a d.
      *
      * \ingroup TaskSearch
      */
@@ -795,6 +806,7 @@ namespace Gecode {
      * memory (in particular when considering a space to be stored
      * for later use such as during search). Even better is to make a
      * clone of the space.
+     *
      * \ingroup TaskSearch
      */
     GECODE_KERNEL_EXPORT
