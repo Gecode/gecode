@@ -53,6 +53,22 @@ Date:		Upcoming
 Nothing to say yet.
 
 [ENTRY]
+Module: set
+What: bug
+Rank: minor
+[DESCRIPTION]
+Fixed fixpoint detection for n-ary partition propagator.
+
+[ENTRY]
+Module: set
+What: new
+Rank: major
+[DESCRIPTION]
+Added finite set projection propagators. They allow to propagate all
+finite set constraints expressible as finite set projectors, including
+negated and reified constraints.
+
+[ENTRY]
 Module: support
 What:   new
 Rank:   minor

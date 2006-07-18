@@ -90,7 +90,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     do {
       oldModified = modified;
       modified = false;
-      if (modified || anybevent)
+      if (oldModified || anybevent)
         GECODE_ME_CHECK(partitionNXiUB(home,modified, x, y,unionOfDets));
       if (modified || oldModified || anybevent)
         GECODE_ME_CHECK(partitionNXiLB(home,modified, x, y,unionOfDets));
