@@ -30,17 +30,17 @@ namespace Gecode { namespace Search {
    */
 
   forceinline
-  ProbeEngine::ProbeNode::ProbeNode(Space* s, unsigned int a)
-    : _space(s), _alt(a) {}
+  ProbeEngine::ProbeNode::ProbeNode(Space* s, BranchingDesc* d, unsigned int a)
+    : _space(s), _desc(d), _alt(a) {}
 
   forceinline Space*
   ProbeEngine::ProbeNode::space(void) const {
     return _space;
   }
 
-  forceinline void
-  ProbeEngine::ProbeNode::space(Space* s) {
-    _space = s;
+  forceinline BranchingDesc*
+  ProbeEngine::ProbeNode::desc(void) const {
+    return _desc;
   }
 
   forceinline unsigned int
@@ -49,8 +49,8 @@ namespace Gecode { namespace Search {
   }
 
   forceinline void
-  ProbeEngine::ProbeNode::alt(unsigned int a) {
-    _alt = a;
+  ProbeEngine::ProbeNode::next(void) {
+    _alt--;
   }
 
 
@@ -102,16 +102,19 @@ namespace Gecode { namespace Search {
       backtrack:
 	if (ds.empty())
 	  return NULL;
-	unsigned int a = ds.top().alt();
+	unsigned int a      = ds.top().alt();
+	BranchingDesc* desc = ds.top().desc();
 	if (a == 0) {
 	  cur = ds.pop().space();
-	  EngineCtrl::pop(cur);
+	  EngineCtrl::pop(cur,desc);
+	  cur->commit(desc,a);
+	  delete desc;
 	} else {
-	  ds.top().alt(a-1);
+	  ds.top().next();
 	  cur = ds.top().space()->clone(true,propagate);
 	  clone++;
+	  cur->commit(desc,a);
 	}
-	cur->commit(NULL,a);
 	EngineCtrl::current(cur);
 	d++;
       }
@@ -144,20 +147,20 @@ namespace Gecode { namespace Search {
       case SS_BRANCH:
 	{
 	  BranchingDesc* desc = cur->description();
-	  unsigned int alt = desc->alternatives();
+	  unsigned int alt    = desc->alternatives();
 	  if (alt > 1) {
 	    unsigned int d_a = (d >= alt-1) ? alt-1 : d;
 	    Space* cc = cur->clone(true,propagate);
-	    EngineCtrl::push(cc);
-	    ProbeNode sn(cc,d_a-1);
+	    EngineCtrl::push(cc,desc);
+	    ProbeNode sn(cc,desc,d_a-1);
 	    clone++;
 	    ds.push(sn);
 	    cur->commit(desc,d_a);
 	    d -= d_a;
 	  } else {
 	    cur->commit(desc,0);
+	    delete desc;
 	  }
-	  delete desc;
 	  commit++;
 	  goto check_discrepancy;
 	}

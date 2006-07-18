@@ -203,14 +203,14 @@ namespace Gecode {
       bool stop(size_t sz);
       /// Check whether engine has been stopped
       bool stopped(void) const;
-      /// New space \a s gets pushed on stack
-      void push(const Space* s);
       /// New space \a s and branching description \a d get pushed on stack
       void push(const Space* s, const BranchingDesc* d);
-      /// Space \a s gets popped from stack
-      void pop(const Space* s);
+      /// New space \a s is aded for adaptive recomputation
+      void adapt(const Space* s);
       /// Space \a s and branching description \a d get popped from stack
       void pop(const Space* s, const BranchingDesc* d);
+      /// Space \a s gets used for LAO (removed from stack)
+      void lao(const Space* s);
       /// Space \a s becomes current space (\a s = NULL: current space deleted)
       void current(const Space* s);
       /// Reset statistics for space \a s
@@ -405,20 +405,22 @@ namespace Gecode {
       class ProbeNode {
       private:
 	/// %Space of current node
-	Space*       _space;
+	Space*         _space;
+	/// Branching description
+	BranchingDesc* _desc;
 	/// Next alternative to try
-	unsigned int _alt;
+	unsigned int   _alt;
       public:
-	/// Initialize with node \a s and next alternative \a a
-	ProbeNode(Space* s, unsigned int a);
+	/// Initialize with node \a s, description \a d, and alternative \a a
+	ProbeNode(Space* s, BranchingDesc* d, unsigned int a);
 	/// Return space
 	Space* space(void) const; 
-	/// Set space to \a s
-	void space(Space* s);
+	/// Return branching description
+	BranchingDesc* desc(void) const; 
 	/// Return next alternative
 	unsigned int alt(void) const; 
 	/// %Set next alternative
-	void alt(unsigned int a);
+	void next(void);
       };
       /// %Stack storing current path in search tree
       Support::DynamicStack<ProbeNode> ds;

@@ -34,7 +34,7 @@ namespace Gecode { namespace Search {
       Space* s = top().space();
       s->commit(top().desc(),top().alt());
       top().space(NULL);
-      stat.pop(s);
+      stat.lao(s);
       d = 0;
       stat.commit++;
       return s;
@@ -68,7 +68,7 @@ namespace Gecode { namespace Search {
       if (i < entries()-1) {
 	stat.clone++;
 	operator[](i).space(s->clone(true,stat.propagate));
-	stat.push(operator[](i).space());
+	stat.adapt(operator[](i).space());
 	d = entries()-i;
       } else {
 	d = entries()-last;
