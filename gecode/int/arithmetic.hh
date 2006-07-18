@@ -283,7 +283,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 }}}
 
 #include "gecode/int/arithmetic/abs.icc"
-#include "gecode/int/arithmetic/minmax.icc"
+#include "gecode/int/arithmetic/max.icc"
 #include "gecode/int/arithmetic/mult.icc"
 
 #endif
