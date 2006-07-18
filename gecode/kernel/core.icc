@@ -508,11 +508,10 @@ namespace Gecode {
     const unsigned int alt; ///< Number of alternatives
   protected:
     /// Initialize for particular branching \a b and alternatives \a a
-    BranchingDesc(Branching* b, unsigned int a);
+    BranchingDesc(const Branching* b, const unsigned int a);
   public:
     /// Destructor
-    GECODE_KERNEL_EXPORT
-    virtual ~BranchingDesc(void);
+    GECODE_KERNEL_EXPORT virtual ~BranchingDesc(void);
 
     /// Return number of alternatives
     unsigned int alternatives(void) const;
@@ -653,7 +652,7 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT static unsigned long int unused_uli;
 
     /// Perform propagation, return number of propagation steps
-    unsigned long int propagate(void);
+    GECODE_KERNEL_EXPORT unsigned long int propagate(void);
 
     /// Add new propagator \a p to space (force disposal, if \a fd is true)
     void propagator(Propagator* p, bool fd);
@@ -735,7 +734,6 @@ namespace Gecode {
      *  - otherwise, SpaceStatus::SS_BRANCH is returned.
      * \ingroup TaskSearch
      */
-    GECODE_KERNEL_EXPORT
     SpaceStatus status(unsigned long int& pn=unused_uli);
 
     /** 
@@ -1075,6 +1073,33 @@ namespace Gecode {
     return b_fst->description(this);
   }
 
+  /*
+   * Main control for propagation and branching
+   *  - a space only propagates and branches if requested by
+   *    either a status, commit, or clone operation
+   *  - for all of the operations the number of propagation
+   *    steps performed is returned in the last (optional)
+   *    reference argument
+   *
+   */
+  forceinline SpaceStatus
+  Space::status(unsigned long int& pn) {
+    // Perform propagation and do not continue when failed
+    pn += propagate();
+    if (failed())
+      return SS_FAILED;
+    // Find the next branching that has still alternatives left
+    while (b_fst != &a_actors) {
+      if (b_fst->status(this))
+	return SS_BRANCH;
+      Branching* b = b_fst;
+      b_fst = static_cast<Branching*>(b->next());
+      b->unlink();
+      b->destruct(this);
+    }
+    // No branching left, space is solved
+    return SS_SOLVED;
+  }
 
 
   /*
@@ -1269,7 +1294,7 @@ namespace Gecode {
    */
 
   forceinline
-  BranchingDesc::BranchingDesc(Branching* b, unsigned int a)
+  BranchingDesc::BranchingDesc(const Branching* b, const unsigned int a)
     : id(b->id), alt(a) {}
 
   forceinline unsigned int

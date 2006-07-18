@@ -212,36 +212,6 @@ namespace Gecode {
     return pn;
   }
 
-
-  /*
-   * Main control for propagation and branching
-   *  - a space only propagates and branches if requested by
-   *    either a status, commit, or clone operation
-   *  - for all of the operations the number of propagation
-   *    steps performed is returned in the last (optional)
-   *    reference argument
-   *
-   */
-  SpaceStatus
-  Space::status(unsigned long int& pn) {
-    // Perform propagation and do not continue when failed
-    pn += propagate();
-    if (failed())
-      return SS_FAILED;
-    // Find out how many alternatives the next branching provides
-    // No alternatives means that the space is solved if no more
-    // branchings are available.
-    while (b_fst != &a_actors) {
-      if (b_fst->status(this))
-	return SS_BRANCH;
-      Branching* b = b_fst;
-      b_fst = static_cast<Branching*>(b->next());
-      b->unlink();
-      b->destruct(this);
-    }
-    return SS_SOLVED;
-  }
-
   void
   Space::commit(const BranchingDesc* d, unsigned int a) {
     if (failed())
@@ -263,7 +233,6 @@ namespace Gecode {
     if (b_fst->commit(this,d,a) == ES_FAILED)
       fail();
   }
-
 
   /*
    * Space cloning
