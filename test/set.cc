@@ -109,12 +109,11 @@ operator<<(std::ostream& os, const SetAssignment& a) {
 
 #define FORCE_FIXFLUSH				\
 do {						\
-  if (random(opt.fixprob) == 0) {		\
-    unsigned int alt;				\
+  if (Test::randgen(opt.fixprob) == 0) {	\
     Log::fixpoint();				\
-    if (status(alt) == SS_FAILED) return;	\
+    if (status() == SS_FAILED) return;		\
   }						\
-  if (random(opt.flushprob) == 0) {		\
+  if (Test::randgen(opt.flushprob) == 0) {	\
     flush();					\
     Log::flush();				\
   }						\
@@ -142,8 +141,7 @@ public:
     return new SetTestSpace(share,*this);
   }
   bool failed(void) {
-    unsigned int alt;
-    return status(alt) == SS_FAILED;
+    return status() == SS_FAILED;
   }
   void assign(const SetAssignment& a) {
     for (int i=a.size(); i--; ) {
@@ -195,9 +193,8 @@ public:
   }
 
   bool fixprob(SetTest& st, bool r, BoolVar& b) {
-    unsigned int alt;				
     Log::fixpoint();				
-    if (status(alt) == SS_FAILED) 
+    if (status() == SS_FAILED) 
       return true;
     SetTestSpace* c = static_cast<SetTestSpace*>(clone());
     Log::print(c->x, "x");
@@ -205,7 +202,7 @@ public:
     if (!r) {
       st.post(c,c->x,c->y);
       Log::fixpoint();
-      if (c->status(alt) == SS_FAILED) {
+      if (c->status() == SS_FAILED) {
 	Log::print(c->x, "x");
 	if (c->y.size() > 0) Log::print(c->y, "y");
 	delete c;
@@ -228,7 +225,7 @@ public:
       Log::initial(cb, "cb");
       st.post(c,c->x,c->y,cb);
       Log::fixpoint();
-      if (c->status(alt) == SS_FAILED) {
+      if (c->status() == SS_FAILED) {
 	Log::print(c->x, "x");
 	if (c->y.size() > 0) Log::print(c->y, "y");
 	Log::print(cb, "cb");
@@ -278,11 +275,11 @@ public:
     // Select variable to be pruned
     int i;
     if (intsAssigned) {
-      i = random(x.size());
+      i = Test::randgen(x.size());
     } else if (setsAssigned) {
-      i = random(y.size());
+      i = Test::randgen(y.size());
     } else {
-      i = random(x.size()+y.size());
+      i = Test::randgen(x.size()+y.size());
     }
 
     if (setsAssigned || i>=x.size()) {
@@ -295,17 +292,17 @@ public:
 
 
       // Select mode for pruning
-      int m=random(3);
+      int m=Test::randgen(3);
       if ((m == 0) && (a.ints()[i] < y[i].max())) {
 	int v=a.ints()[i]+1+
-	  random(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
+	  Test::randgen(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
 	assert((v > a.ints()[i]) && (v <= y[i].max()));
 	Log::prune(y[i], Log::mk_name("y", i), IRT_LE, v);
 	rel(this, y[i], IRT_LE, v);
 	Log::prune_result(y[i]);
       } else if ((m == 1) && (a.ints()[i] > y[i].min())) {
 	int v=y[i].min()+
-	  random(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
+	  Test::randgen(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
 	assert((v < a.ints()[i]) && (v >= y[i].min()));
 	Log::prune(y[i], Log::mk_name("y", i), IRT_GR, v);
 	rel(this, y[i], IRT_GR, v);
@@ -313,7 +310,7 @@ public:
       } else  {
 	int v;
 	Int::ViewRanges<Int::IntView> it(y[i]);
-	unsigned int skip = random(y[i].size()-1);
+	unsigned int skip = Test::randgen(y[i].size()-1);
 	while (true) {
 	  if (it.width() > skip) {
 	    v = it.min() + skip;
@@ -335,9 +332,9 @@ public:
 	rel(this, y[i], IRT_NQ, v);
 	Log::prune_result(y[i]);
       }
-      if (random(opt.fixprob) == 0 && !fixprob(st, r, b))
+      if (Test::randgen(opt.fixprob) == 0 && !fixprob(st, r, b))
 	return false;
-      if (random(opt.flushprob) == 0) {		
+      if (Test::randgen(opt.flushprob) == 0) {		
 	flush();					
 	Log::flush();				
       }		
@@ -359,22 +356,24 @@ public:
     unsigned int aisize = Iter::Ranges::size(aisizer);
 
     // Select mode for pruning
-    int m=random(5);
+    int m=Test::randgen(5);
     if (m==0 && inter()) {
-      int v = random(Iter::Ranges::size(inter));
+      int v = Test::randgen(Iter::Ranges::size(inter));
       addToGlb(v, x[i], i, a);
     } else if (m==1 && diff()) {
-      int v = random(Iter::Ranges::size(diff));
+      int v = Test::randgen(Iter::Ranges::size(diff));
       removeFromLub(v, x[i], i, a);
     } else if (m==2 && x[i].cardMin() < aisize) {
-      unsigned int newc = x[i].cardMin() + 1 + random(aisize - x[i].cardMin());
+      unsigned int newc = x[i].cardMin() + 1 + 
+	Test::randgen(aisize - x[i].cardMin());
       assert( newc > x[i].cardMin() );
       assert( newc <= aisize );
       Log::prune(x[i], Log::mk_name("x", i), newc, Limits::Set::card_max);
       cardinality(this, x[i], newc, Limits::Set::card_max);
       Log::prune_result(x[i]);
     } else if (m==3 && x[i].cardMax() > aisize) {
-      unsigned int newc = x[i].cardMax() - 1 - random(x[i].cardMax() - aisize);
+      unsigned int newc = x[i].cardMax() - 1 - 
+	Test::randgen(x[i].cardMax() - aisize);
       assert( newc < x[i].cardMax() );
       assert( newc >= aisize );
       Log::prune(x[i], Log::mk_name("x", i), 0, newc);
@@ -382,16 +381,16 @@ public:
       Log::prune_result(x[i]);
     } else {
       if (inter()) {
-	int v = random(Iter::Ranges::size(inter));
+	int v = Test::randgen(Iter::Ranges::size(inter));
 	addToGlb(v, x[i], i, a);
       } else {
-	int v = random(Iter::Ranges::size(diff));
+	int v = Test::randgen(Iter::Ranges::size(diff));
 	removeFromLub(v, x[i], i, a);
       }
     }
-    if (random(opt.fixprob) == 0 && !fixprob(st, r, b))
+    if (Test::randgen(opt.fixprob) == 0 && !fixprob(st, r, b))
       return false;
-    if (random(opt.flushprob) == 0) {		
+    if (Test::randgen(opt.flushprob) == 0) {		
       flush();					
       Log::flush();				
     }		

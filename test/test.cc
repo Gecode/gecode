@@ -43,25 +43,9 @@ using std::pair;
 
 vector<pair<bool, const char*> > testpat;
 
-#include "test/random.hh"
-
 Test* Test::all = NULL;
+Support::RandomGenerator Test::randgen = Support::RandomGenerator();
 
-/// Return number between 0..m-1
-int random(int m) {
-  double d = ((double) test_rand()) / TEST_RAND_MAX;
-  int n = static_cast<int>(m * d);
-  return (n < m) ? n : (m-1);
-}
-
-/// Return number between 0..m-1
-unsigned int random(unsigned int m) {
-  if (m < 2)
-    return 0;
-  double d = ((double) test_rand()) / TEST_RAND_MAX;
-  unsigned int n = static_cast<unsigned int>(m * d);
-  return (n < m) ? n : (m-1);
-}
 
 namespace {
 
@@ -85,7 +69,7 @@ main(int argc, char** argv) {
 
   Options o;
   o.parse(argc, argv);
-  test_seed(o.seed);
+  Test::randgen.seed(o.seed);
   Log::logging(o.log);
 
   for (Test* t = Test::tests(); t != NULL; t = t->next()) {
@@ -109,7 +93,7 @@ main(int argc, char** argv) {
       std::cout << name << ": ";
       std::cout.flush();
       for (int i = o.iter; i--; ) {
-	o.seed = test_seed();
+	o.seed = Test::randgen.seed();
 	if (t->run(o)) {
 	  std::cout << "+";
 	  std::cout.flush();

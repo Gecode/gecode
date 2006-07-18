@@ -53,6 +53,14 @@ Date:		Upcoming
 Nothing to say yet.
 
 [ENTRY]
+Module: support
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added simple class encapsulating a linear congruential pseudo-random
+number generator.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   major

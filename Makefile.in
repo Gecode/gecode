@@ -332,7 +332,7 @@ MMBUILDDIRS	= minimodel
 
 SUPPORTHDR0 = \
 	block-allocator.hh dynamic-array.hh dynamic-stack.hh \
-	shared-array.hh sort.hh \
+	random.hh shared-array.hh sort.hh \
 	static-pqueue.hh static-stack.hh
 ITERHDR0 = \
 	ranges-add.icc ranges-append.icc ranges-array.icc ranges-cache.icc \
@@ -463,11 +463,11 @@ STRESSTESTSRC0 = \
 	exec minsort domain distinct regular 
 ifeq "@enable_set_vars@" "yes"
 TESTSRC0 = \
-	test log random int set stress intset \
+	test log int set stress intset \
 	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) $(STRESSTESTSRC0:%=stress/%)
 else
 TESTSRC0 = \
-	test log random int stress intset \
+	test log int stress intset \
 	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) $(STRESSTESTSRC0:%=stress/%)
 endif
 TESTSRC	= $(TESTSRC0:%=test/%.cc)

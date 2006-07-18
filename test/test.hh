@@ -29,6 +29,8 @@
 #include "gecode/kernel.hh"
 #include "gecode/search.hh"
 
+#include "gecode/support/random.hh"
+
 using namespace Gecode;
 
 class Options {
@@ -58,6 +60,9 @@ private:
   Test* n;
   static Test* all;
 public:
+  /// Return number between 0..m-1
+  static Support::RandomGenerator randgen;
+
   Test(const char* module, const char* test)
     : m(module), t(test) {
     if (all == NULL) {
@@ -95,10 +100,6 @@ public:
   virtual bool run(const Options& opt) = 0;
   virtual ~Test(void) {}
 };
-
-/// Return number between 0..m-1
-unsigned int random(unsigned int m);
-int random(int m);
 
 #endif
 
