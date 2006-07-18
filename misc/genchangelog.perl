@@ -181,7 +181,7 @@ according to the following rules (of thumb):
    stable and only minor additions or improvements are included.
  - when \\e y changes, the above mentioned interfaces might have changed
    and medium to major additions or improvements are included.
- - the change of \\e x is reserved for radical changes to Gecode.
+ - the change of \\e x is reserved for radical changes to %Gecode.
 
 EOF
 ;
