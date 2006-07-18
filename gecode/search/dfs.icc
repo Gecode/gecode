@@ -86,7 +86,7 @@ namespace Gecode {
 	      BranchingDesc* desc = ds.push(cur,c);
 	      EngineCtrl::push(c,desc);
 	      commit++;
-	      cur->commit(0,desc);
+	      cur->commit(desc,0);
 	      break;
 	    }
 	  }

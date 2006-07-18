@@ -344,6 +344,25 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
 
+  /**
+   * \brief %Branching descriptions storing position and value
+   *
+   */
+  class AssignDesc : public BranchingDesc {
+  protected:
+    const int _pos;
+    const int _val;
+  public:
+    /// Initialize description for branching \a b, position \a p and value \a n
+    AssignDesc(Branching* b, int p, int n);
+    /// Return position in array
+    int pos(void) const;
+    /// Return value to branch with
+    int val(void) const;
+    /// Report size occupied
+    virtual size_t size(void) const;
+  };
+
   /*
    * Classes for assignment
    *
@@ -355,14 +374,17 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Views to assign
     ViewArray<IntView> x;
     /// Next position to be assigned
-    int pos;
+    mutable int pos;
     /// Constructor for cloning \a b
     Assign(Space* home, bool share, Assign& b);
   public:
     /// Constructor for creation
     Assign(Space* home, ViewArray<IntView>& x);
     /// Perform branching (selects view)
-    virtual unsigned int branch(Space* home);
+    virtual bool status(const Space* home) const;
+    /// Perform commit for branching description \a d and alternative \a a
+    virtual ExecStatus commit(Space* home, const BranchingDesc* d,
+			      unsigned int a);
   };
 
 
@@ -376,10 +398,8 @@ namespace Gecode { namespace Int { namespace Branch {
     AssignMin(Space* home, ViewArray<IntView>& x);
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
-    /// Return branching description (of type Gecode::PosValDesc)
-    virtual BranchingDesc* description(void);
-    /// Perform commit for alternative \a a and branching description \a d
-    virtual ExecStatus commit(Space* home, unsigned int a, BranchingDesc* d);
+    /// Return branching description (of type AssignDesc)
+    virtual BranchingDesc* description(const Space* home);
   };
 
   /// Median assignment (single-alternative branching)
@@ -392,10 +412,8 @@ namespace Gecode { namespace Int { namespace Branch {
     AssignMed(Space* home, ViewArray<IntView>& x);
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
-    /// Return branching description (of type Gecode::PosValDesc)
-    virtual BranchingDesc* description(void);
-    /// Perform commit for alternative \a a and branching description \a d
-    virtual ExecStatus commit(Space* home, unsigned int a, BranchingDesc* d);
+    /// Return branching description (of type AssignDesc)
+    virtual BranchingDesc* description(const Space* home);
   };
 
   /// Maximum assignment (single-alternative branching)
@@ -408,10 +426,8 @@ namespace Gecode { namespace Int { namespace Branch {
     AssignMax(Space* home, ViewArray<IntView>& x);
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
-    /// Return branching description (of type Gecode::PosValDesc)
-    virtual BranchingDesc* description(void);
-    /// Perform commit for alternative \a a and branching description \a d
-    virtual ExecStatus commit(Space* home, unsigned int a, BranchingDesc* d);
+    /// Return branching description (of type AssignDesc)
+    virtual BranchingDesc* description(const Space* home);
   };
 
 }}}

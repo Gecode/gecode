@@ -543,18 +543,34 @@ namespace Gecode {
   public:
     /// \name Branching
     //@{
-    /// Perform branching, return number of alternatives
-    virtual unsigned int branch(Space* home) = 0;
     /**
-     * \brief Commit for alternative \a a and branching description \a d
+     * \brief Check status of branching, return true if alternatives left
+     *
+     * This method is called when Space::status is called, it determines
+     * whether to continue branching with this branching or move on to
+     * the (possibly) next branching.
+     *
+     */
+    virtual bool status(const Space* home) const = 0;
+    /** 
+     * \brief Return branching description
+     *
+     * Note that this method can rely on the fact that it is called
+     * immediately after a previous call to status. Hence, it is safe
+     * to remember computation from status in order to speed up
+     * description.
+     *
+     */
+    virtual BranchingDesc* description(const Space* home) = 0;
+    /**
+     * \brief Commit for branching description \a d and alternative \a a
      * 
      * The current branching in the space \a home performs a commit from
      * the information provided by the branching description \a d
      * and the alternative \a a.
      */
-    virtual ExecStatus commit(Space* home, unsigned int a, BranchingDesc* d) = 0;
-    /// Return branching description
-    virtual BranchingDesc* description(void) = 0;
+    virtual ExecStatus commit(Space* home, const BranchingDesc* d, 
+			      unsigned int a) = 0;
     //@}
   };
 
@@ -723,6 +739,16 @@ namespace Gecode {
     SpaceStatus status(unsigned long int& pn=unused_uli);
 
     /** 
+     * \brief Create new branching description for current branching
+     *
+     * The method must be called directly after a call to Space::status,
+     * otherwise the system will crash. In particular, if applied to a space
+     * with no current branching, the system will crash.
+     * \ingroup TaskSearch
+     */
+    BranchingDesc* description(void);
+
+    /** 
      * \brief Clone space 
      *
      * Propagates the space until fixpoint and increments \a pn by the
@@ -762,15 +788,8 @@ namespace Gecode {
      * \ingroup TaskSearch
      */
     GECODE_KERNEL_EXPORT
-    void commit(unsigned int a, BranchingDesc* d);
-    /** 
-     * \brief Get branching description for current branching
-     *
-     * If applied to a space with no current branching, the system
-     * will crash.
-     * \ingroup TaskSearch
-     */
-    BranchingDesc* description(void) const;
+    void commit(const BranchingDesc* d, unsigned int a);
+
     /** 
      * \brief Flush cache datastructures in actors
      *
@@ -1052,8 +1071,8 @@ namespace Gecode {
    */
 
   forceinline BranchingDesc*
-  Space::description(void) const {
-    return b_fst->description();
+  Space::description(void) {
+    return b_fst->description(this);
   }
 
 

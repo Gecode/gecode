@@ -232,7 +232,7 @@ namespace Gecode {
     // No alternatives means that the space is solved if no more
     // branchings are available.
     while (b_fst != &a_actors) {
-      if (b_fst->branch(this) > 0)
+      if (b_fst->status(this))
 	return SS_BRANCH;
       Branching* b = b_fst;
       b_fst = static_cast<Branching*>(b->next());
@@ -243,7 +243,7 @@ namespace Gecode {
   }
 
   void
-  Space::commit(unsigned int a, BranchingDesc* d) {
+  Space::commit(const BranchingDesc* d, unsigned int a) {
     if (failed())
       throw SpaceFailed("Space::commit");
     // Invariant for committing with BranchingDescs:
@@ -258,7 +258,9 @@ namespace Gecode {
       b->unlink();
       b->destruct(this);
     }
-    if (b_fst->commit(this,a,d) == ES_FAILED)
+    if (a >= d->alternatives())
+      throw SpaceIllegalAlternative();
+    if (b_fst->commit(this,d,a) == ES_FAILED)
       fail();
   }
 

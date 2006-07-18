@@ -111,7 +111,7 @@ namespace Gecode { namespace Search {
 	  cur = ds.top().space()->clone(true,propagate);
 	  clone++;
 	}
-	cur->commit(a,NULL);
+	cur->commit(NULL,a);
 	EngineCtrl::current(cur);
 	d++;
       }
@@ -122,7 +122,7 @@ namespace Gecode { namespace Search {
 	  if (stop(stacksize()))
 	    return NULL;
 	  BranchingDesc* desc = s->description();
-	  s->commit(0,desc);
+	  s->commit(desc,0);
 	  delete desc;
 	}
 	cur = NULL;
@@ -152,10 +152,10 @@ namespace Gecode { namespace Search {
 	    ProbeNode sn(cc,d_a-1);
 	    clone++;
 	    ds.push(sn);
-	    cur->commit(d_a,desc);
+	    cur->commit(desc,d_a);
 	    d -= d_a;
 	  } else {
-	    cur->commit(0,desc);
+	    cur->commit(desc,0);
 	  }
 	  delete desc;
 	  commit++;

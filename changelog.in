@@ -57,6 +57,25 @@ Module: kernel
 What:   change
 Rank:   major
 [DESCRIPTION]
+The interface for branchings have changed considerably, reflecting
+the fact now that all branchings must support branching descriptions.
+This is also reflected in the Space::status operation which has its
+arguments reversed and corrected const qualifiers on its arguments.
+But the good news is that it is considerably simpler than before.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Assignment branchings (that is, branchings with a single alternative)
+could possibly take the wrong values for assignment during recomputation.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
 The status operation does not any longer accept an argument for
 the number of alternatives. The number of alternatives is now
 available from a branching description (where it is passed upon

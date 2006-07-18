@@ -68,19 +68,19 @@ namespace Gecode {
   class ViewValBranching : public Branching {
   protected:
     ViewArray<View> x; ///< Views to branch on
-    int start;         ///< Unassigned variables start at x[start]
-    int next;          ///< Next variable to branch is x[next]
+    mutable int start; ///< Unassigned variables start at x[start]
     /// Constructor for cloning \a b
     ViewValBranching(Space* home, bool share, ViewValBranching& b);
   public:
     /// Constructor for creation
     ViewValBranching(Space* home, ViewArray<View>& x);
-    /// Perform branching (selects view)
-    virtual unsigned int   branch(Space* home);
+    /// Check status of branching, return true if alternatives left
+    virtual bool status(const Space* home) const;
     /// Return branching description (of type Gecode::PosValDesc)
-    virtual BranchingDesc* description(void);
-    /// Perform commit for alternative \a a and branching description \a d
-    virtual ExecStatus commit(Space* home, unsigned int a, BranchingDesc* d);
+    virtual BranchingDesc* description(const Space* home);
+    /// Perform commit for branching description \a d and alternative \a a
+    virtual ExecStatus commit(Space* home, const BranchingDesc* d,
+			      unsigned int a);
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
   };
@@ -157,7 +157,7 @@ namespace Gecode {
   forceinline
   ViewValBranching<View,Val,ViewSel,ValSel>::ViewValBranching
   (Space* home, bool share, ViewValBranching& b)
-    : Branching(home,share,b), start(b.start), next(b.next) {
+    : Branching(home,share,b), start(b.start) {
     x.update(home,share,b.x);
   }
 
@@ -169,45 +169,45 @@ namespace Gecode {
   }
 
   template <class View, class Val, class ViewSel, class ValSel>
-  unsigned int
-  ViewValBranching<View,Val,ViewSel,ValSel>::branch(Space*) {
+  bool
+  ViewValBranching<View,Val,ViewSel,ValSel>
+  ::status(const Space*) const {
     for (int i=start; i < x.size(); i++)
       if (!x[i].assigned()) {
 	start = i;
-	int b = i++;
-	ViewSel vs;
-	if (vs.init(x[b]) == VSS_COMMIT)
-	  goto commit;
-	for (; i < x.size(); i++)
-	  if (!x[i].assigned()) {
-	    ViewSelStatus vss = vs.select(x[i]);
-	    if (vss != VSS_NONE) {
-	      b = i;
-	      if (vss == VSS_COMMIT)
-		goto commit;
-	    }
-	  }
-      commit:
-	next = b;
-	return 2;
+	return true;
       }
-    return 0;
+    return false;
   }
 
   template <class View, class Val, class ViewSel, class ValSel>
   BranchingDesc*
-  ViewValBranching<View,Val,ViewSel,ValSel>::description(void) {
-    ValSel vl;
-    return new PosValDesc<Val>(this,next,vl.val(x[next]));
+  ViewValBranching<View,Val,ViewSel,ValSel>
+  ::description(const Space* home) {
+    assert(!x[start].assigned());
+    ViewSel vs; // For view selection
+    ValSel  vl; // For value selection
+    int i = start;
+    int b = i++;
+    if (vs.init(x[b]) != VSS_COMMIT)
+      for (; i < x.size(); i++)
+	if (!x[i].assigned())
+	  switch (vs.select(x[i])) {
+	  case VSS_SELECT: b=i; break;
+	  case VSS_COMMIT: b=i; goto create;
+	  case VSS_NONE:   break;
+	  }
+  create:
+    return new PosValDesc<Val>(this,b,vl.val(x[b]));
   }
 
   template <class View, class Val, class ViewSel, class ValSel>
   ExecStatus
   ViewValBranching<View,Val,ViewSel,ValSel>::commit
-  (Space* home, unsigned int a, BranchingDesc* d) {
-    PosValDesc<Val>* pvd = static_cast<PosValDesc<Val>*>(d);
+  (Space* home, const BranchingDesc* d, unsigned int a) {
+    const PosValDesc<Val>* pvd = static_cast<const PosValDesc<Val>*>(d);
     ValSel vs;
-    return me_failed(vs.tell(home,a,x[pvd->pos()],pvd->val())) 
+    return me_failed(vs.tell(home,a,x[pvd->pos()],pvd->val()))
       ? ES_FAILED : ES_OK;
   }
 

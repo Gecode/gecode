@@ -97,7 +97,7 @@ namespace Gecode { namespace Search {
 	  }
 	  BranchingDesc* desc = ds.push(cur,c);
 	  EngineCtrl::push(c,desc);
-	  cur->commit(0,desc);
+	  cur->commit(desc,0);
 	  commit++;
 	  break;
 	}

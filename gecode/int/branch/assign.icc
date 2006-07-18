@@ -21,6 +21,23 @@
 
 namespace Gecode { namespace Int { namespace Branch {
 
+  /*
+   * Branching descriptions for assignments with position and value
+   *
+   */
+  forceinline
+  AssignDesc::AssignDesc(Branching* b, int p, int n)
+    : BranchingDesc(b,1), _pos(p), _val(n) {}
+  forceinline int
+  AssignDesc::pos(void) const {
+    return _pos;
+  }
+  forceinline int
+  AssignDesc::val(void) const {
+    return _val;
+  }
+
+
   forceinline
   Assign::Assign(Space* home, bool share, Assign& b)
     : Branching(home,share,b), pos(b.pos) {

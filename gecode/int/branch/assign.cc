@@ -23,14 +23,25 @@
 
 namespace Gecode { namespace Int { namespace Branch {
 
-  unsigned int
-  Assign::branch(Space*) {
+  size_t
+  AssignDesc::size(void) const {
+    return sizeof(*this);
+  }
+
+
+  bool
+  Assign::status(const Space*) const {
     for (int i = pos; i<x.size(); i++)
       if (!x[i].assigned()) {
 	pos = i;
-	return 1;
+	return true;
       }
-    return 0;
+    return false;
+  }
+  ExecStatus
+  Assign::commit(Space* home, const BranchingDesc* _d, unsigned int) {
+    const AssignDesc* d = static_cast<const AssignDesc*>(_d);
+    return me_failed(x[d->pos()].eq(home,d->val())) ? ES_FAILED : ES_OK;
   }
 
 
@@ -39,19 +50,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return new (home) AssignMin(home,share,*this);
   }
   BranchingDesc*
-  AssignMin::description(void) {
-    return new PosValDesc<int>(this, pos, x[pos].min());
-  }
-  ExecStatus
-  AssignMin::commit(Space* home, unsigned int, BranchingDesc* _d) {
-    PosValDesc<int>* d = static_cast<PosValDesc<int>*>(_d);
-    int p, v;
-    if (d == NULL) {
-      p = pos; v = x[pos].min();
-    } else {
-      p = d->pos(); v = d->val();
-    }
-    return me_failed(x[p].eq(home,v)) ? ES_FAILED : ES_OK;
+  AssignMin::description(const Space*) {
+    assert(!x[pos].assigned());
+    return new AssignDesc(this, pos, x[pos].min());
   }
 
 
@@ -60,19 +61,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return new (home) AssignMed(home,share,*this);
   }
   BranchingDesc*
-  AssignMed::description(void) {
-    return new PosValDesc<int>(this, pos, x[pos].med());
-  }
-  ExecStatus
-  AssignMed::commit(Space* home, unsigned int, BranchingDesc* _d) {
-    PosValDesc<int>* d = static_cast<PosValDesc<int>*>(_d);
-    int p, v;
-    if (d == NULL) {
-      p = pos; v = x[pos].med();
-    } else {
-      p = d->pos(); v = d->val();
-    }
-    return me_failed(x[p].eq(home,v)) ? ES_FAILED : ES_OK;
+  AssignMed::description(const Space*) {
+    assert(!x[pos].assigned());
+    return new AssignDesc(this, pos, x[pos].med());
   }
 
 
@@ -81,19 +72,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return new (home) AssignMax(home,share,*this);
   }
   BranchingDesc*
-  AssignMax::description(void) {
-    return new PosValDesc<int>(this, pos, x[pos].max());
-  }
-  ExecStatus
-  AssignMax::commit(Space* home, unsigned int, BranchingDesc* _d) {
-    PosValDesc<int>* d = static_cast<PosValDesc<int>*>(_d);
-    int p, v;
-    if (d == NULL) {
-      p = pos; v = x[pos].max();
-    } else {
-      p = d->pos(); v = d->val();
-    }
-    return me_failed(x[p].eq(home,v)) ? ES_FAILED : ES_OK;
+  AssignMax::description(const Space*) {
+    assert(!x[pos].assigned());
+    return new AssignDesc(this, pos, x[pos].max());
   }
 
 }}}

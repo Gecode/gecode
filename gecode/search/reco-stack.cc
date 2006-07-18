@@ -32,7 +32,7 @@ namespace Gecode { namespace Search {
     // Check for LAO
     if ((top().space() != NULL) && top().rightmost()) {
       Space* s = top().space();
-      s->commit(top().alt(),top().desc());
+      s->commit(top().desc(),top().alt());
       top().space(NULL);
       stat.pop(s);
       d = 0;
@@ -52,8 +52,7 @@ namespace Gecode { namespace Search {
     stat.commit += dist;
     if (dist < a_d) {
       for (unsigned int i = last; i < entries(); i++)
-	s->commit(operator[](i).alt(),
-		  operator[](i).desc());
+	s->commit(operator[](i).desc(),operator[](i).alt());
       d = dist;
     } else {
       unsigned int mid  = last + (dist >> 1);
@@ -61,12 +60,10 @@ namespace Gecode { namespace Search {
 
       // Recompute up to middle
       for (; i < mid; i++ )
-	s->commit(operator[](i).alt(),
-		  operator[](i).desc());
+	s->commit(operator[](i).desc(),operator[](i).alt());
       // Skip over all rightmost branches
       for (; (i < entries()) && operator[](i).rightmost(); i++)
-	s->commit(operator[](i).alt(),
-		  operator[](i).desc());
+	s->commit(operator[](i).desc(),operator[](i).alt());
       // Is there any point to make a copy?
       if (i < entries()-1) {
 	stat.clone++;
@@ -78,8 +75,7 @@ namespace Gecode { namespace Search {
       }
       // Finally do the remaining commits
       for (; i < entries(); i++ )
-	s->commit(operator[](i).alt(),
-		  operator[](i).desc());
+	s->commit(operator[](i).desc(),operator[](i).alt());
     }
     return s;
   }
