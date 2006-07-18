@@ -54,7 +54,7 @@ namespace Gecode { namespace Set { namespace Branch {
   class ValMin {
   public:
     /// Return minimum value of view \a x
-    int val(SetView x) const;
+    int val(const Space* home, SetView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, SetView x, int v);
   };
@@ -69,7 +69,7 @@ namespace Gecode { namespace Set { namespace Branch {
   class ValMax {
   public:
     /// Return maximum value of view \a x
-    int val(SetView x) const;
+    int val(const Space* home, SetView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, SetView x, int v);
   };
@@ -93,9 +93,9 @@ namespace Gecode { namespace Set { namespace Branch {
   class ByNone {
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(SetView x);
+    ViewSelStatus init(const Space* home, SetView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(SetView x);
+    ViewSelStatus select(const Space* home, SetView x);
   };
 
   /**
@@ -110,9 +110,9 @@ namespace Gecode { namespace Set { namespace Branch {
     unsigned int minCard;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(SetView x);
+    ViewSelStatus init(const Space* home, SetView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(SetView x);
+    ViewSelStatus select(const Space* home, SetView x);
   };
 
   /**
@@ -127,9 +127,9 @@ namespace Gecode { namespace Set { namespace Branch {
     unsigned int maxCard;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(SetView x);
+    ViewSelStatus init(const Space* home, SetView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(SetView x);
+    ViewSelStatus select(const Space* home, SetView x);
   };
 
   /**
@@ -144,9 +144,9 @@ namespace Gecode { namespace Set { namespace Branch {
     int minUnknown;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(SetView x);
+    ViewSelStatus init(const Space* home, SetView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(SetView x);
+    ViewSelStatus select(const Space* home, SetView x);
   };
 
   /**
@@ -161,9 +161,9 @@ namespace Gecode { namespace Set { namespace Branch {
     int maxUnknown;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(SetView x);
+    ViewSelStatus init(const Space* home, SetView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(SetView x);
+    ViewSelStatus select(const Space* home, SetView x);
   };
 
 }}}

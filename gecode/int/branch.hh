@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValMin {
   public:
     /// Return minimum value of view \a x
-    int val(IntView x) const;
+    int val(const Space* home, IntView x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, IntView x, int n);
   };
@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValMed {
   public:
     /// Return maximum value of view \a x
-    int val(IntView x) const;
+    int val(const Space* home, IntView x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, IntView x, int n);
   };
@@ -76,7 +76,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValMax {
   public:
     /// Return median value of view \a x
-    int val(IntView x) const;
+    int val(const Space* home, IntView x) const;
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, IntView x, int n);
   };
@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValSplitMin {
   public:
     /// Return minimum value of view \a x
-    int val(IntView x) const;
+    int val(const Space* home, IntView x) const;
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x >n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, IntView x, int n);
   };
@@ -106,7 +106,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class ValSplitMax {
   public:
     /// Return minimum value of view \a x
-    int val(IntView x) const;
+    int val(const Space* home, IntView x) const;
     /// Tell \f$x>n\f$ (\a a = 0) or \f$x\leq n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, IntView x, int n);
   };
@@ -131,9 +131,9 @@ namespace Gecode { namespace Int { namespace Branch {
   class ByNone {
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(IntView x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(IntView x);
+    ViewSelStatus select(const Space* home, IntView x);
   };
 
   /**
@@ -148,9 +148,9 @@ namespace Gecode { namespace Int { namespace Branch {
     int min;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(IntView x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(IntView x);
+    ViewSelStatus select(const Space* home, IntView x);
   };
 
   /**
@@ -165,9 +165,9 @@ namespace Gecode { namespace Int { namespace Branch {
     int min;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(IntView x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(IntView x);
+    ViewSelStatus select(const Space* home, IntView x);
   };
 
   /**
@@ -182,9 +182,9 @@ namespace Gecode { namespace Int { namespace Branch {
     int max;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(IntView x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(IntView x);
+    ViewSelStatus select(const Space* home, IntView x);
   };
 
   /**
@@ -199,9 +199,9 @@ namespace Gecode { namespace Int { namespace Branch {
     int max;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(IntView x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(IntView x);
+    ViewSelStatus select(const Space* home, IntView x);
   };
 
   /**
@@ -216,9 +216,9 @@ namespace Gecode { namespace Int { namespace Branch {
     unsigned int size;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(IntView x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(IntView x);
+    ViewSelStatus select(const Space* home, IntView x);
   };
 
   /**
@@ -233,9 +233,9 @@ namespace Gecode { namespace Int { namespace Branch {
     unsigned int size;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(IntView x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(IntView x);
+    ViewSelStatus select(const Space* home, IntView x);
   };
 
   /**
@@ -252,9 +252,9 @@ namespace Gecode { namespace Int { namespace Branch {
     unsigned int size;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(IntView x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(IntView x);
+    ViewSelStatus select(const Space* home, IntView x);
   };
 
   /**
@@ -271,9 +271,9 @@ namespace Gecode { namespace Int { namespace Branch {
     unsigned int size;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(IntView x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(IntView x);
+    ViewSelStatus select(const Space* home, IntView x);
   };
 
   /**
@@ -288,9 +288,9 @@ namespace Gecode { namespace Int { namespace Branch {
     unsigned int regret;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(IntView x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(IntView x);
+    ViewSelStatus select(const Space* home, IntView x);
   };
 
   /**
@@ -305,9 +305,9 @@ namespace Gecode { namespace Int { namespace Branch {
     unsigned int regret;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(IntView x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(IntView x);
+    ViewSelStatus select(const Space* home, IntView x);
   };
 
   /**
@@ -322,9 +322,9 @@ namespace Gecode { namespace Int { namespace Branch {
     unsigned int regret;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(IntView x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(IntView x);
+    ViewSelStatus select(const Space* home, IntView x);
   };
 
   /**
@@ -339,9 +339,9 @@ namespace Gecode { namespace Int { namespace Branch {
     unsigned int regret;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(IntView x);
+    ViewSelStatus init(const Space* home, IntView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(IntView x);
+    ViewSelStatus select(const Space* home, IntView x);
   };
 
 

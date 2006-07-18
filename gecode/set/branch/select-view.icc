@@ -28,22 +28,22 @@
 namespace Gecode { namespace Set { namespace Branch {
 
   forceinline ViewSelStatus
-  ByNone::init(SetView) {
+  ByNone::init(const Space*, SetView) {
     return VSS_COMMIT;
   }
   forceinline ViewSelStatus
-  ByNone::select(SetView) {
+  ByNone::select(const Space*, SetView) {
     assert(false);
     return VSS_NONE;
   }
 
   forceinline ViewSelStatus
-  ByMinCard::init(SetView x) { 
+  ByMinCard::init(const Space*, SetView x) { 
     minCard = x.unknownSize();
     return (minCard == 1) ? VSS_COMMIT : VSS_SELECT;
   }
   forceinline ViewSelStatus
-  ByMinCard::select(SetView x) {
+  ByMinCard::select(const Space*, SetView x) {
     unsigned int us = x.unknownSize();
     if (us < minCard) {
       minCard = us;
@@ -53,12 +53,12 @@ namespace Gecode { namespace Set { namespace Branch {
   }
 
   forceinline ViewSelStatus
-  ByMaxCard::init(SetView x) { 
+  ByMaxCard::init(const Space*, SetView x) { 
     maxCard = x.unknownSize();
     return VSS_SELECT;
   }
   forceinline ViewSelStatus
-  ByMaxCard::select(SetView x) {
+  ByMaxCard::select(const Space*, SetView x) {
     unsigned int us = x.unknownSize();
     if (us > maxCard) {
       maxCard = us; return VSS_SELECT;
@@ -67,13 +67,13 @@ namespace Gecode { namespace Set { namespace Branch {
   }
 
   forceinline ViewSelStatus
-  ByMinUnknown::init(SetView x) {
+  ByMinUnknown::init(const Space*, SetView x) {
     UnknownRanges<SetView> unknown(x);
     minUnknown = unknown.min();
     return VSS_SELECT;
   }
   forceinline ViewSelStatus
-  ByMinUnknown::select(SetView x) {
+  ByMinUnknown::select(const Space*, SetView x) {
     UnknownRanges<SetView> unknown(x);
     int um = unknown.min();
     if (um < minUnknown) {
@@ -83,7 +83,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
 
   forceinline ViewSelStatus
-  ByMaxUnknown::init (SetView x) {
+  ByMaxUnknown::init(const Space*, SetView x) {
     UnknownRanges<SetView> unknown(x);
     do {
       maxUnknown = unknown.max();
@@ -92,7 +92,7 @@ namespace Gecode { namespace Set { namespace Branch {
     return VSS_SELECT;
   }
   forceinline ViewSelStatus
-  ByMaxUnknown::select(SetView x) {
+  ByMaxUnknown::select(const Space*, SetView x) {
     UnknownRanges<SetView> unknown(x);
     int um = 0;
     assert(unknown());

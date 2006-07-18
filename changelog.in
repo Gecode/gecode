@@ -53,16 +53,25 @@ Date:		Upcoming
 Nothing to say yet.
 
 [ENTRY]
+Module: kernel
+What: 	change
+Rank: 	minor
+Thanks:	Martin Mann
+[DESCRIPTION]
+The ViewValBranching class now passes the home space to all member
+functions used in selecting the view and the value.
+
+[ENTRY]
 Module: set
-What: bug
-Rank: minor
+What: 	bug
+Rank: 	minor
 [DESCRIPTION]
 Fixed fixpoint detection for n-ary partition propagator.
 
 [ENTRY]
 Module: set
-What: new
-Rank: major
+What: 	new
+Rank: 	major
 [DESCRIPTION]
 Added finite set projection propagators. They allow to propagate all
 finite set constraints expressible as finite set projectors, including

@@ -47,19 +47,19 @@ namespace Gecode {
    * and the class \a ValSel (which value is selected for branching).
    *
    * The class \a ViewSel must implement two member functions:
-   *  - Gecode::ViewSelStatus init(\a View \a x)
+   *  - Gecode::ViewSelStatus init(const Space* \a home, \a View \a x)
    *    Initializes view selection with the \a View \x. If \a x
    *    is known to be a best one, VSS_COMMIT should be returned.
    *    Otherwise, either VSS_NONE or VSS_SELECT should be returned.
-   *  - Gecode::ViewSelStatus select(\a View \a x)
-   *    If \a x is not better that the previously selected view, 
+   *  - Gecode::ViewSelStatus select(const Space* \a home, \a View \a x)
+   *    If \a x is not better than the previously selected view, 
    *    return VSS_NONE. If it is better, return VSS_SELECT. If
    *    it is a best view, return VSS_COMMIT.
    *
    * The class \a VarSel must implement two member functions:
-   *  - \a Val val(View)
-   *    returns the value to branch with.
-   *  - Gecode::ModEvent tell(Space*, unsigned int \a a, \a View \a x, \a Val \a n)
+   *  - \a Val val(const Space* \a home, View \a x) const
+   *    returns the value (most likely determined by \a x) to branch with.
+   *  - Gecode::ModEvent tell(Space* \a home, unsigned int \a a, \a View \a x, \a Val \a n)
    *    performs a tell for alternative \a a on \a x with value \a n.
    *
    * For examples, see \link int/branch.hh integer branchings \endlink.
@@ -189,16 +189,16 @@ namespace Gecode {
     ValSel  vl; // For value selection
     int i = start;
     int b = i++;
-    if (vs.init(x[b]) != VSS_COMMIT)
+    if (vs.init(home,x[b]) != VSS_COMMIT)
       for (; i < x.size(); i++)
 	if (!x[i].assigned())
-	  switch (vs.select(x[i])) {
+	  switch (vs.select(home,x[i])) {
 	  case VSS_SELECT: b=i; break;
 	  case VSS_COMMIT: b=i; goto create;
 	  case VSS_NONE:   break;
 	  }
   create:
-    return new PosValDesc<Val>(this,b,vl.val(x[b]));
+    return new PosValDesc<Val>(this,b,vl.val(home,x[b]));
   }
 
   template <class View, class Val, class ViewSel, class ValSel>

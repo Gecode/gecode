@@ -22,7 +22,7 @@
 namespace Gecode { namespace Int { namespace Branch {
 
   forceinline int
-  ValMin::val(IntView x) const {
+  ValMin::val(const Space*, IntView x) const {
     return x.min();
   }
   forceinline ModEvent
@@ -32,7 +32,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
 
   forceinline int
-  ValMed::val(IntView x) const {
+  ValMed::val(const Space*, IntView x) const {
     return x.med();
   }
   forceinline ModEvent
@@ -42,7 +42,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
 
   forceinline int
-  ValMax::val(IntView x) const {
+  ValMax::val(const Space*, IntView x) const {
     return x.max();
   }
   forceinline ModEvent
@@ -52,7 +52,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
 
   forceinline int
-  ValSplitMin::val(IntView x) const {
+  ValSplitMin::val(const Space*, IntView x) const {
     return (x.width() == 2) ? x.min() : ((x.min()+x.max()) / 2);
   }
   forceinline ModEvent
@@ -62,7 +62,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
 
   forceinline int
-  ValSplitMax::val(IntView x) const {
+  ValSplitMax::val(const Space*, IntView x) const {
     return (x.width() == 2) ? x.min() : ((x.min()+x.max()) / 2);
   }
   forceinline ModEvent

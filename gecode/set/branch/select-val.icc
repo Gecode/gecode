@@ -28,7 +28,7 @@
 namespace Gecode { namespace Set { namespace Branch {
 
   forceinline int
-  ValMin::val(SetView x) const {
+  ValMin::val(const Space*, SetView x) const {
     UnknownRanges<SetView> unknown(x);
     return unknown.min();
   }
@@ -38,7 +38,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
 
   forceinline int
-  ValMax::val(SetView x) const {
+  ValMax::val(const Space*, SetView x) const {
     int maxElem = 0;
     UnknownRanges<SetView> unknown(x);
     while (unknown()) {

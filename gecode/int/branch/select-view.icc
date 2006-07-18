@@ -23,23 +23,23 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select first variable
   forceinline ViewSelStatus
-  ByNone::init(IntView) {
+  ByNone::init(const Space*, IntView) {
     return VSS_COMMIT;
   }
   forceinline ViewSelStatus
-  ByNone::select(IntView) {
+  ByNone::select(const Space*, IntView) {
     assert(false);
     return VSS_NONE;
   }
 
   // Select variable with smallest min
   forceinline ViewSelStatus
-  ByMinMin::init(IntView x) {
+  ByMinMin::init(const Space*, IntView x) {
     min = x.min();
     return VSS_SELECT;
   }
   forceinline ViewSelStatus
-  ByMinMin::select(IntView x) {
+  ByMinMin::select(const Space*, IntView x) {
     if (x.min() < min) {
       min = x.min(); return VSS_SELECT;
     }
@@ -48,12 +48,12 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with largest min
   forceinline ViewSelStatus
-  ByMinMax::init(IntView x) { 
+  ByMinMax::init(const Space*, IntView x) { 
     min = x.min();
     return VSS_SELECT;
   }
   forceinline ViewSelStatus
-  ByMinMax::select(IntView x) {
+  ByMinMax::select(const Space*, IntView x) {
     if (x.min() > min) {
       min = x.min(); return VSS_SELECT;
     }
@@ -62,12 +62,12 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest max
   forceinline ViewSelStatus
-  ByMaxMin::init(IntView x) { 
+  ByMaxMin::init(const Space*, IntView x) { 
     max = x.max();
     return VSS_SELECT;
   }
   forceinline ViewSelStatus
-  ByMaxMin::select(IntView x) {
+  ByMaxMin::select(const Space*, IntView x) {
     if (x.max() < max) {
       max = x.max(); return VSS_SELECT;
     }
@@ -76,12 +76,12 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with largest max
   forceinline ViewSelStatus
-  ByMaxMax::init(IntView x) {
+  ByMaxMax::init(const Space*, IntView x) {
     max = x.max();
     return VSS_SELECT;
   }
   forceinline ViewSelStatus
-  ByMaxMax::select(IntView x) {
+  ByMaxMax::select(const Space*, IntView x) {
     if (x.max() > max) {
       max = x.max(); return VSS_SELECT;
     }
@@ -90,12 +90,12 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest size
   forceinline ViewSelStatus
-  BySizeMin::init(IntView x) { 
+  BySizeMin::init(const Space*, IntView x) { 
     size = x.size();
     return (size == 2) ? VSS_COMMIT : VSS_SELECT;
   }
   forceinline ViewSelStatus
-  BySizeMin::select(IntView x) {
+  BySizeMin::select(const Space*, IntView x) {
     if (x.size() < size) {
       size = x.size(); 
       return (size == 2) ? VSS_COMMIT : VSS_SELECT;
@@ -105,12 +105,12 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with largest size
   forceinline ViewSelStatus
-  BySizeMax::init(IntView x) { 
+  BySizeMax::init(const Space*, IntView x) { 
     size = x.size();
     return VSS_SELECT;
   }
   forceinline ViewSelStatus
-  BySizeMax::select(IntView x) {
+  BySizeMax::select(const Space*, IntView x) {
     if (x.size() > size) {
       size = x.size(); return VSS_SELECT;
     }
@@ -119,12 +119,12 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest degree (and smallest size in case of ties)
   forceinline ViewSelStatus
-  ByDegreeMin::init(IntView x) { 
+  ByDegreeMin::init(const Space*, IntView x) { 
     degree = x.degree(); size = x.size();
     return VSS_SELECT;
   }
   forceinline ViewSelStatus
-  ByDegreeMin::select(IntView x) {
+  ByDegreeMin::select(const Space*, IntView x) {
     if (x.degree() < degree) {
       degree = x.degree();
       size   = x.size();
@@ -138,12 +138,12 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest degree (and smallest size in case of ties)
   forceinline ViewSelStatus
-  ByDegreeMax::init(IntView x) { 
+  ByDegreeMax::init(const Space*, IntView x) { 
     degree = x.degree(); size = x.size();
     return VSS_SELECT;
   }
   forceinline ViewSelStatus
-  ByDegreeMax::select(IntView x) {
+  ByDegreeMax::select(const Space*, IntView x) {
     if (x.degree() > degree) {
       degree = x.degree();
       size   = x.size();
@@ -157,12 +157,12 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest min-regret
   forceinline ViewSelStatus
-  ByRegretMinMin::init(IntView x) { 
+  ByRegretMinMin::init(const Space*, IntView x) { 
     regret = x.regret_min();
     return (regret == 1) ? VSS_COMMIT : VSS_SELECT;
   }
   forceinline ViewSelStatus
-  ByRegretMinMin::select(IntView x) {
+  ByRegretMinMin::select(const Space*, IntView x) {
     if (x.regret_min() < regret) {
       regret = x.regret_min();
       return (regret == 1) ? VSS_COMMIT : VSS_SELECT;
@@ -172,12 +172,12 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with largest min-regret
   forceinline ViewSelStatus
-  ByRegretMinMax::init(IntView x) { 
+  ByRegretMinMax::init(const Space*, IntView x) { 
     regret = x.regret_min();
     return VSS_SELECT;
   }
   forceinline ViewSelStatus
-  ByRegretMinMax::select(IntView x) {
+  ByRegretMinMax::select(const Space*, IntView x) {
     if (x.regret_min() > regret) {
       regret = x.regret_min(); return VSS_SELECT;
     }
@@ -186,12 +186,12 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest max-regret
   forceinline ViewSelStatus
-  ByRegretMaxMin::init(IntView x) { 
+  ByRegretMaxMin::init(const Space*, IntView x) { 
     regret = x.regret_max();
     return (regret == 1) ? VSS_COMMIT : VSS_SELECT;
   }
   forceinline ViewSelStatus
-  ByRegretMaxMin::select(IntView x) {
+  ByRegretMaxMin::select(const Space*, IntView x) {
     if (x.regret_max() < regret) {
       regret = x.regret_max();
       return (regret == 1) ? VSS_COMMIT : VSS_SELECT;
@@ -201,12 +201,12 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest min-regret
   forceinline ViewSelStatus
-  ByRegretMaxMax::init(IntView x) { 
+  ByRegretMaxMax::init(const Space*, IntView x) { 
     regret = x.regret_max();
     return VSS_SELECT;
   }
   forceinline ViewSelStatus
-  ByRegretMaxMax::select(IntView x) {
+  ByRegretMaxMax::select(const Space*, IntView x) {
     if (x.regret_max() > regret) {
       regret = x.regret_max(); return VSS_SELECT;
     }
