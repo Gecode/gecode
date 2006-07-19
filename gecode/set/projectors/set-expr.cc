@@ -73,8 +73,6 @@ namespace Gecode {
     /// Decrement reference count and possibly free memory
     GECODE_SET_EXPORT bool decrement(void);
     
-    /// String representation
-    std::string toString(bool monotone) const;
     /// Returns the scope of the node
     proj_scope scope(int sign) const;
     /// Returns the arity of the node
@@ -171,50 +169,6 @@ namespace Gecode {
       return true;
     }
     return false;
-  }
-
-  std::string
-  SetExpr::Node::toString(bool monotone) const {
-    if (left==NULL && right==NULL) {
-      char cidx[256];
-      sprintf(cidx, "%d", x);
-      std::string ret = "x[";
-      ret += cidx;
-      ret += "].";
-      if (monotone)
-	ret += "lub()";
-      else
-	ret += "glb()";
-      return ret;
-    }
-
-    std::string ret = "";
-    if (signLeft==-1)
-      ret += "-(";
-    if (left==NULL) {
-      ret += (signLeft==-1) ? "e" : "u";
-    } else {
-      ret += left->toString( (signLeft==1) ? monotone : !monotone);
-    }
-    if (signLeft==-1)
-      ret += ")";
-    switch (rel) {
-    case REL_INTER: ret += " && "; break;
-    case REL_UNION: ret += " || "; break;
-    default:
-      assert(false);
-      exit(2);
-    }
-    if (signRight==-1)
-      ret += "-(";
-    if (right==NULL) {
-      ret += (signRight==1) ? "e" : "u";
-    } else {
-      ret += right->toString((signRight==1) ? monotone : !monotone);
-    }
-    if (signRight==-1)
-      ret += ")";
-    return ret;
   }
 
   SetExpr::proj_scope
@@ -355,19 +309,6 @@ namespace Gecode {
   SetExpr::~SetExpr(void) {
     if ((ax != NULL) && ax->decrement())
       delete ax;
-  }
-
-  std::string
-  SetExpr::toString(bool monotone) const {
-    if (ax==NULL)
-      return (sign==1) ? "e" : "u";
-    if (sign==-1) {
-      std::string ret = "-(";
-      ret += ax->toString(!monotone);
-      ret += ")";
-      return ret;
-    }
-    return ax->toString(monotone);
   }
 
   SetExpr::proj_scope

@@ -47,17 +47,6 @@ namespace Gecode {
     return scope;
   }
 
-  std::string
-  ProjectorSet::toString(void) {
-    std::string ret = "";
-    for (int i=0; i<_count; i++) {
-      ret += "Next: ";
-      ret += _ps[i].toString();
-      ret += "\n";
-    }
-    return ret;
-  }
-
   ExecStatus
   ProjectorSet::check(Space* home, ViewArray<Set::SetView>& x) {
     //    std::vector<Projector>::iterator iter = _ps.begin();

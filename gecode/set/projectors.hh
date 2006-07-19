@@ -85,8 +85,6 @@ namespace Gecode {
 			      const SetExpr& t, int tsign);
     /// Assignment operator
     GECODE_SET_EXPORT const SetExpr& operator=(const SetExpr& e);
-    /// String representation
-    GECODE_SET_EXPORT std::string toString(bool monotone) const;
     /// Returns the scope of the set expression
     GECODE_SET_EXPORT proj_scope scope(int sign) const;
     /// Returns the arity of the set expression
@@ -128,9 +126,6 @@ namespace Gecode {
 
     /// Returns the arity of the projector
     GECODE_SET_EXPORT int arity(void) const;
-
-    /// Return string representation
-    GECODE_SET_EXPORT std::string toString(void) const;
 	      
     /// Propagate the projector
     template <bool negated>
@@ -174,9 +169,6 @@ namespace Gecode {
     /// Returns the scope of the projector set
     GECODE_SET_EXPORT SetExpr::proj_scope scope(void) const;
     
-    /// Get string representation
-    GECODE_SET_EXPORT std::string toString(void);
-
     /// Propagate the set
     template <bool negated>
     ExecStatus propagate(Space* home, ViewArray<Set::SetView>& x);

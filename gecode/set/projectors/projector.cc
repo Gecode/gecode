@@ -28,14 +28,6 @@ namespace Gecode {
     return std::max(glb.arity(), lub.arity());
   }
 
-  std::string
-  Projector::toString(void) const {
-    std::string ret = glb.toString(false);
-    ret += " <= ";
-    ret += lub.toString(true);
-    return ret;
-  }
-
   SetExpr::proj_scope
   Projector::scope(void) const {
     return SetExpr::combineScopes(glb.scope(-1), lub.scope(1));
