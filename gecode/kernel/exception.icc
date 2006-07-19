@@ -27,16 +27,14 @@ namespace Gecode {
    * \brief %Exception: Base-class for exceptions
    * \ingroup FuncThrow
    */
-  class Exception : public std::exception {
+  class GECODE_KERNEL_EXPORT Exception : public std::exception {
   private:
     static const int li_max = 128;
     char li[li_max+1];
   public:
     /// Initialize with location \a l and information \a i
-    GECODE_KERNEL_EXPORT
     Exception(const char* l, const char* i) throw ();
     /// Return information
-    GECODE_KERNEL_EXPORT
     virtual const char* what(void) const throw();
   };
     
