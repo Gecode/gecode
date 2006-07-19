@@ -33,6 +33,7 @@ export sharedlibdir = @sharedlibdir@
 export includedir = @includedir@
 export pkgincludedir = $(includedir)/gecode
 export srcdir = @srcdir@
+export datarootdir = @datarootdir@
 export datadir = @datadir@
 export docdir= @docdir@
 export top_srcdir = @top_srcdir@
