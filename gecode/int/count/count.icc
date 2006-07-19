@@ -133,7 +133,9 @@ namespace Gecode { namespace Int { namespace Count {
 	x.move_lst(i,home,this,PC_INT_DOM); c++;
 	if (z.max() == atleast()) goto decided;
 	break;
-      default: ;
+      case RT_MAYBE:
+	break;
+      default: GECODE_NEVER;
       }
   decided:
     GECODE_ME_CHECK(z.gq(home,atleast()));
@@ -191,7 +193,9 @@ namespace Gecode { namespace Int { namespace Count {
 	x.move_lst(i,home,this,PC_INT_DOM); break;
       case RT_TRUE:
 	x.move_lst(i,home,this,PC_INT_DOM); c++; break;
-      default: ;
+      case RT_MAYBE:
+	break;
+      default: GECODE_NEVER;
       }
     if (atleast() == atmost()) {
       GECODE_ME_CHECK(z.nq(home,atleast()));
@@ -251,7 +255,9 @@ namespace Gecode { namespace Int { namespace Count {
 	x.move_lst(i,home,this,PC_INT_DOM); c++;
 	if (z.max() == atleast()) goto decided;
 	break;
-      default: ;
+      case RT_MAYBE:
+	break;
+      default: GECODE_NEVER;
       }
   decided:
     GECODE_ME_CHECK(z.gq(home,atleast()));
@@ -310,7 +316,9 @@ namespace Gecode { namespace Int { namespace Count {
       case RT_TRUE:
 	x.move_lst(i,home,this,PC_INT_DOM); c++;
 	break;
-      default: ;
+      case RT_MAYBE:
+	break;
+      default: GECODE_NEVER;
       }
   decided:
     GECODE_ME_CHECK(z.lq(home,atmost()));

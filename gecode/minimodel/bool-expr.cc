@@ -94,7 +94,7 @@ namespace Gecode {
 	bool_eqv(home, l->post(home), r->post(home), b);
 	break;
       default:
-	assert(false);
+	GECODE_NEVER;
       case BT_RLIN:
 	rl.post(home,b);
 	break;

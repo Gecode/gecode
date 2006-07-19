@@ -62,4 +62,23 @@
     return;					\
   }
 
+/**
+ * \def GECODE_NEVER
+ * \brief Assert that this command is never executed
+ *
+ * This is preferred over assert(false) as it is used for optimization,
+ * if supported by a compiler (for example, Microsoft Visual C++).
+ *
+ */
+
+#if defined(_MSC_VER) && defined(NDEBUG)
+
+#define GECODE_NEVER __assume(false);
+
+#else
+
+#define GECODE_NEVER assert(false);
+
+#endif
+
 // STATISTICS: kernel-other

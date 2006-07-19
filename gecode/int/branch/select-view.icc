@@ -28,7 +28,7 @@ namespace Gecode { namespace Int { namespace Branch {
   }
   forceinline ViewSelStatus
   ByNone::select(const Space*, IntView) {
-    assert(false);
+    GECODE_NEVER;
     return VSS_NONE;
   }
 

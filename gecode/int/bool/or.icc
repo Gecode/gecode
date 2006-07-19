@@ -60,6 +60,7 @@ namespace Gecode { namespace Int { namespace Bool {
 	(void) new (home) OrTrue<BVA,BVB>(home,b0,b1);
       }
       break;
+    default: GECODE_NEVER;
     }
     return ES_OK;
   }
@@ -131,6 +132,7 @@ namespace Gecode { namespace Int { namespace Bool {
 	  (void) new (home) Or<BVA,BVB,BVC>(home,b0,b1,b2);
 	}
 	break;
+      default: GECODE_NEVER;
       }
     }
     return ES_OK;

@@ -72,7 +72,9 @@ namespace Gecode { namespace Int { namespace Dom {
       b.t_one_none(home); return ES_SUBSUMED;
     case Iter::Ranges::SS_EMPTY:
       b.t_zero_none(home); return ES_SUBSUMED;
-    default: ;
+    case Iter::Ranges::SS_NONE:
+      break;
+    default: GECODE_NEVER;
     }
     return ES_FIX;
   }

@@ -207,6 +207,8 @@ namespace Gecode {
 	  process();
 	}
 	break;
+      default:
+	GECODE_NEVER;
       }
     }
     return pn;

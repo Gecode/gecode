@@ -165,6 +165,7 @@ namespace Gecode { namespace Search {
 	  commit++;
 	  goto check_discrepancy;
 	}
+      default: GECODE_NEVER;
       }
     }
   }

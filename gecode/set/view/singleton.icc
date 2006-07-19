@@ -136,7 +136,7 @@ namespace Gecode {
       case ME_SET_VAL:
 	return ME_SET_VAL;
       default:
-	assert(false);
+	GECODE_NEVER;
 	return ME_SET_VAL;
       }
     }
@@ -164,7 +164,7 @@ namespace Gecode {
       case ME_SET_VAL:
 	return ME_SET_VAL;
       default:
-	assert(false);
+	GECODE_NEVER;
 	return ME_SET_VAL;
       }
     }

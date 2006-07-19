@@ -2058,6 +2058,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	  case UBC: {
 	    follow = !cur->template matched<direction>(); 
 	    break;
+	  default: GECODE_NEVER;
 	  }
 	  }
 	  if (follow) {
@@ -2100,6 +2101,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	  }
 	  break;
 	}
+	default: GECODE_NEVER;
 	}
       }
     }

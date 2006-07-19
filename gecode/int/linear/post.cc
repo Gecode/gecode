@@ -153,8 +153,7 @@ namespace Gecode { namespace Int { namespace Linear {
       if (Nq<Val,View,View >::post(home,x,y,c) == ES_FAILED)
 	home->fail();
       break;
-    default:
-      assert(0);
+    default: GECODE_NEVER;
     }
   }
 
@@ -168,7 +167,7 @@ namespace Gecode { namespace Int { namespace Linear {
       case IRT_EQ: if (c != 0) home->fail(); break;
       case IRT_NQ: if (c == 0) home->fail(); break;
       case IRT_LQ: if (0 > c)  home->fail(); break;
-      default: assert(0);
+      default: GECODE_NEVER;
       }
       return;
     }
@@ -179,7 +178,7 @@ namespace Gecode { namespace Int { namespace Linear {
 	case IRT_EQ: GECODE_ME_FAIL(home,y.eq(home,c)); break;
 	case IRT_NQ: GECODE_ME_FAIL(home,y.nq(home,c)); break;
 	case IRT_LQ: GECODE_ME_FAIL(home,y.lq(home,c)); break;
-	default: assert(0);
+	default: GECODE_NEVER;
 	}
       } else {
 	DoubleScaleView y(-e[0].a,e[0].x);
@@ -187,7 +186,7 @@ namespace Gecode { namespace Int { namespace Linear {
 	case IRT_EQ: GECODE_ME_FAIL(home,y.eq(home,-c)); break;
 	case IRT_NQ: GECODE_ME_FAIL(home,y.nq(home,-c)); break;
 	case IRT_LQ: GECODE_ME_FAIL(home,y.gq(home,-c)); break;
-	default: assert(0);
+	default: GECODE_NEVER;
 	}
       }
       return;
@@ -210,8 +209,7 @@ namespace Gecode { namespace Int { namespace Linear {
 	    if (LqBin<int,MinusView,MinusView>::post(home,e[0].x,e[1].x,c)
 		== ES_FAILED) home->fail();
 	    break;
-	  default:
-	    assert(0);
+	  default: GECODE_NEVER;
 	  }
 	  break;
 	case IRT_EQ:
@@ -228,8 +226,7 @@ namespace Gecode { namespace Int { namespace Linear {
 	    if (EqBin<int,IntView,IntView>::post(home,e[0].x,e[1].x,-c)
 		== ES_FAILED) home->fail();
 	    break;
-	  default:
-	    assert(0);
+	  default: GECODE_NEVER;
 	  }
 	  break;
 	case IRT_NQ:
@@ -246,12 +243,10 @@ namespace Gecode { namespace Int { namespace Linear {
 	    if (NqBin<int,IntView,IntView>::post(home,e[0].x,e[1].x,-c)
 		== ES_FAILED) home->fail();
 	    break;
-	  default:
-	    assert(0);
+	  default: GECODE_NEVER;
 	  }
 	  break;
-	default:
-	  assert(0);
+	default: GECODE_NEVER;
 	}
       } else if (n == 3) {
 	switch (r) {						
@@ -273,8 +268,7 @@ namespace Gecode { namespace Int { namespace Linear {
 	    if (LqTer<int,MinusView,MinusView,MinusView>::post
 		(home,e[0].x,e[1].x,e[2].x,c) == ES_FAILED) home->fail();
 	    break;
-	  default:
-	    assert(0);
+	  default: GECODE_NEVER;
 	  }
 	  break;
 	case IRT_EQ:
@@ -295,8 +289,7 @@ namespace Gecode { namespace Int { namespace Linear {
 	    if (EqTer<int,IntView,IntView,IntView>::post
 		(home,e[0].x,e[1].x,e[2].x,-c) == ES_FAILED) home->fail();
 	    break;
-	  default:
-	    assert(0);
+	  default: GECODE_NEVER;
 	  }
 	  break;
 	case IRT_NQ:
@@ -317,12 +310,10 @@ namespace Gecode { namespace Int { namespace Linear {
 	    if (NqTer<int,IntView,IntView,IntView>::post
 	      (home,e[0].x,e[1].x,e[2].x,-c) == ES_FAILED) home->fail();
 	    break;
-	  default:
-	    assert(0);
+	  default: GECODE_NEVER;
 	  }
 	  break;
-	default:
-	  assert(0);
+	default: GECODE_NEVER;
 	}
       } else {
 	ViewArray<IntView> x(home,n_p);
@@ -389,8 +380,7 @@ namespace Gecode { namespace Int { namespace Linear {
 	  home->fail();
       }
       break;
-    default:
-      assert(0);
+    default: GECODE_NEVER;
     }
   }
 
@@ -405,7 +395,7 @@ namespace Gecode { namespace Int { namespace Linear {
       case IRT_EQ: fail = (c != 0); break;
       case IRT_NQ: fail = (c == 0); break;
       case IRT_LQ: fail = (0 > c);  break;
-      default: assert(0);
+      default: GECODE_NEVER;
       }
       if ((fail ? b.t_zero(home) : b.t_one(home)) == ME_INT_FAILED)
 	home->fail();
@@ -452,8 +442,7 @@ namespace Gecode { namespace Int { namespace Linear {
 	      home->fail();
 	  }
 	  break;
-	default: 
-	  assert(false);
+	default: GECODE_NEVER;
 	}
       } else if (n == 2) {
 	switch (r) {
@@ -471,8 +460,7 @@ namespace Gecode { namespace Int { namespace Linear {
 	    if (ReLqBin<int,MinusView,MinusView>::post(home,e[0].x,e[1].x,c,b)
 		== ES_FAILED) home->fail();
 	    break;
-	  default:
-	    assert(0);
+	  default: GECODE_NEVER;
 	  }
 	  break;
 	case IRT_EQ:
@@ -492,8 +480,7 @@ namespace Gecode { namespace Int { namespace Linear {
 		(home,e[0].x,e[1].x,-c,b)
 		== ES_FAILED) home->fail();
 	    break;
-	  default:
-	    assert(0);
+	  default: GECODE_NEVER;
 	  }
 	  break;
 	case IRT_NQ:
@@ -515,13 +502,11 @@ namespace Gecode { namespace Int { namespace Linear {
 		  (home,e[0].x,e[1].x,-c,b)
 		  == ES_FAILED) home->fail();
 	      break;
-	    default:
-	      assert(0);
+	    default: GECODE_NEVER;
 	    }
 	  }
 	  break;
-	default:
-	  assert(0);
+	default: GECODE_NEVER;
 	}
       } else {
 	ViewArray<IntView> x(home,n_p);

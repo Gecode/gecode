@@ -197,6 +197,7 @@ namespace Gecode {
 	  case VSS_SELECT: b=i; break;
 	  case VSS_COMMIT: b=i; goto create;
 	  case VSS_NONE:   break;
+	  default:         GECODE_NEVER;
 	  }
   create:
     return new PosValDesc<Val>(this,b+offset,vl.val(home,x[b]));

@@ -101,6 +101,7 @@ namespace Gecode { namespace Search {
 	  commit++;
 	  break;
 	}
+      default: GECODE_NEVER;
       }
     }
     return true;

@@ -236,6 +236,7 @@ namespace Gecode { namespace Int { namespace Element {
 	case RT_MAYBE:
 	  iv[j++] = iv[i];
 	  break;
+	default: GECODE_NEVER;
 	}
 	++vx0; ++i;
       }

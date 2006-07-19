@@ -244,7 +244,7 @@ namespace Gecode {
       i = new Iter::Ranges::Virt::Union(li, ri);
       break;
     default:
-      assert(false);
+      GECODE_NEVER;
     }
     if (sign!=1) {
       i = new Iter::Ranges::Virt::Compl<Limits::Set::int_min,

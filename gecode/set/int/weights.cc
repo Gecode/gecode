@@ -77,6 +77,7 @@ namespace Gecode { namespace Set { namespace Int {
       case NEG_COST:
 	if (weights[i] < 0) sum += weights[i];
 	break;
+      default: GECODE_NEVER;
       }
     }
     return sum;

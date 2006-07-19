@@ -66,7 +66,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   forceinline void
   Empty::operator++(void) {
-    assert(false);
+    GECODE_NEVER;
   }
 
   forceinline bool
@@ -76,17 +76,17 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   forceinline int
   Empty::min(void) const {
-    assert(false);
+    GECODE_NEVER;
     return 0;
   }
   forceinline int
   Empty::max(void) const {
-    assert(false);
+    GECODE_NEVER;
     return 0;
   }
   forceinline unsigned int
   Empty::width(void) const {
-    assert(false);
+    GECODE_NEVER;
     return 0;
   }
 

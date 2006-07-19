@@ -101,7 +101,7 @@ namespace Gecode { namespace Int {
 
   forceinline void
   IntVarImp::RangeList::operator delete(void*, Space*) {
-    assert(false);
+    GECODE_NEVER;
   }
 
   forceinline void*

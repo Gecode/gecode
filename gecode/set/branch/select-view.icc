@@ -33,7 +33,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
   forceinline ViewSelStatus
   ByNone::select(const Space*, SetView) {
-    assert(false);
+    GECODE_NEVER;
     return VSS_NONE;
   }
 

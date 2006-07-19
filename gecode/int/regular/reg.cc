@@ -157,8 +157,9 @@ namespace Gecode {
       }
     case ET_OR:
       return data.kids[1]->print(data.kids[0]->print(os) << "|");
+    default: GECODE_NEVER;
     }
-    assert(0);
+    GECODE_NEVER;
     return os;
   }
   
@@ -470,6 +471,7 @@ namespace Gecode {
 	ni.lastpos  = PosSet::cup(psm,ni0.lastpos,ni.lastpos);
       }
       break;
+    default: GECODE_NEVER;
     }
   }
 
@@ -549,6 +551,7 @@ namespace Gecode {
 	case PSC_EQ: return n->state;
 	case PSC_LE: p = &n->left;  n = *p; break;
 	case PSC_GR: p = &n->right; n = *p; break;
+	default: GECODE_NEVER;
 	}
 	d++;
       } while (n != NULL);

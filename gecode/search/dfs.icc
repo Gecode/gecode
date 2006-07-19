@@ -89,6 +89,7 @@ namespace Gecode {
 	      cur->commit(desc,0);
 	      break;
 	    }
+	  default: GECODE_NEVER;
 	  }
 	}
 	if (!ds.next(*this))

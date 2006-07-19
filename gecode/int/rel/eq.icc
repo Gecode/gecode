@@ -227,7 +227,7 @@ namespace Gecode { namespace Int { namespace Rel {
 	    GECODE_ME_CHECK(x[i].eq(home,n));
 	  return ES_SUBSUMED;
 	}
-      assert(0);
+      GECODE_NEVER;
       return ES_SUBSUMED;
     }
 
@@ -345,7 +345,7 @@ namespace Gecode { namespace Int { namespace Rel {
 	    GECODE_ME_CHECK(x[i].eq(home,n));
 	  return ES_SUBSUMED;
 	}
-      assert(0);
+      GECODE_NEVER;
       return ES_SUBSUMED;
     }
 
@@ -428,7 +428,9 @@ namespace Gecode { namespace Int { namespace Rel {
       b.t_one_none(home);  return ES_SUBSUMED;
     case RT_FALSE:
       b.t_zero_none(home); return ES_SUBSUMED;
-    default: ;
+    case RT_MAYBE:
+      break;
+    default: GECODE_NEVER;
     }
     return ES_FIX;
   }
@@ -491,7 +493,9 @@ namespace Gecode { namespace Int { namespace Rel {
       b.t_one_none(home);  return ES_SUBSUMED;
     case RT_FALSE:
       b.t_zero_none(home); return ES_SUBSUMED;
-    default: ;
+    case RT_MAYBE:
+      break;
+    default: GECODE_NEVER;
     }
     return ES_FIX;
   }
@@ -556,7 +560,9 @@ namespace Gecode { namespace Int { namespace Rel {
       b.t_one_none(home);  return ES_SUBSUMED;
     case RT_FALSE:
       b.t_zero_none(home); return ES_SUBSUMED;
-    default: ;
+    case RT_MAYBE:
+      break;
+    default: GECODE_NEVER;
     }
     return ES_FIX;
   }
@@ -621,7 +627,9 @@ namespace Gecode { namespace Int { namespace Rel {
       b.t_one_none(home);  return ES_SUBSUMED;
     case RT_FALSE:
       b.t_zero_none(home); return ES_SUBSUMED;
-    default: ;
+    case RT_MAYBE:
+      break;
+    default: GECODE_NEVER;
     }
     return ES_FIX;
   }

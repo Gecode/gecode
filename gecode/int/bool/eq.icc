@@ -44,6 +44,8 @@ namespace Gecode { namespace Int { namespace Bool {
       } else {
 	(void) new (home) Eq<BVA,BVB>(home,b0,b1);
       }
+      break;
+    default: GECODE_NEVER;
     }
     return ES_OK;
   }

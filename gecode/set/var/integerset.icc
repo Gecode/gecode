@@ -97,7 +97,7 @@ namespace Gecode { namespace Set {
 
   forceinline void
   RangeList::operator delete(void*, Space* home) {
-    assert(false);
+    GECODE_NEVER;
   }
 
   forceinline void*
