@@ -224,11 +224,11 @@ namespace Gecode {
     class ReCoNode {
     protected:
       /// Space corresponding to this node (might be NULL)
-      Space*         _space;
+      Space*               _space;
       /// Current alternative 
-      unsigned int   _alt;
+      unsigned int         _alt;
       /// Braching description
-      BranchingDesc* _desc;
+      const BranchingDesc* _desc;
     public:
       /// Node for space \a s with clone \a c (possibly NULL)
       ReCoNode(Space* s, Space* c);
@@ -239,7 +239,7 @@ namespace Gecode {
       void space(Space* s);
 
       /// Return branching description
-      BranchingDesc* desc(void) const; 
+      const BranchingDesc* desc(void) const; 
 
       /// Return number for alternatives
       unsigned int alt(void) const; 
@@ -274,7 +274,7 @@ namespace Gecode {
       /// Initialize with adaptive recomputation distance \a a_d
       ReCoStack(unsigned int a_d);
       /// Push space \a c (a clone of \a s or NULL)
-      BranchingDesc* push(Space* s, Space* c);
+      const BranchingDesc* push(Space* s, Space* c);
       /// Generate path for next node and return whether a next node exists
       bool next(EngineCtrl& s);
       /// Recompute space according to path with copying distance \a d
@@ -405,18 +405,18 @@ namespace Gecode {
       class ProbeNode {
       private:
 	/// %Space of current node
-	Space*         _space;
+	Space*               _space;
 	/// Branching description
-	BranchingDesc* _desc;
+	const BranchingDesc* _desc;
 	/// Next alternative to try
-	unsigned int   _alt;
+	unsigned int         _alt;
       public:
 	/// Initialize with node \a s, description \a d, and alternative \a a
-	ProbeNode(Space* s, BranchingDesc* d, unsigned int a);
+	ProbeNode(Space* s, const BranchingDesc* d, unsigned int a);
 	/// Return space
 	Space* space(void) const; 
 	/// Return branching description
-	BranchingDesc* desc(void) const; 
+	const BranchingDesc* desc(void) const; 
 	/// Return next alternative
 	unsigned int alt(void) const; 
 	/// %Set next alternative

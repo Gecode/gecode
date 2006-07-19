@@ -52,7 +52,7 @@ namespace Gecode { namespace Search {
     _alt++;
   }
 
-  forceinline BranchingDesc*
+  forceinline const BranchingDesc*
   ReCoNode::desc(void) const {
     return _desc;
   }
@@ -73,7 +73,7 @@ namespace Gecode { namespace Search {
   forceinline
   ReCoStack::ReCoStack(unsigned int a_d0) : a_d(a_d0) {}
 
-  forceinline BranchingDesc*
+  forceinline const BranchingDesc*
   ReCoStack::push(Space* s, Space* c) {
     ReCoNode sn(s,c);
     Support::DynamicStack<ReCoNode>::push(sn);

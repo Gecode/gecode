@@ -400,7 +400,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
     /// Return branching description (of type AssignDesc)
-    virtual BranchingDesc* description(const Space* home) const;
+    virtual const BranchingDesc* description(const Space* home) const;
   };
 
   /// Median assignment (single-alternative branching)
@@ -414,7 +414,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
     /// Return branching description (of type AssignDesc)
-    virtual BranchingDesc* description(const Space* home) const;
+    virtual const BranchingDesc* description(const Space* home) const;
   };
 
   /// Maximum assignment (single-alternative branching)
@@ -428,7 +428,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
     /// Return branching description (of type AssignDesc)
-    virtual BranchingDesc* description(const Space* home) const;
+    virtual const BranchingDesc* description(const Space* home) const;
   };
 
 }}}

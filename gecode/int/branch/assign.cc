@@ -49,7 +49,7 @@ namespace Gecode { namespace Int { namespace Branch {
   AssignMin::copy(Space* home, bool share) {
     return new (home) AssignMin(home,share,*this);
   }
-  BranchingDesc*
+  const BranchingDesc*
   AssignMin::description(const Space*) const {
     assert(!x[pos].assigned());
     return new AssignDesc(this, pos, x[pos].min());
@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace Branch {
   AssignMed::copy(Space* home, bool share) {
     return new (home) AssignMed(home,share,*this);
   }
-  BranchingDesc*
+  const BranchingDesc*
   AssignMed::description(const Space*) const {
     assert(!x[pos].assigned());
     return new AssignDesc(this, pos, x[pos].med());
@@ -71,7 +71,7 @@ namespace Gecode { namespace Int { namespace Branch {
   AssignMax::copy(Space* home, bool share) {
     return new (home) AssignMax(home,share,*this);
   }
-  BranchingDesc*
+  const BranchingDesc*
   AssignMax::description(const Space*) const {
     assert(!x[pos].assigned());
     return new AssignDesc(this, pos, x[pos].max());

@@ -78,7 +78,7 @@ namespace Gecode {
     /// Check status of branching, return true if alternatives left
     virtual bool status(const Space* home) const;
     /// Return branching description (of type Gecode::PosValDesc)
-    virtual BranchingDesc* description(const Space* home) const;
+    virtual const BranchingDesc* description(const Space* home) const;
     /// Perform commit for branching description \a d and alternative \a a
     virtual ExecStatus commit(Space* home, const BranchingDesc* d,
 			      unsigned int a);
@@ -182,7 +182,7 @@ namespace Gecode {
   }
 
   template <class View, class Val, class ViewSel, class ValSel>
-  BranchingDesc*
+  const BranchingDesc*
   ViewValBranching<View,Val,ViewSel,ValSel>
   ::description(const Space* home) const {
     assert(!x[start].assigned());

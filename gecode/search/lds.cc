@@ -30,7 +30,8 @@ namespace Gecode { namespace Search {
    */
 
   forceinline
-  ProbeEngine::ProbeNode::ProbeNode(Space* s, BranchingDesc* d, unsigned int a)
+  ProbeEngine::ProbeNode
+  ::ProbeNode(Space* s, const BranchingDesc* d, unsigned int a)
     : _space(s), _desc(d), _alt(a) {}
 
   forceinline Space*
@@ -38,7 +39,7 @@ namespace Gecode { namespace Search {
     return _space;
   }
 
-  forceinline BranchingDesc*
+  forceinline const BranchingDesc*
   ProbeEngine::ProbeNode::desc(void) const {
     return _desc;
   }
@@ -102,8 +103,8 @@ namespace Gecode { namespace Search {
       backtrack:
 	if (ds.empty())
 	  return NULL;
-	unsigned int a      = ds.top().alt();
-	BranchingDesc* desc = ds.top().desc();
+	unsigned int a            = ds.top().alt();
+	const BranchingDesc* desc = ds.top().desc();
 	if (a == 0) {
 	  cur = ds.pop().space();
 	  EngineCtrl::pop(cur,desc);
@@ -124,7 +125,7 @@ namespace Gecode { namespace Search {
 	while (s->status(propagate) == SS_BRANCH) {
 	  if (stop(stacksize()))
 	    return NULL;
-	  BranchingDesc* desc = s->description();
+	  const BranchingDesc* desc = s->description();
 	  s->commit(desc,0);
 	  delete desc;
 	}
@@ -146,8 +147,8 @@ namespace Gecode { namespace Search {
 	goto backtrack;
       case SS_BRANCH:
 	{
-	  BranchingDesc* desc = cur->description();
-	  unsigned int alt    = desc->alternatives();
+	  const BranchingDesc* desc = cur->description();
+	  unsigned int alt          = desc->alternatives();
 	  if (alt > 1) {
 	    unsigned int d_a = (d >= alt-1) ? alt-1 : d;
 	    Space* cc = cur->clone(true,propagate);

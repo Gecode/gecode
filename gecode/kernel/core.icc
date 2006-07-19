@@ -560,7 +560,7 @@ namespace Gecode {
      * description.
      *
      */
-    virtual BranchingDesc* description(const Space* home) const = 0;
+    virtual const BranchingDesc* description(const Space* home) const = 0;
     /**
      * \brief Commit for branching description \a d and alternative \a a
      * 
@@ -751,7 +751,7 @@ namespace Gecode {
      *
      * \ingroup TaskSearch
      */
-    BranchingDesc* description(void) const;
+    const BranchingDesc* description(void) const;
 
     /** 
      * \brief Clone space 
@@ -1080,7 +1080,7 @@ namespace Gecode {
    *
    */
 
-  forceinline BranchingDesc*
+  forceinline const BranchingDesc*
   Space::description(void) const {
     return b_fst->description(this);
   }
