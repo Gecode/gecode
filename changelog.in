@@ -676,7 +676,7 @@ Module: int
 What:   bug
 Rank:   minor
 [DESCRIPTION]
-Fixed subsumtion detection for regular with multiple variable occurences.
+Fixed subsumption detection for regular with multiple variable occurences.
 
 [ENTRY]
 Module: int
