@@ -328,7 +328,7 @@ namespace Gecode {
      * functionality providing the necessary typecasts is available
      * in Gecode::DFS.
      */
-    class GECODE_SEARCH_EXPORT DFS {
+    class DFS {
     protected:
       /// Engine used for exploration
       DfsEngine e;
@@ -341,12 +341,16 @@ namespace Gecode {
        * \param st %Stop-object
        * \param sz size of one space
        */
+      GECODE_SEARCH_EXPORT
       DFS(Space* s, unsigned int c_d, unsigned int a_d, Stop* st, size_t sz);
       /// Return next solution (NULL, if none exists or search has been stopped)
+      GECODE_SEARCH_EXPORT
       Space* next(void);
       /// Return statistics
+      GECODE_SEARCH_EXPORT
       Statistics statistics(void) const;
       /// Check whether engine has been stopped
+      GECODE_SEARCH_EXPORT
       bool stopped(void) const;
     };
 
@@ -446,7 +450,7 @@ namespace Gecode {
     /**
      * \brief Limited discrepancy search engine
      */
-    class GECODE_SEARCH_EXPORT LDS {
+    class LDS {
     protected:
       Space*       root;        ///< Root node for problem
       unsigned int d_cur;       ///< Current discrepancy
@@ -460,14 +464,19 @@ namespace Gecode {
        * \param st %Stop-object
        * \param sz size of space
        */
+      GECODE_SEARCH_EXPORT
       LDS(Space* s, unsigned int d, Stop* st, size_t sz);
       /// Return next solution (NULL, if none exists or search has been stopped)
+      GECODE_SEARCH_EXPORT
       Space* next(void);
       /// Return statistics
+      GECODE_SEARCH_EXPORT
       Statistics statistics(void) const;
       /// Check whether engine has been stopped
+      GECODE_SEARCH_EXPORT
       bool stopped(void) const;
       /// Destructor
+      GECODE_SEARCH_EXPORT
       ~LDS(void);
     };
 
@@ -566,7 +575,7 @@ namespace Gecode {
      * in Gecode::BAB:
      *
      */
-    class GECODE_SEARCH_EXPORT BAB {
+    class BAB {
     protected:
       /// Engine used for exploration
       BabEngine e;
@@ -579,10 +588,13 @@ namespace Gecode {
        * \param st %Stop-object
        * \param sz size of one space
        */
+      GECODE_SEARCH_EXPORT
       BAB(Space* s, unsigned int c_d, unsigned int a_d, Stop* st, size_t sz);
       /// Check whether engine has been stopped
+      GECODE_SEARCH_EXPORT
       bool stopped(void) const;
       /// Return statistics
+      GECODE_SEARCH_EXPORT
       Statistics statistics(void) const;
     };
 
