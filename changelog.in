@@ -57,6 +57,13 @@ Module: int
 What: 	bug
 Rank: 	minor
 [DESCRIPTION]
+Fixed fixpoint detection bug in n-ary min and max propagators.
+
+[ENTRY]
+Module: int
+What: 	bug
+Rank: 	minor
+[DESCRIPTION]
 Min and max propagators now correctly handle cases such as min(x,y)=x.
 
 [ENTRY]
@@ -463,7 +470,7 @@ Module: int
 What:   bug
 Rank:   minor
 [DESCRIPTION]
-Fixed bug in fixpoint detection of nary maximum/minimum
+Fixed bug in fixpoint detection of n-ary maximum/minimum
 propagator.
 
 [ENTRY]
