@@ -124,6 +124,23 @@ namespace {
   Min _minmin("Arithmetic::Min::Bin::C",s3);
 }
 
+class MinShared : public IntTest {
+public:
+  MinShared(const char* t, const IntSet& is) 
+    : IntTest(t,2,is) {}
+  virtual bool solution(const Assignment& x) const {
+    return std::min(x[0],x[1]) == x[0];
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    min(home, x[0], x[1], x[0]);
+  }
+};
+namespace {
+  MinShared _minsmax("Arithmetic::Min::Bin::Shared::A",s1);
+  MinShared _minsmed("Arithmetic::Min::Bin::Shared::B",s2);
+  MinShared _minsmin("Arithmetic::Min::Bin::Shared::C",s3);
+}
+
 class Max : public IntTest {
 public:
   Max(const char* t, const IntSet& is) 
@@ -139,6 +156,23 @@ namespace {
   Max _maxmax("Arithmetic::Max::Bin::A",s1);
   Max _maxmed("Arithmetic::Max::Bin::B",s2);
   Max _maxmin("Arithmetic::Max::Bin::C",s3);
+}
+
+class MaxShared : public IntTest {
+public:
+  MaxShared(const char* t, const IntSet& is) 
+    : IntTest(t,2,is) {}
+  virtual bool solution(const Assignment& x) const {
+    return std::max(x[0],x[1]) == x[0];
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    max(home, x[0], x[1], x[0]);
+  }
+};
+namespace {
+  MaxShared _maxsmax("Arithmetic::Max::Bin::Shared::A",s1);
+  MaxShared _maxsmed("Arithmetic::Max::Bin::Shared::B",s2);
+  MaxShared _maxsmin("Arithmetic::Max::Bin::Shared::C",s3);
 }
 
 class MinNary : public IntTest {
@@ -162,6 +196,27 @@ namespace {
   MinNary _minnary("Arithmetic::Min::Nary",s4);
 }
 
+class MinNaryShared : public IntTest {
+public:
+  MinNaryShared(const char* t, const IntSet& is) 
+    : IntTest(t,3,is) {}
+  virtual bool solution(const Assignment& x) const {
+    return std::min(std::min(x[0],x[1]),
+		    x[2]) == x[1];
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    Log::log("min(home, x[0:2], x[1])",
+	     "\tIntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
+	     "\tmin(this, m, x[1]);");
+    IntVarArgs m(3);
+    m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
+    min(home, m, x[1]);
+  }
+};
+namespace {
+  MinNaryShared _minsnary("Arithmetic::Min::Nary::Shared",s4);
+}
+
 class MaxNary : public IntTest {
 public:
   MaxNary(const char* t, const IntSet& is) 
@@ -181,6 +236,27 @@ public:
 };
 namespace {
   MaxNary _maxnary("Arithmetic::Max::Nary",s4);
+}
+
+class MaxNaryShared : public IntTest {
+public:
+  MaxNaryShared(const char* t, const IntSet& is) 
+    : IntTest(t,3,is) {}
+  virtual bool solution(const Assignment& x) const {
+    return std::max(std::max(x[0],x[1]),
+		    x[2]) == x[1];
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    Log::log("max(home, x[0:2], x[1])",
+	     "\tIntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
+	     "\tmax(this, m, x[1]);");
+    IntVarArgs m(3);
+    m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
+    max(home, m, x[1]);
+  }
+};
+namespace {
+  MaxNaryShared _maxsnary("Arithmetic::Max::Nary::Shared",s4);
 }
 
 // STATISTICS: test-int

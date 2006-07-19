@@ -54,6 +54,13 @@ Nothing to say yet.
 
 [ENTRY]
 Module: int
+What: 	bug
+Rank: 	minor
+[DESCRIPTION]
+Min and max propagators now correctly handle cases such as min(x,y)=x.
+
+[ENTRY]
+Module: int
 What: 	removed
 Rank: 	minor
 [DESCRIPTION]

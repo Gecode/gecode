@@ -19,6 +19,8 @@
  *
  */
 
+#include "gecode/int/rel.hh"
+
 namespace Gecode { namespace Int { namespace Arithmetic {
 
   /*
@@ -36,6 +38,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   Max<View>::post(Space* home, View x0, View x1, View x2) {
     if (same(x0,x1))
       return Rel::EqBnd<View,View>::post(home,x0,x2);
+    if (same(x0,x2))
+      return Rel::Lq<View>::post(home,x1,x2);
+    if (same(x1,x2))
+      return Rel::Lq<View>::post(home,x0,x2);
     (void) new (home) Max<View>(home,x0,x1,x2);
     return ES_OK;
   }
@@ -116,7 +122,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return Rel::EqBnd<View,View>::post(home,x[0],y);
     if (x.size() == 2)
       return Max<View>::post(home,x[0],x[1],y);
-    (void) new (home) NaryMax<View>(home,x,y);
+    if (x.same(y)) {
+      // Check whether y occurs in x
+      for (int i=x.size(); i--; )
+	GECODE_ES_CHECK(Rel::Lq<View>::post(home,x[i],y));
+    } else {
+      (void) new (home) NaryMax<View>(home,x,y);
+    }
     return ES_OK;
   }
 
@@ -151,8 +163,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     maxmax = y.max();
     bool assigned = true;
     for (int i = x.size(); i--; ) {
-      if (x[i].modified())
-	es = ES_NOFIX;
       ModEvent me = x[i].lq(home,maxmax);
       if (me == ME_INT_FAILED)
 	return ES_FAILED;
