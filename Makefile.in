@@ -908,9 +908,9 @@ veryclean: clean
 	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%.ilk) $(LIBTARGETS:%$(DLLSUFFIX)=%.pdb)
 	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%$(SOSUFFIX))
-	$(RMF) $(EXAMPLEEXE:%.exe=%.pdb)
+	$(RMF) $(EXAMPLEEXE:%.exe=%.pdb) $(TESTEXE:%.exe=%.pdb)
 	$(RMF) doc GecodeReference.chm install Makefile.dep
-	$(RMF) $(EXAMPLEEXE)
+	$(RMF) $(EXAMPLEEXE) $(TESTEXE)
 
 distclean: veryclean
 	$(RMF) misc/gecode.pc misc/gecode-search.pc misc/gecode-minimodel.pc
