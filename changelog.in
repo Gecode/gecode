@@ -112,7 +112,7 @@ Module: kernel
 What:   change
 Rank:   major
 [DESCRIPTION]
-The interface for branchings have changed considerably, reflecting
+The interface for branchings has changed considerably, reflecting
 the fact now that all branchings must support branching descriptions.
 This is also reflected in the Space::status operation which has its
 arguments reversed and corrected const qualifiers on its arguments.
