@@ -26,11 +26,11 @@ dnl
 
 AC_REVISION([$Id$])
 AC_PREREQ(2.53)
-AC_INIT(GECODE, 1.2.0, users@gecode.org)
+AC_INIT(GECODE, 1.2.1, users@gecode.org)
 AC_CONFIG_HEADERS([gecode/config.icc])
 AC_CONFIG_SRCDIR(gecode/kernel.hh)
 
-ac_gecode_soversion=4
+ac_gecode_soversion=5
 
 # checks for programs
 

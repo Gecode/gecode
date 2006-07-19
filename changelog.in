@@ -48,9 +48,24 @@
 
 [RELEASE]
 Version:	1.2.1
-Date:		Upcoming
+Date:		2006-07-19
 [DESCRIPTION]
-Nothing to say yet.
+In addition to the usual fixes and improvements, the biggest
+change is that all branchings now must support branching
+descriptions. This also entails straightforward changes
+(simplifications) to search-related space operations and to the
+implementation of search engines.
+
+
+[ENTRY]
+Module: kernel
+What: 	new
+Rank: 	minor
+[DESCRIPTION]
+Added a macro GECODE_NEVER that assert that this command is never
+executed.  This is preferred over assert(false) as it is used for
+optimization, if supported by a compiler (for example, Microsoft
+Visual C++).
 
 [ENTRY]
 Module: int
