@@ -67,8 +67,9 @@ namespace Gecode {
   template <class View, class Val, class ViewSel, class ValSel>
   class ViewValBranching : public Branching {
   protected:
-    ViewArray<View> x; ///< Views to branch on
-    mutable int start; ///< Unassigned variables start at x[start]
+    ViewArray<View> x;  ///< Views to branch on
+    mutable int start;  ///< Unassigned views start at x[start]
+    int offset;         ///< Unassigned views already eliminated
     /// Constructor for cloning \a b
     ViewValBranching(Space* home, bool share, ViewValBranching& b);
   public:
@@ -148,16 +149,16 @@ namespace Gecode {
 
   template <class View, class Val, class ViewSel, class ValSel>
   forceinline
-  ViewValBranching<View,Val,ViewSel,ValSel>::ViewValBranching
-  (Space* home, ViewArray<View>& x0)
-    : Branching(home), x(x0), start(0) {}
+  ViewValBranching<View,Val,ViewSel,ValSel>
+  ::ViewValBranching(Space* home, ViewArray<View>& x0)
+    : Branching(home), x(x0), start(0), offset(0) {}
 
 
   template <class View, class Val, class ViewSel, class ValSel>
   forceinline
-  ViewValBranching<View,Val,ViewSel,ValSel>::ViewValBranching
-  (Space* home, bool share, ViewValBranching& b)
-    : Branching(home,share,b), start(b.start) {
+  ViewValBranching<View,Val,ViewSel,ValSel>
+  ::ViewValBranching(Space* home, bool share, ViewValBranching& b)
+    : Branching(home,share,b), start(b.start), offset(b.offset) {
     x.update(home,share,b.x);
   }
 
@@ -198,16 +199,18 @@ namespace Gecode {
 	  case VSS_NONE:   break;
 	  }
   create:
-    return new PosValDesc<Val>(this,b,vl.val(home,x[b]));
+    return new PosValDesc<Val>(this,b+offset,vl.val(home,x[b]));
   }
 
   template <class View, class Val, class ViewSel, class ValSel>
   ExecStatus
-  ViewValBranching<View,Val,ViewSel,ValSel>::commit
-  (Space* home, const BranchingDesc* d, unsigned int a) {
+  ViewValBranching<View,Val,ViewSel,ValSel>
+  ::commit(Space* home, const BranchingDesc* d, unsigned int a) {
+    // Eliminate views from x[0] ... x[start-1]
+    x.drop_fst(start); offset += start; start = 0;
     const PosValDesc<Val>* pvd = static_cast<const PosValDesc<Val>*>(d);
     ValSel vs;
-    return me_failed(vs.tell(home,a,x[pvd->pos()],pvd->val()))
+    return me_failed(vs.tell(home,a,x[pvd->pos()-offset],pvd->val()))
       ? ES_FAILED : ES_OK;
   }
 
