@@ -68,6 +68,13 @@ Options::parse(int argc, char** argv) {
 	cerr << solutions;
       cerr << endl
 	   << "\t\thow many solutions to search (solution-mode)" << endl
+	   << "\t-fails (unsigned int) default: " 
+	   << (fails<0 ? "(no limit) " : "") << fails << endl
+	   << "\t\tset number of allowed fails before stopping (solution-mode)" 
+	   << endl 
+	   << "\t-time (unsigned int) default: " 
+	   << (fails<0 ? "(no limit) " : "") << time << endl
+	   << "\t\tset allowed time before stopping (solution-mode)" << endl
 	   << "\t-naive default: " 
 	   << bool2str[naive] << endl
 	   << "\t\tuse naive version" << endl
@@ -117,6 +124,12 @@ Options::parse(int argc, char** argv) {
     } else if (!strcmp(argv[i],"-solutions")) {
       if (++i == argc) goto missing;
       solutions = atoi(argv[i]);
+    } else if (!strcmp(argv[i],"-fails")) {
+      if (++i == argc) goto missing;
+      fails = atoi(argv[i]);
+    } else if (!strcmp(argv[i],"-time")) {
+      if (++i == argc) goto missing;
+      time = atoi(argv[i]);
     } else if (!strcmp(argv[i],"-iterations")) {
       if (++i == argc) goto missing;
       iterations = atoi(argv[i]);

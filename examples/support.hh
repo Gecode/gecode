@@ -59,6 +59,8 @@ public:
   unsigned int samples;    ///< how many samples                
   unsigned int iterations; ///< how many iterations per sample  
   unsigned int solutions;  ///< how many solutions (0 == all)   
+  int          fails;      ///< number of fails before stopping search
+  int          time;       ///< allowed time before stopping search
   bool         naive;      ///< use naive version               
   unsigned int size;       ///< problem size/variant            
   const char*  name;       ///< name of problem                 

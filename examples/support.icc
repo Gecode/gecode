@@ -29,9 +29,36 @@ Options::Options(const char* n)
     samples(1),
     iterations(1),
     solutions(1),
+    fails(-1),
+    time(-1),
     naive(false),
     size(0),
     name(n) {}
+
+namespace {
+  /// Stop opbject for controlling stoppage based on both time and
+  /// failures.
+  class FailTimeStop : public Search::Stop {
+  private:
+    Search::TimeStop *ts;
+    Search::FailStop *fs;
+    FailTimeStop(int fails, int time) {
+      ts = new Search::TimeStop(time);
+      fs = new Search::FailStop(fails);
+    }
+  public:
+    bool stop(const Search::Statistics& s) {
+      return fs->stop(s) || ts->stop(s);
+    }
+    /// Create appropriate stop-object
+    static Search::Stop* create(int fails, int time) {
+      if (fails < 0 && time < 0) return NULL;
+      if (fails < 0) return new Search::TimeStop( time);
+      if (time  < 0) return new Search::FailStop(fails);
+      return new FailTimeStop(fails, time);
+    }
+  };
+}
 
 
 template <class Script, template<class> class Engine>
@@ -54,7 +81,8 @@ Example::run(const Options& o) {
 	  p = s->propagators();
 	  b = s->branchings();
 	}
-	Engine<Script> e(s,o.c_d,o.a_d);
+	Search::Stop* stop = FailTimeStop::create(o.fails, o.time);
+	Engine<Script> e(s,o.c_d,o.a_d,stop);
 	delete s;
 	do {
 	  Example* ex = e.next();

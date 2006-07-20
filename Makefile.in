@@ -359,7 +359,7 @@ INTEXAMPLESRC0 = \
 	money ortho-latin packing \
 	partition photo queens \
 	sudoku picture-puzzle  \
-	crowded-chess \
+	crowded-chess black-hole \
 	sports-league all-interval all-interval-sort langfordnum \
 	warehouses \
 	stress-domain stress-failure stress-search baseline
@@ -369,7 +369,7 @@ INTEXAMPLESBJ  = $(INTEXAMPLESRC:%.cc=%$(SBJSUFFIX))
 INTEXAMPLEEXE  = $(INTEXAMPLESRC:%.cc=%$(EXESUFFIX))
 
 SETEXAMPLESRC0 = \
-	crew golf hamming steiner sudoku-set sudoku-set sudoku-mixed
+	crew golf hamming steiner sudoku-set sudoku-mixed queen-armies
 SETEXAMPLESRC  = $(SETEXAMPLESRC0:%=examples/%.cc)
 SETEXAMPLEOBJ  = $(SETEXAMPLESRC:%.cc=%$(OBJSUFFIX))
 SETEXAMPLESBJ  = $(SETEXAMPLESRC:%.cc=%$(SBJSUFFIX))

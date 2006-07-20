@@ -52,6 +52,27 @@ Date:		In the future
 [DESCRIPTION]
 Bla bla.
 
+[ENTRY]
+Module: example
+What: 	new
+Rank: 	minor
+[DESCRIPTION]
+Added possibility to stop the search for solutions in examples based
+on the time taken, the number of fails, or both.
+
+[ENTRY]
+Module: example
+What: 	new
+Rank: 	major
+[DESCRIPTION]
+Added an example for solving Peacable co-existing armies of %Queens.
+
+[ENTRY]
+Module: example
+What: 	new
+Rank: 	major
+[DESCRIPTION]
+Added an example for solving the Black Hole patience.
 
 [RELEASE]
 Version:	1.2.1
