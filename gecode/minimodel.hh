@@ -108,7 +108,7 @@ namespace Gecode {
       LinExpr(const IntVar& x, int a=1, int c=0);
       /// Create expression \f$e_0+s\cdot e_1\f$ (where \a s is the sign)
       LinExpr(const LinExpr& e0, const LinExpr& e1, int s);
-      /// Create expression \f$s(e+c)\f$ (where \a s is the sign)
+      /// Create expression \f$s\cdot e+c\f$ (where \a s is the sign)
       LinExpr(const LinExpr& e, int c, int s);
       /// Create expression \f$a\cdot e\f$
       LinExpr(int a, const LinExpr& e);
