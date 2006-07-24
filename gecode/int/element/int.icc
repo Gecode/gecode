@@ -27,27 +27,28 @@ namespace Gecode { namespace Int { namespace Element {
    * \brief Links for index-value map
    *
    * Data structure linking pairs of index and value (index,value)
-   * where pairs are doubly-linked in order of both index and
+   * where pairs are linked in order of both index and
    * value (to allow for easy removal while keeping both index and
    * value sorted).
    *
    */
   class IdxValLink  {
   public:
-    IdxValLink *idx_prev, *idx_next;
-    IdxValLink *val_prev, *val_next;
+    IdxValLink* idx_next;
+    IdxValLink* val_next;
     int idx, val;
 
-    void unlink(void);
+    void mark(void);
+    bool marked(void) const;
   };
 
   forceinline void
-  IdxValLink::unlink(void) {
-    // Unlink from both index and value links
-    IdxValLink* i_p = idx_prev; IdxValLink* i_n = idx_next;
-    i_p->idx_next = i_n; i_n->idx_prev = i_p;
-    IdxValLink* v_p = val_prev; IdxValLink* v_n = val_next;
-    v_p->val_next = v_n; v_n->val_prev = v_p;
+  IdxValLink::mark(void) {
+    idx = -1;
+  }
+  forceinline bool
+  IdxValLink::marked(void) const {
+    return idx<0;
   }
 
 
@@ -55,14 +56,16 @@ namespace Gecode { namespace Int { namespace Element {
   /**
    * \brief Value iterator for indices in index-value map
    *
+   * The iterator also removes marked index-value pairs.
+   *
    */
   class IterIdx {
   private:
-    const IdxValLink *cur, *end;
+    IdxValLink* l;
   public:
     IterIdx(void);
-    IterIdx(const IdxValLink&);
-    void init(const IdxValLink&);
+    IterIdx(IdxValLink&);
+    void init(IdxValLink&);
     bool operator()(void) const;
     void operator++(void);
     int  val(void) const;
@@ -71,24 +74,37 @@ namespace Gecode { namespace Int { namespace Element {
   forceinline
   IterIdx::IterIdx(void) {}
   forceinline
-  IterIdx::IterIdx(const IdxValLink& ivl)
-    : cur(ivl.idx_next), end(&ivl) {}
+  IterIdx::IterIdx(IdxValLink& ivl) {
+    IdxValLink* p=&ivl; 
+    l = p->idx_next;
+    while ((l != NULL) && l->marked())
+      l=l->idx_next;
+    p->idx_next=l;
+  }
   forceinline void
-  IterIdx::init(const IdxValLink& ivl) {
-    cur = ivl.idx_next;
-    end = &ivl;
+  IterIdx::init(IdxValLink& ivl) {
+    IdxValLink* p=&ivl;
+    l = p->idx_next;
+    while ((l != NULL) && l->marked())
+      l=l->idx_next;
+    p->idx_next=l;
   }
   forceinline bool
   IterIdx::operator()(void) const {
-    return cur != end;
+    return l != NULL;
   }
   forceinline void
   IterIdx::operator++(void) {
-    cur = cur->idx_next;
+    IdxValLink* p=l; 
+    l = p->idx_next;
+    while ((l != NULL) && l->marked())
+      l=l->idx_next;
+    p->idx_next=l;
   }
   forceinline int
   IterIdx::val(void) const {
-    return cur->idx;
+    assert(!l->marked());
+    return l->idx;
   }
 
 
@@ -101,7 +117,7 @@ namespace Gecode { namespace Int { namespace Element {
    */
   class IterVal {
   private:
-    const IdxValLink *cur, *end;
+    const IdxValLink* l;
   public:
     IterVal(void);
     IterVal(const IdxValLink&);
@@ -115,23 +131,23 @@ namespace Gecode { namespace Int { namespace Element {
   IterVal::IterVal(void) {}
   forceinline
   IterVal::IterVal(const IdxValLink& ivl)
-    : cur(ivl.val_next), end(&ivl) {}
+    : l(ivl.val_next) {}
   forceinline void
   IterVal::init(const IdxValLink& ivl) {
-    cur = ivl.val_next;
-    end = &ivl;
+    l = ivl.val_next;
   }
   forceinline bool
   IterVal::operator()(void) const {
-    return cur != end;
+    return l != NULL;
   }
   forceinline void
   IterVal::operator++(void) {
-    cur = cur->val_next;
+    l=l->val_next;
   }
   forceinline int
   IterVal::val(void) const {
-    return cur->val;
+    assert(!l->marked());
+    return l->val;
   }
 
 
@@ -161,8 +177,7 @@ namespace Gecode { namespace Int { namespace Element {
 
     /// Telling data structure to variables: returns true if at fixpoint
     template <class ViewA, class ViewB> 
-    ExecStatus tell(Space*,ViewA,ViewB) const;
-    bool failed(void) const;
+    ExecStatus tell(Space*,ViewA,ViewB);
 
     size_t size(void) const;
     static void operator delete(void* p,size_t);
@@ -191,6 +206,7 @@ namespace Gecode { namespace Int { namespace Element {
   template <class ViewA>
   inline void
   IdxValMap::init(int* a, ViewA ix) {
+    // The first element in iv[0] is used as sentinel
     // Enter information sorted by idx
     IdxValLink* by_idx = &iv[1];
     {
@@ -209,67 +225,66 @@ namespace Gecode { namespace Int { namespace Element {
       by_val[i] = &iv[i+1];
     ByVal lt;
     Support::quicksort<IdxValLink*>(by_val,size,lt);
-    // Create idx links
+    // Create idx and val links
     for (int i = size-1; i--; ) {
-      by_idx[i+1].idx_prev  = by_idx+i;
-      by_idx[i].idx_next    = by_idx+i+1;
-      by_val[i+1]->val_prev = by_val[i];
-      by_val[i]->val_next   = by_val[i+1];
+      by_idx[i].idx_next  = by_idx+i+1;
+      by_val[i]->val_next = by_val[i+1];
     }
-    // Link to sentinel element: iv[0]
-    by_idx[0].idx_prev       = &iv[0];
-    by_idx[size-1].idx_next  = &iv[0];
-    by_val[0]->val_prev      = &iv[0];
-    by_val[size-1]->val_next = &iv[0];
-    iv[0].idx_prev = &by_idx[size-1];
+    by_idx[size-1].idx_next  = NULL;
+    by_val[size-1]->val_next = NULL;
+    // Set up sentinel element: iv[0]
     iv[0].idx_next = &by_idx[0];
-    iv[0].val_prev = by_val[size-1];
     iv[0].val_next = by_val[0];
   }
 
   template <class ViewA>
   forceinline void
   IdxValMap::prune_idx(ViewA x0) {
-    IdxValLink*       l = iv[0].idx_next;
+    IdxValLink* p = &iv[0];
+    IdxValLink* l = p->idx_next;
     ViewRanges<ViewA> i(x0);
-    while (i() && (l != &iv[0])) {
+    while (i() && (l != NULL)) {
+      assert(!l->marked());
       if (l->idx < i.min()) {
-	l->unlink(); l = l->idx_next;
+	l->mark(); l=l->idx_next; p->idx_next=l;
       } else if (l->idx > i.max()) {
 	++i;
       } else {
-	l = l->idx_next;
+	p=l; l=l->idx_next;
       }
     }
-    while (l != &iv[0]) { l->unlink(); l = l->idx_next; }
+    p->idx_next = NULL;
+    while (l != NULL) { l->mark(); l=l->idx_next; }
   }
 
   template <class ViewB>
   forceinline void
   IdxValMap::prune_val(ViewB x1) {
-    IdxValLink*       l = iv[0].val_next;
+    IdxValLink* p = &iv[0];
+    IdxValLink* l = p->val_next;
     ViewRanges<ViewB> v(x1);
-    while (v() && (l != &iv[0])) {
-      if (l->val < v.min()) {
-	l->unlink(); l = l->val_next;
+    while (v() && (l != NULL)) {
+      if (l->marked()) {
+	l=l->val_next; p->val_next=l;
+      } else if (l->val < v.min()) {
+	l->mark(); l=l->val_next; p->val_next=l;
       } else if (l->val > v.max()) {
 	++v;
       } else {
-	l = l->val_next;
+	p=l; l=l->val_next;
       }
     }
-    while (l != &iv[0]) { l->unlink(); l = l->val_next; }
-  }
-
-  forceinline bool
-  IdxValMap::failed(void) const {
-    return iv[0].val_next == &iv[0];
+    p->val_next = NULL;
+    while (l != NULL) { l->mark(); l=l->val_next; }
   }
 
   template <class ViewA, class ViewB>
   forceinline ExecStatus
-  IdxValMap::tell(Space* home, ViewA x0, ViewB x1) const {
-    IterIdx i(iv[0]); Iter::Values::ToRanges<IterIdx> ri(i);
+  IdxValMap::tell(Space* home, ViewA x0, ViewB x1) {
+    IterIdx i(iv[0]); 
+    if (!i())
+      return ES_FAILED;
+    Iter::Values::ToRanges<IterIdx> ri(i);
     x0.narrow(home,ri);
     IterVal v(iv[0]); Iter::Values::ToRanges<IterVal> rv(v);
     ExecStatus es = x1.modified() ? ES_NOFIX : ES_FIX;
@@ -367,10 +382,9 @@ namespace Gecode { namespace Int { namespace Element {
     }
     ivm->prune_val(x1);
 
-    if (ivm->failed())
-      return ES_FAILED;
-
     ExecStatus es = ivm->tell(home,x0,x1);
+    if (es == ES_FAILED)
+      return ES_FAILED;
 
     return (x0.assigned() || x1.assigned()) ? ES_SUBSUMED : es;
   }

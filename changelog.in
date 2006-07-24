@@ -53,6 +53,13 @@ Date:		In the future
 Bla bla.
 
 [ENTRY]
+Module: int
+What: 	performance
+Rank: 	minor
+[DESCRIPTION]
+Cut memory requirements for element (for integer arrays) by half.
+
+[ENTRY]
 Module: example
 What: 	new
 Rank: 	minor
