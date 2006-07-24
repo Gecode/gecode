@@ -57,6 +57,15 @@ Module: int
 What: 	performance
 Rank: 	minor
 [DESCRIPTION]
+Improve performance of domain-consistent distinct (by providing
+special ternary version). Can reduce runtime by 10-20% for some
+examples.
+
+[ENTRY]
+Module: int
+What: 	performance
+Rank: 	minor
+[DESCRIPTION]
 Cut memory requirements for element (for integer arrays) by half.
 
 [ENTRY]

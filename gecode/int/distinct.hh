@@ -233,10 +233,37 @@ namespace Gecode { namespace Int { namespace Distinct {
     virtual size_t dispose(Space* home);
   };
 
+  /**
+   * \brief Ternary domain-consistent distinct propagator
+   *
+   * Requires \code #include "gecode/int/distinct.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class View>
+  class TerDom : public TernaryPropagator<View,PC_INT_DOM> {
+  protected:
+    using TernaryPropagator<View,PC_INT_DOM>::x0;
+    using TernaryPropagator<View,PC_INT_DOM>::x1;
+    using TernaryPropagator<View,PC_INT_DOM>::x2;
+
+    /// Constructor for cloning \a p
+    TerDom(Space* home, bool share, TerDom<View>& p);
+    /// Constructor for posting
+    TerDom(Space* home, View x0, View x1, View x2);
+  public:
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Post propagator for views \a x
+    static  ExecStatus post(Space* home, View x0, View x1, View x2);
+  };
+
 }}}
 
 #include "gecode/int/distinct/val.icc"
 #include "gecode/int/distinct/bnd.icc"
+#include "gecode/int/distinct/ter-dom.icc"
 #include "gecode/int/distinct/dom.icc"
 
 #endif

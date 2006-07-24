@@ -179,7 +179,7 @@ INTHDR0 = \
 	cumulatives/val.icc \
 	distinct/bilink.icc distinct/bnd.icc distinct/combptr.icc \
 	distinct/dom.icc distinct/edge.icc distinct/node.icc \
-	distinct/val.icc \
+	distinct/val.icc distinct/ter-dom.icc \
 	dom/range.icc dom/spec.icc \
 	element/int.icc element/view.icc \
 	gcc/bnd.icc gcc/dom.icc gcc/gccbndsup.icc gcc/graphsup.icc \

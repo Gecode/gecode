@@ -6,8 +6,8 @@
  *     Mikael Lagerkvist, 2006
  *
  *  Last modified:
- *     $Date: 2006-06-08 16:07:07 +0200 (tor, 08 jun 2006) $ by $Author: tack $
- *     $Revision: 3278 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:

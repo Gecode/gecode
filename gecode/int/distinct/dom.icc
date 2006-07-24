@@ -490,8 +490,9 @@ namespace Gecode { namespace Int { namespace Distinct {
 	view[i] = view[--n_view];
       } else {
 	for (Edge<View>* e = view[i]->val_edges(); e!=NULL; e = e->next_edge())
-	  if (!e->used(view[i]))
+	  if (!e->used(view[i])) {
 	    view[i]->view().nq(home,e->val(view[i])->val());
+	  }
       }
   }
 
@@ -648,7 +649,9 @@ namespace Gecode { namespace Int { namespace Distinct {
   Dom<View>::post(Space* home, ViewArray<View>& x) {
     if (x.size() == 2)
       return Rel::Nq<View>::post(home,x[0],x[1]);
-    if (x.size() > 2) {
+    if (x.size() == 3)
+      return TerDom<View>::post(home,x[0],x[1],x[2]);
+    if (x.size() > 3) {
       // Do bounds propagation to make view-value graph smaller
       if (prop_bnd<View>(home,x) == ES_FAILED)
       	return ES_FAILED;
@@ -707,6 +710,10 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     if (x.size() == 2) {
       GECODE_ES_CHECK(Rel::Nq<View>::post(home,x[0],x[1]));
+      return ES_SUBSUMED;
+    }
+    if (x.size() == 3) {
+      GECODE_ES_CHECK(TerDom<View>::post(home,x[0],x[1],x[2]));
       return ES_SUBSUMED;
     }
 
