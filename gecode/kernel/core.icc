@@ -217,6 +217,8 @@ namespace Gecode {
     //@{
     /// Return next modified variable and reset (during processing)
     Variable* next(void);
+    void next(Variable*);
+    Variable* next_simple(void);
     /// Return current modification event of variable 
     ModEvent modevent(void) const;
     /// Set modification event to \a me
@@ -1188,6 +1190,19 @@ namespace Gecode {
   }
 
   template <VarTypeId VTI, PropCond PC>
+  forceinline Variable<VTI,PC>*
+  Variable<VTI,PC>::next_simple(void) {
+    Variable<VTI,PC>* n = _next;
+    return n;
+  }
+
+  template <VarTypeId VTI, PropCond PC>
+  forceinline void
+  Variable<VTI,PC>::next(Variable<VTI,PC>* x) {
+    _next = x;
+  }
+
+  template <VarTypeId VTI, PropCond PC>
   forceinline bool
   Variable<VTI,PC>::copied(void) const {
     return _next != reinterpret_cast<Variable<VTI,PC>*>(1);
@@ -1585,6 +1600,45 @@ namespace Gecode {
   void
   VarTypeProcessor<VTI,PC>::process(Space* home, VarBase* vb) {
     Variable<VTI,PC>* x = static_cast<Variable<VTI,PC>*>(vb);
+
+    Variable<VTI,PC>* me2var[ME_GEN_MAX+1];
+    for (int i=ME_GEN_MAX+1; i--; )
+      me2var[i] = NULL;
+
+    do {
+      ModEvent me = x->modevent();
+      Variable<VTI,PC>* y = x->next_simple();
+      x->next(me2var[me]); me2var[me]=x;
+      x=y;
+    } while (x != NULL);
+    
+    for (x=me2var[ME_GEN_ASSIGNED]; x != NULL; x=x->next()) {
+      // Entries in index structure are disabled. However they
+      // must still work for cloning (idx[0]) and degree (idx[PC+1])
+      Propagator** b = x->idx[0];    x->idx[0] = NULL;
+      Propagator** p = x->idx[PC+1]; x->idx[PC+1] = NULL;
+      // Information needed to release the dependency array
+      unsigned int n = x->free() + (p-b);
+      Propagator** s = p-n;
+      while (p-- > b)
+	home->process(VTI,*p);
+      home->reuse(s,n*sizeof(Propagator*));
+    }
+
+    for (ModEvent me = ME_GEN_ASSIGNED+1; me<=ME_GEN_MAX; me++) {
+      ModEvent* mec = &home->vtd[VTI].mec[me][0];
+      for (x=me2var[me]; x != NULL; x=x->next()) {
+	PropCond* pcr = &home->vtd[VTI].pcr[me][0];
+	do {
+	  Propagator** b = x->idx[*pcr]; pcr++;
+	  Propagator** p = x->idx[*pcr]; pcr++;
+	  while (p-- > b)
+	    home->process(VTI,*p,mec);
+	} while (*pcr >= 0);
+      }
+    }
+    
+    /*
     do {
       ModEvent me = x->modevent();
       if (me != ME_GEN_ASSIGNED) {
@@ -1610,6 +1664,7 @@ namespace Gecode {
       }
       x = x->next();
     } while (x != NULL);
+    */
   }
 
 

@@ -98,7 +98,7 @@ public:
 
 int main(int argc, char** argv){
   Options opt("All-interval Series");
-  opt.size = 12;
+  opt.size = 1000;
   opt.icl  = ICL_BND;
   opt.parse(argc, argv);
   if (opt.size < 2) {
