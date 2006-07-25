@@ -102,14 +102,14 @@ namespace Gecode {
      * \brief Base-class for %Stop-object
      * \ingroup TaskIntSearchStop
      */
-    class Stop {
+    class GECODE_SEARCH_EXPORT Stop {
     public:
       /// Default constructor
       Stop(void);
       /// Stop search, if returns true (can be based on statistics \a s)
       virtual bool stop(const Statistics& s) = 0;
       /// Destructor
-      GECODE_SEARCH_EXPORT virtual ~Stop(void);
+      virtual ~Stop(void);
     };
 
     /**
@@ -117,7 +117,7 @@ namespace Gecode {
      *
      * \ingroup TaskIntSearchStop
      */
-    class MemoryStop : public Stop {
+    class GECODE_SEARCH_EXPORT MemoryStop : public Stop {
     protected:
       /// Size limit
       size_t l;
@@ -129,7 +129,7 @@ namespace Gecode {
       /// Set current limit to \a l (in bytes)
       void limit(size_t l);
       /// Return true if memory limit is exceeded 
-      GECODE_SEARCH_EXPORT virtual bool stop(const Statistics& s);
+      virtual bool stop(const Statistics& s);
     };
 
     /**
@@ -140,7 +140,7 @@ namespace Gecode {
      * number since the last stop!
      * \ingroup TaskIntSearchStop
      */
-    class FailStop : public Stop {
+    class GECODE_SEARCH_EXPORT FailStop : public Stop {
     protected:
       /// Failure limit
       unsigned long int l;
@@ -152,14 +152,14 @@ namespace Gecode {
       /// Set current limit to \a l failures
       void limit(unsigned long int l);
       /// Return true if failure limit is exceeded 
-      GECODE_SEARCH_EXPORT virtual bool stop(const Statistics& s);
+      virtual bool stop(const Statistics& s);
     };
 
     /**
      * \brief %Stop-object based on time
      * \ingroup TaskIntSearchStop
      */
-    class TimeStop : public Stop {
+    class GECODE_SEARCH_EXPORT TimeStop : public Stop {
     protected:
       /// Clock when execution should stop
       clock_t s;
@@ -175,7 +175,7 @@ namespace Gecode {
       /// Reset time to zero
       void reset(void);
       /// Return true if time limit is exceeded 
-      GECODE_SEARCH_EXPORT virtual bool stop(const Statistics& s);
+      virtual bool stop(const Statistics& s);
     };
 
 
