@@ -94,6 +94,7 @@ namespace Gecode { namespace Search {
 	    d = 1;
 	  } else {
 	    c = NULL;
+	    d++;
 	  }
 	  const BranchingDesc* desc = ds.push(cur,c);
 	  EngineCtrl::push(c,desc);
