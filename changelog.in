@@ -48,9 +48,17 @@
 
 [RELEASE]
 Version:	1.2.2
-Date:		In the future
+Date:		2006-07-25
 [DESCRIPTION]
-Bla bla.
+This release switches recomputation back on...
+
+[ENTRY]
+Module: search
+What: 	bug
+Rank: 	major
+[DESCRIPTION]
+With the changes to search in Gecode 1.2.1 recomputation was
+actually almost switched off...
 
 [ENTRY]
 Module: int
