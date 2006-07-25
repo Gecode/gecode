@@ -360,7 +360,7 @@ INTEXAMPLESRC0 = \
 	money ortho-latin packing \
 	partition photo queens \
 	sudoku picture-puzzle  \
-	crowded-chess black-hole \
+	crowded-chess \
 	sports-league all-interval all-interval-sort langfordnum \
 	warehouses \
 	stress-domain stress-exec stress-search baseline \

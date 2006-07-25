@@ -98,13 +98,6 @@ Rank: 	minor
 [DESCRIPTION]
 Added an example for solving Peacable co-existing armies of %Queens.
 
-[ENTRY]
-Module: example
-What: 	new
-Rank: 	minor
-[DESCRIPTION]
-Added an example for solving the Black Hole patience.
-
 
 
 [RELEASE]
