@@ -28,6 +28,10 @@ namespace Gecode { namespace Search {
   forceinline
   Stop::Stop(void) {}
 
+  forceinline
+  Stop::~Stop(void) {}
+
+
 
   /*
    * Stopping for memory limit

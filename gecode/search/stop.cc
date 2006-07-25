@@ -24,13 +24,6 @@
 namespace Gecode { namespace Search {
 
   /*
-   * Base class
-   *
-   */
-  Stop::~Stop(void) {}
-
-
-  /*
    * Stopping for memory limit
    *
    */
