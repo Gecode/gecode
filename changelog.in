@@ -50,7 +50,16 @@
 Version:	1.2.2
 Date:		2006-07-25
 [DESCRIPTION]
-This release switches recomputation back on...
+This release switches recomputation back on and removes some
+experimental code that had sneaked into the system...
+
+[ENTRY]
+Module: kernel
+What: 	performance
+Rank: 	major
+[DESCRIPTION]
+Some experimental code had sneaked into the release, slowing down
+the system by more than 10%...
 
 [ENTRY]
 Module: search
