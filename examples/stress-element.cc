@@ -20,7 +20,6 @@
  */
 
 #include "examples/support.hh"
-#include "gecode/support/random.hh"
 
 static const int n = 15;
 static const int m = 90;
