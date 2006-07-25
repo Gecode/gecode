@@ -364,7 +364,7 @@ INTEXAMPLESRC0 = \
 	sports-league all-interval all-interval-sort langfordnum \
 	warehouses \
 	stress-domain stress-exec stress-search baseline \
-	stress-element
+	stress-element stress-min
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cc)
 INTEXAMPLEOBJ  = $(INTEXAMPLESRC:%.cc=%$(OBJSUFFIX))
 INTEXAMPLESBJ  = $(INTEXAMPLESRC:%.cc=%$(SBJSUFFIX))

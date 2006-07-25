@@ -88,6 +88,13 @@ Module: example
 What: 	new
 Rank: 	minor
 [DESCRIPTION]
+Added stress test for min constraint.
+
+[ENTRY]
+Module: example
+What: 	new
+Rank: 	minor
+[DESCRIPTION]
 Added possibility to stop the search for solutions in examples based
 on the time taken, the number of fails, or both.
 
