@@ -30,7 +30,7 @@ namespace Gecode {
     forceinline
     DfsEngine::DfsEngine(unsigned int c_d0, unsigned int a_d0,
 			 Stop* st, size_t sz)
-      : EngineCtrl(st,sz), ds(a_d0), cur(NULL), c_d(c_d0), d(0) {}
+      : EngineCtrl(st,sz), rcs(a_d0), cur(NULL), c_d(c_d0), d(0) {}
 
   
     forceinline void
@@ -41,7 +41,7 @@ namespace Gecode {
     forceinline void
     DfsEngine::reset(Space* s) {
       delete cur;
-      ds.reset();
+      rcs.reset();
       cur = s;
       d   = 0;
       EngineCtrl::reset(s);
@@ -49,7 +49,7 @@ namespace Gecode {
 
     forceinline size_t
     DfsEngine::stacksize(void) const {
-      return ds.size();
+      return rcs.stacksize();
     }
 
     forceinline Space*
@@ -84,7 +84,7 @@ namespace Gecode {
 		c = NULL;
 		d++;
 	      }
-	      const BranchingDesc* desc = ds.push(cur,c);
+	      const BranchingDesc* desc = rcs.push(cur,c);
 	      EngineCtrl::push(c,desc);
 	      commit++;
 	      cur->commit(desc,0);
@@ -93,9 +93,9 @@ namespace Gecode {
 	  default: GECODE_NEVER;
 	  }
 	}
-	if (!ds.next(*this))
+	if (!rcs.next(*this))
 	  return NULL;
-	cur = ds.recompute(d,*this);
+	cur = rcs.recompute(d,*this);
 	EngineCtrl::current(cur);
       }
       return NULL;
@@ -104,7 +104,7 @@ namespace Gecode {
     forceinline
     DfsEngine::~DfsEngine(void) {
       delete cur;
-      ds.reset();
+      rcs.reset();
     }
 
   }

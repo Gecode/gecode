@@ -54,15 +54,15 @@ namespace Gecode { namespace Search {
 	return ES_SOLUTION;
       }
       if (cur == NULL) {
-	if (!ds.next(*this)) {
+	if (!rcs.next(*this)) {
 	  s1 = NULL;
 	  return ES_SOLUTION;
 	}
-	cur = ds.recompute(d,*this);
+	cur = rcs.recompute(d,*this);
 	EngineCtrl::current(cur);
-	if (ds.entries() <= mark) {
+	if (rcs.entries() <= mark) {
 	  // Next space needs to be constrained
-	  mark = ds.entries();
+	  mark = rcs.entries();
 	  d  = 0; // Force copy!
 	  s1 = cur;
 	  s2 = best;
@@ -79,7 +79,7 @@ namespace Gecode { namespace Search {
       case SS_SOLVED:
 	delete best;
 	best = cur;
-	mark = ds.entries();
+	mark = rcs.entries();
 	s1 = best->clone(true,propagate);
 	clone++;
 	cur = NULL;
@@ -96,7 +96,7 @@ namespace Gecode { namespace Search {
 	    c = NULL;
 	    d++;
 	  }
-	  const BranchingDesc* desc = ds.push(cur,c);
+	  const BranchingDesc* desc = rcs.push(cur,c);
 	  EngineCtrl::push(c,desc);
 	  cur->commit(desc,0);
 	  commit++;

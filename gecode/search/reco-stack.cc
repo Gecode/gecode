@@ -25,51 +25,51 @@ namespace Gecode { namespace Search {
 
   Space*
   ReCoStack::recompute(unsigned int& d, EngineCtrl& stat) {
-    assert(!empty());
+    assert(!ds.empty());
     // Recompute space according to path
     // Also say distance to copy (d == 0) requires immediate copying
 
     // Check for LAO
-    if ((top().space() != NULL) && top().rightmost()) {
-      Space* s = top().space();
-      s->commit(top().desc(),top().alt());
-      top().space(NULL);
+    if ((ds.top().space() != NULL) && ds.top().rightmost()) {
+      Space* s = ds.top().space();
+      s->commit(ds.top().desc(),ds.top().alt());
+      ds.top().space(NULL);
       stat.lao(s);
       d = 0;
       stat.commit++;
       return s;
     }
     // General case for recomputation
-    int l = lc();      // Position of last clone
-    int n = entries(); // Number of stack entries
-    d = n - l;         // New distance, if no adaptive recomputation kicks in 
+    int l = lc();         // Position of last clone
+    int n = ds.entries(); // Number of stack entries
+    d = n - l;            // New distance, if no adaptive recomputation
 
-    stat.commit += d;  // Number of commit operations to be performed
+    stat.commit += d;     // Number of commit operations to be performed
     stat.clone++;
-    Space* s = operator[](l).space()->clone(true,stat.propagate);
+    Space* s = ds[l].space()->clone(true,stat.propagate);
 
     if (d < a_d) {
       for (int i=l; i<n; i++)
-	s->commit(operator[](i).desc(),operator[](i).alt());
+	commit(s,i);
     } else {
       int m = l + (d >> 1); // Middle between copy and top
       int i = l;            // To iterate over all entries
       // Recompute up to middle
       for (; i<m; i++ )
-	s->commit(operator[](i).desc(),operator[](i).alt());
+	commit(s,i);
       // Skip over all rightmost branches
-      for (; (i<n) && operator[](i).rightmost(); i++)
-	s->commit(operator[](i).desc(),operator[](i).alt());
+      for (; (i<n) && ds[i].rightmost(); i++)
+	commit(s,i);
       // Is there any point to make a copy?
       if (i<n-1) {
 	stat.clone++;
-	operator[](i).space(s->clone(true,stat.propagate));
-	stat.adapt(operator[](i).space());
+	ds[i].space(s->clone(true,stat.propagate));
+	stat.adapt(ds[i].space());
 	d = n-i;
       }
       // Finally do the remaining commits
       for (; i<n; i++)
-	s->commit(operator[](i).desc(),operator[](i).alt());
+	commit(s,i);
     }
     return s;
   }

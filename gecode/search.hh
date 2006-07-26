@@ -266,8 +266,10 @@ namespace Gecode {
      * clone is created.
      *
      */
-    class ReCoStack : public Support::DynamicStack<ReCoNode> {
+    class ReCoStack {
     private:
+      /// Stack to store node information
+      Support::DynamicStack<ReCoNode> ds;
       /// Adaptive recomputation distance
       const unsigned int a_d;
     public:
@@ -279,9 +281,15 @@ namespace Gecode {
       bool next(EngineCtrl& s);
       /// Return position on stack of last copy
       int lc(void) const;
+      /// Commit space \a s as described by stack entry at position \a i
+      void commit(Space* s, int i) const;
       /// Recompute space according to path with copying distance \a d
       GECODE_SEARCH_EXPORT
       Space* recompute(unsigned int& d, EngineCtrl& s);
+      /// Return number of entries on stack
+      int entries(void) const;
+      /// Return stack size used
+      size_t stacksize(void) const;
       /// Reset stack
       void reset(void);
     };
@@ -293,7 +301,7 @@ namespace Gecode {
     class DfsEngine : public EngineCtrl {
     private:
       /// Recomputation stack of nodes
-      ReCoStack          ds;
+      ReCoStack          rcs;
       /// Current space being explored
       Space*             cur;
       /// Copying recomputation distance
@@ -518,7 +526,7 @@ namespace Gecode {
     class BabEngine : public EngineCtrl {
     private:
       /// Recomputation stack of nodes
-      ReCoStack          ds;
+      ReCoStack          rcs;
       /// Current space being explored
       Space*             cur;
       /// Number of entries not yet constrained to be better

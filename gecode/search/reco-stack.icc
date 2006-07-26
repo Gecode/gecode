@@ -76,36 +76,52 @@ namespace Gecode { namespace Search {
   forceinline const BranchingDesc*
   ReCoStack::push(Space* s, Space* c) {
     ReCoNode sn(s,c);
-    Support::DynamicStack<ReCoNode>::push(sn);
+    ds.push(sn);
     return sn.desc();
   }
 
   forceinline bool
   ReCoStack::next(EngineCtrl& stat) {
     // Generate path for next node and return whether node exists.
-    while (!empty())
-      if (top().rightmost()) {
-	stat.pop(top().space(),top().desc());
-	pop().dispose();
+    while (!ds.empty())
+      if (ds.top().rightmost()) {
+	stat.pop(ds.top().space(),ds.top().desc());
+	ds.pop().dispose();
       } else {
-	top().next();
+	ds.top().next();
 	return true;
       }
     return false;
   }
 
+  forceinline void
+  ReCoStack::commit(Space* s, int i) const {
+    const ReCoNode& n = ds[i];
+    s->commit(n.desc(),n.alt());
+  }
+
   forceinline int
   ReCoStack::lc(void) const {
-    int l = entries()-1;
-    while (operator[](l).space() == NULL)
+    int l = ds.entries()-1;
+    while (ds[l].space() == NULL)
       l--;
     return l;
   }
 
+  forceinline int
+  ReCoStack::entries(void) const {
+    return ds.entries();
+  }
+
+  forceinline size_t
+  ReCoStack::stacksize(void) const {
+    return ds.size();
+  }
+
   inline void
   ReCoStack::reset(void) {
-    while (!empty())
-      pop().dispose();
+    while (!ds.empty())
+      ds.pop().dispose();
   }
 
 }}
