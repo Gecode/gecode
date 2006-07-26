@@ -277,10 +277,11 @@ namespace Gecode {
       const BranchingDesc* push(Space* s, Space* c);
       /// Generate path for next node and return whether a next node exists
       bool next(EngineCtrl& s);
+      /// Return position on stack of last copy
+      int lc(void) const;
       /// Recompute space according to path with copying distance \a d
       GECODE_SEARCH_EXPORT
-      Space* recompute(unsigned int& d, 
-		       EngineCtrl& s);
+      Space* recompute(unsigned int& d, EngineCtrl& s);
       /// Reset stack
       void reset(void);
     };
@@ -521,7 +522,7 @@ namespace Gecode {
       /// Current space being explored
       Space*             cur;
       /// Number of entries not yet constrained to be better
-      unsigned int       mark;
+      int                mark;
       /// Best solution found so far
       Space*             best;
       /// Copying recomputation distance
@@ -529,6 +530,11 @@ namespace Gecode {
       /// Distance until next clone
       unsigned int       d;
     public:
+      /// Status of the explore function
+      enum ExploreStatus {
+	ES_SOLUTION,
+	ES_CONSTRAIN
+      };
       /**
        * \brief Initialize engine
        * \param c_d minimal recomputation distance
@@ -542,15 +548,16 @@ namespace Gecode {
       /**
        * \brief %Search for next better solution
        *
-       * If \c true is returned, a next better solution has been found.
+       * If \c ES_SOLUTION is returned, a next better solution has been found.
        * This solution is available from \a s1.
        *
-       * If \c false is returned, the engine requires that the space \a s1
-       * is constrained to be better by the so-far best solution \a s2.
+       * If \c ES_CONSTRAIN is returned, the engine requires that the 
+       * space \a s1 is constrained to be better by the so-far best 
+       * solution \a s2.
        *
        */
       GECODE_SEARCH_EXPORT 
-      bool explore(Space*& s1, Space*& s2);
+      ExploreStatus explore(Space*& s1, Space*& s2);
       /// Return stack size used by engine
       size_t stacksize(void) const;
       /// Destructor

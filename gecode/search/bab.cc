@@ -34,7 +34,7 @@ namespace Gecode { namespace Search {
    *
    */
 
-  bool
+  BabEngine::ExploreStatus
   BabEngine::explore(Space*& s1, Space*& s2) {
     start();
     /*
@@ -42,21 +42,21 @@ namespace Gecode { namespace Search {
      * has been returned) or set to a space that has been
      * requested to be constrained.
      * When a solution is found, the solution is returned in s1
-     * and true is returned.
+     * and ES_SOLUTION is returned.
      * When a space is requested to be constrained, the space
      * to be constrained is returned in s1 and s2 refers to the
-     * currently best solution. In this case false is returned.
+     * currently best solution. In this case ES_CONSTRAIN is returned.
      *
      */
     while (true) {
       if (stop(stacksize())) {
 	s1 = NULL;
-	return true;
+	return ES_SOLUTION;
       }
       if (cur == NULL) {
 	if (!ds.next(*this)) {
 	  s1 = NULL;
-	  return true;
+	  return ES_SOLUTION;
 	}
 	cur = ds.recompute(d,*this);
 	EngineCtrl::current(cur);
@@ -66,7 +66,7 @@ namespace Gecode { namespace Search {
 	  d  = 0; // Force copy!
 	  s1 = cur;
 	  s2 = best;
-	  return false;
+	  return ES_CONSTRAIN;
 	}
       }
       switch (cur->status(propagate)) {
@@ -84,7 +84,7 @@ namespace Gecode { namespace Search {
 	clone++;
 	cur = NULL;
 	EngineCtrl::current(NULL);
-	return true;
+	return ES_SOLUTION;
       case SS_BRANCH:
 	{
 	  Space* c;
@@ -102,10 +102,11 @@ namespace Gecode { namespace Search {
 	  commit++;
 	  break;
 	}
-      default: GECODE_NEVER;
+      default: 
+	GECODE_NEVER;
       }
     }
-    return true;
+    return ES_SOLUTION;
   }
 
 

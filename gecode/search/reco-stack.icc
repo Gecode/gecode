@@ -94,6 +94,14 @@ namespace Gecode { namespace Search {
     return false;
   }
 
+  forceinline int
+  ReCoStack::lc(void) const {
+    int l = entries()-1;
+    while (operator[](l).space() == NULL)
+      l--;
+    return l;
+  }
+
   inline void
   ReCoStack::reset(void) {
     while (!empty())

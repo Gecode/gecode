@@ -36,16 +36,16 @@ namespace Gecode { namespace Support {
   class DynamicStack {
   private:
     /// Current size of the stack
-    unsigned int limit;
+    int limit;
     /// Top of stack
-    unsigned int tos;
+    int tos;
     /// Elements on stack
     T*  stack;
     /// Resize stack (increase size)
     void resize(void);
   public:
     /// Initialize stack with \a n elements
-    DynamicStack(unsigned int n=64);
+    DynamicStack(int n=64);
     /// Release memory
     ~DynamicStack(void);
 
@@ -60,7 +60,7 @@ namespace Gecode { namespace Support {
 
 
     /// Return number of entries currently on stack
-    unsigned int entries(void) const;
+    int entries(void) const;
     /** \brief Return entry at position \a i
      *
      * Position 0 corresponds to the element first pushed, 
@@ -84,14 +84,14 @@ namespace Gecode { namespace Support {
   template <class T>
   void
   DynamicStack<T>::resize(void) {
-    unsigned int nl = (limit * 3) / 2;
+    int nl = (limit * 3) / 2;
     stack = Memory::brealloc<T>(stack,limit,nl);
     limit = nl;
   }
 
   template <class T>
   forceinline
-  DynamicStack<T>::DynamicStack(unsigned int n)
+  DynamicStack<T>::DynamicStack(int n)
     : limit(n), tos(0), stack(Memory::bmalloc<T>(n)) {}
 
   template <class T>
@@ -127,7 +127,7 @@ namespace Gecode { namespace Support {
   }
 
   template <class T>
-  forceinline unsigned int
+  forceinline int
   DynamicStack<T>::entries(void) const {
     return tos;
   }

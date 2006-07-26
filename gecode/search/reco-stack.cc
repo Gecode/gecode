@@ -40,41 +40,35 @@ namespace Gecode { namespace Search {
       return s;
     }
     // General case for recomputation
-    unsigned int last = entries()-1;
+    int l = lc();      // Position of last clone
+    int n = entries(); // Number of stack entries
+    d = n - l;         // New distance, if no adaptive recomputation kicks in 
 
-    while (!operator[](last).space())
-      last--;
-
+    stat.commit += d;  // Number of commit operations to be performed
     stat.clone++;
-    Space* s = operator[](last).space()->clone(true,stat.propagate);
+    Space* s = operator[](l).space()->clone(true,stat.propagate);
 
-    unsigned int dist = entries() - last;
-    stat.commit += dist;
-    if (dist < a_d) {
-      for (unsigned int i = last; i < entries(); i++)
+    if (d < a_d) {
+      for (int i=l; i<n; i++)
 	s->commit(operator[](i).desc(),operator[](i).alt());
-      d = dist;
     } else {
-      unsigned int mid  = last + (dist >> 1);
-      unsigned int i    = last;
-
+      int m = l + (d >> 1); // Middle between copy and top
+      int i = l;            // To iterate over all entries
       // Recompute up to middle
-      for (; i < mid; i++ )
+      for (; i<m; i++ )
 	s->commit(operator[](i).desc(),operator[](i).alt());
       // Skip over all rightmost branches
-      for (; (i < entries()) && operator[](i).rightmost(); i++)
+      for (; (i<n) && operator[](i).rightmost(); i++)
 	s->commit(operator[](i).desc(),operator[](i).alt());
       // Is there any point to make a copy?
-      if (i < entries()-1) {
+      if (i<n-1) {
 	stat.clone++;
 	operator[](i).space(s->clone(true,stat.propagate));
 	stat.adapt(operator[](i).space());
-	d = entries()-i;
-      } else {
-	d = entries()-last;
+	d = n-i;
       }
       // Finally do the remaining commits
-      for (; i < entries(); i++ )
+      for (; i<n; i++)
 	s->commit(operator[](i).desc(),operator[](i).alt());
     }
     return s;
