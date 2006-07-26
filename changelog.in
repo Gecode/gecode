@@ -47,6 +47,25 @@
 #
 
 [RELEASE]
+Version:	1.2.3
+Date:		Unknown
+[DESCRIPTION]
+Jabba Jabba
+
+[ENTRY]
+Module: kernel
+What: 	bug
+Rank: 	minor
+[DESCRIPTION]
+Now commits can be interleaved with adding new constraints during
+batch recomputation. The bug could not be observed (unless you
+did some very fancy search engines yourself) and one could actually
+see it as an extension.
+
+
+
+
+[RELEASE]
 Version:	1.2.2
 Date:		2006-07-25
 [DESCRIPTION]

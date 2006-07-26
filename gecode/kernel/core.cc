@@ -45,7 +45,8 @@ namespace Gecode {
     // Initialize actor and branching links
     a_actors.init();
     a_actors.init_delete();
-    b_fst = static_cast<Branching*>(&a_actors);
+    b_status = static_cast<Branching*>(&a_actors);
+    b_commit = static_cast<Branching*>(&a_actors);
   }
 
 
@@ -218,21 +219,26 @@ namespace Gecode {
   Space::commit(const BranchingDesc* d, unsigned int a) {
     if (failed())
       throw SpaceFailed("Space::commit");
-    // Invariant for committing with BranchingDescs:
-    // * completeness: if there is more than one branching,
-    //                 before committing to a description for the
-    //                 second distributor, you have to commit to as
-    //                 many descriptions of the first to make it disappear
-    // This might still be incorrect if propagators create new branchings.
-    while (d->id != b_fst->id) {
-      Branching* b = b_fst;
-      b_fst = static_cast<Branching*>(b_fst->next());
-      b->unlink();
-      b->destruct(this);
+    /*
+     * This relies on the fact that branching descriptions must be
+     * used in the order of creation. If a branching description
+     * with an id different from the id of the current branching
+     * is used, it is clear that the current branching can be discarded
+     * as all of its descriptions must have been used already.
+     *
+     */
+    while ((b_commit != &a_actors) && (d->id != b_commit->id)) {
+      Branching* b = b_commit;
+      b_commit = static_cast<Branching*>(b_commit->next());
+      if (b == b_status)
+	b_status = b_commit;
+      b->unlink(); b->destruct(this);
     }
+    if (b_commit == &a_actors)
+      throw SpaceNoBranching();
     if (a >= d->alternatives())
       throw SpaceIllegalAlternative();
-    if (b_fst->commit(this,d,a) == ES_FAILED)
+    if (b_commit->commit(this,d,a) == ES_FAILED)
       fail();
   }
 
@@ -288,11 +294,16 @@ namespace Gecode {
       // Link last actor
       p->next_delete(&a_actors); a_actors.prev_delete(p);
     }
-    // Setup branching pointer
-    if (s.b_fst == &s.a_actors) {
-      b_fst = static_cast<Branching*>(&a_actors);
+    // Setup branching pointers
+    if (s.b_status == &s.a_actors) {
+      b_status = static_cast<Branching*>(&a_actors);
     } else {
-      b_fst = static_cast<Branching*>(s.b_fst->prev());
+      b_status = static_cast<Branching*>(s.b_status->prev());
+    }
+    if (s.b_commit == &s.a_actors) {
+      b_commit = static_cast<Branching*>(&a_actors);
+    } else {
+      b_commit = static_cast<Branching*>(s.b_commit->prev());
     }
   }
 
@@ -331,7 +342,7 @@ namespace Gecode {
     if (failed())
       throw SpaceFailed("Space::propagators");
     unsigned int n = 0;
-    for (const ActorLink* a = a_actors.next(); a != b_fst; a = a->next())
+    for (const ActorLink* a = a_actors.next(); a != b_commit; a = a->next())
       n++;
     return n;
   }
@@ -341,7 +352,7 @@ namespace Gecode {
     if (failed())
       throw SpaceFailed("Space::branchings");
     unsigned int n = 0;
-    for (const ActorLink* a = b_fst; a != &a_actors; a = a->next())
+    for (const ActorLink* a = b_status; a != &a_actors; a = a->next())
       n++;
     return n;
   }

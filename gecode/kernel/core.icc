@@ -499,6 +499,7 @@ namespace Gecode {
    * Must be refined by inheritance such that the information stored
    * inside a branching description is sufficient to redo a tell 
    * performed by a particular branching.
+   *
    * \ingroup TaskActor
    */
   class BranchingDesc {
@@ -526,6 +527,11 @@ namespace Gecode {
 
   /**
    * \brief Base-class for branchings
+   *
+   * Note that branchings cannot be created inside a propagator
+   * (no idea why one would like to that anyway). If you do that
+   * the system will explode in a truly interesting way.
+   *
    * \ingroup TaskActor
    */
   class Branching : public Actor {
@@ -639,12 +645,27 @@ namespace Gecode {
      */
     ActorDeleteLink a_actors;
     /**
-     * \brief Points to the first branching
+     * \brief Points to the first branching to be used for status
      *
-     * If equal to actors, no branching does exist. If it is NULL,
-     * the space is failed.
+     * If equal to &a_actors, no branching does exist. 
+     *
+     * If it is NULL, the space is failed.
+     *
      */
-    Branching*      b_fst;
+    Branching*      b_status;
+    /**
+     * \brief Points to the first branching to be used for commit
+     *
+     * Note that \a b_commit can point to an earlier branching
+     * than \a b_status. This reflects the fact that the earlier
+     * branching is already done (that is, status on that branching
+     * returns false) but there might be still branching descriptions
+     * referring to the earlier branching.
+     *
+     * If equal to &a_actors, no branching does exist.
+     *
+     */
+    Branching*      b_commit;
     /// Id of next branching to be created
     unsigned int    branch_id;
 
@@ -786,6 +807,12 @@ namespace Gecode {
      * Committing with branching descriptions must be carried
      * out in the same order as the branch descriptions have been
      * obtained by the member function Space::description().
+     *
+     * It is perfectly okay to add constraints interleaved with
+     * branching descriptions (provided they are in the right order).
+     * However, if propagation is performed by calling the member
+     * function status and then new branching descriptions are
+     * computed, these branching descriptions are different.
      *
      * Committing throws the following exceptions:
      *  - SpaceFailed, if the space is failed.
@@ -1082,7 +1109,7 @@ namespace Gecode {
 
   forceinline const BranchingDesc*
   Space::description(void) const {
-    return b_fst->description(this);
+    return b_status->description(this);
   }
 
   /*
@@ -1100,16 +1127,28 @@ namespace Gecode {
     pn += propagate();
     if (failed())
       return SS_FAILED;
-    // Find the next branching that has still alternatives left
-    while (b_fst != &a_actors) {
-      if (b_fst->status(this))
+    /* 
+     * Find the next branching that has still alternatives left
+     *
+     * It is important to note that branchings reporting to have no more
+     * alternatives left can not be deleted. They can not be deleted
+     * as there might be branching descriptions to be used in commit
+     * that refer to one of these branchings.
+     *
+     * A branching reporting that no more alternatives exist will eventually
+     * be deleted in commit. It will be deleted if the first branching
+     * description is used in commit that does not refer to this branching.
+     * As we insist that branching descriptions are used in order of
+     * creation, all further branching descriptions cannot refer to this
+     * branching.
+     *
+     */
+    while (b_status != &a_actors) {
+      if (b_status->status(this))
 	return SS_BRANCH;
-      Branching* b = b_fst;
-      b_fst = static_cast<Branching*>(b->next());
-      b->unlink();
-      b->destruct(this);
+      b_status = static_cast<Branching*>(b_status->next());
     }
-    // No branching left, space is solved
+    // No branching with alternatives left, space is solved
     return SS_SOLVED;
   }
 
@@ -1263,8 +1302,11 @@ namespace Gecode {
     // Propagators are put at the tail of the link of actors
     b->id = branch_id++;
     // If no branching available, make it the first one
-    if (b_fst == &a_actors)
-      b_fst = b;
+    if (b_status == &a_actors) {
+      b_status = b;
+      if (b_commit == &a_actors) 
+	b_commit = b;
+    }
     a_actors.tail(b);
     a_actors.insert_delete(b,fd);
   }
@@ -1336,12 +1378,12 @@ namespace Gecode {
 
   forceinline void
   Space::fail(void) {
-    b_fst = NULL;
+    b_status = NULL;
   }
 
   forceinline bool
   Space::failed(void) const {
-    return b_fst == NULL;
+    return b_status == NULL;
   }
 
   forceinline bool
