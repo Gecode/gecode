@@ -346,7 +346,7 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Space* home, IntVar x0, IntRelType r, IntVar x1, BoolVar b,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$ x \sim_r c\f$
+  /** \brief Post propagator for \f$(x \sim_r c)\Leftrightarrow b\f$
    *
    * Supports both bounds (\a icl = ICL_BND) and 
    * domain-consistency (\a icl = ICL_DOM, default). 
