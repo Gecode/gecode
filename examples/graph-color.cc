@@ -314,10 +314,13 @@ public:
     for (int i = *c++; i--; c++)
       rel(this, v[*c], IRT_EQ, i);
     while (*c != -1) {
-      IntVarArgs x(*c); c++;
-      for (int i = x.size(); i--; c++)
+      int n = *c;
+      IntVarArgs x(n); c++;
+      for (int i = n; i--; c++)
 	x[i] = v[*c];
       distinct(this, x, opt.icl);
+      if (!opt.naive)
+	rel(this, m, IRT_GQ, n);
     }
     IntVarArgs ma(1);
     ma[0] = m;
