@@ -815,7 +815,6 @@ namespace Gecode {
      * computed, these branching descriptions are different.
      *
      * Committing throws the following exceptions:
-     *  - SpaceFailed, if the space is failed.
      *  - SpaceNoBranching, if the space has no current branching (it is
      *    already solved).
      *  - SpaceIllegalAlternative, if \a a is not smaller than the number

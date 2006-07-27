@@ -58,8 +58,10 @@ What: 	bug
 Rank: 	minor
 [DESCRIPTION]
 Now commits can be interleaved with adding new constraints during
-batch recomputation. The bug could not be observed (unless you
-did some very fancy search engines yourself) and one could actually
+batch recomputation. This also entails that commit does not raise
+an exception when applied to an already failed space (it is
+simply ignored). The bug could not be observed (unless you did
+some very fancy search engines yourself) and one could actually
 see it as an extension.
 
 

@@ -218,7 +218,7 @@ namespace Gecode {
   void
   Space::commit(const BranchingDesc* d, unsigned int a) {
     if (failed())
-      throw SpaceFailed("Space::commit");
+      return;
     /*
      * This relies on the fact that branching descriptions must be
      * used in the order of creation. If a branching description
