@@ -76,7 +76,7 @@ public:
     const int* e = g.e;
     const int* e1 = e++; const int* e2 = e++;
     for (int i = g.n_e; i--; )
-      post(this, v[*e1]+v[*e2] <= 1);
+      bool_and(this, v[*e1],v[*e2],false);
     linear(this, v, IRT_EQ, k);
     branch(this, v, BVAR_NONE, BVAL_MIN);
   }
