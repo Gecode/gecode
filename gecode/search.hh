@@ -205,7 +205,9 @@ namespace Gecode {
       bool stopped(void) const;
       /// New space \a s and branching description \a d get pushed on stack
       void push(const Space* s, const BranchingDesc* d);
-      /// New space \a s is aded for adaptive recomputation
+      /// Space \a s1 is replaced by space \a s2 due to constraining
+      void constrained(const Space* s1, const Space* s2);
+      /// New space \a s is added for adaptive recomputation
       void adapt(const Space* s);
       /// Space \a s and branching description \a d get popped from stack
       void pop(const Space* s, const BranchingDesc* d);
@@ -280,11 +282,19 @@ namespace Gecode {
       /// Generate path for next node and return whether a next node exists
       bool next(EngineCtrl& s);
       /// Return position on stack of last copy
-      int lc(void) const;
+      int lc(Space*& s) const;
+      /// Unwind the stack up to position \a l (after failure)
+      void unwind(int l);
       /// Commit space \a s as described by stack entry at position \a i
       void commit(Space* s, int i) const;
-      /// Recompute space according to path with copying distance \a d
-      GECODE_SEARCH_EXPORT
+      /**
+       * \brief Recompute space according to path with copying distance \a d
+       *
+       * The template parameter \a constrained describes whether the stack
+       * might contain spaces not propagated (from constraining during
+       * branch-and-bound).
+       */
+      template <bool constrained>
       Space* recompute(unsigned int& d, EngineCtrl& s);
       /// Return number of entries on stack
       int entries(void) const;
@@ -524,6 +534,12 @@ namespace Gecode {
      * \brief Implementation of depth-first branch-and-bound search engines
      */
     class BabEngine : public EngineCtrl {
+    public:
+      /// Status of the explore function
+      enum ExploreStatus {
+	ES_SOLUTION,
+	ES_CONSTRAIN
+      };
     private:
       /// Recomputation stack of nodes
       ReCoStack          rcs;
@@ -531,6 +547,8 @@ namespace Gecode {
       Space*             cur;
       /// Number of entries not yet constrained to be better
       int                mark;
+      /// Record which current operation is in progress
+      ExploreStatus      es;
       /// Best solution found so far
       Space*             best;
       /// Copying recomputation distance
@@ -538,11 +556,6 @@ namespace Gecode {
       /// Distance until next clone
       unsigned int       d;
     public:
-      /// Status of the explore function
-      enum ExploreStatus {
-	ES_SOLUTION,
-	ES_CONSTRAIN
-      };
       /**
        * \brief Initialize engine
        * \param c_d minimal recomputation distance

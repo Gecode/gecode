@@ -53,6 +53,19 @@ Date:		Unknown
 Jabba Jabba
 
 [ENTRY]
+Module: search
+What: 	new
+Rank: 	major
+[DESCRIPTION]
+Branch-and-bound search now interleaves recomputation with adding
+bounding constraints. This can prune the search tree much
+earlier: instead of recomputing many nodes from the same copy
+node and then adding a constraint that fails all these nodes, it
+might be possible to already fail the copy node directly. In
+principle, the difference can be exponential, however for
+examples we tried the effect is minor.
+
+[ENTRY]
 Module: kernel
 What: 	bug
 Rank: 	minor

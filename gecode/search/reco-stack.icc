@@ -101,10 +101,11 @@ namespace Gecode { namespace Search {
   }
 
   forceinline int
-  ReCoStack::lc(void) const {
+  ReCoStack::lc(Space*& s) const {
     int l = ds.entries()-1;
     while (ds[l].space() == NULL)
       l--;
+    s = ds[l].space();
     return l;
   }
 
@@ -118,10 +119,99 @@ namespace Gecode { namespace Search {
     return ds.size();
   }
 
+  forceinline void
+  ReCoStack::unwind(int l) {
+    assert((ds[l].space() == NULL) || ds[l].space()->failed());
+    int n = ds.entries();
+    for (int i=l; i<n; i++)
+      ds.pop().dispose();
+    assert(ds.entries() == l);
+  }
+
   inline void
   ReCoStack::reset(void) {
     while (!ds.empty())
       ds.pop().dispose();
+  }
+
+  template <bool constrained>
+  forceinline Space*
+  ReCoStack::recompute(unsigned int& d, EngineCtrl& stat) {
+    assert(!ds.empty());
+    // Recompute space according to path
+    // Also say distance to copy (d == 0) requires immediate copying
+
+    // Check for LAO
+    if ((ds.top().space() != NULL) && ds.top().rightmost()) {
+      Space* s = ds.top().space();
+      s->commit(ds.top().desc(),ds.top().alt());
+      ds.top().space(NULL);
+      stat.lao(s);
+      d = 0;
+      stat.commit++;
+      return s;
+    }
+    // General case for recomputation
+    Space* s;             // Last clone
+    int l = lc(s);        // Position of last clone
+    int n = ds.entries(); // Number of stack entries
+    d = n - l;            // New distance, if no adaptive recomputation
+
+    if (constrained) {
+      // The space on the stack could be failed now as an additional
+      // constraint might have been added.
+      if (s->status(stat.propagate) == SS_FAILED) {
+	// s does not need deletion as it is on the stack (unwind does this)
+	stat.fail++;
+	unwind(l);
+	return NULL;
+      }
+      // It is important to replace the space on the stack with the
+      // copy: a copy might be much smaller due to flushed caches
+      // of propagators
+      Space* c = s->clone(true,stat.propagate);
+      ds[l].space(c);
+      stat.constrained(s,c);
+    } else {
+      s = s->clone(true,stat.propagate);
+    }
+    stat.clone++;
+    
+    if (d < a_d) {
+      // No adaptive recomputation
+      for (int i=l; i<n; i++)
+	commit(s,i);
+    } else {
+      int m = l + (d >> 1); // Middle between copy and top
+      int i = l;            // To iterate over all entries
+      // Recompute up to middle
+      for (; i<m; i++ )
+	commit(s,i);
+      // Skip over all rightmost branches
+      for (; (i<n) && ds[i].rightmost(); i++)
+	commit(s,i);
+      // Is there any point to make a copy?
+      if (i<n-1) {
+	// Again, the space might already propagate to failure
+	if (constrained && s->status(stat.propagate) == SS_FAILED) {
+	  // s must be deleted as it is not on the stack
+	  delete s;
+	  stat.commit += (i-l);
+	  stat.fail++;
+	  unwind(i);
+	  return NULL;
+	}
+	stat.clone++;
+	ds[i].space(s->clone(true,stat.propagate));
+	stat.adapt(ds[i].space());
+	d = n-i;
+      }
+      // Finally do the remaining commits
+      for (; i<n; i++)
+	commit(s,i);
+    }
+    stat.commit += d;
+    return s;
   }
 
 }}

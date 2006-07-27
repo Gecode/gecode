@@ -95,7 +95,7 @@ namespace Gecode {
 	}
 	if (!rcs.next(*this))
 	  return NULL;
-	cur = rcs.recompute(d,*this);
+	cur = rcs.recompute<false>(d,*this);
 	EngineCtrl::current(cur);
       }
       return NULL;

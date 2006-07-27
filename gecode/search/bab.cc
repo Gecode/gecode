@@ -38,36 +38,45 @@ namespace Gecode { namespace Search {
   BabEngine::explore(Space*& s1, Space*& s2) {
     start();
     /*
-     * Upon entry, cur can be either NULL (after a solution
-     * has been returned) or set to a space that has been
-     * requested to be constrained.
-     * When a solution is found, the solution is returned in s1
-     * and ES_SOLUTION is returned.
-     * When a space is requested to be constrained, the space
-     * to be constrained is returned in s1 and s2 refers to the
-     * currently best solution. In this case ES_CONSTRAIN is returned.
+     * Upon entry, cur can be either NULL or set to the initial
+     * space. For the initial case, es is also ES_CONSTRAIN.
      *
+     * Otherwise (that is, cur == NULL), the actions depend on
+     * es. In case es is ES_CONSTRAIN, a space on stack has been
+     * constrained. Whether this is succesful recomputation finds
+     * out. In any case, the stack is not allowed to be moved to
+     * the next node.
+     *
+     * In case es is ES_SOLUTION, the stack must be moved to the next
+     * node and recomputation is to be performed.
      */
     while (true) {
+      assert((es == ES_SOLUTION) || (cur == NULL));
       if (stop(stacksize())) {
 	s1 = NULL;
 	return ES_SOLUTION;
       }
       if (cur == NULL) {
-	if (!rcs.next(*this)) {
-	  s1 = NULL;
-	  return ES_SOLUTION;
+	if (es == ES_CONSTRAIN) {
+	  es = ES_SOLUTION;
+	  goto same;
 	}
-	cur = rcs.recompute(d,*this);
+	do {
+	  if (!rcs.next(*this)) {
+	    s1 = NULL;
+	    return ES_SOLUTION;
+	  }
+	  int l = rcs.lc(s1);
+	  if (l < mark) {
+	    es = ES_CONSTRAIN;
+	    mark = l;
+	    s2 = best;
+	    return ES_CONSTRAIN;
+	  }
+	same:
+	  cur = rcs.recompute<true>(d,*this);
+	} while (cur == NULL);
 	EngineCtrl::current(cur);
-	if (rcs.entries() <= mark) {
-	  // Next space needs to be constrained
-	  mark = rcs.entries();
-	  d  = 0; // Force copy!
-	  s1 = cur;
-	  s2 = best;
-	  return ES_CONSTRAIN;
-	}
       }
       switch (cur->status(propagate)) {
       case SS_FAILED:

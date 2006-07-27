@@ -64,6 +64,14 @@ namespace Gecode { namespace Search {
   }
 
   forceinline void
+  EngineCtrl::constrained(const Space* s1, const Space* s2) {
+    mem_total -= s1->allocated();
+    mem_total += s2->allocated();
+    if (mem_total > memory)
+      memory = mem_total;
+  }
+
+  forceinline void
   EngineCtrl::lao(const Space* s) {
     mem_total -= mem_space + s->allocated();
   }
