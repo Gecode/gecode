@@ -41,4 +41,7 @@
 /* Whether we have mtrace for memory leak debugging*/
 #undef GECODE_HAVE_MTRACE
 
+/* Whether gcc understands visibility attributes */
+#undef GCC_HASCLASSVISIBILITY
+
 // STATISTICS: kernel-other

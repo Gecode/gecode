@@ -49,8 +49,15 @@
 
 #else
 
+#ifdef GCC_HASCLASSVISIBILITY
+
+#define GECODE_KERNEL_EXPORT __attribute__ ((visibility("default")))
+
+#else
+
 #define GECODE_KERNEL_EXPORT
 
+#endif
 #endif
 
 /**

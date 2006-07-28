@@ -62,8 +62,15 @@ namespace Gecode { namespace Set {
 
 #else
 
+#ifdef GCC_HASCLASSVISIBILITY
+
+#define GECODE_SET_EXPORT __attribute__ ((visibility("default")))
+
+#else
+
 #define GECODE_SET_EXPORT
 
+#endif
 #endif
 
 #include "gecode/set/exception.icc"

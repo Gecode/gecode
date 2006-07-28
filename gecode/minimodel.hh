@@ -50,8 +50,15 @@
 
 #else
 
+#ifdef GCC_HASCLASSVISIBILITY
+
+#define GECODE_MINIMODEL_EXPORT __attribute__ ((visibility("default")))
+
+#else
+
 #define GECODE_MINIMODEL_EXPORT
 
+#endif
 #endif
 
 namespace Gecode {

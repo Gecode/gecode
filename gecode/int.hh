@@ -62,8 +62,15 @@ namespace Gecode { namespace Int {
 
 #else
 
+#ifdef GCC_HASCLASSVISIBILITY
+
+#define GECODE_INT_EXPORT __attribute__ ((visibility("default")))
+
+#else
+
 #define GECODE_INT_EXPORT
 
+#endif
 #endif
 
 #include <iostream>

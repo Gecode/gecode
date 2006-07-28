@@ -44,8 +44,15 @@
 
 #else
 
+#ifdef GCC_HASCLASSVISIBILITY
+
+#define GECODE_SEARCH_EXPORT __attribute__ ((visibility("default")))
+
+#else
+
 #define GECODE_SEARCH_EXPORT
 
+#endif
 #endif
 
 #include "gecode/support/dynamic-stack.hh"
