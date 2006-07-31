@@ -69,7 +69,8 @@ namespace Gecode {
    */
   enum VarTypeId {
 #include "gecode/vti.icc"
-    VTI_LAST ///< Maximal variable type identifier plus one
+    VTI_LAST,     ///< Maximal variable type identifier plus one
+    VTI_NOIDX = 0 ///< Used for variables without indexing structure
   };
 
 
@@ -111,10 +112,10 @@ namespace Gecode {
     /**
      * \brief Update copied variables linked from \a x
      *
-     * Returns the number of subscriptions including free slots
-     * found during copying.
+     * The argument \a sub gives the array where subscriptions are 
+     * to be stored.
      */
-    virtual void update(Space* home, VarBase* x, Propagator**&)  = 0;
+    virtual void update(VarBase* x, Propagator**& sub) = 0;
     /// Destructor (not really used)
     GECODE_KERNEL_EXPORT virtual ~VarTypeProcessorBase(void);
   };
@@ -168,10 +169,10 @@ namespace Gecode {
     /**
      * \brief Update copied variables linked from \a x
      *
-     * Returns the number of subscriptions including free slots
-     * found during copying.
+     * The argument \a sub gives the array where subscriptions are 
+     * to be stored.
      */
-    virtual void update(Space* home, VarBase* x, Propagator**&);
+    virtual void update(VarBase* x, Propagator**& sub);
   };
 
   /**
@@ -227,10 +228,10 @@ namespace Gecode {
     /**
      * \brief Update copied variables linked from \a x
      *
-     * Returns the number of subscriptions including free slots
-     * found during copying.
+     * The argument \a sub gives the array where subscriptions are 
+     * to be stored.
      */
-    void update(Space* home, Variable* x, Propagator**&);
+    void update(Variable* x, Propagator**& sub);
 
     /// \name Processing modified variables
     //@{
@@ -638,6 +639,8 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT static VarTypeData vtd[VTI_LAST];
     /// Array of all modified or copied variables (entry points)
     VarBase* vars[VTI_LAST];
+    /// To keep variables during copying without index structure
+    VarBase* vars_noidx;
     /// Process all modified variables by delegating to registered processors
     void process(void);
     //@}
@@ -718,9 +721,6 @@ namespace Gecode {
     void propagator(Propagator*);
     /// Add new branching \a b to space (force disposal, if \a fd is true)
     void branching(Branching* b, bool fd);
-    /// Add variable \a x to space (modified or copied)
-    template <VarTypeId VTI, PropCond PC>
-    void variable(Variable<VTI,PC>* x);
 
     /**
      * \name Processing propagators
@@ -1282,22 +1282,25 @@ namespace Gecode {
   }
 
   template <VarTypeId VTI, PropCond PC>
-  forceinline void
-  Space::variable(Variable<VTI,PC>* x) {
-    x->_next = static_cast<Variable<VTI,PC>*>(vars[VTI]);
-    vars[VTI] = x;
-  }
-
-  template <VarTypeId VTI, PropCond PC>
   forceinline
   Variable<VTI,PC>::Variable(Space* home, bool, Variable<VTI,PC>& x)
     : _next(reinterpret_cast<Variable<VTI,PC>*>(1)) {
-    // Recover original value in copy
-    u.free_me = x.u.free_me;
+    VarBase** reg;
+    if (x.idx[0] == NULL) {
+      // Variable needs no index structure
+      u.free_me = 0;
+      for (int i=PC+2; i--; )
+	idx[i] = NULL;
+      reg = &home->vars_noidx;
+    } else {
+      // Recover original value in copy
+      u.free_me = x.u.free_me;
+      reg = &home->vars[VTI];
+    }
     // Set forwarding pointer
     x.u.fwd = this;
     // Register original
-    home->variable(&x);
+    x._next = static_cast<Variable<VTI,PC>*>(*reg); *reg = &x;
   }
 
   template <VarTypeId VTI, PropCond PC>
@@ -1559,7 +1562,8 @@ namespace Gecode {
     if (modified()) {
       u.free_me ^= home->vtd[VTI].mec[new_me][modevent()];
     } else {
-      home->variable(this);
+      _next = static_cast<Variable<VTI,PC>*>(home->vars[VTI]);
+      home->vars[VTI] = this;
       modevent(new_me);
     }
   }
@@ -1632,45 +1636,34 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC>
   forceinline void
-  Variable<VTI,PC>::update(Space* home, Variable<VTI,PC>* x, 
-			   Propagator**& sub) {
+  Variable<VTI,PC>::update(Variable<VTI,PC>* x, Propagator**& sub) {
     // this refers to the variable to be updated (clone)
     // x refers to the original
     // Recover from copy (also overwrites forwarding pointer)
     x->u.free_me = u.free_me;
     Propagator** f = x->idx[0];
     int n = static_cast<int>(x->idx[PC+1] - f);
-    if (n == 0) {
-      u.free_me = 0;
-      for (int i=PC+2; i--; )
-	idx[i] = NULL;
-    } else {
-      u.free_me = 1 << 4;
-      Propagator** t = sub + 1;
-      //reinterpret_cast<Propagator**>
-      //	(home->alloc((n+1)*sizeof(Propagator*))) + 1;
-      sub += n+1;
-      idx[0] = t;
-      ptrdiff_t o = t - f;
-      for (PropCond i = PC+1; i>0; i--)
-	idx[i] = x->idx[i]+o;
-      if (n & 1)
-	t[0] = static_cast<Propagator*>(f[0]->prev());
-      for (int i = n-1; i>0; i -= 2) {
-	t[i-1] = static_cast<Propagator*>(f[i-1]->prev());;
-	t[i-0] = static_cast<Propagator*>(f[i-0]->prev());;
-      }
+    u.free_me = 1 << 4;
+    Propagator** t = sub + 1;
+    sub += n+1;
+    idx[0] = t;
+    ptrdiff_t o = t - f;
+    for (PropCond i = PC+1; i>0; i--)
+      idx[i] = x->idx[i]+o;
+    if (n & 1)
+      t[0] = static_cast<Propagator*>(f[0]->prev());
+    for (int i = n-1; i>0; i -= 2) {
+      t[i-1] = static_cast<Propagator*>(f[i-1]->prev());;
+      t[i-0] = static_cast<Propagator*>(f[i-0]->prev());;
     }
   }
 
   template <VarTypeId VTI, PropCond PC>
   void
-  VarTypeProcessor<VTI,PC>::update(Space* home, VarBase* vb,
-				   Propagator**& sub) {
+  VarTypeProcessor<VTI,PC>::update(VarBase* vb, Propagator**& sub) {
     Variable<VTI,PC>* x = static_cast<Variable<VTI,PC>*>(vb);
     do {
-      x->forward()->update(home,x,sub);
-      x = x->next();
+      x->forward()->update(x,sub); x = x->next();
     } while (x != NULL);
   }
 

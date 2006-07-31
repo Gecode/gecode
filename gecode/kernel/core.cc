@@ -38,6 +38,7 @@ namespace Gecode {
     // Initialize variable entry points
     for (int i=0; i<VTI_LAST; i++)
       vars[i]=NULL;
+    vars_noidx = NULL;
     // Initialize propagator pool
     pool_next = 0;
     for (int i=0; i<=PC_MAX; i++)
@@ -262,6 +263,7 @@ namespace Gecode {
     // Initialize variable entry points
     for (int i=0; i<VTI_LAST; i++)
       vars[i]=NULL;
+    vars_noidx = NULL;
     // Initialize propagator pool
     pool_next = 0;
     for (int i=0; i<=PC_MAX; i++)
@@ -337,6 +339,13 @@ namespace Gecode {
      * Update subscriptions and reset forwarding pointers
      *
      */
+    // Update variables without indexing structure
+    for (Variable<VTI_NOIDX,0>* x 
+	   = static_cast<Variable<VTI_NOIDX,0>*>(c->vars_noidx);
+	 x != NULL; x = x->next())
+      x->u.free_me = 0;
+    c->vars_noidx = NULL;
+    // Update variables with indexing structure
     Propagator** s;
     if (n_sub > 0)
       s = reinterpret_cast<Propagator**>
@@ -348,12 +357,12 @@ namespace Gecode {
       VarBase* vs = c->vars[vti];
       if (vs != NULL) {
 	c->vars[vti] = NULL; 
-	vtd[vti].proc->update(c,vs,s);
+	vtd[vti].proc->update(vs,s);
       }
     }
     // Update the number of subscriptions (both in copy and original)
     // Remember: this is a conservative estimate
-    unsigned int n = s-c->sub;
+    unsigned int n = s - c->sub;
     assert(n <= n_sub);
     c->n_sub = n; n_sub = n;
     // Re-establish prev links (reset forwarding information)
