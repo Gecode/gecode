@@ -48,6 +48,7 @@ namespace Gecode {
     b_status = static_cast<Branching*>(&a_actors);
     b_commit = static_cast<Branching*>(&a_actors);
     n_sub = 0;
+    sub = NULL;
   }
 
 
@@ -98,6 +99,8 @@ namespace Gecode {
       a = a->next_delete();
       d->dispose(this);
     }
+    if (sub != NULL)
+      Memory::free(sub);
   }
 
 
@@ -319,19 +322,38 @@ namespace Gecode {
     pn += propagate();
     if (failed())
       throw SpaceFailed("Space::clone");
-    // Start stage one
+
+    /*
+     * Stage one
+     *
+     * Copy all data structures (which in turn will invoke the
+     * constructor Space::Space.
+     */
     Space* c = copy(share);
-    // Stage 2: update variables
-    unsigned int n = 0;
+
+    /*
+     * Stage two
+     *
+     * Update subscriptions and reset forwarding pointers
+     *
+     */
+    Propagator** s;
+    if (n_sub > 0)
+      s = reinterpret_cast<Propagator**>
+	(Memory::malloc(n_sub*sizeof(Propagator*)));
+    else
+      s = NULL;
+    c->sub = s;
     for (int vti=VTI_LAST; vti--; ) {
       VarBase* vs = c->vars[vti];
       if (vs != NULL) {
 	c->vars[vti] = NULL; 
-	n += vtd[vti].proc->update(c,vs);
+	vtd[vti].proc->update(c,vs,s);
       }
     }
     // Update the number of subscriptions (both in copy and original)
     // Remember: this is a conservative estimate
+    unsigned int n = s-c->sub;
     assert(n <= n_sub);
     c->n_sub = n; n_sub = n;
     // Re-establish prev links (reset forwarding information)
