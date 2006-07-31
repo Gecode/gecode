@@ -75,11 +75,13 @@ Example::run(const Options& o) {
 	int i = o.solutions;
 	t.start();
 	Script* s = new Script(o);
-	unsigned int p = 0;
-	unsigned int b = 0;
+	unsigned int n_p = 0;
+	unsigned int n_b = 0;
+	unsigned int n_s = 0;
 	if (s->status() != SS_FAILED) {
-	  p = s->propagators();
-	  b = s->branchings();
+	  n_p = s->propagators();
+	  n_b = s->branchings();
+	  n_s = s->subscriptions();
 	}
 	Search::Stop* stop = FailTimeStop::create(o.fails, o.time);
 	Engine<Script> e(s,o.c_d,o.a_d,stop);
@@ -94,17 +96,18 @@ Example::run(const Options& o) {
 	Search::Statistics stat = e.statistics();
 	cout << endl;
 	cout << "Initial" << endl
-	     << "\tpropagators:  " << p << endl
-	     << "\tbranchings:   " << b << endl
+	     << "\tpropagators:   " << n_p << endl
+	     << "\tbranchings:    " << n_b << endl
+	     << "\tsubscriptions: " << n_s << endl
 	     << endl
 	     << "Summary" << endl
-	     << "\truntime:      " << t.stop() << endl
-	     << "\tsolutions:    " << abs(static_cast<int>(o.solutions) - i) << endl
-	     << "\tpropagations: " << stat.propagate << endl
-	     << "\tfailures:     " << stat.fail << endl
-	     << "\tclones:       " << stat.clone << endl
-	     << "\tcommits:      " << stat.commit << endl
-	     << "\tpeak memory:  " 
+	     << "\truntime:       " << t.stop() << endl
+	     << "\tsolutions:     " << abs(static_cast<int>(o.solutions) - i) << endl
+	     << "\tpropagations:  " << stat.propagate << endl
+	     << "\tfailures:      " << stat.fail << endl
+	     << "\tclones:        " << stat.clone << endl
+	     << "\tcommits:       " << stat.commit << endl
+	     << "\tpeak memory:   " 
 	     << static_cast<int>((stat.memory+1023) / 1024) << " KB"
 	     << endl;
       }
@@ -113,11 +116,13 @@ Example::run(const Options& o) {
       {
 	int i = o.solutions;
 	Script* s = new Script(o);
-	unsigned int p = 0;
-	unsigned int b = 0;
+	unsigned int n_p = 0;
+	unsigned int n_b = 0;
+	unsigned int n_s = 0;
 	if (s->status() != SS_FAILED) {
-	  p = s->propagators();
-	  b = s->branchings();
+	  n_p = s->propagators();
+	  n_b = s->branchings();
+	  n_s = s->subscriptions();
 	}
 	Engine<Script> e(s,o.c_d,o.a_d);
 	delete s;
@@ -129,14 +134,15 @@ Example::run(const Options& o) {
 	} while (--i != 0);
 	Search::Statistics stat = e.statistics();
 	cout << endl
-	     << "\tpropagators:  " << p << endl
-	     << "\tbranchings:   " << b << endl
-	     << "\tsolutions:    " << abs(static_cast<int>(o.solutions) - i) << endl
-	     << "\tpropagations: " << stat.propagate << endl
-	     << "\tfailures:     " << stat.fail << endl
-	     << "\tclones:       " << stat.clone << endl
-	     << "\tcommits:      " << stat.commit << endl
-	     << "\tpeak memory:  " 
+	     << "\tpropagators:   " << n_p << endl
+	     << "\tbranchings:    " << n_b << endl
+	     << "\tsubscriptions: " << n_s << endl
+	     << "\tsolutions:     " << abs(static_cast<int>(o.solutions) - i) << endl
+	     << "\tpropagations:  " << stat.propagate << endl
+	     << "\tfailures:      " << stat.fail << endl
+	     << "\tclones:        " << stat.clone << endl
+	     << "\tcommits:       " << stat.commit << endl
+	     << "\tpeak memory:   " 
 	     << static_cast<int>((stat.memory+1023) / 1024) << " KB"
 	     << endl;
       }

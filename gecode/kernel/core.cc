@@ -47,6 +47,7 @@ namespace Gecode {
     a_actors.init_delete();
     b_status = static_cast<Branching*>(&a_actors);
     b_commit = static_cast<Branching*>(&a_actors);
+    n_sub = 0;
   }
 
 
@@ -321,12 +322,18 @@ namespace Gecode {
     // Start stage one
     Space* c = copy(share);
     // Stage 2: update variables
+    unsigned int n = 0;
     for (int vti=VTI_LAST; vti--; ) {
       VarBase* vs = c->vars[vti];
       if (vs != NULL) {
-	c->vars[vti] = NULL; vtd[vti].proc->update(c,vs);
+	c->vars[vti] = NULL; 
+	n += vtd[vti].proc->update(c,vs);
       }
     }
+    // Update the number of subscriptions (both in copy and original)
+    // Remember: this is a conservative estimate
+    assert(n <= n_sub);
+    c->n_sub = n; n_sub = n;
     // Re-establish prev links (reset forwarding information)
     ActorLink* p = &a_actors;
     ActorLink* a = p->next();

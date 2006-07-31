@@ -108,8 +108,13 @@ namespace Gecode {
   public:
     /// Process modified variables linked from \a x
     virtual void process(Space* home, VarBase* x) = 0;
-    /// Update copied variables linked from \a x
-    virtual void update(Space* home, VarBase* x)  = 0;
+    /**
+     * \brief Update copied variables linked from \a x
+     *
+     * Returns the number of subscriptions including free slots
+     * found during copying.
+     */
+    virtual unsigned int update(Space* home, VarBase* x)  = 0;
     /// Destructor (not really used)
     GECODE_KERNEL_EXPORT virtual ~VarTypeProcessorBase(void);
   };
@@ -160,8 +165,13 @@ namespace Gecode {
     void enter(void);
     /// Process modified variables linked from \a x
     virtual void process(Space* home, VarBase* x);
-    /// Update copied variables linked from \a x
-    virtual void update(Space* home, VarBase* x);
+    /**
+     * \brief Update copied variables linked from \a x
+     *
+     * Returns the number of subscriptions including free slots
+     * found during copying.
+     */
+    virtual unsigned int update(Space* home, VarBase* x);
   };
 
   /**
@@ -214,8 +224,13 @@ namespace Gecode {
     /// Manage number of free entries internally
     void free_dec(void);
 
-    /// Update variable (dependencies) in second stage of cloning
-    void update(Space* home, Variable* x);
+    /**
+     * \brief Update copied variables linked from \a x
+     *
+     * Returns the number of subscriptions including free slots
+     * found during copying.
+     */
+    unsigned int update(Space* home, Variable* x);
 
     /// \name Processing modified variables
     //@{
@@ -673,6 +688,16 @@ namespace Gecode {
     /// Id of next branching to be created
     unsigned int    branch_id;
 
+    /**
+     * \brief Number of subscriptions
+     *
+     * This number includes both the number of subscriptions and
+     * one free slot and hence can be considered as a conservative
+     * approximation of the real number of subscriptions. The number
+     * becomes more accurate after cloning a space.
+     *
+     */
+    unsigned int n_sub;
     /// Used for default arguments 
     GECODE_KERNEL_EXPORT static unsigned long int unused_uli;
 
@@ -885,6 +910,15 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT
     unsigned int branchings(void) const;
+    /**
+     * \brief Return approximate number of subscriptions
+     *
+     * This number is a conservative approximation of (larger than the)
+     * the real number of subscriptions. The number becomes more accurate 
+     * after cloning a space but still is too high by the number of variables.
+     *
+     */
+    unsigned int subscriptions(void) const;
 
 
 
@@ -1106,6 +1140,16 @@ namespace Gecode {
   forceinline const BranchingDesc*
   Space::description(void) const {
     return b_status->description(this);
+  }
+
+  forceinline bool
+  Space::failed(void) const {
+    return b_status == NULL;
+  }
+
+  forceinline unsigned int
+  Space::subscriptions(void) const {
+    return n_sub;
   }
 
   /*
@@ -1378,11 +1422,6 @@ namespace Gecode {
     b_status = NULL;
   }
 
-  forceinline bool
-  Space::failed(void) const {
-    return b_status == NULL;
-  }
-
   forceinline void
   Space::process(VarTypeId VTI, Propagator* p) {
     // The new event is ME_GEN_ASSIGNED
@@ -1442,6 +1481,8 @@ namespace Gecode {
     } else {
       if (free() == 0) {
 	if (idx[0] == NULL) {
+	  // Count the new entry and one free entry
+	  home->n_sub += 2;
 	  // Create fresh dependency array
 	  free(3);
 	  Propagator** prop = reinterpret_cast<Propagator**>
@@ -1449,6 +1490,8 @@ namespace Gecode {
 	  for (PropCond i = PC+2; i--; )
 	    idx[i] = prop;
 	} else {
+	  // Count one new subscription
+	  home->n_sub += 1;
 	  // Resize dependency array
 	  int n = static_cast<int>(idx[PC+1] - idx[0]);
 	  Propagator** prop = reinterpret_cast<Propagator**>
@@ -1464,6 +1507,8 @@ namespace Gecode {
 	    idx[i] += o;
 	}
       } else {
+	// Count one new subscription
+	home->n_sub += 1;
 	free_dec();
       }
       // Enter propagator
@@ -1487,7 +1532,7 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC>
   forceinline void
-  Variable<VTI,PC>::cancel(Space*, Propagator* p, PropCond pc) {
+  Variable<VTI,PC>::cancel(Space* home, Propagator* p, PropCond pc) {
     if (idx[0] != NULL) {
       Propagator** f = idx[pc];
       while (*f != p) f++;
@@ -1496,6 +1541,7 @@ namespace Gecode {
 	*(idx[i]++)=*(idx[i-1]);
       idx[0]++;
       free_inc();
+      home->n_sub -= 1;
     }
   }
 
@@ -1577,7 +1623,7 @@ namespace Gecode {
   }
 
   template <VarTypeId VTI, PropCond PC>
-  forceinline void
+  forceinline unsigned int
   Variable<VTI,PC>::update(Space* home, Variable<VTI,PC>* x) {
     // this refers to the variable to be updated (clone)
     // x refers to the original
@@ -1589,6 +1635,7 @@ namespace Gecode {
       u.free_me = 0;
       for (int i=PC+2; i--; )
 	idx[i] = NULL;
+      return 0;
     } else {
       u.free_me = 1 << 4;
       Propagator** t = reinterpret_cast<Propagator**>
@@ -1603,17 +1650,20 @@ namespace Gecode {
 	t[i-1] = static_cast<Propagator*>(f[i-1]->prev());;
 	t[i-0] = static_cast<Propagator*>(f[i-0]->prev());;
       }
+      return n+1;
     }
   }
 
   template <VarTypeId VTI, PropCond PC>
-  void
+  unsigned int
   VarTypeProcessor<VTI,PC>::update(Space* home, VarBase* vb) {
     Variable<VTI,PC>* x = static_cast<Variable<VTI,PC>*>(vb);
+    unsigned int n = 0;
     do {
-      x->forward()->update(home,x);
+      n += x->forward()->update(home,x);
       x = x->next();
     } while (x != NULL);
+    return n;
   }
 
   template <VarTypeId VTI, PropCond PC>
@@ -1636,6 +1686,16 @@ namespace Gecode {
 	// must still work for cloning (idx[0]) and degree (idx[PC+1])
 	Propagator** b = x->idx[0];    x->idx[0] = NULL;
 	Propagator** p = x->idx[PC+1]; x->idx[PC+1] = NULL;
+	/*
+	 * Decrement for p-b subscriptions
+	 *
+	 * Note that one would like to also decrement for the additional
+	 * single free slot that was counted initially. However, this
+	 * is not possible as there might be no free slot. So the number
+	 * of subscriptions is a conservative estimate and will be corrected
+	 * upon cloning.
+	 */
+	home->n_sub -= p-b;
 	// Information needed to release the dependency array
 	unsigned int n = x->free() + (p-b);
 	Propagator** s = p-n;
