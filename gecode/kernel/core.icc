@@ -191,14 +191,18 @@ namespace Gecode {
     friend class VarTypeProcessor<VTI,PC>;
   private:
     Variable* _next; ///< Either next modified or copied variable
-    /**
-     * \brief Combines the number of free entries with modification events
-     * 
-     * The least for bits are reserved for the modification events, the
-     * remaining 28 bits are for the number of free entries.
-     *
-     */
-    unsigned int free_me;   
+    union {
+      /**
+       * \brief Combines the number of free entries with modification events
+       * 
+       * The least for bits are reserved for the modification events, the
+       * remaining 28 bits are for the number of free entries.
+       *
+       */
+      unsigned int free_me;   
+      /// Store the forwarding pointer during copying
+      Variable* fwd;
+    } u;
     Propagator** idx[PC+2]; ///< Stores where entries start (idx[pc]}
 
     /// Manage number of free entries internally
@@ -1153,7 +1157,8 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC>
   forceinline
   Variable<VTI,PC>::Variable(Space*) :
-    _next(reinterpret_cast<Variable<VTI,PC>*>(1)), free_me(0) {
+    _next(reinterpret_cast<Variable<VTI,PC>*>(1)) {
+    u.free_me = 0;
     for (int i=PC+2; i--; )
       idx[i] = NULL;
   }
@@ -1170,36 +1175,36 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC>
   forceinline ModEvent
   Variable<VTI,PC>::modevent(void) const {
-    return free_me & 15;
+    return u.free_me & 15;
   }
 
   template <VarTypeId VTI, PropCond PC>
   forceinline void
   Variable<VTI,PC>::modevent(ModEvent me) {
-    free_me = (free_me & ~15) | me;
+    u.free_me = (u.free_me & ~15) | me;
   }
   template <VarTypeId VTI, PropCond PC>
   forceinline unsigned int
   Variable<VTI,PC>::free(void) const {
-    return free_me >> 4;
+    return u.free_me >> 4;
   }
 
   template <VarTypeId VTI, PropCond PC>
   forceinline void
   Variable<VTI,PC>::free(unsigned int n) {
-    free_me = (free_me & 15) | (n << 4);
+    u.free_me = (u.free_me & 15) | (n << 4);
   }
 
   template <VarTypeId VTI, PropCond PC>
   forceinline void
   Variable<VTI,PC>::free_inc(void) {
-    free_me += (1 << 4);
+    u.free_me += (1 << 4);
   }
 
   template <VarTypeId VTI, PropCond PC>
   forceinline void
   Variable<VTI,PC>::free_dec(void) {
-    free_me -= (1 << 4);
+    u.free_me -= (1 << 4);
   }
 
   template <VarTypeId VTI, PropCond PC>
@@ -1236,9 +1241,9 @@ namespace Gecode {
   Variable<VTI,PC>::Variable(Space* home, bool, Variable<VTI,PC>& x)
     : _next(reinterpret_cast<Variable<VTI,PC>*>(1)) {
     // Recover original value in copy
-    idx[0] = x.idx[0];
-    // Use first entry as forwarding pointer
-    x.idx[0] = reinterpret_cast<Propagator**>(this);
+    u.free_me = x.u.free_me;
+    // Set forwarding pointer
+    x.u.fwd = this;
     // Register original
     home->variable(&x);
   }
@@ -1246,7 +1251,7 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC>
   forceinline Variable<VTI,PC>*
   Variable<VTI,PC>::forward(void) const {
-    return reinterpret_cast<Variable<VTI,PC>*>(idx[0]);
+    return u.fwd;
   }
 
   /*
@@ -1498,7 +1503,7 @@ namespace Gecode {
   forceinline void
   Variable<VTI,PC>::notify(Space* home, ModEvent new_me) {
     if (modified()) {
-      free_me ^= home->vtd[VTI].mec[new_me][modevent()];
+      u.free_me ^= home->vtd[VTI].mec[new_me][modevent()];
     } else {
       home->variable(this);
       modevent(new_me);
@@ -1576,14 +1581,15 @@ namespace Gecode {
   Variable<VTI,PC>::update(Space* home, Variable<VTI,PC>* x) {
     // this refers to the variable to be updated (clone)
     // x refers to the original
-    Propagator** f = idx[0];
-    x->idx[0] = f;
+    // Recover from copy (also overwrites forwarding pointer)
+    x->u.free_me = u.free_me;
+    Propagator** f = x->idx[0];
     if (f == NULL) {
-      free_me = 0;
-      for (int i=1; i<PC+2; i++)
+      u.free_me = 0;
+      for (int i=PC+2; i--; )
 	idx[i] = NULL;
     } else {
-      free_me = 1 << 4;
+      u.free_me = 1 << 4;
       int n = static_cast<int>(x->idx[PC+1] - f);
       Propagator** t = reinterpret_cast<Propagator**>
 	(home->alloc((n+1)*sizeof(Propagator*))) + 1;
