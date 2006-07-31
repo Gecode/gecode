@@ -431,7 +431,7 @@ SetTest::run(const Options& opt) {
       post(s,s->x,s->y); s->assign(a);
       if (is_sol) {
 	CHECK(!s->failed(), "Failed on solution");
-	CHECK(!s->actors(), "No subsumtion");
+	CHECK(s->propagators()==0, "No subsumtion");
       } else {
 	CHECK(s->failed(), "Solved on non-solution");
       }
@@ -444,7 +444,7 @@ SetTest::run(const Options& opt) {
       s->assign(a); post(s,s->x,s->y);
       if (is_sol) {
 	CHECK(!s->failed(), "Failed on solution");
-	CHECK(!s->actors(), "No subsumtion");
+	CHECK(s->propagators()==0, "No subsumtion");
       } else {
 	CHECK(s->failed(), "Solved on non-solution");
       }
@@ -457,7 +457,7 @@ SetTest::run(const Options& opt) {
       BoolVar b(s,0,1); 
       s->assign(a); post(s,s->x,s->y,b);
       CHECK(!s->failed(), "Failed");
-      CHECK(!s->actors(), "No subsumtion");
+      CHECK(s->propagators()==0, "No subsumtion");
       CHECK(b.assigned(), "Control variable unassigned");
       if (is_sol) {
 	CHECK(b.val()==1, "Zero on solution");
@@ -473,7 +473,7 @@ SetTest::run(const Options& opt) {
       BoolVar b(s,0,1);
       post(s,s->x,s->y,b); s->assign(a);
       CHECK(!s->failed(), "Failed");
-      CHECK(!s->actors(), "No subsumtion");
+      CHECK(s->propagators()==0, "No subsumtion");
       CHECK(b.assigned(), "Control variable unassigned");
       if (is_sol) {
 	CHECK(b.val()==1, "Zero on solution");
@@ -496,7 +496,7 @@ SetTest::run(const Options& opt) {
       s->assign(a);
       if (is_sol) {
 	CHECK(!s->failed(), "Failed on solution");
-	CHECK(!s->actors(), "No subsumtion");
+	CHECK(s->propagators()==0, "No subsumtion");
       } else {
 	CHECK(s->failed(), "Solved on non-solution");
       }
@@ -515,7 +515,7 @@ SetTest::run(const Options& opt) {
  	  goto failed;
  	}
       CHECK(!s->failed(), "Failed");
-      CHECK(!s->actors(), "No subsumtion");
+      CHECK(s->propagators()==0, "No subsumtion");
       CHECK(b.assigned(), "Control variable unassigned");
       if (is_sol) {
 	CHECK(b.val()==1, "Zero on solution");

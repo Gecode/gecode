@@ -862,13 +862,6 @@ namespace Gecode {
      */
     bool failed(void) const;
     /**
-     * \brief Check whether space has actors left
-     *
-     * Is only accurate when the space is stable (that is, at
-     * fixpoint and all propagation is done).
-     */
-    bool actors(void) const;
-    /**
      * \brief Return number of propagators
      *
      * Note that this function takes linear time in the number of 
@@ -1383,11 +1376,6 @@ namespace Gecode {
   forceinline bool
   Space::failed(void) const {
     return b_status == NULL;
-  }
-
-  forceinline bool
-  Space::actors(void) const {
-    return  &a_actors != a_actors.next();
   }
 
   forceinline void

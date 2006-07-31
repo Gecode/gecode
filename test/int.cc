@@ -311,7 +311,7 @@ IntTest::run(const Options& opt) {
       if (is_sol) {
 	IntTestSpace* s = e_s.next();
 	CHECK(s != NULL,    "Solutions exhausted");
-	CHECK(!s->actors(), "No subsumtion");
+	CHECK(s->propagators()==0, "No subsumtion");
 	for (int i=a.size(); i--; ) {
 	  CHECK(s->x[i].assigned(), "Unassigned variable");
 	  CHECK(a[i] == s->x[i].val(), "Wrong value in solution");
@@ -326,7 +326,7 @@ IntTest::run(const Options& opt) {
       post(s,s->x); s->assign(a);
       if (is_sol) {
 	CHECK(!s->is_failed(), "Failed on solution");
-	CHECK(!s->actors(), "No subsumtion");
+	CHECK(s->propagators()==0, "No subsumtion");
       } else {
 	CHECK(s->is_failed(), "Solved on non-solution");
       }
@@ -339,7 +339,7 @@ IntTest::run(const Options& opt) {
       s->assign(a); post(s,s->x);
       if (is_sol) {
 	CHECK(!s->is_failed(), "Failed on solution");
-	CHECK(!s->actors(), "No subsumtion");
+	CHECK(s->propagators()==0, "No subsumtion");
       } else {
 	CHECK(s->is_failed(), "Solved on non-solution");
       }
@@ -359,7 +359,7 @@ IntTest::run(const Options& opt) {
       }
       s->assign(a); 
       CHECK(!s->is_failed(), "Failed");
-      CHECK(!s->actors(), "No subsumtion");
+      CHECK(s->propagators()==0, "No subsumtion");
       delete s;
     }
     if (reified) {
@@ -376,7 +376,7 @@ IntTest::run(const Options& opt) {
       post(s,s->x,b);
       s->assign(a); 
       CHECK(!s->is_failed(), "Failed");
-      CHECK(!s->actors(), "No subsumtion");
+      CHECK(s->propagators()==0, "No subsumtion");
       delete s;
     }
     if (reified) {
@@ -387,7 +387,7 @@ IntTest::run(const Options& opt) {
       Log::initial(b, "b");
       s->assign(a); post(s,s->x,b);
       CHECK(!s->is_failed(), "Failed");
-      CHECK(!s->actors(), "No subsumtion");
+      CHECK(s->propagators()==0, "No subsumtion");
       CHECK(b.assigned(), "Control variable unassigned");
       if (is_sol) {
 	CHECK(b.val()==1, "Zero on solution");
@@ -404,7 +404,7 @@ IntTest::run(const Options& opt) {
       Log::initial(b, "b");
       post(s,s->x,b); s->assign(a);
       CHECK(!s->is_failed(), "Failed");
-      CHECK(!s->actors(), "No subsumtion");
+      CHECK(s->propagators()==0, "No subsumtion");
       CHECK(b.assigned(), "Control variable unassigned");
       if (is_sol) {
 	CHECK(b.val()==1, "Zero on solution");
@@ -427,7 +427,7 @@ IntTest::run(const Options& opt) {
       s->assign(a);
       if (is_sol) {
 	CHECK(!s->is_failed(), "Failed on solution");
-	CHECK(!s->actors(), "No subsumtion");
+	CHECK(s->propagators()==0, "No subsumtion");
       } else {
 	CHECK(s->is_failed(), "Solved on non-solution");
       }
@@ -447,7 +447,7 @@ IntTest::run(const Options& opt) {
 	  goto failed;
 	}
       CHECK(!s->is_failed(), "Failed");
-      CHECK(!s->actors(), "No subsumtion");
+      CHECK(s->propagators()==0, "No subsumtion");
       CHECK(b.assigned(), "Control variable unassigned");
       if (is_sol) {
 	CHECK(b.val()==1, "Zero on solution");
@@ -475,7 +475,7 @@ IntTest::run(const Options& opt) {
       s->prune();
     }
     CHECK(!s->is_failed(), "Failed");
-    CHECK(!s->actors(), "No subsumtion");
+    CHECK(s->propagators()==0, "No subsumtion");
     delete s;
     has_assignment = true;
   }
