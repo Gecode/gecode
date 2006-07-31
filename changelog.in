@@ -53,6 +53,14 @@ Date:		Unknown
 Jabba Jabba
 
 [ENTRY]
+Module: int
+What: 	documentation
+Rank: 	minor
+Bug:	43
+[DESCRIPTION]
+Fixed documentation problem due to doxygen...
+
+[ENTRY]
 Module: search
 What: 	new
 Rank: 	major
