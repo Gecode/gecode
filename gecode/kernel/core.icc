@@ -1584,13 +1584,13 @@ namespace Gecode {
     // Recover from copy (also overwrites forwarding pointer)
     x->u.free_me = u.free_me;
     Propagator** f = x->idx[0];
-    if (f == NULL) {
+    int n = static_cast<int>(x->idx[PC+1] - f);
+    if (n == 0) {
       u.free_me = 0;
       for (int i=PC+2; i--; )
 	idx[i] = NULL;
     } else {
       u.free_me = 1 << 4;
-      int n = static_cast<int>(x->idx[PC+1] - f);
       Propagator** t = reinterpret_cast<Propagator**>
 	(home->alloc((n+1)*sizeof(Propagator*))) + 1;
       idx[0] = t;
