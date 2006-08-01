@@ -1650,11 +1650,22 @@ namespace Gecode {
     ptrdiff_t o = t - f;
     for (PropCond i = PC+1; i>0; i--)
       idx[i] = x->idx[i]+o;
-    if (n & 1)
-      t[0] = static_cast<Propagator*>(f[0]->prev());
-    for (int i = n-1; i>0; i -= 2) {
-      t[i-1] = static_cast<Propagator*>(f[i-1]->prev());;
-      t[i-0] = static_cast<Propagator*>(f[i-0]->prev());;
+    while ((n-4) >= 0) {
+      n -= 4;
+      t[0] = static_cast<Propagator*>(f[0]->prev());;
+      t[1] = static_cast<Propagator*>(f[1]->prev());;
+      t[2] = static_cast<Propagator*>(f[2]->prev());;
+      t[3] = static_cast<Propagator*>(f[3]->prev());;
+      t += 4; f += 4;
+    }
+    if ((n-2) >= 0) {
+      n -= 2;
+      t[0] = static_cast<Propagator*>(f[0]->prev());;
+      t[1] = static_cast<Propagator*>(f[1]->prev());;
+      t += 2; f += 2;
+    }
+    if (n > 0) {
+      t[0] = static_cast<Propagator*>(f[0]->prev());;
     }
   }
 
