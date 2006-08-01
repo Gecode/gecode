@@ -49,7 +49,7 @@ namespace Gecode {
        * If a space has requested \a hcsz_inc_ratio chunks of heap memory,
        * the chunk size is doubled.
        */
-      const int hcsz_inc_ratio = 8;
+      const int hcsz_inc_ratio = 3;
       /**
        * \brief Decrement ratio for chunk size
        *
@@ -59,7 +59,7 @@ namespace Gecode {
        * heap chunks of the current chunk size, the current chunk size
        * for the clone is halfed.
        */
-      const int hcsz_dec_ratio = 4;
+      const int hcsz_dec_ratio = 2;
       
       /**
        * \brief Unit size for free lists
@@ -98,7 +98,7 @@ namespace Gecode {
        * the free list is empty and there is also no reusable memory
        * available, allocate \a fl_refill free list elements.
        */
-      const int fl_refill = 8;
+      const int fl_refill = 16;
       /**
        * \brief Memory alignment
        *
