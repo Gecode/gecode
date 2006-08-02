@@ -205,8 +205,8 @@ close FILE;
 
 $maxpc = "PC_${VTI}_$pcn[$pc_n-1]";
 $class = "${name}VarImpBase";
-$combc = "${name}MeCombine";
-$base  = "Gecode::Variable<VTI_$VTI,$maxpc,$combc>";
+$diffc = "${name}MeDiff";
+$base  = "Gecode::Variable<VTI_$VTI,$maxpc,$diffc>";
 
 print <<EOF
 /*
@@ -291,12 +291,12 @@ if ($gen_header) {
 
   print <<EOF
 
-  /// Modification event combiner for $name-variable implementations
-  class $combc {
+  /// Modification event difference for $name-variable implementations
+  class $diffc {
   private:
-    $export static const Gecode::ModEvent mec[$me_max][$me_max];
+    $export static const Gecode::ModEvent med[$me_max][$me_max];
   public:
-    /// Combine modification events \\a me1 and \\a me2
+    /// Return difference when changing modification event \\a me2 to \\a me1
     ModEvent operator()(ModEvent me1, ModEvent me2) const;
   };
 
@@ -304,7 +304,7 @@ $chdr
   class $class : public $base {
   protected:
     /// Variable procesor for variables of this type
-    class Processor : public Gecode::VarTypeProcessor<VTI_${VTI},$maxpc,$combc> {
+    class Processor : public Gecode::VarTypeProcessor<VTI_${VTI},$maxpc,$diffc> {
     public:
       /// Initialize and register variables with kernel
       Processor(void);
@@ -338,8 +338,8 @@ $chdr
 
 
   $forceinline ModEvent
-  ${combc}::operator()(ModEvent me1, ModEvent me2) const {
-    return mec[me1][me2];
+  ${diffc}::operator()(ModEvent me1, ModEvent me2) const {
+    return med[me1][me2];
   }
 
   $forceinline
@@ -372,7 +372,7 @@ EOF
    * The modification event combiner for $name-variable implementations
    *
    */
-  const Gecode::ModEvent mec[$me_max][$me_max] = {
+  const Gecode::ModEvent ${diffc}::med[$me_max][$me_max] = {
 EOF
 ;
 
@@ -388,7 +388,7 @@ EOF
       } else {
         $n3 = $mec{$n1}{$n2};
       }
-      print "    ME_${VTI}_$n3";
+      print "    ME_${VTI}_$n2 ^ ME_${VTI}_$n3";
       if ($j+1 == $me_max_n) {
         print " ";
       } else {
