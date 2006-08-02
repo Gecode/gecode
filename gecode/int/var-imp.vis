@@ -29,11 +29,11 @@ namespace Gecode { namespace Int {
 # General settings
 #
 [General]
-Name:	Int
-VTI:	INT
-Export:	GECODE_INT_EXPORT
-
-
+Name:		Int
+VTI:		INT
+Export:		GECODE_INT_EXPORT
+Forceinline:	forceinline
+  /// Generated baseclass for integer variables
 #
 # Definition of modification events
 #
@@ -44,7 +44,6 @@ Export:	GECODE_INT_EXPORT
    */
   
   //@{
-
 [ModEvent]
 Name:		FAILED=FAILED
   /// Domain operation has resulted in failure
@@ -53,6 +52,7 @@ Name:		NONE=NONE
   /// Domain operation has not changed domain
 [ModEvent]
 Name:		VAL=ASSIGNED
+Combine:	VAL=VAL, BND=VAL, DOM=VAL
   /// Domain operation has resulted in a value (assigned variable)
 [ModEvent]
 Name:		BND
@@ -72,9 +72,9 @@ Combine:	VAL=VAL, BND=BND, DOM=DOM
    * and that also the minimum and maximum of the domain have not changed.
    */
 # [ModEventFooter]: Nothing
-#
-# Definition of propagation conditions
-#
+##
+## Definition of propagation conditions
+##
 # [PropCondHeader]: Nothing
 [PropCond]
 Name:		VAL=ASSIGNED
@@ -86,7 +86,6 @@ ModEvents:	VAL
    * condition PC_INT_VAL, then \a p is propagated when a domain
    * update operation on \a x returns the modification event ME_INT_VAL.
    */
-
 [PropCond]
 Name:		BND
 ModEvents:	VAL, BND
@@ -98,7 +97,6 @@ ModEvents:	VAL, BND
    * update operation on \a x returns the modification events ME_INT_VAL
    * or ME_INT_BND.
    */
-
 [PropCond]
 Name:		DOM
 ModEvents:	VAL, BND, DOM
@@ -110,18 +108,14 @@ ModEvents:	VAL, BND, DOM
    * update operation on \a x returns the modification event ME_INT_VAL,
    * ME_INT_BND, or ME_INT_DOM.
    */
-
 [PropCondFooter]
   //@}
-
-
-#
-# Footer of file to be generated
-#
+##
+## Footer of file to be generated
+##
 [Footer]
 
 }}
 
 // STATISTICS: int-var
-
 [End]

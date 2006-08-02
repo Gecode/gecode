@@ -31,6 +31,7 @@ pop;
 $name   = "";
 $VTI    = "";
 $export = "";
+$forceinline = "inline";
 
 ##
 ## Headers and footers
@@ -72,6 +73,8 @@ while ($l = <>) {
 	$VTI = $1;
       } elsif ($l =~ /^Export:\s*(\w+)/io) {
 	$export = $1;
+      } elsif ($l =~ /^Forceinline:\s*(\w+)/io) {
+	$forceinline = $1;
       }
     }
     goto LINE;
@@ -94,6 +97,9 @@ while ($l = <>) {
 	    !($rhs eq "ASSIGNED")) {
 	  die "Unknown special modification event: $rhs\n";
 	}
+        if ($rhs eq "NONE") {
+           $me_none = "ME_${VTI}_$lhs";
+        }
 	$mespecial{$lhs} = $rhs;
 	$n = $lhs;
       } elsif ($l =~ /^Name:\s*(\w+)/io) {
@@ -147,7 +153,7 @@ while ($l = <>) {
 	# Found relation to modification events
 	$events = $1;
 	while ($events =~ /(\w+)/g) {
-	  $me2pc{$1} = $n;
+	  $mepc{$1}{$n} = 1;
 	}
       } else {
 	$h = $h . $l;
@@ -183,6 +189,10 @@ while ($l = <>) {
 ## Generate the output
 ##
 
+$maxpc = "PC_${VTI}_$pcn[$pc_n-1]";
+$class = "${name}VarImpBase";
+$base  = "Gecode::Variable<VTI_$VTI,$maxpc>";
+
 if ($gen_header) {
 
   print "$hdr";
@@ -211,6 +221,7 @@ if ($gen_header) {
     print $pch[$i];
     print "  const Gecode::PropCond PC_${VTI}_${n} = ";
     if ($pcspecial{$n}) {
+      $pc_assigned = "PC_${VTI}_${n}";
       print "Gecode::PC_GEN_" . $pcspecial{$n};
     } else {
       print "Gecode::PC_GEN_ASSIGNED + " . $o;
@@ -220,21 +231,144 @@ if ($gen_header) {
   }
 
   print "$pcftr";
+
+  print <<EOF
+
+  class $class : public $base {
+  protected:
+    /// Variable procesor for variables of this type
+    class Processor : public VarTypeProcessor<VTI_${VTI},$pcmax> {
+    public:
+      /// Initialize and register variables with kernel
+      Processor(void);
+    };
+    /// The processor used
+    $export static Processor p;
+
+    /// Modification event combiner for variables of this type
+    class Combiner {
+    private:
+    public:
+      /// Combine modification events \\a me1 and \\a me2
+      ModEvent operator()(ModEvent me1, ModEvent me2) const;
+    };
+    /// The combiner used
+    Combiner c;
+
+    /// Constructor for cloning \\a x
+    $class(Space* home, bool share, $class\& x);
+  public:
+    /// Constructor for creating variable
+    $class(Space* home);
+    /// \\name Dependencies
+    //\@{
+    /** \\brief Subscribe propagator \\a p with propagation condition \\a pc to variable
+     *
+     * In case the variable is assigned (that is, \\a assigned is true),
+     * the subscribing propagator is processed for execution.
+     * Otherwise, the propagator subscribes and is processed for execution
+     * with modification event \\a me provided that \\a pc is different
+     * from \\a $pc_assigned.
+     */
+    void subscribe(Space* home, Propagator* p, PropCond pc,
+		   bool assigned, ModEvent me);
+    /// Cancel subscription of propagator \\a p with propagation condition \\a pc
+    void cancel(Space* home, Propagator* p, PropCond pc);
+    //\@}
+  };
+
+
+  $forceinline
+  ${class}::${class}(Space* home)
+    : $base(home) {}
+
+  $forceinline
+  ${class}::${class}(Space* home, bool share, $class\<& x)
+    : $base(home,share,x) {}
+
+  $forceinline void
+  ${class}::subscribe(Space* home, Propagator* p, PropCond pc,
+		      bool assigned, ModEvent me) {
+    ${base}::subscribe(home,p,pc,assigned,me);
+  }
+
+  $forceinline void
+  ${class}::cancel(Space* home, Propagator* p, PropCond pc) {
+    ${base}::cancel(home,p,pc);
+  }
+
+EOF
+;
   print "$ftr";
 
 } else {
 
-  $maxpc = "PC_${VTI}_$pcn[$pc_n-1]";
-
   print "$hdr";
+
   print <<EOF
 
-  class ${name}VarImpBase : public Variable<VTI_$VTI,$maxpc> {
-    public:
-  };
+  /*
+   * The variable processor for $class
+   *
+   */
+
+  inline
+  ${class}::Processor::Processor(void) {
+    // Combination of modification events
+EOF
+;
+  for ($i=0; $i<$me_n; $i++) {
+    $n = $men[$i];
+    if (!($mespecial{$n} eq "NONE") && !($mespecial{$n} eq "FAILED")) {
+      $n = "ME_${VTI}_$n";
+      print "    mec($me_none,$n,$n);\n"; 
+      print "    mec($n,$me_none,$n);\n";
+    }
+  }
+  for ($i=0; $i<$me_n; $i++) {
+    $n1 = $men[$i];
+    if (!($mespecial{$n1} eq "NONE") && !($mespecial{$n1} eq "FAILED")) {
+      $n1 = "ME_${VTI}_$n1";
+      for ($j=0; $j<$me_n; $j++) {
+        $n2 = $men[$j];
+        if (!($mespecial{$n2} eq "NONE") && !($mespecial{$n2} eq "FAILED")) {
+          $n2 = "ME_${VTI}_$n2";
+          $n3 = "ME_${VTI}_" . $mec{$men[$i]}{$men[$j]};
+          print "    mec($n1,$n2,$n3);\n";
+        }
+      }
+    }
+  }
+
+  print <<EOF
+    // Mapping between modification events and propagation conditions
+EOF
+;
+
+  for ($i=0; $i<$me_n; $i++) {
+    $n1 = $men[$i];
+    if (!($mespecial{$n1} eq "NONE") && !($mespecial{$n1} eq "FAILED")) {
+      $n1 = "ME_${VTI}_$n1";
+      for ($j=0; $j<$pc_n; $j++) {
+        $n2 = "PC_${VTI}_" . $pcn[$j];
+        if ($mepc{$men[$i]}{$pcn[$j]}) {
+          print "    mepc($n1,$n2);\n";
+        }
+      }
+    }
+  }
+
+
+  print <<EOF
+    // Transfer to kernel
+    enter();
+  }
+  
+  ${class}::Processor ${class}::p;
 
 EOF
 ;
+
   print "$ftr";
 
 }
