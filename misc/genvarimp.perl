@@ -205,7 +205,8 @@ close FILE;
 
 $maxpc = "PC_${VTI}_$pcn[$pc_n-1]";
 $class = "${name}VarImpBase";
-$base  = "Gecode::Variable<VTI_$VTI,$maxpc>";
+$combc = "${name}MeCombine";
+$base  = "Gecode::Variable<VTI_$VTI,$maxpc,$combc>";
 
 print <<EOF
 /*
@@ -276,11 +277,19 @@ if ($gen_header) {
 
   print <<EOF
 
+    /// Modification event combiner for $name-variables 
+    class $combc {
+    private:
+    public:
+      /// Combine modification events \\a me1 and \\a me2
+      ModEvent operator()(ModEvent me1, ModEvent me2) const;
+    };
+
 $chdr
   class $class : public $base {
   protected:
     /// Variable procesor for variables of this type
-    class Processor : public Gecode::VarTypeProcessor<VTI_${VTI},$maxpc> {
+    class Processor : public Gecode::VarTypeProcessor<VTI_${VTI},$maxpc,$combc> {
     public:
       /// Initialize and register variables with kernel
       Processor(void);
@@ -289,16 +298,6 @@ $chdr
     };
     /// The processor used
     $export static Processor p;
-
-    /// Modification event combiner for variables of this type
-    class Combiner {
-    private:
-    public:
-      /// Combine modification events \\a me1 and \\a me2
-      ModEvent operator()(ModEvent me1, ModEvent me2) const;
-    };
-    /// The combiner used
-    Combiner c;
 
     /// Constructor for cloning \\a x
     $class(Space* home, bool share, $class\& x);
