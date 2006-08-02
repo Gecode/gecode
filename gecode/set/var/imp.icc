@@ -34,7 +34,7 @@ namespace Gecode { namespace Set {
 
   forceinline
   SetVarImp::SetVarImp(Space* home)
-    : Variable<VTI_SET,PC_SET_ANY>(home), lub(home), glb(home) {
+    : SetVarImpBase(home), lub(home), glb(home) {
     _cardMin = 0;
     _cardMax = Limits::Set::card_max;
     assert(_cardMax==lub.size());
@@ -43,7 +43,7 @@ namespace Gecode { namespace Set {
   forceinline
   SetVarImp::SetVarImp(Space* home,int lbMin,int lbMax,int ubMin,int ubMax,
 		       unsigned int cardMin, unsigned int cardMax)
-    : Variable<VTI_SET,PC_SET_ANY>(home),
+    : SetVarImpBase(home),
       lub(home,ubMin,ubMax), glb(home,lbMin,lbMax) {
     _cardMin = std::max(cardMin, glb.size() );
     _cardMax = std::min(cardMax, lub.size() );
@@ -53,7 +53,7 @@ namespace Gecode { namespace Set {
   SetVarImp::SetVarImp(Space* home,
 		       const IntSet& theGlb,int ubMin,int ubMax,
 		       unsigned int cardMin, unsigned int cardMax)
-    : Variable<VTI_SET,PC_SET_ANY>(home),
+    : SetVarImpBase(home),
       lub(home,ubMin,ubMax), glb(home,theGlb) {
     _cardMin = std::max(cardMin, glb.size() );
     _cardMax = std::min(cardMax, lub.size() );
@@ -63,7 +63,7 @@ namespace Gecode { namespace Set {
   SetVarImp::SetVarImp(Space* home,
 		       int lbMin,int lbMax,const IntSet& theLub,
 		       unsigned int cardMin, unsigned int cardMax)
-    : Variable<VTI_SET,PC_SET_ANY>(home),
+    : SetVarImpBase(home),
       lub(home,theLub), glb(home,lbMin,lbMax) {
     _cardMin = std::max(cardMin, glb.size() );
     _cardMax = std::min(cardMax, lub.size() );
@@ -73,7 +73,7 @@ namespace Gecode { namespace Set {
   SetVarImp::SetVarImp(Space* home,
 		       const IntSet& theGlb,const IntSet& theLub,
 		       unsigned int cardMin, unsigned int cardMax)
-    : Variable<VTI_SET,PC_SET_ANY>(home), lub(home,theLub), glb(home,theGlb) {
+    : SetVarImpBase(home), lub(home,theLub), glb(home,theGlb) {
     _cardMin = std::max(cardMin, glb.size() );
     _cardMax = std::min(cardMax, lub.size() );
   }

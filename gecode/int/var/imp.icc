@@ -166,13 +166,11 @@ namespace Gecode { namespace Int {
 
   forceinline
   IntVarImp::IntVarImp(Space* home, int min, int max)
-    : Variable<VTI_INT,PC_INT_DOM>(home),
-      dom(min,max,NULL,NULL), holes(0) {}
+    : IntVarImpBase(home), dom(min,max,NULL,NULL), holes(0) {}
 
   forceinline
   IntVarImp::IntVarImp(Space* home, const IntSet& d)
-    : Variable<VTI_INT,PC_INT_DOM>(home),
-      dom(d.min(),d.max()) {
+    : IntVarImpBase(home), dom(d.min(),d.max()) {
     if (d.size() > 1) {
       int n = d.size();
       RangeList* r = reinterpret_cast<RangeList*>

@@ -23,6 +23,8 @@
 
 #include "gecode/set.hh"
 
+#include "gecode/set/var/imp-body.icc"
+
 namespace Gecode { namespace Set {
 
   /*
@@ -103,7 +105,7 @@ namespace Gecode { namespace Set {
 
   forceinline
   SetVarImp::SetVarImp(Space* home, bool share, SetVarImp& x)
-    : Variable<VTI_SET,PC_SET_ANY>(home,share,x),
+    : SetVarImpBase(home,share,x),
       _cardMin(x._cardMin), _cardMax(x._cardMax) {
     lub.update(home, x.lub);
     if (x.assigned()) {
@@ -121,75 +123,14 @@ namespace Gecode { namespace Set {
 
 
   /*
-   * Finite Integer Set variable processor
-   *
-   */
-
-  forceinline
-  SetVarImp::Processor::Processor(void) {
-    // Combination of modification events
-    mec(ME_SET_CARD, ME_SET_LUB,  ME_SET_CLUB);
-    mec(ME_SET_CARD, ME_SET_GLB,  ME_SET_CGLB);
-    mec(ME_SET_CARD, ME_SET_BB,   ME_SET_CBB);
-    mec(ME_SET_CARD, ME_SET_CLUB, ME_SET_CLUB);
-    mec(ME_SET_CARD, ME_SET_CGLB, ME_SET_CGLB);
-    mec(ME_SET_CARD, ME_SET_CBB,  ME_SET_CBB);
-
-    mec(ME_SET_LUB,  ME_SET_GLB,  ME_SET_BB);
-    mec(ME_SET_LUB,  ME_SET_BB,   ME_SET_BB);
-    mec(ME_SET_LUB,  ME_SET_CLUB, ME_SET_CLUB);
-    mec(ME_SET_LUB,  ME_SET_CGLB, ME_SET_CBB);
-    mec(ME_SET_LUB,  ME_SET_CBB,  ME_SET_CBB);
-
-    mec(ME_SET_GLB,  ME_SET_BB,   ME_SET_BB);
-    mec(ME_SET_GLB,  ME_SET_CLUB, ME_SET_CBB);
-    mec(ME_SET_GLB,  ME_SET_CGLB, ME_SET_CGLB);
-    mec(ME_SET_GLB,  ME_SET_CBB,  ME_SET_CBB);
-
-    mec(ME_SET_BB,   ME_SET_CLUB, ME_SET_CBB);
-    mec(ME_SET_BB,   ME_SET_CGLB, ME_SET_CBB);
-    mec(ME_SET_BB,   ME_SET_CBB,  ME_SET_CBB);
-
-    mec(ME_SET_CLUB, ME_SET_CGLB, ME_SET_CBB);
-    mec(ME_SET_CLUB, ME_SET_CBB,  ME_SET_CBB);
-
-    mec(ME_SET_CGLB, ME_SET_CBB,  ME_SET_CBB);
-
-    // Mapping between modification events and propagation conditions
-    mepc(ME_SET_CARD, PC_SET_CARD); mepc(ME_SET_CARD, PC_SET_CGLB);
-    mepc(ME_SET_CARD, PC_SET_CLUB); mepc(ME_SET_CARD, PC_SET_ANY);
-
-    mepc(ME_SET_LUB,  PC_SET_CLUB); mepc(ME_SET_LUB,  PC_SET_ANY);
-
-    mepc(ME_SET_GLB,  PC_SET_CGLB); mepc(ME_SET_GLB,  PC_SET_ANY);
-
-    mepc(ME_SET_BB,   PC_SET_CGLB); mepc(ME_SET_BB,   PC_SET_CLUB);
-    mepc(ME_SET_BB,   PC_SET_ANY);
-
-    mepc(ME_SET_CLUB, PC_SET_CARD); mepc(ME_SET_CLUB, PC_SET_CGLB);
-    mepc(ME_SET_CLUB, PC_SET_CLUB); mepc(ME_SET_CLUB, PC_SET_ANY);
-
-    mepc(ME_SET_CGLB, PC_SET_CARD); mepc(ME_SET_CGLB, PC_SET_CGLB);
-    mepc(ME_SET_CGLB, PC_SET_CLUB); mepc(ME_SET_CGLB, PC_SET_ANY);
-
-    mepc(ME_SET_CBB,  PC_SET_CARD); mepc(ME_SET_CBB,  PC_SET_CGLB);
-    mepc(ME_SET_CBB,  PC_SET_CLUB); mepc(ME_SET_CBB,  PC_SET_ANY);
-    // Transfer to kernel
-    enter();
-  }
-
-  SetVarImp::Processor SetVarImp::svp;
-
-
-  /*
    * Subscribing to variables
    *
    */
 
   void
   SetVarImp::subscribe(Space* home, Propagator* p, PropCond pc) {
-    Variable<VTI_SET,PC_SET_ANY>::subscribe(home,p,pc,
-					    assigned(), ME_SET_CBB);
+    SetVarImpBase::subscribe(home,p,pc,
+			     assigned(), ME_SET_CBB);
   }
 
 }}

@@ -25,62 +25,9 @@
 
 #include <cmath>
 
+#include "gecode/int/var/imp-hdr.icc"
+
 namespace Gecode { namespace Int {
-
-  /**
-   * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
-   * \ingroup TaskActorInt
-   */
-  
-  //@{
-  /// Domain operation has resulted in failure
-  const ModEvent ME_INT_FAILED = ME_GEN_FAILED;
-  /// Domain operation has not changed domain
-  const ModEvent ME_INT_NONE  = ME_GEN_NONE;
-  /// Domain operation has resulted in a value (assigned variable)
-  const ModEvent ME_INT_VAL   = ME_GEN_ASSIGNED;
-  /** 
-   * \brief Domain operation has changed the minimum or maximum of the domain
-   *
-   * Note that this implies that the domain has not resulted in a value.
-   */
-  const ModEvent ME_INT_BND   = ME_INT_VAL + 1;
-  /** 
-   * \brief Domain operation has changed the domain
-   *
-   * Note that this implies that the domain has not resulted in a value
-   * and that also the minimum and maximum of the domain have not changed.
-   */
-  const ModEvent ME_INT_DOM   = ME_INT_BND + 1;
-
-  /**
-   * \brief Propagate when a view becomes assigned (single value)
-   *
-   * If a propagator \a p depends on a view \a x with propagation
-   * condition PC_INT_VAL, then \a p is propagated when a domain
-   * update operation on \a x returns the modification event ME_INT_VAL.
-   */
-  const PropCond PC_INT_VAL = PC_GEN_ASSIGNED;
-  /**
-   * \brief Propagate when minimum or maximum of a view changes
-   *
-   * If a propagator \a p depends on a view \a x with propagation
-   * condition PC_INT_BND, then \a p is propagated when a domain
-   * update operation on \a x returns the modification events ME_INT_VAL
-   * or ME_INT_BND.
-   */
-  const PropCond PC_INT_BND = PC_INT_VAL + 1;
-  /**
-   * \brief Propagate when domain changes
-   *
-   * If a propagator \a p depends on a view \a x with propagation
-   * condition PC_INT_DOM, then \a p is propagated when a domain
-   * update operation on \a x returns the modification event ME_INT_VAL,
-   * ME_INT_BND, or ME_INT_DOM.
-   */
-  const PropCond PC_INT_DOM = PC_INT_BND + 1;
-
-  //@}
 
   class IntVarImpFwd;
   class IntVarImpBwd;
@@ -90,7 +37,7 @@ namespace Gecode { namespace Int {
    *
    * \ingroup Other
    */  
-  class IntVarImp : public Variable<VTI_INT,PC_INT_DOM> {
+  class IntVarImp : public IntVarImpBase {
     friend class IntVarImpFwd;
     friend class IntVarImpBwd;
   protected:
@@ -198,15 +145,6 @@ namespace Gecode { namespace Int {
     void lst(RangeList* l);
     /// Size of holes in the domain
     unsigned int holes;
-    
-    /// Integer variable processor for modified variables
-    class Processor : public VarTypeProcessor<VTI_INT,PC_INT_DOM> {
-    public:
-      /// Initialize and register
-      Processor(void);
-    };
-    /// The processor
-    GECODE_INT_EXPORT static Processor ivp;
 
   protected:
     /// Constructor for cloning \a x

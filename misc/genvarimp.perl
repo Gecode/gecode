@@ -237,7 +237,7 @@ if ($gen_header) {
   class $class : public $base {
   protected:
     /// Variable procesor for variables of this type
-    class Processor : public VarTypeProcessor<VTI_${VTI},$pcmax> {
+    class Processor : public VarTypeProcessor<VTI_${VTI},$maxpc> {
     public:
       /// Initialize and register variables with kernel
       Processor(void);
@@ -283,7 +283,7 @@ if ($gen_header) {
     : $base(home) {}
 
   $forceinline
-  ${class}::${class}(Space* home, bool share, $class\<& x)
+  ${class}::${class}(Space* home, bool share, $class\& x)
     : $base(home,share,x) {}
 
   $forceinline void

@@ -23,6 +23,8 @@
 
 #include "gecode/limits.hh"
 
+#include "gecode/int/var/imp-body.icc"
+
 namespace Gecode { namespace Int {
 
   forceinline bool
@@ -306,7 +308,7 @@ namespace Gecode { namespace Int {
 
   forceinline
   IntVarImp::IntVarImp(Space* home, bool share, IntVarImp& x)
-    : Variable<VTI_INT,PC_INT_DOM>(home,share,x),
+    : IntVarImpBase(home,share,x),
       dom(x.dom.min(),x.dom.max()), holes(x.holes) {
     if (holes) {
       int m = 1;
@@ -347,29 +349,6 @@ namespace Gecode { namespace Int {
   }
 
 
-
-
-  /*
-   * Integer variable modification board
-   *
-   */
-
-  forceinline
-  IntVarImp::Processor::Processor(void) {
-    // Combination of modification events
-    mec(ME_INT_BND,  ME_INT_DOM,  ME_INT_BND);
-    // Mapping between modification events and propagation conditions
-    mepc(ME_INT_BND, PC_INT_BND);
-    mepc(ME_INT_BND, PC_INT_DOM);
-    mepc(ME_INT_DOM, PC_INT_DOM);
-    // Transfer to kernel
-    enter();
-  }
-
-  IntVarImp::Processor IntVarImp::ivp;
-
-
-
   /*
    * Subscribing to variables
    *
@@ -377,8 +356,8 @@ namespace Gecode { namespace Int {
 
   void
   IntVarImp::subscribe(Space* home, Propagator* p, PropCond pc) {
-    Variable<VTI_INT,PC_INT_DOM>::subscribe(home,p,pc,
-					    dom.min()==dom.max(), ME_INT_BND);
+    IntVarImpBase::subscribe(home,p,pc,
+			     dom.min()==dom.max(), ME_INT_BND);
   }
 
 }}

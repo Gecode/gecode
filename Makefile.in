@@ -171,6 +171,8 @@ INTSRC0 = \
 	distinct.cc cumulatives.cc \
 	sortedness.cc gcc.cc \
 	channel.cc
+INTVARIMP = \
+        gecode/int/var/imp-hdr.icc gecode/int/var/imp-body.icc
 INTHDR0 = \
 	arithmetic/abs.icc arithmetic/max.icc arithmetic/mult.icc \
 	bool/or.icc bool/eq.icc bool/eqv.icc bool/base.icc \
@@ -202,7 +204,7 @@ INTHDR0 = \
 	channel/base.icc
 
 INTSRC		= $(INTSRC0:%=gecode/int/%)
-INTHDR		= gecode/int.hh $(INTHDR0:%=gecode/int/%)
+INTHDR		= gecode/int.hh $(INTHDR0:%=gecode/int/%) $(INTVARIMP)
 INTOBJ		= $(INTSRC:%.cc=%$(OBJSUFFIX))
 
 ifeq "@enable_int_vars@" "yes"
@@ -243,6 +245,8 @@ SETSRC0 =								 \
 	projectors/set-expr.cc projectors/projector.cc			 \
 	projectors/projector-set.cc					 \
 	projectors/propagator/re-nary.cc
+SETVARIMP = \
+        gecode/set/var/imp-hdr.icc gecode/set/var/imp-body.icc
 SETHDR0 =								     \
 	view.icc exception.icc int.hh select.hh var.icc int/card.icc	     \
 	int/match.icc int/channel.icc int/minmax.icc int/weights.icc	     \
@@ -269,7 +273,7 @@ SETHDR0 =								     \
 	projectors/propagator/re-nary.icc
 
 SETSRC		= $(SETSRC0:%=gecode/set/%)
-SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%)
+SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%) $(SETVARIMP)
 SETOBJ		= $(SETSRC:%.cc=%$(OBJSUFFIX))
 
 ifeq "@enable_set_vars@" "yes"
@@ -405,6 +409,7 @@ SUPPORTSBJ = $(SUPPORTSRC:%.cc=%$(SBJSUFFIX))
 ALLSRC =						\
 	$(KERNELSRC) $(SEARCHSRC) $(INTSRC) $(SETSRC)	\
 	$(MMSRC) $(SUPPORTSRC) $(INTEXAMPLESRC) $(SETEXAMPLESRC)
+ALLVARIMP = $(INTVARIMP) $(SETVARIMP)
 ALLHDR = $(KERNELHDR) $(SEARCHHDR) $(INTHDR) $(SETHDR) $(MMHDR) $(OTHERHDR)
 ALLOBJ = $(ALLSRC:%.cc=%$(OBJSUFFIX))
 ALLSBJ = $(ALLSRC:%.cc=%$(SBJSUFFIX))
@@ -487,9 +492,9 @@ BUILDDIRS = $(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%) $(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
 
 ifeq "@enable_examples@" "yes"
-all: compilelib compileexamples
+all: $(ALLVARIMP) compilelib compileexamples
 else
-all: compilelib
+all: $(ALLVARIMP) compilelib
 endif
 compilelib: mkcompiledirs $(LIBTARGETS) compilesubdirs
 compileexamples: $(EXAMPLEEXE)
@@ -527,6 +532,19 @@ compilesubdirs:
 	    $(MAKE) -C $$i; \
 	  fi; \
 	done
+
+#
+# Generated variable implementations
+#
+gecode/int/var/imp-hdr.icc: $(top_srcdir)/gecode/int/var-imp.vis
+	perl $(top_srcdir)/misc/genvarimp.perl -header < $^ > $@
+gecode/int/var/imp-body.icc: $(top_srcdir)/gecode/int/var-imp.vis
+	perl $(top_srcdir)/misc/genvarimp.perl -body < $^ > $@
+gecode/set/var/imp-hdr.icc: $(top_srcdir)/gecode/set/var-imp.vis
+	perl $(top_srcdir)/misc/genvarimp.perl -header < $^ > $@
+gecode/set/var/imp-body.icc: $(top_srcdir)/gecode/set/var-imp.vis
+	perl $(top_srcdir)/misc/genvarimp.perl -body < $^ > $@
+
 
 #
 # Object targets
@@ -905,6 +923,7 @@ clean:
 	$(RMF) $(TESTOBJ) $(TESTSBJ)
 
 veryclean: clean
+	$(RMF) $(ALLVARIMP)
 	$(RMF) $(LIBTARGETS)
 	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%.exp) $(LIBTARGETS:%$(DLLSUFFIX)=%.lib)
 	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%.ilk) $(LIBTARGETS:%$(DLLSUFFIX)=%.pdb)
