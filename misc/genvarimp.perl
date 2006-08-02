@@ -293,8 +293,17 @@ if ($gen_header) {
 
   /// Modification event difference for $name-variable implementations
   class $diffc {
+EOF
+;
+
+if ($me_max_n > 4) {
+  print <<EOF
   private:
     $export static const Gecode::ModEvent med[$me_max][$me_max];
+EOF
+;
+}
+  print <<EOF
   public:
     /// Return difference when changing modification event \\a me2 to \\a me1
     ModEvent operator()(ModEvent me1, ModEvent me2) const;
@@ -337,7 +346,48 @@ $chdr
 
   $forceinline ModEvent
   ${diffc}::operator()(ModEvent me1, ModEvent me2) const {
-    return med[me1][me2];
+EOF
+;
+
+if ($me_max_n <= 4) {
+  print "    const int med = (\n";
+
+  for ($i=0; $i<$me_max_n;$i++) {
+    $n1 = $val2me[$i];
+    print "      (\n";
+    for ($j=0; $j<$me_max_n;$j++) {
+      $n2 = $val2me[$j];
+      if ($n1 eq "NONE") {
+        $n3 = $n2;
+      } elsif ($n2 eq "NONE") {
+        $n3 = $n1;
+      } else {
+        $n3 = $mec{$n1}{$n2};
+      }
+      print "        ((ME_${VTI}_$n2 ^ ME_${VTI}_$n3) << ";
+      print (($i << 3) + ($j << 1));
+      if ($j+1 == $me_max_n) {
+        print ")   ";
+      } else {
+        print ") | ";
+      }
+      print " // [ME_${VTI}_$n1][ME_${VTI}_$n2]\n";
+    }
+    if ($i+1 == $me_max_n) {
+      print "      )\n";
+    } else {
+      print "      ) |\n";
+    }
+  }
+
+
+  print "    );\n";
+  print "    return (((med >> (me1 << 3)) >> (me2 << 1)) & 3);\n";
+} else {
+  print "    return med[me1][me2];\n";
+}
+
+print <<EOF
   }
 
   $forceinline
@@ -364,6 +414,7 @@ EOF
 
 } else {
 
+  if ($me_max_n > 4) {
   print <<EOF
 
   /*
@@ -386,7 +437,7 @@ EOF
       } else {
         $n3 = $mec{$n1}{$n2};
       }
-      print "    ME_${VTI}_$n2 ^ ME_${VTI}_$n3";
+      print "      ME_${VTI}_$n2 ^ ME_${VTI}_$n3";
       if ($j+1 == $me_max_n) {
         print " ";
       } else {
@@ -395,14 +446,15 @@ EOF
       print " // [ME_${VTI}_$n1][ME_${VTI}_$n2]\n";
     }
     if ($i+1 == $me_max_n) {
-      print "}\n";
+      print "    }\n";
     } else {
-      print "},\n";
+      print "    },\n";
     }
   }
+  print "  };\n";
+}
 
   print <<EOF
-  };
 
 
   /*
