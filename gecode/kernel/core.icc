@@ -132,13 +132,6 @@ namespace Gecode {
   private:
     /// Table for combining modification events
     ModEvent met[ME_GEN_MAX+1][ME_GEN_MAX+1];
-    /** \brief Mapping between modification event and propagation conditions
-     *
-     * Used during set up of processor. If propagators with propagation
-     * condition \a pc must be processed for the modification event
-     * \a me, then \code (pcs[me] & (1 << pc)) != 0 \endcode
-     */
-    PropCond pcs[ME_GEN_MAX+1];
   public:
     /// Constructor
     VarTypeProcessor(void);
@@ -153,19 +146,11 @@ namespace Gecode {
      *  - Combination with ME_GEN_NONE yields the event itself.
      */
     void mec(ModEvent me1, ModEvent me2, ModEvent me3);
-    /** \brief Store mapping between modification event and propagation condition
-     *
-     * Execute propagators with propagation condition \a pc if
-     * a variable is modified with modification event \a me.
-     */
-    void mepc(ModEvent me, PropCond pc);
     /** \brief Register variable type processor with kernel
      *
      * Transfers the combinations of modification events also to the kernel
      */
     void enter(void);
-    /// Process modified variables linked from \a x
-    virtual void process(Space* home, VarBase* x);
     /**
      * \brief Update copied variables linked from \a x
      *
@@ -233,16 +218,6 @@ namespace Gecode {
      */
     void update(Variable* x, Propagator**& sub);
 
-    /// \name Processing modified variables
-    //@{
-    /// Return next modified variable and reset (during processing)
-    Variable* next(void);
-    /// Return current modification event of variable 
-    ModEvent modevent(void) const;
-    /// Set modification event to \a me
-    void modevent(ModEvent me);
-    //@}
-
   public:
     /// Creation
     Variable(Space* home);
@@ -291,6 +266,20 @@ namespace Gecode {
     static PropModEvent pme(ModEvent me);
     /// Combine modifications events \a me1 and \a me2
     static ModEvent     combine(ModEvent me1, ModEvent me2);
+    //@}
+
+    /// \name Processing modified variables
+    //@{
+    /// Return next modified variable and reset (during processing)
+    Variable* next(void);
+    /// Return current modification event of variable 
+    ModEvent modevent(void) const;
+    /// Set modification event to \a me
+    void modevent(ModEvent me);
+    /// Process subscribed propagators
+    void process(Space* home, PropCond pc1, PropCond pc2, ModEvent me);
+    /// Process subscribed propagators for assigned variable
+    void process(Space* home);
     //@}
 
     /// \name Memory management
@@ -1590,8 +1579,6 @@ namespace Gecode {
       met[ME_GEN_NONE][i] = i;
       // Combination of event with itself is the event itself
       met[i][i] = i;
-      // Initialize mapping table
-      pcs[i] = 0;
     }
   }
 
@@ -1599,12 +1586,6 @@ namespace Gecode {
   forceinline void
   VarTypeProcessor<VTI,PC>::mec(ModEvent me1, ModEvent me2, ModEvent me3) {
     met[me1][me2] = met[me2][me1] = me3;
-  }
-
-  template <VarTypeId VTI, PropCond PC>
-  forceinline void
-  VarTypeProcessor<VTI,PC>::mepc(ModEvent me, PropCond pc) {
-    pcs[me] |= (1 << pc);
   }
 
   template <VarTypeId VTI, PropCond PC>
@@ -1616,22 +1597,6 @@ namespace Gecode {
       for (ModEvent j = ME_GEN_MAX+1; j--; )
 	// The assumption is that i is the new ModEvent and j the old
 	Space::vtd[VTI].mec[i][j] = j^met[i][j];
-    // Initialize the mapping table used by the kernel
-    for (ModEvent me = ME_GEN_MAX+1; me--; ) {
-      int i = 0;
-      for (PropCond pc=PC+1; pc--; )
-	if (pcs[me] & (1 << pc)) {
-	  // Found initial entry (plus one for stopping)
-	  Space::vtd[VTI].pcr[me][i+1] = pc+1;
-	  // Look for all connected entries
-	  while (pcs[me] & (1 << (pc-1)))
-	    pc--;
-	  // Found last entry
-	  Space::vtd[VTI].pcr[me][i+0] = pc;
-	  i += 2;
-	}
-      Space::vtd[VTI].pcr[me][i+0] = -1;
-    }
   }
 
   template <VarTypeId VTI, PropCond PC>
@@ -1678,47 +1643,45 @@ namespace Gecode {
     } while (x != NULL);
   }
 
+  /*
+   * Procesing a single modified variable
+   *
+   */
   template <VarTypeId VTI, PropCond PC>
-  void
-  VarTypeProcessor<VTI,PC>::process(Space* home, VarBase* vb) {
-    Variable<VTI,PC>* x = static_cast<Variable<VTI,PC>*>(vb);
-    do {
-      ModEvent me = x->modevent();
-      if (me != ME_GEN_ASSIGNED) {
-	ModEvent* mec = &home->vtd[VTI].mec[me][0];
-	PropCond* pcr = &home->vtd[VTI].pcr[me][0];
-	do {
-	  Propagator** b = x->idx[*pcr]; pcr++;
-	  Propagator** p = x->idx[*pcr]; pcr++;
-	  while (p-- > b)
-	    home->process(VTI,*p,mec);
-	} while (*pcr >= 0);
-      } else {
-	// Entries in index structure are disabled. However they
-	// must still work for cloning (idx[0]) and degree (idx[PC+1])
-	Propagator** b = x->idx[0];    x->idx[0] = NULL;
-	Propagator** p = x->idx[PC+1]; x->idx[PC+1] = NULL;
-	/*
-	 * Decrement for p-b subscriptions
-	 *
-	 * Note that one would like to also decrement for the additional
-	 * single free slot that was counted initially. However, this
-	 * is not possible as there might be no free slot. So the number
-	 * of subscriptions is a conservative estimate and will be corrected
-	 * upon cloning.
-	 */
-	home->n_sub -= p-b;
-	// Information needed to release the dependency array
-	unsigned int n = x->free() + (p-b);
-	Propagator** s = p-n;
-	while (p-- > b)
-	  home->process(VTI,*p);
-	home->reuse(s,n*sizeof(Propagator*));
-      }
-      x = x->next();
-    } while (x != NULL);
+  forceinline void 
+  Variable<VTI,PC>::process(Space* home,
+			    PropCond pc1, PropCond pc2, ModEvent me) {
+    ModEvent* mec = &home->vtd[VTI].mec[me][0];
+    Propagator** b = idx[pc1];
+    Propagator** p = idx[pc2+1];
+    while (p-- > b)
+      home->process(VTI,*p,mec);
   }
 
+  template <VarTypeId VTI, PropCond PC>
+  forceinline void 
+  Variable<VTI,PC>::process(Space* home) {
+    // Entries in index structure are disabled. However they
+    // must still work for cloning (idx[0]) and degree (idx[PC+1])
+    Propagator** b = idx[0];    idx[0] = NULL;
+    Propagator** p = idx[PC+1]; idx[PC+1] = NULL;
+    /*
+     * Decrement for p-b subscriptions
+     *
+     * Note that one would like to also decrement for the additional
+     * single free slot that was counted initially. However, this
+     * is not possible as there might be no free slot. So the number
+     * of subscriptions is a conservative estimate and will be corrected
+     * upon cloning.
+     */
+    home->n_sub -= p-b;
+    // Information needed to release the dependency array
+    unsigned int n = free() + (p-b);
+    Propagator** s = p-n;
+    while (p-- > b)
+      home->process(VTI,*p);
+    home->reuse(s,n*sizeof(Propagator*));
+  }
 
 }
 

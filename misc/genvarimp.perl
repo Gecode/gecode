@@ -284,6 +284,8 @@ $chdr
     public:
       /// Initialize and register variables with kernel
       Processor(void);
+      /// Process modified variables linked from \\a x
+      $export virtual void process(Space* home, VarBase* x);
     };
     /// The processor used
     $export static Processor p;
@@ -381,27 +383,73 @@ EOF
   }
 
   print <<EOF
-    // Mapping between modification events and propagation conditions
+    // Transfer to kernel
+    enter();
+  }
+
+  void
+  ${class}::Processor::process(Space* home, VarBase* _x) {
+    // Process modified variables
+    ${base}* x = 
+      static_cast<${base}*>(_x);
+    do {
+      switch (x->modevent()) {
 EOF
 ;
 
+  for ($i=0; $i<$pc_n; $i++) {
+     if ($pcspecial{$pcn[$i]} eq "ASSIGNED") {
+       $val2pc[0] = $pcn[$i];
+     }
+  }
+  $o = 1;
+  for ($i=0; $i<$pc_n; $i++) {
+     if (!($pcspecial{$pcn[$i]} eq "ASSIGNED")) {
+       $val2pc[$o] = $pcn[$i]; $o++;
+     }
+  }
+
+#  for ($i=0; $i<$pc_n; $i++) {
+#     print "val2pc[$i] = " . $val2pc[$i] . "\n";
+# }
+
   for ($i=0; $i<$me_n; $i++) {
-    $n1 = $men[$i];
-    if (!($mespecial{$n1} eq "NONE") && !($mespecial{$n1} eq "FAILED")) {
-      $n1 = "ME_${VTI}_$n1";
+    $n = $men[$i];
+    if ($mespecial{$n} eq "ASSIGNED") {
+      print "      case ME_${VTI}_$n:\n";
+      print "        x->process(home);\n";
+      print "        break;\n";
+    } elsif (!($mespecial{$n} eq "NONE") && !($mespecial{$n} eq "FAILED")) {
+      print "      case ME_${VTI}_$n:\n";
+      print "        // Conditions: ";
       for ($j=0; $j<$pc_n; $j++) {
-        $n2 = "PC_${VTI}_" . $pcn[$j];
         if ($mepc{$men[$i]}{$pcn[$j]}) {
-          print "    mepc($n1,$n2);\n";
+          print $pcn[$j] . " ";
         }
       }
+      print "\n";
+      for ($j=0; $j<$pc_n; $j++) {
+	if ($mepc{$men[$i]}{$val2pc[$j]}) {
+	  # Found initial entry (plus one for stopping)
+	  print "        x->process(home,PC_${VTI}_" . $val2pc[$j] . ",";
+	  # Look for all connected entries
+	  while ($mepc{$men[$i]}{$val2pc[$j+1]}) {
+	    $j++;
+          }
+	  # Found last entry
+	  print "PC_${VTI}_" . $val2pc[$j] . ",ME_${VTI}_$n);\n";
+	}
+      }
+      print "        break;\n";
     }
   }
 
 
   print <<EOF
-    // Transfer to kernel
-    enter();
+      default: GECODE_NEVER;
+      }
+      x = x->next();
+    } while (x != NULL);
   }
   
   ${class}::Processor ${class}::p;
