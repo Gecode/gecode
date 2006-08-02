@@ -237,6 +237,20 @@ EOF
 ;
 print "$hdr";
 
+$o = 2;
+for ($i=0; $i<$me_n; $i++) {
+  $n = $men[$i];
+  if ($mespecial{$n} eq "NONE") {
+    $me2val{$n} = 0;  $val2me[0] = $n;
+  } elsif ($mespecial{$n} eq "ASSIGNED") {
+    $me2val{$n} = 1;  $val2me[1] = $n;
+  } elsif (!$mespecial{$n}) {
+    $me2val{$n} = $o; $val2me[$o] = $n; $o++;
+  }
+}
+$me_max   = "ME_${VTI}_" . $val2me[$o-1] . "+1";
+$me_max_n = $o;
+
 if ($gen_header) {
 
   print "$mehdr";
@@ -277,13 +291,14 @@ if ($gen_header) {
 
   print <<EOF
 
-    /// Modification event combiner for $name-variables 
-    class $combc {
-    private:
-    public:
-      /// Combine modification events \\a me1 and \\a me2
-      ModEvent operator()(ModEvent me1, ModEvent me2) const;
-    };
+  /// Modification event combiner for $name-variable implementations
+  class $combc {
+  private:
+    $export static const Gecode::ModEvent mec[$me_max][$me_max];
+  public:
+    /// Combine modification events \\a me1 and \\a me2
+    ModEvent operator()(ModEvent me1, ModEvent me2) const;
+  };
 
 $chdr
   class $class : public $base {
@@ -322,6 +337,11 @@ $chdr
   };
 
 
+  $forceinline ModEvent
+  ${combc}::operator()(ModEvent me1, ModEvent me2) const {
+    return mec[me1][me2];
+  }
+
   $forceinline
   ${class}::${class}(Space* home)
     : $base(home) {}
@@ -347,6 +367,45 @@ EOF
 } else {
 
   print <<EOF
+
+  /*
+   * The modification event combiner for $name-variable implementations
+   *
+   */
+  const Gecode::ModEvent mec[$me_max][$me_max] = {
+EOF
+;
+
+  for ($i=0; $i<$me_max_n;$i++) {
+    $n1 = $val2me[$i];
+    print "    {\n";
+    for ($j=0; $j<$me_max_n;$j++) {
+      $n2 = $val2me[$j];
+      if ($n1 eq "NONE") {
+        $n3 = $n2;
+      } elsif ($n2 eq "NONE") {
+        $n3 = $n1;
+      } else {
+        $n3 = $mec{$n1}{$n2};
+      }
+      print "    ME_${VTI}_$n3";
+      if ($j+1 == $me_max_n) {
+        print " ";
+      } else {
+        print ",";
+      }
+      print " // [ME_${VTI}_$n1][ME_${VTI}_$n2]\n";
+    }
+    if ($i+1 == $me_max_n) {
+      print "}\n";
+    } else {
+      print "},\n";
+    }
+  }
+
+  print <<EOF
+  };
+
 
   /*
    * The variable processor for $class

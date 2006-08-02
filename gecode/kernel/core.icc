@@ -624,8 +624,6 @@ namespace Gecode {
       VarTypeProcessorBase* proc;
       /// Information for combining modification events
       ModEvent mec[ME_GEN_MAX+1][ME_GEN_MAX+1];
-      /// Ranges of propagation conditions for processing propagators
-      PropCond pcr[ME_GEN_MAX+1][PC_GEN_MAX+3];
     };
     /// Collects all data relevant to processing variables and propagators
     GECODE_KERNEL_EXPORT static VarTypeData vtd[VTI_LAST];
