@@ -537,13 +537,13 @@ compilesubdirs:
 # Generated variable implementations
 #
 gecode/int/var/imp-hdr.icc: $(top_srcdir)/gecode/int/var-imp.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -header < $^ > $@
+	perl $(top_srcdir)/misc/genvarimp.perl -header $^ > $@
 gecode/int/var/imp-body.icc: $(top_srcdir)/gecode/int/var-imp.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -body < $^ > $@
+	perl $(top_srcdir)/misc/genvarimp.perl -body $^ > $@
 gecode/set/var/imp-hdr.icc: $(top_srcdir)/gecode/set/var-imp.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -header < $^ > $@
+	perl $(top_srcdir)/misc/genvarimp.perl -header $^ > $@
 gecode/set/var/imp-body.icc: $(top_srcdir)/gecode/set/var-imp.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -body < $^ > $@
+	perl $(top_srcdir)/misc/genvarimp.perl -body $^ > $@
 
 
 #

@@ -20,12 +20,18 @@
 #
 #
 
-if (@ARGV[0] eq "-header") {
-  $gen_header = 1;
-} else {
-  $gen_header = 0;
+while (($arg = $ARGV[$i]) && ($arg =~ /^-/)) {
+  $i++;
+  if ($arg eq "-header") {
+    $gen_header = 1;
+  } elsif ($arg eq "-body") {
+    $gen_header = 0;
+  }
 }
-pop;
+
+$file = $ARGV[$i];
+
+open FILE, $file;
 
 ## General values
 $name   = "";
@@ -45,6 +51,8 @@ $meftr  = ""; # Footer text for modification events
 $pchdr  = ""; # Header text for propagation conditions
 $pcftr  = ""; # Footer text for propagation conditions
 
+$chdr   = ""; # Class header
+
 ##
 ## Real stuff
 ##
@@ -59,13 +67,14 @@ $me_n = 0; # running number of modification events
 $pc_n = 0; # running number of propagation conditions
 
 
-while ($l = <>) {
+while ($l = <FILE>) {
  LINE:
   next if ($l =~ /^\#/);
   last if ($l =~ /^\[End\]/io);
   
   if ($l =~ /^\[General\]/io) {
-    while (($l = <>) && !($l =~ /^\[/)) {
+    $h = "";
+    while (($l = <FILE>) && !($l =~ /^\[/)) {
       next if ($l =~ /^\#/);
       if ($l =~ /^Name:\s*(\w+)/io) {
 	$name = $1;
@@ -75,11 +84,14 @@ while ($l = <>) {
 	$export = $1;
       } elsif ($l =~ /^Forceinline:\s*(\w+)/io) {
 	$forceinline = $1;
+      } else {
+        $h = $h . $l;
       }
     }
+    $chdr = $h;
     goto LINE;
   } elsif ($l =~ /^\[ModEventHeader\]/io) {
-    while (($l = <>) && !($l =~ /^\[/)) {
+    while (($l = <FILE>) && !($l =~ /^\[/)) {
       next if ($l =~ /^\#/);
       $mehdr = $mehdr . $l;
     }
@@ -88,7 +100,7 @@ while ($l = <>) {
     $n = "";
     $h = "";
 
-    while (($l = <>) && !($l =~ /^\[/)) {
+    while (($l = <FILE>) && !($l =~ /^\[/)) {
       next if ($l =~ /^\#/);
       if ($l =~ /^Name:\s*(\w+)\s*=\s*(\w+)/io) {
 	# Found a special modification event
@@ -121,13 +133,13 @@ while ($l = <>) {
     $me_n++;
     goto LINE;
   } elsif ($l =~ /^\[ModEventFooter\]/io) {
-    while (($l = <>) && !($l =~ /^\[/)) {
+    while (($l = <FILE>) && !($l =~ /^\[/)) {
       next if ($l =~ /^\#/);
       $meftr = $meftr . $l;
     }
     goto LINE;
   } elsif ($l =~ /^\[PropCondHeader\]/io) {
-    while (($l = <>) && !($l =~ /^\[/)) {
+    while (($l = <FILE>) && !($l =~ /^\[/)) {
       next if ($l =~ /^\#/);
       $pchdr = $pchdr . $l;
     }
@@ -136,7 +148,7 @@ while ($l = <>) {
     $n = "";
     $h = "";
 
-    while (($l = <>) && !($l =~ /^\[/)) {
+    while (($l = <FILE>) && !($l =~ /^\[/)) {
       next if ($l =~ /^\#/);
       if ($l =~ /^Name:\s*(\w+)\s*=\s*(\w+)/io) {
 	# Found a special propagation condition
@@ -164,19 +176,19 @@ while ($l = <>) {
     $pc_n++;
     goto LINE;
   } elsif ($l =~ /^\[PropCondFooter\]/io) {
-    while (($l = <>) && !($l =~ /^\[/)) {
+    while (($l = <FILE>) && !($l =~ /^\[/)) {
       next if ($l =~ /^\#/);
       $pcftr = $pcftr . $l;
     }
     goto LINE;
   } elsif ($l =~ /^\[Header\]/io) {
-    while (($l = <>) && !($l =~ /^\[/)) {
+    while (($l = <FILE>) && !($l =~ /^\[/)) {
       next if ($l =~ /^\#/);
       $hdr = $hdr . "$l";
     }
     goto LINE;
   } elsif ($l =~ /^\[Footer\]/io) {
-    while (($l = <>) && !($l =~ /^\[/)) {
+    while (($l = <FILE>) && !($l =~ /^\[/)) {
       next if ($l =~ /^\#/);
       $ftr = $ftr . "$l";
     }
@@ -184,6 +196,8 @@ while ($l = <>) {
   }
 
 }
+
+close FILE;
 
 ##
 ## Generate the output
@@ -193,9 +207,37 @@ $maxpc = "PC_${VTI}_$pcn[$pc_n-1]";
 $class = "${name}VarImpBase";
 $base  = "Gecode::Variable<VTI_$VTI,$maxpc>";
 
+print <<EOF
+/*
+ *  CAUTION:
+ *    This file has been automatically generated.
+ *    Do not edit, edit the file "$file" instead.
+ *
+ *  This file contains generated code fragments which are 
+ *  copyrighted as follows:
+ *
+ *  Main author:
+ *     Christian Schulte <schulte\@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2006
+ *
+ *  The generated code fragments are part of Gecode, the generic
+ *  constraint development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+EOF
+;
+print "$hdr";
+
 if ($gen_header) {
 
-  print "$hdr";
   print "$mehdr";
 
   $o = 1;
@@ -234,10 +276,11 @@ if ($gen_header) {
 
   print <<EOF
 
+$chdr
   class $class : public $base {
   protected:
     /// Variable procesor for variables of this type
-    class Processor : public VarTypeProcessor<VTI_${VTI},$maxpc> {
+    class Processor : public Gecode::VarTypeProcessor<VTI_${VTI},$maxpc> {
     public:
       /// Initialize and register variables with kernel
       Processor(void);
@@ -299,11 +342,8 @@ if ($gen_header) {
 
 EOF
 ;
-  print "$ftr";
 
 } else {
-
-  print "$hdr";
 
   print <<EOF
 
@@ -369,6 +409,7 @@ EOF
 EOF
 ;
 
-  print "$ftr";
-
 }
+
+print "$ftr";
+
