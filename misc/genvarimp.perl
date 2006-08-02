@@ -306,8 +306,6 @@ $chdr
     /// Variable procesor for variables of this type
     class Processor : public Gecode::VarTypeProcessor<VTI_${VTI},$maxpc,$diffc> {
     public:
-      /// Initialize and register variables with kernel
-      Processor(void);
       /// Process modified variables linked from \\a x
       $export virtual void process(Space* home, VarBase* x);
     };
@@ -369,7 +367,7 @@ EOF
   print <<EOF
 
   /*
-   * The modification event combiner for $name-variable implementations
+   * Modification event difference for $name-variable implementations
    *
    */
   const Gecode::ModEvent ${diffc}::med[$me_max][$me_max] = {
@@ -411,39 +409,6 @@ EOF
    * The variable processor for $class
    *
    */
-
-  inline
-  ${class}::Processor::Processor(void) {
-    // Combination of modification events
-EOF
-;
-  for ($i=0; $i<$me_n; $i++) {
-    $n = $men[$i];
-    if (!($mespecial{$n} eq "NONE") && !($mespecial{$n} eq "FAILED")) {
-      $n = "ME_${VTI}_$n";
-      print "    mec($me_none,$n,$n);\n"; 
-      print "    mec($n,$me_none,$n);\n";
-    }
-  }
-  for ($i=0; $i<$me_n; $i++) {
-    $n1 = $men[$i];
-    if (!($mespecial{$n1} eq "NONE") && !($mespecial{$n1} eq "FAILED")) {
-      $n1 = "ME_${VTI}_$n1";
-      for ($j=0; $j<$me_n; $j++) {
-        $n2 = $men[$j];
-        if (!($mespecial{$n2} eq "NONE") && !($mespecial{$n2} eq "FAILED")) {
-          $n2 = "ME_${VTI}_$n2";
-          $n3 = "ME_${VTI}_" . $mec{$men[$i]}{$men[$j]};
-          print "    mec($n1,$n2,$n3);\n";
-        }
-      }
-    }
-  }
-
-  print <<EOF
-    // Transfer to kernel
-    enter();
-  }
 
   void
   ${class}::Processor::process(Space* home, VarBase* _x) {

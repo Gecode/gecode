@@ -129,28 +129,9 @@ namespace Gecode {
    */
   template <VarTypeId VTI, PropCond PC, class MED>
   class VarTypeProcessor : public VarTypeProcessorBase {
-  private:
-    /// Table for combining modification events
-    ModEvent met[ME_GEN_MAX+1][ME_GEN_MAX+1];
   public:
-    /// Constructor
+    /// Constructor (registers processor with kernel)
     VarTypeProcessor(void);
-    /** \brief Store combinations of modification events
-     *
-     * The combination of \a me1 with \a me2 (and of \a me2 with \a me1)
-     * is stored to be \a me3.
-     *
-     * Note that the following combinations are predefined
-     *  - Combination with ME_GEN_ASSIGNED is ME_GEN_ASSIGNED.
-     *  - Combination of an event with itself yields that event.
-     *  - Combination with ME_GEN_NONE yields the event itself.
-     */
-    void mec(ModEvent me1, ModEvent me2, ModEvent me3);
-    /** \brief Register variable type processor with kernel
-     *
-     * Transfers the combinations of modification events also to the kernel
-     */
-    void enter(void);
     /**
      * \brief Update copied variables linked from \a x
      *
@@ -614,16 +595,9 @@ namespace Gecode {
      * \name Processing variables
      */
     //@{
-    /// Collects all data relevant to processing variables and propagators
-    class VarTypeData {
-    public:
-      /// Registered variable type processor
-      VarTypeProcessorBase* proc;
-      /// Information for combining modification events
-      ModEvent mec[ME_GEN_MAX+1][ME_GEN_MAX+1];
-    };
-    /// Collects all data relevant to processing variables and propagators
-    GECODE_KERNEL_EXPORT static VarTypeData vtd[VTI_LAST];
+    /// Registered variable type processors
+    GECODE_KERNEL_EXPORT
+    static VarTypeProcessorBase* vtp[VTI_LAST];
     /// Array of all modified or copied variables (entry points)
     VarBase* vars[VTI_LAST];
     /// To keep variables during copying without index structure
@@ -1567,42 +1541,6 @@ namespace Gecode {
    */
 
   template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline
-  VarTypeProcessor<VTI,PC,MED>::VarTypeProcessor(void) {
-    // Initialize combination table with pre-defined entries
-    for (ModEvent i = ME_GEN_MAX+1; i--; )
-      for (ModEvent j = ME_GEN_MAX+1; j--; )
-	met[i][j] = ME_GEN_NONE;
-    for (ModEvent i = ME_GEN_MAX+1; i--; ) {
-      // Combination with ME_GEN_ASSIGNED is ME_GEN_ASSIGNED
-      met[i][ME_GEN_ASSIGNED] = ME_GEN_ASSIGNED;
-      met[ME_GEN_ASSIGNED][i] = ME_GEN_ASSIGNED;
-      // Combination with ME_GEN_NONE is the event
-      met[i][ME_GEN_NONE] = i;
-      met[ME_GEN_NONE][i] = i;
-      // Combination of event with itself is the event itself
-      met[i][i] = i;
-    }
-  }
-
-  template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline void
-  VarTypeProcessor<VTI,PC,MED>::mec(ModEvent me1, ModEvent me2, ModEvent me3) {
-    met[me1][me2] = met[me2][me1] = me3;
-  }
-
-  template <VarTypeId VTI, PropCond PC, class MED>
-  void
-  VarTypeProcessor<VTI,PC,MED>::enter(void) {
-    Space::vtd[VTI].proc = this;
-    // Initialize the combination table used by the kernel
-    for (ModEvent i = ME_GEN_MAX+1; i--; )
-      for (ModEvent j = ME_GEN_MAX+1; j--; )
-	// The assumption is that i is the new ModEvent and j the old
-	Space::vtd[VTI].mec[i][j] = j^met[i][j];
-  }
-
-  template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::update(Variable<VTI,PC,MED>* x, Propagator**& sub) {
     // this refers to the variable to be updated (clone)
@@ -1635,6 +1573,11 @@ namespace Gecode {
     if (n > 0) {
       t[0] = static_cast<Propagator*>(f[0]->prev());;
     }
+  }
+
+  template <VarTypeId VTI, PropCond PC, class MED>
+  VarTypeProcessor<VTI,PC,MED>::VarTypeProcessor(void) {
+    Space::vtp[VTI] = this;
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>

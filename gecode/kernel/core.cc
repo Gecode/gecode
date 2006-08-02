@@ -30,7 +30,7 @@ namespace Gecode {
    *
    */
 
-  Space::VarTypeData Space::vtd[VTI_LAST];
+  VarTypeProcessorBase* Space::vtp[VTI_LAST];
 
   VarTypeProcessorBase::~VarTypeProcessorBase(void) {}
 
@@ -115,7 +115,7 @@ namespace Gecode {
     for (int vti=VTI_LAST; vti--; ) {
       VarBase* vs = vars[vti];
       if (vs != NULL) {
-	vars[vti] = NULL; vtd[vti].proc->process(this,vs);
+	vars[vti] = NULL; vtp[vti]->process(this,vs);
       }
     }
   }
@@ -365,8 +365,7 @@ namespace Gecode {
     for (int vti=VTI_LAST; vti--; ) {
       VarBase* vs = c->vars[vti];
       if (vs != NULL) {
-	c->vars[vti] = NULL; 
-	vtd[vti].proc->update(vs,s);
+	c->vars[vti] = NULL; vtp[vti]->update(vs,s);
       }
     }
     // Update the number of subscriptions (both in copy and original)
