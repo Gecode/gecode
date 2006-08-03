@@ -88,9 +88,8 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("Queens");
-  opt.iterations = 200;
+  opt.iterations = 500;
   opt.size       = 100;
-  opt.c_d        = 5;
   opt.parse(argc,argv);
   Example::run<Queens,DFS>(opt);
   return 0;

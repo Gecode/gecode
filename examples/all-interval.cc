@@ -98,8 +98,9 @@ public:
 
 int main(int argc, char** argv){
   Options opt("All-interval Series");
-  opt.size = 1000;
-  opt.icl  = ICL_BND;
+  opt.size       = 1000;
+  opt.iterations = 5;
+  opt.icl        = ICL_BND;
   opt.parse(argc, argv);
   if (opt.size < 2) {
     std::cerr << "n must be at least 2!" << std::endl;

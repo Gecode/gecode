@@ -364,8 +364,7 @@ main(int argc, char** argv) {
   Options opt("GraphColor");
   opt.naive      = false;
   opt.icl        = ICL_DOM;
-  opt.iterations = 5;
-  opt.c_d        = 10;
+  opt.iterations = 20;
   opt.parse(argc,argv);
   Example::run<GraphColor,DFS>(opt);
   return 0;

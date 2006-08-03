@@ -97,7 +97,6 @@ int
 main(int argc, char** argv) {
   Options o("Hamming");
   o.size = 32;
-  o.c_d  = 5;
   o.parse(argc,argv);
   Example::run<Hamming,DFS>(o);
   return 0;

@@ -135,10 +135,8 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("Knights");
-  opt.iterations = 50;
+  opt.iterations = 100;
   opt.size       = 8;
-  opt.c_d        = 25;
-  opt.a_d        = 5;
   opt.parse(argc,argv);
   Example::run<Knights,DFS>(opt);
   return 0;

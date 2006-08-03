@@ -61,7 +61,6 @@ int
 main(int argc, char** argv) {
   Options opt("Baseline");
   opt.iterations = 2000;
-  opt.c_d        = 5;
   opt.solutions  = 0;
   opt.parse(argc,argv);
   Example::run<Baseline,DFS>(opt);

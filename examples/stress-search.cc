@@ -62,7 +62,6 @@ main(int argc, char** argv) {
   Options opt("StressSearch");
   opt.iterations = 20;
   opt.size       = 6;
-  opt.c_d        = 5;
   opt.solutions  = 0;
   opt.parse(argc,argv);
   Example::run<StressSearch,DFS>(opt);

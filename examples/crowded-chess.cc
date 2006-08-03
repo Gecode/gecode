@@ -297,7 +297,6 @@ public:
 int
 main(int argc, char** argv) {
   Options o("CrowdedChess");
-  o.c_d        = 2;
   o.icl        = ICL_DOM;
   o.size       = 7;
   o.parse(argc,argv);
