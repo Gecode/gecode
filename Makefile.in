@@ -492,14 +492,14 @@ BUILDDIRS = $(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%) $(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
 
 ifeq "@enable_examples@" "yes"
-all: $(ALLVARIMP) compilelib compileexamples
+all: compilelib compileexamples
 else
-all: $(ALLVARIMP) compilelib
+all: compilelib
 endif
-compilelib: mkcompiledirs $(LIBTARGETS) compilesubdirs
+compilelib: mkcompiledirs $(ALLVARIMP) $(LIBTARGETS) compilesubdirs
 compileexamples: $(EXAMPLEEXE)
 
-test: mkcompiledirs $(TESTEXE)
+test: mkcompiledirs $(ALLVARIMP) $(TESTEXE)
 
 ifeq "@top_srcdir@" "."
 mkcompiledirs:
@@ -938,7 +938,7 @@ distclean: veryclean
 	$(RMF) gecode/vti.icc doxygen.conf doxygen.hh Makefile
 	$(RMF) config.log config.status
 
-depend: 	
+depend: $(ALLVARIMP) 	
 	perl $(top_srcdir)/misc/makedepend.perl \
 	$(top_srcdir) \
 	$(ALLSRC) \
