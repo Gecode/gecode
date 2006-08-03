@@ -51,8 +51,6 @@ $meftr  = ""; # Footer text for modification events
 $pchdr  = ""; # Header text for propagation conditions
 $pcftr  = ""; # Footer text for propagation conditions
 
-$chdr   = ""; # Class header
-
 ##
 ## Real stuff
 ##
@@ -73,7 +71,6 @@ while ($l = <FILE>) {
   last if ($l =~ /^\[End\]/io);
   
   if ($l =~ /^\[General\]/io) {
-    $h = "";
     while (($l = <FILE>) && !($l =~ /^\[/)) {
       next if ($l =~ /^\#/);
       if ($l =~ /^Name:\s*(\w+)/io) {
@@ -84,11 +81,8 @@ while ($l = <FILE>) {
 	$export = $1;
       } elsif ($l =~ /^Forceinline:\s*(\w+)/io) {
 	$forceinline = $1;
-      } else {
-        $h = $h . $l;
       }
     }
-    $chdr = $h;
     goto LINE;
   } elsif ($l =~ /^\[ModEventHeader\]/io) {
     while (($l = <FILE>) && !($l =~ /^\[/)) {
@@ -106,13 +100,14 @@ while ($l = <FILE>) {
 	# Found a special modification event
 	$lhs = $1; $rhs = $2;
 	if (!($rhs eq "FAILED") && !($rhs eq "NONE") &&
-	    !($rhs eq "ASSIGNED")) {
+	    !($rhs eq "ASSIGNED") && !($rhs eq "SUBSCRIBE")) {
 	  die "Unknown special modification event: $rhs\n";
 	}
-        if ($rhs eq "NONE") {
-           $me_none = "ME_${VTI}_$lhs";
+        if ($rhs eq "SUBSCRIBE") {
+           $me_subscribe = "ME_${VTI}_$lhs";
+        } else {
+	  $mespecial{$lhs} = $rhs;
         }
-	$mespecial{$lhs} = $rhs;
 	$n = $lhs;
       } elsif ($l =~ /^Name:\s*(\w+)/io) {
 	# Found a normal modification event
@@ -241,11 +236,11 @@ $o = 2;
 for ($i=0; $i<$me_n; $i++) {
   $n = $men[$i];
   if ($mespecial{$n} eq "NONE") {
-    $me2val{$n} = 0;  $val2me[0] = $n;
+    $val2me[0] = $n;
   } elsif ($mespecial{$n} eq "ASSIGNED") {
-    $me2val{$n} = 1;  $val2me[1] = $n;
+    $val2me[1] = $n;
   } elsif (!$mespecial{$n}) {
-    $me2val{$n} = $o; $val2me[$o] = $n; $o++;
+    $val2me[$o] = $n; $o++;
   }
 }
 $me_max   = "ME_${VTI}_" . $val2me[$o-1] . "+1";
@@ -309,7 +304,7 @@ EOF
     ModEvent operator()(ModEvent me1, ModEvent me2) const;
   };
 
-$chdr
+  /// Base-class for $name-variable implementations
   class $class : public $base {
   protected:
     /// Variable procesor for variables of this type
@@ -333,11 +328,10 @@ $chdr
      * In case the variable is assigned (that is, \\a assigned is true),
      * the subscribing propagator is processed for execution.
      * Otherwise, the propagator subscribes and is processed for execution
-     * with modification event \\a me provided that \\a pc is different
+     * with modification event $me_subscribe provided that \\a pc is different
      * from \\a $pc_assigned.
      */
-    void subscribe(Space* home, Propagator* p, PropCond pc,
-		   bool assigned, ModEvent me);
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned);
     /// Cancel subscription of propagator \\a p with propagation condition \\a pc
     void cancel(Space* home, Propagator* p, PropCond pc);
     //\@}
@@ -399,9 +393,8 @@ print <<EOF
     : $base(home,share,x) {}
 
   $forceinline void
-  ${class}::subscribe(Space* home, Propagator* p, PropCond pc,
-		      bool assigned, ModEvent me) {
-    ${base}::subscribe(home,p,pc,assigned,me);
+  ${class}::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned) {
+    ${base}::subscribe(home,p,pc,assigned,$me_subscribe);
   }
 
   $forceinline void
@@ -483,10 +476,6 @@ EOF
        $val2pc[$o] = $pcn[$i]; $o++;
      }
   }
-
-#  for ($i=0; $i<$pc_n; $i++) {
-#     print "val2pc[$i] = " . $val2pc[$i] . "\n";
-# }
 
   for ($i=0; $i<$me_n; $i++) {
     $n = $men[$i];

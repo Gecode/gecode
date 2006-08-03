@@ -199,6 +199,9 @@ namespace Gecode {
      */
     void update(Variable* x, Propagator**& sub);
 
+    /// Resize subscription array
+    void resize(Space* home);
+
   public:
     /// Creation
     Variable(Space* home);
@@ -1450,6 +1453,36 @@ namespace Gecode {
    */
 
   template <VarTypeId VTI, PropCond PC, class MED>
+  void
+  Variable<VTI,PC,MED>::resize(Space* home) {
+    assert(free() == 0);
+    if (idx[0] == NULL) {
+      // Count the one new free entry
+      home->n_sub += 1;
+      // Create fresh dependency array
+      free(4);
+      Propagator** prop = reinterpret_cast<Propagator**>
+	(home->alloc(4*sizeof(Propagator*))) + 4;
+      for (PropCond i = PC+2; i--; )
+	idx[i] = prop;
+    } else {
+      // Resize dependency array
+      int n = static_cast<int>(idx[PC+1] - idx[0]);
+      Propagator** prop = reinterpret_cast<Propagator**>
+	(home->alloc(2*n*sizeof(Propagator*))) + n;
+      free(n);
+      // Copy entries
+      memcpy(prop, idx[0], n*sizeof(Propagator*));
+      home->reuse(idx[0], n*sizeof(Propagator*));
+      // Update index pointers
+      ptrdiff_t o = prop - idx[0];
+      idx[0] = prop;
+      for (PropCond i = PC+1; i > 0; i--)
+	idx[i] += o;
+    }
+  }
+
+  template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::subscribe(Space* home, Propagator* p, PropCond pc,
 				  bool assigned, ModEvent me) {
@@ -1457,38 +1490,11 @@ namespace Gecode {
       // Do not subscribe, just process the propagator
       home->process<VTI,MED>(p);
     } else {
-      if (free() == 0) {
-	if (idx[0] == NULL) {
-	  // Count the new entry and one free entry
-	  home->n_sub += 2;
-	  // Create fresh dependency array
-	  free(3);
-	  Propagator** prop = reinterpret_cast<Propagator**>
-	    (home->alloc(4*sizeof(Propagator*))) + 4;
-	  for (PropCond i = PC+2; i--; )
-	    idx[i] = prop;
-	} else {
-	  // Count one new subscription
-	  home->n_sub += 1;
-	  // Resize dependency array
-	  int n = static_cast<int>(idx[PC+1] - idx[0]);
-	  Propagator** prop = reinterpret_cast<Propagator**>
-	    (home->alloc(2*n*sizeof(Propagator*))) + n;
-	  free(n-1);
-	  // Copy entries
-	  memcpy(prop, idx[0], n*sizeof(Propagator*));
-	  home->reuse(idx[0], n*sizeof(Propagator*));
-	  // Update index pointers
-	  ptrdiff_t o = prop - idx[0];
-	  idx[0] = prop;
-	  for (PropCond i = PC+1; i > 0; i--)
-	    idx[i] += o;
-	}
-      } else {
-	// Count one new subscription
-	home->n_sub += 1;
-	free_dec();
-      }
+      // Count one new subscription
+      home->n_sub += 1;
+      if (free() == 0)
+	resize(home);
+      free_dec();
       // Enter propagator
       --idx[0];
       for (PropCond i = 0; i < pc; i++)

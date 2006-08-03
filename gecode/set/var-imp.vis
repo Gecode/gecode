@@ -37,7 +37,7 @@ Name:		Set
 VTI:		SET
 Export:		GECODE_SET_EXPORT
 Forceinline:	forceinline
-  /// Generated baseclass for set variables
+
 #
 # Definition of modification events
 #
@@ -115,13 +115,17 @@ Combine:	VAL=VAL,CARD=CGLB,LUB=CBB,GLB=CGLB,BB=CBB,CLUB=CBB,CGLB=CGLB,CBB=CBB
    * and that also the least upper bound has not changed.
    */
 [ModEvent]
-Name:		CBB
+Name:		CBB=SUBSCRIBE
 Combine:	VAL=VAL,CARD=CBB,LUB=CBB,GLB=CBB,BB=CBB,CLUB=CBB,CGLB=CBB,CBB=CBB
   /**
    * \brief Domain operation has changed both the greatest lower bound and
    * the least upper bound, as well as the cardinality
    *
    * Note that this implies that the domain has not resulted in a value.
+   *
+   * If a propagator subscribes to this variable, it will be processed
+   * assuming a ME_SET_CBB modification event.
+   *
    */
 
 # [ModEventFooter]: Nothing

@@ -356,8 +356,7 @@ namespace Gecode { namespace Int {
 
   void
   IntVarImp::subscribe(Space* home, Propagator* p, PropCond pc) {
-    IntVarImpBase::subscribe(home,p,pc,
-			     dom.min()==dom.max(), ME_INT_BND);
+    IntVarImpBase::subscribe(home,p,pc,dom.min()==dom.max());
   }
 
 }}
