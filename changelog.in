@@ -57,8 +57,19 @@ Module: kernel
 What: 	performance
 Rank: 	major
 [DESCRIPTION]
+Variable implementations are now generated from a high-level
+description (taking care of all aspects relating to modification
+events and propagation conditions). While simplifying the
+implementation of new variable domains considerably, this also can, 
+in lucky cases, deliver a speed-up of 5%.
+
+[ENTRY]
+Module: kernel
+What: 	performance
+Rank: 	major
+[DESCRIPTION]
 Allocate subscriptions in separate memory area. Can speedup execution
-in some cases by up to 15-20%.
+in some (but few) cases by up to 15-20%.
 
 [ENTRY]
 Module: int

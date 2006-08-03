@@ -332,8 +332,6 @@ EOF
      * from \\a $pc_assigned.
      */
     void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned);
-    /// Cancel subscription of propagator \\a p with propagation condition \\a pc
-    void cancel(Space* home, Propagator* p, PropCond pc);
     //\@}
   };
 
@@ -395,11 +393,6 @@ print <<EOF
   $forceinline void
   ${class}::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned) {
     ${base}::subscribe(home,p,pc,assigned,$me_subscribe);
-  }
-
-  $forceinline void
-  ${class}::cancel(Space* home, Propagator* p, PropCond pc) {
-    ${base}::cancel(home,p,pc);
   }
 
 EOF
