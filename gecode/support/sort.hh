@@ -32,13 +32,13 @@ namespace Gecode { namespace Support {
   exchange(Type &a, Type &b, LessThan &lt) {
     if (lt(b,a)) std::swap(a,b);
   }
-  
+
   /// Perform quicksort only for more elements
   int const QuickSortCutoff = 20;
-  
+
   /// Maximal stacksize quicksort ever needs
   static const int QuickSortStack_maxsize = 32;
-  
+
   /// Static stack for quicksort
   template <class Type>
   class QuickSortStack {
@@ -51,31 +51,31 @@ namespace Gecode { namespace Support {
     void push(Type*, Type*);
     void pop(Type*&, Type*&);
   };
-  
+
   template <class Type>
   forceinline
   QuickSortStack<Type>::QuickSortStack(void) : tos(&stack[0]) {
     *(tos++) = 0;
   }
-  
+
   template <class Type>
   forceinline bool
   QuickSortStack<Type>::empty(void) const {
     return !*(tos-1);
   }
-  
+
   template <class Type>
   forceinline void
   QuickSortStack<Type>::push(Type* l, Type* r) {
     *(tos++) = l; *(tos++) = r;
   }
-  
+
   template <class Type>
   forceinline void
   QuickSortStack<Type>::pop(Type*& l, Type*& r) {
     r = *(--tos); l = *(--tos);
   }
- 
+
   /// Standard insertion sort
   template <class Type, class LessThan>
   inline void
@@ -91,7 +91,7 @@ namespace Gecode { namespace Support {
       *j = v;
     }
   }
-  
+
   /// Standard partioning
   template <class Type, class LessThan>
   inline Type*
@@ -132,7 +132,7 @@ namespace Gecode { namespace Support {
       }
     }
   }
-  
+
   /*
    * These are the routines to be used
    *
@@ -141,10 +141,10 @@ namespace Gecode { namespace Support {
   /**
    * \brief Insertion sort
    *
-   * Sorts by insertion the \a n first elements of array \a x according 
-   * to the order \a lt as instance of class \a LessThan. The class 
+   * Sorts by insertion the \a n first elements of array \a x according
+   * to the order \a lt as instance of class \a LessThan. The class
    * \a LessThan must implement the single member function
-   * \code bool operator()(const Type&, const Type&) \endcode 
+   * \code bool operator()(const Type&, const Type&) \endcode
    * for comparing elements.
    *
    * The algorithm is largely based on the following book:
@@ -164,10 +164,10 @@ namespace Gecode { namespace Support {
   /**
    * \brief Quicksort
    *
-   * Sorts with quicksort the \a n first elements of array \a x according 
-   * to the order \a lt as instance of class \a LessThan. The class 
+   * Sorts with quicksort the \a n first elements of array \a x according
+   * to the order \a lt as instance of class \a LessThan. The class
    * \a LessThan must implement the single member function
-   * \code bool operator()(const Type&, const Type&) \endcode 
+   * \code bool operator()(const Type&, const Type&) \endcode
    * for comparing elements.
    *
    * The algorithm is largely based on the following book:

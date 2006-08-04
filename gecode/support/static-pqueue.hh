@@ -41,7 +41,7 @@ namespace Gecode { namespace Support {
    *
    * The order is implemented by an instance of the class \a Less which
    * must provide the single member function
-   * \code bool operator()(const T&, const T&) \endcode 
+   * \code bool operator()(const T&, const T&) \endcode
    * for comparing elements.
    *
    * Requires \code #include "gecode/support/static-pqueue.hh" \endcode
@@ -98,7 +98,7 @@ namespace Gecode { namespace Support {
     T& top(void);
     /// Reorder queue after smallest element has changed (might not be smallest any longer)
     void fix(void);
-    
+
     /// Update this queue from queue \a p (share elements if \a share is true)
     void update(const PQueue<T,Less>& p, bool share);
   };

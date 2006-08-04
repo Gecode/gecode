@@ -24,16 +24,16 @@
 #ifndef __GECODE_SUPPORT_RANDOM_HH__
 #define __GECODE_SUPPORT_RANDOM_HH__
 
-#define GECODE_RAND_MAX 
+#define GECODE_RAND_MAX
 
 namespace Gecode { namespace Support {
-  
+
   /** \brief Template for linear congruential generators.
    *
    * This class template defines a simple class for linear
    * congruential generators.
    *
-   * The values used for calculation shouldbe specified so that 
+   * The values used for calculation shouldbe specified so that
    *
    * Requires \code #include "gecode/support/random.hh" \endcode
    * \ingroup FuncSupport
@@ -53,7 +53,7 @@ namespace Gecode { namespace Support {
     const unsigned long rand_max;
 
     /// Construct the generator instance.
-    LinearCongruentialGenerator(int _seed = 1) 
+    LinearCongruentialGenerator(int _seed = 1)
       : rand_max(1UL<<31) {
       seed(_seed);
     }

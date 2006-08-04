@@ -53,12 +53,12 @@ namespace Gecode { namespace Support {
       int n;
       /// Start of elements
       T   a[1];
-      
+
       /// Allocate new information for \a n elements
       static Object* allocate(int n);
       /// Create copy of elements
       Object* copy(void) const;
-      
+
       /// Register new object
       void subscribe(void);
       /// Delete object

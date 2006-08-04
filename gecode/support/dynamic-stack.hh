@@ -63,15 +63,15 @@ namespace Gecode { namespace Support {
     int entries(void) const;
     /** \brief Return entry at position \a i
      *
-     * Position 0 corresponds to the element first pushed, 
-     * whereas position \c entries()-1 corresponds to the 
+     * Position 0 corresponds to the element first pushed,
+     * whereas position \c entries()-1 corresponds to the
      * element pushed last.
      */
     T& operator[](int i);
     /** \brief Return entry at position \a i
      *
-     * Position 0 corresponds to the element first pushed, 
-     * whereas position \c entries()-1 corresponds to the 
+     * Position 0 corresponds to the element first pushed,
+     * whereas position \c entries()-1 corresponds to the
      * element pushed last.
      */
     const T& operator [] (int i) const;

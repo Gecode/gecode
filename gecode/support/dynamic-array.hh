@@ -39,7 +39,7 @@ namespace Gecode { namespace Support {
   class DynamicArray {
   private:
     /// Size of array
-    int n; 
+    int n;
     /// Array elements
     T*  x;
     /// Resize to at least \a n + 1 elements
@@ -67,12 +67,12 @@ namespace Gecode { namespace Support {
 
   template <class T>
   forceinline
-  DynamicArray<T>::DynamicArray(int m) 
+  DynamicArray<T>::DynamicArray(int m)
     : n(m), x(Memory::bmalloc<T>(n)) {}
 
   template <class T>
   forceinline
-  DynamicArray<T>::DynamicArray(const DynamicArray<T>& a) 
+  DynamicArray<T>::DynamicArray(const DynamicArray<T>& a)
     : n(a.n), x(Memory::bmalloc<T>(n)) {
     (void) Memory::bcopy<T>(x,a.x,n);
   }
@@ -84,7 +84,7 @@ namespace Gecode { namespace Support {
   }
 
   template <class T>
-  forceinline const DynamicArray<T>& 
+  forceinline const DynamicArray<T>&
   DynamicArray<T>::operator =(const DynamicArray<T>& a) {
     if (this != &a) {
       if (n < a.n) {
@@ -96,7 +96,7 @@ namespace Gecode { namespace Support {
   }
 
   template <class T>
-  void 
+  void
   DynamicArray<T>::resize(int i) {
     int m = std::max(i+1, (3*n)/2);
     x = Memory::brealloc(x,n,m);
