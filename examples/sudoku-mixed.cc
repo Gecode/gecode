@@ -42,7 +42,7 @@ block_col(MiniModel::Matrix<IntVarArray> m,
 	  int n, int bc, int i, int j) {
   return m.slice(bc*n+i, bc*n+i+1, j*n, (j+1)*n);
 }
- 
+
 MiniModel::Matrix<IntVarArray>::Slice
 block_row(MiniModel::Matrix<IntVarArray> m,
 	  int n, int br, int i, int j) {
@@ -67,7 +67,7 @@ protected:
 public:
   /// Actual model
   SudokuMixed(const Options& opt)
-    : n(example_size(examples[opt.size])), 
+    : n(example_size(examples[opt.size])),
       x(this,n*n,IntSet::empty,1,n*n*n*n,9,9) {
 
     const int nn = n*n;
@@ -86,7 +86,7 @@ public:
       distinct(this, m.row(i), opt.icl);
       distinct(this, m.col(i), opt.icl);
     }
-    
+
     // Constraints for squares
     for (int i=0; i<nn; i+=n)
       for (int j=0; j<nn; j+=n) {
@@ -157,7 +157,7 @@ public:
 
     gcc(this, y, 9, ICL_DOM);
 
-    
+
     /********************************************************
      *
      * Finite set model
@@ -214,15 +214,15 @@ public:
       for (int j=0; j<nn; j++)
 	if (int idx = value_at(examples[opt.size], nn, i, j))
 	  dom(this, x[idx-1], SRT_SUP, (i+1)+(j*nn) );
-    
+
     branch(this, x, SETBVAR_NONE, SETBVAL_MIN);
   }
-  
+
   /// Constructor for cloning \a s
   SudokuMixed(bool share, SudokuMixed& s) : Example(share,s), n(s.n) {
     x.update(this, share, s.x);
   }
-  
+
   /// Perform copying during cloning
   virtual Space*
   copy(bool share) {
@@ -239,7 +239,7 @@ public:
 	  if (j+1<10)
 	    std::cout << j+1 << " ";
 	  else
-	    std::cout << (char)(j+1+'A'-10) << " ";	  
+	    std::cout << (char)(j+1+'A'-10) << " ";	
 	  break;
 	}
       }
@@ -248,7 +248,7 @@ public:
     }
     std::cout << std::endl;
   }
-  
+
 };
 
 
@@ -265,7 +265,7 @@ main(int argc, char** argv) {
   opt.naive      = true;
   opt.parse(argc,argv);
   if (opt.size >= n_examples) {
-    std::cerr << "Error: size must be between 0 and " 
+    std::cerr << "Error: size must be between 0 and "
 	      << n_examples-1 << std::endl;
     return 1;
   }

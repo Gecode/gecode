@@ -97,7 +97,7 @@ public:
 
     // Break some symmetries
     rel(this, pos[0], IRT_LE, pos[1]);
-    
+
     if (opt.naive) {
       branch(this, pos, BVAR_NONE, BVAL_MIN);
     } else {

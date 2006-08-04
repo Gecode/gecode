@@ -21,12 +21,12 @@
 
 #include "examples/support.hh"
 
-/** 
+/**
  * \name Graph specification for graph coloring
  *
- * The edges are described by an array of integers with even number 
+ * The edges are described by an array of integers with even number
  * of elements, terminated by the elements -1,-1.
- * The cliques are described by an array of integers, where the first 
+ * The cliques are described by an array of integers, where the first
  * integer gives the size of the clique, the following elements are
  * nodes for each clique. The cliques are terminated by -1 for clique size
  *
@@ -299,8 +299,8 @@ private:
 public:
   /// The actual model
   GraphColor(const Options& opt)
-    : g(opt.size == 1 ? g2 : g1), 
-      v(this,g.n_v,0,g.n_v), 
+    : g(opt.size == 1 ? g2 : g1),
+      v(this,g.n_v,0,g.n_v),
       m(this,0,g.n_v) {
     for (int i = g.n_v; i--; )
       rel(this, v[i], IRT_LQ, m);

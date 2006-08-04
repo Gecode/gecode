@@ -37,7 +37,7 @@ private:
   /// Array of letters
   IntVarArray le;
 public:
-  Donald(const Options& opt) : 
+  Donald(const Options& opt) :
     le(this,nl,0,9) {
     IntVar
       d(le[0]), o(le[1]), n(le[2]), a(le[3]), l(le[4]),

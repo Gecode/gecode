@@ -25,7 +25,7 @@
 /**
  * \brief %Example: Magic sequence
  *
- * Find a magic sequence of length \f$n\f$. A magic sequence of 
+ * Find a magic sequence of length \f$n\f$. A magic sequence of
  * length \f$n\f$ is a sequence \f[x_0,x_1, \ldots, x_{n-1}\f]
  * of integers such that for every \f$i=0,\ldots,n-1\f$:
  *  - \f$x_i\f$ is an integer between \f$0\f$ and \f$n-1\f$.

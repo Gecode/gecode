@@ -42,7 +42,7 @@ block_col(MiniModel::Matrix<IntVarArray> m,
 	  int n, int bc, int i, int j) {
   return m.slice(bc*n+i, bc*n+i+1, j*n, (j+1)*n);
 }
- 
+
 IntVarArgs
 block_row(MiniModel::Matrix<IntVarArray> m,
 	  int n, int br, int i, int j) {
@@ -66,7 +66,7 @@ public:
 
   /// Actual model
   Sudoku(const Options& opt)
-    : n(example_size(examples[opt.size])), 
+    : n(example_size(examples[opt.size])),
       x(this,n*n*n*n,1,n*n) {
     const int nn = n*n;
     MiniModel::Matrix<IntVarArray> m(x, nn, nn);
@@ -76,7 +76,7 @@ public:
       distinct(this, m.row(i), opt.icl);
       distinct(this, m.col(i), opt.icl);
     }
-    
+
     // Constraints for squares
     for (int i=0; i<nn; i+=n)
       for (int j=0; j<nn; j+=n) {
@@ -131,18 +131,18 @@ public:
 
     branch(this, x, BVAR_SIZE_MIN, BVAL_SPLIT_MIN);
   }
-  
+
   /// Constructor for cloning \a s
   Sudoku(bool share, Sudoku& s) : Example(share,s), n(s.n) {
     x.update(this, share, s.x);
   }
-  
+
   /// Perform copying during cloning
   virtual Space*
   copy(bool share) {
     return new Sudoku(share,*this);
   }
-  
+
   /// Print solution
   virtual void
   print(void) {
@@ -152,7 +152,7 @@ public:
 	if (x[i].val()<10)
 	  std::cout << x[i] << " ";
 	else
-	  std::cout << (char)(x[i].val()+'A'-10) << " ";	  
+	  std::cout << (char)(x[i].val()+'A'-10) << " ";	
       }
       else
 	std::cout << ". ";
@@ -176,7 +176,7 @@ main(int argc, char** argv) {
   opt.naive      = true;
   opt.parse(argc,argv);
   if (opt.size >= n_examples) {
-    std::cerr << "Error: size must be between 0 and " 
+    std::cerr << "Error: size must be between 0 and "
 	      << n_examples-1 << std::endl;
     return 1;
   }

@@ -51,19 +51,19 @@ enum ExampleMode {
 /// Class for options for examples
 class Options {
 public:
-  IntConLevel  icl;        ///< integer consistency level       
-  unsigned int c_d;        ///< recomputation copy distance     
-  unsigned int a_d;        ///< recomputation adaption distance 
-  ExampleMode  mode;       ///< in which mode to run            
+  IntConLevel  icl;        ///< integer consistency level
+  unsigned int c_d;        ///< recomputation copy distance
+  unsigned int a_d;        ///< recomputation adaption distance
+  ExampleMode  mode;       ///< in which mode to run
   bool         quiet;      ///< quiet mode
-  unsigned int samples;    ///< how many samples                
-  unsigned int iterations; ///< how many iterations per sample  
-  unsigned int solutions;  ///< how many solutions (0 == all)   
+  unsigned int samples;    ///< how many samples
+  unsigned int iterations; ///< how many iterations per sample
+  unsigned int solutions;  ///< how many solutions (0 == all)
   int          fails;      ///< number of fails before stopping search
   int          time;       ///< allowed time before stopping search
-  bool         naive;      ///< use naive version               
-  unsigned int size;       ///< problem size/variant            
-  const char*  name;       ///< name of problem                 
+  bool         naive;      ///< use naive version
+  unsigned int size;       ///< problem size/variant
+  const char*  name;       ///< name of problem
 
   /// Initialize options for example with name \a s
   Options(const char* s);

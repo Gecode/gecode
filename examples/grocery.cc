@@ -25,13 +25,13 @@
 /**
  * \brief %Example: %Grocery puzzle
  *
- * A kid goes into a grocery store and buys four items. The cashier 
- * charges $7.11, the kid pays and is about to leave when the cashier 
- * calls the kid back, and says "Hold on, I multiplied the four items 
- * instead of adding them; I'll try again; Hah, with adding them the 
- * price still comes to $7.11''. What were the prices of the four items? 
+ * A kid goes into a grocery store and buys four items. The cashier
+ * charges $7.11, the kid pays and is about to leave when the cashier
+ * calls the kid back, and says "Hold on, I multiplied the four items
+ * instead of adding them; I'll try again; Hah, with adding them the
+ * price still comes to $7.11''. What were the prices of the four items?
  *
- * The model is taken from: Christian Schulte, Gert Smolka, Finite Domain 
+ * The model is taken from: Christian Schulte, Gert Smolka, Finite Domain
  * Constraint Programming in Oz. A Tutorial. 2001.
  * Available from: http://www.mozart-oz.org/documentation/fdt/
  *
@@ -85,7 +85,7 @@ public:
   virtual void
   print(void) {
     std::cout << "\t";
-    for (int i = 0; i < x.size(); i++) 
+    for (int i = 0; i < x.size(); i++)
       std::cout << x[i] << ", ";
     std::cout << std::endl;
   }

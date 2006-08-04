@@ -60,8 +60,8 @@ public:
   IntVar q; ///< The number of white queens placed.
 
   QueenArmies(const Options& o) :
-    n(o.size), 
-    U(this, IntSet::empty, IntSet(0, n*n)), 
+    n(o.size),
+    U(this, IntSet::empty, IntSet(0, n*n)),
     W(this, IntSet::empty, IntSet(0, n*n)),
     w(this, n*n, 0, 1),
     b(this, n*n, 0, 1),
@@ -95,7 +95,7 @@ public:
     }
   }
 
-  QueenArmies(bool share, QueenArmies& s) 
+  QueenArmies(bool share, QueenArmies& s)
     : Example(share,s), n(s.n)
   {
     U.update(this, share, s.U);
@@ -135,9 +135,9 @@ public:
    */
   class QueenBranch : Branching {
     mutable int pos;
-    QueenBranch(Space* home) 
+    QueenBranch(Space* home)
       : Branching(home), pos(-1) {}
-    QueenBranch(Space* home, bool share, QueenBranch& b) 
+    QueenBranch(Space* home, bool share, QueenBranch& b)
       : Branching(home, share, b), pos(b.pos) {}
 
   public:
@@ -168,8 +168,8 @@ public:
       QueenArmies *q = static_cast<QueenArmies*>(home);
       const PosValDesc<bool> *pvd = static_cast<const PosValDesc<bool>*>(d);
       bool val = a == 0 ? pvd->val() : !pvd->val();
-      return me_failed(Int::BoolView(q->w[pvd->pos()]).eq(q, val)) 
-	? ES_FAILED 
+      return me_failed(Int::BoolView(q->w[pvd->pos()]).eq(q, val))
+	? ES_FAILED
 	: ES_OK;
     }
     virtual Actor* copy(Space *home, bool share) {
@@ -218,7 +218,7 @@ main(int argc, char** argv) {
       };
       p[pn++] = pos(i, j, n);
       for (int k = 8; k--; ) {
-	for (int l = 0; l < n 
+	for (int l = 0; l < n
 	       && 0 <= (i+l*dir[k][0]) && (i+l*dir[k][0]) < n
 	       && 0 <= (j+l*dir[k][1]) && (j+l*dir[k][1]) < n; ++l) {
 	  p[pn++] = pos(i+l*dir[k][0], j+l*dir[k][1], n);
@@ -226,7 +226,7 @@ main(int argc, char** argv) {
       }
 
       A[pos(i, j, n)] = IntSet(p, pn);
-      
+
       pn = 0;
     }
   }

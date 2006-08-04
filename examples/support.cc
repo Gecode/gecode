@@ -32,7 +32,7 @@ static const char* icl2str[] =
 static const char* em2str[] =
   { "solution", "time", "stat" };
 
-static const char* bool2str[] = 
+static const char* bool2str[] =
   { "false", "true" };
 
 void
@@ -42,9 +42,9 @@ Options::parse(int argc, char** argv) {
   const char* e = NULL;
   while (i < argc) {
     if (!strcmp(argv[i],"-help") || !strcmp(argv[i],"--help")) {
-      cerr << "Options for example " << name << ":" 
+      cerr << "Options for example " << name << ":"
 	   << endl
-	   << "\t-icl (def,val,bnd,dom) default: " << icl2str[icl] 
+	   << "\t-icl (def,val,bnd,dom) default: " << icl2str[icl]
 	   << endl
 	   << "\t\tinteger consistency level" << endl
 	   << "\t-c_d (unsigned int) default: " << c_d << endl
@@ -55,10 +55,10 @@ Options::parse(int argc, char** argv) {
 	   << em2str[mode] << endl
 	   << "\t\twhether to print solutions, measure time, "
 	   << "or print statistics" << endl
-	   << "\t-samples (unsigned int) default: " 
+	   << "\t-samples (unsigned int) default: "
 	   << samples << endl
 	   << "\t\thow many samples (time-mode)" << endl
-	   << "\t-iterations (unsigned int) default: " 
+	   << "\t-iterations (unsigned int) default: "
 	   << iterations << endl
 	   << "\t\thow many iterations per sample (time-mode)" << endl
 	   << "\t-solutions (unsigned int) default: ";
@@ -68,14 +68,14 @@ Options::parse(int argc, char** argv) {
 	cerr << solutions;
       cerr << endl
 	   << "\t\thow many solutions to search (solution-mode)" << endl
-	   << "\t-fails (unsigned int) default: " 
+	   << "\t-fails (unsigned int) default: "
 	   << (fails<0 ? "(no limit) " : "") << fails << endl
-	   << "\t\tset number of allowed fails before stopping (solution-mode)" 
-	   << endl 
-	   << "\t-time (unsigned int) default: " 
+	   << "\t\tset number of allowed fails before stopping (solution-mode)"
+	   << endl
+	   << "\t-time (unsigned int) default: "
 	   << (fails<0 ? "(no limit) " : "") << time << endl
 	   << "\t\tset allowed time before stopping (solution-mode)" << endl
-	   << "\t-naive default: " 
+	   << "\t-naive default: "
 	   << bool2str[naive] << endl
 	   << "\t\tuse naive version" << endl
 	   << "\t-smart default: "

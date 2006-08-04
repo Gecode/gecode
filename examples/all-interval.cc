@@ -31,17 +31,17 @@
  * \f[
  * (x_0,x_1,\ldots,n_{n-1})
  * \f]
- * where each \f$x_i\f$ is an integer between \f$0\f$ and \f$n-1\f$ 
+ * where each \f$x_i\f$ is an integer between \f$0\f$ and \f$n-1\f$
  * such that the following conditions hold:
  *  - the \f$x_i\f$ are a permutation of \f$\{0,1,\ldots,n-1\}\f$
  *    (that is, they are pairwise distinct and take values from
  *    \f$\{0,1,\ldots,n-1\}\f$).
  *  - the differences between adjacent values \f$(d_1,d_2,\ldots,d_{n-1})\f$
- *    with \f$d_i=\operatorname{abs}(x_i-x_{i-1})\f$ form a permutation of 
+ *    with \f$d_i=\operatorname{abs}(x_i-x_{i-1})\f$ form a permutation of
  *    \f$\{1,2,\ldots,n-1\}\f$.
  *
- * Read more about this problem as prob007 in the category 
- * "combinatorial mathematics" of http://www.csplib.org/. 
+ * Read more about this problem as prob007 in the category
+ * "combinatorial mathematics" of http://www.csplib.org/.
  *
  * \ingroup Example
  */
@@ -60,10 +60,10 @@ public:
     // Set up variables for distance
     for (int i=0; i<n-1; i++)
       d[i] = abs(this, minus(this,x[i+1],x[i],opt.icl),opt.icl);
-   
+
     // Constrain them to be between 1 and n-1
     dom(this, d, 1, n-1);
-    
+
     distinct(this, x, opt.icl);
     distinct(this, d, opt.icl);
 
@@ -80,7 +80,7 @@ public:
     x.update(this, share, e.x);
   }
   /// Copy during cloning
-  virtual Space* 
+  virtual Space*
   copy(bool share) {
     return new AllInterval(share, *this);
   }

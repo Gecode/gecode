@@ -58,7 +58,7 @@ public:
       IntVar p(this,0,nn-1);
       IntVar s(this,0,nn-1);
       pred[i]=p; succ[i]=s;
-    } 
+    }
 
     // Place the first two knights
     rel(this, jump[field(0,0)], IRT_EQ, 0);
@@ -90,7 +90,7 @@ public:
 	  rel(this, succ[f], IRT_EQ, g, b);
 	  rel(this, pred[g], IRT_EQ, f, b);
 
-	  bool_xor(this, 
+	  bool_xor(this,
 		   post(this, ~(jump[g]-jump[f] == 1)),
 		   post(this, ~(jump[g]-jump[f] == 1-nn)),
 		   b);

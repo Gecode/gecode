@@ -64,7 +64,7 @@ public:
 	IntVar y3(this,1,n);
 
 	if (o.naive) {
-	  
+	
 	  /* Naive alternative:
 	   * just including the ints in the set
 	   */
@@ -79,17 +79,17 @@ public:
 	  /* Smart alternative:
 	   * Using matching constraints
 	   */
-	  
+	
 	  IntVarArgs xargs(3);
 	  xargs[0] = x1; xargs[1] = x2; xargs[2] = x3;
 	  match(this, x,xargs);
-	  
+	
 	  IntVarArgs yargs(3);
 	  yargs[0] = y1; yargs[1] = y2; yargs[2] = y3;
 	  match(this, y,yargs);
-	  
+	
 	}
-	  
+	
 	/* Breaking symmetries */
 	
 	rel(this, x1,IRT_LE,x2);
@@ -108,7 +108,7 @@ public:
       }
     }
 
-    
+
     branch(this, root, SETBVAR_NONE, SETBVAL_MIN);
   }
 

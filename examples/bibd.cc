@@ -103,7 +103,7 @@ public:
       lex(this, col1, IRT_GQ, col2);
     }
 
-    branch(this, _p, BVAR_NONE, 
+    branch(this, _p, BVAR_NONE,
 	   (opt.naive ? BVAL_MIN : BVAL_MAX));
   }
 
@@ -164,7 +164,7 @@ main(int argc, char** argv) {
     std::cerr << "Error: size must be between 0 and 9" << std::endl;
     return 1;
   }
-  
+
   Example::run<BIBD,DFS>(opt);
   return 0;
 }

@@ -107,7 +107,7 @@ Example::run(const Options& o) {
 	     << "\tfailures:      " << stat.fail << endl
 	     << "\tclones:        " << stat.clone << endl
 	     << "\tcommits:       " << stat.commit << endl
-	     << "\tpeak memory:   " 
+	     << "\tpeak memory:   "
 	     << static_cast<int>((stat.memory+1023) / 1024) << " KB"
 	     << endl;
       }
@@ -142,7 +142,7 @@ Example::run(const Options& o) {
 	     << "\tfailures:      " << stat.fail << endl
 	     << "\tclones:        " << stat.clone << endl
 	     << "\tcommits:       " << stat.commit << endl
-	     << "\tpeak memory:   " 
+	     << "\tpeak memory:   "
 	     << static_cast<int>((stat.memory+1023) / 1024) << " KB"
 	     << endl;
       }

@@ -33,7 +33,7 @@ struct Play {
   int h;
   /// number of the away team
   int a;
-  /// game number 
+  /// game number
   int g;
 };
 
@@ -44,25 +44,25 @@ typedef PrimArgArray<Play> RRSArray;
  *
  * Prob026: round robin tournaments from http://www.csplip.org
  *
- * 
- * -# There are \f$ t \f$ teams (\f$ t \f$  even). 
+ *
+ * -# There are \f$ t \f$ teams (\f$ t \f$  even).
  * -# The season lasts \f$ t - 1 \f$ weeks.
  * -# Each game between two different teams occurs exactly once.
  * -# Every team plays one game in each week of the season.
- * -# There are \f$ \displaystyle\frac{t}{2} \f$ periods and each week 
+ * -# There are \f$ \displaystyle\frac{t}{2} \f$ periods and each week
  *    every period is scheduled for one game.
- * -# No team plays more than twice in the same period over 
+ * -# No team plays more than twice in the same period over
  *    the course of the season.
- * 
+ *
  * \ingroup Example
  */
 class SportsLeague : public Example {
 private:
   /// require t to be even and t!=4 (has only failures)
   /// number of considered teams
-  int t;            
+  int t;
   /// number of weeks
-  int weeks; 
+  int weeks;
   /// inserting a dummy week according to Régin
   int eweeks;
   /// number of periods
@@ -124,13 +124,13 @@ public:
   }
 
   /**
-   * \brief Access the game number associated with the game 
+   * \brief Access the game number associated with the game
    * in period \a p and week \a w
    */
   IntVar& g (int p, int w) {
     return game[p * weeks + w];
   }
- 
+
   /**
    * \brief Access the entry in the round robin schedule for
    *  period \a p and week \a w
@@ -141,9 +141,9 @@ public:
 
   /**
    * \brief Compute game numbers
-   * 
+   *
    * Given the game \f$ (h,a) \f$ between a
-   * home team \f$ h \f$ and an away team \f$ a \f$ this function 
+   * home team \f$ h \f$ and an away team \f$ a \f$ this function
    * computes the unique game number
    * \f$g = (h - 1) * t + a  \Leftrightarrow  t = t * h + a - g\f$
    */
@@ -156,10 +156,10 @@ public:
    * \brief Build a feasible schedule
    *
    * The games of the first week are fixed as:
-   * \f$ \langle 1,2 \rangle \cup 
+   * \f$ \langle 1,2 \rangle \cup
    * \{\langle p + 2, t - p + 1\rangle | p \geq 1\}\f$. \n
-   * The remaining games are computed by transforming a game 
-   * \f$ \langle h, a, g \rangle \f$ from the previous week 
+   * The remaining games are computed by transforming a game
+   * \f$ \langle h, a, g \rangle \f$ from the previous week
    * in a new game \f$ \langle h', a'\rangle \f$, where: \n
    * \f$ h' = \left\{
    *  \begin{tabular}{l c l}
@@ -167,27 +167,27 @@ public:
    *   2 & & if $h = t$ \\
    *   $h + 1$ & & otherwise
    *  \end{tabular}\right.
-   * \f$ and 
+   * \f$ and
    * \f$ a' = \left\{
    *  \begin{tabular}{l c l}
    *   2 & & if $h = t$ \\
    *   a + 1 & & otherwise
    *  \end{tabular}\right.
-   * \f$ 
-   * 
-   *  
+   * \f$
+   *
+   *
    */
 
   void init_rrs(void) {
 
-    // Initialize the array 
+    // Initialize the array
     for(int p = 0; p < periods; p++)
       for (int w = 0; w < weeks; w++) {
 	rrs(p, w).h = 0;
 	rrs(p, w).a = 0;
 	rrs(p, w).g = 0;
       }
-    
+
     // Determine the first game (week 0 period 0)
     rrs(0, 0).h = 1;
     rrs(0, 0).a = 2;
@@ -228,17 +228,17 @@ public:
       }
     }
   }
-  
+
   SportsLeague(const Options& op) :
-    t       (op.size), 
-    weeks   (t - 1), 
-    eweeks  (t), 
-    periods (t / 2), 
-    season  (weeks * periods), 
-    value   (t * (t - 2) + t), 
+    t       (op.size),
+    weeks   (t - 1),
+    eweeks  (t),
+    periods (t / 2),
+    season  (weeks * periods),
+    value   (t * (t - 2) + t),
     home    (this, periods * eweeks),
     away    (this, periods * eweeks),
-    game    (this, season), 
+    game    (this, season),
     rrs_array     (periods * weeks){
 
     IntSet dom_all   (1, t);
@@ -246,7 +246,7 @@ public:
     IntSet dom_home  (1, t - 1);
     IntSet dom_away  (2, t);
     IntSet dom_index (0, periods - 1);
-    
+
     for (int i = eweeks * periods; i--; ) {
       home[i].init(this, dom_home);
       away[i].init(this, dom_away);
@@ -266,7 +266,7 @@ public:
       IntArgs snd(periods);
 
       for(int p = 0; p < periods; p++){
-	gamenum[p] = rrs(p, w).g; 
+	gamenum[p] = rrs(p, w).g;
 	fst[p]     = rrs(p, w).h;
 	snd[p]     = rrs(p, w).a;
       }
@@ -283,7 +283,7 @@ public:
 
 
     /**
-     * Symmetrie breaking: 
+     * Symmetrie breaking:
      * we consider (h, a) and (a, h) as the same game and focus
      * on the home game for h, i.e. (h, a) with h < a
      */
@@ -302,18 +302,18 @@ public:
     for (int p = 0; p < periods - 1; p++) {
       rel(this, h(p, 0), IRT_LE, h(p + 1, 0));
     }
-    
+
     /**
-     * Constraint on each column: 
+     * Constraint on each column:
      * each team occurs exactly once.
      * (you need two teams in order to form a match).
      */
-    
+
     for(int w = 0; w < eweeks; w++ ) {
       IntVarArray col(this, t);
       int k = 0;
       for( int p = 0; p < periods; p++ ) {
-	col[k] = h(p, w); 
+	col[k] = h(p, w);
 	k++;
 	col[k] = a(p, w);
 	k++;
@@ -321,8 +321,8 @@ public:
       distinct(this, col, ICL_DOM);
     }
 
-    /** 
-     * Constraint on each row: 
+    /**
+     * Constraint on each row:
      * no team appears more than twice
      * (you do not want a team to play more than twice a week in the same slot
      * the same time.)
@@ -353,16 +353,16 @@ public:
   }
 
   SportsLeague(bool share, SportsLeague& s)
-    : Example(share, s), 
-      t(s.t), weeks(s.weeks), eweeks(s.eweeks), 
-      periods(s.periods), season(s.season), 
+    : Example(share, s),
+      t(s.t), weeks(s.weeks), eweeks(s.eweeks),
+      periods(s.periods), season(s.season),
       value(s.value), rrs_array(s.rrs_array) {
     home.update(this, share, s.home);
     away.update(this, share, s.away);
     game.update(this, share, s.game);
   }
-  
-  virtual Space* 
+
+  virtual Space*
   copy(bool share) {
     return new SportsLeague(share, *this);
   }
@@ -387,8 +387,8 @@ public:
 
     // print entries
     for(int w = 0; w < weeks; w++){
-      std::cout << "W["; 
-      blank(w + 1); 
+      std::cout << "W[";
+      blank(w + 1);
       std::cout <<"]: ";
       for(int p = 0; p < periods; p++){
 	if (h(p, w).assigned() && a(p, w).assigned()) {
@@ -441,7 +441,7 @@ int main(int argc, char** argv){
   if (o.size == 4) {
     std::cerr<< "No Solution for t = 4!\n";
     return -1;
-  } 
+  }
   if (o.size % 2 != 0) {
     std::cerr << "Number of t has to be even!\n";
     return -1;

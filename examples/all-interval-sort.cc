@@ -22,8 +22,8 @@
 /**
  * \brief %Example: %All-Interval Series
  *
- * This is  prob007 in the category "combinatorial mathematics" of 
- * http://www.csplib.org/. 
+ * This is  prob007 in the category "combinatorial mathematics" of
+ * http://www.csplib.org/.
  *
  * \ingroup Example
  */
@@ -39,30 +39,30 @@ private:
 public:
 
   /**
-   * \brief Constrain x to be a permuation of \f$ S_n = \{0, \dots, n - 1\} \f$ 
+   * \brief Constrain x to be a permuation of \f$ S_n = \{0, \dots, n - 1\} \f$
    *
    * \f$ \forall i, j\in S_n, i\neq j: x_i \neq x_j\f$
    */
   void adiff_sn(Space* home, IntVarArray& x) {
 
     // S_n = \{0, \dots, n - 1\}
-    IntVarArray sn(home, n);      
+    IntVarArray sn(home, n);
 
     for (int i = n; i--; ) {
       sn[i].init(home, i, i);
     }
-    
+
     sortedness(home, x, sn);
   }
 
   /**
-   * \brief Constrain x to be a permuation of \f$ S^*_n = S_n \setminus \{0\} \f$ 
+   * \brief Constrain x to be a permuation of \f$ S^*_n = S_n \setminus \{0\} \f$
    *
    * \f$ \forall i, j\in S^*_n, i\neq j: x_i \neq x_j\f$
    */
   void adiff_sn_star(Space* home, IntVarArray& x) {
     // S^*_n = S_n \setminus \{0\} = \{1, \dots, n - 1\}
-    IntVarArray snstar(home, n - 1);      
+    IntVarArray snstar(home, n - 1);
 
     for (int i = n - 1; i--; ) {
       snstar[i].init(home, i + 1, i + 1);
@@ -88,12 +88,12 @@ public:
     }
   }
 
-  /** 
+  /**
    * \name Static Symmetrie Breaking
    *
-   * This is taken from: I.P. Gent and I. McDonald and B.M. Smith, 
+   * This is taken from: I.P. Gent and I. McDonald and B.M. Smith,
    * Conditional Symmetry in the All-Interval Series Problem,
-   * Proceedings of the Third International Workshop 
+   * Proceedings of the Third International Workshop
    * on Symmetry in Constraint Satisfaction Problems, pages 55-65, 2003.
    *
    */
@@ -104,8 +104,8 @@ public:
    *
    *  As we are intereseted in the absolute value of the difference of neighbored values in x
    *  the following holds:
-   *  If the sequence \f$ \sigma = \langle s_0, \dots, s_{n - 1} \rangle \f$ is a solution to 
-   *  the problem so is the negated sequence 
+   *  If the sequence \f$ \sigma = \langle s_0, \dots, s_{n - 1} \rangle \f$ is a solution to
+   *  the problem so is the negated sequence
    *  \f$ \phi = \langle (n - 1 - s_0), \dots, (n - 1) - s_{n - 1}\f$. \n
    */
   void break_negation(Space* home, IntVarArray& x) {
@@ -115,8 +115,8 @@ public:
   /*
    * \brief Break reveres symmetry
    *
-   *  If the sequence \f$ \sigma = \langle s_0, \dots, s_{n - 1} \rangle \f$ is a solution 
-   *  so is the reverse sequence \f$\sigma^{-1} = \langle s_{n - 1}, \dots, s_0 \rangle \f$ 
+   *  If the sequence \f$ \sigma = \langle s_0, \dots, s_{n - 1} \rangle \f$ is a solution
+   *  so is the reverse sequence \f$\sigma^{-1} = \langle s_{n - 1}, \dots, s_0 \rangle \f$
    */
 
   void break_reversal(Space* home, IntVarArray& d) {
@@ -125,13 +125,13 @@ public:
   //@}
 
   AllInterval(const Options& op) :
-    n(op.size), 
+    n(op.size),
     x(this, n),
     d(this, n - 1) {
-    
+
     IntSet dom_zn   (0, n - 1);
     IntSet dom_zns  (1, n - 1);
-    
+
     // initialization of the problem variables
     for (int i = 0; i < n; i++) {
       x[i].init(this, dom_zn);
@@ -142,7 +142,7 @@ public:
     difference(this, x, d);
 
     // breaks negation
-    break_negation(this, x); 
+    break_negation(this, x);
 
     // breaks reversal
     break_reversal(this, d);
@@ -156,13 +156,13 @@ public:
   }
 
   AllInterval(bool share, AllInterval& a)
-    : Example(share, a), 
+    : Example(share, a),
       n(a.n) {
     x.update(this, share, a.x);
     d.update(this, share, a.d);
   }
 
-  virtual Space* 
+  virtual Space*
   copy(bool share) {
     return new AllInterval(share, *this);
   }

@@ -144,7 +144,7 @@ public:
       SetVar spanishInFS(this);
       SetVar frenchInFS(this);
       SetVar germanInFS(this);
-      
+
       rel(this, team, SOT_INTER, stewardsDS, SRT_EQ, stewardsInFS);
       rel(this, team, SOT_INTER, hostessesDS, SRT_EQ, hostessesInFS);
       rel(this, team, SOT_INTER, spanishDS, SRT_EQ, spanishInFS);
@@ -195,7 +195,7 @@ public:
       for (int j=1; j<7; j++)
         std::cout << "\t" << flights[i][j];
       std::cout << std::endl;
-      
+
       std::cout << "\t\tSchedule:" << std::endl << "\t\t";
       for (;d();++d) {
         std::cout << employeeToName((Employees)d.val()) << " ";

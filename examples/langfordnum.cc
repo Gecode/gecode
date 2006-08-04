@@ -39,10 +39,10 @@ public:
 /**
  * \brief %Example: Langford's number problem
 
- * Problem 024 in the categoy "combinatorial mathematics" 
+ * Problem 024 in the categoy "combinatorial mathematics"
  * of http://www.csplib.org/.
  *
- * For a detailed problem analysis see 
+ * For a detailed problem analysis see
  * http://www.lclark.edu/~miller/langford.html
  *
  * \ingroup Example
@@ -53,7 +53,7 @@ private:
   int k;
 
   /// Problem variables
-  /// pos contains the position of the values in seqence 
+  /// pos contains the position of the values in seqence
   IntVarArray pos;
   IntVarArray y;
   /// pi makes the permutation explicit
@@ -63,12 +63,12 @@ public:
 
   /**
    * \brief Constrain x to be a permutation of \f$ S_{kn} = \{0, \dots, n*k - 1\}\f$
-   *        
+   *
    * \f$ \forall i, j\in S_{kn}, i\neq j: x_i \neq x_j \f$
    */
-  
+
   void adiff_skn(Space* home, IntVarArray& x, IntVarArray& pi) {
-    
+
     IntVarArray skn(home, k * n);
     for (int i = k * n; i--; ) {
       skn[i].init(home, i, i);
@@ -77,11 +77,11 @@ public:
     for (int i = k * n; i--; ) {
       pi[i].init (home, 0, k * n - 1);
     }
-    
+
     sortedness(home, x, skn, pi);
   }
 
-  /** 
+  /**
    * \brief Returns the position of the j-th occurence of value \f$ v =(i + 1)\f$
    *
    */
@@ -92,17 +92,17 @@ public:
   IntVar& ys(int i, int j) {
     return y[i * k + j];
   }
-  
+
   /**
    * \brief The occurences of a value v in the Langford sequence are v numbers apart.
    *
-   * Let \f$ \#(i, v) \f$ denote the position of the i-th occurence of value v 
+   * Let \f$ \#(i, v) \f$ denote the position of the i-th occurence of value v
    * in the Langford Sequence. Then this function posts the constraint that
-   * \f$ \forall i, j \in \{1, \dots, k\}, i \neq j: 
+   * \f$ \forall i, j \in \{1, \dots, k\}, i \neq j:
    *     \forall v \in \{1, \dots, n\}: \#(i, v) + (v + 1) = \#(j, v)\f$
    *
    */
-  
+
   void distance(Space* home) {
     // p(i, j) denotes the j-th occurence of value i + 1
     for (int i = 0; i < n; i++) {
@@ -114,7 +114,7 @@ public:
   }
 
   LangfordNum(const Options& op) {
-    
+
     const ExtOptions* eop = NULL;
     eop = reinterpret_cast<const ExtOptions*> (&op);
     n = eop->n;
@@ -134,10 +134,10 @@ public:
 	y[i*k + j].init(this, dom_val);
       }
     }
-    
+
     distance(this);
     adiff_skn(this, pos, pi);
-    
+
     rel(this, y[0], IRT_LE, y[n*k - 1]);
 
     // dual  using gcc
@@ -151,7 +151,7 @@ public:
       }
     }
 
-    branch(this, pos, BVAR_SIZE_MIN, BVAL_MIN);    
+    branch(this, pos, BVAR_SIZE_MIN, BVAL_MIN);
   }
 
   LangfordNum(bool share, LangfordNum& l)
@@ -162,14 +162,14 @@ public:
 
   }
 
-  virtual Space* 
+  virtual Space*
   copy(bool share) {
     return new LangfordNum(share, *this);
   }
 
   virtual void print(void){
     std::cout << "\nL(" << k << "," << n <<"):\n";
-    
+
     GECODE_AUTOARRAY(int, values, k*n);
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < k; j++) {
@@ -225,7 +225,7 @@ int main(int argc, char** argv){
   o.k = atoi(argv[1]);
   o.n = atoi(argv[2]);
   argv[2] = name;
-  argv++; 
+  argv++;
   argv++;
   if (o.k < 1) {
     std::cerr << "k must be at least 1!\n";

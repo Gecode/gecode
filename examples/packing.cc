@@ -89,7 +89,7 @@ protected:
 public:
   /// Actual model
   Packing(const Options& opt)
-    : s(*specs[opt.size]), 
+    : s(*specs[opt.size]),
       x(this,s.n,0,s.x-1), y(this,s.n,0,s.y-1) {
 
     // Restrict position according to square size
@@ -153,7 +153,7 @@ public:
 	cumulatives(this, m, x, dh, e, dh, limit,  true);
 	cumulatives(this, m, x, dh, e, dh, limit, false);
       }
-      { 
+      {
 	// y-direction
 	for (int i = s.n; i--; ) {
 	  IntVar ei(this, 0, s.y);

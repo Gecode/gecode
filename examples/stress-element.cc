@@ -50,9 +50,9 @@ public:
 
     for (int i=0; i<n-1; i++)
       rel(this, s[i], IRT_LQ, s[i+1]);
-    
+
     IntArgs e(n,p);
-    
+
     for (int i=0; i<n; i++)
       element(this, e, x[i], s[i]);
 

@@ -34,7 +34,7 @@ extern const unsigned int n_examples;
  * unmarked spots) and their length. The objective is to find a valid
  * assignment, which incidentally may also produce a pretty picture.
  *
- * Picture puzzles are also called Nonograms. 
+ * Picture puzzles are also called Nonograms.
  *
  * Problem 12 at http://www.csplib.org/.
  *
@@ -46,7 +46,7 @@ private:
   const int *spec;
   int width, height;
   BoolVarArray b;
-  
+
   /// Access position (h,w) in the matrix.
   BoolVar pos(int h, int w) {
     return b[h*width + w];
@@ -100,7 +100,7 @@ public:
   }
 
   /// Constructor for cloning \a s
-  PicturePuzzle(bool share, PicturePuzzle& s) : 
+  PicturePuzzle(bool share, PicturePuzzle& s) :
     Example(share,s), spec(s.spec), width(s.width), height(s.height) {
     b.update(this, share, s.b);
   }
@@ -139,7 +139,7 @@ main(int argc, char** argv) {
   o.size  = 8;
   o.parse(argc,argv);
   if (o.size >= n_examples) {
-    std::cerr << "Error: size must be between 0 and " 
+    std::cerr << "Error: size must be between 0 and "
 	      << n_examples-1 << std::endl;
     return 1;
   }
@@ -185,7 +185,7 @@ static const int heart[] =
   };
 
 /// Specification for a bear/bunny-shaped picture.
-static const int bear[] = 
+static const int bear[] =
   { 13, 8,
     // Column constraints
     1, 2,
@@ -244,7 +244,7 @@ static const int crocodile[] =
   };
 
 /// Specification for an unknown picture
-static const int unknown[] = 
+static const int unknown[] =
   { 10, 10,
     // Column constraints
     1, 3,
@@ -271,7 +271,7 @@ static const int unknown[] =
   };
 
 /// Specification for a pinwheel-picture
-static const int pinwheel[] = 
+static const int pinwheel[] =
   { 6, 6,
     // Column constraints
     2, 1, 2,
@@ -286,11 +286,11 @@ static const int pinwheel[] =
     1, 2,
     1, 2,
     1, 1,
-    2, 1, 2    
+    2, 1, 2
   };
 
 /// Specification for a more difficult picture.
-static const int difficult[] = 
+static const int difficult[] =
   { 15, 15,
     // Column constraints
     1, 3,
@@ -327,7 +327,7 @@ static const int difficult[] =
   };
 
 /// Specification for a non-unique picture
-static const int non_unique[] = 
+static const int non_unique[] =
   { 11, 15,
     // Column constraints
     1, 5,
@@ -410,12 +410,12 @@ static const int dragonfly[] =
     4, 2, 1, 1, 2
   };
 
-/** \brief Specification for a picture of a flower. 
+/** \brief Specification for a picture of a flower.
  *
  * From http://www.icparc.ic.ac.uk/eclipse/examples/nono.ecl.txt, the
  * hardest instance.
  */
-static const int p200[] = 
+static const int p200[] =
   { 25, 25,
     // Column constraints
     4, 1,1,2,2,
@@ -472,7 +472,7 @@ static const int p200[] =
   };
 
 /// List of specifications
-const int *specs[] = {heart, bear, crocodile, unknown, 
+const int *specs[] = {heart, bear, crocodile, unknown,
 		      pinwheel, difficult, non_unique, dragonfly, p200};
 /// Number of specifications
 const unsigned n_examples = sizeof(specs)/sizeof(int*);

@@ -90,7 +90,7 @@ public:
       SetVarArgs p(groups);
       for (int g=0; g < groups; g++)
        	p[g] = group(w,g);
-      
+
       rel(this,SOT_DUNION,p,allPlayers);
     }
 
@@ -108,7 +108,7 @@ public:
     if (!o.naive) {
 
       //      atmostOne(this, groupsS, playersInGroup);
-      
+
       /*
        * Redundant constraints and static symmetry breaking from
        * "Solving Kirkman's Schoolgirl Problem in a Few Seconds"
@@ -133,7 +133,7 @@ public:
       // Redundant constraint:
       // any two groups has at most one player in common
       atmostOne(this, groupsS, playersInGroup);
-      
+
       // Symmetry breaking: order groups
       for (int w=0; w<weeks; w++) {
 	for (int g=0; g<groups-1; g++) {
@@ -162,7 +162,7 @@ public:
 	min(this, g2, minG2);
 	rel(this, minG1, IRT_LE, minG2);
       }
-      
+
       // Initialize the dual variables:
       // groupInv(w,p) is player p's group in week w
       for (int w=0; w<weeks; w++) {

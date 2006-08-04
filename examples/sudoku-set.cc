@@ -40,7 +40,7 @@ protected:
 public:
   /// Actual model
   SudokuSet(const Options& opt)
-    : n(example_size(examples[opt.size])), 
+    : n(example_size(examples[opt.size])),
     x(this,n*n,IntSet::empty,1,n*n*n*n,9,9) {
 
     const int nn = n*n;
@@ -95,21 +95,21 @@ public:
       for (int j=0; j<nn; j++)
 	if (int idx = value_at(examples[opt.size], nn, i, j))
 	  dom(this, x[idx-1], SRT_SUP, (i+1)+(j*nn) );
-    
+
     branch(this, x, SETBVAR_NONE, SETBVAL_MIN);
   }
-  
+
   /// Constructor for cloning \a s
   SudokuSet(bool share, SudokuSet& s) : Example(share,s), n(s.n) {
     x.update(this, share, s.x);
   }
-  
+
   /// Perform copying during cloning
   virtual Space*
   copy(bool share) {
     return new SudokuSet(share,*this);
   }
-  
+
   /// Print solution
   virtual void
   print(void) {
@@ -120,7 +120,7 @@ public:
 	  if (j+1<10)
 	    std::cout << j+1 << " ";
 	  else
-	    std::cout << (char)(j+1+'A'-10) << " ";	  
+	    std::cout << (char)(j+1+'A'-10) << " ";	
 	  break;
 	}
       }
@@ -145,7 +145,7 @@ main(int argc, char** argv) {
   opt.naive      = true;
   opt.parse(argc,argv);
   if (opt.size >= n_examples) {
-    std::cerr << "Error: size must be between 0 and " 
+    std::cerr << "Error: size must be between 0 and "
 	      << n_examples-1 << std::endl;
     return 1;
   }

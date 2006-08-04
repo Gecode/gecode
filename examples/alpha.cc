@@ -39,13 +39,13 @@ protected:
 public:
   /// Actual model
   Alpha(const Options& opt) : le(this,n,1,n) {
-    IntVar 
-      a(le[ 0]), b(le[ 1]), c(le[ 2]), e(le[ 4]), f(le[ 5]), 
-      g(le[ 6]), h(le[ 7]), i(le[ 8]), j(le[ 9]), k(le[10]), 
-      l(le[11]), m(le[12]), n(le[13]), o(le[14]), p(le[15]), 
-      q(le[16]), r(le[17]), s(le[18]), t(le[19]), u(le[20]), 
+    IntVar
+      a(le[ 0]), b(le[ 1]), c(le[ 2]), e(le[ 4]), f(le[ 5]),
+      g(le[ 6]), h(le[ 7]), i(le[ 8]), j(le[ 9]), k(le[10]),
+      l(le[11]), m(le[12]), n(le[13]), o(le[14]), p(le[15]),
+      q(le[16]), r(le[17]), s(le[18]), t(le[19]), u(le[20]),
       v(le[21]), w(le[22]), x(le[23]), y(le[24]), z(le[25]);
-    
+
     post(this, b+a+l+l+e+t       == 45,  opt.icl);
     post(this, c+e+l+l+o         == 43,  opt.icl);
     post(this, c+o+n+c+e+r+t     == 74,  opt.icl);
@@ -66,7 +66,7 @@ public:
     post(this, t+h+e+m+e         == 72,  opt.icl);
     post(this, v+i+o+l+i+n       == 100, opt.icl);
     post(this, w+a+l+t+z         == 34,  opt.icl);
-    
+
     distinct(this, le, opt.icl);
 
     branch(this, le, opt.naive ? BVAR_NONE : BVAR_SIZE_MIN, BVAL_MIN);
@@ -82,7 +82,7 @@ public:
     return new Alpha(share,*this);
   }
   /// Print solution
-  virtual void 
+  virtual void
   print(void) {
     std::cout << "\t";
     for (int i = 0; i < n; i++) {

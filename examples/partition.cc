@@ -35,7 +35,7 @@ protected:
 public:
   /// Actual model
   Partition(const Options& opt)
-    : x(this,opt.size,1,2*opt.size), 
+    : x(this,opt.size,1,2*opt.size),
       y(this,opt.size,1,2*opt.size) {
     const int n = opt.size;
     // Break symmetries by ordering numbers in each group

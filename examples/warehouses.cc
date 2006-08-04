@@ -80,7 +80,7 @@ protected:
   IntVar total;
 public:
   /// Actual model
-  Warehouses(const Options& opt) 
+  Warehouses(const Options& opt)
     : supplier(this, n_stores, 0, n_suppliers-1),
       open(this, n_suppliers, 0, 1),
       cost(this, n_stores, 0, Limits::Int::int_max),
@@ -93,7 +93,7 @@ public:
 	c[i]=1; x[i]=cost[i];
       }
       for (int i=0; i<n_suppliers; i++) {
-	c[n_stores+i]=building_cost; 
+	c[n_stores+i]=building_cost;
 	x[n_stores+i]=open[i];
       }
       linear(this, c, x, IRT_EQ, total);
@@ -143,7 +143,7 @@ public:
     return new Warehouses(share,*this);
   }
   /// Print solution
-  virtual void 
+  virtual void
   print(void) {
     std::cout << "\tSupplier: {";
     for (int i=0; i<n_stores; i++) {

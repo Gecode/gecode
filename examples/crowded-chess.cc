@@ -46,8 +46,8 @@ const int nkval = 16;
    may be, say, a rook, a bishop, and a knight between them. It is not
    difficult to dispose of each type of piece separately; the
    difficulty comes in when you have to find room for all the
-   arrangements on the board simultaneously." 
-   <em>Dudeney, H.E., (1917), Amusements in Mathematics, 
+   arrangements on the board simultaneously."
+   <em>Dudeney, H.E., (1917), Amusements in Mathematics,
    Thomas Nelson and Sons.</em>
 
    This puzzle can be generalized to chess-boards of size \f$n\f$, where the
@@ -92,7 +92,7 @@ const int nkval = 16;
    <TR><TD>B</TD><TD>Q</TD><TD>K</TD><TD>.</TD>
    <TD>K</TD><TD>R</TD><TD>K</TD><TD>.</TD></TR>
    <TR><TD>B</TD><TD>K</TD><TD>B</TD><TD>Q</TD>
-   <TD>R</TD><TD>K</TD><TD>B</TD><TD>B</TD></TR> 
+   <TD>R</TD><TD>K</TD><TD>B</TD><TD>B</TD></TR>
  </TABLE>
 
  \todo Currently this script finds a solution. Instead, it should find
@@ -103,15 +103,15 @@ const int nkval = 16;
 class CrowdedChess : public Example {
 protected:
   const int n;          ///< Board-size
-  IntVarArray s;        ///< The board 
-  IntVarArray queens,   ///< Row of queen in column x 
-    rooks;              ///< Row of rook in column x 
+  IntVarArray s;        ///< The board
+  IntVarArray queens,   ///< Row of queen in column x
+    rooks;              ///< Row of rook in column x
   BoolVarArray knights; ///< True iff the corresponding place has a knight
 
   /** Symbolic names of pieces. The order determines which piece will
    * be placed first.
    */
-  enum 
+  enum
     {Q,   ///< Queen
      R,   ///< Rook
      B,   ///< Bishop
@@ -134,7 +134,7 @@ protected:
     MiniModel::Matrix<BoolVarArray> kb(knights, n, n);
     for (int x = n; x--; )
       for (int y = n; y--; )
-	for (int i = 4; i--; ) 
+	for (int i = 4; i--; )
 	  if (valid_pos(x+kmoves[i][0], y+kmoves[i][1])) {
 	    IntVarArgs places(2);
 	    places[0] = kb(x, y);
@@ -143,16 +143,16 @@ protected:
 	  }
   }
 
-  
+
 public:
   /// The model of the problem
   CrowdedChess(const Options& o)
-    : n(o.size), s(this, n*n, 0, PMAX-1), queens(this, n, 0, n-1), 
+    : n(o.size), s(this, n*n, 0, PMAX-1), queens(this, n, 0, n-1),
       rooks(this, n, 0, n-1), knights(this, n*n, 0, 1) {
-    const int nn = n*n, q = n, r = n, b = (2*n)-2, 
+    const int nn = n*n, q = n, r = n, b = (2*n)-2,
       k = n <= nkval ? kval[n-1] : kval[nkval-1];
     const int e = nn - (q + r + b + k);
-    
+
     assert(nn == (e + q + r + b + k));
 
     MiniModel::Matrix<IntVarArray> m(s, n);
@@ -166,7 +166,7 @@ public:
     count(this, s, R, IRT_EQ, r, o.icl);
     count(this, s, B, IRT_EQ, b, o.icl);
     count(this, s, K, IRT_EQ, k, o.icl);
-    
+
     // Integer variables for use with the element constraint
     IntVar queen(this, Q, Q), rook(this, R, R);
 
@@ -178,13 +178,13 @@ public:
       count(this, bb, Q, IRT_EQ, 1, o.icl);
       count(this, aa, R, IRT_EQ, 1, o.icl);
       count(this, bb, R, IRT_EQ, 1, o.icl);
-      
+
       //Connect (queens|rooks)[i] to the row it is in
       element(this, aa, queens[i], queen, ICL_DOM);
       element(this, aa,  rooks[i],  rook, ICL_DOM);
     }
-    
-    // N-queens constraints 
+
+    // N-queens constraints
     distinct(this, queens, ICL_DOM);
     IntArgs koff(n);
     for (int i = n; i--; ) koff[i] = i;
@@ -194,7 +194,7 @@ public:
 
     // N-rooks constraints
     distinct(this,  rooks, ICL_DOM);
-    
+
     // Collect diagonals for handling queens and bishops
     for (int l = n; l--; ) {
       const int il = (n-1) - l;
