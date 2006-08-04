@@ -47,7 +47,7 @@ namespace Gecode { namespace Int { namespace Dom {
     using ReUnaryPropagator<View,PC_INT_BND,BoolView>::x0;
     using ReUnaryPropagator<View,PC_INT_BND,BoolView>::b;
     /// Minimum of range
-    int min; 
+    int min;
     /// Maximum of range
     int max;
     /// Constructor for cloning \a p

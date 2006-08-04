@@ -32,8 +32,8 @@
    }
    @proceedings{DBLP:conf/cp/2002,
      editor    = {Pascal Van Hentenryck},
-     title     = {Principles and Practice of Constraint Programming - CP 2002, 
-                  8th International Conference, CP 2002, 
+     title     = {Principles and Practice of Constraint Programming - CP 2002,
+                  8th International Conference, CP 2002,
                   Ithaca, NY, USA, September 9-13, 2002, Proceedings},
      booktitle = {CP},
      publisher = {Springer},
@@ -55,15 +55,15 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   template <class ViewM, class ViewD, class ViewH, class View>
   forceinline
-  Val<ViewM,ViewD,ViewH,View>::Val(Space* home, const ViewArray<ViewM>& _machine, 
-				   const ViewArray<View>& _start, 
-				   const ViewArray<ViewD>& _duration, 
-				   const ViewArray<View>& _end, 
-				   const ViewArray<ViewH>& _height, 
-				   const IntArgs& _limit, 
+  Val<ViewM,ViewD,ViewH,View>::Val(Space* home, const ViewArray<ViewM>& _machine,
+				   const ViewArray<View>& _start,
+				   const ViewArray<ViewD>& _duration,
+				   const ViewArray<View>& _end,
+				   const ViewArray<ViewH>& _height,
+				   const IntArgs& _limit,
 				   bool _at_most) :
-    Propagator(home,true), 
-    machine(_machine), start(_start), duration(_duration), 
+    Propagator(home,true),
+    machine(_machine), start(_start), duration(_duration),
     end(_end), height(_height), limit(_limit.size()), at_most(_at_most) {
     for(int i = _limit.size(); i--; ) {
       limit[i] = _limit[i];
@@ -79,19 +79,19 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   template <class ViewM, class ViewD, class ViewH, class View>
   ExecStatus
   Val<ViewM,ViewD,ViewH,View>
-  ::post(Space* home, const ViewArray<ViewM>& machine, 
-	 const ViewArray<View>& start, const ViewArray<ViewD>& duration, 
-	 const ViewArray<View>& end, const ViewArray<ViewH>& height, 
+  ::post(Space* home, const ViewArray<ViewM>& machine,
+	 const ViewArray<View>& start, const ViewArray<ViewD>& duration,
+	 const ViewArray<View>& end, const ViewArray<ViewH>& height,
 	 const IntArgs& limit, bool at_most) {
-    (void) new (home) Val(home, machine, start, duration, 
+    (void) new (home) Val(home, machine, start, duration,
 			  end, height, limit, at_most);
-    
+
     return ES_OK;
   }
 
   template <class ViewM, class ViewD, class ViewH, class View>
   forceinline
-  Val<ViewM,ViewD,ViewH,View>::Val(Space* home, bool share, 
+  Val<ViewM,ViewD,ViewH,View>::Val(Space* home, bool share,
 				   Val<ViewM,ViewD,ViewH,View>& p)
     : Propagator(home,share,p), at_most(p.at_most) {
     machine.update(home,share,p.machine);
@@ -100,7 +100,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     end.update(home, share, p.end);
     height.update(home, share, p.height);
     limit.update(share, p.limit);
-  } 
+  }
 
   template <class ViewM, class ViewD, class ViewH, class View>
   size_t
@@ -116,7 +116,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
-  
+
   template <class ViewM, class ViewD, class ViewH, class View>
   PropCost
   Val<ViewM,ViewD,ViewH,View>::cost(void) const {
@@ -132,15 +132,15 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   /// Types of events for the sweep-line
   typedef enum {EVENT_CHCK, EVENT_PROF, EVENT_PRUN} ev_t;
   /// An event collects the information for one evnet for the sweep-line
-  class Event 
+  class Event
   {
   public:
     /// The type of the event
-    ev_t e; 
+    ev_t e;
     /// The task this event refers to
-    int task; 
+    int task;
     /// The date of this event
-    int date; 
+    int date;
     /// The quantity changed by this event (if any)
     int inc;
     /** If the type is EVENT_PROF and it is the first of the pair,
@@ -148,40 +148,40 @@ namespace Gecode { namespace Int { namespace Cumulatives {
      * correctly for both at_most and at_least.
      */
     bool first_prof;
-    
+
     /// Simple constructor
-    Event(ev_t _e, int _task, int _date, int _inc = 0, bool _first_prof = false) 
+    Event(ev_t _e, int _task, int _date, int _inc = 0, bool _first_prof = false)
       : e(_e), task(_task), date(_date), inc(_inc), first_prof(_first_prof)
     {}
-    
+
     /// Order events based on date.
     bool operator<(const Event& e) {
       return date < e.date;
     }
   };
-  
 
-  template <class ViewM, class ViewD, class ViewH, class View> 
-  ExecStatus 
-  Val<ViewM,ViewD,ViewH,View>::prune(Space * home, int low, int up, int r, 
+
+  template <class ViewM, class ViewD, class ViewH, class View>
+  ExecStatus
+  Val<ViewM,ViewD,ViewH,View>::prune(Space * home, int low, int up, int r,
 		   int ntask, int sheight,
-		   const std::vector<int>& contribution, 
+		   const std::vector<int>& contribution,
 		   std::list<int>& prune_tasks) {
 
-    if (ntask > 0 && 
+    if (ntask > 0 &&
 	(at_most ? sheight > limit[r]
 	 : sheight < limit[r])) {
       return ES_FAILED;
     }
 
-    std::list<int>::iterator it = prune_tasks.begin(); 
+    std::list<int>::iterator it = prune_tasks.begin();
     while (it != prune_tasks.end()) {
       int t = *it;
       // Algorithm 2.
-      // Prune the machine, start, and end for required 
+      // Prune the machine, start, and end for required
       // tasks for machine r that have heights possibly greater than 0.
-      if (ntask != 0 && 
-	  (at_most ? height[t].min() < 0 
+      if (ntask != 0 &&
+	  (at_most ? height[t].min() < 0
 	   : height[t].max() > 0) &&
 	  (at_most ? sheight-contribution[t] > limit[r]
 	   : sheight-contribution[t] < limit[r])) {
@@ -202,8 +202,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 	  : height[t].max() < std::max(0, limit[r])) {
 	if (at_most ? sheight-contribution[t]+height[t].min() > limit[r]
 	    : sheight-contribution[t]+height[t].max() < limit[r]) {
-	  if (end[t].min() > low  && 
-	      start[t].max() <= up && 
+	  if (end[t].min() > low  &&
+	      start[t].max() <= up &&
 	      duration[t].min() > 0) {
 	    if (me_failed(machine[t].nq(home, r)))
 	      return ES_FAILED;
@@ -216,8 +216,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   		  me_failed(end[t].minus(home, b)))
   		return ES_FAILED;
 	    }
-	    if (me_failed(duration[t].lq(home, 
-					 std::max(std::max(low-start[t].min(), 
+	    if (me_failed(duration[t].lq(home,
+					 std::max(std::max(low-start[t].min(),
 							   end[t].max()-up-1),
 						  0))))
 	      return ES_FAILED;
@@ -228,7 +228,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
       // Algorithm 4.
       // Remove bad negative values from for-sure heights.
       /* \note "It is not sufficient to only test for assignment of machine[t]
-       *         since Algorithm 3 can remove the value." Check this against 
+       *         since Algorithm 3 can remove the value." Check this against
        *         the conditions for Alg3.
        */
       if (machine[t].assigned() &&
@@ -243,7 +243,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
       }
 
       // Remove tasks that are no longer relevant.
-      /* @todo check condition more thouroughly - is 
+      /* @todo check condition more thouroughly - is
        *        \f$max(end_r)\geq up+1\f$  CORRECT?
        */
       if ((!machine[t].in(r)) ||
@@ -258,15 +258,15 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
     return ES_OK;
   }
-    
-  template <class ViewM, class ViewD, class ViewH, class View> 
-  ExecStatus 
+
+  template <class ViewM, class ViewD, class ViewH, class View>
+  ExecStatus
   Val<ViewM,ViewD,ViewH,View>::propagate(Space* home) {
     ExecStatus res = ES_NOFIX;
     // Check for subsumption
     bool nnft = true; // no non-fixed tasks.
     for (int t = start.size(); t--; )
-      if(!(duration[t].assigned() && end[t].assigned()   && 
+      if(!(duration[t].assigned() && end[t].assigned()   &&
 	   machine[t].assigned()  && start[t].assigned() &&
 	   height[t].assigned())) {
 	nnft = false;
@@ -278,13 +278,13 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     // Propagate information for machine r
     for (int r = limit.size(); r--; ) {
       std::list<Event> events;
-      
-      // Find events for sweep-line 
+
+      // Find events for sweep-line
       for (int t = start.size(); t--; ) {
-	if (machine[t].assigned() && 
+	if (machine[t].assigned() &&
 	    machine[t].val() == r &&
 	    start[t].max() < end[t].min()) {
-	  if (at_most 
+	  if (at_most
 	      ? height[t].min() > std::min(0, limit[r])
 	      : height[t].max() < std::max(0, limit[r])) {
 	    events.push_back(Event(EVENT_CHCK, t, start[t].max(), 1));
@@ -293,10 +293,10 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 	  if (at_most
 	      ? height[t].min() > 0
 	      : height[t].max() < 0) {
-	    events.push_back(Event(EVENT_PROF, t, start[t].max(), 
+	    events.push_back(Event(EVENT_PROF, t, start[t].max(),
 				   at_most ? height[t].min()
 				   : height[t].max(), true));
-	    events.push_back(Event(EVENT_PROF, t, end[t].min(), 
+	    events.push_back(Event(EVENT_PROF, t, end[t].min(),
 				   at_most ? -height[t].min()
 				   : -height[t].max()));
 	  }
@@ -306,10 +306,10 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 	  if (at_most
 	      ? height[t].min() < 0
 	      : height[t].max() > 0) {
-	    events.push_back(Event(EVENT_PROF, t, start[t].min(), 
+	    events.push_back(Event(EVENT_PROF, t, start[t].min(),
 				   at_most ? height[t].min()
 				   : height[t].max(), true));
-	    events.push_back(Event(EVENT_PROF, t, end[t].max(), 
+	    events.push_back(Event(EVENT_PROF, t, end[t].max(),
 				   at_most ? -height[t].min()
 				   : -height[t].max()));
 	  }
@@ -335,7 +335,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
       int sheight  = 0;
       std::list<Event>::iterator it = events.begin();
       std::list<int> prune_tasks;
-      std::vector<int> contribution(start.size(), at_most 
+      std::vector<int> contribution(start.size(), at_most
 				    ? Limits::Int::int_max
 				    : Limits::Int::int_min);
 
@@ -343,7 +343,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
       while (it != events.end()) {
 	if (it->e != EVENT_PRUN) {
 	  if (d != it->date) {
-	    GECODE_ES_CHECK(prune(home, d, it->date-1, r, 
+	    GECODE_ES_CHECK(prune(home, d, it->date-1, r,
 				  ntask, sheight,
 				  contribution, prune_tasks));
 	    d = it->date;
@@ -353,7 +353,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 	  } else /* if (it->e == EVENT_PROF) */ {
 	    sheight += it->inc;
 	    if(it->first_prof)
-	      contribution[it->task] = at_most 
+	      contribution[it->task] = at_most
 		? std::min(contribution[it->task], it->inc)
 		: std::max(contribution[it->task], it->inc);
 	  }
@@ -363,7 +363,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 	++it;
       }
 
-      GECODE_ES_CHECK(prune(home, d, d, r, 
+      GECODE_ES_CHECK(prune(home, d, d, r,
 			    ntask, sheight,
 			    contribution, prune_tasks));
     }

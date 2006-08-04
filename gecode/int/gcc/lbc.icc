@@ -22,11 +22,11 @@
 namespace Gecode { namespace Int { namespace GCC {
 
   /**
-   * \brief Lower Bounds constraint (LBC) stating 
-   * \f$ \forall j \in \{0, \dots, |k|-1\}: 
+   * \brief Lower Bounds constraint (LBC) stating
+   * \f$ \forall j \in \{0, \dots, |k|-1\}:
    * \#\{i\in\{0, \dots, |x| - 1\} | x_i = card(k_j)\} \geq min(k_j)\f$
    * Hence the lbc constraints the variables such that every value occurs
-   * at least as often as specified by its lower cardinality bound. 
+   * at least as often as specified by its lower cardinality bound.
    * \param home current space
    * \param x  the problem variables
    * \param nb denotes number of unique bounds
@@ -34,21 +34,21 @@ namespace Gecode { namespace Int { namespace GCC {
    *        (cf. HallInfo)
    * \param rank ranking information about the variable bounds (cf. Rank)
    * \param lps partial sum structure for the lower cardinality bounds (cf. PartialSum)
-   * \param mu permutation \f$ \mu \f$ such that 
-   *        \f$ \forall i\in \{0, \dots, |x|-2\}: 
+   * \param mu permutation \f$ \mu \f$ such that
+   *        \f$ \forall i\in \{0, \dots, |x|-2\}:
    *        max(x_{\mu(i)}) \leq max(x_{\mu(i+1)})\f$
    * \param nu permutation \f$ \nu \f$ such that
-   *        \f$ \forall i\in \{0, \dots, |x|-2\}: 
+   *        \f$ \forall i\in \{0, \dots, |x|-2\}:
    *        min(x_{\mu(i)}) \leq min(x_{\mu(i+1)})\f$
    */
 
   template <class View, class Card, bool shared>
-  inline ExecStatus 
-  lbc(Space* home, ViewArray<View>& x, int& nb, 
+  inline ExecStatus
+  lbc(Space* home, ViewArray<View>& x, int& nb,
       HallInfo hall[], Rank rank[],
       PartialSum<Card>* lps,
       int mu[], int nu[]){
-    
+
     ExecStatus es = ES_FIX;
     int n = x.size();
 
@@ -148,31 +148,31 @@ namespace Gecode { namespace Int { namespace GCC {
       // visit intervals in increasing max order
       int x0   = rank[mu[i]].min;
       int y    = rank[mu[i]].max;
-      int succ = x0 + 1;  
+      int succ = x0 + 1;
       z        = pathmax_t(hall, succ);
       j        = hall[z].t;
 
       /*
        * POTENTIALLY STABLE SET:
-       *  z \neq succ \Leftrigharrow z>succ, i.e. 
-       *  min(D_{\mu(i)}) is guaranteed to occur min(K_i) times 
-       *  \Rightarrow [x0, min(y,z)] is potentially stable 
+       *  z \neq succ \Leftrigharrow z>succ, i.e.
+       *  min(D_{\mu(i)}) is guaranteed to occur min(K_i) times
+       *  \Rightarrow [x0, min(y,z)] is potentially stable
        */
 
       if (z != succ) {
 	w = pathmax_ps(hall, succ);
-	v = hall[w].ps; 
-	pathset_ps(hall, succ, w, w); 
-	w = std::min(y, z); 
+	v = hall[w].ps;
+	pathset_ps(hall, succ, w, w);
+	w = std::min(y, z);
 	pathset_ps(hall, hall[w].ps, v, w);
 	hall[w].ps = v;
       }
 
       /*
        * STABLE SET:
-       *   being stable implies being potentially stable, i.e. 
-       *   [hall[y].ps, hall[y].bounds-1] is the largest stable subset of 
-       *   [hall[j].bounds, hall[y].bounds-1]. 
+       *   being stable implies being potentially stable, i.e.
+       *   [hall[y].ps, hall[y].bounds-1] is the largest stable subset of
+       *   [hall[j].bounds, hall[y].bounds-1].
        */
 
       if (hall[z].d <= lps->sumup(hall[y].bounds, hall[z].bounds - 1)) {
@@ -219,10 +219,10 @@ namespace Gecode { namespace Int { namespace GCC {
 	 * number of variables whose domain intersect the interval
 	 * (see ZEROTEST in "gcc/ubc.icc")
 	 */
-	// CLEARLY THIS WAS NOT STABLE == UNSTABLE 
+	// CLEARLY THIS WAS NOT STABLE == UNSTABLE
 	if (hall[z].d == lps->sumup(hall[y].bounds, hall[z].bounds - 1)) {
 	  if (hall[y].h > y)
-	    /* 
+	    /*
 	     * y is not the end of the potentially stable set
 	     * thus ensure that the potentially stable superset is marked
 	     */
@@ -285,7 +285,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     //LBC narrow upper bounds
-    
+
     w = 0;
     for (i = 0; i <= nb; i++) {
       hall[i].d = lps->sumup(hall[i].bounds, hall[i + 1].bounds - 1);

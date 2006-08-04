@@ -23,11 +23,11 @@
 namespace Gecode {
 
   using namespace Int;
-  void sortedness(Space* home, 
-		  const IntVarArgs& x, 
-		  const IntVarArgs& y, 
+  void sortedness(Space* home,
+		  const IntVarArgs& x,
+		  const IntVarArgs& y,
 		  IntConLevel) {
-   
+
     if (home->failed()) {
       return;
     }
@@ -57,21 +57,21 @@ namespace Gecode {
     }
 
 
-    GECODE_ES_FAIL(home, 
+    GECODE_ES_FAIL(home,
 		   (Sortedness::
 		    Sortedness<IntView, ViewTuple<IntView,1>, false>::
 		    post(home, x0, y0)));
   }
 
-  void sortedness(Space* home, 
-		  const IntVarArgs& x, 
-		  const IntVarArgs& y, 
-		  const IntVarArgs& z, 
+  void sortedness(Space* home,
+		  const IntVarArgs& x,
+		  const IntVarArgs& y,
+		  const IntVarArgs& z,
 		  IntConLevel) {
     int n = x.size();
     int n2 = 2*n;
     int n3 = 3*n;
-    
+
     if ((n != y.size()) || (n != z.size())) {
       throw ArgumentSizeMismatch("Int::sortedness");
     }
@@ -109,12 +109,12 @@ namespace Gecode {
     for (int i = n2; i < n3; i++) {
       xyz[i] = xz0[i - n2][1];
     }
-    
+
     if (xyz.shared()) {
       throw ArgumentSame("Int::sortedness");
     }
 
-    GECODE_ES_FAIL(home, 
+    GECODE_ES_FAIL(home,
 		   (Sortedness::
 		    Sortedness<IntView, ViewTuple<IntView,2>, true>::
 		    post(home, xz0, y0)));

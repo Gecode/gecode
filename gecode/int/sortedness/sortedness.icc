@@ -22,44 +22,44 @@
 namespace Gecode { namespace Int { namespace Sortedness {
 
 
-  /* 
+  /*
    * Summary of the propagation algorithm as implemented in the
    * propagate method below:
    *
    * STEP 1: Normalize the domains of the y variables
    * STEP 2: Sort the domains of the x variables according to their lower
    *         and upper endpoints
-   * STEP 3: Compute the matchings phi and phiprime with 
+   * STEP 3: Compute the matchings phi and phiprime with
    *         Glover's matching algorithm
-   * STEP 4: Compute the strongly connected components in 
+   * STEP 4: Compute the strongly connected components in
    *         the oriented intersection graph
    * STEP 5: Narrow the domains of the variables
    *
    */
 
   /**
-   * \brief Perform bounds consistent sortedness propagation 
+   * \brief Perform bounds consistent sortedness propagation
    *
    * Implements the propagation algorithm for Sortedness::Sortedness
-   * and is provided as seperate function, because a second pass of 
+   * and is provided as seperate function, because a second pass of
    * the propagation algorithm is needed in order to achieve idempotency
-   * in case explicit permutation variables are provided. 
-   * 
-   * If \a Perm is true, permutation variables form the 
-   * third argument which implies additional inferences, 
+   * in case explicit permutation variables are provided.
+   *
+   * If \a Perm is true, permutation variables form the
+   * third argument which implies additional inferences,
    * consistency check on the permutation variables and eventually a
-   * second pass of the propagation algorithm. 
-   * Otherwise, the algorithm does not take care of the permutation 
-   * variables resulting in a better performance. 
+   * second pass of the propagation algorithm.
+   * Otherwise, the algorithm does not take care of the permutation
+   * variables resulting in a better performance.
    */
 
   template<class View, class Tuple, bool Perm>
-  ExecStatus  
-  bounds_propagation(Space* home, 
-		     ViewArray<Tuple>& xz, 
-		     ViewArray<View>& y, 
-		     bool& repairpass, 
-		     bool& nofix, 
+  ExecStatus
+  bounds_propagation(Space* home,
+		     ViewArray<Tuple>& xz,
+		     ViewArray<View>& y,
+		     bool& repairpass,
+		     bool& nofix,
 		     bool& match_fixed){
 
     int n        = xz.size();
@@ -82,7 +82,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	tau[i] = i;
       }
     }
-    
+
     bool yval    = true;
     bool ysorted = true;
     for (int i = n; i--; ) {
@@ -97,9 +97,9 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
       // normalized and sorted
       // collect all bounds
-      
+
       // minimum bound
-      int mib = y[0].min(); 
+      int mib = y[0].min();
       // maximum bound
       int mab = y[n - 1].max();
       // interval size
@@ -152,14 +152,14 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	if (me_failed(me)) {
 	  return ES_FAILED;
 	}
-	nofix |= (me_modified(me) && 
+	nofix |= (me_modified(me) &&
 		  xz[i][0].min() != y[minr].min());
 
 	me = xz[i][0].lq(home, y[maxr].max());
 	if (me_failed(me)) {
 	  return ES_FAILED;
 	}
-	nofix |= (me_modified(me) && 
+	nofix |= (me_modified(me) &&
 		  xz[i][0].min() != y[maxr].max());
 
 	me = xz[i][1].gq(home, minr);
@@ -185,12 +185,12 @@ namespace Gecode { namespace Int { namespace Sortedness {
       }
     }
 
-    /* 
+    /*
      * STEP 1:
      *  normalization is implemented in "sortedness/order.icc"
      *    o  setting the lower bounds of the y_i domains (\lb E_i)
      *       to max(\lb E_{i-1},\lb E_i)
-     *    o  setting the upper bounds of the y_i domains (\ub E_i) 
+     *    o  setting the upper bounds of the y_i domains (\ub E_i)
      *       to min(\ub E_i,\ub E_{i+1})
      */
 
@@ -227,21 +227,21 @@ namespace Gecode { namespace Int { namespace Sortedness {
     }
 
     if (subsumed || array_subs) {
-      return ES_SUBSUMED; 
+      return ES_SUBSUMED;
     }
 
 
     /*
-     * STEP 2: creating tau 
-     * Sort the domains of the x variables according 
-     * to their lower bounds, where we use an 
+     * STEP 2: creating tau
+     * Sort the domains of the x variables according
+     * to their lower bounds, where we use an
      * intermediate array of integers for sorting
      */
     sort_tau<View, Tuple, Perm>(xz, tau);
 
-    /* 
+    /*
      * STEP 3:
-     *  Compute the matchings \phi and \phi' between 
+     *  Compute the matchings \phi and \phi' between
      *  the x and the y variables
      *  with Glover's matching algorithm.
      *        o  phi is computed with the glover function
@@ -268,8 +268,8 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	    (home, xz, y, tau, phiprime, sequence, vertices)) {
 	  return ES_FAILED;
 	}
-      } 
-      
+      }
+
       if (!narrow_domy<View, Tuple, Perm>
 	  (home, xz, y, phi, phiprime, nofix)) {
 	return ES_FAILED;
@@ -277,7 +277,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
       if (nofix && !match_fixed) {
 	// data structures (matching) destroyed by domains with holes
-	    
+	
 	for (int i = y.size(); i--; ) {
 	  phi[i] = 0;
 	  phiprime[i] = 0;
@@ -286,7 +286,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	    (home, xz, y, tau, phi, sequence, vertices)) {
 	  return ES_FAILED;
 	}
-	    
+	
 	if (!revglover<View, Tuple, Perm>
 	    (home, xz, y, tau, phiprime, sequence, vertices)) {
 	  return ES_FAILED;
@@ -299,17 +299,17 @@ namespace Gecode { namespace Int { namespace Sortedness {
       }
     }
 
-    /* 
+    /*
      * STEP 4:
-     *  Compute the strongly connected components in 
+     *  Compute the strongly connected components in
      *  the oriented intersection graph
-     *  the computation of the sccs is implemented in 
+     *  the computation of the sccs is implemented in
      *  "sortedness/narrowing.icc" in the function narrow_domx
      */
 
     GECODE_AUTOARRAY(int,          scclist, n);
     GECODE_AUTOARRAY(SccComponent, sinfo  , n);
-    
+
     for(int i = n; i--; ) {
       sinfo[i].left       = i;
       sinfo[i].right      = i;
@@ -366,14 +366,14 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	    if (me_failed(me)) {
 	      return ES_FAILED;
 	    }
-	    nofix |= (y[xz[tau[i]][1].min()].modified() && 
+	    nofix |= (y[xz[tau[i]][1].min()].modified() &&
 		      y[xz[tau[i]][1].min()].max() != xz[tau[i]][0].max());
-	    
+	
 	    me = y[xz[tau[i+1]][1].max()].lq(home, xz[tau[i+1]][0].max());
 	    if (me_failed(me)) {
 	      return ES_FAILED;
 	    }
-	    nofix |= (y[xz[tau[i+1]][1].max()].modified() && 
+	    nofix |= (y[xz[tau[i+1]][1].max()].modified() &&
 		      y[xz[tau[i+1]][1].max()].max() != xz[tau[i+1]][0].max());
 	  }
 	}
@@ -381,11 +381,11 @@ namespace Gecode { namespace Int { namespace Sortedness {
     }
     return nofix ? ES_NOFIX : ES_FIX;
   }
-  
+
   template<class View, class Tuple, bool Perm>
   forceinline Sortedness<View, Tuple, Perm>::
   Sortedness(Space* home, bool share, Sortedness<View, Tuple, Perm>& p):
-    Propagator(home, share, p), 
+    Propagator(home, share, p),
     reachable(p.reachable) {
     xz.update(home, share, p.xz);
     y.update(home, share, p.y);
@@ -398,7 +398,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
     Propagator(home), xz(xz0), y(y0), w(home, y0), reachable(-1) {
     xz.subscribe(home, this, PC_INT_BND);
     y.subscribe(home, this, PC_INT_BND);
-    
+
   }
 
   template<class View, class Tuple, bool Perm>
@@ -426,7 +426,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
   Sortedness<View, Tuple, Perm>::propagate(Space* home) {
 
     int  n           = xz.size();
-    bool secondpass  = false; 
+    bool secondpass  = false;
     bool nofix       = false;
     int  dropfst     = 0;
 
@@ -453,7 +453,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
     }
 
     sort_sigma<View, Tuple, Perm>(xz, match_fixed);
-   
+
     // in this case check_subsumptions is guaranteed to find
     // the xs ordered by sigma
 
@@ -463,8 +463,8 @@ namespace Gecode { namespace Int { namespace Sortedness {
     }
 
     if (subsumed) {
-      return ES_SUBSUMED; 
-    }	  
+      return ES_SUBSUMED;
+    }	
 
     if (Perm) {
       // dropping possibly yields inconsistent indices on permutation variables
@@ -498,11 +498,11 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	}
       }
 
-      // check whether shifting the permutation variables 
+      // check whether shifting the permutation variables
       // is necessary after dropping x and y vars
       // highest reachable index
-      int  valid = n - 1; 
-      int  index = 0;     
+      int  valid = n - 1;
+      int  index = 0;
       int  shift = 0;
 
       for (int i = n; i--; ){
@@ -520,19 +520,19 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
 	for (int i = n; i--; ) {
 
-	  GECODE_ME_CHECK(xz[i][1].gq(home, shift)); 
+	  GECODE_ME_CHECK(xz[i][1].gq(home, shift));
 
 	  oxz[i][1] = OffsetView(xz[i][1], -shift);
 	  oxz[i][0] = OffsetView(xz[i][0], 0);
 	  oy[i] = OffsetView(y[i], 0);
 	}
 
-	GECODE_ES_CHECK((bounds_propagation<OffsetView, 
+	GECODE_ES_CHECK((bounds_propagation<OffsetView,
 			 ViewTuple<OffsetView,2>, Perm>
 			 (home, oxz, oy, secondpass, nofix, match_fixed)));
 
 	if (secondpass) {
-	  GECODE_ES_CHECK((bounds_propagation<OffsetView, 
+	  GECODE_ES_CHECK((bounds_propagation<OffsetView,
 			   ViewTuple<OffsetView,2>, Perm>
 			   (home, oxz, oy, secondpass, nofix, match_fixed)));
 	}
@@ -619,14 +619,14 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	    if (me_failed(me)) {
 	      return ES_FAILED;
 	    }
-	    nofix |= (y[xz[i][1].min()].modified() && 
+	    nofix |= (y[xz[i][1].min()].modified() &&
 		      y[xz[i][1].min()].min() != xz[i][0].min());
 
 	    me = y[xz[i+1][1].max()].gq(home, xz[i+1][0].min());
 	    if (me_failed(me)) {
 	      return ES_FAILED;
 	    }
-	    nofix |= (y[xz[i+1][1].max()].modified() && 
+	    nofix |= (y[xz[i+1][1].max()].modified() &&
 		      y[xz[i+1][1].max()].min() != xz[i+1][0].min());
 	  }
 	}
@@ -634,7 +634,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
     }
 
     // check assigned
-    // should be sorted 
+    // should be sorted
     bool xassigned = true;
     for (int i = 0; i < xz.size(); i++) {
       if (xz[i][0].assigned() && xassigned) {
@@ -713,15 +713,15 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	  GECODE_ME_CHECK(xz0[0][1].eq(home, 0));
 	}
       }
-    } else { 
-      new (home) Sortedness<View, Tuple, Perm>(home, xz0, y0); 
+    } else {
+      new (home) Sortedness<View, Tuple, Perm>(home, xz0, y0);
     }
     return ES_OK;
   }
-  
+
 }}}
 
 // STATISTICS: int-prop
 
-  
-  
+
+

@@ -31,7 +31,7 @@ namespace Gecode {
     bool operator()(const Range &x, const Range &y);
   };
 
-  forceinline bool 
+  forceinline bool
   IntSet::MinInc::operator()(const Range &x, const Range &y) {
     return x.min < y.min;
   }

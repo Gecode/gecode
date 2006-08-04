@@ -20,13 +20,13 @@
  */
 
 namespace Gecode {
-  
+
   // Forward declaration.
   class BoolVarArray;
 
   /**
    * \defgroup TaskIntIntArgs Argument arrays
-   * 
+   *
    * Argument arrays are just good enough for passing arguments
    * with automatic memory management.
    * \ingroup TaskIntInt
@@ -63,7 +63,7 @@ namespace Gecode {
 
   /**
    * \defgroup TaskIntIntVarArrays Variable arrays
-   * 
+   *
    * Variable arrays can store variables. They are typically used
    * for storing the variables being part of a solution (script). However,
    * they can also be used for temporary purposes (even though
@@ -71,7 +71,7 @@ namespace Gecode {
    * is deleted).
    * \ingroup TaskIntInt
    */
-  
+
   /**
    * \brief Integer variable array
    * \ingroup TaskIntIntVarArrays
@@ -89,7 +89,7 @@ namespace Gecode {
     /**
      * \brief Initialize array with \a n new variables
      *
-     * The variables are created with a domain ranging from \a min 
+     * The variables are created with a domain ranging from \a min
      * to \a max. The following execptions might be thrown:
      *  - If \a min is greater than \a max, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
@@ -97,7 +97,7 @@ namespace Gecode {
      *    in Gecode::Limits::Int, an exception of type
      *    Gecode::Int::VariableOutOfDomain is thrown.
      */
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     IntVarArray(Space* home, int n, int min, int max);
     /**
      * \brief Initialize array with \a n new variables
@@ -106,11 +106,11 @@ namespace Gecode {
      * The following execptions might be thrown:
      *  - If \a s is empty, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
-     *  - If \a s contains values that exceed the limits for integers 
+     *  - If \a s contains values that exceed the limits for integers
      *    as defined in Gecode::Limits::Int, an exception of type
      *    Gecode::Int::VariableOutOfDomain is thrown.
      */
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     IntVarArray(Space* home, int n, const IntSet& s);
     //@}
   };
@@ -131,15 +131,15 @@ namespace Gecode {
     /**
      * \brief Initialize array with \a n new variables
      *
-     * The variables are created with a domain ranging from \a min 
+     * The variables are created with a domain ranging from \a min
      * to \a max. The following execptions might be thrown:
      *  - If \a min is greater than \a max, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
-     *  - If \a min is less than 0 or \a max is greater than 1, 
+     *  - If \a min is less than 0 or \a max is greater than 1,
      *    an exception of type
      *    Gecode::Int::VariableOutOfDomain is thrown.
      */
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     BoolVarArray(Space* home, int n, int min, int max);
     //@}
 

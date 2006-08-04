@@ -85,11 +85,11 @@ namespace Gecode { namespace Int { namespace Branch {
       (void) new (home) ViewValBranching<IntView,int,SelView,ValMax>(home,x);
       break;
     case BVAL_SPLIT_MIN:
-      (void) new (home) 
+      (void) new (home)
 	ViewValBranching<IntView,int,SelView,ValSplitMin>(home,x);
       break;
     case BVAL_SPLIT_MAX:
-      (void) new (home) 
+      (void) new (home)
 	ViewValBranching<IntView,int,SelView,ValSplitMax>(home,x);
       break;
     default:

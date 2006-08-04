@@ -42,7 +42,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       } else if (x1.val() == 0) {
 	GECODE_ME_CHECK(x0.eq(home,0));
       } else {
-	Iter::Ranges::Array::Range r[2] 
+	Iter::Ranges::Array::Range r[2]
 	  = { {-x1.val(),-x1.val()}, {x1.val(),x1.val()} };
 	Iter::Ranges::Array i(r,2);
 	GECODE_ME_CHECK(x0.inter(home,i));
@@ -166,7 +166,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     IntVarRanges xr1(x0);
     IntVarRanges xr2(x0);
-    
+
     Iter::Ranges::Inter<Iter::Ranges::Singleton,
       IntVarRanges> posInter(positive, xr1);
     Iter::Ranges::Inter<Iter::Ranges::Singleton,
@@ -179,17 +179,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       Iter::Ranges::Singleton,
       IntVarRanges> > >
       u(posInter, mneg);
-    
+
     GECODE_ME_CHECK(x1.inter(home, u));
-    
+
     IntVarRanges x1r1(x1);
     IntVarRanges x1r2(x1);
-    
+
     Iter::Ranges::Minus<IntVarRanges> x1m(x1r2);
     Iter::Ranges::Union<IntVarRanges,
       Iter::Ranges::Minus<IntVarRanges> > u2(x1r1,x1m);
     GECODE_ME_CHECK(x0.inter(home, u2));
-    
+
     if (x1.assigned())
       return ES_SUBSUMED;
 

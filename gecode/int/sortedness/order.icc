@@ -24,14 +24,14 @@
 namespace Gecode { namespace Int { namespace Sortedness {
 
   /**
-   *  \brief Build \f$\sigma\f$ 
+   *  \brief Build \f$\sigma\f$
    *
-   *  Creates a sorting permutation \f$\sigma\f$ by sorting the 
+   *  Creates a sorting permutation \f$\sigma\f$ by sorting the
    *  views in \a x according to their lower bounds
    */
 
   template <class View, class Tuple, bool Perm>
-  forceinline void 
+  forceinline void
   sort_sigma(ViewArray<Tuple>& xz, bool fixed) {
     int xs = xz.size();
 
@@ -66,14 +66,14 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
   /**
    *  \brief Build \f$\tau\f$
-   * 
-   *  Creates a sorting permutation \f$\tau\f$ by sorting 
-   *  a given array of indices in \a tau according to the upper bounds 
+   *
+   *  Creates a sorting permutation \f$\tau\f$ by sorting
+   *  a given array of indices in \a tau according to the upper bounds
    *  of the views in \a x
    */
 
   template <class View, class Tuple, bool Perm>
-  forceinline void 
+  forceinline void
   sort_tau(ViewArray<Tuple>& xz, int tau[]) {
     int xs = xz.size();
 
@@ -83,7 +83,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 // 	eqbnd &= ( (xz[i][0].min() == xz[i + 1][0].min()) &&
 // 		   (xz[i][0].max() == xz[i + 1][0].max()));
 //       }
-      
+
 //       if (eqbnd) {
 // 	TupleMaxIncPerm<Tuple> max_inc;
 // 	Support::quicksort<Tuple, TupleMaxIncPerm<Tuple> >
@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 //       }
 	TupleMaxIncExt<Tuple> ltmax(xz);
 	Support::quicksort(&(*tau), xs, ltmax);
-      
+
     } else {
       TupleMaxInc<Tuple> ltmax(xz);
       Support::quicksort(&(*tau), xs, ltmax);
@@ -103,27 +103,27 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
   /**
    * \brief Performing normalization on the views in \a y
-   * 
-   * The views in \a y are called normalized if 
-   * \f$\forall i\in\{0,\dots, n-1\}: min(y_0) \leq \dots \leq min(y_{n-1}) \wedge 
-   *  max(y_0) \leq \dots \leq max(y_{n-1})\f$ holds. 
+   *
+   * The views in \a y are called normalized if
+   * \f$\forall i\in\{0,\dots, n-1\}: min(y_0) \leq \dots \leq min(y_{n-1}) \wedge
+   *  max(y_0) \leq \dots \leq max(y_{n-1})\f$ holds.
    */
   template <class View, class Tuple>
   forceinline bool
-  normalize(Space* home, 
-	    ViewArray<View>& y, 
+  normalize(Space* home,
+	    ViewArray<View>& y,
 	    ViewArray<Tuple>& xz,
 	    bool& nofix) {
 
     int ys = y.size();
     for (int i = 1; i < ys; i++) {
-      ModEvent me_lb = y[i].gq(home, y[i - 1].min()); 
+      ModEvent me_lb = y[i].gq(home, y[i - 1].min());
       if (me_failed(me_lb)) {
 	return false;
       }
       nofix |= (me_modified(me_lb) && y[i - 1].min() != y[i].min());
     }
-    
+
     for (int i = ys - 1; i--; ) {
       ModEvent me_ub = y[i].lq(home, y[i + 1].max());
       if (me_failed(me_ub)) {
@@ -134,13 +134,13 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
     int xs = xz.size();
     for (int i = xs; i--; ) {
-      ModEvent me = xz[i][0].gq(home, y[0].min()); 
+      ModEvent me = xz[i][0].gq(home, y[0].min());
       if (me_failed(me)) {
 	return false;
       }
       nofix |= (me_modified(me) && xz[i][0].min() != y[0].min());
 
-      me = xz[i][0].lq(home, y[xs - 1].max()); 
+      me = xz[i][0].lq(home, y[xs - 1].max());
       if (me_failed(me)) {
 	return false;
       }
@@ -151,21 +151,21 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
   /**
    *  \brief Bounds consistency on the permutation views
-   * 
+   *
    *  Check, whether the permutation view are bounds consistent.
-   *  This function tests, whether there are "crossing edges", i.e. 
+   *  This function tests, whether there are "crossing edges", i.e.
    *  whether the current domains permit matchings between unsorted views
    *  \a x and the sorted variables \a y violating the property
-   *  that \a y is sorted. 
+   *  that \a y is sorted.
    */
 
   template<class View, class Tuple, bool Perm>
   forceinline bool
-  perm_bc(Space* home, int tau[], 
-	  SccComponent sinfo[],	  
+  perm_bc(Space* home, int tau[],
+	  SccComponent sinfo[],	
 	  int scclist[],
-	  ViewArray<Tuple>& xz, 
-	  bool& crossingedge, 
+	  ViewArray<Tuple>& xz,
+	  bool& crossingedge,
 	  bool& nofix) {
 
     int ps = xz.size();
@@ -190,7 +190,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	      if (me_failed(me_z)) {
 		return false;
 	      }
-	      nofix |= ( me_modified(me_z) && 
+	      nofix |= ( me_modified(me_z) &&
 			 xz[i - 1][1].min() != xz[i][1].min());
 	    }
 	  }

@@ -21,11 +21,11 @@
 namespace Gecode { namespace Int { namespace GCC {
 
   /**
-   * \brief Upper Bounds constraint (UBC) stating 
-   * \f$ \forall j \in \{0, \dots, |k|-1\}: 
+   * \brief Upper Bounds constraint (UBC) stating
+   * \f$ \forall j \in \{0, \dots, |k|-1\}:
    * \#\{i\in\{0, \dots, |x| - 1\} | x_i = card(k_j)\} \leq max(k_j)\f$
    * Hence the ubc constraints the variables such that no value occurs
-   * more often than specified by its upper cardinality bound. 
+   * more often than specified by its upper cardinality bound.
    * \param home current space
    * \param x  the problem variables
    * \param nb denotes number of unique bounds
@@ -33,16 +33,16 @@ namespace Gecode { namespace Int { namespace GCC {
    *        (cf. HallInfo)
    * \param rank ranking information about the variable bounds (cf. Rank)
    * \param ups partial sum structure for the upper cardinality bounds (cf. PartialSum)
-   * \param mu permutation \f$ \mu \f$ such that 
-   *        \f$ \forall i\in \{0, \dots, |x|-2\}: 
+   * \param mu permutation \f$ \mu \f$ such that
+   *        \f$ \forall i\in \{0, \dots, |x|-2\}:
    *        max(x_{\mu(i)}) \leq max(x_{\mu(i+1)})\f$
    * \param nu permutation \f$ \nu \f$ such that
-   *        \f$ \forall i\in \{0, \dots, |x|-2\}: 
+   *        \f$ \forall i\in \{0, \dots, |x|-2\}:
    *        min(x_{\mu(i)}) \leq min(x_{\mu(i+1)})\f$
    */
 
   template <class View, class Card, bool shared>
-  inline ExecStatus 
+  inline ExecStatus
   ubc(Space* home, ViewArray<View>& x, int& nb,
       HallInfo hall[], Rank rank[],
       PartialSum<Card>* ups,
@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
     //Narrow lower bounds (UBC)
 
-    /* 
+    /*
      * Initializing tree structure with the values from bounds
      * and the interval capacities of neighboured values
      * from left to right
@@ -86,11 +86,11 @@ namespace Gecode { namespace Int { namespace GCC {
       /* DOMINATION:
        *     v^i_j denotes
        *     unused values in the current interval. If the difference d
-       *     between to critical capacities v^i_j and v^i_z 
+       *     between to critical capacities v^i_j and v^i_z
        *     is equal to zero, j dominates z
        *
        *     i.e. [hall[l].bounds, hall[nb+1].bounds] is not left-maximal and
-       *     [hall[j].bounds, hall[l].bounds] is a Hall set iff 
+       *     [hall[j].bounds, hall[l].bounds] is a Hall set iff
        *     [hall[j].bounds, hall[l].bounds] processing a variable x_i uses up a value in the interval
        *     [hall[z].bounds,hall[z+1].bounds] according to the intervals
        *     capacity. Therefore, if d = 0
@@ -158,7 +158,7 @@ namespace Gecode { namespace Int { namespace GCC {
        */
 
       if (hall[z].d == ups->sumup(hall[y].bounds, hall[z].bounds - 1)) {
-	/* 
+	/*
 	 *mark hall interval [j,z-1]
 	 * hall pointers form a path to the upper bound of the interval
 	 */

@@ -42,7 +42,7 @@ namespace Gecode {
       ValInfo<IntView>* vi
 	= ValInfo<IntView>::allocate(home,2*n);
       for (int i=n; i--; ) {
-	vi[i  ].init(x[i],n); 
+	vi[i  ].init(x[i],n);
 	vi[i+n].init(y[i],n);
       }
       GECODE_ES_FAIL(home,Val<IntView>::post(home,n,vi));
@@ -50,7 +50,7 @@ namespace Gecode {
       DomInfo<IntView>* di
 	= DomInfo<IntView>::allocate(home,2*n);
       for (int i=n; i--; ) {
-	di[i  ].init(x[i],n); 
+	di[i  ].init(x[i],n);
 	di[i+n].init(y[i],n);
       }
       GECODE_ES_FAIL(home,Dom<IntView>::post(home,n,di));

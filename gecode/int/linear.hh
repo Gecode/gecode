@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// View of type \a A
     A x0;
     /// View of type \a B
-    B x1; 
+    B x1;
     /// Value of type \a Val
     Val c;
     /// Constructor for cloning \a p
@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// View of type \a A
     A x0;
     /// View of type \a B
-    B x1; 
+    B x1;
     /// Value of type \a Val
     Val c;
     /// Control view for reification
@@ -330,9 +330,9 @@ namespace Gecode { namespace Int { namespace Linear {
     /// View of type \a A
     A x0;
     /// View of type \a B
-    B x1; 
+    B x1;
     /// View of type \a C
-    C x2; 
+    C x2;
     /// Value of type \a Val
     Val c;
     /// Constructor for cloning \a p
@@ -352,7 +352,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief %Propagator for bounds-consistent ternary linear equality
    *
    * The type \a Val can be either \c double or \c int, defining the
-   * numerical precision during propagation. The types \a A, \a B, 
+   * numerical precision during propagation. The types \a A, \a B,
    * and \a C give the types of the views.
    *
    * The propagation condition \a pc refers to all three views.
@@ -387,7 +387,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief %Propagator for bounds-consistent ternary linear disquality
    *
    * The type \a Val can be either \c double or \c int, defining the
-   * numerical precision during propagation. The types \a A, \a B, 
+   * numerical precision during propagation. The types \a A, \a B,
    * and \a C give the types of the views.
    *
    * The propagation condition \a pc refers to all three views.
@@ -422,7 +422,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief %Propagator for bounds-consistent ternary linear less or equal
    *
    * The type \a Val can be either \c double or \c int, defining the
-   * numerical precision during propagation. The types \a A, \a B, 
+   * numerical precision during propagation. The types \a A, \a B,
    * and \a C give the types of the views.
    *
    * The propagation condition \a pc refers to all three views.
@@ -477,9 +477,9 @@ namespace Gecode { namespace Int { namespace Linear {
   class Lin : public Propagator {
   protected:
     /// Array of positive views
-    ViewArray<P> x; 
+    ViewArray<P> x;
     /// Array of negative views
-    ViewArray<N> y; 
+    ViewArray<N> y;
     /// Constant value
     Val c;
 
@@ -523,7 +523,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \relates Lin
    */
   template <class Val, class View>
-  void bounds_p(const Propagator*, ViewArray<View>& x, 
+  void bounds_p(const Propagator*, ViewArray<View>& x,
 		Val& c, Val& sl, Val& su);
 
   /**
@@ -532,7 +532,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \relates Lin
    */
   template <class Val, class View>
-  void bounds_n(const Propagator*, ViewArray<View>& y, 
+  void bounds_n(const Propagator*, ViewArray<View>& y,
 		Val& c, Val& sl, Val& su);
 
   /**
@@ -579,7 +579,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   template <class Val, class View>
-  class DomEq 
+  class DomEq
     : public Lin<Val,View,View,PC_INT_DOM> {
   protected:
     using Lin<Val,View,View,PC_INT_DOM>::x;
@@ -598,7 +598,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\f$
-    static ExecStatus 
+    static ExecStatus
     post(Space* home, ViewArray<View>& x, ViewArray<View>& y, Val c);
   };
 
@@ -632,7 +632,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\right)\Leftrightarrow b\f$
-    static ExecStatus 
+    static ExecStatus
     post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
   };
 
@@ -665,7 +665,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\neq c\f$
-    static ExecStatus 
+    static ExecStatus
     post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c);
   };
 
@@ -698,7 +698,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\leq c\f$
-    static ExecStatus 
+    static ExecStatus
     post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c);
   };
 
@@ -951,7 +951,7 @@ namespace Gecode { namespace Int { namespace Linear {
   class Term {
   public:
     /// Coefficient
-    int a; 
+    int a;
     /// View
     IntView x;
   };
@@ -966,13 +966,13 @@ namespace Gecode { namespace Int { namespace Linear {
    * All variants for linear constraints share the following properties:
    *  - Only bounds-consistency is supported.
    *  - Variables occuring multiply in the term array are replaced
-   *    by a single occurence: for example, \f$ax+bx\f$ becomes 
+   *    by a single occurence: for example, \f$ax+bx\f$ becomes
    *    \f$(a+b)x\f$.
    *  - If in the above simplification the value for \f$(a+b)\f$ (or for
    *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
-   *    defined in Limits::Int, an exception of type 
+   *    defined in Limits::Int, an exception of type
    *    Int::NumericalOverflow is thrown.
-   *  - Assume linear terms for the constraint 
+   *  - Assume linear terms for the constraint
    *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
    *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
    *    for doubles as defined in Limits::Int, an exception of
@@ -997,13 +997,13 @@ namespace Gecode { namespace Int { namespace Linear {
    * All variants for linear constraints share the following properties:
    *  - Only bounds-consistency is supported.
    *  - Variables occuring multiply in the term array are replaced
-   *    by a single occurence: for example, \f$ax+bx\f$ becomes 
+   *    by a single occurence: for example, \f$ax+bx\f$ becomes
    *    \f$(a+b)x\f$.
    *  - If in the above simplification the value for \f$(a+b)\f$ (or for
    *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
-   *    defined in Limits::Int, an exception of type 
+   *    defined in Limits::Int, an exception of type
    *    Int::NumericalOverflow is thrown.
-   *  - Assume linear terms for the constraint 
+   *  - Assume linear terms for the constraint
    *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
    *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
    *    for doubles as defined in Limits::Int, an exception of

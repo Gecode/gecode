@@ -121,7 +121,7 @@ namespace Gecode { namespace Int { namespace Linear {
       if (u < 0.0) sn += u; else sp += u;
     }
     double cp = (c<0) ? -c : c;
-    if ((sn-cp < Limits::Int::double_min) || 
+    if ((sn-cp < Limits::Int::double_min) ||
 	(sp+cp > Limits::Int::double_max))
       throw NumericalOverflow("Int::linear");
 
@@ -373,7 +373,7 @@ namespace Gecode { namespace Int { namespace Linear {
       if (ReEq<Val,View,View,BoolView>::post(home,x,y,c,b) == ES_FAILED)
 	home->fail();
       break;
-    case IRT_NQ: 
+    case IRT_NQ:
       {
 	NegBoolView n(b);
 	if (ReEq<Val,View,View,NegBoolView>::post(home,x,y,c,n) == ES_FAILED)
@@ -405,7 +405,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if (is_unit && is_ip) {
       if (n == 1) {
 	switch (r) {
-	case IRT_EQ: 
+	case IRT_EQ:
 	  if (e[0].a == 1) {
 	    if (Rel::ReEqBndInt<IntView,BoolView>::post(home,e[0].x,c,b)
 		== ES_FAILED)
@@ -432,7 +432,7 @@ namespace Gecode { namespace Int { namespace Linear {
 	  break;
 	case IRT_LQ:
 	  if (e[0].a == 1) {
-	    if (Rel::ReLqInt<IntView,BoolView>::post(home,e[0].x,c,b) 
+	    if (Rel::ReLqInt<IntView,BoolView>::post(home,e[0].x,c,b)
 		== ES_FAILED)
 	      home->fail();
 	  } else {

@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * The propagator uses staging: first it uses naive value-based
    * propagation and only then uses bounds-consistent propagation.
    * Due to using naive value-based propagation, the propagator
-   * might actually achieve stronger consistency than just 
+   * might actually achieve stronger consistency than just
    * bounds-consistency.
    *
    * The algorithm is taken from:
@@ -112,8 +112,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   class Bnd : public Propagator {
   protected:
     /// Views on which to perform bounds-propagation
-    ViewArray<View> x; 
-    /// Views on which to perform value-propagation (subset of \c x) 
+    ViewArray<View> x;
+    /// Views on which to perform value-propagation (subset of \c x)
     ViewArray<View> y;
     /// Constructor for posting
     Bnd(Space* home, ViewArray<View>& x);

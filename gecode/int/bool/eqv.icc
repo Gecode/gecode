@@ -28,7 +28,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template <class BVA, class BVB, class BVC>
   forceinline
-  Eqv<BVA,BVB,BVC>::Eqv(Space* home, bool share, Eqv<BVA,BVB,BVC>& p) 
+  Eqv<BVA,BVB,BVC>::Eqv(Space* home, bool share, Eqv<BVA,BVB,BVC>& p)
     : BoolTernary<BVA,BVB,BVC>(home,share,p) {}
 
   template <class BVA, class BVB, class BVC>
@@ -36,10 +36,10 @@ namespace Gecode { namespace Int { namespace Bool {
   Eqv<BVA,BVB,BVC>::post(Space* home, BVA b0, BVB b1, BVC b2){
     switch (bool_test(b0,b1)) {
     case BT_SAME:
-      GECODE_ME_CHECK(b2.t_one(home)); 
+      GECODE_ME_CHECK(b2.t_one(home));
       break;
     case BT_COMP:
-      GECODE_ME_CHECK(b2.t_zero(home)); 
+      GECODE_ME_CHECK(b2.t_zero(home));
       break;
     case BT_NONE:
       if (b2.one())
@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Bool {
 	  GECODE_ME_CHECK(b2.t_one(home));
 	  return ES_OK;
 	}
-      } 
+      }
       (void) new (home) Eqv(home,b0,b1,b2);
       break;
     default: GECODE_NEVER;

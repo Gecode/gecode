@@ -43,7 +43,7 @@ namespace Gecode { namespace Int {
     const RangeList* p = NULL;
     const RangeList* c = fst();
     while (i >= c->width()) {
-      i -= c->width(); 
+      i -= c->width();
       const RangeList* n=c->next(p); p=c; c=n;
     }
     return c->min() + static_cast<int>(i);
@@ -85,12 +85,12 @@ namespace Gecode { namespace Int {
       fst(NULL); holes = 0;
       if (assigned()) goto notify_val;
     } else { // Stays non-range...
-      RangeList* n = NULL;  
+      RangeList* n = NULL;
       RangeList* c = lst();
       unsigned int h = 0;
       while (m < c->min()) {
 	RangeList* p = c->prev(n); c->fix(n);
-	h += (c->min() - p->max() - 1); 
+	h += (c->min() - p->max() - 1);
 	n=c; c=p;
       }
       holes -= h;
@@ -124,7 +124,7 @@ namespace Gecode { namespace Int {
       unsigned int h = 0;
       while (m > c->max()) {
 	RangeList* n = c->next(p); c->fix(n);
-	h += (n->min() - c->max() - 1); 
+	h += (n->min() - c->max() - 1);
 	p=c; c=n;
       }
       holes -= h;
@@ -250,7 +250,7 @@ namespace Gecode { namespace Int {
 	assert(m > fst()->max());
 	p = NULL;
 	c = fst();
-	do { 
+	do {
 	  n=c->next(p); p=c; c=n;
 	} while (m > c->max());
 	if (m < c->min())
@@ -260,7 +260,7 @@ namespace Gecode { namespace Int {
 	assert(m < lst()->min());
 	n = NULL;
 	c = lst();
-	do { 
+	do {
 	  p=c->prev(n); n=c; c=p;
 	} while (m < c->min());
 	if (m > c->max())
@@ -324,14 +324,14 @@ namespace Gecode { namespace Int {
       RangeList* d_c =
 	reinterpret_cast<RangeList*>(home->alloc(m*sizeof(RangeList)));
       fst(d_c); lst(d_c+m-1);
-      d_c->min(x.fst()->min()); 
+      d_c->min(x.fst()->min());
       d_c->max(x.fst()->max());
       d_c->prevnext(NULL,NULL);
       RangeList* s_p = x.fst();
       RangeList* s_c = s_p->next(NULL);
       do {
 	RangeList* d_n = d_c + 1;
-	d_c->next(NULL,d_n); 
+	d_c->next(NULL,d_n);
 	d_n->prevnext(d_c,NULL);
 	d_n->min(s_c->min()); d_n->max(s_c->max());
 	d_c = d_n;

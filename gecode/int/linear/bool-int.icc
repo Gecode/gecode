@@ -31,7 +31,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class VX>
   forceinline
-  LinBoolInt<VX>::LinBoolInt(Space* home, ViewArray<VX>& x0, 
+  LinBoolInt<VX>::LinBoolInt(Space* home, ViewArray<VX>& x0,
 			     int n_s0, int c0)
     : Propagator(home), x(x0), n_s(n_s0), c(c0) {
     for (int i=n_s; i--; )
@@ -68,7 +68,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class VX>
   forceinline
-  EqBoolInt<VX>::EqBoolInt(Space* home, ViewArray<VX>& x, 
+  EqBoolInt<VX>::EqBoolInt(Space* home, ViewArray<VX>& x,
 			   int n_s, int c)
     : LinBoolInt<VX>(home,x,n_s,c) {}
 
@@ -170,7 +170,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class VX>
   forceinline
-  GqBoolInt<VX>::GqBoolInt(Space* home, ViewArray<VX>& x, 
+  GqBoolInt<VX>::GqBoolInt(Space* home, ViewArray<VX>& x,
 			   int n_s, int c)
     : LinBoolInt<VX>(home,x,n_s,c) {}
 

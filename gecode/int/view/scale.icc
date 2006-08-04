@@ -19,7 +19,7 @@
  *
  */
 
-namespace Gecode { 
+namespace Gecode {
 
   namespace Int {
 
@@ -354,13 +354,13 @@ namespace Gecode {
    */
   template <class Val, class UnsVal>
   forceinline bool
-  same(const Int::ScaleView<Val,UnsVal>& x, 
+  same(const Int::ScaleView<Val,UnsVal>& x,
        const Int::ScaleView<Val,UnsVal>& y) {
     return same(x.base(),y.base()) && (x.scale() == y.scale());
   }
   template <class Val, class UnsVal>
   forceinline bool
-  before(const Int::ScaleView<Val,UnsVal>& x, 
+  before(const Int::ScaleView<Val,UnsVal>& x,
 	 const Int::ScaleView<Val,UnsVal>& y) {
     return before(x.base(),y.base())
       || (same(x.base(),y.base()) && (x.scale() < y.scale()));

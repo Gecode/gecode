@@ -26,7 +26,7 @@
 #include "gecode/support/dynamic-stack.hh"
 #include "gecode/support/dynamic-array.hh"
 
-namespace Gecode { 
+namespace Gecode {
 
   namespace Int { namespace Regular {
 
@@ -35,10 +35,10 @@ namespace Gecode {
      * \brief Allocator for position sets
      */
     typedef Support::BlockAllocator<PosSet> PosSetAllocator;
-    
+
     class NodeInfo;
     class PosInfo;
-    
+
   }}
 
   /// Implementation of the actual expression tree
@@ -60,7 +60,7 @@ namespace Gecode {
       int  symbol;
       Exp* kids[2];
     } data;
-    
+
     void followpos(Int::Regular::PosSetAllocator&,
 		   Int::Regular::NodeInfo&,
 		   Int::Regular::PosInfo*,
@@ -81,8 +81,8 @@ namespace Gecode {
    * Operations on expression nodes
    *
    */
-  
-  
+
+
   forceinline void*
   REG::Exp::operator new(size_t s) {
     return Memory::malloc(s);
@@ -91,7 +91,7 @@ namespace Gecode {
   REG::Exp::operator delete(void*) {
     // Deallocation happens in dispose
   }
-  
+
   void
   REG::Exp::dispose(void) {
     Support::DynamicStack<Exp*> todo;
@@ -111,7 +111,7 @@ namespace Gecode {
       Memory::free(e);
     }
   }
-  
+
   forceinline void
   REG::Exp::inc(void) {
     if (this != NULL)
@@ -122,13 +122,13 @@ namespace Gecode {
     if ((this != NULL) && (--use_cnt == 0))
       dispose();
   }
-  
-  
+
+
   forceinline unsigned int
   REG::Exp::n_pos(void) const {
     return (this != NULL) ? _n_pos : 0;
   }
-  
+
   std::ostream&
   REG::Exp::print(std::ostream& os) const {
     if (this == NULL)
@@ -162,27 +162,27 @@ namespace Gecode {
     GECODE_NEVER;
     return os;
   }
-  
-  
+
+
   /*
    * Regular expressions
    *
    */
-  
+
   forceinline
   REG::REG(Exp* f) : e(f) {}
-  
+
   REG::REG(void) : e(NULL) {}
-  
+
   REG::REG(const REG& r) : e(r.e) {
     e->inc();
   }
-  
+
   std::ostream&
   REG::print(std::ostream& os) const {
     return e->print(os);
   }
-  
+
   const REG&
   REG::operator=(const REG& r) {
     if (&r != this) {
@@ -192,18 +192,18 @@ namespace Gecode {
     }
     return *this;
   }
-  
+
   REG::~REG(void) {
     e->dec();
   }
-  
+
   REG::REG(int s) : e(new Exp) {
     e->use_cnt     = 1;
     e->_n_pos      = 1;
     e->type        = REG::Exp::ET_SYMBOL;
     e->data.symbol = s;
   }
-  
+
   REG
   REG::operator|(const REG& r2) {
     if (e == r2.e)
@@ -217,7 +217,7 @@ namespace Gecode {
     REG r(f);
     return r;
   }
-  
+
   REG
   REG::operator+(const REG& r2) {
     if (e == NULL)    return r2;
@@ -231,7 +231,7 @@ namespace Gecode {
     REG r(f);
     return r;
   }
-  
+
   REG
   REG::operator*(void) {
     if ((e == NULL) || (e->type == REG::Exp::ET_STAR))
@@ -244,7 +244,7 @@ namespace Gecode {
     REG r(f);
     return r;
   }
-  
+
   REG
   REG::operator()(unsigned int n, unsigned int m) {
     REG r;
@@ -275,7 +275,7 @@ namespace Gecode {
     }
     return r;
   }
-  
+
   REG
   REG::operator()(unsigned int n) {
     REG r;
@@ -296,7 +296,7 @@ namespace Gecode {
   REG::operator+(void) {
     return this->operator()(1);
   }
-  
+
 
   namespace Int { namespace Regular {
 
@@ -415,8 +415,8 @@ namespace Gecode {
   }}
 
   void
-  REG::Exp::followpos(Int::Regular::PosSetAllocator& psm, 
-		      Int::Regular::NodeInfo& ni, 
+  REG::Exp::followpos(Int::Regular::PosSetAllocator& psm,
+		      Int::Regular::NodeInfo& ni,
 		      Int::Regular::PosInfo* pi, int& p) {
     using Int::Regular::PosSet;
     using Int::Regular::NodeInfo;
@@ -482,9 +482,9 @@ namespace Gecode {
 
     /**
      * \brief Allocator for state nodes
-     */    
+     */
     typedef Support::BlockAllocator<StateNode> StatePoolAllocator;
-    
+
     /**
      * \brief %Node together with state information
      */
@@ -596,10 +596,10 @@ namespace Gecode {
       void finish(void);
       DFA::Transition* transitions(void);
     };
-    
+
     forceinline
     TransitionBag::TransitionBag(void) : n(0) {}
-    
+
     forceinline void
     TransitionBag::add(int i_state, int symbol, int o_state) {
       t[n].i_state = i_state;
@@ -607,18 +607,18 @@ namespace Gecode {
       t[n].o_state = o_state;
       n++;
     }
-    
+
     forceinline void
     TransitionBag::finish(void) {
       t[n].i_state = -1;
     }
-    
+
     forceinline DFA::Transition*
     TransitionBag::transitions(void) {
       return &t[0];
     }
-    
-    
+
+
     /**
      * \brief For collecting final states while constructing a %DFA
      *
@@ -633,25 +633,25 @@ namespace Gecode {
       void finish(void);
       int* finals(void);
     };
-    
+
     forceinline
     FinalBag::FinalBag(void) : n(0) {}
-    
+
     forceinline void
     FinalBag::add(int state) {
       f[n++] = state;
     }
-    
+
     forceinline void
     FinalBag::finish(void) {
       f[n] = -1;
     }
-    
+
     forceinline int*
     FinalBag::finals(void) {
       return &f[0];
     }
-    
+
   }}
 
   DFA::DFA(REG& r0) {

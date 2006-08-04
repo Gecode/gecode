@@ -36,7 +36,7 @@ namespace Gecode { namespace Int {
    * \brief Integer variable implementation
    *
    * \ingroup Other
-   */  
+   */
   class IntVarImp : public IntVarImpBase {
     friend class IntVarImpFwd;
     friend class IntVarImpBwd;
@@ -66,7 +66,7 @@ namespace Gecode { namespace Int {
       /// Initialize with minimum \a min and maximum \a max and predecessor \a p and successor \a n
       RangeList(int min, int max, RangeList* p, RangeList* n);
       //@}
-      
+
       /// \name Access
       //@{
       /// Return minimum
@@ -75,20 +75,20 @@ namespace Gecode { namespace Int {
       int max(void) const;
       /// Return width (distance between maximum and minimum)
       unsigned int width(void) const;
-      
+
       /// Return next element (from previous \a p)
       RangeList* next(const RangeList* p) const;
       /// Return previous element (from next \a n)
       RangeList* prev(const RangeList* n) const;
       //@}
-      
+
       /// \name Update
       //@{
       /// Set minimum to \a n
       void min(int n);
       /// Set maximum to \a n
       void max(int n);
-      
+
       /// Set previous element to \a p and next element to \a n
       void prevnext(RangeList* p, RangeList* n);
       /// Set next element from \a o to \a n
@@ -98,7 +98,7 @@ namespace Gecode { namespace Int {
       /// Restore simple link to next element (so that it becomes a true free list)
       void fix(RangeList* n);
       //@}
-      
+
       /// \name Memory management
       //@{
       /**
@@ -115,7 +115,7 @@ namespace Gecode { namespace Int {
       void dispose(Space* home, RangeList* l);
       /// Free memory for this element
       void dispose(Space* home);
-      
+
       /// Allocate memory from space
       static void* operator new(size_t s, Space* home);
       /// No-op (for exceptions)
@@ -209,34 +209,34 @@ namespace Gecode { namespace Int {
     /// \name Domain update by value (full domain)
     //@{
     /// Restrict domain values to be less or equal than \a n
-    GECODE_INT_EXPORT void lq_full(Space* home, int n); 
+    GECODE_INT_EXPORT void lq_full(Space* home, int n);
     /// Restrict domain values to be greater or equal than \a n
-    GECODE_INT_EXPORT void gq_full(Space* home, int n); 
+    GECODE_INT_EXPORT void gq_full(Space* home, int n);
     /// Restrict domain values to be equal to \a n
-    GECODE_INT_EXPORT void eq_full(Space* home, int n); 
+    GECODE_INT_EXPORT void eq_full(Space* home, int n);
     /// Restrict domain values to be different from \a n
-    GECODE_INT_EXPORT ModEvent nq_full(Space* home, int n); 
+    GECODE_INT_EXPORT ModEvent nq_full(Space* home, int n);
     //@}
   public:
     /// \name Domain update by value
     //@{
     /// Restrict domain values to be less or equal than \a n
-    ModEvent lq(Space* home, int n); 
+    ModEvent lq(Space* home, int n);
     /// Restrict domain values to be less or equal than \a n
     ModEvent lq(Space* home, double n);
 
     /// Restrict domain values to be greater or equal than \a n
-    ModEvent gq(Space* home, int n); 
+    ModEvent gq(Space* home, int n);
     /// Restrict domain values to be greater or equal than \a n
     ModEvent gq(Space* home, double n);
 
     /// Restrict domain values to be different from \a n
-    ModEvent nq(Space* home, int n); 
+    ModEvent nq(Space* home, int n);
     /// Restrict domain values to be different from \a n
     ModEvent nq(Space* home, double n);
 
     /// Restrict domain values to be equal to \a n
-    ModEvent eq(Space* home, int n); 
+    ModEvent eq(Space* home, int n);
     /// Restrict domain values to be equal to \a n
     ModEvent eq(Space* home, double n);
     //@}
@@ -374,7 +374,7 @@ namespace Gecode {
 
   /**
    * \brief Integer variables
-   * 
+   *
    * \ingroup TaskIntIntVars
    */
   class IntVar {
@@ -393,7 +393,7 @@ namespace Gecode {
     /**
      * \brief Initialize variable with range domain
      *
-     * The variable is created with a domain ranging from \a min 
+     * The variable is created with a domain ranging from \a min
      * to \a max. The following exceptions might be thrown:
      *  - If \a min is greater than \a max, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
@@ -409,7 +409,7 @@ namespace Gecode {
      * The following exceptions might be thrown:
      *  - If \a d is empty, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
-     *  - If \a d contains values that exceed the limits for integers 
+     *  - If \a d contains values that exceed the limits for integers
      *    as defined in Gecode::Limits::Int, an exception of type
      *    Gecode::Int::VariableOutOfDomain is thrown.
      */
@@ -417,7 +417,7 @@ namespace Gecode {
     /**
      * \brief Initialize variable with range domain
      *
-     * The variable is created with a domain ranging from \a min 
+     * The variable is created with a domain ranging from \a min
      * to \a max. The following exceptions might be thrown:
      *  - If \a min is greater than \a max, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
@@ -433,7 +433,7 @@ namespace Gecode {
      * The following exceptions might be thrown:
      *  - If \a d is empty, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
-     *  - If \a d contains values that exceed the limits for integers 
+     *  - If \a d contains values that exceed the limits for integers
      *    as defined in Gecode::Limits::Int, an exception of type
      *    Gecode::Int::VariableOutOfDomain is thrown.
      */
@@ -445,7 +445,7 @@ namespace Gecode {
     /// Return integer variable implementation
     Int::IntVarImp* variable(void) const;
     //@}
-    
+
     /// \name Value access
     //@{
     /// Return minimum of domain
@@ -464,7 +464,7 @@ namespace Gecode {
     /// Return degree (number of subscribed propagators)
     unsigned int degree(void) const;
     //@}
-    
+
     /// \name Domain tests
     //@{
     /// Test whether domain is a range
@@ -475,14 +475,14 @@ namespace Gecode {
     /// Test whether \a n is contained in domain
     bool in(int n) const;
     //@}
-    
+
     /// \name Cloning
     //@{
     /// Update this variable to be a clone of variable \a x
     void update(Space* home, bool share, IntVar& x);
     //@}
   };
-  
+
 
   /**
    * \brief %Range iterator for integer variables
@@ -521,7 +521,7 @@ namespace Gecode {
 
   /**
    * \brief Boolean integer variables
-   * 
+   *
    * \ingroup TaskIntIntVars
    */
   class BoolVar : public IntVar {
@@ -530,16 +530,16 @@ namespace Gecode {
     //@{
     /// Default constructor
     BoolVar(void);
-    /// Initialize from Boolean View \a x    
+    /// Initialize from Boolean View \a x
     BoolVar(const Int::BoolView& x);
     /**
      * \brief Initialize Boolean variable with range domain
      *
-     * The variable is created with a domain ranging from \a min 
+     * The variable is created with a domain ranging from \a min
      * to \a max. The following exceptions might be thrown:
      *  - If \a min is greater than \a max, an exception of type
      *    Gecode::Int::VariableEmptyDomain is thrown.
-     *  - If \a min is less than 0 or \a max is greater than 1, 
+     *  - If \a min is less than 0 or \a max is greater than 1,
      *    an exception of type
      *    Gecode::Int::VariableOutOfDomain is thrown.
      */
@@ -547,19 +547,19 @@ namespace Gecode {
     /**
      * \brief Initialize Boolean variable from integer variable
      *
-     * If \a x.min() is less than 0 or \a x.max() is greater than 1, 
+     * If \a x.min() is less than 0 or \a x.max() is greater than 1,
      * an exception of type Gecode::Int::VariableOutOfDomain is thrown.
      */
     explicit BoolVar(const IntVar& x);
     //@}
-    
+
     /// \name Cloning
     //@{
     /// Update this variable to be a clone of variable \a x
     void update(Space* home, bool share, BoolVar& x);
     //@}
   };
-  
+
 }
 
 /**

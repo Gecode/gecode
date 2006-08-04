@@ -23,12 +23,12 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
   /**
    * \brief Glover's maximum matching in a bipartite graph
-   * 
+   *
    * Compute a matching in the bipartite convex intersection graph with
    * one partition containing the x views and the other containing
-   * the y views. The algorithm works with an implicit array structure 
-   * of the intersection graph. 
-   * 
+   * the y views. The algorithm works with an implicit array structure
+   * of the intersection graph.
+   *
    * Union-Find Implementation of F.Glover's matching algorithm.
    *
    * The idea is to mimick a priority queue storing x-indices
@@ -40,14 +40,14 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
   template <class View, class Tuple, bool Perm>
   forceinline bool
-  glover(Space* home, 
-	 ViewArray<Tuple>& xz, 
-	 ViewArray<View>& y, 
-	 int tau[], 
+  glover(Space* home,
+	 ViewArray<Tuple>& xz,
+	 ViewArray<View>& y,
+	 int tau[],
 	 int phi[],
-	 OfflineMinItem sequence[], 
+	 OfflineMinItem sequence[],
 	 int vertices[]) {
-    
+
     int xs = xz.size();
     OfflineMin seq(sequence, vertices, xs);
     int s  = 0;
@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
     for (int z = 0; z < xs; z++) {  // forall y nodes
       int maxy = y[z].max();
-      // creating the sequence of inserts and extractions from the queue  
+      // creating the sequence of inserts and extractions from the queue
 //       for( ; s <xs && xz[s][0].min() <= maxy; s++) {
       for( ; s <xs && xz[s][0].min() <= maxy; s++) {
 	seq[s].iset = z;
@@ -83,14 +83,14 @@ namespace Gecode { namespace Int { namespace Sortedness {
       if (xz[perm][0].max() < y[j].min()) {
 	return false;
       }
-      phi[j]         = perm; 
+      phi[j]         = perm;
       seq[perm].iset = -5;           //remove from candidate set
       int sqjsucc    = seq[j].succ;
       if (sqjsucc < xs){
 	seq.unite(j,sqjsucc,sqjsucc);
       } else {
 	seq[seq[j].root].name = sqjsucc; // end of sequence achieved
-      } 
+      }
 
       // adjust tree list
       int pr = seq[j].pred;
@@ -110,15 +110,15 @@ namespace Gecode { namespace Int { namespace Sortedness {
    */
   template <class View, class Tuple, bool Perm>
   forceinline bool
-  revglover(Space* home, 
-	    ViewArray<Tuple>& xz, 
-	    ViewArray<View>& y, 
-	    int tau[], 
+  revglover(Space* home,
+	    ViewArray<Tuple>& xz,
+	    ViewArray<View>& y,
+	    int tau[],
 	    int phiprime[],
 	    OfflineMinItem sequence[],
 	    int vertices[]) {
-    
-    int xs = xz.size();  
+
+    int xs = xz.size();
     OfflineMin seq(sequence, vertices, xs);
     int s  = xs - 1;
     seq.makeset();
@@ -126,7 +126,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
     int miny = 0;
     for (int z = xs; z--; ) {     // forall y nodes
       miny = y[z].min();
-      // creating the sequence of inserts and extractions from the queue  
+      // creating the sequence of inserts and extractions from the queue
       for ( ; s > -1 && xz[tau[s]][0].max() >= miny; s--) {
 	seq[tau[s]].iset = z;
 	seq[z].rank++;
@@ -150,14 +150,14 @@ namespace Gecode { namespace Int { namespace Sortedness {
       if (xz[perm][0].min() > y[j].max()) {
 	return false;
       }
-      phiprime[j]    = perm; 
+      phiprime[j]    = perm;
       seq[perm].iset = -5;
       int sqjsucc    = seq[j].pred;
       if (sqjsucc >= 0) {
 	seq.unite(j, sqjsucc, sqjsucc);
       } else {
 	seq[seq[j].root].name = sqjsucc; // end of sequence achieved
-      } 
+      }
 
       // adjust tree list
       int pr = seq[j].succ;
@@ -170,7 +170,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
     }
     return true;
   }
- 
+
 }}}
 
 // STATISTICS: int-prop

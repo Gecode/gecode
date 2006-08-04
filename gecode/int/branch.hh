@@ -39,7 +39,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /**
    * \brief Class for selecting minimum value
    *
-   * All value selection classes require 
+   * All value selection classes require
    * \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelVal
    */
@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /**
    * \brief Class for selecting maximum value
    *
-   * Requires 
+   * Requires
    * \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelVal
    */
@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /**
    * \brief Class for selecting median value
    *
-   * Requires 
+   * Requires
    * \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelVal
    */
@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /**
    * \brief Class for splitting domain (lower half first)
    *
-   * Requires 
+   * Requires
    * \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelVal
    */
@@ -99,7 +99,7 @@ namespace Gecode { namespace Int { namespace Branch {
   /**
    * \brief Class for splitting domain (upper half first)
    *
-   * Requires 
+   * Requires
    * \code #include "gecode/int/branch.hh" \endcode
    * \ingroup FuncIntSelVal
    */

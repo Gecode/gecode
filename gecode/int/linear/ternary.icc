@@ -29,8 +29,8 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline
   LinTer<Val,A,B,C,pc>::LinTer(Space* home, A y0, B y1, C y2, Val c0)
     : Propagator(home), x0(y0), x1(y1), x2(y2), c(c0) {
-    x0.subscribe(home,this,pc); 
-    x1.subscribe(home,this,pc); 
+    x0.subscribe(home,this,pc);
+    x1.subscribe(home,this,pc);
     x2.subscribe(home,this,pc);
   }
 
@@ -64,8 +64,8 @@ namespace Gecode { namespace Int { namespace Linear {
   size_t
   LinTer<Val,A,B,C,pc>::dispose(Space* home) {
     assert(!home->failed());
-    x0.cancel(home,this,pc); 
-    x1.cancel(home,this,pc); 
+    x0.cancel(home,this,pc);
+    x1.cancel(home,this,pc);
     x2.cancel(home,this,pc);
     (void) Propagator::dispose(home);
     return sizeof(*this);
@@ -129,17 +129,17 @@ namespace Gecode { namespace Int { namespace Linear {
   EqTer<Val,A,B,C>::propagate(Space* home) {
     int bm = TM_ALL;
     do {
-      GECODE_INT_PV(TM_X0_MIN, x0.gq(home,c-x1.max()-x2.max()), 
+      GECODE_INT_PV(TM_X0_MIN, x0.gq(home,c-x1.max()-x2.max()),
 		    TM_X1_MAX | TM_X2_MAX);
-      GECODE_INT_PV(TM_X1_MIN, x1.gq(home,c-x0.max()-x2.max()), 
+      GECODE_INT_PV(TM_X1_MIN, x1.gq(home,c-x0.max()-x2.max()),
 		    TM_X0_MAX | TM_X2_MAX);
-      GECODE_INT_PV(TM_X2_MIN, x2.gq(home,c-x0.max()-x1.max()), 
+      GECODE_INT_PV(TM_X2_MIN, x2.gq(home,c-x0.max()-x1.max()),
 		    TM_X0_MAX | TM_X1_MAX);
-      GECODE_INT_PV(TM_X0_MAX, x0.lq(home,c-x1.min()-x2.min()), 
+      GECODE_INT_PV(TM_X0_MAX, x0.lq(home,c-x1.min()-x2.min()),
 		    TM_X1_MIN | TM_X2_MIN);
-      GECODE_INT_PV(TM_X1_MAX, x1.lq(home,c-x0.min()-x2.min()), 
+      GECODE_INT_PV(TM_X1_MAX, x1.lq(home,c-x0.min()-x2.min()),
 		    TM_X0_MIN | TM_X2_MIN);
-      GECODE_INT_PV(TM_X2_MAX, x2.lq(home,c-x0.min()-x1.min()), 
+      GECODE_INT_PV(TM_X2_MAX, x2.lq(home,c-x0.min()-x1.min()),
 		    TM_X0_MIN | TM_X1_MIN);
     } while (bm);
     return (x0.assigned() && x1.assigned()) ? ES_SUBSUMED : ES_FIX;

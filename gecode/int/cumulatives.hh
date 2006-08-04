@@ -33,15 +33,15 @@
 
 namespace Gecode { namespace Int { namespace Cumulatives {
 
-  /** \namespace Gecode::Int::Cumulatives 
+  /** \namespace Gecode::Int::Cumulatives
    *  \brief %Cumulatives propagators
    *
-   * This namespace contains a propagator for the 
+   * This namespace contains a propagator for the
    * cumulatives constraint as presented in
    \verbatim
    @inproceedings{DBLP:conf/cp/BeldiceanuC02,
      author    = {Nicolas Beldiceanu and Mats Carlsson},
-     title     = {A New Multi-resource cumulatives Constraint 
+     title     = {A New Multi-resource cumulatives Constraint
                   with Negative Heights.},
      booktitle = {CP},
      year      = {2002},
@@ -53,8 +53,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
    }
    @proceedings{DBLP:conf/cp/2002,
      editor    = {Pascal Van Hentenryck},
-     title     = {Principles and Practice of Constraint Programming - 
-                  CP 2002, 8th International Conference, CP 2002, 
+     title     = {Principles and Practice of Constraint Programming -
+                  CP 2002, 8th International Conference, CP 2002,
                   Ithaca, NY, USA, September 9-13, 2002, Proceedings},
      booktitle = {CP},
      publisher = {Springer},
@@ -92,9 +92,9 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 	const ViewArray<ViewD>&, const ViewArray<View>&,
 	const ViewArray<ViewH>&, const IntArgs&, bool);
 
-    ExecStatus prune(Space * home, int low, int up, int r, 
+    ExecStatus prune(Space * home, int low, int up, int r,
 		     int ntask, int sheight,
-		     const std::vector<int>& contribution, 
+		     const std::vector<int>& contribution,
 		     std::list<int>& prune_tasks);
   public:
     virtual size_t dispose(Space* home);

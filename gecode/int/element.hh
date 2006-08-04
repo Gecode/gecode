@@ -78,7 +78,7 @@ namespace Gecode { namespace Int { namespace Element {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$i_{x_0}=x_1\f$
-    static  ExecStatus post(Space* home, IntSharedArray& i, 
+    static  ExecStatus post(Space* home, IntSharedArray& i,
 			    ViewA x0, ViewB x1);
     /// Flush cached index-value map
     virtual void flush(void);
@@ -96,7 +96,7 @@ namespace Gecode { namespace Int { namespace Element {
    */
   template <class ViewB> class IdxView;
 
-  /** 
+  /**
    * \brief Base-class for element propagator for array of views
    *
    */
@@ -179,10 +179,10 @@ namespace Gecode { namespace Int { namespace Element {
     /**
      * \brief Cost function
      *
-     * If in stage for bounds-propagation defined as dynamic PC_LINEAR_LO, 
+     * If in stage for bounds-propagation defined as dynamic PC_LINEAR_LO,
      * otherwise as dynamic PC_LINEAR_HI.
      *
-     */    
+     */
     virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);

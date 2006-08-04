@@ -39,7 +39,7 @@ namespace Gecode { namespace Int {
   template <class View>
   forceinline void
   ViewValues<View>::init(const View& x) {
-    ViewRanges<View> r(x); 
+    ViewRanges<View> r(x);
     Iter::Ranges::ToValues<ViewRanges<View> >::init(r);
   }
 

@@ -19,7 +19,7 @@
  *
  */
 
-namespace Gecode { 
+namespace Gecode {
 
   namespace Int { namespace Linear {
 
@@ -36,7 +36,7 @@ namespace Gecode {
       /// Initialize
       void init(void) {}
       //@}
-      
+
       /// \name Value access
       //@{
       /// Return minimum of domain
@@ -47,7 +47,7 @@ namespace Gecode {
       int med(void) const { return 0; }
       /// Return assigned value (only if assigned)
       int val(void) const { return 0; }
-      
+
       /// Return size (cardinality) of domain
       unsigned int size(void) const { return 1; }
       /// Return width of domain (distance between maximum and minimum)
@@ -57,20 +57,20 @@ namespace Gecode {
       /// Return regret of domain maximum (distance to next smaller value)
       unsigned int regret_max(void) const { return 0; }
       //@}
-      
+
       /// \name Domain tests
       //@{
       /// Test whether domain is a range
       bool range(void) const { return true; }
       /// Test whether view is assigned
       bool assigned(void) const { return true; }
-      
+
       /// Test whether \a n is contained in domain
       bool in(int n) const { return false; }
       /// Test whether \a n is contained in domain
       bool in(double n) const { return false; }
       //@}
-      
+
       /// \name Domain update by value
       //@{
       /// Restrict domain values to be less or equal than \a n
@@ -98,7 +98,7 @@ namespace Gecode {
       /// Restrict domain values to be equal to \a n
       ModEvent eq(Space* home, double n) { return ME_INT_NONE; }
       //@}
-      
+
       /// \name Propagator modification events
       //@{
       /// Return modification event of propagator \a p for view
@@ -106,7 +106,7 @@ namespace Gecode {
       /// Translate modification event \a me to propagator modification event for view
       static PropModEvent pme(ModEvent me) { return ME_INT_NONE; }
       //@}
-      
+
       /// \name Dependencies
       //@{
       /// Subscribe propagator \a p with propagation condition \a pc to view
@@ -114,13 +114,13 @@ namespace Gecode {
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
       void cancel(Space* home, Propagator* p, PropCond pc) {}
       //@}
-      
+
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, NoView& x) {}
       //@}
-      
+
       /// \name View comparison
       //@{
       /// Test whether this view is the same as \a x
@@ -201,13 +201,13 @@ namespace Gecode {
     void move_lst(int i) {}
     /** \brief Move view from position 0 to position \a i (shift elements to the left)
      *
-     * Before moving, cancel subscription of propagator \a p with 
+     * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to view at position \a i.
      */
     void move_fst(int i, Propagator* p, PropCond pc) {}
     /** \brief Move view from position \c size()-1 to position \a i (truncate array by one)
      *
-     * Before moving, cancel subscription of propagator \a p with 
+     * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to view at position \a i.
      */
     void move_lst(int i, Propagator* p, PropCond pc) {}
@@ -221,13 +221,13 @@ namespace Gecode {
     void drop_lst(int i);
     /** \brief Drop views from positions 0 to \a i-1 from array
      *
-     * Before moving, cancel subscription of propagator \a p with 
+     * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to views at positions 0 to \a i-1.
      */
     void drop_fst(int i, Propagator* p, PropCond pc) {}
     /** \brief Drop assigned views from positions \a i+1 to \c size()-1 from array
      *
-     * Before moving, cancel subscription of propagator \a p with 
+     * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to views at positions \a i+1 to
      * \c size()-1.
      */

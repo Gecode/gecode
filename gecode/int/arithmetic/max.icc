@@ -164,7 +164,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       maxmax = std::max(x[i].max(),maxmax);
       maxmin = std::max(x[i].min(),maxmin);
     }
-    GECODE_ME_CHECK(y.lq(home,maxmax)); 
+    GECODE_ME_CHECK(y.lq(home,maxmax));
     GECODE_ME_CHECK(y.gq(home,maxmin));
     maxmin = y.min();
     maxmax = y.max();

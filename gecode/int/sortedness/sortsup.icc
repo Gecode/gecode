@@ -35,7 +35,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	while(iter()){
 	  std::cout << iter.val() <<",";
 	  ++iter;
-	}     
+	}
 	std::cout << "} ";
       }
     }
@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	} else {
 	  os << "["<<xs[1].min() <<".."<<xs[1].max()<<"]("<<xs[1].range()<<") ";
 	}
-      } 
+      }
     } else {
       os << "["<<xs[0].min() <<".."<<xs[0].max()<<"]("<<xs[0].range()<<")";
       if (n > 1) {
@@ -66,14 +66,14 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	  os << "["<<xs[1].min() <<".."<<xs[1].max()<<"]("<<xs[1].range()<<") ";
 	}
       }
-    } 
+    }
 //  else {
 // 	os << "{";
 // 	ViewValues<View> iter(xs[0]);
 // 	while(iter()){
 // 	  os << iter.val() <<",";
 // 	  ++iter;
-// 	}     
+// 	}
 // 	os << "} ";
 //       }
     if (n > 1) { os << ">";}
@@ -92,42 +92,42 @@ namespace Gecode { namespace Int { namespace Sortedness {
   };
 
   /**
-   *  \brief Representation of a strongly connected component 
-   *  
-   *  Used with the implicit array representation of the 
-   *  bipartite oriented intersection graph. 
+   *  \brief Representation of a strongly connected component
+   *
+   *  Used with the implicit array representation of the
+   *  bipartite oriented intersection graph.
    */
   class SccComponent {
   public:
     /// Leftmost y-node in a scc
-    int leftmost;   
+    int leftmost;
     /// Direct left neighbour of an y-node in a scc
-    int left;       
+    int left;
     /// Direct right neighbour of an y-node in a scc
-    int right;    
+    int right;
     /// Rightmost reachable y-node in a scc
-    int rightmost;  
+    int rightmost;
   };
 
   /**
    * \brief Subsumption test
-   * 
-   * The propagator for Sortedness is subsumed if all 
-   * variables of the ViewArrays 
-   * \a x, \a y and \a z are determined and 
-   * \ref SortednessSemantics "the Semantics of Sortedness" 
+   *
+   * The propagator for Sortedness is subsumed if all
+   * variables of the ViewArrays
+   * \a x, \a y and \a z are determined and
+   * \ref SortednessSemantics "the Semantics of Sortedness"
    * are respected. \n
    * In addition to the subsumption test check_subsumption
    * determines, whether we can reduce the orginial problem
-   * to a smaller one, by dropping already matched variables. 
+   * to a smaller one, by dropping already matched variables.
    */
 
   template<class View, class Tuple, bool Perm>
   forceinline bool
-  check_subsumption(Space* home, 
-		    ViewArray<Tuple>& xz, 
-		    ViewArray<View>& y, 
-		    bool& subsumed, 
+  check_subsumption(Space* home,
+		    ViewArray<Tuple>& xz,
+		    ViewArray<View>& y,
+		    bool& subsumed,
 		    int& dropfst) {
 
     dropfst  = 0;
@@ -135,7 +135,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
     int  xs  = xz.size();
     for (int i = 0; i < xs ; i++) {
       if (Perm) {
-	subsumed &= (xz[i][0].assigned() && 
+	subsumed &= (xz[i][0].assigned() &&
 		     xz[i][1].assigned() &&
 		     y[xz[i][1].val()].assigned());
 	if (subsumed) {
@@ -155,7 +155,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	  } else {
 	    dropfst++;
 	  }
-	} 
+	}
       }
     }
     return true;
@@ -163,19 +163,19 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
   /**
    *   \brief Item used to construct the OfflineMin sequence
-   *  
+   *
    */
 
   class OfflineMinItem{
   public:
     /// Root node representing the set the vertex belongs to
-    int root;  
+    int root;
     /// Predecessor in the tree representation of the set
-    int parent; 
+    int parent;
     /// Ranking of the set given by its cardinality
-    int rank;   
+    int rank;
     /// Name or label of a set
-    int name;   
+    int name;
     /**
      *  \brief Initial set label
      *
@@ -183,17 +183,17 @@ namespace Gecode { namespace Int { namespace Sortedness {
      *   and hence the index of an insert instruction
      *   in the complete Offline-Min sequence
      */
-    int iset;   
+    int iset;
     /// Successor in the Offline-Min sequence
-    int succ;   
+    int succ;
     /// Predecessor in the Offline-Min sequence
     int pred;
   };
 
-  /** 
-   *  \brief Offline-Min datastructure 
-   *  Used to compute the perfect matching between the unsorted views 
-   *  \a x and the sorted views \a y. 
+  /**
+   *  \brief Offline-Min datastructure
+   *  Used to compute the perfect matching between the unsorted views
+   *  \a x and the sorted views \a y.
    */
   class OfflineMin {
   private:
@@ -204,12 +204,12 @@ namespace Gecode { namespace Int { namespace Sortedness {
     OfflineMin(void);
     OfflineMin(OfflineMinItem[], int[], int);
     /**
-     *  Find the set x belongs to 
+     *  Find the set x belongs to
      *  (wihtout path compression)
      */
     int  find(int x);
-    /** 
-     *  Find the set x belongs to 
+    /**
+     *  Find the set x belongs to
      *  (using path compression)
      */
     int  find_pc(int x);
@@ -234,20 +234,20 @@ namespace Gecode { namespace Int { namespace Sortedness {
     vertices = &v[0];
   }
 
-  forceinline int 
+  forceinline int
   OfflineMin::find(int x) {
-    while (sequence[x].parent != x) { 
+    while (sequence[x].parent != x) {
       x = sequence[x].parent;
     }
     // x is now the root of the tree
-    // return the set, x belongs to 
+    // return the set, x belongs to
     return sequence[x].name;
   }
 
-  forceinline int 
+  forceinline int
   OfflineMin::find_pc(int x){
     int vsize = 0;
-    while (sequence[x].parent != x) { 
+    while (sequence[x].parent != x) {
       vertices[x] = x;
       x = sequence[x].parent;
     }
@@ -255,11 +255,11 @@ namespace Gecode { namespace Int { namespace Sortedness {
     for (int i = vsize; i--; ) {
       sequence[vertices[i]].parent = x;
     }
-    // return the set, x belongs to 
+    // return the set, x belongs to
     return sequence[x].name;
   }
 
-  forceinline void 
+  forceinline void
   OfflineMin::unite(int a, int b, int c){
     // c is the union of a and b
     int ra = sequence[a].root;
@@ -282,26 +282,26 @@ namespace Gecode { namespace Int { namespace Sortedness {
       OfflineMinItem& cur = sequence[i];
       cur.rank   = 0;     // initially each set is empty
       cur.name   = i;     // it has its own name
-      cur.root   = i;     // it is the root node         
-      cur.parent = i;     // it is its own parent         
-      cur.pred   = i - 1;    
+      cur.root   = i;     // it is the root node
+      cur.parent = i;     // it is its own parent
+      cur.pred   = i - 1;
       cur.succ   = i + 1;
       cur.iset   = -5;
     }
   }
 
-  forceinline int 
+  forceinline int
   OfflineMin::size(void){
     return n;
   }
 
-  forceinline OfflineMinItem& 
+  forceinline OfflineMinItem&
   OfflineMin::operator [](int i){
     return sequence[i];
   }
 
-  /// Print an OfflineMin sequence 
-  forceinline std::ostream& 
+  /// Print an OfflineMin sequence
+  forceinline std::ostream&
   operator<<(std::ostream& os,  OfflineMin seq){
     for (int i = 0; i < seq.size();i++) {
       os << "Succ(" <<seq[i].succ   << ") "
@@ -315,14 +315,14 @@ namespace Gecode { namespace Int { namespace Sortedness {
     return os;
   }
 
-  /** 
+  /**
    *  \brief Index comparison for %ViewArray<Tuple>
    *
    *  Checks whether for two indices \a i and \a j
    *  the first component of the corresponding viewtuples
-   *  \f$x_i\f$ and \f$x_j\f$ the upper domain bound of \f$x_j\f$ 
-   *  is larger than the upper domain bound of \f$x_i\f$ 
-   * 
+   *  \f$x_i\f$ and \f$x_j\f$ the upper domain bound of \f$x_j\f$
+   *  is larger than the upper domain bound of \f$x_i\f$
+   *
    */
   template <class Tuple>
   class TupleMaxInc {
@@ -340,14 +340,14 @@ namespace Gecode { namespace Int { namespace Sortedness {
   };
 
 
-  /** 
+  /**
    *  \brief Extended Index comparison for %ViewArray<Tuple>
    *
    *  Checks whether for two indices \a i and \a j
    *  the first component of the corresponding viewtuples
-   *  \f$x_i\f$ and \f$x_j\f$ the upper domain bound of \f$x_j\f$ 
-   *  is larger than the upper domain bound of \f$x_i\f$ 
-   * 
+   *  \f$x_i\f$ and \f$x_j\f$ the upper domain bound of \f$x_j\f$
+   *  is larger than the upper domain bound of \f$x_i\f$
+   *
    */
   template <class Tuple>
   class TupleMaxIncExt {
@@ -373,11 +373,11 @@ namespace Gecode { namespace Int { namespace Sortedness {
   };
 
   /**
-   * \brief View comparison on ViewTuples 
+   * \brief View comparison on ViewTuples
    *
-   * Checks whether the lower domain bound of the 
-   * first component of \a x (the variable itself) 
-   * is smaller than the lower domain bound of the 
+   * Checks whether the lower domain bound of the
+   * first component of \a x (the variable itself)
+   * is smaller than the lower domain bound of the
    * first component of \a y
    */
 
@@ -394,11 +394,11 @@ namespace Gecode { namespace Int { namespace Sortedness {
   };
 
   /**
-   * \brief Extended View comparison on ViewTuples 
+   * \brief Extended View comparison on ViewTuples
    *
-   * Checks whether the lower domain bound of the 
-   * first component of \a x (the variable itself) 
-   * is smaller than the lower domain bound of the 
+   * Checks whether the lower domain bound of the
+   * first component of \a x (the variable itself)
+   * is smaller than the lower domain bound of the
    * first component of \a y. If they are equal
    * it checks their upper bounds. If they are also
    * equal we sort the views by the permutation variables.
@@ -425,10 +425,10 @@ namespace Gecode { namespace Int { namespace Sortedness {
   };
 
   /**
-   * \brief View comparison on ViewTuples 
+   * \brief View comparison on ViewTuples
    *
    * Checks whether the lower domain bound of the second component
-   * of \a x (the lower bound on the permutation variable) is smaller 
+   * of \a x (the lower bound on the permutation variable) is smaller
    * than the lower domain bound of the second component of \a y.
    */
 
@@ -445,10 +445,10 @@ namespace Gecode { namespace Int { namespace Sortedness {
   };
 
   /**
-   * \brief View comparison on ViewTuples 
+   * \brief View comparison on ViewTuples
    *
    * Checks whether the upper domain bound of the second component
-   * of \a x (the upper bound on the permutation variable) is smaller 
+   * of \a x (the upper bound on the permutation variable) is smaller
    * than the upper domain bound of the second component of \a y.
    */
 
@@ -464,7 +464,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
     }
   };
 
-  /** 
+  /**
    * \brief Check for assignment of a variable array
    *
    * Check whether one of the argument arrays is completely assigned
@@ -473,12 +473,12 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
   template<class View, class Tuple, bool Perm>
   forceinline bool
-  array_assigned(Space* home, 
-		 ViewArray<Tuple>& xz, 
-		 ViewArray<View>& y, 
-		 bool& subsumed, 
-		 bool& match_fixed, 
-		 bool& nofix, 
+  array_assigned(Space* home,
+		 ViewArray<Tuple>& xz,
+		 ViewArray<View>& y,
+		 bool& subsumed,
+		 bool& match_fixed,
+		 bool& nofix,
 		 bool& noperm_bc) {
 
     bool x_complete = true;
@@ -492,7 +492,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	z_complete &= xz[i][1].assigned();
       }
     }
-    
+
     if (x_complete) {
       for (int i = xz.size(); i--; ) {
 	ModEvent me = y[i].eq(home, xz[i][0].val());
@@ -574,11 +574,11 @@ namespace Gecode { namespace Int { namespace Sortedness {
     return true;
   }
 
-  /** 
+  /**
    * \brief Channel between \a x, \a y and \a z
-   * 
+   *
    * Keep variables consisting by channeling information
-   * 
+   *
    */
 
   template<class View, class Tuple, bool Perm>
@@ -589,7 +589,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
       if (xz[i][1].assigned()) {
 
 	// if the permutation variable is determined
-	  
+	
 	int v = xz[i][1].val();
 	if (xz[i][0].assigned()) {
 	  // channel equality from x to y
@@ -636,11 +636,11 @@ namespace Gecode { namespace Int { namespace Sortedness {
 	  }
 	}
       } else {
-	  
+	
 	// if the permutation variable is undetermined
 	int l = xz[i][1].min();
 	int r = xz[i][1].max();
-	 
+	
 	// upper bound
 	ModEvent me = xz[i][0].lq(home, y[r].max());
 	if (me_failed(me)) {

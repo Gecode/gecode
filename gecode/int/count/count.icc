@@ -27,7 +27,7 @@ namespace Gecode { namespace Int { namespace Count {
    */
 
   template <class VX, class VY, class VZ, bool shr>
-  Base<VX,VY,VZ,shr>::Base(Space* home, 
+  Base<VX,VY,VZ,shr>::Base(Space* home,
 			       ViewArray<VX>& x0, VY y0, VZ z0, int c0)
     : Propagator(home), x(x0), y(y0), z(z0), c(c0) {
     x.subscribe(home,this,PC_INT_DOM);
@@ -93,13 +93,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline
-  Eq<VX,VY,VZ,shr>::Eq(Space* home, 
+  Eq<VX,VY,VZ,shr>::Eq(Space* home,
 			       ViewArray<VX>& x, VY y, VZ z, int c)
     : Base<VX,VY,VZ,shr>(home,x,y,z,c) {}
 
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  Eq<VX,VY,VZ,shr>::post(Space* home, 
+  Eq<VX,VY,VZ,shr>::post(Space* home,
 				ViewArray<VX>& x, VY y, VZ z, int c) {
     if (sharing(x,y,z))
       (void) new (home) Eq<VX,VY,VZ,true>(home,x,y,z,c);
@@ -142,9 +142,9 @@ namespace Gecode { namespace Int { namespace Count {
     GECODE_ME_CHECK(z.lq(home,atmost()));
 
     if (z.assigned()) {
-      if (z.val() == atleast()) 
+      if (z.val() == atleast())
 	return post_false(home,x,y);
-      if (z.val() == atmost())  
+      if (z.val() == atmost())
 	return post_true(home,x,y);
     }
     return shr ? ES_NOFIX : ES_FIX;
@@ -160,13 +160,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline
-  Nq<VX,VY,VZ,shr>::Nq(Space* home, 
+  Nq<VX,VY,VZ,shr>::Nq(Space* home,
 			       ViewArray<VX>& x, VY y, VZ z, int c)
     : Base<VX,VY,VZ,shr>(home,x,y,z,c) {}
 
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  Nq<VX,VY,VZ,shr>::post(Space* home, 
+  Nq<VX,VY,VZ,shr>::post(Space* home,
 			     ViewArray<VX>& x, VY y, VZ z, int c) {
     (void) new (home) Nq<VX,VY,VZ,shr>(home,x,y,z,c);
     return ES_OK;
@@ -217,13 +217,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline
-  Lq<VX,VY,VZ,shr>::Lq(Space* home, 
+  Lq<VX,VY,VZ,shr>::Lq(Space* home,
 			       ViewArray<VX>& x, VY y, VZ z, int c)
     : Base<VX,VY,VZ,shr>(home,x,y,z,c) {}
 
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  Lq<VX,VY,VZ,shr>::post(Space* home, 
+  Lq<VX,VY,VZ,shr>::post(Space* home,
 			     ViewArray<VX>& x, VY y, VZ z, int c) {
     if (sharing(x,y,z))
       (void) new (home) Lq<VX,VY,VZ,true>(home,x,y,z,c);
@@ -231,13 +231,13 @@ namespace Gecode { namespace Int { namespace Count {
       (void) new (home) Lq<VX,VY,VZ,false>(home,x,y,z,c);
     return ES_OK;
   }
-  
+
   template <class VX, class VY, class VZ, bool shr>
   forceinline
   Lq<VX,VY,VZ,shr>::Lq(Space* home, bool share,
 			       Lq<VX,VY,VZ,shr>& p)
     : Base<VX,VY,VZ,shr>(home,share,p) {}
-  
+
   template <class VX, class VY, class VZ, bool shr>
   Actor*
   Lq<VX,VY,VZ,shr>::copy(Space* home, bool share) {
@@ -277,13 +277,13 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline
-  Gq<VX,VY,VZ,shr>::Gq(Space* home, 
+  Gq<VX,VY,VZ,shr>::Gq(Space* home,
 			       ViewArray<VX>& x, VY y, VZ z, int c)
     : Base<VX,VY,VZ,shr>(home,x,y,z,c) {}
 
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  Gq<VX,VY,VZ,shr>::post(Space* home, 
+  Gq<VX,VY,VZ,shr>::post(Space* home,
 			     ViewArray<VX>& x, VY y, VZ z, int c) {
     if (sharing(x,y,z))
       (void) new (home) Gq<VX,VY,VZ,true>(home,x,y,z,c);

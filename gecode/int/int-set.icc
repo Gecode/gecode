@@ -19,7 +19,7 @@
  *
  */
 
-namespace Gecode { 
+namespace Gecode {
 
   /*
    * Integer sets
@@ -103,7 +103,7 @@ namespace Gecode {
   IntSetRanges::init(const IntSet& s) {
     i = &s.sar[0]; e = &s.sar[s.size()];
   }
-  
+
   forceinline void
   IntSetRanges::operator++(void) {
     i++;
@@ -112,7 +112,7 @@ namespace Gecode {
   IntSetRanges::operator()(void) const {
     return i<e;
   }
-  
+
   forceinline int
   IntSetRanges::min(void) const {
     return i->min;
@@ -125,7 +125,7 @@ namespace Gecode {
   IntSetRanges::width(void) const {
     return i->max - i->min +1;
   }
-  
+
   /*
    * Value iterator for integer sets
    *
@@ -141,10 +141,10 @@ namespace Gecode {
 
   forceinline void
   IntSetValues::init(const IntSet& s) {
-    IntSetRanges r(s); 
+    IntSetRanges r(s);
     Iter::Ranges::ToValues<IntSetRanges>::init(r);
   }
-  
+
 }
 
 // STATISTICS: int-var

@@ -29,7 +29,7 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline
   LinBin<Val,A,B,pc>::LinBin(Space* home, A y0, B y1, Val c0)
     : Propagator(home), x0(y0), x1(y1), c(c0) {
-    x0.subscribe(home,this,pc); 
+    x0.subscribe(home,this,pc);
     x1.subscribe(home,this,pc);
   }
 
@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace Linear {
   size_t
   LinBin<Val,A,B,pc>::dispose(Space* home) {
     assert(!home->failed());
-    x0.cancel(home,this,pc); 
+    x0.cancel(home,this,pc);
     x1.cancel(home,this,pc);
     (void) Propagator::dispose(home);
     return sizeof(*this);
@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline
   ReLinBin<Val,A,B,pc,Ctrl>::ReLinBin(Space* home, A y0, B y1, Val c0, Ctrl b0)
     : Propagator(home), x0(y0), x1(y1), c(c0), b(b0) {
-    x0.subscribe(home,this,pc); 
+    x0.subscribe(home,this,pc);
     x1.subscribe(home,this,pc);
     b.subscribe(home,this,PC_INT_VAL);
   }
@@ -100,7 +100,7 @@ namespace Gecode { namespace Int { namespace Linear {
   size_t
   ReLinBin<Val,A,B,pc,Ctrl>::dispose(Space* home) {
     assert(!home->failed());
-    x0.cancel(home,this,pc); 
+    x0.cancel(home,this,pc);
     x1.cancel(home,this,pc);
     b.cancel(home,this,PC_INT_VAL);
     (void) Propagator::dispose(home);
@@ -198,7 +198,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B, class Ctrl>
   forceinline
-  ReEqBin<Val,A,B,Ctrl>::ReEqBin(Space* home, bool share, 
+  ReEqBin<Val,A,B,Ctrl>::ReEqBin(Space* home, bool share,
 				 ReEqBin<Val,A,B,Ctrl>& p)
     : ReLinBin<Val,A,B,PC_INT_BND,Ctrl>(home,share,p) {}
 

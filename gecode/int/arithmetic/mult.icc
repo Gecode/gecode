@@ -29,7 +29,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
 
   /// Multiply \a a and \a b as double
-  forceinline double 
+  forceinline double
   m(int a, int b) {
     return static_cast<double>(a)*static_cast<double>(b);
   }
@@ -50,19 +50,19 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   /// Test whether \a x is postive
   template <class View>
-  forceinline bool 
+  forceinline bool
   p(const View& x) {
     return x.min() > 0;
   }
   /// Test whether \a x is negative
   template <class View>
-  forceinline bool 
+  forceinline bool
   n(const View& x) {
     return x.max() < 0;
   }
   /// Test whether \a x is neither positive nor negative
   template <class View>
-  forceinline bool 
+  forceinline bool
   x(const View& x) {
     return (x.min() <= 0) && (x.max() >= 0);
   }
@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class VA, class VB>
   forceinline
-  SquarePlus<VA,VB>::SquarePlus(Space* home, VA y0, VB y1) 
+  SquarePlus<VA,VB>::SquarePlus(Space* home, VA y0, VB y1)
     : Propagator(home), x0(y0), x1(y1) {
     x0.subscribe(home,this,PC_INT_BND);
     x1.subscribe(home,this,PC_INT_BND);
@@ -95,7 +95,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
   }
-  
+
   template <class VA, class VB>
   Actor*
   SquarePlus<VA,VB>::copy(Space* home, bool share) {
@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   SquarePlus<VA,VB>::cost(void) const {
     return PC_TERNARY_HI;
   }
-  
+
   template <class VA, class VB>
   ExecStatus
   SquarePlus<VA,VB>::propagate(Space* home) {
@@ -137,7 +137,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     } while (mod);
     return x0.assigned() ? ES_SUBSUMED : ES_FIX;
   }
-  
+
   template <class VA, class VB>
   size_t
   SquarePlus<VA,VB>::dispose(Space* home) {
@@ -147,8 +147,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
-  
-  
+
+
   /*
    * Bounds-consistent Square
    *
@@ -196,10 +196,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     // x0 * x0 = x1
     assert(x1.min() >= 0);
     if (x0.min() >= 0)
-      return (SquarePlus<IntView,IntView>::post(home,x0,x1) 
+      return (SquarePlus<IntView,IntView>::post(home,x0,x1)
 	      == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
     if (x0.max() <= 0)
-      return (SquarePlus<MinusView,IntView>::post(home,x0,x1) 
+      return (SquarePlus<MinusView,IntView>::post(home,x0,x1)
 	      == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
 
     GECODE_ME_CHECK(x1.lq(home,std::max(x0.min()*x0.min(),
@@ -223,7 +223,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class VA, class VB, class VC>
   inline
-  MultPlus<VA,VB,VC>::MultPlus(Space* home, VA y0, VB y1, VC y2) 
+  MultPlus<VA,VB,VC>::MultPlus(Space* home, VA y0, VB y1, VC y2)
     : Propagator(home), x0(y0), x1(y1), x2(y2) {
     x0.subscribe(home,this,PC_INT_BND);
     x1.subscribe(home,this,PC_INT_BND);
@@ -248,7 +248,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     x1.update(home,share,p.x1);
     x2.update(home,share,p.x2);
   }
-  
+
   template <class VA, class VB, class VC>
   Actor*
   MultPlus<VA,VB,VC>::copy(Space* home, bool share) {
@@ -260,7 +260,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   MultPlus<VA,VB,VC>::cost(void) const {
     return PC_TERNARY_HI;
   }
-  
+
   template <class VA, class VB, class VC>
   ExecStatus
   MultPlus<VA,VB,VC>::propagate(Space* home) {
@@ -301,7 +301,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     } while (mod);
     return x0.assigned() && x1.assigned() ? ES_SUBSUMED : ES_FIX;
   }
-  
+
   template <class VA, class VB, class VC>
   size_t
   MultPlus<VA,VB,VC>::dispose(Space* home) {
@@ -312,8 +312,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
-  
-  
+
+
   /*
    * Bounds-consistent multiplication
    *
@@ -352,17 +352,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (n(x0)) {
       if (n(x1) || p(x2)) goto rewrite_nnp;
       if (p(x1) || n(x2)) goto rewrite_npn;
-      goto prop_nxx; 
+      goto prop_nxx;
     }
     if (p(x1)) {
       if (p(x2)) goto rewrite_ppp;
       if (n(x2)) goto rewrite_npn;
-      goto prop_xpx; 
+      goto prop_xpx;
     }
     if (n(x1)) {
       if (p(x2)) goto rewrite_nnp;
       if (n(x2)) goto rewrite_pnn;
-      goto prop_xnx; 
+      goto prop_xnx;
     }
 
     assert(x(x0) && x(x1));
@@ -390,13 +390,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     GECODE_ME_CHECK(x2.lq(home,m(x0.max(),x1.max())));
     GECODE_ME_CHECK(x2.gq(home,m(x0.max(),x1.min())));
-    
+
     if (p(x2)) goto rewrite_ppp;
     if (n(x2)) goto rewrite_pnn;
-    
+
     GECODE_ME_CHECK(x1.lq(home,f_d(x2.max(),x0.min())));
     GECODE_ME_CHECK(x1.gq(home,c_d(x2.min(),x0.min())));
-    
+
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.eq(home,m(x0.val(),x1.val())));
       return ES_SUBSUMED;
@@ -411,13 +411,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     GECODE_ME_CHECK(x2.lq(home,m(x0.min(),x1.min())));
     GECODE_ME_CHECK(x2.gq(home,m(x0.min(),x1.max())));
-    
+
     if (p(x2)) goto rewrite_nnp;
     if (n(x2)) goto rewrite_npn;
-    
+
     GECODE_ME_CHECK(x1.lq(home,f_d(x2.min(),x0.max())));
     GECODE_ME_CHECK(x1.gq(home,c_d(x2.max(),x0.max())));
-    
+
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.eq(home,m(x0.val(),x1.val())));
       return ES_SUBSUMED;
@@ -426,17 +426,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_NOFIX;
 
   rewrite_ppp:
-    return (MultPlus<IntView,IntView,IntView>::post(home,x0,x1,x2) 
+    return (MultPlus<IntView,IntView,IntView>::post(home,x0,x1,x2)
 	    == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
 
   rewrite_nnp:
-    return (MultPlus<MinusView,MinusView,IntView>::post(home,x0,x1,x2) 
+    return (MultPlus<MinusView,MinusView,IntView>::post(home,x0,x1,x2)
 	    == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
 
   rewrite_pnn:
-    std::swap(x0,x1);   
+    std::swap(x0,x1);
   rewrite_npn:
-    return (MultPlus<MinusView,IntView,MinusView>::post(home,x0,x1,x2) 
+    return (MultPlus<MinusView,IntView,MinusView>::post(home,x0,x1,x2)
 	    == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
 
   }
@@ -467,7 +467,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   post_nnp:
     return MultPlus<MinusView,MinusView,IntView>::post(home,x0,x1,x2);
   post_pnn:
-    std::swap(x0,x1);   
+    std::swap(x0,x1);
   post_npn:
     return MultPlus<MinusView,IntView,MinusView>::post(home,x0,x1,x2);
   }

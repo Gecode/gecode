@@ -43,7 +43,7 @@ namespace Gecode { namespace Int {
   forceinline
   IntVarImp::RangeList::RangeList(int min, int max, RangeList* p, RangeList* n)
     : _min(min), _max(max) {
-    _next = GECODE_INT_PD2RL(GECODE_INT_RL2PD(p)^GECODE_INT_RL2PD(n)); 
+    _next = GECODE_INT_PD2RL(GECODE_INT_RL2PD(p)^GECODE_INT_RL2PD(n));
   }
 
   forceinline IntVarImp::RangeList*
@@ -182,7 +182,7 @@ namespace Gecode { namespace Int {
 	r[i].min(d.min(i)); r[i].max(d.max(i));
 	r[i].prevnext(&r[i-1],&r[i+1]);
       }
-      r[0].prev(&r[-1],NULL); 
+      r[0].prev(&r[-1],NULL);
       r[n-1].next(&r[n],NULL);
       holes = h;
     } else {
@@ -336,7 +336,7 @@ namespace Gecode { namespace Int {
 
   forceinline ModEvent
   IntVarImp::eq(Space* home, int n) {
-    if ((n < dom.min()) || (n > dom.max())) 
+    if ((n < dom.min()) || (n > dom.max()))
       return ME_INT_FAILED;
     if ((n == dom.min()) && (n == dom.max()))
       return ME_INT_NONE;
@@ -347,7 +347,7 @@ namespace Gecode { namespace Int {
   }
   forceinline ModEvent
   IntVarImp::eq(Space* home, double n) {
-    if ((n < dom.min()) || (n > dom.max())) 
+    if ((n < dom.min()) || (n > dom.max()))
       return ME_INT_FAILED;
     if ((n == dom.min()) && (n == dom.max()))
       return ME_INT_NONE;
@@ -471,7 +471,7 @@ namespace Gecode { namespace Int {
   forceinline
   IntVarImpFwd::IntVarImpFwd(void) {}
   forceinline
-  IntVarImpFwd::IntVarImpFwd(const IntVarImp* x) 
+  IntVarImpFwd::IntVarImpFwd(const IntVarImp* x)
     : p(NULL), c(x->ranges_fwd()) {}
   forceinline void
   IntVarImpFwd::init(const IntVarImp* x) {
@@ -509,7 +509,7 @@ namespace Gecode { namespace Int {
   forceinline
   IntVarImpBwd::IntVarImpBwd(void) {}
   forceinline
-  IntVarImpBwd::IntVarImpBwd(const IntVarImp* x) 
+  IntVarImpBwd::IntVarImpBwd(const IntVarImp* x)
     : n(NULL), c(x->ranges_bwd()) {}
   forceinline void
   IntVarImpBwd::init(const IntVarImp* x) {

@@ -26,7 +26,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
   template <class XV, class YV>
-  LinBoolView<XV,YV>::LinBoolView(Space* home, 
+  LinBoolView<XV,YV>::LinBoolView(Space* home,
 				  ViewArray<XV>& x0, YV y0, int c0)
     :  Propagator(home), x(x0), y(y0), c(c0) {
     x.subscribe(home,this,PC_INT_VAL);

@@ -54,7 +54,7 @@ namespace Gecode {
 
   void
   linear(Space* home,
-	 const IntArgs& a, const IntVarArgs& x, IntRelType r, int c, 
+	 const IntArgs& a, const IntVarArgs& x, IntRelType r, int c,
 	 IntConLevel icl) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
@@ -94,7 +94,7 @@ namespace Gecode {
 
   void
   linear(Space* home,
-	 const IntVarArgs& x, IntRelType r, IntVar y, BoolVar b, 
+	 const IntVarArgs& x, IntRelType r, IntVar y, BoolVar b,
 	 IntConLevel) {
     if (home->failed()) return;
     GECODE_AUTOARRAY(Linear::Term, t, x.size()+1);
@@ -107,7 +107,7 @@ namespace Gecode {
 
   void
   linear(Space* home,
-	 const IntArgs& a, const IntVarArgs& x, IntRelType r, IntVar y, 
+	 const IntArgs& a, const IntVarArgs& x, IntRelType r, IntVar y,
 	 IntConLevel icl) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
@@ -122,7 +122,7 @@ namespace Gecode {
 
   void
   linear(Space* home,
-	 const IntArgs& a, const IntVarArgs& x, IntRelType r, IntVar y, 
+	 const IntArgs& a, const IntVarArgs& x, IntRelType r, IntVar y,
 	 BoolVar b, IntConLevel) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
@@ -167,7 +167,7 @@ namespace Gecode {
 	GECODE_ES_FAIL(home,Linear::GqBoolInt<BoolView>::post(home,xv,c+1));
 	break;
       }
-    case IRT_LQ: 
+    case IRT_LQ:
       {
 	ViewArray<NegBoolView> xv(home,x.size());
 	for (int i=x.size(); i--; ) {

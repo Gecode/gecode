@@ -59,7 +59,7 @@ namespace Gecode {
     /// Last final state
     int          final_lst;
     /// The transitions (actual size depends on number of transitions)
-    Transition   trans[1]; 
+    Transition   trans[1];
     /// Create a copy
     GECODE_INT_EXPORT DFAI* copy(void);
   };

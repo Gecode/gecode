@@ -24,8 +24,8 @@ namespace Gecode { namespace Int { namespace GCC {
   /// \name GCC-Bnd-Support
   //@{
 
-  /** 
-   * \brief Class for computing unreachable values in the 
+  /**
+   * \brief Class for computing unreachable values in the
    *  value GCC propagator
    *
    */
@@ -38,12 +38,12 @@ namespace Gecode { namespace Int { namespace GCC {
     unsigned int gr;
   };
 
-  /** 
+  /**
    * \brief Bounds consistency check for cardinality variables.
    */
 
   template <class View, class Card, bool shared>
-  forceinline ExecStatus 
+  forceinline ExecStatus
   prop_card(Space* home, ViewArray<View>& x, ViewArray<Card>& k, bool& mod) {
     int n = x.size();
     int m = k.size();
@@ -73,16 +73,16 @@ namespace Gecode { namespace Int { namespace GCC {
 	if (max_idx == -1) {
 	  return ES_FAILED;
 	}
-	// count the number of variables 
+	// count the number of variables
 	// with lower bound k[min_idx].card()
 	rv[min_idx].minb++;
 
-	// count the number of variables 
+	// count the number of variables
 	// with upper bound k[max_idx].card()
 	rv[max_idx].maxb++;
-      }      
+      }
     }
-    
+
     rv[0].le = 0;
     int c_min = 0;
     for (int i = 1; i < m; i++) {
@@ -96,7 +96,7 @@ namespace Gecode { namespace Int { namespace GCC {
       rv[i].gr = c_max + rv[i + 1].minb;
       c_max += rv[i + 1].minb;
     }
-    
+
     for (int i = m; i--; ) {
       int reachable = (int) (x.size() - rv[i].le - rv[i].gr);
       if (!k[i].assigned()) {
@@ -106,7 +106,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	}
 	mod |= (k[i].modified() && (k[i].max() != reachable));
 	mod |= shared && k[i].modified();
-	  
+	
 	if (rv[i].eq > 0) {
 	  ModEvent me = k[i].gq(home, (int) rv[i].eq);
 	  if (me_failed(me)) {
@@ -135,7 +135,7 @@ namespace Gecode { namespace Int { namespace GCC {
   inline bool
   card_consistent(int& smin, int& smax, ViewArray<View>& x,
 		  ViewArray<Card>& k, bool& all) {
-    
+
     int m = k.size();
     int n = x.size();
     for (int i = m; i--; ) {
@@ -146,14 +146,14 @@ namespace Gecode { namespace Int { namespace GCC {
     // not enough variables to satifsy cardinality requirements
     if (n < smin) {
       return false;
-    } 
+    }
 
     // if we use all variables
     // not all variables can be assigned
     if (all && smax < n) {
       return false;
     }
-        
+
     return true;
   }
 
@@ -163,24 +163,24 @@ namespace Gecode { namespace Int { namespace GCC {
   class Rank {
   public:
     /**
-     * \brief \f$ rank[i].min = z 
+     * \brief \f$ rank[i].min = z
      * \Leftrightarrow min(x_i) = hall[z].bounds \f$
      */
     int min;
     /**
-     * \brief \f$ rank[i].max = z 
+     * \brief \f$ rank[i].max = z
      * \Leftrightarrow max(x_i) = hall[z].bounds \f$
      */
     int max;
   };
 
   /**
-   * \brief Compares two indices \a i, \a j of two views 
+   * \brief Compares two indices \a i, \a j of two views
    * \a \f$ x_i \f$ \f$ x_j\f$ according to the
    * ascending order of the views upper bounds
    *
    */
-  
+
   template <class View>
   class MaxInc {
   protected:
@@ -194,7 +194,7 @@ namespace Gecode { namespace Int { namespace GCC {
   };
 
   /**
-   * \brief Compares two indices \a i, \a j of two views 
+   * \brief Compares two indices \a i, \a j of two views
    * \a \f$ x_i \f$ \f$ x_j\f$ according to the
    * ascending order of the views lower bounds
    *
@@ -214,7 +214,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   /**
-   * \brief Partial sum structure for constant 
+   * \brief Partial sum structure for constant
    *  time computation of the maximal capacity of an interval.
    *
    */
@@ -224,15 +224,15 @@ namespace Gecode { namespace Int { namespace GCC {
     /// memory allocation
     char* mem;
     /// sum[i] contains the partial sum from 0 to i
-    int* sum;  
+    int* sum;
     /**
      *  marks indices with 0 that can be skipped
      *  and can be compared to doublet control
      */
-    int* ds;   
+    int* ds;
     /// the size of the sum
     int size;
-  public:    
+  public:
     /// \name Constructors and destructors
     //@{
     PartialSum( int, int, ViewArray<Card>& , bool);
@@ -258,7 +258,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /// \brief Default destructor
   template <class Card>
-  forceinline 
+  forceinline
   PartialSum<Card>::~PartialSum(void){
     assert(mem != NULL);
     Memory::free(mem);
@@ -271,7 +271,7 @@ namespace Gecode { namespace Int { namespace GCC {
     void* allocated = Memory::malloc(t);
     return allocated;
   }
-  
+
   /// \brief Free memory used by partial sum structure
   template <class Card>
   forceinline void
@@ -279,23 +279,23 @@ namespace Gecode { namespace Int { namespace GCC {
       Memory::free(p);
   }
 
-  /** 
-   * \brief Default initialization 
+  /**
+   * \brief Default initialization
    *
    * \param first is the miminum value the variables can take
-   * \param count is equal to the size \f$ |k| \f$, 
+   * \param count is equal to the size \f$ |k| \f$,
    *        where \a k denotes the array of cardinalities used
    *        in the global cardinality propagator
    * \param elements contains the upper and lower cardinalities for every value
    * \param up denotes the direction whether we sumup the lower or upper cardinality bounds
    *        If \a up is true we sumup the upper bounds, otherwise the lower bounds.
-   * 
+   *
    */
   template <class Card>
-  inline 
+  inline
   PartialSum<Card>::PartialSum(int first,
-			       int count, 
-			       ViewArray<Card>& elements, 
+			       int count,
+			       ViewArray<Card>& elements,
 			       bool up) {
     int i = 0;
     int j = 0;
@@ -315,12 +315,12 @@ namespace Gecode { namespace Int { namespace GCC {
       ds[z]  = 0;
     }
 
-    /* 
+    /*
      * firstValue and lastValue are sentinels
      * indicating whether an end of the sum has been reached
      *
      */
-    firstValue = first - 3; 
+    firstValue = first - 3;
     lastValue  = first + count + 1;
 
 
@@ -330,10 +330,10 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     int shift  = count + 2;
-    
+
     /*
      * copy the bounds into sum
-     * optimization only those values being indeed 
+     * optimization only those values being indeed
      * variable bounds
      */
     for (i = 2; i < shift; i++){
@@ -346,7 +346,7 @@ namespace Gecode { namespace Int { namespace GCC {
     sum[i + 1] = sum[i] + 1;
     sum[i + 2] = sum[i + 1] + 1;
 
-    
+
     // check for doublets
     i = count + 3;
     j = i + 1;
@@ -368,7 +368,7 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Compute the maximum capacity of an interval I
    */
   template <class Card>
-  forceinline int 
+  forceinline int
   PartialSum<Card>::sumup(int from, int to){
     if (from <= to) {
       return sum[to - firstValue] - sum[from - firstValue - 1];
@@ -382,7 +382,7 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   template <class Card>
-  forceinline int 
+  forceinline int
   PartialSum<Card>::minValue(void){
     return firstValue + 3;
   }
@@ -391,33 +391,33 @@ namespace Gecode { namespace Int { namespace GCC {
    * \brief Returns the largest bound of the variables in \a x
    *
    */
-  
+
   template <class Card>
-  forceinline int 
+  forceinline int
   PartialSum<Card>::maxValue(void){
     return lastValue - 2;
   }
 
 
   /**
-   * \brief Skip neigboured array entries if their values do 
+   * \brief Skip neigboured array entries if their values do
    *        not differ.
    *
    */
   template <class Card>
-  forceinline int 
+  forceinline int
   PartialSum<Card>::skipNonNullElementsRight(int value) {
     value -= firstValue;
     return (ds[value] < value ? value : ds[value]) + firstValue;
   }
 
   /**
-   * \brief Skip neigboured array entries if their values do 
+   * \brief Skip neigboured array entries if their values do
    *        not differ.
    *
    */
   template <class Card>
-  forceinline int 
+  forceinline int
   PartialSum<Card>::skipNonNullElementsLeft(int value) {
     value -= firstValue;
     return (ds[value] > value ? ds[ds[value]] : value) + firstValue;
@@ -430,7 +430,7 @@ namespace Gecode { namespace Int { namespace GCC {
     std::cout << "----------\n";
     std::cout << "smallest elem = "<< minValue() << " - "
 	      << "largest  elem = "<< maxValue() << "\n";
-    std::cout << "fsv: "<< firstValue <<" lsv: " << lastValue 
+    std::cout << "fsv: "<< firstValue <<" lsv: " << lastValue
 	      << " size = "<< size << "\n";
     std::cout << "number of elements = "<< size - 5<<"\n";
     std::cout << "elements: ";
@@ -453,18 +453,18 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   /**
-   * \brief Check whether the values in the 
+   * \brief Check whether the values in the
    *        partial sum structure containting
    *        the upper cardinality bounds differ
    *        from the actual upper bounds of the
-   *        cardinalities. 
+   *        cardinalities.
    */
 
   template <class Card>
   inline bool
   PartialSum<Card>::check_update_max(ViewArray<Card>& k){
     if (k.size() <= size - 5) {
-      return true; 
+      return true;
     } else {
       for (int i = 3; i < size - 2; i++) {
 	if ((sum[i] - sum[i - 1]) != k[i - 3].max()) {
@@ -476,18 +476,18 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   /**
-   * \brief Check whether the values in the 
+   * \brief Check whether the values in the
    *        partial sum structure containting
    *        the lower cardinality bounds differ
    *        from the actual lower bounds of the
-   *        cardinalities. 
+   *        cardinalities.
    */
 
   template <class Card>
   inline bool
   PartialSum<Card>::check_update_min(ViewArray<Card>& k){
     if (k.size() <= size - 5) {
-      return true; 
+      return true;
     } else {
       for (int i = 3; i < size - 2; i++) {
 	if ((sum[i] - sum[i - 1]) != k[i - 3].min()) {
@@ -497,7 +497,7 @@ namespace Gecode { namespace Int { namespace GCC {
       return false;
     }
   }
-  
+
   /// \brief Return the size of the partial sum structure.
   template <class Card>
   forceinline int
@@ -508,20 +508,20 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /**
    * \brief Container class provding information about the Hall
-   *  structure of the problem variables. 
+   *  structure of the problem variables.
    *
-   *  This class is used to 
+   *  This class is used to
    *  keep the number of different arrays small, that is
    *  an array of type %HallInfo replaces integer arrays for each
-   *  of the class members. 
-   *   
+   *  of the class members.
+   *
    */
   class HallInfo {
   public:
     /// Represents the union of all lower and upper domain bounds
-    int bounds;   
+    int bounds;
     /**
-     * \brief critical capacity pointer 
+     * \brief critical capacity pointer
      * t represents a predecessor function where \f$ t_i \f$ denotes the
      * predecessor of i in bounds
      */
@@ -529,7 +529,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /**
      * \brief difference between critical capacities
      *
-     * d_i is the difference between the capacities of hall[i].bounds 
+     * d_i is the difference between the capacities of hall[i].bounds
      * and its predecessor in bounds hall[t[i]].bounds
      *
      */
@@ -539,7 +539,7 @@ namespace Gecode { namespace Int { namespace GCC {
      *
      * If hall[i].h < i then the half-open interval
      * [hall[h[i]].bounds,hall[i].bounds) is containd in a Hall
-     * set. 
+     * set.
      * Otherwise holds a pointer to the Hall intervall it belongs to.
      */
     int h;
@@ -547,7 +547,7 @@ namespace Gecode { namespace Int { namespace GCC {
      * \brief Stable Set pointer
      *
      */
-    int s;    
+    int s;
     /**
      * \brief Potentially Stable Set pointer
      *
@@ -559,15 +559,15 @@ namespace Gecode { namespace Int { namespace GCC {
      * \a newBound contains either a narrowed domain bound
      * or is stores the old domain bound of a variable.
      */
-    int newBound; 
+    int newBound;
   };
 
 
-  /** 
+  /**
    * \name Path compression
    *
-   * Each of the nodes on the path from \a start to \a end 
-   * becomes a direct child of \a to. 
+   * Each of the nodes on the path from \a start to \a end
+   * becomes a direct child of \a to.
    *
    */
 
@@ -608,9 +608,9 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
   //@}
-  
+
   /**
-   *  \name Path minimum 
+   *  \name Path minimum
    *
    *  returns the smalles reachable index starting from i
    *
@@ -635,10 +635,10 @@ namespace Gecode { namespace Int { namespace GCC {
   /**
    *  \name Path maximum
    *
-   *  returns the greatest reachable index starting from i  
+   *  returns the greatest reachable index starting from i
    */
   //@{
-  /// \brief Path maximum for hall pointer structure  
+  /// \brief Path maximum for hall pointer structure
   forceinline int
   pathmax_h(const HallInfo hall[], int i) {
     while (hall[i].h > i)
@@ -647,7 +647,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
 
-  /// \brief Path maximum for capacity pointer structure  
+  /// \brief Path maximum for capacity pointer structure
   forceinline int
   pathmax_t(const HallInfo hall[], int i) {
     while (hall[i].t > i) {
@@ -656,7 +656,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return i;
   }
 
-  /// \brief Path maximum for stable set pointer structure  
+  /// \brief Path maximum for stable set pointer structure
   forceinline int
   pathmax_s(const HallInfo hall[], int i) {
     while (hall[i].s > i)
@@ -664,7 +664,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return i;
   }
 
-  /// \brief Path maximum for potentially stable set pointer structure  
+  /// \brief Path maximum for potentially stable set pointer structure
   forceinline int
   pathmax_ps(const HallInfo hall[], int i) {
     while (hall[i].ps > i)
@@ -674,17 +674,17 @@ namespace Gecode { namespace Int { namespace GCC {
   //@}
   //@}
 
-  /** \brief Assert consistency in the cardinality specification 
+  /** \brief Assert consistency in the cardinality specification
    *         for bounds propagation.
    *
    *         This is done by ensuring that only those values are specified with
    *         cardinalities, which are not smaller
-   *         than the smallest value of all variable domains and not greater 
-   *         than the greatest value of all variable domains. 
+   *         than the smallest value of all variable domains and not greater
+   *         than the greatest value of all variable domains.
    */
 
   template <class Card>
-  void 
+  void
   reduce_card(int cmin, int cmax, ViewArray<Card>& k) {
     if (cmin == cmax) {
       int idx = 0;
@@ -709,9 +709,9 @@ namespace Gecode { namespace Int { namespace GCC {
 	} else {
 	  zero[i] = false;
 	}
-      } 
+      }
 
-      
+
       if (zero[ks - 1]) {
 	int m = ks;
 	while(zero[m - 1]) {
@@ -751,7 +751,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
 
     }
-    
+
   }
 
 }}}

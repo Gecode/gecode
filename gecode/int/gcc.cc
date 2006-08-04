@@ -24,16 +24,16 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /**
    * \brief Check whether gcc can be rewritten to distinct
-   * 
-   * If the number of available values equals \f$ |x| \f$, 
+   *
+   * If the number of available values equals \f$ |x| \f$,
    * we can rewrite gcc to distinct if every value occurs exactly once.
-   * If the number of available values is greater than \f$ |x| \f$, 
+   * If the number of available values is greater than \f$ |x| \f$,
    * we can rewrite gcc to distinct if every value occurs at least zero times
-   * and atmost once, otherwise, there is no rewriting possible. 
+   * and atmost once, otherwise, there is no rewriting possible.
    */
 
   template<class Card>
-  forceinline bool 
+  forceinline bool
   check_alldiff(int n, ViewArray<Card>& k){
     int left     = 0;
     int right    = k.size() - 1;
@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
     if (n == k.size()) {
       while (left < right) {
-	alldiff &= (k[left].max()  == 1 && 
+	alldiff &= (k[left].max()  == 1 &&
 		    k[left].min()  == 1 &&
 		    k[right].max() == 1 &&
 		    k[left].max()  == 1);
@@ -58,7 +58,7 @@ namespace Gecode { namespace Int { namespace GCC {
     } else {
       if (n < k.size()) {
 	while (left < right) {
-	  alldiff &= (k[left].max()  == 1 && 
+	  alldiff &= (k[left].max()  == 1 &&
 		      k[left].min()  == 0 &&
 		      k[right].max() == 1 &&
 		      k[left].max()  == 0);
@@ -90,7 +90,7 @@ namespace Gecode { namespace Int { namespace GCC {
       ViewRanges<View> iter(x[i]);
       xrange[i] = iter;
     }
-    
+
     Gecode::Iter::Ranges::NaryUnion<ViewRanges<View> > drl(&xrange[0], x.size());
     int r = 0;
     if (icl == ICL_BND) {
@@ -111,23 +111,23 @@ namespace Gecode { namespace Int { namespace GCC {
     }
     return r;
   }
-  
+
   /**
    * \brief Initialize the cardinalities for the values in \a k.
    *
    */
-  
+
   template <class Card, class View>
   forceinline void
   initcard(Space* home, ViewArray<View>& x, ViewArray<Card>& k,
-	   int lb, int ub, 
+	   int lb, int ub,
 	   IntConLevel icl) {
     GECODE_AUTOARRAY(ViewRanges<View>, xrange, x.size());
     for (int i = x.size(); i--; ){
       ViewRanges<View> iter(x[i]);
       xrange[i] = iter;
     }
-    
+
     Iter::Ranges::NaryUnion<ViewRanges<View> > drl(&xrange[0], x.size());
     if (icl == ICL_BND) {
       int fstv = drl.min();
@@ -151,9 +151,9 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   /**
-   * \brief Reset already existing cardinalities to zero. 
+   * \brief Reset already existing cardinalities to zero.
    *
-   */  
+   */
 
   template <class Card, class View, bool isView>
   forceinline void
@@ -166,7 +166,7 @@ namespace Gecode { namespace Int { namespace GCC {
       k[idx].counter(0);
       idx++;
     }
-    
+
     bool assigned = true;
     for (int i = x.size(); i--; ) {
       assigned &= x[i].assigned();
@@ -191,7 +191,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
 
-  /** 
+  /**
    * \brief Check whether the cardinalities are consistent
    *
    * -# \f$\forall i\in\{0, \dots, |k| - 1\}: max(k_i) \leq |x|\f$
@@ -234,7 +234,7 @@ namespace Gecode { namespace Int { namespace GCC {
     if (n < smin) {
 //       std::cout << "not enough variables to satisfy min req\n";
       return ES_FAILED;
-    } 
+    }
 
 
 //     for (int i = 0; i < k.size(); i++) {
@@ -257,11 +257,11 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template<class View, class Card, bool isView>
   forceinline void
-  post_template(Space* home, ViewArray<View>& x, ViewArray<Card>& k, 
-		IntConLevel& icl, bool& all){ 
+  post_template(Space* home, ViewArray<View>& x, ViewArray<Card>& k,
+		IntConLevel& icl, bool& all){
 
     int  n        = x_card(x, icl);
-    bool rewrite  = false; 
+    bool rewrite  = false;
     if (!isView) {
      rewrite = check_alldiff(n, k);
     }
@@ -287,7 +287,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
     }
   }
-  
+
 }}
 
   using namespace Int;
@@ -299,9 +299,9 @@ namespace Gecode { namespace Int { namespace GCC {
 	      const IntArgs& ia, const ViewArray<View>& x,
 	      int l, ViewArray<OccurBndsView>& a,
 	      int iasize, int val, int nov,
-	      int min, int max, 
+	      int min, int max,
 	      int unspec_low, int unspec_up) {
-  
+
     int n = x.size();
 
     GECODE_AUTOARRAY(ViewRanges<View>, xrange, n);
@@ -310,15 +310,15 @@ namespace Gecode { namespace Int { namespace GCC {
       xrange[i] = iter;
     }
 
-    Gecode::Iter::Ranges::NaryUnion<ViewRanges<View> >     
+    Gecode::Iter::Ranges::NaryUnion<ViewRanges<View> >
       drl(&xrange[0], x.size());
     Gecode::Iter::Ranges::Cache<
       Gecode::Iter::Ranges::
       NaryUnion<ViewRanges<View> > > crl(drl);
-       
-    int c = 0; 
+
+    int c = 0;
     int r = 0;
-    
+
     GECODE_AUTOARRAY(bool, indom, (max - (min - 1)));
     for (int i = max - (min - 1); i--; ) {
       indom[i] = false;
@@ -348,7 +348,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	    if (ia[r + 1] > ia[r + 2]) {
 	      throw ArgumentSizeMismatch("Int::gcc");
 	    }
-	    
+	
 	    a[c].card(v);
 	    a[c].counter(0);
 	    a[c].min(ia[r + 1]);
@@ -366,7 +366,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	  }
 	} else {
 	  // there are more values in the variable domains
-	  // than specified 
+	  // than specified
 	    a[c].card(v);
 	    a[c].counter(0);
 	    a[c].min(unspec_low);
@@ -382,7 +382,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	    if (ia[r + 1] > ia[r + 2]) {
 	      throw ArgumentSizeMismatch("Int::gcc");
 	    }
-	    
+	
 	    a[c].card(v);
 	    a[c].counter(0);
 	    a[c].min(ia[r + 1]);
@@ -399,7 +399,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	  }
 	} else {
 	  // there are more values in the variable domains
-	  // than specified 
+	  // than specified
 	    a[c].card(v);
 	    a[c].counter(0);
 	    a[c].min(unspec_low);
@@ -408,7 +408,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	}
       }
     }
-    
+
     if (c < l) {
       for ( ; r < iasize; r+=3) {
 	assert(0 <= c && c < l);
@@ -423,7 +423,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   // Interfacing gcc with fixed cardinalities
-  void gcc(Space* home, const IntVarArgs& x, const IntArgs& c, 
+  void gcc(Space* home, const IntVarArgs& x, const IntArgs& c,
 	   int m, int unspec_low, int unspec_up, int min, int max,
 	   IntConLevel icl) {
     if (home->failed()) {
@@ -435,7 +435,7 @@ namespace Gecode { namespace Int { namespace GCC {
       throw ArgumentSame("Int::GCC");
     }
 
-    
+
     ViewArray<IntView> xv(home, x);
 
     int iasize = m;
@@ -462,7 +462,7 @@ namespace Gecode { namespace Int { namespace GCC {
     // if there are zero entries
     if (z > 0) {
 
-      // reduce the occurences 
+      // reduce the occurences
       ViewArray<OccurBndsView> red(home, cv.size() - z);
       IntArgs rem(z);
       z = 0;
@@ -478,7 +478,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	}
 	c++;
       }
-      
+
       IntSet zero(&rem[0], z);
       int n = xv.size();
       for (int i = n; i--; ) {
@@ -486,13 +486,13 @@ namespace Gecode { namespace Int { namespace GCC {
 	GECODE_ME_FAIL(home, xv[i].minus(home, remzero));
       }
       GCC::post_template<IntView,OccurBndsView,false>(home, xv, red, icl, all);
-    } else { 
+    } else {
       GCC::post_template<IntView,OccurBndsView,false>(home, xv, cv, icl, all);
     }
   }
 
-  void gcc(Space* home, const IntVarArgs& x, const IntArgs& c, 
-	   int m, int unspec, int min, int max, 
+  void gcc(Space* home, const IntVarArgs& x, const IntArgs& c,
+	   int m, int unspec, int min, int max,
 	   IntConLevel icl) {
     gcc(home, x, c, m, 0, unspec, min, max, icl);
   }
@@ -507,7 +507,7 @@ namespace Gecode { namespace Int { namespace GCC {
     if (x0.shared()) {
       throw ArgumentSame("Int::GCC");
     }
-   
+
     ViewArray<IntView> xv(home,x);
 
     int values = x_card(xv, icl);
@@ -525,7 +525,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   // Interfacing gcc with cardinality variables
 
-  void gcc(Space* home, const IntVarArgs& x, const IntVarArgs& c, 
+  void gcc(Space* home, const IntVarArgs& x, const IntVarArgs& c,
 	   int min, int max, IntConLevel icl) {
 
     if (home->failed()) {
@@ -551,7 +551,7 @@ namespace Gecode { namespace Int { namespace GCC {
       xrange[i] = iter;
     }
 
-    Gecode::Iter::Ranges::NaryUnion<ViewRanges<IntView> >     
+    Gecode::Iter::Ranges::NaryUnion<ViewRanges<IntView> >
       drl(&xrange[0], xv.size());
     Gecode::Iter::Ranges::Cache<
       Gecode::Iter::Ranges::
@@ -584,18 +584,18 @@ namespace Gecode { namespace Int { namespace GCC {
     GCC::post_template<IntView, CardView, true>(home, xv, cv, icl, all);
   }
 
-  void gcc(Space* home, 
+  void gcc(Space* home,
 	   const IntVarArgs& x, const IntArgs& v, const IntVarArgs& c,
-	   int m, int unspec, bool all, int min, int max, 
+	   int m, int unspec, bool all, int min, int max,
 	   IntConLevel icl) {
     gcc(home, x, v, c, m, 0, unspec, all, min, max, icl);
   }
 
-  void gcc(Space* home, 
+  void gcc(Space* home,
 	   const IntVarArgs& x, const IntArgs& v, const IntVarArgs& c,
 	   int m, int unspec_low, int unspec_up, bool all, int min, int max,
 	   IntConLevel icl) {
-    
+
     if (m != c.size()) {
       throw ArgumentSizeMismatch("Int::gcc");
     }
@@ -618,7 +618,7 @@ namespace Gecode { namespace Int { namespace GCC {
       xrange[i] = iter;
     }
 
-    Gecode::Iter::Ranges::NaryUnion<ViewRanges<IntView> >     
+    Gecode::Iter::Ranges::NaryUnion<ViewRanges<IntView> >
       drl(&xrange[0], xv.size());
     Gecode::Iter::Ranges::Cache<
       Gecode::Iter::Ranges::
@@ -639,9 +639,9 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     // iterating over cardinality variables
-    int ci  = 0;  
+    int ci  = 0;
     // iterating over the new cardvars
-    int cvi = 0;  
+    int cvi = 0;
     IntVarArgs cv(interval);
     for (int i = min; i <= max; i++) {
       // value in var domain
@@ -655,13 +655,13 @@ namespace Gecode { namespace Int { namespace GCC {
 	  } else {
 	    // value in domain but unspecified
 	    IntVar iv(home, unspec_low, unspec_up);
-	    cv[cvi] = iv; 
+	    cv[cvi] = iv;
 	    cvi++;
 	  }
 	} else {
 	  // in domain but after the specification
 	  IntVar iv(home, unspec_low, unspec_up);
-	  cv[cvi] = iv; 
+	  cv[cvi] = iv;
 	  cvi++;
 	}
       } else {
@@ -675,13 +675,13 @@ namespace Gecode { namespace Int { namespace GCC {
 	  } else {
 	    // unspecified and not in x
 	    IntVar iv(home, unspec_low, unspec_up);
-	    cv[cvi] = iv; 
+	    cv[cvi] = iv;
 	    cvi++;
 	  }
 	} else {
 	  // more values than specified
 	  IntVar iv(home, unspec_low, unspec_up);
-	  cv[cvi] = iv; 
+	  cv[cvi] = iv;
 	  cvi++;
 	}
       }

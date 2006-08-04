@@ -6,7 +6,7 @@
  *     Patrick Pekczynski, 2004
  *
  *  Last modified:
- *     $Date$ 
+ *     $Date$
        $Author$
  *     $Revision$
  *
@@ -47,7 +47,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   inline
-  Dom<View, Card, isView>::Dom(Space* home, ViewArray<View>& x0, 
+  Dom<View, Card, isView>::Dom(Space* home, ViewArray<View>& x0,
 			       ViewArray<Card>& k0, bool cf, bool all)
     : Propagator(home, true), x(x0),  y(home, x0),
       k(k0), vvg(NULL), card_fixed(cf), card_all(all) {
@@ -59,15 +59,15 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   forceinline
-  Dom<View, Card, isView>::Dom(Space* home, bool share, 
+  Dom<View, Card, isView>::Dom(Space* home, bool share,
 			       Dom<View, Card, isView>& p)
-    : Propagator(home, share, p), vvg(NULL), 
+    : Propagator(home, share, p), vvg(NULL),
       card_fixed(p.card_fixed), card_all(p.card_all) {
     x.update(home, share, p.x);
     y.update(home, share, p.y);
     k.update(home, share, p.k);
   }
-  
+
   template <class View, class Card, bool isView>
   size_t
   Dom<View, Card, isView>::dispose(Space* home) {
@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace GCC {
       x.cancel(home,this, PC_INT_DOM);
       k.cancel(home,this, PC_INT_DOM);
     }
-    delete vvg; 
+    delete vvg;
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -83,20 +83,20 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   void
   Dom<View, Card, isView>::flush(void) {
-    delete vvg; 
+    delete vvg;
     vvg = NULL;
   }
-  
+
   template <class View, class Card, bool isView>
-  Actor* 
+  Actor*
   Dom<View, Card, isView>::copy(Space* home, bool share) {
     return new (home) Dom<View, Card, isView>(home, share, *this);
   }
 
   template <class View, class Card, bool isView>
-  PropCost    
+  PropCost
   Dom<View, Card, isView>::cost(void) const {
-    
+
     unsigned int n = x.size();
     unsigned int d = x[n - 1].size();
     for (int i = n; i--; ) {
@@ -104,7 +104,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	d = x[i].size();
       }
     }
-    
+
     PropCost pc;
     if (d < 6) {
       pc = PC_LINEAR_LO;
@@ -124,9 +124,9 @@ namespace Gecode { namespace Int { namespace GCC {
 
   }
 
-  /// \brief Perform domain propagation.  
+  /// \brief Perform domain propagation.
   template <class View, class Card, bool isView>
-  ExecStatus 
+  ExecStatus
   Dom<View, Card, isView>::propagate(Space* home) {
 
     ExecStatus es = ES_NOFIX;
@@ -138,7 +138,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
     bool all_assigned = true;
     // total number of assigned views
-    int noa = 0; 
+    int noa = 0;
     for (int i = y.size(); i--; ) {
       bool b = y[i].assigned();
       all_assigned &= b;
@@ -156,7 +156,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	}
       }
     }
-    
+
     if (all_assigned) {
       for (int i = k.size(); i--; ) {
 	int ci = count[i];
@@ -182,10 +182,10 @@ namespace Gecode { namespace Int { namespace GCC {
 
     // before propagation performs inferences on cardinality variables:
     if (isView) {
-      if (noa > 0) {      
+      if (noa > 0) {
 	int n  = y.size();
 	int ks = k.size();
-      
+
 	for (int i = ks; i--; ) {
 	  if (!k[i].assigned()) {
 	    int ub = n - (noa - count[i]);
@@ -204,7 +204,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	  }
 	}
       }
-      
+
       es = prop_card<View, Card, true>(home, y, k, card_mod);
       if (es == ES_FAILED) {
 	return es;
@@ -251,7 +251,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     assert(x.size() > 0);
-    
+
     bool mod = false;
     bool min_req_mod = false;
     int noe     = 0;
@@ -263,7 +263,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     assert(noe > 0);
-      
+
     for (int i = k.size(); i--; ) {
       int ci = k[i].counter();
       if (ci > k[i].max() ) {
@@ -285,7 +285,7 @@ namespace Gecode { namespace Int { namespace GCC {
       return ES_FAILED;
       }
     }
-    
+
     if (vvg == NULL) {
       assert(noe > 0);
       assert(smin >= 0);
@@ -307,12 +307,12 @@ namespace Gecode { namespace Int { namespace GCC {
 	  return ES_FAILED;
 	}
       }
-    } else {    
+    } else {
       if (!vvg->sync()) {
 	return ES_FAILED;
       }
     }
-    
+
     bool filter_ubc = false;
     bool filter_lbc = false;
 
@@ -355,7 +355,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	assert(x.size() >= 0);
 	if (x.size() == 0) {
 	  for (int j = k.size(); j--; ) {
-	    if (k[j].min() > k[j].counter() || 
+	    if (k[j].min() > k[j].counter() ||
 		k[j].max() < k[j].counter()) {
 	      return ES_FAILED;
 	    }
@@ -376,7 +376,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	      card_mod |= k[idx].modified();
 
 	      for (int j = k.size(); j--; ) {
-		if (k[j].min() > k[j].counter() || 
+		if (k[j].min() > k[j].counter() ||
 		    k[j].max() < k[j].counter()) {
 		  return ES_FAILED;
 		}
@@ -452,7 +452,7 @@ namespace Gecode { namespace Int { namespace GCC {
       smin = 0;
       bool card_ass = true;
       for (int i = k.size(); i--; ) {
-	int lb = ysmax + k[i].max(); 
+	int lb = ysmax + k[i].max();
 	int ub = ysmin + k[i].min();
 	ModEvent me = k[i].gq(home, lb);
 	if (me_failed(me)) {
@@ -477,14 +477,14 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     mod = (filter_ubc || filter_lbc || min_req_mod || card_mod);
-    
+
     return mod ? ES_NOFIX : ES_FIX;
 
   }
 
   template <class View, class Card, bool isView>
-  inline ExecStatus 
-  Dom<View, Card, isView>::post(Space* home, ViewArray<View>& x0, 
+  inline ExecStatus
+  Dom<View, Card, isView>::post(Space* home, ViewArray<View>& x0,
 				ViewArray<Card>& k0, bool all){
 
     bool cardfix = true;

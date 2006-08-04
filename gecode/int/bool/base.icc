@@ -35,8 +35,8 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB>
   forceinline
-  BoolBinary<BVA,BVB>::BoolBinary(Space* home, bool share, 
-				  BoolBinary<BVA,BVB>& p) 
+  BoolBinary<BVA,BVB>::BoolBinary(Space* home, bool share,
+				  BoolBinary<BVA,BVB>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BVA, class BVB>
   forceinline
   BoolBinary<BVA,BVB>::BoolBinary(Space* home, bool share, Propagator& p,
-				  BVA b0, BVB b1) 
+				  BVA b0, BVB b1)
     : Propagator(home,share,p) {
     x0.update(home,share,b0);
     x1.update(home,share,b1);
@@ -83,8 +83,8 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BVA, class BVB, class BVC>
   forceinline
-  BoolTernary<BVA,BVB,BVC>::BoolTernary(Space* home, bool share, 
-					BoolTernary<BVA,BVB,BVC>& p) 
+  BoolTernary<BVA,BVB,BVC>::BoolTernary(Space* home, bool share,
+					BoolTernary<BVA,BVB,BVC>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BVA, class BVB, class BVC>
   forceinline
   BoolTernary<BVA,BVB,BVC>::BoolTernary(Space* home, bool share, Propagator& p,
-					BVA b0, BVB b1, BVC b2) 
+					BVA b0, BVB b1, BVC b2)
     : Propagator(home,share,p) {
     x0.update(home,share,b0);
     x1.update(home,share,b1);

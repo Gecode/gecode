@@ -243,7 +243,7 @@ namespace Gecode {
 		    sg->group = s2g[n_states]; // Go to dead state
 		}
 		// Sort group by groups from transitions
-		StateGroupByGroup::sort(g2s[g].fst, 
+		StateGroupByGroup::sort(g2s[g].fst,
 					static_cast<int>(g2s[g].lst-g2s[g].fst));
 		// Group must be split?
 		if (g2s[g].fst->group != (g2s[g].lst-1)->group) {

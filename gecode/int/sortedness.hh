@@ -36,16 +36,16 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
   /**
    * \brief Bounds consistent sortedness propagator
-   * \par [Reference] 
+   * \par [Reference]
    *  The algorithm is taken from: \n
-   *  Sven Thiel: Efficient Algorithms for Constraint Propagation 
+   *  Sven Thiel: Efficient Algorithms for Constraint Propagation
    *  and for Processing Tree Descriptions (pages 39 to 59)
    *  [http://www.mpi-sb.mpg.de/~sthiel/thesis.pdf]
    *
-   * Requires \code #include "gecode/int/sortedness.hh" \endcode 
+   * Requires \code #include "gecode/int/sortedness.hh" \endcode
    * and \code #include "gecode/int/distinct.hh" \endcode.
-   * The latter is required for the extended version of sortedness 
-   * including permutation views. 
+   * The latter is required for the extended version of sortedness
+   * including permutation views.
    * \ingroup FuncIntProp
    * \note The sortedness propagator does not support sharing!
    */
@@ -53,17 +53,17 @@ namespace Gecode { namespace Int { namespace Sortedness {
   template<class View, class Tuple, bool Perm>
   class Sortedness : public Propagator {
   protected:
-    
+
     /**
      *  \brief Views to be sorted
      *
-     *   If Tuple is instantiated to ViewTuple<View,2>, 
+     *   If Tuple is instantiated to ViewTuple<View,2>,
      *   \f$xz_i\f$ is a pair \f$(x_i, z_i)\f$, where
      *   \f$x_i\f$ denotes an unsorted view
-     *   and \f$z_i\f$ is the explicit 
+     *   and \f$z_i\f$ is the explicit
      *   permutation view mapping \f$x_i\f$ to its unsorted counterpart
-     *   \f$y_{z_i}\f$. 
-     *   If Tuple is instantiated to ViewTuple<View,1>, 
+     *   \f$y_{z_i}\f$.
+     *   If Tuple is instantiated to ViewTuple<View,1>,
      *   \f$xz_i\f$ is the unsorted view \f$x_i\f$ lifted to a ViewTuple.
      */
     ViewArray<Tuple> xz;
@@ -76,7 +76,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
     int reachable;
     /// Constructor for posting
     Sortedness(Space*, ViewArray<Tuple>&, ViewArray<View>&);
-    /// Constructor for cloning 
+    /// Constructor for cloning
     Sortedness(Space* home, bool share, Sortedness<View, Tuple, Perm>& p);
 
   public:
@@ -92,7 +92,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
     static  ExecStatus post(Space*, ViewArray<Tuple>&, ViewArray<View>&);
   };
 
-  
+
 }}}
 
 #include "gecode/int/sortedness/sortsup.icc"

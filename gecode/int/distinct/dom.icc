@@ -218,7 +218,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline
   DomCtrl<View>::ViewValGraph::ViewValGraph(int n_view0, View* x,
-					    int n_val0, 
+					    int n_val0,
 					    unsigned int n_edges, int min)
     :  n_view(n_view0), n_val(n_val0),
        count(0), cnt0(0), cnt1(0), n_s(n_view+n_val)
@@ -265,7 +265,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline
-  DomCtrl<View>::ViewValGraph::ViewValGraph(int n_view0, View* x, 
+  DomCtrl<View>::ViewValGraph::ViewValGraph(int n_view0, View* x,
 					    const int* val_inf,
 					    int n_val0, unsigned int n_edges)
     :  n_view(n_view0), n_val(n_val0),
@@ -322,7 +322,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       min = std::min(min,x[i].min());
       max = std::max(max,x[i].max());
     }
-    
+
     unsigned int width = max-min+1;
 
     // Definitly not enough values
@@ -531,7 +531,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 	  assert(r.min() == e->val(x)->val());
 	  // This edges must be kept
 	  for (unsigned int i=r.width(); i--; ) {
-	    e->free(); 
+	    e->free();
 	    p = e->next_edge_ref();
 	    e = e->next_edge();
 	  }
@@ -631,7 +631,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   DomCtrl<View>::dispose(void) {
     delete vvg;
   }
-  
+
 
 
   /*
@@ -705,7 +705,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       es = prop_val<View,true>(home,x);
       if ((es == ES_FAILED) || (es == ES_SUBSUMED))
 	return es;
-      return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));      
+      return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
     }
 
     if (x.size() == 2) {

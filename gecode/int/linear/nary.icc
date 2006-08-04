@@ -28,18 +28,18 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
   template <class P, class N>
-  forceinline bool 
+  forceinline bool
   isunit(ViewArray<P>& x, ViewArray<N>& y) { return false; }
   template <>
-  forceinline bool 
+  forceinline bool
   isunit(ViewArray<IntView>& x, ViewArray<IntView>& y) { return true; }
   template <>
-  forceinline bool 
+  forceinline bool
   isunit(ViewArray<IntView>& x, ViewArray<NoView>& y) { return true; }
   template <>
-  forceinline bool 
+  forceinline bool
   isunit(ViewArray<NoView>& x, ViewArray<IntView>& y) { return true; }
-  
+
   /*
    * Linear propagators
    *
@@ -114,7 +114,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class View>
   void
-  bounds_p(const Propagator* p, ViewArray<View>& x, 
+  bounds_p(const Propagator* p, ViewArray<View>& x,
 	   Val& c, Val& sl, Val& su) {
     int n = x.size();
     if (IntView::pme(p) == ME_INT_VAL) {
@@ -136,7 +136,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class View>
   void
-  bounds_n(const Propagator* p, ViewArray<View>& y, 
+  bounds_n(const Propagator* p, ViewArray<View>& y,
 	   Val& c, Val& sl, Val& su) {
     int n = y.size();
     if (IntView::pme(p) == ME_INT_VAL) {
@@ -277,7 +277,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class P, class N>
   forceinline Actor*
-  eqtobin(Space* home, bool share, Propagator& p, 
+  eqtobin(Space* home, bool share, Propagator& p,
 	  ViewArray<P>& x, ViewArray<N>& y, Val c) {
     return NULL;
   }
@@ -317,7 +317,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class P, class N>
   forceinline Actor*
-  eqtoter(Space* home, bool share, Propagator& p, 
+  eqtoter(Space* home, bool share, Propagator& p,
 	  ViewArray<P>& x, ViewArray<N>& y, Val c) {
     return NULL;
   }
@@ -381,13 +381,13 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class P, class N, class Ctrl>
   forceinline
-  ReEq<Val,P,N,Ctrl>::ReEq(Space* home, 
+  ReEq<Val,P,N,Ctrl>::ReEq(Space* home,
 			   ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b)
     : ReLin<Val,P,N,PC_INT_BND,Ctrl>(home,x,y,c,b) {}
 
   template <class Val, class P, class N, class Ctrl>
   ExecStatus
-  ReEq<Val,P,N,Ctrl>::post(Space* home, 
+  ReEq<Val,P,N,Ctrl>::post(Space* home,
 			   ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b) {
     ViewArray<NoView> nva;
     if (y.size() == 0) {
@@ -474,7 +474,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class P, class N>
   forceinline Actor*
-  nqtobin(Space* home, bool share, Propagator& p, 
+  nqtobin(Space* home, bool share, Propagator& p,
 	  ViewArray<P>& x, ViewArray<N>& y, Val c) {
     return NULL;
   }
@@ -507,14 +507,14 @@ namespace Gecode { namespace Int { namespace Linear {
     return new (home) NqBin<Val,IntView,IntView>
       (home,share,p,y[0],y[1],-c);
   }
-  
+
   /**
    * \brief Rewriting of disequality to ternary propagators
    *
    */
   template <class Val, class P, class N>
   forceinline Actor*
-  nqtoter(Space* home, bool share, Propagator& p, 
+  nqtoter(Space* home, bool share, Propagator& p,
 	  ViewArray<P>& x, ViewArray<N>& y, Val c) {
     return NULL;
   }
@@ -624,7 +624,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class P, class N>
   forceinline Actor*
-  lqtobin(Space* home, bool share, Propagator& p, 
+  lqtobin(Space* home, bool share, Propagator& p,
 	  ViewArray<P>& x, ViewArray<N>& y, Val c) {
     return NULL;
   }
@@ -657,14 +657,14 @@ namespace Gecode { namespace Int { namespace Linear {
     return new (home) LqBin<Val,MinusView,MinusView>
       (home,share,p,y[0],y[1],c);
   }
-  
+
   /**
    * \brief Rewriting of inequality to ternary propagators
    *
    */
   template <class Val, class P, class N>
   forceinline Actor*
-  lqtoter(Space* home, bool share, Propagator& p, 
+  lqtoter(Space* home, bool share, Propagator& p,
 	  ViewArray<P>& x, ViewArray<N>& y, Val c) {
     return NULL;
   }

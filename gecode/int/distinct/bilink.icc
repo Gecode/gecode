@@ -30,7 +30,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   BiLink::prev(void) const {
     return _prev;
   }
-  forceinline BiLink* 
+  forceinline BiLink*
   BiLink::next(void) const {
     return _next;
   }

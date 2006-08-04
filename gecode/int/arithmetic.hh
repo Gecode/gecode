@@ -59,13 +59,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /**
      * \brief Cost function
      *
-     * If a view has been assigned, the cost is PC_UNARY_LO. 
+     * If a view has been assigned, the cost is PC_UNARY_LO.
      * Otherwise it is PC_BINARY_LO.
      */
     virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home);
-    /// Post bounds-consistent propagator \f$ |x_0|=x_1\f$ 
+    /// Post bounds-consistent propagator \f$ |x_0|=x_1\f$
     static  ExecStatus  post(Space* home, View x0, View x1);
   };
 
@@ -101,14 +101,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     /**
      * \brief Cost function
      *
-     * If a view has been assigned, the cost is PC_UNARY_LO. 
+     * If a view has been assigned, the cost is PC_UNARY_LO.
      * If in stage for bounds propagation, the cost is
      * PC_BINARY_LO. Otherwise it is PC_BINARY_HI.
      */
     virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home);
-    /// Post domain-consistent propagator \f$ |x_0|=x_1\f$ 
+    /// Post domain-consistent propagator \f$ |x_0|=x_1\f$
     static  ExecStatus  post(Space* home, View x0, View x1);
   };
 
@@ -136,7 +136,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator \f$ \max\{x_0,x_1\}=x_2\f$ 
+    /// Post propagator \f$ \max\{x_0,x_1\}=x_2\f$
     static  ExecStatus post(Space* home, View x0, View x1, View x2);
   };
 
@@ -161,7 +161,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator \f$ \max x=y\f$ 
+    /// Post propagator \f$ \max x=y\f$
     static  ExecStatus post(Space* home, ViewArray<View>& x, View y);
   };
 
@@ -180,7 +180,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   public:
     /// Constructor for posting
     SquarePlus(Space* home, VA x0, VB x1);
-    /// Post propagator \f$x_0\cdot x_0=x_1\f$ 
+    /// Post propagator \f$x_0\cdot x_0=x_1\f$
     static ExecStatus post(Space* home, VA x0, VB x1);
     /// Constructor for cloning \a p
     SquarePlus(Space* home, bool share, SquarePlus<VA,VB>& p);
@@ -217,7 +217,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus propagate(Space* home);
     /// Cost function (defined as PC_BINARY_HI)
     virtual PropCost cost(void) const;
-    /// Post propagator \f$x_0\cdot x_0=x_1\f$ 
+    /// Post propagator \f$x_0\cdot x_0=x_1\f$
     static  ExecStatus post(Space* home, View x0, View x1);
   };
 
@@ -233,7 +233,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   public:
     /// Constructor for posting
     MultPlus(Space* home, VA x0, VB x1, VC x2);
-    /// Post propagator \f$x_0\cdot x_1=x_2\f$ 
+    /// Post propagator \f$x_0\cdot x_1=x_2\f$
     static ExecStatus post(Space* home, VA x0, VB x1, VC x2);
     /// Constructor for cloning \a p
     MultPlus(Space* home, bool share, MultPlus<VA,VB,VC>& p);
@@ -270,7 +270,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   public:
     /// Constructor for posting
     Mult(Space* home, View x0, View x1, View x2);
-    /// Post propagator \f$x_0\cdot x_1=x_2\f$ 
+    /// Post propagator \f$x_0\cdot x_1=x_2\f$
     static  ExecStatus post(Space* home, View x0, View x1, View x2);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);

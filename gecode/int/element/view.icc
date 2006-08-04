@@ -269,13 +269,13 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class ViewA, class ViewB>
   forceinline
-  ViewBnd<ViewA,ViewB>::ViewBnd(Space* home, 
+  ViewBnd<ViewA,ViewB>::ViewBnd(Space* home,
 				IdxView<ViewB>* iv, int n, ViewA x0, ViewB x1)
     : View<ViewA,ViewB,PC_INT_BND>(home,iv,n,x0,x1) {}
 
   template <class ViewA, class ViewB>
   ExecStatus
-  ViewBnd<ViewA,ViewB>::post(Space* home, 
+  ViewBnd<ViewA,ViewB>::post(Space* home,
 			     IdxView<ViewB>* iv, int n, ViewA x0, ViewB x1) {
     GECODE_ME_CHECK(x0.gq(home,0));
     GECODE_ME_CHECK(x0.le(home,n));
@@ -323,14 +323,14 @@ namespace Gecode { namespace Int { namespace Element {
       max = std::max(iv[i].view.max(),max);
     }
     ExecStatus es = shared(x0,x1) ? ES_NOFIX : ES_FIX;
-    { 
+    {
      ModEvent me = x1.lq(home,max);
      if (me_failed(me))
        return ES_FAILED;
      if (me_modified(me) && (x1.max() != max))
        es = ES_NOFIX;
     }
-    { 
+    {
      ModEvent me = x1.gq(home,min);
      if (me_failed(me))
        return ES_FAILED;
@@ -351,13 +351,13 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class ViewA, class ViewB>
   forceinline
-  ViewDom<ViewA,ViewB>::ViewDom(Space* home, 
+  ViewDom<ViewA,ViewB>::ViewDom(Space* home,
 				IdxView<ViewB>* iv, int n, ViewA x0, ViewB x1)
     : View<ViewA,ViewB,PC_INT_DOM>(home,iv,n,x0,x1) {}
 
   template <class ViewA, class ViewB>
   ExecStatus
-  ViewDom<ViewA,ViewB>::post(Space* home, 
+  ViewDom<ViewA,ViewB>::post(Space* home,
 			     IdxView<ViewB>* iv, int n, ViewA x0, ViewB x1){
     GECODE_ME_CHECK(x0.gq(home,0));
     GECODE_ME_CHECK(x0.le(home,n));
@@ -415,8 +415,8 @@ namespace Gecode { namespace Int { namespace Element {
       }
       GECODE_ME_CHECK(x1.lq(home,max));
       GECODE_ME_CHECK(x1.gq(home,min));
-      return (x1.assigned() && (min == max)) ? 
-	ES_SUBSUMED : 
+      return (x1.assigned() && (min == max)) ?
+	ES_SUBSUMED :
 	this->ES_NOFIX_PARTIAL(ViewA::pme(ME_INT_DOM));
     }
     RelTestDom<ViewB> rt;

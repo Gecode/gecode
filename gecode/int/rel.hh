@@ -54,7 +54,7 @@ namespace Gecode { namespace Int { namespace Rel {
    * \ingroup FuncIntProp
    */
   template <class View0,class View1>
-  class EqDom : 
+  class EqDom :
     public InhomBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM> {
   protected:
     using InhomBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM>::x0;
@@ -70,7 +70,7 @@ namespace Gecode { namespace Int { namespace Rel {
     /**
      * \brief Cost function
      *
-     * If a view has been assigned, the cost is PC_UNARY_LO. 
+     * If a view has been assigned, the cost is PC_UNARY_LO.
      * If in stage for bounds propagation, the cost is
      * PC_BINARY_LO. Otherwise it is PC_BINARY_HI.
      */
@@ -133,7 +133,7 @@ namespace Gecode { namespace Int { namespace Rel {
     /**
      * \brief Cost function
      *
-     * If a view has been assigned, the cost is PC_UNARY_LO. 
+     * If a view has been assigned, the cost is PC_UNARY_LO.
      * If in stage for bounds propagation, the cost is dynamic
      * PC_LINEAR_LO. Otherwise it is dynamic PC_LINEAR_HI.
      */
@@ -165,7 +165,7 @@ namespace Gecode { namespace Int { namespace Rel {
     /**
      * \brief Cost function
      *
-     * If a view has been assigned, the cost is PC_UNARY_LO. 
+     * If a view has been assigned, the cost is PC_UNARY_LO.
      * Otherwise it is dynamic PC_LINEAR_HI.
      */
     virtual PropCost cost(void) const;
@@ -480,7 +480,7 @@ namespace Gecode { namespace Int { namespace Rel {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for lexical order on \a xy
-    static  ExecStatus post(Space* home, 
+    static  ExecStatus post(Space* home,
 			    ViewArray<ViewTuple<View,2> >& xy, bool strict);
   };
 

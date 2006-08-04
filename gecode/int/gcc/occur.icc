@@ -23,7 +23,7 @@
 namespace Gecode { namespace Int { namespace GCC {
   /**
    * \brief Tuple conataining the lower and upper cardinality bounds
-   * 
+   *
    */
   class OccurBndsView {
   private:
@@ -44,9 +44,9 @@ namespace Gecode { namespace Int { namespace GCC {
     void counter(int c);
 
     void init(Space* home, int min, int max, int c);
-    ModEvent lq(Space* home, int n); 
-    ModEvent gq(Space* home, int n); 
-    ModEvent eq(Space* home, int n); 
+    ModEvent lq(Space* home, int n);
+    ModEvent gq(Space* home, int n);
+    ModEvent eq(Space* home, int n);
     bool assigned(void) const;
     bool modified(void) const;
     bool range(void) const;
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
 
-  forceinline ModEvent 
+  forceinline ModEvent
   OccurBndsView::lq(Space*, int i){
     // the maximum can be made consistent
     if (_min > i) {
@@ -144,7 +144,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
   }
 
-  forceinline ModEvent 
+  forceinline ModEvent
   OccurBndsView::gq(Space*, int i){
     // this bound is fix
     if (_max < i) {
@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace GCC {
     return ME_GEN_NONE;
   }
 
-  forceinline ModEvent 
+  forceinline ModEvent
   OccurBndsView::eq(Space*, int i){
     if (_min > i || _max < i) {
       return ME_GEN_FAILED;
@@ -184,10 +184,10 @@ namespace Gecode { namespace Int { namespace GCC {
    *  Complexity is \f$O(log(|k|))\f$
    */
   template <class T>
-  forceinline int 
+  forceinline int
   lookupValue(T& a, int v){
     int idx = -1;
-    
+
     int l  = 0;
     int r  = a.size() - 1;
 
@@ -247,7 +247,7 @@ namespace Gecode { namespace Int { namespace GCC {
     void init(const IntView& x, int c);
     void init(Space* home, int mi, int ma , int c);
 
-    /// Return value 
+    /// Return value
     int card(void) const;
     void card(int ca);
 
@@ -257,7 +257,7 @@ namespace Gecode { namespace Int { namespace GCC {
     void counter(int);
     /// Return the number of times value \a c occurs
     int counter(void);
-    
+
     /// \name Value access
     //@{
     void operator=(const IntView& x);
@@ -298,27 +298,27 @@ namespace Gecode { namespace Int { namespace GCC {
     /// \name Domain update by value
     ///@{
     /// Restrict domain values to be less or equal than \a n
-    ModEvent lq(Space* home, int n); 
+    ModEvent lq(Space* home, int n);
     /// Restrict domain values to be less or equal than \a n
     ModEvent lq(Space* home, double n);
     /// Restrict domain values to be less than \a n
-    ModEvent le(Space* home, int n); 
+    ModEvent le(Space* home, int n);
     /// Restrict domain values to be less than \a n
     ModEvent le(Space* home, double n);
     /// Restrict domain values to be greater or equal than \a n
-    ModEvent gq(Space* home, int n); 
+    ModEvent gq(Space* home, int n);
     /// Restrict domain values to be greater or equal than \a n
     ModEvent gq(Space* home, double n);
     /// Restrict domain values to be greater than \a n
-    ModEvent gr(Space* home, int n); 
+    ModEvent gr(Space* home, int n);
     /// Restrict domain values to be greater than \a n
     ModEvent gr(Space* home, double n);
     /// Restrict domain values to be different from \a n
-    ModEvent nq(Space* home, int n); 
+    ModEvent nq(Space* home, int n);
     /// Restrict domain values to be different from \a n
     ModEvent nq(Space* home, double n);
     /// Restrict domain values to be equal to \a n
-    ModEvent eq(Space* home, int n); 
+    ModEvent eq(Space* home, int n);
     /// Restrict domain values to be equal to \a n
     ModEvent eq(Space* home, double n);
     ///@}
@@ -380,8 +380,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
   forceinline void
   CardView::init(const IntView& x, int d) {
-    view  = x; 
-    c     = d; 
+    view  = x;
+    c     = d;
     count = 0;
   }
 
@@ -390,12 +390,12 @@ namespace Gecode { namespace Int { namespace GCC {
   CardView::init(Space* home, int mi, int ma, int d) {
     IntVar ivar(home, mi, ma);
     IntView iview(ivar);
-    view  = iview; 
+    view  = iview;
     c     = d;
     count = 0;
   }
 
-  forceinline void 
+  forceinline void
   CardView::card(int ca) {
     c = ca;
   }
@@ -430,60 +430,60 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
 
-  forceinline void 
-  CardView::operator=(const IntView& x) { 
-    view  = x; 
-    c     = 0; 
+  forceinline void
+  CardView::operator=(const IntView& x) {
+    view  = x;
+    c     = 0;
     count = 0;
   }
 
-  forceinline void 
-  CardView::operator=(const CardView& x) { 
-    view  = x.view; 
-    c     = x.c; 
+  forceinline void
+  CardView::operator=(const CardView& x) {
+    view  = x.view;
+    c     = x.c;
     count = x.count;
   }
 
 
   forceinline int
-  CardView::min(void) const { 
-    return view.min(); 
+  CardView::min(void) const {
+    return view.min();
   }
   forceinline int
-  CardView::max(void) const { 
-    return view.max(); 
+  CardView::max(void) const {
+    return view.max();
   }
   forceinline int
-  CardView::med(void) const { 
-    return view.med(); 
+  CardView::med(void) const {
+    return view.med();
   }
 
   forceinline int
-  CardView::val(void) const { 
-    return view.val(); 
+  CardView::val(void) const {
+    return view.val();
   }
 
   forceinline IntView
-  CardView::intview(void){ 
+  CardView::intview(void){
     return view;
   }
 
 
   forceinline unsigned int
-  CardView::width(void) const { 
-    return view.width(); 
+  CardView::width(void) const {
+    return view.width();
   }
   forceinline unsigned int
-  CardView::size(void) const { 
-    return view.size(); 
+  CardView::size(void) const {
+    return view.size();
   }
   forceinline unsigned int
-  CardView::regret_min(void) const { 
-    return view.regret_min(); 
+  CardView::regret_min(void) const {
+    return view.regret_min();
   }
   forceinline unsigned int
-  CardView::regret_max(void) const { 
-    return view.regret_max(); 
+  CardView::regret_max(void) const {
+    return view.regret_max();
   }
 
   /*
@@ -491,21 +491,21 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   forceinline bool
-  CardView::range(void) const { 
-    return view.range(); 
+  CardView::range(void) const {
+    return view.range();
   }
   forceinline bool
-  CardView::assigned(void) const { 
-    return view.assigned(); 
+  CardView::assigned(void) const {
+    return view.assigned();
   }
 
   forceinline bool
-  CardView::in(int n) const { 
-    return view.in(n); 
+  CardView::in(int n) const {
+    return view.in(n);
   }
   forceinline bool
-  CardView::in(double n) const { 
-    return view.in(n); 
+  CardView::in(double n) const {
+    return view.in(n);
   }
 
 
@@ -514,52 +514,52 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   forceinline ModEvent
-  CardView::lq(Space* home, int n) { 
-    return view.lq(home,n); 
+  CardView::lq(Space* home, int n) {
+    return view.lq(home,n);
   }
   forceinline ModEvent
-  CardView::lq(Space* home, double n) { 
-    return view.lq(home,n); 
+  CardView::lq(Space* home, double n) {
+    return view.lq(home,n);
   }
   forceinline ModEvent
-  CardView::le(Space* home, int n) { 
-    return view.le(home,n); 
+  CardView::le(Space* home, int n) {
+    return view.le(home,n);
   }
   forceinline ModEvent
-  CardView::le(Space* home, double n) { 
-    return view.le(home,n); 
+  CardView::le(Space* home, double n) {
+    return view.le(home,n);
   }
   forceinline ModEvent
-  CardView::gq(Space* home, int n) { 
-    return view.gq(home,n); 
+  CardView::gq(Space* home, int n) {
+    return view.gq(home,n);
   }
   forceinline ModEvent
-  CardView::gq(Space* home, double n) { 
-    return view.gq(home,n); 
+  CardView::gq(Space* home, double n) {
+    return view.gq(home,n);
   }
   forceinline ModEvent
-  CardView::gr(Space* home, int n) { 
-    return view.gr(home,n); 
+  CardView::gr(Space* home, int n) {
+    return view.gr(home,n);
   }
   forceinline ModEvent
-  CardView::gr(Space* home, double n) { 
-    return view.gr(home,n); 
+  CardView::gr(Space* home, double n) {
+    return view.gr(home,n);
   }
   forceinline ModEvent
-  CardView::nq(Space* home, int n) { 
-    return view.nq(home,n); 
+  CardView::nq(Space* home, int n) {
+    return view.nq(home,n);
   }
   forceinline ModEvent
-  CardView::nq(Space* home, double n) { 
-    return view.nq(home,n); 
+  CardView::nq(Space* home, double n) {
+    return view.nq(home,n);
   }
   forceinline ModEvent
-  CardView::eq(Space* home, int n) { 
-    return view.eq(home,n); 
+  CardView::eq(Space* home, int n) {
+    return view.eq(home,n);
   }
   forceinline ModEvent
-  CardView::eq(Space* home, double n) { 
-    return view.eq(home,n); 
+  CardView::eq(Space* home, double n) {
+    return view.eq(home,n);
   }
 
 
@@ -614,7 +614,7 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   forceinline void
   CardView::update(Space* home, bool share, CardView& x) {
-    c     = x.c; 
+    c     = x.c;
     count = x.count;
     view.update(home,share,x.view);
   }
@@ -658,7 +658,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	while(iter()){
 	  os << iter.val() <<",";
 	  ++iter;
-	}     
+	}
 	os << "}";
       }
     }
@@ -668,11 +668,11 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   forceinline
-  ViewRanges<GCC::CardView>::ViewRanges(void) : 
+  ViewRanges<GCC::CardView>::ViewRanges(void) :
     Gecode::Int::ViewRanges<IntView>()  {}
 
   forceinline
-  ViewRanges<GCC::CardView>::ViewRanges (const GCC::CardView& x) 
+  ViewRanges<GCC::CardView>::ViewRanges (const GCC::CardView& x)
     : Gecode::Int::ViewRanges<IntView>(x.base())  {}
 
   forceinline void

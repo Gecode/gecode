@@ -51,13 +51,13 @@ namespace Gecode { namespace Int { namespace Regular {
     class LayeredGraph;
     /// Propagation is performed on a layered graph (used as cache)
     LayeredGraph* lg;
-        
+
     /// Constructor for cloning \a p (use \a shared for \a dfa)
     Dom(Space* home, bool shared, Dom<View>& p);
     /// Constructor for posting
     Dom(Space* home, ViewArray<View>& x, DFA& d);
   public:
-    /// Copy propagator during cloning    
+    /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Cost function (defined as dynamic PC_LINEAR_HI)
     virtual PropCost cost(void) const;

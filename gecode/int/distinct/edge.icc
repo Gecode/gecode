@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  forceinline void* 
+  forceinline void*
   Edge<View>::operator new(size_t, void* p) {
     return p;
   }

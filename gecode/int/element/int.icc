@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace Element {
   IterIdx::IterIdx(void) {}
   forceinline
   IterIdx::IterIdx(IdxValLink& ivl) {
-    IdxValLink* p=&ivl; 
+    IdxValLink* p=&ivl;
     l = p->idx_next;
     while ((l != NULL) && l->marked())
       l=l->idx_next;
@@ -95,7 +95,7 @@ namespace Gecode { namespace Int { namespace Element {
   }
   forceinline void
   IterIdx::operator++(void) {
-    IdxValLink* p=l; 
+    IdxValLink* p=l;
     l = p->idx_next;
     while ((l != NULL) && l->marked())
       l=l->idx_next;
@@ -176,7 +176,7 @@ namespace Gecode { namespace Int { namespace Element {
     template <class ViewB> void prune_val(ViewB);
 
     /// Telling data structure to variables: returns true if at fixpoint
-    template <class ViewA, class ViewB> 
+    template <class ViewA, class ViewB>
     ExecStatus tell(Space*,ViewA,ViewB);
 
     size_t size(void) const;
@@ -281,7 +281,7 @@ namespace Gecode { namespace Int { namespace Element {
   template <class ViewA, class ViewB>
   forceinline ExecStatus
   IdxValMap::tell(Space* home, ViewA x0, ViewB x1) {
-    IterIdx i(iv[0]); 
+    IterIdx i(iv[0]);
     if (!i())
       return ES_FAILED;
     Iter::Values::ToRanges<IterIdx> ri(i);

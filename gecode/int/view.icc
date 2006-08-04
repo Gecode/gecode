@@ -34,7 +34,7 @@ namespace Gecode { namespace Int {
   /**
    * \brief Range iterator for integer views
    *
-   * This class provides (by specialization) a range iterator 
+   * This class provides (by specialization) a range iterator
    * for all integer views.
    *
    * Note that this template class serves only as a specification
@@ -42,7 +42,7 @@ namespace Gecode { namespace Int {
    *
    * \ingroup TaskActorInt
    */
-  template <class View> 
+  template <class View>
   class ViewRanges {
   public:
     /// \name Constructors and initialization
@@ -101,7 +101,7 @@ namespace Gecode { namespace Int {
 
 #include "gecode/int/view/iter.icc"
 
-namespace Gecode { 
+namespace Gecode {
 
   namespace Int {
 
@@ -170,32 +170,32 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, int n); 
+      ModEvent lq(Space* home, int n);
       /// Restrict domain values to be less or equal than \a n
       ModEvent lq(Space* home, double n);
 
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, int n); 
+      ModEvent le(Space* home, int n);
       /// Restrict domain values to be less than \a n
       ModEvent le(Space* home, double n);
 
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, int n); 
+      ModEvent gq(Space* home, int n);
       /// Restrict domain values to be greater or equal than \a n
       ModEvent gq(Space* home, double n);
 
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, int n); 
+      ModEvent gr(Space* home, int n);
       /// Restrict domain values to be greater than \a n
       ModEvent gr(Space* home, double n);
 
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, int n); 
+      ModEvent nq(Space* home, int n);
       /// Restrict domain values to be different from \a n
       ModEvent nq(Space* home, double n);
 
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, int n); 
+      ModEvent eq(Space* home, int n);
       /// Restrict domain values to be equal to \a n
       ModEvent eq(Space* home, double n);
       //@}
@@ -292,27 +292,27 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, int n); 
+      ModEvent lq(Space* home, int n);
       /// Restrict domain values to be less or equal than \a n
       ModEvent lq(Space* home, double n);
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, int n); 
+      ModEvent le(Space* home, int n);
       /// Restrict domain values to be less than \a n
       ModEvent le(Space* home, double n);
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, int n); 
+      ModEvent gq(Space* home, int n);
       /// Restrict domain values to be greater or equal than \a n
       ModEvent gq(Space* home, double n);
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, int n); 
+      ModEvent gr(Space* home, int n);
       /// Restrict domain values to be greater than \a n
       ModEvent gr(Space* home, double n);
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, int n); 
+      ModEvent nq(Space* home, int n);
       /// Restrict domain values to be different from \a n
       ModEvent nq(Space* home, double n);
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, int n); 
+      ModEvent eq(Space* home, int n);
       /// Restrict domain values to be equal to \a n
       ModEvent eq(Space* home, double n);
       //@}
@@ -382,7 +382,7 @@ namespace Gecode {
      * \brief Offset integer view
      *
      * An offset integer view \f$o\f$ for an integer view \f$x\f$ and
-     * an integer \f$c\f$ provides operations such that \f$o\f$ 
+     * an integer \f$c\f$ provides operations such that \f$o\f$
      * behaves as \f$x+c\f$.
      * \ingroup TaskActorIntView
      */
@@ -441,27 +441,27 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, int n); 
+      ModEvent lq(Space* home, int n);
       /// Restrict domain values to be less or equal than \a n
       ModEvent lq(Space* home, double n);
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, int n); 
+      ModEvent le(Space* home, int n);
       /// Restrict domain values to be less than \a n
       ModEvent le(Space* home, double n);
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, int n); 
+      ModEvent gq(Space* home, int n);
       /// Restrict domain values to be greater or equal than \a n
       ModEvent gq(Space* home, double n);
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, int n); 
+      ModEvent gr(Space* home, int n);
       /// Restrict domain values to be greater than \a n
       ModEvent gr(Space* home, double n);
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, int n); 
+      ModEvent nq(Space* home, int n);
       /// Restrict domain values to be different from \a n
       ModEvent nq(Space* home, double n);
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, int n); 
+      ModEvent eq(Space* home, int n);
       /// Restrict domain values to be equal to \a n
       ModEvent eq(Space* home, double n);
       //@}
@@ -532,7 +532,7 @@ namespace Gecode {
      * \brief Scale integer view (template)
      *
      * A scale integer view \f$s\f$ for an integer view \f$x\f$ and
-     * a non-negative integer \f$a\f$ provides operations such that \f$s\f$ 
+     * a non-negative integer \f$a\f$ provides operations such that \f$s\f$
      * behaves as \f$a\cdot x\f$.
      *
      * The precision of a scale integer view is defined by the value types
@@ -626,17 +626,17 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, Val n); 
+      ModEvent lq(Space* home, Val n);
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, Val n); 
+      ModEvent le(Space* home, Val n);
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, Val n); 
+      ModEvent gq(Space* home, Val n);
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, Val n); 
+      ModEvent gr(Space* home, Val n);
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, Val n); 
+      ModEvent nq(Space* home, Val n);
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, Val n); 
+      ModEvent eq(Space* home, Val n);
       //@}
 
       /// \name Propagator modification events
@@ -682,11 +682,11 @@ namespace Gecode {
   //@{
   /// Test whether views \a x and \a y are the same
   template <class Val, class UnsVal>
-  bool same(const Int::ScaleView<Val,UnsVal>& x, 
+  bool same(const Int::ScaleView<Val,UnsVal>& x,
 	    const Int::ScaleView<Val,UnsVal>& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
   template <class Val, class UnsVal>
-  bool before(const Int::ScaleView<Val,UnsVal>& x, 
+  bool before(const Int::ScaleView<Val,UnsVal>& x,
 	      const Int::ScaleView<Val,UnsVal>& y);
   //@}
 
@@ -711,7 +711,7 @@ namespace Gecode {
     /**
      * \brief Constant integer view
      *
-     * An constant integer view \f$x\f$ for an integer \f$c\f$ provides 
+     * An constant integer view \f$x\f$ for an integer \f$c\f$ provides
      * operations such that \f$x\f$ behaves as a view assigned to \f$c\f$.
      * \ingroup TaskActorIntView
      */
@@ -766,27 +766,27 @@ namespace Gecode {
       /// \name Domain update by value
       //@{
       /// Restrict domain values to be less or equal than \a n
-      ModEvent lq(Space* home, int n); 
+      ModEvent lq(Space* home, int n);
       /// Restrict domain values to be less or equal than \a n
       ModEvent lq(Space* home, double n);
       /// Restrict domain values to be less than \a n
-      ModEvent le(Space* home, int n); 
+      ModEvent le(Space* home, int n);
       /// Restrict domain values to be less than \a n
       ModEvent le(Space* home, double n);
       /// Restrict domain values to be greater or equal than \a n
-      ModEvent gq(Space* home, int n); 
+      ModEvent gq(Space* home, int n);
       /// Restrict domain values to be greater or equal than \a n
       ModEvent gq(Space* home, double n);
       /// Restrict domain values to be greater than \a n
-      ModEvent gr(Space* home, int n); 
+      ModEvent gr(Space* home, int n);
       /// Restrict domain values to be greater than \a n
       ModEvent gr(Space* home, double n);
       /// Restrict domain values to be different from \a n
-      ModEvent nq(Space* home, int n); 
+      ModEvent nq(Space* home, int n);
       /// Restrict domain values to be different from \a n
       ModEvent nq(Space* home, double n);
       /// Restrict domain values to be equal to \a n
-      ModEvent eq(Space* home, int n); 
+      ModEvent eq(Space* home, int n);
       /// Restrict domain values to be equal to \a n
       ModEvent eq(Space* home, double n);
       //@}
@@ -894,11 +894,11 @@ namespace Gecode {
       /// \name Boolean assignment operations
       //@{
       /// Try to assign view to one
-      ModEvent t_one(Space* home);  
+      ModEvent t_one(Space* home);
       /// Try to assign view to zero
       ModEvent t_zero(Space* home);
       /// Assign not yet assigned view to one
-      void t_one_none(Space* home); 
+      void t_one_none(Space* home);
       /// Assign not yet assigned view to zero
       void t_zero_none(Space* home);
       //@}
@@ -925,8 +925,8 @@ namespace Gecode {
     /**
      * \brief Negated Boolean view
      *
-     * A negated Boolean view \f$n\f$ for a Boolean view \f$b\f$ 
-     * provides operations such that \f$n\f$ 
+     * A negated Boolean view \f$n\f$ for a Boolean view \f$b\f$
+     * provides operations such that \f$n\f$
      * behaves as \f$\neg b\f$.
      * \ingroup TaskActorIntView
      */
@@ -957,11 +957,11 @@ namespace Gecode {
       /// \name Boolean assignment operations
       //@{
       /// Try to assign view to one
-      ModEvent t_one(Space* home);  
+      ModEvent t_one(Space* home);
       /// Try to assign view to zero
       ModEvent t_zero(Space* home);
       /// Assign not yet assigned view to one
-      void t_one_none(Space* home); 
+      void t_one_none(Space* home);
       /// Assign not yet assigned view to zero
       void t_zero_none(Space* home);
       //@}
@@ -1119,7 +1119,7 @@ operator<<(std::ostream& os, const Gecode::IntVar& x) {
   return os << vx;
 }
 
-namespace Gecode { 
+namespace Gecode {
 
   namespace Int {
 
@@ -1127,7 +1127,7 @@ namespace Gecode {
      * \defgroup TaskActorIntTest Testing relations between integer views
      * \ingroup TaskActorInt
      */
-    
+
     //@{
     /// Result of testing relation
     enum RelTest {
@@ -1144,7 +1144,7 @@ namespace Gecode {
     template <class View> RelTest rtest_eq_bnd(View x, int n);
     /// Test whether view \a x and integer \a n are equal (use full domain information)
     template <class View> RelTest rtest_eq_dom(View x, int n);
-    
+
     /// Test whether views \a x and \a y are different (use bounds information)
     template <class View> RelTest rtest_nq_bnd(View x, View y);
     /// Test whether views \a x and \a y are different (use full domain information)
@@ -1153,22 +1153,22 @@ namespace Gecode {
     template <class View> RelTest rtest_nq_bnd(View x, int n);
     /// Test whether view \a x and integer \a n are different (use full domain information)
     template <class View> RelTest rtest_nq_dom(View x, int n);
-    
+
     /// Test whether view \a x is less or equal than view \a y
     template <class View> RelTest rtest_lq(View x, View y);
     /// Test whether view \a x is less or equal than integer \a n
     template <class View> RelTest rtest_lq(View x, int n);
-    
+
     /// Test whether view \a x is less than view \a y
     template <class View> RelTest rtest_le(View x, View y);
     /// Test whether view \a x is less than integer \a n
     template <class View> RelTest rtest_le(View x, int n);
-    
+
     /// Test whether view \a x is greater or equal than view \a y
     template <class View> RelTest rtest_gq(View x, View y);
     /// Test whether view \a x is greater or equal than integer \a n
     template <class View> RelTest rtest_gq(View x, int n);
-    
+
     /// Test whether view \a x is greater than view \a y
     template <class View> RelTest rtest_gr(View x, View y);
     /// Test whether view \a x is greater than integer \a n

@@ -48,7 +48,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with largest min
   forceinline ViewSelStatus
-  ByMinMax::init(const Space*, IntView x) { 
+  ByMinMax::init(const Space*, IntView x) {
     min = x.min();
     return VSS_SELECT;
   }
@@ -62,7 +62,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest max
   forceinline ViewSelStatus
-  ByMaxMin::init(const Space*, IntView x) { 
+  ByMaxMin::init(const Space*, IntView x) {
     max = x.max();
     return VSS_SELECT;
   }
@@ -90,14 +90,14 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest size
   forceinline ViewSelStatus
-  BySizeMin::init(const Space*, IntView x) { 
+  BySizeMin::init(const Space*, IntView x) {
     size = x.size();
     return (size == 2) ? VSS_COMMIT : VSS_SELECT;
   }
   forceinline ViewSelStatus
   BySizeMin::select(const Space*, IntView x) {
     if (x.size() < size) {
-      size = x.size(); 
+      size = x.size();
       return (size == 2) ? VSS_COMMIT : VSS_SELECT;
     }
     return VSS_NONE;
@@ -105,7 +105,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with largest size
   forceinline ViewSelStatus
-  BySizeMax::init(const Space*, IntView x) { 
+  BySizeMax::init(const Space*, IntView x) {
     size = x.size();
     return VSS_SELECT;
   }
@@ -119,7 +119,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest degree (and smallest size in case of ties)
   forceinline ViewSelStatus
-  ByDegreeMin::init(const Space*, IntView x) { 
+  ByDegreeMin::init(const Space*, IntView x) {
     degree = x.degree(); size = x.size();
     return VSS_SELECT;
   }
@@ -138,7 +138,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest degree (and smallest size in case of ties)
   forceinline ViewSelStatus
-  ByDegreeMax::init(const Space*, IntView x) { 
+  ByDegreeMax::init(const Space*, IntView x) {
     degree = x.degree(); size = x.size();
     return VSS_SELECT;
   }
@@ -157,7 +157,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest min-regret
   forceinline ViewSelStatus
-  ByRegretMinMin::init(const Space*, IntView x) { 
+  ByRegretMinMin::init(const Space*, IntView x) {
     regret = x.regret_min();
     return (regret == 1) ? VSS_COMMIT : VSS_SELECT;
   }
@@ -172,7 +172,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with largest min-regret
   forceinline ViewSelStatus
-  ByRegretMinMax::init(const Space*, IntView x) { 
+  ByRegretMinMax::init(const Space*, IntView x) {
     regret = x.regret_min();
     return VSS_SELECT;
   }
@@ -186,7 +186,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest max-regret
   forceinline ViewSelStatus
-  ByRegretMaxMin::init(const Space*, IntView x) { 
+  ByRegretMaxMin::init(const Space*, IntView x) {
     regret = x.regret_max();
     return (regret == 1) ? VSS_COMMIT : VSS_SELECT;
   }
@@ -201,7 +201,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   // Select variable with smallest min-regret
   forceinline ViewSelStatus
-  ByRegretMaxMax::init(const Space*, IntView x) { 
+  ByRegretMaxMax::init(const Space*, IntView x) {
     regret = x.regret_max();
     return VSS_SELECT;
   }

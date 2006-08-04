@@ -25,31 +25,31 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
   /**
    *   \brief Compute the sccs of the oriented intersection-graph
-   *   
-   *   An y-node \f$y_j\f$ and its corresponding matching mate 
+   *
+   *   An y-node \f$y_j\f$ and its corresponding matching mate
    *   \f$x_{\phi(j)}\f$ form the smallest possible scc, since both
    *   edges \f$e_1(y_j, x_{\phi(j)})\f$ and \f$e_2(x_{\phi(j)},y_j)\f$
    *   are both contained in the oriented intersection graph.
    *
-   *   Hence a scc containg more than two nodes is represented as an 
-   *   array of SccComponent entries, 
-   *   \f$[ y_{j_0},x_{\phi(j_0)},\dots,y_{j_k},x_{\phi(j_k)}]\f$. 
+   *   Hence a scc containg more than two nodes is represented as an
+   *   array of SccComponent entries,
+   *   \f$[ y_{j_0},x_{\phi(j_0)},\dots,y_{j_k},x_{\phi(j_k)}]\f$.
    *
    *   Parameters
    *   scclist ~ resulting sccs
    */
-  
+
   template<class View, class Tuple>
-  forceinline void 
-  computesccs(Space* home, 
+  forceinline void
+  computesccs(Space* home,
 	      ViewArray<Tuple>& xz,
 	      ViewArray<View>& y,
-	      int phi[], 
-	      SccComponent sinfo[], 
+	      int phi[],
+	      SccComponent sinfo[],
 	      int scclist[]) {
 
     // number of sccs is bounded by xs (number of x-nodes)
-    int xs = xz.size(); 
+    int xs = xz.size();
     Support::StaticStack<int> cs(xs);
 
     //select an y node from the graph
@@ -85,13 +85,13 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
 
     // now we mark all components with the respective scc-number
-    // labeling is bound by O(k) which is bound by O(n) 
+    // labeling is bound by O(k) which is bound by O(n)
 
     for (int i = 0; i < xs; i++) {
       if (sinfo[i].left == i) { // only label variables in sccs
-	int scc = sinfo[i].rightmost; 
+	int scc = sinfo[i].rightmost;
 	int z   = i;
-	//bound by the size of the largest scc = k 
+	//bound by the size of the largest scc = k
 	while (sinfo[z].right != z) {
 	  sinfo[z].rightmost   = scc;
 	  scclist[phi[z]]      = scc;
@@ -103,14 +103,14 @@ namespace Gecode { namespace Int { namespace Sortedness {
     }
   }
 
-  /**   
+  /**
    *   \brief Narrowing the domains of the x variables
-   * 
+   *
    *   Due to the correspondance between perfect matchings in the "reduced"
-   *   intersection graph of \a x and \a y views and feasible 
-   *   assignments for the Sortedness constraint the new domain bounds for 
-   *   views in \a x are computed as 
-   *      - lower bounds: 
+   *   intersection graph of \a x and \a y views and feasible
+   *   assignments for the Sortedness constraint the new domain bounds for
+   *   views in \a x are computed as
+   *      - lower bounds:
    *        \f$ S_i \geq E_l \f$
    *        where \f$y_l\f$ is the leftmost neighbour of \f$x_i\f$
    *      - upper bounds:
@@ -120,25 +120,25 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
   template<class View, class Tuple, bool Perm>
   forceinline bool
-  narrow_domx(Space* home, 
-	      ViewArray<Tuple>& xz, 
+  narrow_domx(Space* home,
+	      ViewArray<Tuple>& xz,
 	      ViewArray<View>& y,
-	      int tau[], 
-	      int phi[], 
-	      int scclist[], 
-	      SccComponent sinfo[], 
+	      int tau[],
+	      int phi[],
+	      int scclist[],
+	      SccComponent sinfo[],
 	      bool& nofix) {
 
-    int xs        = xz.size(); 
+    int xs        = xz.size();
 
     // For every x node
     for (int i = 0; i < xs; i++) {
-      
+
       int xmin = xz[i][0].min();
-      /* 
-       * take the scc-list for the current x node 
-       * start from the leftmost reachable y node of the scc 
-       * and check which Y node in the scc is 
+      /*
+       * take the scc-list for the current x node
+       * start from the leftmost reachable y node of the scc
+       * and check which Y node in the scc is
        * really the rightmost node intersecting x, i.e.
        * search for the greatest lower bound of x
        */
@@ -148,30 +148,30 @@ namespace Gecode { namespace Int { namespace Sortedness {
       }
 	
       if (Perm) {
-	// start is the leftmost-position for x_i 
+	// start is the leftmost-position for x_i
 	// that denotes the lower bound on p_i
 
 	ModEvent me_plb = xz[i][1].gq(home, start);
 	if (me_failed(me_plb)) {
 	  return false;
 	}
-	nofix |= (me_modified(me_plb) && start != xz[i][1].min()); 
+	nofix |= (me_modified(me_plb) && start != xz[i][1].min());
       }
 
       ModEvent me_lb = xz[i][0].gq(home, y[start].min());
       if (me_failed(me_lb)) {
 	return false;
       }
-      nofix |= (me_modified(me_lb) && 
+      nofix |= (me_modified(me_lb) &&
 		y[start].min() != xz[i][0].min());
 	
       int ptau = tau[xs - 1 - i];
       int xmax = xz[ptau][0].max();
-      /* 
-       * take the scc-list for the current x node 
-       * start from the rightmost reachable node and check which 
-       * y node in the scc is 
-       * really the rightmost node intersecting x, i.e. 
+      /*
+       * take the scc-list for the current x node
+       * start from the rightmost reachable node and check which
+       * y node in the scc is
+       * really the rightmost node intersecting x, i.e.
        * search for the smallest upper bound of x
        */
       start = sinfo[scclist[ptau]].rightmost;
@@ -180,7 +180,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
       }
 
       if (Perm) {
-	//start is the rightmost-position for x_i 
+	//start is the rightmost-position for x_i
 	//that denotes the upper bound on p_i
 	ModEvent me_pub = xz[ptau][1].lq(home, start);
 	if (me_failed(me_pub)) {
@@ -193,38 +193,38 @@ namespace Gecode { namespace Int { namespace Sortedness {
       if (me_failed(me_ub)) {
 	return false;
       }
-      nofix |= (me_modified(me_ub) && 
+      nofix |= (me_modified(me_ub) &&
 		y[start].max() != xz[ptau][0].max());
     }
     return true;
   }
-  
-  /** 
+
+  /**
    * \brief Narrowing the domains of the y views
-   * 
+   *
    * analogously to the x views we take
-   *    - for the upper bounds the matching \f$\phi\f$ computed in  glover 
+   *    - for the upper bounds the matching \f$\phi\f$ computed in  glover
    *      and compute the new upper bound by \f$T_j=min(E_j, D_{\phi(j)})\f$
-   *    - for the lower bounds the matching \f$\phi'\f$ computed in  revglover 
+   *    - for the lower bounds the matching \f$\phi'\f$ computed in  revglover
    *      and update the new lower bound by \f$T_j=max(E_j, D_{\phi'(j)})\f$
    */
-  
+
   template<class View, class Tuple, bool Perm>
   forceinline bool
-  narrow_domy(Space* home, 
-	      ViewArray<Tuple>& xz, 
+  narrow_domy(Space* home,
+	      ViewArray<Tuple>& xz,
 	      ViewArray<View>& y,
-	      int phi[], 
-	      int phiprime[], 
+	      int phi[],
+	      int phiprime[],
 	      bool& nofix) {
 
     int xs = xz.size();
     for (int i = xs; i--; ) {
-      ModEvent me_lb = y[i].gq(home, xz[phiprime[i]][0].min()); 
+      ModEvent me_lb = y[i].gq(home, xz[phiprime[i]][0].min());
       if (me_failed(me_lb)) {
 	return false;
       }
-      nofix |= (me_modified(me_lb) && 
+      nofix |= (me_modified(me_lb) &&
 		xz[phiprime[i]][0].min() != y[i].min());
 
       ModEvent me_ub = y[i].lq(home, xz[phi[i]][0].max());
@@ -236,7 +236,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
     }
     return true;
   }
-  
+
 }}}
 
 // STATISTICS: int-prop

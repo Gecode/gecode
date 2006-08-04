@@ -79,7 +79,7 @@ namespace Gecode {
 
 
   void
-  rel(Space* home, IntVar x0, IntRelType r, IntVar x1, BoolVar b, 
+  rel(Space* home, IntVar x0, IntRelType r, IntVar x1, BoolVar b,
       IntConLevel icl) {
     if (home->failed()) return;
     switch (r) {
@@ -125,7 +125,7 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, IntVar x, IntRelType r, int n, BoolVar b, 
+  rel(Space* home, IntVar x, IntRelType r, int n, BoolVar b,
       IntConLevel icl) {
     if (home->failed()) return;
     switch (r) {
@@ -158,7 +158,7 @@ namespace Gecode {
       break;
     case IRT_GQ:
       n--; // Fall through
-    case IRT_GR: 
+    case IRT_GR:
       {
 	NegBoolView nb(b);
 	GECODE_ES_FAIL(home,(Rel::ReLqInt<IntView,NegBoolView>

@@ -30,7 +30,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View>
   forceinline
   Lex<View>::Lex(Space* home, bool share, Lex<View>& p)
-    : NaryPropagator<ViewTuple<View,2>,PC_INT_BND>(home,share,p), 
+    : NaryPropagator<ViewTuple<View,2>,PC_INT_BND>(home,share,p),
       strict(p.strict) {}
 
   template <class View>
@@ -50,7 +50,7 @@ namespace Gecode { namespace Int { namespace Rel {
       int i = 0;
       int n = x.size();
 
-      while ((i < n) && (x[i][0].min() == x[i][1].max())) { 
+      while ((i < n) && (x[i][0].min() == x[i][1].max())) {
 	// case: =, >=
 	GECODE_ME_CHECK(x[i][0].lq(home,x[i][1].max()));
 	GECODE_ME_CHECK(x[i][1].gq(home,x[i][0].min()));
@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace Rel {
       while ((i < n) &&
 	     (x[i][0].min() == x[i][1].max()) &&
 	     (x[i][0].max() == x[i][1].min())) { // case: =
-	assert(x[i][0].assigned() && x[i][1].assigned() && 
+	assert(x[i][0].assigned() && x[i][1].assigned() &&
 	       (x[i][0].val() == x[i][1].val()));
 	i++;
       }
@@ -111,7 +111,7 @@ namespace Gecode { namespace Int { namespace Rel {
       }
     }
 
-    if (x[1][0].max() <= x[1][1].min()) { 
+    if (x[1][0].max() <= x[1][1].min()) {
       // case: <= (invariant: not =, <)
       /*
        * State 3
@@ -145,7 +145,7 @@ namespace Gecode { namespace Int { namespace Rel {
       return ES_FIX;
     }
 
-    if (x[1][0].min() >= x[1][1].max()) { 
+    if (x[1][0].min() >= x[1][1].max()) {
       // case: >= (invariant: not =, >)
       /*
        * State 4
@@ -155,7 +155,7 @@ namespace Gecode { namespace Int { namespace Rel {
       int i = 2;
       int n = x.size();
 
-      while ((i < n) && (x[i][0].min() == x[i][1].max())) 
+      while ((i < n) && (x[i][0].min() == x[i][1].max()))
 	// case: >=, =
 	i++;
 

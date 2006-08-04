@@ -19,7 +19,7 @@
  *
  */
 
-namespace Gecode { 
+namespace Gecode {
 
   namespace Int {
 
@@ -39,7 +39,7 @@ namespace Gecode {
     BoolView::BoolView(const IntView& x) : IntView(x) {
       assert((variable()->min() >= 0) && (variable()->max() <= 1));
     }
-    
+
 
     /*
      * Boolean domain tests
@@ -57,8 +57,8 @@ namespace Gecode {
     BoolView::none(void) const {
       return ((var->min()+var->max()) == 1);
     }
-    
-    
+
+
     /*
      * Boolean assignment operations
      *
@@ -71,7 +71,7 @@ namespace Gecode {
     BoolView::t_one_none(Space* home) {
       var->t_one_none(home);
     }
-    
+
     forceinline ModEvent
     BoolView::t_zero(Space* home) {
       if (one())  return ME_INT_FAILED;
@@ -125,8 +125,8 @@ namespace Gecode {
     NegBoolView::none(void) const {
       return view.none();
     }
-    
-    
+
+
     /*
      * Boolean assignment operations
      *
@@ -139,7 +139,7 @@ namespace Gecode {
     NegBoolView::t_one_none(Space* home) {
       view.t_zero_none(home);
     }
-    
+
     forceinline ModEvent
     NegBoolView::t_zero(Space* home) {
       return view.t_one(home);
@@ -155,16 +155,16 @@ namespace Gecode {
      *
      */
     forceinline int
-    NegBoolView::min(void) const { 
-      return view.max(); 
+    NegBoolView::min(void) const {
+      return view.max();
     }
     forceinline int
-    NegBoolView::max(void) const { 
-      return view.min(); 
+    NegBoolView::max(void) const {
+      return view.min();
     }
     forceinline int
-    NegBoolView::val(void) const { 
-      return 1-view.val(); 
+    NegBoolView::val(void) const {
+      return 1-view.val();
     }
 
 
@@ -173,8 +173,8 @@ namespace Gecode {
      *
      */
     forceinline bool
-    NegBoolView::assigned(void) const { 
-      return view.assigned(); 
+    NegBoolView::assigned(void) const {
+      return view.assigned();
     }
 
     /*
@@ -234,22 +234,22 @@ namespace Gecode {
 
     /*
      * Test sharing between Boolean and negated Boolean views
-     * 
+     *
      */
-    forceinline BoolTest 
+    forceinline BoolTest
     bool_test(const BoolView& b0, const BoolView& b1) {
       return same(b0,b1) ? BT_SAME : BT_NONE;
     }
-    forceinline BoolTest 
+    forceinline BoolTest
     bool_test(const BoolView& b0, const NegBoolView& b1) {
       return same(b0,b1.base()) ? BT_COMP : BT_NONE;
     }
-    forceinline BoolTest 
+    forceinline BoolTest
     bool_test(const NegBoolView& b0, const BoolView& b1) {
       return same(b0.base(),b1) ? BT_COMP : BT_NONE;
     }
     /// Test whether views \a b0 and \a b1 are the same
-    forceinline BoolTest 
+    forceinline BoolTest
     bool_test(const NegBoolView& b0, const NegBoolView& b1) {
       return same(b0,b1) ? BT_SAME : BT_NONE;
     }

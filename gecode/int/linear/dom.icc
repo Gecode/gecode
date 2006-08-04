@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace Linear {
       /// Increment to next supported value
       void operator++(void);
     };
-    
+
   public:
     /// Perform tell according to recorded support information on \arg x
     ModEvent tell(Space* home, IntView& x) const;
@@ -155,31 +155,31 @@ namespace Gecode { namespace Int { namespace Linear {
    * Support set
    *
    */
-  forceinline void 
+  forceinline void
   SupportSet::init(unsigned int n) {
     bits = Memory::bmalloc<unsigned int>((n / bpui) + 1);
     for (unsigned int i = (n / bpui) + 1; i--; )
       bits[i] = 0;
   }
-  forceinline void 
+  forceinline void
   SupportSet::support(unsigned int i) {
     unsigned int p = i / bpui;
     bits[p] |= 1 << (i-p*bpui);
   }
-  forceinline bool 
+  forceinline bool
   SupportSet::supported(unsigned int i) const {
     unsigned int p = i / bpui;
     return (bits[p] & (1 << (i-p*bpui))) != 0;
   }
 
   forceinline
-  SupportSet::ResultIter::ResultIter(const SupportSet* s0, const IntView& x) 
+  SupportSet::ResultIter::ResultIter(const SupportSet* s0, const IntView& x)
     : ViewValues<IntView>(x), s(s0), p(0) {
     while (ViewValues<IntView>::operator()() && !s->supported(p)) {
       ViewValues<IntView>::operator++(); ++p;
-    } 
+    }
   }
-  forceinline void 
+  forceinline void
   SupportSet::ResultIter::operator++(void) {
     do {
       ViewValues<IntView>::operator++(); ++p;
@@ -187,7 +187,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
 
-  inline ModEvent 
+  inline ModEvent
   SupportSet::tell(Space* home, IntView& x) const {
     unsigned int n = x.size() / bpui;
     // Check whether all bits are zero: failure
@@ -213,7 +213,7 @@ namespace Gecode { namespace Int { namespace Linear {
     }
   }
 
-  forceinline void 
+  forceinline void
   SupportSet::dispose(void) {
     Memory::free(bits);
   }
@@ -224,13 +224,13 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
   template <class Val>
-  forceinline void 
+  forceinline void
   SupportIter<Val>::init(int a0, const IntView& x0, Val l0, Val u0) {
     a=a0; x=x0; l=l0; u=u0;
     s.init(x.size());
   }
   template <class Val>
-  forceinline void 
+  forceinline void
   SupportIter<Val>::support(void) {
     s.support(p);
   }
@@ -240,7 +240,7 @@ namespace Gecode { namespace Int { namespace Linear {
     return s.tell(home,x);
   }
   template <class Val>
-  forceinline void 
+  forceinline void
   SupportIter<Val>::dispose(void) {
     s.dispose();
   }
@@ -251,7 +251,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
   template <class Val>
-  forceinline bool 
+  forceinline bool
   PosSupportIter<Val>::reset(Val& d) {
     // Way too small, no value can make it big enough
     if (d + static_cast<Val>(a)*x.max() < u)
@@ -269,13 +269,13 @@ namespace Gecode { namespace Int { namespace Linear {
     // Skip all values which are too small
     while (d + static_cast<Val>(a)*c < u) {
       p++; c++;
-    }      
+    }
     // Adjust to new value
     d += static_cast<Val>(a) * c;
     return true;
   }
   template <class Val>
-  forceinline bool 
+  forceinline bool
   PosSupportIter<Val>::adjust(Val& d) {
     // Current value
     Val v = static_cast<Val>(a) * c;
@@ -298,7 +298,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if (d + v > l)
       return false;
     // Update d
-    d += v; 
+    d += v;
     return true;
   }
 
@@ -308,7 +308,7 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
   template <class Val>
-  forceinline bool 
+  forceinline bool
   NegSupportIter<Val>::reset(Val& d) {
     // Way too small, no value can make it big enough
     if (d + static_cast<Val>(a)*x.min() < u)
@@ -326,13 +326,13 @@ namespace Gecode { namespace Int { namespace Linear {
     // Skip all values which are too small
     while (d + static_cast<Val>(a)*c < u) {
       p--; c--;
-    }      
+    }
     // Adjust to new value
     d += static_cast<Val>(a) * c;
     return true;
   }
   template <class Val>
-  forceinline bool 
+  forceinline bool
   NegSupportIter<Val>::adjust(Val& d) {
     // Current value
     Val v = static_cast<Val>(a) * c;
@@ -355,7 +355,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if (d + v > l)
       return false;
     // Update d
-    d += v; 
+    d += v;
     return true;
   }
 
@@ -368,40 +368,40 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class View>
   forceinline
   DomEq<Val,View>::DomEq(Space* home,
-			 ViewArray<View >& x, ViewArray<View >& y, 
+			 ViewArray<View >& x, ViewArray<View >& y,
 			 Val c)
     : Lin<Val,View,View,PC_INT_DOM>(home,x,y,c) {}
 
   template <class Val, class View>
-  ExecStatus 
+  ExecStatus
   DomEq<Val,View>::post(Space* home,
-			ViewArray<View>& x, ViewArray<View>& y, 
+			ViewArray<View>& x, ViewArray<View>& y,
 			Val c) {
     (void) new (home) DomEq<Val,View>(home,x,y,c);
     return ES_OK;
   }
-   
+
   template <class Val, class View>
   forceinline
-  DomEq<Val,View>::DomEq(Space* home, bool share, DomEq<Val,View>& p) 
+  DomEq<Val,View>::DomEq(Space* home, bool share, DomEq<Val,View>& p)
     : Lin<Val,View,View,PC_INT_DOM>(home,share,p) {}
 
   template <class Val, class View>
-  Actor* 
+  Actor*
   DomEq<Val,View>::copy(Space* home, bool share) {
     return new (home) DomEq<Val,View>(home,share,*this);
   }
 
   template <class Val, class View>
-  PropCost 
+  PropCost
   DomEq<Val,View>::cost(void) const {
     return (View::pme(this) != ME_INT_DOM)
       ? cost_hi(x.size()+y.size(),PC_LINEAR_LO)
       : cost_hi(x.size()+y.size(),PC_CRAZY_HI);
   }
-  
+
   template <class Val, class View>
-  ExecStatus 
+  ExecStatus
   DomEq<Val,View>::propagate(Space* home) {
     if (View::pme(this) != ME_INT_DOM) {
       ExecStatus es = prop_bnd<Val,View,View>(this,home,x,y,c);
@@ -425,21 +425,21 @@ namespace Gecode { namespace Int { namespace Linear {
       Val l = 0;
       Val u = 0;
       for (int j=m; j--; ) {
-	yp[j].init(-y[j].scale(),y[j].base(),l,u); 
+	yp[j].init(-y[j].scale(),y[j].base(),l,u);
 	l += y[j].max(); u += y[j].min();
       }
       for (int i=n; i--; ) {
-	xp[i].init(x[i].scale(),x[i].base(),l,u); 
+	xp[i].init(x[i].scale(),x[i].base(),l,u);
 	l -= x[i].min(); u -= x[i].max();
       }
     }
-    
+
     // Collect support information by iterating assignments
     {
       // Force reset of all iterators in first round
       int i = 0;
       int j = 0;
-      
+
     next_i:
       // Reset all iterators for positive views and update d
       while (i<n) {
@@ -471,7 +471,7 @@ namespace Gecode { namespace Int { namespace Linear {
 	i--;
       }
     }
-    
+
     // Tell back new variable domains
     ExecStatus es = ES_SUBSUMED;
     for (int i=n; i--; ) {
@@ -490,14 +490,14 @@ namespace Gecode { namespace Int { namespace Linear {
       if (!y[j].assigned())
 	es = ES_FIX;
     }
-    
+
     // Release memory
   dispose:
     for (int i=n; i--; ) xp[i].dispose();
     for (int j=m; j--; ) yp[j].dispose();
     return es;
   }
-    
+
 }}}
 
 // STATISTICS: int-prop

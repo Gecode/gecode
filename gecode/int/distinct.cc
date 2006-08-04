@@ -46,7 +46,7 @@ namespace Gecode {
   }
 
   void
-  distinct(Space* home, const IntArgs& c, const IntVarArgs& x, 
+  distinct(Space* home, const IntArgs& c, const IntVarArgs& x,
 	   IntConLevel icl) {
     if (x.same())
       throw ArgumentSame("Int::distinct");

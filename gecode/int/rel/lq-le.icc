@@ -126,9 +126,9 @@ namespace Gecode { namespace Int { namespace Rel {
       return Le<View>::post(home,x1,x0);
     if (!same(x0,x1)) {
       switch (rtest_lq(x0,x1)) {
-      case RT_TRUE: 
+      case RT_TRUE:
 	b.t_one_none(home); break;
-      case RT_FALSE: 
+      case RT_FALSE:
 	b.t_zero_none(home); break;
       case RT_MAYBE:
 	(void) new (home) ReLq<View,CtrlView>(home,x0,x1,b); break;
@@ -160,7 +160,7 @@ namespace Gecode { namespace Int { namespace Rel {
       return ES_SUBSUMED;
     }
     if (b.zero()) {
-      if (Le<View>::post(home,x1,x0) == ES_FAILED) 
+      if (Le<View>::post(home,x1,x0) == ES_FAILED)
 	return ES_FAILED;
       return ES_SUBSUMED;
     }

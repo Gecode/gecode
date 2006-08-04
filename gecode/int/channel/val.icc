@@ -62,7 +62,7 @@ namespace Gecode { namespace Int { namespace Channel {
     return reinterpret_cast<ValInfo<View>*>
       (home->alloc(n*sizeof(ValInfo<View>)));
   }
- 
+
   template <class View>
   forceinline void
   ValInfo<View>::init(View x, int) {
@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace Channel {
   forceinline void
   ValInfo<View>::done(void) {}
 
- 
+
   // Propagate assigned views for x
   template <class View, class Info>
   ExecStatus
@@ -212,7 +212,7 @@ namespace Gecode { namespace Int { namespace Channel {
 	return ES_FAILED;
       assert(ya.empty());
     } while (!xa.empty());
-      
+
     return (n_na == 0) ? ES_SUBSUMED : ES_FIX;
   }
 

@@ -19,7 +19,7 @@
  *
  */
 
-namespace Gecode { 
+namespace Gecode {
 
   namespace Int {
 
@@ -47,37 +47,37 @@ namespace Gecode {
      *
      */
     forceinline int
-    OffsetView::min(void) const { 
-      return view.min()+c; 
+    OffsetView::min(void) const {
+      return view.min()+c;
     }
     forceinline int
-    OffsetView::max(void) const { 
-      return view.max()+c; 
+    OffsetView::max(void) const {
+      return view.max()+c;
     }
     forceinline int
-    OffsetView::med(void) const { 
-      return view.med()+c; 
+    OffsetView::med(void) const {
+      return view.med()+c;
     }
     forceinline int
-    OffsetView::val(void) const { 
-      return view.val()+c; 
+    OffsetView::val(void) const {
+      return view.val()+c;
     }
 
     forceinline unsigned int
-    OffsetView::width(void) const { 
-      return view.width(); 
+    OffsetView::width(void) const {
+      return view.width();
     }
     forceinline unsigned int
-    OffsetView::size(void) const { 
-      return view.size(); 
+    OffsetView::size(void) const {
+      return view.size();
     }
     forceinline unsigned int
-    OffsetView::regret_min(void) const { 
-      return view.regret_min(); 
+    OffsetView::regret_min(void) const {
+      return view.regret_min();
     }
     forceinline unsigned int
-    OffsetView::regret_max(void) const { 
-      return view.regret_max(); 
+    OffsetView::regret_max(void) const {
+      return view.regret_max();
     }
 
     /*
@@ -85,21 +85,21 @@ namespace Gecode {
      *
      */
     forceinline bool
-    OffsetView::range(void) const { 
-      return view.range(); 
+    OffsetView::range(void) const {
+      return view.range();
     }
     forceinline bool
-    OffsetView::assigned(void) const { 
-      return view.assigned(); 
+    OffsetView::assigned(void) const {
+      return view.assigned();
     }
 
     forceinline bool
-    OffsetView::in(int n) const { 
-      return view.in(n-c); 
+    OffsetView::in(int n) const {
+      return view.in(n-c);
     }
     forceinline bool
-    OffsetView::in(double n) const { 
-      return view.in(n-c); 
+    OffsetView::in(double n) const {
+      return view.in(n-c);
     }
 
 
@@ -108,52 +108,52 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    OffsetView::lq(Space* home, int n) { 
-      return view.lq(home,n-c); 
+    OffsetView::lq(Space* home, int n) {
+      return view.lq(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::lq(Space* home, double n) { 
-      return view.lq(home,n-c); 
+    OffsetView::lq(Space* home, double n) {
+      return view.lq(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::le(Space* home, int n) { 
-      return view.le(home,n-c); 
+    OffsetView::le(Space* home, int n) {
+      return view.le(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::le(Space* home, double n) { 
-      return view.le(home,n-c); 
+    OffsetView::le(Space* home, double n) {
+      return view.le(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::gq(Space* home, int n) { 
-      return view.gq(home,n-c); 
+    OffsetView::gq(Space* home, int n) {
+      return view.gq(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::gq(Space* home, double n) { 
-      return view.gq(home,n-c); 
+    OffsetView::gq(Space* home, double n) {
+      return view.gq(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::gr(Space* home, int n) { 
-      return view.gr(home,n-c); 
+    OffsetView::gr(Space* home, int n) {
+      return view.gr(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::gr(Space* home, double n) { 
-      return view.gr(home,n-c); 
+    OffsetView::gr(Space* home, double n) {
+      return view.gr(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::nq(Space* home, int n) { 
-      return view.nq(home,n-c); 
+    OffsetView::nq(Space* home, int n) {
+      return view.nq(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::nq(Space* home, double n) { 
-      return view.nq(home,n-c); 
+    OffsetView::nq(Space* home, double n) {
+      return view.nq(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::eq(Space* home, int n) { 
-      return view.eq(home,n-c); 
+    OffsetView::eq(Space* home, int n) {
+      return view.eq(home,n-c);
     }
     forceinline ModEvent
-    OffsetView::eq(Space* home, double n) { 
-      return view.eq(home,n-c); 
+    OffsetView::eq(Space* home, double n) {
+      return view.eq(home,n-c);
     }
 
 

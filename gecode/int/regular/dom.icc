@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Regular {
     Edge*  next;
   };
 
-  /** 
+  /**
    * \name Flags for modification in layer
    */
   //@{

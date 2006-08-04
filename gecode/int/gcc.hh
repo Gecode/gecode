@@ -25,7 +25,7 @@
 #include "gecode/int.hh"
 #include "gecode/support/sort.hh"
 #include "gecode/support/static-stack.hh"
-#include "gecode/int/gcc/gccbndsup.icc" 
+#include "gecode/int/gcc/gccbndsup.icc"
 #include "gecode/int/gcc/graphsup.icc"
 #include "gecode/int/gcc/occur.icc"
 
@@ -41,49 +41,49 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /**
    * \brief Bounds-consistent global cardinality propagator
-   * \par [Reference] 
+   * \par [Reference]
    *  The algorithm is taken from: \n
      \verbatim
      @PROCEEDINGS{quimper-efficient,
-     title     = {An Efficient Bounds Consistency Algorithm 
+     title     = {An Efficient Bounds Consistency Algorithm
                   for the Global Cardinality Constraint},
      year      = {2003},
      volume    = {2833},
      address   = {Kinsale, Ireland},
      month     = {September},
-     author    = {Claude-Guy Quimper and Peter van Beek 
+     author    = {Claude-Guy Quimper and Peter van Beek
                   and Alejandro López-Ortiz
                   and Alexander Golynski and Sayyed Bashir Sadjad},
-     booktitle = {Proceedings of the 9th International Conference 
-                  on Principles and Practice of 
+     booktitle = {Proceedings of the 9th International Conference
+                  on Principles and Practice of
 		  Constraint Programming},
      pages     = {600--614},
      url       = {http://ai.uwaterloo.ca/~vanbeek/publications},
      }
      @TECHREPORT{quimper-efficientTR,
-     author      = {Claude-Guy Quimper and Peter van Beek 
+     author      = {Claude-Guy Quimper and Peter van Beek
                     and Alejandro López-Ortiz
-                    and Alexander Golynski and 
+                    and Alexander Golynski and
 		    Sayyed Bashir Sadjad},
-     title       = {An Efficient Bounds Consistency Algorithm 
-                    for the Global Cardinality Constraint, 
+     title       = {An Efficient Bounds Consistency Algorithm
+                    for the Global Cardinality Constraint,
 		    Technical Report},
-     institution = {School of Computer Science, 
+     institution = {School of Computer Science,
                     University of Waterloo, Waterloo, Canada},
      year        = {2003},
      url         = {http://ai.uwaterloo.ca/~vanbeek/publications},
      }
      \endverbatim
    *
-   * This implementation uses the code that is provided 
-   * by Peter Van Beek:\n 
-   * http://ai.uwaterloo.ca/~vanbeek/software/software.html 
-   * The code here has only been slightly modified to fit Gecode 
-   * (taking idempotent/non-idempotent propagation into account) 
-   * and uses a more efficient layout of datastructures (keeping the 
+   * This implementation uses the code that is provided
+   * by Peter Van Beek:\n
+   * http://ai.uwaterloo.ca/~vanbeek/software/software.html
+   * The code here has only been slightly modified to fit Gecode
+   * (taking idempotent/non-idempotent propagation into account)
+   * and uses a more efficient layout of datastructures (keeping the
    * number of different arrays small).
    *
-   * The Bnd class is used to post the propagator and BndImp 
+   * The Bnd class is used to post the propagator and BndImp
    * is the actual implementation taking shared variables into account.
    *
    * Requires \code #include "gecode/int/gcc.hh" \endcode
@@ -93,21 +93,21 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   class Bnd{
   public:
-    /** 
+    /**
      * \brief Post propagator for views \a x and cardinalities \a k
-     * 
+     *
      * \a all denotes whether the propagator uses all value occuring
-     * in the domains of the problem vies specified in \a x. Also 
-     * checks whether \a x and \a k contain shared views. 
+     * in the domains of the problem vies specified in \a x. Also
+     * checks whether \a x and \a k contain shared views.
      */
-    static  ExecStatus  post(Space* home, 
+    static  ExecStatus  post(Space* home,
 			     ViewArray<View>& x,
-			     ViewArray<Card>& k, 
+			     ViewArray<Card>& k,
 			     bool all);
   };
 
   /**
-   * \brief Implementation of the bounds consistent 
+   * \brief Implementation of the bounds consistent
    * global cardinality propagator
    */
   template <class View, class Card, bool isView, bool shared>
@@ -115,16 +115,16 @@ namespace Gecode { namespace Int { namespace GCC {
     friend class Bnd<View, Card, isView>;
   protected:
     /// Views on which to perform bounds-propagation
-    ViewArray<View> x; 
+    ViewArray<View> x;
     /// Array containing either fixed cardinalities or CardViews
     ViewArray<Card> k;
     /**
-     * \brief  Data structure storing the sum of the views lower bounds 
+     * \brief  Data structure storing the sum of the views lower bounds
      * Necessary for reasoning about the interval capacities in the
-     * propagation algorithm. 
+     * propagation algorithm.
      */
     PartialSum<Card>* lps;
-    /// Data structure storing the sum of the views upper bounds 
+    /// Data structure storing the sum of the views upper bounds
     PartialSum<Card>* ups;
     /**
      * \brief Stores whether cardinalities are all assigned
@@ -139,8 +139,8 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     bool card_all;
     /**
-     * \brief Stores whether the minium required occurences of 
-     *        the cardinalities are all zero. If so, we do not need 
+     * \brief Stores whether the minium required occurences of
+     *        the cardinalities are all zero. If so, we do not need
      *        to perform lower bounds propagation.
      */
     bool skip_lbc;
@@ -164,35 +164,35 @@ namespace Gecode { namespace Int { namespace GCC {
 
   /**
    * \brief Performs bounds-consistent global cardinality propagation
-   * 
+   *
    * This function implements the propagation algorithm for
    * the bounds-consistent global cardinality propagator implemented
    * in GCC::Bnd. It is available as seperate function in order
    * to allow staging for GCC::Dom and GCC::Bnd though staging is
-   * currently not used due to technical difficulties. 
+   * currently not used due to technical difficulties.
    */
   template <class View, class Card, bool isView, bool shared>
   ExecStatus prop_bnd(Space* home, ViewArray<View>&, ViewArray<Card>&,
-		      PartialSum<Card>*&, PartialSum<Card>*&, 
+		      PartialSum<Card>*&, PartialSum<Card>*&,
 		      bool, bool, bool);
 
   /**
    * \brief Domain-consistent global cardinality propagator
-   * \par [Reference] 
+   * \par [Reference]
    *  The algorithm is taken from: \n
    * \anchor CardVarNPCompl
    \verbatim
      @PROCEEDINGS{improvedgcc,
-     title     = {Improved Algorithms for the 
+     title     = {Improved Algorithms for the
                   Global Cardinality Constraint},
      year      = {2004},
      volume    = {3528},
      address   = {Toronto, Canada},
      month     = {September},
-     author    = {Claude-Guy Quimper and Peter van Beek and 
+     author    = {Claude-Guy Quimper and Peter van Beek and
                   Alejandro López-Ortiz and Alexander Golynski},
-     booktitle = {Proceedings of the 10th International 
-                  Conference on Principles and Practice of 
+     booktitle = {Proceedings of the 10th International
+                  Conference on Principles and Practice of
 		  Constraint Programming},
      url       = {http://ai.uwaterloo.ca/~vanbeek/publications},
      }
@@ -206,12 +206,12 @@ namespace Gecode { namespace Int { namespace GCC {
   class Dom : public Propagator {
   protected:
     /// Views on which to perform domain-propagation
-    ViewArray<View> x; 
-    /** 
+    ViewArray<View> x;
+    /**
      * \brief Views used to channel information between \c x and \c k
-     * (\f$ x \subseteq y \f$). 
+     * (\f$ x \subseteq y \f$).
      */
-    ViewArray<View> y; 
+    ViewArray<View> y;
     /// Array containing either fixed cardinalities or CardViews
     ViewArray<Card> k;
     /// Propagation is performed on a variable-value graph (used as cache)
@@ -255,13 +255,13 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual PropCost    cost (void) const;
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home);
-    /** 
+    /**
      * \brief Post propagator for views \a x and cardinalities \a k
-     * 
+     *
      * \a all denotes whether the propagator uses all value occuring
-     * in the domains of the problem vies specified in \a x. 
+     * in the domains of the problem vies specified in \a x.
      */
-    static  ExecStatus  post(Space* home, 
+    static  ExecStatus  post(Space* home,
 			     ViewArray<View>& x, ViewArray<Card>& k,
 			     bool all);
   };
@@ -300,27 +300,27 @@ namespace Gecode { namespace Int { namespace GCC {
     virtual PropCost    cost (void) const;
         /// Perform propagation
     virtual ExecStatus  propagate(Space* home);
-    /** 
+    /**
      * \brief Post propagator for views \a x and cardinalities \a k
-     * 
+     *
      * \a all denotes whether the propagator uses all value occuring
-     * in the domains of the problem vies specified in \a x. 
+     * in the domains of the problem vies specified in \a x.
      */
-    static  ExecStatus  post(Space* home, 
-			     ViewArray<View>& x, ViewArray<Card>& k, 
+    static  ExecStatus  post(Space* home,
+			     ViewArray<View>& x, ViewArray<Card>& k,
 			     bool all);
   };
 
   /**
    * \brief Performs value-consistent global cardinality propagation
-   * 
+   *
    * This function implements the propagation algorithm for
    * the value-consistent global cardinality propagator implemented
-   * in GCC::Val. 
+   * in GCC::Val.
    */
 
   template <class View, class Card, bool isView>
-  ExecStatus prop_val(Space* home, ViewArray<View>&, ViewArray<Card>&, 
+  ExecStatus prop_val(Space* home, ViewArray<View>&, ViewArray<Card>&,
 		      bool&);
 
 }}}

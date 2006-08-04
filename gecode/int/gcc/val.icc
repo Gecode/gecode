@@ -19,7 +19,7 @@
  */
 
 namespace Gecode { namespace Int { namespace GCC {
-  /// \brief Perform value propagation.  
+  /// \brief Perform value propagation.
   template <class View, class Card, bool isView>
   inline ExecStatus
   prop_val(Space* home, ViewArray<View>& x, ViewArray<Card>& k,
@@ -30,11 +30,11 @@ namespace Gecode { namespace Int { namespace GCC {
     int  m   = k.size();
 
     // count[i] denotes how often value k[i].card() occurs in x
-    GECODE_AUTOARRAY(int,  count, m); 
+    GECODE_AUTOARRAY(int,  count, m);
     // stack of values having reached their maximum occurence
-    GECODE_AUTOARRAY(int,  rem,   m); 
+    GECODE_AUTOARRAY(int,  rem,   m);
     // keep track whether a value is already on the stack
-    GECODE_AUTOARRAY(bool, onrem, m); 
+    GECODE_AUTOARRAY(bool, onrem, m);
     // stacksize
     int rs = 0;
 
@@ -51,7 +51,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     for (int i = m; i--; ) {
-      // less than or equal than the total number of free variables 
+      // less than or equal than the total number of free variables
       // to satisfy the required occurences
       if (!k[i].assigned()) {
 	int mub     = n + removed - (sum_min - k[i].min());
@@ -60,13 +60,13 @@ namespace Gecode { namespace Int { namespace GCC {
 	mod |= (me_modified(me) && k[i].max() != mub);
       }
     }
-    
+
     // Due to lookup operation counting requires O(n \cdot log(n)) time
     bool all_assigned = true;
     // number of assigned views with respect to the current problem size
-    int  noa   = 0;            
+    int  noa   = 0;
     // total number of assigned views wrt. the original probem size
-    int  t_noa = 0;            
+    int  t_noa = 0;
     for (int i = n; i--; ) {
       bool b = x[i].assigned();
       all_assigned &= b;
@@ -79,9 +79,9 @@ namespace Gecode { namespace Int { namespace GCC {
 	noa++;
       }
     }
-    
-    // number of unassigned views 
-    int  non = x.size() - noa; 
+
+    // number of unassigned views
+    int  non = x.size() - noa;
 
     // check for subsumption
     if (all_assigned) {
@@ -103,17 +103,17 @@ namespace Gecode { namespace Int { namespace GCC {
       return ES_SUBSUMED;
     }
 
-    // total number of unsatisfied miminum occurences 
-    int req = 0;    
+    // total number of unsatisfied miminum occurences
+    int req = 0;
 
     // number of values whose min requirements are not yet met
-    int n_r = 0;    
+    int n_r = 0;
 
     // if only one value is unsatisified single holds the index of that value
-    int single = 0; 
+    int single = 0;
 
     for (int i = m; i--; ) {
-      int ci = count[i] + k[i].counter();  
+      int ci = count[i] + k[i].counter();
       t_noa += ci;
       if (ci == 0) { // this works
 	req += k[i].min();
@@ -121,13 +121,13 @@ namespace Gecode { namespace Int { namespace GCC {
 	single = i;
       }
 
-      // number of unassigned views cannot satisfy 
+      // number of unassigned views cannot satisfy
       // the required minimum occurence
       if (req > non) {
 	return ES_FAILED;
       }
     }
-    
+
     // if only one unsatisfied occurences is left
     if (req == non && n_r == 1) {
       for (int i = n; i--; ) {
@@ -155,7 +155,7 @@ namespace Gecode { namespace Int { namespace GCC {
       }
       return ES_SUBSUMED;
     }
-    
+
     for (int i = m; i--; ) {
       int ci = count[i] + k[i].counter();
       if (ci == k[i].max() && !onrem[i]) {
@@ -187,7 +187,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	    }
 	    int occupied = t_noa - ci;
 	    int mub = x.size() + removed - occupied;
-	    
+	
 	    ModEvent me = k[i].lq(home, mub);
 	    GECODE_ME_CHECK(me);
 	    mod |= k[i].assigned();
@@ -228,7 +228,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	}
       }
     }
-    
+
     all_assigned = true;
 
     for (int i = x.size(); i--; ) {
@@ -259,7 +259,7 @@ namespace Gecode { namespace Int { namespace GCC {
 	}
       }
       return ES_SUBSUMED;
-    } 
+    }
 
     if (isView) {
       // check again consistnecy of cardinalities
@@ -290,7 +290,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
       if (n < reqmin) {
 	return ES_FAILED;
-      } 
+      }
 
       if (_cardall && allmax < n) {
 	return ES_FAILED;
@@ -307,7 +307,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   inline
   Val<View, Card, isView>::Val(Space* home, ViewArray<View>& x0,
-			       ViewArray<Card>& k0, 
+			       ViewArray<Card>& k0,
 			       bool all)
     :Propagator(home,true), x(x0), k(k0), card_all(all){
     x.subscribe(home, this, PC_INT_VAL);
@@ -316,7 +316,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   forceinline
-  Val<View, Card, isView>::Val(Space* home, bool share, 
+  Val<View, Card, isView>::Val(Space* home, bool share,
 			       Val<View, Card, isView>& p)
     : Propagator(home,share,p), card_all(p.card_all){
     x.update(home,share, p.x);
@@ -341,8 +341,8 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView>
-  ExecStatus 
-  Val<View, Card, isView>::post(Space* home, 
+  ExecStatus
+  Val<View, Card, isView>::post(Space* home,
 				ViewArray<View>& x0,
 				ViewArray<Card>& k0, bool all) {
     new (home) Val<View, Card, isView>(home, x0, k0, all);
@@ -350,18 +350,18 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   /**
-   * \brief Complexity depends on the time needed for value lookup in \a k 
+   * \brief Complexity depends on the time needed for value lookup in \a k
    * which is O(n log n).
    *
    */
   template <class View, class Card, bool isView>
-  PropCost    
+  PropCost
   Val<View, Card, isView>::cost (void) const {
-    return PC_LINEAR_HI; 
+    return PC_LINEAR_HI;
   }
 
   template <class View, class Card, bool isView>
-  ExecStatus 
+  ExecStatus
   Val<View, Card, isView>::propagate(Space* home) {
     assert(x.size() > 0);
     return prop_val<View, Card, isView>(home, x, k, card_all);

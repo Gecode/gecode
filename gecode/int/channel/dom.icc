@@ -62,13 +62,13 @@ namespace Gecode { namespace Int { namespace Channel {
     return reinterpret_cast<DomInfo<View>*>
       (home->alloc(n*sizeof(DomInfo<View>)));
   }
- 
+
   template <class View>
   forceinline void
   DomInfo<View>::init(View x, int n) {
     view = x;
     card = static_cast<unsigned int>(n);
-    min  = 0; 
+    min  = 0;
     max  = n-1;
   }
 
@@ -122,13 +122,13 @@ namespace Gecode { namespace Int { namespace Channel {
   ExecStatus
   prop_dom(Space* home, int n, DomInfo<View>* x, DomInfo<View>* y,
 	   ProcessStack& ya) {
-    for (int i = n; i--; ) 
+    for (int i = n; i--; )
       // Only views with not yet propagated missing values
       if (x[i].dodom()) {
 	// Iterate the values in the complement of x[i]
-	ViewRanges<IntView> 
+	ViewRanges<IntView>
 	  xir(x[i].view);
-	Iter::Ranges::ComplVal<ViewRanges<IntView> > 
+	Iter::Ranges::ComplVal<ViewRanges<IntView> >
 	  xirc(x[i].min,x[i].max,xir);
 	Iter::Ranges::ToValues<Iter::Ranges::ComplVal<ViewRanges<IntView> > >
 	  jv(xirc);
@@ -197,7 +197,7 @@ namespace Gecode { namespace Int { namespace Channel {
 	if (x[i].doval()) xa.push(i);
 	if (y[i].doval()) ya.push(i);
       }
-      
+
       do {
 	// Propagate assigned views for x
 	if (prop_val<View,DomInfo<View> >(home,n,x,y,n_na,xa,ya) == ES_FAILED)
@@ -209,7 +209,7 @@ namespace Gecode { namespace Int { namespace Channel {
       } while (!xa.empty());
       this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
     }
-      
+
     // Process changed views for y
     // This propagates from y to x and possibly records xs that
     // got assigned
@@ -265,7 +265,7 @@ namespace Gecode { namespace Int { namespace Channel {
       if (prop_val<View,DomInfo<View> >(home,n,y,x,n_na,ya,xa) == ES_FAILED)
 	return ES_FAILED;
     };
-      
+
     return (n_na == 0) ? ES_SUBSUMED : ES_FIX;
   }
 
