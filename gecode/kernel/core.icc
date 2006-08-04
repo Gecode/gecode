@@ -172,7 +172,7 @@ namespace Gecode {
       /**
        * \brief Combines the number of free entries with modification events
        *
-       * The least for bits are reserved for the modification events, the
+       * The least four bits are reserved for the modification events, the
        * remaining 28 bits are for the number of free entries.
        *
        */
@@ -574,6 +574,65 @@ namespace Gecode {
 
 
   /**
+   * \brief Deleter
+   *
+   * A Deleter is used to reclaim resources when a space is destroyed.
+   * This is especially useful for variables that allocate resources outside
+   * the space.
+   *
+   */
+  class Deleter {
+  private:
+    Deleter* _next; ///< Deleters are kept in a linked list
+    Deleter* _fwd; ///< Forwarding pointer used in copying
+  protected:
+    /// Constructor
+    Deleter(Space* home);
+    /// Copy constructor
+    Deleter(Space* home, bool share, Deleter& d);
+  public:
+    //@{
+    /// Routines for linked list
+    Deleter* next(void) const; void next(Deleter*);
+    //@}
+
+    /**
+     * \brief Create copy
+     *
+     * If NULL is returned, this deleter is not copied. Useful if there
+     * is nothing left to delete.
+     *
+     */
+    virtual Deleter* copy(Space*,bool) = 0;
+
+    /// Do the actual deletion
+    virtual void do_delete(Space* home) = 0;
+
+    /// Get forwarding pointer. Only valid during copying.
+    Deleter* forward(void) const;
+    /// Set forwarding pointer
+    void forward(Deleter*);
+
+    /// Allocate memory from space
+    static void* operator new(size_t, Space*);
+    /// Return memory to space
+    static void operator delete(void*, Space*);
+
+#ifndef __GNUC__
+  private:
+    /// Not used
+    static void  operator delete(void* p, size_t s);
+#else
+  public:
+    /// To avoid warnings from GCC    
+    virtual ~Deleter(void);
+    /// Not used
+    static void operator delete(void*, size_t s);
+#endif
+
+  };
+
+  /** 
    * \brief %Space status
    * \ingroup TaskSearch
    */
@@ -589,6 +648,7 @@ namespace Gecode {
   class Space {
     friend class Propagator;
     friend class Branching;
+    friend class Deleter;
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
     template <VarTypeId VTI, PropCond PC, class MED> friend class VarTypeProcessor;
   private:
@@ -654,6 +714,11 @@ namespace Gecode {
     Branching*      b_commit;
     /// Id of next branching to be created
     unsigned int    branch_id;
+    /**
+     * \brief Points to the first deleter
+     *
+     */
+    Deleter* deleters;
 
     /**
      * \brief Number of subscriptions
@@ -685,6 +750,8 @@ namespace Gecode {
     void propagator(Propagator*);
     /// Add new branching \a b to space (force disposal, if \a fd is true)
     void branching(Branching* b, bool fd);
+    /// Add new deleter \a d to space
+    void deleter(Deleter* d);
 
     /**
      * \name Processing propagators
@@ -1103,8 +1170,38 @@ namespace Gecode {
     home->reuse(this,s);
   }
 
+  /*
+   * Deleters
+   *
+   */
 
+  forceinline
+  Deleter::Deleter(Space* home) {
+    home->deleter(this);
+  }
+  forceinline
+  Deleter::Deleter(Space*, bool, Deleter&) {
+  }
+  forceinline Deleter*
+  Deleter::next(void) const { return _next; }
+  forceinline void
+  Deleter::next(Deleter* d) { _next = d; }
+  
+  forceinline Deleter*
+  Deleter::forward(void) const { return _fwd; }
+  forceinline void
+  Deleter::forward(Deleter* d) { _fwd = d; }
 
+  forceinline void*
+  Deleter::operator new(size_t size, Space* s) {
+    return s->alloc(size);
+  }
+  forceinline void
+  Deleter::operator delete(void*, Space*) {}
+  forceinline void
+  Deleter::operator delete(void*, size_t) {}
+  forceinline
+  Deleter::~Deleter(void) {}
 
   /*
    * Spaces
@@ -1330,7 +1427,11 @@ namespace Gecode {
     a_actors.insert_delete(b,fd);
   }
 
-
+  forceinline void
+  Space::deleter(Deleter* d) {
+    d->next(deleters);
+    deleters = d;
+  }
 
 
 

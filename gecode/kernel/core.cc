@@ -39,6 +39,8 @@ namespace Gecode {
     for (int i=0; i<VTI_LAST; i++)
       vars[i]=NULL;
     vars_noidx = NULL;
+    // Initialize deleters
+    deleters = NULL;
     // Initialize propagator pool
     pool_next = 0;
     for (int i=0; i<=PC_MAX; i++)
@@ -99,6 +101,10 @@ namespace Gecode {
       Actor* d = static_cast<Actor*>(a);
       a = a->next_delete();
       d->dispose(this);
+    }
+    // Invoke deleters
+    for (Deleter* d=deleters; d != NULL; d=d->next()) {
+      d->do_delete(this);
     }
     if (sub != NULL)
       Memory::free(sub);
@@ -264,6 +270,22 @@ namespace Gecode {
     for (int i=0; i<VTI_LAST; i++)
       vars[i]=NULL;
     vars_noidx = NULL;
+    // Copy deleters
+    {
+      deleters = NULL;
+      for (Deleter* d = s.deleters; d != NULL; d=d->next()) {
+	Deleter* od = deleters;
+	deleters = d->copy(this, share);
+	if (deleters == NULL)
+	  // Deleter can be discarded
+	  deleters = od;
+	else {
+	  // Link deleter and set forwarding pointer
+	  deleters->next(od);
+	  d->forward(deleters);
+	}
+      }
+    }
     // Initialize propagator pool
     pool_next = 0;
     for (int i=0; i<=PC_MAX; i++)
