@@ -32,17 +32,17 @@
 
 namespace Gecode { namespace Limits {
 
-  /** 
+  /**
    * \namespace Gecode::Limits
    *  \brief Numerical limits
-   * 
+   *
    * Contains constants describing numerical limits
    * for numbers contained in integer and set variables.
    *
    */
 
   namespace Int {
-    /** 
+    /**
      * \namespace Gecode::Limits::Int
      *  \brief Numerical limits for integer variables
      *
@@ -66,7 +66,7 @@ namespace Gecode { namespace Limits {
   }
 
   namespace Set {
-    /** 
+    /**
      * \namespace Gecode::Limits::Set
      *  \brief Numerical limits for set variables
      *

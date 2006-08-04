@@ -164,12 +164,12 @@ namespace Gecode {
 
 /**
  * \defgroup TaskMiniModelLin Linear expressions and relations
- * 
+ *
  * Linear expressions can be freely composed of sums and differences of
  * integer variables (Gecode::IntVar) possibly with integer coefficients
  * and integer constants.
  *
- * Note that integer variables are automatically available as linear 
+ * Note that integer variables are automatically available as linear
  * expressions.
  *
  * Linear relations are obtained from linear expressions with the normal
@@ -344,7 +344,7 @@ namespace Gecode {
 	/// Decrement reference count and possibly free memory
 	GECODE_MINIMODEL_EXPORT bool decrement(void);
 	/// Post propagators for nested conjunctive and disjunctive expression
-	GECODE_MINIMODEL_EXPORT int post(Space* home, NodeType t, 
+	GECODE_MINIMODEL_EXPORT int post(Space* home, NodeType t,
 					 BoolVarArgs& b, int i) const;
 	/// Post propagators for expression
 	GECODE_MINIMODEL_EXPORT void post(Space* home, BoolVar b) const;
@@ -402,12 +402,12 @@ namespace Gecode {
 
 /**
  * \defgroup TaskMiniModelBool Boolean expressions and relations
- * 
+ *
  * Boolean expressions can be freely composed of variables with
  * the usual connectives and reified linear expressions.
  *
  * Boolean relations are obtained from Boolean expressions with
- * functions \a tt (stating that the expression must be true) 
+ * functions \a tt (stating that the expression must be true)
  * and \a ff (stating that the expression must be false).
  *
  * \ingroup TaskMiniModel
@@ -452,7 +452,7 @@ namespace Gecode {
   /// State that Boolean expression must be true
   MiniModel::BoolRel
   tt(const MiniModel::BoolExpr&);
-  
+
   /// State that Boolean expression must be false
   MiniModel::BoolRel
   ff(const MiniModel::BoolExpr&);
@@ -461,16 +461,16 @@ namespace Gecode {
 
 //@}
 
-namespace Gecode { 
+namespace Gecode {
 
   /**
    * \defgroup TaskMiniModelPost Posting of expressions and relations
-   * 
+   *
    * \ingroup TaskMiniModel
    */
   //@{
   /// Post linear expression and return its value
-  IntVar post(Space* home, const MiniModel::LinExpr& e, 
+  IntVar post(Space* home, const MiniModel::LinExpr& e,
 	      IntConLevel icl=ICL_DEF);
   /// Post linear expression (special case for variable) and return its value
   IntVar post(Space* home, const IntVar& x,
@@ -496,7 +496,7 @@ namespace Gecode {
   void post(Space* home, const MiniModel::BoolRel& r,
 	    IntConLevel icl=ICL_DEF);
   //@}
-  
+
 }
 
 #include "gecode/minimodel/lin-expr.icc"
@@ -513,19 +513,19 @@ namespace Gecode {
    */
   //@{
   /// Return variable constrained to \f$|x|\f$
-  GECODE_MINIMODEL_EXPORT IntVar 
+  GECODE_MINIMODEL_EXPORT IntVar
   abs(Space* home, IntVar x, IntConLevel icl=ICL_DEF);
   /// Return variable constrained to \f$\min(x,y)\f$
-  GECODE_MINIMODEL_EXPORT IntVar 
+  GECODE_MINIMODEL_EXPORT IntVar
   min(Space* home, IntVar x, IntVar y, IntConLevel icl=ICL_DEF);
   /// Return variable constrained to \f$\min(x)\f$
-  GECODE_MINIMODEL_EXPORT IntVar 
+  GECODE_MINIMODEL_EXPORT IntVar
   min(Space* home, const IntVarArgs& x, IntConLevel icl=ICL_DEF);
   /// Return variable constrained to \f$\max(x,y)\f$
   GECODE_MINIMODEL_EXPORT IntVar
   max(Space* home, IntVar x, IntVar y, IntConLevel icl=ICL_DEF);
   /// Return variable constrained to \f$\max(x)\f$
-  GECODE_MINIMODEL_EXPORT IntVar 
+  GECODE_MINIMODEL_EXPORT IntVar
   max(Space* home, const IntVarArgs& x, IntConLevel icl=ICL_DEF);
   /// Return variable constrained to \f$x\cdot y\f$
   GECODE_MINIMODEL_EXPORT IntVar
@@ -540,27 +540,27 @@ namespace Gecode {
   GECODE_MINIMODEL_EXPORT IntVar
   minus(Space* home, IntVar x, IntVar y, IntConLevel icl=ICL_DEF);
   //@}
-  
+
 }
 
 namespace Gecode {
-  
+
   /**
    * \defgroup TaskMiniModelScheduling Alternative interfaces to scheduling constraints
-   * 
+   *
    * \ingroup TaskMiniModel
    */
-  
+
   //@{
   /** \brief Creates propagator for a producer-consumer constraint.
-   * 
+   *
    * This function will create a propagator that models a
    * producer-consumer constraint, using the translation of such
    * constraints into cumulatives due to Helmut Simoni and Trijntje
    * Cornelissens ("Modelling Producer/Consumer Constraints",
    * Principles and Practice of Constraint Progamming 1995, Cassis,
    * France).
-   * 
+   *
    * \param produce_date \f$ produce\_date_i \f$ is the date of event
    *                      \f$ i \f$.
    * \param produce_amount \f$ produce\_amount_i \f$ is the amount
@@ -569,24 +569,24 @@ namespace Gecode {
    *                     \f$ j \f$.
    * \param consume_amount \f$ consume\_amount_j \f$ is the amount
    *                       produced by event \f$ j \f$.
-   * \param initial is the amount available at the start 
+   * \param initial is the amount available at the start
    * \param icl Supports value consistency only (\c cl = ICL_VAL, default)
-   * 
+   *
    * \todo Make amounts variable, requires changes to cumulatives.
    *
    * \exception Int::ArgumentSizeMismatch Raised if the sizes of the arguments
    *            representing producer events or the sizes of the arguments
    *            representing consumer events does not match.
-   * \exception Int::NumericalOverflow Raised if any numerical argument is 
-   *            larger than Limits::Int::int_max or less than 
+   * \exception Int::NumericalOverflow Raised if any numerical argument is
+   *            larger than Limits::Int::int_max or less than
    *            Limits::Int::int_min.
    */
   GECODE_MINIMODEL_EXPORT void
-  producer_consumer(Space *home, 
+  producer_consumer(Space *home,
 		    const IntVarArgs& produce_date, const IntArgs& produce_amount,
 		    const IntVarArgs& consume_date, const IntArgs& consume_amount,
 		    int initial, IntConLevel icl=ICL_DEF);
-  
+
 
   /** \brief Creates propagator for the cumulative constraint.
    *
@@ -595,24 +595,24 @@ namespace Gecode {
    *
    * \param start \f$ start_i \f$ is the start date assigned to task \f$ i \f$
    * \param duration \f$ duration_i \f$ is the duration of task \f$ i \f$
-   * \param height \f$ height_i \f$ is the height is the amount of resources 
+   * \param height \f$ height_i \f$ is the height is the amount of resources
    *         consumed by task \f$ i \f$
    * \param limit \c limit_r  is the amount of resource available
    * \param at_most tells if the amount of resources used for a machine
-   *         should be less than the limit (\c at_most = true, default) or 
-   *         greater than the limit (\c at_most = false) 
+   *         should be less than the limit (\c at_most = true, default) or
+   *         greater than the limit (\c at_most = false)
    * \param icl Supports value-consistency only (\c cl = ICL_VAL, default).
    *
    * \exception Int::ArgumentSizeMismatch Raised if the sizes of the arguments
    *            representing tasks does not match.
-   * \exception Int::NumericalOverflow Raised if any numerical argument is 
-   *            larger than Limits::Int::int_max or less than 
+   * \exception Int::NumericalOverflow Raised if any numerical argument is
+   *            larger than Limits::Int::int_max or less than
    *            Limits::Int::int_min.
    *
    */
   GECODE_MINIMODEL_EXPORT void
   cumulative(Space *home, const IntVarArgs& start, const IntVarArgs& duration,
-	     const IntVarArgs& height, int limit, bool at_most = true, 
+	     const IntVarArgs& height, int limit, bool at_most = true,
 	     IntConLevel cl=ICL_DEF);
 
   /** \brief Creates propagator for the cumulative constraint.
@@ -621,7 +621,7 @@ namespace Gecode {
    */
   GECODE_MINIMODEL_EXPORT void
   cumulative(Space *home, const IntVarArgs& start, const IntArgs& duration,
-	     const IntVarArgs& height, int limit, bool at_most = true, 
+	     const IntVarArgs& height, int limit, bool at_most = true,
 	     IntConLevel cl=ICL_DEF);
 
   /** \brief Creates propagator for the cumulative constraint.
@@ -630,7 +630,7 @@ namespace Gecode {
    */
   GECODE_MINIMODEL_EXPORT void
   cumulative(Space *home, const IntVarArgs& start, const IntVarArgs& duration,
-	     const IntArgs& height, int limit, bool at_most = true, 
+	     const IntArgs& height, int limit, bool at_most = true,
 	     IntConLevel cl=ICL_DEF);
 
   /** \brief Creates propagator for the cumulative constraint.
@@ -639,9 +639,9 @@ namespace Gecode {
    */
   GECODE_MINIMODEL_EXPORT void
   cumulative(Space *home, const IntVarArgs& start, const IntArgs& duration,
-	     const IntArgs& height, int limit, bool at_most = true, 
+	     const IntArgs& height, int limit, bool at_most = true,
 	     IntConLevel cl=ICL_DEF);
-  
+
   /** \brief Creates propagator for the serialized constraint.
    *
    * This function will create a propagator for the serialized constraint, by
@@ -653,15 +653,15 @@ namespace Gecode {
    *
    * \exception Int::ArgumentSizeMismatch Raised if the sizes of the arguments
    *            representing tasks does not match.
-   * \exception Int::NumericalOverflow Raised if any numerical argument is 
-   *            larger than Limits::Int::int_max or less than 
+   * \exception Int::NumericalOverflow Raised if any numerical argument is
+   *            larger than Limits::Int::int_max or less than
    *            Limits::Int::int_min.
    *
    */
   GECODE_MINIMODEL_EXPORT void
   serialized(Space *home, const IntVarArgs& start, const IntVarArgs& duration,
 	     IntConLevel cl=ICL_DEF);
-  
+
 
   /** \brief Creates propagator for the serialized constraint.
    *
@@ -670,22 +670,22 @@ namespace Gecode {
   GECODE_MINIMODEL_EXPORT void
   serialized(Space *home, const IntVarArgs& start, const IntArgs& duration,
 	     IntConLevel cl=ICL_DEF);
-  
+
 
   //@}
-  
+
 }
 
 /**
  * \addtogroup TaskMiniModelMatrix Matrix interface for arrays
- * 
+ *
  * Wrapper for arrays to act as a two-dimensional matrix.
  *
  * \ingroup TaskMiniModel
  */
 //@{
 namespace Gecode { namespace MiniModel {
-  
+
   /** \brief Matrix-interface for arrays
    *
    * This class allows for wrapping some array and accessing it as a
@@ -693,7 +693,7 @@ namespace Gecode { namespace MiniModel {
    *
    * \note This is a light-weight wrapper, and is not intended for
    * storing variables directly instead of in an array.
-   * 
+   *
    * \ingroup TaskMiniModelMatrix
    */
   template <class A>
@@ -703,7 +703,7 @@ namespace Gecode { namespace MiniModel {
     typedef typename ArrayTraits<A>::value_type value_type;
     /// The type of the Args-array type for value_type values.
     typedef typename ArrayTraits<A>::args_type  args_type;
-    
+
     /** \brief A slice of a matrix.
      *
      * This class represents a slice of the matrix. It is used to get
@@ -718,8 +718,8 @@ namespace Gecode { namespace MiniModel {
 	_fr,            ///< From row
 	_tr;            ///< To row
     public:
-      Slice(Matrix<A>& a, 
-	    unsigned int fc, unsigned int tc, 
+      Slice(Matrix<A>& a,
+	    unsigned int fc, unsigned int tc,
 	    unsigned int fr, unsigned int tr);
 
       operator args_type(void);
@@ -730,9 +730,9 @@ namespace Gecode { namespace MiniModel {
     /// The type of storage for this array
     typedef typename ArrayTraits<A>::storage_type storage_type;
     storage_type _a; ///< The array wrapped
-    unsigned int _w, ///< The width of the matrix 
+    unsigned int _w, ///< The width of the matrix
       _h;            ///< The height of the matrix
-    
+
   public:
     /** \brief Basic constructor
      *
@@ -743,7 +743,7 @@ namespace Gecode { namespace MiniModel {
      * row-major order.
      *
      * \exception MiniModel::ArgumentSizeMismatch Raised if the
-     *            parameters \a w and \a h doesn't match the size 
+     *            parameters \a w and \a h doesn't match the size
      *            of the array \a a.
      */
     Matrix(A a, unsigned int w, unsigned int h);
@@ -757,11 +757,11 @@ namespace Gecode { namespace MiniModel {
      * row-major order.
      *
      * \exception MiniModel::ArgumentSizeMismatch Raised if the
-     *            parameter \a n doesn't match the size 
+     *            parameter \a n doesn't match the size
      *            of the array \a a.
      */
     Matrix(A a, unsigned int n);
-    
+
     /// Return the width of the matrix
     unsigned int width(void) const;
     /// Return the height of the matrix
@@ -775,7 +775,7 @@ namespace Gecode { namespace MiniModel {
      *            are out of range.
      */
     value_type& operator()(unsigned int c, unsigned int r);
-    
+
     /** \brief Access slice of the matrix
      *
      * This function allows accessing a slice of the matrix, located at
@@ -785,12 +785,12 @@ namespace Gecode { namespace MiniModel {
      *
      * For further information, see Slice.
      */
-    Slice slice(unsigned int fc, unsigned int tc, 
+    Slice slice(unsigned int fc, unsigned int tc,
 		unsigned int fr, unsigned int tr);
-    
+
     /// Access row \a r.
     args_type row(int r);
-    
+
     /// Access column \a c.
     args_type col(int c);
   };

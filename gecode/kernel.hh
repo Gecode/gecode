@@ -65,10 +65,10 @@
  * \brief Gecode toplevel namespace
  *
  * The Gecode namespace contains nested namespaces for
- * the various submodules (for example Int for the 
+ * the various submodules (for example Int for the
  * definition of integer propagator classes). Functionality
  * that is used for interfacing (search engines, variables,
- * and so on) or belongs to the %Gecode %Kernel is contained 
+ * and so on) or belongs to the %Gecode %Kernel is contained
  * directly in the Gecode namespace.
  *
  */

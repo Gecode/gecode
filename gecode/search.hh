@@ -57,7 +57,7 @@
 
 #include "gecode/support/dynamic-stack.hh"
 
-namespace Gecode { 
+namespace Gecode {
 
   /// %Search engines
   namespace Search {
@@ -93,14 +93,14 @@ namespace Gecode {
       /// Initialize with all numbers zero
       Statistics(void);
     };
-    
+
 
     /**
      * \defgroup TaskIntSearchStop Stop-objects for stopping search
      * \ingroup TaskIntSearch
      *
      * Allows to specify various criteria when a search engine should
-     * stop exploration. Only exploration but neither recomputation 
+     * stop exploration. Only exploration but neither recomputation
      * nor propagation will be interrupted.
      *
      */
@@ -129,13 +129,13 @@ namespace Gecode {
       /// Size limit
       size_t l;
     public:
-      /// Stop if memory limit \a l (in bytes) is exceeded 
+      /// Stop if memory limit \a l (in bytes) is exceeded
       MemoryStop(size_t l);
       /// Return current limit
       size_t limit(void) const;
       /// Set current limit to \a l (in bytes)
       void limit(size_t l);
-      /// Return true if memory limit is exceeded 
+      /// Return true if memory limit is exceeded
       virtual bool stop(const Statistics& s);
     };
 
@@ -152,13 +152,13 @@ namespace Gecode {
       /// Failure limit
       unsigned long int l;
     public:
-      /// Stop if failure limit \a l is exceeded 
+      /// Stop if failure limit \a l is exceeded
       FailStop(unsigned long int l);
       /// Return current limit
       unsigned long int limit(void) const;
       /// Set current limit to \a l failures
       void limit(unsigned long int l);
-      /// Return true if failure limit is exceeded 
+      /// Return true if failure limit is exceeded
       virtual bool stop(const Statistics& s);
     };
 
@@ -181,7 +181,7 @@ namespace Gecode {
       void limit(unsigned long int l);
       /// Reset time to zero
       void reset(void);
-      /// Return true if time limit is exceeded 
+      /// Return true if time limit is exceeded
       virtual bool stop(const Statistics& s);
     };
 
@@ -225,7 +225,7 @@ namespace Gecode {
       /// Reset statistics for space \a s
       void reset(const Space* s);
     };
-    
+
     /**
      * \brief %Search tree node for recomputation
      *
@@ -234,7 +234,7 @@ namespace Gecode {
     protected:
       /// Space corresponding to this node (might be NULL)
       Space*               _space;
-      /// Current alternative 
+      /// Current alternative
       unsigned int         _alt;
       /// Braching description
       const BranchingDesc* _desc;
@@ -243,15 +243,15 @@ namespace Gecode {
       ReCoNode(Space* s, Space* c);
 
       /// Return space for node
-      Space* space(void) const; 
+      Space* space(void) const;
       /// Set space to \a s
       void space(Space* s);
 
       /// Return branching description
-      const BranchingDesc* desc(void) const; 
+      const BranchingDesc* desc(void) const;
 
       /// Return number for alternatives
-      unsigned int alt(void) const; 
+      unsigned int alt(void) const;
       /// Test whether current alternative is rightmost
       bool rightmost(void) const;
       /// Move to next alternative
@@ -394,9 +394,9 @@ namespace Gecode {
      * \param c_d minimal recomputation distance
      * \param a_d adaptive recomputation distance
      * \param st %Stop-object
-     */ 
-    DFS(T* s, 
-	unsigned int c_d=Search::Config::c_d, 
+     */
+    DFS(T* s,
+	unsigned int c_d=Search::Config::c_d,
 	unsigned int a_d=Search::Config::a_d,
 	Search::Stop* st=NULL);
     /// Return next solution (NULL, if none exists or search has been stopped)
@@ -440,11 +440,11 @@ namespace Gecode {
 	/// Initialize with node \a s, description \a d, and alternative \a a
 	ProbeNode(Space* s, const BranchingDesc* d, unsigned int a);
 	/// Return space
-	Space* space(void) const; 
+	Space* space(void) const;
 	/// Return branching description
-	const BranchingDesc* desc(void) const; 
+	const BranchingDesc* desc(void) const;
 	/// Return next alternative
-	unsigned int alt(void) const; 
+	unsigned int alt(void) const;
 	/// %Set next alternative
 	void next(void);
       };
@@ -579,12 +579,12 @@ namespace Gecode {
        * If \c ES_SOLUTION is returned, a next better solution has been found.
        * This solution is available from \a s1.
        *
-       * If \c ES_CONSTRAIN is returned, the engine requires that the 
-       * space \a s1 is constrained to be better by the so-far best 
+       * If \c ES_CONSTRAIN is returned, the engine requires that the
+       * space \a s1 is constrained to be better by the so-far best
        * solution \a s2.
        *
        */
-      GECODE_SEARCH_EXPORT 
+      GECODE_SEARCH_EXPORT
       ExploreStatus explore(Space*& s1, Space*& s2);
       /// Return stack size used by engine
       size_t stacksize(void) const;
@@ -595,9 +595,9 @@ namespace Gecode {
     /**
      * \brief Depth-first branch-and-bound search engine
      *
-     * This class implements depth-first branch-and-bound exploration 
+     * This class implements depth-first branch-and-bound exploration
      * for spaces. In order to use it on subclasses of Space, additional
-     * functionality providing the necessary typecasts is available 
+     * functionality providing the necessary typecasts is available
      * in Gecode::BAB:
      *
      */
@@ -608,7 +608,7 @@ namespace Gecode {
     public:
       /**
        * \brief Initialize engine
-       * \param s root node 
+       * \param s root node
        * \param c_d minimal recomputation distance
        * \param a_d adaptive recomputation distance
        * \param st %Stop-object
@@ -622,7 +622,7 @@ namespace Gecode {
     };
 
   }
-  
+
   /**
    * \brief Depth-first branch-and-bound search engine
    * \ingroup TaskIntSearch
@@ -632,12 +632,12 @@ namespace Gecode {
   public:
     /**
      * \brief Initialize engine
-     * \param s Root node (subclass \a T of Space). 
+     * \param s Root node (subclass \a T of Space).
      *          Additionally, \a s must implement
      *          a member function \code void constrain(T* t) \endcode
      *          Whenever exploration requires to add a constraint
      *          to the space \a c currently being explored, the engine
-     *          executes \c c->constrain(t) where \a t is the so-far 
+     *          executes \c c->constrain(t) where \a t is the so-far
      *          best solution.
      * \param c_d Minimal recomputation distance
      * \param a_d Adaptive recomputation distance
@@ -653,12 +653,12 @@ namespace Gecode {
 
   /**
    * \brief Perform depth-first branch-and-bound search
-   * \param s root node (subclass \a T of Space). 
+   * \param s root node (subclass \a T of Space).
    *          Additionally, \a s must implement
    *          a member function \code void constrain(T* t) \endcode
    *          Whenever exploration requires to add a constraint
    *          to the space \a c currently being explored, the engine
-   *          executes \c c->constrain(t) where \a t is the so-far 
+   *          executes \c c->constrain(t) where \a t is the so-far
    *          best solution.
    * \param c_d minimal recomputation distance
    * \param a_d adaptive recomputation distance
@@ -687,19 +687,19 @@ namespace Gecode {
   public:
     /**
      * \brief Initialize engine
-     * \param s root node (subclass \a T of Space). 
+     * \param s root node (subclass \a T of Space).
      *          Additionally, \a s must implement
      *          a member function \code void constrain(T* t) \endcode
      *          Whenever exploration requires to add a constraint
      *          to the space \a c currently being explored, the engine
-     *          executes \c c->constrain(t) where \a t is the so-far 
+     *          executes \c c->constrain(t) where \a t is the so-far
      *          best solution.
      * \param c_d minimal recomputation distance
      * \param a_d adaptive recomputation distance
      * \param st %Stop-object
      */
-    Restart(T* s, 
-	    unsigned int c_d=Search::Config::c_d, 
+    Restart(T* s,
+	    unsigned int c_d=Search::Config::c_d,
 	    unsigned int a_d=Search::Config::a_d,
 	    Search::Stop* st=NULL);
     /// Destructor
@@ -710,12 +710,12 @@ namespace Gecode {
 
   /**
    * \brief Perform depth-first restart best solution search
-   * \param s root node (subclass \a T of Space). 
+   * \param s root node (subclass \a T of Space).
    *          Additionally, \a s must implement
    *          a member function \code void constrain(T* t) \endcode
    *          Whenever exploration requires to add a constraint
    *          to the space \a c currently being explored, the engine
-   *          executes \c c->constrain(t) where \a t is the so-far 
+   *          executes \c c->constrain(t) where \a t is the so-far
    *          best solution.
    * \param c_d minimal recomputation distance
    * \param a_d adaptive recomputation distance

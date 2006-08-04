@@ -29,13 +29,13 @@
 
 namespace Gecode { namespace Int {
 
-  /** 
+  /**
    * \namespace Gecode::Int
    * \brief Finite domain integers
-   * 
+   *
    * The Gecode::Int namespace contains all functionality required
    * to program propagators and branchings for finite domain integers.
-   * In addition, all propagators and branchings for finite domain 
+   * In addition, all propagators and branchings for finite domain
    * integers provided by %Gecode are contained as nested namespaces.
    *
    */
@@ -123,7 +123,7 @@ namespace Gecode {
     /// Initialize with \a n integers from array \a r
     IntSet(const int r[],   int n);
     /** \brief Initialize with \a n ranges from array \a r
-     * 
+     *
      * For position \a i in the array \a r, the minimum is \a r[\a i][0]
      * and the maximum is \a r[\a i][1].
      */
@@ -148,7 +148,7 @@ namespace Gecode {
     /// Return width of range at position \a i
     unsigned int width(int i) const;
     //@}
-    
+
     /// \name Entire set access
     //@{
     /// Return minimum of entire set
@@ -156,17 +156,17 @@ namespace Gecode {
     /// Return maximum of entire set
     int max(void) const;
     //@}
-    
+
     /// \name Cloning
     //@{
     /** \brief Update this set to be a copy of \a s
-     * 
+     *
      * If \a share is true, the copy is identical. Otherwise an independent
      * copy is created.
      */
     void update(bool share, IntSet& s);
     //@}
-    
+
     /// \name Predefined value
     //@{
     /// Empty set
@@ -182,7 +182,7 @@ namespace Gecode {
   class IntSetRanges {
   private:
     /// Current range
-    const IntSet::Range* i; 
+    const IntSet::Range* i;
     /// End range
     const IntSet::Range* e;
   public:
@@ -195,7 +195,7 @@ namespace Gecode {
     /// Initialize with ranges for set \a s
     void init(const IntSet& s);
     //@}
-    
+
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a range or done
@@ -203,7 +203,7 @@ namespace Gecode {
     /// Move iterator to next range (if possible)
     void operator++(void);
     //@}
-    
+
     /// \name Range access
     //@{
     /// Return smallest value of range
@@ -214,7 +214,7 @@ namespace Gecode {
     unsigned int width(void) const;
     //@}
   };
-  
+
   /**
    * \brief Value iterator for integer sets
    *
@@ -276,7 +276,7 @@ namespace Gecode {
    * of consistency comes closest.
    *
    * If in the description of a constraint below no consistency level
-   * is mentioned, the propagator for the constraint implements 
+   * is mentioned, the propagator for the constraint implements
    * domain-consistency.
    * \ingroup TaskIntInt
    */
@@ -286,7 +286,7 @@ namespace Gecode {
     ICL_DOM, ///< Domain consistency
     ICL_DEF  ///< The default consistency for a constraint
   };
-  
+
 
 
   /**
@@ -323,20 +323,20 @@ namespace Gecode {
   dom(Space* home, IntVar x, const IntSet& s, BoolVar b,
       IntConLevel=ICL_DEF);
   //@}
-  
-  
+
+
   /**
    * \defgroup TaskIntIntRel Simple relation constraints
    * \ingroup TaskIntInt
    */
-  
+
   //@{
-  
+
 
   /** \brief Post propagator for \f$ x_0 \sim_r x_1\f$
    *
-   * Supports both bounds (\a icl = ICL_BND) and 
-   * domain-consistency (\a icl = ICL_DOM, default). 
+   * Supports both bounds (\a icl = ICL_BND) and
+   * domain-consistency (\a icl = ICL_DOM, default).
    */
   GECODE_INT_EXPORT void
   rel(Space* home, IntVar x0, IntRelType r, IntVar x1,
@@ -347,16 +347,16 @@ namespace Gecode {
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ (x_0 \sim_r x_1)\Leftrightarrow b\f$
    *
-   * Supports both bounds (\a icl = ICL_BND) and 
-   * domain-consistency (\a icl = ICL_DOM, default). 
+   * Supports both bounds (\a icl = ICL_BND) and
+   * domain-consistency (\a icl = ICL_DOM, default).
    */
   GECODE_INT_EXPORT void
   rel(Space* home, IntVar x0, IntRelType r, IntVar x1, BoolVar b,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$(x \sim_r c)\Leftrightarrow b\f$
    *
-   * Supports both bounds (\a icl = ICL_BND) and 
-   * domain-consistency (\a icl = ICL_DOM, default). 
+   * Supports both bounds (\a icl = ICL_BND) and
+   * domain-consistency (\a icl = ICL_DOM, default).
    */
   GECODE_INT_EXPORT void
   rel(Space* home, IntVar x, IntRelType r, int c, BoolVar b,
@@ -378,13 +378,13 @@ namespace Gecode {
    * \defgroup TaskIntIntEq Equality constraints
    * \ingroup TaskIntInt
    */
-  
+
   //@{
-  
+
   /** \brief Post propagator for \f$ x_0 = x_1\f$
    *
-   * Supports both bounds (\a icl = ICL_BND) and 
-   * domain-consistency (\a icl = ICL_DOM, default). 
+   * Supports both bounds (\a icl = ICL_BND) and
+   * domain-consistency (\a icl = ICL_DOM, default).
    */
   GECODE_INT_EXPORT void
   eq(Space* home, IntVar x0, IntVar x1, IntConLevel icl=ICL_DEF);
@@ -393,25 +393,25 @@ namespace Gecode {
   eq(Space* home, IntVar x, int n, IntConLevel=ICL_DEF);
   /** \brief Post propagator for \f$ (x_0 = x_1)\Leftrightarrow b\f$
    *
-   * Supports both bounds (\a icl = ICL_BND) and 
-   * domain-consistency (\a icl = ICL_DOM, default). 
+   * Supports both bounds (\a icl = ICL_BND) and
+   * domain-consistency (\a icl = ICL_DOM, default).
    */
   GECODE_INT_EXPORT void
   eq(Space* home, IntVar x0, IntVar x1, BoolVar b, IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ (x=n)\Leftrightarrow b\f$
    *
-   * Supports both bounds (\a icl = ICL_BND) and 
-   * domain-consistency (\a icl = ICL_DOM, default). 
+   * Supports both bounds (\a icl = ICL_BND) and
+   * domain-consistency (\a icl = ICL_DOM, default).
    */
   GECODE_INT_EXPORT void
   eq(Space* home, IntVar x, int n, BoolVar b, IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
    *
-   * Supports both bounds (\a icl = ICL_BND) and 
-   * domain-consistency (\a icl = ICL_DOM, default). 
+   * Supports both bounds (\a icl = ICL_BND) and
+   * domain-consistency (\a icl = ICL_DOM, default).
    */
   GECODE_INT_EXPORT void
-  eq(Space* home, const IntVarArgs& x, IntConLevel icl=ICL_DEF);  
+  eq(Space* home, const IntVarArgs& x, IntConLevel icl=ICL_DEF);
   //@}
 
 
@@ -424,7 +424,7 @@ namespace Gecode {
   //@{
   /** \brief Post propagator for \f$ n_{x_0}=x_1\f$
    *
-   *  Throws an exception of type Int::NumericalOverflow, if 
+   *  Throws an exception of type Int::NumericalOverflow, if
    *  the integers in \a n exceed the limits in Limits::Int.
    */
   GECODE_INT_EXPORT void
@@ -432,8 +432,8 @@ namespace Gecode {
 	  IntConLevel=ICL_DEF);
   /** \brief Post propagator for \f$ x_{y_0}=y_1\f$
    *
-   * Supports both bounds (\a icl = ICL_BND) and 
-   * domain-consistency (\a icl = ICL_DOM, default). 
+   * Supports both bounds (\a icl = ICL_BND) and
+   * domain-consistency (\a icl = ICL_DOM, default).
    */
   GECODE_INT_EXPORT void
   element(Space* home, const IntVarArgs& x, IntVar y0, IntVar y1,
@@ -456,13 +456,13 @@ namespace Gecode {
    * the same variable multiply.
    */
   GECODE_INT_EXPORT void
-  distinct(Space* home, const IntVarArgs& x, 
+  distinct(Space* home, const IntVarArgs& x,
 	   IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ x_i+n_i\neq x_j+n_j\f$ for all \f$0\leq i\neq j<|x|\f$
    *
    * \li Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
    *     and domain-consistency (\a icl = ICL_DOM).
-   * \li Throws an exception of type Int::NumericalOverflow, if 
+   * \li Throws an exception of type Int::NumericalOverflow, if
    *     the integers in \a n exceed the limits in Limits::Int.
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a n are of different size.
@@ -529,83 +529,83 @@ namespace Gecode {
    * \param limit \f$ limit_r \f$ is the amount of resource available
    *              for machine \f$ r \f$
    * \param at_most \a at_most tells if the amount of resources used
-   *                for a machine should be less than the limit (\a at_most 
+   *                for a machine should be less than the limit (\a at_most
    *                = true) or greater than the limit (\a at_most = false)
    * \param icl Supports value-consistency only (\a icl = ICL_VAL, default).
    *
    * \exception Int::ArgumentSizeMismatch thrown if the sizes of the arguments
    *            representing tasks does not match.
-   * \exception Int::NumericalOverflow thrown if any numerical argument is 
-   *            larger than Limits::Int::int_max or less than 
+   * \exception Int::NumericalOverflow thrown if any numerical argument is
+   *            larger than Limits::Int::int_max or less than
    *            Limits::Int::int_min.
    */
   GECODE_INT_EXPORT void
-  cumulatives(Space* home, const IntVarArgs& machine, 
-	      const IntVarArgs& start, const IntVarArgs& duration, 
-	      const IntVarArgs& end, const IntVarArgs& height, 
+  cumulatives(Space* home, const IntVarArgs& machine,
+	      const IntVarArgs& start, const IntVarArgs& duration,
+	      const IntVarArgs& end, const IntVarArgs& height,
 	      const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
-  cumulatives(Space* home, const IntArgs& machine, 
-	      const IntVarArgs& start, const IntVarArgs& duration, 
-	      const IntVarArgs& end, const IntVarArgs& height, 
+  cumulatives(Space* home, const IntArgs& machine,
+	      const IntVarArgs& start, const IntVarArgs& duration,
+	      const IntVarArgs& end, const IntVarArgs& height,
 	      const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
-  cumulatives(Space* home, const IntVarArgs& machine, 
-	      const IntVarArgs& start, const IntArgs& duration, 
-	      const IntVarArgs& end, const IntVarArgs& height, 
+  cumulatives(Space* home, const IntVarArgs& machine,
+	      const IntVarArgs& start, const IntArgs& duration,
+	      const IntVarArgs& end, const IntVarArgs& height,
 	      const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
-  cumulatives(Space* home, const IntArgs& machine, 
-	      const IntVarArgs& start, const IntArgs& duration, 
-	      const IntVarArgs& end, const IntVarArgs& height, 
+  cumulatives(Space* home, const IntArgs& machine,
+	      const IntVarArgs& start, const IntArgs& duration,
+	      const IntVarArgs& end, const IntVarArgs& height,
 	      const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
    GECODE_INT_EXPORT void
-  cumulatives(Space* home, const IntVarArgs& machine, 
-	      const IntVarArgs& start, const IntVarArgs& duration, 
-	      const IntVarArgs& end, const IntArgs& height, 
+  cumulatives(Space* home, const IntVarArgs& machine,
+	      const IntVarArgs& start, const IntVarArgs& duration,
+	      const IntVarArgs& end, const IntArgs& height,
 	      const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
-  cumulatives(Space* home, const IntArgs& machine, 
-	      const IntVarArgs& start, const IntVarArgs& duration, 
-	      const IntVarArgs& end, const IntArgs& height, 
+  cumulatives(Space* home, const IntArgs& machine,
+	      const IntVarArgs& start, const IntVarArgs& duration,
+	      const IntVarArgs& end, const IntArgs& height,
 	      const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
-  cumulatives(Space* home, const IntVarArgs& machine, 
-	      const IntVarArgs& start, const IntArgs& duration, 
-	      const IntVarArgs& end, const IntArgs& height, 
+  cumulatives(Space* home, const IntVarArgs& machine,
+	      const IntVarArgs& start, const IntArgs& duration,
+	      const IntVarArgs& end, const IntArgs& height,
 	      const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
-  cumulatives(Space* home, const IntArgs& machine, 
-	      const IntVarArgs& start, const IntArgs& duration, 
-	      const IntVarArgs& end, const IntArgs& height, 
+  cumulatives(Space* home, const IntArgs& machine,
+	      const IntVarArgs& start, const IntArgs& duration,
+	      const IntVarArgs& end, const IntArgs& height,
 	      const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
   //@}
 
@@ -658,10 +658,10 @@ namespace Gecode {
     ~REG(void);
   };
 
-  /** 
-   * \brief Deterministic finite automaton 
-   * 
-   * After initialization, the start state is always zero. 
+  /**
+   * \brief Deterministic finite automaton
+   *
+   * After initialization, the start state is always zero.
    * The final states are contiguous ranging from the first to the
    * last final state.
    */
@@ -683,20 +683,20 @@ namespace Gecode {
     DFAI* dfai;
   protected:
     GECODE_INT_EXPORT
-    /** 
+    /**
      * \brief Initialize automaton
      *
      * Start state \a start, transition specification t_spec,
      * final state specification \a f_spec and a flag \a minimize whether
      * the automaton should be minimized
      */
-    void init(int start, Transition t_spec[], int f_spec[], 
+    void init(int start, Transition t_spec[], int f_spec[],
 	      bool minimize);
   public:
     friend class Transitions;
     /// Default constructor (empty DFA)
     DFA(void);
-    /** 
+    /**
      * \brief Initialize DFA by transitions
      *
      * - Start state is given by \a s.
@@ -707,7 +707,7 @@ namespace Gecode {
      * - Minimizes the DFA, if \a minimize is true.
      */
     DFA(int s, Transition t[], int f[], bool minimize=true);
-    GECODE_INT_EXPORT 
+    GECODE_INT_EXPORT
     /// Initialize DFA by regular expression \a r
     DFA(REG& r);
     /// Initialize by DFA \a d (DFA is shared)
@@ -716,9 +716,9 @@ namespace Gecode {
     const DFA& operator=(const DFA&);
     /// Destructor
     ~DFA(void);
-    /** 
+    /**
      * \brief Update this DFA to \a d
-     * 
+     *
      * If \a share is true, share the same \a d. If not, create
      * an independent copy from \a d.
      */
@@ -737,14 +737,14 @@ namespace Gecode {
     int symbol_max(void) const;
   };
 
-  /** 
-   * \brief Post propagator for regular constraint 
+  /**
+   * \brief Post propagator for regular constraint
    *
    * The elements of \a x must be a word of the language described by
    * the DFA \a d.
    */
   GECODE_INT_EXPORT void
-  regular(Space* home, const IntVarArgs& x, DFA& d, 
+  regular(Space* home, const IntVarArgs& x, DFA& d,
 	  IntConLevel=ICL_DEF);
 
   //@}
@@ -764,96 +764,96 @@ namespace Gecode {
    * \ingroup TaskIntInt
    */
 
-  
+
   //@{
-  /** 
-   *  \brief Post propagator \f$\exists\pi:\forall i\in\{0,\dots,|x|-1\}: 
-   *         y_0 \leq\dots\leq y_{|x|-1} \wedge  x_i=y_{\pi(i)}\f$ 
-   *  
+  /**
+   *  \brief Post propagator \f$\exists\pi:\forall i\in\{0,\dots,|x|-1\}:
+   *         y_0 \leq\dots\leq y_{|x|-1} \wedge  x_i=y_{\pi(i)}\f$
+   *
    *  \anchor SortednessSemantics
    *
-   *  \exception Int::ArgumentSizeMismatch thrown if \a x and \a y 
+   *  \exception Int::ArgumentSizeMismatch thrown if \a x and \a y
    *             differ in size.
-   *  \exception Int::ArgumentSame thrown if \a x or \a y contain 
+   *  \exception Int::ArgumentSame thrown if \a x or \a y contain
    *             shared variables.
    *
-   *  Taking only two arguments, this interface for Sortedness leaves 
+   *  Taking only two arguments, this interface for Sortedness leaves
    *  the sorting permutation \f$\pi\f$ implicit.
    *
    */
-  GECODE_INT_EXPORT void 
+  GECODE_INT_EXPORT void
   sortedness(Space* home, const IntVarArgs& x, const IntVarArgs& y,
 	     IntConLevel icl=ICL_DEF);
 
-  /** 
-   *  \brief Post propagator \f$\forall i\in\{0,\dots,|x|-1\}: 
+  /**
+   *  \brief Post propagator \f$\forall i\in\{0,\dots,|x|-1\}:
    *         y_0 \leq\dots\leq y_{|x|-1} \wedge x_i=y_{z_i} \f$ \n
    *
    *  \exception Int::ArgumentSizeMismatch thrown if \a x, \a y or \a z
    *             differ in size.
-   *  \exception Int::ArgumentSame thrown if \a x, \a y or \a z contain 
+   *  \exception Int::ArgumentSame thrown if \a x, \a y or \a z contain
    *             shared variables.
    *
-   * Providing a third argument \f$z_0, \dots, z_{|x|-1} \f$, this 
-   * interface for Sortedness models the sorting permutation 
-   * \f$\pi\f$ explicitly, such that 
-   * \f$\forall i\in\{0,\dots,|x|-1\}:\pi(i) = z_i\f$ holds. 
+   * Providing a third argument \f$z_0, \dots, z_{|x|-1} \f$, this
+   * interface for Sortedness models the sorting permutation
+   * \f$\pi\f$ explicitly, such that
+   * \f$\forall i\in\{0,\dots,|x|-1\}:\pi(i) = z_i\f$ holds.
    *
    */
 
-  GECODE_INT_EXPORT void 
+  GECODE_INT_EXPORT void
   sortedness(Space*, const IntVarArgs& x, const IntVarArgs& y,
-	     const IntVarArgs& z,  
+	     const IntVarArgs& z,
 	     IntConLevel icl=ICL_DEF);
   //@}
 
   /**
    * \defgroup TaskIntIntCard Cardinality constraints
    * \ingroup TaskIntInt
-   * 
+   *
    *  \note
-   *    Domain consistency on the extended cardinality variables of 
-   *    the Global Cardinality Propagator is only obtained if they are bounds 
+   *    Domain consistency on the extended cardinality variables of
+   *    the Global Cardinality Propagator is only obtained if they are bounds
    *    consistent, otherwise the problem of enforcing domain consistency
-   *    on the cardinality variables is NP-complete as proved by 
-   *    \ref CardVarNPCompl "Qumiper et. al. in 
+   *    on the cardinality variables is NP-complete as proved by
+   *    \ref CardVarNPCompl "Qumiper et. al. in
    *    Improved Algorithms for the Global Cardinality Constraint"
    */
 
   //@{
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\sim_r m\f$
-   * 
+   *
    * Supports domain-consistent propagation only.
    */
   GECODE_INT_EXPORT void
-  count(Space* home, const IntVarArgs& x, int n, IntRelType r, int m,   
+  count(Space* home, const IntVarArgs& x, int n, IntRelType r, int m,
 	IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r m\f$
-   * 
+   *
    * Supports domain-consistent propagation only.
    */
   GECODE_INT_EXPORT void
-  count(Space* home, const IntVarArgs& x, IntVar y, IntRelType r, int m,   
+  count(Space* home, const IntVarArgs& x, IntVar y, IntRelType r, int m,
 	IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\sim_r z\f$
-   * 
+   *
    * Supports domain-consistent propagation only.
    */
   GECODE_INT_EXPORT void
-  count(Space* home, const IntVarArgs& x, int n, IntRelType r, IntVar z, 
+  count(Space* home, const IntVarArgs& x, int n, IntRelType r, IntVar z,
 	IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r z\f$
-   * 
+   *
    * Supports domain-consistent propagation only.
    */
   GECODE_INT_EXPORT void
-  count(Space* home, const IntVarArgs& x, IntVar y, IntRelType r, IntVar z, 
+  count(Space* home, const IntVarArgs& x, IntVar y, IntRelType r, IntVar z,
 	IntConLevel icl=ICL_DEF);
 
 
   /**
-   *  \brief Post propagator for 
-   *  \f{eqnarray*} 
+   *  \brief Post propagator for
+   *  \f{eqnarray*}
    *       \forall t=(v, lb, ub) \in c: & &
    *       lb \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq ub \\
    *	   \forall t=(v, unspec_{low}, unspec_{up}) \not\in c: & &
@@ -867,77 +867,77 @@ namespace Gecode {
    *
    *  \param x variables on which to perform propagation
    *  \param c specifying cardinality information as shown below
-   *  \param m denotes the size of c 
-   *  \param unspec_low denotes the lower bound for those values 
+   *  \param m denotes the size of c
+   *  \param unspec_low denotes the lower bound for those values
    *         not specified in c
-   *  \param unspec_up denotes the upper bound for those values 
+   *  \param unspec_up denotes the upper bound for those values
    *         not specified in c
    *  \param min smallest domain value of \a x
    *  \param max largest domain value of \a x
    *  \param icl consistency level
    *
-   *  Let \f$ D:=\displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} dom(x_i)\f$ and  
-   *  \f$ V \f$ the set of values represented by \a c. Then this progator allows 
-   *  sets \f$ V\subset D\f$ as well as \f$ V=D\f$. 
+   *  Let \f$ D:=\displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} dom(x_i)\f$ and
+   *  \f$ V \f$ the set of values represented by \a c. Then this progator allows
+   *  sets \f$ V\subset D\f$ as well as \f$ V=D\f$.
    *
-   *  In this interface values \f$ v\f$ and their cardinality bounds 
-   *  have to specified such that \a c looks as follows (for example): 
+   *  In this interface values \f$ v\f$ and their cardinality bounds
+   *  have to specified such that \a c looks as follows (for example):
    *  \f$ c=[ (1,0,1), (2,1,3), \dots, (10,4,5)]\f$, where the value 1 may occur
    *  zero times or once, the value 2 must occur at least once at most three times
    *  and the value 10 must occur at least 4 times and at most 5 times.
    *
-   *  Furthermore, this interface requires that 
-   *  \f$ \forall {i\in\{0, \dots, |x|-1\}}: dom(x_i) 
+   *  Furthermore, this interface requires that
+   *  \f$ \forall {i\in\{0, \dots, |x|-1\}}: dom(x_i)
    *  \subseteq I=[min;max]\f$.
    *
    */
 
-  GECODE_INT_EXPORT void 
-  gcc(Space* home, const IntVarArgs& x, const IntArgs& c, 
-      int m, int unspec_low, int unspec_up, int min, int max, 
+  GECODE_INT_EXPORT void
+  gcc(Space* home, const IntVarArgs& x, const IntArgs& c,
+      int m, int unspec_low, int unspec_up, int min, int max,
       IntConLevel icl);
-  
+
   /**
-   *  \brief Post propagator for 
+   *  \brief Post propagator for
    *  \f{eqnarray*}
-   *      \forall t=(v, lb, ub) \in c: & & 
+   *      \forall t=(v, lb, ub) \in c: & &
    *      lb \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq ub \\
-   *	  \forall t=(v, 0, unspec) \not\in c: & & 
-   *	  0 \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq unspec 
+   *	  \forall t=(v, 0, unspec) \not\in c: & &
+   *	  0 \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq unspec
    *  \f}
    *
    *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
    *  and domain-consistency (\a icl = ICL_DOM).
    *
-   *  \exception Int::ArgumentSame thrown if \a x contains shared variables. 
+   *  \exception Int::ArgumentSame thrown if \a x contains shared variables.
    *
    *  \param x variables on which to perform propagation
    *  \param c specifying cardinality information as shown below
-   *  \param m denotes the size of \a c 
-   *  \param unspec denotes the upper bound for those values 
+   *  \param m denotes the size of \a c
+   *  \param unspec denotes the upper bound for those values
    *         not specified in \a c
    *  \param min smallest domain value of \a x
    *  \param max largest domain value of \a x
    *  \param icl consistency level
    *
-   *  Let \f$ D:=\displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} dom(x_i)\f$ and  
+   *  Let \f$ D:=\displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} dom(x_i)\f$ and
    *  \f$ V \f$ the set of values represented by \a c. Then this interface allows
-   *  to specify sets \f$ V\subset D\f$ as well as \f$ V=D\f$. 
+   *  to specify sets \f$ V\subset D\f$ as well as \f$ V=D\f$.
    *
-   *  In this interface values \f$ v\f$ and their cardinality bounds 
-   *  have to be specified such that \a c looks as follows (for example): 
+   *  In this interface values \f$ v\f$ and their cardinality bounds
+   *  have to be specified such that \a c looks as follows (for example):
    *  \f$ c=[ (1,0,1), (2,1,3), \dots, (10,4,5)]\f$, where the value 1 may occur
    *  zero times or once, the value 2 must occur at least once at most three times
    *  and the value 10 must occur at least 4 times and at most 5 times.
    */
 
-  GECODE_INT_EXPORT void 
-  gcc(Space* home, const IntVarArgs& x, const IntArgs& c, 
+  GECODE_INT_EXPORT void
+  gcc(Space* home, const IntVarArgs& x, const IntArgs& c,
       int m, int unspec, int min, int max,
       IntConLevel icl);
 
   /**
-   *  \brief Post propagator for \f$ \forall v 
+   *  \brief Post propagator for \f$ \forall v
    *         \in \displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} dom(x_i):
    *         lb \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq ub \f$
    *
@@ -947,22 +947,22 @@ namespace Gecode {
    *  \exception Int::ArgumentSame thrown if \a x contains shared variables.
    *
    *  \param x variables on which to perform propagation
-   *  \param lb denotes the lower bound for all values 
-   *         specified in the array \a c, 
-   *  \param ub denotes the upper bound for all values 
-   *         specified in the array \a c, 
-   *         where this interface allows only value sets 
-   *         \f$ V=D \displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} 
+   *  \param lb denotes the lower bound for all values
+   *         specified in the array \a c,
+   *  \param ub denotes the upper bound for all values
+   *         specified in the array \a c,
+   *         where this interface allows only value sets
+   *         \f$ V=D \displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}}
    *         dom(x_i)\f$
    *  \param icl consistency level
    */
 
-  GECODE_INT_EXPORT void 
+  GECODE_INT_EXPORT void
   gcc(Space* home, const IntVarArgs& x, int lb, int ub, IntConLevel icl);
 
   /**
-   *  \brief Post propagator for \f$ \forall v 
-   *         \in \displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} dom(x_i): 
+   *  \brief Post propagator for \f$ \forall v
+   *         \in \displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} dom(x_i):
    *         lb = \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} = ub \f$
    *
    *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
@@ -971,26 +971,26 @@ namespace Gecode {
    *  \exception Int::ArgumentSame thrown if \a x contains shared variables.
    *
    *  \param x variables on which to perform propagation
-   *  \param ub denotes the upper bound for all values specified 
-   *            in the array \a c, where this interface 
-   *            allows only value sets 
-   *            \f$ V=D \displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} 
+   *  \param ub denotes the upper bound for all values specified
+   *            in the array \a c, where this interface
+   *            allows only value sets
+   *            \f$ V=D \displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}}
    *            dom(x_i)\f$
    *  \param icl consistency level
    *
    */
 
-  GECODE_INT_EXPORT void 
+  GECODE_INT_EXPORT void
   gcc(Space* home, const IntVarArgs& x, int ub, IntConLevel icl);
 
 
   /**
    *  \brief Post propagator for
-   *  \f{eqnarray*} 
+   *  \f{eqnarray*}
    *    v_j \in I=[min;max] & & \\
    *    \forall j \in \{0, \dots, |I| - 1\}: & &
-   *    \#\{i\in\{0, \dots, |x| - 1\} | x_i = v_j\} = c_j 
-   *  \f}    
+   *    \#\{i\in\{0, \dots, |x| - 1\} | x_i = v_j\} = c_j
+   *  \f}
    *
    *  \param x variables on which to perform propagation
    *  \param c cardinality variables
@@ -1001,30 +1001,30 @@ namespace Gecode {
    *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
    *  and domain-consistency (\a icl = ICL_DOM).
    *
-   *  This interface requires that 
-   *  \f$ \forall {i\in\{0, \dots, |x|-1\}}: dom(x_i) 
+   *  This interface requires that
+   *  \f$ \forall {i\in\{0, \dots, |x|-1\}}: dom(x_i)
    *  \subseteq I=[min;max]\f$.
    */
 
-  GECODE_INT_EXPORT void 
-  gcc(Space* home,  const IntVarArgs& x, const IntVarArgs& c, 
-      int min, int max, 
+  GECODE_INT_EXPORT void
+  gcc(Space* home,  const IntVarArgs& x, const IntVarArgs& c,
+      int min, int max,
       IntConLevel icl);
-  
+
   /**
    *  \brief Post propagator for \f$ \forall j \in \{0, \dots, |v| - 1\}:
    *  \#\{i\in\{0, \dots, |x| - 1\} | x_i = v_j\} = c_j \f$
    *
    *  \param x variables on which to perform propagation
-   *  \param v containing the values connected to the cardinality 
+   *  \param v containing the values connected to the cardinality
    *         variables as specified below
    *  \param c cardinality variables
    *  \param m denotes the size of \a v and \a c
-   *  \param unspec_low denotes the lower bound for those values 
+   *  \param unspec_low denotes the lower bound for those values
    *         not specified in \a v and \a c
-   *  \param unspec_up denotes the upper bound for those values 
+   *  \param unspec_up denotes the upper bound for those values
    *         not specified in \a v and \a c
-   *  \param all specifies whether the propagator uses all values in 
+   *  \param all specifies whether the propagator uses all values in
    *         the interval \f$ I=[min;max]\f$
    *  \param min smallest domain value of \a x
    *  \param max largest domain value of \a x
@@ -1033,19 +1033,19 @@ namespace Gecode {
    *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
    *  and domain-consistency (\a icl = ICL_DOM).
    *
-   *  This interface requires that 
-   *  \f$ \forall {i\in\{0, \dots, |x|-1\}}: dom(x_i) 
+   *  This interface requires that
+   *  \f$ \forall {i\in\{0, \dots, |x|-1\}}: dom(x_i)
    *  \subseteq I=[min;max]\f$.
-   *  If \a all is set to true, every value from the interval 
-   *  \f$ I=[min;max]\f$ is specified with cardinalities. 
+   *  If \a all is set to true, every value from the interval
+   *  \f$ I=[min;max]\f$ is specified with cardinalities.
    *  Otherwise, only specified values in \a v are used and unspecified values
    *  may occur between \a unspec_low and \a unspec_up times.
    */
 
   GECODE_INT_EXPORT void
-  gcc(Space* home, 
-      const IntVarArgs& x, const IntArgs& v, const IntVarArgs& c, 
-      int m, int unspec_low, int unspec_up, bool all, int min, int max, 
+  gcc(Space* home,
+      const IntVarArgs& x, const IntArgs& v, const IntVarArgs& c,
+      int m, int unspec_low, int unspec_up, bool all, int min, int max,
       IntConLevel icl);
 
   /**
@@ -1053,13 +1053,13 @@ namespace Gecode {
    *  \#\{i\in\{0, \dots, |x| - 1\} | x_i = v_j\} = c_j \f$
    *
    *  \param x variables on which to perform propagation
-   *  \param v containing the values connected to the cardinality 
+   *  \param v containing the values connected to the cardinality
    *         variables as specified below
    *  \param c cardinality variables
    *  \param m denotes the size of \a v and \a c
-   *  \param unspec denotes the upper bound for those values 
+   *  \param unspec denotes the upper bound for those values
    *         not specified in \a v and \a c
-   *  \param all specifies whether the propagator uses all values in 
+   *  \param all specifies whether the propagator uses all values in
    *         the interval \f$ I=[min;max]\f$
    *  \param min smallest domain value of \a x
    *  \param max largest domain value of \a x
@@ -1068,18 +1068,18 @@ namespace Gecode {
    *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
    *  and domain-consistency (\a icl = ICL_DOM).
    *
-   *  This interface requires that 
-   *  \f$ \forall {i\in\{0, \dots, |x|-1\}}: dom(x_i) 
+   *  This interface requires that
+   *  \f$ \forall {i\in\{0, \dots, |x|-1\}}: dom(x_i)
    *  \subseteq [min, \dots, max]\f$.
-   *  If \a all is set to true, every value from the interval 
-   *  \f$ I=[min;max]\f$ is specified with cardinalities. 
+   *  If \a all is set to true, every value from the interval
+   *  \f$ I=[min;max]\f$ is specified with cardinalities.
    *  Otherwise, only specified values in \a v are used and unspecified values
    *  may occur between 0 and \a unspec times.
    */
   GECODE_INT_EXPORT void
-  gcc(Space* home, 
-      const IntVarArgs& x, const IntArgs& v, const IntVarArgs& c, 
-      int m, int unspec, bool all, int min, int max, 
+  gcc(Space* home,
+      const IntVarArgs& x, const IntArgs& v, const IntVarArgs& c,
+      int m, int unspec, bool all, int min, int max,
       IntConLevel icl);
   //@}
 
@@ -1167,30 +1167,30 @@ namespace Gecode {
    */
 
   //@{
-  /** \brief Post propagator for \f$ \min\{x_0,x_1\}=x_2\f$ 
-   * 
-   * Only bounds-consistency is supported. 
+  /** \brief Post propagator for \f$ \min\{x_0,x_1\}=x_2\f$
+   *
+   * Only bounds-consistency is supported.
    */
   GECODE_INT_EXPORT void
   min(Space* home, IntVar x0, IntVar x1, IntVar x2,
       IntConLevel=ICL_DEF);
-  /** \brief Post propagator for \f$ \min x=y\f$ 
-   * 
-   * Only bounds-consistency is supported. 
+  /** \brief Post propagator for \f$ \min x=y\f$
+   *
+   * Only bounds-consistency is supported.
    */
   GECODE_INT_EXPORT void
   min(Space* home, const IntVarArgs& x, IntVar y,
       IntConLevel=ICL_DEF);
-  /** \brief Post propagator for \f$ \max\{x_0,x_1\}=x_2\f$ 
-   * 
+  /** \brief Post propagator for \f$ \max\{x_0,x_1\}=x_2\f$
+   *
    * Only bounds-consistency is supported. If \a x is empty,
    * an exception of type Int::ArgumentEmpty is thrown.
    */
   GECODE_INT_EXPORT void
   max(Space* home, IntVar x0, IntVar x1, IntVar x2,
       IntConLevel=ICL_DEF);
-  /** \brief Post propagator for \f$ \max x=y\f$ 
-   * 
+  /** \brief Post propagator for \f$ \max x=y\f$
+   *
    * Only bounds-consistency is supported. If \a x is empty,
    * an exception of type Int::ArgumentEmpty is thrown.
    */
@@ -1198,16 +1198,16 @@ namespace Gecode {
   max(Space* home, const IntVarArgs& x, IntVar y,
       IntConLevel=ICL_DEF);
 
-  /** \brief Post propagator for \f$ |x_0|=x_1\f$ 
-   * 
-   * Only bounds-consistency is supported. 
+  /** \brief Post propagator for \f$ |x_0|=x_1\f$
+   *
+   * Only bounds-consistency is supported.
    */
   GECODE_INT_EXPORT void
   abs(Space* home, IntVar x0, IntVar x1,
       IntConLevel=ICL_DEF);
 
-  /** \brief Post propagator for \f$x_0\cdot x_1=x_2\f$ 
-   * 
+  /** \brief Post propagator for \f$x_0\cdot x_1=x_2\f$
+   *
    * Only bounds-consistency is supported. The propagator
    * is overflow safe.
    */
@@ -1219,9 +1219,9 @@ namespace Gecode {
   /**
    * \defgroup TaskIntIntLinear Linear constraints
    * \ingroup TaskIntInt
-   * 
+   *
    * All variants for linear constraints share the following properties:
-   *  - Bounds-consistency (over the real numbers) is supported for 
+   *  - Bounds-consistency (over the real numbers) is supported for
    *    all constraints (actually, for disequlities always domain-consistency
    *    is used as it is cheaper). Domain-consistency is supported for all
    *    non-reified constraint. As bounds-consistency for inequalities
@@ -1229,13 +1229,13 @@ namespace Gecode {
    *    real variation is for linear equations). Domain-consistent
    *    linear equations are exponential, so use with care!
    *  - Variables occurring multiply in the argument arrays are replaced
-   *    by a single occurrence: for example, \f$ax+bx\f$ becomes 
+   *    by a single occurrence: for example, \f$ax+bx\f$ becomes
    *    \f$(a+b)x\f$.
    *  - If in the above simplification the value for \f$(a+b)\f$ (or for
    *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
-   *    defined in Limits::Int, an exception of type 
+   *    defined in Limits::Int, an exception of type
    *    Int::NumericalOverflow is thrown.
-   *  - Assume the constraint 
+   *  - Assume the constraint
    *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
    *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
    *    for doubles as defined in Limits::Int, an exception of
@@ -1247,21 +1247,21 @@ namespace Gecode {
   //@{
   /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r c\f$
   GECODE_INT_EXPORT void
-  linear(Space* home, const IntVarArgs& x, 
+  linear(Space* home, const IntVarArgs& x,
 	 IntRelType r, int c,
 	 IntConLevel=ICL_DEF);
   /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
   GECODE_INT_EXPORT void
-  linear(Space* home, const IntVarArgs& x, 
+  linear(Space* home, const IntVarArgs& x,
 	 IntRelType r, IntVar y,
 	 IntConLevel=ICL_DEF);
   /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r c\right)\Leftrightarrow b\f$
   GECODE_INT_EXPORT void
-  linear(Space* home, const IntVarArgs& x, 
+  linear(Space* home, const IntVarArgs& x,
 	 IntRelType r, int c, BoolVar b, IntConLevel=ICL_DEF);
   /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r y\right)\Leftrightarrow b\f$
   GECODE_INT_EXPORT void
-  linear(Space* home, const IntVarArgs& x, 
+  linear(Space* home, const IntVarArgs& x,
 	 IntRelType r, IntVar y, BoolVar b, IntConLevel=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$
    *
@@ -1269,7 +1269,7 @@ namespace Gecode {
    *  \a a and \a x are of different size.
    */
   GECODE_INT_EXPORT void
-  linear(Space* home, const IntArgs& a, const IntVarArgs& x, 
+  linear(Space* home, const IntArgs& a, const IntVarArgs& x,
 	 IntRelType r, int c,
 	 IntConLevel=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\f$
@@ -1278,7 +1278,7 @@ namespace Gecode {
    *  \a a and \a x are of different size.
    */
   GECODE_INT_EXPORT void
-  linear(Space* home, const IntArgs& a, const IntVarArgs& x, 
+  linear(Space* home, const IntArgs& a, const IntVarArgs& x,
 	 IntRelType r, IntVar y,
 	 IntConLevel=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\right)\Leftrightarrow b\f$
@@ -1287,8 +1287,8 @@ namespace Gecode {
    *  \a a and \a x are of different size.
    */
   GECODE_INT_EXPORT void
-  linear(Space* home, const IntArgs& a, const IntVarArgs& x, 
-	 IntRelType r, int c, BoolVar b, 
+  linear(Space* home, const IntArgs& a, const IntVarArgs& x,
+	 IntRelType r, int c, BoolVar b,
 	 IntConLevel=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\right)\Leftrightarrow b\f$
    *
@@ -1296,19 +1296,19 @@ namespace Gecode {
    *  \a a and \a x are of different size.
    */
   GECODE_INT_EXPORT void
-  linear(Space* home, const IntArgs& a, const IntVarArgs& x, 
-	 IntRelType r, IntVar y, BoolVar b, 
+  linear(Space* home, const IntArgs& a, const IntVarArgs& x,
+	 IntRelType r, IntVar y, BoolVar b,
 	 IntConLevel=ICL_DEF);
 
   /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r c\f$
   GECODE_INT_EXPORT void
-  linear(Space* home, const BoolVarArgs& x, 
+  linear(Space* home, const BoolVarArgs& x,
 	 IntRelType r, int c,
 	 IntConLevel=ICL_DEF);
 
   /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
   GECODE_INT_EXPORT void
-  linear(Space* home, const BoolVarArgs& x, 
+  linear(Space* home, const BoolVarArgs& x,
 	 IntRelType r, IntVar y,
 	 IntConLevel=ICL_DEF);
 
@@ -1346,25 +1346,25 @@ namespace Gecode {
     BVAR_DEGREE_MAX,
     /** \brief With smallest min-regret
      *
-     * The min-regret of a variable is the difference between the 
+     * The min-regret of a variable is the difference between the
      * smallest and second-smallest value still in the domain.
      */
     BVAR_REGRET_MIN_MIN,
     /** \brief With largest min-regret
      *
-     * The min-regret of a variable is the difference between the 
+     * The min-regret of a variable is the difference between the
      * smallest and second-smallest value still in the domain.
      */
     BVAR_REGRET_MIN_MAX,
     /** \brief With smallest max-regret
      *
-     * The max-regret of a variable is the difference between the 
+     * The max-regret of a variable is the difference between the
      * largest and second-largest value still in the domain.
      */
     BVAR_REGRET_MAX_MIN,
     /** \brief With largest max-regret
      *
-     * The max-regret of a variable is the difference between the 
+     * The max-regret of a variable is the difference between the
      * largest and second-largest value still in the domain.
      */
     BVAR_REGRET_MAX_MAX
