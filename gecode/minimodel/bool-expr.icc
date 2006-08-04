@@ -42,7 +42,7 @@ namespace Gecode { namespace MiniModel {
    * Operations for expressions
    *
    */
-  
+
   forceinline
   BoolExpr::BoolExpr(const BoolExpr& e) : n(e.n) {
     n->use++;
@@ -58,7 +58,7 @@ namespace Gecode { namespace MiniModel {
   }
 
   inline
-  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r) 
+  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r)
     : n(new Node) {
     unsigned int ls = ((l.n->t == t) || l.n->t == BT_VAR) ? l.n->same : 0;
     unsigned int rs = ((r.n->t == t) || r.n->t == BT_VAR) ? r.n->same : 0;
@@ -71,7 +71,7 @@ namespace Gecode { namespace MiniModel {
   }
 
   inline
-  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t) 
+  BoolExpr::BoolExpr(const BoolExpr& l, NodeType t)
     : n(new Node) {
     assert(t == BT_NOT);
     n->same = 1;
@@ -82,7 +82,7 @@ namespace Gecode { namespace MiniModel {
   }
 
   inline
-  BoolExpr::BoolExpr(const LinRel& rl) 
+  BoolExpr::BoolExpr(const LinRel& rl)
     : n(new Node) {
     n->same = 1;
     n->t    = BT_RLIN;

@@ -37,8 +37,8 @@ namespace Gecode { namespace MiniModel {
 
 
   forceinline void
-  LinExpr::Node::increment(void) { 
-    ++use; 
+  LinExpr::Node::increment(void) {
+    ++use;
   }
 
   forceinline
@@ -59,9 +59,9 @@ namespace Gecode { namespace MiniModel {
    * Operations for expressions
    *
    */
-  
+
   forceinline
-  LinExpr::LinExpr(void) 
+  LinExpr::LinExpr(void)
     : ax(NULL), n(0) {}
 
   inline
@@ -179,14 +179,14 @@ namespace Gecode {
     return x;
   }
 
-  inline IntVar 
+  inline IntVar
   post(Space* home, const MiniModel::LinExpr& e, IntConLevel icl) {
     if (!home->failed())
       return e.post(home,icl);
     IntVar x;
     return x;
   }
-    
+
 }
 
 // STATISTICS: minimodel-any

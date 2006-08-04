@@ -23,14 +23,14 @@
 
 #include <algorithm>
 
-namespace Gecode { 
+namespace Gecode {
 
 #define GECODE_MM_RETURN_FAILED			\
 if (home->failed()) {				\
   IntVar _x(home,0,0); return _x;		\
 }
 
-  IntVar 
+  IntVar
   abs(Space* home, IntVar x, IntConLevel icl) {
     GECODE_MM_RETURN_FAILED;
     if (x.min() >= 0)
@@ -42,7 +42,7 @@ if (home->failed()) {				\
     return y;
   }
 
-  IntVar 
+  IntVar
   min(Space* home, IntVar x, IntVar y, IntConLevel icl) {
     GECODE_MM_RETURN_FAILED;
     IntVar z(home,
@@ -52,7 +52,7 @@ if (home->failed()) {				\
     return z;
   }
 
-  IntVar 
+  IntVar
   min(Space* home, const IntVarArgs& x, IntConLevel icl) {
     GECODE_MM_RETURN_FAILED;
     int min = Limits::Int::int_max;
@@ -76,7 +76,7 @@ if (home->failed()) {				\
     return z;
   }
 
-  IntVar 
+  IntVar
   max(Space* home, const IntVarArgs& x, IntConLevel icl) {
     GECODE_MM_RETURN_FAILED;
     int min = Limits::Int::int_min;

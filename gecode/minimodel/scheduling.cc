@@ -28,7 +28,7 @@ namespace Gecode {
   using namespace Int;
 
   void
-  producer_consumer(Space *home, 
+  producer_consumer(Space *home,
 		    const IntVarArgs& produce_date, const IntArgs& produce_amount,
 		    const IntVarArgs& consume_date, const IntArgs& consume_amount,
 		    int initial, IntConLevel cl)
@@ -47,11 +47,11 @@ namespace Gecode {
     if (initial < Limits::Int::int_min ||
 	initial > Limits::Int::int_max)
       throw new NumericalOverflow("MiniModel::producer_consumer");
-    
+
     int maxval = 0;
-    for (int j = produce_date.size(); j--; ) 
+    for (int j = produce_date.size(); j--; )
 	maxval = std::max(produce_date[i].max(), maxval);
-    for (int j = consume_date.size(); j--; ) 
+    for (int j = consume_date.size(); j--; )
 	maxval = std::max(consume_date[j].max(), maxval);
     ++maxval;
 
@@ -63,7 +63,7 @@ namespace Gecode {
     for (int k = produce_date.size(); k--; ++i) {
       sum_height += produce_amount[k];
       machine[i] = 0;
-      
+
       start[i] = minvar;
       end[i] = produce_date[k];
       duration[i] = IntVar(home, end[i].min(), end[i].max());
@@ -76,7 +76,7 @@ namespace Gecode {
     // Construct consumer tasks
     for (int k = consume_date.size(); k--; ++i) {
       machine[i] = 0;
-      
+
       start[i] = consume_date[k];
       end[i] = maxvar;
       duration[i] = IntVar(home, maxval - start[i].max(),
@@ -94,13 +94,13 @@ namespace Gecode {
 
   /*
   template<class In> class ArgType;
-  
+
   template<>
   class ArgType<IntArgs> {
   public:
     typedef IntArgs Result;
   };
-  
+
   template<>
   class ArgType<IntVarArgs> {
   public:
@@ -127,25 +127,25 @@ namespace Gecode {
     {
       return iv;
     }
-    
+
     template<class Duration, class Height>
     void
     post_cumulative(Space *home, const IntVarArgs& start, const Duration& duration,
 		    const Height& height, int limit, bool at_most, IntConLevel cl)
     {
-      if (start.size() != duration.size() || 
+      if (start.size() != duration.size() ||
 	  duration.size() !=  height.size())
 	throw new ArgumentSizeMismatch("MiniModel::cumulative");
-      
+
       if (limit < Limits::Int::int_min ||
 	  limit > Limits::Int::int_max)
 	throw new NumericalOverflow("MiniModel::cumulative");
-      
+
       int n = start.size() + !at_most;
       IntArgs m(n), l(1, limit);
       IntVarArgs s(n), d(n), e(n);
       Height h(n);
-      
+
       if (!at_most) {
 	int smin, smax, emin, emax;
 	IntVarArgs end(n-1);
@@ -155,7 +155,7 @@ namespace Gecode {
 	  smin = std::min(s[i].min(), smin);
 	  smax = std::max(s[i].max(), smax);
 	  d[i] = make_intvar(home, duration[i]);
-	  e[i] = IntVar(home, Limits::Int::int_min, Limits::Int::int_max); 
+	  e[i] = IntVar(home, Limits::Int::int_min, Limits::Int::int_max);
 	  //s[i].min()+d[i].min(), s[i].max()+d[i].max());
 	  end[i] = e[i];
 	  emin = std::min(e[i].min(), emin);
@@ -182,7 +182,7 @@ namespace Gecode {
 
       cumulatives(home, m, s, d, e, h, l, at_most, cl);
     }
-    
+
   }
 
   void
@@ -222,7 +222,7 @@ namespace Gecode {
     {
       if (start.size() != duration.size())
 	throw new ArgumentSizeMismatch("MiniModel::serialized");
-      
+
       IntArgs height(start.size());
       for (int i = start.size(); i--; ) height[i] = 1;
 
@@ -236,7 +236,7 @@ namespace Gecode {
   {
     post_serialized(home, start, duration, cl);
   }
-  
+
 
   void
   serialized(Space *home, const IntVarArgs& start, const IntArgs& duration,
@@ -246,5 +246,5 @@ namespace Gecode {
   }
 
 }
-  
+
 // STATISTICS: minimodel-any

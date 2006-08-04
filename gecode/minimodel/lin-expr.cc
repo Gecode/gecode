@@ -23,7 +23,7 @@
 
 #include "gecode/minimodel.hh"
 
-namespace Gecode { 
+namespace Gecode {
 
   namespace MiniModel {
 
@@ -31,7 +31,7 @@ namespace Gecode {
      * Operations for linear expressions
      *
      */
-    
+
     bool
     LinExpr::Node::decrement(void) {
       if (--use == 0) {
@@ -45,7 +45,7 @@ namespace Gecode {
       }
       return false;
     }
-    
+
     int
     LinExpr::Node::fill(Int::Linear::Term t[], int i, int m) const {
       if (left != NULL) {
@@ -62,14 +62,14 @@ namespace Gecode {
       (void) ax->fill(ts,0,sign);
       Int::Linear::post(home, ts, n, irt, sign*-c, icl);
     }
-    
+
     void
     LinExpr::post(Space* home, IntRelType irt, const BoolVar& b) const {
       GECODE_AUTOARRAY(Int::Linear::Term, ts, n);
       (void) ax->fill(ts,0,sign);
       Int::Linear::post(home, ts, n, irt, sign*-c, b);
     }
-    
+
     IntVar
     LinExpr::post(Space* home, IntConLevel icl) const {
       GECODE_AUTOARRAY(Int::Linear::Term, ts, n+1);
@@ -94,8 +94,8 @@ namespace Gecode {
       Int::Linear::post(home, ts, n+1, IRT_EQ, sign*-c, icl);
       return x;
     }
-    
-    
+
+
   }
 
 }

@@ -29,14 +29,14 @@ namespace Gecode { namespace MiniModel {
    */
 
   //@{
-  
+
   /// %Exception: Sizes of arguments does not match
   class ArgumentSizeMismatch : public Exception  {
   public:
     /// Initialize with location \a l
     ArgumentSizeMismatch(const char* l);
   };
-  
+
   /// %Exception: Argument out of range
   class ArgumentOutOfRange : public Exception  {
   public:
@@ -49,11 +49,11 @@ namespace Gecode { namespace MiniModel {
   inline
   ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l)
     : Exception(l,"Sizes of argument arrays mismatch") {}
-  
+
   inline
   ArgumentOutOfRange::ArgumentOutOfRange(const char* l)
     : Exception(l,"Argument out of range") {}
-  
+
 }}
 
 // STATISTICS: minimodel-any

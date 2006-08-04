@@ -19,10 +19,10 @@
  *
  */
 
-namespace Gecode { 
+namespace Gecode {
 
   namespace MiniModel {
-    
+
     /*
      * Operations for Boolean relations
      *
@@ -35,7 +35,7 @@ namespace Gecode {
     BoolRel::post(Space* home) const {
       e.post(home,t);
     }
-    
+
   }
 
   /*
@@ -55,7 +55,7 @@ namespace Gecode {
    * Posting
    *
    */
-  inline void 
+  inline void
   post(Space* home, const MiniModel::BoolRel& r, IntConLevel) {
     if (home->failed()) return;
     r.post(home);

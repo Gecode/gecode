@@ -19,7 +19,7 @@
  *
  */
 
-namespace Gecode { 
+namespace Gecode {
 
   namespace MiniModel {
 
@@ -29,28 +29,28 @@ namespace Gecode {
      */
     forceinline
     LinRel::LinRel(void) {}
-    
+
     forceinline
-    LinRel::LinRel(const LinExpr& l, IntRelType irt0, const LinExpr& r) 
+    LinRel::LinRel(const LinExpr& l, IntRelType irt0, const LinExpr& r)
       : e(l,r,-1), irt(irt0) {}
-    
+
     forceinline
-    LinRel::LinRel(const LinExpr& l, IntRelType irt0, int r) 
+    LinRel::LinRel(const LinExpr& l, IntRelType irt0, int r)
       : e(l,-r,1), irt(irt0) {}
-    
+
     forceinline
-    LinRel::LinRel(int l, IntRelType irt0, const LinExpr& r) 
+    LinRel::LinRel(int l, IntRelType irt0, const LinExpr& r)
       : e(r,-l,-1), irt(irt0) {}
-    
+
     forceinline IntRelType
     LinRel::neg(IntRelType irt) {
-      switch (irt) { 
+      switch (irt) {
       case IRT_EQ: return IRT_NQ;
       case IRT_NQ: return IRT_EQ;
       case IRT_LQ: return IRT_GR;
       case IRT_LE: return IRT_GQ;
       case IRT_GQ: return IRT_LE;
-      case IRT_GR: 
+      case IRT_GR:
       default:
 	assert(irt == IRT_GR);
       }
@@ -65,12 +65,12 @@ namespace Gecode {
 	e.post(home,neg(irt),icl);
       }
     }
-    
+
     forceinline void
     LinRel::post(Space* home, const BoolVar& b) const {
       e.post(home,irt,b);
     }
-    
+
   }
 
 }
@@ -183,12 +183,12 @@ namespace Gecode {
    *
    */
 
-  forceinline void 
+  forceinline void
   post(Space* home, const MiniModel::LinRel& r, IntConLevel icl) {
     if (home->failed()) return;
     r.post(home,true,icl);
   }
-  forceinline void 
+  forceinline void
   post(Space* home, bool r, IntConLevel) {
     if (home->failed()) return;
     if (!r)

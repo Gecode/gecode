@@ -23,10 +23,10 @@
 
 #include "gecode/minimodel.hh"
 
-namespace Gecode { 
+namespace Gecode {
 
   namespace MiniModel {
-    
+
     bool
     BoolExpr::Node::decrement(void) {
       if (--use == 0) {
@@ -38,7 +38,7 @@ namespace Gecode {
       }
       return false;
     }
-    
+
     BoolVar
     BoolExpr::Node::post(Space* home) const {
       if (t == BT_VAR)
@@ -49,7 +49,7 @@ namespace Gecode {
     }
 
     int
-    BoolExpr::Node::post(Space* home, NodeType t, 
+    BoolExpr::Node::post(Space* home, NodeType t,
 			 BoolVarArgs& b, int i) const {
       if (this->t != t) {
 	b[i] = post(home);
@@ -190,7 +190,7 @@ namespace Gecode {
 	case BT_RLIN:
 	  rl.post(home,false,ICL_DEF);
 	  break;
-	default: 
+	default:
 	  {
 	    BoolVar b(home,0,0);
 	    post(home,b);
