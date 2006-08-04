@@ -65,13 +65,13 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY, class VZ, bool shr>
   forceinline int
   Base<VX,VY,VZ,shr>::atleast(void) const {
-    return c;
+    return -c;
   }
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline int
   Base<VX,VY,VZ,shr>::atmost(void) const {
-    return c+x.size();
+    return x.size()-c;
   }
 
   template <class VX, class VY, class VZ, bool shr>
@@ -130,7 +130,7 @@ namespace Gecode { namespace Int { namespace Count {
 	if (z.min() == atmost()) goto decided;
 	break;
       case RT_TRUE:
-	x.move_lst(i,home,this,PC_INT_DOM); c++;
+	x.move_lst(i,home,this,PC_INT_DOM); c--;
 	if (z.max() == atleast()) goto decided;
 	break;
       case RT_MAYBE:
@@ -192,7 +192,7 @@ namespace Gecode { namespace Int { namespace Count {
       case RT_FALSE:
 	x.move_lst(i,home,this,PC_INT_DOM); break;
       case RT_TRUE:
-	x.move_lst(i,home,this,PC_INT_DOM); c++; break;
+	x.move_lst(i,home,this,PC_INT_DOM); c--; break;
       case RT_MAYBE:
 	break;
       default: GECODE_NEVER;
@@ -252,7 +252,7 @@ namespace Gecode { namespace Int { namespace Count {
       case RT_FALSE:
 	x.move_lst(i,home,this,PC_INT_DOM); break;
       case RT_TRUE:
-	x.move_lst(i,home,this,PC_INT_DOM); c++;
+	x.move_lst(i,home,this,PC_INT_DOM); c--;
 	if (z.max() == atleast()) goto decided;
 	break;
       case RT_MAYBE:
@@ -314,7 +314,7 @@ namespace Gecode { namespace Int { namespace Count {
 	if (z.min() == atmost()) goto decided;
 	break;
       case RT_TRUE:
-	x.move_lst(i,home,this,PC_INT_DOM); c++;
+	x.move_lst(i,home,this,PC_INT_DOM); c--;
 	break;
       case RT_MAYBE:
 	break;

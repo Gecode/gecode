@@ -41,11 +41,11 @@ namespace Gecode {
     case IRT_NQ:
       GECODE_INT_CREATE(ConstIntView,ConstIntView,Count::Nq); break;
     case IRT_LE:
-      c = 1; // Fall through
+      c = -1; // Fall through
     case IRT_LQ:
       GECODE_INT_CREATE(ConstIntView,ConstIntView,Count::Lq); break;
     case IRT_GR:
-      c = -1; // Fall through
+      c = 1; // Fall through
     case IRT_GQ:
       GECODE_INT_CREATE(ConstIntView,ConstIntView,Count::Gq); break;
     default:
@@ -67,11 +67,11 @@ namespace Gecode {
     case IRT_NQ:
       GECODE_INT_CREATE(ConstIntView,IntView,Count::Nq); break;
     case IRT_LE:
-      c = 1; // Fall through
+      c = -1; // Fall through
     case IRT_LQ:
       GECODE_INT_CREATE(ConstIntView,IntView,Count::Lq); break;
     case IRT_GR:
-      c = -1; // Fall through
+      c = 1; // Fall through
     case IRT_GQ:
       GECODE_INT_CREATE(ConstIntView,IntView,Count::Gq); break;
     default:
@@ -93,11 +93,11 @@ namespace Gecode {
     case IRT_NQ:
       GECODE_INT_CREATE(IntView,ConstIntView,Count::Nq); break;
     case IRT_LE:
-      c = 1; // Fall through
+      c = -1; // Fall through
     case IRT_LQ:
       GECODE_INT_CREATE(IntView,ConstIntView,Count::Lq); break;
     case IRT_GR:
-      c = -1; // Fall through
+      c = 1; // Fall through
     case IRT_GQ:
       GECODE_INT_CREATE(IntView,ConstIntView,Count::Gq); break;
     default:
@@ -118,11 +118,11 @@ namespace Gecode {
     case IRT_NQ:
       GECODE_INT_CREATE(IntView,IntView,Count::Nq); break;
     case IRT_LE:
-      c = 1; // Fall through
+      c = -1; // Fall through
     case IRT_LQ:
       GECODE_INT_CREATE(IntView,IntView,Count::Lq); break;
     case IRT_GR:
-      c = -1; // Fall through
+      c = 1; // Fall through
     case IRT_GQ:
       GECODE_INT_CREATE(IntView,IntView,Count::Gq); break;
     default:
