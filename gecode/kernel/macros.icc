@@ -37,7 +37,7 @@
  * \ingroup TaskActor
  */ 
 #define GECODE_ME_FAIL(home,me)			\
-  if (::Gecode::me_failed(me)) {			\
+  if (::Gecode::me_failed(me)) {		\
     (home)->fail();				\
     return;					\
   }
@@ -48,18 +48,18 @@
  * \brief Check whether execution status \a es is failed, and forward failure.
  * \ingroup TaskActor
  */ 
-#define GECODE_ES_CHECK(es)			\
-  if ((es) == ::Gecode::ES_FAILED)		\
+#define GECODE_ES_CHECK(es)		\
+  if ((es) < ::Gecode::ES_OK)		\
     return ::Gecode::ES_FAILED;
 
 /**
  * \brief Check whether execution status \a es is failed, and fail space \a home.
  * \ingroup TaskActor
  */ 
-#define GECODE_ES_FAIL(home,es)			\
-  if ((es) == ::Gecode::ES_FAILED) {		\
-    (home)->fail();				\
-    return;					\
+#define GECODE_ES_FAIL(home,es)		\
+  if ((es) < ::Gecode::ES_OK) {		\
+    (home)->fail();			\
+    return;				\
   }
 
 /**
