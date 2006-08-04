@@ -57,7 +57,7 @@ namespace Gecode {
       return IRT_LQ;
     }
 
-    forceinline void
+    inline void
     LinRel::post(Space* home, bool t, IntConLevel icl) const {
       if (t) {
 	e.post(home,irt,icl);
@@ -79,97 +79,97 @@ namespace Gecode {
  * Construction of linear relations
  *
  */
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator==(int l,
 	   const Gecode::MiniModel::LinExpr& r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_EQ,r);
 }
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator==(const Gecode::MiniModel::LinExpr& l,
 	   int r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_EQ,r);
 }
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator==(const Gecode::MiniModel::LinExpr& l,
 	   const Gecode::MiniModel::LinExpr& r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_EQ,r);
 }
 
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator!=(int l,
 	   const Gecode::MiniModel::LinExpr& r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_NQ,r);
 }
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator!=(const Gecode::MiniModel::LinExpr& l,
 	   int r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_NQ,r);
 }
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator!=(const Gecode::MiniModel::LinExpr& l,
 	   const Gecode::MiniModel::LinExpr& r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_NQ,r);
 }
 
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator<(int l,
 	  const Gecode::MiniModel::LinExpr& r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_LE,r);
 }
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator<(const Gecode::MiniModel::LinExpr& l,
 	  int r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_LE,r);
 }
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator<(const Gecode::MiniModel::LinExpr& l,
 	  const Gecode::MiniModel::LinExpr& r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_LE,r);
 }
 
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator<=(int l,
 	   const Gecode::MiniModel::LinExpr& r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_LQ,r);
 }
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator<=(const Gecode::MiniModel::LinExpr& l,
 	   int r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_LQ,r);
 }
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator<=(const Gecode::MiniModel::LinExpr& l,
 	   const Gecode::MiniModel::LinExpr& r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_LQ,r);
 }
 
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator>(int l,
 	  const Gecode::MiniModel::LinExpr& r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_GR,r);
 }
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator>(const Gecode::MiniModel::LinExpr& l,
 	  int r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_GR,r);
 }
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator>(const Gecode::MiniModel::LinExpr& l,
 	  const Gecode::MiniModel::LinExpr& r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_GR,r);
 }
 
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator>=(int l,
 	   const Gecode::MiniModel::LinExpr& r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_GQ,r);
 }
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator>=(const Gecode::MiniModel::LinExpr& l,
 	   int r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_GQ,r);
 }
-forceinline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel
 operator>=(const Gecode::MiniModel::LinExpr& l,
 	   const Gecode::MiniModel::LinExpr& r) {
   return Gecode::MiniModel::LinRel(l,Gecode::IRT_GQ,r);

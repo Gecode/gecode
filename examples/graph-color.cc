@@ -39,6 +39,8 @@ public:
   const int  n_v; ///< Number of nodes
   const int* e;   ///< Edges
   const int* c;   ///< Cliques
+  GraphColorSpec(const int n_v0, const int* e0, const int* c0)
+    : n_v(n_v0), e(e0), c(c0) {}
 };
 
 /// First example graph: edges
@@ -165,10 +167,7 @@ static const int g1_c[] = {
   -1};
 
 /// First example graph
-static const GraphColorSpec g1 = {
-  200, g1_e, g1_c
-};
-
+static const GraphColorSpec g1(200, g1_e, g1_c);
 
 /// Second example graph: edges
 static const int g2_e[] = {
@@ -281,9 +280,7 @@ static const int g2_c[] = {
   -1};
 
 /// Second example graph
-static const GraphColorSpec g2 = {
-  200, g2_e, g2_c
-};
+static const GraphColorSpec g2(200, g2_e, g2_c);
 //@}
 
 /**

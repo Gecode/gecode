@@ -154,12 +154,11 @@ namespace Gecode { namespace Set { namespace Int {
     weights.update(share,p.weights);
   }
 
-  forceinline ExecStatus
+  inline ExecStatus
   Weights::post(Space* home, const IntArgs& elements, const IntArgs& weights,
 		SetView x, Gecode::Int::IntView y) {
-    if (elements.size() != weights.size()) {
+    if (elements.size() != weights.size())
       throw ArgumentSizeMismatch("Weights");
-    }
     GECODE_AUTOARRAY(int, els_arr, elements.size());
     for (int i=elements.size(); i--;)
       els_arr[i] = elements[i];

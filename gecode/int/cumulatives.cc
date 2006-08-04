@@ -107,15 +107,12 @@ namespace Gecode {
 	vend      = make_view_array(home,      end);
       
       // There is only the value-consistent propagator for this constraint
-      if(Cumulatives::Val<
-	 typename ViewType<Machine>::Result,
-	 typename ViewType<Duration>::Result,
-	 typename ViewType<Height>::Result,
-	 IntView>::post(home, vmachine,vstart, vduration, vend, vheight,
-			limit, at_most) == ::Gecode::ES_FAILED) {
-	home->fail();
-	return;
-      }
+      GECODE_ES_FAIL(home,(Cumulatives::Val<
+			   typename ViewType<Machine>::Result,
+			   typename ViewType<Duration>::Result,
+			   typename ViewType<Height>::Result,
+			   IntView>::post(home, vmachine,vstart, vduration, 
+					  vend, vheight,limit, at_most)));
       
       // By definition, s+d=e should hold.
       // We enforce this using basic linear constraints, since the

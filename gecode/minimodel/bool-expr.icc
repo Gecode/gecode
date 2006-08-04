@@ -48,7 +48,7 @@ namespace Gecode { namespace MiniModel {
     n->use++;
   }
 
-  forceinline
+  inline
   BoolExpr::BoolExpr(const BoolVar& x) : n(new Node) {
     n->same = 1;
     n->t    = BT_VAR;
@@ -57,7 +57,7 @@ namespace Gecode { namespace MiniModel {
     n->x    = x;
   }
 
-  forceinline
+  inline
   BoolExpr::BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r) 
     : n(new Node) {
     unsigned int ls = ((l.n->t == t) || l.n->t == BT_VAR) ? l.n->same : 0;
@@ -70,7 +70,7 @@ namespace Gecode { namespace MiniModel {
     n->r->use++;
   }
 
-  forceinline
+  inline
   BoolExpr::BoolExpr(const BoolExpr& l, NodeType t) 
     : n(new Node) {
     assert(t == BT_NOT);
@@ -81,7 +81,7 @@ namespace Gecode { namespace MiniModel {
     n->r    = NULL;
   }
 
-  forceinline
+  inline
   BoolExpr::BoolExpr(const LinRel& rl) 
     : n(new Node) {
     n->same = 1;
@@ -121,7 +121,7 @@ namespace Gecode { namespace MiniModel {
 
 }}
 
-forceinline Gecode::MiniModel::BoolExpr
+inline Gecode::MiniModel::BoolExpr
 operator&&(const Gecode::MiniModel::BoolExpr& l,
 	   const Gecode::MiniModel::BoolExpr& r) {
   return Gecode::MiniModel::BoolExpr(l,
@@ -129,7 +129,7 @@ operator&&(const Gecode::MiniModel::BoolExpr& l,
 				     r);
 }
 
-forceinline Gecode::MiniModel::BoolExpr
+inline Gecode::MiniModel::BoolExpr
 operator||(const Gecode::MiniModel::BoolExpr& l,
 	   const Gecode::MiniModel::BoolExpr& r) {
   return Gecode::MiniModel::BoolExpr(l,
@@ -137,7 +137,7 @@ operator||(const Gecode::MiniModel::BoolExpr& l,
 				     r);
 }
 
-forceinline Gecode::MiniModel::BoolExpr
+inline Gecode::MiniModel::BoolExpr
 operator^(const Gecode::MiniModel::BoolExpr& l,
 	  const Gecode::MiniModel::BoolExpr& r) {
   return Gecode::MiniModel::BoolExpr(l,
@@ -145,12 +145,12 @@ operator^(const Gecode::MiniModel::BoolExpr& l,
 				     r);
 }
 
-forceinline Gecode::MiniModel::BoolExpr
+inline Gecode::MiniModel::BoolExpr
 operator~(const Gecode::MiniModel::LinRel& rl) {
   return Gecode::MiniModel::BoolExpr(rl);
 }
 
-forceinline Gecode::MiniModel::BoolExpr
+inline Gecode::MiniModel::BoolExpr
 operator!(const Gecode::MiniModel::BoolExpr& e) {
   return Gecode::MiniModel::BoolExpr(e,
 				     Gecode::MiniModel::BoolExpr::BT_NOT);
@@ -158,7 +158,7 @@ operator!(const Gecode::MiniModel::BoolExpr& e) {
 
 namespace Gecode {
 
-  forceinline MiniModel::BoolExpr
+  inline MiniModel::BoolExpr
   eqv(const MiniModel::BoolExpr& l,
       const MiniModel::BoolExpr& r) {
     return MiniModel::BoolExpr(l,
@@ -166,7 +166,7 @@ namespace Gecode {
 			       r);
   }
 
-  forceinline MiniModel::BoolExpr
+  inline MiniModel::BoolExpr
   imp(const MiniModel::BoolExpr& l,
       const MiniModel::BoolExpr& r) {
     return MiniModel::BoolExpr(l,
@@ -175,12 +175,12 @@ namespace Gecode {
   }
 
 
-  forceinline BoolVar
+  inline BoolVar
   post(Space* home, const MiniModel::BoolExpr& e, IntConLevel) {
     return e.post(home);
   }
 
-  forceinline BoolVar
+  inline BoolVar
   post(Space* home, const BoolVar& b, IntConLevel) {
     return b;
   }

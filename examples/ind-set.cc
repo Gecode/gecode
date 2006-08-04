@@ -34,6 +34,8 @@ public:
   const int  n_v; ///< Number of vertices
   const int  n_e; ///< Number of edges
   const int* e;   ///< Arrays of edges (as vertex pairs)
+  Graph(const int n_v0, const int n_e0, const int* e0)
+    : n_v(n_v0), n_e(n_e0), e(e0) {}
 };
 
 static const int e_20_10[] = {
@@ -41,7 +43,7 @@ static const int e_20_10[] = {
   9,12,  5,11,   6,15,   3,18,   7,16
 };
 
-static const Graph g_20_10 = { 20, 10, e_20_10 };
+static const Graph g_20_10(20,10,e_20_10);
 
 static const int e_40_20[] = {
   21,30,   11,30,   19,38,   20,25,   11,24,
@@ -50,7 +52,7 @@ static const int e_40_20[] = {
   19,25,   11,22,   13,30,    7,36,   15,33
 };
 
-static const Graph g_40_20 = { 40, 20, e_40_20 };
+static const Graph g_40_20(40, 20, e_40_20);
 //@}
 
 

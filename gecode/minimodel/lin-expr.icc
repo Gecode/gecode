@@ -64,12 +64,12 @@ namespace Gecode { namespace MiniModel {
   LinExpr::LinExpr(void) 
     : ax(NULL), n(0) {}
 
-  forceinline
+  inline
   LinExpr::LinExpr(const IntVar& x, int a, int c0) :
     ax(new Node(a, x)), n(1), c(c0), sign(1) {
   }
 
-  forceinline
+  inline
   LinExpr::LinExpr(const LinExpr& t1, const LinExpr& t2, int m) :
     ax(new Node(t1.ax, t1.sign, t2.ax, t2.sign*m)),
     n(t1.n+t2.n),
@@ -109,59 +109,59 @@ namespace Gecode { namespace MiniModel {
 
 }}
 
-forceinline Gecode::MiniModel::LinExpr
+inline Gecode::MiniModel::LinExpr
 operator+(int c,
 	  const Gecode::MiniModel::LinExpr& t) {
   return Gecode::MiniModel::LinExpr(t,c,1);
 }
-forceinline Gecode::MiniModel::LinExpr
+inline Gecode::MiniModel::LinExpr
 operator+(const Gecode::MiniModel::LinExpr& t,
 	  int c) {
   return Gecode::MiniModel::LinExpr(t,c,1);
 }
-forceinline Gecode::MiniModel::LinExpr
+inline Gecode::MiniModel::LinExpr
 operator+(const Gecode::MiniModel::LinExpr& t1,
 	  const Gecode::MiniModel::LinExpr& t2) {
   return Gecode::MiniModel::LinExpr(t1,t2,1);
 }
 
 
-forceinline Gecode::MiniModel::LinExpr
+inline Gecode::MiniModel::LinExpr
 operator-(int c,
 	  const Gecode::MiniModel::LinExpr& t) {
   return Gecode::MiniModel::LinExpr(t, c, -1);
 }
-forceinline Gecode::MiniModel::LinExpr
+inline Gecode::MiniModel::LinExpr
 operator-(const Gecode::MiniModel::LinExpr& t,
 	  int c) {
   return Gecode::MiniModel::LinExpr(t, -c, 1);
 }
-forceinline Gecode::MiniModel::LinExpr
+inline Gecode::MiniModel::LinExpr
 operator-(const Gecode::MiniModel::LinExpr& t1,
 	  const Gecode::MiniModel::LinExpr& t2) {
   return Gecode::MiniModel::LinExpr(t1, t2, -1);
 }
 
 
-forceinline Gecode::MiniModel::LinExpr
+inline Gecode::MiniModel::LinExpr
 operator-(const Gecode::MiniModel::LinExpr& t) {
   return Gecode::MiniModel::LinExpr(t,0,-1);
 }
 
 
-forceinline Gecode::MiniModel::LinExpr
+inline Gecode::MiniModel::LinExpr
 operator*(int a, const Gecode::IntVar& x) {
   return Gecode::MiniModel::LinExpr(x,a);
 }
-forceinline Gecode::MiniModel::LinExpr
+inline Gecode::MiniModel::LinExpr
 operator*(const Gecode::IntVar& x, int a) {
   return Gecode::MiniModel::LinExpr(x,a);
 }
-forceinline Gecode::MiniModel::LinExpr
+inline Gecode::MiniModel::LinExpr
 operator*(const Gecode::MiniModel::LinExpr& t, int a) {
   return Gecode::MiniModel::LinExpr(a,t);
 }
-forceinline Gecode::MiniModel::LinExpr
+inline Gecode::MiniModel::LinExpr
 operator*(int a, const Gecode::MiniModel::LinExpr& t) {
   return Gecode::MiniModel::LinExpr(a,t);
 }
@@ -173,13 +173,13 @@ namespace Gecode {
     return x;
   }
 
-  forceinline IntVar
+  inline IntVar
   post(Space* home, int n, IntConLevel) {
     IntVar x(home, n, n);
     return x;
   }
 
-  forceinline IntVar 
+  inline IntVar 
   post(Space* home, const MiniModel::LinExpr& e, IntConLevel icl) {
     if (!home->failed())
       return e.post(home,icl);

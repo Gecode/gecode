@@ -45,8 +45,7 @@ namespace Gecode {
 	vi[i  ].init(x[i],n); 
 	vi[i+n].init(y[i],n);
       }
-      if (Val<IntView>::post(home,n,vi) == ES_FAILED)
-	home->fail();
+      GECODE_ES_FAIL(home,Val<IntView>::post(home,n,vi));
     } else {
       DomInfo<IntView>* di
 	= DomInfo<IntView>::allocate(home,2*n);
@@ -54,8 +53,7 @@ namespace Gecode {
 	di[i  ].init(x[i],n); 
 	di[i+n].init(y[i],n);
       }
-      if (Dom<IntView>::post(home,n,di) == ES_FAILED)
-	home->fail();
+      GECODE_ES_FAIL(home,Dom<IntView>::post(home,n,di));
     }
   }
 

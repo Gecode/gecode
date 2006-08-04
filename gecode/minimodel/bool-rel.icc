@@ -42,11 +42,11 @@ namespace Gecode {
    * Construction of linear relations
    *
    */
-  forceinline MiniModel::BoolRel
+  inline MiniModel::BoolRel
   tt(const MiniModel::BoolExpr& e) {
     return MiniModel::BoolRel(e,true);
   }
-  forceinline MiniModel::BoolRel
+  inline MiniModel::BoolRel
   ff(const MiniModel::BoolExpr& e) {
     return MiniModel::BoolRel(e,false);
   }
@@ -55,7 +55,7 @@ namespace Gecode {
    * Posting
    *
    */
-  forceinline void 
+  inline void 
   post(Space* home, const MiniModel::BoolRel& r, IntConLevel) {
     if (home->failed()) return;
     r.post(home);

@@ -33,8 +33,8 @@ namespace Gecode {
 		    const IntVarArgs& consume_date, const IntArgs& consume_amount,
 		    int initial, IntConLevel cl)
   {
-    if(produce_date.size() != produce_amount.size() ||
-       consume_date.size() != consume_amount.size())
+    if (produce_date.size() != produce_amount.size() ||
+	consume_date.size() != consume_amount.size())
       throw new ArgumentSizeMismatch("Minimodel::producer_consumer");
 
     int ntasks = produce_date.size() + consume_date.size();
@@ -44,8 +44,8 @@ namespace Gecode {
 
     int i = 0;
     int sum_height = initial;
-    if(initial < Limits::Int::int_min ||
-       initial > Limits::Int::int_max)
+    if (initial < Limits::Int::int_min ||
+	initial > Limits::Int::int_max)
       throw new NumericalOverflow("MiniModel::producer_consumer");
     
     int maxval = 0;
@@ -68,8 +68,8 @@ namespace Gecode {
       end[i] = produce_date[k];
       duration[i] = IntVar(home, end[i].min(), end[i].max());
       height[i] = produce_amount[k];
-      if(height[i] < Limits::Int::int_min ||
-	 height[i] > Limits::Int::int_max)
+      if (height[i] < Limits::Int::int_min ||
+	  height[i] > Limits::Int::int_max)
 	throw new NumericalOverflow("MiniModel::producer_consumer");
     }
 
@@ -82,8 +82,8 @@ namespace Gecode {
       duration[i] = IntVar(home, maxval - start[i].max(),
 			   maxval - start[i].min());
       height[i] = consume_amount[k];
-      if(height[i] < Limits::Int::int_min ||
-	 height[i] > Limits::Int::int_max)
+      if (height[i] < Limits::Int::int_min ||
+	  height[i] > Limits::Int::int_max)
 	throw new NumericalOverflow("MiniModel::producer_consumer");
     }
 
@@ -133,12 +133,12 @@ namespace Gecode {
     post_cumulative(Space *home, const IntVarArgs& start, const Duration& duration,
 		    const Height& height, int limit, bool at_most, IntConLevel cl)
     {
-      if(start.size() != duration.size() || 
-	 duration.size() !=  height.size())
+      if (start.size() != duration.size() || 
+	  duration.size() !=  height.size())
 	throw new ArgumentSizeMismatch("MiniModel::cumulative");
       
-      if(limit < Limits::Int::int_min ||
-	 limit > Limits::Int::int_max)
+      if (limit < Limits::Int::int_min ||
+	  limit > Limits::Int::int_max)
 	throw new NumericalOverflow("MiniModel::cumulative");
       
       int n = start.size() + !at_most;
@@ -146,7 +146,7 @@ namespace Gecode {
       IntVarArgs s(n), d(n), e(n);
       Height h(n);
       
-      if(!at_most) {
+      if (!at_most) {
 	int smin, smax, emin, emax;
 	IntVarArgs end(n-1);
 	for (int i = start.size(); i--; ) {
@@ -220,7 +220,7 @@ namespace Gecode {
     post_serialized(Space *home, const IntVarArgs& start, const Duration& duration,
 	       IntConLevel cl)
     {
-      if(start.size() != duration.size())
+      if (start.size() != duration.size())
 	throw new ArgumentSizeMismatch("MiniModel::serialized");
       
       IntArgs height(start.size());

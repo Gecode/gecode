@@ -85,33 +85,29 @@ namespace Gecode {
     switch (r) {
     case IRT_EQ:
       if (icl == ICL_BND) {
-	if (Rel::ReEqBnd<IntView,BoolView>::post(home,x0,x1,b) 
-	    == ES_FAILED)
-	  home->fail();
+	GECODE_ES_FAIL(home,(Rel::ReEqBnd<IntView,BoolView>
+			     ::post(home,x0,x1,b)));
       } else {
-	if (Rel::ReEqDom<IntView,BoolView>::post(home,x0,x1,b)
-	    == ES_FAILED)
-	  home->fail();
+	GECODE_ES_FAIL(home,(Rel::ReEqDom<IntView,BoolView>
+			     ::post(home,x0,x1,b)));
       }
       break;
     case IRT_NQ:
       {
 	NegBoolView n(b);
 	if (icl == ICL_BND) {
-	  if (Rel::ReEqBnd<IntView,NegBoolView>::post(home,x0,x1,n)
-	      == ES_FAILED)
-	    home->fail();
+	  GECODE_ES_FAIL(home,(Rel::ReEqBnd<IntView,NegBoolView>
+			       ::post(home,x0,x1,n)));
 	} else {
-	  if (Rel::ReEqDom<IntView,NegBoolView>::post(home,x0,x1,n)
-	      == ES_FAILED)
-	    home->fail();
+	  GECODE_ES_FAIL(home,(Rel::ReEqDom<IntView,NegBoolView>
+			       ::post(home,x0,x1,n)));
 	}
       }
       break;
     case IRT_GQ:
       std::swap(x0,x1); // Fall through
     case IRT_LQ:
-      if (Rel::ReLq<IntView,BoolView>::post(home,x0,x1,b) == ES_FAILED)
+    GECODE_ES_FAIL(home,(Rel::ReLq<IntView,BoolView>::post(home,x0,x1,b)));
 	home->fail();
       break;
     case IRT_LE:
@@ -119,7 +115,7 @@ namespace Gecode {
     case IRT_GR:
       {
 	NegBoolView n(b);
-	if (Rel::ReLq<IntView,NegBoolView>::post(home,x0,x1,n) == ES_FAILED)
+	GECODE_ES_FAIL(home,(Rel::ReLq<IntView,NegBoolView>::post(home,x0,x1,n)));
 	  home->fail();
       }
       break;
@@ -135,42 +131,38 @@ namespace Gecode {
     switch (r) {
     case IRT_EQ:
       if (icl == ICL_BND) {
-	if (Rel::ReEqBndInt<IntView,BoolView>::post(home,x,n,b)
-	    == ES_FAILED)
-	  home->fail();
+	GECODE_ES_FAIL(home,(Rel::ReEqBndInt<IntView,BoolView>
+			     ::post(home,x,n,b)));
       } else {
-	if (Rel::ReEqDomInt<IntView,BoolView>::post(home,x,n,b)
-	    == ES_FAILED)
-	  home->fail();
+	GECODE_ES_FAIL(home,(Rel::ReEqDomInt<IntView,BoolView>
+			     ::post(home,x,n,b)));
       }
       break;
     case IRT_NQ:
       {
 	NegBoolView nb(b);
 	if (icl == ICL_BND) {
-	  if (Rel::ReEqBndInt<IntView,NegBoolView>::post(home,x,n,nb)
-	      == ES_FAILED)
-	    home->fail();
+	  GECODE_ES_FAIL(home,(Rel::ReEqBndInt<IntView,NegBoolView>
+			       ::post(home,x,n,nb)));
 	} else {
-	  if (Rel::ReEqDomInt<IntView,NegBoolView>::post(home,x,n,nb)
-	      == ES_FAILED)
-	    home->fail();
+	  GECODE_ES_FAIL(home,(Rel::ReEqDomInt<IntView,NegBoolView>
+			       ::post(home,x,n,nb)));
 	}
       }
       break;
     case IRT_LE:
       n--; // Fall through
     case IRT_LQ:
-      if (Rel::ReLqInt<IntView,BoolView>::post(home,x,n,b) == ES_FAILED)
-	home->fail();
+      GECODE_ES_FAIL(home,(Rel::ReLqInt<IntView,BoolView>
+			   ::post(home,x,n,b)));
       break;
     case IRT_GQ:
       n--; // Fall through
     case IRT_GR: 
       {
 	NegBoolView nb(b);
-	if (Rel::ReLqInt<IntView,NegBoolView>::post(home,x,n,nb) == ES_FAILED)
-	  home->fail();
+	GECODE_ES_FAIL(home,(Rel::ReLqInt<IntView,NegBoolView>
+			     ::post(home,x,n,nb)));
       }
       break;
     default:
@@ -199,10 +191,10 @@ namespace Gecode {
   eq(Space* home, IntVar x0, IntVar x1, BoolVar b, IntConLevel icl) {
     if (home->failed()) return;
     if (icl == ICL_BND) {
-      if (Rel::ReEqBnd<IntView,BoolView>::post(home,x0,x1,b) == ES_FAILED)
+GECODE_ES_FAIL(home,(Rel::ReEqBnd<IntView,BoolView>::post(home,x0,x1,b)));
 	home->fail();
     } else {
-      if (Rel::ReEqDom<IntView,BoolView>::post(home,x0,x1,b) == ES_FAILED)
+GECODE_ES_FAIL(home,(Rel::ReEqDom<IntView,BoolView>::post(home,x0,x1,b)));
 	home->fail();
     }
   }
@@ -211,10 +203,10 @@ namespace Gecode {
   eq(Space* home, IntVar x, int n, BoolVar b, IntConLevel icl) {
     if (home->failed()) return;
     if (icl == ICL_BND) {
-      if (Rel::ReEqBndInt<IntView,BoolView>::post(home,x,n,b) == ES_FAILED)
+GECODE_ES_FAIL(home,(Rel::ReEqBndInt<IntView,BoolView>::post(home,x,n,b)));
 	home->fail();
     } else {
-      if (Rel::ReEqDomInt<IntView,BoolView>::post(home,x,n,b) == ES_FAILED)
+GECODE_ES_FAIL(home,(Rel::ReEqDomInt<IntView,BoolView>::post(home,x,n,b)));
 	home->fail();
     }
   }
@@ -250,8 +242,7 @@ namespace Gecode {
 	xy[i][0]=x[i]; xy[i][1]=y[i];
       }
     le:
-      if (Rel::Lex<IntView>::post(home,xy,true) == ES_FAILED)
-	home->fail();
+      GECODE_ES_FAIL(home,Rel::Lex<IntView>::post(home,xy,true));
       break;
     case IRT_GQ:
       for (int i = x.size(); i--; ) {
@@ -263,8 +254,7 @@ namespace Gecode {
 	xy[i][0]=x[i]; xy[i][1]=y[i];
       }
     lq:
-      if (Rel::Lex<IntView>::post(home,xy,false) == ES_FAILED)
-	home->fail();
+      GECODE_ES_FAIL(home,Rel::Lex<IntView>::post(home,xy,false));
       break;
     default:
       throw OnlyInequalityRelations("Int::lex");

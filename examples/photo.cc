@@ -28,6 +28,8 @@ public:
   const int  n_names; ///< Number of people on picture
   const int  n_prefs; ///< Number of preferences
   const int* prefs;   ///< Array of preferences
+  PhotoSpec(const int n_n, const int n_p, const int* p)
+    : n_names(n_n), n_prefs(n_p), prefs(p) {}
 };
 
 /// Preferences for small example
@@ -35,7 +37,7 @@ static const int s_prefs[] = {
   0,2, 1,4, 2,3, 2,4, 3,0, 4,3, 4,0, 4,1
 };
 /// Small Photo example
-static const PhotoSpec p_small = { 5, 8, s_prefs};
+static const PhotoSpec p_small(5, 8, s_prefs);
 
 /// Preferences for large example
 static const int l_prefs[] = {
@@ -43,7 +45,7 @@ static const int l_prefs[] = {
   4,5, 4,0, 5,0, 5,8, 6,2, 6,7, 7,8, 7,6
 };
 /// Large Photo example
-static const PhotoSpec p_large = { 9,17, l_prefs };
+static const PhotoSpec p_large(9,17, l_prefs);
 
 /**
  * \brief %Example: Placing people on a photo

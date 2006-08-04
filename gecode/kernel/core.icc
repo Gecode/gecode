@@ -992,7 +992,7 @@ namespace Gecode {
    */
 
   forceinline void
-  Actor::operator delete(void* p, size_t s) {}
+  Actor::operator delete(void*, size_t) {}
   forceinline void
   Actor::operator delete(void*,Space*) {}
   forceinline void*

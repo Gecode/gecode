@@ -687,9 +687,12 @@ int value_at(const char *s, int n, int i, int j) {
   assert(i >= 0 && i < n);
   assert(j >= 0 && j < n);
   char c = s[i*n + j];
-  if (!std::isalnum(c)) return 0;
-  if (std::isdigit(c)) return c - '0';
-  if (std::islower(c)) c = std::toupper(c);
+  if (!std::isalnum(c)) 
+    return 0;
+  if (std::isdigit(c)) 
+    return c - '0';
+  if (std::islower(c)) 
+    c = static_cast<char>(std::toupper(c));
   // std::alpha(c) == true
   int res = (c - 'A') + 10;
   if (res > n) return 0;

@@ -35,8 +35,7 @@ namespace Gecode {
 	throw NumericalOverflow("Int::element");
       else
 	cs[i] = c[i];
-    if (Element::Int<IntView,IntView>::post(home,cs,x0,x1) == ES_FAILED)
-      home->fail();
+    GECODE_ES_FAIL(home,(Element::Int<IntView,IntView>::post(home,cs,x0,x1)));
   }
 
   void
@@ -45,18 +44,15 @@ namespace Gecode {
     if (home->failed()) return;
     Element::IdxView<IntView>* iv = Element::IdxView<IntView>::init(home,c);
     if (icl == ICL_BND) {
-      if (Element::ViewBnd<IntView,IntView>::post(home,iv,c.size(),x0,x1) 
-	  == ES_FAILED)
-	home->fail();
+      GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,IntView>
+			   ::post(home,iv,c.size(),x0,x1)));
     } else {
-      if (Element::ViewDom<IntView,IntView>::post(home,iv,c.size(),x0,x1) 
-	  == ES_FAILED)
-	home->fail();
+      GECODE_ES_FAIL(home,(Element::ViewDom<IntView,IntView>
+			   ::post(home,iv,c.size(),x0,x1)));
     }
   }
 
 }
-
 
 // STATISTICS: int-post
 
