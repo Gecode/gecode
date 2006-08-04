@@ -32,7 +32,7 @@ namespace Gecode { namespace Search {
     return s.memory > l;
   }
 
-  
+
   /*
    * Stopping for memory limit
    *
@@ -42,7 +42,7 @@ namespace Gecode { namespace Search {
     return s.fail > l;
   }
 
-  
+
   /*
    * Stopping for memory limit
    *
@@ -50,7 +50,7 @@ namespace Gecode { namespace Search {
   bool
   TimeStop::stop(const Statistics&) {
     return static_cast<unsigned long int>
-      ((static_cast<double>(clock()-s)/CLOCKS_PER_SEC) * 1000.0) > l; 
+      ((static_cast<double>(clock()-s)/CLOCKS_PER_SEC) * 1000.0) > l;
   }
 
 }}

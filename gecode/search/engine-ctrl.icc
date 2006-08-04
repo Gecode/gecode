@@ -22,7 +22,7 @@
 namespace Gecode { namespace Search {
 
   forceinline
-  EngineCtrl::EngineCtrl(Stop* st0, size_t sz) 
+  EngineCtrl::EngineCtrl(Stop* st0, size_t sz)
     : st(st0), _stopped(false), mem_space(sz), mem_cur(0), mem_total(0) {
     memory = 0;
   }
@@ -51,7 +51,7 @@ namespace Gecode { namespace Search {
   EngineCtrl::push(const Space* s, const BranchingDesc* d) {
     if (s != NULL)
       mem_total += mem_space + s->allocated();
-    mem_total += d->size();      
+    mem_total += d->size();
     if (mem_total > memory)
       memory = mem_total;
   }
@@ -80,7 +80,7 @@ namespace Gecode { namespace Search {
   EngineCtrl::pop(const Space* s, const BranchingDesc* d) {
     if (s != NULL)
       mem_total -= mem_space + s->allocated();
-    mem_total -= d->size();      
+    mem_total -= d->size();
   }
 
   forceinline void

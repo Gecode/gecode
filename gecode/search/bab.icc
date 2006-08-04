@@ -23,7 +23,7 @@
  *
  */
 
-namespace Gecode { 
+namespace Gecode {
 
   /*
    * BAB search engine
@@ -35,16 +35,16 @@ namespace Gecode {
     forceinline
     BabEngine::BabEngine(unsigned int c_d0, unsigned int a_d,
 			 Stop* st, size_t sz)
-      : EngineCtrl(st,sz), rcs(a_d), cur(NULL), 
-	mark(0), es(ES_SOLUTION), best(NULL), 
+      : EngineCtrl(st,sz), rcs(a_d), cur(NULL),
+	mark(0), es(ES_SOLUTION), best(NULL),
 	c_d(c_d0), d(0) {}
-    
-    
+
+
     forceinline void
     BabEngine::init(Space* s) {
       cur = s;
     }
-    
+
     forceinline size_t
     BabEngine::stacksize(void) const {
       return rcs.stacksize();
@@ -62,7 +62,7 @@ namespace Gecode {
    * Control for bab search engine
    *
    */
-  
+
   template <class T>
   forceinline
   BAB<T>::BAB(T* s, unsigned int c_d, unsigned int a_d, Search::Stop* st)

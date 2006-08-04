@@ -113,7 +113,7 @@ namespace Gecode { namespace Search {
 	  commit++;
 	  break;
 	}
-      default: 
+      default:
 	GECODE_NEVER;
       }
     }
@@ -123,7 +123,7 @@ namespace Gecode { namespace Search {
 
 
 
-  BAB::BAB(Space* s, unsigned int c_d, unsigned int a_d, Stop* st, size_t sz) 
+  BAB::BAB(Space* s, unsigned int c_d, unsigned int a_d, Stop* st, size_t sz)
     : e(c_d,a_d,st,sz) {
     unsigned long int p = 0;
     Space* c = (s->status(p) == SS_FAILED) ? NULL : s->clone(true,p);

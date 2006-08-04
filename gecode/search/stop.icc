@@ -51,7 +51,7 @@ namespace Gecode { namespace Search {
     l=l0;
   }
 
-  
+
   /*
    * Stopping for memory limit
    *
@@ -70,14 +70,14 @@ namespace Gecode { namespace Search {
     l=l0;
   }
 
-  
+
   /*
    * Stopping for memory limit
    *
    */
 
   forceinline
-  TimeStop::TimeStop(unsigned long int l0) 
+  TimeStop::TimeStop(unsigned long int l0)
     : s(clock()), l(l0) {}
 
   forceinline unsigned long int

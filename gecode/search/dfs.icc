@@ -32,7 +32,7 @@ namespace Gecode {
 			 Stop* st, size_t sz)
       : EngineCtrl(st,sz), rcs(a_d0), cur(NULL), c_d(c_d0), d(0) {}
 
-  
+
     forceinline void
     DfsEngine::init(Space* s) {
       cur = s;

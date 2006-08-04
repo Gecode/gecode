@@ -176,7 +176,7 @@ namespace Gecode { namespace Search {
       s = s->clone(true,stat.propagate);
     }
     stat.clone++;
-    
+
     if (d < a_d) {
       // No adaptive recomputation
       for (int i=l; i<n; i++)
