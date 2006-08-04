@@ -26,7 +26,7 @@ static IntSet ds_22(-2,2);
 
 class RegularA : public IntTest {
 public:
-  RegularA(const char* t) 
+  RegularA(const char* t)
     : IntTest(t,4,ds_22,false,ICL_DOM) {}
   virtual bool solution(const Assignment& x) const {
     return (((x[0] == 0) || (x[0] == 2)) &&
@@ -35,7 +35,7 @@ public:
 	    ((x[3] == 0) || (x[3] == 1)));
   }
   virtual void post(Space* home, IntVarArray& x) {
-    REG r = 
+    REG r =
       (REG(0) | REG(2)) +
       (REG(-1) | REG(1)) +
       (REG(7) | REG(0) | REG(1)) +
@@ -47,13 +47,13 @@ public:
 
 class RegularB : public IntTest {
 public:
-  RegularB(const char* t) 
+  RegularB(const char* t)
     : IntTest(t,4,ds_22,false,ICL_DOM) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0]<x[1]) && (x[1]<x[2]) && (x[2]<x[3]);
   }
   virtual void post(Space* home, IntVarArray& x) {
-    REG r = 
+    REG r =
       (REG(-2) + REG(-1) + REG(0) + REG(1)) |
       (REG(-2) + REG(-1) + REG(0) + REG(2)) |
       (REG(-2) + REG(-1) + REG(1) + REG(2)) |
@@ -66,7 +66,7 @@ public:
 
 class RegularShared : public IntTest {
 public:
-  RegularShared(const char* t) 
+  RegularShared(const char* t)
     : IntTest(t,2,ds_22,false,ICL_DOM) {}
   virtual bool solution(const Assignment& x) const {
     return (((x[0] == 0) || (x[0] == 2)) &&
@@ -85,7 +85,7 @@ public:
 	     "\tIntVarArgs y(4);\n"
 	     "\ty[0]=x[0]; y[1]=x[1]; y[2]=x[0]; y[3]=x[1];\n"
 	     "\tregular(home, y, d);\n");
-    REG r = 
+    REG r =
       (REG(0) | REG(2)) +
       (REG(-1) | REG(1)) +
       (REG(7) | REG(0) | REG(1)) +

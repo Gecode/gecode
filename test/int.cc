@@ -29,15 +29,15 @@ Assignment::Assignment(int n0, const IntSet& d0)
   : n(n0), dsv(new IntSetValues[n]), d(d0) {
   reset();
 }
- 
-void 
+
+void
 Assignment::reset(void) {
   done = false;
   for (int i=n; i--; )
     dsv[i].init(d);
 }
 
-void 
+void
 Assignment::operator++(void) {
   int i = n-1;
   while (true) {
@@ -59,21 +59,21 @@ RandomAssignment::RandomAssignment(int n0, const IntSet& d0, int count0)
   reset();
 }
 
-void 
+void
 RandomAssignment::reset(void) {
   left = count;
   for (int i=n; i--; )
     vals[i] = randval();
 }
 
-void 
+void
 RandomAssignment::operator++(void) {
-  for (int i = n; i--; ) 
+  for (int i = n; i--; )
     vals[i] = randval();
   --left;
 }
 
-int 
+int
 RandomAssignment::randval(void) {
   int v;
   IntSetRanges it(d);
@@ -117,7 +117,7 @@ private:
   const Options opt;
 
 public:
-  IntTestSpace(int n, IntSet& d, const Options& o) 
+  IntTestSpace(int n, IntSet& d, const Options& o)
     : x(this, n, d), opt(o) {
     Log::initial(x, "x");
   }
@@ -171,7 +171,7 @@ public:
 
   static BoolVar unused;
 
-  bool prune(const Assignment& a, IntTest& it, 
+  bool prune(const Assignment& a, IntTest& it,
 	     bool r, BoolVar& b = unused) {
     // Select variable to be pruned
     int i = Test::randgen(x.size());
@@ -219,7 +219,7 @@ public:
     }
     if (Test::randgen(opt.fixprob) == 0) {		
       Log::fixpoint();
-      if (status() == SS_FAILED) 
+      if (status() == SS_FAILED)
 	return true;
       IntTestSpace* c = static_cast<IntTestSpace*>(clone());
       Log::print(c->x, "x");
@@ -271,14 +271,14 @@ public:
     }		
     return true;
   }
-  
+
 };
 
 BoolVar IntTestSpace::unused;
 
 
 
-Assignment* 
+Assignment*
 IntTest::make_assignment() {
   return new Assignment(arity, dom);
 }
@@ -290,7 +290,7 @@ if (!(T)) { 					\
   goto failed; 					\
 }
 
-bool 
+bool
 IntTest::run(const Options& opt) {
   const char* test    = "NONE";
   const char* problem = "NONE";
@@ -357,7 +357,7 @@ IntTest::run(const Options& opt) {
       } else {
 	rel(s, b, IRT_EQ, 0);
       }
-      s->assign(a); 
+      s->assign(a);
       CHECK(!s->is_failed(), "Failed");
       CHECK(s->propagators()==0, "No subsumtion");
       delete s;
@@ -374,7 +374,7 @@ IntTest::run(const Options& opt) {
 	rel(s, b, IRT_EQ, 0);
       }
       post(s,s->x,b);
-      s->assign(a); 
+      s->assign(a);
       CHECK(!s->is_failed(), "Failed");
       CHECK(s->propagators()==0, "No subsumtion");
       delete s;
@@ -383,7 +383,7 @@ IntTest::run(const Options& opt) {
       test = "Assignment reified (before posting)";
       Log::reset();
       IntTestSpace* s = new IntTestSpace(arity,dom,opt);
-      BoolVar b(s,0,1); 
+      BoolVar b(s,0,1);
       Log::initial(b, "b");
       s->assign(a); post(s,s->x,b);
       CHECK(!s->is_failed(), "Failed");

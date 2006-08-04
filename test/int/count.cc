@@ -24,7 +24,7 @@
 
 static IntSet ds_22(-2,2);
 
-static inline int 
+static inline int
 compare(int x, IntRelType r, int y) {
   switch (r) {
   case IRT_EQ: return x == y;
@@ -42,7 +42,7 @@ class CountIntInt : public IntTest {
 private:
   IntRelType irt;
 public:
-  CountIntInt(const char* t, IntRelType irt0) 
+  CountIntInt(const char* t, IntRelType irt0)
     : IntTest(t,4,ds_22), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     int m = 0;
@@ -67,7 +67,7 @@ class CountIntIntDup : public IntTest {
 private:
   IntRelType irt;
 public:
-  CountIntIntDup(const char* t, IntRelType irt0) 
+  CountIntIntDup(const char* t, IntRelType irt0)
     : IntTest(t,4,ds_22), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     int m = 0;
@@ -96,7 +96,7 @@ class CountIntVar : public IntTest {
 private:
   IntRelType irt;
 public:
-  CountIntVar(const char* t, IntRelType irt0) 
+  CountIntVar(const char* t, IntRelType irt0)
     : IntTest(t,5,ds_22), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     int m = 0;
@@ -125,7 +125,7 @@ class CountIntVarShared : public IntTest {
 private:
   IntRelType irt;
 public:
-  CountIntVarShared(const char* t, IntRelType irt0) 
+  CountIntVarShared(const char* t, IntRelType irt0)
     : IntTest(t,4,ds_22), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     int m = 0;
@@ -154,7 +154,7 @@ class CountVarVar : public IntTest {
 private:
   IntRelType irt;
 public:
-  CountVarVar(const char* t, IntRelType irt0) 
+  CountVarVar(const char* t, IntRelType irt0)
     : IntTest(t,5,ds_22), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     int m = 0;
@@ -182,7 +182,7 @@ class CountVarVarSharedA : public IntTest {
 private:
   IntRelType irt;
 public:
-  CountVarVarSharedA(const char* t, IntRelType irt0) 
+  CountVarVarSharedA(const char* t, IntRelType irt0)
     : IntTest(t,5,ds_22), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     int m = 0;
@@ -210,7 +210,7 @@ class CountVarVarSharedB : public IntTest {
 private:
   IntRelType irt;
 public:
-  CountVarVarSharedB(const char* t, IntRelType irt0) 
+  CountVarVarSharedB(const char* t, IntRelType irt0)
     : IntTest(t,5,ds_22), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     int m = 0;
@@ -238,7 +238,7 @@ class CountVarVarSharedC : public IntTest {
 private:
   IntRelType irt;
 public:
-  CountVarVarSharedC(const char* t, IntRelType irt0) 
+  CountVarVarSharedC(const char* t, IntRelType irt0)
     : IntTest(t,4,ds_22), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     int m = 0;

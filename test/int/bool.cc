@@ -25,7 +25,7 @@ static IntSet ds(0,1);
 
 class BoolEq : public IntTest {
 public:
-  BoolEq(const char* t) 
+  BoolEq(const char* t)
     : IntTest(t,2,ds) {}
   virtual bool solution(const Assignment& x) const {
     return x[0]==x[1];
@@ -41,7 +41,7 @@ BoolEq _booleq("Bool::Eq");
 
 class BoolNot : public IntTest {
 public:
-  BoolNot(const char* t) 
+  BoolNot(const char* t)
     : IntTest(t,2,ds) {}
   virtual bool solution(const Assignment& x) const {
     return x[0]!=x[1];
@@ -57,7 +57,7 @@ BoolNot _boolnot("Bool::Not");
 
 class BoolAnd : public IntTest {
 public:
-  BoolAnd(const char* t) 
+  BoolAnd(const char* t)
     : IntTest(t,3,ds) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0]&x[1])==x[2];
@@ -73,7 +73,7 @@ BoolAnd _booland("Bool::And::Binary");
 
 class BoolOr : public IntTest {
 public:
-  BoolOr(const char* t) 
+  BoolOr(const char* t)
     : IntTest(t,3,ds) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0]|x[1])==x[2];
@@ -89,7 +89,7 @@ BoolOr _boolor("Bool::Or::Binary");
 
 class BoolImp : public IntTest {
 public:
-  BoolImp(const char* t) 
+  BoolImp(const char* t)
     : IntTest(t,3,ds) {}
   virtual bool solution(const Assignment& x) const {
     return ((x[0] == 0 ? 1 : 0)|x[1])==x[2];
@@ -105,7 +105,7 @@ BoolImp _boolimp("Bool::Imp");
 
 class BoolEqv : public IntTest {
 public:
-  BoolEqv(const char* t) 
+  BoolEqv(const char* t)
     : IntTest(t,3,ds) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0] == x[1])==x[2];
@@ -121,7 +121,7 @@ BoolEqv _booleqv("Bool::Eqv");
 
 class BoolXor : public IntTest {
 public:
-  BoolXor(const char* t) 
+  BoolXor(const char* t)
     : IntTest(t,3,ds) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0] != x[1])==x[2];
@@ -138,7 +138,7 @@ BoolXor _boolxor("Bool::Xor");
 
 class BoolAndNary : public IntTest {
 public:
-  BoolAndNary(const char* t) 
+  BoolAndNary(const char* t)
     : IntTest(t,14,ds) {}
   virtual bool solution(const Assignment& x) const {
     for (int i = x.size()-1; i--; )
@@ -151,7 +151,7 @@ public:
       Gecode::dom(home, x[i], 0, 1);
     BoolVarArgs b(2*(x.size()-1));
     for (int i=x.size()-1; i--; ) {
-      BoolVar bx(x[i]); 
+      BoolVar bx(x[i]);
       b[2*i+0] = bx; b[2*i+1] = bx;
     }
     BoolVar bx(x[x.size()-1]);
@@ -162,7 +162,7 @@ BoolAndNary _boolandnary("Bool::And::Nary");
 
 class BoolOrNary : public IntTest {
 public:
-  BoolOrNary(const char* t) 
+  BoolOrNary(const char* t)
     : IntTest(t,14,ds) {}
   virtual bool solution(const Assignment& x) const {
     for (int i = x.size()-1; i--; )
@@ -175,7 +175,7 @@ public:
       Gecode::dom(home, x[i], 0, 1);
     BoolVarArgs b(2*(x.size()-1));
     for (int i=x.size()-1; i--; ) {
-      BoolVar bx(x[i]); 
+      BoolVar bx(x[i]);
       b[2*i+0] = bx; b[2*i+1] = bx;
     }
     BoolVar bx(x[x.size()-1]);

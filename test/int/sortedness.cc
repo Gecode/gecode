@@ -42,13 +42,13 @@ class SortPermAssignment : public Assignment{
   int permup;
   int xsize;
 public:
-  SortPermAssignment(int xlow, int xup, 
+  SortPermAssignment(int xlow, int xup,
 		     int plow, int pup,
 		     int xs,
-		     int n0, const IntSet& d0) 
-    : Assignment(n0, d0), 
-      problow(xlow), probup(xup), 
-      permlow(plow), permup(pup), 
+		     int n0, const IntSet& d0)
+    : Assignment(n0, d0),
+      problow(xlow), probup(xup),
+      permlow(plow), permup(pup),
       xsize(xs) {
     reset();
   }
@@ -92,7 +92,7 @@ private:
   static const int ve = xs /2;
 
 public:
-  Sortedness_NoVar(const char* t, IntConLevel icl0) 
+  Sortedness_NoVar(const char* t, IntConLevel icl0)
     : IntTest(t, xs, ds_13), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     int sortx[ve];
@@ -112,7 +112,7 @@ public:
 //       }
 //     }
 //     std::cout <<"...";
-    
+
 
     for (int i = ve; i < xs - 1; i++) {
       if ( !(x[i] <= x[i + 1]) ) {
@@ -127,21 +127,21 @@ public:
 	return false;
       }
     }
-    
+
     // std::cout << "valid\n";
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
     IntVarArgs z(ve);
     for (int i = 0; i < ve; i++) {
-      z[i] = x[i]; 
+      z[i] = x[i];
     }
 
     IntVarArgs y(ve);
     for (int i = ve; i < xs; i++) {
-      y[i - ve] = x[i]; 
+      y[i - ve] = x[i];
     }
-    
+
     sortedness(home, z, y, icl);
   }
 };
@@ -159,13 +159,13 @@ private:
   static const int plow  = 0;
   static const int pup   = 2;
   static const int xsize = 3;
-  
+
   Assignment* make_assignment() {
     return new SortPermAssignment(1, 3, 0, 2, 3, 9, dom);
   }
 
 public:
-  Sortedness_PermVar(const char* t, IntConLevel icl0) 
+  Sortedness_PermVar(const char* t, IntConLevel icl0)
     : IntTest(t, xs, ds_03), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
 
@@ -192,7 +192,7 @@ public:
 	return false;
       }
     }
-    
+
 
     // assert correct domains
     for (int i = 0; i < ve2; i++) {
@@ -241,19 +241,19 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     IntVarArgs z(ve1);
     for (int i = 0; i < ve1; i++) {
-      z[i] = x[i]; 
+      z[i] = x[i];
     }
 
     IntVarArgs y(ve1);
     for (int i = ve1; i < ve2; i++) {
-      y[i - ve1] = x[i]; 
+      y[i - ve1] = x[i];
     }
 
     IntVarArgs p(ve1);
     for (int i = ve2; i < xs; i++) {
-      p[i - ve2] = x[i]; 
+      p[i - ve2] = x[i];
     }
-    
+
     for (int i = 0; i < ve1; i++) {
       rel(home, z[i], IRT_GQ, 1);
       rel(home, y[i], IRT_GQ, 1);

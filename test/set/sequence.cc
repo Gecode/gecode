@@ -25,7 +25,7 @@ static IntSet ds_33(-1,2);
 
 class Sequence : public SetTest {
 public:
-  Sequence(const char* t) 
+  Sequence(const char* t)
     : SetTest(t,4,ds_33,false) {}
   virtual bool solution(const SetAssignment& x) const {
     int max = Limits::Set::int_min - 1;
@@ -49,7 +49,7 @@ Sequence _sequence("Sequence::Sequence");
 
 class SeqU : public SetTest {
 public:
-  SeqU(const char* t) 
+  SeqU(const char* t)
     : SetTest(t,4,ds_33,false) {}
   virtual bool solution(const SetAssignment& x) const {
     int max = Limits::Set::int_min - 1;

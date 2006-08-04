@@ -37,7 +37,7 @@ CountableSet::CountableSet(const IntSet& d0) : d(d0), //curd(IntSet::empty),
 }
 
 void CountableSet::operator++(void) {
-  cur++; 
+  cur++;
 }
 
 void CountableSet::init(const IntSet& d0) {
@@ -58,8 +58,8 @@ SetAssignment::SetAssignment(int n0, const IntSet& d0, int _withInt)
   for (int i=n; i--; )
     dsv[i].init(lub);
 }
- 
-void 
+
+void
 SetAssignment::reset(void) {
   done = false;
   for (int i=n; i--; )
@@ -67,7 +67,7 @@ SetAssignment::reset(void) {
   ir.reset();
 }
 
-void 
+void
 SetAssignment::operator++(void) {
   int i = n-1;
   while (true) {
@@ -127,12 +127,12 @@ private:
   const Options opt;
   int withInt;
 public:
-  SetTestSpace(int n, IntSet& d, int _withInt, const Options& o) 
+  SetTestSpace(int n, IntSet& d, int _withInt, const Options& o)
     : x(this, n, IntSet::empty, d), y(this, _withInt, d),
       opt(o), withInt(_withInt) {
     Log::initial(x, "x");
   }
-  SetTestSpace(bool share, SetTestSpace& s) : Space(share,s), opt(s.opt), 
+  SetTestSpace(bool share, SetTestSpace& s) : Space(share,s), opt(s.opt),
 					      withInt(s.withInt) {
     x.update(this, share, s.x);
     y.update(this, share, s.y);
@@ -176,7 +176,7 @@ public:
     for (int j=0; j<v; j++, ++diffV);
     Log::prune(x, Log::mk_name("x", i), SRT_DISJ, diffV.val());
     dom(this, x, SRT_DISJ, diffV.val());
-    Log::prune_result(x);      
+    Log::prune_result(x);
   }
 
   void addToGlb(int v, SetVar& x, int i, const SetAssignment& a) {
@@ -189,12 +189,12 @@ public:
     for (int j=0; j<v; j++, ++interV);
     Log::prune(x, Log::mk_name("x", i), SRT_SUP, interV.val());
     dom(this, x, SRT_SUP, interV.val());
-    Log::prune_result(x);      
+    Log::prune_result(x);
   }
 
   bool fixprob(SetTest& st, bool r, BoolVar& b) {
     Log::fixpoint();				
-    if (status() == SS_FAILED) 
+    if (status() == SS_FAILED)
       return true;
     SetTestSpace* c = static_cast<SetTestSpace*>(clone());
     Log::print(c->x, "x");
@@ -364,7 +364,7 @@ public:
       int v = Test::randgen(Iter::Ranges::size(diff));
       removeFromLub(v, x[i], i, a);
     } else if (m==2 && x[i].cardMin() < aisize) {
-      unsigned int newc = x[i].cardMin() + 1 + 
+      unsigned int newc = x[i].cardMin() + 1 +
 	Test::randgen(aisize - x[i].cardMin());
       assert( newc > x[i].cardMin() );
       assert( newc <= aisize );
@@ -372,7 +372,7 @@ public:
       cardinality(this, x[i], newc, Limits::Set::card_max);
       Log::prune_result(x[i]);
     } else if (m==3 && x[i].cardMax() > aisize) {
-      unsigned int newc = x[i].cardMax() - 1 - 
+      unsigned int newc = x[i].cardMax() - 1 -
 	Test::randgen(x[i].cardMax() - aisize);
       assert( newc < x[i].cardMax() );
       assert( newc >= aisize );
@@ -397,7 +397,7 @@ public:
 
     return true;
   }
-  
+
 };
 
 BoolVar SetTestSpace::unused;
@@ -415,7 +415,7 @@ SetTest::make_assignment(void) {
   return new SetAssignment(arity,lub,withInt);
 }
 
-bool 
+bool
 SetTest::run(const Options& opt) {
   const char* test    = "NONE";
   const char* problem = "NONE";
@@ -454,7 +454,7 @@ SetTest::run(const Options& opt) {
       test = "Assignment reified (before posting)";
       Log::reset();
       SetTestSpace* s = new SetTestSpace(arity,lub,withInt,opt);
-      BoolVar b(s,0,1); 
+      BoolVar b(s,0,1);
       s->assign(a); post(s,s->x,s->y,b);
       CHECK(!s->failed(), "Failed");
       CHECK(s->propagators()==0, "No subsumtion");

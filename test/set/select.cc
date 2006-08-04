@@ -25,7 +25,7 @@ static IntSet ds_012(-1,2);
 
 class SelectUnion : public SetTest {
 public:
-  SelectUnion(const char* t) 
+  SelectUnion(const char* t)
     : SetTest(t,5,ds_012,false) {}
   virtual bool solution(const SetAssignment& x) const {
     int selected = 0;
@@ -56,7 +56,7 @@ SelectUnion _selectunion("Select::Union");
 
 class SelectInter : public SetTest {
 public:
-  SelectInter(const char* t) 
+  SelectInter(const char* t)
     : SetTest(t,5,ds_012,false) {}
   virtual bool solution(const SetAssignment& x) const {
     int selected = 0;
@@ -87,7 +87,7 @@ SelectInter _selectinter("Select::Inter");
 
 class SelectSet : public SetTest {
 public:
-  SelectSet(const char* t) 
+  SelectSet(const char* t)
     : SetTest(t,4,ds_012,false,true) {}
   virtual bool solution(const SetAssignment& x) const {
     if (x.intval() < 0 || x.intval() > 2)

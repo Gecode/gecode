@@ -30,7 +30,7 @@ namespace Projection {
 
   class RelBinNEq : public SetTest {
   public:
-    RelBinNEq(const char* t) 
+    RelBinNEq(const char* t)
       : SetTest(t,2,ds_33) {}
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
@@ -49,7 +49,7 @@ namespace Projection {
 
   class RelBinEq : public SetTest {
   public:
-    RelBinEq(const char* t) 
+    RelBinEq(const char* t)
       : SetTest(t,2,ds_33,true) {}
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
@@ -78,7 +78,7 @@ namespace Projection {
 
   class RelBinSub : public SetTest {
   public:
-    RelBinSub(const char* t) 
+    RelBinSub(const char* t)
       : SetTest(t,2,ds_33,true) {}
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
@@ -104,7 +104,7 @@ namespace Projection {
 
   class RelBinDisj : public SetTest {
   public:
-    RelBinDisj(const char* t) 
+    RelBinDisj(const char* t)
       : SetTest(t,2,ds_33,true) {}
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
@@ -130,7 +130,7 @@ namespace Projection {
 
   class RelBinCompl : public SetTest {
   public:
-    RelBinCompl(const char* t) 
+    RelBinCompl(const char* t)
     : SetTest(t,2,ds_33,true) {}
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
@@ -142,7 +142,7 @@ namespace Projection {
       Gecode::Projector p(0, -Gecode::SetExpr(1), -Gecode::SetExpr(1));
       Gecode::Projector q(1, -Gecode::SetExpr(0), -Gecode::SetExpr(0));
       Gecode::ProjectorSet ps;
-      ps.add(p); ps.add(q);      
+      ps.add(p); ps.add(q);
       Gecode::projector(home, x[0], x[1], ps);
     }
     virtual void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
@@ -157,7 +157,7 @@ namespace Projection {
 
   class RelUnionEq : public SetTest {
   public:
-    RelUnionEq(const char* t) 
+    RelUnionEq(const char* t)
       : SetTest(t,3,ds_22,true) {}
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
@@ -236,7 +236,7 @@ namespace Projection {
 
   class RelInterEqCard : public SetTest {
   public:
-    RelInterEqCard(const char* t) 
+    RelInterEqCard(const char* t)
       : SetTest(t,3,ds_22,false) {}
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
@@ -299,7 +299,7 @@ namespace Projection {
 
   class NegRelUnionEq : public SetTest {
   public:
-    NegRelUnionEq(const char* t) 
+    NegRelUnionEq(const char* t)
       : SetTest(t,3,ds_22) {}
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);

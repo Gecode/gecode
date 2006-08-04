@@ -25,7 +25,7 @@ static IntSet ds_33(-4,4);
 
 class Convex : public SetTest {
 public:
-  Convex(const char* t) 
+  Convex(const char* t)
     : SetTest(t,1,ds_33,false) {}
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
@@ -44,7 +44,7 @@ Convex _convex("Convex::Convex");
 
 class ConvexHull : public SetTest {
 public:
-  ConvexHull(const char* t) 
+  ConvexHull(const char* t)
     : SetTest(t,2,ds_33,false) {}
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
@@ -74,7 +74,7 @@ ConvexHull _convexhull("Convex::ConvexHull");
 
 class ConvexHullS : public SetTest {
 public:
-  ConvexHullS(const char* t) 
+  ConvexHullS(const char* t)
     : SetTest(t,1,ds_33,false) {}
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);

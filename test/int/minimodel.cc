@@ -282,15 +282,15 @@ MmBoolF _mmboolf;
 
 namespace {
   const int s1r[7] = {
-    Limits::Int::int_min, Limits::Int::int_min+1, 
+    Limits::Int::int_min, Limits::Int::int_min+1,
     -1,0,1,
     Limits::Int::int_max-1, Limits::Int::int_max
-  }; 
+  };
   const int s2r[9] = {
     static_cast<int>(-sqrt(static_cast<double>(-Limits::Int::int_min))),
     -4,-2,-1,0,1,2,4,
     static_cast<int>(sqrt(static_cast<double>(Limits::Int::int_max)))
-  }; 
+  };
   IntSet s1(s1r,7);
   IntSet s2(s2r,9);
   IntSet s3(-8,8);
@@ -299,7 +299,7 @@ namespace {
 
 class Mult : public IntTest {
 public:
-  Mult(const char* t, const IntSet& is) 
+  Mult(const char* t, const IntSet& is)
     : IntTest(t,3,is) {}
   virtual bool solution(const Assignment& x) const {
     double d0 = static_cast<double>(x[0]);
@@ -322,7 +322,7 @@ namespace {
 
 class Square : public IntTest {
 public:
-  Square(const char* t, const IntSet& is) 
+  Square(const char* t, const IntSet& is)
     : IntTest(t,2,is) {}
   virtual bool solution(const Assignment& x) const {
     double d0 = static_cast<double>(x[0]);
@@ -342,7 +342,7 @@ namespace {
 
 class Abs : public IntTest {
 public:
-  Abs(const char* t, IntConLevel icl, const IntSet& is) 
+  Abs(const char* t, IntConLevel icl, const IntSet& is)
     : IntTest(t,2,is,false,icl) {}
   virtual bool solution(const Assignment& x) const {
     double d0 = static_cast<double>(x[0]);
@@ -367,7 +367,7 @@ namespace {
 
 class Min : public IntTest {
 public:
-  Min(const char* t, const IntSet& is) 
+  Min(const char* t, const IntSet& is)
     : IntTest(t,3,is) {}
   virtual bool solution(const Assignment& x) const {
     return std::min(x[0],x[1]) == x[2];
@@ -385,7 +385,7 @@ namespace {
 
 class Max : public IntTest {
 public:
-  Max(const char* t, const IntSet& is) 
+  Max(const char* t, const IntSet& is)
     : IntTest(t,3,is) {}
   virtual bool solution(const Assignment& x) const {
     return std::max(x[0],x[1]) == x[2];
@@ -403,7 +403,7 @@ namespace {
 
 class MinNary : public IntTest {
 public:
-  MinNary(const char* t, const IntSet& is) 
+  MinNary(const char* t, const IntSet& is)
     : IntTest(t,4,is) {}
   virtual bool solution(const Assignment& x) const {
     return std::min(std::min(x[0],x[1]),
@@ -425,7 +425,7 @@ namespace {
 
 class MaxNary : public IntTest {
 public:
-  MaxNary(const char* t, const IntSet& is) 
+  MaxNary(const char* t, const IntSet& is)
     : IntTest(t,4,is) {}
   virtual bool solution(const Assignment& x) const {
     return std::max(std::max(x[0],x[1]),

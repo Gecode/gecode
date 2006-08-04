@@ -30,7 +30,7 @@ static IntSet ds_33(-3,3);
 
 class DomEqRange : public SetTest {
 public:
-  DomEqRange(const char* t) 
+  DomEqRange(const char* t)
     : SetTest(t,1,ds_33,true) {}
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr(x.lub, x[0]);
@@ -48,7 +48,7 @@ DomEqRange _domeqrange("Dom::EqRange");
 
 class DomEqDom : public SetTest {
 public:
-  DomEqDom(const char* t) 
+  DomEqDom(const char* t)
     : SetTest(t,1,d1,true) {}
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr(x.lub, x[0]);

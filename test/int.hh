@@ -99,8 +99,8 @@ protected:
   virtual bool do_search_test(void) { return true; }
 public:
   /// Constructor
-  IntTest(const char* t, int a, const IntSet& d, 
-	  bool r=false, IntConLevel i=ICL_DEF) 
+  IntTest(const char* t, int a, const IntSet& d,
+	  bool r=false, IntConLevel i=ICL_DEF)
     : Test("Int",t), arity(a), dom(d), reified(r), icl(i)  {
   }
   /// Check for solution

@@ -40,9 +40,9 @@ private:
   const int* c;
   const IntRelType irt;
 public:
-  LinearInt(const char* t, 
+  LinearInt(const char* t,
 	    const IntSet& is,
-	    const int* c0, int n, IntRelType irt0, IntConLevel icl) 
+	    const int* c0, int n, IntRelType irt0, IntConLevel icl)
     : IntTest(t,n,is,icl != ICL_DOM,icl), c(c0), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     double e = 0.0;
@@ -198,7 +198,7 @@ private:
   const int rhs;
   const IntRelType irt;
 public:
-  LinearBoolInt(const char* t, int n, int rhs0, IntRelType irt0) 
+  LinearBoolInt(const char* t, int n, int rhs0, IntRelType irt0)
     : IntTest(t,n,db,false), rhs(rhs0), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     double m = 0;
@@ -265,14 +265,14 @@ class LinearBoolVar : public IntTest {
 private:
   const IntRelType irt;
 public:
-  LinearBoolVar(const char* t, int n, IntRelType irt0) 
+  LinearBoolVar(const char* t, int n, IntRelType irt0)
     : IntTest(t,n+1,dbv,false), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
-    for (int i=0; i<x.size()-1; i++) 
+    for (int i=0; i<x.size()-1; i++)
       if ((x[i] != 0) && (x[i] != 1))
 	return false;
     double m = 0;
-    for (int i=0; i<x.size()-1; i++) 
+    for (int i=0; i<x.size()-1; i++)
       m += x[i];
     return compare(m, irt, static_cast<double>(x[x.size()-1]));
   }

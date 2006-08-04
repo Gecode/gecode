@@ -82,13 +82,13 @@ namespace {
       if (e  ) delete e;
     }
   };
-  
+
   CumulativeAssignment::CumulativeAssignment(int n0, const IntSet& d0)
     : Assignment(n0, d0), cur(NULL), nxt(NULL), e(NULL)
   {
     reset();
   }
-  void 
+  void
   CumulativeAssignment::reset(void) {
     Ass *a = new Ass(n, d);
     delete e;
@@ -97,22 +97,22 @@ namespace {
     nxt = cur = e->next();
     if (cur != NULL) nxt = e->next();
   }
-  int 
+  int
   CumulativeAssignment::operator[](int i) const {
     assert((i>=0) && (i<n) && cur != NULL);
     return cur->x[i].val();
   }
-  void 
+  void
   CumulativeAssignment::operator++(void) {
     if(cur) delete cur;
     cur = nxt;
     if (nxt != NULL) nxt = e->next();
   }
-  bool 
+  bool
   CumulativeAssignment::operator()(void) const {
     return nxt != NULL;
   }
-  
+
   // Classes and functions for checking an assignment
   struct Event {
     int p, h;
@@ -120,7 +120,7 @@ namespace {
     Event(int pos, int height, bool s) : p(pos), h(height), start(s) {}
     bool operator<(const Event& e) const { return p<e.p; }
   };
-  
+
   struct Below {
     int limit;
     Below(int l) : limit(l) {}
@@ -131,12 +131,12 @@ namespace {
     Above(int l) : limit(l) {}
     bool operator()(int val) { return val >= limit; }
   };
-  
+
   typedef std::vector<Event> eventv;
 
   template <class C>
   bool valid(eventv e, C comp) {
-    std::sort(e.begin(), e.end());    
+    std::sort(e.begin(), e.end());
     unsigned int i = 0;
     int p = 0;
     int h = 0;
@@ -167,7 +167,7 @@ protected:
     return new CumulativeAssignment(arity, dom);
   }
 public:
-  Cumulatives(const char* t, int nt, bool am, int l) 
+  Cumulatives(const char* t, int nt, bool am, int l)
     : IntTest(t,nt*4,ds_12), ntasks(nt), at_most(am), limit(l) {}
 
   virtual bool solution(const Assignment& x) const {
@@ -197,7 +197,7 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     if (Log::logging()) {
       std::ostringstream buf;
-      buf << "\tint ntastks = " << ntasks << ", limit = " << limit 
+      buf << "\tint ntastks = " << ntasks << ", limit = " << limit
 	  << ";\n\tbool at_most = " << at_most << ";";
       Log::log("", buf.str().c_str());
       Log::log("post cumulatives",

@@ -36,7 +36,7 @@ namespace TestsForSetsAndInts {
 
   class Card : public SetTest {
   public:
-    Card(const char* t) 
+    Card(const char* t)
       : SetTest(t,1,ds_33,false,1) {}
     virtual bool solution(const SetAssignment& x) const {
       unsigned int s = 0;
@@ -53,9 +53,9 @@ namespace TestsForSetsAndInts {
 
   class Min : public SetTest {
   public:
-    Min(const char* t) 
+    Min(const char* t)
       : SetTest(t,1,ds_33,false,1) {}
-    virtual bool solution(const SetAssignment& x) const {    
+    virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
       return xr0() && xr0.min()==x.intval();
     }
@@ -67,9 +67,9 @@ namespace TestsForSetsAndInts {
 
   class Max : public SetTest {
   public:
-    Max(const char* t) 
+    Max(const char* t)
       : SetTest(t,1,ds_33,false,1) {}
-    virtual bool solution(const SetAssignment& x) const {    
+    virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
       IntSet x0(xr0);
       return x0.size() > 0 && x0.max()==x.intval();
@@ -82,9 +82,9 @@ namespace TestsForSetsAndInts {
 
   class Elem : public SetTest {
   public:
-    Elem(const char* t) 
+    Elem(const char* t)
       : SetTest(t,1,ds_33,true,1) {}
-    virtual bool solution(const SetAssignment& x) const {    
+    virtual bool solution(const SetAssignment& x) const {
       for(CountableSetValues xr(x.lub, x[0]);xr();++xr)
 	if (xr.val()==x.intval())
 	  return true;
@@ -101,9 +101,9 @@ namespace TestsForSetsAndInts {
 
   class NoElem : public SetTest {
   public:
-    NoElem(const char* t) 
+    NoElem(const char* t)
       : SetTest(t,1,ds_33,true,1) {}
-    virtual bool solution(const SetAssignment& x) const {    
+    virtual bool solution(const SetAssignment& x) const {
       for(CountableSetValues xr(x.lub, x[0]);xr();++xr)
 	if (xr.val()==x.intval())
 	  return false;
@@ -120,9 +120,9 @@ namespace TestsForSetsAndInts {
 
   class The : public SetTest {
   public:
-    The(const char* t) 
+    The(const char* t)
       : SetTest(t,1,ds_33,true,1) {}
-    virtual bool solution(const SetAssignment& x) const {    
+    virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
       IntSet x0(xr0);
       return x0.size()==1 && x0.min()==x0.max() &&
@@ -157,7 +157,7 @@ namespace TestsForSetsAndInts {
     IntArgs elements;
     IntArgs weights;
 
-    Weights(const char* t) 
+    Weights(const char* t)
       : SetTest(t,1,ds_33,false,1),
 	elements(7), weights(7) {
       for (int i=-3; i<=3; i++)
@@ -167,7 +167,7 @@ namespace TestsForSetsAndInts {
       weights[1] = -2;
       weights[5] = 6;
     }
-    virtual bool solution(const SetAssignment& x) const {    
+    virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges x0(x.lub, x[0]);
       return x.intval()==weightI(elements,weights,x0);
     }
@@ -179,9 +179,9 @@ namespace TestsForSetsAndInts {
 
   class Match : public SetTest {
   public:
-    Match(const char* t) 
+    Match(const char* t)
       : SetTest(t,1,ds_33,false,3) {}
-    virtual bool solution(const SetAssignment& x) const {    
+    virtual bool solution(const SetAssignment& x) const {
       if (x.ints()[0]>=x.ints()[1] ||
 	  x.ints()[1]>=x.ints()[2])
 	return false;
@@ -215,9 +215,9 @@ namespace TestsForSetsAndInts {
   private:
     int ssize, isize;
   public:
-    Channel(const char* t, const IntSet& d, int _ssize, int _isize) 
+    Channel(const char* t, const IntSet& d, int _ssize, int _isize)
       : SetTest(t,_ssize,d,false,_isize), ssize(_ssize), isize(_isize) {}
-    virtual bool solution(const SetAssignment& x) const {    
+    virtual bool solution(const SetAssignment& x) const {
       for (int i=0; i<isize; i++) {
 	if (x.ints()[i] < 0 || x.ints()[i] >= ssize)
 	  return false;

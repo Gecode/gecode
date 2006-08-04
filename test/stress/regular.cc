@@ -75,7 +75,7 @@ construct(int n) {
  */
 struct StressRegular : public StressTest {
   int n;
-  StressRegular() 
+  StressRegular()
     : StressTest("Regular",_p) {}
   virtual CheckResult check(const StressTestSpace *s) const {
     for (int i=0; i<s->x.size(); ++i)

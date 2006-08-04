@@ -26,7 +26,7 @@ static IntSet ds_44(-4,4);
 
 class AtmostOne : public SetTest {
 public:
-  AtmostOne(const char* t) 
+  AtmostOne(const char* t)
     : SetTest(t,3,ds_33,false) {}
   virtual bool solution(const SetAssignment& x) const {
     {
@@ -75,7 +75,7 @@ AtmostOne _atmostone("Distinct::AtmostOne");
 
 class Distinct : public SetTest {
 public:
-  Distinct(const char* t) 
+  Distinct(const char* t)
     : SetTest(t,4,ds_44,false) {}
   virtual bool solution(const SetAssignment& x) const {
     {

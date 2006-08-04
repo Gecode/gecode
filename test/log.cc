@@ -130,7 +130,7 @@ namespace Log {
 	cout << hinitial[i] << endl;
       }
       cout << endl;
-      
+
       cout << "Operations" << endl;
       for (unsigned int i = 0; i < hops.size(); ++i) {
 	cout << hops[i] << endl;
@@ -192,7 +192,7 @@ namespace Log {
 
       cout << error_space;
     }
-    
+
   }
 
   std::string mk_name(const char* arr, int idx) {
@@ -228,7 +228,7 @@ namespace Log {
 
     ostringstream update;
     update << "\t" <<  name << ".update(this, share, s." << name << ");";
-    cupdate.push_back(update.str());    
+    cupdate.push_back(update.str());
 
     cnames.push_back(psb(name, true));
 
@@ -266,7 +266,7 @@ namespace Log {
 
     ostringstream update;
     update << "\t" <<  name << ".update(this, share, s." << name << ");";
-    cupdate.push_back(update.str());    
+    cupdate.push_back(update.str());
 
     cnames.push_back(psb(name, false));
   }
@@ -297,7 +297,7 @@ namespace Log {
 
     ostringstream update;
     update << "\t" <<  name << ".update(this, share, s." << name << ");";
-    cupdate.push_back(update.str());    
+    cupdate.push_back(update.str());
 
     cnames.push_back(psb(name, true));
 

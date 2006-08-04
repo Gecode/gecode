@@ -31,16 +31,16 @@ static IntSet _smallp(smallvals, sizeof(smallvals)/sizeof(int));
 /*
  * Stress distinct propagator
  *
- * Performs propagation on a pathological example. The example is taken 
- * from: Jean-François Puget, A fast algorithm for the bound consistency 
- * of alldiff constraints, AAAI-98, pages 359-366, July 1998, 
+ * Performs propagation on a pathological example. The example is taken
+ * from: Jean-François Puget, A fast algorithm for the bound consistency
+ * of alldiff constraints, AAAI-98, pages 359-366, July 1998,
  * Madison, WI, USA.
  */
 class StressDistinct : public StressTest {
 private:
   IntConLevel icl;
 public:
-  StressDistinct(const char* t, IntConLevel icl0, IntSet& p) 
+  StressDistinct(const char* t, IntConLevel icl0, IntSet& p)
     : StressTest(t,p), icl(icl0) {}
   virtual CheckResult check(const StressTestSpace *s) const {
     for (int i=0; i<s->x.size(); i++) {

@@ -37,17 +37,17 @@ class GCCAssignment : public Assignment {
   int cardup;
   int xsize;
 public:
-  GCCAssignment(int xlow, int xup, 
+  GCCAssignment(int xlow, int xup,
 		int clow, int cup,
 		int xs,
-		int n0, const IntSet& d0) 
-    : Assignment(n0, d0), 
-      problow(xlow), probup(xup), 
-      cardlow(clow), cardup(cup), 
+		int n0, const IntSet& d0)
+    : Assignment(n0, d0),
+      problow(xlow), probup(xup),
+      cardlow(clow), cardup(cup),
       xsize(xs) {
     reset();
   }
-  
+
   void reset(void) {
     done = false;
     IntSet card_dom(cardlow, cardup);
@@ -83,7 +83,7 @@ public:
 
 class GCC_FC_AllLbUb : public IntTest {
 public:
-  GCC_FC_AllLbUb(const char* t, IntConLevel icl) 
+  GCC_FC_AllLbUb(const char* t, IntConLevel icl)
     : IntTest(t, 4, ds_14, false, icl) {}
   virtual bool solution(const Assignment& x) const {
     int n[4];
@@ -103,7 +103,7 @@ public:
 
 class GCC_FC_AllTriple : public IntTest {
 public:
-  GCC_FC_AllTriple(const char* t, IntConLevel icl) 
+  GCC_FC_AllTriple(const char* t, IntConLevel icl)
     : IntTest(t, 4, ds_14, false, icl) {}
   virtual bool solution(const Assignment& x) const {
     int n[4];
@@ -124,7 +124,7 @@ public:
 
 class GCC_FC_SomeTriple : public IntTest {
 public:
-  GCC_FC_SomeTriple(const char* t, IntConLevel icl) 
+  GCC_FC_SomeTriple(const char* t, IntConLevel icl)
     : IntTest(t, 4, ds_14, false, icl) {}
   virtual bool solution(const Assignment& x) const {
     int n[4];
@@ -133,7 +133,7 @@ public:
     for (int i=x.size(); i--; )
       n[x[i] - 1]++;
     if (n[0] < 2 || n[1] < 2 ||
-	n[2] > 0 || n[3] > 0) 
+	n[2] > 0 || n[3] > 0)
       return false;
     return true;
   }
@@ -145,7 +145,7 @@ public:
 
 class GCC_FC_AllEqUb : public IntTest {
 public:
-  GCC_FC_AllEqUb(const char* t, IntConLevel icl) 
+  GCC_FC_AllEqUb(const char* t, IntConLevel icl)
     : IntTest(t, 4, ds_12, false, icl) {}
   virtual bool solution(const Assignment& x) const {
     int n[2];
@@ -165,7 +165,7 @@ public:
 
 class GCC_FC_Shared_AllLbUb : public IntTest {
 public:
-  GCC_FC_Shared_AllLbUb(const char* t, IntConLevel icl) 
+  GCC_FC_Shared_AllLbUb(const char* t, IntConLevel icl)
     : IntTest(t,2,ds_14,false, icl) {}
   virtual bool solution(const Assignment& x) const {
     if (x[0] != x[1]) {
@@ -189,7 +189,7 @@ public:
 
 class GCC_FC_Shared_SomeTrip : public IntTest {
 public:
-  GCC_FC_Shared_SomeTrip(const char* t, IntConLevel icl) 
+  GCC_FC_Shared_SomeTrip(const char* t, IntConLevel icl)
     : IntTest(t,1,ds_14,false,icl) {}
   virtual bool solution(const Assignment& x) const {
     if (x[0] == 1) {
@@ -199,8 +199,8 @@ public:
     }
   }
   virtual void post(Space* home, IntVarArray& x) {
-    IntArgs c(3, 1,4,4); 
-    
+    IntArgs c(3, 1,4,4);
+
     IntVarArgs y(4);
     for (int i = 0; i < 4; i++) {
       y[i] = x[0];
@@ -212,7 +212,7 @@ public:
 
 class GCC_VC_AllLbUb : public IntTest {
 private:
-  static const int lb = 0; 
+  static const int lb = 0;
   static const int rb = 2;
 
   static const int xs = 7;
@@ -228,7 +228,7 @@ private:
 
 
 public:
-  GCC_VC_AllLbUb(const char* t, IntConLevel icl) 
+  GCC_VC_AllLbUb(const char* t, IntConLevel icl)
     : IntTest(t, xs, ds_02, false,icl) {}
   virtual bool solution(const Assignment& x) const {
 //     std::cout << "GCC-Sol: ";
@@ -244,7 +244,7 @@ public:
 	return false;
       }
     }
-    
+
     GECODE_AUTOARRAY(int, count, xs - ve);
     for (int i = ve; i < xs; i++) {
       count[i - ve] = 0;
@@ -271,7 +271,7 @@ public:
 
   virtual void post(Space* home, IntVarArray& x) {
     // std::cout << "test_post\n";
-    
+
     // get the number of used values
     GECODE_AUTOARRAY(bool, done, xs - ve);
     for (int i = 0; i < xs - ve; i++) {
@@ -287,7 +287,7 @@ public:
 // 	}
 //       }
 //     }
-    
+
 //     std::cout << "nov = "<<nov<<"\n";
 //     for (int i = ve; i < ve + nov; i++) {
     IntVarArgs y(xs - ve);
@@ -296,7 +296,7 @@ public:
 //       rel(home, y[i - ve], IRT_LQ, maxocc);
 //       rel(home, y[i - ve], IRT_GQ, minocc);
     }
-    
+
     IntVarArgs z(ve);
     for (int i = 0; i < ve; i++) {
 //       std::cout << x[i] << " ";
@@ -311,7 +311,7 @@ public:
 
 class GCC_VC_AllTriple : public IntTest {
 private:
-  static const int lb = 0; 
+  static const int lb = 0;
   static const int rb = 2;
 
   static const int xs = 7;
@@ -326,7 +326,7 @@ private:
 
 
 public:
-  GCC_VC_AllTriple(const char* t, IntConLevel icl) 
+  GCC_VC_AllTriple(const char* t, IntConLevel icl)
     : IntTest(t, xs, ds_02, false,icl) {}
   virtual bool solution(const Assignment& x) const {
 //     std::cout << "GCC-Sol: ";
@@ -342,7 +342,7 @@ public:
 	return false;
       }
     }
-    
+
     GECODE_AUTOARRAY(int, count, xs - ve);
     for (int i = ve; i < xs; i++) {
       count[i - ve] = 0;
@@ -361,7 +361,7 @@ public:
       // std::cout << count[i] << " ";
     }
     // std::cout << "\n";
-    
+
     for (int i = 0; i < xs - ve; i++) {
       // std::cout << "comp: "<< count[i] <<" & "<<x[i + ve] << "\n";
       if (count[i] != x[i + ve]) {
@@ -376,7 +376,7 @@ public:
 
   virtual void post(Space* home, IntVarArray& x) {
     // std::cout << "test_post\n";
-    
+
     // get the number of used values
     GECODE_AUTOARRAY(bool, done, xs - ve);
     for (int i = 0; i < xs - ve; i++) {
@@ -389,7 +389,7 @@ public:
       rel(home, y[i - ve], IRT_LQ, maxocc);
       rel(home, y[i - ve], IRT_GQ, minocc);
     }
-    
+
     IntVarArgs z(ve);
     for (int i = 0; i < ve; i++) {
       z[i] = x[i];
@@ -405,7 +405,7 @@ public:
 
 class GCC_VC_SomeTriple : public IntTest {
 private:
-  static const int lb = 0; 
+  static const int lb = 0;
   static const int rb = 2;
 
   static const int xs = 6;
@@ -419,7 +419,7 @@ private:
   }
 
 public:
-  GCC_VC_SomeTriple(const char* t, IntConLevel icl) 
+  GCC_VC_SomeTriple(const char* t, IntConLevel icl)
     : IntTest(t, xs, ds_02, false,icl) {}
   virtual bool solution(const Assignment& x) const {
 //     std::cout << "GCC-Sol: ";
@@ -435,7 +435,7 @@ public:
 	return false;
       }
     }
-    
+
     GECODE_AUTOARRAY(int, count, xs - ve);
     for (int i = ve; i < xs; i++) {
       count[i - ve] = 0;
@@ -461,7 +461,7 @@ public:
       }
     }
 //     std::cout << "\n";
-    
+
     for (int i = 0; i < xs - ve; i++) {
 //       std::cout << "comp: "<< count[i] <<" & "<<x[i + ve] << "\n";
       if (count[i] != x[i + ve]) {
@@ -482,7 +482,7 @@ public:
       rel(home, y[i - ve], IRT_LQ, maxocc);
       rel(home, y[i - ve], IRT_GQ, minocc);
     }
-    
+
     IntVarArgs z(ve);
     for (int i = 0; i < ve; i++) {
       z[i] = x[i];
@@ -496,7 +496,7 @@ public:
 
 class GCC_VC_Shared_SomeTriple : public IntTest {
 public:
-  GCC_VC_Shared_SomeTriple(const char* t, IntConLevel icl) 
+  GCC_VC_Shared_SomeTriple(const char* t, IntConLevel icl)
     : IntTest(t,3,ds_04,false,icl) {}
   virtual bool solution(const Assignment& x) const {
     if ( (x[0] != 1 && x[0] != 3) ||

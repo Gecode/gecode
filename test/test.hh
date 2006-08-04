@@ -34,7 +34,7 @@
 using namespace Gecode;
 
 class Options {
-public:    
+public:
   static const int defiter = 5,
     deffixprob = 10,
     defflushprob = 10;
@@ -45,7 +45,7 @@ public:
   int   flushprob;
   bool  log, display;
   bool  stop_on_error;
-  Options(void) 
+  Options(void)
     : seed(0), iter(defiter), fixprob(deffixprob), flushprob(defflushprob),
       log(false), display(true), stop_on_error(true)
   {}
@@ -71,7 +71,7 @@ public:
       // Search alphabetically
       Test* p = NULL;
       Test* c = all;
-      while ((c != NULL) && 
+      while ((c != NULL) &&
 	     ((strcmp(m,c->m)>0)
 	      || ((strcmp(m,c->m)==0) && (strcmp(t,c->t)>0)))) {
 	p = c; c = c->n;

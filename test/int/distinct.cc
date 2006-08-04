@@ -33,7 +33,7 @@ namespace {
 
 class Distinct : public IntTest {
 public:
-  Distinct(const char* t, const IntSet& ds, IntConLevel icl) 
+  Distinct(const char* t, const IntSet& ds, IntConLevel icl)
     : IntTest(t,4,ds,false,icl) {}
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<4; i++)
@@ -68,7 +68,7 @@ protected:
   virtual bool do_search_test() { return false; }
 public:
   DistinctRandom(const char* t, int size0, const IntSet& ds0, IntConLevel icl0)
-    : IntTest(t,size0,ds0,false), 
+    : IntTest(t,size0,ds0,false),
       icl(icl0), size(size0), ds(ds0) {}
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<x.size(); i++)
@@ -90,7 +90,7 @@ namespace {
 
 class DistinctOffset : public IntTest {
 public:
-  DistinctOffset(const char* t, const IntSet& ds, IntConLevel icl) 
+  DistinctOffset(const char* t, const IntSet& ds, IntConLevel icl)
     : IntTest(t,4,ds,false,icl) {}
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<4; i++)

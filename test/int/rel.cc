@@ -27,7 +27,7 @@ class RelEqBin : public IntTest {
 private:
   IntConLevel icl;
 public:
-  RelEqBin(const char* t, IntConLevel icl0) 
+  RelEqBin(const char* t, IntConLevel icl0)
     : IntTest(t,2,ds_22,true), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     return x[0]==x[1];
@@ -46,7 +46,7 @@ class RelEqBinInt : public IntTest {
 private:
   IntConLevel icl;
 public:
-  RelEqBinInt(const char* t, IntConLevel icl0) 
+  RelEqBinInt(const char* t, IntConLevel icl0)
     : IntTest(t,1,ds_22,true), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     return x[0]==0;
@@ -66,7 +66,7 @@ class RelEqNary : public IntTest {
 private:
   IntConLevel icl;
 public:
-  RelEqNary(const char* t, IntConLevel icl0) 
+  RelEqNary(const char* t, IntConLevel icl0)
     : IntTest(t,4,ds_22,false), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0]==x[1]) && (x[1]==x[2]) && (x[2]==x[3]);
@@ -83,7 +83,7 @@ class RelNq : public IntTest {
 private:
   IntConLevel icl;
 public:
-  RelNq(const char* t, IntConLevel icl0) 
+  RelNq(const char* t, IntConLevel icl0)
     : IntTest(t,2,ds_22,true), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     return x[0]!=x[1];
@@ -101,7 +101,7 @@ RelNq _relnqdom("Rel::NqDom",ICL_DOM);
 
 class RelLq : public IntTest {
 public:
-  RelLq(void) 
+  RelLq(void)
     : IntTest("Rel::Lq",2,ds_22,true) {}
   virtual bool solution(const Assignment& x) const {
     return x[0] <= x[1];
@@ -117,7 +117,7 @@ RelLq _rellq;
 
 class RelLqInt : public IntTest {
 public:
-  RelLqInt(void) 
+  RelLqInt(void)
     : IntTest("Rel::LqInt",1,ds_22,true) {}
   virtual bool solution(const Assignment& x) const {
     return x[0] <= 0;
@@ -134,7 +134,7 @@ RelLqInt _rellqint;
 
 class RelLe : public IntTest {
 public:
-  RelLe(void) 
+  RelLe(void)
     : IntTest("Rel::Le",2,ds_22,true) {}
   virtual bool solution(const Assignment& x) const {
     return x[0] < x[1];
@@ -150,7 +150,7 @@ RelLe _relle;
 
 class RelLeInt : public IntTest {
 public:
-  RelLeInt(void) 
+  RelLeInt(void)
     : IntTest("Rel::LeInt",1,ds_22,true) {}
   virtual bool solution(const Assignment& x) const {
     return x[0] < 0;
@@ -166,7 +166,7 @@ RelLeInt _relleint;
 
 class RelGq : public IntTest {
 public:
-  RelGq(void) 
+  RelGq(void)
     : IntTest("Rel::Gq",2,ds_22,true) {}
   virtual bool solution(const Assignment& x) const {
     return x[0] >= x[1];
@@ -182,7 +182,7 @@ RelGq _relgq;
 
 class RelGqInt : public IntTest {
 public:
-  RelGqInt(void) 
+  RelGqInt(void)
     : IntTest("Rel::GqInt",1,ds_22,true) {}
   virtual bool solution(const Assignment& x) const {
     return x[0] >= 0;
@@ -199,7 +199,7 @@ RelGqInt _relgqint;
 
 class RelGr : public IntTest {
 public:
-  RelGr(void) 
+  RelGr(void)
     : IntTest("Rel::Gr",2,ds_22,true) {}
   virtual bool solution(const Assignment& x) const {
     return x[0] > x[1];
@@ -215,7 +215,7 @@ RelGr _relgr;
 
 class RelGrInt : public IntTest {
 public:
-  RelGrInt(void) 
+  RelGrInt(void)
     : IntTest("Rel::GrInt",1,ds_22,true) {}
   virtual bool solution(const Assignment& x) const {
     return x[0] > 0;
@@ -234,7 +234,7 @@ private:
   int  n;
   bool strict;
 public:
-  Lex(const char* t, int m, bool _strict) 
+  Lex(const char* t, int m, bool _strict)
     : IntTest(t,m*2,ds_22), n(m), strict(_strict) {}
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<n; i++)

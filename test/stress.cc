@@ -27,11 +27,11 @@
 
 #include "gecode/search.hh"
 
-StressTestSpace::StressTestSpace(int n, IntSet dom, const Options& o) 
+StressTestSpace::StressTestSpace(int n, IntSet dom, const Options& o)
   : x(this, n, dom), opt(o) {
   Log::initial(x, "x");
 }
-StressTestSpace::StressTestSpace(bool share, StressTestSpace& s) 
+StressTestSpace::StressTestSpace(bool share, StressTestSpace& s)
   : Space(share,s), opt(s.opt) {
   x.update(this, share, s.x);
 }
@@ -53,7 +53,7 @@ problem = (M);    \
 delete e;         \
 goto failed;
 
-bool 
+bool
 StressTest::run(const Options& opt) {
   const char* problem = "NONE";
   while (param()) {

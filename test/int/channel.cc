@@ -26,7 +26,7 @@ static IntSet ds_05(0,5);
 
 class ChannelFull : public IntTest {
 public:
-  ChannelFull(const char* t, IntConLevel icl) 
+  ChannelFull(const char* t, IntConLevel icl)
     : IntTest(t,8,ds_03,false,icl) {}
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<4; i++)
@@ -50,7 +50,7 @@ ChannelFull _channel_full_val("Channel::Full::Val",ICL_VAL);
 
 class ChannelHalf : public IntTest {
 public:
-  ChannelHalf(const char* t, IntConLevel icl) 
+  ChannelHalf(const char* t, IntConLevel icl)
     : IntTest(t,6,ds_05,false,icl) {}
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<6; i++)

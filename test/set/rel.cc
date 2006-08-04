@@ -25,7 +25,7 @@ static IntSet ds_33(-3,3);
 
 class RelBinNEq : public SetTest {
 public:
-  RelBinNEq(const char* t) 
+  RelBinNEq(const char* t)
     : SetTest(t,2,ds_33,true) {}
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
@@ -43,7 +43,7 @@ RelBinNEq _relneq("Rel::BinNEq");
 
 class RelBinNEqS : public SetTest {
 public:
-  RelBinNEqS(const char* t) 
+  RelBinNEqS(const char* t)
     : SetTest(t,1,ds_33,true) {}
   virtual bool solution(const SetAssignment& x) const {
     return false;
@@ -59,7 +59,7 @@ RelBinNEqS _relneqs("Rel::Sharing::BinNEqS");
 
 class RelBinEq : public SetTest {
 public:
-  RelBinEq(const char* t) 
+  RelBinEq(const char* t)
     : SetTest(t,2,ds_33,true) {}
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
@@ -77,7 +77,7 @@ RelBinEq _releq("Rel::BinEq");
 
 class RelBinEqS : public SetTest {
 public:
-  RelBinEqS(const char* t) 
+  RelBinEqS(const char* t)
     : SetTest(t,1,ds_33,true) {}
   virtual bool solution(const SetAssignment& x) const {
     return true;
@@ -93,7 +93,7 @@ RelBinEqS _releqs("Rel::Sharing::BinEqS");
 
 class RelBinSub : public SetTest {
 public:
-  RelBinSub(const char* t) 
+  RelBinSub(const char* t)
     : SetTest(t,2,ds_33,true) {}
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
@@ -111,7 +111,7 @@ RelBinSub _relsub("Rel::BinSub");
 
 class RelBinSubS : public SetTest {
 public:
-  RelBinSubS(const char* t) 
+  RelBinSubS(const char* t)
     : SetTest(t,1,ds_33,true) {}
   virtual bool solution(const SetAssignment& x) const {
     return true;
@@ -127,7 +127,7 @@ RelBinSubS _relsubs("Rel::Sharing::BinSubS");
 
 class RelBinDisj : public SetTest {
 public:
-  RelBinDisj(const char* t) 
+  RelBinDisj(const char* t)
     : SetTest(t,2,ds_33,true) {}
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
@@ -145,7 +145,7 @@ RelBinDisj _reldisj("Rel::BinDisj");
 
 class RelBinDisjS : public SetTest {
 public:
-  RelBinDisjS(const char* t) 
+  RelBinDisjS(const char* t)
     : SetTest(t,1,ds_33,true) {}
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
@@ -162,7 +162,7 @@ RelBinDisjS _reldisjs("Rel::Sharing::BinDisjS");
 
 class RelBinCompl : public SetTest {
 public:
-  RelBinCompl(const char* t) 
+  RelBinCompl(const char* t)
     : SetTest(t,2,ds_33,true) {}
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
@@ -181,7 +181,7 @@ RelBinCompl _relcompl("Rel::BinCompl");
 
 class RelBinComplS : public SetTest {
 public:
-  RelBinComplS(const char* t) 
+  RelBinComplS(const char* t)
     : SetTest(t,1,ds_33,true) {}
   virtual bool solution(const SetAssignment& x) const {
     return false;
