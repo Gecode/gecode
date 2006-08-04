@@ -66,12 +66,14 @@ namespace Gecode { namespace Search {
 	    s1 = NULL;
 	    return ES_SOLUTION;
 	  }
-	  int l = rcs.lc(s1);
-	  if (l < mark) {
-	    es = ES_CONSTRAIN;
-	    mark = l;
-	    s2 = best;
-	    return ES_CONSTRAIN;
+	  {
+	    int l = rcs.lc(s1);
+	    if (l < mark) {
+	      es = ES_CONSTRAIN;
+	      mark = l;
+	      s2 = best;
+	      return ES_CONSTRAIN;
+	    }
 	  }
 	same:
 	  cur = rcs.recompute<true>(d,*this);
