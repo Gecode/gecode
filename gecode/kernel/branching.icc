@@ -25,7 +25,7 @@ namespace Gecode {
 
   /**
    * \defgroup TaskBranchViewVal Generic branching based on view and value selection
-   * 
+   *
    * Implements view-based branching for an array of views and value.
    * \ingroup TaskActor
    */
@@ -52,7 +52,7 @@ namespace Gecode {
    *    is known to be a best one, VSS_COMMIT should be returned.
    *    Otherwise, either VSS_NONE or VSS_SELECT should be returned.
    *  - Gecode::ViewSelStatus select(const Space* \a home, \a View \a x)
-   *    If \a x is not better than the previously selected view, 
+   *    If \a x is not better than the previously selected view,
    *    return VSS_NONE. If it is better, return VSS_SELECT. If
    *    it is a best view, return VSS_COMMIT.
    *

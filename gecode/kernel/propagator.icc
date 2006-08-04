@@ -149,14 +149,14 @@ namespace Gecode {
   /**
    * \brief (n+1)-ary propagator
    *
-   * Stores array of views and single view of type \a View with propagation 
+   * Stores array of views and single view of type \a View with propagation
    * condition \a pc.
    */
   template <class View, PropCond pc>
   class NaryOnePropagator : public Propagator {
   protected:
     /// Array of views
-    ViewArray<View> x; 
+    ViewArray<View> x;
     /// Single view
     View y;
     /// Constructor for cloning \a p
@@ -235,7 +235,7 @@ namespace Gecode {
   class InhomNaryOnePropagator : public Propagator {
   protected:
     /// Array of views
-    ViewArray<View0> x; 
+    ViewArray<View0> x;
     /// Single view
     View1 y;
     /// Constructor for cloning \a p

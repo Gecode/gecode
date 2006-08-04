@@ -37,7 +37,7 @@ namespace Gecode {
     /// Return information
     virtual const char* what(void) const throw();
   };
-    
+
 
   /**
    * \defgroup FuncThrowKernel Kernel exceptions
@@ -82,7 +82,7 @@ namespace Gecode {
    */
 
   inline
-  MemoryExhausted::MemoryExhausted(void) 
+  MemoryExhausted::MemoryExhausted(void)
     : Exception("Memory","Heap memory exhausted") {}
 
   inline
@@ -98,7 +98,7 @@ namespace Gecode {
   SpaceIllegalAlternative::SpaceIllegalAlternative(void)
     : Exception("Space::commit",
 		"Attempt to commit with illegal alternative") {}
-  
+
 }
 
 // STATISTICS: kernel-other

@@ -24,12 +24,12 @@ namespace Gecode {
   /**
    * \brief Check whether modification event \a me is failed.
    * \ingroup TaskActor
-   */ 
+   */
   bool me_failed(ModEvent me);
   /**
    * \brief Check whether modification event \a me describes variable modification.
    * \ingroup TaskActor
-   */ 
+   */
   bool me_modified(ModEvent me);
 
 

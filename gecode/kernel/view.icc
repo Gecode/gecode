@@ -194,28 +194,28 @@ namespace Gecode {
    * \ingroup TaskVarView
    */
   template <class VarA, class VarB>
-  bool shared(const VariableViewBase<VarA>&, 
+  bool shared(const VariableViewBase<VarA>&,
 	      const VariableViewBase<VarB>&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
   template <class VarA, class ViewB>
-  bool shared(const VariableViewBase<VarA>&, 
+  bool shared(const VariableViewBase<VarA>&,
 	      const DerivedViewBase<ViewB>&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
   template <class ViewA, class VarB>
-  bool shared(const DerivedViewBase<ViewA>&, 
+  bool shared(const DerivedViewBase<ViewA>&,
 	      const VariableViewBase<VarB>&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
   template <class ViewA, class ViewB>
-  bool shared(const DerivedViewBase<ViewA>&, 
+  bool shared(const DerivedViewBase<ViewA>&,
 	      const DerivedViewBase<ViewB>&);
 
 
@@ -238,7 +238,7 @@ namespace Gecode {
     /// Default constructor
     ViewTuple(void);
     //@}
-     
+
     /// \name Component access
     //@{
     /// Return \a i-th component of tuple
@@ -288,9 +288,9 @@ namespace Gecode {
 template <class View, unsigned int n>
 std::ostream&
 operator<<(std::ostream& os, const Gecode::ViewTuple<View,n>& xy);
-  
 
-namespace Gecode {  
+
+namespace Gecode {
 
   /*
    * Constant view: has no variable implementation
@@ -372,14 +372,14 @@ namespace Gecode {
   }
 
   template <class Var>
-  forceinline bool 
+  forceinline bool
   same(const VariableViewBase<Var>& x, const VariableViewBase<Var>& y) {
     return x.variable() == y.variable();
   }
   template <class Var>
-  forceinline bool 
+  forceinline bool
   before(const VariableViewBase<Var>& x, const VariableViewBase<Var>& y) {
-    return x.variable() < y.variable();    
+    return x.variable() < y.variable();
   }
 
   /*
@@ -463,14 +463,14 @@ namespace Gecode {
 
   template <class VarA, class VarB>
   forceinline bool
-  shared(const VariableViewBase<VarA>& x, 
+  shared(const VariableViewBase<VarA>& x,
 	 const VariableViewBase<VarB>& y) {
     return (static_cast<VarBase*>(x.variable()) ==
 	    static_cast<VarBase*>(y.variable()));
   }
   template <class VarA, class ViewB>
   forceinline bool
-  shared(const VariableViewBase<VarA>& x, 
+  shared(const VariableViewBase<VarA>& x,
 	 const DerivedViewBase<ViewB>& y) {
     return (ViewB::varderived() &&
 	    static_cast<VarBase*>(x.variable()) ==
@@ -478,7 +478,7 @@ namespace Gecode {
   }
   template <class ViewA, class VarB>
   forceinline bool
-  shared(const DerivedViewBase<ViewA>& x, 
+  shared(const DerivedViewBase<ViewA>& x,
 	 const VariableViewBase<VarB>& y) {
     return (ViewA::varderived() &&
 	    static_cast<VarBase*>(x.variable()) ==
@@ -486,7 +486,7 @@ namespace Gecode {
   }
   template <class ViewA, class ViewB>
   forceinline bool
-  shared(const DerivedViewBase<ViewA>& x, 
+  shared(const DerivedViewBase<ViewA>& x,
 	 const DerivedViewBase<ViewB>& y) {
     return (ViewA::varderived() && ViewB::varderived() &&
 	    static_cast<VarBase*>(x.variable()) ==
@@ -564,6 +564,6 @@ operator<<(std::ostream& os, const Gecode::ViewTuple<View,n>& xs) {
     os << xs[i] << ",";
   return os << xs[n-1] << "]";
 }
-  
+
 
 // STATISTICS: kernel-other

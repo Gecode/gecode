@@ -19,7 +19,7 @@
  *
  */
 
-namespace Gecode { 
+namespace Gecode {
 
   /// Heap and automatic memory management
   namespace Memory {
@@ -51,13 +51,13 @@ namespace Gecode {
     T* bcopy(T* d, const T* s, size_t n);
 
     //@}
-    
+
 
     /*
      * Implementations
      *
      */
-    
+
     forceinline void*
     malloc(size_t s) {
       void* p = ::malloc(s);
@@ -65,7 +65,7 @@ namespace Gecode {
 	return p;
       throw MemoryExhausted();
     }
-    
+
     forceinline void*
     realloc(void *p, size_t s) {
       p = ::realloc(p,s);
@@ -73,31 +73,31 @@ namespace Gecode {
 	return p;
       throw MemoryExhausted();
     }
-    
+
     forceinline void
     free(void* p) {
       ::free(p);
     }
-    
-    
+
+
     template <class T>
     forceinline T*
     bmalloc(size_t n) {
       return reinterpret_cast<T*>(Memory::malloc(sizeof(T)*n));
     }
-    
+
     template <class T>
     forceinline T*
     brealloc(T* b, size_t, size_t m) {
       return reinterpret_cast<T*>(Memory::realloc(b,m*sizeof(T)));
     }
-    
+
     template <class T>
     forceinline T*
     bcopy(T* d, const T* s, size_t n) {
       return reinterpret_cast<T*>(memcpy(d,s,n*sizeof(T)));
     }
-    
+
   }
 
 }
@@ -178,7 +178,7 @@ if ((sizeof(T)*(N)) <= 2048) {					\
 
 namespace Gecode { namespace Memory {
 
-  /** 
+  /**
    *  \brief Helper class for large automatic memory chunks
    */
   template <class T>

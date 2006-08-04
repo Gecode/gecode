@@ -83,7 +83,7 @@ namespace Gecode {
     const ActorDeleteLink* e = &a_actors;
     const ActorDeleteLink* a = e->next_delete();
     while (a != e) {
-      s += static_cast<const Actor*>(a)->cached(); 
+      s += static_cast<const Actor*>(a)->cached();
       a = a->next_delete();
     }
     return s;
@@ -289,7 +289,7 @@ namespace Gecode {
     {
       ActorDeleteLink* p  = &a_actors;
       ActorDeleteLink* e  = &s.a_actors;
-      for (ActorDeleteLink* a = e->next_delete(); a != e; 
+      for (ActorDeleteLink* a = e->next_delete(); a != e;
 	   a = a->next_delete()) {
 	ActorDeleteLink* c = static_cast<ActorDeleteLink*>(a->prev());
 	// Link copied actor
@@ -349,7 +349,7 @@ namespace Gecode {
      *
      */
     // Update variables without indexing structure
-    for (Variable<VTI_NOIDX,0,__Combine>* x 
+    for (Variable<VTI_NOIDX,0,__Combine>* x
 	   = static_cast<Variable<VTI_NOIDX,0,__Combine>*>(c->vars_noidx);
 	 x != NULL; x = x->next())
       x->u.free_me = 0;

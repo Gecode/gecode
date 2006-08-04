@@ -31,7 +31,7 @@ namespace Gecode {
      * \ingroup FuncMemSpace
      */
     namespace Config {
-      /** 
+      /**
        * \brief Minimal size of a heap chunk requested from the OS
        */
       const size_t hcsz_min =  1 * 1024;
@@ -53,17 +53,17 @@ namespace Gecode {
       /**
        * \brief Decrement ratio for chunk size
        *
-       * When a space is cloned, the new clone normally inherits the 
+       * When a space is cloned, the new clone normally inherits the
        * current chunk size from the original space. However, if the
-       * original space has requested less than \a hcsz_dec_ratio 
+       * original space has requested less than \a hcsz_dec_ratio
        * heap chunks of the current chunk size, the current chunk size
        * for the clone is halfed.
        */
       const int hcsz_dec_ratio = 2;
-      
+
       /**
        * \brief Unit size for free lists
-       * 
+       *
        * The unit size (given as binary logarithm) defines how big
        * a unit of memory for free lists is. Also, it defines the
        * alignment. Sizes of free list objects must be multiples of
@@ -75,7 +75,7 @@ namespace Gecode {
       const int fl_unit_size = ((sizeof(void*) == 4) ? 2 : 3);
       /**
        * \brief Minimal size for free list element
-       * 
+       *
        * The minimal size is given in the number of free list units.
        *
        * Currently, for 32 bit machines, the minimal size is 12 bytes.
@@ -84,7 +84,7 @@ namespace Gecode {
       const int fl_size_min  = ((sizeof(void*) == 4) ? 3 : 2);
       /**
        * \brief Maximal size for free list element
-       * 
+       *
        * The maximal size is given in the number of free list units.
        *
        * Currently, for 32 bit machines, the maximal size is 12 bytes.
@@ -129,7 +129,7 @@ namespace Gecode {
     FreeList* next(void) const;
     void next(FreeList*);
   };
-  
+
   /// Manage memory for space
   class MemoryManager {
   private:
@@ -161,7 +161,7 @@ namespace Gecode {
     size_t lsz;   ///< Size left for allocation
 
     /// Refill current heap area (outlined) issued by request of size \a s
-    GECODE_KERNEL_EXPORT 
+    GECODE_KERNEL_EXPORT
     void alloc_refill(size_t s);
     /// Do the real work for refilling
     void alloc_fill(size_t s);
@@ -184,7 +184,7 @@ namespace Gecode {
 
   public:
     /// Allocate free list element of size \a s
-    template <size_t s> 
+    template <size_t s>
     void* fl_alloc(void);
     /// Release all free list elements of size \a s between f and l (inclusive)
     template <size_t> void  fl_dispose(FreeList* f, FreeList* l);
@@ -273,8 +273,8 @@ namespace Gecode {
   forceinline void
   MemoryManager::alloc_fill(size_t sz) {
     // Adjust current heap chunk size
-    if (((requested > Memory::Config::hcsz_inc_ratio*cur_hcsz) || 
-	 (sz > cur_hcsz)) && 
+    if (((requested > Memory::Config::hcsz_inc_ratio*cur_hcsz) ||
+	 (sz > cur_hcsz)) &&
 	(cur_hcsz < Memory::Config::hcsz_max)) {
       cur_hcsz <<= 1;
     }
@@ -328,7 +328,7 @@ namespace Gecode {
   forceinline
   MemoryManager::MemoryManager(MemoryManager& mm)
     : cur_hcsz(mm.cur_hcsz), slack(NULL) {
-    if ((mm.requested < Memory::Config::hcsz_dec_ratio*mm.cur_hcsz) && 
+    if ((mm.requested < Memory::Config::hcsz_dec_ratio*mm.cur_hcsz) &&
 	(mm.cur_hcsz > Memory::Config::hcsz_min))
       cur_hcsz >>= 1;
     init();
@@ -402,7 +402,7 @@ namespace Gecode {
   MemoryManager::fl_refill(void) {
     // Try to acquire memory from slack
     if (slack != NULL) {
-      ReuseChunk* m = slack; 
+      ReuseChunk* m = slack;
       slack = NULL;
       do {
 	char*  block = GECODE_KERNEL_PTR2CH(m);

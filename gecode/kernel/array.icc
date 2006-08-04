@@ -33,7 +33,7 @@ namespace Gecode {
    * \brief %Variable arrays
    *
    * %Variable arrays store variables. They are typically used
-   * for storing the variables being part of a solution. 
+   * for storing the variables being part of a solution.
    *
    * Never use them for temporary purposes, use argument arrays
    * instead.
@@ -43,7 +43,7 @@ namespace Gecode {
   class VarArray {
   protected:
     /// Number of variables (size)
-    int  n; 
+    int  n;
     /// Array of variables
     Var* x;
   public:
@@ -103,7 +103,7 @@ namespace Gecode {
   class ViewArray {
   private:
     /// Number of views (size)
-    int  n; 
+    int  n;
     /// Views
     View* x;
     /// Sort order for views
@@ -126,7 +126,7 @@ namespace Gecode {
     ViewArray(Space*,const ViewArray<View>& a);
     /// Initialize from view array \a a (share elements)
     const ViewArray<View>& operator=(const ViewArray<View>& a);
-    /** 
+    /**
      * \brief Initialize from variable argument array \a a (copy elements)
      *
      * Note that the view type \a View must provide a constructor
@@ -191,13 +191,13 @@ namespace Gecode {
     void move_lst(int i);
     /** \brief Move view from position 0 to position \a i (shift elements to the left)
      *
-     * Before moving, cancel subscription of propagator \a p with 
+     * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to view at position \a i.
      */
     void move_fst(int i, Space* home, Propagator* p, PropCond pc);
     /** \brief Move view from position \c size()-1 to position \a i (truncate array by one)
      *
-     * Before moving, cancel subscription of propagator \a p with 
+     * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to view at position \a i.
      */
     void move_lst(int i, Space* home, Propagator* p, PropCond pc);
@@ -211,13 +211,13 @@ namespace Gecode {
     void drop_lst(int i);
     /** \brief Drop views from positions 0 to \a i-1 from array
      *
-     * Before moving, cancel subscription of propagator \a p with 
+     * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to views at positions 0 to \a i-1.
      */
     void drop_fst(int i, Space* home, Propagator* p, PropCond pc);
     /** \brief Drop assigned views from positions \a i+1 to \c size()-1 from array
      *
-     * Before moving, cancel subscription of propagator \a p with 
+     * Before moving, cancel subscription of propagator \a p with
      * propagation condition \a pc to views at positions \a i+1 to
      * \c size()-1.
      */
@@ -264,7 +264,7 @@ namespace Gecode {
   class ArgArrayBase {
   protected:
     /// Number of elements
-    int n; 
+    int n;
     /// Element array
     T*  a;
     /// How much elements are possible inside array
@@ -289,7 +289,7 @@ namespace Gecode {
     /// Return size of array (number of elements)
     int size(void) const;
     //@}
-    
+
     /// \name Array elements
     //@{
     /// Return element at position \a i
@@ -391,7 +391,7 @@ namespace Gecode {
    *     - <code>typedef Type value_type</code>  where \c Type is the type
    *       of the elements of this array.
    *     - <code>typedef Type args_type</code>  where \c Type is the type
-   *       of the appropriate Args-array type (e.g., \c BoolVarArgs if \c A is 
+   *       of the appropriate Args-array type (e.g., \c BoolVarArgs if \c A is
    *       \c BoolVarArray).
    */
   template <class A>
@@ -638,8 +638,8 @@ namespace Gecode {
 
   template <class View>
   forceinline bool
-  __before(const View& x, const View& y) { 
-    return before(x,y); 
+  __before(const View& x, const View& y) {
+    return before(x,y);
   }
 
   template <class View>
@@ -657,13 +657,13 @@ namespace Gecode {
 
   template <class View>
   forceinline bool
-  __same(const View& x, const View& y) { 
-    return same(x,y); 
+  __same(const View& x, const View& y) {
+    return same(x,y);
   }
   template <class View>
   forceinline bool
-  __shared(const View& x, const View& y) { 
-    return shared(x,y); 
+  __shared(const View& x, const View& y) {
+    return shared(x,y);
   }
 
   template <class View>
@@ -750,12 +750,12 @@ namespace Gecode {
     return (n > onstack_size) ?
       Memory::bmalloc<T>(n) : &onstack[0];
   }
-  
+
   template <class T>
   forceinline
   ArgArrayBase<T>::ArgArrayBase(int n0)
     : n(n0), a(allocate(n0)) {}
-  
+
   template <class T>
   inline
   ArgArrayBase<T>::ArgArrayBase(const ArgArrayBase<T>& aa)
@@ -763,14 +763,14 @@ namespace Gecode {
     for (int i = n; i--; )
       a[i] = aa.a[i];
   }
-  
+
   template <class T>
   forceinline
   ArgArrayBase<T>::~ArgArrayBase(void) {
     if (n > onstack_size)
       Memory::free(a);
   }
-  
+
   template <class T>
   forceinline const ArgArrayBase<T>&
   ArgArrayBase<T>::operator=(const ArgArrayBase<T>& aa) {
@@ -784,20 +784,20 @@ namespace Gecode {
     }
     return *this;
   }
-  
+
   template <class T>
   forceinline int
   ArgArrayBase<T>::size(void) const {
     return n;
   }
-  
+
   template <class T>
   forceinline T&
   ArgArrayBase<T>::operator[](int i) {
     assert((i>=0) && (i < n));
     return a[i];
   }
-  
+
   template <class T>
   forceinline const T&
   ArgArrayBase<T>::operator[](int i) const {

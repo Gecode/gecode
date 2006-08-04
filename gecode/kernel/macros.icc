@@ -22,10 +22,10 @@
 /**
  * \brief Check whether modification event \a me is failed, and forward failure.
  *
- * To be used inside the propagate member function of a propagator 
+ * To be used inside the propagate member function of a propagator
  * or the commit member function of a branching.
  * \ingroup TaskActor
- */ 
+ */
 #define GECODE_ME_CHECK(me)			\
   if (::Gecode::me_failed(me))			\
     return ::Gecode::ES_FAILED;
@@ -35,7 +35,7 @@
  *
  * To be used inside post functions.
  * \ingroup TaskActor
- */ 
+ */
 #define GECODE_ME_FAIL(home,me)			\
   if (::Gecode::me_failed(me)) {		\
     (home)->fail();				\
@@ -47,7 +47,7 @@
 /**
  * \brief Check whether execution status \a es is failed, and forward failure.
  * \ingroup TaskActor
- */ 
+ */
 #define GECODE_ES_CHECK(es)		\
   if ((es) < ::Gecode::ES_OK)		\
     return ::Gecode::ES_FAILED;
@@ -55,7 +55,7 @@
 /**
  * \brief Check whether execution status \a es is failed, and fail space \a home.
  * \ingroup TaskActor
- */ 
+ */
 #define GECODE_ES_FAIL(home,es)		\
   if ((es) < ::Gecode::ES_OK) {		\
     (home)->fail();			\

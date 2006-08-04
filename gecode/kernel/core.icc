@@ -61,7 +61,7 @@ namespace Gecode {
    * Each variable type must have a unique variable type identifier. The
    * kernel supports at most eight different variable type identifiers.
    *
-   * If you want to add your own variable type, you have to make sure that 
+   * If you want to add your own variable type, you have to make sure that
    * file is created in the subdirectory vti. The names of the file defines
    * the name of the variable type identifier (for example, if the name of
    * the file is INT, it defines the identifier VTI_INT).
@@ -92,7 +92,7 @@ namespace Gecode {
   /**
    * \brief Base-class for variable implementations
    *
-   * Serves as base-class that can be used without having to know any 
+   * Serves as base-class that can be used without having to know any
    * template arguments.
    * \ingroup TaskVar
    */
@@ -101,7 +101,7 @@ namespace Gecode {
   /**
    * \brief Base-class for variable type processor
    *
-   * Serves as base-class that can be used without having to know any 
+   * Serves as base-class that can be used without having to know any
    * template arguments.
    * \ingroup TaskVar
    */
@@ -112,7 +112,7 @@ namespace Gecode {
     /**
      * \brief Update copied variables linked from \a x
      *
-     * The argument \a sub gives the array where subscriptions are 
+     * The argument \a sub gives the array where subscriptions are
      * to be stored.
      */
     virtual void update(VarBase* x, Propagator**& sub) = 0;
@@ -122,7 +122,7 @@ namespace Gecode {
 
   /**
    * \brief %Variable type processor
-   * 
+   *
    * Base class for variable type processor for variable type index \a VTI
    * and maximum propagation condition \a PC.
    * \ingroup TaskVar
@@ -135,7 +135,7 @@ namespace Gecode {
     /**
      * \brief Update copied variables linked from \a x
      *
-     * The argument \a sub gives the array where subscriptions are 
+     * The argument \a sub gives the array where subscriptions are
      * to be stored.
      */
     virtual void update(VarBase* x, Propagator**& sub);
@@ -171,12 +171,12 @@ namespace Gecode {
     union {
       /**
        * \brief Combines the number of free entries with modification events
-       * 
+       *
        * The least for bits are reserved for the modification events, the
        * remaining 28 bits are for the number of free entries.
        *
        */
-      unsigned int free_me;   
+      unsigned int free_me;
       /// Store the forwarding pointer during copying
       Variable* fwd;
     } u;
@@ -194,7 +194,7 @@ namespace Gecode {
     /**
      * \brief Update copied variable \a x
      *
-     * The argument \a sub gives the array where subscriptions are 
+     * The argument \a sub gives the array where subscriptions are
      * to be stored.
      */
     void update(Variable* x, Propagator**& sub);
@@ -256,7 +256,7 @@ namespace Gecode {
     //@{
     /// Return next modified variable and reset (during processing)
     Variable* next(void);
-    /// Return current modification event of variable 
+    /// Return current modification event of variable
     ModEvent modevent(void) const;
     /// Set modification event to \a me
     void modevent(ModEvent me);
@@ -319,8 +319,8 @@ namespace Gecode {
   /**
    * \brief Double-linked list for actors
    *
-   * Used to maintain which actors belong to a space and also 
-   * (for propagators) to organize actors in the queue of 
+   * Used to maintain which actors belong to a space and also
+   * (for propagators) to organize actors in the queue of
    * waiting propagators.
    */
   class ActorLink {
@@ -336,7 +336,7 @@ namespace Gecode {
     ActorLink* next(void) const; void next(ActorLink*);
     //@}
 
-    
+
     /// Initialize links (self-linked)
     void init(void);
     /// Remove from predecessor and successor
@@ -351,7 +351,7 @@ namespace Gecode {
   /**
    * \brief Double-linked list for deleting actors
    *
-   * Used for actors that must be deleted (forced deletion) when a space 
+   * Used for actors that must be deleted (forced deletion) when a space
    * is deleted (even if the space is failed).
    *
    * The reason why it is not conjoined with ActorLink is that the array
@@ -389,7 +389,7 @@ namespace Gecode {
     /// Create copy
     virtual Actor* copy(Space*,bool) = 0;
     /// Delete actor and return its size
-    GECODE_KERNEL_EXPORT 
+    GECODE_KERNEL_EXPORT
     virtual size_t dispose(Space* home);
 
     /// \name Memory management
@@ -447,7 +447,7 @@ namespace Gecode {
     /**
      * \brief %Propagator has computed partial fixpoint
      *
-     * %Set propagator modification events after processing of 
+     * %Set propagator modification events after processing of
      * variables to \a pme.
      * \warning Has a side-effect on the propagator. Overwrites
      *          the propagator modification events of a propagator.
@@ -490,7 +490,7 @@ namespace Gecode {
    * \brief Branch description for batch recomputation
    *
    * Must be refined by inheritance such that the information stored
-   * inside a branching description is sufficient to redo a tell 
+   * inside a branching description is sufficient to redo a tell
    * performed by a particular branching.
    *
    * \ingroup TaskActor
@@ -550,7 +550,7 @@ namespace Gecode {
      *
      */
     virtual bool status(const Space* home) const = 0;
-    /** 
+    /**
      * \brief Return branching description
      *
      * Note that this method can rely on the fact that it is called
@@ -562,18 +562,18 @@ namespace Gecode {
     virtual const BranchingDesc* description(const Space* home) const = 0;
     /**
      * \brief Commit for branching description \a d and alternative \a a
-     * 
+     *
      * The current branching in the space \a home performs a commit from
      * the information provided by the branching description \a d
      * and the alternative \a a.
      */
-    virtual ExecStatus commit(Space* home, const BranchingDesc* d, 
+    virtual ExecStatus commit(Space* home, const BranchingDesc* d,
 			      unsigned int a) = 0;
     //@}
   };
 
 
-  /** 
+  /**
    * \brief %Space status
    * \ingroup TaskSearch
    */
@@ -594,7 +594,7 @@ namespace Gecode {
   private:
     MemoryManager   mm; ///< Performs memory management for space
 
-    /** 
+    /**
      * \name Processing variables
      */
     //@{
@@ -609,7 +609,7 @@ namespace Gecode {
     void process(void);
     //@}
 
-    /** 
+    /**
      * \name Pool of waiting propagators
      */
     //@{
@@ -623,9 +623,9 @@ namespace Gecode {
     bool pool_get(Propagator*& p);
     //@}
 
-    /** 
+    /**
      * \brief Doubly linked list of all actors
-     * 
+     *
      * Propagators are stored at the beginning, branchings (if any) at
      * the end.
      */
@@ -633,7 +633,7 @@ namespace Gecode {
     /**
      * \brief Points to the first branching to be used for status
      *
-     * If equal to &a_actors, no branching does exist. 
+     * If equal to &a_actors, no branching does exist.
      *
      * If it is NULL, the space is failed.
      *
@@ -673,7 +673,7 @@ namespace Gecode {
      *
      */
     Propagator** sub;
-    /// Used for default arguments 
+    /// Used for default arguments
     GECODE_KERNEL_EXPORT static unsigned long int unused_uli;
 
     /// Perform propagation, return number of propagation steps
@@ -723,17 +723,17 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT Space(bool share, Space& s);
     /**
      * \brief Copying member function
-     * 
+     *
      * Must create a new object using the constructor for cloning.
      * \ingroup TaskIntScript
      */
     virtual Space* copy(bool share) = 0;
-    /** 
+    /**
      * \brief Allocate memory from heap for new space
      * \ingroup TaskIntScript
      */
     static void* operator new(size_t);
-    /** 
+    /**
      * \brief Free memory allocated from heap
      * \ingroup TaskIntScript
      */
@@ -747,7 +747,7 @@ namespace Gecode {
      *
      */
 
-    /** 
+    /**
      * \brief Query space status
      *
      * Propagates the space until fixpoint or failure and
@@ -760,7 +760,7 @@ namespace Gecode {
      */
     SpaceStatus status(unsigned long int& pn=unused_uli);
 
-    /** 
+    /**
      * \brief Create new branching description for current branching
      *
      * This member function can only be called after the member function
@@ -769,7 +769,7 @@ namespace Gecode {
      *
      * Note that the above invariant obly pertains to calls of member
      * functions of the same space. If the invariant is violated, the
-     * system is likely to crash (hopefully it does). In particular, if 
+     * system is likely to crash (hopefully it does). In particular, if
      * applied to a space with no current branching, the system will
      * crash.
      *
@@ -777,8 +777,8 @@ namespace Gecode {
      */
     const BranchingDesc* description(void) const;
 
-    /** 
-     * \brief Clone space 
+    /**
+     * \brief Clone space
      *
      * Propagates the space until fixpoint and increments \a pn by the
      * number of propagator executions. If propagation results in
@@ -796,9 +796,9 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     Space* clone(bool share=true, unsigned long int& pn=unused_uli);
 
-    /** 
+    /**
      * \brief Commit branching description \a d and for alternative \a a
-     * 
+     *
      * The current branching in the space performs a commit from
      * the information provided by the branching description \a d
      * and the alternative \a a.
@@ -828,7 +828,7 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     void commit(const BranchingDesc* d, unsigned int a);
 
-    /** 
+    /**
      * \brief Flush cache datastructures in actors
      *
      * Flushes caches of actors in the space. This is useful to free
@@ -847,7 +847,7 @@ namespace Gecode {
      *
      */
 
-    /** 
+    /**
      * \brief Fail space
      *
      * This is useful for failing outside of actors. Never use inside
@@ -855,7 +855,7 @@ namespace Gecode {
      * \ingroup TaskActor
      */
     void fail(void);
-    /** 
+    /**
      * \brief Check whether space is failed
      *
      * Note that this does not perform propagation. This is useful
@@ -867,7 +867,7 @@ namespace Gecode {
     /**
      * \brief Return number of propagators
      *
-     * Note that this function takes linear time in the number of 
+     * Note that this function takes linear time in the number of
      * propagators. The number is only accurate when the space is
      * stable (that is, at fixpoint and all propagation is done).
      *
@@ -888,7 +888,7 @@ namespace Gecode {
      * \brief Return approximate number of subscriptions
      *
      * This number is a conservative approximation of (larger than the)
-     * the real number of subscriptions. The number becomes more accurate 
+     * the real number of subscriptions. The number becomes more accurate
      * after cloning a space but still is too high by the number of variables.
      *
      */
@@ -909,7 +909,7 @@ namespace Gecode {
     template <size_t> void* fl_alloc(void);
     /**
      * \brief Return freelist-managed memory to freelist
-     * 
+     *
      * The first list element to be retuned is \a f, the last is \a l.
      */
     template <size_t> void  fl_dispose(FreeList* f, FreeList* l);
@@ -920,7 +920,7 @@ namespace Gecode {
      */
     size_t allocated(void) const;
     /// Return how much memory is used by caches for actors
-    GECODE_KERNEL_EXPORT size_t cached(void) const;    
+    GECODE_KERNEL_EXPORT size_t cached(void) const;
     //@}
   };
 
@@ -1141,7 +1141,7 @@ namespace Gecode {
     pn += propagate();
     if (failed())
       return SS_FAILED;
-    /* 
+    /*
      * Find the next branching that has still alternatives left
      *
      * It is important to note that branchings reporting to have no more
@@ -1323,7 +1323,7 @@ namespace Gecode {
     // If no branching available, make it the first one
     if (b_status == &a_actors) {
       b_status = b;
-      if (b_commit == &a_actors) 
+      if (b_commit == &a_actors)
 	b_commit = b;
     }
     a_actors.tail(b);
@@ -1600,7 +1600,7 @@ namespace Gecode {
    *
    */
   template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline void 
+  forceinline void
   Variable<VTI,PC,MED>::process(Space* home,
 				PropCond pc1, PropCond pc2, ModEvent me) {
     Propagator** b = idx[pc1];
@@ -1610,7 +1610,7 @@ namespace Gecode {
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline void 
+  forceinline void
   Variable<VTI,PC,MED>::process(Space* home) {
     // Entries in index structure are disabled. However they
     // must still work for cloning (idx[0]) and degree (idx[PC+1])
