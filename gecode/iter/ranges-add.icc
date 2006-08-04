@@ -31,9 +31,9 @@ namespace Gecode { namespace Iter { namespace Ranges {
   class AddRange : public MinMax {
   protected:
     /// Iterator to which the range is to be added
-    I i; 
+    I i;
     /// Minimum of range to be added
-    int r_min; 
+    int r_min;
     /// Maximum of range to be added
     int r_max;
   public:
@@ -78,7 +78,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template <class I>
   forceinline
   AddRange<I>::AddRange(void) {}
-  
+
   template <class I>
   forceinline void
   AddRange<I>::operator++(void) {
@@ -93,10 +93,10 @@ namespace Gecode { namespace Iter { namespace Ranges {
       finish();
     }
   }
-  
+
   template <class I>
   forceinline
-  AddRange<I>::AddRange(I& i0, int r_min0, int r_max0) 
+  AddRange<I>::AddRange(I& i0, int r_min0, int r_max0)
     : i(i0), r_min(r_min0), r_max(r_max0) {
     operator++();
   }
@@ -112,12 +112,12 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template <class I>
   forceinline
   SubRange<I>::SubRange(void) {}
-  
+
   template <class I>
   forceinline
-  SubRange<I>::SubRange(I& i, int r_min, int r_max) 
+  SubRange<I>::SubRange(I& i, int r_min, int r_max)
     : AddRange<I>(i,-r_max,-r_min) {}
-  
+
   template <class I>
   forceinline void
   SubRange<I>::init(I& i, int r_min, int r_max) {

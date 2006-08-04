@@ -47,7 +47,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     /// %Ranges stored
     Support::SharedArray<Range> r;
     /// Current range
-    int c; 
+    int c;
     /// Number of ranges
     int n;
   public:

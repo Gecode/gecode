@@ -25,7 +25,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   /**
    * \brief Range iterator for computing the complement (described by template arguments)
-   * 
+   *
    * The complement is computed with respect to a given universe set
    * provided as template arguments (\a UMIN ... \a UMAX). The universe
    * must always be a superset!
@@ -62,7 +62,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   /**
    * \brief Range iterator for computing the complement (described by values)
-   * 
+   *
    * The complement is computed with respect to a given universe set
    * provided as arguments upon initialization. The universe
    * must always be a superset!
@@ -176,7 +176,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I>
   forceinline
-  ComplVal<I>::ComplVal(int umin, int umax, I& i0) 
+  ComplVal<I>::ComplVal(int umin, int umax, I& i0)
     : UMIN(umin), UMAX(umax), i(i0) {
     start();
   }

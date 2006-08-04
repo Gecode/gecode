@@ -38,11 +38,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
   class ScaleUp {
   protected:
     /// Iterator to be scaled
-    I i; 
+    I i;
     /// Scale-factor
     int a;
     /// Current value of range
-    Val cur; 
+    Val cur;
     /// Last value of scaled range of \a i
     Val end;
   public:
@@ -85,7 +85,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   class ScaleDown : public MinMax {
   protected:
     /// Iterator to be scaled down
-    I i; 
+    I i;
     /// Divide by this factor
     int a;
   public:
@@ -172,8 +172,8 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template <class Val, class UnsVal, class I>
   forceinline UnsVal
   ScaleUp<Val,UnsVal,I>::width(void) const {
-    return (a == 1) ? 
-      static_cast<UnsVal>(i.width()) : 
+    return (a == 1) ?
+      static_cast<UnsVal>(i.width()) :
       static_cast<UnsVal>(max - min + 1);
   }
 

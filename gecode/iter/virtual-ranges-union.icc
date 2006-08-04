@@ -32,7 +32,7 @@ namespace Gecode { namespace Iter { namespace Ranges {  namespace Virt {
 
   class Union : public MinMax, public Iterator {
     /// First iterator
-    Iterator* i; 
+    Iterator* i;
     /// Second iterator
     Iterator* j;
     Union(const Union&);
@@ -179,7 +179,7 @@ namespace Gecode { namespace Iter { namespace Ranges {  namespace Virt {
    */
 
   forceinline bool
-  NaryUnion::RangeUnionOrder::operator()(const Iterator* a, 
+  NaryUnion::RangeUnionOrder::operator()(const Iterator* a,
 					 const Iterator* b) const {
     return a->min() > b->min();
   }

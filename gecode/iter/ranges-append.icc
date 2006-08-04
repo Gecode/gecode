@@ -35,7 +35,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   class Append : public MinMax {
   protected:
     /// First iterator
-    I i; 
+    I i;
     /// Iterator to be appended
     J j;
   public:
@@ -71,9 +71,9 @@ namespace Gecode { namespace Iter { namespace Ranges {
   class NaryAppend  :  public MinMax {
   protected:
     /// The array of iterators to be appended
-    I* r; 
+    I* r;
     /// Number of iterators
-    unsigned int n; 
+    unsigned int n;
     /// Number of current iterator being processed
     unsigned int active;
   public:

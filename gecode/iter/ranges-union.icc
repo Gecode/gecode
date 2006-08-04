@@ -33,7 +33,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   template <class I, class J>
   class Union : public MinMax {
     /// First iterator
-    I i; 
+    I i;
     /// Second iterator
     J j;
   public:

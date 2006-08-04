@@ -25,7 +25,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \brief %Range iterator for array of ranges
    *
    * Allows to iterate the ranges as defined by an array.
-   * The ranges can be iterated several times provided the iterator 
+   * The ranges can be iterated several times provided the iterator
    * is %reset by the reset member function.
    *
    * Requires \code #include "gecode/iter.hh" \endcode
@@ -82,7 +82,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   Array::Array(void) {}
 
   forceinline
-  Array::Array(Range* r0, int n0) 
+  Array::Array(Range* r0, int n0)
     : r(r0), c(0), n(n0) {}
 
   forceinline void

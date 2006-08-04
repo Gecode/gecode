@@ -31,9 +31,9 @@ namespace Gecode { namespace Iter { namespace Ranges {
   class ToValues {
   protected:
     /// Range iterator used
-    I i; 
+    I i;
     /// Current value
-    int cur; 
+    int cur;
     /// End of current range
     int max;
     /// Initialize iterator

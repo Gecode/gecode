@@ -34,7 +34,7 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
     Inter(const Inter&);
   protected:
     /// First iterator
-    Iterator* i; 
+    Iterator* i;
     /// Second iterator
     Iterator* j;
   public:
@@ -79,7 +79,7 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
     NaryInter(const NaryInter&);
   protected:
     /// Array of iterators
-    Iterator** is; 
+    Iterator** is;
     /// Number of iterators
     int n;
   public:

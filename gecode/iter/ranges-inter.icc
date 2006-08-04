@@ -33,7 +33,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   class Inter : public MinMax {
   protected:
     /// First iterator
-    I i; 
+    I i;
     /// Second iterator
     J j;
   public:
@@ -65,7 +65,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   class NaryInter : public MinMax {
   protected:
     /// Array of iterators
-    I* is; 
+    I* is;
     /// Number of iterators
     int n;
   public:

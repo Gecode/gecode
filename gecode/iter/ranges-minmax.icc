@@ -36,7 +36,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   class MinMax {
   protected:
     /// Minimum of current range
-    int mi; 
+    int mi;
     /// Maximum of current range
     int ma;
     /// %Set range such that iteration stops
