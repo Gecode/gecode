@@ -51,25 +51,20 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX>
   forceinline
   LinBoolInt<VX>::LinBoolInt(Space* home, bool share, LinBoolInt<VX>& p)
-    : Propagator(home,share,p), x(home,p.x.size()), n_s(p.n_s), c(p.c) {
-    // All of these views are by definition not yet assigned
-    for (int i=n_s; i--; )
-      x[i].update(home,share,p.x[i]);
-    // Only copy not yet assigned views
-    {
-      int i = n_s; // Range over original p.x[i]
-      int j = n_s; // Range over copy x[j]
-      int n_x = x.size();
-      while (i < n_x) {
-	if (p.x[i].one()) {
-	  c--;
-	} else if (!p.x[i].zero()) {
-	  x[j++].update(home,share,p.x[i]);
-	}
-	i++;
+    : Propagator(home,share,p), n_s(p.n_s) {
+    // Eliminate assigned but not subscribed views in original
+    int n_x = p.x.size();
+    int p_c = p.c;
+    for (int i=n_x; i-- > n_s; )
+      if (p.x[i].one()) {
+	p.x[i]=p.x[--n_x]; p_c--;
+      } else if (p.x[i].zero()) {
+	p.x[i]=p.x[--n_x];
       }
-      x.size(j);
-    }
+    p.c = p_c; c = p_c;
+    p.x.size(n_x);
+    // Now all views in x are not assigned
+    x.update(home,share,p.x);
   }
 
   template <class VX>
