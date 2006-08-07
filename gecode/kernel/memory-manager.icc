@@ -34,11 +34,11 @@ namespace Gecode {
       /**
        * \brief Minimal size of a heap chunk requested from the OS
        */
-      const size_t hcsz_min =  1 * 1024;
+      const size_t hcsz_min =  2 * 1024;
       /**
        * \brief Maximal size of a heap chunk requested from the OS
        *
-       * Maximal is not strictly true, if a contigues memory chunk is
+       * Maximal is not strictly true, if a contiguous memory chunk is
        * requested that exceeds \a hcsz_max, a chunk will be allocated
        * that fits that request.
        */
@@ -49,7 +49,7 @@ namespace Gecode {
        * If a space has requested \a hcsz_inc_ratio chunks of heap memory,
        * the chunk size is doubled.
        */
-      const int hcsz_inc_ratio = 3;
+      const int hcsz_inc_ratio = 8;
       /**
        * \brief Decrement ratio for chunk size
        *
@@ -59,7 +59,7 @@ namespace Gecode {
        * heap chunks of the current chunk size, the current chunk size
        * for the clone is halfed.
        */
-      const int hcsz_dec_ratio = 2;
+      const int hcsz_dec_ratio = 4;
 
       /**
        * \brief Unit size for free lists
@@ -98,7 +98,7 @@ namespace Gecode {
        * the free list is empty and there is also no reusable memory
        * available, allocate \a fl_refill free list elements.
        */
-      const int fl_refill = 16;
+      const int fl_refill = 8;
       /**
        * \brief Memory alignment
        *
