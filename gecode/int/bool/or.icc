@@ -190,6 +190,21 @@ namespace Gecode { namespace Int { namespace Bool {
   NaryOrTrue<View>::NaryOrTrue(Space* home, bool share,
 				   NaryOrTrue<View>& p)
     : BinaryPropagator<View,PC_INT_VAL>(home,share,p) {
+    // Eliminate all zeros and all but one ones in original
+    int n = p.x.size();
+    for (int i=n; i--; )
+      if (p.x[i].zero()) {
+	p.x[i]=p.x[--n];
+      } else if (p.x[i].one()) {
+	// Now eliminate all remaining zeros and ones
+	while (i--)
+	  if (p.x[i].zero() || p.x[i].one())
+	    p.x[i]=p.x[--n];
+	goto done;
+      }
+    done:
+    p.x.size(n);
+    // Now do the actual copying
     x.update(home,share,p.x);
   }
 
@@ -224,25 +239,30 @@ namespace Gecode { namespace Int { namespace Bool {
   forceinline ExecStatus
   NaryOrTrue<View>::resubscribe(Space* home, View& x0, View x1) {
     if (x0.zero()) {
-      for (int i=x.size(); i--; )
+      int n = x.size();
+      for (int i=n; i--; )
 	if (x[i].one()) {
+	  x.size(n);
 	  return ES_SUBSUMED;
 	} else if (x[i].zero()) {
-	  x.move_lst(i);
+	  x[i] = x[--n];
 	} else {
 	  // New unassigned view found
 	  assert(!x[i].zero() && !x[i].one());
 	  // Rewrite if there is just one view left
 	  if (i == 0) {
+	    x.size(0);
 	    GECODE_ES_CHECK((OrTrue<View,View>::post(home,x1,x[0])));
 	    return ES_SUBSUMED;
 	  }
 	  // Move to x0 and subscribe
-	  x0=x[i]; x[i]=x[x.size()-1]; x.size(x.size()-1);
+	  x0=x[i]; x[i]=x[--n]; 
+	  x.size(n);
 	  x0.subscribe(home,this,PC_INT_VAL);
 	  return ES_FIX;
 	}
       // All views have been assigned!
+      x.size(0);
       GECODE_ME_CHECK(x1.t_one(home));
       return ES_SUBSUMED;
     }
