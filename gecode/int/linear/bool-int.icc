@@ -51,8 +51,25 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX>
   forceinline
   LinBoolInt<VX>::LinBoolInt(Space* home, bool share, LinBoolInt<VX>& p)
-    : Propagator(home,share,p), n_s(p.n_s), c(p.c) {
-    x.update(home,share,p.x);
+    : Propagator(home,share,p), x(home,p.x.size()), n_s(p.n_s), c(p.c) {
+    // All of these views are by definition not yet assigned
+    for (int i=n_s; i--; )
+      x[i].update(home,share,p.x[i]);
+    // Only copy not yet assigned views
+    {
+      int i = n_s; // Range over original p.x[i]
+      int j = n_s; // Range over copy x[j]
+      int n_x = x.size();
+      while (i < n_x) {
+	if (p.x[i].one()) {
+	  c--;
+	} else if (!p.x[i].zero()) {
+	  x[j++].update(home,share,p.x[i]);
+	}
+	i++;
+      }
+      x.size(j);
+    }
   }
 
   template <class VX>
@@ -127,12 +144,19 @@ namespace Gecode { namespace Int { namespace Linear {
       } else if (x[i].one()) {
 	x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--;
       }
-    // Eliminate assigned views from unsubscribed views
-    for (int i=n_x; i-- > n_s; )
-      if (x[i].zero()) {
-	x[i] = x[--n_x];
-      } else if (x[i].one()) {
-	x[i] = x[--n_x]; c--;
+    x.size(n_x);
+    if (n_x < c)
+      return ES_FAILED;
+    if (c <= 0)
+      return ES_SUBSUMED;
+    // Find unassigned variables to subscribe to
+    while ((n_s < n_x) && (n_s <= c)) 
+      if (x[n_s].zero()) {
+	x[n_s]=x[--n_x];
+      } else if (x[n_s].one()) {
+	x[n_s]=x[--n_x]; c--;
+      } else {
+	x[n_s++].subscribe(home,this,PC_INT_VAL);;
       }
     x.size(n_x);
     if (n_x < c)
@@ -140,15 +164,16 @@ namespace Gecode { namespace Int { namespace Linear {
     if (c <= 0)
       return ES_SUBSUMED;
     if (c == n_x) {
+      // These are known to be not assigned
+      for (int i=n_s; i--; )
+	x[i].t_one_none(home);
+      // These are not known to be assigned
+      for (int i=n_s+1; i<n_x; i++)
+	x[i].t_one(home);
       // Fix number of subscriptions such that cancelling subscriptions work
       n_s = 0;
-      for (int i=n_x; i--; )
-	x[i].t_one_none(home);
       return ES_SUBSUMED;
     }
-    // Now, there must be new subscriptions from x[n_s] up to x[c]
-    while (n_s < c+1)
-      x[n_s++].subscribe(home,this,PC_INT_VAL);
     return ES_FIX;
   }
 
@@ -219,34 +244,43 @@ namespace Gecode { namespace Int { namespace Linear {
       } else if (x[i].one()) {
 	x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--;
       }
-    // Eliminate assigned views from unsubscribed views
-    for (int i=n_x; i-- > n_s; )
-      if (x[i].zero()) {
-	x[i] = x[--n_x];
-      } else if (x[i].one()) {
-	x[i] = x[--n_x]; c--;
+    x.size(n_x);
+    if ((c < 0) || (c > n_x))
+      return ES_FAILED;
+    // Find unassigned variables to subscribe to
+    while ((n_s < n_x) && ((n_s <= c) || (n_s <= n_x-c))) 
+      if (x[n_s].zero()) {
+	x[n_s]=x[--n_x];
+      } else if (x[n_s].one()) {
+	x[n_s]=x[--n_x]; c--;
+      } else {
+	x[n_s++].subscribe(home,this,PC_INT_VAL);;
       }
     x.size(n_x);
     if ((c < 0) || (c > n_x))
       return ES_FAILED;
     if (c == 0) {
+      // These are known to be not assigned
+      for (int i=n_s; i--; )
+	x[i].t_zero_none(home);
+      // These are not known to be assigned
+      for (int i=n_s+1; i<n_x; i++)
+	x[i].t_zero(home);
       // Fix number of subscriptions such that cancelling subscriptions work
       n_s = 0;
-      for (int i=n_x; i--; )
-	x[i].t_zero_none(home);
       return ES_SUBSUMED;
     }
     if (c == n_x) {
+      // These are known to be not assigned
+      for (int i=n_s; i--; )
+	x[i].t_one_none(home);
+      // These are not known to be assigned
+      for (int i=n_s+1; i<n_x; i++)
+	x[i].t_one(home);
       // Fix number of subscriptions such that cancelling subscriptions work
       n_s = 0;
-      for (int i=n_x; i--; )
-	x[i].t_one_none(home);
       return ES_SUBSUMED;
     }
-    int m = std::max(c,n_x-c)+1;
-    // Now, there must be new subscriptions from x[n_s] up to x[m-1]
-    while (n_s < m)
-      x[n_s++].subscribe(home,this,PC_INT_VAL);
     return ES_FIX;
   }
 
