@@ -1200,8 +1200,10 @@ namespace Gecode {
   Deleter::operator delete(void*, Space*) {}
   forceinline void
   Deleter::operator delete(void*, size_t) {}
+#ifdef __GNUC__
   forceinline
   Deleter::~Deleter(void) {}
+#endif
 
   /*
    * Spaces
