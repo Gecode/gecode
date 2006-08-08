@@ -89,6 +89,8 @@ namespace Gecode { namespace Int { namespace Count {
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
   protected:
+    /// Count how many views are equal now
+    void count(Space* home);
     /// How many views are at least equal
     int atleast(void) const;
     /// How many views are at most equal
@@ -113,6 +115,7 @@ namespace Gecode { namespace Int { namespace Count {
     using Base<VX,VY,VZ,shr>::z;
     using Base<VX,VY,VZ,shr>::c;
     using Base<VX,VY,VZ,shr>::y;
+    using Base<VX,VY,VZ,shr>::count;
     using Base<VX,VY,VZ,shr>::atleast;
     using Base<VX,VY,VZ,shr>::atmost;
 
@@ -145,6 +148,7 @@ namespace Gecode { namespace Int { namespace Count {
     using Base<VX,VY,VZ,shr>::z;
     using Base<VX,VY,VZ,shr>::c;
     using Base<VX,VY,VZ,shr>::y;
+    using Base<VX,VY,VZ,shr>::count;
     using Base<VX,VY,VZ,shr>::atleast;
     using Base<VX,VY,VZ,shr>::atmost;
 
@@ -177,6 +181,7 @@ namespace Gecode { namespace Int { namespace Count {
     using Base<VX,VY,VZ,shr>::z;
     using Base<VX,VY,VZ,shr>::c;
     using Base<VX,VY,VZ,shr>::y;
+    using Base<VX,VY,VZ,shr>::count;
     using Base<VX,VY,VZ,shr>::atleast;
     using Base<VX,VY,VZ,shr>::atmost;
 
@@ -209,6 +214,7 @@ namespace Gecode { namespace Int { namespace Count {
     using Base<VX,VY,VZ,shr>::z;
     using Base<VX,VY,VZ,shr>::c;
     using Base<VX,VY,VZ,shr>::y;
+    using Base<VX,VY,VZ,shr>::count;
     using Base<VX,VY,VZ,shr>::atleast;
     using Base<VX,VY,VZ,shr>::atmost;
 

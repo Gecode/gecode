@@ -63,6 +63,27 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, bool shr>
+  forceinline void
+  Base<VX,VY,VZ,shr>::count(Space* home) {
+    int n = x.size();
+    for (int i=n; i--; )
+      switch (holds(x[i],y)) {
+      case RT_FALSE:
+	x[i].cancel(home,this,PC_INT_DOM); x[i]=x[--n];
+	break;
+      case RT_TRUE:
+	x[i].cancel(home,this,PC_INT_DOM); x[i]=x[--n];
+	c--;
+	break;
+      case RT_MAYBE:
+	break;
+      default: 
+	GECODE_NEVER;
+      }
+    x.size(n);
+  }
+
+  template <class VX, class VY, class VZ, bool shr>
   forceinline int
   Base<VX,VY,VZ,shr>::atleast(void) const {
     return -c;
@@ -123,18 +144,8 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
   Eq<VX,VY,VZ,shr>::propagate(Space* home) {
-    for (int i = x.size(); i--; )
-      switch (holds(x[i],y)) {
-      case RT_FALSE:
-	x.move_lst(i,home,this,PC_INT_DOM);
-	break;
-      case RT_TRUE:
-	x.move_lst(i,home,this,PC_INT_DOM); c--;
-	break;
-      case RT_MAYBE:
-	break;
-      default: GECODE_NEVER;
-      }
+    count(home);
+
     GECODE_ME_CHECK(z.gq(home,atleast()));
     GECODE_ME_CHECK(z.lq(home,atmost()));
 
@@ -158,21 +169,19 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY, class VZ, bool shr>
   forceinline
   Nq<VX,VY,VZ,shr>::Nq(Space* home,
-			       ViewArray<VX>& x, VY y, VZ z, int c)
+		       ViewArray<VX>& x, VY y, VZ z, int c)
     : Base<VX,VY,VZ,shr>(home,x,y,z,c) {}
 
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
-  Nq<VX,VY,VZ,shr>::post(Space* home,
-			     ViewArray<VX>& x, VY y, VZ z, int c) {
+  Nq<VX,VY,VZ,shr>::post(Space* home, ViewArray<VX>& x, VY y, VZ z, int c) {
     (void) new (home) Nq<VX,VY,VZ,shr>(home,x,y,z,c);
     return ES_OK;
   }
 
   template <class VX, class VY, class VZ, bool shr>
   forceinline
-  Nq<VX,VY,VZ,shr>::Nq(Space* home, bool share,
-			       Nq<VX,VY,VZ,shr>& p)
+  Nq<VX,VY,VZ,shr>::Nq(Space* home, bool share, Nq<VX,VY,VZ,shr>& p)
     : Base<VX,VY,VZ,shr>(home,share,p) {}
 
   template <class VX, class VY, class VZ, bool shr>
@@ -184,16 +193,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
   Nq<VX,VY,VZ,shr>::propagate(Space* home) {
-    for (int i = x.size(); i--; )
-      switch (holds(x[i],y)) {
-      case RT_FALSE:
-	x.move_lst(i,home,this,PC_INT_DOM); break;
-      case RT_TRUE:
-	x.move_lst(i,home,this,PC_INT_DOM); c--; break;
-      case RT_MAYBE:
-	break;
-      default: GECODE_NEVER;
-      }
+    count(home);
     if (atleast() == atmost()) {
       GECODE_ME_CHECK(z.nq(home,atleast()));
       return ES_SUBSUMED;
@@ -244,17 +244,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
   Lq<VX,VY,VZ,shr>::propagate(Space* home) {
-    for (int i = x.size(); i--; )
-      switch (holds(x[i],y)) {
-      case RT_FALSE:
-	x.move_lst(i,home,this,PC_INT_DOM); break;
-      case RT_TRUE:
-	x.move_lst(i,home,this,PC_INT_DOM); c--;
-	break;
-      case RT_MAYBE:
-	break;
-      default: GECODE_NEVER;
-      }
+    count(home);
     GECODE_ME_CHECK(z.gq(home,atleast()));
     if (z.max() == atleast())
       return post_false(home,x,y);
@@ -302,18 +292,8 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY, class VZ, bool shr>
   ExecStatus
   Gq<VX,VY,VZ,shr>::propagate(Space* home) {
-    for (int i = x.size(); i--; )
-      switch (holds(x[i],y)) {
-      case RT_FALSE:
-	x.move_lst(i,home,this,PC_INT_DOM);
-	break;
-      case RT_TRUE:
-	x.move_lst(i,home,this,PC_INT_DOM); c--;
-	break;
-      case RT_MAYBE:
-	break;
-      default: GECODE_NEVER;
-      }
+    count(home);
+
     GECODE_ME_CHECK(z.lq(home,atmost()));
 
     if (z.min() == atmost())
