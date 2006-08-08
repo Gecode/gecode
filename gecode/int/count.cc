@@ -37,17 +37,17 @@ namespace Gecode {
     int c = 0;
     switch (r) {
     case IRT_EQ:
-      GECODE_INT_CREATE(ConstIntView,ConstIntView,Count::Eq); break;
+      GECODE_INT_CREATE(ConstIntView,ConstIntView,Count::EqView); break;
     case IRT_NQ:
-      GECODE_INT_CREATE(ConstIntView,ConstIntView,Count::Nq); break;
+      GECODE_INT_CREATE(ConstIntView,ConstIntView,Count::NqView); break;
     case IRT_LE:
       c = -1; // Fall through
     case IRT_LQ:
-      GECODE_INT_CREATE(ConstIntView,ConstIntView,Count::Lq); break;
+      GECODE_INT_CREATE(ConstIntView,ConstIntView,Count::LqView); break;
     case IRT_GR:
       c = 1; // Fall through
     case IRT_GQ:
-      GECODE_INT_CREATE(ConstIntView,ConstIntView,Count::Gq); break;
+      GECODE_INT_CREATE(ConstIntView,ConstIntView,Count::GqView); break;
     default:
       throw UnknownRelation("Int::count");
     }
@@ -63,17 +63,17 @@ namespace Gecode {
     int c = 0;
     switch (r) {
     case IRT_EQ:
-      GECODE_INT_CREATE(ConstIntView,IntView,Count::Eq); break;
+      GECODE_INT_CREATE(ConstIntView,IntView,Count::EqView); break;
     case IRT_NQ:
-      GECODE_INT_CREATE(ConstIntView,IntView,Count::Nq); break;
+      GECODE_INT_CREATE(ConstIntView,IntView,Count::NqView); break;
     case IRT_LE:
       c = -1; // Fall through
     case IRT_LQ:
-      GECODE_INT_CREATE(ConstIntView,IntView,Count::Lq); break;
+      GECODE_INT_CREATE(ConstIntView,IntView,Count::LqView); break;
     case IRT_GR:
       c = 1; // Fall through
     case IRT_GQ:
-      GECODE_INT_CREATE(ConstIntView,IntView,Count::Gq); break;
+      GECODE_INT_CREATE(ConstIntView,IntView,Count::GqView); break;
     default:
       throw UnknownRelation("Int::count");
     }
@@ -89,17 +89,17 @@ namespace Gecode {
     int c = 0;
     switch (r) {
     case IRT_EQ:
-      GECODE_INT_CREATE(IntView,ConstIntView,Count::Eq); break;
+      GECODE_INT_CREATE(IntView,ConstIntView,Count::EqView); break;
     case IRT_NQ:
-      GECODE_INT_CREATE(IntView,ConstIntView,Count::Nq); break;
+      GECODE_INT_CREATE(IntView,ConstIntView,Count::NqView); break;
     case IRT_LE:
       c = -1; // Fall through
     case IRT_LQ:
-      GECODE_INT_CREATE(IntView,ConstIntView,Count::Lq); break;
+      GECODE_INT_CREATE(IntView,ConstIntView,Count::LqView); break;
     case IRT_GR:
       c = 1; // Fall through
     case IRT_GQ:
-      GECODE_INT_CREATE(IntView,ConstIntView,Count::Gq); break;
+      GECODE_INT_CREATE(IntView,ConstIntView,Count::GqView); break;
     default:
       throw UnknownRelation("Int::count");
     }
@@ -114,17 +114,17 @@ namespace Gecode {
     int c = 0;
     switch (r) {
     case IRT_EQ:
-      GECODE_INT_CREATE(IntView,IntView,Count::Eq); break;
+      GECODE_INT_CREATE(IntView,IntView,Count::EqView); break;
     case IRT_NQ:
-      GECODE_INT_CREATE(IntView,IntView,Count::Nq); break;
+      GECODE_INT_CREATE(IntView,IntView,Count::NqView); break;
     case IRT_LE:
       c = -1; // Fall through
     case IRT_LQ:
-      GECODE_INT_CREATE(IntView,IntView,Count::Lq); break;
+      GECODE_INT_CREATE(IntView,IntView,Count::LqView); break;
     case IRT_GR:
       c = 1; // Fall through
     case IRT_GQ:
-      GECODE_INT_CREATE(IntView,IntView,Count::Gq); break;
+      GECODE_INT_CREATE(IntView,IntView,Count::GqView); break;
     default:
       throw UnknownRelation("Int::count");
     }

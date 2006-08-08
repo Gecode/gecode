@@ -69,7 +69,7 @@ namespace Gecode { namespace Int { namespace Count {
    *
    */
   template <class VX, class VY, class VZ, bool shr>
-  class Base : public Propagator {
+  class BaseView : public Propagator {
   protected:
     /// Views still to count
     ViewArray<VX> x;
@@ -80,9 +80,9 @@ namespace Gecode { namespace Int { namespace Count {
     /// Number of views which are equal and have been eliminated
     int   c;
     /// Constructor for cloning \a p
-    Base(Space* home, bool shr, Base& p);
+    BaseView(Space* home, bool shr, BaseView& p);
     /// Constructor for creation
-    Base(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
+    BaseView(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
   public:
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
@@ -109,21 +109,21 @@ namespace Gecode { namespace Int { namespace Count {
    * \ingroup FuncIntProp
    */
   template <class VX, class VY, class VZ, bool shr>
-  class Eq : public Base<VX,VY,VZ,shr> {
+  class EqView : public BaseView<VX,VY,VZ,shr> {
   protected:
-    using Base<VX,VY,VZ,shr>::x;
-    using Base<VX,VY,VZ,shr>::z;
-    using Base<VX,VY,VZ,shr>::c;
-    using Base<VX,VY,VZ,shr>::y;
-    using Base<VX,VY,VZ,shr>::count;
-    using Base<VX,VY,VZ,shr>::atleast;
-    using Base<VX,VY,VZ,shr>::atmost;
+    using BaseView<VX,VY,VZ,shr>::x;
+    using BaseView<VX,VY,VZ,shr>::z;
+    using BaseView<VX,VY,VZ,shr>::c;
+    using BaseView<VX,VY,VZ,shr>::y;
+    using BaseView<VX,VY,VZ,shr>::count;
+    using BaseView<VX,VY,VZ,shr>::atleast;
+    using BaseView<VX,VY,VZ,shr>::atmost;
 
     /// Constructor for cloning \a p
-    Eq(Space* home, bool shr, Eq& p);
+    EqView(Space* home, bool shr, EqView& p);
   public:
     /// Constructor for creation
-    Eq(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
+    EqView(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool shr);
     /// Perform propagation
@@ -142,21 +142,21 @@ namespace Gecode { namespace Int { namespace Count {
    * \ingroup FuncIntProp
    */
   template <class VX, class VY, class VZ, bool shr>
-  class Nq : public Base<VX,VY,VZ,shr> {
+  class NqView : public BaseView<VX,VY,VZ,shr> {
   protected:
-    using Base<VX,VY,VZ,shr>::x;
-    using Base<VX,VY,VZ,shr>::z;
-    using Base<VX,VY,VZ,shr>::c;
-    using Base<VX,VY,VZ,shr>::y;
-    using Base<VX,VY,VZ,shr>::count;
-    using Base<VX,VY,VZ,shr>::atleast;
-    using Base<VX,VY,VZ,shr>::atmost;
+    using BaseView<VX,VY,VZ,shr>::x;
+    using BaseView<VX,VY,VZ,shr>::z;
+    using BaseView<VX,VY,VZ,shr>::c;
+    using BaseView<VX,VY,VZ,shr>::y;
+    using BaseView<VX,VY,VZ,shr>::count;
+    using BaseView<VX,VY,VZ,shr>::atleast;
+    using BaseView<VX,VY,VZ,shr>::atmost;
 
     /// Constructor for cloning \a p
-    Nq(Space* home, bool shr, Nq& p);
+    NqView(Space* home, bool shr, NqView& p);
   public:
     /// Constructor for creation
-    Nq(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
+    NqView(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool shr);
     /// Perform propagation
@@ -175,21 +175,21 @@ namespace Gecode { namespace Int { namespace Count {
    * \ingroup FuncIntProp
    */
   template <class VX, class VY, class VZ, bool shr>
-  class Lq : public Base<VX,VY,VZ,shr> {
+  class LqView : public BaseView<VX,VY,VZ,shr> {
   protected:
-    using Base<VX,VY,VZ,shr>::x;
-    using Base<VX,VY,VZ,shr>::z;
-    using Base<VX,VY,VZ,shr>::c;
-    using Base<VX,VY,VZ,shr>::y;
-    using Base<VX,VY,VZ,shr>::count;
-    using Base<VX,VY,VZ,shr>::atleast;
-    using Base<VX,VY,VZ,shr>::atmost;
+    using BaseView<VX,VY,VZ,shr>::x;
+    using BaseView<VX,VY,VZ,shr>::z;
+    using BaseView<VX,VY,VZ,shr>::c;
+    using BaseView<VX,VY,VZ,shr>::y;
+    using BaseView<VX,VY,VZ,shr>::count;
+    using BaseView<VX,VY,VZ,shr>::atleast;
+    using BaseView<VX,VY,VZ,shr>::atmost;
 
     /// Constructor for cloning \a p
-    Lq(Space* home, bool shr, Lq& p);
+    LqView(Space* home, bool shr, LqView& p);
   public:
     /// Constructor for creation
-    Lq(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
+    LqView(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool shr);
     /// Perform propagation
@@ -208,21 +208,21 @@ namespace Gecode { namespace Int { namespace Count {
    * \ingroup FuncIntProp
    */
   template <class VX, class VY, class VZ, bool shr>
-  class Gq : public Base<VX,VY,VZ,shr> {
+  class GqView : public BaseView<VX,VY,VZ,shr> {
   protected:
-    using Base<VX,VY,VZ,shr>::x;
-    using Base<VX,VY,VZ,shr>::z;
-    using Base<VX,VY,VZ,shr>::c;
-    using Base<VX,VY,VZ,shr>::y;
-    using Base<VX,VY,VZ,shr>::count;
-    using Base<VX,VY,VZ,shr>::atleast;
-    using Base<VX,VY,VZ,shr>::atmost;
+    using BaseView<VX,VY,VZ,shr>::x;
+    using BaseView<VX,VY,VZ,shr>::z;
+    using BaseView<VX,VY,VZ,shr>::c;
+    using BaseView<VX,VY,VZ,shr>::y;
+    using BaseView<VX,VY,VZ,shr>::count;
+    using BaseView<VX,VY,VZ,shr>::atleast;
+    using BaseView<VX,VY,VZ,shr>::atmost;
 
     /// Constructor for cloning \a p
-    Gq(Space* home, bool shr, Gq& p);
+    GqView(Space* home, bool shr, GqView& p);
   public:
     /// Constructor for creation
-    Gq(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
+    GqView(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
