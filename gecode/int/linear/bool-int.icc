@@ -398,7 +398,7 @@ namespace Gecode { namespace Int { namespace Linear {
 	else
 	  x0.t_one_none(home);
       } else {
-	assert(s2);
+	assert(s1);
 	if (c == 1)
 	  x1.t_zero_none(home);
 	else
