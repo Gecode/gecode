@@ -187,25 +187,28 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class View>
   forceinline
-  NaryOrTrue<View>::NaryOrTrue(Space* home, bool share,
-				   NaryOrTrue<View>& p)
-    : BinaryPropagator<View,PC_INT_VAL>(home,share,p) {
-    // Eliminate all zeros and all but one ones in original
+  NaryOrTrue<View>::NaryOrTrue(Space* home, bool share, NaryOrTrue<View>& p)
+    : BinaryPropagator<View,PC_INT_VAL>(home,share,p), x(home,p.x.size()) {
+    // Eliminate all zeros and all but one ones in original and update
     int n = p.x.size();
     for (int i=n; i--; )
       if (p.x[i].zero()) {
-	p.x[i]=p.x[--n];
+	n--; p.x[i]=p.x[n]; x[i]=x[n];
       } else if (p.x[i].one()) {
+	x[i].update(home,share,p.x[i]);
 	// Now eliminate all remaining zeros and ones
 	while (i--)
-	  if (p.x[i].zero() || p.x[i].one())
-	    p.x[i]=p.x[--n];
+	  if (p.x[i].zero() || p.x[i].one()) {
+	    n--; p.x[i]=p.x[n]; x[i]=x[n];
+	  } else {
+	    x[i].update(home,share,p.x[i]);
+	  }
 	goto done;
+      } else {
+	x[i].update(home,share,p.x[i]);
       }
     done:
-    p.x.size(n);
-    // Now do the actual copying
-    x.update(home,share,p.x);
+    x.size(n); p.x.size(n);
   }
 
   template<class View>
