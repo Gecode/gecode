@@ -822,6 +822,35 @@ namespace Gecode { namespace Int { namespace Linear {
     static ExecStatus post(Space* home, ViewArray<VX>& x, int c);
   };
 
+  /**
+   * \brief %Propagator for integer disequal to Boolean sum (cardinality)
+   *
+   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class VX>
+  class NqBoolInt : public BinaryPropagator<VX,PC_INT_VAL> {
+  protected:
+    using BinaryPropagator<VX,PC_INT_VAL>::x0;
+    using BinaryPropagator<VX,PC_INT_VAL>::x1;
+    /// Views not yet subscribed to
+    ViewArray<VX> x;
+    /// Righthandside
+    int c;
+    /// Update subscription
+    bool resubscribe(Space* home, VX& y);
+    /// Constructor for posting
+    NqBoolInt(Space* home,  ViewArray<VX>& b, int c);
+    /// Constructor for cloning \a p
+    NqBoolInt(Space* home, bool share, NqBoolInt<VX>& p);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \neq c\f$
+    static  ExecStatus post(Space* home, ViewArray<VX>& b, int c);
+  };
 
 }}}
 

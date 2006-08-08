@@ -285,6 +285,131 @@ namespace Gecode { namespace Int { namespace Linear {
     return ES_FIX;
   }
 
+
+  /*
+   * Integer disequal to Boolean sum
+   *
+   */
+
+  template<class VX>
+  forceinline
+  NqBoolInt<VX>::NqBoolInt(Space* home, ViewArray<VX>& b, int c0)
+    : BinaryPropagator<VX,PC_INT_VAL>(home,
+				      b[b.size()-2],
+				      b[b.size()-1]), x(b), c(c0) {
+    assert(x.size() >= 2);
+    x.size(x.size()-2);
+  }
+
+  template<class VX>
+  forceinline
+  NqBoolInt<VX>::NqBoolInt(Space* home, bool share, NqBoolInt<VX>& p)
+    : BinaryPropagator<VX,PC_INT_VAL>(home,share,p), x(home,p.x.size()) {
+    // Eliminate all zeros and ones in original and update
+    int n = p.x.size();
+    int p_c = p.c;
+    for (int i=n; i--; )
+      if (p.x[i].zero()) {
+	n--; p.x[i]=p.x[n]; x[i]=x[n];
+      } else if (p.x[i].one()) {
+	n--; p_c--; p.x[i]=p.x[n]; x[i]=x[n];
+      } else {
+	x[i].update(home,share,p.x[i]);
+      }
+    c = p_c; p.c = p_c;
+    x.size(n); p.x.size(n);
+  }
+
+  template<class VX>
+  forceinline ExecStatus
+  NqBoolInt<VX>::post(Space* home, ViewArray<VX>& x, int c) {
+    int n = x.size();
+    for (int i=n; i--; )
+      if (x[i].one()) {
+	x[i]=x[--n]; c--;
+      } else if (x[i].zero()) {
+	x[i]=x[--n];
+      }
+    x.size(n);
+    if ((n < c) || (c < 0))
+      return ES_OK;
+    if (n == 0)
+      return (c == 0) ? ES_FAILED : ES_OK;
+    if (n == 1) {
+      if (c == 1)
+	x[0].t_zero_none(home);
+      else
+	x[0].t_one_none(home);
+      return ES_OK;
+    }
+    (void) new (home) NqBoolInt(home,x,c);
+    return ES_OK;
+  }
+
+  template<class VX>
+  Actor*
+  NqBoolInt<VX>::copy(Space* home, bool share) {
+    return new (home) NqBoolInt<VX>(home,share,*this);
+  }
+
+  template<class VX>
+  forceinline bool
+  NqBoolInt<VX>::resubscribe(Space* home, VX& y) {
+    if (y.one())
+      c--;
+    int n = x.size();
+    for (int i=n; i--; )
+      if (x[i].one()) {
+	c--; x[i]=x[--n];
+      } else if (x[i].zero()) {
+	x[i] = x[--n];
+      } else {
+	// New unassigned view found
+	assert(!x[i].zero() && !x[i].one());
+	// Move to y and subscribe
+	y=x[i]; x[i]=x[--n]; 
+	x.size(n);
+	y.subscribe(home,this,PC_INT_VAL);
+	return true;
+      }
+    // All views have been assigned!
+    x.size(0);
+    return false;
+  }
+
+  template<class VX>
+  ExecStatus
+  NqBoolInt<VX>::propagate(Space* home) {
+    bool s0 = true; 
+    if (x0.zero() || x0.one())
+      s0 = resubscribe(home,x0);
+    bool s1 = true;
+    if (x1.zero() || x1.one())
+      s1 = resubscribe(home,x1);
+    int n = x.size() + s0 + s1;
+    if ((n < c) || (c < 0))
+      return ES_SUBSUMED;
+    if (n == 0)
+      return (c == 0) ? ES_FAILED : ES_SUBSUMED;
+    if (n == 1) {
+      if (s0) {
+	if (c == 1)
+	  x0.t_zero_none(home);
+	else
+	  x0.t_one_none(home);
+      } else {
+	assert(s2);
+	if (c == 1)
+	  x1.t_zero_none(home);
+	else
+	  x1.t_one_none(home);
+      }
+      return ES_SUBSUMED;
+    }
+    return ES_FIX;
+  }
+
+
 }}}
 
 // STATISTICS: int-prop

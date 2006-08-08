@@ -149,10 +149,8 @@ namespace Gecode {
       }
     case IRT_NQ:
       {
-	ConstIntView cv(c);
 	ViewArray<BoolView> xv(home,x);
-	GECODE_ES_FAIL(home,(Linear::NqBoolView<BoolView,ConstIntView>
-			     ::post(home,xv,cv,0)));
+	GECODE_ES_FAIL(home,Linear::NqBoolInt<BoolView>::post(home,xv,c));
 	break;
       }
     case IRT_GQ:
