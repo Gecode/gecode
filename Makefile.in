@@ -177,7 +177,7 @@ INTHDR0 = \
 	arithmetic/abs.icc arithmetic/max.icc arithmetic/mult.icc \
 	bool/or.icc bool/eq.icc bool/eqv.icc bool/base.icc \
 	branch/assign.icc branch/select-val.icc branch/select-view.icc \
-	count/view.icc count/rel.icc \
+	count/view.icc count/int.icc count/rel.icc \
 	cumulatives/val.icc \
 	distinct/bilink.icc distinct/bnd.icc distinct/combptr.icc \
 	distinct/dom.icc distinct/edge.icc distinct/node.icc \

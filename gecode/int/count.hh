@@ -62,10 +62,73 @@ namespace Gecode { namespace Int { namespace Count {
 
 #include "gecode/int/count/rel.icc"
 
+
 namespace Gecode { namespace Int { namespace Count {
 
   /**
-   * \brief Base-class for count propagators
+   * \brief Baseclass for count propagators (integer)
+   *
+   */
+  template <class VX, class VY>
+  class BaseInt : public Propagator {
+  protected:
+    /// Views still to count
+    ViewArray<VX> x;
+    /// Views from x[0] ... x[n_s-1] have subscriptions
+    int n_s;
+    /// View to compare to
+    VY y;
+    /// Number of views which are equal and have been eliminated
+    int c;
+    /// Constructor for cloning \a p
+    BaseInt(Space* home, bool share, BaseInt& p);
+    /// Constructor for creation
+    BaseInt(Space* home, ViewArray<VX>& x, int n_s, VY y, int c);
+  public:
+    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    virtual PropCost cost(void) const;
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
+  };
+
+  /**
+   * \brief %Propagator for counting views (equal integer to number of equal views)
+   *
+   * Not all combinations of views are possible. The types \a VX
+   * and \a VY must be either equal, or \a VY must be ConstIntView.
+   *
+   * Requires \code #include "gecode/int/count.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class VX, class VY>
+  class EqInt : public BaseInt<VX,VY> {
+  protected:
+    using BaseInt<VX,VY>::x;
+    using BaseInt<VX,VY>::n_s;
+    using BaseInt<VX,VY>::y;
+    using BaseInt<VX,VY>::c;
+    /// Constructor for cloning \a p
+    EqInt(Space* home, bool share, EqInt& p);
+    /// Constructor for creation
+    EqInt(Space* home, ViewArray<VX>& x, int n_s, VY y, int c);
+  public:
+    /// Create copy during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=c\f$
+    static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
+  };
+
+}}}
+
+#include "gecode/int/count/int.icc"
+
+
+namespace Gecode { namespace Int { namespace Count {
+
+  /**
+   * \brief Base-class for count propagators (view)
    *
    */
   template <class VX, class VY, class VZ, bool shr>
@@ -128,7 +191,7 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Actor* copy(Space* home, bool shr);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}+c=z\f$
+    /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=z+c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
 
@@ -161,7 +224,7 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Actor* copy(Space* home, bool shr);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}+c\neq z\f$
+    /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\neq z+c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
 
@@ -194,7 +257,7 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Actor* copy(Space* home, bool shr);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}+c\leq z\f$
+    /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq z+c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
 
@@ -227,7 +290,7 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}+c\geq z\f$
+    /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq z+c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
 

@@ -1,0 +1,211 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-08-08 20:36:53 +0200 (Tue, 08 Aug 2006) $ by $Author: schulte $
+ *     $Revision: 3538 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Count {
+
+  /*
+   * General baseclass
+   *
+   */
+
+  template <class VX, class VY>
+  forceinline
+  BaseInt<VX,VY>::BaseInt(Space* home, 
+			  ViewArray<VX>& x0, int n_s0, VY y0, int c0)
+    : Propagator(home), x(x0), n_s(n_s0), y(y0), c(c0) {
+    for (int i=n_s; i--; )
+      x[i].subscribe(home,this,PC_INT_DOM);
+    y.subscribe(home,this,PC_INT_DOM);
+  }
+
+  template <class VX, class VY>
+  size_t
+  BaseInt<VX,VY>::dispose(Space* home) {
+    assert(!home->failed());
+    for (int i=n_s; i--; )
+      x[i].cancel(home,this,PC_INT_DOM);
+    y.cancel(home,this,PC_INT_DOM);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class VX, class VY>
+  forceinline
+  BaseInt<VX,VY>::BaseInt(Space* home, bool share, BaseInt<VX,VY>& p)
+    : Propagator(home,share,p), n_s(p.n_s), c(p.c) {
+    x.update(home,share,p.x);
+    y.update(home,share,p.y);
+  }
+
+  template <class VX, class VY>
+  PropCost
+  BaseInt<VX,VY>::cost(void) const {
+    return cost_lo(x.size(),PC_LINEAR_LO);
+  }
+
+  /*
+   * Equal propagator (integer rhs)
+   *
+   */
+  template <class VX, class VY>
+  forceinline
+  EqInt<VX,VY>::EqInt(Space* home, ViewArray<VX>& x, int n_s, VY y, int c)
+    : BaseInt<VX,VY>(home,x,n_s,y,c) {}
+
+  template <class VX, class VY>
+  ExecStatus
+  EqInt<VX,VY>::post(Space* home, ViewArray<VX>& x, VY y, int c) {
+    // Eliminate decided views
+    /*
+    std::cout << "Before post-eliminate" << std::endl;
+    std::cout << "count({";
+    for (int i=0; i<x.size(); i++)
+      std::cout << x[i] << ",";
+    std::cout << "}," << y << "," << c << ");" << std::endl;
+    */
+    int n_x = x.size();
+    for (int i=n_x; i--; )
+      switch (holds(x[i],y)) {
+      case RT_FALSE:
+	x[i] = x[--n_x]; break;
+      case RT_TRUE:
+	x[i] = x[--n_x]; c--; break;
+      case RT_MAYBE:
+	break;
+      default: 
+	GECODE_NEVER;
+      }
+    x.size(n_x);
+    /*
+    std::cout << "After post-eliminate" << std::endl;
+    std::cout << "count({";
+    for (int i=0; i<x.size(); i++)
+      std::cout << x[i] << ",";
+    std::cout << "}," << y << "," << c << ");" << std::endl;
+    */
+    // RHS too small or too large
+    if ((c < 0) || (c > n_x))
+      return ES_FAILED;
+    // All views must be different
+    if (c == 0) {
+      ExecStatus es = post_false(home,x,y);
+      return (es == ES_SUBSUMED) ? ES_OK : es;
+    }
+    // All views must be equal
+    if (c == n_x) {
+      ExecStatus es = post_true(home,x,y);
+      return (es == ES_SUBSUMED) ? ES_OK : es;
+    }
+    // Compute how many subscriptions must be created
+    int n_s = std::max(c,n_x-c)+1;
+    assert(n_s <= n_x);
+    (void) new (home) EqInt<VX,VY>(home,x,n_s,y,c);
+    return ES_OK;
+  }
+
+  template <class VX, class VY>
+  forceinline
+  EqInt<VX,VY>::EqInt(Space* home, bool share, EqInt<VX,VY>& p)
+    : BaseInt<VX,VY>(home,share,p) {}
+
+  template <class VX, class VY>
+  Actor*
+  EqInt<VX,VY>::copy(Space* home, bool share) {
+    return new (home) EqInt<VX,VY>(home,share,*this);
+  }
+
+  template <class VX, class VY>
+  ExecStatus
+  EqInt<VX,VY>::propagate(Space* home) {
+    std::cout << "Before" << std::endl;
+    std::cout << "count({";
+    for (int i=0; i<x.size(); i++)
+      std::cout << x[i] << ",";
+    std::cout << "}," << y << "," << c << "); n_s = " << n_s << std::endl;
+    // Eliminate decided views from subscribed views
+    int n_x = x.size();
+    assert(n_s <= n_x);
+    for (int i=n_s; i--; )
+      switch (holds(x[i],y)) {
+      case RT_FALSE:
+	std::cout << "Cancel x[" << i << "] = " << x[i] << std::endl;
+	x[i].cancel(home,this,PC_INT_DOM);
+	x[i]=x[--n_s]; x[n_s]=x[--n_x]; 
+	break;
+      case RT_TRUE:
+	std::cout << "Cancel x[" << i << "] = " << x[i] << std::endl;
+	x[i].cancel(home,this,PC_INT_DOM);
+	x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--; 
+	break;
+      case RT_MAYBE:
+	break;
+      default: 
+	GECODE_NEVER;
+      }
+    x.size(n_x);
+    std::cout << "After subscribed" << std::endl;
+    std::cout << "count({";
+    for (int i=0; i<x.size(); i++)
+      std::cout << x[i] << ",";
+    std::cout << "}," << y << "," << c << "); n_s = " << n_s << std::endl;
+    //    if ((c < 0) || (c > n_x))
+    //      return ES_FAILED;
+    // Eliminate decide views from unsubscribed views
+    for (int i=n_x; i-- > n_s; )
+      switch (holds(x[i],y)) {
+      case RT_FALSE: x[i]=x[--n_x]; break;
+      case RT_TRUE:  x[i]=x[--n_x]; c--; break;
+      case RT_MAYBE: break;
+      default:       GECODE_NEVER;
+      }
+    x.size(n_x);
+    std::cout << "After both" << std::endl;
+    std::cout << "count({";
+    for (int i=0; i<x.size(); i++)
+      std::cout << x[i] << ",";
+    std::cout << "}," << y << "," << c << "); n_s = " << n_s << std::endl;
+    if ((c < 0) || (c > n_x))
+      return ES_FAILED;
+    if (c == 0)
+      // All views must be different
+      return post_false(home,x,y);
+    if (c == n_x)
+      // All views must be equal
+      return post_true(home,x,y);
+    int m = std::max(c,n_x-c)+1;
+    assert(m <= n_x);
+    // Now, there must be new subscriptions from x[n_s] up to x[m-1]
+    while (n_s < m) {
+      std::cout << "Subscribe x[" << n_s << "] = " << x[n_s] << std::endl;
+      x[n_s++].subscribe(home,this,PC_INT_DOM);
+    }
+    std::cout << "Aftre subscribe" << std::endl;
+    std::cout << "count({";
+    for (int i=0; i<x.size(); i++)
+      std::cout << x[i] << ",";
+    std::cout << "}," << y << "," << c << "); n_s = " << n_s << std::endl;
+    return ES_FIX;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

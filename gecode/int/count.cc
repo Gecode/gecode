@@ -38,6 +38,9 @@ namespace Gecode {
     switch (r) {
     case IRT_EQ:
       GECODE_INT_CREATE(ConstIntView,ConstIntView,Count::EqView); break;
+      //      GECODE_ES_FAIL(home,(Count::EqInt<IntView,ConstIntView>
+      //			   ::post(home,x,y,zn)));
+      break;
     case IRT_NQ:
       GECODE_INT_CREATE(ConstIntView,ConstIntView,Count::NqView); break;
     case IRT_LE:
