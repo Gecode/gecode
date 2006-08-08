@@ -147,8 +147,8 @@ namespace Gecode { namespace Int {
     unsigned int holes;
 
   protected:
-    /// Constructor for cloning \a x
-    IntVarImp(Space* home, bool share, IntVarImp& x);
+    /// Constructor for cloning \a x (\a is_bool whether this is a Boolean variable)
+    IntVarImp(Space* home, bool share, IntVarImp& x, bool is_bool);
   public:
     /// Initialize with range domain
     IntVarImp(Space* home, int min, int max);
@@ -269,11 +269,15 @@ namespace Gecode { namespace Int {
   private:
     /// Return copy of not-yet copied variable
     GECODE_INT_EXPORT IntVarImp* perform_copy(Space* home, bool share);
+    /// Return copy of not-yet copied variable (Boolean)
+    GECODE_INT_EXPORT IntVarImp* perform_copy_bool(Space* home, bool share);
   public:
     /// \name Cloning
     //@{
     /// Return copy of this variable
     IntVarImp* copy(Space* home, bool share);
+    /// Return copy of this variable (Boolean)
+    IntVarImp* copy_bool(Space* home, bool share);
     //@}
   };
 

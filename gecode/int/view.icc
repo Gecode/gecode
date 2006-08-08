@@ -903,6 +903,11 @@ namespace Gecode {
       void t_zero_none(Space* home);
       //@}
 
+      /// \name Cloning
+      //@{
+      /// Update this view to be a clone of view \a x
+      void update(Space* home, bool share, BoolView& x);
+      //@}
     };
 
   }

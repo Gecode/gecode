@@ -88,6 +88,14 @@ namespace Gecode {
     }
 
 
+    /*
+     * Cloning
+     *
+     */
+    forceinline void
+    BoolView::update(Space* home, bool share, BoolView& x) {
+      var = x.var->copy(home,share);
+    }
 
     /*
      * Negated Boolean views

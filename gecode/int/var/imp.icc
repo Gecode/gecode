@@ -440,6 +440,11 @@ namespace Gecode { namespace Int {
     return copied() ? static_cast<IntVarImp*>(forward())
       : perform_copy(home,share);
   }
+  forceinline IntVarImp*
+  IntVarImp::copy_bool(Space* home, bool share) {
+    return copied() ? static_cast<IntVarImp*>(forward())
+      : perform_copy_bool(home,share);
+  }
 
 
 
