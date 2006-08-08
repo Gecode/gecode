@@ -127,17 +127,14 @@ namespace Gecode { namespace Int { namespace Count {
       switch (holds(x[i],y)) {
       case RT_FALSE:
 	x.move_lst(i,home,this,PC_INT_DOM);
-	if (z.min() == atmost()) goto decided;
 	break;
       case RT_TRUE:
 	x.move_lst(i,home,this,PC_INT_DOM); c--;
-	if (z.max() == atleast()) goto decided;
 	break;
       case RT_MAYBE:
 	break;
       default: GECODE_NEVER;
       }
-  decided:
     GECODE_ME_CHECK(z.gq(home,atleast()));
     GECODE_ME_CHECK(z.lq(home,atmost()));
 
@@ -253,13 +250,11 @@ namespace Gecode { namespace Int { namespace Count {
 	x.move_lst(i,home,this,PC_INT_DOM); break;
       case RT_TRUE:
 	x.move_lst(i,home,this,PC_INT_DOM); c--;
-	if (z.max() == atleast()) goto decided;
 	break;
       case RT_MAYBE:
 	break;
       default: GECODE_NEVER;
       }
-  decided:
     GECODE_ME_CHECK(z.gq(home,atleast()));
     if (z.max() == atleast())
       return post_false(home,x,y);
@@ -311,7 +306,6 @@ namespace Gecode { namespace Int { namespace Count {
       switch (holds(x[i],y)) {
       case RT_FALSE:
 	x.move_lst(i,home,this,PC_INT_DOM);
-	if (z.min() == atmost()) goto decided;
 	break;
       case RT_TRUE:
 	x.move_lst(i,home,this,PC_INT_DOM); c--;
@@ -320,7 +314,6 @@ namespace Gecode { namespace Int { namespace Count {
 	break;
       default: GECODE_NEVER;
       }
-  decided:
     GECODE_ME_CHECK(z.lq(home,atmost()));
 
     if (z.min() == atmost())
