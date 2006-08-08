@@ -233,7 +233,7 @@ namespace Gecode { namespace Int { namespace Count {
 
 }}}
 
-#include "gecode/int/count/count.icc"
+#include "gecode/int/count/view.icc"
 
 #endif
 
