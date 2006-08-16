@@ -20,6 +20,7 @@
  */
 
 #include "gecode/set/projectors.hh"
+#include <stack>
 
 using namespace Gecode::Set;
 
@@ -50,7 +51,6 @@ namespace Gecode {
    * \brief Nodes used to construct set expressions
    */
   class SetExpr::Node {
-    friend class SetExpr::NodeIter;
   private:
     /// Nodes are reference counted
     unsigned int use;
@@ -73,6 +73,8 @@ namespace Gecode {
     /// Decrement reference count and possibly free memory
     GECODE_SET_EXPORT bool decrement(void);
     
+    /// Returns code representation of the node
+    SetExprCode::code encode(bool monotone) const;
     /// Returns the scope of the node
     proj_scope scope(int sign) const;
     /// Returns the arity of the node
@@ -85,42 +87,6 @@ namespace Gecode {
     static void* operator new(size_t size);
     /// Memory management
     static void  operator delete(void* p,size_t size);
-  };
-
-  /**
-   * \brief Node iterator
-   */
-  class SetExpr::NodeIter : public Iter::Ranges::Virt::Iterator {
-  private:
-    /// An iterator with virtual member functions for the node
-    Iterator* i;
-    /// Copy constructor not needed
-    NodeIter(const NodeIter&);
-  public:
-    /// \name Constructor and destructor
-    //@{
-    /// Construct iterator
-    NodeIter(const ViewArray<SetView>& x, SetExpr::Node* n,
-	     int sign, bool monotone);
-    /// Destructor
-    virtual ~NodeIter(void);
-    ///@}
-    /// \name Iteration control
-    //@{
-    /// Move iterator to next range (if possible)
-    virtual void operator++(void);
-    /// Test whether iterator is still at a range or done
-    virtual bool operator()(void);
-    //@}
-    /// \name Range access
-    //@{
-    /// Return smallest value of range
-    virtual int min(void) const;
-    /// Return largest value of range
-    virtual int max(void) const;
-    /// Return width of range (distance between minimum and maximum)
-    virtual unsigned int width(void) const;
-    ///@}
   };
 
   /*
@@ -193,81 +159,54 @@ namespace Gecode {
 		     right==NULL ? 0 : right->arity() );
   }
 
-
-  SetExpr::NodeIter::NodeIter(const ViewArray<SetView>& x, SetExpr::Node* n,
-			      int sign, bool monotone) {
-    if (n==NULL) {
-      int mi = sign==1 ? 1 : Limits::Set::int_min;
-      int ma = sign==1 ? 0 : Limits::Set::int_max;
-      Iter::Ranges::Singleton s(mi, ma);
-      i =
-	new Iter::Ranges::Virt::RangesTemplate<Iter::Ranges::Singleton>(s);
-      return;
-    }
-    if (n->left==NULL && n->right==NULL) {
-      if (monotone) {
-	if (sign==1) {
-	  LubRanges<SetView> r(x[n->x]);
-	  i = new Iter::Ranges::Virt::RangesTemplate<LubRanges<SetView> >(r);
-	  return;
-	} else {
-	  LubRanges<SetView> r(x[n->x]);
-	  RangesCompl<LubRanges<SetView> > c(r);
-	  i = new Iter::Ranges::Virt::RangesTemplate<
-	           RangesCompl<LubRanges<SetView> > >(c);
-	  return;	  
-	}
-      } else {
-	if (sign==1) {
-	  GlbRanges<SetView> r(x[n->x]);
-	  i = new Iter::Ranges::Virt::RangesTemplate<GlbRanges<SetView> >(r);
-	  return;
-	} else {
-	  GlbRanges<SetView> r(x[n->x]);
-	  RangesCompl<GlbRanges<SetView> > c(r);
-	  i = new Iter::Ranges::Virt::RangesTemplate<
-	           RangesCompl<GlbRanges<SetView> > >(c);
-	  return;	  
-	}
-      }
-      return;
-    }
-    NodeIter* li = new NodeIter(x, n->left, n->signLeft,
-				n->signLeft==1 ? monotone : !monotone);
-    NodeIter* ri = new NodeIter(x, n->right, n->signRight,
-				n->signRight==1 ? monotone : !monotone);
-    switch (n->rel) {
-    case SetExpr::REL_INTER:
-      i = new Iter::Ranges::Virt::Inter(li, ri);
-      break;
-    case SetExpr::REL_UNION:
-      i = new Iter::Ranges::Virt::Union(li, ri);
-      break;
-    default:
-      GECODE_NEVER;
-    }
-    if (sign!=1) {
-      i = new Iter::Ranges::Virt::Compl<Limits::Set::int_min,
-	                                Limits::Set::int_max>(i);
+  void concatCode(SetExprCode::code& v1, const SetExprCode::code& v2) {
+    for (SetExprCode::code::const_iterator i = v2.begin();
+	 i != v2.end(); ++i) {
+      v1.push_back(*i);
     }
   }
 
-  SetExpr::NodeIter::~NodeIter(void) { delete i; }
+  SetExprCode::code
+  SetExpr::Node::encode(bool monotone) const {
+    SetExprCode::code ret;
+    if (left==NULL && right==NULL) {
+      assert(x>=0);
+      ret.push_back(SetExprCode::LAST+x);
+      if (monotone)
+        ret.push_back(SetExprCode::LUB);
+      else
+        ret.push_back(SetExprCode::GLB);
+      return ret;
+    }
+    if (left==NULL) {
+      ret.push_back(SetExprCode::UNIVERSE);
+    } else {
+      std::vector<int> lvec =
+	left->encode( (signLeft==1) ? monotone : !monotone);
+      concatCode(ret, lvec);
+    }
+    if (signLeft==-1)
+      ret.push_back(SetExprCode::COMPLEMENT);
+    if (right==NULL) {
+      ret.push_back(SetExprCode::UNIVERSE);
+    } else {
+      std::vector<int> rvec =
+	right->encode( (signRight==1) ? monotone : !monotone);
+      concatCode(ret, rvec);
+    }
+    if (signRight==-1)
+      ret.push_back(SetExprCode::COMPLEMENT);
+    switch (rel) {
+    case REL_INTER: ret.push_back(SetExprCode::INTER); break;
+    case REL_UNION: ret.push_back(SetExprCode::UNION); break;
+    default:
+      assert(false);
+      exit(2);
+    }
 
-  forceinline void
-  SetExpr::NodeIter::operator++(void) { ++(*i); }
+    return ret;
+  }
 
-  forceinline bool
-  SetExpr::NodeIter::operator()(void) { return (*i)(); }
-
-  forceinline int
-  SetExpr::NodeIter::min(void) const { return i->min(); }
-
-  forceinline int
-  SetExpr::NodeIter::max(void) const { return i->max(); }
-
-  forceinline unsigned int
-  SetExpr::NodeIter::width(void) const { return i->width(); }
 
   /*
    * Operations for expressions
@@ -321,11 +260,105 @@ namespace Gecode {
     return (ax==NULL) ? 0 : ax->arity();
   }
 
+  SetExprCode::code
+  SetExpr::encode(void) const {
+    SetExprCode::code ret;
+    if (ax==NULL) {
+      ret.push_back((sign==1) ? SetExprCode::EMPTY : SetExprCode::UNIVERSE);
+    } else {
+      if (sign==-1) {
+	std::vector<int> axe = ax->encode(false);
+	concatCode(ret, axe);
+	ret.push_back(SetExprCode::COMPLEMENT);
+      } else {
+	std::vector<int> axe = ax->encode(true);
+	concatCode(ret, axe);
+      }
+    }
+    return ret;
+  }
+
+  Iter::Ranges::Virt::Iterator*
+  codeToIterator(const ViewArray<Set::SetView>& x,
+		 const SetExprCode::code& c, bool monotone) {
+    std::stack<Iter::Ranges::Virt::Iterator*> s;
+
+    typedef Iter::Ranges::Virt::Iterator Iterator;
+
+    int tmp = 0;
+    for (SetExprCode::code::const_iterator i=c.begin(); i!=c.end(); ++i) {
+      switch (*i) {
+      case SetExprCode::COMPLEMENT:
+	{
+	  Iterator* it = s.top(); s.pop();
+	  s.push(new Iter::Ranges::Virt::Compl<Limits::Set::int_min,
+		                               Limits::Set::int_max> (it));
+	}
+	break;
+      case SetExprCode::INTER:
+	{
+	  Iterator* ri = s.top(); s.pop();
+	  Iterator* li = s.top(); s.pop();
+	  s.push(new Iter::Ranges::Virt::Inter(li, ri));
+	}
+      	break;
+      case SetExprCode::UNION:
+	{
+	  Iterator* ri = s.top(); s.pop();
+	  Iterator* li = s.top(); s.pop();
+	  s.push(new Iter::Ranges::Virt::Union(li, ri));
+	}
+	break;
+      case SetExprCode::GLB:
+	if (monotone) {
+	  GlbRanges<SetView> r(x[tmp]);
+	  s.push(new Iter::Ranges::Virt::RangesTemplate<GlbRanges<SetView> >(r));
+	} else {
+	  LubRanges<SetView> r(x[tmp]);
+	  s.push(new Iter::Ranges::Virt::RangesTemplate<LubRanges<SetView> >(r));		
+	}
+	break;
+      case SetExprCode::LUB:
+	if (monotone) {
+	  LubRanges<SetView> r(x[tmp]);
+	  s.push(new Iter::Ranges::Virt::RangesTemplate<LubRanges<SetView> >(r));
+	} else {
+	  GlbRanges<SetView> r(x[tmp]);
+	  s.push(new Iter::Ranges::Virt::RangesTemplate<GlbRanges<SetView> >(r));		
+	}
+	break;
+      case SetExprCode::EMPTY:
+	{
+	  Iter::Ranges::Singleton it(1,0);
+	  s.push(new Iter::Ranges::Virt::RangesTemplate<Iter::Ranges::Singleton> (it));
+	}
+	break;
+      case SetExprCode::UNIVERSE:
+	{
+	  Iter::Ranges::Singleton it(Limits::Set::int_min,
+				     Limits::Set::int_max);
+	  s.push(new Iter::Ranges::Virt::RangesTemplate<Iter::Ranges::Singleton> (it));
+	}
+	break;
+      default:
+        tmp = (*i)-SetExprCode::LAST;
+        break;
+      }
+    }
+
+    return s.top();
+  }
+
   SetExprRanges::SetExprRanges(const ViewArray<Set::SetView>& x,
 			       SetExpr& s,
 			       bool monotone) {
-    i = new Iter(new SetExpr::NodeIter(x, s.ax, s.sign,
-				       s.sign==1 ? monotone : !monotone));
+    i = new Iter(codeToIterator(x, s.encode(), monotone));
+  }
+
+  SetExprRanges::SetExprRanges(const ViewArray<Set::SetView>& x,
+			       const SetExprCode::code& c,
+			       bool monotone) {
+    i = new Iter(codeToIterator(x, c, monotone));
   }
 
 }

@@ -68,6 +68,13 @@ namespace Gecode {
      */
     SetExprRanges(const ViewArray<Set::SetView>& x, SetExpr& s,
 		  bool monotone);
+    /** Initialize with the views \a x, a set expression code \a c,
+     *  and a flag whether \a c is to be interpreted in a monotone or
+     *  anti-monotone way
+     */
+    SetExprRanges(const ViewArray<Set::SetView>& x,
+		  const SetExprCode::code& s,
+		  bool monotone);
     /// Destructor
     ~SetExprRanges(void);
     //@}

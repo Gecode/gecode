@@ -25,12 +25,12 @@ namespace Gecode {
 
   int
   Projector::arity(void) const {
-    return std::max(glb.arity(), lub.arity());
+    return _arity;
   }
 
   SetExpr::proj_scope
   Projector::scope(void) const {
-    return SetExpr::combineScopes(glb.scope(-1), lub.scope(1));
+    return _scope;
   }
 
   ExecStatus

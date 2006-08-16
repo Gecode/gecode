@@ -27,7 +27,9 @@ namespace Gecode {
   forceinline
   Projector::Projector(SetExpr::var_idx x,
 		       const SetExpr& sglb, const SetExpr& slub)
-    : i(x), glb(sglb), lub(slub) {}
+    : i(x), glb(sglb.encode()), lub(slub.encode()),
+      _scope(SetExpr::combineScopes(sglb.scope(-1), slub.scope(1))),
+      _arity(std::max(sglb.arity(), slub.arity())) {}
 
   template <bool negated>
   inline ExecStatus

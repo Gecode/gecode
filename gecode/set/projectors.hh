@@ -36,15 +36,18 @@ namespace Gecode {
 
   //@{
 
-
+  class SetExprCode {
+  public:
+    enum Instruction {
+	COMPLEMENT, INTER, UNION, GLB, LUB, EMPTY, UNIVERSE, LAST
+    };
+    typedef std::vector<int> code;
+  };
   
-  class SetExprRanges;
-
   /**
    * \brief Set-valued expressions for finite set projectors
    */
   class SetExpr {
-    friend class SetExprRanges;
   public:
     /// Type of variable indices
     typedef int var_idx;
@@ -52,6 +55,7 @@ namespace Gecode {
     typedef std::map<int, PropCond> proj_scope;
 
     /// Combine two projector scopes into one
+    GECODE_SET_EXPORT
     static proj_scope combineScopes(const proj_scope& s1, 
 				    const proj_scope& s2);
 
@@ -64,8 +68,6 @@ namespace Gecode {
   private:
     /// Nodes for set expressions
     class Node;
-    /// Iterator for nodes
-    class NodeIter;
 
     Node* ax; ///< Node for expression
     int sign; ///< Sign for expression
@@ -89,6 +91,8 @@ namespace Gecode {
     GECODE_SET_EXPORT proj_scope scope(int sign) const;
     /// Returns the arity of the set expression
     GECODE_SET_EXPORT int arity(void) const;
+    /// Returns code for this set expression
+    GECODE_SET_EXPORT SetExprCode::code encode(void) const;
     /// Destructor
     GECODE_SET_EXPORT ~SetExpr(void);
   };
@@ -113,8 +117,10 @@ namespace Gecode {
   class Projector {
   private:
     SetExpr::var_idx i; ///< The variable for this projector
-    SetExpr glb; ///< The greatest lower bound set expression
-    SetExpr lub; ///< The least upper bound set expression
+    SetExprCode::code glb; ///< The greatest lower bound set expression code
+    SetExprCode::code lub; ///< The least upper bound set expression code
+    SetExpr::proj_scope _scope; ///< The scope of this projector
+    int _arity; ///< The arity of this projector
   public:
     /// Default constructor
     Projector(void);
