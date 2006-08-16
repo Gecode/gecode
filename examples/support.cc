@@ -151,8 +151,8 @@ Options::parse(int argc, char** argv) {
  missing:
   e = "missing argument";
  error:
-  cerr << "Erroneous argument (" << argv[i-1] << ")" << endl
-       << e << endl;
+  cerr << "Erroneous argument (" << argv[i-1] << ")" << endl;
+  if (e) cerr << e << endl;
   exit(EXIT_FAILURE);
 }
 
