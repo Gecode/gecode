@@ -48,6 +48,8 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
     Compl(void);
     /// Initialize with iterator \a i
     Compl(Iterator* i);
+    /// Destructor
+    ~Compl(void);
     //@}
 
     /// \name Range access
@@ -96,8 +98,8 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
     ComplVal(void);
     /// Initialize with iterator \a i
     ComplVal(int umin, int umax, Iterator* i);
-    /// Initialize with iterator \a i
-    void init(int umin, int umax, Iterator* i);
+    /// Destructor
+    ~ComplVal(void);
     //@}
 
     /// \name Range access
@@ -150,6 +152,9 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
   Compl<UMIN,UMAX>::Compl(Iterator* i0) : i(i0) {
     start();
   }
+
+  template <int UMIN, int UMAX>
+  Compl<UMIN,UMAX>::~Compl(void) { delete i; }
 
   template <int UMIN, int UMAX>
   forceinline void
@@ -208,6 +213,9 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
     : UMIN(umin), UMAX(umax), i(i0) {
     start();
   }
+
+  forceinline
+  ComplVal::~ComplVal(void) { delete i; }
 
   forceinline void
   ComplVal::operator++(void) {
