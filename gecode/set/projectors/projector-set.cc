@@ -34,13 +34,16 @@ namespace Gecode {
     _arity = std::max(_arity, p.arity());
   }
 
-  SetExpr::proj_scope
-  ProjectorSet::scope(void) const {
-    SetExpr::proj_scope scope;
-    for (int i=0; i<_count; i++) {
-      scope = SetExpr::combineScopes(_ps[i].scope(), scope);
+  void
+  ProjectorSet::scope(Support::DynamicArray<int>& s) const {
+    // Clear out s
+    for (int i=_arity+1; i--;)
+      s[i] = Set::PC_SET_ANY + 1;
+
+    // Collect scope from individual projectors
+    for (int i=_count; i--; ) {
+      _ps[i].scope(s);
     }
-    return scope;
   }
 
   ExecStatus

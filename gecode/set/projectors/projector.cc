@@ -28,9 +28,41 @@ namespace Gecode {
     return _arity;
   }
 
-  SetExpr::proj_scope
-  Projector::scope(void) const {
-    return _scope;
+  void codeScope(Support::DynamicArray<int>& s, const SetExprCode::code& c) {
+    int tmp = 0;
+    for (SetExprCode::code::const_iterator i=c.begin();
+	 i!=c.end(); ++i) {
+      switch (*i) {
+      case SetExprCode::COMPLEMENT:
+      case SetExprCode::INTER:
+      case SetExprCode::UNION:
+      case SetExprCode::EMPTY:
+      case SetExprCode::UNIVERSE:
+	break;
+      case SetExprCode::GLB:
+	if (s[tmp] == Set::PC_SET_ANY+1)
+	  s[tmp] = Set::PC_SET_CGLB;
+	else if (s[tmp] != Set::PC_SET_CGLB)
+	  s[tmp] = Set::PC_SET_ANY;
+	break;
+      case SetExprCode::LUB:
+	if (s[tmp] == Set::PC_SET_ANY+1)
+	  s[tmp] = Set::PC_SET_CLUB;
+	else if (s[tmp] != Set::PC_SET_CLUB)
+	  s[tmp] = Set::PC_SET_ANY;
+	break;
+	break;
+      default:
+        tmp = (*i)-SetExprCode::LAST;
+        break;
+      }
+    }	
+  }
+
+  void
+  Projector::scope(Support::DynamicArray<int>& s) const {
+    codeScope(s, glb);
+    codeScope(s, lub);
   }
 
   ExecStatus

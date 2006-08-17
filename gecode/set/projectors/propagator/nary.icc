@@ -26,17 +26,14 @@ namespace Gecode { namespace Set { namespace Projection {
   NaryProjection<negated>::NaryProjection
   (Space* home, ViewArray<SetView>& x0, ProjectorSet& ps0)
     : Propagator(home,true), x(x0), ps(ps0) {
-    SetExpr::proj_scope scope = ps.scope();
+    Support::DynamicArray<int> scope;
+    ps.scope(scope);
     pc.ensure(x.size());
     for (int i=x0.size(); i--;) {
-      if (scope.find(i) == scope.end()) {
-	pc[i] = PC_SET_ANY + 1;
-      } else {
-	pc[i] = scope[i];
-	if (negated)
-	  pc[i] = ComplementView<SetView>::pc_negateset(pc[i]);
-	x[i].subscribe(home, this, pc[i]);
-      }
+      pc[i] = scope[i];
+      if (negated)
+	pc[i] = ComplementView<SetView>::pc_negateset(pc[i]);
+      x[i].subscribe(home, this, pc[i]);
     }
   }
 

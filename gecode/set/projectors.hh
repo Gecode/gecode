@@ -23,7 +23,7 @@
 #define __GECODE_GENERATOR_PROJECTORS_HH
 
 #include "gecode/set.hh"
-#include <map>
+#include "gecode/support/dynamic-array.hh"
 #include <vector>
 
 namespace Gecode {
@@ -51,13 +51,6 @@ namespace Gecode {
   public:
     /// Type of variable indices
     typedef int var_idx;
-    /// Scope of a projector
-    typedef std::map<int, PropCond> proj_scope;
-
-    /// Combine two projector scopes into one
-    GECODE_SET_EXPORT
-    static proj_scope combineScopes(const proj_scope& s1, 
-				    const proj_scope& s2);
 
     /// Relation used to connect two set expressions
     enum RelType {
@@ -87,8 +80,6 @@ namespace Gecode {
 			      const SetExpr& t, int tsign);
     /// Assignment operator
     GECODE_SET_EXPORT const SetExpr& operator=(const SetExpr& e);
-    /// Returns the scope of the set expression
-    GECODE_SET_EXPORT proj_scope scope(int sign) const;
     /// Returns the arity of the set expression
     GECODE_SET_EXPORT int arity(void) const;
     /// Returns code for this set expression
@@ -119,7 +110,6 @@ namespace Gecode {
     SetExpr::var_idx i; ///< The variable for this projector
     SetExprCode::code glb; ///< The greatest lower bound set expression code
     SetExprCode::code lub; ///< The least upper bound set expression code
-    SetExpr::proj_scope _scope; ///< The scope of this projector
     int _arity; ///< The arity of this projector
   public:
     /// Default constructor
@@ -128,7 +118,7 @@ namespace Gecode {
     Projector(SetExpr::var_idx x, const SetExpr& sglb, const SetExpr& slub);
 
     /// Returns the scope of the projector
-    GECODE_SET_EXPORT SetExpr::proj_scope scope(void) const;
+    GECODE_SET_EXPORT void scope(Support::DynamicArray<int>&) const;
 
     /// Returns the arity of the projector
     GECODE_SET_EXPORT int arity(void) const;
@@ -172,7 +162,7 @@ namespace Gecode {
     int arity(void) const;
 
     /// Returns the scope of the projector set
-    GECODE_SET_EXPORT SetExpr::proj_scope scope(void) const;
+    GECODE_SET_EXPORT void scope(Support::DynamicArray<int>&) const;
     
     /// Propagate the set
     template <bool negated>

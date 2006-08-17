@@ -26,27 +26,6 @@ using namespace Gecode::Set;
 
 namespace Gecode {
 
-  SetExpr::proj_scope
-  SetExpr::combineScopes(const SetExpr::proj_scope& s1,
-			 const SetExpr::proj_scope& s2) {
-    SetExpr::proj_scope s = s1;
-
-    SetExpr::proj_scope::const_iterator iter;
-    for (iter=s2.begin(); iter != s2.end(); iter++) {
-      if ( s.find(iter->first) == s.end()) {
-	// variable in s2 is not in s1, add it
-	s[iter->first] = iter->second;
-      } else if (iter->second != s[iter->first]) {
-	// variables are in both scopes, but with different PropCond
-	s[iter->first] = PC_SET_ANY;
-      } else {
-	// variables are in both scopes with the same PropCond
-      }
-    }
-
-    return s;
-  }
-
   /**
    * \brief Nodes used to construct set expressions
    */
@@ -75,8 +54,6 @@ namespace Gecode {
     
     /// Returns code representation of the node
     SetExprCode::code encode(bool monotone) const;
-    /// Returns the scope of the node
-    proj_scope scope(int sign) const;
     /// Returns the arity of the node
     int arity(void) const;
 
@@ -135,20 +112,6 @@ namespace Gecode {
       return true;
     }
     return false;
-  }
-
-  SetExpr::proj_scope
-  SetExpr::Node::scope(int sign) const {
-    if (left==NULL && right==NULL) {
-      proj_scope ps;
-      ps[x] = (sign==1) ? PC_SET_CLUB : PC_SET_CGLB;
-      return ps;
-    }
-    proj_scope ls =
-      (left==NULL) ? proj_scope::map() : left->scope(sign*signLeft);
-    proj_scope rs =
-      (right==NULL) ? proj_scope::map() : right->scope(sign*signRight);
-    return combineScopes(ls, rs);
   }
 
   int
@@ -248,11 +211,6 @@ namespace Gecode {
   SetExpr::~SetExpr(void) {
     if ((ax != NULL) && ax->decrement())
       delete ax;
-  }
-
-  SetExpr::proj_scope
-  SetExpr::scope(int sign) const {
-    return (ax==NULL) ? proj_scope::map() : ax->scope(sign*this->sign);
   }
 
   int

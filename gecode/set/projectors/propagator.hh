@@ -23,8 +23,6 @@
 #define __GECODE_GENERATOR_PROJECTORS_HH
 
 #include "gecode/set/projectors.hh"
-#include <map>
-#include <vector>
 
 namespace Gecode { namespace Set { namespace Projection {
 
