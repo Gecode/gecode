@@ -24,7 +24,7 @@
 
 #include "gecode/set.hh"
 #include "gecode/support/dynamic-array.hh"
-#include <vector>
+#include "gecode/support/shared-array.hh"
 
 namespace Gecode {
 
@@ -36,12 +36,50 @@ namespace Gecode {
 
   //@{
 
+  /**
+   * \brief Code representing set-valued expressions for finite set projectors
+   *
+   * Set-valued expressions are represented using a simple stack-based
+   * language.
+   */
   class SetExprCode {
+  private:
+    /// The actual code
+    Support::SharedArray<int> c;
+    /// The number of instructions
+    int n;
   public:
+    /// Instructions for set-valued expression code
     enum Instruction {
 	COMPLEMENT, INTER, UNION, GLB, LUB, EMPTY, UNIVERSE, LAST
     };
-    typedef std::vector<int> code;
+
+    ///\name Construction and initialization
+    //@{
+	
+    /// Default constructor
+    SetExprCode(void);
+
+    /// Copy constructor
+    SetExprCode(const SetExprCode& sc);
+
+    //@}
+
+    /// Copying
+    void update(bool share, SetExprCode& sc);
+    
+    /// Add instruction \a i to the end of the current code
+    void add(int i);
+
+    /// Add code \a sc to the end of the current code
+    void add(const SetExprCode& sc);
+
+    /// Return number of instructions
+    int size(void) const;
+
+    /// Return instruction at position \a ii
+    int operator[](int i) const;
+
   };
   
   /**
@@ -83,7 +121,7 @@ namespace Gecode {
     /// Returns the arity of the set expression
     GECODE_SET_EXPORT int arity(void) const;
     /// Returns code for this set expression
-    GECODE_SET_EXPORT SetExprCode::code encode(void) const;
+    GECODE_SET_EXPORT SetExprCode encode(void) const;
     /// Destructor
     GECODE_SET_EXPORT ~SetExpr(void);
   };
@@ -108,8 +146,8 @@ namespace Gecode {
   class Projector {
   private:
     SetExpr::var_idx i; ///< The variable for this projector
-    SetExprCode::code glb; ///< The greatest lower bound set expression code
-    SetExprCode::code lub; ///< The least upper bound set expression code
+    SetExprCode glb; ///< The greatest lower bound set expression code
+    SetExprCode lub; ///< The least upper bound set expression code
     int _arity; ///< The arity of this projector
   public:
     /// Default constructor

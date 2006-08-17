@@ -22,6 +22,44 @@
 namespace Gecode {
 
   /*
+   * Operations for set expression code
+   *
+   */
+
+  forceinline
+  SetExprCode::SetExprCode(void) : c(5), n(0) {}
+
+  forceinline
+  SetExprCode::SetExprCode(const SetExprCode& sc) : c(sc.c), n(sc.n) {}
+
+  forceinline void
+  SetExprCode::update(bool share, SetExprCode& sc) {
+    n=sc.n; c.update(share, sc.c);
+  }
+  
+  forceinline void
+  SetExprCode::add(int i) {
+    c.ensure(n+1);
+    c[n] = i;
+    n++;
+  }
+
+  forceinline void
+  SetExprCode::add(const SetExprCode& sc) {
+    c.ensure(n+sc.size());
+    for (int i=0; i<sc.size(); i++) {
+      c[n+i] = sc[i];
+    }
+    n += sc.size();
+  }
+
+  forceinline int
+  SetExprCode::size(void) const { return n; }
+
+  forceinline int
+  SetExprCode::operator[](int i) const { return c[i]; }
+
+  /*
    * Operations for expressions
    *
    */
@@ -73,7 +111,7 @@ namespace Gecode {
      *  anti-monotone way
      */
     SetExprRanges(const ViewArray<Set::SetView>& x,
-		  const SetExprCode::code& s,
+		  const SetExprCode& s,
 		  bool monotone);
     /// Destructor
     ~SetExprRanges(void);

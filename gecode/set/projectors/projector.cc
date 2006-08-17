@@ -28,12 +28,11 @@ namespace Gecode {
     return _arity;
   }
 
-  void codeScope(Support::DynamicArray<int>& s, const SetExprCode::code& c,
+  void codeScope(Support::DynamicArray<int>& s, const SetExprCode& c,
 		 bool monotone) {
     int tmp = 0;
-    for (SetExprCode::code::const_iterator i=c.begin();
-	 i!=c.end(); ++i) {
-      switch (*i) {
+    for (int i=0; i<c.size(); i++) {
+      switch (c[i]) {
       case SetExprCode::COMPLEMENT:
       case SetExprCode::INTER:
       case SetExprCode::UNION:
@@ -57,7 +56,7 @@ namespace Gecode {
 	  s[tmp] = Set::PC_SET_ANY;
 	break;
       default:
-        tmp = (*i)-SetExprCode::LAST;
+        tmp = c[i]-SetExprCode::LAST;
         break;
       }
     }

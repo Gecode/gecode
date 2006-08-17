@@ -53,7 +53,7 @@ namespace Gecode {
     GECODE_SET_EXPORT bool decrement(void);
     
     /// Returns code representation of the node
-    SetExprCode::code encode(bool monotone) const;
+    SetExprCode encode(bool monotone) const;
     /// Returns the arity of the node
     int arity(void) const;
 
@@ -122,49 +122,41 @@ namespace Gecode {
 		     right==NULL ? 0 : right->arity() );
   }
 
-  void concatCode(SetExprCode::code& v1, const SetExprCode::code& v2) {
-    for (SetExprCode::code::const_iterator i = v2.begin();
-	 i != v2.end(); ++i) {
-      v1.push_back(*i);
-    }
-  }
-
-  SetExprCode::code
+  SetExprCode
   SetExpr::Node::encode(bool monotone) const {
-    SetExprCode::code ret;
+    SetExprCode ret;
     if (left==NULL && right==NULL) {
       assert(x>=0);
-      ret.push_back(SetExprCode::LAST+x);
+      ret.add(SetExprCode::LAST+x);
       if (monotone)
-        ret.push_back(SetExprCode::LUB);
+        ret.add(SetExprCode::LUB);
       else
-        ret.push_back(SetExprCode::GLB);
+        ret.add(SetExprCode::GLB);
       return ret;
     }
     if (left==NULL) {
-      ret.push_back(SetExprCode::UNIVERSE);
+      ret.add(SetExprCode::UNIVERSE);
     } else {
-      std::vector<int> lvec =
+      SetExprCode lcode =
 	left->encode( (signLeft==1) ? monotone : !monotone);
-      concatCode(ret, lvec);
+      ret.add(lcode);
     }
     if (signLeft==-1)
-      ret.push_back(SetExprCode::COMPLEMENT);
+      ret.add(SetExprCode::COMPLEMENT);
     if (right==NULL) {
-      ret.push_back(SetExprCode::UNIVERSE);
+      ret.add(SetExprCode::UNIVERSE);
     } else {
-      std::vector<int> rvec =
+      SetExprCode rcode =
 	right->encode( (signRight==1) ? monotone : !monotone);
-      concatCode(ret, rvec);
+      ret.add(rcode);
     }
     if (signRight==-1)
-      ret.push_back(SetExprCode::COMPLEMENT);
+      ret.add(SetExprCode::COMPLEMENT);
     switch (rel) {
-    case REL_INTER: ret.push_back(SetExprCode::INTER); break;
-    case REL_UNION: ret.push_back(SetExprCode::UNION); break;
+    case REL_INTER: ret.add(SetExprCode::INTER); break;
+    case REL_UNION: ret.add(SetExprCode::UNION); break;
     default:
-      assert(false);
-      exit(2);
+	GECODE_NEVER;
     }
 
     return ret;
@@ -218,19 +210,19 @@ namespace Gecode {
     return (ax==NULL) ? 0 : ax->arity();
   }
 
-  SetExprCode::code
+  SetExprCode
   SetExpr::encode(void) const {
-    SetExprCode::code ret;
+    SetExprCode ret;
     if (ax==NULL) {
-      ret.push_back((sign==1) ? SetExprCode::EMPTY : SetExprCode::UNIVERSE);
+      ret.add((sign==1) ? SetExprCode::EMPTY : SetExprCode::UNIVERSE);
     } else {
       if (sign==-1) {
-	std::vector<int> axe = ax->encode(false);
-	concatCode(ret, axe);
-	ret.push_back(SetExprCode::COMPLEMENT);
+	SetExprCode axe = ax->encode(false);
+	ret.add(axe);
+	ret.add(SetExprCode::COMPLEMENT);
       } else {
-	std::vector<int> axe = ax->encode(true);
-	concatCode(ret, axe);
+	SetExprCode axe = ax->encode(true);
+	ret.add(axe);
       }
     }
     return ret;
@@ -238,15 +230,15 @@ namespace Gecode {
 
   Iter::Ranges::Virt::Iterator*
   codeToIterator(const ViewArray<Set::SetView>& x,
-		 const SetExprCode::code& c, bool monotone) {
+		 const SetExprCode& c, bool monotone) {
 
     typedef Iter::Ranges::Virt::Iterator Iterator;
 
     Support::DynamicStack<Iterator*> s;
 
     int tmp = 0;
-    for (SetExprCode::code::const_iterator i=c.begin(); i!=c.end(); ++i) {
-      switch (*i) {
+    for (int i=0; i<c.size(); i++) {
+      switch (c[i]) {
       case SetExprCode::COMPLEMENT:
 	{
 	  Iterator* it = s.pop();
@@ -300,7 +292,7 @@ namespace Gecode {
 	}
 	break;
       default:
-        tmp = (*i)-SetExprCode::LAST;
+        tmp = c[i]-SetExprCode::LAST;
         break;
       }
     }
@@ -315,7 +307,7 @@ namespace Gecode {
   }
 
   SetExprRanges::SetExprRanges(const ViewArray<Set::SetView>& x,
-			       const SetExprCode::code& c,
+			       const SetExprCode& c,
 			       bool monotone) {
     i = new Iter(codeToIterator(x, c, monotone));
   }
