@@ -28,7 +28,8 @@ namespace Gecode {
     return _arity;
   }
 
-  void codeScope(Support::DynamicArray<int>& s, const SetExprCode::code& c) {
+  void codeScope(Support::DynamicArray<int>& s, const SetExprCode::code& c,
+		 bool monotone) {
     int tmp = 0;
     for (SetExprCode::code::const_iterator i=c.begin();
 	 i!=c.end(); ++i) {
@@ -41,28 +42,31 @@ namespace Gecode {
 	break;
       case SetExprCode::GLB:
 	if (s[tmp] == Set::PC_SET_ANY+1)
-	  s[tmp] = Set::PC_SET_CGLB;
-	else if (s[tmp] != Set::PC_SET_CGLB)
+	  s[tmp] = monotone ? Set::PC_SET_CGLB : Set::PC_SET_CLUB;
+	else if (monotone && s[tmp] != Set::PC_SET_CGLB)
+	  s[tmp] = Set::PC_SET_ANY;
+	else if (!monotone && s[tmp] != Set::PC_SET_CLUB)
 	  s[tmp] = Set::PC_SET_ANY;
 	break;
       case SetExprCode::LUB:
 	if (s[tmp] == Set::PC_SET_ANY+1)
-	  s[tmp] = Set::PC_SET_CLUB;
-	else if (s[tmp] != Set::PC_SET_CLUB)
+	  s[tmp] = monotone ? Set::PC_SET_CLUB : Set::PC_SET_CGLB;
+	else if (monotone && s[tmp] != Set::PC_SET_CLUB)
 	  s[tmp] = Set::PC_SET_ANY;
-	break;
+	else if (!monotone && s[tmp] != Set::PC_SET_CGLB)
+	  s[tmp] = Set::PC_SET_ANY;
 	break;
       default:
         tmp = (*i)-SetExprCode::LAST;
         break;
       }
-    }	
+    }
   }
 
   void
   Projector::scope(Support::DynamicArray<int>& s) const {
-    codeScope(s, glb);
-    codeScope(s, lub);
+    codeScope(s, glb, false);
+    codeScope(s, lub, true);
   }
 
   ExecStatus
