@@ -22,9 +22,7 @@
 namespace Gecode {
 
   forceinline
-  ProjectorSet::ProjectorSet(void) : _ps(0), _count(0), _arity(0) {
-    //    std::cerr << "construct " << this << "\n";
-  }
+  ProjectorSet::ProjectorSet(void) : _ps(0), _count(0), _arity(0) {}
 
   forceinline void
   ProjectorSet::update(Space* home, bool share, ProjectorSet& p) {
@@ -36,25 +34,17 @@ namespace Gecode {
   forceinline int
   ProjectorSet::arity(void) const { return _arity; }
 
-  forceinline void
-  ProjectorSet::makeLast(int i) {
-    Projector p = _ps[_count-1];
-    _ps[_count-1] = _ps[i];
-    _ps[i] = p;
-  }
-
   template <bool negated>
   inline ExecStatus
   ProjectorSet::propagate(Space* home, ViewArray<Set::SetView>& x) {
-    if (_count==0)
-      return ES_FIX;
-    for (int i=0; i<_count; i++) {
+    int failedCount = 0;
+    for (int i=_count; i--; ) {
       ExecStatus es = _ps[i].propagate<negated>(home, x);
       switch (es) {
       case ES_FAILED:
 	if (!negated)
 	  return ES_FAILED;
-	makeLast(i); i--; _count--;
+	failedCount++;
 	break;
       case ES_SUBSUMED:
 	return ES_SUBSUMED;
@@ -62,7 +52,7 @@ namespace Gecode {
 	break;
       }
     }
-    return _count==0 ? ES_FAILED : ES_NOFIX;
+    return failedCount==_count ? ES_FAILED : ES_NOFIX;
   }
 
 }

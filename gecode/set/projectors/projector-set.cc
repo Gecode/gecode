@@ -25,16 +25,12 @@ namespace Gecode {
 
   void
   ProjectorSet::add(const Projector& p) {
-    //    std::cerr << "add " << this << " " <<_count << "\n";
     _ps.ensure(_count+1);    
     new (&_ps[_count]) Projector(p);
     for (int i=_count+1; i<_ps.size(); i++)
       new (&_ps[i]) Projector();
-    //    std::cerr << "done " << _count << " " << _ps.size() << "\n";
-    //    _ps[_count] = p;
     _count++;
 
-    //    _scope = SetExpr::combineScopes(_scope, p.scope());
     _arity = std::max(_arity, p.arity());
   }
 
@@ -49,9 +45,7 @@ namespace Gecode {
 
   ExecStatus
   ProjectorSet::check(Space* home, ViewArray<Set::SetView>& x) {
-    //    std::vector<Projector>::iterator iter = _ps.begin();
     ExecStatus es = ES_SUBSUMED;
-    //    for (; iter != _ps.end(); iter++) {
     for (int i=0; i<_count; i++) {
       ExecStatus es_new = _ps[i].check(home, x);
       switch (es_new) {

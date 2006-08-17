@@ -157,7 +157,6 @@ namespace Gecode {
     Support::SharedArray<Projector,true> _ps; ///< The projectors
     int _count; ///< The number of projectors in the set
     int _arity; ///< The maximum arity of the projectors in the set
-    void makeLast(int i); ///< Swap projector \a i with the last projector
   public:
     
     /// Construct empty projector set

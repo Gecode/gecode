@@ -20,7 +20,7 @@
  */
 
 #include "gecode/set/projectors.hh"
-#include <stack>
+#include "gecode/support/dynamic-stack.hh"
 
 using namespace Gecode::Set;
 
@@ -281,31 +281,32 @@ namespace Gecode {
   Iter::Ranges::Virt::Iterator*
   codeToIterator(const ViewArray<Set::SetView>& x,
 		 const SetExprCode::code& c, bool monotone) {
-    std::stack<Iter::Ranges::Virt::Iterator*> s;
 
     typedef Iter::Ranges::Virt::Iterator Iterator;
+
+    Support::DynamicStack<Iterator*> s;
 
     int tmp = 0;
     for (SetExprCode::code::const_iterator i=c.begin(); i!=c.end(); ++i) {
       switch (*i) {
       case SetExprCode::COMPLEMENT:
 	{
-	  Iterator* it = s.top(); s.pop();
+	  Iterator* it = s.pop();
 	  s.push(new Iter::Ranges::Virt::Compl<Limits::Set::int_min,
 		                               Limits::Set::int_max> (it));
 	}
 	break;
       case SetExprCode::INTER:
 	{
-	  Iterator* ri = s.top(); s.pop();
-	  Iterator* li = s.top(); s.pop();
+	  Iterator* ri = s.pop();
+	  Iterator* li = s.pop();
 	  s.push(new Iter::Ranges::Virt::Inter(li, ri));
 	}
       	break;
       case SetExprCode::UNION:
 	{
-	  Iterator* ri = s.top(); s.pop();
-	  Iterator* li = s.top(); s.pop();
+	  Iterator* ri = s.pop();
+	  Iterator* li = s.pop();
 	  s.push(new Iter::Ranges::Virt::Union(li, ri));
 	}
 	break;
