@@ -52,8 +52,8 @@ namespace Gecode {
     /// Decrement reference count and possibly free memory
     GECODE_SET_EXPORT bool decrement(void);
     
-    /// Returns code representation of the node
-    SetExprCode encode(bool monotone) const;
+    /// Adds code representation of the node to \a ret
+    void encode(SetExprCode& ret, bool monotone) const;
     /// Returns the arity of the node
     int arity(void) const;
 
@@ -122,9 +122,8 @@ namespace Gecode {
 		     right==NULL ? 0 : right->arity() );
   }
 
-  SetExprCode
-  SetExpr::Node::encode(bool monotone) const {
-    SetExprCode ret;
+  void
+  SetExpr::Node::encode(SetExprCode& ret, bool monotone) const {
     if (left==NULL && right==NULL) {
       assert(x>=0);
       ret.add(SetExprCode::LAST+x);
@@ -132,23 +131,19 @@ namespace Gecode {
         ret.add(SetExprCode::LUB);
       else
         ret.add(SetExprCode::GLB);
-      return ret;
+      return;
     }
     if (left==NULL) {
       ret.add(SetExprCode::UNIVERSE);
     } else {
-      SetExprCode lcode =
-	left->encode( (signLeft==1) ? monotone : !monotone);
-      ret.add(lcode);
+      left->encode(ret, (signLeft==1) ? monotone : !monotone);
     }
     if (signLeft==-1)
       ret.add(SetExprCode::COMPLEMENT);
     if (right==NULL) {
       ret.add(SetExprCode::UNIVERSE);
     } else {
-      SetExprCode rcode =
-	right->encode( (signRight==1) ? monotone : !monotone);
-      ret.add(rcode);
+      right->encode(ret, (signRight==1) ? monotone : !monotone);
     }
     if (signRight==-1)
       ret.add(SetExprCode::COMPLEMENT);
@@ -158,8 +153,6 @@ namespace Gecode {
     default:
 	GECODE_NEVER;
     }
-
-    return ret;
   }
 
 
@@ -215,15 +208,11 @@ namespace Gecode {
     SetExprCode ret;
     if (ax==NULL) {
       ret.add((sign==1) ? SetExprCode::EMPTY : SetExprCode::UNIVERSE);
+    } else if (sign==-1) {
+      ax->encode(ret, false);
+      ret.add(SetExprCode::COMPLEMENT);
     } else {
-      if (sign==-1) {
-	SetExprCode axe = ax->encode(false);
-	ret.add(axe);
-	ret.add(SetExprCode::COMPLEMENT);
-      } else {
-	SetExprCode axe = ax->encode(true);
-	ret.add(axe);
-      }
+      ax->encode(ret, true);
     }
     return ret;
   }

@@ -44,15 +44,6 @@ namespace Gecode {
     n++;
   }
 
-  forceinline void
-  SetExprCode::add(const SetExprCode& sc) {
-    c.ensure(n+sc.size());
-    for (int i=0; i<sc.size(); i++) {
-      c[n+i] = sc[i];
-    }
-    n += sc.size();
-  }
-
   forceinline int
   SetExprCode::size(void) const { return n; }
 

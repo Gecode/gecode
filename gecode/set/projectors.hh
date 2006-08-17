@@ -71,9 +71,6 @@ namespace Gecode {
     /// Add instruction \a i to the end of the current code
     void add(int i);
 
-    /// Add code \a sc to the end of the current code
-    void add(const SetExprCode& sc);
-
     /// Return number of instructions
     int size(void) const;
 
