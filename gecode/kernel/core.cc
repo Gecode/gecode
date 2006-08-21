@@ -36,11 +36,11 @@ namespace Gecode {
 
   Space::Space(void) {
     // Initialize variable entry points
-    for (int i=0; i<VTI_LAST; i++)
+    for (int i=0; i<VTI_LAST; i++) {
       vars[i]=NULL;
+      vars_dispose[i]=NULL;
+    }
     vars_noidx = NULL;
-    // Initialize deleters
-    deleters = NULL;
     // Initialize propagator pool
     pool_next = 0;
     for (int i=0; i<=PC_MAX; i++)
@@ -102,10 +102,10 @@ namespace Gecode {
       a = a->next_delete();
       d->dispose(this);
     }
-    // Invoke deleters
-    for (Deleter* d=deleters; d != NULL; d=d->next()) {
-      d->do_delete(this);
-    }
+    // Delete variables that were registered for deletion
+    for (int vti=VTI_LAST; vti--;)
+      if (vars_dispose[vti] != NULL)
+        vtp[vti]->dispose(this, vars_dispose[vti]);
     if (sub != NULL)
       Memory::free(sub);
   }
@@ -267,25 +267,11 @@ namespace Gecode {
 
   Space::Space(bool share, Space& s) : mm(s.mm) {
     // Initialize variable entry points
-    for (int i=0; i<VTI_LAST; i++)
+    for (int i=0; i<VTI_LAST; i++) {
       vars[i]=NULL;
-    vars_noidx = NULL;
-    // Copy deleters
-    {
-      deleters = NULL;
-      for (Deleter* d = s.deleters; d != NULL; d=d->next()) {
-	Deleter* od = deleters;
-	deleters = d->copy(this, share);
-	if (deleters == NULL)
-	  // Deleter can be discarded
-	  deleters = od;
-	else {
-	  // Link deleter and set forwarding pointer
-	  deleters->next(od);
-	  d->forward(deleters);
-	}
-      }
+      vars_dispose[i]=NULL;
     }
+    vars_noidx = NULL;
     // Initialize propagator pool
     pool_next = 0;
     for (int i=0; i<=PC_MAX; i++)

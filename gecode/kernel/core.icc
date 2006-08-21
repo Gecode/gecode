@@ -116,6 +116,13 @@ namespace Gecode {
      * to be stored.
      */
     virtual void update(VarBase* x, Propagator**& sub) = 0;
+    /**
+      * \brief Dispose variables
+      *
+      * If needed for the variable type, dispose a list of
+      * variables, with \a x being the first variable on the list.
+      */
+    virtual void dispose(Space* home, VarBase* x) = 0;
     /// Destructor (not really used)
     GECODE_KERNEL_EXPORT virtual ~VarTypeProcessorBase(void);
   };
@@ -139,6 +146,13 @@ namespace Gecode {
      * to be stored.
      */
     virtual void update(VarBase* x, Propagator**& sub);
+    /**
+      * \brief Dispose variables
+      *
+      * If needed for the variable type, dispose a list of
+      * variables, with \a x being the first variable on the list.
+      */
+    virtual void dispose(Space* home, VarBase* x);
   };
 
   /**
@@ -573,64 +587,6 @@ namespace Gecode {
   };
 
 
-  /**
-   * \brief Deleter
-   *
-   * A Deleter is used to reclaim resources when a space is destroyed.
-   * This is especially useful for variables that allocate resources outside
-   * the space.
-   *
-   */
-  class Deleter {
-  private:
-    Deleter* _next; ///< Deleters are kept in a linked list
-    Deleter* _fwd; ///< Forwarding pointer used in copying
-  protected:
-    /// Constructor
-    Deleter(Space* home);
-    /// Copy constructor
-    Deleter(Space* home, bool share, Deleter& d);
-  public:
-    //@{
-    /// Routines for linked list
-    Deleter* next(void) const; void next(Deleter*);
-    //@}
-
-    /**
-     * \brief Create copy
-     *
-     * If NULL is returned, this deleter is not copied. Useful if there
-     * is nothing left to delete.
-     *
-     */
-    virtual Deleter* copy(Space*,bool) = 0;
-
-    /// Do the actual deletion
-    virtual void do_delete(Space* home) = 0;
-
-    /// Get forwarding pointer. Only valid during copying.
-    Deleter* forward(void) const;
-    /// Set forwarding pointer
-    void forward(Deleter*);
-
-    /// Allocate memory from space
-    static void* operator new(size_t, Space*);
-    /// Return memory to space
-    static void operator delete(void*, Space*);
-
-#ifndef __GNUC__
-  private:
-    /// Not used
-    static void  operator delete(void* p, size_t s);
-#else
-  public:
-    /// To avoid warnings from GCC    
-    virtual ~Deleter(void);
-    /// Not used
-    static void operator delete(void*, size_t s);
-#endif
-
-  };
 
   /** 
    * \brief %Space status
@@ -648,7 +604,6 @@ namespace Gecode {
   class Space {
     friend class Propagator;
     friend class Branching;
-    friend class Deleter;
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
     template <VarTypeId VTI, PropCond PC, class MED> friend class VarTypeProcessor;
   private:
@@ -663,6 +618,8 @@ namespace Gecode {
     static VarTypeProcessorBase* vtp[VTI_LAST];
     /// Array of all modified or copied variables (entry points)
     VarBase* vars[VTI_LAST];
+    /// Array of lists of variables that need deletion
+    VarBase* vars_dispose[VTI_LAST];
     /// To keep variables during copying without index structure
     VarBase* vars_noidx;
     /// Process all modified variables by delegating to registered processors
@@ -714,11 +671,6 @@ namespace Gecode {
     Branching*      b_commit;
     /// Id of next branching to be created
     unsigned int    branch_id;
-    /**
-     * \brief Points to the first deleter
-     *
-     */
-    Deleter* deleters;
 
     /**
      * \brief Number of subscriptions
@@ -750,8 +702,6 @@ namespace Gecode {
     void propagator(Propagator*);
     /// Add new branching \a b to space (force disposal, if \a fd is true)
     void branching(Branching* b, bool fd);
-    /// Add new deleter \a d to space
-    void deleter(Deleter* d);
 
     /**
      * \name Processing propagators
@@ -988,6 +938,10 @@ namespace Gecode {
     size_t allocated(void) const;
     /// Return how much memory is used by caches for actors
     GECODE_KERNEL_EXPORT size_t cached(void) const;
+    /// Return list of variables that need deletion
+    template <VarTypeId VTI> VarBase* varsDisposeList(void);
+    /// Set list of variables that need deletion
+    template <VarTypeId VTI> void varsDisposeList(VarBase* v);
     //@}
   };
 
@@ -1052,6 +1006,17 @@ namespace Gecode {
     return mm.allocated()+n_sub*sizeof(Propagator**);
   }
 
+  template <VarTypeId VTI>
+  forceinline VarBase*
+  Space::varsDisposeList(void) {
+    return vars_dispose[VTI];
+  }
+
+  template <VarTypeId VTI>
+  forceinline void
+  Space::varsDisposeList(VarBase* v) {
+    vars_dispose[VTI]=v;
+  }
 
   /*
    * Space allocated entities: Actors and Variables
@@ -1170,40 +1135,6 @@ namespace Gecode {
     home->reuse(this,s);
   }
 
-  /*
-   * Deleters
-   *
-   */
-
-  forceinline
-  Deleter::Deleter(Space* home) {
-    home->deleter(this);
-  }
-  forceinline
-  Deleter::Deleter(Space*, bool, Deleter&) {
-  }
-  forceinline Deleter*
-  Deleter::next(void) const { return _next; }
-  forceinline void
-  Deleter::next(Deleter* d) { _next = d; }
-  
-  forceinline Deleter*
-  Deleter::forward(void) const { return _fwd; }
-  forceinline void
-  Deleter::forward(Deleter* d) { _fwd = d; }
-
-  forceinline void*
-  Deleter::operator new(size_t size, Space* s) {
-    return s->alloc(size);
-  }
-  forceinline void
-  Deleter::operator delete(void*, Space*) {}
-  forceinline void
-  Deleter::operator delete(void*, size_t) {}
-#ifdef __GNUC__
-  forceinline
-  Deleter::~Deleter(void) {}
-#endif
 
   /*
    * Spaces
@@ -1427,12 +1358,6 @@ namespace Gecode {
     }
     a_actors.tail(b);
     a_actors.insert_delete(b,fd);
-  }
-
-  forceinline void
-  Space::deleter(Deleter* d) {
-    d->next(deleters);
-    deleters = d;
   }
 
 
@@ -1697,6 +1622,10 @@ namespace Gecode {
       x->forward()->update(x,sub); x = x->next();
     } while (x != NULL);
   }
+
+  template <VarTypeId VTI, PropCond PC, class MED>
+  void
+  VarTypeProcessor<VTI,PC,MED>::dispose(Space* home, VarBase* x) {}
 
   /*
    * Processing a single modified variable

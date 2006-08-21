@@ -38,6 +38,7 @@ $name   = "";
 $VTI    = "";
 $export = "";
 $forceinline = "inline";
+$forcedelete = 0;
 
 ##
 ## Headers and footers
@@ -81,6 +82,8 @@ while ($l = <FILE>) {
 	$export = $1;
       } elsif ($l =~ /^Forceinline:\s*(\w+)/io) {
 	$forceinline = $1;
+      }	elsif ($l =~ /^Forcedelete:\s*true/io) {
+	$forcedelete = 1;
       }
     }
     goto LINE;
@@ -312,10 +315,30 @@ EOF
     public:
       /// Process modified variables linked from \\a x
       $export virtual void process(Space* home, VarBase* x);
+EOF
+;
+if ($forcedelete) {
+  print <<EOF
+      /// Delete variables registered for deletion
+      $export virtual void dispose(Space* home, VarBase* x);
+EOF
+;
+}
+  print <<EOF
     };
     /// The processor used
     $export static Processor p;
+EOF
+;
+if ($forcedelete) {
+  print <<EOF
+    /// Link to next variable, used for deletion
+    VarBase* _nextDispose;
+EOF
+;
+}
 
+print <<EOF
     /// Constructor for cloning \\a x
     $class(Space* home, bool share, $class\& x);
   public:
@@ -333,6 +356,21 @@ EOF
      */
     void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned);
     //\@}
+
+EOF
+;
+if ($forcedelete) {
+  print <<EOF
+    /// Return link to next variable, used for deletion
+    ${class}* nextDispose(void);
+    /// Set link to next variable, used for deletion
+    void nextDispose(${class}* next);
+EOF
+;
+}
+
+print <<EOF
+
   };
 
 
@@ -378,9 +416,32 @@ if ($me_max_n <= 4) {
 } else {
   print "    return med[me1][me2];\n";
 }
+print "  }\n";
 
-print <<EOF
+if ($forcedelete) {
+  print <<EOF
+
+  $forceinline
+  ${class}::${class}(Space* home)
+    : $base(home), _nextDispose(home->varsDisposeList<VTI_${VTI}>()) {
+    home->varsDisposeList<VTI_${VTI}>(this);
   }
+
+  $forceinline
+  ${class}::${class}(Space* home, bool share, $class\& x)
+    : $base(home,share,x), _nextDispose(home->varsDisposeList<VTI_${VTI}>()) {
+    home->varsDisposeList<VTI_${VTI}>(this);
+  }
+
+  forceinline ${class}*
+  ${class}::nextDispose(void) {
+    return static_cast<${class}*>(_nextDispose);
+  }
+
+EOF
+;
+} else {
+  print <<EOF
 
   $forceinline
   ${class}::${class}(Space* home)
@@ -389,6 +450,10 @@ print <<EOF
   $forceinline
   ${class}::${class}(Space* home, bool share, $class\& x)
     : $base(home,share,x) {}
+EOF
+;
+}
+  print <<EOF
 
   $forceinline void
   ${class}::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned) {
@@ -508,6 +573,25 @@ EOF
       x = x->next();
     } while (x != NULL);
   }
+
+EOF
+;
+
+  if ($forcedelete) {
+    print <<EOF
+  void
+  ${class}::Processor::dispose(Space* home, VarBase* x) {
+    ${name}VarImp* _x = static_cast<${name}VarImp*>(x);
+    while (_x != NULL) {
+      _x->dispose(home);
+      _x = static_cast<${name}VarImp*>(_x->nextDispose());
+    }
+  }
+EOF
+;	
+  }
+
+  print <<EOF
   
   ${class}::Processor ${class}::p;
 

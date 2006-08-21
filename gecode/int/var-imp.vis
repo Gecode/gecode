@@ -37,12 +37,15 @@ namespace Gecode { namespace Int {
 ## Forceinline defines whether a special macro for inlining should
 ## be used. If it is omitted, inline will be used instead.
 ##
+## Forcedelete defines whether this variable type provides a dispose
+## function that must be called for all variables in a space when the
+## space is destroyed. If it is omitted, false is assumed.
 [General]
 Name:		Int
 VTI:		INT
 Export:		GECODE_INT_EXPORT
 Forceinline:	forceinline
-
+Forcedelete:    false
 
 ##
 ## Definition of modification events
