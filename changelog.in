@@ -54,6 +54,25 @@ Jabba Jabba
 
 [ENTRY]
 Module: kernel
+What:	new
+Rank:	minor
+[DESCRIPTION]
+Variables can now be deallocated when the Space is deallocated (for example in 
+case of failure). This is important in case a variable implementation needs to 
+reference external resources. Deallocation can be switched on in the 
+high-level description used for generating the variable implementation.
+
+[ENTRY]
+Module: minimodel
+What:	bug
+Rank:	minor
+Thanks:	Rafael Meneses
+[DESCRIPTION]
+Under certain conditions (posting in a failed space), the post function 
+returned uninitialized variables.
+
+[ENTRY]
+Module: kernel
 What: 	performance
 Rank: 	major
 [DESCRIPTION]
