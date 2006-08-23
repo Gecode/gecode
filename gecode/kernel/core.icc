@@ -1545,7 +1545,17 @@ namespace Gecode {
   Variable<VTI,PC,MED>::cancel(Space* home, Propagator* p, PropCond pc) {
     if (idx[0] != NULL) {
       Propagator** f = idx[pc];
+#ifdef GECODE_AUDIT
+      while (f < idx[pc+1])
+	if (*f == p)
+	  goto found;
+	else
+	  f++;
+      GECODE_NEVER;
+    found: ;
+#else
       while (*f != p) f++;
+#endif
       *f=*idx[pc];
       for (PropCond i=pc; i>0; i--)
 	*(idx[i]++)=*(idx[i-1]);
