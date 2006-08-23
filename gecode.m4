@@ -546,13 +546,13 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
     AC_GECODE_ADD_TO_CXXFLAGS([-Ox -fp:fast])
 
     dnl flags for creating optimized dlls
-    AC_GECODE_ADD_TO_DLLFLAGS("${CXXFLAGS} -LD")
+    AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LD])
   else
     dnl compiler flags for a debug build
     AC_GECODE_ADD_TO_CXXFLAGS([-Zi])  
 
     dnl flags for creating debug dlls
-    AC_GECODE_ADD_TO_DLLFLAGS("${CXXFLAGS} -LDd")
+    AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LDd])
   fi
 
   AC_SUBST(sharedlibdir, "${bindir}")
@@ -581,7 +581,6 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   cygpathprefix=$prefix
   test "x$cygpathprefix" = xNONE && cygpathprefix=$ac_default_prefix
   cygpathprefix=`cygpath -m ${cygpathprefix}`
-  echo "cp: ${cygpathprefix}"
 
   AC_SUBST(cygpathprefix, "${cygpathprefix}")
   AC_GECODE_BUILDFLAGS
