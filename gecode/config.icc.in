@@ -44,4 +44,7 @@
 /* Whether gcc understands visibility attributes */
 #undef GCC_HASCLASSVISIBILITY
 
+/* Whether to include audit code */
+#undef GECODE_AUDIT
+
 // STATISTICS: kernel-other

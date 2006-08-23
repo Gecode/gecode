@@ -749,10 +749,15 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * <code>make SHELL="/bin/bash"</code>
  *
  * You can compile as <b>"universal binary" on a Mac OS
- * machine</b>. Configure as usual, then compile with (all in one line)
+ * machine</b>. Configure with
  *
- * <code>make CXXUSR="-isysroot /Developer/SDKs/MacOSX10.4u.sdk -arch i386 -arch ppc"
- * DLLFLAGS="-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk -dynamiclib -arch i386 -arch ppc"</code>
+ * <code>./configure --enable-universal</code>
+ *
+ * For building universal binaries on a PowerPC machine, you have to supply
+ * the path to the universal SDK (which is the default on Intel based Macs):
+ * 
+ * <code>./configure --enable-universal</code>
+ * <code>&nbsp;&nbsp;&nbsp;--with-sdk=/Developer/SDKs/MacOSX10.4u.sdk</code>
  *
  * \subsection CompConfUsr Passing options for compilation
  *

@@ -53,6 +53,8 @@ AC_GECODE_GET_OS
 dnl determine which compiler we are using
 AC_CXX_COMPILER_VENDOR(ac_gecode_compiler_vendor)
 
+AC_GECODE_UNIVERSAL
+
 dnl check whether we want to build static libraries
 AC_GECODE_STATICLIBS
 
@@ -61,6 +63,9 @@ AC_GECODE_DEBUG
 
 dnl check whether we want to have support for finding memory leaks
 AC_GECODE_LEAK_DEBUG
+
+dnl check whether we want audit code in our build
+AC_GECODE_AUDIT
 
 dnl check whether we want to produce code suitable for profiling
 AC_GECODE_PROFILE
@@ -163,6 +168,7 @@ dnl @SUBDIRS@
 
 AC_SUBST(PKG_CONFIG_CXXFLAGS, ${ac_gecode_pkg_cxxflags})
 AC_SUBST(VERSION, ${PACKAGE_VERSION})
+AC_SUBST(DLLFLAGS, ${DLLFLAGS})
 
 AC_CONFIG_FILES([Makefile doxygen.conf doxygen.hh
 	misc/gecode.pc misc/gecode-search.pc misc/gecode-minimodel.pc])

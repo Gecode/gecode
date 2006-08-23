@@ -76,7 +76,10 @@ AC_DEFUN([AC_GECODE_ADD_TO_CXXFLAGS],
 AC_DEFUN([AC_GECODE_ADD_TO_LDFLAGS],
    [LDFLAGS="${LDFLAGS}${LDFLAGS:+ }$1"])
 AC_DEFUN([AC_GECODE_ADD_TO_PKG_CXXFLAGS],
-   [ac_gecode_pkg_cxxflags="${ac_gecode_pkg_cxxflags}${ac_gecode_pkg_cxxflags:+ }$1"])
+  [ac_gecode_pkg_cxxflags="${ac_gecode_pkg_cxxflags}${ac_gecode_pkg_cxxflags:+ }$1"])
+AC_DEFUN([AC_GECODE_ADD_TO_DLLFLAGS],
+  [DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }$1"])
+
 
 dnl Macro:
 dnl   AC_GECODE_CHECK_CXXFLAG (FLAG, [ACTION-IF-TRUE,
@@ -358,6 +361,20 @@ AC_DEFUN([AC_GECODE_LEAK_DEBUG],
 	    AC_MSG_RESULT(no)
 	 fi])
 
+AC_DEFUN([AC_GECODE_AUDIT],
+	[AC_ARG_ENABLE([audit],
+	   AC_HELP_STRING([--enable-audit],
+	     [build with auditing code @<:@default=no@:>@]))
+	 AC_MSG_CHECKING(whether to build with auditing code)
+	 if test "${enable_audit:-no}" = "yes"; then
+	    AC_DEFINE(GECODE_AUDIT, 1)
+	    AC_MSG_RESULT(yes)
+	 else
+	    AC_DEFINE(GECODE_AUDIT, 0)
+	    AC_MSG_RESULT(no)
+	 fi])
+
+
 AC_DEFUN([AC_GECODE_PROFILE],
 	 [AC_ARG_ENABLE([profile],
 	   AC_HELP_STRING([--enable-profile],
@@ -479,7 +496,7 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
   case $host_os in
      darwin*)
        AC_SUBST(need_soname, "yes")
-       AC_SUBST(DLLFLAGS, "-dynamiclib")
+       AC_GECODE_ADD_TO_DLLFLAGS("-dynamiclib")
        AC_SUBST(DLLEXT, "${ac_gecode_soversion}.0.dylib")
        AC_SUBST(SOSUFFIX, ".${ac_gecode_soversion}.dylib")
        AC_SUBST(SOLINKSUFFIX, ".dylib")
@@ -493,7 +510,7 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
 	       "${enable_shared:-yes}" = "yes"; then
          AC_MSG_ERROR([Only either static or shared libraries can be built.])
        fi
-       AC_SUBST(DLLFLAGS, "-shared")
+       AC_GECODE_ADD_TO_DLLFLAGS("-shared")
        AC_SUBST(DLLEXT, "dll")
        AC_SUBST(SOSUFFIX, "")
        AC_SUBST(SOLINKSUFFIX, "")
@@ -507,7 +524,7 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
        ;;
      *)
        AC_SUBST(need_soname, "yes")
-       AC_SUBST(DLLFLAGS, "-shared")
+       AC_GECODE_ADD_TO_DLLFLAGS("-shared")
        AC_SUBST(DLLEXT, "so.${ac_gecode_soversion}.0")
        AC_SUBST(SOSUFFIX, ".so.${ac_gecode_soversion}")
        AC_SUBST(SOLINKSUFFIX, ".so")
@@ -529,13 +546,13 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
     AC_GECODE_ADD_TO_CXXFLAGS([-Ox -fp:fast])
 
     dnl flags for creating optimized dlls
-    AC_SUBST(DLLFLAGS, "${CXXFLAGS} -LD")
+    AC_GECODE_ADD_TO_DLLFLAGS("${CXXFLAGS} -LD")
   else
     dnl compiler flags for a debug build
     AC_GECODE_ADD_TO_CXXFLAGS([-Zi])  
 
     dnl flags for creating debug dlls
-    AC_SUBST(DLLFLAGS, "${CXXFLAGS} -LDd")
+    AC_GECODE_ADD_TO_DLLFLAGS("${CXXFLAGS} -LDd")
   fi
 
   AC_SUBST(sharedlibdir, "${bindir}")
@@ -670,3 +687,38 @@ AC_DEFUN([AC_GECODE_DOC_SWITCHES],
 	;;
    esac])
 
+dnl Macro:
+dnl   AC_GECODE_UNIVERSAL
+dnl
+dnl Description:
+dnl   Produces the configure switches --enable-universal and --with-sdk
+dnl   for compiling universal binaries on Mac OS X.
+dnl
+dnl Authors:
+dnl   Guido Tack <tack@gecode.org>
+AC_DEFUN([AC_GECODE_UNIVERSAL],
+  [dnl build universal binaries on Mac OS X
+  AC_ARG_WITH([sdk],
+    AC_HELP_STRING([--with-sdk],
+	[SDK to use on Mac OS X]))
+  if test "${host_os}" = "darwin"; then
+    if test "${with_sdk:-no}" != "no"; then
+      AC_GECODE_CHECK_CXXFLAG([-isysroot ${with_sdk}])
+      AC_GECODE_ADD_TO_DLLFLAGS([-Wl,-syslibroot,${with_sdk}])
+    fi
+  fi
+  AC_ARG_ENABLE([universal],
+    AC_HELP_STRING([--enable-universal],
+	[build universal binaries on Mac OS X @<:@default=no@:>@]))
+  if test "${host_os}" = "darwin"; then
+    AC_MSG_CHECKING(whether to build universal binaries on Mac OS X)
+    if test "${enable_universal:-no}" = "yes"; then
+      AC_MSG_RESULT(yes)
+      AC_GECODE_CHECK_CXXFLAG([-arch i386 -arch ppc])
+      AC_GECODE_ADD_TO_DLLFLAGS([-arch i386 -arch ppc])
+    else
+      AC_MSG_RESULT(no)
+    fi
+  fi
+
+])

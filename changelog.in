@@ -53,6 +53,16 @@ Date:		Unknown
 Jabba Jabba
 
 [ENTRY]
+Module: other
+What:   new
+Rank:	minor
+[DESCRIPTION]
+New configure switches: --enable-audit to include audit code, which may
+contain expensive checks of internal invariants or alternative, checked
+implementations of critical parts of Gecode. --enable-universal and 
+--with-sdk, to support building universal binaries on Mac OS X.
+
+[ENTRY]
 Module: kernel
 What:	new
 Rank:	minor

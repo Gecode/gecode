@@ -313,7 +313,7 @@ ac_includes_default="\
 #endif"
 
 ac_subdirs_all="$ac_subdirs_all "
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT RANLIB ac_ct_RANLIB PKGCONFIG ac_ct_PKGCONFIG HAVE_PKGCONFIG CXXCPP CC CFLAGS ac_ct_CC BUILDSTATIC BUILDDLL CPP EGREP DLLPATH need_soname DLLFLAGS DLLEXT SOSUFFIX SOLINKSUFFIX sharedlibdir WLSONAME GECODE_BUILD_KERNEL_FLAG GECODE_BUILD_SEARCH_FLAG GECODE_BUILD_INT_FLAG GECODE_BUILD_SET_FLAG GECODE_BUILD_MINIMODEL_FLAG docdir SBJEXT LIBEXT LIBPREFIX STATICLIBEXT MINUSLDIR LINKLIBDIR cygpathprefix COMPILEOBJ COMPILESBJ COMPILERIN EXAMPLES_EXTRA_CXXFLAGS INSTALLLIBS LINKPREFIX LINKSUFFIX LINKOUTPUT EXEOUTPUT KERNEL SEARCH INT SET MM DOT GECODE_DOXYGEN_DOT ENABLEDOCSEARCH GECODE_DOXYGEN_TAGFILE ENABLEDOCCHM enable_set_vars enable_int_vars enable_examples enable_minimodel enable_search subdirs PKG_CONFIG_CXXFLAGS VERSION LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS CXX CXXFLAGS LDFLAGS CPPFLAGS ac_ct_CXX EXEEXT OBJEXT RANLIB ac_ct_RANLIB PKGCONFIG ac_ct_PKGCONFIG HAVE_PKGCONFIG CXXCPP CC CFLAGS ac_ct_CC BUILDSTATIC BUILDDLL CPP EGREP DLLPATH need_soname DLLEXT SOSUFFIX SOLINKSUFFIX sharedlibdir WLSONAME GECODE_BUILD_KERNEL_FLAG GECODE_BUILD_SEARCH_FLAG GECODE_BUILD_INT_FLAG GECODE_BUILD_SET_FLAG GECODE_BUILD_MINIMODEL_FLAG docdir SBJEXT LIBEXT LIBPREFIX STATICLIBEXT MINUSLDIR LINKLIBDIR cygpathprefix COMPILEOBJ COMPILESBJ COMPILERIN EXAMPLES_EXTRA_CXXFLAGS INSTALLLIBS LINKPREFIX LINKSUFFIX LINKOUTPUT EXEOUTPUT KERNEL SEARCH INT SET MM DOT GECODE_DOXYGEN_DOT ENABLEDOCSEARCH GECODE_DOXYGEN_TAGFILE ENABLEDOCCHM enable_set_vars enable_int_vars enable_examples enable_minimodel enable_search subdirs PKG_CONFIG_CXXFLAGS VERSION DLLFLAGS LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -858,11 +858,14 @@ if test -n "$ac_init_help"; then
 Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --enable-universal      build universal binaries on Mac OS X
+                          [default=no]
   --enable-static         build static libraries [default=no]
   --enable-shared         build shared libraries [default=yes]
   --enable-debug          build with assertions [default=no]
   --enable-leak-debug     build with support for finding memory leaks
                           [default=no]
+  --enable-audit          build with auditing code [default=no]
   --enable-profile        build with profiling information [default=no]
   --enable-doc-dot        enable graphs in documentation [default=yes]
   --enable-doc-search     enable documentation search engine
@@ -886,6 +889,7 @@ Optional Packages:
                           Linux, Darwin, and Windows.
   --with-compiler-vendor  Override compiler test. Valid values are gnu, intel,
                           and microsoft.
+  --with-sdk              SDK to use on Mac OS X
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -2021,7 +2025,12 @@ fi
 
 
 
+
+
           ac_config_commands="$ac_config_commands vti.icc"
+
+
+
 
 
 
@@ -3313,6 +3322,171 @@ fi
 echo "$as_me:$LINENO: result: $ac_cv_cxx_compiler_vendor" >&5
 echo "${ECHO_T}$ac_cv_cxx_compiler_vendor" >&6
 
+
+# Check whether --with-sdk or --without-sdk was given.
+if test "${with_sdk+set}" = set; then
+  withval="$with_sdk"
+
+fi;
+  if test "${host_os}" = "darwin"; then
+    if test "${with_sdk:-no}" != "no"; then
+      echo "$as_me:$LINENO: checking whether ${CXX} accepts -isysroot ${with_sdk}" >&5
+echo $ECHO_N "checking whether ${CXX} accepts -isysroot ${with_sdk}... $ECHO_C" >&6
+   ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
+   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-isysroot ${with_sdk} -Werror"
+   ac_ext=cc
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+   cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_cxx_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+      CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
+      CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-isysroot ${with_sdk}"
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+      CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
+      :
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+   ac_ext=cc
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+      DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }-Wl,-syslibroot,${with_sdk}"
+    fi
+  fi
+  # Check whether --enable-universal or --disable-universal was given.
+if test "${enable_universal+set}" = set; then
+  enableval="$enable_universal"
+
+fi;
+  if test "${host_os}" = "darwin"; then
+    echo "$as_me:$LINENO: checking whether to build universal binaries on Mac OS X" >&5
+echo $ECHO_N "checking whether to build universal binaries on Mac OS X... $ECHO_C" >&6
+    if test "${enable_universal:-no}" = "yes"; then
+      echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+      echo "$as_me:$LINENO: checking whether ${CXX} accepts -arch i386 -arch ppc" >&5
+echo $ECHO_N "checking whether ${CXX} accepts -arch i386 -arch ppc... $ECHO_C" >&6
+   ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
+   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-arch i386 -arch ppc -Werror"
+   ac_ext=cc
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+   cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+int
+main ()
+{
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_cxx_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+      CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
+      CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-arch i386 -arch ppc"
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+      CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
+      :
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+   ac_ext=cc
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+      DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }-arch i386 -arch ppc"
+    else
+      echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+    fi
+  fi
+
+
+
 # Check whether --enable-static or --disable-static was given.
 if test "${enable_static+set}" = set; then
   enableval="$enable_static"
@@ -3455,6 +3629,29 @@ echo "$as_me: error: mtrace not available." >&2;}
 fi
 
 	 else
+	    echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+	 fi
+
+# Check whether --enable-audit or --disable-audit was given.
+if test "${enable_audit+set}" = set; then
+  enableval="$enable_audit"
+
+fi;
+	 echo "$as_me:$LINENO: checking whether to build with auditing code" >&5
+echo $ECHO_N "checking whether to build with auditing code... $ECHO_C" >&6
+	 if test "${enable_audit:-no}" = "yes"; then
+	    cat >>confdefs.h <<\_ACEOF
+#define GECODE_AUDIT 1
+_ACEOF
+
+	    echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+	 else
+	    cat >>confdefs.h <<\_ACEOF
+#define GECODE_AUDIT 0
+_ACEOF
+
 	    echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6
 	 fi
@@ -4642,8 +4839,7 @@ gnu)
      darwin*)
        need_soname="yes"
 
-       DLLFLAGS="-dynamiclib"
-
+       DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"-dynamiclib""
        DLLEXT="${ac_gecode_soversion}.0.dylib"
 
        SOSUFFIX=".${ac_gecode_soversion}.dylib"
@@ -4674,8 +4870,7 @@ gnu)
 echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
    { (exit 1); exit 1; }; }
        fi
-       DLLFLAGS="-shared"
-
+       DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"-shared""
        DLLEXT="dll"
 
        SOSUFFIX=""
@@ -4705,8 +4900,7 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
      *)
        need_soname="yes"
 
-       DLLFLAGS="-shared"
-
+       DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"-shared""
        DLLEXT="so.${ac_gecode_soversion}.0"
 
        SOSUFFIX=".so.${ac_gecode_soversion}"
@@ -5683,13 +5877,11 @@ _ACEOF
   if test "${enable_debug:-no}" = "no"; then
         CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox -fp:fast"
 
-        DLLFLAGS="${CXXFLAGS} -LD"
-
+        DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"${CXXFLAGS} -LD""
   else
         CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Zi"
 
-        DLLFLAGS="${CXXFLAGS} -LDd"
-
+        DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"${CXXFLAGS} -LDd""
   fi
 
   sharedlibdir="${bindir}"
@@ -5782,8 +5974,7 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
      darwin*)
        need_soname="yes"
 
-       DLLFLAGS="-dynamiclib"
-
+       DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"-dynamiclib""
        DLLEXT="${ac_gecode_soversion}.0.dylib"
 
        SOSUFFIX=".${ac_gecode_soversion}.dylib"
@@ -5814,8 +6005,7 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
 echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
    { (exit 1); exit 1; }; }
        fi
-       DLLFLAGS="-shared"
-
+       DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"-shared""
        DLLEXT="dll"
 
        SOSUFFIX=""
@@ -5845,8 +6035,7 @@ echo "$as_me: error: Only either static or shared libraries can be built." >&2;}
      *)
        need_soname="yes"
 
-       DLLFLAGS="-shared"
-
+       DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"-shared""
        DLLEXT="so.${ac_gecode_soversion}.0"
 
        SOSUFFIX=".so.${ac_gecode_soversion}"
@@ -6620,13 +6809,11 @@ _ACEOF
   if test "${enable_debug:-no}" = "no"; then
         CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox -fp:fast"
 
-        DLLFLAGS="${CXXFLAGS} -LD"
-
+        DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"${CXXFLAGS} -LD""
   else
         CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Zi"
 
-        DLLFLAGS="${CXXFLAGS} -LDd"
-
+        DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }"${CXXFLAGS} -LDd""
   fi
 
   sharedlibdir="${bindir}"
@@ -7017,6 +7204,8 @@ subdirs="$subdirs "
 PKG_CONFIG_CXXFLAGS=${ac_gecode_pkg_cxxflags}
 
 VERSION=${PACKAGE_VERSION}
+
+DLLFLAGS=${DLLFLAGS}
 
 
                                                             ac_config_files="$ac_config_files Makefile doxygen.conf doxygen.hh misc/gecode.pc misc/gecode-search.pc misc/gecode-minimodel.pc"
@@ -7670,7 +7859,6 @@ s,@CPP@,$CPP,;t t
 s,@EGREP@,$EGREP,;t t
 s,@DLLPATH@,$DLLPATH,;t t
 s,@need_soname@,$need_soname,;t t
-s,@DLLFLAGS@,$DLLFLAGS,;t t
 s,@DLLEXT@,$DLLEXT,;t t
 s,@SOSUFFIX@,$SOSUFFIX,;t t
 s,@SOLINKSUFFIX@,$SOLINKSUFFIX,;t t
@@ -7716,6 +7904,7 @@ s,@enable_search@,$enable_search,;t t
 s,@subdirs@,$subdirs,;t t
 s,@PKG_CONFIG_CXXFLAGS@,$PKG_CONFIG_CXXFLAGS,;t t
 s,@VERSION@,$VERSION,;t t
+s,@DLLFLAGS@,$DLLFLAGS,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
 s,@LTLIBOBJS@,$LTLIBOBJS,;t t
 CEOF
