@@ -91,6 +91,13 @@
 #include "gecode/kernel/memory-manager.icc"
 
 
+/*
+ * Macros for checking failure
+ *
+ */
+
+
+#include "gecode/kernel/macros.icc"
 
 /*
  * Gecode kernel
@@ -117,14 +124,6 @@
 
 #include "gecode/kernel/array.icc"
 
-
-
-/*
- * Macros for checking failure
- *
- */
-
-#include "gecode/kernel/macros.icc"
 
 
 
