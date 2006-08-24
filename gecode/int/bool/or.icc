@@ -254,8 +254,9 @@ namespace Gecode { namespace Int { namespace Bool {
 	  assert(!x[i].zero() && !x[i].one());
 	  // Rewrite if there is just one view left
 	  if (i == 0) {
+	    View y = x[0];
 	    x.size(0);
-	    GECODE_ES_CHECK((OrTrue<View,View>::post(home,x1,x[0])));
+	    GECODE_ES_CHECK((OrTrue<View,View>::post(home,x1,y)));
 	    return ES_SUBSUMED;
 	  }
 	  // Move to x0 and subscribe
