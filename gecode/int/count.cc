@@ -47,9 +47,13 @@ namespace Gecode {
     case IRT_LQ:
       GECODE_INT_CREATE(ConstIntView,ConstIntView,Count::LqView); break;
     case IRT_GR:
-      c = 1; // Fall through
+      GECODE_ES_FAIL(home,(Count::GqInt<IntView,ConstIntView>
+      			   ::post(home,x,y,zn+1)));
+      break;
     case IRT_GQ:
-      GECODE_INT_CREATE(ConstIntView,ConstIntView,Count::GqView); break;
+      GECODE_ES_FAIL(home,(Count::GqInt<IntView,ConstIntView>
+      			   ::post(home,x,y,zn)));
+      break;
     default:
       throw UnknownRelation("Int::count");
     }
@@ -75,9 +79,13 @@ namespace Gecode {
     case IRT_LQ:
       GECODE_INT_CREATE(IntView,ConstIntView,Count::LqView); break;
     case IRT_GR:
-      c = 1; // Fall through
+      GECODE_ES_FAIL(home,(Count::GqInt<IntView,IntView>
+      			   ::post(home,x,y,zn+1)));
+      break;
     case IRT_GQ:
-      GECODE_INT_CREATE(IntView,ConstIntView,Count::GqView); break;
+      GECODE_ES_FAIL(home,(Count::GqInt<IntView,IntView>
+      			   ::post(home,x,y,zn)));
+      break;
     default:
       throw UnknownRelation("Int::count");
     }

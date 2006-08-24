@@ -120,6 +120,35 @@ namespace Gecode { namespace Int { namespace Count {
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
   };
 
+  /**
+   * \brief %Propagator for counting views (greater or equal integer to number of equal views)
+   *
+   * Not all combinations of views are possible. The types \a VX
+   * and \a VY must be either equal, or \a VY must be ConstIntView.
+   *
+   * Requires \code #include "gecode/int/count.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class VX, class VY>
+  class GqInt : public BaseInt<VX,VY> {
+  protected:
+    using BaseInt<VX,VY>::x;
+    using BaseInt<VX,VY>::n_s;
+    using BaseInt<VX,VY>::y;
+    using BaseInt<VX,VY>::c;
+    /// Constructor for cloning \a p
+    GqInt(Space* home, bool share, GqInt& p);
+    /// Constructor for creation
+    GqInt(Space* home, ViewArray<VX>& x, int n_s, VY y, int c);
+  public:
+    /// Create copy during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq c\f$
+    static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
+  };
+
 }}}
 
 #include "gecode/int/count/int.icc"
