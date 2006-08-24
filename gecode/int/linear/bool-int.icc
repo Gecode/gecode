@@ -157,7 +157,7 @@ namespace Gecode { namespace Int { namespace Linear {
       } else if (x[n_s].one()) {
 	x[n_s]=x[--n_x]; c--;
       } else {
-	x[n_s++].subscribe(home,this,PC_INT_VAL);;
+	x[n_s++].subscribe(home,this,PC_INT_VAL,false);
       }
     x.size(n_x);
     if (n_x < c)
@@ -255,7 +255,7 @@ namespace Gecode { namespace Int { namespace Linear {
       } else if (x[n_s].one()) {
 	x[n_s]=x[--n_x]; c--;
       } else {
-	x[n_s++].subscribe(home,this,PC_INT_VAL);;
+	x[n_s++].subscribe(home,this,PC_INT_VAL,false);
       }
     x.size(n_x);
     if ((c < 0) || (c > n_x))
@@ -369,7 +369,7 @@ namespace Gecode { namespace Int { namespace Linear {
 	// Move to y and subscribe
 	y=x[i]; x[i]=x[--n]; 
 	x.size(n);
-	y.subscribe(home,this,PC_INT_VAL);
+	y.subscribe(home,this,PC_INT_VAL,false);
 	return true;
       }
     // All views have been assigned!
