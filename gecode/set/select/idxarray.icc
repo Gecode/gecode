@@ -80,9 +80,10 @@ namespace Gecode { namespace Set { namespace Select {
 
   template <class View>
   void
-  IdxViewArray<View>::subscribe(Space* home, Propagator* p, PropCond pc) {
+  IdxViewArray<View>::subscribe(Space* home, Propagator* p, PropCond pc,
+				bool process) {
     for (int i = n; i--; )
-      xs[i].var.subscribe(home,p,pc);
+      xs[i].var.subscribe(home,p,pc,process);
   }
 
   template <class View>

@@ -348,13 +348,18 @@ print <<EOF
     //\@{
     /** \\brief Subscribe propagator \\a p with propagation condition \\a pc to variable
      *
-     * In case the variable is assigned (that is, \\a assigned is true),
-     * the subscribing propagator is processed for execution.
+     * In case \\a process is false, the propagator is just subscribed but
+     * not processed for execution (this must be used when creating
+     * subscriptions during propagation).
+     *
+     * In case the variable is assigned (that is, \\a assigned is 
+     * true), the subscribing propagator is processed for execution.
      * Otherwise, the propagator subscribes and is processed for execution
-     * with modification event $me_subscribe provided that \\a pc is different
-     * from \\a $pc_assigned.
+     * with modification event \\a me provided that \\a pc is different
+     * from \\a PC_GEN_ASSIGNED.
      */
-    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned);
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned,
+                   bool process);
     //\@}
 
 EOF
@@ -456,8 +461,9 @@ EOF
   print <<EOF
 
   $forceinline void
-  ${class}::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned) {
-    ${base}::subscribe(home,p,pc,assigned,$me_subscribe);
+  ${class}::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned,
+                      bool process) {
+    ${base}::subscribe(home,p,pc,assigned,$me_subscribe,process);
   }
 
 EOF

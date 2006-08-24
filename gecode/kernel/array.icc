@@ -164,8 +164,14 @@ namespace Gecode {
 
     /// \name Dependencies
     //@{
-    /// Subscribe propagator \a p with propagation condition \a pc to all views
-    void subscribe(Space*, Propagator* p, PropCond pc);
+    /**
+     * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+     *
+     * In case \a process is false, the propagator is just subscribed but
+     * not processed for execution (this must be used when creating
+     * subscriptions during propagation).
+     */
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to all views
     void cancel(Space* home, Propagator* p, PropCond pc);
     //@}
@@ -624,9 +630,10 @@ namespace Gecode {
 
   template <class View>
   void
-  ViewArray<View>::subscribe(Space* home, Propagator* p, PropCond pc) {
+  ViewArray<View>::subscribe(Space* home, Propagator* p, PropCond pc, 
+			     bool process) {
     for (int i = n; i--; )
-      x[i].subscribe(home,p,pc);
+      x[i].subscribe(home,p,pc,process);
   }
 
   template <class View>

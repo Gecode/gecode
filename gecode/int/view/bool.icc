@@ -204,8 +204,9 @@ namespace Gecode {
      *
      */
     forceinline void
-    NegBoolView::subscribe(Space* home, Propagator* p, PropCond pc) {
-      view.subscribe(home,p,pc);
+    NegBoolView::subscribe(Space* home, Propagator* p, PropCond pc,
+			   bool process) {
+      view.subscribe(home,p,pc,process);
     }
     forceinline void
     NegBoolView::cancel(Space* home, Propagator* p, PropCond pc) {

@@ -262,8 +262,16 @@ namespace Gecode { namespace Int {
   public:
     /// \name Dependencies
     //@{
-    /// Subscribe propagator \a p with propagation condition \a pc to variable
-    GECODE_INT_EXPORT void subscribe(Space* home, Propagator* p, PropCond pc);
+    /**
+     * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+     *
+     * In case \a process is false, the propagator is just subscribed but
+     * not processed for execution (this must be used when creating
+     * subscriptions during propagation).
+     *
+     */
+    GECODE_INT_EXPORT
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
     //@}
 
   private:

@@ -86,8 +86,14 @@ namespace Gecode {
 
     /// \name Dependencies
     //@{
-    /// Subscribe propagator \a p with propagation condition \a pc to view
-    void subscribe(Space*, Propagator* p, PropCond pc);
+    /**
+     * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+     *
+     * In case \a process is false, the propagator is just subscribed but
+     * not processed for execution (this must be used when creating
+     * subscriptions during propagation).
+     */
+    void subscribe(Space*, Propagator* p, PropCond pc, bool process=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
     void cancel(Space* home, Propagator* p, PropCond pc);
     //@}
@@ -249,8 +255,14 @@ namespace Gecode {
 
     /// \name Dependencies
     //@{
-    /// Subscribe propagator \a p with propagation condition \a pc to all views
-    void subscribe(Space* home, Propagator* p, PropCond pc);
+    /**
+     * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+     *
+     * In case \a process is false, the propagator is just subscribed but
+     * not processed for execution (this must be used when creating
+     * subscriptions during propagation).
+     */
+    void subscribe(Space*, Propagator* p, PropCond pc, bool process=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
     void cancel(Space* home, Propagator* p, PropCond pc);
     //@}
@@ -347,8 +359,9 @@ namespace Gecode {
   }
   template <class Var>
   forceinline void
-  VariableViewBase<Var>::subscribe(Space* home, Propagator* p, PropCond pc) {
-    var->subscribe(home,p,pc);
+  VariableViewBase<Var>::subscribe(Space* home, Propagator* p, PropCond pc,
+				   bool process) {
+    var->subscribe(home,p,pc,process);
   }
   template <class Var>
   forceinline void
@@ -517,9 +530,10 @@ namespace Gecode {
 
   template <class View, unsigned int n>
   forceinline void
-  ViewTuple<View,n>::subscribe(Space* home, Propagator* p, PropCond pc) {
+  ViewTuple<View,n>::subscribe(Space* home, Propagator* p, PropCond pc,
+			       bool process) {
     for (unsigned int i=0; i<n; i++)
-      x[i].subscribe(home,p,pc);
+      x[i].subscribe(home,p,pc,process);
   }
   template <class View, unsigned int n>
   forceinline void

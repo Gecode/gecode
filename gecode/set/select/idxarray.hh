@@ -72,7 +72,7 @@ namespace Gecode { namespace Set { namespace Select {
      * Subscribe propagator \a p with propagation condition \a pc
      * to all elements of the array.
      */
-    void subscribe(Space* home,Propagator* p, PropCond pc);
+    void subscribe(Space* home,Propagator* p, PropCond pc, bool process=true);
     /**
      * Cancel subscription of propagator \a p with propagation condition \a pc
      * for all elements of the array.

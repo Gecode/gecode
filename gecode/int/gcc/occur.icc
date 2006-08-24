@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace GCC {
     ModEvent inc(void);
 
     void cancel(Space* home, Propagator* , PropCond ) {}
-    void subscribe(Space*, Propagator* , PropCond) {}
+    void subscribe(Space*, Propagator* , PropCond, bool=true) {}
 
     void update(Space*, bool, OccurBndsView&);
   };
@@ -343,7 +343,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// \name Dependencies
     ///@{
     /// Subscribe propagator \a p with propagation condition \a pc to view
-    void subscribe(Space* home, Propagator* p, PropCond pc);
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
     void cancel(Space* home, Propagator* p, PropCond pc);
     ///@}
@@ -599,8 +599,8 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   forceinline void
-  CardView::subscribe(Space* home, Propagator* p, PropCond pc) {
-    view.subscribe(home, p, pc);
+  CardView::subscribe(Space* home, Propagator* p, PropCond pc, bool process) {
+    view.subscribe(home, p, pc, process);
   }
   forceinline void
   CardView::cancel(Space* home, Propagator* p, PropCond pc) {

@@ -128,8 +128,8 @@ namespace Gecode { namespace Set {
    */
 
   void
-  SetVarImp::subscribe(Space* home, Propagator* p, PropCond pc) {
-    SetVarImpBase::subscribe(home,p,pc,assigned());
+  SetVarImp::subscribe(Space* home, Propagator* p, PropCond pc, bool process) {
+    SetVarImpBase::subscribe(home,p,pc,assigned(),process);
   }
 
 }}

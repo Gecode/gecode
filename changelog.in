@@ -53,6 +53,15 @@ Date:		Unknown
 Jabba Jabba
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:	major
+[DESCRIPTION]
+Subscription to variables now features an additional and optional
+Boolean argument whether the propagator is to be processed. This
+allows to dynamically create subscriptions during propagation.
+
+[ENTRY]
 Module: other
 What:   new
 Rank:	minor
