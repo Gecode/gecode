@@ -154,6 +154,8 @@ namespace Gecode { namespace Int { namespace Count {
 	return post_false(home,x,y);
       if (z.val() == atmost())
 	return post_true(home,x,y);
+      GECODE_ES_CHECK((EqInt<VX,VY>::post(home,x,y,z.val()+c)));
+      return ES_SUBSUMED;
     }
     return shr ? ES_NOFIX : ES_FIX;
   }

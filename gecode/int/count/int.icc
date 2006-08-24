@@ -74,13 +74,6 @@ namespace Gecode { namespace Int { namespace Count {
   ExecStatus
   EqInt<VX,VY>::post(Space* home, ViewArray<VX>& x, VY y, int c) {
     // Eliminate decided views
-    /*
-    std::cout << "Before post-eliminate" << std::endl;
-    std::cout << "count({";
-    for (int i=0; i<x.size(); i++)
-      std::cout << x[i] << ",";
-    std::cout << "}," << y << "," << c << ");" << std::endl;
-    */
     int n_x = x.size();
     for (int i=n_x; i--; )
       switch (holds(x[i],y)) {
@@ -94,13 +87,6 @@ namespace Gecode { namespace Int { namespace Count {
 	GECODE_NEVER;
       }
     x.size(n_x);
-    /*
-    std::cout << "After post-eliminate" << std::endl;
-    std::cout << "count({";
-    for (int i=0; i<x.size(); i++)
-      std::cout << x[i] << ",";
-    std::cout << "}," << y << "," << c << ");" << std::endl;
-    */
     // RHS too small or too large
     if ((c < 0) || (c > n_x))
       return ES_FAILED;
@@ -135,23 +121,15 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY>
   ExecStatus
   EqInt<VX,VY>::propagate(Space* home) {
-    std::cout << "Before" << std::endl;
-    std::cout << "count({";
-    for (int i=0; i<x.size(); i++)
-      std::cout << x[i] << ",";
-    std::cout << "}," << y << "," << c << "); n_s = " << n_s << std::endl;
     // Eliminate decided views from subscribed views
     int n_x = x.size();
-    assert(n_s <= n_x);
     for (int i=n_s; i--; )
       switch (holds(x[i],y)) {
       case RT_FALSE:
-	std::cout << "Cancel x[" << i << "] = " << x[i] << std::endl;
 	x[i].cancel(home,this,PC_INT_DOM);
 	x[i]=x[--n_s]; x[n_s]=x[--n_x]; 
 	break;
       case RT_TRUE:
-	std::cout << "Cancel x[" << i << "] = " << x[i] << std::endl;
 	x[i].cancel(home,this,PC_INT_DOM);
 	x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--; 
 	break;
@@ -161,14 +139,9 @@ namespace Gecode { namespace Int { namespace Count {
 	GECODE_NEVER;
       }
     x.size(n_x);
-    std::cout << "After subscribed" << std::endl;
-    std::cout << "count({";
-    for (int i=0; i<x.size(); i++)
-      std::cout << x[i] << ",";
-    std::cout << "}," << y << "," << c << "); n_s = " << n_s << std::endl;
-    //    if ((c < 0) || (c > n_x))
-    //      return ES_FAILED;
-    // Eliminate decide views from unsubscribed views
+    if ((c < 0) || (c > n_x))
+      return ES_FAILED;
+    // Eliminate decided views from unsubscribed views
     for (int i=n_x; i-- > n_s; )
       switch (holds(x[i],y)) {
       case RT_FALSE: x[i]=x[--n_x]; break;
@@ -177,11 +150,6 @@ namespace Gecode { namespace Int { namespace Count {
       default:       GECODE_NEVER;
       }
     x.size(n_x);
-    std::cout << "After both" << std::endl;
-    std::cout << "count({";
-    for (int i=0; i<x.size(); i++)
-      std::cout << x[i] << ",";
-    std::cout << "}," << y << "," << c << "); n_s = " << n_s << std::endl;
     if ((c < 0) || (c > n_x))
       return ES_FAILED;
     if (c == 0)
@@ -193,15 +161,8 @@ namespace Gecode { namespace Int { namespace Count {
     int m = std::max(c,n_x-c)+1;
     assert(m <= n_x);
     // Now, there must be new subscriptions from x[n_s] up to x[m-1]
-    while (n_s < m) {
-      std::cout << "Subscribe x[" << n_s << "] = " << x[n_s] << std::endl;
-      x[n_s++].subscribe(home,this,PC_INT_DOM);
-    }
-    std::cout << "Aftre subscribe" << std::endl;
-    std::cout << "count({";
-    for (int i=0; i<x.size(); i++)
-      std::cout << x[i] << ",";
-    std::cout << "}," << y << "," << c << "); n_s = " << n_s << std::endl;
+    while (n_s < m)
+      x[n_s++].subscribe(home,this,PC_INT_DOM,false);
     return ES_FIX;
   }
 
