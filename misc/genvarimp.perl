@@ -38,7 +38,7 @@ $name   = "";
 $VTI    = "";
 $export = "";
 $forceinline = "inline";
-$forcedelete = 0;
+$forcedispose = 0;
 
 ##
 ## Headers and footers
@@ -82,8 +82,8 @@ while ($l = <FILE>) {
 	$export = $1;
       } elsif ($l =~ /^Forceinline:\s*(\w+)/io) {
 	$forceinline = $1;
-      }	elsif ($l =~ /^Forcedelete:\s*true/io) {
-	$forcedelete = 1;
+      }	elsif ($l =~ /^Forcedispose:\s*true/io) {
+	$forcedispose = 1;
       }
     }
     goto LINE;
@@ -317,9 +317,9 @@ EOF
       $export virtual void process(Space* home, VarBase* x);
 EOF
 ;
-if ($forcedelete) {
+if ($forcedispose) {
   print <<EOF
-      /// Delete variables registered for deletion
+      /// Dispose registered variables
       $export virtual void dispose(Space* home, VarBase* x);
 EOF
 ;
@@ -330,9 +330,9 @@ EOF
     $export static Processor p;
 EOF
 ;
-if ($forcedelete) {
+if ($forcedispose) {
   print <<EOF
-    /// Link to next variable, used for deletion
+    /// Link to next variable, used for disposal
     VarBase* _nextDispose;
 EOF
 ;
@@ -358,17 +358,16 @@ print <<EOF
      * with modification event \\a me provided that \\a pc is different
      * from \\a PC_GEN_ASSIGNED.
      */
-    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned,
-                   bool process);
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
     //\@}
 
 EOF
 ;
-if ($forcedelete) {
+if ($forcedispose) {
   print <<EOF
-    /// Return link to next variable, used for deletion
+    /// Return link to next variable, used for dispose
     ${class}* nextDispose(void);
-    /// Set link to next variable, used for deletion
+    /// Set link to next variable, used for dispose
     void nextDispose(${class}* next);
 EOF
 ;
@@ -423,7 +422,7 @@ if ($me_max_n <= 4) {
 }
 print "  }\n";
 
-if ($forcedelete) {
+if ($forcedispose) {
   print <<EOF
 
   $forceinline
@@ -583,7 +582,7 @@ EOF
 EOF
 ;
 
-  if ($forcedelete) {
+  if ($forcedispose) {
     print <<EOF
   void
   ${class}::Processor::dispose(Space* home, VarBase* x) {

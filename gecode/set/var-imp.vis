@@ -37,7 +37,6 @@ Name:		Set
 VTI:		SET
 Export:		GECODE_SET_EXPORT
 Forceinline:	forceinline
-Forcedelete:    false
 
 #
 # Definition of modification events
