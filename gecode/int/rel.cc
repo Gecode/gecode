@@ -107,8 +107,7 @@ namespace Gecode {
     case IRT_GQ:
       std::swap(x0,x1); // Fall through
     case IRT_LQ:
-    GECODE_ES_FAIL(home,(Rel::ReLq<IntView,BoolView>::post(home,x0,x1,b)));
-	home->fail();
+      GECODE_ES_FAIL(home,(Rel::ReLq<IntView,BoolView>::post(home,x0,x1,b)));
       break;
     case IRT_LE:
       std::swap(x0,x1); // Fall through
@@ -116,7 +115,6 @@ namespace Gecode {
       {
 	NegBoolView n(b);
 	GECODE_ES_FAIL(home,(Rel::ReLq<IntView,NegBoolView>::post(home,x0,x1,n)));
-	  home->fail();
       }
       break;
     default:
@@ -191,11 +189,9 @@ namespace Gecode {
   eq(Space* home, IntVar x0, IntVar x1, BoolVar b, IntConLevel icl) {
     if (home->failed()) return;
     if (icl == ICL_BND) {
-GECODE_ES_FAIL(home,(Rel::ReEqBnd<IntView,BoolView>::post(home,x0,x1,b)));
-	home->fail();
+      GECODE_ES_FAIL(home,(Rel::ReEqBnd<IntView,BoolView>::post(home,x0,x1,b)));
     } else {
-GECODE_ES_FAIL(home,(Rel::ReEqDom<IntView,BoolView>::post(home,x0,x1,b)));
-	home->fail();
+      GECODE_ES_FAIL(home,(Rel::ReEqDom<IntView,BoolView>::post(home,x0,x1,b)));
     }
   }
 
@@ -203,11 +199,9 @@ GECODE_ES_FAIL(home,(Rel::ReEqDom<IntView,BoolView>::post(home,x0,x1,b)));
   eq(Space* home, IntVar x, int n, BoolVar b, IntConLevel icl) {
     if (home->failed()) return;
     if (icl == ICL_BND) {
-GECODE_ES_FAIL(home,(Rel::ReEqBndInt<IntView,BoolView>::post(home,x,n,b)));
-	home->fail();
+      GECODE_ES_FAIL(home,(Rel::ReEqBndInt<IntView,BoolView>::post(home,x,n,b)));
     } else {
-GECODE_ES_FAIL(home,(Rel::ReEqDomInt<IntView,BoolView>::post(home,x,n,b)));
-	home->fail();
+      GECODE_ES_FAIL(home,(Rel::ReEqDomInt<IntView,BoolView>::post(home,x,n,b)));
     }
   }
 
