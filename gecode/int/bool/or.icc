@@ -262,7 +262,7 @@ namespace Gecode { namespace Int { namespace Bool {
 	  // Move to x0 and subscribe
 	  x0=x[i]; x[i]=x[--n]; 
 	  x.size(n);
-	  x0.subscribe(home,this,PC_INT_VAL);
+	  x0.subscribe(home,this,PC_INT_VAL,false);
 	  return ES_FIX;
 	}
       // All views have been assigned!
