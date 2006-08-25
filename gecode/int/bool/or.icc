@@ -43,7 +43,7 @@ namespace Gecode { namespace Int { namespace Bool {
     : BoolBinary<BVA,BVB>(home,share,p,b0,b1) {}
 
   template <class BVA, class BVB>
-  forceinline ExecStatus
+  inline ExecStatus
   OrTrue<BVA,BVB>::post(Space* home, BVA b0, BVB b1) {
     switch (bool_test(b0,b1)) {
     case BT_SAME:
@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace Bool {
     : BoolTernary<BVA,BVB,BVC>(home,share,p,b0,b1,b2) {}
 
   template <class BVA, class BVB, class BVC>
-  forceinline ExecStatus
+  inline ExecStatus
   Or<BVA,BVB,BVC>::post(Space* home, BVA b0, BVB b1, BVC b2) {
     if (b2.zero()) {
       GECODE_ME_CHECK(b0.t_zero(home));
@@ -212,7 +212,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class View>
-  forceinline ExecStatus
+  inline ExecStatus
   NaryOrTrue<View>::post(Space* home, ViewArray<View>& b) {
     for (int i=b.size(); i--; )
       if (b[i].one())
@@ -301,7 +301,7 @@ namespace Gecode { namespace Int { namespace Bool {
     : NaryOnePropagator<View,PC_INT_VAL>(home,share,p) {}
 
   template<class View>
-  forceinline ExecStatus
+  inline ExecStatus
   NaryOr<View>::post(Space* home, ViewArray<View>& b, View c) {
     if (c.one())
       return NaryOrTrue<View>::post(home,b);

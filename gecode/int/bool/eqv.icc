@@ -32,7 +32,7 @@ namespace Gecode { namespace Int { namespace Bool {
     : BoolTernary<BVA,BVB,BVC>(home,share,p) {}
 
   template <class BVA, class BVB, class BVC>
-  forceinline ExecStatus
+  inline ExecStatus
   Eqv<BVA,BVB,BVC>::post(Space* home, BVA b0, BVB b1, BVC b2){
     switch (bool_test(b0,b1)) {
     case BT_SAME:

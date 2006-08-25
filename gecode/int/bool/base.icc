@@ -121,4 +121,3 @@ namespace Gecode { namespace Int { namespace Bool {
 }}}
 
 // STATISTICS: int-prop
-
