@@ -356,22 +356,6 @@ namespace Gecode { namespace Int {
     return new (home) IntVarImp(home,share,*this,true);
   }
 
-
-  /*
-   * Subscribing to variables
-   *
-   */
-
-  void
-  IntVarImp::subscribe(Space* home, Propagator* p, PropCond pc, bool process) {
-    IntVarImpBase::subscribe(home,p,pc,dom.min()==dom.max(),process);
-  }
-
 }}
 
-
-
-
-
 // STATISTICS: int-var
-

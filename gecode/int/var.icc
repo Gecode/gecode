@@ -270,7 +270,6 @@ namespace Gecode { namespace Int {
      * subscriptions during propagation).
      *
      */
-    GECODE_INT_EXPORT
     void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
     //@}
 

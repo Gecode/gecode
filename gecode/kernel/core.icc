@@ -1485,6 +1485,31 @@ namespace Gecode {
    */
 
   template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline void
+  Variable<VTI,PC,MED>::subscribe(Space* home, Propagator* p, PropCond pc,
+				  bool assigned, ModEvent me, bool process) {
+    if (assigned) {
+      // Do not subscribe, just process the propagator
+      if (process)
+	home->process<VTI,MED>(p);
+    } else {
+      // Count one new subscription
+      home->n_sub += 1;
+      if (free() == 0)
+	resize(home);
+      free_dec();
+      // Enter propagator
+      --idx[0];
+      for (PropCond i = 0; i < pc; i++)
+	*(idx[i]) = *(--idx[i+1]);
+      *idx[pc]=p;
+      // Process propagator
+      if (process && (pc != PC_GEN_ASSIGNED))
+	home->process<VTI,MED>(p,me);
+    }
+  }
+
+  template <VarTypeId VTI, PropCond PC, class MED>
   void
   Variable<VTI,PC,MED>::resize(Space* home) {
     assert(free() == 0);
@@ -1511,31 +1536,6 @@ namespace Gecode {
       idx[0] = prop;
       for (PropCond i = PC+1; i > 0; i--)
 	idx[i] += o;
-    }
-  }
-
-  template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline void
-  Variable<VTI,PC,MED>::subscribe(Space* home, Propagator* p, PropCond pc,
-				  bool assigned, ModEvent me, bool process) {
-    if (assigned) {
-      // Do not subscribe, just process the propagator
-      if (process)
-	home->process<VTI,MED>(p);
-    } else {
-      // Count one new subscription
-      home->n_sub += 1;
-      if (free() == 0)
-	resize(home);
-      free_dec();
-      // Enter propagator
-      --idx[0];
-      for (PropCond i = 0; i < pc; i++)
-	*(idx[i]) = *(--idx[i+1]);
-      *idx[pc]=p;
-      // Process propagator
-      if (process && (pc != PC_GEN_ASSIGNED))
-	home->process<VTI,MED>(p,me);
     }
   }
 

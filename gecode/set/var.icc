@@ -633,7 +633,6 @@ namespace Gecode { namespace Set {
      * not processed for execution (this must be used when creating
      * subscriptions during propagation).
      */
-    GECODE_SET_EXPORT
     void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
     //@}
 

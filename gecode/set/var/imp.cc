@@ -121,17 +121,6 @@ namespace Gecode { namespace Set {
     return new (home) SetVarImp(home,share,*this);
   }
 
-
-  /*
-   * Subscribing to variables
-   *
-   */
-
-  void
-  SetVarImp::subscribe(Space* home, Propagator* p, PropCond pc, bool process) {
-    SetVarImpBase::subscribe(home,p,pc,assigned(),process);
-  }
-
 }}
 
 // STATISTICS: set-var
