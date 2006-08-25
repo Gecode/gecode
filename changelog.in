@@ -53,6 +53,13 @@ Date:		Unknown
 Jabba Jabba
 
 [ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added an example for solving Black Hole patience games.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:	major
