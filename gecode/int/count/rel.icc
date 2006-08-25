@@ -40,9 +40,21 @@ namespace Gecode { namespace Int { namespace Count {
   }
   template <class VX>
   forceinline ExecStatus
+  post_true(Space* home, VX x, ConstIntView y) {
+    GECODE_ME_CHECK(x.eq(home,y.val()));
+    return ES_SUBSUMED;
+  }
+  template <class VX>
+  forceinline ExecStatus
   post_true(Space* home, ViewArray<VX>& x, ConstIntView y) {
     for (int i = x.size(); i--; )
       GECODE_ME_CHECK(x[i].eq(home,y.val()));
+    return ES_SUBSUMED;
+  }
+  template <class VX>
+  forceinline ExecStatus
+  post_false(Space* home, VX x, ConstIntView y) {
+    GECODE_ME_CHECK(x.nq(home,y.val()));
     return ES_SUBSUMED;
   }
   template <class VX>
@@ -64,9 +76,21 @@ namespace Gecode { namespace Int { namespace Count {
   }
   template <class VX>
   forceinline ExecStatus
+  post_true(Space* home, VX x, VX y) {
+    GECODE_ES_CHECK((Rel::EqDom<VX,VX>::post(home,x,y)));
+    return ES_SUBSUMED;
+  }
+  template <class VX>
+  forceinline ExecStatus
   post_false(Space* home, ViewArray<VX>& x, VX y) {
     for (int i = x.size(); i--; )
       GECODE_ES_CHECK(Rel::Nq<VX>::post(home,x[i],y));
+    return ES_SUBSUMED;
+  }
+  template <class VX>
+  forceinline ExecStatus
+  post_false(Space* home, VX x, VX y) {
+    GECODE_ES_CHECK(Rel::Nq<VX>::post(home,x,y));
     return ES_SUBSUMED;
   }
 

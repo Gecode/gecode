@@ -178,6 +178,43 @@ namespace Gecode { namespace Int { namespace Count {
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
   };
 
+  /**
+   * \brief %Propagator for counting views (not equal integer to number of equal views)
+   *
+   * Not all combinations of views are possible. The types \a VX
+   * and \a VY must be either equal, or \a VY must be ConstIntView.
+   *
+   * Requires \code #include "gecode/int/count.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class VX, class VY>
+  class NqInt : public BinaryPropagator<VX,PC_INT_DOM> {
+  protected:
+    using BinaryPropagator<VX,PC_INT_DOM>::x0;
+    using BinaryPropagator<VX,PC_INT_DOM>::x1;
+    /// Views not yet subscribed to
+    ViewArray<VX> x;
+    /// View to compare with
+    VY y;
+    /// Righthandside
+    int c;
+    /// Update subscription
+    bool resubscribe(Space* home, VX& z);
+    /// Constructor for posting
+    NqInt(Space* home,  ViewArray<VX>& x, VY y, int c);
+    /// Constructor for cloning \a p
+    NqInt(Space* home, bool share, NqInt& p);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\neq c\f$
+    static  ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
+  };
+
 }}}
 
 #include "gecode/int/count/int.icc"
