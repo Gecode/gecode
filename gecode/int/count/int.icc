@@ -203,8 +203,6 @@ namespace Gecode { namespace Int { namespace Count {
       ExecStatus es = post_true(home,x,y);
       return (es == ES_SUBSUMED) ? ES_OK : es;
     }
-    // Compute how many subscriptions must be created
-    assert(n_x > c);
     (void) new (home) GqInt<VX,VY>(home,x,c+1,y,c);
     return ES_OK;
   }
@@ -263,6 +261,104 @@ namespace Gecode { namespace Int { namespace Count {
       return post_true(home,x,y);
     // Now, there must be new subscriptions from x[n_s] up to x[c+1]
     while (n_s <= c)
+      x[n_s++].subscribe(home,this,PC_INT_DOM,false);
+    return ES_FIX;
+  }
+
+  /*
+   * Less or equal propagator (integer rhs)
+   *
+   */
+  template <class VX, class VY>
+  forceinline
+  LqInt<VX,VY>::LqInt(Space* home, ViewArray<VX>& x, int n_s, VY y, int c)
+    : BaseInt<VX,VY>(home,x,n_s,y,c) {}
+
+  template <class VX, class VY>
+  ExecStatus
+  LqInt<VX,VY>::post(Space* home, ViewArray<VX>& x, VY y, int c) {
+    // Eliminate decided views
+    int n_x = x.size();
+    for (int i=n_x; i--; )
+      switch (holds(x[i],y)) {
+      case RT_FALSE:
+	x[i] = x[--n_x]; break;
+      case RT_TRUE:
+	x[i] = x[--n_x]; c--; break;
+      case RT_MAYBE:
+	break;
+      default: 
+	GECODE_NEVER;
+      }
+    x.size(n_x);
+    if (c < 0)
+      return ES_FAILED;
+    if (c >= n_x)
+      return ES_OK;
+    // All views must be different
+    if (c == 0) {
+      ExecStatus es = post_false(home,x,y);
+      return (es == ES_SUBSUMED) ? ES_OK : es;
+    }
+    (void) new (home) LqInt<VX,VY>(home,x,n_x-c+1,y,c);
+    return ES_OK;
+  }
+
+  template <class VX, class VY>
+  forceinline
+  LqInt<VX,VY>::LqInt(Space* home, bool share, LqInt<VX,VY>& p)
+    : BaseInt<VX,VY>(home,share,p) {}
+
+  template <class VX, class VY>
+  Actor*
+  LqInt<VX,VY>::copy(Space* home, bool share) {
+    return new (home) LqInt<VX,VY>(home,share,*this);
+  }
+
+  template <class VX, class VY>
+  ExecStatus
+  LqInt<VX,VY>::propagate(Space* home) {
+    // Eliminate decided views from subscribed views
+    int n_x = x.size();
+    for (int i=n_s; i--; )
+      switch (holds(x[i],y)) {
+      case RT_FALSE:
+	x[i].cancel(home,this,PC_INT_DOM);
+	x[i]=x[--n_s]; x[n_s]=x[--n_x]; 
+	break;
+      case RT_TRUE:
+	x[i].cancel(home,this,PC_INT_DOM);
+	x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--; 
+	break;
+      case RT_MAYBE:
+	break;
+      default: 
+	GECODE_NEVER;
+      }
+    x.size(n_x);
+    if (c < 0)
+      return ES_FAILED;
+    if (c >= n_x)
+      return ES_SUBSUMED;
+    // Eliminate decided views from unsubscribed views
+    for (int i=n_x; i-- > n_s; )
+      switch (holds(x[i],y)) {
+      case RT_FALSE: x[i]=x[--n_x]; break;
+      case RT_TRUE:  x[i]=x[--n_x]; c--; break;
+      case RT_MAYBE: break;
+      default:       GECODE_NEVER;
+      }
+    x.size(n_x);
+    if (c < 0)
+      return ES_FAILED;
+    if (c >= n_x)
+      return ES_SUBSUMED;
+    if (c == 0)
+      // All views must be different
+      return post_false(home,x,y);
+    // Now, there must be new subscriptions from x[n_s] up to x[n_x-c+1]
+    int m = n_x-c;
+    while (n_s <= m)
       x[n_s++].subscribe(home,this,PC_INT_DOM,false);
     return ES_FIX;
   }

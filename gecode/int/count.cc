@@ -43,9 +43,13 @@ namespace Gecode {
     case IRT_NQ:
       GECODE_INT_CREATE(ConstIntView,ConstIntView,Count::NqView); break;
     case IRT_LE:
-      c = -1; // Fall through
+      GECODE_ES_FAIL(home,(Count::LqInt<IntView,ConstIntView>
+      			   ::post(home,x,y,zn-1)));
+      break;
     case IRT_LQ:
-      GECODE_INT_CREATE(ConstIntView,ConstIntView,Count::LqView); break;
+      GECODE_ES_FAIL(home,(Count::LqInt<IntView,ConstIntView>
+      			   ::post(home,x,y,zn)));
+      break;
     case IRT_GR:
       GECODE_ES_FAIL(home,(Count::GqInt<IntView,ConstIntView>
       			   ::post(home,x,y,zn+1)));
@@ -75,9 +79,13 @@ namespace Gecode {
     case IRT_NQ:
       GECODE_INT_CREATE(IntView,ConstIntView,Count::NqView); break;
     case IRT_LE:
-      c = -1; // Fall through
+      GECODE_ES_FAIL(home,(Count::LqInt<IntView,IntView>
+      			   ::post(home,x,y,zn-1)));
+      break;
     case IRT_LQ:
-      GECODE_INT_CREATE(IntView,ConstIntView,Count::LqView); break;
+      GECODE_ES_FAIL(home,(Count::LqInt<IntView,IntView>
+      			   ::post(home,x,y,zn)));
+      break;
     case IRT_GR:
       GECODE_ES_FAIL(home,(Count::GqInt<IntView,IntView>
       			   ::post(home,x,y,zn+1)));

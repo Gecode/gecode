@@ -254,6 +254,10 @@ namespace Gecode { namespace Int { namespace Count {
       return post_false(home,x,y);
     if (x.size() == 0)
       return ES_SUBSUMED;
+    if (z.assigned()) {
+      GECODE_ES_CHECK((LqInt<VX,VY>::post(home,x,y,z.val()+c)));
+      return ES_SUBSUMED;
+    }
     return shr ? ES_NOFIX : ES_FIX;
   }
 
