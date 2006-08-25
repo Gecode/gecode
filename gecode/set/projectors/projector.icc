@@ -65,6 +65,15 @@ namespace Gecode {
     return Iter::Ranges::size(lubranges);
   }
 
+  forceinline const SetExprCode&
+  Projector::getGlb(void) const { return glb; }
+
+  forceinline const SetExprCode&
+  Projector::getLub(void) const { return lub; }
+
+  forceinline int
+  Projector::getIdx(void) const { return i; }
+
 }
 
 // STATISTICS: set-prop

@@ -70,7 +70,7 @@ namespace Gecode { namespace Set { namespace Sequence {
       XLBs[i]=lb;
     }
     Iter::Ranges::NaryAppend<GlbRanges<SetView> > u(XLBs,x.size());
-    GECODE_SET_ME_CHECK_B(modified, y.includeI(home,u));
+    GECODE_ME_CHECK_MODIFIED(modified, y.includeI(home,u));
     return ES_FIX;
   }
 

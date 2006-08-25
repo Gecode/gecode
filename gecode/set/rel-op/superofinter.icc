@@ -75,7 +75,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 	Iter::Ranges::Inter<GlbRanges<View0>,GlbRanges<View1> >
 	  is(lb0, lb1);
 
-	GECODE_SET_ME_CHECK_B(modified,x2.includeI(home,is));
+	GECODE_ME_CHECK_MODIFIED(modified,x2.includeI(home,is));
       }
 
       // lub(x0) -= glb(x1)-lub(x2)
@@ -87,14 +87,14 @@ namespace Gecode { namespace Set { namespace RelOp {
 	Iter::Ranges::Diff<GlbRanges<View1>, LubRanges<View2> >
 	  diff1(lb12, ub22);
 
-	GECODE_SET_ME_CHECK_B(modified, x0.excludeI(home,diff1));
+	GECODE_ME_CHECK_MODIFIED(modified, x0.excludeI(home,diff1));
 
 	GlbRanges<View0> lb01(x0);
 	LubRanges<View2> ub23(x2);
 	Iter::Ranges::Diff<GlbRanges<View0>, LubRanges<View2> >
 	  diff2(lb01, ub23);
 
-	GECODE_SET_ME_CHECK_B(modified, x1.excludeI(home,diff2));
+	GECODE_ME_CHECK_MODIFIED(modified, x1.excludeI(home,diff2));
       } else {
  	modified = false;
       }
@@ -112,17 +112,17 @@ namespace Gecode { namespace Set { namespace RelOp {
 	unsigned int m = Iter::Ranges::size(u);
 
 	if (m < x0.cardMin() + x1.cardMin()) {
-	  GECODE_SET_ME_CHECK_B(modified,
+	  GECODE_ME_CHECK_MODIFIED(modified,
 			    x2.cardMin( home,
 					x0.cardMin()+x1.cardMin() - m ) );
 	}
 	if (m + x2.cardMax() > x1.cardMin()) {
-	  GECODE_SET_ME_CHECK_B(modified,
+	  GECODE_ME_CHECK_MODIFIED(modified,
 			    x0.cardMax( home,
 					m+x2.cardMax()-x1.cardMin() )  );
 	}
 	if (m + x2.cardMax() > x0.cardMin()) {
-          GECODE_SET_ME_CHECK_B(modified,
+          GECODE_ME_CHECK_MODIFIED(modified,
                             x1.cardMax( home,
                                         m+x2.cardMax()-x0.cardMin() )  );
 	}

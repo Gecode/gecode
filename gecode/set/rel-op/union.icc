@@ -86,7 +86,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 	  LubRanges<View0> x0ub(x0);
 	  LubRanges<View1> x1ub(x1);
 	  Iter::Ranges::Union<LubRanges<View0>, LubRanges<View1> > u2(x0ub,x1ub);
-	  GECODE_SET_ME_CHECK_B(modified, x2.intersectI(home,u2) );
+	  GECODE_ME_CHECK_MODIFIED(modified, x2.intersectI(home,u2) );
 	}
 
 	if (modified || Rel::testSetEventUB(me2) )
@@ -94,13 +94,13 @@ namespace Gecode { namespace Set { namespace RelOp {
 	    modified = false;
 	    // 5) x0 <= x2
 	    LubRanges<View2> x2ub1(x2);
-	    GECODE_SET_ME_CHECK_B(modified, x0.intersectI(home,x2ub1) );
+	    GECODE_ME_CHECK_MODIFIED(modified, x0.intersectI(home,x2ub1) );
 	    x0ubmod |= modified;
 
 	    // 6) x1 <= x2
 	    bool modified2=false;
 	    LubRanges<View2> x2ub2(x2);
-	    GECODE_SET_ME_CHECK_B(modified2, x1.intersectI(home,x2ub2) );
+	    GECODE_ME_CHECK_MODIFIED(modified2, x1.intersectI(home,x2ub2) );
 	    x1ubmod |= modified2;
 	    modified |= modified2;
 	  }
@@ -120,7 +120,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 	    LubRanges<View0> x0ub(x0);
 	    Iter::Ranges::Diff<GlbRanges<View2>, LubRanges<View0> >
 	      diff(x2lb, x0ub);
-	    GECODE_SET_ME_CHECK_B(modified, x1.includeI(home,diff) );
+	    GECODE_ME_CHECK_MODIFIED(modified, x1.includeI(home,diff) );
 	  }
 
 	if (Rel::testSetEventLB(me2) || Rel::testSetEventUB(me1)
@@ -131,7 +131,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 	    LubRanges<View1> x1ub(x1);
 	    Iter::Ranges::Diff<GlbRanges<View2>, LubRanges<View1> >
 	      diff(x2lb, x1ub);
-	    GECODE_SET_ME_CHECK_B(modified, x0.includeI(home,diff) );
+	    GECODE_ME_CHECK_MODIFIED(modified, x0.includeI(home,diff) );
 	  }
 
  	if (Rel::testSetEventLB(me0,me1) || modified)
@@ -142,7 +142,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 	    GlbRanges<View1> x1lb(x1);
 	    Iter::Ranges::Union<GlbRanges<View0>, GlbRanges<View1> >
 	      u1(x0lb,x1lb);
-	    GECODE_SET_ME_CHECK_B(modified, x2.includeI(home,u1) );
+	    GECODE_ME_CHECK_MODIFIED(modified, x2.includeI(home,u1) );
 	  }
 
       } while(modified);

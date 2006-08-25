@@ -244,7 +244,8 @@ SETSRC0 =								 \
 	projectors.cc							 \
 	projectors/set-expr.cc projectors/projector.cc			 \
 	projectors/projector-set.cc					 \
-	projectors/propagator/re-nary.cc
+	projectors/propagator/re-nary.cc				 \
+	projectors/compiler.cc
 SETVARIMP = \
         gecode/set/var/imp-hdr.icc gecode/set/var/imp-body.icc
 SETHDR0 =								     \
@@ -266,11 +267,12 @@ SETHDR0 =								     \
 	sequence/common.icc convex/conv.icc convex/hull.icc convex.hh	     \
 	propagator.icc rel-op.hh					     \
 	branch.hh branch/select-val.icc branch/select-view.icc		     \
-	projectors.hh							     \
+	projectors.hh projectors-compiler.hh				     \
 	projectors/projector.icc					     \
 	projectors/projector-set.icc projectors/set-expr.icc		     \
 	projectors/propagator/nary.icc					     \
-	projectors/propagator/re-nary.icc
+	projectors/propagator/re-nary.icc				     \
+	projectors/projpropspec.icc
 
 SETSRC		= $(SETSRC0:%=gecode/set/%)
 SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%) $(SETVARIMP)

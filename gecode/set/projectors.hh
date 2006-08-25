@@ -51,7 +51,14 @@ namespace Gecode {
   public:
     /// Instructions for set-valued expression code
     enum Instruction {
-	COMPLEMENT, INTER, UNION, GLB, LUB, EMPTY, UNIVERSE, LAST
+      COMPLEMENT, ///< Complement
+      INTER,	  ///< Intersection
+      UNION,	  ///< Union
+      GLB,	  ///< Greatest lower bound
+      LUB,	  ///< Least upper bound
+      EMPTY,	  ///< Constant empty set
+      UNIVERSE,   ///< Constant universal set
+      LAST	  ///< First integer to use for immediate arguments
     };
 
     ///\name Construction and initialization
@@ -74,7 +81,7 @@ namespace Gecode {
     /// Return number of instructions
     int size(void) const;
 
-    /// Return instruction at position \a ii
+    /// Return instruction at position \a i
     int operator[](int i) const;
 
   };
@@ -89,8 +96,8 @@ namespace Gecode {
 
     /// Relation used to connect two set expressions
     enum RelType {
-      REL_INTER,
-      REL_UNION
+      REL_INTER, ///< Intersection relation
+      REL_UNION  ///< Union relation
     };
     
   private:
@@ -172,6 +179,15 @@ namespace Gecode {
     /// Compute size of least upper bound
     unsigned int lubSize(ViewArray<Set::SetView>& x);
 
+    /// Return the set expression code for the glb
+    const SetExprCode& getGlb(void) const;
+
+    /// Return the set expression code for the lub
+    const SetExprCode& getLub(void) const;
+
+    /// Return the variable index for this projector
+    SetExpr::var_idx getIdx(void) const;
+
   };
   
   /**
@@ -206,6 +222,12 @@ namespace Gecode {
     /// Check for subsumption or failure
     GECODE_SET_EXPORT ExecStatus check(Space* home,
 				       ViewArray<Set::SetView>& x);
+
+    /// Return number of projectors int the set
+    int size(void) const;
+
+    /// Return projector \a i from the set
+    const Projector& operator[](int i) const;
 
   };
 

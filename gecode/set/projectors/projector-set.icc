@@ -55,6 +55,12 @@ namespace Gecode {
     return failedCount==_count ? ES_FAILED : ES_NOFIX;
   }
 
+  forceinline int
+  ProjectorSet::size(void) const { return _count; }
+
+  forceinline const Projector&
+  ProjectorSet::operator[](int i) const { return _ps[i]; }
+
 }
 
 // STATISTICS: set-prop

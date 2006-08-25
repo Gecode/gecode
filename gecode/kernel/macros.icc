@@ -31,6 +31,20 @@
     return ::Gecode::ES_FAILED;
 
 /**
+ * \brief Check whether \a me is failed or modified, and forward failure.
+ *
+ * To be used inside the propagate member function of a propagator
+ * or the commit member function of a branching.
+ * \ingroup TaskActor
+ */
+#define GECODE_ME_CHECK_MODIFIED(modified, me) {           \
+    ModEvent __me__ ## __LINE__ = (me);                    \
+    if (::Gecode::me_failed(__me__ ## __LINE__))	   \
+      return ::Gecode::ES_FAILED;                          \
+    modified = ::Gecode::me_modified(__me__ ## __LINE__);  \
+  }
+
+/**
  * \brief Check whether modification event \a me is failed, and fail space \a home.
  *
  * To be used inside post functions.
