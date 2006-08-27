@@ -206,6 +206,10 @@ namespace Gecode { namespace Int { namespace Count {
       return ES_SUBSUMED;
     if (z.min() > atmost())
       return ES_SUBSUMED;
+    if (z.assigned()) {
+      GECODE_ES_CHECK((NqInt<VX,VY>::post(home,x,y,z.val()+c)));
+      return ES_SUBSUMED;
+    }
     return ES_FIX;
   }
 

@@ -53,6 +53,15 @@ Date:		Unknown
 Jabba Jabba
 
 [ENTRY]
+Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Make count constraints with integer number of equal ocurrences
+more incremental using dynamic subscriptions (gives a 20-30%
+speedup).
+
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor

@@ -429,9 +429,12 @@ namespace Gecode { namespace Int { namespace Count {
   template<class VX, class VY>
   forceinline bool
   NqInt<VX,VY>::resubscribe(Space* home, VX& z) {
-    z.cancel(home,this,PC_INT_DOM);
-    if (holds(z,y) == RT_TRUE)
-      c--;
+    switch (holds(z,y)) {
+    case RT_FALSE: break;
+    case RT_TRUE:  c--; break;
+    case RT_MAYBE: return true;
+    default:       GECODE_NEVER;
+    }
     int n = x.size();
     for (int i=n; i--; )
       switch (holds(x[i],y)) {
@@ -443,6 +446,7 @@ namespace Gecode { namespace Int { namespace Count {
 	break;
       case RT_MAYBE: 
 	// New undecided view found
+	z.cancel(home,this,PC_INT_DOM);
 	z=x[i]; x[i]=x[--n]; 
 	x.size(n);
 	z.subscribe(home,this,PC_INT_DOM,false);
@@ -458,12 +462,8 @@ namespace Gecode { namespace Int { namespace Count {
   template<class VX, class VY>
   ExecStatus
   NqInt<VX,VY>::propagate(Space* home) {
-    bool s0 = true; 
-    if (holds(x0,y) != RT_MAYBE)
-      s0 = resubscribe(home,x0);
-    bool s1 = true;
-    if (holds(x1,y) != RT_MAYBE)
-      s1 = resubscribe(home,x1);
+    bool s0 = resubscribe(home,x0);
+    bool s1 = resubscribe(home,x1);
     int n = x.size() + s0 + s1;
     if ((n < c) || (c < 0))
       return ES_SUBSUMED;
