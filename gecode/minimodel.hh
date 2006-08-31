@@ -546,6 +546,133 @@ namespace Gecode {
 namespace Gecode {
 
   /**
+   * \defgroup TaskMiniModelIntAlias Aliases for integer constraints
+   *
+   * Contains definitions of common constraints which have different
+   * names in Gecode.
+   *
+   * \ingroup TaskMiniModel
+   */
+
+  //@{
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\leq m\f$
+   *
+   * Supports domain-consistent propagation only.
+   */
+  inline void
+  atmost(Space* home, const IntVarArgs& x, int n, int m,
+	 IntConLevel icl=ICL_DEF) {
+    count(home,x,n,IRT_LQ,m,icl);
+  }
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq m\f$
+   *
+   * Supports domain-consistent propagation only.
+   */
+  inline void
+  atmost(Space* home, const IntVarArgs& x, IntVar y, int m,
+	 IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_LQ,m,icl);
+  }
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\leq z\f$
+   *
+   * Supports domain-consistent propagation only.
+   */
+  inline void
+  atmost(Space* home, const IntVarArgs& x, int n, IntVar z,
+	 IntConLevel icl=ICL_DEF) {
+    count(home,x,n,IRT_LQ,z,icl);
+  }
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq z\f$
+   *
+   * Supports domain-consistent propagation only.
+   */
+  inline void
+  atmost(Space* home, const IntVarArgs& x, IntVar y, IntVar z,
+	 IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_LQ,z,icl);
+  }
+
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq m\f$
+   *
+   * Supports domain-consistent propagation only.
+   */
+  inline void
+  atleast(Space* home, const IntVarArgs& x, int n, int m,
+	  IntConLevel icl=ICL_DEF) {
+    count(home,x,n,IRT_GQ,m,icl);
+  }
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq m\f$
+   *
+   * Supports domain-consistent propagation only.
+   */
+  inline void
+  atleast(Space* home, const IntVarArgs& x, IntVar y, int m,
+	  IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_GQ,m,icl);
+  }
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq z\f$
+   *
+   * Supports domain-consistent propagation only.
+   */
+  inline void
+  atleast(Space* home, const IntVarArgs& x, int n, IntVar z,
+	  IntConLevel icl=ICL_DEF) {
+    count(home,x,n,IRT_GQ,z,icl);
+  }
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq z\f$
+   *
+   * Supports domain-consistent propagation only.
+   */
+  inline void
+  atleast(Space* home, const IntVarArgs& x, IntVar y, IntVar z,
+	  IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_GQ,z,icl);
+  }
+
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=m\f$
+   *
+   * Supports domain-consistent propagation only.
+   */
+  inline void
+  exactly(Space* home, const IntVarArgs& x, int n, int m,
+	  IntConLevel icl=ICL_DEF) {
+    count(home,x,n,IRT_EQ,m,icl);
+  }
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=m\f$
+   *
+   * Supports domain-consistent propagation only.
+   */
+  inline void
+  exactly(Space* home, const IntVarArgs& x, IntVar y, int m,
+	  IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_EQ,m,icl);
+  }
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=z\f$
+   *
+   * Supports domain-consistent propagation only.
+   */
+  inline void
+  exactly(Space* home, const IntVarArgs& x, int n, IntVar z,
+	  IntConLevel icl=ICL_DEF) {
+    count(home,x,n,IRT_EQ,z,icl);
+  }
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=z\f$
+   *
+   * Supports domain-consistent propagation only.
+   */
+  inline void
+  exactly(Space* home, const IntVarArgs& x, IntVar y, IntVar z,
+	  IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_EQ,z,icl);
+  }
+
+  //@}
+
+}
+
+namespace Gecode {
+
+  /**
    * \defgroup TaskMiniModelScheduling Alternative interfaces to scheduling constraints
    *
    * \ingroup TaskMiniModel
