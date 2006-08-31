@@ -362,15 +362,19 @@ namespace Gecode {
   rel(Space* home, IntVar x, IntRelType r, int c, BoolVar b,
       IntConLevel icl=ICL_DEF);
 
-  /** \brief Post propagator for lexical order between \a x and \a y.
+  /** \brief Post propagator for relation between \a x and \a y.
    *
-   * - Throws an exception of type Int::ArgumentSizeMismatch, if
-   *   \a x and \a y are of different size.
-   * - Throws an exception of type Int::OnlyInequalityRelations, if
-   *   \a r is not an inequality relation.
+   * Note that for the inequality relations this corresponds to
+   * the lexical order between \a x and \a y.
+   *
+   * Supports both bounds (\a icl = ICL_BND) and
+   * domain-consistency (\a icl = ICL_DOM, default).
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   * \a x and \a y are of different size.
    */
   GECODE_INT_EXPORT void
-  lex(Space* home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
+  rel(Space* home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
       IntConLevel icl=ICL_DEF);
   //@}
 

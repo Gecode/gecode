@@ -57,7 +57,14 @@ Module: minimodel
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Added aliases atleast, atmeast, and exactly for the count constraint.
+Added aliases lex, atleast, atmeast, and exactly for the count constraint.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Renamed lex constraint to rel (as it also supports equality and disequality).
 
 [ENTRY]
 Module: int

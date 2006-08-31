@@ -484,6 +484,34 @@ namespace Gecode { namespace Int { namespace Rel {
 			    ViewArray<ViewTuple<View,2> >& xy, bool strict);
   };
 
+
+  /**
+   * \brief %Propagator for n-ary disequlaity
+   *
+   * Requires \code #include "gecode/int/rel.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class View>
+  class NaryNq : public BinaryPropagator<ViewTuple<View,2>,PC_INT_DOM> {
+  protected:
+    using BinaryPropagator<ViewTuple<View,2>,PC_INT_DOM>::x0;
+    using BinaryPropagator<ViewTuple<View,2>,PC_INT_DOM>::x1;
+    /// Views not yet subscribed to
+    ViewArray<ViewTuple<View,2> > x;
+    /// Constructor for posting
+    NaryNq(Space* home,  ViewArray<ViewTuple<View,2> >& x);
+    /// Constructor for cloning \a p
+    NaryNq(Space* home, bool share, NaryNq& p);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator for \f$\exists i\in\{0,\ldots,|x|-1\}:\;x_i\neq y_i\f$
+    static  ExecStatus post(Space* home, ViewArray<ViewTuple<View,2> >& x);
+  };
+
+
 }}}
 
 #include "gecode/int/rel/eq.icc"

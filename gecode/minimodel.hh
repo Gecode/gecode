@@ -665,6 +665,16 @@ namespace Gecode {
 	  IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_EQ,z,icl);
   }
+  /** \brief Post propagator for lexical order between \a x and \a y.
+   *
+   * - Throws an exception of type Int::ArgumentSizeMismatch, if
+   *   \a x and \a y are of different size.
+   */
+  inline void
+  lex(Space* home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
+      IntConLevel icl=ICL_DEF) {
+    rel(home,x,r,y,icl);
+  }
 
   //@}
 

@@ -250,12 +250,34 @@ public:
     for (int i=0; i<n; i++) {
       y[i]=x[i]; z[i]=x[n+i];
     }
-    lex(home, y, strict ? IRT_LE : IRT_LQ, z);
+    rel(home, y, strict ? IRT_LE : IRT_LQ, z);
   }
 };
 Lex _lexlq("Lex::Lq",3,false);
 Lex _lexle("Lex::Le",3,true);
 
+
+class NaryNq : public IntTest {
+private:
+  int  n;
+public:
+  NaryNq(const char* t, int m)
+    : IntTest(t,m*2,ds_22), n(m) {}
+  virtual bool solution(const Assignment& x) const {
+    for (int i=0; i<n; i++)
+      if (x[i] != x[n+i])
+	return true;
+    return false;
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    IntVarArgs y(n); IntVarArgs z(n);
+    for (int i=0; i<n; i++) {
+      y[i]=x[i]; z[i]=x[n+i];
+    }
+    rel(home, y, IRT_NQ, z);
+  }
+};
+NaryNq _nnq("NaryNq",3);
 
 // STATISTICS: test-int
 

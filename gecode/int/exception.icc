@@ -72,13 +72,6 @@ namespace Gecode { namespace Int {
     ArgumentSame(const char* l);
   };
 
-  /// %Exception: Only inequality relations are supported
-  class OnlyInequalityRelations : public Exception  {
-  public:
-    /// Initialize with location \a l
-    OnlyInequalityRelations(const char* l);
-  };
-
   /// %Exception: Unknown relation passed as argument
   class UnknownRelation : public Exception  {
   public:
@@ -129,10 +122,6 @@ namespace Gecode { namespace Int {
   ArgumentSame::ArgumentSame(const char* l)
     : Exception(l,"Argument array contains same variable multiply") {}
 
-
-  inline
-  OnlyInequalityRelations::OnlyInequalityRelations(const char* l)
-    : Exception(l,"Only inequality relations are allowed") {}
 
   inline
   UnknownRelation::UnknownRelation(const char* l)

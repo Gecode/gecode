@@ -95,7 +95,7 @@ public:
 	ry1[j] = y1(i-1,j);
 	ry2[j] = y2(i,j);
       }
-      lex(this, ry1, IRT_GQ, ry2);
+      rel(this, ry1, IRT_GQ, ry2);
     }
 
     branch(this, z, BVAR_SIZE_MIN, BVAL_SPLIT_MIN);

@@ -218,40 +218,72 @@ namespace Gecode {
 
 
   void
-  lex(Space* home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
-      IntConLevel) {
+  rel(Space* home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
+      IntConLevel icl) {
     if (x.size() != y.size())
-      throw ArgumentSizeMismatch("Int::lex");
+      throw ArgumentSizeMismatch("Int::rel");
     if (home->failed()) return;
 
-    ViewArray<ViewTuple<IntView,2> > xy(home,x.size());
     switch (r) {
-    case IRT_GR:
-      for (int i = x.size(); i--; ) {
-	xy[i][0]=y[i]; xy[i][1]=x[i];
+    case IRT_GR: 
+      {
+	ViewArray<ViewTuple<IntView,2> > xy(home,x.size());
+	for (int i = x.size(); i--; ) {
+	  xy[i][0]=y[i]; xy[i][1]=x[i];
+	}
+	GECODE_ES_FAIL(home,Rel::Lex<IntView>::post(home,xy,true));
       }
-      goto le;
-    case IRT_LE:
-      for (int i = x.size(); i--; ) {
-	xy[i][0]=x[i]; xy[i][1]=y[i];
-      }
-    le:
-      GECODE_ES_FAIL(home,Rel::Lex<IntView>::post(home,xy,true));
       break;
-    case IRT_GQ:
-      for (int i = x.size(); i--; ) {
-	xy[i][0]=y[i]; xy[i][1]=x[i];
+    case IRT_LE: 
+      {
+	ViewArray<ViewTuple<IntView,2> > xy(home,x.size());
+	for (int i = x.size(); i--; ) {
+	  xy[i][0]=x[i]; xy[i][1]=y[i];
+	}
+	GECODE_ES_FAIL(home,Rel::Lex<IntView>::post(home,xy,true));
       }
-      goto lq;
-    case IRT_LQ:
-      for (int i = x.size(); i--; ) {
-	xy[i][0]=x[i]; xy[i][1]=y[i];
+      break;
+    case IRT_GQ: 
+      {
+	ViewArray<ViewTuple<IntView,2> > xy(home,x.size());
+	for (int i = x.size(); i--; ) {
+	  xy[i][0]=y[i]; xy[i][1]=x[i];
+	}
+	GECODE_ES_FAIL(home,Rel::Lex<IntView>::post(home,xy,false));
       }
-    lq:
-      GECODE_ES_FAIL(home,Rel::Lex<IntView>::post(home,xy,false));
+      break;
+    case IRT_LQ: 
+      {
+	ViewArray<ViewTuple<IntView,2> > xy(home,x.size());
+	for (int i = x.size(); i--; ) {
+	  xy[i][0]=x[i]; xy[i][1]=y[i];
+	}
+	GECODE_ES_FAIL(home,Rel::Lex<IntView>::post(home,xy,false));
+      }
+      break;
+    case IRT_EQ:
+      if (icl == ICL_BND)
+	for (int i=x.size(); i--; ) {
+	  GECODE_ES_FAIL(home,(Rel::EqBnd<IntView,IntView>
+			       ::post(home,x[i],y[i])));
+	}
+      else
+	for (int i=x.size(); i--; ) {
+	  GECODE_ES_FAIL(home,(Rel::EqDom<IntView,IntView>
+			       ::post(home,x[i],y[i])));
+	}
+      break;
+    case IRT_NQ: 
+      {
+	ViewArray<ViewTuple<IntView,2> > xy(home,x.size());
+	for (int i = x.size(); i--; ) {
+	  xy[i][0]=x[i]; xy[i][1]=y[i];
+	}
+	GECODE_ES_FAIL(home,Rel::NaryNq<IntView>::post(home,xy));
+      }
       break;
     default:
-      throw OnlyInequalityRelations("Int::lex");
+      throw UnknownRelation("Int::rel");
     }
   }
 

@@ -91,7 +91,7 @@ public:
 	row1[j] = p(i-1,j);
 	row2[j] = p(i,j);
       }
-      lex(this, row1, IRT_GQ, row2);
+      rel(this, row1, IRT_GQ, row2);
     }
     for (int j=1;j<par.b;j++) {
       BoolVarArgs col1(par.v);
@@ -100,7 +100,7 @@ public:
 	col1[i] = p(i,j-1);
 	col2[i] = p(i,j);
       }
-      lex(this, col1, IRT_GQ, col2);
+      rel(this, col1, IRT_GQ, col2);
     }
 
     branch(this, _p, BVAR_NONE,
