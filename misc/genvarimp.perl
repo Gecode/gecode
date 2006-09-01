@@ -60,6 +60,7 @@ $pcftr  = ""; # Footer text for propagation conditions
 # $men : name table
 # $meh : header table
 $me_n = 0; # running number of modification events
+$me_subscribe = ""; 
 
 # $pcn : name table
 # $pch : header table
@@ -107,9 +108,12 @@ while ($l = <FILE>) {
 	  die "Unknown special modification event: $rhs\n";
 	}
         if ($rhs eq "SUBSCRIBE") {
-           $me_subscribe = "ME_${VTI}_$lhs";
+	  $me_subscribe = "ME_${VTI}_$lhs";
         } else {
 	  $mespecial{$lhs} = $rhs;
+	  if ($rhs eq "ASSIGNED") {
+	    $me_assigned = "ME_${VTI}_$lhs";
+	  }
         }
 	$n = $lhs;
       } elsif ($l =~ /^Name:\s*(\w+)/io) {
@@ -205,6 +209,11 @@ $maxpc = "PC_${VTI}_$pcn[$pc_n-1]";
 $class = "${name}VarImpBase";
 $diffc = "${name}MeDiff";
 $base  = "Gecode::Variable<VTI_$VTI,$maxpc,$diffc>";
+
+## Check whether there is only one real event
+if ($me_n == 3) {
+  $me_subscribe = $me_assigned;
+}
 
 print <<EOF
 /*
@@ -359,6 +368,8 @@ print <<EOF
      * from \\a PC_GEN_ASSIGNED.
      */
     void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
+    /// Notify that variable implementation has been modified with modification event \\a me
+    void notify(Space* home, ModEvent me);
     //\@}
 
 EOF
@@ -383,7 +394,9 @@ print <<EOF
 EOF
 ;
 
-if ($me_max_n <= 4) {
+if ($me_max_n == 2) {
+  print "    return me2^me1;\n";
+} elsif ($me_max_n <= 4) {
   print "    const int med = (\n";
 
   for ($i=0; $i<$me_max_n;$i++) {
@@ -460,13 +473,30 @@ EOF
   print <<EOF
 
   $forceinline void
-  ${class}::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned,
-                      bool process) {
+  ${class}::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
     ${base}::subscribe(home,p,pc,assigned,$me_subscribe,process);
   }
 
 EOF
 ;
+
+if ($me_max_n == 2) {
+  print <<EOF
+  $forceinline void
+  ${class}::notify(Space* home, ModEvent) {
+    ${base}::notify(home);
+  }
+EOF
+;
+} else {
+  print <<EOF
+  $forceinline void
+  ${class}::notify(Space* home, ModEvent me) {
+    ${base}::notify(home,me);
+  }
+EOF
+;
+}
 
 } else {
 
@@ -510,6 +540,31 @@ EOF
   print "  };\n";
 }
 
+if ($me_max_n == 2) {
+
+  print <<EOF
+
+
+  /*
+   * The variable processor for $class
+   *
+   */
+
+  void
+  ${class}::Processor::process(Space* home, VarBase* _x) {
+    // Process modified variables
+    ${base}* x = 
+      static_cast<${base}*>(_x);
+    do {
+      x->process(home); x = x->next();
+    } while (x != NULL);
+  }
+
+EOF
+;
+
+
+} else {
   print <<EOF
 
 
@@ -581,6 +636,8 @@ EOF
 
 EOF
 ;
+
+}
 
   if ($forcedispose) {
     print <<EOF

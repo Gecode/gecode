@@ -70,12 +70,14 @@ Forceinline:	forceinline
 ##  - SUBSCRIBE: when a propagator subscribes to a variable, the
 ##    propagator will be processed with that event initially.
 ##
-## Note that all of these special cases must be present!
+## Note that at least the special cases "FAILED", "NONE", and "ASSIGNED"
+## must be present. In case there are more events defined, then also
+## "SUBSCRIBE" must be present.
 ##
 ## Additionally, for all modfication events but the special cases
 ## "FAILED" and "NONE" one needs to define the combination of
 ## modification events by
-##	Combine: <me1>=<me2>, ... (repeeated)
+##	Combine: <me1>=<me2>, ... (repeated)
 ## This means that the combination of the currently defined
 ## modification event together with <me1> results in <me2>.
 ##
