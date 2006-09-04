@@ -92,22 +92,9 @@ namespace Gecode {
     cumulatives(home, machine, start, duration, end, height, limit, true, cl);
   }
 
-  /*
-  template<class In> class ArgType;
 
-  template<>
-  class ArgType<IntArgs> {
-  public:
-    typedef IntArgs Result;
-  };
-
-  template<>
-  class ArgType<IntVarArgs> {
-  public:
-    typedef IntView Result;
-  };
-  */
   namespace {
+    /// Delayed optimized construction of constant value.
     class ConstVar {
       Space *home_;
       int val_;
@@ -118,11 +105,13 @@ namespace Gecode {
       operator IntVar() { return IntVar(home_, val_, val_); }
     };
 
+    /// Return an IntVar representing the constant value \a val
     IntVar make_intvar(Space *home, int val)
     {
       return IntVar(home, val, val);
     }
 
+    /// Return the IntVar  \a iv directly
     IntVar make_intvar(Space *home, IntVar iv)
     {
       return iv;
@@ -147,7 +136,10 @@ namespace Gecode {
       Height h(n);
 
       if (!at_most) {
-	int smin, smax, emin, emax;
+	int smin = Limits::Int::int_max, 
+	    smax = Limits::Int::int_min, 
+	    emin = Limits::Int::int_max, 
+	    emax = Limits::Int::int_min;
 	IntVarArgs end(n-1);
 	for (int i = start.size(); i--; ) {
 	  m[i] = 0;
@@ -156,7 +148,6 @@ namespace Gecode {
 	  smax = std::max(s[i].max(), smax);
 	  d[i] = make_intvar(home, duration[i]);
 	  e[i] = IntVar(home, Limits::Int::int_min, Limits::Int::int_max);
-	  //s[i].min()+d[i].min(), s[i].max()+d[i].max());
 	  end[i] = e[i];
 	  emin = std::min(e[i].min(), emin);
 	  emax = std::max(e[i].max(), emax);
