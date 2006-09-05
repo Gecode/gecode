@@ -186,6 +186,12 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class View>
+  PropCost
+  NaryOrTrue<View>::cost(void) const {
+    return PC_LINEAR_LO;
+  }
+
+  template<class View>
   forceinline
   NaryOrTrue<View>::NaryOrTrue(Space* home, bool share, NaryOrTrue<View>& p)
     : BinaryPropagator<View,PC_INT_VAL>(home,share,p), x(home,p.x.size()) {
