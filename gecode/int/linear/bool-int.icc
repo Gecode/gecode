@@ -353,6 +353,12 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class VX>
+  PropCost
+  NqBoolInt<VX>::cost(void) const {
+    return PC_LINEAR_LO;
+  }
+
+  template<class VX>
   forceinline bool
   NqBoolInt<VX>::resubscribe(Space* home, VX& y) {
     if (y.one())

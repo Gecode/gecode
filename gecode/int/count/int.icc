@@ -427,6 +427,12 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template<class VX, class VY>
+  PropCost
+  NqInt<VX,VY>::cost(void) const {
+    return PC_LINEAR_LO;
+  }
+
+  template<class VX, class VY>
   forceinline bool
   NqInt<VX,VY>::resubscribe(Space* home, VX& z) {
     switch (holds(z,y)) {

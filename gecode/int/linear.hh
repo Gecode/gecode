@@ -846,6 +846,8 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
+    /// Cost function (defined as PC_LINEAR_LO)
+    virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \neq c\f$
