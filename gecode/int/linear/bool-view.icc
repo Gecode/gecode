@@ -71,10 +71,8 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class XV, class YV>
   ExecStatus
   EqBoolView<XV,YV>::post(Space* home, ViewArray<XV>& x, YV y, int c) {
-    if (y.assigned()) {
-      GECODE_ES_CHECK(EqBoolInt<XV>::post(home,x,y.val()+c));
-      return ES_OK;
-    }
+    if (y.assigned())
+      return EqBoolInt<XV>::post(home,x,y.val()+c);
     int n = x.size();
     for (int i = n; i--; )
       if (x[i].one()) {
@@ -161,6 +159,8 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class XV, class YV>
   ExecStatus
   NqBoolView<XV,YV>::post(Space* home, ViewArray<XV>& x, YV y, int c) {
+    if (y.assigned())
+      return NqBoolInt<XV>::post(home,x,y.val()+c);
     int n = x.size();
     for (int i = n; i--; )
       if (x[i].one()) {
@@ -243,10 +243,8 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class XV, class YV>
   ExecStatus
   GqBoolView<XV,YV>::post(Space* home, ViewArray<XV>& x, YV y, int c) {
-    if (y.assigned()) {
-      GECODE_ES_CHECK(GqBoolInt<XV>::post(home,x,y.val()+c));
-      return ES_OK;
-    }
+    if (y.assigned())
+      return GqBoolInt<XV>::post(home,x,y.val()+c);
     // Eliminate assigned views
     int n = x.size();
     for (int i = n; i--; )
