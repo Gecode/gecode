@@ -188,7 +188,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class View>
   PropCost
   NaryOrTrue<View>::cost(void) const {
-    return PC_LINEAR_LO;
+    return cost_lo(x.size(),PC_LINEAR_LO);
   }
 
   template<class View>
