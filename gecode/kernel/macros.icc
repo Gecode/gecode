@@ -41,7 +41,7 @@
     ModEvent __me__ ## __LINE__ = (me);                    \
     if (::Gecode::me_failed(__me__ ## __LINE__))	   \
       return ::Gecode::ES_FAILED;                          \
-    modified = ::Gecode::me_modified(__me__ ## __LINE__);  \
+    modified |= ::Gecode::me_modified(__me__ ## __LINE__); \
   }
 
 /**
