@@ -271,8 +271,7 @@ SETHDR0 =								     \
 	projectors/projector.icc					     \
 	projectors/projector-set.icc projectors/set-expr.icc		     \
 	projectors/propagator/nary.icc					     \
-	projectors/propagator/re-nary.icc				     \
-	projectors/projpropspec.icc
+	projectors/propagator/re-nary.icc
 
 SETSRC		= $(SETSRC0:%=gecode/set/%)
 SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%) $(SETVARIMP)

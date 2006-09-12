@@ -47,10 +47,18 @@
 #
 
 [RELEASE]
-Version:	1.2.3
+Version:	1.3.0
 Date:		Unknown
 [DESCRIPTION]
 Jabba Jabba
+
+[ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+The pkg-config files now contain the correct path if you configured to the
+default prefix (i.e. /usr/local).
 
 [ENTRY]
 Module: minimodel
