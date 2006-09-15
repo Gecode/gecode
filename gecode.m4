@@ -466,12 +466,23 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
 
 AC_DEFUN([AC_GECODE_GCC_OPTIMIZED_SWITCHES],
  [AC_GECODE_CHECK_CXXFLAG([-O3])
-  AC_GECODE_CHECK_CXXFLAG([-fno-strict-aliasing])
-  AC_GECODE_CHECK_CXXFLAG([-fvisibility=hidden],
-    [AC_DEFINE(GCC_HASCLASSVISIBILITY)
-     AC_GECODE_ADD_TO_CXXFLAGS([-fvisibility=hidden])
-     AC_GECODE_CHECK_CXXFLAG([-fno-rtti])],
-    [])])
+  AC_GECODE_CHECK_CXXFLAG([-fno-strict-aliasing])])
+
+AC_DEFUN([AC_GECODE_GCC_VISIBILITY],
+  	[AC_ARG_ENABLE([gcc-visibility],
+	   AC_HELP_STRING([--enable-gcc-visibility],
+	     [use gcc visibility attributes @<:@default=no@:>@]))
+	 AC_MSG_CHECKING(whether to use gcc visibility attributes)
+	 if test "${enable_gcc_visibility:-no}" = "yes"; then
+	    AC_MSG_RESULT(yes)
+	    AC_GECODE_CHECK_CXXFLAG([-fvisibility=hidden],
+	      [AC_DEFINE(GCC_HASCLASSVISIBILITY)
+	        AC_GECODE_ADD_TO_CXXFLAGS([-fvisibility=hidden])
+	        AC_GECODE_CHECK_CXXFLAG([-fno-rtti])],
+	       [])
+	 else
+	    AC_MSG_RESULT(no)
+	 fi])
 
 AC_DEFUN([AC_GECODE_GCC_DEBUG_SWITCHES],
   [AC_GECODE_CHECK_CXXFLAG([-fno-inline-functions])

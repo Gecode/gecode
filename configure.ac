@@ -53,12 +53,13 @@ AC_GECODE_GET_OS
 dnl determine which compiler we are using
 AC_CXX_COMPILER_VENDOR(ac_gecode_compiler_vendor)
 
+dnl check whether we want to build universal binaries on Mac OS X
 AC_GECODE_UNIVERSAL
 
 dnl check whether we want to build static libraries
 AC_GECODE_STATICLIBS
 
-dnl check whether we want to have assertions and debuggin options
+dnl check whether we want to have assertions and debugging options
 AC_GECODE_DEBUG
 
 dnl check whether we want to have support for finding memory leaks
@@ -66,6 +67,9 @@ AC_GECODE_LEAK_DEBUG
 
 dnl check whether we want audit code in our build
 AC_GECODE_AUDIT
+
+dnl check whether we want to use visibility attributes with gcc
+AC_GECODE_GCC_VISIBILITY
 
 dnl check whether we want to produce code suitable for profiling
 AC_GECODE_PROFILE
