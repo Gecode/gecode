@@ -182,7 +182,7 @@ namespace Gecode {
 
    if (spec._reified || spec._negated) {
       hhos << indent << "  /// Check if the constraint holds" << endl;
-      hhos << indent << "  bool check(Space* home);" << endl;
+      hhos << indent << "  ExecStatus check(Space* home);" << endl;
       hhos << indent << "  /// Propagate negated version" << endl;
       hhos << indent << "  ExecStatus propagateNegative(Space* home);"
            << endl << endl;	
@@ -220,6 +220,17 @@ namespace Gecode {
 
   string
   ProjectorCompiler::propcond(PropCond pc) {
+    if (spec._reified || spec._negated) {
+      switch (pc) {
+      case Gecode::Set::PC_SET_VAL : return "Gecode::Set::PC_SET_VAL";
+      case Gecode::Set::PC_SET_CARD : return "Gecode::Set::PC_SET_CARD";
+      case Gecode::Set::PC_SET_CGLB :
+      case Gecode::Set::PC_SET_CLUB :
+      case Gecode::Set::PC_SET_ANY : return "Gecode::Set::PC_SET_ANY";
+      default: GECODE_NEVER;
+      }	
+    }
+
     switch (pc) {
     case Gecode::Set::PC_SET_VAL : return "Gecode::Set::PC_SET_VAL";
     case Gecode::Set::PC_SET_CARD : return "Gecode::Set::PC_SET_CARD";
@@ -414,9 +425,9 @@ namespace Gecode {
 	  string t = typestack.back(); typestack.pop_back();
 	  int a = argstack.back(); argstack.pop_back();
 	  iccos << indent
-		<< "ComplementIter<" << t << " > i" << (++arg)
+		<< "RangesCompl<" << t << " > i" << (++arg)
 		<< "(i" << a << ");" << endl;
-	  typestack.push_back("ComplementIter<"+t+" >");
+	  typestack.push_back("RangesCompl<"+t+" >");
 	  argstack.push_back(arg);
 	}
 	break;
@@ -481,9 +492,9 @@ namespace Gecode {
 	  }
 	  iccos << (++arg);
 	  if (nary())
-	    iccos << "(x[" << a << "]);" << endl;
+	    iccos << "(_x[" << a << "]);" << endl;
 	  else
-	    iccos << "(x" << a << ");" << endl;
+	    iccos << "(_x" << a << ");" << endl;
 	  argstack.push_back(arg);
 	}
 	break;
@@ -510,18 +521,18 @@ namespace Gecode {
   ProjectorCompiler::allAssigned(ostream& os) {
     os << indent << "bool assigned=true;" << endl;
     if (nary()) {
-      os << indent << "for (int i=x.size(); i--;)" << endl;
-      os << indent << "  assigned = assigned && x[i].assigned();" << endl;
+      os << indent << "for (int i=_x.size(); i--;)" << endl;
+      os << indent << "  assigned = assigned && _x[i].assigned();" << endl;
     } else {
       for (int i=0; i<spec._arity; i++)
-        os << indent << "assigned = assigned && x" << i << ".assigned();"
+        os << indent << "assigned = assigned && _x" << i << ".assigned();"
            << endl;
     }
   }
 
   void
   ProjectorCompiler::propagation(void) {
-    if (!spec._negated) {
+    if (!spec._negated || spec._reified) {
       templatehead(iccos);
       iccos << indent << "ExecStatus" << endl << indent << spec._name;
       templateparams();
@@ -553,12 +564,12 @@ namespace Gecode {
         if (glb.size() > 0 && glb[0] != SetExprCode::EMPTY) {
   	  iccos << indent << "{" << endl;
 	  ++indent;
-	  int arg = iterator(glb);
+	  int arg = iterator(glb, false, true);
 	  iccos << indent << me_check;
 	  if (nary())
-	    iccos << "x[" << spec._ps[i].getIdx() << "]";
+	    iccos << "_x[" << spec._ps[i].getIdx() << "]";
 	  else
-	    iccos << "x" << spec._ps[i].getIdx();
+	    iccos << "_x" << spec._ps[i].getIdx();
 	  iccos << ".includeI(home, i" << arg << "));" << endl;
 	  --indent;
 	  iccos << indent << "}" << endl;
@@ -570,9 +581,9 @@ namespace Gecode {
 	  int arg = iterator(lub);
 	  iccos << indent << me_check;
 	  if (nary())
-	    iccos << "x[" << spec._ps[i].getIdx() << "]";
+	    iccos << "_x[" << spec._ps[i].getIdx() << "]";
 	  else
-	    iccos << "x" << spec._ps[i].getIdx();
+	    iccos << "_x" << spec._ps[i].getIdx();
 	  iccos << ".intersectI(home, i" << arg << "));" << endl;
 	  --indent;
 	  iccos << indent << "}" << endl;
@@ -612,16 +623,16 @@ namespace Gecode {
         if (glb.size() > 0 && glb[0] != SetExprCode::EMPTY) {
   	  iccos << indent << "{" << endl;
 	  ++indent;
-	  int arg = iterator(glb,true);
+	  int arg = iterator(glb,true,true);
 
           iccos << indent;
 	  if (nary())
-	    iccos << "LubRanges<View> j(x[" << spec._ps[i].getIdx() << "])";
+	    iccos << "LubRanges<View> j(_x[" << spec._ps[i].getIdx() << "]);";
 	  else if (views==SINGLE_VIEW)
-	    iccos << "LubRanges<View> j(x" << spec._ps[i].getIdx() << ")";
+	    iccos << "LubRanges<View> j(_x" << spec._ps[i].getIdx() << ");";
 	  else
 	    iccos << "LubRanges<View" << spec._ps[i].getIdx() << "> j(x"
-	          << spec._ps[i].getIdx() << ")";
+	          << spec._ps[i].getIdx() << ");";
           iccos << endl;
           iccos << indent
                 << "if (!Iter::Ranges::subset(i" << arg
@@ -629,8 +640,11 @@ namespace Gecode {
                 << endl;
           iccos << indent << "while (i" << arg << "()) ++i" << arg << ";"
                 << endl;
-          iccos << indent << "if (i" << arg << ".size() > x[i].cardMax())"
-                << endl;
+          if (nary())
+            iccos << indent << "if (i" << arg << ".size() > _x[" << i << "].cardMax())";
+          else
+            iccos << indent << "if (i" << arg << ".size() > _x" << i << ".cardMax())";
+          iccos << endl;
 	  iccos << indent << "  return ES_FAILED;" << endl;
 	  --indent;
 	  iccos << indent << "}" << endl;
@@ -643,12 +657,12 @@ namespace Gecode {
 
           iccos << indent;
 	  if (nary())
-	    iccos << "GlbRanges<View> j(x[" << spec._ps[i].getIdx() << "])";
+	    iccos << "GlbRanges<View> j(_x[" << spec._ps[i].getIdx() << "]);";
 	  else if (views==SINGLE_VIEW)
-	    iccos << "GlbRanges<View> j(x" << spec._ps[i].getIdx() << ")";
+	    iccos << "GlbRanges<View> j(_x" << spec._ps[i].getIdx() << ");";
 	  else
 	    iccos << "GlbRanges<View" << spec._ps[i].getIdx() << "> j(x"
-	          << spec._ps[i].getIdx() << ")";
+	          << spec._ps[i].getIdx() << ");";
           iccos << endl;
           iccos << indent
                 << "if (!Iter::Ranges::subset(j,i" << arg
@@ -656,8 +670,12 @@ namespace Gecode {
                 << endl;
           iccos << indent << "while (i" << arg << "()) ++i" << arg << ";"
                 << endl;
-          iccos << indent << "if (i" << arg << ".size() < x[i].cardMin())"
-                << endl;
+          if (nary())
+            iccos << indent << "if (i" << arg << ".size() < _x[" << i << "].cardMin())";
+          else
+            iccos << indent << "if (i" << arg << ".size() < _x" << i << ".cardMin())";
+          iccos << endl;
+
 	  iccos << indent << "  return ES_FAILED;" << endl;
 	  --indent;
 	  iccos << indent << "}" << endl;
@@ -665,20 +683,20 @@ namespace Gecode {
         if (glb.size() > 0 && glb[0] != SetExprCode::EMPTY) {
   	  iccos << indent << "{" << endl;
 	  ++indent;
-	  int arg = iterator(glb,false,true);
+	  int arg = iterator(glb,false,false);
 
           iccos << indent;
 	  if (nary())
-	    iccos << "GlbRanges<View> j(x[" << spec._ps[i].getIdx() << "])";
+	    iccos << "GlbRanges<View> j(_x[" << spec._ps[i].getIdx() << "]);";
 	  else if (views==SINGLE_VIEW)
-	    iccos << "GlbRanges<View> j(x" << spec._ps[i].getIdx() << ")";
+	    iccos << "GlbRanges<View> j(_x" << spec._ps[i].getIdx() << ");";
 	  else
-	    iccos << "GlbRanges<View" << spec._ps[i].getIdx() << "> j(x"
-	          << spec._ps[i].getIdx() << ")";
+	    iccos << "GlbRanges<View" << spec._ps[i].getIdx() << "> j(_x"
+	          << spec._ps[i].getIdx() << ");";
           iccos << endl;
           iccos << indent
-                << "if (!Iter::Ranges::subset(j,i" << arg
-                << ")) es = ES_FIX;"
+                << "if (!Iter::Ranges::subset(i" << arg
+                << ",j)) es = ES_FIX;"
                 << endl;	  
 	  --indent;
 	  iccos << indent << "}" << endl;
@@ -690,16 +708,16 @@ namespace Gecode {
 
           iccos << indent;
 	  if (nary())
-	    iccos << "LubRanges<View> j(x[" << spec._ps[i].getIdx() << "])";
+	    iccos << "LubRanges<View> j(_x[" << spec._ps[i].getIdx() << "]);";
 	  else if (views==SINGLE_VIEW)
-	    iccos << "LubRanges<View> j(x" << spec._ps[i].getIdx() << ")";
+	    iccos << "LubRanges<View> j(_x" << spec._ps[i].getIdx() << ");";
 	  else
-	    iccos << "LubRanges<View" << spec._ps[i].getIdx() << "> j(x"
-	          << spec._ps[i].getIdx() << ")";
+	    iccos << "LubRanges<View" << spec._ps[i].getIdx() << "> j(_x"
+	          << spec._ps[i].getIdx() << ");";
           iccos << endl;
           iccos << indent
-                << "if (!Iter::Ranges::subset(i" << arg
-                << ",i)) es = ES_FIX;"
+                << "if (!Iter::Ranges::subset(j,i" << arg
+                << ")) es = ES_FIX;"
                 << endl;	  
 	  --indent;
 	  iccos << indent << "}" << endl;
@@ -729,7 +747,7 @@ namespace Gecode {
     iccos << "::propagate(Space* home) {" << endl;
     ++indent;
 
-    if (spec._negated) {
+    if (spec._negated && ! spec._reified) {
       iccos << indent << "return propagateNegative(home);" << endl;
       --indent;
       iccos << indent << "}" << endl;
@@ -737,22 +755,41 @@ namespace Gecode {
     }
 
     if (spec._reified) {
-      iccos << indent << "if (b.one()) return propagatePositive(home);"
-            << endl;
-      iccos << indent << "if (b.zero()) return propagateNegative(home);"
-            << endl;
-      iccos << indent << "switch (check(home)) {" << endl;
-      iccos << indent << "case ES_SUBSUMED:" << endl;
-      iccos << indent << "  b.t_one_none(home);" << endl;
-      iccos << indent << "  return ES_SUBSUMED;" << endl;
-      iccos << indent << "case ES_FAILED:" << endl;
-      iccos << indent << "  b.t_zero_none(home);" << endl;
-      iccos << indent << "  return ES_SUBSUMED;" << endl;
-      iccos << indent << "default:" << endl;
-      iccos << indent << "  return ES_FIX;" << endl;
-      iccos << indent << "}" << endl;
-      --indent;
-      iccos << indent << "}" << endl;
+      if (spec._negated) {
+      	iccos << indent << "if (_b.zero()) return propagatePositive(home);"
+	      << endl;
+	iccos << indent << "if (_b.one()) return propagateNegative(home);"
+	      << endl;
+	iccos << indent << "switch (check(home)) {" << endl;
+	iccos << indent << "case ES_SUBSUMED:" << endl;
+	iccos << indent << "  _b.t_zero_none(home);" << endl;
+	iccos << indent << "  return ES_SUBSUMED;" << endl;
+	iccos << indent << "case ES_FAILED:" << endl;
+	iccos << indent << "  _b.t_one_none(home);" << endl;
+	iccos << indent << "  return ES_SUBSUMED;" << endl;
+	iccos << indent << "default:" << endl;
+	iccos << indent << "  return ES_FIX;" << endl;
+	iccos << indent << "}" << endl;
+	--indent;
+	iccos << indent << "}" << endl;	
+      } else {
+      	iccos << indent << "if (_b.one()) return propagatePositive(home);"
+	      << endl;
+	iccos << indent << "if (_b.zero()) return propagateNegative(home);"
+	      << endl;
+	iccos << indent << "switch (check(home)) {" << endl;
+	iccos << indent << "case ES_SUBSUMED:" << endl;
+	iccos << indent << "  _b.t_one_none(home);" << endl;
+	iccos << indent << "  return ES_SUBSUMED;" << endl;
+	iccos << indent << "case ES_FAILED:" << endl;
+	iccos << indent << "  _b.t_zero_none(home);" << endl;
+	iccos << indent << "  return ES_SUBSUMED;" << endl;
+	iccos << indent << "default:" << endl;
+	iccos << indent << "  return ES_FIX;" << endl;
+	iccos << indent << "}" << endl;
+	--indent;
+	iccos << indent << "}" << endl;
+      }
       return;	
     }
 
