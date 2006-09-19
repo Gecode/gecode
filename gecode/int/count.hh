@@ -34,7 +34,7 @@
 namespace Gecode { namespace Int { namespace Count {
 
   /**
-   * \defgroup Relations for domain-consistent counting
+   * Relations for domain-consistent counting
    *
    */
   //@{
