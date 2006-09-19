@@ -50,7 +50,21 @@
 Version:	1.3.0
 Date:		2006-09-19
 [DESCRIPTION]
-Contains some fixes and improvements but nothing spectacular.
+This release adds a compiler for finite set projectors and provides new
+infrastructure making it easier to add new variable domains. In addition,
+it contains recent bug fixes and minor improvements.
+
+[ENTRY]
+Module: set
+What:   new
+Rank:   major
+[DESCRIPTION]
+Compiler for finite set projectors. Given a specification of a finite set
+constraint as a projector set, it generates C++ code for the corresponding
+propagator. Together with the dynamic propagator for finite set projectors,
+this implements the backend of the technique described in the paper
+"Generating Propagators for Finite Set Constraints" (Tack, Schulte,
+Smolka; CP 2006.).
 
 [ENTRY]
 Module: other
@@ -73,7 +87,7 @@ Module: minimodel
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Added aliases lex, atleast, atmeast, and exactly for the count constraint.
+Added aliases lex, atleast, atmost, and exactly for the count constraint.
 
 [ENTRY]
 Module: int
