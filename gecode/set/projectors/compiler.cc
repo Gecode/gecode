@@ -20,6 +20,9 @@
  */
 
 #include "gecode/set/projectors-compiler.hh"
+#include <iostream>
+#include <sstream>
+#include <string>
 #include <vector>
 
 using namespace std;
@@ -483,10 +486,10 @@ namespace Gecode {
 	    typestack.push_back(ty);
 	  } else {
 	    iccos << bound << "Ranges<View" << a << "> i";
-	    char buf[255];
-	    sprintf(buf, "%d", a);
+	    stringstream s;
+	    s << a;
 	    string ty = bound + "Ranges<View";
-	    ty += buf;
+	    ty += s.str();
 	    ty += ">";
 	    typestack.push_back(ty);
 	  }
