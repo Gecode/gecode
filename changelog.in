@@ -54,6 +54,13 @@ Jabba Jabba
 
 [ENTRY]
 Module: other
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Also pass options for linking standard libraries for MSVC.
+
+[ENTRY]
+Module: other
 What:   bug
 Rank:   minor
 [DESCRIPTION]
