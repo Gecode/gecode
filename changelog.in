@@ -56,6 +56,7 @@ Contains some fixes and improvements but nothing spectacular.
 Module: other
 What:   new
 Rank:   minor
+Thanks:	Jorge Marques Pelizzoni
 [DESCRIPTION]
 Also pass options for linking standard libraries for MSVC.
 
