@@ -24,17 +24,6 @@ namespace Gecode {
   forceinline
   IntVar::IntVar(void) {}
 
-  forceinline void
-  IntVar::init(Space* home, int min, int max) {
-    var = new (home) Int::IntVarImp(home,min,max);
-  }
-
-  forceinline void
-  IntVar::init(Space* home, const IntSet& ds) {
-    var = new (home) Int::IntVarImp(home,ds);
-  }
-
-
 
   inline
   IntVar::IntVar(const IntVar& x)

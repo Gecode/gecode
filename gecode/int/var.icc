@@ -436,7 +436,7 @@ namespace Gecode {
      *    in Gecode::Limits::Int, an exception of type
      *    Gecode::Int::VariableOutOfDomain is thrown.
      */
-    void init(Space* home, int min, int max);
+    GECODE_INT_EXPORT void init(Space* home, int min, int max);
     /**
      * \brief Initialize variable with arbitrary domain
      *
@@ -448,7 +448,7 @@ namespace Gecode {
      *    as defined in Gecode::Limits::Int, an exception of type
      *    Gecode::Int::VariableOutOfDomain is thrown.
      */
-    void init(Space* home, const IntSet& d);
+    GECODE_INT_EXPORT void init(Space* home, const IntSet& d);
     //@}
 
     /// \name Variable implementation access
