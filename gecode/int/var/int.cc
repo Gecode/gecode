@@ -48,7 +48,7 @@ namespace Gecode {
     var = new (home) Int::IntVarImp(home,min,max);
   }
 
-  forceinline void
+  void
   IntVar::init(Space* home, const IntSet& ds) {
     if ((ds.min() < Limits::Int::int_min) || (ds.max() > Limits::Int::int_max))
       throw Int::VariableOutOfRangeDomain("IntVar::init");
