@@ -494,8 +494,10 @@ BUILDDIRS = $(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
 
 ifeq "@enable_examples@" "yes"
 all: compilelib compileexamples
+	@$(MAKE) makecompletedmessage
 else
 all: compilelib
+	@$(MAKE) makecompletedmessage
 endif
 compilelib: mkcompiledirs $(ALLVARIMP) $(LIBTARGETS) compilesubdirs
 compileexamples: $(EXAMPLEEXE)
@@ -510,6 +512,14 @@ mkcompiledirs:
 	  (test -z "$(top_builddir)"/$$f || mkdir -p "$(top_builddir)"/$$f); \
 	done
 endif
+
+makecompletedmessage:
+	@echo
+	@echo Compilation of Gecode finished successfully. To use Gecode, either add
+	@echo $(PWD)
+	@echo to your search path for libraries, or install Gecode using
+	@echo make install
+	@echo
 
 # ugly hack by Grégoire Dooms to call a target on a contribs after evaluating all the variables in this Makefile.
 # used as make contribs:cpgraph:doc or make contribs:cpgraph:Makefile.in
