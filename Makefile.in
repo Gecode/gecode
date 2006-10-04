@@ -853,7 +853,10 @@ else
 ranliblib:
 endif
 
-installlib: compilelib doinstalllib ranliblib installsubdirs
+installlib: compilelib
+	$(MAKE) doinstalllib
+	$(MAKE) ranliblib
+	$(MAKE) installsubdirs
 
 installexamples: compileexamples
 	mkdir -p $(DESTDIR)$(bindir); \
