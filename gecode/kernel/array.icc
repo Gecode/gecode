@@ -576,7 +576,7 @@ namespace Gecode {
   ViewArray<View>::drop_lst(int i) {
     // Drop elements from i+1..n-1
     assert(i<n);
-    n = i+i;
+    n = i+1;
   }
 
   template <class View>
