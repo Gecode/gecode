@@ -222,7 +222,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 	ModEvent me = x[GECODE_INT_MAXSORTED(i)].gq(home,m);
 	if (me_failed(me))
 	  return ES_FAILED;
-	if (me_modified(me) && (m != x[GECODE_INT_MAXSORTED(i)].min()))
+	if ((me == ME_INT_VAL) || 
+	    ((me == ME_INT_BND) && (m != x[GECODE_INT_MAXSORTED(i)].min())))
 	  es = ES_NOFIX;
 	pathset_h(hall, x0, w, w); // path compression
       }
@@ -253,7 +254,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 	ModEvent me = x[GECODE_INT_MINSORTED(i)].lq(home,m);
 	if (me_failed(me))
 	  return ES_FAILED;
-	if (me_modified(me) && (m != x[GECODE_INT_MINSORTED(i)].max()))
+	if ((me == ME_INT_VAL) || 
+	    ((me == ME_INT_BND) && (m != x[GECODE_INT_MAXSORTED(i)].min())))
 	  es = ES_NOFIX;
 	pathset_h(hall, x0, w, w);
       }

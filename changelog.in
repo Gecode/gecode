@@ -56,6 +56,14 @@ Duh!
 Module: int
 What:   bug
 Rank:   minor
+[DESCRIPTION]
+Bounds-consistent distinct catches border case when an assigned variable
+during bounds propagation leads to value removal for value propagation.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
 Thanks:	Alejandro Arbelaez
 [DESCRIPTION]
 IntVar::init now also raises exceptions for illegal domain specifications.
