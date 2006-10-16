@@ -204,7 +204,7 @@ INTHDR0 = \
 	channel/base.icc
 
 INTSRC		= $(INTSRC0:%=gecode/int/%)
-INTHDR		= gecode/int.hh $(INTHDR0:%=gecode/int/%) $(INTVARIMP)
+INTHDR		= gecode/int.hh $(INTHDR0:%=gecode/int/%)
 INTOBJ		= $(INTSRC:%.cc=%$(OBJSUFFIX))
 
 ifeq "@enable_int_vars@" "yes"
@@ -274,7 +274,7 @@ SETHDR0 =								     \
 	projectors/propagator/re-nary.icc
 
 SETSRC		= $(SETSRC0:%=gecode/set/%)
-SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%) $(SETVARIMP)
+SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%)
 SETOBJ		= $(SETSRC:%.cc=%$(OBJSUFFIX))
 
 ifeq "@enable_set_vars@" "yes"
@@ -463,7 +463,7 @@ INTTESTSRC0 = \
 	rel linear scheduling minimodel gcc sortedness
 ifeq "@enable_set_vars@" "yes"
 SETTESTSRC0 = \
-	dom rel rel-op convex sequence int select distinct projection
+	dom rel rel-op convex sequence int select distinct projection comp-projection
 else
 SETTESTSRC0 =
 endif
@@ -499,10 +499,13 @@ else
 all: compilelib
 	@$(MAKE) makecompletedmessage
 endif
-compilelib: mkcompiledirs $(ALLVARIMP) $(LIBTARGETS) compilesubdirs
+compilelib: mkcompiledirs
+	@$(MAKE) $(ALLVARIMP) $(LIBTARGETS)
+	@$(MAKE) compilesubdirs
 compileexamples: $(EXAMPLEEXE)
 
-test: mkcompiledirs $(ALLVARIMP) $(TESTEXE)
+test: mkcompiledirs
+	@$(MAKE) $(ALLVARIMP) $(TESTEXE)
 
 ifeq "@top_srcdir@" "."
 mkcompiledirs:
@@ -741,11 +744,11 @@ changelog.hh: $(top_srcdir)/changelog.in
 ChangeLog: $(top_srcdir)/changelog.in
 	perl $(top_srcdir)/misc/gentxtchangelog.perl < $^ > ChangeLog
 
-license.hh: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%)
+license.hh: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) $(ALLVARIMP)
 	perl $(top_srcdir)/misc/genlicense.perl $^ > license.hh
 
 stat.hh: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) \
-	$(TESTHDR:%=$(top_srcdir)/%) $(TESTSRC:%=$(top_srcdir)/%)
+	$(TESTHDR:%=$(top_srcdir)/%) $(TESTSRC:%=$(top_srcdir)/%) $(ALLVARIMP)
 	perl $(top_srcdir)/misc/genstatistics.perl $^ > stat.hh
 
 
@@ -819,7 +822,7 @@ install: installlib installexamples
 else
 install: installlib
 endif
-doinstalllib: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
+doinstalllib: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS) $(ALLVARIMP)
 	mkdir -p $(DESTDIR)$(sharedlibdir) && \
 	mkdir -p $(DESTDIR)$(libdir) && \
 	mkdir -p $(DESTDIR)$(includedir) && \
@@ -832,7 +835,7 @@ doinstalllib: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
 	for_liblibtargets="$(LIBLIBTARGETS)" && \
 	  for f in $$for_liblibtargets; do \
 	    cp $$f $(DESTDIR)$(libdir); done && \
-	(cd $(top_srcdir) && tar cf - $(ALLHDR)) | \
+	(cd $(top_srcdir) && tar cf - $(ALLHDR) $(ALLVARIMP)) | \
 	(cd $(DESTDIR)$(includedir) && tar xf -) && \
 	for_extraheaders="$(EXTRA_HEADERS)" && \
 	  for f in $$for_extraheaders; do \
