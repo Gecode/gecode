@@ -146,7 +146,7 @@ namespace Gecode { namespace Int { namespace Distinct {
    * propagators.
    */
   template <class View>
-  ExecStatus prop_bnd(Space* home, ViewArray<View>& x);
+  ExecStatus prop_bnd(Space* home, ViewArray<View>& x, int m);
 
 
   /**

@@ -151,19 +151,22 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   ExecStatus
-  prop_bnd(Space* home, ViewArray<View>& x) {
-    // Sort variable array for minimum directly
-    MinInc<View> min_inc;
-    Support::insertion<View,MinInc<View> >(&x[0], x.size(), min_inc);
-
+  prop_bnd(Space* home, ViewArray<View>& x, int m) {
     const int n = x.size();
+    // Sort variable array for minimum directly
+    {
+      MinInc<View> min_inc;
+      Support::insertion<View,MinInc<View> >(&x[0], n, min_inc);
+    }
 
     GECODE_AUTOARRAY(int, _maxsorted, n);
     for (int i = n; i--; )
       _maxsorted[i]=i;
 
-    MaxInc<View> max_inc(x);
-    Support::insertion<int,MaxInc<View> >(_maxsorted, n, max_inc);
+    {
+      MaxInc<View> max_inc(x);
+      Support::insertion<int,MaxInc<View> >(_maxsorted, n, max_inc);
+    }
 
     // Setup rank and bounds info
     GECODE_AUTOARRAY(HallInfo, hall, 2*n+2);
@@ -265,6 +268,29 @@ namespace Gecode { namespace Int { namespace Distinct {
       }
     }
 
+    if ((n > 2*m) && (n > 6)) {
+      // If there are many assigned views, try to eliminate them
+      MinInc<View> min_inc;
+      Support::insertion<View,MinInc<View> >(&x[0], n, min_inc);
+      int i   = 0;
+      int j   = 0;
+      int max = x[0].max()-1;
+      while (i < n-1) {
+	if (!x[i].assigned() ||
+	    (x[i].val() <= max) || (x[i].val() > x[i+1].min())) {
+	  // Keep view x[i]
+	  max = std::max(max,x[i].max());
+	  x[j++]=x[i];
+	}
+	i++;
+      }
+      if (!x[i].assigned() || (x[i].val() <= max))
+	x[j++]=x[i];
+      x.size(j);
+      if (j < 2)
+	return ES_SUBSUMED;
+    }
+
     return es;
   }
 
@@ -289,7 +315,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       return ES_SUBSUMED;
     }
 
-    return prop_bnd<View>(home,x);
+    return prop_bnd<View>(home,x,y.size());
   }
 
   template <class View>

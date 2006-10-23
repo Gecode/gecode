@@ -653,7 +653,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       return TerDom<View>::post(home,x[0],x[1],x[2]);
     if (x.size() > 3) {
       // Do bounds propagation to make view-value graph smaller
-      if (prop_bnd<View>(home,x) == ES_FAILED)
+      if (prop_bnd<View>(home,x,x.size()) == ES_FAILED)
       	return ES_FAILED;
       (void) new (home) Dom<View>(home,x);
     }
@@ -700,7 +700,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 	return es;
       if (es == ES_FIX)
 	return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
-      if (prop_bnd<View>(home,x) == ES_FAILED)
+      if (prop_bnd<View>(home,x,x.size()) == ES_FAILED)
 	return ES_FAILED;
       es = prop_val<View,true>(home,x);
       if ((es == ES_FAILED) || (es == ES_SUBSUMED))

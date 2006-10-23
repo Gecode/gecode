@@ -62,6 +62,14 @@ during bounds propagation leads to value removal for value propagation.
 
 [ENTRY]
 Module: int
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Bounds-consistent distinct eliminates assigned variables more 
+aggresively (can save up to 10% runtime in some cases).
+
+[ENTRY]
+Module: int
 What:   bug
 Rank:   minor
 Thanks:	Alejandro Arbelaez
