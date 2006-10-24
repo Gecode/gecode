@@ -947,13 +947,14 @@ veryclean: clean
 	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%$(SOSUFFIX))
 	$(RMF) $(EXAMPLEEXE:%.exe=%.pdb) $(TESTEXE:%.exe=%.pdb)
-	$(RMF) doc GecodeReference.chm install Makefile.dep
+	$(RMF) doc GecodeReference.chm
 	$(RMF) $(EXAMPLEEXE) $(TESTEXE)
 
 distclean: veryclean
 	$(RMF) misc/gecode.pc misc/gecode-search.pc misc/gecode-minimodel.pc
 	$(RMF) gecode/vti.icc doxygen.conf doxygen.hh Makefile
-	$(RMF) config.log config.status
+	$(RMF) $(EXTRA_HEADERS)
+	$(RMF) config.log config.status Makefile.dep
 
 depend: $(ALLVARIMP) 	
 	perl $(top_srcdir)/misc/makedepend.perl \

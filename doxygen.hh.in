@@ -860,7 +860,8 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *                         into the <code>prefix</code> given at
  *                         <code>configure</code>
  *  - <code>clean</code> removes object files
- *  - <code>veryclean</code> removes object files and libraries
+ *  - <code>veryclean</code> removes object files, libraries, and all files 
+ +                           generated during <code>make</code>
  *  - <code>distclean</code> removes object files, libraries, and all
  *                           generated files
  *  - <code>depend</code> computes dependencies between source files
