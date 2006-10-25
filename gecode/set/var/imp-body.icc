@@ -1,0 +1,192 @@
+/*
+ *  CAUTION:
+ *    This file has been automatically generated.
+ *    Do not edit, edit the file "../trunk/gecode/set/var-imp.vis" instead.
+ *
+ *  This file contains generated code fragments which are 
+ *  copyrighted as follows:
+ *
+ *  Main author:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2006
+ *
+ *  The generated code fragments are part of Gecode, the generic
+ *  constraint development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+
+namespace Gecode { namespace Set {
+
+
+  /*
+   * Modification event difference for Set-variable implementations
+   *
+   */
+  const Gecode::ModEvent SetMeDiff::med[ME_SET_CBB+1][ME_SET_CBB+1] = {
+    {
+      ME_SET_NONE ^ ME_SET_NONE, // [ME_SET_NONE][ME_SET_NONE]
+      ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_NONE][ME_SET_VAL]
+      ME_SET_CARD ^ ME_SET_CARD, // [ME_SET_NONE][ME_SET_CARD]
+      ME_SET_LUB ^ ME_SET_LUB, // [ME_SET_NONE][ME_SET_LUB]
+      ME_SET_GLB ^ ME_SET_GLB, // [ME_SET_NONE][ME_SET_GLB]
+      ME_SET_BB ^ ME_SET_BB, // [ME_SET_NONE][ME_SET_BB]
+      ME_SET_CLUB ^ ME_SET_CLUB, // [ME_SET_NONE][ME_SET_CLUB]
+      ME_SET_CGLB ^ ME_SET_CGLB, // [ME_SET_NONE][ME_SET_CGLB]
+      ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_NONE][ME_SET_CBB]
+    },
+    {
+      ME_SET_NONE ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_NONE]
+      ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_VAL]
+      ME_SET_CARD ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_CARD]
+      ME_SET_LUB ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_LUB]
+      ME_SET_GLB ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_GLB]
+      ME_SET_BB ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_BB]
+      ME_SET_CLUB ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_CLUB]
+      ME_SET_CGLB ^ ME_SET_VAL, // [ME_SET_VAL][ME_SET_CGLB]
+      ME_SET_CBB ^ ME_SET_VAL  // [ME_SET_VAL][ME_SET_CBB]
+    },
+    {
+      ME_SET_NONE ^ ME_SET_CARD, // [ME_SET_CARD][ME_SET_NONE]
+      ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_CARD][ME_SET_VAL]
+      ME_SET_CARD ^ ME_SET_CARD, // [ME_SET_CARD][ME_SET_CARD]
+      ME_SET_LUB ^ ME_SET_CLUB, // [ME_SET_CARD][ME_SET_LUB]
+      ME_SET_GLB ^ ME_SET_CGLB, // [ME_SET_CARD][ME_SET_GLB]
+      ME_SET_BB ^ ME_SET_CBB, // [ME_SET_CARD][ME_SET_BB]
+      ME_SET_CLUB ^ ME_SET_CLUB, // [ME_SET_CARD][ME_SET_CLUB]
+      ME_SET_CGLB ^ ME_SET_CGLB, // [ME_SET_CARD][ME_SET_CGLB]
+      ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_CARD][ME_SET_CBB]
+    },
+    {
+      ME_SET_NONE ^ ME_SET_LUB, // [ME_SET_LUB][ME_SET_NONE]
+      ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_LUB][ME_SET_VAL]
+      ME_SET_CARD ^ ME_SET_CLUB, // [ME_SET_LUB][ME_SET_CARD]
+      ME_SET_LUB ^ ME_SET_LUB, // [ME_SET_LUB][ME_SET_LUB]
+      ME_SET_GLB ^ ME_SET_BB, // [ME_SET_LUB][ME_SET_GLB]
+      ME_SET_BB ^ ME_SET_BB, // [ME_SET_LUB][ME_SET_BB]
+      ME_SET_CLUB ^ ME_SET_CLUB, // [ME_SET_LUB][ME_SET_CLUB]
+      ME_SET_CGLB ^ ME_SET_CBB, // [ME_SET_LUB][ME_SET_CGLB]
+      ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_LUB][ME_SET_CBB]
+    },
+    {
+      ME_SET_NONE ^ ME_SET_GLB, // [ME_SET_GLB][ME_SET_NONE]
+      ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_GLB][ME_SET_VAL]
+      ME_SET_CARD ^ ME_SET_CGLB, // [ME_SET_GLB][ME_SET_CARD]
+      ME_SET_LUB ^ ME_SET_BB, // [ME_SET_GLB][ME_SET_LUB]
+      ME_SET_GLB ^ ME_SET_GLB, // [ME_SET_GLB][ME_SET_GLB]
+      ME_SET_BB ^ ME_SET_BB, // [ME_SET_GLB][ME_SET_BB]
+      ME_SET_CLUB ^ ME_SET_CBB, // [ME_SET_GLB][ME_SET_CLUB]
+      ME_SET_CGLB ^ ME_SET_CGLB, // [ME_SET_GLB][ME_SET_CGLB]
+      ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_GLB][ME_SET_CBB]
+    },
+    {
+      ME_SET_NONE ^ ME_SET_BB, // [ME_SET_BB][ME_SET_NONE]
+      ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_BB][ME_SET_VAL]
+      ME_SET_CARD ^ ME_SET_CBB, // [ME_SET_BB][ME_SET_CARD]
+      ME_SET_LUB ^ ME_SET_BB, // [ME_SET_BB][ME_SET_LUB]
+      ME_SET_GLB ^ ME_SET_BB, // [ME_SET_BB][ME_SET_GLB]
+      ME_SET_BB ^ ME_SET_BB, // [ME_SET_BB][ME_SET_BB]
+      ME_SET_CLUB ^ ME_SET_CBB, // [ME_SET_BB][ME_SET_CLUB]
+      ME_SET_CGLB ^ ME_SET_CBB, // [ME_SET_BB][ME_SET_CGLB]
+      ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_BB][ME_SET_CBB]
+    },
+    {
+      ME_SET_NONE ^ ME_SET_CLUB, // [ME_SET_CLUB][ME_SET_NONE]
+      ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_CLUB][ME_SET_VAL]
+      ME_SET_CARD ^ ME_SET_CLUB, // [ME_SET_CLUB][ME_SET_CARD]
+      ME_SET_LUB ^ ME_SET_CLUB, // [ME_SET_CLUB][ME_SET_LUB]
+      ME_SET_GLB ^ ME_SET_CBB, // [ME_SET_CLUB][ME_SET_GLB]
+      ME_SET_BB ^ ME_SET_CBB, // [ME_SET_CLUB][ME_SET_BB]
+      ME_SET_CLUB ^ ME_SET_CLUB, // [ME_SET_CLUB][ME_SET_CLUB]
+      ME_SET_CGLB ^ ME_SET_CBB, // [ME_SET_CLUB][ME_SET_CGLB]
+      ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_CLUB][ME_SET_CBB]
+    },
+    {
+      ME_SET_NONE ^ ME_SET_CGLB, // [ME_SET_CGLB][ME_SET_NONE]
+      ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_CGLB][ME_SET_VAL]
+      ME_SET_CARD ^ ME_SET_CGLB, // [ME_SET_CGLB][ME_SET_CARD]
+      ME_SET_LUB ^ ME_SET_CBB, // [ME_SET_CGLB][ME_SET_LUB]
+      ME_SET_GLB ^ ME_SET_CGLB, // [ME_SET_CGLB][ME_SET_GLB]
+      ME_SET_BB ^ ME_SET_CBB, // [ME_SET_CGLB][ME_SET_BB]
+      ME_SET_CLUB ^ ME_SET_CBB, // [ME_SET_CGLB][ME_SET_CLUB]
+      ME_SET_CGLB ^ ME_SET_CGLB, // [ME_SET_CGLB][ME_SET_CGLB]
+      ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_CGLB][ME_SET_CBB]
+    },
+    {
+      ME_SET_NONE ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_NONE]
+      ME_SET_VAL ^ ME_SET_VAL, // [ME_SET_CBB][ME_SET_VAL]
+      ME_SET_CARD ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_CARD]
+      ME_SET_LUB ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_LUB]
+      ME_SET_GLB ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_GLB]
+      ME_SET_BB ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_BB]
+      ME_SET_CLUB ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_CLUB]
+      ME_SET_CGLB ^ ME_SET_CBB, // [ME_SET_CBB][ME_SET_CGLB]
+      ME_SET_CBB ^ ME_SET_CBB  // [ME_SET_CBB][ME_SET_CBB]
+    }
+  };
+
+
+  /*
+   * The variable processor for SetVarImpBase
+   *
+   */
+
+  void
+  SetVarImpBase::Processor::process(Space* home, VarBase* _x) {
+    // Process modified variables
+    Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>* x = 
+      static_cast<Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>*>(_x);
+    do {
+      switch (x->modevent()) {
+      case ME_SET_VAL:
+        x->process(home);
+        break;
+      case ME_SET_CARD:
+        // Conditions: CARD CLUB CGLB ANY 
+        x->process(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CARD);
+        break;
+      case ME_SET_LUB:
+        // Conditions: CLUB ANY 
+        x->process(home,PC_SET_CLUB,PC_SET_CLUB,ME_SET_LUB);
+        x->process(home,PC_SET_ANY,PC_SET_ANY,ME_SET_LUB);
+        break;
+      case ME_SET_GLB:
+        // Conditions: CGLB ANY 
+        x->process(home,PC_SET_CGLB,PC_SET_ANY,ME_SET_GLB);
+        break;
+      case ME_SET_BB:
+        // Conditions: CLUB CGLB ANY 
+        x->process(home,PC_SET_CLUB,PC_SET_ANY,ME_SET_BB);
+        break;
+      case ME_SET_CLUB:
+        // Conditions: CARD CLUB CGLB ANY 
+        x->process(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CLUB);
+        break;
+      case ME_SET_CGLB:
+        // Conditions: CARD CLUB CGLB ANY 
+        x->process(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CGLB);
+        break;
+      case ME_SET_CBB:
+        // Conditions: CARD CLUB CGLB ANY 
+        x->process(home,PC_SET_CARD,PC_SET_ANY,ME_SET_CBB);
+        break;
+      default: GECODE_NEVER;
+      }
+      x = x->next();
+    } while (x != NULL);
+  }
+
+  
+  SetVarImpBase::Processor SetVarImpBase::p;
+
+
+}}
+
+// STATISTICS: set-var

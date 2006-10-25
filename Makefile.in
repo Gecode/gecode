@@ -411,7 +411,8 @@ ALLSRC =						\
 	$(KERNELSRC) $(SEARCHSRC) $(INTSRC) $(SETSRC)	\
 	$(MMSRC) $(SUPPORTSRC) $(INTEXAMPLESRC) $(SETEXAMPLESRC)
 ALLVARIMP = $(INTVARIMP) $(SETVARIMP)
-ALLHDR = $(KERNELHDR) $(SEARCHHDR) $(INTHDR) $(SETHDR) $(MMHDR) $(OTHERHDR)
+ALLHDR = $(KERNELHDR) $(SEARCHHDR) $(INTHDR) $(SETHDR) $(MMHDR) \
+		$(OTHERHDR) $(ALLVARIMP)
 ALLOBJ = $(ALLSRC:%.cc=%$(OBJSUFFIX))
 ALLSBJ = $(ALLSRC:%.cc=%$(SBJSUFFIX))
 
@@ -500,12 +501,12 @@ all: compilelib
 	@$(MAKE) makecompletedmessage
 endif
 compilelib: mkcompiledirs
-	@$(MAKE) $(ALLVARIMP) $(LIBTARGETS)
+	@$(MAKE) $(ALLVARIMP:%=$(top_srcdir)/%) $(LIBTARGETS)
 	@$(MAKE) compilesubdirs
 compileexamples: $(EXAMPLEEXE)
 
 test: mkcompiledirs
-	@$(MAKE) $(ALLVARIMP) $(TESTEXE)
+	@$(MAKE) $(ALLVARIMP:%=$(top_srcdir)/%) $(TESTEXE)
 
 ifeq "@top_srcdir@" "."
 mkcompiledirs:
@@ -550,13 +551,13 @@ compilesubdirs:
 #
 # Generated variable implementations
 #
-gecode/int/var/imp-hdr.icc: $(top_srcdir)/gecode/int/var-imp.vis
+$(top_srcdir)/gecode/int/var/imp-hdr.icc: $(top_srcdir)/gecode/int/var-imp.vis
 	perl $(top_srcdir)/misc/genvarimp.perl -header $^ > $@
-gecode/int/var/imp-body.icc: $(top_srcdir)/gecode/int/var-imp.vis
+$(top_srcdir)/gecode/int/var/imp-body.icc: $(top_srcdir)/gecode/int/var-imp.vis
 	perl $(top_srcdir)/misc/genvarimp.perl -body $^ > $@
-gecode/set/var/imp-hdr.icc: $(top_srcdir)/gecode/set/var-imp.vis
+$(top_srcdir)/gecode/set/var/imp-hdr.icc: $(top_srcdir)/gecode/set/var-imp.vis
 	perl $(top_srcdir)/misc/genvarimp.perl -header $^ > $@
-gecode/set/var/imp-body.icc: $(top_srcdir)/gecode/set/var-imp.vis
+$(top_srcdir)/gecode/set/var/imp-body.icc: $(top_srcdir)/gecode/set/var-imp.vis
 	perl $(top_srcdir)/misc/genvarimp.perl -body $^ > $@
 
 
@@ -744,11 +745,11 @@ changelog.hh: $(top_srcdir)/changelog.in
 ChangeLog: $(top_srcdir)/changelog.in
 	perl $(top_srcdir)/misc/gentxtchangelog.perl < $^ > ChangeLog
 
-license.hh: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) $(ALLVARIMP)
+license.hh: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%)
 	perl $(top_srcdir)/misc/genlicense.perl $^ > license.hh
 
 stat.hh: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) \
-	$(TESTHDR:%=$(top_srcdir)/%) $(TESTSRC:%=$(top_srcdir)/%) $(ALLVARIMP)
+	$(TESTHDR:%=$(top_srcdir)/%) $(TESTSRC:%=$(top_srcdir)/%)
 	perl $(top_srcdir)/misc/genstatistics.perl $^ > stat.hh
 
 
@@ -822,7 +823,7 @@ install: installlib installexamples
 else
 install: installlib
 endif
-doinstalllib: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS) $(ALLVARIMP)
+doinstalllib: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
 	mkdir -p $(DESTDIR)$(sharedlibdir) && \
 	mkdir -p $(DESTDIR)$(libdir) && \
 	mkdir -p $(DESTDIR)$(includedir) && \
@@ -835,7 +836,7 @@ doinstalllib: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS) $(ALLVARIMP)
 	for_liblibtargets="$(LIBLIBTARGETS)" && \
 	  for f in $$for_liblibtargets; do \
 	    cp $$f $(DESTDIR)$(libdir); done && \
-	(cd $(top_srcdir) && tar cf - $(ALLHDR) $(ALLVARIMP)) | \
+	(cd $(top_srcdir) && tar cf - $(ALLHDR)) | \
 	(cd $(DESTDIR)$(includedir) && tar xf -) && \
 	for_extraheaders="$(EXTRA_HEADERS)" && \
 	  for f in $$for_extraheaders; do \
@@ -940,7 +941,6 @@ clean:
 	$(RMF) $(TESTOBJ) $(TESTSBJ)
 
 veryclean: clean
-	$(RMF) $(ALLVARIMP)
 	$(RMF) $(LIBTARGETS)
 	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%.exp) $(LIBTARGETS:%$(DLLSUFFIX)=%.lib)
 	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%.ilk) $(LIBTARGETS:%$(DLLSUFFIX)=%.pdb)
@@ -951,12 +951,13 @@ veryclean: clean
 	$(RMF) $(EXAMPLEEXE) $(TESTEXE)
 
 distclean: veryclean
+	$(RMF) $(ALLVARIMP:%=$(top_srcdir)/%)
 	$(RMF) misc/gecode.pc misc/gecode-search.pc misc/gecode-minimodel.pc
 	$(RMF) gecode/vti.icc doxygen.conf doxygen.hh Makefile
 	$(RMF) $(EXTRA_HEADERS)
 	$(RMF) config.log config.status Makefile.dep
 
-depend: $(ALLVARIMP) 	
+depend: $(ALLVARIMP:%=$(top_srcdir)/%) 	
 	perl $(top_srcdir)/misc/makedepend.perl \
 	$(top_srcdir) \
 	$(ALLSRC) \

@@ -1,0 +1,65 @@
+/*
+ *  CAUTION:
+ *    This file has been automatically generated.
+ *    Do not edit, edit the file "../trunk/gecode/int/var-imp.vis" instead.
+ *
+ *  This file contains generated code fragments which are 
+ *  copyrighted as follows:
+ *
+ *  Main author:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2006
+ *
+ *  The generated code fragments are part of Gecode, the generic
+ *  constraint development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+
+namespace Gecode { namespace Int {
+
+
+
+  /*
+   * The variable processor for IntVarImpBase
+   *
+   */
+
+  void
+  IntVarImpBase::Processor::process(Space* home, VarBase* _x) {
+    // Process modified variables
+    Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>* x = 
+      static_cast<Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>*>(_x);
+    do {
+      switch (x->modevent()) {
+      case ME_INT_VAL:
+        x->process(home);
+        break;
+      case ME_INT_BND:
+        // Conditions: BND DOM 
+        x->process(home,PC_INT_BND,PC_INT_DOM,ME_INT_BND);
+        break;
+      case ME_INT_DOM:
+        // Conditions: DOM 
+        x->process(home,PC_INT_DOM,PC_INT_DOM,ME_INT_DOM);
+        break;
+      default: GECODE_NEVER;
+      }
+      x = x->next();
+    } while (x != NULL);
+  }
+
+  
+  IntVarImpBase::Processor IntVarImpBase::p;
+
+
+}}
+
+// STATISTICS: int-var

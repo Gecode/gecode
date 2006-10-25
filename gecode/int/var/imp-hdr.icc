@@ -1,0 +1,191 @@
+/*
+ *  CAUTION:
+ *    This file has been automatically generated.
+ *    Do not edit, edit the file "../trunk/gecode/int/var-imp.vis" instead.
+ *
+ *  This file contains generated code fragments which are 
+ *  copyrighted as follows:
+ *
+ *  Main author:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2006
+ *
+ *  The generated code fragments are part of Gecode, the generic
+ *  constraint development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+
+namespace Gecode { namespace Int {
+
+  /**
+   * \defgroup TaskActorIntMEPC Integer modification events and propagation conditions
+   * \ingroup TaskActorInt
+   */
+  
+  //@{
+  /// Domain operation has resulted in failure
+  const Gecode::ModEvent ME_INT_FAILED = Gecode::ME_GEN_FAILED;
+
+  /// Domain operation has not changed domain
+  const Gecode::ModEvent ME_INT_NONE = Gecode::ME_GEN_NONE;
+
+  /// Domain operation has resulted in a value (assigned variable)
+  const Gecode::ModEvent ME_INT_VAL = Gecode::ME_GEN_ASSIGNED;
+
+  /** 
+   * \brief Domain operation has changed the minimum or maximum of the domain
+   *
+   * Note that this implies that the domain has not resulted in a value.
+   *
+   * If a propagator subscribes to this variable, it will be processed
+   * assuming a ME_INT_BND modification event.
+   */
+  const Gecode::ModEvent ME_INT_BND = Gecode::ME_GEN_ASSIGNED + 1;
+
+  /** 
+   * \brief Domain operation has changed the domain
+   *
+   * Note that this implies that the domain has not resulted in a value
+   * and that also the minimum and maximum of the domain have not changed.
+   */
+
+
+  const Gecode::ModEvent ME_INT_DOM = Gecode::ME_GEN_ASSIGNED + 2;
+
+  /**
+   * \brief Propagate when a view becomes assigned (single value)
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_INT_VAL, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_INT_VAL.
+   */
+  const Gecode::PropCond PC_INT_VAL = Gecode::PC_GEN_ASSIGNED;
+
+  /**
+   * \brief Propagate when minimum or maximum of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_INT_BND, then \a p is propagated when a domain
+   * update operation on \a x returns the modification events ME_INT_VAL
+   * or ME_INT_BND.
+   */
+  const Gecode::PropCond PC_INT_BND = Gecode::PC_GEN_ASSIGNED + 1;
+
+  /**
+   * \brief Propagate when domain changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_INT_DOM, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_INT_VAL,
+   * ME_INT_BND, or ME_INT_DOM.
+   */
+  const Gecode::PropCond PC_INT_DOM = Gecode::PC_GEN_ASSIGNED + 2;
+
+  //@}
+
+  /// Modification event difference for Int-variable implementations
+  class IntMeDiff {
+  public:
+    /// Return difference when changing modification event \a me2 to \a me1
+    ModEvent operator()(ModEvent me1, ModEvent me2) const;
+  };
+
+  /// Base-class for Int-variable implementations
+  class IntVarImpBase : public Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff> {
+  protected:
+    /// Variable procesor for variables of this type
+    class Processor : public Gecode::VarTypeProcessor<VTI_INT,PC_INT_DOM,IntMeDiff> {
+    public:
+      /// Process modified variables linked from \a x
+      GECODE_INT_EXPORT virtual void process(Space* home, VarBase* x);
+    };
+    /// The processor used
+    GECODE_INT_EXPORT static Processor p;
+    /// Constructor for cloning \a x
+    IntVarImpBase(Space* home, bool share, IntVarImpBase& x);
+  public:
+    /// Constructor for creating variable
+    IntVarImpBase(Space* home);
+    /// \name Dependencies
+    //@{
+    /** \brief Subscribe propagator \a p with propagation condition \a pc to variable
+     *
+     * In case \a process is false, the propagator is just subscribed but
+     * not processed for execution (this must be used when creating
+     * subscriptions during propagation).
+     *
+     * In case the variable is assigned (that is, \a assigned is 
+     * true), the subscribing propagator is processed for execution.
+     * Otherwise, the propagator subscribes and is processed for execution
+     * with modification event \a me provided that \a pc is different
+     * from \a PC_GEN_ASSIGNED.
+     */
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
+    /// Notify that variable implementation has been modified with modification event \a me
+    void notify(Space* home, ModEvent me);
+    //@}
+
+
+  };
+
+
+  forceinline ModEvent
+  IntMeDiff::operator()(ModEvent me1, ModEvent me2) const {
+    const int med = (
+      (
+        ((ME_INT_NONE ^ ME_INT_NONE) << 0) |  // [ME_INT_NONE][ME_INT_NONE]
+        ((ME_INT_VAL ^ ME_INT_VAL) << 2) |  // [ME_INT_NONE][ME_INT_VAL]
+        ((ME_INT_BND ^ ME_INT_BND) << 4) |  // [ME_INT_NONE][ME_INT_BND]
+        ((ME_INT_DOM ^ ME_INT_DOM) << 6)    // [ME_INT_NONE][ME_INT_DOM]
+      ) |
+      (
+        ((ME_INT_NONE ^ ME_INT_VAL) << 8) |  // [ME_INT_VAL][ME_INT_NONE]
+        ((ME_INT_VAL ^ ME_INT_VAL) << 10) |  // [ME_INT_VAL][ME_INT_VAL]
+        ((ME_INT_BND ^ ME_INT_VAL) << 12) |  // [ME_INT_VAL][ME_INT_BND]
+        ((ME_INT_DOM ^ ME_INT_VAL) << 14)    // [ME_INT_VAL][ME_INT_DOM]
+      ) |
+      (
+        ((ME_INT_NONE ^ ME_INT_BND) << 16) |  // [ME_INT_BND][ME_INT_NONE]
+        ((ME_INT_VAL ^ ME_INT_VAL) << 18) |  // [ME_INT_BND][ME_INT_VAL]
+        ((ME_INT_BND ^ ME_INT_BND) << 20) |  // [ME_INT_BND][ME_INT_BND]
+        ((ME_INT_DOM ^ ME_INT_BND) << 22)    // [ME_INT_BND][ME_INT_DOM]
+      ) |
+      (
+        ((ME_INT_NONE ^ ME_INT_DOM) << 24) |  // [ME_INT_DOM][ME_INT_NONE]
+        ((ME_INT_VAL ^ ME_INT_VAL) << 26) |  // [ME_INT_DOM][ME_INT_VAL]
+        ((ME_INT_BND ^ ME_INT_BND) << 28) |  // [ME_INT_DOM][ME_INT_BND]
+        ((ME_INT_DOM ^ ME_INT_DOM) << 30)    // [ME_INT_DOM][ME_INT_DOM]
+      )
+    );
+    return (((med >> (me1 << 3)) >> (me2 << 1)) & 3);
+  }
+
+  forceinline
+  IntVarImpBase::IntVarImpBase(Space* home)
+    : Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>(home) {}
+
+  forceinline
+  IntVarImpBase::IntVarImpBase(Space* home, bool share, IntVarImpBase& x)
+    : Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>(home,share,x) {}
+
+  forceinline void
+  IntVarImpBase::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
+    Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>::subscribe(home,p,pc,assigned,ME_INT_BND,process);
+  }
+
+  forceinline void
+  IntVarImpBase::notify(Space* home, ModEvent me) {
+    Gecode::Variable<VTI_INT,PC_INT_DOM,IntMeDiff>::notify(home,me);
+  }
+
+}}
+
+// STATISTICS: int-var
