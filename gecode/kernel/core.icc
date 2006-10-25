@@ -907,17 +907,6 @@ namespace Gecode {
      */
     GECODE_KERNEL_EXPORT
     unsigned int branchings(void) const;
-    /**
-     * \brief Return approximate number of subscriptions
-     *
-     * This number is a conservative approximation of (larger than the)
-     * the real number of subscriptions. The number becomes more accurate
-     * after cloning a space but still is too high by the number of variables.
-     *
-     */
-    unsigned int subscriptions(void) const;
-
-
 
     /**
      * \defgroup FuncMemSpace Space-memory management
@@ -1155,11 +1144,6 @@ namespace Gecode {
   forceinline bool
   Space::failed(void) const {
     return b_status == NULL;
-  }
-
-  forceinline unsigned int
-  Space::subscriptions(void) const {
-    return n_sub;
   }
 
   /*
