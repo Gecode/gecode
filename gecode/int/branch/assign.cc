@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -33,8 +34,8 @@ namespace Gecode { namespace Int { namespace Branch {
   Assign::status(const Space*) const {
     for (int i = pos; i<x.size(); i++)
       if (!x[i].assigned()) {
-	pos = i;
-	return true;
+        pos = i;
+        return true;
       }
     return false;
   }

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -29,7 +30,7 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   forceinline
   ReEq<View0,View1>::ReEq(Space* home, View0 y0, View1 y1,
-			  Gecode::Int::BoolView y2)
+                          Gecode::Int::BoolView y2)
     : Propagator(home), x0(y0), x1(y1), b(y2) {
     b.subscribe(home,this, Gecode::Int::PC_INT_VAL);
     x0.subscribe(home,this, PC_SET_ANY);
@@ -65,7 +66,7 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   ExecStatus
   ReEq<View0,View1>::post(Space* home, View0 x0, View1 x1,
-			    Gecode::Int::BoolView b) {
+                            Gecode::Int::BoolView b) {
     (void) new (home) ReEq<View0,View1>(home,x0,x1,b);
     return ES_OK;
   }
@@ -101,11 +102,11 @@ namespace Gecode { namespace Set { namespace Rel {
         }
       }
       if (!x0lb() && !x1lb()) {
-	b.t_one_none(home);
-	return ES_SUBSUMED;
+        b.t_one_none(home);
+        return ES_SUBSUMED;
       } else {
-	b.t_zero_none(home);
-	return ES_SUBSUMED;
+        b.t_zero_none(home);
+        return ES_SUBSUMED;
       }
     }
 

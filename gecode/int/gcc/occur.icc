@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -193,34 +194,34 @@ namespace Gecode { namespace Int { namespace GCC {
 
     if (r == 0) {
       if (a[0].card() == v) {
-	return 0;
+        return 0;
       } else {
-	return -1;
+        return -1;
       }
     }
 
     while ( l < r ) {
       if ( a[l].card() == v) {
-	idx = l;
-	break;
+        idx = l;
+        break;
       }
       if ( a[r].card() == v) {
-	idx = r;
-	break;
+        idx = r;
+        break;
       }
       int p  = (l + r) / 2;
       if ( v == a[p].card()) {
-	idx = p;
-	break;
+        idx = p;
+        break;
       } else {
-	if ( v < a[p].card()) {
-	  r = p;
-	} else {
-	  l = p;
-	}
+        if ( v < a[p].card()) {
+          r = p;
+        } else {
+          l = p;
+        }
       }
       if (l == r - 1) {
-	break;
+        break;
       }
     }
 
@@ -651,15 +652,15 @@ namespace Gecode { namespace Int { namespace GCC {
       os << v.min() <<" ";
     } else {
       if (v.range()){
-	os << "["<<v.min() <<".."<<v.max()<<"] ";
+        os << "["<<v.min() <<".."<<v.max()<<"] ";
       } else {
-	os << "{";
-	ViewValues<GCC::CardView> iter(v);
-	while(iter()){
-	  os << iter.val() <<",";
-	  ++iter;
-	}
-	os << "}";
+        os << "{";
+        ViewValues<GCC::CardView> iter(v);
+        while(iter()){
+          os << iter.val() <<",";
+          ++iter;
+        }
+        os << "}";
       }
     }
     os << ")";

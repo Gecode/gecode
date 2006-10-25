@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -37,7 +38,7 @@ public:
     CountableSetValues selector(x.lub, x[3]);
     for (int i=selected; i--;++selector) {
       if (selector.val()>=3 || selector.val()<0)
-	return false;
+        return false;
       sel[i].init(x.lub, x[selector.val()]);
     }
     Iter::Ranges::NaryUnion<CountableSetRanges> u(sel, selected);
@@ -68,7 +69,7 @@ public:
     CountableSetValues selector(x.lub, x[3]);
     for (int i=selected; i--;++selector) {
       if (selector.val()>=3 || selector.val()<0)
-	return false;
+        return false;
       sel[i].init(x.lub, x[selector.val()]);
     }
     Iter::Ranges::NaryInter<CountableSetRanges> u(sel, selected);

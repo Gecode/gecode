@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -175,9 +176,9 @@ namespace Gecode {
       friend class LubRanges<ConstantView>;
       friend class GlbRanges<ConstantView>;
       friend bool Gecode::same(const Gecode::Set::ConstantView&, 
-			       const Gecode::Set::ConstantView&);
+                               const Gecode::Set::ConstantView&);
       friend bool Gecode::before(const Gecode::Set::ConstantView&, 
-				 const Gecode::Set::ConstantView&);
+                                 const Gecode::Set::ConstantView&);
     private:
       int *ranges;
       unsigned int size;
@@ -941,11 +942,11 @@ namespace Gecode {
   /// Test whether views \a x and \a y are the same
   template <class View>
   bool same(const Set::ComplementView<View>& x, 
-	    const Set::ComplementView<View>& y);
+            const Set::ComplementView<View>& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
   template <class View>
   bool before(const Set::ComplementView<View>& x, 
-	      const Set::ComplementView<View>& y);
+              const Set::ComplementView<View>& y);
   //@}
 
 
@@ -993,11 +994,11 @@ namespace Gecode {
   /// Test whether views \a x and \a y are the same
   template <class View>
   bool same(const Set::ComplementView<Set::ComplementView<View> >& x, 
-	    const Set::ComplementView<Set::ComplementView<View> >& y);
+            const Set::ComplementView<Set::ComplementView<View> >& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
   template <class View>
   bool before(const Set::ComplementView<Set::ComplementView<View> >& x, 
-	      const Set::ComplementView<Set::ComplementView<View> >& y);
+              const Set::ComplementView<Set::ComplementView<View> >& y);
   //@}
 
 

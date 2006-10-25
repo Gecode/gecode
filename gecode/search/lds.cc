@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -98,73 +99,73 @@ namespace Gecode { namespace Search {
     start();
     while (true) {
       if (stop(stacksize()))
-	return NULL;
+        return NULL;
       if (cur == NULL) {
       backtrack:
-	if (ds.empty())
-	  return NULL;
-	unsigned int a            = ds.top().alt();
-	const BranchingDesc* desc = ds.top().desc();
-	if (a == 0) {
-	  cur = ds.pop().space();
-	  EngineCtrl::pop(cur,desc);
-	  cur->commit(desc,a);
-	  delete desc;
-	} else {
-	  ds.top().next();
-	  cur = ds.top().space()->clone(true,propagate);
-	  clone++;
-	  cur->commit(desc,a);
-	}
-	EngineCtrl::current(cur);
-	d++;
+        if (ds.empty())
+          return NULL;
+        unsigned int a            = ds.top().alt();
+        const BranchingDesc* desc = ds.top().desc();
+        if (a == 0) {
+          cur = ds.pop().space();
+          EngineCtrl::pop(cur,desc);
+          cur->commit(desc,a);
+          delete desc;
+        } else {
+          ds.top().next();
+          cur = ds.top().space()->clone(true,propagate);
+          clone++;
+          cur->commit(desc,a);
+        }
+        EngineCtrl::current(cur);
+        d++;
       }
     check_discrepancy:
       if (d == 0) {
-	Space* s = cur;
-	while (s->status(propagate) == SS_BRANCH) {
-	  if (stop(stacksize()))
-	    return NULL;
-	  const BranchingDesc* desc = s->description();
-	  s->commit(desc,0);
-	  delete desc;
-	}
-	cur = NULL;
-	EngineCtrl::current(NULL);
-	if (s->failed()) {
-	  delete s;
-	  goto backtrack;
-	}
-	return s;
+        Space* s = cur;
+        while (s->status(propagate) == SS_BRANCH) {
+          if (stop(stacksize()))
+            return NULL;
+          const BranchingDesc* desc = s->description();
+          s->commit(desc,0);
+          delete desc;
+        }
+        cur = NULL;
+        EngineCtrl::current(NULL);
+        if (s->failed()) {
+          delete s;
+          goto backtrack;
+        }
+        return s;
       }
       switch (cur->status(propagate)) {
       case SS_FAILED:
-	fail++;
-      case SS_SOLVED:	
-	delete cur;
-	cur = NULL;
-	EngineCtrl::current(NULL);
-	goto backtrack;
+        fail++;
+      case SS_SOLVED:        
+        delete cur;
+        cur = NULL;
+        EngineCtrl::current(NULL);
+        goto backtrack;
       case SS_BRANCH:
-	{
-	  const BranchingDesc* desc = cur->description();
-	  unsigned int alt          = desc->alternatives();
-	  if (alt > 1) {
-	    unsigned int d_a = (d >= alt-1) ? alt-1 : d;
-	    Space* cc = cur->clone(true,propagate);
-	    EngineCtrl::push(cc,desc);
-	    ProbeNode sn(cc,desc,d_a-1);
-	    clone++;
-	    ds.push(sn);
-	    cur->commit(desc,d_a);
-	    d -= d_a;
-	  } else {
-	    cur->commit(desc,0);
-	    delete desc;
-	  }
-	  commit++;
-	  goto check_discrepancy;
-	}
+        {
+          const BranchingDesc* desc = cur->description();
+          unsigned int alt          = desc->alternatives();
+          if (alt > 1) {
+            unsigned int d_a = (d >= alt-1) ? alt-1 : d;
+            Space* cc = cur->clone(true,propagate);
+            EngineCtrl::push(cc,desc);
+            ProbeNode sn(cc,desc,d_a-1);
+            clone++;
+            ds.push(sn);
+            cur->commit(desc,d_a);
+            d -= d_a;
+          } else {
+            cur->commit(desc,0);
+            delete desc;
+          }
+          commit++;
+          goto check_discrepancy;
+        }
       default: GECODE_NEVER;
       }
     }
@@ -203,18 +204,18 @@ namespace Gecode { namespace Search {
     while (true) {
       Space* s = e.explore();
       if (s != NULL) {
-	no_solution = false;
-	return s;
+        no_solution = false;
+        return s;
       }
       if (no_solution || (++d_cur > d_max))
-	break;
+        break;
       no_solution = true;
       if (d_cur == d_max) {
-	e.reset(root,d_cur);
-	root = NULL;
+        e.reset(root,d_cur);
+        root = NULL;
       } else {
-	e.clone++;
-	e.reset(root->clone(true,e.propagate),d_cur);
+        e.clone++;
+        e.reset(root->clone(true,e.propagate),d_cur);
       }
     }
     return NULL;

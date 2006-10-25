@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -53,68 +54,68 @@ namespace Gecode { namespace Search {
     while (true) {
       assert((es == ES_SOLUTION) || (cur == NULL));
       if (stop(stacksize())) {
-	s1 = NULL;
-	return ES_SOLUTION;
+        s1 = NULL;
+        return ES_SOLUTION;
       }
       if (cur == NULL) {
-	if (es == ES_CONSTRAIN) {
-	  es = ES_SOLUTION;
-	  goto same;
-	}
-	do {
-	  if (!rcs.next(*this)) {
-	    s1 = NULL;
-	    return ES_SOLUTION;
-	  }
-	  {
-	    int l = rcs.lc(s1);
-	    if (l < mark) {
-	      es = ES_CONSTRAIN;
-	      mark = l;
-	      s2 = best;
-	      return ES_CONSTRAIN;
-	    }
-	  }
-	same:
-	  cur = rcs.recompute<true>(d,*this);
-	} while (cur == NULL);
-	EngineCtrl::current(cur);
+        if (es == ES_CONSTRAIN) {
+          es = ES_SOLUTION;
+          goto same;
+        }
+        do {
+          if (!rcs.next(*this)) {
+            s1 = NULL;
+            return ES_SOLUTION;
+          }
+          {
+            int l = rcs.lc(s1);
+            if (l < mark) {
+              es = ES_CONSTRAIN;
+              mark = l;
+              s2 = best;
+              return ES_CONSTRAIN;
+            }
+          }
+        same:
+          cur = rcs.recompute<true>(d,*this);
+        } while (cur == NULL);
+        EngineCtrl::current(cur);
       }
       switch (cur->status(propagate)) {
       case SS_FAILED:
-	fail++;
-	delete cur;
-	cur = NULL;
-	EngineCtrl::current(NULL);
-	break;
+        fail++;
+        delete cur;
+        cur = NULL;
+        EngineCtrl::current(NULL);
+        break;
       case SS_SOLVED:
-	delete best;
-	best = cur;
-	mark = rcs.entries();
-	s1 = best->clone(true,propagate);
-	clone++;
-	cur = NULL;
-	EngineCtrl::current(NULL);
-	return ES_SOLUTION;
+        delete best;
+        best = cur;
+        mark = rcs.entries();
+        s1 = best->clone(true,propagate);
+        clone++;
+        cur = NULL;
+        EngineCtrl::current(NULL);
+        return ES_SOLUTION;
       case SS_BRANCH:
-	{
-	  Space* c;
-	  if ((d == 0) || (d >= c_d)) {
-	    c = cur->clone(true,propagate);
-	    clone++;
-	    d = 1;
-	  } else {
-	    c = NULL;
-	    d++;
-	  }
-	  const BranchingDesc* desc = rcs.push(cur,c);
-	  EngineCtrl::push(c,desc);
-	  cur->commit(desc,0);
-	  commit++;
-	  break;
-	}
+        {
+          Space* c;
+          if ((d == 0) || (d >= c_d)) {
+            c = cur->clone(true,propagate);
+            clone++;
+            d = 1;
+          } else {
+            c = NULL;
+            d++;
+          }
+          const BranchingDesc* desc = rcs.push(cur,c);
+          EngineCtrl::push(c,desc);
+          cur->commit(desc,0);
+          commit++;
+          break;
+        }
       default:
-	GECODE_NEVER;
+        GECODE_NEVER;
       }
     }
     return ES_SOLUTION;

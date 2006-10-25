@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -80,8 +81,8 @@ public:
       int pa = spec.prefs[2*i+0];
       int pb = spec.prefs[2*i+1];
       ful[i] = post(this,
-		    ~(pos[pb]-pos[pa] == 1) ^
-		    ~(pos[pa]-pos[pb] == 1));
+                    ~(pos[pb]-pos[pa] == 1) ^
+                    ~(pos[pa]-pos[pb] == 1));
     }
     // Sum of fulfilment
     {
@@ -89,7 +90,7 @@ public:
       IntArgs    c(spec.n_prefs+1);
       eq[spec.n_prefs] = sat; c[spec.n_prefs] = -1;
       for (int i = spec.n_prefs; i--; ) {
-	eq[i] = ful[i]; c[i] = 1;
+        eq[i] = ful[i]; c[i] = 1;
       }
       linear(this, c, eq, IRT_EQ, 0);
     }

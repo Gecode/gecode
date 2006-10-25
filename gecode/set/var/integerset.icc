@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -57,12 +58,12 @@ namespace Gecode { namespace Set {
   forceinline void
   RangeList::next(RangeList* o, RangeList* n) {
     _next = GECODE_SET_PD2RL(GECODE_SET_RL2PD(_next)^
-			     (GECODE_SET_RL2PD(o)^GECODE_SET_RL2PD(n)));
+                             (GECODE_SET_RL2PD(o)^GECODE_SET_RL2PD(n)));
   }
   forceinline void
   RangeList::prev(RangeList* o, RangeList* n) {
     _next = GECODE_SET_PD2RL(GECODE_SET_RL2PD(_next)^
-			     (GECODE_SET_RL2PD(o)^GECODE_SET_RL2PD(n)));
+                             (GECODE_SET_RL2PD(o)^GECODE_SET_RL2PD(n)));
   }
   forceinline void
   RangeList::fix(RangeList* n) {
@@ -198,11 +199,11 @@ namespace Gecode { namespace Set {
     RangeList* c=fst();
     while (c!=NULL){
       if (c->width() > n){
-	return(c->min()+n);
+        return(c->min()+n);
       } else {
-	n-=c->width();
-	RangeList* nc=c->next(p);
-	p=c; c=nc;
+        n-=c->width();
+        RangeList* nc=c->next(p);
+        p=c; c=nc;
       }
     }
     return MIN_OF_EMPTY;
@@ -215,11 +216,11 @@ namespace Gecode { namespace Set {
     RangeList* c=lst();
     while (c!=NULL){
       if (c->width() > n){
-	return(c->max()-n);
+        return(c->max()-n);
       } else {
-	n-=c->width();
-	RangeList* nc=c->next(p);
-	p=c; c=nc;
+        n-=c->width();
+        RangeList* nc=c->next(p);
+        p=c; c=nc;
       }
     }
     return MAX_OF_EMPTY;
@@ -237,8 +238,8 @@ namespace Gecode { namespace Set {
       RangeList* p = NULL;
       RangeList* c = d.fst();
       while (c!=NULL) {
-	RangeList* nc=c->next(p);
-	p=c; c=nc; n++;
+        RangeList* nc=c->next(p);
+        p=c; c=nc; n++;
       }
     }
 
@@ -250,12 +251,12 @@ namespace Gecode { namespace Set {
       RangeList* p = NULL;
       RangeList* c = d.lst();
       for (int i=n; i--; ) {
-	r[i].min(c->min());
-	r[i].max(c->max());
-	r[i].prevnext(&r[i-1],&r[i+1]);
+        r[i].min(c->min());
+        r[i].max(c->max());
+        r[i].prevnext(&r[i-1],&r[i+1]);
 
-	RangeList* nc=c->next(p);
-	p=c; c=nc;
+        RangeList* nc=c->next(p);
+        p=c; c=nc;
       }
       r[0].prev(&r[-1],NULL); 
       r[n-1].next(&r[n],NULL);
@@ -269,7 +270,7 @@ namespace Gecode { namespace Set {
     if (!ri()) {
       //Was it empty?
       if (fst()==NULL)
-	return false;
+        return false;
       fst()->dispose(home,NULL,lst());
       _size=0; fst(NULL); lst(NULL);
       return true;
@@ -322,9 +323,9 @@ namespace Gecode { namespace Set {
     RangeList *c = fst();
     while (c) {
       if (c->min() <= i && c->max() >= i)
-	return true;
+        return true;
       if (c->min() > i)
-	return false;
+        return false;
       RangeList* nc = c->next(p);
       p=c; c=nc;
     }
@@ -441,8 +442,8 @@ namespace Gecode { namespace Set {
   LUBndSet::init(Space* home) {
     RangeList *p =
       new (home) RangeList(Limits::Set::int_min,
-			   Limits::Set::int_max,
-			   NULL,NULL);
+                           Limits::Set::int_max,
+                           NULL,NULL);
     fst(p);
     lst(p);
     _size = Limits::Set::card_max;
@@ -497,8 +498,8 @@ namespace Gecode { namespace Set {
   template <class I>
   RangesCompl<I>::RangesCompl(I& i)
     : Iter::Ranges::Compl<Limits::Set::int_min,
-			  Limits::Set::int_max,
-			  I>(i) {}
+                          Limits::Set::int_max,
+                          I>(i) {}
 
   template <class I> void
   RangesCompl<I>::init(I& i) {

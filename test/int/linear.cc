@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -41,8 +42,8 @@ private:
   const IntRelType irt;
 public:
   LinearInt(const char* t,
-	    const IntSet& is,
-	    const int* c0, int n, IntRelType irt0, IntConLevel icl)
+            const IntSet& is,
+            const int* c0, int n, IntRelType irt0, IntConLevel icl)
     : IntTest(t,n,is,icl != ICL_DOM,icl), c(c0), irt(irt0) {}
   virtual bool solution(const Assignment& x) const {
     double e = 0.0;
@@ -270,7 +271,7 @@ public:
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<x.size()-1; i++)
       if ((x[i] != 0) && (x[i] != 1))
-	return false;
+        return false;
     double m = 0;
     for (int i=0; i<x.size()-1; i++)
       m += x[i];

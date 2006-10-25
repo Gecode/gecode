@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -91,7 +92,7 @@ namespace Gecode { namespace MiniModel {
   LinExpr::operator=(const LinExpr& t) {
     if (this != &t) {
       if ((ax != NULL) && ax->decrement())
-	delete ax;
+        delete ax;
       n    = t.n;
       ax   = t.ax;
       c    = t.c;
@@ -111,34 +112,34 @@ namespace Gecode { namespace MiniModel {
 
 inline Gecode::MiniModel::LinExpr
 operator+(int c,
-	  const Gecode::MiniModel::LinExpr& t) {
+          const Gecode::MiniModel::LinExpr& t) {
   return Gecode::MiniModel::LinExpr(t,c,1);
 }
 inline Gecode::MiniModel::LinExpr
 operator+(const Gecode::MiniModel::LinExpr& t,
-	  int c) {
+          int c) {
   return Gecode::MiniModel::LinExpr(t,c,1);
 }
 inline Gecode::MiniModel::LinExpr
 operator+(const Gecode::MiniModel::LinExpr& t1,
-	  const Gecode::MiniModel::LinExpr& t2) {
+          const Gecode::MiniModel::LinExpr& t2) {
   return Gecode::MiniModel::LinExpr(t1,t2,1);
 }
 
 
 inline Gecode::MiniModel::LinExpr
 operator-(int c,
-	  const Gecode::MiniModel::LinExpr& t) {
+          const Gecode::MiniModel::LinExpr& t) {
   return Gecode::MiniModel::LinExpr(t, c, -1);
 }
 inline Gecode::MiniModel::LinExpr
 operator-(const Gecode::MiniModel::LinExpr& t,
-	  int c) {
+          int c) {
   return Gecode::MiniModel::LinExpr(t, -c, 1);
 }
 inline Gecode::MiniModel::LinExpr
 operator-(const Gecode::MiniModel::LinExpr& t1,
-	  const Gecode::MiniModel::LinExpr& t2) {
+          const Gecode::MiniModel::LinExpr& t2) {
   return Gecode::MiniModel::LinExpr(t1, t2, -1);
 }
 

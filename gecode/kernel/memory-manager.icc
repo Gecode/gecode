@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -274,14 +275,14 @@ namespace Gecode {
   MemoryManager::alloc_fill(size_t sz) {
     // Adjust current heap chunk size
     if (((requested > Memory::Config::hcsz_inc_ratio*cur_hcsz) ||
-	 (sz > cur_hcsz)) &&
-	(cur_hcsz < Memory::Config::hcsz_max)) {
+         (sz > cur_hcsz)) &&
+        (cur_hcsz < Memory::Config::hcsz_max)) {
       cur_hcsz <<= 1;
     }
 
     // Round size to next multiple of current heap chunk size
     lsz = ((sz > cur_hcsz) ?
-	   (((size_t) (sz / cur_hcsz)) + 1) * cur_hcsz : cur_hcsz);
+           (((size_t) (sz / cur_hcsz)) + 1) * cur_hcsz : cur_hcsz);
 
     // Request as close as possible a chunk with lsz sizes free
 #if GECODE_MEMORY_ALIGNMENT == 4
@@ -315,7 +316,7 @@ namespace Gecode {
     requested = 0;
     alloc_fill(cur_hcsz);
     for (size_t i = Memory::Config::fl_size_max-Memory::Config::fl_size_min+1;
-	 i--; )
+         i--; )
       fl[i] = NULL;
   }
 
@@ -329,7 +330,7 @@ namespace Gecode {
   MemoryManager::MemoryManager(MemoryManager& mm)
     : cur_hcsz(mm.cur_hcsz), slack(NULL) {
     if ((mm.requested < Memory::Config::hcsz_dec_ratio*mm.cur_hcsz) &&
-	(mm.cur_hcsz > Memory::Config::hcsz_min))
+        (mm.cur_hcsz > Memory::Config::hcsz_min))
       cur_hcsz >>= 1;
     init();
   }
@@ -356,7 +357,7 @@ namespace Gecode {
       char* c = reinterpret_cast<char*>(p);
       char* e = c + s;
       while (c < e) {
-	*c = 0; c++;
+        *c = 0; c++;
       }
     }
 #endif
@@ -405,28 +406,28 @@ namespace Gecode {
       ReuseChunk* m = slack;
       slack = NULL;
       do {
-	char*  block = GECODE_KERNEL_PTR2CH(m);
-	size_t s     = m->size;
-	assert(s >= sz);
-	m = m->next;
-	fl[sz2i(sz)] = GECODE_KERNEL_PTR2FL(block);
-	while (s >= 2*sz) {
-	  GECODE_KERNEL_PTR2FL(block)->next(GECODE_KERNEL_PTR2FL(block+sz));
-	  block += sz;
-	  s     -= sz;
-	}
-	GECODE_KERNEL_PTR2FL(block)->next(NULL);
+        char*  block = GECODE_KERNEL_PTR2CH(m);
+        size_t s     = m->size;
+        assert(s >= sz);
+        m = m->next;
+        fl[sz2i(sz)] = GECODE_KERNEL_PTR2FL(block);
+        while (s >= 2*sz) {
+          GECODE_KERNEL_PTR2FL(block)->next(GECODE_KERNEL_PTR2FL(block+sz));
+          block += sz;
+          s     -= sz;
+        }
+        GECODE_KERNEL_PTR2FL(block)->next(NULL);
       } while (m != NULL);
     } else {
       char* block = GECODE_KERNEL_PTR2CH(alloc(Memory::Config::fl_refill*sz));
       fl[sz2i(sz)] = GECODE_KERNEL_PTR2FL(block);
       int i = Memory::Config::fl_refill-2;
       do {
-	GECODE_KERNEL_PTR2FL(block+i*sz)->next
-	  (GECODE_KERNEL_PTR2FL(block+(i+1)*sz));
+        GECODE_KERNEL_PTR2FL(block+i*sz)->next
+          (GECODE_KERNEL_PTR2FL(block+(i+1)*sz));
       } while (--i >= 0);
       GECODE_KERNEL_PTR2FL(block+(Memory::Config::fl_refill-1)*sz)->next
-	(GECODE_KERNEL_PTR2FL(NULL));
+        (GECODE_KERNEL_PTR2FL(NULL));
     }
   }
 

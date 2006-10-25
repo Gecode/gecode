@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -93,9 +94,9 @@ namespace Gecode { namespace Int { namespace Distinct {
    * bounds-consistency.
    *
    * The algorithm is taken from:
-   *	A. Lopez-Ortiz, C.-G. Quimper, J. Tromp, and P. van Beek.
-   *	A fast and simple algorithm for bounds consistency of the
-   *	alldifferent constraint. IJCAI-2003.
+   *        A. Lopez-Ortiz, C.-G. Quimper, J. Tromp, and P. van Beek.
+   *        A fast and simple algorithm for bounds consistency of the
+   *        alldifferent constraint. IJCAI-2003.
    *
    * This implementation uses the code that is provided by
    * Peter Van Beek:

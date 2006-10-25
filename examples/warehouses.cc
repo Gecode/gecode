@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -90,11 +91,11 @@ public:
       IntArgs c(n_stores + n_suppliers);
       IntVarArgs x(n_stores + n_suppliers);
       for (int i=0; i<n_stores; i++) {
-	c[i]=1; x[i]=cost[i];
+        c[i]=1; x[i]=cost[i];
       }
       for (int i=0; i<n_suppliers; i++) {
-	c[n_stores+i]=building_cost;
-	x[n_stores+i]=open[i];
+        c[n_stores+i]=building_cost;
+        x[n_stores+i]=open[i];
       }
       linear(this, c, x, IRT_EQ, total);
     }
@@ -103,7 +104,7 @@ public:
     for (int i=0; i<n_stores; i++) {
       IntArgs c(n_suppliers);
       for (int j=0; j<n_suppliers; j++)
-	c[j] = cost_matrix[i][j];
+        c[j] = cost_matrix[i][j];
       element(this, c, supplier[i], cost[i]);
     }
 
@@ -115,7 +116,7 @@ public:
     for (int i=0; i<n_suppliers; i++) {
       BoolVarArgs store_by_supplier(n_stores);
       for (int j=0; j<n_stores; j++)
-	store_by_supplier[j] = post(this, ~(supplier[j] == i));
+        store_by_supplier[j] = post(this, ~(supplier[j] == i));
       BoolVar b(this, 0, 1);
       rel(this, open[i], IRT_EQ, 1, b);
       linear(this, store_by_supplier, IRT_GR, 0, b);

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -401,19 +402,19 @@ public:
       CountableSetRanges x0r(x.lub, x[0]);
       CountableSetRanges x1r(x.lub, x[1]);
       if (!Iter::Ranges::disjoint(x0r,x1r))
-	return false;
+        return false;
     }
     {
       CountableSetRanges x0r(x.lub, x[0]);
       CountableSetRanges x2r(x.lub, x[2]);
       if (!Iter::Ranges::disjoint(x0r,x2r))
-	return false;
+        return false;
     }
     {
       CountableSetRanges x1r(x.lub, x[1]);
       CountableSetRanges x2r(x.lub, x[2]);
       if (!Iter::Ranges::disjoint(x1r,x2r))
-	return false;
+        return false;
     }
 
     GECODE_AUTOARRAY(CountableSetRanges, isrs, 3);

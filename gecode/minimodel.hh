@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -72,35 +73,35 @@ namespace Gecode {
       /// Nodes for linear expressions
       class Node {
       private:
-	/// Nodes are reference counted
-	unsigned int use;
-	/// Left and right subtrees
-	Node *left, *right;
-	/// Left and right signs for entire subtress
-	int signLeft, signRight;
-	/// Coefficient
-	int a;
-	/// Variable
-	IntVar x;
+        /// Nodes are reference counted
+        unsigned int use;
+        /// Left and right subtrees
+        Node *left, *right;
+        /// Left and right signs for entire subtress
+        int signLeft, signRight;
+        /// Coefficient
+        int a;
+        /// Variable
+        IntVar x;
       public:
-	/// Construct node for \a a multiplied with \a x
-	Node(int a, const IntVar& x);
-	/// Construct node from nodes \a n0 and \a n1 with signs \a s0 and \a s1
-	Node(Node* n0, int s0, Node* n1, int s1);
+        /// Construct node for \a a multiplied with \a x
+        Node(int a, const IntVar& x);
+        /// Construct node from nodes \a n0 and \a n1 with signs \a s0 and \a s1
+        Node(Node* n0, int s0, Node* n1, int s1);
 
-	/// Increment reference count
-	void increment(void);
-	/// Decrement reference count and possibly free memory
-	GECODE_MINIMODEL_EXPORT bool decrement(void);
-	
-	/// Fill in array of linear terms based on this node
-	GECODE_MINIMODEL_EXPORT int
-	fill(Int::Linear::Term t[], int i, int s) const;
-	
-	/// Memory management
-	static void* operator new(size_t size);
-	/// Memory management
-	static void  operator delete(void* p,size_t size);
+        /// Increment reference count
+        void increment(void);
+        /// Decrement reference count and possibly free memory
+        GECODE_MINIMODEL_EXPORT bool decrement(void);
+        
+        /// Fill in array of linear terms based on this node
+        GECODE_MINIMODEL_EXPORT int
+        fill(Int::Linear::Term t[], int i, int s) const;
+        
+        /// Memory management
+        static void* operator new(size_t size);
+        /// Memory management
+        static void  operator delete(void* p,size_t size);
       };
       Node* ax;       ///< Node for expression
     public:
@@ -183,28 +184,28 @@ namespace Gecode {
 /// Construct linear expression as sum of linear expression and integer
 Gecode::MiniModel::LinExpr
 operator+(int,
-	  const Gecode::MiniModel::LinExpr&);
+          const Gecode::MiniModel::LinExpr&);
 /// Construct linear expression as sum of integer and linear expression
 Gecode::MiniModel::LinExpr
 operator+(const Gecode::MiniModel::LinExpr&,
-	  int);
+          int);
 /// Construct linear expression as sum of linear expressions
 Gecode::MiniModel::LinExpr
 operator+(const Gecode::MiniModel::LinExpr&,
-	  const Gecode::MiniModel::LinExpr&);
+          const Gecode::MiniModel::LinExpr&);
 
 /// Construct linear expression as difference of linear expression and integer
 Gecode::MiniModel::LinExpr
 operator-(int,
-	  const Gecode::MiniModel::LinExpr&);
+          const Gecode::MiniModel::LinExpr&);
 /// Construct linear expression as difference of integer and linear expression
 Gecode::MiniModel::LinExpr
 operator-(const Gecode::MiniModel::LinExpr&,
-	  int);
+          int);
 /// Construct linear expression as difference of linear expressions
 Gecode::MiniModel::LinExpr
 operator-(const Gecode::MiniModel::LinExpr&,
-	  const Gecode::MiniModel::LinExpr&);
+          const Gecode::MiniModel::LinExpr&);
 
 /// Construct linear expression as negative of linear expression
 Gecode::MiniModel::LinExpr
@@ -228,80 +229,80 @@ operator*(int, const Gecode::MiniModel::LinExpr&);
 /// Construct linear equality relation
 Gecode::MiniModel::LinRel
 operator==(int l,
-	   const Gecode::MiniModel::LinExpr& r);
+           const Gecode::MiniModel::LinExpr& r);
 /// Construct linear equality relation
 Gecode::MiniModel::LinRel
 operator==(const Gecode::MiniModel::LinExpr& l,
-	   int r);
+           int r);
 /// Construct linear equality relation
 Gecode::MiniModel::LinRel
 operator==(const Gecode::MiniModel::LinExpr& l,
-	   const Gecode::MiniModel::LinExpr& r);
+           const Gecode::MiniModel::LinExpr& r);
 
 /// Construct linear disequality relation
 Gecode::MiniModel::LinRel
 operator!=(int l,
-	   const Gecode::MiniModel::LinExpr& r);
+           const Gecode::MiniModel::LinExpr& r);
 /// Construct linear disequality relation
 Gecode::MiniModel::LinRel
 operator!=(const Gecode::MiniModel::LinExpr& l,
-	   int r);
+           int r);
 /// Construct linear disequality relation
 Gecode::MiniModel::LinRel
 operator!=(const Gecode::MiniModel::LinExpr& l,
-	   const Gecode::MiniModel::LinExpr& r);
+           const Gecode::MiniModel::LinExpr& r);
 
 /// Construct linear inequality relation
 Gecode::MiniModel::LinRel
 operator<(int l,
-	  const Gecode::MiniModel::LinExpr& r);
+          const Gecode::MiniModel::LinExpr& r);
 /// Construct linear inequality relation
 Gecode::MiniModel::LinRel
 operator<(const Gecode::MiniModel::LinExpr& l,
-	  int r);
+          int r);
 /// Construct linear inequality relation
 Gecode::MiniModel::LinRel
 operator<(const Gecode::MiniModel::LinExpr& l,
-	  const Gecode::MiniModel::LinExpr& r);
+          const Gecode::MiniModel::LinExpr& r);
 
 /// Construct linear inequality relation
 Gecode::MiniModel::LinRel
 operator<=(int l,
-	   const Gecode::MiniModel::LinExpr& r);
+           const Gecode::MiniModel::LinExpr& r);
 /// Construct linear inequality relation
 Gecode::MiniModel::LinRel
 operator<=(const Gecode::MiniModel::LinExpr& l,
-	   int r);
+           int r);
 /// Construct linear inequality relation
 Gecode::MiniModel::LinRel
 operator<=(const Gecode::MiniModel::LinExpr& l,
-	   const Gecode::MiniModel::LinExpr& r);
+           const Gecode::MiniModel::LinExpr& r);
 
 /// Construct linear inequality relation
 Gecode::MiniModel::LinRel
 operator>(int l,
-	  const Gecode::MiniModel::LinExpr& r);
+          const Gecode::MiniModel::LinExpr& r);
 /// Construct linear inequality relation
 Gecode::MiniModel::LinRel
 operator>(const Gecode::MiniModel::LinExpr& l,
-	  int r);
+          int r);
 /// Construct linear inequality relation
 Gecode::MiniModel::LinRel
 operator>(const Gecode::MiniModel::LinExpr& l,
-	  const Gecode::MiniModel::LinExpr& r);
+          const Gecode::MiniModel::LinExpr& r);
 
 /// Construct linear inequality relation
 Gecode::MiniModel::LinRel
 operator>=(int l,
-	   const Gecode::MiniModel::LinExpr& r);
+           const Gecode::MiniModel::LinExpr& r);
 /// Construct linear inequality relation
 Gecode::MiniModel::LinRel
 operator>=(const Gecode::MiniModel::LinExpr& l,
-	   int r);
+           int r);
 /// Construct linear inequality relation
 Gecode::MiniModel::LinRel
 operator>=(const Gecode::MiniModel::LinExpr& l,
-	   const Gecode::MiniModel::LinExpr& r);
+           const Gecode::MiniModel::LinExpr& r);
 
 //@}
 
@@ -314,49 +315,49 @@ namespace Gecode {
     public:
       /// Type of Boolean expression
       enum NodeType {
-	BT_VAR, ///< Variable
-	BT_NOT, ///< Negation
-	BT_AND, ///< Conjunction
-	BT_OR,  ///< Disjunction
-	BT_IMP, ///< Implication
-	BT_XOR, ///< Exclusive or
-	BT_EQV, ///< Equivalence
-	BT_RLIN ///< Reified linear relation
+        BT_VAR, ///< Variable
+        BT_NOT, ///< Negation
+        BT_AND, ///< Conjunction
+        BT_OR,  ///< Disjunction
+        BT_IMP, ///< Implication
+        BT_XOR, ///< Exclusive or
+        BT_EQV, ///< Equivalence
+        BT_RLIN ///< Reified linear relation
       };
       /// Node for Boolean expression
       class Node {
       public:
-	/// Nodes are reference counted
-	unsigned int use;
-	/// Number of variables in subtree with same type (for AND and OR)
-	unsigned int same;
-	/// Type of expression
-	NodeType t;
-	/// Subexpressions
-	Node *l, *r;
-	/// Possibly a variable
-	BoolVar x;
-	/// Possibly a reified linear relation
-	LinRel rl;
+        /// Nodes are reference counted
+        unsigned int use;
+        /// Number of variables in subtree with same type (for AND and OR)
+        unsigned int same;
+        /// Type of expression
+        NodeType t;
+        /// Subexpressions
+        Node *l, *r;
+        /// Possibly a variable
+        BoolVar x;
+        /// Possibly a reified linear relation
+        LinRel rl;
 
-	/// Default constructor
-	Node(void);
-	/// Decrement reference count and possibly free memory
-	GECODE_MINIMODEL_EXPORT bool decrement(void);
-	/// Post propagators for nested conjunctive and disjunctive expression
-	GECODE_MINIMODEL_EXPORT int post(Space* home, NodeType t,
-					 BoolVarArgs& b, int i) const;
-	/// Post propagators for expression
-	GECODE_MINIMODEL_EXPORT void post(Space* home, BoolVar b) const;
-	/// Post propagators for expression
-	GECODE_MINIMODEL_EXPORT BoolVar post(Space* home) const;
-	/// Post propagators for relation
-	GECODE_MINIMODEL_EXPORT void post(Space* home, bool t) const;
-	
-	/// Memory management
-	static void* operator new(size_t size);
-	/// Memory management
-	static void  operator delete(void* p,size_t size);
+        /// Default constructor
+        Node(void);
+        /// Decrement reference count and possibly free memory
+        GECODE_MINIMODEL_EXPORT bool decrement(void);
+        /// Post propagators for nested conjunctive and disjunctive expression
+        GECODE_MINIMODEL_EXPORT int post(Space* home, NodeType t,
+                                         BoolVarArgs& b, int i) const;
+        /// Post propagators for expression
+        GECODE_MINIMODEL_EXPORT void post(Space* home, BoolVar b) const;
+        /// Post propagators for expression
+        GECODE_MINIMODEL_EXPORT BoolVar post(Space* home) const;
+        /// Post propagators for relation
+        GECODE_MINIMODEL_EXPORT void post(Space* home, bool t) const;
+        
+        /// Memory management
+        static void* operator new(size_t size);
+        /// Memory management
+        static void  operator delete(void* p,size_t size);
       };
     private:
       /// Pointer to node for expression
@@ -422,17 +423,17 @@ operator!(const Gecode::MiniModel::BoolExpr&);
 /// Conjunction of Boolean expressions
 Gecode::MiniModel::BoolExpr
 operator&&(const Gecode::MiniModel::BoolExpr&,
-	   const Gecode::MiniModel::BoolExpr&);
+           const Gecode::MiniModel::BoolExpr&);
 
 /// Disjunction of Boolean expressions
 Gecode::MiniModel::BoolExpr
 operator||(const Gecode::MiniModel::BoolExpr&,
-	   const Gecode::MiniModel::BoolExpr&);
+           const Gecode::MiniModel::BoolExpr&);
 
 /// Exclusive-or of Boolean expressions
 Gecode::MiniModel::BoolExpr
 operator^(const Gecode::MiniModel::BoolExpr&,
-	  const Gecode::MiniModel::BoolExpr&);
+          const Gecode::MiniModel::BoolExpr&);
 
 /// Reification of linear expression
 Gecode::MiniModel::BoolExpr
@@ -471,30 +472,30 @@ namespace Gecode {
   //@{
   /// Post linear expression and return its value
   IntVar post(Space* home, const MiniModel::LinExpr& e,
-	      IntConLevel icl=ICL_DEF);
+              IntConLevel icl=ICL_DEF);
   /// Post linear expression (special case for variable) and return its value
   IntVar post(Space* home, const IntVar& x,
-	      IntConLevel icl=ICL_DEF);
+              IntConLevel icl=ICL_DEF);
   /// Post linear expression (special case for constant) and return its value
   IntVar post(Space* home, int n,
-	      IntConLevel icl=ICL_DEF);
+              IntConLevel icl=ICL_DEF);
 
   /// Post linear relation
   void post(Space* home, const MiniModel::LinRel& r,
-	    IntConLevel icl=ICL_DEF);
+            IntConLevel icl=ICL_DEF);
   /// Make it work for special integer only-case
   void post(Space* home, bool r,
-	    IntConLevel icl=ICL_DEF);
+            IntConLevel icl=ICL_DEF);
 
   /// Post Boolean expression and return its value
   BoolVar post(Space* home, const MiniModel::BoolExpr& e,
-	       IntConLevel icl=ICL_DEF);
+               IntConLevel icl=ICL_DEF);
   /// Post Boolean expression (special case for variable) and return its value
   BoolVar post(Space* home, const BoolVar& b,
-	       IntConLevel icl=ICL_DEF);
+               IntConLevel icl=ICL_DEF);
   /// Post Boolean relation
   void post(Space* home, const MiniModel::BoolRel& r,
-	    IntConLevel icl=ICL_DEF);
+            IntConLevel icl=ICL_DEF);
   //@}
 
 }
@@ -561,7 +562,7 @@ namespace Gecode {
    */
   inline void
   atmost(Space* home, const IntVarArgs& x, int n, int m,
-	 IntConLevel icl=ICL_DEF) {
+         IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_LQ,m,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq m\f$
@@ -570,7 +571,7 @@ namespace Gecode {
    */
   inline void
   atmost(Space* home, const IntVarArgs& x, IntVar y, int m,
-	 IntConLevel icl=ICL_DEF) {
+         IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_LQ,m,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\leq z\f$
@@ -579,7 +580,7 @@ namespace Gecode {
    */
   inline void
   atmost(Space* home, const IntVarArgs& x, int n, IntVar z,
-	 IntConLevel icl=ICL_DEF) {
+         IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_LQ,z,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq z\f$
@@ -588,7 +589,7 @@ namespace Gecode {
    */
   inline void
   atmost(Space* home, const IntVarArgs& x, IntVar y, IntVar z,
-	 IntConLevel icl=ICL_DEF) {
+         IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_LQ,z,icl);
   }
 
@@ -598,7 +599,7 @@ namespace Gecode {
    */
   inline void
   atleast(Space* home, const IntVarArgs& x, int n, int m,
-	  IntConLevel icl=ICL_DEF) {
+          IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_GQ,m,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq m\f$
@@ -607,7 +608,7 @@ namespace Gecode {
    */
   inline void
   atleast(Space* home, const IntVarArgs& x, IntVar y, int m,
-	  IntConLevel icl=ICL_DEF) {
+          IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_GQ,m,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq z\f$
@@ -616,7 +617,7 @@ namespace Gecode {
    */
   inline void
   atleast(Space* home, const IntVarArgs& x, int n, IntVar z,
-	  IntConLevel icl=ICL_DEF) {
+          IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_GQ,z,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq z\f$
@@ -625,7 +626,7 @@ namespace Gecode {
    */
   inline void
   atleast(Space* home, const IntVarArgs& x, IntVar y, IntVar z,
-	  IntConLevel icl=ICL_DEF) {
+          IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_GQ,z,icl);
   }
 
@@ -635,7 +636,7 @@ namespace Gecode {
    */
   inline void
   exactly(Space* home, const IntVarArgs& x, int n, int m,
-	  IntConLevel icl=ICL_DEF) {
+          IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_EQ,m,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=m\f$
@@ -644,7 +645,7 @@ namespace Gecode {
    */
   inline void
   exactly(Space* home, const IntVarArgs& x, IntVar y, int m,
-	  IntConLevel icl=ICL_DEF) {
+          IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_EQ,m,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=z\f$
@@ -653,7 +654,7 @@ namespace Gecode {
    */
   inline void
   exactly(Space* home, const IntVarArgs& x, int n, IntVar z,
-	  IntConLevel icl=ICL_DEF) {
+          IntConLevel icl=ICL_DEF) {
     count(home,x,n,IRT_EQ,z,icl);
   }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=z\f$
@@ -662,7 +663,7 @@ namespace Gecode {
    */
   inline void
   exactly(Space* home, const IntVarArgs& x, IntVar y, IntVar z,
-	  IntConLevel icl=ICL_DEF) {
+          IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_EQ,z,icl);
   }
   /** \brief Post propagator for lexical order between \a x and \a y.
@@ -720,9 +721,9 @@ namespace Gecode {
    */
   GECODE_MINIMODEL_EXPORT void
   producer_consumer(Space *home,
-		    const IntVarArgs& produce_date, const IntArgs& produce_amount,
-		    const IntVarArgs& consume_date, const IntArgs& consume_amount,
-		    int initial, IntConLevel icl=ICL_DEF);
+                    const IntVarArgs& produce_date, const IntArgs& produce_amount,
+                    const IntVarArgs& consume_date, const IntArgs& consume_amount,
+                    int initial, IntConLevel icl=ICL_DEF);
 
 
   /** \brief Creates propagator for the cumulative constraint.
@@ -749,8 +750,8 @@ namespace Gecode {
    */
   GECODE_MINIMODEL_EXPORT void
   cumulative(Space *home, const IntVarArgs& start, const IntVarArgs& duration,
-	     const IntVarArgs& height, int limit, bool at_most = true,
-	     IntConLevel cl=ICL_DEF);
+             const IntVarArgs& height, int limit, bool at_most = true,
+             IntConLevel cl=ICL_DEF);
 
   /** \brief Creates propagator for the cumulative constraint.
    *
@@ -758,8 +759,8 @@ namespace Gecode {
    */
   GECODE_MINIMODEL_EXPORT void
   cumulative(Space *home, const IntVarArgs& start, const IntArgs& duration,
-	     const IntVarArgs& height, int limit, bool at_most = true,
-	     IntConLevel cl=ICL_DEF);
+             const IntVarArgs& height, int limit, bool at_most = true,
+             IntConLevel cl=ICL_DEF);
 
   /** \brief Creates propagator for the cumulative constraint.
    *
@@ -767,8 +768,8 @@ namespace Gecode {
    */
   GECODE_MINIMODEL_EXPORT void
   cumulative(Space *home, const IntVarArgs& start, const IntVarArgs& duration,
-	     const IntArgs& height, int limit, bool at_most = true,
-	     IntConLevel cl=ICL_DEF);
+             const IntArgs& height, int limit, bool at_most = true,
+             IntConLevel cl=ICL_DEF);
 
   /** \brief Creates propagator for the cumulative constraint.
    *
@@ -776,8 +777,8 @@ namespace Gecode {
    */
   GECODE_MINIMODEL_EXPORT void
   cumulative(Space *home, const IntVarArgs& start, const IntArgs& duration,
-	     const IntArgs& height, int limit, bool at_most = true,
-	     IntConLevel cl=ICL_DEF);
+             const IntArgs& height, int limit, bool at_most = true,
+             IntConLevel cl=ICL_DEF);
 
   /** \brief Creates propagator for the serialized constraint.
    *
@@ -797,7 +798,7 @@ namespace Gecode {
    */
   GECODE_MINIMODEL_EXPORT void
   serialized(Space *home, const IntVarArgs& start, const IntVarArgs& duration,
-	     IntConLevel cl=ICL_DEF);
+             IntConLevel cl=ICL_DEF);
 
 
   /** \brief Creates propagator for the serialized constraint.
@@ -806,7 +807,7 @@ namespace Gecode {
    */
   GECODE_MINIMODEL_EXPORT void
   serialized(Space *home, const IntVarArgs& start, const IntArgs& duration,
-	     IntConLevel cl=ICL_DEF);
+             IntConLevel cl=ICL_DEF);
 
 
   //@}
@@ -851,13 +852,13 @@ namespace Gecode { namespace MiniModel {
     class Slice {
       args_type _r;     ///< The elements of the slice
       unsigned int _fc, ///< From column
-	_tc,            ///< To column
-	_fr,            ///< From row
-	_tr;            ///< To row
+        _tc,            ///< To column
+        _fr,            ///< From row
+        _tr;            ///< To row
     public:
       Slice(Matrix<A>& a,
-	    unsigned int fc, unsigned int tc,
-	    unsigned int fr, unsigned int tr);
+            unsigned int fc, unsigned int tc,
+            unsigned int fr, unsigned int tr);
 
       operator args_type(void);
       operator Matrix<args_type>(void);
@@ -923,7 +924,7 @@ namespace Gecode { namespace MiniModel {
      * For further information, see Slice.
      */
     Slice slice(unsigned int fc, unsigned int tc,
-		unsigned int fr, unsigned int tr);
+                unsigned int fr, unsigned int tr);
 
     /// Access row \a r.
     args_type row(int r);

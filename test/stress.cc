@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -82,8 +83,8 @@ StressTest::run(const Options& opt) {
   return true;
  failed:
   std::cout << "FAILURE" << std::endl
-	    << "\t" << "Problem:    " << problem << std::endl
-	    << "\t" << "Parameter: " << param.val() << std::endl;
+            << "\t" << "Problem:    " << problem << std::endl
+            << "\t" << "Parameter: " << param.val() << std::endl;
   return false;
 }
 

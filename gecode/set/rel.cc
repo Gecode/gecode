@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -40,41 +41,41 @@ namespace Gecode {
     switch(r) {
     case SRT_EQ:
       {
-	GECODE_ES_FAIL(home,
-		       (Eq<View0,View1>::post(home,x0,x1)));
+        GECODE_ES_FAIL(home,
+                       (Eq<View0,View1>::post(home,x0,x1)));
       }
       break;
     case SRT_NQ:
       {
-	GECODE_ES_FAIL(home,
-		       (Distinct<View0,View1>::post(home,x0,x1)));
+        GECODE_ES_FAIL(home,
+                       (Distinct<View0,View1>::post(home,x0,x1)));
       }
       break;
     case SRT_SUB:
       {
-	GECODE_ES_FAIL(home,
-		       (SubSet<View0,View1>::post(home, x0,x1)));
+        GECODE_ES_FAIL(home,
+                       (SubSet<View0,View1>::post(home, x0,x1)));
       }
       break;
     case SRT_SUP:
       {
-	GECODE_ES_FAIL(home,
-		       (SubSet<View1,View0>::post(home, x1,x0)));
+        GECODE_ES_FAIL(home,
+                       (SubSet<View1,View0>::post(home, x1,x0)));
       }
       break;
     case SRT_DISJ:
       {
-	EmptyView emptyset;
-	GECODE_ES_FAIL(home,(SuperOfInter<View0,View1,EmptyView>
-			     ::post(home, x0, x1, emptyset)));
+        EmptyView emptyset;
+        GECODE_ES_FAIL(home,(SuperOfInter<View0,View1,EmptyView>
+                             ::post(home, x0, x1, emptyset)));
       }
       break;
     case SRT_CMPL:
       {
-	ComplementView<View0> cx0(x0);
-	GECODE_ES_FAIL(home,
-		       (Eq<ComplementView<View0>, View1>
-			::post(home, cx0, x1)));
+        ComplementView<View0> cx0(x0);
+        GECODE_ES_FAIL(home,
+                       (Eq<ComplementView<View0>, View1>
+                        ::post(home, cx0, x1)));
       }
       break;
     }
@@ -87,58 +88,58 @@ namespace Gecode {
     switch(r) {
     case SRT_EQ:
       {
-	GECODE_ES_FAIL(home,
-		       (ReEq<View0,View1>::post(home, x,y,b)));
+        GECODE_ES_FAIL(home,
+                       (ReEq<View0,View1>::post(home, x,y,b)));
       }
       break;
     case SRT_NQ:
       {
-	BoolVar notb(home, 0, 1);
-	bool_not(home, b, notb);
-	GECODE_ES_FAIL(home,
-		       (ReEq<View0,View1>::post(home,
-							   x,y,notb)));
+        BoolVar notb(home, 0, 1);
+        bool_not(home, b, notb);
+        GECODE_ES_FAIL(home,
+                       (ReEq<View0,View1>::post(home,
+                                                           x,y,notb)));
       }
       break;
     case SRT_SUB:
       {
-	GECODE_ES_FAIL(home,
-		       (ReSubset<View0,View1>::post(home, x,y,b)));
+        GECODE_ES_FAIL(home,
+                       (ReSubset<View0,View1>::post(home, x,y,b)));
       }
       break;
     case SRT_SUP:
       {
-	GECODE_ES_FAIL(home,
-		       (ReSubset<View1,View0>::post(home, y,x,b)));
+        GECODE_ES_FAIL(home,
+                       (ReSubset<View1,View0>::post(home, y,x,b)));
       }
       break;
     case SRT_DISJ:
       {
-	// x||y <=> b is equivalent to
-	// ( y <= complement(x) and x<=complement(y) ) <=> b
+        // x||y <=> b is equivalent to
+        // ( y <= complement(x) and x<=complement(y) ) <=> b
 
-	// set up BoolVars for the conjunction
-	BoolVar b1(home, 0, 1);
-	BoolVar b2(home, 0, 1);
-	bool_and(home, b1, b2, b);	
+        // set up BoolVars for the conjunction
+        BoolVar b1(home, 0, 1);
+        BoolVar b2(home, 0, 1);
+        bool_and(home, b1, b2, b);        
 
-	ComplementView<View0> xc(x);
-	ComplementView<View1> yc(y);
+        ComplementView<View0> xc(x);
+        ComplementView<View1> yc(y);
 
-	GECODE_ES_FAIL(home,
-		       (ReSubset<View0,ComplementView<View1> >
-			::post(home, x, yc, b1)));
-	GECODE_ES_FAIL(home,
-		       (ReSubset<View1,ComplementView<View0> >
-			::post(home, y, xc, b2)));
+        GECODE_ES_FAIL(home,
+                       (ReSubset<View0,ComplementView<View1> >
+                        ::post(home, x, yc, b1)));
+        GECODE_ES_FAIL(home,
+                       (ReSubset<View1,ComplementView<View0> >
+                        ::post(home, y, xc, b2)));
       }
       break;
     case SRT_CMPL:
       {
-	ComplementView<View0> cx(x);
-	GECODE_ES_FAIL(home,
-		       (ReEq<ComplementView<View0>,
-			View1>::post(home, cx, y, b)));
+        ComplementView<View0> cx(x);
+        GECODE_ES_FAIL(home,
+                       (ReEq<ComplementView<View0>,
+                        View1>::post(home, cx, y, b)));
       }
       break;
     }

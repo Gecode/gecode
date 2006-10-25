@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -72,16 +73,16 @@ public:
       Test* p = NULL;
       Test* c = all;
       while ((c != NULL) &&
-	     ((strcmp(m,c->m)>0)
-	      || ((strcmp(m,c->m)==0) && (strcmp(t,c->t)>0)))) {
-	p = c; c = c->n;
+             ((strcmp(m,c->m)>0)
+              || ((strcmp(m,c->m)==0) && (strcmp(t,c->t)>0)))) {
+        p = c; c = c->n;
       }
       if (c == NULL) {
-	p->n = this; n = NULL;
+        p->n = this; n = NULL;
       } else if (c == all) {
-	n = all; all = this;
+        n = all; all = this;
       } else {
-	p->n = this; n = c;
+        p->n = this; n = c;
       }
     }
   }

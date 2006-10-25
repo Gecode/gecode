@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -88,7 +89,7 @@ public:
     for (int i = 0; i < n; i++) {
       std::cout << ((char) (i+'a')) << '=' << le[i] << ((i<n-1)?", ":"\n");
       if ((i+1) % 8 == 0)
-	std::cout << std::endl << "\t";
+        std::cout << std::endl << "\t";
     }
     std::cout << std::endl;
   }

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -135,7 +136,7 @@ private:
   SetAssignment* make_assignment(void);
 public:
   SetTest(const char* t,
-	  int a, const IntSet& d, bool r=false, int w=0)
+          int a, const IntSet& d, bool r=false, int w=0)
     : Test("Set",t), arity(a), lub(d), reified(r), withInt(w)  {}
   /// Check for solution
   virtual bool solution(const SetAssignment&) const = 0;

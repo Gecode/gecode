@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -40,7 +41,7 @@ public:
     for (int i=1; i<n; i++) {
       IntVarArgs y(i);
       for (int j=0; j<i; j++)
-	y[j]=x[j];
+        y[j]=x[j];
       IntVar m(this,0,2*n);
       min(this, y, m);
       rel(this, m, IRT_GR, x[i]);

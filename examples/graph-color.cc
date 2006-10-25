@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -314,10 +315,10 @@ public:
       int n = *c;
       IntVarArgs x(n); c++;
       for (int i = n; i--; c++)
-	x[i] = v[*c];
+        x[i] = v[*c];
       distinct(this, x, opt.icl);
       if (!opt.naive)
-	rel(this, m, IRT_GQ, n);
+        rel(this, m, IRT_GQ, n);
     }
     IntVarArgs ma(1);
     ma[0] = m;
@@ -342,11 +343,11 @@ public:
   virtual void
   print(void) {
     std::cout << "\tm = " << m << std::endl
-	      << "\tv[] = {";
+              << "\tv[] = {";
     for (int i = 0; i < v.size(); i++) {
       std::cout << v[i] << ", ";
       if ((i+1) % 15 == 0)
-	std::cout << std::endl << "\t       ";
+        std::cout << std::endl << "\t       ";
     }
     std::cout << "};" << std::endl;
   }

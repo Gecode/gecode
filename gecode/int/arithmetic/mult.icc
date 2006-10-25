@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -38,14 +39,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   forceinline int
   f_d(int x, int y) {
     return static_cast<int>(floor(static_cast<double>(x) /
-				  static_cast<double>(y)));
+                                  static_cast<double>(y)));
   }
 
   /// Compute \f$\lceil x/y\rceil\f$
   forceinline int
   c_d(int x, int y) {
     return static_cast<int>(ceil(static_cast<double>(x) /
-				 static_cast<double>(y)));
+                                 static_cast<double>(y)));
   }
 
   /// Test whether \a x is postive
@@ -115,24 +116,24 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     do {
       mod = false;
       {
-	ModEvent me = x0.lq(home,floor(sqrt(static_cast<double>(x1.max()))));
-	if (me_failed(me)) return ES_FAILED;
-	mod |= me_modified(me);
+        ModEvent me = x0.lq(home,floor(sqrt(static_cast<double>(x1.max()))));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
       }
       {
-	ModEvent me = x0.gq(home,ceil(sqrt(static_cast<double>(x1.min()))));
-	if (me_failed(me)) return ES_FAILED;
-	mod |= me_modified(me);
+        ModEvent me = x0.gq(home,ceil(sqrt(static_cast<double>(x1.min()))));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
       }
       {
-	ModEvent me = x1.lq(home,x0.max()*x0.max());
-	if (me_failed(me)) return ES_FAILED;
-	mod |= me_modified(me);
+        ModEvent me = x1.lq(home,x0.max()*x0.max());
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
       }
       {
-	ModEvent me = x1.gq(home,x0.min()*x0.min());
-	if (me_failed(me)) return ES_FAILED;
-	mod |= me_modified(me);
+        ModEvent me = x1.gq(home,x0.min()*x0.min());
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
       }
     } while (mod);
     return x0.assigned() ? ES_SUBSUMED : ES_FIX;
@@ -164,7 +165,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   Square<View>::post(Space* home, View x0, View x1) {
     GECODE_ME_CHECK(x1.gq(home,0));
     GECODE_ME_CHECK(x0.lq(home,floor(sqrt(static_cast<double>
-					  (Limits::Int::int_max)))));
+                                          (Limits::Int::int_max)))));
     if (x0.min() >= 0)
       return SquarePlus<IntView,IntView>::post(home,x0,x1);
     if (x0.max() <= 0)
@@ -197,13 +198,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     assert(x1.min() >= 0);
     if (x0.min() >= 0)
       return (SquarePlus<IntView,IntView>::post(home,x0,x1)
-	      == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
+              == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
     if (x0.max() <= 0)
       return (SquarePlus<MinusView,IntView>::post(home,x0,x1)
-	      == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
+              == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
 
     GECODE_ME_CHECK(x1.lq(home,std::max(x0.min()*x0.min(),
-					x0.max()*x0.max())));
+                                        x0.max()*x0.max())));
 
     int s = static_cast<int>(floor(sqrt(static_cast<double>(x1.max()))));
 
@@ -269,34 +270,34 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     do {
       mod = false;
       {
-	ModEvent me = x2.lq(home,m(x0.max(),x1.max()));
-	if (me_failed(me)) return ES_FAILED;
-	mod |= me_modified(me);
+        ModEvent me = x2.lq(home,m(x0.max(),x1.max()));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
       }
       {
-	ModEvent me = x2.gq(home,m(x0.min(),x1.min()));
-	if (me_failed(me)) return ES_FAILED;
-	mod |= me_modified(me);
+        ModEvent me = x2.gq(home,m(x0.min(),x1.min()));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
       }
       {
-	ModEvent me = x0.lq(home,f_d(x2.max(),x1.min()));
-	if (me_failed(me)) return ES_FAILED;
-	mod |= me_modified(me);
+        ModEvent me = x0.lq(home,f_d(x2.max(),x1.min()));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
       }
       {
-	ModEvent me = x0.gq(home,c_d(x2.min(),x1.max()));
-	if (me_failed(me)) return ES_FAILED;
-	mod |= me_modified(me);
+        ModEvent me = x0.gq(home,c_d(x2.min(),x1.max()));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
       }
       {
-	ModEvent me = x1.lq(home,f_d(x2.max(),x0.min()));
-	if (me_failed(me)) return ES_FAILED;
-	mod |= me_modified(me);
+        ModEvent me = x1.lq(home,f_d(x2.max(),x0.min()));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
       }
       {
-	ModEvent me = x1.gq(home,c_d(x2.min(),x0.max()));
-	if (me_failed(me)) return ES_FAILED;
-	mod |= me_modified(me);
+        ModEvent me = x1.gq(home,c_d(x2.min(),x0.max()));
+        if (me_failed(me)) return ES_FAILED;
+        mod |= me_modified(me);
       }
     } while (mod);
     return x0.assigned() && x1.assigned() ? ES_SUBSUMED : ES_FIX;
@@ -367,9 +368,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     assert(x(x0) && x(x1));
     GECODE_ME_CHECK(x2.lq(home,std::max(m(x0.max(),x1.max()),
-					m(x0.min(),x1.min()))));
+                                        m(x0.min(),x1.min()))));
     GECODE_ME_CHECK(x2.gq(home,std::min(m(x0.min(),x1.max()),
-					m(x0.max(),x1.min()))));
+                                        m(x0.max(),x1.min()))));
 
     if (x0.assigned()) {
       assert((x0.val() == 0) && (x2.val() == 0));
@@ -427,17 +428,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
   rewrite_ppp:
     return (MultPlus<IntView,IntView,IntView>::post(home,x0,x1,x2)
-	    == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
+            == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
 
   rewrite_nnp:
     return (MultPlus<MinusView,MinusView,IntView>::post(home,x0,x1,x2)
-	    == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
+            == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
 
   rewrite_pnn:
     std::swap(x0,x1);
   rewrite_npn:
     return (MultPlus<MinusView,IntView,MinusView>::post(home,x0,x1,x2)
-	    == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
+            == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
 
   }
 

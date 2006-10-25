@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -151,7 +152,7 @@ namespace Gecode { namespace Int { namespace Regular {
     if (e1 != NULL) {
       e2 = e1;
       while ((e2->next != NULL) && (e2->next->val <= e2->val+1))
-	e2 = e2->next;
+        e2 = e2->next;
     }
   }
 
@@ -206,25 +207,25 @@ namespace Gecode { namespace Int { namespace Regular {
       DFA::Transitions  t_a(dfa);
       ViewRanges<View>    rx(x[i]);
       while (rx() && t_a()) {
-	const DFA::Transition* t = t_a.transition();
-	// Compute pointers to states
-	State* i_state = state_mem + (i  )*n_states + t->i_state;
-	State* o_state = state_mem + (i+1)*n_states + t->o_state;
-	if (t->symbol > rx.max()) {
-	  ++rx;
-	} else if ((t->symbol >= rx.min()) && (i_state->i_deg > 0)) {
-	  // Add new transition as state is reachable
-	  i_state->o_deg++; o_state->i_deg++;
-	  Edge* e = new (ea) Edge;
-	  e->i_state = i_state;
-	  e->val     = t->symbol;
-	  e->o_state = o_state;
-	  *p = e;
-	  p = &e->next;
-	  ++t_a;
-	} else {
-	  ++t_a;
-	}
+        const DFA::Transition* t = t_a.transition();
+        // Compute pointers to states
+        State* i_state = state_mem + (i  )*n_states + t->i_state;
+        State* o_state = state_mem + (i+1)*n_states + t->o_state;
+        if (t->symbol > rx.max()) {
+          ++rx;
+        } else if ((t->symbol >= rx.min()) && (i_state->i_deg > 0)) {
+          // Add new transition as state is reachable
+          i_state->o_deg++; o_state->i_deg++;
+          Edge* e = new (ea) Edge;
+          e->i_state = i_state;
+          e->val     = t->symbol;
+          e->o_state = o_state;
+          *p = e;
+          p = &e->next;
+          ++t_a;
+        } else {
+          ++t_a;
+        }
       }
       // Write endmarker for edges
       *p = NULL;
@@ -239,15 +240,15 @@ namespace Gecode { namespace Int { namespace Regular {
       Edge** p = &layers[i].edges;
       Edge*  e = *p;
       while (e != NULL) {
-	if (e->o_state->o_deg != 0) {
-	  // This state is still reachable, keep edge
-	  p = &e->next;
-	} else {
-	  // Unreachable state, prune edge
-	  *p = e->next;
-	  e->i_state->o_deg--; e->o_state->i_deg--;
-	}
-	e = e->next;
+        if (e->o_state->o_deg != 0) {
+          // This state is still reachable, keep edge
+          p = &e->next;
+        } else {
+          // Unreachable state, prune edge
+          *p = e->next;
+          e->i_state->o_deg--; e->o_state->i_deg--;
+        }
+        e = e->next;
       }
       *p = NULL;
     }
@@ -256,14 +257,14 @@ namespace Gecode { namespace Int { namespace Regular {
     ExecStatus es = ES_FIX;
     for (int i=x.size(); i--; ) {
       if (layers[i].edges == NULL)
-	return ES_FAILED;
+        return ES_FAILED;
       if (x[i].modified())
-	es = ES_NOFIX;
+        es = ES_NOFIX;
       EdgeRanges er(layers[i].edges);
       if (x[i].modified()) {
-	GECODE_ME_CHECK(x[i].inter(home,er));
+        GECODE_ME_CHECK(x[i].inter(home,er));
       } else {
-	x[i].narrow(home,er);
+        x[i].narrow(home,er);
       }
       // Initialize size and modification data
       layers[i].modified = MOD_NONE;
@@ -271,7 +272,7 @@ namespace Gecode { namespace Int { namespace Regular {
     }
     for (int i=x.size(); i--; )
       if (!x[i].assigned())
-	return es;
+        return es;
     return ES_SUBSUMED;
   }
 
@@ -282,99 +283,99 @@ namespace Gecode { namespace Int { namespace Regular {
     // Prune edges for which no value support exists
     for (int i = 0; i < n; i++)
       if (layers[i].size != x[i].size()) {
-	layers[i].size = x[i].size();
-	Edge** p = &layers[i].edges;
-	Edge*  e = *p;
-	ViewRanges<View> rx(x[i]);
-	while (rx() && (e != NULL)) {
-	  if (e->val > rx.max()) {
-	    ++rx;
-	  } else if ((e->val < rx.min()) || (e->i_state->i_deg == 0)) {
-	    // Adapt states
-	    if ((--e->i_state->o_deg) == 0)
-	      layers[i-1].modified |= MOD_ODEG;
-	    if ((--e->o_state->i_deg) == 0)
-	      layers[i+1].modified |= MOD_IDEG;
-	    // Remove this edge
-	    *p = e->next; e = e->next;
-	  } else {
-	    // Keep edge
-	    p = &e->next; e = e->next;
-	  }
-	}
-	*p = NULL;
-	// Remove all remaining edges
-	while (e != NULL) {
-	  // Adapt states
-	  if (--e->i_state->o_deg == 0)
-	    layers[i-1].modified |= MOD_ODEG;
-	  if (--e->o_state->i_deg == 0)
-	    layers[i+1].modified |= MOD_IDEG;
-	  e = e->next;
-	}
-	// Write endmarker for edges
+        layers[i].size = x[i].size();
+        Edge** p = &layers[i].edges;
+        Edge*  e = *p;
+        ViewRanges<View> rx(x[i]);
+        while (rx() && (e != NULL)) {
+          if (e->val > rx.max()) {
+            ++rx;
+          } else if ((e->val < rx.min()) || (e->i_state->i_deg == 0)) {
+            // Adapt states
+            if ((--e->i_state->o_deg) == 0)
+              layers[i-1].modified |= MOD_ODEG;
+            if ((--e->o_state->i_deg) == 0)
+              layers[i+1].modified |= MOD_IDEG;
+            // Remove this edge
+            *p = e->next; e = e->next;
+          } else {
+            // Keep edge
+            p = &e->next; e = e->next;
+          }
+        }
+        *p = NULL;
+        // Remove all remaining edges
+        while (e != NULL) {
+          // Adapt states
+          if (--e->i_state->o_deg == 0)
+            layers[i-1].modified |= MOD_ODEG;
+          if (--e->o_state->i_deg == 0)
+            layers[i+1].modified |= MOD_IDEG;
+          e = e->next;
+        }
+        // Write endmarker for edges
       }  else if (layers[i].modified & MOD_IDEG) {
-	assert(layers[i].size == x[i].size());
-	Edge** p = &layers[i].edges;
-	Edge*  e = *p;
-	while (e != NULL) {
-	  if (e->i_state->i_deg == 0) {
-	    // Adapt states
-	    if (--e->i_state->o_deg == 0)
-	      layers[i-1].modified |= MOD_ODEG;
-	    if (--e->o_state->i_deg == 0)
-	      layers[i+1].modified |= MOD_IDEG;
-	    // Remove this edge
-	    *p = e->next;
-	  } else {
-	    // Keep edge
-	    p = &e->next;
-	  }
-	  e = e->next;
-	}
-	// Write endmarker for edges
-	*p = NULL;
+        assert(layers[i].size == x[i].size());
+        Edge** p = &layers[i].edges;
+        Edge*  e = *p;
+        while (e != NULL) {
+          if (e->i_state->i_deg == 0) {
+            // Adapt states
+            if (--e->i_state->o_deg == 0)
+              layers[i-1].modified |= MOD_ODEG;
+            if (--e->o_state->i_deg == 0)
+              layers[i+1].modified |= MOD_IDEG;
+            // Remove this edge
+            *p = e->next;
+          } else {
+            // Keep edge
+            p = &e->next;
+          }
+          e = e->next;
+        }
+        // Write endmarker for edges
+        *p = NULL;
       }
 
     for (int i=n; i--; )
       if (layers[i].modified & MOD_ODEG) {
-	Edge** p = &layers[i].edges;
-	Edge*  e = *p;
-	while (e != NULL) {
-	  if (e->o_state->o_deg != 0) {
-	    // This state is still reachable, keep edge
-	    p = &e->next;
-	  } else {
-	    // Unreachable state, prune edge
-	    if (--e->i_state->o_deg == 0)
-	      layers[i-1].modified |= MOD_ODEG;
-	    --e->o_state->i_deg;
-	    *p = e->next;
-	  }
-	  e = e->next;
-	}
-	*p = NULL;
+        Edge** p = &layers[i].edges;
+        Edge*  e = *p;
+        while (e != NULL) {
+          if (e->o_state->o_deg != 0) {
+            // This state is still reachable, keep edge
+            p = &e->next;
+          } else {
+            // Unreachable state, prune edge
+            if (--e->i_state->o_deg == 0)
+              layers[i-1].modified |= MOD_ODEG;
+            --e->o_state->i_deg;
+            *p = e->next;
+          }
+          e = e->next;
+        }
+        *p = NULL;
       }
     // Tell back variable domains
     ExecStatus es = ES_FIX;
     for (int i=n; i--; )
       if (layers[i].modified) {
-	layers[i].modified = MOD_NONE;
-	if (layers[i].edges == NULL)
-	  return ES_FAILED;
-	if (x[i].modified())
-	  es = ES_NOFIX;
-	EdgeRanges er(layers[i].edges);
-	if (x[i].modified()) {
-	  GECODE_ME_CHECK(x[i].inter(home,er));
-	} else {
-	  x[i].narrow(home,er);
-	}
-	layers[i].size = x[i].size();
+        layers[i].modified = MOD_NONE;
+        if (layers[i].edges == NULL)
+          return ES_FAILED;
+        if (x[i].modified())
+          es = ES_NOFIX;
+        EdgeRanges er(layers[i].edges);
+        if (x[i].modified()) {
+          GECODE_ME_CHECK(x[i].inter(home,er));
+        } else {
+          x[i].narrow(home,er);
+        }
+        layers[i].size = x[i].size();
       }
     for (int i=x.size(); i--; )
       if (!x[i].assigned())
-	return es;
+        return es;
     return ES_SUBSUMED;
   }
 

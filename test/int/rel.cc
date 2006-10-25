@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -239,9 +240,9 @@ public:
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<n; i++)
       if (x[i]<x[n+i]) {
-	return true;
+        return true;
       } else if (x[i]>x[n+i]) {
-	return false;
+        return false;
       }
     return !strict;
   }
@@ -266,7 +267,7 @@ public:
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<n; i++)
       if (x[i] != x[n+i])
-	return true;
+        return true;
     return false;
   }
   virtual void post(Space* home, IntVarArray& x) {

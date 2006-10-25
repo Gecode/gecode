@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -224,7 +225,7 @@ namespace Gecode { namespace Set {
   template <class View>
   forceinline void
   ComplementView<View>::subscribe(Space* home, Propagator* p, PropCond pc,
-				  bool process) {
+                                  bool process) {
     view.subscribe(home,p, pc_negateset(pc),process);
   }
 
@@ -249,7 +250,7 @@ namespace Gecode { namespace Set {
   template <class View>
   forceinline void
   ComplementView<View>::update(Space* home, bool share, 
-			       ComplementView& y) {
+                               ComplementView& y) {
     view.update(home,share,y.view);
   }
 
@@ -497,7 +498,7 @@ namespace Gecode { namespace Set {
   template <class View>
   forceinline bool
   before(const Set::ComplementView<View>& x, 
-	 const Set::ComplementView<View>& y) {
+         const Set::ComplementView<View>& y) {
     return before(x.base(),y.base());
   }
   template <class View>
@@ -509,7 +510,7 @@ namespace Gecode { namespace Set {
   template <class View>
   forceinline bool
   before(const Set::ComplementView<Set::ComplementView<View> >& x, 
-	 const Set::ComplementView<Set::ComplementView<View> >& y) {
+         const Set::ComplementView<Set::ComplementView<View> >& y) {
     return before(x,y);
   }
 

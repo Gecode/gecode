@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -106,50 +107,50 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View, class Info>
   ExecStatus
   doprop_val(Space* home, int n, Info* x, Info* y,
-	     int& n_na, ProcessStack& xa, ProcessStack& ya) {
+             int& n_na, ProcessStack& xa, ProcessStack& ya) {
     do {
       int i = xa.pop();
       int j = x[i].view.val();
       // Assign the y variable to i (or test if already assigned!)
       {
-	ModEvent me = y[j].view.eq(home,i);
-	if (me_failed(me))
-	  return ES_FAILED;
-	// Record that y[j] has been assigned and must be propagated
-	if (me_modified(me))
-	  ya.push(j);
+        ModEvent me = y[j].view.eq(home,i);
+        if (me_failed(me))
+          return ES_FAILED;
+        // Record that y[j] has been assigned and must be propagated
+        if (me_modified(me))
+          ya.push(j);
       }
       // Prune the value j from all x variables
       for (int k=i; k--; ) {
-	ModEvent me = x[k].view.nq(home,j);
-	if (me_failed(me))
-	  return ES_FAILED;
-	if (me_modified(me))
-	  if (me == ME_INT_VAL) {
-	    // Record that x[k] has been assigned and must be propagated
-	    xa.push(k);
-	  } else {
-	    // One value has been removed and this removal does not need
-	    // to be propagated again: after all y[j] = i, so it holds
-	    // that y[j] != k.
-	    x[k].removed(j);
-	  }
+        ModEvent me = x[k].view.nq(home,j);
+        if (me_failed(me))
+          return ES_FAILED;
+        if (me_modified(me))
+          if (me == ME_INT_VAL) {
+            // Record that x[k] has been assigned and must be propagated
+            xa.push(k);
+          } else {
+            // One value has been removed and this removal does not need
+            // to be propagated again: after all y[j] = i, so it holds
+            // that y[j] != k.
+            x[k].removed(j);
+          }
       }
       // The same for the other views
       for (int k=i+1; k<n; k++) {
-	ModEvent me = x[k].view.nq(home,j);
-	if (me_failed(me))
-	  return ES_FAILED;
-	if (me_modified(me))
-	  if (me == ME_INT_VAL) {
-	    // Record that x[k] has been assigned and must be propagated
-	    xa.push(k);
-	  } else {
-	    // One value has been removed and this removal does not need
-	    // to be propagated again: after all y[j] = i, so it holds
-	    // that y[j] != k.
-	    x[k].removed(j);
-	  }
+        ModEvent me = x[k].view.nq(home,j);
+        if (me_failed(me))
+          return ES_FAILED;
+        if (me_modified(me))
+          if (me == ME_INT_VAL) {
+            // Record that x[k] has been assigned and must be propagated
+            xa.push(k);
+          } else {
+            // One value has been removed and this removal does not need
+            // to be propagated again: after all y[j] = i, so it holds
+            // that y[j] != k.
+            x[k].removed(j);
+          }
       }
       x[i].assigned(); n_na--;
     } while (!xa.empty());
@@ -160,7 +161,7 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View, class Info>
   forceinline ExecStatus
   prop_val(Space* home, int n, Info* x, Info* y,
-	   int& n_na, ProcessStack& xa, ProcessStack& ya) {
+           int& n_na, ProcessStack& xa, ProcessStack& ya) {
     if (xa.empty())
       return ES_OK;
     return doprop_val<View,Info>(home,n,x,y,n_na,xa,ya);
@@ -206,10 +207,10 @@ namespace Gecode { namespace Int { namespace Channel {
     do {
       // Propagate assigned views for x
       if (prop_val<View,ValInfo<View> >(home,n,x,y,n_na,xa,ya) == ES_FAILED)
-	return ES_FAILED;
+        return ES_FAILED;
       // Propagate assigned views for y
       if (prop_val<View,ValInfo<View> >(home,n,y,x,n_na,ya,xa) == ES_FAILED)
-	return ES_FAILED;
+        return ES_FAILED;
       assert(ya.empty());
     } while (!xa.empty());
 

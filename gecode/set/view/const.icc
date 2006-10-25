@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -75,10 +76,10 @@ namespace Gecode { namespace Set {
       ranges = static_cast<int*>(home->alloc(2*size*sizeof(int)));
       IntSetRanges dr(dom);
       for (int i=0; dr(); ++dr, i+=2) {
-	int min = dr.min(); int max = dr.max();
-	ranges[i] = min;
-	ranges[i+1] = max;
-	domSize += (max-min+1);
+        int min = dr.min(); int max = dr.max();
+        ranges[i] = min;
+        ranges[i+1] = max;
+        domSize += (max-min+1);
       }
     }
   }
@@ -99,9 +100,9 @@ namespace Gecode { namespace Set {
   ConstantView::contains(int i) const {
     for (unsigned int j=size; j--; ) {
       if (ranges[2*j+1] < i)
-	return false;
+        return false;
       if (ranges[2*j] >= i)
-	return true;
+        return true;
     }
     return false;
   }
@@ -156,8 +157,8 @@ namespace Gecode { namespace Set {
   forceinline ModEvent
   ConstantView::intersect(Space* home,int c) {
     return (size==0 ||
-	    (size==1 &&
-	     ranges[0]==ranges[1] && ranges[0]==c)) ?
+            (size==1 &&
+             ranges[0]==ranges[1] && ranges[0]==c)) ?
       ME_SET_NONE : ME_SET_FAILED;
   }
 
@@ -230,8 +231,8 @@ namespace Gecode { namespace Set {
       // copy ranges from p
       ranges = static_cast<int*>(home->alloc(2*size*sizeof(int)));
       for (unsigned int i=size; i--; ) {
-	ranges[2*i]   = p.ranges[2*i];
-	ranges[2*i+1] = p.ranges[2*i+1];
+        ranges[2*i]   = p.ranges[2*i];
+        ranges[2*i+1] = p.ranges[2*i+1];
       }
     }
   }
@@ -420,14 +421,14 @@ namespace Gecode { namespace Set {
   forceinline ModEvent
   UniverseView::intersect(Space* home,int i,int j) {
     return (i>Limits::Set::int_min ||
-	    i<Limits::Set::int_max) ? ME_SET_FAILED : ME_SET_NONE;
+            i<Limits::Set::int_max) ? ME_SET_FAILED : ME_SET_NONE;
   }
 
   template <class I> forceinline ModEvent
   UniverseView::intersectI(Space* home,I& i) {
     return (i() &&
-	    (i.min()>Limits::Set::int_min ||
-	     i.max()<Limits::Set::int_max) ) ?
+            (i.min()>Limits::Set::int_min ||
+             i.max()<Limits::Set::int_max) ) ?
       ME_SET_FAILED : ME_SET_NONE;
   }
 
@@ -504,11 +505,11 @@ namespace Gecode { namespace Set {
     /// Default constructor
     LubRanges(void)
       : Iter::Ranges::Singleton(Limits::Set::int_min,
-				Limits::Set::int_max) {}
+                                Limits::Set::int_max) {}
     /// Initialize with ranges for view \a x
     LubRanges(const UniverseView& x)
       : Iter::Ranges::Singleton(Limits::Set::int_min,
-				Limits::Set::int_max) {}
+                                Limits::Set::int_max) {}
     /// Initialize with ranges for view \a x
     void init(const UniverseView& x) {}
     //@}
@@ -526,11 +527,11 @@ namespace Gecode { namespace Set {
     /// Default constructor
     GlbRanges(void)
       : Iter::Ranges::Singleton(Limits::Set::int_min,
-				Limits::Set::int_max) {}
+                                Limits::Set::int_max) {}
     /// Initialize with ranges for view \a x
     GlbRanges(const UniverseView& x)
       : Iter::Ranges::Singleton(Limits::Set::int_min,
-				Limits::Set::int_max) {}
+                                Limits::Set::int_max) {}
     /// Initialize with ranges for view \a x
     void init(const UniverseView& x) {}
     //@}
@@ -609,8 +610,8 @@ namespace Gecode { namespace Set {
       return false;
     for (int i=x.size; i--; )
       if (x.ranges[2*i]   != y.ranges[2*i] ||
-	  x.ranges[2*i+1] != y.ranges[2*i+1])
-	return false;
+          x.ranges[2*i+1] != y.ranges[2*i+1])
+        return false;
     return true;
   }
   forceinline bool
@@ -621,8 +622,8 @@ namespace Gecode { namespace Set {
       return true;
     for (int i=x.size; i--; )
       if (x.ranges[2*i]   < y.ranges[2*i] ||
-	  x.ranges[2*i+1] < y.ranges[2*i+1])
-	return true;
+          x.ranges[2*i+1] < y.ranges[2*i+1])
+        return true;
     return false;
   }
 

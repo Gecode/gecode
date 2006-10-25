@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -196,7 +197,7 @@ namespace Gecode {
      */
     forceinline void
     MinusView::subscribe(Space* home, Propagator* p, PropCond pc, 
-			 bool process) {
+                         bool process) {
       view.subscribe(home,p,pc,process);
     }
     forceinline void

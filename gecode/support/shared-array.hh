@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -131,8 +132,8 @@ namespace Gecode { namespace Support {
   SharedArray<T,fd>::Object::release(void) {
     if (--use == 0) {
       if (fd)
-	for (int i=n; i--;)
-	  a[i].~T();
+        for (int i=n; i--;)
+          a[i].~T();
       Memory::free(this);
     }
   }
@@ -167,10 +168,10 @@ namespace Gecode { namespace Support {
   SharedArray<T,fd>::operator=(const SharedArray<T,fd>& a) {
     if (this != &a) {
       if (sao != NULL)
-	sao->release();
+        sao->release();
       sao = a.sao;
       if (sao != NULL)
-	sao->subscribe();
+        sao->subscribe();
     }
     return *this;
   }
@@ -183,7 +184,7 @@ namespace Gecode { namespace Support {
     if (share) {
       sao = a.sao;
       if (sao != NULL)
-	sao->subscribe();
+        sao->subscribe();
     } else {
       sao = (a.sao == NULL) ? NULL : a.sao->copy();
     }
@@ -212,7 +213,7 @@ namespace Gecode { namespace Support {
   SharedArray<T,fd>::size(int n) {
     if (n==0) {
       if (sao != NULL)
-	sao->release();
+        sao->release();
       sao = NULL;
     } else {
       sao->n = n;
@@ -235,14 +236,14 @@ namespace Gecode { namespace Support {
   SharedArray<T,fd>::ensure(int n) {
     if (sao == NULL) {
       if (n>0)
-	sao = Object::allocate(n);
+        sao = Object::allocate(n);
       return;
     }
     if (n >= sao->n) {
       int m = std::max(2*sao->n,n);
       Object* nsao = Object::allocate(m);
       for (int i = sao->n; i--; )
-	new (&(nsao->a[i])) T(sao->a[i]);
+        new (&(nsao->a[i])) T(sao->a[i]);
       sao->release();
       sao = nsao;
     }

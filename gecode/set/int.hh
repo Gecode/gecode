@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -128,7 +129,7 @@ namespace Gecode { namespace Set { namespace Int {
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order 
     static ExecStatus post(Space* home,SetView s,
-			   ViewArray< Gecode::Int::IntView >& x);
+                           ViewArray< Gecode::Int::IntView >& x);
   };
 
   /**
@@ -159,7 +160,7 @@ namespace Gecode { namespace Set { namespace Int {
     Channel(Space* home, bool share,Channel& p);
     /// Constructor for posting
     Channel(Space* home,ViewArray< Gecode::Int::IntView >&,
-	    ViewArray< SetView >&);
+            ViewArray< SetView >&);
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*   copy(Space* home,bool);
@@ -196,7 +197,7 @@ namespace Gecode { namespace Set { namespace Int {
     Weights(Space* home, bool share,Weights& p);
     /// Constructor for posting
     Weights(Space* home, const IntArgs&, const IntArgs&,
-	    SetView, Gecode::Int::IntView);
+            SetView, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*   copy(Space* home,bool);
@@ -208,8 +209,8 @@ namespace Gecode { namespace Set { namespace Int {
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\sum_{i\in x} weights_i = y \f$
     static ExecStatus post(Space* home,
-			   const IntArgs& elements, const IntArgs& weights,
-			   SetView x, Gecode::Int::IntView y);
+                           const IntArgs& elements, const IntArgs& weights,
+                           SetView x, Gecode::Int::IntView y);
   };
 
 }}}

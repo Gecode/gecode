@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -43,8 +44,8 @@ public:
     int v, k, lambda, b, r;
     Par(int v0, int k0, int l0)
       : v(v0), k(k0), lambda(l0),
-	b((v*(v-1)*lambda)/(k*(k-1))),
-	r((lambda*(v-1)) / (k-1)) {}
+        b((v*(v-1)*lambda)/(k*(k-1))),
+        r((lambda*(v-1)) / (k-1)) {}
     Par(void) {}
   };
   static Par par;
@@ -62,34 +63,34 @@ public:
     for (int i=par.v; i--; ) {
       BoolVarArgs row(par.b);
       for (int j=par.b; j--; )
-	row[j] = p(i,j);
+        row[j] = p(i,j);
       linear(this, row, IRT_EQ, par.r);
     }
     // k ones per column
     for (int j=par.b; j--; ) {
       BoolVarArgs col(par.v);
       for (int i=par.v; i--; )
-	col[i] = p(i,j);
+        col[i] = p(i,j);
       linear(this, col, IRT_EQ, par.k);
     }
     // Exactly lambda ones in scalar product between two different rows
     for (int i1=0; i1<par.v; i1++)
       for (int i2=i1+1; i2<par.v; i2++) {
-	BoolVarArgs row(par.b);
-	for (int j=par.b; j--; ) {
-	  BoolVar b(this,0,1);
-	  bool_and(this,p(i1,j),p(i2,j),b);
-	  row[j] = b;
-	}
-	linear(this, row, IRT_EQ, par.lambda);
+        BoolVarArgs row(par.b);
+        for (int j=par.b; j--; ) {
+          BoolVar b(this,0,1);
+          bool_and(this,p(i1,j),p(i2,j),b);
+          row[j] = b;
+        }
+        linear(this, row, IRT_EQ, par.lambda);
       }
 
     for (int i=1;i<par.v;i++) {
       BoolVarArgs row1(par.b);
       BoolVarArgs row2(par.b);
       for (int j=par.b; j--; ) {
-	row1[j] = p(i-1,j);
-	row2[j] = p(i,j);
+        row1[j] = p(i-1,j);
+        row2[j] = p(i,j);
       }
       rel(this, row1, IRT_GQ, row2);
     }
@@ -97,26 +98,26 @@ public:
       BoolVarArgs col1(par.v);
       BoolVarArgs col2(par.v);
       for (int i=par.v; i--; ) {
-	col1[i] = p(i,j-1);
-	col2[i] = p(i,j);
+        col1[i] = p(i,j-1);
+        col2[i] = p(i,j);
       }
       rel(this, col1, IRT_GQ, col2);
     }
 
     branch(this, _p, BVAR_NONE,
-	   (opt.naive ? BVAL_MIN : BVAL_MAX));
+           (opt.naive ? BVAL_MIN : BVAL_MAX));
   }
 
   /// Print solution
   virtual void
   print(void) {
     std::cout << "\tBIBD("
-	      << par.v << "," << par.k << ","
-	      << par.lambda << ")" << std::endl;
+              << par.v << "," << par.k << ","
+              << par.lambda << ")" << std::endl;
     for (int i = 0; i < par.v; i++) {
       std::cout << "\t\t";
       for (int j = 0; j< par.b; j++)
-	std::cout << p(i,j) << " ";
+        std::cout << p(i,j) << " ";
       std::cout << std::endl;
     }
     std::cout << std::endl;

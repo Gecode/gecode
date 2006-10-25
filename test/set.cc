@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -29,11 +30,11 @@
 #include <algorithm>
 
 CountableSet::CountableSet(const IntSet& d0) : d(d0), //curd(IntSet::empty),
-					       cur(0) {
+                                               cur(0) {
   IntSetRanges isr(d);
   lubmax =
     static_cast<unsigned int>(pow(static_cast<double>(2.0),
-				  static_cast<int>(Iter::Ranges::size(isr))));
+                                  static_cast<int>(Iter::Ranges::size(isr))));
 }
 
 void CountableSet::operator++(void) {
@@ -46,7 +47,7 @@ void CountableSet::init(const IntSet& d0) {
   IntSetRanges isr(d);
   lubmax =
     static_cast<unsigned int>(pow(static_cast<double>(2.0),
-				  static_cast<int>(Iter::Ranges::size(isr))));
+                                  static_cast<int>(Iter::Ranges::size(isr))));
 }
 
 int CountableSet::val(void) const {
@@ -78,17 +79,17 @@ SetAssignment::operator++(void) {
     --i;
     if (i<0) {
       if (withInt==0) {
-	done = true;
-	return;
+        done = true;
+        return;
       }
       ++ir;
       if (ir()) {
-	i = n-1;
-	for (int j=n; j--; )
-	  dsv[j].init(lub);
+        i = n-1;
+        for (int j=n; j--; )
+          dsv[j].init(lub);
       } else {
-	done = true;
-	return;
+        done = true;
+        return;
       }
     }
   }
@@ -107,16 +108,16 @@ operator<<(std::ostream& os, const SetAssignment& a) {
   return os;
 }
 
-#define FORCE_FIXFLUSH				\
-do {						\
-  if (Test::randgen(opt.fixprob) == 0) {	\
-    Log::fixpoint();				\
-    if (status() == SS_FAILED) return;		\
-  }						\
-  if (Test::randgen(opt.flushprob) == 0) {	\
-    flush();					\
-    Log::flush();				\
-  }						\
+#define FORCE_FIXFLUSH                                \
+do {                                                \
+  if (Test::randgen(opt.fixprob) == 0) {        \
+    Log::fixpoint();                                \
+    if (status() == SS_FAILED) return;                \
+  }                                                \
+  if (Test::randgen(opt.flushprob) == 0) {        \
+    flush();                                        \
+    Log::flush();                                \
+  }                                                \
 } while(0)
 
 class SetTestSpace : public Space {
@@ -133,7 +134,7 @@ public:
     Log::initial(x, "x");
   }
   SetTestSpace(bool share, SetTestSpace& s) : Space(share,s), opt(s.opt),
-					      withInt(s.withInt) {
+                                              withInt(s.withInt) {
     x.update(this, share, s.x);
     y.update(this, share, s.y);
   }
@@ -160,10 +161,10 @@ public:
   bool assigned(void) const {
     for (int i=x.size(); i--; )
       if (!x[i].assigned())
-	return false;
+        return false;
     for (int i=y.size(); i--; )
       if (!y[i].assigned())
-	return false;
+        return false;
     return true;
   }
 
@@ -193,7 +194,7 @@ public:
   }
 
   bool fixprob(SetTest& st, bool r, BoolVar& b) {
-    Log::fixpoint();				
+    Log::fixpoint();                                
     if (status() == SS_FAILED)
       return true;
     SetTestSpace* c = static_cast<SetTestSpace*>(clone());
@@ -203,21 +204,21 @@ public:
       st.post(c,c->x,c->y);
       Log::fixpoint();
       if (c->status() == SS_FAILED) {
-	Log::print(c->x, "x");
-	if (c->y.size() > 0) Log::print(c->y, "y");
-	delete c;
-	return false;
+        Log::print(c->x, "x");
+        if (c->y.size() > 0) Log::print(c->y, "y");
+        delete c;
+        return false;
       }
       for (int i=x.size(); i--; ) {
-	if (x[i].glbSize() != c->x[i].glbSize() ||
-	    x[i].lubSize() != c->x[i].lubSize() ||
-	    x[i].cardMin() != c->x[i].cardMin() ||
-	    x[i].cardMax() != c->x[i].cardMax()) {
-	  Log::print(c->x, "x");
-	  if (c->y.size() > 0) Log::print(c->y, "y");
-	  delete c;
-	  return false;
-	}
+        if (x[i].glbSize() != c->x[i].glbSize() ||
+            x[i].lubSize() != c->x[i].lubSize() ||
+            x[i].cardMin() != c->x[i].cardMin() ||
+            x[i].cardMax() != c->x[i].cardMax()) {
+          Log::print(c->x, "x");
+          if (c->y.size() > 0) Log::print(c->y, "y");
+          delete c;
+          return false;
+        }
       }
     } else {
       Log::print(b, "b");
@@ -226,30 +227,30 @@ public:
       st.post(c,c->x,c->y,cb);
       Log::fixpoint();
       if (c->status() == SS_FAILED) {
-	Log::print(c->x, "x");
-	if (c->y.size() > 0) Log::print(c->y, "y");
-	Log::print(cb, "cb");
-	delete c;
-	return false;
+        Log::print(c->x, "x");
+        if (c->y.size() > 0) Log::print(c->y, "y");
+        Log::print(cb, "cb");
+        delete c;
+        return false;
       }
       if (cb.size() != b.size()) {
-	Log::print(c->x, "x");
-	if (c->y.size() > 0) Log::print(c->y, "y");
-	Log::print(cb, "cb");
-	delete c;
-	return false;
+        Log::print(c->x, "x");
+        if (c->y.size() > 0) Log::print(c->y, "y");
+        Log::print(cb, "cb");
+        delete c;
+        return false;
       }
       for (int i=x.size(); i--; )
-	if (x[i].glbSize() != c->x[i].glbSize() ||
-	    x[i].lubSize() != c->x[i].lubSize() ||
-	    x[i].cardMin() != c->x[i].cardMin() ||
-	    x[i].cardMax() != c->x[i].cardMax() ) {
-	  Log::print(c->x, "x");
-	  if (c->y.size() > 0) Log::print(c->y, "y");
-	  Log::print(cb, "cb");
-	  delete c;
-	  return false;
-	}
+        if (x[i].glbSize() != c->x[i].glbSize() ||
+            x[i].lubSize() != c->x[i].lubSize() ||
+            x[i].cardMin() != c->x[i].cardMin() ||
+            x[i].cardMax() != c->x[i].cardMax() ) {
+          Log::print(c->x, "x");
+          if (c->y.size() > 0) Log::print(c->y, "y");
+          Log::print(cb, "cb");
+          delete c;
+          return false;
+        }
     }
     delete c;
     return true;
@@ -258,18 +259,18 @@ public:
   static BoolVar unused;
 
   bool prune(const SetAssignment& a, SetTest& st,
-	     bool r, BoolVar& b=unused) {
+             bool r, BoolVar& b=unused) {
     bool setsAssigned = true;
     for (int j=x.size(); j--; )
       if (!x[j].assigned()) {
-	setsAssigned = false;
-	break;
+        setsAssigned = false;
+        break;
       }
     bool intsAssigned = true;
     for (int j=y.size(); j--; )
       if (!y[j].assigned()) {
-	intsAssigned = false;
-	break;
+        intsAssigned = false;
+        break;
       }
 
     // Select variable to be pruned
@@ -284,9 +285,9 @@ public:
 
     if (setsAssigned || i>=x.size()) {
       if (i>=x.size())
-	i = i-x.size();
+        i = i-x.size();
       while (y[i].assigned()) {
-	i = (i+1) % y.size();
+        i = (i+1) % y.size();
       }
       // Prune int var
 
@@ -294,50 +295,50 @@ public:
       // Select mode for pruning
       int m=Test::randgen(3);
       if ((m == 0) && (a.ints()[i] < y[i].max())) {
-	int v=a.ints()[i]+1+
-	  Test::randgen(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
-	assert((v > a.ints()[i]) && (v <= y[i].max()));
-	Log::prune(y[i], Log::mk_name("y", i), IRT_LE, v);
-	rel(this, y[i], IRT_LE, v);
-	Log::prune_result(y[i]);
+        int v=a.ints()[i]+1+
+          Test::randgen(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
+        assert((v > a.ints()[i]) && (v <= y[i].max()));
+        Log::prune(y[i], Log::mk_name("y", i), IRT_LE, v);
+        rel(this, y[i], IRT_LE, v);
+        Log::prune_result(y[i]);
       } else if ((m == 1) && (a.ints()[i] > y[i].min())) {
-	int v=y[i].min()+
-	  Test::randgen(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
-	assert((v < a.ints()[i]) && (v >= y[i].min()));
-	Log::prune(y[i], Log::mk_name("y", i), IRT_GR, v);
-	rel(this, y[i], IRT_GR, v);
-	Log::prune_result(y[i]);
+        int v=y[i].min()+
+          Test::randgen(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
+        assert((v < a.ints()[i]) && (v >= y[i].min()));
+        Log::prune(y[i], Log::mk_name("y", i), IRT_GR, v);
+        rel(this, y[i], IRT_GR, v);
+        Log::prune_result(y[i]);
       } else  {
-	int v;
-	Int::ViewRanges<Int::IntView> it(y[i]);
-	unsigned int skip = Test::randgen(y[i].size()-1);
-	while (true) {
-	  if (it.width() > skip) {
-	    v = it.min() + skip;
-	    if (v == a.ints()[i]) {
-	      if (it.width() == 1) {
-		++it; v = it.min();
-	      } else if (v < it.max()) {
-		++v;
-	      } else {
-		--v;
-	      }
-	    }
-	    break;
-	  }
-	  skip -= it.width();
-	  ++it;
-	}
-	Log::prune(y[i], Log::mk_name("y", i), IRT_NQ, v);
-	rel(this, y[i], IRT_NQ, v);
-	Log::prune_result(y[i]);
+        int v;
+        Int::ViewRanges<Int::IntView> it(y[i]);
+        unsigned int skip = Test::randgen(y[i].size()-1);
+        while (true) {
+          if (it.width() > skip) {
+            v = it.min() + skip;
+            if (v == a.ints()[i]) {
+              if (it.width() == 1) {
+                ++it; v = it.min();
+              } else if (v < it.max()) {
+                ++v;
+              } else {
+                --v;
+              }
+            }
+            break;
+          }
+          skip -= it.width();
+          ++it;
+        }
+        Log::prune(y[i], Log::mk_name("y", i), IRT_NQ, v);
+        rel(this, y[i], IRT_NQ, v);
+        Log::prune_result(y[i]);
       }
       if (Test::randgen(opt.fixprob) == 0 && !fixprob(st, r, b))
-	return false;
-      if (Test::randgen(opt.flushprob) == 0) {		
-	flush();					
-	Log::flush();				
-      }		
+        return false;
+      if (Test::randgen(opt.flushprob) == 0) {                
+        flush();                                        
+        Log::flush();                                
+      }                
       return true;
     }
     while (x[i].assigned()) {
@@ -365,7 +366,7 @@ public:
       removeFromLub(v, x[i], i, a);
     } else if (m==2 && x[i].cardMin() < aisize) {
       unsigned int newc = x[i].cardMin() + 1 +
-	Test::randgen(aisize - x[i].cardMin());
+        Test::randgen(aisize - x[i].cardMin());
       assert( newc > x[i].cardMin() );
       assert( newc <= aisize );
       Log::prune(x[i], Log::mk_name("x", i), newc, Limits::Set::card_max);
@@ -373,7 +374,7 @@ public:
       Log::prune_result(x[i]);
     } else if (m==3 && x[i].cardMax() > aisize) {
       unsigned int newc = x[i].cardMax() - 1 -
-	Test::randgen(x[i].cardMax() - aisize);
+        Test::randgen(x[i].cardMax() - aisize);
       assert( newc < x[i].cardMax() );
       assert( newc >= aisize );
       Log::prune(x[i], Log::mk_name("x", i), 0, newc);
@@ -381,19 +382,19 @@ public:
       Log::prune_result(x[i]);
     } else {
       if (inter()) {
-	int v = Test::randgen(Iter::Ranges::size(inter));
-	addToGlb(v, x[i], i, a);
+        int v = Test::randgen(Iter::Ranges::size(inter));
+        addToGlb(v, x[i], i, a);
       } else {
-	int v = Test::randgen(Iter::Ranges::size(diff));
-	removeFromLub(v, x[i], i, a);
+        int v = Test::randgen(Iter::Ranges::size(diff));
+        removeFromLub(v, x[i], i, a);
       }
     }
     if (Test::randgen(opt.fixprob) == 0 && !fixprob(st, r, b))
       return false;
-    if (Test::randgen(opt.flushprob) == 0) {		
-      flush();					
-      Log::flush();				
-    }		
+    if (Test::randgen(opt.flushprob) == 0) {                
+      flush();                                        
+      Log::flush();                                
+    }                
 
     return true;
   }
@@ -403,11 +404,11 @@ public:
 BoolVar SetTestSpace::unused;
 
 
-#define CHECK(T,M) 				\
-if (!(T)) { 					\
-  problem = (M); 				\
-  delete s;					\
-  goto failed; 					\
+#define CHECK(T,M)                                 \
+if (!(T)) {                                         \
+  problem = (M);                                 \
+  delete s;                                        \
+  goto failed;                                         \
 }
 
 SetAssignment*
@@ -430,10 +431,10 @@ SetTest::run(const Options& opt) {
       SetTestSpace* s = new SetTestSpace(arity,lub,withInt,opt);
       post(s,s->x,s->y); s->assign(a);
       if (is_sol) {
-	CHECK(!s->failed(), "Failed on solution");
-	CHECK(s->propagators()==0, "No subsumtion");
+        CHECK(!s->failed(), "Failed on solution");
+        CHECK(s->propagators()==0, "No subsumtion");
       } else {
-	CHECK(s->failed(), "Solved on non-solution");
+        CHECK(s->failed(), "Solved on non-solution");
       }
       delete s;
     }
@@ -443,10 +444,10 @@ SetTest::run(const Options& opt) {
       SetTestSpace* s = new SetTestSpace(arity,lub,withInt,opt);
       s->assign(a); post(s,s->x,s->y);
       if (is_sol) {
-	CHECK(!s->failed(), "Failed on solution");
-	CHECK(s->propagators()==0, "No subsumtion");
+        CHECK(!s->failed(), "Failed on solution");
+        CHECK(s->propagators()==0, "No subsumtion");
       } else {
-	CHECK(s->failed(), "Solved on non-solution");
+        CHECK(s->failed(), "Solved on non-solution");
       }
       delete s;
     }
@@ -460,9 +461,9 @@ SetTest::run(const Options& opt) {
       CHECK(s->propagators()==0, "No subsumtion");
       CHECK(b.assigned(), "Control variable unassigned");
       if (is_sol) {
-	CHECK(b.val()==1, "Zero on solution");
+        CHECK(b.val()==1, "Zero on solution");
       } else {
-	CHECK(b.val()==0, "One on non-solution");
+        CHECK(b.val()==0, "One on non-solution");
       }
       delete s;
     }
@@ -476,9 +477,9 @@ SetTest::run(const Options& opt) {
       CHECK(s->propagators()==0, "No subsumtion");
       CHECK(b.assigned(), "Control variable unassigned");
       if (is_sol) {
-	CHECK(b.val()==1, "Zero on solution");
+        CHECK(b.val()==1, "Zero on solution");
       } else {
-	CHECK(b.val()==0, "One on non-solution");
+        CHECK(b.val()==0, "One on non-solution");
       }
       delete s;
     }
@@ -488,17 +489,17 @@ SetTest::run(const Options& opt) {
       SetTestSpace* s = new SetTestSpace(arity,lub,withInt,opt);
       post(s,s->x,s->y);
       while (!s->failed() && !s->assigned())
- 	if (!s->prune(a,*this,false)) {
- 	  problem = "No fixpoint";
- 	  delete s;
- 	  goto failed;
- 	}
+         if (!s->prune(a,*this,false)) {
+           problem = "No fixpoint";
+           delete s;
+           goto failed;
+         }
       s->assign(a);
       if (is_sol) {
-	CHECK(!s->failed(), "Failed on solution");
-	CHECK(s->propagators()==0, "No subsumtion");
+        CHECK(!s->failed(), "Failed on solution");
+        CHECK(s->propagators()==0, "No subsumtion");
       } else {
-	CHECK(s->failed(), "Solved on non-solution");
+        CHECK(s->failed(), "Solved on non-solution");
       }
       delete s;
     }
@@ -509,18 +510,18 @@ SetTest::run(const Options& opt) {
       BoolVar b(s,0,1);
       post(s,s->x,s->y,b);
       while (!s->assigned() && !b.assigned())
- 	if (!s->prune(a,*this,true,b)) {
- 	  problem = "No fixpoint";
- 	  delete s;
- 	  goto failed;
- 	}
+         if (!s->prune(a,*this,true,b)) {
+           problem = "No fixpoint";
+           delete s;
+           goto failed;
+         }
       CHECK(!s->failed(), "Failed");
       CHECK(s->propagators()==0, "No subsumtion");
       CHECK(b.assigned(), "Control variable unassigned");
       if (is_sol) {
-	CHECK(b.val()==1, "Zero on solution");
+        CHECK(b.val()==1, "Zero on solution");
       } else {
-	CHECK(b.val()==0, "One on non-solution");
+        CHECK(b.val()==0, "One on non-solution");
       }
       delete s;
     }
@@ -530,9 +531,9 @@ SetTest::run(const Options& opt) {
   return true;
  failed:
   std::cout << "FAILURE" << std::endl
-	    << "\t" << "Test:       " << test << std::endl
-	    << "\t" << "Problem:    " << problem << std::endl
-	    << "\t" << "SetAssignment: " << a << std::endl;
+            << "\t" << "Test:       " << test << std::endl
+            << "\t" << "Problem:    " << problem << std::endl
+            << "\t" << "SetAssignment: " << a << std::endl;
   delete ap;
   return false;
 }

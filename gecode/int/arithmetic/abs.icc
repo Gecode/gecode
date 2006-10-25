@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -36,29 +37,29 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     if (x1.assigned()) {
       if (x0.min() >= 0) {
-	GECODE_ME_CHECK(x0.eq(home,x1.val()));
+        GECODE_ME_CHECK(x0.eq(home,x1.val()));
       } else if (x0.max() <= 0) {
-	GECODE_ME_CHECK(x0.eq(home,-x1.val()));
+        GECODE_ME_CHECK(x0.eq(home,-x1.val()));
       } else if (x1.val() == 0) {
-	GECODE_ME_CHECK(x0.eq(home,0));
+        GECODE_ME_CHECK(x0.eq(home,0));
       } else {
-	Iter::Ranges::Array::Range r[2]
-	  = { {-x1.val(),-x1.val()}, {x1.val(),x1.val()} };
-	Iter::Ranges::Array i(r,2);
-	GECODE_ME_CHECK(x0.inter(home,i));
+        Iter::Ranges::Array::Range r[2]
+          = { {-x1.val(),-x1.val()}, {x1.val(),x1.val()} };
+        Iter::Ranges::Array i(r,2);
+        GECODE_ME_CHECK(x0.inter(home,i));
       }
       return ES_SUBSUMED;
     }
 
     if (x0.min() >= 0) {
       return (Eq<View,View>::post(home,x0,x1) == ES_FAILED)
-	? ES_FAILED : ES_SUBSUMED;
+        ? ES_FAILED : ES_SUBSUMED;
     }
 
     if (x0.max() <= 0) {
       MinusView mx0(x0);
       return (Eq<MinusView,View>::post(home,mx0,x1) == ES_FAILED)
-	? ES_FAILED : ES_SUBSUMED;
+        ? ES_FAILED : ES_SUBSUMED;
     }
 
     GECODE_ME_CHECK(x1.lq(home,std::max(x0.max(),-x0.min())));
@@ -157,7 +158,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (View::pme(this) != ME_INT_DOM) {
       ExecStatus es = prop_bnd<View,Rel::EqDom>(home, x0, x1);
       if (es != ES_NOFIX)
-	return es;
+        return es;
       return this->ES_NOFIX_PARTIAL(View::pme(ME_INT_DOM));
     }
 
@@ -195,13 +196,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     if (x0.min() >= 0) {
       return (Rel::EqDom<View,View>::post(home,x0,x1) == ES_FAILED)
-	? ES_FAILED : ES_SUBSUMED;
+        ? ES_FAILED : ES_SUBSUMED;
     }
 
     if (x0.max() <= 0) {
       MinusView mx0(x0);
       return (Rel::EqDom<MinusView,View>::post(home,mx0,x1) == ES_FAILED)
-	? ES_FAILED : ES_SUBSUMED;
+        ? ES_FAILED : ES_SUBSUMED;
     }
 
     return ES_FIX;

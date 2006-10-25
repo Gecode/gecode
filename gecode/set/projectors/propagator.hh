@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -52,7 +53,7 @@ namespace Gecode { namespace Set { namespace Projection {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     static  ExecStatus post(Space* home, ViewArray<SetView>& x,
-			    ProjectorSet& ps);
+                            ProjectorSet& ps);
   };
 
   /**
@@ -70,8 +71,8 @@ namespace Gecode { namespace Set { namespace Projection {
     ReNaryProjection(Space* home, bool share, ReNaryProjection& p);
     /// Constructor for creation
     ReNaryProjection(Space* home,ViewArray<SetView>& x,
-		     Gecode::Int::BoolView,
-		     ProjectorSet& ps);
+                     Gecode::Int::BoolView,
+                     ProjectorSet& ps);
   public:
     /// Cost function
     virtual PropCost cost(void) const;
@@ -82,9 +83,9 @@ namespace Gecode { namespace Set { namespace Projection {
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     GECODE_SET_EXPORT static  ExecStatus post(Space* home,
-					      ViewArray<SetView>& x,
-					      Gecode::Int::BoolView b,
-					      ProjectorSet& ps);
+                                              ViewArray<SetView>& x,
+                                              Gecode::Int::BoolView b,
+                                              ProjectorSet& ps);
   };
 
   /**
@@ -104,7 +105,7 @@ namespace Gecode { namespace Set { namespace Projection {
     CardProjection(Space* home, bool share, CardProjection& p);
     /// Constructor for creation
     CardProjection(Space* home, ViewArray<SetView>& x,
-		   Gecode::Int::IntView i, Projector& ps);
+                   Gecode::Int::IntView i, Projector& ps);
   public:
     /// Cost function
     virtual PropCost cost(void) const;
@@ -115,7 +116,7 @@ namespace Gecode { namespace Set { namespace Projection {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     static  ExecStatus post(Space* home, ViewArray<SetView>& x,
-			    Gecode::Int::IntView i, Projector& p);
+                            Gecode::Int::IntView i, Projector& p);
   };
   
 }}}

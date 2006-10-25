@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
@@ -39,10 +40,10 @@ namespace Gecode {
     {
       ViewArray<ConstIntView> res(home, in.size());
       for (int i = in.size(); i--; ) {
-	if(in[i] < Limits::Int::int_min ||
-	   in[i] > Limits::Int::int_max)
-	  throw new NumericalOverflow("Int::cumulatives");
-	res[i] = ConstIntView(in[i]);
+        if(in[i] < Limits::Int::int_min ||
+           in[i] > Limits::Int::int_max)
+          throw new NumericalOverflow("Int::cumulatives");
+        res[i] = ConstIntView(in[i]);
       }
 
       return res;
@@ -84,41 +85,41 @@ namespace Gecode {
     template <class Machine, class Duration, class Height>
     void
     post_cumulatives(Space* home, const Machine& machine,
-		     const IntVarArgs& start, const Duration& duration,
-		     const IntVarArgs& end, const Height& height,
-		     const IntArgs& limit, bool at_most,
-		     IntConLevel cl) {
+                     const IntVarArgs& start, const Duration& duration,
+                     const IntVarArgs& end, const Height& height,
+                     const IntArgs& limit, bool at_most,
+                     IntConLevel cl) {
       if (home->failed()) return;
 
       if(machine.size() != start.size()  ||
-	 start.size() != duration.size() ||
-	 duration.size() != end.size()   ||
-	 end.size() != height.size())
-	throw new ArgumentSizeMismatch("Int::cumulatives");
+         start.size() != duration.size() ||
+         duration.size() != end.size()   ||
+         end.size() != height.size())
+        throw new ArgumentSizeMismatch("Int::cumulatives");
 
       ViewArray<typename ViewType<Machine>::Result>
-	vmachine  = make_view_array(home,  machine);
+        vmachine  = make_view_array(home,  machine);
       ViewArray<typename ViewType<Duration>::Result>
-	vduration = make_view_array(home, duration);
+        vduration = make_view_array(home, duration);
       ViewArray<typename ViewType<Height>::Result>
-	vheight   = make_view_array(home,   height);
+        vheight   = make_view_array(home,   height);
       ViewArray<IntView>
-	vstart    = make_view_array(home,    start),
-	vend      = make_view_array(home,      end);
+        vstart    = make_view_array(home,    start),
+        vend      = make_view_array(home,      end);
 
       // There is only the value-consistent propagator for this constraint
       GECODE_ES_FAIL(home,(Cumulatives::Val<
-			   typename ViewType<Machine>::Result,
-			   typename ViewType<Duration>::Result,
-			   typename ViewType<Height>::Result,
-			   IntView>::post(home, vmachine,vstart, vduration,
-					  vend, vheight,limit, at_most)));
+                           typename ViewType<Machine>::Result,
+                           typename ViewType<Duration>::Result,
+                           typename ViewType<Height>::Result,
+                           IntView>::post(home, vmachine,vstart, vduration,
+                                          vend, vheight,limit, at_most)));
 
       // By definition, s+d=e should hold.
       // We enforce this using basic linear constraints, since the
       // sweep-algorithm does not check for it.
       for (int i = start.size(); i--; ) {
-	sum(home, start[i], duration[i], end[i]);
+        sum(home, start[i], duration[i], end[i]);
       }
     }
   }
@@ -126,82 +127,82 @@ namespace Gecode {
 
   void
   cumulatives(Space* home, const IntVarArgs& machine,
-	      const IntVarArgs& start, const IntVarArgs& duration,
-	      const IntVarArgs& end, const IntVarArgs& height,
-	      const IntArgs& limit, bool at_most,
-	      IntConLevel cl) {
+              const IntVarArgs& start, const IntVarArgs& duration,
+              const IntVarArgs& end, const IntVarArgs& height,
+              const IntArgs& limit, bool at_most,
+              IntConLevel cl) {
     post_cumulatives(home, machine, start, duration, end,
-		     height, limit, at_most, cl);
+                     height, limit, at_most, cl);
   }
 
   void
   cumulatives(Space* home, const IntArgs& machine,
-	      const IntVarArgs& start, const IntVarArgs& duration,
-	      const IntVarArgs& end, const IntVarArgs& height,
-	      const IntArgs& limit, bool at_most,
-	      IntConLevel cl) {
+              const IntVarArgs& start, const IntVarArgs& duration,
+              const IntVarArgs& end, const IntVarArgs& height,
+              const IntArgs& limit, bool at_most,
+              IntConLevel cl) {
     post_cumulatives(home, machine, start, duration, end,
-		     height, limit, at_most, cl);
+                     height, limit, at_most, cl);
   }
 
   void
   cumulatives(Space* home, const IntVarArgs& machine,
-	      const IntVarArgs& start, const IntArgs& duration,
-	      const IntVarArgs& end, const IntVarArgs& height,
-	      const IntArgs& limit, bool at_most,
-	      IntConLevel cl) {
+              const IntVarArgs& start, const IntArgs& duration,
+              const IntVarArgs& end, const IntVarArgs& height,
+              const IntArgs& limit, bool at_most,
+              IntConLevel cl) {
     post_cumulatives(home, machine, start, duration, end,
-		     height, limit, at_most, cl);
+                     height, limit, at_most, cl);
   }
 
   void
   cumulatives(Space* home, const IntArgs& machine,
-	      const IntVarArgs& start, const IntArgs& duration,
-	      const IntVarArgs& end, const IntVarArgs& height,
-	      const IntArgs& limit, bool at_most,
-	      IntConLevel cl) {
+              const IntVarArgs& start, const IntArgs& duration,
+              const IntVarArgs& end, const IntVarArgs& height,
+              const IntArgs& limit, bool at_most,
+              IntConLevel cl) {
     post_cumulatives(home, machine, start, duration, end,
-		     height, limit, at_most, cl);
+                     height, limit, at_most, cl);
   }
 
   void
   cumulatives(Space* home, const IntVarArgs& machine,
-	      const IntVarArgs& start, const IntVarArgs& duration,
-	      const IntVarArgs& end, const IntArgs& height,
-	      const IntArgs& limit, bool at_most,
-	      IntConLevel cl) {
+              const IntVarArgs& start, const IntVarArgs& duration,
+              const IntVarArgs& end, const IntArgs& height,
+              const IntArgs& limit, bool at_most,
+              IntConLevel cl) {
     post_cumulatives(home, machine, start, duration, end,
-		     height, limit, at_most, cl);
+                     height, limit, at_most, cl);
   }
 
   void
   cumulatives(Space* home, const IntArgs& machine,
-	      const IntVarArgs& start, const IntVarArgs& duration,
-	      const IntVarArgs& end, const IntArgs& height,
-	      const IntArgs& limit, bool at_most,
-	      IntConLevel cl) {
+              const IntVarArgs& start, const IntVarArgs& duration,
+              const IntVarArgs& end, const IntArgs& height,
+              const IntArgs& limit, bool at_most,
+              IntConLevel cl) {
     post_cumulatives(home, machine, start, duration, end,
-		     height, limit, at_most, cl);
+                     height, limit, at_most, cl);
   }
 
   void
   cumulatives(Space* home, const IntVarArgs& machine,
-	      const IntVarArgs& start, const IntArgs& duration,
-	      const IntVarArgs& end, const IntArgs& height,
-	      const IntArgs& limit, bool at_most,
-	      IntConLevel cl) {
+              const IntVarArgs& start, const IntArgs& duration,
+              const IntVarArgs& end, const IntArgs& height,
+              const IntArgs& limit, bool at_most,
+              IntConLevel cl) {
     post_cumulatives(home, machine, start, duration, end,
-		     height, limit, at_most, cl);
+                     height, limit, at_most, cl);
   }
 
   void
   cumulatives(Space* home, const IntArgs& machine,
-	      const IntVarArgs& start, const IntArgs& duration,
-	      const IntVarArgs& end, const IntArgs& height,
-	      const IntArgs& limit, bool at_most,
-	      IntConLevel cl) {
+              const IntVarArgs& start, const IntArgs& duration,
+              const IntVarArgs& end, const IntArgs& height,
+              const IntArgs& limit, bool at_most,
+              IntConLevel cl) {
     post_cumulatives(home, machine, start, duration, end,
-		     height, limit, at_most, cl);
+                     height, limit, at_most, cl);
   }
 
 }

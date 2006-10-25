@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -53,12 +54,12 @@ namespace Gecode {
       ExecStatus es_new = _ps[i].check(home, x);
       switch (es_new) {
       case ES_FAILED:
-	return ES_FAILED;
+        return ES_FAILED;
       case ES_SUBSUMED:
-	break;
+        break;
       default:
-	es = es_new;
-	break;
+        es = es_new;
+        break;
       }
     }
     return es;

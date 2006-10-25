@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -44,9 +45,9 @@ namespace Gecode {
     ScaleView<Val,UnsVal>::exact_div(double x, bool& exact) const {
       double xa = x / a;
       if (ceil(xa) == xa) {
-	exact = true;  return static_cast<int>(xa);
+        exact = true;  return static_cast<int>(xa);
       } else {
-	exact = false; return 0;
+        exact = false; return 0;
       }
     }
 
@@ -69,9 +70,9 @@ namespace Gecode {
     ScaleView<Val,UnsVal>::exact_div(int x, bool& exact) const {
       int xa = x / a;
       if (a * xa == x) {
-	exact = true;  return xa;
+        exact = true;  return xa;
       } else {
-	exact = false; return 0;
+        exact = false; return 0;
       }
     }
 
@@ -254,7 +255,7 @@ namespace Gecode {
     template <class Val, class UnsVal>
     forceinline void
     ScaleView<Val,UnsVal>::subscribe(Space* home, Propagator* p, PropCond pc,
-				     bool process) {
+                                     bool process) {
       view.subscribe(home,p,pc,process);
     }
     template <class Val, class UnsVal>
@@ -271,7 +272,7 @@ namespace Gecode {
     template <class Val, class UnsVal>
     forceinline void
     ScaleView<Val,UnsVal>::update(Space* home, bool share,
-				  ScaleView<Val,UnsVal>& x) {
+                                  ScaleView<Val,UnsVal>& x) {
       a=x.a; view.update(home,share,x.view);
     }
 
@@ -301,13 +302,13 @@ namespace Gecode {
     ViewRanges<IntScaleView>::ViewRanges(const IntScaleView& x) {
       ViewRanges<IntView> xi(x.base());
       Iter::Ranges::ScaleUp<int,unsigned int,ViewRanges<IntView> >::init
-	(xi,x.scale());
+        (xi,x.scale());
     }
     forceinline void
     ViewRanges<IntScaleView>::init(const IntScaleView& x) {
       ViewRanges<IntView> xi(x.base());
       Iter::Ranges::ScaleUp<int,unsigned int,ViewRanges<IntView> >::init
-	(xi,x.scale());
+        (xi,x.scale());
     }
 
 
@@ -336,13 +337,13 @@ namespace Gecode {
     ViewRanges<DoubleScaleView>::ViewRanges(const DoubleScaleView& x) {
       ViewRanges<IntView> xi(x.base());
       Iter::Ranges::ScaleUp<double,double,ViewRanges<IntView> >::init
-	(xi,x.scale());
+        (xi,x.scale());
     }
     forceinline void
     ViewRanges<DoubleScaleView>::init(const DoubleScaleView& x) {
       ViewRanges<IntView> xi(x.base());
       Iter::Ranges::ScaleUp<double,double,ViewRanges<IntView> >::init
-	(xi,x.scale());
+        (xi,x.scale());
     }
 
   }
@@ -362,7 +363,7 @@ namespace Gecode {
   template <class Val, class UnsVal>
   forceinline bool
   before(const Int::ScaleView<Val,UnsVal>& x,
-	 const Int::ScaleView<Val,UnsVal>& y) {
+         const Int::ScaleView<Val,UnsVal>& y) {
     return before(x.base(),y.base())
       || (same(x.base(),y.base()) && (x.scale() < y.scale()));
   }

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -34,14 +35,14 @@ namespace Gecode { namespace Int {
       os << '{';
       ViewRanges<View> r(x);
       while (true) {
-	if (r.min() == r.max()) {
-	  os << r.min();
-	} else {
-	  os << r.min() << ".." << r.max();
-	}
-	++r;
-	if (!r()) break;
-	os << ',';
+        if (r.min() == r.max()) {
+          os << r.min();
+        } else {
+          os << r.min() << ".." << r.max();
+        }
+        ++r;
+        if (!r()) break;
+        os << ',';
       }
       return os << '}';
     }
@@ -56,14 +57,14 @@ namespace Gecode { namespace Int {
       os << '{';
       ViewRanges<ScaleView<Val,UnsVal> > r(x);
       while (true) {
-	if (r.min() == r.max()) {
-	  os << r.min();
-	} else {
-	  os << r.min() << ".." << r.max();
-	}
-	++r;
-	if (!r()) break;
-	os << ',';
+        if (r.min() == r.max()) {
+          os << r.min();
+        } else {
+          os << r.min() << ".." << r.max();
+        }
+        ++r;
+        if (!r()) break;
+        os << ',';
       }
       return os << '}';
     }

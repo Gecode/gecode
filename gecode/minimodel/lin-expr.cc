@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -35,13 +36,13 @@ namespace Gecode {
     bool
     LinExpr::Node::decrement(void) {
       if (--use == 0) {
-	if (left != NULL) {
-	  if (left->decrement())
-	    delete left;
-	  if (right->decrement())
-	    delete right;
-	}
-	return true;
+        if (left != NULL) {
+          if (left->decrement())
+            delete left;
+          if (right->decrement())
+            delete right;
+        }
+        return true;
       }
       return false;
     }
@@ -49,10 +50,10 @@ namespace Gecode {
     int
     LinExpr::Node::fill(Int::Linear::Term t[], int i, int m) const {
       if (left != NULL) {
-	return right->fill(t, left->fill(t, i, signLeft*m), signRight*m);
+        return right->fill(t, left->fill(t, i, signLeft*m), signRight*m);
       } else {
-	t[i].a=m*a; t[i].x=x;
-	return i+1;
+        t[i].a=m*a; t[i].x=x;
+        return i+1;
       }
     }
 
@@ -77,17 +78,17 @@ namespace Gecode {
       double min = sign*-c;
       double max = sign*-c;
       for (int i=n; i--; )
-	if (ts[i].a > 0) {
-	  min += ts[i].a*ts[i].x.min();
-	  max += ts[i].a*ts[i].x.max();
-	} else {
-	  max += ts[i].a*ts[i].x.min();
-	  min += ts[i].a*ts[i].x.max();
-	}
+        if (ts[i].a > 0) {
+          min += ts[i].a*ts[i].x.min();
+          max += ts[i].a*ts[i].x.max();
+        } else {
+          max += ts[i].a*ts[i].x.min();
+          min += ts[i].a*ts[i].x.max();
+        }
       if (min < Limits::Int::int_min)
-	min = Limits::Int::int_min;
+        min = Limits::Int::int_min;
       if (max > Limits::Int::int_max)
-	max = Limits::Int::int_max;
+        max = Limits::Int::int_max;
       IntVar x(home, static_cast<int>(min), static_cast<int>(max));
       ts[n].x = x;
       ts[n].a = -1;

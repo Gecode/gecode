@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
@@ -46,15 +47,15 @@ namespace {
     int pos = 0;
     for (int i = 17; i--; )
       for (int j = 3; j--; )
-	layout[i][j] = nums[pos++];
+        layout[i][j] = nums[pos++];
 
     // Location-information for each value
     layer = vector<int>(52);
     pile  = vector<int>(52);
     for (int i = 17; i--; ) {
       for (int j = 3; j--; ) {
-	layer[layout[i][j]] = j;
-	pile[ layout[i][j]] = i;
+        layer[layout[i][j]] = j;
+        pile[ layout[i][j]] = i;
       }
     }
   }
@@ -79,14 +80,14 @@ public:
   virtual bool status(const Space* home) const {
     for (pos = 0; pos < x.size(); ++pos) {
       if (!x[pos].assigned()) {
-	int w = 4;
-	for (Int::ViewValues<Int::IntView> vals(x[pos]); vals(); ++vals) {
-	  if (layer[vals.val()] < w) {
-	    val = vals.val();
-	    if ((w = layer[vals.val()]) == 0) break;
-	  }
-	}
-	return true;
+        int w = 4;
+        for (Int::ViewValues<Int::IntView> vals(x[pos]); vals(); ++vals) {
+          if (layer[vals.val()] < w) {
+            val = vals.val();
+            if ((w = layer[vals.val()]) == 0) break;
+          }
+        }
+        return true;
       }
     }
     // No non-assigned variables left
@@ -169,14 +170,14 @@ public:
       const int dr[2] = {1, 12};
       IntVar diff(this, IntSet(dr, 2));
       post(this, abs(this, minus(this, x1, x2, ICL_DOM), ICL_DOM) 
-	   == diff, ICL_DOM);
+           == diff, ICL_DOM);
     }
 
     // Set up instance
     for (int i = 17; i--; ) {
       for (int j = 2; j--; ) {
-	// A card must be played before the one under it.
-	post(this, y[layout[i][j]] < y[layout[i][j+1]]);
+        // A card must be played before the one under it.
+        post(this, y[layout[i][j]] < y[layout[i][j+1]]);
       }
     }
 
@@ -185,41 +186,41 @@ public:
     if (!opt.naive) {
       // For all ranks
       for (int r = 13; r--; ) {
-	// For all pairs of suits
-	for (int s1 = 4; s1--; ) {
-	  for (int s2 = s1; s2--; ) {
-	    int c1 = 13*s1 + r,
-	      c2 = 13*s2 + r;
-	    // The ace of spades is already placed
-	    if (c1 == 0 || c2 == 0) continue;
-	    // Piles are handled by the rules of the game
-	    if (pile[c1] == pile[c2]) continue;
-	    // Get the right order of the cards
-	    int o1 = c1, o2 = c2;
-	    if (pile[c1] > pile[c2] && layer[c2] >= layer[c1]) 
-	      std::swap(o1, o2);
-	    // cond is the condition for the symmetry
-	    BoolVarArgs ba(4);
-	    int pos = 0;
-	    // Both cards played after the ones on top of them
-	    for (int i = 0; i < layer[o1]; ++i)
-	      ba[pos++] = post(this, ~(y[layout[pile[o1]][i]] < y[o2]));
-	    for (int i = 0; i < layer[o2]; ++i)
-	      ba[pos++] = post(this, ~(y[layout[pile[o2]][i]] < y[o1]));
-	    // Both cards played before the ones under them
-	    for (int i = layer[o1]+1; i < 3; ++i)
-	      ba[pos++] = post(this, ~(y[o2] < y[layout[pile[o1]][i]]));
-	    for (int i = layer[o2]+1; i < 3; ++i)
-	      ba[pos++] = post(this, ~(y[o1] < y[layout[pile[o2]][i]]));
-	    // Cond holds when all the above holds
-	    BoolVar cond(this, 0, 1);
-	    bool_and(this, ba, cond);
-	    
-	    // If cond is fulfilled, then we can order the cards
-	    // cond -> (y[o1] < y[o2])
-	    post(this, tt(!cond || ~(y[o1] < y[o2])));
-	  }
-	}
+        // For all pairs of suits
+        for (int s1 = 4; s1--; ) {
+          for (int s2 = s1; s2--; ) {
+            int c1 = 13*s1 + r,
+              c2 = 13*s2 + r;
+            // The ace of spades is already placed
+            if (c1 == 0 || c2 == 0) continue;
+            // Piles are handled by the rules of the game
+            if (pile[c1] == pile[c2]) continue;
+            // Get the right order of the cards
+            int o1 = c1, o2 = c2;
+            if (pile[c1] > pile[c2] && layer[c2] >= layer[c1]) 
+              std::swap(o1, o2);
+            // cond is the condition for the symmetry
+            BoolVarArgs ba(4);
+            int pos = 0;
+            // Both cards played after the ones on top of them
+            for (int i = 0; i < layer[o1]; ++i)
+              ba[pos++] = post(this, ~(y[layout[pile[o1]][i]] < y[o2]));
+            for (int i = 0; i < layer[o2]; ++i)
+              ba[pos++] = post(this, ~(y[layout[pile[o2]][i]] < y[o1]));
+            // Both cards played before the ones under them
+            for (int i = layer[o1]+1; i < 3; ++i)
+              ba[pos++] = post(this, ~(y[o2] < y[layout[pile[o1]][i]]));
+            for (int i = layer[o2]+1; i < 3; ++i)
+              ba[pos++] = post(this, ~(y[o1] < y[layout[pile[o2]][i]]));
+            // Cond holds when all the above holds
+            BoolVar cond(this, 0, 1);
+            bool_and(this, ba, cond);
+            
+            // If cond is fulfilled, then we can order the cards
+            // cond -> (y[o1] < y[o2])
+            post(this, tt(!cond || ~(y[o1] < y[o2])));
+          }
+        }
       }
     }
     
@@ -232,11 +233,11 @@ public:
     std::cout << "Layout:" << std::endl;
     for (int i = 0; i < 17; i++) {
       for (int j = 0; j < 3; j++)
-	std::cout << card(layout[i][j]) << " ";
+        std::cout << card(layout[i][j]) << " ";
       if ((i+1) % 3 == 0) 
-	std::cout << std::endl;
+        std::cout << std::endl;
       else
-	std::cout << "\t";
+        std::cout << "\t";
     }
     std::cout << std::endl << std::endl;
     
@@ -244,7 +245,7 @@ public:
     for (int i = 0; i < 52; ++i) {
       std::cout << card(x[i].min()) << " ";
       if ((i + 1) % 13 == 0)
-	std::cout << std::endl;
+        std::cout << std::endl;
     }
     std::cout << std::endl;
     std::cout << std::endl;

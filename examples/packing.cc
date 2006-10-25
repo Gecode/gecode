@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -62,11 +63,11 @@ static const int s5_s[] = {25,24,23,22,19,17,11,6,5,3,0};
 static const PackingSpec s5(65,47,s5_s);
 
 static const int s6_s[] = {50,42,37,35,33,29,27,25,24,19,18,
-			   17,16,15,11,9,8,7,6,4,2,0};
+                           17,16,15,11,9,8,7,6,4,2,0};
 static const PackingSpec s6(112,112,s6_s);
 
 static const int s7_s[] = {81,64,56,55,51,43,39,38,35,33,31,30,29,20,
-			   18,16,14,9,8,5,4,3,2,1,0};
+                           18,16,14,9,8,5,4,3,2,1,0};
 static const PackingSpec s7(175,175,s7_s);
 
 static const PackingSpec* specs[] = {&s0,&s1,&s2,&s3,&s4,&s5,&s6,&s7};
@@ -101,8 +102,8 @@ public:
     // Squares do not overlap
     for (int i=0; i<s.n; i++)
       for (int j=i+1; j<s.n; j++)
-	post(this, tt(~(x[j]-x[i] >= s.s[i]) || ~(x[i]-x[j] >= s.s[j]) ||
-		      ~(y[j]-y[i] >= s.s[i]) || ~(y[i]-y[j] >= s.s[j])));
+        post(this, tt(~(x[j]-x[i] >= s.s[i]) || ~(x[i]-x[j] >= s.s[j]) ||
+                      ~(y[j]-y[i] >= s.s[i]) || ~(y[i]-y[j] >= s.s[j])));
 
     /*
      * Symmetry breaking
@@ -110,7 +111,7 @@ public:
      */
     for (int i=s.n-1; i--; )
       if (s.s[i] == s.s[i+1])
-	rel(this, x[i], IRT_LQ, x[i+1]);
+        rel(this, x[i], IRT_LQ, x[i+1]);
 
     /*
      * Capacity constraints
@@ -120,48 +121,48 @@ public:
       IntArgs sa(s.n,s.s);
       BoolVarArgs b(s.n);
       for (int cx=0; cx<s.x; cx++) {
-	for (int i=0; i<s.n; i++) {
-	  BoolVar b_cx(this,0,1);
-	  dom(this, x[i], cx-s.s[i]+1, cx, b_cx);
-	  b[i] = b_cx;
-	}
-	linear(this, sa, b, IRT_EQ, s.y);
+        for (int i=0; i<s.n; i++) {
+          BoolVar b_cx(this,0,1);
+          dom(this, x[i], cx-s.s[i]+1, cx, b_cx);
+          b[i] = b_cx;
+        }
+        linear(this, sa, b, IRT_EQ, s.y);
       }
       for (int cy=0; cy<s.y; cy++) {
-	for (int i=0; i<s.n; i++) {
-	  BoolVar b_cy(this,0,1);
-	  dom(this, y[i], cy-s.s[i]+1, cy, b_cy);
-	  b[i] = b_cy;
-	}
-	linear(this, sa, b, IRT_EQ, s.x);
+        for (int i=0; i<s.n; i++) {
+          BoolVar b_cy(this,0,1);
+          dom(this, y[i], cy-s.s[i]+1, cy, b_cy);
+          b[i] = b_cy;
+        }
+        linear(this, sa, b, IRT_EQ, s.x);
       }
     } else {
       IntArgs m(s.n), dh(s.n);
       for (int i = s.n; i--; ) {
-	m[i]  = 0;
-	dh[i] = s.s[i];
+        m[i]  = 0;
+        dh[i] = s.s[i];
       }
       IntVarArgs e(s.n);
       IntArgs limit(1);
       {
-	// x-direction
-	for (int i = s.n; i--; ) {
-	  IntVar ei(this, 0, s.x);
-	  e[i] = ei;
-	}
-	limit[0] = s.y;
-	cumulatives(this, m, x, dh, e, dh, limit,  true);
-	cumulatives(this, m, x, dh, e, dh, limit, false);
+        // x-direction
+        for (int i = s.n; i--; ) {
+          IntVar ei(this, 0, s.x);
+          e[i] = ei;
+        }
+        limit[0] = s.y;
+        cumulatives(this, m, x, dh, e, dh, limit,  true);
+        cumulatives(this, m, x, dh, e, dh, limit, false);
       }
       {
-	// y-direction
-	for (int i = s.n; i--; ) {
-	  IntVar ei(this, 0, s.y);
-	  e[i] = ei;
-	}
-	limit[0] = s.x;
-	cumulatives(this, m, y, dh, e, dh, limit,  true);
-	cumulatives(this, m, y, dh, e, dh, limit, false);
+        // y-direction
+        for (int i = s.n; i--; ) {
+          IntVar ei(this, 0, s.y);
+          e[i] = ei;
+        }
+        limit[0] = s.x;
+        cumulatives(this, m, y, dh, e, dh, limit,  true);
+        cumulatives(this, m, y, dh, e, dh, limit, false);
       }
     }
 
@@ -200,7 +201,7 @@ main(int argc, char** argv) {
   opt.parse(argc,argv);
   if (opt.size >= n_examples) {
     std::cerr << "Error: size must be between 0 and " << n_examples - 1
-	      << std::endl;
+              << std::endl;
     return 1;
   }
   Example::run<Packing,DFS>(opt);

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -26,8 +27,8 @@
  * or the commit member function of a branching.
  * \ingroup TaskActor
  */
-#define GECODE_ME_CHECK(me)			\
-  if (::Gecode::me_failed(me))			\
+#define GECODE_ME_CHECK(me)                        \
+  if (::Gecode::me_failed(me))                        \
     return ::Gecode::ES_FAILED;
 
 /**
@@ -39,7 +40,7 @@
  */
 #define GECODE_ME_CHECK_MODIFIED(modified, me) {           \
     ModEvent __me__ ## __LINE__ = (me);                    \
-    if (::Gecode::me_failed(__me__ ## __LINE__))	   \
+    if (::Gecode::me_failed(__me__ ## __LINE__))           \
       return ::Gecode::ES_FAILED;                          \
     modified |= ::Gecode::me_modified(__me__ ## __LINE__); \
   }
@@ -50,10 +51,10 @@
  * To be used inside post functions.
  * \ingroup TaskActor
  */
-#define GECODE_ME_FAIL(home,me)			\
-  if (::Gecode::me_failed(me)) {		\
-    (home)->fail();				\
-    return;					\
+#define GECODE_ME_FAIL(home,me)                        \
+  if (::Gecode::me_failed(me)) {                \
+    (home)->fail();                                \
+    return;                                        \
   }
 
 
@@ -62,18 +63,18 @@
  * \brief Check whether execution status \a es is failed, and forward failure.
  * \ingroup TaskActor
  */
-#define GECODE_ES_CHECK(es)		\
-  if ((es) < ::Gecode::ES_OK)		\
+#define GECODE_ES_CHECK(es)                \
+  if ((es) < ::Gecode::ES_OK)                \
     return ::Gecode::ES_FAILED;
 
 /**
  * \brief Check whether execution status \a es is failed, and fail space \a home.
  * \ingroup TaskActor
  */
-#define GECODE_ES_FAIL(home,es)		\
-  if ((es) < ::Gecode::ES_OK) {		\
-    (home)->fail();			\
-    return;				\
+#define GECODE_ES_FAIL(home,es)                \
+  if ((es) < ::Gecode::ES_OK) {                \
+    (home)->fail();                        \
+    return;                                \
   }
 
 /**

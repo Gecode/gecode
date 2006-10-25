@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -86,7 +87,7 @@ namespace Gecode { namespace Support {
       Type* j = i;
       Type v = *i;
       while (lt(v,*(j-1))) {
-	*j = *(j-1); j--;
+        *j = *(j-1); j--;
       }
       *j = v;
     }
@@ -102,8 +103,8 @@ namespace Gecode { namespace Support {
     while (true) {
       while (lt(*(++i),v));
       while (lt(v,*(--j))) if (j == l) break;
-	if (i >= j) break;
-	std::swap(*i,*j);
+        if (i >= j) break;
+        std::swap(*i,*j);
     }
     std::swap(*i,*r);
     return i;
@@ -119,16 +120,16 @@ namespace Gecode { namespace Support {
       s.pop(l,r);
     nopush:
       if (r-l <= QuickSortCutoff)
-	continue;
+        continue;
       std::swap(*(l+((r-l) >> 1)),*(r-1));
       exchange(*l,*(r-1),lt);
       exchange(*l,*r,lt);
       exchange(*(r-1),*r,lt);
       Type* i = partition(l+1,r-1,lt);
       if (i-l > r-i) {
-	s.push(l,i-1); l=i+1; goto nopush;
+        s.push(l,i-1); l=i+1; goto nopush;
       } else {
-	s.push(i+1,r); r=i-1; goto nopush;
+        s.push(i+1,r); r=i-1; goto nopush;
       }
     }
   }

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -36,50 +37,50 @@ namespace Gecode {
     switch(r) {
     case IRT_EQ:
       {
-	Gecode::Int::IntView xv(x);
-	Set::SingletonView xsingle(xv);
-	GECODE_ES_FAIL(home,
-		       (Set::Rel::Eq<Set::SetView,Set::SingletonView>
-			::post(home,s,xsingle)));
+        Gecode::Int::IntView xv(x);
+        Set::SingletonView xsingle(xv);
+        GECODE_ES_FAIL(home,
+                       (Set::Rel::Eq<Set::SetView,Set::SingletonView>
+                        ::post(home,s,xsingle)));
 
       }
       break;
     case IRT_NQ:
       {
-	Gecode::Int::IntView xv(x);
-	Set::SingletonView xsingle(xv);
-	GECODE_ES_FAIL(home,
-		       (Set::Rel::Distinct<Set::SetView,Set::SingletonView>
-			::post(home,s,xsingle)));
+        Gecode::Int::IntView xv(x);
+        Set::SingletonView xsingle(xv);
+        GECODE_ES_FAIL(home,
+                       (Set::Rel::Distinct<Set::SetView,Set::SingletonView>
+                        ::post(home,s,xsingle)));
 
       }
       break;
     case IRT_LQ:
       {
-	IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
-	rel(home, tmp, IRT_LQ, x);
-	GECODE_ES_FAIL(home,Set::Int::MaxElement::post(home,s,tmp));
+        IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
+        rel(home, tmp, IRT_LQ, x);
+        GECODE_ES_FAIL(home,Set::Int::MaxElement::post(home,s,tmp));
       }
       break;
     case IRT_LE:
       {
-	IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
-	rel(home, tmp, IRT_LE, x);
-	GECODE_ES_FAIL(home,Set::Int::MaxElement::post(home,s,tmp));
+        IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
+        rel(home, tmp, IRT_LE, x);
+        GECODE_ES_FAIL(home,Set::Int::MaxElement::post(home,s,tmp));
       }
       break;
     case IRT_GQ:
       {
-	IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
-	rel(home, tmp, IRT_GQ, x);
-	GECODE_ES_FAIL(home,Set::Int::MinElement::post(home,s,tmp));
+        IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
+        rel(home, tmp, IRT_GQ, x);
+        GECODE_ES_FAIL(home,Set::Int::MinElement::post(home,s,tmp));
       }
       break;
     case IRT_GR:
       {
-	IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
-	rel(home, tmp, IRT_GR, x);
-	GECODE_ES_FAIL(home,Set::Int::MinElement::post(home,s,tmp));
+        IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
+        rel(home, tmp, IRT_GR, x);
+        GECODE_ES_FAIL(home,Set::Int::MinElement::post(home,s,tmp));
       }
       break;
     }
@@ -126,7 +127,7 @@ namespace Gecode {
   }
 
   void weights(Space* home, const IntArgs& elements, const IntArgs& weights,
-	       SetVar x, IntVar y) {
+               SetVar x, IntVar y) {
     if (home->failed()) return;
     Set::SetView xv(x);
     Int::IntView yv(y);

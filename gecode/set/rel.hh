@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -119,7 +120,7 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$ (x\subseteq y) \Leftrightarrow b \f$ 
     static ExecStatus post(Space* home,View0 x, View1 y,
-			   Gecode::Int::BoolView b);
+                           Gecode::Int::BoolView b);
   };
 
   /**
@@ -177,7 +178,7 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual ExecStatus propagate(Space* home);
   /// Post propagator for \f$ (x=y) \Leftrightarrow b\f$ 
     static ExecStatus post(Space* home,View0 x, View1 y,
-			   Gecode::Int::BoolView b);
+                           Gecode::Int::BoolView b);
   };
 
   /**

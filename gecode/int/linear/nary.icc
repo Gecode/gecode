@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -115,21 +116,21 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class View>
   void
   bounds_p(const Propagator* p, ViewArray<View>& x,
-	   Val& c, Val& sl, Val& su) {
+           Val& c, Val& sl, Val& su) {
     int n = x.size();
     if (IntView::pme(p) == ME_INT_VAL) {
       for (int i = n; i--; ) {
-	Val m = x[i].min();
-	if (x[i].assigned()) {
-	  c -= m; x[i] = x[--n];
-	} else {
-	  sl -= m; su -= x[i].max();
-	}
+        Val m = x[i].min();
+        if (x[i].assigned()) {
+          c -= m; x[i] = x[--n];
+        } else {
+          sl -= m; su -= x[i].max();
+        }
       }
       x.size(n);
     } else {
       for (int i = n; i--; ) {
-	sl -= x[i].min(); su -= x[i].max();
+        sl -= x[i].min(); su -= x[i].max();
       }
     }
   }
@@ -137,21 +138,21 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class View>
   void
   bounds_n(const Propagator* p, ViewArray<View>& y,
-	   Val& c, Val& sl, Val& su) {
+           Val& c, Val& sl, Val& su) {
     int n = y.size();
     if (IntView::pme(p) == ME_INT_VAL) {
       for (int i = n; i--; ) {
-	Val m = y[i].max();
-	if (y[i].assigned()) {
-	  c += m; y[i] = y[--n];
-	} else {
-	  sl += m; su += y[i].min();
-	}
+        Val m = y[i].max();
+        if (y[i].assigned()) {
+          c += m; y[i] = y[--n];
+        } else {
+          sl += m; su += y[i].min();
+        }
       }
       y.size(n);
     } else {
       for (int i = n; i--; ) {
-	sl += y[i].max(); su += y[i].min();
+        sl += y[i].max(); su += y[i].min();
       }
     }
   }
@@ -160,7 +161,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class P, class N>
   ExecStatus
   prop_bnd(const Propagator* p, Space* home,
-	   ViewArray<P>& x, ViewArray<N>& y, Val& c) {
+           ViewArray<P>& x, ViewArray<N>& y, Val& c) {
     // Eliminate singletons
     Val sl = 0;
     Val su = 0;
@@ -170,10 +171,10 @@ namespace Gecode { namespace Int { namespace Linear {
 
     if ((IntView::pme(p) == ME_INT_VAL) && ((x.size() + y.size()) <= 1)) {
       if (x.size() == 1) {
-	GECODE_ME_CHECK(x[0].eq(home,c)); return ES_SUBSUMED;
+        GECODE_ME_CHECK(x[0].eq(home,c)); return ES_SUBSUMED;
       }
       if (y.size() == 1) {
-	GECODE_ME_CHECK(y[0].eq(home,-c)); return ES_SUBSUMED;
+        GECODE_ME_CHECK(y[0].eq(home,-c)); return ES_SUBSUMED;
       }
       return (c == static_cast<Val>(0)) ? ES_SUBSUMED : ES_FAILED;
     }
@@ -187,54 +188,54 @@ namespace Gecode { namespace Int { namespace Linear {
 
     do {
       if (mod & mod_sl) {
-	mod -= mod_sl;
-	// Propagate upper bound for positive variables
-	for (int i = x.size(); i--; ) {
-	  const Val xi_max = x[i].max();
-	  ModEvent me = x[i].lq(home,sl + x[i].min());
-	  if (me_failed(me))
-	    return ES_FAILED;
-	  if (me_modified(me)) {
-	    su += xi_max - x[i].max();
-	    mod |= mod_su;
-	  }
-	}
-	// Propagate lower bound for negative variables
-	for (int i = y.size(); i--; ) {
-	  const Val yi_min = y[i].min();
-	  ModEvent me = y[i].gq(home,y[i].max() - sl);
-	  if (me_failed(me))
-	    return ES_FAILED;
-	  if (me_modified(me)) {
-	    su += y[i].min() - yi_min;
-	    mod |= mod_su;
-	  }
-	}
+        mod -= mod_sl;
+        // Propagate upper bound for positive variables
+        for (int i = x.size(); i--; ) {
+          const Val xi_max = x[i].max();
+          ModEvent me = x[i].lq(home,sl + x[i].min());
+          if (me_failed(me))
+            return ES_FAILED;
+          if (me_modified(me)) {
+            su += xi_max - x[i].max();
+            mod |= mod_su;
+          }
+        }
+        // Propagate lower bound for negative variables
+        for (int i = y.size(); i--; ) {
+          const Val yi_min = y[i].min();
+          ModEvent me = y[i].gq(home,y[i].max() - sl);
+          if (me_failed(me))
+            return ES_FAILED;
+          if (me_modified(me)) {
+            su += y[i].min() - yi_min;
+            mod |= mod_su;
+          }
+        }
       }
       if (mod & mod_su) {
-	mod -= mod_su;
-	// Propagate lower bound for positive variables
-	for (int i = x.size(); i--; ) {
-	  const Val xi_min = x[i].min();
-	  ModEvent me = x[i].gq(home,su + x[i].max());
-	  if (me_failed(me))
-	    return ES_FAILED;
-	  if (me_modified(me)) {
-	    sl += xi_min - x[i].min();
-	    mod |= mod_sl;
-	  }
-	}
-	// Propagate upper bound for negative variables
-	for (int i = y.size(); i--; ) {
-	  const Val yi_max = y[i].max();
-	  ModEvent me = y[i].lq(home,y[i].min() - su);
-	  if (me_failed(me))
-	    return ES_FAILED;
-	  if (me_modified(me)) {
-	    sl += y[i].max() - yi_max;
-	    mod |= mod_sl;
-	  }
-	}
+        mod -= mod_su;
+        // Propagate lower bound for positive variables
+        for (int i = x.size(); i--; ) {
+          const Val xi_min = x[i].min();
+          ModEvent me = x[i].gq(home,su + x[i].max());
+          if (me_failed(me))
+            return ES_FAILED;
+          if (me_modified(me)) {
+            sl += xi_min - x[i].min();
+            mod |= mod_sl;
+          }
+        }
+        // Propagate upper bound for negative variables
+        for (int i = y.size(); i--; ) {
+          const Val yi_max = y[i].max();
+          ModEvent me = y[i].lq(home,y[i].min() - su);
+          if (me_failed(me))
+            return ES_FAILED;
+          if (me_modified(me)) {
+            sl += y[i].max() - yi_max;
+            mod |= mod_sl;
+          }
+        }
       }
     } while (mod);
 
@@ -278,13 +279,13 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class P, class N>
   forceinline Actor*
   eqtobin(Space* home, bool share, Propagator& p,
-	  ViewArray<P>& x, ViewArray<N>& y, Val c) {
+          ViewArray<P>& x, ViewArray<N>& y, Val c) {
     return NULL;
   }
   template <class Val>
   forceinline Actor*
   eqtobin(Space* home, bool share, Propagator& p,
-	  ViewArray<IntView>& x, ViewArray<NoView>& y, Val c) {
+          ViewArray<IntView>& x, ViewArray<NoView>& y, Val c) {
     assert(x.size() == 2);
     return new (home) EqBin<Val,IntView,IntView>
       (home,share,p,x[0],x[1],c);
@@ -292,7 +293,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val>
   forceinline Actor*
   eqtobin(Space* home, bool share, Propagator& p,
-	  ViewArray<NoView>& x, ViewArray<IntView>& y, Val c) {
+          ViewArray<NoView>& x, ViewArray<IntView>& y, Val c) {
     assert(y.size() == 2);
     return new (home) EqBin<Val,IntView,IntView>
       (home,share,p,y[0],y[1],-c);
@@ -300,13 +301,13 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val>
   forceinline Actor*
   eqtobin(Space* home, bool share, Propagator& p,
-	  ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
+          ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
     if (x.size() == 2)
       return new (home) EqBin<Val,IntView,IntView>
-	(home,share,p,x[0],x[1],c);
+        (home,share,p,x[0],x[1],c);
     if (x.size() == 1)
       return new (home) EqBin<Val,IntView,MinusView>
-	(home,share,p,x[0],y[0],c);
+        (home,share,p,x[0],y[0],c);
     return new (home) EqBin<Val,IntView,IntView>
       (home,share,p,y[0],y[1],-c);
   }
@@ -318,13 +319,13 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class P, class N>
   forceinline Actor*
   eqtoter(Space* home, bool share, Propagator& p,
-	  ViewArray<P>& x, ViewArray<N>& y, Val c) {
+          ViewArray<P>& x, ViewArray<N>& y, Val c) {
     return NULL;
   }
   template <class Val>
   forceinline Actor*
   eqtoter(Space* home, bool share, Propagator& p,
-	  ViewArray<IntView>& x, ViewArray<NoView>& y, Val c) {
+          ViewArray<IntView>& x, ViewArray<NoView>& y, Val c) {
     assert(x.size() == 3);
     return new (home) EqTer<Val,IntView,IntView,IntView>
       (home,share,p,x[0],x[1],x[2],c);
@@ -332,7 +333,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val>
   forceinline Actor*
   eqtoter(Space* home, bool share, Propagator& p,
-	  ViewArray<NoView>& x, ViewArray<IntView>& y, Val c) {
+          ViewArray<NoView>& x, ViewArray<IntView>& y, Val c) {
     assert(y.size() == 3);
     return new (home) EqTer<Val,IntView,IntView,IntView>
       (home,share,p,y[0],y[1],y[2],-c);
@@ -340,16 +341,16 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val>
   forceinline Actor*
   eqtoter(Space* home, bool share, Propagator& p,
-	  ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
+          ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
     if (x.size() == 3)
       return new (home) EqTer<Val,IntView,IntView,IntView>
-	(home,share,p,x[0],x[1],x[2],c);
+        (home,share,p,x[0],x[1],x[2],c);
     if (x.size() == 2)
       return new (home) EqTer<Val,IntView,IntView,MinusView>
-	(home,share,p,x[0],x[1],y[0],c);
+        (home,share,p,x[0],x[1],y[0],c);
     if (x.size() == 1)
       return new (home) EqTer<Val,IntView,IntView,MinusView>
-	(home,share,p,y[0],y[1],x[0],-c);
+        (home,share,p,y[0],y[1],x[0],-c);
     return new (home) EqTer<Val,IntView,IntView,IntView>
       (home,share,p,y[0],y[1],y[2],-c);
   }
@@ -360,9 +361,9 @@ namespace Gecode { namespace Int { namespace Linear {
     if (isunit(x,y)) {
       // Check whether rewriting is possible
       if (x.size() + y.size() == 2)
-	return eqtobin(home,share,*this,x,y,c);
+        return eqtobin(home,share,*this,x,y,c);
       if (x.size() + y.size() == 3)
-	return eqtoter(home,share,*this,x,y,c);
+        return eqtoter(home,share,*this,x,y,c);
     }
     return new (home) Eq<Val,P,N>(home,share,*this);
   }
@@ -382,13 +383,13 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class P, class N, class Ctrl>
   forceinline
   ReEq<Val,P,N,Ctrl>::ReEq(Space* home,
-			   ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b)
+                           ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b)
     : ReLin<Val,P,N,PC_INT_BND,Ctrl>(home,x,y,c,b) {}
 
   template <class Val, class P, class N, class Ctrl>
   ExecStatus
   ReEq<Val,P,N,Ctrl>::post(Space* home,
-			   ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b) {
+                           ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b) {
     ViewArray<NoView> nva;
     if (y.size() == 0) {
       (void) new (home) ReEq<Val,P,NoView,Ctrl>(home,x,nva,c,b);
@@ -417,10 +418,10 @@ namespace Gecode { namespace Int { namespace Linear {
   ReEq<Val,P,N,Ctrl>::propagate(Space* home) {
     if (b.zero())
       return (Nq<Val,P,N>::post(home,x,y,c) == ES_FAILED)
-	? ES_FAILED : ES_SUBSUMED;
+        ? ES_FAILED : ES_SUBSUMED;
     if (b.one())
       return (Eq<Val,P,N>::post(home,x,y,c) == ES_FAILED)
-	? ES_FAILED : ES_SUBSUMED;
+        ? ES_FAILED : ES_SUBSUMED;
 
     Val sl = 0;
     Val su = 0;
@@ -475,13 +476,13 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class P, class N>
   forceinline Actor*
   nqtobin(Space* home, bool share, Propagator& p,
-	  ViewArray<P>& x, ViewArray<N>& y, Val c) {
+          ViewArray<P>& x, ViewArray<N>& y, Val c) {
     return NULL;
   }
   template <class Val>
   forceinline Actor*
   nqtobin(Space* home, bool share, Propagator& p,
-	  ViewArray<IntView>& x, ViewArray<NoView>& y, Val c) {
+          ViewArray<IntView>& x, ViewArray<NoView>& y, Val c) {
     assert(x.size() == 2);
     return new (home) NqBin<Val,IntView,IntView>
       (home,share,p,x[0],x[1],c);
@@ -489,7 +490,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val>
   forceinline Actor*
   nqtobin(Space* home, bool share, Propagator& p,
-	  ViewArray<NoView>& x, ViewArray<IntView>& y, Val c) {
+          ViewArray<NoView>& x, ViewArray<IntView>& y, Val c) {
     assert(y.size() == 2);
     return new (home) NqBin<Val,IntView,IntView>
       (home,share,p,y[0],y[1],-c);
@@ -497,13 +498,13 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val>
   forceinline Actor*
   nqtobin(Space* home, bool share, Propagator& p,
-	  ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
+          ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
     if (x.size() == 2)
       return new (home) NqBin<Val,IntView,IntView>
-	(home,share,p,x[0],x[1],c);
+        (home,share,p,x[0],x[1],c);
     if (x.size() == 1)
       return new (home) NqBin<Val,IntView,MinusView>
-	(home,share,p,x[0],y[0],c);
+        (home,share,p,x[0],y[0],c);
     return new (home) NqBin<Val,IntView,IntView>
       (home,share,p,y[0],y[1],-c);
   }
@@ -515,13 +516,13 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class P, class N>
   forceinline Actor*
   nqtoter(Space* home, bool share, Propagator& p,
-	  ViewArray<P>& x, ViewArray<N>& y, Val c) {
+          ViewArray<P>& x, ViewArray<N>& y, Val c) {
     return NULL;
   }
   template <class Val>
   forceinline Actor*
   nqtoter(Space* home, bool share, Propagator& p,
-	  ViewArray<IntView>& x, ViewArray<NoView>& y, Val c) {
+          ViewArray<IntView>& x, ViewArray<NoView>& y, Val c) {
     assert(x.size() == 3);
     return new (home) NqTer<Val,IntView,IntView,IntView>
       (home,share,p,x[0],x[1],x[2],c);
@@ -529,7 +530,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val>
   forceinline Actor*
   nqtoter(Space* home, bool share, Propagator& p,
-	  ViewArray<NoView>& x, ViewArray<IntView>& y, Val c) {
+          ViewArray<NoView>& x, ViewArray<IntView>& y, Val c) {
     assert(y.size() == 3);
     return new (home) NqTer<Val,IntView,IntView,IntView>
       (home,share,p,y[0],y[1],y[2],-c);
@@ -537,16 +538,16 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val>
   forceinline Actor*
   nqtoter(Space* home, bool share, Propagator& p,
-	  ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
+          ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
     if (x.size() == 3)
       return new (home) NqTer<Val,IntView,IntView,IntView>
-	(home,share,p,x[0],x[1],x[2],c);
+        (home,share,p,x[0],x[1],x[2],c);
     if (x.size() == 2)
       return new (home) NqTer<Val,IntView,IntView,MinusView>
-	(home,share,p,x[0],x[1],y[0],c);
+        (home,share,p,x[0],x[1],y[0],c);
     if (x.size() == 1)
       return new (home) NqTer<Val,IntView,IntView,MinusView>
-	(home,share,p,y[0],y[1],x[0],-c);
+        (home,share,p,y[0],y[1],x[0],-c);
     return new (home) NqTer<Val,IntView,IntView,IntView>
       (home,share,p,y[0],y[1],y[2],-c);
   }
@@ -557,9 +558,9 @@ namespace Gecode { namespace Int { namespace Linear {
     if (isunit(x,y)) {
       // Check whether rewriting is possible
       if (x.size() + y.size() == 2)
-	return nqtobin(home,share,*this,x,y,c);
+        return nqtobin(home,share,*this,x,y,c);
       if (x.size() + y.size() == 3)
-	return nqtoter(home,share,*this,x,y,c);
+        return nqtoter(home,share,*this,x,y,c);
     }
     return new (home) Nq<Val,P,N>(home,share,*this);
   }
@@ -569,18 +570,18 @@ namespace Gecode { namespace Int { namespace Linear {
   Nq<Val,P,N>::propagate(Space* home) {
     for (int i = x.size(); i--; )
       if (x[i].assigned()) {
-	c -= x[i].val();  x.move_lst(i);
+        c -= x[i].val();  x.move_lst(i);
       }
     for (int i = y.size(); i--; )
       if (y[i].assigned()) {
-	c += y[i].val();  y.move_lst(i);
+        c += y[i].val();  y.move_lst(i);
       }
     if (x.size() + y.size() <= 1) {
       if (x.size() == 1) {
-	GECODE_ME_CHECK(x[0].nq(home,c)); return ES_SUBSUMED;
+        GECODE_ME_CHECK(x[0].nq(home,c)); return ES_SUBSUMED;
       }
       if (y.size() == 1) {
-	GECODE_ME_CHECK(y[0].nq(home,-c)); return ES_SUBSUMED;
+        GECODE_ME_CHECK(y[0].nq(home,-c)); return ES_SUBSUMED;
       }
       return (c == static_cast<Val>(0)) ? ES_FAILED : ES_SUBSUMED;
     }
@@ -625,13 +626,13 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class P, class N>
   forceinline Actor*
   lqtobin(Space* home, bool share, Propagator& p,
-	  ViewArray<P>& x, ViewArray<N>& y, Val c) {
+          ViewArray<P>& x, ViewArray<N>& y, Val c) {
     return NULL;
   }
   template <class Val>
   forceinline Actor*
   lqtobin(Space* home, bool share, Propagator& p,
-	  ViewArray<IntView>& x, ViewArray<NoView>& y, Val c) {
+          ViewArray<IntView>& x, ViewArray<NoView>& y, Val c) {
     assert(x.size() == 2);
     return new (home) LqBin<Val,IntView,IntView>
       (home,share,p,x[0],x[1],c);
@@ -639,7 +640,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val>
   forceinline Actor*
   lqtobin(Space* home, bool share, Propagator& p,
-	  ViewArray<NoView>& x, ViewArray<IntView>& y, Val c) {
+          ViewArray<NoView>& x, ViewArray<IntView>& y, Val c) {
     assert(y.size() == 2);
     return new (home) LqBin<Val,MinusView,MinusView>
       (home,share,p,y[0],y[1],c);
@@ -647,13 +648,13 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val>
   forceinline Actor*
   lqtobin(Space* home, bool share, Propagator& p,
-	  ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
+          ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
     if (x.size() == 2)
       return new (home) LqBin<Val,IntView,IntView>
-	(home,share,p,x[0],x[1],c);
+        (home,share,p,x[0],x[1],c);
     if (x.size() == 1)
       return new (home) LqBin<Val,IntView,MinusView>
-	(home,share,p,x[0],y[0],c);
+        (home,share,p,x[0],y[0],c);
     return new (home) LqBin<Val,MinusView,MinusView>
       (home,share,p,y[0],y[1],c);
   }
@@ -665,13 +666,13 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class P, class N>
   forceinline Actor*
   lqtoter(Space* home, bool share, Propagator& p,
-	  ViewArray<P>& x, ViewArray<N>& y, Val c) {
+          ViewArray<P>& x, ViewArray<N>& y, Val c) {
     return NULL;
   }
   template <class Val>
   forceinline Actor*
   lqtoter(Space* home, bool share, Propagator& p,
-	  ViewArray<IntView>& x, ViewArray<NoView>& y, Val c) {
+          ViewArray<IntView>& x, ViewArray<NoView>& y, Val c) {
     assert(x.size() == 3);
     return new (home) LqTer<Val,IntView,IntView,IntView>
       (home,share,p,x[0],x[1],x[2],c);
@@ -679,7 +680,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val>
   forceinline Actor*
   lqtoter(Space* home, bool share, Propagator& p,
-	  ViewArray<NoView>& x, ViewArray<IntView>& y, Val c) {
+          ViewArray<NoView>& x, ViewArray<IntView>& y, Val c) {
     assert(y.size() == 3);
     return new (home) LqTer<Val,MinusView,MinusView,MinusView>
       (home,share,p,y[0],y[1],y[2],c);
@@ -687,16 +688,16 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val>
   forceinline Actor*
   lqtoter(Space* home, bool share, Propagator& p,
-	  ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
+          ViewArray<IntView>& x, ViewArray<IntView>& y, Val c) {
     if (x.size() == 3)
       return new (home) LqTer<Val,IntView,IntView,IntView>
-	(home,share,p,x[0],x[1],x[2],c);
+        (home,share,p,x[0],x[1],x[2],c);
     if (x.size() == 2)
       return new (home) LqTer<Val,IntView,IntView,MinusView>
-	(home,share,p,x[0],x[1],y[0],c);
+        (home,share,p,x[0],x[1],y[0],c);
     if (x.size() == 1)
       return new (home) LqTer<Val,IntView,MinusView,MinusView>
-	(home,share,p,x[0],y[0],y[1],c);
+        (home,share,p,x[0],y[0],y[1],c);
     return new (home) LqTer<Val,MinusView,MinusView,MinusView>
       (home,share,p,y[0],y[1],y[2],c);
   }
@@ -707,9 +708,9 @@ namespace Gecode { namespace Int { namespace Linear {
     if (isunit(x,y)) {
       // Check whether rewriting is possible
       if (x.size() + y.size() == 2)
-	return lqtobin(home,share,*this,x,y,c);
+        return lqtobin(home,share,*this,x,y,c);
       if (x.size() + y.size() == 3)
-	return lqtoter(home,share,*this,x,y,c);
+        return lqtoter(home,share,*this,x,y,c);
     }
     return new (home) Lq<Val,P,N>(home,share,*this);
   }
@@ -722,37 +723,37 @@ namespace Gecode { namespace Int { namespace Linear {
 
     if (IntView::pme(this) == ME_INT_VAL) {
       for (int i = x.size(); i--; ) {
-	Val m = x[i].min();
-	if (x[i].assigned()) {
-	  c  -= m;  x.move_lst(i);
-	} else {
-	  sl -= m;
-	}
+        Val m = x[i].min();
+        if (x[i].assigned()) {
+          c  -= m;  x.move_lst(i);
+        } else {
+          sl -= m;
+        }
       }
       for (int i = y.size(); i--; ) {
-	Val m = y[i].max();
-	if (y[i].assigned()) {
-	  c  += m;  y.move_lst(i);
-	} else {
-	  sl += m;
-	}
+        Val m = y[i].max();
+        if (y[i].assigned()) {
+          c  += m;  y.move_lst(i);
+        } else {
+          sl += m;
+        }
       }
       if ((x.size() + y.size()) <= 1) {
-	if (x.size() == 1) {
-	  GECODE_ME_CHECK(x[0].lq(home,c));
-	  return ES_SUBSUMED;
-	}
-	if (y.size() == 1) {
-	  GECODE_ME_CHECK(y[0].gq(home,-c));
-	  return ES_SUBSUMED;
-	}
-	return (c >= static_cast<Val>(0)) ? ES_SUBSUMED : ES_FAILED;
+        if (x.size() == 1) {
+          GECODE_ME_CHECK(x[0].lq(home,c));
+          return ES_SUBSUMED;
+        }
+        if (y.size() == 1) {
+          GECODE_ME_CHECK(y[0].gq(home,-c));
+          return ES_SUBSUMED;
+        }
+        return (c >= static_cast<Val>(0)) ? ES_SUBSUMED : ES_FAILED;
       }
     } else {
       for (int i = x.size(); i--; )
-	sl -= x[i].min();
+        sl -= x[i].min();
       for (int i = y.size(); i--; )
-	sl += y[i].max();
+        sl += y[i].max();
     }
 
     sl += c;
@@ -764,11 +765,11 @@ namespace Gecode { namespace Int { namespace Linear {
       Val slx = sl + x[i].min();
       ModEvent me = x[i].lq(home,slx);
       if (me == ME_INT_FAILED)
-	return ES_FAILED;
+        return ES_FAILED;
       if (me != ME_INT_VAL)
-	assigned = false;
+        assigned = false;
       if (me_modified(me) && (slx != x[i].max()))
-	es = ES_NOFIX;
+        es = ES_NOFIX;
     }
 
     for (int i = y.size(); i--; ) {
@@ -776,11 +777,11 @@ namespace Gecode { namespace Int { namespace Linear {
       Val sly = y[i].max() - sl;
       ModEvent me = y[i].gq(home,sly);
       if (me == ME_INT_FAILED)
-	return ES_FAILED;
+        return ES_FAILED;
       if (me != ME_INT_VAL)
-	assigned = false;
+        assigned = false;
       if (me_modified(me) && (sly != y[i].min()))
-	es = ES_NOFIX;
+        es = ES_NOFIX;
     }
     return assigned ? ES_SUBSUMED : es;
   }
@@ -829,10 +830,10 @@ namespace Gecode { namespace Int { namespace Linear {
   ReLq<Val,P,N>::propagate(Space* home) {
     if (b.zero())
       return (Lq<Val,N,P>::post(home,y,x,-c-1) == ES_FAILED)
-	? ES_FAILED : ES_SUBSUMED;
+        ? ES_FAILED : ES_SUBSUMED;
     if (b.one())
       return (Lq<Val,P,N>::post(home,x,y,c) == ES_FAILED)
-	? ES_FAILED : ES_SUBSUMED;
+        ? ES_FAILED : ES_SUBSUMED;
 
     // Eliminate singletons
     Val sl = 0;

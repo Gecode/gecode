@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -48,8 +49,8 @@ public:
 
     post(this,    100000*d+10000*o+1000*n+100*a+10*l+d
                 + 100000*g+10000*e+1000*r+100*a+10*l+d
-	       == 100000*r+10000*o+1000*b+100*e+10*r+t,
-	 opt.icl);
+               == 100000*r+10000*o+1000*b+100*e+10*r+t,
+         opt.icl);
 
     distinct(this, le, opt.icl);
 

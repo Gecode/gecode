@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -53,14 +54,14 @@ namespace Gecode { namespace Set { namespace Int {
     OverweightValues(void);
     /// Initialize with elements/weights pairs, threshold \a t and iterator \a i
     OverweightValues(int t,
-		     Support::SharedArray<int>& elements0,
-		     Support::SharedArray<int>& weights0,
-		     I& i);
+                     Support::SharedArray<int>& elements0,
+                     Support::SharedArray<int>& weights0,
+                     I& i);
     /// Initialize with elements/weights pairs, threshold \a t and iterator \a i
     void init(int t,
-	      Support::SharedArray<int>& elements0,
-	      Support::SharedArray<int>& weights0,
-	      I& i);
+              Support::SharedArray<int>& elements0,
+              Support::SharedArray<int>& weights0,
+              I& i);
     //@}
 
     /// \name Iteration control
@@ -84,7 +85,7 @@ namespace Gecode { namespace Set { namespace Int {
       while (elements[index]<iter.val()) index++;
       assert(elements[index]==iter.val());
       if (weights[index] > threshold) {
-	return;
+        return;
       }
       ++iter;
     }
@@ -97,22 +98,22 @@ namespace Gecode { namespace Set { namespace Int {
   template <class I>
   forceinline
   OverweightValues<I>::OverweightValues(int t,
-					Support::SharedArray<int>& elements0,
-					Support::SharedArray<int>& weights0,
-					I& i) : threshold(t),
-						iter(i),
-						elements(elements0),
-						weights(weights0),
-						index(0) {
+                                        Support::SharedArray<int>& elements0,
+                                        Support::SharedArray<int>& weights0,
+                                        I& i) : threshold(t),
+                                                iter(i),
+                                                elements(elements0),
+                                                weights(weights0),
+                                                index(0) {
     next();
   }
 
   template <class I>
   forceinline void
   OverweightValues<I>::init(int t,
-			    Support::SharedArray<int>& elements0,
-			    Support::SharedArray<int>& weights0,
-			    I& i) {
+                            Support::SharedArray<int>& elements0,
+                            Support::SharedArray<int>& weights0,
+                            I& i) {
     threshold = t; iter = i;
     elements = elements0; weights = weights0;
     index = 0;
@@ -133,8 +134,8 @@ namespace Gecode { namespace Set { namespace Int {
 
   forceinline
   Weights::Weights(Space* home,
-		   const IntArgs& elements0, const IntArgs& weights0,
-		   SetView x0, Gecode::Int::IntView y0)
+                   const IntArgs& elements0, const IntArgs& weights0,
+                   SetView x0, Gecode::Int::IntView y0)
     : Propagator(home), elements(elements0.size()), weights(weights0.size()),
       x(x0), y(y0) {
     x.subscribe(home,this, PC_SET_ANY);
@@ -156,7 +157,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   inline ExecStatus
   Weights::post(Space* home, const IntArgs& elements, const IntArgs& weights,
-		SetView x, Gecode::Int::IntView y) {
+                SetView x, Gecode::Int::IntView y) {
     if (elements.size() != weights.size())
       throw ArgumentSizeMismatch("Weights");
     GECODE_AUTOARRAY(int, els_arr, elements.size());

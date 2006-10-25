@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
@@ -27,8 +28,8 @@ namespace Gecode { namespace MiniModel {
   template <class A>
   inline
   Matrix<A>::Slice::Slice(Matrix<A>& a,
-			  unsigned int fc, unsigned int tc,
-			  unsigned int fr, unsigned int tr)
+                          unsigned int fc, unsigned int tc,
+                          unsigned int fr, unsigned int tr)
     : _r(0), _fc(fc), _tc(tc), _fr(fr), _tr(tr) {
     if (tc > a.width() || tr > a.height())
       throw ArgumentOutOfRange("MiniModel::Matrix::Slice::Slice");
@@ -40,7 +41,7 @@ namespace Gecode { namespace MiniModel {
     int i = 0;
     for (unsigned int h = fr; h < tr; ++h) {
       for (unsigned int w = fc; w < tc; ++w) {
-	_r[i++] = a(w, h);
+        _r[i++] = a(w, h);
       }
     }
   }
@@ -97,7 +98,7 @@ namespace Gecode { namespace MiniModel {
   template <class A>
   inline typename Matrix<A>::Slice
   Matrix<A>::slice(unsigned int fc, unsigned int tc,
-		   unsigned int fr, unsigned int tr) {
+                   unsigned int fr, unsigned int tr) {
     return Slice(*this, fc, tc, fr, tr);
   }
 

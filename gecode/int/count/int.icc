@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -29,7 +30,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY>
   forceinline
   BaseInt<VX,VY>::BaseInt(Space* home, 
-			  ViewArray<VX>& x0, int n_s0, VY y0, int c0)
+                          ViewArray<VX>& x0, int n_s0, VY y0, int c0)
     : Propagator(home), x(x0), n_s(n_s0), y(y0), c(c0) {
     for (int i=n_s; i--; )
       x[i].subscribe(home,this,PC_INT_DOM);
@@ -78,13 +79,13 @@ namespace Gecode { namespace Int { namespace Count {
     for (int i=n_x; i--; )
       switch (holds(x[i],y)) {
       case RT_FALSE:
-	x[i] = x[--n_x]; break;
+        x[i] = x[--n_x]; break;
       case RT_TRUE:
-	x[i] = x[--n_x]; c--; break;
+        x[i] = x[--n_x]; c--; break;
       case RT_MAYBE:
-	break;
+        break;
       default: 
-	GECODE_NEVER;
+        GECODE_NEVER;
       }
     x.size(n_x);
     // RHS too small or too large
@@ -126,17 +127,17 @@ namespace Gecode { namespace Int { namespace Count {
     for (int i=n_s; i--; )
       switch (holds(x[i],y)) {
       case RT_FALSE:
-	x[i].cancel(home,this,PC_INT_DOM);
-	x[i]=x[--n_s]; x[n_s]=x[--n_x]; 
-	break;
+        x[i].cancel(home,this,PC_INT_DOM);
+        x[i]=x[--n_s]; x[n_s]=x[--n_x]; 
+        break;
       case RT_TRUE:
-	x[i].cancel(home,this,PC_INT_DOM);
-	x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--; 
-	break;
+        x[i].cancel(home,this,PC_INT_DOM);
+        x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--; 
+        break;
       case RT_MAYBE:
-	break;
+        break;
       default: 
-	GECODE_NEVER;
+        GECODE_NEVER;
       }
     x.size(n_x);
     if ((c < 0) || (c > n_x))
@@ -183,13 +184,13 @@ namespace Gecode { namespace Int { namespace Count {
     for (int i=n_x; i--; )
       switch (holds(x[i],y)) {
       case RT_FALSE:
-	x[i] = x[--n_x]; break;
+        x[i] = x[--n_x]; break;
       case RT_TRUE:
-	x[i] = x[--n_x]; c--; break;
+        x[i] = x[--n_x]; c--; break;
       case RT_MAYBE:
-	break;
+        break;
       default: 
-	GECODE_NEVER;
+        GECODE_NEVER;
       }
     x.size(n_x);
     // RHS too large
@@ -226,17 +227,17 @@ namespace Gecode { namespace Int { namespace Count {
     for (int i=n_s; i--; )
       switch (holds(x[i],y)) {
       case RT_FALSE:
-	x[i].cancel(home,this,PC_INT_DOM);
-	x[i]=x[--n_s]; x[n_s]=x[--n_x]; 
-	break;
+        x[i].cancel(home,this,PC_INT_DOM);
+        x[i]=x[--n_s]; x[n_s]=x[--n_x]; 
+        break;
       case RT_TRUE:
-	x[i].cancel(home,this,PC_INT_DOM);
-	x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--; 
-	break;
+        x[i].cancel(home,this,PC_INT_DOM);
+        x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--; 
+        break;
       case RT_MAYBE:
-	break;
+        break;
       default: 
-	GECODE_NEVER;
+        GECODE_NEVER;
       }
     x.size(n_x);
     if (n_x < c)
@@ -282,13 +283,13 @@ namespace Gecode { namespace Int { namespace Count {
     for (int i=n_x; i--; )
       switch (holds(x[i],y)) {
       case RT_FALSE:
-	x[i] = x[--n_x]; break;
+        x[i] = x[--n_x]; break;
       case RT_TRUE:
-	x[i] = x[--n_x]; c--; break;
+        x[i] = x[--n_x]; c--; break;
       case RT_MAYBE:
-	break;
+        break;
       default: 
-	GECODE_NEVER;
+        GECODE_NEVER;
       }
     x.size(n_x);
     if (c < 0)
@@ -323,17 +324,17 @@ namespace Gecode { namespace Int { namespace Count {
     for (int i=n_s; i--; )
       switch (holds(x[i],y)) {
       case RT_FALSE:
-	x[i].cancel(home,this,PC_INT_DOM);
-	x[i]=x[--n_s]; x[n_s]=x[--n_x]; 
-	break;
+        x[i].cancel(home,this,PC_INT_DOM);
+        x[i]=x[--n_s]; x[n_s]=x[--n_x]; 
+        break;
       case RT_TRUE:
-	x[i].cancel(home,this,PC_INT_DOM);
-	x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--; 
-	break;
+        x[i].cancel(home,this,PC_INT_DOM);
+        x[i]=x[--n_s]; x[n_s]=x[--n_x]; c--; 
+        break;
       case RT_MAYBE:
-	break;
+        break;
       default: 
-	GECODE_NEVER;
+        GECODE_NEVER;
       }
     x.size(n_x);
     if (c < 0)
@@ -371,8 +372,8 @@ namespace Gecode { namespace Int { namespace Count {
   forceinline
   NqInt<VX,VY>::NqInt(Space* home, ViewArray<VX>& x0, VY y0, int c0)
     : BinaryPropagator<VX,PC_INT_DOM>(home,
-				      x0[x0.size()-2],
-				      x0[x0.size()-1]), x(x0), y(y0), c(c0) {
+                                      x0[x0.size()-2],
+                                      x0[x0.size()-1]), x(x0), y(y0), c(c0) {
     assert(x.size() >= 2);
     x.size(x.size()-2);
     y.subscribe(home,this,PC_INT_DOM);
@@ -413,7 +414,7 @@ namespace Gecode { namespace Int { namespace Count {
       return (c == 0) ? ES_FAILED : ES_OK;
     if (n == 1) {
       ExecStatus es = (c == 1) ?
-	post_false(home,x[0],y) : post_true(home,x[0],y);
+        post_false(home,x[0],y) : post_true(home,x[0],y);
       return (es == ES_SUBSUMED) ? ES_OK : es;
     }
     (void) new (home) NqInt(home,x,y,c);
@@ -445,20 +446,20 @@ namespace Gecode { namespace Int { namespace Count {
     for (int i=n; i--; )
       switch (holds(x[i],y)) {
       case RT_FALSE: 
-	x[i]=x[--n]; 
-	break;
+        x[i]=x[--n]; 
+        break;
       case RT_TRUE:  
-	x[i]=x[--n]; c--; 
-	break;
+        x[i]=x[--n]; c--; 
+        break;
       case RT_MAYBE: 
-	// New undecided view found
-	z.cancel(home,this,PC_INT_DOM);
-	z=x[i]; x[i]=x[--n]; 
-	x.size(n);
-	z.subscribe(home,this,PC_INT_DOM,false);
-	return true;
+        // New undecided view found
+        z.cancel(home,this,PC_INT_DOM);
+        z=x[i]; x[i]=x[--n]; 
+        x.size(n);
+        z.subscribe(home,this,PC_INT_DOM,false);
+        return true;
       default:       
-	GECODE_NEVER;
+        GECODE_NEVER;
       }
     // All views have been decided
     x.size(0);
@@ -477,12 +478,12 @@ namespace Gecode { namespace Int { namespace Count {
       return (c == 0) ? ES_FAILED : ES_SUBSUMED;
     if (n == 1) {
       if (s0) {
-	return (c == 1) ? 
-	  post_false(home,x0,y) : post_true(home,x0,y);
+        return (c == 1) ? 
+          post_false(home,x0,y) : post_true(home,x0,y);
       } else {
-	assert(s1);
-	return (c == 1) ? 
-	  post_false(home,x1,y) : post_true(home,x1,y);
+        assert(s1);
+        return (c == 1) ? 
+          post_false(home,x1,y) : post_true(home,x1,y);
       }
       return ES_SUBSUMED;
     }

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -52,18 +53,18 @@ namespace Gecode {
     /// Instructions for set-valued expression code
     enum Instruction {
       COMPLEMENT, ///< Complement
-      INTER,	  ///< Intersection
-      UNION,	  ///< Union
-      GLB,	  ///< Greatest lower bound
-      LUB,	  ///< Least upper bound
-      EMPTY,	  ///< Constant empty set
+      INTER,          ///< Intersection
+      UNION,          ///< Union
+      GLB,          ///< Greatest lower bound
+      LUB,          ///< Least upper bound
+      EMPTY,          ///< Constant empty set
       UNIVERSE,   ///< Constant universal set
-      LAST	  ///< First integer to use for immediate arguments
+      LAST          ///< First integer to use for immediate arguments
     };
 
     ///\name Construction and initialization
     //@{
-	
+        
     /// Default constructor
     SetExprCode(void);
 
@@ -118,8 +119,8 @@ namespace Gecode {
     GECODE_SET_EXPORT SetExpr(const SetExpr& s, int sign);
     /// Construct set expression from \a s with sign \a ssign and \a t with sign \a tsign under relation \a r
     GECODE_SET_EXPORT SetExpr(const SetExpr& s, int ssign,
-			      RelType r,
-			      const SetExpr& t, int tsign);
+                              RelType r,
+                              const SetExpr& t, int tsign);
     /// Assignment operator
     GECODE_SET_EXPORT const SetExpr& operator=(const SetExpr& e);
     /// Returns the arity of the set expression
@@ -164,14 +165,14 @@ namespace Gecode {
 
     /// Returns the arity of the projector
     GECODE_SET_EXPORT int arity(void) const;
-	      
+              
     /// Propagate the projector
     template <bool negated>
     ExecStatus propagate(Space* home, ViewArray<Set::SetView>& x);
 
     /// Check for subsumption or failure
     GECODE_SET_EXPORT ExecStatus check(Space* home,
-				       ViewArray<Set::SetView>& x);
+                                       ViewArray<Set::SetView>& x);
 
     /// Compute size of greatest lower bound
     unsigned int glbSize(ViewArray<Set::SetView>& x);
@@ -221,7 +222,7 @@ namespace Gecode {
 
     /// Check for subsumption or failure
     GECODE_SET_EXPORT ExecStatus check(Space* home,
-				       ViewArray<Set::SetView>& x);
+                                       ViewArray<Set::SetView>& x);
 
     /// Return number of projectors int the set
     int size(void) const;
@@ -243,7 +244,7 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   projector(Space* home, const SetVar& xa, const SetVar& ya,
-	    ProjectorSet& ps, bool negated=false);
+            ProjectorSet& ps, bool negated=false);
 
   /**
    * \brief Post reified projection propagators for binary constraint
@@ -253,8 +254,8 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   projector(Space* home, const SetVar& xa, const SetVar& ya,
-	    const BoolVar& bv,
-	    ProjectorSet& ps);
+            const BoolVar& bv,
+            ProjectorSet& ps);
 
   /**
    * \brief Post projection propagators for ternary constraint
@@ -265,8 +266,8 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   projector(Space* home,
-	    const SetVar& xa, const SetVar& ya, const SetVar& za,
-	    ProjectorSet& ps, bool negated=false);
+            const SetVar& xa, const SetVar& ya, const SetVar& za,
+            ProjectorSet& ps, bool negated=false);
 
   /**
    * \brief Post reified projection propagators for ternary constraint
@@ -276,9 +277,9 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   projector(Space* home,
-	    const SetVar& xa, const SetVar& ya, const SetVar& za,
-	    const BoolVar& bv,
-	    ProjectorSet& ps);
+            const SetVar& xa, const SetVar& ya, const SetVar& za,
+            const BoolVar& bv,
+            ProjectorSet& ps);
   
   /**
    * \brief Post projection propagator for cardinality constraint
@@ -289,8 +290,8 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   projector(Space* home, const SetVar& xa, const SetVar& ya,
-	    const IntVar& i,
-	    Projector& p);
+            const IntVar& i,
+            Projector& p);
 
   /**
    * \brief Post projection propagator for cardinality constraint
@@ -301,8 +302,8 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   projector(Space* home, const SetVar& xa, const SetVar& ya,
-	    const SetVar& za, const IntVar& i,
-	    Projector& p);
+            const SetVar& za, const IntVar& i,
+            Projector& p);
 
   //@}
 

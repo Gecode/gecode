@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -62,24 +63,24 @@ namespace Gecode { namespace Int { namespace GCC {
       int max_idx = 0;
       min_idx = lookupValue(k,x[i].min());
       if (min_idx == -1) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
       if (b) {
-	rv[min_idx].minb++;
-	rv[min_idx].maxb++;
-	rv[min_idx].eq++;
+        rv[min_idx].minb++;
+        rv[min_idx].maxb++;
+        rv[min_idx].eq++;
       } else {
-	max_idx = lookupValue(k,x[i].max());
-	if (max_idx == -1) {
-	  return ES_FAILED;
-	}
-	// count the number of variables
-	// with lower bound k[min_idx].card()
-	rv[min_idx].minb++;
+        max_idx = lookupValue(k,x[i].max());
+        if (max_idx == -1) {
+          return ES_FAILED;
+        }
+        // count the number of variables
+        // with lower bound k[min_idx].card()
+        rv[min_idx].minb++;
 
-	// count the number of variables
-	// with upper bound k[max_idx].card()
-	rv[max_idx].maxb++;
+        // count the number of variables
+        // with upper bound k[max_idx].card()
+        rv[max_idx].maxb++;
       }
     }
 
@@ -100,27 +101,27 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = m; i--; ) {
       int reachable = (int) (x.size() - rv[i].le - rv[i].gr);
       if (!k[i].assigned()) {
-	ModEvent me = k[i].lq(home, reachable);
-	if (me_failed(me)) {
-	  return ES_FAILED;
-	}
-	mod |= (k[i].modified() && (k[i].max() != reachable));
-	mod |= shared && k[i].modified();
-	
-	if (rv[i].eq > 0) {
-	  ModEvent me = k[i].gq(home, (int) rv[i].eq);
-	  if (me_failed(me)) {
-	    return ES_FAILED;
-	  }
-	  mod |= (k[i].modified() && (k[i].min() != (int) rv[i].eq));
-	  mod |= shared && k[i].modified();
-	}
+        ModEvent me = k[i].lq(home, reachable);
+        if (me_failed(me)) {
+          return ES_FAILED;
+        }
+        mod |= (k[i].modified() && (k[i].max() != reachable));
+        mod |= shared && k[i].modified();
+        
+        if (rv[i].eq > 0) {
+          ModEvent me = k[i].gq(home, (int) rv[i].eq);
+          if (me_failed(me)) {
+            return ES_FAILED;
+          }
+          mod |= (k[i].modified() && (k[i].min() != (int) rv[i].eq));
+          mod |= shared && k[i].modified();
+        }
       } else {
-	// check validity of the cardinality value
-	int v = k[i].max();
-	if ( !( (int) rv[i].eq <= v && v <= reachable) ) {
-	  return ES_FAILED;
-	}
+        // check validity of the cardinality value
+        int v = k[i].max();
+        if ( !( (int) rv[i].eq <= v && v <= reachable) ) {
+          return ES_FAILED;
+        }
       }
     }
 
@@ -134,7 +135,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card>
   inline bool
   card_consistent(int& smin, int& smax, ViewArray<View>& x,
-		  ViewArray<Card>& k, bool& all) {
+                  ViewArray<Card>& k, bool& all) {
 
     int m = k.size();
     int n = x.size();
@@ -294,9 +295,9 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class Card>
   inline
   PartialSum<Card>::PartialSum(int first,
-			       int count,
-			       ViewArray<Card>& elements,
-			       bool up) {
+                               int count,
+                               ViewArray<Card>& elements,
+                               bool up) {
     int i = 0;
     int j = 0;
     // we add three elements at the beginning and two at the end
@@ -338,9 +339,9 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     for (i = 2; i < shift; i++){
       if (up) {
-	sum[i + 1] = sum[i] + elements[i - 2].max();
+        sum[i + 1] = sum[i] + elements[i - 2].max();
       } else {
-	sum[i + 1] = sum[i] + elements[i - 2].min();
+        sum[i + 1] = sum[i] + elements[i - 2].min();
       }
     }
     sum[i + 1] = sum[i] + 1;
@@ -352,8 +353,8 @@ namespace Gecode { namespace Int { namespace GCC {
     j = i + 1;
     for ( ; i > 0; ){
       while(sum[i] == sum[i - 1]) {
-	ds[i] = j;
-	i--;
+        ds[i] = j;
+        i--;
       }
       ds[j] = i;
       i--;
@@ -429,9 +430,9 @@ namespace Gecode { namespace Int { namespace GCC {
   PartialSum<Card>::print(void){
     std::cout << "----------\n";
     std::cout << "smallest elem = "<< minValue() << " - "
-	      << "largest  elem = "<< maxValue() << "\n";
+              << "largest  elem = "<< maxValue() << "\n";
     std::cout << "fsv: "<< firstValue <<" lsv: " << lastValue
-	      << " size = "<< size << "\n";
+              << " size = "<< size << "\n";
     std::cout << "number of elements = "<< size - 5<<"\n";
     std::cout << "elements: ";
     for (int i = 3; i < size - 2; i++) {
@@ -467,9 +468,9 @@ namespace Gecode { namespace Int { namespace GCC {
       return true;
     } else {
       for (int i = 3; i < size - 2; i++) {
-	if ((sum[i] - sum[i - 1]) != k[i - 3].max()) {
-	  return true;
-	}
+        if ((sum[i] - sum[i - 1]) != k[i - 3].max()) {
+          return true;
+        }
       }
       return false;
     }
@@ -490,9 +491,9 @@ namespace Gecode { namespace Int { namespace GCC {
       return true;
     } else {
       for (int i = 3; i < size - 2; i++) {
-	if ((sum[i] - sum[i - 1]) != k[i - 3].min()) {
-	  return true;
-	}
+        if ((sum[i] - sum[i - 1]) != k[i - 3].min()) {
+          return true;
+        }
       }
       return false;
     }
@@ -689,7 +690,7 @@ namespace Gecode { namespace Int { namespace GCC {
     if (cmin == cmax) {
       int idx = 0;
       while (k[idx].card() != cmax) {
-	idx++;
+        idx++;
       }
       k[0] = k[idx];
       k.size(1);
@@ -699,55 +700,55 @@ namespace Gecode { namespace Int { namespace GCC {
       int ks = k.size();
       int zc = 0;
       for (int i = 0; i < ks; i++) {
-	bool impossible  = ( (k[i].counter() == 0) &&
-			     (k[i].card() < cmin ||
-			      k[i].card() > cmax));
-	
-	if (impossible) {
-	  zero[i] = true;
-	  zc++;
-	} else {
-	  zero[i] = false;
-	}
+        bool impossible  = ( (k[i].counter() == 0) &&
+                             (k[i].card() < cmin ||
+                              k[i].card() > cmax));
+        
+        if (impossible) {
+          zero[i] = true;
+          zc++;
+        } else {
+          zero[i] = false;
+        }
       }
 
 
       if (zero[ks - 1]) {
-	int m = ks;
-	while(zero[m - 1]) {
-	  m--;
-	  zc--;
-	}
-	k.size(m);
+        int m = ks;
+        while(zero[m - 1]) {
+          m--;
+          zc--;
+        }
+        k.size(m);
       }
 
       if (zc > 0) {
-	int ks = k.size();
-	// if there are still zero entries left
-	for (int i = 0; i < ks; i++) {
-	  assert(0 <= i && i < ks);
-	  if  (zero[i]) {
-	    if (i == ks - 1) {
-	      break;
-	    }
-	    // this cardinality does not occur
-	    // remove it
-	    // we need the next non-null entry
-	    int j = i + 1;
-	    assert(0 <= j && j < ks);
-	    if (j < ks) {
-	      while (zero[j]) {
-		j++;
-	      }
-	    }
-	    if (j > ks - 1) {
-	      break;
-	    }
-	    k[i] = k[j];
-	    zero[j] = true;
-	  }
-	}
-	k.size(ks - zc);
+        int ks = k.size();
+        // if there are still zero entries left
+        for (int i = 0; i < ks; i++) {
+          assert(0 <= i && i < ks);
+          if  (zero[i]) {
+            if (i == ks - 1) {
+              break;
+            }
+            // this cardinality does not occur
+            // remove it
+            // we need the next non-null entry
+            int j = i + 1;
+            assert(0 <= j && j < ks);
+            if (j < ks) {
+              while (zero[j]) {
+                j++;
+              }
+            }
+            if (j > ks - 1) {
+              break;
+            }
+            k[i] = k[j];
+            zero[j] = true;
+          }
+        }
+        k.size(ks - zc);
       }
 
     }

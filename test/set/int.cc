@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -42,7 +43,7 @@ namespace TestsForSetsAndInts {
       unsigned int s = 0;
       for (CountableSetRanges xr(x.lub, x[0]);xr();++xr) s+= xr.width();
       if (x.intval() < 0)
-	return false;
+        return false;
       return s==(unsigned int)x.intval();
     }
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
@@ -86,8 +87,8 @@ namespace TestsForSetsAndInts {
       : SetTest(t,1,ds_33,true,1) {}
     virtual bool solution(const SetAssignment& x) const {
       for(CountableSetValues xr(x.lub, x[0]);xr();++xr)
-	if (xr.val()==x.intval())
-	  return true;
+        if (xr.val()==x.intval())
+          return true;
       return false;
     }
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
@@ -105,8 +106,8 @@ namespace TestsForSetsAndInts {
       : SetTest(t,1,ds_33,true,1) {}
     virtual bool solution(const SetAssignment& x) const {
       for(CountableSetValues xr(x.lub, x[0]);xr();++xr)
-	if (xr.val()==x.intval())
-	  return false;
+        if (xr.val()==x.intval())
+          return false;
       return true;
     }
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
@@ -126,7 +127,7 @@ namespace TestsForSetsAndInts {
       CountableSetRanges xr0(x.lub, x[0]);
       IntSet x0(xr0);
       return x0.size()==1 && x0.min()==x0.max() &&
-	x0.max()==x.intval();
+        x0.max()==x.intval();
     }
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
       Gecode::rel(home, x[0], SRT_EQ, y[0]);
@@ -139,8 +140,8 @@ namespace TestsForSetsAndInts {
 
   template <class I>
   int weightI(const IntArgs& elements,
-	      const IntArgs& weights,
-	      I& iter) {
+              const IntArgs& weights,
+              I& iter) {
     int sum = 0;
     int i = 0;
     for (Iter::Ranges::ToValues<I> v(iter); v(); ++v) {
@@ -159,11 +160,11 @@ namespace TestsForSetsAndInts {
 
     Weights(const char* t)
       : SetTest(t,1,ds_33,false,1),
-	elements(7), weights(7) {
+        elements(7), weights(7) {
       for (int i=-3; i<=3; i++)
-	elements[i+3] = i;
+        elements[i+3] = i;
       for (int i=0; i<7; i++)
-	weights[i] = 1;
+        weights[i] = 1;
       weights[1] = -2;
       weights[5] = 6;
     }
@@ -183,26 +184,26 @@ namespace TestsForSetsAndInts {
       : SetTest(t,1,ds_33,false,3) {}
     virtual bool solution(const SetAssignment& x) const {
       if (x.ints()[0]>=x.ints()[1] ||
-	  x.ints()[1]>=x.ints()[2])
-	return false;
+          x.ints()[1]>=x.ints()[2])
+        return false;
       CountableSetValues xr(x.lub, x[0]);
       if (!xr())
-	return false;
+        return false;
       if (xr.val() != x.ints()[0])
-	return false;
+        return false;
       ++xr;
       if (!xr())
-	return false;
+        return false;
       if (xr.val() != x.ints()[1])
-	return false;
+        return false;
       ++xr;
       if (!xr())
-	return false;
+        return false;
       if (xr.val() != x.ints()[2])
-	return false;
+        return false;
       ++xr;
       if (xr())
-	return false;
+        return false;
       return true;
     }
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
@@ -219,20 +220,20 @@ namespace TestsForSetsAndInts {
       : SetTest(t,_ssize,d,false,_isize), ssize(_ssize), isize(_isize) {}
     virtual bool solution(const SetAssignment& x) const {
       for (int i=0; i<isize; i++) {
-	if (x.ints()[i] < 0 || x.ints()[i] >= ssize)
-	  return false;
-	Iter::Ranges::Singleton single(i,i);
-	CountableSetRanges csr(x.lub, x[x.ints()[i]]);
-	if (!Iter::Ranges::subset(single, csr))
-	  return false;
+        if (x.ints()[i] < 0 || x.ints()[i] >= ssize)
+          return false;
+        Iter::Ranges::Singleton single(i,i);
+        CountableSetRanges csr(x.lub, x[x.ints()[i]]);
+        if (!Iter::Ranges::subset(single, csr))
+          return false;
       }
       for (int i=0; i<ssize; i++) {
-	int size = 0;
-	for (CountableSetValues csv(x.lub, x[i]); csv(); ++csv) {
-	  if (csv.val() < 0 || csv.val() >= isize) return false;
-	  if (x.ints()[csv.val()] != i) return false;
-	  size++;
-	}
+        int size = 0;
+        for (CountableSetValues csv(x.lub, x[i]); csv(); ++csv) {
+          if (csv.val() < 0 || csv.val() >= isize) return false;
+          if (x.ints()[csv.val()] != i) return false;
+          size++;
+        }
       }
       return true;
     }

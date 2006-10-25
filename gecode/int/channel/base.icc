@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -49,7 +50,7 @@ namespace Gecode { namespace Int { namespace Channel {
   Base<Info,pc>::dispose(Space* home) {
     if (!home->failed())
       for (int i=2*n; i--; )
-	xy[i].view.cancel(home,this,pc);
+        xy[i].view.cancel(home,this,pc);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }

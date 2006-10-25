@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -44,7 +45,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, PropCond pc>
   forceinline
   LinBin<Val,A,B,pc>::LinBin(Space* home, bool share, Propagator& p,
-			     A y0, B y1, Val c0)
+                             A y0, B y1, Val c0)
     : Propagator(home,share,p), c(c0) {
     x0.update(home,share,y0);
     x1.update(home,share,y1);
@@ -83,7 +84,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, PropCond pc, class Ctrl>
   forceinline
   ReLinBin<Val,A,B,pc,Ctrl>::ReLinBin(Space* home, bool share,
-				      ReLinBin<Val,A,B,pc,Ctrl>& p)
+                                      ReLinBin<Val,A,B,pc,Ctrl>& p)
     : Propagator(home,share,p), c(p.c) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -134,7 +135,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B>
   forceinline
   EqBin<Val,A,B>::EqBin(Space* home, bool share, Propagator& p,
-			A x0, B x1, Val c)
+                        A x0, B x1, Val c)
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
 
   template <class Val, class A, class B>
@@ -152,11 +153,11 @@ namespace Gecode { namespace Int { namespace Linear {
     BM_ALL    = BM_X0_MIN|BM_X0_MAX|BM_X1_MIN|BM_X1_MAX
   };
 
-#define GECODE_INT_PV(CASE,TELL,UPDATE)		\
-  if (bm & (CASE)) {				\
-    bm -= (CASE); ModEvent me = (TELL);	        \
-    if (me_failed(me))   return ES_FAILED;	\
-    if (me_modified(me)) bm |= (UPDATE);	\
+#define GECODE_INT_PV(CASE,TELL,UPDATE)                \
+  if (bm & (CASE)) {                                \
+    bm -= (CASE); ModEvent me = (TELL);                \
+    if (me_failed(me))   return ES_FAILED;        \
+    if (me_modified(me)) bm |= (UPDATE);        \
   }
 
   template <class Val, class A, class B>
@@ -199,7 +200,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, class Ctrl>
   forceinline
   ReEqBin<Val,A,B,Ctrl>::ReEqBin(Space* home, bool share,
-				 ReEqBin<Val,A,B,Ctrl>& p)
+                                 ReEqBin<Val,A,B,Ctrl>& p)
     : ReLinBin<Val,A,B,PC_INT_BND,Ctrl>(home,share,p) {}
 
   template <class Val, class A, class B, class Ctrl>
@@ -214,10 +215,10 @@ namespace Gecode { namespace Int { namespace Linear {
   ReEqBin<Val,A,B,Ctrl>::propagate(Space* home) {
     if (b.zero())
       return (NqBin<Val,A,B>::post(home,x0,x1,c) == ES_FAILED) ?
-	ES_FAILED : ES_SUBSUMED;
+        ES_FAILED : ES_SUBSUMED;
     if (b.one())
       return (EqBin<Val,A,B>::post(home,x0,x1,c) == ES_FAILED) ?
-	ES_FAILED : ES_SUBSUMED;
+        ES_FAILED : ES_SUBSUMED;
     if ((x0.min() + x1.min() > c) || (x0.max() + x1.max() < c)) {
       b.t_zero_none(home); return ES_SUBSUMED;
     }
@@ -263,7 +264,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B>
   forceinline
   NqBin<Val,A,B>::NqBin(Space* home, bool share, Propagator& p,
-			A x0, B x1, Val c)
+                        A x0, B x1, Val c)
     : LinBin<Val,A,B,PC_INT_VAL>(home,share,p,x0,x1,c) {}
 
 
@@ -321,7 +322,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B>
   forceinline
   LqBin<Val,A,B>::LqBin(Space* home, bool share, Propagator& p,
-			A x0, B x1, Val c)
+                        A x0, B x1, Val c)
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
 
 
@@ -369,7 +370,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B>
   forceinline
   GqBin<Val,A,B>::GqBin(Space* home, bool share, Propagator& p,
-			A x0, B x1, Val c)
+                        A x0, B x1, Val c)
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
 
 
@@ -420,10 +421,10 @@ namespace Gecode { namespace Int { namespace Linear {
   ReLqBin<Val,A,B>::propagate(Space* home) {
     if (b.one())
       return (LqBin<Val,A,B>::post(home,x0,x1,c) == ES_FAILED) ?
-	ES_FAILED : ES_SUBSUMED;
+        ES_FAILED : ES_SUBSUMED;
     if (b.zero())
       return (GqBin<Val,A,B>::post(home,x0,x1,c+1) == ES_FAILED) ?
-	ES_FAILED : ES_SUBSUMED;
+        ES_FAILED : ES_SUBSUMED;
     if (x0.max() + x1.max() <= c) {
       b.t_one_none(home); return ES_SUBSUMED;
     }

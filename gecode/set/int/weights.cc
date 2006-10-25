@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -59,8 +60,8 @@ namespace Gecode { namespace Set { namespace Int {
   template <class I, CostType c>
   forceinline
   int weightI(Support::SharedArray<int>& elements,
-	      Support::SharedArray<int>& weights,
-	      I& iter) {
+              Support::SharedArray<int>& weights,
+              I& iter) {
     int sum = 0;
     int i = 0;
     for (Iter::Ranges::ToValues<I> v(iter); v(); ++v) {
@@ -69,14 +70,14 @@ namespace Gecode { namespace Set { namespace Int {
       assert(elements[i] == v.val());
       switch (c) {
       case ALL_COST:
-	sum += weights[i];
-	break;
+        sum += weights[i];
+        break;
       case POS_COST:
-	if (weights[i] > 0) sum += weights[i];
-	break;
+        if (weights[i] > 0) sum += weights[i];
+        break;
       case NEG_COST:
-	if (weights[i] < 0) sum += weights[i];
-	break;
+        if (weights[i] < 0) sum += weights[i];
+        break;
       default: GECODE_NEVER;
       }
     }
@@ -101,7 +102,7 @@ namespace Gecode { namespace Set { namespace Int {
     if (x.assigned()) {
       GlbRanges<SetView> glb(x);
       int w = 
-	weightI<GlbRanges<SetView>,ALL_COST>(elements, weights, glb);
+        weightI<GlbRanges<SetView>,ALL_COST>(elements, weights, glb);
       GECODE_ME_CHECK(y.eq(home, w));
       return ES_SUBSUMED;
     }
@@ -115,13 +116,13 @@ namespace Gecode { namespace Set { namespace Int {
       Iter::Ranges::ToValues<UnknownRanges<SetView> > urv(ur);
       GECODE_AUTOARRAY(int, currentWeights, size);
       for (int i=0; i<size; i++) {
-	if (!urv() || elements[i]<urv.val()) {
-	  currentWeights[i] = 0;
-	} else {
-	  assert(elements[i] == urv.val());
-	  currentWeights[i] = weights[i];
-	  ++urv;
-	}
+        if (!urv() || elements[i]<urv.val()) {
+          currentWeights[i] = 0;
+        } else {
+          assert(elements[i] == urv.val());
+          currentWeights[i] = weights[i];
+          ++urv;
+        }
       }
 
       IntLt ilt;
@@ -130,23 +131,23 @@ namespace Gecode { namespace Set { namespace Int {
       GlbRanges<SetView> glb(x);
       lowCost = weightI<GlbRanges<SetView>,ALL_COST>(elements, weights, glb);
       highestCost =
-	weightI<GlbRanges<SetView>,ALL_COST>(elements, weights, glb);
+        weightI<GlbRanges<SetView>,ALL_COST>(elements, weights, glb);
 
       int delta = std::min(x.unknownSize(), x.cardMax() - x.glbSize());
 
       for (int i=0; i<delta-1; i++) {
-	if (currentWeights[i] >= 0)
-	  break;
-	lowCost+=currentWeights[i];
+        if (currentWeights[i] >= 0)
+          break;
+        lowCost+=currentWeights[i];
       }
       lowestCost = lowCost;
       if (delta>0 && currentWeights[delta-1]<0)
-	lowestCost+=currentWeights[delta-1];
+        lowestCost+=currentWeights[delta-1];
 
       for (int i=0; i<delta; i++) {
-	if (currentWeights[size-i-1]<=0)
-	  break;
-	highestCost += currentWeights[size-i-1];
+        if (currentWeights[size-i-1]<=0)
+          break;
+        highestCost += currentWeights[size-i-1];
       }
 
     }
@@ -159,7 +160,7 @@ namespace Gecode { namespace Set { namespace Int {
       UnknownRanges<SetView> ur2(x);
       Iter::Ranges::ToValues<UnknownRanges<SetView> > urv(ur2);
       OverweightValues<Iter::Ranges::ToValues<UnknownRanges<SetView> > >
-	ov(y.max()-lowCost, elements, weights, urv);
+        ov(y.max()-lowCost, elements, weights, urv);
       Iter::Values::ToRanges<OverweightValues<
         Iter::Ranges::ToValues<UnknownRanges<SetView> > > > ovr(ov);
       me = x.excludeI(home, ovr);
@@ -169,7 +170,7 @@ namespace Gecode { namespace Set { namespace Int {
     if (x.assigned()) {
       GlbRanges<SetView> glb(x);
       int w = 
-	weightI<GlbRanges<SetView>,ALL_COST>(elements, weights, glb);
+        weightI<GlbRanges<SetView>,ALL_COST>(elements, weights, glb);
       GECODE_ME_CHECK(y.eq(home, w));
       return ES_SUBSUMED;
     }

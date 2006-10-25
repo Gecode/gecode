@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -61,8 +62,8 @@ public:
         SetVar xIntCy(this);
         SetVar yIntCx(this);
 
-	rel(this, x, SOT_INTER, cy, SRT_EQ, xIntCy);
-	rel(this, y, SOT_INTER, cx, SRT_EQ, yIntCx);
+        rel(this, x, SOT_INTER, cy, SRT_EQ, xIntCy);
+        rel(this, y, SOT_INTER, cx, SRT_EQ, yIntCx);
         IntVar diff1(this,0,1024);
         IntVar diff2(this,0,1204);
         cardinality(this, xIntCy,diff1);

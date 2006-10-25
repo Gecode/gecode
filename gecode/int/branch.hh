@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -385,7 +386,7 @@ namespace Gecode { namespace Int { namespace Branch {
     virtual bool status(const Space* home) const;
     /// Perform commit for branching description \a d and alternative \a a
     virtual ExecStatus commit(Space* home, const BranchingDesc* d,
-			      unsigned int a);
+                              unsigned int a);
   };
 
 

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -34,7 +35,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2> ExecStatus
   Intersection<View0,View1,View2>::post(Space* home,
-					View0 x0,View1 x1,View2 x2) {
+                                        View0 x0,View1 x1,View2 x2) {
     (void) new (home) Intersection<View0,View1,View2>(home,x0,x1,x2);
     return ES_OK;
   }
@@ -95,7 +96,7 @@ namespace Gecode { namespace Set { namespace RelOp {
       m = Iter::Ranges::size(u1);
       n = x0.cardMin()+x1.cardMin();
       if (n>m)
-	GECODE_ME_CHECK( x2.cardMin(home,n-m) );
+        GECODE_ME_CHECK( x2.cardMin(home,n-m) );
     }
     unsigned int s2;
     {
@@ -114,10 +115,10 @@ namespace Gecode { namespace Set { namespace RelOp {
       assert (s1 <= x0.cardMax());
       GECODE_ME_CHECK( x2.cardMax(home,x0.cardMax()-s1) );
       if (m+x2.cardMax() > x1.cardMin())
-	GECODE_ME_CHECK( x0.cardMax(home,m+x2.cardMax()-x1.cardMin()) );
+        GECODE_ME_CHECK( x0.cardMax(home,m+x2.cardMax()-x1.cardMin()) );
       //I might have to recaluclate m here?
       if (m+x2.cardMax() > x0.cardMin())
-	GECODE_ME_CHECK( x1.cardMax(home,m+x2.cardMax()-x0.cardMin()) );
+        GECODE_ME_CHECK( x1.cardMax(home,m+x2.cardMax()-x0.cardMin()) );
       //s1 and s2 could be outdated too...
       GECODE_ME_CHECK( x0.cardMin(home,s1+x2.cardMin()) );
       GECODE_ME_CHECK( x1.cardMin(home,s2+x2.cardMin()) );
@@ -130,16 +131,16 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1, class View2>
   forceinline
   Intersection<View0,View1,View2>::Intersection(Space* home,
-					     View0 y0,View1 y1,View2 y2)
+                                             View0 y0,View1 y1,View2 y2)
     : InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-			     View2,PC_SET_ANY>(home,y0,y1,y2) {}
+                             View2,PC_SET_ANY>(home,y0,y1,y2) {}
 
   template <class View0, class View1, class View2>
   forceinline
   Intersection<View0,View1,View2>::Intersection(Space* home, bool share,
-					     Intersection<View0,View1,View2>& p)
+                                             Intersection<View0,View1,View2>& p)
     : InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-			     View2,PC_SET_ANY>(home,share,p) {}
+                             View2,PC_SET_ANY>(home,share,p) {}
 
   /*
    * "Nary intersection" propagator
@@ -149,7 +150,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1>
   forceinline
   IntersectionN<View0,View1>::IntersectionN(Space* home, ViewArray<View0>& x,
-					    View1 y)
+                                            View1 y)
     : InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y),
       intOfDets(home) {
     shared = x.shared() || viewarrayshared(x,y);
@@ -158,7 +159,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1>
   forceinline
   IntersectionN<View0,View1>::IntersectionN(Space* home, bool share,
-					    IntersectionN& p)
+                                            IntersectionN& p)
     : InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,share,p),
       shared(p.shared),
       intOfDets() {
@@ -168,7 +169,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1>
   ExecStatus
   IntersectionN<View0,View1>::post(Space* home,
-				   ViewArray<View0>& x, View1 y) {
+                                   ViewArray<View0>& x, View1 y) {
     switch (x.size()) {
     case 0:
       GECODE_ME_CHECK(y.cardMin(home, Limits::Set::card_max));
@@ -264,11 +265,11 @@ namespace Gecode { namespace Set { namespace RelOp {
           BndSetRanges left(leftAcc);
           BndSetRanges right(rightSet[i]);
           Iter::Ranges::Inter<BndSetRanges,
-	    BndSetRanges> inter(left, right);
+            BndSetRanges> inter(left, right);
           LubRanges<View1> yub(y);
           Iter::Ranges::Diff<Iter::Ranges::Inter<BndSetRanges,
             BndSetRanges>, LubRanges<View1> >
-	    forbidden(inter, yub);
+            forbidden(inter, yub);
           GECODE_ME_CHECK( x[i].excludeI(home,forbidden) );
           GlbRanges<View0> xlb(x[i]);
           leftAcc.intersectI(home,xlb);
@@ -294,12 +295,12 @@ namespace Gecode { namespace Set { namespace RelOp {
         }
       }
       if (x.size()==0) {
-	BndSetRanges all1(intOfDets);
-	GECODE_ME_CHECK( y.intersectI(home,all1) );
-	BndSetRanges all2(intOfDets);
-	GECODE_ME_CHECK( y.includeI(home,all2) );
-	intOfDets.dispose(home);
-	return ES_SUBSUMED;
+        BndSetRanges all1(intOfDets);
+        GECODE_ME_CHECK( y.intersectI(home,all1) );
+        BndSetRanges all2(intOfDets);
+        GECODE_ME_CHECK( y.includeI(home,all2) );
+        intOfDets.dispose(home);
+        return ES_SUBSUMED;
       }
 
     } while (repeat);

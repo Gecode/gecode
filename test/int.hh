@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -100,7 +101,7 @@ protected:
 public:
   /// Constructor
   IntTest(const char* t, int a, const IntSet& d,
-	  bool r=false, IntConLevel i=ICL_DEF)
+          bool r=false, IntConLevel i=ICL_DEF)
     : Test("Int",t), arity(a), dom(d), reified(r), icl(i)  {
   }
   /// Check for solution

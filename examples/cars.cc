@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -73,7 +74,7 @@ public:
   }
 
   void sum(int n,
-	   BoolVar& b0, BoolVar& b1, BoolVar& b2, BoolVar& b3, BoolVar& b4) {
+           BoolVar& b0, BoolVar& b1, BoolVar& b2, BoolVar& b3, BoolVar& b4) {
     BoolVarArgs b(5);
     b[0]=b0; b[1]=b1; b[2]=b2; b[3]=b3; b[4]=b4;
     linear(this, b,IRT_LQ,n);

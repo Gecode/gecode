@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -134,8 +135,8 @@ namespace Gecode {
 
     /// Construct compiler
     GECODE_SET_EXPORT ProjectorCompiler(std::ostream& hhos,
-					std::ostream& iccos,
-					const ProjectorPropagatorSpec& spec);
+                                        std::ostream& iccos,
+                                        const ProjectorPropagatorSpec& spec);
     /// Do the compilation
     GECODE_SET_EXPORT void compile(void);
   };

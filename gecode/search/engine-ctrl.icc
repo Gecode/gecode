@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -92,7 +93,7 @@ namespace Gecode { namespace Search {
       mem_cur = mem_space + s->allocated() + s->cached();
       mem_total += mem_cur;
       if (mem_total > memory)
-	memory = mem_total;
+        memory = mem_total;
     }
   }
 

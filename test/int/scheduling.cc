@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -47,15 +48,15 @@ namespace {
     IntVarArray x;
     Ass(int n, const IntSet& d) : x(this, n, d) {
       for (int i = 0; i < n; i += 4) {
-	post(this, x[i+0] >= 0);
-	post(this, x[i+1] >= 0);
-	post(this, x[i+2] >= 0);
-	post(this, x[i] + x[i+1] == x[i+2]);
-	// Doesn't work with search-based tests
-	//if (i+4 < n) {
-	//   post(this, x[i] <= x[i+4]);
-	//}
-	branch(this, x, BVAR_NONE, BVAL_MIN);
+        post(this, x[i+0] >= 0);
+        post(this, x[i+1] >= 0);
+        post(this, x[i+2] >= 0);
+        post(this, x[i] + x[i+1] == x[i+2]);
+        // Doesn't work with search-based tests
+        //if (i+4 < n) {
+        //   post(this, x[i] <= x[i+4]);
+        //}
+        branch(this, x, BVAR_NONE, BVAL_MIN);
       }
     }
     Ass(bool share, Ass& s) : Space(share,s) {
@@ -144,12 +145,12 @@ namespace {
     while (i < e.size()) {
       p = e[i].p;
       while (i < e.size() && e[i].p == p) {
-	h += e[i].h;
-	n += (e[i].start ? +1 : -1);
-	++i;
+        h += e[i].h;
+        n += (e[i].start ? +1 : -1);
+        ++i;
       }
       if (n && !comp(h)) {
-	return false;
+        return false;
       }
     }
     return true;
@@ -178,7 +179,7 @@ public:
       if (x[p+0] < 0 || x[p+1] < 1 || x[p+2] < 1) return false;
       // Start + Duration == End
       if (x[p+0] + x[p+1] != x[p+2]) {
-	return false;
+        return false;
       }
     }
     for (int i = 0; i < ntasks; ++i) {
@@ -198,21 +199,21 @@ public:
     if (Log::logging()) {
       std::ostringstream buf;
       buf << "\tint ntastks = " << ntasks << ", limit = " << limit
-	  << ";\n\tbool at_most = " << at_most << ";";
+          << ";\n\tbool at_most = " << at_most << ";";
       Log::log("", buf.str().c_str());
       Log::log("post cumulatives",
-	       "\tIntArgs m(ntasks), l(1, limit);\n"
-	       "\tIntVarArgs s(ntasks), d(ntasks), e(ntasks), h(ntasks);\n"
-	       "\tfor (int i = 0; i < ntasks; ++i) {\n"
-	       "\t\tint p = i*4;\n"
-	       "\t\tm[i] = 0;\n"
-	       "\t\ts[i] = x[p+0]; rel(this, x[p+0], IRT_GQ, 0);\n"
-	       "\t\td[i] = x[p+1]; rel(this, x[p+1], IRT_GQ, 1);\n"
-	       "\t\te[i] = x[p+2]; rel(this, x[p+2], IRT_GQ, 1);\n"
-	       "\t\th[i] = x[p+3];\n"
-	       "\t}\n"
-	       "\tcumulatives(this, m, s, d, e, h, l, at_most);\n"
-	     );
+               "\tIntArgs m(ntasks), l(1, limit);\n"
+               "\tIntVarArgs s(ntasks), d(ntasks), e(ntasks), h(ntasks);\n"
+               "\tfor (int i = 0; i < ntasks; ++i) {\n"
+               "\t\tint p = i*4;\n"
+               "\t\tm[i] = 0;\n"
+               "\t\ts[i] = x[p+0]; rel(this, x[p+0], IRT_GQ, 0);\n"
+               "\t\td[i] = x[p+1]; rel(this, x[p+1], IRT_GQ, 1);\n"
+               "\t\te[i] = x[p+2]; rel(this, x[p+2], IRT_GQ, 1);\n"
+               "\t\th[i] = x[p+3];\n"
+               "\t}\n"
+               "\tcumulatives(this, m, s, d, e, h, l, at_most);\n"
+             );
     }
     IntArgs m(ntasks), l(1, limit);
     IntVarArgs s(ntasks), d(ntasks), e(ntasks), h(ntasks);

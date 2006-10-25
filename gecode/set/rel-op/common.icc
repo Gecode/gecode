@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -30,7 +31,7 @@ namespace Gecode {
   template <class View0, class View1>
   forceinline bool
   viewarrayshared(const ViewArray<View0>& va,
-		       const View1& y) {
+                       const View1& y) {
     return va.shared(y);
   }
 
@@ -52,7 +53,7 @@ namespace Gecode {
   template <>
   forceinline bool
   viewarrayshared<Set::ComplementView<Set::SingletonView>,
-		       Set::ComplementView<Set::SetView> >
+                       Set::ComplementView<Set::SetView> >
   (const ViewArray<Set::ComplementView<Set::SingletonView> >& va,
    const Set::ComplementView<Set::SetView>& y) {
     return false;
@@ -73,47 +74,47 @@ namespace Set { namespace RelOp {
 
   template <class View0, class View1, class View2>
   ExecStatus unionCard(Space* home,
-		       bool& retmodified, View0& x0, View1& x1, View2& x2) {
+                       bool& retmodified, View0& x0, View1& x1, View2& x2) {
     bool modified = false;
     do {
       retmodified |= modified;
       modified = false;
 
       {
-	LubRanges<View0> x0ub(x0);
-	LubRanges<View1> x1ub(x1);
-	Iter::Ranges::Inter<LubRanges<View0>, LubRanges<View1> > i1(x0ub,x1ub);
-	unsigned int s1 = Iter::Ranges::size(i1);
+        LubRanges<View0> x0ub(x0);
+        LubRanges<View1> x1ub(x1);
+        Iter::Ranges::Inter<LubRanges<View0>, LubRanges<View1> > i1(x0ub,x1ub);
+        unsigned int s1 = Iter::Ranges::size(i1);
         unsigned int res = std::max(x0.cardMin()+
                                     (x1.cardMin()<s1 ?
                                      0 : x1.cardMin()-s1),
                                     std::max(x0.cardMin(),
                                              x1.cardMin()));
-	GECODE_ME_CHECK_MODIFIED(modified, x2.cardMin(home,res));
+        GECODE_ME_CHECK_MODIFIED(modified, x2.cardMin(home,res));
       }
 
       {
-	LubRanges<View0> x0ub(x0);
-	LubRanges<View1> x1ub(x1);
-	Iter::Ranges::Union<LubRanges<View0>, LubRanges<View1> > u1(x0ub,x1ub);
-	unsigned int s1 = Iter::Ranges::size(u1);
-	GECODE_ME_CHECK_MODIFIED(modified, 
-			  x2.cardMax(home,
-				     std::min(x0.cardMax()+x1.cardMax(),s1)));
+        LubRanges<View0> x0ub(x0);
+        LubRanges<View1> x1ub(x1);
+        Iter::Ranges::Union<LubRanges<View0>, LubRanges<View1> > u1(x0ub,x1ub);
+        unsigned int s1 = Iter::Ranges::size(u1);
+        GECODE_ME_CHECK_MODIFIED(modified, 
+                          x2.cardMax(home,
+                                     std::min(x0.cardMax()+x1.cardMax(),s1)));
       }
 
       if (x2.cardMin() > x1.cardMax())
-	GECODE_ME_CHECK_MODIFIED(modified,
-			  x0.cardMin(home,x2.cardMin() - x1.cardMax()));
+        GECODE_ME_CHECK_MODIFIED(modified,
+                          x0.cardMin(home,x2.cardMin() - x1.cardMax()));
 
       if (x2.cardMin() > x0.cardMax())
-	GECODE_ME_CHECK_MODIFIED(modified,
-			  x1.cardMin(home,x2.cardMin() - x0.cardMax()));
+        GECODE_ME_CHECK_MODIFIED(modified,
+                          x1.cardMin(home,x2.cardMin() - x0.cardMax()));
 
       GECODE_ME_CHECK_MODIFIED(modified,
-			x0.cardMax(home,x2.cardMax()));
+                        x0.cardMax(home,x2.cardMax()));
       GECODE_ME_CHECK_MODIFIED(modified,
-			x1.cardMax(home,x2.cardMax()));
+                        x1.cardMax(home,x2.cardMax()));
     } while(modified);
     return ES_FIX;
   }
@@ -121,7 +122,7 @@ namespace Set { namespace RelOp {
   template <class View0, class View1>
   ExecStatus
   unionNCard(Space* home, bool& modified, ViewArray<View0>& x,
-	     View1& y, GLBndSet& unionOfDets) {
+             View1& y, GLBndSet& unionOfDets) {
     int xsize = x.size();
     // Max(Xi.cardMin) <= y.card <= Sum(Xi.cardMax)
     // Xi.card <=y.cardMax
@@ -144,27 +145,27 @@ namespace Set { namespace RelOp {
       rightSum[xsize-1]=0;
 
       for (int i=x.size()-1;i--;) {
-	rightSum[i] = rightSum[i+1] + x[i+1].cardMax();
-	if (rightSum[i] < rightSum[i+1]) {
-	  //overflow, fill the rest of the array.
-	  for (int j=i; j>0;j--) {
-	    rightSum[j]=Limits::Set::card_max;
-	  }
-	  break;
-	}
+        rightSum[i] = rightSum[i+1] + x[i+1].cardMax();
+        if (rightSum[i] < rightSum[i+1]) {
+          //overflow, fill the rest of the array.
+          for (int j=i; j>0;j--) {
+            rightSum[j]=Limits::Set::card_max;
+          }
+          break;
+        }
       }
 
       //Size of union of determied vars missing from x sneaked in here:
       unsigned int leftAcc=unionOfDets.size();
 
       for (int i=0; i<xsize;i++) {
-	unsigned int jsum = leftAcc+rightSum[i];
-	//If jsum did not overflow and is less than y.cardMin:
-	if (jsum >= leftAcc &&  jsum < y.cardMin()) {
-	  GECODE_ME_CHECK_MODIFIED(modified, x[i].cardMin(home,y.cardMin()-jsum));
-	}
-	leftAcc += x[i].cardMax();
-	if (leftAcc < x[i].cardMax()) {leftAcc = Limits::Set::card_max;}
+        unsigned int jsum = leftAcc+rightSum[i];
+        //If jsum did not overflow and is less than y.cardMin:
+        if (jsum >= leftAcc &&  jsum < y.cardMin()) {
+          GECODE_ME_CHECK_MODIFIED(modified, x[i].cardMin(home,y.cardMin()-jsum));
+        }
+        leftAcc += x[i].cardMax();
+        if (leftAcc < x[i].cardMax()) {leftAcc = Limits::Set::card_max;}
       }
     }
 
@@ -174,33 +175,33 @@ namespace Set { namespace RelOp {
       GECODE_AUTOARRAY(GLBndSet, rightUnion, xsize);
       rightUnion[xsize-1].init(home);
       for (int i=xsize-1;i--;){
-	BndSetRanges prev(rightUnion[i+1]);
-	LubRanges<View0> prevX(x[i+1]);
-	Iter::Ranges::Union< BndSetRanges,LubRanges<View0> >
-	  iter(prev,prevX);
-	rightUnion[i].init(home);
-	rightUnion[i].includeI(home, iter);
+        BndSetRanges prev(rightUnion[i+1]);
+        LubRanges<View0> prevX(x[i+1]);
+        Iter::Ranges::Union< BndSetRanges,LubRanges<View0> >
+          iter(prev,prevX);
+        rightUnion[i].init(home);
+        rightUnion[i].includeI(home, iter);
       }
 
       //union of determied vars missing from x sneaked in here:
       GLBndSet leftAcc;
       leftAcc.update(home,unionOfDets);
       for (int i=0; i<xsize; i++) {
-	BndSetRanges left(leftAcc);
-	BndSetRanges right(rightUnion[i]);
-	Iter::Ranges::Union<BndSetRanges,
-	  BndSetRanges> iter(left, right);
-	unsigned int unionSize = Iter::Ranges::size(iter);
-	if (y.cardMin() > unionSize) {
-	  GECODE_ME_CHECK_MODIFIED(modified,
-			    x[i].cardMin(home, y.cardMin() - unionSize) );
-	}
-	LubRanges<View0> xiub(x[i]);
-	leftAcc.includeI(home, xiub);
+        BndSetRanges left(leftAcc);
+        BndSetRanges right(rightUnion[i]);
+        Iter::Ranges::Union<BndSetRanges,
+          BndSetRanges> iter(left, right);
+        unsigned int unionSize = Iter::Ranges::size(iter);
+        if (y.cardMin() > unionSize) {
+          GECODE_ME_CHECK_MODIFIED(modified,
+                            x[i].cardMin(home, y.cardMin() - unionSize) );
+        }
+        LubRanges<View0> xiub(x[i]);
+        leftAcc.includeI(home, xiub);
       }
 
       for (int i=xsize; i--;)
-	rightUnion[i].dispose(home);
+        rightUnion[i].dispose(home);
       leftAcc.dispose(home);
     }
 
@@ -217,8 +218,8 @@ namespace Set { namespace RelOp {
   template <class View0, class View1>
   ExecStatus
   unionNXiUB(Space* home,
-	     bool& modified, ViewArray<View0>& x, View1& y,
-	     GLBndSet & unionOfDets) {
+             bool& modified, ViewArray<View0>& x, View1& y,
+             GLBndSet & unionOfDets) {
     int xsize = x.size();
     for (int i=xsize; i--; ) {
       LubRanges<View1> yub(y);
@@ -231,24 +232,24 @@ namespace Set { namespace RelOp {
   template <class View0, class View1>
   ExecStatus
   partitionNCard(Space* home,
-		 bool& modified, ViewArray<View0>& x, View1& y,
-		 GLBndSet& unionOfDets) {
+                 bool& modified, ViewArray<View0>& x, View1& y,
+                 GLBndSet& unionOfDets) {
     unsigned int cardMinSum=unionOfDets.size();
     unsigned int cardMaxSum=unionOfDets.size();
     int xsize = x.size();
     for (int i=xsize; i--; ) {
       cardMinSum+=x[i].cardMin();
       if (cardMinSum < x[i].cardMin()) {
-	//sum of mins overflows: fail the space.
-	GECODE_ME_CHECK(ME_SET_FAILED);
+        //sum of mins overflows: fail the space.
+        GECODE_ME_CHECK(ME_SET_FAILED);
       }
     }
     GECODE_ME_CHECK_MODIFIED(modified, y.cardMin(home,cardMinSum));
     for (int i=xsize; i--; ) {
       cardMaxSum+=x[i].cardMax();
       if (cardMaxSum < x[i].cardMax()) {
-	//sum of maxes overflows: no useful information to tell.
-	goto overflow;
+        //sum of maxes overflows: no useful information to tell.
+        goto overflow;
       }
     }
     GECODE_ME_CHECK_MODIFIED(modified, y.cardMax(home,cardMaxSum));
@@ -263,20 +264,20 @@ namespace Set { namespace RelOp {
       rightMaxSum[xsize-1]=0;
 
       for (int i=x.size()-1;i--;) {
-	rightMaxSum[i] = rightMaxSum[i+1] + x[i+1].cardMax();
-	if (rightMaxSum[i] < rightMaxSum[i+1]) {
-	  //overflow, fill the rest of the array.
-	  for (int j=i; j>0;j--) {
-	    rightMaxSum[j]=Limits::Set::card_max;
-	  }
-	  break;
-	}
+        rightMaxSum[i] = rightMaxSum[i+1] + x[i+1].cardMax();
+        if (rightMaxSum[i] < rightMaxSum[i+1]) {
+          //overflow, fill the rest of the array.
+          for (int j=i; j>0;j--) {
+            rightMaxSum[j]=Limits::Set::card_max;
+          }
+          break;
+        }
 
-	rightMinSum[i] = rightMinSum[i+1] + x[i+1].cardMin();
-	if (rightMinSum[i] < rightMinSum[i+1]) {
-	  //overflow, fail the space
-	  GECODE_ME_CHECK(ME_SET_FAILED);
-	}
+        rightMinSum[i] = rightMinSum[i+1] + x[i+1].cardMin();
+        if (rightMinSum[i] < rightMinSum[i+1]) {
+          //overflow, fail the space
+          GECODE_ME_CHECK(ME_SET_FAILED);
+        }
 
 
       }
@@ -284,25 +285,25 @@ namespace Set { namespace RelOp {
       unsigned int leftMaxAcc=unionOfDets.size();
 
       for (int i=0; i<xsize;i++) {
-	unsigned int maxSum = leftMaxAcc+rightMaxSum[i];
-	unsigned int minSum = leftMinAcc+rightMinSum[i];
-	//If maxSum did not overflow and is less than y.cardMin:
-	if (maxSum >= leftMaxAcc &&  maxSum < y.cardMin()) {
-	  GECODE_ME_CHECK_MODIFIED(modified, x[i].cardMin(home,y.cardMin()-maxSum));
-	}
+        unsigned int maxSum = leftMaxAcc+rightMaxSum[i];
+        unsigned int minSum = leftMinAcc+rightMinSum[i];
+        //If maxSum did not overflow and is less than y.cardMin:
+        if (maxSum >= leftMaxAcc &&  maxSum < y.cardMin()) {
+          GECODE_ME_CHECK_MODIFIED(modified, x[i].cardMin(home,y.cardMin()-maxSum));
+        }
 
-	//Overflow, fail.
-	if (minSum < leftMinAcc || y.cardMax() < minSum) {
-	  GECODE_ME_CHECK(ME_SET_FAILED);
-	}
-	else {
-	  GECODE_ME_CHECK_MODIFIED(modified, x[i].cardMax(home,y.cardMax()-minSum));
-	}
+        //Overflow, fail.
+        if (minSum < leftMinAcc || y.cardMax() < minSum) {
+          GECODE_ME_CHECK(ME_SET_FAILED);
+        }
+        else {
+          GECODE_ME_CHECK_MODIFIED(modified, x[i].cardMax(home,y.cardMax()-minSum));
+        }
 
-	leftMaxAcc += x[i].cardMax();
-	if (leftMaxAcc < x[i].cardMax()) {leftMaxAcc = Limits::Set::card_max;}
-	leftMinAcc += x[i].cardMin();
-	if (leftMinAcc < x[i].cardMin()) {GECODE_ME_CHECK(ME_SET_FAILED);}
+        leftMaxAcc += x[i].cardMax();
+        if (leftMaxAcc < x[i].cardMax()) {leftMaxAcc = Limits::Set::card_max;}
+        leftMinAcc += x[i].cardMin();
+        if (leftMinAcc < x[i].cardMin()) {GECODE_ME_CHECK(ME_SET_FAILED);}
       }
     }
 
@@ -314,7 +315,7 @@ namespace Set { namespace RelOp {
   template <class View0, class View1>
   ExecStatus
   partitionNXi(Space* home,
-	       bool& modified, ViewArray<View0>& x, View1& y) {
+               bool& modified, ViewArray<View0>& x, View1& y) {
     int xsize = x.size();
     GECODE_AUTOARRAY(GLBndSet, afterUB, xsize);
     GECODE_AUTOARRAY(GLBndSet, afterLB, xsize);
@@ -323,14 +324,14 @@ namespace Set { namespace RelOp {
       GLBndSet sofarAfterUB;
       GLBndSet sofarAfterLB;
       for (int i=xsize; i--;) {
-	afterUB[i].init(home);
-	afterLB[i].init(home);
-	afterUB[i].update(home,sofarAfterUB);
-	afterLB[i].update(home,sofarAfterLB);
-	LubRanges<View0> xiub(x[i]);
-	GlbRanges<View0> xilb(x[i]);
-	sofarAfterUB.includeI(home,xiub);
-	sofarAfterLB.includeI(home,xilb);
+        afterUB[i].init(home);
+        afterLB[i].init(home);
+        afterUB[i].update(home,sofarAfterUB);
+        afterLB[i].update(home,sofarAfterLB);
+        LubRanges<View0> xiub(x[i]);
+        GlbRanges<View0> xilb(x[i]);
+        sofarAfterUB.includeI(home,xiub);
+        sofarAfterLB.includeI(home,xilb);
       }
       sofarAfterUB.dispose(home);
       sofarAfterLB.dispose(home);
@@ -340,30 +341,30 @@ namespace Set { namespace RelOp {
       GLBndSet sofarBeforeUB;
       GLBndSet sofarBeforeLB;
       for (int i=0; i<xsize; i++) {
-	LubRanges<View1> yub(y);
-	BndSetRanges slb(sofarBeforeLB);
-	BndSetRanges afterlb(afterLB[i]);
-	Iter::Ranges::Union<BndSetRanges,
-	  BndSetRanges> xjlb(slb, afterlb);
-	Iter::Ranges::Diff<LubRanges<View1>,
-	  Iter::Ranges::Union<BndSetRanges,
-	  BndSetRanges> > diff1(yub, xjlb);
-	GECODE_ME_CHECK_MODIFIED(modified, x[i].intersectI(home,diff1));
+        LubRanges<View1> yub(y);
+        BndSetRanges slb(sofarBeforeLB);
+        BndSetRanges afterlb(afterLB[i]);
+        Iter::Ranges::Union<BndSetRanges,
+          BndSetRanges> xjlb(slb, afterlb);
+        Iter::Ranges::Diff<LubRanges<View1>,
+          Iter::Ranges::Union<BndSetRanges,
+          BndSetRanges> > diff1(yub, xjlb);
+        GECODE_ME_CHECK_MODIFIED(modified, x[i].intersectI(home,diff1));
 
-	GlbRanges<View1> ylb(y);
-	BndSetRanges sub(sofarBeforeUB);
-	BndSetRanges afterub(afterUB[i]);
-	Iter::Ranges::Union<BndSetRanges,
-	  BndSetRanges> xjub(sub, afterub);
-	Iter::Ranges::Diff<GlbRanges<View1>,
-	  Iter::Ranges::Union<BndSetRanges,
-	  BndSetRanges> > diff2(ylb, xjub);
-	GECODE_ME_CHECK_MODIFIED(modified, x[i].includeI(home,diff2));
+        GlbRanges<View1> ylb(y);
+        BndSetRanges sub(sofarBeforeUB);
+        BndSetRanges afterub(afterUB[i]);
+        Iter::Ranges::Union<BndSetRanges,
+          BndSetRanges> xjub(sub, afterub);
+        Iter::Ranges::Diff<GlbRanges<View1>,
+          Iter::Ranges::Union<BndSetRanges,
+          BndSetRanges> > diff2(ylb, xjub);
+        GECODE_ME_CHECK_MODIFIED(modified, x[i].includeI(home,diff2));
 
-	LubRanges<View0> xiub(x[i]);
-	GlbRanges<View0> xilb(x[i]);
-	sofarBeforeUB.includeI(home,xiub);
-	sofarBeforeLB.includeI(home,xilb);
+        LubRanges<View0> xiub(x[i]);
+        GlbRanges<View0> xilb(x[i]);
+        sofarBeforeUB.includeI(home,xiub);
+        sofarBeforeLB.includeI(home,xilb);
       }
       sofarBeforeLB.dispose(home);
       sofarBeforeUB.dispose(home);
@@ -381,18 +382,18 @@ namespace Set { namespace RelOp {
   template <class View0, class View1>
   ExecStatus
   partitionNXiUB(Space* home,
-		 bool& modified, ViewArray<View0>& x, View1& y,
-		 GLBndSet& unionOfDets) {
+                 bool& modified, ViewArray<View0>& x, View1& y,
+                 GLBndSet& unionOfDets) {
     int xsize = x.size();
     GECODE_AUTOARRAY(GLBndSet, afterLB, xsize);
 
     {
       GLBndSet sofarAfterLB;
       for (int i=xsize; i--;) {
-	afterLB[i].init(home);
-	afterLB[i].update(home,sofarAfterLB);
-	GlbRanges<View0> xilb(x[i]);
-	sofarAfterLB.includeI(home,xilb);
+        afterLB[i].init(home);
+        afterLB[i].update(home,sofarAfterLB);
+        GlbRanges<View0> xilb(x[i]);
+        sofarAfterLB.includeI(home,xilb);
       }
       sofarAfterLB.dispose(home);
     }
@@ -401,18 +402,18 @@ namespace Set { namespace RelOp {
       GLBndSet sofarBeforeLB;
       sofarBeforeLB.update(home,unionOfDets);
       for (int i=0; i<xsize; i++) {
-	LubRanges<View1> yub(y);
-	BndSetRanges slb(sofarBeforeLB);
-	BndSetRanges afterlb(afterLB[i]);
-	Iter::Ranges::Union<BndSetRanges,
-	  BndSetRanges> xjlb(slb, afterlb);
-	Iter::Ranges::Diff<LubRanges<View1>,
-	  Iter::Ranges::Union<BndSetRanges,
-	  BndSetRanges> > diff1(yub, xjlb);
-	GECODE_ME_CHECK_MODIFIED(modified, x[i].intersectI(home,diff1));
+        LubRanges<View1> yub(y);
+        BndSetRanges slb(sofarBeforeLB);
+        BndSetRanges afterlb(afterLB[i]);
+        Iter::Ranges::Union<BndSetRanges,
+          BndSetRanges> xjlb(slb, afterlb);
+        Iter::Ranges::Diff<LubRanges<View1>,
+          Iter::Ranges::Union<BndSetRanges,
+          BndSetRanges> > diff1(yub, xjlb);
+        GECODE_ME_CHECK_MODIFIED(modified, x[i].intersectI(home,diff1));
 
-	GlbRanges<View0> xilb(x[i]);
-	sofarBeforeLB.includeI(home,xilb);
+        GlbRanges<View0> xilb(x[i]);
+        sofarBeforeLB.includeI(home,xilb);
       }
       sofarBeforeLB.dispose(home);
     }
@@ -425,18 +426,18 @@ namespace Set { namespace RelOp {
   template <class View0, class View1>
   ExecStatus
   partitionNXiLB(Space* home,
-		 bool& modified, ViewArray<View0>& x, View1& y,
-		 GLBndSet& unionOfDets) {
+                 bool& modified, ViewArray<View0>& x, View1& y,
+                 GLBndSet& unionOfDets) {
     int xsize = x.size();
     GECODE_AUTOARRAY(GLBndSet, afterUB, xsize);
 
     {
       GLBndSet sofarAfterUB;
       for (int i=xsize; i--;) {
-	afterUB[i].init(home);
-	afterUB[i].update(home,sofarAfterUB);
-	LubRanges<View0> xiub(x[i]);
-	sofarAfterUB.includeI(home,xiub);
+        afterUB[i].init(home);
+        afterUB[i].update(home,sofarAfterUB);
+        LubRanges<View0> xiub(x[i]);
+        sofarAfterUB.includeI(home,xiub);
       }
       sofarAfterUB.dispose(home);
     }
@@ -446,18 +447,18 @@ namespace Set { namespace RelOp {
       GLBndSet sofarBeforeUB;
       sofarBeforeUB.update(home,unionOfDets);
       for (int i=0; i<xsize; i++) {
-	GlbRanges<View1> ylb(y);
-	BndSetRanges sub(sofarBeforeUB);
-	BndSetRanges afterub(afterUB[i]);
-	Iter::Ranges::Union<BndSetRanges,
-	  BndSetRanges> xjub(sub, afterub);
-	Iter::Ranges::Diff<GlbRanges<View1>,
-	  Iter::Ranges::Union<BndSetRanges,
-	  BndSetRanges> > diff2(ylb, xjub);
-	GECODE_ME_CHECK_MODIFIED(modified, x[i].includeI(home,diff2));
+        GlbRanges<View1> ylb(y);
+        BndSetRanges sub(sofarBeforeUB);
+        BndSetRanges afterub(afterUB[i]);
+        Iter::Ranges::Union<BndSetRanges,
+          BndSetRanges> xjub(sub, afterub);
+        Iter::Ranges::Diff<GlbRanges<View1>,
+          Iter::Ranges::Union<BndSetRanges,
+          BndSetRanges> > diff2(ylb, xjub);
+        GECODE_ME_CHECK_MODIFIED(modified, x[i].includeI(home,diff2));
 
-	LubRanges<View0> xiub(x[i]);
-	sofarBeforeUB.includeI(home,xiub);
+        LubRanges<View0> xiub(x[i]);
+        sofarBeforeUB.includeI(home,xiub);
       }
       sofarBeforeUB.dispose(home);
     }
@@ -470,8 +471,8 @@ namespace Set { namespace RelOp {
   template <class View0, class View1>
   ExecStatus
   partitionNYLB(Space* home,
-		bool& modified, ViewArray<View0>& x, View1& y,
-		GLBndSet& unionOfDets) {
+                bool& modified, ViewArray<View0>& x, View1& y,
+                GLBndSet& unionOfDets) {
     assert(unionOfDets.isConsistent());
     int xsize = x.size();
     GECODE_AUTOARRAY(GlbRanges<View0>,xLBs,xsize);
@@ -479,17 +480,17 @@ namespace Set { namespace RelOp {
     for (int i = xsize; i--; ) {
       GlbRanges<View0> r(x[i]);
       if (r()) {
-	xLBs[nonEmptyCounter] = r;
-	nonEmptyCounter++;
+        xLBs[nonEmptyCounter] = r;
+        nonEmptyCounter++;
       }
     }
     if (nonEmptyCounter !=0) {
       Iter::Ranges::NaryUnion<GlbRanges<View0> >
-	xLBUnion(xLBs,nonEmptyCounter);
+        xLBUnion(xLBs,nonEmptyCounter);
       BndSetRanges dets(unionOfDets);
       Iter::Ranges::Union<Iter::Ranges::NaryUnion<GlbRanges<View0> >,
-	BndSetRanges>
-	allUnion(xLBUnion,dets);
+        BndSetRanges>
+        allUnion(xLBUnion,dets);
       GECODE_ME_CHECK_MODIFIED(modified, y.includeI(home,allUnion));
     }
     return ES_FIX;
@@ -499,25 +500,25 @@ namespace Set { namespace RelOp {
   template <class View0, class View1>
   ExecStatus
   partitionNYUB(Space* home,
-		bool& modified, ViewArray<View0>& x, View1& y,
-		GLBndSet& unionOfDets) {
+                bool& modified, ViewArray<View0>& x, View1& y,
+                GLBndSet& unionOfDets) {
     int xsize = x.size();
     GECODE_AUTOARRAY(LubRanges<View0>,xUBs,xsize);
     int nonEmptyCounter=0;
     for (int i = xsize; i--; ) {
       LubRanges<View0> r(x[i]);
       if (r()) {
-	xUBs[nonEmptyCounter] = r;
-	nonEmptyCounter++;
+        xUBs[nonEmptyCounter] = r;
+        nonEmptyCounter++;
       }
     }
     if (nonEmptyCounter !=0) {
       Iter::Ranges::NaryUnion<LubRanges<View0> >
-	xUBUnion(xUBs,nonEmptyCounter);
+        xUBUnion(xUBs,nonEmptyCounter);
       BndSetRanges dets(unionOfDets);
       Iter::Ranges::Union<Iter::Ranges::NaryUnion<LubRanges<View0> >,
-	BndSetRanges>
-	fullUnion(xUBUnion, dets);
+        BndSetRanges>
+        fullUnion(xUBUnion, dets);
       GECODE_ME_CHECK_MODIFIED(modified, y.intersectI(home,fullUnion));
     }
     return ES_FIX;

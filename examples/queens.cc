@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -42,11 +43,11 @@ public:
     const int n = q.size();
     if (opt.naive) {
       for (int i = 0; i<n; i++)
-	for (int j = i+1; j<n; j++) {
-	  post(this, q[i] != q[j]);
-	  post(this, q[i]+i != q[j]+j);
-	  post(this, q[i]-i != q[j]-j);
-	}
+        for (int j = i+1; j<n; j++) {
+          post(this, q[i] != q[j]);
+          post(this, q[i]+i != q[j]+j);
+          post(this, q[i]-i != q[j]-j);
+        }
     } else {
       IntArgs c(n);
       for (int i = n; i--; ) c[i] = i;
@@ -76,7 +77,7 @@ public:
     for (int i = 0; i < q.size(); i++) {
       std::cout << q[i] << ", ";
       if ((i+1) % 10 == 0)
-	std::cout << std::endl << "\t";
+        std::cout << std::endl << "\t";
     }
     std::cout << std::endl;
     }

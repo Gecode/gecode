@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -17,16 +18,16 @@
  *  redistribution of this file, and for a
  *     DISCLAIMER OF ALL WARRANTIES.
  *
- */	
+ */        
 
 #include "gecode/int/sortedness.hh"
 namespace Gecode {
 
   using namespace Int;
   void sortedness(Space* home,
-		  const IntVarArgs& x,
-		  const IntVarArgs& y,
-		  IntConLevel) {
+                  const IntVarArgs& x,
+                  const IntVarArgs& y,
+                  IntConLevel) {
 
     if (home->failed()) {
       return;
@@ -58,16 +59,16 @@ namespace Gecode {
 
 
     GECODE_ES_FAIL(home,
-		   (Sortedness::
-		    Sortedness<IntView, ViewTuple<IntView,1>, false>::
-		    post(home, x0, y0)));
+                   (Sortedness::
+                    Sortedness<IntView, ViewTuple<IntView,1>, false>::
+                    post(home, x0, y0)));
   }
 
   void sortedness(Space* home,
-		  const IntVarArgs& x,
-		  const IntVarArgs& y,
-		  const IntVarArgs& z,
-		  IntConLevel) {
+                  const IntVarArgs& x,
+                  const IntVarArgs& y,
+                  const IntVarArgs& z,
+                  IntConLevel) {
     int n = x.size();
     int n2 = 2*n;
     int n3 = 3*n;
@@ -115,9 +116,9 @@ namespace Gecode {
     }
 
     GECODE_ES_FAIL(home,
-		   (Sortedness::
-		    Sortedness<IntView, ViewTuple<IntView,2>, true>::
-		    post(home, xz0, y0)));
+                   (Sortedness::
+                    Sortedness<IntView, ViewTuple<IntView,2>, true>::
+                    post(home, xz0, y0)));
   }
 }
 

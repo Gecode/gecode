@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -218,8 +219,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline
   DomCtrl<View>::ViewValGraph::ViewValGraph(int n_view0, View* x,
-					    int n_val0,
-					    unsigned int n_edges, int min)
+                                            int n_val0,
+                                            unsigned int n_edges, int min)
     :  n_view(n_view0), n_val(n_val0),
        count(0), cnt0(0), cnt1(0), n_s(n_view+n_val)
   {
@@ -245,7 +246,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     {
       int v = min+n_val;
       for (int i = n_val; i--; )
-	val[i] = new (val_nodes + i) ValNode<View>(--v);
+        val[i] = new (val_nodes + i) ValNode<View>(--v);
     }
 
     // Init view nodes and edges
@@ -254,10 +255,10 @@ namespace Gecode { namespace Int { namespace Distinct {
       Edge<View>** edge_p = view[i]->val_edges_ref();
       ViewValues<View> x_i(x[i]);
       while (x_i()) {
-	*edge_p = new (edges++) Edge<View>(val_nodes+x_i.val()-min,
-					   view_nodes+i);
-	edge_p = (*edge_p)->next_edge_ref();
-	++x_i;
+        *edge_p = new (edges++) Edge<View>(val_nodes+x_i.val()-min,
+                                           view_nodes+i);
+        edge_p = (*edge_p)->next_edge_ref();
+        ++x_i;
       }
       *edge_p = NULL;
     }
@@ -266,8 +267,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline
   DomCtrl<View>::ViewValGraph::ViewValGraph(int n_view0, View* x,
-					    const int* val_inf,
-					    int n_val0, unsigned int n_edges)
+                                            const int* val_inf,
+                                            int n_val0, unsigned int n_edges)
     :  n_view(n_view0), n_val(n_val0),
        count(0), cnt0(0), cnt1(0), n_s(n_view+n_val)
   {
@@ -300,11 +301,11 @@ namespace Gecode { namespace Int { namespace Distinct {
       ViewValues<View> x_i(x[i]);
       int j = 0;
       while (x_i()) {
-	while (val_inf[j] < x_i.val())
-	  j++;
-	*edge_p = new (edges++) Edge<View>(val_nodes+j,view_nodes+i);
-	edge_p = (*edge_p)->next_edge_ref();
-	++x_i;
+        while (val_inf[j] < x_i.val())
+          j++;
+        *edge_p = new (edges++) Edge<View>(val_nodes+j,view_nodes+i);
+        edge_p = (*edge_p)->next_edge_ref();
+        ++x_i;
       }
       *edge_p = NULL;
     }
@@ -345,7 +346,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     // Fill array of values
     do {
       for (int v = xu.min(); v <= xu.max(); v++)
-	val_inf[n_val++] = v;
+        val_inf[n_val++] = v;
       ++xu;
     } while (xu());
     if (n_val < n_view)
@@ -363,25 +364,25 @@ namespace Gecode { namespace Int { namespace Distinct {
       // This holds true as domains are never empty
       assert(e != NULL);
       do {
-	if (!e->val(x)->matching()) {
-	  e->revert(x); e->val(x)->matching(e);
-	  return true;
-	}
-	e = e->next_edge();
+        if (!e->val(x)->matching()) {
+          e->revert(x); e->val(x)->matching(e);
+          return true;
+        }
+        e = e->next_edge();
       } while (e != NULL);
     }
     // No, find matching edge by augmenting path method
     {
       Edge<View>* e = x->val_edges();
       do {
-	ValNode<View>*  n = e->val(x);
-	ViewNode<View>* y = n->matching()->view(n);
-	if ((y->comp < count) && search_match(y)) {
-	  n->matching()->revert(n);
-	  e->revert(x); n->matching(e);
-	  return true;
-	}
-	e = e->next_edge();
+        ValNode<View>*  n = e->val(x);
+        ViewNode<View>* y = n->matching()->view(n);
+        if ((y->comp < count) && search_match(y)) {
+          n->matching()->revert(n);
+          e->revert(x); n->matching(e);
+          return true;
+        }
+        e = e->next_edge();
       } while (e != NULL);
     }
     return false;
@@ -400,7 +401,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   DomCtrl<View>::ViewValGraph::initial_match(void) {
     for (int i = n_view; i--; )
       if (!match(view[i]))
-	return false;
+        return false;
     return true;
   }
 
@@ -414,9 +415,9 @@ namespace Gecode { namespace Int { namespace Distinct {
     for (Edge<View>* e = w->edge_fst(); e != w->edge_lst(); e = e->next()) {
       Node<View>* v = e->dst(w);
       if (v->pre < count)
-	scc(v);
+        scc(v);
       if (v->low < min)
-	min = v->low;
+        min = v->low;
     }
     if (min < w->low) {
       w->low = min;
@@ -441,31 +442,31 @@ namespace Gecode { namespace Int { namespace Distinct {
     count++;
     for (int i = n_val; i--; )
       if (!val[i]->matching())
-	// Is it orphaned?
-	if (val[i]->empty()) {
-	  val[i] = val[--n_val];
-	} else {
-	  val[i]->comp = count;
-	  n_s.push(val[i]);
-	}
+        // Is it orphaned?
+        if (val[i]->empty()) {
+          val[i] = val[--n_val];
+        } else {
+          val[i]->comp = count;
+          n_s.push(val[i]);
+        }
 
     // Invariant: only value nodes are on the stack!
     while (!n_s.empty()) {
       ValNode<View>* n = static_cast<ValNode<View>*>(n_s.pop());
       for (Edge<View>* e = n->edge_fst(); e != n->edge_lst(); e = e->next()) {
-	// Get the value node
-	e->use();
-	ViewNode<View>* x = e->view(n);
-	if (x->comp < count) {
-	  x->comp = count;
-	  assert(x->edge_fst()->next() == x->edge_lst());
-	  ValNode<View>* m = x->edge_fst()->val(x);
-	  x->edge_fst()->use();
-	  if (m->comp < count) {
-	    m->comp = count;
-	    n_s.push(m);
-	  }
-	}
+        // Get the value node
+        e->use();
+        ViewNode<View>* x = e->view(n);
+        if (x->comp < count) {
+          x->comp = count;
+          assert(x->edge_fst()->next() == x->edge_lst());
+          ValNode<View>* m = x->edge_fst()->val(x);
+          x->edge_fst()->use();
+          if (m->comp < count) {
+            m->comp = count;
+            n_s.push(m);
+          }
+        }
       }
     }
 
@@ -475,7 +476,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     n_s.reset();
     for (int i = n_view; i--; )
       if (view[i]->comp < count)
-	scc(view[i]);
+        scc(view[i]);
     count = cnt0+1;
   }
 
@@ -485,14 +486,14 @@ namespace Gecode { namespace Int { namespace Distinct {
     // Tell constraints and also eliminate nodes and edges
     for (int i = n_view; i--; )
       if (!view[i]->edge_fst()->used(view[i])) {
-	view[i]->view().eq(home,view[i]->edge_fst()->val(view[i])->val());
-	view[i]->edge_fst()->val(view[i])->matching(NULL);
-	view[i] = view[--n_view];
+        view[i]->view().eq(home,view[i]->edge_fst()->val(view[i])->val());
+        view[i]->edge_fst()->val(view[i])->matching(NULL);
+        view[i] = view[--n_view];
       } else {
-	for (Edge<View>* e = view[i]->val_edges(); e!=NULL; e = e->next_edge())
-	  if (!e->used(view[i])) {
-	    view[i]->view().nq(home,e->val(view[i])->val());
-	  }
+        for (Edge<View>* e = view[i]->val_edges(); e!=NULL; e = e->next_edge())
+          if (!e->used(view[i])) {
+            view[i]->view().nq(home,e->val(view[i])->val());
+          }
       }
   }
 
@@ -512,46 +513,46 @@ namespace Gecode { namespace Int { namespace Distinct {
     for (int i = n_view; i--; ) {
       ViewNode<View>* x = view[i];
       if (x->view().assigned()) {
-	x->edge_fst()->val(x)->matching(NULL);
-	for (Edge<View>* e = x->val_edges(); e != NULL; e = e->next_edge())
-	  e->unlink();
-	view[i] = view[--n_view];
+        x->edge_fst()->val(x)->matching(NULL);
+        for (Edge<View>* e = x->val_edges(); e != NULL; e = e->next_edge())
+          e->unlink();
+        view[i] = view[--n_view];
       } else {
-	ViewRanges<View> r(x->view());
-	Edge<View>*  m = x->edge_fst();      // Matching edge
-	Edge<View>** p = x->val_edges_ref();
-	Edge<View>*  e = *p;
-	do {
-	  while (e->val(x)->val() < r.min()) {
-	    // Skip edge
-	    e->unlink(); e->mark();
-	    e = e->next_edge();
-	    *p = e;
-	  }
-	  assert(r.min() == e->val(x)->val());
-	  // This edges must be kept
-	  for (unsigned int i=r.width(); i--; ) {
-	    e->free();
-	    p = e->next_edge_ref();
-	    e = e->next_edge();
-	  }
-	  ++r;
-	} while (r());
-	*p = NULL;
-	while (e != NULL) {
-	  e->unlink(); e->mark();
-	  e = e->next_edge();
-	}
-	if (m->marked()) {
-	  // Matching has been deleted!
-	  m->val(x)->matching(NULL);
-	  re[n_re++] = x;
-	}
+        ViewRanges<View> r(x->view());
+        Edge<View>*  m = x->edge_fst();      // Matching edge
+        Edge<View>** p = x->val_edges_ref();
+        Edge<View>*  e = *p;
+        do {
+          while (e->val(x)->val() < r.min()) {
+            // Skip edge
+            e->unlink(); e->mark();
+            e = e->next_edge();
+            *p = e;
+          }
+          assert(r.min() == e->val(x)->val());
+          // This edges must be kept
+          for (unsigned int i=r.width(); i--; ) {
+            e->free();
+            p = e->next_edge_ref();
+            e = e->next_edge();
+          }
+          ++r;
+        } while (r());
+        *p = NULL;
+        while (e != NULL) {
+          e->unlink(); e->mark();
+          e = e->next_edge();
+        }
+        if (m->marked()) {
+          // Matching has been deleted!
+          m->val(x)->matching(NULL);
+          re[n_re++] = x;
+        }
       }
     }
     while (n_re--)
       if (!match(re[n_re]))
-	return false;
+        return false;
     return true;
   }
 
@@ -654,7 +655,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     if (x.size() > 3) {
       // Do bounds propagation to make view-value graph smaller
       if (prop_bnd<View>(home,x,x.size()) == ES_FAILED)
-      	return ES_FAILED;
+              return ES_FAILED;
       (void) new (home) Dom<View>(home,x);
     }
     return ES_OK;
@@ -681,8 +682,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   PropCost
   Dom<View>::cost(void) const {
     return cost_lo(x.size(),
-		   (View::pme(this) == ME_INT_VAL)
-		   ? PC_LINEAR_LO : PC_CUBIC_LO);
+                   (View::pme(this) == ME_INT_VAL)
+                   ? PC_LINEAR_LO : PC_CUBIC_LO);
   }
 
   template <class View>
@@ -697,14 +698,14 @@ namespace Gecode { namespace Int { namespace Distinct {
     if (View::pme(this) == ME_INT_VAL) {
       ExecStatus es = prop_val<View,false>(home,x);
       if ((es == ES_FAILED) || (es == ES_SUBSUMED))
-	return es;
+        return es;
       if (es == ES_FIX)
-	return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
+        return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
       if (prop_bnd<View>(home,x,x.size()) == ES_FAILED)
-	return ES_FAILED;
+        return ES_FAILED;
       es = prop_val<View,true>(home,x);
       if ((es == ES_FAILED) || (es == ES_SUBSUMED))
-	return es;
+        return es;
       return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
     }
 

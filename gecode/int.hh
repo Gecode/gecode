@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -433,7 +434,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   element(Space* home, const IntArgs& n, IntVar x0, IntVar x1,
-	  IntConLevel=ICL_DEF);
+          IntConLevel=ICL_DEF);
   /** \brief Post propagator for \f$ x_{y_0}=y_1\f$
    *
    * Supports both bounds (\a icl = ICL_BND) and
@@ -441,7 +442,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   element(Space* home, const IntVarArgs& x, IntVar y0, IntVar y1,
-	  IntConLevel icl=ICL_DEF);
+          IntConLevel icl=ICL_DEF);
   //@}
 
 
@@ -461,7 +462,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   distinct(Space* home, const IntVarArgs& x,
-	   IntConLevel icl=ICL_DEF);
+           IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ x_i+n_i\neq x_j+n_j\f$ for all \f$0\leq i\neq j<|x|\f$
    *
    * \li Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
@@ -475,7 +476,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   distinct(Space* home, const IntArgs& n, const IntVarArgs& x,
-	   IntConLevel icl=ICL_DEF);
+           IntConLevel icl=ICL_DEF);
   //@}
 
 
@@ -496,7 +497,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   channel(Space* home, const IntVarArgs& x, const IntVarArgs& y,
-	   IntConLevel icl=ICL_DEF);
+           IntConLevel icl=ICL_DEF);
   //@}
 
 
@@ -545,72 +546,72 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   cumulatives(Space* home, const IntVarArgs& machine,
-	      const IntVarArgs& start, const IntVarArgs& duration,
-	      const IntVarArgs& end, const IntVarArgs& height,
-	      const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
+              const IntVarArgs& start, const IntVarArgs& duration,
+              const IntVarArgs& end, const IntVarArgs& height,
+              const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
   cumulatives(Space* home, const IntArgs& machine,
-	      const IntVarArgs& start, const IntVarArgs& duration,
-	      const IntVarArgs& end, const IntVarArgs& height,
-	      const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
+              const IntVarArgs& start, const IntVarArgs& duration,
+              const IntVarArgs& end, const IntVarArgs& height,
+              const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
   cumulatives(Space* home, const IntVarArgs& machine,
-	      const IntVarArgs& start, const IntArgs& duration,
-	      const IntVarArgs& end, const IntVarArgs& height,
-	      const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
+              const IntVarArgs& start, const IntArgs& duration,
+              const IntVarArgs& end, const IntVarArgs& height,
+              const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
   cumulatives(Space* home, const IntArgs& machine,
-	      const IntVarArgs& start, const IntArgs& duration,
-	      const IntVarArgs& end, const IntVarArgs& height,
-	      const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
+              const IntVarArgs& start, const IntArgs& duration,
+              const IntVarArgs& end, const IntVarArgs& height,
+              const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
    GECODE_INT_EXPORT void
   cumulatives(Space* home, const IntVarArgs& machine,
-	      const IntVarArgs& start, const IntVarArgs& duration,
-	      const IntVarArgs& end, const IntArgs& height,
-	      const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
+              const IntVarArgs& start, const IntVarArgs& duration,
+              const IntVarArgs& end, const IntArgs& height,
+              const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
   cumulatives(Space* home, const IntArgs& machine,
-	      const IntVarArgs& start, const IntVarArgs& duration,
-	      const IntVarArgs& end, const IntArgs& height,
-	      const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
+              const IntVarArgs& start, const IntVarArgs& duration,
+              const IntVarArgs& end, const IntArgs& height,
+              const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
   cumulatives(Space* home, const IntVarArgs& machine,
-	      const IntVarArgs& start, const IntArgs& duration,
-	      const IntVarArgs& end, const IntArgs& height,
-	      const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
+              const IntVarArgs& start, const IntArgs& duration,
+              const IntVarArgs& end, const IntArgs& height,
+              const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
   /** \brief Post propagators for the cumulatives constraint.
    *
    * \copydoc cumulatives()
    */
   GECODE_INT_EXPORT void
   cumulatives(Space* home, const IntArgs& machine,
-	      const IntVarArgs& start, const IntArgs& duration,
-	      const IntVarArgs& end, const IntArgs& height,
-	      const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
+              const IntVarArgs& start, const IntArgs& duration,
+              const IntVarArgs& end, const IntArgs& height,
+              const IntArgs& limit, bool at_most, IntConLevel icl=ICL_DEF);
   //@}
 
 
@@ -653,7 +654,7 @@ namespace Gecode {
     /// Repeat expression for this expression arbitrarily often (Kleene star)
     REG operator*(void);
     /** \brief Repeat expression for this expression arbitrarily often, but
-     *	at least once
+     *        at least once
      */
     REG operator+(void);
     /// Print expression
@@ -695,7 +696,7 @@ namespace Gecode {
      * the automaton should be minimized
      */
     void init(int start, Transition t_spec[], int f_spec[],
-	      bool minimize);
+              bool minimize);
   public:
     friend class Transitions;
     /// Default constructor (empty DFA)
@@ -749,7 +750,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   regular(Space* home, const IntVarArgs& x, DFA& d,
-	  IntConLevel=ICL_DEF);
+          IntConLevel=ICL_DEF);
 
   //@}
 
@@ -787,7 +788,7 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   sortedness(Space* home, const IntVarArgs& x, const IntVarArgs& y,
-	     IntConLevel icl=ICL_DEF);
+             IntConLevel icl=ICL_DEF);
 
   /**
    *  \brief Post propagator \f$\forall i\in\{0,\dots,|x|-1\}:
@@ -807,8 +808,8 @@ namespace Gecode {
 
   GECODE_INT_EXPORT void
   sortedness(Space*, const IntVarArgs& x, const IntVarArgs& y,
-	     const IntVarArgs& z,
-	     IntConLevel icl=ICL_DEF);
+             const IntVarArgs& z,
+             IntConLevel icl=ICL_DEF);
   //@}
 
   /**
@@ -831,28 +832,28 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   count(Space* home, const IntVarArgs& x, int n, IntRelType r, int m,
-	IntConLevel icl=ICL_DEF);
+        IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r m\f$
    *
    * Supports domain-consistent propagation only.
    */
   GECODE_INT_EXPORT void
   count(Space* home, const IntVarArgs& x, IntVar y, IntRelType r, int m,
-	IntConLevel icl=ICL_DEF);
+        IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\sim_r z\f$
    *
    * Supports domain-consistent propagation only.
    */
   GECODE_INT_EXPORT void
   count(Space* home, const IntVarArgs& x, int n, IntRelType r, IntVar z,
-	IntConLevel icl=ICL_DEF);
+        IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\sim_r z\f$
    *
    * Supports domain-consistent propagation only.
    */
   GECODE_INT_EXPORT void
   count(Space* home, const IntVarArgs& x, IntVar y, IntRelType r, IntVar z,
-	IntConLevel icl=ICL_DEF);
+        IntConLevel icl=ICL_DEF);
 
 
   /**
@@ -860,8 +861,8 @@ namespace Gecode {
    *  \f{eqnarray*}
    *       \forall t=(v, lb, ub) \in c: & &
    *       lb \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq ub \\
-   *	   \forall t=(v, unspec_{low}, unspec_{up}) \not\in c: & &
-   *	   unspec_{low} \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq unspec_{up}
+   *           \forall t=(v, unspec_{low}, unspec_{up}) \not\in c: & &
+   *           unspec_{low} \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq unspec_{up}
    *  \f}
    *
    *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
@@ -906,8 +907,8 @@ namespace Gecode {
    *  \f{eqnarray*}
    *      \forall t=(v, lb, ub) \in c: & &
    *      lb \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq ub \\
-   *	  \forall t=(v, 0, unspec) \not\in c: & &
-   *	  0 \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq unspec
+   *          \forall t=(v, 0, unspec) \not\in c: & &
+   *          0 \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq unspec
    *  \f}
    *
    *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
@@ -1096,72 +1097,72 @@ namespace Gecode {
   /// Post propagator for \f$ \lnot b_0 = b_1\f$
   GECODE_INT_EXPORT void
   bool_not(Space* home, BoolVar b0, BoolVar b1,
-	   IntConLevel=ICL_DEF);
+           IntConLevel=ICL_DEF);
 
   /// Post propagator for \f$ b_0 = b_1\f$
   GECODE_INT_EXPORT void
   bool_eq(Space* home, BoolVar b0, BoolVar b1,
-	  IntConLevel=ICL_DEF);
+          IntConLevel=ICL_DEF);
 
   /// Post propagator for \f$ b_0 \land b_1 = b_2 \f$
   GECODE_INT_EXPORT void
   bool_and(Space* home, BoolVar b0, BoolVar b1, BoolVar b2,
-	   IntConLevel=ICL_DEF);
+           IntConLevel=ICL_DEF);
   /// Post propagator for \f$ b_0 \land b_1 = b_2 \f$
   GECODE_INT_EXPORT void
   bool_and(Space* home, BoolVar b0, BoolVar b1, bool b2,
-	   IntConLevel=ICL_DEF);
+           IntConLevel=ICL_DEF);
   /// Post propagator for \f$ \bigwedge_{i=0}^{|b|-1} b_i = c\f$
   GECODE_INT_EXPORT void
   bool_and(Space* home, const BoolVarArgs& b, BoolVar c,
-	   IntConLevel=ICL_DEF);
+           IntConLevel=ICL_DEF);
   /// Post propagator for \f$ \bigwedge_{i=0}^{|b|-1} b_i = c\f$
   GECODE_INT_EXPORT void
   bool_and(Space* home, const BoolVarArgs& b, bool c,
-	   IntConLevel=ICL_DEF);
+           IntConLevel=ICL_DEF);
 
   /// Post propagator for \f$ b_0 \lor b_1 = b_2 \f$
   GECODE_INT_EXPORT void
   bool_or(Space* home, BoolVar b0, BoolVar b1, BoolVar b2,
-	  IntConLevel=ICL_DEF);
+          IntConLevel=ICL_DEF);
   /// Post propagator for \f$ b_0 \lor b_1 = b_2 \f$
   GECODE_INT_EXPORT void
   bool_or(Space* home, BoolVar b0, BoolVar b1, bool b2,
-	  IntConLevel=ICL_DEF);
+          IntConLevel=ICL_DEF);
   /// Post propagator for \f$ \bigvee_{i=0}^{|b|-1} b_i = c\f$
   GECODE_INT_EXPORT void
   bool_or(Space* home, const BoolVarArgs& b, BoolVar c,
-	  IntConLevel=ICL_DEF);
+          IntConLevel=ICL_DEF);
   /// Post propagator for \f$ \bigvee_{i=0}^{|b|-1} b_i = c\f$
   GECODE_INT_EXPORT void
   bool_or(Space* home, const BoolVarArgs& b, bool c,
-	  IntConLevel=ICL_DEF);
+          IntConLevel=ICL_DEF);
 
   /// Post propagator for \f$ b_0 \Rightarrow b_1 = b_2 \f$ (implication)
   GECODE_INT_EXPORT void
   bool_imp(Space* home, BoolVar b0, BoolVar b1, BoolVar b2,
-	   IntConLevel=ICL_DEF);
+           IntConLevel=ICL_DEF);
   /// Post propagator for \f$ b_0 \Rightarrow b_1 = b_2 \f$ (implication)
   GECODE_INT_EXPORT void
   bool_imp(Space* home, BoolVar b0, BoolVar b1, bool b2,
-	   IntConLevel=ICL_DEF);
+           IntConLevel=ICL_DEF);
 
   /// Post propagator for \f$ b_0 \Leftrightarrow b_1 = b_2 \f$ (equivalence)
   GECODE_INT_EXPORT void
   bool_eqv(Space* home, BoolVar b0, BoolVar b1, BoolVar b2,
-	   IntConLevel=ICL_DEF);
+           IntConLevel=ICL_DEF);
   /// Post propagator for \f$ b_0 \Leftrightarrow b_1 = b_2 \f$ (equivalence)
   GECODE_INT_EXPORT void
   bool_eqv(Space* home, BoolVar b0, BoolVar b1, bool b2,
-	   IntConLevel=ICL_DEF);
+           IntConLevel=ICL_DEF);
   /// Post propagator for \f$ b_1 \otimes b_2 = b_3 \f$ (exclusive or)
   GECODE_INT_EXPORT void
   bool_xor(Space* home, BoolVar b0, BoolVar b1, BoolVar b2,
-	   IntConLevel=ICL_DEF);
+           IntConLevel=ICL_DEF);
   /// Post propagator for \f$ b_1 \otimes b_2 = b_3 \f$ (exclusive or)
   GECODE_INT_EXPORT void
   bool_xor(Space* home, BoolVar b0, BoolVar b1, bool b2,
-	   IntConLevel=ICL_DEF);
+           IntConLevel=ICL_DEF);
 
   //@}
 
@@ -1252,21 +1253,21 @@ namespace Gecode {
   /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r c\f$
   GECODE_INT_EXPORT void
   linear(Space* home, const IntVarArgs& x,
-	 IntRelType r, int c,
-	 IntConLevel=ICL_DEF);
+         IntRelType r, int c,
+         IntConLevel=ICL_DEF);
   /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
   GECODE_INT_EXPORT void
   linear(Space* home, const IntVarArgs& x,
-	 IntRelType r, IntVar y,
-	 IntConLevel=ICL_DEF);
+         IntRelType r, IntVar y,
+         IntConLevel=ICL_DEF);
   /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r c\right)\Leftrightarrow b\f$
   GECODE_INT_EXPORT void
   linear(Space* home, const IntVarArgs& x,
-	 IntRelType r, int c, BoolVar b, IntConLevel=ICL_DEF);
+         IntRelType r, int c, BoolVar b, IntConLevel=ICL_DEF);
   /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i\sim_r y\right)\Leftrightarrow b\f$
   GECODE_INT_EXPORT void
   linear(Space* home, const IntVarArgs& x,
-	 IntRelType r, IntVar y, BoolVar b, IntConLevel=ICL_DEF);
+         IntRelType r, IntVar y, BoolVar b, IntConLevel=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -1274,8 +1275,8 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   linear(Space* home, const IntArgs& a, const IntVarArgs& x,
-	 IntRelType r, int c,
-	 IntConLevel=ICL_DEF);
+         IntRelType r, int c,
+         IntConLevel=ICL_DEF);
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -1283,8 +1284,8 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   linear(Space* home, const IntArgs& a, const IntVarArgs& x,
-	 IntRelType r, IntVar y,
-	 IntConLevel=ICL_DEF);
+         IntRelType r, IntVar y,
+         IntConLevel=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\right)\Leftrightarrow b\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -1292,8 +1293,8 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   linear(Space* home, const IntArgs& a, const IntVarArgs& x,
-	 IntRelType r, int c, BoolVar b,
-	 IntConLevel=ICL_DEF);
+         IntRelType r, int c, BoolVar b,
+         IntConLevel=ICL_DEF);
   /** \brief Post propagator for \f$\left(\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\right)\Leftrightarrow b\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
@@ -1301,20 +1302,20 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   linear(Space* home, const IntArgs& a, const IntVarArgs& x,
-	 IntRelType r, IntVar y, BoolVar b,
-	 IntConLevel=ICL_DEF);
+         IntRelType r, IntVar y, BoolVar b,
+         IntConLevel=ICL_DEF);
 
   /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r c\f$
   GECODE_INT_EXPORT void
   linear(Space* home, const BoolVarArgs& x,
-	 IntRelType r, int c,
-	 IntConLevel=ICL_DEF);
+         IntRelType r, int c,
+         IntConLevel=ICL_DEF);
 
   /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
   GECODE_INT_EXPORT void
   linear(Space* home, const BoolVarArgs& x,
-	 IntRelType r, IntVar y,
-	 IntConLevel=ICL_DEF);
+         IntRelType r, IntVar y,
+         IntConLevel=ICL_DEF);
 
   //@}
 

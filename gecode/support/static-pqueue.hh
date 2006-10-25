@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -123,9 +124,9 @@ namespace Gecode { namespace Support {
     while ((k << 1) < n) {
       int j = k << 1;
       if (j < n-1 && l(pq[j],pq[j+1]))
-	j++;
+        j++;
       if (!l(pq[k],pq[j]))
-	break;
+        break;
       std::swap(pq[k], pq[j]);
       k = j;
     }
@@ -169,10 +170,10 @@ namespace Gecode { namespace Support {
   PQueue<T,Less>::operator =(const PQueue<T,Less>& p) {
     if (this != &p) {
       if ((spq != NULL) && (--spq->ref == 0))
-	Memory::free(spq);
+        Memory::free(spq);
       spq = p.spq;
       if (spq != NULL)
-	spq->ref++;
+        spq->ref++;
     }
     return *this;
   }
@@ -183,12 +184,12 @@ namespace Gecode { namespace Support {
     if (share) {
       spq = p.spq;
       if (spq != NULL)
-	spq->ref++;
+        spq->ref++;
     } else {
       if (p.spq != NULL) {
-	spq = allocate(p.spq->n,p.spq->l);
+        spq = allocate(p.spq->n,p.spq->l);
       } else {
-	spq = NULL;
+        spq = NULL;
       }
     }
   }

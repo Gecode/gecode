@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -62,9 +63,9 @@ namespace Gecode {
     } data;
 
     void followpos(Int::Regular::PosSetAllocator&,
-		   Int::Regular::NodeInfo&,
-		   Int::Regular::PosInfo*,
-		   int&);
+                   Int::Regular::NodeInfo&,
+                   Int::Regular::PosInfo*,
+                   int&);
     void inc(void);
     void dec(void);
     unsigned int n_pos(void) const;
@@ -101,11 +102,11 @@ namespace Gecode {
       switch (e->type) {
       case ET_OR:
       case ET_CONC:
-	if ((e->data.kids[1] != NULL) && (--e->data.kids[1]->use_cnt == 0))
-	  todo.push(e->data.kids[1]);
+        if ((e->data.kids[1] != NULL) && (--e->data.kids[1]->use_cnt == 0))
+          todo.push(e->data.kids[1]);
       case ET_STAR:
-	if ((e->data.kids[0] != NULL) && (--e->data.kids[0]->use_cnt == 0))
-	  todo.push(e->data.kids[0]);
+        if ((e->data.kids[0] != NULL) && (--e->data.kids[0]->use_cnt == 0))
+          todo.push(e->data.kids[0]);
       default: ;
       }
       Memory::free(e);
@@ -138,22 +139,22 @@ namespace Gecode {
       return os << "[" << data.symbol << "]";
     case ET_STAR:
       {
-	bool par = ((data.kids[0] != NULL) &&
-		    ((data.kids[0]->type == ET_CONC) ||
-		     (data.kids[0]->type == ET_OR)));
-	return data.kids[0]->print(os << (par ? "*(" : "*"))
-				      << (par ? ")" : "");
+        bool par = ((data.kids[0] != NULL) &&
+                    ((data.kids[0]->type == ET_CONC) ||
+                     (data.kids[0]->type == ET_OR)));
+        return data.kids[0]->print(os << (par ? "*(" : "*"))
+                                      << (par ? ")" : "");
       }
     case ET_CONC:
       {
-	bool par0 = ((data.kids[0] != NULL) &&
-		     (data.kids[0]->type == ET_OR));
-	std::ostream& os1 = data.kids[0]->print(os << (par0 ? "(" : ""))
-						   << (par0 ? ")+" : "+");
-	bool par1 = ((data.kids[1] != NULL) &&
-		     (data.kids[1]->type == ET_OR));
-	return data.kids[1]->print(os1 << (par1 ? "(" : "") )
-				       << (par1 ? ")" : "");
+        bool par0 = ((data.kids[0] != NULL) &&
+                     (data.kids[0]->type == ET_OR));
+        std::ostream& os1 = data.kids[0]->print(os << (par0 ? "(" : ""))
+                                                   << (par0 ? ")+" : "+");
+        bool par1 = ((data.kids[1] != NULL) &&
+                     (data.kids[1]->type == ET_OR));
+        return data.kids[1]->print(os1 << (par1 ? "(" : "") )
+                                       << (par1 ? ")" : "");
       }
     case ET_OR:
       return data.kids[1]->print(data.kids[0]->print(os) << "|");
@@ -254,11 +255,11 @@ namespace Gecode {
       int i = n;
       REG r0 = *this;
       while (i>0)
-	if (i & 1) {
-	  r = r0+r; i--;
-	} else {
-	  r0 = r0+r0; i >>= 1;
-	}
+        if (i & 1) {
+          r = r0+r; i--;
+        } else {
+          r0 = r0+r0; i >>= 1;
+        }
     }
     if (m > n) {
       int i = m-n;
@@ -266,11 +267,11 @@ namespace Gecode {
       s0 = s0 | *this;
       REG s;
       while (i>0)
-	if (i & 1) {
-	  s = s0+s; i--;
-	} else {
-	  s0 = s0+s0; i >>= 1;
-	}
+        if (i & 1) {
+          s = s0+s; i--;
+        } else {
+          s0 = s0+s0; i >>= 1;
+        }
       r = r + s;
     }
     return r;
@@ -283,11 +284,11 @@ namespace Gecode {
       REG r0 = *this;
       int i = n;
       while (i>0)
-	if (i & 1) {
-	  r = r0+r; i--;
-	} else {
-	  r0 = r0+r0; i >>= 1;
-	}
+        if (i & 1) {
+          r = r0+r; i--;
+        } else {
+          r0 = r0+r0; i >>= 1;
+        }
     }
     return r+**this;
   }
@@ -342,27 +343,27 @@ namespace Gecode {
     forceinline bool
     PosSet::in(int p) const {
       for (const PosSet* ps = this; ps != NULL; ps = ps->next)
-	if (ps->pos == p) {
-	  return true;
-	} else if (ps->pos < p) {
-	  return false;
-	}
+        if (ps->pos == p) {
+          return true;
+        } else if (ps->pos < p) {
+          return false;
+        }
       return false;
     }
 
     forceinline PosSetCmp
     PosSet::cmp(PosSet* ps1, PosSet* ps2) {
       while ((ps1 != NULL) && (ps2 != NULL)) {
-	if (ps1 == ps2)
-	  return PSC_EQ;
-	if (ps1->pos < ps2->pos)
-	  return PSC_LE;
-	if (ps1->pos > ps2->pos)
-	  return PSC_GR;
-	ps1 = ps1->next; ps2 = ps2->next;
+        if (ps1 == ps2)
+          return PSC_EQ;
+        if (ps1->pos < ps2->pos)
+          return PSC_LE;
+        if (ps1->pos > ps2->pos)
+          return PSC_GR;
+        ps1 = ps1->next; ps2 = ps2->next;
       }
       if (ps1 == ps2)
-	return PSC_EQ;
+        return PSC_EQ;
       return ps1 == NULL ? PSC_LE : PSC_GR;
     }
 
@@ -371,19 +372,19 @@ namespace Gecode {
       PosSet*  ps;
       PosSet** p = &ps;
       while ((ps1 != NULL) && (ps2 != NULL)) {
-	if (ps1 == ps2) {
-	  *p = ps1; return ps;
-	}
-	PosSet* n = new (psm) PosSet;
-	*p = n; p = &n->next;
-	if (ps1->pos == ps2->pos) {
-	  n->pos = ps1->pos;
-	  ps1 = ps1->next; ps2 = ps2->next;
-	} else if (ps1->pos > ps2->pos) {
-	  n->pos = ps1->pos; ps1 = ps1->next;
-	} else {
-	  n->pos = ps2->pos; ps2 = ps2->next;
-	}
+        if (ps1 == ps2) {
+          *p = ps1; return ps;
+        }
+        PosSet* n = new (psm) PosSet;
+        *p = n; p = &n->next;
+        if (ps1->pos == ps2->pos) {
+          n->pos = ps1->pos;
+          ps1 = ps1->next; ps2 = ps2->next;
+        } else if (ps1->pos > ps2->pos) {
+          n->pos = ps1->pos; ps1 = ps1->next;
+        } else {
+          n->pos = ps2->pos; ps2 = ps2->next;
+        }
       }
       *p = (ps1 != NULL) ? ps1 : ps2;
       return ps;
@@ -416,8 +417,8 @@ namespace Gecode {
 
   void
   REG::Exp::followpos(Int::Regular::PosSetAllocator& psm,
-		      Int::Regular::NodeInfo& ni,
-		      Int::Regular::PosInfo* pi, int& p) {
+                      Int::Regular::NodeInfo& ni,
+                      Int::Regular::PosInfo* pi, int& p) {
     using Int::Regular::PosSet;
     using Int::Regular::NodeInfo;
     if (this == NULL) {
@@ -429,46 +430,46 @@ namespace Gecode {
     switch (type) {
     case ET_SYMBOL:
       {
-	pi[p].symbol = data.symbol;
-	PosSet* ps = new (psm) PosSet(p);
-	p++;
-	ni.nullable = false;
-	ni.firstpos = ps;
-	ni.lastpos  = ps;
+        pi[p].symbol = data.symbol;
+        PosSet* ps = new (psm) PosSet(p);
+        p++;
+        ni.nullable = false;
+        ni.firstpos = ps;
+        ni.lastpos  = ps;
       }
       break;
     case ET_STAR:
       {
-	data.kids[0]->followpos(psm, ni, pi, p);
-	ni.nullable = true;
-	for (PosSet* ps = ni.lastpos; ps != NULL; ps = ps->next)
-	  pi[ps->pos].followpos =
-	    PosSet::cup(psm,pi[ps->pos].followpos, ni.firstpos);
+        data.kids[0]->followpos(psm, ni, pi, p);
+        ni.nullable = true;
+        for (PosSet* ps = ni.lastpos; ps != NULL; ps = ps->next)
+          pi[ps->pos].followpos =
+            PosSet::cup(psm,pi[ps->pos].followpos, ni.firstpos);
       }
       break;
     case ET_CONC:
       {
-	NodeInfo ni0; data.kids[0]->followpos(psm, ni0, pi, p);
-	data.kids[1]->followpos(psm, ni, pi, p);
-	for (PosSet* ps = ni0.lastpos; ps != NULL; ps = ps->next)
-	  pi[ps->pos].followpos =
-	    PosSet::cup(psm,pi[ps->pos].followpos,ni.firstpos);
-	ni.firstpos =
-	  ni0.nullable ? PosSet::cup(psm,ni0.firstpos,ni.firstpos)
-	  : ni0.firstpos;
-	ni.lastpos =
-	  ni.nullable ? PosSet::cup(psm,ni0.lastpos,ni.lastpos)
-	  : ni.lastpos;
-	ni.nullable &= ni0.nullable;
+        NodeInfo ni0; data.kids[0]->followpos(psm, ni0, pi, p);
+        data.kids[1]->followpos(psm, ni, pi, p);
+        for (PosSet* ps = ni0.lastpos; ps != NULL; ps = ps->next)
+          pi[ps->pos].followpos =
+            PosSet::cup(psm,pi[ps->pos].followpos,ni.firstpos);
+        ni.firstpos =
+          ni0.nullable ? PosSet::cup(psm,ni0.firstpos,ni.firstpos)
+          : ni0.firstpos;
+        ni.lastpos =
+          ni.nullable ? PosSet::cup(psm,ni0.lastpos,ni.lastpos)
+          : ni.lastpos;
+        ni.nullable &= ni0.nullable;
       }
       break;
     case ET_OR:
       {
-	NodeInfo ni0; data.kids[0]->followpos(psm, ni0, pi, p);
-	data.kids[1]->followpos(psm, ni, pi, p);
-	ni.nullable |= ni0.nullable;
-	ni.firstpos = PosSet::cup(psm,ni0.firstpos,ni.firstpos);
-	ni.lastpos  = PosSet::cup(psm,ni0.lastpos,ni.lastpos);
+        NodeInfo ni0; data.kids[0]->followpos(psm, ni0, pi, p);
+        data.kids[1]->followpos(psm, ni, pi, p);
+        ni.nullable |= ni0.nullable;
+        ni.firstpos = PosSet::cup(psm,ni0.firstpos,ni.firstpos);
+        ni.lastpos  = PosSet::cup(psm,ni0.lastpos,ni.lastpos);
       }
       break;
     default: GECODE_NEVER;
@@ -547,13 +548,13 @@ namespace Gecode {
       StateNode** p = NULL;
       StateNode*  n = &root;
       do {
-	switch (PosSet::cmp(ps,n->pos)) {
-	case PSC_EQ: return n->state;
-	case PSC_LE: p = &n->left;  n = *p; break;
-	case PSC_GR: p = &n->right; n = *p; break;
-	default: GECODE_NEVER;
-	}
-	d++;
+        switch (PosSet::cmp(ps,n->pos)) {
+        case PSC_EQ: return n->state;
+        case PSC_LE: p = &n->left;  n = *p; break;
+        case PSC_GR: p = &n->right; n = *p; break;
+        default: GECODE_NEVER;
+        }
+        d++;
       } while (n != NULL);
       n = new (spm) StateNode; *p = n;
       n->pos   = ps;
@@ -572,12 +573,12 @@ namespace Gecode {
     public:
       forceinline bool
       operator()(int x, int y) {
-	return x < y;
+        return x < y;
       }
       forceinline static void
       sort(int s[], int n) {
-	SymbolsInc o;
-	Support::quicksort<int,SymbolsInc>(s,n,o);
+        SymbolsInc o;
+        Support::quicksort<int,SymbolsInc>(s,n,o);
       }
     };
 
@@ -692,7 +693,7 @@ namespace Gecode {
     int n_symbols = 1;
     for (int i = 1; i<n_pos-1; i++)
       if (symbols[i-1] != symbols[i])
-	symbols[n_symbols++] = symbols[i];
+        symbols[n_symbols++] = symbols[i];
 
     // Compute states and transitions
     TransitionBag tb;
@@ -700,12 +701,12 @@ namespace Gecode {
     while (!sp.empty()) {
       StateNode* sn = sp.pop();
       for (int i = n_symbols; i--; ) {
-	PosSet* u = NULL;
-	for (PosSet* ps = sn->pos; ps != NULL; ps = ps->next)
-	  if (pi[ps->pos].symbol == symbols[i])
-	    u = PosSet::cup(psm,u,pi[ps->pos].followpos);
-	if (u != NULL)
-	  tb.add(sn->state,symbols[i],sp.state(spm,u));
+        PosSet* u = NULL;
+        for (PosSet* ps = sn->pos; ps != NULL; ps = ps->next)
+          if (pi[ps->pos].symbol == symbols[i])
+            u = PosSet::cup(psm,u,pi[ps->pos].followpos);
+        if (u != NULL)
+          tb.add(sn->state,symbols[i],sp.state(spm,u));
       }
     }
     tb.finish();
@@ -714,7 +715,7 @@ namespace Gecode {
     FinalBag fb;
     for (StateNode* n = sp.all; n != NULL; n = n->next)
       if (n->pos->in(n_pos-1))
-	fb.add(n->state);
+        fb.add(n->state);
     fb.finish();
 
     init(0,tb.transitions(),fb.finals(),true);

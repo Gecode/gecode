@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -80,7 +81,7 @@ public:
     weeks(t[o.size].weeks),
     players(groups*playersInGroup),
     groupsS(this,groups*weeks,IntSet::empty,0,players-1,
-	    playersInGroup,playersInGroup),
+            playersInGroup,playersInGroup),
     groupsSInv(this, weeks*players, 0, groups-1) {
 
     SetVar allPlayers(this, 0, players-1, 0, players-1);
@@ -89,7 +90,7 @@ public:
     for (int w=0; w<weeks; w++) {
       SetVarArgs p(groups);
       for (int g=0; g < groups; g++)
-       	p[g] = group(w,g);
+               p[g] = group(w,g);
 
       rel(this,SOT_DUNION,p,allPlayers);
     }
@@ -97,11 +98,11 @@ public:
     // No two golfers play in the same group more than once
     for (int w=0; w<weeks; w++) {
       for (int g=0; g<groups; g++) {
-      	SetVar v = group(w,g);
-      	for (int i=(w+1)*groups; i<weeks*groups; i++) {
-      	  SetVar atMostOne(this,IntSet::empty,0,players-1,0,1);
-	  rel(this, v, SOT_INTER, groupsS[i], SRT_EQ, atMostOne);
-      	}
+              SetVar v = group(w,g);
+              for (int i=(w+1)*groups; i<weeks*groups; i++) {
+                SetVar atMostOne(this,IntSet::empty,0,players-1,0,1);
+          rel(this, v, SOT_INTER, groupsS[i], SRT_EQ, atMostOne);
+              }
       }
     }
 
@@ -119,15 +120,15 @@ public:
       // Redundant constraint:
       // in each week, one player plays in only one group
       for (int w=0; w < weeks; w++) {
- 	for (int p=0; p < players; p++) {
- 	  BoolVarArgs bs(groups);
- 	  for (int g=0; g<groups; g++) {
-	    BoolVar b(this,0,1);
-	    dom(this, group(w,g), SRT_SUP, p, b);
-	    bs[g] = b;
-	  }
- 	  linear(this, bs, IRT_EQ, 1);
- 	}
+         for (int p=0; p < players; p++) {
+           BoolVarArgs bs(groups);
+           for (int g=0; g<groups; g++) {
+            BoolVar b(this,0,1);
+            dom(this, group(w,g), SRT_SUP, p, b);
+            bs[g] = b;
+          }
+           linear(this, bs, IRT_EQ, 1);
+         }
        }
 
       // Redundant constraint:
@@ -136,51 +137,51 @@ public:
 
       // Symmetry breaking: order groups
       for (int w=0; w<weeks; w++) {
-	for (int g=0; g<groups-1; g++) {
-	  IntVar minG1(this, 0, players-1);
-	  IntVar minG2(this, 0, players-1);
-	  SetVar g1 = group(w,g);
-	  SetVar g2 = group(w,g+1);
-	  min(this, g1, minG1);
-	  min(this, g2, minG2);
-	  rel(this, minG1, IRT_LE, minG2);
-	}
+        for (int g=0; g<groups-1; g++) {
+          IntVar minG1(this, 0, players-1);
+          IntVar minG2(this, 0, players-1);
+          SetVar g1 = group(w,g);
+          SetVar g2 = group(w,g+1);
+          min(this, g1, minG1);
+          min(this, g2, minG2);
+          rel(this, minG1, IRT_LE, minG2);
+        }
       }
 
       // Symmetry breaking: order weeks
       // minElem(group(w,0)\{0}) < minElem(group(w+1,0)\{0})
       for (int w=0; w<weeks-1; w++) {
-	SetVar g1(this, IntSet::empty, 1, players-1);
-	SetVar g2(this, IntSet::empty, 1, players-1);
-	SetVar zero1(this, IntSet::empty,0,0);
-	SetVar zero2(this, IntSet::empty,0,0);
-	rel(this, g1, SOT_DUNION, zero1, SRT_EQ, group(w,0));
-	rel(this, g2, SOT_DUNION, zero2, SRT_EQ, group(w+1,0));
-	IntVar minG1(this, 0, players-1);
-	IntVar minG2(this, 0, players-1);
-	min(this, g1, minG1);
-	min(this, g2, minG2);
-	rel(this, minG1, IRT_LE, minG2);
+        SetVar g1(this, IntSet::empty, 1, players-1);
+        SetVar g2(this, IntSet::empty, 1, players-1);
+        SetVar zero1(this, IntSet::empty,0,0);
+        SetVar zero2(this, IntSet::empty,0,0);
+        rel(this, g1, SOT_DUNION, zero1, SRT_EQ, group(w,0));
+        rel(this, g2, SOT_DUNION, zero2, SRT_EQ, group(w+1,0));
+        IntVar minG1(this, 0, players-1);
+        IntVar minG2(this, 0, players-1);
+        min(this, g1, minG1);
+        min(this, g2, minG2);
+        rel(this, minG1, IRT_LE, minG2);
       }
 
       // Initialize the dual variables:
       // groupInv(w,p) is player p's group in week w
       for (int w=0; w<weeks; w++) {
-	for (int p=0; p<players; p++) {
-	  SetVar thisPlayer(this, p,p, 0, players-1);
-	  SetVarArgs thisWeek(groups);
-	  for (int g=0; g<groups; g++)
-	    thisWeek[g] = group(w,g);
-	  selectSet(this, thisWeek, groupInv(w,p), thisPlayer);
-	}
+        for (int p=0; p<players; p++) {
+          SetVar thisPlayer(this, p,p, 0, players-1);
+          SetVarArgs thisWeek(groups);
+          for (int g=0; g<groups; g++)
+            thisWeek[g] = group(w,g);
+          selectSet(this, thisWeek, groupInv(w,p), thisPlayer);
+        }
       }
 
       // Symmetry breaking: order players
       // For all p<groups : groupInv(w,p) <= p
       for (int w=0; w<weeks; w++) {
-	for (int p=0; p<groups; p++) {
-	  rel(this, groupInv(w,p), IRT_LQ, p);
-	}
+        for (int p=0; p<groups; p++) {
+          rel(this, groupInv(w,p), IRT_LQ, p);
+        }
       }
 
     }
@@ -207,16 +208,16 @@ public:
     for (int w=0; w<weeks; w++) {
       std::cout << "Week " << w << ": " << std::endl << "    ";
       for (int g=0; g<groups; g++) {
-	SetVarGlbValues glb(group(w,g));
-	std::cout << "(" << glb.val();
-	++glb;
-	while(glb()) {
-	  std::cout << " " << glb.val();
-	  ++glb;
-	}
-	std::cout << ")";
-	if (g < groups-1) std::cout << " ";
-	if (g > 0 && g % 4 == 0) std::cout << std::endl << "    ";
+        SetVarGlbValues glb(group(w,g));
+        std::cout << "(" << glb.val();
+        ++glb;
+        while(glb()) {
+          std::cout << " " << glb.val();
+          ++glb;
+        }
+        std::cout << ")";
+        if (g < groups-1) std::cout << " ";
+        if (g > 0 && g % 4 == 0) std::cout << std::endl << "    ";
       }
       std::cout << std::endl;
     }
@@ -231,7 +232,7 @@ main(int argc, char** argv) {
   o.solutions  = 1;
   if (o.size >= n_examples) {
     std::cerr << "Error: size must be between 0 and " << n_examples - 1
-	      << std::endl;
+              << std::endl;
     return 1;
   }
   Example::run<Golf,DFS>(o);

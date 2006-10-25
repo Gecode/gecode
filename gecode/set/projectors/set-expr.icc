@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -96,14 +97,14 @@ namespace Gecode {
      *  anti-monotone way
      */
     SetExprRanges(const ViewArray<Set::SetView>& x, SetExpr& s,
-		  bool monotone);
+                  bool monotone);
     /** Initialize with the views \a x, a set expression code \a c,
      *  and a flag whether \a c is to be interpreted in a monotone or
      *  anti-monotone way
      */
     SetExprRanges(const ViewArray<Set::SetView>& x,
-		  const SetExprCode& s,
-		  bool monotone);
+                  const SetExprCode& s,
+                  bool monotone);
     /// Destructor
     ~SetExprRanges(void);
     //@}

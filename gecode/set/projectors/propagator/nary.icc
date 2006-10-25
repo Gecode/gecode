@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -32,7 +33,7 @@ namespace Gecode { namespace Set { namespace Projection {
     for (int i=x0.size(); i--;) {
       pc[i] = scope[i];
       if (negated)
-	pc[i] = ComplementView<SetView>::pc_negateset(pc[i]);
+        pc[i] = ComplementView<SetView>::pc_negateset(pc[i]);
       x[i].subscribe(home, this, pc[i]);
     }
   }
@@ -62,8 +63,8 @@ namespace Gecode { namespace Set { namespace Projection {
   NaryProjection<negated>::dispose(Space* home) {
     if (!home->failed()) {
       for (int i=x.size(); i--;)
-	if (pc[i] != PC_SET_ANY + 1)
-	  x[i].cancel(home, this, pc[i]);
+        if (pc[i] != PC_SET_ANY + 1)
+          x[i].cancel(home, this, pc[i]);
     }
     ps.~ProjectorSet();
     pc.~SharedArray();
@@ -74,7 +75,7 @@ namespace Gecode { namespace Set { namespace Projection {
   template <bool negated>
   ExecStatus
   NaryProjection<negated>::post(Space* home,
-				ViewArray<SetView>& x, ProjectorSet& ps) {
+                                ViewArray<SetView>& x, ProjectorSet& ps) {
     if (ps.arity() != x.size()-1) {
       throw Set::InvalidProjector("");
     }
@@ -94,7 +95,7 @@ namespace Gecode { namespace Set { namespace Projection {
     bool done = true;
     for (int i=x.size(); i--;)
       if (!x[i].assigned()) {
-	done = false; break;
+        done = false; break;
       }
     ExecStatus es = ps.propagate<negated>(home, x);
     GECODE_ES_CHECK(es);

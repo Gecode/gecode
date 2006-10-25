@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -37,7 +38,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, class C, PropCond pc>
   forceinline
   LinTer<Val,A,B,C,pc>::LinTer(Space* home, bool share,
-			       LinTer<Val,A,B,C,pc>& p)
+                               LinTer<Val,A,B,C,pc>& p)
     : Propagator(home,share,p), c(p.c) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -47,7 +48,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, class C, PropCond pc>
   forceinline
   LinTer<Val,A,B,C,pc>::LinTer(Space* home, bool share, Propagator& p,
-			       A y0, B y1, C y2, Val c0)
+                               A y0, B y1, C y2, Val c0)
     : Propagator(home,share,p), c(c0) {
     x0.update(home,share,y0);
     x1.update(home,share,y1);
@@ -97,7 +98,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, class C>
   forceinline
   EqTer<Val,A,B,C>::EqTer(Space* home, bool share, Propagator& p,
-			  A x0, B x1, C x2, Val c)
+                          A x0, B x1, C x2, Val c)
     : LinTer<Val,A,B,C,PC_INT_BND>(home,share,p,x0,x1,x2,c) {}
 
   template <class Val, class A, class B, class C>
@@ -117,11 +118,11 @@ namespace Gecode { namespace Int { namespace Linear {
     TM_ALL    = TM_X0_MIN|TM_X0_MAX|TM_X1_MIN|TM_X1_MAX|TM_X2_MIN|TM_X2_MAX
   };
 
-#define GECODE_INT_PV(CASE,TELL,UPDATE)		\
-  if (bm & (CASE)) {				\
-    bm -= (CASE); ModEvent me = (TELL);		\
-    if (me_failed(me))   return ES_FAILED;	\
-    if (me_modified(me)) bm |= (UPDATE);	\
+#define GECODE_INT_PV(CASE,TELL,UPDATE)                \
+  if (bm & (CASE)) {                                \
+    bm -= (CASE); ModEvent me = (TELL);                \
+    if (me_failed(me))   return ES_FAILED;        \
+    if (me_modified(me)) bm |= (UPDATE);        \
   }
 
   template <class Val, class A, class B, class C>
@@ -130,17 +131,17 @@ namespace Gecode { namespace Int { namespace Linear {
     int bm = TM_ALL;
     do {
       GECODE_INT_PV(TM_X0_MIN, x0.gq(home,c-x1.max()-x2.max()),
-		    TM_X1_MAX | TM_X2_MAX);
+                    TM_X1_MAX | TM_X2_MAX);
       GECODE_INT_PV(TM_X1_MIN, x1.gq(home,c-x0.max()-x2.max()),
-		    TM_X0_MAX | TM_X2_MAX);
+                    TM_X0_MAX | TM_X2_MAX);
       GECODE_INT_PV(TM_X2_MIN, x2.gq(home,c-x0.max()-x1.max()),
-		    TM_X0_MAX | TM_X1_MAX);
+                    TM_X0_MAX | TM_X1_MAX);
       GECODE_INT_PV(TM_X0_MAX, x0.lq(home,c-x1.min()-x2.min()),
-		    TM_X1_MIN | TM_X2_MIN);
+                    TM_X1_MIN | TM_X2_MIN);
       GECODE_INT_PV(TM_X1_MAX, x1.lq(home,c-x0.min()-x2.min()),
-		    TM_X0_MIN | TM_X2_MIN);
+                    TM_X0_MIN | TM_X2_MIN);
       GECODE_INT_PV(TM_X2_MAX, x2.lq(home,c-x0.min()-x1.min()),
-		    TM_X0_MIN | TM_X1_MIN);
+                    TM_X0_MIN | TM_X1_MIN);
     } while (bm);
     return (x0.assigned() && x1.assigned()) ? ES_SUBSUMED : ES_FIX;
   }
@@ -181,7 +182,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, class C>
   forceinline
   NqTer<Val,A,B,C>::NqTer(Space* home, bool share, Propagator& p,
-			  A x0, B x1, C x2, Val c)
+                          A x0, B x1, C x2, Val c)
     : LinTer<Val,A,B,C,PC_INT_VAL>(home,share,p,x0,x1,x2,c) {}
 
 
@@ -237,7 +238,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, class C>
   forceinline
   LqTer<Val,A,B,C>::LqTer(Space* home, bool share, Propagator& p,
-			  A x0, B x1, C x2, Val c)
+                          A x0, B x1, C x2, Val c)
     : LinTer<Val,A,B,C,PC_INT_BND>(home,share,p,x0,x1,x2,c) {}
 
   template <class Val, class A, class B, class C>

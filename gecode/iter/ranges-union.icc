@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -118,10 +119,10 @@ namespace Gecode { namespace Iter { namespace Ranges {
     do {
       goOn = false;
       if (i() && (i.min() <= ma+1)) {
-	ma = std::max(ma,i.max()); ++i; goOn=true;
+        ma = std::max(ma,i.max()); ++i; goOn=true;
       }
       if (j() && (j.min() <= ma+1)) {
-	ma = std::max(ma,j.max()); ++j; goOn=true;
+        ma = std::max(ma,j.max()); ++j; goOn=true;
       }
     } while (goOn);
   }
@@ -168,14 +169,14 @@ namespace Gecode { namespace Iter { namespace Ranges {
     ma = r.top().max();
     do {
       if (ma < r.top().max())
-	ma = r.top().max();
+        ma = r.top().max();
       ++(r.top());
       if (!(r.top())()) {
-	r.remove();
-	if (r.empty())
-	  return;
+        r.remove();
+        if (r.empty())
+          return;
       } else {
-	r.fix();
+        r.fix();
       }
     } while (ma+1 >= r.top().min());
   }
@@ -191,7 +192,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     : order(), r(n,order) {
     for (int i = n; i--; )
       if (r0[i]())
-	r.insert(r0[i]);
+        r.insert(r0[i]);
     operator++();
   }
 
@@ -201,7 +202,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
     r.init(n,order);
     for (int i = n; i--; )
       if (r0[i]())
-	r.insert(r0[i]);
+        r.insert(r0[i]);
     operator++();
   }
 

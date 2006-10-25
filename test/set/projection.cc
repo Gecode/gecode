@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -168,17 +169,17 @@ namespace Projection {
     }
     virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
       Gecode::Projector p0(0,
-			   Gecode::SetExpr(2) - Gecode::SetExpr(1),
-			   Gecode::SetExpr(2)
-			   );
+                           Gecode::SetExpr(2) - Gecode::SetExpr(1),
+                           Gecode::SetExpr(2)
+                           );
       Gecode::Projector p1(1,
-			   Gecode::SetExpr(2) - Gecode::SetExpr(0),
-			   Gecode::SetExpr(2)
-			   );
+                           Gecode::SetExpr(2) - Gecode::SetExpr(0),
+                           Gecode::SetExpr(2)
+                           );
       Gecode::Projector p2(2,
-			   Gecode::SetExpr(0) || Gecode::SetExpr(1),
-			   Gecode::SetExpr(0) || Gecode::SetExpr(1)
-			   );
+                           Gecode::SetExpr(0) || Gecode::SetExpr(1),
+                           Gecode::SetExpr(0) || Gecode::SetExpr(1)
+                           );
       Gecode::ProjectorSet ps;
       ps.add(p0); ps.add(p1); ps.add(p2);
       Gecode::projector(home, x[0], x[1], x[2], ps);
@@ -191,42 +192,42 @@ namespace Projection {
       Gecode::cardinality(home, x[2], x2c);
 
       Gecode::Projector p3(2,
-			   Gecode::SetExpr(0) && Gecode::SetExpr(1),
-			   Gecode::SetExpr(0) && Gecode::SetExpr(1)
-			   );
+                           Gecode::SetExpr(0) && Gecode::SetExpr(1),
+                           Gecode::SetExpr(0) && Gecode::SetExpr(1)
+                           );
       IntVar x0ix1c(home, 0, 20);
       Gecode::projector(home, x[0], x[1], x[2], x0ix1c, p3);
       Gecode::post(home, x2c == x0c + x1c - x0ix1c);
 
       Gecode::Projector p4(2,
-			   Gecode::SetExpr(0) - Gecode::SetExpr(1),
-			   Gecode::SetExpr(0) - Gecode::SetExpr(1)
-			   );
+                           Gecode::SetExpr(0) - Gecode::SetExpr(1),
+                           Gecode::SetExpr(0) - Gecode::SetExpr(1)
+                           );
       IntVar x0mx1c(home, 0, 20);
       Gecode::projector(home, x[0], x[1], x[2], x0mx1c, p4);
       Gecode::post(home, x1c == x2c - x0mx1c);
 
       Gecode::Projector p5(2,
-			   Gecode::SetExpr(1) - Gecode::SetExpr(0),
-			   Gecode::SetExpr(1) - Gecode::SetExpr(0)
-			   );
+                           Gecode::SetExpr(1) - Gecode::SetExpr(0),
+                           Gecode::SetExpr(1) - Gecode::SetExpr(0)
+                           );
       IntVar x1mx0c(home, 0, 20);
       Gecode::projector(home, x[0], x[1], x[2], x1mx0c, p5);
       Gecode::post(home, x0c == x2c - x1mx0c);
     }
     virtual void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
       Gecode::Projector p0(0,
-			   Gecode::SetExpr(2) - Gecode::SetExpr(1),
-			   Gecode::SetExpr(2)
-			   );
+                           Gecode::SetExpr(2) - Gecode::SetExpr(1),
+                           Gecode::SetExpr(2)
+                           );
       Gecode::Projector p1(1,
-			   Gecode::SetExpr(2) - Gecode::SetExpr(0),
-			   Gecode::SetExpr(2)
-			   );
+                           Gecode::SetExpr(2) - Gecode::SetExpr(0),
+                           Gecode::SetExpr(2)
+                           );
       Gecode::Projector p2(2,
-			   Gecode::SetExpr(0) || Gecode::SetExpr(1),
-			   Gecode::SetExpr(0) || Gecode::SetExpr(1)
-			   );
+                           Gecode::SetExpr(0) || Gecode::SetExpr(1),
+                           Gecode::SetExpr(0) || Gecode::SetExpr(1)
+                           );
       Gecode::ProjectorSet ps;
       ps.add(p0); ps.add(p1); ps.add(p2);
       Gecode::projector(home, x[0], x[1], x[2], b, ps);
@@ -247,17 +248,17 @@ namespace Projection {
     }
     virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
       Gecode::Projector p0(0,
-			   Gecode::SetExpr(2),
-			   Gecode::SetExpr(2) || -Gecode::SetExpr(1)
-			   );
+                           Gecode::SetExpr(2),
+                           Gecode::SetExpr(2) || -Gecode::SetExpr(1)
+                           );
       Gecode::Projector p1(1,
-			   Gecode::SetExpr(2),
-			   Gecode::SetExpr(2) || -Gecode::SetExpr(0)
-			   );
+                           Gecode::SetExpr(2),
+                           Gecode::SetExpr(2) || -Gecode::SetExpr(0)
+                           );
       Gecode::Projector p2(2,
-			   Gecode::SetExpr(0) && Gecode::SetExpr(1),
-			   Gecode::SetExpr(0) && Gecode::SetExpr(1)
-			   );
+                           Gecode::SetExpr(0) && Gecode::SetExpr(1),
+                           Gecode::SetExpr(0) && Gecode::SetExpr(1)
+                           );
       Gecode::ProjectorSet ps;
       ps.add(p0); ps.add(p1); ps.add(p2);
       Gecode::projector(home, x[0], x[1], x[2], ps);
@@ -270,25 +271,25 @@ namespace Projection {
       Gecode::cardinality(home, x[2], x2c);
 
       Gecode::Projector p3(2,
-			   Gecode::SetExpr(0) || Gecode::SetExpr(1),
-			   Gecode::SetExpr(0) || Gecode::SetExpr(1)
-			   );
+                           Gecode::SetExpr(0) || Gecode::SetExpr(1),
+                           Gecode::SetExpr(0) || Gecode::SetExpr(1)
+                           );
       IntVar x0ux1c(home, 0, 20);
       Gecode::projector(home, x[0], x[1], x[2], x0ux1c, p3);
       Gecode::post(home, x2c == x0c + x1c - x0ux1c);
 
       Gecode::Projector p4(2,
-			   Gecode::SetExpr(0) - Gecode::SetExpr(1),
-			   Gecode::SetExpr(0) - Gecode::SetExpr(1)
-			   );
+                           Gecode::SetExpr(0) - Gecode::SetExpr(1),
+                           Gecode::SetExpr(0) - Gecode::SetExpr(1)
+                           );
       IntVar x0mx1c(home, 0, 20);
       Gecode::projector(home, x[0], x[1], x[2], x0mx1c, p4);
       Gecode::post(home, x2c == x0c - x0mx1c);
 
       Gecode::Projector p5(2,
-			   Gecode::SetExpr(1) - Gecode::SetExpr(0),
-			   Gecode::SetExpr(1) - Gecode::SetExpr(0)
-			   );
+                           Gecode::SetExpr(1) - Gecode::SetExpr(0),
+                           Gecode::SetExpr(1) - Gecode::SetExpr(0)
+                           );
       IntVar x1mx0c(home, 0, 20);
       Gecode::projector(home, x[0], x[1], x[2], x1mx0c, p5);
       Gecode::post(home, x2c == x1c - x1mx0c);
@@ -310,17 +311,17 @@ namespace Projection {
     }
     virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
       Gecode::Projector p0(0,
-			   Gecode::SetExpr(2) - Gecode::SetExpr(1),
-			   Gecode::SetExpr(2)
-			   );
+                           Gecode::SetExpr(2) - Gecode::SetExpr(1),
+                           Gecode::SetExpr(2)
+                           );
       Gecode::Projector p1(1,
-			   Gecode::SetExpr(2) - Gecode::SetExpr(0),
-			   Gecode::SetExpr(2)
-			   );
+                           Gecode::SetExpr(2) - Gecode::SetExpr(0),
+                           Gecode::SetExpr(2)
+                           );
       Gecode::Projector p2(2,
-			   Gecode::SetExpr(0) || Gecode::SetExpr(1),
-			   Gecode::SetExpr(0) || Gecode::SetExpr(1)
-			   );
+                           Gecode::SetExpr(0) || Gecode::SetExpr(1),
+                           Gecode::SetExpr(0) || Gecode::SetExpr(1)
+                           );
       Gecode::ProjectorSet ps;
       ps.add(p0); ps.add(p1); ps.add(p2);
       Gecode::projector(home, x[0], x[1], x[2], ps, true);

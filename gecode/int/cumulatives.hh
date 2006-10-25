@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
@@ -89,22 +90,22 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
     Val(Space* home, bool share, Val<ViewM, ViewD, ViewH, View>& p);
     Val(Space* home, const ViewArray<ViewM>&, const ViewArray<View>&,
-	const ViewArray<ViewD>&, const ViewArray<View>&,
-	const ViewArray<ViewH>&, const IntArgs&, bool);
+        const ViewArray<ViewD>&, const ViewArray<View>&,
+        const ViewArray<ViewH>&, const IntArgs&, bool);
 
     ExecStatus prune(Space * home, int low, int up, int r,
-		     int ntask, int sheight,
-		     const std::vector<int>& contribution,
-		     std::list<int>& prune_tasks);
+                     int ntask, int sheight,
+                     const std::vector<int>& contribution,
+                     std::list<int>& prune_tasks);
   public:
     virtual size_t dispose(Space* home);
     virtual Actor*     copy(Space* home, bool share);
     virtual PropCost   cost(void) const;
     virtual ExecStatus propagate(Space* home);
     static  ExecStatus post(Space* home, const ViewArray<ViewM>&,
-			    const ViewArray<View>&, const ViewArray<ViewD>&,
-			    const ViewArray<View>&, const ViewArray<ViewH>&,
-			    const IntArgs&, bool);
+                            const ViewArray<View>&, const ViewArray<ViewD>&,
+                            const ViewArray<View>&, const ViewArray<ViewH>&,
+                            const IntArgs&, bool);
   };
 
 

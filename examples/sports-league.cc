@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -17,7 +18,7 @@
  *  redistribution of this file, and for a
  *     DISCLAIMER OF ALL WARRANTIES.
  *
- */	
+ */        
 
 #include "examples/support.hh"
 #include "gecode/minimodel.hh"
@@ -183,9 +184,9 @@ public:
     // Initialize the array
     for(int p = 0; p < periods; p++)
       for (int w = 0; w < weeks; w++) {
-	rrs(p, w).h = 0;
-	rrs(p, w).a = 0;
-	rrs(p, w).g = 0;
+        rrs(p, w).h = 0;
+        rrs(p, w).a = 0;
+        rrs(p, w).g = 0;
       }
 
     // Determine the first game (week 0 period 0)
@@ -203,28 +204,28 @@ public:
     // Compute the games for the subsequent weeks
     for (int w = 1; w < weeks; w++) {
       for (int p = 0; p < periods; p++) {
-	if (rrs(p, w - 1).h == t) {
-	  rrs(p, w).h = 2;
-	} else {
-	  if (rrs(p, w - 1).h == 1) {
-	    rrs(p, w).h = 1;
-	  } else {
-	    rrs(p, w).h = rrs(p, w - 1).h + 1;
-	  }
-	}
-	if (rrs(p, w - 1).a == t) {
-	  rrs(p, w).a = 2;
-	} else {
-	  rrs(p, w).a = rrs(p, w - 1).a + 1;
-	}
+        if (rrs(p, w - 1).h == t) {
+          rrs(p, w).h = 2;
+        } else {
+          if (rrs(p, w - 1).h == 1) {
+            rrs(p, w).h = 1;
+          } else {
+            rrs(p, w).h = rrs(p, w - 1).h + 1;
+          }
+        }
+        if (rrs(p, w - 1).a == t) {
+          rrs(p, w).a = 2;
+        } else {
+          rrs(p, w).a = rrs(p, w - 1).a + 1;
+        }
 
-	// maintain symmetry for (h, a): h < a
-	if (rrs(p, w).h > rrs(p, w).a) {
-	  int buffer  = rrs(p, w).h;
-	  rrs(p, w).h = rrs(p, w).a;
-	  rrs(p, w).a = buffer;
-	}
-	rrs(p, w).g = gn(rrs(p, w).h, rrs(p, w).a);
+        // maintain symmetry for (h, a): h < a
+        if (rrs(p, w).h > rrs(p, w).a) {
+          int buffer  = rrs(p, w).h;
+          rrs(p, w).h = rrs(p, w).a;
+          rrs(p, w).a = buffer;
+        }
+        rrs(p, w).g = gn(rrs(p, w).h, rrs(p, w).a);
       }
     }
   }
@@ -266,18 +267,18 @@ public:
       IntArgs snd(periods);
 
       for(int p = 0; p < periods; p++){
-	gamenum[p] = rrs(p, w).g;
-	fst[p]     = rrs(p, w).h;
-	snd[p]     = rrs(p, w).a;
+        gamenum[p] = rrs(p, w).g;
+        fst[p]     = rrs(p, w).h;
+        snd[p]     = rrs(p, w).a;
       }
 
       IntVarArray n(this, periods, 0, periods - 1);
       distinct(this, n, ICL_DOM);
-	
+        
       for(int p = 0; p < periods; p++){
-	element(this, gamenum, n[p], g(p, w), op.icl);
-	element(this, fst,     n[p], h(p, w), op.icl);
-	element(this, snd,     n[p], a(p, w), op.icl);
+        element(this, gamenum, n[p], g(p, w), op.icl);
+        element(this, fst,     n[p], h(p, w), op.icl);
+        element(this, snd,     n[p], a(p, w), op.icl);
       }
     }
 
@@ -294,7 +295,7 @@ public:
 
     for (int p = 0; p < periods; p++) {
       for (int w = 0; w < eweeks; w++) {
-    	rel(this, h(p, w), IRT_LE, a(p, w));
+            rel(this, h(p, w), IRT_LE, a(p, w));
       }
     }
 
@@ -313,10 +314,10 @@ public:
       IntVarArray col(this, t);
       int k = 0;
       for( int p = 0; p < periods; p++ ) {
-	col[k] = h(p, w);
-	k++;
-	col[k] = a(p, w);
-	k++;
+        col[k] = h(p, w);
+        k++;
+        col[k] = a(p, w);
+        k++;
       }
       distinct(this, col, ICL_DOM);
     }
@@ -332,8 +333,8 @@ public:
     for(int p = 0; p < periods; p++) {
       IntVarArray row(this, 2 * eweeks);
       for (int w = 0; w < 2 * eweeks; w +=2) {
-	row[w]     = h(p, w / 2);
-	row[w + 1] = a(p, w / 2);
+        row[w]     = h(p, w / 2);
+        row[w + 1] = a(p, w / 2);
       }
       gcc(this, row, 2, op.icl); // cardvars
     }
@@ -342,7 +343,7 @@ public:
 
     for(int p = 0; p < periods; p++) {
       for(int w = 0; w < weeks; w ++) {
-	post(this, t * h(p, w) + 1 * a(p, w) - 1* g(p, w) == t);
+        post(this, t * h(p, w) + 1 * a(p, w) - 1* g(p, w) == t);
       }
     }
 
@@ -371,7 +372,7 @@ public:
     // print feasible schedule
     // t is the number of the greatest game
     std::cout << "\nSchedule for " << t << " teams"
-	      << " and "<< weeks << " weeks:" << std::endl;
+              << " and "<< weeks << " weeks:" << std::endl;
     // print period index
     std::cout << " ";
     blank_only(t);
@@ -391,17 +392,17 @@ public:
       blank(w + 1);
       std::cout <<"]: ";
       for(int p = 0; p < periods; p++){
-	if (h(p, w).assigned() && a(p, w).assigned()) {
-	  std::cout <<" ";
-	  blank(h(p, w).val());
-	  std::cout <<",";
-	  blank(a(p, w).val());
-	  std::cout <<" ";
-	} else {
-	  blank_only(t);
-	  std::cout << " x ";
-	  blank_only(t);
-	}
+        if (h(p, w).assigned() && a(p, w).assigned()) {
+          std::cout <<" ";
+          blank(h(p, w).val());
+          std::cout <<",";
+          blank(a(p, w).val());
+          std::cout <<" ";
+        } else {
+          blank_only(t);
+          std::cout << " x ";
+          blank_only(t);
+        }
       }
       std::cout << "\n";
     }
@@ -415,15 +416,15 @@ public:
       blank(p + 1);
       std::cout <<"]: " ;
       for(int w = 0; w < weeks; w++){
-	if (g(p, w).assigned()) {
-	  blankv(g(p, w).val());
-	  std::cout << " ";
-	} else {
-	  for (int i = digit(value); i--; ) {
-	    std::cout << " ";
-	  }
-	  std::cout << " ";
-	}
+        if (g(p, w).assigned()) {
+          blankv(g(p, w).val());
+          std::cout << " ";
+        } else {
+          for (int i = digit(value); i--; ) {
+            std::cout << " ";
+          }
+          std::cout << " ";
+        }
       }
       std::cout << "\n";
     }

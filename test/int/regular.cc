@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -30,9 +31,9 @@ public:
     : IntTest(t,4,ds_22,false,ICL_DOM) {}
   virtual bool solution(const Assignment& x) const {
     return (((x[0] == 0) || (x[0] == 2)) &&
-	    ((x[1] == -1) || (x[1] == 1)) &&
-	    ((x[2] == 0) || (x[2] == 1)) &&
-	    ((x[3] == 0) || (x[3] == 1)));
+            ((x[1] == -1) || (x[1] == 1)) &&
+            ((x[2] == 0) || (x[2] == 1)) &&
+            ((x[3] == 0) || (x[3] == 1)));
   }
   virtual void post(Space* home, IntVarArray& x) {
     REG r =
@@ -70,21 +71,21 @@ public:
     : IntTest(t,2,ds_22,false,ICL_DOM) {}
   virtual bool solution(const Assignment& x) const {
     return (((x[0] == 0) || (x[0] == 2)) &&
-	    ((x[1] == -1) || (x[1] == 1)) &&
-	    ((x[0] == 0) || (x[0] == 1)) &&
-	    ((x[1] == 0) || (x[1] == 1)));
+            ((x[1] == -1) || (x[1] == 1)) &&
+            ((x[0] == 0) || (x[0] == 1)) &&
+            ((x[1] == 0) || (x[1] == 1)));
   }
   virtual void post(Space* home, IntVarArray& x) {
     Log::log("post regular: x[0]x[1]x[0]x[1] in (0|2)(-1|1)(7|0|1)(0|1)",
-	     "\tREG r = \n"
-	     "\t  (REG(0) | REG(2)) +\n"
-	     "\t  (REG(-1) | REG(1)) +\n"
-	     "\t  (REG(7) | REG(0) | REG(1)) +\n"
-	     "\t  (REG(0) | REG(1));\n"
-	     "\tDFA d(r);\n"
-	     "\tIntVarArgs y(4);\n"
-	     "\ty[0]=x[0]; y[1]=x[1]; y[2]=x[0]; y[3]=x[1];\n"
-	     "\tregular(home, y, d);\n");
+             "\tREG r = \n"
+             "\t  (REG(0) | REG(2)) +\n"
+             "\t  (REG(-1) | REG(1)) +\n"
+             "\t  (REG(7) | REG(0) | REG(1)) +\n"
+             "\t  (REG(0) | REG(1));\n"
+             "\tDFA d(r);\n"
+             "\tIntVarArgs y(4);\n"
+             "\ty[0]=x[0]; y[1]=x[1]; y[2]=x[0]; y[3]=x[1];\n"
+             "\tregular(home, y, d);\n");
     REG r =
       (REG(0) | REG(2)) +
       (REG(-1) | REG(1)) +

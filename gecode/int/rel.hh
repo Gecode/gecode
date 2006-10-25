@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -481,7 +482,7 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for lexical order on \a xy
     static  ExecStatus post(Space* home,
-			    ViewArray<ViewTuple<View,2> >& xy, bool strict);
+                            ViewArray<ViewTuple<View,2> >& xy, bool strict);
   };
 
 

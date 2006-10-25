@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -47,7 +48,7 @@ struct MinSort : public StressTest {
     for (int i=1; i<param; i++) {
       IntVarArgs y(i);
       for (int j=0; j<i; j++)
-	y[j] = x[j];
+        y[j] = x[j];
       IntVar m(home,0,2*param);
       min(home, y, m);
       rel(home, m, IRT_GR, x[i]);

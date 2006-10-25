@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -122,7 +123,7 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   forceinline
   DistinctDoit<View0,View1>::DistinctDoit(Space* home, bool share,
-					  DistinctDoit<View0,View1>& p)
+                                          DistinctDoit<View0,View1>& p)
     : UnaryPropagator<View0, PC_SET_ANY>(home,share,p) {
     y.update(home,share,p.y);
   }

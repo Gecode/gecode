@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -98,7 +99,7 @@ public:
   virtual void
   print(void) {
     std::cout << "\tk = " << k << std::endl
-	      << "\tv[] = {";
+              << "\tv[] = {";
     for (int i = 0; i < v.size(); i++)
       std::cout << v[i] << ", ";
     std::cout << "};" << std::endl;

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -29,8 +30,8 @@ namespace Gecode { namespace Set { namespace Sequence {
 
   forceinline
   ExecStatus propagateSeq(Space* home,
-			  bool& modified, bool& assigned,
-			  ViewArray<SetView>& x) {
+                          bool& modified, bool& assigned,
+                          ViewArray<SetView>& x) {
 
     int lastElem = x.size()-1;
     int cur_max = BndSet::MAX_OF_EMPTY;
@@ -38,31 +39,31 @@ namespace Gecode { namespace Set { namespace Sequence {
 
     for (int i=0; i<lastElem; i++) {
       if (x[i].glbSize() > 0) {
-	int glbMax = x[i].glbMax();
-	cur_max = std::max(cur_max, glbMax);
+        int glbMax = x[i].glbMax();
+        cur_max = std::max(cur_max, glbMax);
       }
       if (cur_max>=Limits::Set::int_min)
-	GECODE_SET_ME_CHECK_VAL_B(modified,
-			      x[i+1].exclude(home, Limits::Set::int_min,
-					     cur_max),
-			      assigned);
+        GECODE_SET_ME_CHECK_VAL_B(modified,
+                              x[i+1].exclude(home, Limits::Set::int_min,
+                                             cur_max),
+                              assigned);
 
       if (x[lastElem-i].lubSize() > 0) {
-	int glbMin = x[lastElem-i].glbMin();
-	cur_min = std::min(cur_min, glbMin);
+        int glbMin = x[lastElem-i].glbMin();
+        cur_min = std::min(cur_min, glbMin);
       }
       if (Limits::Set::int_max>=cur_min)
-	GECODE_SET_ME_CHECK_VAL_B(modified,
-			      x[lastElem-i-1].exclude(home, cur_min,
-						      Limits::Set::int_max),
-			      assigned);
+        GECODE_SET_ME_CHECK_VAL_B(modified,
+                              x[lastElem-i-1].exclude(home, cur_min,
+                                                      Limits::Set::int_max),
+                              assigned);
     }
     return ES_FIX;
   }
 
   forceinline
   ExecStatus propagateSeqUnion(Space* home,
-		      bool& modified, ViewArray<SetView>& x, SetView& y) {
+                      bool& modified, ViewArray<SetView>& x, SetView& y) {
 
     GECODE_AUTOARRAY(GlbRanges<SetView>, XLBs,x.size());
     for (int i=x.size(); i--; ){

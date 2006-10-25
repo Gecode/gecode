@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -99,12 +100,12 @@ namespace Gecode { namespace Int { namespace GCC {
        *     be reconsidered the path can be compressed
        */
       if (--hall[z].d == 0){
-	hall[z].t = z + 1;
-	z         = pathmax_t(hall, hall[z].t);
-	if (z >= bsize) {
-	  z--;
-	}
-	hall[z].t = j;
+        hall[z].t = z + 1;
+        z         = pathmax_t(hall, hall[z].t);
+        if (z >= bsize) {
+          z--;
+        }
+        hall[z].t = j;
       }
       pathset_t(hall, succ, z, z); // path compression
       /* NEGATIVE CAPACITY:
@@ -116,7 +117,7 @@ namespace Gecode { namespace Int { namespace GCC {
        */
 
       if (hall[z].d < ups->sumup(hall[y].bounds, hall[z].bounds - 1)){
-	return ES_FAILED;
+        return ES_FAILED;
       }
 
       /* UPDATING LOWER BOUND:
@@ -125,20 +126,20 @@ namespace Gecode { namespace Int { namespace GCC {
        *   min_i is set to  min_i := b+1
        */
       if (hall[x0].h > x0) {
-	int w       = pathmax_h(hall, hall[x0].h);
-	int m       = hall[w].bounds;
+        int w       = pathmax_h(hall, hall[x0].h);
+        int m       = hall[w].bounds;
 
-	ModEvent me = x[mu[i]].gq(home, m);
-	if (me_failed(me)) {
-	  return ES_FAILED;
-	}
-	if (me_modified(me) && (m != x[mu[i]].min())) {
-	  es = ES_NOFIX;
-	}
-	if (shared && me_modified(me)) {
-	  es = ES_NOFIX;
-	}
-	pathset_h(hall, x0, w, w); // path compression
+        ModEvent me = x[mu[i]].gq(home, m);
+        if (me_failed(me)) {
+          return ES_FAILED;
+        }
+        if (me_modified(me) && (m != x[mu[i]].min())) {
+          es = ES_NOFIX;
+        }
+        if (shared && me_modified(me)) {
+          es = ES_NOFIX;
+        }
+        pathset_h(hall, x0, w, w); // path compression
       }
 
       /* ZEROTEST:
@@ -158,13 +159,13 @@ namespace Gecode { namespace Int { namespace GCC {
        */
 
       if (hall[z].d == ups->sumup(hall[y].bounds, hall[z].bounds - 1)) {
-	/*
-	 *mark hall interval [j,z-1]
-	 * hall pointers form a path to the upper bound of the interval
-	 */
-	int predj = j - 1;
-	pathset_h(hall, hall[y].h, predj, y);
-	hall[y].h = predj;
+        /*
+         *mark hall interval [j,z-1]
+         * hall pointers form a path to the upper bound of the interval
+         */
+        int predj = j - 1;
+        pathset_h(hall, hall[y].h, predj, y);
+        hall[y].h = predj;
       }
     }
 
@@ -188,15 +189,15 @@ namespace Gecode { namespace Int { namespace GCC {
 
       // DOMINATION:
       if (--hall[z].d == 0){
-	hall[z].t = z - 1;
-	z         = pathmin_t(hall, hall[z].t);
-	hall[z].t = j;
+        hall[z].t = z - 1;
+        z         = pathmin_t(hall, hall[z].t);
+        hall[z].t = j;
       }
       pathset_t(hall, pred, z, z);
 
       // NEGATIVE CAPACITY:
       if (hall[z].d < ups->sumup(hall[z].bounds,hall[y].bounds-1)){
-	return ES_FAILED;
+        return ES_FAILED;
       }
 
       /* UPDATING UPPER BOUND:
@@ -205,26 +206,26 @@ namespace Gecode { namespace Int { namespace GCC {
        *   max_i is set to  max_i := a-1
        */
       if (hall[x0].h < x0) {
-	int w       = pathmin_h(hall, hall[x0].h);
-	int m       = hall[w].bounds - 1;
-	ModEvent me = x[nu[i]].lq(home, m);
-	if (me_failed(me)) {
-	  return ES_FAILED;
-	}
-	if (me_modified(me) && (m != x[nu[i]].max())) {
-	  es = ES_NOFIX;
-	}
-	if (me_modified(me) && shared) {
-	  es = ES_NOFIX;
-	}
-	pathset_h(hall, x0, w, w);
+        int w       = pathmin_h(hall, hall[x0].h);
+        int m       = hall[w].bounds - 1;
+        ModEvent me = x[nu[i]].lq(home, m);
+        if (me_failed(me)) {
+          return ES_FAILED;
+        }
+        if (me_modified(me) && (m != x[nu[i]].max())) {
+          es = ES_NOFIX;
+        }
+        if (me_modified(me) && shared) {
+          es = ES_NOFIX;
+        }
+        pathset_h(hall, x0, w, w);
       }
       // ZEROTEST
       if (hall[z].d == ups->sumup(hall[z].bounds, hall[y].bounds - 1)) {
-	//mark hall interval [y,j]
-	int succj = j + 1;
-	pathset_h(hall, hall[y].h, succj, y);
-	hall[y].h = succj;
+        //mark hall interval [y,j]
+        int succj = j + 1;
+        pathset_h(hall, hall[y].h, succj, y);
+        hall[y].h = succj;
       }
     }
     return es;

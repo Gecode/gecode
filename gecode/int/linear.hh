@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -524,7 +525,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class View>
   void bounds_p(const Propagator*, ViewArray<View>& x,
-		Val& c, Val& sl, Val& su);
+                Val& c, Val& sl, Val& su);
 
   /**
    * \brief Compute bounds information for negative views
@@ -533,7 +534,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   template <class Val, class View>
   void bounds_n(const Propagator*, ViewArray<View>& y,
-		Val& c, Val& sl, Val& su);
+                Val& c, Val& sl, Val& su);
 
   /**
    * \brief %Propagator for bounds-consistent n-ary linear equality

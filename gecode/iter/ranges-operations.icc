@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -74,9 +75,9 @@ namespace Gecode { namespace Iter { namespace Ranges {
     // Are i and j equal?
     while (i() && j())
       if ((i.min() == j.min()) && (i.max() == j.max())) {
-	++i; ++j;
+        ++i; ++j;
       } else {
-	return false;
+        return false;
       }
     return !i() && !j();
   }
@@ -87,11 +88,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
     // Is i subset of j?
     while (i() && j())
       if (j.max() < i.min()) {
-	++j;
+        ++j;
       } else if ((i.min() >= j.min()) && (i.max() <= j.max())) {
-	++i;
+        ++i;
       } else {
-	return false;
+        return false;
       }
     return !i();
   }
@@ -102,11 +103,11 @@ namespace Gecode { namespace Iter { namespace Ranges {
     // Are i and j disjoint?
     while (i() && j())
       if (j.max() < i.min()) {
-	++j;
+        ++j;
       } else if (i.max() < j.min()) {
-	++i;
+        ++i;
       } else {
-	return false;
+        return false;
       }
     return true;
   }
@@ -118,15 +119,15 @@ namespace Gecode { namespace Iter { namespace Ranges {
     bool empty    = true;
     while (i() && j()) {
       if (i.max() < j.min()) {
-	++i;
+        ++i;
       } else if (j.max() < i.min()) {
-	++j; subsumed = false;
+        ++j; subsumed = false;
       } else if ((j.min() >= i.min()) && (j.max() <= i.max())) {
-	++j; empty = false;
+        ++j; empty = false;
       } else if (j.max() <= i.max()) {
-	++j; empty = false; subsumed = false;
+        ++j; empty = false; subsumed = false;
       } else if (i.max() <= j.max()) {
-	++i; empty = false; subsumed = false;
+        ++i; empty = false; subsumed = false;
       }
     }
     if (j())

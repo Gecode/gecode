@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -82,8 +83,8 @@ namespace Gecode { namespace Int { namespace Rel {
   forceinline
   NaryNq<View>::NaryNq(Space* home, ViewArray<ViewTuple<View,2> >& x0)
     : BinaryPropagator<ViewTuple<View,2>,PC_INT_DOM>(home,
-						     x0[x0.size()-2],
-						     x0[x0.size()-1]), x(x0) {
+                                                     x0[x0.size()-2],
+                                                     x0[x0.size()-1]), x(x0) {
     assert(x.size() >= 2);
     x.size(x.size()-2);
   }
@@ -102,14 +103,14 @@ namespace Gecode { namespace Int { namespace Rel {
     for (int i=n; i--; )
       switch (rtest_nq_dom(x[i][0],x[i][1])) {
       case RT_FALSE: 
-	x[i]=x[--n]; 
-	break;
+        x[i]=x[--n]; 
+        break;
       case RT_TRUE:  
-	return ES_OK;
+        return ES_OK;
       case RT_MAYBE: 
-	break;
+        break;
       default:
-	GECODE_NEVER;
+        GECODE_NEVER;
       }
     x.size(n);
     if (n == 0)
@@ -134,23 +135,23 @@ namespace Gecode { namespace Int { namespace Rel {
     for (int i=n; i--; )
       switch (rtest_nq_dom(x[i][0],x[i][1])) {
       case RT_TRUE:  
-	return ES_SUBSUMED;
+        return ES_SUBSUMED;
       case RT_FALSE: 
-	x[i].cancel(home,this,PC_INT_DOM);
-	x[i]=x[--n]; 
-	break;
+        x[i].cancel(home,this,PC_INT_DOM);
+        x[i]=x[--n]; 
+        break;
       case RT_MAYBE: 
-	break;
+        break;
       default:
-	GECODE_NEVER;
+        GECODE_NEVER;
       }
     switch (rtest_nq_dom(x0[0],x0[1])) {
     case RT_TRUE: 
       return ES_SUBSUMED;
     case RT_FALSE:
       if (n == 0) {
-	GECODE_ES_CHECK(Nq<View>::post(home,x1[0],x1[1]));
-	return ES_SUBSUMED;
+        GECODE_ES_CHECK(Nq<View>::post(home,x1[0],x1[1]));
+        return ES_SUBSUMED;
       }
       x0.cancel(home,this,PC_INT_DOM);
       x0=x[--n];
@@ -166,8 +167,8 @@ namespace Gecode { namespace Int { namespace Rel {
       return ES_SUBSUMED;
     case RT_FALSE:
       if (n == 0) {
-	GECODE_ES_CHECK(Nq<View>::post(home,x0[0],x0[1]));
-	return ES_SUBSUMED;
+        GECODE_ES_CHECK(Nq<View>::post(home,x0[0],x0[1]));
+        return ES_SUBSUMED;
       }
       x1.cancel(home,this,PC_INT_DOM);
       x1=x[--n];

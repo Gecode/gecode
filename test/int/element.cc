@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -78,14 +79,14 @@ public:
   }
   virtual void post(Space* home, IntVarArray& x) {
     Log::log("", icl == ICL_BND
-	     ? "\tIntConLevel icl = ICL_BND;"
-	     : "\tIntConLevel icl = ICL_DOM;");
+             ? "\tIntConLevel icl = ICL_BND;"
+             : "\tIntConLevel icl = ICL_DOM;");
     Log::log("post element",
-	     "\tint n = x.size()-2;\n"
-	     "\tIntVarArgs ia(n);\n"
-	     "\tfor (int i=0;i<n;i++)\n"
-	     "\t  ia[i]=x[2+i];\n"
-	     "\telement(this, ia, x[0], x[1], icl);");
+             "\tint n = x.size()-2;\n"
+             "\tIntVarArgs ia(n);\n"
+             "\tfor (int i=0;i<n;i++)\n"
+             "\t  ia[i]=x[2+i];\n"
+             "\telement(this, ia, x[0], x[1], icl);");
     IntVarArgs ia(n);
     for (int i=0;i<n;i++)
       ia[i]=x[2+i];
@@ -106,14 +107,14 @@ public:
   }
   virtual void post(Space* home, IntVarArray& x) {
     Log::log("", icl == ICL_BND
-	     ? "\tIntConLevel icl = ICL_BND;"
-	     : "\tIntConLevel icl = ICL_DOM;");
+             ? "\tIntConLevel icl = ICL_BND;"
+             : "\tIntConLevel icl = ICL_DOM;");
     Log::log("post element",
-	     "\tint n = x.size()-1;\n"
-	     "\tIntVarArgs ia(n);\n"
-	     "\tfor (int i=0;i<n;i++)\n"
-	     "\t  ia[i]=x[1+i];\n"
-	     "\telement(this, ia, x[0], x[0], icl);");
+             "\tint n = x.size()-1;\n"
+             "\tIntVarArgs ia(n);\n"
+             "\tfor (int i=0;i<n;i++)\n"
+             "\t  ia[i]=x[1+i];\n"
+             "\telement(this, ia, x[0], x[0], icl);");
     IntVarArgs ia(n);
     for (int i=0;i<n;i++)
       ia[i]=x[1+i];

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -87,7 +88,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
       ma = r_max + i.max();
       ++i;
       while (i() && (ma+1 >= r_min+i.min())) {
-	ma = r_max + i.max(); ++i;
+        ma = r_max + i.max(); ++i;
       }
     } else {
       finish();

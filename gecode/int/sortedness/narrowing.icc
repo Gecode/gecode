@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -17,7 +18,7 @@
  *  redistribution of this file, and for a
  *     DISCLAIMER OF ALL WARRANTIES.
  *
- */	
+ */        
 
 #include "gecode/support/static-stack.hh"
 
@@ -42,11 +43,11 @@ namespace Gecode { namespace Int { namespace Sortedness {
   template<class View, class Tuple>
   forceinline void
   computesccs(Space* home,
-	      ViewArray<Tuple>& xz,
-	      ViewArray<View>& y,
-	      int phi[],
-	      SccComponent sinfo[],
-	      int scclist[]) {
+              ViewArray<Tuple>& xz,
+              ViewArray<View>& y,
+              int phi[],
+              SccComponent sinfo[],
+              int scclist[]) {
 
     // number of sccs is bounded by xs (number of x-nodes)
     int xs = xz.size();
@@ -56,8 +57,8 @@ namespace Gecode { namespace Int { namespace Sortedness {
     for (int j = 0; j < xs; j++) {
       int yjmin      = y[j].min();    // the processed min
       while (!cs.empty() && xz[phi[sinfo[cs.top()].rightmost]][0].max() < yjmin) {
-	// the topmost scc cannot "reach" y_j or a node to the right of it
-	cs.pop();
+        // the topmost scc cannot "reach" y_j or a node to the right of it
+        cs.pop();
       }
 
       // a component has the form C(y-Node, matching x-Node)
@@ -66,18 +67,18 @@ namespace Gecode { namespace Int { namespace Sortedness {
       int i     = phi[j];
       int ximin = xz[i][0].min();
       while (!cs.empty() && ximin <= y[sinfo[cs.top()].rightmost].max()) {
-	// y_j can "reach" cs.top() ,
-	// i.e. component c can reach component cs.top()
-	// merge c and cs.top() into new component
-	int top = cs.top();
-	// connecting
-	sinfo[sinfo[j].leftmost].left        = top;
-	sinfo[top].right                     = sinfo[j].leftmost;
-	// moving leftmost
-	sinfo[j].leftmost                    = sinfo[top].leftmost;
-	// moving rightmost
-	sinfo[sinfo[top].leftmost].rightmost = j;
-	cs.pop();
+        // y_j can "reach" cs.top() ,
+        // i.e. component c can reach component cs.top()
+        // merge c and cs.top() into new component
+        int top = cs.top();
+        // connecting
+        sinfo[sinfo[j].leftmost].left        = top;
+        sinfo[top].right                     = sinfo[j].leftmost;
+        // moving leftmost
+        sinfo[j].leftmost                    = sinfo[top].leftmost;
+        // moving rightmost
+        sinfo[sinfo[top].leftmost].rightmost = j;
+        cs.pop();
       }
       cs.push(j);
     }
@@ -89,16 +90,16 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
     for (int i = 0; i < xs; i++) {
       if (sinfo[i].left == i) { // only label variables in sccs
-	int scc = sinfo[i].rightmost;
-	int z   = i;
-	//bound by the size of the largest scc = k
-	while (sinfo[z].right != z) {
-	  sinfo[z].rightmost   = scc;
-	  scclist[phi[z]]      = scc;
-	  z                    = sinfo[z].right;
-	}
-	sinfo[z].rightmost     = scc;
-	scclist[phi[z]]        = scc;
+        int scc = sinfo[i].rightmost;
+        int z   = i;
+        //bound by the size of the largest scc = k
+        while (sinfo[z].right != z) {
+          sinfo[z].rightmost   = scc;
+          scclist[phi[z]]      = scc;
+          z                    = sinfo[z].right;
+        }
+        sinfo[z].rightmost     = scc;
+        scclist[phi[z]]        = scc;
       }
     }
   }
@@ -121,13 +122,13 @@ namespace Gecode { namespace Int { namespace Sortedness {
   template<class View, class Tuple, bool Perm>
   forceinline bool
   narrow_domx(Space* home,
-	      ViewArray<Tuple>& xz,
-	      ViewArray<View>& y,
-	      int tau[],
-	      int phi[],
-	      int scclist[],
-	      SccComponent sinfo[],
-	      bool& nofix) {
+              ViewArray<Tuple>& xz,
+              ViewArray<View>& y,
+              int tau[],
+              int phi[],
+              int scclist[],
+              SccComponent sinfo[],
+              bool& nofix) {
 
     int xs        = xz.size();
 
@@ -144,27 +145,27 @@ namespace Gecode { namespace Int { namespace Sortedness {
        */
       int start = sinfo[scclist[i]].leftmost;
       while (y[start].max() < xmin) {
-	start = sinfo[start].right;
+        start = sinfo[start].right;
       }
-	
+        
       if (Perm) {
-	// start is the leftmost-position for x_i
-	// that denotes the lower bound on p_i
+        // start is the leftmost-position for x_i
+        // that denotes the lower bound on p_i
 
-	ModEvent me_plb = xz[i][1].gq(home, start);
-	if (me_failed(me_plb)) {
-	  return false;
-	}
-	nofix |= (me_modified(me_plb) && start != xz[i][1].min());
+        ModEvent me_plb = xz[i][1].gq(home, start);
+        if (me_failed(me_plb)) {
+          return false;
+        }
+        nofix |= (me_modified(me_plb) && start != xz[i][1].min());
       }
 
       ModEvent me_lb = xz[i][0].gq(home, y[start].min());
       if (me_failed(me_lb)) {
-	return false;
+        return false;
       }
       nofix |= (me_modified(me_lb) &&
-		y[start].min() != xz[i][0].min());
-	
+                y[start].min() != xz[i][0].min());
+        
       int ptau = tau[xs - 1 - i];
       int xmax = xz[ptau][0].max();
       /*
@@ -176,25 +177,25 @@ namespace Gecode { namespace Int { namespace Sortedness {
        */
       start = sinfo[scclist[ptau]].rightmost;
       while (y[start].min() > xmax) {
-	start = sinfo[start].left;
+        start = sinfo[start].left;
       }
 
       if (Perm) {
-	//start is the rightmost-position for x_i
-	//that denotes the upper bound on p_i
-	ModEvent me_pub = xz[ptau][1].lq(home, start);
-	if (me_failed(me_pub)) {
-	  return false;
-	}
-	nofix |= (me_modified(me_pub) && start != xz[ptau][1].max());
+        //start is the rightmost-position for x_i
+        //that denotes the upper bound on p_i
+        ModEvent me_pub = xz[ptau][1].lq(home, start);
+        if (me_failed(me_pub)) {
+          return false;
+        }
+        nofix |= (me_modified(me_pub) && start != xz[ptau][1].max());
       }
 
       ModEvent me_ub = xz[ptau][0].lq(home, y[start].max());
       if (me_failed(me_ub)) {
-	return false;
+        return false;
       }
       nofix |= (me_modified(me_ub) &&
-		y[start].max() != xz[ptau][0].max());
+                y[start].max() != xz[ptau][0].max());
     }
     return true;
   }
@@ -212,27 +213,27 @@ namespace Gecode { namespace Int { namespace Sortedness {
   template<class View, class Tuple, bool Perm>
   forceinline bool
   narrow_domy(Space* home,
-	      ViewArray<Tuple>& xz,
-	      ViewArray<View>& y,
-	      int phi[],
-	      int phiprime[],
-	      bool& nofix) {
+              ViewArray<Tuple>& xz,
+              ViewArray<View>& y,
+              int phi[],
+              int phiprime[],
+              bool& nofix) {
 
     int xs = xz.size();
     for (int i = xs; i--; ) {
       ModEvent me_lb = y[i].gq(home, xz[phiprime[i]][0].min());
       if (me_failed(me_lb)) {
-	return false;
+        return false;
       }
       nofix |= (me_modified(me_lb) &&
-		xz[phiprime[i]][0].min() != y[i].min());
+                xz[phiprime[i]][0].min() != y[i].min());
 
       ModEvent me_ub = y[i].lq(home, xz[phi[i]][0].max());
       if (me_failed(me_ub)) {
-	return false;
+        return false;
       }
       nofix |= (me_modified(me_ub) &&
-		xz[phi[i]][0].max() != y[i].max());
+                xz[phi[i]][0].max() != y[i].max());
     }
     return true;
   }

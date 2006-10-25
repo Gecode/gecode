@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -55,10 +56,10 @@ public:
     : n(opt.size), s(this,n,0,n-1) {
     if (opt.naive)
       for (int i=n; i--; )
-	exactly(s, s[i], i);
+        exactly(s, s[i], i);
     else
       for (int i=n; i--; )
-	count(this, s, i, IRT_EQ, s[i]);
+        count(this, s, i, IRT_EQ, s[i]);
     linear(this, s, IRT_EQ, n);
     IntArgs c(n);
     for (int j = n; j--; )
@@ -83,7 +84,7 @@ public:
     for (int i = 0; i<n; i++) {
       std::cout << s[i] << ", ";
       if ((i+1) % 20 == 0)
-	std::cout << std::endl << "\t";
+        std::cout << std::endl << "\t";
     }
     std::cout << std::endl;
   }

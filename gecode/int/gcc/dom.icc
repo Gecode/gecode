@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -48,7 +49,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   inline
   Dom<View, Card, isView>::Dom(Space* home, ViewArray<View>& x0,
-			       ViewArray<Card>& k0, bool cf, bool all)
+                               ViewArray<Card>& k0, bool cf, bool all)
     : Propagator(home, true), x(x0),  y(home, x0),
       k(k0), vvg(NULL), card_fixed(cf), card_all(all) {
     // y is used for bounds propagation since prop_bnd needs all variables
@@ -60,7 +61,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   forceinline
   Dom<View, Card, isView>::Dom(Space* home, bool share,
-			       Dom<View, Card, isView>& p)
+                               Dom<View, Card, isView>& p)
     : Propagator(home, share, p), vvg(NULL),
       card_fixed(p.card_fixed), card_all(p.card_all) {
     x.update(home, share, p.x);
@@ -101,7 +102,7 @@ namespace Gecode { namespace Int { namespace GCC {
     unsigned int d = x[n - 1].size();
     for (int i = n; i--; ) {
       if (x[i].size() > d) {
-	d = x[i].size();
+        d = x[i].size();
       }
     }
 
@@ -110,14 +111,14 @@ namespace Gecode { namespace Int { namespace GCC {
       pc = PC_LINEAR_LO;
     } else {
       if (6 <= d && d < n/2) {
-	pc = PC_LINEAR_HI;
+        pc = PC_LINEAR_HI;
       }
       else {
-	if (n/2 <= d && d < n*n) {
-	  pc = PC_QUADRATIC_LO;
-	} else {
-	  pc = PC_CUBIC_LO;
-	}
+        if (n/2 <= d && d < n*n) {
+          pc = PC_QUADRATIC_LO;
+        } else {
+          pc = PC_CUBIC_LO;
+        }
       }
     }
     return cost_lo(x.size(), pc);
@@ -143,110 +144,110 @@ namespace Gecode { namespace Int { namespace GCC {
       bool b = y[i].assigned();
       all_assigned &= b;
       if (b) {
-	noa++;
-	int idx = lookupValue(k, y[i].val());
-	if (idx == -1) {
-	  return ES_FAILED;
-	}
-	count[idx]++;
-	if (isView) {
-	  if (k[idx].max() == 0) {
-	    return ES_FAILED;
-	  }
-	}
+        noa++;
+        int idx = lookupValue(k, y[i].val());
+        if (idx == -1) {
+          return ES_FAILED;
+        }
+        count[idx]++;
+        if (isView) {
+          if (k[idx].max() == 0) {
+            return ES_FAILED;
+          }
+        }
       }
     }
 
     if (all_assigned) {
       for (int i = k.size(); i--; ) {
-	int ci = count[i];
-	if (!(k[i].min() <= ci && ci <= k[i].max())) {
-	  return ES_FAILED;
-	}
-	// the solution contains ci occurences of value k[i].card();
-	if (isView) {
-	  if (!k[i].assigned()) {
-	    ModEvent me = k[i].eq(home, ci);
-	    if (me_failed(me)) {
-	      return ES_FAILED;
-	    }
-	  }
-	  all_assigned &= k[i].assigned();
-	  card_mod |= k[i].modified();
-	}
+        int ci = count[i];
+        if (!(k[i].min() <= ci && ci <= k[i].max())) {
+          return ES_FAILED;
+        }
+        // the solution contains ci occurences of value k[i].card();
+        if (isView) {
+          if (!k[i].assigned()) {
+            ModEvent me = k[i].eq(home, ci);
+            if (me_failed(me)) {
+              return ES_FAILED;
+            }
+          }
+          all_assigned &= k[i].assigned();
+          card_mod |= k[i].modified();
+        }
       }
       if (all_assigned) {
-	return ES_SUBSUMED;
+        return ES_SUBSUMED;
       }
     }
 
     // before propagation performs inferences on cardinality variables:
     if (isView) {
       if (noa > 0) {
-	int n  = y.size();
-	int ks = k.size();
+        int n  = y.size();
+        int ks = k.size();
 
-	for (int i = ks; i--; ) {
-	  if (!k[i].assigned()) {
-	    int ub = n - (noa - count[i]);
-	    int lb = count[i];
-	    ModEvent melq = k[i].lq(home, ub);
-	    if (me_failed(melq)) {
-	      return ES_FAILED;
-	    }
-	    card_mod |= k[i].modified();
+        for (int i = ks; i--; ) {
+          if (!k[i].assigned()) {
+            int ub = n - (noa - count[i]);
+            int lb = count[i];
+            ModEvent melq = k[i].lq(home, ub);
+            if (me_failed(melq)) {
+              return ES_FAILED;
+            }
+            card_mod |= k[i].modified();
 
-	    ModEvent megq = k[i].gq(home, lb);
-	    if (me_failed(megq)) {
-	      return ES_FAILED;
-	    }
-	    card_mod |= k[i].modified();
-	  }
-	}
+            ModEvent megq = k[i].gq(home, lb);
+            if (me_failed(megq)) {
+              return ES_FAILED;
+            }
+            card_mod |= k[i].modified();
+          }
+        }
       }
 
       es = prop_card<View, Card, true>(home, y, k, card_mod);
       if (es == ES_FAILED) {
-	return es;
+        return es;
       }
 
       int smin = 0;
       int smax = 0;
       if (!card_consistent<View, Card>(smin, smax, y, k, card_all)) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
     }
 
     if (x.size() < 2) {
       assert(x.size() >= 0);
       if (x.size() == 0) {
-	for (int j = k.size(); j--; ) {
-	  if (k[j].min() > k[j].counter() || k[j].max() < k[j].counter()) {
-	    return ES_FAILED;
-	  }
-	}
-	return ES_SUBSUMED;
+        for (int j = k.size(); j--; ) {
+          if (k[j].min() > k[j].counter() || k[j].max() < k[j].counter()) {
+            return ES_FAILED;
+          }
+        }
+        return ES_SUBSUMED;
       } else {
-	if (x.size() == 1) {
-	  if (x[0].assigned()) {
-	    int v = x[0].val();
-	    int idx = lookupValue(k,v);
-	    if (idx == -1) {
-	      return ES_FAILED;
-	    }
-	    ModEvent me = k[idx].inc();
-	    if (me_failed(me)) {
-	      return ES_FAILED;
-	    }
-	    card_mod |= k[idx].modified();
-	    for (int j = k.size(); j--; ) {
-	      if (k[j].min() > k[j].counter() || k[j].max() < k[j].counter()) {
-		return ES_FAILED;
-	      }
-	    }
-	    return ES_SUBSUMED;
-	  }
-	}
+        if (x.size() == 1) {
+          if (x[0].assigned()) {
+            int v = x[0].val();
+            int idx = lookupValue(k,v);
+            if (idx == -1) {
+              return ES_FAILED;
+            }
+            ModEvent me = k[idx].inc();
+            if (me_failed(me)) {
+              return ES_FAILED;
+            }
+            card_mod |= k[idx].modified();
+            for (int j = k.size(); j--; ) {
+              if (k[j].min() > k[j].counter() || k[j].max() < k[j].counter()) {
+                return ES_FAILED;
+              }
+            }
+            return ES_SUBSUMED;
+          }
+        }
       }
     }
 
@@ -267,12 +268,12 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = k.size(); i--; ) {
       int ci = k[i].counter();
       if (ci > k[i].max() ) {
-	return ES_FAILED;
+        return ES_FAILED;
       } else {
-	smax += (k[i].max() - ci);
-	if (ci < k[i].min()) {
-	  smin += (k[i].min() - ci);
-	}
+        smax += (k[i].max() - ci);
+        if (ci < k[i].min()) {
+          smin += (k[i].min() - ci);
+        }
       }
     }
 
@@ -293,23 +294,23 @@ namespace Gecode { namespace Int { namespace GCC {
       vvg = new VarValGraph<View, Card, isView> (x, y, k, noe, smin, smax);
       min_req_mod = vvg->min_require(home);
       if (vvg->failed()) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
 
       bool init_ubm = vvg->template maximum_matching<UBC>();
       if (!init_ubm) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
 
       if (!card_fixed) {
-	bool init_lbm = vvg->template maximum_matching<LBC>();
-	if (!init_lbm) {
-	  return ES_FAILED;
-	}
+        bool init_lbm = vvg->template maximum_matching<LBC>();
+        if (!init_lbm) {
+          return ES_FAILED;
+        }
       }
     } else {
       if (!vvg->sync()) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
     }
 
@@ -325,16 +326,16 @@ namespace Gecode { namespace Int { namespace GCC {
     }
     if (!card_fixed) {
       if (isView) {
-	if (!vvg->sync()) {
-	  return ES_FAILED;
-	}
+        if (!vvg->sync()) {
+          return ES_FAILED;
+        }
       }
       vvg->template free_alternating_paths<LBC>();
       vvg->template strongly_connected_components<LBC>();
 
       filter_lbc = vvg->template narrow<LBC>(home);
       if (vvg->failed()) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
     }
 
@@ -342,49 +343,49 @@ namespace Gecode { namespace Int { namespace GCC {
     if (isView) {
       es = prop_card<View, Card, true>(home, y, k, card_mod);
       if (es == ES_FAILED) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
 
       for (int i = k.size(); i--; ) {
-	card_assigned &= k[i].assigned();
+        card_assigned &= k[i].assigned();
       }
     }
 
     if (card_assigned) {
       if (x.size() < 2) {
-	assert(x.size() >= 0);
-	if (x.size() == 0) {
-	  for (int j = k.size(); j--; ) {
-	    if (k[j].min() > k[j].counter() ||
-		k[j].max() < k[j].counter()) {
-	      return ES_FAILED;
-	    }
-	  }
-	  return ES_SUBSUMED;
-	} else {
-	  if (x.size() == 1) {
-	    if (x[0].assigned()) {
-	      int v = x[0].val();
-	      int idx = lookupValue(k,v);
-	      if (idx == -1) {
-		return ES_FAILED;
-	      }
-	      ModEvent me = k[idx].inc();
-	      if (me_failed(me)) {
-		return ES_FAILED;
-	      }
-	      card_mod |= k[idx].modified();
+        assert(x.size() >= 0);
+        if (x.size() == 0) {
+          for (int j = k.size(); j--; ) {
+            if (k[j].min() > k[j].counter() ||
+                k[j].max() < k[j].counter()) {
+              return ES_FAILED;
+            }
+          }
+          return ES_SUBSUMED;
+        } else {
+          if (x.size() == 1) {
+            if (x[0].assigned()) {
+              int v = x[0].val();
+              int idx = lookupValue(k,v);
+              if (idx == -1) {
+                return ES_FAILED;
+              }
+              ModEvent me = k[idx].inc();
+              if (me_failed(me)) {
+                return ES_FAILED;
+              }
+              card_mod |= k[idx].modified();
 
-	      for (int j = k.size(); j--; ) {
-		if (k[j].min() > k[j].counter() ||
-		    k[j].max() < k[j].counter()) {
-		  return ES_FAILED;
-		}
-	      }
-	      return ES_SUBSUMED;
-	    }
-	  }
-	}
+              for (int j = k.size(); j--; ) {
+                if (k[j].min() > k[j].counter() ||
+                    k[j].max() < k[j].counter()) {
+                  return ES_FAILED;
+                }
+              }
+              return ES_SUBSUMED;
+            }
+          }
+        }
       }
     }
 
@@ -397,46 +398,46 @@ namespace Gecode { namespace Int { namespace GCC {
       bool b = y[i].assigned();
       all_assigned &= b;
       if (b) {
-	int idx = lookupValue(k,y[i].val());
-	if (idx == -1) {
-	  return ES_FAILED;
-	}
-	count[idx]++;
-	if (isView) {
-	  if (k[idx].max() == 0) {
-	    return ES_FAILED;
-	  }
-	}
+        int idx = lookupValue(k,y[i].val());
+        if (idx == -1) {
+          return ES_FAILED;
+        }
+        count[idx]++;
+        if (isView) {
+          if (k[idx].max() == 0) {
+            return ES_FAILED;
+          }
+        }
       }
     }
 
     if (isView) {
       es = prop_card<View, Card, true>(home, y, k, card_mod);
       if (es == ES_FAILED) {
-	return es;
+        return es;
       }
     }
 
     if (all_assigned) {
       for (int i = k.size(); i--; ) {
-	int ci = count[i];
-	if (!(k[i].min() <= ci && ci <= k[i].max())) {
-	  return ES_FAILED;
-	}
-	// the solution contains ci occurences of value k[i].card();
-	if (isView) {
-	  if (!k[i].assigned()) {
-	    ModEvent me = k[i].eq(home, ci);
-	    if (me_failed(me)) {
-	      return ES_FAILED;
-	    }
-	  }
-	  all_assigned &= k[i].assigned();
-	  card_mod |= k[i].modified();
-	}
+        int ci = count[i];
+        if (!(k[i].min() <= ci && ci <= k[i].max())) {
+          return ES_FAILED;
+        }
+        // the solution contains ci occurences of value k[i].card();
+        if (isView) {
+          if (!k[i].assigned()) {
+            ModEvent me = k[i].eq(home, ci);
+            if (me_failed(me)) {
+              return ES_FAILED;
+            }
+          }
+          all_assigned &= k[i].assigned();
+          card_mod |= k[i].modified();
+        }
       }
       if (all_assigned) {
-	return ES_SUBSUMED;
+        return ES_SUBSUMED;
       }
     }
 
@@ -444,7 +445,7 @@ namespace Gecode { namespace Int { namespace GCC {
       int smax = 0;
       int smin = 0;
       for (int i = k.size(); i--; ) {
-	smax += k[i].max();
+        smax += k[i].max();
       }
       int ysmax = y.size() - smax;
       int ysmin = y.size() - smin;
@@ -452,27 +453,27 @@ namespace Gecode { namespace Int { namespace GCC {
       smin = 0;
       bool card_ass = true;
       for (int i = k.size(); i--; ) {
-	int lb = ysmax + k[i].max();
-	int ub = ysmin + k[i].min();
-	ModEvent me = k[i].gq(home, lb);
-	if (me_failed(me)) {
-	  return ES_FAILED;
-	}
+        int lb = ysmax + k[i].max();
+        int ub = ysmin + k[i].min();
+        ModEvent me = k[i].gq(home, lb);
+        if (me_failed(me)) {
+          return ES_FAILED;
+        }
 
-	card_mod |= k[i].modified() && k[i].min() != lb;
-	smax += k[i].max();
+        card_mod |= k[i].modified() && k[i].min() != lb;
+        smax += k[i].max();
 
-	me = k[i].lq(home, ub);
-	if (me_failed(me)) {
-	  return ES_FAILED;
-	}
-	card_mod |= k[i].modified();	
-	card_ass &= k[i].assigned();
+        me = k[i].lq(home, ub);
+        if (me_failed(me)) {
+          return ES_FAILED;
+        }
+        card_mod |= k[i].modified();        
+        card_ass &= k[i].assigned();
       }
       if (card_ass) {
-	if (smax < y.size() || smax > y.size()) {
-	  return ES_FAILED;
-	}
+        if (smax < y.size() || smax > y.size()) {
+          return ES_FAILED;
+        }
       }
     }
 
@@ -485,7 +486,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   inline ExecStatus
   Dom<View, Card, isView>::post(Space* home, ViewArray<View>& x0,
-				ViewArray<Card>& k0, bool all){
+                                ViewArray<Card>& k0, bool all){
 
     bool cardfix = true;
     for (int i = k0.size(); i--; ) {

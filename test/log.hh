@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
@@ -56,7 +57,7 @@ namespace Log {
   void initial(const SetVarArray& a, const char*name);
   void prune(const SetVar& v, std::string name, SetRelType irt, int val);
   void prune(const SetVar& v, std::string name,
-	     unsigned int cardMin, unsigned int cardMax);
+             unsigned int cardMin, unsigned int cardMax);
   void prune_result(const SetVar& v);
   void print(const SetVarArray& a, const char* name=NULL);
 #endif

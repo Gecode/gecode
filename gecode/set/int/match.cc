@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -65,19 +66,19 @@ namespace Gecode { namespace Set { namespace Int {
       // Order int vars in xs
       GECODE_ME_CHECK(xs[0].gq(home,x0.lubMin()));
       for (int i=xs_size-1; i--; ) {
-	GECODE_ME_CHECK_MODIFIED(loopFlag, xs[i+1].gq(home,xs[i].min() + 1));
+        GECODE_ME_CHECK_MODIFIED(loopFlag, xs[i+1].gq(home,xs[i].min() + 1));
       }
       
       GECODE_ME_CHECK_MODIFIED(loopFlag, xs[xs_size-1].lq(home,x0.lubMax()));
       for (int i=xs_size-2; i--; ) {
-	GECODE_ME_CHECK_MODIFIED(loopFlag, xs[i].lq(home,xs[i+1].max() - 1));
+        GECODE_ME_CHECK_MODIFIED(loopFlag, xs[i].lq(home,xs[i+1].max() - 1));
       }
 
       // if y from xs is assigned, add to glb(x0)
       for (int i=xs_size; i--; ) {
         if (xs[i].assigned()) {
-	  GECODE_ME_CHECK_MODIFIED(loopFlag, x0.include(home,xs[i].val()));
-	}
+          GECODE_ME_CHECK_MODIFIED(loopFlag, x0.include(home,xs[i].val()));
+        }
       }
 
       // intersect every y in xs with lub(x0)
@@ -88,10 +89,10 @@ namespace Gecode { namespace Set { namespace Int {
 
       // remove gaps between vars in xs from lub(x0)
       GECODE_ME_CHECK_MODIFIED(loopFlag,
-			x0.exclude(home,Limits::Set::int_min,xs[0].min()-1));
+                        x0.exclude(home,Limits::Set::int_min,xs[0].min()-1));
       GECODE_ME_CHECK_MODIFIED(loopFlag,
-			x0.exclude(home,xs[xs_size-1].max()+1,
-				   Limits::Set::int_max));
+                        x0.exclude(home,xs[xs_size-1].max()+1,
+                                   Limits::Set::int_max));
 
       for (int i=xs_size-1; i--; ) {
         int start = xs[i].max() + 1;
@@ -116,30 +117,30 @@ namespace Gecode { namespace Set { namespace Int {
         }
 
         if (i<xs_size-1 && x0.lubMax()==x0.glbMax()) {
-	  LubRanges<SetView> lbx0(x0);
-	  GlbRanges<SetView> ubx0(x0);
-	  Iter::Ranges::Inter<LubRanges<SetView>,GlbRanges<SetView> >
-	    inter(lbx0, ubx0);
-	  
-	  int to = x0.glbMax();
-	  int from = to;
-	  while (inter()) {
-	    from = inter.min();
-	    ++inter;
-	  }
+          LubRanges<SetView> lbx0(x0);
+          GlbRanges<SetView> ubx0(x0);
+          Iter::Ranges::Inter<LubRanges<SetView>,GlbRanges<SetView> >
+            inter(lbx0, ubx0);
+          
+          int to = x0.glbMax();
+          int from = to;
+          while (inter()) {
+            from = inter.min();
+            ++inter;
+          }
 
-	  int i=xs_size-1;
-	  for (int j=to; j>=from;j--,i--) {
+          int i=xs_size-1;
+          for (int j=to; j>=from;j--,i--) {
             GECODE_ME_CHECK_MODIFIED(loopFlag, xs[i].eq(home,j));
-	  }
+          }
         }
       }
 
     } while (loopFlag);
 
     for (int i=xs_size; i--; )
-      if (!xs[i].assigned())	
-	return ES_FIX;
+      if (!xs[i].assigned())        
+        return ES_FIX;
     return ES_SUBSUMED;
   }
 

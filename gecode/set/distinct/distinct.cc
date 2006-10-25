@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -82,18 +83,18 @@ namespace Gecode { namespace Set { namespace Distinct {
       // The clique will be moved to the end of the array, but before
       // oldCliques.
       for (int j=0; j<curClique; ) {
-	GlbRanges<SetView> xjglb(x[j]);
-	GlbRanges<SetView> xiglb(x[curClique]);
-	if (Iter::Ranges::equal(xiglb, xjglb)) {
-	  curClique--;
-	  SetView tmp2 = x[curClique];
-	  x[curClique] = x[j];
-	  x[j] = tmp2;
-	  cliqueLubs[ki].init(x[curClique]);
-	  ki++;
-	} else {
-	  j++;
-	}
+        GlbRanges<SetView> xjglb(x[j]);
+        GlbRanges<SetView> xiglb(x[curClique]);
+        if (Iter::Ranges::equal(xiglb, xjglb)) {
+          curClique--;
+          SetView tmp2 = x[curClique];
+          x[curClique] = x[j];
+          x[j] = tmp2;
+          cliqueLubs[ki].init(x[curClique]);
+          ki++;
+        } else {
+          j++;
+        }
       }
 
       Iter::Ranges::NaryUnion<LubRanges<SetView> > cliqueLub(cliqueLubs, ki);
@@ -102,15 +103,15 @@ namespace Gecode { namespace Set { namespace Distinct {
       unsigned int possible = bin.c(ui-li, c-li);
 
       if (possible < ki)
-	return ES_FAILED;
+        return ES_FAILED;
 
       if (possible == ki) {
-	for (int i=curClique; i--; ) {
-	  GECODE_ME_CHECK(nosubset(home, x[curClique], x[i]));
-	}
-	for (int i=oldCliques; i<x.size(); i++) {
-	  GECODE_ME_CHECK(nosubset(home, x[curClique], x[i]));
-	}
+        for (int i=curClique; i--; ) {
+          GECODE_ME_CHECK(nosubset(home, x[curClique], x[i]));
+        }
+        for (int i=oldCliques; i<x.size(); i++) {
+          GECODE_ME_CHECK(nosubset(home, x[curClique], x[i]));
+        }
       }
 
       oldCliques = curClique;

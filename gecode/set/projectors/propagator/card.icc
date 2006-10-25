@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -57,8 +58,8 @@ namespace Gecode { namespace Set { namespace Projection {
   CardProjection::dispose(Space* home) {
     if (!home->failed()) {
       for (int i=x.size(); i--;)
-	if (pc[i] != PC_SET_ANY + 1)
-	  x[i].cancel(home, this, pc[i]);
+        if (pc[i] != PC_SET_ANY + 1)
+          x[i].cancel(home, this, pc[i]);
     }
     proj.~Projector();
     pc.~SharedArray();
@@ -68,8 +69,8 @@ namespace Gecode { namespace Set { namespace Projection {
 
   inline ExecStatus
   CardProjection::post(Space* home,
-		       ViewArray<SetView>& x, Gecode::Int::IntView i,
-		       Projector& p) {
+                       ViewArray<SetView>& x, Gecode::Int::IntView i,
+                       Projector& p) {
     (void) new (home) CardProjection(home,x,i,p);
     return ES_OK;
   }
@@ -84,7 +85,7 @@ namespace Gecode { namespace Set { namespace Projection {
     bool done = true;
     for (int j=x.size(); j--;)
       if (pc[j] != PC_SET_ANY + 1)
-	done = done && x[j].assigned();
+        done = done && x[j].assigned();
     
     {
       GECODE_ME_CHECK(i.gq(home, static_cast<int>(proj.glbSize(x))));

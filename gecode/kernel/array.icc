@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -137,11 +138,11 @@ namespace Gecode {
       : n(a.size()) {
       // This may not be in the icc file (to satisfy the MS compiler)
       if (n>0) {
-	x = static_cast<View*>(home->alloc(sizeof(View)*n));
-	for (int i = n; i--; )
-	  x[i] = a[i];
+        x = static_cast<View*>(home->alloc(sizeof(View)*n));
+        for (int i = n; i--; )
+          x[i] = a[i];
       } else {
-	x = NULL;
+        x = NULL;
       }
     }
     //@}
@@ -464,7 +465,7 @@ namespace Gecode {
     if (n > 0) {
       x = static_cast<Var*>(home->alloc(sizeof(Var)*n));
       for (int i = n; i--; )
-	x[i].update(home, share, a.x[i]);
+        x[i].update(home, share, a.x[i]);
     } else {
       x = NULL;
     }
@@ -503,7 +504,7 @@ namespace Gecode {
     if (n>0) {
       x = static_cast<View*>(home->alloc(sizeof(View)*n));
       for (int i = n; i--; )
-	x[i] = a[i];
+        x[i] = a[i];
     } else {
       x = NULL;
     }
@@ -622,7 +623,7 @@ namespace Gecode {
     if (n > 0) {
       x = static_cast<View*>(home->alloc(sizeof(View)*n));
       for (int i = n; i--; )
-	x[i].update(home, share, y.x[i]);
+        x[i].update(home, share, y.x[i]);
     } else {
       x = NULL;
     }
@@ -631,7 +632,7 @@ namespace Gecode {
   template <class View>
   void
   ViewArray<View>::subscribe(Space* home, Propagator* p, PropCond pc, 
-			     bool process) {
+                             bool process) {
     for (int i = n; i--; )
       x[i].subscribe(home,p,pc,process);
   }
@@ -684,7 +685,7 @@ namespace Gecode {
     sort(y,n);
     for (int i = n-1; i--; )
       if (__same(y[i+1],y[i]))
-	return true;
+        return true;
     return false;
   }
 
@@ -693,7 +694,7 @@ namespace Gecode {
   ViewArray<View>::same(const View& y) const {
     for (int i = n; i--; )
       if (__same(x[i],y))
-	return true;
+        return true;
     return false;
   }
 
@@ -706,7 +707,7 @@ namespace Gecode {
     int j = 0;
     for (int i = 1; i<n; i++)
       if (!__same(x[j],x[i]))
-	x[++j] = x[i];
+        x[++j] = x[i];
     n = j+1;
   }
 
@@ -721,7 +722,7 @@ namespace Gecode {
     sort(y,n);
     for (int i = n-1; i--; )
       if (__shared(y[i+1],y[i]))
-	return true;
+        return true;
     return false;
   }
 
@@ -730,7 +731,7 @@ namespace Gecode {
   ViewArray<View>::shared(const View& y) const {
     for (int i = n; i--; )
       if (__shared(x[i],y))
-	return true;
+        return true;
     return false;
   }
 
@@ -783,11 +784,11 @@ namespace Gecode {
   ArgArrayBase<T>::operator=(const ArgArrayBase<T>& aa) {
     if (&aa != this) {
       if (n > onstack_size)
-	Memory::free(a);
+        Memory::free(a);
       n = aa.n;
       a = allocate(aa.n);
       for (int i = n; i--; )
-	a[i] = aa.a[i];
+        a[i] = aa.a[i];
     }
     return *this;
   }
@@ -894,7 +895,7 @@ namespace Gecode {
     Support::quicksort<Var,VarLess>(y,n,vl);
     for (int i = n-1; i--; )
       if (y[i+1].variable() == y[i].variable())
-	return true;
+        return true;
     return false;
   }
 
@@ -913,7 +914,7 @@ namespace Gecode {
     Support::quicksort<Var,VarLess>(z,m,vl);
     for (int i = m-1; i--; )
       if (z[i+1].variable() == z[i].variable())
-	return true;
+        return true;
     return false;
   }
 
@@ -922,7 +923,7 @@ namespace Gecode {
   VarArgArray<Var>::same(const Var& y) const {
     for (int i = n; i--; )
       if (a[i].variable() == y.variable())
-	return true;
+        return true;
     return false;
   }
 
@@ -943,7 +944,7 @@ namespace Gecode {
     if (n>0) {
       x = static_cast<Var*>(home->alloc(sizeof(Var)*n));
       for (int i = n; i--; )
-	x[i] = a[i];
+        x[i] = a[i];
     } else {
       x = NULL;
     }

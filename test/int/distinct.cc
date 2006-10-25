@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -38,8 +39,8 @@ public:
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<4; i++)
       for (int j=i+1; j<4; j++)
-	if (x[i]==x[j])
-	  return false;
+        if (x[i]==x[j])
+          return false;
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -73,8 +74,8 @@ public:
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<x.size(); i++)
       for (int j=i+1; j<x.size(); j++)
-	if (x[i]==x[j])
-	  return false;
+        if (x[i]==x[j])
+          return false;
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -95,8 +96,8 @@ public:
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<4; i++)
       for (int j=i+1; j<4; j++)
-	if (x[i]+i==x[j]+j)
-	  return false;
+        if (x[i]+i==x[j]+j)
+          return false;
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {

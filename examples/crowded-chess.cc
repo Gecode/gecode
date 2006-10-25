@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -134,13 +135,13 @@ protected:
     MiniModel::Matrix<BoolVarArray> kb(knights, n, n);
     for (int x = n; x--; )
       for (int y = n; y--; )
-	for (int i = 4; i--; )
-	  if (valid_pos(x+kmoves[i][0], y+kmoves[i][1])) {
-	    IntVarArgs places(2);
-	    places[0] = kb(x, y);
-	    places[1] = kb(x+kmoves[i][0], y+kmoves[i][1]);
-	    linear(this, places, IRT_LQ, 1);
-	  }
+        for (int i = 4; i--; )
+          if (valid_pos(x+kmoves[i][0], y+kmoves[i][1])) {
+            IntVarArgs places(2);
+            places[0] = kb(x, y);
+            places[1] = kb(x+kmoves[i][0], y+kmoves[i][1]);
+            linear(this, places, IRT_LQ, 1);
+          }
   }
 
 
@@ -200,10 +201,10 @@ public:
       const int il = (n-1) - l;
       IntVarArgs d1(l+1), d2(l+1), d3(l+1), d4(l+1);
       for (int i = 0; i <= l; ++i) {
-	d1[i] = m(i+il, i);
-	d2[i] = m(i, i+il);
-	d3[i] = m((n-1)-i-il, i);
-	d4[i] = m((n-1)-i, i+il);
+        d1[i] = m(i+il, i);
+        d2[i] = m(i, i+il);
+        d3[i] = m((n-1)-i-il, i);
+        d4[i] = m((n-1)-i, i+il);
       }
 
       count(this, d1, Q, IRT_LQ, 1, o.icl);
@@ -274,16 +275,16 @@ public:
       // Print main board
       std::cout << '\t';
       for (int c = 0; c < n; ++c) {
-	std::cout << names[m(r, c).val()];
+        std::cout << names[m(r, c).val()];
       }
       // Print each piece on its own
       for (int p = 0; p < PMAX; ++p) {
-	if (p == E) continue;
-	std::cout << sep;
-	for (int c = 0; c < n; ++c) {
-	  if (m(r, c).val() == p) std::cout << names[p];
-	  else                   std::cout << names[E];
-	}
+        if (p == E) continue;
+        std::cout << sep;
+        for (int c = 0; c < n; ++c) {
+          if (m(r, c).val() == p) std::cout << names[p];
+          else                   std::cout << names[E];
+        }
       }
       std::cout << std::endl;
     }

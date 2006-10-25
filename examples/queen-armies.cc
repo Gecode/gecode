@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
@@ -148,15 +149,15 @@ public:
       pos = -1;
 
       for (int i = q->n*q->n; i--; ) {
-	if (q->w[i].assigned()) continue;
-	IntSetRanges ai(A[i]);
-	SetVarUnknownRanges qU(q->U);
-	Iter::Ranges::Inter<IntSetRanges, SetVarUnknownRanges> r(ai, qU);
-	int size = Iter::Ranges::size(r);
-	if (size > maxsize) {
-	  maxsize = size;
-	  pos = i;
-	}
+        if (q->w[i].assigned()) continue;
+        IntSetRanges ai(A[i]);
+        SetVarUnknownRanges qU(q->U);
+        Iter::Ranges::Inter<IntSetRanges, SetVarUnknownRanges> r(ai, qU);
+        int size = Iter::Ranges::size(r);
+        if (size > maxsize) {
+          maxsize = size;
+          pos = i;
+        }
       }
       if (pos == -1) return false;
       return true;
@@ -170,8 +171,8 @@ public:
       const PosValDesc<bool> *pvd = static_cast<const PosValDesc<bool>*>(d);
       bool val = a == 0 ? pvd->val() : !pvd->val();
       return me_failed(Int::BoolView(q->w[pvd->pos()]).eq(q, val))
-	? ES_FAILED
-	: ES_OK;
+        ? ES_FAILED
+        : ES_OK;
     }
     virtual Actor* copy(Space *home, bool share) {
       return new (home) QueenBranch(home, share, *this);
@@ -208,22 +209,22 @@ main(int argc, char** argv) {
   for (int i = n; i--; ) {
     for (int j = n; j--; ) {
       int dir[][2] = {
-	{ 0,  1},
-	{ 1,  1},
-	{ 1,  0},
-	{ 0, -1},
-	{-1, -1},
-	{-1,  0},
-	{ 1, -1},
-	{-1,  1}
+        { 0,  1},
+        { 1,  1},
+        { 1,  0},
+        { 0, -1},
+        {-1, -1},
+        {-1,  0},
+        { 1, -1},
+        {-1,  1}
       };
       p[pn++] = pos(i, j, n);
       for (int k = 8; k--; ) {
-	for (int l = 0; l < n
-	       && 0 <= (i+l*dir[k][0]) && (i+l*dir[k][0]) < n
-	       && 0 <= (j+l*dir[k][1]) && (j+l*dir[k][1]) < n; ++l) {
-	  p[pn++] = pos(i+l*dir[k][0], j+l*dir[k][1], n);
-	}
+        for (int l = 0; l < n
+               && 0 <= (i+l*dir[k][0]) && (i+l*dir[k][0]) < n
+               && 0 <= (j+l*dir[k][1]) && (j+l*dir[k][1]) < n; ++l) {
+          p[pn++] = pos(i+l*dir[k][0], j+l*dir[k][1], n);
+        }
       }
 
       A[pos(i, j, n)] = IntSet(p, pn);

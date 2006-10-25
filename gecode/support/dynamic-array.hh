@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -88,7 +89,7 @@ namespace Gecode { namespace Support {
   DynamicArray<T>::operator =(const DynamicArray<T>& a) {
     if (this != &a) {
       if (n < a.n) {
-	Memory::free(x); n = a.n; x = Memory::bmalloc<T>(n);
+        Memory::free(x); n = a.n; x = Memory::bmalloc<T>(n);
       }
       (void) Memory::bcopy(x,a.x,n);
     }

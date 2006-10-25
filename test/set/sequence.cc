@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -33,10 +34,10 @@ public:
       CountableSetRanges xir(x.lub, x[i]);
       IntSet xi(xir);
       if (xi.size() > 0) {
-	int oldMax = max;
-	max = xi.max();
-	if (xi.min() <= oldMax)
-	  return false;
+        int oldMax = max;
+        max = xi.max();
+        if (xi.min() <= oldMax)
+          return false;
       }
     }
     return true;
@@ -57,10 +58,10 @@ public:
       CountableSetRanges xir(x.lub, x[i]);
       IntSet xi(xir);
       if (xi.size() > 0) {
-	int oldMax = max;
-	max = xi.max();
-	if (xi.min() <= oldMax)
-	  return false;
+        int oldMax = max;
+        max = xi.max();
+        if (xi.min() <= oldMax)
+          return false;
       }
     }
     GECODE_AUTOARRAY(CountableSetRanges, isrs, 3);

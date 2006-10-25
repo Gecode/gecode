@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
@@ -29,12 +30,12 @@ namespace Gecode {
 
   void
   producer_consumer(Space *home,
-		    const IntVarArgs& produce_date, const IntArgs& produce_amount,
-		    const IntVarArgs& consume_date, const IntArgs& consume_amount,
-		    int initial, IntConLevel cl)
+                    const IntVarArgs& produce_date, const IntArgs& produce_amount,
+                    const IntVarArgs& consume_date, const IntArgs& consume_amount,
+                    int initial, IntConLevel cl)
   {
     if (produce_date.size() != produce_amount.size() ||
-	consume_date.size() != consume_amount.size())
+        consume_date.size() != consume_amount.size())
       throw new ArgumentSizeMismatch("Minimodel::producer_consumer");
 
     int ntasks = produce_date.size() + consume_date.size();
@@ -45,14 +46,14 @@ namespace Gecode {
     int i = 0;
     int sum_height = initial;
     if (initial < Limits::Int::int_min ||
-	initial > Limits::Int::int_max)
+        initial > Limits::Int::int_max)
       throw new NumericalOverflow("MiniModel::producer_consumer");
 
     int maxval = 0;
     for (int j = produce_date.size(); j--; )
-	maxval = std::max(produce_date[i].max(), maxval);
+        maxval = std::max(produce_date[i].max(), maxval);
     for (int j = consume_date.size(); j--; )
-	maxval = std::max(consume_date[j].max(), maxval);
+        maxval = std::max(consume_date[j].max(), maxval);
     ++maxval;
 
     IntVar minvar = IntVar(home, 0, 0);
@@ -69,8 +70,8 @@ namespace Gecode {
       duration[i] = IntVar(home, end[i].min(), end[i].max());
       height[i] = produce_amount[k];
       if (height[i] < Limits::Int::int_min ||
-	  height[i] > Limits::Int::int_max)
-	throw new NumericalOverflow("MiniModel::producer_consumer");
+          height[i] > Limits::Int::int_max)
+        throw new NumericalOverflow("MiniModel::producer_consumer");
     }
 
     // Construct consumer tasks
@@ -80,11 +81,11 @@ namespace Gecode {
       start[i] = consume_date[k];
       end[i] = maxvar;
       duration[i] = IntVar(home, maxval - start[i].max(),
-			   maxval - start[i].min());
+                           maxval - start[i].min());
       height[i] = consume_amount[k];
       if (height[i] < Limits::Int::int_min ||
-	  height[i] > Limits::Int::int_max)
-	throw new NumericalOverflow("MiniModel::producer_consumer");
+          height[i] > Limits::Int::int_max)
+        throw new NumericalOverflow("MiniModel::producer_consumer");
     }
 
     limit[0] = sum_height;
@@ -120,15 +121,15 @@ namespace Gecode {
     template<class Duration, class Height>
     void
     post_cumulative(Space *home, const IntVarArgs& start, const Duration& duration,
-		    const Height& height, int limit, bool at_most, IntConLevel cl)
+                    const Height& height, int limit, bool at_most, IntConLevel cl)
     {
       if (start.size() != duration.size() ||
-	  duration.size() !=  height.size())
-	throw new ArgumentSizeMismatch("MiniModel::cumulative");
+          duration.size() !=  height.size())
+        throw new ArgumentSizeMismatch("MiniModel::cumulative");
 
       if (limit < Limits::Int::int_min ||
-	  limit > Limits::Int::int_max)
-	throw new NumericalOverflow("MiniModel::cumulative");
+          limit > Limits::Int::int_max)
+        throw new NumericalOverflow("MiniModel::cumulative");
 
       int n = start.size() + !at_most;
       IntArgs m(n), l(1, limit);
@@ -136,39 +137,39 @@ namespace Gecode {
       Height h(n);
 
       if (!at_most) {
-	int smin = Limits::Int::int_max, 
-	    smax = Limits::Int::int_min, 
-	    emin = Limits::Int::int_max, 
-	    emax = Limits::Int::int_min;
-	IntVarArgs end(n-1);
-	for (int i = start.size(); i--; ) {
-	  m[i] = 0;
-	  s[i] = start[i];
-	  smin = std::min(s[i].min(), smin);
-	  smax = std::max(s[i].max(), smax);
-	  d[i] = make_intvar(home, duration[i]);
-	  e[i] = IntVar(home, Limits::Int::int_min, Limits::Int::int_max);
-	  end[i] = e[i];
-	  emin = std::min(e[i].min(), emin);
-	  emax = std::max(e[i].max(), emax);
-	  h[i] = height[i];
-	}
-	m[n-1] = 0;
-	s[n-1] = IntVar(home, smin, smax);
-	d[n-1] = IntVar(home, 0, emax - smin);
-	e[n-1] = IntVar(home, emin, emax);
-	h[n-1] = ConstVar(home, 0);
-	
-	min(home, start, s[n-1]);
-	max(home, end, e[n-1]);
+        int smin = Limits::Int::int_max, 
+            smax = Limits::Int::int_min, 
+            emin = Limits::Int::int_max, 
+            emax = Limits::Int::int_min;
+        IntVarArgs end(n-1);
+        for (int i = start.size(); i--; ) {
+          m[i] = 0;
+          s[i] = start[i];
+          smin = std::min(s[i].min(), smin);
+          smax = std::max(s[i].max(), smax);
+          d[i] = make_intvar(home, duration[i]);
+          e[i] = IntVar(home, Limits::Int::int_min, Limits::Int::int_max);
+          end[i] = e[i];
+          emin = std::min(e[i].min(), emin);
+          emax = std::max(e[i].max(), emax);
+          h[i] = height[i];
+        }
+        m[n-1] = 0;
+        s[n-1] = IntVar(home, smin, smax);
+        d[n-1] = IntVar(home, 0, emax - smin);
+        e[n-1] = IntVar(home, emin, emax);
+        h[n-1] = ConstVar(home, 0);
+        
+        min(home, start, s[n-1]);
+        max(home, end, e[n-1]);
       } else {
-	for (int i = start.size(); i--; ) {
-	  m[i] = 0;
-	  s[i] = start[i];
-	  d[i] = make_intvar(home, duration[i]);
-	  e[i] = IntVar(home, s[i].min()+d[i].min(), s[i].max()+d[i].max());
-	  h[i] = height[i];
-	}
+        for (int i = start.size(); i--; ) {
+          m[i] = 0;
+          s[i] = start[i];
+          d[i] = make_intvar(home, duration[i]);
+          e[i] = IntVar(home, s[i].min()+d[i].min(), s[i].max()+d[i].max());
+          h[i] = height[i];
+        }
       }
 
       cumulatives(home, m, s, d, e, h, l, at_most, cl);
@@ -178,28 +179,28 @@ namespace Gecode {
 
   void
   cumulative(Space *home, const IntVarArgs& start, const IntVarArgs& duration,
-	     const IntVarArgs& height, int limit, bool at_most, IntConLevel cl)
+             const IntVarArgs& height, int limit, bool at_most, IntConLevel cl)
   {
     post_cumulative(home, start, duration, height, limit, at_most, cl);
   }
 
   void
   cumulative(Space *home, const IntVarArgs& start, const IntArgs& duration,
-	     const IntVarArgs& height, int limit, bool at_most, IntConLevel cl)
+             const IntVarArgs& height, int limit, bool at_most, IntConLevel cl)
   {
     post_cumulative(home, start, duration, height, limit, at_most, cl);
   }
 
   void
   cumulative(Space *home, const IntVarArgs& start, const IntVarArgs& duration,
-	     const IntArgs& height, int limit, bool at_most, IntConLevel cl)
+             const IntArgs& height, int limit, bool at_most, IntConLevel cl)
   {
     post_cumulative(home, start, duration, height, limit, at_most, cl);
   }
 
   void
   cumulative(Space *home, const IntVarArgs& start, const IntArgs& duration,
-	     const IntArgs& height, int limit, bool at_most, IntConLevel cl)
+             const IntArgs& height, int limit, bool at_most, IntConLevel cl)
   {
     post_cumulative(home, start, duration, height, limit, at_most, cl);
   }
@@ -209,10 +210,10 @@ namespace Gecode {
     template <class Duration>
     void
     post_serialized(Space *home, const IntVarArgs& start, const Duration& duration,
-	       IntConLevel cl)
+               IntConLevel cl)
     {
       if (start.size() != duration.size())
-	throw new ArgumentSizeMismatch("MiniModel::serialized");
+        throw new ArgumentSizeMismatch("MiniModel::serialized");
 
       IntArgs height(start.size());
       for (int i = start.size(); i--; ) height[i] = 1;
@@ -223,7 +224,7 @@ namespace Gecode {
 
   void
   serialized(Space *home, const IntVarArgs& start, const IntVarArgs& duration,
-	     IntConLevel cl)
+             IntConLevel cl)
   {
     post_serialized(home, start, duration, cl);
   }
@@ -231,7 +232,7 @@ namespace Gecode {
 
   void
   serialized(Space *home, const IntVarArgs& start, const IntArgs& duration,
-	     IntConLevel cl)
+             IntConLevel cl)
   {
         post_serialized(home, start, duration, cl);
   }

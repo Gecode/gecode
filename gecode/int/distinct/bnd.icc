@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -183,20 +184,20 @@ namespace Gecode { namespace Int { namespace Distinct {
       int i = 0;
       int j = 0;
       while (true) {
-	if (i < n && min < max) {
-	  if (min != last)
-	    hall[++nb].bounds = last = min;
-	  rank[GECODE_INT_MINSORTED(i)].min = nb;
-	  if (++i < n)
-	    min = x[GECODE_INT_MINSORTED(i)].min();
-	} else {
-	  if (max != last)
-	    hall[++nb].bounds = last = max;
-	  rank[GECODE_INT_MAXSORTED(j)].max = nb;
-	  if (++j == n)
-	    break;
-	  max = x[GECODE_INT_MAXSORTED(j)].max() + 1;
-	}
+        if (i < n && min < max) {
+          if (min != last)
+            hall[++nb].bounds = last = min;
+          rank[GECODE_INT_MINSORTED(i)].min = nb;
+          if (++i < n)
+            min = x[GECODE_INT_MINSORTED(i)].min();
+        } else {
+          if (max != last)
+            hall[++nb].bounds = last = max;
+          rank[GECODE_INT_MAXSORTED(j)].max = nb;
+          if (++j == n)
+            break;
+          max = x[GECODE_INT_MAXSORTED(j)].max() + 1;
+        }
       }
       hall[nb+1].bounds = hall[nb].bounds + 2;
     }
@@ -214,25 +215,25 @@ namespace Gecode { namespace Int { namespace Distinct {
       int z = pathmax_t(hall, x0+1);
       int j = hall[z].t;
       if (--hall[z].d == 0)
-	hall[z = pathmax_t(hall, hall[z].t=z+1)].t = j;
+        hall[z = pathmax_t(hall, hall[z].t=z+1)].t = j;
       pathset_t(hall, x0+1, z, z); // path compression
       int y = rank[GECODE_INT_MAXSORTED(i)].max;
       if (hall[z].d < hall[z].bounds-hall[y].bounds)
-	return ES_FAILED;
+        return ES_FAILED;
       if (hall[x0].h > x0) {
-	int w = pathmax_h(hall, hall[x0].h);
-	int m = hall[w].bounds;
-	ModEvent me = x[GECODE_INT_MAXSORTED(i)].gq(home,m);
-	if (me_failed(me))
-	  return ES_FAILED;
-	if ((me == ME_INT_VAL) || 
-	    ((me == ME_INT_BND) && (m != x[GECODE_INT_MAXSORTED(i)].min())))
-	  es = ES_NOFIX;
-	pathset_h(hall, x0, w, w); // path compression
+        int w = pathmax_h(hall, hall[x0].h);
+        int m = hall[w].bounds;
+        ModEvent me = x[GECODE_INT_MAXSORTED(i)].gq(home,m);
+        if (me_failed(me))
+          return ES_FAILED;
+        if ((me == ME_INT_VAL) || 
+            ((me == ME_INT_BND) && (m != x[GECODE_INT_MAXSORTED(i)].min())))
+          es = ES_NOFIX;
+        pathset_h(hall, x0, w, w); // path compression
       }
       if (hall[z].d == hall[z].bounds-hall[y].bounds) {
-	pathset_h(hall, hall[y].h, j-1, y); // mark hall interval
-	hall[y].h = j-1;
+        pathset_h(hall, hall[y].h, j-1, y); // mark hall interval
+        hall[y].h = j-1;
       }
     }
 
@@ -246,25 +247,25 @@ namespace Gecode { namespace Int { namespace Distinct {
       int z = pathmin_t(hall, x0-1);
       int j = hall[z].t;
       if (--hall[z].d == 0)
-	hall[z = pathmin_t(hall, hall[z].t=z-1)].t = j;
+        hall[z = pathmin_t(hall, hall[z].t=z-1)].t = j;
       pathset_t(hall, x0-1, z, z);
       int y = rank[GECODE_INT_MINSORTED(i)].min;
       if (hall[z].d < hall[y].bounds-hall[z].bounds)
-	return ES_FAILED;
+        return ES_FAILED;
       if (hall[x0].h < x0) {
-	int w = pathmin_h(hall, hall[x0].h);
-	int m = hall[w].bounds - 1;
-	ModEvent me = x[GECODE_INT_MINSORTED(i)].lq(home,m);
-	if (me_failed(me))
-	  return ES_FAILED;
-	if ((me == ME_INT_VAL) || 
-	    ((me == ME_INT_BND) && (m != x[GECODE_INT_MAXSORTED(i)].min())))
-	  es = ES_NOFIX;
-	pathset_h(hall, x0, w, w);
+        int w = pathmin_h(hall, hall[x0].h);
+        int m = hall[w].bounds - 1;
+        ModEvent me = x[GECODE_INT_MINSORTED(i)].lq(home,m);
+        if (me_failed(me))
+          return ES_FAILED;
+        if ((me == ME_INT_VAL) || 
+            ((me == ME_INT_BND) && (m != x[GECODE_INT_MAXSORTED(i)].min())))
+          es = ES_NOFIX;
+        pathset_h(hall, x0, w, w);
       }
       if (hall[z].d == hall[y].bounds-hall[z].bounds) {
-	pathset_h(hall, hall[y].h, j+1, y);
-	hall[y].h = j+1;
+        pathset_h(hall, hall[y].h, j+1, y);
+        hall[y].h = j+1;
       }
     }
 
@@ -276,19 +277,19 @@ namespace Gecode { namespace Int { namespace Distinct {
       int j   = 0;
       int max = x[0].max()-1;
       while (i < n-1) {
-	if (!x[i].assigned() ||
-	    (x[i].val() <= max) || (x[i].val() > x[i+1].min())) {
-	  // Keep view x[i]
-	  max = std::max(max,x[i].max());
-	  x[j++]=x[i];
-	}
-	i++;
+        if (!x[i].assigned() ||
+            (x[i].val() <= max) || (x[i].val() > x[i+1].min())) {
+          // Keep view x[i]
+          max = std::max(max,x[i].max());
+          x[j++]=x[i];
+        }
+        i++;
       }
       if (!x[i].assigned() || (x[i].val() <= max))
-	x[j++]=x[i];
+        x[j++]=x[i];
       x.size(j);
       if (j < 2)
-	return ES_SUBSUMED;
+        return ES_SUBSUMED;
     }
 
     return es;
@@ -305,9 +306,9 @@ namespace Gecode { namespace Int { namespace Distinct {
     if (View::pme(this) == ME_INT_VAL) {
       ExecStatus es = prop_val<View,false>(home,y);
       if ((es == ES_FAILED) || (es == ES_SUBSUMED))
-	return es;
+        return es;
       if (es == ES_FIX)
-	return ES_FIX_PARTIAL(View::pme(ME_INT_BND));
+        return ES_FIX_PARTIAL(View::pme(ME_INT_BND));
     }
 
     if (y.size() == 2) {

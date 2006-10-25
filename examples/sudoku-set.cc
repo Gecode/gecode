@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -63,38 +64,38 @@ public:
     // Set up the block set constants
     for (int i=0; i<3; i++)
       for (int j=0; j<3; j++) {
-	int dsb_arr[9] = {
-	  (j*27)+(i*3)+1, (j*27)+(i*3)+2, (j*27)+(i*3)+3,
-	  (j*27)+(i*3)+10, (j*27)+(i*3)+11, (j*27)+(i*3)+12,
-	  (j*27)+(i*3)+19, (j*27)+(i*3)+20, (j*27)+(i*3)+21
-	};
-	IntSet dsb(dsb_arr, 9);
- 	block[i*3+j]=dsb;
+        int dsb_arr[9] = {
+          (j*27)+(i*3)+1, (j*27)+(i*3)+2, (j*27)+(i*3)+3,
+          (j*27)+(i*3)+10, (j*27)+(i*3)+11, (j*27)+(i*3)+12,
+          (j*27)+(i*3)+19, (j*27)+(i*3)+20, (j*27)+(i*3)+21
+        };
+        IntSet dsb(dsb_arr, 9);
+         block[i*3+j]=dsb;
       }
 
     // All x must be pairwise disjoint
     for (int i=0; i<nn-1; i++)
       for (int j=i+1; j<nn; j++)
- 	rel(this, x[i], SRT_DISJ, x[j]);
+         rel(this, x[i], SRT_DISJ, x[j]);
     distinct(this, x, nn);
 
     // The x must intersect in exactly one element with each
     // row, column, and block
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++) {
-	SetVar inter_row(this, IntSet::empty, 1, 9*9, 1, 1);
-	rel(this, x[i], SOT_INTER, row[j], SRT_EQ, inter_row);
-	SetVar inter_col(this, IntSet::empty, 1, 9*9, 1, 1);
-	rel(this, x[i], SOT_INTER, col[j], SRT_EQ, inter_col);
-	SetVar inter_block(this, IntSet::empty, 1, 9*9, 1, 1);
-	rel(this, x[i], SOT_INTER, block[j], SRT_EQ, inter_block);
+        SetVar inter_row(this, IntSet::empty, 1, 9*9, 1, 1);
+        rel(this, x[i], SOT_INTER, row[j], SRT_EQ, inter_row);
+        SetVar inter_col(this, IntSet::empty, 1, 9*9, 1, 1);
+        rel(this, x[i], SOT_INTER, col[j], SRT_EQ, inter_col);
+        SetVar inter_block(this, IntSet::empty, 1, 9*9, 1, 1);
+        rel(this, x[i], SOT_INTER, block[j], SRT_EQ, inter_block);
       }
 
     // Fill-in predefined fields
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++)
-	if (int idx = value_at(examples[opt.size], nn, i, j))
-	  dom(this, x[idx-1], SRT_SUP, (i+1)+(j*nn) );
+        if (int idx = value_at(examples[opt.size], nn, i, j))
+          dom(this, x[idx-1], SRT_SUP, (i+1)+(j*nn) );
 
     branch(this, x, SETBVAR_NONE, SETBVAL_MIN);
   }
@@ -116,16 +117,16 @@ public:
     std::cout << '\t';
     for (int i = 0; i<n*n*n*n; i++) {
       for (int j=0; j<n*n; j++) {
-	if (x[j].contains(i+1)) {
-	  if (j+1<10)
-	    std::cout << j+1 << " ";
-	  else
-	    std::cout << (char)(j+1+'A'-10) << " ";	
-	  break;
-	}
+        if (x[j].contains(i+1)) {
+          if (j+1<10)
+            std::cout << j+1 << " ";
+          else
+            std::cout << (char)(j+1+'A'-10) << " ";        
+          break;
+        }
       }
       if((i+1)%(n*n) == 0)
-	std::cout << std::endl << '\t';
+        std::cout << std::endl << '\t';
     }
     std::cout << std::endl;
   }
@@ -146,12 +147,12 @@ main(int argc, char** argv) {
   opt.parse(argc,argv);
   if (opt.size >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
-	      << n_examples-1 << std::endl;
+              << n_examples-1 << std::endl;
     return 1;
   }
   if (example_size(examples[opt.size]) != 3) {
     std::cerr << "Set-based version only available with exmples of size 9*9"
-	      << std::endl;
+              << std::endl;
     return 2;
   }
   Example::run<SudokuSet,DFS>(opt);

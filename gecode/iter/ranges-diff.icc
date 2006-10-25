@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -76,16 +77,16 @@ namespace Gecode { namespace Iter { namespace Ranges {
       // Now the interval [mi ... ma] must be shrunken
       // Is [mi ... ma] completely consumed?
       if ((mi >= j.min()) && (ma <= j.max()))
-	goto retry;
+        goto retry;
       // Does [mi ... ma] overlap on the left?
       if (j.min() <= mi) {
-	mi = j.max()+1;
-	// Search for max!
-	++j;
-	if (j() && (j.min() <= ma))
-	  ma = j.min()-1;
+        mi = j.max()+1;
+        // Search for max!
+        ++j;
+        if (j() && (j.min() <= ma))
+          ma = j.min()-1;
       } else {
-	ma = j.min()-1;
+        ma = j.min()-1;
       }
     }
     return;

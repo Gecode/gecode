@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -17,7 +18,7 @@
  *  redistribution of this file, and for a
  *     DISCLAIMER OF ALL WARRANTIES.
  *
- */	
+ */        
 
 #include "examples/support.hh"
 #include "gecode/minimodel.hh"
@@ -108,7 +109,7 @@ public:
     for (int i = 0; i < n; i++) {
       int v = i + 1;
       for (int j = 0; j < k - 1; j++) {
-	post(home, p(i, j) + (v + 1) == p(i, j + 1));
+        post(home, p(i, j) + (v + 1) == p(i, j + 1));
       }
     }
   }
@@ -130,8 +131,8 @@ public:
 
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < k; j++) {
-	p(i, j).init(this, dom_idx);
-	y[i*k + j].init(this, dom_val);
+        p(i, j).init(this, dom_idx);
+        y[i*k + j].init(this, dom_val);
       }
     }
 
@@ -147,7 +148,7 @@ public:
     // channeling
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < k; j++) {
-	element(this, y, p(i, j), IntVar(this, i + 1, i + 1));
+        element(this, y, p(i, j), IntVar(this, i + 1, i + 1));
       }
     }
 
@@ -173,7 +174,7 @@ public:
     GECODE_AUTOARRAY(int, values, k*n);
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < k; j++) {
-	values[i * k + j] = i + 1;
+        values[i * k + j] = i + 1;
       }
     }
 
@@ -181,7 +182,7 @@ public:
     for(int c = 0; c < k * n; c++) {
       int i = 0;
       while (pos[i].assigned() && pos[i].val() != c) {
-	i++;
+        i++;
       }
       std::cout << values[i] << " ";
     }

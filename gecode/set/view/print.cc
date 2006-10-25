@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -58,7 +59,7 @@ printBound(std::ostream& os, I& r) {
 template <class IL, class IU>
 static void
 printVar(std::ostream& os, const bool assigned, IL& lb, IU& ub,
-	 unsigned int cardMin, unsigned int cardMax) {
+         unsigned int cardMin, unsigned int cardMax) {
   if (assigned) {
     printBound(os, ub);
     os << "#" << cardMin;
@@ -102,8 +103,8 @@ operator<<(std::ostream& os, const EmptyView&) {
 std::ostream&
 operator<<(std::ostream& os, const UniverseView&) {
   return os << "{" << Gecode::Limits::Set::int_min << "#"
-	    << Gecode::Limits::Set::int_max << "}#"
-	    << Gecode::Limits::Set::card_max;
+            << Gecode::Limits::Set::int_max << "}#"
+            << Gecode::Limits::Set::card_max;
 }
 
 std::ostream&

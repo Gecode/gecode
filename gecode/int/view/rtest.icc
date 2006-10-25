@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -39,9 +40,9 @@ namespace Gecode { namespace Int {
     ViewRanges<View> rx(x), ry(y);
     while (rx() && ry()) {
       if (rx.max() < ry.min()) {
-	++rx;
+        ++rx;
       } else if (ry.max() < rx.min()) {
-	++ry;
+        ++ry;
       } else return RT_MAYBE;
     }
     return RT_FALSE;
@@ -99,9 +100,9 @@ namespace Gecode { namespace Int {
     ViewRanges<View> rx(x), ry(y);
     while (rx() && ry()) {
       if (rx.max() < ry.min()) {
-	++rx;
+        ++rx;
       } else if (ry.max() < rx.min()) {
-	++ry;
+        ++ry;
       } else return RT_MAYBE;
     }
     return RT_TRUE;

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -26,7 +27,7 @@ namespace Gecode {
   
   forceinline
   Projector::Projector(SetExpr::var_idx x,
-		       const SetExpr& sglb, const SetExpr& slub)
+                       const SetExpr& sglb, const SetExpr& slub)
     : i(x), glb(sglb.encode()), lub(slub.encode()),
       _arity(std::max(sglb.arity(), slub.arity())) {}
 
@@ -42,12 +43,12 @@ namespace Gecode {
     } else {
       // Prune greatest lower and least upper bound according to given ranges
       {
-	SetExprRanges glbranges(x,glb,false);
-	GECODE_ME_CHECK(x[i].includeI(home, glbranges));
+        SetExprRanges glbranges(x,glb,false);
+        GECODE_ME_CHECK(x[i].includeI(home, glbranges));
       }
       {
-	SetExprRanges lubranges(x,lub,true);
-	GECODE_ME_CHECK(x[i].intersectI(home, lubranges));
+        SetExprRanges lubranges(x,lub,true);
+        GECODE_ME_CHECK(x[i].intersectI(home, lubranges));
       }
       return ES_NOFIX;
     }

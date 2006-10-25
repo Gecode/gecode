@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -213,9 +214,9 @@ namespace Gecode { namespace Int { namespace Element {
       int i = 0;
       ViewValues<ViewA> v(ix);
       while (v()) {
-	by_idx[i].idx = v.val();
-	by_idx[i].val = a[v.val()];
-	++i; ++v;
+        by_idx[i].idx = v.val();
+        by_idx[i].val = a[v.val()];
+        ++i; ++v;
       }
     }
     int size = ix.size();
@@ -246,11 +247,11 @@ namespace Gecode { namespace Int { namespace Element {
     while (i() && (l != NULL)) {
       assert(!l->marked());
       if (l->idx < i.min()) {
-	l->mark(); l=l->idx_next; p->idx_next=l;
+        l->mark(); l=l->idx_next; p->idx_next=l;
       } else if (l->idx > i.max()) {
-	++i;
+        ++i;
       } else {
-	p=l; l=l->idx_next;
+        p=l; l=l->idx_next;
       }
     }
     p->idx_next = NULL;
@@ -265,13 +266,13 @@ namespace Gecode { namespace Int { namespace Element {
     ViewRanges<ViewB> v(x1);
     while (v() && (l != NULL)) {
       if (l->marked()) {
-	l=l->val_next; p->val_next=l;
+        l=l->val_next; p->val_next=l;
       } else if (l->val < v.min()) {
-	l->mark(); l=l->val_next; p->val_next=l;
+        l->mark(); l=l->val_next; p->val_next=l;
       } else if (l->val > v.max()) {
-	++v;
+        ++v;
       } else {
-	p=l; l=l->val_next;
+        p=l; l=l->val_next;
       }
     }
     p->val_next = NULL;

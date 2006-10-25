@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -201,28 +202,28 @@ namespace Gecode {
    */
   template <class VarA, class VarB>
   bool shared(const VariableViewBase<VarA>&,
-	      const VariableViewBase<VarB>&);
+              const VariableViewBase<VarB>&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
   template <class VarA, class ViewB>
   bool shared(const VariableViewBase<VarA>&,
-	      const DerivedViewBase<ViewB>&);
+              const DerivedViewBase<ViewB>&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
   template <class ViewA, class VarB>
   bool shared(const DerivedViewBase<ViewA>&,
-	      const VariableViewBase<VarB>&);
+              const VariableViewBase<VarB>&);
   /**
    * \brief Test whether views share same variable
    * \ingroup TaskVarView
    */
   template <class ViewA, class ViewB>
   bool shared(const DerivedViewBase<ViewA>&,
-	      const DerivedViewBase<ViewB>&);
+              const DerivedViewBase<ViewB>&);
 
 
   /**
@@ -360,7 +361,7 @@ namespace Gecode {
   template <class Var>
   forceinline void
   VariableViewBase<Var>::subscribe(Space* home, Propagator* p, PropCond pc,
-				   bool process) {
+                                   bool process) {
     var->subscribe(home,p,pc,process);
   }
   template <class Var>
@@ -477,33 +478,33 @@ namespace Gecode {
   template <class VarA, class VarB>
   forceinline bool
   shared(const VariableViewBase<VarA>& x,
-	 const VariableViewBase<VarB>& y) {
+         const VariableViewBase<VarB>& y) {
     return (static_cast<VarBase*>(x.variable()) ==
-	    static_cast<VarBase*>(y.variable()));
+            static_cast<VarBase*>(y.variable()));
   }
   template <class VarA, class ViewB>
   forceinline bool
   shared(const VariableViewBase<VarA>& x,
-	 const DerivedViewBase<ViewB>& y) {
+         const DerivedViewBase<ViewB>& y) {
     return (ViewB::varderived() &&
-	    static_cast<VarBase*>(x.variable()) ==
-	    static_cast<VarBase*>(y.variable()));
+            static_cast<VarBase*>(x.variable()) ==
+            static_cast<VarBase*>(y.variable()));
   }
   template <class ViewA, class VarB>
   forceinline bool
   shared(const DerivedViewBase<ViewA>& x,
-	 const VariableViewBase<VarB>& y) {
+         const VariableViewBase<VarB>& y) {
     return (ViewA::varderived() &&
-	    static_cast<VarBase*>(x.variable()) ==
-	    static_cast<VarBase*>(y.variable()));
+            static_cast<VarBase*>(x.variable()) ==
+            static_cast<VarBase*>(y.variable()));
   }
   template <class ViewA, class ViewB>
   forceinline bool
   shared(const DerivedViewBase<ViewA>& x,
-	 const DerivedViewBase<ViewB>& y) {
+         const DerivedViewBase<ViewB>& y) {
     return (ViewA::varderived() && ViewB::varderived() &&
-	    static_cast<VarBase*>(x.variable()) ==
-	    static_cast<VarBase*>(y.variable()));
+            static_cast<VarBase*>(x.variable()) ==
+            static_cast<VarBase*>(y.variable()));
   }
 
 
@@ -531,7 +532,7 @@ namespace Gecode {
   template <class View, unsigned int n>
   forceinline void
   ViewTuple<View,n>::subscribe(Space* home, Propagator* p, PropCond pc,
-			       bool process) {
+                               bool process) {
     for (unsigned int i=0; i<n; i++)
       x[i].subscribe(home,p,pc,process);
   }
@@ -553,7 +554,7 @@ namespace Gecode {
   same(const ViewTuple<View,n>& x, const ViewTuple<View,n>& y) {
     for (unsigned int i=0; i<n; i++)
       if (!same(x[i],y[i]))
-	return false;
+        return false;
     return true;
   }
   template <class View, unsigned int n>
@@ -561,9 +562,9 @@ namespace Gecode {
   before(const ViewTuple<View,n>& x, const ViewTuple<View,n>& y){
     for (unsigned int i=0; i<n; i++)
       if (before(x[i],y[i])) {
-	return true;
+        return true;
       } else if (before(y[i],x[i])) {
-	return false;
+        return false;
       }
     return false;
   }

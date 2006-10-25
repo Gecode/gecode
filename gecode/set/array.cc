@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -36,14 +37,14 @@ namespace Gecode {
   }
 
   SetVarArray::SetVarArray(Space* home,int n,
-			   int lbMin,int lbMax,int ubMin,int ubMax,
-			   unsigned int minCard,
-			   unsigned int maxCard)
+                           int lbMin,int lbMax,int ubMin,int ubMax,
+                           unsigned int minCard,
+                           unsigned int maxCard)
     : VarArray<SetVar>(home,n) {
     if ((lbMin < Limits::Set::int_min) || 
-	(lbMax > Limits::Set::int_max) ||
-	(ubMin < Limits::Set::int_min) || 
-	(ubMax > Limits::Set::int_max))
+        (lbMax > Limits::Set::int_max) ||
+        (ubMin < Limits::Set::int_min) || 
+        (ubMax > Limits::Set::int_max))
       throw Set::VariableOutOfRangeDomain("SetVarArray");
     if (maxCard > Limits::Set::card_max)
       throw Set::VariableOutOfRangeCardinality("SetVarArray");
@@ -54,14 +55,14 @@ namespace Gecode {
   }
 
   SetVarArray::SetVarArray(Space* home,int n,
-			   const IntSet& glb,int ubMin,int ubMax,
-			   unsigned int minCard,unsigned int maxCard)
+                           const IntSet& glb,int ubMin,int ubMax,
+                           unsigned int minCard,unsigned int maxCard)
     : VarArray<SetVar>(home,n) {
     if ( ((glb.size() > 0) &&
-	  ((glb.min() < Limits::Set::int_min) ||
-	   (glb.max() > Limits::Set::int_max))) ||
-	 (ubMin < Limits::Set::int_min) || 
-	 (ubMax > Limits::Set::int_max))
+          ((glb.min() < Limits::Set::int_min) ||
+           (glb.max() > Limits::Set::int_max))) ||
+         (ubMin < Limits::Set::int_min) || 
+         (ubMax > Limits::Set::int_max))
       throw Set::VariableOutOfRangeDomain("SetVar");
     if (maxCard > Limits::Set::card_max)
       throw Set::VariableOutOfRangeCardinality("SetVarArray");
@@ -72,14 +73,14 @@ namespace Gecode {
   }
 
   SetVarArray::SetVarArray(Space* home,int n,
-			   int lbMin,int lbMax,const IntSet& lub,
-			   unsigned int minCard,unsigned int maxCard)
+                           int lbMin,int lbMax,const IntSet& lub,
+                           unsigned int minCard,unsigned int maxCard)
     : VarArray<SetVar>(home,n) {
     if ( ((lub.size() > 0) &&
-	  ((lub.min() < Limits::Set::int_min) ||
-	   (lub.max() > Limits::Set::int_max))) ||
-	 (lbMin < Limits::Set::int_min) || 
-	 (lbMax > Limits::Set::int_max))
+          ((lub.min() < Limits::Set::int_min) ||
+           (lub.max() > Limits::Set::int_max))) ||
+         (lbMin < Limits::Set::int_min) || 
+         (lbMax > Limits::Set::int_max))
       throw Set::VariableOutOfRangeDomain("SetVarArray");
     if (maxCard > Limits::Set::card_max)
       throw Set::VariableOutOfRangeCardinality("SetVarArray");
@@ -90,15 +91,15 @@ namespace Gecode {
   }
 
   SetVarArray::SetVarArray(Space* home,int n,
-			   const IntSet& glb, const IntSet& lub,
-			   unsigned int minCard, unsigned int maxCard)
+                           const IntSet& glb, const IntSet& lub,
+                           unsigned int minCard, unsigned int maxCard)
     : VarArray<SetVar>(home,n) {
     if (((glb.size() > 0) &&
-	 ((glb.min() < Limits::Set::int_min) ||
-	  (glb.max() > Limits::Set::int_max)))  ||
-	((lub.size() > 0) &&
-	 ((lub.min() < Limits::Set::int_min) ||
-	  (lub.max() > Limits::Set::int_max))))
+         ((glb.min() < Limits::Set::int_min) ||
+          (glb.max() > Limits::Set::int_max)))  ||
+        ((lub.size() > 0) &&
+         ((lub.min() < Limits::Set::int_min) ||
+          (lub.max() > Limits::Set::int_max))))
       throw Set::VariableOutOfRangeDomain("SetVar");
     if (maxCard > Limits::Set::card_max)
       throw Set::VariableOutOfRangeCardinality("SetVar");

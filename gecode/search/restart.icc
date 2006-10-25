@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -28,7 +29,7 @@ namespace Gecode {
 
   template <class T>
   Restart<T>::Restart(T* s, unsigned int c_d, unsigned int a_d,
-		      Search::Stop* st) :
+                      Search::Stop* st) :
     Gecode::DFS<T>(s,c_d,a_d,st), root(s->clone()), best(NULL) {}
 
   template <class T>

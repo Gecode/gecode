@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
@@ -127,13 +128,13 @@ namespace Log {
     if (for_display) {
       cout << "Initial configuration" << endl;
       for (unsigned int i = 0; i < hinitial.size(); ++i) {
-	cout << hinitial[i] << endl;
+        cout << hinitial[i] << endl;
       }
       cout << endl;
 
       cout << "Operations" << endl;
       for (unsigned int i = 0; i < hops.size(); ++i) {
-	cout << hops[i] << endl;
+        cout << hops[i] << endl;
       }
       cout << endl;
     } else {
@@ -141,54 +142,54 @@ namespace Log {
 
       ostringstream decl;
       for (unsigned int i = 0; i < cdecla.size(); ++i) {
-	decl << cdecla[i] << endl;
+        decl << cdecla[i] << endl;
       }
       error_space.replace(error_space.find("DECL"), 4,
-			  decl.str(), 0, decl.str().length());
+                          decl.str(), 0, decl.str().length());
 
       ostringstream initlist; initlist << "\t";
       for (unsigned int i = 0; i < cinitlist.size(); ++i) {
-	initlist << cinitlist[i];
-	if (i+1 != cinitlist.size()) initlist << ", ";
+        initlist << cinitlist[i];
+        if (i+1 != cinitlist.size()) initlist << ", ";
       }
       error_space.replace(error_space.find("INITLIST"), 9,
-			  initlist.str(), 0, initlist.str().length());
+                          initlist.str(), 0, initlist.str().length());
 
       ostringstream init;
       for (unsigned int i = 0; i < cinit.size(); ++i) {
-	init << cinit[i] << endl;
+        init << cinit[i] << endl;
       }
       error_space.replace(error_space.find("INIT"), 4,
-			  init.str(), 0, init.str().length());
+                          init.str(), 0, init.str().length());
 
       ostringstream update;
       for (unsigned int i = 0; i < cupdate.size(); ++i) {
-	update << cupdate[i] << endl;
+        update << cupdate[i] << endl;
       }
       error_space.replace(error_space.find("UPDATE"), 6,
-			  update.str(), 0, update.str().length());
+                          update.str(), 0, update.str().length());
 
       ostringstream operations;
       for (unsigned int i = 0; i < cops.size(); ++i) {
-	if (cops[i].size() > 0) {
-	  if (cops[i][0] != '\t' && cops[i][0] != ' ')
-	    operations << '\t';
-	  operations << cops[i] << endl;
-	}
+        if (cops[i].size() > 0) {
+          if (cops[i][0] != '\t' && cops[i][0] != ' ')
+            operations << '\t';
+          operations << cops[i] << endl;
+        }
       }
       error_space.replace(error_space.find("OPERATIONS"), 10,
-			  operations.str(), 0, operations.str().length());
+                          operations.str(), 0, operations.str().length());
 
       ostringstream printops;
       for (unsigned int i = 0; i < cnames.size(); ++i) {
-	string pop = cnames[i].second ? printloop : printcmd,
-	  name = cnames[i].first;
-	while (pop.find("NAME") != string::npos)
-	  pop.replace(pop.find("NAME"), 4, name, 0, name.length());
-	printops << pop;
+        string pop = cnames[i].second ? printloop : printcmd,
+          name = cnames[i].first;
+        while (pop.find("NAME") != string::npos)
+          pop.replace(pop.find("NAME"), 4, name, 0, name.length());
+        printops << pop;
       }
       error_space.replace(error_space.find("PRINTOPS"), 8,
-			  printops.str(), 0, printops.str().length());
+                          printops.str(), 0, printops.str().length());
 
       cout << error_space;
     }
@@ -213,7 +214,7 @@ namespace Log {
     for (int i = 0; i < a.size(); ++i) {
       ostringstream ai;
       ai << "\t" << name << "[" << i << "]="
-	 << a[i];
+         << a[i];
       hinitial.push_back(ai.str());
     }
 
@@ -237,12 +238,12 @@ namespace Log {
       init << "\tconst int arr" << i << "[][2] = {";
       int n = 0;
       for (IntVarRanges it(a[i]); it(); ++it, ++n) {
-	if (n) init << ",";
-	init << "{" << it.min() << "," << it.max() << "}";
+        if (n) init << ",";
+        init << "{" << it.min() << "," << it.max() << "}";
       }
       init << "};\n\t"
-	   << name << "[" << i << "] = IntVar(this, IntSet(arr"
-	   << i << ", " << n << "));";
+           << name << "[" << i << "] = IntVar(this, IntSet(arr"
+           << i << ", " << n << "));";
       cinit.push_back(init.str());
     }
   }
@@ -282,7 +283,7 @@ namespace Log {
     for (int i = 0; i < a.size(); ++i) {
       ostringstream ai;
       ai << "\t" << name << "[" << i << "]="
-	 << a[i];
+         << a[i];
       hinitial.push_back(ai.str());
     }
 
@@ -306,21 +307,21 @@ namespace Log {
       init << "\tconst int arrGlb" << i << "[][2] = {";
       int n = 0;
       for (SetVarGlbRanges it(a[i]); it(); ++it, ++n) {
-	if (n) init << ",";
-	init << "{" << it.min() << "," << it.max() << "}";
+        if (n) init << ",";
+        init << "{" << it.min() << "," << it.max() << "}";
       }
       init << "};\n";
       init << "\tconst int arrLub" << i << "[][2] = {";
       int m = 0;
       for (SetVarLubRanges it(a[i]); it(); ++it, ++m) {
-	if(m) init << ",";
-	init << "{" << it.min() << "," << it.max() << "}";
+        if(m) init << ",";
+        init << "{" << it.min() << "," << it.max() << "}";
       }
       init << "};\n\t";
       init << name << "[" << i << "] = SetVar(this, IntSet(arrGlb"
-	   << i << ", " << n << "), IntSet(arrLub"
-	   << i << ", " << m << "), " << a[i].cardMin()
-	   << ", " << a[i].cardMax() << ");";
+           << i << ", " << n << "), IntSet(arrLub"
+           << i << ", " << m << "), " << a[i].cardMin()
+           << ", " << a[i].cardMax() << ");";
       cinit.push_back(init.str());
     }
   }
@@ -430,7 +431,7 @@ namespace Log {
   }
 
   void prune(const SetVar& v, std::string name,
-	     unsigned int cardMin, unsigned int cardMax) {
+             unsigned int cardMin, unsigned int cardMax) {
     if(!do_logging) return;
     ostringstream h;
     h << "Prune cardinality of " << name << " to "

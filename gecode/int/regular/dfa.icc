@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -100,7 +101,7 @@ namespace Gecode {
   DFA::operator=(const DFA& d) {
     if (&d != this) {
       if (--dfai->use_cnt == 0)
-	Memory::free(dfai);
+        Memory::free(dfai);
       dfai = d.dfai;
       dfai->use_cnt++;
     }

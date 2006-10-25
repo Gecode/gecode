@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -27,7 +28,7 @@ namespace Gecode {
 
   void
   channel(Space* home, const IntVarArgs& x, const IntVarArgs& y,
-	  IntConLevel icl) {
+          IntConLevel icl) {
     using namespace Channel;
     int n = x.size();
     if (n != y.size())
@@ -40,18 +41,18 @@ namespace Gecode {
 
     if (icl == ICL_VAL) {
       ValInfo<IntView>* vi
-	= ValInfo<IntView>::allocate(home,2*n);
+        = ValInfo<IntView>::allocate(home,2*n);
       for (int i=n; i--; ) {
-	vi[i  ].init(x[i],n);
-	vi[i+n].init(y[i],n);
+        vi[i  ].init(x[i],n);
+        vi[i+n].init(y[i],n);
       }
       GECODE_ES_FAIL(home,Val<IntView>::post(home,n,vi));
     } else {
       DomInfo<IntView>* di
-	= DomInfo<IntView>::allocate(home,2*n);
+        = DomInfo<IntView>::allocate(home,2*n);
       for (int i=n; i--; ) {
-	di[i  ].init(x[i],n);
-	di[i+n].init(y[i],n);
+        di[i  ].init(x[i],n);
+        di[i+n].init(y[i],n);
       }
       GECODE_ES_FAIL(home,Dom<IntView>::post(home,n,di));
     }

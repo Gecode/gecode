@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -40,9 +41,9 @@ namespace Gecode {
       case PC_SET_VAL:
       case PC_SET_CGLB:
       case PC_SET_CARD:
-	return Gecode::Int::PC_INT_VAL;
+        return Gecode::Int::PC_INT_VAL;
       default:
-	return Gecode::Int::PC_INT_DOM;
+        return Gecode::Int::PC_INT_DOM;
       }
     }
 
@@ -50,15 +51,15 @@ namespace Gecode {
     SingletonView::me_inttoset(ModEvent me) {
       switch(me) {
       case Gecode::Int::ME_INT_FAILED: 
-	return ME_SET_FAILED;
+        return ME_SET_FAILED;
       case Gecode::Int::ME_INT_NONE: 
-	return ME_SET_NONE;
+        return ME_SET_NONE;
       case Gecode::Int::ME_INT_VAL: 
-	return ME_SET_VAL;
+        return ME_SET_VAL;
       case Gecode::Int::ME_INT_DOM: 
-	return ME_SET_LUB;
+        return ME_SET_LUB;
       default:
-	return ME_SET_LUB;
+        return ME_SET_LUB;
       }
     }
 
@@ -78,7 +79,7 @@ namespace Gecode {
 
     forceinline bool
     SingletonView::contains(int n) const { return view.assigned() ?
-					     (view.val()==n) : false; }
+                                             (view.val()==n) : false; }
 
     forceinline bool
     SingletonView::notContains(int n) const { return !view.in(n); }
@@ -97,11 +98,11 @@ namespace Gecode {
 
     forceinline int
     SingletonView::glbMin() const { return view.assigned() ?
-				      view.val() : BndSet::MIN_OF_EMPTY; }
+                                      view.val() : BndSet::MIN_OF_EMPTY; }
 
     forceinline int
     SingletonView::glbMax() const { return view.assigned() ?
-				      view.val() : BndSet::MAX_OF_EMPTY; }
+                                      view.val() : BndSet::MAX_OF_EMPTY; }
 
     forceinline ModEvent
     SingletonView::cardMin(Space* home,unsigned int c) {
@@ -128,16 +129,16 @@ namespace Gecode {
       ModEvent me1 = me_inttoset(view.gq(home,i));
       ModEvent me2 = me_inttoset(view.lq(home,j));
       if (me_failed(me1) || me_failed(me2))
-	return ME_SET_FAILED;
+        return ME_SET_FAILED;
       switch (me1) {
       case ME_SET_NONE:
       case ME_SET_LUB:
-	return me2;
+        return me2;
       case ME_SET_VAL:
-	return ME_SET_VAL;
+        return ME_SET_VAL;
       default:
-	GECODE_NEVER;
-	return ME_SET_VAL;
+        GECODE_NEVER;
+        return ME_SET_VAL;
       }
     }
 
@@ -156,16 +157,16 @@ namespace Gecode {
       ModEvent me1 = me_inttoset(view.gr(home,j));
       ModEvent me2 = me_inttoset(view.le(home,k));
       if (me_failed(me1) || me_failed(me2))
-	return ME_SET_FAILED;
+        return ME_SET_FAILED;
       switch (me1) {
       case ME_SET_NONE:
       case ME_SET_LUB:
-	return me2;
+        return me2;
       case ME_SET_VAL:
-	return ME_SET_VAL;
+        return ME_SET_VAL;
       default:
-	GECODE_NEVER;
-	return ME_SET_VAL;
+        GECODE_NEVER;
+        return ME_SET_VAL;
       }
     }
 
@@ -177,15 +178,15 @@ namespace Gecode {
     template <class I> ModEvent
     SingletonView::includeI(Space* home, I& iter) {
       if (!iter())
-	return ME_SET_NONE;
+        return ME_SET_NONE;
 
       if (iter.min()!=iter.max())
-	return ME_SET_FAILED;
+        return ME_SET_FAILED;
 
       int val = iter.min();
       ++iter;
       if ( iter() )
-	return ME_SET_FAILED;
+        return ME_SET_FAILED;
 
       return me_inttoset(view.eq(home, val));
     }
@@ -197,7 +198,7 @@ namespace Gecode {
 
     forceinline void
     SingletonView::subscribe(Space* home, Propagator* p, PropCond pc,
-			     bool process) {
+                             bool process) {
       view.subscribe(home,p,pc_settoint(pc),process);
     }
     forceinline void
@@ -300,11 +301,11 @@ namespace Gecode {
     forceinline void
     GlbRanges<SingletonView>::init(const SingletonView& s) {
       if (s.base().assigned()) {
-	val = s.base().val();
-	flag = true;
+        val = s.base().val();
+        flag = true;
       } else {
-	val = 0;
-	flag = false;
+        val = 0;
+        flag = false;
       }
     }
 

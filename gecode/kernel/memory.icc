@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -62,7 +63,7 @@ namespace Gecode {
     malloc(size_t s) {
       void* p = ::malloc(s);
       if (p != NULL)
-	return p;
+        return p;
       throw MemoryExhausted();
     }
 
@@ -70,7 +71,7 @@ namespace Gecode {
     realloc(void *p, size_t s) {
       p = ::realloc(p,s);
       if (p != NULL)
-	return p;
+        return p;
       throw MemoryExhausted();
     }
 
@@ -132,8 +133,8 @@ namespace Gecode {
 
 #if defined(__GNUC__) && (! defined(_WIN32) )
 
-#define GECODE_AUTOARRAY(T,X,N)					\
-char __GECODE__ ## X ## __LINE__ [(N)*sizeof(T)];		\
+#define GECODE_AUTOARRAY(T,X,N)                                        \
+char __GECODE__ ## X ## __LINE__ [(N)*sizeof(T)];                \
 T* X = reinterpret_cast<T*>(__GECODE__ ## X ## __LINE__);
 
 #elif defined(_MSC_VER) || (defined(__GNUC__) && defined(_WIN32))
@@ -154,22 +155,22 @@ namespace Gecode { namespace Memory {
     void init(void* p) { _x = p; }
     ~ManageMemory(void) {
       if (_x != NULL)
-	::free(_x);
+        ::free(_x);
     }
   };
 
 }}
 
 
-#define GECODE_AUTOARRAY(T,X,N)					\
-T* X;								\
-::Gecode::Memory::ManageMemory __GECODE__ ## X ## __LINE__;	\
-if ((sizeof(T)*(N)) <= 2048) {					\
-   X = reinterpret_cast<T*>(_alloca(sizeof(T)*(N)));		\
-   __GECODE__ ## X ## __LINE__ .init(NULL);			\
-} else {							\
-   X = reinterpret_cast<T*>(::malloc(sizeof(T)*(N)));		\
-   __GECODE__ ## X ## __LINE__ .init(X);			\
+#define GECODE_AUTOARRAY(T,X,N)                                        \
+T* X;                                                                \
+::Gecode::Memory::ManageMemory __GECODE__ ## X ## __LINE__;        \
+if ((sizeof(T)*(N)) <= 2048) {                                        \
+   X = reinterpret_cast<T*>(_alloca(sizeof(T)*(N)));                \
+   __GECODE__ ## X ## __LINE__ .init(NULL);                        \
+} else {                                                        \
+   X = reinterpret_cast<T*>(::malloc(sizeof(T)*(N)));                \
+   __GECODE__ ## X ## __LINE__ .init(X);                        \
 }
 
 #else

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -34,15 +35,15 @@ namespace Gecode { namespace Int { namespace Bool {
     case BT_COMP: return ES_FAILED;
     case BT_NONE:
       if (b0.zero()) {
-	GECODE_ME_CHECK(b1.t_zero(home));
+        GECODE_ME_CHECK(b1.t_zero(home));
       } else if (b0.one()) {
-	GECODE_ME_CHECK(b1.t_one(home));
+        GECODE_ME_CHECK(b1.t_one(home));
       } else if (b1.zero()) {
-	GECODE_ME_CHECK(b0.t_zero(home));
+        GECODE_ME_CHECK(b0.t_zero(home));
       } else if (b1.one()) {
-	GECODE_ME_CHECK(b0.t_one(home));
+        GECODE_ME_CHECK(b0.t_one(home));
       } else {
-	(void) new (home) Eq<BVA,BVB>(home,b0,b1);
+        (void) new (home) Eq<BVA,BVB>(home,b0,b1);
       }
       break;
     default: GECODE_NEVER;
@@ -58,7 +59,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BVA, class BVB>
   forceinline
   Eq<BVA,BVB>::Eq(Space* home, bool share, Propagator& p,
-		  BVA b0, BVB b1)
+                  BVA b0, BVB b1)
     : BoolBinary<BVA,BVB>(home,share,p,b0,b1) {}
 
   template<class BVA, class BVB>

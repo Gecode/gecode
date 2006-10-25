@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -701,11 +702,11 @@ namespace Gecode {
   /// Test whether views \a x and \a y are the same
   template <class Val, class UnsVal>
   bool same(const Int::ScaleView<Val,UnsVal>& x,
-	    const Int::ScaleView<Val,UnsVal>& y);
+            const Int::ScaleView<Val,UnsVal>& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
   template <class Val, class UnsVal>
   bool before(const Int::ScaleView<Val,UnsVal>& x,
-	      const Int::ScaleView<Val,UnsVal>& y);
+              const Int::ScaleView<Val,UnsVal>& y);
   //@}
 
 

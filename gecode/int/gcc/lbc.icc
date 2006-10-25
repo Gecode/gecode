@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -114,10 +115,10 @@ namespace Gecode { namespace Int { namespace GCC {
        * => I is an unstable set
        */
       if (hall[i].d == 0) {
-	hall[pred].h = w;
+        hall[pred].h = w;
       } else {
-	hall[w].h = pred;
-	w         = pred;
+        hall[w].h = pred;
+        w         = pred;
       }
     }
 
@@ -125,10 +126,10 @@ namespace Gecode { namespace Int { namespace GCC {
     for (i = bsize; i--; ) { // i can be zero
       hall[i].t = i - 1;
       if (hall[i].d == 0) {
-	hall[i].t = w;
+        hall[i].t = w;
       } else {
-	hall[w].t = i;
-	w = i;
+        hall[w].t = i;
+        w = i;
       }
     }
 
@@ -160,12 +161,12 @@ namespace Gecode { namespace Int { namespace GCC {
        */
 
       if (z != succ) {
-	w = pathmax_ps(hall, succ);
-	v = hall[w].ps;
-	pathset_ps(hall, succ, w, w);
-	w = std::min(y, z);
-	pathset_ps(hall, hall[w].ps, v, w);
-	hall[w].ps = v;
+        w = pathmax_ps(hall, succ);
+        v = hall[w].ps;
+        pathset_ps(hall, succ, w, w);
+        w = std::min(y, z);
+        pathset_ps(hall, hall[w].ps, v, w);
+        hall[w].ps = v;
       }
 
       /*
@@ -176,63 +177,63 @@ namespace Gecode { namespace Int { namespace GCC {
        */
 
       if (hall[z].d <= lps->sumup(hall[y].bounds, hall[z].bounds - 1)) {
-	w = pathmax_s(hall, hall[y].ps);
-	pathset_s(hall, hall[y].ps, w, w);
-	// Path compression
-	v = hall[w].s;
-	pathset_s(hall, hall[y].s, v, y);
-	hall[y].s = v;
+        w = pathmax_s(hall, hall[y].ps);
+        pathset_s(hall, hall[y].ps, w, w);
+        // Path compression
+        v = hall[w].s;
+        pathset_s(hall, hall[y].s, v, y);
+        hall[y].s = v;
       } else {
-	/*
-	 * FAILURE SET:
-	 * If the considered interval [x0,y] is neither POTENTIALLY STABLE
-	 * nor STABLE there are still buckets that can be filled,
-	 * therefore d can be decreased. If d equals zero the intervals
-	 * minimum capacity is met and thepath can be compressed to the
-	 * next value having an empty bucket.
-	 * see DOMINATION in "gcc/ubc.icc"
-	 */
-	if (--hall[z].d == 0) {
-	  hall[z].t = z + 1;
-	  z         = pathmax_t(hall, hall[z].t);
-	  hall[z].t = j;
-	}
+        /*
+         * FAILURE SET:
+         * If the considered interval [x0,y] is neither POTENTIALLY STABLE
+         * nor STABLE there are still buckets that can be filled,
+         * therefore d can be decreased. If d equals zero the intervals
+         * minimum capacity is met and thepath can be compressed to the
+         * next value having an empty bucket.
+         * see DOMINATION in "gcc/ubc.icc"
+         */
+        if (--hall[z].d == 0) {
+          hall[z].t = z + 1;
+          z         = pathmax_t(hall, hall[z].t);
+          hall[z].t = j;
+        }
 
-	/*
-	 * FINDING NEW LOWER BOUND:
-	 * If the lower bound belongs to an unstable or a stable set,
-	 * remind the new value we might assigned to the lower bound
-	 * in case the variable doesn't belong to a stable set.
-	 */
-	if (hall[x0].h > x0) {
-	  hall[i].newBound = pathmax_h(hall, x0);
-	  w                = hall[i].newBound;
-	  pathset_h(hall, x0, w, w); // path compression
-	} else {
-	  // Do not shrink the variable: take old min as new min
-	  hall[i].newBound = x0;
-	}
+        /*
+         * FINDING NEW LOWER BOUND:
+         * If the lower bound belongs to an unstable or a stable set,
+         * remind the new value we might assigned to the lower bound
+         * in case the variable doesn't belong to a stable set.
+         */
+        if (hall[x0].h > x0) {
+          hall[i].newBound = pathmax_h(hall, x0);
+          w                = hall[i].newBound;
+          pathset_h(hall, x0, w, w); // path compression
+        } else {
+          // Do not shrink the variable: take old min as new min
+          hall[i].newBound = x0;
+        }
 
-	/* UNSTABLE SET
-	 * If an unstable set is discovered
-	 * the difference between the interval bounds is equal to the
-	 * number of variables whose domain intersect the interval
-	 * (see ZEROTEST in "gcc/ubc.icc")
-	 */
-	// CLEARLY THIS WAS NOT STABLE == UNSTABLE
-	if (hall[z].d == lps->sumup(hall[y].bounds, hall[z].bounds - 1)) {
-	  if (hall[y].h > y)
-	    /*
-	     * y is not the end of the potentially stable set
-	     * thus ensure that the potentially stable superset is marked
-	     */
-	    y = hall[y].h;
-	  // Equivalent to pathmax since the path is fully compressed
-	  int predj = j - 1;
-	  pathset_h(hall, hall[y].h, predj, y);
-	  // mark the new unstable set [j,y]
-	  hall[y].h = predj;
-	}
+        /* UNSTABLE SET
+         * If an unstable set is discovered
+         * the difference between the interval bounds is equal to the
+         * number of variables whose domain intersect the interval
+         * (see ZEROTEST in "gcc/ubc.icc")
+         */
+        // CLEARLY THIS WAS NOT STABLE == UNSTABLE
+        if (hall[z].d == lps->sumup(hall[y].bounds, hall[z].bounds - 1)) {
+          if (hall[y].h > y)
+            /*
+             * y is not the end of the potentially stable set
+             * thus ensure that the potentially stable superset is marked
+             */
+            y = hall[y].h;
+          // Equivalent to pathmax since the path is fully compressed
+          int predj = j - 1;
+          pathset_h(hall, hall[y].h, predj, y);
+          // mark the new unstable set [j,y]
+          hall[y].h = predj;
+        }
       }
       pathset_t(hall, succ, z, z); // path compression
     }
@@ -253,9 +254,9 @@ namespace Gecode { namespace Int { namespace GCC {
     // a linear time compression.
     for (i = bsize; --i;) {
       if (hall[i].s > i) {
-	hall[i].s = w;
+        hall[i].s = w;
       } else {
-	w = i;
+        w = i;
       }
     }
 
@@ -271,16 +272,16 @@ namespace Gecode { namespace Int { namespace GCC {
       int y  = rank[mu[i]].max;
       // update only those variables that are not contained in a stable set
       if ((hall[x0].s <= x0) || (y > hall[x0].s)) {
-	//still have to check this out, how skipping works (consider dominated indices)
-	int m = lps->skipNonNullElementsRight(hall[hall[i].newBound].bounds);
-	ModEvent me = x[mu[i]].gq(home, m);
-	GECODE_ME_CHECK(me);
-	if (me_modified(me) && m != x[mu[i]].min()) {
-	  es = ES_NOFIX;
-	}
-	if (shared && me_modified(me)) {
-	  es = ES_NOFIX;
-	}
+        //still have to check this out, how skipping works (consider dominated indices)
+        int m = lps->skipNonNullElementsRight(hall[hall[i].newBound].bounds);
+        ModEvent me = x[mu[i]].gq(home, m);
+        GECODE_ME_CHECK(me);
+        if (me_modified(me) && m != x[mu[i]].min()) {
+          es = ES_NOFIX;
+        }
+        if (shared && me_modified(me)) {
+          es = ES_NOFIX;
+        }
       }
     }
 
@@ -290,10 +291,10 @@ namespace Gecode { namespace Int { namespace GCC {
     for (i = 0; i <= nb; i++) {
       hall[i].d = lps->sumup(hall[i].bounds, hall[i + 1].bounds - 1);
       if (hall[i].d == 0) {
-	hall[i].t = w;
+        hall[i].t = w;
       } else {
-	hall[w].t = i;
-	w         = i;
+        hall[w].t = i;
+        w         = i;
       }
     }
     hall[w].t = i;
@@ -301,7 +302,7 @@ namespace Gecode { namespace Int { namespace GCC {
     w         = 0;
     for (i = 1; i <= nb; i++) {
       if (hall[i - 1].d == 0) {
-	hall[i].h = w;
+        hall[i].h = w;
       } else {
          hall[w].h = i;
          w         = i;
@@ -322,30 +323,30 @@ namespace Gecode { namespace Int { namespace GCC {
        * (see above condition for STABLE SET)
        */
       if (hall[z].d > lps->sumup(hall[z].bounds, hall[y].bounds - 1)) {
-	//FAILURE SET
-	if (--hall[z].d == 0) {
-	  hall[z].t = z - 1;
-	  z         = pathmin_t(hall, hall[z].t);
-	  hall[z].t = j;
-	}
-	//FINDING NEW UPPER BOUND
-	if (hall[x0].h < x0) {
-	  w                = pathmin_h(hall, hall[x0].h);
-	  hall[i].newBound = w;
-	  pathset_h(hall, x0, w, w); // path compression
-	} else {
-	  hall[i].newBound = x0;
-	}
-	//UNSTABLE SET
-	if (hall[z].d == lps->sumup(hall[z].bounds, hall[y].bounds - 1)) {
-	  if (hall[y].h < y) {
-	    y = hall[y].h;
-	  }
-	  int succj = j + 1;
-	  //mark new unstable set [y,j]
-	  pathset_h(hall, hall[y].h, succj, y);
-	  hall[y].h = succj;
-	}
+        //FAILURE SET
+        if (--hall[z].d == 0) {
+          hall[z].t = z - 1;
+          z         = pathmin_t(hall, hall[z].t);
+          hall[z].t = j;
+        }
+        //FINDING NEW UPPER BOUND
+        if (hall[x0].h < x0) {
+          w                = pathmin_h(hall, hall[x0].h);
+          hall[i].newBound = w;
+          pathset_h(hall, x0, w, w); // path compression
+        } else {
+          hall[i].newBound = x0;
+        }
+        //UNSTABLE SET
+        if (hall[z].d == lps->sumup(hall[z].bounds, hall[y].bounds - 1)) {
+          if (hall[y].h < y) {
+            y = hall[y].h;
+          }
+          int succj = j + 1;
+          //mark new unstable set [y,j]
+          pathset_h(hall, hall[y].h, succj, y);
+          hall[y].h = succj;
+        }
       }
       pathset_t(hall, pred, z, z);
     }
@@ -355,15 +356,15 @@ namespace Gecode { namespace Int { namespace GCC {
       int x0 =  rank[nu[i]].min;
       int y  =  rank[nu[i]].max;
       if ((hall[x0].s <= x0) || (y > hall[x0].s)){
-	int m = lps->skipNonNullElementsLeft(hall[hall[i].newBound].bounds - 1);
-	ModEvent me = x[nu[i]].lq(home, m);
-	GECODE_ME_CHECK(me);
-	if (me_modified(me) && m != x[nu[i]].max()) {
-	  es = ES_NOFIX;
-	}
-	if (shared && me_modified(me)) {
-	  es = ES_NOFIX;
-	}
+        int m = lps->skipNonNullElementsLeft(hall[hall[i].newBound].bounds - 1);
+        ModEvent me = x[nu[i]].lq(home, m);
+        GECODE_ME_CHECK(me);
+        if (me_modified(me) && m != x[nu[i]].max()) {
+          es = ES_NOFIX;
+        }
+        if (shared && me_modified(me)) {
+          es = ES_NOFIX;
+        }
       }
     }
     return es;

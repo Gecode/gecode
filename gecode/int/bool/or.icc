@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -39,7 +40,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template <class BVA, class BVB>
   forceinline
   OrTrue<BVA,BVB>::OrTrue(Space* home, bool share, Propagator& p,
-			      BVA b0, BVB b1)
+                              BVA b0, BVB b1)
     : BoolBinary<BVA,BVB>(home,share,p,b0,b1) {}
 
   template <class BVA, class BVB>
@@ -53,11 +54,11 @@ namespace Gecode { namespace Int { namespace Bool {
       break;
     case BT_NONE:
       if (b0.zero()) {
-	GECODE_ES_CHECK(b1.t_one(home));
+        GECODE_ES_CHECK(b1.t_one(home));
       } else if (b1.zero()) {
-	GECODE_ES_CHECK(b0.t_one(home));
+        GECODE_ES_CHECK(b0.t_one(home));
       } else if (!b0.one() && !b1.one()) {
-	(void) new (home) OrTrue<BVA,BVB>(home,b0,b1);
+        (void) new (home) OrTrue<BVA,BVB>(home,b0,b1);
       }
       break;
     default: GECODE_NEVER;
@@ -103,7 +104,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template <class BVA, class BVB, class BVC>
   forceinline
   Or<BVA,BVB,BVC>::Or(Space* home, bool share, Propagator& p,
-			BVA b0, BVB b1, BVC b2)
+                        BVA b0, BVB b1, BVC b2)
     : BoolTernary<BVA,BVB,BVC>(home,share,p,b0,b1,b2) {}
 
   template <class BVA, class BVB, class BVC>
@@ -117,21 +118,21 @@ namespace Gecode { namespace Int { namespace Bool {
     } else {
       switch (bool_test(b0,b1)) {
       case BT_SAME:
-	return Eq<BVA,BVC>::post(home,b0,b2);
+        return Eq<BVA,BVC>::post(home,b0,b2);
       case BT_COMP:
-	GECODE_ME_CHECK(b2.t_one(home));
-	break;
+        GECODE_ME_CHECK(b2.t_one(home));
+        break;
       case BT_NONE:
-	if (b0.one() || b1.one()) {
-	  GECODE_ME_CHECK(b2.t_one(home));
-	} else if (b0.zero()) {
-	  return Eq<BVB,BVC>::post(home,b1,b2);
-	} else if (b1.zero()) {
-	  return Eq<BVA,BVC>::post(home,b0,b2);
-	} else {
-	  (void) new (home) Or<BVA,BVB,BVC>(home,b0,b1,b2);
-	}
-	break;
+        if (b0.one() || b1.one()) {
+          GECODE_ME_CHECK(b2.t_one(home));
+        } else if (b0.zero()) {
+          return Eq<BVB,BVC>::post(home,b1,b2);
+        } else if (b1.zero()) {
+          return Eq<BVA,BVC>::post(home,b0,b2);
+        } else {
+          (void) new (home) Or<BVA,BVB,BVC>(home,b0,b1,b2);
+        }
+        break;
       default: GECODE_NEVER;
       }
     }
@@ -154,12 +155,12 @@ namespace Gecode { namespace Int { namespace Bool {
       GECODE_ES_CHECK(x1.t_zero(home));
     } else if (x2.one()) {
       if (x0.zero()) {
-	GECODE_ES_CHECK(x1.t_one(home));
+        GECODE_ES_CHECK(x1.t_one(home));
       } else if (x1.zero()) {
-	GECODE_ES_CHECK(x0.t_one(home));
+        GECODE_ES_CHECK(x0.t_one(home));
       } else {
-	return ES_FIX;
-      }	
+        return ES_FIX;
+      }        
     } else if (x0.zero() && x1.zero()) {
       GECODE_ES_CHECK(x2.t_zero(home));
     } else {
@@ -179,8 +180,8 @@ namespace Gecode { namespace Int { namespace Bool {
   forceinline
   NaryOrTrue<View>::NaryOrTrue(Space* home, ViewArray<View>& b)
     : BinaryPropagator<View,PC_INT_VAL>(home,
-					b[b.size()-2],
-					b[b.size()-1]), x(b) {
+                                        b[b.size()-2],
+                                        b[b.size()-1]), x(b) {
     assert(x.size() > 2);
     x.size(x.size()-2);
   }
@@ -199,19 +200,19 @@ namespace Gecode { namespace Int { namespace Bool {
     int n = p.x.size();
     for (int i=n; i--; )
       if (p.x[i].zero()) {
-	n--; p.x[i]=p.x[n]; x[i]=x[n];
+        n--; p.x[i]=p.x[n]; x[i]=x[n];
       } else if (p.x[i].one()) {
-	x[i].update(home,share,p.x[i]);
-	// Now eliminate all remaining zeros and ones
-	while (i--)
-	  if (p.x[i].zero() || p.x[i].one()) {
-	    n--; p.x[i]=p.x[n]; x[i]=x[n];
-	  } else {
-	    x[i].update(home,share,p.x[i]);
-	  }
-	goto done;
+        x[i].update(home,share,p.x[i]);
+        // Now eliminate all remaining zeros and ones
+        while (i--)
+          if (p.x[i].zero() || p.x[i].one()) {
+            n--; p.x[i]=p.x[n]; x[i]=x[n];
+          } else {
+            x[i].update(home,share,p.x[i]);
+          }
+        goto done;
       } else {
-	x[i].update(home,share,p.x[i]);
+        x[i].update(home,share,p.x[i]);
       }
     done:
     x.size(n); p.x.size(n);
@@ -222,9 +223,9 @@ namespace Gecode { namespace Int { namespace Bool {
   NaryOrTrue<View>::post(Space* home, ViewArray<View>& b) {
     for (int i=b.size(); i--; )
       if (b[i].one())
-	return ES_OK;
+        return ES_OK;
       else if (b[i].zero())
-	b.move_lst(i);
+        b.move_lst(i);
     if (b.size() == 0)
       return ES_FAILED;
     b.unique();
@@ -250,27 +251,27 @@ namespace Gecode { namespace Int { namespace Bool {
     if (x0.zero()) {
       int n = x.size();
       for (int i=n; i--; )
-	if (x[i].one()) {
-	  x.size(n);
-	  return ES_SUBSUMED;
-	} else if (x[i].zero()) {
-	  x[i] = x[--n];
-	} else {
-	  // New unassigned view found
-	  assert(!x[i].zero() && !x[i].one());
-	  // Rewrite if there is just one view left
-	  if (i == 0) {
-	    View y = x[0];
-	    x.size(0);
-	    GECODE_ES_CHECK((OrTrue<View,View>::post(home,x1,y)));
-	    return ES_SUBSUMED;
-	  }
-	  // Move to x0 and subscribe
-	  x0=x[i]; x[i]=x[--n]; 
-	  x.size(n);
-	  x0.subscribe(home,this,PC_INT_VAL,false);
-	  return ES_FIX;
-	}
+        if (x[i].one()) {
+          x.size(n);
+          return ES_SUBSUMED;
+        } else if (x[i].zero()) {
+          x[i] = x[--n];
+        } else {
+          // New unassigned view found
+          assert(!x[i].zero() && !x[i].one());
+          // Rewrite if there is just one view left
+          if (i == 0) {
+            View y = x[0];
+            x.size(0);
+            GECODE_ES_CHECK((OrTrue<View,View>::post(home,x1,y)));
+            return ES_SUBSUMED;
+          }
+          // Move to x0 and subscribe
+          x0=x[i]; x[i]=x[--n]; 
+          x.size(n);
+          x0.subscribe(home,this,PC_INT_VAL,false);
+          return ES_FIX;
+        }
       // All views have been assigned!
       x.size(0);
       GECODE_ME_CHECK(x1.t_one(home));
@@ -313,15 +314,15 @@ namespace Gecode { namespace Int { namespace Bool {
       return NaryOrTrue<View>::post(home,b);
     if (c.zero()) {
       for (int i=b.size(); i--; )
-	GECODE_ME_CHECK(b[i].t_zero(home));
+        GECODE_ME_CHECK(b[i].t_zero(home));
       return ES_OK;
     }
     for (int i=b.size(); i--; )
       if (b[i].one()) {
-	GECODE_ME_CHECK(c.t_one(home));
-	return ES_OK;
+        GECODE_ME_CHECK(c.t_one(home));
+        return ES_OK;
       } else if (b[i].zero()) {
-	b.move_lst(i);
+        b.move_lst(i);
       }
     if (b.size() == 0)
       return ES_FAILED;
@@ -339,10 +340,10 @@ namespace Gecode { namespace Int { namespace Bool {
   NaryOr<View>::copy(Space* home, bool share) {
     if (x.size() == 1)
       return new (home) Eq<View,View>(home,share,*this,
-				      x[0],y);
+                                      x[0],y);
     if (x.size() == 2)
       return new (home) Or<View,View,View>(home,share,*this,
-					   x[0],x[1],y);
+                                           x[0],x[1],y);
     return new (home) NaryOr<View>(home,share,*this);
   }
 
@@ -351,7 +352,7 @@ namespace Gecode { namespace Int { namespace Bool {
   NaryOr<View>::propagate(Space* home) {
     if (y.zero()) {
       for (int i = x.size(); i--; )
-	GECODE_ME_CHECK(x[i].t_zero(home));
+        GECODE_ME_CHECK(x[i].t_zero(home));
       return ES_SUBSUMED;
     }
     if (y.one()) {
@@ -360,11 +361,11 @@ namespace Gecode { namespace Int { namespace Bool {
     }
     for (int i = x.size(); i--; ) {
       if (x[i].one()) {
-	y.t_one_none(home);
-	return ES_SUBSUMED;
+        y.t_one_none(home);
+        return ES_SUBSUMED;
       }
       if (x[i].zero())
-	x.move_lst(i);
+        x.move_lst(i);
     }
     if (x.size() == 0) {
       y.t_zero_none(home);

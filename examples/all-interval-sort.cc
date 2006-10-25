@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -17,7 +18,7 @@
  *  redistribution of this file, and for a
  *     DISCLAIMER OF ALL WARRANTIES.
  *
- */	
+ */        
 
 /**
  * \brief %Example: %All-Interval Series
@@ -136,7 +137,7 @@ public:
     for (int i = 0; i < n; i++) {
       x[i].init(this, dom_zn);
       if (i < n - 1)
-	d[i].init(this, dom_zns);
+        d[i].init(this, dom_zns);
     }
 
     difference(this, x, d);

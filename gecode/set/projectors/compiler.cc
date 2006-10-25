@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -85,13 +86,13 @@ namespace Gecode {
       os << "ViewArray<View>& x";
     } else {
       for (int i=0; i<spec._arity; i++) {
-	if (views==SINGLE_VIEW)
-	  os << "View";
-	else
-	  os << "View" << i;
-	os << " x" << i;
-	if (i<spec._arity-1)
-	  os << ", ";
+        if (views==SINGLE_VIEW)
+          os << "View";
+        else
+          os << "View" << i;
+        os << " x" << i;
+        if (i<spec._arity-1)
+          os << ", ";
       }
     }
     if (spec._reified)
@@ -104,10 +105,10 @@ namespace Gecode {
       os << "_x(x)";
     } else {
       for (int i=0; i<spec._arity; i++) {
-	os << "_x"<< i << "("
-	   << "x" << i << ")";
-	if (i<spec._arity-1)
-	  os <<", ";
+        os << "_x"<< i << "("
+           << "x" << i << ")";
+        if (i<spec._arity-1)
+          os <<", ";
       }
     }
     if (spec._reified)
@@ -120,9 +121,9 @@ namespace Gecode {
       iccos << "View";
     else
       for (int i=0; i<spec._arity; i++) {
-	iccos << "View" << i;
-	if (i!=spec._arity-1)
-	  hhos << ", ";
+        iccos << "View" << i;
+        if (i!=spec._arity-1)
+          hhos << ", ";
       }
     iccos << ">";
   }
@@ -133,9 +134,9 @@ namespace Gecode {
     else {
       os << indent << "template <";
       for (int i=0; i<spec._arity; i++) {
-	os << "class View" << i;
-	if (i!=spec._arity-1)
-	  os << ", ";
+        os << "class View" << i;
+        if (i!=spec._arity-1)
+          os << ", ";
       }
       os << ">" << endl;
     }
@@ -145,35 +146,35 @@ namespace Gecode {
   ProjectorCompiler::classdef() {
     templatehead(hhos);
     hhos << indent
-	 << "class " << spec._name << " : public Propagator { " << endl
-	 << indent << "protected:" << endl;
+         << "class " << spec._name << " : public Propagator { " << endl
+         << indent << "protected:" << endl;
       
     if (nary())
       hhos << indent
-	   << "  ViewArray<View> _x; ///< The view array" << endl;
+           << "  ViewArray<View> _x; ///< The view array" << endl;
     else
       for (int i=0; i<spec._arity; i++) {
-	hhos << indent << "  ";
-	if (views==SINGLE_VIEW)
-	  hhos << "View";
-	else
-	  hhos << "View" << i;
-	hhos << " _x" << i << "; ///< View #" << i << endl;
+        hhos << indent << "  ";
+        if (views==SINGLE_VIEW)
+          hhos << "View";
+        else
+          hhos << "View" << i;
+        hhos << " _x" << i << "; ///< View #" << i << endl;
       }
 
     if (spec._reified)
       hhos << indent
-	   << "  Gecode::Int::BoolView _b; ///< Boolean view for reification"
-	   << endl;
+           << "  Gecode::Int::BoolView _b; ///< Boolean view for reification"
+           << endl;
 
     hhos << indent
-	 << "  /// Constructor for cloning" << endl << indent
-	 << "  " << spec._name << "(Space* home,bool,"
-	 << spec._name << "&);" << endl;
+         << "  /// Constructor for cloning" << endl << indent
+         << "  " << spec._name << "(Space* home,bool,"
+         << spec._name << "&);" << endl;
 
     hhos << indent
-	 << "  /// Constructor for creation" << endl << indent
-	 << "  " << spec._name << "(Space* home, ";
+         << "  /// Constructor for creation" << endl << indent
+         << "  " << spec._name << "(Space* home, ";
     viewsarglist(hhos);
     hhos
       << ");" << endl;
@@ -188,36 +189,36 @@ namespace Gecode {
       hhos << indent << "  ExecStatus check(Space* home);" << endl;
       hhos << indent << "  /// Propagate negated version" << endl;
       hhos << indent << "  ExecStatus propagateNegative(Space* home);"
-           << endl << endl;	
+           << endl << endl;        
     }
      
     hhos << indent
-	 << "public:" << endl;
+         << "public:" << endl;
 
     hhos << indent
-	 << "  /// Cost function (defined as " << propcost() << ")" 
-	 << endl << indent
-	 << "  virtual PropCost cost(void) const;" << endl;
+         << "  /// Cost function (defined as " << propcost() << ")" 
+         << endl << indent
+         << "  virtual PropCost cost(void) const;" << endl;
 
     hhos << indent
-	 << "  /// Delete propagator and return its size"
-	 << endl << indent
-	 << "  virtual size_t dispose(Space* home);" << endl;
+         << "  /// Delete propagator and return its size"
+         << endl << indent
+         << "  virtual size_t dispose(Space* home);" << endl;
 
     hhos << indent
-	 << "  /// Copy propagator during cloning" << endl << indent
-	 << "  virtual Actor*      copy(Space* home,bool);" << endl
-	 << endl << indent
-	 << "  /// Perform propagation" << endl << indent
-	 << "  virtual ExecStatus propagate(Space* home);" << endl
-	 << endl << indent
-	 << "  /// Post projection propagator" << endl << indent
-	 << "  static  ExecStatus post(Space* home, ";
+         << "  /// Copy propagator during cloning" << endl << indent
+         << "  virtual Actor*      copy(Space* home,bool);" << endl
+         << endl << indent
+         << "  /// Perform propagation" << endl << indent
+         << "  virtual ExecStatus propagate(Space* home);" << endl
+         << endl << indent
+         << "  /// Post projection propagator" << endl << indent
+         << "  static  ExecStatus post(Space* home, ";
     viewsarglist(hhos);
     hhos
       << ");" << endl;
 
-    hhos << indent	<< "};" << endl;
+    hhos << indent        << "};" << endl;
 
   }
 
@@ -231,7 +232,7 @@ namespace Gecode {
       case Gecode::Set::PC_SET_CLUB :
       case Gecode::Set::PC_SET_ANY : return "Gecode::Set::PC_SET_ANY";
       default: GECODE_NEVER;
-      }	
+      }        
     }
 
     switch (pc) {
@@ -256,14 +257,14 @@ namespace Gecode {
     iccos << indent << spec._name;
     templateparams();
     iccos << "::" << spec._name << endl << indent
-	  << "(Space* home, ";
+          << "(Space* home, ";
     viewsarglist(iccos);
     iccos << ")" << endl;
 
     ++indent;
 
     iccos << indent
-	 << ": Propagator(home), ";
+         << ": Propagator(home), ";
     initarglist(iccos);
     iccos << " {" << endl;
       
@@ -278,12 +279,12 @@ namespace Gecode {
       iccos << i;
       if (isNary) iccos << "]";
       iccos << ".subscribe(home, this, " << propcond(scope[i])
-	   << ");" << endl;
+           << ");" << endl;
     }
       
     if (spec._reified)
       iccos << indent << "_b.subscribe(home, this, Gecode::Int::PC_INT_VAL);"
-	    << endl;
+            << endl;
 
     --indent;
     iccos << indent << "}" << endl;
@@ -295,22 +296,22 @@ namespace Gecode {
     // Copy constructor
     templatehead(iccos);
     iccos << indent
-	 << spec._name;
+         << spec._name;
     templateparams();
     iccos << "::" << spec._name << endl << indent
-	 << "(Space* home, bool share, " << spec._name << "& p)" << endl;
+         << "(Space* home, bool share, " << spec._name << "& p)" << endl;
 
     ++indent;
 
     iccos << indent
-	 << ": Propagator(home, share, p) {" << endl;
+         << ": Propagator(home, share, p) {" << endl;
 
     if (isNary) {
       iccos << indent << "_x.update(home, share, p._x);" << endl;
     } else {
       for (int i=0; i<spec._arity; i++)
-	iccos << indent
-	     << "_x" << i << ".update(home, share, p._x" << i << ");" << endl;
+        iccos << indent
+             << "_x" << i << ".update(home, share, p._x" << i << ");" << endl;
     }
       
     if (spec._reified)
@@ -339,18 +340,18 @@ namespace Gecode {
       iccos << i;
       if (isNary) iccos << "]";
       iccos << ".cancel(home, this, " << propcond(scope[i])
-	   << ");" << endl;
+           << ");" << endl;
     }
       
     if (spec._reified)
       iccos << indent << "_b.cancel(home, this, Gecode::Int::PC_INT_VAL);"
-	    << endl;
+            << endl;
 
     --indent;
     iccos << indent << "}" << endl;
 
     iccos << indent << "(void) Propagator::dispose(home);" << endl
-	 << indent << "return sizeof(*this);" << endl;      
+         << indent << "return sizeof(*this);" << endl;      
 
     --indent;
     iccos << indent << "}" << endl << endl;
@@ -361,40 +362,40 @@ namespace Gecode {
     // Copy function
     templatehead(iccos);
     iccos << indent
-	  << "Actor*" << endl << indent
-	  << spec._name;
+          << "Actor*" << endl << indent
+          << spec._name;
     templateparams();
     iccos << "::copy(Space* home, bool share) {"
-	 << endl << indent
-	 << "  return new (home) " << spec._name << "(home,share,*this);"
-	 << endl << indent << "}" << endl << endl;
+         << endl << indent
+         << "  return new (home) " << spec._name << "(home,share,*this);"
+         << endl << indent << "}" << endl << endl;
     ///////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////
     // Post member function
     templatehead(iccos);
     iccos << indent
-	  << "ExecStatus" << endl << indent
-	  << spec._name;
+          << "ExecStatus" << endl << indent
+          << spec._name;
     templateparams();
     iccos << "::post(Space* home, ";
     viewsarglist(iccos);
     iccos << ") {" << endl << indent
-	 << "  (void) new (home) " << spec._name << "(home, ";
+         << "  (void) new (home) " << spec._name << "(home, ";
     if (isNary) {
       iccos << "x";
     } else {
       for (int i=0; i<spec._arity; i++) {
-	iccos << "x" << i;
-	if (i<spec._arity-1)
-	  iccos << ", ";
+        iccos << "x" << i;
+        if (i<spec._arity-1)
+          iccos << ", ";
       }
     }
     if (spec._reified)
       iccos << ", b";
     iccos << ");" << endl
-	 << indent << "  return ES_OK;" << endl
-	 << indent << "}" << endl;
+         << indent << "  return ES_OK;" << endl
+         << indent << "}" << endl;
     ///////////////////////////////////////////////////
 
 
@@ -403,12 +404,12 @@ namespace Gecode {
     iccos << endl;
     templatehead(iccos);
     iccos << indent
-	  << "PropCost" << endl << indent
-	  << spec._name;
+          << "PropCost" << endl << indent
+          << spec._name;
     templateparams();
     iccos << "::cost(void) const {" << endl << indent
-	  << "  return " << propcost() << ";" << endl << indent
-	  << "}" << endl;
+          << "  return " << propcost() << ";" << endl << indent
+          << "}" << endl;
     ///////////////////////////////////////////////////
 
   }
@@ -424,90 +425,90 @@ namespace Gecode {
     for (int i=0; i<instrs.size(); i++) {
       switch (instrs[i]) {
       case SetExprCode::COMPLEMENT:
-	{
-	  string t = typestack.back(); typestack.pop_back();
-	  int a = argstack.back(); argstack.pop_back();
-	  iccos << indent
-		<< "RangesCompl<" << t << " > i" << (++arg)
-		<< "(i" << a << ");" << endl;
-	  typestack.push_back("RangesCompl<"+t+" >");
-	  argstack.push_back(arg);
-	}
-	break;
+        {
+          string t = typestack.back(); typestack.pop_back();
+          int a = argstack.back(); argstack.pop_back();
+          iccos << indent
+                << "RangesCompl<" << t << " > i" << (++arg)
+                << "(i" << a << ");" << endl;
+          typestack.push_back("RangesCompl<"+t+" >");
+          argstack.push_back(arg);
+        }
+        break;
       case SetExprCode::INTER:
-	{
-	  string t2 = typestack.back(); typestack.pop_back();
-	  string t1 = typestack.back(); typestack.pop_back();
-	  int a2 = argstack.back(); argstack.pop_back();
-	  int a1 = argstack.back(); argstack.pop_back();
-	  iccos << indent
-		<< "Iter::Ranges::Inter<" << t1 << ", " << t2 << " > i" 
-		<< (++arg)
-		<< "(i" << a1 << ", i" << a2 << ");" << endl;
-	  typestack.push_back("Iter::Ranges::Inter<"+t1+", "+t2+" >");
-	  argstack.push_back(arg);
-	}
-	break;
+        {
+          string t2 = typestack.back(); typestack.pop_back();
+          string t1 = typestack.back(); typestack.pop_back();
+          int a2 = argstack.back(); argstack.pop_back();
+          int a1 = argstack.back(); argstack.pop_back();
+          iccos << indent
+                << "Iter::Ranges::Inter<" << t1 << ", " << t2 << " > i" 
+                << (++arg)
+                << "(i" << a1 << ", i" << a2 << ");" << endl;
+          typestack.push_back("Iter::Ranges::Inter<"+t1+", "+t2+" >");
+          argstack.push_back(arg);
+        }
+        break;
       case SetExprCode::UNION:
-	{
-	  string t2 = typestack.back(); typestack.pop_back();
-	  string t1 = typestack.back(); typestack.pop_back();
-	  int a2 = argstack.back(); argstack.pop_back();
-	  int a1 = argstack.back(); argstack.pop_back();
-	  iccos << indent
-		<< "Iter::Ranges::Union<" << t1 << ", " << t2 << " > i" 
-		<< (++arg)
-		<< "(i" << a1 << ", i" << a2 << ");" << endl;
-	  typestack.push_back("Iter::Ranges::Union<"+t1+", "+t2+" >");
-	  argstack.push_back(arg);
-	}
-	break;
+        {
+          string t2 = typestack.back(); typestack.pop_back();
+          string t1 = typestack.back(); typestack.pop_back();
+          int a2 = argstack.back(); argstack.pop_back();
+          int a1 = argstack.back(); argstack.pop_back();
+          iccos << indent
+                << "Iter::Ranges::Union<" << t1 << ", " << t2 << " > i" 
+                << (++arg)
+                << "(i" << a1 << ", i" << a2 << ");" << endl;
+          typestack.push_back("Iter::Ranges::Union<"+t1+", "+t2+" >");
+          argstack.push_back(arg);
+        }
+        break;
       case SetExprCode::GLB:
       case SetExprCode::LUB:
         {
           string bound;
           if (invert) {
-	    if (instrs[i] == SetExprCode::GLB)
-	      bound = "Lub";
-	    else
-	      bound = "Glb";
+            if (instrs[i] == SetExprCode::GLB)
+              bound = "Lub";
+            else
+              bound = "Glb";
           } else {
-	    if (instrs[i] == SetExprCode::GLB)
-	      bound = "Glb";
-	    else
-	      bound = "Lub";	
+            if (instrs[i] == SetExprCode::GLB)
+              bound = "Glb";
+            else
+              bound = "Lub";        
           }
 
-	  int a = argstack.back(); argstack.pop_back();
-	  iccos << indent;
-	  if (nary() || views==SINGLE_VIEW) {
-	    iccos << bound << "Ranges<View> i";
-	    string ty = bound + "Ranges<View>";
-	    typestack.push_back(ty);
-	  } else {
-	    iccos << bound << "Ranges<View" << a << "> i";
-	    stringstream s;
-	    s << a;
-	    string ty = bound + "Ranges<View";
-	    ty += s.str();
-	    ty += ">";
-	    typestack.push_back(ty);
-	  }
-	  iccos << (++arg);
-	  if (nary())
-	    iccos << "(_x[" << a << "]);" << endl;
-	  else
-	    iccos << "(_x" << a << ");" << endl;
-	  argstack.push_back(arg);
-	}
-	break;
+          int a = argstack.back(); argstack.pop_back();
+          iccos << indent;
+          if (nary() || views==SINGLE_VIEW) {
+            iccos << bound << "Ranges<View> i";
+            string ty = bound + "Ranges<View>";
+            typestack.push_back(ty);
+          } else {
+            iccos << bound << "Ranges<View" << a << "> i";
+            stringstream s;
+            s << a;
+            string ty = bound + "Ranges<View";
+            ty += s.str();
+            ty += ">";
+            typestack.push_back(ty);
+          }
+          iccos << (++arg);
+          if (nary())
+            iccos << "(_x[" << a << "]);" << endl;
+          else
+            iccos << "(_x" << a << ");" << endl;
+          argstack.push_back(arg);
+        }
+        break;
       case SetExprCode::EMPTY : iccos << " e "; break;
       case SetExprCode::UNIVERSE : iccos << " u "; break;
       default:
-	{
-	  argstack.push_back((instrs[i])-SetExprCode::LAST);
-	}
-	break;
+        {
+          argstack.push_back((instrs[i])-SetExprCode::LAST);
+        }
+        break;
       }
     }
 
@@ -552,11 +553,11 @@ namespace Gecode {
           break;
         case ITER_FIX:
           {
-  	    iccos << indent << "bool modified=true;" << endl;
-  	    iccos << indent << "while (modified) {" << endl;
-  	    ++indent;
-  	    iccos << indent << "modified = false;" << endl;
-  	    me_check = "GECODE_ME_CHECK_MODIFIED(modified, ";
+              iccos << indent << "bool modified=true;" << endl;
+              iccos << indent << "while (modified) {" << endl;
+              ++indent;
+              iccos << indent << "modified = false;" << endl;
+              me_check = "GECODE_ME_CHECK_MODIFIED(modified, ";
           }
           break;
         default: GECODE_NEVER;
@@ -565,31 +566,31 @@ namespace Gecode {
       for (int i=spec._ps.size(); i--; ) {
         SetExprCode glb = spec._ps[i].getGlb();
         if (glb.size() > 0 && glb[0] != SetExprCode::EMPTY) {
-  	  iccos << indent << "{" << endl;
-	  ++indent;
-	  int arg = iterator(glb, false, true);
-	  iccos << indent << me_check;
-	  if (nary())
-	    iccos << "_x[" << spec._ps[i].getIdx() << "]";
-	  else
-	    iccos << "_x" << spec._ps[i].getIdx();
-	  iccos << ".includeI(home, i" << arg << "));" << endl;
-	  --indent;
-	  iccos << indent << "}" << endl;
+            iccos << indent << "{" << endl;
+          ++indent;
+          int arg = iterator(glb, false, true);
+          iccos << indent << me_check;
+          if (nary())
+            iccos << "_x[" << spec._ps[i].getIdx() << "]";
+          else
+            iccos << "_x" << spec._ps[i].getIdx();
+          iccos << ".includeI(home, i" << arg << "));" << endl;
+          --indent;
+          iccos << indent << "}" << endl;
         }
         SetExprCode lub = spec._ps[i].getLub();
         if (lub.size() > 0 && lub[0] != SetExprCode::UNIVERSE) {
-  	  iccos << indent << "{" << endl;
-	  ++indent;
-	  int arg = iterator(lub);
-	  iccos << indent << me_check;
-	  if (nary())
-	    iccos << "_x[" << spec._ps[i].getIdx() << "]";
-	  else
-	    iccos << "_x" << spec._ps[i].getIdx();
-	  iccos << ".intersectI(home, i" << arg << "));" << endl;
-	  --indent;
-	  iccos << indent << "}" << endl;
+            iccos << indent << "{" << endl;
+          ++indent;
+          int arg = iterator(lub);
+          iccos << indent << me_check;
+          if (nary())
+            iccos << "_x[" << spec._ps[i].getIdx() << "]";
+          else
+            iccos << "_x" << spec._ps[i].getIdx();
+          iccos << ".intersectI(home, i" << arg << "));" << endl;
+          --indent;
+          iccos << indent << "}" << endl;
         }
       }
 
@@ -600,8 +601,8 @@ namespace Gecode {
           break;
         case ITER_FIX:
           {
-	    --indent;
-	    iccos << indent << "}" << endl;
+            --indent;
+            iccos << indent << "}" << endl;
             allAssigned(iccos);
             iccos << indent << "return assigned ? ES_SUBSUMED : ES_FIX;"
                   << endl;
@@ -624,18 +625,18 @@ namespace Gecode {
       for (int i=spec._ps.size(); i--; ) {
         SetExprCode glb = spec._ps[i].getGlb();
         if (glb.size() > 0 && glb[0] != SetExprCode::EMPTY) {
-  	  iccos << indent << "{" << endl;
-	  ++indent;
-	  int arg = iterator(glb,true,true);
+            iccos << indent << "{" << endl;
+          ++indent;
+          int arg = iterator(glb,true,true);
 
           iccos << indent;
-	  if (nary())
-	    iccos << "LubRanges<View> j(_x[" << spec._ps[i].getIdx() << "]);";
-	  else if (views==SINGLE_VIEW)
-	    iccos << "LubRanges<View> j(_x" << spec._ps[i].getIdx() << ");";
-	  else
-	    iccos << "LubRanges<View" << spec._ps[i].getIdx() << "> j(x"
-	          << spec._ps[i].getIdx() << ");";
+          if (nary())
+            iccos << "LubRanges<View> j(_x[" << spec._ps[i].getIdx() << "]);";
+          else if (views==SINGLE_VIEW)
+            iccos << "LubRanges<View> j(_x" << spec._ps[i].getIdx() << ");";
+          else
+            iccos << "LubRanges<View" << spec._ps[i].getIdx() << "> j(x"
+                  << spec._ps[i].getIdx() << ");";
           iccos << endl;
           iccos << indent
                 << "if (!Iter::Ranges::subset(i" << arg
@@ -648,24 +649,24 @@ namespace Gecode {
           else
             iccos << indent << "if (i" << arg << ".size() > _x" << i << ".cardMax())";
           iccos << endl;
-	  iccos << indent << "  return ES_FAILED;" << endl;
-	  --indent;
-	  iccos << indent << "}" << endl;
+          iccos << indent << "  return ES_FAILED;" << endl;
+          --indent;
+          iccos << indent << "}" << endl;
         }
         SetExprCode lub = spec._ps[i].getLub();
         if (lub.size() > 0 && lub[0] != SetExprCode::UNIVERSE) {
-  	  iccos << indent << "{" << endl;
-	  ++indent;
-	  int arg = iterator(lub,true);
+            iccos << indent << "{" << endl;
+          ++indent;
+          int arg = iterator(lub,true);
 
           iccos << indent;
-	  if (nary())
-	    iccos << "GlbRanges<View> j(_x[" << spec._ps[i].getIdx() << "]);";
-	  else if (views==SINGLE_VIEW)
-	    iccos << "GlbRanges<View> j(_x" << spec._ps[i].getIdx() << ");";
-	  else
-	    iccos << "GlbRanges<View" << spec._ps[i].getIdx() << "> j(x"
-	          << spec._ps[i].getIdx() << ");";
+          if (nary())
+            iccos << "GlbRanges<View> j(_x[" << spec._ps[i].getIdx() << "]);";
+          else if (views==SINGLE_VIEW)
+            iccos << "GlbRanges<View> j(_x" << spec._ps[i].getIdx() << ");";
+          else
+            iccos << "GlbRanges<View" << spec._ps[i].getIdx() << "> j(x"
+                  << spec._ps[i].getIdx() << ");";
           iccos << endl;
           iccos << indent
                 << "if (!Iter::Ranges::subset(j,i" << arg
@@ -679,57 +680,57 @@ namespace Gecode {
             iccos << indent << "if (i" << arg << ".size() < _x" << i << ".cardMin())";
           iccos << endl;
 
-	  iccos << indent << "  return ES_FAILED;" << endl;
-	  --indent;
-	  iccos << indent << "}" << endl;
+          iccos << indent << "  return ES_FAILED;" << endl;
+          --indent;
+          iccos << indent << "}" << endl;
         }
         if (glb.size() > 0 && glb[0] != SetExprCode::EMPTY) {
-  	  iccos << indent << "{" << endl;
-	  ++indent;
-	  int arg = iterator(glb,false,false);
+            iccos << indent << "{" << endl;
+          ++indent;
+          int arg = iterator(glb,false,false);
 
           iccos << indent;
-	  if (nary())
-	    iccos << "GlbRanges<View> j(_x[" << spec._ps[i].getIdx() << "]);";
-	  else if (views==SINGLE_VIEW)
-	    iccos << "GlbRanges<View> j(_x" << spec._ps[i].getIdx() << ");";
-	  else
-	    iccos << "GlbRanges<View" << spec._ps[i].getIdx() << "> j(_x"
-	          << spec._ps[i].getIdx() << ");";
+          if (nary())
+            iccos << "GlbRanges<View> j(_x[" << spec._ps[i].getIdx() << "]);";
+          else if (views==SINGLE_VIEW)
+            iccos << "GlbRanges<View> j(_x" << spec._ps[i].getIdx() << ");";
+          else
+            iccos << "GlbRanges<View" << spec._ps[i].getIdx() << "> j(_x"
+                  << spec._ps[i].getIdx() << ");";
           iccos << endl;
           iccos << indent
                 << "if (!Iter::Ranges::subset(i" << arg
                 << ",j)) es = ES_FIX;"
-                << endl;	  
-	  --indent;
-	  iccos << indent << "}" << endl;
+                << endl;          
+          --indent;
+          iccos << indent << "}" << endl;
         }
         if (lub.size() > 0 && lub[0] != SetExprCode::UNIVERSE) {
-  	  iccos << indent << "{" << endl;
-	  ++indent;
-	  int arg = iterator(lub,false,true);
+            iccos << indent << "{" << endl;
+          ++indent;
+          int arg = iterator(lub,false,true);
 
           iccos << indent;
-	  if (nary())
-	    iccos << "LubRanges<View> j(_x[" << spec._ps[i].getIdx() << "]);";
-	  else if (views==SINGLE_VIEW)
-	    iccos << "LubRanges<View> j(_x" << spec._ps[i].getIdx() << ");";
-	  else
-	    iccos << "LubRanges<View" << spec._ps[i].getIdx() << "> j(_x"
-	          << spec._ps[i].getIdx() << ");";
+          if (nary())
+            iccos << "LubRanges<View> j(_x[" << spec._ps[i].getIdx() << "]);";
+          else if (views==SINGLE_VIEW)
+            iccos << "LubRanges<View> j(_x" << spec._ps[i].getIdx() << ");";
+          else
+            iccos << "LubRanges<View" << spec._ps[i].getIdx() << "> j(_x"
+                  << spec._ps[i].getIdx() << ");";
           iccos << endl;
           iccos << indent
                 << "if (!Iter::Ranges::subset(j,i" << arg
                 << ")) es = ES_FIX;"
-                << endl;	  
-	  --indent;
-	  iccos << indent << "}" << endl;
+                << endl;          
+          --indent;
+          iccos << indent << "}" << endl;
         }
       }
       iccos << indent << "return es;" << endl;
       --indent;
       iccos << indent << "}" << endl << endl;
-	
+        
       templatehead(iccos);
       iccos << indent << "ExecStatus" << endl << indent << spec._name;
       templateparams();
@@ -754,58 +755,58 @@ namespace Gecode {
       iccos << indent << "return propagateNegative(home);" << endl;
       --indent;
       iccos << indent << "}" << endl;
-      return;	
+      return;        
     }
 
     if (spec._reified) {
       if (spec._negated) {
-      	iccos << indent << "if (_b.zero()) return propagatePositive(home);"
-	      << endl;
-	iccos << indent << "if (_b.one()) return propagateNegative(home);"
-	      << endl;
-	iccos << indent << "switch (check(home)) {" << endl;
-	iccos << indent << "case ES_SUBSUMED:" << endl;
-	iccos << indent << "  _b.t_zero_none(home);" << endl;
-	iccos << indent << "  return ES_SUBSUMED;" << endl;
-	iccos << indent << "case ES_FAILED:" << endl;
-	iccos << indent << "  _b.t_one_none(home);" << endl;
-	iccos << indent << "  return ES_SUBSUMED;" << endl;
-	iccos << indent << "default:" << endl;
-	iccos << indent << "  return ES_FIX;" << endl;
-	iccos << indent << "}" << endl;
-	--indent;
-	iccos << indent << "}" << endl;	
+              iccos << indent << "if (_b.zero()) return propagatePositive(home);"
+              << endl;
+        iccos << indent << "if (_b.one()) return propagateNegative(home);"
+              << endl;
+        iccos << indent << "switch (check(home)) {" << endl;
+        iccos << indent << "case ES_SUBSUMED:" << endl;
+        iccos << indent << "  _b.t_zero_none(home);" << endl;
+        iccos << indent << "  return ES_SUBSUMED;" << endl;
+        iccos << indent << "case ES_FAILED:" << endl;
+        iccos << indent << "  _b.t_one_none(home);" << endl;
+        iccos << indent << "  return ES_SUBSUMED;" << endl;
+        iccos << indent << "default:" << endl;
+        iccos << indent << "  return ES_FIX;" << endl;
+        iccos << indent << "}" << endl;
+        --indent;
+        iccos << indent << "}" << endl;        
       } else {
-      	iccos << indent << "if (_b.one()) return propagatePositive(home);"
-	      << endl;
-	iccos << indent << "if (_b.zero()) return propagateNegative(home);"
-	      << endl;
-	iccos << indent << "switch (check(home)) {" << endl;
-	iccos << indent << "case ES_SUBSUMED:" << endl;
-	iccos << indent << "  _b.t_one_none(home);" << endl;
-	iccos << indent << "  return ES_SUBSUMED;" << endl;
-	iccos << indent << "case ES_FAILED:" << endl;
-	iccos << indent << "  _b.t_zero_none(home);" << endl;
-	iccos << indent << "  return ES_SUBSUMED;" << endl;
-	iccos << indent << "default:" << endl;
-	iccos << indent << "  return ES_FIX;" << endl;
-	iccos << indent << "}" << endl;
-	--indent;
-	iccos << indent << "}" << endl;
+              iccos << indent << "if (_b.one()) return propagatePositive(home);"
+              << endl;
+        iccos << indent << "if (_b.zero()) return propagateNegative(home);"
+              << endl;
+        iccos << indent << "switch (check(home)) {" << endl;
+        iccos << indent << "case ES_SUBSUMED:" << endl;
+        iccos << indent << "  _b.t_one_none(home);" << endl;
+        iccos << indent << "  return ES_SUBSUMED;" << endl;
+        iccos << indent << "case ES_FAILED:" << endl;
+        iccos << indent << "  _b.t_zero_none(home);" << endl;
+        iccos << indent << "  return ES_SUBSUMED;" << endl;
+        iccos << indent << "default:" << endl;
+        iccos << indent << "  return ES_FIX;" << endl;
+        iccos << indent << "}" << endl;
+        --indent;
+        iccos << indent << "}" << endl;
       }
-      return;	
+      return;        
     }
 
     iccos << indent << "return propagatePositive(home);" << endl;
     --indent;
     iccos << indent << "}" << endl;
-    return;	
+    return;        
 
   }
 
   ProjectorCompiler::ProjectorCompiler(ostream& _hhos,
-				       ostream& _iccos,
-				       const ProjectorPropagatorSpec& _spec)
+                                       ostream& _iccos,
+                                       const ProjectorPropagatorSpec& _spec)
     : hhos(_hhos), iccos(_iccos), spec(_spec),
       compiletest(false),
       fixpoint(NO_FIX),

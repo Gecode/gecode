@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -48,7 +49,7 @@ public:
     int m = 0;
     for (int i=0; i<4; i++)
       if (x[i] == 0)
-	m++;
+        m++;
     return compare(m,irt,2);
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -73,7 +74,7 @@ public:
     int m = 0;
     for (int i=0; i<4; i++)
       if (x[i] == 0)
-	m += 2;
+        m += 2;
     return compare(m,irt,4);
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -102,7 +103,7 @@ public:
     int m = 0;
     for (int i=0; i<4; i++)
       if (x[i] == 0)
-	m++;
+        m++;
     return compare(m,irt,x[4]);
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -131,7 +132,7 @@ public:
     int m = 0;
     for (int i=0; i<4; i++)
       if (x[i] == 0)
-	m++;
+        m++;
     return compare(m,irt,x[2]);
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -160,7 +161,7 @@ public:
     int m = 0;
     for (int i=0; i<3; i++)
       if (x[i] == x[3])
-	m++;
+        m++;
     return compare(m,irt,x[4]);
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -188,7 +189,7 @@ public:
     int m = 0;
     for (int i=0; i<4; i++)
       if (x[i] == x[1])
-	m++;
+        m++;
     return compare(m,irt,x[4]);
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -216,7 +217,7 @@ public:
     int m = 0;
     for (int i=0; i<4; i++)
       if (x[i] == x[4])
-	m++;
+        m++;
     return compare(m,irt,x[3]);
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -244,7 +245,7 @@ public:
     int m = 0;
     for (int i=0; i<4; i++)
       if (x[i] == x[1])
-	m++;
+        m++;
     return compare(m,irt,x[3]);
   }
   virtual void post(Space* home, IntVarArray& x) {

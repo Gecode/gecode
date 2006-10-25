@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -46,8 +47,8 @@ public:
     for (int i=0; i<s->x.size(); i++) {
       if (!s->x[i].assigned()) return CR_UNSPEC;
       for (int j=i+1; j<s->x.size(); j++){
-	if (s->x[i].val() == s->x[j].val())
-	  return CR_FOS;
+        if (s->x[i].val() == s->x[j].val())
+          return CR_FOS;
       }
     }
     return CR_OK;

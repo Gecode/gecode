@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -96,7 +97,7 @@ namespace Gecode { namespace MiniModel {
   BoolExpr::operator=(const BoolExpr& e) {
     if (this != &e) {
       if (n->decrement())
-	delete n;
+        delete n;
       n = e.n;
       n->use++;
     }
@@ -123,26 +124,26 @@ namespace Gecode { namespace MiniModel {
 
 inline Gecode::MiniModel::BoolExpr
 operator&&(const Gecode::MiniModel::BoolExpr& l,
-	   const Gecode::MiniModel::BoolExpr& r) {
+           const Gecode::MiniModel::BoolExpr& r) {
   return Gecode::MiniModel::BoolExpr(l,
-				     Gecode::MiniModel::BoolExpr::BT_AND,
-				     r);
+                                     Gecode::MiniModel::BoolExpr::BT_AND,
+                                     r);
 }
 
 inline Gecode::MiniModel::BoolExpr
 operator||(const Gecode::MiniModel::BoolExpr& l,
-	   const Gecode::MiniModel::BoolExpr& r) {
+           const Gecode::MiniModel::BoolExpr& r) {
   return Gecode::MiniModel::BoolExpr(l,
-				     Gecode::MiniModel::BoolExpr::BT_OR,
-				     r);
+                                     Gecode::MiniModel::BoolExpr::BT_OR,
+                                     r);
 }
 
 inline Gecode::MiniModel::BoolExpr
 operator^(const Gecode::MiniModel::BoolExpr& l,
-	  const Gecode::MiniModel::BoolExpr& r) {
+          const Gecode::MiniModel::BoolExpr& r) {
   return Gecode::MiniModel::BoolExpr(l,
-				     Gecode::MiniModel::BoolExpr::BT_XOR,
-				     r);
+                                     Gecode::MiniModel::BoolExpr::BT_XOR,
+                                     r);
 }
 
 inline Gecode::MiniModel::BoolExpr
@@ -153,7 +154,7 @@ operator~(const Gecode::MiniModel::LinRel& rl) {
 inline Gecode::MiniModel::BoolExpr
 operator!(const Gecode::MiniModel::BoolExpr& e) {
   return Gecode::MiniModel::BoolExpr(e,
-				     Gecode::MiniModel::BoolExpr::BT_NOT);
+                                     Gecode::MiniModel::BoolExpr::BT_NOT);
 }
 
 namespace Gecode {
@@ -162,16 +163,16 @@ namespace Gecode {
   eqv(const MiniModel::BoolExpr& l,
       const MiniModel::BoolExpr& r) {
     return MiniModel::BoolExpr(l,
-			       MiniModel::BoolExpr::BT_EQV,
-			       r);
+                               MiniModel::BoolExpr::BT_EQV,
+                               r);
   }
 
   inline MiniModel::BoolExpr
   imp(const MiniModel::BoolExpr& l,
       const MiniModel::BoolExpr& r) {
     return MiniModel::BoolExpr(l,
-			       MiniModel::BoolExpr::BT_IMP,
-			       r);
+                               MiniModel::BoolExpr::BT_IMP,
+                               r);
   }
 
 

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -92,7 +93,7 @@ namespace Gecode { namespace Set { namespace Select {
           iv[k].var.cancel(home,this, PC_SET_ANY);
         }
         n = j;
-	iv.size(n);
+        iv.size(n);
       }
 
       {
@@ -115,7 +116,7 @@ namespace Gecode { namespace Set { namespace Select {
         GlbRanges<SetView> clb(candidate);
         BndSetRanges uos(unionOfSelected);
         Iter::Ranges::Inter<GlbRanges<SetView>, BndSetRanges>
-	  inter(clb, uos);
+          inter(clb, uos);
         if (inter()) {
           ModEvent me = x1.exclude(home,candidateInd);
           fix_flag |= me_modified(me);

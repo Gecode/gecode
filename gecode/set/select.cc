@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -32,11 +33,11 @@ namespace Gecode {
     if (home->failed()) return;
     Set::Select::IdxViewArray<ComplementView<SetView> > iv(home, x);
     IntSet universe(Limits::Set::int_min,
-		    Limits::Set::int_max);
+                    Limits::Set::int_max);
     SetView zv(z);
     ComplementView<SetView> cz(zv);
     GECODE_ES_FAIL(home,(Select::SelectIntersection<ComplementView<SetView>,
-			 SetView>::post(home,cz,iv,y,universe)));
+                         SetView>::post(home,cz,iv,y,universe)));
   }
 
   void
@@ -44,10 +45,10 @@ namespace Gecode {
     if (home->failed()) return;
     Set::Select::IdxViewArray<SetView> iv(home, x);
     IntSet universe(Limits::Set::int_min,
-		    Limits::Set::int_max);
+                    Limits::Set::int_max);
     GECODE_ES_FAIL(home,
                    (Select::SelectIntersection<SetView,SetView>::
-		    post(home,z,iv,y,universe)));
+                    post(home,z,iv,y,universe)));
   }
 
   void
@@ -57,7 +58,7 @@ namespace Gecode {
     Set::Select::IdxViewArray<SetView> iv(home, x);
     GECODE_ES_FAIL(home,
                    (Select::SelectIntersection<SetView,SetView>::
-		    post(home,z,iv,y,universe)));
+                    post(home,z,iv,y,universe)));
   }
 
   void
@@ -69,10 +70,10 @@ namespace Gecode {
     SetView zv(z);
     ComplementView<SetView> cz(zv);
     IntSet universe(Limits::Set::int_min,
-		    Limits::Set::int_max);
+                    Limits::Set::int_max);
     GECODE_ES_FAIL(home,(Select::SelectIntersection<ComplementView<SetView>,
-			 SingletonView>::post(home, cz, iv,
-					      single, universe)));
+                         SingletonView>::post(home, cz, iv,
+                                              single, universe)));
   }
 
   void

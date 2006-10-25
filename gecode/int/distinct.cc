@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -47,7 +48,7 @@ namespace Gecode {
 
   void
   distinct(Space* home, const IntArgs& c, const IntVarArgs& x,
-	   IntConLevel icl) {
+           IntConLevel icl) {
     if (x.same())
       throw ArgumentSame("Int::distinct");
     if (c.size() != x.size())
@@ -56,9 +57,9 @@ namespace Gecode {
     ViewArray<OffsetView> cx(home,x.size());
     for (int i = c.size(); i--; )
       if ((c[i] < Limits::Int::int_min) || (c[i] > Limits::Int::int_max))
-	throw NumericalOverflow("Int::distinct");
+        throw NumericalOverflow("Int::distinct");
       else
-	cx[i].init(x[i],c[i]);
+        cx[i].init(x[i],c[i]);
     switch (icl) {
     case ICL_BND:
       GECODE_ES_FAIL(home,Distinct::Bnd<OffsetView>::post(home,cx));

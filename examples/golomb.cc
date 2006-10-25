@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -62,7 +63,7 @@ public:
       d[diag(0,j)] = m[j];
     for (int i=1; i<n-1; i++)
       for (int j=i+1; j<n; j++)
-	d[diag(i,j)] = minus(this, m[j], m[i]);
+        d[diag(i,j)] = minus(this, m[j], m[i]);
 
     // Order marks
     for (int i=1; i<n; i++)
@@ -71,19 +72,19 @@ public:
     if (opt.naive) {
       // d[diag(i,j)] must be at least sum of first j-i integers
       for (int i=0; i<n; i++)
-	for (int j=i+1; j<n; j++)
-	  rel(this, d[diag(i,j)], IRT_GQ, (j-i)*(j-i+1)/2);
+        for (int j=i+1; j<n; j++)
+          rel(this, d[diag(i,j)], IRT_GQ, (j-i)*(j-i+1)/2);
     } else {
       static const int length[] = {
-	// Length 0-9
-	0,0,1,3,6,11,17,25,34,44,
-	// Length 10-
-	55,72,85,106,127};
+        // Length 0-9
+        0,0,1,3,6,11,17,25,34,44,
+        // Length 10-
+        55,72,85,106,127};
 
       // Marks from i to j must be ruler of length j-1+i
       for (int i=0; i<n; i++)
-	for (int j=i+1; j<n; j++)
-	  rel(this, d[diag(i,j)], IRT_GQ, length[j-i+1]);
+        for (int j=i+1; j<n; j++)
+          rel(this, d[diag(i,j)], IRT_GQ, length[j-i+1]);
     }
     distinct(this, d, opt.icl);
 

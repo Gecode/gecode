@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -38,7 +39,7 @@ namespace Gecode { namespace Set { namespace Distinct {
     nmax = n;
     for (unsigned int i=oldnmax+1; i<=n; i++)
       for (unsigned int j=2; j<=(i/2); j++)
-	y(i, j, y(i-1, j-1) + y(i-1, j));
+        y(i, j, y(i-1, j-1) + y(i-1, j));
   }
 
 }}}

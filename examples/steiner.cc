@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -52,59 +53,59 @@ public:
         SetVar x = root[i];
         SetVar y = root[j];
 
-	SetVar atmostOne(this,IntSet::empty,1,n,0,1);
-	cardinality(this, atmostOne,0,1);
-	rel(this, x, SOT_INTER, y, SRT_EQ, atmostOne);
+        SetVar atmostOne(this,IntSet::empty,1,n,0,1);
+        cardinality(this, atmostOne,0,1);
+        rel(this, x, SOT_INTER, y, SRT_EQ, atmostOne);
 
-	IntVar x1(this,1,n);
-	IntVar x2(this,1,n);
-	IntVar x3(this,1,n);
-	IntVar y1(this,1,n);
-	IntVar y2(this,1,n);
-	IntVar y3(this,1,n);
+        IntVar x1(this,1,n);
+        IntVar x2(this,1,n);
+        IntVar x3(this,1,n);
+        IntVar y1(this,1,n);
+        IntVar y2(this,1,n);
+        IntVar y3(this,1,n);
 
-	if (o.naive) {
-	
-	  /* Naive alternative:
-	   * just including the ints in the set
-	   */
-	  rel(this, x, SRT_SUP, x1);
-	  rel(this, x, SRT_SUP, x2);
-	  rel(this, x, SRT_SUP, x3);
-	  rel(this, y, SRT_SUP, y1);
-	  rel(this, y, SRT_SUP, y2);
-	  rel(this, y, SRT_SUP, y3);
-	} else {
+        if (o.naive) {
+        
+          /* Naive alternative:
+           * just including the ints in the set
+           */
+          rel(this, x, SRT_SUP, x1);
+          rel(this, x, SRT_SUP, x2);
+          rel(this, x, SRT_SUP, x3);
+          rel(this, y, SRT_SUP, y1);
+          rel(this, y, SRT_SUP, y2);
+          rel(this, y, SRT_SUP, y3);
+        } else {
 
-	  /* Smart alternative:
-	   * Using matching constraints
-	   */
-	
-	  IntVarArgs xargs(3);
-	  xargs[0] = x1; xargs[1] = x2; xargs[2] = x3;
-	  match(this, x,xargs);
-	
-	  IntVarArgs yargs(3);
-	  yargs[0] = y1; yargs[1] = y2; yargs[2] = y3;
-	  match(this, y,yargs);
-	
-	}
-	
-	/* Breaking symmetries */
-	
-	rel(this, x1,IRT_LE,x2);
-	rel(this, x2,IRT_LE,x3);
-	rel(this, x1,IRT_LE,x3);
-	
-	rel(this, y1,IRT_LE,y2);
-	rel(this, y2,IRT_LE,y3);
-	rel(this, y1,IRT_LE,y3);
-	
-	IntArgs ia(6,n1n1,n1,1,-n1n1,-n1,-1);
-	IntVarArgs iva(6);
-	iva[0]=x1; iva[1]=x2; iva[2]=x3;
-	iva[3]=y1; iva[4]=y2; iva[5]=y3;
-	linear(this, ia, iva, IRT_LE, 0);
+          /* Smart alternative:
+           * Using matching constraints
+           */
+        
+          IntVarArgs xargs(3);
+          xargs[0] = x1; xargs[1] = x2; xargs[2] = x3;
+          match(this, x,xargs);
+        
+          IntVarArgs yargs(3);
+          yargs[0] = y1; yargs[1] = y2; yargs[2] = y3;
+          match(this, y,yargs);
+        
+        }
+        
+        /* Breaking symmetries */
+        
+        rel(this, x1,IRT_LE,x2);
+        rel(this, x2,IRT_LE,x3);
+        rel(this, x1,IRT_LE,x3);
+        
+        rel(this, y1,IRT_LE,y2);
+        rel(this, y2,IRT_LE,y3);
+        rel(this, y1,IRT_LE,y3);
+        
+        IntArgs ia(6,n1n1,n1,1,-n1n1,-n1,-1);
+        IntVarArgs iva(6);
+        iva[0]=x1; iva[1]=x2; iva[2]=x3;
+        iva[3]=y1; iva[4]=y2; iva[5]=y3;
+        linear(this, ia, iva, IRT_LE, 0);
       }
     }
 
@@ -113,7 +114,7 @@ public:
   }
 
   Steiner(bool share, Steiner& s) : Example(share,s),
-				    n(s.n), n1(s.n1), n1n1(s.n1n1), len(s.len)
+                                    n(s.n), n1(s.n1), n1n1(s.n1n1), len(s.len)
   {
     root.update(this, share, s.root);
   }

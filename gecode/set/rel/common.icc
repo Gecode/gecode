@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -25,17 +26,17 @@
  *
  */
 
-#define GECODE_SET_ME_CHECK_VAL(p,f) {				\
-    ModEvent __me__ ## __LINE__ = (p);				\
-    if (me_failed(__me__ ## __LINE__)) return ES_FAILED;	\
+#define GECODE_SET_ME_CHECK_VAL(p,f) {                                \
+    ModEvent __me__ ## __LINE__ = (p);                                \
+    if (me_failed(__me__ ## __LINE__)) return ES_FAILED;        \
     if (ME_GEN_ASSIGNED==(__me__ ## __LINE__))f=true; }
 
 #define GECODE_SET_ME_CHECK_VAL_B(modified, tell, f)        \
-  {							\
-    ModEvent me = (tell);				\
-    modified |= me_modified(me);			\
-    if (ME_GEN_ASSIGNED==(me))f=true;			\
-    GECODE_ME_CHECK(me);				\
+  {                                                        \
+    ModEvent me = (tell);                                \
+    modified |= me_modified(me);                        \
+    if (ME_GEN_ASSIGNED==(me))f=true;                        \
+    GECODE_ME_CHECK(me);                                \
   }
 
 namespace Gecode { namespace Set { namespace Rel {

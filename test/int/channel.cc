@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -31,7 +32,7 @@ public:
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<4; i++)
       if (x[4+x[i]] != i)
-	return false;
+        return false;
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -55,17 +56,17 @@ public:
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<6; i++)
       for (int j=i+1; j<6; j++)
-	if (x[i] == x[j])
-	  return false;
+        if (x[i] == x[j])
+          return false;
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
     IntVarArray y(home,6,dom);
     for (int i=0; i<6; i++) {
       for (int j=0; j<6; j++) {
-	BoolVar b(home,0,1);
-	rel(home, x[i], IRT_EQ, j, b);
-	rel(home, y[j], IRT_EQ, i, b);
+        BoolVar b(home,0,1);
+        rel(home, x[i], IRT_EQ, j, b);
+        rel(home, y[j], IRT_EQ, i, b);
       }
     }
     channel(home, x, y, icl);

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -48,10 +49,10 @@ namespace Gecode {
     int j = 0;
     while (i < n) {
       if (max+1 < sar[i].min) {
-	sar[j].min = min; sar[j].max = max; j++;
-	min = sar[i].min; max = sar[i].max; i++;
+        sar[j].min = min; sar[j].max = max; j++;
+        min = sar[i].min; max = sar[i].max; i++;
       } else {
-	max = std::max(max,sar[i].max); i++;
+        max = std::max(max,sar[i].max); i++;
       }
     }
     sar[j].min = min; sar[j].max = max;
@@ -62,7 +63,7 @@ namespace Gecode {
   IntSet::init(const int r[], int n) {
     if (n>0) {
       for (int i = n; i--; ) {
-	sar[i].min=r[i]; sar[i].max=r[i];
+        sar[i].min=r[i]; sar[i].max=r[i];
       }
       normalize(n);
     }
@@ -73,9 +74,9 @@ namespace Gecode {
     if (n>0) {
       int j = 0;
       for (int i = 0; i < n; i++)
-	if (r[i][0] <= r[i][1]) {
-	  sar[j].min=r[i][0]; sar[j].max=r[i][1]; j++;
-	}
+        if (r[i][0] <= r[i][1]) {
+          sar[j].min=r[i][0]; sar[j].max=r[i][1]; j++;
+        }
       normalize(j);
     }
   }

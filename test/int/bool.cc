@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -143,7 +144,7 @@ public:
   virtual bool solution(const Assignment& x) const {
     for (int i = x.size()-1; i--; )
       if (x[i] == 0)
-	return x[x.size()-1] == 0;
+        return x[x.size()-1] == 0;
     return x[x.size()-1] == 1;
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -167,7 +168,7 @@ public:
   virtual bool solution(const Assignment& x) const {
     for (int i = x.size()-1; i--; )
       if (x[i] == 1)
-	return x[x.size()-1] == 1;
+        return x[x.size()-1] == 1;
     return x[x.size()-1] == 0;
   }
   virtual void post(Space* home, IntVarArray& x) {

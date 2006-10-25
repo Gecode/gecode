@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -42,7 +43,7 @@ namespace Gecode { namespace Set {
 
   forceinline
   SetVarImp::SetVarImp(Space* home,int lbMin,int lbMax,int ubMin,int ubMax,
-		       unsigned int cardMin, unsigned int cardMax)
+                       unsigned int cardMin, unsigned int cardMax)
     : SetVarImpBase(home),
       lub(home,ubMin,ubMax), glb(home,lbMin,lbMax) {
     _cardMin = std::max(cardMin, glb.size() );
@@ -51,8 +52,8 @@ namespace Gecode { namespace Set {
 
   forceinline
   SetVarImp::SetVarImp(Space* home,
-		       const IntSet& theGlb,int ubMin,int ubMax,
-		       unsigned int cardMin, unsigned int cardMax)
+                       const IntSet& theGlb,int ubMin,int ubMax,
+                       unsigned int cardMin, unsigned int cardMax)
     : SetVarImpBase(home),
       lub(home,ubMin,ubMax), glb(home,theGlb) {
     _cardMin = std::max(cardMin, glb.size() );
@@ -61,8 +62,8 @@ namespace Gecode { namespace Set {
 
   forceinline
   SetVarImp::SetVarImp(Space* home,
-		       int lbMin,int lbMax,const IntSet& theLub,
-		       unsigned int cardMin, unsigned int cardMax)
+                       int lbMin,int lbMax,const IntSet& theLub,
+                       unsigned int cardMin, unsigned int cardMax)
     : SetVarImpBase(home),
       lub(home,theLub), glb(home,lbMin,lbMax) {
     _cardMin = std::max(cardMin, glb.size() );
@@ -71,8 +72,8 @@ namespace Gecode { namespace Set {
   
   forceinline
   SetVarImp::SetVarImp(Space* home,
-		       const IntSet& theGlb,const IntSet& theLub,
-		       unsigned int cardMin, unsigned int cardMax)
+                       const IntSet& theGlb,const IntSet& theLub,
+                       unsigned int cardMin, unsigned int cardMax)
     : SetVarImpBase(home), lub(home,theLub), glb(home,theGlb) {
     _cardMin = std::max(cardMin, glb.size() );
     _cardMax = std::min(cardMax, lub.size() );
@@ -80,15 +81,15 @@ namespace Gecode { namespace Set {
 
 
 #define GECODE_SET_CHECK_LUB(home,changed) {        \
-    if (changed)				\
-      return processLubChange(home);		\
-    return ME_SET_NONE;				\
+    if (changed)                                \
+      return processLubChange(home);                \
+    return ME_SET_NONE;                                \
   }
 
 #define GECODE_SET_CHECK_GLB(home,changed) {        \
-    if (changed)				\
-      return processGlbChange(home);		\
-    return ME_SET_NONE;				\
+    if (changed)                                \
+      return processGlbChange(home);                \
+    return ME_SET_NONE;                                \
   }
 
   forceinline  bool
@@ -203,7 +204,7 @@ namespace Gecode { namespace Set {
     if (assigned()) {
       BndSetRanges lbi(glb);
       Iter::Ranges::Diff<I,BndSetRanges>
-	probe(iterator,lbi);
+        probe(iterator,lbi);
       return probe() ? ME_SET_FAILED : ME_SET_NONE;
     }
     GECODE_SET_CHECK_GLB(home, glb.includeI(home, iterator));

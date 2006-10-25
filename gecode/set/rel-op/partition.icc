@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -55,7 +56,7 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   ExecStatus PartitionN<View0,View1>::post(Space* home, ViewArray<View0>& x,
-					   View1 y) {
+                                           View1 y) {
     switch (x.size()) {
     case 0:
       GECODE_ME_CHECK(y.cardMax(home, 0));

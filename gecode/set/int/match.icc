@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -53,7 +54,7 @@ namespace Gecode { namespace Set { namespace Int {
     if (xs_size==1) {
       SingletonView sv(xs[0]);
       GECODE_ES_CHECK((Rel::Eq<SetView,
-		       SingletonView>::post(home,x0, sv)));
+                       SingletonView>::post(home,x0, sv)));
     } else {
       // Sharing in xs is handled correctly in the propagator:
       // if two views in xs are shared, this leads to failure.

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -56,7 +57,7 @@ namespace Gecode { namespace Int { namespace GCC {
                   and Alexander Golynski and Sayyed Bashir Sadjad},
      booktitle = {Proceedings of the 9th International Conference
                   on Principles and Practice of
-		  Constraint Programming},
+                  Constraint Programming},
      pages     = {600--614},
      url       = {http://ai.uwaterloo.ca/~vanbeek/publications},
      }
@@ -64,10 +65,10 @@ namespace Gecode { namespace Int { namespace GCC {
      author      = {Claude-Guy Quimper and Peter van Beek
                     and Alejandro López-Ortiz
                     and Alexander Golynski and
-		    Sayyed Bashir Sadjad},
+                    Sayyed Bashir Sadjad},
      title       = {An Efficient Bounds Consistency Algorithm
                     for the Global Cardinality Constraint,
-		    Technical Report},
+                    Technical Report},
      institution = {School of Computer Science,
                     University of Waterloo, Waterloo, Canada},
      year        = {2003},
@@ -101,9 +102,9 @@ namespace Gecode { namespace Int { namespace GCC {
      * checks whether \a x and \a k contain shared views.
      */
     static  ExecStatus  post(Space* home,
-			     ViewArray<View>& x,
-			     ViewArray<Card>& k,
-			     bool all);
+                             ViewArray<View>& x,
+                             ViewArray<Card>& k,
+                             bool all);
   };
 
   /**
@@ -173,8 +174,8 @@ namespace Gecode { namespace Int { namespace GCC {
    */
   template <class View, class Card, bool isView, bool shared>
   ExecStatus prop_bnd(Space* home, ViewArray<View>&, ViewArray<Card>&,
-		      PartialSum<Card>*&, PartialSum<Card>*&,
-		      bool, bool, bool);
+                      PartialSum<Card>*&, PartialSum<Card>*&,
+                      bool, bool, bool);
 
   /**
    * \brief Domain-consistent global cardinality propagator
@@ -193,7 +194,7 @@ namespace Gecode { namespace Int { namespace GCC {
                   Alejandro López-Ortiz and Alexander Golynski},
      booktitle = {Proceedings of the 10th International
                   Conference on Principles and Practice of
-		  Constraint Programming},
+                  Constraint Programming},
      url       = {http://ai.uwaterloo.ca/~vanbeek/publications},
      }
      \endverbatim
@@ -262,8 +263,8 @@ namespace Gecode { namespace Int { namespace GCC {
      * in the domains of the problem vies specified in \a x.
      */
     static  ExecStatus  post(Space* home,
-			     ViewArray<View>& x, ViewArray<Card>& k,
-			     bool all);
+                             ViewArray<View>& x, ViewArray<Card>& k,
+                             bool all);
   };
 
   /**
@@ -307,8 +308,8 @@ namespace Gecode { namespace Int { namespace GCC {
      * in the domains of the problem vies specified in \a x.
      */
     static  ExecStatus  post(Space* home,
-			     ViewArray<View>& x, ViewArray<Card>& k,
-			     bool all);
+                             ViewArray<View>& x, ViewArray<Card>& k,
+                             bool all);
   };
 
   /**
@@ -321,7 +322,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View, class Card, bool isView>
   ExecStatus prop_val(Space* home, ViewArray<View>&, ViewArray<Card>&,
-		      bool&);
+                      bool&);
 
 }}}
 

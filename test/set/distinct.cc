@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -34,30 +35,30 @@ public:
       CountableSetRanges xr1(x.lub, x[1]);
       Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges> i(xr0,xr1);
       if (Iter::Ranges::size(i)>1)
-	return false;
+        return false;
     }
     {
       CountableSetRanges xr0(x.lub, x[0]);
       CountableSetRanges xr2(x.lub, x[2]);
       Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges> i(xr0,xr2);
       if (Iter::Ranges::size(i)>1)
-	return false;
+        return false;
     }
     {
       CountableSetRanges xr1(x.lub, x[1]);
       CountableSetRanges xr2(x.lub, x[2]);
       Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges> i(xr1,xr2);
       if (Iter::Ranges::size(i)>1)
-	return false;
+        return false;
     }
     {
       CountableSetRanges xr0(x.lub, x[0]);
       CountableSetRanges xr1(x.lub, x[1]);
       CountableSetRanges xr2(x.lub, x[2]);
       if (Iter::Ranges::size(xr0)!=3 ||
-	  Iter::Ranges::size(xr1)!=3 ||
-	  Iter::Ranges::size(xr2)!=3)
-	return false;
+          Iter::Ranges::size(xr1)!=3 ||
+          Iter::Ranges::size(xr2)!=3)
+        return false;
     }
     return true;
   }
@@ -83,42 +84,42 @@ public:
       CountableSetRanges xr1(x.lub, x[1]);
       Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges> i(xr0,xr1);
       if (!i())
-	return false;
+        return false;
     }
     {
       CountableSetRanges xr0(x.lub, x[0]);
       CountableSetRanges xr2(x.lub, x[2]);
       Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges> i(xr0,xr2);
       if (!i())
-	return false;
+        return false;
     }
     {
       CountableSetRanges xr0(x.lub, x[0]);
       CountableSetRanges xr3(x.lub, x[3]);
       Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges> i(xr0,xr3);
       if (!i())
-	return false;
+        return false;
     }
     {
       CountableSetRanges xr1(x.lub, x[1]);
       CountableSetRanges xr2(x.lub, x[2]);
       Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges> i(xr1,xr2);
       if (!i())
-	return false;
+        return false;
     }
     {
       CountableSetRanges xr1(x.lub, x[1]);
       CountableSetRanges xr3(x.lub, x[3]);
       Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges> i(xr1,xr3);
       if (!i())
-	return false;
+        return false;
     }
     {
       CountableSetRanges xr2(x.lub, x[2]);
       CountableSetRanges xr3(x.lub, x[3]);
       Iter::Ranges::Inter<CountableSetRanges,CountableSetRanges> i(xr2,xr3);
       if (!i())
-	return false;
+        return false;
     }
     {
       CountableSetRanges xr0(x.lub, x[0]);
@@ -126,10 +127,10 @@ public:
       CountableSetRanges xr2(x.lub, x[2]);
       CountableSetRanges xr3(x.lub, x[3]);
       if (Iter::Ranges::size(xr0)!=3 ||
-	  Iter::Ranges::size(xr1)!=3 ||
-	  Iter::Ranges::size(xr2)!=3 ||
-	  Iter::Ranges::size(xr3)!=3)
-	return false;
+          Iter::Ranges::size(xr1)!=3 ||
+          Iter::Ranges::size(xr2)!=3 ||
+          Iter::Ranges::size(xr3)!=3)
+        return false;
     }
     return true;
   }

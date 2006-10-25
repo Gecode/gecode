@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -52,9 +53,9 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View0, class View1>
   forceinline
   EqBnd<View0,View1>::EqBnd(Space* home, bool share, Propagator& p,
-			    View0 x0, View1 x1)
+                            View0 x0, View1 x1)
     : InhomBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND>(home,share,p,
-							       x0,x1) {}
+                                                               x0,x1) {}
 
   template <class View0, class View1>
   Actor*
@@ -147,17 +148,17 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     if (View0::pme(this) != ME_INT_DOM && View1::pme(this) != ME_INT_DOM) {
       do {
-	GECODE_ME_CHECK(x0.gq(home,x1.min()));
-	GECODE_ME_CHECK(x1.gq(home,x0.min()));
+        GECODE_ME_CHECK(x0.gq(home,x1.min()));
+        GECODE_ME_CHECK(x1.gq(home,x0.min()));
       } while (x0.min() != x1.min());
       do {
-	GECODE_ME_CHECK(x0.lq(home,x1.max()));
-	GECODE_ME_CHECK(x1.lq(home,x0.max()));
+        GECODE_ME_CHECK(x0.lq(home,x1.max()));
+        GECODE_ME_CHECK(x1.lq(home,x0.max()));
       } while (x0.max() != x1.max());
       if (x0.assigned())
-	return ES_SUBSUMED;
+        return ES_SUBSUMED;
       if (x0.range() && x1.range())
-	return ES_FIX;
+        return ES_FIX;
       return this->ES_FIX_PARTIAL(View0::pme(ME_INT_DOM));
     }
     ViewRanges<View0> r0(x0);
@@ -220,44 +221,44 @@ namespace Gecode { namespace Int { namespace Rel {
     if (me == ME_INT_VAL) {
       // One of the variables is assigned
       for (int i = 0; ; i++)
-	if (x[i].assigned()) {
-	  int n = x[i].val();
-	  x.move_lst(i);
-	  for (int i = x.size(); i--; )
-	    GECODE_ME_CHECK(x[i].eq(home,n));
-	  return ES_SUBSUMED;
-	}
+        if (x[i].assigned()) {
+          int n = x[i].val();
+          x.move_lst(i);
+          for (int i = x.size(); i--; )
+            GECODE_ME_CHECK(x[i].eq(home,n));
+          return ES_SUBSUMED;
+        }
       GECODE_NEVER;
       return ES_SUBSUMED;
     }
 
     if (me == ME_INT_BND) {
       {
-	// One of the mins has changed
-	int mn = x[0].min();
+        // One of the mins has changed
+        int mn = x[0].min();
       restart_min:
-	for (int i = x.size(); i--; ) {
-	  GECODE_ME_CHECK(x[i].gq(home,mn));
-	  if (mn < x[i].min()) {
-	    mn = x[i].min();
-	    goto restart_min;
-	  }
-	}
+        for (int i = x.size(); i--; ) {
+          GECODE_ME_CHECK(x[i].gq(home,mn));
+          if (mn < x[i].min()) {
+            mn = x[i].min();
+            goto restart_min;
+          }
+        }
       }
       {
-	// One of the maxs has changed
-	int mx = x[0].max();
+        // One of the maxs has changed
+        int mx = x[0].max();
       restart_max:
-	for (int i = x.size(); i--; ) {
-	  GECODE_ME_CHECK(x[i].lq(home,mx));
-	  if (mx > x[i].max()) {
-	    mx = x[i].max();
-	    goto restart_max;
-	  }
-	}
+        for (int i = x.size(); i--; ) {
+          GECODE_ME_CHECK(x[i].lq(home,mx));
+          if (mx > x[i].max()) {
+            mx = x[i].max();
+            goto restart_max;
+          }
+        }
       }
       if (x[0].assigned())
-	return ES_SUBSUMED;
+        return ES_SUBSUMED;
       return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
     }
 
@@ -277,13 +278,13 @@ namespace Gecode { namespace Int { namespace Rel {
     if (!rc()) {
       rc.reset();
       for (int i = n; i--; ) {
-	GECODE_ME_CHECK(x[i].gq(home,rc.min()));
-	GECODE_ME_CHECK(x[i].lq(home,rc.max()));
+        GECODE_ME_CHECK(x[i].gq(home,rc.min()));
+        GECODE_ME_CHECK(x[i].lq(home,rc.max()));
       }
     } else {
       for (int i = n; i--; ) {
-	rc.reset();
-	GECODE_ME_CHECK(x[i].narrow(home,rc));
+        rc.reset();
+        GECODE_ME_CHECK(x[i].narrow(home,rc));
       }
     }
     return ES_FIX;
@@ -338,13 +339,13 @@ namespace Gecode { namespace Int { namespace Rel {
     if (View::pme(this) == ME_INT_VAL) {
       // One of the variables is assigned
       for (int i = 0; ; i++)
-	if (x[i].assigned()) {
-	  int n = x[i].val();
-	  x.move_lst(i);
-	  for (int i = x.size(); i--; )
-	    GECODE_ME_CHECK(x[i].eq(home,n));
-	  return ES_SUBSUMED;
-	}
+        if (x[i].assigned()) {
+          int n = x[i].val();
+          x.move_lst(i);
+          for (int i = x.size(); i--; )
+            GECODE_ME_CHECK(x[i].eq(home,n));
+          return ES_SUBSUMED;
+        }
       GECODE_NEVER;
       return ES_SUBSUMED;
     }
@@ -354,8 +355,8 @@ namespace Gecode { namespace Int { namespace Rel {
     for (int i = x.size(); i--; ) {
       GECODE_ME_CHECK(x[i].gq(home,mn));
       if (mn < x[i].min()) {
-	mn = x[i].min();
-	goto restart_min;
+        mn = x[i].min();
+        goto restart_min;
       }
     }
     int mx = x[0].max();
@@ -363,8 +364,8 @@ namespace Gecode { namespace Int { namespace Rel {
     for (int i = x.size(); i--; ) {
       GECODE_ME_CHECK(x[i].lq(home,mx));
       if (mx > x[i].max()) {
-	mx = x[i].max();
-	goto restart_max;
+        mx = x[i].max();
+        goto restart_max;
       }
     }
     return x[0].assigned() ? ES_SUBSUMED : ES_FIX;
@@ -415,12 +416,12 @@ namespace Gecode { namespace Int { namespace Rel {
   ReEqDom<View,CtrlView>::propagate(Space* home) {
     if (b.one()) {
       if (EqDom<View,View>::post(home,x0,x1) == ES_FAILED)
-	return ES_FAILED;
+        return ES_FAILED;
       return ES_SUBSUMED;
     }
     if (b.zero()) {
       if (Nq<View>::post(home,x0,x1) == ES_FAILED)
-	return ES_FAILED;
+        return ES_FAILED;
       return ES_SUBSUMED;
     }
     switch (rtest_eq_dom(x0,x1)) {
@@ -480,12 +481,12 @@ namespace Gecode { namespace Int { namespace Rel {
   ReEqBnd<View,CtrlView>::propagate(Space* home) {
     if (b.one()) {
       if (EqBnd<View,View>::post(home,x0,x1) == ES_FAILED)
-	return ES_FAILED;
+        return ES_FAILED;
       return ES_SUBSUMED;
     }
     if (b.zero()) {
       if (Nq<View>::post(home,x0,x1) == ES_FAILED)
-	return ES_FAILED;
+        return ES_FAILED;
       return ES_SUBSUMED;
     }
     switch (rtest_eq_bnd(x0,x1)) {
@@ -524,12 +525,12 @@ namespace Gecode { namespace Int { namespace Rel {
     } else if (x.assigned()) {
       assert(b.none());
       if (x.val() == c) {
-	b.t_one_none(home);
+        b.t_one_none(home);
       } else {
-	b.t_zero_none(home);
+        b.t_zero_none(home);
       }
     } else {
-      (void) new (home) ReEqDomInt(home,x,c,b);	
+      (void) new (home) ReEqDomInt(home,x,c,b);        
     }
     return ES_OK;
   }
@@ -591,12 +592,12 @@ namespace Gecode { namespace Int { namespace Rel {
     } else if (x.assigned()) {
       assert(b.none());
       if (x.val() == c) {
-	b.t_one_none(home);
+        b.t_one_none(home);
       } else {
-	b.t_zero_none(home);
+        b.t_zero_none(home);
       }
     } else {
-      (void) new (home) ReEqBndInt(home,x,c,b);	
+      (void) new (home) ReEqBndInt(home,x,c,b);        
     }
     return ES_OK;
   }

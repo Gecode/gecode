@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -34,10 +35,10 @@ namespace Gecode {
 
     forceinline
     BabEngine::BabEngine(unsigned int c_d0, unsigned int a_d,
-			 Stop* st, size_t sz)
+                         Stop* st, size_t sz)
       : EngineCtrl(st,sz), rcs(a_d), cur(NULL),
-	mark(0), es(ES_SOLUTION), best(NULL),
-	c_d(c_d0), d(0) {}
+        mark(0), es(ES_SOLUTION), best(NULL),
+        c_d(c_d0), d(0) {}
 
 
     forceinline void

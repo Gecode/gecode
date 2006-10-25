@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -59,7 +60,7 @@ namespace Gecode { namespace Set { namespace Int {
     int assigned = 0;
     for (int v=xs.size(); v--;) {
       if (xs[v].assigned()) {
-	assigned += 1;
+        assigned += 1;
         for (int i=ys.size(); i--;) {
           if (i==xs[v].val()) {
             GECODE_ME_CHECK(ys[i].include(home, v));

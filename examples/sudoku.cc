@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -39,13 +40,13 @@ void same(Space* home, int nn, IntVarArgs a, IntVarArgs b) {
 
 IntVarArgs
 block_col(MiniModel::Matrix<IntVarArray> m,
-	  int n, int bc, int i, int j) {
+          int n, int bc, int i, int j) {
   return m.slice(bc*n+i, bc*n+i+1, j*n, (j+1)*n);
 }
 
 IntVarArgs
 block_row(MiniModel::Matrix<IntVarArray> m,
-	  int n, int br, int i, int j) {
+          int n, int br, int i, int j) {
   return m.slice(j*n, (j+1)*n, br*n+i, br*n+i+1);
 }
 #endif
@@ -80,45 +81,45 @@ public:
     // Constraints for squares
     for (int i=0; i<nn; i+=n)
       for (int j=0; j<nn; j+=n) {
-	distinct(this, m.slice(i, i+n, j, j+n), opt.icl);
+        distinct(this, m.slice(i, i+n, j, j+n), opt.icl);
       }
 
 #ifdef GECODE_HAVE_SET_VARS
     if (!opt.naive) {
       // Implied constraints linking squares and rows
       for (int b=0; b<n; b++) {
-	int b1c = 0;
-	int b2c = 0;
-	IntVarArgs bc1(nn-n);
-	IntVarArgs bc2(nn-n);
- 	IntVarArgs br1(nn-n);
- 	IntVarArgs br2(nn-n);
-	for (int i=0; i<n; i++)
-	  for (int j=0; j<n; j++) {
-	    b1c = 0; b2c = 0;
-	    for (int k=0; k<n; k++) {
-	      if (k != j) {
-		IntVarArgs bc1s = block_col(m, n, b, i, k);
-		IntVarArgs br1s = block_row(m, n, b, i, k);
-		for (int count=0; count<n; count++) {
-		  bc1[b1c] = bc1s[count];
-		  br1[b1c] = br1s[count];
-		  ++b1c;
-		}
-	      }
-	      if (k != i) {
-		IntVarArgs bc2s = block_col(m, n, b, k, j);
-		IntVarArgs br2s = block_row(m, n, b, k, j);
-		for (int count=0; count<n; count++) {
-		  bc2[b2c] = bc2s[count];
-		  br2[b2c] = br2s[count];
-		  ++b2c;
-		}
-	      }
-	    }
-	    same(this, nn, bc1, bc2);
-	    same(this, nn, br1, br2);
-	  }
+        int b1c = 0;
+        int b2c = 0;
+        IntVarArgs bc1(nn-n);
+        IntVarArgs bc2(nn-n);
+         IntVarArgs br1(nn-n);
+         IntVarArgs br2(nn-n);
+        for (int i=0; i<n; i++)
+          for (int j=0; j<n; j++) {
+            b1c = 0; b2c = 0;
+            for (int k=0; k<n; k++) {
+              if (k != j) {
+                IntVarArgs bc1s = block_col(m, n, b, i, k);
+                IntVarArgs br1s = block_row(m, n, b, i, k);
+                for (int count=0; count<n; count++) {
+                  bc1[b1c] = bc1s[count];
+                  br1[b1c] = br1s[count];
+                  ++b1c;
+                }
+              }
+              if (k != i) {
+                IntVarArgs bc2s = block_col(m, n, b, k, j);
+                IntVarArgs br2s = block_row(m, n, b, k, j);
+                for (int count=0; count<n; count++) {
+                  bc2[b2c] = bc2s[count];
+                  br2[b2c] = br2s[count];
+                  ++b2c;
+                }
+              }
+            }
+            same(this, nn, bc1, bc2);
+            same(this, nn, br1, br2);
+          }
       }
     }
 #endif
@@ -126,8 +127,8 @@ public:
     // Fill-in predefined fields
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++)
-	if (int v = value_at(examples[opt.size], nn, i, j))
-	  rel(this, m(i,j), IRT_EQ, v );
+        if (int v = value_at(examples[opt.size], nn, i, j))
+          rel(this, m(i,j), IRT_EQ, v );
 
     branch(this, x, BVAR_SIZE_MIN, BVAL_SPLIT_MIN);
   }
@@ -149,15 +150,15 @@ public:
     std::cout << "  ";
     for (int i = 0; i<n*n*n*n; i++) {
       if (x[i].assigned()) {
-	if (x[i].val()<10)
-	  std::cout << x[i] << " ";
-	else
-	  std::cout << (char)(x[i].val()+'A'-10) << " ";	
+        if (x[i].val()<10)
+          std::cout << x[i] << " ";
+        else
+          std::cout << (char)(x[i].val()+'A'-10) << " ";        
       }
       else
-	std::cout << ". ";
+        std::cout << ". ";
       if((i+1)%(n*n) == 0)
-	std::cout << std::endl << "  ";
+        std::cout << std::endl << "  ";
     }
     std::cout << std::endl;
   }
@@ -177,7 +178,7 @@ main(int argc, char** argv) {
   opt.parse(argc,argv);
   if (opt.size >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
-	      << n_examples-1 << std::endl;
+              << n_examples-1 << std::endl;
     return 1;
   }
   Example::run<Sudoku,DFS>(opt);

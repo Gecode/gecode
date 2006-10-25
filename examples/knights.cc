@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -74,29 +75,29 @@ public:
       int n_nbs = 0;
 
       static const int moves[8][2] = {
-	{-2,-1}, {-2,1}, {-1,-2}, {-1,2}, {1,-2}, {1,2}, {2,-1}, {2,1}
+        {-2,-1}, {-2,1}, {-1,-2}, {-1,2}, {1,-2}, {1,2}, {2,-1}, {2,1}
       };
 
       for (int nij = 0; nij<8 ; nij++) {
-	int id = i + moves[nij][0];
-	int jd = j + moves[nij][1];
-	
-	if ((id >= 0) && (jd >= 0) && (id < n) && (jd < n)) {
-	  int g = field(id,jd);
-	  nbs[n_nbs++] = g;
-	
-	  BoolVar b(this,0,1);
+        int id = i + moves[nij][0];
+        int jd = j + moves[nij][1];
+        
+        if ((id >= 0) && (jd >= 0) && (id < n) && (jd < n)) {
+          int g = field(id,jd);
+          nbs[n_nbs++] = g;
+        
+          BoolVar b(this,0,1);
 
-	  rel(this, succ[f], IRT_EQ, g, b);
-	  rel(this, pred[g], IRT_EQ, f, b);
+          rel(this, succ[f], IRT_EQ, g, b);
+          rel(this, pred[g], IRT_EQ, f, b);
 
-	  bool_xor(this,
-		   post(this, ~(jump[g]-jump[f] == 1)),
-		   post(this, ~(jump[g]-jump[f] == 1-nn)),
-		   b);
-	}
+          bool_xor(this,
+                   post(this, ~(jump[g]-jump[f] == 1)),
+                   post(this, ~(jump[g]-jump[f] == 1-nn)),
+                   b);
+        }
       }
-	
+        
       IntSet ds(nbs, n_nbs);
       dom(this, pred[f], ds);
       dom(this, succ[f], ds);
@@ -120,8 +121,8 @@ public:
     std::cout << "\t";
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < n; j++) {
-	std::cout.width(3);
-	std::cout << jump[field(i,j)] << " ";
+        std::cout.width(3);
+        std::cout << jump[field(i,j)] << " ";
       }
       std::cout << std::endl << "\t";
     }

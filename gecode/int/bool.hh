@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -50,7 +51,7 @@ namespace Gecode { namespace Int { namespace Bool {
     BoolBinary(Space* home, bool share, BoolBinary& p);
     /// Constructor for rewriting \a p during cloning
     BoolBinary(Space* home, bool share, Propagator& p,
-	       BVA b0, BVB b1);
+               BVA b0, BVB b1);
   public:
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(void) const;
@@ -72,7 +73,7 @@ namespace Gecode { namespace Int { namespace Bool {
   public:
     /// Constructor for rewriting \a p during cloning
     BoolTernary(Space* home, bool share, Propagator& p,
-		BVA b0, BVB b1, BVC b2);
+                BVA b0, BVB b1, BVC b2);
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
     /// Delete propagator and return its size
@@ -125,7 +126,7 @@ namespace Gecode { namespace Int { namespace Bool {
   public:
     /// Constructor for rewriting \a p during cloning
     OrTrue(Space* home, bool share, Propagator& p,
-	     BVA b0, BVB b1);
+             BVA b0, BVB b1);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation

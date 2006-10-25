@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -71,7 +72,7 @@ namespace Gecode { namespace Set { namespace Select {
      * \a u (as an empty intersection is the universe).
      */
     static  ExecStatus  post(Space* home,SView z,IdxViewArray<SView>& x,
-			     RView y, const IntSet& u);
+                             RView y, const IntSet& u);
   };
 
   /**

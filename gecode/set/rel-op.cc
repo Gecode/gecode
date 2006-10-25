@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -47,13 +48,13 @@ namespace Gecode {
       break;
     case SOT_DUNION:
       GECODE_ES_FAIL(home,
-		     (RelOp::PartitionN<SetView,SetView>::post(home, xa, y)));
+                     (RelOp::PartitionN<SetView,SetView>::post(home, xa, y)));
       break;
     case SOT_INTER:
       {
-	GECODE_ES_FAIL(home,
-		       (RelOp::IntersectionN<SetView,SetView>
-			::post(home, xa, y)));
+        GECODE_ES_FAIL(home,
+                       (RelOp::IntersectionN<SetView,SetView>
+                        ::post(home, xa, y)));
       }
       break;
     case SOT_MINUS:
@@ -75,16 +76,16 @@ namespace Gecode {
     switch(op) {
     case SOT_UNION:
       GECODE_ES_FAIL(home,(RelOp::UnionN<SingletonView,SetView>
-			   ::post(home, xa, y)));
+                           ::post(home, xa, y)));
       break;
     case SOT_DUNION:
       GECODE_ES_FAIL(home,(RelOp::PartitionN<SingletonView,SetView>
-			   ::post(home, xa, y)));
+                           ::post(home, xa, y)));
       break;
     case SOT_INTER:
       GECODE_ES_FAIL(home,
-		     (RelOp::IntersectionN<SingletonView,SetView>
-		      ::post(home, xa, y)));
+                     (RelOp::IntersectionN<SingletonView,SetView>
+                      ::post(home, xa, y)));
       break;
     case SOT_MINUS:
       throw InvalidRelation("rel minus");

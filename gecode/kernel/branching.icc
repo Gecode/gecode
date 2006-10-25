@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -80,7 +81,7 @@ namespace Gecode {
     virtual const BranchingDesc* description(const Space* home) const;
     /// Perform commit for branching description \a d and alternative \a a
     virtual ExecStatus commit(Space* home, const BranchingDesc* d,
-			      unsigned int a);
+                              unsigned int a);
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
   };
@@ -127,7 +128,7 @@ namespace Gecode {
   template <class Val>
   forceinline
   PosValDesc<Val>::PosValDesc(const Branching* b, const int p, const Val& n, 
-			      const int s)
+                              const int s)
     : BranchingDesc(b,2), _pos(p), _val(n), _start(s) {}
 
   template <class Val>
@@ -188,8 +189,8 @@ namespace Gecode {
   ::status(const Space*) const {
     for (int i=start; i < x.size(); i++)
       if (!x[i].assigned()) {
-	start = i;
-	return true;
+        start = i;
+        return true;
       }
     return false;
   }
@@ -205,13 +206,13 @@ namespace Gecode {
     int b = i++;
     if (vs.init(home,x[b]) != VSS_COMMIT)
       for (; i < x.size(); i++)
-	if (!x[i].assigned())
-	  switch (vs.select(home,x[i])) {
-	  case VSS_SELECT: b=i; break;
-	  case VSS_COMMIT: b=i; goto create;
-	  case VSS_NONE:   break;
-	  default:         GECODE_NEVER;
-	  }
+        if (!x[i].assigned())
+          switch (vs.select(home,x[i])) {
+          case VSS_SELECT: b=i; break;
+          case VSS_COMMIT: b=i; goto create;
+          case VSS_NONE:   break;
+          default:         GECODE_NEVER;
+          }
   create:
     return new PosValDesc<Val>(this,b-start,vl.val(home,x[b]),start);
   }

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -68,8 +69,8 @@ namespace Gecode {
      * given by the arguments.
      */
     SetVarArray(Space* home,int n,int glbMin,int glbMax,int lubMin,int lubMax,
-		unsigned int minCard = 0,
-		unsigned int maxCard = Limits::Set::card_max);
+                unsigned int minCard = 0,
+                unsigned int maxCard = Limits::Set::card_max);
     /**
      * \brief Create an array of size \a n.
      *
@@ -77,8 +78,8 @@ namespace Gecode {
      * given by the arguments.
      */
     SetVarArray(Space* home,int n,const IntSet& glb, int lubMin, int lubMax,
-		unsigned int minCard = 0,
-		unsigned int maxCard = Limits::Set::card_max);
+                unsigned int minCard = 0,
+                unsigned int maxCard = Limits::Set::card_max);
     /**
      * \brief Create an array of size \a n.
      *
@@ -86,8 +87,8 @@ namespace Gecode {
      * given by the arguments.
      */
     SetVarArray(Space* home,int n,int glbMin,int glbMax,const IntSet& lub,
-		unsigned int minCard = 0,
-		unsigned int maxCard = Limits::Set::card_max);
+                unsigned int minCard = 0,
+                unsigned int maxCard = Limits::Set::card_max);
     /**
      * \brief Create an array of size \a n.
      *
@@ -95,9 +96,9 @@ namespace Gecode {
      * given by the arguments.
      */
     SetVarArray(Space* home,int n,
-		const IntSet& glb,const IntSet& lub,
-		unsigned int minCard = 0,
-		unsigned int maxCard = Limits::Set::card_max);
+                const IntSet& glb,const IntSet& lub,
+                unsigned int minCard = 0,
+                unsigned int maxCard = Limits::Set::card_max);
   };
   
   /// Traits of SetVarArray

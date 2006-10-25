@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -127,11 +128,11 @@ namespace Gecode { namespace Int { namespace Rel {
     if (!same(x0,x1)) {
       switch (rtest_lq(x0,x1)) {
       case RT_TRUE:
-	b.t_one_none(home); break;
+        b.t_one_none(home); break;
       case RT_FALSE:
-	b.t_zero_none(home); break;
+        b.t_zero_none(home); break;
       case RT_MAYBE:
-	(void) new (home) ReLq<View,CtrlView>(home,x0,x1,b); break;
+        (void) new (home) ReLq<View,CtrlView>(home,x0,x1,b); break;
       default: GECODE_NEVER;
       }
     } else {
@@ -156,12 +157,12 @@ namespace Gecode { namespace Int { namespace Rel {
   ReLq<View,CtrlView>::propagate(Space* home) {
     if (b.one()) {
       if (Lq<View>::post(home,x0,x1) == ES_FAILED)
-	return ES_FAILED;
+        return ES_FAILED;
       return ES_SUBSUMED;
     }
     if (b.zero()) {
       if (Le<View>::post(home,x1,x0) == ES_FAILED)
-	return ES_FAILED;
+        return ES_FAILED;
       return ES_SUBSUMED;
     }
     switch (rtest_lq(x0,x1)) {
@@ -196,11 +197,11 @@ namespace Gecode { namespace Int { namespace Rel {
     } else {
       switch (rtest_lq(x,c)) {
       case RT_TRUE:
-	b.t_one_none(home); break;
+        b.t_one_none(home); break;
       case RT_FALSE:
-	b.t_zero_none(home); break;
+        b.t_zero_none(home); break;
       case RT_MAYBE:
-	(void) new (home) ReLqInt<View,CtrlView>(home,x,c,b); break;
+        (void) new (home) ReLqInt<View,CtrlView>(home,x,c,b); break;
       default: GECODE_NEVER;
       }
     }

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -27,28 +28,28 @@ namespace Gecode {
 
   void
   element(Space* home, const IntArgs& c, IntVar x0, IntVar x1,
-	  IntConLevel) {
+          IntConLevel) {
     if (home->failed()) return;
     Element::IntSharedArray cs(c.size());
     for (int i = c.size(); i--; )
       if ((c[i] < Limits::Int::int_min) || (c[i] > Limits::Int::int_max))
-	throw NumericalOverflow("Int::element");
+        throw NumericalOverflow("Int::element");
       else
-	cs[i] = c[i];
+        cs[i] = c[i];
     GECODE_ES_FAIL(home,(Element::Int<IntView,IntView>::post(home,cs,x0,x1)));
   }
 
   void
   element(Space* home, const IntVarArgs& c, IntVar x0, IntVar x1,
-	  IntConLevel icl) {
+          IntConLevel icl) {
     if (home->failed()) return;
     Element::IdxView<IntView>* iv = Element::IdxView<IntView>::init(home,c);
     if (icl == ICL_BND) {
       GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,IntView>
-			   ::post(home,iv,c.size(),x0,x1)));
+                           ::post(home,iv,c.size(),x0,x1)));
     } else {
       GECODE_ES_FAIL(home,(Element::ViewDom<IntView,IntView>
-			   ::post(home,iv,c.size(),x0,x1)));
+                           ::post(home,iv,c.size(),x0,x1)));
     }
   }
 

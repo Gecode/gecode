@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -121,35 +122,35 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View>
   ExecStatus
   prop_dom(Space* home, int n, DomInfo<View>* x, DomInfo<View>* y,
-	   ProcessStack& ya) {
+           ProcessStack& ya) {
     for (int i = n; i--; )
       // Only views with not yet propagated missing values
       if (x[i].dodom()) {
-	// Iterate the values in the complement of x[i]
-	ViewRanges<IntView>
-	  xir(x[i].view);
-	Iter::Ranges::ComplVal<ViewRanges<IntView> >
-	  xirc(x[i].min,x[i].max,xir);
-	Iter::Ranges::ToValues<Iter::Ranges::ComplVal<ViewRanges<IntView> > >
-	  jv(xirc);
-	while (jv()) {
-	  // j is not in the domain of x[i], so prune i from y[j]
-	  int j = jv.val();
-	  ModEvent me = y[j].view.nq(home,i);
-	  if (me_failed(me))
-	    return ES_FAILED;
-	  if (me_modified(me))
-	    if (me == ME_INT_VAL) {
-	      // Record that y[j] has been assigned and must be propagated
-	      ya.push(j);
-	    } else {
-	      // Obvious as x[i] is different from j
-	      y[j].removed(i);
-	    }
-	  ++jv;
-	}
-	// Update which values have been propagated and what are the new bounds
-	x[i].done();
+        // Iterate the values in the complement of x[i]
+        ViewRanges<IntView>
+          xir(x[i].view);
+        Iter::Ranges::ComplVal<ViewRanges<IntView> >
+          xirc(x[i].min,x[i].max,xir);
+        Iter::Ranges::ToValues<Iter::Ranges::ComplVal<ViewRanges<IntView> > >
+          jv(xirc);
+        while (jv()) {
+          // j is not in the domain of x[i], so prune i from y[j]
+          int j = jv.val();
+          ModEvent me = y[j].view.nq(home,i);
+          if (me_failed(me))
+            return ES_FAILED;
+          if (me_modified(me))
+            if (me == ME_INT_VAL) {
+              // Record that y[j] has been assigned and must be propagated
+              ya.push(j);
+            } else {
+              // Obvious as x[i] is different from j
+              y[j].removed(i);
+            }
+          ++jv;
+        }
+        // Update which values have been propagated and what are the new bounds
+        x[i].done();
       }
     return ES_OK;
   }
@@ -194,18 +195,18 @@ namespace Gecode { namespace Int { namespace Channel {
     if (View::pme(this) == ME_INT_VAL) {
       // Scan x and y for assigned but not yet propagated views
       for (int i = n; i--; ) {
-	if (x[i].doval()) xa.push(i);
-	if (y[i].doval()) ya.push(i);
+        if (x[i].doval()) xa.push(i);
+        if (y[i].doval()) ya.push(i);
       }
 
       do {
-	// Propagate assigned views for x
-	if (prop_val<View,DomInfo<View> >(home,n,x,y,n_na,xa,ya) == ES_FAILED)
-	  return ES_FAILED;
-	// Propagate assigned views for y
-	if (prop_val<View,DomInfo<View> >(home,n,y,x,n_na,ya,xa) == ES_FAILED)
-	  return ES_FAILED;
-	assert(ya.empty());
+        // Propagate assigned views for x
+        if (prop_val<View,DomInfo<View> >(home,n,x,y,n_na,xa,ya) == ES_FAILED)
+          return ES_FAILED;
+        // Propagate assigned views for y
+        if (prop_val<View,DomInfo<View> >(home,n,y,x,n_na,ya,xa) == ES_FAILED)
+          return ES_FAILED;
+        assert(ya.empty());
       } while (!xa.empty());
       this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
     }
@@ -226,7 +227,7 @@ namespace Gecode { namespace Int { namespace Channel {
     } else {
       GECODE_AUTOARRAY(View,xv,n);
       for (int i=n; i--; )
-	xv[i] = x[i].view;
+        xv[i] = x[i].view;
       GECODE_ES_CHECK(dc.init(n,&xv[0]));
     }
     dc.propagate(home);
@@ -236,18 +237,18 @@ namespace Gecode { namespace Int { namespace Channel {
     // propagated.
     for (int i=n; i--; )
       if (x[i].doval()) {
-	int j = x[i].view.val();
-	// Assign the y variable to i (or test if already assigned!)
-	ModEvent me = y[j].view.eq(home,i);
-	if (me_failed(me))
-	  return ES_FAILED;
-	if (me_modified(me)) {
-	  // Record that y[j] has been assigned and must be propagated
-	  assert(me == ME_INT_VAL);
-	  // Otherwise the modification event would not be ME_INT_VAL
-	  ya.push(j);
-	}
-	x[i].assigned(); n_na--;
+        int j = x[i].view.val();
+        // Assign the y variable to i (or test if already assigned!)
+        ModEvent me = y[j].view.eq(home,i);
+        if (me_failed(me))
+          return ES_FAILED;
+        if (me_modified(me)) {
+          // Record that y[j] has been assigned and must be propagated
+          assert(me == ME_INT_VAL);
+          // Otherwise the modification event would not be ME_INT_VAL
+          ya.push(j);
+        }
+        x[i].assigned(); n_na--;
       }
 
     // Process changed views for x
@@ -260,10 +261,10 @@ namespace Gecode { namespace Int { namespace Channel {
     while (!xa.empty() || !ya.empty()) {
       // Process assigned views for x
       if (prop_val<View,DomInfo<View> >(home,n,x,y,n_na,xa,ya) == ES_FAILED)
-	return ES_FAILED;
+        return ES_FAILED;
       // Process assigned views for y
       if (prop_val<View,DomInfo<View> >(home,n,y,x,n_na,ya,xa) == ES_FAILED)
-	return ES_FAILED;
+        return ES_FAILED;
     };
 
     return (n_na == 0) ? ES_SUBSUMED : ES_FIX;

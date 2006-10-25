@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -17,7 +18,7 @@
  *  redistribution of this file, and for a
  *     DISCLAIMER OF ALL WARRANTIES.
  *
- */	
+ */        
 
 namespace Gecode { namespace Int { namespace Sortedness {
 
@@ -56,11 +57,11 @@ namespace Gecode { namespace Int { namespace Sortedness {
   template<class View, class Tuple, bool Perm>
   ExecStatus
   bounds_propagation(Space* home,
-		     ViewArray<Tuple>& xz,
-		     ViewArray<View>& y,
-		     bool& repairpass,
-		     bool& nofix,
-		     bool& match_fixed){
+                     ViewArray<Tuple>& xz,
+                     ViewArray<View>& y,
+                     bool& repairpass,
+                     bool& nofix,
+                     bool& match_fixed){
 
     int n        = xz.size();
 
@@ -74,12 +75,12 @@ namespace Gecode { namespace Int { namespace Sortedness {
       // sorting is determined
       // sigma and tau coincide
       for (int i = xz.size(); i--; ) {
-	int pi = xz[i][1].val();
-	tau[pi] = i;
+        int pi = xz[i][1].val();
+        tau[pi] = i;
       }
     } else {
       for (int i = n; i--; ) {
-	tau[i] = i;
+        tau[i] = i;
       }
     }
 
@@ -88,8 +89,8 @@ namespace Gecode { namespace Int { namespace Sortedness {
     for (int i = n; i--; ) {
       yval    &= y[i].assigned();
       if (i) {
-	ysorted &= (y[i].min() <= y[i - 1].min() &&
-		    y[i].max() <= y[i - 1].max());
+        ysorted &= (y[i].min() <= y[i - 1].min() &&
+                    y[i].max() <= y[i - 1].max());
       }
     }
 
@@ -108,80 +109,80 @@ namespace Gecode { namespace Int { namespace Sortedness {
       int iter = mib;
       int idx = 0;
       while(iter <= mab && idx < n) {
-	if (y[idx].min() > iter) {
-	  // idx cannot be zero because consisteny in posting
-	  assert(idx > 0);
-	  allbnd[iter - mib].min = idx;
-	  allbnd[iter - mib].max = idx - 1;
-	  iter++;
-	} else {
-	  if (y[idx].min() <= iter && iter <= y[idx].max() ) {
-	    allbnd[iter - mib].min = idx;
-	    allbnd[iter - mib].max = idx;
-	    iter++;
-	  } else {
-	    idx++;
-	  }
-	}
+        if (y[idx].min() > iter) {
+          // idx cannot be zero because consisteny in posting
+          assert(idx > 0);
+          allbnd[iter - mib].min = idx;
+          allbnd[iter - mib].max = idx - 1;
+          iter++;
+        } else {
+          if (y[idx].min() <= iter && iter <= y[idx].max() ) {
+            allbnd[iter - mib].min = idx;
+            allbnd[iter - mib].max = idx;
+            iter++;
+          } else {
+            idx++;
+          }
+        }
       }
 
       iter = mab;
       idx = n -1;
       while(iter >= mib && idx >= 0) {
-	if (y[idx].min() > iter) {
-	  // idx cannot be zero because consisteny in posting
-	  assert(idx > 0);
-	  allbnd[iter - mib].max = idx - 1;
-	  iter--;
-	} else {
-	  if (y[idx].min() <= iter && iter <= y[idx].max() ) {
-	    allbnd[iter - mib].max = idx;
-	    iter--;
-	  } else {
-	    idx--;
-	  }
-	}
+        if (y[idx].min() > iter) {
+          // idx cannot be zero because consisteny in posting
+          assert(idx > 0);
+          allbnd[iter - mib].max = idx - 1;
+          iter--;
+        } else {
+          if (y[idx].min() <= iter && iter <= y[idx].max() ) {
+            allbnd[iter - mib].max = idx;
+            iter--;
+          } else {
+            idx--;
+          }
+        }
       }
 
       for (int i = n; i--; ) {
-	// minimum reachable y-variable
-	int minr = allbnd[xz[i][0].min() - mib].min;
-	int maxr = allbnd[xz[i][0].max() - mib].max;
+        // minimum reachable y-variable
+        int minr = allbnd[xz[i][0].min() - mib].min;
+        int maxr = allbnd[xz[i][0].max() - mib].max;
 
-	ModEvent me = xz[i][0].gq(home, y[minr].min());
-	if (me_failed(me)) {
-	  return ES_FAILED;
-	}
-	nofix |= (me_modified(me) &&
-		  xz[i][0].min() != y[minr].min());
+        ModEvent me = xz[i][0].gq(home, y[minr].min());
+        if (me_failed(me)) {
+          return ES_FAILED;
+        }
+        nofix |= (me_modified(me) &&
+                  xz[i][0].min() != y[minr].min());
 
-	me = xz[i][0].lq(home, y[maxr].max());
-	if (me_failed(me)) {
-	  return ES_FAILED;
-	}
-	nofix |= (me_modified(me) &&
-		  xz[i][0].min() != y[maxr].max());
+        me = xz[i][0].lq(home, y[maxr].max());
+        if (me_failed(me)) {
+          return ES_FAILED;
+        }
+        nofix |= (me_modified(me) &&
+                  xz[i][0].min() != y[maxr].max());
 
-	me = xz[i][1].gq(home, minr);
-	if (me_failed(me)) {
-	  return ES_FAILED;
-	}
-	nofix |= (me_modified(me) &&  xz[i][1].min() != minr);
+        me = xz[i][1].gq(home, minr);
+        if (me_failed(me)) {
+          return ES_FAILED;
+        }
+        nofix |= (me_modified(me) &&  xz[i][1].min() != minr);
 
-	me = xz[i][1].lq(home, maxr);
-	if (me_failed(me)) {
-	  return ES_FAILED;
-	}
-	nofix |= (me_modified(me) &&  xz[i][1].max() != maxr);
+        me = xz[i][1].lq(home, maxr);
+        if (me_failed(me)) {
+          return ES_FAILED;
+        }
+        nofix |= (me_modified(me) &&  xz[i][1].max() != maxr);
 
       }
 
       // channel information from x to y through permutation variables in z
       if (!channel<View, Tuple, Perm>(home, xz, y, nofix)) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
       if (nofix) {
-	return ES_NOFIX;
+        return ES_NOFIX;
       }
     }
 
@@ -201,10 +202,10 @@ namespace Gecode { namespace Int { namespace Sortedness {
     if (Perm) {
       // check consistency of channeling after normalization
       if (!channel<View, Tuple, Perm>(home, xz, y, nofix)) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
       if (nofix) {
-	return ES_NOFIX;
+        return ES_NOFIX;
       }
     }
 
@@ -220,9 +221,9 @@ namespace Gecode { namespace Int { namespace Sortedness {
     bool noperm_bc = false;
 
     if (!(check_subsumption<View, Tuple, Perm>
-	  (home, xz, y, subsumed, dropfst)) ||
-	!(array_assigned<View, Tuple, Perm>
-	  (home, xz, y, array_subs, match_fixed, nofix, noperm_bc))) {
+          (home, xz, y, subsumed, dropfst)) ||
+        !(array_assigned<View, Tuple, Perm>
+          (home, xz, y, array_subs, match_fixed, nofix, noperm_bc))) {
       return ES_FAILED;
     }
 
@@ -251,51 +252,51 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
     if (!match_fixed) {
       if (!glover<View, Tuple, Perm>
-	  (home, xz, y, tau, phi, sequence, vertices)) {
-	return ES_FAILED;
+          (home, xz, y, tau, phi, sequence, vertices)) {
+        return ES_FAILED;
       }
     } else {
       for (int i = xz.size(); i--; ) {
-	phi[i]      = xz[i][1].val();
-	phiprime[i] = phi[i];
+        phi[i]      = xz[i][1].val();
+        phiprime[i] = phi[i];
       }
     }
 
     if(!yval) {
       // phiprime is not needed to narrow the domains of the x-variables
       if (!match_fixed) {
-	if (!revglover<View, Tuple, Perm>
-	    (home, xz, y, tau, phiprime, sequence, vertices)) {
-	  return ES_FAILED;
-	}
+        if (!revglover<View, Tuple, Perm>
+            (home, xz, y, tau, phiprime, sequence, vertices)) {
+          return ES_FAILED;
+        }
       }
 
       if (!narrow_domy<View, Tuple, Perm>
-	  (home, xz, y, phi, phiprime, nofix)) {
-	return ES_FAILED;
+          (home, xz, y, phi, phiprime, nofix)) {
+        return ES_FAILED;
       }
 
       if (nofix && !match_fixed) {
-	// data structures (matching) destroyed by domains with holes
-	
-	for (int i = y.size(); i--; ) {
-	  phi[i] = 0;
-	  phiprime[i] = 0;
-	}
-	if (!glover<View, Tuple, Perm>
-	    (home, xz, y, tau, phi, sequence, vertices)) {
-	  return ES_FAILED;
-	}
-	
-	if (!revglover<View, Tuple, Perm>
-	    (home, xz, y, tau, phiprime, sequence, vertices)) {
-	  return ES_FAILED;
-	}
+        // data structures (matching) destroyed by domains with holes
+        
+        for (int i = y.size(); i--; ) {
+          phi[i] = 0;
+          phiprime[i] = 0;
+        }
+        if (!glover<View, Tuple, Perm>
+            (home, xz, y, tau, phi, sequence, vertices)) {
+          return ES_FAILED;
+        }
+        
+        if (!revglover<View, Tuple, Perm>
+            (home, xz, y, tau, phiprime, sequence, vertices)) {
+          return ES_FAILED;
+        }
 
-	if (!narrow_domy<View, Tuple, Perm>
-	    (home, xz, y, phi, phiprime, nofix)) {
-	  return ES_FAILED;
-	}
+        if (!narrow_domy<View, Tuple, Perm>
+            (home, xz, y, phi, phiprime, nofix)) {
+          return ES_FAILED;
+        }
       }
     }
 
@@ -327,25 +328,25 @@ namespace Gecode { namespace Int { namespace Sortedness {
      */
 
     if (!narrow_domx<View, Tuple, Perm>
-	(home, xz, y, tau, phi, scclist, sinfo, nofix)) {
+        (home, xz, y, tau, phi, scclist, sinfo, nofix)) {
       return ES_FAILED;
     }
 
     if (Perm) {
       if (!noperm_bc) {
-	if (!perm_bc<View, Tuple, Perm>
-	    (home, tau, sinfo, scclist, xz, repairpass, nofix)) {
-	  return ES_FAILED;
-	}
+        if (!perm_bc<View, Tuple, Perm>
+            (home, tau, sinfo, scclist, xz, repairpass, nofix)) {
+          return ES_FAILED;
+        }
       }
 
       // channeling also needed after normal propagation steps
       // in order to ensure consistency after possible modification in perm_bc
       if (!channel<View, Tuple, Perm>(home, xz, y, nofix)) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
       if (nofix) {
-	return ES_NOFIX;
+        return ES_NOFIX;
       }
     }
 
@@ -356,27 +357,27 @@ namespace Gecode { namespace Int { namespace Sortedness {
       // used to enforce consistency from x to y
       // case of the upper bound ordering tau
       for (int i = xz.size() - 1; i--; ) {
-	// two x variables are in the same scc of size 2
-	if (xz[tau[i]][1].min() == xz[tau[i+1]][1].min() &&
-	    xz[tau[i]][1].max() == xz[tau[i+1]][1].max() &&
-	    xz[tau[i]][1].size() == 2 && xz[tau[i]][1].range()) {
-	  // if bounds are strictly smaller
-	  if (xz[tau[i]][0].max() < xz[tau[i+1]][0].max()) {
-	    ModEvent me = y[xz[tau[i]][1].min()].lq(home, xz[tau[i]][0].max());
-	    if (me_failed(me)) {
-	      return ES_FAILED;
-	    }
-	    nofix |= (y[xz[tau[i]][1].min()].modified() &&
-		      y[xz[tau[i]][1].min()].max() != xz[tau[i]][0].max());
-	
-	    me = y[xz[tau[i+1]][1].max()].lq(home, xz[tau[i+1]][0].max());
-	    if (me_failed(me)) {
-	      return ES_FAILED;
-	    }
-	    nofix |= (y[xz[tau[i+1]][1].max()].modified() &&
-		      y[xz[tau[i+1]][1].max()].max() != xz[tau[i+1]][0].max());
-	  }
-	}
+        // two x variables are in the same scc of size 2
+        if (xz[tau[i]][1].min() == xz[tau[i+1]][1].min() &&
+            xz[tau[i]][1].max() == xz[tau[i+1]][1].max() &&
+            xz[tau[i]][1].size() == 2 && xz[tau[i]][1].range()) {
+          // if bounds are strictly smaller
+          if (xz[tau[i]][0].max() < xz[tau[i+1]][0].max()) {
+            ModEvent me = y[xz[tau[i]][1].min()].lq(home, xz[tau[i]][0].max());
+            if (me_failed(me)) {
+              return ES_FAILED;
+            }
+            nofix |= (y[xz[tau[i]][1].min()].modified() &&
+                      y[xz[tau[i]][1].min()].max() != xz[tau[i]][0].max());
+        
+            me = y[xz[tau[i+1]][1].max()].lq(home, xz[tau[i+1]][0].max());
+            if (me_failed(me)) {
+              return ES_FAILED;
+            }
+            nofix |= (y[xz[tau[i+1]][1].max()].modified() &&
+                      y[xz[tau[i+1]][1].max()].max() != xz[tau[i+1]][0].max());
+          }
+        }
       }
     }
     return nofix ? ES_NOFIX : ES_FIX;
@@ -444,7 +445,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
     bool noperm_bc = false;
     if (!array_assigned<View, Tuple, Perm>
-	(home, xz, y, array_subs, match_fixed, nofix, noperm_bc)) {
+        (home, xz, y, array_subs, match_fixed, nofix, noperm_bc)) {
       return ES_FAILED;
     }
 
@@ -458,44 +459,44 @@ namespace Gecode { namespace Int { namespace Sortedness {
     // the xs ordered by sigma
 
     if (!check_subsumption<View, Tuple, Perm>
-	(home, xz, y, subsumed, dropfst)) {
+        (home, xz, y, subsumed, dropfst)) {
       return ES_FAILED;
     }
 
     if (subsumed) {
       return ES_SUBSUMED;
-    }	
+    }        
 
     if (Perm) {
       // dropping possibly yields inconsistent indices on permutation variables
       if (dropfst) {
-	reachable = w[dropfst - 1].max();
-	bool unreachable = true;
-	for (int i = xz.size(); unreachable && i-- ; ) {
-	  unreachable &= (reachable < xz[i][0].min());
-	}
+        reachable = w[dropfst - 1].max();
+        bool unreachable = true;
+        for (int i = xz.size(); unreachable && i-- ; ) {
+          unreachable &= (reachable < xz[i][0].min());
+        }
 
-	if (unreachable) {
-	  xz.drop_fst(dropfst, home, this, PC_INT_BND);
-	  y.drop_fst (dropfst, home, this, PC_INT_BND);
-	} else {
-	  dropfst = 0;
-	}
+        if (unreachable) {
+          xz.drop_fst(dropfst, home, this, PC_INT_BND);
+          y.drop_fst (dropfst, home, this, PC_INT_BND);
+        } else {
+          dropfst = 0;
+        }
       }
 
       n = xz.size();
 
       if (n < 2) {
-	if (xz[0][0].max() < y[0].min() || y[0].max() < xz[0][0].min()) {
-	  return ES_FAILED;
-	} else {
-	  if (Perm) {
-	    GECODE_ME_CHECK(xz[0][1].eq(home, w.size() - 1));
-	  }
-	  Rel::EqBnd<View,View>::post(home, xz[0][0], y[0]);
-	  return ES_SUBSUMED;
+        if (xz[0][0].max() < y[0].min() || y[0].max() < xz[0][0].min()) {
+          return ES_FAILED;
+        } else {
+          if (Perm) {
+            GECODE_ME_CHECK(xz[0][1].eq(home, w.size() - 1));
+          }
+          Rel::EqBnd<View,View>::post(home, xz[0][0], y[0]);
+          return ES_SUBSUMED;
 
-	}
+        }
       }
 
       // check whether shifting the permutation variables
@@ -506,64 +507,64 @@ namespace Gecode { namespace Int { namespace Sortedness {
       int  shift = 0;
 
       for (int i = n; i--; ){
-	if (xz[i][1].max() > index) {
-	  index = xz[i][1].max();
-	}
-	if (index > valid) {
-	  shift = index - valid;
-	}
+        if (xz[i][1].max() > index) {
+          index = xz[i][1].max();
+        }
+        if (index > valid) {
+          shift = index - valid;
+        }
       }
 
       if (shift) {
-     	ViewArray<ViewTuple<OffsetView,2> > oxz(home, n);
-	ViewArray<OffsetView> oy(home, n);
+             ViewArray<ViewTuple<OffsetView,2> > oxz(home, n);
+        ViewArray<OffsetView> oy(home, n);
 
-	for (int i = n; i--; ) {
+        for (int i = n; i--; ) {
 
-	  GECODE_ME_CHECK(xz[i][1].gq(home, shift));
+          GECODE_ME_CHECK(xz[i][1].gq(home, shift));
 
-	  oxz[i][1] = OffsetView(xz[i][1], -shift);
-	  oxz[i][0] = OffsetView(xz[i][0], 0);
-	  oy[i] = OffsetView(y[i], 0);
-	}
+          oxz[i][1] = OffsetView(xz[i][1], -shift);
+          oxz[i][0] = OffsetView(xz[i][0], 0);
+          oy[i] = OffsetView(y[i], 0);
+        }
 
-	GECODE_ES_CHECK((bounds_propagation<OffsetView,
-			 ViewTuple<OffsetView,2>, Perm>
-			 (home, oxz, oy, secondpass, nofix, match_fixed)));
+        GECODE_ES_CHECK((bounds_propagation<OffsetView,
+                         ViewTuple<OffsetView,2>, Perm>
+                         (home, oxz, oy, secondpass, nofix, match_fixed)));
 
-	if (secondpass) {
-	  GECODE_ES_CHECK((bounds_propagation<OffsetView,
-			   ViewTuple<OffsetView,2>, Perm>
-			   (home, oxz, oy, secondpass, nofix, match_fixed)));
-	}
+        if (secondpass) {
+          GECODE_ES_CHECK((bounds_propagation<OffsetView,
+                           ViewTuple<OffsetView,2>, Perm>
+                           (home, oxz, oy, secondpass, nofix, match_fixed)));
+        }
       } else {
-	GECODE_ES_CHECK((bounds_propagation<View, Tuple, Perm>
-			 (home, xz, y, secondpass, nofix, match_fixed)));
+        GECODE_ES_CHECK((bounds_propagation<View, Tuple, Perm>
+                         (home, xz, y, secondpass, nofix, match_fixed)));
 
-	if (secondpass) {
-	  GECODE_ES_CHECK((bounds_propagation<View, Tuple, Perm>
-			   (home, xz, y, secondpass, nofix, match_fixed)));
-	}
+        if (secondpass) {
+          GECODE_ES_CHECK((bounds_propagation<View, Tuple, Perm>
+                           (home, xz, y, secondpass, nofix, match_fixed)));
+        }
       }
     } else {
       // dropping has no consequences
       if (dropfst) {
-	xz.drop_fst(dropfst, home, this, PC_INT_BND);
-	y.drop_fst (dropfst, home, this, PC_INT_BND);
+        xz.drop_fst(dropfst, home, this, PC_INT_BND);
+        y.drop_fst (dropfst, home, this, PC_INT_BND);
       }
 
       n = xz.size();
 
       if (n < 2) {
-	if (xz[0][0].max() < y[0].min() || y[0].max() < xz[0][0].min()) {
-	  return ES_FAILED;
-	} else {
-	  Rel::EqBnd<View,View>::post(home, xz[0][0], y[0]);
-	  return ES_SUBSUMED;
-	}
+        if (xz[0][0].max() < y[0].min() || y[0].max() < xz[0][0].min()) {
+          return ES_FAILED;
+        } else {
+          Rel::EqBnd<View,View>::post(home, xz[0][0], y[0]);
+          return ES_SUBSUMED;
+        }
       }
       GECODE_ES_CHECK((bounds_propagation<View, Tuple, Perm>
-		       (home, xz, y, secondpass, nofix, match_fixed)));
+                       (home, xz, y, secondpass, nofix, match_fixed)));
       // no second pass possible if there are no permvars
     }
 
@@ -576,12 +577,12 @@ namespace Gecode { namespace Int { namespace Sortedness {
       // sorting is determined
       // sigma and tau coincide
       for (int i = xz.size(); i--; ) {
-	int pi = xz[i][1].val();
-	tau[pi] = i;
+        int pi = xz[i][1].val();
+        tau[pi] = i;
       }
     } else {
       for (int i = n; i--; ) {
-	tau[i] = i;
+        tau[i] = i;
       }
     }
 
@@ -591,12 +592,12 @@ namespace Gecode { namespace Int { namespace Sortedness {
     bool xbassigned = true;
     for (int i = xz.size(); i--; ) {
       if (xz[tau[i]][0].assigned() && xbassigned) {
-	ModEvent me = y[i].eq(home, xz[tau[i]][0].val());
-	if (me_failed(me)) {
-	  return ES_FAILED;
-	}
+        ModEvent me = y[i].eq(home, xz[tau[i]][0].val());
+        if (me_failed(me)) {
+          return ES_FAILED;
+        }
       } else {
-	xbassigned = false;
+        xbassigned = false;
       }
     }
 
@@ -609,27 +610,27 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
     if (Perm) {
       for (int i = 0; i < xz.size() - 1; i++) {
-	// special case of subsccs of size2 for the lower bounds
-	// two x variables are in the same scc of size 2
-	if (xz[i][1].min() == xz[i+1][1].min() &&
-	    xz[i][1].max() == xz[i+1][1].max() &&
-	    xz[i][1].size() == 2 && xz[i][1].range()) {
-	  if (xz[i][0].min() < xz[i+1][0].min()) {
-	    ModEvent me = y[xz[i][1].min()].gq(home, xz[i][0].min());
-	    if (me_failed(me)) {
-	      return ES_FAILED;
-	    }
-	    nofix |= (y[xz[i][1].min()].modified() &&
-		      y[xz[i][1].min()].min() != xz[i][0].min());
+        // special case of subsccs of size2 for the lower bounds
+        // two x variables are in the same scc of size 2
+        if (xz[i][1].min() == xz[i+1][1].min() &&
+            xz[i][1].max() == xz[i+1][1].max() &&
+            xz[i][1].size() == 2 && xz[i][1].range()) {
+          if (xz[i][0].min() < xz[i+1][0].min()) {
+            ModEvent me = y[xz[i][1].min()].gq(home, xz[i][0].min());
+            if (me_failed(me)) {
+              return ES_FAILED;
+            }
+            nofix |= (y[xz[i][1].min()].modified() &&
+                      y[xz[i][1].min()].min() != xz[i][0].min());
 
-	    me = y[xz[i+1][1].max()].gq(home, xz[i+1][0].min());
-	    if (me_failed(me)) {
-	      return ES_FAILED;
-	    }
-	    nofix |= (y[xz[i+1][1].max()].modified() &&
-		      y[xz[i+1][1].max()].min() != xz[i+1][0].min());
-	  }
-	}
+            me = y[xz[i+1][1].max()].gq(home, xz[i+1][0].min());
+            if (me_failed(me)) {
+              return ES_FAILED;
+            }
+            nofix |= (y[xz[i+1][1].max()].modified() &&
+                      y[xz[i+1][1].max()].min() != xz[i+1][0].min());
+          }
+        }
       }
     }
 
@@ -638,12 +639,12 @@ namespace Gecode { namespace Int { namespace Sortedness {
     bool xassigned = true;
     for (int i = 0; i < xz.size(); i++) {
       if (xz[i][0].assigned() && xassigned) {
-	ModEvent me = y[i].eq(home, xz[i][0].val());
-	if (me_failed(me)) {
-	  return ES_FAILED;
-	}
+        ModEvent me = y[i].eq(home, xz[i][0].val());
+        if (me_failed(me)) {
+          return ES_FAILED;
+        }
       } else {
-	xassigned = false;
+        xassigned = false;
       }
     }
 
@@ -655,31 +656,31 @@ namespace Gecode { namespace Int { namespace Sortedness {
     for (int i = xz.size(); i--; ) {
       ModEvent me = y[i].lq(home, tub);
       if (me_failed(me)) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
       nofix |= y[i].modified() && y[i].max() != tub;
 
       me = y[i].gq(home, tlb);
       if (me_failed(me)) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
       nofix |= y[i].modified() && y[i].min() != tlb;
 
       me = xz[i][0].lq(home, tub);
       if (me_failed(me)) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
       nofix |= xz[i][0].modified() && xz[i][0].max() != tub;
 
       me = xz[i][0].gq(home, tlb);
       if (me_failed(me)) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
       nofix |= xz[i][0].modified() && xz[i][0].min() != tlb;
     }
 
     if (!array_assigned<View, Tuple, Perm>
-	(home, xz, y, array_subs, match_fixed, nofix, noperm_bc)) {
+        (home, xz, y, array_subs, match_fixed, nofix, noperm_bc)) {
       return ES_FAILED;
     }
 
@@ -688,7 +689,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
     }
 
     if (!check_subsumption<View, Tuple, Perm>
-	(home, xz, y, subsumed, dropfst)) {
+        (home, xz, y, subsumed, dropfst)) {
       return ES_FAILED;
     }
 
@@ -706,12 +707,12 @@ namespace Gecode { namespace Int { namespace Sortedness {
     int n = xz0.size();
     if (n < 2) {
       if ((xz0[0][0].max() < y0[0].min()) || (y0[0].max() < xz0[0][0].min())) {
-	return ES_FAILED;
+        return ES_FAILED;
       } else {
-	Rel::EqBnd<View,View>::post(home, xz0[0][0], y0[0]);
-	if (Perm) {
-	  GECODE_ME_CHECK(xz0[0][1].eq(home, 0));
-	}
+        Rel::EqBnd<View,View>::post(home, xz0[0][0], y0[0]);
+        if (Perm) {
+          GECODE_ME_CHECK(xz0[0][1].eq(home, 0));
+        }
       }
     } else {
       new (home) Sortedness<View, Tuple, Perm>(home, xz0, y0);

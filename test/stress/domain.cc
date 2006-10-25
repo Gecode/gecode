@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -47,17 +48,17 @@ struct Domain : public StressTest {
     // Cut holes: expand
     for (int i = 5; i--; ) {
       for (int j = 0; j <= 5*param; j++)
-	rel(home, x[i], IRT_NQ, 5*j);
+        rel(home, x[i], IRT_NQ, 5*j);
       for (int j = 0; j <= 5*param; j++)
-	rel(home, x[i], IRT_NQ, 5*j+2);
+        rel(home, x[i], IRT_NQ, 5*j+2);
       for (int j = 0; j <= 5*param; j++)
-	rel(home, x[i], IRT_NQ, 5*j+4);
+        rel(home, x[i], IRT_NQ, 5*j+4);
     }
     // Contract
     for (int j = 0; j <= 5*param/2; j++)
       for (int i = 5; i--; ) {
-	rel(home, x[i], IRT_GQ, 5*j);
-	rel(home, x[i], IRT_LQ, 5*(j + (5*param/2)));
+        rel(home, x[i], IRT_GQ, 5*j);
+        rel(home, x[i], IRT_LQ, 5*(j + (5*param/2)));
       }
   }
   virtual int    vars(int param) { return 5; }

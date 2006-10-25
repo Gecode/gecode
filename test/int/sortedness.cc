@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -17,7 +18,7 @@
  *  redistribution of this file, and for a
  *     DISCLAIMER OF ALL WARRANTIES.
  *
- */	
+ */        
 
 #include "test/int.hh"
 #include "test/log.hh"
@@ -43,9 +44,9 @@ class SortPermAssignment : public Assignment{
   int xsize;
 public:
   SortPermAssignment(int xlow, int xup,
-		     int plow, int pup,
-		     int xs,
-		     int n0, const IntSet& d0)
+                     int plow, int pup,
+                     int xs,
+                     int n0, const IntSet& d0)
     : Assignment(n0, d0),
       problow(xlow), probup(xup),
       permlow(plow), permup(pup),
@@ -69,17 +70,17 @@ public:
     while (true) {
       ++dsv[i];
       if (dsv[i]())
-	return;
+        return;
       dsv[i].init(d);
       if (i >= 2*xsize && i < n) {
-	dsv[i].init(perm_dom);
+        dsv[i].init(perm_dom);
       } else {
-	dsv[i].init(var_dom);
+        dsv[i].init(var_dom);
       }
       --i;
       if (i<0) {
-	done = true;
-	return;
+        done = true;
+        return;
       }
     }
   }
@@ -106,9 +107,9 @@ public:
 //     for (int i = 0; i < xs; i++) {
 //       if (i == ve) std::cout << "||";
 //       if (i < ve) {
-// 	std::cout << sortx[i]<<" ";
+//         std::cout << sortx[i]<<" ";
 //       } else {
-// 	std::cout <<x[i] << " ";
+//         std::cout <<x[i] << " ";
 //       }
 //     }
 //     std::cout <<"...";
@@ -116,15 +117,15 @@ public:
 
     for (int i = ve; i < xs - 1; i++) {
       if ( !(x[i] <= x[i + 1]) ) {
-	// std::cout << "y not sorted\n";
-	return false;
+        // std::cout << "y not sorted\n";
+        return false;
       }
     }
 
     for (int i = ve; i < xs; i++) {
       if (sortx[i - ve] != x[i]) {
-	// std::cout << "no sorting poss\n";
-	return false;
+        // std::cout << "no sorting poss\n";
+        return false;
       }
     }
 
@@ -182,14 +183,14 @@ public:
 //     for (int i = 0; i < xs; i++) {
 //       if (i == ve1 || i == ve2) std::cout << "||";
 //       std::cout <<x[i] << " ";
-// 	}
+//         }
 //     std::cout <<"...";
 
     // ys have to be sorted
     for (int i = ve1; i < ve2 - 1; i++) {
       if ( !(x[i] <= x[i + 1]) ) {
-// 	std::cout << "y not sorted\n";
-	return false;
+//         std::cout << "y not sorted\n";
+        return false;
       }
     }
 
@@ -197,41 +198,41 @@ public:
     // assert correct domains
     for (int i = 0; i < ve2; i++) {
       if (!(x[i] > 0)) {
-// 	std::cout << "false domain\n";
-	return false;
+//         std::cout << "false domain\n";
+        return false;
       }
     }
 
     for (int i = ve2; i < xs; i++) {
       if (! (x[i] < 3)) {
-// 	std::cout << "false domain 2\n";
-	return false;
+//         std::cout << "false domain 2\n";
+        return false;
       }
     }
 
     // perm index
     for (int i = 0; i < ve1; i++) {
       if (x[i] != x[ve1 + x[i + ve2]]) {
-// 	std::cout << "wrong index\n";
-	return false;
+//         std::cout << "wrong index\n";
+        return false;
       }
     }
 
     // perm distinct
     for (int i = ve2; i < xs - 1; i++) {
       for (int j = i + 1; j < xs; j++) {
-	if (x[i] == x[j]) {
-// 	  std::cout << "no perm\n";
-	  return false;
-	}
+        if (x[i] == x[j]) {
+//           std::cout << "no perm\n";
+          return false;
+        }
       }
     }
 
 
     for (int i = ve1; i < ve2; i++) {
       if (sortx[i - ve1] != x[i]) {
-// 	std::cout << "no sorting poss\n";
-	return false;
+//         std::cout << "no sorting poss\n";
+        return false;
       }
     }
 

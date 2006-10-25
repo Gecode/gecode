@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -41,12 +42,12 @@ namespace Gecode { namespace Int { namespace Sortedness {
   template <class View, class Tuple, bool Perm>
   forceinline bool
   glover(Space* home,
-	 ViewArray<Tuple>& xz,
-	 ViewArray<View>& y,
-	 int tau[],
-	 int phi[],
-	 OfflineMinItem sequence[],
-	 int vertices[]) {
+         ViewArray<Tuple>& xz,
+         ViewArray<View>& y,
+         int tau[],
+         int phi[],
+         OfflineMinItem sequence[],
+         int vertices[]) {
 
     int xs = xz.size();
     OfflineMin seq(sequence, vertices, xs);
@@ -58,8 +59,8 @@ namespace Gecode { namespace Int { namespace Sortedness {
       // creating the sequence of inserts and extractions from the queue
 //       for( ; s <xs && xz[s][0].min() <= maxy; s++) {
       for( ; s <xs && xz[s][0].min() <= maxy; s++) {
-	seq[s].iset = z;
-	seq[z].rank++;
+        seq[s].iset = z;
+        seq[z].rank++;
       }
     }
 
@@ -70,35 +71,35 @@ namespace Gecode { namespace Int { namespace Sortedness {
       // find the iteration where \tau(i) became a maching candidate
       int iter = seq[perm].iset;
       if (iter<0) {
-	return false;
+        return false;
       }
       int j = 0;
       j = seq.find_pc(iter);
       // check whether the sequence is valid
       if (j >= xs) {
-	return false;
+        return false;
       }
       // if there is no intersection between the matching candidate
       // and the y node then there exists NO perfect matching
       if (xz[perm][0].max() < y[j].min()) {
-	return false;
+        return false;
       }
       phi[j]         = perm;
       seq[perm].iset = -5;           //remove from candidate set
       int sqjsucc    = seq[j].succ;
       if (sqjsucc < xs){
-	seq.unite(j,sqjsucc,sqjsucc);
+        seq.unite(j,sqjsucc,sqjsucc);
       } else {
-	seq[seq[j].root].name = sqjsucc; // end of sequence achieved
+        seq[seq[j].root].name = sqjsucc; // end of sequence achieved
       }
 
       // adjust tree list
       int pr = seq[j].pred;
       if (pr != -1) {
-	seq[pr].succ = sqjsucc;
+        seq[pr].succ = sqjsucc;
       }
       if (sqjsucc != xs) {
-	seq[sqjsucc].pred = pr;
+        seq[sqjsucc].pred = pr;
       }
     }
     return true;
@@ -111,12 +112,12 @@ namespace Gecode { namespace Int { namespace Sortedness {
   template <class View, class Tuple, bool Perm>
   forceinline bool
   revglover(Space* home,
-	    ViewArray<Tuple>& xz,
-	    ViewArray<View>& y,
-	    int tau[],
-	    int phiprime[],
-	    OfflineMinItem sequence[],
-	    int vertices[]) {
+            ViewArray<Tuple>& xz,
+            ViewArray<View>& y,
+            int tau[],
+            int phiprime[],
+            OfflineMinItem sequence[],
+            int vertices[]) {
 
     int xs = xz.size();
     OfflineMin seq(sequence, vertices, xs);
@@ -128,8 +129,8 @@ namespace Gecode { namespace Int { namespace Sortedness {
       miny = y[z].min();
       // creating the sequence of inserts and extractions from the queue
       for ( ; s > -1 && xz[tau[s]][0].max() >= miny; s--) {
-	seq[tau[s]].iset = z;
-	seq[z].rank++;
+        seq[tau[s]].iset = z;
+        seq[z].rank++;
       }
     }
 
@@ -138,34 +139,34 @@ namespace Gecode { namespace Int { namespace Sortedness {
       int perm = i;
       int iter = seq[perm].iset;
       if (iter < 0) {
-	return false;
+        return false;
       }
       int j = 0;
       j = seq.find_pc(iter);
       if (j <= -1) {
-	return false;
+        return false;
       }
       // if there is no intersection between the matching candidate
       // and the y node then there exists NO perfect matching
       if (xz[perm][0].min() > y[j].max()) {
-	return false;
+        return false;
       }
       phiprime[j]    = perm;
       seq[perm].iset = -5;
       int sqjsucc    = seq[j].pred;
       if (sqjsucc >= 0) {
-	seq.unite(j, sqjsucc, sqjsucc);
+        seq.unite(j, sqjsucc, sqjsucc);
       } else {
-	seq[seq[j].root].name = sqjsucc; // end of sequence achieved
+        seq[seq[j].root].name = sqjsucc; // end of sequence achieved
       }
 
       // adjust tree list
       int pr = seq[j].succ;
       if (pr != xs) {
-	seq[pr].pred = sqjsucc;
+        seq[pr].pred = sqjsucc;
       }
       if (sqjsucc != -1) {
-	seq[sqjsucc].succ = pr;
+        seq[sqjsucc].succ = pr;
       }
     }
     return true;

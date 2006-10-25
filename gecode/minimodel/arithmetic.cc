@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -25,9 +26,9 @@
 
 namespace Gecode {
 
-#define GECODE_MM_RETURN_FAILED			\
-if (home->failed()) {				\
-  IntVar _x(home,0,0); return _x;		\
+#define GECODE_MM_RETURN_FAILED                        \
+if (home->failed()) {                                \
+  IntVar _x(home,0,0); return _x;                \
 }
 
   IntVar
@@ -36,8 +37,8 @@ if (home->failed()) {				\
     if (x.min() >= 0)
       return x;
     IntVar y(home,
-	     std::min(-x.max(),x.min()),
-	     std::max(-x.min(),x.max()));
+             std::min(-x.max(),x.min()),
+             std::max(-x.min(),x.max()));
     abs(home, x, y, icl);
     return y;
   }
@@ -46,8 +47,8 @@ if (home->failed()) {				\
   min(Space* home, IntVar x, IntVar y, IntConLevel icl) {
     GECODE_MM_RETURN_FAILED;
     IntVar z(home,
-	     std::min(x.min(),y.min()),
-	     std::min(x.max(),y.max()));
+             std::min(x.min(),y.min()),
+             std::min(x.max(),y.max()));
     min(home, x, y, z, icl);
     return z;
   }
@@ -70,8 +71,8 @@ if (home->failed()) {				\
   max(Space* home, IntVar x, IntVar y, IntConLevel icl) {
     GECODE_MM_RETURN_FAILED;
     IntVar z(home,
-	     std::max(x.min(),y.min()),
-	     std::max(x.max(),y.max()));
+             std::max(x.min(),y.min()),
+             std::max(x.max(),y.max()));
     max(home, x, y, z, icl);
     return z;
   }

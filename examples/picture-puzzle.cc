@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
@@ -117,11 +118,11 @@ public:
     for (int h = 0; h < height; ++h) {
       std::cout << '\t';
       for (int w = 0; w < width; ++w) {
-	if (pos(h,w).val() == 1) {
-	  std::cout << "#";
-	} else {
-	  std::cout << " ";
-	}
+        if (pos(h,w).val() == 1) {
+          std::cout << "#";
+        } else {
+          std::cout << " ";
+        }
       }
       std::cout << std::endl;
     }
@@ -140,7 +141,7 @@ main(int argc, char** argv) {
   o.parse(argc,argv);
   if (o.size >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
-	      << n_examples-1 << std::endl;
+              << n_examples-1 << std::endl;
     return 1;
   }
   Example::run<PicturePuzzle,DFS>(o);
@@ -473,7 +474,7 @@ static const int p200[] =
 
 /// List of specifications
 const int *specs[] = {heart, bear, crocodile, unknown,
-		      pinwheel, difficult, non_unique, dragonfly, p200};
+                      pinwheel, difficult, non_unique, dragonfly, p200};
 /// Number of specifications
 const unsigned n_examples = sizeof(specs)/sizeof(int*);
 //@}

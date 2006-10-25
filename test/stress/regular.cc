@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -32,24 +33,24 @@ typedef Support::DynamicArray<DFA::Transition> Transitions;
 // Create all states for permutation of symbols
 void
 permute(int i_state, int i, int n, int p,
-	Transitions& t, int& n_t, int& n_state) {
+        Transitions& t, int& n_t, int& n_state) {
   if (i<n-1) {
     for (int j=n; j--; )
       if (!(p & (1 << j))) {
-	t[n_t].i_state = i_state;
-	t[n_t].symbol  = j;
-	t[n_t].o_state = ++n_state;
-	n_t++;
-	permute(n_state,i+1,n,p | (1 << j),
-		t,n_t,n_state);
+        t[n_t].i_state = i_state;
+        t[n_t].symbol  = j;
+        t[n_t].o_state = ++n_state;
+        n_t++;
+        permute(n_state,i+1,n,p | (1 << j),
+                t,n_t,n_state);
       }
   } else {
     for (int j=n; j--; )
       if (!(p & (1 << j))) {
-	t[n_t].i_state = i_state;
-	t[n_t].symbol  = j;
-	t[n_t].o_state = 1;
-	n_t++;
+        t[n_t].i_state = i_state;
+        t[n_t].symbol  = j;
+        t[n_t].o_state = 1;
+        n_t++;
       }
   }
 }
@@ -82,10 +83,10 @@ struct StressRegular : public StressTest {
       if (!s->x[i].assigned()) return CR_UNSPEC;
     for (int o = 0; o <= 3*n; ++o) {
       for (int i = 0; i < n; ++i) {
-	for (int j = i+1; j < n; ++j) {
-	  if (s->x[o+i].val() == s->x[o+j].val())
-	    return CR_FOS;
-	}
+        for (int j = i+1; j < n; ++j) {
+          if (s->x[o+i].val() == s->x[o+j].val())
+            return CR_FOS;
+        }
       }
     }
     return CR_OK;
@@ -96,7 +97,7 @@ struct StressRegular : public StressTest {
     IntVarArgs y(param);
     for (int i = 0; i <= 3*param; ++i) {
       for (int j = param; j--; )
-	y[j] = x[i+j];
+        y[j] = x[i+j];
       regular(home, y, a);
     }
     for (int j=param; j--; )

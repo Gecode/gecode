@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -17,7 +18,7 @@
  *  redistribution of this file, and for a
  *     DISCLAIMER OF ALL WARRANTIES.
  *
- */	
+ */        
 
 namespace Gecode { namespace Int { namespace Sortedness {
 
@@ -28,15 +29,15 @@ namespace Gecode { namespace Int { namespace Sortedness {
       std::cout << v.min() <<" ";
     } else {
       if (v.range()){
-	std::cout << "["<<v.min() <<".."<<v.max()<<"] ";
+        std::cout << "["<<v.min() <<".."<<v.max()<<"] ";
       } else {
-	std::cout << "{";
-	ViewValues<View> iter(v);
-	while(iter()){
-	  std::cout << iter.val() <<",";
-	  ++iter;
-	}
-	std::cout << "} ";
+        std::cout << "{";
+        ViewValues<View> iter(v);
+        while(iter()){
+          std::cout << iter.val() <<",";
+          ++iter;
+        }
+        std::cout << "} ";
       }
     }
   }
@@ -49,32 +50,32 @@ namespace Gecode { namespace Int { namespace Sortedness {
     if (xs[0].min() == xs[0].max()) {
       os << xs[0].min();
       if (n > 1) {
-	std::cout << ",";
-	if (xs[1].min() == xs[1].max()) {
-	  os << xs[1].min() <<" ";
-	} else {
-	  os << "["<<xs[1].min() <<".."<<xs[1].max()<<"]("<<xs[1].range()<<") ";
-	}
+        std::cout << ",";
+        if (xs[1].min() == xs[1].max()) {
+          os << xs[1].min() <<" ";
+        } else {
+          os << "["<<xs[1].min() <<".."<<xs[1].max()<<"]("<<xs[1].range()<<") ";
+        }
       }
     } else {
       os << "["<<xs[0].min() <<".."<<xs[0].max()<<"]("<<xs[0].range()<<")";
       if (n > 1) {
-	std::cout << ", ";
-	if (xs[1].min() == xs[1].max()) {
-	  os << xs[1].min() <<" ";
-	} else {
-	  os << "["<<xs[1].min() <<".."<<xs[1].max()<<"]("<<xs[1].range()<<") ";
-	}
+        std::cout << ", ";
+        if (xs[1].min() == xs[1].max()) {
+          os << xs[1].min() <<" ";
+        } else {
+          os << "["<<xs[1].min() <<".."<<xs[1].max()<<"]("<<xs[1].range()<<") ";
+        }
       }
     }
 //  else {
-// 	os << "{";
-// 	ViewValues<View> iter(xs[0]);
-// 	while(iter()){
-// 	  os << iter.val() <<",";
-// 	  ++iter;
-// 	}
-// 	os << "} ";
+//         os << "{";
+//         ViewValues<View> iter(xs[0]);
+//         while(iter()){
+//           os << iter.val() <<",";
+//           ++iter;
+//         }
+//         os << "} ";
 //       }
     if (n > 1) { os << ">";}
     return os;
@@ -125,37 +126,37 @@ namespace Gecode { namespace Int { namespace Sortedness {
   template<class View, class Tuple, bool Perm>
   forceinline bool
   check_subsumption(Space* home,
-		    ViewArray<Tuple>& xz,
-		    ViewArray<View>& y,
-		    bool& subsumed,
-		    int& dropfst) {
+                    ViewArray<Tuple>& xz,
+                    ViewArray<View>& y,
+                    bool& subsumed,
+                    int& dropfst) {
 
     dropfst  = 0;
     subsumed = true;
     int  xs  = xz.size();
     for (int i = 0; i < xs ; i++) {
       if (Perm) {
-	subsumed &= (xz[i][0].assigned() &&
-		     xz[i][1].assigned() &&
-		     y[xz[i][1].val()].assigned());
-	if (subsumed) {
-	  if (xz[i][0].val() != y[xz[i][1].val()].val()) {
-	    return false;
-	  } else {
-	    if (xz[i][1].val() == i) {
-	      dropfst++;
-	    }
-	  }
-	}
+        subsumed &= (xz[i][0].assigned() &&
+                     xz[i][1].assigned() &&
+                     y[xz[i][1].val()].assigned());
+        if (subsumed) {
+          if (xz[i][0].val() != y[xz[i][1].val()].val()) {
+            return false;
+          } else {
+            if (xz[i][1].val() == i) {
+              dropfst++;
+            }
+          }
+        }
       } else {
-	subsumed &= (xz[i][0].assigned() && y[i].assigned());
-	if (subsumed) {
-	  if (xz[i][0].val() != y[i].val()) {
-	    return false;
-	  } else {
-	    dropfst++;
-	  }
-	}
+        subsumed &= (xz[i][0].assigned() && y[i].assigned());
+        if (subsumed) {
+          if (xz[i][0].val() != y[i].val()) {
+            return false;
+          } else {
+            dropfst++;
+          }
+        }
       }
     }
     return true;
@@ -305,12 +306,12 @@ namespace Gecode { namespace Int { namespace Sortedness {
   operator<<(std::ostream& os,  OfflineMin seq){
     for (int i = 0; i < seq.size();i++) {
       os << "Succ(" <<seq[i].succ   << ") "
-	 << "Pred(" <<seq[i].pred   << ") "
-	 << "Root(" <<seq[i].root   << ") "
-	 << "Par (" <<seq[i].parent << ") "
-	 << "Rank(" <<seq[i].rank   << ") "
-	 << "Name(" <<seq[i].name   << ") "
-	 << "Set (" <<seq[i].iset   << ") \n";
+         << "Pred(" <<seq[i].pred   << ") "
+         << "Root(" <<seq[i].root   << ") "
+         << "Par (" <<seq[i].parent << ") "
+         << "Rank(" <<seq[i].rank   << ") "
+         << "Name(" <<seq[i].name   << ") "
+         << "Set (" <<seq[i].iset   << ") \n";
     }
     return os;
   }
@@ -332,9 +333,9 @@ namespace Gecode { namespace Int { namespace Sortedness {
     TupleMaxInc(const ViewArray<Tuple>& x0) : x(x0) {}
     bool operator()(const int i, const int j) {
       if (x[i][0].max() == x[j][0].max()) {
-	return x[i][0].min() < x[j][0].min();
+        return x[i][0].min() < x[j][0].min();
       } else {
-	return x[i][0].max() < x[j][0].max();
+        return x[i][0].max() < x[j][0].max();
       }
     }
   };
@@ -357,17 +358,17 @@ namespace Gecode { namespace Int { namespace Sortedness {
     TupleMaxIncExt(const ViewArray<Tuple>& x0) : x(x0) {}
     bool operator()(const int i, const int j) {
       if (x[i][0].max() == x[j][0].max()) {
-	if (x[i][0].min() == x[j][0].min()) {
-	  if (x[i][1].max() == x[j][1].max()) {
-	    return x[i][1].min() < x[j][1].min();
-	  } else {
-	    return x[i][1].max() < x[j][1].max();
-	  }
-	} else {
-	  return x[i][0].min() < x[j][0].min();
-	}
+        if (x[i][0].min() == x[j][0].min()) {
+          if (x[i][1].max() == x[j][1].max()) {
+            return x[i][1].min() < x[j][1].min();
+          } else {
+            return x[i][1].max() < x[j][1].max();
+          }
+        } else {
+          return x[i][0].min() < x[j][0].min();
+        }
       } else {
-	return x[i][0].max() < x[j][0].max();
+        return x[i][0].max() < x[j][0].max();
       }
     }
   };
@@ -386,9 +387,9 @@ namespace Gecode { namespace Int { namespace Sortedness {
   public:
     bool operator()(const View& x, const View& y) {
       if (x[0].min() == y[0].min()) {
-	return x[0].max() < y[0].max();
+        return x[0].max() < y[0].max();
       } else {
-	return x[0].min() < y[0].min();
+        return x[0].min() < y[0].min();
       }
     }
   };
@@ -409,17 +410,17 @@ namespace Gecode { namespace Int { namespace Sortedness {
   public:
     bool operator()(const View& x, const View& y) {
       if (x[0].min() == y[0].min()) {
-	if (x[0].max() == y[0].max()) {
-	  if (x[1].min() == y[1].min()) {
-	    return x[1].max() < y[1].max();
-	  } else {
-	    return x[1].min() < y[1].min();
-	  }
-	} else {
-	  return x[0].max() < y[0].max();
-	}
+        if (x[0].max() == y[0].max()) {
+          if (x[1].min() == y[1].min()) {
+            return x[1].max() < y[1].max();
+          } else {
+            return x[1].min() < y[1].min();
+          }
+        } else {
+          return x[0].max() < y[0].max();
+        }
       } else {
-	return x[0].min() < y[0].min();
+        return x[0].min() < y[0].min();
       }
     }
   };
@@ -437,9 +438,9 @@ namespace Gecode { namespace Int { namespace Sortedness {
   public:
     bool operator()(const View& x, const View& y) {
       if (x[1].min() == y[1].min()) {
-	return x[1].max() < y[1].max();
+        return x[1].max() < y[1].max();
       } else {
-	return x[1].min() < y[1].min();
+        return x[1].min() < y[1].min();
       }
     }
   };
@@ -457,9 +458,9 @@ namespace Gecode { namespace Int { namespace Sortedness {
   public:
     bool operator()(const View& x, const View& y) {
       if (x[1].max() == y[1].max()) {
-	return x[1].min() < y[1].min();
+        return x[1].min() < y[1].min();
       } else {
-	return x[1].max() < y[1].max();
+        return x[1].max() < y[1].max();
       }
     }
   };
@@ -474,12 +475,12 @@ namespace Gecode { namespace Int { namespace Sortedness {
   template<class View, class Tuple, bool Perm>
   forceinline bool
   array_assigned(Space* home,
-		 ViewArray<Tuple>& xz,
-		 ViewArray<View>& y,
-		 bool& subsumed,
-		 bool& match_fixed,
-		 bool& nofix,
-		 bool& noperm_bc) {
+                 ViewArray<Tuple>& xz,
+                 ViewArray<View>& y,
+                 bool& subsumed,
+                 bool& match_fixed,
+                 bool& nofix,
+                 bool& noperm_bc) {
 
     bool x_complete = true;
     bool y_complete = true;
@@ -489,86 +490,86 @@ namespace Gecode { namespace Int { namespace Sortedness {
       x_complete &= xz[i][0].assigned();
       y_complete &= y[i].assigned();
       if (Perm) {
-	z_complete &= xz[i][1].assigned();
+        z_complete &= xz[i][1].assigned();
       }
     }
 
     if (x_complete) {
       for (int i = xz.size(); i--; ) {
-	ModEvent me = y[i].eq(home, xz[i][0].val());
-	if (me_failed(me)) {
-	  return false;
-	}
+        ModEvent me = y[i].eq(home, xz[i][0].val());
+        if (me_failed(me)) {
+          return false;
+        }
       }
       if (Perm) {
-	subsumed = false;
+        subsumed = false;
       } else {
-	subsumed = true;
+        subsumed = true;
       }
     }
 
     if (y_complete) {
       bool y_equality = true;
       for (int i = y.size() - 1; i--; ) {
-	y_equality &= (y[i].val() == y[i + 1].val());
+        y_equality &= (y[i].val() == y[i + 1].val());
       }
       if (y_equality) {
-	for (int i = xz.size(); i--; ) {
-	  ModEvent me = xz[i][0].eq(home, y[i].val());
-	  if (me_failed(me)) {
-	    return false;
-	  }
-	}
-	if (Perm) {
-	  subsumed = false;
-	} else {
-	  subsumed = true;
-	}
-	noperm_bc = true;
+        for (int i = xz.size(); i--; ) {
+          ModEvent me = xz[i][0].eq(home, y[i].val());
+          if (me_failed(me)) {
+            return false;
+          }
+        }
+        if (Perm) {
+          subsumed = false;
+        } else {
+          subsumed = true;
+        }
+        noperm_bc = true;
       }
     }
 
     if (Perm) {
       if (z_complete) {
-	if (x_complete) {
-	  for (int i = xz.size(); i--; ) {
-	    ModEvent me = y[xz[i][1].val()].eq(home, xz[i][0].val());
-	    if (me_failed(me)) {
-	      return false;
-	    }
-	  }
-	  subsumed = true;
-	  return subsumed;
-	}
-	if (y_complete) {
-	  for (int i = xz.size(); i--; ) {
-	    ModEvent me = xz[i][0].eq(home, y[xz[i][1].val()].val());
-	    if (me_failed(me)) {
-	      return false;
-	    }
-	  }
-	  subsumed = true;
-	  return subsumed;
-	}
+        if (x_complete) {
+          for (int i = xz.size(); i--; ) {
+            ModEvent me = y[xz[i][1].val()].eq(home, xz[i][0].val());
+            if (me_failed(me)) {
+              return false;
+            }
+          }
+          subsumed = true;
+          return subsumed;
+        }
+        if (y_complete) {
+          for (int i = xz.size(); i--; ) {
+            ModEvent me = xz[i][0].eq(home, y[xz[i][1].val()].val());
+            if (me_failed(me)) {
+              return false;
+            }
+          }
+          subsumed = true;
+          return subsumed;
+        }
 
-	// validate the permutation
-	int sum = 0;
-	for (int i = xz.size(); i--; ) {
-	  int pi = xz[i][1].val();
-	  if (xz[i][0].max() < y[pi].min() ||
-	      xz[i][0].min() > y[pi].max()) {
-	    return false;
-	  }
-	  sum += pi;
-	}
-	int n = xz.size();
-	int gauss = ( (n * (n + 1)) / 2);
-	// if the sum over all assigned permutation variables is not
-	// equal to the gaussian sum - n they are not distinct, hence invalid
-	if (sum != gauss - n) {
-	  return false;
-	}
-	match_fixed = true;
+        // validate the permutation
+        int sum = 0;
+        for (int i = xz.size(); i--; ) {
+          int pi = xz[i][1].val();
+          if (xz[i][0].max() < y[pi].min() ||
+              xz[i][0].min() > y[pi].max()) {
+            return false;
+          }
+          sum += pi;
+        }
+        int n = xz.size();
+        int gauss = ( (n * (n + 1)) / 2);
+        // if the sum over all assigned permutation variables is not
+        // equal to the gaussian sum - n they are not distinct, hence invalid
+        if (sum != gauss - n) {
+          return false;
+        }
+        match_fixed = true;
       }
     }
     return true;
@@ -588,72 +589,72 @@ namespace Gecode { namespace Int { namespace Sortedness {
     for (int i = n; i--; ) {
       if (xz[i][1].assigned()) {
 
-	// if the permutation variable is determined
-	
-	int v = xz[i][1].val();
-	if (xz[i][0].assigned()) {
-	  // channel equality from x to y
-	  ModEvent me = y[v].eq(home, xz[i][0].val());
-	  if (me_failed(me)) {
-	    return false;
-	  }
-	} else {
-	  if (y[v].assigned()) {
-	    // channel equality from y to x
-	    ModEvent me = xz[i][0].eq(home, y[v].val());
-	    if (me_failed(me)) {
-	      return false;
-	    }
-	  } else {
-	    // constrain upper bound
-	    ModEvent me = xz[i][0].lq(home, y[v].max());
-	    if (me_failed(me)) {
-	      return false;
-	    }
-	    nofix |= (me_modified(me) && xz[i][0].max() != y[v].max());
+        // if the permutation variable is determined
+        
+        int v = xz[i][1].val();
+        if (xz[i][0].assigned()) {
+          // channel equality from x to y
+          ModEvent me = y[v].eq(home, xz[i][0].val());
+          if (me_failed(me)) {
+            return false;
+          }
+        } else {
+          if (y[v].assigned()) {
+            // channel equality from y to x
+            ModEvent me = xz[i][0].eq(home, y[v].val());
+            if (me_failed(me)) {
+              return false;
+            }
+          } else {
+            // constrain upper bound
+            ModEvent me = xz[i][0].lq(home, y[v].max());
+            if (me_failed(me)) {
+              return false;
+            }
+            nofix |= (me_modified(me) && xz[i][0].max() != y[v].max());
 
-	    // constrain lower bound
-	    me = xz[i][0].gq(home, y[v].min());
-	    if (me_failed(me)) {
-	      return false;
-	    }
-	    nofix |= (me_modified(me) && xz[i][0].min() != y[v].min());
+            // constrain lower bound
+            me = xz[i][0].gq(home, y[v].min());
+            if (me_failed(me)) {
+              return false;
+            }
+            nofix |= (me_modified(me) && xz[i][0].min() != y[v].min());
 
-	    // constrain the sorted variable
-	    // constrain upper bound
-	    me = y[v].lq(home, xz[i][0].max());
-	    if (me_failed(me)) {
-	      return false;
-	    }
-	    nofix |= (me_modified(me) && y[v].max() != xz[i][0].max());
+            // constrain the sorted variable
+            // constrain upper bound
+            me = y[v].lq(home, xz[i][0].max());
+            if (me_failed(me)) {
+              return false;
+            }
+            nofix |= (me_modified(me) && y[v].max() != xz[i][0].max());
 
-	    // constrain lower bound
-	    me = y[v].gq(home, xz[i][0].min());
-	    if (me_failed(me)) {
-	      return false;
-	    }
-	    nofix |= (me_modified(me) && y[v].min() != xz[i][0].min());
-	  }
-	}
+            // constrain lower bound
+            me = y[v].gq(home, xz[i][0].min());
+            if (me_failed(me)) {
+              return false;
+            }
+            nofix |= (me_modified(me) && y[v].min() != xz[i][0].min());
+          }
+        }
       } else {
-	
-	// if the permutation variable is undetermined
-	int l = xz[i][1].min();
-	int r = xz[i][1].max();
-	
-	// upper bound
-	ModEvent me = xz[i][0].lq(home, y[r].max());
-	if (me_failed(me)) {
-	  return false;
-	}
-	nofix |= (me_modified(me) && xz[i][0].max() != y[r].max());
+        
+        // if the permutation variable is undetermined
+        int l = xz[i][1].min();
+        int r = xz[i][1].max();
+        
+        // upper bound
+        ModEvent me = xz[i][0].lq(home, y[r].max());
+        if (me_failed(me)) {
+          return false;
+        }
+        nofix |= (me_modified(me) && xz[i][0].max() != y[r].max());
 
-	// lower bound
-	me = xz[i][0].gq(home, y[l].min());
-	if (me_failed(me)) {
-	  return false;
-	}
-	nofix |= (me_modified(me) && xz[i][0].min() != y[l].min());
+        // lower bound
+        me = xz[i][0].gq(home, y[l].min());
+        if (me_failed(me)) {
+          return false;
+        }
+        nofix |= (me_modified(me) && xz[i][0].min() != y[l].min());
       }
     }
     return true;

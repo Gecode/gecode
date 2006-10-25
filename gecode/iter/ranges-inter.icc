@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -147,9 +148,9 @@ namespace Gecode { namespace Iter { namespace Ranges {
     for (int i = n; i--;) {
       // Skip intervals that are too small
       while (is[i]() && (is[i].max() < mi))
-	++is[i];
+        ++is[i];
       if (!is[i]())
-	goto done;
+        goto done;
 
       if (is[i].min() > ma) {
         mi=is[i].min();
@@ -158,9 +159,9 @@ namespace Gecode { namespace Iter { namespace Ranges {
       }
       // Now the intervals overlap
       if (mi < is[i].min())
-	mi = is[i].min();
+        mi = is[i].min();
       if (ma > is[i].max()) {
-	ma = is[i].max();
+        ma = is[i].max();
       }
     }
     return;

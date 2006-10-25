@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -86,11 +87,11 @@ namespace Gecode { namespace Int { namespace Branch {
       break;
     case BVAL_SPLIT_MIN:
       (void) new (home)
-	ViewValBranching<IntView,int,SelView,ValSplitMin>(home,x);
+        ViewValBranching<IntView,int,SelView,ValSplitMin>(home,x);
       break;
     case BVAL_SPLIT_MAX:
       (void) new (home)
-	ViewValBranching<IntView,int,SelView,ValSplitMax>(home,x);
+        ViewValBranching<IntView,int,SelView,ValSplitMax>(home,x);
       break;
     default:
       throw UnknownBranching("Int::branch");

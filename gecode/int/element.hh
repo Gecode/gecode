@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -79,7 +80,7 @@ namespace Gecode { namespace Int { namespace Element {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$i_{x_0}=x_1\f$
     static  ExecStatus post(Space* home, IntSharedArray& i,
-			    ViewA x0, ViewB x1);
+                            ViewA x0, ViewB x1);
     /// Flush cached index-value map
     virtual void flush(void);
     /// Return size of index-value map
@@ -148,7 +149,7 @@ namespace Gecode { namespace Int { namespace Element {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
     static  ExecStatus post(Space* home, IdxView<ViewB>* iv, int n,
-			    ViewA x0, ViewB x1);
+                            ViewA x0, ViewB x1);
   };
 
   /**
@@ -188,7 +189,7 @@ namespace Gecode { namespace Int { namespace Element {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
     static  ExecStatus post(Space* home, IdxView<ViewB>* iv, int n,
-			    ViewA x0, ViewB x1);
+                            ViewA x0, ViewB x1);
   };
 
 }}}

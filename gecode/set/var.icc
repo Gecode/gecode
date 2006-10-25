@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -490,8 +491,8 @@ namespace Gecode { namespace Set {
      * \f$\mathit{cardMin}\leq |s|\leq\mathit{cardMax}\f$
      */
     SetVarImp(Space* home,int glbMin,int glbMax,int lubMin,int lubMax,
-	       unsigned int cardMin = 0,
-	       unsigned int cardMax = Limits::Set::card_max);
+               unsigned int cardMin = 0,
+               unsigned int cardMax = Limits::Set::card_max);
     /**
      * \brief Initialize with given bounds and cardinality
      *
@@ -501,7 +502,7 @@ namespace Gecode { namespace Set {
      * \f$\mathit{cardMin}\leq |s|\leq\mathit{cardMax}\f$
      */
     SetVarImp(Space* home,const IntSet& glbD,int lubMin,int lubMax,
-	      unsigned int cardMin,unsigned int cardMax);
+              unsigned int cardMin,unsigned int cardMax);
     /**
      * \brief Initialize with given bounds and cardinality
      *
@@ -511,7 +512,7 @@ namespace Gecode { namespace Set {
      * \f$\mathit{cardMin}\leq |s|\leq\mathit{cardMax}\f$
      */
     SetVarImp(Space* home,int glbMin,int glbMax,const IntSet& lubD,
-	      unsigned int cardMin,unsigned int cardMax);
+              unsigned int cardMin,unsigned int cardMax);
     /**
      * \brief Initialize with given bounds and cardinality
      *
@@ -521,7 +522,7 @@ namespace Gecode { namespace Set {
      * \f$\mathit{cardMin}\leq |s|\leq\mathit{cardMax}\f$
      */
     SetVarImp(Space* home,const IntSet& glbD,const IntSet& lubD,
-	      unsigned int cardMin,unsigned int cardMax);
+              unsigned int cardMin,unsigned int cardMax);
     //@}
 
     /// \name Value access
@@ -694,8 +695,8 @@ namespace Gecode {
      */
     GECODE_SET_EXPORT 
     SetVar(Space* home,int glbMin,int glbMax,int lubMin,int lubMax,
-	   unsigned int cardMin = 0,
-	   unsigned int cardMax = Limits::Set::card_max);
+           unsigned int cardMin = 0,
+           unsigned int cardMax = Limits::Set::card_max);
     /**
      * \brief Initialize variable with given bounds and cardinality
      *
@@ -714,8 +715,8 @@ namespace Gecode {
      *    Gecode::Set::VariableFailedDomain is thrown.
      */
     void init(Space* home,int glbMin,int glbMax,int lubMin,int lubMax,
-	      unsigned int cardMin = 0,
-	      unsigned int cardMax = Limits::Set::card_max);
+              unsigned int cardMin = 0,
+              unsigned int cardMax = Limits::Set::card_max);
 
     /**
      * \brief Initialize variable with given bounds and cardinality
@@ -736,8 +737,8 @@ namespace Gecode {
      */
     GECODE_SET_EXPORT 
     SetVar(Space* home,const IntSet& glbD,int lubMin,int lubMax,
-	   unsigned int cardMin = 0,
-	   unsigned int cardMax = Limits::Set::card_max);
+           unsigned int cardMin = 0,
+           unsigned int cardMax = Limits::Set::card_max);
     /**
      * \brief Initialize variable with given bounds and cardinality
      *
@@ -756,8 +757,8 @@ namespace Gecode {
      *    Gecode::Set::VariableFailedDomain is thrown.
      */
     void init(Space* home,const IntSet& glbD,int lubMin,int lubMax,
-	      unsigned int cardMin = 0,
-	      unsigned int cardMax = Limits::Set::card_max);
+              unsigned int cardMin = 0,
+              unsigned int cardMax = Limits::Set::card_max);
 
     /**
      * \brief Initialize variable with given bounds and cardinality
@@ -778,8 +779,8 @@ namespace Gecode {
      */
     GECODE_SET_EXPORT 
     SetVar(Space* home,int glbMin,int glbMax,const IntSet& lubD,
-	   unsigned int cardMin = 0,
-	   unsigned int cardMax = Limits::Set::card_max);
+           unsigned int cardMin = 0,
+           unsigned int cardMax = Limits::Set::card_max);
     /**
      * \brief Initialize variable with given bounds and cardinality
      *
@@ -798,8 +799,8 @@ namespace Gecode {
      *    Gecode::Set::VariableFailedDomain is thrown.
      */
     void init(Space* home,int glbMin,int glbMax,const IntSet& lubD,
-	      unsigned int cardMin = 0,
-	      unsigned int cardMax = Limits::Set::card_max);
+              unsigned int cardMin = 0,
+              unsigned int cardMax = Limits::Set::card_max);
 
     /**
      * \brief Initialize variable with given bounds and cardinality
@@ -820,8 +821,8 @@ namespace Gecode {
      */
     GECODE_SET_EXPORT 
     SetVar(Space* home,const IntSet& glbD,const IntSet& lubD,
-	   unsigned int cardMin = 0,
-	   unsigned int cardMax = Limits::Set::card_max);
+           unsigned int cardMin = 0,
+           unsigned int cardMax = Limits::Set::card_max);
     /**
      * \brief Initialize variable with given bounds and cardinality
      *
@@ -840,8 +841,8 @@ namespace Gecode {
      *    Gecode::Set::VariableFailedDomain is thrown.
      */
     void init(Space* home,const IntSet& glbD,const IntSet& lubD,
-	      unsigned int cardMin = 0,
-	      unsigned int cardMax = Limits::Set::card_max);
+              unsigned int cardMin = 0,
+              unsigned int cardMax = Limits::Set::card_max);
     //@}
 
     /// \name Variable implementation access

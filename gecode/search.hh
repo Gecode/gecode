@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -396,9 +397,9 @@ namespace Gecode {
      * \param st %Stop-object
      */
     DFS(T* s,
-	unsigned int c_d=Search::Config::c_d,
-	unsigned int a_d=Search::Config::a_d,
-	Search::Stop* st=NULL);
+        unsigned int c_d=Search::Config::c_d,
+        unsigned int a_d=Search::Config::a_d,
+        Search::Stop* st=NULL);
     /// Return next solution (NULL, if none exists or search has been stopped)
     T* next(void);
   };
@@ -413,9 +414,9 @@ namespace Gecode {
    */
   template <class T>
   T* dfs(T* s,
-	 unsigned int c_d=Search::Config::c_d,
-	 unsigned int a_d=Search::Config::a_d,
-	 Search::Stop* st=NULL);
+         unsigned int c_d=Search::Config::c_d,
+         unsigned int a_d=Search::Config::a_d,
+         Search::Stop* st=NULL);
 
 
 
@@ -430,23 +431,23 @@ namespace Gecode {
       /// %Node in the search tree for %LDS
       class ProbeNode {
       private:
-	/// %Space of current node
-	Space*               _space;
-	/// Branching description
-	const BranchingDesc* _desc;
-	/// Next alternative to try
-	unsigned int         _alt;
+        /// %Space of current node
+        Space*               _space;
+        /// Branching description
+        const BranchingDesc* _desc;
+        /// Next alternative to try
+        unsigned int         _alt;
       public:
-	/// Initialize with node \a s, description \a d, and alternative \a a
-	ProbeNode(Space* s, const BranchingDesc* d, unsigned int a);
-	/// Return space
-	Space* space(void) const;
-	/// Return branching description
-	const BranchingDesc* desc(void) const;
-	/// Return next alternative
-	unsigned int alt(void) const;
-	/// %Set next alternative
-	void next(void);
+        /// Initialize with node \a s, description \a d, and alternative \a a
+        ProbeNode(Space* s, const BranchingDesc* d, unsigned int a);
+        /// Return space
+        Space* space(void) const;
+        /// Return branching description
+        const BranchingDesc* desc(void) const;
+        /// Return next alternative
+        unsigned int alt(void) const;
+        /// %Set next alternative
+        void next(void);
       };
       /// %Stack storing current path in search tree
       Support::DynamicStack<ProbeNode> ds;
@@ -544,8 +545,8 @@ namespace Gecode {
     public:
       /// Status of the explore function
       enum ExploreStatus {
-	ES_SOLUTION,
-	ES_CONSTRAIN
+        ES_SOLUTION,
+        ES_CONSTRAIN
       };
     private:
       /// Recomputation stack of nodes
@@ -644,9 +645,9 @@ namespace Gecode {
      * \param st %Stop-object
      */
     BAB(T* s,
-	unsigned int c_d=Search::Config::c_d,
-	unsigned int a_d=Search::Config::a_d,
-	Search::Stop* st=NULL);
+        unsigned int c_d=Search::Config::c_d,
+        unsigned int a_d=Search::Config::a_d,
+        Search::Stop* st=NULL);
     /// Return next better solution (NULL, if none exists or search has been stopped)
     T* next(void);
   };
@@ -667,9 +668,9 @@ namespace Gecode {
    */
   template <class T>
   T* bab(T* s,
-	 unsigned int c_d=Search::Config::c_d,
-	 unsigned int a_d=Search::Config::a_d,
-	 Search::Stop* st=NULL);
+         unsigned int c_d=Search::Config::c_d,
+         unsigned int a_d=Search::Config::a_d,
+         Search::Stop* st=NULL);
 
 
 
@@ -699,9 +700,9 @@ namespace Gecode {
      * \param st %Stop-object
      */
     Restart(T* s,
-	    unsigned int c_d=Search::Config::c_d,
-	    unsigned int a_d=Search::Config::a_d,
-	    Search::Stop* st=NULL);
+            unsigned int c_d=Search::Config::c_d,
+            unsigned int a_d=Search::Config::a_d,
+            Search::Stop* st=NULL);
     /// Destructor
     ~Restart(void);
     /// Return next better solution (NULL, if none exists or search has been stopped)
@@ -723,9 +724,9 @@ namespace Gecode {
    */
   template <class T>
   T* restart(T* s,
-	     unsigned int c_d=Search::Config::c_d,
-	     unsigned int a_d=Search::Config::a_d,
-	     Search::Stop* st=NULL);
+             unsigned int c_d=Search::Config::c_d,
+             unsigned int a_d=Search::Config::a_d,
+             Search::Stop* st=NULL);
 
 }
 

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -49,14 +50,14 @@ namespace Gecode { namespace Set { namespace RelOp {
    template <class View0, class View1, class View2>
    class SuperOfInter :
     public InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-				  View2,PC_SET_CLUB> {
+                                  View2,PC_SET_CLUB> {
    protected:
      using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-				  View2,PC_SET_CLUB>::x0;
+                                  View2,PC_SET_CLUB>::x0;
      using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-				  View2,PC_SET_CLUB>::x1;
+                                  View2,PC_SET_CLUB>::x1;
      using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-				  View2,PC_SET_CLUB>::x2;
+                                  View2,PC_SET_CLUB>::x2;
      /// Constructor for cloning \a p
      SuperOfInter(Space* home, bool share,SuperOfInter& p);
      /// Constructor for posting
@@ -79,14 +80,14 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1, class View2>
   class SubOfUnion :
     public InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-				  View2,PC_SET_ANY> {
+                                  View2,PC_SET_ANY> {
   protected:
     using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-				 View2,PC_SET_ANY>::x0;
+                                 View2,PC_SET_ANY>::x0;
     using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-				 View2,PC_SET_ANY>::x1;
+                                 View2,PC_SET_ANY>::x1;
     using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-				 View2,PC_SET_ANY>::x2;
+                                 View2,PC_SET_ANY>::x2;
     /// Constructor for cloning \a p
     SubOfUnion(Space* home, bool share,SubOfUnion& p);
     /// Constructor for posting
@@ -110,14 +111,14 @@ namespace Gecode { namespace Set { namespace RelOp {
    template <class View0, class View1, class View2>
    class Intersection:
     public InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-				  View2,PC_SET_ANY> {
+                                  View2,PC_SET_ANY> {
    protected:
      using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-				  View2,PC_SET_ANY>::x0;
+                                  View2,PC_SET_ANY>::x0;
      using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-				  View2,PC_SET_ANY>::x1;
+                                  View2,PC_SET_ANY>::x1;
      using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-				  View2,PC_SET_ANY>::x2;
+                                  View2,PC_SET_ANY>::x2;
      /// Constructor for cloning \a p
      Intersection(Space* home, bool share,Intersection& p);
      /// Constructor for posting
@@ -140,14 +141,14 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1, class View2>
   class Union:
     public InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-				  View2,PC_SET_ANY> {
+                                  View2,PC_SET_ANY> {
   protected:
     using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-				 View2,PC_SET_ANY>::x0;
+                                 View2,PC_SET_ANY>::x0;
     using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-				 View2,PC_SET_ANY>::x1;
+                                 View2,PC_SET_ANY>::x1;
     using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
-				 View2,PC_SET_ANY>::x2;
+                                 View2,PC_SET_ANY>::x2;
     /// Constructor for cloning \a p
     Union(Space* home, bool share,Union& p);
     /// Constructor for posting
@@ -169,7 +170,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     */
   template <class View0, class View1>
   class IntersectionN : public InhomNaryOnePropagator<View0,PC_SET_ANY,
-						      View1,PC_SET_ANY> {
+                                                      View1,PC_SET_ANY> {
   protected:
     using InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x;
     using InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::y;
@@ -199,7 +200,7 @@ namespace Gecode { namespace Set { namespace RelOp {
    */
   template <class View0, class View1>
   class UnionN : public InhomNaryOnePropagator<View0,PC_SET_ANY,
-					       View1,PC_SET_ANY> {
+                                               View1,PC_SET_ANY> {
   protected:
     using InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x;
     using InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::y;
@@ -230,7 +231,7 @@ namespace Gecode { namespace Set { namespace RelOp {
    */
   template <class View0, class View1>
   class PartitionN : public InhomNaryOnePropagator<View0,PC_SET_ANY,
-						   View1,PC_SET_ANY> {
+                                                   View1,PC_SET_ANY> {
   protected:
     using InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x;
     using InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::y;

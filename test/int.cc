@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -98,16 +99,16 @@ operator<<(std::ostream& os, const Assignment& a) {
   return os;
 }
 
-#define FORCE_FIXFLUSH				\
-do {						\
-  if (Test::randgen(opt.fixprob) == 0) {	\
-    Log::fixpoint();				\
-    if (status() == SS_FAILED) return;	        \
-  }						\
-  if (Test::randgen(opt.flushprob) == 0) {	\
-    flush();					\
-    Log::flush();				\
-  }						\
+#define FORCE_FIXFLUSH                                \
+do {                                                \
+  if (Test::randgen(opt.fixprob) == 0) {        \
+    Log::fixpoint();                                \
+    if (status() == SS_FAILED) return;                \
+  }                                                \
+  if (Test::randgen(opt.flushprob) == 0) {        \
+    flush();                                        \
+    Log::flush();                                \
+  }                                                \
 } while(0)
 
 class IntTestSpace : public Space {
@@ -141,7 +142,7 @@ public:
   bool assigned(void) const {
     for (int i=x.size(); i--; )
       if (!x[i].assigned())
-	return false;
+        return false;
     return true;
   }
   void prune(void) {
@@ -156,12 +157,12 @@ public:
       Int::ViewRanges<Int::IntView> it(x[i]);
       unsigned int skip = Test::randgen(x[i].size()-1);
       while (true) {
-	if (it.width() > skip) {
-	  v = it.min() + skip;
-	  break;
-	}
-	skip -= it.width();
-	++it;
+        if (it.width() > skip) {
+          v = it.min() + skip;
+          break;
+        }
+        skip -= it.width();
+        ++it;
       }
       Log::prune(x[i], Log::mk_name("x", i), IRT_NQ, v);
       rel(this, x[i], IRT_NQ, v);
@@ -172,7 +173,7 @@ public:
   static BoolVar unused;
 
   bool prune(const Assignment& a, IntTest& it,
-	     bool r, BoolVar& b = unused) {
+             bool r, BoolVar& b = unused) {
     // Select variable to be pruned
     int i = Test::randgen(x.size());
     while (x[i].assigned()) {
@@ -197,78 +198,78 @@ public:
       Int::ViewRanges<Int::IntView> it(x[i]);
       unsigned int skip = Test::randgen(x[i].size()-1);
       while (true) {
-	if (it.width() > skip) {
-	  v = it.min() + skip;
-	  if (v == a[i]) {
-	    if (it.width() == 1) {
-	      ++it; v = it.min();
-	    } else if (v < it.max()) {
-	      ++v;
-	    } else {
-	      --v;
-	    }
-	  }
-	  break;
-	}
-	skip -= it.width();
-	++it;
+        if (it.width() > skip) {
+          v = it.min() + skip;
+          if (v == a[i]) {
+            if (it.width() == 1) {
+              ++it; v = it.min();
+            } else if (v < it.max()) {
+              ++v;
+            } else {
+              --v;
+            }
+          }
+          break;
+        }
+        skip -= it.width();
+        ++it;
       }
       Log::prune(x[i], Log::mk_name("x", i), IRT_NQ, v);
       rel(this, x[i], IRT_NQ, v);
       Log::prune_result(x[i]);
     }
-    if (Test::randgen(opt.fixprob) == 0) {		
+    if (Test::randgen(opt.fixprob) == 0) {                
       Log::fixpoint();
       if (status() == SS_FAILED)
-	return true;
+        return true;
       IntTestSpace* c = static_cast<IntTestSpace*>(clone());
       Log::print(c->x, "x");
       if (!r) {
-	it.post(c,c->x);
-	Log::fixpoint();
-	if (c->status() == SS_FAILED) {
-	  Log::print(c->x, "x");
-	  delete c;
-	  return false;
-	}
-	for (int i=x.size(); i--; )
-	  if (x[i].size() != c->x[i].size()) {
-	    Log::print(c->x, "x");
-	    delete c;
-	    return false;
-	  }
+        it.post(c,c->x);
+        Log::fixpoint();
+        if (c->status() == SS_FAILED) {
+          Log::print(c->x, "x");
+          delete c;
+          return false;
+        }
+        for (int i=x.size(); i--; )
+          if (x[i].size() != c->x[i].size()) {
+            Log::print(c->x, "x");
+            delete c;
+            return false;
+          }
       } else {
-	Log::print(b, "b");
-	BoolVar cb(c,0,1);
-	Log::initial(cb, "cb");
-	it.post(c,c->x,cb);
-	Log::fixpoint();
-	if (c->status() == SS_FAILED) {
-	  Log::print(c->x, "x");
-	  Log::print(cb, "cb");
-	  delete c;
-	  return false;
-	}
-	if (cb.size() != b.size()) {
-	  Log::print(c->x, "x");
-	  Log::print(cb, "cb");
-	  delete c;
-	  return false;
-	}
-	for (int i=x.size(); i--; )
-	  if (x[i].size() != c->x[i].size()) {
-	    Log::print(c->x, "x");
-	    Log::print(cb, "cb");
-	    delete c;
-	    return false;
-	  }
+        Log::print(b, "b");
+        BoolVar cb(c,0,1);
+        Log::initial(cb, "cb");
+        it.post(c,c->x,cb);
+        Log::fixpoint();
+        if (c->status() == SS_FAILED) {
+          Log::print(c->x, "x");
+          Log::print(cb, "cb");
+          delete c;
+          return false;
+        }
+        if (cb.size() != b.size()) {
+          Log::print(c->x, "x");
+          Log::print(cb, "cb");
+          delete c;
+          return false;
+        }
+        for (int i=x.size(); i--; )
+          if (x[i].size() != c->x[i].size()) {
+            Log::print(c->x, "x");
+            Log::print(cb, "cb");
+            delete c;
+            return false;
+          }
       }
       delete c;
-    }						
-    if (Test::randgen(opt.flushprob) == 0) {		
-      flush();					
-      Log::flush();				
-    }		
+    }                                                
+    if (Test::randgen(opt.flushprob) == 0) {                
+      flush();                                        
+      Log::flush();                                
+    }                
     return true;
   }
 
@@ -283,11 +284,11 @@ IntTest::make_assignment() {
   return new Assignment(arity, dom);
 }
 
-#define CHECK(T,M) 				\
-if (!(T)) { 					\
-  problem = (M); 				\
-  delete s;					\
-  goto failed; 					\
+#define CHECK(T,M)                                 \
+if (!(T)) {                                         \
+  problem = (M);                                 \
+  delete s;                                        \
+  goto failed;                                         \
 }
 
 bool
@@ -309,14 +310,14 @@ IntTest::run(const Options& opt) {
     if (do_search_test()) {
       test = "Search";
       if (is_sol) {
-	IntTestSpace* s = e_s.next();
-	CHECK(s != NULL,    "Solutions exhausted");
-	CHECK(s->propagators()==0, "No subsumtion");
-	for (int i=a.size(); i--; ) {
-	  CHECK(s->x[i].assigned(), "Unassigned variable");
-	  CHECK(a[i] == s->x[i].val(), "Wrong value in solution");
-	}
-	delete s;
+        IntTestSpace* s = e_s.next();
+        CHECK(s != NULL,    "Solutions exhausted");
+        CHECK(s->propagators()==0, "No subsumtion");
+        for (int i=a.size(); i--; ) {
+          CHECK(s->x[i].assigned(), "Unassigned variable");
+          CHECK(a[i] == s->x[i].val(), "Wrong value in solution");
+        }
+        delete s;
       }
     }
     {
@@ -325,10 +326,10 @@ IntTest::run(const Options& opt) {
       IntTestSpace* s = new IntTestSpace(arity,dom,opt);
       post(s,s->x); s->assign(a);
       if (is_sol) {
-	CHECK(!s->is_failed(), "Failed on solution");
-	CHECK(s->propagators()==0, "No subsumtion");
+        CHECK(!s->is_failed(), "Failed on solution");
+        CHECK(s->propagators()==0, "No subsumtion");
       } else {
-	CHECK(s->is_failed(), "Solved on non-solution");
+        CHECK(s->is_failed(), "Solved on non-solution");
       }
       delete s;
     }
@@ -338,10 +339,10 @@ IntTest::run(const Options& opt) {
       IntTestSpace* s = new IntTestSpace(arity,dom,opt);
       s->assign(a); post(s,s->x);
       if (is_sol) {
-	CHECK(!s->is_failed(), "Failed on solution");
-	CHECK(s->propagators()==0, "No subsumtion");
+        CHECK(!s->is_failed(), "Failed on solution");
+        CHECK(s->propagators()==0, "No subsumtion");
       } else {
-	CHECK(s->is_failed(), "Solved on non-solution");
+        CHECK(s->is_failed(), "Solved on non-solution");
       }
       delete s;
     }
@@ -353,9 +354,9 @@ IntTest::run(const Options& opt) {
       Log::initial(b, "b");
       post(s,s->x,b);
       if (is_sol) {
-	rel(s, b, IRT_EQ, 1);
+        rel(s, b, IRT_EQ, 1);
       } else {
-	rel(s, b, IRT_EQ, 0);
+        rel(s, b, IRT_EQ, 0);
       }
       s->assign(a);
       CHECK(!s->is_failed(), "Failed");
@@ -369,9 +370,9 @@ IntTest::run(const Options& opt) {
       BoolVar b(s,0,1);
       Log::initial(b, "b");
       if (is_sol) {
-	rel(s, b, IRT_EQ, 1);
+        rel(s, b, IRT_EQ, 1);
       } else {
-	rel(s, b, IRT_EQ, 0);
+        rel(s, b, IRT_EQ, 0);
       }
       post(s,s->x,b);
       s->assign(a);
@@ -390,9 +391,9 @@ IntTest::run(const Options& opt) {
       CHECK(s->propagators()==0, "No subsumtion");
       CHECK(b.assigned(), "Control variable unassigned");
       if (is_sol) {
-	CHECK(b.val()==1, "Zero on solution");
+        CHECK(b.val()==1, "Zero on solution");
       } else {
-	CHECK(b.val()==0, "One on non-solution");
+        CHECK(b.val()==0, "One on non-solution");
       }
       delete s;
     }
@@ -407,9 +408,9 @@ IntTest::run(const Options& opt) {
       CHECK(s->propagators()==0, "No subsumtion");
       CHECK(b.assigned(), "Control variable unassigned");
       if (is_sol) {
-	CHECK(b.val()==1, "Zero on solution");
+        CHECK(b.val()==1, "Zero on solution");
       } else {
-	CHECK(b.val()==0, "One on non-solution");
+        CHECK(b.val()==0, "One on non-solution");
       }
       delete s;
     }
@@ -419,17 +420,17 @@ IntTest::run(const Options& opt) {
       IntTestSpace* s = new IntTestSpace(arity,dom,opt);
       post(s,s->x);
       while (!s->failed() && !s->assigned())
-	if (!s->prune(a,*this,false)) {
-	  problem = "No fixpoint";
-	  delete s;
-	  goto failed;
-	}
+        if (!s->prune(a,*this,false)) {
+          problem = "No fixpoint";
+          delete s;
+          goto failed;
+        }
       s->assign(a);
       if (is_sol) {
-	CHECK(!s->is_failed(), "Failed on solution");
-	CHECK(s->propagators()==0, "No subsumtion");
+        CHECK(!s->is_failed(), "Failed on solution");
+        CHECK(s->propagators()==0, "No subsumtion");
       } else {
-	CHECK(s->is_failed(), "Solved on non-solution");
+        CHECK(s->is_failed(), "Solved on non-solution");
       }
       delete s;
     }
@@ -441,18 +442,18 @@ IntTest::run(const Options& opt) {
       Log::initial(b, "b");
       post(s,s->x,b);
       while (!s->failed() && !s->assigned() && !b.assigned())
-	if (!s->prune(a,*this,true,b)) {
-	  problem = "No fixpoint";
-	  delete s;
-	  goto failed;
-	}
+        if (!s->prune(a,*this,true,b)) {
+          problem = "No fixpoint";
+          delete s;
+          goto failed;
+        }
       CHECK(!s->is_failed(), "Failed");
       CHECK(s->propagators()==0, "No subsumtion");
       CHECK(b.assigned(), "Control variable unassigned");
       if (is_sol) {
-	CHECK(b.val()==1, "Zero on solution");
+        CHECK(b.val()==1, "Zero on solution");
       } else {
-	CHECK(b.val()==0, "One on non-solution");
+        CHECK(b.val()==0, "One on non-solution");
       }
       delete s;
     }
@@ -483,8 +484,8 @@ IntTest::run(const Options& opt) {
   return true;
  failed:
   std::cout   << "FAILURE" << std::endl
-	      << "\t" << "Test:       " << test << std::endl
-	      << "\t" << "Problem:    " << problem << std::endl;
+              << "\t" << "Test:       " << test << std::endl
+              << "\t" << "Problem:    " << problem << std::endl;
   if (has_assignment)
     std::cout << "\t" << "Assignment: " << a << std::endl;
   delete ap;

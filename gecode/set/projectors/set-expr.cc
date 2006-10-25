@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -106,9 +107,9 @@ namespace Gecode {
   SetExpr::Node::decrement(void) {
     if (--use == 0) {
       if (left != NULL && left->decrement())
-	delete left;
+        delete left;
       if (right != NULL && right->decrement())
-	delete right;
+        delete right;
       return true;
     }
     return false;
@@ -119,7 +120,7 @@ namespace Gecode {
     if (left==NULL && right==NULL)
       return x;
     return std::max( left==NULL ? 0 : left->arity(),
-		     right==NULL ? 0 : right->arity() );
+                     right==NULL ? 0 : right->arity() );
   }
 
   void
@@ -151,7 +152,7 @@ namespace Gecode {
     case REL_INTER: ret.add(SetExprCode::INTER); break;
     case REL_UNION: ret.add(SetExprCode::UNION); break;
     default:
-	GECODE_NEVER;
+        GECODE_NEVER;
     }
   }
 
@@ -164,8 +165,8 @@ namespace Gecode {
   SetExpr::SetExpr(var_idx v) : ax(new Node(v)), sign(1) {}
 
   SetExpr::SetExpr(const SetExpr& s, int ssign,
-		   RelType r,
-		   const SetExpr& t, int tsign)
+                   RelType r,
+                   const SetExpr& t, int tsign)
     : ax(new Node(s.ax,s.sign*ssign,r,t.ax,t.sign*tsign)), sign(1) {}
 
   SetExpr::SetExpr(const SetExpr& s, int sign)
@@ -184,11 +185,11 @@ namespace Gecode {
   SetExpr::operator=(const SetExpr& s) {
     if (this != &s) {
       if ((ax != NULL) && ax->decrement())
-	delete ax;
+        delete ax;
       ax = s.ax;
       sign = s.sign;
       if (ax != NULL)
-	ax->increment();
+        ax->increment();
     }
     return *this;
   }
@@ -219,7 +220,7 @@ namespace Gecode {
 
   Iter::Ranges::Virt::Iterator*
   codeToIterator(const ViewArray<Set::SetView>& x,
-		 const SetExprCode& c, bool monotone) {
+                 const SetExprCode& c, bool monotone) {
 
     typedef Iter::Ranges::Virt::Iterator Iterator;
 
@@ -229,57 +230,57 @@ namespace Gecode {
     for (int i=0; i<c.size(); i++) {
       switch (c[i]) {
       case SetExprCode::COMPLEMENT:
-	{
-	  Iterator* it = s.pop();
-	  s.push(new Iter::Ranges::Virt::Compl<Limits::Set::int_min,
-		                               Limits::Set::int_max> (it));
-	}
-	break;
+        {
+          Iterator* it = s.pop();
+          s.push(new Iter::Ranges::Virt::Compl<Limits::Set::int_min,
+                                               Limits::Set::int_max> (it));
+        }
+        break;
       case SetExprCode::INTER:
-	{
-	  Iterator* ri = s.pop();
-	  Iterator* li = s.pop();
-	  s.push(new Iter::Ranges::Virt::Inter(li, ri));
-	}
-      	break;
+        {
+          Iterator* ri = s.pop();
+          Iterator* li = s.pop();
+          s.push(new Iter::Ranges::Virt::Inter(li, ri));
+        }
+              break;
       case SetExprCode::UNION:
-	{
-	  Iterator* ri = s.pop();
-	  Iterator* li = s.pop();
-	  s.push(new Iter::Ranges::Virt::Union(li, ri));
-	}
-	break;
+        {
+          Iterator* ri = s.pop();
+          Iterator* li = s.pop();
+          s.push(new Iter::Ranges::Virt::Union(li, ri));
+        }
+        break;
       case SetExprCode::GLB:
-	if (monotone) {
-	  GlbRanges<SetView> r(x[tmp]);
-	  s.push(new Iter::Ranges::Virt::RangesTemplate<GlbRanges<SetView> >(r));
-	} else {
-	  LubRanges<SetView> r(x[tmp]);
-	  s.push(new Iter::Ranges::Virt::RangesTemplate<LubRanges<SetView> >(r));		
-	}
-	break;
+        if (monotone) {
+          GlbRanges<SetView> r(x[tmp]);
+          s.push(new Iter::Ranges::Virt::RangesTemplate<GlbRanges<SetView> >(r));
+        } else {
+          LubRanges<SetView> r(x[tmp]);
+          s.push(new Iter::Ranges::Virt::RangesTemplate<LubRanges<SetView> >(r));                
+        }
+        break;
       case SetExprCode::LUB:
-	if (monotone) {
-	  LubRanges<SetView> r(x[tmp]);
-	  s.push(new Iter::Ranges::Virt::RangesTemplate<LubRanges<SetView> >(r));
-	} else {
-	  GlbRanges<SetView> r(x[tmp]);
-	  s.push(new Iter::Ranges::Virt::RangesTemplate<GlbRanges<SetView> >(r));		
-	}
-	break;
+        if (monotone) {
+          LubRanges<SetView> r(x[tmp]);
+          s.push(new Iter::Ranges::Virt::RangesTemplate<LubRanges<SetView> >(r));
+        } else {
+          GlbRanges<SetView> r(x[tmp]);
+          s.push(new Iter::Ranges::Virt::RangesTemplate<GlbRanges<SetView> >(r));                
+        }
+        break;
       case SetExprCode::EMPTY:
-	{
-	  Iter::Ranges::Singleton it(1,0);
-	  s.push(new Iter::Ranges::Virt::RangesTemplate<Iter::Ranges::Singleton> (it));
-	}
-	break;
+        {
+          Iter::Ranges::Singleton it(1,0);
+          s.push(new Iter::Ranges::Virt::RangesTemplate<Iter::Ranges::Singleton> (it));
+        }
+        break;
       case SetExprCode::UNIVERSE:
-	{
-	  Iter::Ranges::Singleton it(Limits::Set::int_min,
-				     Limits::Set::int_max);
-	  s.push(new Iter::Ranges::Virt::RangesTemplate<Iter::Ranges::Singleton> (it));
-	}
-	break;
+        {
+          Iter::Ranges::Singleton it(Limits::Set::int_min,
+                                     Limits::Set::int_max);
+          s.push(new Iter::Ranges::Virt::RangesTemplate<Iter::Ranges::Singleton> (it));
+        }
+        break;
       default:
         tmp = c[i]-SetExprCode::LAST;
         break;
@@ -290,14 +291,14 @@ namespace Gecode {
   }
 
   SetExprRanges::SetExprRanges(const ViewArray<Set::SetView>& x,
-			       SetExpr& s,
-			       bool monotone) {
+                               SetExpr& s,
+                               bool monotone) {
     i = new Iter(codeToIterator(x, s.encode(), monotone));
   }
 
   SetExprRanges::SetExprRanges(const ViewArray<Set::SetView>& x,
-			       const SetExprCode& c,
-			       bool monotone) {
+                               const SetExprCode& c,
+                               bool monotone) {
     i = new Iter(codeToIterator(x, c, monotone));
   }
 

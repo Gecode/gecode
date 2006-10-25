@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -235,7 +236,7 @@ namespace Gecode {
      * from \a PC_GEN_ASSIGNED.
      */
     void subscribe(Space* home, Propagator* p, PropCond pc,
-		   bool assigned, ModEvent me, bool process);
+                   bool assigned, ModEvent me, bool process);
     /// Cancel subscription of propagator \a p with propagation condition \a pc
     void cancel(Space* home, Propagator* p, PropCond pc);
     /// Return degree (number of subscribed propagators)
@@ -588,7 +589,7 @@ namespace Gecode {
      * and the alternative \a a.
      */
     virtual ExecStatus commit(Space* home, const BranchingDesc* d,
-			      unsigned int a) = 0;
+                              unsigned int a) = 0;
     //@}
   };
 
@@ -1179,7 +1180,7 @@ namespace Gecode {
      */
     while (b_status != &a_actors) {
       if (b_status->status(this))
-	return SS_BRANCH;
+        return SS_BRANCH;
       b_status = static_cast<Branching*>(b_status->next());
     }
     // No branching with alternatives left, space is solved
@@ -1276,7 +1277,7 @@ namespace Gecode {
       // Variable needs no index structure
       u.free_me = 0;
       for (int i=PC+2; i--; )
-	idx[i] = NULL;
+        idx[i] = NULL;
       reg = &home->vars_noidx;
     } else {
       // Recover original value in copy
@@ -1344,7 +1345,7 @@ namespace Gecode {
     if (b_status == &a_actors) {
       b_status = b;
       if (b_commit == &a_actors)
-	b_commit = b;
+        b_commit = b;
     }
     a_actors.tail(b);
     a_actors.insert_delete(b,fd);
@@ -1473,25 +1474,25 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::subscribe(Space* home, Propagator* p, PropCond pc,
-				  bool assigned, ModEvent me, bool process) {
+                                  bool assigned, ModEvent me, bool process) {
     if (assigned) {
       // Do not subscribe, just process the propagator
       if (process)
-	home->process<VTI,MED>(p);
+        home->process<VTI,MED>(p);
     } else {
       // Count one new subscription
       home->n_sub += 1;
       if (free() == 0)
-	resize(home);
+        resize(home);
       free_dec();
       // Enter propagator
       --idx[0];
       for (PropCond i = 0; i < pc; i++)
-	*(idx[i]) = *(--idx[i+1]);
+        *(idx[i]) = *(--idx[i+1]);
       *idx[pc]=p;
       // Process propagator
       if (process && (pc != PC_GEN_ASSIGNED))
-	home->process<VTI,MED>(p,me);
+        home->process<VTI,MED>(p,me);
     }
   }
 
@@ -1505,14 +1506,14 @@ namespace Gecode {
       // Create fresh dependency array
       free(4);
       Propagator** prop = reinterpret_cast<Propagator**>
-	(home->alloc(4*sizeof(Propagator*))) + 4;
+        (home->alloc(4*sizeof(Propagator*))) + 4;
       for (PropCond i = PC+2; i--; )
-	idx[i] = prop;
+        idx[i] = prop;
     } else {
       // Resize dependency array
       int n = static_cast<int>(idx[PC+1] - idx[0]);
       Propagator** prop = reinterpret_cast<Propagator**>
-	(home->alloc(2*n*sizeof(Propagator*))) + n;
+        (home->alloc(2*n*sizeof(Propagator*))) + n;
       free(n);
       // Copy entries
       memcpy(prop, idx[0], n*sizeof(Propagator*));
@@ -1521,7 +1522,7 @@ namespace Gecode {
       ptrdiff_t o = prop - idx[0];
       idx[0] = prop;
       for (PropCond i = PC+1; i > 0; i--)
-	idx[i] += o;
+        idx[i] += o;
     }
   }
 
@@ -1538,10 +1539,10 @@ namespace Gecode {
       Propagator** f = idx[pc];
 #ifdef GECODE_AUDIT
       while (f < idx[pc+1])
-	if (*f == p)
-	  goto found;
-	else
-	  f++;
+        if (*f == p)
+          goto found;
+        else
+          f++;
       GECODE_NEVER;
     found: ;
 #else
@@ -1549,7 +1550,7 @@ namespace Gecode {
 #endif
       *f=*idx[pc];
       for (PropCond i=pc; i>0; i--)
-	*(idx[i]++)=*(idx[i-1]);
+        *(idx[i]++)=*(idx[i-1]);
       idx[0]++;
       free_inc();
       home->n_sub -= 1;
@@ -1644,7 +1645,7 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::process(Space* home,
-				PropCond pc1, PropCond pc2, ModEvent me) {
+                                PropCond pc1, PropCond pc2, ModEvent me) {
     Propagator** b = idx[pc1];
     Propagator** p = idx[pc2+1];
     while (p-- > b)

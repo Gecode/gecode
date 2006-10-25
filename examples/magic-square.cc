@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -51,16 +52,16 @@ public:
     MiniModel::Matrix<IntVarArray> m(x, n, n);
 
     for (int i = n; i--; ) {
-	linear(this, m.row(i), IRT_EQ, s, opt.icl);
-	linear(this, m.col(i), IRT_EQ, s, opt.icl);
+        linear(this, m.row(i), IRT_EQ, s, opt.icl);
+        linear(this, m.col(i), IRT_EQ, s, opt.icl);
     }
     // Both diagonals must have sum s
     {
       IntVarArgs d1y(n);
       IntVarArgs d2y(n);
       for (int i = n; i--; ) {
-	d1y[i] = m(i,i);
-	d2y[i] = m(n-i-1,i);
+        d1y[i] = m(i,i);
+        d2y[i] = m(n-i-1,i);
       }
       linear(this, d1y, IRT_EQ, s, opt.icl);
       linear(this, d2y, IRT_EQ, s, opt.icl);
@@ -94,8 +95,8 @@ public:
     for (int i = 0; i<n; i++) {
       std::cout << "\t";
       for (int j = 0; j<n; j++) {
-	std::cout.width(2);
-	std::cout << m(i,j) << "  ";
+        std::cout.width(2);
+        std::cout << m(i,j) << "  ";
       }
       std::cout << std::endl;
     }

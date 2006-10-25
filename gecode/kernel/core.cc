@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -121,7 +122,7 @@ namespace Gecode {
     for (int vti=VTI_LAST; vti--; ) {
       VarBase* vs = vars[vti];
       if (vs != NULL) {
-	vars[vti] = NULL; vtp[vti]->process(this,vs);
+        vars[vti] = NULL; vtp[vti]->process(this,vs);
       }
     }
   }
@@ -134,12 +135,12 @@ namespace Gecode {
       // First propagator or link back to queue
       ActorLink* fst = lnk->next();
       if (lnk != fst) {
-	pool_next = c;
-	// Unlink first propagator from queue
-	ActorLink* snd = fst->next();
-	lnk->next(snd); snd->prev(lnk);
-	p = static_cast<Propagator*>(fst);
-	return true;
+        pool_next = c;
+        // Unlink first propagator from queue
+        ActorLink* snd = fst->next();
+        lnk->next(snd); snd->prev(lnk);
+        p = static_cast<Propagator*>(fst);
+        return true;
       }
     }
     pool_next = 0;
@@ -172,55 +173,55 @@ namespace Gecode {
       pn++;
       switch (p->propagate(this)) {
       case ES_FAILED:
-	fail();
-	return pn;
+        fail();
+        return pn;
       case ES_FIX:
-	{
-	  // Put propagator in idle queue
-	  propagator(p);
-	  // Prevent that propagator gets rescheduled (turn on all events)
-	  p->pme = PME_ASSIGNED;
-	  process();
-	  p->pme = PME_NONE;
-	}
-	break;
+        {
+          // Put propagator in idle queue
+          propagator(p);
+          // Prevent that propagator gets rescheduled (turn on all events)
+          p->pme = PME_ASSIGNED;
+          process();
+          p->pme = PME_NONE;
+        }
+        break;
       case ES_NOFIX:
-	{
-	  // Propagator is currently in no queue, put in into idle
-	  propagator(p);
-	  p->pme = PME_NONE;
-	  process();
-	}
-	break;
+        {
+          // Propagator is currently in no queue, put in into idle
+          propagator(p);
+          p->pme = PME_NONE;
+          process();
+        }
+        break;
       case ES_SUBSUMED:
-	{
-	  // Prevent that propagator gets rescheduled (turn on all events)
-	  p->pme = PME_ASSIGNED;
-	  process();
-	  p->destruct(this);
-	}
-	break;
+        {
+          // Prevent that propagator gets rescheduled (turn on all events)
+          p->pme = PME_ASSIGNED;
+          process();
+          p->destruct(this);
+        }
+        break;
       case __ES_FIX_PARTIAL:
-	{
-	  // Remember the event set to be kept after processing
-	  PropModEvent keep = p->pme;
-	  // Prevent that propagator gets rescheduled (turn on all events)
-	  p->pme = PME_ASSIGNED;
-	  process();
-	  p->pme = keep;
-	  assert(p->pme);
-	  pool_put(p);
-	}
-	break;
+        {
+          // Remember the event set to be kept after processing
+          PropModEvent keep = p->pme;
+          // Prevent that propagator gets rescheduled (turn on all events)
+          p->pme = PME_ASSIGNED;
+          process();
+          p->pme = keep;
+          assert(p->pme);
+          pool_put(p);
+        }
+        break;
       case __ES_NOFIX_PARTIAL:
-	{
-	  // Start from the specified propagator events
-	  pool_put(p);
-	  process();
-	}
-	break;
+        {
+          // Start from the specified propagator events
+          pool_put(p);
+          process();
+        }
+        break;
       default:
-	GECODE_NEVER;
+        GECODE_NEVER;
       }
     }
     return pn;
@@ -242,7 +243,7 @@ namespace Gecode {
       Branching* b = b_commit;
       b_commit = static_cast<Branching*>(b_commit->next());
       if (b == b_status)
-	b_status = b_commit;
+        b_status = b_commit;
       b->unlink(); b->destruct(this);
     }
     if (b_commit == &a_actors)
@@ -281,14 +282,14 @@ namespace Gecode {
       ActorLink* p  = &a_actors;
       ActorLink* e  = &s.a_actors;
       for (ActorLink* a = e->next(); a != e; a = a->next()) {
-	ActorLink* c = static_cast<Actor*>(a)->copy(this,share);
-	// Link copied actor
-	p->next(c); c->prev(p);
-	// Forward
-	a->prev(c);
-	//
-	static_cast<ActorDeleteLink*>(c)->init_delete();
-	p = c;
+        ActorLink* c = static_cast<Actor*>(a)->copy(this,share);
+        // Link copied actor
+        p->next(c); c->prev(p);
+        // Forward
+        a->prev(c);
+        //
+        static_cast<ActorDeleteLink*>(c)->init_delete();
+        p = c;
       }
       // Link last actor
       p->next(&a_actors); a_actors.prev(p);
@@ -298,12 +299,12 @@ namespace Gecode {
       ActorDeleteLink* p  = &a_actors;
       ActorDeleteLink* e  = &s.a_actors;
       for (ActorDeleteLink* a = e->next_delete(); a != e;
-	   a = a->next_delete()) {
-	ActorDeleteLink* c = static_cast<ActorDeleteLink*>(a->prev());
-	// Link copied actor
-	p->next_delete(c); c->prev_delete(p);
-	// Forward
-	p = c;
+           a = a->next_delete()) {
+        ActorDeleteLink* c = static_cast<ActorDeleteLink*>(a->prev());
+        // Link copied actor
+        p->next_delete(c); c->prev_delete(p);
+        // Forward
+        p = c;
       }
       // Link last actor
       p->next_delete(&a_actors); a_actors.prev_delete(p);
@@ -358,22 +359,22 @@ namespace Gecode {
      */
     // Update variables without indexing structure
     for (Variable<VTI_NOIDX,0,__Combine>* x
-	   = static_cast<Variable<VTI_NOIDX,0,__Combine>*>(c->vars_noidx);
-	 x != NULL; x = x->next())
+           = static_cast<Variable<VTI_NOIDX,0,__Combine>*>(c->vars_noidx);
+         x != NULL; x = x->next())
       x->u.free_me = 0;
     c->vars_noidx = NULL;
     // Update variables with indexing structure
     Propagator** s;
     if (n_sub > 0)
       s = reinterpret_cast<Propagator**>
-	(Memory::malloc(n_sub*sizeof(Propagator*)));
+        (Memory::malloc(n_sub*sizeof(Propagator*)));
     else
       s = NULL;
     c->sub = s;
     for (int vti=VTI_LAST; vti--; ) {
       VarBase* vs = c->vars[vti];
       if (vs != NULL) {
-	c->vars[vti] = NULL; vtp[vti]->update(vs,s);
+        c->vars[vti] = NULL; vtp[vti]->update(vs,s);
       }
     }
     // Update the number of subscriptions (both in copy and original)

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -47,75 +48,75 @@ namespace Gecode {
     if (op==SOT_MINUS) {
       switch(r) {
       case SRT_EQ:
-	{
-	  ComplementView<ConstantView> cy(yv);
-	  GECODE_ES_FAIL(home,
-			 (Intersection<ComplementView<ConstantView>,
-			  SetView,SetView>
-			  ::post(home,cy,x,z)));
-	}
-	break;
+        {
+          ComplementView<ConstantView> cy(yv);
+          GECODE_ES_FAIL(home,
+                         (Intersection<ComplementView<ConstantView>,
+                          SetView,SetView>
+                          ::post(home,cy,x,z)));
+        }
+        break;
       case SRT_NQ:
-	{
-	  SetVar tmp(home);
-	  GECODE_ES_FAIL(home,
-			 (Distinct<SetView,SetView>
-			  ::post(home,z,tmp)));
-	  ComplementView<ConstantView> cy(yv);
-	  GECODE_ES_FAIL(home,
-			 (Intersection<ComplementView<ConstantView>,
-			  SetView,SetView>
-			  ::post(home,cy,x,tmp)));
-	}
-	break;
+        {
+          SetVar tmp(home);
+          GECODE_ES_FAIL(home,
+                         (Distinct<SetView,SetView>
+                          ::post(home,z,tmp)));
+          ComplementView<ConstantView> cy(yv);
+          GECODE_ES_FAIL(home,
+                         (Intersection<ComplementView<ConstantView>,
+                          SetView,SetView>
+                          ::post(home,cy,x,tmp)));
+        }
+        break;
       case SRT_SUB:
-	{
-	  ComplementView<ConstantView> cy(yv);
-	  GECODE_ES_FAIL(home,
-			 (SuperOfInter<SetView,
-			  ComplementView<ConstantView>,SetView>
-			  ::post(home,x,cy,z)));
+        {
+          ComplementView<ConstantView> cy(yv);
+          GECODE_ES_FAIL(home,
+                         (SuperOfInter<SetView,
+                          ComplementView<ConstantView>,SetView>
+                          ::post(home,x,cy,z)));
 
-	}
-	break;
+        }
+        break;
       case SRT_SUP:
-	{
-	  SetVar tmp(home);
-	  GECODE_ES_FAIL(home,
-			 (SubSet<SetView,SetView>::post(home,z,tmp)));
-	  
-	  SetView xv(x);
-	  ComplementView<SetView> cx(xv);
-	  GECODE_ES_FAIL(home,
-			 (Intersection<ConstantView,
-			  ComplementView<SetView>,SetView>
-			  ::post(home,yv,cx,tmp)));
-	}
-	break;
+        {
+          SetVar tmp(home);
+          GECODE_ES_FAIL(home,
+                         (SubSet<SetView,SetView>::post(home,z,tmp)));
+          
+          SetView xv(x);
+          ComplementView<SetView> cx(xv);
+          GECODE_ES_FAIL(home,
+                         (Intersection<ConstantView,
+                          ComplementView<SetView>,SetView>
+                          ::post(home,yv,cx,tmp)));
+        }
+        break;
       case SRT_DISJ:
-	{
-	  SetVar tmp(home);
-	  EmptyView emptyset;
-	  GECODE_ES_FAIL(home,(SuperOfInter<SetView,SetView,EmptyView>
-			       ::post(home, z, tmp, emptyset)));
+        {
+          SetVar tmp(home);
+          EmptyView emptyset;
+          GECODE_ES_FAIL(home,(SuperOfInter<SetView,SetView,EmptyView>
+                               ::post(home, z, tmp, emptyset)));
 
-	  ComplementView<ConstantView> cy(yv);
-	  GECODE_ES_FAIL(home,
-			 (Intersection<ComplementView<ConstantView>,
-			  SetView,SetView>
-			  ::post(home,cy,x,tmp)));
-	}
-	break;
+          ComplementView<ConstantView> cy(yv);
+          GECODE_ES_FAIL(home,
+                         (Intersection<ComplementView<ConstantView>,
+                          SetView,SetView>
+                          ::post(home,cy,x,tmp)));
+        }
+        break;
       case SRT_CMPL:
-	{
-	  SetView xv(x);
-	  ComplementView<SetView> cx(xv);
-	  GECODE_ES_FAIL(home,
-			 (Union<ConstantView,
-			  ComplementView<SetView>,
-			  SetView>::post(home, yv, cx, z)));
-	}
-	break;
+        {
+          SetView xv(x);
+          ComplementView<SetView> cx(xv);
+          GECODE_ES_FAIL(home,
+                         (Union<ConstantView,
+                          ComplementView<SetView>,
+                          SetView>::post(home, yv, cx, z)));
+        }
+        break;
       }
     } else {
       rel_op_post<ConstantView,SetView,SetView>(home, yv, op, x, r, z);
@@ -154,74 +155,74 @@ namespace Gecode {
     if (op==SOT_MINUS) {
       switch(r) {
       case SRT_EQ:
-	{
-	  ComplementView<ConstantView> cy(yv);
-	  GECODE_ES_FAIL(home,
-			 (Intersection<ComplementView<ConstantView>,
-			  SetView,ConstantView>
-			  ::post(home,cy,x,zv)));
-	}
-	break;
+        {
+          ComplementView<ConstantView> cy(yv);
+          GECODE_ES_FAIL(home,
+                         (Intersection<ComplementView<ConstantView>,
+                          SetView,ConstantView>
+                          ::post(home,cy,x,zv)));
+        }
+        break;
       case SRT_NQ:
-	{
-	  SetVar tmp(home);
-	  GECODE_ES_FAIL(home,
-			 (Distinct<ConstantView,SetView>
-			  ::post(home,zv,tmp)));
-	  ComplementView<ConstantView> cy(yv);
-	  GECODE_ES_FAIL(home,
-			 (Intersection<ComplementView<ConstantView>,
-			  SetView,SetView>
-			  ::post(home,cy,x,tmp)));
-	}
-	break;
+        {
+          SetVar tmp(home);
+          GECODE_ES_FAIL(home,
+                         (Distinct<ConstantView,SetView>
+                          ::post(home,zv,tmp)));
+          ComplementView<ConstantView> cy(yv);
+          GECODE_ES_FAIL(home,
+                         (Intersection<ComplementView<ConstantView>,
+                          SetView,SetView>
+                          ::post(home,cy,x,tmp)));
+        }
+        break;
       case SRT_SUB:
-	{
-	  ComplementView<ConstantView> cy(yv);
-	  GECODE_ES_FAIL(home,
-			 (SuperOfInter<SetView,
-			  ComplementView<ConstantView>,ConstantView>
-			  ::post(home,x,cy,zv)));
+        {
+          ComplementView<ConstantView> cy(yv);
+          GECODE_ES_FAIL(home,
+                         (SuperOfInter<SetView,
+                          ComplementView<ConstantView>,ConstantView>
+                          ::post(home,x,cy,zv)));
 
-	}
-	break;
+        }
+        break;
       case SRT_SUP:
-	{
-	  // z <= tmp
-	  SetVar tmp(home,z,Limits::Set::int_min, Limits::Set::int_max);
-	  SetView xv(x);
-	  ComplementView<SetView> cx(xv);
-	  
-	  GECODE_ES_FAIL(home,
-			 (Intersection<ConstantView,
-			  ComplementView<SetView>,SetView>
-			  ::post(home,yv,cx,tmp)));
-	}
-	break;
+        {
+          // z <= tmp
+          SetVar tmp(home,z,Limits::Set::int_min, Limits::Set::int_max);
+          SetView xv(x);
+          ComplementView<SetView> cx(xv);
+          
+          GECODE_ES_FAIL(home,
+                         (Intersection<ConstantView,
+                          ComplementView<SetView>,SetView>
+                          ::post(home,yv,cx,tmp)));
+        }
+        break;
       case SRT_DISJ:
-	{
-	  SetVar tmp(home);
-	  SetView tmpv(tmp);
-	  IntSetRanges zi(z);
-	  GECODE_ME_FAIL(home, tmpv.excludeI(home, zi));
-	  
-	  ComplementView<ConstantView> cy(yv);
-	  GECODE_ES_FAIL(home,
-			 (Intersection<ComplementView<ConstantView>,
-			  SetView,SetView>
-			  ::post(home,cy,x,tmp)));
-	}
-	break;
+        {
+          SetVar tmp(home);
+          SetView tmpv(tmp);
+          IntSetRanges zi(z);
+          GECODE_ME_FAIL(home, tmpv.excludeI(home, zi));
+          
+          ComplementView<ConstantView> cy(yv);
+          GECODE_ES_FAIL(home,
+                         (Intersection<ComplementView<ConstantView>,
+                          SetView,SetView>
+                          ::post(home,cy,x,tmp)));
+        }
+        break;
       case SRT_CMPL:
-	{
-	  SetView xv(x);
-	  ComplementView<SetView> cx(xv);
-	  GECODE_ES_FAIL(home,
-			 (Union<ConstantView,
-			  ComplementView<SetView>,
-			  ConstantView>::post(home, yv, cx, zv)));
-	}
-	break;
+        {
+          SetView xv(x);
+          ComplementView<SetView> cx(xv);
+          GECODE_ES_FAIL(home,
+                         (Union<ConstantView,
+                          ComplementView<SetView>,
+                          ConstantView>::post(home, yv, cx, zv)));
+        }
+        break;
       }
     } else {
       rel_op_post<ConstantView,SetView,ConstantView>(home, yv, op, x, r, zv);

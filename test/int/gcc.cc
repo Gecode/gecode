@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -17,7 +18,7 @@
  *  redistribution of this file, and for a
  *     DISCLAIMER OF ALL WARRANTIES.
  *
- */	
+ */        
 
 #include "test/int.hh"
 #include "test/log.hh"
@@ -38,9 +39,9 @@ class GCCAssignment : public Assignment {
   int xsize;
 public:
   GCCAssignment(int xlow, int xup,
-		int clow, int cup,
-		int xs,
-		int n0, const IntSet& d0)
+                int clow, int cup,
+                int xs,
+                int n0, const IntSet& d0)
     : Assignment(n0, d0),
       problow(xlow), probup(xup),
       cardlow(clow), cardup(cup),
@@ -65,16 +66,16 @@ public:
     while (true) {
       ++dsv[i];
       if (dsv[i]())
-	return;
+        return;
       if (i >= xsize && i < n) {
-	dsv[i].init(card_dom);
+        dsv[i].init(card_dom);
       } else {
-	dsv[i].init(var_dom);
+        dsv[i].init(var_dom);
       }
       --i;
       if (i<0) {
-	done = true;
-	return;
+        done = true;
+        return;
       }
     }
   }
@@ -93,7 +94,7 @@ public:
       n[x[i] - 1]++;
     for (int i=4; i--;)
       if (n[i] > 2)
-	return false;
+        return false;
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -113,7 +114,7 @@ public:
       n[x[i] - 1]++;
     for (int i=4; i--;)
       if (n[i] > 2)
-	return false;
+        return false;
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
@@ -133,7 +134,7 @@ public:
     for (int i=x.size(); i--; )
       n[x[i] - 1]++;
     if (n[0] < 2 || n[1] < 2 ||
-	n[2] > 0 || n[3] > 0)
+        n[2] > 0 || n[3] > 0)
       return false;
     return true;
   }
@@ -178,9 +179,9 @@ public:
     IntVarArgs y(6);
     for (int i = 0; i < 6; i++) {
       if (i < 3) {
-	y[i] = x[0];
+        y[i] = x[0];
       } else {
-	y[i] = x[1];
+        y[i] = x[1];
       }
     }
     gcc(home, y, 0, 3, icl);
@@ -240,8 +241,8 @@ public:
 
     for (int i = 0; i < ve; i++) {
       if ( x[i] < lb || x[i] > rb) {
-// 	std::cout << "wrong bounds\n";
-	return false;
+//         std::cout << "wrong bounds\n";
+        return false;
       }
     }
 
@@ -249,8 +250,8 @@ public:
     for (int i = ve; i < xs; i++) {
       count[i - ve] = 0;
       if (x[i] < minocc || x[i] > maxocc) {
-// 	std::cout << "min-max-occ\n";
-	return false;
+//         std::cout << "min-max-occ\n";
+        return false;
       }
     }
 
@@ -260,8 +261,8 @@ public:
 
     for (int i = 0; i < xs - ve; i++) {
       if (count[i] != x[i + ve]) {
-// 	std::cout << "counting failed\n";
-	return false;
+//         std::cout << "counting failed\n";
+        return false;
       }
     }
 
@@ -281,10 +282,10 @@ public:
 //     int nov = 0;
 //     for (int i = 0; i < xs - ve; i++) {
 //       for (int j = 0; j < ve; j++) {
-// 	if (x[j].in(i) && !done[i]) {
-// 	  nov++;
-// 	  done[i] = true;
-// 	}
+//         if (x[j].in(i) && !done[i]) {
+//           nov++;
+//           done[i] = true;
+//         }
 //       }
 //     }
 
@@ -338,8 +339,8 @@ public:
 
     for (int i = 0; i < ve; i++) {
       if ( x[i] < lb || x[i] > rb) {
-	// std::cout << "wrong bounds\n";
-	return false;
+        // std::cout << "wrong bounds\n";
+        return false;
       }
     }
 
@@ -347,8 +348,8 @@ public:
     for (int i = ve; i < xs; i++) {
       count[i - ve] = 0;
       if (x[i] < minocc || x[i] > maxocc) {
-	// std::cout << "min-max-occ\n";
-	return false;
+        // std::cout << "min-max-occ\n";
+        return false;
       }
     }
 
@@ -365,8 +366,8 @@ public:
     for (int i = 0; i < xs - ve; i++) {
       // std::cout << "comp: "<< count[i] <<" & "<<x[i + ve] << "\n";
       if (count[i] != x[i + ve]) {
-	// std::cout << "count not met\n";
-	return false;
+        // std::cout << "count not met\n";
+        return false;
       }
     }
 
@@ -431,8 +432,8 @@ public:
 
     for (int i = 0; i < ve; i++) {
       if ( x[i] < lb || x[i] > rb) {
-// 	std::cout << "wrong bounds\n";
-	return false;
+//         std::cout << "wrong bounds\n";
+        return false;
       }
     }
 
@@ -440,24 +441,24 @@ public:
     for (int i = ve; i < xs; i++) {
       count[i - ve] = 0;
       if (x[i] < minocc || x[i] > maxocc) {
-// 	std::cout << "min-max-occ\n";
-	return false;
+//         std::cout << "min-max-occ\n";
+        return false;
       }
     }
 
     for (int i = 0; i < ve; i++) {
       if (x[i] == 0) {
-	count[0]++;
+        count[0]++;
       }
       if (x[i] == 1) {
-	count[1]++;
+        count[1]++;
       }
     }
 
     for (int i = 0; i < ve; i++) {
       if (x[i] == 2) {
-// 	std::cout << "2 not allowed!\n";
-	return false;
+//         std::cout << "2 not allowed!\n";
+        return false;
       }
     }
 //     std::cout << "\n";
@@ -465,8 +466,8 @@ public:
     for (int i = 0; i < xs - ve; i++) {
 //       std::cout << "comp: "<< count[i] <<" & "<<x[i + ve] << "\n";
       if (count[i] != x[i + ve]) {
-// 	std::cout << "count not met\n";
-	return false;
+//         std::cout << "count not met\n";
+        return false;
       }
     }
 
@@ -500,7 +501,7 @@ public:
     : IntTest(t,3,ds_04,false,icl) {}
   virtual bool solution(const Assignment& x) const {
     if ( (x[0] != 1 && x[0] != 3) ||
-	 (x[1] != 1 && x[1] != 3)) {
+         (x[1] != 1 && x[1] != 3)) {
       return false;
     }
     if (x[0] == x[1]) {
@@ -518,9 +519,9 @@ public:
     IntVarArgs y(6);
     for (int i = 0; i < 6; i++) {
       if (i < 3) {
-	y[i] = x[0];
+        y[i] = x[0];
       } else {
-	y[i] = x[1];
+        y[i] = x[1];
       }
       rel(home, y[i], IRT_GQ, 1);
     }

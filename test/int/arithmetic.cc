@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -54,7 +55,7 @@ public:
   }
   virtual void post(Space* home, IntVarArray& x) {
     Log::log("x[0]*x[1]==x[2]",
-	     "\tmult(this, x[0], x[1], x[2]);");
+             "\tmult(this, x[0], x[1], x[2]);");
     mult(home, x[0], x[1], x[2]);
   }
 };
@@ -94,7 +95,7 @@ public:
   }
   virtual void post(Space* home, IntVarArray& x) {
     Log::log("post abs(x0, x1)",
-	     "\tabs(this, x[0], x[1], icl);");
+             "\tabs(this, x[0], x[1], icl);");
     abs(home, x[0], x[1], icl);
   }
 };
@@ -181,12 +182,12 @@ public:
     : IntTest(t,4,is) {}
   virtual bool solution(const Assignment& x) const {
     return std::min(std::min(x[0],x[1]),
-		    x[2]) == x[3];
+                    x[2]) == x[3];
   }
   virtual void post(Space* home, IntVarArray& x) {
     Log::log("min(home, x[0:2], x[3])",
-	     "\tIntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
-	     "\tmin(this, m, x[3]);");
+             "\tIntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
+             "\tmin(this, m, x[3]);");
     IntVarArgs m(3);
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     min(home, m, x[3]);
@@ -202,12 +203,12 @@ public:
     : IntTest(t,3,is) {}
   virtual bool solution(const Assignment& x) const {
     return std::min(std::min(x[0],x[1]),
-		    x[2]) == x[1];
+                    x[2]) == x[1];
   }
   virtual void post(Space* home, IntVarArray& x) {
     Log::log("min(home, x[0:2], x[1])",
-	     "\tIntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
-	     "\tmin(this, m, x[1]);");
+             "\tIntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
+             "\tmin(this, m, x[1]);");
     IntVarArgs m(3);
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     min(home, m, x[1]);
@@ -223,12 +224,12 @@ public:
     : IntTest(t,4,is) {}
   virtual bool solution(const Assignment& x) const {
     return std::max(std::max(x[0],x[1]),
-		    x[2]) == x[3];
+                    x[2]) == x[3];
   }
   virtual void post(Space* home, IntVarArray& x) {
     Log::log("max(home, x[0:2], x[3])",
-	     "\tIntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
-	     "\tmax(this, m, x[3]);");
+             "\tIntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
+             "\tmax(this, m, x[3]);");
     IntVarArgs m(3);
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     max(home, m, x[3]);
@@ -244,12 +245,12 @@ public:
     : IntTest(t,3,is) {}
   virtual bool solution(const Assignment& x) const {
     return std::max(std::max(x[0],x[1]),
-		    x[2]) == x[1];
+                    x[2]) == x[1];
   }
   virtual void post(Space* home, IntVarArray& x) {
     Log::log("max(home, x[0:2], x[1])",
-	     "\tIntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
-	     "\tmax(this, m, x[1]);");
+             "\tIntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
+             "\tmax(this, m, x[1]);");
     IntVarArgs m(3);
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     max(home, m, x[1]);

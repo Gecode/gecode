@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -43,7 +44,7 @@ namespace Gecode {
     if (home->failed()) return;
     NegBoolView n0(b0); NegBoolView n1(b1); NegBoolView n2(b2);
     GECODE_ES_FAIL(home,(Bool::Or<NegBoolView,NegBoolView,NegBoolView>
-			 ::post(home,n0,n1,n2)));
+                         ::post(home,n0,n1,n2)));
   }
   void
   bool_and(Space* home, BoolVar b0, BoolVar b1, bool b2, IntConLevel) {
@@ -55,7 +56,7 @@ namespace Gecode {
     } else {
       NegBoolView n0(b0); NegBoolView n1(b1);
       GECODE_ES_FAIL(home,(Bool::OrTrue<NegBoolView,NegBoolView>
-			   ::post(home,n0,n1)));
+                           ::post(home,n0,n1)));
     }
   }
   void
@@ -73,12 +74,12 @@ namespace Gecode {
     if (home->failed()) return;
     if (c) {
       for (int i=b.size(); i--; ) {
-	BoolView bvi(b[i]); GECODE_ME_FAIL(home,bvi.t_one(home));
+        BoolView bvi(b[i]); GECODE_ME_FAIL(home,bvi.t_one(home));
       }
     } else {
       ViewArray<NegBoolView> x(home,b.size());
       for (int i=b.size(); i--; ) {
-	NegBoolView nb(b[i]); x[i]=nb;
+        NegBoolView nb(b[i]); x[i]=nb;
       }
       GECODE_ES_FAIL(home,Bool::NaryOrTrue<NegBoolView>::post(home,x));
     }
@@ -88,15 +89,15 @@ namespace Gecode {
   bool_or(Space* home, BoolVar b0, BoolVar b1, BoolVar b2, IntConLevel) {
     if (home->failed()) return;
     GECODE_ES_FAIL(home,
-		   (Bool::Or<BoolView,BoolView,BoolView>
-		    ::post(home,b0,b1,b2)));
+                   (Bool::Or<BoolView,BoolView,BoolView>
+                    ::post(home,b0,b1,b2)));
   }
   void
   bool_or(Space* home, BoolVar b0, BoolVar b1, bool b2, IntConLevel) {
     if (home->failed()) return;
     if (b2) {
       GECODE_ES_FAIL(home,
-		     (Bool::OrTrue<BoolView,BoolView>::post(home,b0,b1)));
+                     (Bool::OrTrue<BoolView,BoolView>::post(home,b0,b1)));
     } else {
       BoolView bv0(b0);
       BoolView bv1(b1);
@@ -118,8 +119,8 @@ namespace Gecode {
       GECODE_ES_FAIL(home,Bool::NaryOrTrue<BoolView>::post(home,x));
     } else {
       for (int i=b.size(); i--; ) {
-	BoolView bvi(b[i]);
-	GECODE_ME_FAIL(home,bvi.t_zero(home));
+        BoolView bvi(b[i]);
+        GECODE_ME_FAIL(home,bvi.t_zero(home));
       }
     }
   }
@@ -129,7 +130,7 @@ namespace Gecode {
     if (home->failed()) return;
     NegBoolView n0(b0);
     GECODE_ME_FAIL(home,(Bool::Or<NegBoolView,BoolView,BoolView>
-			 ::post(home,n0,b1,b2)));
+                         ::post(home,n0,b1,b2)));
   }
   void
   bool_imp(Space* home, BoolVar b0, BoolVar b1, bool b2, IntConLevel) {
@@ -137,7 +138,7 @@ namespace Gecode {
     if (b2) {
       NegBoolView n0(b0);
       GECODE_ME_FAIL(home,(Bool::OrTrue<NegBoolView,BoolView>
-			   ::post(home,n0,b1)));
+                           ::post(home,n0,b1)));
     } else {
       BoolView bv0(b0); BoolView bv1(b1);
       GECODE_ME_FAIL(home,bv0.t_one(home));
@@ -149,7 +150,7 @@ namespace Gecode {
   bool_eqv(Space* home, BoolVar b0, BoolVar b1, BoolVar b2, IntConLevel) {
     if (home->failed()) return;
     GECODE_ES_FAIL(home,(Bool::Eqv<BoolView,BoolView,BoolView>
-			 ::post(home,b0,b1,b2)));
+                         ::post(home,b0,b1,b2)));
   }
   void
   bool_eqv(Space* home, BoolVar b0, BoolVar b1, bool b2, IntConLevel) {
@@ -167,7 +168,7 @@ namespace Gecode {
     if (home->failed()) return;
     NegBoolView n2(b2);
     GECODE_ES_FAIL(home,(Bool::Eqv<BoolView,BoolView,NegBoolView>
-			 ::post(home,b0,b1,n2)));
+                         ::post(home,b0,b1,n2)));
   }
   void
   bool_xor(Space* home, BoolVar b0, BoolVar b1, bool b2, IntConLevel) {

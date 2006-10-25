@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -64,7 +65,7 @@ namespace Gecode {
     UnaryPropagator(Space* home, bool share, UnaryPropagator& p);
     /// Constructor for rewriting \a p during cloning
     UnaryPropagator(Space* home, bool share, Propagator& p,
-		    View x0);
+                    View x0);
     /// Constructor for creation
     UnaryPropagator(Space* home, View x0, bool fd=false);
   public:
@@ -90,7 +91,7 @@ namespace Gecode {
     BinaryPropagator(Space* home, View x0, View x1, bool fd=false);
     /// Constructor for rewriting \a p during cloning
     BinaryPropagator(Space* home, bool share, Propagator& p,
-		     View x0, View x1);
+                     View x0, View x1);
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
@@ -114,7 +115,7 @@ namespace Gecode {
     TernaryPropagator(Space* home, View x0, View x1, View x2, bool fd=false);
     /// Constructor for rewriting \a p during cloning
     TernaryPropagator(Space* home, bool share, Propagator& p,
-		      View x0, View x1, View x2);
+                      View x0, View x1, View x2);
   public:
     /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(void) const;
@@ -136,7 +137,7 @@ namespace Gecode {
     NaryPropagator(Space* home, bool share, NaryPropagator& p);
     /// Constructor for rewriting \a p during cloning
     NaryPropagator(Space* home, bool share, Propagator& p,
-		   ViewArray<View>& x);
+                   ViewArray<View>& x);
     /// Constructor for creation
     NaryPropagator(Space* home, ViewArray<View>& x, bool fd=false);
   public:
@@ -163,7 +164,7 @@ namespace Gecode {
     NaryOnePropagator(Space* home, bool share, NaryOnePropagator& p);
     /// Constructor for rewriting \a p during cloning
     NaryOnePropagator(Space* home, bool share, Propagator& p,
-		      ViewArray<View>& x, View y);
+                      ViewArray<View>& x, View y);
     /// Constructor for creation
     NaryOnePropagator(Space* home, ViewArray<View>& x, View y, bool fd=false);
   public:
@@ -190,7 +191,7 @@ namespace Gecode {
     InhomBinaryPropagator(Space* home,View0,View1,bool=false);
     /// Constructor for rewriting \a p during cloning
     InhomBinaryPropagator(Space* home, bool share, Propagator& p,
-			  View0 x0, View1 x1);
+                          View0 x0, View1 x1);
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
@@ -205,7 +206,7 @@ namespace Gecode {
    * with propagation conditions \a pc0, \a pc1, and \a pc2.
    */
   template <class View0, PropCond pc0, class View1, PropCond pc1,
-	    class View2, PropCond pc2>
+            class View2, PropCond pc2>
   class InhomTernaryPropagator : public Propagator {
   protected:
     View0 x0;
@@ -217,7 +218,7 @@ namespace Gecode {
     InhomTernaryPropagator(Space* home,View0,View1,View2,bool=false);
     /// Constructor for rewriting \a p during cloning
     InhomTernaryPropagator(Space* home, bool share, Propagator& p,
-			   View0 x0, View1 x1, View2 x2);
+                           View0 x0, View1 x1, View2 x2);
   public:
     /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(void) const;
@@ -242,10 +243,10 @@ namespace Gecode {
     InhomNaryOnePropagator(Space* home, bool share, InhomNaryOnePropagator& p);
     /// Constructor for creation
     InhomNaryOnePropagator(Space* home, ViewArray<View0>& x, View1 y,
-			   bool fd=false);
+                           bool fd=false);
     /// Constructor for rewriting \a p during cloning
     InhomNaryOnePropagator(Space* home, bool share, Propagator& p,
-			   ViewArray<View0>& x, View1 y);
+                           ViewArray<View0>& x, View1 y);
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
@@ -572,7 +573,7 @@ namespace Gecode {
    */
 
   template <class View0, PropCond pc0, class View1, PropCond pc1,
-	    class View2, PropCond pc2>
+            class View2, PropCond pc2>
   InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
   InhomTernaryPropagator(Space* home, View0 y0, View1 y1, View2 y2, bool fd)
     : Propagator(home,fd), x0(y0), x1(y1), x2(y2) {
@@ -582,12 +583,12 @@ namespace Gecode {
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1,
-	    class View2, PropCond pc2>
+            class View2, PropCond pc2>
   forceinline
   InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
   InhomTernaryPropagator(Space* home, bool share,
-			 InhomTernaryPropagator<View0,pc0,View1,pc1,
-			 View2,pc2>& p)
+                         InhomTernaryPropagator<View0,pc0,View1,pc1,
+                         View2,pc2>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -595,7 +596,7 @@ namespace Gecode {
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1,
-	    class View2, PropCond pc2>
+            class View2, PropCond pc2>
   forceinline
   InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::InhomTernaryPropagator
   (Space* home, bool share, Propagator& p, View0 y0, View1 y1, View2 y2)
@@ -606,14 +607,14 @@ namespace Gecode {
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1,
-	    class View2, PropCond pc2>
+            class View2, PropCond pc2>
   PropCost
   InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::cost(void) const {
     return PC_BINARY_LO;
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1,
-	    class View2, PropCond pc2>
+            class View2, PropCond pc2>
   size_t
   InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
   dispose(Space* home) {

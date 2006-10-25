@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -36,7 +37,7 @@ namespace Gecode { namespace Set { namespace Projection {
 
   ExecStatus
   ReNaryProjection::post(Space* home, ViewArray<SetView>& x,
-			 Gecode::Int::BoolView b, ProjectorSet& ps) {
+                         Gecode::Int::BoolView b, ProjectorSet& ps) {
     if (ps.arity() != x.size() - 1)
       throw Set::InvalidProjector("");
     (void) new (home) ReNaryProjection(home,x,b,ps);

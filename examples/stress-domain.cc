@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -39,17 +40,17 @@ public:
     // Cut holes: expand
     for (int i = 5; i--; ) {
       for (unsigned int j = 0; j <= 5*opt.size; j++)
-	rel(this, x[i], IRT_NQ, 5*j);
+        rel(this, x[i], IRT_NQ, 5*j);
       for (unsigned int j = 0; j <= 5*opt.size; j++)
-	rel(this, x[i], IRT_NQ, 5*j+2);
+        rel(this, x[i], IRT_NQ, 5*j+2);
       for (unsigned int j = 0; j <= 5*opt.size; j++)
-	rel(this, x[i], IRT_NQ, 5*j+4);
+        rel(this, x[i], IRT_NQ, 5*j+4);
     }
     // Contract
     for (unsigned int j = 0; j <= 5*opt.size/2; j++)
       for (unsigned int i = 5; i--; ) {
-	rel(this, x[i], IRT_GQ, 5*j);
-	rel(this, x[i], IRT_LQ, 5*(j + (5*opt.size/2)));
+        rel(this, x[i], IRT_GQ, 5*j);
+        rel(this, x[i], IRT_LQ, 5*(j + (5*opt.size/2)));
       }
   }
 

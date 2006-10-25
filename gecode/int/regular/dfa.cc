@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -66,7 +67,7 @@ namespace Gecode { namespace Int { namespace Regular {
     forceinline bool
     operator()(const DFA::Transition& x, const DFA::Transition& y) {
       return ((x.symbol < y.symbol) ||
-	      (x.symbol == y.symbol) && (x.i_state < y.i_state));
+              (x.symbol == y.symbol) && (x.i_state < y.i_state));
     }
     forceinline static void
     sort(DFA::Transition t[], int n) {
@@ -109,7 +110,7 @@ namespace Gecode { namespace Int { namespace Regular {
     forceinline bool
     operator()(const StateGroup& x, const StateGroup& y) {
       return ((x.group < y.group) ||
-	      (x.group == y.group) && (x.state < y.state));
+              (x.group == y.group) && (x.state < y.state));
     }
     static void
     sort(StateGroup sg[], int n) {
@@ -177,15 +178,15 @@ namespace Gecode {
       //  idx[i]...idx[i+1]-1 gives where transitions for symbol i start
       int n_symbols = 0;
       {
-	int j = 0;
-	while (j < n_trans) {
-	  idx[n_symbols++] = &trans[j];
-	  int s = trans[j].symbol;
-	  while ((j < n_trans) && (s == trans[j].symbol))
-	    j++;
-	}
-	idx[n_symbols] = &trans[j];
-	assert(j == n_trans);
+        int j = 0;
+        while (j < n_trans) {
+          idx[n_symbols++] = &trans[j];
+          int s = trans[j].symbol;
+          while ((j < n_trans) && (s == trans[j].symbol))
+            j++;
+        }
+        idx[n_symbols] = &trans[j];
+        assert(j == n_trans);
       }
       // Map states to groups
       GECODE_AUTOARRAY(int,         s2g,  n_states+1);
@@ -193,9 +194,9 @@ namespace Gecode {
       GECODE_AUTOARRAY(GroupStates, g2s,  n_states+1);
       // Initialize: final states is group one, all other group zero
       for (int i = n_states+1; i--; ) {
-	part[i].state = i;
-	part[i].group = is_final[i] ? 1 : 0;
-	s2g[i]        = part[i].group;
+        part[i].state = i;
+        part[i].group = is_final[i] ? 1 : 0;
+        s2g[i]        = part[i].group;
       }
       // Important: the state n_state is the dead state, conceptually
       // if there is no transition for a symbol and input state, it is
@@ -205,95 +206,95 @@ namespace Gecode {
       StateGroupByGroup::sort(part,n_states+1);
       int n_groups;
       if (part[0].group == part[n_states].group) {
-	// No final states, just one group
-	g2s[0].fst = &part[0]; g2s[0].lst = &part[n_states+1];
-	n_groups = 1;
+        // No final states, just one group
+        g2s[0].fst = &part[0]; g2s[0].lst = &part[n_states+1];
+        n_groups = 1;
       } else  {
-	int i = 0;
-	assert(part[0].group == 0);
-	do i++; while (part[i].group == 0);
-	g2s[0].fst = &part[0]; g2s[0].lst = &part[i];
-	g2s[1].fst = &part[i]; g2s[1].lst = &part[n_states+1];
-	n_groups = 2;
+        int i = 0;
+        assert(part[0].group == 0);
+        do i++; while (part[i].group == 0);
+        g2s[0].fst = &part[0]; g2s[0].lst = &part[i];
+        g2s[1].fst = &part[i]; g2s[1].lst = &part[n_states+1];
+        n_groups = 2;
       }
 
       // Do the refinement
       {
-	int m_groups;
-	do {
-	  m_groups = n_groups;
-	  // Iterate over symbols
-	  for (int sidx = n_symbols; sidx--; ) {
-	    // Iterate over groups
-	    for (int g = n_groups; g--; ) {
-	      // Ignore singleton groups
-	      if (g2s[g].lst-g2s[g].fst > 1) {
-		// Apply transitions to group states
-		// This exploits that both transitions as well as
-		// stategroups are sorted by (input) state
-		Transition* t     = idx[sidx];
-		Transition* t_lst = idx[sidx+1];
-		for (StateGroup* sg = g2s[g].fst; sg<g2s[g].lst; sg++) {
-		  while ((t < t_lst) && (t->i_state < sg->state))
-		    t++;
-		  // Compute group resulting from transition
-		  if ((t < t_lst) && (t->i_state == sg->state))
-		    sg->group = s2g[t->o_state];
-		  else
-		    sg->group = s2g[n_states]; // Go to dead state
-		}
-		// Sort group by groups from transitions
-		StateGroupByGroup::sort(g2s[g].fst,
-					static_cast<int>(g2s[g].lst-g2s[g].fst));
-		// Group must be split?
-		if (g2s[g].fst->group != (g2s[g].lst-1)->group) {
-		  // Skip first group
-		  StateGroup* sg = g2s[g].fst+1;
-		  while ((sg-1)->group == sg->group)
-		    sg++;
-		  // Start splitting
-		  StateGroup* lst = g2s[g].lst;
-		  g2s[g].lst = sg;
-		  while (sg < lst) {
-		    s2g[sg->state] = n_groups;
-		    g2s[n_groups].fst  = sg++;
-		    while ((sg < lst) && ((sg-1)->group == sg->group)) {
-		      s2g[sg->state] = n_groups; sg++;
-		    }
-		    g2s[n_groups++].lst = sg;
-		  }
-		}
-	      }
-	    }
-	  }
-	} while (n_groups != m_groups);
-	// New start state
-	start = s2g[start];
-	// Compute new final states
-	n_finals = 0;
-	for (int g = n_groups; g--; )
-	  for (StateGroup* sg = g2s[g].fst; sg < g2s[g].lst; sg++)
-	    if (is_final[sg->state]) {
-	      final[n_finals++] = g;
-	      break;
-	    }
-	// Compute representatives
-	GECODE_AUTOARRAY(int, s2r, n_states+1);
-	for (int i = n_states+1; i--; )
-	  s2r[i] = -1;
-	for (int g = n_groups; g--; )
-	  s2r[g2s[g].fst->state] = g;
-	// Clean transitions
-	int j = 0;
-	for (int i = 0; i<n_trans; i++)
-	  if (s2r[trans[i].i_state] != -1) {
-	    trans[j].i_state = s2g[trans[i].i_state];
-	    trans[j].symbol  = trans[i].symbol;
-	    trans[j].o_state = s2g[trans[i].o_state];
-	    j++;
-	  }
-	n_trans  = j;
-	n_states = n_groups;
+        int m_groups;
+        do {
+          m_groups = n_groups;
+          // Iterate over symbols
+          for (int sidx = n_symbols; sidx--; ) {
+            // Iterate over groups
+            for (int g = n_groups; g--; ) {
+              // Ignore singleton groups
+              if (g2s[g].lst-g2s[g].fst > 1) {
+                // Apply transitions to group states
+                // This exploits that both transitions as well as
+                // stategroups are sorted by (input) state
+                Transition* t     = idx[sidx];
+                Transition* t_lst = idx[sidx+1];
+                for (StateGroup* sg = g2s[g].fst; sg<g2s[g].lst; sg++) {
+                  while ((t < t_lst) && (t->i_state < sg->state))
+                    t++;
+                  // Compute group resulting from transition
+                  if ((t < t_lst) && (t->i_state == sg->state))
+                    sg->group = s2g[t->o_state];
+                  else
+                    sg->group = s2g[n_states]; // Go to dead state
+                }
+                // Sort group by groups from transitions
+                StateGroupByGroup::sort(g2s[g].fst,
+                                        static_cast<int>(g2s[g].lst-g2s[g].fst));
+                // Group must be split?
+                if (g2s[g].fst->group != (g2s[g].lst-1)->group) {
+                  // Skip first group
+                  StateGroup* sg = g2s[g].fst+1;
+                  while ((sg-1)->group == sg->group)
+                    sg++;
+                  // Start splitting
+                  StateGroup* lst = g2s[g].lst;
+                  g2s[g].lst = sg;
+                  while (sg < lst) {
+                    s2g[sg->state] = n_groups;
+                    g2s[n_groups].fst  = sg++;
+                    while ((sg < lst) && ((sg-1)->group == sg->group)) {
+                      s2g[sg->state] = n_groups; sg++;
+                    }
+                    g2s[n_groups++].lst = sg;
+                  }
+                }
+              }
+            }
+          }
+        } while (n_groups != m_groups);
+        // New start state
+        start = s2g[start];
+        // Compute new final states
+        n_finals = 0;
+        for (int g = n_groups; g--; )
+          for (StateGroup* sg = g2s[g].fst; sg < g2s[g].lst; sg++)
+            if (is_final[sg->state]) {
+              final[n_finals++] = g;
+              break;
+            }
+        // Compute representatives
+        GECODE_AUTOARRAY(int, s2r, n_states+1);
+        for (int i = n_states+1; i--; )
+          s2r[i] = -1;
+        for (int g = n_groups; g--; )
+          s2r[g2s[g].fst->state] = g;
+        // Clean transitions
+        int j = 0;
+        for (int i = 0; i<n_trans; i++)
+          if (s2r[trans[i].i_state] != -1) {
+            trans[j].i_state = s2g[trans[i].i_state];
+            trans[j].symbol  = trans[i].symbol;
+            trans[j].o_state = s2g[trans[i].o_state];
+            j++;
+          }
+        n_trans  = j;
+        n_states = n_groups;
       }
     }
 
@@ -309,25 +310,25 @@ namespace Gecode {
       TransByI_State::sort(trans, n_trans);
       GECODE_AUTOARRAY(Transition*, idx, n_states+1);
       {
-	int j = 0;
-	for (int i=0; i<n_states; i++) {
-	  idx[i] = &trans[j];
-	  while ((j < n_trans) && (i == trans[j].i_state))
-	    j++;
-	}
-	idx[n_states] = &trans[j];
-	assert(j == n_trans);
+        int j = 0;
+        for (int i=0; i<n_states; i++) {
+          idx[i] = &trans[j];
+          while ((j < n_trans) && (i == trans[j].i_state))
+            j++;
+        }
+        idx[n_states] = &trans[j];
+        assert(j == n_trans);
       }
 
       state[start] = SI_FROM_START;
       visit.push(start);
       while (!visit.empty()) {
-	int s = visit.pop();
-	for (Transition* t = idx[s]; t < idx[s+1]; t++)
-	  if (!(state[t->o_state] & SI_FROM_START)) {
-	    state[t->o_state] |= SI_FROM_START;
-	    visit.push(t->o_state);
-	  }
+        int s = visit.pop();
+        for (Transition* t = idx[s]; t < idx[s+1]; t++)
+          if (!(state[t->o_state] & SI_FROM_START)) {
+            state[t->o_state] |= SI_FROM_START;
+            visit.push(t->o_state);
+          }
       }
     }
 
@@ -338,27 +339,27 @@ namespace Gecode {
       TransByO_State::sort(trans, n_trans);
       GECODE_AUTOARRAY(Transition*, idx, n_states+1);
       {
-	int j = 0;
-	for (int i=0; i<n_states; i++) {
-	  idx[i] = &trans[j];
-	  while ((j < n_trans) && (i == trans[j].o_state))
-	    j++;
-	}
-	idx[n_states] = &trans[j];
-	assert(j == n_trans);
+        int j = 0;
+        for (int i=0; i<n_states; i++) {
+          idx[i] = &trans[j];
+          while ((j < n_trans) && (i == trans[j].o_state))
+            j++;
+        }
+        idx[n_states] = &trans[j];
+        assert(j == n_trans);
       }
 
       for (int i = n_finals; i--; ) {
-	state[final[i]] |= (SI_TO_FINAL | SI_FINAL);
-	visit.push(final[i]);
+        state[final[i]] |= (SI_TO_FINAL | SI_FINAL);
+        visit.push(final[i]);
       }
       while (!visit.empty()) {
-	int s = visit.pop();
-	for (Transition* t = idx[s]; t < idx[s+1]; t++)
-	  if (!(state[t->i_state] & SI_TO_FINAL)) {
-	    state[t->i_state] |= SI_TO_FINAL;
-	    visit.push(t->i_state);
-	  }
+        int s = visit.pop();
+        for (Transition* t = idx[s]; t < idx[s+1]; t++)
+          if (!(state[t->i_state] & SI_TO_FINAL)) {
+            state[t->i_state] |= SI_TO_FINAL;
+            visit.push(t->i_state);
+          }
       }
     }
 
@@ -375,7 +376,7 @@ namespace Gecode {
     // Renumber final states
     for (int i = n_states; i--; )
       if ((state[i] == (SI_FINAL | SI_FROM_START | SI_TO_FINAL)) && (re[i] < 0))
-	re[i] = m_states++;
+        re[i] = m_states++;
     // If start state is final, final states start from zero, otherwise from one
     int final_fst = (state[start] & SI_FINAL) ? 0 : 1;
     int final_lst = m_states;
@@ -384,13 +385,13 @@ namespace Gecode {
     // Renumber remaining states
     for (int i = n_states; i--; )
       if ((state[i] == (SI_FROM_START | SI_TO_FINAL)) && (re[i] < 0))
-	re[i] = m_states++;
+        re[i] = m_states++;
 
     // Count number of remaining transitions
     int m_trans = 0;
     for (int i = n_trans; i--; )
       if ((re[trans[i].i_state] >= 0) && (re[trans[i].o_state] >= 0))
-	m_trans++;
+        m_trans++;
 
     // All done... Construct the automaton
     DFAI* d = reinterpret_cast<DFAI*>
@@ -404,12 +405,12 @@ namespace Gecode {
       int j = 0;
       Transition* r = &d->trans[0];
       for (int i = 0; i<n_trans; i++)
-	if ((re[trans[i].i_state] >= 0) && (re[trans[i].o_state] >= 0)) {
-	  r[j].symbol  = trans[i].symbol;
-	  r[j].i_state = re[trans[i].i_state];
-	  r[j].o_state = re[trans[i].o_state];
-	  j++;
-	}
+        if ((re[trans[i].i_state] >= 0) && (re[trans[i].o_state] >= 0)) {
+          r[j].symbol  = trans[i].symbol;
+          r[j].i_state = re[trans[i].i_state];
+          r[j].o_state = re[trans[i].o_state];
+          j++;
+        }
       TransBySymbol::sort(r,m_trans);
     }
     dfai = d;
@@ -427,12 +428,12 @@ operator<<(std::ostream& os, const Gecode::DFA& dfa) {
     int n = 0;
     while (t()) {
       if (t.transition()->i_state == s) {
-	if ((n % 4) == 0)
-	  os << std::endl << "\t";
-	os << "[" << t.transition()->i_state << "]"
-	   << "- " << t.transition()->symbol << " >"
-	   << "[" << t.transition()->o_state << "]  ";
-	++n;
+        if ((n % 4) == 0)
+          os << std::endl << "\t";
+        os << "[" << t.transition()->i_state << "]"
+           << "- " << t.transition()->symbol << " >"
+           << "[" << t.transition()->o_state << "]  ";
+        ++n;
       }
       ++t;
     }

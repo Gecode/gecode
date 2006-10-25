@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -332,7 +333,7 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   weights(Space* home, const IntArgs& elements, const IntArgs& weights,
-	  SetVar x, IntVar y);
+          SetVar x, IntVar y);
 
   //@}
 
@@ -373,7 +374,7 @@ namespace Gecode {
    */
   GECODE_SET_EXPORT void
   selectInterIn(Space* home, const SetVarArgs& x, SetVar y, SetVar z,
-		const IntSet& u);
+                const IntSet& u);
 
   /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
   GECODE_SET_EXPORT void

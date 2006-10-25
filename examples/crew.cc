@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -191,7 +192,7 @@ public:
 
       std::cout << "\tFlight " << i+1 << ":" << std::endl;
       std::cout << "\t\tCrew\tStew.\tHost.\tFrench\tSpanish\tGerman"
-		<< std::endl << "\t";
+                << std::endl << "\t";
       for (int j=1; j<7; j++)
         std::cout << "\t" << flights[i][j];
       std::cout << std::endl;

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -16,7 +17,7 @@
  *  redistribution of this file, and for a
  *     DISCLAIMER OF ALL WARRANTIES.
  *
- */	
+ */        
 
 #include "gecode/int/gcc.hh"
 
@@ -44,32 +45,32 @@ namespace Gecode { namespace Int { namespace GCC {
     }
     if (n == k.size()) {
       while (left < right) {
-	alldiff &= (k[left].max()  == 1 &&
-		    k[left].min()  == 1 &&
-		    k[right].max() == 1 &&
-		    k[left].max()  == 1);
-	if (!alldiff) {
-	  break;
-	}
+        alldiff &= (k[left].max()  == 1 &&
+                    k[left].min()  == 1 &&
+                    k[right].max() == 1 &&
+                    k[left].max()  == 1);
+        if (!alldiff) {
+          break;
+        }
 
-	left++;
-	right--;
+        left++;
+        right--;
       }
     } else {
       if (n < k.size()) {
-	while (left < right) {
-	  alldiff &= (k[left].max()  == 1 &&
-		      k[left].min()  == 0 &&
-		      k[right].max() == 1 &&
-		      k[left].max()  == 0);
-	  if (!alldiff) {
-	    break;
-	  }
-	  left++;
-	  right--;
-	}
+        while (left < right) {
+          alldiff &= (k[left].max()  == 1 &&
+                      k[left].min()  == 0 &&
+                      k[right].max() == 1 &&
+                      k[left].max()  == 0);
+          if (!alldiff) {
+            break;
+          }
+          left++;
+          right--;
+        }
       } else {
-	return false;
+        return false;
       }
     }
     return alldiff;
@@ -97,16 +98,16 @@ namespace Gecode { namespace Int { namespace GCC {
       int fstv = drl.min();
       int lstv = 0;
       for ( ; drl(); ++drl){
-	lstv = drl.max();
+        lstv = drl.max();
       }
       r = lstv - fstv + 1;
 
     } else {
 
       for ( ; drl(); ++drl){
-	for (int v = drl.min(); v <=drl.max(); v++) {
-	  r ++;
-	}
+        for (int v = drl.min(); v <=drl.max(); v++) {
+          r ++;
+        }
       }
     }
     return r;
@@ -120,8 +121,8 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class Card, class View>
   forceinline void
   initcard(Space* home, ViewArray<View>& x, ViewArray<Card>& k,
-	   int lb, int ub,
-	   IntConLevel icl) {
+           int lb, int ub,
+           IntConLevel icl) {
     GECODE_AUTOARRAY(ViewRanges<View>, xrange, x.size());
     for (int i = x.size(); i--; ){
       ViewRanges<View> iter(x[i]);
@@ -133,18 +134,18 @@ namespace Gecode { namespace Int { namespace GCC {
       int fstv = drl.min();
       int lstv = 0;
       for ( ; drl(); ++drl){
-	lstv = drl.max();
+        lstv = drl.max();
       }
       for (int i = fstv; i <= lstv; i++) {
-	k[i - fstv].init(home, lb, ub, i);
+        k[i - fstv].init(home, lb, ub, i);
       }
     } else {
       int idx = 0;
       for ( ; drl(); ++drl){
-	for (int v = drl.min(); v <= drl.max(); v++){
-	  k[idx].init(home, lb, ub, v);
-	  idx++;
-	}
+        for (int v = drl.min(); v <= drl.max(); v++){
+          k[idx].init(home, lb, ub, v);
+          idx++;
+        }
       }
     }
   }
@@ -158,7 +159,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class Card, class View, bool isView>
   forceinline void
   setcard(Space* home, ViewArray<View>& x, ViewArray<Card>& k,
-	  int xmin, int xmax) {
+          int xmin, int xmax) {
 
     int idx = 0;
     for (int v = xmin; v <= xmax; v++) {
@@ -177,15 +178,15 @@ namespace Gecode { namespace Int { namespace GCC {
       int size = xmax - (xmin - 1);
       GECODE_AUTOARRAY(int, count, size);
       for (int i = size; i--; ) {
-	count[i] = 0;
+        count[i] = 0;
       }
       for (int i = x.size(); i--; ) {
-	count[x[i].val() - xmin]++;
+        count[x[i].val() - xmin]++;
       }
       for (int i = k.size(); i--; ) {
-	if (k[i].min() > count[i]) {
-	  home->fail();
-	}
+        if (k[i].min() > count[i]) {
+          home->fail();
+        }
       }
     }
   }
@@ -208,25 +209,25 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = m; i--; ) {
       int ci = k[i].counter();
       if (ci > k[i].max() ) {
-// 	std::cout << "more occurrences of "<<k[i].card()
-// 		  << " than allowed\n";
-	return ES_FAILED;
+//         std::cout << "more occurrences of "<<k[i].card()
+//                   << " than allowed\n";
+        return ES_FAILED;
       } else {
-	smax += (k[i].max() - ci);
-	if (ci < k[i].min()) {
-	  smin += (k[i].min() - ci);
-	}
+        smax += (k[i].max() - ci);
+        if (ci < k[i].min()) {
+          smin += (k[i].min() - ci);
+        }
       }
       if (k[i].min() > n) {
-// 	std::cout << "cannot satisfy requiremnts for " << k[i].card() << "!\n";
-	return ES_FAILED;
+//         std::cout << "cannot satisfy requiremnts for " << k[i].card() << "!\n";
+        return ES_FAILED;
       }
       if (!k[i].assigned()) {
-	ModEvent me = k[i].lq(home, n);
-	if (me_failed(me)) {
-// 	  std::cout << "invalid\n";
-	  return ES_FAILED;
-	}
+        ModEvent me = k[i].lq(home, n);
+        if (me_failed(me)) {
+//           std::cout << "invalid\n";
+          return ES_FAILED;
+        }
       }
     }
 
@@ -258,7 +259,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template<class View, class Card, bool isView>
   forceinline void
   post_template(Space* home, ViewArray<View>& x, ViewArray<Card>& k,
-		IntConLevel& icl, bool& all){
+                IntConLevel& icl, bool& all){
 
     int  n        = x_card(x, icl);
     bool rewrite  = false;
@@ -270,8 +271,8 @@ namespace Gecode { namespace Int { namespace GCC {
     if (!isView && rewrite) {
       IntVarArgs xv(x.size());
       for (int i = 0; i < x.size(); i++) {
-	IntVar iv(x[i]);
-	xv[i] = iv;
+        IntVar iv(x[i]);
+        xv[i] = iv;
       }
       distinct(home, xv, icl);
     } else {
@@ -280,10 +281,10 @@ namespace Gecode { namespace Int { namespace GCC {
       GECODE_ES_FAIL(home, (GCC::Bnd<View, Card, isView>::post(home, x, k, all)));
       break;
       case ICL_DOM:
-	GECODE_ES_FAIL(home, (GCC::Dom<View, Card, isView>::post(home, x, k, all)));
-	break;
+        GECODE_ES_FAIL(home, (GCC::Dom<View, Card, isView>::post(home, x, k, all)));
+        break;
       default:
-	GECODE_ES_FAIL(home, (GCC::Val<View, Card, isView>::post(home, x, k, all)));
+        GECODE_ES_FAIL(home, (GCC::Val<View, Card, isView>::post(home, x, k, all)));
       }
     }
   }
@@ -296,11 +297,11 @@ namespace Gecode { namespace Int { namespace GCC {
 
   template <class View>
   void initCV(Space* home,
-	      const IntArgs& ia, const ViewArray<View>& x,
-	      int l, ViewArray<OccurBndsView>& a,
-	      int iasize, int val, int nov,
-	      int min, int max,
-	      int unspec_low, int unspec_up) {
+              const IntArgs& ia, const ViewArray<View>& x,
+              int l, ViewArray<OccurBndsView>& a,
+              int iasize, int val, int nov,
+              int min, int max,
+              int unspec_low, int unspec_up) {
 
     int n = x.size();
 
@@ -325,7 +326,7 @@ namespace Gecode { namespace Int { namespace GCC {
     }
     for ( ; crl(); ++crl) {
       for (int v = crl.min(); v <= crl.max(); v++) {
-	indom[v - min] = true;
+        indom[v - min] = true;
       }
     }
 
@@ -337,95 +338,95 @@ namespace Gecode { namespace Int { namespace GCC {
 
     for (int v = min; v <= max; v++) {
       if (c > l - 1) {
-	break;
+        break;
       }
       // value is in a variable domain
       if (v >= xmin && indom[v - xmin]) {
-	if (r < iasize) {
-	  if (v == ia[r]) {
-	    // value is specified with cardinalities
-	    // checking should be outsourced to gcc.cc
-	    if (ia[r + 1] > ia[r + 2]) {
-	      throw ArgumentSizeMismatch("Int::gcc");
-	    }
-	
-	    a[c].card(v);
-	    a[c].counter(0);
-	    a[c].min(ia[r + 1]);
-	    a[c].max(ia[r + 2]);
-	    c++;
-	    r += 3;
-	  } else {
-	    // value is not specified with cardinalities
-	    // the value is unspecified
-	    a[c].card(v);
-	    a[c].counter(0);
-	    a[c].min(unspec_low);
-	    a[c].max(unspec_up);
-	    c++;
-	  }
-	} else {
-	  // there are more values in the variable domains
-	  // than specified
-	    a[c].card(v);
-	    a[c].counter(0);
-	    a[c].min(unspec_low);
-	    a[c].max(unspec_up);
-	    c++;
-	}
+        if (r < iasize) {
+          if (v == ia[r]) {
+            // value is specified with cardinalities
+            // checking should be outsourced to gcc.cc
+            if (ia[r + 1] > ia[r + 2]) {
+              throw ArgumentSizeMismatch("Int::gcc");
+            }
+        
+            a[c].card(v);
+            a[c].counter(0);
+            a[c].min(ia[r + 1]);
+            a[c].max(ia[r + 2]);
+            c++;
+            r += 3;
+          } else {
+            // value is not specified with cardinalities
+            // the value is unspecified
+            a[c].card(v);
+            a[c].counter(0);
+            a[c].min(unspec_low);
+            a[c].max(unspec_up);
+            c++;
+          }
+        } else {
+          // there are more values in the variable domains
+          // than specified
+            a[c].card(v);
+            a[c].counter(0);
+            a[c].min(unspec_low);
+            a[c].max(unspec_up);
+            c++;
+        }
       } else {
-	// the value is not in a variable domain of the current assignment
-	if (r < iasize) {
-	  // but it is specified
-	  if (v == ia[r]) {
-	    // checking should be outsourced to gcc.cc
-	    if (ia[r + 1] > ia[r + 2]) {
-	      throw ArgumentSizeMismatch("Int::gcc");
-	    }
-	
-	    a[c].card(v);
-	    a[c].counter(0);
-	    a[c].min(ia[r + 1]);
-	    a[c].max(ia[r + 2]);
-	    c++;
-	    r += 3;
-	  } else {
-	    // the value is unspecified
-	    a[c].card(v);
-	    a[c].counter(0);
-	    a[c].min(unspec_low);
-	    a[c].max(unspec_up);
-	    c++;
-	  }
-	} else {
-	  // there are more values in the variable domains
-	  // than specified
-	    a[c].card(v);
-	    a[c].counter(0);
-	    a[c].min(unspec_low);
-	    a[c].max(unspec_up);
-	    c++;
-	}
+        // the value is not in a variable domain of the current assignment
+        if (r < iasize) {
+          // but it is specified
+          if (v == ia[r]) {
+            // checking should be outsourced to gcc.cc
+            if (ia[r + 1] > ia[r + 2]) {
+              throw ArgumentSizeMismatch("Int::gcc");
+            }
+        
+            a[c].card(v);
+            a[c].counter(0);
+            a[c].min(ia[r + 1]);
+            a[c].max(ia[r + 2]);
+            c++;
+            r += 3;
+          } else {
+            // the value is unspecified
+            a[c].card(v);
+            a[c].counter(0);
+            a[c].min(unspec_low);
+            a[c].max(unspec_up);
+            c++;
+          }
+        } else {
+          // there are more values in the variable domains
+          // than specified
+            a[c].card(v);
+            a[c].counter(0);
+            a[c].min(unspec_low);
+            a[c].max(unspec_up);
+            c++;
+        }
       }
     }
 
     if (c < l) {
       for ( ; r < iasize; r+=3) {
-	assert(0 <= c && c < l);
-	a[c].card(ia[r]);
-	a[c].counter(0);
-	a[c].min(unspec_low);
-	a[c].max(unspec_up);
-	c++;
-	r+=3;
+        assert(0 <= c && c < l);
+        a[c].card(ia[r]);
+        a[c].counter(0);
+        a[c].min(unspec_low);
+        a[c].max(unspec_up);
+        c++;
+        r+=3;
       }
     }
   }
 
   // Interfacing gcc with fixed cardinalities
   void gcc(Space* home, const IntVarArgs& x, const IntArgs& c,
-	   int m, int unspec_low, int unspec_up, int min, int max,
-	   IntConLevel icl) {
+           int m, int unspec_low, int unspec_up, int min, int max,
+           IntConLevel icl) {
     if (home->failed()) {
       return;
     }
@@ -445,16 +446,16 @@ namespace Gecode { namespace Int { namespace GCC {
     ViewArray<OccurBndsView> cv(home, std::max(nov, val));
 
     initCV(home, c, xv,
-	   std::max(nov, val), cv,
-	   iasize, val, nov,
-	   min, max,
-	   unspec_low, unspec_up);
+           std::max(nov, val), cv,
+           iasize, val, nov,
+           min, max,
+           unspec_low, unspec_up);
 
     // compute number of zero entries
     int z = 0;
     for (int j = cv.size(); j--; ){
       if (cv[j].max() == 0){
-	z++;
+        z++;
       }
     }
 
@@ -469,21 +470,21 @@ namespace Gecode { namespace Int { namespace GCC {
       int c = 0;
       int r = red.size() - 1;
       for (int j = cv.size(); j--;) {
-	if (cv[j].max() == 0){
-	  rem[z] = cv[j].card();
-	  z++;
-	} else {
-	  red[r]= cv[j];
-	  r--;
-	}
-	c++;
+        if (cv[j].max() == 0){
+          rem[z] = cv[j].card();
+          z++;
+        } else {
+          red[r]= cv[j];
+          r--;
+        }
+        c++;
       }
 
       IntSet zero(&rem[0], z);
       int n = xv.size();
       for (int i = n; i--; ) {
-	IntSetRanges remzero(zero);
-	GECODE_ME_FAIL(home, xv[i].minus(home, remzero));
+        IntSetRanges remzero(zero);
+        GECODE_ME_FAIL(home, xv[i].minus(home, remzero));
       }
       GCC::post_template<IntView,OccurBndsView,false>(home, xv, red, icl, all);
     } else {
@@ -492,13 +493,13 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   void gcc(Space* home, const IntVarArgs& x, const IntArgs& c,
-	   int m, int unspec, int min, int max,
-	   IntConLevel icl) {
+           int m, int unspec, int min, int max,
+           IntConLevel icl) {
     gcc(home, x, c, m, 0, unspec, min, max, icl);
   }
 
   void gcc(Space* home, const IntVarArgs& x, int lb, int ub,
-	   IntConLevel icl) {
+           IntConLevel icl) {
     if (home->failed()) {
       return;
     }
@@ -526,7 +527,7 @@ namespace Gecode { namespace Int { namespace GCC {
   // Interfacing gcc with cardinality variables
 
   void gcc(Space* home, const IntVarArgs& x, const IntVarArgs& c,
-	   int min, int max, IntConLevel icl) {
+           int min, int max, IntConLevel icl) {
 
     if (home->failed()) {
       return;
@@ -558,15 +559,15 @@ namespace Gecode { namespace Int { namespace GCC {
       NaryUnion<ViewRanges<IntView> > > crl(drl);
     for ( ; crl(); ++crl) {
       for (int v = crl.min(); v <= crl.max(); v++) {
-	done[v - min] = true;
+        done[v - min] = true;
       }
     }
 
     for (int i = 0; i < interval; i++) {
       if (!done[i]) {
-	if (icl == ICL_DOM) {
-	  GECODE_ME_FAIL(home, cv[i].eq(home, 0));
-	}
+        if (icl == ICL_DOM) {
+          GECODE_ME_FAIL(home, cv[i].eq(home, 0));
+        }
       }
     }
 
@@ -585,16 +586,16 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   void gcc(Space* home,
-	   const IntVarArgs& x, const IntArgs& v, const IntVarArgs& c,
-	   int m, int unspec, bool all, int min, int max,
-	   IntConLevel icl) {
+           const IntVarArgs& x, const IntArgs& v, const IntVarArgs& c,
+           int m, int unspec, bool all, int min, int max,
+           IntConLevel icl) {
     gcc(home, x, v, c, m, 0, unspec, all, min, max, icl);
   }
 
   void gcc(Space* home,
-	   const IntVarArgs& x, const IntArgs& v, const IntVarArgs& c,
-	   int m, int unspec_low, int unspec_up, bool all, int min, int max,
-	   IntConLevel icl) {
+           const IntVarArgs& x, const IntArgs& v, const IntVarArgs& c,
+           int m, int unspec_low, int unspec_up, bool all, int min, int max,
+           IntConLevel icl) {
 
     if (m != c.size()) {
       throw ArgumentSizeMismatch("Int::gcc");
@@ -625,14 +626,14 @@ namespace Gecode { namespace Int { namespace GCC {
       NaryUnion<ViewRanges<IntView> > > crl(drl);
     for ( ; crl(); ++crl) {
       for (int v = crl.min(); v <= crl.max(); v++) {
-	done[v - min] = true;
+        done[v - min] = true;
       }
     }
 
     if (all) {
       linear(home, c, IRT_EQ, xv.size());
       for (int i = 0; i < interval; i++) {
-	done[i] = true;
+        done[i] = true;
       }
     } else {
       linear(home, c, IRT_LQ, xv.size());
@@ -646,53 +647,53 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = min; i <= max; i++) {
       // value in var domain
       if (done[i - min]) {
-	if (ci < m) {
-	  // specified wih cardinalities
-	  if (i == v[ci]) {
-	    cv[cvi] = c[ci];
-	    ci++;
-	    cvi++;
-	  } else {
-	    // value in domain but unspecified
-	    IntVar iv(home, unspec_low, unspec_up);
-	    cv[cvi] = iv;
-	    cvi++;
-	  }
-	} else {
-	  // in domain but after the specification
-	  IntVar iv(home, unspec_low, unspec_up);
-	  cv[cvi] = iv;
-	  cvi++;
-	}
+        if (ci < m) {
+          // specified wih cardinalities
+          if (i == v[ci]) {
+            cv[cvi] = c[ci];
+            ci++;
+            cvi++;
+          } else {
+            // value in domain but unspecified
+            IntVar iv(home, unspec_low, unspec_up);
+            cv[cvi] = iv;
+            cvi++;
+          }
+        } else {
+          // in domain but after the specification
+          IntVar iv(home, unspec_low, unspec_up);
+          cv[cvi] = iv;
+          cvi++;
+        }
       } else {
-	// not in the variable domain of the current assignment
-	if (ci < m) {
-	  // but is specified
-	  if (i == v[ci]) {
-	    cv[cvi] = c[ci];
-	    ci++;
-	    cvi++;
-	  } else {
-	    // unspecified and not in x
-	    IntVar iv(home, unspec_low, unspec_up);
-	    cv[cvi] = iv;
-	    cvi++;
-	  }
-	} else {
-	  // more values than specified
-	  IntVar iv(home, unspec_low, unspec_up);
-	  cv[cvi] = iv;
-	  cvi++;
-	}
+        // not in the variable domain of the current assignment
+        if (ci < m) {
+          // but is specified
+          if (i == v[ci]) {
+            cv[cvi] = c[ci];
+            ci++;
+            cvi++;
+          } else {
+            // unspecified and not in x
+            IntVar iv(home, unspec_low, unspec_up);
+            cv[cvi] = iv;
+            cvi++;
+          }
+        } else {
+          // more values than specified
+          IntVar iv(home, unspec_low, unspec_up);
+          cv[cvi] = iv;
+          cvi++;
+        }
       }
     }
 
     if (ci < m) {
       // still values left
       for (; ci < m; ci++) {
-	cv[cvi] = c[ci];
-	ci++;
-	cvi++;
+        cv[cvi] = c[ci];
+        ci++;
+        cvi++;
       }
     }
 

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -23,7 +24,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   inline ExecStatus
   prop_val(Space* home, ViewArray<View>& x, ViewArray<Card>& k,
-	   bool& _cardall){
+           bool& _cardall){
 
     bool mod = false;
     int  n   = x.size();
@@ -54,10 +55,10 @@ namespace Gecode { namespace Int { namespace GCC {
       // less than or equal than the total number of free variables
       // to satisfy the required occurences
       if (!k[i].assigned()) {
-	int mub     = n + removed - (sum_min - k[i].min());
-	ModEvent me = k[i].lq(home, mub);
-	GECODE_ME_CHECK(me);
-	mod |= (me_modified(me) && k[i].max() != mub);
+        int mub     = n + removed - (sum_min - k[i].min());
+        ModEvent me = k[i].lq(home, mub);
+        GECODE_ME_CHECK(me);
+        mod |= (me_modified(me) && k[i].max() != mub);
       }
     }
 
@@ -71,12 +72,12 @@ namespace Gecode { namespace Int { namespace GCC {
       bool b = x[i].assigned();
       all_assigned &= b;
       if (b) {
-	int idx = lookupValue(k,x[i].val());
-	if (idx == -1) {
-	  return ES_FAILED;
-	}
-	count[idx]++;
-	noa++;
+        int idx = lookupValue(k,x[i].val());
+        if (idx == -1) {
+          return ES_FAILED;
+        }
+        count[idx]++;
+        noa++;
       }
     }
 
@@ -87,18 +88,18 @@ namespace Gecode { namespace Int { namespace GCC {
     if (all_assigned) {
 
       for (int i = m; i--; ) {
-	int ci = count[i] + k[i].counter();
-	if (!(k[i].min() <= ci && ci <= k[i].max())) {
-	  return ES_FAILED;
-	}
-	// the solution contains ci occurences of value k[i].card();
-	if (isView) {
-	  if (!k[i].assigned()) {
-	    ModEvent me = k[i].eq(home, ci);
-	    GECODE_ME_CHECK(me);
-	    mod |= k[i].assigned();
-	  }
-	}
+        int ci = count[i] + k[i].counter();
+        if (!(k[i].min() <= ci && ci <= k[i].max())) {
+          return ES_FAILED;
+        }
+        // the solution contains ci occurences of value k[i].card();
+        if (isView) {
+          if (!k[i].assigned()) {
+            ModEvent me = k[i].eq(home, ci);
+            GECODE_ME_CHECK(me);
+            mod |= k[i].assigned();
+          }
+        }
       }
       return ES_SUBSUMED;
     }
@@ -116,42 +117,42 @@ namespace Gecode { namespace Int { namespace GCC {
       int ci = count[i] + k[i].counter();
       t_noa += ci;
       if (ci == 0) { // this works
-	req += k[i].min();
-	n_r++;
-	single = i;
+        req += k[i].min();
+        n_r++;
+        single = i;
       }
 
       // number of unassigned views cannot satisfy
       // the required minimum occurence
       if (req > non) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
     }
 
     // if only one unsatisfied occurences is left
     if (req == non && n_r == 1) {
       for (int i = n; i--; ) {
-	// try to assign it
-	if (!x[i].assigned()) {
-	  ModEvent me = x[i].eq(home, k[single].card());
-	  count[single]++;
-	  GECODE_ME_CHECK(me);
-	}
+        // try to assign it
+        if (!x[i].assigned()) {
+          ModEvent me = x[i].eq(home, k[single].card());
+          count[single]++;
+          GECODE_ME_CHECK(me);
+        }
       }
 
       for (int i = m; i--; ) {
-	int ci = count[i] + k[i].counter();
-	// consistency check
-	if (!(k[i].min() <= ci && ci <= k[i].max())) {
-	  return ES_FAILED;
-	}
-	// the solution contains ci occurences of value k[i].card();
-	if (isView) {
-	  if (!k[i].assigned()) {
-	    ModEvent me = k[i].eq(home, ci);
-	    GECODE_ME_CHECK(me);
-	  }
-	}
+        int ci = count[i] + k[i].counter();
+        // consistency check
+        if (!(k[i].min() <= ci && ci <= k[i].max())) {
+          return ES_FAILED;
+        }
+        // the solution contains ci occurences of value k[i].card();
+        if (isView) {
+          if (!k[i].assigned()) {
+            ModEvent me = k[i].eq(home, ci);
+            GECODE_ME_CHECK(me);
+          }
+        }
       }
       return ES_SUBSUMED;
     }
@@ -159,41 +160,41 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = m; i--; ) {
       int ci = count[i] + k[i].counter();
       if (ci == k[i].max() && !onrem[i]) {
-	rem[rs] = k[i].card();
-	k[i].counter(ci);
-	rs++;
-	onrem[i] = true;
-	if (isView) {
-	  // the solution contains ci occurences of value k[i].card();
-	  if (!k[i].assigned()) {
-	    ModEvent me = k[i].eq(home, ci);
-	    GECODE_ME_CHECK(me);
-	    mod |= k[i].assigned();
-	  }
-	}
+        rem[rs] = k[i].card();
+        k[i].counter(ci);
+        rs++;
+        onrem[i] = true;
+        if (isView) {
+          // the solution contains ci occurences of value k[i].card();
+          if (!k[i].assigned()) {
+            ModEvent me = k[i].eq(home, ci);
+            GECODE_ME_CHECK(me);
+            mod |= k[i].assigned();
+          }
+        }
       } else {
-	if (ci > k[i].max()) {
-	  return ES_FAILED;
-	}
+        if (ci > k[i].max()) {
+          return ES_FAILED;
+        }
 
-	// in case of variable cardinalities
-	if (isView) {
-	  if (!k[i].assigned()) {
-	    if (ci > k[i].min()) {
-	      ModEvent me = k[i].gq(home, ci);
-	      GECODE_ME_CHECK(me);
-	      mod |= k[i].assigned();
-	      mod |= (me_modified(me) && k[i].min() != ci);
-	    }
-	    int occupied = t_noa - ci;
-	    int mub = x.size() + removed - occupied;
-	
-	    ModEvent me = k[i].lq(home, mub);
-	    GECODE_ME_CHECK(me);
-	    mod |= k[i].assigned();
-	    mod |= (me_failed(me) && k[i].max() != mub);
-	  }
-	}
+        // in case of variable cardinalities
+        if (isView) {
+          if (!k[i].assigned()) {
+            if (ci > k[i].min()) {
+              ModEvent me = k[i].gq(home, ci);
+              GECODE_ME_CHECK(me);
+              mod |= k[i].assigned();
+              mod |= (me_modified(me) && k[i].min() != ci);
+            }
+            int occupied = t_noa - ci;
+            int mub = x.size() + removed - occupied;
+        
+            ModEvent me = k[i].lq(home, mub);
+            GECODE_ME_CHECK(me);
+            mod |= k[i].assigned();
+            mod |= (me_failed(me) && k[i].max() != mub);
+          }
+        }
       }
       // reset counter
       count[i] = 0;
@@ -203,14 +204,14 @@ namespace Gecode { namespace Int { namespace GCC {
     for (int i = n; i--; ) {
       bool b = x[i].assigned();
       if (b) {
-	int idx = lookupValue(k,x[i].val());
-	if (idx == -1) {
-	  return ES_FAILED;
-	}
-	if (onrem[idx]) {
-	  x[i] = x[--n];
-	  x.size(n);
-	}
+        int idx = lookupValue(k,x[i].val());
+        if (idx == -1) {
+          return ES_FAILED;
+        }
+        if (onrem[idx]) {
+          x[i] = x[--n];
+          x.size(n);
+        }
       }
     }
 
@@ -219,13 +220,13 @@ namespace Gecode { namespace Int { namespace GCC {
       IntSet remset(&rem[0], rs);
       IntSetRanges rr(remset);
       for (int i = x.size(); i--;) {
-	if (!x[i].assigned()) {
-	  ModEvent me = x[i].minus(home, rr);
-	  if (me_failed(me)) {
-	    return ES_FAILED;
-	  }
-	  mod |= x[i].assigned();
-	}
+        if (!x[i].assigned()) {
+          ModEvent me = x[i].minus(home, rr);
+          if (me_failed(me)) {
+            return ES_FAILED;
+          }
+          mod |= x[i].assigned();
+        }
       }
     }
 
@@ -235,28 +236,28 @@ namespace Gecode { namespace Int { namespace GCC {
       bool b = x[i].assigned();
       all_assigned &= b;
       if (b) {
-	int idx = lookupValue(k,x[i].val());
-	if (idx == -1) {
-	  return ES_FAILED;
-	}
-	count[idx]++;
+        int idx = lookupValue(k,x[i].val());
+        if (idx == -1) {
+          return ES_FAILED;
+        }
+        count[idx]++;
       }
     }
 
     if (all_assigned) {
       for (int i = k.size(); i--; ) {
-	int ci = count[i] + k[i].counter();
-	if (!(k[i].min() <= ci && ci <= k[i].max())) {
-	  return ES_FAILED;
-	}
-	// the solution contains ci occurences of value k[i].card();
-	if (isView) {
-	  if (!k[i].assigned()) {
-	    ModEvent me = k[i].eq(home, ci);
-	    GECODE_ME_CHECK(me);
-	    mod |= k[i].assigned();
-	  }
-	}
+        int ci = count[i] + k[i].counter();
+        if (!(k[i].min() <= ci && ci <= k[i].max())) {
+          return ES_FAILED;
+        }
+        // the solution contains ci occurences of value k[i].card();
+        if (isView) {
+          if (!k[i].assigned()) {
+            ModEvent me = k[i].eq(home, ci);
+            GECODE_ME_CHECK(me);
+            mod |= k[i].assigned();
+          }
+        }
       }
       return ES_SUBSUMED;
     }
@@ -268,32 +269,32 @@ namespace Gecode { namespace Int { namespace GCC {
       m    = k.size();
       n    = x.size();
       for (int i = m; i--; ) {
-	int ci = k[i].counter();
-	if (ci > k[i].max() ) {
-	  return ES_FAILED;
-	} else {
-	  allmax += (k[i].max() - ci);
-	  if (ci < k[i].min()) {
-	    reqmin += (k[i].min() - ci);
-	  }
-	}
-	if (k[i].min() > n) {
-	  return ES_FAILED;
-	}
-	if (!k[i].assigned()) {
-	  ModEvent me = k[i].lq(home, n);
-	  if (me_failed(me)) {
-	    return ES_FAILED;
-	  }
-	}
+        int ci = k[i].counter();
+        if (ci > k[i].max() ) {
+          return ES_FAILED;
+        } else {
+          allmax += (k[i].max() - ci);
+          if (ci < k[i].min()) {
+            reqmin += (k[i].min() - ci);
+          }
+        }
+        if (k[i].min() > n) {
+          return ES_FAILED;
+        }
+        if (!k[i].assigned()) {
+          ModEvent me = k[i].lq(home, n);
+          if (me_failed(me)) {
+            return ES_FAILED;
+          }
+        }
       }
 
       if (n < reqmin) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
 
       if (_cardall && allmax < n) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
     }
     return mod ? ES_NOFIX : ES_FIX;
@@ -307,8 +308,8 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   inline
   Val<View, Card, isView>::Val(Space* home, ViewArray<View>& x0,
-			       ViewArray<Card>& k0,
-			       bool all)
+                               ViewArray<Card>& k0,
+                               bool all)
     :Propagator(home,true), x(x0), k(k0), card_all(all){
     x.subscribe(home, this, PC_INT_VAL);
     k.subscribe(home, this, PC_INT_VAL);
@@ -317,7 +318,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   forceinline
   Val<View, Card, isView>::Val(Space* home, bool share,
-			       Val<View, Card, isView>& p)
+                               Val<View, Card, isView>& p)
     : Propagator(home,share,p), card_all(p.card_all){
     x.update(home,share, p.x);
     k.update(home,share, p.k);
@@ -343,8 +344,8 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   ExecStatus
   Val<View, Card, isView>::post(Space* home,
-				ViewArray<View>& x0,
-				ViewArray<Card>& k0, bool all) {
+                                ViewArray<View>& x0,
+                                ViewArray<Card>& k0, bool all) {
     new (home) Val<View, Card, isView>(home, x0, k0, all);
     return ES_OK;
   }

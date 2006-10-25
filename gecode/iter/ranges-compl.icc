@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -105,14 +106,14 @@ namespace Gecode { namespace Iter { namespace Ranges {
     if (i()) {
       assert((i.min() >= UMIN) && (i.max() <= UMAX));
       if (i.min() > UMIN) {
-	mi = UMIN;
-	ma = i.min()-1;
+        mi = UMIN;
+        ma = i.min()-1;
       } else if (i.max() < UMAX) {
-	mi = i.max()+1;
-	++i;
-	ma = i() ? (i.min()-1) : UMAX;
+        mi = i.max()+1;
+        ++i;
+        ma = i() ? (i.min()-1) : UMAX;
       } else {
-	finish();
+        finish();
       }
     } else {
       mi = UMIN;
@@ -155,14 +156,14 @@ namespace Gecode { namespace Iter { namespace Ranges {
     if (i()) {
       assert((i.min() >= UMIN) && (i.max() <= UMAX));
       if (i.min() > UMIN) {
-	mi = UMIN;
-	ma = i.min()-1;
+        mi = UMIN;
+        ma = i.min()-1;
       } else if (i.max() < UMAX) {
-	mi = i.max()+1;
-	++i;
-	ma = i() ? (i.min()-1) : UMAX;
+        mi = i.max()+1;
+        ++i;
+        ma = i() ? (i.min()-1) : UMAX;
       } else {
-	finish();
+        finish();
       }
     } else {
       mi = UMIN;

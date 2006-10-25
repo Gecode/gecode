@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -32,8 +33,8 @@ namespace Gecode { namespace Set { namespace Int {
 
   forceinline
   Channel::Channel(Space* home,
-		   ViewArray< Gecode::Int::IntView >& xs0,
-		   ViewArray< SetView >& ys0)
+                   ViewArray< Gecode::Int::IntView >& xs0,
+                   ViewArray< SetView >& ys0)
     : Propagator(home), xs(xs0), ys(ys0) {
     xs.subscribe(home,this, Gecode::Int::PC_INT_DOM);
     ys.subscribe(home,this, PC_SET_ANY);
@@ -41,7 +42,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   forceinline
   Channel::Channel(Space* home, bool share,
-		   Channel& p)
+                   Channel& p)
     : Propagator(home,share,p) {
     xs.update(home,share,p.xs);
     ys.update(home,share,p.ys);
@@ -49,7 +50,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   forceinline ExecStatus
   Channel::post(Space* home, ViewArray<Gecode::Int::IntView>& xs,
-		ViewArray<SetView>& ys) {
+                ViewArray<SetView>& ys) {
     // Sharing of ys is taken care of in the propagator:
     // The ys are propagated to be disjoint, so shared variables
     // result in failure.

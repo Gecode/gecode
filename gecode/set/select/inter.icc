@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -27,9 +28,9 @@ namespace Gecode { namespace Set { namespace Select {
   forceinline
   SelectIntersection<SView,RView>::
   SelectIntersection(Space* home, SView y0,
-		     IdxViewArray<SView>& iv0,
-		     RView y1,
-		     const IntSet& theUniverse)
+                     IdxViewArray<SView>& iv0,
+                     RView y1,
+                     const IntSet& theUniverse)
     : Propagator(home, true), universe(theUniverse), x0(y0), iv(iv0), x1(y1) {
 
     x0.subscribe(home,this, PC_SET_ANY);
@@ -41,7 +42,7 @@ namespace Gecode { namespace Set { namespace Select {
   forceinline
   SelectIntersection<SView,RView>::
   SelectIntersection(Space* home, bool share,
-		     SelectIntersection<SView,RView>& p)
+                     SelectIntersection<SView,RView>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -108,7 +109,7 @@ namespace Gecode { namespace Set { namespace Select {
       GlbRanges<RView> x1lb(x1);
       Iter::Ranges::Cache<GlbRanges<RView> > x1lbc(x1lb);
       Iter::Ranges::ToValues<Iter::Ranges::Cache<GlbRanges<RView> > >
-	vx1(x1lbc);
+        vx1(x1lbc);
 
       // In the first iteration, compute in before[i] the intersection
       // of all the lower bounds of the x_i. At the same time,
@@ -139,7 +140,7 @@ namespace Gecode { namespace Set { namespace Select {
         LubRanges<SView> candub(candidate);
         RangesCompl<LubRanges<SView> > candubc(candub);
         Iter::Ranges::Inter<GlbRanges<SView>,
-	  RangesCompl<LubRanges<SView> > > inter(x0lb, candubc);
+          RangesCompl<LubRanges<SView> > > inter(x0lb, candubc);
 
         // exclude inconsistent x_i
         // an x_i is inconsistent if
@@ -200,8 +201,8 @@ namespace Gecode { namespace Set { namespace Select {
           IntSetRanges uniI(universe);
           GECODE_ME_CHECK(x0.intersectI(home,uniI));
         }
-	for (int i=n; i--;)
-	  before[i].dispose(home);
+        for (int i=n; i--;)
+          before[i].dispose(home);
         return ES_SUBSUMED;
       }
 
@@ -256,9 +257,9 @@ namespace Gecode { namespace Set { namespace Select {
         ViewArray<SView> is(home,ubsize);
         for (int i=n; i--;) {
           is[i] = iv[i].var;
-	}
+        }
         GECODE_ES_CHECK((RelOp::IntersectionN<SView, SView>
-			 ::post(home,is,x0)));
+                         ::post(home,is,x0)));
         return ES_SUBSUMED;
 
       } else if (ubsize == 2) {
@@ -284,8 +285,8 @@ namespace Gecode { namespace Set { namespace Select {
     bool allAssigned = true;
     for (int i=iv.size(); i--;) {
       if (!iv[i].var.assigned()) {
-	allAssigned = false;
-	break;
+        allAssigned = false;
+        break;
       }
     }
     if (x0.assigned() && x1.assigned() && allAssigned) {

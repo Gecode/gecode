@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -45,8 +46,8 @@ namespace Gecode { namespace Set { namespace Select {
     if (n>0) {
       xs = IdxView<View>::allocate(home, n);
       for (int i = n; i--; ) {
-	SetView xav(xa[i]);
-	View xavv(xav);
+        SetView xav(xa[i]);
+        View xavv(xav);
         xs[i].idx = i; xs[i].var = xavv;
       }
     }
@@ -81,7 +82,7 @@ namespace Gecode { namespace Set { namespace Select {
   template <class View>
   void
   IdxViewArray<View>::subscribe(Space* home, Propagator* p, PropCond pc,
-				bool process) {
+                                bool process) {
     for (int i = n; i--; )
       xs[i].var.subscribe(home,p,pc,process);
   }
@@ -100,8 +101,8 @@ namespace Gecode { namespace Set { namespace Select {
     if (n>0) {
       xs = IdxView<View>::allocate(home,n);
       for (int i=n; i--; ) {
-	xs[i].idx = a[i].idx;
-	xs[i].var.update(home,share,a[i].var);
+        xs[i].idx = a[i].idx;
+        xs[i].var.update(home,share,a[i].var);
       }
     }
   }

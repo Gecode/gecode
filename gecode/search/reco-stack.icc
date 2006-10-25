@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -85,11 +86,11 @@ namespace Gecode { namespace Search {
     // Generate path for next node and return whether node exists.
     while (!ds.empty())
       if (ds.top().rightmost()) {
-	stat.pop(ds.top().space(),ds.top().desc());
-	ds.pop().dispose();
+        stat.pop(ds.top().space(),ds.top().desc());
+        ds.pop().dispose();
       } else {
-	ds.top().next();
-	return true;
+        ds.top().next();
+        return true;
       }
     return false;
   }
@@ -161,10 +162,10 @@ namespace Gecode { namespace Search {
       // The space on the stack could be failed now as an additional
       // constraint might have been added.
       if (s->status(stat.propagate) == SS_FAILED) {
-	// s does not need deletion as it is on the stack (unwind does this)
-	stat.fail++;
-	unwind(l);
-	return NULL;
+        // s does not need deletion as it is on the stack (unwind does this)
+        stat.fail++;
+        unwind(l);
+        return NULL;
       }
       // It is important to replace the space on the stack with the
       // copy: a copy might be much smaller due to flushed caches
@@ -180,35 +181,35 @@ namespace Gecode { namespace Search {
     if (d < a_d) {
       // No adaptive recomputation
       for (int i=l; i<n; i++)
-	commit(s,i);
+        commit(s,i);
     } else {
       int m = l + (d >> 1); // Middle between copy and top
       int i = l;            // To iterate over all entries
       // Recompute up to middle
       for (; i<m; i++ )
-	commit(s,i);
+        commit(s,i);
       // Skip over all rightmost branches
       for (; (i<n) && ds[i].rightmost(); i++)
-	commit(s,i);
+        commit(s,i);
       // Is there any point to make a copy?
       if (i<n-1) {
-	// Again, the space might already propagate to failure
-	if (constrained && s->status(stat.propagate) == SS_FAILED) {
-	  // s must be deleted as it is not on the stack
-	  delete s;
-	  stat.commit += (i-l);
-	  stat.fail++;
-	  unwind(i);
-	  return NULL;
-	}
-	stat.clone++;
-	ds[i].space(s->clone(true,stat.propagate));
-	stat.adapt(ds[i].space());
-	d = n-i;
+        // Again, the space might already propagate to failure
+        if (constrained && s->status(stat.propagate) == SS_FAILED) {
+          // s must be deleted as it is not on the stack
+          delete s;
+          stat.commit += (i-l);
+          stat.fail++;
+          unwind(i);
+          return NULL;
+        }
+        stat.clone++;
+        ds[i].space(s->clone(true,stat.propagate));
+        stat.adapt(ds[i].space());
+        d = n-i;
       }
       // Finally do the remaining commits
       for (; i<n; i++)
-	commit(s,i);
+        commit(s,i);
     }
     stat.commit += d;
     return s;
