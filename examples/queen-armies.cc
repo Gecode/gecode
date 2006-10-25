@@ -92,6 +92,7 @@ public:
       branch(this, b, BVAR_NONE, BVAL_MAX);
     } else {
       QueenBranch::post(this);
+      assign(this, b, AVAL_MAX);
     }
   }
 
