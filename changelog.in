@@ -53,6 +53,17 @@ Date:		Who knows?
 Duh!
 
 [ENTRY]
+Module: kernel
+What:   bug
+Rank:   major
+Thanks: Rafael Meneses
+[DESCRIPTION]
+Branch&Bound search with ViewValBranchings (all standard branchings) together 
+with batch recomputation was severely broken. The problems ranged from wrong 
+search trees (missing solutions) to segmentation faults. The fix changes the 
+way assigned variables are removed from the array in a ViewValBranching.
+
+[ENTRY]
 Module: int
 What:   bug
 Rank:   minor
