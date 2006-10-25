@@ -464,7 +464,7 @@ INTTESTSRC0 = \
 	rel linear scheduling minimodel gcc sortedness
 ifeq "@enable_set_vars@" "yes"
 SETTESTSRC0 = \
-	dom rel rel-op convex sequence int select distinct projection comp-projection
+	dom rel rel-op convex sequence int select distinct projection 
 else
 SETTESTSRC0 =
 endif
