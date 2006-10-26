@@ -806,6 +806,21 @@ doc: $(ALLHDR:%=$(top_srcdir)/%) $(ALLSRC:%=$(top_srcdir)/%) $(DOCSRC)
 endif
 
 
+# Generate an indexed Apple HelpBook
+# The generated book must then be copied to
+# /Library/Documentation/Help
+doc-apple: doc
+	mkdir -p doc/Gecode.help/Contents/Resources
+	rm -rf doc/Gecode.help/Contents/Resources/English.lproj
+	cp -r doc/html doc/Gecode.help/Contents/Resources/English.lproj
+	cp misc/AppleHelpbookInfo.plist \
+	  doc/Gecode.help/Contents/Info.plist
+	sed -i -e \
+	  's|</title>|</title><META NAME="AppleTitle" CONTENT="Gecode Help">|g' \
+	  doc/Gecode.help/Contents/Resources/English.lproj/index.html
+	/Developer/Applications/Utilities/Help\ Indexer.app/Contents/MacOS/Help\ Indexer \
+	  doc/Gecode.help/Contents/Resources/English.lproj
+
 #
 # Installation
 #
