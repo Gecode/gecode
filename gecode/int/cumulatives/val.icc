@@ -63,12 +63,12 @@ namespace Gecode { namespace Int { namespace Cumulatives {
                                    const ViewArray<ViewH>& _height,
                                    const IntArgs& _limit,
                                    bool _at_most) :
-    Propagator(home,true),
+    Propagator(home),
     machine(_machine), start(_start), duration(_duration),
     end(_end), height(_height), limit(_limit.size()), at_most(_at_most) {
-    for(int i = _limit.size(); i--; ) {
+    force(home);    
+    for(int i = _limit.size(); i--; )
       limit[i] = _limit[i];
-    }
 
     machine.subscribe(home,this,PC_INT_DOM);
     start.subscribe(home,this,PC_INT_BND);
@@ -106,6 +106,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   template <class ViewM, class ViewD, class ViewH, class View>
   size_t
   Val<ViewM,ViewD,ViewH,View>::dispose(Space* home) {
+    unforce(home);
     if (!home->failed()) {
       machine.cancel(home,this,PC_INT_DOM);
       start.cancel(home,this,PC_INT_BND);

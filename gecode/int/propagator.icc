@@ -25,8 +25,6 @@ namespace Gecode {
   /**
    * \defgroup TaskPropRePat Reified propagator patterns
    *
-   * The optional last Boolean argument (\a fd) to the constructor for creation
-   * defines whether deletion must be forced.
    * \ingroup TaskActor
    */
 
@@ -50,7 +48,7 @@ namespace Gecode {
     ReUnaryPropagator(Space* home, bool share, Propagator& p,
                       View x0, CtrlView b);
     /// Constructor for creation
-    ReUnaryPropagator(Space* home, View x0, CtrlView b, bool fd=false);
+    ReUnaryPropagator(Space* home, View x0, CtrlView b);
   public:
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(void) const;
@@ -77,8 +75,7 @@ namespace Gecode {
     ReBinaryPropagator(Space* home, bool share, Propagator& p,
                        View x0, View x1, CtrlView b);
     /// Constructor for creation
-    ReBinaryPropagator(Space* home, View x0, View x1,
-                       CtrlView b, bool fd=false);
+    ReBinaryPropagator(Space* home, View x0, View x1, CtrlView b);
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
@@ -95,8 +92,8 @@ namespace Gecode {
    */
   template <class View, PropCond pc, class CtrlView>
   ReUnaryPropagator<View,pc,CtrlView>::ReUnaryPropagator
-  (Space* home, View y0, CtrlView b0, bool fd)
-    : Propagator(home,fd), x0(y0), b(b0) {
+  (Space* home, View y0, CtrlView b0)
+    : Propagator(home), x0(y0), b(b0) {
     x0.subscribe(home,this,pc);
     b.subscribe(home,this,Int::PC_INT_VAL);
   }
@@ -144,8 +141,8 @@ namespace Gecode {
    */
   template <class View, PropCond pc, class CtrlView>
   ReBinaryPropagator<View,pc,CtrlView>::ReBinaryPropagator
-  (Space* home, View y0, View y1, CtrlView b1, bool fd)
-    : Propagator(home,fd), x0(y0), x1(y1), b(b1) {
+  (Space* home, View y0, View y1, CtrlView b1)
+    : Propagator(home), x0(y0), x1(y1), b(b1) {
     x0.subscribe(home,this,pc);
     x1.subscribe(home,this,pc);
     b.subscribe(home,this,Int::PC_INT_VAL);

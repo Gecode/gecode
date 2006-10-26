@@ -162,7 +162,9 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View>
   forceinline
   Dom<View>::Dom(Space* home, int n, DomInfo<View>* xy)
-    : Base<DomInfo<View>,PC_INT_DOM>(home,n,xy,true) {}
+    : Base<DomInfo<View>,PC_INT_DOM>(home,n,xy) {
+    force(home);
+  }
 
   template <class View>
   forceinline
@@ -302,6 +304,7 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View>
   size_t
   Dom<View>::dispose(Space* home) {
+    unforce(home);
     dc.dispose();
     (void) Base<DomInfo<View>,PC_INT_DOM>::dispose(home);
     return sizeof(*this);

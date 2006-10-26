@@ -310,7 +310,8 @@ namespace Gecode { namespace Int { namespace GCC {
   Val<View, Card, isView>::Val(Space* home, ViewArray<View>& x0,
                                ViewArray<Card>& k0,
                                bool all)
-    :Propagator(home,true), x(x0), k(k0), card_all(all){
+    :Propagator(home), x(x0), k(k0), card_all(all){
+    force(home);
     x.subscribe(home, this, PC_INT_VAL);
     k.subscribe(home, this, PC_INT_VAL);
   }
@@ -327,6 +328,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   size_t
   Val<View, Card, isView>::dispose(Space* home) {
+    unforce(home);
     if (!home->failed()) {
       x.cancel(home,this, PC_INT_VAL);
       k.cancel(home,this, PC_INT_VAL);

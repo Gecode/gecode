@@ -49,7 +49,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Constructor for cloning \a p
     Base(Space* home, bool share, Base<Info,pc>& p);
     /// Constructor for posting
-    Base(Space* home, int n, Info* xy, bool fd=false);
+    Base(Space* home, int n, Info* xy);
   public:
     /// Propagation cost
     virtual PropCost cost(void) const;

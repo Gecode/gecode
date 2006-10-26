@@ -487,8 +487,9 @@ namespace Gecode { namespace Int { namespace GCC {
   BndImp<View, Card, isView, shared>::
   BndImp(Space* home, ViewArray<View>& x0, ViewArray<Card>& k0,
          bool cf,  bool all, bool nolbc) :
-    Propagator(home, true), x(x0), k(k0), lps(NULL), ups(NULL),
+    Propagator(home), x(x0), k(k0), lps(NULL), ups(NULL),
     card_fixed(cf), card_all(all), skip_lbc(nolbc) {
+    force(home);
     x.subscribe(home, this, PC_INT_BND);
     k.subscribe(home, this, PC_INT_BND);
   }
@@ -508,6 +509,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView, bool shared>
   size_t
   BndImp<View, Card, isView, shared>::dispose(Space* home){
+    unforce(home);
     if (!home->failed()) {
       x.cancel(home,this, PC_INT_BND);
       k.cancel(home,this, PC_INT_BND);

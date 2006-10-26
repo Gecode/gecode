@@ -643,7 +643,9 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline
   Dom<View>::Dom(Space* home, ViewArray<View>& x)
-    : NaryPropagator<View,PC_INT_DOM>(home,x,true) {}
+    : NaryPropagator<View,PC_INT_DOM>(home,x) {
+    force(home);
+  }
 
   template <class View>
   ExecStatus
@@ -730,6 +732,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   size_t
   Dom<View>::dispose(Space* home) {
+    unforce(home);
     dc.dispose();
     (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
     return sizeof(*this);

@@ -29,7 +29,9 @@ namespace Gecode { namespace Set { namespace Distinct {
 
   forceinline
   Distinct::Distinct(Space* home, ViewArray<SetView>& x, unsigned int _c)
-    : NaryPropagator<SetView, PC_SET_ANY>(home,x,true), bin(10), c(_c) {}
+    : NaryPropagator<SetView, PC_SET_ANY>(home,x), bin(10), c(_c) {
+    force(home);
+  }
 
   forceinline
   Distinct::Distinct(Space* home, bool share, Distinct& p)
@@ -50,7 +52,9 @@ namespace Gecode { namespace Set { namespace Distinct {
 
   forceinline size_t
   Distinct::dispose(Space* home) {
+    unforce(home);
     bin.~Binomial();
+    (void) NaryPropagator<SetView, PC_SET_ANY>::dispose(home);
     return sizeof(*this);
   }
 

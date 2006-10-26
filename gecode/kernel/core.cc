@@ -36,6 +36,10 @@ namespace Gecode {
   VarTypeProcessorBase::~VarTypeProcessorBase(void) {}
 
   Space::Space(void) {
+    // Initialize array for forced deletion to be empty
+    d_fst  = NULL;
+    d_lst  = NULL;
+    d_free = 0;
     // Initialize variable entry points
     for (int i=0; i<VTI_LAST; i++) {
       vars[i]=NULL;
@@ -48,7 +52,6 @@ namespace Gecode {
       pool[i].init();
     // Initialize actor and branching links
     a_actors.init();
-    a_actors.init_delete();
     b_status = static_cast<Branching*>(&a_actors);
     b_commit = static_cast<Branching*>(&a_actors);
     n_sub = 0;
@@ -73,35 +76,57 @@ namespace Gecode {
   void
   Space::flush(void) {
     // Flush actors registered for deletion
-    ActorDeleteLink* e = &a_actors;
-    ActorDeleteLink* a = e->next_delete();
-    while (a != e) {
-      static_cast<Actor*>(a)->flush(); a = a->next_delete();
+    Actor** a = d_fst;
+    Actor** e = d_lst;
+    while (a < e) {
+      (*a)->flush(); a++;
     }
   }
 
   size_t
   Space::cached(void) const {
     size_t s = 0;
-    const ActorDeleteLink* e = &a_actors;
-    const ActorDeleteLink* a = e->next_delete();
-    while (a != e) {
-      s += static_cast<const Actor*>(a)->cached();
-      a = a->next_delete();
+    Actor** a = d_fst;
+    Actor** e = d_lst;
+    while (a < e) {
+      s += (*a)->cached(); a++;
     }
     return s;
   }
 
+  void
+  Space::d_resize(void) {
+    if (d_fst == NULL) {
+      // Create new array
+      d_free = 4;
+      d_fst  = reinterpret_cast<Actor**>(alloc(4*sizeof(Actor*)));
+      d_lst  = d_fst;
+    } else {
+      // Resize existing array
+      unsigned int n = static_cast<unsigned int>(d_lst - d_fst);
+      assert(n != 0);
+      Actor** a = reinterpret_cast<Actor**>(alloc(2*n*sizeof(Actor*)));
+      memcpy(a, d_fst, n*sizeof(Actor*));
+      reuse(d_fst,n*sizeof(Actor*));
+      d_fst  = a;
+      d_lst  = a+n;
+      d_free = n;
+    }
+  }
+  
   Space::~Space(void) {
     // Mark space as failed
     fail();
     // Delete actors that must be deleted
-    ActorDeleteLink* e = &a_actors;
-    ActorDeleteLink* a = e->next_delete();
-    while (a != e) {
-      Actor* d = static_cast<Actor*>(a);
-      a = a->next_delete();
-      d->dispose(this);
+    {
+      Actor** a = d_fst;
+      Actor** e = d_lst;
+      // So that d_unforce knows that deletion is in progress
+      d_fst = NULL;
+      while (a < e) {
+        (void) (*a)->dispose(this);
+        a++;
+      }
     }
     // Delete variables that were registered for deletion
     for (int vti=VTI_LAST; vti--;)
@@ -198,7 +223,7 @@ namespace Gecode {
           // Prevent that propagator gets rescheduled (turn on all events)
           p->pme = PME_ASSIGNED;
           process();
-          p->destruct(this);
+          reuse(p,p->dispose(this));
         }
         break;
       case __ES_FIX_PARTIAL:
@@ -244,7 +269,8 @@ namespace Gecode {
       b_commit = static_cast<Branching*>(b_commit->next());
       if (b == b_status)
         b_status = b_commit;
-      b->unlink(); b->destruct(this);
+      b->unlink(); 
+      reuse(b,b->dispose(this));
     }
     if (b_commit == &a_actors)
       throw SpaceNoBranching();
@@ -287,27 +313,29 @@ namespace Gecode {
         p->next(c); c->prev(p);
         // Forward
         a->prev(c);
-        //
-        static_cast<ActorDeleteLink*>(c)->init_delete();
         p = c;
       }
       // Link last actor
       p->next(&a_actors); a_actors.prev(p);
     }
-    // Setup delete links
+    // Setup array for actor disposal
     {
-      ActorDeleteLink* p  = &a_actors;
-      ActorDeleteLink* e  = &s.a_actors;
-      for (ActorDeleteLink* a = e->next_delete(); a != e;
-           a = a->next_delete()) {
-        ActorDeleteLink* c = static_cast<ActorDeleteLink*>(a->prev());
-        // Link copied actor
-        p->next_delete(c); c->prev_delete(p);
-        // Forward
-        p = c;
+      unsigned int n = static_cast<unsigned int>(s.d_lst - s.d_fst);
+      if (n == 0) {
+        // No actors
+        d_fst  = NULL;
+        d_lst  = NULL;
+        d_free = 0;
+      } else {
+        // Leave one entry free
+        Actor** a = reinterpret_cast<Actor**>(alloc((n+1)*sizeof(Actor*)));
+        d_fst  = a;
+        d_lst  = a+n;
+        d_free = 1;
+        Actor** f = s.d_fst;
+        for (unsigned int i=n; i--; )
+          a[i] = static_cast<Actor*>(f[i]->prev());
       }
-      // Link last actor
-      p->next_delete(&a_actors); a_actors.prev_delete(p);
     }
     // Setup branching pointers
     if (s.b_status == &s.a_actors) {

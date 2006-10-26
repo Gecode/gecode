@@ -24,8 +24,8 @@ namespace Gecode { namespace Int { namespace Channel {
 
   template <class Info, PropCond pc>
   forceinline
-  Base<Info,pc>::Base(Space* home, int n0, Info* xy0, bool fd)
-    : Propagator(home,fd), n(n0), n_na(2*n), xy(xy0) {
+  Base<Info,pc>::Base(Space* home, int n0, Info* xy0)
+    : Propagator(home), n(n0), n_na(2*n), xy(xy0) {
     for (int i=2*n; i--; )
       xy[i].view.subscribe(home,this,pc);
   }

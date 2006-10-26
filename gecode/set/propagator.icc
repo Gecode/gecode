@@ -47,7 +47,7 @@ namespace Gecode {
     /// Constructor for cloning
     IntSetPropagator(Space* home,bool,IntSetPropagator&);
     /// Constructor for creation
-    IntSetPropagator(Space* home,View,Gecode::Int::IntView,bool=false);
+    IntSetPropagator(Space* home,View,Gecode::Int::IntView);
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
@@ -59,8 +59,8 @@ namespace Gecode {
 
   template <class View, PropCond pcs, PropCond pci>
   IntSetPropagator<View,pcs,pci>::IntSetPropagator
-  (Space* home, View y0, Gecode::Int::IntView y1, bool fd)
-    : Propagator(home,fd), x0(y0), x1(y1) {
+  (Space* home, View y0, Gecode::Int::IntView y1)
+    : Propagator(home), x0(y0), x1(y1) {
     x0.subscribe(home,this,pcs);
     x1.subscribe(home,this,pci);
   }

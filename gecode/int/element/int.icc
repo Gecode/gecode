@@ -310,7 +310,8 @@ namespace Gecode { namespace Int { namespace Element {
   template <class ViewA, class ViewB>
   forceinline
   Int<ViewA,ViewB>::Int(Space* home, IntSharedArray& c0, ViewA y0, ViewB y1)
-    : Propagator(home,true), x0(y0), x1(y1), c(c0), ivm(NULL) {
+    : Propagator(home), x0(y0), x1(y1), c(c0), ivm(NULL) {
+    force(home);
     x0.subscribe(home,this,PC_INT_DOM);
     x1.subscribe(home,this,PC_INT_DOM);
   }
@@ -328,6 +329,7 @@ namespace Gecode { namespace Int { namespace Element {
   template <class ViewA, class ViewB>
   size_t
   Int<ViewA,ViewB>::dispose(Space* home) {
+    unforce(home);
     if (!home->failed()) {
       x0.cancel(home,this,PC_INT_DOM);
       x1.cancel(home,this,PC_INT_DOM);

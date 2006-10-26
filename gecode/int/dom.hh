@@ -89,6 +89,8 @@ namespace Gecode { namespace Int { namespace Dom {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$ (x \in d) \Leftrightarrow b\f$
     static ExecStatus post(Space* home, View x, const IntSet& s, BoolView b);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
 
 }}}

@@ -50,6 +50,42 @@
 Version:	2.0.0
 Date:		unknown
 [DESCRIPTION]
+The best Gecode ever... Done with supernatural powers!
+
+[ENTRY]
+Module: kernel
+What:   performance
+Rank:   major
+[DESCRIPTION]
+Explicit disposal of actors has been reimplemented (the old
+design was nothing short of darn stupid). The memory overhead of
+propagators is reduced by 40% for most propagators and 20% for
+all. That is, a binary propagator takes 30% less memory and a
+ternary propagator takes 25% less memory. Programs with many
+binary or ternary propagators can run up to 20% faster.
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Propagators and branchings that require disposal when a space is
+deleted must now be explicitly registered via a force function
+and explictly deregistered by an unforce function.
+
+[ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed memory leak in reified dom constraint.
+
+[ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed memory leak in distinct constraint for sets.
 
 [ENTRY]
 Module: example
@@ -58,6 +94,8 @@ Rank:   major
 [DESCRIPTION]
 Added placement puzzles as an example. The example uses
 regular-constraints to place irregular-shaped pieces on a board.
+
+
 
 [RELEASE]
 Version:	1.3.1
