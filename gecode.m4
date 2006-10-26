@@ -565,7 +565,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
     AC_GECODE_ADD_TO_CXXFLAGS([-Zi])  
 
     dnl flags for creating debug dlls
-    AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LDd MDd])
+    AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LDd -MDd])
   fi
 
   AC_SUBST(sharedlibdir, "${bindir}")
