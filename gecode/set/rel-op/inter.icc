@@ -132,14 +132,14 @@ namespace Gecode { namespace Set { namespace RelOp {
   forceinline
   Intersection<View0,View1,View2>::Intersection(Space* home,
                                              View0 y0,View1 y1,View2 y2)
-    : InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+    : MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                              View2,PC_SET_ANY>(home,y0,y1,y2) {}
 
   template <class View0, class View1, class View2>
   forceinline
   Intersection<View0,View1,View2>::Intersection(Space* home, bool share,
                                              Intersection<View0,View1,View2>& p)
-    : InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+    : MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                              View2,PC_SET_ANY>(home,share,p) {}
 
   /*
@@ -151,7 +151,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   forceinline
   IntersectionN<View0,View1>::IntersectionN(Space* home, ViewArray<View0>& x,
                                             View1 y)
-    : InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y),
+    : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y),
       intOfDets(home) {
     shared = x.shared() || viewarrayshared(x,y);
   }
@@ -160,7 +160,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   forceinline
   IntersectionN<View0,View1>::IntersectionN(Space* home, bool share,
                                             IntersectionN& p)
-    : InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,share,p),
+    : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,share,p),
       shared(p.shared),
       intOfDets() {
     intOfDets.update(home, p.intOfDets);

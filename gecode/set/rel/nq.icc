@@ -31,12 +31,12 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   forceinline
   Distinct<View0,View1>::Distinct(Space* home, View0 x, View1 y)
-    : InhomBinaryPropagator<View0, PC_SET_VAL, View1, PC_SET_VAL>(home,x,y) {}
+    : MixBinaryPropagator<View0, PC_SET_VAL, View1, PC_SET_VAL>(home,x,y) {}
 
   template <class View0, class View1>
   forceinline
   Distinct<View0,View1>::Distinct(Space* home, bool share, Distinct& p)
-    : InhomBinaryPropagator<View0, PC_SET_VAL, View1, PC_SET_VAL>
+    : MixBinaryPropagator<View0, PC_SET_VAL, View1, PC_SET_VAL>
         (home,share,p) {}
 
   template <class View0, class View1>

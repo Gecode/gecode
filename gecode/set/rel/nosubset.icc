@@ -34,14 +34,14 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   forceinline
   NoSubSet<View0,View1>::NoSubSet(Space* home, View0 y0, View1 y1)
-    : InhomBinaryPropagator<View0,PC_SET_CLUB,
+    : MixBinaryPropagator<View0,PC_SET_CLUB,
                             View1,PC_SET_CGLB>(home,y0,y1) {}
 
   template <class View0, class View1>
   forceinline
   NoSubSet<View0,View1>::NoSubSet(Space* home, bool share, 
                                   NoSubSet<View0,View1>& p)
-    : InhomBinaryPropagator<View0,PC_SET_CLUB,
+    : MixBinaryPropagator<View0,PC_SET_CLUB,
                             View1,PC_SET_CGLB>(home,share,p) {}
 
   template <class View0, class View1>

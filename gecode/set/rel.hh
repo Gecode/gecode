@@ -48,10 +48,10 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   class SubSet :
-    public InhomBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB> {
+    public MixBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB> {
   protected:
-    using InhomBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB>::x0;
-    using InhomBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB>::x1;
+    using MixBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB>::x0;
+    using MixBinaryPropagator<View0,PC_SET_CGLB,View1,PC_SET_CLUB>::x1;
     /// Constructor for cloning \a p
     SubSet(Space* home, bool share,SubSet& p);
     /// Constructor for posting
@@ -74,10 +74,10 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   class NoSubSet :
-    public InhomBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB> {
+    public MixBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB> {
   protected:
-    using InhomBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB>::x0;
-    using InhomBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB>::x1;
+    using MixBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB>::x0;
+    using MixBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB>::x1;
     /// Constructor for cloning \a p
     NoSubSet(Space* home, bool share,NoSubSet& p);
     /// Constructor for posting
@@ -132,10 +132,10 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   class Eq : 
-    public InhomBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY> {
+    public MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY> {
   protected:
-    using InhomBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x0;
-    using InhomBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x1;
+    using MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x0;
+    using MixBinaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x1;
     /// Constructor for cloning \a p
     Eq(Space* home, bool share,Eq& p);
     /// Constructor for posting
@@ -190,10 +190,10 @@ namespace Gecode { namespace Set { namespace Rel {
 
   template <class View0, class View1>
   class Distinct :
-    public InhomBinaryPropagator<View0,PC_SET_VAL,View1,PC_SET_VAL> {
+    public MixBinaryPropagator<View0,PC_SET_VAL,View1,PC_SET_VAL> {
   protected:
-    using InhomBinaryPropagator<View0,PC_SET_VAL,View1,PC_SET_VAL>::x0;
-    using InhomBinaryPropagator<View0,PC_SET_VAL,View1,PC_SET_VAL>::x1;
+    using MixBinaryPropagator<View0,PC_SET_VAL,View1,PC_SET_VAL>::x0;
+    using MixBinaryPropagator<View0,PC_SET_VAL,View1,PC_SET_VAL>::x1;
     /// Constructor for cloning \a p
     Distinct(Space* home, bool share,Distinct& p);
     /// Constructor for posting

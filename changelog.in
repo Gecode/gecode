@@ -53,6 +53,13 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The propagator abstractions Inhom* have been renamed to Mix*.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   minor

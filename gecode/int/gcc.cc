@@ -2,6 +2,7 @@
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
  *  Copyright:
  *     Patrick Pekczynski, 2004
  *

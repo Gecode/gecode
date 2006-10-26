@@ -36,14 +36,14 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1, class View2>
   forceinline
   Union<View0,View1,View2>::Union(Space* home, View0 y0,View1 y1,View2 y2)
-    : InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+    : MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                              View2,PC_SET_ANY>(home,y0,y1,y2) {}
 
   template <class View0, class View1, class View2>
   forceinline
   Union<View0,View1,View2>::Union(Space* home, bool share,
                                Union<View0,View1,View2>& p)
-    : InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+    : MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                              View2,PC_SET_ANY>(home,share,p) {}
 
   template <class View0, class View1, class View2>
@@ -199,14 +199,14 @@ namespace Gecode { namespace Set { namespace RelOp {
   template <class View0, class View1>
   forceinline
   UnionN<View0,View1>::UnionN(Space* home, ViewArray<View0>& x, View1 y)
-    : InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y) {
+    : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y) {
     shared = x.shared() || viewarrayshared(x,y);
   }
 
   template <class View0, class View1>
   forceinline
   UnionN<View0,View1>::UnionN(Space* home, bool share, UnionN& p)
-    : InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,share,p),
+    : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,share,p),
       shared(p.shared) {
     unionOfDets.update(home,p.unionOfDets);
   }

@@ -31,13 +31,13 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   forceinline
   SubSet<View0,View1>::SubSet(Space* home, View0 y0, View1 y1)
-    : InhomBinaryPropagator<View0,PC_SET_CGLB,
+    : MixBinaryPropagator<View0,PC_SET_CGLB,
                             View1,PC_SET_CLUB>(home,y0,y1) {}
 
   template <class View0, class View1>
   forceinline
   SubSet<View0,View1>::SubSet(Space* home, bool share, SubSet& p)
-    : InhomBinaryPropagator<View0,PC_SET_CGLB,
+    : MixBinaryPropagator<View0,PC_SET_CGLB,
                             View1,PC_SET_CLUB>(home,share,p) {}
 
   template <class View0, class View1>

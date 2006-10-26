@@ -171,23 +171,23 @@ namespace Gecode {
   };
 
   /**
-   * \brief Inhomogeneous binary propagator
+   * \brief Mixed binary propagator
    *
    * Stores two views of type \a View0 and \a View1 with propagation
    * conditions \a pc0 and \a pc1.
    */
   template <class View0, PropCond pc0, class View1, PropCond pc1>
-  class InhomBinaryPropagator : public Propagator {
+  class MixBinaryPropagator : public Propagator {
   protected:
     View0 x0;
     View1 x1;
     /// Constructor for cloning
-    InhomBinaryPropagator(Space* home,bool,InhomBinaryPropagator&);
+    MixBinaryPropagator(Space* home,bool,MixBinaryPropagator&);
     /// Constructor for creation
-    InhomBinaryPropagator(Space* home,View0,View1);
+    MixBinaryPropagator(Space* home,View0,View1);
     /// Constructor for rewriting \a p during cloning
-    InhomBinaryPropagator(Space* home, bool share, Propagator& p,
-                          View0 x0, View1 x1);
+    MixBinaryPropagator(Space* home, bool share, Propagator& p,
+                        View0 x0, View1 x1);
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
@@ -196,25 +196,25 @@ namespace Gecode {
   };
 
   /**
-   * \brief Inhomogeneous ternary propagator
+   * \brief Mixed ternary propagator
    *
    * Stores three views of type \a View0, \a View1, and \a View2
    * with propagation conditions \a pc0, \a pc1, and \a pc2.
    */
   template <class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
-  class InhomTernaryPropagator : public Propagator {
+  class MixTernaryPropagator : public Propagator {
   protected:
     View0 x0;
     View1 x1;
     View2 x2;
     /// Constructor for cloning
-    InhomTernaryPropagator(Space* home,bool,InhomTernaryPropagator&);
+    MixTernaryPropagator(Space* home,bool,MixTernaryPropagator&);
     /// Constructor for creation
-    InhomTernaryPropagator(Space* home,View0,View1,View2);
+    MixTernaryPropagator(Space* home,View0,View1,View2);
     /// Constructor for rewriting \a p during cloning
-    InhomTernaryPropagator(Space* home, bool share, Propagator& p,
-                           View0 x0, View1 x1, View2 x2);
+    MixTernaryPropagator(Space* home, bool share, Propagator& p,
+                         View0 x0, View1 x1, View2 x2);
   public:
     /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(void) const;
@@ -223,24 +223,24 @@ namespace Gecode {
   };
 
   /**
-   * \brief Inhomogeneous (n+1)-ary propagator
+   * \brief Mixed (n+1)-ary propagator
    *
    * Stores array of views of type \a View0 with propagation condition \a pc0
    * and a single view of type \a View1 with propagation condition \a pc1.
    */
   template <class View0, PropCond pc0, class View1, PropCond pc1>
-  class InhomNaryOnePropagator : public Propagator {
+  class MixNaryOnePropagator : public Propagator {
   protected:
     /// Array of views
     ViewArray<View0> x;
     /// Single view
     View1 y;
     /// Constructor for cloning \a p
-    InhomNaryOnePropagator(Space* home, bool share, InhomNaryOnePropagator& p);
+    MixNaryOnePropagator(Space* home, bool share, MixNaryOnePropagator& p);
     /// Constructor for creation
-    InhomNaryOnePropagator(Space* home, ViewArray<View0>& x, View1 y);
+    MixNaryOnePropagator(Space* home, ViewArray<View0>& x, View1 y);
     /// Constructor for rewriting \a p during cloning
-    InhomNaryOnePropagator(Space* home, bool share, Propagator& p,
+    MixNaryOnePropagator(Space* home, bool share, Propagator& p,
                            ViewArray<View0>& x, View1 y);
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
@@ -512,12 +512,12 @@ namespace Gecode {
 
 
   /*
-   * Inhomogeneous binary propagators
+   * Mixed binary propagators
    *
    */
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
-  InhomBinaryPropagator<View0,pc0,View1,pc1>::InhomBinaryPropagator
+  MixBinaryPropagator<View0,pc0,View1,pc1>::MixBinaryPropagator
   (Space* home, View0 y0, View1 y1)
     : Propagator(home), x0(y0), x1(y1) {
     x0.subscribe(home,this,pc0);
@@ -526,8 +526,8 @@ namespace Gecode {
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline
-  InhomBinaryPropagator<View0,pc0,View1,pc1>::InhomBinaryPropagator
-  (Space* home, bool share, InhomBinaryPropagator<View0,pc0,View1,pc1>& p)
+  MixBinaryPropagator<View0,pc0,View1,pc1>::MixBinaryPropagator
+  (Space* home, bool share, MixBinaryPropagator<View0,pc0,View1,pc1>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
@@ -535,7 +535,7 @@ namespace Gecode {
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline
-  InhomBinaryPropagator<View0,pc0,View1,pc1>::InhomBinaryPropagator
+  MixBinaryPropagator<View0,pc0,View1,pc1>::MixBinaryPropagator
   (Space* home, bool share, Propagator& p, View0 y0, View1 y1)
     : Propagator(home,share,p) {
     x0.update(home,share,y0);
@@ -544,13 +544,13 @@ namespace Gecode {
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   PropCost
-  InhomBinaryPropagator<View0,pc0,View1,pc1>::cost(void) const {
+  MixBinaryPropagator<View0,pc0,View1,pc1>::cost(void) const {
     return PC_BINARY_LO;
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   size_t
-  InhomBinaryPropagator<View0,pc0,View1,pc1>::dispose(Space* home) {
+  MixBinaryPropagator<View0,pc0,View1,pc1>::dispose(Space* home) {
     if (!home->failed()) {
       x0.cancel(home,this,pc0);
       x1.cancel(home,this,pc1);
@@ -561,14 +561,14 @@ namespace Gecode {
 
 
   /*
-   * Inhomogeneous ternary propagators
+   * Mixed ternary propagators
    *
    */
 
   template <class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
-  InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
-  InhomTernaryPropagator(Space* home, View0 y0, View1 y1, View2 y2)
+  MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
+  MixTernaryPropagator(Space* home, View0 y0, View1 y1, View2 y2)
     : Propagator(home), x0(y0), x1(y1), x2(y2) {
     x0.subscribe(home,this,pc0);
     x1.subscribe(home,this,pc1);
@@ -578,9 +578,9 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
   forceinline
-  InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
-  InhomTernaryPropagator(Space* home, bool share,
-                         InhomTernaryPropagator<View0,pc0,View1,pc1,
+  MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
+  MixTernaryPropagator(Space* home, bool share,
+                         MixTernaryPropagator<View0,pc0,View1,pc1,
                          View2,pc2>& p)
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
@@ -591,7 +591,7 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
   forceinline
-  InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::InhomTernaryPropagator
+  MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::MixTernaryPropagator
   (Space* home, bool share, Propagator& p, View0 y0, View1 y1, View2 y2)
     : Propagator(home,share,p) {
     x0.update(home,share,y0);
@@ -602,14 +602,14 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
   PropCost
-  InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::cost(void) const {
+  MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::cost(void) const {
     return PC_BINARY_LO;
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
   size_t
-  InhomTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
+  MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
   dispose(Space* home) {
     if (!home->failed()) {
       x0.cancel(home,this,pc0);
@@ -622,12 +622,12 @@ namespace Gecode {
 
 
   /*
-   * InhomNaryOne (one additional variable) propagators
+   * MixNaryOne (one additional variable) propagators
    *
    */
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
-  InhomNaryOnePropagator<View0,pc0,View1,pc1>::InhomNaryOnePropagator
+  MixNaryOnePropagator<View0,pc0,View1,pc1>::MixNaryOnePropagator
   (Space* home, ViewArray<View0>& x0, View1 y0)
     : Propagator(home), x(x0), y(y0) {
     x.subscribe(home,this,pc0);
@@ -636,8 +636,8 @@ namespace Gecode {
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline
-  InhomNaryOnePropagator<View0,pc0,View1,pc1>::InhomNaryOnePropagator
-  (Space* home, bool share, InhomNaryOnePropagator<View0,pc0,View1,pc1>& p)
+  MixNaryOnePropagator<View0,pc0,View1,pc1>::MixNaryOnePropagator
+  (Space* home, bool share, MixNaryOnePropagator<View0,pc0,View1,pc1>& p)
     : Propagator(home,share,p) {
     x.update(home,share,p.x);
     y.update(home,share,p.y);
@@ -645,7 +645,7 @@ namespace Gecode {
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   forceinline
-  InhomNaryOnePropagator<View0,pc0,View1,pc1>::InhomNaryOnePropagator
+  MixNaryOnePropagator<View0,pc0,View1,pc1>::MixNaryOnePropagator
   (Space* home, bool share, Propagator& p, ViewArray<View0>& x0, View1 y0)
     : Propagator(home,share,p) {
     x.update(home,share,x0);
@@ -654,13 +654,13 @@ namespace Gecode {
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   PropCost
-  InhomNaryOnePropagator<View0,pc0,View1,pc1>::cost(void) const {
+  MixNaryOnePropagator<View0,pc0,View1,pc1>::cost(void) const {
     return cost_lo(x.size()+1, PC_LINEAR_LO);
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   size_t
-  InhomNaryOnePropagator<View0,pc0,View1,pc1>::dispose(Space* home) {
+  MixNaryOnePropagator<View0,pc0,View1,pc1>::dispose(Space* home) {
     if (!home->failed()) {
       x.cancel(home,this,pc0);
       y.cancel(home,this,pc1);

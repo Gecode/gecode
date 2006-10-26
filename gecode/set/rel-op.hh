@@ -49,14 +49,14 @@ namespace Gecode { namespace Set { namespace RelOp {
   
    template <class View0, class View1, class View2>
    class SuperOfInter :
-    public InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+    public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                   View2,PC_SET_CLUB> {
    protected:
-     using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                   View2,PC_SET_CLUB>::x0;
-     using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                   View2,PC_SET_CLUB>::x1;
-     using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                   View2,PC_SET_CLUB>::x2;
      /// Constructor for cloning \a p
      SuperOfInter(Space* home, bool share,SuperOfInter& p);
@@ -79,14 +79,14 @@ namespace Gecode { namespace Set { namespace RelOp {
    */
   template <class View0, class View1, class View2>
   class SubOfUnion :
-    public InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+    public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                   View2,PC_SET_ANY> {
   protected:
-    using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+    using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                  View2,PC_SET_ANY>::x0;
-    using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+    using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                  View2,PC_SET_ANY>::x1;
-    using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+    using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                  View2,PC_SET_ANY>::x2;
     /// Constructor for cloning \a p
     SubOfUnion(Space* home, bool share,SubOfUnion& p);
@@ -110,14 +110,14 @@ namespace Gecode { namespace Set { namespace RelOp {
     */
    template <class View0, class View1, class View2>
    class Intersection:
-    public InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+    public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                   View2,PC_SET_ANY> {
    protected:
-     using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                   View2,PC_SET_ANY>::x0;
-     using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                   View2,PC_SET_ANY>::x1;
-     using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+     using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                   View2,PC_SET_ANY>::x2;
      /// Constructor for cloning \a p
      Intersection(Space* home, bool share,Intersection& p);
@@ -140,14 +140,14 @@ namespace Gecode { namespace Set { namespace RelOp {
    */
   template <class View0, class View1, class View2>
   class Union:
-    public InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+    public MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                   View2,PC_SET_ANY> {
   protected:
-    using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+    using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                  View2,PC_SET_ANY>::x0;
-    using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+    using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                  View2,PC_SET_ANY>::x1;
-    using InhomTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+    using MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
                                  View2,PC_SET_ANY>::x2;
     /// Constructor for cloning \a p
     Union(Space* home, bool share,Union& p);
@@ -169,11 +169,11 @@ namespace Gecode { namespace Set { namespace RelOp {
     * \ingroup FuncSetProp
     */
   template <class View0, class View1>
-  class IntersectionN : public InhomNaryOnePropagator<View0,PC_SET_ANY,
+  class IntersectionN : public MixNaryOnePropagator<View0,PC_SET_ANY,
                                                       View1,PC_SET_ANY> {
   protected:
-    using InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x;
-    using InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::y;
+    using MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x;
+    using MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::y;
     /// Whether the any views share a variable implementation
     bool shared;
     /// Intersection of the determined \f$x_i\f$ (which are dropped)
@@ -199,11 +199,11 @@ namespace Gecode { namespace Set { namespace RelOp {
    * \ingroup FuncSetProp
    */
   template <class View0, class View1>
-  class UnionN : public InhomNaryOnePropagator<View0,PC_SET_ANY,
+  class UnionN : public MixNaryOnePropagator<View0,PC_SET_ANY,
                                                View1,PC_SET_ANY> {
   protected:
-    using InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x;
-    using InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::y;
+    using MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x;
+    using MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::y;
     /// Whether the any views share a variable implementation
     bool shared;
     /// Union of the determined \f$x_i\f$ (which are dropped)
@@ -230,11 +230,11 @@ namespace Gecode { namespace Set { namespace RelOp {
    * \ingroup FuncSetProp
    */
   template <class View0, class View1>
-  class PartitionN : public InhomNaryOnePropagator<View0,PC_SET_ANY,
+  class PartitionN : public MixNaryOnePropagator<View0,PC_SET_ANY,
                                                    View1,PC_SET_ANY> {
   protected:
-    using InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x;
-    using InhomNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::y;
+    using MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::x;
+    using MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::y;
     /// Whether the any views share a variable implementation
     bool shared;
     /// Union of the determined \f$x_i\f$ (which are dropped)

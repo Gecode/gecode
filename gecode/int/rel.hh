@@ -56,10 +56,10 @@ namespace Gecode { namespace Int { namespace Rel {
    */
   template <class View0,class View1>
   class EqDom :
-    public InhomBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM> {
+    public MixBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM> {
   protected:
-    using InhomBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM>::x0;
-    using InhomBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM>::x1;
+    using MixBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM>::x0;
+    using MixBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM>::x1;
 
     /// Constructor for cloning \a p
     EqDom(Space* home, bool share, EqDom<View0,View1>& p);
@@ -90,10 +90,10 @@ namespace Gecode { namespace Int { namespace Rel {
    */
   template <class View0, class View1>
   class EqBnd :
-    public InhomBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND> {
+    public MixBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND> {
   protected:
-    using InhomBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND>::x0;
-    using InhomBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND>::x1;
+    using MixBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND>::x0;
+    using MixBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
     EqBnd(Space* home, bool share, EqBnd<View0,View1>& p);
