@@ -47,6 +47,19 @@
 #
 
 [RELEASE]
+Version:	2.0.0
+Date:		unknown
+[DESCRIPTION]
+
+[ENTRY]
+Module: example
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added placement puzzles as an example. The example uses
+regular-constraints to place irregular-shaped pieces on a board.
+
+[RELEASE]
 Version:	1.3.1
 Date:		2006-10-25
 [DESCRIPTION]

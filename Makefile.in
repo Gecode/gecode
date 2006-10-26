@@ -364,7 +364,7 @@ INTEXAMPLESRC0 = \
 	magic-sequence magic-sequence-gcc magic-square \
 	money ortho-latin packing \
 	partition photo queens \
-	sudoku picture-puzzle  \
+	sudoku picture-puzzle placement-puzzle  \
 	crowded-chess black-hole \
 	sports-league all-interval all-interval-sort langfordnum \
 	warehouses \
