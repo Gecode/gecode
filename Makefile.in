@@ -50,7 +50,7 @@ export CXX = @CXX@
 ifeq "$(top_srcdir)" "$(top_builddir)"
 CPPFLAGS=-I$(top_srcdir)
 else
-CPPFLAGS=-I$(top_srcdir) -I$(top_builddir)
+CPPFLAGS=-I$(top_builddir) -I$(top_srcdir)
 endif
 export CPPFLAGS
 export CXXFLAGS = $(CPPFLAGS) @CXXFLAGS@ $(CXXUSR)
