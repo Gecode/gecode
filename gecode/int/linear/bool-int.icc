@@ -114,7 +114,7 @@ namespace Gecode { namespace Int { namespace Linear {
     // All views must be one to satisfy inequality
     if (c == n_x) {
       for (int i=n_x; i--; )
-        x[i].t_one_none(home);
+        x[i].one_none(home);
       return ES_OK;
     }
     // This is the needed invariant as c+1 subscriptions must be created
@@ -168,10 +168,10 @@ namespace Gecode { namespace Int { namespace Linear {
     if (c == n_x) {
       // These are known to be not assigned
       for (int i=n_s; i--; )
-        x[i].t_one_none(home);
+        x[i].one_none(home);
       // These are not known to be assigned
       for (int i=n_s+1; i<n_x; i++)
-        x[i].t_one(home);
+        x[i].one(home);
       // Fix number of subscriptions such that cancelling subscriptions work
       n_s = 0;
       return ES_SUBSUMED;
@@ -207,13 +207,13 @@ namespace Gecode { namespace Int { namespace Linear {
     // All views must be zero to satisfy equality
     if (c == 0) {
       for (int i=n_x; i--; )
-        x[i].t_zero_none(home);
+        x[i].zero_none(home);
       return ES_OK;
     }
     // All views must be one to satisfy equality
     if (c == n_x) {
       for (int i=n_x; i--; )
-        x[i].t_one_none(home);
+        x[i].one_none(home);
       return ES_OK;
     }
     x.size(n_x);
@@ -264,10 +264,10 @@ namespace Gecode { namespace Int { namespace Linear {
     if (c == 0) {
       // These are known to be not assigned
       for (int i=n_s; i--; )
-        x[i].t_zero_none(home);
+        x[i].zero_none(home);
       // These are not known to be assigned
       for (int i=n_s+1; i<n_x; i++)
-        x[i].t_zero(home);
+        x[i].zero(home);
       // Fix number of subscriptions such that cancelling subscriptions work
       n_s = 0;
       return ES_SUBSUMED;
@@ -275,10 +275,10 @@ namespace Gecode { namespace Int { namespace Linear {
     if (c == n_x) {
       // These are known to be not assigned
       for (int i=n_s; i--; )
-        x[i].t_one_none(home);
+        x[i].one_none(home);
       // These are not known to be assigned
       for (int i=n_s+1; i<n_x; i++)
-        x[i].t_one(home);
+        x[i].one(home);
       // Fix number of subscriptions such that cancelling subscriptions work
       n_s = 0;
       return ES_SUBSUMED;
@@ -338,9 +338,9 @@ namespace Gecode { namespace Int { namespace Linear {
       return (c == 0) ? ES_FAILED : ES_OK;
     if (n == 1) {
       if (c == 1)
-        x[0].t_zero_none(home);
+        x[0].zero_none(home);
       else
-        x[0].t_one_none(home);
+        x[0].one_none(home);
       return ES_OK;
     }
     (void) new (home) NqBoolInt(home,x,c);
@@ -401,15 +401,15 @@ namespace Gecode { namespace Int { namespace Linear {
     if (n == 1) {
       if (s0) {
         if (c == 1)
-          x0.t_zero_none(home);
+          x0.zero_none(home);
         else
-          x0.t_one_none(home);
+          x0.one_none(home);
       } else {
         assert(s1);
         if (c == 1)
-          x1.t_zero_none(home);
+          x1.zero_none(home);
         else
-          x1.t_one_none(home);
+          x1.one_none(home);
       }
       return ES_SUBSUMED;
     }

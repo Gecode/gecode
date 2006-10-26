@@ -398,7 +398,7 @@ namespace Gecode { namespace Int { namespace Linear {
       case IRT_LQ: fail = (0 > c);  break;
       default: GECODE_NEVER;
       }
-      if ((fail ? b.t_zero(home) : b.t_one(home)) == ME_INT_FAILED)
+      if ((fail ? b.zero(home) : b.one(home)) == ME_INT_FAILED)
         home->fail();
       return;
     }

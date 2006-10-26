@@ -255,9 +255,9 @@ namespace Gecode { namespace Int {
     /// \name Boolean update operations
     //@{
     /// Assign unassigned variable to zero
-    void t_zero_none(Space* home);
+    void zero_none(Space* home);
     /// Assign unassigned variable to one
-    void t_one_none(Space* home);
+    void one_none(Space* home);
     //@}
 
   public:

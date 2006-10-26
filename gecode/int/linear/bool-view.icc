@@ -89,13 +89,13 @@ namespace Gecode { namespace Int { namespace Linear {
     if (y.min()+c == n) {
       assert(y.assigned());
       for (int i = n; i--; )
-        x[i].t_one_none(home);
+        x[i].one_none(home);
       return ES_OK;
     }
     if (y.max()+c == 0) {
       assert(y.assigned());
       for (int i = n; i--; )
-        x[i].t_zero_none(home);
+        x[i].zero_none(home);
       return ES_OK;
     }
     (void) new (home) EqBoolView<XV,YV>(home,x,y,c);
@@ -131,13 +131,13 @@ namespace Gecode { namespace Int { namespace Linear {
     if (y.min()+c == n) {
       assert(y.assigned());
       for (int i = n; i--; )
-        x[i].t_one_none(home);
+        x[i].one_none(home);
       return ES_SUBSUMED;
     }
     if (y.max()+c == 0) {
       assert(y.assigned());
       for (int i = n; i--; )
-        x[i].t_zero_none(home);
+        x[i].zero_none(home);
       return ES_SUBSUMED;
     }
     if (y.assigned()) {
@@ -178,10 +178,10 @@ namespace Gecode { namespace Int { namespace Linear {
     }
     if ((n == 1) && y.assigned()) {
       if (y.val()+c == 1) {
-        x[0].t_zero_none(home);
+        x[0].zero_none(home);
       } else {
         assert(y.val()+c == 0);
-        x[0].t_one_none(home);
+        x[0].one_none(home);
       }
       return ES_OK;
     }
@@ -221,10 +221,10 @@ namespace Gecode { namespace Int { namespace Linear {
     }
     if ((n == 1) && y.assigned()) {
       if (y.val()+c == 1) {
-        x[0].t_zero_none(home);
+        x[0].zero_none(home);
       } else {
         assert(y.val()+c == 0);
-        x[0].t_one_none(home);
+        x[0].one_none(home);
       }
       return ES_SUBSUMED;
     }
@@ -260,7 +260,7 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_OK;
     if (y.min()+c == n) {
       for (int i = n; i--; )
-        x[i].t_one_none(home);
+        x[i].one_none(home);
       return ES_OK;
     }
     (void) new (home) GqBoolView<XV,YV>(home,x,y,c);
@@ -296,7 +296,7 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_SUBSUMED;
     if (y.min()+c == n) {
       for (int i = n; i--; )
-        x[i].t_one_none(home);
+        x[i].one_none(home);
       return ES_SUBSUMED;
     }
     if (y.assigned()) {

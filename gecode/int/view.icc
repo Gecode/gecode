@@ -919,13 +919,13 @@ namespace Gecode {
       /// \name Boolean assignment operations
       //@{
       /// Try to assign view to one
-      ModEvent t_one(Space* home);
+      ModEvent one(Space* home);
       /// Try to assign view to zero
-      ModEvent t_zero(Space* home);
+      ModEvent zero(Space* home);
       /// Assign not yet assigned view to one
-      void t_one_none(Space* home);
+      void one_none(Space* home);
       /// Assign not yet assigned view to zero
-      void t_zero_none(Space* home);
+      void zero_none(Space* home);
       //@}
 
       /// \name Cloning
@@ -987,13 +987,13 @@ namespace Gecode {
       /// \name Boolean assignment operations
       //@{
       /// Try to assign view to one
-      ModEvent t_one(Space* home);
+      ModEvent one(Space* home);
       /// Try to assign view to zero
-      ModEvent t_zero(Space* home);
+      ModEvent zero(Space* home);
       /// Assign not yet assigned view to one
-      void t_one_none(Space* home);
+      void one_none(Space* home);
       /// Assign not yet assigned view to zero
-      void t_zero_none(Space* home);
+      void zero_none(Space* home);
       //@}
 
       /// \name Value access

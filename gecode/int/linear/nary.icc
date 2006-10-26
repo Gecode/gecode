@@ -430,10 +430,10 @@ namespace Gecode { namespace Int { namespace Linear {
     bounds_n<Val,N>(this, y, c, sl, su);
 
     if ((-sl == c) && (-su == c)) {
-      b.t_one_none(home); return ES_SUBSUMED;
+      b.one_none(home); return ES_SUBSUMED;
     }
     if ((-sl > c) || (-su < c)) {
-      b.t_zero_none(home); return ES_SUBSUMED;
+      b.zero_none(home); return ES_SUBSUMED;
     }
     return ES_FIX;
   }
@@ -843,10 +843,10 @@ namespace Gecode { namespace Int { namespace Linear {
     bounds_n<Val,N>(this,y,c,sl,su);
 
     if (-sl > c) {
-      b.t_zero_none(home); return ES_SUBSUMED;
+      b.zero_none(home); return ES_SUBSUMED;
     }
     if (-su <= c) {
-      b.t_one_none(home); return ES_SUBSUMED;
+      b.one_none(home); return ES_SUBSUMED;
     }
 
     return ES_FIX;

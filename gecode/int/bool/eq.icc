@@ -35,13 +35,13 @@ namespace Gecode { namespace Int { namespace Bool {
     case BT_COMP: return ES_FAILED;
     case BT_NONE:
       if (b0.zero()) {
-        GECODE_ME_CHECK(b1.t_zero(home));
+        GECODE_ME_CHECK(b1.zero(home));
       } else if (b0.one()) {
-        GECODE_ME_CHECK(b1.t_one(home));
+        GECODE_ME_CHECK(b1.one(home));
       } else if (b1.zero()) {
-        GECODE_ME_CHECK(b0.t_zero(home));
+        GECODE_ME_CHECK(b0.zero(home));
       } else if (b1.one()) {
-        GECODE_ME_CHECK(b0.t_one(home));
+        GECODE_ME_CHECK(b0.one(home));
       } else {
         (void) new (home) Eq<BVA,BVB>(home,b0,b1);
       }
@@ -72,14 +72,14 @@ namespace Gecode { namespace Int { namespace Bool {
   ExecStatus
   Eq<BVA,BVB>::propagate(Space* home) {
     if (x0.zero()) {
-      GECODE_ME_CHECK(x1.t_zero(home));
+      GECODE_ME_CHECK(x1.zero(home));
     } else if (x0.one()) {
-      GECODE_ME_CHECK(x1.t_one(home));
+      GECODE_ME_CHECK(x1.one(home));
     } else if (x1.zero()) {
-      x0.t_zero_none(home);
+      x0.zero_none(home);
     } else {
       assert(x1.one());
-      x0.t_one_none(home);
+      x0.one_none(home);
     }
     return ES_SUBSUMED;
   }

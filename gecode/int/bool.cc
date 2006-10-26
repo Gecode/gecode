@@ -51,8 +51,8 @@ namespace Gecode {
     if (home->failed()) return;
     if (b2) {
       BoolView bv0(b0); BoolView bv1(b1);
-      GECODE_ME_FAIL(home,bv0.t_one(home));
-      GECODE_ME_FAIL(home,bv1.t_one(home));
+      GECODE_ME_FAIL(home,bv0.one(home));
+      GECODE_ME_FAIL(home,bv1.one(home));
     } else {
       NegBoolView n0(b0); NegBoolView n1(b1);
       GECODE_ES_FAIL(home,(Bool::OrTrue<NegBoolView,NegBoolView>
@@ -74,7 +74,7 @@ namespace Gecode {
     if (home->failed()) return;
     if (c) {
       for (int i=b.size(); i--; ) {
-        BoolView bvi(b[i]); GECODE_ME_FAIL(home,bvi.t_one(home));
+        BoolView bvi(b[i]); GECODE_ME_FAIL(home,bvi.one(home));
       }
     } else {
       ViewArray<NegBoolView> x(home,b.size());
@@ -101,8 +101,8 @@ namespace Gecode {
     } else {
       BoolView bv0(b0);
       BoolView bv1(b1);
-      GECODE_ME_FAIL(home,bv0.t_zero(home));
-      GECODE_ME_FAIL(home,bv1.t_zero(home));
+      GECODE_ME_FAIL(home,bv0.zero(home));
+      GECODE_ME_FAIL(home,bv1.zero(home));
     }
   }
   void
@@ -120,7 +120,7 @@ namespace Gecode {
     } else {
       for (int i=b.size(); i--; ) {
         BoolView bvi(b[i]);
-        GECODE_ME_FAIL(home,bvi.t_zero(home));
+        GECODE_ME_FAIL(home,bvi.zero(home));
       }
     }
   }
@@ -141,8 +141,8 @@ namespace Gecode {
                            ::post(home,n0,b1)));
     } else {
       BoolView bv0(b0); BoolView bv1(b1);
-      GECODE_ME_FAIL(home,bv0.t_one(home));
-      GECODE_ME_FAIL(home,bv1.t_zero(home));
+      GECODE_ME_FAIL(home,bv0.one(home));
+      GECODE_ME_FAIL(home,bv1.zero(home));
     }
   }
 

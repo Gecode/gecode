@@ -53,6 +53,14 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The operations t_one, t_one_none, t_zero, t_zero_none for Boolean
+views have been renamed to one, one_none, zero, zero_none.
+
+[ENTRY]
 Module: kernel
 What:   performance
 Rank:   major

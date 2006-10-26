@@ -43,7 +43,7 @@ namespace Gecode { namespace Int { namespace Dom {
   ExecStatus
   ReIntSet<View>::post(Space* home, View x, const IntSet& s, BoolView b) {
     if (s.size() == 0) {
-      GECODE_ME_CHECK(b.t_zero(home));
+      GECODE_ME_CHECK(b.zero(home));
     } else if (s.size() == 1) {
       return ReRange<View>::post(home,x,s.min(),s.max(),b);
     } else {
@@ -81,9 +81,9 @@ namespace Gecode { namespace Int { namespace Dom {
 
     switch (Iter::Ranges::subsumes(i_is,i_x)) {
     case Iter::Ranges::SS_SUBSUMED:
-      b.t_one_none(home); return ES_SUBSUMED;
+      b.one_none(home); return ES_SUBSUMED;
     case Iter::Ranges::SS_EMPTY:
-      b.t_zero_none(home); return ES_SUBSUMED;
+      b.zero_none(home); return ES_SUBSUMED;
     case Iter::Ranges::SS_NONE:
       break;
     default: GECODE_NEVER;

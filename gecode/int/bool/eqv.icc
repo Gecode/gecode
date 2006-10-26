@@ -37,29 +37,29 @@ namespace Gecode { namespace Int { namespace Bool {
   Eqv<BVA,BVB,BVC>::post(Space* home, BVA b0, BVB b1, BVC b2){
     switch (bool_test(b0,b1)) {
     case BT_SAME:
-      GECODE_ME_CHECK(b2.t_one(home));
+      GECODE_ME_CHECK(b2.one(home));
       break;
     case BT_COMP:
-      GECODE_ME_CHECK(b2.t_zero(home));
+      GECODE_ME_CHECK(b2.zero(home));
       break;
     case BT_NONE:
       if (b2.one())
         return Eq<BVA,BVB>::post(home,b0,b1);
       if (b0.one()) {
         if (b1.one()) {
-          GECODE_ME_CHECK(b2.t_one(home));
+          GECODE_ME_CHECK(b2.one(home));
           return ES_OK;
         } else if (b2.zero()) {
-          GECODE_ME_CHECK(b2.t_zero(home));
+          GECODE_ME_CHECK(b2.zero(home));
           return ES_OK;
         }
       }
       if (b0.zero()) {
         if (b1.one()) {
-          GECODE_ME_CHECK(b2.t_zero(home));
+          GECODE_ME_CHECK(b2.zero(home));
           return ES_OK;
         } else if (b2.zero()) {
-          GECODE_ME_CHECK(b2.t_one(home));
+          GECODE_ME_CHECK(b2.one(home));
           return ES_OK;
         }
       }
@@ -81,43 +81,43 @@ namespace Gecode { namespace Int { namespace Bool {
   Eqv<BVA,BVB,BVC>::propagate(Space* home) {
     if (x0.zero()) {
       if (x1.zero()) {
-        GECODE_ES_CHECK(x2.t_one(home));
+        GECODE_ES_CHECK(x2.one(home));
       } else if (x1.one()) {
-        GECODE_ES_CHECK(x2.t_zero(home));
+        GECODE_ES_CHECK(x2.zero(home));
       } else if (x2.zero()) {
-        x1.t_one_none(home);
+        x1.one_none(home);
       } else if (x2.one()) {
-        x1.t_zero_none(home);
+        x1.zero_none(home);
       } else {
         return ES_FIX;
       }
     } else if (x0.one()) {
       if (x1.zero()) {
-        GECODE_ES_CHECK(x2.t_zero(home));
+        GECODE_ES_CHECK(x2.zero(home));
       } else if (x1.one()) {
-        GECODE_ES_CHECK(x2.t_one(home));
+        GECODE_ES_CHECK(x2.one(home));
       } else if (x2.zero()) {
-        x1.t_zero_none(home);
+        x1.zero_none(home);
       } else if (x2.one()) {
-        x1.t_one_none(home);
+        x1.one_none(home);
       } else {
         return ES_FIX;
       }
     } else if (x1.zero()) {
       assert(!x0.zero() && !x0.one());
       if (x2.zero()) {
-        x0.t_one_none(home);
+        x0.one_none(home);
       } else if (x2.one()) {
-        x0.t_zero_none(home);
+        x0.zero_none(home);
       } else {
         return ES_FIX;
       }
     } else if (x1.one()) {
       assert(!x0.zero() && !x0.one());
       if (x2.zero()) {
-        x0.t_zero_none(home);
+        x0.zero_none(home);
       } else if (x2.one()) {
-        x0.t_one_none(home);
+        x0.one_none(home);
       } else {
         return ES_FIX;
       }

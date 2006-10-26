@@ -220,11 +220,11 @@ namespace Gecode { namespace Int { namespace Linear {
       return (EqBin<Val,A,B>::post(home,x0,x1,c) == ES_FAILED) ?
         ES_FAILED : ES_SUBSUMED;
     if ((x0.min() + x1.min() > c) || (x0.max() + x1.max() < c)) {
-      b.t_zero_none(home); return ES_SUBSUMED;
+      b.zero_none(home); return ES_SUBSUMED;
     }
     if (x0.assigned() && x1.assigned()) {
       assert(x0.val() + x1.val() == c);
-      b.t_one_none(home); return ES_SUBSUMED;
+      b.one_none(home); return ES_SUBSUMED;
     }
     return ES_FIX;
   }
@@ -426,10 +426,10 @@ namespace Gecode { namespace Int { namespace Linear {
       return (GqBin<Val,A,B>::post(home,x0,x1,c+1) == ES_FAILED) ?
         ES_FAILED : ES_SUBSUMED;
     if (x0.max() + x1.max() <= c) {
-      b.t_one_none(home); return ES_SUBSUMED;
+      b.one_none(home); return ES_SUBSUMED;
     }
     if (x0.min() + x1.min() > c) {
-      b.t_zero_none(home); return ES_SUBSUMED;
+      b.zero_none(home); return ES_SUBSUMED;
     }
     return ES_FIX;
   }

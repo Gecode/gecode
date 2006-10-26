@@ -65,26 +65,26 @@ namespace Gecode {
      *
      */
     forceinline void
-    BoolView::t_zero_none(Space* home) {
-      var->t_zero_none(home);
+    BoolView::zero_none(Space* home) {
+      var->zero_none(home);
     }
     forceinline void
-    BoolView::t_one_none(Space* home) {
-      var->t_one_none(home);
+    BoolView::one_none(Space* home) {
+      var->one_none(home);
     }
 
     forceinline ModEvent
-    BoolView::t_zero(Space* home) {
+    BoolView::zero(Space* home) {
       if (one())  return ME_INT_FAILED;
       if (zero()) return ME_INT_NONE;
-      t_zero_none(home);
+      zero_none(home);
       return ME_INT_VAL;
     }
     forceinline ModEvent
-    BoolView::t_one(Space* home) {
+    BoolView::one(Space* home) {
       if (zero()) return ME_INT_FAILED;
       if (one())  return ME_INT_NONE;
-      t_one_none(home);
+      one_none(home);
       return ME_INT_VAL;
     }
 
@@ -141,21 +141,21 @@ namespace Gecode {
      *
      */
     forceinline void
-    NegBoolView::t_zero_none(Space* home) {
-      view.t_one_none(home);
+    NegBoolView::zero_none(Space* home) {
+      view.one_none(home);
     }
     forceinline void
-    NegBoolView::t_one_none(Space* home) {
-      view.t_zero_none(home);
+    NegBoolView::one_none(Space* home) {
+      view.zero_none(home);
     }
 
     forceinline ModEvent
-    NegBoolView::t_zero(Space* home) {
-      return view.t_one(home);
+    NegBoolView::zero(Space* home) {
+      return view.one(home);
     }
     forceinline ModEvent
-    NegBoolView::t_one(Space* home) {
-      return view.t_zero(home);
+    NegBoolView::one(Space* home) {
+      return view.zero(home);
     }
 
 

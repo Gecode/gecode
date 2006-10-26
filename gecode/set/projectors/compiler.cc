@@ -766,10 +766,10 @@ namespace Gecode {
               << endl;
         iccos << indent << "switch (check(home)) {" << endl;
         iccos << indent << "case ES_SUBSUMED:" << endl;
-        iccos << indent << "  _b.t_zero_none(home);" << endl;
+        iccos << indent << "  _b.zero_none(home);" << endl;
         iccos << indent << "  return ES_SUBSUMED;" << endl;
         iccos << indent << "case ES_FAILED:" << endl;
-        iccos << indent << "  _b.t_one_none(home);" << endl;
+        iccos << indent << "  _b.one_none(home);" << endl;
         iccos << indent << "  return ES_SUBSUMED;" << endl;
         iccos << indent << "default:" << endl;
         iccos << indent << "  return ES_FIX;" << endl;
@@ -783,10 +783,10 @@ namespace Gecode {
               << endl;
         iccos << indent << "switch (check(home)) {" << endl;
         iccos << indent << "case ES_SUBSUMED:" << endl;
-        iccos << indent << "  _b.t_one_none(home);" << endl;
+        iccos << indent << "  _b.one_none(home);" << endl;
         iccos << indent << "  return ES_SUBSUMED;" << endl;
         iccos << indent << "case ES_FAILED:" << endl;
-        iccos << indent << "  _b.t_zero_none(home);" << endl;
+        iccos << indent << "  _b.zero_none(home);" << endl;
         iccos << indent << "  return ES_SUBSUMED;" << endl;
         iccos << indent << "default:" << endl;
         iccos << indent << "  return ES_FIX;" << endl;

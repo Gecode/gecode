@@ -34,9 +34,9 @@ namespace Gecode { namespace Int { namespace Dom {
     if (min > max)
       return ES_FAILED;
     if ((max < x.min()) || (min > x.max())) {
-      GECODE_ME_CHECK(b.t_zero(home));
+      GECODE_ME_CHECK(b.zero(home));
     } else if ((min <= x.min()) && (x.max() <= max)) {
-      GECODE_ME_CHECK(b.t_one(home));
+      GECODE_ME_CHECK(b.one(home));
     } else {
       (void) new (home) ReRange<View>(home,x,min,max,b);
     }
@@ -71,10 +71,10 @@ namespace Gecode { namespace Int { namespace Dom {
       return ES_SUBSUMED;
     }
     if ((x0.max() <= max) && (x0.min() >= min)) {
-      b.t_one_none(home); return ES_SUBSUMED;
+      b.one_none(home); return ES_SUBSUMED;
     }
     if ((x0.max() < min) || (x0.min() > max)) {
-      b.t_zero_none(home); return ES_SUBSUMED;
+      b.zero_none(home); return ES_SUBSUMED;
     }
     return ES_FIX;
   }

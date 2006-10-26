@@ -128,15 +128,15 @@ namespace Gecode { namespace Int { namespace Rel {
     if (!same(x0,x1)) {
       switch (rtest_lq(x0,x1)) {
       case RT_TRUE:
-        b.t_one_none(home); break;
+        b.one_none(home); break;
       case RT_FALSE:
-        b.t_zero_none(home); break;
+        b.zero_none(home); break;
       case RT_MAYBE:
         (void) new (home) ReLq<View,CtrlView>(home,x0,x1,b); break;
       default: GECODE_NEVER;
       }
     } else {
-      b.t_one_none(home);
+      b.one_none(home);
     }
     return ES_OK;
   }
@@ -167,9 +167,9 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     switch (rtest_lq(x0,x1)) {
     case RT_TRUE:
-      b.t_one_none(home);  return ES_SUBSUMED;
+      b.one_none(home);  return ES_SUBSUMED;
     case RT_FALSE:
-      b.t_zero_none(home); return ES_SUBSUMED;
+      b.zero_none(home); return ES_SUBSUMED;
     case RT_MAYBE:
       break;
     default: GECODE_NEVER;
@@ -197,9 +197,9 @@ namespace Gecode { namespace Int { namespace Rel {
     } else {
       switch (rtest_lq(x,c)) {
       case RT_TRUE:
-        b.t_one_none(home); break;
+        b.one_none(home); break;
       case RT_FALSE:
-        b.t_zero_none(home); break;
+        b.zero_none(home); break;
       case RT_MAYBE:
         (void) new (home) ReLqInt<View,CtrlView>(home,x,c,b); break;
       default: GECODE_NEVER;
@@ -231,9 +231,9 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     switch (rtest_lq(x0,c)) {
     case RT_TRUE:
-      b.t_one_none(home);  return ES_SUBSUMED;
+      b.one_none(home);  return ES_SUBSUMED;
     case RT_FALSE:
-      b.t_zero_none(home); return ES_SUBSUMED;
+      b.zero_none(home); return ES_SUBSUMED;
     case RT_MAYBE:
       break;
     default: GECODE_NEVER;
