@@ -426,7 +426,7 @@ namespace Gecode { namespace Int { namespace Regular {
   Dom<View>::Dom(Space* home, ViewArray<View>& x, DFA& d)
     : NaryPropagator<View,PC_INT_DOM>(home,x),
       dfa(d), lg(NULL) {
-    force(home);
+    Propagator::force(home);
   }
 
   template <class View>
@@ -446,7 +446,7 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View>
   size_t
   Dom<View>::dispose(Space* home) {
-    unforce(home);
+    Propagator::unforce(home);
     dfa.~DFA();
     delete lg;
     (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
