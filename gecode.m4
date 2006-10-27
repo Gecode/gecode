@@ -221,8 +221,8 @@ AC_DEFUN([AC_GECODE_VTI],
    if test "${enable_$1_vars:-$3}" = "yes"; then
      AC_MSG_RESULT(yes)
      enable_$1_vars="yes";
-     AC_GECODE_ADD_VTI(translit($1,`a-z', `A-Z'))
      $4
+     AC_GECODE_ADD_VTI(translit($1,`a-z', `A-Z'))
    else
      enable_$1_vars="no";
      AC_MSG_RESULT(no)

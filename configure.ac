@@ -146,7 +146,8 @@ AC_GECODE_VTI(set,
 	 enable_int_vars="yes";])
 
 AC_GECODE_VTI(int, finite domain library, yes,
-	      [AC_DEFINE(GECODE_HAVE_INT_VARS)])
+	      [AC_DEFINE(GECODE_HAVE_INT_VARS)
+	       AC_GECODE_ADD_VTI(BOOL)])
 
 dnl End of definition of variable types
 dnl ------------------------------------------------------------------
