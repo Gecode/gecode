@@ -201,7 +201,8 @@ INTHDR0 = \
 	propagator.icc regular.hh rel.hh \
 	sortedness.hh var.icc view.icc \
 	channel.hh channel/dom.icc channel/val.icc channel/stack.icc \
-	channel/base.icc
+	channel/base.icc \
+	link.hh
 
 INTSRC		= $(INTSRC0:%=gecode/int/%)
 INTHDR		= gecode/int.hh $(INTHDR0:%=gecode/int/%)
