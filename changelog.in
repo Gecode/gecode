@@ -57,6 +57,14 @@ Module: int
 What:   change
 Rank:   minor
 [DESCRIPTION]
+Boolean variables cannot langer be initialized from an integer 
+variable. If needed, a link propagator must be posted (added).
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
 The equality constraints have been replaced by a variant of rel.
 
 [ENTRY]

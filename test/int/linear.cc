@@ -21,6 +21,7 @@
  */
 
 #include "test/int.hh"
+#include "gecode/minimodel.hh"
 
 static inline bool
 compare(double x, IntRelType r, double y) {
@@ -209,10 +210,8 @@ public:
   }
   virtual void post(Space* home, IntVarArray& x) {
     BoolVarArgs b(x.size());
-    for (int i=x.size(); i--; ) {
-      BoolVar bx(x[i]);
-      b[i] = bx;
-    }
+    for (int i=x.size(); i--; )
+      b[i]=link(home,x[i]);
     linear(home, b, irt, rhs);
   }
 };
@@ -280,13 +279,7 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     BoolVarArgs b(x.size()-1);
     for (int i=x.size()-1; i--; )
-      Gecode::dom(home,x[i],0,1);
-    if (home->failed())
-      return;
-    for (int i=x.size()-1; i--; ) {
-      BoolVar bx(x[i]);
-      b[i] = bx;
-    }
+      b[i] = link(home,x[i]);
     linear(home, b, irt, x[x.size()-1]);
   }
 };

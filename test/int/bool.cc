@@ -21,6 +21,7 @@
  */
 
 #include "test/int.hh"
+#include "gecode/minimodel.hh"
 
 static IntSet ds(0,1);
 
@@ -32,10 +33,7 @@ public:
     return x[0]==x[1];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    for (int i=x.size(); i--; )
-      Gecode::dom(home, x[i], 0, 1);
-    BoolVar b0(x[0]); BoolVar b1(x[1]);
-    bool_eq(home, b0, b1);
+    bool_eq(home, link(home,x[0]), link(home,x[1]));
   }
 };
 BoolEq _booleq("Bool::Eq");
@@ -48,10 +46,7 @@ public:
     return x[0]!=x[1];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    for (int i=x.size(); i--; )
-      Gecode::dom(home, x[i], 0, 1);
-    BoolVar b0(x[0]); BoolVar b1(x[1]);
-    bool_not(home, b0, b1);
+    bool_not(home, link(home,x[0]), link(home,x[1]));
   }
 };
 BoolNot _boolnot("Bool::Not");
@@ -64,10 +59,7 @@ public:
     return (x[0]&x[1])==x[2];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    for (int i=x.size(); i--; )
-      Gecode::dom(home, x[i], 0, 1);
-    BoolVar b0(x[0]); BoolVar b1(x[1]); BoolVar b2(x[2]);
-    bool_and(home, b0, b1, b2);
+    bool_and(home, link(home,x[0]), link(home,x[1]), link(home,x[2]));
   }
 };
 BoolAnd _booland("Bool::And::Binary");
@@ -80,10 +72,7 @@ public:
     return (x[0]|x[1])==x[2];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    for (int i=x.size(); i--; )
-      Gecode::dom(home, x[i], 0, 1);
-    BoolVar b0(x[0]); BoolVar b1(x[1]); BoolVar b2(x[2]);
-    bool_or(home, b0, b1, b2);
+    bool_or(home, link(home,x[0]), link(home,x[1]), link(home,x[2]));
   }
 };
 BoolOr _boolor("Bool::Or::Binary");
@@ -96,10 +85,7 @@ public:
     return ((x[0] == 0 ? 1 : 0)|x[1])==x[2];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    for (int i=x.size(); i--; )
-      Gecode::dom(home, x[i], 0, 1);
-    BoolVar b0(x[0]); BoolVar b1(x[1]); BoolVar b2(x[2]);
-    bool_imp(home, b0, b1, b2);
+    bool_imp(home, link(home,x[0]), link(home,x[1]), link(home,x[2]));
   }
 };
 BoolImp _boolimp("Bool::Imp");
@@ -112,10 +98,7 @@ public:
     return (x[0] == x[1])==x[2];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    for (int i=x.size(); i--; )
-      Gecode::dom(home, x[i], 0, 1);
-    BoolVar b0(x[0]); BoolVar b1(x[1]); BoolVar b2(x[2]);
-    bool_eqv(home, b0, b1, b2);
+    bool_eqv(home, link(home,x[0]), link(home,x[1]), link(home,x[2]));
   }
 };
 BoolEqv _booleqv("Bool::Eqv");
@@ -128,10 +111,7 @@ public:
     return (x[0] != x[1])==x[2];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    for (int i=x.size(); i--; )
-      Gecode::dom(home, x[i], 0, 1);
-    BoolVar b0(x[0]); BoolVar b1(x[1]); BoolVar b2(x[2]);
-    bool_xor(home, b0, b1, b2);
+    bool_xor(home, link(home,x[0]), link(home,x[1]), link(home,x[2]));
   }
 };
 BoolXor _boolxor("Bool::Xor");
@@ -148,15 +128,12 @@ public:
     return x[x.size()-1] == 1;
   }
   virtual void post(Space* home, IntVarArray& x) {
-    for (int i=x.size(); i--; )
-      Gecode::dom(home, x[i], 0, 1);
     BoolVarArgs b(2*(x.size()-1));
     for (int i=x.size()-1; i--; ) {
-      BoolVar bx(x[i]);
+      BoolVar bx = link(home,x[i]);
       b[2*i+0] = bx; b[2*i+1] = bx;
     }
-    BoolVar bx(x[x.size()-1]);
-    bool_and(home, b, bx);
+    bool_and(home, b, link(home,x[x.size()-1]));
   }
 };
 BoolAndNary _boolandnary("Bool::And::Nary");
@@ -172,15 +149,12 @@ public:
     return x[x.size()-1] == 0;
   }
   virtual void post(Space* home, IntVarArray& x) {
-    for (int i=x.size(); i--; )
-      Gecode::dom(home, x[i], 0, 1);
     BoolVarArgs b(2*(x.size()-1));
     for (int i=x.size()-1; i--; ) {
-      BoolVar bx(x[i]);
+      BoolVar bx = link(home,x[i]);
       b[2*i+0] = bx; b[2*i+1] = bx;
     }
-    BoolVar bx(x[x.size()-1]);
-    bool_or(home, b, bx);
+    bool_or(home, b, link(home,x[x.size()-1]));
   }
 };
 BoolOrNary _boolornary("Bool::Or::Nary");

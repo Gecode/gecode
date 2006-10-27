@@ -41,13 +41,6 @@ namespace Gecode {
     var = x.var->copy(home,share);
   }
 
-  forceinline
-  BoolVar::BoolVar(const IntVar& x)
-    : IntVar(x) {
-    if ((x.min() < 0) || (x.max() > 1))
-      throw Int::VariableOutOfRangeDomain("BoolVar");
-  }
-
 }
 
 // STATISTICS: int-var

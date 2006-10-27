@@ -401,6 +401,21 @@ namespace Gecode {
 
 
   /**
+   * \defgroup TaskIntIntLink Link constraints between Boolean and Integer variables
+   * \ingroup TaskIntInt
+   */
+
+  //@{
+  /// Post propagator for \f$ x_0 = x_1\f$
+  GECODE_INT_EXPORT void
+  link(Space* home, IntVar x0, BoolVar x1, IntConLevel icl=ICL_DEF);
+  /// Post propagator for \f$ x_0 = x_1\f$
+  void
+  link(Space* home, BoolVar x0, IntVar x1, IntConLevel icl=ICL_DEF);
+  //@}
+
+
+  /**
    * \defgroup TaskIntIntElement Element constraints
    * \ingroup TaskIntInt
    */

@@ -556,13 +556,6 @@ namespace Gecode {
      *    Gecode::Int::VariableOutOfDomain is thrown.
      */
     BoolVar(Space* home, int min, int max);
-    /**
-     * \brief Initialize Boolean variable from integer variable
-     *
-     * If \a x.min() is less than 0 or \a x.max() is greater than 1,
-     * an exception of type Gecode::Int::VariableOutOfDomain is thrown.
-     */
-    explicit BoolVar(const IntVar& x);
     //@}
 
     /// \name Cloning

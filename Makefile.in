@@ -165,7 +165,7 @@ INTSRC0 = \
 	int-set.cc var/imp.cc var/int.cc \
 	view/print.cc array.cc bool.cc \
 	regular/reg.cc regular/dfa.cc regular.cc \
-	dom.cc rel.cc element.cc count.cc arithmetic.cc \
+	dom.cc rel.cc link.cc element.cc count.cc arithmetic.cc \
 	linear/post.cc linear.cc \
 	branch.cc branch/assign.cc \
 	distinct.cc cumulatives.cc \

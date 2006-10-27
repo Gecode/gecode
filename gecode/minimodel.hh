@@ -547,6 +547,30 @@ namespace Gecode {
 namespace Gecode {
 
   /**
+   * \defgroup TaskMiniModelLink Link functions
+   *
+   * \ingroup TaskMiniModel
+   */
+  //@{
+  /// Return Boolean variable equal to \f$x\f$
+  inline BoolVar
+  link(Space* home, IntVar x, IntConLevel icl=ICL_DEF) {
+    BoolVar b(home,0,1); link(home,x,b);
+    return b;
+  }
+  /// Return integer variable equal to \f$x\f$
+  inline IntVar
+  link(Space* home, BoolVar b, IntConLevel icl=ICL_DEF) {
+    IntVar x(home,0,1); link(home,x,b);
+    return x;
+  }
+  //@}
+
+}
+
+namespace Gecode {
+
+  /**
    * \defgroup TaskMiniModelIntAlias Aliases for integer constraints
    *
    * Contains definitions of common constraints which have different
