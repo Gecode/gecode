@@ -592,10 +592,10 @@ namespace Gecode {
 
     /// First actor for forced disposal
     Actor** d_fst;
+    /// Current actor for forced disposal
+    Actor** d_cur;
     /// Last actor for forced disposal
     Actor** d_lst;
-    /// Number of free entries in disposal array
-    unsigned int d_free;
     /// Resize disposal array
     GECODE_KERNEL_EXPORT void d_resize(void);
 
@@ -1256,21 +1256,19 @@ namespace Gecode {
    */
   forceinline void
   Actor::force(Space* home) {
-    if (home->d_free == 0)
+    if (home->d_cur == home->d_lst)
       home->d_resize();
-    *(home->d_lst) = this;
-    home->d_lst++; home->d_free--;
+    *(home->d_cur++) = this;
   }
   forceinline void
   Actor::unforce(Space* home) {
     // Check wether array has already been discarded as space
     // deletion is already in progress
-    if (home->d_fst != NULL) {
-      Actor** f = home->d_fst;
+    Actor** f = home->d_fst;
+    if (f != NULL) {
       while (this != *f)
         f++;
-      home->d_lst--; home->d_free++;
-      *f = *(home->d_lst);
+      *f = *(--home->d_cur);
     }
   }
 

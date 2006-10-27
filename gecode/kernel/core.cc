@@ -37,9 +37,9 @@ namespace Gecode {
 
   Space::Space(void) {
     // Initialize array for forced deletion to be empty
-    d_fst  = NULL;
-    d_lst  = NULL;
-    d_free = 0;
+    d_fst = NULL;
+    d_cur = NULL;
+    d_lst = NULL;
     // Initialize variable entry points
     for (int i=0; i<VTI_LAST; i++) {
       vars[i]=NULL;
@@ -77,7 +77,7 @@ namespace Gecode {
   Space::flush(void) {
     // Flush actors registered for deletion
     Actor** a = d_fst;
-    Actor** e = d_lst;
+    Actor** e = d_cur;
     while (a < e) {
       (*a)->flush(); a++;
     }
@@ -87,7 +87,7 @@ namespace Gecode {
   Space::cached(void) const {
     size_t s = 0;
     Actor** a = d_fst;
-    Actor** e = d_lst;
+    Actor** e = d_cur;
     while (a < e) {
       s += (*a)->cached(); a++;
     }
@@ -98,19 +98,19 @@ namespace Gecode {
   Space::d_resize(void) {
     if (d_fst == NULL) {
       // Create new array
-      d_free = 4;
-      d_fst  = reinterpret_cast<Actor**>(alloc(4*sizeof(Actor*)));
-      d_lst  = d_fst;
+      d_fst = reinterpret_cast<Actor**>(alloc(4*sizeof(Actor*)));
+      d_cur = d_fst;
+      d_lst = d_fst+4;
     } else {
       // Resize existing array
-      unsigned int n = static_cast<unsigned int>(d_lst - d_fst);
+      ptrdiff_t n = d_lst - d_fst;
       assert(n != 0);
       Actor** a = reinterpret_cast<Actor**>(alloc(2*n*sizeof(Actor*)));
       memcpy(a, d_fst, n*sizeof(Actor*));
       reuse(d_fst,n*sizeof(Actor*));
-      d_fst  = a;
-      d_lst  = a+n;
-      d_free = n;
+      d_fst = a;
+      d_cur = a+n;
+      d_lst = a+2*n;
     }
   }
   
@@ -120,7 +120,7 @@ namespace Gecode {
     // Delete actors that must be deleted
     {
       Actor** a = d_fst;
-      Actor** e = d_lst;
+      Actor** e = d_cur;
       // So that d_unforce knows that deletion is in progress
       d_fst = NULL;
       while (a < e) {
@@ -320,18 +320,18 @@ namespace Gecode {
     }
     // Setup array for actor disposal
     {
-      unsigned int n = static_cast<unsigned int>(s.d_lst - s.d_fst);
+      ptrdiff_t n = s.d_cur - s.d_fst;
       if (n == 0) {
         // No actors
-        d_fst  = NULL;
-        d_lst  = NULL;
-        d_free = 0;
+        d_fst = NULL;
+        d_cur = NULL;
+        d_lst = NULL;
       } else {
         // Leave one entry free
         Actor** a = reinterpret_cast<Actor**>(alloc((n+1)*sizeof(Actor*)));
-        d_fst  = a;
-        d_lst  = a+n;
-        d_free = 1;
+        d_fst = a;
+        d_cur = a+n;
+        d_lst = a+n+1;
         Actor** f = s.d_fst;
         for (unsigned int i=n; i--; )
           a[i] = static_cast<Actor*>(f[i]->prev());
