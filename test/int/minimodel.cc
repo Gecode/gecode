@@ -147,7 +147,7 @@ public:
   }
   virtual void post(Space* home, IntVarArray& x) {
     IntVar y = Gecode::post(home, 2*x[0] + 3*x[1] - x[2]);
-    Gecode::eq(home,y,x[3]);
+    Gecode::rel(home,y,IRT_EQ,x[3]);
   }
 };
 MmLinExprA _mmlinexpra;
@@ -312,7 +312,7 @@ public:
     Log::log("x[0]*x[1]==x[2]",
              "\tmult(this, x[0], x[1], x[2]);");
     IntVar y = mult(home, x[0], x[1]);
-    eq(home, y, x[2], ICL_DOM);
+    rel(home, y, IRT_EQ, x[2], ICL_DOM);
   }
 };
 namespace {
@@ -332,7 +332,7 @@ public:
   }
   virtual void post(Space* home, IntVarArray& x) {
     IntVar y = sqr(home, x[0]);
-    eq(home, y, x[1], ICL_DOM);
+    rel(home, y, IRT_EQ, x[1], ICL_DOM);
   }
 };
 namespace {
@@ -354,7 +354,7 @@ public:
     Log::log("post abs(x0, x1)",
              "\tabs(this, x[0], x[1], icl);");
     IntVar y = abs(home, x[0], icl);
-    eq(home, y, x[1], ICL_DOM);
+    rel(home, y, IRT_EQ, x[1], ICL_DOM);
   }
 };
 namespace {
@@ -375,7 +375,7 @@ public:
   }
   virtual void post(Space* home, IntVarArray& x) {
     IntVar y = min(home, x[0], x[1]);
-    eq(home, y, x[2], ICL_DOM);
+    rel(home, y, IRT_EQ, x[2], ICL_DOM);
   }
 };
 namespace {
@@ -393,7 +393,7 @@ public:
   }
   virtual void post(Space* home, IntVarArray& x) {
     IntVar y = max(home, x[0], x[1]);
-    eq(home, y, x[2], ICL_DOM);
+    rel(home, y, IRT_EQ, x[2], ICL_DOM);
   }
 };
 namespace {
@@ -417,7 +417,7 @@ public:
     IntVarArgs m(3);
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     IntVar y = min(home, m);
-    eq(home, y, x[3], ICL_DOM);
+    rel(home, y, IRT_EQ, x[3], ICL_DOM);
   }
 };
 namespace {
@@ -439,7 +439,7 @@ public:
     IntVarArgs m(3);
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     IntVar y = max(home, m);
-    eq(home, y, x[3], ICL_DOM);
+    rel(home, y, IRT_EQ, x[3], ICL_DOM);
   }
 };
 namespace {

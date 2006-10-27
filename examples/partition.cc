@@ -40,10 +40,9 @@ public:
       y(this,opt.size,1,2*opt.size) {
     const int n = opt.size;
     // Break symmetries by ordering numbers in each group
-    for (int i = n-1; i--; ) {
-      rel(this, x[i], IRT_LE, x[i+1]);
-      rel(this, y[i], IRT_LE, y[i+1]);
-    }
+    rel(this, x, IRT_LE);
+    rel(this, y, IRT_LE);
+
     rel(this, x[0], IRT_LE, y[0]);
 
     IntVarArgs xy(2*n);

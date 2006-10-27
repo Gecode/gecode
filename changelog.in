@@ -53,6 +53,13 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The equality constraints have been replaced by a variant of rel.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

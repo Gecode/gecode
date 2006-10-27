@@ -363,6 +363,26 @@ namespace Gecode {
   rel(Space* home, IntVar x, IntRelType r, int c, BoolVar b,
       IntConLevel icl=ICL_DEF);
 
+  /** \brief Post propagator for pairwise relation on \a x.
+   *
+   * States that the elements of \a x are in the following relation:
+   *  - if \a r = IRT_EQ, then all elements of \a x must be equal. 
+   *    Supports both bounds (\a icl = ICL_BND) and
+   *    domain-consistency (\a icl = ICL_DOM, default).
+   *  - if \a r = IRT_LE, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ, 
+   *    then the elements of \a x are ordered with respt to \a r.
+   *    Supports domain-consistency (\a icl = ICL_DOM, default).
+   *  - if \a r = IRT_NQ, then all elements of \a x must be pairwise 
+   *    distinct (corresponds to the distinct constraint).
+   *    Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
+   *    and domain-consistency (\a icl = ICL_DOM).
+   *    Throws an exception of type Int::ArgumentSame, if \a x contains
+   *    the same variable multiply.
+   *
+   */
+  GECODE_INT_EXPORT void
+  rel(Space* home, const IntVarArgs& x, IntRelType r,
+      IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for relation between \a x and \a y.
    *
    * Note that for the inequality relations this corresponds to
@@ -378,47 +398,6 @@ namespace Gecode {
   rel(Space* home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
       IntConLevel icl=ICL_DEF);
   //@}
-
-  /**
-   * \defgroup TaskIntIntEq Equality constraints
-   * \ingroup TaskIntInt
-   */
-
-  //@{
-
-  /** \brief Post propagator for \f$ x_0 = x_1\f$
-   *
-   * Supports both bounds (\a icl = ICL_BND) and
-   * domain-consistency (\a icl = ICL_DOM, default).
-   */
-  GECODE_INT_EXPORT void
-  eq(Space* home, IntVar x0, IntVar x1, IntConLevel icl=ICL_DEF);
-  /// Propagates \f$ x = n\f$
-  GECODE_INT_EXPORT void
-  eq(Space* home, IntVar x, int n, IntConLevel=ICL_DEF);
-  /** \brief Post propagator for \f$ (x_0 = x_1)\Leftrightarrow b\f$
-   *
-   * Supports both bounds (\a icl = ICL_BND) and
-   * domain-consistency (\a icl = ICL_DOM, default).
-   */
-  GECODE_INT_EXPORT void
-  eq(Space* home, IntVar x0, IntVar x1, BoolVar b, IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$ (x=n)\Leftrightarrow b\f$
-   *
-   * Supports both bounds (\a icl = ICL_BND) and
-   * domain-consistency (\a icl = ICL_DOM, default).
-   */
-  GECODE_INT_EXPORT void
-  eq(Space* home, IntVar x, int n, BoolVar b, IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
-   *
-   * Supports both bounds (\a icl = ICL_BND) and
-   * domain-consistency (\a icl = ICL_DOM, default).
-   */
-  GECODE_INT_EXPORT void
-  eq(Space* home, const IntVarArgs& x, IntConLevel icl=ICL_DEF);
-  //@}
-
 
 
   /**

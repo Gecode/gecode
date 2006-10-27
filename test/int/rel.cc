@@ -73,7 +73,7 @@ public:
     return (x[0]==x[1]) && (x[1]==x[2]) && (x[2]==x[3]);
   }
   virtual void post(Space* home, IntVarArray& x) {
-    eq(home, x, icl);
+    rel(home, x, IRT_EQ, icl);
   }
 };
 RelEqNary _releqnarybnd("Rel::EqNaryBnd", ICL_BND);

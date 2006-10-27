@@ -66,8 +66,7 @@ public:
         d[diag(i,j)] = minus(this, m[j], m[i]);
 
     // Order marks
-    for (int i=1; i<n; i++)
-      rel(this, m[i-1], IRT_LE, m[i]);
+    rel(this, m, IRT_LE);
 
     if (opt.naive) {
       // d[diag(i,j)] must be at least sum of first j-i integers
