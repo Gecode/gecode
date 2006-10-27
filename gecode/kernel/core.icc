@@ -346,6 +346,8 @@ namespace Gecode {
    */
   class ActorLink {
     friend class Actor;
+    friend class Propagator;
+    friend class Branching;
     friend class Space;
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
   private:
@@ -374,6 +376,8 @@ namespace Gecode {
    */
   class Actor : private ActorLink {
     friend class Space;
+    friend class Propagator;
+    friend class Branching;
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
   public:
     /// Create copy
@@ -594,10 +598,6 @@ namespace Gecode {
     unsigned int d_free;
     /// Resize disposal array
     GECODE_KERNEL_EXPORT void d_resize(void);
-    /// Remove actor from disposal array
-    void d_unforce(Actor* a);
-    /// Add actor to disposal array
-    void d_force(Actor* a);
 
     /**
      * \name Processing variables
@@ -685,11 +685,6 @@ namespace Gecode {
 
     /// Perform propagation, return number of propagation steps
     GECODE_KERNEL_EXPORT unsigned long int propagate(void);
-
-    /// Add new propagator \a p to space
-    void propagator(Propagator* p);
-    /// Add new branching \a b to space
-    void branching(Branching* b);
 
     /**
      * \name Processing propagators
@@ -1260,58 +1255,30 @@ namespace Gecode {
    *
    */
   forceinline void
-  Space::d_force(Actor* a) {
-    if (d_free == 0)
-      d_resize();
-    assert(d_free > 0);
-    *d_lst = a;
-    d_lst++; d_free--;
-  }
-  forceinline void
   Actor::force(Space* home) {
-    home->d_force(this);
-  }
-  forceinline void
-  Space::d_unforce(Actor* a) {
-    // Check wether array has already been discarded as space
-    // deletion is already in progress
-    if (d_fst != NULL) {
-      Actor** f = d_fst;
-      while (a != *f)
-        f++;
-      d_lst--; d_free++;
-      *f = *d_lst;
-    }
+    if (home->d_free == 0)
+      home->d_resize();
+    *(home->d_lst) = this;
+    home->d_lst++; home->d_free--;
   }
   forceinline void
   Actor::unforce(Space* home) {
-    home->d_unforce(this);
-  }
-  forceinline void
-  Space::propagator(Propagator* p) {
-    // Propagators must be put at the front of the link of actors
-    a_actors.head(p);
-  }
-
-  forceinline void
-  Space::branching(Branching* b) {
-    // Propagators are put at the tail of the link of actors
-    b->id = branch_id++;
-    // If no branching available, make it the first one
-    if (b_status == &a_actors) {
-      b_status = b;
-      if (b_commit == &a_actors)
-        b_commit = b;
+    // Check wether array has already been discarded as space
+    // deletion is already in progress
+    if (home->d_fst != NULL) {
+      Actor** f = home->d_fst;
+      while (this != *f)
+        f++;
+      home->d_lst--; home->d_free++;
+      *f = *(home->d_lst);
     }
-    a_actors.tail(b);
   }
-
 
 
   forceinline
   Propagator::Propagator(Space* home)
     : pme(0) {
-    home->propagator(this);
+    home->a_actors.head(this);
   }
 
   forceinline
@@ -1326,7 +1293,15 @@ namespace Gecode {
 
   forceinline
   Branching::Branching(Space* home) {
-    home->branching(this);
+    // Propagators are put at the tail of the link of actors
+    id = home->branch_id++;
+    // If no branching available, make it the first one
+    if (home->b_status == &(home->a_actors)) {
+      home->b_status = this;
+      if (home->b_commit == &(home->a_actors))
+        home->b_commit = this;
+    }
+    home->a_actors.tail(this);
   }
 
   forceinline

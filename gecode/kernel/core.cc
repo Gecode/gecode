@@ -203,7 +203,7 @@ namespace Gecode {
       case ES_FIX:
         {
           // Put propagator in idle queue
-          propagator(p);
+          a_actors.head(p);
           // Prevent that propagator gets rescheduled (turn on all events)
           p->pme = PME_ASSIGNED;
           process();
@@ -213,7 +213,7 @@ namespace Gecode {
       case ES_NOFIX:
         {
           // Propagator is currently in no queue, put in into idle
-          propagator(p);
+          a_actors.head(p);
           p->pme = PME_NONE;
           process();
         }
