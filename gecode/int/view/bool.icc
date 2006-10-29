@@ -224,6 +224,67 @@ namespace Gecode {
       view.update(home,share,b.view);
     }
 
+
+    /**
+     * \brief %Range iterator for Boolean variable views
+     * \ingroup TaskActorIntView
+     */
+    template <>
+    class ViewRanges<BoolView> : public Iter::Ranges::Singleton {
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      ViewRanges(void);
+      /// Initialize with ranges for view \a x
+      ViewRanges(const BoolView& x);
+      /// Initialize with ranges for view \a x
+      void init(const BoolView& x);
+      //@}
+    };
+
+    forceinline
+    ViewRanges<BoolView>::ViewRanges(void) {}
+
+    forceinline
+    ViewRanges<BoolView>::ViewRanges(const BoolView& x)
+      : Iter::Ranges::Singleton(x.min(),x.max()) {}
+
+    forceinline void
+    ViewRanges<BoolView>::init(const BoolView& x) {
+      Iter::Ranges::Singleton::init(x.min(),x.max());
+    }
+
+    /**
+     * \brief %Range iterator for negated Boolean variable views
+     * \ingroup TaskActorIntView
+     */
+    template <>
+    class ViewRanges<NegBoolView> : public Iter::Ranges::Singleton {
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      ViewRanges(void);
+      /// Initialize with ranges for view \a x
+      ViewRanges(const NegBoolView& x);
+      /// Initialize with ranges for view \a x
+      void init(const NegBoolView& x);
+      //@}
+    };
+
+    forceinline
+    ViewRanges<NegBoolView>::ViewRanges(void) {}
+
+    forceinline
+    ViewRanges<NegBoolView>::ViewRanges(const NegBoolView& x)
+      : Iter::Ranges::Singleton(x.min(),x.max()) {}
+
+    forceinline void
+    ViewRanges<NegBoolView>::init(const NegBoolView& x) {
+      Iter::Ranges::Singleton::init(x.min(),x.max());
+    }
+
   }
 
 

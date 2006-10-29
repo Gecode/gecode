@@ -33,6 +33,13 @@ namespace Gecode {
     GECODE_ES_FAIL(home,Regular::Dom<IntView>::post(home,xv,dfa));
   }
 
+  void
+  regular(Space* home, const BoolVarArgs& x, DFA& dfa, IntConLevel) {
+    if (home->failed()) return;
+    ViewArray<BoolView> xv(home,x);
+    GECODE_ES_FAIL(home,Regular::Dom<BoolView>::post(home,xv,dfa));
+  }
+
 }
 
 
