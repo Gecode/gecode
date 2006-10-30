@@ -380,7 +380,7 @@ namespace Gecode { namespace Int {
 
 }}
 
-#include "gecode/int/var/imp.icc"
+#include "gecode/int/var/imp-int.icc"
 
 
 namespace Gecode {
