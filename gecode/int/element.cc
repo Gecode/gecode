@@ -40,6 +40,19 @@ namespace Gecode {
   }
 
   void
+  element(Space* home, const IntArgs& c, IntVar x0, BoolVar x1,
+          IntConLevel) {
+    if (home->failed()) return;
+    Element::IntSharedArray cs(c.size());
+    for (int i = c.size(); i--; )
+      if ((c[i] < 0) || (c[i] > 1))
+        throw NumericalOverflow("Int::element");
+      else
+        cs[i] = c[i];
+    GECODE_ES_FAIL(home,(Element::Int<IntView,BoolView>::post(home,cs,x0,x1)));
+  }
+
+  void
   element(Space* home, const IntVarArgs& c, IntVar x0, IntVar x1,
           IntConLevel icl) {
     if (home->failed()) return;
@@ -52,6 +65,20 @@ namespace Gecode {
                            ::post(home,iv,c.size(),x0,x1)));
     }
   }
+
+  /*
+
+  MISSING!
+  void
+  element(Space* home, const BoolVarArgs& c, IntVar x0, BoolVar x1,
+          IntConLevel) {
+    if (home->failed()) return;
+    Element::IdxView<BoolView>* iv = Element::IdxView<BoolView>::init(home,c);
+    GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,BoolView>
+                         ::post(home,iv,c.size(),x0,x1)));
+  }
+
+  */
 
 }
 

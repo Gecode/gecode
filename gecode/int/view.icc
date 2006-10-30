@@ -132,6 +132,8 @@ namespace Gecode {
       IntView(void);
       /// Initialize from integer variable \a x
       IntView(const IntVar& x);
+      /// Initialize from integer variable \a x
+      IntView(IntVarImp* x);
       //@}
 
       /// \name Value access
@@ -894,16 +896,6 @@ namespace Gecode {
       BoolView(void);
       /// Initialize from Boolean variable \a b
       BoolView(const BoolVar& b);
-    private:
-      /** \brief Initialize from integer variable \a x
-       *
-       * This is odd, but is required to go from an VarArgArray to
-       * a ViewArray.
-       */
-      BoolView(const IntVar& b);
-    public:
-      /// Initialize from integer variable \a x
-      explicit BoolView(const IntView& x);
       //@}
 
       /// \name Boolean domain tests
@@ -1141,6 +1133,13 @@ operator<<(std::ostream&, const Gecode::Int::IntScaleView&);
  */
 GECODE_INT_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::Int::DoubleScaleView&);
+
+/**
+ * \brief Print Boolean variable view
+ * \relates Gecode::Int::BoolView
+ */
+GECODE_INT_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::Int::BoolView&);
 /**
  * \brief Print negated Boolean view
  * \relates Gecode::Int::NegBoolView
@@ -1152,6 +1151,12 @@ operator<<(std::ostream&, const Gecode::Int::NegBoolView&);
 inline std::ostream&
 operator<<(std::ostream& os, const Gecode::IntVar& x) {
   Gecode::Int::IntView vx(x);
+  return os << vx;
+}
+
+inline std::ostream&
+operator<<(std::ostream& os, const Gecode::BoolVar& x) {
+  Gecode::Int::BoolView vx(x);
   return os << vx;
 }
 

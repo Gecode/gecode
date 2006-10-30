@@ -536,13 +536,18 @@ namespace Gecode {
    *
    * \ingroup TaskIntIntVars
    */
-  class BoolVar : public IntVar {
+  class BoolVar {
+  protected:
+    /// Integer variable implementation used
+    Int::IntVarImp* var;
   public:
     /// \name Constructors and initialization
     //@{
     /// Default constructor
     BoolVar(void);
-    /// Initialize from Boolean View \a x
+    /// Initialize from Boolean variable \a x
+    BoolVar(const BoolVar& x);
+    /// Initialize from Boolean view \a x
     BoolVar(const Int::BoolView& x);
     /**
      * \brief Initialize Boolean variable with range domain
@@ -555,7 +560,59 @@ namespace Gecode {
      *    an exception of type
      *    Gecode::Int::VariableOutOfDomain is thrown.
      */
-    BoolVar(Space* home, int min, int max);
+    GECODE_INT_EXPORT BoolVar(Space* home, int min, int max);
+    /**
+     * \brief Initialize Boolean variable with range domain
+     *
+     * The variable is created with a domain ranging from \a min
+     * to \a max. The following exceptions might be thrown:
+     *  - If \a min is greater than \a max, an exception of type
+     *    Gecode::Int::VariableEmptyDomain is thrown.
+     *  - If \a min is less than 0 or \a max is greater than 1,
+     *    an exception of type
+     *    Gecode::Int::VariableOutOfDomain is thrown.
+     */
+    GECODE_INT_EXPORT void init(Space* home, int min, int max);
+    //@}
+
+    /// \name Variable implementation access
+    //@{
+    /// Return integer variable implementation
+    Int::IntVarImp* variable(void) const;
+    //@}
+
+    /// \name Value access
+    //@{
+    /// Return minimum of domain
+    int min(void) const;
+    /// Return maximum of domain
+    int max(void) const;
+    /// Return median of domain
+    int med(void) const;
+    /// Return assigned value (only if assigned)
+    int val(void) const;
+
+    /// Return size (cardinality) of domain
+    unsigned int size(void) const;
+    /// Return width of domain (distance between maximum and minimum)
+    unsigned int width(void) const;
+    /// Return degree (number of subscribed propagators)
+    unsigned int degree(void) const;
+    //@}
+
+    /// \name Domain tests
+    //@{
+    /// Test whether domain is a range
+    bool range(void) const;
+    /// Test whether view is assigned
+    bool assigned(void) const;
+
+    /// Test whether \a n is contained in domain
+    bool in(int n) const;
+    /// Test whether domain is zero
+    bool zero(void) const;
+    /// Test whether domain is one
+    bool one(void) const;
     //@}
 
     /// \name Cloning
@@ -573,6 +630,12 @@ namespace Gecode {
  */
 std::ostream&
 operator<<(std::ostream&, const Gecode::IntVar& x);
+/**
+ * \brief Print Boolean variable \a x
+ * \relates Gecode::BoolVar
+ */
+std::ostream&
+operator<<(std::ostream&, const Gecode::BoolVar& x);
 
 /*
  * For initialization, IntVar and IntView are mutually dependent.

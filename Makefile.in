@@ -162,7 +162,7 @@ SEARCHBUILDDIRS = search
 #
 
 INTSRC0 = \
-	int-set.cc var/imp.cc var/int.cc \
+	int-set.cc var/imp.cc var/int.cc var/bool.cc \
 	view/print.cc array.cc bool.cc \
 	regular/reg.cc regular/dfa.cc regular.cc \
 	dom.cc rel.cc link.cc element.cc count.cc arithmetic.cc \

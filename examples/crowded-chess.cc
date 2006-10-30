@@ -128,7 +128,7 @@ protected:
   }
 
   /// Post knight-constraints
-  void knight_constraints() {
+  void knight_constraints(void) {
     static const int kmoves[4][2] = {
       {-1,2}, {1,2}, {2,-1}, {2,1}
     };
@@ -136,12 +136,11 @@ protected:
     for (int x = n; x--; )
       for (int y = n; y--; )
         for (int i = 4; i--; )
-          if (valid_pos(x+kmoves[i][0], y+kmoves[i][1])) {
-            IntVarArgs places(2);
-            places[0] = kb(x, y);
-            places[1] = kb(x+kmoves[i][0], y+kmoves[i][1]);
-            linear(this, places, IRT_LQ, 1);
-          }
+          if (valid_pos(x+kmoves[i][0], y+kmoves[i][1]))
+            bool_and(this, 
+                     kb(x, y),
+                     kb(x+kmoves[i][0], y+kmoves[i][1]),
+                     false);
   }
 
 

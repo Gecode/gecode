@@ -31,16 +31,7 @@ namespace Gecode {
     forceinline
     BoolView::BoolView(void) {}
     forceinline
-    BoolView::BoolView(const BoolVar& b) : IntView(b) {}
-    forceinline
-    BoolView::BoolView(const IntVar& x) : IntView(x) {
-      assert((variable()->min() >= 0) && (variable()->max() <= 1));
-    }
-    forceinline
-    BoolView::BoolView(const IntView& x) : IntView(x) {
-      assert((variable()->min() >= 0) && (variable()->max() <= 1));
-    }
-
+    BoolView::BoolView(const BoolVar& b) : IntView(b.variable()) {}
 
     /*
      * Boolean domain tests

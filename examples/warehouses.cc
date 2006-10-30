@@ -95,7 +95,7 @@ public:
       }
       for (int i=0; i<n_suppliers; i++) {
         c[n_stores+i]=building_cost;
-        x[n_stores+i]=open[i];
+        x[n_stores+i]=link(this,open[i]);
       }
       linear(this, c, x, IRT_EQ, total);
     }

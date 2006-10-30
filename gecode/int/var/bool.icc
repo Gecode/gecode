@@ -25,20 +25,82 @@ namespace Gecode {
   forceinline
   BoolVar::BoolVar(void) {}
 
-  forceinline
-  BoolVar::BoolVar(Space* home, int min, int max)
-    : IntVar(home,min,max) {
-    if ((min < 0) || (max > 1))
-      throw Int::VariableOutOfRangeDomain("BoolVar");
-  }
 
   forceinline
-  BoolVar::BoolVar(const Int::BoolView& b)
-    : IntVar(b) {}
+  BoolVar::BoolVar(const BoolVar& x)
+    : var(x.var) {}
+  forceinline
+  BoolVar::BoolVar(const Int::BoolView& x)
+    : var(x.variable()) {}
+
+  forceinline Int::IntVarImp*
+  BoolVar::variable(void) const {
+    return var;
+  }
+
+
+  forceinline int
+  BoolVar::val(void) const {
+    return var->val();
+  }
+  forceinline int
+  BoolVar::min(void) const {
+    return var->min();
+  }
+  forceinline int
+  BoolVar::med(void) const {
+    return var->med();
+  }
+  forceinline int
+  BoolVar::max(void) const {
+    return var->max();
+  }
+
+
+  forceinline unsigned int
+  BoolVar::degree(void) const {
+    return var->degree();
+  }
+  forceinline unsigned int
+  BoolVar::width(void) const {
+    return var->width();
+  }
+  forceinline unsigned int
+  BoolVar::size(void) const {
+    return var->size();
+  }
+
+
+
+  forceinline bool
+  BoolVar::assigned(void) const {
+    return var->assigned();
+  }
+  forceinline bool
+  BoolVar::range(void) const {
+    return var->range();
+  }
+  forceinline bool
+  BoolVar::in(int n) const {
+    return var->in(n);
+  }
+
 
   forceinline void
   BoolVar::update(Space* home, bool share, BoolVar& x) {
     var = x.var->copy(home,share);
+  }
+
+  forceinline bool
+  BoolVar::zero(void) const {
+    return max() == 0;
+    //    return var->zero();
+  }
+
+  forceinline bool
+  BoolVar::one(void) const {
+    return min() == 1;
+    //    return var->one();
   }
 
 }

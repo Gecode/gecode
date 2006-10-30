@@ -85,15 +85,8 @@ public:
                     ~(pos[pa]-pos[pb] == 1));
     }
     // Sum of fulfilment
-    {
-      IntVarArgs eq(spec.n_prefs+1);
-      IntArgs    c(spec.n_prefs+1);
-      eq[spec.n_prefs] = sat; c[spec.n_prefs] = -1;
-      for (int i = spec.n_prefs; i--; ) {
-        eq[i] = ful[i]; c[i] = 1;
-      }
-      linear(this, c, eq, IRT_EQ, 0);
-    }
+    linear(this, ful, IRT_EQ, sat);
+
     distinct(this, pos, opt.icl);
 
     // Break some symmetries

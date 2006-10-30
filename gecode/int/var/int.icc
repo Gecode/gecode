@@ -26,10 +26,10 @@ namespace Gecode {
   IntVar::IntVar(void) {}
 
 
-  inline
+  forceinline
   IntVar::IntVar(const IntVar& x)
     : var(x.var) {}
-  inline
+  forceinline
   IntVar::IntVar(const Int::IntView& x)
     : var(x.variable()) {}
 

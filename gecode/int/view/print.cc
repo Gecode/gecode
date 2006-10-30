@@ -77,6 +77,10 @@ operator<<(std::ostream& os, const Gecode::Int::IntView& x) {
   return Gecode::Int::print_view(os,x);
 }
 std::ostream&
+operator<<(std::ostream& os, const Gecode::Int::BoolView& x) {
+  return Gecode::Int::print_view(os,x);
+}
+std::ostream&
 operator<<(std::ostream& os, const Gecode::Int::MinusView& x) {
   return Gecode::Int::print_view(os,x);
 }

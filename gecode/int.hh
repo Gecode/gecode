@@ -461,6 +461,14 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   element(Space* home, const IntArgs& n, IntVar x0, IntVar x1,
           IntConLevel=ICL_DEF);
+  /** \brief Post propagator for \f$ n_{x_0}=x_1\f$
+   *
+   *  Throws an exception of type Int::NumericalOverflow, if
+   *  the integers in \a n are not between 0 and 1.
+   */
+  GECODE_INT_EXPORT void
+  element(Space* home, const IntArgs& n, IntVar x0, BoolVar x1,
+          IntConLevel=ICL_DEF);
   /** \brief Post propagator for \f$ x_{y_0}=y_1\f$
    *
    * Supports both bounds (\a icl = ICL_BND) and
@@ -468,6 +476,10 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   element(Space* home, const IntVarArgs& x, IntVar y0, IntVar y1,
+          IntConLevel icl=ICL_DEF);
+  /// Post propagator for \f$ x_{y_0}=y_1\f$
+  GECODE_INT_EXPORT void
+  element(Space* home, const BoolVarArgs& x, IntVar y0, BoolVar y1,
           IntConLevel icl=ICL_DEF);
   //@}
 
