@@ -69,7 +69,7 @@ namespace Gecode {
     for (int i=x.size(); i--; ) {
       IntVar yi(home,0,1); link(home,x[i],yi); y[i]=yi;
     }
-    branch(home,x,vars,vals);
+    branch(home,y,vars,vals);
   }
 
   void
@@ -92,7 +92,7 @@ namespace Gecode {
     for (int i=x.size(); i--; ) {
       IntVar yi(home,0,1); link(home,x[i],yi); y[i]=yi;
     }
-    assign(home,x,vals);
+    assign(home,y,vals);
   }
 
 
