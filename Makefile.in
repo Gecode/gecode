@@ -172,7 +172,8 @@ INTSRC0 = \
 	sortedness.cc gcc.cc \
 	channel.cc
 INTVARIMP = \
-        gecode/int/var/imp-hdr.icc gecode/int/var/imp-body.icc
+        gecode/int/var/imp-int-hdr.icc gecode/int/var/imp-int-body.icc \
+        gecode/int/var/imp-bool-hdr.icc gecode/int/var/imp-bool-body.icc
 INTHDR0 = \
 	arithmetic/abs.icc arithmetic/max.icc arithmetic/mult.icc \
 	bool/or.icc bool/eq.icc bool/eqv.icc bool/base.icc \
@@ -552,9 +553,13 @@ compilesubdirs:
 #
 # Generated variable implementations
 #
-$(top_srcdir)/gecode/int/var/imp-hdr.icc: $(top_srcdir)/gecode/int/var-imp.vis
+$(top_srcdir)/gecode/int/var/imp-int-hdr.icc: $(top_srcdir)/gecode/int/var-imp-int.vis
 	perl $(top_srcdir)/misc/genvarimp.perl -header $^ > $@
-$(top_srcdir)/gecode/int/var/imp-body.icc: $(top_srcdir)/gecode/int/var-imp.vis
+$(top_srcdir)/gecode/int/var/imp-int-body.icc: $(top_srcdir)/gecode/int/var-imp-int.vis
+	perl $(top_srcdir)/misc/genvarimp.perl -body $^ > $@
+$(top_srcdir)/gecode/int/var/imp-bool-hdr.icc: $(top_srcdir)/gecode/int/var-imp-bool.vis
+	perl $(top_srcdir)/misc/genvarimp.perl -header $^ > $@
+$(top_srcdir)/gecode/int/var/imp-bool-body.icc: $(top_srcdir)/gecode/int/var-imp-bool.vis
 	perl $(top_srcdir)/misc/genvarimp.perl -body $^ > $@
 $(top_srcdir)/gecode/set/var/imp-hdr.icc: $(top_srcdir)/gecode/set/var-imp.vis
 	perl $(top_srcdir)/misc/genvarimp.perl -header $^ > $@

@@ -26,7 +26,8 @@
 
 #include <cmath>
 
-#include "gecode/int/var/imp-hdr.icc"
+#include "gecode/int/var/imp-int-hdr.icc"
+#include "gecode/int/var/imp-bool-hdr.icc"
 
 namespace Gecode { namespace Int {
 
