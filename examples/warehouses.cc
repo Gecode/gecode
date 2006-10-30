@@ -117,9 +117,7 @@ public:
       BoolVarArgs store_by_supplier(n_stores);
       for (int j=0; j<n_stores; j++)
         store_by_supplier[j] = post(this, ~(supplier[j] == i));
-      BoolVar b(this, 0, 1);
-      rel(this, open[i], IRT_EQ, 1, b);
-      linear(this, store_by_supplier, IRT_GR, 0, b);
+      bool_or(this, store_by_supplier, open[i]);
     }
 
     branch(this, cost, BVAR_REGRET_MIN_MAX, BVAL_MIN);
