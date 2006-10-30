@@ -22,9 +22,6 @@
 
 namespace Gecode {
 
-  // Forward declaration.
-  class BoolVarArray;
-
   /**
    * \defgroup TaskIntIntArgs Argument arrays
    *
@@ -39,27 +36,7 @@ namespace Gecode {
   /// Passing integer variables
   typedef VarArgArray<IntVar>  IntVarArgs;
   /// Passing Boolean variables
-  class BoolVarArgs : public IntVarArgs {
-  public:
-    /// \name Creation and initialization
-    //@{
-    /// Allocate argument array for \a n Boolean variables
-    BoolVarArgs(int n);
-    /// Initialize from Boolean variable array \a a (copy elements)
-    BoolVarArgs(const BoolVarArgs& a);
-    /// Initialize from Boolean variable array \a a (copy elements)
-    explicit BoolVarArgs(const BoolVarArray& a);
-    //@}
-
-    /// \name Array elements
-    //@{
-    /// Return variable at position \a i
-    BoolVar& operator[](int i);
-    /// Return variable at position \a i
-    const BoolVar& operator[](int i) const;
-    //@}
-  };
-
+  typedef VarArgArray<BoolVar> BoolVarArgs;
   //@}
 
   /**
@@ -119,7 +96,7 @@ namespace Gecode {
    * \brief Boolean variable array
    * \ingroup TaskIntIntVarArrays
    */
-  class BoolVarArray : public IntVarArray {
+  class BoolVarArray : public VarArray<BoolVar> {
   public:
     /// \name Creation and initialization
     //@{
@@ -142,14 +119,6 @@ namespace Gecode {
      */
     GECODE_INT_EXPORT
     BoolVarArray(Space* home, int n, int min, int max);
-    //@}
-
-    /// \name Array elements
-    //@{
-    /// Return variable at position \a i
-    BoolVar& operator[](int i);
-    /// Return variable at position \a i
-    const BoolVar& operator[](int i) const;
     //@}
   };
 
@@ -200,31 +169,6 @@ namespace Gecode {
    */
 
   forceinline
-  BoolVarArgs::BoolVarArgs(const BoolVarArgs& a)
-    : IntVarArgs(a) {}
-
-  forceinline
-  BoolVarArgs::BoolVarArgs(const BoolVarArray& a)
-    : IntVarArgs(a) {}
-
-  forceinline
-  BoolVarArgs::BoolVarArgs(int n)
-    : IntVarArgs(n) {}
-
-
-  forceinline BoolVar&
-  BoolVarArgs::operator[](int i) {
-    BoolVar* b = static_cast<BoolVar*>(&a[i]);
-    return *b;
-  }
-
-  forceinline const BoolVar&
-  BoolVarArgs::operator[](int i) const {
-    const BoolVar* b = static_cast<BoolVar*>(&a[i]);
-    return *b;
-  }
-
-  forceinline
   IntVarArray::IntVarArray(void) {}
 
   forceinline
@@ -240,25 +184,12 @@ namespace Gecode {
   BoolVarArray::BoolVarArray(void) {}
 
   forceinline
-  BoolVarArray::BoolVarArray(const BoolVarArray& a)
-    : IntVarArray(a) {}
+  BoolVarArray::BoolVarArray(Space* home, int n)
+    : VarArray<BoolVar>(home,n) {}
 
   forceinline
-  BoolVarArray::BoolVarArray(Space* home, int n)
-    : IntVarArray(home,n) {}
-
-
-  forceinline BoolVar&
-  BoolVarArray::operator[](int i) {
-    BoolVar* b = static_cast<BoolVar*>(&x[i]);
-    return *b;
-  }
-
-  forceinline const BoolVar&
-  BoolVarArray::operator[](int i) const {
-    const BoolVar* b = static_cast<BoolVar*>(&x[i]);
-    return *b;
-  }
+  BoolVarArray::BoolVarArray(const BoolVarArray& a)
+    : VarArray<BoolVar>(a) {}
 
 }
 

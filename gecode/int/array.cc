@@ -45,7 +45,7 @@ namespace Gecode {
   }
 
   BoolVarArray::BoolVarArray(Space* home, int n, int min, int max)
-    : IntVarArray(home, n) {
+    : VarArray<BoolVar>(home, n) {
     if ((min < 0) || (max > 1))
       throw Int::VariableOutOfRangeDomain("BoolVarArray");
     if (min > max)
