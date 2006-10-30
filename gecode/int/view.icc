@@ -884,9 +884,9 @@ namespace Gecode {
      * Provides convenient and efficient operations for Boolean views.
      * \ingroup TaskActorIntView
      */
-    class BoolView : public VariableViewBase<IntVarImp> {
+    class BoolView : public VariableViewBase<BoolVarImp> {
     protected:
-      using VariableViewBase<IntVarImp>::var;
+      using VariableViewBase<BoolVarImp>::var;
     public:
       /// \name Constructors and initialization
       //@{
@@ -1014,7 +1014,7 @@ namespace Gecode {
   class ViewVarTraits<Int::BoolView> {
   public:
     /// The variable type of a BoolView
-    typedef Int::IntVarImp Var;
+    typedef Int::BoolVarImp Var;
   };
 
   namespace Int {
@@ -1155,7 +1155,7 @@ namespace Gecode {
   class ViewVarTraits<Int::NegBoolView> {
   public:
     /// The variable type of a NegBoolView
-    typedef Int::IntVarImp Var;
+    typedef Int::BoolVarImp Var;
   };
 
 }

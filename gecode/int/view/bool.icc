@@ -32,7 +32,7 @@ namespace Gecode {
     BoolView::BoolView(void) {}
     forceinline
     BoolView::BoolView(const BoolVar& x)
-      : VariableViewBase<IntVarImp>(x.variable()) {}
+      : VariableViewBase<BoolVarImp>(x.variable()) {}
     
 
     /*
@@ -183,15 +183,15 @@ namespace Gecode {
      */
     forceinline bool
     BoolView::zero(void) const {
-      return var->max() == 0;
+      return var->zero();
     }
     forceinline bool
     BoolView::one(void) const {
-      return var->min() != 0;
+      return var->one();
     }
     forceinline bool
     BoolView::none(void) const {
-      return ((var->min()+var->max()) == 1);
+      return var->none();
     }
 
 
@@ -210,17 +210,11 @@ namespace Gecode {
 
     forceinline ModEvent
     BoolView::zero(Space* home) {
-      if (one())  return ME_INT_FAILED;
-      if (zero()) return ME_INT_NONE;
-      zero_none(home);
-      return ME_INT_VAL;
+      return var->zero(home);
     }
     forceinline ModEvent
     BoolView::one(Space* home) {
-      if (zero()) return ME_INT_FAILED;
-      if (one())  return ME_INT_NONE;
-      one_none(home);
-      return ME_INT_VAL;
+      return var->one(home);
     }
 
 

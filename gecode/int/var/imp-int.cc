@@ -308,53 +308,45 @@ namespace Gecode { namespace Int {
    */
 
   forceinline
-  IntVarImp::IntVarImp(Space* home, bool share, IntVarImp& x, bool is_bool)
+  IntVarImp::IntVarImp(Space* home, bool share, IntVarImp& x)
     : IntVarImpBase(home,share,x), dom(x.dom.min(),x.dom.max()) { 
-    if (is_bool) {
-      holes = 0; fst(NULL);
-    } else {
-      holes = x.holes;
-      if (holes) {
-        int m = 1;
-        // Compute length
-        {
-          RangeList* s_p = x.fst();
-          RangeList* s_c = s_p->next(NULL);
-          do {
-            m++;
-            RangeList* s_n = s_c->next(s_p); s_p=s_c; s_c=s_n;
-          } while (s_c != NULL);
-        }
-        RangeList* d_c =
-          reinterpret_cast<RangeList*>(home->alloc(m*sizeof(RangeList)));
-        fst(d_c); lst(d_c+m-1);
-        d_c->min(x.fst()->min());
-        d_c->max(x.fst()->max());
-        d_c->prevnext(NULL,NULL);
+    holes = x.holes;
+    if (holes) {
+      int m = 1;
+      // Compute length
+      {
         RangeList* s_p = x.fst();
         RangeList* s_c = s_p->next(NULL);
         do {
-          RangeList* d_n = d_c + 1;
-          d_c->next(NULL,d_n);
-          d_n->prevnext(d_c,NULL);
-          d_n->min(s_c->min()); d_n->max(s_c->max());
-          d_c = d_n;
-          RangeList* s_n=s_c->next(s_p); s_p=s_c; s_c=s_n;
+          m++;
+          RangeList* s_n = s_c->next(s_p); s_p=s_c; s_c=s_n;
         } while (s_c != NULL);
-        d_c->next(NULL,NULL);
-      } else {
-        fst(NULL);
       }
+      RangeList* d_c =
+        reinterpret_cast<RangeList*>(home->alloc(m*sizeof(RangeList)));
+      fst(d_c); lst(d_c+m-1);
+      d_c->min(x.fst()->min());
+      d_c->max(x.fst()->max());
+      d_c->prevnext(NULL,NULL);
+      RangeList* s_p = x.fst();
+      RangeList* s_c = s_p->next(NULL);
+      do {
+        RangeList* d_n = d_c + 1;
+        d_c->next(NULL,d_n);
+        d_n->prevnext(d_c,NULL);
+        d_n->min(s_c->min()); d_n->max(s_c->max());
+        d_c = d_n;
+        RangeList* s_n=s_c->next(s_p); s_p=s_c; s_c=s_n;
+      } while (s_c != NULL);
+      d_c->next(NULL,NULL);
+    } else {
+      fst(NULL);
     }
   }
 
   IntVarImp*
   IntVarImp::perform_copy(Space* home, bool share) {
-    return new (home) IntVarImp(home,share,*this,false);
-  }
-  IntVarImp*
-  IntVarImp::perform_copy_bool(Space* home, bool share) {
-    return new (home) IntVarImp(home,share,*this,true);
+    return new (home) IntVarImp(home,share,*this);
   }
 
 }}

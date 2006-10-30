@@ -25,7 +25,7 @@
 namespace Gecode {
 
   BoolVar::BoolVar(Space* home, int min, int max)
-    : var(new (home) Int::IntVarImp(home,min,max)) {
+    : var(new (home) Int::BoolVarImp(home,min,max)) {
     if ((min < 0) || (max > 1))
       throw Int::VariableOutOfRangeDomain("BoolVar::BoolVar");
     if (min > max)
@@ -38,7 +38,7 @@ namespace Gecode {
       throw Int::VariableOutOfRangeDomain("BoolVar::init");
     if (min > max)
       throw Int::VariableEmptyDomain("BoolVar::init");
-    var = new (home) Int::IntVarImp(home,min,max);
+    var = new (home) Int::BoolVarImp(home,min,max);
   }
 
 }

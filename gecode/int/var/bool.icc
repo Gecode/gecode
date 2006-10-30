@@ -33,7 +33,7 @@ namespace Gecode {
   BoolVar::BoolVar(const Int::BoolView& x)
     : var(x.variable()) {}
 
-  forceinline Int::IntVarImp*
+  forceinline Int::BoolVarImp*
   BoolVar::variable(void) const {
     return var;
   }
@@ -100,6 +100,11 @@ namespace Gecode {
   forceinline bool
   BoolVar::one(void) const {
     return min() == 1;
+    //    return var->one();
+  }
+  forceinline bool
+  BoolVar::none(void) const {
+    return !assigned();
     //    return var->one();
   }
 

@@ -21,8 +21,10 @@
  */
 
 #include "test/int.hh"
+#include "gecode/minimodel.hh"
 
 static IntSet ds_22(-2,2);
+static IntSet ds_01(0,1);
 
 class RelEqBin : public IntTest {
 private:
@@ -230,12 +232,12 @@ public:
 };
 RelGrInt _relgrint;
 
-class Lex : public IntTest {
+class LexInt : public IntTest {
 private:
   int  n;
   bool strict;
 public:
-  Lex(const char* t, int m, bool _strict)
+  LexInt(const char* t, int m, bool _strict)
     : IntTest(t,m*2,ds_22), n(m), strict(_strict) {}
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<n; i++)
@@ -254,8 +256,35 @@ public:
     rel(home, y, strict ? IRT_LE : IRT_LQ, z);
   }
 };
-Lex _lexlq("Lex::Lq",3,false);
-Lex _lexle("Lex::Le",3,true);
+LexInt _lexlqi("Lex::Lq::Int",3,false);
+LexInt _lexlei("Lex::Le::Int",3,true);
+
+class LexBool : public IntTest {
+private:
+  int  n;
+  bool strict;
+public:
+  LexBool(const char* t, int m, bool _strict)
+    : IntTest(t,m*2,ds_01), n(m), strict(_strict) {}
+  virtual bool solution(const Assignment& x) const {
+    for (int i=0; i<n; i++)
+      if (x[i]<x[n+i]) {
+        return true;
+      } else if (x[i]>x[n+i]) {
+        return false;
+      }
+    return !strict;
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    BoolVarArgs y(n); BoolVarArgs z(n);
+    for (int i=0; i<n; i++) {
+      y[i]=link(home,x[i]);; z[i]=link(home,x[n+i]);
+    }
+    rel(home, y, strict ? IRT_LE : IRT_LQ, z);
+  }
+};
+LexBool _lexlq("Lex::Lq::Bool",3,false);
+LexBool _lexle("Lex::Le::Bool",3,true);
 
 
 class NaryNq : public IntTest {

@@ -162,7 +162,7 @@ SEARCHBUILDDIRS = search
 #
 
 INTSRC0 = \
-	int-set.cc var/imp-int.cc var/int.cc var/bool.cc \
+	int-set.cc var/imp-int.cc var/imp-bool.cc var/int.cc var/bool.cc \
 	view/print.cc array.cc bool.cc \
 	regular/reg.cc regular/dfa.cc regular.cc \
 	dom.cc rel.cc link.cc element.cc count.cc arithmetic.cc \
@@ -193,7 +193,7 @@ INTHDR0 = \
 	rel/eq.icc rel/lex.icc rel/lq-le.icc rel/nq.icc \
 	sortedness/matching.icc sortedness/narrowing.icc \
 	sortedness/order.icc sortedness/sortedness.icc sortedness/sortsup.icc \
-	int-set.icc var/bool.icc var/imp-int.icc var/int.icc \
+	int-set.icc var/bool.icc var/imp-int.icc var/imp-bool.icc var/int.icc \
 	view/bool.icc view/constint.icc view/int.icc view/minus.icc \
 	view/offset.icc view/rtest.icc view/scale.icc view/iter.icc \
 	arithmetic.hh array.icc bool.hh branch.hh \
