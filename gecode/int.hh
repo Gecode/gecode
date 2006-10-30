@@ -440,8 +440,10 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   link(Space* home, IntVar x0, BoolVar x1, IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$ x_0 = x_1\f$
-  void
-  link(Space* home, BoolVar x0, IntVar x1, IntConLevel icl=ICL_DEF);
+  forceinline void
+  link(Space* home, BoolVar x0, IntVar x1, IntConLevel icl=ICL_DEF) {
+    link(home,x1,x0,icl);
+  }
   //@}
 
 
@@ -1351,6 +1353,24 @@ namespace Gecode {
          IntRelType r, IntVar y,
          IntConLevel=ICL_DEF);
 
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$
+   *
+   *  Throws an exception of type Int::ArgumentSizeMismatch, if
+   *  \a a and \a x are of different size.
+   */
+  GECODE_INT_EXPORT void
+  linear(Space* home, const IntArgs& a, const BoolVarArgs& x,
+         IntRelType r, int c,
+         IntConLevel=ICL_DEF);
+  /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r y\f$
+   *
+   *  Throws an exception of type Int::ArgumentSizeMismatch, if
+   *  \a a and \a x are of different size.
+   */
+  GECODE_INT_EXPORT void
+  linear(Space* home, const IntArgs& a, const BoolVarArgs& x,
+         IntRelType r, IntVar y,
+         IntConLevel=ICL_DEF);
   //@}
 
 
@@ -1421,6 +1441,8 @@ namespace Gecode {
   /// Branch over all \a x with variable selection \a vars and value selection \a vals
   GECODE_INT_EXPORT void
   branch(Space* home, const IntVarArgs& x, BvarSel vars, BvalSel vals);
+  GECODE_INT_EXPORT void
+  branch(Space* home, const BoolVarArgs& x, BvarSel vars, BvalSel vals);
   //@}
 
   /**
@@ -1438,6 +1460,9 @@ namespace Gecode {
   /// Assign all \a x with value selection \a vals
   GECODE_INT_EXPORT void
   assign(Space* home, const IntVarArgs& x, AvalSel vals);
+  /// Assign all \a x with value selection \a vals
+  GECODE_INT_EXPORT void
+  assign(Space* home, const BoolVarArgs& x, AvalSel vals);
 
   //@}
 

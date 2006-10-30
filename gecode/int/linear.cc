@@ -138,6 +138,37 @@ namespace Gecode {
 
 
   void
+  linear(Space* home,
+         const IntArgs& a, const BoolVarArgs& x, IntRelType r, int c,
+         IntConLevel icl) {
+    if (a.size() != x.size())
+      throw ArgumentSizeMismatch("Int::linear");
+    if (home->failed()) return;
+    GECODE_AUTOARRAY(Linear::Term, t, x.size());
+    for (int i = x.size(); i--; ) {
+      IntVar ix(home,0,1); link(home,ix,x[i]);
+      t[i].a=a[i]; t[i].x=ix;
+    }
+    Linear::post(home,t,x.size(),r,c,icl);
+  }
+
+  void
+  linear(Space* home,
+         const IntArgs& a, const BoolVarArgs& x, IntRelType r, IntVar y,
+         IntConLevel icl) {
+    if (a.size() != x.size())
+      throw ArgumentSizeMismatch("Int::linear");
+    if (home->failed()) return;
+    GECODE_AUTOARRAY(Linear::Term, t, x.size()+1);
+    for (int i = x.size(); i--; ) {
+      IntVar ix(home,0,1); link(home,ix,x[i]);
+      t[i].a=a[i]; t[i].x=ix;
+    }
+    t[x.size()].a=-1; t[x.size()].x=y;
+    Linear::post(home,t,x.size()+1,r,0,icl);
+  }
+
+  void
   linear(Space* home, const BoolVarArgs& x, IntRelType r, int c,
          IntConLevel) {
     if (home->failed()) return;

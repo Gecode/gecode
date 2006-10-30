@@ -61,15 +61,6 @@ namespace Gecode { namespace Int { namespace Link {
 
 }}}
 
-namespace Gecode {
-
-  forceinline void 
-  link(Space* home, BoolVar x0, IntVar x1, IntConLevel icl) {
-    link(home,x1,x0,icl);
-  }
-
-}
-
 #endif
 
 

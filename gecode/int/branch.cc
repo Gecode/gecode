@@ -63,6 +63,16 @@ namespace Gecode {
   }
 
   void
+  branch(Space* home, const BoolVarArgs& x, BvarSel vars, BvalSel vals) {
+    if (home->failed()) return;
+    IntVarArgs y(x.size());
+    for (int i=x.size(); i--; ) {
+      IntVar yi(home,0,1); link(home,x[i],yi); y[i]=yi;
+    }
+    branch(home,x,vars,vals);
+  }
+
+  void
   assign(Space* home, const IntVarArgs& x, AvalSel vals) {
     if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
@@ -74,6 +84,17 @@ namespace Gecode {
       throw UnknownBranching("Int::assign");
     }
   }
+
+  void
+  assign(Space* home, const BoolVarArgs& x, AvalSel vals) {
+    if (home->failed()) return;
+    IntVarArgs y(x.size());
+    for (int i=x.size(); i--; ) {
+      IntVar yi(home,0,1); link(home,x[i],yi); y[i]=yi;
+    }
+    assign(home,x,vals);
+  }
+
 
 }
 
