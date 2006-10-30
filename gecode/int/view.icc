@@ -132,8 +132,6 @@ namespace Gecode {
       IntView(void);
       /// Initialize from integer variable \a x
       IntView(const IntVar& x);
-      /// Initialize from integer variable \a x
-      IntView(IntVarImp* x);
       //@}
 
       /// \name Value access
@@ -886,16 +884,50 @@ namespace Gecode {
      * Provides convenient and efficient operations for Boolean views.
      * \ingroup TaskActorIntView
      */
-    class BoolView : public IntView {
-      /// For initialization from IntVar (see below)
-      friend class ViewArray<BoolView>;
+    class BoolView : public VariableViewBase<IntVarImp> {
+    protected:
+      using VariableViewBase<IntVarImp>::var;
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
       BoolView(void);
-      /// Initialize from Boolean variable \a b
-      BoolView(const BoolVar& b);
+      /// Initialize from integer variable \a x
+      BoolView(const BoolVar& x);
+      //@}
+
+      /// \name Value access
+      //@{
+      /// Return minimum of domain
+      int min(void) const;
+      /// Return maximum of domain
+      int max(void) const;
+      /// Return median of domain
+      int med(void) const;
+      /// Return assigned value (only if assigned)
+      int val(void) const;
+
+      /// Return size (cardinality) of domain
+      unsigned int size(void) const;
+      /// Return width of domain (distance between maximum and minimum)
+      unsigned int width(void) const;
+      /// Return regret of domain minimum (distance to next larger value)
+      unsigned int regret_min(void) const;
+      /// Return regret of domain maximum (distance to next smaller value)
+      unsigned int regret_max(void) const;
+      //@}
+
+      /// \name Domain tests
+      //@{
+      /// Test whether domain is a range
+      bool range(void) const;
+      /// Test whether view is assigned
+      bool assigned(void) const;
+
+      /// Test whether \a n is contained in domain
+      bool in(int n) const;
+      /// Test whether \a n is contained in domain
+      bool in(double n) const;
       //@}
 
       /// \name Boolean domain tests
@@ -918,6 +950,49 @@ namespace Gecode {
       void one_none(Space* home);
       /// Assign not yet assigned view to zero
       void zero_none(Space* home);
+      //@}
+
+      /// \name Domain update by value
+      //@{
+      /// Restrict domain values to be less or equal than \a n
+      ModEvent lq(Space* home, int n);
+      /// Restrict domain values to be less or equal than \a n
+      ModEvent lq(Space* home, double n);
+
+      /// Restrict domain values to be less than \a n
+      ModEvent le(Space* home, int n);
+      /// Restrict domain values to be less than \a n
+      ModEvent le(Space* home, double n);
+
+      /// Restrict domain values to be greater or equal than \a n
+      ModEvent gq(Space* home, int n);
+      /// Restrict domain values to be greater or equal than \a n
+      ModEvent gq(Space* home, double n);
+
+      /// Restrict domain values to be greater than \a n
+      ModEvent gr(Space* home, int n);
+      /// Restrict domain values to be greater than \a n
+      ModEvent gr(Space* home, double n);
+
+      /// Restrict domain values to be different from \a n
+      ModEvent nq(Space* home, int n);
+      /// Restrict domain values to be different from \a n
+      ModEvent nq(Space* home, double n);
+
+      /// Restrict domain values to be equal to \a n
+      ModEvent eq(Space* home, int n);
+      /// Restrict domain values to be equal to \a n
+      ModEvent eq(Space* home, double n);
+      //@}
+
+      /// \name Domain update by range iterator
+      //@{
+      /// Replace domain by range sequence described by \a i
+      template <class I> ModEvent narrow(Space* home, I& i);
+      /// Intersect domain with range sequence described by \a i
+      template <class I> ModEvent inter(Space* home, I& i);
+      /// Remove from domain the range sequence described by \a i
+      template <class I> ModEvent minus(Space* home, I& i);
       //@}
 
       /// \name Cloning

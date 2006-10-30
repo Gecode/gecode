@@ -31,9 +31,6 @@ namespace Gecode { namespace Int {
   forceinline
   IntView::IntView(const IntVar& x)
     : VariableViewBase<IntVarImp>(x.variable()) {}
-  forceinline
-  IntView::IntView(IntVarImp* x)
-    : VariableViewBase<IntVarImp>(x) {}
 
 
   /*
