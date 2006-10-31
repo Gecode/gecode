@@ -50,6 +50,7 @@ namespace Gecode { namespace Int {
 
   forceinline int
   BoolVarImp::val(void) const {
+    assert(dom != DOM_NONE);    
     return min();
   }
 
@@ -59,27 +60,27 @@ namespace Gecode { namespace Int {
   }
   forceinline bool
   BoolVarImp::assigned(void) const {
-    return dom != 2;
+    return dom != DOM_NONE;
   }
 
 
   forceinline unsigned int
   BoolVarImp::width(void) const {
-    return (dom != 2) ? 1 : 2;
+    return (dom != DOM_NONE) ? 1 : 2;
   }
 
   forceinline unsigned int
   BoolVarImp::size(void) const {
-    return (dom != 2) ? 1 : 2;
+    return (dom != DOM_NONE) ? 1 : 2;
   }
 
   forceinline unsigned int
   BoolVarImp::regret_min(void) const {
-    return (dom != 2) ? 1 : 0;
+    return (dom != DOM_NONE) ? 1 : 0;
   }
   forceinline unsigned int
   BoolVarImp::regret_max(void) const {
-    return (dom != 2) ? 1 : 0;
+    return (dom != DOM_NONE) ? 1 : 0;
   }
 
 
@@ -105,15 +106,15 @@ namespace Gecode { namespace Int {
    */
   forceinline bool
   BoolVarImp::zero(void) const {
-    return dom == 0;
+    return dom < DOM_NONE;
   }
   forceinline bool
   BoolVarImp::one(void) const {
-    return dom == 3;
+    return dom > DOM_NONE;
   }
   forceinline bool
   BoolVarImp::none(void) const {
-    return dom == 2;
+    return dom == DOM_NONE;
   }
 
 
@@ -124,7 +125,7 @@ namespace Gecode { namespace Int {
   forceinline void
   BoolVarImp::zero_none(Space* home) {
     assert(none());
-    dom = 0;
+    dom = DOM_ZERO;
     notify(home,ME_BOOL_VAL);
   }
   forceinline ModEvent
@@ -138,7 +139,7 @@ namespace Gecode { namespace Int {
   forceinline void
   BoolVarImp::one_none(Space* home) {
     assert(none());
-    dom = 3;
+    dom = DOM_ONE;
     notify(home,ME_BOOL_VAL);
   }
   forceinline ModEvent
@@ -165,7 +166,7 @@ namespace Gecode { namespace Int {
     assert(none());
     if (n != 0) {
       assert(n == 1);
-      dom = 3;
+      dom = DOM_ONE;
       notify(home,ME_BOOL_VAL);
       return ME_INT_VAL;
     } else {
@@ -183,7 +184,7 @@ namespace Gecode { namespace Int {
     assert(none());
     if (n != 0) {
       assert(n == 1);
-      dom = 3;
+      dom = DOM_ONE;
       notify(home,ME_BOOL_VAL);
       return ME_INT_VAL;
     } else {
@@ -202,7 +203,7 @@ namespace Gecode { namespace Int {
       return (n == 1) ? ME_INT_NONE : ME_INT_FAILED;
     assert(none());
     if (n == 0) {
-      dom = 0;
+      dom = DOM_ZERO;
       notify(home,ME_BOOL_VAL);
       return ME_INT_VAL;
     } else {
@@ -219,7 +220,7 @@ namespace Gecode { namespace Int {
       return (n == 1) ? ME_INT_NONE : ME_INT_FAILED;
     assert(none());
     if (n == 0) {
-      dom = 0;
+      dom = DOM_ZERO;
       notify(home,ME_BOOL_VAL);
       return ME_INT_VAL;
     } else {
@@ -235,13 +236,13 @@ namespace Gecode { namespace Int {
       if (zero()) return ME_INT_NONE;
       if (one())  return ME_INT_FAILED;
       assert(none());
-      dom = 0;
+      dom = DOM_ZERO;
     } else {
       assert(n == 1);
       if (zero()) return ME_INT_FAILED;
       if (one())  return ME_INT_NONE;
       assert(none());
-      dom = 3;
+      dom = DOM_ONE;
     }
     notify(home,ME_BOOL_VAL);
     return ME_INT_VAL;
@@ -253,13 +254,13 @@ namespace Gecode { namespace Int {
       if (zero()) return ME_INT_NONE;
       if (one())  return ME_INT_FAILED;
       assert(none());
-      dom = 0;
+      dom = DOM_ZERO;
     } else {
       assert(n == 1);
       if (zero()) return ME_INT_FAILED;
       if (one())  return ME_INT_NONE;
       assert(none());
-      dom = 3;
+      dom = DOM_ONE;
     }
     notify(home,ME_BOOL_VAL);
     return ME_INT_VAL;
@@ -273,13 +274,13 @@ namespace Gecode { namespace Int {
       if (zero()) return ME_INT_FAILED;
       if (one())  return ME_INT_NONE;
       assert(none());
-      dom = 3;
+      dom = DOM_ONE;
     } else {
       assert(n == 1);
       if (zero()) return ME_INT_NONE;
       if (one())  return ME_INT_FAILED;
       assert(none());
-      dom = 0;
+      dom = DOM_ZERO;
     }
     notify(home,ME_BOOL_VAL);
     return ME_INT_VAL;
@@ -291,13 +292,13 @@ namespace Gecode { namespace Int {
       if (zero()) return ME_INT_FAILED;
       if (one())  return ME_INT_NONE;
       assert(none());
-      dom = 3;
+      dom = DOM_ONE;
     } else {
       assert(n == 1);
       if (zero()) return ME_INT_NONE;
       if (one())  return ME_INT_FAILED;
       assert(none());
-      dom = 0;
+      dom = DOM_ZERO;
     }
     notify(home,ME_BOOL_VAL);
     return ME_INT_VAL;
@@ -329,6 +330,7 @@ namespace Gecode { namespace Int {
     assert((i.min() == 0) || (i.min() == 1)); 
     assert((i.max() == 0) || (i.max() == 1)); 
     if (i.max() == 0) {
+      assert(!one());
       // Assign domain to be zero (domain cannot be one)
       return zero(home);
     }

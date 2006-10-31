@@ -389,6 +389,12 @@ namespace Gecode { namespace Int {
      * - No other values are possible.
      */
     unsigned int dom;
+    /// Value of domain assigned to zero
+    static const unsigned int DOM_ZERO = 0;
+    /// Value of domain assigned to one
+    static const unsigned int DOM_ONE  = 3;
+    /// Value of domain not yet assigned
+    static const unsigned int DOM_NONE = 2;
 
     /// Constructor for cloning \a x
     BoolVarImp(Space* home, bool share, BoolVarImp& x);
