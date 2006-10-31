@@ -88,16 +88,18 @@ public:
       total(this, 0, Limits::Int::int_max) {
     // Compute total cost
     {
-      IntArgs c(n_stores + n_suppliers);
-      IntVarArgs x(n_stores + n_suppliers);
-      for (int i=0; i<n_stores; i++) {
-        c[i]=1; x[i]=cost[i];
-      }
-      for (int i=0; i<n_suppliers; i++) {
-        c[n_stores+i]=building_cost;
-        x[n_stores+i]=link(this,open[i]);
-      }
-      linear(this, c, x, IRT_EQ, total);
+      // Opening cost
+      IntArgs c(n_suppliers);
+      for (int i=0; i<n_suppliers; i++)
+        c[i]=building_cost;
+      IntVar oc(this, 0, Limits::Int::int_max);
+      linear(this, c, open, IRT_EQ, oc);
+      // Total cost of stores
+      IntVarArgs tc(n_stores+1);
+      for (int i=0; i<n_stores; i++)
+        tc[i]=cost[i];
+      tc[n_stores] = oc;
+      linear(this, tc, IRT_EQ, total);
     }
 
     // Compute cost for store
