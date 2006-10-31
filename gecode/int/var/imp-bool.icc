@@ -310,10 +310,14 @@ namespace Gecode { namespace Int {
    *
    */
 
+  forceinline
+  BoolVarImp::BoolVarImp(Space* home, bool share, BoolVarImp& x)
+    : BoolVarImpBase(home,share,x), dom(x.dom) {}
   forceinline BoolVarImp*
   BoolVarImp::copy(Space* home, bool share) {
-    return copied() ? static_cast<BoolVarImp*>(forward())
-      : perform_copy(home,share);
+    if (copied())
+      return static_cast<BoolVarImp*>(forward());
+    return new (home) BoolVarImp(home,share,*this);
   }
 
 

@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2002
+ *     Christian Schulte, 2006
  *
  *  Last modified:
  *     $Date: 2006-10-30 18:30:04 +0100 (Mon, 30 Oct 2006) $ by $Author: schulte $
@@ -22,23 +22,5 @@
 
 #include "gecode/int.hh"
 #include "gecode/int/var/imp-bool-body.icc"
-
-namespace Gecode { namespace Int {
-
-  /*
-   * Copying variables
-   *
-   */
-
-  forceinline
-  BoolVarImp::BoolVarImp(Space* home, bool share, BoolVarImp& x)
-    : BoolVarImpBase(home,share,x), dom(x.dom) {}
-
-  BoolVarImp*
-  BoolVarImp::perform_copy(Space* home, bool share) {
-    return new (home) BoolVarImp(home,share,*this);
-  }
-
-}}
 
 // STATISTICS: int-var

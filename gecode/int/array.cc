@@ -31,7 +31,7 @@ namespace Gecode {
     if (min > max)
       throw Int::VariableEmptyDomain("IntVarArray");
     for (int i = size(); i--; )
-      x[i].init(home,min,max);
+      x[i]._init(home,min,max);
   }
 
   IntVarArray::IntVarArray(Space* home, int n, const IntSet& s)
@@ -41,7 +41,7 @@ namespace Gecode {
     if (s.size() == 0)
       throw Int::VariableEmptyDomain("IntVarArray");
     for (int i = size(); i--; )
-      x[i].init(home,s);
+      x[i]._init(home,s);
   }
 
   BoolVarArray::BoolVarArray(Space* home, int n, int min, int max)
@@ -51,7 +51,7 @@ namespace Gecode {
     if (min > max)
       throw Int::VariableEmptyDomain("BoolVarArray");
     for (int i = size(); i--; )
-      x[i].init(home,min,max);
+      x[i]._init(home,min,max);
   }
 
 
@@ -59,4 +59,3 @@ namespace Gecode {
 
 
 // STATISTICS: int-post
-

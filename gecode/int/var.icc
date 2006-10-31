@@ -507,10 +507,6 @@ namespace Gecode { namespace Int {
     void cancel(Space* home, Propagator* p, PropCond pc);
     //@}
 
-  private:
-    /// Return copy of not-yet copied variable
-    GECODE_INT_EXPORT BoolVarImp* perform_copy(Space* home, bool share);
-  public:
     /// \name Cloning
     //@{
     /// Return copy of this variable
@@ -530,9 +526,24 @@ namespace Gecode {
    * \ingroup TaskIntIntVars
    */
   class IntVar {
-  protected:
+    friend class IntVarArray;
+  private:
     /// Integer variable implementation used
     Int::IntVarImp* var;
+    /**
+     * \brief Initialize variable with range domain
+     *
+     * The variable is created with a domain ranging from \a min
+     * to \a max. No exceptions are thrown.
+     */
+    void _init(Space* home, int min, int max);
+    /**
+     * \brief Initialize variable with arbitrary domain
+     *
+     * The variable is created with a domain described by \a d.
+     * No exceptions are thrown.
+     */
+    void _init(Space* home, const IntSet& d);
   public:
     /// \name Constructors and initialization
     //@{
@@ -677,9 +688,17 @@ namespace Gecode {
    * \ingroup TaskIntIntVars
    */
   class BoolVar {
-  protected:
+    friend class BoolVarArray;
+  private:
     /// Integer variable implementation used
     Int::BoolVarImp* var;
+    /**
+     * \brief Initialize Boolean variable with range domain
+     *
+     * The variable is created with a domain ranging from \a min
+     * to \a max. No exceptions are thrown.
+     */
+    void _init(Space* home, int min, int max);
   public:
     /// \name Constructors and initialization
     //@{
