@@ -73,7 +73,7 @@ public:
       // w[i] means that no blacks are allowed on A[i]
       dom(this, U, SRT_DISJ, A[i], w[i]);
       // Make sure blacks and whites are disjoint.
-      post(this, w[i] + b[i] <= 1);
+      post(this, tt(!(w[i] && b[i])));
       // If i in U, then b[i] has a piece.
       dom(this, U, SRT_SUP, i, b[i]);
     }
