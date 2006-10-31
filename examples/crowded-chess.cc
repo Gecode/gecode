@@ -167,9 +167,6 @@ public:
     count(this, s, B, IRT_EQ, b, o.icl);
     count(this, s, K, IRT_EQ, k, o.icl);
 
-    // Integer variables for use with the element constraint
-    IntVar queen(this, Q, Q), rook(this, R, R);
-
     // Collect rows and columns for handling rooks and queens.
     for (int i = 0; i < n; ++i) {
       IntVarArgs aa = m.row(i), bb = m.col(i);
@@ -180,8 +177,8 @@ public:
       count(this, bb, R, IRT_EQ, 1, o.icl);
 
       //Connect (queens|rooks)[i] to the row it is in
-      element(this, aa, queens[i], queen, ICL_DOM);
-      element(this, aa,  rooks[i],  rook, ICL_DOM);
+      element(this, aa, queens[i], Q, ICL_DOM);
+      element(this, aa,  rooks[i], R, ICL_DOM);
     }
 
     // N-queens constraints

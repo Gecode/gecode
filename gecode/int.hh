@@ -485,9 +485,21 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   element(Space* home, const IntVarArgs& x, IntVar y0, IntVar y1,
           IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for \f$ x_{y_0}=y_1\f$
+   *
+   * Supports both bounds (\a icl = ICL_BND) and
+   * domain-consistency (\a icl = ICL_DOM, default).
+   */
+  GECODE_INT_EXPORT void
+  element(Space* home, const IntVarArgs& x, IntVar y0, int y1,
+          IntConLevel icl=ICL_DEF);
   /// Post propagator for \f$ x_{y_0}=y_1\f$
   GECODE_INT_EXPORT void
   element(Space* home, const BoolVarArgs& x, IntVar y0, BoolVar y1,
+          IntConLevel icl=ICL_DEF);
+  /// Post propagator for \f$ x_{y_0}=y_1\f$
+  GECODE_INT_EXPORT void
+  element(Space* home, const BoolVarArgs& x, IntVar y0, int y1,
           IntConLevel icl=ICL_DEF);
   //@}
 

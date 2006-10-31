@@ -53,6 +53,13 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: int
+What:   new
+Rank:   minor
+[DESCRIPTION]
+The element constraint now also supports integer values as result.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor

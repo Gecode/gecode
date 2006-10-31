@@ -146,11 +146,9 @@ public:
     // lack of distance constraints for the dual model
 
     // channeling
-    for (int i = 0; i < n; i++) {
-      for (int j = 0; j < k; j++) {
-        element(this, y, p(i, j), IntVar(this, i + 1, i + 1));
-      }
-    }
+    for (int i = 0; i < n; i++)
+      for (int j = 0; j < k; j++)
+        element(this, y, p(i,j), i+1);
 
     branch(this, pos, BVAR_SIZE_MIN, BVAL_MIN);
   }

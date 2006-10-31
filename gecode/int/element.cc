@@ -82,19 +82,42 @@ namespace Gecode {
     }
   }
 
-  /*
+  void
+  element(Space* home, const IntVarArgs& c, IntVar x0, int x1,
+          IntConLevel icl) {
+    if (home->failed()) return;
+    Element::IdxView<IntView>* iv = 
+      Element::IdxView<IntView>::init(home,c);
+    ConstIntView v1(x1);
+    if (icl == ICL_BND) {
+      GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,IntView,ConstIntView>
+                           ::post(home,iv,c.size(),x0,v1)));
+    } else {
+      GECODE_ES_FAIL(home,(Element::ViewDom<IntView,IntView,ConstIntView>
+                           ::post(home,iv,c.size(),x0,v1)));
+    }
+  }
 
-  MISSING!
   void
   element(Space* home, const BoolVarArgs& c, IntVar x0, BoolVar x1,
           IntConLevel) {
     if (home->failed()) return;
-    Element::IdxView<BoolView>* iv = Element::IdxView<BoolView>::init(home,c);
-    GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,BoolView>
+    Element::IdxView<BoolView>* iv = 
+      Element::IdxView<BoolView>::init(home,c);
+    GECODE_ES_FAIL(home,(Element::ViewBnd<BoolView,IntView,BoolView>
                          ::post(home,iv,c.size(),x0,x1)));
   }
 
-  */
+  void
+  element(Space* home, const BoolVarArgs& c, IntVar x0, int x1,
+          IntConLevel) {
+    if (home->failed()) return;
+    Element::IdxView<BoolView>* iv = 
+      Element::IdxView<BoolView>::init(home,c);
+    ConstIntView v1(x1);
+    GECODE_ES_FAIL(home,(Element::ViewBnd<BoolView,IntView,ConstIntView>
+                         ::post(home,iv,c.size(),x0,v1)));
+  }
 
 }
 

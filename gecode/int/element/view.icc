@@ -30,6 +30,23 @@
 
 namespace Gecode { namespace Int { namespace Element {
 
+  /// Class to get VarArg type for view
+  template<class View>
+  class ViewToVarArg {};
+
+  /// VarArg type for integer views
+  template<>
+  class ViewToVarArg<IntView> {
+  public:
+    typedef IntVarArgs argtype;
+  };
+  /// VarArg type for Boolean views
+  template<>
+  class ViewToVarArg<BoolView> {
+  public:
+    typedef BoolVarArgs argtype;
+  };
+
   /**
    * \brief Class for pair of index and view
    *
@@ -40,7 +57,7 @@ namespace Gecode { namespace Int { namespace Element {
     int idx; View view;
 
     static IdxView* allocate(Space*, int);
-    static IdxView* init(Space*, const IntVarArgs&);
+    static IdxView* init(Space*, const typename ViewToVarArg<View>::argtype&);
   };
 
 
@@ -53,7 +70,7 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class View>
   forceinline IdxView<View>*
-  IdxView<View>::init(Space* home, const IntVarArgs& x) {
+  IdxView<View>::init(Space* home, const typename ViewToVarArg<View>::argtype& x) {
     IdxView<View>* iv = allocate(home,x.size());
     for (int i = x.size(); i--; ) {
       iv[i].idx = i; iv[i].view = x[i];
@@ -72,6 +89,11 @@ namespace Gecode { namespace Int { namespace Element {
   public:
     RelTest operator()(VA,VC);
   };
+  template <class VA>
+  class RelTestBnd<VA,ConstIntView> {
+  public:
+    RelTest operator()(VA,ConstIntView);
+  };
 
   /**
    * \brief Class for domain-equality test
@@ -82,6 +104,11 @@ namespace Gecode { namespace Int { namespace Element {
   public:
     RelTest operator()(VA,VC);
   };
+  template <class VA>
+  class RelTestDom<VA,ConstIntView> {
+  public:
+    RelTest operator()(VA,ConstIntView);
+  };
 
 
   template <class VA, class VC>
@@ -89,11 +116,21 @@ namespace Gecode { namespace Int { namespace Element {
   RelTestBnd<VA,VC>::operator()(VA x, VC y) {
     return rtest_eq_bnd(x,y);
   }
+  template <class VA>
+  forceinline RelTest
+  RelTestBnd<VA,ConstIntView>::operator()(VA x, ConstIntView y) {
+    return rtest_eq_bnd(x,y.val());
+  }
 
   template <class VA, class VC>
   forceinline RelTest
   RelTestDom<VA,VC>::operator()(VA x, VC y) {
     return rtest_eq_dom(x,y);
+  }
+  template <class VA>
+  forceinline RelTest
+  RelTestDom<VA,ConstIntView>::operator()(VA x, ConstIntView y) {
+    return rtest_eq_dom(x,y.val());
   }
 
 
@@ -253,8 +290,8 @@ namespace Gecode { namespace Int { namespace Element {
     if (n == 1) {
       (void) x0.eq(home,iv[0].idx);
     } else if (adjust) {
-      IterIdxView<VB> i(&iv[0],&iv[n]);
-      Iter::Values::ToRanges<IterIdxView<VB> > ri(i);
+      IterIdxView<VA> i(&iv[0],&iv[n]);
+      Iter::Values::ToRanges<IterIdxView<VA> > ri(i);
       (void) x0.narrow(home,ri);
       assert(x0.size() == static_cast<unsigned int>(n));
     }

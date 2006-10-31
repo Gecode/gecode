@@ -25,6 +25,17 @@
 namespace Gecode {
 
   /**
+   * \brief Test whether views \a x and \a y are the same
+   * \ingroup TaskVarView
+   */
+  template <class ViewA, class ViewB>
+  forceinline bool 
+  same(const ViewA& x, const ViewB& y) {
+    // If not specialized, this is always false
+    return false;
+  }
+
+  /**
    * \brief Base-class for constant views
    * \ingroup TaskVarView
    */
