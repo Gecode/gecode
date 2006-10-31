@@ -434,99 +434,10 @@ namespace Gecode { namespace Int { namespace Branch {
     ViewSelStatus select(const Space* home, View x);
   };
 
-
-  /**
-   * \brief %Branching descriptions storing position and value
-   *
-   */
-  class AssignDesc : public BranchingDesc {
-  protected:
-    const int _pos;
-    const int _val;
-  public:
-    /// Initialize description for branching \a b, position \a p and value \a n
-    AssignDesc(const Branching* b, const int p, const int n);
-    /// Return position in array
-    int pos(void) const;
-    /// Return value to branch with
-    int val(void) const;
-    /// Report size occupied
-    virtual size_t size(void) const;
-  };
-
-  /*
-   * Classes for assignment
-   *
-   */
-
-  /// Assignment (single-alternative branching) base-class
-  class Assign : public Branching {
-  protected:
-    /// Views to assign
-    ViewArray<IntView> x;
-    /// Next position to be assigned
-    mutable int pos;
-    /// Constructor for cloning \a b
-    Assign(Space* home, bool share, Assign& b);
-  public:
-    /// Constructor for creation
-    Assign(Space* home, ViewArray<IntView>& x);
-    /// Perform branching (selects view)
-    virtual bool status(const Space* home) const;
-    /// Perform commit for branching description \a d and alternative \a a
-    virtual ExecStatus commit(Space* home, const BranchingDesc* d,
-                              unsigned int a);
-  };
-
-
-  /// Minimum assignment (single-alternative branching)
-  class AssignMin : public Assign {
-  protected:
-    /// Constructor for cloning \a b
-    AssignMin(Space* home, bool share, AssignMin& b);
-  public:
-    /// Constructor for creation
-    AssignMin(Space* home, ViewArray<IntView>& x);
-    /// Perform cloning
-    virtual Actor* copy(Space* home, bool share);
-    /// Return branching description (of type AssignDesc)
-    virtual const BranchingDesc* description(const Space* home) const;
-  };
-
-  /// Median assignment (single-alternative branching)
-  class AssignMed : public Assign {
-  protected:
-    /// Constructor for cloning \a b
-    AssignMed(Space* home, bool share, AssignMed& b);
-  public:
-    /// Constructor for creation
-    AssignMed(Space* home, ViewArray<IntView>& x);
-    /// Perform cloning
-    virtual Actor* copy(Space* home, bool share);
-    /// Return branching description (of type AssignDesc)
-    virtual const BranchingDesc* description(const Space* home) const;
-  };
-
-  /// Maximum assignment (single-alternative branching)
-  class AssignMax : public Assign {
-  protected:
-    /// Constructor for cloning \a b
-    AssignMax(Space* home, bool share, AssignMax& b);
-  public:
-    /// Constructor for creation
-    AssignMax(Space* home, ViewArray<IntView>& x);
-    /// Perform cloning
-    virtual Actor* copy(Space* home, bool share);
-    /// Return branching description (of type AssignDesc)
-    virtual const BranchingDesc* description(const Space* home) const;
-  };
-
 }}}
 
 #include "gecode/int/branch/select-val.icc"
 #include "gecode/int/branch/select-view.icc"
-
-#include "gecode/int/branch/assign.icc"
 
 #endif
 

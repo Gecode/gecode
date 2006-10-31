@@ -57,7 +57,7 @@ namespace Gecode {
    *    return VSS_NONE. If it is better, return VSS_SELECT. If
    *    it is a best view, return VSS_COMMIT.
    *
-   * The class \a VarSel must implement two member functions:
+   * The class \a ValSel must implement two member functions:
    *  - \a Val val(const Space* \a home, View \a x) const
    *    returns the value (most likely determined by \a x) to branch with.
    *  - Gecode::ModEvent tell(Space* \a home, unsigned int \a a, \a View \a x, \a Val \a n)
@@ -75,6 +75,44 @@ namespace Gecode {
   public:
     /// Constructor for creation
     ViewValBranching(Space* home, ViewArray<View>& x);
+    /// Check status of branching, return true if alternatives left
+    virtual bool status(const Space* home) const;
+    /// Return branching description (of type Gecode::PosValDesc)
+    virtual const BranchingDesc* description(const Space* home) const;
+    /// Perform commit for branching description \a d and alternative \a a
+    virtual ExecStatus commit(Space* home, const BranchingDesc* d,
+                              unsigned int a);
+    /// Perform cloning
+    virtual Actor* copy(Space* home, bool share);
+  };
+
+  /**
+   * \brief Generic assignment
+   *
+   * Implements view-based assignment for an array of views (of type
+   * \a View) and value (of type \a Val). The behaviour is defined by
+   * the class \a ValSel (which value is selected for assignment).
+   *
+   * The class \a ValSel must implement two member functions:
+   *  - \a Val val(const Space* \a home, View \a x) const
+   *    returns the value (most likely determined by \a x) to branch with.
+   *  - Gecode::ModEvent tell(Space* \a home, unsigned int a, \a View \a x, \a Val \a n)
+   *    performs a tell on \a x with value \a n (the value for \a a is
+   *    always 0, it is present such that assignments can use the same
+   *    value selection as branchings).
+   *
+   * For examples, see \link int/branch.hh integer branchings \endlink.
+   */
+  template <class View, class Val, class ValSel>
+  class ViewValAssignment : public Branching {
+  protected:
+    ViewArray<View> x;  ///< Views to branch on
+    mutable int start;  ///< Unassigned views start at x[start]
+    /// Constructor for cloning \a b
+    ViewValAssignment(Space* home, bool share, ViewValAssignment& b);
+  public:
+    /// Constructor for creation
+    ViewValAssignment(Space* home, ViewArray<View>& x);
     /// Check status of branching, return true if alternatives left
     virtual bool status(const Space* home) const;
     /// Return branching description (of type Gecode::PosValDesc)
@@ -226,6 +264,67 @@ namespace Gecode {
     x.drop_fst(pvd->start()); start = 0;
     ValSel vs;
     return me_failed(vs.tell(home,a,x[pvd->pos()],pvd->val()))
+      ? ES_FAILED : ES_OK;
+  }
+
+
+  /*
+   * Generic assignment based on value selection
+   *
+   */
+
+  template <class View, class Val, class ValSel>
+  forceinline
+  ViewValAssignment<View,Val,ValSel>
+  ::ViewValAssignment(Space* home, ViewArray<View>& x0)
+    : Branching(home), x(x0), start(0) {}
+
+
+  template <class View, class Val, class ValSel>
+  forceinline
+  ViewValAssignment<View,Val,ValSel>
+  ::ViewValAssignment(Space* home, bool share, ViewValAssignment& b)
+    : Branching(home,share,b), start(b.start) {
+    x.update(home,share,b.x);
+  }
+
+  template <class View, class Val, class ValSel>
+  Actor*
+  ViewValAssignment<View,Val,ValSel>::copy(Space* home, bool share) {
+    return new (home)
+      ViewValAssignment<View,Val,ValSel>(home,share,*this);
+  }
+
+  template <class View, class Val, class ValSel>
+  bool
+  ViewValAssignment<View,Val,ValSel>
+  ::status(const Space*) const {
+    for (int i=start; i < x.size(); i++)
+      if (!x[i].assigned()) {
+        start = i;
+        return true;
+      }
+    return false;
+  }
+
+  template <class View, class Val, class ValSel>
+  const BranchingDesc*
+  ViewValAssignment<View,Val,ValSel>
+  ::description(const Space* home) const {
+    assert(!x[start].assigned());
+    ValSel vl; // For value selection
+    return new PosValDesc<Val>(this,0,vl.val(home,x[start]),start);
+  }
+
+  template <class View, class Val, class ValSel>
+  ExecStatus
+  ViewValAssignment<View,Val,ValSel>
+  ::commit(Space* home, const BranchingDesc* d, unsigned int) {
+    const PosValDesc<Val>* pvd = static_cast<const PosValDesc<Val>*>(d);
+    // Eliminate views from x[0] ... x[d->start()-1]
+    x.drop_fst(pvd->start()); start = 0;
+    ValSel vs;
+    return me_failed(vs.tell(home,0,x[pvd->pos()],pvd->val()))
       ? ES_FAILED : ES_OK;
   }
 

@@ -150,9 +150,21 @@ namespace Gecode {
     if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
     switch (vals) {
-    case AVAL_MIN: (void) new (home) Branch::AssignMin(home,xv); break;
-    case AVAL_MED: (void) new (home) Branch::AssignMed(home,xv); break;
-    case AVAL_MAX: (void) new (home) Branch::AssignMax(home,xv); break;
+    case AVAL_MIN:
+      (void) new (home) 
+        ViewValAssignment<IntView,int,
+                          Branch::ValMin<IntView> >(home,xv);
+      break;
+    case AVAL_MED:
+      (void) new (home) 
+        ViewValAssignment<IntView,int,
+                          Branch::ValMed<IntView> >(home,xv);
+      break;
+    case AVAL_MAX:
+      (void) new (home) 
+        ViewValAssignment<IntView,int,
+                          Branch::ValMax<IntView> >(home,xv);
+      break;
     default:
       throw UnknownBranching("Int::assign");
     }
@@ -161,13 +173,23 @@ namespace Gecode {
   void
   assign(Space* home, const BoolVarArgs& x, AvalSel vals) {
     if (home->failed()) return;
-    IntVarArgs y(x.size());
-    for (int i=x.size(); i--; ) {
-      IntVar yi(home,0,1); link(home,x[i],yi); y[i]=yi;
+    ViewArray<BoolView> xv(home,x);
+    switch (vals) {
+    case AVAL_MIN:
+    case AVAL_MED:
+      (void) new (home) 
+        ViewValAssignment<BoolView,Branch::NoValue,
+                          Branch::ValZeroOne<BoolView> >(home,xv);
+      break;
+    case AVAL_MAX:
+      (void) new (home) 
+        ViewValAssignment<BoolView,Branch::NoValue,
+                          Branch::ValOneZero<BoolView> >(home,xv);
+      break;
+    default:
+      throw UnknownBranching("Int::assign");
     }
-    assign(home,y,vals);
   }
-
 
 }
 

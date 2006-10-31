@@ -53,6 +53,14 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Add a generic class for assignments during search (similar to
+generic branchings for views and values).
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   minor

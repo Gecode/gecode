@@ -167,7 +167,7 @@ INTSRC0 = \
 	regular/reg.cc regular/dfa.cc regular.cc \
 	dom.cc rel.cc link.cc element.cc count.cc arithmetic.cc \
 	linear/post.cc linear.cc \
-	branch.cc branch/assign.cc \
+	branch.cc \
 	distinct.cc cumulatives.cc \
 	sortedness.cc gcc.cc \
 	channel.cc
@@ -177,7 +177,7 @@ INTVARIMP = \
 INTHDR0 = \
 	arithmetic/abs.icc arithmetic/max.icc arithmetic/mult.icc \
 	bool/or.icc bool/eq.icc bool/eqv.icc bool/base.icc \
-	branch/assign.icc branch/select-val.icc branch/select-view.icc \
+	branch/select-val.icc branch/select-view.icc \
 	count/view.icc count/int.icc count/rel.icc \
 	cumulatives/val.icc \
 	distinct/bilink.icc distinct/bnd.icc distinct/combptr.icc \
