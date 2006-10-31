@@ -22,81 +22,119 @@
 
 namespace Gecode { namespace Int { namespace Branch {
 
+  template<class View>
   forceinline int
-  ValMin::val(const Space*, IntView x) const {
+  ValMin<View>::val(const Space*, View x) const {
     return x.min();
   }
+  template<class View>
   forceinline ModEvent
-  ValMin::tell(Space* home, unsigned int a, IntView x, int n) {
+  ValMin<View>::tell(Space* home, unsigned int a, View x, int n) {
     return (a == 0) ? x.eq(home,n) : x.gr(home,n);
   }
 
 
+  template<class View>
   forceinline int
-  ValMed::val(const Space*, IntView x) const {
+  ValMed<View>::val(const Space*, View x) const {
     return x.med();
   }
+  template<class View>
   forceinline ModEvent
-  ValMed::tell(Space* home, unsigned int a, IntView x, int n) {
+  ValMed<View>::tell(Space* home, unsigned int a, View x, int n) {
     return (a == 0) ? x.eq(home,n) : x.nq(home,n);
   }
 
 
+  template<class View>
   forceinline int
-  ValMax::val(const Space*, IntView x) const {
+  ValMax<View>::val(const Space*, View x) const {
     return x.max();
   }
+  template<class View>
   forceinline ModEvent
-  ValMax::tell(Space* home, unsigned int a, IntView x, int n) {
+  ValMax<View>::tell(Space* home, unsigned int a, View x, int n) {
     return (a == 0) ? x.eq(home,n) : x.le(home,n);
   }
 
 
+  template<class View>
   forceinline int
-  ValSplitMin::val(const Space*, IntView x) const {
+  ValSplitMin<View>::val(const Space*, View x) const {
     return (x.width() == 2) ? x.min() : ((x.min()+x.max()) / 2);
   }
+  template<class View>
   forceinline ModEvent
-  ValSplitMin::tell(Space* home, unsigned int a, IntView x, int n) {
+  ValSplitMin<View>::tell(Space* home, unsigned int a, View x, int n) {
     return (a == 0) ? x.lq(home,n) : x.gr(home,n);
   }
 
 
+  template<class View>
   forceinline int
-  ValSplitMax::val(const Space*, IntView x) const {
+  ValSplitMax<View>::val(const Space*, View x) const {
     return (x.width() == 2) ? x.min() : ((x.min()+x.max()) / 2);
   }
+  template<class View>
   forceinline ModEvent
-  ValSplitMax::tell(Space* home, unsigned int a, IntView x, int n) {
+  ValSplitMax<View>::tell(Space* home, unsigned int a, View x, int n) {
     return (a == 0) ? x.gr(home,n) : x.lq(home,n);
   }
 
 
-  template <class SelView>
+  template<class View, template <class> class SelView>
   void
-  create(Space* home, ViewArray<IntView>& x, BvalSel vals) {
+  create(Space* home, ViewArray<View>& x, BvalSel vals) {
     switch (vals) {
     case BVAL_MIN:
-      (void) new (home) ViewValBranching<IntView,int,SelView,ValMin>(home,x);
+      (void) new (home) 
+        ViewValBranching<View,int,SelView<View>,ValMin<View> >(home,x);
       break;
     case BVAL_MED:
-      (void) new (home) ViewValBranching<IntView,int,SelView,ValMed>(home,x);
+      (void) new (home) 
+        ViewValBranching<View,int,SelView<View>,ValMed<View> >(home,x);
       break;
     case BVAL_MAX:
-      (void) new (home) ViewValBranching<IntView,int,SelView,ValMax>(home,x);
+      (void) new (home) 
+        ViewValBranching<View,int,SelView<View>,ValMax<View> >(home,x);
       break;
     case BVAL_SPLIT_MIN:
       (void) new (home)
-        ViewValBranching<IntView,int,SelView,ValSplitMin>(home,x);
+        ViewValBranching<View,int,SelView<View>,ValSplitMin<View> >(home,x);
       break;
     case BVAL_SPLIT_MAX:
       (void) new (home)
-        ViewValBranching<IntView,int,SelView,ValSplitMax>(home,x);
+        ViewValBranching<View,int,SelView<View>,ValSplitMax<View> >(home,x);
       break;
     default:
       throw UnknownBranching("Int::branch");
     }
   }
+
+
+  template<class View>
+  forceinline NoValue
+  ValZeroOne<View>::val(const Space*, View) const {
+    NoValue n; return n;
+  }
+  template<class View>
+  forceinline ModEvent
+  ValZeroOne<View>::tell(Space* home, unsigned int a, View x, NoValue) {
+    return (a == 0) ? x.zero(home) : x.one(home);
+  }
+
+
+  template<class View>
+  forceinline NoValue
+  ValOneZero<View>::val(const Space*, View) const {
+    NoValue n; return n;
+  }
+  template<class View>
+  forceinline ModEvent
+  ValOneZero<View>::tell(Space* home, unsigned int a, View x, NoValue) {
+    return (a == 0) ? x.one(home) : x.zero(home);
+  }
+
 
 }}}
 

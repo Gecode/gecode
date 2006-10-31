@@ -57,6 +57,13 @@ Module: int
 What:   change
 Rank:   minor
 [DESCRIPTION]
+All branching classes for value and view selection are now parametric.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
 Boolean variables cannot langer be initialized from an integer 
 variable. If needed, a link propagator must be posted (added).
 
