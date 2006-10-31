@@ -63,9 +63,9 @@ namespace Gecode { namespace Int { namespace Rel {
 
     /// Constructor for cloning \a p
     EqDom(Space* home, bool share, EqDom<View0,View1>& p);
+  public:
     /// Constructor for posting
     EqDom(Space* home, View0 x0, View1 x1);
-  public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /**
@@ -97,9 +97,9 @@ namespace Gecode { namespace Int { namespace Rel {
 
     /// Constructor for cloning \a p
     EqBnd(Space* home, bool share, EqBnd<View0,View1>& p);
+  public:
     /// Constructor for posting
     EqBnd(Space* home, View0 x0, View1 x1);
-  public:
     /// Constructor for rewriting \a p during cloning
     EqBnd(Space* home, bool share, Propagator& p, View0 x0, View1 x1);
     /// Copy propagator during cloning
