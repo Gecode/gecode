@@ -464,10 +464,18 @@ namespace Gecode {
   /** \brief Post propagator for \f$ n_{x_0}=x_1\f$
    *
    *  Throws an exception of type Int::NumericalOverflow, if
-   *  the integers in \a n are not between 0 and 1.
+   *  the integers in \a n exceed the limits in Limits::Int.
    */
   GECODE_INT_EXPORT void
   element(Space* home, const IntArgs& n, IntVar x0, BoolVar x1,
+          IntConLevel=ICL_DEF);
+  /** \brief Post propagator for \f$ n_{x_0}=x_1\f$
+   *
+   *  Throws an exception of type Int::NumericalOverflow, if
+   *  the integers in \a n exceed the limits in Limits::Int.
+   */
+  GECODE_INT_EXPORT void
+  element(Space* home, const IntArgs& n, IntVar x0, int x1,
           IntConLevel=ICL_DEF);
   /** \brief Post propagator for \f$ x_{y_0}=y_1\f$
    *
