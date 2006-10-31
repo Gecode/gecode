@@ -71,12 +71,13 @@ namespace Gecode {
   element(Space* home, const IntVarArgs& c, IntVar x0, IntVar x1,
           IntConLevel icl) {
     if (home->failed()) return;
-    Element::IdxView<IntView>* iv = Element::IdxView<IntView>::init(home,c);
+    Element::IdxView<IntView>* iv = 
+      Element::IdxView<IntView>::init(home,c);
     if (icl == ICL_BND) {
-      GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,IntView>
+      GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,IntView,IntView>
                            ::post(home,iv,c.size(),x0,x1)));
     } else {
-      GECODE_ES_FAIL(home,(Element::ViewDom<IntView,IntView>
+      GECODE_ES_FAIL(home,(Element::ViewDom<IntView,IntView,IntView>
                            ::post(home,iv,c.size(),x0,x1)));
     }
   }

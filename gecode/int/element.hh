@@ -101,21 +101,21 @@ namespace Gecode { namespace Int { namespace Element {
    * \brief Base-class for element propagator for array of views
    *
    */
-  template <class ViewA, class ViewB, PropCond pcb>
+  template <class VA, class VB, class VC, PropCond pc_ac>
   class View : public Propagator {
   protected:
-    /// View for index
-    ViewA    x0;
-    /// View for result
-    ViewB    x1;
-    /// Number of elements in index-view map
-    int      n;
     /// Current index-view map
-    IdxView<ViewB>* iv;
+    IdxView<VA>* iv;
+    /// Number of elements in index-view map
+    int n;
+    /// View for index
+    VB x0;
+    /// View for result
+    VC x1;
     /// Constructor for cloning \a p
     View(Space* home, bool share, View& p);
     /// Constructor for creation
-    View(Space* home, IdxView<ViewB>* iv, int n, ViewA x0, ViewB x1);
+    View(Space* home, IdxView<VA>* iv, int n, VB x0, VC x1);
   public:
     // Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
@@ -130,26 +130,26 @@ namespace Gecode { namespace Int { namespace Element {
    * Requires \code #include "gecode/int/element.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class ViewA, class ViewB>
-  class ViewBnd : public View<ViewA,ViewB,PC_INT_BND> {
+  template <class VA, class VB, class VC>
+  class ViewBnd : public View<VA,VB,VC,PC_INT_BND> {
   protected:
-    using View<ViewA,ViewB,PC_INT_BND>::x0;
-    using View<ViewA,ViewB,PC_INT_BND>::x1;
-    using View<ViewA,ViewB,PC_INT_BND>::n;
-    using View<ViewA,ViewB,PC_INT_BND>::iv;
+    using View<VA,VB,VC,PC_INT_BND>::iv;
+    using View<VA,VB,VC,PC_INT_BND>::n;
+    using View<VA,VB,VC,PC_INT_BND>::x0;
+    using View<VA,VB,VC,PC_INT_BND>::x1;
 
     /// Constructor for cloning \a p
     ViewBnd(Space* home, bool share, ViewBnd& p);
     /// Constructor for creation
-    ViewBnd(Space* home, IdxView<ViewB>* iv, int n, ViewA x0, ViewB x1);
+    ViewBnd(Space* home, IdxView<VA>* iv, int n, VB x0, VC x1);
   public:
     /// Perform copying during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
-    static  ExecStatus post(Space* home, IdxView<ViewB>* iv, int n,
-                            ViewA x0, ViewB x1);
+    static  ExecStatus post(Space* home, IdxView<VA>* iv, int n,
+                            VB x0, VC x1);
   };
 
   /**
@@ -162,18 +162,18 @@ namespace Gecode { namespace Int { namespace Element {
    * Requires \code #include "gecode/int/element.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class ViewA, class ViewB>
-  class ViewDom : public View<ViewA,ViewB,PC_INT_DOM> {
+  template <class VA, class VB, class VC>
+  class ViewDom : public View<VA,VB,VC,PC_INT_DOM> {
   protected:
-    using View<ViewA,ViewB,PC_INT_DOM>::x0;
-    using View<ViewA,ViewB,PC_INT_DOM>::x1;
-    using View<ViewA,ViewB,PC_INT_DOM>::n;
-    using View<ViewA,ViewB,PC_INT_DOM>::iv;
+    using View<VA,VB,VC,PC_INT_DOM>::iv;
+    using View<VA,VB,VC,PC_INT_DOM>::n;
+    using View<VA,VB,VC,PC_INT_DOM>::x0;
+    using View<VA,VB,VC,PC_INT_DOM>::x1;
 
     /// Constructor for cloning \a p
     ViewDom(Space* home, bool share, ViewDom& p);
     /// Constructor for creation
-    ViewDom(Space* home, IdxView<ViewB>* iv, int n, ViewA x0, ViewB x1);
+    ViewDom(Space* home, IdxView<VA>* iv, int n, VB x0, VC x1);
   public:
     /// Perform copying during cloning
     virtual Actor* copy(Space* home, bool share);
@@ -188,8 +188,8 @@ namespace Gecode { namespace Int { namespace Element {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
-    static  ExecStatus post(Space* home, IdxView<ViewB>* iv, int n,
-                            ViewA x0, ViewB x1);
+    static  ExecStatus post(Space* home, IdxView<VA>* iv, int n,
+                            VB x0, VC x1);
   };
 
 }}}
