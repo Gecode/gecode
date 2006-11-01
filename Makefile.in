@@ -505,6 +505,8 @@ endif
 compilelib: mkcompiledirs
 	@$(MAKE) $(ALLVARIMP:%=$(top_srcdir)/%) $(LIBTARGETS)
 	@$(MAKE) compilesubdirs
+	@$(MAKE) framework
+
 compileexamples: $(EXAMPLEEXE)
 
 test: mkcompiledirs
@@ -699,6 +701,33 @@ $(MMSTATICLIB): $(MMOBJ)
 	$(RANLIB) $@
 
 #
+# Mac OS X Framework
+#
+
+.PHONY: framework
+ifeq "@BUILD_MACOS_FRAMEWORK@" "yes"
+framework: $(STATICTARGETS)
+	$(RMF) gecode.framework
+	mkdir -p gecode.framework/Versions/@GECODE_SOVERSION@
+	$(CXX) -all_load -compatibility_version @GECODE_SOVERSION@.0 \
+	  -current_version @GECODE_SOVERSION@.0 \
+	  -install_name /Library/Frameworks/gecode.framework/Versions/@GECODE_SOVERSION@/gecode \
+	  -dynamiclib \
+	  -o gecode.framework/Versions/@GECODE_SOVERSION@/gecode $^
+	$(MAKE) doinstallheaders \
+	  prefix=gecode.framework/Versions/@GECODE_SOVERSION@
+	mv gecode.framework/Versions/@GECODE_SOVERSION@/include/gecode/* \
+	  gecode.framework/Versions/@GECODE_SOVERSION@/include/
+	rmdir gecode.framework/Versions/@GECODE_SOVERSION@/include/gecode
+	ln -s Versions/@GECODE_SOVERSION@/include \
+	  gecode.framework/Headers
+	ln -s Versions/@GECODE_SOVERSION@/gecode \
+	  gecode.framework/gecode
+else
+framework:
+endif
+
+#
 # EXE Targets
 #
 
@@ -839,15 +868,34 @@ endif
 
 .PHONY: install
 
+ifeq "@BUILD_MACOS_FRAMEWORK@" "yes"
+install: installframework
+else
+
 ifeq "@enable_examples@" "yes"
 install: installlib installexamples
 else
 install: installlib
 endif
-doinstalllib: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
+
+endif
+
+doinstallheaders: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
+	mkdir -p $(DESTDIR)$(includedir) && \
+	(cd $(top_srcdir) && tar cf - $(ALLHDR)) | \
+	  (cd $(DESTDIR)$(includedir) && tar xf -) && \
+	for_extraheaders="$(EXTRA_HEADERS)" && \
+  	  for f in $$for_extraheaders; do \
+    	    cp $$f $(DESTDIR)$(pkgincludedir); done && \
+	for_pkgconfigfiles="$(PKGCONFIGFILES)" && \
+  	  for f in $$for_pkgconfigfiles; do \
+	    mkdir -p $(DESTDIR)$(libdir)/pkgconfig; \
+	    cp misc/$$f $(DESTDIR)$(libdir)/pkgconfig; \
+	  done
+
+doinstalllib: 
 	mkdir -p $(DESTDIR)$(sharedlibdir) && \
 	mkdir -p $(DESTDIR)$(libdir) && \
-	mkdir -p $(DESTDIR)$(includedir) && \
 	for_libtargets="$(LIBTARGETS)" && \
 	  for f in $$for_libtargets; do \
 	    cp $$f $(DESTDIR)$(sharedlibdir); done && \
@@ -856,18 +904,7 @@ doinstalllib: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
 	    cp -pR $$f $(DESTDIR)$(sharedlibdir); done &&\
 	for_liblibtargets="$(LIBLIBTARGETS)" && \
 	  for f in $$for_liblibtargets; do \
-	    cp $$f $(DESTDIR)$(libdir); done && \
-	(cd $(top_srcdir) && tar cf - $(ALLHDR)) | \
-	(cd $(DESTDIR)$(includedir) && tar xf -) && \
-	for_extraheaders="$(EXTRA_HEADERS)" && \
-	  for f in $$for_extraheaders; do \
-	    cp $$f $(DESTDIR)$(pkgincludedir); done && \
-	for_pkgconfigfiles="$(PKGCONFIGFILES)" && \
-	  for f in $$for_pkgconfigfiles; do \
-		mkdir -p $(DESTDIR)$(libdir)/pkgconfig; \
-		cp misc/$$f $(DESTDIR)$(libdir)/pkgconfig; \
-	done
-
+	    cp $$f $(DESTDIR)$(libdir); done
 
 ifeq "@BUILDSTATIC@" "yes"
 ranliblib:
@@ -880,6 +917,7 @@ endif
 
 installlib: compilelib
 	$(MAKE) doinstalllib
+	$(MAKE) doinstallheaders
 	$(MAKE) ranliblib
 	$(MAKE) installsubdirs
 
@@ -887,6 +925,11 @@ installexamples: compileexamples
 	mkdir -p $(DESTDIR)$(bindir); \
 	for_exampleexe="$(EXAMPLEEXE)" ; \
 	for f in $$for_exampleexe; do cp $$f $(DESTDIR)$(bindir); done \
+
+installframework: framework
+	mkdir -p $(DESTDIR)/Library/Frameworks/gecode.framework && \
+	(cd gecode.framework && tar cf - *) | \
+  	  (cd $(DESTDIR)/Library/Frameworks/gecode.framework && tar xf -)
 
 installdoc: doc
 	mkdir -p $(DESTDIR)$(docdir); \

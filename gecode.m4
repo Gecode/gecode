@@ -734,3 +734,32 @@ AC_DEFUN([AC_GECODE_UNIVERSAL],
   fi
 
 ])
+
+dnl Macro:
+dnl   AC_GECODE_FRAMEWORK
+dnl
+dnl Description:
+dnl   Produces the configure switch --enable-framework
+dnl   for creating a Mac OS X framework instead of individual libraries.
+dnl
+dnl Authors:
+dnl   Guido Tack <tack@gecode.org>
+AC_DEFUN([AC_GECODE_FRAMEWORK],
+  [dnl build framework bundle on Mac OS X
+  AC_ARG_ENABLE([framework],
+    AC_HELP_STRING([--enable-framework],
+	[build framework bundle on Mac OS X @<:@default=no@:>@]))
+  if test "${host_os}" = "darwin"; then
+    AC_MSG_CHECKING(whether to build framework bundle on Mac OS X)
+    if test "${enable_framework:-no}" = "yes"; then
+      AC_MSG_RESULT(yes)
+      AC_SUBST(BUILD_MACOS_FRAMEWORK, "yes")
+      AC_DEFINE(GECODE_STATIC_LIBS)
+      AC_SUBST(BUILDSTATIC, "yes")
+    else
+      AC_MSG_RESULT(no)
+      AC_SUBST(BUILD_MACOS_FRAMEWORK, "no")
+    fi
+  fi
+
+])
