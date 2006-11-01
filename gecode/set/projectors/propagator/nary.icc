@@ -49,7 +49,7 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   template <bool negated>
-  forceinline PropCost
+  PropCost
   NaryProjection<negated>::cost(void) const {
     switch (x.size()) {
     case 1: return PC_UNARY_HI;
