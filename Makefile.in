@@ -366,10 +366,10 @@ INTEXAMPLESRC0 = \
 	magic-sequence magic-sequence-gcc magic-square \
 	money ortho-latin packing \
 	partition photo queens \
-	sudoku picture-puzzle placement-puzzle  \
+	sudoku picture-puzzle placement-puzzle placement-puzzle-01 \
 	crowded-chess black-hole \
-	sports-league all-interval all-interval-sort langfordnum \
-	warehouses \
+	sports-league all-interval all-interval-sort \
+	langfordnum langfordnum-regular warehouses \
 	stress-domain stress-exec stress-search baseline \
 	stress-element stress-min
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cc)

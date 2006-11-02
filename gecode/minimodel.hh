@@ -884,6 +884,11 @@ namespace Gecode { namespace MiniModel {
             unsigned int fc, unsigned int tc,
             unsigned int fr, unsigned int tr);
 
+      /** \brief Reverses the contents of the slice, and returns a
+       *  reference to it.
+       */
+      Slice& reverse(void);
+
       operator args_type(void);
       operator Matrix<args_type>(void);
     };
@@ -951,10 +956,10 @@ namespace Gecode { namespace MiniModel {
                 unsigned int fr, unsigned int tr);
 
     /// Access row \a r.
-    args_type row(int r);
+    Slice row(int r);
 
     /// Access column \a c.
-    args_type col(int c);
+    Slice col(int c);
   };
 }}
 

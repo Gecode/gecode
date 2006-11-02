@@ -196,7 +196,7 @@ namespace {
  * sequence of values for the variables 0-F out, we get the string
  * 0110001000100000. This string and all other strings corresponding
  * to placing the above piece in that particular rotation can be
- * described using the regular expression \f$0^*11000100010^*\f$. The
+ * described using the regular expression \f$ 0^*11000100010^*\f$. The
  * expression indicates that first comes some number of zeroes, then
  * two ones in a row (covering places 1 and 2 in our example
  * placement), then comes exactly three 0's (not covering places 3, 4,
@@ -215,7 +215,7 @@ namespace {
  * \endcode
  * The variables for places G to J are all set to zero initially, and the
  * regular expression for  the placement of the piece is modified to
- * include the extra column, \f$0^*1100001000010^*\f$.
+ * include the extra column, \f$ 0^*1100001000010^*\f$.
  *
  * 
  * \section ExamplePlacementPuzzleRotatingPiece Rotating pieces
@@ -228,9 +228,9 @@ namespace {
  * XXX
  * \endcode
  * The corresponding regular expression for this piece is
- * \f$0^*1001110^*\f$. To combine these two regular expressions, we
+ * \f$ 0^*1001110^*\f$. To combine these two regular expressions, we
  * can simply use disjunction of regular expressions, arriving at the
- * expression \f$0^*1100001000010^*|0^*1001110^*\f$ for enforcing
+ * expression \f$ 0^*1100001000010^*|0^*1001110^*\f$ for enforcing
  * the placement of the piece in one of the above two rotations.
  *
  * There are 8 symmetries for the pieces in general. The 8 disjuncts
@@ -243,23 +243,22 @@ namespace {
  * \section ExamplePlacementPuzzleSeveral Placing several pieces
  *
  * To generalize the above model to several pieces, we let the
- * variables range from 0 to n, where n is the number of pieces to
- * place. Given that we place three pieces, and that the above shown
- * piece is number one, we will replace each \f$0\f$-expression with
- * the expression \f$(0|2|3)\f$. Thus, the second regular expression
- * becomes \f$(0|2|3)^*1(0|2|3)(0|2|3)111(0|2|3)^*\f$.
- *
- * Additionaly, the end of line marker gets its own value.
+ * variables range from \a 0 to \a n, where \a n is the number of pieces to
+ * place. For placing piece number \a p, we construct a 0/1-matrix,
+ * where each position is 1 if and only if the corresponding place in
+ * the original variable matrix is equal to \a p. Then we post the
+ * constraint for piece \a p on this new matrix of variables.
  * 
  * \section ExamplePlacementPuzzleHeuristic The Branching
  * 
  * This model does not use any advanced heuristic for the
- * branching. The variables selection is simply minimum domain
- * size, and the value selection minimum first. 
+ * branching. The variables selection is simply left to right, top to
+ * bottom, and the value selection minimum first.
  *
- * The static value selection allows us to order the pieces in the
- * specification of the problem. We use approximately "largest first"
- * ordering for the pieces.
+ * The static variable ordering means that we try to place the pieces
+ * top to bottom. The static value selection allows us to order the
+ * pieces in the specification of the problem. We use approximately
+ * "largest first" ordering for the pieces.
  *
  *
  * \section ExamplePlacementPuzzleSymmetries Removing board symmetries
@@ -281,8 +280,6 @@ private:
   int width, height;
   /// Number of tiles to place
   int ntiles;
-  /// Wheter the board is fileld or not
-  bool filled;
 
   /// The variables for the board.
   IntVarArray b;
@@ -294,20 +291,18 @@ private:
 
   /// Returns the regular expression for placing a specific tile \a
   /// tile in a specific rotation.
-  REG tile_reg(int col, int twidth, int theight, const char* tile, REG other) {
-    REG eol = other | REG(ntiles+1);
-    REG res = *eol;
-    REG color[] = {other, REG(col)};
+  REG tile_reg(int col, int twidth, int theight, const char* tile) {
+    REG res = *REG(0);
     for (int h = 0; h < theight; ++h) {
       for (int w = 0; w < twidth; ++w) {
 	int which = tile[h*twidth + w] == 'X';
-	res = res + color[which];
+	res = res + REG(which);
       }
       if (h < theight-1) {
-	res = res + eol(width-twidth, width-twidth);
+	res = res + REG(0)(width-twidth, width-twidth);
       }
     }
-    res = res + *eol;
+    res = res + *REG(0);
 
     return res;
   } 
@@ -315,29 +310,19 @@ private:
   /// Returns the regular expression for placing tile number \a t in
   /// any rotation.
   REG get_constraint(int t) {
-    int col = t+1;
-    // Build expression for complement to color t+1
-    REG other; 
-    bool first = true;
-    for (int i = filled; i <= ntiles; ++i) {
-      if (i == col) continue;
-      if (first) {
-	other = REG(i);
-	first = false;
-      } else {
-	other = other | REG(i);
-      }
-    }
-
-    // This should be done for all rotations
+    // Resulting regular expression
     REG res;
+    // Color of tile
+    int col = t+1;
+    // Tile specification for tile under symmetry operations
     char *t2 = new char[width*height];
     int w2, h2;
+    // Symmetry functions
     tsymmfunc syms[] = {id, flipx, flipy, flipd1, flipd2, rot90, rot180, rot270};
     int symscnt = sizeof(syms)/sizeof(tsymmfunc);
     for (int i = 0; i < symscnt; ++i) {
       syms[i](spec[t].tile, spec[t].width, spec[t].height, t2, w2, h2);
-      res = res | tile_reg(col, w2, h2, t2, other);
+      res = res | tile_reg(col, w2, h2, t2);
     }
     delete [] t2;
 
@@ -350,34 +335,43 @@ public:
   PlacementPuzzle(const Options& o)
     : spec(specs[o.size]), 
       width(spec[0].width+1), height(spec[0].height),
-      ntiles(spec[1].width), filled(spec[1].height),
-      b(this, width*height, filled,ntiles+1) {
+      ntiles(spec[1].width),
+      b(this, width*height, 0,ntiles) {
+    bool filled = spec[1].height;
     spec += 2; // No need for the specification-part any longer
     
     // Set end-of-line markers
     for (int h = 0; h < height; ++h) {
-      for (int w = 0; w < width-1; ++w)
-	rel(this, b[h*width + w], IRT_NQ, ntiles+1);
-      rel(this, b[h*width + width - 1], IRT_EQ, ntiles+1);
+      if (filled)
+        for (int w = 0; w < width-1; ++w)
+          rel(this, b[h*width + w], IRT_NQ, 0);
+      rel(this, b[h*width + width - 1], IRT_EQ, 0);
     }
 
     // Post constraints
     for (int i = 0; i < ntiles; ++i) {
+      // Construct matrix for color i+1
+      BoolVarArgs cm(b.size());
+      for (int p = b.size(); p--; )
+        cm[p] = post(this, ~(b[p] == i+1));
+      // Get constraint for color i+1
       REG reg = get_constraint(i);
       DFA dfa = reg;
-      regular(this, b, dfa);
+      // Post constraint
+      regular(this, cm, dfa);
     }
 
     // Remove symmetrical boards
     if (!o.naive) {
+      // Storage for board under symmetry operations
       IntVarArgs orig(b.size()-height), symm(b.size()-height);
       int pos = 0;
       for (int i = 0; i < b.size(); ++i) {
         if ((i+1)%width==0) continue;
         orig[pos++] = b[i];
       }
-      
       int w2, h2;
+      // Symmetry functions
       bsymmfunc syms[] = {flipx, flipy, flipd1, flipd2, rot90, rot180, rot270};
       int symscnt = sizeof(syms)/sizeof(bsymmfunc);
       for (int i = 0; i < symscnt; ++i) {
@@ -386,7 +380,6 @@ public:
       }
     }
 
-    // Install branchings
     branch(this, b, BVAR_NONE, BVAL_MIN);
   }
 
@@ -408,8 +401,13 @@ public:
     for (int h = 0; h < height; ++h) {
       std::cout << "\t";
       for (int w = 0; w < width-1; ++w) {
-	int val =  board(h,w).val();
-	char c = val < 10 ? '0'+val : 'A' + (val-10);
+        char c;
+        if (board(h,w).assigned()) {
+          int val =  board(h,w).val();
+          c = val < 10 ? '0'+val : 'A' + (val-10);
+        } else {
+          c = '_';
+        }
 	std::cout << c;
       }
       std::cout << std::endl;
@@ -517,6 +515,58 @@ static const tilespec puzzle1[] =
      "XXX"}
   };
 
+/// Standard specification with small changes
+static const tilespec puzzle2[] =
+  {
+    // Width and height of board
+    {8, 8, ""},
+    // Number of tiles and wheter the board is filled
+    {10, true, ""},
+    {3, 3,
+     "XXX"
+     "XXX"
+     "XX "},
+    {5, 3,
+     "  XXX"
+     "  X  "
+     "XXXX "},
+    {3, 4,
+     "XXX"
+     "XXX"
+     "  X"
+     "  X"},
+    {3, 4,
+     "XXX"
+     "  X"
+     " XX"
+     "  X"},
+    {2, 5,
+     " X"
+     " X"
+     " X"
+     "X "
+     "XX"},
+    {4, 2,
+     "XX  "
+     "XXXX"},
+    {3, 3,
+     "XXX"
+     "  X"
+     "  X"},
+    {2, 3, 
+     "XX"
+     "X "
+     "X "},
+    {2, 4,
+     "XX"
+     "XX"
+     "X "
+     "XX"},
+    {3, 2,
+     "XX "
+     "XXX"}
+  };
+
 // Packing number 2 from examples/packing.cc
 static const tilespec packing2[] =
   {
@@ -562,7 +612,7 @@ static const tilespec packing2[] =
   };
 
 /// List of specifications
-const tilespec *specs[] = {puzzle0, puzzle1, packing2};
+const tilespec *specs[] = {puzzle0, puzzle1, puzzle2, packing2};
 /// Number of specifications
 const unsigned n_examples = sizeof(specs)/sizeof(tilespec*);
 //@}

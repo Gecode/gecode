@@ -23,6 +23,8 @@
  *
  */
 
+#include <algorithm>
+
 namespace Gecode { namespace MiniModel {
 
   template <class A>
@@ -44,6 +46,14 @@ namespace Gecode { namespace MiniModel {
         _r[i++] = a(w, h);
       }
     }
+  }
+
+  template <class A>
+  typename Matrix<A>::Slice&
+  Matrix<A>::Slice::reverse(void) {
+    for (int i = 0; i < _r.size()/2; ++i)
+      std::swap(_r[i], _r[_r.size()-i-1]);
+    return *this;
   }
 
   template <class A>
@@ -103,13 +113,13 @@ namespace Gecode { namespace MiniModel {
   }
 
   template <class A>
-  inline typename Matrix<A>::args_type
+  inline typename Matrix<A>::Slice
   Matrix<A>::row(int r) {
     return slice(0, width(), r, r+1);
   }
 
   template <class A>
-  inline typename Matrix<A>::args_type
+  inline typename Matrix<A>::Slice
   Matrix<A>::col(int c) {
     return slice(c, c+1, 0, height());
   }
