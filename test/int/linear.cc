@@ -357,5 +357,56 @@ LinearBoolScaleInt _lbsi_5_1_14_eq("Linear::Bool::Scale::Int::Eq::5::1::14",
 LinearBoolScaleInt _lbsi_5_1_15_eq("Linear::Bool::Scale::Int::Eq::5::1::15",
                                    _lbsi_a_51,5,IRT_EQ,15);
 
+class LinearBoolScaleView : public IntTest {
+private:
+  const IntRelType irt;
+  int* a;
+public:
+  LinearBoolScaleView(const char* t, 
+                     int* a0, int n, const IntSet& is, IntRelType irt0)
+    : IntTest(t,n+1,is,false), irt(irt0), a(a0) {}
+  virtual bool solution(const Assignment& x) const {
+    for (int i=0; i<x.size()-1; i++)
+      if ((x[i] < 0) || (x[i] > 1))
+        return false;
+    double m = 0;
+    for (int i=0; i<x.size()-1; i++)
+      m += a[i]*x[i];
+    return compare(m, irt, static_cast<double>(x[x.size()-1]));
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    IntArgs ia(x.size()-1);
+    BoolVarArgs b(x.size()-1);
+    for (int i=x.size()-1; i--; ) {
+      b[i] = link(home,x[i]); ia[i] = a[i];
+    }
+    linear(home, ia, b, irt, x[x.size()-1]);
+  }
+};
+
+
+static IntSet is_010(0,10);
+static int a1234[4] = {1,2,3,4};
+static IntSet is_100(-10,0);
+static int b1234[4] = {-1,-2,-3,-4};
+static IntSet is_33(-3,3);
+static int a1212[4] = {-1,-2,1,2};
+static int a123123[6] = {-1,-2,1,2,-3,3};
+
+LinearBoolScaleView _lbsv_4_1_eq("Linear::Bool::Scale::View::Eq::1",
+                                 a1234,4,is_010,IRT_EQ);
+LinearBoolScaleView _lbsv_4_2_eq("Linear::Bool::Scale::View::Eq::2",
+                                 b1234,4,is_010,IRT_EQ);
+LinearBoolScaleView _lbsv_4_3_eq("Linear::Bool::Scale::View::Eq::3",
+                                 a1234,4,is_100,IRT_EQ);
+LinearBoolScaleView _lbsv_4_4_eq("Linear::Bool::Scale::View::Eq::4",
+                                 b1234,4,is_100,IRT_EQ);
+LinearBoolScaleView _lbsv_4_5_eq("Linear::Bool::Scale::View::Eq::5",
+                                 a1212,4,is_33,IRT_EQ);
+LinearBoolScaleView _lbsv_4_6_eq("Linear::Bool::Scale::View::Eq::6",
+                                 a123123,6,is_33,IRT_EQ);
+
+
+
 // STATISTICS: test-int
 
