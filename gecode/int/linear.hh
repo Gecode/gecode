@@ -975,8 +975,77 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     int      a;
     BoolView x;
-    static ScaleBool* allocate(Space* home, int n);
   };
+
+  /// Array of scale Boolean views
+  class ScaleBoolArray {
+  private:
+    ScaleBool* _fst;
+    ScaleBool* _lst;
+  public:
+    ScaleBoolArray(void) {}
+    ScaleBoolArray(Space* home, int n) {
+      if (n > 0) {
+        _fst = reinterpret_cast<ScaleBool*>(home->alloc(n*sizeof(ScaleBool)));
+        _lst = _fst+n;
+      } else {
+        _fst = _lst = NULL;
+      }
+    }
+    void subscribe(Space* home, Propagator* p) {
+      for (ScaleBool* f = _fst; f < _lst; f++)
+        f->x.subscribe(home,p,PC_BOOL_VAL);
+    }
+    void cancel(Space* home, Propagator* p) {
+      for (ScaleBool* f = _fst; f < _lst; f++)
+        f->x.cancel(home,p,PC_BOOL_VAL);
+    }
+    void update(Space* home, bool share, ScaleBoolArray& sba) {
+      int n = sba._lst - sba._fst;
+      if (n > 0) {
+        _fst = reinterpret_cast<ScaleBool*>(home->alloc(n*sizeof(ScaleBool)));
+        _lst = _fst+n;
+        for (int i=n; i--; ) {
+          _fst[i].a = sba._fst[i].a;
+          _fst[i].x.update(home,share,sba._fst[i].x);
+        }
+      } else {
+        _fst = _lst = NULL;
+      }
+    }
+    ScaleBool* fst(void) const {
+      return _fst;
+    }
+    ScaleBool* lst(void) const {
+      return _lst;
+    }
+    void fst(ScaleBool* f) {
+      _fst = f;
+    }
+    void lst(ScaleBool* l) {
+      _lst = l;
+    }
+    bool empty(void) const {
+      return _fst == _lst;
+    }
+    int size(void) const {
+      return static_cast<int>(_lst - _fst);
+    }
+  private:
+    class ScaleInc {
+    public:
+      forceinline bool
+      operator()(const ScaleBool& x, const ScaleBool& y) {
+        return x.a < y.a;
+      }
+    };
+  public:
+    void sort(void) {
+      ScaleInc scale_inc;
+      Support::quicksort<ScaleBool,ScaleInc>(fst(), size(), scale_inc);
+    }
+  };
+
 
   /**
    * \brief %Propagator for equality to Boolean sum with coefficients (cardinality)
@@ -987,18 +1056,15 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class IV>
   class EqBoolScale : public Propagator {
   protected:
-    ScaleBool* p;
-    int n_p;
-    ScaleBool* n;
-    int n_n;
+    ScaleBoolArray p;
+    ScaleBoolArray n;
     IV x;
     int c;
     /// Constructor for cloning \a p
     EqBoolScale(Space* home, bool share, EqBoolScale& p);
     /// Constructor for creation
     EqBoolScale(Space* home, 
-                ScaleBool* p, int n_p,
-                ScaleBool* n, int n_n,
+                ScaleBoolArray& p, ScaleBoolArray& n,
                 IV x, int c);
   public:
     /// Create copy during cloning

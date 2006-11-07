@@ -22,62 +22,52 @@
 
 namespace Gecode { namespace Int { namespace Linear {
 
-  forceinline ScaleBool*
-  ScaleBool::allocate(Space* home, int n) {
-    return reinterpret_cast<ScaleBool*>(home->alloc(n*sizeof(ScaleBool)));
-  }
-
   template <class IV>
   forceinline
   EqBoolScale<IV>::EqBoolScale(Space* home, 
-                               ScaleBool* p0, int n_p0,
-                               ScaleBool* n0, int n_n0,
+                               ScaleBoolArray& p0, ScaleBoolArray& n0,
                                IV x0, int c0)
-    : Propagator(home), p(p0), n_p(n_p0), n(n0), n_n(n_n0), x(x0), c(c0) {
+    : Propagator(home), p(p0), n(n0), x(x0), c(c0) {
     x.subscribe(home,this,PC_INT_BND);
-    for (int i=n_p; i--; )
-      p[i].x.subscribe(home,this,PC_BOOL_VAL);
-    for (int i=n_n; i--; )
-      n[i].x.subscribe(home,this,PC_BOOL_VAL);
+    p.subscribe(home,this);
+    n.subscribe(home,this);
   }
 
   template <class IV>
   forceinline
   EqBoolScale<IV>::EqBoolScale(Space* home, bool share, 
                                EqBoolScale<IV>& pr)
-    : Propagator(home,share,pr), n_p(pr.n_p), n_n(pr.n_n), c(pr.c) {
+    : Propagator(home,share,pr), c(pr.c) {
     x.update(home,share,pr.x);
-    if (n_p > 0) {
-      p = ScaleBool::allocate(home,n_p);
-      for (int i=n_p; i--; ) {
-        p[i].a = pr.p[i].a;
-        p[i].x.update(home,share,pr.p[i].x);
-      }
-    }
-    if (n_n > 0) {
-      n = ScaleBool::allocate(home,n_n);
-      for (int i=n_n; i--; ) {
-        n[i].a = pr.n[i].a;
-        n[i].x.update(home,share,pr.n[i].x);
-      }
-    }
+    p.update(home,share,pr.p);
+    n.update(home,share,pr.n);
+#ifdef DBG_PRINT
+    std::cout << "COPY" << std::endl;
+    std::cout << "\t";
+    for (ScaleBool* f=p.fst(); f<p.lst(); f++)
+      std::cout << " + " << f->a << "*" << f->x;
+    for (ScaleBool* f=n.fst(); f<n.lst(); f++)
+      std::cout << " - " << f->a << "*" << f->x;
+    std::cout << " = " << x << " + " << c << std::endl;
+#endif
   }
 
   template <class IV>
   PropCost
   EqBoolScale<IV>::cost(void) const {
-    return cost_lo(n_p + n_n, PC_LINEAR_LO);
+    return cost_lo(p.size() + n.size(), PC_LINEAR_LO);
   }
 
   template <class IV>
   forceinline size_t
   EqBoolScale<IV>::dispose(Space* home) {
+#ifdef DBG_PRINT
+    std::cout << "DISPOSE" << std::endl;
+#endif
     assert(!home->failed());
     x.cancel(home,this,PC_INT_BND);
-    for (int i=n_p; i--; )
-      p[i].x.cancel(home,this,PC_BOOL_VAL);
-    for (int i=n_n; i--; )
-      n[i].x.cancel(home,this,PC_BOOL_VAL);
+    p.cancel(home,this);
+    n.cancel(home,this);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -95,39 +85,57 @@ namespace Gecode { namespace Int { namespace Linear {
 #ifdef DBG_PRINT
     std::cout << "PROPAGATE" << std::endl;
     std::cout << "\t";
-    for (int i=0; i<n_p; i++)
-      std::cout << " + " << p[i].a << "*" << p[i].x;
-    for (int i=0; i<n_n; i++)
-      std::cout << " - " << n[i].a << "*" << n[i].x;
+    for (ScaleBool* f=p.fst(); f<p.lst(); f++)
+      std::cout << " + " << f->a << "*" << f->x;
+    for (ScaleBool* f=n.fst(); f<n.lst(); f++)
+      std::cout << " - " << f->a << "*" << f->x;
     std::cout << " = " << x << " + " << c << std::endl;
 #endif
     int sl = 0;
     int su = 0;
     if (BoolView::pme(this) == ME_BOOL_VAL) {
-      for (int i = n_p; i--; )
-        if (p[i].x.one()) {
-          c -= p[i].a; p[i] = p[--n_p];
-        } else if (p[i].x.zero()) {
-          p[i] = p[--n_p];
-        } else {
-          su -= p[i].a;
+      {
+        ScaleBool* f = p.fst();
+        ScaleBool* l = p.lst();
+        while ((f < l) && f->x.none()) {
+          su -= f->a; f++;
         }
-      for (int i = n_n; i--; )
-        if (n[i].x.one()) {
-          c += n[i].a; n[i] = n[--n_n];
-        } else if (n[i].x.zero()) {
-          n[i] = n[--n_n];
-        } else {
-          sl += n[i].a;
+        ScaleBool* t = f;
+        while (f < l) {
+          if (f->x.one()) {
+            c -= f->a;
+          } else if (f->x.none()) {
+            su -= f->a; *t = *f; t++;
+          }
+          f++;
         }
+        p.lst(t);
+      }
+      {
+        ScaleBool* f = n.fst();
+        ScaleBool* l = n.lst();
+        while ((f < l) && f->x.none()) {
+          sl += f->a; f++;
+        }
+        ScaleBool* t = f;
+        while (f < l) {
+          if (f->x.one()) {
+            c += f->a;
+          } else if (f->x.none()) {
+            sl += f->a; *t = *f; t++;
+          }
+          f++;
+        }
+        n.lst(t);
+      }
     } else {
-      for (int i = n_p; i--; )
-        su -= p[i].a;
-      for (int i = n_n; i--; )
-        sl += n[i].a;
+      for (ScaleBool* f=p.fst(); f<p.lst(); f++)
+        su -= f->a;
+      for (ScaleBool* f=n.fst(); f<n.lst(); f++)
+        sl += f->a;
     }
     
-    if ((n_p + n_n) == 0) {
+    if (p.empty() && n.empty()) {
       GECODE_ME_CHECK(x.eq(home,-c)); 
       return ES_SUBSUMED;
     }
@@ -163,10 +171,10 @@ namespace Gecode { namespace Int { namespace Linear {
               << sl << ", su: " << su << ")"
               << std::endl;
     std::cout << "\t";
-    for (int i=0; i<n_p; i++)
-      std::cout << " + " << p[i].a << "*" << p[i].x;
-    for (int i=0; i<n_n; i++)
-      std::cout << " - " << n[i].a << "*" << n[i].x;
+    for (ScaleBool* f=p.fst(); f<p.lst(); f++)
+      std::cout << " + " << f->a << "*" << f->x;
+    for (ScaleBool* f=n.fst(); f<n.lst(); f++)
+      std::cout << " - " << f->a << "*" << f->x;
     std::cout << " = " << x << " + " << c << std::endl;
 #endif
 
@@ -179,14 +187,27 @@ namespace Gecode { namespace Int { namespace Linear {
                 << sl << ", su: " << su << ")"
                 << std::endl;
       std::cout << "\t";
-      for (int i=0; i<n_p; i++)
-        std::cout << " + " << p[i].a << "*" << p[i].x;
-      for (int i=0; i<n_n; i++)
-        std::cout << " - " << n[i].a << "*" << n[i].x;
+      for (ScaleBool* f=p.fst(); f<p.lst(); f++)
+        std::cout << " + " << f->a << "*" << f->x;
+      for (ScaleBool* f=n.fst(); f<n.lst(); f++)
+        std::cout << " - " << f->a << "*" << f->x;
       std::cout << " = " << x << " + " << c << std::endl;
 #endif
 
       // Propagate upper bound for positive Boolean views
+      {
+        ScaleBool* f = p.fst();
+        ScaleBool* l = p.lst();
+        while ((f < l) && ((l-1)->a > sl)) {
+          l--;
+          su += l->a;
+          l->x.zero_none(home);
+        }
+        if (l < p.lst()) {
+          p.lst(l); mod=true;
+        }
+      }
+      /*
       for (int i = n_p; i--; )
         if (p[i].a > sl) {
           su += p[i].a;
@@ -194,7 +215,21 @@ namespace Gecode { namespace Int { namespace Linear {
           p[i]=p[--n_p];
           mod = true;
         }
+      */
       // Propagate lower bound for negative Boolean views
+      {
+        ScaleBool* f = n.fst();
+        ScaleBool* l = n.lst();
+        while ((f < l) && (f->a < -sl)) {
+          c += f->a; su += f->a;
+          f->x.one_none(home);
+          f++;
+        }
+        if (f > n.fst()) {
+          n.fst(f); mod=true;
+        }
+      }
+      /*
       for (int i = n_n; i--; )
         if (n[i].a < -sl) {
           c  += n[i].a;
@@ -203,6 +238,7 @@ namespace Gecode { namespace Int { namespace Linear {
           n[i]=n[--n_n];
           mod = true;
         }
+      */
       // Propagate lower bound for integer view
       {
         const int x_min = x.min();
@@ -213,15 +249,20 @@ namespace Gecode { namespace Int { namespace Linear {
           std::cout << "FAILED on x.gq ("
                     << ngq << ") (sl: "
                     << sl << ", su: " << su << ")"
+                    << " p.size()=" << p.size()
+                    << " n.size()=" << n.size()
                     << std::endl;
           std::cout << "\t";
-          for (int i=0; i<n_p; i++)
-            std::cout << " + " << p[i].a << "*" << p[i].x;
-          for (int i=0; i<n_n; i++)
-            std::cout << " - " << n[i].a << "*" << n[i].x;
+          for (ScaleBool* f=p.fst(); f<p.lst(); f++)
+            std::cout << " + " << f->a << "*" << f->x;
+          for (ScaleBool* f=n.fst(); f<n.lst(); f++)
+            std::cout << " - " << f->a << "*" << f->x;
           std::cout << " = " << x << " + " << c << std::endl;
 #endif
           return ES_FAILED;
+#ifdef DBG_PRINT
+          std::cout << "AFTER FAILED (gq)" << std::endl;
+#endif
         }
         if (me_modified(me)) {
           su += x.min() - x_min;
@@ -229,6 +270,19 @@ namespace Gecode { namespace Int { namespace Linear {
         }
       }
       // Propagate lower bound for positive Boolean views
+      {
+        ScaleBool* f = p.fst();
+        ScaleBool* l = p.lst();
+        while ((f < l) && ((l-1)->a > -su)) {
+          l--;
+          c -= l->a; sl -= l->a;
+          l->x.one_none(home);
+        }
+        if (l < p.lst()) {
+          p.lst(l); mod=true;
+        }
+      }
+      /*
       for (int i = n_p; i--; )
         if (p[i].a > -su) {
           c  -= p[i].a;
@@ -237,7 +291,21 @@ namespace Gecode { namespace Int { namespace Linear {
           p[i] = p[--n_p];
           mod = true;
         }
+      */
       // Propagate upper bound for negative Boolean views
+      {
+        ScaleBool* f = n.fst();
+        ScaleBool* l = n.lst();
+        while ((f < l) && ((l-1)->a > -su)) {
+          l--;
+          sl -= l->a;
+          l->x.zero_none(home);
+        }
+        if (l < n.lst()) {
+          n.lst(l); mod=true;
+        }
+      }
+      /*
       for (int i = n_n; i--; )
         if (n[i].a > -su) {
           sl -= n[i].a;
@@ -245,6 +313,7 @@ namespace Gecode { namespace Int { namespace Linear {
           n[i]=n[--n_n];
           mod = true;
         }
+      */
       // Propagate upper bound for integer view
       {
         const int x_max = x.max();
@@ -255,15 +324,20 @@ namespace Gecode { namespace Int { namespace Linear {
           std::cout << "FAILED on x.lq(" << nlq
                     << ") (sl: " 
                     << sl << ", su: " << su << ")"
+                    << " p.size()=" << p.size()
+                    << " n.size()=" << n.size()
                     << std::endl;
           std::cout << "\t";
-          for (int i=0; i<n_p; i++)
-            std::cout << " + " << p[i].a << "*" << p[i].x;
-          for (int i=0; i<n_n; i++)
-            std::cout << " - " << n[i].a << "*" << n[i].x;
+          for (ScaleBool* f=p.fst(); f<p.lst(); f++)
+            std::cout << " + " << f->a << "*" << f->x;
+          for (ScaleBool* f=n.fst(); f<n.lst(); f++)
+            std::cout << " - " << f->a << "*" << f->x;
           std::cout << " = " << x << " + " << c << std::endl;
 #endif
           return ES_FAILED;
+#ifdef DBG_PRINT
+          std::cout << "AFTER FAILED (lq)" << std::endl;
+#endif
         }
         if (me_modified(me)) {
           sl += x.max() - x_max;
@@ -277,15 +351,13 @@ namespace Gecode { namespace Int { namespace Linear {
               << sl << ", su: " << su << ")"
               << std::endl;
     std::cout << "\t";
-    for (int i=0; i<n_p; i++)
-      std::cout << " + " << p[i].a << "*" << p[i].x;
-    for (int i=0; i<n_n; i++)
-      std::cout << " - " << n[i].a << "*" << n[i].x;
+    for (ScaleBool* f=p.fst(); f<p.lst(); f++)
+      std::cout << " + " << f->a << "*" << f->x;
+    for (ScaleBool* f=n.fst(); f<n.lst(); f++)
+      std::cout << " - " << f->a << "*" << f->x;
     std::cout << " = " << x << " + " << c << std::endl;
 #endif
-    //    if (sl == su)
-    //      return (c==0) ? ES_SUBSUMED : ES_FAILED;
-    //    return ES_FIX;
+
     return (sl == su) ? ES_SUBSUMED : ES_FIX;
   }
 
@@ -296,20 +368,31 @@ namespace Gecode { namespace Int { namespace Linear {
   EqBoolScale<IV>::post(Space* home,
                         const IntArgs& a, const BoolVarArgs& b,
                         IV x, int c) {
-    ScaleBool* p = ScaleBool::allocate(home,a.size());
     int n_p = 0;
-    for (int i=a.size(); i--; )
-      if (a[i] > 0) {
-        p[n_p].a = a[i]; p[n_p].x = b[i]; n_p++;
-      }
-    ScaleBool* n = p+n_p;
     int n_n = 0;
     for (int i=a.size(); i--; )
-      if (a[i] < 0) {
-        n[n_n].a = -a[i]; n[n_n].x = b[i]; n_n++;
+      if (a[i] > 0) n_p++; else n_n++;
+    ScaleBoolArray p(home,n_p);
+    ScaleBoolArray n(home,n_n);
+    ScaleBool* f_p = p.fst();
+    ScaleBool* f_n = n.fst();
+    for (int i=a.size(); i--; )
+      if (a[i] > 0) {
+        f_p->a=a[i]; f_p->x=b[i]; f_p++;
+      } else {
+        f_n->a=-a[i]; f_n->x=b[i]; f_n++;
       }
-    //    std::cout << "POST(n_p=" << n_p << ",n_n=" << n_n << ")" << std::endl;
-    (void) new (home) EqBoolScale<IV>(home,p,n_p,n,n_n,x,c);
+    p.sort(); n.sort();
+#ifdef DBG_PRINT
+    std::cout << "POST" << std::endl;
+    std::cout << "\t";
+    for (ScaleBool* f=p.fst(); f<p.lst(); f++)
+      std::cout << " + " << f->a << "*" << f->x;
+    for (ScaleBool* f=n.fst(); f<n.lst(); f++)
+      std::cout << " - " << f->a << "*" << f->x;
+    std::cout << " = " << x << " + " << c << std::endl;
+#endif
+    (void) new (home) EqBoolScale<IV>(home,p,n,x,c);
     return ES_OK;
   }
 
