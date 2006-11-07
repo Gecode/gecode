@@ -91,7 +91,16 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class IV>
   ExecStatus
   EqBoolScale<IV>::propagate(Space* home) {
-    //    std::cout << "PROPAGATE(n_p=" << n_p << ",n_n=" << n_n << ")" << std::endl;
+    // #define DBG_PRINT 1
+#ifdef DBG_PRINT
+    std::cout << "PROPAGATE" << std::endl;
+    std::cout << "\t";
+    for (int i=0; i<n_p; i++)
+      std::cout << " + " << p[i].a << "*" << p[i].x;
+    for (int i=0; i<n_n; i++)
+      std::cout << " - " << n[i].a << "*" << n[i].x;
+    std::cout << " = " << x << " + " << c << std::endl;
+#endif
     int sl = 0;
     int su = 0;
     if (BoolView::pme(this) == ME_BOOL_VAL) {
@@ -122,7 +131,7 @@ namespace Gecode { namespace Int { namespace Linear {
       GECODE_ME_CHECK(x.eq(home,-c)); 
       return ES_SUBSUMED;
     }
-
+    /*
     if (x.assigned() && ((n_p + n_n) == 1)) {
       int r = x.val() + c;
       if (n_p == 1) {
@@ -145,80 +154,139 @@ namespace Gecode { namespace Int { namespace Linear {
       }
       return ES_FAILED;
     }
-
+    */
     sl += x.max() + c;
     su += x.min() + c;
 
-    const int mod_sl = 1;
-    const int mod_su = 2;
+#ifdef DBG_PRINT
+    std::cout << "ELIMINATE (sl: "
+              << sl << ", su: " << su << ")"
+              << std::endl;
+    std::cout << "\t";
+    for (int i=0; i<n_p; i++)
+      std::cout << " + " << p[i].a << "*" << p[i].x;
+    for (int i=0; i<n_n; i++)
+      std::cout << " - " << n[i].a << "*" << n[i].x;
+    std::cout << " = " << x << " + " << c << std::endl;
+#endif
 
-    int mod = mod_sl | mod_su;
+    bool mod = false;
 
     do {
-      if (mod & mod_sl) {
-        mod -= mod_sl;
-        // Propagate upper bound for positive Boolean views
-        for (int i = n_p; i--; )
-          if (p[i].a > sl) {
-            su += p[i].a;
-            p[i].x.zero_none(home);
-            p[i]=p[--n_p];
-            mod |= mod_su;
-          }
-        // Propagate lower bound for negative Boolean views
-        for (int i = n_n; i--; )
-          if (-n[i].a > sl) {
-            c  += n[i].a;
-            su += n[i].a;
-            n[i].x.one_none(home);
-            n[i]=n[--n_n];
-            mod |= mod_su;
-          }
-        // Propagate lower bound for integer view
+      mod = false;
+#ifdef DBG_PRINT
+      std::cout << "ITERATE (sl: "
+                << sl << ", su: " << su << ")"
+                << std::endl;
+      std::cout << "\t";
+      for (int i=0; i<n_p; i++)
+        std::cout << " + " << p[i].a << "*" << p[i].x;
+      for (int i=0; i<n_n; i++)
+        std::cout << " - " << n[i].a << "*" << n[i].x;
+      std::cout << " = " << x << " + " << c << std::endl;
+#endif
+
+      // Propagate upper bound for positive Boolean views
+      for (int i = n_p; i--; )
+        if (p[i].a > sl) {
+          su += p[i].a;
+          p[i].x.zero_none(home);
+          p[i]=p[--n_p];
+          mod = true;
+        }
+      // Propagate lower bound for negative Boolean views
+      for (int i = n_n; i--; )
+        if (n[i].a < -sl) {
+          c  += n[i].a;
+          su += n[i].a;
+          n[i].x.one_none(home);
+          n[i]=n[--n_n];
+          mod = true;
+        }
+      // Propagate lower bound for integer view
+      {
         const int x_min = x.min();
+        const int ngq = x.max() - sl;
         ModEvent me = x.gq(home,x.max() - sl);
-        if (me_failed(me))
+        if (me_failed(me)) {
+#ifdef DBG_PRINT
+          std::cout << "FAILED on x.gq ("
+                    << ngq << ") (sl: "
+                    << sl << ", su: " << su << ")"
+                    << std::endl;
+          std::cout << "\t";
+          for (int i=0; i<n_p; i++)
+            std::cout << " + " << p[i].a << "*" << p[i].x;
+          for (int i=0; i<n_n; i++)
+            std::cout << " - " << n[i].a << "*" << n[i].x;
+          std::cout << " = " << x << " + " << c << std::endl;
+#endif
           return ES_FAILED;
+        }
         if (me_modified(me)) {
           su += x.min() - x_min;
-          mod |= mod_su;
+          mod = true;
         }
       }
-      if (mod & mod_su) {
-        mod -= mod_su;
-        // Propagate lower bound for positive Boolean views
-        for (int i = n_p; i--; )
-          if (p[i].a > -su) {
-            c  -= p[i].a;
-            sl -= p[i].a;
-            p[i].x.one_none(home);
-            p[i] = p[--n_p];
-            mod |= mod_sl;
+      // Propagate lower bound for positive Boolean views
+      for (int i = n_p; i--; )
+        if (p[i].a > -su) {
+          c  -= p[i].a;
+          sl -= p[i].a;
+          p[i].x.one_none(home);
+          p[i] = p[--n_p];
+          mod = true;
         }
-        // Propagate upper bound for negative Boolean views
-        for (int i = n_n; i--; )
-          if (-n[i].a > -su) {
-            sl -= n[i].a;
-            n[i].x.zero_none(home);
-            n[i]=n[--n_n];
-            mod |= mod_sl;
-          }
-        // Propagate upper bound for integer view
+      // Propagate upper bound for negative Boolean views
+      for (int i = n_n; i--; )
+        if (n[i].a > -su) {
+          sl -= n[i].a;
+          n[i].x.zero_none(home);
+          n[i]=n[--n_n];
+          mod = true;
+        }
+      // Propagate upper bound for integer view
+      {
         const int x_max = x.max();
+        const int nlq = x.min() - su;
         ModEvent me = x.lq(home,x.min() - su);
-        if (me_failed(me))
+        if (me_failed(me)) {
+#ifdef DBG_PRINT
+          std::cout << "FAILED on x.lq(" << nlq
+                    << ") (sl: " 
+                    << sl << ", su: " << su << ")"
+                    << std::endl;
+          std::cout << "\t";
+          for (int i=0; i<n_p; i++)
+            std::cout << " + " << p[i].a << "*" << p[i].x;
+          for (int i=0; i<n_n; i++)
+            std::cout << " - " << n[i].a << "*" << n[i].x;
+          std::cout << " = " << x << " + " << c << std::endl;
+#endif
           return ES_FAILED;
+        }
         if (me_modified(me)) {
           sl += x.max() - x_max;
-          mod |= mod_sl;
+          mod = true;
         }
       }
-    } while (mod != 0);
+    } while (mod);
 
-    if (sl == su)
-      return (c==0) ? ES_SUBSUMED : ES_FAILED;
-    return ES_FIX;
-
+#ifdef DBG_PRINT
+    std::cout << "AFTER PROPAGATION (sl: "
+              << sl << ", su: " << su << ")"
+              << std::endl;
+    std::cout << "\t";
+    for (int i=0; i<n_p; i++)
+      std::cout << " + " << p[i].a << "*" << p[i].x;
+    for (int i=0; i<n_n; i++)
+      std::cout << " - " << n[i].a << "*" << n[i].x;
+    std::cout << " = " << x << " + " << c << std::endl;
+#endif
+    //    if (sl == su)
+    //      return (c==0) ? ES_SUBSUMED : ES_FAILED;
+    //    return ES_FIX;
+    return (sl == su) ? ES_SUBSUMED : ES_FIX;
   }
 
 
