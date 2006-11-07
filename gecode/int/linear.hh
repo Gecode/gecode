@@ -970,6 +970,57 @@ namespace Gecode { namespace Int { namespace Linear {
 
 namespace Gecode { namespace Int { namespace Linear {
 
+  /// Coefficient and Boolean view
+  class ScaleBool {
+  public:
+    int      a;
+    BoolView x;
+    static ScaleBool* allocate(Space* home, int n);
+  };
+
+  /**
+   * \brief %Propagator for equality to Boolean sum with coefficients (cardinality)
+   *
+   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class IV>
+  class EqBoolScale : public Propagator {
+  protected:
+    ScaleBool* p;
+    int n_p;
+    ScaleBool* n;
+    int n_n;
+    IV x;
+    int c;
+    /// Constructor for cloning \a p
+    EqBoolScale(Space* home, bool share, EqBoolScale& p);
+    /// Constructor for creation
+    EqBoolScale(Space* home, 
+                ScaleBool* p, int n_p,
+                ScaleBool* n, int n_n,
+                IV x, int c);
+  public:
+    /// Create copy during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n = y\f$
+    static ExecStatus post(Space* home, 
+                           const IntArgs& a, const BoolVarArgs& b, 
+                           IV x, int c);
+    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    virtual PropCost cost(void) const;
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
+  };
+
+}}}
+
+#include "gecode/int/linear/bool-scale.icc"
+
+namespace Gecode { namespace Int { namespace Linear {
+
 
   /*
    * Support for preprocessing and posting

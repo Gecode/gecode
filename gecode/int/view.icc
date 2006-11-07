@@ -730,7 +730,7 @@ namespace Gecode {
     /**
      * \brief Constant integer view
      *
-     * An constant integer view \f$x\f$ for an integer \f$c\f$ provides
+     * A constant integer view \f$x\f$ for an integer \f$c\f$ provides
      * operations such that \f$x\f$ behaves as a view assigned to \f$c\f$.
      * \ingroup TaskActorIntView
      */

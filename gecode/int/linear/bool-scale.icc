@@ -1,0 +1,251 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2003
+ *
+ *  Last modified:
+ *     $Date: 2006-10-26 22:15:50 +0200 (Thu, 26 Oct 2006) $ by $Author: schulte $
+ *     $Revision: 3806 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Linear {
+
+  forceinline ScaleBool*
+  ScaleBool::allocate(Space* home, int n) {
+    return reinterpret_cast<ScaleBool*>(home->alloc(n*sizeof(ScaleBool)));
+  }
+
+  template <class IV>
+  forceinline
+  EqBoolScale<IV>::EqBoolScale(Space* home, 
+                               ScaleBool* p0, int n_p0,
+                               ScaleBool* n0, int n_n0,
+                               IV x0, int c0)
+    : Propagator(home), p(p0), n_p(n_p0), n(n0), n_n(n_n0), x(x0), c(c0) {
+    x.subscribe(home,this,PC_INT_BND);
+    for (int i=n_p; i--; )
+      p[i].x.subscribe(home,this,PC_BOOL_VAL);
+    for (int i=n_n; i--; )
+      n[i].x.subscribe(home,this,PC_BOOL_VAL);
+  }
+
+  template <class IV>
+  forceinline
+  EqBoolScale<IV>::EqBoolScale(Space* home, bool share, 
+                               EqBoolScale<IV>& pr)
+    : Propagator(home,share,pr), n_p(pr.n_p), n_n(pr.n_n), c(pr.c) {
+    x.update(home,share,pr.x);
+    if (n_p > 0) {
+      p = ScaleBool::allocate(home,n_p);
+      for (int i=n_p; i--; ) {
+        p[i].a = pr.p[i].a;
+        p[i].x.update(home,share,pr.p[i].x);
+      }
+    }
+    if (n_n > 0) {
+      n = ScaleBool::allocate(home,n_n);
+      for (int i=n_n; i--; ) {
+        n[i].a = pr.n[i].a;
+        n[i].x.update(home,share,pr.n[i].x);
+      }
+    }
+  }
+
+  template <class IV>
+  PropCost
+  EqBoolScale<IV>::cost(void) const {
+    return cost_lo(n_p + n_n, PC_LINEAR_LO);
+  }
+
+  template <class IV>
+  forceinline size_t
+  EqBoolScale<IV>::dispose(Space* home) {
+    assert(!home->failed());
+    x.cancel(home,this,PC_INT_BND);
+    for (int i=n_p; i--; )
+      p[i].x.cancel(home,this,PC_BOOL_VAL);
+    for (int i=n_n; i--; )
+      n[i].x.cancel(home,this,PC_BOOL_VAL);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class IV>
+  Actor*
+  EqBoolScale<IV>::copy(Space* home, bool share) {
+    return new (home) EqBoolScale<IV>(home,share,*this);
+  }
+
+  template <class IV>
+  ExecStatus
+  EqBoolScale<IV>::propagate(Space* home) {
+    //    std::cout << "PROPAGATE(n_p=" << n_p << ",n_n=" << n_n << ")" << std::endl;
+    int sl = 0;
+    int su = 0;
+    if (BoolView::pme(this) == ME_BOOL_VAL) {
+      for (int i = n_p; i--; )
+        if (p[i].x.one()) {
+          c -= p[i].a; p[i] = p[--n_p];
+        } else if (p[i].x.zero()) {
+          p[i] = p[--n_p];
+        } else {
+          su -= p[i].a;
+        }
+      for (int i = n_n; i--; )
+        if (n[i].x.one()) {
+          c += n[i].a; n[i] = n[--n_n];
+        } else if (n[i].x.zero()) {
+          n[i] = n[--n_n];
+        } else {
+          sl += n[i].a;
+        }
+    } else {
+      for (int i = n_p; i--; )
+        su -= p[i].a;
+      for (int i = n_n; i--; )
+        sl += n[i].a;
+    }
+    
+    if ((n_p + n_n) == 0) {
+      GECODE_ME_CHECK(x.eq(home,-c)); 
+      return ES_SUBSUMED;
+    }
+
+    if (x.assigned() && ((n_p + n_n) == 1)) {
+      int r = x.val() + c;
+      if (n_p == 1) {
+        if (p[0].a == r) {
+          p[0].x.one_none(home); 
+          return ES_SUBSUMED;
+        } else if (r == 0) {
+          p[0].x.zero_none(home); 
+          return ES_SUBSUMED;
+        }
+      } else {
+        assert(n_n == 1);
+        if (-n[0].a == r) {
+          n[0].x.one_none(home); 
+          return ES_SUBSUMED;
+        } else if (r == 0) {
+          n[0].x.zero_none(home); 
+          return ES_SUBSUMED;
+        }
+      }
+      return ES_FAILED;
+    }
+
+    sl += x.max() + c;
+    su += x.min() + c;
+
+    const int mod_sl = 1;
+    const int mod_su = 2;
+
+    int mod = mod_sl | mod_su;
+
+    do {
+      if (mod & mod_sl) {
+        mod -= mod_sl;
+        // Propagate upper bound for positive Boolean views
+        for (int i = n_p; i--; )
+          if (p[i].a > sl) {
+            su += p[i].a;
+            p[i].x.zero_none(home);
+            p[i]=p[--n_p];
+            mod |= mod_su;
+          }
+        // Propagate lower bound for negative Boolean views
+        for (int i = n_n; i--; )
+          if (-n[i].a > sl) {
+            c  += n[i].a;
+            su += n[i].a;
+            n[i].x.one_none(home);
+            n[i]=n[--n_n];
+            mod |= mod_su;
+          }
+        // Propagate lower bound for integer view
+        const int x_min = x.min();
+        ModEvent me = x.gq(home,x.max() - sl);
+        if (me_failed(me))
+          return ES_FAILED;
+        if (me_modified(me)) {
+          su += x.min() - x_min;
+          mod |= mod_su;
+        }
+      }
+      if (mod & mod_su) {
+        mod -= mod_su;
+        // Propagate lower bound for positive Boolean views
+        for (int i = n_p; i--; )
+          if (p[i].a > -su) {
+            c  -= p[i].a;
+            sl -= p[i].a;
+            p[i].x.one_none(home);
+            p[i] = p[--n_p];
+            mod |= mod_sl;
+        }
+        // Propagate upper bound for negative Boolean views
+        for (int i = n_n; i--; )
+          if (-n[i].a > -su) {
+            sl -= n[i].a;
+            n[i].x.zero_none(home);
+            n[i]=n[--n_n];
+            mod |= mod_sl;
+          }
+        // Propagate upper bound for integer view
+        const int x_max = x.max();
+        ModEvent me = x.lq(home,x.min() - su);
+        if (me_failed(me))
+          return ES_FAILED;
+        if (me_modified(me)) {
+          sl += x.max() - x_max;
+          mod |= mod_sl;
+        }
+      }
+    } while (mod != 0);
+
+    if (sl == su)
+      return (c==0) ? ES_SUBSUMED : ES_FAILED;
+    return ES_FIX;
+
+  }
+
+
+
+  template <class IV>
+  ExecStatus
+  EqBoolScale<IV>::post(Space* home,
+                        const IntArgs& a, const BoolVarArgs& b,
+                        IV x, int c) {
+    ScaleBool* p = ScaleBool::allocate(home,a.size());
+    int n_p = 0;
+    for (int i=a.size(); i--; )
+      if (a[i] > 0) {
+        p[n_p].a = a[i]; p[n_p].x = b[i]; n_p++;
+      }
+    ScaleBool* n = p+n_p;
+    int n_n = 0;
+    for (int i=a.size(); i--; )
+      if (a[i] < 0) {
+        n[n_n].a = -a[i]; n[n_n].x = b[i]; n_n++;
+      }
+    //    std::cout << "POST(n_p=" << n_p << ",n_n=" << n_n << ")" << std::endl;
+    (void) new (home) EqBoolScale<IV>(home,p,n_p,n,n_n,x,c);
+    return ES_OK;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

@@ -305,5 +305,57 @@ LinearBoolVar _lb_v_5_le("Linear::Bool::Var::Le::5",5,IRT_LE);
 LinearBoolVar _lb_v_5_gq("Linear::Bool::Var::Gq::5",5,IRT_GQ);
 LinearBoolVar _lb_v_5_gr("Linear::Bool::Var::Gr::5",5,IRT_GR);
 
+
+class LinearBoolScaleInt : public IntTest {
+private:
+  const IntRelType irt;
+  int* a;
+  int c;
+public:
+  LinearBoolScaleInt(const char* t, 
+                     int* a0, int n, IntRelType irt0, int c0)
+    : IntTest(t,n,db,false), irt(irt0), a(a0), c(c0) {}
+  virtual bool solution(const Assignment& x) const {
+    double m = 0;
+    for (int i=0; i<x.size(); i++)
+      m += a[i]*x[i];
+    return compare(m, irt, static_cast<double>(c));
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    IntArgs ia(x.size());
+    BoolVarArgs b(x.size());
+    for (int i=x.size(); i--; ) {
+      b[i] = link(home,x[i]); ia[i] = a[i];
+    }
+    linear(home, ia, b, irt, c);
+  }
+};
+
+static int _lbsi_a_51[5] = {1,2,3,4,5};
+LinearBoolScaleInt _lbsi_5_1_0_eq("Linear::Bool::Scale::Int::Eq::5::1::0",
+                                  _lbsi_a_51,5,IRT_EQ,0);
+LinearBoolScaleInt _lbsi_5_1_1_eq("Linear::Bool::Scale::Int::Eq::5::1::1",
+                                  _lbsi_a_51,5,IRT_EQ,1);
+LinearBoolScaleInt _lbsi_5_1_2_eq("Linear::Bool::Scale::Int::Eq::5::1::2",
+                                  _lbsi_a_51,5,IRT_EQ,2);
+LinearBoolScaleInt _lbsi_5_1_3_eq("Linear::Bool::Scale::Int::Eq::5::1::3",
+                                  _lbsi_a_51,5,IRT_EQ,3);
+LinearBoolScaleInt _lbsi_5_1_4_eq("Linear::Bool::Scale::Int::Eq::5::1::4",
+                                  _lbsi_a_51,5,IRT_EQ,4);
+LinearBoolScaleInt _lbsi_5_1_5_eq("Linear::Bool::Scale::Int::Eq::5::1::5",
+                                  _lbsi_a_51,5,IRT_EQ,5);
+LinearBoolScaleInt _lbsi_5_1_7_eq("Linear::Bool::Scale::Int::Eq::5::1::7",
+                                  _lbsi_a_51,5,IRT_EQ,7);
+LinearBoolScaleInt _lbsi_5_1_9_eq("Linear::Bool::Scale::Int::Eq::5::1::9",
+                                  _lbsi_a_51,5,IRT_EQ,9);
+LinearBoolScaleInt _lbsi_5_1_11_eq("Linear::Bool::Scale::Int::Eq::5::1::11",
+                                   _lbsi_a_51,5,IRT_EQ,11);
+LinearBoolScaleInt _lbsi_5_1_13_eq("Linear::Bool::Scale::Int::Eq::5::1::13",
+                                   _lbsi_a_51,5,IRT_EQ,13);
+LinearBoolScaleInt _lbsi_5_1_14_eq("Linear::Bool::Scale::Int::Eq::5::1::14",
+                                   _lbsi_a_51,5,IRT_EQ,14);
+LinearBoolScaleInt _lbsi_5_1_15_eq("Linear::Bool::Scale::Int::Eq::5::1::15",
+                                   _lbsi_a_51,5,IRT_EQ,15);
+
 // STATISTICS: test-int
 
