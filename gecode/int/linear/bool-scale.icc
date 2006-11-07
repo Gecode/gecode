@@ -22,45 +22,36 @@
 
 namespace Gecode { namespace Int { namespace Linear {
 
-  template <class IV>
+  template<class SBAP, class SBAN, class VX>
   forceinline
-  EqBoolScale<IV>::EqBoolScale(Space* home, 
-                               ScaleBoolArray& p0, ScaleBoolArray& n0,
-                               IV x0, int c0)
+  EqBoolScale<SBAP,SBAN,VX>::EqBoolScale(Space* home, 
+                               SBAP& p0, SBAN& n0,
+                               VX x0, int c0)
     : Propagator(home), p(p0), n(n0), x(x0), c(c0) {
     x.subscribe(home,this,PC_INT_BND);
     p.subscribe(home,this);
     n.subscribe(home,this);
   }
 
-  template <class IV>
+  template<class SBAP, class SBAN, class VX>
   forceinline
-  EqBoolScale<IV>::EqBoolScale(Space* home, bool share, 
-                               EqBoolScale<IV>& pr)
+  EqBoolScale<SBAP,SBAN,VX>::EqBoolScale(Space* home, bool share, 
+                               EqBoolScale<SBAP,SBAN,VX>& pr)
     : Propagator(home,share,pr), c(pr.c) {
     x.update(home,share,pr.x);
     p.update(home,share,pr.p);
     n.update(home,share,pr.n);
-#ifdef DBG_PRINT
-    std::cout << "COPY" << std::endl;
-    std::cout << "\t";
-    for (ScaleBool* f=p.fst(); f<p.lst(); f++)
-      std::cout << " + " << f->a << "*" << f->x;
-    for (ScaleBool* f=n.fst(); f<n.lst(); f++)
-      std::cout << " - " << f->a << "*" << f->x;
-    std::cout << " = " << x << " + " << c << std::endl;
-#endif
   }
 
-  template <class IV>
+  template<class SBAP, class SBAN, class VX>
   PropCost
-  EqBoolScale<IV>::cost(void) const {
+  EqBoolScale<SBAP,SBAN,VX>::cost(void) const {
     return cost_lo(p.size() + n.size(), PC_LINEAR_LO);
   }
 
-  template <class IV>
+  template<class SBAP, class SBAN, class VX>
   forceinline size_t
-  EqBoolScale<IV>::dispose(Space* home) {
+  EqBoolScale<SBAP,SBAN,VX>::dispose(Space* home) {
 #ifdef DBG_PRINT
     std::cout << "DISPOSE" << std::endl;
 #endif
@@ -72,15 +63,15 @@ namespace Gecode { namespace Int { namespace Linear {
     return sizeof(*this);
   }
 
-  template <class IV>
+  template<class SBAP, class SBAN, class VX>
   Actor*
-  EqBoolScale<IV>::copy(Space* home, bool share) {
-    return new (home) EqBoolScale<IV>(home,share,*this);
+  EqBoolScale<SBAP,SBAN,VX>::copy(Space* home, bool share) {
+    return new (home) EqBoolScale<SBAP,SBAN,VX>(home,share,*this);
   }
 
-  template <class IV>
+  template<class SBAP, class SBAN, class VX>
   ExecStatus
-  EqBoolScale<IV>::propagate(Space* home) {
+  EqBoolScale<SBAP,SBAN,VX>::propagate(Space* home) {
     // #define DBG_PRINT 1
 #ifdef DBG_PRINT
     std::cout << "PROPAGATE" << std::endl;
@@ -260,9 +251,6 @@ namespace Gecode { namespace Int { namespace Linear {
           std::cout << " = " << x << " + " << c << std::endl;
 #endif
           return ES_FAILED;
-#ifdef DBG_PRINT
-          std::cout << "AFTER FAILED (gq)" << std::endl;
-#endif
         }
         if (me_modified(me)) {
           su += x.min() - x_min;
@@ -335,9 +323,6 @@ namespace Gecode { namespace Int { namespace Linear {
           std::cout << " = " << x << " + " << c << std::endl;
 #endif
           return ES_FAILED;
-#ifdef DBG_PRINT
-          std::cout << "AFTER FAILED (lq)" << std::endl;
-#endif
         }
         if (me_modified(me)) {
           sl += x.max() - x_max;
@@ -363,11 +348,11 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
 
-  template <class IV>
+  template<class SBAP, class SBAN, class VX>
   ExecStatus
-  EqBoolScale<IV>::post(Space* home,
+  EqBoolScale<SBAP,SBAN,VX>::post(Space* home,
                         const IntArgs& a, const BoolVarArgs& b,
-                        IV x, int c) {
+                        VX x, int c) {
     int n_p = 0;
     int n_n = 0;
     for (int i=a.size(); i--; )
@@ -383,16 +368,8 @@ namespace Gecode { namespace Int { namespace Linear {
         f_n->a=-a[i]; f_n->x=b[i]; f_n++;
       }
     p.sort(); n.sort();
-#ifdef DBG_PRINT
-    std::cout << "POST" << std::endl;
-    std::cout << "\t";
-    for (ScaleBool* f=p.fst(); f<p.lst(); f++)
-      std::cout << " + " << f->a << "*" << f->x;
-    for (ScaleBool* f=n.fst(); f<n.lst(); f++)
-      std::cout << " - " << f->a << "*" << f->x;
-    std::cout << " = " << x << " + " << c << std::endl;
-#endif
-    (void) new (home) EqBoolScale<IV>(home,p,n,x,c);
+    (void) new (home) EqBoolScale<ScaleBoolArray,ScaleBoolArray,VX>
+      (home,p,n,x,c);
     return ES_OK;
   }
 

@@ -1053,20 +1053,18 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include "gecode/int/linear.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class IV>
+  template <class SBAP, class SBAN, class VX>
   class EqBoolScale : public Propagator {
   protected:
-    ScaleBoolArray p;
-    ScaleBoolArray n;
-    IV x;
+    SBAP p;
+    SBAN n;
+    VX x;
     int c;
+  public:
+    /// Constructor for creation
+    EqBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
     /// Constructor for cloning \a p
     EqBoolScale(Space* home, bool share, EqBoolScale& p);
-    /// Constructor for creation
-    EqBoolScale(Space* home, 
-                ScaleBoolArray& p, ScaleBoolArray& n,
-                IV x, int c);
-  public:
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
@@ -1074,7 +1072,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n = y\f$
     static ExecStatus post(Space* home, 
                            const IntArgs& a, const BoolVarArgs& b, 
-                           IV x, int c);
+                           VX x, int c);
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
     /// Delete propagator and return its size
