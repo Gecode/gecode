@@ -973,77 +973,52 @@ namespace Gecode { namespace Int { namespace Linear {
   /// Coefficient and Boolean view
   class ScaleBool {
   public:
+    /// Integer coefficient
     int      a;
+    /// Boolean view
     BoolView x;
   };
 
   /// Array of scale Boolean views
   class ScaleBoolArray {
   private:
+    /// First entry in array
     ScaleBool* _fst;
+    /// One after last entry in array
     ScaleBool* _lst;
   public:
-    ScaleBoolArray(void) {}
-    ScaleBoolArray(Space* home, int n) {
-      if (n > 0) {
-        _fst = reinterpret_cast<ScaleBool*>(home->alloc(n*sizeof(ScaleBool)));
-        _lst = _fst+n;
-      } else {
-        _fst = _lst = NULL;
-      }
-    }
-    void subscribe(Space* home, Propagator* p) {
-      for (ScaleBool* f = _fst; f < _lst; f++)
-        f->x.subscribe(home,p,PC_BOOL_VAL);
-    }
-    void cancel(Space* home, Propagator* p) {
-      for (ScaleBool* f = _fst; f < _lst; f++)
-        f->x.cancel(home,p,PC_BOOL_VAL);
-    }
-    void update(Space* home, bool share, ScaleBoolArray& sba) {
-      int n = sba._lst - sba._fst;
-      if (n > 0) {
-        _fst = reinterpret_cast<ScaleBool*>(home->alloc(n*sizeof(ScaleBool)));
-        _lst = _fst+n;
-        for (int i=n; i--; ) {
-          _fst[i].a = sba._fst[i].a;
-          _fst[i].x.update(home,share,sba._fst[i].x);
-        }
-      } else {
-        _fst = _lst = NULL;
-      }
-    }
-    ScaleBool* fst(void) const {
-      return _fst;
-    }
-    ScaleBool* lst(void) const {
-      return _lst;
-    }
-    void fst(ScaleBool* f) {
-      _fst = f;
-    }
-    void lst(ScaleBool* l) {
-      _lst = l;
-    }
-    bool empty(void) const {
-      return _fst == _lst;
-    }
-    int size(void) const {
-      return static_cast<int>(_lst - _fst);
-    }
+    /// Default constructor
+    ScaleBoolArray(void);
+    /// Create array with \a n elements
+    ScaleBoolArray(Space* home, int n);
+    /// Subscribe propagator \a p
+    void subscribe(Space* home, Propagator* p);
+    /// Cancel propagator \a p
+    void cancel(Space* home, Propagator* p);
+    /// Update \a sba during copying
+    void update(Space* home, bool share, ScaleBoolArray& sba);
+    /// Return pointer to first element
+    ScaleBool* fst(void) const;
+    /// Return pointer after last element
+    ScaleBool* lst(void) const;
+    /// Set pointer to first element
+    void fst(ScaleBool* f);
+    /// Set pointer after last element
+    void lst(ScaleBool* l);
+    /// Test whether array is empty
+    bool empty(void) const;
+    /// Return number of elements
+    int size(void) const;
   private:
+    /// For sorting array in increasing order of coefficients
     class ScaleInc {
     public:
-      forceinline bool
-      operator()(const ScaleBool& x, const ScaleBool& y) {
-        return x.a < y.a;
-      }
+      bool
+      operator()(const ScaleBool& x, const ScaleBool& y);
     };
   public:
-    void sort(void) {
-      ScaleInc scale_inc;
-      Support::quicksort<ScaleBool,ScaleInc>(fst(), size(), scale_inc);
-    }
+    /// Sort array in increasing order of coefficients
+    void sort(void);
   };
 
 
@@ -1056,10 +1031,14 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class SBAP, class SBAN, class VX>
   class EqBoolScale : public Propagator {
   protected:
+    /// Positive Boolean views with coefficients on left-hand side
     SBAP p;
+    /// Negative Boolean views with coefficients on left-hand side
     SBAN n;
-    VX x;
-    int c;
+    /// Integer view on right-hand side
+    VX   x;
+    /// Integer constant on right-hand side
+    int  c;
   public:
     /// Constructor for creation
     EqBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
