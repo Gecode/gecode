@@ -194,7 +194,7 @@ INTHDR0 = \
 	sortedness/matching.icc sortedness/narrowing.icc \
 	sortedness/order.icc sortedness/sortedness.icc sortedness/sortsup.icc \
 	int-set.icc var/bool.icc var/imp-int.icc var/imp-bool.icc var/int.icc \
-	view/bool.icc view/constint.icc view/int.icc view/minus.icc \
+	view/bool.icc view/constint.icc view/zero.icc view/int.icc view/minus.icc \
 	view/offset.icc view/rtest.icc view/scale.icc view/iter.icc \
 	arithmetic.hh array.icc bool.hh branch.hh \
 	count.hh cumulatives.hh distinct.hh dom.hh \
@@ -885,10 +885,10 @@ doinstallheaders: $(ALLHDR:%=$(top_srcdir)/%) $(EXTRA_HEADERS)
 	(cd $(top_srcdir) && tar cf - $(ALLHDR)) | \
 	  (cd $(DESTDIR)$(includedir) && tar xf -) && \
 	for_extraheaders="$(EXTRA_HEADERS)" && \
-  	  for f in $$for_extraheaders; do \
-    	    cp $$f $(DESTDIR)$(pkgincludedir); done && \
+	  for f in $$for_extraheaders; do \
+	    cp $$f $(DESTDIR)$(pkgincludedir); done && \
 	for_pkgconfigfiles="$(PKGCONFIGFILES)" && \
-  	  for f in $$for_pkgconfigfiles; do \
+	  for f in $$for_pkgconfigfiles; do \
 	    mkdir -p $(DESTDIR)$(libdir)/pkgconfig; \
 	    cp misc/$$f $(DESTDIR)$(libdir)/pkgconfig; \
 	  done

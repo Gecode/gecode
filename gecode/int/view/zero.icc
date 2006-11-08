@@ -1,0 +1,300 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2003
+ *
+ *  Last modified:
+ *     $Date: 2006-10-25 15:21:37 +0200 (Wed, 25 Oct 2006) $ by $Author: tack $
+ *     $Revision: 3791 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  namespace Int {
+
+    /*
+     * Constructors and initialization
+     *
+     */
+    forceinline
+    ZeroIntView::ZeroIntView(void) {}
+    forceinline void
+    ZeroIntView::init(void) {}
+
+    /*
+     * Value access
+     *
+     */
+    forceinline int
+    ZeroIntView::min(void) const {
+      return 0;
+    }
+    forceinline int
+    ZeroIntView::max(void) const {
+      return 0;
+    }
+    forceinline int
+    ZeroIntView::med(void) const {
+      return 0;
+    }
+    forceinline int
+    ZeroIntView::val(void) const {
+      return 0;
+    }
+
+    forceinline unsigned int
+    ZeroIntView::size(void) const {
+      return 1;
+    }
+    forceinline unsigned int
+    ZeroIntView::width(void) const {
+      return 1;
+    }
+    forceinline unsigned int
+    ZeroIntView::regret_min(void) const {
+      return 0;
+    }
+    forceinline unsigned int
+    ZeroIntView::regret_max(void) const {
+      return 0;
+    }
+
+
+    /*
+     * Domain tests
+     *
+     */
+    forceinline bool
+    ZeroIntView::range(void) const {
+      return true;
+    }
+    forceinline bool
+    ZeroIntView::assigned(void) const {
+      return true;
+    }
+
+    forceinline bool
+    ZeroIntView::in(int n) const {
+      return n == 0;
+    }
+    forceinline bool
+    ZeroIntView::in(double n) const {
+      return n == 0;
+    }
+
+
+    /*
+     * Domain update by value
+     *
+     */
+    forceinline ModEvent
+    ZeroIntView::lq(Space*, int n) {
+      return (0 <= n) ? ME_INT_NONE : ME_INT_FAILED;
+    }
+    forceinline ModEvent
+    ZeroIntView::lq(Space*, double n) {
+      return (0 <= n) ? ME_INT_NONE : ME_INT_FAILED;
+    }
+
+    forceinline ModEvent
+    ZeroIntView::le(Space*, int n) {
+      return (0 < n) ? ME_INT_NONE : ME_INT_FAILED;
+    }
+    forceinline ModEvent
+    ZeroIntView::le(Space*, double n) {
+      return (0 < n) ? ME_INT_NONE : ME_INT_FAILED;
+    }
+
+    forceinline ModEvent
+    ZeroIntView::gq(Space*, int n) {
+      return (0 >= n) ? ME_INT_NONE : ME_INT_FAILED;
+    }
+    forceinline ModEvent
+    ZeroIntView::gq(Space*, double n) {
+      return (0 >= n) ? ME_INT_NONE : ME_INT_FAILED;
+    }
+
+    forceinline ModEvent
+    ZeroIntView::gr(Space*, int n) {
+      return (0 > n) ? ME_INT_NONE : ME_INT_FAILED;
+    }
+    forceinline ModEvent
+    ZeroIntView::gr(Space*, double n) {
+      return (0 > n) ? ME_INT_NONE : ME_INT_FAILED;
+    }
+
+    forceinline ModEvent
+    ZeroIntView::nq(Space*, int n) {
+      return (0 != n) ? ME_INT_NONE : ME_INT_FAILED;
+    }
+    forceinline ModEvent
+    ZeroIntView::nq(Space*, double n) {
+      return (0 != n) ? ME_INT_NONE : ME_INT_FAILED;
+    }
+
+    forceinline ModEvent
+    ZeroIntView::eq(Space*, int n) {
+      return (0 == n) ? ME_INT_NONE : ME_INT_FAILED;
+    }
+    forceinline ModEvent
+    ZeroIntView::eq(Space*, double n) {
+      return (0 == n) ? ME_INT_NONE : ME_INT_FAILED;
+    }
+
+
+
+    /*
+     * Domain update by range iterator
+     *
+     */
+    template <class I>
+    forceinline ModEvent
+    ZeroIntView::narrow(Space*, I& i) {
+      return i() ? ME_INT_NONE : ME_INT_FAILED;
+    }
+    template <class I>
+    ModEvent
+    ZeroIntView::inter(Space*, I& i) {
+      while (i() && (i.max() < 0)) ++i;
+      return (i() && (i.min() <= 0)) ? ME_INT_NONE : ME_INT_FAILED;
+    }
+    template <class I>
+    ModEvent
+    ZeroIntView::minus(Space*, I& i) {
+      while (i() && (i.max() < 0)) ++i;
+      return (i() && (i.min() <= 0)) ? ME_INT_FAILED : ME_INT_NONE;
+    }
+
+
+
+    /*
+     * Propagator modification events
+     *
+     */
+    forceinline ModEvent
+    ZeroIntView::pme(const Propagator*) {
+      return ME_INT_NONE;
+    }
+    forceinline PropModEvent
+    ZeroIntView::pme(ModEvent me) {
+      return static_cast<PropModEvent>(me);
+    }
+
+
+    /*
+     * Dependencies
+     *
+     */
+    forceinline void
+    ZeroIntView::subscribe(Space*,Propagator*,PropCond,bool) {}
+    forceinline void
+    ZeroIntView::cancel(Space* home, Propagator*,PropCond) {}
+
+
+
+    /*
+     * Cloning
+     *
+     */
+    forceinline void
+    ZeroIntView::update(Space*, bool, ZeroIntView&) {}
+
+    /**
+     * \brief %Range iterator for constant integer views
+     * \ingroup TaskActorIntView
+     */
+    template <>
+    class ViewRanges<ZeroIntView> {
+    private:
+      /// Whether the iterator is done
+      bool done;
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      ViewRanges(void);
+      /// Initialize with ranges for view \a x
+      ViewRanges(const ZeroIntView& x);
+      /// Initialize with ranges for view \a x
+      void init(const ZeroIntView& x);
+      //@}
+
+      /// \name Iteration control
+      //@{
+      /// Test whether iterator is still at a range or done
+      bool operator()(void) const;
+      /// Move iterator to next range (if possible)
+      void operator++(void);
+      //@}
+
+      /// \name Range access
+      //@{
+      /// Return smallest value of range
+      int min(void) const;
+      /// Return largest value of range
+      int max(void) const;
+      /// Return width of ranges (distance between minimum and maximum)
+      unsigned int width(void) const;
+      //@}
+    };
+
+    forceinline
+    ViewRanges<ZeroIntView>::ViewRanges(void) {}
+
+    forceinline
+    ViewRanges<ZeroIntView>::ViewRanges(const ZeroIntView&)
+      : done(false) {}
+
+    forceinline bool
+    ViewRanges<ZeroIntView>::operator()(void) const {
+      return !done;
+    }
+    forceinline void
+    ViewRanges<ZeroIntView>::operator++(void) {
+      done=true;
+    }
+
+    forceinline int
+    ViewRanges<ZeroIntView>::min(void) const {
+      return 0;
+    }
+    forceinline int
+    ViewRanges<ZeroIntView>::max(void) const {
+      return 0;
+    }
+    forceinline unsigned int
+    ViewRanges<ZeroIntView>::width(void) const {
+      return 1;
+    }
+
+  }
+
+  /*
+   * View comparison
+   *
+   */
+  forceinline bool
+  same(const Int::ZeroIntView& x, const Int::ZeroIntView& y) {
+    return true;
+  }
+  forceinline bool
+  before(const Int::ZeroIntView& x, const Int::ZeroIntView& y) {
+    return false;
+  }
+
+}
+
+// STATISTICS: int-var
+

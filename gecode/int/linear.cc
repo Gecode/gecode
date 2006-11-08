@@ -152,8 +152,8 @@ namespace Gecode {
     }
     Linear::post(home,t,x.size(),r,c,icl);
     */
-    ConstIntView y(0);
-    GECODE_ES_FAIL(home,(Linear::EqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ConstIntView>::post(home,a,x,y,c)));
+    ZeroIntView z;
+    GECODE_ES_FAIL(home,(Linear::EqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>::post(home,a,x,z,c)));
   }
 
   void

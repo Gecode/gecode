@@ -859,7 +859,6 @@ namespace Gecode {
   /// Test whether views \a x and \a y are the same
   bool same(const Int::ConstIntView& x, const Int::ConstIntView& y);
   /// Test whether view \a x is before \a y (arbitrary order)
-  template <class View, unsigned int n>
   bool before(const Int::ConstIntView& x, const Int::ConstIntView& y);
   //@}
 
@@ -873,6 +872,152 @@ namespace Gecode {
   class ViewVarTraits<Int::ConstIntView> {
   public:
     /// The variable type of a ConstIntView
+    typedef VarBase Var;
+  };
+
+  namespace Int {
+
+    /**
+     * \brief Zero integer view
+     *
+     * A zero integer view \f$x\f$ for provides
+     * operations such that \f$x\f$ behaves as a view assigned to \f$0\f$.
+     * \ingroup TaskActorIntView
+     */
+    class ZeroIntView : public ConstantViewBase {
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      ZeroIntView(void);
+      /// Initialize
+      void init(void);
+      //@}
+
+      /// \name Value access
+      //@{
+      /// Return minimum of domain
+      int min(void) const;
+      /// Return maximum of domain
+      int max(void) const;
+      /// Return median of domain
+      int med(void) const;
+      /// Return assigned value (only if assigned)
+      int val(void) const;
+
+      /// Return size (cardinality) of domain
+      unsigned int size(void) const;
+      /// Return width of domain (distance between maximum and minimum)
+      unsigned int width(void) const;
+      /// Return regret of domain minimum (distance to next larger value)
+      unsigned int regret_min(void) const;
+      /// Return regret of domain maximum (distance to next smaller value)
+      unsigned int regret_max(void) const;
+      //@}
+
+      /// \name Domain tests
+      //@{
+      /// Test whether domain is a range
+      bool range(void) const;
+      /// Test whether view is assigned
+      bool assigned(void) const;
+
+      /// Test whether \a n is contained in domain
+      bool in(int n) const;
+      /// Test whether \a n is contained in domain
+      bool in(double n) const;
+      //@}
+
+      /// \name Domain update by value
+      //@{
+      /// Restrict domain values to be less or equal than \a n
+      ModEvent lq(Space* home, int n);
+      /// Restrict domain values to be less or equal than \a n
+      ModEvent lq(Space* home, double n);
+      /// Restrict domain values to be less than \a n
+      ModEvent le(Space* home, int n);
+      /// Restrict domain values to be less than \a n
+      ModEvent le(Space* home, double n);
+      /// Restrict domain values to be greater or equal than \a n
+      ModEvent gq(Space* home, int n);
+      /// Restrict domain values to be greater or equal than \a n
+      ModEvent gq(Space* home, double n);
+      /// Restrict domain values to be greater than \a n
+      ModEvent gr(Space* home, int n);
+      /// Restrict domain values to be greater than \a n
+      ModEvent gr(Space* home, double n);
+      /// Restrict domain values to be different from \a n
+      ModEvent nq(Space* home, int n);
+      /// Restrict domain values to be different from \a n
+      ModEvent nq(Space* home, double n);
+      /// Restrict domain values to be equal to \a n
+      ModEvent eq(Space* home, int n);
+      /// Restrict domain values to be equal to \a n
+      ModEvent eq(Space* home, double n);
+      //@}
+
+      /// \name Domain update by range iterator
+      //@{
+      /// Replace domain by range sequence described by \a i
+      template <class I> ModEvent narrow(Space* home, I& i);
+      /// Intersect domain with range sequence described by \a i
+      template <class I> ModEvent inter(Space* home, I& i);
+      /// Remove from domain the range sequence described by \a i
+      template <class I> ModEvent minus(Space* home, I& i);
+      //@}
+
+      /// \name Propagator modification events
+      //@{
+      /// Return modification event of propagator \a p for view
+      static ModEvent     pme(const Propagator* p);
+      /// Translate modification event \a me to propagator modification event for view
+      static PropModEvent pme(ModEvent me);
+      //@}
+
+      /// \name Dependencies
+      //@{
+      /**
+       * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+       *
+       * In case \a process is false, the propagator is just subscribed but
+       * not processed for execution (this must be used when creating
+       * subscriptions during propagation).
+       */
+      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+      void cancel(Space* home, Propagator* p, PropCond pc);
+      //@}
+
+      /// \name Cloning
+      //@{
+      /// Update this view to be a clone of view \a x
+      void update(Space* home, bool share, ZeroIntView& x);
+      //@}
+    };
+
+  }
+
+  /**
+   * \name View comparison
+   * \relates Gecode::Int::ZeroIntView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  bool same(const Int::ZeroIntView& x, const Int::ZeroIntView& y);
+  /// Test whether view \a x is before \a y (arbitrary order)
+  bool before(const Int::ZeroIntView& x, const Int::ZeroIntView& y);
+  //@}
+
+  /**
+   * \brief Traits class for views and variable implementations
+   *
+   * This class specializes the ViewVarTraits for ZeroIntView.
+   * \ingroup TaskActorIntView
+   */
+  template<>
+  class ViewVarTraits<Int::ZeroIntView> {
+  public:
+    /// The variable type of a ZeroIntView
     typedef VarBase Var;
   };
 
@@ -1167,6 +1312,7 @@ namespace Gecode {
 #include "gecode/int/view/bool.icc"
 
 #include "gecode/int/view/constint.icc"
+#include "gecode/int/view/zero.icc"
 
 #include "gecode/int/view/minus.icc"
 #include "gecode/int/view/offset.icc"
@@ -1196,6 +1342,12 @@ operator<<(std::ostream&, const Gecode::Int::OffsetView&);
  */
 GECODE_INT_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::Int::ConstIntView&);
+/**
+ * \brief Print zero integer view
+ * \relates Gecode::Int::ZeroIntView
+ */
+GECODE_INT_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::Int::ZeroIntView&);
 /**
  * \brief Print integer-precision scale integer view
  * \relates Gecode::Int::ScaleView

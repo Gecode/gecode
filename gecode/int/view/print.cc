@@ -101,6 +101,10 @@ operator<<(std::ostream& os, const Gecode::Int::ConstIntView& x) {
   return os << x.val();
 }
 std::ostream&
+operator<<(std::ostream& os, const Gecode::Int::ZeroIntView& x) {
+  return os << 0;
+}
+std::ostream&
 operator<<(std::ostream& os, const Gecode::Int::NegBoolView& x) {
   if (x.one())
     return os << 1;
