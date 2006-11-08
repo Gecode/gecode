@@ -1053,13 +1053,11 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   /**
-   * \brief %Propagator for equality to Boolean sum with coefficients (cardinality)
+   * \brief Base class for linear Boolean constraints with coefficients
    *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
-   * \ingroup FuncIntProp
    */
   template <class SBAP, class SBAN, class VX>
-  class EqBoolScale : public Propagator {
+  class LinBoolScale : public Propagator {
   protected:
     /// Positive Boolean views with coefficients on left-hand side
     SBAP p;
@@ -1069,6 +1067,33 @@ namespace Gecode { namespace Int { namespace Linear {
     VX   x;
     /// Integer constant on right-hand side
     int  c;
+  public:
+    /// Constructor for creation
+    LinBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
+    /// Constructor for cloning \a pr
+    LinBoolScale(Space* home, bool share, LinBoolScale& pr);
+    /// Constructor for cloning \a pr
+    LinBoolScale(Space* home, bool share, Propagator& pr, 
+                 SBAP& p, SBAN& n, VX x, int c);
+    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    virtual PropCost cost(void) const;
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
+  };
+
+  /**
+   * \brief %Propagator for equality to Boolean sum with coefficients (cardinality)
+   *
+   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class SBAP, class SBAN, class VX>
+  class EqBoolScale : public LinBoolScale<SBAP,SBAN,VX> {
+  protected:
+    using LinBoolScale<SBAP,SBAN,VX>::p;
+    using LinBoolScale<SBAP,SBAN,VX>::n;
+    using LinBoolScale<SBAP,SBAN,VX>::x;
+    using LinBoolScale<SBAP,SBAN,VX>::c;
   public:
     /// Constructor for creation
     EqBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
@@ -1085,10 +1110,6 @@ namespace Gecode { namespace Int { namespace Linear {
     static ExecStatus post(Space* home, 
                            const IntArgs& a, const BoolVarArgs& b, 
                            VX x, int c);
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(void) const;
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
   };
 
 }}}
