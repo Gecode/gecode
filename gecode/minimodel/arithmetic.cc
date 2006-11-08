@@ -26,9 +26,9 @@
 
 namespace Gecode {
 
-#define GECODE_MM_RETURN_FAILED                        \
-if (home->failed()) {                                \
-  IntVar _x(home,0,0); return _x;                \
+#define GECODE_MM_RETURN_FAILED                 \
+if (home->failed()) {                           \
+  IntVar _x(home,0,0); return _x;               \
 }
 
   IntVar
@@ -111,7 +111,7 @@ if (home->failed()) {                                \
   plus(Space* home, IntVar x, IntVar y, IntConLevel icl) {
     GECODE_MM_RETURN_FAILED;
     IntVar z(home,x.min()+y.min(),x.max()+y.max());
-    Int::Linear::Term ts[3];
+    Int::Linear::Term<Int::IntView> ts[3];
     ts[0].a =  1; ts[0].x = x;
     ts[1].a =  1; ts[1].x = y;
     ts[2].a = -1; ts[2].x = z;
@@ -123,7 +123,7 @@ if (home->failed()) {                                \
   minus(Space* home, IntVar x, IntVar y, IntConLevel icl) {
     GECODE_MM_RETURN_FAILED;
     IntVar z(home,x.min()-y.max(),x.max()-y.min());
-    Int::Linear::Term ts[3];
+    Int::Linear::Term<Int::IntView> ts[3];
     ts[0].a =  1; ts[0].x = x;
     ts[1].a = -1; ts[1].x = y;
     ts[2].a = -1; ts[2].x = z;

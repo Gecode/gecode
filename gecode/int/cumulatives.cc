@@ -66,7 +66,7 @@ namespace Gecode {
     void
     sum(Space *home, const IntVar& s, const IntVar& d, const IntVar& e)
     {
-      GECODE_AUTOARRAY(Linear::Term, t, 3);
+      GECODE_AUTOARRAY(Linear::Term<IntView>, t, 3);
       t[0].a= 1; t[0].x=s;
       t[1].a= 1; t[1].x=d;
       t[2].a=-1; t[2].x=e;
@@ -76,7 +76,7 @@ namespace Gecode {
     void
     sum(Space *home, const IntVar& s, int d, const IntVar& e)
     {
-      GECODE_AUTOARRAY(Linear::Term, t, 2);
+      GECODE_AUTOARRAY(Linear::Term<IntView>, t, 2);
       t[0].a= 1; t[0].x=s;
       t[1].a=-1; t[1].x=e;
       Linear::post(home, t, 2, IRT_EQ, -d);

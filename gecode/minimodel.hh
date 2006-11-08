@@ -96,7 +96,7 @@ namespace Gecode {
         
         /// Fill in array of linear terms based on this node
         GECODE_MINIMODEL_EXPORT int
-        fill(Int::Linear::Term t[], int i, int s) const;
+        fill(Int::Linear::Term<Int::IntView> t[], int i, int s) const;
         
         /// Memory management
         static void* operator new(size_t size);

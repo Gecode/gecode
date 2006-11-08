@@ -30,88 +30,8 @@
 
 namespace Gecode { namespace Int { namespace Linear {
 
-  /// Sort linear terms by view
-  class TermLess {
-  public:
-    forceinline bool
-    operator()(const Term& a, const Term& b) {
-      return before(a.x,b.x);
-    }
-  };
-
   bool
-  preprocess(Term e[], int& n, IntRelType& r, int& c, int& n_p, int& n_n) {
-    if ((c < Limits::Int::int_min) || (c > Limits::Int::int_max))
-      throw NumericalOverflow("Int::linear");
-    /*
-     * Join coefficients for aliased variables:
-     */
-    {
-      // Group same variables
-      TermLess el;
-      Support::quicksort<Term,TermLess>(e,n,el);
-
-      // Join adjacent variables
-      int i = 0;
-      int j = 0;
-      while (i < n) {
-        int     a = e[i].a;
-        if ((a < Limits::Int::int_min) || (a > Limits::Int::int_max))
-          throw NumericalOverflow("Int::linear");
-        IntView x = e[i].x;
-        while ((++i < n) && same(e[i].x,x)) {
-          a += e[i].a;
-          if ((a < Limits::Int::int_min) || (a > Limits::Int::int_max))
-            throw NumericalOverflow("Int::linear");
-        }
-        if (a != 0) {
-          e[j].a = a; e[j].x = x; j++;
-        }
-      }
-      n = j;
-    }
-    /*
-     * All inequations in terms of <=
-     */
-    switch (r) {
-    case IRT_EQ: case IRT_NQ: case IRT_LQ:
-      break;
-    case IRT_LE:
-      c--; r = IRT_LQ; break;
-    case IRT_GR:
-      c++; /* fall through */
-    case IRT_GQ:
-      r = IRT_LQ;
-      for (int i = n; i--; )
-        e[i].a = -e[i].a;
-      c = -c;
-      break;
-    default:
-      throw UnknownRelation("Int::linear");
-    }
-    /*
-     * Partition into positive/negative coefficents
-     */
-    {
-      int i = 0;
-      int j = n-1;
-      while (true) {
-        while ((e[j].a < 0) && (--j >= 0)) ;
-        while ((e[i].a > 0) && (++i <  n)) ;
-        if (j <= i) break;
-        std::swap(e[i],e[j]);
-      }
-      n_p = i;
-      n_n = n-n_p;
-    }
-    for (int i = n; i--; )
-      if ((e[i].a != 1) && (e[i].a != -1))
-        return false;
-    return true;
-  }
-
-  bool
-  int_precision(Term e[], int n, int c) {
+  int_precision(Term<IntView> e[], int n, int c) {
     // Decide the required precision
     double sn = 0.0; double sp = 0.0;
 
@@ -159,10 +79,10 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   void
-  post(Space* home, Term e[], int n, IntRelType r, int c,
+  post(Space* home, Term<IntView> e[], int n, IntRelType r, int c,
        IntConLevel icl) {
     int n_p, n_n;
-    bool is_unit = preprocess(e,n,r,c,n_p,n_n);
+    bool is_unit = preprocess<IntView>(e,n,r,c,n_p,n_n);
     if (n == 0) {
       switch (r) {
       case IRT_EQ: if (c != 0) home->fail(); break;
@@ -387,9 +307,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
   void
   post(Space* home,
-       Term e[], int n, IntRelType r, int c, BoolView b) {
+       Term<IntView> e[], int n, IntRelType r, int c, BoolView b) {
     int n_p, n_n;
-    bool is_unit = preprocess(e,n,r,c,n_p,n_n);
+    bool is_unit = preprocess<IntView>(e,n,r,c,n_p,n_n);
     if (n == 0) {
       bool fail = false;
       switch (r) {

@@ -48,7 +48,7 @@ namespace Gecode {
     }
 
     int
-    LinExpr::Node::fill(Int::Linear::Term t[], int i, int m) const {
+    LinExpr::Node::fill(Int::Linear::Term<Int::IntView> t[], int i, int m) const {
       if (left != NULL) {
         return right->fill(t, left->fill(t, i, signLeft*m), signRight*m);
       } else {
@@ -59,21 +59,21 @@ namespace Gecode {
 
     void
     LinExpr::post(Space* home, IntRelType irt, IntConLevel icl) const {
-      GECODE_AUTOARRAY(Int::Linear::Term, ts, n);
+      GECODE_AUTOARRAY(Int::Linear::Term<Int::IntView>, ts, n);
       (void) ax->fill(ts,0,sign);
       Int::Linear::post(home, ts, n, irt, sign*-c, icl);
     }
 
     void
     LinExpr::post(Space* home, IntRelType irt, const BoolVar& b) const {
-      GECODE_AUTOARRAY(Int::Linear::Term, ts, n);
+      GECODE_AUTOARRAY(Int::Linear::Term<Int::IntView>, ts, n);
       (void) ax->fill(ts,0,sign);
       Int::Linear::post(home, ts, n, irt, sign*-c, b);
     }
 
     IntVar
     LinExpr::post(Space* home, IntConLevel icl) const {
-      GECODE_AUTOARRAY(Int::Linear::Term, ts, n+1);
+      GECODE_AUTOARRAY(Int::Linear::Term<Int::IntView>, ts, n+1);
       (void) ax->fill(ts,0,sign);
       double min = sign*-c;
       double max = sign*-c;

@@ -1180,33 +1180,27 @@ namespace Gecode { namespace Int { namespace Linear {
 
 namespace Gecode { namespace Int { namespace Linear {
 
-
-  /*
-   * Support for preprocessing and posting
-   *
-   */
-
   /**
    * \brief Class for describing linear term \f$a\cdot x\f$
    *
    */
+  template<class View>
   class Term {
   public:
     /// Coefficient
     int a;
     /// View
-    IntView x;
+    View x;
   };
 
   /**
-   * \brief Post propagator for linear constraint
-   * \param e array of linear terms
+   * \brief Post propagator for linear constraint over integers
+   * \param e array of linear terms over integers
    * \param n size of array
    * \param r type of relation
    * \param c result of linear constraint
    *
    * All variants for linear constraints share the following properties:
-   *  - Only bounds-consistency is supported.
    *  - Variables occuring multiply in the term array are replaced
    *    by a single occurence: for example, \f$ax+bx\f$ becomes
    *    \f$(a+b)x\f$.
@@ -1226,7 +1220,8 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space* home, Term t[], int n, IntRelType r, int c, IntConLevel=ICL_DEF);
+  post(Space* home, Term<IntView> t[], int n, IntRelType r, int c, 
+       IntConLevel=ICL_DEF);
 
   /**
    * \brief Post reified propagator for linear constraint
@@ -1257,9 +1252,11 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space* home, Term t[], int n, IntRelType r, int c, BoolView b);
+  post(Space* home, Term<IntView> t[], int n, IntRelType r, int c, BoolView b);
 
 }}}
+
+#include "gecode/int/linear/post.icc"
 
 #endif
 

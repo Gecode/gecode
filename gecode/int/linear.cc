@@ -35,7 +35,7 @@ namespace Gecode {
   linear(Space* home,
          const IntVarArgs& x, IntRelType r, int c, IntConLevel icl) {
     if (home->failed()) return;
-    GECODE_AUTOARRAY(Linear::Term, t, x.size());
+    GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -46,7 +46,7 @@ namespace Gecode {
   linear(Space* home,
          const IntVarArgs& x, IntRelType r, int c, BoolVar b, IntConLevel icl) {
     if (home->failed()) return;
-    GECODE_AUTOARRAY(Linear::Term, t, x.size());
+    GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -60,7 +60,7 @@ namespace Gecode {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) return;
-    GECODE_AUTOARRAY(Linear::Term, t, x.size());
+    GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -74,7 +74,7 @@ namespace Gecode {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) return;
-    GECODE_AUTOARRAY(Linear::Term, t, x.size());
+    GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size());
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -85,7 +85,7 @@ namespace Gecode {
   linear(Space* home,
          const IntVarArgs& x, IntRelType r, IntVar y, IntConLevel icl) {
     if (home->failed()) return;
-    GECODE_AUTOARRAY(Linear::Term, t, x.size()+1);
+    GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -98,7 +98,7 @@ namespace Gecode {
          const IntVarArgs& x, IntRelType r, IntVar y, BoolVar b,
          IntConLevel) {
     if (home->failed()) return;
-    GECODE_AUTOARRAY(Linear::Term, t, x.size()+1);
+    GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=1; t[i].x=x[i];
     }
@@ -113,7 +113,7 @@ namespace Gecode {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) return;
-    GECODE_AUTOARRAY(Linear::Term, t, x.size()+1);
+    GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -128,7 +128,7 @@ namespace Gecode {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) return;
-    GECODE_AUTOARRAY(Linear::Term, t, x.size()+1);
+    GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size()+1);
     for (int i = x.size(); i--; ) {
       t[i].a=a[i]; t[i].x=x[i];
     }
@@ -145,7 +145,7 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) return;
     /*
-    GECODE_AUTOARRAY(Linear::Term, t, x.size());
+    GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size());
     for (int i = x.size(); i--; ) {
       IntVar ix(home,0,1); link(home,ix,x[i]);
       t[i].a=a[i]; t[i].x=ix;
@@ -195,7 +195,7 @@ namespace Gecode {
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) return;
     /*
-    GECODE_AUTOARRAY(Linear::Term, t, x.size()+1);
+    GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size()+1);
     for (int i = x.size(); i--; ) {
       IntVar ix(home,0,1); link(home,ix,x[i]);
       t[i].a=a[i]; t[i].x=ix;
