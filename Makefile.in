@@ -166,7 +166,7 @@ INTSRC0 = \
 	view/print.cc array.cc bool.cc \
 	regular/reg.cc regular/dfa.cc regular.cc \
 	dom.cc rel.cc link.cc element.cc count.cc arithmetic.cc \
-	linear/post.cc linear.cc \
+	linear/int-post.cc linear-int.cc linear-bool.cc \
 	branch.cc \
 	distinct.cc cumulatives.cc \
 	sortedness.cc gcc.cc \
@@ -187,8 +187,10 @@ INTHDR0 = \
 	element/int.icc element/view.icc \
 	gcc/bnd.icc gcc/dom.icc gcc/gccbndsup.icc gcc/graphsup.icc \
 	gcc/lbc.icc gcc/ubc.icc gcc/val.icc gcc/occur.icc \
-	linear/binary.icc linear/post.icc linear/bool-int.icc linear/bool-scale.icc linear/bool-view.icc \
-	linear/nary.icc linear/noview.icc linear/ternary.icc linear/dom.icc \
+	linear/post.icc \
+	linear/int-noview.icc linear/int-bin.icc linear/int-ter.icc \
+	linear/int-nary.icc linear/int-dom.icc \
+	linear/bool-int.icc linear/bool-view.icc linear/bool-scale.icc \
 	regular/dfa.icc regular/dom.icc \
 	rel/eq.icc rel/lex.icc rel/lq-le.icc rel/nq.icc \
 	sortedness/matching.icc sortedness/narrowing.icc \
