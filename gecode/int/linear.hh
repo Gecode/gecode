@@ -1022,6 +1022,36 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
 
+  /// Empty array of scale Boolean views
+  class EmptyScaleBoolArray {
+  public:
+    /// Default constructor
+    EmptyScaleBoolArray(void);
+    /// Create array with \a n elements
+    EmptyScaleBoolArray(Space* home, int n);
+    /// Subscribe propagator \a p
+    void subscribe(Space* home, Propagator* p);
+    /// Cancel propagator \a p
+    void cancel(Space* home, Propagator* p);
+    /// Update \a sba during copying
+    void update(Space* home, bool share, EmptyScaleBoolArray& esba);
+    /// Return pointer to first element
+    ScaleBool* fst(void) const;
+    /// Return pointer after last element
+    ScaleBool* lst(void) const;
+    /// Set pointer to first element
+    void fst(ScaleBool* f);
+    /// Set pointer after last element
+    void lst(ScaleBool* l);
+    /// Test whether array is empty
+    bool empty(void) const;
+    /// Return number of elements
+    int size(void) const;
+    /// Sort array in increasing order of coefficients
+    void sort(void);
+  };
+
+
   /**
    * \brief %Propagator for equality to Boolean sum with coefficients (cardinality)
    *
@@ -1042,8 +1072,11 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Constructor for creation
     EqBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
-    /// Constructor for cloning \a p
-    EqBoolScale(Space* home, bool share, EqBoolScale& p);
+    /// Constructor for cloning \a pr
+    EqBoolScale(Space* home, bool share, EqBoolScale& pr);
+    /// Constructor for cloning \a pr
+    EqBoolScale(Space* home, bool share, Propagator& pr, 
+                SBAP& p, SBAN& n, VX x, int c);
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation

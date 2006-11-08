@@ -101,6 +101,36 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   /*
+   * Empty array of scale Boolean views
+   *
+   */
+  forceinline
+  EmptyScaleBoolArray::EmptyScaleBoolArray(void) {}
+  forceinline
+  EmptyScaleBoolArray::EmptyScaleBoolArray(Space*, int) {}
+  forceinline void 
+  EmptyScaleBoolArray::subscribe(Space*, Propagator*) {}
+  forceinline void 
+  EmptyScaleBoolArray::cancel(Space*, Propagator*) {}
+  forceinline void 
+  EmptyScaleBoolArray::update(Space*, bool, EmptyScaleBoolArray&) {}
+  forceinline ScaleBool* 
+  EmptyScaleBoolArray::fst(void) const { return NULL; }
+  forceinline ScaleBool* 
+  EmptyScaleBoolArray::lst(void) const { return NULL; }
+  forceinline void 
+  EmptyScaleBoolArray::fst(ScaleBool*) {}
+  forceinline void 
+  EmptyScaleBoolArray::lst(ScaleBool*) {}
+  forceinline bool 
+  EmptyScaleBoolArray::empty(void) const { return true; }
+  forceinline int 
+  EmptyScaleBoolArray::size(void) const { return 0; }
+  forceinline void 
+  EmptyScaleBoolArray::sort(void) {}
+
+
+  /*
    * Boolean equality with coefficients
    *
    */
@@ -108,22 +138,12 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class SBAP, class SBAN, class VX>
   forceinline
   EqBoolScale<SBAP,SBAN,VX>::EqBoolScale(Space* home, 
-                               SBAP& p0, SBAN& n0,
-                               VX x0, int c0)
+                                         SBAP& p0, SBAN& n0,
+                                         VX x0, int c0)
     : Propagator(home), p(p0), n(n0), x(x0), c(c0) {
     x.subscribe(home,this,PC_INT_BND);
     p.subscribe(home,this);
     n.subscribe(home,this);
-  }
-
-  template<class SBAP, class SBAN, class VX>
-  forceinline
-  EqBoolScale<SBAP,SBAN,VX>::EqBoolScale(Space* home, bool share, 
-                               EqBoolScale<SBAP,SBAN,VX>& pr)
-    : Propagator(home,share,pr), c(pr.c) {
-    x.update(home,share,pr.x);
-    p.update(home,share,pr.p);
-    n.update(home,share,pr.n);
   }
 
   template<class SBAP, class SBAN, class VX>
@@ -144,8 +164,40 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class SBAP, class SBAN, class VX>
+  forceinline
+  EqBoolScale<SBAP,SBAN,VX>::EqBoolScale(Space* home, bool share, 
+                                         EqBoolScale<SBAP,SBAN,VX>& pr)
+    : Propagator(home,share,pr), c(pr.c) {
+    x.update(home,share,pr.x);
+    p.update(home,share,pr.p);
+    n.update(home,share,pr.n);
+  }
+
+  template<class SBAP, class SBAN, class VX>
+  forceinline
+  EqBoolScale<SBAP,SBAN,VX>::EqBoolScale(Space* home, bool share, 
+                                         Propagator& pr,
+                                         SBAP& p0, SBAN& n0,
+                                         VX x0, int c0)
+    : Propagator(home,share,pr), c(c0) {
+    x.update(home,share,x0);
+    p.update(home,share,p0);
+    n.update(home,share,n0);
+  }
+
+  template<class SBAP, class SBAN, class VX>
   Actor*
   EqBoolScale<SBAP,SBAN,VX>::copy(Space* home, bool share) {
+    if (p.empty()) {
+      EmptyScaleBoolArray ep;
+      return new (home) EqBoolScale<EmptyScaleBoolArray,SBAN,VX>
+        (home,share,*this,ep,n,x,c);
+    }
+    if (n.empty()) {
+      EmptyScaleBoolArray en;
+      return new (home) EqBoolScale<SBAP,EmptyScaleBoolArray,VX>
+        (home,share,*this,p,en,x,c);
+    }
     return new (home) EqBoolScale<SBAP,SBAN,VX>(home,share,*this);
   }
 
