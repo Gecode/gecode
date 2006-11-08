@@ -147,40 +147,20 @@ namespace Gecode { namespace Set {
   SetVarImp::cardMin(Space* home,unsigned int newMin) {
     if (_cardMin >= newMin)
       return ME_SET_NONE;
-    _cardMin=newMin;
-    if (_cardMin > _cardMax)
+    if (newMin > _cardMax)
       return ME_SET_FAILED;
-    return cardMin_full(home, newMin);
+    _cardMin=newMin;
+    return cardMin_full(home);
   }
 
   forceinline ModEvent
   SetVarImp::cardMax(Space* home,unsigned int newMax) {
     if (_cardMax <= newMax)
       return ME_SET_NONE;
-    _cardMax=newMax;
-    if (_cardMin > _cardMax)
+    if (_cardMin > newMax)
       return ME_SET_FAILED;
-    return cardMax_full(home, newMax);
-  }
-
-  template <class I> ModEvent
-  SetVarImp::excludeI(Space* home, I& iterator) {
-    if (assigned()) {
-      BndSetRanges ubi(lub);
-      Iter::Ranges::Inter<BndSetRanges,I> probe(ubi,iterator);
-      return probe() ? ME_SET_FAILED : ME_SET_NONE;
-    }
-    GECODE_SET_CHECK_LUB(home, lub.excludeI(home, iterator));
-  }
-
-  template <class I> forceinline ModEvent
-  SetVarImp::intersectI(Space* home, I& iterator) {
-    if (assigned()) {
-      BndSetRanges ubi(lub);
-      Iter::Ranges::Diff<BndSetRanges,I> probe(ubi,iterator);
-      return probe() ? ME_SET_FAILED : ME_SET_NONE;
-    }
-    GECODE_SET_CHECK_LUB(home, lub.intersectI(home, iterator));
+    _cardMax=newMax;
+    return cardMax_full(home);
   }
 
   forceinline ModEvent
@@ -200,14 +180,29 @@ namespace Gecode { namespace Set {
   }
 
   template <class I> forceinline ModEvent
-  SetVarImp::includeI(Space* home, I& iterator) {
+  SetVarImp::intersectI(Space* home, I& iterator) {
     if (assigned()) {
-      BndSetRanges lbi(glb);
-      Iter::Ranges::Diff<I,BndSetRanges>
-        probe(iterator,lbi);
+      BndSetRanges ubi(lub);
+      Iter::Ranges::Diff<BndSetRanges,I> probe(ubi,iterator);
       return probe() ? ME_SET_FAILED : ME_SET_NONE;
     }
-    GECODE_SET_CHECK_GLB(home, glb.includeI(home, iterator));
+    if (!iterator()) {
+      if (_cardMin > 0)
+        return ME_SET_FAILED;
+      _cardMax = 0;
+      lub.excludeAll(home);
+      notify(home, ME_SET_VAL);
+      return ME_SET_VAL;
+    }
+    int mi=iterator.min();
+    int ma=iterator.max();
+    ++iterator;
+    if (iterator()) {
+      Iter::Ranges::SingletonAppend<I> si(mi,ma,iterator);
+      GECODE_SET_CHECK_LUB(home, lub.intersectI(home, si));
+    } else {
+      return intersect(home, mi, ma);
+    }
   }
 
   forceinline ModEvent
@@ -220,6 +215,29 @@ namespace Gecode { namespace Set {
     GECODE_SET_CHECK_GLB(home,glb.include(home,i,j)) ;
   }
 
+  template <class I> forceinline ModEvent
+  SetVarImp::includeI(Space* home, I& iterator) {
+    if (!iterator()) {
+      return ME_SET_NONE;
+    }
+    if (assigned()) {
+      BndSetRanges lbi(glb);
+      Iter::Ranges::Diff<I,BndSetRanges>
+        probe(iterator,lbi);
+      return probe() ? ME_SET_FAILED : ME_SET_NONE;
+    }
+
+    int mi=iterator.min();
+    int ma=iterator.max();
+    ++iterator;
+    if (iterator()) {
+      Iter::Ranges::SingletonAppend<I> si(mi,ma,iterator);
+      GECODE_SET_CHECK_GLB(home, glb.includeI(home, si));
+    } else {
+      return include(home, mi, ma);
+    }
+  }
+
   forceinline ModEvent
   SetVarImp::exclude(Space* home,int i) {
     GECODE_SET_CHECK_LUB(home,lub.exclude(home,i,i));
@@ -228,6 +246,28 @@ namespace Gecode { namespace Set {
   forceinline ModEvent
   SetVarImp::exclude(Space* home,int i, int j) {
     GECODE_SET_CHECK_LUB(home,lub.exclude(home,i,j)) ;
+  }
+
+  template <class I> ModEvent
+  SetVarImp::excludeI(Space* home, I& iterator) {
+    if (!iterator()) {
+      return ME_SET_NONE;
+    }
+    if (assigned()) {
+      BndSetRanges ubi(lub);
+      Iter::Ranges::Inter<BndSetRanges,I> probe(ubi,iterator);
+      return probe() ? ME_SET_FAILED : ME_SET_NONE;
+    }
+
+    int mi=iterator.min();
+    int ma=iterator.max();
+    ++iterator;
+    if (iterator()) {
+      Iter::Ranges::SingletonAppend<I> si(mi,ma,iterator);
+      GECODE_SET_CHECK_GLB(home, lub.excludeI(home, si));
+    } else {
+      return exclude(home, mi, ma);
+    }
   }
 
   forceinline ModEvent

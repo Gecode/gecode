@@ -50,6 +50,7 @@ namespace Gecode {
 #include "gecode/iter/ranges-union.icc"
 #include "gecode/iter/ranges-values.icc"
 #include "gecode/iter/ranges-add.icc"
+#include "gecode/iter/ranges-singleton-append.icc"
 
 #include "gecode/iter/ranges-size.icc"
 

@@ -488,6 +488,12 @@ namespace Gecode { namespace Set {
     return ret;
   }
 
+  forceinline void
+  LUBndSet::excludeAll(Space* home) {
+    fst()->dispose(home,NULL,lst()); fst(NULL); lst(NULL);
+    _size=0;    
+  }
+
   /*
    * A complement iterator spezialized for the BndSet limits
    *

@@ -1,0 +1,95 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date: 2006-10-25 15:21:37 +0200 (Wed, 25 Oct 2006) $ by $Author: tack $
+ *     $Revision: 3791 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Iter { namespace Ranges {
+
+  /**
+   * \brief %Range iterator for appending a singleton with a range iterator
+   *
+   * The singleton is not allowed to be adjacent to the iterator.
+   *
+   * Requires \code #include "gecode/iter.hh" \endcode
+   * \ingroup FuncIterRanges
+   */
+
+  template <class J>
+  class SingletonAppend : public MinMax {
+  protected:
+    /// Iterator to be appended
+    J j;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    SingletonAppend(void);
+    /// Initialize with singleton (\a i0, \a i1) and iterator \a j
+    SingletonAppend(int i0, int i1, J& j);
+    /// Initialize with singleton (\a i0, \a i1) and iterator \a j
+    void init(int i0, int i1, J& j);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Move iterator to next range (if possible)
+    void operator++(void);
+    //@}
+  };
+
+
+  /*
+   * Binary SingletonAppend
+   *
+   */
+
+  template <class J>
+  inline void
+  SingletonAppend<J>::operator++(void) {
+    if (j()) {
+      mi = j.min();  ma = j.max();
+      ++j;
+    } else {
+      finish();
+    }
+  }
+
+
+  template <class J>
+  forceinline
+  SingletonAppend<J>::SingletonAppend(void) {}
+
+  template <class J>
+  forceinline
+  SingletonAppend<J>::SingletonAppend(int i0, int i1, J& j0)
+    : j(j0) {
+    mi = i0; ma=i1;
+  }
+
+  template <class J>
+  forceinline void
+  SingletonAppend<J>::init(int i0, int i1, J& j0) {
+    mi = i0; ma=i1;
+  }
+
+}}}
+
+// STATISTICS: iter-any
+

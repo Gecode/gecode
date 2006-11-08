@@ -305,6 +305,8 @@ namespace Gecode { namespace Set {
     template <class I> bool intersectI(Space* home, I& i);
     /// Exclude all elements in the set represented by \a i from this set
     template <class I> bool excludeI(Space* home, I& i);
+    /// Exclude all elements from this set
+    void excludeAll(Space* home);
     //@}
   private:
     LUBndSet(const LUBndSet&);
@@ -585,9 +587,9 @@ namespace Gecode { namespace Set {
     /// \name Cardinality update implementation
     //@{
     /// Restrict cardinality to be at least n
-    GECODE_SET_EXPORT ModEvent cardMin_full(Space* home,unsigned int n);
+    GECODE_SET_EXPORT ModEvent cardMin_full(Space* home);
     /// Restrict cardinality to be at most n
-    GECODE_SET_EXPORT ModEvent cardMax_full(Space* home,unsigned int n);
+    GECODE_SET_EXPORT ModEvent cardMax_full(Space* home);
     //@}
 
     /// Test whether glb is a subset of lub

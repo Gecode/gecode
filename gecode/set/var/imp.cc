@@ -33,7 +33,7 @@ namespace Gecode { namespace Set {
    *
    */
   ModEvent
-  SetVarImp::cardMin_full(Space* home,unsigned int newMin) {
+  SetVarImp::cardMin_full(Space* home) {
     ModEvent me = ME_SET_CARD;
     if (_cardMin == _cardMax)
       me = checkLubCardAssigned(home,ME_SET_CARD);
@@ -43,7 +43,7 @@ namespace Gecode { namespace Set {
   }
 
   ModEvent
-  SetVarImp::cardMax_full(Space* home,unsigned int newMax) {
+  SetVarImp::cardMax_full(Space* home) {
     ModEvent me = ME_SET_CARD;
     if (_cardMin == _cardMax)
       me = checkGlbCardAssigned(home,ME_SET_CARD);
