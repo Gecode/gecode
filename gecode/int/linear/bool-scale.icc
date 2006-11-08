@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2003
+ *     Christian Schulte, 2006
  *
  *  Last modified:
  *     $Date: 2006-10-26 22:15:50 +0200 (Thu, 26 Oct 2006) $ by $Author: schulte $
@@ -397,6 +397,293 @@ namespace Gecode { namespace Int { namespace Linear {
       }
     p.sort(); n.sort();
     (void) new (home) EqBoolScale<ScaleBoolArray,ScaleBoolArray,VX>
+      (home,p,n,x,c);
+    return ES_OK;
+  }
+
+
+  /*
+   * Boolean inequality with coefficients
+   *
+   */
+
+  template<class SBAP, class SBAN, class VX>
+  forceinline
+  LqBoolScale<SBAP,SBAN,VX>::LqBoolScale(Space* home, 
+                                         SBAP& p, SBAN& n,
+                                         VX x, int c)
+    : LinBoolScale<SBAP,SBAN,VX>(home,p,n,x,c) {}
+
+  template<class SBAP, class SBAN, class VX>
+  forceinline
+  LqBoolScale<SBAP,SBAN,VX>::LqBoolScale(Space* home, bool share, 
+                                         LqBoolScale<SBAP,SBAN,VX>& pr)
+    : LinBoolScale<SBAP,SBAN,VX>(home,share,pr) {}
+
+  template<class SBAP, class SBAN, class VX>
+  forceinline
+  LqBoolScale<SBAP,SBAN,VX>::LqBoolScale(Space* home, bool share, 
+                                         Propagator& pr,
+                                         SBAP& p, SBAN& n,
+                                         VX x, int c)
+    : LinBoolScale<SBAP,SBAN,VX>(home,share,pr,p,n,x,c) {}
+
+  template<class SBAP, class SBAN, class VX>
+  Actor*
+  LqBoolScale<SBAP,SBAN,VX>::copy(Space* home, bool share) {
+    if (p.empty()) {
+      EmptyScaleBoolArray ep;
+      return new (home) LqBoolScale<EmptyScaleBoolArray,SBAN,VX>
+        (home,share,*this,ep,n,x,c);
+    }
+    if (n.empty()) {
+      EmptyScaleBoolArray en;
+      return new (home) LqBoolScale<SBAP,EmptyScaleBoolArray,VX>
+        (home,share,*this,p,en,x,c);
+    }
+    return new (home) LqBoolScale<SBAP,SBAN,VX>(home,share,*this);
+  }
+
+  template<class SBAP, class SBAN, class VX>
+  ExecStatus
+  LqBoolScale<SBAP,SBAN,VX>::propagate(Space* home) {
+    int sl = 0;
+    if (BoolView::pme(this) == ME_BOOL_VAL) {
+      // Eliminate assigned positive views while keeping order
+      {
+        // Skip not assigned views
+        ScaleBool* f = p.fst();
+        ScaleBool* l = p.lst();
+        while ((f < l) && f->x.none())
+          f++;
+        // Copy unassigned views to t
+        ScaleBool* t = f;
+        while (f < l) {
+          if (f->x.one()) {
+            c -= f->a;
+          } else if (f->x.none()) {
+            *t = *f; t++;
+          }
+          f++;
+        }
+        p.lst(t);
+      }
+      // Eliminate assigned negative views while keeping order
+      {
+        // Skip not assigned views
+        ScaleBool* f = n.fst();
+        ScaleBool* l = n.lst();
+        while ((f < l) && f->x.none()) {
+          sl += f->a; f++;
+        }
+        // Copy unassigned views to t
+        ScaleBool* t = f;
+        while (f < l) {
+          if (f->x.one()) {
+            c += f->a;
+          } else if (f->x.none()) {
+            sl += f->a; *t = *f; t++;
+          }
+          f++;
+        }
+        n.lst(t);
+      }
+    } else {
+      for (ScaleBool* f=n.fst(); f<n.lst(); f++)
+        sl += f->a;
+    }
+    
+    sl += x.max() + c;
+
+    // Propagate upper bound for positive Boolean views
+    {
+      ScaleBool* f = p.fst();
+      ScaleBool* l = p.lst();
+      while ((f < l) && ((l-1)->a > sl)) {
+        l--; l->x.zero_none(home);
+      }
+      p.lst(l);
+    }
+    // Propagate lower bound for negative Boolean views
+    {
+      ScaleBool* f = n.fst();
+      ScaleBool* l = n.lst();
+      while ((f < l) && (f->a < -sl)) {
+        c += f->a; f->x.one_none(home); f++;
+      }
+      n.fst(f);
+    }
+    ExecStatus es = ES_FIX;
+    // Propagate lower bound for integer view
+    {
+      const int slx = x.max() - sl;
+      ModEvent me = x.gq(home,slx);
+      if (me_failed(me))
+        return ES_FAILED;
+      if (me_modified(me) && (slx != x.min()))
+        es = ES_NOFIX;
+    }
+
+    if (p.empty() && n.empty())
+      return ES_SUBSUMED;
+
+    return es;
+  }
+
+
+
+  template<class SBAP, class SBAN, class VX>
+  ExecStatus
+  LqBoolScale<SBAP,SBAN,VX>::post(Space* home,
+                        const IntArgs& a, const BoolVarArgs& b,
+                        VX x, int c) {
+    int n_p = 0;
+    int n_n = 0;
+    for (int i=a.size(); i--; )
+      if (a[i] > 0) n_p++; else n_n++;
+    ScaleBoolArray p(home,n_p);
+    ScaleBoolArray n(home,n_n);
+    ScaleBool* f_p = p.fst();
+    ScaleBool* f_n = n.fst();
+    for (int i=a.size(); i--; )
+      if (a[i] > 0) {
+        f_p->a=a[i]; f_p->x=b[i]; f_p++;
+      } else {
+        f_n->a=-a[i]; f_n->x=b[i]; f_n++;
+      }
+    p.sort(); n.sort();
+    (void) new (home) LqBoolScale<ScaleBoolArray,ScaleBoolArray,VX>
+      (home,p,n,x,c);
+    return ES_OK;
+  }
+
+  /*
+   * Boolean disequality with coefficients
+   *
+   */
+
+  template<class SBAP, class SBAN, class VX>
+  forceinline
+  NqBoolScale<SBAP,SBAN,VX>::NqBoolScale(Space* home, 
+                                         SBAP& p, SBAN& n,
+                                         VX x, int c)
+    : LinBoolScale<SBAP,SBAN,VX>(home,p,n,x,c) {}
+
+  template<class SBAP, class SBAN, class VX>
+  forceinline
+  NqBoolScale<SBAP,SBAN,VX>::NqBoolScale(Space* home, bool share, 
+                                         NqBoolScale<SBAP,SBAN,VX>& pr)
+    : LinBoolScale<SBAP,SBAN,VX>(home,share,pr) {}
+
+  template<class SBAP, class SBAN, class VX>
+  forceinline
+  NqBoolScale<SBAP,SBAN,VX>::NqBoolScale(Space* home, bool share, 
+                                         Propagator& pr,
+                                         SBAP& p, SBAN& n,
+                                         VX x, int c)
+    : LinBoolScale<SBAP,SBAN,VX>(home,share,pr,p,n,x,c) {}
+
+  template<class SBAP, class SBAN, class VX>
+  Actor*
+  NqBoolScale<SBAP,SBAN,VX>::copy(Space* home, bool share) {
+    if (p.empty()) {
+      EmptyScaleBoolArray ep;
+      return new (home) NqBoolScale<EmptyScaleBoolArray,SBAN,VX>
+        (home,share,*this,ep,n,x,c);
+    }
+    if (n.empty()) {
+      EmptyScaleBoolArray en;
+      return new (home) NqBoolScale<SBAP,EmptyScaleBoolArray,VX>
+        (home,share,*this,p,en,x,c);
+    }
+    return new (home) NqBoolScale<SBAP,SBAN,VX>(home,share,*this);
+  }
+
+  template<class SBAP, class SBAN, class VX>
+  ExecStatus
+  NqBoolScale<SBAP,SBAN,VX>::propagate(Space* home) {
+    if (BoolView::pme(this) == ME_BOOL_VAL) {
+      // Eliminate assigned positive views
+      {
+        ScaleBool* f = p.fst();
+        ScaleBool* t = f;
+        ScaleBool* l = p.lst();
+        while (f < l) {
+          if (f->x.one()) {
+            c -= f->a; *f = *(t++);
+          } else if (f->x.zero()) {
+            *f = *(t++);
+          } 
+          f++;
+        }
+        p.fst(t);
+      }
+      // Eliminate assigned negative views
+      {
+        ScaleBool* f = n.fst();
+        ScaleBool* t = f;
+        ScaleBool* l = n.lst();
+        while (f < l) {
+          if (f->x.one()) {
+            c += f->a; *f = *(t++);
+          } else if (f->x.zero()) {
+            *f = *(t++);
+          } 
+          f++;
+        }
+        n.fst(t);
+      }
+    }
+    
+    if (p.empty() && n.empty()) {
+      GECODE_ME_CHECK(x.nq(home,-c)); 
+      return ES_SUBSUMED;
+    }
+
+    if (x.assigned()) {
+      int r = x.val()+c;
+      if (p.empty() && (n.size() == 1)) {
+        if (r == -n.fst()->a) {
+          n.fst()->x.zero_none(home);
+        } else if (r == 0) {
+          n.fst()->x.one_none(home);
+        }
+        return ES_SUBSUMED;
+      }
+      if ((p.size() == 1) && n.empty()) {
+        if (r == p.fst()->a) {
+          p.fst()->x.zero_none(home);
+        } else if (r == 0) {
+          p.fst()->x.one_none(home);
+        }
+        return ES_SUBSUMED;
+      }
+    }
+    return ES_FIX;
+  }
+
+
+
+  template<class SBAP, class SBAN, class VX>
+  ExecStatus
+  NqBoolScale<SBAP,SBAN,VX>::post(Space* home,
+                        const IntArgs& a, const BoolVarArgs& b,
+                        VX x, int c) {
+    int n_p = 0;
+    int n_n = 0;
+    for (int i=a.size(); i--; )
+      if (a[i] > 0) n_p++; else n_n++;
+    ScaleBoolArray p(home,n_p);
+    ScaleBoolArray n(home,n_n);
+    ScaleBool* f_p = p.fst();
+    ScaleBool* f_n = n.fst();
+    for (int i=a.size(); i--; )
+      if (a[i] > 0) {
+        f_p->a=a[i]; f_p->x=b[i]; f_p++;
+      } else {
+        f_n->a=-a[i]; f_n->x=b[i]; f_n++;
+      }
+    (void) new (home) NqBoolScale<ScaleBoolArray,ScaleBoolArray,VX>
       (home,p,n,x,c);
     return ES_OK;
   }

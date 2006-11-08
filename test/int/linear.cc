@@ -332,30 +332,60 @@ public:
 };
 
 static int _lbsi_a_51[5] = {1,2,3,4,5};
-LinearBoolScaleInt _lbsi_5_1_0_eq("Linear::Bool::Scale::Int::Eq::5::1::0",
-                                  _lbsi_a_51,5,IRT_EQ,0);
-LinearBoolScaleInt _lbsi_5_1_1_eq("Linear::Bool::Scale::Int::Eq::5::1::1",
-                                  _lbsi_a_51,5,IRT_EQ,1);
-LinearBoolScaleInt _lbsi_5_1_2_eq("Linear::Bool::Scale::Int::Eq::5::1::2",
-                                  _lbsi_a_51,5,IRT_EQ,2);
-LinearBoolScaleInt _lbsi_5_1_3_eq("Linear::Bool::Scale::Int::Eq::5::1::3",
-                                  _lbsi_a_51,5,IRT_EQ,3);
-LinearBoolScaleInt _lbsi_5_1_4_eq("Linear::Bool::Scale::Int::Eq::5::1::4",
-                                  _lbsi_a_51,5,IRT_EQ,4);
-LinearBoolScaleInt _lbsi_5_1_5_eq("Linear::Bool::Scale::Int::Eq::5::1::5",
-                                  _lbsi_a_51,5,IRT_EQ,5);
-LinearBoolScaleInt _lbsi_5_1_7_eq("Linear::Bool::Scale::Int::Eq::5::1::7",
-                                  _lbsi_a_51,5,IRT_EQ,7);
-LinearBoolScaleInt _lbsi_5_1_9_eq("Linear::Bool::Scale::Int::Eq::5::1::9",
-                                  _lbsi_a_51,5,IRT_EQ,9);
-LinearBoolScaleInt _lbsi_5_1_11_eq("Linear::Bool::Scale::Int::Eq::5::1::11",
-                                   _lbsi_a_51,5,IRT_EQ,11);
-LinearBoolScaleInt _lbsi_5_1_13_eq("Linear::Bool::Scale::Int::Eq::5::1::13",
-                                   _lbsi_a_51,5,IRT_EQ,13);
-LinearBoolScaleInt _lbsi_5_1_14_eq("Linear::Bool::Scale::Int::Eq::5::1::14",
-                                   _lbsi_a_51,5,IRT_EQ,14);
-LinearBoolScaleInt _lbsi_5_1_15_eq("Linear::Bool::Scale::Int::Eq::5::1::15",
-                                   _lbsi_a_51,5,IRT_EQ,15);
+static int _lbsi_b_51[5] = {-1,-2,-3,-4,-5};
+static int _lbsi_c_51[5] = {-1,-2,1,2,4};
+
+class LBSIC {
+public:
+  void a(char* s, const char* a) {
+    while (*s != 0) 
+      s++;
+    while (*a != 0) {
+      *s=*a; s++; a++;
+    }
+    *s = 0;
+  }
+  LBSIC(void) {
+    for (int r=IRT_EQ; r<=IRT_GR;r++)
+      for (int i=0; i<16; i++)
+        for (int j=0; j<3; j++) {
+          char* t = new char[256];
+          t[0]=0;
+          a(t,"Linear::Bool::Scale::Int::");
+          switch (static_cast<IntRelType>(r)) {
+          case IRT_EQ: a(t,"Eq"); break;
+          case IRT_NQ: a(t,"Nq"); break;
+          case IRT_LQ: a(t,"Lq"); break;
+          case IRT_LE: a(t,"Le"); break;
+          case IRT_GR: a(t,"Gr"); break;
+          case IRT_GQ: a(t,"Gq"); break;
+          default: ;
+          }
+          a(t,"::");
+          char sj[2]; sj[0] = 'A'+j; sj[1] = 0;
+          a(t,sj);
+          a(t,"::");
+          char si[2]; si[0] = 'A'+i; si[1] = 0;
+          a(t,si);
+          switch (j) {
+          case 0:
+            (void) new LinearBoolScaleInt(t,_lbsi_a_51,5,
+                                          static_cast<IntRelType>(r),i);
+            break;
+          case 1:
+            (void) new LinearBoolScaleInt(t,_lbsi_b_51,5,
+                                          static_cast<IntRelType>(r),i);
+            break;
+          case 2:
+            (void) new LinearBoolScaleInt(t,_lbsi_c_51,5,
+                                          static_cast<IntRelType>(r),i);
+            break;
+          }
+        }
+  }
+};
+
+static LBSIC _lbsic;
 
 class LinearBoolScaleView : public IntTest {
 private:
@@ -405,6 +435,71 @@ LinearBoolScaleView _lbsv_4_5_eq("Linear::Bool::Scale::View::Eq::5",
                                  a1212,4,is_33,IRT_EQ);
 LinearBoolScaleView _lbsv_4_6_eq("Linear::Bool::Scale::View::Eq::6",
                                  a123123,6,is_33,IRT_EQ);
+
+LinearBoolScaleView _lbsv_4_1_lq("Linear::Bool::Scale::View::Lq::1",
+                                 a1234,4,is_010,IRT_LQ);
+LinearBoolScaleView _lbsv_4_2_lq("Linear::Bool::Scale::View::Lq::2",
+                                 b1234,4,is_010,IRT_LQ);
+LinearBoolScaleView _lbsv_4_3_lq("Linear::Bool::Scale::View::Lq::3",
+                                 a1234,4,is_100,IRT_LQ);
+LinearBoolScaleView _lbsv_4_4_lq("Linear::Bool::Scale::View::Lq::4",
+                                 b1234,4,is_100,IRT_LQ);
+LinearBoolScaleView _lbsv_4_5_lq("Linear::Bool::Scale::View::Lq::5",
+                                 a1212,4,is_33,IRT_LQ);
+LinearBoolScaleView _lbsv_4_6_lq("Linear::Bool::Scale::View::Lq::6",
+                                 a123123,6,is_33,IRT_LQ);
+
+LinearBoolScaleView _lbsv_4_1_le("Linear::Bool::Scale::View::Le::1",
+                                 a1234,4,is_010,IRT_LE);
+LinearBoolScaleView _lbsv_4_2_le("Linear::Bool::Scale::View::Le::2",
+                                 b1234,4,is_010,IRT_LE);
+LinearBoolScaleView _lbsv_4_3_le("Linear::Bool::Scale::View::Le::3",
+                                 a1234,4,is_100,IRT_LE);
+LinearBoolScaleView _lbsv_4_4_le("Linear::Bool::Scale::View::Le::4",
+                                 b1234,4,is_100,IRT_LE);
+LinearBoolScaleView _lbsv_4_5_le("Linear::Bool::Scale::View::Le::5",
+                                 a1212,4,is_33,IRT_LE);
+LinearBoolScaleView _lbsv_4_6_le("Linear::Bool::Scale::View::Le::6",
+                                 a123123,6,is_33,IRT_LE);
+
+LinearBoolScaleView _lbsv_4_1_gr("Linear::Bool::Scale::View::Gr::1",
+                                 a1234,4,is_010,IRT_GR);
+LinearBoolScaleView _lbsv_4_2_gr("Linear::Bool::Scale::View::Gr::2",
+                                 b1234,4,is_010,IRT_GR);
+LinearBoolScaleView _lbsv_4_3_gr("Linear::Bool::Scale::View::Gr::3",
+                                 a1234,4,is_100,IRT_GR);
+LinearBoolScaleView _lbsv_4_4_gr("Linear::Bool::Scale::View::Gr::4",
+                                 b1234,4,is_100,IRT_GR);
+LinearBoolScaleView _lbsv_4_5_gr("Linear::Bool::Scale::View::Gr::5",
+                                 a1212,4,is_33,IRT_GR);
+LinearBoolScaleView _lbsv_4_6_gr("Linear::Bool::Scale::View::Gr::6",
+                                 a123123,6,is_33,IRT_GR);
+
+LinearBoolScaleView _lbsv_4_1_gq("Linear::Bool::Scale::View::Gq::1",
+                                 a1234,4,is_010,IRT_GQ);
+LinearBoolScaleView _lbsv_4_2_gq("Linear::Bool::Scale::View::Gq::2",
+                                 b1234,4,is_010,IRT_GQ);
+LinearBoolScaleView _lbsv_4_3_gq("Linear::Bool::Scale::View::Gq::3",
+                                 a1234,4,is_100,IRT_GQ);
+LinearBoolScaleView _lbsv_4_4_gq("Linear::Bool::Scale::View::Gq::4",
+                                 b1234,4,is_100,IRT_GQ);
+LinearBoolScaleView _lbsv_4_5_gq("Linear::Bool::Scale::View::Gq::5",
+                                 a1212,4,is_33,IRT_GQ);
+LinearBoolScaleView _lbsv_4_6_gq("Linear::Bool::Scale::View::Gq::6",
+                                 a123123,6,is_33,IRT_GQ);
+
+LinearBoolScaleView _lbsv_4_1_nq("Linear::Bool::Scale::View::Nq::1",
+                                 a1234,4,is_010,IRT_NQ);
+LinearBoolScaleView _lbsv_4_2_nq("Linear::Bool::Scale::View::Nq::2",
+                                 b1234,4,is_010,IRT_NQ);
+LinearBoolScaleView _lbsv_4_3_nq("Linear::Bool::Scale::View::Nq::3",
+                                 a1234,4,is_100,IRT_NQ);
+LinearBoolScaleView _lbsv_4_4_nq("Linear::Bool::Scale::View::Nq::4",
+                                 b1234,4,is_100,IRT_NQ);
+LinearBoolScaleView _lbsv_4_5_nq("Linear::Bool::Scale::View::Nq::5",
+                                 a1212,4,is_33,IRT_NQ);
+LinearBoolScaleView _lbsv_4_6_nq("Linear::Bool::Scale::View::Nq::6",
+                                 a123123,6,is_33,IRT_NQ);
 
 
 

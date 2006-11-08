@@ -1082,7 +1082,7 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   /**
-   * \brief %Propagator for equality to Boolean sum with coefficients (cardinality)
+   * \brief %Propagator for equality to Boolean sum with coefficients
    *
    * Requires \code #include "gecode/int/linear.hh" \endcode
    * \ingroup FuncIntProp
@@ -1101,6 +1101,68 @@ namespace Gecode { namespace Int { namespace Linear {
     EqBoolScale(Space* home, bool share, EqBoolScale& pr);
     /// Constructor for cloning \a pr
     EqBoolScale(Space* home, bool share, Propagator& pr, 
+                SBAP& p, SBAN& n, VX x, int c);
+    /// Create copy during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n = y\f$
+    static ExecStatus post(Space* home, 
+                           const IntArgs& a, const BoolVarArgs& b, 
+                           VX x, int c);
+  };
+
+  /**
+   * \brief %Propagator for inequality to Boolean sum with coefficients
+   *
+   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class SBAP, class SBAN, class VX>
+  class LqBoolScale : public LinBoolScale<SBAP,SBAN,VX> {
+  protected:
+    using LinBoolScale<SBAP,SBAN,VX>::p;
+    using LinBoolScale<SBAP,SBAN,VX>::n;
+    using LinBoolScale<SBAP,SBAN,VX>::x;
+    using LinBoolScale<SBAP,SBAN,VX>::c;
+  public:
+    /// Constructor for creation
+    LqBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
+    /// Constructor for cloning \a pr
+    LqBoolScale(Space* home, bool share, LqBoolScale& pr);
+    /// Constructor for cloning \a pr
+    LqBoolScale(Space* home, bool share, Propagator& pr, 
+                SBAP& p, SBAN& n, VX x, int c);
+    /// Create copy during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n = y\f$
+    static ExecStatus post(Space* home, 
+                           const IntArgs& a, const BoolVarArgs& b, 
+                           VX x, int c);
+  };
+
+  /**
+   * \brief %Propagator for disequality to Boolean sum with coefficients
+   *
+   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class SBAP, class SBAN, class VX>
+  class NqBoolScale : public LinBoolScale<SBAP,SBAN,VX> {
+  protected:
+    using LinBoolScale<SBAP,SBAN,VX>::p;
+    using LinBoolScale<SBAP,SBAN,VX>::n;
+    using LinBoolScale<SBAP,SBAN,VX>::x;
+    using LinBoolScale<SBAP,SBAN,VX>::c;
+  public:
+    /// Constructor for creation
+    NqBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
+    /// Constructor for cloning \a pr
+    NqBoolScale(Space* home, bool share, NqBoolScale& pr);
+    /// Constructor for cloning \a pr
+    NqBoolScale(Space* home, bool share, Propagator& pr, 
                 SBAP& p, SBAN& n, VX x, int c);
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);

@@ -153,7 +153,38 @@ namespace Gecode {
     Linear::post(home,t,x.size(),r,c,icl);
     */
     ZeroIntView z;
-    GECODE_ES_FAIL(home,(Linear::EqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>::post(home,a,x,z,c)));
+    switch (r) {
+    case IRT_EQ:
+      GECODE_ES_FAIL(home,(Linear::EqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>::post(home,a,x,z,c)));
+      break;
+    case IRT_LQ:
+      GECODE_ES_FAIL(home,(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>::post(home,a,x,z,c)));
+      break;
+    case IRT_LE:
+      GECODE_ES_FAIL(home,(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>::post(home,a,x,z,c-1)));
+      break;
+    case IRT_GQ:
+      {
+        IntArgs b(a.size());
+        for (int i=a.size(); i--; )
+          b[i]=-a[i];
+        GECODE_ES_FAIL(home,(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>::post(home,b,x,z,-c)));
+        break;
+      }
+    case IRT_GR:
+      {
+        IntArgs b(a.size());
+        for (int i=a.size(); i--; )
+          b[i]=-a[i];
+        GECODE_ES_FAIL(home,(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>::post(home,b,x,z,-c-1)));
+        break;
+      }
+    case IRT_NQ:
+      GECODE_ES_FAIL(home,(Linear::NqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>::post(home,a,x,z,c)));
+      break;
+    default:
+      break;
+    }
   }
 
   void
@@ -172,7 +203,40 @@ namespace Gecode {
     t[x.size()].a=-1; t[x.size()].x=y;
     Linear::post(home,t,x.size()+1,r,0,icl);
     */
-    GECODE_ES_FAIL(home,(Linear::EqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,IntView>::post(home,a,x,y,0)));
+    switch (r) {
+    case IRT_EQ:
+      GECODE_ES_FAIL(home,(Linear::EqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,IntView>::post(home,a,x,y,0)));
+      break;
+    case IRT_LQ:
+      GECODE_ES_FAIL(home,(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,IntView>::post(home,a,x,y,0)));
+      break;
+    case IRT_LE:
+      GECODE_ES_FAIL(home,(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,IntView>::post(home,a,x,y,-1)));
+      break;
+    case IRT_GQ:
+      {
+        IntArgs b(a.size());
+        for (int i=a.size(); i--; )
+          b[i]=-a[i];
+        MinusView my(y);
+        GECODE_ES_FAIL(home,(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,MinusView>::post(home,b,x,my,0)));
+        break;
+      }
+    case IRT_GR:
+      {
+        IntArgs b(a.size());
+        for (int i=a.size(); i--; )
+          b[i]=-a[i];
+        MinusView my(y);
+        GECODE_ES_FAIL(home,(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,MinusView>::post(home,b,x,my,-1)));
+        break;
+      }
+    case IRT_NQ:
+      GECODE_ES_FAIL(home,(Linear::NqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,IntView>::post(home,a,x,y,0)));
+      break;
+    default:
+      break;
+    }
   }
 
   void
