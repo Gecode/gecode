@@ -181,14 +181,16 @@ namespace Gecode { namespace Set {
   forceinline ModEvent
   ComplementView<View>::intersect(Space* home, int c) {
     Iter::Ranges::Singleton si(c,c);
-    return me_negateset((view.includeI(home, si)));
+    RangesCompl<Iter::Ranges::Singleton> csi(si);
+    return me_negateset((view.includeI(home, csi)));
   }
 
   template <class View>
   forceinline ModEvent
   ComplementView<View>::intersect(Space* home, int i, int j) {
     Iter::Ranges::Singleton si(i,j);
-    return me_negateset((view.includeI(home, si)));
+    RangesCompl<Iter::Ranges::Singleton> csi(si);
+    return me_negateset((view.includeI(home, csi)));
   }
 
   template <class View>
