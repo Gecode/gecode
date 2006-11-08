@@ -307,7 +307,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 }}}
 
-#include "gecode/int/linear/binary.icc"
+#include "gecode/int/linear/int-bin.icc"
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -456,7 +456,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 }}}
 
-#include "gecode/int/linear/ternary.icc"
+#include "gecode/int/linear/int-ter.icc"
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -739,8 +739,8 @@ namespace Gecode { namespace Int { namespace Linear {
 
 }}}
 
-#include "gecode/int/linear/nary.icc"
-#include "gecode/int/linear/dom.icc"
+#include "gecode/int/linear/int-nary.icc"
+#include "gecode/int/linear/int-dom.icc"
 
 namespace Gecode { namespace Int { namespace Linear {
 
