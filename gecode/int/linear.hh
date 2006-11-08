@@ -1106,10 +1106,8 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n = y\f$
-    static ExecStatus post(Space* home, 
-                           const IntArgs& a, const BoolVarArgs& b, 
-                           VX x, int c);
+    /// Post propagator
+    static ExecStatus post(Space* home, SBAP& p, SBAN& n, VX x, int c);
   };
 
   /**
@@ -1137,10 +1135,8 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n = y\f$
-    static ExecStatus post(Space* home, 
-                           const IntArgs& a, const BoolVarArgs& b, 
-                           VX x, int c);
+    /// Post propagator
+    static ExecStatus post(Space* home, SBAP& p, SBAN& n, VX x, int c);
   };
 
   /**
@@ -1168,10 +1164,8 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n = y\f$
-    static ExecStatus post(Space* home, 
-                           const IntArgs& a, const BoolVarArgs& b, 
-                           VX x, int c);
+    /// Post propagator
+    static ExecStatus post(Space* home, SBAP& p, SBAN& n, VX x, int c);
   };
 
 }}}

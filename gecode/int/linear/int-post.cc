@@ -81,8 +81,10 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   post(Space* home, Term<IntView> e[], int n, IntRelType r, int c,
        IntConLevel icl) {
+    normalize<IntView>(e,n,r,c);
     int n_p, n_n;
-    bool is_unit = preprocess<IntView>(e,n,r,c,n_p,n_n);
+    preprocess<IntView>(e,n,r,c,n_p,n_n);
+
     if (n == 0) {
       switch (r) {
       case IRT_EQ: if (c != 0) home->fail(); break;
@@ -112,6 +114,13 @@ namespace Gecode { namespace Int { namespace Linear {
       }
       return;
     }
+
+    bool is_unit = true;
+    for (int i = n; i--; )
+      if ((e[i].a != 1) && (e[i].a != -1)) {
+        is_unit = false; 
+        break;
+      }
     bool is_ip = int_precision(e,n,c);
     if (is_unit && is_ip && (icl != ICL_DOM)) {
       if (n == 2) {
@@ -308,8 +317,9 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   post(Space* home,
        Term<IntView> e[], int n, IntRelType r, int c, BoolView b) {
+    normalize<IntView>(e,n,r,c);
     int n_p, n_n;
-    bool is_unit = preprocess<IntView>(e,n,r,c,n_p,n_n);
+    preprocess<IntView>(e,n,r,c,n_p,n_n);
     if (n == 0) {
       bool fail = false;
       switch (r) {
@@ -322,6 +332,12 @@ namespace Gecode { namespace Int { namespace Linear {
         home->fail();
       return;
     }
+    bool is_unit = true;
+    for (int i = n; i--; )
+      if ((e[i].a != 1) && (e[i].a != -1)) {
+        is_unit = false; 
+        break;
+      }
     bool is_ip  = int_precision(e,n,c);
     if (is_unit && is_ip) {
       if (n == 1) {

@@ -24,159 +24,56 @@
 
 namespace Gecode {
 
-  using namespace Int;
-
-  void
-  linear(Space* home,
-         const IntArgs& a, const BoolVarArgs& x, IntRelType r, int c,
-         IntConLevel icl) {
-    if (a.size() != x.size())
-      throw ArgumentSizeMismatch("Int::linear");
-    if (home->failed()) return;
-    /*
-    GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size());
-    for (int i = x.size(); i--; ) {
-      IntVar ix(home,0,1); link(home,ix,x[i]);
-      t[i].a=a[i]; t[i].x=ix;
-    }
-    Linear::post(home,t,x.size(),r,c,icl);
-    */
-    ZeroIntView z;
-    switch (r) {
-    case IRT_EQ:
-      GECODE_ES_FAIL(home,(Linear::EqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>::post(home,a,x,z,c)));
-      break;
-    case IRT_LQ:
-      GECODE_ES_FAIL(home,(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>::post(home,a,x,z,c)));
-      break;
-    case IRT_LE:
-      GECODE_ES_FAIL(home,(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>::post(home,a,x,z,c-1)));
-      break;
-    case IRT_GQ:
-      {
-        IntArgs b(a.size());
-        for (int i=a.size(); i--; )
-          b[i]=-a[i];
-        GECODE_ES_FAIL(home,(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>::post(home,b,x,z,-c)));
-        break;
-      }
-    case IRT_GR:
-      {
-        IntArgs b(a.size());
-        for (int i=a.size(); i--; )
-          b[i]=-a[i];
-        GECODE_ES_FAIL(home,(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>::post(home,b,x,z,-c-1)));
-        break;
-      }
-    case IRT_NQ:
-      GECODE_ES_FAIL(home,(Linear::NqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>::post(home,a,x,z,c)));
-      break;
-    default:
-      break;
-    }
-  }
-
-  void
-  linear(Space* home,
-         const IntArgs& a, const BoolVarArgs& x, IntRelType r, IntVar y,
-         IntConLevel icl) {
-    if (a.size() != x.size())
-      throw ArgumentSizeMismatch("Int::linear");
-    if (home->failed()) return;
-    /*
-    GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size()+1);
-    for (int i = x.size(); i--; ) {
-      IntVar ix(home,0,1); link(home,ix,x[i]);
-      t[i].a=a[i]; t[i].x=ix;
-    }
-    t[x.size()].a=-1; t[x.size()].x=y;
-    Linear::post(home,t,x.size()+1,r,0,icl);
-    */
-    switch (r) {
-    case IRT_EQ:
-      GECODE_ES_FAIL(home,(Linear::EqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,IntView>::post(home,a,x,y,0)));
-      break;
-    case IRT_LQ:
-      GECODE_ES_FAIL(home,(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,IntView>::post(home,a,x,y,0)));
-      break;
-    case IRT_LE:
-      GECODE_ES_FAIL(home,(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,IntView>::post(home,a,x,y,-1)));
-      break;
-    case IRT_GQ:
-      {
-        IntArgs b(a.size());
-        for (int i=a.size(); i--; )
-          b[i]=-a[i];
-        MinusView my(y);
-        GECODE_ES_FAIL(home,(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,MinusView>::post(home,b,x,my,0)));
-        break;
-      }
-    case IRT_GR:
-      {
-        IntArgs b(a.size());
-        for (int i=a.size(); i--; )
-          b[i]=-a[i];
-        MinusView my(y);
-        GECODE_ES_FAIL(home,(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,MinusView>::post(home,b,x,my,-1)));
-        break;
-      }
-    case IRT_NQ:
-      GECODE_ES_FAIL(home,(Linear::NqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,IntView>::post(home,a,x,y,0)));
-      break;
-    default:
-      break;
-    }
-  }
-
   void
   linear(Space* home, const BoolVarArgs& x, IntRelType r, int c,
          IntConLevel) {
+    using namespace Int;
+    using namespace Int::Linear;
     if (home->failed()) return;
+    int n=x.size();
     switch (r) {
     case IRT_EQ:
       {
         ViewArray<BoolView> xv(home,x);
-        GECODE_ES_FAIL(home,Linear::EqBoolInt<BoolView>::post(home,xv,c));
-        break;
+        GECODE_ES_FAIL(home,EqBoolInt<BoolView>::post(home,xv,c));
       }
+      break;
     case IRT_NQ:
       {
         ViewArray<BoolView> xv(home,x);
-        GECODE_ES_FAIL(home,Linear::NqBoolInt<BoolView>::post(home,xv,c));
-        break;
+        GECODE_ES_FAIL(home,NqBoolInt<BoolView>::post(home,xv,c));
       }
+      break;
     case IRT_GQ:
       {
         ViewArray<BoolView> xv(home,x);
-        GECODE_ES_FAIL(home,Linear::GqBoolInt<BoolView>::post(home,xv,c));
-        break;
+        GECODE_ES_FAIL(home,GqBoolInt<BoolView>::post(home,xv,c));
       }
+      break;
     case IRT_GR:
       {
         ViewArray<BoolView> xv(home,x);
-        GECODE_ES_FAIL(home,Linear::GqBoolInt<BoolView>::post(home,xv,c+1));
-        break;
+        GECODE_ES_FAIL(home,GqBoolInt<BoolView>::post(home,xv,c+1));
       }
+      break;
     case IRT_LQ:
       {
-        ViewArray<NegBoolView> xv(home,x.size());
-        for (int i=x.size(); i--; ) {
+        ViewArray<NegBoolView> xv(home,n);
+        for (int i=n; i--; ) {
           BoolView y(x[i]); xv[i] = y;
         }
-        GECODE_ES_FAIL(home,Linear::GqBoolInt<NegBoolView>
-                       ::post(home,xv,x.size()-c));
-        break;
+        GECODE_ES_FAIL(home,GqBoolInt<NegBoolView>::post(home,xv,n-c));
       }
+      break;
     case IRT_LE:
       {
-        ViewArray<NegBoolView> xv(home,x.size());
-        for (int i=x.size(); i--; ) {
+        ViewArray<NegBoolView> xv(home,n);
+        for (int i=n; i--; ) {
           BoolView y(x[i]); xv[i] = y;
         }
-        GECODE_ES_FAIL(home,Linear::GqBoolInt<NegBoolView>
-                       ::post(home,xv,x.size()-c+1));
-        break;
+        GECODE_ES_FAIL(home,GqBoolInt<NegBoolView>::post(home,xv,n-c+1));
       }
+      break;
     default:
       throw UnknownRelation("Int::linear");
     }
@@ -185,48 +82,201 @@ namespace Gecode {
   void
   linear(Space* home, const BoolVarArgs& x, IntRelType r, IntVar y,
          IntConLevel) {
+    using namespace Int;
+    using namespace Int::Linear;
     if (home->failed()) return;
-    ViewArray<BoolView> xv(home,x);
+    int n = x.size();
     switch (r) {
     case IRT_EQ:
-      GECODE_ES_FAIL(home,(Linear::EqBoolView<BoolView,IntView>
-                           ::post(home,xv,y,0)));
+      {
+        ViewArray<BoolView> xv(home,x);
+        GECODE_ES_FAIL(home,(EqBoolView<BoolView,IntView>
+                             ::post(home,xv,y,0)));
+      }
       break;
     case IRT_NQ:
-      GECODE_ES_FAIL(home,(Linear::NqBoolView<BoolView,IntView>
-                           ::post(home,xv,y,0)));
+      {
+        ViewArray<BoolView> xv(home,x);
+        GECODE_ES_FAIL(home,(NqBoolView<BoolView,IntView>
+                             ::post(home,xv,y,0)));
+      }
       break;
     case IRT_LQ:
       {
-        int n = x.size();
         ViewArray<NegBoolView> xv(home,n);
         for (int i=n; i--; ) {
           BoolView y(x[i]); xv[i]=y;
         }
         MinusView my(y);
-        GECODE_ES_FAIL(home,(Linear::GqBoolView<NegBoolView,MinusView>
+        GECODE_ES_FAIL(home,(GqBoolView<NegBoolView,MinusView>
                              ::post(home,xv,my,n)));
-        break;
       }
+      break;
     case IRT_LE:
       {
-        int n = x.size();
         ViewArray<NegBoolView> xv(home,n);
         for (int i=n; i--; ) {
           BoolView y(x[i]); xv[i]=y;
         }
         MinusView my(y);
-        GECODE_ES_FAIL(home,(Linear::GqBoolView<NegBoolView,MinusView>
+        GECODE_ES_FAIL(home,(GqBoolView<NegBoolView,MinusView>
                              ::post(home,xv,my,n+1)));
-        break;
       }
+      break;
     case IRT_GQ:
-      GECODE_ES_FAIL(home,(Linear::GqBoolView<BoolView,IntView>
-                           ::post(home,xv,y,0)));
+      {
+        ViewArray<BoolView> xv(home,x);
+        GECODE_ES_FAIL(home,(GqBoolView<BoolView,IntView>
+                             ::post(home,xv,y,0)));
+      }
       break;
     case IRT_GR:
-      GECODE_ES_FAIL(home,(Linear::GqBoolView<BoolView,IntView>
-                           ::post(home,xv,y,1)));
+      {
+        ViewArray<BoolView> xv(home,x);
+        GECODE_ES_FAIL(home,(GqBoolView<BoolView,IntView>
+                             ::post(home,xv,y,1)));
+      }
+      break;
+    default:
+      throw UnknownRelation("Int::linear");
+    }
+  }
+
+  void
+  linear(Space* home,
+         const IntArgs& a, const BoolVarArgs& x, IntRelType r, int c,
+         IntConLevel icl) {
+    using namespace Int;
+    using namespace Int::Linear;
+
+    if (a.size() != x.size())
+      throw ArgumentSizeMismatch("Int::linear");
+    if (home->failed()) 
+      return;
+
+    int n=x.size();
+    GECODE_AUTOARRAY(Term<BoolView>, t, n);
+    for (int i=n; i--; ) {
+      t[i].a=a[i]; t[i].x=x[i];
+    }
+    normalize<BoolView>(t,n,r,c);
+
+    int n_p = 0;
+    int n_n = 0;
+    preprocess<BoolView>(t,n,r,c,n_p,n_n);
+
+    ScaleBoolArray pb(home,n_p);
+    {
+      ScaleBool* f=pb.fst();
+      for (int i=n_p; i--; ) {
+        f[i].x=t[i].x; f[i].a=t[i].a;
+      }
+    }
+    ScaleBoolArray nb(home,n_n);
+    {
+      ScaleBool* f=nb.fst();
+      for (int i=n_n; i--; ) {
+        f[i].x=t[i+n_p].x; f[i].a=-t[i+n_p].a;
+      }
+    }
+
+    ZeroIntView z;
+
+    switch (r) {
+    case IRT_EQ:
+      GECODE_ES_FAIL(home,
+                     (EqBoolScale<ScaleBoolArray,ScaleBoolArray,ZeroIntView>
+                      ::post(home,pb,nb,z,c)));
+      break;
+    case IRT_LQ:
+      GECODE_ES_FAIL(home,
+                     (LqBoolScale<ScaleBoolArray,ScaleBoolArray,ZeroIntView>
+                      ::post(home,pb,nb,z,c)));
+      break;
+    case IRT_NQ:
+      GECODE_ES_FAIL(home,
+                     (NqBoolScale<ScaleBoolArray,ScaleBoolArray,ZeroIntView>
+                      ::post(home,pb,nb,z,c)));
+      break;
+    default:
+      GECODE_NEVER;
+    }
+  }
+
+  void
+  linear(Space* home,
+         const IntArgs& a, const BoolVarArgs& x, IntRelType r, IntVar y,
+         IntConLevel icl) {
+    using namespace Int;
+    using namespace Int::Linear;
+
+    if (a.size() != x.size())
+      throw ArgumentSizeMismatch("Int::linear");
+    if (home->failed()) 
+      return;
+
+    int n=x.size();
+    GECODE_AUTOARRAY(Term<BoolView>, t, n);
+    for (int i=n; i--; ) {
+      t[i].a=a[i]; t[i].x=x[i];
+    }
+
+    int n_p = 0;
+    int n_n = 0;
+    int c=0;
+    preprocess<BoolView>(t,n,r,c,n_p,n_n);
+
+    ScaleBoolArray pb(home,n_p);
+    {
+      ScaleBool* f=pb.fst();
+      for (int i=n_p; i--; ) {
+        f[i].x=t[i].x; f[i].a=t[i].a;
+      }
+    }
+    ScaleBoolArray nb(home,n_n);
+    {
+      ScaleBool* f=nb.fst();
+      for (int i=n_n; i--; ) {
+        f[i].x=t[i+n_p].x; f[i].a=-t[i+n_p].a;
+      }
+    }
+
+    switch (r) {
+    case IRT_EQ:
+      GECODE_ES_FAIL(home,
+                     (EqBoolScale<ScaleBoolArray,ScaleBoolArray,IntView>
+                      ::post(home,pb,nb,y,0)));
+      break;
+    case IRT_NQ:
+      GECODE_ES_FAIL(home,
+                     (NqBoolScale<ScaleBoolArray,ScaleBoolArray,IntView>
+                      ::post(home,pb,nb,y,0)));
+      break;
+    case IRT_LQ:
+      GECODE_ES_FAIL(home,
+                     (LqBoolScale<ScaleBoolArray,ScaleBoolArray,IntView>
+                      ::post(home,pb,nb,y,0)));
+      break;
+    case IRT_LE:
+      GECODE_ES_FAIL(home,
+                     (LqBoolScale<ScaleBoolArray,ScaleBoolArray,IntView>
+                      ::post(home,pb,nb,y,-1)));
+      break;
+    case IRT_GQ:
+      {
+        MinusView my(y);
+        GECODE_ES_FAIL(home,
+                       (LqBoolScale<ScaleBoolArray,ScaleBoolArray,MinusView>
+                        ::post(home,nb,pb,my,0)));
+      }
+      break;
+    case IRT_GR:
+      {
+        MinusView my(y);
+        GECODE_ES_FAIL(home,
+                       (LqBoolScale<ScaleBoolArray,ScaleBoolArray,MinusView>
+                        ::post(home,nb,pb,my,-1)));
+      }
       break;
     default:
       throw UnknownRelation("Int::linear");

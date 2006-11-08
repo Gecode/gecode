@@ -379,22 +379,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class SBAP, class SBAN, class VX>
   ExecStatus
   EqBoolScale<SBAP,SBAN,VX>::post(Space* home,
-                        const IntArgs& a, const BoolVarArgs& b,
-                        VX x, int c) {
-    int n_p = 0;
-    int n_n = 0;
-    for (int i=a.size(); i--; )
-      if (a[i] > 0) n_p++; else n_n++;
-    ScaleBoolArray p(home,n_p);
-    ScaleBoolArray n(home,n_n);
-    ScaleBool* f_p = p.fst();
-    ScaleBool* f_n = n.fst();
-    for (int i=a.size(); i--; )
-      if (a[i] > 0) {
-        f_p->a=a[i]; f_p->x=b[i]; f_p++;
-      } else {
-        f_n->a=-a[i]; f_n->x=b[i]; f_n++;
-      }
+                                  SBAP& p, SBAN& n, VX x, int c) {
     p.sort(); n.sort();
     (void) new (home) EqBoolScale<ScaleBoolArray,ScaleBoolArray,VX>
       (home,p,n,x,c);
@@ -535,22 +520,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class SBAP, class SBAN, class VX>
   ExecStatus
   LqBoolScale<SBAP,SBAN,VX>::post(Space* home,
-                        const IntArgs& a, const BoolVarArgs& b,
-                        VX x, int c) {
-    int n_p = 0;
-    int n_n = 0;
-    for (int i=a.size(); i--; )
-      if (a[i] > 0) n_p++; else n_n++;
-    ScaleBoolArray p(home,n_p);
-    ScaleBoolArray n(home,n_n);
-    ScaleBool* f_p = p.fst();
-    ScaleBool* f_n = n.fst();
-    for (int i=a.size(); i--; )
-      if (a[i] > 0) {
-        f_p->a=a[i]; f_p->x=b[i]; f_p++;
-      } else {
-        f_n->a=-a[i]; f_n->x=b[i]; f_n++;
-      }
+                                  SBAP& p, SBAN& n, VX x, int c) {
     p.sort(); n.sort();
     (void) new (home) LqBoolScale<ScaleBoolArray,ScaleBoolArray,VX>
       (home,p,n,x,c);
@@ -667,22 +637,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class SBAP, class SBAN, class VX>
   ExecStatus
   NqBoolScale<SBAP,SBAN,VX>::post(Space* home,
-                        const IntArgs& a, const BoolVarArgs& b,
-                        VX x, int c) {
-    int n_p = 0;
-    int n_n = 0;
-    for (int i=a.size(); i--; )
-      if (a[i] > 0) n_p++; else n_n++;
-    ScaleBoolArray p(home,n_p);
-    ScaleBoolArray n(home,n_n);
-    ScaleBool* f_p = p.fst();
-    ScaleBool* f_n = n.fst();
-    for (int i=a.size(); i--; )
-      if (a[i] > 0) {
-        f_p->a=a[i]; f_p->x=b[i]; f_p++;
-      } else {
-        f_n->a=-a[i]; f_n->x=b[i]; f_n++;
-      }
+                                  SBAP& p, SBAN& n, VX x, int c) {
     (void) new (home) NqBoolScale<ScaleBoolArray,ScaleBoolArray,VX>
       (home,p,n,x,c);
     return ES_OK;
