@@ -204,16 +204,6 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class SBAP, class SBAN, class VX>
   ExecStatus
   EqBoolScale<SBAP,SBAN,VX>::propagate(Space* home) {
-    // #define DBG_PRINT 1
-#ifdef DBG_PRINT
-    std::cout << "PROPAGATE" << std::endl;
-    std::cout << "\t";
-    for (ScaleBool* f=p.fst(); f<p.lst(); f++)
-      std::cout << " + " << f->a << "*" << f->x;
-    for (ScaleBool* f=n.fst(); f<n.lst(); f++)
-      std::cout << " - " << f->a << "*" << f->x;
-    std::cout << " = " << x << " + " << c << std::endl;
-#endif
     int sl = 0;
     int su = 0;
     if (BoolView::pme(this) == ME_BOOL_VAL) {
@@ -237,7 +227,7 @@ namespace Gecode { namespace Int { namespace Linear {
         }
         p.lst(t);
       }
-      // Eliminate assigned negatice views while keeping order
+      // Eliminate assigned negative views while keeping order
       {
         // Skip not assigned views
         ScaleBool* f = n.fst();
@@ -268,60 +258,14 @@ namespace Gecode { namespace Int { namespace Linear {
       GECODE_ME_CHECK(x.eq(home,-c)); 
       return ES_SUBSUMED;
     }
-    /*
-    if (x.assigned() && ((n_p + n_n) == 1)) {
-      int r = x.val() + c;
-      if (n_p == 1) {
-        if (p[0].a == r) {
-          p[0].x.one_none(home); 
-          return ES_SUBSUMED;
-        } else if (r == 0) {
-          p[0].x.zero_none(home); 
-          return ES_SUBSUMED;
-        }
-      } else {
-        assert(n_n == 1);
-        if (-n[0].a == r) {
-          n[0].x.one_none(home); 
-          return ES_SUBSUMED;
-        } else if (r == 0) {
-          n[0].x.zero_none(home); 
-          return ES_SUBSUMED;
-        }
-      }
-      return ES_FAILED;
-    }
-    */
+
     sl += x.max() + c;
     su += x.min() + c;
-
-#ifdef DBG_PRINT
-    std::cout << "ELIMINATE (sl: "
-              << sl << ", su: " << su << ")"
-              << std::endl;
-    std::cout << "\t";
-    for (ScaleBool* f=p.fst(); f<p.lst(); f++)
-      std::cout << " + " << f->a << "*" << f->x;
-    for (ScaleBool* f=n.fst(); f<n.lst(); f++)
-      std::cout << " - " << f->a << "*" << f->x;
-    std::cout << " = " << x << " + " << c << std::endl;
-#endif
 
     bool mod = false;
 
     do {
       mod = false;
-#ifdef DBG_PRINT
-      std::cout << "ITERATE (sl: "
-                << sl << ", su: " << su << ")"
-                << std::endl;
-      std::cout << "\t";
-      for (ScaleBool* f=p.fst(); f<p.lst(); f++)
-        std::cout << " + " << f->a << "*" << f->x;
-      for (ScaleBool* f=n.fst(); f<n.lst(); f++)
-        std::cout << " - " << f->a << "*" << f->x;
-      std::cout << " = " << x << " + " << c << std::endl;
-#endif
 
       // Propagate upper bound for positive Boolean views
       {
@@ -336,15 +280,6 @@ namespace Gecode { namespace Int { namespace Linear {
           p.lst(l); mod=true;
         }
       }
-      /*
-      for (int i = n_p; i--; )
-        if (p[i].a > sl) {
-          su += p[i].a;
-          p[i].x.zero_none(home);
-          p[i]=p[--n_p];
-          mod = true;
-        }
-      */
       // Propagate lower bound for negative Boolean views
       {
         ScaleBool* f = n.fst();
@@ -358,38 +293,12 @@ namespace Gecode { namespace Int { namespace Linear {
           n.fst(f); mod=true;
         }
       }
-      /*
-      for (int i = n_n; i--; )
-        if (n[i].a < -sl) {
-          c  += n[i].a;
-          su += n[i].a;
-          n[i].x.one_none(home);
-          n[i]=n[--n_n];
-          mod = true;
-        }
-      */
       // Propagate lower bound for integer view
       {
         const int x_min = x.min();
-        const int ngq = x.max() - sl;
         ModEvent me = x.gq(home,x.max() - sl);
-        if (me_failed(me)) {
-#ifdef DBG_PRINT
-          std::cout << "FAILED on x.gq ("
-                    << ngq << ") (sl: "
-                    << sl << ", su: " << su << ")"
-                    << " p.size()=" << p.size()
-                    << " n.size()=" << n.size()
-                    << std::endl;
-          std::cout << "\t";
-          for (ScaleBool* f=p.fst(); f<p.lst(); f++)
-            std::cout << " + " << f->a << "*" << f->x;
-          for (ScaleBool* f=n.fst(); f<n.lst(); f++)
-            std::cout << " - " << f->a << "*" << f->x;
-          std::cout << " = " << x << " + " << c << std::endl;
-#endif
+        if (me_failed(me))
           return ES_FAILED;
-        }
         if (me_modified(me)) {
           su += x.min() - x_min;
           mod = true;
@@ -408,16 +317,6 @@ namespace Gecode { namespace Int { namespace Linear {
           p.lst(l); mod=true;
         }
       }
-      /*
-      for (int i = n_p; i--; )
-        if (p[i].a > -su) {
-          c  -= p[i].a;
-          sl -= p[i].a;
-          p[i].x.one_none(home);
-          p[i] = p[--n_p];
-          mod = true;
-        }
-      */
       // Propagate upper bound for negative Boolean views
       {
         ScaleBool* f = n.fst();
@@ -431,55 +330,19 @@ namespace Gecode { namespace Int { namespace Linear {
           n.lst(l); mod=true;
         }
       }
-      /*
-      for (int i = n_n; i--; )
-        if (n[i].a > -su) {
-          sl -= n[i].a;
-          n[i].x.zero_none(home);
-          n[i]=n[--n_n];
-          mod = true;
-        }
-      */
       // Propagate upper bound for integer view
       {
         const int x_max = x.max();
         const int nlq = x.min() - su;
         ModEvent me = x.lq(home,x.min() - su);
-        if (me_failed(me)) {
-#ifdef DBG_PRINT
-          std::cout << "FAILED on x.lq(" << nlq
-                    << ") (sl: " 
-                    << sl << ", su: " << su << ")"
-                    << " p.size()=" << p.size()
-                    << " n.size()=" << n.size()
-                    << std::endl;
-          std::cout << "\t";
-          for (ScaleBool* f=p.fst(); f<p.lst(); f++)
-            std::cout << " + " << f->a << "*" << f->x;
-          for (ScaleBool* f=n.fst(); f<n.lst(); f++)
-            std::cout << " - " << f->a << "*" << f->x;
-          std::cout << " = " << x << " + " << c << std::endl;
-#endif
+        if (me_failed(me))
           return ES_FAILED;
-        }
         if (me_modified(me)) {
           sl += x.max() - x_max;
           mod = true;
         }
       }
     } while (mod);
-
-#ifdef DBG_PRINT
-    std::cout << "AFTER PROPAGATION (sl: "
-              << sl << ", su: " << su << ")"
-              << std::endl;
-    std::cout << "\t";
-    for (ScaleBool* f=p.fst(); f<p.lst(); f++)
-      std::cout << " + " << f->a << "*" << f->x;
-    for (ScaleBool* f=n.fst(); f<n.lst(); f++)
-      std::cout << " - " << f->a << "*" << f->x;
-    std::cout << " = " << x << " + " << c << std::endl;
-#endif
 
     return (sl == su) ? ES_SUBSUMED : ES_FIX;
   }
