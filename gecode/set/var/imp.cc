@@ -59,8 +59,12 @@ namespace Gecode { namespace Set {
     ModEvent me = ME_SET_LUB;
     if (_cardMax > lub.size()) {
       _cardMax = lub.size();
-      if (_cardMin > _cardMax)
+      if (_cardMin > _cardMax) {
+        glb.become(home, lub);
+        _cardMin = glb.size();
+        _cardMax = glb.size();
         return ME_SET_FAILED;
+      }
       me = ME_SET_CLUB;
     }
     if (_cardMax == lub.size() && _cardMin == _cardMax) {
@@ -76,8 +80,12 @@ namespace Gecode { namespace Set {
     ModEvent me = ME_SET_GLB;
     if (_cardMin < glb.size()) {
       _cardMin = glb.size();
-      if (_cardMin > _cardMax)
+      if (_cardMin > _cardMax) {
+        glb.become(home, lub);
+        _cardMin = glb.size();
+        _cardMax = glb.size();
         return ME_SET_FAILED;
+      }
       me = ME_SET_CGLB;
     }
     if (_cardMin == glb.size() && _cardMin == _cardMax) {
