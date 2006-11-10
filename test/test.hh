@@ -38,7 +38,10 @@ class Options {
 public:
   static const int defiter = 5,
     deffixprob = 10,
-    defflushprob = 10;
+    defflushprob = 10,
+    defnoofmachines = 1,
+    defmachine = 1,
+    defskip = 0;
 
   int   seed;
   int   iter;
@@ -46,9 +49,13 @@ public:
   int   flushprob;
   bool  log, display;
   bool  stop_on_error;
+  unsigned int   noofmachines;
+  unsigned int   machine;
+  unsigned int   skip;
   Options(void)
     : seed(0), iter(defiter), fixprob(deffixprob), flushprob(defflushprob),
-      log(false), display(true), stop_on_error(true)
+      log(false), display(true), stop_on_error(true),
+      noofmachines(defnoofmachines), machine(defmachine), skip(defskip)
   {}
 
   void parse(int argc, char **argv);

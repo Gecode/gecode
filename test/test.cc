@@ -73,7 +73,17 @@ main(int argc, char** argv) {
   Test::randgen.seed(o.seed);
   Log::logging(o.log);
 
-  for (Test* t = Test::tests(); t != NULL; t = t->next()) {
+  unsigned int testCount = 0;
+  for ( Test* t = Test::tests(); t != NULL; t = t->next() )
+    testCount++;
+  int digits = std::ceil(std::log10(testCount));
+  
+  unsigned int counter = 1;
+  Test* t = Test::tests();
+  for ( ; t != NULL; counter++, t = t->next() )
+    if (o.skip-- == 0)
+      break;
+  for ( ; t != NULL; counter++, t = t->next() ) {
     std::string name(t->module()); name += "::"; name += t->test();
     try {
       if (testpat.size() != 0) {
@@ -91,10 +101,14 @@ main(int argc, char** argv) {
         }
         if (some_positive && !match_found) goto next;
       }
+      std::cout.width(digits);
+      std::cout << counter << " ";
       std::cout << name << ": ";
       std::cout.flush();
       for (int i = o.iter; i--; ) {
         o.seed = Test::randgen.seed();
+        if (i % o.noofmachines != o.machine-1)
+          continue;
         if (t->run(o)) {
           std::cout << "+";
           std::cout.flush();
@@ -155,7 +169,20 @@ Options::parse(int argc, char** argv) {
                 << std::endl
                 << "\t-stop (boolean) default: "
                 << bool2str[stop_on_error] << std::endl
-                << "\t\tstop on first error or continue" << std::endl;
+                << "\t\tstop on first error or continue" << std::endl
+                << "\t-noofmachines (unsigned int) default: "
+                << noofmachines << std::endl
+                << "\t\thow many machines to use (for parallel testing)" 
+                << std::endl
+                << "\t-machine (unsigned int) default: "
+                << machine << std::endl
+                << "\t\twhich machine this is (for parallel testing)" 
+                << std::endl                
+                << "\t-skip (unsigned int) default: "
+                << skip << std::endl
+                << "\t\thow many tests to skip" 
+                << std::endl                
+                ;
       exit(EXIT_SUCCESS);
     } else if (!strcmp(argv[i],"-seed")) {
       if (++i == argc) goto missing;
@@ -198,6 +225,15 @@ Options::parse(int argc, char** argv) {
       } else if (argv[i][0] == 'f') {
         stop_on_error = false;
       }
+    } else if (!strcmp(argv[i],"-noofmachines")) {
+      if (++i == argc) goto missing;
+      noofmachines = atoi(argv[i]);
+    } else if (!strcmp(argv[i],"-machine")) {
+      if (++i == argc) goto missing;
+      machine = atoi(argv[i]);
+    } else if (!strcmp(argv[i],"-skip")) {
+      if (++i == argc) goto missing;
+      skip = atoi(argv[i]);
     } else {
       i++;
       goto error;
