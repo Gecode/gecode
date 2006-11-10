@@ -54,6 +54,13 @@ The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
 Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Set projectors could subscribe with bogus propagation conditions.
+
+[ENTRY]
+Module: set
 What:   performance
 Rank:   minor
 [DESCRIPTION]
