@@ -172,7 +172,7 @@ namespace Gecode { namespace Set {
     /// \name Update operations
     //@{
     /// Make this set equal to \a s
-    void linkTo(Space* home, const BndSet& s);
+    void become(Space* home, const BndSet& s);
     //@}
     
     /// \name Range list access for iteration
@@ -282,6 +282,7 @@ namespace Gecode { namespace Set {
   class LUBndSet: public BndSet{
   private:
     GECODE_SET_EXPORT bool exclude_full(Space* home, int, int);
+    GECODE_SET_EXPORT bool intersect_full(Space* home, int i, int j);
   public:
     /// \name Constructors and initialization
     //@{
@@ -301,6 +302,8 @@ namespace Gecode { namespace Set {
     //@{
     /// Exclude the set \f$\{i,\dots,j\}\f$ from this set
     bool exclude(Space* home, int i, int j);
+    /// Intersect this set with the set \f$\{i,\dots,j\}\f$
+    bool intersect(Space* home, int i, int j);
     /// Exclude all elements not in the set represented by \a i from this set
     template <class I> bool intersectI(Space* home, I& i);
     /// Exclude all elements in the set represented by \a i from this set
@@ -562,27 +565,18 @@ namespace Gecode { namespace Set {
     //@}
 
   private:
-    /// \name Common methods for the tell operations
+    /// \name Domain update by range iterator, implementations
     //@{
-    /// Computes ModEvent that resulted from updating the least upper bound
-    GECODE_SET_EXPORT ModEvent processLubChange(Space* home);
-    /// Computes ModEvent that resulted from updating the greatest lower bound
-    GECODE_SET_EXPORT ModEvent processGlbChange(Space* home);
-    /** \brief Check whether least upper and minimum cardinality agree
-     * If the minimum cardinality is still smaller than the lub size, \a me
-     * is returned. If minimum cardinality and lub size are the same, the
-     * variable is assigned, and ME_SET_VAL is returned. Otherwise
-     * returns ME_SET_FAILED.
-     */
-    ModEvent checkLubCardAssigned(Space* home,ModEvent me);
-    /** \brief Check whether greatest lower bound and maximum cardinality agree
-     * If the maximum cardinality is still greater than the glb size, \a me
-     * is returned. If maximum cardinality and glb size are the same, the
-     * variable is assigned, and ME_SET_VAL is returned. Otherwise
-     * returns ME_SET_FAILED.
-     */
-    ModEvent checkGlbCardAssigned(Space* home,ModEvent me);
+    /// Include set described by \a i in the greatest lower bound
+    template <class I> ModEvent includeI_full(Space* home,int mi, int ma, I& i);
+    /// Exclude set described by \a i from the least upper bound
+    template <class I> ModEvent excludeI_full(Space* home,int mi, int ma, I& i);
+    /// Exclude everything but set described by \a i from the least upper bound
+    template <class I> ModEvent intersectI_full(Space* home,int mi, int ma, I& i);
     //@}
+
+    GECODE_SET_EXPORT ModEvent processLubChange(Space* home);
+    GECODE_SET_EXPORT ModEvent processGlbChange(Space* home);
 
     /// \name Cardinality update implementation
     //@{
@@ -592,8 +586,6 @@ namespace Gecode { namespace Set {
     GECODE_SET_EXPORT ModEvent cardMax_full(Space* home);
     //@}
 
-    /// Test whether glb is a subset of lub
-    bool boundsConsistent(void) const;
   public:
 
     /// \name Domain update by value

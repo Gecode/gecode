@@ -35,67 +35,56 @@ namespace Gecode { namespace Set {
   ModEvent
   SetVarImp::cardMin_full(Space* home) {
     ModEvent me = ME_SET_CARD;
-    if (_cardMin == _cardMax)
-      me = checkLubCardAssigned(home,ME_SET_CARD);
-    if (!me_failed(me))
-      notify(home, me);
+    if (_cardMin == lub.size()) {
+      glb.become(home, lub);
+      me = ME_SET_VAL;
+    }
+    notify(home, me);
     return me;
   }
 
   ModEvent
   SetVarImp::cardMax_full(Space* home) {
     ModEvent me = ME_SET_CARD;
-    if (_cardMin == _cardMax)
-      me = checkGlbCardAssigned(home,ME_SET_CARD);
-    if (!me_failed(me))
-      notify(home, me);
+    if (_cardMax == glb.size()) {
+      lub.become(home, glb);
+      me = ME_SET_VAL;
+    }
+    notify(home, me);
     return me;
   }
 
   ModEvent
   SetVarImp::processLubChange(Space* home) {
-    if (!boundsConsistent()) {
-      return ME_SET_FAILED;
-    }
-    ModEvent me;
+    ModEvent me = ME_SET_LUB;
     if (_cardMax > lub.size()) {
       _cardMax = lub.size();
-      if (cardMin() > cardMax())
+      if (_cardMin > _cardMax)
         return ME_SET_FAILED;
-      if (assigned()) {
-        lub.linkTo(home, glb);
-        me = ME_SET_VAL;
-      } else {
-        me = checkLubCardAssigned(home, ME_SET_CLUB);
-      }
-    } else {
-      me = checkLubCardAssigned(home, ME_SET_LUB);
+      me = ME_SET_CLUB;
     }
-    if (!me_failed(me))
-      notify(home, me);
+    if (_cardMax == lub.size() && _cardMin == _cardMax) {
+      glb.become(home, lub);
+      me = ME_SET_VAL;
+    }
+    notify(home, me);
     return me;
   }
 
   ModEvent
   SetVarImp::processGlbChange(Space* home) {
-    if (!boundsConsistent())
-      return ME_SET_FAILED;
-    ModEvent me;
+    ModEvent me = ME_SET_GLB;
     if (_cardMin < glb.size()) {
       _cardMin = glb.size();
-      if (cardMin() > cardMax())
+      if (_cardMin > _cardMax)
         return ME_SET_FAILED;
-      if (assigned()) {
-        lub.linkTo(home, glb);
-        me = ME_SET_VAL;
-      } else {
-        me = checkGlbCardAssigned(home, ME_SET_CGLB);
-      }
-    } else {
-      me = checkGlbCardAssigned(home, ME_SET_GLB);
+      me = ME_SET_CGLB;
     }
-    if (me!=ME_SET_FAILED)
-      notify(home, me);
+    if (_cardMin == glb.size() && _cardMin == _cardMax) {
+      lub.become(home, glb);
+      me = ME_SET_VAL;
+    }
+    notify(home, me);
     return me;
   }
 
@@ -110,7 +99,7 @@ namespace Gecode { namespace Set {
       _cardMin(x._cardMin), _cardMax(x._cardMax) {
     lub.update(home, x.lub);
     if (x.assigned()) {
-      glb.linkTo(home,lub);
+      glb.become(home,lub);
     } else {
       glb.update(home,x.glb);
     }

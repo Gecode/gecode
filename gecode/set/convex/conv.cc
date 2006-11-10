@@ -43,7 +43,6 @@ namespace Gecode { namespace Set { namespace Convex {
     //III, Drop ranges from UB that do not contain all elements of LB
     //that is: range.min()>LB.smallest or range.max()<LB.largest
     //This leaves only one range.
-
     //II
     if (x0.glbSize()>0) {
       GECODE_ME_CHECK( x0.include(home,x0.glbMin(),x0.glbMax()) );
@@ -57,7 +56,7 @@ namespace Gecode { namespace Set { namespace Convex {
        for (;ubRangeIt();++ubRangeIt){
          maxWidth = std::max(maxWidth, ubRangeIt.width());
        }
-        GECODE_ME_CHECK( x0.cardMax(home,maxWidth) );
+       GECODE_ME_CHECK( x0.cardMax(home,maxWidth) );
     }
 
 

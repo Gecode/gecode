@@ -53,6 +53,14 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: set
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Performance of the tell operations on finite set variables was improved. 
+Especially the intersect operation benefits from this.
+
+[ENTRY]
 Module: int
 What:   new
 Rank:   minor

@@ -125,6 +125,78 @@ namespace Gecode { namespace Set {
   }
 
   bool
+  LUBndSet::intersect_full(Space* home, int mi, int ma) {
+    RangeList* p = NULL;
+    RangeList* c = fst();
+
+    assert(c != NULL); // Never intersect with an empty set
+
+    // Skip ranges that are before mi
+    while (c != NULL && c->max() < mi) {
+      _size -= c->width();
+      RangeList *nc = c->next(p);
+      p=c; c=nc;
+    }
+    if (c == NULL) {
+      // Delete entire domain
+      fst()->dispose(home, NULL, lst());
+      fst(NULL); lst(NULL);
+      return true;
+    }
+
+    bool changed = false;
+    if (c != fst()) {
+      c->prev(p, NULL);
+      fst()->dispose(home, NULL, p);
+      fst(c);
+      p = NULL;
+      changed = true;
+    }
+    // We have found the first range that intersects with [mi,ma]
+    if (mi > c->min()) {
+      _size -= mi-c->min();
+      c->min(mi);
+      changed = true;
+    }
+
+    while (c != NULL && c->max() <= ma) {
+      RangeList *nc = c->next(p);
+      p=c; c=nc;      
+    }
+    
+    if (c == NULL) {
+      return changed;
+    }
+
+    RangeList* newlst = p;
+    if (ma >= c->min()) {
+      _size -= c->max() - ma;
+      c->max(ma);
+      newlst = c;
+      RangeList* nc = c->next(p);
+      c->next(nc, NULL);
+      p=c; c=nc;
+    } else {
+      if (p != NULL)
+        p->next(c, NULL);
+    }
+    if (c != NULL) {
+      RangeList* del = c;
+      RangeList* delp = p;
+      while (c != NULL) {
+        _size -= c->width();
+        RangeList* nc = c->next(p);
+        p=c; c=nc;
+      }
+      del->dispose(home, delp, lst());
+    }
+    lst(newlst);
+    if (newlst==NULL)
+      fst(NULL);
+    return true;
+  }
+
+  bool
   LUBndSet::exclude_full(Space* home, int mi, int ma) {
     assert(ma >= mi);
     assert(mi <= max() && ma >= min() &&
@@ -197,13 +269,13 @@ namespace Gecode { namespace Set {
 #ifndef NDEBUG
     if (fst()==NULL) {
       if (lst()!=NULL || size()!=0) {
-        std::cout<<"Strange empty set.\n";
+        std::cerr<<"Strange empty set.\n";
         return false;
       } else return true;
     }
 
     if (fst()!=NULL && lst()==NULL) {
-      std::cout<<"First is not null, last is.\n";
+      std::cerr<<"First is not null, last is.\n";
       return false;
     }
 
@@ -214,7 +286,7 @@ namespace Gecode { namespace Set {
     int max = c->max();
 
     if (max<min) {
-      std::cout << "Single range list twisted: ("<<min<<","<<max<<")" ;
+      std::cerr << "Single range list twisted: ("<<min<<","<<max<<")" ;
       return false;
     }
 
@@ -222,20 +294,20 @@ namespace Gecode { namespace Set {
     p=c; c=nc;
     while (c) {
       if (max<min) {
-        std::cout << "1";
+        std::cerr << "1";
         return false;
       }
       if ((max+1)>=c->min()) {
-        std::cout << "2";
+        std::cerr << "2";
         return false;
       }
       if (c->next(p)==NULL && c!=lst()) {
-        std::cout << "3";
+        std::cerr << "3";
         return false;
       }
 
       if (c->next(p)!=NULL && c->next(p)->prev(c->next(p)->next(c))!=c) {
-        std::cout<<"Prev of next not self.\n";
+        std::cerr<<"Prev of next not self.\n";
         ((RangeList *)NULL)->min();
         return false;
       }

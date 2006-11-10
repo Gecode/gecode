@@ -305,7 +305,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  BndSet::linkTo(Space* home, const BndSet& that){
+  BndSet::become(Space* home, const BndSet& that){
     if (fst()!=NULL){
       assert(lst()!=NULL);
       assert(fst()!= that.fst());
@@ -461,6 +461,24 @@ namespace Gecode { namespace Set {
     bool ret =  exclude_full(home, mi, ma);
     assert(isConsistent());
     return ret;
+  }
+
+  forceinline bool
+  LUBndSet::intersect(Space* home, int mi, int ma) {
+    assert(ma >= mi);
+    if ((mi <= min()) && (ma >= max())) { return false; }
+    if (_size == 0) return false;
+    if (ma < min() || mi > max() ) { // empty the whole set
+     fst()->dispose(home,NULL,lst()); fst(NULL); lst(NULL);
+     _size=0;
+     return true;
+    }
+    bool ret = intersect_full(home, mi, ma);
+    assert(isConsistent());
+    return ret;
+    // bool changed = exclude(home, Limits::Set::int_min-1,mi-1);
+    // changed |= exclude(home, ma+1, Limits::Set::int_max+1);
+    // return changed;
   }
 
   template <class I> bool
