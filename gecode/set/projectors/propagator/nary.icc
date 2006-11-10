@@ -29,13 +29,15 @@ namespace Gecode { namespace Set { namespace Projection {
     : Propagator(home), x(x0), ps(ps0) {
     force(home);
     Support::DynamicArray<int> scope;
-    ps.scope(scope);
+    ps.scope(scope, x0.size());
     pc.ensure(x.size());
     for (int i=x0.size(); i--;) {
       pc[i] = scope[i];
-      if (negated)
-        pc[i] = ComplementView<SetView>::pc_negateset(pc[i]);
-      x[i].subscribe(home, this, pc[i]);
+      if (pc[i] != PC_SET_ANY + 1) {
+        if (negated)
+          pc[i] = ComplementView<SetView>::pc_negateset(pc[i]);
+        x[i].subscribe(home, this, pc[i]);
+      }
     }
   }
 

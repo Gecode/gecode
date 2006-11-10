@@ -270,7 +270,7 @@ namespace Gecode {
       
     int projArity = spec._ps.arity();
     Support::DynamicArray<int> scope;
-    spec._ps.scope(scope);
+    spec._ps.scope(scope, projArity);
     bool isNary = nary();
 
     for (int i=0; i<=projArity; i++) {

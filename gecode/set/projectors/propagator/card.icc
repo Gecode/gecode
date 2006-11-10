@@ -28,11 +28,14 @@ namespace Gecode { namespace Set { namespace Projection {
     : Propagator(home), x(x0), i(i0), proj(p0) {
     force(home);
     Support::DynamicArray<int> scope;
+    for (int i=x0.size(); i--;)
+      scope[i] = PC_SET_ANY + 1;
     p0.scope(scope);
     pc.ensure(x.size());
     for (int i=x0.size(); i--;) {
       pc[i] = scope[i];
-      x[i].subscribe(home, this, pc[i]);
+      if (pc[i] != PC_SET_ANY + 1)
+        x[i].subscribe(home, this, pc[i]);
     }
   }
 

@@ -36,9 +36,10 @@ namespace Gecode {
   }
 
   void
-  ProjectorSet::scope(Support::DynamicArray<int>& s) const {
+  ProjectorSet::scope(Support::DynamicArray<int>& s,
+                      unsigned int size) const {
     // Clear out s
-    for (int i=_arity+1; i--;)
+    for (unsigned int i=std::max((unsigned)_arity+1, size); i--;)
       s[i] = Set::PC_SET_ANY + 1;
 
     // Collect scope from individual projectors

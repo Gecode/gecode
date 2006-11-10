@@ -161,7 +161,7 @@ namespace Gecode {
     Projector(SetExpr::var_idx x, const SetExpr& sglb, const SetExpr& slub);
 
     /// Returns the scope of the projector
-    GECODE_SET_EXPORT void scope(Support::DynamicArray<int>&) const;
+    GECODE_SET_EXPORT void scope(Support::DynamicArray<int>& scope) const;
 
     /// Returns the arity of the projector
     GECODE_SET_EXPORT int arity(void) const;
@@ -214,7 +214,8 @@ namespace Gecode {
     int arity(void) const;
 
     /// Returns the scope of the projector set
-    GECODE_SET_EXPORT void scope(Support::DynamicArray<int>&) const;
+    GECODE_SET_EXPORT void scope(Support::DynamicArray<int>& scope,
+                                 unsigned int size) const;
     
     /// Propagate the set
     template <bool negated>
