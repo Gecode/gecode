@@ -561,8 +561,226 @@ static const tilespec packing2[] =
      "XX"}
   };
 
+static const tilespec pentomino6x10[] =
+  {
+    // Width and height of board
+    {10, 6, ""},
+    // Number of tiles and wheter the board is filled
+    {12, true, ""},
+    {2, 4,
+     "X "
+     "X "
+     "X "
+     "XX"},
+    {3,3,
+     "XX "
+     " XX"
+     " X "},
+    {3,3,
+     "XXX"
+     " X "
+     " X "},
+    {3,3,
+     "  X"
+     " XX"
+     "XX "},
+    {2,4,
+     " X"
+     "XX"
+     " X"
+     " X"},
+    {5,1,
+     "XXXXX"},
+    {3,3,
+     "X  "
+     "XXX"
+     "  X"},
+    {4,2,
+     " XXX"
+     "XX  "},
+    {2,3,
+     "XX"
+     "XX"
+     " X"},
+    {3,2,
+     "X X"
+     "XXX"},
+    {3,3,
+     " X "
+     "XXX"
+     " X "},
+    {3,3,
+     "  X"
+     "  X"
+     "XXX"}
+  };
+
+static const tilespec pentomino5x12[] =
+  {
+    // Width and height of board
+    {12, 5, ""},
+    // Number of tiles and wheter the board is filled
+    {12, true, ""},
+    {2, 4,
+     "X "
+     "X "
+     "X "
+     "XX"},
+    {3,3,
+     "XX "
+     " XX"
+     " X "},
+    {3,3,
+     "XXX"
+     " X "
+     " X "},
+    {3,3,
+     "  X"
+     " XX"
+     "XX "},
+    {2,4,
+     " X"
+     "XX"
+     " X"
+     " X"},
+    {5,1,
+     "XXXXX"},
+    {3,3,
+     "X  "
+     "XXX"
+     "  X"},
+    {4,2,
+     " XXX"
+     "XX  "},
+    {2,3,
+     "XX"
+     "XX"
+     " X"},
+    {3,2,
+     "X X"
+     "XXX"},
+    {3,3,
+     " X "
+     "XXX"
+     " X "},
+    {3,3,
+     "  X"
+     "  X"
+     "XXX"}
+  };
+
+static const tilespec pentomino4x15[] =
+  {
+    // Width and height of board
+    {15, 4, ""},
+    // Number of tiles and wheter the board is filled
+    {12, true, ""},
+    {2, 4,
+     "X "
+     "X "
+     "X "
+     "XX"},
+    {3,3,
+     "XX "
+     " XX"
+     " X "},
+    {3,3,
+     "XXX"
+     " X "
+     " X "},
+    {3,3,
+     "  X"
+     " XX"
+     "XX "},
+    {2,4,
+     " X"
+     "XX"
+     " X"
+     " X"},
+    {5,1,
+     "XXXXX"},
+    {3,3,
+     "X  "
+     "XXX"
+     "  X"},
+    {4,2,
+     " XXX"
+     "XX  "},
+    {2,3,
+     "XX"
+     "XX"
+     " X"},
+    {3,2,
+     "X X"
+     "XXX"},
+    {3,3,
+     " X "
+     "XXX"
+     " X "},
+    {3,3,
+     "  X"
+     "  X"
+     "XXX"}
+  };
+
+static const tilespec pentomino3x20[] =
+  {
+    // Width and height of board
+    {20, 3, ""},
+    // Number of tiles and wheter the board is filled
+    {12, true, ""},
+    {2, 4,
+     "X "
+     "X "
+     "X "
+     "XX"},
+    {3,3,
+     "XX "
+     " XX"
+     " X "},
+    {3,3,
+     "XXX"
+     " X "
+     " X "},
+    {3,3,
+     "  X"
+     " XX"
+     "XX "},
+    {2,4,
+     " X"
+     "XX"
+     " X"
+     " X"},
+    {5,1,
+     "XXXXX"},
+    {3,3,
+     "X  "
+     "XXX"
+     "  X"},
+    {4,2,
+     " XXX"
+     "XX  "},
+    {2,3,
+     "XX"
+     "XX"
+     " X"},
+    {3,2,
+     "X X"
+     "XXX"},
+    {3,3,
+     " X "
+     "XXX"
+     " X "},
+    {3,3,
+     "  X"
+     "  X"
+     "XXX"}
+  };
+
 /// List of specifications
-const tilespec *specs[] = {puzzle0, puzzle1, packing2};
+const tilespec *specs[] = {puzzle0, puzzle1, packing2,
+                           pentomino6x10,pentomino5x12,
+                           pentomino4x15,pentomino3x20};
 /// Number of specifications
 const unsigned n_examples = sizeof(specs)/sizeof(tilespec*);
 //@}
