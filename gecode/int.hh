@@ -1290,10 +1290,11 @@ namespace Gecode {
   //@}
 
   /**
-   * \defgroup TaskIntIntLinear Linear constraints
+   * \defgroup TaskIntIntLinearInt Linear constraints over integer variables
    * \ingroup TaskIntInt
    *
-   * All variants for linear constraints share the following properties:
+   * All variants for linear constraints over integer variables share
+   * the following properties:
    *  - Bounds-consistency (over the real numbers) is supported for
    *    all constraints (actually, for disequlities always domain-consistency
    *    is used as it is cheaper). Domain-consistency is supported for all
@@ -1372,19 +1373,44 @@ namespace Gecode {
   linear(Space* home, const IntArgs& a, const IntVarArgs& x,
          IntRelType r, IntVar y, BoolVar b,
          IntConLevel=ICL_DEF);
+  //@}
 
+
+  /**
+   * \defgroup TaskIntIntLinearBool Linear constraints over Boolean variables
+   * \ingroup TaskIntInt
+   *
+   * All variants for linear constraints over Boolean variables share 
+   * the following properties:
+   *  - Bounds-consistency (over the real numbers) is supported for
+   *    all constraints (actually, for disequlities always domain-consistency
+   *    is used as it is cheaper).
+   *  - Variables occurring multiply in the argument arrays are replaced
+   *    by a single occurrence: for example, \f$ax+bx\f$ becomes
+   *    \f$(a+b)x\f$.
+   *  - If in the above simplification the value for \f$(a+b)\f$ (or for
+   *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
+   *    defined in Limits::Int, an exception of type
+   *    Int::NumericalOverflow is thrown.
+   *  - Assume the constraint
+   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
+   *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
+   *    for integers as defined in Limits::Int, an exception of
+   *    type Int::NumericalOverflow is thrown.
+   *  - In all other cases, the created propagators are accurate (that
+   *    is, they will not silently overflow during propagation).
+   */
+  //@{
   /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r c\f$
   GECODE_INT_EXPORT void
   linear(Space* home, const BoolVarArgs& x,
          IntRelType r, int c,
          IntConLevel=ICL_DEF);
-
   /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i\sim_r y\f$
   GECODE_INT_EXPORT void
   linear(Space* home, const BoolVarArgs& x,
          IntRelType r, IntVar y,
          IntConLevel=ICL_DEF);
-
   /** \brief Post propagator for \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$
    *
    *  Throws an exception of type Int::ArgumentSizeMismatch, if
