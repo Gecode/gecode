@@ -369,7 +369,7 @@ INTEXAMPLESRC0 = \
 	money ortho-latin packing \
 	partition photo queens \
 	sudoku picture-puzzle placement-puzzle placement-puzzle-01 \
-	crowded-chess black-hole \
+	crowded-chess black-hole minesweeper domino \
 	sports-league all-interval all-interval-sort \
 	langfordnum langfordnum-regular warehouses \
 	stress-domain stress-exec stress-search baseline \
@@ -714,16 +714,17 @@ framework: $(STATICTARGETS)
 	$(CXX) -all_load -compatibility_version @GECODE_SOVERSION@.0 \
 	  -current_version @GECODE_SOVERSION@.0 \
 	  -install_name /Library/Frameworks/gecode.framework/Versions/@GECODE_SOVERSION@/gecode \
-	  -dynamiclib \
+	  $(DLLFLAGS) \
 	  -o gecode.framework/Versions/@GECODE_SOVERSION@/gecode $^
 	$(MAKE) doinstallheaders \
 	  prefix=gecode.framework/Versions/@GECODE_SOVERSION@
 	mv gecode.framework/Versions/@GECODE_SOVERSION@/include/gecode/* \
 	  gecode.framework/Versions/@GECODE_SOVERSION@/include/
 	rmdir gecode.framework/Versions/@GECODE_SOVERSION@/include/gecode
-	ln -s Versions/@GECODE_SOVERSION@/include \
+	cd gecode.framework/Versions && ln -s @GECODE_SOVERSION@ Current
+	ln -s Versions/Current/include \
 	  gecode.framework/Headers
-	ln -s Versions/@GECODE_SOVERSION@/gecode \
+	ln -s Versions/Current/gecode \
 	  gecode.framework/gecode
 else
 framework:

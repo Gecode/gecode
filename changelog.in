@@ -53,6 +53,13 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Two new examples: Mine Sweeper and Domino.
+
+[ENTRY]
 Module: set
 What:   bug
 Rank:   minor
