@@ -102,13 +102,13 @@ public:
             diff, ICL_DOM);
 
         // Link the current piece to the board
-        element(this, board, p1[dominoCount], i, o.icl);
-        element(this, board, p2[dominoCount], j, o.icl);
+        element(this, board, p1[dominoCount], i);
+        element(this, board, p2[dominoCount], j);
         
         // Link the current piece to the array where its
         // number is stored.
-        element(this, x, p1[dominoCount], dominoCount, o.icl);
-        element(this, x, p2[dominoCount], dominoCount, o.icl);
+        element(this, x, p1[dominoCount], dominoCount);
+        element(this, x, p2[dominoCount], dominoCount);
         dominoCount++;
       }
 
@@ -120,7 +120,7 @@ public:
     }
 
     // Install branchings
-    branch(this, ps, BVAR_SIZE_MIN, BVAL_MIN);
+    branch(this, ps, BVAR_NONE, BVAL_MIN);
   }
 
   /// Constructor for cloning \a s
