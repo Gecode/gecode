@@ -2,9 +2,11 @@
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
  *  Copyright:
  *     Guido Tack, 2006
+ *     Mikael Lagerkvist, 2006
  *
  *  Last modified:
  *     $Date: 2006-11-13 15:42:58 +0100 (Mon, 13 Nov 2006) $ by $Author: tack $
@@ -84,33 +86,78 @@ public:
     IntVarArray p1(this, 28, 0, (width+1)*height-1);
     IntVarArray p2(this, 28, 0, (width+1)*height-1);
     
-    int dominoCount = 0;
 
-    int possibleDiffsA[] = {1, width+1};
-    IntSet possibleDiffs(possibleDiffsA, 2);
+    if (o.naive) {
+      int dominoCount = 0;
+      
+      int possibleDiffsA[] = {1, width+1};
+      IntSet possibleDiffs(possibleDiffsA, 2);
+      
+      for (int i=0; i<=6; i++)
+        for (int j=i; j<=6; j++) {
+          
+          // The two coordinates must be adjacent.
+          // I.e., they may differ by 1 or by the width.
+          // The separator column makes sure that a field
+          // at the right border is not adjacent to the first field
+          // in the next row.
+          IntVar diff(this, possibleDiffs);
+          abs(this, minus(this, p1[dominoCount], p2[dominoCount]),
+              diff, ICL_DOM);
 
-    for (int i=0; i<=6; i++)
-      for (int j=i; j<=6; j++) {
+          // If the piece is symmetrical, order the locations
+          if (i == j)
+            rel(this, p1[dominoCount], IRT_LE, p2[dominoCount]);
+          
+          // Link the current piece to the board
+          element(this, board, p1[dominoCount], i);
+          element(this, board, p2[dominoCount], j);
+          
+          // Link the current piece to the array where its
+          // number is stored.
+          element(this, x, p1[dominoCount], dominoCount);
+          element(this, x, p2[dominoCount], dominoCount);
+          dominoCount++;
+        }
+    } else {
+      int dominoCount = 0;
+      
+      for (int i=0; i<=6; i++)
+        for (int j=i; j<=6; j++) {
+          // Find valid placements for piece i-j
+          // Regular is used as a table-constraint listing all valid
+          // tuples.
+          // Note that when i == j, only one of the orientations are used.
+          REG valids;
+          for (int pos = 0; pos < (width+1)*height; ++pos) {
+            if ((pos+1) % width+1 != 0) { // not end-col
+              if (board[pos] == i && board[pos+1] == j)
+                valids = valids | REG(pos) + REG(pos+1);
+              if (board[pos] == j && board[pos+1] == i && i != j)
+                valids = valids | REG(pos+1) + REG(pos);
+            }
+            if (pos/(width+1) < height) { // not end-row
+              if (board[pos] == i && board[pos+width+1] == j)
+                valids = valids | REG(pos) + REG(pos+width+1);
+              if (board[pos] == j && board[pos+width+1] == i && i != j)
+                valids = valids | REG(pos+width+1) + REG(pos);
+            }
 
-        // The two coordinates must be adjacent.
-        // I.e., they may differ by 1 or by the width.
-        // The separator column makes sure that a field
-        // at the right border is not adjacent to the first field
-        // in the next row.
-        IntVar diff(this, possibleDiffs);
-        abs(this, minus(this, p1[dominoCount], p2[dominoCount]),
-            diff, ICL_DOM);
+          }
+          IntVarArgs piece(2); 
+          piece[0] = p1[dominoCount];
+          piece[1] = p2[dominoCount];
+          DFA dfa = valids;
+          regular(this, piece, dfa);
 
-        // Link the current piece to the board
-        element(this, board, p1[dominoCount], i);
-        element(this, board, p2[dominoCount], j);
-        
-        // Link the current piece to the array where its
-        // number is stored.
-        element(this, x, p1[dominoCount], dominoCount);
-        element(this, x, p2[dominoCount], dominoCount);
-        dominoCount++;
-      }
+
+          // Link the current piece to the array where its
+          // number is stored.
+          element(this, x, p1[dominoCount], dominoCount);
+          element(this, x, p2[dominoCount], dominoCount);
+          dominoCount++;
+        }
+    }
 
     // Branch by piece
     IntVarArgs ps(28*2);
@@ -159,7 +206,7 @@ int
 main(int argc, char** argv) {
   Options o("Domino");
   o.size  = 0;
-  o.naive = true;
+  o.naive = false;
   o.parse(argc,argv);
   if (o.size >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
