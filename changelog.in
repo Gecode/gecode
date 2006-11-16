@@ -54,10 +54,25 @@ The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
 Module: example
+What:   change
+Rank:   minor
+Bug:    46
+[DESCRIPTION]
+Orientation of Sudokus now match the orientation in the specification-file.
+
+[ENTRY]
+Module: example
 What:   new
 Rank:   minor
 [DESCRIPTION]
-Two new examples: Mine Sweeper and Domino.
+New example: MineSweeper.
+
+[ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+New example: Domino.
 
 [ENTRY]
 Module: set
@@ -166,7 +181,7 @@ Module: example
 What:   new
 Rank:   major
 [DESCRIPTION]
-Added placement puzzles as an example. The example uses
+New example: PlacementPuzzle. The example uses
 regular-constraints to place irregular-shaped pieces on a board.
 
 

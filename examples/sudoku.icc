@@ -687,14 +687,14 @@ int value_at(const char *s, int n, int i, int j) {
   assert(example_size(s) == std::sqrt(static_cast<float>(n)));
   assert(i >= 0 && i < n);
   assert(j >= 0 && j < n);
-  char c = s[i*n + j];
+  char c = s[j*n + i];
   if (!std::isalnum(c))
     return 0;
   if (std::isdigit(c))
     return c - '0';
   if (std::islower(c))
     c = static_cast<char>(std::toupper(c));
-  // std::alpha(c) == true
+  // std::alpha(c) == true && std::isupper(c)
   int res = (c - 'A') + 10;
   if (res > n) return 0;
   else return res;
