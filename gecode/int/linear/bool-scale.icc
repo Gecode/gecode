@@ -360,7 +360,6 @@ namespace Gecode { namespace Int { namespace Linear {
       // Propagate upper bound for integer view
       {
         const int x_max = x.max();
-        const int nlq = x.min() - su;
         ModEvent me = x.lq(home,x.min() - su);
         if (me_failed(me))
           return ES_FAILED;
