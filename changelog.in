@@ -53,6 +53,21 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Made all macros type safe.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added macro GECODE_REWRITE for rewriting propagators. It is strongly advised
+to always use this macro!
+
+[ENTRY]
 Module: example
 What:   change
 Rank:   minor
