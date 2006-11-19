@@ -306,13 +306,14 @@ namespace Gecode {
    * \ingroup TaskActor
    */
   enum ExecStatus {
+    ES_SUBSUMED        = -3, ///< %Propagator is subsumed
+    __ES_DISPOSED      = -2, ///< Internal: propagator is subsumed and disposed, do not use
     ES_FAILED          = -1, ///< Execution has resulted in failure
     ES_NOFIX           =  0, ///< Propagation has not computed fixpoint
     ES_OK              =  0, ///< Execution is okay
     ES_FIX             =  1, ///< Propagation has computed fixpoint
-    ES_SUBSUMED        =  2, ///< %Propagator is subsumed (entailed)
-    __ES_FIX_PARTIAL   =  3, ///< Internal: do not use
-    __ES_NOFIX_PARTIAL =  4  ///< Internal: do not use
+    __ES_FIX_PARTIAL   =  2, ///< Internal: propagator has computed partial fixpoint, do not use
+    __ES_NOFIX_PARTIAL =  3  ///< Internal: propagator has computed no partial fixpoint, do not use
   };
 
   /**
@@ -429,15 +430,39 @@ namespace Gecode {
     friend class Space;
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
   private:
-    PropModEvent pme;
+    union {
+      PropModEvent pme;
+      size_t       size;
+    } u;
   protected:
     /// Constructor for creation
     Propagator(Space* home);
     /// Constructor for cloning \a p
     Propagator(Space* home, bool share, Propagator& p);
 
-    /// \name Partial fixpoints
+  public:
+    /// \name Fixpoint status
     //@{
+    /**
+     * \brief %Propagator is subsumed
+     *
+     * The size of the propagator is \a s.
+     *
+     * Note that the propagator must be subsumed and also disposed. So
+     * in general, there should be code such as 
+     * \code return ES_SUBSUMED(dispose(home)) \endcode.
+     * 
+     * However, in case the propagator has nothing to dispose (all its
+     * views are assigned and no external resources) it is sufficient
+     * to do 
+     * \code return ES_SUBSUMED(sizeof(*this)) \endcode.
+     *
+     * \warning Has a side-effect on the propagator. Overwrites
+     *          the propagator modification events of a propagator.
+     *          Use only directly with returning from propagation.
+     * \ingroup TaskActor
+     */
+    ExecStatus ES_DISPOSED(size_t s);
     /**
      * \brief %Propagator has computed partial fixpoint
      *
@@ -461,7 +486,6 @@ namespace Gecode {
      */
     ExecStatus ES_NOFIX_PARTIAL(PropModEvent pme);
     //@}
-  public:
     /// \name Propagation
     //@{
     /// Propagation function
@@ -1234,7 +1258,7 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline ModEvent
   Variable<VTI,PC,MED>::pme(const Propagator* p) {
-    return static_cast<ModEvent>((p->pme >> (VTI << 2)) & 15);
+    return static_cast<ModEvent>((p->u.pme >> (VTI << 2)) & 15);
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
@@ -1274,14 +1298,15 @@ namespace Gecode {
 
 
   forceinline
-  Propagator::Propagator(Space* home)
-    : pme(0) {
+  Propagator::Propagator(Space* home) {
+    u.pme = 0;
     home->a_actors.head(this);
   }
 
   forceinline
-  Propagator::Propagator(Space*, bool, Propagator&)
-    : pme(0) {}
+  Propagator::Propagator(Space*, bool, Propagator&) {
+    u.pme = 0;
+  }
 
 
   /*
@@ -1351,14 +1376,14 @@ namespace Gecode {
   forceinline void
   Space::process(Propagator* p) {
     // The new event is ME_GEN_ASSIGNED
-    PropModEvent old_pme = p->pme;
+    PropModEvent old_pme = p->u.pme;
     // Compute old modification event
     ModEvent old_me = old_pme & (ME_GEN_MAX << (VTI << 2));
     // Check whether old event is already ME_GEN_ASSIGNED
     if (old_me == (ME_GEN_ASSIGNED << (VTI << 2)))
       return;
     // Update event
-    p->pme ^= old_me ^ (ME_GEN_ASSIGNED << (VTI << 2));
+    p->u.pme ^= old_me ^ (ME_GEN_ASSIGNED << (VTI << 2));
     // Put propagator into right queue
     p->unlink();
     pool_put(p);
@@ -1368,7 +1393,7 @@ namespace Gecode {
   forceinline void
   Space::process(Propagator* p, ModEvent new_me) {
     MED med;
-    PropModEvent old_pme = p->pme;
+    PropModEvent old_pme = p->u.pme;
     // Compute the old modification event
     ModEvent old_me = ((old_pme >> (VTI << 2)) & ME_GEN_MAX);
     // Get the new modification event (xor-ed with the old one)
@@ -1377,20 +1402,25 @@ namespace Gecode {
     if (com_me == 0)
       return;
     // Update modification event for propagator (use xor)
-    p->pme ^= (com_me << (VTI << 2));
+    p->u.pme ^= (com_me << (VTI << 2));
     // Put propagator into right queue
     p->unlink();
     pool_put(p);
   }
 
   forceinline ExecStatus
+  Propagator::ES_DISPOSED(size_t s) {
+    this->u.size = s; return __ES_DISPOSED;
+  }
+
+  forceinline ExecStatus
   Propagator::ES_FIX_PARTIAL(PropModEvent pme) {
-    this->pme = pme; return __ES_FIX_PARTIAL;
+    this->u.pme = pme; return __ES_FIX_PARTIAL;
   }
 
   forceinline ExecStatus
   Propagator::ES_NOFIX_PARTIAL(PropModEvent pme) {
-    this->pme = pme; return __ES_NOFIX_PARTIAL;
+    this->u.pme = pme; return __ES_NOFIX_PARTIAL;
   }
 
 

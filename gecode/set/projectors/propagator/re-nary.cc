@@ -52,14 +52,10 @@ namespace Gecode { namespace Set { namespace Projection {
 
   ExecStatus
   ReNaryProjection::propagate(Space* home) {
-    if (b.one()) {
-      GECODE_ES_CHECK((NaryProjection<false>::post(home,x,ps)));
-      return ES_SUBSUMED;
-    }
-    if (b.zero()) {
-      GECODE_ES_CHECK((NaryProjection<true>::post(home,x,ps)));
-      return ES_SUBSUMED;
-    }
+    if (b.one())
+      GECODE_REWRITE((NaryProjection<false>::post(home,x,ps)));
+    if (b.zero())
+      GECODE_REWRITE((NaryProjection<true>::post(home,x,ps)));
 
     switch (ps.check(home, x)) {
     case ES_SUBSUMED:

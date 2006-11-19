@@ -77,15 +77,10 @@ namespace Gecode { namespace Set { namespace Rel {
   template <class View0, class View1>
   ExecStatus
   ReSubset<View0,View1>::propagate(Space* home) {
-
-    if (b.one()) {
-      GECODE_ES_CHECK((SubSet<View0,View1>::post(home,x0,x1)));
-      return ES_SUBSUMED;
-    }
-    if (b.zero()) {
-      GECODE_ES_CHECK((NoSubSet<View0,View1>::post(home,x0,x1)));
-      return ES_SUBSUMED;
-    }
+    if (b.one())
+      GECODE_REWRITE((SubSet<View0,View1>::post(home,x0,x1)));
+    if (b.zero())
+      GECODE_REWRITE((NoSubSet<View0,View1>::post(home,x0,x1)));
 
     // check whether cardinalities still allow subset
     if (x0.cardMin() > x1.cardMax()) {

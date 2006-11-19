@@ -197,11 +197,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     // x0 * x0 = x1
     assert(x1.min() >= 0);
     if (x0.min() >= 0)
-      return (SquarePlus<IntView,IntView>::post(home,x0,x1)
-              == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
+      GECODE_REWRITE((SquarePlus<IntView,IntView>::post(home,x0,x1)));
     if (x0.max() <= 0)
-      return (SquarePlus<MinusView,IntView>::post(home,x0,x1)
-              == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
+      GECODE_REWRITE((SquarePlus<MinusView,IntView>::post(home,x0,x1)));
 
     GECODE_ME_CHECK(x1.lq(home,std::max(x0.min()*x0.min(),
                                         x0.max()*x0.max())));
@@ -427,19 +425,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_NOFIX;
 
   rewrite_ppp:
-    return (MultPlus<IntView,IntView,IntView>::post(home,x0,x1,x2)
-            == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
+    GECODE_REWRITE((MultPlus<IntView,IntView,IntView>::post(home,x0,x1,x2)));
 
   rewrite_nnp:
-    return (MultPlus<MinusView,MinusView,IntView>::post(home,x0,x1,x2)
-            == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
+    GECODE_REWRITE((MultPlus<MinusView,MinusView,IntView>::post(home,x0,x1,x2)));
 
   rewrite_pnn:
     std::swap(x0,x1);
   rewrite_npn:
-    return (MultPlus<MinusView,IntView,MinusView>::post(home,x0,x1,x2)
-            == ES_FAILED) ? ES_FAILED : ES_SUBSUMED;
-
+    GECODE_REWRITE((MultPlus<MinusView,IntView,MinusView>::post(home,x0,x1,x2)));
   }
 
   template <class View>

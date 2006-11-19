@@ -657,7 +657,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     if (x.size() > 3) {
       // Do bounds propagation to make view-value graph smaller
       if (prop_bnd<View>(home,x,x.size()) == ES_FAILED)
-              return ES_FAILED;
+        return ES_FAILED;
       (void) new (home) Dom<View>(home,x);
     }
     return ES_OK;
@@ -699,32 +699,27 @@ namespace Gecode { namespace Int { namespace Distinct {
   Dom<View>::propagate(Space* home) {
     if (View::pme(this) == ME_INT_VAL) {
       ExecStatus es = prop_val<View,false>(home,x);
-      if ((es == ES_FAILED) || (es == ES_SUBSUMED))
-        return es;
+      GECODE_ES_CHECK(es);
       if (es == ES_FIX)
         return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
-      if (prop_bnd<View>(home,x,x.size()) == ES_FAILED)
-        return ES_FAILED;
+      es = prop_bnd<View>(home,x,x.size());
+      GECODE_ES_CHECK(es);
       es = prop_val<View,true>(home,x);
-      if ((es == ES_FAILED) || (es == ES_SUBSUMED))
-        return es;
+      GECODE_ES_CHECK(es);
       return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
     }
 
-    if (x.size() == 2) {
-      GECODE_ES_CHECK(Rel::Nq<View>::post(home,x[0],x[1]));
-      return ES_SUBSUMED;
-    }
-    if (x.size() == 3) {
-      GECODE_ES_CHECK(TerDom<View>::post(home,x[0],x[1],x[2]));
-      return ES_SUBSUMED;
-    }
+    if (x.size() == 2)
+      GECODE_REWRITE(Rel::Nq<View>::post(home,x[0],x[1]));
+    if (x.size() == 3)
+      GECODE_REWRITE(TerDom<View>::post(home,x[0],x[1],x[2]));
 
     if (dc.available()) {
       GECODE_ES_CHECK(dc.sync());
     } else {
       GECODE_ES_CHECK(dc.init(x.size(),&x[0]));
     }
+
     dc.propagate(home);
     return ES_FIX;
   }

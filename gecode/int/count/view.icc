@@ -157,8 +157,7 @@ namespace Gecode { namespace Int { namespace Count {
         return post_false(home,x,y);
       if (z.val() == atmost())
         return post_true(home,x,y);
-      GECODE_ES_CHECK((EqInt<VX,VY>::post(home,x,y,z.val()+c)));
-      return ES_SUBSUMED;
+      GECODE_REWRITE((EqInt<VX,VY>::post(home,x,y,z.val()+c)));
     }
     return shr ? ES_NOFIX : ES_FIX;
   }
@@ -211,10 +210,8 @@ namespace Gecode { namespace Int { namespace Count {
       return ES_SUBSUMED;
     if (z.min() > atmost())
       return ES_SUBSUMED;
-    if (z.assigned()) {
-      GECODE_ES_CHECK((NqInt<VX,VY>::post(home,x,y,z.val()+c)));
-      return ES_SUBSUMED;
-    }
+    if (z.assigned())
+      GECODE_REWRITE((NqInt<VX,VY>::post(home,x,y,z.val()+c)));
     return ES_FIX;
   }
 
@@ -265,10 +262,8 @@ namespace Gecode { namespace Int { namespace Count {
       return post_false(home,x,y);
     if (x.size() == 0)
       return ES_SUBSUMED;
-    if (z.assigned()) {
-      GECODE_ES_CHECK((LqInt<VX,VY>::post(home,x,y,z.val()+c)));
-      return ES_SUBSUMED;
-    }
+    if (z.assigned())
+      GECODE_REWRITE((LqInt<VX,VY>::post(home,x,y,z.val()+c)));
     return shr ? ES_NOFIX : ES_FIX;
   }
 
@@ -320,10 +315,8 @@ namespace Gecode { namespace Int { namespace Count {
       return post_true(home,x,y);
     if (x.size() == 0)
       return ES_SUBSUMED;
-    if (z.assigned()) {
-      GECODE_ES_CHECK((GqInt<VX,VY>::post(home,x,y,z.val()+c)));
-      return ES_SUBSUMED;
-    }
+    if (z.assigned())
+      GECODE_REWRITE((GqInt<VX,VY>::post(home,x,y,z.val()+c)));
     return shr ? ES_NOFIX : ES_FIX;
   }
 

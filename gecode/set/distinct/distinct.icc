@@ -42,10 +42,9 @@ namespace Gecode { namespace Set { namespace Distinct {
   forceinline ExecStatus
   Distinct::post(Space* home, ViewArray<SetView> x, unsigned int c) {
     for (int i=x.size(); i--;) {
-      GECODE_ES_CHECK(x[i].cardMin(home, c));
-      GECODE_ES_CHECK(x[i].cardMax(home, c));
+      GECODE_ME_CHECK(x[i].cardMin(home, c));
+      GECODE_ME_CHECK(x[i].cardMax(home, c));
     }
-
     (void) new (home) Distinct(home,x,c);
     return ES_OK;
   }

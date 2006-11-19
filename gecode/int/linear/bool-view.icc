@@ -140,10 +140,8 @@ namespace Gecode { namespace Int { namespace Linear {
         x[i].zero_none(home);
       return ES_SUBSUMED;
     }
-    if (y.assigned()) {
-      GECODE_ES_CHECK(EqBoolInt<XV>::post(home,x,y.val()+c));
-      return ES_SUBSUMED;
-    }
+    if (y.assigned())
+      GECODE_REWRITE(EqBoolInt<XV>::post(home,x,y.val()+c));
     return ES_FIX;
   }
 
@@ -299,10 +297,8 @@ namespace Gecode { namespace Int { namespace Linear {
         x[i].one_none(home);
       return ES_SUBSUMED;
     }
-    if (y.assigned()) {
-      GECODE_ES_CHECK(GqBoolInt<XV>::post(home,x,y.val()+c));
-      return ES_SUBSUMED;
-    }
+    if (y.assigned())
+      GECODE_REWRITE(GqBoolInt<XV>::post(home,x,y.val()+c));
     return ES_FIX;
   }
 

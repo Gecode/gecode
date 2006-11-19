@@ -205,36 +205,46 @@ namespace Gecode {
           // Put propagator in idle queue
           a_actors.head(p);
           // Prevent that propagator gets rescheduled (turn on all events)
-          p->pme = PME_ASSIGNED;
+          p->u.pme = PME_ASSIGNED;
           process();
-          p->pme = PME_NONE;
+          p->u.pme = PME_NONE;
         }
         break;
       case ES_NOFIX:
         {
           // Propagator is currently in no queue, put in into idle
           a_actors.head(p);
-          p->pme = PME_NONE;
+          p->u.pme = PME_NONE;
           process();
         }
         break;
       case ES_SUBSUMED:
         {
           // Prevent that propagator gets rescheduled (turn on all events)
-          p->pme = PME_ASSIGNED;
+          p->u.pme = PME_ASSIGNED;
           process();
           reuse(p,p->dispose(this));
+        }
+        break;
+      case __ES_DISPOSED:
+        {
+          // Remember size
+          size_t s = p->u.size;
+          // Prevent that propagator gets rescheduled (turn on all events)
+          p->u.pme = PME_ASSIGNED;
+          process();
+          reuse(p,s);
         }
         break;
       case __ES_FIX_PARTIAL:
         {
           // Remember the event set to be kept after processing
-          PropModEvent keep = p->pme;
+          PropModEvent keep = p->u.pme;
           // Prevent that propagator gets rescheduled (turn on all events)
-          p->pme = PME_ASSIGNED;
+          p->u.pme = PME_ASSIGNED;
           process();
-          p->pme = keep;
-          assert(p->pme);
+          p->u.pme = keep;
+          assert(p->u.pme);
           pool_put(p);
         }
         break;

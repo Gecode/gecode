@@ -81,9 +81,9 @@ namespace Gecode { namespace Int { namespace Bool {
   Eqv<BVA,BVB,BVC>::propagate(Space* home) {
     if (x0.zero()) {
       if (x1.zero()) {
-        GECODE_ES_CHECK(x2.one(home));
+        GECODE_ME_CHECK(x2.one(home));
       } else if (x1.one()) {
-        GECODE_ES_CHECK(x2.zero(home));
+        GECODE_ME_CHECK(x2.zero(home));
       } else if (x2.zero()) {
         x1.one_none(home);
       } else if (x2.one()) {
@@ -93,9 +93,9 @@ namespace Gecode { namespace Int { namespace Bool {
       }
     } else if (x0.one()) {
       if (x1.zero()) {
-        GECODE_ES_CHECK(x2.zero(home));
+        GECODE_ME_CHECK(x2.zero(home));
       } else if (x1.one()) {
-        GECODE_ES_CHECK(x2.one(home));
+        GECODE_ME_CHECK(x2.one(home));
       } else if (x2.zero()) {
         x1.zero_none(home);
       } else if (x2.one()) {

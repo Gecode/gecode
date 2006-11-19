@@ -248,34 +248,27 @@ namespace Gecode { namespace Set { namespace Select {
       }
       sofarAfter.dispose(home);
 
-    } while(loopVar);
+    } while (loopVar);
 
     // Test whether we determined x1 without determining x0
-    if(x1.assigned() && !x0.assigned()) {
+    if (x1.assigned() && !x0.assigned()) {
       int ubsize = x1.lubSize();
       if (ubsize > 2) {
         assert(ubsize==n);
         ViewArray<SView> is(home,ubsize);
-        for (int i=n; i--;) {
-          is[i] = iv[i].var;
-        }
-        GECODE_ES_CHECK((RelOp::IntersectionN<SView, SView>
-                         ::post(home,is,x0)));
-        return ES_SUBSUMED;
-
+        for (int i=n; i--;)
+          is[i]=iv[i].var;
+        GECODE_REWRITE((RelOp::IntersectionN<SView, SView>
+                        ::post(home,is,x0)));
       } else if (ubsize == 2) {
         assert(n==2);
         SView a = iv[0].var;
         SView b = iv[1].var;
-
-        GECODE_ES_CHECK((RelOp::Intersection<SView, SView, SView>
-                           ::post(home,a,b,x0)));
-        return ES_SUBSUMED;
+        GECODE_REWRITE((RelOp::Intersection<SView, SView, SView>
+                       ::post(home,a,b,x0)));
       } else if (ubsize == 1) {
         assert(n==1);
-        GECODE_ES_CHECK(
-          (Rel::Eq<SView,SView>::post(home,x0,iv[0].var)));
-        return ES_SUBSUMED;
+        GECODE_REWRITE((Rel::Eq<SView,SView>::post(home,x0,iv[0].var)));
       } else {
         GECODE_ME_CHECK(x0.exclude(home,Limits::Set::int_min,
                                    Limits::Set::int_max));

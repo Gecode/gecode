@@ -78,7 +78,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * domain-consistent distinct propagators.
    */
   template <class View>
-  ExecStatus prop_bnd(Space* home, ViewArray<View>&);
+  ExecStatus prop_bnd(Space* home, Propagator* p, ViewArray<View>&);
 
   /**
    * \brief Domain-consistent absolute value propagator

@@ -66,10 +66,10 @@ namespace Gecode { namespace Set { namespace Rel {
       GECODE_ME_CHECK ( x0.intersectI(home,x1ub) );
       GECODE_ME_CHECK ( x0.cardMax(home,x1.cardMax()) );
     } while (x0.glbSize() > x0glbsize);
-    if (x0.cardMin()==x1.cardMax()) {
-      GECODE_ES_CHECK((Eq<View0,View1>::post(home,x0,x1)));
-      return ES_SUBSUMED;
-    }
+
+    if (x0.cardMin() == x1.cardMax())
+      GECODE_REWRITE((Eq<View0,View1>::post(home,x0,x1)));
+
     if (shared(x0,x1)) {
       return oneassigned ? ES_SUBSUMED : ES_NOFIX;
     }

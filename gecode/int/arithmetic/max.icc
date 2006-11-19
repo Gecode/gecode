@@ -91,15 +91,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         mod |= me_modified(me);
       }
     } while (mod);
-    if (x0.max() <= x1.min()) {
-      GECODE_ES_CHECK((Rel::EqBnd<View,View>::post(home,x1,x2)));
-      return ES_SUBSUMED;
-    }
-    if (x1.max() <= x0.min()) {
-      GECODE_ES_CHECK((Rel::EqBnd<View,View>::post(home,x0,x2)));
-      return ES_SUBSUMED;
-    }
-    return x0.assigned() && x1.assigned() && x2.assigned() ? ES_SUBSUMED : ES_FIX;
+    if (x0.max() <= x1.min())
+      GECODE_REWRITE((Rel::EqBnd<View,View>::post(home,x1,x2)));
+    if (x1.max() <= x0.min())
+      GECODE_REWRITE((Rel::EqBnd<View,View>::post(home,x0,x2)));
+    return x0.assigned() && x1.assigned() && x2.assigned() ?
+      ES_DISPOSED(sizeof(*this)) : ES_FIX;
   }
 
 

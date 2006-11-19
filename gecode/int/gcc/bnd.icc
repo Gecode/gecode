@@ -22,13 +22,73 @@
 
 namespace Gecode { namespace Int { namespace GCC {
 
-  /// \brief Perform bounds propagation
+  // for posting
   template <class View, class Card, bool isView, bool shared>
-  inline ExecStatus
-  prop_bnd(Space* home, ViewArray<View>& x, ViewArray<Card>& k,
-           PartialSum<Card>*& lps, PartialSum<Card>*& ups,
-           bool card_fixed, bool card_all, bool nolbc){                
+  inline
+  BndImp<View, Card, isView, shared>::
+  BndImp(Space* home, ViewArray<View>& x0, ViewArray<Card>& k0,
+         bool cf,  bool all, bool nolbc) :
+    Propagator(home), x(x0), k(k0), lps(NULL), ups(NULL),
+    card_fixed(cf), card_all(all), skip_lbc(nolbc) {
+    force(home);
+    x.subscribe(home, this, PC_INT_BND);
+    k.subscribe(home, this, PC_INT_BND);
+  }
 
+  // for cloning
+  template <class View, class Card, bool isView, bool shared>
+  forceinline
+  BndImp<View, Card, isView, shared>::
+  BndImp(Space* home, bool share, BndImp<View, Card, isView, shared>& p)
+    : Propagator(home, share, p), lps(NULL), ups(NULL),
+      card_fixed(p.card_fixed), card_all(p.card_all),
+      skip_lbc(p.skip_lbc) {
+    x.update(home, share, p.x);
+    k.update(home, share, p.k);
+  }
+
+  template <class View, class Card, bool isView, bool shared>
+  size_t
+  BndImp<View, Card, isView, shared>::dispose(Space* home){
+    unforce(home);
+    if (!home->failed()) {
+      x.cancel(home,this, PC_INT_BND);
+      k.cancel(home,this, PC_INT_BND);
+    }
+    if (lps != NULL) {
+      delete lps;
+    }
+    if (ups != NULL) {
+      delete ups;
+    }
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class View, class Card, bool isView, bool shared>
+  Actor*
+  BndImp<View, Card, isView, shared>::copy(Space* home, bool share){
+    return new (home) BndImp<View, Card, isView, shared>
+      (home, share, *this);
+  }
+
+  template <class View, class Card, bool isView, bool shared>
+  PropCost
+  BndImp<View, Card, isView, shared>::cost (void) const {
+    /*
+     * The bounds consistent version of the Global Cardinality constraint
+     * has a theoretical complexity of
+     *   O(t + n\cdot log(n)) with
+     *   n = number of variables
+     *   t = time needed to sort the domain bounds of the variables
+     */
+    PropCost pc = PC_LINEAR_HI;
+    return cost_hi(x.size(),pc);
+  }
+
+  template <class View, class Card, bool isView, bool shared>
+  ExecStatus
+  BndImp<View, Card, isView, shared>::propagate(Space* home) {
     bool all_assigned = true;
     bool mod          = false;
     int  smin         = 0;
@@ -415,23 +475,19 @@ namespace Gecode { namespace Int { namespace GCC {
     int rightmost = nb + 1; // rightmost accesible value in bounds
     hall[rightmost].bounds = ups->lastValue + 1 ;
 
-    nolbc = true;
+    skip_lbc = true;
     for (int i = k.size(); i--; ) {
-      nolbc &= (k[i].min() == 0);
+      skip_lbc &= (k[i].min() == 0);
     }
 
-    if (!card_fixed && !nolbc) {
+    if (!card_fixed && !skip_lbc) {
       es_lbc = lbc<View, Card, shared>(home, x, nb, hall, rank,lps, mu, nu);
-      if (es_lbc == ES_FAILED || es_lbc == ES_SUBSUMED) {
-        return es_lbc;
-      }
+      GECODE_ES_CHECK(es_lbc);
       mod |= (es_lbc == ES_NOFIX);
     }
 
     es_ubc = ubc<View, Card, shared>(home, x, nb, hall, rank, ups, mu, nu);
-    if (es_ubc == ES_FAILED || es_ubc == ES_SUBSUMED) {
-      return es_ubc;
-    }
+    GECODE_ES_CHECK(es_ubc);
     mod |= (es_ubc == ES_NOFIX);
 
     if (isView) {
@@ -479,77 +535,6 @@ namespace Gecode { namespace Int { namespace GCC {
     }
 
     return mod ? ES_NOFIX : ES_FIX;
-  }
-
-  // for posting
-  template <class View, class Card, bool isView, bool shared>
-  inline
-  BndImp<View, Card, isView, shared>::
-  BndImp(Space* home, ViewArray<View>& x0, ViewArray<Card>& k0,
-         bool cf,  bool all, bool nolbc) :
-    Propagator(home), x(x0), k(k0), lps(NULL), ups(NULL),
-    card_fixed(cf), card_all(all), skip_lbc(nolbc) {
-    force(home);
-    x.subscribe(home, this, PC_INT_BND);
-    k.subscribe(home, this, PC_INT_BND);
-  }
-
-  // for cloning
-  template <class View, class Card, bool isView, bool shared>
-  forceinline
-  BndImp<View, Card, isView, shared>::
-  BndImp(Space* home, bool share, BndImp<View, Card, isView, shared>& p)
-    : Propagator(home, share, p), lps(NULL), ups(NULL),
-      card_fixed(p.card_fixed), card_all(p.card_all),
-      skip_lbc(p.skip_lbc) {
-    x.update(home, share, p.x);
-    k.update(home, share, p.k);
-  }
-
-  template <class View, class Card, bool isView, bool shared>
-  size_t
-  BndImp<View, Card, isView, shared>::dispose(Space* home){
-    unforce(home);
-    if (!home->failed()) {
-      x.cancel(home,this, PC_INT_BND);
-      k.cancel(home,this, PC_INT_BND);
-    }
-    if (lps != NULL) {
-      delete lps;
-    }
-    if (ups != NULL) {
-      delete ups;
-    }
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
-
-  template <class View, class Card, bool isView, bool shared>
-  Actor*
-  BndImp<View, Card, isView, shared>::copy(Space* home, bool share){
-    return new (home) BndImp<View, Card, isView, shared>
-      (home, share, *this);
-  }
-
-  template <class View, class Card, bool isView, bool shared>
-  PropCost
-  BndImp<View, Card, isView, shared>::cost (void) const {
-    /*
-     * The bounds consistent version of the Global Cardinality constraint
-     * has a theoretical complexity of
-     *   O(t + n\cdot log(n)) with
-     *   n = number of variables
-     *   t = time needed to sort the domain bounds of the variables
-     */
-    PropCost pc = PC_LINEAR_HI;
-    return cost_hi(x.size(),pc);
-  }
-
-  template <class View, class Card, bool isView, bool shared>
-  ExecStatus
-  BndImp<View, Card, isView, shared>::propagate(Space* home) {
-    return prop_bnd<View, Card, isView, shared>
-      (home, x, k, lps, ups, card_fixed, card_all, skip_lbc);
   }
 
   /**
@@ -620,10 +605,8 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView, bool shared>
   void
   BndImp<View, Card, isView, shared>::flush(void){
-    delete lps;
-    lps = NULL;
-    delete ups;
-    ups = NULL;
+    delete lps; lps = NULL;
+    delete ups; ups = NULL;
   }
 
 }}}

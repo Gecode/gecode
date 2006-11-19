@@ -27,8 +27,8 @@
  * or the commit member function of a branching.
  * \ingroup TaskActor
  */
-#define GECODE_ME_CHECK(me)                        \
-  if (::Gecode::me_failed(me))                        \
+#define GECODE_ME_CHECK(me)                     \
+  if (::Gecode::me_failed(me))                  \
     return ::Gecode::ES_FAILED;
 
 /**
@@ -51,31 +51,83 @@
  * To be used inside post functions.
  * \ingroup TaskActor
  */
-#define GECODE_ME_FAIL(home,me)                        \
+#define GECODE_ME_FAIL(home,me)                 \
   if (::Gecode::me_failed(me)) {                \
-    (home)->fail();                                \
-    return;                                        \
+    (home)->fail();                             \
+    return;                                     \
   }
 
 
 
 /**
- * \brief Check whether execution status \a es is failed, and forward failure.
+ * \brief Check whether execution status \a es is failed or subsumed, and 
+ * forward failure or subsumtion.
+ *
  * \ingroup TaskActor
  */
-#define GECODE_ES_CHECK(es)                \
-  if ((es) < ::Gecode::ES_OK)                \
-    return ::Gecode::ES_FAILED;
+#define GECODE_ES_CHECK(es) {                           \
+    ::Gecode::ExecStatus __es__ ## __LINE__ = (es);     \
+    if (__es__ ## __LINE__ < ::Gecode::ES_OK)           \
+      return __es__ ## __LINE__;                        \
+  }
 
 /**
- * \brief Check whether execution status \a es is failed, and fail space \a home.
+ * \brief Check whether execution status \a es is failed, and fail 
+ * space \a home.
+ *
  * \ingroup TaskActor
  */
-#define GECODE_ES_FAIL(home,es)                \
-  if ((es) < ::Gecode::ES_OK) {                \
-    (home)->fail();                        \
-    return;                                \
+#define GECODE_ES_FAIL(home,es) {                               \
+    ::Gecode::ExecStatus __es__ ## __LINE__ = (es);             \
+    assert(__es__ ## __LINE__ != ::Gecode::__ES_DISPOSED);      \
+    assert(__es__ ## __LINE__ != ::Gecode::ES_SUBSUMED);        \
+    if (__es__ ## __LINE__ < ::Gecode::ES_OK) {                 \
+      (home)->fail(); return;                                   \
+    }                                                           \
   }
+
+/**
+ * \brief Rewrite propagator by executing post function
+ *
+ * \ingroup TaskActor
+ */
+#define GECODE_REWRITE_PROP(prop,post) {                                \
+  Propagator* __p__ ## __LINE__ = (prop);                               \
+  size_t     __s__ ## __LINE__  = __p__ ## __LINE__->dispose((home));   \
+  ExecStatus __es__ ## __LINE__ = (post);                               \
+  if (__es__ ## __LINE__ != ::Gecode::ES_OK)                            \
+    return ::Gecode::ES_FAILED;                                         \
+  return __p__ ## __LINE__->ES_DISPOSED(__s__ ## __LINE__);             \
+}
+
+/**
+ * \brief Rewrite current propagator by executing post function
+ *
+ * \ingroup TaskActor
+ */
+#define GECODE_REWRITE(post) GECODE_REWRITE_PROP(this,post)
+
+
+/**
+ * \brief Rewrite current, already disposed propagator by executing post function
+ *
+ * \ingroup TaskActor
+ */
+#define GECODE_REWRITE_PROP_DISPOSED(prop,post) {                       \
+  Propagator* __p__ ## __LINE__ = (prop);                               \
+  ExecStatus __es__ ## __LINE__ = (post);                               \
+  if (__es__ ## __LINE__ != ::Gecode::ES_OK)                            \
+    return ::Gecode::ES_FAILED;                                         \
+  return __p__ ## __LINE__->ES_DISPOSED(sizeof(*__p__ ## __LINE__));    \
+}
+
+/**
+ * \brief Rewrite current, already disposed propagator by executing post function
+ *
+ * \ingroup TaskActor
+ */
+#define GECODE_REWRITE_DISPOSED(post) GECODE_REWRITE_PROP_DISPOSED(this,home)
+
 
 /**
  * \def GECODE_NEVER

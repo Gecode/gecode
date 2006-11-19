@@ -308,10 +308,9 @@ namespace Gecode {
   }
 
   template <class View, PropCond pc>
-  size_t
+  forceinline size_t
   UnaryPropagator<View,pc>::dispose(Space* home) {
-    if (!home->failed())
-      x0.cancel(home,this,pc);
+    x0.cancel(home,this,pc);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -354,12 +353,10 @@ namespace Gecode {
   }
 
   template <class View, PropCond pc>
-  size_t
+  forceinline size_t
   BinaryPropagator<View,pc>::dispose(Space* home) {
-    if (!home->failed()) {
-      x0.cancel(home,this,pc);
-      x1.cancel(home,this,pc);
-    }
+    x0.cancel(home,this,pc);
+    x1.cancel(home,this,pc);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -406,13 +403,11 @@ namespace Gecode {
   }
 
   template <class View, PropCond pc>
-  size_t
+  forceinline size_t
   TernaryPropagator<View,pc>::dispose(Space* home) {
-    if (!home->failed()) {
-      x0.cancel(home,this,pc);
-      x1.cancel(home,this,pc);
-      x2.cancel(home,this,pc);
-    }
+    x0.cancel(home,this,pc);
+    x1.cancel(home,this,pc);
+    x2.cancel(home,this,pc);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -453,10 +448,9 @@ namespace Gecode {
   }
 
   template <class View, PropCond pc>
-  size_t
+  forceinline size_t
   NaryPropagator<View,pc>::dispose(Space* home) {
-    if (!home->failed())
-      x.cancel(home,this,pc);
+    x.cancel(home,this,pc);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -500,12 +494,10 @@ namespace Gecode {
   }
 
   template <class View, PropCond pc>
-  size_t
+  forceinline size_t
   NaryOnePropagator<View,pc>::dispose(Space* home) {
-    if (!home->failed()) {
-      x.cancel(home,this,pc);
-      y.cancel(home,this,pc);
-    }
+    x.cancel(home,this,pc);
+    y.cancel(home,this,pc);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -549,12 +541,10 @@ namespace Gecode {
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
-  size_t
+  forceinline size_t
   MixBinaryPropagator<View0,pc0,View1,pc1>::dispose(Space* home) {
-    if (!home->failed()) {
-      x0.cancel(home,this,pc0);
-      x1.cancel(home,this,pc1);
-    }
+    x0.cancel(home,this,pc0);
+    x1.cancel(home,this,pc1);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -608,14 +598,12 @@ namespace Gecode {
 
   template <class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
-  size_t
+  forceinline size_t
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
   dispose(Space* home) {
-    if (!home->failed()) {
-      x0.cancel(home,this,pc0);
-      x1.cancel(home,this,pc1);
-      x2.cancel(home,this,pc2);
-    }
+    x0.cancel(home,this,pc0);
+    x1.cancel(home,this,pc1);
+    x2.cancel(home,this,pc2);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -659,12 +647,10 @@ namespace Gecode {
   }
 
   template <class View0, PropCond pc0, class View1, PropCond pc1>
-  size_t
+  forceinline size_t
   MixNaryOnePropagator<View0,pc0,View1,pc1>::dispose(Space* home) {
-    if (!home->failed()) {
-      x.cancel(home,this,pc0);
-      y.cancel(home,this,pc1);
-    }
+    x.cancel(home,this,pc0);
+    y.cancel(home,this,pc1);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }

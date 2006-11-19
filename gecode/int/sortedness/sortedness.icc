@@ -487,16 +487,12 @@ namespace Gecode { namespace Int { namespace Sortedness {
       n = xz.size();
 
       if (n < 2) {
-        if (xz[0][0].max() < y[0].min() || y[0].max() < xz[0][0].min()) {
+        if (xz[0][0].max() < y[0].min() || y[0].max() < xz[0][0].min())
           return ES_FAILED;
-        } else {
-          if (Perm) {
-            GECODE_ME_CHECK(xz[0][1].eq(home, w.size() - 1));
-          }
-          Rel::EqBnd<View,View>::post(home, xz[0][0], y[0]);
-          return ES_SUBSUMED;
-
+        if (Perm) {
+          GECODE_ME_CHECK(xz[0][1].eq(home, w.size() - 1));
         }
+        GECODE_REWRITE((Rel::EqBnd<View,View>::post(home, xz[0][0], y[0])));
       }
 
       // check whether shifting the permutation variables
@@ -507,20 +503,17 @@ namespace Gecode { namespace Int { namespace Sortedness {
       int  shift = 0;
 
       for (int i = n; i--; ){
-        if (xz[i][1].max() > index) {
+        if (xz[i][1].max() > index)
           index = xz[i][1].max();
-        }
-        if (index > valid) {
+        if (index > valid)
           shift = index - valid;
-        }
       }
 
       if (shift) {
-             ViewArray<ViewTuple<OffsetView,2> > oxz(home, n);
+        ViewArray<ViewTuple<OffsetView,2> > oxz(home, n);
         ViewArray<OffsetView> oy(home, n);
 
         for (int i = n; i--; ) {
-
           GECODE_ME_CHECK(xz[i][1].gq(home, shift));
 
           oxz[i][1] = OffsetView(xz[i][1], -shift);
@@ -556,13 +549,11 @@ namespace Gecode { namespace Int { namespace Sortedness {
       n = xz.size();
 
       if (n < 2) {
-        if (xz[0][0].max() < y[0].min() || y[0].max() < xz[0][0].min()) {
+        if (xz[0][0].max() < y[0].min() || y[0].max() < xz[0][0].min())
           return ES_FAILED;
-        } else {
-          Rel::EqBnd<View,View>::post(home, xz[0][0], y[0]);
-          return ES_SUBSUMED;
-        }
+        GECODE_REWRITE((Rel::EqBnd<View,View>::post(home, xz[0][0], y[0])));
       }
+
       GECODE_ES_CHECK((bounds_propagation<View, Tuple, Perm>
                        (home, xz, y, secondpass, nofix, match_fixed)));
       // no second pass possible if there are no permvars
@@ -706,13 +697,11 @@ namespace Gecode { namespace Int { namespace Sortedness {
   post(Space* home, ViewArray<Tuple>& xz0, ViewArray<View>& y0) {
     int n = xz0.size();
     if (n < 2) {
-      if ((xz0[0][0].max() < y0[0].min()) || (y0[0].max() < xz0[0][0].min())) {
+      if ((xz0[0][0].max() < y0[0].min()) || (y0[0].max() < xz0[0][0].min()))
         return ES_FAILED;
-      } else {
-        Rel::EqBnd<View,View>::post(home, xz0[0][0], y0[0]);
-        if (Perm) {
-          GECODE_ME_CHECK(xz0[0][1].eq(home, 0));
-        }
+      Rel::EqBnd<View,View>::post(home, xz0[0][0], y0[0]);
+      if (Perm) {
+        GECODE_ME_CHECK(xz0[0][1].eq(home, 0));
       }
     } else {
       new (home) Sortedness<View, Tuple, Perm>(home, xz0, y0);

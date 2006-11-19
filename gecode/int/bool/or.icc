@@ -54,9 +54,9 @@ namespace Gecode { namespace Int { namespace Bool {
       break;
     case BT_NONE:
       if (b0.zero()) {
-        GECODE_ES_CHECK(b1.one(home));
+        GECODE_ME_CHECK(b1.one(home));
       } else if (b1.zero()) {
-        GECODE_ES_CHECK(b0.one(home));
+        GECODE_ME_CHECK(b0.one(home));
       } else if (!b0.one() && !b1.one()) {
         (void) new (home) OrTrue<BVA,BVB>(home,b0,b1);
       }
@@ -149,20 +149,20 @@ namespace Gecode { namespace Int { namespace Bool {
   ExecStatus
   Or<BVA,BVB,BVC>::propagate(Space* home) {
     if (x0.one() || x1.one()) {
-      GECODE_ES_CHECK(x2.one(home));
+      GECODE_ME_CHECK(x2.one(home));
     } else if (x2.zero()) {
-      GECODE_ES_CHECK(x0.zero(home));
-      GECODE_ES_CHECK(x1.zero(home));
+      GECODE_ME_CHECK(x0.zero(home));
+      GECODE_ME_CHECK(x1.zero(home));
     } else if (x2.one()) {
       if (x0.zero()) {
-        GECODE_ES_CHECK(x1.one(home));
+        GECODE_ME_CHECK(x1.one(home));
       } else if (x1.zero()) {
-        GECODE_ES_CHECK(x0.one(home));
+        GECODE_ME_CHECK(x0.one(home));
       } else {
         return ES_FIX;
       }        
     } else if (x0.zero() && x1.zero()) {
-      GECODE_ES_CHECK(x2.zero(home));
+      GECODE_ME_CHECK(x2.zero(home));
     } else {
       return ES_FIX;
     }
@@ -263,8 +263,7 @@ namespace Gecode { namespace Int { namespace Bool {
           if (i == 0) {
             View y = x[0];
             x.size(0);
-            GECODE_ES_CHECK((OrTrue<View,View>::post(home,x1,y)));
-            return ES_SUBSUMED;
+            GECODE_REWRITE((OrTrue<View,View>::post(home,x1,y)));
           }
           // Move to x0 and subscribe
           x0=x[i]; x[i]=x[--n]; 
@@ -355,10 +354,8 @@ namespace Gecode { namespace Int { namespace Bool {
         GECODE_ME_CHECK(x[i].zero(home));
       return ES_SUBSUMED;
     }
-    if (y.one()) {
-      GECODE_ES_CHECK(NaryOrTrue<View>::post(home,x));
-      return ES_SUBSUMED;
-    }
+    if (y.one())
+      GECODE_REWRITE(NaryOrTrue<View>::post(home,x));
     for (int i = x.size(); i--; ) {
       if (x[i].one()) {
         y.one_none(home);

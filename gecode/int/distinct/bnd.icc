@@ -305,16 +305,13 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     if (View::pme(this) == ME_INT_VAL) {
       ExecStatus es = prop_val<View,false>(home,y);
-      if ((es == ES_FAILED) || (es == ES_SUBSUMED))
-        return es;
+      GECODE_ES_CHECK(es);
       if (es == ES_FIX)
         return ES_FIX_PARTIAL(View::pme(ME_INT_BND));
     }
 
-    if (y.size() == 2) {
-      GECODE_ES_CHECK(Rel::Nq<View>::post(home,y[0],y[1]));
-      return ES_SUBSUMED;
-    }
+    if (y.size() == 2)
+      GECODE_REWRITE(Rel::Nq<View>::post(home,y[0],y[1]));
 
     return prop_bnd<View>(home,x,y.size());
   }

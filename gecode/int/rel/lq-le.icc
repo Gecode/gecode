@@ -155,16 +155,10 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View, class CtrlView>
   ExecStatus
   ReLq<View,CtrlView>::propagate(Space* home) {
-    if (b.one()) {
-      if (Lq<View>::post(home,x0,x1) == ES_FAILED)
-        return ES_FAILED;
-      return ES_SUBSUMED;
-    }
-    if (b.zero()) {
-      if (Le<View>::post(home,x1,x0) == ES_FAILED)
-        return ES_FAILED;
-      return ES_SUBSUMED;
-    }
+    if (b.one())
+      GECODE_REWRITE(Lq<View>::post(home,x0,x1));
+    if (b.zero())
+      GECODE_REWRITE(Le<View>::post(home,x1,x0));
     switch (rtest_lq(x0,x1)) {
     case RT_TRUE:
       b.one_none(home);  return ES_SUBSUMED;

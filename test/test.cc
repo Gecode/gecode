@@ -240,6 +240,7 @@ Options::parse(int argc, char** argv) {
     }
     i++;
   }
+  //  testpat.push_back(make_pair(false,"Count::Eq::VarVarShared"));
   return;
  missing:
   e = "missing parameter";

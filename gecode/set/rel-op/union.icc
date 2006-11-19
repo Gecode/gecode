@@ -163,15 +163,10 @@ namespace Gecode { namespace Set { namespace RelOp {
         return ES_SUBSUMED;
       }
 
-      if (x0.cardMax() == 0) {
-        GECODE_ES_CHECK( (Rel::Eq<View2,View1>::post(home,x2,x1)) );
-        return ES_SUBSUMED;
-      }
-
-      if (x1.cardMax() == 0) {
-        GECODE_ES_CHECK( (Rel::Eq<View2,View0>::post(home,x2,x0)) );
-        return ES_SUBSUMED;
-      }
+      if (x0.cardMax() == 0)
+        GECODE_REWRITE((Rel::Eq<View2,View1>::post(home,x2,x1)));
+      if (x1.cardMax() == 0)
+        GECODE_REWRITE((Rel::Eq<View2,View0>::post(home,x2,x0)));
 
     } while(modified);
 
@@ -218,8 +213,8 @@ namespace Gecode { namespace Set { namespace RelOp {
   }
 
   template <class View0, class View1>
-  ExecStatus UnionN<View0,View1>::post(Space* home,
-                                      ViewArray<View0>& x, View1 y) {
+  ExecStatus 
+  UnionN<View0,View1>::post(Space* home, ViewArray<View0>& x, View1 y) {
     switch (x.size()) {
     case 0:
       GECODE_ME_CHECK(y.cardMax(home, 0));
@@ -235,7 +230,8 @@ namespace Gecode { namespace Set { namespace RelOp {
   }
 
   template <class View0, class View1>
-  PropCost UnionN<View0,View1>::cost(void) const {
+  PropCost
+  UnionN<View0,View1>::cost(void) const {
     return PC_QUADRATIC_LO;
   }
 
