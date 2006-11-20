@@ -256,7 +256,7 @@ operator<<(std::ostream&, const Gecode::IntSet& s);
 namespace Gecode {
 
   /**
-   * \brief Common relation types for integers
+   * \brief Relation types for integers
    * \ingroup TaskIntInt
    */
   enum IntRelType {
@@ -266,6 +266,18 @@ namespace Gecode {
     IRT_LE, ///< Less (\f$<\f$)
     IRT_GQ, ///< Greater or equal (\f$\geq\f$)
     IRT_GR  ///< Greater (\f$>\f$)
+  };
+
+  /**
+   * \brief Operation types for Booleans
+   * \ingroup TaskIntInt
+   */
+  enum BoolOpType {
+    BOT_AND, ///< Conjunction
+    BOT_OR,  ///< Disjunction
+    BOT_IMP, ///< Implication
+    BOT_EQV, ///< Equivalence
+    BOT_XOR  ///< Exclusive or
   };
 
   /**
@@ -327,13 +339,10 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntIntRel Simple relation constraints
+   * \defgroup TaskIntIntRelInt Simple relation constraints over integer variables
    * \ingroup TaskIntInt
    */
-
   //@{
-
-
   /** \brief Post propagator for \f$ x_0 \sim_r x_1\f$
    *
    * Supports both bounds (\a icl = ICL_BND) and
@@ -342,17 +351,9 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Space* home, IntVar x0, IntRelType r, IntVar x1,
       IntConLevel icl=ICL_DEF);
-  /// Post propagator for \f$ x_0 \sim_r x_1\f$
-  GECODE_INT_EXPORT void
-  rel(Space* home, BoolVar x0, IntRelType r, BoolVar x1,
-      IntConLevel icl=ICL_DEF);
   /// Propagates \f$ x \sim_r c\f$
   GECODE_INT_EXPORT void
   rel(Space* home, IntVar x, IntRelType r, int c,
-      IntConLevel icl=ICL_DEF);
-  /// Propagates \f$ x \sim_r c\f$
-  GECODE_INT_EXPORT void
-  rel(Space* home, BoolVar x, IntRelType r, int c,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$ (x_0 \sim_r x_1)\Leftrightarrow b\f$
    *
@@ -390,6 +391,41 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Space* home, const IntVarArgs& x, IntRelType r,
       IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for relation between \a x and \a y.
+   *
+   * Note that for the inequality relations this corresponds to
+   * the lexical order between \a x and \a y.
+   *
+   * Supports both bounds (\a icl = ICL_BND) and
+   * domain-consistency (\a icl = ICL_DOM, default).
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   * \a x and \a y are of different size.
+   */
+  GECODE_INT_EXPORT void
+  rel(Space* home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
+      IntConLevel icl=ICL_DEF);
+  //@}
+
+
+  /**
+   * \defgroup TaskIntIntRelBool Simple relation constraints over Boolean variables
+   * \ingroup TaskIntInt
+   */
+  //@{
+  /// Post propagator for \f$ x_0 \sim_r x_1\f$
+  GECODE_INT_EXPORT void
+  rel(Space* home, BoolVar x0, IntRelType r, BoolVar x1,
+      IntConLevel icl=ICL_DEF);
+  /**
+   * \brief Propagates \f$ x \sim_r c\f$
+   *
+   * Throws an exception of type Int::NumericalOverflow, if \a c is neither
+   * 0 or 1.
+   */
+  GECODE_INT_EXPORT void
+  rel(Space* home, BoolVar x, IntRelType r, int c,
+      IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for pairwise relation on \a x.
    *
    * States that the elements of \a x are in the following relation:
@@ -407,25 +443,25 @@ namespace Gecode {
    * Note that for the inequality relations this corresponds to
    * the lexical order between \a x and \a y.
    *
-   * Supports both bounds (\a icl = ICL_BND) and
-   * domain-consistency (\a icl = ICL_DOM, default).
-   *
-   * Throws an exception of type Int::ArgumentSizeMismatch, if
-   * \a x and \a y are of different size.
-   */
-  GECODE_INT_EXPORT void
-  rel(Space* home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
-      IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for relation between \a x and \a y.
-   *
-   * Note that for the inequality relations this corresponds to
-   * the lexical order between \a x and \a y.
-   *
    * Throws an exception of type Int::ArgumentSizeMismatch, if
    * \a x and \a y are of different size.
    */
   GECODE_INT_EXPORT void
   rel(Space* home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
+      IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for operation on \a x0 and \a x1
+   *
+   * Posts propagator for \f$ x_0 o x_1 = x_2\f$
+   */
+  GECODE_INT_EXPORT void
+  rel(Space* home, const BoolVar x0, BoolOpType o, const BoolVar x1,
+      const BoolVar x2, IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for operation on \a x
+   *
+   * Posts propagator for \f$ x_0 o x_1 = y\f$
+   */
+  GECODE_INT_EXPORT void
+  rel(Space* home, const BoolVarArgs x, BoolOpType o, const BoolVar y,
       IntConLevel icl=ICL_DEF);
   //@}
 
