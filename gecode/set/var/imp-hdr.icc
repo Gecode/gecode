@@ -203,7 +203,6 @@ namespace Gecode { namespace Set {
     void notify(Space* home, ModEvent me);
     //@}
 
-
   };
 
 

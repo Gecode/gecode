@@ -1041,6 +1041,20 @@ namespace Gecode {
       BoolView(const BoolVar& x);
       //@}
 
+      /// \name Domain status access
+      //@{
+      /// How many bits does the status have
+      static const int BITS = BoolVarImp::BITS;
+      /// Status of domain assigned to zero
+      static const BoolStatus ZERO = BoolVarImp::ZERO;
+      /// Status of domain assigned to one
+      static const BoolStatus ONE  = BoolVarImp::ONE;
+      /// Status of domain not yet assigned
+      static const BoolStatus NONE = BoolVarImp::NONE;
+      /// Return current domain status
+      BoolStatus status(void) const;
+      //@}
+
       /// \name Value access
       //@{
       /// Return minimum of domain
@@ -1184,6 +1198,20 @@ namespace Gecode {
       NegBoolView(const BoolView& b);
       /// Initialize with Boolean view \a b
       void init(const BoolView& b);
+      //@}
+
+      /// \name Domain status access
+      //@{
+      /// How many bits does the status have
+      static const int BITS = BoolView::BITS;
+      /// Status of domain assigned to zero
+      static const BoolStatus ZERO = BoolView::ONE;
+      /// Status of domain assigned to one
+      static const BoolStatus ONE  = BoolView::ZERO;
+      /// Status of domain not yet assigned
+      static const BoolStatus NONE = BoolView::NONE;
+      /// Return current domain status
+      BoolStatus status(void) const;
       //@}
 
       /// \name Boolean domain tests

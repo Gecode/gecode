@@ -371,6 +371,9 @@ namespace Gecode { namespace Int {
 
 namespace Gecode { namespace Int {
 
+  /// Type for status of a Boolean variable
+  typedef unsigned int BoolStatus;
+
   /**
    * \brief Boolean variable implementation
    *
@@ -388,19 +391,27 @@ namespace Gecode { namespace Int {
      *   assigned to 1, and 2 represents an unassigned variable.
      * - No other values are possible.
      */
-    unsigned int dom;
-    /// Value of domain assigned to zero
-    static const unsigned int DOM_ZERO = 0;
-    /// Value of domain assigned to one
-    static const unsigned int DOM_ONE  = 3;
-    /// Value of domain not yet assigned
-    static const unsigned int DOM_NONE = 2;
+    BoolStatus dom;
 
     /// Constructor for cloning \a x
     BoolVarImp(Space* home, bool share, BoolVarImp& x);
   public:
     /// Initialize with range domain
     BoolVarImp(Space* home, int min, int max);
+
+    /// \name Domain status access
+    //@{
+    /// How many bits does the status have
+    static const int BITS = 2;
+    /// Status of domain assigned to zero
+    static const BoolStatus ZERO = 0;
+    /// Status of domain assigned to one
+    static const BoolStatus ONE  = 3;
+    /// Status of domain not yet assigned
+    static const BoolStatus NONE = 2;
+    /// Return current domain status
+    BoolStatus status(void) const;
+    //@}
 
     /// \name Value access
     //@{

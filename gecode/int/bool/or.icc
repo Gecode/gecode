@@ -148,25 +148,68 @@ namespace Gecode { namespace Int { namespace Bool {
   template <class BVA, class BVB, class BVC>
   ExecStatus
   Or<BVA,BVB,BVC>::propagate(Space* home) {
-    if (x0.one() || x1.one()) {
-      GECODE_ME_CHECK(x2.one(home));
-    } else if (x2.zero()) {
-      GECODE_ME_CHECK(x0.zero(home));
-      GECODE_ME_CHECK(x1.zero(home));
-    } else if (x2.one()) {
-      if (x0.zero()) {
-        GECODE_ME_CHECK(x1.one(home));
-      } else if (x1.zero()) {
-        GECODE_ME_CHECK(x0.one(home));
-      } else {
-        return ES_FIX;
-      }        
-    } else if (x0.zero() && x1.zero()) {
-      GECODE_ME_CHECK(x2.zero(home));
-    } else {
+#define GECODE_INT_STATUS(S0,S1,S2) \
+    ((((BVA::S0 << BVA::BITS) | BVB::S1) << BVB::BITS) | BVC::S2)
+    switch ((((x0.status() << BVA::BITS) | x1.status()) << BVB::BITS) | x2.status()) {
+    case GECODE_INT_STATUS(NONE,NONE,NONE):
+      GECODE_NEVER;
+    case GECODE_INT_STATUS(NONE,NONE,ZERO):
+      x0.zero_none(home); x1.zero_none(home); break;
+    case GECODE_INT_STATUS(NONE,NONE,ONE):
       return ES_FIX;
+    case GECODE_INT_STATUS(NONE,ZERO,NONE):
+      return ES_FIX;
+    case GECODE_INT_STATUS(NONE,ZERO,ZERO):
+      x0.zero_none(home); break;
+    case GECODE_INT_STATUS(NONE,ZERO,ONE):
+      x0.one_none(home); break;
+    case GECODE_INT_STATUS(NONE,ONE,NONE):
+      x0.cancel(home,this,PC_BOOL_VAL); x2.one_none(home); break;
+    case GECODE_INT_STATUS(NONE,ONE,ZERO):
+      return ES_FAILED;      
+    case GECODE_INT_STATUS(NONE,ONE,ONE):
+      x0.cancel(home,this,PC_BOOL_VAL); break;
+    case GECODE_INT_STATUS(ZERO,NONE,NONE):
+      return ES_FIX;
+    case GECODE_INT_STATUS(ZERO,NONE,ZERO):
+      x1.zero_none(home); break;
+    case GECODE_INT_STATUS(ZERO,NONE,ONE):
+      x1.one_none(home); break;
+    case GECODE_INT_STATUS(ZERO,ZERO,NONE):
+      x2.zero_none(home); break;
+    case GECODE_INT_STATUS(ZERO,ZERO,ZERO):
+      break;
+    case GECODE_INT_STATUS(ZERO,ZERO,ONE):
+      return ES_FAILED;
+    case GECODE_INT_STATUS(ZERO,ONE,NONE):
+      x2.one_none(home); break;
+    case GECODE_INT_STATUS(ZERO,ONE,ZERO):
+      return ES_FAILED;
+    case GECODE_INT_STATUS(ZERO,ONE,ONE):
+      break;
+    case GECODE_INT_STATUS(ONE,NONE,NONE):
+      x1.cancel(home,this,PC_BOOL_VAL); x2.one_none(home); break;
+    case GECODE_INT_STATUS(ONE,NONE,ZERO):
+      return ES_FAILED;
+    case GECODE_INT_STATUS(ONE,NONE,ONE):
+      x1.cancel(home,this,PC_BOOL_VAL); break;
+    case GECODE_INT_STATUS(ONE,ZERO,NONE):
+      x2.one_none(home); break;
+    case GECODE_INT_STATUS(ONE,ZERO,ZERO):
+      return ES_FAILED;
+    case GECODE_INT_STATUS(ONE,ZERO,ONE):
+      break;
+    case GECODE_INT_STATUS(ONE,ONE,NONE):
+      x2.one_none(home); break;
+    case GECODE_INT_STATUS(ONE,ONE,ZERO):
+      return ES_FAILED;
+    case GECODE_INT_STATUS(ONE,ONE,ONE):
+      break;
+    default:
+      GECODE_NEVER;
     }
-    return ES_SUBSUMED;
+    return this->ES_DISPOSED(sizeof(*this));
+#undef GECODE_INT_STATUS
   }
 
 

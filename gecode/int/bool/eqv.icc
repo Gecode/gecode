@@ -37,35 +37,30 @@ namespace Gecode { namespace Int { namespace Bool {
   Eqv<BVA,BVB,BVC>::post(Space* home, BVA b0, BVB b1, BVC b2){
     switch (bool_test(b0,b1)) {
     case BT_SAME:
-      GECODE_ME_CHECK(b2.one(home));
-      break;
+      GECODE_ME_CHECK(b2.one(home)); break;
     case BT_COMP:
-      GECODE_ME_CHECK(b2.zero(home));
-      break;
+      GECODE_ME_CHECK(b2.zero(home)); break;
     case BT_NONE:
       if (b2.one())
         return Eq<BVA,BVB>::post(home,b0,b1);
       if (b0.one()) {
         if (b1.one()) {
-          GECODE_ME_CHECK(b2.one(home));
-          return ES_OK;
+          GECODE_ME_CHECK(b2.one(home)); return ES_OK;
         } else if (b2.zero()) {
-          GECODE_ME_CHECK(b2.zero(home));
-          return ES_OK;
+          GECODE_ME_CHECK(b2.zero(home)); return ES_OK;
         }
       }
       if (b0.zero()) {
         if (b1.one()) {
-          GECODE_ME_CHECK(b2.zero(home));
-          return ES_OK;
+          GECODE_ME_CHECK(b2.zero(home)); return ES_OK;
         } else if (b2.zero()) {
-          GECODE_ME_CHECK(b2.one(home));
-          return ES_OK;
+          GECODE_ME_CHECK(b2.one(home)); return ES_OK;
         }
       }
       (void) new (home) Eqv(home,b0,b1,b2);
       break;
-    default: GECODE_NEVER;
+    default: 
+      GECODE_NEVER;
     }
     return ES_OK;
   }
@@ -79,55 +74,68 @@ namespace Gecode { namespace Int { namespace Bool {
   template <class BVA, class BVB, class BVC>
   ExecStatus
   Eqv<BVA,BVB,BVC>::propagate(Space* home) {
-    if (x0.zero()) {
-      if (x1.zero()) {
-        GECODE_ME_CHECK(x2.one(home));
-      } else if (x1.one()) {
-        GECODE_ME_CHECK(x2.zero(home));
-      } else if (x2.zero()) {
-        x1.one_none(home);
-      } else if (x2.one()) {
-        x1.zero_none(home);
-      } else {
-        return ES_FIX;
-      }
-    } else if (x0.one()) {
-      if (x1.zero()) {
-        GECODE_ME_CHECK(x2.zero(home));
-      } else if (x1.one()) {
-        GECODE_ME_CHECK(x2.one(home));
-      } else if (x2.zero()) {
-        x1.zero_none(home);
-      } else if (x2.one()) {
-        x1.one_none(home);
-      } else {
-        return ES_FIX;
-      }
-    } else if (x1.zero()) {
-      assert(!x0.zero() && !x0.one());
-      if (x2.zero()) {
-        x0.one_none(home);
-      } else if (x2.one()) {
-        x0.zero_none(home);
-      } else {
-        return ES_FIX;
-      }
-    } else if (x1.one()) {
-      assert(!x0.zero() && !x0.one());
-      if (x2.zero()) {
-        x0.zero_none(home);
-      } else if (x2.one()) {
-        x0.one_none(home);
-      } else {
-        return ES_FIX;
-      }
-    } else {
+#define GECODE_INT_STATUS(S0,S1,S2) \
+    ((((BVA::S0 << BVA::BITS) | BVB::S1) << BVB::BITS) | BVC::S2)
+    switch ((((x0.status() << BVA::BITS) | x1.status()) << BVB::BITS) | x2.status()) {
+    case GECODE_INT_STATUS(NONE,NONE,NONE):
+      GECODE_NEVER;
+    case GECODE_INT_STATUS(NONE,NONE,ZERO):
+    case GECODE_INT_STATUS(NONE,NONE,ONE):
+    case GECODE_INT_STATUS(NONE,ZERO,NONE):
       return ES_FIX;
+    case GECODE_INT_STATUS(NONE,ZERO,ZERO):
+      x0.one_none(home); break;
+    case GECODE_INT_STATUS(NONE,ZERO,ONE):
+      x0.zero_none(home); break;
+    case GECODE_INT_STATUS(NONE,ONE,NONE):
+      return ES_FIX;
+    case GECODE_INT_STATUS(NONE,ONE,ZERO):
+      x0.zero_none(home); break;
+    case GECODE_INT_STATUS(NONE,ONE,ONE):
+      x0.one_none(home); break;
+    case GECODE_INT_STATUS(ZERO,NONE,NONE):
+      return ES_FIX;
+    case GECODE_INT_STATUS(ZERO,NONE,ZERO):
+      x1.one_none(home); break;
+    case GECODE_INT_STATUS(ZERO,NONE,ONE):
+      x1.zero_none(home); break;
+    case GECODE_INT_STATUS(ZERO,ZERO,NONE):
+      x2.one_none(home); break;
+    case GECODE_INT_STATUS(ZERO,ZERO,ZERO):
+      return ES_FAILED;
+    case GECODE_INT_STATUS(ZERO,ZERO,ONE):
+      break;
+    case GECODE_INT_STATUS(ZERO,ONE,NONE):
+      x2.zero_none(home); break;
+    case GECODE_INT_STATUS(ZERO,ONE,ZERO):
+      break;
+    case GECODE_INT_STATUS(ZERO,ONE,ONE):
+      return ES_FAILED;
+    case GECODE_INT_STATUS(ONE,NONE,NONE):
+      return ES_FIX;
+    case GECODE_INT_STATUS(ONE,NONE,ZERO):
+      x1.zero_none(home); break;
+    case GECODE_INT_STATUS(ONE,NONE,ONE):
+      x1.one_none(home); break;
+    case GECODE_INT_STATUS(ONE,ZERO,NONE):
+      x2.zero_none(home); break;
+    case GECODE_INT_STATUS(ONE,ZERO,ZERO):
+      break;
+    case GECODE_INT_STATUS(ONE,ZERO,ONE):
+      return ES_FAILED;
+    case GECODE_INT_STATUS(ONE,ONE,NONE):
+      x2.one_none(home); break;
+    case GECODE_INT_STATUS(ONE,ONE,ZERO):
+      return ES_FAILED;
+    case GECODE_INT_STATUS(ONE,ONE,ONE):
+      break;
+    default:
+      GECODE_NEVER;
     }
-    return ES_SUBSUMED;
+    return this->ES_DISPOSED(sizeof(*this));
+#undef GECODE_INT_STATUS
   }
 
 }}}
 
 // STATISTICS: int-prop
-

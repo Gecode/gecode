@@ -71,17 +71,31 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BVA, class BVB>
   ExecStatus
   Eq<BVA,BVB>::propagate(Space* home) {
-    if (x0.zero()) {
-      GECODE_ME_CHECK(x1.zero(home));
-    } else if (x0.one()) {
-      GECODE_ME_CHECK(x1.one(home));
-    } else if (x1.zero()) {
-      x0.zero_none(home);
-    } else {
-      assert(x1.one());
-      x0.one_none(home);
+#define GECODE_INT_STATUS(S0,S1) ((BVA::S0 << BVA::BITS) | (BVB::S1))
+    switch ((x0.status() << BVA::BITS) | x1.status()) {
+    case GECODE_INT_STATUS(NONE,NONE):
+      GECODE_NEVER;
+    case GECODE_INT_STATUS(NONE,ZERO):
+      x0.zero_none(home); break;
+    case GECODE_INT_STATUS(NONE,ONE):
+      x0.one_none(home); break;
+    case GECODE_INT_STATUS(ZERO,NONE):
+      x1.zero_none(home); break;
+    case GECODE_INT_STATUS(ZERO,ZERO):
+      break;
+    case GECODE_INT_STATUS(ZERO,ONE):
+      return ES_FAILED;
+    case GECODE_INT_STATUS(ONE,NONE):
+      x1.one_none(home); break;
+    case GECODE_INT_STATUS(ONE,ZERO):
+      return ES_FAILED;
+    case GECODE_INT_STATUS(ONE,ONE):
+      break;
+    default:
+        GECODE_NEVER;
     }
-    return ES_SUBSUMED;
+    return this->ES_DISPOSED(sizeof(*this));
+#undef GECODE_INT_STATUS
   }
 
 }}}

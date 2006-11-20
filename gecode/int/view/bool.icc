@@ -39,6 +39,10 @@ namespace Gecode {
      * Value access
      *
      */
+    forceinline BoolStatus
+    BoolView::status(void) const {
+      return var->status();
+    }
     forceinline int
     BoolView::min(void) const {
       return var->min();
@@ -251,6 +255,10 @@ namespace Gecode {
      * Boolean domain tests
      *
      */
+    forceinline BoolStatus
+    NegBoolView::status(void) const {
+      return view.status();
+    }
     forceinline bool
     NegBoolView::zero(void) const {
       return view.one();
