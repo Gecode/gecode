@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_ME_CHECK(x0.nq(home,x1.val()));
       x0.cancel(home,this,PC_INT_VAL);
     }
-    return ES_DISPOSED(sizeof(*this));
+    return this->ES_DISPOSED(sizeof(*this));
   }
 
   /*

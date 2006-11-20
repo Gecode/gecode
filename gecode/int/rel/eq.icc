@@ -83,7 +83,7 @@ namespace Gecode { namespace Int { namespace Rel {
         return ES_FIX;
     }
     assert(x0.assigned() && x1.assigned());
-    return ES_DISPOSED(sizeof(*this));
+    return this->ES_DISPOSED(sizeof(*this));
   }
 
 
@@ -141,11 +141,11 @@ namespace Gecode { namespace Int { namespace Rel {
   EqDom<View0,View1>::propagate(Space* home) {
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.eq(home,x0.val()));
-      return ES_DISPOSED(sizeof(*this));
+      return this->ES_DISPOSED(sizeof(*this));
     }
     if (x1.assigned()) {
       GECODE_ME_CHECK(x0.eq(home,x1.val()));
-      return ES_DISPOSED(sizeof(*this));
+      return this->ES_DISPOSED(sizeof(*this));
     }
     if ((View0::pme(this) != ME_INT_DOM) && 
         (View1::pme(this) != ME_INT_DOM)) {
@@ -158,7 +158,7 @@ namespace Gecode { namespace Int { namespace Rel {
         GECODE_ME_CHECK(x1.lq(home,x0.max()));
       } while (x0.max() != x1.max());
       if (x0.assigned())
-        return ES_DISPOSED(sizeof(*this));
+        return this->ES_DISPOSED(sizeof(*this));
       if (x0.range() && x1.range())
         return ES_FIX;
       return ES_FIX_PARTIAL(View0::pme(ME_INT_DOM));
@@ -168,7 +168,7 @@ namespace Gecode { namespace Int { namespace Rel {
     ViewRanges<View1> r1(x1);
     GECODE_ME_CHECK(x0.narrow(home,r1));
     if (x0.assigned())
-      return ES_DISPOSED(sizeof(*this));
+      return this->ES_DISPOSED(sizeof(*this));
     return ES_FIX;
   }
 
@@ -230,10 +230,10 @@ namespace Gecode { namespace Int { namespace Rel {
           x.move_lst(i);
           for (int i = x.size(); i--; )
             GECODE_ME_CHECK(x[i].eq(home,n));
-          return ES_DISPOSED(sizeof(*this));
+          return this->ES_DISPOSED(sizeof(*this));
         }
       GECODE_NEVER;
-      return ES_DISPOSED(sizeof(*this));
+      return this->ES_DISPOSED(sizeof(*this));
     }
 
     if (me == ME_INT_BND) {
@@ -262,7 +262,7 @@ namespace Gecode { namespace Int { namespace Rel {
         }
       }
       if (x[0].assigned())
-        return ES_DISPOSED(sizeof(*this));
+        return this->ES_DISPOSED(sizeof(*this));
       return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
     }
 
@@ -348,10 +348,10 @@ namespace Gecode { namespace Int { namespace Rel {
           x.move_lst(i);
           for (int i = x.size(); i--; )
             GECODE_ME_CHECK(x[i].eq(home,n));
-          return ES_DISPOSED(sizeof(*this));
+          return this->ES_DISPOSED(sizeof(*this));
         }
       GECODE_NEVER;
-      return ES_DISPOSED(sizeof(*this));
+      return this->ES_DISPOSED(sizeof(*this));
     }
 
     int mn = x[0].min();
@@ -372,7 +372,7 @@ namespace Gecode { namespace Int { namespace Rel {
         goto restart_max;
       }
     }
-    return x[0].assigned() ? ES_DISPOSED(sizeof(*this)) : ES_FIX;
+    return x[0].assigned() ? this->ES_DISPOSED(sizeof(*this)) : ES_FIX;
   }
 
 
@@ -424,9 +424,9 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_REWRITE(Nq<View>::post(home,x0,x1));
     switch (rtest_eq_dom(x0,x1)) {
     case RT_TRUE:
-      b.one_none(home); return ES_DISPOSED(dispose(home));
+      b.one_none(home); return this->ES_DISPOSED(dispose(home));
     case RT_FALSE:
-      b.zero_none(home); return ES_DISPOSED(dispose(home));
+      b.zero_none(home); return this->ES_DISPOSED(dispose(home));
     case RT_MAYBE:
       break;
     default: GECODE_NEVER;
@@ -483,9 +483,9 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_REWRITE(Nq<View>::post(home,x0,x1));
     switch (rtest_eq_bnd(x0,x1)) {
     case RT_TRUE:
-      b.one_none(home);  return ES_DISPOSED(dispose(home));
+      b.one_none(home);  return this->ES_DISPOSED(dispose(home));
     case RT_FALSE:
-      b.zero_none(home); return ES_DISPOSED(dispose(home));
+      b.zero_none(home); return this->ES_DISPOSED(dispose(home));
     case RT_MAYBE:
       break;
     default: GECODE_NEVER;
@@ -567,7 +567,7 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     return ES_FIX;
   subsumed:
-    return ES_DISPOSED(sizeof(*this));    
+    return this->ES_DISPOSED(sizeof(*this));    
   }
 
 
@@ -644,7 +644,7 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     return ES_FIX;
   subsumed:
-    return ES_DISPOSED(sizeof(*this));
+    return this->ES_DISPOSED(sizeof(*this));
   }
 
 }}}

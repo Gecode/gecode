@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace Dom {
     return ES_FIX;
   subsumed:
     x0.cancel(home,this,PC_INT_BND);
-    return ES_DISPOSED(sizeof(*this));
+    return this->ES_DISPOSED(sizeof(*this));
   }
 
 

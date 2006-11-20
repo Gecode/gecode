@@ -96,7 +96,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (x1.max() <= x0.min())
       GECODE_REWRITE((Rel::EqBnd<View,View>::post(home,x0,x2)));
     return x0.assigned() && x1.assigned() && x2.assigned() ?
-      ES_DISPOSED(sizeof(*this)) : ES_FIX;
+      this->ES_DISPOSED(sizeof(*this)) : ES_FIX;
   }
 
 

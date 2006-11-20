@@ -352,7 +352,7 @@ namespace Gecode { namespace Int { namespace Element {
     if (n == 1) {
       size_t s = dispose(home);
       (void) new (home) Rel::EqBnd<VA,VC>(home,iv[0].view,x1);
-      return ES_DISPOSED(s);
+      return this->ES_DISPOSED(s);
     }
     assert(n > 1);
     // Compute new result
@@ -446,7 +446,7 @@ namespace Gecode { namespace Int { namespace Element {
       if (n == 1) {
         size_t s = dispose(home);
         (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);
-        return ES_DISPOSED(s);
+        return this->ES_DISPOSED(s);
       }
       // Compute new result
       int min = iv[n-1].view.min();
@@ -469,7 +469,7 @@ namespace Gecode { namespace Int { namespace Element {
     if (n == 1) {
       size_t s = dispose(home);
       (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);
-      return ES_DISPOSED(s);
+      return this->ES_DISPOSED(s);
     }
     assert(n > 1);
     GECODE_AUTOARRAY(ViewRanges<VA>,i_view,n);
