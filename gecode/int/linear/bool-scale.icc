@@ -135,50 +135,49 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    */
 
-  template<class SBAP, class SBAN, class VX>
+  template<class SBAP, class SBAN, class VX, PropCond pcx>
   forceinline
-  LinBoolScale<SBAP,SBAN,VX>::LinBoolScale(Space* home, 
-                                           SBAP& p0, SBAN& n0,
-                                           VX x0, int c0)
+  LinBoolScale<SBAP,SBAN,VX,pcx>::LinBoolScale(Space* home, 
+                                               SBAP& p0, SBAN& n0,
+                                               VX x0, int c0)
     : Propagator(home), p(p0), n(n0), x(x0), c(c0) {
-    x.subscribe(home,this,PC_INT_BND);
+    x.subscribe(home,this,pcx);
     p.subscribe(home,this);
     n.subscribe(home,this);
   }
 
-  template<class SBAP, class SBAN, class VX>
+  template<class SBAP, class SBAN, class VX, PropCond pcx>
   PropCost
-  LinBoolScale<SBAP,SBAN,VX>::cost(void) const {
+  LinBoolScale<SBAP,SBAN,VX,pcx>::cost(void) const {
     return cost_lo(p.size() + n.size(), PC_LINEAR_LO);
   }
 
-  template<class SBAP, class SBAN, class VX>
+  template<class SBAP, class SBAN, class VX, PropCond pcx>
   size_t
-  LinBoolScale<SBAP,SBAN,VX>::dispose(Space* home) {
-    assert(!home->failed());
-    x.cancel(home,this,PC_INT_BND);
+  LinBoolScale<SBAP,SBAN,VX,pcx>::dispose(Space* home) {
+    x.cancel(home,this,pcx);
     p.cancel(home,this);
     n.cancel(home,this);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
-  template<class SBAP, class SBAN, class VX>
+  template<class SBAP, class SBAN, class VX, PropCond pcx>
   forceinline
-  LinBoolScale<SBAP,SBAN,VX>::LinBoolScale(Space* home, bool share, 
-                                           LinBoolScale<SBAP,SBAN,VX>& pr)
+  LinBoolScale<SBAP,SBAN,VX,pcx>
+  ::LinBoolScale(Space* home, bool share, LinBoolScale<SBAP,SBAN,VX,pcx>& pr)
     : Propagator(home,share,pr), c(pr.c) {
     x.update(home,share,pr.x);
     p.update(home,share,pr.p);
     n.update(home,share,pr.n);
   }
 
-  template<class SBAP, class SBAN, class VX>
+  template<class SBAP, class SBAN, class VX, PropCond pcx>
   forceinline
-  LinBoolScale<SBAP,SBAN,VX>::LinBoolScale(Space* home, bool share, 
-                                           Propagator& pr,
-                                           SBAP& p0, SBAN& n0,
-                                           VX x0, int c0)
+  LinBoolScale<SBAP,SBAN,VX,pcx>::LinBoolScale(Space* home, bool share, 
+                                               Propagator& pr,
+                                               SBAP& p0, SBAN& n0,
+                                               VX x0, int c0)
     : Propagator(home,share,pr), c(c0) {
     x.update(home,share,x0);
     p.update(home,share,p0);
@@ -196,13 +195,13 @@ namespace Gecode { namespace Int { namespace Linear {
   EqBoolScale<SBAP,SBAN,VX>::EqBoolScale(Space* home, 
                                          SBAP& p, SBAN& n,
                                          VX x, int c)
-    : LinBoolScale<SBAP,SBAN,VX>(home,p,n,x,c) {}
+    : LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>(home,p,n,x,c) {}
 
   template<class SBAP, class SBAN, class VX>
   forceinline
   EqBoolScale<SBAP,SBAN,VX>::EqBoolScale(Space* home, bool share, 
                                          EqBoolScale<SBAP,SBAN,VX>& pr)
-    : LinBoolScale<SBAP,SBAN,VX>(home,share,pr) {}
+    : LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>(home,share,pr) {}
 
   template<class SBAP, class SBAN, class VX>
   forceinline
@@ -210,7 +209,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                          Propagator& pr,
                                          SBAP& p, SBAN& n,
                                          VX x, int c)
-    : LinBoolScale<SBAP,SBAN,VX>(home,share,pr,p,n,x,c) {}
+    : LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>(home,share,pr,p,n,x,c) {}
 
   template<class SBAP, class SBAN, class VX>
   Actor*
@@ -396,13 +395,13 @@ namespace Gecode { namespace Int { namespace Linear {
   LqBoolScale<SBAP,SBAN,VX>::LqBoolScale(Space* home, 
                                          SBAP& p, SBAN& n,
                                          VX x, int c)
-    : LinBoolScale<SBAP,SBAN,VX>(home,p,n,x,c) {}
+    : LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>(home,p,n,x,c) {}
 
   template<class SBAP, class SBAN, class VX>
   forceinline
   LqBoolScale<SBAP,SBAN,VX>::LqBoolScale(Space* home, bool share, 
                                          LqBoolScale<SBAP,SBAN,VX>& pr)
-    : LinBoolScale<SBAP,SBAN,VX>(home,share,pr) {}
+    : LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>(home,share,pr) {}
 
   template<class SBAP, class SBAN, class VX>
   forceinline
@@ -410,7 +409,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                          Propagator& pr,
                                          SBAP& p, SBAN& n,
                                          VX x, int c)
-    : LinBoolScale<SBAP,SBAN,VX>(home,share,pr,p,n,x,c) {}
+    : LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>(home,share,pr,p,n,x,c) {}
 
   template<class SBAP, class SBAN, class VX>
   Actor*
@@ -536,13 +535,13 @@ namespace Gecode { namespace Int { namespace Linear {
   NqBoolScale<SBAP,SBAN,VX>::NqBoolScale(Space* home, 
                                          SBAP& p, SBAN& n,
                                          VX x, int c)
-    : LinBoolScale<SBAP,SBAN,VX>(home,p,n,x,c) {}
+    : LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>(home,p,n,x,c) {}
 
   template<class SBAP, class SBAN, class VX>
   forceinline
   NqBoolScale<SBAP,SBAN,VX>::NqBoolScale(Space* home, bool share, 
                                          NqBoolScale<SBAP,SBAN,VX>& pr)
-    : LinBoolScale<SBAP,SBAN,VX>(home,share,pr) {}
+    : LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>(home,share,pr) {}
 
   template<class SBAP, class SBAN, class VX>
   forceinline
@@ -550,7 +549,7 @@ namespace Gecode { namespace Int { namespace Linear {
                                          Propagator& pr,
                                          SBAP& p, SBAN& n,
                                          VX x, int c)
-    : LinBoolScale<SBAP,SBAN,VX>(home,share,pr,p,n,x,c) {}
+    : LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>(home,share,pr,p,n,x,c) {}
 
   template<class SBAP, class SBAN, class VX>
   Actor*

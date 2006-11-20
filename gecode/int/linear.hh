@@ -1056,7 +1056,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * \brief Base class for linear Boolean constraints with coefficients
    *
    */
-  template <class SBAP, class SBAN, class VX>
+  template <class SBAP, class SBAN, class VX, PropCond pcx>
   class LinBoolScale : public Propagator {
   protected:
     /// Positive Boolean views with coefficients on left-hand side
@@ -1088,12 +1088,12 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   template <class SBAP, class SBAN, class VX>
-  class EqBoolScale : public LinBoolScale<SBAP,SBAN,VX> {
+  class EqBoolScale : public LinBoolScale<SBAP,SBAN,VX,PC_INT_BND> {
   protected:
-    using LinBoolScale<SBAP,SBAN,VX>::p;
-    using LinBoolScale<SBAP,SBAN,VX>::n;
-    using LinBoolScale<SBAP,SBAN,VX>::x;
-    using LinBoolScale<SBAP,SBAN,VX>::c;
+    using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::p;
+    using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::n;
+    using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::x;
+    using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::c;
   public:
     /// Constructor for creation
     EqBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
@@ -1117,12 +1117,12 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   template <class SBAP, class SBAN, class VX>
-  class LqBoolScale : public LinBoolScale<SBAP,SBAN,VX> {
+  class LqBoolScale : public LinBoolScale<SBAP,SBAN,VX,PC_INT_BND> {
   protected:
-    using LinBoolScale<SBAP,SBAN,VX>::p;
-    using LinBoolScale<SBAP,SBAN,VX>::n;
-    using LinBoolScale<SBAP,SBAN,VX>::x;
-    using LinBoolScale<SBAP,SBAN,VX>::c;
+    using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::p;
+    using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::n;
+    using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::x;
+    using LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::c;
   public:
     /// Constructor for creation
     LqBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
@@ -1146,12 +1146,12 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   template <class SBAP, class SBAN, class VX>
-  class NqBoolScale : public LinBoolScale<SBAP,SBAN,VX> {
+  class NqBoolScale : public LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL> {
   protected:
-    using LinBoolScale<SBAP,SBAN,VX>::p;
-    using LinBoolScale<SBAP,SBAN,VX>::n;
-    using LinBoolScale<SBAP,SBAN,VX>::x;
-    using LinBoolScale<SBAP,SBAN,VX>::c;
+    using LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>::p;
+    using LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>::n;
+    using LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>::x;
+    using LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>::c;
   public:
     /// Constructor for creation
     NqBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
