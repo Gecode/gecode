@@ -133,7 +133,6 @@ namespace Gecode { namespace Int {
     void notify(Space* home, ModEvent me);
     //@}
 
-
   };
 
 

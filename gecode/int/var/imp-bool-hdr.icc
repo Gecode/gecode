@@ -94,7 +94,8 @@ namespace Gecode { namespace Int {
     /// Notify that variable implementation has been modified with modification event \a me
     void notify(Space* home, ModEvent me);
     //@}
-
+    /// Return the current modification event
+    ModEvent modevent(void) const;
 
   };
 
@@ -103,6 +104,12 @@ namespace Gecode { namespace Int {
   BoolMeDiff::operator()(ModEvent me1, ModEvent me2) const {
     return me2^me1;
   }
+
+  forceinline ModEvent
+  BoolVarImpBase::modevent(void) const {
+    return modified() ? ME_GEN_ASSIGNED : ME_GEN_NONE;
+  }
+
 
   forceinline
   BoolVarImpBase::BoolVarImpBase(Space* home)

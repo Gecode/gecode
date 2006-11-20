@@ -371,9 +371,16 @@ print <<EOF
     /// Notify that variable implementation has been modified with modification event \\a me
     void notify(Space* home, ModEvent me);
     //\@}
-
 EOF
 ;
+if ($me_max_n == 2) {
+print <<EOF
+    /// Return the current modification event
+    ModEvent modevent(void) const;
+EOF
+;
+}
+
 if ($forcedispose) {
   print <<EOF
     /// Return link to next variable, used for dispose
@@ -434,6 +441,18 @@ if ($me_max_n == 2) {
   print "    return med[me1][me2];\n";
 }
 print "  }\n";
+
+if ($me_max_n == 2) {
+print <<EOF
+
+  $forceinline ModEvent
+  ${class}::modevent(void) const {
+    return modified() ? ME_GEN_ASSIGNED : ME_GEN_NONE;
+  }
+
+EOF
+;
+}
 
 if ($forcedispose) {
   print <<EOF

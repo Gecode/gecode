@@ -1534,7 +1534,6 @@ namespace Gecode {
     assert(!modified());
     _next = static_cast<Variable<VTI,PC,MED>*>(home->vars[VTI]);
     home->vars[VTI] = this;
-    modevent(ME_GEN_ASSIGNED);
   }
 
 
