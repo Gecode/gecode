@@ -350,7 +350,7 @@ namespace Gecode { namespace Int { namespace Element {
     if (n == 0)
       return ES_FAILED;
     if (n == 1) {
-      size_t s = dispose(home);
+      size_t s = this->dispose(home);
       (void) new (home) Rel::EqBnd<VA,VC>(home,iv[0].view,x1);
       return this->ES_DISPOSED(s);
     }
@@ -444,7 +444,7 @@ namespace Gecode { namespace Int { namespace Element {
       if (n == 0)
         return ES_FAILED;
       if (n == 1) {
-        size_t s = dispose(home);
+        size_t s = this->dispose(home);
         (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);
         return this->ES_DISPOSED(s);
       }
@@ -467,7 +467,7 @@ namespace Gecode { namespace Int { namespace Element {
     if (n == 0)
       return ES_FAILED;
     if (n == 1) {
-      size_t s = dispose(home);
+      size_t s = this->dispose(home);
       (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);
       return this->ES_DISPOSED(s);
     }

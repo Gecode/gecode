@@ -424,9 +424,9 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_REWRITE(Nq<View>::post(home,x0,x1));
     switch (rtest_eq_dom(x0,x1)) {
     case RT_TRUE:
-      b.one_none(home); return this->ES_DISPOSED(dispose(home));
+      b.one_none(home); return this->ES_DISPOSED(this->dispose(home));
     case RT_FALSE:
-      b.zero_none(home); return this->ES_DISPOSED(dispose(home));
+      b.zero_none(home); return this->ES_DISPOSED(this->dispose(home));
     case RT_MAYBE:
       break;
     default: GECODE_NEVER;
@@ -483,9 +483,9 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_REWRITE(Nq<View>::post(home,x0,x1));
     switch (rtest_eq_bnd(x0,x1)) {
     case RT_TRUE:
-      b.one_none(home);  return this->ES_DISPOSED(dispose(home));
+      b.one_none(home);  return this->ES_DISPOSED(this->dispose(home));
     case RT_FALSE:
-      b.zero_none(home); return this->ES_DISPOSED(dispose(home));
+      b.zero_none(home); return this->ES_DISPOSED(this->dispose(home));
     case RT_MAYBE:
       break;
     default: GECODE_NEVER;
