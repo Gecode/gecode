@@ -53,6 +53,15 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: minimodel
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Boolean expressions errorneously decomposed into ternary Boolean
+constraints, while not incorrect rather inefficient for large
+Boolean expressions.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   minor

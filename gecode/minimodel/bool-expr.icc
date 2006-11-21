@@ -61,8 +61,8 @@ namespace Gecode { namespace MiniModel {
   inline
   BoolExpr::BoolExpr(const BoolExpr& l, NodeType t, const BoolExpr& r)
     : n(new Node) {
-    unsigned int ls = ((l.n->t == t) || l.n->t == BT_VAR) ? l.n->same : 0;
-    unsigned int rs = ((r.n->t == t) || r.n->t == BT_VAR) ? r.n->same : 0;
+    unsigned int ls = ((l.n->t == t) || (l.n->t == BT_VAR)) ? l.n->same : 1;
+    unsigned int rs = ((r.n->t == t) || (r.n->t == BT_VAR)) ? r.n->same : 1;
     n->same = ls+rs;
     n->t    = t;
     n->l    = l.n;
