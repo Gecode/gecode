@@ -55,7 +55,7 @@ namespace Gecode {
       GECODE_ME_FAIL(home,bv1.one(home));
     } else {
       NegBoolView n0(b0); NegBoolView n1(b1);
-      GECODE_ES_FAIL(home,(Bool::OrTrue<NegBoolView,NegBoolView>
+      GECODE_ES_FAIL(home,(Bool::BinOrTrue<NegBoolView,NegBoolView>
                            ::post(home,n0,n1)));
     }
   }
@@ -97,7 +97,7 @@ namespace Gecode {
     if (home->failed()) return;
     if (b2) {
       GECODE_ES_FAIL(home,
-                     (Bool::OrTrue<BoolView,BoolView>::post(home,b0,b1)));
+                     (Bool::BinOrTrue<BoolView,BoolView>::post(home,b0,b1)));
     } else {
       BoolView bv0(b0);
       BoolView bv1(b1);
@@ -137,7 +137,7 @@ namespace Gecode {
     if (home->failed()) return;
     if (b2) {
       NegBoolView n0(b0);
-      GECODE_ME_FAIL(home,(Bool::OrTrue<NegBoolView,BoolView>
+      GECODE_ME_FAIL(home,(Bool::BinOrTrue<NegBoolView,BoolView>
                            ::post(home,n0,b1)));
     } else {
       BoolView bv0(b0); BoolView bv1(b1);

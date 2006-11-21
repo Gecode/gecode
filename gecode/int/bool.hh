@@ -109,30 +109,63 @@ namespace Gecode { namespace Int { namespace Bool {
 
 
   /**
-   * \brief Boolean disjunction propagator (true)
+   * \brief Binary Boolean disjunction propagator (true)
    *
    * Requires \code #include "gecode/int/bool.hh" \endcode
    * \ingroup FuncIntProp
    */
   template<class BVA, class BVB>
-  class OrTrue : public BoolBinary<BVA,BVB> {
+  class BinOrTrue : public BoolBinary<BVA,BVB> {
   protected:
     using BoolBinary<BVA,BVB>::x0;
     using BoolBinary<BVA,BVB>::x1;
     /// Constructor for posting
-    OrTrue(Space* home, BVA b0, BVB b1);
+    BinOrTrue(Space* home, BVA b0, BVB b1);
     /// Constructor for cloning \a p
-    OrTrue(Space* home, bool share, OrTrue& p);
+    BinOrTrue(Space* home, bool share, BinOrTrue& p);
   public:
     /// Constructor for rewriting \a p during cloning
-    OrTrue(Space* home, bool share, Propagator& p,
-             BVA b0, BVB b1);
+    BinOrTrue(Space* home, bool share, Propagator& p,
+              BVA b0, BVB b1);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator \f$ b_0 \lor b_1 = 0 \f$
+    /// Post propagator \f$ b_0 \lor b_1 = 1 \f$
     static  ExecStatus post(Space* home, BVA b0, BVB b1);
+  };
+
+  /**
+   * \brief Quarternary Boolean disjunction propagator (true)
+   *
+   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class BV>
+  class QuadOrTrue : public BoolBinary<BV,BV> {
+  protected:
+    using BoolBinary<BV,BV>::x0;
+    using BoolBinary<BV,BV>::x1;
+    /// Boolean view without subscription
+    BV x2;
+    /// Boolean view without subscription
+    BV x3;
+    /// Constructor for posting
+    QuadOrTrue(Space* home, BV b0, BV b1, BV b2, BV b3);
+    /// Constructor for cloning \a p
+    QuadOrTrue(Space* home, bool share, QuadOrTrue& p);
+  public:
+    /// Constructor for rewriting \a p during cloning
+    QuadOrTrue(Space* home, bool share, Propagator& p,
+               BV b0, BV b1, BV b2, BV b3);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator \f$ b_0 \lor b_1 \lor b_2 \lor b_3 = 1 \f$
+    static  ExecStatus post(Space* home, BV b0, BV b1, BV b2, BV b3);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
 
   /**
