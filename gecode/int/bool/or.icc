@@ -22,6 +22,51 @@
 
 namespace Gecode { namespace Int { namespace Bool {
 
+  /// Binary Boolean disjunction propagator (subsumed)
+  template<class BV>
+  class OrTrueSubsumed : public BoolBinary<BV,BV> {
+  protected:
+    using BoolBinary<BV,BV>::x0;
+    using BoolBinary<BV,BV>::x1;
+    /// Constructor for cloning \a p
+    OrTrueSubsumed(Space* home, bool share, OrTrueSubsumed& p);
+  public:
+    /// Constructor for rewriting \a p during cloning
+    OrTrueSubsumed(Space* home, bool share, Propagator& p,
+                   BV b0, BV b1);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+  };
+
+
+  template <class BV>
+  forceinline
+  OrTrueSubsumed<BV>::OrTrueSubsumed
+  (Space* home, bool share, OrTrueSubsumed<BV>& p)
+    : BoolBinary<BV,BV>(home,share,p) {}
+
+  template <class BV>
+  forceinline
+  OrTrueSubsumed<BV>::OrTrueSubsumed(Space* home, bool share, Propagator& p,
+                                     BV b0, BV b1)
+    : BoolBinary<BV,BV>(home,share,p,b0,b1) {}
+
+  template <class BV>
+  Actor*
+  OrTrueSubsumed<BV>::copy(Space* home, bool share) {
+    return new (home) OrTrueSubsumed<BV>(home,share,*this);
+  }
+
+  template <class BV>
+  ExecStatus
+  OrTrueSubsumed<BV>::propagate(Space* home) {
+    return this->ES_DISPOSED(home);
+  }
+
+
+
   /*
    * Binary Boolean disjunction propagator (true)
    *
@@ -42,6 +87,12 @@ namespace Gecode { namespace Int { namespace Bool {
   BinOrTrue<BVA,BVB>::BinOrTrue(Space* home, bool share, Propagator& p,
                               BVA b0, BVB b1)
     : BoolBinary<BVA,BVB>(home,share,p,b0,b1) {}
+
+  template <class BVA, class BVB>
+  Actor*
+  BinOrTrue<BVA,BVB>::copy(Space* home, bool share) {
+    return new (home) BinOrTrue<BVA,BVB>(home,share,*this);
+  }
 
   template <class BVA, class BVB>
   inline ExecStatus
@@ -67,22 +118,140 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BVA, class BVB>
-  Actor*
-  BinOrTrue<BVA,BVB>::copy(Space* home, bool share) {
-    return new (home) BinOrTrue<BVA,BVB>(home,share,*this);
-  }
-
-  template <class BVA, class BVB>
   ExecStatus
   BinOrTrue<BVA,BVB>::propagate(Space* home) {
-    if (x0.zero()) {
-      GECODE_ME_CHECK(x1.one(home));
-    } else if (x1.zero()) {
-      GECODE_ME_CHECK(x0.one(home));
-    } else {
-      assert(x0.one() || x1.one());
+#define GECODE_INT_STATUS(S0,S1) \
+  ((BVA::S0<<(1*BVA::BITS))|(BVB::S1<<(0*BVB::BITS)))
+    switch ((x0.status() << (1*BVA::BITS)) | (x1.status() << (0*BVB::BITS))) {
+    case GECODE_INT_STATUS(NONE,NONE):
+      GECODE_NEVER;
+    case GECODE_INT_STATUS(NONE,ZERO):
+      x0.one_none(home); break;
+    case GECODE_INT_STATUS(NONE,ONE):
+      x0.cancel(home,this,PC_BOOL_VAL); break;
+    case GECODE_INT_STATUS(ZERO,NONE):
+      x1.one_none(home); break;
+    case GECODE_INT_STATUS(ZERO,ZERO):
+      return ES_FAILED;
+    case GECODE_INT_STATUS(ZERO,ONE):
+      break;
+    case GECODE_INT_STATUS(ONE,NONE):
+      x1.cancel(home,this,PC_BOOL_VAL); break;
+    case GECODE_INT_STATUS(ONE,ZERO):
+      break;
+    case GECODE_INT_STATUS(ONE,ONE):
+      break;
+    default:
+        GECODE_NEVER;
     }
-    return ES_SUBSUMED;
+    return this->ES_DISPOSED(sizeof(*this));
+#undef GECODE_INT_STATUS
+  }
+
+
+  /*
+   * Boolean disjunction propagator (true)
+   *
+   */
+
+  template <class BV>
+  forceinline
+  TerOrTrue<BV>::TerOrTrue(Space* home, BV b0, BV b1, BV b2)
+    : BoolBinary<BV,BV>(home,b0,b1), x2(b2) {}
+
+  template<class BV>
+  forceinline size_t
+  TerOrTrue<BV>::dispose(Space* home) {
+    (void) BoolBinary<BV,BV>::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class BV>
+  forceinline
+  TerOrTrue<BV>::TerOrTrue(Space* home, bool share, TerOrTrue<BV>& p)
+    : BoolBinary<BV,BV>(home,share,p) {
+    x2.update(home,share,p.x2);
+  }
+
+  template <class BV>
+  forceinline
+  TerOrTrue<BV>::TerOrTrue(Space* home, bool share, Propagator& p,
+                           BV b0, BV b1, BV b2)
+    : BoolBinary<BV,BV>(home,share,p,b0,b1) {
+    x2.update(home,share,b2);
+  }
+
+  template <class BV>
+  Actor*
+  TerOrTrue<BV>::copy(Space* home, bool share) {
+    assert(x0.none() && x1.none());
+    if (x2.one())
+      return new (home) OrTrueSubsumed<BV>(home,share,*this,x0,x1);
+    if (x2.zero())
+      return new (home) BinOrTrue<BV,BV>(home,share,*this,x0,x1);
+    return new (home) TerOrTrue<BV>(home,share,*this);
+  }
+
+  template <class BV>
+  inline ExecStatus
+  TerOrTrue<BV>::post(Space* home, BV b0, BV b1, BV b2) {
+    (void) new (home) TerOrTrue<BV>(home,b0,b1,b2);
+    return ES_OK;
+  }
+
+  template <class BV>
+  ExecStatus
+  TerOrTrue<BV>::propagate(Space* home) {
+#define GECODE_INT_STATUS(S0,S1,S2) \
+    ((BV::S0<<(2*BV::BITS))|(BV::S1<<(1*BV::BITS))|(BV::S2<<(0*BV::BITS)))
+    switch ((x0.status() << (2*BV::BITS)) | (x1.status() << (1*BV::BITS)) |
+            (x2.status() << (0*BV::BITS))) {
+    case GECODE_INT_STATUS(NONE,NONE,NONE):
+    case GECODE_INT_STATUS(NONE,NONE,ZERO):
+    case GECODE_INT_STATUS(NONE,NONE,ONE):
+      GECODE_NEVER;
+    case GECODE_INT_STATUS(NONE,ZERO,NONE):
+      std::swap(x1,x2); x1.subscribe(home,this,PC_BOOL_VAL);
+      return ES_FIX;
+    case GECODE_INT_STATUS(NONE,ZERO,ZERO):
+      x0.one_none(home); break;
+    case GECODE_INT_STATUS(NONE,ZERO,ONE):
+    case GECODE_INT_STATUS(NONE,ONE,NONE):
+    case GECODE_INT_STATUS(NONE,ONE,ZERO):
+    case GECODE_INT_STATUS(NONE,ONE,ONE):
+      x0.cancel(home,this,PC_BOOL_VAL); break;
+    case GECODE_INT_STATUS(ZERO,NONE,NONE):
+      std::swap(x0,x2); x0.subscribe(home,this,PC_BOOL_VAL);
+      return ES_FIX;
+    case GECODE_INT_STATUS(ZERO,NONE,ZERO):
+      x1.one_none(home); break;
+    case GECODE_INT_STATUS(ZERO,NONE,ONE):
+      x1.cancel(home,this,PC_BOOL_VAL); break;
+    case GECODE_INT_STATUS(ZERO,ZERO,NONE):
+      x2.one_none(home); break;
+    case GECODE_INT_STATUS(ZERO,ZERO,ZERO):
+      return ES_FAILED;
+    case GECODE_INT_STATUS(ZERO,ZERO,ONE):
+    case GECODE_INT_STATUS(ZERO,ONE,NONE):
+    case GECODE_INT_STATUS(ZERO,ONE,ZERO):
+    case GECODE_INT_STATUS(ZERO,ONE,ONE):
+      break;
+    case GECODE_INT_STATUS(ONE,NONE,NONE):
+    case GECODE_INT_STATUS(ONE,NONE,ZERO):
+    case GECODE_INT_STATUS(ONE,NONE,ONE):
+      x1.cancel(home,this,PC_BOOL_VAL); break;
+    case GECODE_INT_STATUS(ONE,ZERO,NONE):
+    case GECODE_INT_STATUS(ONE,ZERO,ZERO):
+    case GECODE_INT_STATUS(ONE,ZERO,ONE):
+    case GECODE_INT_STATUS(ONE,ONE,NONE):
+    case GECODE_INT_STATUS(ONE,ONE,ZERO):
+    case GECODE_INT_STATUS(ONE,ONE,ONE):
+      break;
+    default:
+      GECODE_NEVER;
+    }
+    return this->ES_DISPOSED(sizeof(*this));
+#undef GECODE_INT_STATUS
   }
 
 
@@ -95,6 +264,13 @@ namespace Gecode { namespace Int { namespace Bool {
   forceinline
   QuadOrTrue<BV>::QuadOrTrue(Space* home, BV b0, BV b1, BV b2, BV b3)
     : BoolBinary<BV,BV>(home,b0,b1), x2(b2), x3(b3) {}
+
+  template<class BV>
+  forceinline size_t
+  QuadOrTrue<BV>::dispose(Space* home) {
+    (void) BoolBinary<BV,BV>::dispose(home);
+    return sizeof(*this);
+  }
 
   template <class BV>
   forceinline
@@ -114,16 +290,25 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BV>
+  Actor*
+  QuadOrTrue<BV>::copy(Space* home, bool share) {
+    assert(x0.none() && x1.none());
+    if (x2.one() || x3.one())
+      return new (home) OrTrueSubsumed<BV>(home,share,*this,x0,x1);
+    if (x2.zero() && x3.zero())
+      return new (home) BinOrTrue<BV,BV>(home,share,*this,x0,x1);
+    if (x2.zero())
+      return new (home) TerOrTrue<BV>(home,share,*this,x0,x1,x3);
+    if (x3.zero())
+      return new (home) TerOrTrue<BV>(home,share,*this,x0,x1,x2);
+    return new (home) QuadOrTrue<BV>(home,share,*this);
+  }
+
+  template <class BV>
   inline ExecStatus
   QuadOrTrue<BV>::post(Space* home, BV b0, BV b1, BV b2, BV b3) {
     (void) new (home) QuadOrTrue<BV>(home,b0,b1,b2,b3);
     return ES_OK;
-  }
-
-  template <class BV>
-  Actor*
-  QuadOrTrue<BV>::copy(Space* home, bool share) {
-    return new (home) QuadOrTrue<BV>(home,share,*this);
   }
 
   template <class BV>
@@ -248,13 +433,6 @@ namespace Gecode { namespace Int { namespace Bool {
 #undef GECODE_INT_STATUS
   }
 
-  template<class BV>
-  size_t
-  QuadOrTrue<BV>::dispose(Space* home) {
-    (void) BoolBinary<BV,BV>::dispose(home);
-    return sizeof(*this);
-  }
-
 
   /*
    * Boolean disjunction propagator
@@ -276,6 +454,12 @@ namespace Gecode { namespace Int { namespace Bool {
   Or<BVA,BVB,BVC>::Or(Space* home, bool share, Propagator& p,
                         BVA b0, BVB b1, BVC b2)
     : BoolTernary<BVA,BVB,BVC>(home,share,p,b0,b1,b2) {}
+
+  template <class BVA, class BVB, class BVC>
+  Actor*
+  Or<BVA,BVB,BVC>::copy(Space* home, bool share) {
+    return new (home) Or<BVA,BVB,BVC>(home,share,*this);
+  }
 
   template <class BVA, class BVB, class BVC>
   inline ExecStatus
@@ -310,17 +494,12 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BVA, class BVB, class BVC>
-  Actor*
-  Or<BVA,BVB,BVC>::copy(Space* home, bool share) {
-    return new (home) Or<BVA,BVB,BVC>(home,share,*this);
-  }
-
-  template <class BVA, class BVB, class BVC>
   ExecStatus
   Or<BVA,BVB,BVC>::propagate(Space* home) {
 #define GECODE_INT_STATUS(S0,S1,S2) \
-    ((((BVA::S0 << BVA::BITS) | BVB::S1) << BVB::BITS) | BVC::S2)
-    switch ((((x0.status() << BVA::BITS) | x1.status()) << BVB::BITS) | x2.status()) {
+  ((BVA::S0<<(2*BVA::BITS))|(BVB::S1<<(1*BVB::BITS))|(BVC::S2<<(0*BVC::BITS)))
+    switch ((x0.status() << (2*BVA::BITS)) | (x1.status() << (1*BVB::BITS)) |
+            (x2.status() << (0*BVC::BITS))) {
     case GECODE_INT_STATUS(NONE,NONE,NONE):
       GECODE_NEVER;
     case GECODE_INT_STATUS(NONE,NONE,ZERO):
@@ -389,51 +568,55 @@ namespace Gecode { namespace Int { namespace Bool {
    *
    */
 
-  template<class View>
+  template<class BV>
   forceinline
-  NaryOrTrue<View>::NaryOrTrue(Space* home, ViewArray<View>& b)
-    : BinaryPropagator<View,PC_INT_VAL>(home,
-                                        b[b.size()-2],
-                                        b[b.size()-1]), x(b) {
+  NaryOrTrue<BV>::NaryOrTrue(Space* home, ViewArray<BV>& b)
+    : BinaryPropagator<BV,PC_BOOL_VAL>(home,
+                                      b[b.size()-2],
+                                      b[b.size()-1]), x(b) {
     assert(x.size() > 2);
     x.size(x.size()-2);
   }
 
-  template<class View>
+  template<class BV>
   PropCost
-  NaryOrTrue<View>::cost(void) const {
+  NaryOrTrue<BV>::cost(void) const {
     return cost_lo(x.size(),PC_LINEAR_LO);
   }
 
-  template<class View>
+  template<class BV>
   forceinline
-  NaryOrTrue<View>::NaryOrTrue(Space* home, bool share, NaryOrTrue<View>& p)
-    : BinaryPropagator<View,PC_INT_VAL>(home,share,p), x(home,p.x.size()) {
-    // Eliminate all zeros and all but one ones in original and update
-    int n = p.x.size();
-    for (int i=n; i--; )
-      if (p.x[i].zero()) {
-        n--; p.x[i]=p.x[n]; x[i]=x[n];
-      } else if (p.x[i].one()) {
-        x[i].update(home,share,p.x[i]);
-        // Now eliminate all remaining zeros and ones
-        while (i--)
-          if (p.x[i].zero() || p.x[i].one()) {
-            n--; p.x[i]=p.x[n]; x[i]=x[n];
-          } else {
-            x[i].update(home,share,p.x[i]);
-          }
-        goto done;
-      } else {
-        x[i].update(home,share,p.x[i]);
-      }
-    done:
-    x.size(n); p.x.size(n);
+  NaryOrTrue<BV>::NaryOrTrue(Space* home, bool share, NaryOrTrue<BV>& p)
+    : BinaryPropagator<BV,PC_BOOL_VAL>(home,share,p) {
+    x.update(home,share,p.x);
   }
 
-  template<class View>
+  template<class BV>
+  Actor*
+  NaryOrTrue<BV>::copy(Space* home, bool share) {
+    // Check whether the original has already been purged
+    if (x[0].one()) {
+      x.size(1); // The rest does not matter any longer
+      return new (home) OrTrueSubsumed<BV>(home,share,*this,x0,x1);
+    }
+    // Eliminate all zeros and find a one
+    int n = x.size();
+    for (int i=n; i--; )
+      if (x[i].one()) {
+        // Only keep the one
+        x[0]=x[i]; x.size(1);
+        return new (home) OrTrueSubsumed<BV>(home,share,*this,x0,x1);
+      } else if (x[i].zero()) {
+        // Eliminate the zero
+        x[i]=x[--n];
+      }
+    x.size(n);
+    return new (home) NaryOrTrue<BV>(home,share,*this);
+  }
+
+  template<class BV>
   inline ExecStatus
-  NaryOrTrue<View>::post(Space* home, ViewArray<View>& b) {
+  NaryOrTrue<BV>::post(Space* home, ViewArray<BV>& b) {
     for (int i=b.size(); i--; )
       if (b[i].one())
         return ES_OK;
@@ -442,33 +625,29 @@ namespace Gecode { namespace Int { namespace Bool {
     if (b.size() == 0)
       return ES_FAILED;
     b.unique();
-     if (b.size() == 1) {
+    if (b.size() == 1) {
       GECODE_ME_CHECK(b[0].one(home));
     } else if (b.size() == 2) {
-       return BinOrTrue<View,View>::post(home,b[0],b[1]);
+       return BinOrTrue<BV,BV>::post(home,b[0],b[1]);
+    } else if (b.size() == 3) {
+       return TerOrTrue<BV>::post(home,b[0],b[1],b[2]);
     } else if (b.size() == 4) {
-       return QuadOrTrue<View>::post(home,b[0],b[1],b[2],b[3]);
+       return QuadOrTrue<BV>::post(home,b[0],b[1],b[2],b[3]);
     } else {
       (void) new (home) NaryOrTrue(home,b);
     }
     return ES_OK;
   }
 
-  template<class View>
-  Actor*
-  NaryOrTrue<View>::copy(Space* home, bool share) {
-    return new (home) NaryOrTrue<View>(home,share,*this);
-  }
-
-  template<class View>
+  template<class BV>
   forceinline ExecStatus
-  NaryOrTrue<View>::resubscribe(Space* home, View& x0, View x1) {
+  NaryOrTrue<BV>::resubscribe(Space* home, BV& x0, BV x1) {
     if (x0.zero()) {
       int n = x.size();
       for (int i=n; i--; )
         if (x[i].one()) {
           x.size(n);
-          return ES_SUBSUMED;
+          return this->ES_DISPOSED(home);
         } else if (x[i].zero()) {
           x[i] = x[--n];
         } else {
@@ -476,33 +655,31 @@ namespace Gecode { namespace Int { namespace Bool {
           assert(!x[i].zero() && !x[i].one());
           // Rewrite if there is just one view left
           if (i == 0) {
-            View y = x[0];
-            x.size(0);
-            GECODE_REWRITE((BinOrTrue<View,View>::post(home,x1,y)));
+            BV y = x[0]; x.size(0);
+            GECODE_REWRITE((BinOrTrue<BV,BV>::post(home,x1,y)));
           }
           // Move to x0 and subscribe
           x0=x[i]; x[i]=x[--n]; 
           x.size(n);
-          x0.subscribe(home,this,PC_INT_VAL,false);
+          x0.subscribe(home,this,PC_BOOL_VAL,false);
           return ES_FIX;
         }
       // All views have been assigned!
       x.size(0);
       GECODE_ME_CHECK(x1.one(home));
-      return ES_SUBSUMED;
+      return this->ES_DISPOSED(sizeof(*this));
     }
     return ES_FIX;
   }
 
-  template<class View>
+  template<class BV>
   ExecStatus
-  NaryOrTrue<View>::propagate(Space* home) {
+  NaryOrTrue<BV>::propagate(Space* home) {
     if (x0.one() || x1.one())
-      return ES_SUBSUMED;
-    ExecStatus e = resubscribe(home,x0,x1);
-    if (e != ES_FIX)
-      return e;
-    return resubscribe(home,x1,x0);
+      return this->ES_DISPOSED(home);
+    GECODE_ES_CHECK(resubscribe(home,x0,x1));
+    GECODE_ES_CHECK(resubscribe(home,x1,x0));
+    return ES_FIX;
   }
 
 
@@ -511,21 +688,31 @@ namespace Gecode { namespace Int { namespace Bool {
    *
    */
 
-  template<class View>
+  template<class BV>
   forceinline
-  NaryOr<View>::NaryOr(Space* home, ViewArray<View>& b, View c)
-    : NaryOnePropagator<View,PC_INT_VAL>(home,b,c) {}
+  NaryOr<BV>::NaryOr(Space* home, ViewArray<BV>& b, BV c)
+    : NaryOnePropagator<BV,PC_BOOL_VAL>(home,b,c) {}
 
-  template<class View>
+  template<class BV>
   forceinline
-  NaryOr<View>::NaryOr(Space* home, bool share, NaryOr<View>& p)
-    : NaryOnePropagator<View,PC_INT_VAL>(home,share,p) {}
+  NaryOr<BV>::NaryOr(Space* home, bool share, NaryOr<BV>& p)
+    : NaryOnePropagator<BV,PC_BOOL_VAL>(home,share,p) {}
 
-  template<class View>
+  template<class BV>
+  Actor*
+  NaryOr<BV>::copy(Space* home, bool share) {
+    if (x.size() == 1)
+      return new (home) Eq<BV,BV>(home,share,*this,x[0],y);
+    if (x.size() == 2)
+      return new (home) Or<BV,BV,BV>(home,share,*this,x[0],x[1],y);
+    return new (home) NaryOr<BV>(home,share,*this);
+  }
+
+  template<class BV>
   inline ExecStatus
-  NaryOr<View>::post(Space* home, ViewArray<View>& b, View c) {
+  NaryOr<BV>::post(Space* home, ViewArray<BV>& b, BV c) {
     if (c.one())
-      return NaryOrTrue<View>::post(home,b);
+      return NaryOrTrue<BV>::post(home,b);
     if (c.zero()) {
       for (int i=b.size(); i--; )
         GECODE_ME_CHECK(b[i].zero(home));
@@ -542,50 +729,37 @@ namespace Gecode { namespace Int { namespace Bool {
       return ES_FAILED;
     b.unique();
     if (b.size() == 1)
-      return Eq<View,View>::post(home,b[0],c);
+      return Eq<BV,BV>::post(home,b[0],c);
     if (b.size() == 2)
-      return Or<View,View,View>::post(home,b[0],b[1],c);
+      return Or<BV,BV,BV>::post(home,b[0],b[1],c);
     (void) new (home) NaryOr(home,b,c);
     return ES_OK;
   }
 
-  template<class View>
-  Actor*
-  NaryOr<View>::copy(Space* home, bool share) {
-    if (x.size() == 1)
-      return new (home) Eq<View,View>(home,share,*this,
-                                      x[0],y);
-    if (x.size() == 2)
-      return new (home) Or<View,View,View>(home,share,*this,
-                                           x[0],x[1],y);
-    return new (home) NaryOr<View>(home,share,*this);
-  }
-
-  template<class View>
+  template<class BV>
   ExecStatus
-  NaryOr<View>::propagate(Space* home) {
+  NaryOr<BV>::propagate(Space* home) {
     if (y.zero()) {
       for (int i = x.size(); i--; )
         GECODE_ME_CHECK(x[i].zero(home));
-      return ES_SUBSUMED;
+      return this->ES_DISPOSED(sizeof(*this));
     }
     if (y.one())
-      GECODE_REWRITE(NaryOrTrue<View>::post(home,x));
+      GECODE_REWRITE(NaryOrTrue<BV>::post(home,x));
     for (int i = x.size(); i--; ) {
       if (x[i].one()) {
         y.one_none(home);
-        return ES_SUBSUMED;
+        return this->ES_DISPOSED(home);
       }
       if (x[i].zero())
         x.move_lst(i);
     }
     if (x.size() == 0) {
       y.zero_none(home);
-      return ES_SUBSUMED;
+      return this->ES_DISPOSED(sizeof(*this));
     }
     return ES_FIX;
   }
-
 
 }}}
 

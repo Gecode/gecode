@@ -109,6 +109,45 @@ namespace Gecode { namespace Int { namespace Bool {
 
 
   /**
+   * \brief Boolean less or equal propagator
+   *
+   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class BV>
+  class Lq : public BoolBinary<BV,BV> {
+  protected:
+    using BoolBinary<BV,BV>::x0;
+    using BoolBinary<BV,BV>::x1;
+    /// Constructor for posting
+    Lq(Space* home, BV b0, BV b1);
+    /// Constructor for cloning \a p
+    Lq(Space* home, bool share, Lq& p);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator \f$ b_0 \leq b_1\f$
+    static  ExecStatus post(Space* home, BV b0, BV b1);
+  };
+
+
+  /**
+   * \brief Boolean less propagator
+   *
+   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class BV>
+  class Le {
+  public:
+    /// Post propagator \f$ b_0 < b_1\f$
+    static  ExecStatus post(Space* home, BV b0, BV b1);
+  };
+
+
+  /**
    * \brief Binary Boolean disjunction propagator (true)
    *
    * Requires \code #include "gecode/int/bool.hh" \endcode
@@ -133,6 +172,37 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ b_0 \lor b_1 = 1 \f$
     static  ExecStatus post(Space* home, BVA b0, BVB b1);
+  };
+
+  /**
+   * \brief Ternary Boolean disjunction propagator (true)
+   *
+   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class BV>
+  class TerOrTrue : public BoolBinary<BV,BV> {
+  protected:
+    using BoolBinary<BV,BV>::x0;
+    using BoolBinary<BV,BV>::x1;
+    /// Boolean view without subscription
+    BV x2;
+    /// Constructor for posting
+    TerOrTrue(Space* home, BV b0, BV b1, BV b2);
+    /// Constructor for cloning \a p
+    TerOrTrue(Space* home, bool share, TerOrTrue& p);
+  public:
+    /// Constructor for rewriting \a p during cloning
+    TerOrTrue(Space* home, bool share, Propagator& p,
+              BV b0, BV b1, BV b2);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator \f$ b_0 \lor b_1 \lor b_2 = 1 \f$
+    static  ExecStatus post(Space* home, BV b0, BV b1, BV b2);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
 
   /**
@@ -201,22 +271,22 @@ namespace Gecode { namespace Int { namespace Bool {
    * Requires \code #include "gecode/int/bool.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template<class View>
-  class NaryOr : public NaryOnePropagator<View,PC_INT_VAL> {
+  template<class BV>
+  class NaryOr : public NaryOnePropagator<BV,PC_BOOL_VAL> {
   protected:
-    using NaryOnePropagator<View,PC_INT_VAL>::x;
-    using NaryOnePropagator<View,PC_INT_VAL>::y;
+    using NaryOnePropagator<BV,PC_BOOL_VAL>::x;
+    using NaryOnePropagator<BV,PC_BOOL_VAL>::y;
     /// Constructor for posting
-    NaryOr(Space* home,  ViewArray<View>& b, View c);
+    NaryOr(Space* home,  ViewArray<BV>& b, BV c);
     /// Constructor for cloning \a p
-    NaryOr(Space* home, bool share, NaryOr<View>& p);
+    NaryOr(Space* home, bool share, NaryOr<BV>& p);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = c\f$
-    static  ExecStatus post(Space* home, ViewArray<View>& b, View c);
+    static  ExecStatus post(Space* home, ViewArray<BV>& b, BV c);
   };
 
 
@@ -226,19 +296,19 @@ namespace Gecode { namespace Int { namespace Bool {
    * Requires \code #include "gecode/int/bool.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template<class View>
-  class NaryOrTrue : public BinaryPropagator<View,PC_INT_VAL> {
+  template<class BV>
+  class NaryOrTrue : public BinaryPropagator<BV,PC_BOOL_VAL> {
   protected:
-    using BinaryPropagator<View,PC_INT_VAL>::x0;
-    using BinaryPropagator<View,PC_INT_VAL>::x1;
+    using BinaryPropagator<BV,PC_BOOL_VAL>::x0;
+    using BinaryPropagator<BV,PC_BOOL_VAL>::x1;
     /// Views not yet subscribed to
-    ViewArray<View> x;
+    ViewArray<BV> x;
     /// Update subscription
-    ExecStatus resubscribe(Space* home, View& x0, View x1);
+    ExecStatus resubscribe(Space* home, BV& x0, BV x1);
     /// Constructor for posting
-    NaryOrTrue(Space* home,  ViewArray<View>& b);
+    NaryOrTrue(Space* home,  ViewArray<BV>& b);
     /// Constructor for cloning \a p
-    NaryOrTrue(Space* home, bool share, NaryOrTrue<View>& p);
+    NaryOrTrue(Space* home, bool share, NaryOrTrue<BV>& p);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
@@ -247,7 +317,7 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = 0\f$
-    static  ExecStatus post(Space* home, ViewArray<View>& b);
+    static  ExecStatus post(Space* home, ViewArray<BV>& b);
   };
 
 
@@ -280,6 +350,7 @@ namespace Gecode { namespace Int { namespace Bool {
 
 #include "gecode/int/bool/base.icc"
 #include "gecode/int/bool/eq.icc"
+#include "gecode/int/bool/lq.icc"
 #include "gecode/int/bool/or.icc"
 #include "gecode/int/bool/eqv.icc"
 

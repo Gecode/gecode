@@ -27,6 +27,79 @@ namespace Gecode {
   using namespace Int;
 
   void
+  rel(Space* home, BoolVar x0, IntRelType r, BoolVar x1, IntConLevel) {
+    if (home->failed()) return;
+    switch (r) {
+    case IRT_EQ:
+      GECODE_ES_FAIL(home,(Bool::Eq<BoolView,BoolView>
+                           ::post(home,x0,x1)));
+      break;
+    case IRT_NQ: 
+      {
+        NegBoolView n1(x1);
+        GECODE_ES_FAIL(home,(Bool::Eq<BoolView,NegBoolView>
+                             ::post(home,x0,n1)));
+      }
+      break;
+    case IRT_GQ:
+      GECODE_ES_FAIL(home,Bool::Lq<BoolView>::post(home,x1,x0)); 
+      break;
+    case IRT_LQ:
+      GECODE_ES_FAIL(home,Bool::Lq<BoolView>::post(home,x0,x1)); 
+      break;
+    case IRT_GR:
+      GECODE_ES_FAIL(home,Bool::Le<BoolView>::post(home,x1,x0)); 
+      break;
+    case IRT_LE:
+      GECODE_ES_FAIL(home,Bool::Le<BoolView>::post(home,x0,x1)); 
+      break;
+    default:
+      throw UnknownRelation("Int::rel");
+    }
+  }
+
+  void
+  rel(Space* home, BoolVar x0, IntRelType r, int n, IntConLevel) {
+    if (home->failed()) return;
+    BoolView x(x0);
+    if (n == 0) {
+      switch (r) {
+      case IRT_LQ:
+      case IRT_EQ:
+        GECODE_ME_FAIL(home,x.zero(home)); break;
+      case IRT_NQ:
+      case IRT_GR:
+        GECODE_ME_FAIL(home,x.one(home)); break;
+      case IRT_LE:
+        home->fail(); break;
+      case IRT_GQ:
+        break;
+      default:
+        throw UnknownRelation("Int::rel");
+      }
+    } else if (n == 1) {
+      switch (r) {
+      case IRT_GQ:
+      case IRT_EQ:
+        GECODE_ME_FAIL(home,x.one(home)); break;
+      case IRT_NQ:
+      case IRT_LE:
+        GECODE_ME_FAIL(home,x.zero(home)); break;
+      case IRT_GR:
+        home->fail(); break;
+      case IRT_LQ:
+        break;
+      default:
+        throw UnknownRelation("Int::rel");
+      }
+    } else {
+      throw NotZeroOne("Int::rel");
+    }
+  }
+
+
+
+  void
   bool_not(Space* home, BoolVar b0, BoolVar b1, IntConLevel) {
     if (home->failed()) return;
     NegBoolView n0(b0);

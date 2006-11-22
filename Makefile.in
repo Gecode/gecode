@@ -176,7 +176,7 @@ INTVARIMP = \
         gecode/int/var/imp-bool-hdr.icc gecode/int/var/imp-bool-body.icc
 INTHDR0 = \
 	arithmetic/abs.icc arithmetic/max.icc arithmetic/mult.icc \
-	bool/or.icc bool/eq.icc bool/eqv.icc bool/base.icc \
+	bool/or.icc bool/eq.icc bool/lq.icc bool/eqv.icc bool/base.icc \
 	branch/select-val.icc branch/select-view.icc \
 	count/view.icc count/int.icc count/rel.icc \
 	cumulatives/val.icc \

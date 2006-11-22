@@ -51,6 +51,13 @@ namespace Gecode { namespace Int {
     NumericalOverflow(const char* l);
   };
 
+  /// %Exception: Not 0/1 integer
+  class NotZeroOne : public Exception {
+  public:
+    /// Initialize with location \a l
+    NotZeroOne(const char* l);
+  };
+
 
   /// %Exception: No arguments available in argument array
   class ArgumentEmpty : public Exception  {
@@ -109,6 +116,10 @@ namespace Gecode { namespace Int {
   inline
   NumericalOverflow::NumericalOverflow(const char* l)
     : Exception(l,"Integer overflow") {}
+
+  inline
+  NotZeroOne::NotZeroOne(const char* l)
+    : Exception(l,"Not a zero/one integer value") {}
 
 
   inline

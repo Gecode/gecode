@@ -30,8 +30,8 @@ namespace Gecode { namespace Int { namespace Bool {
   forceinline
   BoolBinary<BVA,BVB>::BoolBinary(Space* home, BVA b0, BVB b1)
     : Propagator(home), x0(b0), x1(b1) {
-    x0.subscribe(home,this,PC_INT_VAL);
-    x1.subscribe(home,this,PC_INT_VAL);
+    x0.subscribe(home,this,PC_BOOL_VAL);
+    x1.subscribe(home,this,PC_BOOL_VAL);
   }
 
   template<class BVA, class BVB>
@@ -61,8 +61,8 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BVA, class BVB>
   forceinline size_t
   BoolBinary<BVA,BVB>::dispose(Space* home) {
-    x0.cancel(home,this,PC_INT_VAL);
-    x1.cancel(home,this,PC_INT_VAL);
+    x0.cancel(home,this,PC_BOOL_VAL);
+    x1.cancel(home,this,PC_BOOL_VAL);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -76,9 +76,9 @@ namespace Gecode { namespace Int { namespace Bool {
   BoolTernary<BVA,BVB,BVC>::BoolTernary
   (Space* home, BVA b0, BVB b1, BVC b2)
     : Propagator(home), x0(b0), x1(b1), x2(b2) {
-    x0.subscribe(home,this,PC_INT_VAL);
-    x1.subscribe(home,this,PC_INT_VAL);
-    x2.subscribe(home,this,PC_INT_VAL);
+    x0.subscribe(home,this,PC_BOOL_VAL);
+    x1.subscribe(home,this,PC_BOOL_VAL);
+    x2.subscribe(home,this,PC_BOOL_VAL);
   }
 
   template<class BVA, class BVB, class BVC>
@@ -110,9 +110,9 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BVA, class BVB, class BVC>
   forceinline size_t
   BoolTernary<BVA,BVB,BVC>::dispose(Space* home) {
-    x0.cancel(home,this,PC_INT_VAL);
-    x1.cancel(home,this,PC_INT_VAL);
-    x2.cancel(home,this,PC_INT_VAL);
+    x0.cancel(home,this,PC_BOOL_VAL);
+    x1.cancel(home,this,PC_BOOL_VAL);
+    x2.cancel(home,this,PC_BOOL_VAL);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }

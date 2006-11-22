@@ -28,6 +28,23 @@ namespace Gecode { namespace Int { namespace Bool {
     : BoolBinary<BVA,BVB>(home,b0,b1) {}
 
   template<class BVA, class BVB>
+  forceinline
+  Eq<BVA,BVB>::Eq(Space* home, bool share, Eq<BVA,BVB>& p)
+    : BoolBinary<BVA,BVB>(home,share,p) {}
+
+  template<class BVA, class BVB>
+  forceinline
+  Eq<BVA,BVB>::Eq(Space* home, bool share, Propagator& p,
+                  BVA b0, BVB b1)
+    : BoolBinary<BVA,BVB>(home,share,p,b0,b1) {}
+
+  template<class BVA, class BVB>
+  Actor*
+  Eq<BVA,BVB>::copy(Space* home, bool share) {
+    return new (home) Eq<BVA,BVB>(home,share,*this);
+  }
+
+  template<class BVA, class BVB>
   inline ExecStatus
   Eq<BVA,BVB>::post(Space* home, BVA b0, BVB b1) {
     switch (bool_test(b0,b1)) {
@@ -52,27 +69,11 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BVA, class BVB>
-  forceinline
-  Eq<BVA,BVB>::Eq(Space* home, bool share, Eq<BVA,BVB>& p)
-    : BoolBinary<BVA,BVB>(home,share,p) {}
-
-  template<class BVA, class BVB>
-  forceinline
-  Eq<BVA,BVB>::Eq(Space* home, bool share, Propagator& p,
-                  BVA b0, BVB b1)
-    : BoolBinary<BVA,BVB>(home,share,p,b0,b1) {}
-
-  template<class BVA, class BVB>
-  Actor*
-  Eq<BVA,BVB>::copy(Space* home, bool share) {
-    return new (home) Eq<BVA,BVB>(home,share,*this);
-  }
-
-  template<class BVA, class BVB>
   ExecStatus
   Eq<BVA,BVB>::propagate(Space* home) {
-#define GECODE_INT_STATUS(S0,S1) ((BVA::S0 << BVA::BITS) | (BVB::S1))
-    switch ((x0.status() << BVA::BITS) | x1.status()) {
+#define GECODE_INT_STATUS(S0,S1) \
+  ((BVA::S0<<(1*BVA::BITS))|(BVB::S1<<(0*BVB::BITS)))
+    switch ((x0.status() << (1*BVA::BITS)) | (x1.status() << (0*BVB::BITS))) {
     case GECODE_INT_STATUS(NONE,NONE):
       GECODE_NEVER;
     case GECODE_INT_STATUS(NONE,ZERO):
@@ -92,7 +93,7 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(ONE,ONE):
       break;
     default:
-        GECODE_NEVER;
+      GECODE_NEVER;
     }
     return this->ES_DISPOSED(sizeof(*this));
 #undef GECODE_INT_STATUS

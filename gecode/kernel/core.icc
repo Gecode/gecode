@@ -464,6 +464,17 @@ namespace Gecode {
      */
     ExecStatus ES_DISPOSED(size_t s);
     /**
+     * \brief %Propagator is subsumed
+     *
+     * First disposes the propagator and then returns subsumtion.
+     *
+     * \warning Has a side-effect on the propagator. Overwrites
+     *          the propagator modification events of a propagator.
+     *          Use only directly with returning from propagation.
+     * \ingroup TaskActor
+     */
+    ExecStatus ES_DISPOSED(Space* home);
+    /**
      * \brief %Propagator has computed partial fixpoint
      *
      * %Set propagator modification events after processing of
@@ -1411,6 +1422,10 @@ namespace Gecode {
   forceinline ExecStatus
   Propagator::ES_DISPOSED(size_t s) {
     this->u.size = s; return __ES_DISPOSED;
+  }
+  forceinline ExecStatus
+  Propagator::ES_DISPOSED(Space* home) {
+    this->u.size = this->dispose(home); return __ES_DISPOSED;
   }
 
   forceinline ExecStatus
