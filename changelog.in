@@ -53,6 +53,15 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The use of the consistency options were a little confusing, now
+the rule is: the level of constistency increases from ICL_VAL to
+ICL_BND to ICL_DOM.
+
+[ENTRY]
 Module: minimodel
 What:   performance
 Rank:   minor

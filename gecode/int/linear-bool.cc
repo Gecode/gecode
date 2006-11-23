@@ -145,7 +145,7 @@ namespace Gecode {
   void
   linear(Space* home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType r, int c,
-         IntConLevel icl) {
+         IntConLevel) {
     using namespace Int;
     using namespace Int::Linear;
 
@@ -206,7 +206,7 @@ namespace Gecode {
   void
   linear(Space* home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType r, IntVar y,
-         IntConLevel icl) {
+         IntConLevel) {
     using namespace Int;
     using namespace Int::Linear;
 

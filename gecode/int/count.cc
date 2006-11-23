@@ -26,7 +26,7 @@ namespace Gecode {
 
   void
   count(Space* home, const IntVarArgs& xa, int y,
-        IntRelType r, int z, IntConLevel icl) {
+        IntRelType r, int z, IntConLevel) {
     using namespace Int;
     if (home->failed()) return;
     ViewArray<IntView> x(home,xa);
@@ -63,7 +63,7 @@ namespace Gecode {
 
   void
   count(Space* home, const IntVarArgs& xa, IntVar y,
-        IntRelType r, int z, IntConLevel icl) {
+        IntRelType r, int z, IntConLevel) {
     using namespace Int;
     if (home->failed()) return;
     ViewArray<IntView> x(home,xa);
@@ -99,7 +99,7 @@ namespace Gecode {
 
   void
   count(Space* home, const IntVarArgs& xa, int y,
-        IntRelType r, IntVar z, IntConLevel icl) {
+        IntRelType r, IntVar z, IntConLevel) {
     using namespace Int;
     if (home->failed()) return;
     ViewArray<IntView> x(home,xa);
@@ -136,7 +136,7 @@ namespace Gecode {
 
   void
   count(Space* home, const IntVarArgs& xa, IntVar y,
-        IntRelType r, IntVar z, IntConLevel icl) {
+        IntRelType r, IntVar z, IntConLevel) {
     using namespace Int;
     if (home->failed()) return;
     ViewArray<IntView> x(home,xa);

@@ -73,11 +73,11 @@ namespace Gecode {
     if (home->failed()) return;
     Element::IdxView<IntView>* iv = 
       Element::IdxView<IntView>::init(home,c);
-    if (icl == ICL_BND) {
-      GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,IntView,IntView>
+    if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
+      GECODE_ES_FAIL(home,(Element::ViewDom<IntView,IntView,IntView>
                            ::post(home,iv,c.size(),x0,x1)));
     } else {
-      GECODE_ES_FAIL(home,(Element::ViewDom<IntView,IntView,IntView>
+      GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,IntView,IntView>
                            ::post(home,iv,c.size(),x0,x1)));
     }
   }
@@ -89,11 +89,11 @@ namespace Gecode {
     Element::IdxView<IntView>* iv = 
       Element::IdxView<IntView>::init(home,c);
     ConstIntView v1(x1);
-    if (icl == ICL_BND) {
-      GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,IntView,ConstIntView>
+    if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
+      GECODE_ES_FAIL(home,(Element::ViewDom<IntView,IntView,ConstIntView>
                            ::post(home,iv,c.size(),x0,v1)));
     } else {
-      GECODE_ES_FAIL(home,(Element::ViewDom<IntView,IntView,ConstIntView>
+      GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,IntView,ConstIntView>
                            ::post(home,iv,c.size(),x0,v1)));
     }
   }
