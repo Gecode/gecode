@@ -697,15 +697,7 @@ namespace Gecode {
     /// Id of next branching to be created
     unsigned int branch_id;
 
-    /**
-     * \brief Number of subscriptions
-     *
-     * This number includes both the number of subscriptions and
-     * one free slot and hence can be considered as a conservative
-     * approximation of the real number of subscriptions. The number
-     * becomes more accurate after cloning a space.
-     *
-     */
+    /// Number of subscriptions
     unsigned int n_sub;
     /**
      * \brief Memory area used for storing subscriptions
@@ -1474,8 +1466,6 @@ namespace Gecode {
   Variable<VTI,PC,MED>::resize(Space* home) {
     assert(free() == 0);
     if (idx[0] == NULL) {
-      // Count the one new free entry
-      home->n_sub += 1;
       // Create fresh dependency array
       free(4);
       Propagator** prop = reinterpret_cast<Propagator**>
@@ -1484,10 +1474,26 @@ namespace Gecode {
         idx[i] = prop;
     } else {
       // Resize dependency array
-      int n = static_cast<int>(idx[PC+1] - idx[0]);
+      unsigned int n = static_cast<unsigned int>(idx[PC+1] - idx[0]);
+      // New size
+      unsigned int m;
+      if (home->sub == NULL) {
+        // Space has not been created by cloning, be generous
+        m = 2*n;
+      } else {
+        // Check whether array has already been resized (then it is
+        // not any longer in the special subscription memory array)
+        if ((home->sub <= idx[0]) && (idx[0] < home->sub+home->n_sub)) {
+          // Resize for the first time, increase by just 4
+          m = n+4;
+        } else {
+          // Already resized, increase by 50%
+          m = (n+1)*3 >> 1;
+        }
+      }
       Propagator** prop = reinterpret_cast<Propagator**>
-        (home->alloc(2*n*sizeof(Propagator*))) + n;
-      free(n);
+        (home->alloc(m*sizeof(Propagator*))) + m-n;
+      free(m-n);
       // Copy entries
       memcpy(prop, idx[0], n*sizeof(Propagator*));
       home->reuse(idx[0], n*sizeof(Propagator*));
@@ -1566,9 +1572,9 @@ namespace Gecode {
     x->u.free_me = u.free_me;
     Propagator** f = x->idx[0];
     int n = static_cast<int>(x->idx[PC+1] - f);
-    u.free_me = 1 << 4;
-    Propagator** t = sub + 1;
-    sub += n+1;
+    u.free_me = 0;
+    Propagator** t = sub;
+    sub += n;
     idx[0] = t;
     ptrdiff_t o = t - f;
     for (PropCond i = PC+1; i>0; i--)
@@ -1631,15 +1637,6 @@ namespace Gecode {
     // must still work for cloning (idx[0]) and degree (idx[PC+1])
     Propagator** b = idx[0];    idx[0] = NULL;
     Propagator** p = idx[PC+1]; idx[PC+1] = NULL;
-    /*
-     * Decrement for p-b subscriptions
-     *
-     * Note that one would like to also decrement for the additional
-     * single free slot that was counted initially. However, this
-     * is not possible as there might be no free slot. So the number
-     * of subscriptions is a conservative estimate and will be corrected
-     * upon cloning.
-     */
     home->n_sub -= p-b;
     // Information needed to release the dependency array
     unsigned int n = free() + (p-b);

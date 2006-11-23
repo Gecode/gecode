@@ -408,18 +408,15 @@ namespace Gecode {
         (Memory::malloc(n_sub*sizeof(Propagator*)));
     else
       s = NULL;
-    c->sub = s;
+    c->n_sub = n_sub;
+    c->sub   = s;
     for (int vti=VTI_LAST; vti--; ) {
       VarBase* vs = c->vars[vti];
       if (vs != NULL) {
         c->vars[vti] = NULL; vtp[vti]->update(vs,s);
       }
     }
-    // Update the number of subscriptions (both in copy and original)
-    // Remember: this is a conservative estimate
-    unsigned int n = s - c->sub;
-    assert(n <= n_sub);
-    c->n_sub = n; n_sub = n;
+    assert(s-c->sub == n_sub);
     // Re-establish prev links (reset forwarding information)
     ActorLink* p = &a_actors;
     ActorLink* a = p->next();
