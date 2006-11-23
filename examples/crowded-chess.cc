@@ -137,10 +137,11 @@ protected:
       for (int y = n; y--; )
         for (int i = 4; i--; )
           if (valid_pos(x+kmoves[i][0], y+kmoves[i][1]))
-            bool_and(this, 
-                     kb(x, y),
-                     kb(x+kmoves[i][0], y+kmoves[i][1]),
-                     false);
+            rel(this, 
+                kb(x, y),
+                BOT_AND,
+                kb(x+kmoves[i][0], y+kmoves[i][1]),
+                0);
   }
 
 

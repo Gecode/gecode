@@ -87,6 +87,13 @@ namespace Gecode { namespace Int {
     UnknownRelation(const char* l);
   };
 
+  /// %Exception: Unknown Boolean operation passed as argument
+  class UnknownBoolOp : public Exception  {
+  public:
+    /// Initialize with location \a l
+    UnknownBoolOp(const char* l);
+  };
+
   /// %Exception: Unknown value or variable selection passed as argument
   class UnknownBranching : public Exception {
   public:
@@ -138,6 +145,10 @@ namespace Gecode { namespace Int {
   inline
   UnknownRelation::UnknownRelation(const char* l)
     : Exception(l,"Unknown relation type") {}
+
+  inline
+  UnknownBoolOp::UnknownBoolOp(const char* l)
+    : Exception(l,"Unknown Boolean operation") {}
 
   inline
   UnknownBranching::UnknownBranching(const char* l)

@@ -418,25 +418,13 @@ namespace Gecode {
   rel(Space* home, BoolVar x0, IntRelType r, BoolVar x1,
       IntConLevel icl=ICL_DEF);
   /**
-   * \brief Propagates \f$ x \sim_r c\f$
+   * \brief Propagates \f$ x \sim_r n\f$
    *
-   * Throws an exception of type Int::NumericalOverflow, if \a c is neither
+   * Throws an exception of type Int::NotZeroOne, if \a n is neither
    * 0 or 1.
    */
   GECODE_INT_EXPORT void
-  rel(Space* home, BoolVar x, IntRelType r, int c,
-      IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for pairwise relation on \a x.
-   *
-   * States that the elements of \a x are in the following relation:
-   *  - if \a r = IRT_EQ, then all elements of \a x must be equal. 
-   *  - if \a r = IRT_LE, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ, 
-   *    then the elements of \a x are ordered with respt to \a r.
-   *  - if \a r = IRT_NQ, then all elements of \a x must be pairwise 
-   *    distinct (corresponds to the distinct constraint).
-   */
-  GECODE_INT_EXPORT void
-  rel(Space* home, const BoolVarArgs& x, IntRelType r,
+  rel(Space* home, BoolVar x, IntRelType r, int n,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for relation between \a x and \a y.
    *
@@ -449,19 +437,54 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   rel(Space* home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
       IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for operation on \a x0 and \a x1
+  /** \brief Post propagator for pairwise relation on \a x.
    *
-   * Posts propagator for \f$ x_0 o x_1 = x_2\f$
+   * States that the elements of \a x are in the following relation:
+   *  - if \a r = IRT_EQ, then all elements of \a x must be equal. 
+   *  - if \a r = IRT_LE, \a r = IRT_LQ, \a r = IRT_GR, or \a r = IRT_GQ, 
+   *    then the elements of \a x are ordered with respt to \a r.
+   *  - if \a r = IRT_NQ, then all elements of \a x must be pairwise 
+   *    distinct (corresponds to the distinct constraint).
+   *
    */
   GECODE_INT_EXPORT void
-  rel(Space* home, const BoolVar x0, BoolOpType o, const BoolVar x1,
-      const BoolVar x2, IntConLevel icl=ICL_DEF);
-  /** \brief Post propagator for operation on \a x
+  rel(Space* home, const BoolVarArgs& x, IntRelType r,
+      IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for Boolean operation on \a x0 and \a x1
    *
-   * Posts propagator for \f$ x_0 o x_1 = y\f$
+   * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} x_1 = x_2\f$
    */
   GECODE_INT_EXPORT void
-  rel(Space* home, const BoolVarArgs x, BoolOpType o, const BoolVar y,
+  rel(Space* home, BoolVar x0, BoolOpType o, BoolVar x1, BoolVar x2, 
+      IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for Boolean operation on \a x0 and \a x1
+   *
+   * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} x_1 = n\f$
+   *
+   * Throws an exception of type Int::NotZeroOne, if \a n is neither
+   * 0 or 1.
+   */
+  GECODE_INT_EXPORT void
+  rel(Space* home, BoolVar x0, BoolOpType o, BoolVar x1, int n, 
+      IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for Boolean operation on \a x
+   *
+   * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots  
+   * \diamond_{\mathit{op}} x_{|x|-1}= y\f$
+   */
+  GECODE_INT_EXPORT void
+  rel(Space* home, const BoolVarArgs x, BoolOpType o, BoolVar y,
+      IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for Boolean operation on \a x
+   *
+   * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots  
+   * \diamond_{\mathit{op}} x_{|x|-1}= n\f$
+   *
+   * Throws an exception of type Int::NotZeroOne, if \a n is neither
+   * 0 or 1.
+   */
+  GECODE_INT_EXPORT void
+  rel(Space* home, const BoolVarArgs x, BoolOpType o, int n,
       IntConLevel icl=ICL_DEF);
   //@}
 
@@ -1198,24 +1221,6 @@ namespace Gecode {
    */
 
   //@{
-  /// Post propagator for \f$ \lnot b_0 = b_1\f$
-  GECODE_INT_EXPORT void
-  bool_not(Space* home, BoolVar b0, BoolVar b1,
-           IntConLevel=ICL_DEF);
-
-  /// Post propagator for \f$ b_0 = b_1\f$
-  GECODE_INT_EXPORT void
-  bool_eq(Space* home, BoolVar b0, BoolVar b1,
-          IntConLevel=ICL_DEF);
-
-  /// Post propagator for \f$ b_0 \land b_1 = b_2 \f$
-  GECODE_INT_EXPORT void
-  bool_and(Space* home, BoolVar b0, BoolVar b1, BoolVar b2,
-           IntConLevel=ICL_DEF);
-  /// Post propagator for \f$ b_0 \land b_1 = b_2 \f$
-  GECODE_INT_EXPORT void
-  bool_and(Space* home, BoolVar b0, BoolVar b1, bool b2,
-           IntConLevel=ICL_DEF);
   /// Post propagator for \f$ \bigwedge_{i=0}^{|b|-1} b_i = c\f$
   GECODE_INT_EXPORT void
   bool_and(Space* home, const BoolVarArgs& b, BoolVar c,
@@ -1224,15 +1229,6 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   bool_and(Space* home, const BoolVarArgs& b, bool c,
            IntConLevel=ICL_DEF);
-
-  /// Post propagator for \f$ b_0 \lor b_1 = b_2 \f$
-  GECODE_INT_EXPORT void
-  bool_or(Space* home, BoolVar b0, BoolVar b1, BoolVar b2,
-          IntConLevel=ICL_DEF);
-  /// Post propagator for \f$ b_0 \lor b_1 = b_2 \f$
-  GECODE_INT_EXPORT void
-  bool_or(Space* home, BoolVar b0, BoolVar b1, bool b2,
-          IntConLevel=ICL_DEF);
   /// Post propagator for \f$ \bigvee_{i=0}^{|b|-1} b_i = c\f$
   GECODE_INT_EXPORT void
   bool_or(Space* home, const BoolVarArgs& b, BoolVar c,
@@ -1241,33 +1237,6 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   bool_or(Space* home, const BoolVarArgs& b, bool c,
           IntConLevel=ICL_DEF);
-
-  /// Post propagator for \f$ b_0 \Rightarrow b_1 = b_2 \f$ (implication)
-  GECODE_INT_EXPORT void
-  bool_imp(Space* home, BoolVar b0, BoolVar b1, BoolVar b2,
-           IntConLevel=ICL_DEF);
-  /// Post propagator for \f$ b_0 \Rightarrow b_1 = b_2 \f$ (implication)
-  GECODE_INT_EXPORT void
-  bool_imp(Space* home, BoolVar b0, BoolVar b1, bool b2,
-           IntConLevel=ICL_DEF);
-
-  /// Post propagator for \f$ b_0 \Leftrightarrow b_1 = b_2 \f$ (equivalence)
-  GECODE_INT_EXPORT void
-  bool_eqv(Space* home, BoolVar b0, BoolVar b1, BoolVar b2,
-           IntConLevel=ICL_DEF);
-  /// Post propagator for \f$ b_0 \Leftrightarrow b_1 = b_2 \f$ (equivalence)
-  GECODE_INT_EXPORT void
-  bool_eqv(Space* home, BoolVar b0, BoolVar b1, bool b2,
-           IntConLevel=ICL_DEF);
-  /// Post propagator for \f$ b_1 \otimes b_2 = b_3 \f$ (exclusive or)
-  GECODE_INT_EXPORT void
-  bool_xor(Space* home, BoolVar b0, BoolVar b1, BoolVar b2,
-           IntConLevel=ICL_DEF);
-  /// Post propagator for \f$ b_1 \otimes b_2 = b_3 \f$ (exclusive or)
-  GECODE_INT_EXPORT void
-  bool_xor(Space* home, BoolVar b0, BoolVar b1, bool b2,
-           IntConLevel=ICL_DEF);
-
   //@}
 
   /**

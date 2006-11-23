@@ -91,10 +91,11 @@ public:
           rel(this, succ[f], IRT_EQ, g, b);
           rel(this, pred[g], IRT_EQ, f, b);
 
-          bool_xor(this,
-                   post(this, ~(jump[g]-jump[f] == 1)),
-                   post(this, ~(jump[g]-jump[f] == 1-nn)),
-                   b);
+          rel(this,
+              post(this, ~(jump[g]-jump[f] == 1)),
+              BOT_XOR,
+              post(this, ~(jump[g]-jump[f] == 1-nn)),
+              b);
         }
       }
         

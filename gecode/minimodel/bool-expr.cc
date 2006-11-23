@@ -65,7 +65,7 @@ namespace Gecode {
       assert(t != BT_VAR);
       switch (t) {
       case BT_NOT:
-        bool_not(home, l->post(home), b);
+        rel(home, l->post(home), IRT_NQ, b);
         break;
       case BT_AND:
         if (same > 2) {
@@ -73,7 +73,7 @@ namespace Gecode {
           (void) post(home,BT_AND,ba,0);
           bool_and(home, ba, b);
         } else {
-          bool_and(home, l->post(home), r->post(home), b);
+          rel(home, l->post(home), BOT_AND, r->post(home), b);
         }
         break;
       case BT_OR:
@@ -82,17 +82,17 @@ namespace Gecode {
           (void) post(home,BT_OR,ba,0);
           bool_or(home, ba, b);
         } else {
-          bool_or(home, l->post(home), r->post(home), b);
+          rel(home, l->post(home), BOT_OR, r->post(home), b);
         }
         break;
       case BT_IMP:
-        bool_imp(home, l->post(home), r->post(home), b);
+        rel(home, l->post(home), BOT_IMP, r->post(home), b);
         break;
       case BT_XOR:
-        bool_xor(home, l->post(home), r->post(home), b);
+        rel(home, l->post(home), BOT_XOR, r->post(home), b);
         break;
       case BT_EQV:
-        bool_eqv(home, l->post(home), r->post(home), b);
+        rel(home, l->post(home), BOT_EQV, r->post(home), b);
         break;
       default:
         GECODE_NEVER;
@@ -118,7 +118,7 @@ namespace Gecode {
             (void) post(home,BT_OR,ba,0);
             bool_or(home, ba, true);
           } else {
-            bool_or(home, l->post(home), r->post(home), true);
+            rel(home, l->post(home), BOT_OR, r->post(home), 1);
           }
           break;
         case BT_AND:
@@ -167,7 +167,7 @@ namespace Gecode {
             (void) post(home,BT_AND,ba,0);
             bool_and(home, ba, false);
           } else {
-            bool_and(home, l->post(home), r->post(home), false);
+            rel(home, l->post(home), BOT_AND, r->post(home), 0);
           }
           break;
         case BT_IMP:

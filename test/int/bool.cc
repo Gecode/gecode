@@ -33,7 +33,7 @@ public:
     return x[0]==x[1];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    bool_eq(home, link(home,x[0]), link(home,x[1]));
+    rel(home, link(home,x[0]), IRT_EQ, link(home,x[1]));
   }
 };
 BoolEq _booleq("Bool::Eq");
@@ -46,7 +46,7 @@ public:
     return x[0]!=x[1];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    bool_not(home, link(home,x[0]), link(home,x[1]));
+    rel(home, link(home,x[0]), IRT_NQ, link(home,x[1]));
   }
 };
 BoolNot _boolnot("Bool::Not");
@@ -59,7 +59,7 @@ public:
     return (x[0]&x[1])==x[2];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    bool_and(home, link(home,x[0]), link(home,x[1]), link(home,x[2]));
+    rel(home, link(home,x[0]), BOT_AND, link(home,x[1]), link(home,x[2]));
   }
 };
 BoolAnd _booland("Bool::And::Binary");
@@ -72,7 +72,7 @@ public:
     return (x[0]|x[1])==x[2];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    bool_or(home, link(home,x[0]), link(home,x[1]), link(home,x[2]));
+    rel(home, link(home,x[0]), BOT_OR, link(home,x[1]), link(home,x[2]));
   }
 };
 BoolOr _boolor("Bool::Or::Binary");
@@ -85,7 +85,7 @@ public:
     return ((x[0] == 0 ? 1 : 0)|x[1])==x[2];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    bool_imp(home, link(home,x[0]), link(home,x[1]), link(home,x[2]));
+    rel(home, link(home,x[0]), BOT_IMP, link(home,x[1]), link(home,x[2]));
   }
 };
 BoolImp _boolimp("Bool::Imp");
@@ -98,7 +98,7 @@ public:
     return (x[0] == x[1])==x[2];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    bool_eqv(home, link(home,x[0]), link(home,x[1]), link(home,x[2]));
+    rel(home, link(home,x[0]), BOT_EQV, link(home,x[1]), link(home,x[2]));
   }
 };
 BoolEqv _booleqv("Bool::Eqv");
@@ -111,7 +111,7 @@ public:
     return (x[0] != x[1])==x[2];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    bool_xor(home, link(home,x[0]), link(home,x[1]), link(home,x[2]));
+    rel(home, link(home,x[0]), BOT_XOR, link(home,x[1]), link(home,x[2]));
   }
 };
 BoolXor _boolxor("Bool::Xor");

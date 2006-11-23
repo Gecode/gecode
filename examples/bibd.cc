@@ -79,7 +79,7 @@ public:
         BoolVarArgs row(par.b);
         for (int j=par.b; j--; ) {
           BoolVar b(this,0,1);
-          bool_and(this,p(i1,j),p(i2,j),b);
+          rel(this,p(i1,j),BOT_AND,p(i2,j),b);
           row[j] = b;
         }
         linear(this, row, IRT_EQ, par.lambda);

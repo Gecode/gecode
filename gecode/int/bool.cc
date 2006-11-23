@@ -97,41 +97,126 @@ namespace Gecode {
     }
   }
 
-
-
   void
-  bool_not(Space* home, BoolVar b0, BoolVar b1, IntConLevel) {
+  rel(Space* home, BoolVar x0, BoolOpType o, BoolVar x1, BoolVar x2, 
+      IntConLevel) {
     if (home->failed()) return;
-    NegBoolView n0(b0);
-    GECODE_ES_FAIL(home,(Bool::Eq<NegBoolView,BoolView>::post(home,n0,b1)));
-  }
-
-  void
-  bool_eq(Space* home, BoolVar b0, BoolVar b1, IntConLevel) {
-    if (home->failed()) return;
-    GECODE_ES_FAIL(home,(Bool::Eq<BoolView,BoolView>::post(home,b0,b1)));
-  }
-
-  void
-  bool_and(Space* home, BoolVar b0, BoolVar b1, BoolVar b2, IntConLevel) {
-    if (home->failed()) return;
-    NegBoolView n0(b0); NegBoolView n1(b1); NegBoolView n2(b2);
-    GECODE_ES_FAIL(home,(Bool::Or<NegBoolView,NegBoolView,NegBoolView>
-                         ::post(home,n0,n1,n2)));
-  }
-  void
-  bool_and(Space* home, BoolVar b0, BoolVar b1, bool b2, IntConLevel) {
-    if (home->failed()) return;
-    if (b2) {
-      BoolView bv0(b0); BoolView bv1(b1);
-      GECODE_ME_FAIL(home,bv0.one(home));
-      GECODE_ME_FAIL(home,bv1.one(home));
-    } else {
-      NegBoolView n0(b0); NegBoolView n1(b1);
-      GECODE_ES_FAIL(home,(Bool::BinOrTrue<NegBoolView,NegBoolView>
-                           ::post(home,n0,n1)));
+    switch (o) {
+    case BOT_AND:
+      {
+        NegBoolView n0(x0); NegBoolView n1(x1); NegBoolView n2(x2);
+        GECODE_ES_FAIL(home,(Bool::Or<NegBoolView,NegBoolView,NegBoolView>
+                             ::post(home,n0,n1,n2)));
+      }
+      break;
+    case BOT_OR:
+      GECODE_ES_FAIL(home,(Bool::Or<BoolView,BoolView,BoolView>
+                           ::post(home,x0,x1,x2)));
+      break;
+    case BOT_IMP:
+      {
+        NegBoolView n0(x0);
+        GECODE_ME_FAIL(home,(Bool::Or<NegBoolView,BoolView,BoolView>
+                             ::post(home,n0,x1,x2)));
+      }
+      break;
+    case BOT_EQV:
+      GECODE_ES_FAIL(home,(Bool::Eqv<BoolView,BoolView,BoolView>
+                           ::post(home,x0,x1,x2)));
+      break;
+    case BOT_XOR:
+      {
+        NegBoolView n2(x2);
+        GECODE_ES_FAIL(home,(Bool::Eqv<BoolView,BoolView,NegBoolView>
+                             ::post(home,x0,x1,n2)));
+      }
+      break;
+    default:
+      throw UnknownBoolOp("Int::rel");
     }
   }
+
+  void
+  rel(Space* home, BoolVar x0, BoolOpType o, BoolVar x1, int n, 
+      IntConLevel) {
+    if (home->failed()) return;
+    if (n == 0) {
+      switch (o) {
+      case BOT_AND:
+        {
+          NegBoolView n0(x0); NegBoolView n1(x1);
+          GECODE_ES_FAIL(home,(Bool::BinOrTrue<NegBoolView,NegBoolView>
+                               ::post(home,n0,n1)));
+        }
+        break;
+      case BOT_OR:
+        {
+          BoolView b0(x0); BoolView b1(x1);
+          GECODE_ME_FAIL(home,b0.zero(home));
+          GECODE_ME_FAIL(home,b1.zero(home));
+        }
+        break;
+      case BOT_IMP:
+        {
+          BoolView b0(x0); BoolView b1(x1);
+          GECODE_ME_FAIL(home,b0.one(home));
+          GECODE_ME_FAIL(home,b1.zero(home));
+        }
+        break;
+      case BOT_EQV:
+        {
+          NegBoolView n0(x0);
+          GECODE_ES_FAIL(home,(Bool::Eq<NegBoolView,BoolView>
+                               ::post(home,n0,x1)));
+        }
+        break;
+      case BOT_XOR:
+        GECODE_ES_FAIL(home,(Bool::Eq<BoolView,BoolView>
+                             ::post(home,x0,x1)));
+        break;
+      default:
+        throw UnknownBoolOp("Int::rel");
+      }
+    } else if (n == 1) {
+      switch (o) {
+      case BOT_AND:
+        {
+          BoolView b0(x0); BoolView b1(x1);
+          GECODE_ME_FAIL(home,b0.one(home));
+          GECODE_ME_FAIL(home,b1.one(home));
+        }
+        break;
+      case BOT_OR:
+        GECODE_ES_FAIL(home,(Bool::BinOrTrue<BoolView,BoolView>
+                             ::post(home,x0,x1)));
+        break;
+      case BOT_IMP:
+        {
+          NegBoolView n0(x0);
+          GECODE_ES_FAIL(home,(Bool::BinOrTrue<NegBoolView,BoolView>
+                               ::post(home,n0,x1)));
+        }
+        break;
+      case BOT_EQV:
+        GECODE_ES_FAIL(home,(Bool::Eq<BoolView,BoolView>
+                             ::post(home,x0,x1)));
+        break;
+      case BOT_XOR:
+        {
+          NegBoolView n0(x0);
+          GECODE_ES_FAIL(home,(Bool::Eq<NegBoolView,BoolView>
+                               ::post(home,n0,x1)));
+        }
+        break;
+      default:
+        throw UnknownBoolOp("Int::rel");
+      }
+    } else {
+      throw NotZeroOne("Int::rel");
+    }
+  }
+
+
   void
   bool_and(Space* home, const BoolVarArgs& b, BoolVar c, IntConLevel) {
     if (home->failed()) return;
@@ -159,26 +244,6 @@ namespace Gecode {
   }
 
   void
-  bool_or(Space* home, BoolVar b0, BoolVar b1, BoolVar b2, IntConLevel) {
-    if (home->failed()) return;
-    GECODE_ES_FAIL(home,
-                   (Bool::Or<BoolView,BoolView,BoolView>
-                    ::post(home,b0,b1,b2)));
-  }
-  void
-  bool_or(Space* home, BoolVar b0, BoolVar b1, bool b2, IntConLevel) {
-    if (home->failed()) return;
-    if (b2) {
-      GECODE_ES_FAIL(home,
-                     (Bool::BinOrTrue<BoolView,BoolView>::post(home,b0,b1)));
-    } else {
-      BoolView bv0(b0);
-      BoolView bv1(b1);
-      GECODE_ME_FAIL(home,bv0.zero(home));
-      GECODE_ME_FAIL(home,bv1.zero(home));
-    }
-  }
-  void
   bool_or(Space* home, const BoolVarArgs& b, BoolVar c, IntConLevel) {
     if (home->failed()) return;
     ViewArray<BoolView> x(home,b);
@@ -195,62 +260,6 @@ namespace Gecode {
         BoolView bvi(b[i]);
         GECODE_ME_FAIL(home,bvi.zero(home));
       }
-    }
-  }
-
-  void
-  bool_imp(Space* home, BoolVar b0, BoolVar b1, BoolVar b2, IntConLevel) {
-    if (home->failed()) return;
-    NegBoolView n0(b0);
-    GECODE_ME_FAIL(home,(Bool::Or<NegBoolView,BoolView,BoolView>
-                         ::post(home,n0,b1,b2)));
-  }
-  void
-  bool_imp(Space* home, BoolVar b0, BoolVar b1, bool b2, IntConLevel) {
-    if (home->failed()) return;
-    if (b2) {
-      NegBoolView n0(b0);
-      GECODE_ME_FAIL(home,(Bool::BinOrTrue<NegBoolView,BoolView>
-                           ::post(home,n0,b1)));
-    } else {
-      BoolView bv0(b0); BoolView bv1(b1);
-      GECODE_ME_FAIL(home,bv0.one(home));
-      GECODE_ME_FAIL(home,bv1.zero(home));
-    }
-  }
-
-  void
-  bool_eqv(Space* home, BoolVar b0, BoolVar b1, BoolVar b2, IntConLevel) {
-    if (home->failed()) return;
-    GECODE_ES_FAIL(home,(Bool::Eqv<BoolView,BoolView,BoolView>
-                         ::post(home,b0,b1,b2)));
-  }
-  void
-  bool_eqv(Space* home, BoolVar b0, BoolVar b1, bool b2, IntConLevel) {
-    if (home->failed()) return;
-    if (b2) {
-      GECODE_ES_FAIL(home,(Bool::Eq<BoolView,BoolView>::post(home,b0,b1)));
-    } else {
-      NegBoolView n0(b0);
-      GECODE_ES_FAIL(home,(Bool::Eq<NegBoolView,BoolView>::post(home,n0,b1)));
-    }
-  }
-
-  void
-  bool_xor(Space* home, BoolVar b0, BoolVar b1, BoolVar b2, IntConLevel) {
-    if (home->failed()) return;
-    NegBoolView n2(b2);
-    GECODE_ES_FAIL(home,(Bool::Eqv<BoolView,BoolView,NegBoolView>
-                         ::post(home,b0,b1,n2)));
-  }
-  void
-  bool_xor(Space* home, BoolVar b0, BoolVar b1, bool b2, IntConLevel) {
-    if (home->failed()) return;
-    if (b2) {
-      NegBoolView n0(b0);
-      GECODE_ES_FAIL(home,(Bool::Eq<NegBoolView,BoolView>::post(home,n0,b1)));
-    } else {
-      GECODE_ES_FAIL(home,(Bool::Eq<BoolView,BoolView>::post(home,b0,b1)));
     }
   }
 
