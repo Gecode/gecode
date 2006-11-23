@@ -1487,7 +1487,7 @@ namespace Gecode {
           // Resize for the first time, increase by just 4
           m = n+4;
         } else {
-          // Already resized, increase by 50%
+          // Already resized, increase by around 50%
           m = (n+1)*3 >> 1;
         }
       }
