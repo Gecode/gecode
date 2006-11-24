@@ -44,7 +44,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BV>
-  inline ExecStatus
+  forceinline ExecStatus
   Lq<BV>::post(Space* home, BV b0, BV b1) {
     if (b0.zero()) {
       return ES_OK;

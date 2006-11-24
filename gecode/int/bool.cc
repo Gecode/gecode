@@ -225,6 +225,7 @@ namespace Gecode {
       NegBoolView nb(b[i]); x[i]=nb;
     }
     NegBoolView nc(c);
+    x.unique();
     GECODE_ES_FAIL(home,Bool::NaryOr<NegBoolView>::post(home,x,nc));
   }
   void
@@ -239,6 +240,7 @@ namespace Gecode {
       for (int i=b.size(); i--; ) {
         NegBoolView nb(b[i]); x[i]=nb;
       }
+      x.unique();
       GECODE_ES_FAIL(home,Bool::NaryOrTrue<NegBoolView>::post(home,x));
     }
   }
@@ -247,6 +249,7 @@ namespace Gecode {
   bool_or(Space* home, const BoolVarArgs& b, BoolVar c, IntConLevel) {
     if (home->failed()) return;
     ViewArray<BoolView> x(home,b);
+    x.unique();
     GECODE_ES_FAIL(home,Bool::NaryOr<BoolView>::post(home,x,c));
   }
   void
@@ -254,6 +257,7 @@ namespace Gecode {
     if (home->failed()) return;
     if (c) {
       ViewArray<BoolView> x(home,b);
+      x.unique();
       GECODE_ES_FAIL(home,Bool::NaryOrTrue<BoolView>::post(home,x));
     } else {
       for (int i=b.size(); i--; ) {

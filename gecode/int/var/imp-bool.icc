@@ -27,6 +27,9 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline
+  BoolVarImp::BoolVarImp(int n)
+    : dom((n << 1) | n) {}
+  forceinline
   BoolVarImp::BoolVarImp(Space* home, int min, int max)
     : BoolVarImpBase(home), dom((max << 1) | min) {}
 
@@ -321,7 +324,12 @@ namespace Gecode { namespace Int {
   BoolVarImp::copy(Space* home, bool share) {
     if (copied())
       return static_cast<BoolVarImp*>(forward());
-    return new (home) BoolVarImp(home,share,*this);
+    else if (zero())
+      return &s_zero;
+    else if (one())
+      return &s_one;
+    else
+      return new (home) BoolVarImp(home,share,*this);
   }
 
 
@@ -386,7 +394,7 @@ namespace Gecode { namespace Int {
   }
 
   /*
-   * Subscribing to variables
+   * Dependencies
    *
    */
   forceinline void
@@ -395,7 +403,7 @@ namespace Gecode { namespace Int {
   }
   forceinline void
   BoolVarImp::cancel(Space* home, Propagator* p, PropCond) {
-    BoolVarImpBase::cancel(home,p,PC_BOOL_VAL);
+    BoolVarImpBase::cancel(home,p,PC_BOOL_VAL,assigned());
   }
 
 }}

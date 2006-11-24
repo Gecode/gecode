@@ -264,6 +264,8 @@ namespace Gecode { namespace Int {
      *
      */
     void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+    /// Cancel subscription of propagator \a p with propagation condition \a pc
+    void cancel(Space* home, Propagator* p, PropCond pc);
     //@}
 
   private:
@@ -393,8 +395,13 @@ namespace Gecode { namespace Int {
      */
     BoolStatus dom;
 
+    GECODE_INT_EXPORT static BoolVarImp s_one;
+    GECODE_INT_EXPORT static BoolVarImp s_zero;
+
     /// Constructor for cloning \a x
     BoolVarImp(Space* home, bool share, BoolVarImp& x);
+    /// Initialize static instance assigned to \a n
+    BoolVarImp(int n);
   public:
     /// Initialize with range domain
     BoolVarImp(Space* home, int min, int max);
@@ -514,7 +521,7 @@ namespace Gecode { namespace Int {
      *
      */
     void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
-    /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+    /// Cancel subscription of propagator \a p with propagation condition \a pc
     void cancel(Space* home, Propagator* p, PropCond pc);
     //@}
 

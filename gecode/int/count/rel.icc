@@ -98,4 +98,3 @@ namespace Gecode { namespace Int { namespace Count {
 }}}
 
 // STATISTICS: int-prop
-

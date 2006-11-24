@@ -45,7 +45,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BVA, class BVB>
-  inline ExecStatus
+  forceinline ExecStatus
   Eq<BVA,BVB>::post(Space* home, BVA b0, BVB b1) {
     switch (bool_test(b0,b1)) {
     case BT_SAME: return ES_OK;

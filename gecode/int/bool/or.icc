@@ -95,7 +95,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BVA, class BVB>
-  inline ExecStatus
+  forceinline ExecStatus
   BinOrTrue<BVA,BVB>::post(Space* home, BVA b0, BVB b1) {
     switch (bool_test(b0,b1)) {
     case BT_SAME:
@@ -193,7 +193,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BV>
-  inline ExecStatus
+  forceinline ExecStatus
   TerOrTrue<BV>::post(Space* home, BV b0, BV b1, BV b2) {
     (void) new (home) TerOrTrue<BV>(home,b0,b1,b2);
     return ES_OK;
@@ -305,7 +305,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BV>
-  inline ExecStatus
+  forceinline ExecStatus
   QuadOrTrue<BV>::post(Space* home, BV b0, BV b1, BV b2, BV b3) {
     (void) new (home) QuadOrTrue<BV>(home,b0,b1,b2,b3);
     return ES_OK;
@@ -462,7 +462,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BVA, class BVB, class BVC>
-  inline ExecStatus
+  forceinline ExecStatus
   Or<BVA,BVB,BVC>::post(Space* home, BVA b0, BVB b1, BVC b2) {
     if (b2.zero()) {
       GECODE_ME_CHECK(b0.zero(home));
@@ -615,7 +615,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BV>
-  inline ExecStatus
+  forceinline ExecStatus
   NaryOrTrue<BV>::post(Space* home, ViewArray<BV>& b) {
     for (int i=b.size(); i--; )
       if (b[i].one())
@@ -624,7 +624,6 @@ namespace Gecode { namespace Int { namespace Bool {
         b.move_lst(i);
     if (b.size() == 0)
       return ES_FAILED;
-    b.unique();
     if (b.size() == 1) {
       GECODE_ME_CHECK(b[0].one(home));
     } else if (b.size() == 2) {
@@ -709,7 +708,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BV>
-  inline ExecStatus
+  forceinline ExecStatus
   NaryOr<BV>::post(Space* home, ViewArray<BV>& b, BV c) {
     if (c.one())
       return NaryOrTrue<BV>::post(home,b);
@@ -727,7 +726,6 @@ namespace Gecode { namespace Int { namespace Bool {
       }
     if (b.size() == 0)
       return ES_FAILED;
-    b.unique();
     if (b.size() == 1)
       return Eq<BV,BV>::post(home,b[0],c);
     if (b.size() == 2)

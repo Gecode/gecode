@@ -23,4 +23,11 @@
 #include "gecode/int.hh"
 #include "gecode/int/var/imp-bool-body.icc"
 
+namespace Gecode { namespace Int {
+
+  BoolVarImp BoolVarImp::s_one(1);
+  BoolVarImp BoolVarImp::s_zero(0);
+
+}}
+
 // STATISTICS: int-var

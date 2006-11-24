@@ -22,8 +22,6 @@
 
 #include <algorithm>
 
-#include "gecode/int/bool.hh"
-
 namespace Gecode { namespace Int { namespace Linear {
 
   /*
@@ -95,8 +93,6 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX>
   ExecStatus
   GqBoolInt<VX>::post(Space* home, ViewArray<VX>& x, int c) {
-    if (c == 1)
-      return Bool::NaryOrTrue<VX>::post(home,x);
     // Eliminate assigned views
     int n_x = x.size();
     for (int i=n_x; i--; )

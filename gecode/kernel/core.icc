@@ -220,6 +220,8 @@ namespace Gecode {
   public:
     /// Creation
     Variable(Space* home);
+    /// Creation of static instances
+    Variable(void);
 
     /// \name Dependencies
     //@{
@@ -237,8 +239,13 @@ namespace Gecode {
      */
     void subscribe(Space* home, Propagator* p, PropCond pc,
                    bool assigned, ModEvent me, bool process);
-    /// Cancel subscription of propagator \a p with propagation condition \a pc
-    void cancel(Space* home, Propagator* p, PropCond pc);
+    /** \brief Cancel subscription of propagator \a p with propagation condition \a pc
+     *
+     * If the variables is assigned, \a assigned must be true.
+     *
+     */
+    void cancel(Space* home, Propagator* p, PropCond pc,
+                bool assigned);
     /// Return degree (number of subscribed propagators)
     unsigned int degree(void) const;
     /// Notify that variable implementation has been modified with modification event \a me
@@ -1159,6 +1166,15 @@ namespace Gecode {
       idx[i] = NULL;
   }
 
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline
+  Variable<VTI,PC,MED>::Variable(void) :
+    _next(reinterpret_cast<Variable<VTI,PC,MED>*>(1)) {
+    u.free_me = 0;
+    for (int i=PC+2; i--; )
+      idx[i] = NULL;
+  }
+
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline unsigned int
@@ -1513,8 +1529,9 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
-  Variable<VTI,PC,MED>::cancel(Space* home, Propagator* p, PropCond pc) {
-    if (idx[0] != NULL) {
+  Variable<VTI,PC,MED>::cancel(Space* home, Propagator* p, PropCond pc,
+                               bool assigned) {
+    if (!assigned) {
       Propagator** f = idx[pc];
 #if GECODE_AUDIT
       while (f < idx[pc+1])

@@ -74,6 +74,8 @@ namespace Gecode { namespace Int {
     /// Constructor for cloning \a x
     BoolVarImpBase(Space* home, bool share, BoolVarImpBase& x);
   public:
+    /// Constructor for creating static instance of variable
+    BoolVarImpBase(void);
     /// Constructor for creating variable
     BoolVarImpBase(Space* home);
     /// \name Dependencies
@@ -110,6 +112,9 @@ namespace Gecode { namespace Int {
     return modified() ? ME_GEN_ASSIGNED : ME_GEN_NONE;
   }
 
+
+  forceinline
+  BoolVarImpBase::BoolVarImpBase(void) {}
 
   forceinline
   BoolVarImpBase::BoolVarImpBase(Space* home)

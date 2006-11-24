@@ -182,6 +182,8 @@ namespace Gecode { namespace Set {
     /// Constructor for cloning \a x
     SetVarImpBase(Space* home, bool share, SetVarImpBase& x);
   public:
+    /// Constructor for creating static instance of variable
+    SetVarImpBase(void);
     /// Constructor for creating variable
     SetVarImpBase(Space* home);
     /// \name Dependencies
@@ -210,6 +212,9 @@ namespace Gecode { namespace Set {
   SetMeDiff::operator()(ModEvent me1, ModEvent me2) const {
     return med[me1][me2];
   }
+
+  forceinline
+  SetVarImpBase::SetVarImpBase(void) {}
 
   forceinline
   SetVarImpBase::SetVarImpBase(Space* home)

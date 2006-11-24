@@ -351,6 +351,8 @@ print <<EOF
     /// Constructor for cloning \\a x
     $class(Space* home, bool share, $class\& x);
   public:
+    /// Constructor for creating static instance of variable
+    $class(void);
     /// Constructor for creating variable
     $class(Space* home);
     /// \\name Dependencies
@@ -458,6 +460,9 @@ if ($forcedispose) {
   print <<EOF
 
   $forceinline
+  ${class}::${class}(void) {}
+
+  $forceinline
   ${class}::${class}(Space* home)
     : $base(home), _nextDispose(home->varsDisposeList<VTI_${VTI}>()) {
     home->varsDisposeList<VTI_${VTI}>(this);
@@ -478,6 +483,9 @@ EOF
 ;
 } else {
   print <<EOF
+
+  $forceinline
+  ${class}::${class}(void) {}
 
   $forceinline
   ${class}::${class}(Space* home)

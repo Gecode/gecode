@@ -112,6 +112,8 @@ namespace Gecode { namespace Int {
     /// Constructor for cloning \a x
     IntVarImpBase(Space* home, bool share, IntVarImpBase& x);
   public:
+    /// Constructor for creating static instance of variable
+    IntVarImpBase(void);
     /// Constructor for creating variable
     IntVarImpBase(Space* home);
     /// \name Dependencies
@@ -166,6 +168,9 @@ namespace Gecode { namespace Int {
     );
     return (((med >> (me1 << 3)) >> (me2 << 1)) & 3);
   }
+
+  forceinline
+  IntVarImpBase::IntVarImpBase(void) {}
 
   forceinline
   IntVarImpBase::IntVarImpBase(Space* home)
