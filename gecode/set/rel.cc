@@ -95,7 +95,7 @@ namespace Gecode {
     case SRT_NQ:
       {
         BoolVar notb(home, 0, 1);
-        bool_not(home, b, notb);
+        rel(home, b, IRT_NQ, notb);
         GECODE_ES_FAIL(home,
                        (ReEq<View0,View1>::post(home,
                                                            x,y,notb)));
@@ -121,7 +121,7 @@ namespace Gecode {
         // set up BoolVars for the conjunction
         BoolVar b1(home, 0, 1);
         BoolVar b2(home, 0, 1);
-        bool_and(home, b1, b2, b);        
+        rel(home, b1, BOT_AND, b2, b);        
 
         ComplementView<View0> xc(x);
         ComplementView<View1> yc(y);
