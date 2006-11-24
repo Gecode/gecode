@@ -37,7 +37,7 @@ namespace Log {
   bool logging();
   void reset();
 
-  void print(/*std::ostream& o, */bool for_display = true);
+  void print(bool for_display = true);
 
   std::string mk_name(const char* arr, int idx);
 
@@ -61,6 +61,11 @@ namespace Log {
   void prune_result(const SetVar& v);
   void print(const SetVarArray& a, const char* name=NULL);
 #endif
+
+  std::string iclh(IntConLevel icl);
+  std::string iclc(IntConLevel icl);
+  std::string irth(IntRelType  irt);
+  std::string irtc(IntRelType  irt);
 }
 
 #endif /* __GECODE_LOG_HH__ */

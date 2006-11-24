@@ -123,7 +123,7 @@ namespace Log {
     cnames.clear();
   }
 
-  void print(/*ostream& o, */bool for_display) {
+  void print(bool for_display) {
     if (!do_logging) return;
     if (for_display) {
       cout << "Initial configuration" << endl;
@@ -510,6 +510,92 @@ namespace Log {
     cops.push_back("\tprint();");
   }
 #endif
+
+
+  std::string iclh(IntConLevel icl) {
+    std::string res;
+    switch(icl) {
+    case ICL_DOM:
+      res = "domain";
+      break;
+    case ICL_BND:
+      res = "bound";
+      break;
+    case ICL_VAL:
+      res = "value";
+      break;
+    case ICL_DEF:
+      res = "default";
+      break;
+    }
+    return res;
+  }
+  std::string iclc(IntConLevel icl) {
+    std::string res;
+    switch(icl) {
+    case ICL_DOM:
+      res = "ICL_DOM";
+      break;
+    case ICL_BND:
+      res = "ICL_BND";
+      break;
+    case ICL_VAL:
+      res = "ICL_VAL";
+      break;
+    case ICL_DEF:
+      res = "ICL_DEF";
+      break;
+    }
+    return res;
+  }
+  std::string irth(IntRelType  irt) {
+    std::string hr;
+    switch(irt) {
+    case IRT_LQ:
+      hr = "<=";
+      break;
+    case IRT_LE:
+      hr = "<";
+      break;
+    case IRT_EQ:
+      hr = "==";
+      break;
+    case IRT_NQ:
+      hr = "!=";
+      break;
+    case IRT_GQ:
+      hr = ">=";
+      break;
+    case IRT_GR:
+      hr = ">";
+      break;
+    }
+    return hr;
+  }
+  std::string irtc(IntRelType  irt) {
+    std::string cr;
+    switch(irt) {
+    case IRT_LQ:
+      cr = "IRT_LQ";
+      break;
+    case IRT_LE:
+      cr = "IRT_LE";
+      break;
+    case IRT_EQ:
+      cr = "IRT_EQ";
+      break;
+    case IRT_NQ:
+      cr = "IRT_NQ";
+      break;
+    case IRT_GQ:
+      cr = "IRT_GQ";
+      break;
+    case IRT_GR:
+      cr = "IRT_GR";
+      break;
+    }
+    return cr;
+  }
 
 }
 

@@ -99,16 +99,16 @@ operator<<(std::ostream& os, const Assignment& a) {
   return os;
 }
 
-#define FORCE_FIXFLUSH                                \
-do {                                                \
-  if (Test::randgen(opt.fixprob) == 0) {        \
-    Log::fixpoint();                                \
-    if (status() == SS_FAILED) return;                \
-  }                                                \
+#define FORCE_FIXFLUSH                            \
+do {                                              \
+  if (Test::randgen(opt.fixprob) == 0) {          \
+    Log::fixpoint();                              \
+    if (status() == SS_FAILED) return;            \
+  }                                               \
   if (Test::randgen(opt.flushprob) == 0) {        \
-    flush();                                        \
-    Log::flush();                                \
-  }                                                \
+    flush();                                      \
+    Log::flush();                                 \
+  }                                               \
 } while(0)
 
 class IntTestSpace : public Space {
@@ -284,11 +284,11 @@ IntTest::make_assignment() {
   return new Assignment(arity, dom);
 }
 
-#define CHECK(T,M)                                 \
-if (!(T)) {                                         \
-  problem = (M);                                 \
-  delete s;                                        \
-  goto failed;                                         \
+#define CHECK(T,M)                                \
+if (!(T)) {                                       \
+  problem = (M);                                  \
+  delete s;                                       \
+  goto failed;                                    \
 }
 
 bool
@@ -302,6 +302,7 @@ IntTest::run(const Options& opt) {
   // Set up space for all solution search
   IntTestSpace* search_s = new IntTestSpace(arity,dom,opt);
   post(search_s,search_s->x);
+  log_posting();
   branch(search_s,search_s->x,BVAR_NONE,BVAL_MIN);
   Gecode::DFS<IntTestSpace> e_s(search_s);
   delete search_s;
@@ -324,7 +325,9 @@ IntTest::run(const Options& opt) {
       test = "Assignment (after posting)";
       Log::reset();
       IntTestSpace* s = new IntTestSpace(arity,dom,opt);
-      post(s,s->x); s->assign(a);
+      post(s,s->x);
+      log_posting();
+      s->assign(a);
       if (is_sol) {
         CHECK(!s->is_failed(), "Failed on solution");
         CHECK(s->propagators()==0, "No subsumtion");
@@ -337,7 +340,9 @@ IntTest::run(const Options& opt) {
       test = "Assignment (before posting)";
       Log::reset();
       IntTestSpace* s = new IntTestSpace(arity,dom,opt);
-      s->assign(a); post(s,s->x);
+      s->assign(a); 
+      post(s,s->x);
+      log_posting();
       if (is_sol) {
         CHECK(!s->is_failed(), "Failed on solution");
         CHECK(s->propagators()==0, "No subsumtion");
@@ -353,6 +358,7 @@ IntTest::run(const Options& opt) {
       BoolVar b(s,0,1);
       Log::initial(b, "b");
       post(s,s->x,b);
+      log_posting();
       if (is_sol) {
         rel(s, b, IRT_EQ, 1);
       } else {
@@ -375,6 +381,7 @@ IntTest::run(const Options& opt) {
         rel(s, b, IRT_EQ, 0);
       }
       post(s,s->x,b);
+      log_posting();
       s->assign(a);
       CHECK(!s->is_failed(), "Failed");
       CHECK(s->propagators()==0, "No subsumtion");
@@ -386,7 +393,9 @@ IntTest::run(const Options& opt) {
       IntTestSpace* s = new IntTestSpace(arity,dom,opt);
       BoolVar b(s,0,1);
       Log::initial(b, "b");
-      s->assign(a); post(s,s->x,b);
+      s->assign(a); 
+      post(s,s->x,b);
+      log_posting();
       CHECK(!s->is_failed(), "Failed");
       CHECK(s->propagators()==0, "No subsumtion");
       CHECK(b.assigned(), "Control variable unassigned");
@@ -403,7 +412,9 @@ IntTest::run(const Options& opt) {
       IntTestSpace* s = new IntTestSpace(arity,dom,opt);
       BoolVar b(s,0,1);
       Log::initial(b, "b");
-      post(s,s->x,b); s->assign(a);
+      post(s,s->x,b);
+      log_posting();
+      s->assign(a);
       CHECK(!s->is_failed(), "Failed");
       CHECK(s->propagators()==0, "No subsumtion");
       CHECK(b.assigned(), "Control variable unassigned");
@@ -419,6 +430,7 @@ IntTest::run(const Options& opt) {
       Log::reset();
       IntTestSpace* s = new IntTestSpace(arity,dom,opt);
       post(s,s->x);
+      log_posting();
       while (!s->failed() && !s->assigned())
         if (!s->prune(a,*this,false)) {
           problem = "No fixpoint";
@@ -441,6 +453,7 @@ IntTest::run(const Options& opt) {
       BoolVar b(s,0,1);
       Log::initial(b, "b");
       post(s,s->x,b);
+      log_posting();
       while (!s->failed() && !s->assigned() && !b.assigned())
         if (!s->prune(a,*this,true,b)) {
           problem = "No fixpoint";
@@ -472,6 +485,7 @@ IntTest::run(const Options& opt) {
     Log::reset();
     IntTestSpace* s = new IntTestSpace(arity,dom,opt);
     post(s,s->x);
+    log_posting();
     while (!s->is_failed() && !s->assigned()) {
       s->prune();
     }
@@ -495,4 +509,3 @@ IntTest::run(const Options& opt) {
 #undef CHECK
 
 // STATISTICS: test-int
-

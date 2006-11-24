@@ -76,7 +76,8 @@ main(int argc, char** argv) {
   unsigned int testCount = 0;
   for ( Test* t = Test::tests(); t != NULL; t = t->next() )
     testCount++;
-  int digits = std::ceil(std::log10(static_cast<double>(testCount)));
+  int digits = 
+    static_cast<int>(std::ceil(std::log10(static_cast<double>(testCount))));
   
   unsigned int counter = 1;
   Test* t = Test::tests();

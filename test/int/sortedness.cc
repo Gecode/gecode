@@ -260,9 +260,13 @@ public:
       rel(home, y[i], IRT_GQ, 1);
       rel(home, p[i], IRT_LQ, 2);
     }
-    Log::log("Post sortedness", "\tsortedness(this, ...);");
     sortedness(home, z, y, p, icl);
   }
+  virtual void description(std::ostream& h, std::ostream& c) {
+    h << "post sortedness" << std::endl;
+    c << "sortedness(this, ...);" << std::endl;
+  }
+
 };
 
 

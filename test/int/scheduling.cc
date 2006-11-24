@@ -52,7 +52,7 @@ namespace {
         post(this, x[i+1] >= 0);
         post(this, x[i+2] >= 0);
         post(this, x[i] + x[i+1] == x[i+2]);
-        // Doesn't work with search-based tests
+        // The following doesn't work with search-based tests
         //if (i+4 < n) {
         //   post(this, x[i] <= x[i+4]);
         //}
@@ -196,25 +196,6 @@ public:
   }
 
   virtual void post(Space* home, IntVarArray& x) {
-    if (Log::logging()) {
-      std::ostringstream buf;
-      buf << "\tint ntastks = " << ntasks << ", limit = " << limit
-          << ";\n\tbool at_most = " << at_most << ";";
-      Log::log("", buf.str().c_str());
-      Log::log("post cumulatives",
-               "\tIntArgs m(ntasks), l(1, limit);\n"
-               "\tIntVarArgs s(ntasks), d(ntasks), e(ntasks), h(ntasks);\n"
-               "\tfor (int i = 0; i < ntasks; ++i) {\n"
-               "\t\tint p = i*4;\n"
-               "\t\tm[i] = 0;\n"
-               "\t\ts[i] = x[p+0]; rel(this, x[p+0], IRT_GQ, 0);\n"
-               "\t\td[i] = x[p+1]; rel(this, x[p+1], IRT_GQ, 1);\n"
-               "\t\te[i] = x[p+2]; rel(this, x[p+2], IRT_GQ, 1);\n"
-               "\t\th[i] = x[p+3];\n"
-               "\t}\n"
-               "\tcumulatives(this, m, s, d, e, h, l, at_most);\n"
-             );
-    }
     IntArgs m(ntasks), l(1, limit);
     IntVarArgs s(ntasks), d(ntasks), e(ntasks), h(ntasks);
     for (int i = 0; i < ntasks; ++i) {
@@ -226,6 +207,22 @@ public:
       h[i] = x[p+3];
     }
     cumulatives(home, m, s, d, e, h, l, at_most);
+  }
+  virtual void description(std::ostream& h, std::ostream& c) {
+    h << "post cumulatives" << std::endl;
+    c << "int ntastks = " << ntasks << ", limit = " << limit << ";\n" 
+      << "\tbool at_most = " << at_most << ";\n"
+      << "\tIntArgs m(ntasks), l(1, limit);\n"
+      << "\tIntVarArgs s(ntasks), d(ntasks), e(ntasks), h(ntasks);\n"
+      << "\tfor (int i = 0; i < ntasks; ++i) {\n"
+      << "\t\tint p = i*4;\n"
+      << "\t\tm[i] = 0;\n"
+      << "\t\ts[i] = x[p+0]; rel(this, x[p+0], IRT_GQ, 0);\n"
+      << "\t\td[i] = x[p+1]; rel(this, x[p+1], IRT_GQ, 1);\n"
+      << "\t\te[i] = x[p+2]; rel(this, x[p+2], IRT_GQ, 1);\n"
+      << "\t\th[i] = x[p+3];\n"
+      << "\t}\n"
+      << "\tcumulatives(this, m, s, d, e, h, l, at_most);" << std::endl;
   }
 };
 

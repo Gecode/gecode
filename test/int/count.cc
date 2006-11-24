@@ -136,12 +136,13 @@ public:
     return compare(m,irt,x[2]);
   }
   virtual void post(Space* home, IntVarArray& x) {
-    if(irt == IRT_LQ)
-      Log::log("count(home, x, 0)<=x[2]","\tcount(home, x, 0, IRT_LQ, x[2]);");
-    else if(irt == IRT_GQ)
-      Log::log("count(home, x, 0)>=x[2]","\tcount(home, x, 0, IRT_GQ, x[2]);");
     count(home, x, 0, irt, x[2]);
   }
+  virtual void description(std::ostream& h, std::ostream& c) {
+    h << "count(number of x's == 0) " << Log::irth(irt) << " x[2]" << std::endl;
+    c << "count(home, x, 0, " << Log::irtc(irt) << ", x[2]);" << std::endl;
+  }
+
 };
 
 CountIntVarShared _ceqivs("Count::Eq::IntVarShared",IRT_EQ);

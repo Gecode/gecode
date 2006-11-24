@@ -297,10 +297,13 @@ public:
     return d0*d1 == d2;
   }
   virtual void post(Space* home, IntVarArray& x) {
-    Log::log("x[0]*x[1]==x[2]",
-             "\tmult(this, x[0], x[1], x[2]);");
     IntVar y = mult(home, x[0], x[1]);
     rel(home, y, IRT_EQ, x[2], ICL_DOM);
+  }
+  virtual void description(std::ostream& h, std::ostream& c) {
+    h << "x[0]*x[1] == y == x[2]" << std::endl;
+    c << "IntVar y = mult(home, x[0], x[1]);\n" 
+      << "\trel(home, y, IRT_EQ, x[2], ICL_DOM);" << std::endl;
   }
 };
 namespace {
@@ -339,10 +342,13 @@ public:
     return (d0<0 ? -d0 : d0) == d1;
   }
   virtual void post(Space* home, IntVarArray& x) {
-    Log::log("post abs(x0, x1)",
-             "\tabs(this, x[0], x[1], icl);");
     IntVar y = abs(home, x[0], icl);
     rel(home, y, IRT_EQ, x[1], ICL_DOM);
+  }
+  virtual void description(std::ostream& h, std::ostream& c) {
+    h << "abs(x[0]) == y == x[1]" << std::endl;
+    c << "IntVar y = abs(home, x[0]," << Log::iclc(icl) << ");\n" 
+      << "\trel(home, y, IRT_EQ, x[2], ICL_DOM);" << std::endl;
   }
 };
 namespace {
@@ -399,13 +405,16 @@ public:
                     x[2]) == x[3];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    Log::log("min(home, x[0:2], x[3])",
-             "\tIntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
-             "\tmin(this, m, x[3]);");
     IntVarArgs m(3);
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     IntVar y = min(home, m);
     rel(home, y, IRT_EQ, x[3], ICL_DOM);
+  }
+  virtual void description(std::ostream& h, std::ostream& c) {
+    h << "min(x[0:2]) == y == x[3]" << std::endl;
+    c << "IntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
+      << "\tIntVar y = min(home, m);\n" 
+      << "\trel(home, y, IRT_EQ, x[3], ICL_DOM);" << std::endl;
   }
 };
 namespace {
@@ -421,13 +430,16 @@ public:
                     x[2]) == x[3];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    Log::log("max(home, x[0:2], x[3])",
-             "\tIntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
-             "\tmax(this, m, x[3]);");
     IntVarArgs m(3);
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     IntVar y = max(home, m);
     rel(home, y, IRT_EQ, x[3], ICL_DOM);
+  }
+  virtual void description(std::ostream& h, std::ostream& c) {
+    h << "max(x[0:2]) == y == x[3]" << std::endl;
+    c << "IntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
+      << "\tIntVar y = max(home, m);\n" 
+      << "\trel(home, y, IRT_EQ, x[3], ICL_DOM);" << std::endl;
   }
 };
 namespace {

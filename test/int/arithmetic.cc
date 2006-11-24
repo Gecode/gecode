@@ -54,9 +54,11 @@ public:
     return d0*d1 == d2;
   }
   virtual void post(Space* home, IntVarArray& x) {
-    Log::log("x[0]*x[1]==x[2]",
-             "\tmult(this, x[0], x[1], x[2]);");
     mult(home, x[0], x[1], x[2]);
+  }
+  virtual void description(std::ostream& h, std::ostream& c) {
+    h << "x[0]*x[1] == x[2]" << std::endl;
+    c << "mult(this, x[0], x[1], x[2]);" << std::endl;
   }
 };
 namespace {
@@ -94,9 +96,11 @@ public:
     return (d0<0 ? -d0 : d0) == d1;
   }
   virtual void post(Space* home, IntVarArray& x) {
-    Log::log("post abs(x0, x1)",
-             "\tabs(this, x[0], x[1], icl);");
     abs(home, x[0], x[1], icl);
+  }
+  virtual void description(std::ostream& h, std::ostream& c) {
+    h << "abs(x[0]) == x[1]" << std::endl;
+    c << "abs(this, x[0], x[1], icl);" << std::endl;
   }
 };
 namespace {
@@ -185,12 +189,14 @@ public:
                     x[2]) == x[3];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    Log::log("min(home, x[0:2], x[3])",
-             "\tIntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
-             "\tmin(this, m, x[3]);");
     IntVarArgs m(3);
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     min(home, m, x[3]);
+  }
+  virtual void description(std::ostream& h, std::ostream& c) {
+    h << "min(x[0], x[1], x[2]) == x[3]" << std::endl;
+    c << "IntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];" << std::endl;
+    c << "\tmin(this, m, x[3]);" << std::endl;
   }
 };
 namespace {
@@ -206,12 +212,14 @@ public:
                     x[2]) == x[1];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    Log::log("min(home, x[0:2], x[1])",
-             "\tIntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
-             "\tmin(this, m, x[1]);");
     IntVarArgs m(3);
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     min(home, m, x[1]);
+  }
+  virtual void description(std::ostream& h, std::ostream& c) {
+    h << "min(x[0], x[1], x[2]) == x[1]" << std::endl;
+    c << "IntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];" << std::endl;
+    c << "\tmin(this, m, x[1]);" << std::endl;
   }
 };
 namespace {
@@ -227,12 +235,14 @@ public:
                     x[2]) == x[3];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    Log::log("max(home, x[0:2], x[3])",
-             "\tIntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
-             "\tmax(this, m, x[3]);");
     IntVarArgs m(3);
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     max(home, m, x[3]);
+  }
+  virtual void description(std::ostream& h, std::ostream& c) {
+    h << "max(x[0], x[1], x[2]) == x[3]" << std::endl;
+    c << "IntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];" << std::endl;
+    c << "\tmax(this, m, x[3]);" << std::endl;
   }
 };
 namespace {
@@ -248,12 +258,14 @@ public:
                     x[2]) == x[1];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    Log::log("max(home, x[0:2], x[1])",
-             "\tIntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
-             "\tmax(this, m, x[1]);");
     IntVarArgs m(3);
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     max(home, m, x[1]);
+  }
+  virtual void description(std::ostream& h, std::ostream& c) {
+    h << "max(x[0], x[1], x[2]) == x[1]" << std::endl;
+    c << "IntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];" << std::endl;
+    c << "\tmax(this, m, x[1]);" << std::endl;
   }
 };
 namespace {

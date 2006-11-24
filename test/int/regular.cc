@@ -76,17 +76,7 @@ public:
             ((x[1] == 0) || (x[1] == 1)));
   }
   virtual void post(Space* home, IntVarArray& x) {
-    Log::log("post regular: x[0]x[1]x[0]x[1] in (0|2)(-1|1)(7|0|1)(0|1)",
-             "\tREG r = \n"
-             "\t  (REG(0) | REG(2)) +\n"
-             "\t  (REG(-1) | REG(1)) +\n"
-             "\t  (REG(7) | REG(0) | REG(1)) +\n"
-             "\t  (REG(0) | REG(1));\n"
-             "\tDFA d(r);\n"
-             "\tIntVarArgs y(4);\n"
-             "\ty[0]=x[0]; y[1]=x[1]; y[2]=x[0]; y[3]=x[1];\n"
-             "\tregular(home, y, d);\n");
-    REG r =
+     REG r =
       (REG(0) | REG(2)) +
       (REG(-1) | REG(1)) +
       (REG(7) | REG(0) | REG(1)) +
@@ -96,11 +86,24 @@ public:
     y[0]=x[0]; y[1]=x[1]; y[2]=x[0]; y[3]=x[1];
     regular(home, y, d);
   }
+  virtual void description(std::ostream& h, std::ostream& c) {
+    h << "post regular: x[0]x[1]x[0]x[1] in (0|2)(-1|1)(7|0|1)(0|1)" << std::endl;
+    c << "\tREG r = \n"
+      << "\t  (REG(0) | REG(2)) +\n"
+      << "\t  (REG(-1) | REG(1)) +\n"
+      << "\t  (REG(7) | REG(0) | REG(1)) +\n"
+      << "\t  (REG(0) | REG(1));\n"
+      << "\tDFA d(r);\n"
+      << "\tIntVarArgs y(4);\n"
+      << "\ty[0]=x[0]; y[1]=x[1]; y[2]=x[0]; y[3]=x[1];\n"
+      << "\tregular(home, y, d);\n" << std::endl;
+  }
 };
-
-RegularA _rega("Regular::A");
-RegularB _regb("Regular::B");
-RegularShared _regsa("Regular::Shared");
+namespace {
+  RegularA _rega("Regular::A");
+  RegularB _regb("Regular::B");
+  RegularShared _regsa("Regular::Shared");
+}
 
 // STATISTICS: test-int
 

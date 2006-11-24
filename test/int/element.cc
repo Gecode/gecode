@@ -104,19 +104,20 @@ public:
     return (x[0]>= 0) && (x[0]<n) && x[2+x[0]]==x[1];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    Log::log("", icl == ICL_BND
-             ? "\tIntConLevel icl = ICL_BND;"
-             : "\tIntConLevel icl = ICL_DOM;");
-    Log::log("post element",
-             "\tint n = x.size()-2;\n"
-             "\tIntVarArgs ia(n);\n"
-             "\tfor (int i=0;i<n;i++)\n"
-             "\t  ia[i]=x[2+i];\n"
-             "\telement(this, ia, x[0], x[1], icl);");
     IntVarArgs ia(n);
     for (int i=0;i<n;i++)
       ia[i]=x[2+i];
     element(home, ia, x[0], x[1], icl);
+  }
+  virtual void description(std::ostream& h, std::ostream& c) {
+    h << "post element" << std::endl;
+    c << "IntConLevel icl = " << Log::iclc(icl) << ";\n"
+      << "\tint n = x.size()-2;\n" 
+      << "\tIntVarArgs ia(n);\n" 
+      << "\tfor (int i = 0; i < n; ++i)\n"
+      << "\t    ia[i] = x[2+i];\n"
+      << "\telement(this, ia, x[0], x[1], icl);\n"
+      << std::endl;
   }
 };
 
@@ -132,19 +133,20 @@ public:
     return (x[0]>= 0) && (x[0]<n) && x[1+x[0]]==x[0];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    Log::log("", icl == ICL_BND
-             ? "\tIntConLevel icl = ICL_BND;"
-             : "\tIntConLevel icl = ICL_DOM;");
-    Log::log("post element",
-             "\tint n = x.size()-1;\n"
-             "\tIntVarArgs ia(n);\n"
-             "\tfor (int i=0;i<n;i++)\n"
-             "\t  ia[i]=x[1+i];\n"
-             "\telement(this, ia, x[0], x[0], icl);");
     IntVarArgs ia(n);
     for (int i=0;i<n;i++)
       ia[i]=x[1+i];
     element(home, ia, x[0], x[0], icl);
+  }
+  virtual void description(std::ostream& h, std::ostream& c) {
+    h << "post element" << std::endl;
+    c << "IntConLevel icl = " << Log::iclc(icl) << ";\n"
+      << "\tint n = x.size()-1;\n" 
+      << "\tIntVarArgs ia(n);\n" 
+      << "\tfor (int i = 0; i < n; ++i)\n"
+      << "\t    ia[i] = x[1+i];\n"
+      << "\telement(this, ia, x[0], x[0], icl);\n"
+      << std::endl;
   }
 };
 static IntSet iv1(-1,3);
