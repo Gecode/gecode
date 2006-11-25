@@ -175,24 +175,21 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * This propagator provides multiplication for positive views only.
    */
   template <class VA, class VB>
-  class SquarePlus : public Propagator {
+  class SquarePlus : public MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND> {
   protected:
-    VA x0; VB x1;
-  public:
+    using MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>::x0;
+    using MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>::x1;
     /// Constructor for posting
     SquarePlus(Space* home, VA x0, VB x1);
-    /// Post propagator \f$x_0\cdot x_0=x_1\f$
-    static ExecStatus post(Space* home, VA x0, VB x1);
     /// Constructor for cloning \a p
     SquarePlus(Space* home, bool share, SquarePlus<VA,VB>& p);
+  public:
+    /// Post propagator \f$x_0\cdot x_0=x_1\f$
+    static ExecStatus post(Space* home, VA x0, VB x1);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Cost function (defined as PC_TERNARY_HI)
-    virtual PropCost cost(void) const;
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
   };
 
   /**
@@ -228,24 +225,23 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * This propagator provides multiplication for positive views only.
    */
   template <class VA, class VB, class VC>
-  class MultPlus : public Propagator {
+  class MultPlus : 
+    public MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND> {
   protected:
-    VA x0; VB x1; VC x2;
-  public:
+    using MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>::x0;
+    using MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>::x1;
+    using MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>::x2;
     /// Constructor for posting
     MultPlus(Space* home, VA x0, VB x1, VC x2);
-    /// Post propagator \f$x_0\cdot x_1=x_2\f$
-    static ExecStatus post(Space* home, VA x0, VB x1, VC x2);
     /// Constructor for cloning \a p
     MultPlus(Space* home, bool share, MultPlus<VA,VB,VC>& p);
+  public:
+    /// Post propagator \f$x_0\cdot x_1=x_2\f$
+    static ExecStatus post(Space* home, VA x0, VB x1, VC x2);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Cost function (defined as PC_TERNARY_HI)
-    virtual PropCost cost(void) const;
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
   };
 
   /**

@@ -204,7 +204,7 @@ namespace Gecode { namespace Set { namespace Select {
         }
         for (int i=n; i--;)
           before[i].dispose(home);
-        return ES_SUBSUMED;
+        return ES_SUBSUMED(this,home);
       }
 
       {
@@ -272,7 +272,7 @@ namespace Gecode { namespace Set { namespace Select {
       } else {
         GECODE_ME_CHECK(x0.exclude(home,Limits::Set::int_min,
                                    Limits::Set::int_max));
-        return ES_SUBSUMED;
+        return ES_SUBSUMED(this,home);
       }
     }
 
@@ -284,7 +284,7 @@ namespace Gecode { namespace Set { namespace Select {
       }
     }
     if (x0.assigned() && x1.assigned() && allAssigned) {
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     }
 
     return ES_FIX;

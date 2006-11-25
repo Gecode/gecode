@@ -51,29 +51,29 @@ namespace Gecode { namespace Int { namespace Distinct {
     return new (home) TerDom<View>(home,share,*this);
   }
 
-  // Check whether x0 forms a Hall set of cardinality one
-#define GECODE_INT_HALL_ONE(x0,x1,x2)                                \
-  if (x0.assigned()) {                                                \
-    GECODE_ME_CHECK(x1.nq(home,x0.val()));                        \
-    GECODE_ME_CHECK(x2.nq(home,x0.val()));                        \
-    if (x1.assigned()) {                                        \
-      GECODE_ME_CHECK(x2.nq(home,x1.val()));                        \
-      return ES_SUBSUMED;                                        \
-    }                                                                \
-    if (x2.assigned()) {                                        \
-      GECODE_ME_CHECK(x1.nq(home,x2.val()));                        \
-      return ES_SUBSUMED;                                        \
-    }                                                                \
-    return ES_FIX;                                              \
+  /// Check whether x0 forms a Hall set of cardinality one
+#define GECODE_INT_HALL_ONE(x0,x1,x2)           \
+  if (x0.assigned()) {                          \
+    GECODE_ME_CHECK(x1.nq(home,x0.val()));      \
+    GECODE_ME_CHECK(x2.nq(home,x0.val()));      \
+    if (x1.assigned()) {                        \
+      GECODE_ME_CHECK(x2.nq(home,x1.val()));    \
+      return ES_SUBSUMED(this,home);            \
+    }                                           \
+    if (x2.assigned()) {                        \
+      GECODE_ME_CHECK(x1.nq(home,x2.val()));    \
+      return ES_SUBSUMED(this,home);            \
+    }                                           \
+    return ES_FIX;                              \
   }
 
 
-  // Check whether x0 and x1 form a Hall set of cardinality two
-#define GECODE_INT_HALL_TWO(x0,x1,x2)                                \
-  if ((x0.size() == 2) && (x1.size() == 2) &&                        \
-      (x0.min() == x1.min()) && (x0.max() == x1.max())) {        \
-    GECODE_ME_CHECK(x2.nq(home,x0.min()));                        \
-    GECODE_ME_CHECK(x2.nq(home,x0.max()));                        \
+  /// Check whether x0 and x1 form a Hall set of cardinality two
+#define GECODE_INT_HALL_TWO(x0,x1,x2)                           \
+  if ((x0.size() == 2) && (x1.size() == 2) &&                   \
+      (x0.min() == x1.min()) && (x0.max() == x1.max())) {       \
+    GECODE_ME_CHECK(x2.nq(home,x0.min()));                      \
+    GECODE_ME_CHECK(x2.nq(home,x0.max()));                      \
     return ES_FIX;                                              \
   }
 

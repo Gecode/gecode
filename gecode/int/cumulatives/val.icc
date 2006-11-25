@@ -56,7 +56,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
 
   template <class ViewM, class ViewD, class ViewH, class View>
   forceinline
-  Val<ViewM,ViewD,ViewH,View>::Val(Space* home, const ViewArray<ViewM>& _machine,
+  Val<ViewM,ViewD,ViewH,View>::Val(Space* home, 
+                                   const ViewArray<ViewM>& _machine,
                                    const ViewArray<View>& _start,
                                    const ViewArray<ViewD>& _duration,
                                    const ViewArray<View>& _end,
@@ -166,9 +167,9 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   template <class ViewM, class ViewD, class ViewH, class View>
   ExecStatus
   Val<ViewM,ViewD,ViewH,View>::prune(Space * home, int low, int up, int r,
-                   int ntask, int sheight,
-                   const std::vector<int>& contribution,
-                   std::list<int>& prune_tasks) {
+                                     int ntask, int sheight,
+                                     const std::vector<int>& contribution,
+                                     std::list<int>& prune_tasks) {
 
     if (ntask > 0 &&
         (at_most ? sheight > limit[r]
@@ -264,18 +265,15 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   template <class ViewM, class ViewD, class ViewH, class View>
   ExecStatus
   Val<ViewM,ViewD,ViewH,View>::propagate(Space* home) {
-    ExecStatus res = ES_NOFIX;
     // Check for subsumption
-    bool nnft = true; // no non-fixed tasks.
+    bool subsumed = true;
     for (int t = start.size(); t--; )
-      if(!(duration[t].assigned() && end[t].assigned()   &&
-           machine[t].assigned()  && start[t].assigned() &&
-           height[t].assigned())) {
-        nnft = false;
+      if (!(duration[t].assigned() && end[t].assigned()   &&
+            machine[t].assigned()  && start[t].assigned() &&
+            height[t].assigned())) {
+        subsumed = false;
         break;
       }
-    if(nnft) res = ES_SUBSUMED;
-
 
     // Propagate information for machine r
     for (int r = limit.size(); r--; ) {
@@ -370,7 +368,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
                             contribution, prune_tasks));
     }
 
-    return res;
+    return subsumed ? ES_SUBSUMED(this,home): ES_NOFIX;
   }
 
 }}}

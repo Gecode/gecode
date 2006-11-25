@@ -76,11 +76,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    */
   template <class VA, class VB>
   forceinline
-  SquarePlus<VA,VB>::SquarePlus(Space* home, VA y0, VB y1)
-    : Propagator(home), x0(y0), x1(y1) {
-    x0.subscribe(home,this,PC_INT_BND);
-    x1.subscribe(home,this,PC_INT_BND);
-  }
+  SquarePlus<VA,VB>::SquarePlus(Space* home, VA x0, VB x1)
+    : MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>(home,x0,x1) {}
 
   template <class VA, class VB>
   forceinline ExecStatus
@@ -92,21 +89,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class VA, class VB>
   forceinline
   SquarePlus<VA,VB>::SquarePlus(Space* home, bool share, SquarePlus<VA,VB>& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
-  }
+    : MixBinaryPropagator(home,share,p) {}
 
   template <class VA, class VB>
   Actor*
   SquarePlus<VA,VB>::copy(Space* home, bool share) {
     return new (home) SquarePlus<VA,VB>(home,share,*this);
-  }
-
-  template <class VA, class VB>
-  PropCost
-  SquarePlus<VA,VB>::cost(void) const {
-    return PC_TERNARY_HI;
   }
 
   template <class VA, class VB>
@@ -136,18 +124,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         mod |= me_modified(me);
       }
     } while (mod);
-    return x0.assigned() ? ES_SUBSUMED : ES_FIX;
+    return x0.assigned() ? ES_SUBSUMED(this,sizeof(*this)) : ES_FIX;
   }
 
-  template <class VA, class VB>
-  size_t
-  SquarePlus<VA,VB>::dispose(Space* home) {
-    assert(!home->failed());
-    x0.cancel(home,this,PC_INT_BND);
-    x1.cancel(home,this,PC_INT_BND);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
 
 
   /*
@@ -210,7 +189,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(x0.lq(home,s));
 
     if (x0.assigned() && x1.assigned())
-      return (x0.val()*x0.val() == x1.val()) ? ES_SUBSUMED : ES_FAILED;
+      return (x0.val()*x0.val() == x1.val()) ? 
+        ES_SUBSUMED(this,sizeof(*this)) : ES_FAILED;
 
     return ES_NOFIX;
   }
@@ -221,16 +201,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    */
   template <class VA, class VB, class VC>
-  inline
-  MultPlus<VA,VB,VC>::MultPlus(Space* home, VA y0, VB y1, VC y2)
-    : Propagator(home), x0(y0), x1(y1), x2(y2) {
-    x0.subscribe(home,this,PC_INT_BND);
-    x1.subscribe(home,this,PC_INT_BND);
-    x2.subscribe(home,this,PC_INT_BND);
-  }
+  forceinline
+  MultPlus<VA,VB,VC>::MultPlus(Space* home, VA x0, VB x1, VC x2)
+    : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
+  (home,x0,x1,x2) {}
 
   template <class VA, class VB, class VC>
-  inline ExecStatus
+  forceinline ExecStatus
   MultPlus<VA,VB,VC>::post(Space* home, VA x0, VB x1, VC x2) {
     GECODE_ME_CHECK(x0.gr(home,0));
     GECODE_ME_CHECK(x1.gr(home,0));
@@ -242,22 +219,13 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class VA, class VB, class VC>
   forceinline
   MultPlus<VA,VB,VC>::MultPlus(Space* home, bool share, MultPlus<VA,VB,VC>& p)
-    : Propagator(home,share,p) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
-    x2.update(home,share,p.x2);
-  }
+    : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
+  (home,share,p) {}
 
   template <class VA, class VB, class VC>
   Actor*
   MultPlus<VA,VB,VC>::copy(Space* home, bool share) {
     return new (home) MultPlus<VA,VB,VC>(home,share,*this);
-  }
-
-  template <class VA, class VB, class VC>
-  PropCost
-  MultPlus<VA,VB,VC>::cost(void) const {
-    return PC_TERNARY_HI;
   }
 
   template <class VA, class VB, class VC>
@@ -298,19 +266,10 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         mod |= me_modified(me);
       }
     } while (mod);
-    return x0.assigned() && x1.assigned() ? ES_SUBSUMED : ES_FIX;
+    return x0.assigned() && x1.assigned() ? 
+      ES_SUBSUMED(this,sizeof(*this)) : ES_FIX;
   }
 
-  template <class VA, class VB, class VC>
-  size_t
-  MultPlus<VA,VB,VC>::dispose(Space* home) {
-    assert(!home->failed());
-    x0.cancel(home,this,PC_INT_BND);
-    x1.cancel(home,this,PC_INT_BND);
-    x2.cancel(home,this,PC_INT_BND);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
 
 
   /*
@@ -372,12 +331,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     if (x0.assigned()) {
       assert((x0.val() == 0) && (x2.val() == 0));
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     }
 
     if (x1.assigned()) {
       assert((x1.val() == 0) && (x2.val() == 0));
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     }
 
     return ES_NOFIX;
@@ -398,7 +357,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.eq(home,m(x0.val(),x1.val())));
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,sizeof(*this));
     }
 
     return ES_NOFIX;
@@ -419,7 +378,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
 
     if (x0.assigned() && x1.assigned()) {
       GECODE_ME_CHECK(x2.eq(home,m(x0.val(),x1.val())));
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,sizeof(*this));
     }
 
     return ES_NOFIX;

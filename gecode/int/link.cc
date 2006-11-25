@@ -82,7 +82,7 @@ namespace Gecode { namespace Int { namespace Link {
         GECODE_ME_CHECK(x1.one(home));
       }
     }
-    return ES_SUBSUMED;
+    return ES_SUBSUMED(this,sizeof(*this));
   }
 
 }}}

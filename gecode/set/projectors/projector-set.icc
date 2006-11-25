@@ -47,8 +47,8 @@ namespace Gecode {
           return ES_FAILED;
         failedCount++;
         break;
-      case ES_SUBSUMED:
-        return ES_SUBSUMED;
+      case __ES_SUBSUMED:
+        return __ES_SUBSUMED;
       default:
         break;
       }

@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_ME_CHECK(x0.nq(home,x1.val()));
       x0.cancel(home,this,PC_INT_VAL);
     }
-    return this->ES_DISPOSED(sizeof(*this));
+    return ES_SUBSUMED(this,sizeof(*this));
   }
 
   /*
@@ -137,7 +137,7 @@ namespace Gecode { namespace Int { namespace Rel {
     for (int i=n; i--; )
       switch (rtest_nq_dom(x[i][0],x[i][1])) {
       case RT_TRUE:  
-        return ES_SUBSUMED;
+        return ES_SUBSUMED(this,home);
       case RT_FALSE: 
         x[i].cancel(home,this,PC_INT_DOM);
         x[i]=x[--n]; 
@@ -149,7 +149,7 @@ namespace Gecode { namespace Int { namespace Rel {
       }
     switch (rtest_nq_dom(x0[0],x0[1])) {
     case RT_TRUE: 
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     case RT_FALSE:
       if (n == 0)
         GECODE_REWRITE((Nq<View>::post(home,x1[0],x1[1])));
@@ -164,7 +164,7 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     switch (rtest_nq_dom(x1[0],x1[1])) {
     case RT_TRUE: 
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     case RT_FALSE:
       if (n == 0)
         GECODE_REWRITE((Nq<View>::post(home,x0[0],x0[1])));

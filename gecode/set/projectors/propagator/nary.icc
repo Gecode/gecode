@@ -102,8 +102,11 @@ namespace Gecode { namespace Set { namespace Projection {
         done = false; break;
       }
     ExecStatus es = ps.propagate<negated>(home, x);
-    GECODE_ES_CHECK(es);
-    return done ? ES_SUBSUMED : es;
+    if (es == ES_FAILED)
+      return ES_FAILED;
+    if (es == __ES_SUBSUMED)
+      return ES_SUBSUMED(this,home);
+    return done ? ES_SUBSUMED(this,home) : es;
   }
 
 }}}

@@ -123,7 +123,7 @@ namespace Gecode { namespace Set { namespace RelOp {
       GECODE_ME_CHECK( x0.cardMin(home,s1+x2.cardMin()) );
       GECODE_ME_CHECK( x1.cardMin(home,s2+x2.cardMin()) );
     }
-    if ( x0ass + x1ass + x2ass >= 2 ) return ES_SUBSUMED;
+    if ( x0ass + x1ass + x2ass >= 2 ) return ES_SUBSUMED(this,home);
 
     return ES_NOFIX;
   }
@@ -213,7 +213,7 @@ namespace Gecode { namespace Set { namespace RelOp {
                                      Limits::Set::int_min,
                                      Limits::Set::int_max) );
           intOfDets.dispose(home);
-          return ES_SUBSUMED;
+          return ES_SUBSUMED(this,home);
         }
       }
       {
@@ -290,7 +290,7 @@ namespace Gecode { namespace Set { namespace RelOp {
             GECODE_ME_CHECK( y.exclude(home,Limits::Set::int_min,
                                        Limits::Set::int_max) );
             intOfDets.dispose(home);
-            return ES_SUBSUMED;
+            return ES_SUBSUMED(this,home);
           }
         }
       }
@@ -300,7 +300,7 @@ namespace Gecode { namespace Set { namespace RelOp {
         BndSetRanges all2(intOfDets);
         GECODE_ME_CHECK( y.includeI(home,all2) );
         intOfDets.dispose(home);
-        return ES_SUBSUMED;
+        return ES_SUBSUMED(this,home);
       }
 
     } while (repeat);

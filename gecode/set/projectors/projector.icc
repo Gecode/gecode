@@ -36,9 +36,12 @@ namespace Gecode {
   Projector::propagate(Space* home, ViewArray<Set::SetView>& x) {
     if (negated) {
       switch (ExecStatus es=check(home, x)) {
-      case ES_FAILED: return ES_SUBSUMED;
-      case ES_SUBSUMED: return ES_FAILED;
-      default: return es;
+      case ES_FAILED: 
+        return __ES_SUBSUMED;
+      case __ES_SUBSUMED:
+        return ES_FAILED;
+      default: 
+        return es;
       }
     } else {
       // Prune greatest lower and least upper bound according to given ranges

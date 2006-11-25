@@ -96,7 +96,7 @@ namespace Gecode { namespace Set { namespace Projection {
       GECODE_ME_CHECK(i.gq(home, static_cast<int>(proj.glbSize(x))));
       GECODE_ME_CHECK(i.lq(home, static_cast<int>(proj.lubSize(x))));
     }
-    return done ? ES_SUBSUMED : ES_FIX;
+    return done ? ES_SUBSUMED(this,home) : ES_FIX;
   }
 
 }}}

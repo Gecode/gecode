@@ -46,7 +46,7 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   template <class Info, PropCond pc>
-  size_t
+  forceinline size_t
   Base<Info,pc>::dispose(Space* home) {
     if (!home->failed())
       for (int i=2*n; i--; )

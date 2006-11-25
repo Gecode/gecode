@@ -31,7 +31,7 @@ namespace Gecode { namespace Int { namespace Dom {
   }
 
   template <class View>
-  size_t
+  forceinline size_t
   ReIntSet<View>::dispose(Space* home) {
     Propagator::unforce(home);
     is.~IntSet();
@@ -71,24 +71,29 @@ namespace Gecode { namespace Int { namespace Dom {
   ReIntSet<View>::propagate(Space* home) {
     IntSetRanges i_is(is);
     if (b.one()) {
-      GECODE_ME_CHECK(x0.inter(home,i_is)); return ES_SUBSUMED;
+      GECODE_ME_CHECK(x0.inter(home,i_is)); goto subsumed;
     }
     if (b.zero()) {
-      GECODE_ME_CHECK(x0.minus(home,i_is)); return ES_SUBSUMED;
+      GECODE_ME_CHECK(x0.minus(home,i_is)); goto subsumed;
     }
 
-    ViewRanges<View> i_x(x0);
+    {
+      ViewRanges<View> i_x(x0);
 
-    switch (Iter::Ranges::subsumes(i_is,i_x)) {
-    case Iter::Ranges::SS_SUBSUMED:
-      b.one_none(home); return ES_SUBSUMED;
-    case Iter::Ranges::SS_EMPTY:
-      b.zero_none(home); return ES_SUBSUMED;
-    case Iter::Ranges::SS_NONE:
-      break;
-    default: GECODE_NEVER;
+      switch (Iter::Ranges::subsumes(i_is,i_x)) {
+      case Iter::Ranges::SS_SUBSUMED:
+        b.one_none(home); goto subsumed;
+      case Iter::Ranges::SS_EMPTY:
+        b.zero_none(home); goto subsumed;
+      case Iter::Ranges::SS_NONE:
+        break;
+      default: GECODE_NEVER;
+      }
     }
+
     return ES_FIX;
+  subsumed:
+    return ES_SUBSUMED(this,home);
   }
 
 }}}

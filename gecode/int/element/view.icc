@@ -174,9 +174,8 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class VA, class VB, class VC, PropCond pc_ac>
-  size_t
+  forceinline size_t
   View<VA,VB,VC,pc_ac>::dispose(Space* home) {
-    assert(!home->failed());
     x0.cancel(home,this,PC_INT_DOM);
     x1.cancel(home,this,pc_ac);
     for (int i=n; i--;)
@@ -352,7 +351,7 @@ namespace Gecode { namespace Int { namespace Element {
     if (n == 1) {
       size_t s = this->dispose(home);
       (void) new (home) Rel::EqBnd<VA,VC>(home,iv[0].view,x1);
-      return this->ES_DISPOSED(s);
+      return ES_SUBSUMED(this,s);
     }
     assert(n > 1);
     // Compute new result
@@ -377,7 +376,8 @@ namespace Gecode { namespace Int { namespace Element {
      if (me_modified(me) && (x1.min() != min))
        es = ES_NOFIX;
     }
-    return (x1.assigned() && (min == max)) ? ES_SUBSUMED : es;
+    return (x1.assigned() && (min == max)) ? 
+      ES_SUBSUMED(this,home) : es;
   }
 
 
@@ -446,7 +446,7 @@ namespace Gecode { namespace Int { namespace Element {
       if (n == 1) {
         size_t s = this->dispose(home);
         (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);
-        return this->ES_DISPOSED(s);
+        return ES_SUBSUMED(this,s);
       }
       // Compute new result
       int min = iv[n-1].view.min();
@@ -458,8 +458,8 @@ namespace Gecode { namespace Int { namespace Element {
       GECODE_ME_CHECK(x1.lq(home,max));
       GECODE_ME_CHECK(x1.gq(home,min));
       return (x1.assigned() && (min == max)) ?
-        ES_SUBSUMED :
-        this->ES_NOFIX_PARTIAL(VA::pme(ME_INT_DOM));
+        ES_SUBSUMED(this,home) :
+        ES_NOFIX_PARTIAL(this,VA::pme(ME_INT_DOM));
     }
     RelTestDom<VA,VC> rt;
     scan<VA,VB,VC,PC_INT_DOM,RelTestDom<VA,VC> >
@@ -469,7 +469,7 @@ namespace Gecode { namespace Int { namespace Element {
     if (n == 1) {
       size_t s = this->dispose(home);
       (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);
-      return this->ES_DISPOSED(s);
+      return ES_SUBSUMED(this,s);
     }
     assert(n > 1);
     GECODE_AUTOARRAY(ViewRanges<VA>,i_view,n);

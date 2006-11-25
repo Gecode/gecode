@@ -91,9 +91,9 @@ namespace Gecode { namespace Int { namespace Regular {
     ~LayeredGraph(void);
 
     /// Prune initially for view sequence \a x
-    ExecStatus prune_initial(Space* home, ViewArray<View> x);
+    ExecStatus prune_initial(Space* home, Propagator* p, ViewArray<View> x);
     /// Prune incrementally for view sequence \a x
-    ExecStatus prune(Space* home, ViewArray<View> x);
+    ExecStatus prune(Space* home, Propagator* p, ViewArray<View> x);
 
     /// Return memory required for layered graph
     size_t size(void) const;
@@ -234,7 +234,8 @@ namespace Gecode { namespace Int { namespace Regular {
 
   template <class View>
   forceinline ExecStatus
-  Dom<View>::LayeredGraph::prune_initial(Space* home, ViewArray<View> x) {
+  Dom<View>::LayeredGraph::prune_initial(Space* home, Propagator* p,
+                                         ViewArray<View> x) {
     // Second pass: prune all transitions that do not lead to final state
     for (int i = x.size(); i--; ) {
       Edge** p = &layers[i].edges;
@@ -273,12 +274,13 @@ namespace Gecode { namespace Int { namespace Regular {
     for (int i=x.size(); i--; )
       if (!x[i].assigned())
         return es;
-    return ES_SUBSUMED;
+    return ES_SUBSUMED(p,home);
   }
 
   template <class View>
   forceinline ExecStatus
-  Dom<View>::LayeredGraph::prune(Space* home, ViewArray<View> x) {
+  Dom<View>::LayeredGraph::prune(Space* home, Propagator* p, 
+                                 ViewArray<View> x) {
     int n = x.size();
     // Prune edges for which no value support exists
     for (int i = 0; i < n; i++)
@@ -376,7 +378,7 @@ namespace Gecode { namespace Int { namespace Regular {
     for (int i=x.size(); i--; )
       if (!x[i].assigned())
         return es;
-    return ES_SUBSUMED;
+    return ES_SUBSUMED(p,home);
   }
 
   template <class View>
@@ -411,13 +413,23 @@ namespace Gecode { namespace Int { namespace Regular {
   }
 
   template <class View>
+  size_t
+  Dom<View>::dispose(Space* home) {
+    Propagator::unforce(home);
+    dfa.~DFA();
+    delete lg;
+    (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class View>
   ExecStatus
   Dom<View>::propagate(Space* home) {
     if (lg == NULL) {
       lg = new (this->x.size()) LayeredGraph(this->x,dfa);
-      return lg->prune_initial(home,this->x);
+      return lg->prune_initial(home,this,this->x);
     } else {
-      return lg->prune(home,this->x);
+      return lg->prune(home,this,this->x);
     }
   }
 
@@ -441,16 +453,6 @@ namespace Gecode { namespace Int { namespace Regular {
   Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
     : NaryPropagator<View,PC_INT_DOM>(home,share,p), lg(NULL) {
     dfa.update(share,p.dfa);
-  }
-
-  template <class View>
-  size_t
-  Dom<View>::dispose(Space* home) {
-    Propagator::unforce(home);
-    dfa.~DFA();
-    delete lg;
-    (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
-    return sizeof(*this);
   }
 
   template <class View>

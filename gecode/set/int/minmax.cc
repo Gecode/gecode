@@ -67,7 +67,7 @@ namespace Gecode { namespace Set { namespace Int {
       GECODE_ME_CHECK(x0.include(home,x1.val()));
       GECODE_ME_CHECK(x0.exclude(home,
                                  Limits::Set::int_min, x1.val()-1));
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     }
 
     return ES_FIX;
@@ -99,7 +99,7 @@ namespace Gecode { namespace Set { namespace Int {
       GECODE_ME_CHECK(x0.include(home,x1.val()));
       GECODE_ME_CHECK( x0.exclude(home,
                                   x1.val()+1,Limits::Set::int_max) );
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     }
 
     return ES_FIX;

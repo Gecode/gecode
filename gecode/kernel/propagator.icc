@@ -599,8 +599,7 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1,
             class View2, PropCond pc2>
   forceinline size_t
-  MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::
-  dispose(Space* home) {
+  MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>::dispose(Space* home) {
     x0.cancel(home,this,pc0);
     x1.cancel(home,this,pc1);
     x2.cancel(home,this,pc2);

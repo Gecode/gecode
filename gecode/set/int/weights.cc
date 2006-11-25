@@ -104,7 +104,7 @@ namespace Gecode { namespace Set { namespace Int {
       int w = 
         weightI<GlbRanges<SetView>,ALL_COST>(elements, weights, glb);
       GECODE_ME_CHECK(y.eq(home, w));
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     }
 
     int lowCost;
@@ -172,7 +172,7 @@ namespace Gecode { namespace Set { namespace Int {
       int w = 
         weightI<GlbRanges<SetView>,ALL_COST>(elements, weights, glb);
       GECODE_ME_CHECK(y.eq(home, w));
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     }
     return me_modified(me) ? ES_NOFIX : ES_FIX;
   }

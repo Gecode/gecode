@@ -218,15 +218,7 @@ namespace Gecode {
           process();
         }
         break;
-      case ES_SUBSUMED:
-        {
-          // Prevent that propagator gets rescheduled (turn on all events)
-          p->u.pme = PME_ASSIGNED;
-          process();
-          reuse(p,p->dispose(this));
-        }
-        break;
-      case __ES_DISPOSED:
+      case __ES_SUBSUMED:
         {
           // Remember size
           size_t s = p->u.size;

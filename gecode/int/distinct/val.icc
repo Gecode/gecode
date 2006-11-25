@@ -123,7 +123,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       }
     } while (c_n > 0);
     x.size(n);
-    return (n < 2) ? ES_SUBSUMED : ES_FIX;
+    return ES_FIX;
   failed:
     x.size(0);
     return ES_FAILED;
@@ -153,7 +153,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   ExecStatus
   Val<View>::propagate(Space* home) {
-    return prop_val<View,true>(home,x);
+    GECODE_ES_CHECK((prop_val<View,true>(home,x)));
+    return (x.size() < 2) ? ES_SUBSUMED(this,home) : ES_FIX;
   }
 
   template <class View>

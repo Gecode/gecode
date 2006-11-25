@@ -133,7 +133,7 @@ namespace Gecode { namespace Int { namespace Bool {
     default:
       GECODE_NEVER;
     }
-    return this->ES_DISPOSED(sizeof(*this));
+    return ES_SUBSUMED(this,sizeof(*this));
 #undef GECODE_INT_STATUS
   }
 

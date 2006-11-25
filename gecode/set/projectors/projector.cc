@@ -118,7 +118,7 @@ namespace Gecode {
     // Both bounds, interpreted monotonically (glb) and anti-monotonically
     // (lub) are contained in the respective bounds of x[i]. This means
     // that the bounds are entailed.
-    return ES_SUBSUMED;
+    return __ES_SUBSUMED;
   }
 
 }

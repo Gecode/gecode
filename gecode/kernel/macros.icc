@@ -97,7 +97,7 @@
   ExecStatus __es__ ## __LINE__ = (post);                               \
   if (__es__ ## __LINE__ != ::Gecode::ES_OK)                            \
     return ::Gecode::ES_FAILED;                                         \
-  return __p__ ## __LINE__->ES_DISPOSED(__s__ ## __LINE__);             \
+  return ES_SUBSUMED(__p__ ## __LINE__,__s__ ## __LINE__);              \
 }
 
 /**

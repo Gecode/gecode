@@ -129,9 +129,8 @@ namespace Gecode { namespace Int { namespace GCC {
       all_assigned &= b;
       if (b) {
         int idx = lookupValue(k,x[i].val());
-        if (idx == -1) {
+        if (idx == -1)
           return ES_FAILED;
-        }
         count[idx]++;
         noa++;
       }
@@ -145,9 +144,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
       for (int i = m; i--; ) {
         int ci = count[i] + k[i].counter();
-        if (!(k[i].min() <= ci && ci <= k[i].max())) {
+        if (!(k[i].min() <= ci && ci <= k[i].max()))
           return ES_FAILED;
-        }
         // the solution contains ci occurences of value k[i].card();
         if (isView) {
           if (!k[i].assigned()) {
@@ -157,7 +155,7 @@ namespace Gecode { namespace Int { namespace GCC {
           }
         }
       }
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     }
 
     // total number of unsatisfied miminum occurences
@@ -180,9 +178,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
       // number of unassigned views cannot satisfy
       // the required minimum occurence
-      if (req > non) {
+      if (req > non)
         return ES_FAILED;
-      }
     }
 
     // if only one unsatisfied occurences is left
@@ -199,9 +196,8 @@ namespace Gecode { namespace Int { namespace GCC {
       for (int i = m; i--; ) {
         int ci = count[i] + k[i].counter();
         // consistency check
-        if (!(k[i].min() <= ci && ci <= k[i].max())) {
+        if (!(k[i].min() <= ci && ci <= k[i].max()))
           return ES_FAILED;
-        }
         // the solution contains ci occurences of value k[i].card();
         if (isView) {
           if (!k[i].assigned()) {
@@ -210,7 +206,7 @@ namespace Gecode { namespace Int { namespace GCC {
           }
         }
       }
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     }
 
     for (int i = m; i--; ) {
@@ -229,9 +225,8 @@ namespace Gecode { namespace Int { namespace GCC {
           }
         }
       } else {
-        if (ci > k[i].max()) {
+        if (ci > k[i].max())
           return ES_FAILED;
-        }
 
         // in case of variable cardinalities
         if (isView) {
@@ -261,9 +256,8 @@ namespace Gecode { namespace Int { namespace GCC {
       bool b = x[i].assigned();
       if (b) {
         int idx = lookupValue(k,x[i].val());
-        if (idx == -1) {
+        if (idx == -1)
           return ES_FAILED;
-        }
         if (onrem[idx]) {
           x[i] = x[--n];
           x.size(n);
@@ -278,9 +272,8 @@ namespace Gecode { namespace Int { namespace GCC {
       for (int i = x.size(); i--;) {
         if (!x[i].assigned()) {
           ModEvent me = x[i].minus(home, rr);
-          if (me_failed(me)) {
+          if (me_failed(me))
             return ES_FAILED;
-          }
           mod |= x[i].assigned();
         }
       }
@@ -293,9 +286,8 @@ namespace Gecode { namespace Int { namespace GCC {
       all_assigned &= b;
       if (b) {
         int idx = lookupValue(k,x[i].val());
-        if (idx == -1) {
+        if (idx == -1)
           return ES_FAILED;
-        }
         count[idx]++;
       }
     }
@@ -303,9 +295,8 @@ namespace Gecode { namespace Int { namespace GCC {
     if (all_assigned) {
       for (int i = k.size(); i--; ) {
         int ci = count[i] + k[i].counter();
-        if (!(k[i].min() <= ci && ci <= k[i].max())) {
+        if (!(k[i].min() <= ci && ci <= k[i].max()))
           return ES_FAILED;
-        }
         // the solution contains ci occurences of value k[i].card();
         if (isView) {
           if (!k[i].assigned()) {
@@ -315,7 +306,7 @@ namespace Gecode { namespace Int { namespace GCC {
           }
         }
       }
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     }
 
     if (isView) {

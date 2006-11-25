@@ -62,7 +62,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template <class BV>
   ExecStatus
   OrTrueSubsumed<BV>::propagate(Space* home) {
-    return this->ES_DISPOSED(home);
+    return ES_SUBSUMED(this,home);
   }
 
 
@@ -144,7 +144,7 @@ namespace Gecode { namespace Int { namespace Bool {
     default:
         GECODE_NEVER;
     }
-    return this->ES_DISPOSED(sizeof(*this));
+    return ES_SUBSUMED(this,sizeof(*this));
 #undef GECODE_INT_STATUS
   }
 
@@ -250,7 +250,7 @@ namespace Gecode { namespace Int { namespace Bool {
     default:
       GECODE_NEVER;
     }
-    return this->ES_DISPOSED(sizeof(*this));
+    return ES_SUBSUMED(this,sizeof(*this));
 #undef GECODE_INT_STATUS
   }
 
@@ -429,7 +429,7 @@ namespace Gecode { namespace Int { namespace Bool {
     default:
       GECODE_NEVER;
     }
-    return this->ES_DISPOSED(sizeof(*this));
+    return ES_SUBSUMED(this,sizeof(*this));
 #undef GECODE_INT_STATUS
   }
 
@@ -557,7 +557,7 @@ namespace Gecode { namespace Int { namespace Bool {
     default:
       GECODE_NEVER;
     }
-    return this->ES_DISPOSED(sizeof(*this));
+    return ES_SUBSUMED(this,sizeof(*this));
 #undef GECODE_INT_STATUS
   }
 
@@ -646,7 +646,7 @@ namespace Gecode { namespace Int { namespace Bool {
       for (int i=n; i--; )
         if (x[i].one()) {
           x.size(n);
-          return this->ES_DISPOSED(home);
+          return ES_SUBSUMED(this,home);
         } else if (x[i].zero()) {
           x[i] = x[--n];
         } else {
@@ -666,7 +666,7 @@ namespace Gecode { namespace Int { namespace Bool {
       // All views have been assigned!
       x.size(0);
       GECODE_ME_CHECK(x1.one(home));
-      return this->ES_DISPOSED(sizeof(*this));
+      return ES_SUBSUMED(this,sizeof(*this));
     }
     return ES_FIX;
   }
@@ -675,7 +675,7 @@ namespace Gecode { namespace Int { namespace Bool {
   ExecStatus
   NaryOrTrue<BV>::propagate(Space* home) {
     if (x0.one() || x1.one())
-      return this->ES_DISPOSED(home);
+      return ES_SUBSUMED(this,home);
     GECODE_ES_CHECK(resubscribe(home,x0,x1));
     GECODE_ES_CHECK(resubscribe(home,x1,x0));
     return ES_FIX;
@@ -740,21 +740,21 @@ namespace Gecode { namespace Int { namespace Bool {
     if (y.zero()) {
       for (int i = x.size(); i--; )
         GECODE_ME_CHECK(x[i].zero(home));
-      return this->ES_DISPOSED(sizeof(*this));
+      return ES_SUBSUMED(this,sizeof(*this));
     }
     if (y.one())
       GECODE_REWRITE(NaryOrTrue<BV>::post(home,x));
     for (int i = x.size(); i--; ) {
       if (x[i].one()) {
         y.one_none(home);
-        return this->ES_DISPOSED(home);
+        return ES_SUBSUMED(this,home);
       }
       if (x[i].zero())
         x.move_lst(i);
     }
     if (x.size() == 0) {
       y.zero_none(home);
-      return this->ES_DISPOSED(sizeof(*this));
+      return ES_SUBSUMED(this,sizeof(*this));
     }
     return ES_FIX;
   }

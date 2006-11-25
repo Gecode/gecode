@@ -405,10 +405,9 @@ namespace Gecode { namespace Int { namespace Linear {
   ExecStatus
   DomEq<Val,View>::propagate(Space* home) {
     if (View::pme(this) != ME_INT_DOM) {
-      ExecStatus es = prop_bnd<Val,View,View>(this,home,x,y,c);
-      if ((es == ES_SUBSUMED) || (es == ES_FAILED))
-        return es;
-      return ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
+      ExecStatus es = prop_bnd<Val,View,View>(home,this,x,y,c);
+      GECODE_ES_CHECK(es);
+      return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
     }
 
     // Value of equation for partial assignment
@@ -474,7 +473,7 @@ namespace Gecode { namespace Int { namespace Linear {
     }
 
     // Tell back new variable domains
-    ExecStatus es = ES_SUBSUMED;
+    ExecStatus es = ES_NOFIX;
     for (int i=n; i--; ) {
       ModEvent me = xp[i].tell(home);
       if (me_failed(me)) {
@@ -496,6 +495,9 @@ namespace Gecode { namespace Int { namespace Linear {
   dispose:
     for (int i=n; i--; ) xp[i].dispose();
     for (int j=m; j--; ) yp[j].dispose();
+
+    if (es == ES_NOFIX)
+      return ES_SUBSUMED(this,sizeof(*this));
     return es;
   }
 

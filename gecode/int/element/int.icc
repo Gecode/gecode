@@ -317,17 +317,7 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class ViewA, class ViewB>
-  ExecStatus
-  Int<ViewA,ViewB>::post(Space* home, IntSharedArray& c, ViewA x0, ViewB x1) {
-    GECODE_ME_CHECK(x0.gq(home,0));
-    GECODE_ME_CHECK(x0.le(home,c.size()));
-    (void) new (home) Int<ViewA,ViewB>(home,c,x0,x1);
-    return ES_OK;
-  }
-
-
-  template <class ViewA, class ViewB>
-  size_t
+  forceinline size_t
   Int<ViewA,ViewB>::dispose(Space* home) {
     unforce(home);
     if (!home->failed()) {
@@ -339,6 +329,16 @@ namespace Gecode { namespace Int { namespace Element {
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
+
+  template <class ViewA, class ViewB>
+  ExecStatus
+  Int<ViewA,ViewB>::post(Space* home, IntSharedArray& c, ViewA x0, ViewB x1) {
+    GECODE_ME_CHECK(x0.gq(home,0));
+    GECODE_ME_CHECK(x0.le(home,c.size()));
+    (void) new (home) Int<ViewA,ViewB>(home,c,x0,x1);
+    return ES_OK;
+  }
+
 
   template <class ViewA, class ViewB>
   void
@@ -367,7 +367,6 @@ namespace Gecode { namespace Int { namespace Element {
     return new (home) Int<ViewA,ViewB>(home,share,*this);
   }
 
-
   template <class ViewA, class ViewB>
   PropCost
   Int<ViewA,ViewB>::cost(void) const {
@@ -389,7 +388,8 @@ namespace Gecode { namespace Int { namespace Element {
     if (es == ES_FAILED)
       return ES_FAILED;
 
-    return (x0.assigned() || x1.assigned()) ? ES_SUBSUMED : es;
+    return (x0.assigned() || x1.assigned()) ? 
+      ES_SUBSUMED(this,home) : es;
   }
 
 }}}

@@ -25,7 +25,7 @@
 namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
-  inline
+  forceinline
   Bnd<View>::Bnd(Space* home, ViewArray<View>& x0)
     : Propagator(home), x(x0), y(home,x0) {
     // Both x and y initially contain the same variables
@@ -37,9 +37,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  size_t
+  forceinline size_t
   Bnd<View>::dispose(Space* home) {
-    assert(!home->failed());
     y.cancel(home,this,PC_INT_BND);
     (void) Propagator::dispose(home);
     return sizeof(*this);
@@ -103,7 +102,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     int bounds, t, d, h;
   };
 
-  inline void
+  forceinline void
   pathset_t(HallInfo hall[], int start, int end, int to) {
     int k, l;
     for (l=start; (k=l) != end; hall[k].t=to) {
@@ -111,7 +110,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     }
   }
 
-  inline void
+  forceinline void
   pathset_h(HallInfo hall[], int start, int end, int to) {
     int k, l;
     for (l=start; (k=l) != end; hall[k].h=to) {
@@ -152,7 +151,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   ExecStatus
-  prop_bnd(Space* home, ViewArray<View>& x, int m) {
+  prop_bnd(Space* home, ViewArray<View>& x) {
     const int n = x.size();
     // Sort variable array for minimum directly
     {
@@ -269,7 +268,36 @@ namespace Gecode { namespace Int { namespace Distinct {
       }
     }
 
-    if ((n > 2*m) && (n > 6)) {
+    return es;
+  }
+
+#undef GECODE_INT_MINSORTED
+#undef GECODE_INT_MAXSORTED
+
+  template <class View>
+  ExecStatus
+  Bnd<View>::propagate(Space* home) {
+    assert(x.size() > 1);
+
+    if (View::pme(this) == ME_INT_VAL) {
+      ExecStatus es = prop_val<View,false>(home,y);
+      GECODE_ES_CHECK(es);
+      if (y.size() < 2)
+        return ES_SUBSUMED(this,home);
+      if (es == ES_FIX)
+        return ES_FIX_PARTIAL(this,View::pme(ME_INT_BND));
+    }
+
+    if (y.size() == 2)
+      GECODE_REWRITE(Rel::Nq<View>::post(home,y[0],y[1]));
+
+    ExecStatus es = prop_bnd<View>(home,x);
+
+    GECODE_ES_CHECK(es);
+
+    const int n = x.size();
+
+    if ((n > 2*y.size()) && (n > 6)) {
       // If there are many assigned views, try to eliminate them
       MinInc<View> min_inc;
       Support::insertion<View,MinInc<View> >(&x[0], n, min_inc);
@@ -288,32 +316,15 @@ namespace Gecode { namespace Int { namespace Distinct {
       if (!x[i].assigned() || (x[i].val() <= max))
         x[j++]=x[i];
       x.size(j);
-      if (j < 2)
-        return ES_SUBSUMED;
     }
+    
+    if (x.size() < 2)
+      return ES_SUBSUMED(this,home);
+
+    if (x.size() == 2)
+      GECODE_REWRITE(Rel::Nq<View>::post(home,x[0],x[1]));
 
     return es;
-  }
-
-#undef GECODE_INT_MINSORTED
-#undef GECODE_INT_MAXSORTED
-
-  template <class View>
-  ExecStatus
-  Bnd<View>::propagate(Space* home) {
-    assert(x.size() > 1);
-
-    if (View::pme(this) == ME_INT_VAL) {
-      ExecStatus es = prop_val<View,false>(home,y);
-      GECODE_ES_CHECK(es);
-      if (es == ES_FIX)
-        return ES_FIX_PARTIAL(View::pme(ME_INT_BND));
-    }
-
-    if (y.size() == 2)
-      GECODE_REWRITE(Rel::Nq<View>::post(home,y[0],y[1]));
-
-    return prop_bnd<View>(home,x,y.size());
   }
 
   template <class View>

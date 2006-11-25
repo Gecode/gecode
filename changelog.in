@@ -53,6 +53,20 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: kernel
+What:   change
+Rank:   major
+[DESCRIPTION]
+The way how propagators report subsumtion and partial fixpoints
+has changed. Now, a propagator must first call dispose (which
+then cancels subscriptions and possibly frees external resources)
+and only then can return that the propagator is subsumed. For
+that purpose a new function Gecode::ES_SUBSUMED has been
+defined. Likewise, ES_FIX_PARTIAL and ES_NOFIX_PARTIAL are
+functions rather than member functions of Gecode::Propagator. The
+benefit is that this saves memory and is more efficient.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   minor

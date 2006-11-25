@@ -167,6 +167,15 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   template <class View>
+  forceinline size_t
+  Dom<View>::dispose(Space* home) {
+    Propagator::unforce(home);
+    dc.dispose();
+    (void) Base<DomInfo<View>,PC_INT_DOM>::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class View>
   forceinline
   Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
     : Base<DomInfo<View>,PC_INT_DOM>(home,share,p) {}
@@ -203,25 +212,23 @@ namespace Gecode { namespace Int { namespace Channel {
 
       do {
         // Propagate assigned views for x
-        if (prop_val<View,DomInfo<View> >(home,n,x,y,n_na,xa,ya) == ES_FAILED)
-          return ES_FAILED;
+        GECODE_ES_CHECK((prop_val<View,DomInfo<View> >
+                         (home,n,x,y,n_na,xa,ya)));
         // Propagate assigned views for y
-        if (prop_val<View,DomInfo<View> >(home,n,y,x,n_na,ya,xa) == ES_FAILED)
-          return ES_FAILED;
+        GECODE_ES_CHECK((prop_val<View,DomInfo<View> >
+                         (home,n,y,x,n_na,ya,xa)));
         assert(ya.empty());
       } while (!xa.empty());
-      this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
+      ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
     }
 
     // Process changed views for y
     // This propagates from y to x and possibly records xs that
     // got assigned
-    if (prop_dom(home,n,y,x,xa) == ES_FAILED)
-      return ES_FAILED;
+    GECODE_ES_CHECK(prop_dom(home,n,y,x,xa));
 
     // Process assigned views for x
-    if (prop_val<View,DomInfo<View> >(home,n,x,y,n_na,xa,ya) == ES_FAILED)
-      return ES_FAILED;
+    GECODE_ES_CHECK((prop_val<View,DomInfo<View> >(home,n,x,y,n_na,xa,ya)));
 
     // Perform domain consistent propagation for distinct on the x views
     if (dc.available()) {
@@ -256,20 +263,17 @@ namespace Gecode { namespace Int { namespace Channel {
     // Process changed views for x
     // This propagates from x to y and possibly records ys that
     // got assigned
-    if (prop_dom(home,n,x,y,ya) == ES_FAILED)
-      return ES_FAILED;
+    GECODE_ES_CHECK(prop_dom(home,n,x,y,ya));
 
     // Process assigned view again (some might have been found above)
     while (!xa.empty() || !ya.empty()) {
       // Process assigned views for x
-      if (prop_val<View,DomInfo<View> >(home,n,x,y,n_na,xa,ya) == ES_FAILED)
-        return ES_FAILED;
+      GECODE_ES_CHECK((prop_val<View,DomInfo<View> >(home,n,x,y,n_na,xa,ya)));
       // Process assigned views for y
-      if (prop_val<View,DomInfo<View> >(home,n,y,x,n_na,ya,xa) == ES_FAILED)
-        return ES_FAILED;
+      GECODE_ES_CHECK((prop_val<View,DomInfo<View> >(home,n,y,x,n_na,ya,xa)));
     };
 
-    return (n_na == 0) ? ES_SUBSUMED : ES_FIX;
+    return (n_na == 0) ? ES_SUBSUMED(this,home) : ES_FIX;
   }
 
   template <class View>
@@ -300,16 +304,6 @@ namespace Gecode { namespace Int { namespace Channel {
   Dom<View>::size(void) const {
     return dc.size();
   }
-
-  template <class View>
-  size_t
-  Dom<View>::dispose(Space* home) {
-    Propagator::unforce(home);
-    dc.dispose();
-    (void) Base<DomInfo<View>,PC_INT_DOM>::dispose(home);
-    return sizeof(*this);
-  }
-
 
 }}}
 

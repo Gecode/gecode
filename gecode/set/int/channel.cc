@@ -92,7 +92,7 @@ namespace Gecode { namespace Set { namespace Int {
       }
     }
 
-    return (assigned==xs.size()) ? ES_SUBSUMED : ES_NOFIX;
+    return (assigned==xs.size()) ? ES_SUBSUMED(this,home) : ES_NOFIX;
   }
 
 

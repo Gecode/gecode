@@ -50,13 +50,13 @@ namespace Gecode {
 
   ExecStatus
   ProjectorSet::check(Space* home, ViewArray<Set::SetView>& x) {
-    ExecStatus es = ES_SUBSUMED;
+    ExecStatus es = __ES_SUBSUMED;
     for (int i=0; i<_count; i++) {
       ExecStatus es_new = _ps[i].check(home, x);
       switch (es_new) {
       case ES_FAILED:
         return ES_FAILED;
-      case ES_SUBSUMED:
+      case __ES_SUBSUMED:
         break;
       default:
         es = es_new;

@@ -596,7 +596,7 @@ namespace Gecode {
 
       switch (fixpoint) {
         case NO_FIX:
-          iccos << indent << "return assigned ? ES_SUBSUMED : ES_NOFIX;"
+          iccos << indent << "return assigned ? ES_SUBSUMED(this,home) : ES_NOFIX;"
                 << endl;
           break;
         case ITER_FIX:
@@ -604,7 +604,7 @@ namespace Gecode {
             --indent;
             iccos << indent << "}" << endl;
             allAssigned(iccos);
-            iccos << indent << "return assigned ? ES_SUBSUMED : ES_FIX;"
+            iccos << indent << "return assigned ? ES_SUBSUMED(this,home) : ES_FIX;"
                   << endl;
           }
           break;
@@ -621,7 +621,7 @@ namespace Gecode {
       templateparams();
       iccos << "::check(Space* home) {" << endl;
       ++indent;
-      iccos << indent << "ExecStatus es = ES_SUBSUMED;" << endl;
+      iccos << indent << "ExecStatus es = ES_SUBSUMED(this,home);" << endl;
       for (int i=spec._ps.size(); i--; ) {
         SetExprCode glb = spec._ps[i].getGlb();
         if (glb.size() > 0 && glb[0] != SetExprCode::EMPTY) {
@@ -737,8 +737,8 @@ namespace Gecode {
       iccos << "::propagateNegative(Space* home) {" << endl;
       ++indent;
       iccos << indent << "switch (ExecStatus es=check(home)) {" << endl;
-      iccos << indent << "case ES_FAILED: return ES_SUBSUMED;" << endl;
-      iccos << indent << "case ES_SUBSUMED: return ES_FAILED;" << endl;
+      iccos << indent << "case ES_FAILED: return ES_SUBSUMED(this,home);" << endl;
+      iccos << indent << "case ES_SUBSUMED(this,home): return ES_FAILED;" << endl;
       iccos << indent << "default: return es;" << endl;
       iccos << indent << "}" << endl;
       --indent;
@@ -765,12 +765,12 @@ namespace Gecode {
         iccos << indent << "if (_b.one()) return propagateNegative(home);"
               << endl;
         iccos << indent << "switch (check(home)) {" << endl;
-        iccos << indent << "case ES_SUBSUMED:" << endl;
+        iccos << indent << "case ES_SUBSUMED(this,home):" << endl;
         iccos << indent << "  _b.zero_none(home);" << endl;
-        iccos << indent << "  return ES_SUBSUMED;" << endl;
+        iccos << indent << "  return ES_SUBSUMED(this,home);" << endl;
         iccos << indent << "case ES_FAILED:" << endl;
         iccos << indent << "  _b.one_none(home);" << endl;
-        iccos << indent << "  return ES_SUBSUMED;" << endl;
+        iccos << indent << "  return ES_SUBSUMED(this,home);" << endl;
         iccos << indent << "default:" << endl;
         iccos << indent << "  return ES_FIX;" << endl;
         iccos << indent << "}" << endl;
@@ -782,12 +782,12 @@ namespace Gecode {
         iccos << indent << "if (_b.zero()) return propagateNegative(home);"
               << endl;
         iccos << indent << "switch (check(home)) {" << endl;
-        iccos << indent << "case ES_SUBSUMED:" << endl;
+        iccos << indent << "case ES_SUBSUMED(this,home):" << endl;
         iccos << indent << "  _b.one_none(home);" << endl;
-        iccos << indent << "  return ES_SUBSUMED;" << endl;
+        iccos << indent << "  return ES_SUBSUMED(this,home);" << endl;
         iccos << indent << "case ES_FAILED:" << endl;
         iccos << indent << "  _b.zero_none(home);" << endl;
-        iccos << indent << "  return ES_SUBSUMED;" << endl;
+        iccos << indent << "  return ES_SUBSUMED(this,home);" << endl;
         iccos << indent << "default:" << endl;
         iccos << indent << "  return ES_FIX;" << endl;
         iccos << indent << "}" << endl;

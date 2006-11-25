@@ -648,6 +648,15 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
+  forceinline size_t
+  Dom<View>::dispose(Space* home) {
+    Propagator::unforce(home);
+    dc.dispose();
+    (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class View>
   ExecStatus
   Dom<View>::post(Space* home, ViewArray<View>& x) {
     if (x.size() == 2)
@@ -656,8 +665,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       return TerDom<View>::post(home,x[0],x[1],x[2]);
     if (x.size() > 3) {
       // Do bounds propagation to make view-value graph smaller
-      if (prop_bnd<View>(home,x,x.size()) == ES_FAILED)
-        return ES_FAILED;
+      GECODE_ES_CHECK(prop_bnd<View>(home,x))
       (void) new (home) Dom<View>(home,x);
     }
     return ES_OK;
@@ -700,13 +708,19 @@ namespace Gecode { namespace Int { namespace Distinct {
     if (View::pme(this) == ME_INT_VAL) {
       ExecStatus es = prop_val<View,false>(home,x);
       GECODE_ES_CHECK(es);
+      if (x.size() < 2)
+        return ES_SUBSUMED(this,home);
       if (es == ES_FIX)
-        return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
-      es = prop_bnd<View>(home,x,x.size());
+        return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
+      es = prop_bnd<View>(home,x);
+      if (x.size() < 2)
+        return ES_SUBSUMED(this,home);
       GECODE_ES_CHECK(es);
       es = prop_val<View,true>(home,x);
+      if (x.size() < 2)
+        return ES_SUBSUMED(this,home);
       GECODE_ES_CHECK(es);
-      return this->ES_FIX_PARTIAL(View::pme(ME_INT_DOM));
+      return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
     }
 
     if (x.size() == 2)
@@ -722,15 +736,6 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     dc.propagate(home);
     return ES_FIX;
-  }
-
-  template <class View>
-  size_t
-  Dom<View>::dispose(Space* home) {
-    Propagator::unforce(home);
-    dc.dispose();
-    (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
-    return sizeof(*this);
   }
 
 }}}

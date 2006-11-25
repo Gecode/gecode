@@ -90,7 +90,7 @@ namespace Gecode { namespace Set { namespace Convex {
     assert(x1.assigned() || !x0.assigned());
 
     if (x1.assigned()) {
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     }
 
     return ES_NOFIX;

@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class SBAP, class SBAN, class VX, PropCond pcx>
-  size_t
+  forceinline size_t
   LinBoolScale<SBAP,SBAN,VX,pcx>::dispose(Space* home) {
     x.cancel(home,this,pcx);
     p.cancel(home,this);
@@ -282,7 +282,7 @@ namespace Gecode { namespace Int { namespace Linear {
     
     if (p.empty() && n.empty()) {
       GECODE_ME_CHECK(x.eq(home,-c)); 
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,sizeof(*this));
     }
 
     sl += x.max() + c;
@@ -369,7 +369,7 @@ namespace Gecode { namespace Int { namespace Linear {
       }
     } while (mod);
 
-    return (sl == su) ? ES_SUBSUMED : ES_FIX;
+    return (sl == su) ? ES_SUBSUMED(this,sizeof(*this)) : ES_FIX;
   }
 
 
@@ -508,7 +508,7 @@ namespace Gecode { namespace Int { namespace Linear {
     }
 
     if (p.empty() && n.empty())
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
 
     return es;
   }
@@ -605,7 +605,7 @@ namespace Gecode { namespace Int { namespace Linear {
     
     if (p.empty() && n.empty()) {
       GECODE_ME_CHECK(x.nq(home,-c)); 
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     }
 
     if (x.assigned()) {
@@ -616,7 +616,7 @@ namespace Gecode { namespace Int { namespace Linear {
         } else if (r == 0) {
           n.fst()->x.one_none(home);
         }
-        return ES_SUBSUMED;
+        return ES_SUBSUMED(this,home);
       }
       if ((p.size() == 1) && n.empty()) {
         if (r == p.fst()->a) {
@@ -624,7 +624,7 @@ namespace Gecode { namespace Int { namespace Linear {
         } else if (r == 0) {
           p.fst()->x.one_none(home);
         }
-        return ES_SUBSUMED;
+        return ES_SUBSUMED(this,home);
       }
     }
     return ES_FIX;

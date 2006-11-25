@@ -38,7 +38,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class VX>
-  size_t
+  forceinline size_t
   LinBoolInt<VX>::dispose(Space* home) {
     assert(!home->failed());
     for (int i=n_s; i--; )
@@ -146,7 +146,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if (n_x < c)
       return ES_FAILED;
     if (c <= 0)
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     // Find unassigned variables to subscribe to
     while ((n_s < n_x) && (n_s <= c)) 
       if (x[n_s].zero()) {
@@ -160,7 +160,7 @@ namespace Gecode { namespace Int { namespace Linear {
     if (n_x < c)
       return ES_FAILED;
     if (c <= 0)
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     if (c == n_x) {
       // These are known to be not assigned
       for (int i=n_s; i--; )
@@ -170,7 +170,7 @@ namespace Gecode { namespace Int { namespace Linear {
         x[i].one(home);
       // Fix number of subscriptions such that cancelling subscriptions work
       n_s = 0;
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,sizeof(*this));
     }
     return ES_FIX;
   }
@@ -266,7 +266,7 @@ namespace Gecode { namespace Int { namespace Linear {
         x[i].zero(home);
       // Fix number of subscriptions such that cancelling subscriptions work
       n_s = 0;
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,sizeof(*this));
     }
     if (c == n_x) {
       // These are known to be not assigned
@@ -277,7 +277,7 @@ namespace Gecode { namespace Int { namespace Linear {
         x[i].one(home);
       // Fix number of subscriptions such that cancelling subscriptions work
       n_s = 0;
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,sizeof(*this));
     }
     return ES_FIX;
   }
@@ -391,9 +391,9 @@ namespace Gecode { namespace Int { namespace Linear {
       s1 = resubscribe(home,x1);
     int n = x.size() + s0 + s1;
     if ((n < c) || (c < 0))
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     if (n == 0)
-      return (c == 0) ? ES_FAILED : ES_SUBSUMED;
+      return (c == 0) ? ES_FAILED : ES_SUBSUMED(this,sizeof(*this));
     if (n == 1) {
       if (s0) {
         if (c == 1)
@@ -407,7 +407,7 @@ namespace Gecode { namespace Int { namespace Linear {
         else
           x1.one_none(home);
       }
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,sizeof(*this));
     }
     return ES_FIX;
   }

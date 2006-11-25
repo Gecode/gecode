@@ -206,15 +206,13 @@ namespace Gecode { namespace Int { namespace Channel {
 
     do {
       // Propagate assigned views for x
-      if (prop_val<View,ValInfo<View> >(home,n,x,y,n_na,xa,ya) == ES_FAILED)
-        return ES_FAILED;
+      GECODE_ES_CHECK((prop_val<View,ValInfo<View> >(home,n,x,y,n_na,xa,ya)));
       // Propagate assigned views for y
-      if (prop_val<View,ValInfo<View> >(home,n,y,x,n_na,ya,xa) == ES_FAILED)
-        return ES_FAILED;
+      GECODE_ES_CHECK((prop_val<View,ValInfo<View> >(home,n,y,x,n_na,ya,xa)));
       assert(ya.empty());
     } while (!xa.empty());
 
-    return (n_na == 0) ? ES_SUBSUMED : ES_FIX;
+    return (n_na == 0) ? ES_SUBSUMED(this,home) : ES_FIX;
   }
 
   template <class View>

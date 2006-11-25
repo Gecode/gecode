@@ -145,7 +145,7 @@ namespace Gecode { namespace Set { namespace Select {
 
       if (x1.cardMax()==0) {
         // Selector is empty, we're done
-        return ES_SUBSUMED;
+        return ES_SUBSUMED(this,home);
       }
 
       {

@@ -65,8 +65,8 @@ namespace Gecode { namespace Set { namespace Rel {
     GlbRanges<View0> x0lb(x0);
     LubRanges<View1> x1ub(x1);
     if (!Iter::Ranges::subset(x0lb, x1ub))
-      return ES_SUBSUMED;
-    if (x0.cardMin()>x1.cardMax()) { return ES_SUBSUMED; }
+      return ES_SUBSUMED(this,home);
+    if (x0.cardMin()>x1.cardMax()) { return ES_SUBSUMED(this,home); }
     LubRanges<View0> x0ub(x0);
     GlbRanges<View1> x1lb(x1);
     Iter::Ranges::Diff<LubRanges<View0>,GlbRanges<View1> >
@@ -79,7 +79,7 @@ namespace Gecode { namespace Set { namespace Rel {
       //Only one subsetness-breaker element left:
       GECODE_ME_CHECK( x0.include(home,b1) );
       GECODE_ME_CHECK( x1.exclude(home,b1) );
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     }
     return ES_FIX;
   }

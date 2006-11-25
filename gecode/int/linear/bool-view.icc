@@ -35,7 +35,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class XV, class YV>
-  size_t
+  forceinline size_t
   LinBoolView<XV,YV>::dispose(Space* home) {
     assert(!home->failed());
     x.cancel(home,this,PC_INT_VAL);
@@ -127,18 +127,18 @@ namespace Gecode { namespace Int { namespace Linear {
     GECODE_ME_CHECK(y.lq(home,n-c));
     GECODE_ME_CHECK(y.gq(home,-c));
     if (n == 0)
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,sizeof(*this));
     if (y.min()+c == n) {
       assert(y.assigned());
       for (int i = n; i--; )
         x[i].one_none(home);
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,sizeof(*this));
     }
     if (y.max()+c == 0) {
       assert(y.assigned());
       for (int i = n; i--; )
         x[i].zero_none(home);
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,sizeof(*this));
     }
     if (y.assigned())
       GECODE_REWRITE(EqBoolInt<XV>::post(home,x,y.val()+c));
@@ -212,10 +212,10 @@ namespace Gecode { namespace Int { namespace Linear {
       }
     x.size(n);
     if ((n-c < y.min() ) || (-c > y.max()))
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     if (n == 0) {
       GECODE_ME_CHECK(y.nq(home,-c));
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     }
     if ((n == 1) && y.assigned()) {
       if (y.val()+c == 1) {
@@ -224,7 +224,7 @@ namespace Gecode { namespace Int { namespace Linear {
         assert(y.val()+c == 0);
         x[0].one_none(home);
       }
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,sizeof(*this));
     }
     return ES_FIX;
   }
@@ -291,11 +291,11 @@ namespace Gecode { namespace Int { namespace Linear {
     x.size(n);
     GECODE_ME_CHECK(y.lq(home,n-c));
     if (-c >= y.max())
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     if (y.min()+c == n) {
       for (int i = n; i--; )
         x[i].one_none(home);
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     }
     if (y.assigned())
       GECODE_REWRITE(GqBoolInt<XV>::post(home,x,y.val()+c));

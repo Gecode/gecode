@@ -161,9 +161,8 @@ namespace Gecode { namespace Int { namespace GCC {
         int idx = lookupValue(k,x[i].val());
         // reduction is essential for order on value nodes in dom
         // hence introduce test for failed lookup
-        if (idx == -1) {
+        if (idx == -1)
           return ES_FAILED;
-        }
         count[idx]++;
       } else {
         single = i;
@@ -193,9 +192,8 @@ namespace Gecode { namespace Int { namespace GCC {
         }
       }
 
-      if (!card_consistent<View, Card>(smin, smax, x, k, card_all)) {
+      if (!card_consistent<View, Card>(smin, smax, x, k, card_all))
         return ES_FAILED;
-      }
 
       // can only modified cardinality variables
       GECODE_ES_CHECK((prop_card<View, Card, shared>(home, x, k, mod)));
@@ -231,9 +229,8 @@ namespace Gecode { namespace Int { namespace GCC {
         card_ass &= k[i].assigned();
       }
       if (card_ass) {
-        if (smax < x.size() || smax > x.size()) {
+        if (smax < x.size() || smax > x.size())
           return ES_FAILED;
-        }
 
         // redundant linear constraint
         for (int i = x.size(); i--; ) {
@@ -276,9 +273,8 @@ namespace Gecode { namespace Int { namespace GCC {
         int idx = lookupValue(k,x[i].val());
         // reduction is essential for order on value nodes in dom
         // hence introduce test for failed lookup
-        if (idx == -1) {
+        if (idx == -1)
           return ES_FAILED;
-        }
         count[idx]++;
       } else {
         single = i;
@@ -301,9 +297,8 @@ namespace Gecode { namespace Int { namespace GCC {
           }
         }
       }
-      if (all_assigned) {
-        return ES_SUBSUMED;
-      }
+      if (all_assigned)
+        return ES_SUBSUMED(this,home);
     }
 
     if (isView) {
@@ -529,9 +524,8 @@ namespace Gecode { namespace Int { namespace GCC {
           }
         }
       }
-      if (all_assigned) {
-        return ES_SUBSUMED;
-      }
+      if (all_assigned)
+        return ES_SUBSUMED(this,home);
     }
 
     return mod ? ES_NOFIX : ES_FIX;

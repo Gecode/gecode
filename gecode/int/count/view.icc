@@ -28,6 +28,7 @@ namespace Gecode { namespace Int { namespace Count {
    */
 
   template <class VX, class VY, class VZ, bool shr>
+  forceinline
   BaseView<VX,VY,VZ,shr>::BaseView(Space* home,
                                    ViewArray<VX>& x0, VY y0, VZ z0, int c0)
     : Propagator(home), x(x0), y(y0), z(z0), c(c0) {
@@ -37,7 +38,7 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, bool shr>
-  inline
+  forceinline
   BaseView<VX,VY,VZ,shr>::BaseView(Space* home, bool share,
                                    BaseView<VX,VY,VZ,shr>& p)
     : Propagator(home,shr,p), c(p.c) {
@@ -53,7 +54,7 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, bool shr>
-  size_t
+  forceinline size_t
   BaseView<VX,VY,VZ,shr>::dispose(Space* home) {
     assert(!home->failed());
     x.cancel(home,this,PC_INT_DOM);
@@ -97,7 +98,7 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, bool shr>
-  inline bool
+  forceinline bool
   BaseView<VX,VY,VZ,shr>::sharing(const ViewArray<VX>& x,
                                   const VY& y, const VZ& z) {
     if (shared(y,z))
@@ -154,9 +155,9 @@ namespace Gecode { namespace Int { namespace Count {
 
     if (z.assigned()) {
       if (z.val() == atleast())
-        return post_false(home,x,y);
+        return post_false(home,x,y) ? ES_FAILED : ES_SUBSUMED(this,home);
       if (z.val() == atmost())
-        return post_true(home,x,y);
+        return post_true(home,x,y) ? ES_FAILED : ES_SUBSUMED(this,home);
       GECODE_REWRITE((EqInt<VX,VY>::post(home,x,y,z.val()+c)));
     }
     return shr ? ES_NOFIX : ES_FIX;
@@ -204,12 +205,12 @@ namespace Gecode { namespace Int { namespace Count {
     count(home);
     if (atleast() == atmost()) {
       GECODE_ME_CHECK(z.nq(home,atleast()));
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     }
     if (z.max() < atleast())
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     if (z.min() > atmost())
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     if (z.assigned())
       GECODE_REWRITE((NqInt<VX,VY>::post(home,x,y,z.val()+c)));
     return ES_FIX;
@@ -259,9 +260,9 @@ namespace Gecode { namespace Int { namespace Count {
     count(home);
     GECODE_ME_CHECK(z.gq(home,atleast()));
     if (z.max() == atleast())
-      return post_false(home,x,y);
+      return post_false(home,x,y) ? ES_FAILED : ES_SUBSUMED(this,home);
     if (x.size() == 0)
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     if (z.assigned())
       GECODE_REWRITE((LqInt<VX,VY>::post(home,x,y,z.val()+c)));
     return shr ? ES_NOFIX : ES_FIX;
@@ -312,9 +313,9 @@ namespace Gecode { namespace Int { namespace Count {
     GECODE_ME_CHECK(z.lq(home,atmost()));
 
     if (z.min() == atmost())
-      return post_true(home,x,y);
+      return post_true(home,x,y) ? ES_FAILED : ES_SUBSUMED(this,home);
     if (x.size() == 0)
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(this,home);
     if (z.assigned())
       GECODE_REWRITE((GqInt<VX,VY>::post(home,x,y,z.val()+c)));
     return shr ? ES_NOFIX : ES_FIX;

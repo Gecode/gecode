@@ -47,16 +47,16 @@ namespace Gecode { namespace Int { namespace Count {
   RelTest holds(VX x, ConstIntView y);
   /// Post that all views in \a x are equal to \a y
   template <class VX>
-  ExecStatus post_true(Space* home, ViewArray<VX>& x, VX y);
+  bool post_true(Space* home, ViewArray<VX>& x, VX y);
   /// Post that all views in \a x are equal to \a y
   template <class VX>
-  ExecStatus post_true(Space* home, ViewArray<VX>& x, ConstIntView y);
+  bool post_true(Space* home, ViewArray<VX>& x, ConstIntView y);
   /// Post that all views in \a x are not equal to \a y
   template <class VX>
-  ExecStatus post_false(Space* home, ViewArray<VX>& x, VX y);
+  bool post_false(Space* home, ViewArray<VX>& x, VX y);
   /// Post that all views in \a x are not equal to \a y
   template <class VX>
-  ExecStatus post_false(Space* home, ViewArray<VX>& x, ConstIntView y);
+  bool post_false(Space* home, ViewArray<VX>& x, ConstIntView y);
   //@}
 
 }}}

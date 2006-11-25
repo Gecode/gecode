@@ -57,6 +57,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
   template<class View, class Tuple, bool Perm>
   ExecStatus
   bounds_propagation(Space* home,
+                     Propagator* p,
                      ViewArray<Tuple>& xz,
                      ViewArray<View>& y,
                      bool& repairpass,
@@ -228,7 +229,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
     }
 
     if (subsumed || array_subs) {
-      return ES_SUBSUMED;
+      return ES_SUBSUMED(p,home);
     }
 
 
@@ -449,9 +450,8 @@ namespace Gecode { namespace Int { namespace Sortedness {
       return ES_FAILED;
     }
 
-    if (array_subs) {
-      return ES_SUBSUMED;
-    }
+    if (array_subs)
+      return ES_SUBSUMED(this,home);
 
     sort_sigma<View, Tuple, Perm>(xz, match_fixed);
 
@@ -459,13 +459,11 @@ namespace Gecode { namespace Int { namespace Sortedness {
     // the xs ordered by sigma
 
     if (!check_subsumption<View, Tuple, Perm>
-        (home, xz, y, subsumed, dropfst)) {
+        (home, xz, y, subsumed, dropfst))
       return ES_FAILED;
-    }
 
-    if (subsumed) {
-      return ES_SUBSUMED;
-    }        
+    if (subsumed)
+      return ES_SUBSUMED(this,home);
 
     if (Perm) {
       // dropping possibly yields inconsistent indices on permutation variables
@@ -523,20 +521,20 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
         GECODE_ES_CHECK((bounds_propagation<OffsetView,
                          ViewTuple<OffsetView,2>, Perm>
-                         (home, oxz, oy, secondpass, nofix, match_fixed)));
+                         (home, this,oxz, oy, secondpass, nofix, match_fixed)));
 
         if (secondpass) {
           GECODE_ES_CHECK((bounds_propagation<OffsetView,
                            ViewTuple<OffsetView,2>, Perm>
-                           (home, oxz, oy, secondpass, nofix, match_fixed)));
+                           (home,this,oxz, oy, secondpass, nofix, match_fixed)));
         }
       } else {
         GECODE_ES_CHECK((bounds_propagation<View, Tuple, Perm>
-                         (home, xz, y, secondpass, nofix, match_fixed)));
+                         (home,this,xz, y, secondpass, nofix, match_fixed)));
 
         if (secondpass) {
           GECODE_ES_CHECK((bounds_propagation<View, Tuple, Perm>
-                           (home, xz, y, secondpass, nofix, match_fixed)));
+                           (home,this,xz, y, secondpass, nofix, match_fixed)));
         }
       }
     } else {
@@ -555,7 +553,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
       }
 
       GECODE_ES_CHECK((bounds_propagation<View, Tuple, Perm>
-                       (home, xz, y, secondpass, nofix, match_fixed)));
+                       (home, this, xz, y, secondpass, nofix, match_fixed)));
       // no second pass possible if there are no permvars
     }
 
@@ -583,10 +581,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
     bool xbassigned = true;
     for (int i = xz.size(); i--; ) {
       if (xz[tau[i]][0].assigned() && xbassigned) {
-        ModEvent me = y[i].eq(home, xz[tau[i]][0].val());
-        if (me_failed(me)) {
-          return ES_FAILED;
-        }
+        GECODE_ME_CHECK(y[i].eq(home, xz[tau[i]][0].val()));
       } else {
         xbassigned = false;
       }
@@ -608,16 +603,12 @@ namespace Gecode { namespace Int { namespace Sortedness {
             xz[i][1].size() == 2 && xz[i][1].range()) {
           if (xz[i][0].min() < xz[i+1][0].min()) {
             ModEvent me = y[xz[i][1].min()].gq(home, xz[i][0].min());
-            if (me_failed(me)) {
-              return ES_FAILED;
-            }
+            GECODE_ME_CHECK(me);
             nofix |= (y[xz[i][1].min()].modified() &&
                       y[xz[i][1].min()].min() != xz[i][0].min());
 
             me = y[xz[i+1][1].max()].gq(home, xz[i+1][0].min());
-            if (me_failed(me)) {
-              return ES_FAILED;
-            }
+            GECODE_ME_CHECK(me);
             nofix |= (y[xz[i+1][1].max()].modified() &&
                       y[xz[i+1][1].max()].min() != xz[i+1][0].min());
           }
@@ -630,10 +621,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
     bool xassigned = true;
     for (int i = 0; i < xz.size(); i++) {
       if (xz[i][0].assigned() && xassigned) {
-        ModEvent me = y[i].eq(home, xz[i][0].val());
-        if (me_failed(me)) {
-          return ES_FAILED;
-        }
+        GECODE_ME_CHECK(y[i].eq(home, xz[i][0].val()));
       } else {
         xassigned = false;
       }
@@ -646,28 +634,20 @@ namespace Gecode { namespace Int { namespace Sortedness {
     int tub = std::max(xz[xz.size() - 1][0].max(), y[y.size() - 1].max());
     for (int i = xz.size(); i--; ) {
       ModEvent me = y[i].lq(home, tub);
-      if (me_failed(me)) {
-        return ES_FAILED;
-      }
-      nofix |= y[i].modified() && y[i].max() != tub;
+      GECODE_ME_CHECK(me);
+      nofix |= y[i].modified() && (y[i].max() != tub);
 
       me = y[i].gq(home, tlb);
-      if (me_failed(me)) {
-        return ES_FAILED;
-      }
-      nofix |= y[i].modified() && y[i].min() != tlb;
+      GECODE_ME_CHECK(me);
+      nofix |= y[i].modified() && (y[i].min() != tlb);
 
       me = xz[i][0].lq(home, tub);
-      if (me_failed(me)) {
-        return ES_FAILED;
-      }
-      nofix |= xz[i][0].modified() && xz[i][0].max() != tub;
+      GECODE_ME_CHECK(me);
+      nofix |= xz[i][0].modified() && (xz[i][0].max() != tub);
 
       me = xz[i][0].gq(home, tlb);
-      if (me_failed(me)) {
-        return ES_FAILED;
-      }
-      nofix |= xz[i][0].modified() && xz[i][0].min() != tlb;
+      GECODE_ME_CHECK(me);
+      nofix |= xz[i][0].modified() && (xz[i][0].min() != tlb);
     }
 
     if (!array_assigned<View, Tuple, Perm>
@@ -675,18 +655,15 @@ namespace Gecode { namespace Int { namespace Sortedness {
       return ES_FAILED;
     }
 
-    if (array_subs) {
-      return ES_SUBSUMED;
-    }
+    if (array_subs)
+      return ES_SUBSUMED(this,home);
 
     if (!check_subsumption<View, Tuple, Perm>
-        (home, xz, y, subsumed, dropfst)) {
+        (home, xz, y, subsumed, dropfst))
       return ES_FAILED;
-    }
 
-    if (subsumed) {
-      return ES_SUBSUMED;
-    }
+    if (subsumed)
+      return ES_SUBSUMED(this,home);
 
     return nofix ? ES_NOFIX : ES_FIX;
   }

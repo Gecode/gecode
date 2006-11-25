@@ -179,7 +179,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
       }
       if (all_assigned) {
-        return ES_SUBSUMED;
+        return ES_SUBSUMED(this,home);
       }
     }
 
@@ -208,10 +208,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
       }
 
-      es = prop_card<View, Card, true>(home, y, k, card_mod);
-      if (es == ES_FAILED) {
-        return es;
-      }
+      GECODE_ES_CHECK((prop_card<View, Card, true>(home, y, k, card_mod)));
 
       int smin = 0;
       int smax = 0;
@@ -228,7 +225,7 @@ namespace Gecode { namespace Int { namespace GCC {
             return ES_FAILED;
           }
         }
-        return ES_SUBSUMED;
+        return ES_SUBSUMED(this,home);
       } else {
         if (x.size() == 1) {
           if (x[0].assigned()) {
@@ -247,7 +244,7 @@ namespace Gecode { namespace Int { namespace GCC {
                 return ES_FAILED;
               }
             }
-            return ES_SUBSUMED;
+            return ES_SUBSUMED(this,home);
           }
         }
       }
@@ -363,7 +360,7 @@ namespace Gecode { namespace Int { namespace GCC {
               return ES_FAILED;
             }
           }
-          return ES_SUBSUMED;
+          return ES_SUBSUMED(this,home);
         } else {
           if (x.size() == 1) {
             if (x[0].assigned()) {
@@ -384,7 +381,7 @@ namespace Gecode { namespace Int { namespace GCC {
                   return ES_FAILED;
                 }
               }
-              return ES_SUBSUMED;
+              return ES_SUBSUMED(this,home);
             }
           }
         }
@@ -439,7 +436,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
       }
       if (all_assigned) {
-        return ES_SUBSUMED;
+        return ES_SUBSUMED(this,home);
       }
     }
 

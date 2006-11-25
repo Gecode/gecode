@@ -40,59 +40,57 @@ namespace Gecode { namespace Int { namespace Count {
     return rtest_eq_dom(x,y);
   }
   template <class VX>
-  forceinline ExecStatus
+  forceinline bool
   post_true(Space* home, VX x, ConstIntView y) {
-    GECODE_ME_CHECK(x.eq(home,y.val()));
-    return ES_SUBSUMED;
+    return me_failed(x.eq(home,y.val()));
   }
   template <class VX>
-  forceinline ExecStatus
+  forceinline bool
   post_true(Space* home, ViewArray<VX>& x, ConstIntView y) {
     for (int i = x.size(); i--; )
-      GECODE_ME_CHECK(x[i].eq(home,y.val()));
-    return ES_SUBSUMED;
+      if (me_failed(x[i].eq(home,y.val())))
+        return true;
+    return false;
   }
   template <class VX>
-  forceinline ExecStatus
+  forceinline bool
   post_false(Space* home, VX x, ConstIntView y) {
-    GECODE_ME_CHECK(x.nq(home,y.val()));
-    return ES_SUBSUMED;
+    return me_failed(x.nq(home,y.val()));
   }
   template <class VX>
-  forceinline ExecStatus
+  forceinline bool
   post_false(Space* home, ViewArray<VX>& x, ConstIntView y) {
     for (int i = x.size(); i--; )
-      GECODE_ME_CHECK(x[i].nq(home,y.val()));
-    return ES_SUBSUMED;
+      if (me_failed(x[i].nq(home,y.val())))
+        return true;
+    return false;;
   }
   template <class VX>
-  forceinline ExecStatus
+  forceinline bool
   post_true(Space* home, ViewArray<VX>& x, VX y) {
     ViewArray<VX> z(home,x.size()+1);
     z[x.size()] = y;
     for (int i = x.size(); i--; )
       z[i] = x[i];
-    GECODE_ES_CHECK(Rel::NaryEqDom<VX>::post(home,z));
-    return ES_SUBSUMED;
+    return Rel::NaryEqDom<VX>::post(home,z) == ES_FAILED;
   }
   template <class VX>
-  forceinline ExecStatus
+  forceinline bool
   post_true(Space* home, VX x, VX y) {
-    GECODE_ES_CHECK((Rel::EqDom<VX,VX>::post(home,x,y)));
-    return ES_SUBSUMED;
+    return Rel::EqDom<VX,VX>::post(home,x,y) == ES_FAILED;
   }
   template <class VX>
-  forceinline ExecStatus
+  forceinline bool
   post_false(Space* home, ViewArray<VX>& x, VX y) {
     for (int i = x.size(); i--; )
-      GECODE_ES_CHECK(Rel::Nq<VX>::post(home,x[i],y));
-    return ES_SUBSUMED;
+      if (Rel::Nq<VX>::post(home,x[i],y) == ES_FAILED)
+        return true;
+    return false;
   }
   template <class VX>
-  forceinline ExecStatus
+  forceinline bool
   post_false(Space* home, VX x, VX y) {
-    GECODE_ES_CHECK(Rel::Nq<VX>::post(home,x,y));
-    return ES_SUBSUMED;
+    return Rel::Nq<VX>::post(home,x,y) == ES_FAILED;
   }
 
 }}}

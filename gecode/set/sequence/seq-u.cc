@@ -76,7 +76,7 @@ namespace Gecode { namespace Set { namespace Sequence {
     for (int i=x.size(); i--;)
       if (!x[i].assigned())
         return ES_FIX;
-    return ES_SUBSUMED;
+    return ES_SUBSUMED(this,home);
   }
 
 }}}

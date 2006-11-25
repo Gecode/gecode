@@ -123,12 +123,10 @@ namespace Gecode {
   }
 
   template <class View, PropCond pc, class CtrlView>
-  size_t
+  forceinline size_t
   ReUnaryPropagator<View,pc,CtrlView>::dispose(Space* home) {
-    if (!home->failed()) {
-      x0.cancel(home,this,pc);
-      b.cancel(home,this,Int::PC_INT_VAL);
-    }
+    x0.cancel(home,this,pc);
+    b.cancel(home,this,Int::PC_INT_VAL);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -175,13 +173,11 @@ namespace Gecode {
   }
 
   template <class View, PropCond pc, class CtrlView>
-  size_t
+  forceinline size_t
   ReBinaryPropagator<View,pc,CtrlView>::dispose(Space* home) {
-    if (!home->failed()) {
-      x0.cancel(home,this,pc);
-      x1.cancel(home,this,pc);
-      b.cancel(home,this,Int::PC_INT_VAL);
-    }
+    x0.cancel(home,this,pc);
+    x1.cancel(home,this,pc);
+    b.cancel(home,this,Int::PC_INT_VAL);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
