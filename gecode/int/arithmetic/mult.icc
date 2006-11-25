@@ -89,7 +89,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class VA, class VB>
   forceinline
   SquarePlus<VA,VB>::SquarePlus(Space* home, bool share, SquarePlus<VA,VB>& p)
-    : MixBinaryPropagator(home,share,p) {}
+    : MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>(home,share,p) {}
 
   template <class VA, class VB>
   Actor*
@@ -204,7 +204,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   forceinline
   MultPlus<VA,VB,VC>::MultPlus(Space* home, VA x0, VB x1, VC x2)
     : MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
-  (home,x0,x1,x2) {}
+      (home,x0,x1,x2) {}
 
   template <class VA, class VB, class VC>
   forceinline ExecStatus
