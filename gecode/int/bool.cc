@@ -419,7 +419,7 @@ namespace Gecode {
   rel(Space* home, const BoolVarArgs& x, BoolOpType o, int n, 
       IntConLevel) {
     using namespace Int;
-    if ((n < 0) || (n > 0))
+    if ((n < 0) || (n > 1))
       throw NotZeroOne("Int::rel");
     if (home->failed()) return;
     int m = x.size();
