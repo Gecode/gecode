@@ -53,6 +53,13 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: test
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added simple testing for the branchings.
+
+[ENTRY]
 Module: kernel
 What:   change
 Rank:   major
