@@ -119,7 +119,7 @@ public:
       BoolVarArgs store_by_supplier(n_stores);
       for (int j=0; j<n_stores; j++)
         store_by_supplier[j] = post(this, ~(supplier[j] == i));
-      bool_or(this, store_by_supplier, open[i]);
+      rel(this, store_by_supplier, BOT_OR, open[i]);
     }
 
     branch(this, cost, BVAR_REGRET_MIN_MAX, BVAL_MIN);

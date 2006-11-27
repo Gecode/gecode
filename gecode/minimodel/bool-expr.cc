@@ -71,7 +71,7 @@ namespace Gecode {
         if (same > 2) {
           BoolVarArgs ba(same);
           (void) post(home,BT_AND,ba,0);
-          bool_and(home, ba, b);
+          rel(home, ba, BOT_AND, b);
         } else {
           rel(home, l->post(home), BOT_AND, r->post(home), b);
         }
@@ -80,7 +80,7 @@ namespace Gecode {
         if (same > 2) {
           BoolVarArgs ba(same);
           (void) post(home,BT_OR,ba,0);
-          bool_or(home, ba, b);
+          rel(home, ba, BOT_OR, b);
         } else {
           rel(home, l->post(home), BOT_OR, r->post(home), b);
         }
@@ -116,7 +116,7 @@ namespace Gecode {
           if (same > 2) {
             BoolVarArgs ba(same);
             (void) post(home,BT_OR,ba,0);
-            bool_or(home, ba, true);
+            rel(home, ba, BOT_OR, 1);
           } else {
             rel(home, l->post(home), BOT_OR, r->post(home), 1);
           }
@@ -165,7 +165,7 @@ namespace Gecode {
           if (same > 2) {
             BoolVarArgs ba(same);
             (void) post(home,BT_AND,ba,0);
-            bool_and(home, ba, false);
+            rel(home, ba, BOT_AND, 0);
           } else {
             rel(home, l->post(home), BOT_AND, r->post(home), 0);
           }

@@ -49,7 +49,7 @@ namespace Gecode {
   void
   max(Space* home, const IntVarArgs& x, IntVar y, IntConLevel) {
     if (x.size() == 0)
-      throw ArgumentEmpty("Int::max");
+      throw TooFewArguments("Int::max");
     if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
     GECODE_ES_FAIL(home,Arithmetic::NaryMax<IntView>::post(home,xv,y));
@@ -66,7 +66,7 @@ namespace Gecode {
   void
   min(Space* home, const IntVarArgs& x, IntVar y, IntConLevel) {
     if (x.size() == 0)
-      throw ArgumentEmpty("Int::min");
+      throw TooFewArguments("Int::min");
     if (home->failed()) return;
     ViewArray<MinusView> m(home,x.size());
     for (int i=x.size(); i--; )

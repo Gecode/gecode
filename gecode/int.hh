@@ -471,9 +471,12 @@ namespace Gecode {
    *
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots  
    * \diamond_{\mathit{op}} x_{|x|-1}= y\f$
+   *
+   * Throws an exception of type Int::TooFewArguments, if \f$|x|<2$
+   * and \a o is BOT_IMP, BOT_EQV, or BOT_XOR.
    */
   GECODE_INT_EXPORT void
-  rel(Space* home, const BoolVarArgs x, BoolOpType o, BoolVar y,
+  rel(Space* home, const BoolVarArgs& x, BoolOpType o, BoolVar y,
       IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for Boolean operation on \a x
    *
@@ -482,9 +485,12 @@ namespace Gecode {
    *
    * Throws an exception of type Int::NotZeroOne, if \a n is neither
    * 0 or 1.
+   *
+   * Throws an exception of type Int::TooFewArguments, if \f$|x|<2$
+   * and \a o is BOT_IMP, BOT_EQV, or BOT_XOR.
    */
   GECODE_INT_EXPORT void
-  rel(Space* home, const BoolVarArgs x, BoolOpType o, int n,
+  rel(Space* home, const BoolVarArgs& x, BoolOpType o, int n,
       IntConLevel icl=ICL_DEF);
   //@}
 
@@ -1215,29 +1221,6 @@ namespace Gecode {
       IntConLevel icl);
   //@}
 
-  /**
-   * \defgroup TaskIntIntBool Boolean constraints
-   * \ingroup TaskIntInt
-   */
-
-  //@{
-  /// Post propagator for \f$ \bigwedge_{i=0}^{|b|-1} b_i = c\f$
-  GECODE_INT_EXPORT void
-  bool_and(Space* home, const BoolVarArgs& b, BoolVar c,
-           IntConLevel=ICL_DEF);
-  /// Post propagator for \f$ \bigwedge_{i=0}^{|b|-1} b_i = c\f$
-  GECODE_INT_EXPORT void
-  bool_and(Space* home, const BoolVarArgs& b, bool c,
-           IntConLevel=ICL_DEF);
-  /// Post propagator for \f$ \bigvee_{i=0}^{|b|-1} b_i = c\f$
-  GECODE_INT_EXPORT void
-  bool_or(Space* home, const BoolVarArgs& b, BoolVar c,
-          IntConLevel=ICL_DEF);
-  /// Post propagator for \f$ \bigvee_{i=0}^{|b|-1} b_i = c\f$
-  GECODE_INT_EXPORT void
-  bool_or(Space* home, const BoolVarArgs& b, bool c,
-          IntConLevel=ICL_DEF);
-  //@}
 
   /**
    * \defgroup TaskIntIntArith Arithmetic constraints
@@ -1262,7 +1245,7 @@ namespace Gecode {
   /** \brief Post propagator for \f$ \max\{x_0,x_1\}=x_2\f$
    *
    * Only bounds-consistency is supported. If \a x is empty,
-   * an exception of type Int::ArgumentEmpty is thrown.
+   * an exception of type Int::TooFewArguments is thrown.
    */
   GECODE_INT_EXPORT void
   max(Space* home, IntVar x0, IntVar x1, IntVar x2,
@@ -1270,7 +1253,7 @@ namespace Gecode {
   /** \brief Post propagator for \f$ \max x=y\f$
    *
    * Only bounds-consistency is supported. If \a x is empty,
-   * an exception of type Int::ArgumentEmpty is thrown.
+   * an exception of type Int::TooFewArguments is thrown.
    */
   GECODE_INT_EXPORT void
   max(Space* home, const IntVarArgs& x, IntVar y,

@@ -21,7 +21,6 @@
  */
 
 #include "gecode/int/rel.hh"
-#include "gecode/int/bool.hh"
 
 #include <algorithm>
 
@@ -207,55 +206,6 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, const BoolVarArgs& x, IntRelType r, IntConLevel) {
-    if (home->failed() || (x.size() < 2)) return;
-    switch (r) {
-    case IRT_EQ:
-      for (int i=x.size()-1; i--; )
-        GECODE_ES_FAIL(home,(Bool::Eq<BoolView,BoolView>
-                             ::post(home,x[i],x[i+1])));
-      break;
-    case IRT_NQ:
-      if (x.size() == 2) {
-        NegBoolView n(x[1]);
-        GECODE_ES_FAIL(home,(Bool::Eq<BoolView,NegBoolView>
-                             ::post(home,x[0],n)));
-      } else {
-        home->fail();
-      }
-      break;
-    case IRT_LE:
-      if (x.size() == 2) {
-        BoolView b0(x[0]); BoolView b1(x[1]);
-        GECODE_ME_FAIL(home,b0.zero(home));
-        GECODE_ME_FAIL(home,b1.one(home));
-      } else {
-        home->fail();
-      }
-      break;
-    case IRT_LQ:
-      for (int i=x.size()-1; i--; )
-        GECODE_ES_FAIL(home,Rel::Lq<BoolView>::post(home,x[i],x[i+1]));
-      break;
-    case IRT_GR:
-      if (x.size() == 2) {
-        BoolView b0(x[0]); BoolView b1(x[1]);
-        GECODE_ME_FAIL(home,b0.one(home));
-        GECODE_ME_FAIL(home,b1.zero(home));
-      } else {
-        home->fail();
-      }
-      break;
-    case IRT_GQ:
-      for (int i=x.size()-1; i--; )
-        GECODE_ES_FAIL(home,Rel::Lq<BoolView>::post(home,x[i+1],x[i]));
-      break;
-    default:
-      throw UnknownRelation("Int::rel");
-    }
-  }
-
-  void
   rel(Space* home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
       IntConLevel icl) {
     if (x.size() != y.size())
@@ -318,70 +268,6 @@ namespace Gecode {
           xy[i][0]=x[i]; xy[i][1]=y[i];
         }
         GECODE_ES_FAIL(home,Rel::NaryNq<IntView>::post(home,xy));
-      }
-      break;
-    default:
-      throw UnknownRelation("Int::rel");
-    }
-  }
-
-  void
-  rel(Space* home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
-      IntConLevel) {
-    if (x.size() != y.size())
-      throw ArgumentSizeMismatch("Int::rel");
-    if (home->failed()) return;
-
-    switch (r) {
-    case IRT_GR: 
-      {
-        ViewArray<ViewTuple<BoolView,2> > xy(home,x.size());
-        for (int i = x.size(); i--; ) {
-          xy[i][0]=y[i]; xy[i][1]=x[i];
-        }
-        GECODE_ES_FAIL(home,Rel::Lex<BoolView>::post(home,xy,true));
-      }
-      break;
-    case IRT_LE: 
-      {
-        ViewArray<ViewTuple<BoolView,2> > xy(home,x.size());
-        for (int i = x.size(); i--; ) {
-          xy[i][0]=x[i]; xy[i][1]=y[i];
-        }
-        GECODE_ES_FAIL(home,Rel::Lex<BoolView>::post(home,xy,true));
-      }
-      break;
-    case IRT_GQ: 
-      {
-        ViewArray<ViewTuple<BoolView,2> > xy(home,x.size());
-        for (int i = x.size(); i--; ) {
-          xy[i][0]=y[i]; xy[i][1]=x[i];
-        }
-        GECODE_ES_FAIL(home,Rel::Lex<BoolView>::post(home,xy,false));
-      }
-      break;
-    case IRT_LQ: 
-      {
-        ViewArray<ViewTuple<BoolView,2> > xy(home,x.size());
-        for (int i = x.size(); i--; ) {
-          xy[i][0]=x[i]; xy[i][1]=y[i];
-        }
-        GECODE_ES_FAIL(home,Rel::Lex<BoolView>::post(home,xy,false));
-      }
-      break;
-    case IRT_EQ:
-      for (int i=x.size(); i--; ) {
-        GECODE_ES_FAIL(home,(Bool::Eq<BoolView,BoolView>
-                             ::post(home,x[i],y[i])));
-      }
-      break;
-    case IRT_NQ: 
-      {
-        ViewArray<ViewTuple<BoolView,2> > xy(home,x.size());
-        for (int i = x.size(); i--; ) {
-          xy[i][0]=x[i]; xy[i][1]=y[i];
-        }
-        GECODE_ES_FAIL(home,Rel::NaryNq<BoolView>::post(home,xy));
       }
       break;
     default:

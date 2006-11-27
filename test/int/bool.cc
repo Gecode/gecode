@@ -133,7 +133,7 @@ public:
       BoolVar bx = link(home,x[i]);
       b[2*i+0] = bx; b[2*i+1] = bx;
     }
-    bool_and(home, b, link(home,x[x.size()-1]));
+    rel(home, b, BOT_AND, link(home,x[x.size()-1]));
   }
 };
 BoolAndNary _boolandnary("Bool::And::Nary");
@@ -154,7 +154,7 @@ public:
       BoolVar bx = link(home,x[i]);
       b[2*i+0] = bx; b[2*i+1] = bx;
     }
-    bool_or(home, b, link(home,x[x.size()-1]));
+    rel(home, b, BOT_OR, link(home,x[x.size()-1]));
   }
 };
 BoolOrNary _boolornary("Bool::Or::Nary");

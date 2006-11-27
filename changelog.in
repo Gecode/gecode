@@ -53,6 +53,18 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   major
+[DESCRIPTION]
+All Boolean constraints got a new and regular interface. Rather
+than providing different post functions for the different
+constraints, the single post function rel is used: the Boolean
+operation then is described by a value of type BoolOpType. In
+addition, all Boolean propagators have been reimplemented for
+better performance and less memory use.
+
+[ENTRY]
 Module: test
 What:   new
 Rank:   minor
