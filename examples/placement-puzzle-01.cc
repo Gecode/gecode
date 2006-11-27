@@ -26,33 +26,7 @@
 #include "examples/support.hh"
 #include "gecode/minimodel.hh"
 
-/** \brief Specification of one tile
- *
- * This structure can be used to specify  tile with specified width
- * and height, and a char-array tile consiting of spaces and X's
- * showing the tile in row-major order.
- *
- * \relates PlacementPuzzle
- */
-struct tilespec {
-  int width, height;
-  const char *tile;
-};
-
-/** \brief Board specifications
- *
- * Each board specification repurposes the first two tilespecs to
- * record width and height of the board (tilespec 0) as well as the
- * number of tiles and wheter the board is filled (tilespec 1).
- *
- * \relates PlacementPuzzle
- */
-extern const tilespec *specs[];
-/** \brief Number of board specifications
- *
- * \relates PlacementPuzzle
- */
-extern const unsigned int n_examples;
+#include "examples/placement-puzzle.icc"
 
 namespace {
   /** \name Symmetry functions
@@ -291,7 +265,7 @@ private:
 
   /// Returns the regular expression for placing a specific tile \a
   /// tile in a specific rotation.
-  REG tile_reg(int col, int twidth, int theight, const char* tile) {
+  REG tile_reg(int twidth, int theight, const char* tile) {
     REG res = *REG(0);
     for (int h = 0; h < theight; ++h) {
       for (int w = 0; w < twidth; ++w) {
@@ -309,22 +283,19 @@ private:
 
   /// Returns the regular expression for placing tile number \a t in
   /// any rotation.
-  REG get_constraint(int t) {
+  REG get_constraint(const tilespec tile) {
     // Resulting regular expression
     REG res;
-    // Color of tile
-    int col = t+1;
     // Tile specification for tile under symmetry operations
-    char *t2 = new char[width*height];
+    GECODE_AUTOARRAY(char, t2, width*height);
     int w2, h2;
     // Symmetry functions
     tsymmfunc syms[] = {id, flipx, flipy, flipd1, flipd2, rot90, rot180, rot270};
     int symscnt = sizeof(syms)/sizeof(tsymmfunc);
     for (int i = 0; i < symscnt; ++i) {
-      syms[i](spec[t].tile, spec[t].width, spec[t].height, t2, w2, h2);
-      res = res | tile_reg(col, w2, h2, t2);
+      syms[i](tile.tile, tile.width, tile.height, t2, w2, h2);
+      res = res | tile_reg(w2, h2, t2);
     }
-    delete [] t2;
 
     return res;
   }
@@ -333,32 +304,39 @@ private:
 public:
   /// Construction of the model.
   PlacementPuzzle(const Options& o)
-    : spec(specs[o.size]), 
-      width(spec[0].width+1), height(spec[0].height),
-      ntiles(spec[1].width),
+    : spec(specs[o.size].tiles), 
+      width(specs[o.size].width+1), height(specs[o.size].height),
+      ntiles(specs[o.size].ntiles),
       b(this, width*height, 0,ntiles) {
-    bool filled = spec[1].height;
-    spec += 2; // No need for the specification-part any longer
+    bool filled = specs[o.size].filled;
     
     // Set end-of-line markers
     for (int h = 0; h < height; ++h) {
       if (filled)
         for (int w = 0; w < width-1; ++w)
+          post(this, b[h*width + w] != 0);
+      post(this, b[h*width + width - 1] == 0);
+          /*
           rel(this, b[h*width + w], IRT_NQ, 0);
       rel(this, b[h*width + width - 1], IRT_EQ, 0);
+          */
     }
 
     // Post constraints
+    int col = 0;
     for (int i = 0; i < ntiles; ++i) {
-      // Construct matrix for color i+1
-      BoolVarArgs cm(b.size());
-      for (int p = b.size(); p--; )
-        cm[p] = post(this, ~(b[p] == i+1));
-      // Get constraint for color i+1
-      REG reg = get_constraint(i);
-      DFA dfa = reg;
-      // Post constraint
-      regular(this, cm, dfa);
+      for (int nt = spec[i].num; nt--; ) {
+        ++col;
+        // Construct matrix for color i+1
+        BoolVarArgs cm(b.size());
+        for (int p = b.size(); p--; )
+          cm[p] = post(this, ~(b[p] == col));
+        // Get constraint for color i+1
+        REG reg = get_constraint(spec[i]);
+        DFA dfa = reg;
+        // Post constraint
+        regular(this, cm, dfa);
+      }
     }
 
     // Remove symmetrical boards
@@ -376,7 +354,8 @@ public:
       int symscnt = sizeof(syms)/sizeof(bsymmfunc);
       for (int i = 0; i < symscnt; ++i) {
         syms[i](orig, width-1, height, symm, w2, h2);
-        rel(this, orig, IRT_LQ, symm);
+        if (width-1 == w2 && height == h2)
+          rel(this, orig, IRT_LQ, symm);
       }
     }
 
@@ -436,403 +415,5 @@ main(int argc, char** argv) {
 }
 
 
-/** \name Puzzle specifications
- *
- * \relates PlacementPuzzle
- */
-//@{
-/// Small specification
-static const tilespec puzzle0[] = 
-  {
-    // Width and height of board
-    {4, 4, ""},
-    // Number of tiles and wheter the board is filled
-    {5, true, ""},
-    {2, 3,
-     "XX"
-     "X "
-     "X "},
-    {2, 1,
-     "XX"},
-    {3, 3,
-     " XX"
-     "  X"
-     "XXX"},
-    {1, 1,
-     "X"},
-    {3, 1,
-     "XXX"}
-  };
-/// Standard specification
-static const tilespec puzzle1[] =
-  {
-    // Width and height of board
-    {8, 8, ""},
-    // Number of tiles and wheter the board is filled
-    {10, true, ""},
-    {3, 3,
-     "XXX"
-     "XXX"
-     "XX "},
-    {5, 3,
-     "  XXX"
-     "  X  "
-     "XXX  "},
-    {3, 4,
-     "XXX"
-     "XXX"
-     "  X"
-     "  X"},
-    {3, 4,
-     "XXX"
-     "  X"
-     "  X"
-     "  X"},
-    {2, 5,
-     " X"
-     " X"
-     " X"
-     "XX"
-     "XX"},
-    {4, 2,
-     "XX  "
-     "XXXX"},
-    {3, 3,
-     "XXX"
-     "  X"
-     "  X"},
-    {2, 3, 
-     "XX"
-     "X "
-     "X "},
-    {2, 4,
-     "XX"
-     "XX"
-     "XX"
-     "XX"},
-    {3, 2,
-     "XX "
-     "XXX"}
-  };
-
-/// Standard specification with small changes
-static const tilespec puzzle2[] =
-  {
-    // Width and height of board
-    {8, 8, ""},
-    // Number of tiles and wheter the board is filled
-    {10, true, ""},
-    {3, 3,
-     "XXX"
-     "XXX"
-     "XX "},
-    {5, 3,
-     "  XXX"
-     "  X  "
-     "XXXX "},
-    {3, 4,
-     "XXX"
-     "XXX"
-     "  X"
-     "  X"},
-    {3, 4,
-     "XXX"
-     "  X"
-     " XX"
-     "  X"},
-    {2, 5,
-     " X"
-     " X"
-     " X"
-     "X "
-     "XX"},
-    {4, 2,
-     "XX  "
-     "XXXX"},
-    {3, 3,
-     "XXX"
-     "  X"
-     "  X"},
-    {2, 3, 
-     "XX"
-     "X "
-     "X "},
-    {2, 4,
-     "XX"
-     "XX"
-     "X "
-     "XX"},
-    {3, 2,
-     "XX "
-     "XXX"}
-  };
-
-// Packing number 2 from examples/packing.cc
-static const tilespec packing2[] =
-  {
-    // Width and height of board
-    {10, 10, ""},
-    // Number of tiles and wheter the board is filled
-    {8, true, ""},
-    {6, 6,
-     "XXXXXX"
-     "XXXXXX"
-     "XXXXXX"
-     "XXXXXX"
-     "XXXXXX"
-     "XXXXXX"
-    },
-    {4, 4,
-     "XXXX"
-     "XXXX"
-     "XXXX"
-     "XXXX"},
-    {4, 4,
-     "XXXX"
-     "XXXX"
-     "XXXX"
-     "XXXX"},
-    {4, 4,
-     "XXXX"
-     "XXXX"
-     "XXXX"
-     "XXXX"},
-    {2, 2,
-     "XX"
-     "XX"},
-    {2, 2,
-     "XX"
-     "XX"},
-    {2, 2,
-     "XX"
-     "XX"},
-    {2, 2,
-     "XX"
-     "XX"}
-  };
-
-static const tilespec pentomino6x10[] =
-  {
-    // Width and height of board
-    {10, 6, ""},
-    // Number of tiles and wheter the board is filled
-    {12, true, ""},
-    {2, 4,
-     "X "
-     "X "
-     "X "
-     "XX"},
-    {3,3,
-     "XX "
-     " XX"
-     " X "},
-    {3,3,
-     "XXX"
-     " X "
-     " X "},
-    {3,3,
-     "  X"
-     " XX"
-     "XX "},
-    {2,4,
-     " X"
-     "XX"
-     " X"
-     " X"},
-    {5,1,
-     "XXXXX"},
-    {3,3,
-     "X  "
-     "XXX"
-     "  X"},
-    {4,2,
-     " XXX"
-     "XX  "},
-    {2,3,
-     "XX"
-     "XX"
-     " X"},
-    {3,2,
-     "X X"
-     "XXX"},
-    {3,3,
-     " X "
-     "XXX"
-     " X "},
-    {3,3,
-     "  X"
-     "  X"
-     "XXX"}
-  };
-
-static const tilespec pentomino5x12[] =
-  {
-    // Width and height of board
-    {12, 5, ""},
-    // Number of tiles and wheter the board is filled
-    {12, true, ""},
-    {2, 4,
-     "X "
-     "X "
-     "X "
-     "XX"},
-    {3,3,
-     "XX "
-     " XX"
-     " X "},
-    {3,3,
-     "XXX"
-     " X "
-     " X "},
-    {3,3,
-     "  X"
-     " XX"
-     "XX "},
-    {2,4,
-     " X"
-     "XX"
-     " X"
-     " X"},
-    {5,1,
-     "XXXXX"},
-    {3,3,
-     "X  "
-     "XXX"
-     "  X"},
-    {4,2,
-     " XXX"
-     "XX  "},
-    {2,3,
-     "XX"
-     "XX"
-     " X"},
-    {3,2,
-     "X X"
-     "XXX"},
-    {3,3,
-     " X "
-     "XXX"
-     " X "},
-    {3,3,
-     "  X"
-     "  X"
-     "XXX"}
-  };
-
-static const tilespec pentomino4x15[] =
-  {
-    // Width and height of board
-    {15, 4, ""},
-    // Number of tiles and wheter the board is filled
-    {12, true, ""},
-    {2, 4,
-     "X "
-     "X "
-     "X "
-     "XX"},
-    {3,3,
-     "XX "
-     " XX"
-     " X "},
-    {3,3,
-     "XXX"
-     " X "
-     " X "},
-    {3,3,
-     "  X"
-     " XX"
-     "XX "},
-    {2,4,
-     " X"
-     "XX"
-     " X"
-     " X"},
-    {5,1,
-     "XXXXX"},
-    {3,3,
-     "X  "
-     "XXX"
-     "  X"},
-    {4,2,
-     " XXX"
-     "XX  "},
-    {2,3,
-     "XX"
-     "XX"
-     " X"},
-    {3,2,
-     "X X"
-     "XXX"},
-    {3,3,
-     " X "
-     "XXX"
-     " X "},
-    {3,3,
-     "  X"
-     "  X"
-     "XXX"}
-  };
-
-static const tilespec pentomino3x20[] =
-  {
-    // Width and height of board
-    {20, 3, ""},
-    // Number of tiles and wheter the board is filled
-    {12, true, ""},
-    {2, 4,
-     "X "
-     "X "
-     "X "
-     "XX"},
-    {3,3,
-     "XX "
-     " XX"
-     " X "},
-    {3,3,
-     "XXX"
-     " X "
-     " X "},
-    {3,3,
-     "  X"
-     " XX"
-     "XX "},
-    {2,4,
-     " X"
-     "XX"
-     " X"
-     " X"},
-    {5,1,
-     "XXXXX"},
-    {3,3,
-     "X  "
-     "XXX"
-     "  X"},
-    {4,2,
-     " XXX"
-     "XX  "},
-    {2,3,
-     "XX"
-     "XX"
-     " X"},
-    {3,2,
-     "X X"
-     "XXX"},
-    {3,3,
-     " X "
-     "XXX"
-     " X "},
-    {3,3,
-     "  X"
-     "  X"
-     "XXX"}
-  };
-
-/// List of specifications
-const tilespec *specs[] = {puzzle0, puzzle1, puzzle2, packing2,
-                           pentomino6x10,pentomino5x12,
-                           pentomino4x15,pentomino3x20};
-/// Number of specifications
-const unsigned n_examples = sizeof(specs)/sizeof(tilespec*);
-//@}
 
 // STATISTICS: example-any

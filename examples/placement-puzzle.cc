@@ -382,7 +382,8 @@ public:
       int symscnt = sizeof(syms)/sizeof(bsymmfunc);
       for (int i = 0; i < symscnt; ++i) {
         syms[i](orig, width-1, height, symm, w2, h2);
-        rel(this, orig, IRT_LQ, symm);
+        if (width-1 == w2 && height == h2)
+          rel(this, orig, IRT_LQ, symm);
       }
     }
 

@@ -1,0 +1,288 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Mikael Lagerkvist, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-11-13 15:40:00 +0100 (mån, 13 nov 2006) $ by $Author: tack $
+ *     $Revision: 3931 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+
+
+/** \name Puzzle specifications
+ *
+ * \relates PlacementPuzzle
+ */
+//@{
+/** \brief Data-type for specification of one tile
+ *
+ * This structure can be used to specify  tile with specified width
+ * and height, and a char-array tile consiting of spaces and X's
+ * showing the tile in row-major order.
+ *
+ * \relates PlacementPuzzle
+ */
+struct tilespec {
+  int width, height, num;
+  const char *tile;
+};
+
+/** \brief Data-type for the specification of one problem
+ *
+ * \relates PlacementPuzzle
+ */
+struct puzzlespec {
+  int width, height, ntiles;
+  bool filled;
+  const tilespec *tiles;
+};
+
+namespace {
+  /// Small tileset
+  const tilespec tiles0[] = 
+    {
+      {2, 3, 1,
+       "XX"
+       "X "
+       "X "},
+      {2, 1, 1,
+       "XX"},
+      {3, 3, 1,
+       " XX"
+       "  X"
+       "XXX"},
+      {1, 1, 1,
+       "X"},
+      {3, 1, 1,
+       "XXX"}
+    };
+  /// Small puzzle
+  const puzzlespec puzzle0 =
+    {
+      4, 4, 5, true, tiles0
+    };
+
+  /// Standard tileset
+  const tilespec tiles1[] =
+    {
+      {3, 3, 1,
+       "XXX"
+       "XXX"
+       "XX "},
+      {5, 3, 1,
+       "  XXX"
+       "  X  "
+       "XXX  "},
+      {3, 4, 1,
+       "XXX"
+       "XXX"
+       "  X"
+       "  X"},
+      {3, 4, 1,
+       "XXX"
+       "  X"
+       "  X"
+       "  X"},
+      {2, 5, 1,
+       " X"
+       " X"
+       " X"
+       "XX"
+       "XX"},
+      {4, 2, 1,
+       "XX  "
+       "XXXX"},
+      {3, 3, 1,
+       "XXX"
+       "  X"
+       "  X"},
+      {2, 3, 1,
+       "XX"
+       "X "
+       "X "},
+      {2, 4, 1,
+       "XX"
+       "XX"
+       "XX"
+       "XX"},
+      {3, 2, 1,
+       "XX "
+       "XXX"}
+    };
+  /// Standard specification
+  const puzzlespec puzzle1 =
+    {
+      8, 8, 10, true, tiles1
+    };
+
+
+  // Tiles for packing example number 2 from examples/packing.cc
+  const tilespec packingtiles2[] =
+    {
+      {6, 6, 1,
+       "XXXXXX"
+       "XXXXXX"
+       "XXXXXX"
+       "XXXXXX"
+       "XXXXXX"
+       "XXXXXX"
+      },
+      {4, 4, 1,
+       "XXXX"
+       "XXXX"
+       "XXXX"
+       "XXXX"},
+      {4, 4, 1,
+       "XXXX"
+       "XXXX"
+       "XXXX"
+       "XXXX"},
+      {4, 4, 1,
+       "XXXX"
+       "XXXX"
+       "XXXX"
+       "XXXX"},
+      {2, 2, 1,
+       "XX"
+       "XX"},
+      {2, 2, 1,
+       "XX"
+       "XX"},
+      {2, 2, 1,
+       "XX"
+       "XX"},
+      {2, 2, 1,
+       "XX"
+       "XX"}
+    };
+  // Specification for packing example 2 from examples/packing.cc
+  const puzzlespec packing2 = {
+      10, 10, 8, true, packingtiles2
+  };
+
+  /// Pentomino tileset
+  const tilespec pentominotiles[] =
+    {
+      {2, 4, 1,
+       "X "
+       "X "
+       "X "
+       "XX"},
+      {3,3, 1,
+       "XX "
+       " XX"
+       " X "},
+      {3,3, 1,
+       "XXX"
+       " X "
+       " X "},
+      {3,3, 1,
+       "  X"
+       " XX"
+       "XX "},
+      {2,4, 1,
+       " X"
+       "XX"
+       " X"
+       " X"},
+      {5,1, 1,
+       "XXXXX"},
+      {3,3, 1,
+       "X  "
+       "XXX"
+       "  X"},
+      {4,2, 1,
+       " XXX"
+       "XX  "},
+      {2,3, 1,
+       "XX"
+       "XX"
+       " X"},
+      {3,2, 1,
+       "X X"
+       "XXX"},
+      {3,3, 1,
+       " X "
+       "XXX"
+       " X "},
+      {3,3, 1,
+       "  X"
+       "  X"
+       "XXX"}
+    };
+
+  /// Pentomino specification 
+  const puzzlespec pentomino10x6 =
+    {
+      6, 10, 12, true, pentominotiles
+    };
+  /// Pentomino specification 
+  const puzzlespec pentomino12x5 =
+    {
+      5, 12, 12, true, pentominotiles
+    };
+  /// Pentomino specification 
+  const puzzlespec pentomino15x4 =
+    {
+      4, 15, 12, true, pentominotiles
+    };
+  /// Pentomino specification 
+  const puzzlespec pentomino20x3 =
+    {
+      3, 20, 12, true, pentominotiles
+    };
+  /// Pentomino specification 
+  const puzzlespec pentomino6x10 =
+    {
+      10, 6, 12, true, pentominotiles
+    };
+  /// Pentomino specification 
+  const puzzlespec pentomino5x12 =
+    {
+      12, 5, 12, true, pentominotiles
+    };
+  /// Pentomino specification 
+  const puzzlespec pentomino4x15 =
+    {
+      15, 4, 12, true, pentominotiles
+    };
+  /// Pentomino specification 
+  const puzzlespec pentomino3x20 =
+    {
+      20, 3, 12, true, pentominotiles
+    };
+}
+/** \brief List of all the board specifications
+ *
+ * \relates PlacementPuzzle
+ */
+const puzzlespec specs[] = 
+  {puzzle0, puzzle1, packing2,
+   pentomino10x6,pentomino12x5,
+   pentomino15x4,pentomino20x3,
+   pentomino6x10,pentomino5x12,
+   pentomino4x15,pentomino3x20
+   
+  };
+/** \brief Number of board specifications
+ *
+ * \relates PlacementPuzzle
+ */
+const unsigned n_examples = sizeof(specs)/sizeof(puzzlespec);
+//@}
+
+// STATISTICS: example-any
