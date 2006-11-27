@@ -187,9 +187,10 @@ namespace Gecode { namespace Int { namespace Bool {
     assert(x0.none() && x1.none());
     if (x2.one())
       return new (home) OrTrueSubsumed<BV>(home,share,*this,x0,x1);
-    if (x2.zero())
+    else if (x2.zero())
       return new (home) BinOrTrue<BV,BV>(home,share,*this,x0,x1);
-    return new (home) TerOrTrue<BV>(home,share,*this);
+    else
+      return new (home) TerOrTrue<BV>(home,share,*this);
   }
 
   template <class BV>
@@ -295,13 +296,14 @@ namespace Gecode { namespace Int { namespace Bool {
     assert(x0.none() && x1.none());
     if (x2.one() || x3.one())
       return new (home) OrTrueSubsumed<BV>(home,share,*this,x0,x1);
-    if (x2.zero() && x3.zero())
+    else if (x2.zero() && x3.zero())
       return new (home) BinOrTrue<BV,BV>(home,share,*this,x0,x1);
-    if (x2.zero())
+    else if (x2.zero())
       return new (home) TerOrTrue<BV>(home,share,*this,x0,x1,x3);
-    if (x3.zero())
+    else if (x3.zero())
       return new (home) TerOrTrue<BV>(home,share,*this,x0,x1,x2);
-    return new (home) QuadOrTrue<BV>(home,share,*this);
+    else
+      return new (home) QuadOrTrue<BV>(home,share,*this);
   }
 
   template <class BV>
@@ -611,7 +613,14 @@ namespace Gecode { namespace Int { namespace Bool {
         x[i]=x[--n];
       }
     x.size(n);
-    return new (home) NaryOrTrue<BV>(home,share,*this);
+    if (n == 0)
+      return new (home) BinOrTrue<BV,BV>(home,share,*this,x0,x1);
+    else if (n == 1)
+      return new (home) TerOrTrue<BV>(home,share,*this,x0,x1,x[0]);
+    else if (n == 2)
+      return new (home) QuadOrTrue<BV>(home,share,*this,x0,x1,x[0],x[1]);
+    else
+      return new (home) NaryOrTrue<BV>(home,share,*this);
   }
 
   template<class BV>
