@@ -148,4 +148,24 @@
 
 #endif
 
+/**
+ * \def GECODE_ASSUME
+ * \brief Assert certain property
+ *
+ * This might be used for optimization as well (for example, 
+ * Microsoft Visual C++), otherwise it behaves like any
+ * assert.
+ *
+ */
+
+#if defined(_MSC_VER) && defined(NDEBUG)
+
+#define GECODE_ASSUME(p) __assume((p));
+
+#else
+
+#define GECODE_ASSUME(p) assert((p));
+
+#endif
+
 // STATISTICS: kernel-other

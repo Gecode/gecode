@@ -24,7 +24,13 @@ namespace Gecode {
 
   forceinline void
   BoolVar::_init(Space* home, int min, int max) {
-    var = new (home) Int::BoolVarImp(home,min,max);
+    assert((min >= 0) && (max <= 1) && (min <= max));
+    if (min > 0)
+      var = &Int::BoolVarImp::s_one;
+    else if (max == 0)
+      var = &Int::BoolVarImp::s_zero;
+    else
+      var = new (home) Int::BoolVarImp(home,0,1);
   }
 
   forceinline

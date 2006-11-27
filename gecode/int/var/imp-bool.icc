@@ -40,15 +40,20 @@ namespace Gecode { namespace Int {
    */
   forceinline BoolStatus
   BoolVarImp::status(void) const {
+    GECODE_ASSUME(dom >= 0); GECODE_ASSUME(dom <= 3);
     return dom;
   }
   forceinline int
   BoolVarImp::min(void) const {
-    return static_cast<int>(dom & 1);
+    int n = static_cast<int>(dom & 1);
+    GECODE_ASSUME(n >= 0); GECODE_ASSUME(n <= 0);
+    return n;
   }
   forceinline int
   BoolVarImp::max(void) const {
-    return static_cast<int>(dom >> 1);
+    int n = static_cast<int>(dom >> 1);
+    GECODE_ASSUME(n >= 0); GECODE_ASSUME(n <= 0);
+    return n;
   }
   forceinline int
   BoolVarImp::med(void) const {

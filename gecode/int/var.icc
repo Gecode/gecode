@@ -371,6 +371,13 @@ namespace Gecode { namespace Int {
 
 #include "gecode/int/var/imp-int.icc"
 
+namespace Gecode {
+
+  class BoolVar;
+
+}
+
+
 namespace Gecode { namespace Int {
 
   /// Type for status of a Boolean variable
@@ -382,7 +389,8 @@ namespace Gecode { namespace Int {
    * \ingroup Other
    */
   class BoolVarImp : public BoolVarImpBase {
-  protected:
+    friend class BoolVar;
+  private:
     /** 
      * \brief Domain information
      * 
