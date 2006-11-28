@@ -389,7 +389,7 @@ namespace Gecode { namespace Int {
    * \ingroup Other
    */
   class BoolVarImp : public BoolVarImpBase {
-    friend class BoolVar;
+    friend class ::Gecode::BoolVar;
   private:
     /** 
      * \brief Domain information
