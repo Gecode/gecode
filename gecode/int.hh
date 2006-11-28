@@ -472,7 +472,7 @@ namespace Gecode {
    * Posts propagator for \f$ x_0 \diamond_{\mathit{o}} \cdots  
    * \diamond_{\mathit{op}} x_{|x|-1}= y\f$
    *
-   * Throws an exception of type Int::TooFewArguments, if \f$|x|<2$
+   * Throws an exception of type Int::TooFewArguments, if \f$|x|<2\f$
    * and \a o is BOT_IMP, BOT_EQV, or BOT_XOR.
    */
   GECODE_INT_EXPORT void
@@ -486,7 +486,7 @@ namespace Gecode {
    * Throws an exception of type Int::NotZeroOne, if \a n is neither
    * 0 or 1.
    *
-   * Throws an exception of type Int::TooFewArguments, if \f$|x|<2$
+   * Throws an exception of type Int::TooFewArguments, if \f$|x|<2\f$
    * and \a o is BOT_IMP, BOT_EQV, or BOT_XOR.
    */
   GECODE_INT_EXPORT void
