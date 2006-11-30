@@ -55,11 +55,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
 
     if (x0.min() >= 0)
-      GECODE_REWRITE_PROP(p,(Eq<View,View>::post(home,x0,x1)));
+      GECODE_REWRITE(p,(Eq<View,View>::post(home,x0,x1)));
 
     if (x0.max() <= 0) {
       MinusView mx0(x0);
-      GECODE_REWRITE_PROP(p,(Eq<MinusView,View>::post(home,mx0,x1)));
+      GECODE_REWRITE(p,(Eq<MinusView,View>::post(home,mx0,x1)));
     }
 
     GECODE_ME_CHECK(x1.lq(home,std::max(x0.max(),-x0.min())));
@@ -195,11 +195,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
 
     if (x0.min() >= 0)
-      GECODE_REWRITE((Rel::EqDom<View,View>::post(home,x0,x1)));
+      GECODE_REWRITE(this,(Rel::EqDom<View,View>::post(home,x0,x1)));
 
     if (x0.max() <= 0) {
       MinusView mx0(x0);
-      GECODE_REWRITE((Rel::EqDom<MinusView,View>::post(home,mx0,x1)));
+      GECODE_REWRITE(this,(Rel::EqDom<MinusView,View>::post(home,mx0,x1)));
     }
 
     return ES_FIX;

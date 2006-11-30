@@ -675,7 +675,7 @@ namespace Gecode { namespace Int { namespace Bool {
           // Rewrite if there is just one view left
           if (i == 0) {
             BV y = x[0]; x.size(0);
-            GECODE_REWRITE((BinOrTrue<BV,BV>::post(home,x1,y)));
+            GECODE_REWRITE(this,(BinOrTrue<BV,BV>::post(home,x1,y)));
           }
           // Move to x0 and subscribe
           x0=x[i]; x[i]=x[--n]; 
@@ -763,7 +763,7 @@ namespace Gecode { namespace Int { namespace Bool {
       return ES_SUBSUMED(this,sizeof(*this));
     }
     if (y.one())
-      GECODE_REWRITE(NaryOrTrue<BV>::post(home,x));
+      GECODE_REWRITE(this,NaryOrTrue<BV>::post(home,x));
     for (int i = x.size(); i--; ) {
       if (x[i].one()) {
         y.one_none(home);

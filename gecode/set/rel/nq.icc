@@ -61,9 +61,9 @@ namespace Gecode { namespace Set { namespace Rel {
   Distinct<View0,View1>::propagate(Space* home) {
     assert(x0.assigned()||x1.assigned());
     if (x0.assigned()) {
-      GECODE_REWRITE((DistinctDoit<View1,View0>::post(home,x1,x0)));
+      GECODE_REWRITE(this,(DistinctDoit<View1,View0>::post(home,x1,x0)));
     } else {
-      GECODE_REWRITE((DistinctDoit<View0,View1>::post(home,x0,x1)));
+      GECODE_REWRITE(this,(DistinctDoit<View0,View1>::post(home,x0,x1)));
     }
   }
 

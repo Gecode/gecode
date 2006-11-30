@@ -164,9 +164,9 @@ namespace Gecode { namespace Set { namespace RelOp {
       }
 
       if (x0.cardMax() == 0)
-        GECODE_REWRITE((Rel::Eq<View2,View1>::post(home,x2,x1)));
+        GECODE_REWRITE(this,(Rel::Eq<View2,View1>::post(home,x2,x1)));
       if (x1.cardMax() == 0)
-        GECODE_REWRITE((Rel::Eq<View2,View0>::post(home,x2,x0)));
+        GECODE_REWRITE(this,(Rel::Eq<View2,View0>::post(home,x2,x0)));
 
     } while(modified);
 

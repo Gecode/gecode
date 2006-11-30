@@ -490,7 +490,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
         if (Perm) {
           GECODE_ME_CHECK(xz[0][1].eq(home, w.size() - 1));
         }
-        GECODE_REWRITE((Rel::EqBnd<View,View>::post(home, xz[0][0], y[0])));
+        GECODE_REWRITE(this,(Rel::EqBnd<View,View>::post(home, xz[0][0], y[0])));
       }
 
       // check whether shifting the permutation variables
@@ -549,7 +549,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
       if (n < 2) {
         if (xz[0][0].max() < y[0].min() || y[0].max() < xz[0][0].min())
           return ES_FAILED;
-        GECODE_REWRITE((Rel::EqBnd<View,View>::post(home, xz[0][0], y[0])));
+        GECODE_REWRITE(this,(Rel::EqBnd<View,View>::post(home, xz[0][0], y[0])));
       }
 
       GECODE_ES_CHECK((bounds_propagation<View, Tuple, Perm>

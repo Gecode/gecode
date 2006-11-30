@@ -258,17 +258,17 @@ namespace Gecode { namespace Set { namespace Select {
         ViewArray<SView> is(home,ubsize);
         for (int i=n; i--;)
           is[i]=iv[i].var;
-        GECODE_REWRITE((RelOp::IntersectionN<SView, SView>
+        GECODE_REWRITE(this,(RelOp::IntersectionN<SView, SView>
                         ::post(home,is,x0)));
       } else if (ubsize == 2) {
         assert(n==2);
         SView a = iv[0].var;
         SView b = iv[1].var;
-        GECODE_REWRITE((RelOp::Intersection<SView, SView, SView>
+        GECODE_REWRITE(this,(RelOp::Intersection<SView, SView, SView>
                        ::post(home,a,b,x0)));
       } else if (ubsize == 1) {
         assert(n==1);
-        GECODE_REWRITE((Rel::Eq<SView,SView>::post(home,x0,iv[0].var)));
+        GECODE_REWRITE(this,(Rel::Eq<SView,SView>::post(home,x0,iv[0].var)));
       } else {
         GECODE_ME_CHECK(x0.exclude(home,Limits::Set::int_min,
                                    Limits::Set::int_max));

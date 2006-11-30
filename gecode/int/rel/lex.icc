@@ -184,9 +184,9 @@ namespace Gecode { namespace Int { namespace Rel {
     return ES_FIX;
 
   rewrite_le:
-    GECODE_REWRITE(Le<View>::post(home,x[0][0],x[0][1]));
+    GECODE_REWRITE(this,Le<View>::post(home,x[0][0],x[0][1]));
   rewrite_lq:
-    GECODE_REWRITE(Lq<View>::post(home,x[0][0],x[0][1]));
+    GECODE_REWRITE(this,Lq<View>::post(home,x[0][0],x[0][1]));
   }
 
   template <class View>

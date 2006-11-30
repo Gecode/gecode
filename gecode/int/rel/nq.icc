@@ -152,7 +152,7 @@ namespace Gecode { namespace Int { namespace Rel {
       return ES_SUBSUMED(this,home);
     case RT_FALSE:
       if (n == 0)
-        GECODE_REWRITE((Nq<View>::post(home,x1[0],x1[1])));
+        GECODE_REWRITE(this,(Nq<View>::post(home,x1[0],x1[1])));
       x0.cancel(home,this,PC_INT_DOM);
       x0=x[--n];
       x0.subscribe(home,this,PC_INT_DOM);
@@ -167,7 +167,7 @@ namespace Gecode { namespace Int { namespace Rel {
       return ES_SUBSUMED(this,home);
     case RT_FALSE:
       if (n == 0)
-        GECODE_REWRITE((Nq<View>::post(home,x0[0],x0[1])));
+        GECODE_REWRITE(this,(Nq<View>::post(home,x0[0],x0[1])));
       x1.cancel(home,this,PC_INT_DOM);
       x1=x[--n];
       x1.subscribe(home,this,PC_INT_DOM);

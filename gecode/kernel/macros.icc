@@ -90,7 +90,7 @@
  *
  * \ingroup TaskActor
  */
-#define GECODE_REWRITE_PROP(prop,post) {                                \
+#define GECODE_REWRITE(prop,post) {                                     \
   Propagator* __p__ ## __LINE__ = (prop);                               \
   size_t     __s__ ## __LINE__  = __p__ ## __LINE__->dispose((home));   \
   ExecStatus __es__ ## __LINE__ = (post);                               \
@@ -98,34 +98,6 @@
     return ::Gecode::ES_FAILED;                                         \
   return ES_SUBSUMED(__p__ ## __LINE__,__s__ ## __LINE__);              \
 }
-
-/**
- * \brief Rewrite current propagator by executing post function
- *
- * \ingroup TaskActor
- */
-#define GECODE_REWRITE(post) GECODE_REWRITE_PROP(this,post)
-
-
-/**
- * \brief Rewrite current, already disposed propagator by executing post function
- *
- * \ingroup TaskActor
- */
-#define GECODE_REWRITE_PROP_SUBSUMED(prop,post) {                       \
-  Propagator* __p__ ## __LINE__ = (prop);                               \
-  ExecStatus __es__ ## __LINE__ = (post);                               \
-  if (__es__ ## __LINE__ != ::Gecode::ES_OK)                            \
-    return ::Gecode::ES_FAILED;                                         \
-  return ES_SUBSUMED(__p__ ## __LINE__,sizeof(*__p__ ## __LINE__));     \
-}
-
-/**
- * \brief Rewrite current, already disposed propagator by executing post function
- *
- * \ingroup TaskActor
- */
-#define GECODE_REWRITE_SUBSUMED(post) GECODE_REWRITE_PROP_SUBSUMED(this,home)
 
 
 /**
