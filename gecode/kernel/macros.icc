@@ -79,8 +79,7 @@
  */
 #define GECODE_ES_FAIL(home,es) {                               \
     ::Gecode::ExecStatus __es__ ## __LINE__ = (es);             \
-    assert(__es__ ## __LINE__ != ::Gecode::__ES_DISPOSED);      \
-    assert(__es__ ## __LINE__ != ::Gecode::ES_SUBSUMED);        \
+    assert(__es__ ## __LINE__ != ::Gecode::__ES_SUBSUMED);      \
     if (__es__ ## __LINE__ < ::Gecode::ES_OK) {                 \
       (home)->fail(); return;                                   \
     }                                                           \
@@ -113,12 +112,12 @@
  *
  * \ingroup TaskActor
  */
-#define GECODE_REWRITE_PROP_DISPOSED(prop,post) {                       \
+#define GECODE_REWRITE_PROP_SUBSUMED(prop,post) {                       \
   Propagator* __p__ ## __LINE__ = (prop);                               \
   ExecStatus __es__ ## __LINE__ = (post);                               \
   if (__es__ ## __LINE__ != ::Gecode::ES_OK)                            \
     return ::Gecode::ES_FAILED;                                         \
-  return __p__ ## __LINE__->ES_DISPOSED(sizeof(*__p__ ## __LINE__));    \
+  return ES_SUBSUMED(__p__ ## __LINE__,sizeof(*__p__ ## __LINE__));     \
 }
 
 /**
@@ -126,7 +125,7 @@
  *
  * \ingroup TaskActor
  */
-#define GECODE_REWRITE_DISPOSED(post) GECODE_REWRITE_PROP_DISPOSED(this,home)
+#define GECODE_REWRITE_SUBSUMED(post) GECODE_REWRITE_PROP_SUBSUMED(this,home)
 
 
 /**
