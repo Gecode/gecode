@@ -1639,7 +1639,7 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC, class MED>
   void
-  VarTypeProcessor<VTI,PC,MED>::dispose(Space* home, VarBase* x) {}
+  VarTypeProcessor<VTI,PC,MED>::dispose(Space*, VarBase*) {}
 
   /*
    * Processing a single modified variable

@@ -419,7 +419,7 @@ namespace Gecode { namespace Int { namespace Regular {
 
   template <class View>
   forceinline void*
-  Dom<View>::LayeredGraph::operator new(size_t s, int n) {
+  Dom<View>::LayeredGraph::operator new(size_t, int n) {
     // n ist the number of variables
     return Memory::malloc(sizeof(LayeredGraph) + n*sizeof(Layer));
   }

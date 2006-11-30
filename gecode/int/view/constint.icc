@@ -205,7 +205,7 @@ namespace Gecode {
     forceinline void
     ConstIntView::subscribe(Space*,Propagator*,PropCond,bool) {}
     forceinline void
-    ConstIntView::cancel(Space* home, Propagator*,PropCond) {}
+    ConstIntView::cancel(Space*,Propagator*,PropCond) {}
 
 
 

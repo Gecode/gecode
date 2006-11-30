@@ -106,8 +106,7 @@ namespace Gecode { namespace Int {
   }
 
   forceinline void*
-  IntVarImp::RangeList::operator new(size_t s, Space* home) {
-    assert(s == sizeof(RangeList));
+  IntVarImp::RangeList::operator new(size_t, Space* home) {
     return home->fl_alloc<sizeof(RangeList)>();
   }
 

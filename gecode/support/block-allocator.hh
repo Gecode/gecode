@@ -141,8 +141,7 @@ namespace Gecode { namespace Support {
   }
   template <class T>
   forceinline void*
-  BlockClient<T>::operator new(size_t s, BlockAllocator<T>& ba) {
-    assert(s == sizeof(T));
+  BlockClient<T>::operator new(size_t, BlockAllocator<T>& ba) {
     return ba();
   }
 

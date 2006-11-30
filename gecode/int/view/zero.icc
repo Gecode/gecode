@@ -200,7 +200,7 @@ namespace Gecode {
     forceinline void
     ZeroIntView::subscribe(Space*,Propagator*,PropCond,bool) {}
     forceinline void
-    ZeroIntView::cancel(Space* home, Propagator*,PropCond) {}
+    ZeroIntView::cancel(Space*,Propagator*,PropCond) {}
 
 
 
@@ -286,11 +286,11 @@ namespace Gecode {
    *
    */
   forceinline bool
-  same(const Int::ZeroIntView& x, const Int::ZeroIntView& y) {
+  same(const Int::ZeroIntView&, const Int::ZeroIntView&) {
     return true;
   }
   forceinline bool
-  before(const Int::ZeroIntView& x, const Int::ZeroIntView& y) {
+  before(const Int::ZeroIntView&, const Int::ZeroIntView&) {
     return false;
   }
 

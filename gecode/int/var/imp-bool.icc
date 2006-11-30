@@ -374,9 +374,9 @@ namespace Gecode { namespace Int {
       return ME_INT_FAILED;
     assert(i.min() <= 1);
     if (i.min() == 1)
-      return one();
+      return one(home);
     if (i.max() == 0)
-      return zero();
+      return zero(home);
     assert((i.min() <= 0) && (i.max() >= 1));
     return ME_INT_NONE;
   }
@@ -391,9 +391,9 @@ namespace Gecode { namespace Int {
       return ME_INT_NONE;
     assert(i.min() <= 1);
     if (i.min() == 1)
-      return zero();
+      return zero(home);
     if (i.max() == 0)
-      return one();
+      return one(home);
     assert((i.min() <= 0) && (i.max() >= 1));
     return ME_INT_FAILED;
   }
