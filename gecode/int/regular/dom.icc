@@ -171,6 +171,16 @@ namespace Gecode { namespace Int { namespace Regular {
 
 
 
+  template <class View>
+  forceinline size_t
+  Dom<View>::dispose(Space* home) {
+    Propagator::unforce(home);
+    dfa.~DFA();
+    delete lg;
+    (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
+    return sizeof(*this);
+  }
+
   /*
    * The layered graph
    *
@@ -274,6 +284,7 @@ namespace Gecode { namespace Int { namespace Regular {
     for (int i=x.size(); i--; )
       if (!x[i].assigned())
         return es;
+    x.size(0);
     return ES_SUBSUMED(p,home);
   }
 
@@ -305,6 +316,7 @@ namespace Gecode { namespace Int { namespace Regular {
             p = &e->next; e = e->next;
           }
         }
+        // Write endmarker for edges
         *p = NULL;
         // Remove all remaining edges
         while (e != NULL) {
@@ -315,7 +327,6 @@ namespace Gecode { namespace Int { namespace Regular {
             layers[i+1].modified |= MOD_IDEG;
           e = e->next;
         }
-        // Write endmarker for edges
       }  else if (layers[i].modified & MOD_IDEG) {
         assert(layers[i].size == x[i].size());
         Edge** p = &layers[i].edges;
@@ -378,6 +389,7 @@ namespace Gecode { namespace Int { namespace Regular {
     for (int i=x.size(); i--; )
       if (!x[i].assigned())
         return es;
+    x.size(0);
     return ES_SUBSUMED(p,home);
   }
 
@@ -410,16 +422,6 @@ namespace Gecode { namespace Int { namespace Regular {
   Dom<View>::LayeredGraph::operator new(size_t s, int n) {
     // n ist the number of variables
     return Memory::malloc(sizeof(LayeredGraph) + n*sizeof(Layer));
-  }
-
-  template <class View>
-  size_t
-  Dom<View>::dispose(Space* home) {
-    Propagator::unforce(home);
-    dfa.~DFA();
-    delete lg;
-    (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
-    return sizeof(*this);
   }
 
   template <class View>

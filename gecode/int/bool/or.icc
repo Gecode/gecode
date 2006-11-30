@@ -460,7 +460,18 @@ namespace Gecode { namespace Int { namespace Bool {
   template <class BVA, class BVB, class BVC>
   Actor*
   Or<BVA,BVB,BVC>::copy(Space* home, bool share) {
-    return new (home) Or<BVA,BVB,BVC>(home,share,*this);
+    if (x2.one()) {
+      assert(x0.none() && x1.none());
+      return new (home) BinOrTrue<BVA,BVB>(home,share,*this,x0,x1);
+    } else if (x0.zero()) {
+      assert(x1.none() && x2.none());
+      return new (home) Eq<BVB,BVC>(home,share,*this,x1,x2);
+    } else if (x1.zero()) {
+      assert(x0.none() && x2.none());
+      return new (home) Eq<BVA,BVC>(home,share,*this,x0,x2);
+    } else {
+      return new (home) Or<BVA,BVB,BVC>(home,share,*this);
+    }
   }
 
   template <class BVA, class BVB, class BVC>
