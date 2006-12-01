@@ -53,6 +53,17 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: set
+What: change
+Rank: minor
+[DESCRIPTION]
+The finite set selection propagators accept an additional argument
+that specifies where the indexing should start. It should make some
+models more natural to express, and helps in porting code from Mozart.
+In addition, the selectUnion propagator is now hand-written again,
+resulting in better performance.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   major

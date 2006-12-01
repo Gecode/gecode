@@ -1,0 +1,288 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004,2006
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date: 2006-11-30 12:01:42 +0100 (Thu, 30 Nov 2006) $ by $Author: schulte $
+ *     $Revision: 4011 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Set { namespace Select {
+
+  template <class SView, class RView>
+  forceinline
+  SelectUnion<SView,RView>::
+  SelectUnion(Space* home, SView y0,
+                     IdxViewArray<SView>& iv0,
+                     RView y1)
+    : Propagator(home), x0(y0), iv(iv0), x1(y1) {
+    force(home);
+    x0.subscribe(home,this, PC_SET_ANY);
+    x1.subscribe(home,this, PC_SET_ANY);
+    iv.subscribe(home,this, PC_SET_ANY);
+  }
+
+  template <class SView, class RView>
+  forceinline
+  SelectUnion<SView,RView>::
+  SelectUnion(Space* home, bool share,
+                     SelectUnion<SView,RView>& p)
+    : Propagator(home,share,p) {
+    x0.update(home,share,p.x0);
+    x1.update(home,share,p.x1);
+    iv.update(home,share,p.iv);
+  }
+
+  template <class SView, class RView>
+  PropCost
+  SelectUnion<SView,RView>::cost(void) const {
+    return PC_LINEAR_HI;
+  }
+
+  template <class SView, class RView>
+  size_t
+  SelectUnion<SView,RView>::dispose(Space* home) {
+    unforce(home);
+    if (!home->failed()) {
+      x0.cancel(home,this, PC_SET_ANY);
+      x1.cancel(home,this, PC_SET_ANY);
+      iv.cancel(home,this,PC_SET_ANY);
+    }
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class SView, class RView>
+  ExecStatus
+  SelectUnion<SView,RView>::
+  post(Space* home, SView x0, IdxViewArray<SView>& xs,
+       RView x1) {
+    int n = xs.size();
+
+    // s2 \subseteq {1,...,n}
+    Iter::Ranges::Singleton s(0, n-1);
+    GECODE_ME_CHECK(x1.intersectI(home,s));
+    (void) new (home)
+      SelectUnion<SView,RView>(home,x0,xs,x1);
+    return ES_OK;
+  }
+
+  template <class SView, class RView>
+  Actor*
+  SelectUnion<SView,RView>::copy(Space* home, bool share) {
+    return new (home) SelectUnion<SView,RView>(home,share,*this);
+  }
+
+  template <class SView, class RView>
+  ExecStatus
+  SelectUnion<SView,RView>::propagate(Space* home) {
+    int n = iv.size();
+
+    bool loopVar;
+    do {
+      loopVar = false;
+
+      // Cache the upper bound iterator, as we have to
+      // modify the upper bound while iterating
+      LubRanges<RView> x1ub(x1);
+      Iter::Ranges::Cache<LubRanges<RView> > x1ubc(x1ub);
+      Iter::Ranges::ToValues<Iter::Ranges::Cache<LubRanges<RView> > >
+        vx1ub(x1ubc);
+
+      GlbRanges<RView> x1lb(x1);
+      Iter::Ranges::Cache<GlbRanges<RView> > x1lbc(x1lb);
+      Iter::Ranges::ToValues<Iter::Ranges::Cache<GlbRanges<RView> > >
+        vx1(x1lbc);
+
+      // In the first iteration, compute in before[i] the intersection
+      // of all the lower bounds of the x_i. At the same time,
+      // exclude inconsistent x_i from x1 and remove them from
+      // the list, cancel their dependencies.
+
+      GLBndSet sofarBefore(home);
+      GECODE_AUTOARRAY(GLBndSet, before, n);
+
+      int j = 0;
+      int i = 0;
+      while ( vx1ub() ) {
+
+        // Remove vars at indices not in the upper bound
+        if (iv[i].idx < vx1ub.val()) {
+          iv[i].var.cancel(home,this, PC_SET_ANY);
+          ++i;
+          continue;
+        }
+        assert(iv[i].idx == vx1ub.val());
+        iv[j] = iv[i];
+
+        SView candidate = iv[j].var;
+        int candidateInd = iv[j].idx;
+
+        // inter = glb(candidate) & complement(lub(x0))
+        GlbRanges<SView> candlb(candidate);
+        LubRanges<SView> x0ub(x0);
+        RangesCompl<LubRanges<SView> > x0ubc(x0ub);
+        Iter::Ranges::Inter<GlbRanges<SView>,
+          RangesCompl<LubRanges<SView> > > inter(candlb, x0ubc);
+
+        // exclude inconsistent x_i
+        // an x_i is inconsistent if
+        //  * its min cardinality is greater than maxCard of x0
+        //  * inter is not empty (there are elements in x_0
+        //    that can't be in x_i)
+        if (candidate.cardMin() > x0.cardMax() ||
+            inter()) {
+          ModEvent me = (x1.exclude(home,candidateInd));
+          loopVar |= me_modified(me);
+          GECODE_ME_CHECK(me);
+
+          iv[j].var.cancel(home,this, PC_SET_ANY);
+          ++i;
+          ++vx1ub;
+          continue;
+        } else {
+          // if x_i is consistent, check whether we know
+          // that its index is in x1
+          if (vx1() && vx1.val()==candidateInd) {
+            // x0 >= candidate, candidate <= x0
+            GlbRanges<SView> candlb(candidate);
+            ModEvent me = x0.includeI(home,candlb);
+            loopVar |= me_modified(me);
+            GECODE_ME_CHECK(me);
+
+            LubRanges<SView> x0ub(x0);
+            me = candidate.intersectI(home,x0ub);
+            loopVar |= me_modified(me);
+            GECODE_ME_CHECK(me);
+            ++vx1;
+          }
+          before[j].init(home);
+          before[j].update(home,sofarBefore);
+          LubRanges<SView> cub(candidate);
+          sofarBefore.includeI(home,cub);
+        }
+
+        ++vx1ub;
+        ++i; ++j;
+      }
+
+      // cancel the variables with index greater than
+      // max of lub(x1)
+      for (int k=i; k<n; k++) {
+        iv[k].var.cancel(home,this, PC_SET_ANY);
+      }
+      n = j;
+      iv.size(n);
+
+      if (x1.cardMax()==0) {
+        // Selector is empty, hence the result must be empty
+        {
+          GECODE_ME_CHECK(x0.cardMax(home,0));
+        }
+        for (int i=n; i--;)
+          before[i].dispose(home);
+        return ES_SUBSUMED(this,home);
+      }
+
+      {
+        // x0 <= sofarBefore
+        BndSetRanges sfB(sofarBefore);
+        ModEvent me = x0.intersectI(home,sfB);
+        loopVar |= me_modified(me);
+        GECODE_ME_CHECK(me);
+      }
+
+      sofarBefore.dispose(home);
+
+      GLBndSet sofarAfter(home);
+
+      // In the second iteration, this time backwards, compute
+      // sofarAfter as the union of all lub(x_j) with j>i
+      for (int i=n; i--;) {
+        // TODO: check for size of universe here?
+        // if (sofarAfter.size() == 0) break;
+        
+        // extra = inter(before[i], sofarAfter) - lub(x0)
+        BndSetRanges b(before[i]);
+        BndSetRanges s(sofarAfter);
+        GlbRanges<SView> x0lb(x0);
+        Iter::Ranges::Union<BndSetRanges, BndSetRanges> inter(b,s);
+        Iter::Ranges::Diff<GlbRanges<SView>,
+          Iter::Ranges::Union<BndSetRanges,BndSetRanges> > diff(x0lb, inter);
+        if (diff()) {
+          ModEvent me = (x1.include(home,iv[i].idx));
+          loopVar |= me_modified(me);
+          GECODE_ME_CHECK(me);
+
+          // candidate != extra
+          me = iv[i].var.includeI(home,diff);
+          loopVar |= me_modified(me);
+          GECODE_ME_CHECK(me);
+        }
+
+        LubRanges<SView> iviub(iv[i].var);
+        sofarAfter.includeI(home,iviub);
+        before[i].dispose(home);
+      }
+      sofarAfter.dispose(home);
+
+    } while (loopVar);
+
+    // Test whether we determined x1 without determining x0
+    if (x1.assigned() && !x0.assigned()) {
+      int ubsize = x1.lubSize();
+      if (ubsize > 2) {
+        assert(ubsize==n);
+        ViewArray<SView> is(home,ubsize);
+        for (int i=n; i--;)
+          is[i]=iv[i].var;
+        GECODE_REWRITE(this,(RelOp::UnionN<SView, SView>
+                        ::post(home,is,x0)));
+      } else if (ubsize == 2) {
+        assert(n==2);
+        SView a = iv[0].var;
+        SView b = iv[1].var;
+        GECODE_REWRITE(this,(RelOp::Union<SView, SView, SView>
+                       ::post(home,a,b,x0)));
+      } else if (ubsize == 1) {
+        assert(n==1);
+        GECODE_REWRITE(this,(Rel::Eq<SView,SView>::post(home,x0,iv[0].var)));
+      } else {
+        GECODE_ME_CHECK(x0.exclude(home,Limits::Set::int_min,
+                                   Limits::Set::int_max));
+        return ES_SUBSUMED(this,home);
+      }
+    }
+
+    bool allAssigned = true;
+    for (int i=iv.size(); i--;) {
+      if (!iv[i].var.assigned()) {
+        allAssigned = false;
+        break;
+      }
+    }
+    if (x0.assigned() && x1.assigned() && allAssigned) {
+      return ES_SUBSUMED(this,home);
+    }
+
+    return ES_FIX;
+  }
+
+}}}
+
+// STATISTICS: set-prop

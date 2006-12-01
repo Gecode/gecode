@@ -29,51 +29,79 @@ using namespace Gecode::Set;
 namespace Gecode {
 
   void
-  selectUnion(Space* home, const SetVarArgs& x, SetVar y, SetVar z) {
+  selectUnion(Space* home, const SetVarArgs& x, SetVar y, SetVar z, int k) {
     if (home->failed()) return;
-    Set::Select::IdxViewArray<ComplementView<SetView> > iv(home, x);
-    IntSet universe(Limits::Set::int_min,
-                    Limits::Set::int_max);
-    SetView zv(z);
-    ComplementView<SetView> cz(zv);
-    GECODE_ES_FAIL(home,(Select::SelectIntersection<ComplementView<SetView>,
-                         SetView>::post(home,cz,iv,y,universe)));
+    Set::Select::IdxViewArray<SetView> iv(home, x);
+    if (k == 0) {
+      GECODE_ES_FAIL(home,
+                     (Select::SelectUnion<SetView,SetView>::
+                      post(home,z,iv,y)));
+    } else {
+      SetView vy(y);
+      OffsetSetView<SetView> oy(vy, -k);
+      GECODE_ES_FAIL(home,
+                     (Select::SelectUnion<SetView,OffsetSetView<SetView> >::
+                      post(home,z,iv,oy)));
+    }
   }
 
   void
-  selectInter(Space* home, const SetVarArgs& x, SetVar y, SetVar z) {
+  selectInter(Space* home, const SetVarArgs& x, SetVar y, SetVar z, int k) {
     if (home->failed()) return;
     Set::Select::IdxViewArray<SetView> iv(home, x);
     IntSet universe(Limits::Set::int_min,
                     Limits::Set::int_max);
-    GECODE_ES_FAIL(home,
-                   (Select::SelectIntersection<SetView,SetView>::
-                    post(home,z,iv,y,universe)));
+    if (k == 0) {
+      GECODE_ES_FAIL(home,
+                     (Select::SelectIntersection<SetView,SetView>::
+                      post(home,z,iv,y,universe)));
+    } else {
+      SetView vy(y);
+      OffsetSetView<SetView> oy(vy, -k);
+      GECODE_ES_FAIL(home,
+                     (Select::SelectIntersection<SetView,OffsetSetView<SetView> >::
+                      post(home,z,iv,oy,universe)));
+    }
   }
 
   void
   selectInterIn(Space* home, const SetVarArgs& x, SetVar y, SetVar z,
-                const IntSet& universe) {
+                const IntSet& universe, int k) {
     if (home->failed()) return;
     Set::Select::IdxViewArray<SetView> iv(home, x);
-    GECODE_ES_FAIL(home,
-                   (Select::SelectIntersection<SetView,SetView>::
-                    post(home,z,iv,y,universe)));
+    if (k == 0) {
+      GECODE_ES_FAIL(home,
+                     (Select::SelectIntersection<SetView,SetView>::
+                      post(home,z,iv,y,universe)));
+    } else {
+      SetView vy(y);
+      OffsetSetView<SetView> oy(vy, -k);
+      GECODE_ES_FAIL(home,
+                     (Select::SelectIntersection<SetView,OffsetSetView<SetView> >::
+                      post(home,z,iv,oy,universe)));
+    }
   }
 
   void
-  selectSet(Space* home, const SetVarArgs& x, IntVar y, SetVar z) {
+  selectSet(Space* home, const SetVarArgs& x, IntVar y, SetVar z, int k) {
     if (home->failed()) return;
-    Set::Select::IdxViewArray<ComplementView<SetView> > iv(home, x);
-    Int::IntView yv(y);
-    SingletonView single(yv);
+    Set::Select::IdxViewArray<SetView > iv(home, x);
     SetView zv(z);
-    ComplementView<SetView> cz(zv);
-    IntSet universe(Limits::Set::int_min,
-                    Limits::Set::int_max);
-    GECODE_ES_FAIL(home,(Select::SelectIntersection<ComplementView<SetView>,
-                         SingletonView>::post(home, cz, iv,
-                                              single, universe)));
+
+    if (k == 0) {
+      Int::IntView yv(y);
+      SingletonView single(yv);
+      GECODE_ES_FAIL(home,(Select::SelectUnion<SetView,
+                           SingletonView>::post(home, z, iv, single)));
+    } else {
+      Int::IntView yv(y);
+      SingletonView single(yv);
+      OffsetSetView<SingletonView> osingle(single, -k);
+      GECODE_ES_FAIL(home,(Select::SelectUnion<SetView,
+                           OffsetSetView<SingletonView> >::post(home, z, iv,
+                                                                osingle)));
+      
+    }
   }
 
   void

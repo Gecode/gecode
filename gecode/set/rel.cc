@@ -195,7 +195,7 @@ namespace Gecode {
     default:
       rel(home, s, r, x, b);
     }
-  }
+  }  
 
 }
 

@@ -76,6 +76,41 @@ namespace Gecode { namespace Set { namespace Select {
   };
 
   /**
+   * \brief %Propagator for selected union
+   *
+   * Requires \code #include "gecode/set/select.hh" \endcode
+   * \ingroup FuncSetProp
+   */
+  template <class SView, class RView>
+  class SelectUnion :
+    public Propagator {
+  protected:
+    SView x0;
+    IdxViewArray<SView> iv;
+    RView x1;
+
+    /// Constructor for cloning \a p
+    SelectUnion(Space* home, bool share,SelectUnion& p);
+    /// Constructor for posting
+    SelectUnion(Space* home,SView,IdxViewArray<SView>&,RView);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor*      copy(Space* home,bool);
+    virtual PropCost    cost(void) const;
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
+    /// Perform propagation
+    virtual ExecStatus  propagate(Space* home);
+    /** Post propagator for \f$ z=\bigcup\langle x_0,\dots,x_{n-1}\rangle[y] \f$
+     *
+     * If \a y is empty, \a z will be constrained to be empty
+     * (as an empty union is the empty set).
+     */
+    static  ExecStatus  post(Space* home,SView z,IdxViewArray<SView>& x,
+                             RView y);
+  };
+
+  /**
    * \brief %Propagator for selected disjointness
    *
    * Requires \code #include "gecode/set/select.hh" \endcode
@@ -106,6 +141,7 @@ namespace Gecode { namespace Set { namespace Select {
 }}}
 
 #include "gecode/set/select/inter.icc"
+#include "gecode/set/select/union.icc"
 #include "gecode/set/select/disjoint.icc"
 
 #endif

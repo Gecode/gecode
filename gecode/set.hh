@@ -353,36 +353,46 @@ namespace Gecode {
 
   /**
    * \brief Post propagator for \f$ z=\bigcup\langle x_0,\dots,x_{n-1}\rangle[y] \f$
+   *
    * If \a y is the empty set, \a z will also be constrained to be empty
    * (as an empty union is empty).
+   * The indices for \a x start at 0, unless \a k is specified as the start index.
    */
   GECODE_SET_EXPORT void
-  selectUnion(Space* home, const SetVarArgs& x, SetVar y, SetVar z);
+  selectUnion(Space* home, const SetVarArgs& x, SetVar y, SetVar z, int k=0);
 
-  /** Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \f$ \mathcal{U} \f$ as universe
+  /** 
+   * \brief Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \f$ \mathcal{U} \f$ as universe
    *
    * If \a y is empty, \a z will be constrained to be the universe
    * \f$ \mathcal{U} \f$ (as an empty intersection is the universe).
+   * The indices for \a x start at 0, unless \a k is specified as the start index.
    */
   GECODE_SET_EXPORT void
-  selectInter(Space* home, const SetVarArgs& x, SetVar y, SetVar z);
+  selectInter(Space* home, const SetVarArgs& x, SetVar y, SetVar z, int k=0);
 
-  /** Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \a u as universe
+  /** 
+   * \brief Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \a u as universe
    *
    * If \a y is empty, \a z will be constrained to be the given universe
    * \a u (as an empty intersection is the universe).
+   * The indices for \a x start at 0, unless \a k is specified as the start index.
    */
   GECODE_SET_EXPORT void
   selectInterIn(Space* home, const SetVarArgs& x, SetVar y, SetVar z,
-                const IntSet& u);
+                const IntSet& u, int k=0);
 
   /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
   GECODE_SET_EXPORT void
   selectDisjoint(Space* home, const SetVarArgs& x, SetVar y);
 
-  /// Post propagator for \f$ z=\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
+  /**
+   * \brief Post propagator for \f$ z=\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
+   *
+   * The indices for \a x start at 0, unless \a k is specified as the start index.
+   */
   GECODE_SET_EXPORT void
-  selectSet(Space* home, const SetVarArgs& x, IntVar y, SetVar z);
+  selectSet(Space* home, const SetVarArgs& x, IntVar y, SetVar z, int k=0);
 
   //@}
 
