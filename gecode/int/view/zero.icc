@@ -198,7 +198,9 @@ namespace Gecode {
      *
      */
     forceinline void
-    ZeroIntView::subscribe(Space*,Propagator*,PropCond,bool) {}
+    ZeroIntView::subscribe(Space* home, Propagator* p, PropCond,bool) {
+      IntVarImp::propagate(home,p,ME_INT_VAL);
+    }
     forceinline void
     ZeroIntView::cancel(Space*,Propagator*,PropCond) {}
 

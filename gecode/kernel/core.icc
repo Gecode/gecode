@@ -239,6 +239,12 @@ namespace Gecode {
      */
     void subscribe(Space* home, Propagator* p, PropCond pc,
                    bool assigned, ModEvent me, bool process);
+    /** \brief Propagate propagator \a p with propagation condition \a pc
+     *
+     * The propagator \a p is processed for execution with modification 
+     * event \a me.
+     */
+    static void propagate(Space* home, Propagator* p, ModEvent me);
     /** \brief Cancel subscription of propagator \a p with propagation condition \a pc
      *
      * If the variables is assigned, \a assigned must be true.
@@ -1483,6 +1489,12 @@ namespace Gecode {
       if (process && (pc != PC_GEN_ASSIGNED))
         home->process<VTI,MED>(p,me);
     }
+  }
+
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline void
+  Variable<VTI,PC,MED>::propagate(Space* home, Propagator* p, ModEvent me) {
+    home->process<VTI,MED>(p,me);
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>

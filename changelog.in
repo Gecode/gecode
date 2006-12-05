@@ -53,6 +53,15 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: kernel
+What: 	bug
+Rank: 	minor
+[DESCRIPTION]
+Subscription to constant views now should use the propagate member function
+from a variable implementation: it guarantees execution of a propagator at
+least once (int and set views have been adopted accordingly).
+
+[ENTRY]
 Module: int
 What: 	bug
 Rank: 	major
