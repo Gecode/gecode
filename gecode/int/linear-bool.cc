@@ -142,6 +142,99 @@ namespace Gecode {
     }
   }
 
+  /*
+  namespace Int { namespace Linear {
+
+    template <class View>
+    post_any(Space* home, 
+             Term<BoolView>* t_p, int n_p,
+             Term<BoolView>* t_n, int n_n,
+             View x, int c) {
+      ScaleBoolArray pb(home,n_p);
+      {
+        ScaleBool* f=pb.fst();
+        for (int i=n_p; i--; ) {
+          f[i].x=t_p[i].x; f[i].a=t_p[i].a;
+        }
+      }
+      ScaleBoolArray nb(home,n_n);
+      {
+        ScaleBool* f=nb.fst();
+        for (int i=n_n; i--; ) {
+          f[i].x=t_n[i].x; f[i].a=-t_n[i].a;
+        }
+      }
+      switch (r) {
+      case IRT_EQ:
+        GECODE_ES_FAIL(home,
+                       (EqBoolScale<ScaleBoolArray,ScaleBoolArray,View>
+                        ::post(home,pb,nb,z,c)));
+        break;
+      case IRT_LQ:
+        GECODE_ES_FAIL(home,
+                       (LqBoolScale<ScaleBoolArray,ScaleBoolArray,View>
+                        ::post(home,pb,nb,z,c)));
+        break;
+      case IRT_NQ:
+        GECODE_ES_FAIL(home,
+                       (NqBoolScale<ScaleBoolArray,ScaleBoolArray,View>
+                        ::post(home,pb,nb,z,c)));
+        break;
+      default:
+        GECODE_NEVER;
+      }
+    }
+
+    template <class View>
+    void
+    post(Space* home, Linear::Term<BoolView>* t, int n, IntRelType r, View x,
+         double c) {
+      // Eliminate assigned views
+      for (int i=n; i--; )
+        if (t[i].x.one()) {
+          c -= t[i].a; t[i]=t[--n];
+        } else if (t[i].x.zero()) {
+          t[i]=t[--n];
+        }
+      if ((c < Limits::Int::int_min) || (c > Limits::Int::int_max))
+        throw NumericalOverflow("Int::linear");
+      
+      // Separate into positive and negative coefficients
+      int n_p = 0;
+      int n_n = 0;
+      bool unit = separate<BoolView>(t,n,n_p,n_n);
+      
+      Linear::Term<BoolView>* t_p = t;
+      Linear::Term<BoolView>* t_n = t+n_p;
+      
+      // Check for overflow
+      {
+        double sl = x.max()+c;
+        double su = x.min()+c;
+        for (int i=n_p; i--; )
+          su -= t_p[i].a;
+        for (int i=n_n; i--; )
+          sl += t_n[i].a;
+        if ((su < Limits::Int::int_min) || (su > Limits::Int::int_max) ||
+            (sl < Limits::Int::int_min) || (sl > Limits::Int::int_max))
+          throw NumericalOverflow("Int::linear");
+      }
+      
+      if (unit && (n_n == 0)) {
+        /// All coefficients are 1
+      } else if (unit && (n_p == 0)) {
+        // All coefficients are -1
+      } else {
+        // Mixed coefficients
+        //        normalize<BoolView>(t,n,r,c);
+        for (int 
+      }
+    }
+
+  }}
+
+  */
+
   void
   linear(Space* home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType r, int c,
@@ -163,7 +256,7 @@ namespace Gecode {
 
     int n_p = 0;
     int n_n = 0;
-    preprocess<BoolView>(t,n,r,c,n_p,n_n);
+    separate<BoolView>(t,n,n_p,n_n);
 
     ScaleBoolArray pb(home,n_p);
     {
@@ -224,7 +317,7 @@ namespace Gecode {
     int n_p = 0;
     int n_n = 0;
     int c=0;
-    preprocess<BoolView>(t,n,r,c,n_p,n_n);
+    separate<BoolView>(t,n,n_p,n_n);
 
     ScaleBoolArray pb(home,n_p);
     {

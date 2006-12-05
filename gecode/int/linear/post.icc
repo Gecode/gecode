@@ -38,7 +38,7 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   template<class View>
-  inline void
+  forceinline void
   normalize(Term<View> e[], int n, IntRelType& r, int& c) { 
     /*
      * All inequations in terms of <=
@@ -62,11 +62,8 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class View>
-  void
-  preprocess(Term<View> e[], int& n, IntRelType& r, int& c, 
-             int& n_p, int& n_n) {
-    if ((c < Limits::Int::int_min) || (c > Limits::Int::int_max))
-      throw NumericalOverflow("Int::linear");
+  forceinline bool
+  separate(Term<View> e[], int& n, int& n_p, int& n_n) {
     /*
      * Join coefficients for aliased variables:
      *
@@ -110,6 +107,14 @@ namespace Gecode { namespace Int { namespace Linear {
       n_p = i;
       n_n = n-n_p;
     }
+    /*
+     * Test for unit coefficients
+     *
+     */
+    for (int i=n; i--; )
+      if ((e[i].a != 1) && (e[i].a != -1))
+        return false;
+    return true;
   }
 
 }}}

@@ -1179,6 +1179,34 @@ namespace Gecode { namespace Int { namespace Linear {
     View x;
   };
 
+  /** \brief Join shared terms and separate into positive and negative terms
+   *
+   * \param e array of linear terms over integers
+   * \param n size of array
+   * \param n_p number of postive terms (from 0 to \a n_p-1)
+   * \param n_n number of negative terms (from \a n_p to \a n_p+n_n-1)
+   *
+   *  - Variables occuring multiply in the term array are replaced
+   *    by a single occurence: for example, \f$ax+bx\f$ becomes
+   *    \f$(a+b)x\f$.
+   *  - If in the above simplification the value for \f$(a+b)\f$ (or for
+   *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
+   *    defined in Limits::Int, an exception of type
+   *    Int::NumericalOverflow is thrown.
+   *
+   * Returns true, if all coefficients are unit coefficients
+   */
+  template<class View>
+  bool separate(Term<View> e[], int& n, int& n_p, int& n_n);
+
+  /** \brief Normalize relation type
+   *
+   * Rewrites \a r into IRT_EQ, IRT_NQ, IRT_LQ and changes \a e
+   * and \a c accordingly.
+   */
+  template<class View>
+  void normalize(Term<View> e[], int n, IntRelType& r, int& c);
+
   /**
    * \brief Post propagator for linear constraint over integers
    * \param e array of linear terms over integers
