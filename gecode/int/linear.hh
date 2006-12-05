@@ -1071,8 +1071,6 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     LinBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
     /// Constructor for cloning \a pr
-    LinBoolScale(Space* home, bool share, LinBoolScale& pr);
-    /// Constructor for cloning \a pr
     LinBoolScale(Space* home, bool share, Propagator& pr, 
                  SBAP& p, SBAN& n, VX x, int c);
     /// Cost function (defined as dynamic PC_LINEAR_LO)
@@ -1097,8 +1095,6 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Constructor for creation
     EqBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
-    /// Constructor for cloning \a pr
-    EqBoolScale(Space* home, bool share, EqBoolScale& pr);
     /// Constructor for cloning \a pr
     EqBoolScale(Space* home, bool share, Propagator& pr, 
                 SBAP& p, SBAN& n, VX x, int c);
@@ -1127,8 +1123,6 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Constructor for creation
     LqBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
     /// Constructor for cloning \a pr
-    LqBoolScale(Space* home, bool share, LqBoolScale& pr);
-    /// Constructor for cloning \a pr
     LqBoolScale(Space* home, bool share, Propagator& pr, 
                 SBAP& p, SBAN& n, VX x, int c);
     /// Create copy during cloning
@@ -1155,8 +1149,6 @@ namespace Gecode { namespace Int { namespace Linear {
   public:
     /// Constructor for creation
     NqBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
-    /// Constructor for cloning \a pr
-    NqBoolScale(Space* home, bool share, NqBoolScale& pr);
     /// Constructor for cloning \a pr
     NqBoolScale(Space* home, bool share, Propagator& pr, 
                 SBAP& p, SBAN& n, VX x, int c);
