@@ -242,7 +242,7 @@ namespace Gecode { namespace Int {
   }
   forceinline unsigned int
   IntVarImp::regret_max(void) const {
-    if (lst() == NULL) {
+    if (fst() == NULL) {
       return (dom.min() == dom.max()) ? 0 : 1;
     } else if (dom.max() == lst()->min()) {
       return dom.max()-lst()->prev(NULL)->max();

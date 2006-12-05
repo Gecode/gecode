@@ -53,9 +53,17 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: int
+What: 	bug
+Rank: 	major
+Bug:	48
+[DESCRIPTION]
+Branching on maximum regret would always crash on non-range domains.
+
+[ENTRY]
 Module: set
-What: change
-Rank: minor
+What: 	change
+Rank: 	minor
 [DESCRIPTION]
 The finite set selection propagators accept an additional argument
 that specifies where the indexing should start. It should make some
