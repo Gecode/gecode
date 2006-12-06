@@ -53,6 +53,14 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: example
+What:   new
+Rank:   minor
+[DESCRIPTION]
+New example: the balanced academic curriculum problem (problem 030 from
+CSPlib).
+
+[ENTRY]
 Module: set
 What:   bug
 Rank:   minor
