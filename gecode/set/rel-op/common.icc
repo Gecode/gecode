@@ -253,6 +253,7 @@ namespace Set { namespace RelOp {
       }
     }
     GECODE_ME_CHECK_MODIFIED(modified, y.cardMax(home,cardMaxSum));
+
   overflow:
 
     //Cardinality of each x[i] limited by cardinality of y minus all x[j]s:
@@ -272,14 +273,13 @@ namespace Set { namespace RelOp {
           }
           break;
         }
-
+      }
+      for (int i=x.size()-1;i--;) {
         rightMinSum[i] = rightMinSum[i+1] + x[i+1].cardMin();
         if (rightMinSum[i] < rightMinSum[i+1]) {
           //overflow, fail the space
           GECODE_ME_CHECK(ME_SET_FAILED);
         }
-
-
       }
       unsigned int leftMinAcc=unionOfDets.size();
       unsigned int leftMaxAcc=unionOfDets.size();
@@ -301,9 +301,11 @@ namespace Set { namespace RelOp {
         }
 
         leftMaxAcc += x[i].cardMax();
-        if (leftMaxAcc < x[i].cardMax()) {leftMaxAcc = Limits::Set::card_max;}
+        if (leftMaxAcc < x[i].cardMax())
+          leftMaxAcc = Limits::Set::card_max;
         leftMinAcc += x[i].cardMin();
-        if (leftMinAcc < x[i].cardMin()) {GECODE_ME_CHECK(ME_SET_FAILED);}
+        if (leftMinAcc < x[i].cardMin())
+          GECODE_ME_CHECK(ME_SET_FAILED);
       }
     }
 

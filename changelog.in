@@ -53,6 +53,14 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: set
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed the n-ary partition propagator to handle overflow of the sum of
+cardinalities correctly.
+
+[ENTRY]
 Module: kernel
 What: 	bug
 Rank: 	minor
