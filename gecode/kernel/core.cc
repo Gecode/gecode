@@ -154,21 +154,19 @@ namespace Gecode {
 
   forceinline bool
   Space::pool_get(Propagator*& p) {
-    for (int c = pool_next+1; c--; ) {
+    while (true) {
       // Head of the queue
-      ActorLink* lnk = &pool[c];
+      ActorLink* lnk = &pool[pool_next];
       // First propagator or link back to queue
       ActorLink* fst = lnk->next();
       if (lnk != fst) {
-        pool_next = c;
-        // Unlink first propagator from queue
-        ActorLink* snd = fst->next();
-        lnk->next(snd); snd->prev(lnk);
         p = static_cast<Propagator*>(fst);
         return true;
       }
+      if (pool_next == 0)
+        return false;
+      pool_next--;
     }
-    pool_next = 0;
     return false;
   }
 
@@ -202,18 +200,18 @@ namespace Gecode {
         return pn;
       case ES_FIX:
         {
-          // Put propagator in idle queue
-          a_actors.head(p);
           // Prevent that propagator gets rescheduled (turn on all events)
           p->u.pme = PME_ASSIGNED;
           process();
           p->u.pme = PME_NONE;
+          // Put propagator in idle queue
+          p->unlink(); a_actors.head(p);
         }
         break;
       case ES_NOFIX:
         {
-          // Propagator is currently in no queue, put in into idle
-          a_actors.head(p);
+          // Propagator is currently in no queue, put into idle
+          p->unlink(); a_actors.head(p);
           p->u.pme = PME_NONE;
           process();
         }
@@ -225,6 +223,7 @@ namespace Gecode {
           // Prevent that propagator gets rescheduled (turn on all events)
           p->u.pme = PME_ASSIGNED;
           process();
+          p->unlink();
           reuse(p,s);
         }
         break;
@@ -236,7 +235,7 @@ namespace Gecode {
           p->u.pme = PME_ASSIGNED;
           process();
           p->u.pme = keep;
-          assert(p->u.pme);
+          assert(p->u.pme != 0);
           pool_put(p);
         }
         break;

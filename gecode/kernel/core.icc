@@ -1395,7 +1395,7 @@ namespace Gecode {
   forceinline void
   Space::pool_put(Propagator* p) {
     int c = p->cost();
-    pool[c].tail(p);
+    p->unlink(); pool[c].tail(p);
     if (c > pool_next)
       pool_next = c;
   }
@@ -1418,7 +1418,6 @@ namespace Gecode {
     // Update event
     p->u.pme ^= old_me ^ (ME_GEN_ASSIGNED << (VTI << 2));
     // Put propagator into right queue
-    p->unlink();
     pool_put(p);
   }
 
@@ -1437,7 +1436,6 @@ namespace Gecode {
     // Update modification event for propagator (use xor)
     p->u.pme ^= (com_me << (VTI << 2));
     // Put propagator into right queue
-    p->unlink();
     pool_put(p);
   }
 
