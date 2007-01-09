@@ -46,14 +46,14 @@ namespace Gecode { namespace Set { namespace Sequence {
     bool modified = false;
     bool assigned;
     do {
-      assigned = false;
+      assigned = false; modified = false;
       GECODE_ES_CHECK(propagateSeq(home, modified, assigned, x));
-    } while (assigned);
+    } while (assigned || modified);
 
-    for (int i=x.size(); i--;) {
+    for (int i=x.size(); i--;)
       if (!x[i].assigned())
         return ES_FIX;
-    }
+
     return ES_SUBSUMED(this,home);
   }
 

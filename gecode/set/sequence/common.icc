@@ -32,15 +32,17 @@ namespace Gecode { namespace Set { namespace Sequence {
   ExecStatus propagateSeq(Space* home,
                           bool& modified, bool& assigned,
                           ViewArray<SetView>& x) {
-
     int lastElem = x.size()-1;
     int cur_max = BndSet::MAX_OF_EMPTY;
     int cur_min = BndSet::MIN_OF_EMPTY;
 
     for (int i=0; i<lastElem; i++) {
       if (x[i].glbSize() > 0) {
-        int glbMax = x[i].glbMax();
+        int glbMax = x[i].glbMax();        
         cur_max = std::max(cur_max, glbMax);
+        if (x[i].cardMin() > 0) {
+          cur_max = std::max(cur_max, x[i].lubMinN(x[i].cardMin()-1));
+        }
       }
       if (cur_max>=Limits::Set::int_min)
         GECODE_SET_ME_CHECK_VAL_B(modified,
@@ -51,6 +53,9 @@ namespace Gecode { namespace Set { namespace Sequence {
       if (x[lastElem-i].lubSize() > 0) {
         int glbMin = x[lastElem-i].glbMin();
         cur_min = std::min(cur_min, glbMin);
+        if (x[lastElem-i].cardMin() > 0) {
+          cur_min = std::min(cur_min, x[lastElem-i].lubMaxN(x[lastElem-i].cardMin()-1));
+        }
       }
       if (Limits::Set::int_max>=cur_min)
         GECODE_SET_ME_CHECK_VAL_B(modified,
@@ -58,7 +63,7 @@ namespace Gecode { namespace Set { namespace Sequence {
                                                       Limits::Set::int_max),
                               assigned);
     }
-    return ES_FIX;
+    return ES_NOFIX;
   }
 
   forceinline

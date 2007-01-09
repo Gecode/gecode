@@ -109,12 +109,14 @@ namespace Gecode { namespace Set { namespace Select {
       Iter::Ranges::ToValues<Iter::Ranges::Cache<GlbRanges<RView> > >
         vx1(x1lbc);
 
-      // In the first iteration, compute in before[i] the intersection
-      // of all the lower bounds of the x_i. At the same time,
+      // In the first iteration, compute in before[i] the union
+      // of all the upper bounds of the x_i. At the same time,
       // exclude inconsistent x_i from x1 and remove them from
       // the list, cancel their dependencies.
 
       GLBndSet sofarBefore(home);
+      LUBndSet selectedInter(home, IntSet (Limits::Set::int_min,
+                                   Limits::Set::int_max));
       GECODE_AUTOARRAY(GLBndSet, before, n);
 
       int j = 0;
@@ -175,6 +177,8 @@ namespace Gecode { namespace Set { namespace Select {
           before[j].update(home,sofarBefore);
           LubRanges<SView> cub(candidate);
           sofarBefore.includeI(home,cub);
+          GlbRanges<SView> clb(candidate);
+          selectedInter.intersectI(home,clb);
         }
 
         ++vx1ub;
@@ -198,6 +202,16 @@ namespace Gecode { namespace Set { namespace Select {
           before[i].dispose(home);
         return ES_SUBSUMED(this,home);
       }
+
+      if (x1.cardMin() > 0) {
+        // Selector is not empty, hence the intersection of the
+        // possibly selected lower bounds is contained in x0
+        BndSetRanges si(selectedInter);
+        ModEvent me = x0.includeI(home, si);
+        loopVar |= me_modified(me);
+        GECODE_ME_CHECK(me);
+      }
+      selectedInter.dispose(home);
 
       {
         // x0 <= sofarBefore

@@ -35,11 +35,11 @@ namespace Gecode { namespace Set { namespace Sequence {
 
   forceinline
   Seq::Seq(Space* home, ViewArray<SetView>& x)
-    : NaryPropagator<SetView, PC_SET_CGLB>(home,x) {}
+    : NaryPropagator<SetView, PC_SET_ANY>(home,x) {}
 
   forceinline
   Seq::Seq(Space* home, bool share, Seq& p)
-    : NaryPropagator<SetView, PC_SET_CGLB>(home,share,p) {}
+    : NaryPropagator<SetView, PC_SET_ANY>(home,share,p) {}
 
   forceinline ExecStatus
   Seq::post(Space* home, ViewArray<SetView> x) {

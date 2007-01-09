@@ -53,6 +53,14 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: set
+What: change
+Rank: minor
+[DESCRIPTION]
+Slightly stronger inferences for the finite set sequence and selection
+constraints.
+
+[ENTRY]
 Module: example
 What:   new
 Rank:   minor

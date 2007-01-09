@@ -46,7 +46,7 @@ namespace Gecode { namespace Set { namespace Sequence {
    */
 
   class Seq :
-    public NaryPropagator<SetView, PC_SET_CGLB> {
+    public NaryPropagator<SetView, PC_SET_ANY> {
   protected:
     /// Constructor for cloning \a p
     Seq(Space* home, bool share,Seq& p);
