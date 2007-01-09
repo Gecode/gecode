@@ -121,6 +121,10 @@ namespace Gecode { namespace Set { namespace Select {
 
       int j = 0;
       int i = 0;
+      
+      unsigned int maxCard = 0;
+      unsigned int minCard = Limits::Set::card_max;
+      
       while ( vx1ub() ) {
 
         // Remove vars at indices not in the upper bound
@@ -179,6 +183,8 @@ namespace Gecode { namespace Set { namespace Select {
           sofarBefore.includeI(home,cub);
           GlbRanges<SView> clb(candidate);
           selectedInter.intersectI(home,clb);
+          maxCard = std::max(maxCard, candidate.cardMax());
+          minCard = std::min(minCard, candidate.cardMin());
         }
 
         ++vx1ub;
@@ -210,8 +216,17 @@ namespace Gecode { namespace Set { namespace Select {
         ModEvent me = x0.includeI(home, si);
         loopVar |= me_modified(me);
         GECODE_ME_CHECK(me);
+        me = x0.cardMin(home, minCard);
+        loopVar |= me_modified(me);
+        GECODE_ME_CHECK(me);
       }
       selectedInter.dispose(home);
+
+      if (x1.cardMax() <= 1) {
+        ModEvent me = x0.cardMax(home, maxCard);
+        loopVar |= me_modified(me);
+        GECODE_ME_CHECK(me);
+      }
 
       {
         // x0 <= sofarBefore
