@@ -46,7 +46,6 @@ namespace Gecode { namespace Set { namespace Sequence {
   SeqU::propagate(Space* home) {
     ModEvent me0 = SetView::pme(this);
     bool ubevent = Rel::testSetEventUB(me0);
-    bool lbevent = Rel::testSetEventLB(me0);
     bool anybevent = Rel::testSetEventAnyB(me0);
     bool cardevent = Rel::testSetEventCard(me0);
 
@@ -58,9 +57,9 @@ namespace Gecode { namespace Set { namespace Sequence {
       oldModified = modified;
       modified = false;
 
-      if (oldModified || modified || lbevent)
+      if (oldModified || modified || anybevent || cardevent)
         GECODE_ME_CHECK(propagateSeq(home,modified,assigned,x));
-      if (oldModified || modified || lbevent)
+      if (oldModified || modified || anybevent)
         GECODE_ME_CHECK(propagateSeqUnion(home,modified,x,y));
       if (oldModified || modified || ubevent)
         GECODE_ME_CHECK(RelOp::unionNXiUB(home,modified,x,y,unionOfDets));
