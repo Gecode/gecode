@@ -142,17 +142,29 @@ namespace Gecode { namespace Set { namespace Select {
         // inter = glb(candidate) & complement(lub(x0))
         GlbRanges<SView> candlb(candidate);
         LubRanges<SView> x0ub(x0);
-        RangesCompl<LubRanges<SView> > x0ubc(x0ub);
-        Iter::Ranges::Inter<GlbRanges<SView>,
-          RangesCompl<LubRanges<SView> > > inter(candlb, x0ubc);
+        Iter::Ranges::Diff<GlbRanges<SView>,
+          LubRanges<SView> > diff(candlb, x0ub);
+
+        bool selectSingleInconsistent = false;
+        if (x1.cardMax() <= 1) {
+          GlbRanges<SView> x0lb(x0);
+          LubRanges<SView> candub(candidate);
+          Iter::Ranges::Diff<GlbRanges<SView>,
+                             LubRanges<SView> > diff2(x0lb, candub);
+          selectSingleInconsistent = diff2() || candidate.cardMax() < x0.cardMin();
+        }
 
         // exclude inconsistent x_i
         // an x_i is inconsistent if
+        //  * at most one x_i can be selected and there are
+        //    elements in x_0 that can't be in x_i
+        //    (selectSingleInconsistent)
         //  * its min cardinality is greater than maxCard of x0
-        //  * inter is not empty (there are elements in x_0
-        //    that can't be in x_i)
-        if (candidate.cardMin() > x0.cardMax() ||
-            inter()) {
+        //  * inter is not empty (there are elements in x_i
+        //    that can't be in x_0)
+        if (selectSingleInconsistent ||
+            candidate.cardMin() > x0.cardMax() ||
+            diff()) {
           ModEvent me = (x1.exclude(home,candidateInd));
           loopVar |= me_modified(me);
           GECODE_ME_CHECK(me);
