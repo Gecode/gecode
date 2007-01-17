@@ -190,7 +190,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     GECODE_ME_CHECK(x0.inter(home, u2));
 
     if (x1.assigned()) {
-      assert(x0.assigned());
       return ES_SUBSUMED(this,sizeof(*this));
     }
 
