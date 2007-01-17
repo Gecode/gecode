@@ -28,7 +28,7 @@ namespace Gecode {
 
   void
   element(Space* home, const IntArgs& c, IntVar x0, IntVar x1,
-          IntConLevel) {
+          int offset, IntConLevel) {
     if (home->failed()) return;
     Element::IntSharedArray cs(c.size());
     for (int i = c.size(); i--; )
@@ -36,12 +36,17 @@ namespace Gecode {
         throw NumericalOverflow("Int::element");
       else
         cs[i] = c[i];
-    GECODE_ES_FAIL(home,(Element::Int<IntView,IntView>::post(home,cs,x0,x1)));
+    if (offset==0) {
+      GECODE_ES_FAIL(home,(Element::Int<IntView,IntView>::post(home,cs,x0,x1)));
+    } else {
+      OffsetView ov(IntView(x0), offset);
+      GECODE_ES_FAIL(home,(Element::Int<OffsetView,IntView>::post(home,cs,ov,x1)));
+    }
   }
 
   void
   element(Space* home, const IntArgs& c, IntVar x0, BoolVar x1,
-          IntConLevel) {
+          int offset, IntConLevel) {
     if (home->failed()) return;
     Element::IntSharedArray cs(c.size());
     for (int i = c.size(); i--; )
@@ -49,12 +54,17 @@ namespace Gecode {
         throw NumericalOverflow("Int::element");
       else
         cs[i] = c[i];
-    GECODE_ES_FAIL(home,(Element::Int<IntView,BoolView>::post(home,cs,x0,x1)));
+    if (offset==0) {
+      GECODE_ES_FAIL(home,(Element::Int<IntView,BoolView>::post(home,cs,x0,x1)));
+    } else {
+      OffsetView ov(IntView(x0), offset);
+      GECODE_ES_FAIL(home,(Element::Int<IntView,BoolView>::post(home,cs,x0,x1)));
+    }
   }
 
   void
   element(Space* home, const IntArgs& c, IntVar x0, int x1,
-          IntConLevel) {
+          int offset, IntConLevel) {
     if (home->failed()) return;
     Element::IntSharedArray cs(c.size());
     for (int i = c.size(); i--; )
@@ -63,60 +73,102 @@ namespace Gecode {
       else
         cs[i] = c[i];
     ConstIntView cx1(x1);
-    GECODE_ES_FAIL(home,(Element::Int<IntView,ConstIntView>
-                         ::post(home,cs,x0,cx1)));
+    if (offset==0) {
+      GECODE_ES_FAIL(home,(Element::Int<IntView,ConstIntView>
+                           ::post(home,cs,x0,cx1)));
+    } else {
+      OffsetView ov(IntView(x0), offset);
+      GECODE_ES_FAIL(home,(Element::Int<OffsetView,ConstIntView>
+                           ::post(home,cs,ov,cx1)));
+    }
   }
 
   void
   element(Space* home, const IntVarArgs& c, IntVar x0, IntVar x1,
-          IntConLevel icl) {
+          int offset, IntConLevel icl) {
     if (home->failed()) return;
     Element::IdxView<IntView>* iv = 
       Element::IdxView<IntView>::init(home,c);
     if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
-      GECODE_ES_FAIL(home,(Element::ViewDom<IntView,IntView,IntView>
-                           ::post(home,iv,c.size(),x0,x1)));
+      if (offset==0) {
+        GECODE_ES_FAIL(home,(Element::ViewDom<IntView,IntView,IntView>
+                             ::post(home,iv,c.size(),x0,x1)));
+      } else {
+        OffsetView ov(IntView(x0), offset);
+        GECODE_ES_FAIL(home,(Element::ViewDom<IntView,OffsetView,IntView>
+                             ::post(home,iv,c.size(),ov,x1)));        
+      }
     } else {
-      GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,IntView,IntView>
-                           ::post(home,iv,c.size(),x0,x1)));
+      if (offset==0) {
+        GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,IntView,IntView>
+                             ::post(home,iv,c.size(),x0,x1)));
+      } else {
+        OffsetView ov(IntView(x0), offset);
+        GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,OffsetView,IntView>
+                             ::post(home,iv,c.size(),ov,x1)));        
+      }
     }
   }
 
   void
   element(Space* home, const IntVarArgs& c, IntVar x0, int x1,
-          IntConLevel icl) {
+          int offset, IntConLevel icl) {
     if (home->failed()) return;
     Element::IdxView<IntView>* iv = 
       Element::IdxView<IntView>::init(home,c);
     ConstIntView v1(x1);
     if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
-      GECODE_ES_FAIL(home,(Element::ViewDom<IntView,IntView,ConstIntView>
-                           ::post(home,iv,c.size(),x0,v1)));
+      if (offset==0) {
+        GECODE_ES_FAIL(home,(Element::ViewDom<IntView,IntView,ConstIntView>
+                             ::post(home,iv,c.size(),x0,v1)));
+      } else {
+        OffsetView ov(IntView(x0), offset);
+        GECODE_ES_FAIL(home,(Element::ViewDom<IntView,OffsetView,ConstIntView>
+                             ::post(home,iv,c.size(),ov,v1)));        
+      }
     } else {
-      GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,IntView,ConstIntView>
-                           ::post(home,iv,c.size(),x0,v1)));
+      if (offset==0) {
+        GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,IntView,ConstIntView>
+                             ::post(home,iv,c.size(),x0,v1)));
+      } else {
+        OffsetView ov(IntView(x0), offset);
+        GECODE_ES_FAIL(home,(Element::ViewBnd<IntView,OffsetView,ConstIntView>
+                             ::post(home,iv,c.size(),ov,v1)));        
+      }
     }
   }
 
   void
   element(Space* home, const BoolVarArgs& c, IntVar x0, BoolVar x1,
-          IntConLevel) {
+          int offset, IntConLevel) {
     if (home->failed()) return;
     Element::IdxView<BoolView>* iv = 
       Element::IdxView<BoolView>::init(home,c);
-    GECODE_ES_FAIL(home,(Element::ViewBnd<BoolView,IntView,BoolView>
-                         ::post(home,iv,c.size(),x0,x1)));
+    if (offset==0) {
+      GECODE_ES_FAIL(home,(Element::ViewBnd<BoolView,IntView,BoolView>
+                           ::post(home,iv,c.size(),x0,x1)));
+    } else {
+      OffsetView ov(IntView(x0), offset);
+      GECODE_ES_FAIL(home,(Element::ViewBnd<BoolView,OffsetView,BoolView>
+                           ::post(home,iv,c.size(),ov,x1)));      
+    }
   }
 
   void
   element(Space* home, const BoolVarArgs& c, IntVar x0, int x1,
-          IntConLevel) {
+          int offset, IntConLevel) {
     if (home->failed()) return;
     Element::IdxView<BoolView>* iv = 
       Element::IdxView<BoolView>::init(home,c);
     ConstIntView v1(x1);
-    GECODE_ES_FAIL(home,(Element::ViewBnd<BoolView,IntView,ConstIntView>
-                         ::post(home,iv,c.size(),x0,v1)));
+    if (offset==0) {
+      GECODE_ES_FAIL(home,(Element::ViewBnd<BoolView,IntView,ConstIntView>
+                           ::post(home,iv,c.size(),x0,v1)));
+    } else {
+      OffsetView ov(IntView(x0), offset);
+      GECODE_ES_FAIL(home,(Element::ViewBnd<BoolView,OffsetView,ConstIntView>
+                           ::post(home,iv,c.size(),ov,v1)));
+    }
   }
 
 }
