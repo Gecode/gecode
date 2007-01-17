@@ -177,6 +177,12 @@ namespace Gecode {
   }
 
   void
+  rel(Space* home, SetVar x, SetRelType r, const IntSet& s, BoolVar b) {
+    ConstantView sv(home, s);
+    rel_re<SetView,ConstantView>(home,x,r,sv,b);
+  }
+
+  void
   rel(Space* home, SetVar s, SetRelType r, IntVar x, BoolVar b) {
     Gecode::Int::IntView xv(x);
     SingletonView xsingle(xv);

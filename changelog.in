@@ -53,6 +53,20 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: int
+What: change
+Rank: minor
+[DESCRIPTION]
+The element constraints now accept an additional offset argument.
+
+[ENTRY]
+Module: set
+What: new
+Rank: minor
+[DESCRIPTION]
+Added selection and reified relation constraints with constant sets.
+
+[ENTRY]
 Module: set
 What: change
 Rank: minor
