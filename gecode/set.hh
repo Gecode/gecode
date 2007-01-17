@@ -160,7 +160,11 @@ namespace Gecode {
   /// Post propagator for \f$ (x \sim_r y) \Leftrightarrow b \f$
   GECODE_SET_EXPORT void
   rel(Space* home, SetVar x, SetRelType r, SetVar y, BoolVar b);
-  
+
+  /// Post propagator for \f$ (x \sim_r s) \Leftrightarrow b \f$
+  GECODE_SET_EXPORT void
+  rel(Space* home, SetVar x, SetRelType r, const IntSet& s, BoolVar b);  
+
   /// Post propagator for \f$ s \sim_r \{x\}\f$
   GECODE_SET_EXPORT void
   rel(Space* home, SetVar s, SetRelType r, IntVar x);
@@ -352,47 +356,65 @@ namespace Gecode {
   //@{
 
   /**
-   * \brief Post propagator for \f$ z=\bigcup\langle x_0,\dots,x_{n-1}\rangle[y] \f$
+   * \brief Post propagator for \f$ z=\bigcup\langle x_0,\dots,x_{n-1}\rangle[y+\mathit{offset}] \f$
    *
    * If \a y is the empty set, \a z will also be constrained to be empty
    * (as an empty union is empty).
-   * The indices for \a x start at 0, unless \a k is specified as the start index.
+   * The indices for \a s start at 0, unless an \a offset is specified.
    */
   GECODE_SET_EXPORT void
-  selectUnion(Space* home, const SetVarArgs& x, SetVar y, SetVar z, int k=0);
+  selectUnion(Space* home, const SetVarArgs& x, SetVar y, SetVar z, int offset=0);
+
+  /**
+   * \brief Post propagator for \f$ z=\bigcup\langle s_0,\dots,s_{n-1}\rangle[y+\mathit{offset}] \f$
+   *
+   * If \a y is the empty set, \a z will also be constrained to be empty
+   * (as an empty union is empty).
+   * The indices for \a s start at 0, unless an \a offset is specified.
+   */
+  GECODE_SET_EXPORT void
+  selectUnion(Space* home, const IntSetArgs& s, SetVar y, SetVar z, int offset=0);
 
   /** 
-   * \brief Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \f$ \mathcal{U} \f$ as universe
+   * \brief Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y+\mathit{offset}] \f$ using \f$ \mathcal{U} \f$ as universe
    *
    * If \a y is empty, \a z will be constrained to be the universe
    * \f$ \mathcal{U} \f$ (as an empty intersection is the universe).
-   * The indices for \a x start at 0, unless \a k is specified as the start index.
+   * The indices for \a s start at 0, unless an \a offset is specified.
    */
   GECODE_SET_EXPORT void
-  selectInter(Space* home, const SetVarArgs& x, SetVar y, SetVar z, int k=0);
+  selectInter(Space* home, const SetVarArgs& x, SetVar y, SetVar z, int offset=0);
 
   /** 
-   * \brief Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \a u as universe
+   * \brief Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y+\mathit{offset}] \f$ using \a u as universe
    *
    * If \a y is empty, \a z will be constrained to be the given universe
    * \a u (as an empty intersection is the universe).
-   * The indices for \a x start at 0, unless \a k is specified as the start index.
+   * The indices for \a s start at 0, unless an \a offset is specified.
    */
   GECODE_SET_EXPORT void
   selectInterIn(Space* home, const SetVarArgs& x, SetVar y, SetVar z,
-                const IntSet& u, int k=0);
+                const IntSet& u, int offset=0);
 
   /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
   GECODE_SET_EXPORT void
   selectDisjoint(Space* home, const SetVarArgs& x, SetVar y);
 
   /**
-   * \brief Post propagator for \f$ z=\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
+   * \brief Post propagator for \f$ z=\langle x_0,\dots,x_{n-1}\rangle[y+\mathit{offset}] \f$ 
    *
-   * The indices for \a x start at 0, unless \a k is specified as the start index.
+   * The indices for \a s start at 0, unless an \a offset is specified.
    */
   GECODE_SET_EXPORT void
-  selectSet(Space* home, const SetVarArgs& x, IntVar y, SetVar z, int k=0);
+  selectSet(Space* home, const SetVarArgs& x, IntVar y, SetVar z, int offset=0);
+
+  /**
+   * \brief Post propagator for \f$ z=\langle s_0,\dots,s_{n-1}\rangle[y+\mathit{offset}] \f$ 
+   *
+   * The indices for \a s start at 0, unless an \a offset is specified.
+   */
+  GECODE_SET_EXPORT void
+  selectSet(Space* home, const IntSetArgs& s, IntVar y, SetVar z, int offset=0);
 
   //@}
 
