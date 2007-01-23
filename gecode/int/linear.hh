@@ -1183,8 +1183,12 @@ namespace Gecode { namespace Int { namespace Linear {
    *
    * \param e array of linear terms over integers
    * \param n size of array
+   * \param e_p array of linear terms over integers with positive coefficients
    * \param n_p number of postive terms (from 0 to \a n_p-1)
+   * \param e_n array of linear terms over integers with negative coefficients
    * \param n_n number of negative terms (from \a n_p to \a n_p+n_n-1)
+   *
+   * Replaces all negative coefficients by positive coefficients.
    *
    *  - Variables occuring multiply in the term array are replaced
    *    by a single occurence: for example, \f$ax+bx\f$ becomes
@@ -1197,7 +1201,9 @@ namespace Gecode { namespace Int { namespace Linear {
    * Returns true, if all coefficients are unit coefficients
    */
   template<class View>
-  bool separate(Term<View> e[], int& n, int& n_p, int& n_n);
+  bool separate(Term<View>* e, int &n, 
+                Term<View>* &e_p, int &n_p, 
+                Term<View>* &e_n, int &n_n);
 
   /** \brief Normalize relation type
    *

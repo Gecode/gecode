@@ -80,7 +80,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template<class View>
   forceinline bool
-  separate(Term<View> e[], int& n, int& n_p, int& n_n) {
+  separate(Term<View>* e, int &n,
+           Term<View>* &e_p, int &n_p, 
+           Term<View>* &e_n, int &n_n) {
     /*
      * Join coefficients for aliased variables:
      *
@@ -121,17 +123,15 @@ namespace Gecode { namespace Int { namespace Linear {
         if (j <= i) break;
         std::swap(e[i],e[j]);
       }
-      n_p = i;
-      n_n = n-n_p;
+      e_p = e;     n_p = i;
+      e_n = e+n_p; n_n = n-n_p;
     }
     /*
      * Make all coefficients positive
      *
      */
-    for (int i=n_p; i<n; i++) {
-      assert(e[i].a < 0);
-      e[i].a = -e[i].a;
-    }
+    for (int i=n_n; i--; )
+      e_n[i].a = -e_n[i].a;
     /*
      * Test for unit coefficients
      *

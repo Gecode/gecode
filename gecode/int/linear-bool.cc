@@ -254,22 +254,22 @@ namespace Gecode {
     }
     normalize<BoolView>(t,n,r,c);
 
-    int n_p = 0;
-    int n_n = 0;
-    separate<BoolView>(t,n,n_p,n_n);
+    Term<BoolView> *t_p, *t_n;
+    int n_p, n_n;
+    separate<BoolView>(t,n,t_p,n_p,t_n,n_n);
 
     ScaleBoolArray pb(home,n_p);
     {
       ScaleBool* f=pb.fst();
       for (int i=n_p; i--; ) {
-        f[i].x=t[i].x; f[i].a=t[i].a;
+        f[i].x=t_p[i].x; f[i].a=t_p[i].a;
       }
     }
     ScaleBoolArray nb(home,n_n);
     {
       ScaleBool* f=nb.fst();
       for (int i=n_n; i--; ) {
-        f[i].x=t[i+n_p].x; f[i].a=t[i+n_p].a;
+        f[i].x=t_n[i].x; f[i].a=t_n[i].a;
       }
     }
 
@@ -314,23 +314,22 @@ namespace Gecode {
       t[i].a=a[i]; t[i].x=x[i];
     }
 
-    int n_p = 0;
-    int n_n = 0;
-    int c=0;
-    separate<BoolView>(t,n,n_p,n_n);
+    Term<BoolView> *t_p, *t_n;
+    int n_p, n_n;
+    separate<BoolView>(t,n,t_p,n_p,t_n,n_n);
 
     ScaleBoolArray pb(home,n_p);
     {
       ScaleBool* f=pb.fst();
       for (int i=n_p; i--; ) {
-        f[i].x=t[i].x; f[i].a=t[i].a;
+        f[i].x=t_p[i].x; f[i].a=t_p[i].a;
       }
     }
     ScaleBoolArray nb(home,n_n);
     {
       ScaleBool* f=nb.fst();
       for (int i=n_n; i--; ) {
-        f[i].x=t[i+n_p].x; f[i].a=t[i+n_p].a;
+        f[i].x=t_n[i].x; f[i].a=t_n[i].a;
       }
     }
 
