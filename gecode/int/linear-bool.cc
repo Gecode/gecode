@@ -269,7 +269,7 @@ namespace Gecode {
     {
       ScaleBool* f=nb.fst();
       for (int i=n_n; i--; ) {
-        f[i].x=t[i+n_p].x; f[i].a=-t[i+n_p].a;
+        f[i].x=t[i+n_p].x; f[i].a=t[i+n_p].a;
       }
     }
 
@@ -330,7 +330,7 @@ namespace Gecode {
     {
       ScaleBool* f=nb.fst();
       for (int i=n_n; i--; ) {
-        f[i].x=t[i+n_p].x; f[i].a=-t[i+n_p].a;
+        f[i].x=t[i+n_p].x; f[i].a=t[i+n_p].a;
       }
     }
 

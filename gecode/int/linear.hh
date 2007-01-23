@@ -1207,6 +1207,13 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class View>
   void normalize(Term<View> e[], int n, IntRelType& r, int& c);
 
+  /** \brief Normalize relation type
+   *
+   * Rewrites \a r into IRT_EQ, IRT_NQ, IRT_LQ, IRT_GQ and changes
+   * \a c accordingly.
+   */
+  void normalize(IntRelType& r, int& c);
+
   /**
    * \brief Post propagator for linear constraint over integers
    * \param e array of linear terms over integers

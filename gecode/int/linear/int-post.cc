@@ -97,7 +97,7 @@ namespace Gecode { namespace Int { namespace Linear {
       return;
     }
     if (n == 1) {
-      if (e[0].a > 0) {
+      if (n_p == 1) {
         DoubleScaleView y(e[0].a,e[0].x);
         switch (r) {
         case IRT_EQ: GECODE_ME_FAIL(home,y.eq(home,c)); break;
@@ -106,7 +106,7 @@ namespace Gecode { namespace Int { namespace Linear {
         default: GECODE_NEVER;
         }
       } else {
-        DoubleScaleView y(-e[0].a,e[0].x);
+        DoubleScaleView y(e[0].a,e[0].x);
         switch (r) {
         case IRT_EQ: GECODE_ME_FAIL(home,y.eq(home,-c)); break;
         case IRT_NQ: GECODE_ME_FAIL(home,y.nq(home,-c)); break;
@@ -255,7 +255,7 @@ namespace Gecode { namespace Int { namespace Linear {
           x[i].init(e[i].a,e[i].x);
         ViewArray<IntScaleView> y(home,n_n);
         for (int i = n_n; i--; )
-          y[i].init(-e[i+n_p].a,e[i+n_p].x);
+          y[i].init(e[i+n_p].a,e[i+n_p].x);
         if ((icl == ICL_DOM) && (r == IRT_EQ)) {
           if (DomEq<int,IntScaleView>::post(home,x,y,c) == ES_FAILED)
             home->fail();
@@ -268,7 +268,7 @@ namespace Gecode { namespace Int { namespace Linear {
           x[i].init(e[i].a,e[i].x);
         ViewArray<DoubleScaleView> y(home,n_n);
         for (int i = n_n; i--; )
-          y[i].init(-e[i+n_p].a,e[i+n_p].x);
+          y[i].init(e[i+n_p].a,e[i+n_p].x);
         if ((icl == ICL_DOM) && (r == IRT_EQ)) {
           if (DomEq<double,DoubleScaleView>::post(home,x,y,c) == ES_FAILED)
             home->fail();
@@ -335,7 +335,7 @@ namespace Gecode { namespace Int { namespace Linear {
       if (n == 1) {
         switch (r) {
         case IRT_EQ:
-          if (e[0].a == 1) {
+          if (n_p == 1) {
             if (Rel::ReEqBndInt<IntView,BoolView>::post(home,e[0].x,c,b)
                 == ES_FAILED)
               home->fail();
@@ -348,7 +348,7 @@ namespace Gecode { namespace Int { namespace Linear {
         case IRT_NQ:
           {
             NegBoolView n(b);
-            if (e[0].a == 1) {
+            if (n_p == 1) {
               if (Rel::ReEqBndInt<IntView,NegBoolView>::post(home,e[0].x,c,n)
                   == ES_FAILED)
                 home->fail();
@@ -360,7 +360,7 @@ namespace Gecode { namespace Int { namespace Linear {
           }
           break;
         case IRT_LQ:
-          if (e[0].a == 1) {
+          if (n_p == 1) {
             if (Rel::ReLqInt<IntView,BoolView>::post(home,e[0].x,c,b)
                 == ES_FAILED)
               home->fail();
@@ -451,7 +451,7 @@ namespace Gecode { namespace Int { namespace Linear {
           x[i].init(e[i].a,e[i].x);
         ViewArray<IntScaleView> y(home,n_n);
         for (int i = n_n; i--; )
-          y[i].init(-e[i+n_p].a,e[i+n_p].x);
+          y[i].init(e[i+n_p].a,e[i+n_p].x);
         post_nary<int,IntScaleView>(home,x,y,r,c,b);
       } else {
         ViewArray<DoubleScaleView> x(home,n_p);
@@ -459,7 +459,7 @@ namespace Gecode { namespace Int { namespace Linear {
           x[i].init(e[i].a,e[i].x);
         ViewArray<DoubleScaleView> y(home,n_n);
         for (int i = n_n; i--; )
-          y[i].init(-e[i+n_p].a,e[i+n_p].x);
+          y[i].init(e[i+n_p].a,e[i+n_p].x);
         post_nary<double,DoubleScaleView>(home,x,y,r,c,b);
       }
     }
