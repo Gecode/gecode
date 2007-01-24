@@ -241,7 +241,7 @@ Options::parse(int argc, char** argv) {
     }
     i++;
   }
-  //  testpat.push_back(make_pair(false,"Count::Eq::VarVarShared"));
+  //  testpat.push_back(make_pair(false,"Linear::Bool::Int"));
   return;
  missing:
   e = "missing parameter";
