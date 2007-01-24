@@ -51,23 +51,6 @@ namespace Gecode { namespace Int { namespace Linear {
     }
   }
 
-  forceinline void
-  normalize(IntRelType& r, int& c) { 
-    /*
-     * Only non-strict inequations
-     */
-    switch (r) {
-    case IRT_EQ: case IRT_NQ: case IRT_LQ: case IRT_GQ:
-      break;
-    case IRT_LE:
-      c--; r = IRT_LQ; break;
-    case IRT_GR:
-      c++; r = IRT_GQ; break;
-    default:
-      throw UnknownRelation("Int::linear");
-    }
-  }
-
   /// Sort linear terms by view
   template<class View>
   class TermLess {

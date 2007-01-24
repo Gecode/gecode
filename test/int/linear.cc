@@ -392,7 +392,7 @@ public:
     BoolVarArgs b(x.size()-1);
     for (int i=x.size()-1; i--; )
       b[i] = link(home,x[i]);
-    IntArgs c(x.size());
+    IntArgs c(x.size()-1);
     for (int i=x.size()-1; i--; )
       c[i]=-1;
     linear(home, c, b, irt, x[x.size()-1]);

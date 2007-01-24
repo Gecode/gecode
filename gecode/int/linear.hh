@@ -1218,7 +1218,7 @@ namespace Gecode { namespace Int { namespace Linear {
    * Rewrites \a r into IRT_EQ, IRT_NQ, IRT_LQ, IRT_GQ and changes
    * \a c accordingly.
    */
-  void normalize(IntRelType& r, int& c);
+  void normalize(IntRelType& r, double& c);
 
   /**
    * \brief Post propagator for linear constraint over integers

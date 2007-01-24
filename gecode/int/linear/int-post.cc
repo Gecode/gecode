@@ -30,9 +30,9 @@
 
 namespace Gecode { namespace Int { namespace Linear {
 
-  bool
-  int_precision(Term<IntView> t[], int n, int c) {
-    // Decide the required precision
+  /// Decide the required precision and check for overflow
+  inline bool
+  precision(Term<IntView> t[], int n, int c) {
     double sn = 0.0; double sp = 0.0;
 
     for (int i = n; i--; ) {
@@ -117,7 +117,8 @@ namespace Gecode { namespace Int { namespace Linear {
       return;
     }
 
-    bool is_ip = int_precision(t,n,c);
+    bool is_ip = precision(t,n,c);
+
     if (is_unit && is_ip && (icl != ICL_DOM)) {
       if (n == 2) {
         switch (r) {
@@ -334,7 +335,7 @@ namespace Gecode { namespace Int { namespace Linear {
       return;
     }
 
-    bool is_ip = int_precision(t,n,c);
+    bool is_ip = precision(t,n,c);
 
     if (is_unit && is_ip) {
       if (n == 1) {
