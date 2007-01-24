@@ -80,7 +80,9 @@ namespace Gecode { namespace Int { namespace Linear {
        IntConLevel icl) {
     if ((c < Limits::Int::int_min) || (c > Limits::Int::int_max))
       throw NumericalOverflow("Int::linear");
+
     normalize<IntView>(t,n,r,c);
+
     Term<IntView> *t_p, *t_n;
     int n_p, n_n;
     bool is_unit = separate<IntView>(t,n,t_p,n_p,t_n,n_n);
@@ -89,7 +91,7 @@ namespace Gecode { namespace Int { namespace Linear {
       switch (r) {
       case IRT_EQ: if (c != 0) home->fail(); break;
       case IRT_NQ: if (c == 0) home->fail(); break;
-      case IRT_LQ: if (0 > c)  home->fail(); break;
+      case IRT_LQ: if (c < 0)  home->fail(); break;
       default: GECODE_NEVER;
       }
       return;
@@ -248,33 +250,31 @@ namespace Gecode { namespace Int { namespace Linear {
           y[i] = t_n[i].x;
         post_nary<int,IntView>(home,x,y,r,c);
       }
-    } else {
-      if (is_ip) {
-        ViewArray<IntScaleView> x(home,n_p);
-        for (int i = n_p; i--; )
-          x[i].init(t_p[i].a,t_p[i].x);
-        ViewArray<IntScaleView> y(home,n_n);
-        for (int i = n_n; i--; )
-          y[i].init(t_n[i].a,t_n[i].x);
-        if ((icl == ICL_DOM) && (r == IRT_EQ)) {
-          GECODE_ES_FAIL(home,(DomEq<int,IntScaleView>::post
-                               (home,x,y,c)));
-        } else {
-          post_nary<int,IntScaleView>(home,x,y,r,c);
-        }
+    } else if (is_ip) {
+      // Arbitrary coefficients with integer precision
+      ViewArray<IntScaleView> x(home,n_p);
+      for (int i = n_p; i--; )
+        x[i].init(t_p[i].a,t_p[i].x);
+      ViewArray<IntScaleView> y(home,n_n);
+      for (int i = n_n; i--; )
+        y[i].init(t_n[i].a,t_n[i].x);
+      if ((icl == ICL_DOM) && (r == IRT_EQ)) {
+        GECODE_ES_FAIL(home,(DomEq<int,IntScaleView>::post(home,x,y,c)));
       } else {
-        ViewArray<DoubleScaleView> x(home,n_p);
-        for (int i = n_p; i--; )
-          x[i].init(t_p[i].a,t_p[i].x);
-        ViewArray<DoubleScaleView> y(home,n_n);
-        for (int i = n_n; i--; )
-          y[i].init(t_n[i].a,t_n[i].x);
-        if ((icl == ICL_DOM) && (r == IRT_EQ)) {
-          GECODE_ES_FAIL(home,(DomEq<double,DoubleScaleView>::post
-                               (home,x,y,c)));
-        } else {
-          post_nary<double,DoubleScaleView>(home,x,y,r,c);
-        }
+        post_nary<int,IntScaleView>(home,x,y,r,c);
+      }
+    } else {
+      // Arbitrary coefficients with double precision
+      ViewArray<DoubleScaleView> x(home,n_p);
+      for (int i = n_p; i--; )
+        x[i].init(t_p[i].a,t_p[i].x);
+      ViewArray<DoubleScaleView> y(home,n_n);
+      for (int i = n_n; i--; )
+        y[i].init(t_n[i].a,t_n[i].x);
+      if ((icl == ICL_DOM) && (r == IRT_EQ)) {
+        GECODE_ES_FAIL(home,(DomEq<double,DoubleScaleView>::post(home,x,y,c)));
+      } else {
+        post_nary<double,DoubleScaleView>(home,x,y,r,c);
       }
     }
   }
@@ -314,7 +314,9 @@ namespace Gecode { namespace Int { namespace Linear {
        Term<IntView> t[], int n, IntRelType r, int c, BoolView b) {
     if ((c < Limits::Int::int_min) || (c > Limits::Int::int_max))
       throw NumericalOverflow("Int::linear");
+
     normalize<IntView>(t,n,r,c);
+
     Term<IntView> *t_p, *t_n;
     int n_p, n_n;
     bool is_unit = separate<IntView>(t,n,t_p,n_p,t_n,n_n);
@@ -331,6 +333,7 @@ namespace Gecode { namespace Int { namespace Linear {
         home->fail();
       return;
     }
+
     bool is_ip = int_precision(t,n,c);
 
     if (is_unit && is_ip) {
@@ -439,24 +442,24 @@ namespace Gecode { namespace Int { namespace Linear {
           y[i] = t_n[i].x;
         post_nary<int,IntView>(home,x,y,r,c,b);
       }
+    } else if (is_ip) {
+      // Arbitrary coefficients with integer precision
+      ViewArray<IntScaleView> x(home,n_p);
+      for (int i = n_p; i--; )
+        x[i].init(t_p[i].a,t_p[i].x);
+      ViewArray<IntScaleView> y(home,n_n);
+      for (int i = n_n; i--; )
+        y[i].init(t_n[i].a,t_n[i].x);
+      post_nary<int,IntScaleView>(home,x,y,r,c,b);
     } else {
-      if (is_ip) {
-        ViewArray<IntScaleView> x(home,n_p);
-        for (int i = n_p; i--; )
-          x[i].init(t_p[i].a,t_p[i].x);
-        ViewArray<IntScaleView> y(home,n_n);
-        for (int i = n_n; i--; )
-          y[i].init(t_n[i].a,t_n[i].x);
-        post_nary<int,IntScaleView>(home,x,y,r,c,b);
-      } else {
-        ViewArray<DoubleScaleView> x(home,n_p);
-        for (int i = n_p; i--; )
-          x[i].init(t_p[i].a,t_p[i].x);
-        ViewArray<DoubleScaleView> y(home,n_n);
-        for (int i = n_n; i--; )
-          y[i].init(t_n[i].a,t_n[i].x);
-        post_nary<double,DoubleScaleView>(home,x,y,r,c,b);
-      }
+      // Arbitrary coefficients with double precision
+      ViewArray<DoubleScaleView> x(home,n_p);
+      for (int i = n_p; i--; )
+        x[i].init(t_p[i].a,t_p[i].x);
+      ViewArray<DoubleScaleView> y(home,n_n);
+      for (int i = n_n; i--; )
+        y[i].init(t_n[i].a,t_n[i].x);
+      post_nary<double,DoubleScaleView>(home,x,y,r,c,b);
     }
   }
 
