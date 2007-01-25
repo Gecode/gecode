@@ -386,7 +386,7 @@ public:
     double m = 0;
     for (int i=0; i<x.size()-1; i++)
       m -= x[i];
-    return compare(m, irt, -static_cast<double>(x[x.size()-1]));
+    return compare(m, irt, static_cast<double>(x[x.size()-1]));
   }
   virtual void post(Space* home, IntVarArray& x) {
     BoolVarArgs b(x.size()-1);
