@@ -314,6 +314,7 @@ namespace Gecode {
         throw UnknownRelation("Int::linear");
       }
 
+      /*
       // Eliminate assigned views
       for (int i=n; i--; )
         if (t[i].x.one()) {
@@ -321,6 +322,7 @@ namespace Gecode {
         } else if (t[i].x.zero()) {
           t[i]=t[--n];
         }
+      */
 
       if ((d < Limits::Int::int_min) || (d > Limits::Int::int_max))
         throw NumericalOverflow("Int::linear");
