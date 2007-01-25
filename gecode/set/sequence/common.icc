@@ -40,9 +40,9 @@ namespace Gecode { namespace Set { namespace Sequence {
       if (x[i].glbSize() > 0) {
         int glbMax = x[i].glbMax();        
         cur_max = std::max(cur_max, glbMax);
-        if (x[i].cardMin() > 0) {
-          cur_max = std::max(cur_max, x[i].lubMinN(x[i].cardMin()-1));
-        }
+      }
+      if (x[i].cardMin() > 0) {
+        cur_max = std::max(cur_max, x[i].lubMinN(x[i].cardMin()-1));
       }
       if (cur_max>=Limits::Set::int_min)
         GECODE_SET_ME_CHECK_VAL_B(modified,
