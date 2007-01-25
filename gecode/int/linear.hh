@@ -1179,14 +1179,14 @@ namespace Gecode { namespace Int { namespace Linear {
     View x;
   };
 
-  /** \brief Join shared terms and separate into positive and negative terms
-   *
-   * \param e array of linear terms over integers
+  /** \brief Normalize linear integer constraints
+   * 
+   * \param t array of linear terms
    * \param n size of array
-   * \param e_p array of linear terms over integers with positive coefficients
-   * \param n_p number of postive terms (from 0 to \a n_p-1)
-   * \param e_n array of linear terms over integers with negative coefficients
-   * \param n_n number of negative terms (from \a n_p to \a n_p+n_n-1)
+   * \param t_p array of linear terms over integers with positive coefficients
+   * \param n_p number of postive terms
+   * \param t_n array of linear terms over integers with negative coefficients
+   * \param n_n number of negative terms
    *
    * Replaces all negative coefficients by positive coefficients.
    *
@@ -1201,28 +1201,14 @@ namespace Gecode { namespace Int { namespace Linear {
    * Returns true, if all coefficients are unit coefficients
    */
   template<class View>
-  bool separate(Term<View>* e, int &n, 
-                Term<View>* &e_p, int &n_p, 
-                Term<View>* &e_n, int &n_n);
+  bool normalize(Term<View>* t, int &n,
+                 Term<View>* &t_p, int &n_p, 
+                 Term<View>* &t_n, int &n_n);
 
-  /** \brief Normalize relation type
-   *
-   * Rewrites \a r into IRT_EQ, IRT_NQ, IRT_LQ and changes \a e
-   * and \a c accordingly.
-   */
-  template<class View>
-  void normalize(Term<View> e[], int n, IntRelType& r, int& c);
-
-  /** \brief Normalize relation type
-   *
-   * Rewrites \a r into IRT_EQ, IRT_NQ, IRT_LQ, IRT_GQ and changes
-   * \a c accordingly.
-   */
-  void normalize(IntRelType& r, double& c);
 
   /**
    * \brief Post propagator for linear constraint over integers
-   * \param e array of linear terms over integers
+   * \param t array of linear terms over integers
    * \param n size of array
    * \param r type of relation
    * \param c result of linear constraint
@@ -1247,12 +1233,12 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space* home, Term<IntView> t[], int n, IntRelType r, int c, 
+  post(Space* home, Term<IntView>* t, int n, IntRelType r, int c, 
        IntConLevel=ICL_DEF);
 
   /**
    * \brief Post reified propagator for linear constraint
-   * \param e array of linear terms
+   * \param t array of linear terms
    * \param n size of array
    * \param r type of relation
    * \param c result of linear constraint
@@ -1279,7 +1265,69 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   GECODE_INT_EXPORT void
-  post(Space* home, Term<IntView> t[], int n, IntRelType r, int c, BoolView b);
+  post(Space* home, Term<IntView>* t, int n, IntRelType r, int c, BoolView b,
+       IntConLevel=ICL_DEF);
+
+  /**
+   * \brief Post propagator for linear constraint over Booleans
+   * \param t array of linear terms over Booleans
+   * \param n size of array
+   * \param r type of relation
+   * \param c result of linear constraint
+   *
+   * All variants for linear constraints share the following properties:
+   *  - Variables occuring multiply in the term array are replaced
+   *    by a single occurence: for example, \f$ax+bx\f$ becomes
+   *    \f$(a+b)x\f$.
+   *  - If in the above simplification the value for \f$(a+b)\f$ (or for
+   *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
+   *    defined in Limits::Int, an exception of type
+   *    Int::NumericalOverflow is thrown.
+   *  - Assume linear terms for the constraint
+   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
+   *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
+   *    for integers as defined in Limits::Int, an exception of
+   *    type Int::NumericalOverflow is thrown.
+   *  - In all other cases, the created propagators are accurate (that
+   *    is, they will not silently overflow during propagation).
+   *
+   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  GECODE_INT_EXPORT void
+  post(Space* home, Term<BoolView>* t, int n, IntRelType r, int c, 
+       IntConLevel=ICL_DEF);
+
+  /**
+   * \brief Post propagator for linear constraint over Booleans
+   * \param t array of linear terms over Booleans
+   * \param n size of array
+   * \param r type of relation
+   * \param y variable right hand side of linear constraint
+   * \param c constant right hand side of linear constraint
+   *
+   * All variants for linear constraints share the following properties:
+   *  - Variables occuring multiply in the term array are replaced
+   *    by a single occurence: for example, \f$ax+bx\f$ becomes
+   *    \f$(a+b)x\f$.
+   *  - If in the above simplification the value for \f$(a+b)\f$ (or for
+   *    \f$a\f$ and \f$b\f$) exceeds the limits for integers as
+   *    defined in Limits::Int, an exception of type
+   *    Int::NumericalOverflow is thrown.
+   *  - Assume linear terms for the constraint
+   *    \f$\sum_{i=0}^{|x|-1}a_i\cdot x_i\sim_r c\f$.
+   *    If  \f$|c|+\sum_{i=0}^{|x|-1}a_i\cdot x_i\f$ exceeds the limits
+   *    for integers as defined in Limits::Int, an exception of
+   *    type Int::NumericalOverflow is thrown.
+   *  - In all other cases, the created propagators are accurate (that
+   *    is, they will not silently overflow during propagation).
+   *
+   * Requires \code #include "gecode/int/linear.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  GECODE_INT_EXPORT void
+  post(Space* home, Term<BoolView>* t, int n, IntRelType r, IntView y, int c=0,
+       IntConLevel=ICL_DEF);
 
 }}}
 
@@ -1288,4 +1336,3 @@ namespace Gecode { namespace Int { namespace Linear {
 #endif
 
 // STATISTICS: int-prop
-

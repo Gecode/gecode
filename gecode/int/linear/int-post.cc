@@ -23,16 +23,37 @@
 #include "gecode/int/rel.hh"
 #include "gecode/int/linear.hh"
 
-#include "gecode/support/sort.hh"
-
-#include <climits>
 #include <algorithm>
 
 namespace Gecode { namespace Int { namespace Linear {
 
+  inline void
+  rewrite(IntRelType &r, int &c,
+          Term<IntView>* &t_p, int &n_p,
+          Term<IntView>* &t_n, int &n_n) {
+    /*
+     * Rewrite all inequations in terms of <=
+     *
+     */
+    switch (r) {
+    case IRT_EQ: case IRT_NQ: case IRT_LQ:
+      break;
+    case IRT_LE:
+      c--; r = IRT_LQ; break;
+    case IRT_GR:
+      c++; /* fall through */
+    case IRT_GQ:
+      r = IRT_LQ;
+      std::swap(n_p,n_n); std::swap(t_p,t_n); c = -c;
+      break;
+    default:
+      throw UnknownRelation("Int::linear");
+    }
+  }
+
   /// Decide the required precision and check for overflow
   inline bool
-  precision(Term<IntView> t[], int n, int c) {
+  precision(Term<IntView>* t, int n, int c) {
     double sn = 0.0; double sp = 0.0;
 
     for (int i = n; i--; ) {
@@ -76,16 +97,16 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   void
-  post(Space* home, Term<IntView> t[], int n, IntRelType r, int c,
+  post(Space* home, Term<IntView>* t, int n, IntRelType r, int c,
        IntConLevel icl) {
+
     if ((c < Limits::Int::int_min) || (c > Limits::Int::int_max))
       throw NumericalOverflow("Int::linear");
 
-    normalize<IntView>(t,n,r,c);
-
     Term<IntView> *t_p, *t_n;
     int n_p, n_n;
-    bool is_unit = separate<IntView>(t,n,t_p,n_p,t_n,n_n);
+    bool is_unit = normalize<IntView>(t,n,t_p,n_p,t_n,n_n);
+    rewrite(r,c,t_p,n_p,t_n,n_n);
 
     if (n == 0) {
       switch (r) {
@@ -312,15 +333,15 @@ namespace Gecode { namespace Int { namespace Linear {
 
   void
   post(Space* home,
-       Term<IntView> t[], int n, IntRelType r, int c, BoolView b) {
+       Term<IntView>* t, int n, IntRelType r, int c, BoolView b,
+       IntConLevel) {
     if ((c < Limits::Int::int_min) || (c > Limits::Int::int_max))
       throw NumericalOverflow("Int::linear");
 
-    normalize<IntView>(t,n,r,c);
-
     Term<IntView> *t_p, *t_n;
     int n_p, n_n;
-    bool is_unit = separate<IntView>(t,n,t_p,n_p,t_n,n_n);
+    bool is_unit = normalize<IntView>(t,n,t_p,n_p,t_n,n_n);
+    rewrite(r,c,t_p,n_p,t_n,n_n);
 
     if (n == 0) {
       bool fail = false;

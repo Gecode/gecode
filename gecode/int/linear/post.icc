@@ -20,36 +20,11 @@
  *
  */
 
-#include "gecode/int/rel.hh"
-#include "gecode/int/linear.hh"
+#include <algorithm>
 
 #include "gecode/support/sort.hh"
 
 namespace Gecode { namespace Int { namespace Linear {
-
-  template<class View>
-  forceinline void
-  normalize(Term<View> e[], int n, IntRelType& r, int& c) { 
-    /*
-     * All inequations in terms of <=
-     */
-    switch (r) {
-    case IRT_EQ: case IRT_NQ: case IRT_LQ:
-      break;
-    case IRT_LE:
-      c--; r = IRT_LQ; break;
-    case IRT_GR:
-      c++; /* fall through */
-    case IRT_GQ:
-      r = IRT_LQ;
-      for (int i = n; i--; )
-        e[i].a = -e[i].a;
-      c = -c;
-      break;
-    default:
-      throw UnknownRelation("Int::linear");
-    }
-  }
 
   /// Sort linear terms by view
   template<class View>
@@ -62,65 +37,72 @@ namespace Gecode { namespace Int { namespace Linear {
   };
 
   template<class View>
-  forceinline bool
-  separate(Term<View>* e, int &n,
-           Term<View>* &e_p, int &n_p, 
-           Term<View>* &e_n, int &n_n) {
+  inline bool
+  normalize(Term<View>* t, int &n,
+            Term<View>* &t_p, int &n_p, 
+            Term<View>* &t_n, int &n_n) {
     /*
      * Join coefficients for aliased variables:
      *
      */
     {
       // Group same variables
-      TermLess<View> el;
-      Support::quicksort<Term<View>,TermLess<View> >(e,n,el);
+      TermLess<View> tl;
+      Support::quicksort<Term<View>,TermLess<View> >(t,n,tl);
 
       // Join adjacent variables
       int i = 0;
       int j = 0;
       while (i < n) {
-        int a = e[i].a;
+        int a = t[i].a;
         if ((a < Limits::Int::int_min) || (a > Limits::Int::int_max))
           throw NumericalOverflow("Int::linear");
-        View x = e[i].x;
-        while ((++i < n) && same(e[i].x,x)) {
-          a += e[i].a;
+        View x = t[i].x;
+        while ((++i < n) && same(t[i].x,x)) {
+          a += t[i].a;
           if ((a < Limits::Int::int_min) || (a > Limits::Int::int_max))
             throw NumericalOverflow("Int::linear");
         }
         if (a != 0) {
-          e[j].a = a; e[j].x = x; j++;
+          t[j].a = a; t[j].x = x; j++;
         }
       }
       n = j;
     }
+
     /*
      * Partition into positive/negative coefficents
+     *
      */
-    {
+    if (n > 0) {
       int i = 0;
       int j = n-1;
       while (true) {
-        while ((e[j].a < 0) && (--j >= 0)) ;
-        while ((e[i].a > 0) && (++i <  n)) ;
+        while ((t[j].a < 0) && (--j >= 0)) ;
+        while ((t[i].a > 0) && (++i <  n)) ;
         if (j <= i) break;
-        std::swap(e[i],e[j]);
+        std::swap(t[i],t[j]);
       }
-      e_p = e;     n_p = i;
-      e_n = e+n_p; n_n = n-n_p;
+      t_p = t;     n_p = i;
+      t_n = t+n_p; n_n = n-n_p;
+    } else {
+      t_p = t; n_p = 0;
+      t_n = t; n_n = 0;      
     }
+
     /*
      * Make all coefficients positive
      *
      */
     for (int i=n_n; i--; )
-      e_n[i].a = -e_n[i].a;
+      t_n[i].a = -t_n[i].a;
+
     /*
-     * Test for unit coefficients
+     * Test for unit coefficients only
      *
      */
     for (int i=n; i--; )
-      if (e[i].a != 1)
+      if (t[i].a != 1)
         return false;
     return true;
   }

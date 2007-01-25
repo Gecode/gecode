@@ -166,7 +166,8 @@ INTSRC0 = \
 	view/print.cc array.cc bool.cc \
 	regular/reg.cc regular/dfa.cc regular.cc \
 	dom.cc rel.cc link.cc element.cc count.cc arithmetic.cc \
-	linear/int-post.cc linear-int.cc linear-bool.cc \
+	linear/int-post.cc linear-int.cc \
+	linear/bool-post.cc linear-bool.cc \
 	branch.cc \
 	distinct.cc cumulatives.cc \
 	sortedness.cc gcc.cc \
