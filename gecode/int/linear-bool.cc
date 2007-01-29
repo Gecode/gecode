@@ -24,10 +24,11 @@
 
 namespace Gecode {
 
+  using namespace Int;
+
   void
   linear(Space* home, const BoolVarArgs& x, IntRelType r, int c,
          IntConLevel) {
-    using namespace Int;
     if (home->failed()) return;
 
     int n=x.size();
@@ -42,7 +43,6 @@ namespace Gecode {
   void
   linear(Space* home, const BoolVarArgs& x, IntRelType r, IntVar y,
          IntConLevel) {
-    using namespace Int;
     if (home->failed()) return;
 
     int n=x.size();
@@ -58,8 +58,6 @@ namespace Gecode {
   linear(Space* home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType r, int c,
          IntConLevel) {
-    using namespace Int;
-
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) 
@@ -78,8 +76,6 @@ namespace Gecode {
   linear(Space* home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType r, IntVar y,
          IntConLevel) {
-    using namespace Int;
-
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) 

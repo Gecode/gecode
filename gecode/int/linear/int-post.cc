@@ -96,6 +96,47 @@ namespace Gecode { namespace Int { namespace Linear {
     }
   }
 
+
+/// Macro for posting binary special cases for linear constraints
+#define GECODE_INT_PL_BIN(CLASS)                                \
+  switch (n_p) {                                                \
+  case 2:                                                       \
+    GECODE_ES_FAIL(home,(CLASS<int,IntView,IntView>::post       \
+                         (home,t_p[0].x,t_p[1].x,c)));          \
+    break;                                                      \
+  case 1:                                                       \
+    GECODE_ES_FAIL(home,(CLASS<int,IntView,MinusView>::post     \
+                         (home,t_p[0].x,t_n[0].x,c)));          \
+    break;                                                      \
+  case 0:                                                       \
+    GECODE_ES_FAIL(home,(CLASS<int,MinusView,MinusView>::post   \
+                         (home,t_n[0].x,t_n[1].x,c)));          \
+    break;                                                      \
+  default: GECODE_NEVER;                                        \
+  }
+
+/// Macro for posting ternary special cases for linear constraints
+#define GECODE_INT_PL_TER(CLASS)                                        \
+  switch (n_p) {                                                        \
+  case 3:                                                               \
+    GECODE_ES_FAIL(home,(CLASS<int,IntView,IntView,IntView>::post       \
+                         (home,t_p[0].x,t_p[1].x,t_p[2].x,c)));         \
+    break;                                                              \
+  case 2:                                                               \
+    GECODE_ES_FAIL(home,(CLASS<int,IntView,IntView,MinusView>::post     \
+                         (home,t_p[0].x,t_p[1].x,t_n[0].x,c)));         \
+    break;                                                              \
+  case 1:                                                               \
+    GECODE_ES_FAIL(home,(CLASS<int,IntView,MinusView,MinusView>::post   \
+                         (home,t_p[0].x,t_n[0].x,t_n[1].x,c)));         \
+    break;                                                              \
+  case 0:                                                               \
+    GECODE_ES_FAIL(home,(CLASS<int,MinusView,MinusView,MinusView>::post \
+                         (home,t_n[0].x,t_n[1].x,t_n[2].x,c)));         \
+    break;                                                              \
+  default: GECODE_NEVER;                                                \
+  }
+
   void
   post(Space* home, Term<IntView>* t, int n, IntRelType r, int c,
        IntConLevel icl) {
@@ -117,6 +158,7 @@ namespace Gecode { namespace Int { namespace Linear {
       }
       return;
     }
+
     if (n == 1) {
       if (n_p == 1) {
         DoubleScaleView y(t_p[0].a,t_p[0].x);
@@ -143,124 +185,16 @@ namespace Gecode { namespace Int { namespace Linear {
     if (is_unit && is_ip && (icl != ICL_DOM)) {
       if (n == 2) {
         switch (r) {
-        case IRT_EQ:
-          switch (n_p) {
-          case 2:
-            GECODE_ES_FAIL(home,(EqBin<int,IntView,IntView>::post
-                                 (home,t_p[0].x,t_p[1].x,c)));
-            break;
-          case 1:
-            GECODE_ES_FAIL(home,(EqBin<int,IntView,MinusView>::post
-                                 (home,t_p[0].x,t_n[0].x,c)));
-            break;
-          case 0:
-            GECODE_ES_FAIL(home,(EqBin<int,IntView,IntView>::post
-                                 (home,t_n[0].x,t_n[1].x,-c)));
-            break;
-          default: GECODE_NEVER;
-          }
-          break;
-        case IRT_NQ:
-          switch (n_p) {
-          case 2:
-            GECODE_ES_FAIL(home,(NqBin<int,IntView,IntView>::post
-                                 (home,t_p[0].x,t_p[1].x,c)));
-            break;
-          case 1:
-            GECODE_ES_FAIL(home,(NqBin<int,IntView,MinusView>::post
-                                 (home,t_p[0].x,t_n[0].x,c)));
-            break;
-          case 0:
-            GECODE_ES_FAIL(home,(NqBin<int,IntView,IntView>::post
-                                 (home,t_n[0].x,t_n[1].x,-c)));
-            break;
-          default: GECODE_NEVER;
-          }
-          break;
-        case IRT_LQ:
-          switch (n_p) {
-          case 2:
-            GECODE_ES_FAIL(home,(LqBin<int,IntView,IntView>::post
-                                 (home,t_p[0].x,t_p[1].x,c)));
-            break;
-          case 1:
-            GECODE_ES_FAIL(home,(LqBin<int,IntView,MinusView>::post
-                                 (home,t_p[0].x,t_n[0].x,c)));
-            break;
-          case 0:
-            GECODE_ES_FAIL(home,(LqBin<int,MinusView,MinusView>::post
-                                 (home,t_n[0].x,t_n[1].x,c)));
-            break;
-          default: GECODE_NEVER;
-          }
-          break;
+        case IRT_EQ: GECODE_INT_PL_BIN(EqBin); break;
+        case IRT_NQ: GECODE_INT_PL_BIN(NqBin); break;
+        case IRT_LQ: GECODE_INT_PL_BIN(LqBin); break;
         default: GECODE_NEVER;
         }
       } else if (n == 3) {
         switch (r) {                                                
-        case IRT_EQ:
-          switch (n_p) {
-          case 3:
-            GECODE_ES_FAIL(home,(EqTer<int,IntView,IntView,IntView>::post
-                                 (home,t_p[0].x,t_p[1].x,t_p[2].x,c)));
-            break;
-          case 2:
-            GECODE_ES_FAIL(home,(EqTer<int,IntView,IntView,MinusView>::post
-                                 (home,t_p[0].x,t_p[1].x,t_n[0].x,c)));
-            break;
-          case 1:
-            GECODE_ES_FAIL(home,(EqTer<int,IntView,IntView,MinusView>::post
-                                 (home,t_n[0].x,t_n[1].x,t_p[0].x,-c)));
-            break;
-          case 0:
-            GECODE_ES_FAIL(home,(EqTer<int,IntView,IntView,IntView>::post
-                                 (home,t_n[0].x,t_n[1].x,t_n[2].x,-c)));
-            break;
-          default: GECODE_NEVER;
-          }
-          break;
-        case IRT_NQ:
-          switch (n_p) {
-          case 3:
-            GECODE_ES_FAIL(home,(NqTer<int,IntView,IntView,IntView>::post
-                                 (home,t_p[0].x,t_p[1].x,t_p[2].x,c)));
-            break;
-          case 2:
-            GECODE_ES_FAIL(home,(NqTer<int,IntView,IntView,MinusView>::post
-                                 (home,t_p[0].x,t_p[1].x,t_n[0].x,c)));
-            break;
-          case 1:
-            GECODE_ES_FAIL(home,(NqTer<int,IntView,IntView,MinusView>::post
-                                 (home,t_n[0].x,t_n[1].x,t_p[0].x,-c)));
-            break;
-          case 0:
-            GECODE_ES_FAIL(home,(NqTer<int,IntView,IntView,IntView>::post
-                                 (home,t_n[0].x,t_n[1].x,t_n[2].x,-c)));
-            break;
-          default: GECODE_NEVER;
-          }
-          break;
-        case IRT_LQ:
-          switch (n_p) {
-          case 3:
-            GECODE_ES_FAIL(home,(LqTer<int,IntView,IntView,IntView>::post
-                                 (home,t_p[0].x,t_p[1].x,t_p[2].x,c)));
-            break;
-          case 2:
-            GECODE_ES_FAIL(home,(LqTer<int,IntView,IntView,MinusView>::post
-                                 (home,t_p[0].x,t_p[1].x,t_n[0].x,c)));
-            break;
-          case 1:
-            GECODE_ES_FAIL(home,(LqTer<int,IntView,MinusView,MinusView>::post
-                                 (home,t_p[0].x,t_n[0].x,t_n[1].x,c)));
-            break;
-          case 0:
-            GECODE_ES_FAIL(home,(LqTer<int,MinusView,MinusView,MinusView>::post
-                                 (home,t_n[0].x,t_n[1].x,t_n[2].x,c)));
-            break;
-          default: GECODE_NEVER;
-          }
-          break;
+        case IRT_EQ: GECODE_INT_PL_TER(EqTer); break;
+        case IRT_NQ: GECODE_INT_PL_TER(NqTer); break;
+        case IRT_LQ: GECODE_INT_PL_TER(LqTer); break;
         default: GECODE_NEVER;
         }
       } else {
@@ -301,6 +235,8 @@ namespace Gecode { namespace Int { namespace Linear {
     }
   }
 
+#undef GECODE_INT_PL_BIN
+#undef GECODE_INT_PL_TER
 
 
   /*
@@ -488,4 +424,3 @@ namespace Gecode { namespace Int { namespace Linear {
 }}}
 
 // STATISTICS: int-post
-
