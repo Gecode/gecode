@@ -20,9 +20,10 @@
  *
  */
 
-#include <algorithm>
-
 #include "gecode/support/sort.hh"
+
+#include <algorithm>
+#include <climits>
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -54,17 +55,17 @@ namespace Gecode { namespace Int { namespace Linear {
       int i = 0;
       int j = 0;
       while (i < n) {
-        int a = t[i].a;
+        double a = t[i].a;
         if ((a < Limits::Int::int_min) || (a > Limits::Int::int_max))
           throw NumericalOverflow("Int::linear");
         View x = t[i].x;
         while ((++i < n) && same(t[i].x,x)) {
           a += t[i].a;
-          if ((a < Limits::Int::int_min) || (a > Limits::Int::int_max))
+          if ((a < INT_MIN) || (a > INT_MAX))
             throw NumericalOverflow("Int::linear");
         }
-        if (a != 0) {
-          t[j].a = a; t[j].x = x; j++;
+        if (a != 0.0) {
+          t[j].a = static_cast<int>(a); t[j].x = x; j++;
         }
       }
       n = j;

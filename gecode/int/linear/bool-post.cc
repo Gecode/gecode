@@ -22,6 +22,8 @@
 
 #include "gecode/int/linear.hh"
 
+#include <climits>
+
 namespace Gecode { namespace Int { namespace Linear {
 
   void
@@ -300,31 +302,41 @@ namespace Gecode { namespace Int { namespace Linear {
   post_all(Space* home, 
            Term<BoolView>* t, int n,
            IntRelType r, View x, int c) {
-    /*
-    // Eliminate assigned views
-    for (int i=n; i--; )
-    if (t[i].x.one()) {
-    d -= t[i].a; t[i]=t[--n];
-    } else if (t[i].x.zero()) {
-    t[i]=t[--n];
-    }
-    */
-    
+
     if ((c < Limits::Int::int_min) || (c > Limits::Int::int_max))
       throw NumericalOverflow("Int::linear");
-    
-    // Eliminate non-strict relations
-    switch (r) {
-    case IRT_EQ: case IRT_NQ: case IRT_LQ: case IRT_GQ:
-      break;
-    case IRT_LE:
-      c--; r = IRT_LQ; break;
-    case IRT_GR:
-      c++; r = IRT_GQ; break;
-    default:
-      throw UnknownRelation("Int::linear");
-    }
 
+    {
+      double d = c;
+
+      // Eliminate non-strict relations
+      switch (r) {
+      case IRT_EQ: case IRT_NQ: case IRT_LQ: case IRT_GQ:
+        break;
+      case IRT_LE:
+        d--; r = IRT_LQ; break;
+      case IRT_GR:
+        d++; r = IRT_GQ; break;
+      default:
+        throw UnknownRelation("Int::linear");
+      }
+
+      /*
+      // Eliminate assigned views
+      for (int i=n; i--; )
+        if (t[i].x.one()) {
+          d -= t[i].a; t[i]=t[--n];
+        } else if (t[i].x.zero()) {
+          t[i]=t[--n];
+        }
+      */
+
+      if ((d < INT_MIN) || (d > INT_MAX))
+        throw NumericalOverflow("Int::linear");
+      
+      c = static_cast<int>(d);
+    }
+    
     Term<BoolView> *t_p, *t_n;
     int n_p, n_n;
     bool unit = normalize<BoolView>(t,n,t_p,n_p,t_n,n_n);
@@ -348,8 +360,7 @@ namespace Gecode { namespace Int { namespace Linear {
         su -= t_p[i].a;
       for (int i=n_n; i--; )
         sl += t_n[i].a;
-      if ((su < Limits::Int::int_min) || (su > Limits::Int::int_max) ||
-          (sl < Limits::Int::int_min) || (sl > Limits::Int::int_max))
+      if ((su < INT_MIN) || (su > INT_MAX) || (sl < INT_MIN) || (sl > INT_MAX))
         throw NumericalOverflow("Int::linear");
     }
     

@@ -24,6 +24,7 @@
 #include "gecode/int/linear.hh"
 
 #include <algorithm>
+#include <climits>
 
 namespace Gecode { namespace Int { namespace Linear {
 
@@ -53,24 +54,27 @@ namespace Gecode { namespace Int { namespace Linear {
 
   /// Decide the required precision and check for overflow
   inline bool
-  precision(Term<IntView>* t, int n, int c) {
-    double sn = 0.0; double sp = 0.0;
+  precision(Term<IntView>* t_p, int n_p, 
+            Term<IntView>* t_n, int n_n,
+            int c) {
+    double sl = 0.0;
+    double su = 0.0;
 
-    for (int i = n; i--; ) {
-      const double l = t[i].a * static_cast<double>(t[i].x.min());
-      if (l < 0.0) sn += l; else sp += l;
-      const double u = t[i].a * static_cast<double>(t[i].x.max());
-      if (u < 0.0) sn += u; else sp += u;
+    for (int i = n_p; i--; ) {
+      sl += t_p[i].a * static_cast<double>(t_p[i].x.min());
+      su += t_p[i].a * static_cast<double>(t_p[i].x.max());
     }
-    double cp = (c<0) ? -c : c;
-    if ((sn-cp < Limits::Int::double_min) ||
-        (sp+cp > Limits::Int::double_max))
+    for (int i = n_n; i--; ) {
+      sl -= t_n[i].a * static_cast<double>(t_n[i].x.max());
+      su -= t_n[i].a * static_cast<double>(t_n[i].x.min());
+    }
+    sl -= c;
+    su -= c;
+
+    if ((sl < Limits::Int::double_min) || (su > Limits::Int::double_max))
       throw NumericalOverflow("Int::linear");
 
-    return ((sn >= Limits::Int::int_min) && (sn <= Limits::Int::int_max) &&
-            (sp >= Limits::Int::int_min) && (sp <= Limits::Int::int_max) &&
-            (sn-c >= Limits::Int::int_min) && (sn-c <= Limits::Int::int_max) &&
-            (sp-c >= Limits::Int::int_min) && (sp-c <= Limits::Int::int_max));
+    return ((sl>=INT_MIN) && (su<=INT_MAX));
   }
 
   /*
@@ -180,7 +184,7 @@ namespace Gecode { namespace Int { namespace Linear {
       return;
     }
 
-    bool is_ip = precision(t,n,c);
+    bool is_ip = precision(t_p,n_p,t_n,n_n,c);
 
     if (is_unit && is_ip && (icl != ICL_DOM)) {
       if (n == 2) {
@@ -292,7 +296,7 @@ namespace Gecode { namespace Int { namespace Linear {
       return;
     }
 
-    bool is_ip = precision(t,n,c);
+    bool is_ip = precision(t_p,n_p,t_n,n_n,c);
 
     if (is_unit && is_ip) {
       if (n == 1) {

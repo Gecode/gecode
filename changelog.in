@@ -57,6 +57,15 @@ Module: int
 What: change
 Rank: minor
 [DESCRIPTION]
+The linear constraints are now more careful to determine whether
+overflow occurs and which precision (integer or double) should be
+chosen.
+
+[ENTRY]
+Module: int
+What: change
+Rank: minor
+[DESCRIPTION]
 The element constraints now accept an additional offset argument.
 
 [ENTRY]
