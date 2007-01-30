@@ -28,24 +28,33 @@
 
 namespace Gecode { namespace Int { namespace Linear {
 
+  /// Eliminate assigned views
   inline void
-  rewrite(IntRelType &r, int &c,
+  eliminate(Term<IntView>* t, int &n, double& d) {
+    for (int i=n; i--; )
+      if (t[i].x.assigned()) {
+        d -= t[i].a * static_cast<double>(t[i].x.val());
+        t[i]=t[--n];
+      }
+    if ((d < Limits::Int::double_min) || (d > Limits::Int::double_max))
+      throw NumericalOverflow("Int::linear");
+  }
+
+  /// Rewrite all inequations in terms of IRT_LQ
+  inline void
+  rewrite(IntRelType &r, double &d,
           Term<IntView>* &t_p, int &n_p,
           Term<IntView>* &t_n, int &n_n) {
-    /*
-     * Rewrite all inequations in terms of <=
-     *
-     */
     switch (r) {
     case IRT_EQ: case IRT_NQ: case IRT_LQ:
       break;
     case IRT_LE:
-      c--; r = IRT_LQ; break;
+      d--; r = IRT_LQ; break;
     case IRT_GR:
-      c++; /* fall through */
+      d++; /* fall through */
     case IRT_GQ:
       r = IRT_LQ;
-      std::swap(n_p,n_n); std::swap(t_p,t_n); c = -c;
+      std::swap(n_p,n_n); std::swap(t_p,t_n); d = -d;
       break;
     default:
       throw UnknownRelation("Int::linear");
@@ -56,7 +65,7 @@ namespace Gecode { namespace Int { namespace Linear {
   inline bool
   precision(Term<IntView>* t_p, int n_p, 
             Term<IntView>* t_n, int n_n,
-            int c) {
+            double d) {
     double sl = 0.0;
     double su = 0.0;
 
@@ -68,8 +77,8 @@ namespace Gecode { namespace Int { namespace Linear {
       sl -= t_n[i].a * static_cast<double>(t_n[i].x.max());
       su -= t_n[i].a * static_cast<double>(t_n[i].x.min());
     }
-    sl -= c;
-    su -= c;
+    sl -= d;
+    su -= d;
 
     if ((sl < Limits::Int::double_min) || (su > Limits::Int::double_max))
       throw NumericalOverflow("Int::linear");
@@ -148,16 +157,21 @@ namespace Gecode { namespace Int { namespace Linear {
     if ((c < Limits::Int::int_min) || (c > Limits::Int::int_max))
       throw NumericalOverflow("Int::linear");
 
+    double d = c;
+    
+    eliminate(t,n,d);
+
     Term<IntView> *t_p, *t_n;
     int n_p, n_n;
     bool is_unit = normalize<IntView>(t,n,t_p,n_p,t_n,n_n);
-    rewrite(r,c,t_p,n_p,t_n,n_n);
+
+    rewrite(r,d,t_p,n_p,t_n,n_n);
 
     if (n == 0) {
       switch (r) {
-      case IRT_EQ: if (c != 0) home->fail(); break;
-      case IRT_NQ: if (c == 0) home->fail(); break;
-      case IRT_LQ: if (c < 0)  home->fail(); break;
+      case IRT_EQ: if (d != 0.0) home->fail(); break;
+      case IRT_NQ: if (d == 0.0) home->fail(); break;
+      case IRT_LQ: if (d < 0.0)  home->fail(); break;
       default: GECODE_NEVER;
       }
       return;
@@ -167,26 +181,27 @@ namespace Gecode { namespace Int { namespace Linear {
       if (n_p == 1) {
         DoubleScaleView y(t_p[0].a,t_p[0].x);
         switch (r) {
-        case IRT_EQ: GECODE_ME_FAIL(home,y.eq(home,c)); break;
-        case IRT_NQ: GECODE_ME_FAIL(home,y.nq(home,c)); break;
-        case IRT_LQ: GECODE_ME_FAIL(home,y.lq(home,c)); break;
+        case IRT_EQ: GECODE_ME_FAIL(home,y.eq(home,d)); break;
+        case IRT_NQ: GECODE_ME_FAIL(home,y.nq(home,d)); break;
+        case IRT_LQ: GECODE_ME_FAIL(home,y.lq(home,d)); break;
         default: GECODE_NEVER;
         }
       } else {
         DoubleScaleView y(t_n[0].a,t_n[0].x);
         switch (r) {
-        case IRT_EQ: GECODE_ME_FAIL(home,y.eq(home,-c)); break;
-        case IRT_NQ: GECODE_ME_FAIL(home,y.nq(home,-c)); break;
-        case IRT_LQ: GECODE_ME_FAIL(home,y.gq(home,-c)); break;
+        case IRT_EQ: GECODE_ME_FAIL(home,y.eq(home,-d)); break;
+        case IRT_NQ: GECODE_ME_FAIL(home,y.nq(home,-d)); break;
+        case IRT_LQ: GECODE_ME_FAIL(home,y.gq(home,-d)); break;
         default: GECODE_NEVER;
         }
       }
       return;
     }
 
-    bool is_ip = precision(t_p,n_p,t_n,n_n,c);
+    bool is_ip = precision(t_p,n_p,t_n,n_n,d);
 
     if (is_unit && is_ip && (icl != ICL_DOM)) {
+      c = static_cast<int>(d);
       if (n == 2) {
         switch (r) {
         case IRT_EQ: GECODE_INT_PL_BIN(EqBin); break;
@@ -211,6 +226,7 @@ namespace Gecode { namespace Int { namespace Linear {
         post_nary<int,IntView>(home,x,y,r,c);
       }
     } else if (is_ip) {
+      c = static_cast<int>(d);
       // Arbitrary coefficients with integer precision
       ViewArray<IntScaleView> x(home,n_p);
       for (int i = n_p; i--; )
@@ -232,9 +248,9 @@ namespace Gecode { namespace Int { namespace Linear {
       for (int i = n_n; i--; )
         y[i].init(t_n[i].a,t_n[i].x);
       if ((icl == ICL_DOM) && (r == IRT_EQ)) {
-        GECODE_ES_FAIL(home,(DomEq<double,DoubleScaleView>::post(home,x,y,c)));
+        GECODE_ES_FAIL(home,(DomEq<double,DoubleScaleView>::post(home,x,y,d)));
       } else {
-        post_nary<double,DoubleScaleView>(home,x,y,r,c);
+        post_nary<double,DoubleScaleView>(home,x,y,r,d);
       }
     }
   }
@@ -275,20 +291,26 @@ namespace Gecode { namespace Int { namespace Linear {
   post(Space* home,
        Term<IntView>* t, int n, IntRelType r, int c, BoolView b,
        IntConLevel) {
+
     if ((c < Limits::Int::int_min) || (c > Limits::Int::int_max))
       throw NumericalOverflow("Int::linear");
+
+    double d = c;
+    
+    eliminate(t,n,d);
 
     Term<IntView> *t_p, *t_n;
     int n_p, n_n;
     bool is_unit = normalize<IntView>(t,n,t_p,n_p,t_n,n_n);
-    rewrite(r,c,t_p,n_p,t_n,n_n);
+
+    rewrite(r,d,t_p,n_p,t_n,n_n);
 
     if (n == 0) {
       bool fail = false;
       switch (r) {
-      case IRT_EQ: fail = (c != 0); break;
-      case IRT_NQ: fail = (c == 0); break;
-      case IRT_LQ: fail = (0 > c);  break;
+      case IRT_EQ: fail = (d != 0.0); break;
+      case IRT_NQ: fail = (d == 0.0); break;
+      case IRT_LQ: fail = (0.0 > d); break;
       default: GECODE_NEVER;
       }
       if ((fail ? b.zero(home) : b.one(home)) == ME_INT_FAILED)
@@ -296,9 +318,10 @@ namespace Gecode { namespace Int { namespace Linear {
       return;
     }
 
-    bool is_ip = precision(t_p,n_p,t_n,n_n,c);
+    bool is_ip = precision(t_p,n_p,t_n,n_n,d);
 
     if (is_unit && is_ip) {
+      c = static_cast<int>(d);
       if (n == 1) {
         switch (r) {
         case IRT_EQ:
@@ -405,6 +428,7 @@ namespace Gecode { namespace Int { namespace Linear {
         post_nary<int,IntView>(home,x,y,r,c,b);
       }
     } else if (is_ip) {
+      c = static_cast<int>(d);
       // Arbitrary coefficients with integer precision
       ViewArray<IntScaleView> x(home,n_p);
       for (int i = n_p; i--; )
@@ -421,7 +445,7 @@ namespace Gecode { namespace Int { namespace Linear {
       ViewArray<DoubleScaleView> y(home,n_n);
       for (int i = n_n; i--; )
         y[i].init(t_n[i].a,t_n[i].x);
-      post_nary<double,DoubleScaleView>(home,x,y,r,c,b);
+      post_nary<double,DoubleScaleView>(home,x,y,r,d,b);
     }
   }
 
