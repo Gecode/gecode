@@ -54,6 +54,22 @@ The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
 Module:	int
+What:	change
+Rank:	major
+[DESCRIPTION]
+Boolean variables (and hence Boolean views) do not any longer
+share the implementation with integer variables. That has the
+following consequences:
+- Boolean variables are not any longer integer variables. The same
+  holds true for arrays of variables.
+- All constraints that make sense for both Boolean and integer
+  variables have post functions that support both integer and
+  Boolean variables.
+- Memory for Boolean variables is reduced by 50% and performance
+  increases in problems with many Boolean variables by up to 50%.
+
+[ENTRY]
+Module:	int
 What:	new
 Rank:	major
 [DESCRIPTION]
