@@ -88,15 +88,15 @@ namespace Gecode { namespace Int { namespace Linear {
     return static_cast<int>(_lst - _fst);
   }
   forceinline bool
-  ScaleBoolArray::ScaleInc::operator()(const ScaleBool& x, 
+  ScaleBoolArray::ScaleDec::operator()(const ScaleBool& x, 
                                        const ScaleBool& y) {
-    return x.a < y.a;
+    return x.a > y.a;
   }
 
   inline void 
   ScaleBoolArray::sort(void) {
-    ScaleInc scale_inc;
-    Support::quicksort<ScaleBool,ScaleInc>(fst(), size(), scale_inc);
+    ScaleDec scale_dec;
+    Support::quicksort<ScaleBool,ScaleDec>(fst(), size(), scale_dec);
   }
 
 
@@ -226,8 +226,8 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class SBAP, class SBAN, class VX>
   ExecStatus
   EqBoolScale<SBAP,SBAN,VX>::propagate(Space* home) {
-    int sl = 0;
-    int su = 0;
+    int sl_p = 0; // Lower bound, computed positive
+    int su_n = 0; // Upper bound, computed negative
     if (BoolView::pme(this) == ME_BOOL_VAL) {
       // Eliminate assigned positive views while keeping order
       {
@@ -235,7 +235,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ScaleBool* f = p.fst();
         ScaleBool* l = p.lst();
         while ((f < l) && f->x.none()) {
-          su -= f->a; f++;
+          su_n += f->a; f++;
         }
         // Copy unassigned views to t
         ScaleBool* t = f;
@@ -243,7 +243,7 @@ namespace Gecode { namespace Int { namespace Linear {
           if (f->x.one()) {
             c -= f->a;
           } else if (f->x.none()) {
-            su -= f->a; *t = *f; t++;
+            su_n += f->a; *t = *f; t++;
           }
           f++;
         }
@@ -255,7 +255,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ScaleBool* f = n.fst();
         ScaleBool* l = n.lst();
         while ((f < l) && f->x.none()) {
-          sl += f->a; f++;
+          sl_p += f->a; f++;
         }
         // Copy unassigned views to t
         ScaleBool* t = f;
@@ -263,7 +263,7 @@ namespace Gecode { namespace Int { namespace Linear {
           if (f->x.one()) {
             c += f->a;
           } else if (f->x.none()) {
-            sl += f->a; *t = *f; t++;
+            sl_p += f->a; *t = *f; t++;
           }
           f++;
         }
@@ -271,9 +271,9 @@ namespace Gecode { namespace Int { namespace Linear {
       }
     } else {
       for (ScaleBool* f=p.fst(); f<p.lst(); f++)
-        su -= f->a;
+        su_n += f->a;
       for (ScaleBool* f=n.fst(); f<n.lst(); f++)
-        sl += f->a;
+        sl_p += f->a;
     }
     
     if (p.empty() && n.empty()) {
@@ -281,92 +281,90 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_SUBSUMED(this,sizeof(*this));
     }
 
-    sl += x.max() + c;
-    su += x.min() + c;
+    sl_p += x.max() + c;
+    su_n -= x.min() + c;
 
-    bool mod = false;
+    const int MOD_SL = 1 << 0;
+    const int MOD_SU = 1 << 1;
+
+    int mod = MOD_SL | MOD_SU;
 
     do {
-      mod = false;
-
-      // Propagate upper bound for positive Boolean views
-      {
-        ScaleBool* f = p.fst();
-        ScaleBool* l = p.lst();
-        while ((f < l) && ((l-1)->a > sl)) {
-          l--;
-          su += l->a;
-          l->x.zero_none(home);
+      if (mod & MOD_SL != 0) {
+        mod -= MOD_SL;
+        // Propagate lower bound for positive Boolean views
+        {
+          ScaleBool* f=p.fst();
+          for (ScaleBool* l=p.lst(); (f < l) && (f->a > sl_p); f++) {
+            f->x.zero_none(home);
+            su_n -= f->a;
+          }
+          if (f > p.fst()) {
+            p.fst(f); mod |= MOD_SU;
+          }
         }
-        if (l < p.lst()) {
-          p.lst(l); mod=true;
+        // Propagate lower bound for negative Boolean views
+        {
+          ScaleBool* f=n.fst();
+          for (ScaleBool* l=n.lst(); (f < l) && (f->a > sl_p); f++) {
+            f->x.one_none(home); c += f->a;
+            su_n -= f->a;
+          }
+          if (f > n.fst()) {
+            n.fst(f); mod |= MOD_SU;
+          }
         }
-      }
-      // Propagate lower bound for positive Boolean views
-      {
-        ScaleBool* f = p.fst();
-        ScaleBool* l = p.lst();
-        while ((f < l) && ((l-1)->a > -su)) {
-          l--;
-          c -= l->a; sl -= l->a;
-          l->x.one_none(home);
-        }
-        if (l < p.lst()) {
-          p.lst(l); mod=true;
-        }
-      }
-      // Propagate lower bound for integer view
-      {
-        const int x_min = x.min();
-        ModEvent me = x.gq(home,x.max() - sl);
-        if (me_failed(me))
-          return ES_FAILED;
-        if (me_modified(me)) {
-          su += x.min() - x_min;
-          mod = true;
+        // Propagate lower bound for integer view
+        {
+          const int x_min = x.min();
+          ModEvent me = x.gq(home,x.max() - sl_p);
+          if (me_failed(me))
+            return ES_FAILED;
+          if (me_modified(me)) {
+            su_n -= x.min() - x_min;
+            mod |= MOD_SU;
+          }
         }
       }
-      // Propagate upper bound for negative Boolean views
-      {
-        ScaleBool* f = n.fst();
-        ScaleBool* l = n.lst();
-        while ((f < l) && ((l-1)->a > -su)) {
-          l--;
-          sl -= l->a;
-          l->x.zero_none(home);
+      if (mod & MOD_SU) {
+        mod -= MOD_SU;
+        // Propagate upper bound for positive Boolean views
+        {
+          ScaleBool* f=p.fst();
+          for (ScaleBool* l=p.lst(); (f < l) && (f->a > su_n); f++) {
+            f->x.one_none(home); c -= f->a;
+            sl_p -= f->a;
+          }
+          if (f > p.fst()) {
+            p.fst(f); mod |= MOD_SL;;
+          }
         }
-        if (l < n.lst()) {
-          n.lst(l); mod=true;
+        // Propagate upper bound for negative Boolean views
+        {
+          ScaleBool* f=n.fst();
+          for (ScaleBool* l=n.lst(); (f < l) && (f->a > su_n); f++) {
+            f->x.zero_none(home);
+            sl_p -= f->a;
+          }
+          if (f > n.fst()) {
+            n.fst(f); mod |= MOD_SL;;
+          }
         }
-      }
-      // Propagate lower bound for negative Boolean views
-      {
-        ScaleBool* f = n.fst();
-        ScaleBool* l = n.lst();
-        while ((f < l) && ((l-1)->a > sl)) {
-          l--;
-          c += l->a; su += l->a;
-          l->x.one_none(home);
-        }
-        if (l < n.lst()) {
-          n.lst(l); mod=true;
-        }
-      }
-
-      // Propagate upper bound for integer view
-      {
-        const int x_max = x.max();
-        ModEvent me = x.lq(home,x.min() - su);
-        if (me_failed(me))
-          return ES_FAILED;
-        if (me_modified(me)) {
-          sl += x.max() - x_max;
-          mod = true;
+        // Propagate upper bound for integer view
+        {
+          const int x_max = x.max();
+          ModEvent me = x.lq(home,x.min() + su_n);
+          if (me_failed(me))
+            return ES_FAILED;
+          if (me_modified(me)) {
+            sl_p += x.max() - x_max;
+            mod |= MOD_SL;;
+          }
         }
       }
-    } while (mod);
-
-    return (sl == su) ? ES_SUBSUMED(this,sizeof(*this)) : ES_FIX;
+    } while (mod != 0);
+    
+    return (sl_p == -su_n) ? ES_SUBSUMED(this,sizeof(*this)) : ES_FIX;
   }
 
 
@@ -493,21 +491,19 @@ namespace Gecode { namespace Int { namespace Linear {
 
     // Propagate upper bound for positive Boolean views
     {
-      ScaleBool* f = p.fst();
-      ScaleBool* l = p.lst();
-      while ((f < l) && ((l-1)->a > sl)) {
-        l--; l->x.zero_none(home);
-      }
-      p.lst(l);
+      ScaleBool* f=p.fst();
+      for (ScaleBool* l=p.lst(); (f < l) && (f->a > sl); f++)
+        f->x.zero_none(home);
+      p.fst(f);
     }
     // Propagate lower bound for negative Boolean views
     {
-      ScaleBool* f = n.fst();
-      ScaleBool* l = n.lst();
-      while ((f < l) && ((l-1)->a > sl)) {
-        l--; c += l->a; l->x.one_none(home);
+      ScaleBool* f=n.fst();
+      for (ScaleBool* l=n.lst(); (f < l) && (f->a > sl); f++) {
+        c += f->a; 
+        f->x.one_none(home);
       }
-      n.lst(l);
+      n.fst(f);
     }
     ExecStatus es = ES_FIX;
     // Propagate lower bound for integer view

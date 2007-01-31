@@ -1010,14 +1010,14 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Return number of elements
     int size(void) const;
   private:
-    /// For sorting array in increasing order of coefficients
-    class ScaleInc {
+    /// For sorting array in decreasing order of coefficients
+    class ScaleDec {
     public:
       bool
       operator()(const ScaleBool& x, const ScaleBool& y);
     };
   public:
-    /// Sort array in increasing order of coefficients
+    /// Sort array in decreasing order of coefficients
     void sort(void);
   };
 
@@ -1047,7 +1047,7 @@ namespace Gecode { namespace Int { namespace Linear {
     bool empty(void) const;
     /// Return number of elements
     int size(void) const;
-    /// Sort array in increasing order of coefficients
+    /// Sort array in decreasing order of coefficients
     void sort(void);
   };
 

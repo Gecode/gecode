@@ -53,32 +53,42 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
-Module: int
-What: change
-Rank: minor
+Module:	int
+What:	new
+Rank:	major
 [DESCRIPTION]
-The linear constraints are now more careful to determine whether
-overflow occurs and which precision (integer or double) should be
-chosen.
+Added propagators for linear constraints over Boolean variables,
+in particular specialized and efficient versions for non-unit
+coefficients.
 
 [ENTRY]
-Module: int
-What: change
-Rank: minor
+Module:	int
+What:	change
+Rank:	minor
+[DESCRIPTION]
+The linear constraints are now more careful (that is, they will
+use more efficient versions more often if it is safe) to
+determine whether overflow occurs and which precision (integer or
+double) should be chosen.
+
+[ENTRY]
+Module:	int
+What:	change
+Rank:	minor
 [DESCRIPTION]
 The element constraints now accept an additional offset argument.
 
 [ENTRY]
-Module: set
-What: new
-Rank: minor
+Module:	set
+What:	new
+Rank:	minor
 [DESCRIPTION]
 Added selection and reified relation constraints with constant sets.
 
 [ENTRY]
-Module: set
-What: change
-Rank: minor
+Module:	set
+What:	change
+Rank:	minor
 [DESCRIPTION]
 Slightly stronger inferences for the finite set sequence and selection
 constraints.
