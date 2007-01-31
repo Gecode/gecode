@@ -321,7 +321,6 @@ namespace Gecode { namespace Int { namespace Linear {
         throw UnknownRelation("Int::linear");
       }
 
-      /*
       // Eliminate assigned views
       for (int i=n; i--; )
         if (t[i].x.one()) {
@@ -329,7 +328,6 @@ namespace Gecode { namespace Int { namespace Linear {
         } else if (t[i].x.zero()) {
           t[i]=t[--n];
         }
-      */
 
       if ((d < INT_MIN) || (d > INT_MAX))
         throw NumericalOverflow("Int::linear");
@@ -340,7 +338,7 @@ namespace Gecode { namespace Int { namespace Linear {
     Term<BoolView> *t_p, *t_n;
     int n_p, n_n;
     bool unit = normalize<BoolView>(t,n,t_p,n_p,t_n,n_n);
-    
+
     if (n == 0) {
       switch (r) {
       case IRT_EQ: GECODE_ME_FAIL(home,x.eq(home,-c)); break;

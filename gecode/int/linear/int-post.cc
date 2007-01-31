@@ -86,11 +86,10 @@ namespace Gecode { namespace Int { namespace Linear {
     return ((sl>=INT_MIN) && (su<=INT_MAX));
   }
 
-  /*
-   * Posting plain propagators
+  /**
+   * \brief Posting n-ary propagators
    *
    */
-
   template <class Val, class View>
   forceinline void
   post_nary(Space* home,
@@ -201,6 +200,7 @@ namespace Gecode { namespace Int { namespace Linear {
     bool is_ip = precision(t_p,n_p,t_n,n_n,d);
 
     if (is_unit && is_ip && (icl != ICL_DOM)) {
+      // Unit coefficients with integer precision
       c = static_cast<int>(d);
       if (n == 2) {
         switch (r) {
@@ -226,8 +226,8 @@ namespace Gecode { namespace Int { namespace Linear {
         post_nary<int,IntView>(home,x,y,r,c);
       }
     } else if (is_ip) {
-      c = static_cast<int>(d);
       // Arbitrary coefficients with integer precision
+      c = static_cast<int>(d);
       ViewArray<IntScaleView> x(home,n_p);
       for (int i = n_p; i--; )
         x[i].init(t_p[i].a,t_p[i].x);
@@ -259,11 +259,10 @@ namespace Gecode { namespace Int { namespace Linear {
 #undef GECODE_INT_PL_TER
 
 
-  /*
-   * Posting reified propagators
+  /**
+   * \brief Posting reified n-ary propagators
    *
    */
-
   template <class Val, class View>
   forceinline void
   post_nary(Space* home,
@@ -428,8 +427,8 @@ namespace Gecode { namespace Int { namespace Linear {
         post_nary<int,IntView>(home,x,y,r,c,b);
       }
     } else if (is_ip) {
-      c = static_cast<int>(d);
       // Arbitrary coefficients with integer precision
+      c = static_cast<int>(d); 
       ViewArray<IntScaleView> x(home,n_p);
       for (int i = n_p; i--; )
         x[i].init(t_p[i].a,t_p[i].x);

@@ -302,30 +302,6 @@ namespace Gecode { namespace Int { namespace Linear {
           p.lst(l); mod=true;
         }
       }
-      // Propagate lower bound for negative Boolean views
-      {
-        ScaleBool* f = n.fst();
-        ScaleBool* l = n.lst();
-        while ((f < l) && (f->a < -sl)) {
-          c += f->a; su += f->a;
-          f->x.one_none(home);
-          f++;
-        }
-        if (f > n.fst()) {
-          n.fst(f); mod=true;
-        }
-      }
-      // Propagate lower bound for integer view
-      {
-        const int x_min = x.min();
-        ModEvent me = x.gq(home,x.max() - sl);
-        if (me_failed(me))
-          return ES_FAILED;
-        if (me_modified(me)) {
-          su += x.min() - x_min;
-          mod = true;
-        }
-      }
       // Propagate lower bound for positive Boolean views
       {
         ScaleBool* f = p.fst();
@@ -337,6 +313,17 @@ namespace Gecode { namespace Int { namespace Linear {
         }
         if (l < p.lst()) {
           p.lst(l); mod=true;
+        }
+      }
+      // Propagate lower bound for integer view
+      {
+        const int x_min = x.min();
+        ModEvent me = x.gq(home,x.max() - sl);
+        if (me_failed(me))
+          return ES_FAILED;
+        if (me_modified(me)) {
+          su += x.min() - x_min;
+          mod = true;
         }
       }
       // Propagate upper bound for negative Boolean views
@@ -352,6 +339,20 @@ namespace Gecode { namespace Int { namespace Linear {
           n.lst(l); mod=true;
         }
       }
+      // Propagate lower bound for negative Boolean views
+      {
+        ScaleBool* f = n.fst();
+        ScaleBool* l = n.lst();
+        while ((f < l) && ((l-1)->a > sl)) {
+          l--;
+          c += l->a; su += l->a;
+          l->x.one_none(home);
+        }
+        if (l < n.lst()) {
+          n.lst(l); mod=true;
+        }
+      }
+
       // Propagate upper bound for integer view
       {
         const int x_max = x.max();
@@ -503,10 +504,10 @@ namespace Gecode { namespace Int { namespace Linear {
     {
       ScaleBool* f = n.fst();
       ScaleBool* l = n.lst();
-      while ((f < l) && (f->a < -sl)) {
-        c += f->a; f->x.one_none(home); f++;
+      while ((f < l) && ((l-1)->a > sl)) {
+        l--; c += l->a; l->x.one_none(home);
       }
-      n.fst(f);
+      n.lst(l);
     }
     ExecStatus es = ES_FIX;
     // Propagate lower bound for integer view

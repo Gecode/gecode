@@ -308,22 +308,8 @@ IntTest::run(const Options& opt) {
   delete search_s;
   while (a()) {
     bool is_sol = solution(a);
-    if (do_search_test()) {
-      test = "Search";
-      if (is_sol) {
-        IntTestSpace* s = e_s.next();
-        CHECK(s != NULL,    "Solutions exhausted");
-        CHECK(s->propagators()==0, "No subsumtion");
-        for (int i=a.size(); i--; ) {
-          CHECK(s->x[i].assigned(), "Unassigned variable");
-          CHECK(a[i] == s->x[i].val(), "Wrong value in solution");
-        }
-        delete s;
-      }
-    }
-    {
+   {
       test = "Assignment (after posting)";
-      Log::reset();
       IntTestSpace* s = new IntTestSpace(arity,dom,opt);
       post(s,s->x);
       log_posting();
@@ -469,6 +455,20 @@ IntTest::run(const Options& opt) {
         CHECK(b.val()==0, "One on non-solution");
       }
       delete s;
+    }
+    if (do_search_test()) {
+      Log::reset();
+      test = "Search";
+      if (is_sol) {
+        IntTestSpace* s = e_s.next();
+        CHECK(s != NULL,    "Solutions exhausted");
+        CHECK(s->propagators()==0, "No subsumtion");
+        for (int i=a.size(); i--; ) {
+          CHECK(s->x[i].assigned(), "Unassigned variable");
+          CHECK(a[i] == s->x[i].val(), "Wrong value in solution");
+        }
+        delete s;
+      }
     }
     ++a;
   }
