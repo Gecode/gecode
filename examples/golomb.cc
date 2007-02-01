@@ -32,7 +32,7 @@
  *   In IJCAI 99 Workshop on Non-binary Constraints,
  *   1999.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class Golomb : public Example {

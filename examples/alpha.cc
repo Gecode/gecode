@@ -28,7 +28,7 @@
  *
  * Well-known cryptoarithmetic puzzle of unknown origin.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class Alpha : public Example {

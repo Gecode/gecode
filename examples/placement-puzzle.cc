@@ -270,7 +270,7 @@ namespace {
  * for the piece symmetries and lexicographical order constraints.
  *
  * 
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class PlacementPuzzle : public Example {

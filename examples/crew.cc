@@ -111,7 +111,7 @@ const int len = 10;
  * number of cabin crew, and they have to speak certain languages.
  * Every cabin crew member has two flights off after an attended flight.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class Crew : public Example {

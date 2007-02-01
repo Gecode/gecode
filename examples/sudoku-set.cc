@@ -31,7 +31,7 @@
  *
  * Does not really require any explanation...
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class SudokuSet : public Example {

@@ -27,7 +27,7 @@
  *
  * Standard benchmark for solving linear equations.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class Eq20 : public Example {

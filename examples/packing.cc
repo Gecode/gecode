@@ -77,7 +77,7 @@ static const unsigned int n_examples = sizeof(specs) / sizeof(PackingSpec*);
 /**
  * \brief %Example: packing squares into a rectangle
  *
- * \ingroup Example
+ * \ingroup ExProblem
  */
 class Packing : public Example {
 protected:

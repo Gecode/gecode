@@ -7,8 +7,8 @@
  *     Guido Tack, 2006
  *
  *  Last modified:
- *     $Date: 2006-10-25 15:21:37 +0200 (Wed, 25 Oct 2006) $ by $Author: tack $
- *     $Revision: 3791 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -59,7 +59,7 @@ int value_at(const char *s, int n, int i, int j) {
  * The instances are taken from
  *   http://www.janko.at/Raetsel/Minesweeper/index.htm
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class MineSweeper : public Example {

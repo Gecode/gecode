@@ -36,7 +36,7 @@
  *
  * This instance fixes b to 20 and d to 3.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class Hamming : public Example {

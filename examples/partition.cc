@@ -25,7 +25,7 @@
 /**
  * \brief %Example: partition numbers into two groups
  *
- * \ingroup Example
+ * \ingroup ExProblem
  */
 class Partition : public Example {
 protected:

@@ -48,7 +48,7 @@ IntSet *A;
  * from the above paper, that helps speeding up the proof of
  * optimality.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class QueenArmies : public Example {

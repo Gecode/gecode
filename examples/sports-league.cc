@@ -55,7 +55,7 @@ typedef PrimArgArray<Play> RRSArray;
  * -# No team plays more than twice in the same period over
  *    the course of the season.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  */
 class SportsLeague : public Example {
 private:

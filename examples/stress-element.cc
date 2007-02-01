@@ -32,7 +32,7 @@ static const int p[n] = {16,35,90,42,88,6,40,42,64,48,46,5,90,29,70};
  * This stress test is an adaption of the benchmark for element posted
  * by Neng-Fa Zhou for B-Prolog, November, 2005.
  *
- * \ingroup Example
+ * \ingroup ExStress
  *
  */
 class StressElement : public Example {

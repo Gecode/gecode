@@ -29,7 +29,7 @@
  * Well-known cryptoarithmetic puzzle.
  * Henry Dudeney, Strand Magazine, July 1924.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class Money : public Example {

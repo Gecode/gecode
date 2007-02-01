@@ -32,7 +32,7 @@
  *  - \f$x_i\f$ is an integer between \f$0\f$ and \f$n-1\f$.
  *  - the number \f$i\f$ occurs exactly \f$x_i\f$ times in the sequence.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class MagicSequence : public Example {

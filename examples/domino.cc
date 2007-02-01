@@ -9,8 +9,8 @@
  *     Mikael Lagerkvist, 2006
  *
  *  Last modified:
- *     $Date: 2006-11-13 15:42:58 +0100 (Mon, 13 Nov 2006) $ by $Author: tack $
- *     $Revision: 3932 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -47,7 +47,7 @@ extern const unsigned int n_examples;
  * The instances are taken from
  *   http://www.janko.at/Raetsel/Minesweeper/index.htm
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class Domino : public Example {

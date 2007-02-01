@@ -30,7 +30,7 @@
  *
  * This is problem 044 from csplib.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class Steiner : public Example {

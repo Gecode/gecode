@@ -28,7 +28,7 @@
  *
  * Compute magic squares of arbitrary size
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class MagicSquare : public Example {

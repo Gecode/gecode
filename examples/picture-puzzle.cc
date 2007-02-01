@@ -39,7 +39,7 @@ extern const unsigned int n_examples;
  *
  * Problem 12 at http://www.csplib.org/.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class PicturePuzzle : public Example {

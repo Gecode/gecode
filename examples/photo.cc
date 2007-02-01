@@ -56,7 +56,7 @@ static const PhotoSpec p_large(9,17, l_prefs);
  * photo. The problem to be solved is to find a placement that
  * satisfies as many preferences as possible.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class Photo : public Example {

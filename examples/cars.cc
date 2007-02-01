@@ -40,7 +40,7 @@ IntArgs l5(6, 0,0,1,0,0,0);
  * Schedule a sequence of cars to be produced. This is problem 001 from
  * csplib.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class Cars : public Example {

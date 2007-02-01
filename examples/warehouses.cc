@@ -66,7 +66,7 @@ static const int cost_matrix[n_stores][n_suppliers] = {
  * warehouse should supply which store such that overall cost
  * (transportation cost plus construction cost) is smallest.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class Warehouses : public Example {

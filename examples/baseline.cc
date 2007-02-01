@@ -25,7 +25,7 @@
 /**
  * \brief %Example: Baseline test
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class Baseline : public Example {

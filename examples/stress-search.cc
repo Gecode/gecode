@@ -25,7 +25,7 @@
 /**
  * \brief %Example: Search stress test
  *
- * \ingroup Example
+ * \ingroup ExStress
  *
  */
 class StressSearch : public Example {

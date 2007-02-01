@@ -48,7 +48,7 @@ public:
  * For a detailed problem analysis see
  * http://www.lclark.edu/~miller/langford.html
  *
- * \ingroup Example
+ * \ingroup ExProblem
  */
 class LangfordNumRegular : public Example {
 private:

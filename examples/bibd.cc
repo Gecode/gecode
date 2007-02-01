@@ -30,7 +30,7 @@
  *
  * See problem 28 at http://www.csplib.org/.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class BIBD : public Example {

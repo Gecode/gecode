@@ -29,7 +29,7 @@
  * Place n queens on an n times n chessboard such that they do not
  * attack each other.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class Queens : public Example {

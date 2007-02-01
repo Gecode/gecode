@@ -26,7 +26,7 @@
  * This is  prob007 in the category "combinatorial mathematics" of
  * http://www.csplib.org/.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  */
 
 #include "examples/support.hh"

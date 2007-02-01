@@ -25,7 +25,7 @@
 /**
  * \brief %Example: Execution stress test
  *
- * \ingroup Example
+ * \ingroup ExStress
  *
  */
 class StressExec : public Example {

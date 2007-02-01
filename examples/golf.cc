@@ -55,7 +55,7 @@ static const unsigned int n_examples = sizeof(t) / sizeof(Tournament);
  *
  * Schedule a golf tournament. This is problem 010 from csplib.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class Golf : public Example {

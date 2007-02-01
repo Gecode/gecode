@@ -99,7 +99,7 @@ const int nkval = 16;
  \todo Currently this script finds a solution. Instead, it should find
  the maximum number of knights for a given size.
 
-   \ingroup Example
+   \ingroup ExProblem
 */
 class CrowdedChess : public Example {
 protected:

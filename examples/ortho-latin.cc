@@ -25,7 +25,7 @@
 /**
  * \brief %Example: Orthogonal latin squares
  *
- * \ingroup Examples
+ * \ingroup ExProblem
  */
 class OrthoLatinSquare : public Example {
 protected:

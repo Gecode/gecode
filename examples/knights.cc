@@ -30,7 +30,7 @@
  * knights do a full tour by knights move (last knight reaches
  * first knight again). The formulation is due to Gert Smolka.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class Knights : public Example {

@@ -44,7 +44,7 @@
  * Read more about this problem as prob007 in the category
  * "combinatorial mathematics" of http://www.csplib.org/.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  */
 class AllInterval : public Example {
 private:

@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2004
+ *     Christian Schulte, 2005
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -23,62 +23,55 @@
 #include "examples/support.hh"
 
 /**
- * \brief %Example: Stress test for the minimum constraint
+ * \brief %Example: Stress distinct propagator
+ *
+ * Performs propagation on a pathological example. The example is taken
+ * from: Jean-Francois Puget, A fast algorithm for the bound consistency
+ * of alldiff constraints, AAAI-98, pages 359-366, July 1998,
+ * Madison, WI, USA.
  *
  * \ingroup ExStress
- *
  */
-class StressMin : public Example {
+class StressDistinct : public Example {
 protected:
-  /// Size of problem
-  const int n;
   /// Variables
   IntVarArray x;
 public:
   /// The actual problem
-  StressMin(const Options& opt)
-    : n(opt.size), x(this,n,0,2*n-1) {
-    for (int i=1; i<n; i++) {
-      IntVarArgs y(i);
-      for (int j=0; j<i; j++)
-        y[j]=x[j];
-      IntVar m(this,0,2*n);
-      min(this, y, m);
-      rel(this, m, IRT_GR, x[i]);
-    }
-    branch(this, x, BVAR_NONE, BVAL_SPLIT_MAX);
+  StressDistinct(const Options& opt)
+    : x(this,opt.size+1,0,opt.size) {
+    distinct(this, x, opt.icl);
+    for (int i=0; i<opt.size; i++)
+      rel(this, x[i], IRT_LQ, i);
   }
-
   /// Constructor for cloning \a s
-  StressMin(bool share, StressMin& s) : Example(share,s), n(s.n) {
+  StressDistinct(bool share, StressDistinct& s) : Example(share,s) {
     x.update(this, share, s.x);
   }
-
   /// Perform copying during cloning
   virtual Space*
   copy(bool share) {
-    return new StressMin(share,*this);
+    return new StressDistinct(share,*this);
   }
-
   /// Print solution
   virtual void
   print(void) {
+    int n = x.size();
     std::cout << "\tx[" << n << "] = {";
     for (int i = 0; i < n; i++)
       std::cout << x[i] << ((i<n-1)?",":"};\n");
   }
 };
 
-
 /** \brief Main-function
- *  \relates StressMin
+ *  \relates StressDistinct
  */
 int
 main(int argc, char** argv) {
-  Options opt("StressMin");
+  Options opt("StressDistinct");
+  opt.size = 1000;
   opt.parse(argc,argv);
-  opt.size = 200;
-  Example::run<StressMin,DFS>(opt);
+  Example::run<StressDistinct,DFS>(opt);
   return 0;
 }
 

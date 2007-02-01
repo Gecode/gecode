@@ -36,7 +36,7 @@
  * Constraint Programming in Oz. A Tutorial. 2001.
  * Available from: http://www.mozart-oz.org/documentation/fdt/
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class Grocery : public Example {

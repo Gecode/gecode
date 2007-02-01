@@ -60,7 +60,7 @@ static const Graph g_40_20(40, 20, e_40_20);
 /**
  * \brief %Example: Independent Sets in a %Graph
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class IndSet : public Example {

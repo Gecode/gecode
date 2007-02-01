@@ -58,7 +58,7 @@ block_row(MiniModel::Matrix<IntVarArray> m,
  * This implementation combines both the finite domain and the finite set
  * model using channelling constraints.
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class SudokuMixed : public Example {

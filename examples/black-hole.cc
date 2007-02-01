@@ -128,7 +128,7 @@ public:
  * The smart version breaks the conditional symmetry identified in the
  * above paper (enabled by default). 
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class BlackHole : public Example {

@@ -56,7 +56,7 @@ block_row(MiniModel::Matrix<IntVarArray> m,
  *
  * Does not really require any explanation...
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class Sudoku : public Example {

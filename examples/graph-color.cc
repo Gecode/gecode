@@ -287,7 +287,7 @@ static const GraphColorSpec g2(200, g2_e, g2_c);
 /**
  * \brief %Example: Clique-based graph coloring
  *
- * \ingroup Example
+ * \ingroup ExProblem
  *
  */
 class GraphColor : public Example {
