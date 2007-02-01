@@ -480,27 +480,25 @@ endif
 
 BRANCHTESTSRC0 = \
 	distinct 
-STRESSTESTSRC0 = \
-	exec minsort domain distinct regular 
 ifeq "@enable_set_vars@" "yes"
 TESTSRC0 = \
-	test log int set branch stress intset \
+	test log int set branch intset \
 	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) \
-	$(BRANCHTESTSRC0:%=branch/%) $(STRESSTESTSRC0:%=stress/%)
+	$(BRANCHTESTSRC0:%=branch/%)
 else
 TESTSRC0 = \
-	test log int branch stress intset \
+	test log int branch intset \
 	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) \
-	$(BRANCHTESTSRC0:%=branch/%) $(STRESSTESTSRC0:%=stress/%)
+	$(BRANCHTESTSRC0:%=branch/%)
 endif
 TESTSRC	= $(TESTSRC0:%=test/%.cc)
 TESTHDR0 = \
-	test int set branch stress
+	test int set branch
 TESTHDR = $(TESTHDR0:%=test/%.hh)
 TESTOBJ	= $(TESTSRC:%.cc=%$(OBJSUFFIX))
 TESTSBJ	= $(TESTSRC:%.cc=%$(SBJSUFFIX))
 TESTEXE	= test/test$(EXESUFFIX)
-TESTBUILDDIRS = test test/int test/set test/branch test/stress
+TESTBUILDDIRS = test test/int test/set test/branch
 
 BUILDDIRS = $(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
 	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
