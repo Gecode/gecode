@@ -214,8 +214,8 @@ namespace Gecode { namespace Int {
     GECODE_INT_EXPORT void lq_full(Space* home, int n);
     /// Restrict domain values to be greater or equal than \a n
     GECODE_INT_EXPORT void gq_full(Space* home, int n);
-    /// Restrict domain values to be equal to \a n
-    GECODE_INT_EXPORT void eq_full(Space* home, int n);
+    /// Restrict domain values to be equal to current minimum of domain
+    GECODE_INT_EXPORT bool eq_full(Space* home);
     /// Restrict domain values to be different from \a n
     GECODE_INT_EXPORT ModEvent nq_full(Space* home, int n);
     //@}

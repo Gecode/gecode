@@ -55,6 +55,16 @@ The best Gecode ever... Done with supernatural powers!
 [ENTRY]
 Module:	int
 What:	change
+Rank:	minor
+[DESCRIPTION]
+Integer and Boolean variables are now guaranteed to be
+inspectable (that is, all const member functions work on them),
+even though a space is failed. However, the variables might have
+been modified during a tell operation that has failed.
+
+[ENTRY]
+Module:	int
+What:	change
 Rank:	major
 [DESCRIPTION]
 Boolean variables (and hence Boolean views) do not any longer
