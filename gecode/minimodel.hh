@@ -68,8 +68,10 @@ namespace Gecode {
   namespace MiniModel {
 
     /// Linear expressions
+    template <class Var>
     class LinExpr {
     private:
+      typedef typename VarViewTraits<Var>::View View;
       /// Nodes for linear expressions
       class Node {
       private:
@@ -82,21 +84,20 @@ namespace Gecode {
         /// Coefficient
         int a;
         /// Variable
-        IntVar x;
+        Var x;
       public:
         /// Construct node for \a a multiplied with \a x
-        Node(int a, const IntVar& x);
+        Node(int a, const Var& x);
         /// Construct node from nodes \a n0 and \a n1 with signs \a s0 and \a s1
         Node(Node* n0, int s0, Node* n1, int s1);
 
         /// Increment reference count
         void increment(void);
         /// Decrement reference count and possibly free memory
-        GECODE_MINIMODEL_EXPORT bool decrement(void);
+        bool decrement(void);
         
         /// Fill in array of linear terms based on this node
-        GECODE_MINIMODEL_EXPORT int
-        fill(Int::Linear::Term<Int::IntView> t[], int i, int s) const;
+        int fill(Int::Linear::Term<View> t[], int i, int s) const;
         
         /// Memory management
         static void* operator new(size_t size);
@@ -113,7 +114,7 @@ namespace Gecode {
       /// Copy constructor
       LinExpr(const LinExpr& e);
       /// Create expression \f$a\cdot x+c\f$
-      LinExpr(const IntVar& x, int a=1, int c=0);
+      LinExpr(const Var& x, int a=1, int c=0);
       /// Create expression \f$e_0+s\cdot e_1\f$ (where \a s is the sign)
       LinExpr(const LinExpr& e0, const LinExpr& e1, int s);
       /// Create expression \f$s\cdot e+c\f$ (where \a s is the sign)
@@ -123,36 +124,34 @@ namespace Gecode {
       /// Assignment operator
       const LinExpr& operator=(const LinExpr& e);
       /// Post propagator
-      GECODE_MINIMODEL_EXPORT
       void post(Space* home, IntRelType irt, IntConLevel icl) const;
       /// Post reified propagator
-      GECODE_MINIMODEL_EXPORT
       void post(Space* home, IntRelType irt, const BoolVar& b) const;
       /// Post propagator and return variable for value
-      GECODE_MINIMODEL_EXPORT
       IntVar post(Space* home, IntConLevel icl) const;
       /// Destructor
       ~LinExpr(void);
     };
 
     /// Linear relations
+    template<class Var>
     class LinRel {
     private:
       /// Linear expression describing the entire relation
-      LinExpr    e;
+      LinExpr<Var> e;
       /// Which relation
-      IntRelType irt;
+      IntRelType   irt;
       /// Negate relation type
       static IntRelType neg(IntRelType irt);
     public:
       /// Default constructor
       LinRel(void);
       /// Create linear relation for expressions \a l and \a r
-      LinRel(const LinExpr& l, IntRelType irt, const LinExpr& r);
+      LinRel(const LinExpr<Var>& l, IntRelType irt, const LinExpr<Var>& r);
       /// Create linear relation for expression \a l and integer \a r
-      LinRel(const LinExpr& l, IntRelType irt, int r);
+      LinRel(const LinExpr<Var>& l, IntRelType irt, int r);
       /// Create linear relation for integer \a l and expression \a r
-      LinRel(int l, IntRelType irt, const LinExpr& r);
+      LinRel(int l, IntRelType irt, const LinExpr<Var>& r);
       /// Post propagator for relation (if \a t is false for negated relation)
       void post(Space* home, bool t, IntConLevel icl) const;
       /// Post refied propagator for relation
@@ -182,127 +181,245 @@ namespace Gecode {
 //@{
 
 /// Construct linear expression as sum of linear expression and integer
-Gecode::MiniModel::LinExpr
+Gecode::MiniModel::LinExpr<Gecode::IntVar>
 operator+(int,
-          const Gecode::MiniModel::LinExpr&);
+          const Gecode::MiniModel::LinExpr<Gecode::IntVar>&);
 /// Construct linear expression as sum of integer and linear expression
-Gecode::MiniModel::LinExpr
-operator+(const Gecode::MiniModel::LinExpr&,
+Gecode::MiniModel::LinExpr<Gecode::IntVar>
+operator+(const Gecode::MiniModel::LinExpr<Gecode::IntVar>&,
           int);
 /// Construct linear expression as sum of linear expressions
-Gecode::MiniModel::LinExpr
-operator+(const Gecode::MiniModel::LinExpr&,
-          const Gecode::MiniModel::LinExpr&);
-
+Gecode::MiniModel::LinExpr<Gecode::IntVar>
+operator+(const Gecode::MiniModel::LinExpr<Gecode::IntVar>&,
+          const Gecode::MiniModel::LinExpr<Gecode::IntVar>&);
 /// Construct linear expression as difference of linear expression and integer
-Gecode::MiniModel::LinExpr
+Gecode::MiniModel::LinExpr<Gecode::IntVar>
 operator-(int,
-          const Gecode::MiniModel::LinExpr&);
+          const Gecode::MiniModel::LinExpr<Gecode::IntVar>&);
 /// Construct linear expression as difference of integer and linear expression
-Gecode::MiniModel::LinExpr
-operator-(const Gecode::MiniModel::LinExpr&,
+Gecode::MiniModel::LinExpr<Gecode::IntVar>
+operator-(const Gecode::MiniModel::LinExpr<Gecode::IntVar>&,
           int);
 /// Construct linear expression as difference of linear expressions
-Gecode::MiniModel::LinExpr
-operator-(const Gecode::MiniModel::LinExpr&,
-          const Gecode::MiniModel::LinExpr&);
-
+Gecode::MiniModel::LinExpr<Gecode::IntVar>
+operator-(const Gecode::MiniModel::LinExpr<Gecode::IntVar>&,
+          const Gecode::MiniModel::LinExpr<Gecode::IntVar>&);
 /// Construct linear expression as negative of linear expression
-Gecode::MiniModel::LinExpr
-operator-(const Gecode::MiniModel::LinExpr&);
-
+Gecode::MiniModel::LinExpr<Gecode::IntVar>
+operator-(const Gecode::MiniModel::LinExpr<Gecode::IntVar>&);
 
 /// Construct linear expression as product of integer coefficient and integer variable
-Gecode::MiniModel::LinExpr
+Gecode::MiniModel::LinExpr<Gecode::IntVar>
 operator*(int, const Gecode::IntVar&);
 /// Construct linear expression as product of integer coefficient and integer variable
-Gecode::MiniModel::LinExpr
+Gecode::MiniModel::LinExpr<Gecode::IntVar>
 operator*(const Gecode::IntVar&, int);
 /// Construct linear expression as product of integer coefficient and linear expression
-Gecode::MiniModel::LinExpr
-operator*(const Gecode::MiniModel::LinExpr&, int);
+Gecode::MiniModel::LinExpr<Gecode::IntVar>
+operator*(const Gecode::MiniModel::LinExpr<Gecode::IntVar>&, int);
 /// Construct linear expression as product of integer coefficient and linear expression
-Gecode::MiniModel::LinExpr
-operator*(int, const Gecode::MiniModel::LinExpr&);
+Gecode::MiniModel::LinExpr<Gecode::IntVar>
+operator*(int, const Gecode::MiniModel::LinExpr<Gecode::IntVar>&);
+
+
+/// Construct linear expression as sum of linear expression and integer
+Gecode::MiniModel::LinExpr<Gecode::BoolVar>
+operator+(int,
+          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>&);
+/// Construct linear expression as sum of integer and linear expression
+Gecode::MiniModel::LinExpr<Gecode::BoolVar>
+operator+(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>&,
+          int);
+/// Construct linear expression as sum of linear expressions
+Gecode::MiniModel::LinExpr<Gecode::BoolVar>
+operator+(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>&,
+          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>&);
+/// Construct linear expression as difference of linear expression and integer
+Gecode::MiniModel::LinExpr<Gecode::BoolVar>
+operator-(int,
+          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>&);
+/// Construct linear expression as difference of integer and linear expression
+Gecode::MiniModel::LinExpr<Gecode::BoolVar>
+operator-(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>&,
+          int);
+/// Construct linear expression as difference of linear expressions
+Gecode::MiniModel::LinExpr<Gecode::BoolVar>
+operator-(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>&,
+          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>&);
+/// Construct linear expression as negative of linear expression
+Gecode::MiniModel::LinExpr<Gecode::BoolVar>
+operator-(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>&);
+
+/// Construct linear expression as product of integer coefficient and integer variable
+Gecode::MiniModel::LinExpr<Gecode::BoolVar>
+operator*(int, const Gecode::BoolVar&);
+/// Construct linear expression as product of integer coefficient and integer variable
+Gecode::MiniModel::LinExpr<Gecode::BoolVar>
+operator*(const Gecode::BoolVar&, int);
+/// Construct linear expression as product of integer coefficient and linear expression
+Gecode::MiniModel::LinExpr<Gecode::BoolVar>
+operator*(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>&, int);
+/// Construct linear expression as product of integer coefficient and linear expression
+Gecode::MiniModel::LinExpr<Gecode::BoolVar>
+operator*(int, const Gecode::MiniModel::LinExpr<Gecode::BoolVar>&);
 
 
 /// Construct linear equality relation
-Gecode::MiniModel::LinRel
+Gecode::MiniModel::LinRel<Gecode::IntVar>
 operator==(int l,
-           const Gecode::MiniModel::LinExpr& r);
+           const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r);
 /// Construct linear equality relation
-Gecode::MiniModel::LinRel
-operator==(const Gecode::MiniModel::LinExpr& l,
+Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator==(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
            int r);
 /// Construct linear equality relation
-Gecode::MiniModel::LinRel
-operator==(const Gecode::MiniModel::LinExpr& l,
-           const Gecode::MiniModel::LinExpr& r);
+Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator==(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
+           const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r);
 
 /// Construct linear disequality relation
-Gecode::MiniModel::LinRel
+Gecode::MiniModel::LinRel<Gecode::IntVar>
 operator!=(int l,
-           const Gecode::MiniModel::LinExpr& r);
+           const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r);
 /// Construct linear disequality relation
-Gecode::MiniModel::LinRel
-operator!=(const Gecode::MiniModel::LinExpr& l,
+Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator!=(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
            int r);
 /// Construct linear disequality relation
-Gecode::MiniModel::LinRel
-operator!=(const Gecode::MiniModel::LinExpr& l,
-           const Gecode::MiniModel::LinExpr& r);
+Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator!=(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
+           const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r);
 
 /// Construct linear inequality relation
-Gecode::MiniModel::LinRel
+Gecode::MiniModel::LinRel<Gecode::IntVar>
 operator<(int l,
-          const Gecode::MiniModel::LinExpr& r);
+          const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r);
 /// Construct linear inequality relation
-Gecode::MiniModel::LinRel
-operator<(const Gecode::MiniModel::LinExpr& l,
+Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator<(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
           int r);
 /// Construct linear inequality relation
-Gecode::MiniModel::LinRel
-operator<(const Gecode::MiniModel::LinExpr& l,
-          const Gecode::MiniModel::LinExpr& r);
+Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator<(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
+          const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r);
 
 /// Construct linear inequality relation
-Gecode::MiniModel::LinRel
+Gecode::MiniModel::LinRel<Gecode::IntVar>
 operator<=(int l,
-           const Gecode::MiniModel::LinExpr& r);
+           const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r);
 /// Construct linear inequality relation
-Gecode::MiniModel::LinRel
-operator<=(const Gecode::MiniModel::LinExpr& l,
+Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator<=(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
            int r);
 /// Construct linear inequality relation
-Gecode::MiniModel::LinRel
-operator<=(const Gecode::MiniModel::LinExpr& l,
-           const Gecode::MiniModel::LinExpr& r);
+Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator<=(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
+           const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r);
 
 /// Construct linear inequality relation
-Gecode::MiniModel::LinRel
+Gecode::MiniModel::LinRel<Gecode::IntVar>
 operator>(int l,
-          const Gecode::MiniModel::LinExpr& r);
+          const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r);
 /// Construct linear inequality relation
-Gecode::MiniModel::LinRel
-operator>(const Gecode::MiniModel::LinExpr& l,
+Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator>(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
           int r);
 /// Construct linear inequality relation
-Gecode::MiniModel::LinRel
-operator>(const Gecode::MiniModel::LinExpr& l,
-          const Gecode::MiniModel::LinExpr& r);
+Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator>(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
+          const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r);
 
 /// Construct linear inequality relation
-Gecode::MiniModel::LinRel
+Gecode::MiniModel::LinRel<Gecode::IntVar>
 operator>=(int l,
-           const Gecode::MiniModel::LinExpr& r);
+           const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r);
 /// Construct linear inequality relation
-Gecode::MiniModel::LinRel
-operator>=(const Gecode::MiniModel::LinExpr& l,
+Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator>=(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
            int r);
 /// Construct linear inequality relation
-Gecode::MiniModel::LinRel
-operator>=(const Gecode::MiniModel::LinExpr& l,
-           const Gecode::MiniModel::LinExpr& r);
+Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator>=(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
+           const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r);
+
+
+/// Construct linear equality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator==(int l,
+           const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r);
+/// Construct linear equality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator==(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+           int r);
+/// Construct linear equality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator==(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+           const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r);
+
+/// Construct linear disequality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator!=(int l,
+           const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r);
+/// Construct linear disequality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator!=(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+           int r);
+/// Construct linear disequality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator!=(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+           const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r);
+
+/// Construct linear inequality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator<(int l,
+          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r);
+/// Construct linear inequality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator<(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+          int r);
+/// Construct linear inequality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator<(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r);
+
+/// Construct linear inequality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator<=(int l,
+           const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r);
+/// Construct linear inequality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator<=(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+           int r);
+/// Construct linear inequality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator<=(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+           const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r);
+
+/// Construct linear inequality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator>(int l,
+          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r);
+/// Construct linear inequality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator>(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+          int r);
+/// Construct linear inequality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator>(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r);
+
+/// Construct linear inequality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator>=(int l,
+           const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r);
+/// Construct linear inequality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator>=(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+           int r);
+/// Construct linear inequality relation
+Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator>=(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+           const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r);
 
 //@}
 
@@ -337,22 +454,26 @@ namespace Gecode {
         Node *l, *r;
         /// Possibly a variable
         BoolVar x;
-        /// Possibly a reified linear relation
-        LinRel rl;
+        /// Possibly a reified linear relation over integer variables
+        LinRel<IntVar> rl;
 
         /// Default constructor
         Node(void);
         /// Decrement reference count and possibly free memory
-        GECODE_MINIMODEL_EXPORT bool decrement(void);
+        GECODE_MINIMODEL_EXPORT 
+        bool decrement(void);
         /// Post propagators for nested conjunctive and disjunctive expression
-        GECODE_MINIMODEL_EXPORT int post(Space* home, NodeType t,
-                                         BoolVarArgs& b, int i) const;
+        GECODE_MINIMODEL_EXPORT         
+        int post(Space* home, NodeType t, BoolVarArgs& b, int i) const;
         /// Post propagators for expression
-        GECODE_MINIMODEL_EXPORT void post(Space* home, BoolVar b) const;
+        GECODE_MINIMODEL_EXPORT
+        void post(Space* home, BoolVar b) const;
         /// Post propagators for expression
-        GECODE_MINIMODEL_EXPORT BoolVar post(Space* home) const;
+        GECODE_MINIMODEL_EXPORT
+        BoolVar post(Space* home) const;
         /// Post propagators for relation
-        GECODE_MINIMODEL_EXPORT void post(Space* home, bool t) const;
+        GECODE_MINIMODEL_EXPORT
+        void post(Space* home, bool t) const;
         
         /// Memory management
         static void* operator new(size_t size);
@@ -372,7 +493,7 @@ namespace Gecode {
       /// Construct expression for negation
       BoolExpr(const BoolExpr& e, NodeType t);
       /// Construct expression for reified linear relation
-      BoolExpr(const LinRel& rl);
+      BoolExpr(const LinRel<IntVar>& rl);
       /// Post propagators for expression
       BoolVar post(Space* home) const;
       /// Post propagators for relation
@@ -437,7 +558,7 @@ operator^(const Gecode::MiniModel::BoolExpr&,
 
 /// Reification of linear expression
 Gecode::MiniModel::BoolExpr
-operator~(const Gecode::MiniModel::LinExpr&);
+operator~(const Gecode::MiniModel::LinExpr<Gecode::IntVar>&);
 
 namespace Gecode {
 
@@ -471,9 +592,10 @@ namespace Gecode {
    */
   //@{
   /// Post linear expression and return its value
-  IntVar post(Space* home, const MiniModel::LinExpr& e,
+  template <class Var>
+  IntVar post(Space* home, const MiniModel::LinExpr<Var>& e,
               IntConLevel icl=ICL_DEF);
-  /// Post linear expression (special case for variable) and return its value
+  /// Post linear expression (special case for integer variable) and return its value
   IntVar post(Space* home, const IntVar& x,
               IntConLevel icl=ICL_DEF);
   /// Post linear expression (special case for constant) and return its value
@@ -481,7 +603,8 @@ namespace Gecode {
               IntConLevel icl=ICL_DEF);
 
   /// Post linear relation
-  void post(Space* home, const MiniModel::LinRel& r,
+  template <class Var>
+  void post(Space* home, const MiniModel::LinRel<Var>& r,
             IntConLevel icl=ICL_DEF);
   /// Make it work for special integer only-case
   void post(Space* home, bool r,

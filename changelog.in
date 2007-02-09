@@ -63,6 +63,15 @@ even though a space is failed. However, the variables might have
 been modified during a tell operation that has failed.
 
 [ENTRY]
+Module:	minimodel
+What:	change
+Rank:	major
+[DESCRIPTION]
+Linear expressions and relations can also be created from Boolean
+variables, iwth the reification that Boolean relations cannot be
+reified.
+
+[ENTRY]
 Module:	int
 What:	change
 Rank:	major

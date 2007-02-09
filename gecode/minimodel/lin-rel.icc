@@ -28,38 +28,44 @@ namespace Gecode {
      * Operations for linear expressions
      *
      */
+    template<class Var>
     forceinline
-    LinRel::LinRel(void) {}
+    LinRel<Var>::LinRel(void) {}
 
+    template<class Var>
     forceinline
-    LinRel::LinRel(const LinExpr& l, IntRelType irt0, const LinExpr& r)
+    LinRel<Var>::LinRel(const LinExpr<Var>& l, IntRelType irt0, 
+                        const LinExpr<Var>& r)
       : e(l,r,-1), irt(irt0) {}
 
+    template<class Var>
     forceinline
-    LinRel::LinRel(const LinExpr& l, IntRelType irt0, int r)
+    LinRel<Var>::LinRel(const LinExpr<Var>& l, IntRelType irt0, int r)
       : e(l,-r,1), irt(irt0) {}
 
+    template<class Var>
     forceinline
-    LinRel::LinRel(int l, IntRelType irt0, const LinExpr& r)
+    LinRel<Var>::LinRel(int l, IntRelType irt0, const LinExpr<Var>& r)
       : e(r,-l,-1), irt(irt0) {}
 
+    template<class Var>
     forceinline IntRelType
-    LinRel::neg(IntRelType irt) {
+    LinRel<Var>::neg(IntRelType irt) {
       switch (irt) {
       case IRT_EQ: return IRT_NQ;
       case IRT_NQ: return IRT_EQ;
       case IRT_LQ: return IRT_GR;
       case IRT_LE: return IRT_GQ;
       case IRT_GQ: return IRT_LE;
-      case IRT_GR:
-      default:
-        assert(irt == IRT_GR);
+      case IRT_GR: return IRT_LQ;
+      default: GECODE_NEVER;
       }
       return IRT_LQ;
     }
 
+    template<class Var>
     inline void
-    LinRel::post(Space* home, bool t, IntConLevel icl) const {
+    LinRel<Var>::post(Space* home, bool t, IntConLevel icl) const {
       if (t) {
         e.post(home,irt,icl);
       } else {
@@ -67,8 +73,9 @@ namespace Gecode {
       }
     }
 
+    template<class Var>
     forceinline void
-    LinRel::post(Space* home, const BoolVar& b) const {
+    LinRel<Var>::post(Space* home, const BoolVar& b) const {
       e.post(home,irt,b);
     }
 
@@ -80,100 +87,197 @@ namespace Gecode {
  * Construction of linear relations
  *
  */
-inline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
 operator==(int l,
-           const Gecode::MiniModel::LinExpr& r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_EQ,r);
+           const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_EQ,r);
 }
-inline Gecode::MiniModel::LinRel
-operator==(const Gecode::MiniModel::LinExpr& l,
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator==(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
            int r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_EQ,r);
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_EQ,r);
 }
-inline Gecode::MiniModel::LinRel
-operator==(const Gecode::MiniModel::LinExpr& l,
-           const Gecode::MiniModel::LinExpr& r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_EQ,r);
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator==(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
+           const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_EQ,r);
 }
 
-inline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
 operator!=(int l,
-           const Gecode::MiniModel::LinExpr& r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_NQ,r);
+           const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_NQ,r);
 }
-inline Gecode::MiniModel::LinRel
-operator!=(const Gecode::MiniModel::LinExpr& l,
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator!=(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
            int r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_NQ,r);
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_NQ,r);
 }
-inline Gecode::MiniModel::LinRel
-operator!=(const Gecode::MiniModel::LinExpr& l,
-           const Gecode::MiniModel::LinExpr& r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_NQ,r);
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator!=(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
+           const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_NQ,r);
 }
 
-inline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
 operator<(int l,
-          const Gecode::MiniModel::LinExpr& r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_LE,r);
+          const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_LE,r);
 }
-inline Gecode::MiniModel::LinRel
-operator<(const Gecode::MiniModel::LinExpr& l,
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator<(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
           int r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_LE,r);
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_LE,r);
 }
-inline Gecode::MiniModel::LinRel
-operator<(const Gecode::MiniModel::LinExpr& l,
-          const Gecode::MiniModel::LinExpr& r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_LE,r);
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator<(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
+          const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_LE,r);
 }
 
-inline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
 operator<=(int l,
-           const Gecode::MiniModel::LinExpr& r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_LQ,r);
+           const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_LQ,r);
 }
-inline Gecode::MiniModel::LinRel
-operator<=(const Gecode::MiniModel::LinExpr& l,
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator<=(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
            int r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_LQ,r);
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_LQ,r);
 }
-inline Gecode::MiniModel::LinRel
-operator<=(const Gecode::MiniModel::LinExpr& l,
-           const Gecode::MiniModel::LinExpr& r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_LQ,r);
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator<=(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
+           const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_LQ,r);
 }
 
-inline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
 operator>(int l,
-          const Gecode::MiniModel::LinExpr& r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_GR,r);
+          const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_GR,r);
 }
-inline Gecode::MiniModel::LinRel
-operator>(const Gecode::MiniModel::LinExpr& l,
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator>(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
           int r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_GR,r);
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_GR,r);
 }
-inline Gecode::MiniModel::LinRel
-operator>(const Gecode::MiniModel::LinExpr& l,
-          const Gecode::MiniModel::LinExpr& r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_GR,r);
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator>(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
+          const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_GR,r);
 }
 
-inline Gecode::MiniModel::LinRel
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
 operator>=(int l,
-           const Gecode::MiniModel::LinExpr& r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_GQ,r);
+           const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_GQ,r);
 }
-inline Gecode::MiniModel::LinRel
-operator>=(const Gecode::MiniModel::LinExpr& l,
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator>=(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
            int r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_GQ,r);
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_GQ,r);
 }
-inline Gecode::MiniModel::LinRel
-operator>=(const Gecode::MiniModel::LinExpr& l,
-           const Gecode::MiniModel::LinExpr& r) {
-  return Gecode::MiniModel::LinRel(l,Gecode::IRT_GQ,r);
+inline Gecode::MiniModel::LinRel<Gecode::IntVar>
+operator>=(const Gecode::MiniModel::LinExpr<Gecode::IntVar>& l,
+           const Gecode::MiniModel::LinExpr<Gecode::IntVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::IntVar>(l,Gecode::IRT_GQ,r);
+}
+
+
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator==(int l,
+           const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_EQ,r);
+}
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator==(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+           int r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_EQ,r);
+}
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator==(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+           const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_EQ,r);
+}
+
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator!=(int l,
+           const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_NQ,r);
+}
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator!=(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+           int r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_NQ,r);
+}
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator!=(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+           const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_NQ,r);
+}
+
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator<(int l,
+          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_LE,r);
+}
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator<(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+          int r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_LE,r);
+}
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator<(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_LE,r);
+}
+
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator<=(int l,
+           const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_LQ,r);
+}
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator<=(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+           int r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_LQ,r);
+}
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator<=(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+           const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_LQ,r);
+}
+
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator>(int l,
+          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_GR,r);
+}
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator>(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+          int r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_GR,r);
+}
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator>(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+          const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_GR,r);
+}
+
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator>=(int l,
+           const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_GQ,r);
+}
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator>=(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+           int r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_GQ,r);
+}
+inline Gecode::MiniModel::LinRel<Gecode::BoolVar>
+operator>=(const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& l,
+           const Gecode::MiniModel::LinExpr<Gecode::BoolVar>& r) {
+  return Gecode::MiniModel::LinRel<Gecode::BoolVar>(l,Gecode::IRT_GQ,r);
 }
 
 
@@ -184,8 +288,9 @@ namespace Gecode {
    *
    */
 
+  template<class Var>
   forceinline void
-  post(Space* home, const MiniModel::LinRel& r, IntConLevel icl) {
+  post(Space* home, const MiniModel::LinRel<Var>& r, IntConLevel icl) {
     if (home->failed()) return;
     r.post(home,true,icl);
   }

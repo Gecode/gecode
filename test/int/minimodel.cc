@@ -138,10 +138,29 @@ public:
 };
 MmLinEqG _mmlineqg;
 
-class MmLinExprA : public IntTest {
+class MmLinEqBool : public IntTest {
 public:
-  MmLinExprA(void)
-    : IntTest("MiniModel::Lin::Expr::A",4,is,false) {}
+  MmLinEqBool(void)
+    : IntTest("MiniModel::Lin::Eq::Bool",3,is,false) {}
+  virtual bool solution(const Assignment& x) const {
+    for (int i=x.size(); i--; )
+      if ((x[i] < 0) || (x[i] > 1))
+        return false;
+    return (2*x[0]+1) == (x[1]+x[2]-1);
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    BoolVarArray y(home,x.size());
+    for (int i=x.size(); i--; )
+      y[i] = link(home,x[i]);
+    Gecode::post(home, 2*y[0]+1 == y[1]+y[2]-1);
+  }
+};
+MmLinEqBool _mmlineqbool;
+
+class MmLinExprInt : public IntTest {
+public:
+  MmLinExprInt(void)
+    : IntTest("MiniModel::Lin::Expr::Int",4,is,false) {}
   virtual bool solution(const Assignment& x) const {
     return 2*x[0]+3*x[1]-x[2] == x[3];
   }
@@ -150,7 +169,27 @@ public:
     Gecode::rel(home,y,IRT_EQ,x[3]);
   }
 };
-MmLinExprA _mmlinexpra;
+MmLinExprInt _mmlinexprint;
+
+class MmLinExprBool : public IntTest {
+public:
+  MmLinExprBool(void)
+    : IntTest("MiniModel::Lin::Expr::Bool",4,is,false) {}
+  virtual bool solution(const Assignment& x) const {
+    for (int i=x.size()-1; i--; )
+      if ((x[i] < 0) || (x[i] > 1))
+        return false;
+    return -2*x[0]+3*x[1]-x[2] == x[3];
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    BoolVarArray y(home,x.size()-1);
+    for (int i=x.size()-1; i--; )
+      y[i] = link(home,x[i]);
+    IntVar z = Gecode::post(home, -2*y[0] + 3*y[1] - y[2]);
+    Gecode::rel(home,z,IRT_EQ,x[3]);
+  }
+};
+MmLinExprBool _mmlinexprbool;
 
 static IntSet b(0,1);
 

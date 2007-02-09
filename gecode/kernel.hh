@@ -110,11 +110,12 @@
 
 
 /*
- * Variable views and testing for shared variables
+ * Variables, views and testing for shared variables
  *
  */
 
 #include "gecode/kernel/view.icc"
+#include "gecode/kernel/var.icc"
 
 
 

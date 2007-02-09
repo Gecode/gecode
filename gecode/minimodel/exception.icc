@@ -31,6 +31,13 @@ namespace Gecode { namespace MiniModel {
 
   //@{
 
+  /// %Exception: Reification not supported
+  class ReificationNotSupported : public Exception  {
+  public:
+    /// Initialize with location \a l
+    ReificationNotSupported(const char* l);
+  };
+
   /// %Exception: Sizes of arguments does not match
   class ArgumentSizeMismatch : public Exception  {
   public:
@@ -46,6 +53,10 @@ namespace Gecode { namespace MiniModel {
   };
 
   //@}
+
+  inline
+  ReificationNotSupported::ReificationNotSupported(const char* l)
+    : Exception(l,"Reification not supported") {}
 
   inline
   ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l)

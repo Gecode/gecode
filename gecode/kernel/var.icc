@@ -1,0 +1,36 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2005
+ *
+ *  Last modified:
+ *     $Date: 2006-10-31 20:57:08 +0100 (Tue, 31 Oct 2006) $ by $Author: schulte $
+ *     $Revision: 3846 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  /**
+   * \brief Traits class for mapping variables to views
+   *
+   * Each variable must specialize this traits class and add a \code
+   * typedef \endcode for the view corresponding to this variable.
+   */
+  template <class Var>
+  class VarViewTraits {};
+
+}
+
+// STATISTICS: kernel-other

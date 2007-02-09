@@ -158,6 +158,19 @@ namespace Gecode {
     typedef Set::SetVarImp Var;
   };
 
+
+  /**
+   * \brief Traits class mapping variables to views
+   *
+   * This class specializes the VarViewTraits for set variables.
+   */
+  template<>
+  class VarViewTraits<SetVar> {
+  public:
+    /// The variable type of an IntView
+    typedef Set::SetView View;
+  };
+
   // Forward declarations for friends
   namespace Set { class ConstantView;  }
   bool same(const Set::ConstantView&, const Set::ConstantView&);

@@ -97,16 +97,16 @@ endif
 #
 
 KERNELSRC0 = \
-	exception.cc core.cc memory-manager.cc
+	exception core memory-manager
 KERNELHDR0 = \
-	array.icc branching.icc core.icc exception.icc \
-	macros.icc memory-manager.icc memory.icc modevent.icc \
-	propagator.icc view.icc
+	array branching core exception \
+	macros memory-manager memory modevent \
+	propagator view var
 
-KERNELSRC	= $(KERNELSRC0:%=gecode/kernel/%)
+KERNELSRC	= $(KERNELSRC0:%=gecode/kernel/%.cc)
 KERNELHDR	= \
 	gecode/limits.hh gecode/kernel.hh \
-	$(KERNELHDR0:%=gecode/kernel/%)
+	$(KERNELHDR0:%=gecode/kernel/%.icc)
 KERNELOBJ	= $(KERNELSRC:%.cc=%$(OBJSUFFIX))
 
 export KERNELDLL	= $(LIBPREFIX)@KERNEL@$(DLLSUFFIX)
@@ -311,7 +311,7 @@ SETBUILDDIRS	=						\
 #
 
 MMSRC0 = \
-	lin-expr.cc scheduling.cc bool-expr.cc arithmetic.cc
+	scheduling.cc bool-expr.cc arithmetic.cc
 MMHDR0 = \
 	lin-expr.icc lin-rel.icc exception.icc matrix.icc \
 	bool-expr.icc bool-rel.icc

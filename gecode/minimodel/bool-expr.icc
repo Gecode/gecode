@@ -83,7 +83,7 @@ namespace Gecode { namespace MiniModel {
   }
 
   inline
-  BoolExpr::BoolExpr(const LinRel& rl)
+  BoolExpr::BoolExpr(const LinRel<IntVar>& rl)
     : n(new Node) {
     n->same = 1;
     n->t    = BT_RLIN;
@@ -147,7 +147,7 @@ operator^(const Gecode::MiniModel::BoolExpr& l,
 }
 
 inline Gecode::MiniModel::BoolExpr
-operator~(const Gecode::MiniModel::LinRel& rl) {
+operator~(const Gecode::MiniModel::LinRel<Gecode::IntVar>& rl) {
   return Gecode::MiniModel::BoolExpr(rl);
 }
 

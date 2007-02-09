@@ -27,6 +27,27 @@
 
 namespace Gecode { namespace Int { namespace Linear {
 
+  template<class View>
+  inline void
+  estimate(Term<View>* t, int n, int c, int& l, int &u) {
+    double min = c;
+    double max = c;
+    for (int i=n; i--; )
+      if (t[i].a > 0) {
+        min += t[i].a*t[i].x.min();
+        max += t[i].a*t[i].x.max();
+      } else {
+        max += t[i].a*t[i].x.min();
+        min += t[i].a*t[i].x.max();
+      }
+    if (min < Limits::Int::int_min)
+      min = Limits::Int::int_min;
+    l = static_cast<int>(min);
+    if (max > Limits::Int::int_max)
+      max = Limits::Int::int_max;
+    u = static_cast<int>(max);
+  }
+
   /// Sort linear terms by view
   template<class View>
   class TermLess {

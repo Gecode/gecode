@@ -1179,6 +1179,24 @@ namespace Gecode { namespace Int { namespace Linear {
     View x;
   };
 
+  /** \brief Estimate lower and upper bounds
+   *
+   * Estimates the boundaries for a linear expression 
+   * \f$\sum_{i=0}^{n-1}t_i + c\f$. If the boundaries exceed
+   * the limits as defined in Limits::Int, these boundaries
+   * are returned.
+   *
+   * \param t array of linear terms
+   * \param n size of array
+   * \param c constant
+   * \param l lower bound
+   * \param u upper bound
+   *
+   */
+  template<class View>
+  void estimate(Term<View>* t, int n, int c,
+                int& l, int& u);
+
   /** \brief Normalize linear integer constraints
    * 
    * \param t array of linear terms
