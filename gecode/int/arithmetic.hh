@@ -224,18 +224,18 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    *
    * This propagator provides multiplication for positive views only.
    */
-  template <class VA, class VB, class VC>
+  template <class Val, class VA, class VB, class VC>
   class MultPlus : 
     public MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND> {
   protected:
     using MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>::x0;
     using MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>::x1;
     using MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>::x2;
+  public:
     /// Constructor for posting
     MultPlus(Space* home, VA x0, VB x1, VC x2);
     /// Constructor for cloning \a p
-    MultPlus(Space* home, bool share, MultPlus<VA,VB,VC>& p);
-  public:
+    MultPlus(Space* home, bool share, MultPlus<Val,VA,VB,VC>& p);
     /// Post propagator \f$x_0\cdot x_1=x_2\f$
     static ExecStatus post(Space* home, VA x0, VB x1, VC x2);
     /// Copy propagator during cloning
@@ -248,10 +248,6 @@ namespace Gecode { namespace Int { namespace Arithmetic {
    * \brief Bounds-consistent multiplication propagator
    *
    * Requires \code #include "gecode/int/arithmetic.hh" \endcode
-   *
-   * \todo Currently this propagator only works for \a View
-   * being IntView. This will change when integer views are
-   * available in fully generic form.
    *
    * \ingroup FuncIntProp
    */

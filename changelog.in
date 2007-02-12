@@ -54,6 +54,14 @@ The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
 Module:	int
+What:	performance
+Rank:	minor
+[DESCRIPTION]
+The multiplication uses integer precision if possible for better
+performance.
+
+[ENTRY]
+Module:	int
 What:	change
 Rank:	minor
 [DESCRIPTION]
