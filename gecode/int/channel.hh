@@ -26,12 +26,17 @@
 #include "gecode/int.hh"
 #include "gecode/int/distinct.hh"
 
+#include "gecode/support/sentinel-stack.hh"
+
 /**
  * \namespace Gecode::Int::Channel
  * \brief %Channel propagators
  */
 
 namespace Gecode { namespace Int { namespace Channel {
+
+  /// Processing stack
+  typedef Support::SentinelStack<int,-1> ProcessStack;
 
   /**
    * \brief Base-class for channel propagators
@@ -131,7 +136,6 @@ namespace Gecode { namespace Int { namespace Channel {
 }}}
 
 #include "gecode/int/channel/base.icc"
-#include "gecode/int/channel/stack.icc"
 #include "gecode/int/channel/val.icc"
 #include "gecode/int/channel/dom.icc"
 

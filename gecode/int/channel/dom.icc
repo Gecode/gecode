@@ -192,10 +192,8 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View>
   ExecStatus
   Dom<View>::propagate(Space* home) {
-    GECODE_AUTOARRAY(int, __xa, n+1);
-    GECODE_AUTOARRAY(int, __ya, n+1);
-    ProcessStack xa(__xa);
-    ProcessStack ya(__ya);
+    GECODE_AUTOSTACK(int,-1, xa, n);
+    GECODE_AUTOSTACK(int,-1, ya, n);
 
     DomInfo<View>* x = xy;
     DomInfo<View>* y = xy+n;
