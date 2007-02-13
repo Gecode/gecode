@@ -54,9 +54,9 @@ namespace Gecode { namespace Support {
     /// Pop topmost element from stack and return it
     T pop(void);
     /// Return element on top of stack
-    T& top(void);
+    T& top(void) const;
     /// Return element that has just been popped
-    T& last(void);
+    T& last(void) const;
     /// Push element \a x on top of stack
     void push(T x);
 
@@ -95,13 +95,13 @@ namespace Gecode { namespace Support {
 
   template <class T>
   forceinline T&
-  StaticStack<T>::top(void) {
+  StaticStack<T>::top(void) const {
     return stack[tos-1];
   }
 
   template <class T>
   forceinline T&
-  StaticStack<T>::last(void) {
+  StaticStack<T>::last(void) const {
     return stack[tos];
   }
 

@@ -22,8 +22,7 @@
 
 #include "gecode/int.hh"
 #include "gecode/support/sort.hh"
-#include "gecode/support/static-stack.hh"
-
+#include "gecode/support/sentinel-stack.hh"
 
 namespace Gecode { namespace Int { namespace Regular {
 
@@ -299,7 +298,7 @@ namespace Gecode {
     }
 
     // Do a reachability analysis for all states starting from start state
-    Support::StaticStack<int> visit(n_states);
+    GECODE_AUTOSTACK(int, -1, visit, n_states);
     GECODE_AUTOARRAY(int, state, n_states);
     for (int i=n_states; i--; )
       state[i] = SI_NONE;

@@ -289,8 +289,8 @@ gecode/int/regular/dfa$(OBJSUFFIX) gecode/int/regular/dfa$(SBJSUFFIX): \
 	./gecode/kernel/core.icc ./gecode/kernel/exception.icc ./gecode/kernel/macros.icc \
 	./gecode/kernel/memory-manager.icc ./gecode/kernel/memory.icc ./gecode/kernel/modevent.icc \
 	./gecode/kernel/propagator.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
-	./gecode/limits.hh ./gecode/support/shared-array.hh ./gecode/support/sort.hh \
-	./gecode/support/static-pqueue.hh ./gecode/support/static-stack.hh ./gecode/vti.icc 
+	./gecode/limits.hh ./gecode/support/sentinel-stack.hh ./gecode/support/shared-array.hh \
+	./gecode/support/sort.hh ./gecode/support/static-pqueue.hh ./gecode/vti.icc 
 gecode/int/regular$(OBJSUFFIX) gecode/int/regular$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \
@@ -314,7 +314,7 @@ gecode/int/regular$(OBJSUFFIX) gecode/int/regular$(SBJSUFFIX): \
 	./gecode/kernel/memory.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/limits.hh \
 	./gecode/support/block-allocator.hh ./gecode/support/shared-array.hh ./gecode/support/sort.hh \
-	./gecode/support/static-pqueue.hh ./gecode/support/static-stack.hh ./gecode/vti.icc 
+	./gecode/support/static-pqueue.hh ./gecode/vti.icc 
 gecode/int/dom$(OBJSUFFIX) gecode/int/dom$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/dom.hh ./gecode/int/dom/range.icc ./gecode/int/dom/spec.icc \
@@ -626,8 +626,8 @@ gecode/int/distinct$(OBJSUFFIX) gecode/int/distinct$(SBJSUFFIX): \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/memory.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
 	./gecode/kernel/var.icc ./gecode/kernel/view.icc ./gecode/limits.hh \
-	./gecode/support/dynamic-array.hh ./gecode/support/shared-array.hh ./gecode/support/sort.hh \
-	./gecode/support/static-pqueue.hh ./gecode/support/static-stack.hh ./gecode/vti.icc 
+	./gecode/support/dynamic-array.hh ./gecode/support/sentinel-stack.hh ./gecode/support/shared-array.hh \
+	./gecode/support/sort.hh ./gecode/support/static-pqueue.hh ./gecode/vti.icc 
 gecode/int/cumulatives$(OBJSUFFIX) gecode/int/cumulatives$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/cumulatives.hh ./gecode/int/cumulatives/val.icc ./gecode/int/exception.icc \
@@ -737,7 +737,7 @@ gecode/int/channel$(OBJSUFFIX) gecode/int/channel$(SBJSUFFIX): \
 	./gecode/kernel/propagator.icc ./gecode/kernel/var.icc ./gecode/kernel/view.icc \
 	./gecode/limits.hh ./gecode/support/dynamic-array.hh ./gecode/support/sentinel-stack.hh \
 	./gecode/support/shared-array.hh ./gecode/support/sort.hh ./gecode/support/static-pqueue.hh \
-	./gecode/support/static-stack.hh ./gecode/vti.icc 
+	./gecode/vti.icc 
 gecode/set/branch$(OBJSUFFIX) gecode/set/branch$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/int-set.icc ./gecode/int/propagator.icc \

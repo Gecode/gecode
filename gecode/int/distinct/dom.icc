@@ -23,7 +23,7 @@
 #include <climits>
 
 #include "gecode/support/dynamic-array.hh"
-#include "gecode/support/static-stack.hh"
+#include "gecode/support/sentinel-stack.hh"
 
 #include "gecode/iter.hh"
 
@@ -207,9 +207,10 @@ namespace Gecode { namespace Int { namespace Distinct {
     bool sync(void);
 
   protected:
+    typedef Support::SentinelStack<Node<View>*,NULL> SccStack;
     bool search_match(ViewNode<View>*);
     bool match(ViewNode<View>*);
-    void scc(Support::StaticStack<Node<View>*>&, Node<View>*);
+    void scc(SccStack&, Node<View>*);
 
   public:
     // Memory management
@@ -396,8 +397,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   void
-  DomCtrl<View>::ViewValGraph::scc(Support::StaticStack<Node<View>*>& n_s,
-                                   Node<View>* w) {
+  DomCtrl<View>::ViewValGraph::scc(SccStack& n_s, Node<View>* w) {
     w->pre = cnt0;
     w->low = cnt0;
     unsigned int min = cnt0++;
@@ -424,51 +424,55 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline void
   DomCtrl<View>::ViewValGraph::mark(void) {
-    // Marks all edges as used that are on simple paths in the graph
-    // that start from a free (unmatched node) by depth-first-search
-    Support::StaticStack<Node<View>*> n_s(n_val+n_view);
-
-    // Insert all free nodes: they can be only value nodes as we
-    // have a maximum matching covering all view nodes
-    count++;
-    for (int i = n_val; i--; )
-      if (!val[i]->matching())
-        // Is it orphaned?
-        if (val[i]->empty()) {
-          val[i] = val[--n_val];
-        } else {
-          val[i]->comp = count;
-          n_s.push(val[i]);
-        }
-
-    // Invariant: only value nodes are on the stack!
-    while (!n_s.empty()) {
-      ValNode<View>* n = static_cast<ValNode<View>*>(n_s.pop());
-      for (Edge<View>* e = n->edge_fst(); e != n->edge_lst(); e = e->next()) {
-        // Get the value node
-        e->use();
-        ViewNode<View>* x = e->view(n);
-        if (x->comp < count) {
-          x->comp = count;
-          assert(x->edge_fst()->next() == x->edge_lst());
-          ValNode<View>* m = x->edge_fst()->val(x);
-          x->edge_fst()->use();
-          if (m->comp < count) {
-            m->comp = count;
-            n_s.push(m);
+    {
+      // Marks all edges as used that are on simple paths in the graph
+      // that start from a free (unmatched node) by depth-first-search
+      GECODE_AUTOSTACK(ValNode<View>*,NULL,n_s,n_val);
+      
+      // Insert all free nodes: they can be only value nodes as we
+      // have a maximum matching covering all view nodes
+      count++;
+      for (int i = n_val; i--; )
+        if (!val[i]->matching())
+          // Is it orphaned?
+          if (val[i]->empty()) {
+            val[i] = val[--n_val];
+          } else {
+            val[i]->comp = count;
+            n_s.push(val[i]);
+          }
+      
+      // Invariant: only value nodes are on the stack!
+      while (!n_s.empty()) {
+        ValNode<View>* n = n_s.pop();
+        for (Edge<View>* e = n->edge_fst(); e != n->edge_lst(); e=e->next()) {
+          // Get the value node
+          e->use();
+          ViewNode<View>* x = e->view(n);
+          if (x->comp < count) {
+            x->comp = count;
+            assert(x->edge_fst()->next() == x->edge_lst());
+            ValNode<View>* m = x->edge_fst()->val(x);
+            x->edge_fst()->use();
+            if (m->comp < count) {
+              m->comp = count;
+              n_s.push(m);
+            }
           }
         }
       }
     }
 
-    count++;
-    cnt0 = count;
-    cnt1 = count;
-    n_s.reset();
-    for (int i = n_view; i--; )
-      if (view[i]->comp < count)
-        scc(n_s,view[i]);
-    count = cnt0+1;
+    {
+      count++;
+      cnt0 = count;
+      cnt1 = count;
+      GECODE_AUTOSTACK(Node<View>*,NULL,n_s,n_val+n_view);
+      for (int i = n_view; i--; )
+        if (view[i]->comp < count)
+          scc(n_s,view[i]);
+      count = cnt0+1;
+    }
   }
 
   template <class View>
