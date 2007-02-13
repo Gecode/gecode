@@ -41,19 +41,29 @@ namespace Gecode { namespace Int { namespace Regular {
     unsigned int o_deg;
   };
 
-  class Edge;
-  typedef Support::BlockAllocator<Edge> EdgeAllocator;
-
   /**
    * \brief %Edge in the layered graph
    */
-  class Edge : public Support::BlockClient<Edge> {
+  class Edge {
   public:
     int    val;
     State* i_state;
     State* o_state;
     Edge*  next;
+    static void  operator delete(void*, size_t);
+    static void  operator delete(void*,Space*);
+    static void* operator new(size_t, Space*);
   };
+
+  forceinline void
+  Edge::operator delete(void*, size_t) {}
+  forceinline void
+  Edge::operator delete(void*,Space*) {}
+  forceinline void*
+  Edge::operator new(size_t s, Space* home) {
+    return home->alloc(s);
+  }
+
 
   /**
    * \name Flags for modification in layer
@@ -64,43 +74,12 @@ namespace Gecode { namespace Int { namespace Regular {
   const int MOD_ODEG  = 2; ///< Outdegree has become zero
   //@}
 
-  /**
-   * \brief A layer in the layered graph
-   */
   class Layer {
   public:
     Edge*        edges;
     unsigned int size;
     int          modified;
   };
-
-  /// %LayeredGraph as data structure used for propagation in regular
-  template <class View>
-  class Dom<View>::LayeredGraph {
-  private:
-    EdgeAllocator ea;
-    size_t        state_size;
-    State*        state_mem;
-    Layer         _layer;    // One addional layer (makes layers[-1] okay)
-    Layer         layers[2]; // Dynamically adjusted (also allow layers[...+1])
-  public:
-    /// Construct layered graph
-    LayeredGraph(ViewArray<View> x, const DFA& d);
-    /// Release layered graph
-    ~LayeredGraph(void);
-
-    /// Prune initially for view sequence \a x
-    ExecStatus prune_initial(Space* home, Propagator* p, ViewArray<View> x);
-    /// Prune incrementally for view sequence \a x
-    ExecStatus prune(Space* home, Propagator* p, ViewArray<View> x);
-
-    /// Return memory required for layered graph
-    size_t allocated(void) const;
-    static void* operator new(size_t,int);
-    static void  operator delete(void*);
-    static void  operator delete(void*,int);
-  };
-
 
 
   /**
@@ -170,16 +149,6 @@ namespace Gecode { namespace Int { namespace Regular {
 
 
 
-  template <class View>
-  forceinline size_t
-  Dom<View>::dispose(Space* home) {
-    Propagator::unforce(home);
-    dfa.~DFA();
-    delete lg;
-    (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
-    return sizeof(*this);
-  }
-
   /*
    * The layered graph
    *
@@ -187,45 +156,58 @@ namespace Gecode { namespace Int { namespace Regular {
 
   template <class View>
   forceinline
-  Dom<View>::LayeredGraph::LayeredGraph(ViewArray<View> x, const DFA& dfa) {
+  Dom<View>::LayeredGraph::LayeredGraph(void) : layers(NULL) {}
+
+  template <class View>
+  forceinline bool
+  Dom<View>::LayeredGraph::constructed(void) const {
+    return layers != NULL;
+  }
+
+  template <class View>
+  forceinline void
+  Dom<View>::LayeredGraph::construct(Space* home,
+                                     ViewArray<View> x, const DFA& dfa) {
     int n = x.size();
+    layers = reinterpret_cast<Layer*>
+      (home->alloc(sizeof(Layer)*(n+2))) + 1;
+
     unsigned int n_states = dfa.n_states();
 
     // Allocate memory
-    state_size = sizeof(State)*(n+1)*n_states;
-    state_mem  = reinterpret_cast<State*>(Memory::malloc(state_size));
-
+    State* states = reinterpret_cast<State*>
+      (home->alloc(sizeof(State)*(n+1)*n_states));
 
     // Initialize states (indegree and outdegree)
     for (int i = (n+1)*n_states; i--; ) {
-      state_mem[i].i_deg = 0;
-      state_mem[i].o_deg = 0;
+      states[i].i_deg = 0;
+      states[i].o_deg = 0;
     }
 
     // Mark initial state as being reachable
-    state_mem[0].i_deg = 1;
+    states[0].i_deg = 1;
 
     // Mark final states as reachable as well
     for (int s = dfa.final_fst(); s < dfa.final_lst(); s++)
-      state_mem[n*n_states + s].o_deg = 1;
+      states[n*n_states + s].o_deg = 1;
 
     // First pass: add transitions
     for (int i = 0; i < n; i++) {
       Edge** p = &layers[i].edges;
       // Enter links leaving reachable states (indegree != 0)
       DFA::Transitions  t_a(dfa);
-      ViewRanges<View>    rx(x[i]);
+      ViewRanges<View>  rx(x[i]);
       while (rx() && t_a()) {
         const DFA::Transition* t = t_a.transition();
         // Compute pointers to states
-        State* i_state = state_mem + (i  )*n_states + t->i_state;
-        State* o_state = state_mem + (i+1)*n_states + t->o_state;
+        State* i_state = &states[(i  )*n_states + t->i_state];
+        State* o_state = &states[(i+1)*n_states + t->o_state];
         if (t->symbol > rx.max()) {
           ++rx;
         } else if ((t->symbol >= rx.min()) && (i_state->i_deg > 0)) {
           // Add new transition as state is reachable
           i_state->o_deg++; o_state->i_deg++;
-          Edge* e = new (ea) Edge;
+          Edge* e = new (home) Edge;
           e->i_state = i_state;
           e->val     = t->symbol;
           e->o_state = o_state;
@@ -393,53 +375,27 @@ namespace Gecode { namespace Int { namespace Regular {
   }
 
   template <class View>
-  forceinline
-  Dom<View>::LayeredGraph::~LayeredGraph(void) {
-    Memory::free(state_mem);
-  }
-
-  template <class View>
-  forceinline size_t
-  Dom<View>::LayeredGraph::allocated(void) const {
-    return state_size + ea.size();
-  }
-
-  template <class View>
-  forceinline void
-  Dom<View>::LayeredGraph::operator delete(void* p) {
-    Memory::free(p);
-  }
-
-  template <class View>
-  forceinline void
-  Dom<View>::LayeredGraph::operator delete(void* p, int) {
-    Memory::free(p);
-  }
-
-  template <class View>
-  forceinline void*
-  Dom<View>::LayeredGraph::operator new(size_t, int n) {
-    // n ist the number of variables
-    return Memory::malloc(sizeof(LayeredGraph) + n*sizeof(Layer));
-  }
-
-  template <class View>
   ExecStatus
   Dom<View>::propagate(Space* home) {
-    if (lg == NULL) {
-      lg = new (this->x.size()) LayeredGraph(this->x,dfa);
-      return lg->prune_initial(home,this,this->x);
+    if (lg.constructed()) {
+      return lg.prune(home,this,this->x);
     } else {
-      return lg->prune(home,this,this->x);
+      lg.construct(home,this->x,dfa);
+      return lg.prune_initial(home,this,this->x);
     }
   }
 
   template <class View>
   forceinline
   Dom<View>::Dom(Space* home, ViewArray<View>& x, DFA& d)
-    : NaryPropagator<View,PC_INT_DOM>(home,x),
-      dfa(d), lg(NULL) {
-    Propagator::force(home);
+    : NaryPropagator<View,PC_INT_DOM>(home,x), dfa(d) {}
+
+  template <class View>
+  forceinline size_t
+  Dom<View>::dispose(Space* home) {
+    dfa.~DFA();
+    (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
+    return sizeof(*this);
   }
 
   template <class View>
@@ -452,14 +408,8 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View>
   forceinline
   Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
-    : NaryPropagator<View,PC_INT_DOM>(home,share,p), lg(NULL) {
+    : NaryPropagator<View,PC_INT_DOM>(home,share,p) {
     dfa.update(share,p.dfa);
-  }
-
-  template <class View>
-  size_t
-  Dom<View>::allocated(void) const {
-    return (lg != NULL) ? lg->allocated() : 0;
   }
 
   template <class View>

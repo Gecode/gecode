@@ -32,6 +32,9 @@
 
 namespace Gecode { namespace Int { namespace Regular {
 
+  /// A layer in the layered graph
+  class Layer;
+
   /**
    * \brief Domain-consistent regular propagator
    *
@@ -49,9 +52,24 @@ namespace Gecode { namespace Int { namespace Regular {
     /// The %DFA describing the language
     DFA dfa;
     /// %LayeredGraph as data structure used for propagation
-    class LayeredGraph;
-    /// Propagation is performed on a layered graph (used as cache)
-    LayeredGraph* lg;
+    class LayeredGraph {
+    private:
+      Layer* layers;
+    public:
+      /// Mark layered graph as not yet constructed
+      LayeredGraph(void);
+      /// Test whether layered graph has already been constructed
+      bool constructed(void) const;
+      /// Construct layered graph
+      void construct(Space* home, ViewArray<View> x, const DFA& d);
+
+      /// Prune initially for view sequence \a x
+      ExecStatus prune_initial(Space* home, Propagator* p, ViewArray<View> x);
+      /// Prune incrementally for view sequence \a x
+      ExecStatus prune(Space* home, Propagator* p, ViewArray<View> x);
+    };
+    /// Propagation is performed on a layered graph (cnstructed lazily)
+    LayeredGraph lg;
 
     /// Constructor for cloning \a p (use \a shared for \a dfa)
     Dom(Space* home, bool shared, Dom<View>& p);
@@ -64,8 +82,6 @@ namespace Gecode { namespace Int { namespace Regular {
     virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Returns size of layered graph
-    virtual size_t allocated(void) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
     /// Post propagator on views \a x and DFA \a d
