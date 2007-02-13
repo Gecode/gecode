@@ -43,7 +43,6 @@ class Options {
 public:
   static const int defiter = 5,
     deffixprob = 10,
-    defflushprob = 10,
     defnoofmachines = 1,
     defmachine = 1,
     defskip = 0;
@@ -51,14 +50,13 @@ public:
   int   seed;
   int   iter;
   int   fixprob;
-  int   flushprob;
   bool  log, display;
   bool  stop_on_error;
   unsigned int   noofmachines;
   unsigned int   machine;
   unsigned int   skip;
   Options(void)
-    : seed(0), iter(defiter), fixprob(deffixprob), flushprob(defflushprob),
+    : seed(0), iter(defiter), fixprob(deffixprob), 
       log(false), display(true), stop_on_error(true),
       noofmachines(defnoofmachines), machine(defmachine), skip(defskip)
   {}

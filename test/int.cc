@@ -99,15 +99,11 @@ operator<<(std::ostream& os, const Assignment& a) {
   return os;
 }
 
-#define FORCE_FIXFLUSH                            \
+#define FORCE_FIX                                 \
 do {                                              \
   if (Test::randgen(opt.fixprob) == 0) {          \
     Log::fixpoint();                              \
     if (status() == SS_FAILED) return;            \
-  }                                               \
-  if (Test::randgen(opt.flushprob) == 0) {        \
-    flush();                                      \
-    Log::flush();                                 \
   }                                               \
 } while(0)
 
@@ -136,7 +132,7 @@ public:
     for (int i=a.size(); i--; ) {
       Log::assign(Log::mk_name("x", i), a[i]);
       rel(this, x[i], IRT_EQ, a[i]);
-      FORCE_FIXFLUSH;
+      FORCE_FIX;
     }
   }
   bool assigned(void) const {
@@ -266,10 +262,6 @@ public:
       }
       delete c;
     }                                                
-    if (Test::randgen(opt.flushprob) == 0) {                
-      flush();                                        
-      Log::flush();                                
-    }                
     return true;
   }
 

@@ -54,8 +54,6 @@ namespace {
     std::cout << "Options: -seed " << o.seed;
     if (o.fixprob != o.deffixprob)
       std::cout << "  -fixprob " << o.fixprob;
-    if (o.flushprob != o.defflushprob)
-      std::cout << "  -flushprob " << o.flushprob;
     std::cout << "  -test " << name << std::endl;
     if (o.log)
       Log::print(o.display);
@@ -150,9 +148,6 @@ Options::parse(int argc, char** argv) {
                 << "\t-fixprob (unsigned int) default: " <<fixprob<< std::endl
                 << "\t\t1/fixprob is the probability of fixpoint recalculations"
                 << std::endl
-                << "\t-flushprob (unsigned int) default: " <<flushprob<< std::endl
-                << "\t\t1/flushprob is the probability of flushing the the caches"
-                << std::endl
                 << "\t-iter (unsigned int) default: " <<iter<< std::endl
                 << "\t\tthe number of iterations" << std::endl
                 << "\t-test (string) default: (none)" << std::endl
@@ -198,9 +193,6 @@ Options::parse(int argc, char** argv) {
     } else if (!strcmp(argv[i],"-fixprob")) {
       if (++i == argc) goto missing;
       fixprob = atoi(argv[i]);
-    } else if (!strcmp(argv[i],"-flushprob")) {
-      if (++i == argc) goto missing;
-      flushprob = atoi(argv[i]);
     } else if (!strcmp(argv[i],"-test")) {
       if (++i == argc) goto missing;
       int offset = 0;
