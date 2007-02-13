@@ -38,7 +38,7 @@ public:
   }
   virtual void post(Space* home, IntVarArray& x) {
     IntArgs ia(n,c);
-    element(home, ia, x[0], x[1]);
+    element(home, ia, x[0], x[1], 0);
   }
 };
 static IntSet is1(-4,8);
@@ -63,7 +63,7 @@ public:
   }
   virtual void post(Space* home, IntVarArray& x) {
     IntArgs ia(n,c);
-    element(home, ia, x[0], x[0]);
+    element(home, ia, x[0], x[0], 0);
   }
 };
 
@@ -84,7 +84,7 @@ public:
   }
   virtual void post(Space* home, IntVarArray& x) {
     IntArgs ia(n,c);
-    element(home, ia, x[0], link(home,x[1]));
+    element(home, ia, x[0], link(home,x[1]), 0);
   }
 };
 static const int bc1[5] = {0,1,1,0,1};
@@ -107,7 +107,7 @@ public:
     IntVarArgs ia(n);
     for (int i=0;i<n;i++)
       ia[i]=x[2+i];
-    element(home, ia, x[0], x[1], icl);
+    element(home, ia, x[0], x[1], 0, icl);
   }
   virtual void description(std::ostream& h, std::ostream& c) {
     h << "post element" << std::endl;
@@ -136,7 +136,7 @@ public:
     IntVarArgs ia(n);
     for (int i=0;i<n;i++)
       ia[i]=x[1+i];
-    element(home, ia, x[0], x[0], icl);
+    element(home, ia, x[0], x[0], 0, icl);
   }
   virtual void description(std::ostream& h, std::ostream& c) {
     h << "post element" << std::endl;
@@ -173,7 +173,7 @@ public:
     BoolVarArgs ia(n);
     for (int i=0;i<n;i++)
       ia[i]=link(home,x[2+i]);
-    element(home, ia, x[0], link(home,x[1]));
+    element(home, ia, x[0], link(home,x[1]), 0);
   }
 };
 
