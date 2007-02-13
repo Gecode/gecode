@@ -86,9 +86,15 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
+  forceinline void
+  Edge<View>::operator delete(void*, size_t) {}
+  template <class View>
+  forceinline void
+  Edge<View>::operator delete(void*,Space*) {}
+  template <class View>
   forceinline void*
-  Edge<View>::operator new(size_t, void* p) {
-    return p;
+  Edge<View>::operator new(size_t s, Space* home) {
+    return home->alloc(s);
   }
 
 }}}

@@ -42,12 +42,16 @@ namespace Gecode { namespace Int { namespace Distinct {
     return static_cast<Edge<View>*>(static_cast<BiLink*>(const_cast<Node<View>*>(this)));
   }
   template <class View>
+  forceinline void
+  Node<View>::operator delete(void*, size_t) {}
+  template <class View>
+  forceinline void
+  Node<View>::operator delete(void*,Space*) {}
+  template <class View>
   forceinline void*
-  Node<View>::operator new(size_t, void* p) {
-    return p;
+  Node<View>::operator new(size_t s, Space* home) {
+    return home->alloc(s);
   }
-
-
 
   /*
    * Value nodes

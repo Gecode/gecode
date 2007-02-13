@@ -165,7 +165,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   protected:
     /// View-value graph for propagation
     class ViewValGraph;
-    /// Propagation is performed on a view-value graph (used as cache)
+    /// Propagation is performed on a view-value graph
     ViewValGraph* vvg;
   public:
     /// Initialize with non-existing view-value graph
@@ -173,13 +173,11 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Check whether a view-value graph is available
     bool available(void);
     /// Initialize view-value graph for views \a x
-    ExecStatus init(int n, View* x);
+    ExecStatus init(Space* home, int n, View* x);
     /// Synchronize available view-value graph
     ExecStatus sync(void);
     /// Perform propagation
     void propagate(Space* home);
-    /// Returns size of view-value graph
-    size_t allocated(void) const;
     /// Deallocate view-value graph
     void dispose(void);
   };
@@ -222,8 +220,6 @@ namespace Gecode { namespace Int { namespace Distinct {
     virtual PropCost cost(void) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
-    /// Returns size of view-value graph
-    virtual size_t allocated(void) const;
     /// Post propagator for views \a x
     static  ExecStatus post(Space* home, ViewArray<View>& x);
     /// Delete propagator and return its size

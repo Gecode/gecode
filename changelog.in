@@ -53,6 +53,14 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module:	int
+What:	performance
+Rank:	minor
+[DESCRIPTION]
+Domain consistent distinct and channel allocate memory from the
+space heap now. Much simpler.
+
+[ENTRY]
 Module:	kernel
 What:	performance
 Rank:	major
@@ -63,6 +71,10 @@ likely to be returned to the operating system. Furthermore, the
 flush member functions for actors have been removed (they were
 unneeded) and actors and spaces now have allocated member
 functions for returning how much memory is allocated by a space.
+
+Moreover, the memory reported by some propagators has been
+ingnored. Note that this flow did not affect the bechmark figures
+on the Gecode webpage.
 
 [ENTRY]
 Module:	int

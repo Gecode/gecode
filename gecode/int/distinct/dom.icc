@@ -99,7 +99,9 @@ namespace Gecode { namespace Int { namespace Distinct {
     Edge<View>* edge_fst(void) const;
     Edge<View>* edge_lst(void) const;
 
-    static void* operator new(size_t, void*);
+    static void  operator delete(void*, size_t);
+    static void  operator delete(void*,Space*);
+    static void* operator new(size_t, Space*);
   };
 
   /**
@@ -160,7 +162,10 @@ namespace Gecode { namespace Int { namespace Distinct {
     Edge<View>** next_edge_ref(void);
 
     Edge<View>* next(void) const;
-    static void* operator new(size_t, void*);
+
+    static void  operator delete(void*, size_t);
+    static void  operator delete(void*,Space*);
+    static void* operator new(size_t, Space*);
   };
 
 }}}
@@ -180,20 +185,17 @@ namespace Gecode { namespace Int { namespace Distinct {
   class DomCtrl<View>::ViewValGraph {
   protected:
     ViewNode<View>** view; int n_view;
-    ValNode<View>** val; int n_val;
-    char* mem;
+    ValNode<View>**  val;  int n_val;
+
     unsigned int count;
     unsigned int cnt0;
     unsigned int cnt1;
-    Support::StaticStack<Node<View>*> n_s;
+
   public:
-    ViewValGraph(int, View*, const int*, int, unsigned int);
-    ViewValGraph(int, View*, int, unsigned int, int);
-    ~ViewValGraph(void);
+    ViewValGraph(Space*,int, View*, const int*, int, unsigned int);
+    ViewValGraph(Space*,int, View*, int, unsigned int, int);
 
-    size_t size;
-
-    static ViewValGraph* init(int,View*);
+    static ViewValGraph* init(Space*,int,View*);
 
     bool initial_match(void);
 
@@ -207,56 +209,55 @@ namespace Gecode { namespace Int { namespace Distinct {
   protected:
     bool search_match(ViewNode<View>*);
     bool match(ViewNode<View>*);
-    void scc(Node<View>*);
+    void scc(Support::StaticStack<Node<View>*>&, Node<View>*);
 
   public:
     // Memory management
-    static void* operator new(size_t);
-    static void  operator delete(void*);
+    static void  operator delete(void*, size_t);
+    static void  operator delete(void*,Space*);
+    static void* operator new(size_t, Space*);
   };
 
 
   template <class View>
+  forceinline void
+  DomCtrl<View>::ViewValGraph::operator delete(void*, size_t) {}
+  template <class View>
+  forceinline void
+  DomCtrl<View>::ViewValGraph::operator delete(void*,Space*) {}
+  template <class View>
+  forceinline void*
+  DomCtrl<View>::ViewValGraph::operator new(size_t s, Space* home) {
+    return home->alloc(s);
+  }
+
+  template <class View>
   forceinline
-  DomCtrl<View>::ViewValGraph::ViewValGraph(int n_view0, View* x,
+  DomCtrl<View>::ViewValGraph::ViewValGraph(Space* home,
+                                            int n_view0, View* x,
                                             int n_val0,
                                             unsigned int n_edges, int min)
     :  n_view(n_view0), n_val(n_val0),
-       count(0), cnt0(0), cnt1(0), n_s(n_view+n_val)
-  {
-    size_t edge_size  = sizeof(Edge<View>) * n_edges;
-    size_t views_size = sizeof(ViewNode<View>) * n_view;
-    size_t view_size  = sizeof(ViewNode<View>*) * n_view;
-    size_t vals_size  = sizeof(ValNode<View>) * n_val;
-    size_t val_size   = sizeof(ValNode<View>*) * n_val;
-    size_t size = edge_size +
-      views_size + view_size + vals_size + val_size;
-    mem = reinterpret_cast<char*>(Memory::malloc(size));
-    Edge<View>*     edges      = reinterpret_cast<Edge<View>*>(mem);
-    ViewNode<View>* view_nodes = reinterpret_cast<ViewNode<View>*>
-      (mem+edge_size);
-    ValNode<View>*  val_nodes  = reinterpret_cast<ValNode<View>*>
-      (mem+edge_size+views_size);
+       count(0), cnt0(0), cnt1(0) {
     view = reinterpret_cast<ViewNode<View>**>
-      (mem+edge_size+views_size+vals_size);
+      (home->alloc(n_view*sizeof(ViewNode<View>*)));
     val  = reinterpret_cast<ValNode<View>**>
-      (mem+edge_size+views_size+vals_size+view_size);
+      (home->alloc(n_val*sizeof(ValNode<View>*)));
 
     // Init value nodes
     {
       int v = min+n_val;
       for (int i = n_val; i--; )
-        val[i] = new (val_nodes + i) ValNode<View>(--v);
+        val[i] = new (home) ValNode<View>(--v);
     }
 
     // Init view nodes and edges
     for (int i = n_view; i--; ) {
-      view[i] = new (view_nodes + i) ViewNode<View>(x[i]);
+      view[i] = new (home) ViewNode<View>(x[i]);
       Edge<View>** edge_p = view[i]->val_edges_ref();
       ViewValues<View> x_i(x[i]);
       while (x_i()) {
-        *edge_p = new (edges++) Edge<View>(val_nodes+x_i.val()-min,
-                                           view_nodes+i);
+        *edge_p = new (home) Edge<View>(val[x_i.val()-min],view[i]);
         edge_p = (*edge_p)->next_edge_ref();
         ++x_i;
       }
@@ -266,44 +267,31 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline
-  DomCtrl<View>::ViewValGraph::ViewValGraph(int n_view0, View* x,
+  DomCtrl<View>::ViewValGraph::ViewValGraph(Space* home,
+                                            int n_view0, View* x,
                                             const int* val_inf,
                                             int n_val0, unsigned int n_edges)
     :  n_view(n_view0), n_val(n_val0),
-       count(0), cnt0(0), cnt1(0), n_s(n_view+n_val)
-  {
-    size_t edge_size  = sizeof(Edge<View>) * n_edges;
-    size_t views_size = sizeof(ViewNode<View>) * n_view;
-    size_t view_size  = sizeof(ViewNode<View>*) * n_view;
-    size_t vals_size  = sizeof(ValNode<View>) * n_val;
-    size_t val_size   = sizeof(ValNode<View>*) * n_val;
-    size_t size = edge_size +
-      views_size + view_size + vals_size + val_size;
-    mem = reinterpret_cast<char*>(Memory::malloc(size));
-    Edge<View>*     edges      = reinterpret_cast<Edge<View>*>(mem);
-    ViewNode<View>* view_nodes = reinterpret_cast<ViewNode<View>*>
-      (mem+edge_size);
-    ValNode<View>*  val_nodes  = reinterpret_cast<ValNode<View>*>
-      (mem+edge_size+views_size);
+       count(0), cnt0(0), cnt1(0) {
     view = reinterpret_cast<ViewNode<View>**>
-      (mem+edge_size+views_size+vals_size);
+      (home->alloc(n_view*sizeof(ViewNode<View>*)));
     val  = reinterpret_cast<ValNode<View>**>
-      (mem+edge_size+views_size+vals_size+view_size);
+      (home->alloc(n_val*sizeof(ValNode<View>*)));
 
     // Init value nodes
     for (int i = n_val; i--; )
-      val[i] = new (val_nodes + i) ValNode<View>(val_inf[i]);
+      val[i] = new (home) ValNode<View>(val_inf[i]);
 
     // Init view nodes
     for (int i = n_view; i--; ) {
-      view[i] = new (view_nodes + i) ViewNode<View>(x[i]);
+      view[i] = new (home) ViewNode<View>(x[i]);
       Edge<View>** edge_p = view[i]->val_edges_ref();
       ViewValues<View> x_i(x[i]);
       int j = 0;
       while (x_i()) {
         while (val_inf[j] < x_i.val())
           j++;
-        *edge_p = new (edges++) Edge<View>(val_nodes+j,view_nodes+i);
+        *edge_p = new (home) Edge<View>(val[j],view[i]);
         edge_p = (*edge_p)->next_edge_ref();
         ++x_i;
       }
@@ -313,7 +301,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   typename DomCtrl<View>::ViewValGraph*
-  DomCtrl<View>::ViewValGraph::init(int n_view, View* x) {
+  DomCtrl<View>::ViewValGraph::init(Space* home, int n_view, View* x) {
     // Find value information for construction of view value graph
     int min = x[n_view-1].min();
     int max = x[n_view-1].max();
@@ -332,7 +320,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 
     // Test whether the values are dense or sparse
     if (static_cast<unsigned int>(n_view)*2 >= width)
-      return new ViewValGraph(n_view,x,static_cast<int>(width),size,min);
+      return new (home) ViewValGraph(home,n_view,x,
+                                     static_cast<int>(width),size,min);
 
     Support::DynamicArray<int> val_inf(64);
     // Compute set of values
@@ -351,7 +340,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     } while (xu());
     if (n_val < n_view)
       return NULL;
-    return new ViewValGraph(n_view,x,val_inf,n_val,size);
+    return new (home) ViewValGraph(home, n_view,x,val_inf,n_val,size);
   }
 
   template <class View>
@@ -407,7 +396,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   void
-  DomCtrl<View>::ViewValGraph::scc(Node<View>* w) {
+  DomCtrl<View>::ViewValGraph::scc(Support::StaticStack<Node<View>*>& n_s,
+                                   Node<View>* w) {
     w->pre = cnt0;
     w->low = cnt0;
     unsigned int min = cnt0++;
@@ -415,7 +405,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     for (Edge<View>* e = w->edge_fst(); e != w->edge_lst(); e = e->next()) {
       Node<View>* v = e->dst(w);
       if (v->pre < count)
-        scc(v);
+        scc(n_s,v);
       if (v->low < min)
         min = v->low;
     }
@@ -436,7 +426,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   DomCtrl<View>::ViewValGraph::mark(void) {
     // Marks all edges as used that are on simple paths in the graph
     // that start from a free (unmatched node) by depth-first-search
-    n_s.reset();
+    Support::StaticStack<Node<View>*> n_s(n_val+n_view);
+
     // Insert all free nodes: they can be only value nodes as we
     // have a maximum matching covering all view nodes
     count++;
@@ -476,7 +467,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     n_s.reset();
     for (int i = n_view; i--; )
       if (view[i]->comp < count)
-        scc(view[i]);
+        scc(n_s,view[i]);
     count = cnt0+1;
   }
 
@@ -556,22 +547,6 @@ namespace Gecode { namespace Int { namespace Distinct {
     return true;
   }
 
-  template <class View>
-  forceinline
-  DomCtrl<View>::ViewValGraph::~ViewValGraph(void) {
-    Memory::free(mem);
-  }
-
-  template <class View>
-  forceinline void*
-  DomCtrl<View>::ViewValGraph::operator new(size_t s) {
-    return Memory::malloc(s);
-  }
-  template <class View>
-  forceinline void
-  DomCtrl<View>::ViewValGraph::operator delete(void* p) {
-    Memory::free(p);
-  }
 
   /*
    * The propagation controller
@@ -594,9 +569,9 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline ExecStatus
-  DomCtrl<View>::init(int n, View* x) {
+  DomCtrl<View>::init(Space* home, int n, View* x) {
     assert(vvg == NULL);
-    vvg = ViewValGraph::init(n,x);
+    vvg = ViewValGraph::init(home,n,x);
     if ((vvg == NULL) || !vvg->initial_match())
       return ES_FAILED;
     return ES_OK;
@@ -616,12 +591,6 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  forceinline size_t
-  DomCtrl<View>::allocated(void) const {
-    return (vvg != NULL) ? vvg->size : 0;
-  }
-
-  template <class View>
   forceinline void
   DomCtrl<View>::dispose(void) {
     delete vvg;
@@ -637,14 +606,11 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline
   Dom<View>::Dom(Space* home, ViewArray<View>& x)
-    : NaryPropagator<View,PC_INT_DOM>(home,x) {
-    Propagator::force(home);
-  }
+    : NaryPropagator<View,PC_INT_DOM>(home,x) {}
 
   template <class View>
   forceinline size_t
   Dom<View>::dispose(Space* home) {
-    Propagator::unforce(home);
     dc.dispose();
     (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
     return sizeof(*this);
@@ -669,12 +635,6 @@ namespace Gecode { namespace Int { namespace Distinct {
   forceinline
   Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
     : NaryPropagator<View,PC_INT_DOM>(home,share,p) {}
-
-  template <class View>
-  size_t
-  Dom<View>::allocated(void) const {
-    return dc.allocated();
-  }
 
   template <class View>
   PropCost
@@ -719,7 +679,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     if (dc.available()) {
       GECODE_ES_CHECK(dc.sync());
     } else {
-      GECODE_ES_CHECK(dc.init(x.size(),&x[0]));
+      GECODE_ES_CHECK(dc.init(home,x.size(),&x[0]));
     }
 
     dc.propagate(home);
