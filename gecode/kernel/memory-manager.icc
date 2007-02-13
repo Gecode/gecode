@@ -50,7 +50,7 @@ namespace Gecode {
        * If a space has requested \a hcsz_inc_ratio chunks of heap memory,
        * the chunk size is doubled.
        */
-      const int hcsz_inc_ratio = 8;
+      const int hcsz_inc_ratio = 4;
       /**
        * \brief Decrement ratio for chunk size
        *
@@ -60,7 +60,7 @@ namespace Gecode {
        * heap chunks of the current chunk size, the current chunk size
        * for the clone is halfed.
        */
-      const int hcsz_dec_ratio = 4;
+      const int hcsz_dec_ratio = 2;
 
       /**
        * \brief Unit size for free lists
@@ -279,29 +279,17 @@ namespace Gecode {
         (cur_hcsz < Memory::Config::hcsz_max)) {
       cur_hcsz <<= 1;
     }
-
+    // Increment the size that it caters for the initial overhead
+    size_t overhead = sizeof(HeapChunk) - sizeof(double);
+    sz += overhead;
     // Round size to next multiple of current heap chunk size
-    lsz = ((sz > cur_hcsz) ?
-           (((size_t) (sz / cur_hcsz)) + 1) * cur_hcsz : cur_hcsz);
-
-    // Request as close as possible a chunk with lsz sizes free
-#if GECODE_MEMORY_ALIGNMENT == 4
-    requested += lsz;
-    HeapChunk* hc = reinterpret_cast<HeapChunk*>
-      (Memory::malloc(sizeof(HeapChunk)+lsz-sizeof(double)));
+    size_t allocate = ((sz > cur_hcsz) ?
+                       (((size_t) (sz / cur_hcsz)) + 1) * cur_hcsz : cur_hcsz);
+    // Request a chunk of size lsz
+    requested += allocate;
+    HeapChunk* hc = reinterpret_cast<HeapChunk*>(Memory::malloc(allocate));
     start = reinterpret_cast<char*>(&(hc->area[0]));
-#endif
-#if GECODE_MEMORY_ALIGNMENT == 8
-    // Leave room for adjusting alignment by 4
-    requested += lsz+sizeof(double);
-    HeapChunk* hc = reinterpret_cast<HeapChunk*>
-      (Memory::malloc(sizeof(HeapChunk)+lsz));
-    start = reinterpret_cast<char*>(&(hc->area[0]));
-    // This is four if it is only four aligned
-    size_t size_adj = reinterpret_cast<size_t>(start) & 4;
-    start += size_adj;
-    lsz += sizeof(double) - size_adj;
-#endif
+    lsz   = allocate - overhead;
     // Link heap chunk
     hc->next = cur_hc; cur_hc = hc;
 #ifdef GECODE_MEMORY_CHECK
