@@ -616,14 +616,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  forceinline void
-  DomCtrl<View>::flush(void) {
-    delete vvg; vvg = NULL;
-  }
-
-  template <class View>
   forceinline size_t
-  DomCtrl<View>::size(void) const {
+  DomCtrl<View>::allocated(void) const {
     return (vvg != NULL) ? vvg->size : 0;
   }
 
@@ -677,15 +671,9 @@ namespace Gecode { namespace Int { namespace Distinct {
     : NaryPropagator<View,PC_INT_DOM>(home,share,p) {}
 
   template <class View>
-  void
-  Dom<View>::flush(void) {
-    dc.flush();
-  }
-
-  template <class View>
   size_t
-  Dom<View>::size(void) const {
-    return dc.size();
+  Dom<View>::allocated(void) const {
+    return dc.allocated();
   }
 
   template <class View>

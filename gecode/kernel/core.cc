@@ -64,31 +64,18 @@ namespace Gecode {
    *
    */
 
-  void
-  Actor::flush(void) {}
-
   size_t
-  Actor::cached(void) const {
+  Actor::allocated(void) const {
     return 0;
   }
 
-  void
-  Space::flush(void) {
-    // Flush actors registered for deletion
-    Actor** a = d_fst;
-    Actor** e = d_cur;
-    while (a < e) {
-      (*a)->flush(); a++;
-    }
-  }
-
   size_t
-  Space::cached(void) const {
-    size_t s = 0;
+  Space::allocated(void) const {
+    size_t s = mm.allocated();
     Actor** a = d_fst;
     Actor** e = d_cur;
     while (a < e) {
-      s += (*a)->cached(); a++;
+      s += (*a)->allocated(); a++;
     }
     return s;
   }

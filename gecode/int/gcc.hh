@@ -153,8 +153,6 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     /// Destructor
     virtual size_t dispose(Space* home);
-    /// Flush partial sum data structures
-    virtual void flush(void);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Cost funtion returning dynamic PC_LINEAR_HI.
@@ -237,8 +235,6 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     /// Destructor including deallocation of variable-value graph
     virtual size_t dispose(Space* home);
-    /// Flush variable-value graph
-    virtual void flush(void);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /**

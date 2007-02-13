@@ -402,12 +402,9 @@ namespace Gecode {
 
     /// \name Memory management
     //@{
-    /// Flush cache datastructures
+    /// Report size occupied by additionally datastructures
     GECODE_KERNEL_EXPORT 
-    virtual void flush(void);
-    /// Report size occupied by cached datastructures
-    GECODE_KERNEL_EXPORT 
-    virtual size_t cached(void) const;
+    virtual size_t allocated(void) const;
     /// Delete actor and return its size
     GECODE_KERNEL_EXPORT
     virtual size_t dispose(Space* home);
@@ -868,20 +865,6 @@ namespace Gecode {
     GECODE_KERNEL_EXPORT
     void commit(const BranchingDesc* d, unsigned int a);
 
-    /**
-     * \brief Flush cache datastructures in actors
-     *
-     * Flushes caches of actors in the space. This is useful to free
-     * memory (in particular when considering a space to be stored
-     * for later use such as during search). Even better is to make a
-     * clone of the space.
-     *
-     * \ingroup TaskSearch
-     */
-    GECODE_KERNEL_EXPORT
-    void flush(void);
-
-
     /*
      * Status checking and failing outside actors
      *
@@ -943,13 +926,13 @@ namespace Gecode {
      */
     template <size_t> void  fl_dispose(FreeList* f, FreeList* l);
     /**
-     * \brief Return how much heap memory is allocated by this space
+     * \brief Return how much heap memory is allocated
      *
-     * Note that is excludes the memory for the space object itself.
+     * Note that is includes both the memory allocated for the space heap
+     * as well as additional memory allocated by actors.
      */
+    GECODE_KERNEL_EXPORT 
     size_t allocated(void) const;
-    /// Return how much memory is used by caches for actors
-    GECODE_KERNEL_EXPORT size_t cached(void) const;
     /// Return list of variables that need deletion
     template <VarTypeId VTI> VarBase* varsDisposeList(void);
     /// Set list of variables that need deletion
@@ -1011,11 +994,6 @@ namespace Gecode {
   forceinline void
   Space::fl_dispose(FreeList* f, FreeList* l) {
     mm.template fl_dispose<s>(f,l);
-  }
-
-  forceinline size_t
-  Space::allocated(void) const {
-    return mm.allocated();
   }
 
   template <VarTypeId VTI>

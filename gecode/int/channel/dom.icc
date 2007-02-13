@@ -294,15 +294,9 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   template <class View>
-  void
-  Dom<View>::flush(void) {
-    dc.flush();
-  }
-
-  template <class View>
   size_t
-  Dom<View>::size(void) const {
-    return dc.size();
+  Dom<View>::allocated(void) const {
+    return dc.allocated();
   }
 
 }}}

@@ -179,9 +179,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Perform propagation
     void propagate(Space* home);
     /// Returns size of view-value graph
-    size_t size(void) const;
-    /// Flush view-value graph
-    void flush(void);
+    size_t allocated(void) const;
     /// Deallocate view-value graph
     void dispose(void);
   };
@@ -224,10 +222,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     virtual PropCost cost(void) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
-    /// Flush view-value graph
-    virtual void flush(void);
     /// Returns size of view-value graph
-    virtual size_t size(void) const;
+    virtual size_t allocated(void) const;
     /// Post propagator for views \a x
     static  ExecStatus post(Space* home, ViewArray<View>& x);
     /// Delete propagator and return its size

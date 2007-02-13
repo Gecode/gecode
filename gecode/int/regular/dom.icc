@@ -96,7 +96,7 @@ namespace Gecode { namespace Int { namespace Regular {
     ExecStatus prune(Space* home, Propagator* p, ViewArray<View> x);
 
     /// Return memory required for layered graph
-    size_t size(void) const;
+    size_t allocated(void) const;
     static void* operator new(size_t,int);
     static void  operator delete(void*);
     static void  operator delete(void*,int);
@@ -401,7 +401,7 @@ namespace Gecode { namespace Int { namespace Regular {
 
   template <class View>
   forceinline size_t
-  Dom<View>::LayeredGraph::size(void) const {
+  Dom<View>::LayeredGraph::allocated(void) const {
     return state_size + ea.size();
   }
 
@@ -458,15 +458,9 @@ namespace Gecode { namespace Int { namespace Regular {
   }
 
   template <class View>
-  void
-  Dom<View>::flush(void) {
-    delete lg; lg = NULL;
-  }
-
-  template <class View>
   size_t
-  Dom<View>::size(void) const {
-    return (lg != NULL) ? lg->size() : 0;
+  Dom<View>::allocated(void) const {
+    return (lg != NULL) ? lg->allocated() : 0;
   }
 
   template <class View>

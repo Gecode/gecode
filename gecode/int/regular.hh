@@ -64,10 +64,8 @@ namespace Gecode { namespace Int { namespace Regular {
     virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Flush layered graph
-    virtual void flush(void);
     /// Returns size of layered graph
-    virtual size_t size(void) const;
+    virtual size_t allocated(void) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
     /// Post propagator on views \a x and DFA \a d

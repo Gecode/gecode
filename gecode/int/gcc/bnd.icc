@@ -596,13 +596,6 @@ namespace Gecode { namespace Int { namespace GCC {
     return ES_OK;
   }
 
-  template <class View, class Card, bool isView, bool shared>
-  void
-  BndImp<View, Card, isView, shared>::flush(void){
-    delete lps; lps = NULL;
-    delete ups; ups = NULL;
-  }
-
 }}}
 
 // STATISTICS: int-prop

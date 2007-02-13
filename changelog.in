@@ -53,6 +53,18 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module:	kernel
+What:	performance
+Rank:	major
+[DESCRIPTION]
+The memory management policies have been completely reworked. Now
+memory requests are much more regular. Hence, memory is much more
+likely to be returned to the operating system. Furthermore, the
+flush member functions for actors have been removed (they were
+unneeded) and actors and spaces now have allocated member
+functions for returning how much memory is allocated by a space.
+
+[ENTRY]
 Module:	int
 What:	performance
 Rank:	minor

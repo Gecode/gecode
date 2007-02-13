@@ -81,10 +81,8 @@ namespace Gecode { namespace Int { namespace Element {
     /// Post propagator for \f$i_{x_0}=x_1\f$
     static  ExecStatus post(Space* home, IntSharedArray& i,
                             ViewA x0, ViewB x1);
-    /// Flush cached index-value map
-    virtual void flush(void);
     /// Return size of index-value map
-    virtual size_t size(void) const;
+    virtual size_t allocated(void) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };

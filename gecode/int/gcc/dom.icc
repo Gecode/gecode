@@ -84,13 +84,6 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView>
-  void
-  Dom<View, Card, isView>::flush(void) {
-    delete vvg;
-    vvg = NULL;
-  }
-
-  template <class View, class Card, bool isView>
   Actor*
   Dom<View, Card, isView>::copy(Space* home, bool share) {
     return new (home) Dom<View, Card, isView>(home, share, *this);

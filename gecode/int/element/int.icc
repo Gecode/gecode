@@ -341,14 +341,8 @@ namespace Gecode { namespace Int { namespace Element {
 
 
   template <class ViewA, class ViewB>
-  void
-  Int<ViewA,ViewB>::flush(void) {
-    delete ivm; ivm = NULL;
-  }
-
-  template <class ViewA, class ViewB>
   size_t
-  Int<ViewA,ViewB>::size(void) const {
+  Int<ViewA,ViewB>::allocated(void) const {
     return (ivm != NULL) ? ivm->size() : 0;
   }
 

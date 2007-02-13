@@ -90,7 +90,7 @@ namespace Gecode { namespace Search {
       mem_total -= mem_cur;
       mem_cur = 0;
     } else {
-      mem_cur = mem_space + s->allocated() + s->cached();
+      mem_cur = mem_space + s->allocated();
       mem_total += mem_cur;
       if (mem_total > memory)
         memory = mem_total;
@@ -99,7 +99,7 @@ namespace Gecode { namespace Search {
 
   forceinline void
   EngineCtrl::reset(const Space* s) {
-    mem_cur   = mem_space+s->allocated()+s->cached();
+    mem_cur   = mem_space + s->allocated();
     mem_total = mem_cur;
     if (mem_total > memory)
       memory = mem_total;
