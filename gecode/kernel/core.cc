@@ -55,7 +55,6 @@ namespace Gecode {
     b_status = static_cast<Branching*>(&a_actors);
     b_commit = static_cast<Branching*>(&a_actors);
     n_sub = 0;
-    sub = NULL;
   }
 
 
@@ -132,8 +131,6 @@ namespace Gecode {
     for (int vti=VTI_LAST; vti--;)
       if (vars_dispose[vti] != NULL)
         vtp[vti]->dispose(this, vars_dispose[vti]);
-    if (sub != NULL)
-      Memory::free(sub);
   }
 
 
@@ -293,7 +290,8 @@ namespace Gecode {
    *
    */
 
-  Space::Space(bool share, Space& s) : mm(s.mm) {
+  Space::Space(bool share, Space& s) 
+    : mm(s.mm,s.n_sub*sizeof(Propagator**)) {
     // Initialize variable entry points
     for (int i=0; i<VTI_LAST; i++) {
       vars[i]=NULL;
@@ -393,21 +391,16 @@ namespace Gecode {
       x->u.free_me = 0;
     c->vars_noidx = NULL;
     // Update variables with indexing structure
-    Propagator** s;
-    if (n_sub > 0)
-      s = reinterpret_cast<Propagator**>
-        (Memory::malloc(n_sub*sizeof(Propagator*)));
-    else
-      s = NULL;
-    c->n_sub = n_sub;
-    c->sub   = s;
-    for (int vti=VTI_LAST; vti--; ) {
-      VarBase* vs = c->vars[vti];
-      if (vs != NULL) {
-        c->vars[vti] = NULL; vtp[vti]->update(vs,s);
+    {
+      Propagator** s = reinterpret_cast<Propagator**>(c->mm.subscriptions());
+      c->n_sub = n_sub;
+      for (int vti=VTI_LAST; vti--; ) {
+        VarBase* vs = c->vars[vti];
+        if (vs != NULL) {
+          c->vars[vti] = NULL; vtp[vti]->update(vs,s);
+        }
       }
     }
-    assert(s-c->sub == n_sub);
     // Re-establish prev links (reset forwarding information)
     ActorLink* p = &a_actors;
     ActorLink* a = p->next();

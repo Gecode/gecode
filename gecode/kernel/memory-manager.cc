@@ -32,7 +32,7 @@ namespace Gecode {
   MemoryManager::alloc_refill(size_t sz) {
     // Try to reuse the not used memory
     reuse(start,lsz);
-    alloc_fill(sz);
+    alloc_fill(sz,false);
   }
 
 }
