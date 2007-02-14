@@ -171,7 +171,7 @@ INTSRC0 = \
 	branch.cc \
 	distinct.cc cumulatives.cc \
 	sortedness.cc gcc.cc \
-	channel.cc
+	channel.cc circuit.cc
 INTVARIMP = \
         gecode/int/var/imp-int-hdr.icc gecode/int/var/imp-int-body.icc \
         gecode/int/var/imp-bool-hdr.icc gecode/int/var/imp-bool-body.icc
@@ -206,7 +206,8 @@ INTHDR0 = \
 	sortedness.hh var.icc view.icc \
 	channel.hh channel/dom.icc channel/val.icc \
 	channel/base.icc \
-	link.hh
+	link.hh \
+	circuit.hh circuit/simple.icc
 
 INTSRC		= $(INTSRC0:%=gecode/int/%)
 INTHDR		= gecode/int.hh $(INTHDR0:%=gecode/int/%)

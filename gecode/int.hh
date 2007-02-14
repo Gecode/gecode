@@ -620,7 +620,26 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   channel(Space* home, const IntVarArgs& x, const IntVarArgs& y,
-           IntConLevel icl=ICL_DEF);
+          IntConLevel icl=ICL_DEF);
+  //@}
+
+
+  /**
+   * \defgroup TaskIntIntGraph Graph constraints
+   * \ingroup TaskIntInt
+   */
+
+  //@{
+  /** \brief Post propagator such that \a x forms a circuit
+   *
+   * \a x forms a circuit if the graph with edges \f$i\to j$\f where
+   * \f$x_i=j\f$ has a single cycle covering all nodes.
+   *
+   * Throws an exception of type Int::ArgumentSame, if \a x 
+   * contains the same variable multiply.
+   */
+  GECODE_INT_EXPORT void
+  channel(Space* home, const IntVarArgs& x, IntConLevel icl=ICL_DEF);
   //@}
 
 

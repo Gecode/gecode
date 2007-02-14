@@ -1,0 +1,80 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2007
+ *
+ *  Last modified:
+ *     $Date: 2007-02-13 20:47:50 +0100 (Tue, 13 Feb 2007) $ by $Author: schulte $
+ *     $Revision: 4148 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Circuit {
+
+  /*
+   * The actual propagator
+   *
+   */
+  template <class View>
+  forceinline
+  Simple<View>::Simple(Space* home, ViewArray<View>& x)
+    : NaryPropagator<View,PC_INT_DOM>(home,x) {}
+
+  template <class View>
+  forceinline
+  Simple<View>::Simple(Space* home, bool share, Simple<View>& p)
+    : NaryPropagator<View,PC_INT_DOM>(home,share,p) {}
+
+  template <class View>
+  Actor*
+  Simple<View>::copy(Space* home, bool share) {
+    return new (home) Simple<View>(home,share,*this);
+  }
+
+  template <class View>
+  PropCost
+  Simple<View>::cost(void) const {
+    return (View::pme(this) == ME_INT_VAL) ? PC_QUADRATIC_LO : PC_CUBIC_HI;
+  }
+
+  template <class View>
+  ExecStatus
+  Simple<View>::propagate(Space* home) {
+    return ES_FIX;
+  }
+
+  template <class View>
+  ExecStatus
+  Simple<View>::post(Space* home, ViewArray<View>& x) {
+    int n = x.size();
+    if (n == 1) {
+      GECODE_ME_CHECK(x[0].eq(home,0));
+    } else if (n == 2) {
+      GECODE_ME_CHECK(x[0].eq(home,1));
+      GECODE_ME_CHECK(x[1].eq(home,0));
+    } else {
+      for (int i=n; i--; ) {
+        GECODE_ME_CHECK(x[i].gq(home,0));
+        GECODE_ME_CHECK(x[i].le(home,n));
+        GECODE_ME_CHECK(x[i].nq(home,i));
+      }
+      (void) new (home) Simple<View>(home,x);
+    }
+    return ES_OK;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+
