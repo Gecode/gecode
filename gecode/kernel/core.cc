@@ -42,8 +42,8 @@ namespace Gecode {
     d_lst = NULL;
     // Initialize variable entry points
     for (int i=0; i<VTI_LAST; i++) {
-      vars[i]=NULL;
-      vars_dispose[i]=NULL;
+      vars[i].entry  =NULL;
+      vars[i].dispose=NULL;
     }
     vars_noidx = NULL;
     // Initialize propagator pool
@@ -116,8 +116,8 @@ namespace Gecode {
     }
     // Delete variables that were registered for deletion
     for (int vti=VTI_LAST; vti--;)
-      if (vars_dispose[vti] != NULL)
-        vtp[vti]->dispose(this, vars_dispose[vti]);
+      if (vars[vti].dispose != NULL)
+        vtp[vti]->dispose(this, vars[vti].dispose);
   }
 
 
@@ -129,9 +129,9 @@ namespace Gecode {
   forceinline void
   Space::process(void) {
     for (int vti=VTI_LAST; vti--; ) {
-      VarBase* vs = vars[vti];
+      VarBase* vs = vars[vti].entry;
       if (vs != NULL) {
-        vars[vti] = NULL; vtp[vti]->process(this,vs);
+        vars[vti].entry = NULL; vtp[vti]->process(this,vs);
       }
     }
   }
@@ -281,8 +281,8 @@ namespace Gecode {
     : mm(s.mm,s.n_sub*sizeof(Propagator**)) {
     // Initialize variable entry points
     for (int i=0; i<VTI_LAST; i++) {
-      vars[i]=NULL;
-      vars_dispose[i]=NULL;
+      vars[i].entry   = NULL;
+      vars[i].dispose = NULL;
     }
     vars_noidx = NULL;
     // Initialize propagator pool
@@ -382,9 +382,9 @@ namespace Gecode {
       Propagator** s = reinterpret_cast<Propagator**>(c->mm.subscriptions());
       c->n_sub = n_sub;
       for (int vti=VTI_LAST; vti--; ) {
-        VarBase* vs = c->vars[vti];
+        VarBase* vs = c->vars[vti].entry;
         if (vs != NULL) {
-          c->vars[vti] = NULL; vtp[vti]->update(vs,s);
+          c->vars[vti].entry = NULL; vtp[vti]->update(vs,s);
         }
       }
     }

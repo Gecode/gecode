@@ -659,10 +659,16 @@ namespace Gecode {
     /// Registered variable type processors
     GECODE_KERNEL_EXPORT
     static VarTypeProcessorBase* vtp[VTI_LAST];
-    /// Array of all modified or copied variables (entry points)
-    VarBase* vars[VTI_LAST];
-    /// Array of lists of variables that need deletion
-    VarBase* vars_dispose[VTI_LAST];
+    /// Information for handling variables
+    class VarInfo {
+    public:
+      /// Modified or copied variables (entry points)
+      VarBase* entry;
+      /// Variables that require disposal
+      VarBase* dispose;
+    };
+    /// Information for handling variables
+    VarInfo vars[VTI_LAST];
     /// To keep variables during copying without index structure
     VarBase* vars_noidx;
     /// Process all modified variables by delegating to registered processors
@@ -999,13 +1005,13 @@ namespace Gecode {
   template <VarTypeId VTI>
   forceinline VarBase*
   Space::varsDisposeList(void) {
-    return vars_dispose[VTI];
+    return vars[VTI].dispose;
   }
 
   template <VarTypeId VTI>
   forceinline void
   Space::varsDisposeList(VarBase* v) {
-    vars_dispose[VTI]=v;
+    vars[VTI].dispose=v;
   }
 
   /*
@@ -1239,7 +1245,7 @@ namespace Gecode {
     } else {
       // Recover original value in copy
       u.free_me = x.u.free_me;
-      reg = &home->vars[VTI];
+      reg = &home->vars[VTI].entry;
     }
     // Set forwarding pointer
     x.u.fwd = this;
@@ -1540,8 +1546,8 @@ namespace Gecode {
       MED med;
       u.free_me ^= med(new_me,modevent());
     } else {
-      _next = static_cast<Variable<VTI,PC,MED>*>(home->vars[VTI]);
-      home->vars[VTI] = this;
+      _next = static_cast<Variable<VTI,PC,MED>*>(home->vars[VTI].entry);
+      home->vars[VTI].entry = this;
       modevent(new_me);
     }
   }
@@ -1550,8 +1556,8 @@ namespace Gecode {
   forceinline void
   Variable<VTI,PC,MED>::notify(Space* home) {
     assert(!modified());
-    _next = static_cast<Variable<VTI,PC,MED>*>(home->vars[VTI]);
-    home->vars[VTI] = this;
+    _next = static_cast<Variable<VTI,PC,MED>*>(home->vars[VTI].entry);
+    home->vars[VTI].entry = this;
   }
 
 
