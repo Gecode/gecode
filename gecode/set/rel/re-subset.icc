@@ -84,7 +84,7 @@ namespace Gecode { namespace Set { namespace Rel {
 
     // check whether cardinalities still allow subset
     if (x0.cardMin() > x1.cardMax()) {
-      b.zero_none(home);
+      GECODE_ME_CHECK(b.zero_none(home));
       return ES_SUBSUMED(this,home);
     }
 
@@ -93,7 +93,7 @@ namespace Gecode { namespace Set { namespace Rel {
     GlbRanges<View1> x1lb(x1);
     Iter::Ranges::Diff<LubRanges<View0>,GlbRanges<View1> > diff1(x0ub, x1lb);
     if ( !(diff1()) ) {
-      b.one_none(home);
+      GECODE_ME_CHECK(b.one_none(home));
       return ES_SUBSUMED(this,home);
     }
 
@@ -103,10 +103,10 @@ namespace Gecode { namespace Set { namespace Rel {
       LubRanges<View1> x1ub(x1);
       Iter::Ranges::Diff<GlbRanges<View0>,LubRanges<View1> > diff2(x0lb, x1ub);
       if ( diff2() ) {
-        b.zero_none(home);
+        GECODE_ME_CHECK(b.zero_none(home));
         return ES_SUBSUMED(this,home);
       } else if (x0.assigned() && x1.assigned()) {
-        b.one_none(home);
+        GECODE_ME_CHECK(b.one_none(home));
         return ES_SUBSUMED(this,home);
       }
     }
@@ -117,7 +117,7 @@ namespace Gecode { namespace Set { namespace Rel {
       Iter::Ranges::Inter<LubRanges<View0>,LubRanges<View1> >
         inter(x0ub, x1ub);
       if (!inter()) {
-        b.zero_none(home);
+        GECODE_ME_CHECK(b.zero_none(home));
         return ES_SUBSUMED(this,home);
       }
     }

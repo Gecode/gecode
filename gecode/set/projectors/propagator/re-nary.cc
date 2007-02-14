@@ -59,10 +59,10 @@ namespace Gecode { namespace Set { namespace Projection {
 
     switch (ps.check(home, x)) {
     case __ES_SUBSUMED:
-      b.one_none(home);
+      GECODE_ME_CHECK(b.one_none(home));
       return ES_SUBSUMED(this,home);
     case ES_FAILED:
-      b.zero_none(home);
+      GECODE_ME_CHECK(b.zero_none(home));
       return ES_SUBSUMED(this,home);
     default:
       return ES_FIX;

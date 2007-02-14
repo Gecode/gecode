@@ -77,17 +77,17 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(NONE,NONE):
       GECODE_NEVER;
     case GECODE_INT_STATUS(NONE,ZERO):
-      x0.zero_none(home); break;
+      GECODE_ME_CHECK(x0.zero_none(home)); break;
     case GECODE_INT_STATUS(NONE,ONE):
-      x0.one_none(home); break;
+      GECODE_ME_CHECK(x0.one_none(home)); break;
     case GECODE_INT_STATUS(ZERO,NONE):
-      x1.zero_none(home); break;
+      GECODE_ME_CHECK(x1.zero_none(home)); break;
     case GECODE_INT_STATUS(ZERO,ZERO):
       break;
     case GECODE_INT_STATUS(ZERO,ONE):
       return ES_FAILED;
     case GECODE_INT_STATUS(ONE,NONE):
-      x1.one_none(home); break;
+      GECODE_ME_CHECK(x1.one_none(home)); break;
     case GECODE_INT_STATUS(ONE,ZERO):
       return ES_FAILED;
     case GECODE_INT_STATUS(ONE,ONE):

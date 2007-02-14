@@ -203,13 +203,13 @@ namespace Gecode {
      * Boolean assignment operations
      *
      */
-    forceinline void
+    forceinline ModEvent
     BoolView::zero_none(Space* home) {
-      var->zero_none(home);
+      return var->zero_none(home);
     }
-    forceinline void
+    forceinline ModEvent
     BoolView::one_none(Space* home) {
-      var->one_none(home);
+      return var->one_none(home);
     }
 
     forceinline ModEvent
@@ -277,13 +277,13 @@ namespace Gecode {
      * Boolean assignment operations
      *
      */
-    forceinline void
+    forceinline ModEvent
     NegBoolView::zero_none(Space* home) {
-      view.one_none(home);
+      return view.one_none(home);
     }
-    forceinline void
+    forceinline ModEvent
     NegBoolView::one_none(Space* home) {
-      view.zero_none(home);
+      return view.zero_none(home);
     }
 
     forceinline ModEvent

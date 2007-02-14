@@ -71,10 +71,10 @@ namespace Gecode { namespace Int { namespace Dom {
       goto subsumed;
     }
     if ((x0.max() <= max) && (x0.min() >= min)) {
-      b.one_none(home);  goto subsumed;
+      GECODE_ME_CHECK(b.one_none(home));  goto subsumed;
     }
     if ((x0.max() < min) || (x0.min() > max)) {
-      b.zero_none(home); goto subsumed;
+      GECODE_ME_CHECK(b.zero_none(home)); goto subsumed;
     }
     return ES_FIX;
   subsumed:

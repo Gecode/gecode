@@ -85,29 +85,29 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(NONE,ZERO,NONE):
       return ES_FIX;
     case GECODE_INT_STATUS(NONE,ZERO,ZERO):
-      x0.one_none(home); break;
+      GECODE_ME_CHECK(x0.one_none(home)); break;
     case GECODE_INT_STATUS(NONE,ZERO,ONE):
-      x0.zero_none(home); break;
+      GECODE_ME_CHECK(x0.zero_none(home)); break;
     case GECODE_INT_STATUS(NONE,ONE,NONE):
       return ES_FIX;
     case GECODE_INT_STATUS(NONE,ONE,ZERO):
-      x0.zero_none(home); break;
+      GECODE_ME_CHECK(x0.zero_none(home)); break;
     case GECODE_INT_STATUS(NONE,ONE,ONE):
-      x0.one_none(home); break;
+      GECODE_ME_CHECK(x0.one_none(home)); break;
     case GECODE_INT_STATUS(ZERO,NONE,NONE):
       return ES_FIX;
     case GECODE_INT_STATUS(ZERO,NONE,ZERO):
-      x1.one_none(home); break;
+      GECODE_ME_CHECK(x1.one_none(home)); break;
     case GECODE_INT_STATUS(ZERO,NONE,ONE):
-      x1.zero_none(home); break;
+      GECODE_ME_CHECK(x1.zero_none(home)); break;
     case GECODE_INT_STATUS(ZERO,ZERO,NONE):
-      x2.one_none(home); break;
+      GECODE_ME_CHECK(x2.one_none(home)); break;
     case GECODE_INT_STATUS(ZERO,ZERO,ZERO):
       return ES_FAILED;
     case GECODE_INT_STATUS(ZERO,ZERO,ONE):
       break;
     case GECODE_INT_STATUS(ZERO,ONE,NONE):
-      x2.zero_none(home); break;
+      GECODE_ME_CHECK(x2.zero_none(home)); break;
     case GECODE_INT_STATUS(ZERO,ONE,ZERO):
       break;
     case GECODE_INT_STATUS(ZERO,ONE,ONE):
@@ -115,17 +115,17 @@ namespace Gecode { namespace Int { namespace Bool {
     case GECODE_INT_STATUS(ONE,NONE,NONE):
       return ES_FIX;
     case GECODE_INT_STATUS(ONE,NONE,ZERO):
-      x1.zero_none(home); break;
+      GECODE_ME_CHECK(x1.zero_none(home)); break;
     case GECODE_INT_STATUS(ONE,NONE,ONE):
-      x1.one_none(home); break;
+      GECODE_ME_CHECK(x1.one_none(home)); break;
     case GECODE_INT_STATUS(ONE,ZERO,NONE):
-      x2.zero_none(home); break;
+      GECODE_ME_CHECK(x2.zero_none(home)); break;
     case GECODE_INT_STATUS(ONE,ZERO,ZERO):
       break;
     case GECODE_INT_STATUS(ONE,ZERO,ONE):
       return ES_FAILED;
     case GECODE_INT_STATUS(ONE,ONE,NONE):
-      x2.one_none(home); break;
+      GECODE_ME_CHECK(x2.one_none(home)); break;
     case GECODE_INT_STATUS(ONE,ONE,ZERO):
       return ES_FAILED;
     case GECODE_INT_STATUS(ONE,ONE,ONE):

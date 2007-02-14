@@ -108,17 +108,13 @@ operator<<(std::ostream& os, const SetAssignment& a) {
   return os;
 }
 
-#define FORCE_FIXFLUSH                                \
-do {                                                \
+#define FORCE_FIX                               \
+do {                                            \
   if (Test::randgen(opt.fixprob) == 0) {        \
-    Log::fixpoint();                                \
-    if (status() == SS_FAILED) return;                \
-  }                                                \
-  if (Test::randgen(opt.flushprob) == 0) {        \
-    flush();                                        \
-    Log::flush();                                \
-  }                                                \
-} while(0)
+    Log::fixpoint();                            \
+    if (status() == SS_FAILED) return;          \
+  }                                             \
+} while(false)
 
 class SetTestSpace : public Space {
 public:
@@ -150,12 +146,12 @@ public:
       IntSet ai(csv);
       Log::assign(Log::mk_name("x", i), ai);
       dom(this, x[i], SRT_EQ, ai);
-      FORCE_FIXFLUSH;
+      FORCE_FIX;
     }
     for (int i=withInt; i--; ) {
       Log::assign(Log::mk_name("y", i), a.ints()[i]);
       rel(this, y[i], IRT_EQ, a.ints()[i]);
-      FORCE_FIXFLUSH;
+      FORCE_FIX;
     }
   }
   bool assigned(void) const {
@@ -335,10 +331,6 @@ public:
       }
       if (Test::randgen(opt.fixprob) == 0 && !fixprob(st, r, b))
         return false;
-      if (Test::randgen(opt.flushprob) == 0) {                
-        flush();                                        
-        Log::flush();                                
-      }                
       return true;
     }
     while (x[i].assigned()) {
@@ -391,10 +383,6 @@ public:
     }
     if (Test::randgen(opt.fixprob) == 0 && !fixprob(st, r, b))
       return false;
-    if (Test::randgen(opt.flushprob) == 0) {                
-      flush();                                        
-      Log::flush();                                
-    }                
 
     return true;
   }

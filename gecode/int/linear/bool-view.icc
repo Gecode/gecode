@@ -89,13 +89,13 @@ namespace Gecode { namespace Int { namespace Linear {
     if (y.min()+c == n) {
       assert(y.assigned());
       for (int i = n; i--; )
-        x[i].one_none(home);
+        GECODE_ME_CHECK(x[i].one_none(home));
       return ES_OK;
     }
     if (y.max()+c == 0) {
       assert(y.assigned());
       for (int i = n; i--; )
-        x[i].zero_none(home);
+        GECODE_ME_CHECK(x[i].zero_none(home));
       return ES_OK;
     }
     (void) new (home) EqBoolView<XV,YV>(home,x,y,c);
@@ -131,13 +131,13 @@ namespace Gecode { namespace Int { namespace Linear {
     if (y.min()+c == n) {
       assert(y.assigned());
       for (int i = n; i--; )
-        x[i].one_none(home);
+        GECODE_ME_CHECK(x[i].one_none(home));
       return ES_SUBSUMED(this,sizeof(*this));
     }
     if (y.max()+c == 0) {
       assert(y.assigned());
       for (int i = n; i--; )
-        x[i].zero_none(home);
+        GECODE_ME_CHECK(x[i].zero_none(home));
       return ES_SUBSUMED(this,sizeof(*this));
     }
     if (y.assigned())
@@ -176,10 +176,10 @@ namespace Gecode { namespace Int { namespace Linear {
     }
     if ((n == 1) && y.assigned()) {
       if (y.val()+c == 1) {
-        x[0].zero_none(home);
+        GECODE_ME_CHECK(x[0].zero_none(home));
       } else {
         assert(y.val()+c == 0);
-        x[0].one_none(home);
+        GECODE_ME_CHECK(x[0].one_none(home));
       }
       return ES_OK;
     }
@@ -219,10 +219,10 @@ namespace Gecode { namespace Int { namespace Linear {
     }
     if ((n == 1) && y.assigned()) {
       if (y.val()+c == 1) {
-        x[0].zero_none(home);
+        GECODE_ME_CHECK(x[0].zero_none(home));
       } else {
         assert(y.val()+c == 0);
-        x[0].one_none(home);
+        GECODE_ME_CHECK(x[0].one_none(home));
       }
       return ES_SUBSUMED(this,sizeof(*this));
     }
@@ -258,7 +258,7 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_OK;
     if (y.min()+c == n) {
       for (int i = n; i--; )
-        x[i].one_none(home);
+        GECODE_ME_CHECK(x[i].one_none(home));
       return ES_OK;
     }
     (void) new (home) GqBoolView<XV,YV>(home,x,y,c);
@@ -294,7 +294,7 @@ namespace Gecode { namespace Int { namespace Linear {
       return ES_SUBSUMED(this,home);
     if (y.min()+c == n) {
       for (int i = n; i--; )
-        x[i].one_none(home);
+        GECODE_ME_CHECK(x[i].one_none(home));
       return ES_SUBSUMED(this,home);
     }
     if (y.assigned())

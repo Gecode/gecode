@@ -1118,9 +1118,9 @@ namespace Gecode {
       /// Try to assign view to zero
       ModEvent zero(Space* home);
       /// Assign not yet assigned view to one
-      void one_none(Space* home);
+      ModEvent one_none(Space* home);
       /// Assign not yet assigned view to zero
-      void zero_none(Space* home);
+      ModEvent zero_none(Space* home);
       //@}
 
       /// \name Domain update by value
@@ -1255,9 +1255,9 @@ namespace Gecode {
       /// Try to assign view to zero
       ModEvent zero(Space* home);
       /// Assign not yet assigned view to one
-      void one_none(Space* home);
+      ModEvent one_none(Space* home);
       /// Assign not yet assigned view to zero
-      void zero_none(Space* home);
+      ModEvent zero_none(Space* home);
       //@}
 
       /// \name Value access

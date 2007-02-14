@@ -61,6 +61,15 @@ Domain consistent distinct and channel allocate memory from the
 space heap now. Much simpler.
 
 [ENTRY]
+Module:	int
+What:	change
+Rank:	minor
+[DESCRIPTION]
+The Boolean tell operations one_none and zero_none now also
+return a ModEvent and hence must be checked for failure. This is
+needed for simpler demons.
+
+[ENTRY]
 Module:	kernel
 What:	performance
 Rank:	major

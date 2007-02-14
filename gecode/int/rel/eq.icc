@@ -424,9 +424,9 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_REWRITE(this,Nq<View>::post(home,x0,x1));
     switch (rtest_eq_dom(x0,x1)) {
     case RT_TRUE:
-      b.one_none(home); return ES_SUBSUMED(this,home);
+      GECODE_ME_CHECK(b.one_none(home)); return ES_SUBSUMED(this,home);
     case RT_FALSE:
-      b.zero_none(home); return ES_SUBSUMED(this,home);
+      GECODE_ME_CHECK(b.zero_none(home)); return ES_SUBSUMED(this,home);
     case RT_MAYBE:
       break;
     default: GECODE_NEVER;
@@ -483,9 +483,9 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_REWRITE(this,Nq<View>::post(home,x0,x1));
     switch (rtest_eq_bnd(x0,x1)) {
     case RT_TRUE:
-      b.one_none(home);  return ES_SUBSUMED(this,home);
+      GECODE_ME_CHECK(b.one_none(home));  return ES_SUBSUMED(this,home);
     case RT_FALSE:
-      b.zero_none(home); return ES_SUBSUMED(this,home);
+      GECODE_ME_CHECK(b.zero_none(home)); return ES_SUBSUMED(this,home);
     case RT_MAYBE:
       break;
     default: GECODE_NEVER;
@@ -517,9 +517,9 @@ namespace Gecode { namespace Int { namespace Rel {
     } else if (x.assigned()) {
       assert(b.none());
       if (x.val() == c) {
-        b.one_none(home);
+        GECODE_ME_CHECK(b.one_none(home));
       } else {
-        b.zero_none(home);
+        GECODE_ME_CHECK(b.zero_none(home));
       }
     } else {
       (void) new (home) ReEqDomInt(home,x,c,b);        
@@ -554,11 +554,11 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     switch (rtest_eq_dom(x0,c)) {
     case RT_TRUE:
-      b.one_none(home); 
+      GECODE_ME_CHECK(b.one_none(home)); 
       assert(x0.assigned());
       goto subsumed;
     case RT_FALSE:
-      b.zero_none(home); 
+      GECODE_ME_CHECK(b.zero_none(home)); 
       x0.cancel(home,this,PC_INT_DOM);
       goto subsumed;
     case RT_MAYBE:
@@ -594,9 +594,9 @@ namespace Gecode { namespace Int { namespace Rel {
     } else if (x.assigned()) {
       assert(b.none());
       if (x.val() == c) {
-        b.one_none(home);
+        GECODE_ME_CHECK(b.one_none(home));
       } else {
-        b.zero_none(home);
+        GECODE_ME_CHECK(b.zero_none(home));
       }
     } else {
       (void) new (home) ReEqBndInt(home,x,c,b);        
@@ -631,11 +631,11 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     switch (rtest_eq_bnd(x0,c)) {
     case RT_TRUE:
-      b.one_none(home); 
+      GECODE_ME_CHECK(b.one_none(home)); 
       assert(x0.assigned());
       goto subsumed;
     case RT_FALSE:
-      b.zero_none(home); 
+      GECODE_ME_CHECK(b.zero_none(home)); 
       x0.cancel(home,this,PC_INT_BND);
       goto subsumed;
     case RT_MAYBE:

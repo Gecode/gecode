@@ -82,9 +82,9 @@ namespace Gecode { namespace Int { namespace Dom {
 
       switch (Iter::Ranges::subsumes(i_is,i_x)) {
       case Iter::Ranges::SS_SUBSUMED:
-        b.one_none(home); goto subsumed;
+        GECODE_ME_CHECK(b.one_none(home)); goto subsumed;
       case Iter::Ranges::SS_EMPTY:
-        b.zero_none(home); goto subsumed;
+        GECODE_ME_CHECK(b.zero_none(home)); goto subsumed;
       case Iter::Ranges::SS_NONE:
         break;
       default: GECODE_NEVER;

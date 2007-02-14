@@ -296,7 +296,7 @@ namespace Gecode { namespace Int { namespace Linear {
         {
           ScaleBool* f=p.fst();
           for (ScaleBool* l=p.lst(); (f < l) && (f->a > sl_p); f++) {
-            f->x.zero_none(home);
+            GECODE_ME_CHECK(f->x.zero_none(home));
             su_n -= f->a;
           }
           if (f > p.fst()) {
@@ -307,7 +307,7 @@ namespace Gecode { namespace Int { namespace Linear {
         {
           ScaleBool* f=n.fst();
           for (ScaleBool* l=n.lst(); (f < l) && (f->a > sl_p); f++) {
-            f->x.one_none(home); c += f->a;
+            GECODE_ME_CHECK(f->x.one_none(home)); c += f->a;
             su_n -= f->a;
           }
           if (f > n.fst()) {
@@ -332,7 +332,7 @@ namespace Gecode { namespace Int { namespace Linear {
         {
           ScaleBool* f=p.fst();
           for (ScaleBool* l=p.lst(); (f < l) && (f->a > su_n); f++) {
-            f->x.one_none(home); c -= f->a;
+            GECODE_ME_CHECK(f->x.one_none(home)); c -= f->a;
             sl_p -= f->a;
           }
           if (f > p.fst()) {
@@ -343,7 +343,7 @@ namespace Gecode { namespace Int { namespace Linear {
         {
           ScaleBool* f=n.fst();
           for (ScaleBool* l=n.lst(); (f < l) && (f->a > su_n); f++) {
-            f->x.zero_none(home);
+            GECODE_ME_CHECK(f->x.zero_none(home));
             sl_p -= f->a;
           }
           if (f > n.fst()) {
@@ -493,7 +493,7 @@ namespace Gecode { namespace Int { namespace Linear {
     {
       ScaleBool* f=p.fst();
       for (ScaleBool* l=p.lst(); (f < l) && (f->a > sl); f++)
-        f->x.zero_none(home);
+        GECODE_ME_CHECK(f->x.zero_none(home));
       p.fst(f);
     }
     // Propagate lower bound for negative Boolean views
@@ -501,7 +501,7 @@ namespace Gecode { namespace Int { namespace Linear {
       ScaleBool* f=n.fst();
       for (ScaleBool* l=n.lst(); (f < l) && (f->a > sl); f++) {
         c += f->a; 
-        f->x.one_none(home);
+        GECODE_ME_CHECK(f->x.one_none(home));
       }
       n.fst(f);
     }
@@ -637,17 +637,17 @@ namespace Gecode { namespace Int { namespace Linear {
       int r = x.val()+c;
       if (p.empty() && (n.size() == 1)) {
         if (r == -n.fst()->a) {
-          n.fst()->x.zero_none(home);
+          GECODE_ME_CHECK(n.fst()->x.zero_none(home));
         } else if (r == 0) {
-          n.fst()->x.one_none(home);
+          GECODE_ME_CHECK(n.fst()->x.one_none(home));
         }
         return ES_SUBSUMED(this,home);
       }
       if ((p.size() == 1) && n.empty()) {
         if (r == p.fst()->a) {
-          p.fst()->x.zero_none(home);
+          GECODE_ME_CHECK(p.fst()->x.zero_none(home));
         } else if (r == 0) {
-          p.fst()->x.one_none(home);
+          GECODE_ME_CHECK(p.fst()->x.one_none(home));
         }
         return ES_SUBSUMED(this,home);
       }

@@ -429,10 +429,12 @@ namespace Gecode { namespace Int { namespace Linear {
     bounds_n<Val,N>(this, y, c, sl, su);
 
     if ((-sl == c) && (-su == c)) {
-      b.one_none(home); return ES_SUBSUMED(this,sizeof(*this));
+      GECODE_ME_CHECK(b.one_none(home)); 
+      return ES_SUBSUMED(this,sizeof(*this));
     }
     if ((-sl > c) || (-su < c)) {
-      b.zero_none(home); return ES_SUBSUMED(this,home);
+      GECODE_ME_CHECK(b.zero_none(home)); 
+      return ES_SUBSUMED(this,home);
     }
     return ES_FIX;
   }
@@ -838,10 +840,12 @@ namespace Gecode { namespace Int { namespace Linear {
     bounds_n<Val,N>(this,y,c,sl,su);
 
     if (-sl > c) {
-      b.zero_none(home); return ES_SUBSUMED(this,home);
+      GECODE_ME_CHECK(b.zero_none(home)); 
+      return ES_SUBSUMED(this,home);
     }
     if (-su <= c) {
-      b.one_none(home); return ES_SUBSUMED(this,home);
+      GECODE_ME_CHECK(b.one_none(home)); 
+      return ES_SUBSUMED(this,home);
     }
 
     return ES_FIX;

@@ -128,15 +128,15 @@ namespace Gecode { namespace Int { namespace Rel {
     if (!same(x0,x1)) {
       switch (rtest_lq(x0,x1)) {
       case RT_TRUE:
-        b.one_none(home); break;
+        GECODE_ME_CHECK(b.one_none(home)); break;
       case RT_FALSE:
-        b.zero_none(home); break;
+        GECODE_ME_CHECK(b.zero_none(home)); break;
       case RT_MAYBE:
         (void) new (home) ReLq<View,CtrlView>(home,x0,x1,b); break;
       default: GECODE_NEVER;
       }
     } else {
-      b.one_none(home);
+      GECODE_ME_CHECK(b.one_none(home));
     }
     return ES_OK;
   }
@@ -161,9 +161,9 @@ namespace Gecode { namespace Int { namespace Rel {
       GECODE_REWRITE(this,Le<View>::post(home,x1,x0));
     switch (rtest_lq(x0,x1)) {
     case RT_TRUE:
-      b.one_none(home);  return ES_SUBSUMED(this,home);
+      GECODE_ME_CHECK(b.one_none(home));  return ES_SUBSUMED(this,home);
     case RT_FALSE:
-      b.zero_none(home); return ES_SUBSUMED(this,home);
+      GECODE_ME_CHECK(b.zero_none(home)); return ES_SUBSUMED(this,home);
     case RT_MAYBE:
       break;
     default: GECODE_NEVER;
@@ -191,9 +191,9 @@ namespace Gecode { namespace Int { namespace Rel {
     } else {
       switch (rtest_lq(x,c)) {
       case RT_TRUE:
-        b.one_none(home); break;
+        GECODE_ME_CHECK(b.one_none(home)); break;
       case RT_FALSE:
-        b.zero_none(home); break;
+        GECODE_ME_CHECK(b.zero_none(home)); break;
       case RT_MAYBE:
         (void) new (home) ReLqInt<View,CtrlView>(home,x,c,b); break;
       default: GECODE_NEVER;
@@ -225,9 +225,9 @@ namespace Gecode { namespace Int { namespace Rel {
     }
     switch (rtest_lq(x0,c)) {
     case RT_TRUE:
-      b.one_none(home); goto subsumed;
+      GECODE_ME_CHECK(b.one_none(home)); goto subsumed;
     case RT_FALSE:
-      b.zero_none(home); goto subsumed;
+      GECODE_ME_CHECK(b.zero_none(home)); goto subsumed;
     case RT_MAYBE:
       break;
     default: GECODE_NEVER;
