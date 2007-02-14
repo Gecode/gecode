@@ -104,19 +104,15 @@ namespace Gecode {
 
   forceinline bool
   BoolVar::zero(void) const {
-    return max() == 0;
-    //    return var->zero();
+    return var->zero();
   }
-
   forceinline bool
   BoolVar::one(void) const {
-    return min() == 1;
-    //    return var->one();
+    return var->one();
   }
   forceinline bool
   BoolVar::none(void) const {
-    return !assigned();
-    //    return var->one();
+    return var->none();
   }
 
 }
