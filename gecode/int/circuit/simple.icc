@@ -29,12 +29,22 @@ namespace Gecode { namespace Int { namespace Circuit {
   template <class View>
   forceinline
   Simple<View>::Simple(Space* home, ViewArray<View>& x)
-    : NaryPropagator<View,PC_INT_DOM>(home,x) {}
+    : NaryPropagator<View,PC_INT_DOM>(home,x), y(home,x) {}
 
   template <class View>
   forceinline
   Simple<View>::Simple(Space* home, bool share, Simple<View>& p)
-    : NaryPropagator<View,PC_INT_DOM>(home,share,p) {}
+    : NaryPropagator<View,PC_INT_DOM>(home,share,p) {
+    y.update(home,share,p.y);
+  }
+
+  template <class View>
+  forceinline size_t
+  Simple<View>::dispose(Space* home) {
+    dc.dispose();
+    (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
+    return sizeof(*this);
+  }
 
   template <class View>
   Actor*
@@ -45,12 +55,69 @@ namespace Gecode { namespace Int { namespace Circuit {
   template <class View>
   PropCost
   Simple<View>::cost(void) const {
-    return (View::pme(this) == ME_INT_VAL) ? PC_QUADRATIC_LO : PC_CUBIC_HI;
+    return (View::pme(this) == ME_INT_VAL) ? PC_LINEAR_HI : PC_QUADRATIC_HI;
+  }
+
+  template <class View>
+  bool 
+  Simple<View>::connected(void) const {
+    // Just a mock up, SCC comes later
+    int n = x.size();
+    for (int i=n; i--; )
+      for (int j=n; j--; )
+        if (i != j) {
+          // Check whether there is a path from x[i] to j
+          GECODE_AUTOARRAY(bool,visited,n);
+          for (int k=n; k--; )
+            visited[k]=false;
+          GECODE_AUTOSTACK(int,-1,s,n);
+          s.push(i);
+          while (!s.empty()) {
+            int v = s.pop();
+            visited[v] = true;
+            ViewValues<View> w(x[v]);
+            while (w()) {
+              if (w.val() == j)
+                goto done;
+              if (!visited[w.val()])
+                s.push(w.val());
+              ++w;
+            }
+          }
+        done: ;
+        }
+    return true;
   }
 
   template <class View>
   ExecStatus
   Simple<View>::propagate(Space* home) {
+    if (View::pme(this) == ME_INT_VAL) {
+      ExecStatus es = Distinct::prop_val<View,false>(home,y);
+      GECODE_ES_CHECK(es);
+      if (es == ES_FIX) {
+        if (!connected())
+          return ES_FAILED;
+        return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
+      }
+      es = Distinct::prop_bnd<View>(home,x);
+      GECODE_ES_CHECK(es);
+      es = Distinct::prop_val<View,true>(home,y);
+      GECODE_ES_CHECK(es);
+      if (!connected())
+        return ES_FAILED;
+      return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
+    }
+
+    if (dc.available()) {
+      GECODE_ES_CHECK(dc.sync());
+    } else {
+      GECODE_ES_CHECK(dc.init(home,y.size(),&y[0]));
+    }
+    dc.propagate(home);
+
+    if (!connected())
+      return ES_FAILED;
     return ES_FIX;
   }
 

@@ -47,10 +47,16 @@ namespace Gecode { namespace Int { namespace Circuit {
   class Simple : public NaryPropagator<View,PC_INT_DOM> {
  protected:
     using NaryPropagator<View,PC_INT_DOM>::x;
+    /// Array for performing value propagation for distinct
+    ViewArray<View> y;
+    /// Propagation controller for propagating distinct
+    Distinct::DomCtrl<View> dc;
     /// Constructor for cloning \a p
     Simple(Space* home, bool share, Simple& p);
     /// Constructor for posting
     Simple(Space* home, ViewArray<View>& x);
+    /// Check whether the view value graph is strongly connected
+    bool connected(void) const;
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
@@ -58,13 +64,15 @@ namespace Gecode { namespace Int { namespace Circuit {
      * \brief Cost function
      *
      * If in stage for naive value propagation, the cost is dynamic
-     * PC_LINEAR_LO. Otherwise it is dynamic PC_LINEAR_HI.
+     * PC_LINEAR_HI. Otherwise it is dynamic PC_QUADRATIC_LO.
      */
     virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for circuit on \a x
     static  ExecStatus post(Space* home, ViewArray<View>& x);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
   };
 
 }}}
