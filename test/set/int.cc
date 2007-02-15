@@ -103,7 +103,7 @@ namespace TestsForSetsAndInts {
   class NoElem : public SetTest {
   public:
     NoElem(const char* t)
-      : SetTest(t,1,ds_33,true,1) {}
+      : SetTest(t,1,ds_33,false,1) {}
     virtual bool solution(const SetAssignment& x) const {
       for(CountableSetValues xr(x.lub, x[0]);xr();++xr)
         if (xr.val()==x.intval())
@@ -112,9 +112,6 @@ namespace TestsForSetsAndInts {
     }
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
       Gecode::rel(home, x[0], SRT_DISJ, y[0]);
-    }
-    virtual void post(Space* home, SetVarArray& x, IntVarArray& y, BoolVar b) {
-      Gecode::rel(home, x[0], SRT_DISJ, y[0], b);
     }
   };
   NoElem _noelem("Int::NoElem");
