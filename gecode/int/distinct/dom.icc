@@ -207,7 +207,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     bool sync(void);
 
   protected:
-    typedef Support::SentinelStack<Node<View>*,NULL> SccStack;
+    typedef Support::SentinelStack<Node<View>*> SccStack;
     bool search_match(ViewNode<View>*);
     bool match(ViewNode<View>*);
     void scc(SccStack&, Node<View>*);

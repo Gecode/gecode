@@ -40,13 +40,14 @@ namespace Gecode { namespace Support {
    * Requires \code #include "gecode/support/sentinel-stack.hh" \endcode
    * \ingroup FuncSupport
    */
-  template<class T, T sentinel>
+  template<class T>
   class SentinelStack {
   private:
+    const T sentinel;
     T* tos;
   public:
-    /// Create stack that uses the memory area \a p
-    SentinelStack(T* s);
+    /// Create stack that uses the memory area \a p and sentinel \a s
+    SentinelStack(T* p, T s);
     /// Check whether stack is empty
     bool empty(void) const;
     /// Return topmost element
@@ -59,35 +60,35 @@ namespace Gecode { namespace Support {
     void push(T x);
   };
 
-  template<class T, T sentinel>
+  template<class T>
   forceinline
-  SentinelStack<T,sentinel>::SentinelStack(T* s) 
-    : tos(s) {
+  SentinelStack<T>::SentinelStack(T* p, T s) 
+    : sentinel(s), tos(p) {
     *(tos++) = sentinel;
   }
-  template<class T, T sentinel>
+  template<class T>
   forceinline bool
-  SentinelStack<T,sentinel>::empty(void) const {
+  SentinelStack<T>::empty(void) const {
     return *(tos-1) == sentinel;
   }
-  template<class T, T sentinel>
+  template<class T>
   forceinline T
-  SentinelStack<T,sentinel>::top(void) const {
+  SentinelStack<T>::top(void) const {
     return *(tos-1);
   }
-  template<class T, T sentinel>
+  template<class T>
   forceinline T
-  SentinelStack<T,sentinel>::last(void) const {
+  SentinelStack<T>::last(void) const {
     return *tos;
   }
-  template<class T, T sentinel>
+  template<class T>
   forceinline T
-  SentinelStack<T,sentinel>::pop(void) {
+  SentinelStack<T>::pop(void) {
     return *(--tos);
   }
-  template<class T, T sentinel>
+  template<class T>
   forceinline void
-  SentinelStack<T,sentinel>::push(T x) {
+  SentinelStack<T>::push(T x) {
     assert(x != sentinel);
     *(tos++) = x;
   }
@@ -105,9 +106,9 @@ namespace Gecode { namespace Support {
  *
  */
 
-#define GECODE_AUTOSTACK(T,S,X,N)                                       \
-  GECODE_AUTOARRAY(T,__GECODE__AS__ ## X ## __LINE__,N+1);              \
-  Gecode::Support::SentinelStack<T,S> X(__GECODE__AS__ ## X ## __LINE__);
+#define GECODE_AUTOSTACK(T,S,X,N)                                          \
+  GECODE_AUTOARRAY(T,__GECODE__AS__ ## X ## __LINE__,(N)+1);               \
+  Gecode::Support::SentinelStack<T> X(__GECODE__AS__ ## X ## __LINE__,(S));
 
 #endif
 

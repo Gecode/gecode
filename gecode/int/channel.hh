@@ -36,7 +36,7 @@
 namespace Gecode { namespace Int { namespace Channel {
 
   /// Processing stack
-  typedef Support::SentinelStack<int,-1> ProcessStack;
+  typedef Support::SentinelStack<int> ProcessStack;
 
   /**
    * \brief Base-class for channel propagators
