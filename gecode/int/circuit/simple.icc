@@ -62,6 +62,7 @@ namespace Gecode { namespace Int { namespace Circuit {
   bool 
   Simple<View>::connected(void) const {
     // Just a mock up, SCC comes later
+    /*
     int n = x.size();
     for (int i=n; i--; )
       for (int j=n; j--; )
@@ -86,6 +87,7 @@ namespace Gecode { namespace Int { namespace Circuit {
           }
         done: ;
         }
+    */
     return true;
   }
 
@@ -98,6 +100,8 @@ namespace Gecode { namespace Int { namespace Circuit {
       if (es == ES_FIX) {
         if (!connected())
           return ES_FAILED;
+        if (y.size() < 2)
+          return ES_SUBSUMED(this,home);
         return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
       }
       es = Distinct::prop_bnd<View>(home,x);
@@ -106,6 +110,8 @@ namespace Gecode { namespace Int { namespace Circuit {
       GECODE_ES_CHECK(es);
       if (!connected())
         return ES_FAILED;
+      if (y.size() < 2)
+        return ES_SUBSUMED(this,home);
       return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
     }
 
@@ -134,7 +140,7 @@ namespace Gecode { namespace Int { namespace Circuit {
       for (int i=n; i--; ) {
         GECODE_ME_CHECK(x[i].gq(home,0));
         GECODE_ME_CHECK(x[i].le(home,n));
-        GECODE_ME_CHECK(x[i].nq(home,i));
+        //        GECODE_ME_CHECK(x[i].nq(home,i));
       }
       (void) new (home) Simple<View>(home,x);
     }

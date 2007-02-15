@@ -639,7 +639,7 @@ namespace Gecode {
    * contains the same variable multiply.
    */
   GECODE_INT_EXPORT void
-  channel(Space* home, const IntVarArgs& x, IntConLevel icl=ICL_DEF);
+  circuit(Space* home, const IntVarArgs& x, IntConLevel icl=ICL_DEF);
   //@}
 
 

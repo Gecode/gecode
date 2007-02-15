@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2005
+ *     Christian Schulte, 2006
  *
  *  Last modified:
  *     $Date$ by $Author$
