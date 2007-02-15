@@ -427,7 +427,7 @@ namespace Gecode {
 #ifdef __GNUC__
   public:
     /// To avoid warnings from GCC
-    virtual ~Actor(void) {}
+    GECODE_KERNEL_EXPORT virtual ~Actor(void);
     /// Not used (uses dispose instead)
     static void  operator delete(void* p, size_t s);
 #endif
