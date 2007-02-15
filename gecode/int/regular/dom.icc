@@ -389,13 +389,13 @@ namespace Gecode { namespace Int { namespace Regular {
   forceinline
   Dom<View>::Dom(Space* home, ViewArray<View>& x, DFA& d)
     : NaryPropagator<View,PC_INT_DOM>(home,x), dfa(d) {
-    force(home);
+    this->force(home);
   }
 
   template <class View>
   forceinline size_t
   Dom<View>::dispose(Space* home) {
-    unforce(home);
+    this->unforce(home);
     dfa.~DFA();
     (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
     return sizeof(*this);
