@@ -37,46 +37,33 @@ class Knights : public Example {
 private:
   /// Size of board
   const int n;
-  /// Maps board field to number of knight on board
-  IntVarArray jump;
-  IntVarArray pred;
+  /// Maps board field to successor field
   IntVarArray succ;
-
 public:
-
   /// Return field at position \a i, \a j
   int
   field(int i, int j) {
     return i*n+j;
   }
-
   /// The actual model
   Knights(const Options& opt)
-    : n(opt.size), 
-      jump(this,n*n,0,n*n-1), 
-      pred(this,n*n,0,n*n-1), 
-      succ(this,n*n,0,n*n-1) 
-{
+    : n(opt.size), succ(this,n*n,0,n*n-1) {
     const int nn = n*n;
 
     // Map knight to its predecessor of succesor on board
-    /*
-IntVarArgs pred(nn);
-    IntVarArgs succ(nn);
+    IntVarArgs jump(nn);
+    IntVarArgs pred(nn);
+
     for (int i = nn; i--; ) {
-      IntVar p(this,0,nn-1);
-      IntVar s(this,0,nn-1);
-      pred[i]=p; succ[i]=s;
+      IntVar p(this,0,nn-1); pred[i]=p;
+      IntVar j(this,0,nn-1); jump[i]=j;
     }
-    */
 
     // Place the first two knights
     rel(this, jump[field(0,0)], IRT_EQ, 0);
     rel(this, jump[field(1,2)], IRT_EQ, 1);
 
-    distinct(this, jump, opt.icl);
-
-    //    circuit(this, succ);
+    distinct(this, succ, opt.icl);
 
     for (int f = 0; f < nn; f++) {
       int i = f / n;
@@ -115,15 +102,12 @@ IntVarArgs pred(nn);
       dom(this, succ[f], ds);
       rel(this, succ[f], IRT_NQ, pred[f]);
     }
-    circuit(this, succ);
     branch(this, succ, BVAR_NONE, BVAL_MIN);
   }
 
   /// Constructor for cloning \a s
   Knights(bool share, Knights& s) : Example(share,s), n(s.n) {
-    jump.update(this, share, s.jump);
     succ.update(this, share, s.succ);
-    pred.update(this, share, s.pred);
   }
   /// Copy during cloning
   virtual Space*
@@ -133,31 +117,23 @@ IntVarArgs pred(nn);
   /// Print board
   virtual void
   print(void) {
+    int* jump = new int[n*n];
+    {
+      int j=0;
+      for (int i=0; i<n*n; i++) {
+        jump[i]=j; j=succ[j].min();
+      }
+    }
     std::cout << "\t";
     for (int i = 0; i < n; i++) {
       for (int j = 0; j < n; j++) {
         std::cout.width(3);
         std::cout << jump[field(i,j)] << " ";
-      }
-      std::cout << std::endl << "\t";
+        }
+        std::cout << std::endl << "\t";
     }
     std::cout << std::endl;
-    std::cout << "\t";
-    for (int i = 0; i < n; i++) {
-      for (int j = 0; j < n; j++) {
-        std::cout.width(3);
-        std::cout << succ[field(i,j)] << " ";
-      }
-      std::cout << std::endl << "\t";
-    }
-    std::cout << std::endl;
-    int p=0;
-    std::cout << "0 > ";
-    for (int i=n*n; i--; ) {
-      std::cout << succ[p] << " > ";
-      p = succ[p].val();
-    }
-    std::cout << std::endl;
+    delete [] jump;
   }
 };
 
