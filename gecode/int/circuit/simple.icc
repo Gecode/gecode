@@ -63,14 +63,15 @@ namespace Gecode { namespace Int { namespace Circuit {
   Simple<View>::connected(void) const {
     // Just a mock up, SCC comes later
     int n = x.size();
+    GECODE_AUTOARRAY(bool,visited,n);
     for (int i=n; i--; )
       for (int j=n; j--; ) {
         // Check whether there is a path from i to j
-        GECODE_AUTOARRAY(bool,visited,n);
         for (int k=n; k--; )
           visited[k]=false;
         GECODE_AUTOSTACK(int,-1,s,n);
         s.push(i);
+        visited[i] = true;
         while (!s.empty()) {
           int v = s.pop();
           ViewValues<View> w(x[v]);
@@ -93,6 +94,7 @@ namespace Gecode { namespace Int { namespace Circuit {
   template <class View>
   ExecStatus
   Simple<View>::propagate(Space* home) {
+    /*
     if (View::pme(this) == ME_INT_VAL) {
       ExecStatus es = Distinct::prop_val<View,false>(home,y);
       GECODE_ES_CHECK(es);
@@ -123,6 +125,15 @@ namespace Gecode { namespace Int { namespace Circuit {
 
     if (!connected())
       return ES_FAILED;
+    return ES_FIX;
+    */
+    if (View::pme(this) == ME_INT_VAL) {
+      ExecStatus es = Distinct::prop_val<View,true>(home,y);
+    }
+    if (!connected())
+      return ES_FAILED;
+    if (y.size() < 2)
+      return ES_SUBSUMED(this,home);
     return ES_FIX;
   }
 

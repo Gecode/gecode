@@ -39,6 +39,9 @@ private:
   const int n;
   /// Maps board field to number of knight on board
   IntVarArray jump;
+  IntVarArray pred;
+  IntVarArray succ;
+
 public:
 
   /// Return field at position \a i, \a j
@@ -49,23 +52,31 @@ public:
 
   /// The actual model
   Knights(const Options& opt)
-    : n(opt.size), jump(this,n*n,0,n*n-1) {
+    : n(opt.size), 
+      jump(this,n*n,0,n*n-1), 
+      pred(this,n*n,0,n*n-1), 
+      succ(this,n*n,0,n*n-1) 
+{
     const int nn = n*n;
 
     // Map knight to its predecessor of succesor on board
-    IntVarArgs pred(nn);
+    /*
+IntVarArgs pred(nn);
     IntVarArgs succ(nn);
     for (int i = nn; i--; ) {
       IntVar p(this,0,nn-1);
       IntVar s(this,0,nn-1);
       pred[i]=p; succ[i]=s;
     }
+    */
 
     // Place the first two knights
     rel(this, jump[field(0,0)], IRT_EQ, 0);
     rel(this, jump[field(1,2)], IRT_EQ, 1);
 
     distinct(this, jump, opt.icl);
+
+    //    circuit(this, succ);
 
     for (int f = 0; f < nn; f++) {
       int i = f / n;
@@ -104,12 +115,15 @@ public:
       dom(this, succ[f], ds);
       rel(this, succ[f], IRT_NQ, pred[f]);
     }
+    circuit(this, succ);
     branch(this, succ, BVAR_NONE, BVAL_MIN);
   }
 
   /// Constructor for cloning \a s
   Knights(bool share, Knights& s) : Example(share,s), n(s.n) {
     jump.update(this, share, s.jump);
+    succ.update(this, share, s.succ);
+    pred.update(this, share, s.pred);
   }
   /// Copy during cloning
   virtual Space*
@@ -126,6 +140,22 @@ public:
         std::cout << jump[field(i,j)] << " ";
       }
       std::cout << std::endl << "\t";
+    }
+    std::cout << std::endl;
+    std::cout << "\t";
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < n; j++) {
+        std::cout.width(3);
+        std::cout << succ[field(i,j)] << " ";
+      }
+      std::cout << std::endl << "\t";
+    }
+    std::cout << std::endl;
+    int p=0;
+    std::cout << "0 > ";
+    for (int i=n*n; i--; ) {
+      std::cout << succ[p] << " > ";
+      p = succ[p].val();
     }
     std::cout << std::endl;
   }

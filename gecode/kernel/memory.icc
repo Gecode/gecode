@@ -151,27 +151,18 @@ namespace Gecode { namespace Memory {
   private:
     void* _x;
   public:
-    ManageMemory(void) {}
-    void init(void* p) { _x = p; }
-    ~ManageMemory(void) {
-      if (_x != NULL)
-        ::free(_x);
-    }
+    ManageMemory(void* p) : _x(p) {}
+    ~ManageMemory(void) { _freea(_x); }
   };
 
 }}
 
 
-#define GECODE_AUTOARRAY(T,X,N)                                        \
-T* X;                                                                \
-::Gecode::Memory::ManageMemory __GECODE__ ## X ## __LINE__;        \
-if ((sizeof(T)*(N)) <= 2048) {                                        \
-   X = reinterpret_cast<T*>(_alloca(sizeof(T)*(N)));                \
-   __GECODE__ ## X ## __LINE__ .init(NULL);                        \
-} else {                                                        \
-   X = reinterpret_cast<T*>(::malloc(sizeof(T)*(N)));                \
-   __GECODE__ ## X ## __LINE__ .init(X);                        \
-}
+#define GECODE_AUTOARRAY(T,X,N)                                 \
+T* X;                                                           \
+X = reinterpret_cast<T*>(_malloca(sizeof(T)*(N)));              \
+::Gecode::Memory::ManageMemory __GECODE__ ## X ## __LINE__(X);
+
 
 #else
 
