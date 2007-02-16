@@ -47,4 +47,7 @@
 /* Whether to include audit code */
 #undef GECODE_AUDIT
 
+/* Whether to include support for demons */
+#undef GECODE_USE_DEMONS
+
 // STATISTICS: kernel-other

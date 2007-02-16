@@ -203,11 +203,11 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  ConstantView::subscribe(Space* home, Propagator* p, PropCond,bool) {
+  ConstantView::subscribe(Space* home, SubscriberType p, PropCond,bool) {
     SetVarImp::propagate(home,p,ME_SET_VAL);    
   }
   forceinline void
-  ConstantView::cancel(Space*,Propagator*,PropCond) {}
+  ConstantView::cancel(Space*,SubscriberType,PropCond) {}
 
   forceinline ModEvent
   ConstantView::pme(const Propagator*) {
@@ -325,11 +325,11 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  EmptyView::subscribe(Space* home, Propagator* p, PropCond,bool) {
+  EmptyView::subscribe(Space* home, SubscriberType p, PropCond,bool) {
     SetVarImp::propagate(home,p,ME_SET_VAL);    
   }
   forceinline void
-  EmptyView::cancel(Space*,Propagator*,PropCond) {}
+  EmptyView::cancel(Space*,SubscriberType,PropCond) {}
 
   forceinline ModEvent
   EmptyView::pme(const Propagator*) {
@@ -437,11 +437,11 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  UniverseView::subscribe(Space* home, Propagator* p, PropCond,bool) {
+  UniverseView::subscribe(Space* home, SubscriberType p, PropCond,bool) {
     SetVarImp::propagate(home,p,ME_SET_VAL);    
   }
   forceinline void
-  UniverseView::cancel(Space*,Propagator*,PropCond) {}
+  UniverseView::cancel(Space*,SubscriberType,PropCond) {}
 
   forceinline ModEvent
   UniverseView::pme(const Propagator*) {

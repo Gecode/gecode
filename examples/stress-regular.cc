@@ -79,7 +79,7 @@ public:
     : x(this,4*opt.size,0,opt.size) {
     DFA a = construct(opt.size);
     IntVarArgs y(opt.size);
-    for (int i=0; i <= 3*opt.size; i++) {
+    for (unsigned int i=0; i <= 3*opt.size; i++) {
       for (int j = opt.size; j--; )
         y[j] = x[i+j];
       regular(this, y, a);

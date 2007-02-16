@@ -182,6 +182,14 @@ ModEvents:	VAL, BND, DOM
    * update operation on \a x returns the modification event ME_INT_VAL,
    * ME_INT_BND, or ME_INT_DOM.
    */
+[PropCond]
+Name:           DEMON
+ModEvents:      
+  /**
+   * \brief Propagation condition for demons.
+   *
+   * The subscriber must be a demon, and will be run on all domain changes.
+   */
 [PropCondFooter]
   //@}
 ##

@@ -72,6 +72,9 @@ AC_GECODE_LEAK_DEBUG
 dnl check whether we want audit code in our build
 AC_GECODE_AUDIT
 
+dnl check whether we want demons in our build
+AC_GECODE_DEMONS
+
 dnl check whether we want to use visibility attributes with gcc
 AC_GECODE_GCC_VISIBILITY
 

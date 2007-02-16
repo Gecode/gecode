@@ -342,12 +342,12 @@ namespace Gecode {
      *
      */
     forceinline void
-    NegBoolView::subscribe(Space* home, Propagator* p, PropCond pc,
+    NegBoolView::subscribe(Space* home, SubscriberType p, PropCond pc,
                            bool process) {
       view.subscribe(home,p,pc,process);
     }
     forceinline void
-    NegBoolView::cancel(Space* home, Propagator* p, PropCond pc) {
+    NegBoolView::cancel(Space* home, SubscriberType p, PropCond pc) {
       view.cancel(home,p,pc);
     }
 

@@ -137,6 +137,18 @@
 #include "gecode/kernel/propagator.icc"
 #include "gecode/kernel/branching.icc"
 
+
+/*
+ * Managing demons
+ *
+ */
+#if GECODE_USE_DEMONS
+
+#include "gecode/kernel/demon.icc"
+
+#endif
+
+
 #endif
 
 

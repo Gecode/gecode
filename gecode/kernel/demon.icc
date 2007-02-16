@@ -1,0 +1,209 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Mikael Lagerkvist <Lagerkvist@gecode.org>
+ *
+ *  Copyright:
+ *     Mikael Lagerkvist, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-11-25 19:48:19 +0100 (lör, 25 nov 2006) $ by $Author: schulte $
+ *     $Revision: 3996 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+  /**
+   * \defgroup TaskDemon Programming demons
+   *
+   * \ingroup TaskActor
+   */
+
+  //@{
+  /** \brief Dynamic collection of demons
+   * 
+   * This is a utility class that maintains a collection of
+   * demons. The class is not meant to be allocated from the space,
+   * it is designed to be used as a member of the propagator that uses
+   * demons.
+   *
+   * This class will adjust dynamically to support more demons.
+   *
+   * A demon is owned by the DemonCollection that contains it.
+   *
+   * \warning This class requires the exact type of demons to be
+   * stored. Adding demons of a subclass of \a D will result in memory
+   * leaks.
+   */
+  template <class D>
+  class DynamicDemonCollection {
+    int siz;
+    D** demons;
+  public:
+    /** \brief Construct demon collection
+     *
+     * \param reserve When given a number larger than 0, this allows
+     * the propagator to suggest pre-allocation of a fixed number of
+     * slots for demons.
+     */
+    DynamicDemonCollection(Space* home, Propagator* p, unsigned int reserve = 1);
+
+    /** \brief Copy constructor
+     * 
+     */
+    DynamicDemonCollection(Space* home, Propagator* p, bool share, 
+                           DynamicDemonCollection<D>& ddc);
+
+
+    /** \brief Add a demon to the collection.
+     *
+     */
+    void add(Space* home, Propagator* p, D* d);
+
+    /** \brief Dispose of this colelction
+     */
+    size_t dispose(Space *home);
+  private:
+    /** \brief Is the D* \a d an active demon?
+     *
+     * \todo static? macro?
+     */
+    bool active(D* d) const;
+
+    /** \brief Compact representation. 
+     * 
+     * Compact the storage to the end of the array. Returns memory for
+     * disposed demons.
+     *
+     * Returns number of used spots.
+     */
+    int compact(Space* home, Propagator* p) const;
+  };
+
+
+  /*
+   * Dynamic Demon Collections
+   *
+   */
+
+  template <class D>
+  DynamicDemonCollection<D>::DynamicDemonCollection(Space* home, Propagator* p,
+                                                    unsigned int reserve)
+    : siz(reserve > 1 ? reserve : 1), 
+      demons(static_cast<D**>(home->alloc(sizeof(D*)*siz)))
+  {
+    // Set up free-linkage in array
+    for (int i = siz; i--; ) 
+      demons[i] = reinterpret_cast<D*>((i+1)%siz);
+  }
+
+  template <class D>
+  DynamicDemonCollection<D>::DynamicDemonCollection(Space* home, Propagator* p,
+                                                    bool share,
+                                                    DynamicDemonCollection<D>& ddc)
+    : siz(ddc.compact(home, p)), 
+      demons(static_cast<D**>(home->alloc(sizeof(D*)*siz)))
+  {
+
+    for (int ddci = ddc.siz, i = siz; ddci-- && i--; ) {
+      assert(active(ddc.demons[ddci]));
+      demons[i] = static_cast<D*>(ddc.demons[ddci]->copy(home, p, share));
+      ddc.demons[ddci]->forward(demons[i]);
+    }
+  }
+
+  
+  template <class D>
+  forceinline void
+  DynamicDemonCollection<D>::add(Space *home, Propagator* p, D* d) {
+    if (reinterpret_cast<ptrdiff_t>(demons[0])>siz) {
+      compact(home, p);
+      if (reinterpret_cast<ptrdiff_t>(demons[0])>siz) {
+        // @todo better resizing strategy
+        int nsiz = static_cast<int>(1.5*static_cast<double>(siz))+1;
+        D** newd = static_cast<D**>(home->alloc(sizeof(D*)*nsiz));
+        for (int pos = nsiz, oldpos = siz; pos-- && oldpos--; )
+          newd[pos] = demons[oldpos]; 
+        for (int i = nsiz-siz-1; i--; ) {
+          newd[i] = reinterpret_cast<D*>((i+1)%nsiz);
+        }
+        newd[nsiz-siz-1] = reinterpret_cast<D*>(0);
+        home->reuse(demons, sizeof(D*)*siz);
+        demons = newd;
+        siz = nsiz;
+      }
+    }
+    int d0 = reinterpret_cast<ptrdiff_t>(demons[0]);
+    if (d0 != 0) {
+      demons[0] = demons[d0];
+    }
+    demons[d0] = d;
+  }
+
+
+  template <class D>
+  size_t
+  DynamicDemonCollection<D>::dispose(Space *home) {
+    for (int i = siz; i--; ) {
+      if (active(demons[i])) {
+        (void) demons[i]->dispose(home);
+      }
+    }
+    home->reuse(demons, sizeof(D*)*siz);
+    return sizeof(*this);
+  }
+
+  template <class D>
+  forceinline bool
+  DynamicDemonCollection<D>::active(D* d) const {
+    return 
+      reinterpret_cast<ptrdiff_t>(d) > siz &&
+      !d->disposed();
+  }
+
+  template <class D>
+  int
+  DynamicDemonCollection<D>::compact(Space *home, Propagator* p) const {
+    if (siz == 0) {
+      return 0;
+    }
+
+    D** left  = &(demons[0]);
+    D** right = &(demons[siz-1]);
+    D** lo = left-1;
+    D** hi = right+1;
+
+    while (true) {
+      while (!active(*(++lo)))
+        if (lo == right) break;
+      while ( active(*(--hi)))
+        if (hi ==  left) break;
+      if (lo >= hi) break;
+      std::swap(*lo,*hi);
+    }
+
+    for (D** i = lo-1; i >= left; --i) {
+      if (reinterpret_cast<ptrdiff_t>(*i) > siz) {
+        assert((*i)->disposed());
+        home->reuse(*i, (*i)->size());
+      }
+      *i = reinterpret_cast<D*>((i-left)+1);
+    }
+    if (!active(*hi)) {
+      *hi = reinterpret_cast<D*>(0);
+    }
+
+    return (right-lo)+1;
+  }
+  //@}
+}
+
+// STATISTICS: kernel-other

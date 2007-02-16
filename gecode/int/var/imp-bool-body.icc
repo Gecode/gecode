@@ -35,8 +35,8 @@ namespace Gecode { namespace Int {
   void
   BoolVarImpBase::Processor::process(Space* home, VarBase* _x) {
     // Process modified variables
-    Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>* x = 
-      static_cast<Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>*>(_x);
+    Gecode::Variable<VTI_BOOL,PC_BOOL_DEMON,BoolMeDiff>* x = 
+      static_cast<Gecode::Variable<VTI_BOOL,PC_BOOL_DEMON,BoolMeDiff>*>(_x);
     do {
       x->process(home); x = x->next();
     } while (x != NULL);

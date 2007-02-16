@@ -1,0 +1,153 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *
+ *  Copyright:
+ *     Mikael Lagerkvist, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-11-25 19:48:19 +0100 (lör, 25 nov 2006) $ by $Author: schulte $
+ *     $Revision: 3996 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+  /**
+   * \defgroup TaskDemonInt Integer demons
+   *
+   * \ingroup TaskDemon
+   */
+
+  //@{
+  namespace {
+    template <class View> 
+    struct ViewIntMod {
+      static int mod(int val) {
+        return val;
+      }
+      static int state_mod(int val, View) {
+        return val;
+      }
+    };
+    template <>
+    struct ViewIntMod<Int::MinusView> {
+      static int mod(int val) {
+        return -val;
+      }
+      static int state_mod(int val, Int::MinusView) {
+        return -val;
+      }
+    };
+    template <>
+    struct ViewIntMod<Int::OffsetView> {
+      static int mod(int val) {
+        GECODE_NEVER;
+        return false;
+      }
+      static int state_mod(int val,  Int::OffsetView v) {
+        return val + v.offset();
+      }
+    };
+    template <>
+    struct ViewIntMod<Int::IntScaleView> {
+      static int mod(int val) {
+        GECODE_NEVER;
+        return false;
+      }
+      static int state_mod(int val,  Int::IntScaleView v) {
+        return v.scale()*val;
+      }
+    };
+    template <>
+    struct ViewIntMod<Int::DoubleScaleView> {
+      static int mod(int val) {
+        GECODE_NEVER;
+        return false;
+      }
+      static int state_mod(int val,  Int::DoubleScaleView v) {
+        return v.scale()*val;
+      }
+    };
+    template <>
+    struct ViewIntMod<Int::NegBoolView> {
+      static int mod(int val) {
+        assert(val == 0 || val == 1);
+        return val == 0;
+      }
+      static int state_mod(int val, Int::NegBoolView) {
+        assert(val == 0 || val == 1);
+        return val == 0;
+      }
+    };
+  }
+
+  forceinline int 
+  IntDemon::_mod(int val) {
+    return val;
+  }
+
+  
+  /** \brief Base demonclass for demons that subscribe to views of type \a View. 
+   */
+  template <class View>
+  class IntViewDemon : public IntDemon {
+  public:
+    IntViewDemon(Space* home, Propagator* p) : IntDemon(home,p) {}
+    IntViewDemon(Space* home, Propagator* p, bool share, IntViewDemon<View>& d) 
+      : IntDemon(home, p, share, d) {}
+
+    virtual size_t dispose(Space* home) {
+      (void) IntDemon::dispose(home);
+      return sizeof(*this);
+    }
+  private:
+    int _mod(int val) {
+      return ViewIntMod<View>::mod(val);
+    }
+  };
+
+
+  /** \brief Base demonclass for unary demons that subscribe to
+   * one view (possibly carrying state).
+   *
+   * The primary kind of view that carries state is the OffsetView and ScaleView.
+   */
+  template <class View, PropCond dc = Int::PC_INT_DEMON>
+  class IntUnaryViewDemon : public IntViewDemon<View> {
+  protected:
+    View _v;
+  public:
+    IntUnaryViewDemon(Space* home, Propagator* p, View v) 
+      : IntViewDemon<View>(home,p), _v(v) {
+      _v.subscribe(home, this, dc, false);
+    }
+    IntUnaryViewDemon(Space* home, Propagator* p, 
+                      bool share, IntUnaryViewDemon<View,dc>& d) 
+      : IntViewDemon<View>(home, p, share, d) {
+      _v.update(home, share, d._v);
+    }
+    virtual size_t dispose(Space* home) {
+      _v.cancel(home, this, dc);
+      (void) IntViewDemon<View>::dispose(home);
+      return sizeof(*this);
+    }
+  private:
+    int _mod(int val) {
+      return ViewIntMod<View>::state_mod(val, _v);
+    }
+  };
+  //@}
+
+}
+
+// STATISTICS: int-prop
+

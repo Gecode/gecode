@@ -65,6 +65,9 @@ AC_GECODE_DEBUG
 dnl check whether we want to have support for finding memory leaks
 AC_GECODE_LEAK_DEBUG
 
+dnl check wheter we want to build support for demons
+AC_GECODE_ENABLE_DEMONS
+
 dnl check whether we want audit code in our build
 AC_GECODE_AUDIT
 

@@ -300,9 +300,9 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space* home, SubscriberType p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space* home, SubscriberType p, PropCond pc);
       //@}
 
       /// \name Cloning
@@ -451,9 +451,9 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space* home, SubscriberType p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space* home, SubscriberType p, PropCond pc);
       //@}
 
       /// \name Cloning
@@ -603,9 +603,9 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space* home, SubscriberType p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space* home, SubscriberType p, PropCond pc);
       //@}
 
       /// \name Cloning
@@ -767,9 +767,9 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space* home, SubscriberType p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space* home, SubscriberType p, PropCond pc);
       //@}
 
 
@@ -933,9 +933,9 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space* home, SubscriberType p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space* home, SubscriberType p, PropCond pc);
       //@}
 
 
@@ -1153,9 +1153,9 @@ namespace Gecode {
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      void subscribe(Space* home, SubscriberType p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, Propagator* p, PropCond pc);
+      void cancel(Space* home, SubscriberType p, PropCond pc);
       //@}
 
 

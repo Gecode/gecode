@@ -28,6 +28,32 @@ namespace Gecode { namespace Int {
   BoolVarImp BoolVarImp::s_one(1);
   BoolVarImp BoolVarImp::s_zero(0);
 
+  /*
+   * Demons
+   *
+   */
+#if GECODE_USE_DEMONS
+  bool
+  BoolVarImp::demons(Space *home) {
+    SubscriberType* b = idx[PC_BOOL_DEMON];
+    SubscriberType* p = idx[PC_BOOL_DEMON+1];
+    ModEvent me = dom==NONE ? ME_BOOL_NONE : ME_BOOL_VAL;
+    int lo = dom==ONE, hi = dom==ZERO;
+    while (p-- > b) {
+      switch (static_cast<IntDemon*>(p->d())
+              ->propagate(home,me,lo,hi)) {
+      case __ES_SUBSUMED:
+        break;
+      case ES_FAILED:
+        return false;
+        break;
+      default:
+        break;
+      }
+    }
+    return true;
+  }
+#endif
 }}
 
 // STATISTICS: int-var

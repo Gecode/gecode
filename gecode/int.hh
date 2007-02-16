@@ -247,9 +247,15 @@ operator<<(std::ostream&, const Gecode::IntSet& s);
 #include "gecode/int/int-set.icc"
 
 
+#if GECODE_USE_DEMONS
+#include "gecode/int/demon.icc"
+#endif
 #include "gecode/int/var.icc"
 #include "gecode/int/view.icc"
 #include "gecode/int/propagator.icc"
+#if GECODE_USE_DEMONS
+#include "gecode/int/demon-imp.icc"
+#endif
 #include "gecode/int/array.icc"
 
 
@@ -632,7 +638,7 @@ namespace Gecode {
   //@{
   /** \brief Post propagator such that \a x forms a circuit
    *
-   * \a x forms a circuit if the graph with edges \f$i\to j$\f where
+   * \a x forms a circuit if the graph with edges \f$i\to j\f$ where
    * \f$x_i=j\f$ has a single cycle covering all nodes.
    *
    * Throws an exception of type Int::ArgumentSame, if \a x 

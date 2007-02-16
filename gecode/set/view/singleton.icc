@@ -197,12 +197,12 @@ namespace Gecode {
     }
 
     forceinline void
-    SingletonView::subscribe(Space* home, Propagator* p, PropCond pc,
+    SingletonView::subscribe(Space* home, SubscriberType p, PropCond pc,
                              bool process) {
       view.subscribe(home,p,pc_settoint(pc),process);
     }
     forceinline void
-    SingletonView::cancel(Space* home, Propagator* p, PropCond pc) {
+    SingletonView::cancel(Space* home, SubscriberType p, PropCond pc) {
       view.cancel(home,p,pc_settoint(pc));
     }
 

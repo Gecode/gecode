@@ -384,7 +384,7 @@ namespace Gecode {
     c->vars_noidx = NULL;
     // Update variables with indexing structure
     {
-      Propagator** s = reinterpret_cast<Propagator**>(c->mm.subscriptions());
+      SubscriberType* s = reinterpret_cast<SubscriberType*>(c->mm.subscriptions());
       c->n_sub = n_sub;
       for (int vti=VTI_LAST; vti--; ) {
         VarBase* vs = c->vars[vti].entry;

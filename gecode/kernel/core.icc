@@ -3,10 +3,12 @@
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
  *     Guido Tack <tack@gecode.org>
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
  *  Copyright:
  *     Christian Schulte, 2002
  *     Guido Tack, 2003
+ *     Mikael Lagerkvist, 2006
  *
  *  Bugfixes provided by:
  *     Alexander Samoilov <alexander_samoilov@yahoo.com>
@@ -86,6 +88,75 @@ namespace Gecode {
 
 
   /*
+   * Demons
+   *
+   */
+#if GECODE_USE_DEMONS
+  class Demon;
+  class PropagatorPointer;
+  /// This class encapsulates a subscriber-reference.
+  class Subscriber {
+    ptrdiff_t v;
+  public:
+    Subscriber(Propagator *p) {
+      assert(sizeof(ptrdiff_t) >= sizeof(Propagator*));
+      assert(p);
+      v = reinterpret_cast<ptrdiff_t>(p);
+    }
+    Subscriber(Demon *d) {
+      assert(sizeof(ptrdiff_t) >= sizeof(Demon*));
+      assert(d);
+      v = reinterpret_cast<ptrdiff_t>(d);
+      v |= 1;
+    }
+    /// Returns if this subscriber was constructed from a Demon.
+    bool is_demon() { 
+      assert(v > 1);
+      return v & 1;
+    }
+    /**
+     * Return the Propagator pointer stored.
+     *
+     * \pre this must have been constructed from a Propagator pointer.
+     */
+    Propagator *p() {
+      assert(v > 1);
+      assert(!is_demon());
+      return reinterpret_cast<Propagator*>(v);
+    }
+    /**
+     * Return the Demon pointer stored.
+     *
+     * \pre this must have been constructed from a Demon pointer.
+     */
+    Demon *d() {
+      assert(v > 1);
+      assert(is_demon());
+      return reinterpret_cast<Demon*>(v&~1);
+    }
+
+    /** Return the forward pointer.
+     */
+    Subscriber prev(void);
+    /** Set the forward pointer.
+     *
+     * \pre \a f must match demons status of this
+     */
+    void prev(Subscriber f);
+    
+    bool operator==(const Subscriber& rhs) { return v == rhs.v; }
+    bool operator!=(const Subscriber& rhs) { return v != rhs.v; }
+  };
+
+  /// This is the type of a subscriber
+  typedef Subscriber SubscriberType;
+#else /* GECODE_USE_DEMONS == 0 */
+  /// This is the type of a subscriber
+  typedef Propagator* SubscriberType;
+#endif /* GECODE_USE_DEMONS */
+
+
+  /*
    * Variables
    *
    */
@@ -116,12 +187,13 @@ namespace Gecode {
      * The argument \a sub gives the memory area where subscriptions are
      * to be stored.
      */
-    virtual void update(VarBase* x, Propagator**& sub) = 0;
+    virtual void update(VarBase* x, SubscriberType*& sub) = 0;
     /**
       * \brief Dispose variables
       *
       * If needed for the variable type, dispose a list of
-      * variables, with \a x being the first variable on the list.
+      * variables, with \a x being the first variable on the
+      * list.
       */
     virtual void dispose(Space* home, VarBase* x) = 0;
     /// Destructor (not really used)
@@ -146,7 +218,7 @@ namespace Gecode {
      * The argument \a sub gives the memory area where subscriptions are
      * to be stored.
      */
-    virtual void update(VarBase* x, Propagator**& sub);
+    virtual void update(VarBase* x, SubscriberType*& sub);
     /**
       * \brief Dispose variables
       *
@@ -167,6 +239,8 @@ namespace Gecode {
    * \ingroup TaskActor
    */
   typedef int PropModEvent;
+
+
 
 
   /**
@@ -195,7 +269,17 @@ namespace Gecode {
       /// Store the forwarding pointer during copying
       Variable* fwd;
     } u;
-    Propagator** idx[PC+2]; ///< Stores where entries start (idx[pc]}
+#ifdef GECODE_USE_DEMONS
+    // In the case of demons in the system, we must allow access to
+    // the index structure to subclasses.
+    // This is unfortunate, but hard to overcome, since 
+    // variable-type specific processing for the demons is needed.
+  protected:
+#endif
+    SubscriberType* idx[PC+2]; ///< Stores where entries start (idx[pc]}
+#ifdef GECODE_USE_DEMONS
+  private:
+#endif
 
     /// Manage number of free entries internally
     unsigned int free(void) const;
@@ -212,7 +296,7 @@ namespace Gecode {
      * The argument \a sub gives the memory area where subscriptions are
      * to be stored.
      */
-    void update(Variable* x, Propagator**& sub);
+    void update(Variable* x, SubscriberType*& sub);
 
     /// Resize subscription array
     void resize(Space* home);
@@ -237,20 +321,20 @@ namespace Gecode {
      * with modification event \a me provided that \a pc is different
      * from \a PC_GEN_ASSIGNED.
      */
-    void subscribe(Space* home, Propagator* p, PropCond pc,
+    void subscribe(Space* home, SubscriberType p, PropCond pc,
                    bool assigned, ModEvent me, bool process);
     /** \brief Propagate propagator \a p with propagation condition \a pc
      *
      * The propagator \a p is processed for execution with modification 
      * event \a me.
      */
-    static void propagate(Space* home, Propagator* p, ModEvent me);
+    static void propagate(Space* home, SubscriberType p, ModEvent me);
     /** \brief Cancel subscription of propagator \a p with propagation condition \a pc
      *
      * If the variables is assigned, \a assigned must be true.
      *
      */
-    void cancel(Space* home, Propagator* p, PropCond pc,
+    void cancel(Space* home, SubscriberType p, PropCond pc,
                 bool assigned);
     /// Return degree (number of subscribed propagators)
     unsigned int degree(void) const;
@@ -396,6 +480,10 @@ namespace Gecode {
     friend class Propagator;
     friend class Branching;
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
+#if GECODE_USE_DEMONS
+    friend class Subscriber;
+    friend class PropagatorPointer;
+#endif
   public:
     /// Create copy
     virtual Actor* copy(Space*,bool) = 0;
@@ -502,6 +590,11 @@ namespace Gecode {
     friend ExecStatus ES_SUBSUMED(Propagator*, Space*);
     friend ExecStatus ES_FIX_PARTIAL(Propagator*, PropModEvent);
     friend ExecStatus ES_NOFIX_PARTIAL(Propagator*, PropModEvent);
+#if GECODE_USE_DEMONS
+    friend class Subscriber;
+    friend class Demon;
+    friend class PropagatorPointer;
+#endif
   private:
     union {
       PropModEvent pme;
@@ -524,6 +617,143 @@ namespace Gecode {
   };
 
 
+#if GECODE_USE_DEMONS
+  /**
+   * \brief %Demon \a p is subsumed
+   *
+   * The size of the demon is \a s.
+   *
+   * Note that the demon must be subsumed and also disposed. So
+   * in general, there should be code such as 
+   * \code return ES_SUBSUMED(this,dispose(home)) \endcode.
+   * 
+   * However, in case the demon has nothing to dispose (all its
+   * views are assigned and no external resources) it is sufficient
+   * to do 
+   * \code return ES_SUBSUMED(this,sizeof(*this)) \endcode.
+   *
+   * \warning Has a side-effect on the demon. Use only directly with
+   *          returning from propagation.
+   * \ingroup TaskActorStatus
+   */
+  ExecStatus ES_SUBSUMED(Demon* d, size_t s);
+  /**
+   * \brief %Demon \a p is subsumed
+   *
+   * First disposes the demon and then returns subsumtion.
+   *
+   * \warning Has a side-effect on the demon. Use only directly with
+   *          returning from propagation.
+   * \ingroup TaskActorStatus
+   */
+  ExecStatus ES_SUBSUMED(Demon* d, Space* home);
+
+  /** \brief Propagator maintainer
+   */
+  class PropagatorPointer {
+    friend class Demon;
+  protected:
+    Propagator* _p;
+  public:
+    /// Create propagator pointer.
+    PropagatorPointer(Propagator *p) : _p(p) {}
+
+    /** \brief Schedule propagator for execution.
+     *
+     * The propagator is scheduled for exectuion with a ModEvent of \a
+     * me.
+     *
+     * \warning If the propagator is currently propagating, then
+     *scheduling it will not make the propagator run again.
+     */
+    template <VarTypeId VTI, class MED>
+    void schedule(Space* home, ModEvent me);
+
+    /** \brief Subsume propagator.
+     *
+     * \warning If the propagator is currently propagating, then
+     *running subsume on it will crash the system.
+     */
+    void subsume(Space* home);
+
+    /// Get propagator pointer.
+    Propagator* p() { return _p; }
+  };
+
+
+  /**
+   * \brief Base-class for demons
+   *
+   * Demons are subclassed for each kind of variable that they
+   * support. The subclasses define the kinds of propagate-methods
+   * that might be called.
+   *
+   * \ingroup TaskActor
+   */
+  class Demon {
+    friend class Subscriber;
+    friend ExecStatus ES_SUBSUMED(Demon*, size_t);
+    friend ExecStatus ES_SUBSUMED(Demon*, Space*);
+    Demon* _forward; ///< Forward pointer for cloning.
+  protected:
+    /// Access forward pointer
+    Demon* forward(void)   { return _forward;}
+    // Set disposed flag and size
+    void disposed(bool v, size_t size) { 
+      _forward = reinterpret_cast<Demon*>((size << 1) | 1); 
+    }
+  public:
+    /// Constructor for creation
+    GECODE_KERNEL_EXPORT
+    Demon(Space*, Propagator*) : _forward(NULL) {}
+    /// Copying constructor
+    GECODE_KERNEL_EXPORT
+    Demon(Space*, Propagator*, bool, Demon&) : _forward(NULL) {}
+
+
+    /// Create copy
+    virtual Demon* copy(Space* home, Propagator *p, bool share) = 0;
+
+    
+    /// Is this Demon disposed?
+    bool disposed()  { 
+      return reinterpret_cast<ptrdiff_t>(_forward)&1 == 1;
+    }
+    // Get size of disposed demon
+    size_t size() { 
+      assert(disposed());
+      return reinterpret_cast<ptrdiff_t>(_forward)>>1;
+    }
+    /// Set forward pointer
+    void forward(Demon* f) { 
+      _forward = f;   
+    }
+
+    /// \name Memory management
+    //@{
+    virtual size_t dispose(Space* home);
+
+    /// Allocate memory from space
+    static void* operator new(size_t s, Space* home);
+    /// No-op for exceptions
+    static void  operator delete(void* p, Space* home);
+  private:
+#ifndef __GNUC__
+    /// Not used (uses dispose instead)
+    static void  operator delete(void* p, size_t s);
+#endif
+    /// Not used
+    static void* operator new(size_t s);
+    //@}
+#ifdef __GNUC__
+  public:
+    /// To avoid warnings from GCC
+    virtual ~Demon(void) {}
+    /// Not used (uses dispose instead)
+    static void  operator delete(void* p, size_t s);
+#endif
+  };
+#endif /* GECODE_USE_DEMONS */
 
 
   /*
@@ -640,6 +870,9 @@ namespace Gecode {
     friend class Branching;
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
     template <VarTypeId VTI, PropCond PC, class MED> friend class VarTypeProcessor;
+#if GECODE_USE_DEMONS
+    friend class PropagatorPointer;
+#endif
   private:
     MemoryManager   mm; ///< Performs memory management for space
 
@@ -1041,9 +1274,86 @@ namespace Gecode {
   }
 
 
+  /*
+   * Demon class members
+   *
+   */
+#if GECODE_USE_DEMONS
+  /*
+   * Subsumption
+   */
+  forceinline ExecStatus
+  ES_SUBSUMED(Demon* d, size_t s) {
+    d->disposed(true, s);
+    return __ES_SUBSUMED;
+  }
+  forceinline ExecStatus
+  ES_SUBSUMED(Demon* d, Space* home) {
+    d->dispose(home);
+    // dispose will set the size correctly
+    return __ES_SUBSUMED;
+  }
+
 
   /*
-   * ActorLinks as common subclass for propagators and branchings
+   * Subscribers
+   */
+  forceinline Subscriber
+  Subscriber::prev(void) {
+    assert(v > 1);
+    if (is_demon())
+      return d()->forward();
+    else
+      return static_cast<Propagator*>(p()->prev());
+  }
+  forceinline void
+  Subscriber::prev(Subscriber f) {
+    assert(v > 1);
+    if (is_demon())
+      d()->forward(f.d());
+    else
+      p()->prev(f.p());
+  }
+  
+  /*
+   * Propagator pointers
+   */
+  template <VarTypeId VTI, class MED>
+  forceinline void
+  PropagatorPointer::schedule(Space* home, ModEvent me) {
+    home->process<VTI,MED>(_p, me);
+  }
+
+  forceinline void
+  PropagatorPointer::subsume(Space* home) {
+    size_t s = _p->dispose(home);
+    _p->unlink();
+    home->reuse(_p, s);
+  }
+
+
+  /*
+   * Demons
+   *
+   */
+  forceinline void
+  Demon::operator delete(void*, size_t) {}
+  forceinline void
+  Demon::operator delete(void*,Space*) {}
+  forceinline void*
+  Demon::operator new(size_t s, Space* home) {
+    return home->alloc(s);
+  }
+
+  forceinline size_t
+  Demon::dispose(Space*) {
+    disposed(true, sizeof(*this));
+    return sizeof(*this);
+  }
+#endif
+
+  /*
+   * ActorLinks as common superclass for propagators and branchings
    *
    */
 
@@ -1183,6 +1493,7 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::modevent(ModEvent me) {
+    assert(1 <= me && me <= 3);
     u.free_me = (u.free_me & ~15) | me;
   }
   template <VarTypeId VTI, PropCond PC, class MED>
@@ -1442,12 +1753,18 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
-  Variable<VTI,PC,MED>::subscribe(Space* home, Propagator* p, PropCond pc,
+  Variable<VTI,PC,MED>::subscribe(Space* home, SubscriberType p, PropCond pc,
                                   bool assigned, ModEvent me, bool process) {
     if (assigned) {
       // Do not subscribe, just process the propagator
+#if GECODE_USE_DEMONS
+      if (!p.is_demon())
+        if (process)
+          home->process<VTI,MED>(p.p());
+#else
       if (process)
         home->process<VTI,MED>(p);
+#endif
     } else {
       // Count one new subscription
       home->n_sub += 1;
@@ -1460,15 +1777,26 @@ namespace Gecode {
         *(idx[i]) = *(--idx[i+1]);
       *idx[pc]=p;
       // Process propagator
+#if GECODE_USE_DEMONS
+      if (!p.is_demon())
+        if (process && (pc != PC_GEN_ASSIGNED))
+          home->process<VTI,MED>(p.p(),me);
+#else
       if (process && (pc != PC_GEN_ASSIGNED))
         home->process<VTI,MED>(p,me);
+#endif
     }
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
-  Variable<VTI,PC,MED>::propagate(Space* home, Propagator* p, ModEvent me) {
-    home->process<VTI,MED>(p,me);
+  Variable<VTI,PC,MED>::propagate(Space* home, SubscriberType p, ModEvent me) {
+#if GECODE_USE_DEMONS
+    if (!p.is_demon())
+      home->process<VTI,MED>(p.p(),me);
+#else
+      home->process<VTI,MED>(p,me);
+#endif
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
@@ -1478,8 +1806,8 @@ namespace Gecode {
     if (idx[0] == NULL) {
       // Create fresh dependency array
       free(4);
-      Propagator** prop = reinterpret_cast<Propagator**>
-        (home->alloc(4*sizeof(Propagator*))) + 4;
+      SubscriberType* prop = reinterpret_cast<SubscriberType*>
+        (home->alloc(4*sizeof(SubscriberType))) + 4;
       for (PropCond i = PC+2; i--; )
         idx[i] = prop;
     } else {
@@ -1488,17 +1816,17 @@ namespace Gecode {
       // Find out whether the area is most likely in the special area
       // reserved for subscriptions. If yes, just resize mildly otherwise
       // more agressively
-      Propagator** s = reinterpret_cast<Propagator**>
+      SubscriberType* s = reinterpret_cast<SubscriberType*>
         (home->mm.subscriptions());
       unsigned int m = 
         ((s <= idx[0]) && (idx[0] < s+home->n_sub)) ?
         (n+4) : ((n+1)*3>>1);
-      Propagator** prop = reinterpret_cast<Propagator**>
-        (home->alloc(m*sizeof(Propagator*))) + m-n;
+      SubscriberType* prop = reinterpret_cast<SubscriberType*>
+        (home->alloc(m*sizeof(SubscriberType))) + m-n;
       free(m-n);
       // Copy entries
-      memcpy(prop, idx[0], n*sizeof(Propagator*));
-      home->reuse(idx[0], n*sizeof(Propagator*));
+      memcpy(prop, idx[0], n*sizeof(SubscriberType));
+      home->reuse(idx[0], n*sizeof(SubscriberType));
       // Update index pointers
       ptrdiff_t o = prop - idx[0];
       idx[0] = prop;
@@ -1515,10 +1843,10 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
-  Variable<VTI,PC,MED>::cancel(Space* home, Propagator* p, PropCond pc,
+  Variable<VTI,PC,MED>::cancel(Space* home, SubscriberType p, PropCond pc,
                                bool assigned) {
     if (!assigned) {
-      Propagator** f = idx[pc];
+      SubscriberType* f = idx[pc];
 #if GECODE_AUDIT
       while (f < idx[pc+1])
         if (*f == p)
@@ -1568,37 +1896,57 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
-  Variable<VTI,PC,MED>::update(Variable<VTI,PC,MED>* x, Propagator**& sub) {
+  Variable<VTI,PC,MED>::update(Variable<VTI,PC,MED>* x, SubscriberType*& sub) {
     // this refers to the variable to be updated (clone)
     // x refers to the original
     // Recover from copy (also overwrites forwarding pointer)
     x->u.free_me = u.free_me;
-    Propagator** f = x->idx[0];
+    SubscriberType* f = x->idx[0];
     int n = static_cast<int>(x->idx[PC+1] - f);
     u.free_me = 0;
-    Propagator** t = sub;
+    SubscriberType* t = sub;
     sub += n;
     idx[0] = t;
     ptrdiff_t o = t - f;
     for (PropCond i = PC+1; i>0; i--)
       idx[i] = x->idx[i]+o;
+#if GECODE_USE_DEMONS
     while ((n-4) >= 0) {
       n -= 4;
-      t[0] = static_cast<Propagator*>(f[0]->prev());;
-      t[1] = static_cast<Propagator*>(f[1]->prev());;
-      t[2] = static_cast<Propagator*>(f[2]->prev());;
-      t[3] = static_cast<Propagator*>(f[3]->prev());;
+      t[0] = static_cast<SubscriberType>(f[0].prev());
+      t[1] = static_cast<SubscriberType>(f[1].prev());
+      t[2] = static_cast<SubscriberType>(f[2].prev());
+      t[3] = static_cast<SubscriberType>(f[3].prev());
       t += 4; f += 4;
     }
     if ((n-2) >= 0) {
       n -= 2;
-      t[0] = static_cast<Propagator*>(f[0]->prev());;
-      t[1] = static_cast<Propagator*>(f[1]->prev());;
+      t[0] = static_cast<SubscriberType>(f[0].prev());
+      t[1] = static_cast<SubscriberType>(f[1].prev());
       t += 2; f += 2;
     }
     if (n > 0) {
-      t[0] = static_cast<Propagator*>(f[0]->prev());;
+      t[0] = static_cast<SubscriberType>(f[0].prev());
     }
+#else
+    while ((n-4) >= 0) {
+      n -= 4;
+      t[0] = static_cast<SubscriberType>(f[0]->prev());
+      t[1] = static_cast<SubscriberType>(f[1]->prev());
+      t[2] = static_cast<SubscriberType>(f[2]->prev());
+      t[3] = static_cast<SubscriberType>(f[3]->prev());
+      t += 4; f += 4;
+    }
+    if ((n-2) >= 0) {
+      n -= 2;
+      t[0] = static_cast<SubscriberType>(f[0]->prev());
+      t[1] = static_cast<SubscriberType>(f[1]->prev());
+      t += 2; f += 2;
+    }
+    if (n > 0) {
+      t[0] = static_cast<SubscriberType>(f[0]->prev());
+    }
+#endif
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
@@ -1608,7 +1956,7 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC, class MED>
   void
-  VarTypeProcessor<VTI,PC,MED>::update(VarBase* vb, Propagator**& sub) {
+  VarTypeProcessor<VTI,PC,MED>::update(VarBase* vb, SubscriberType*& sub) {
     Variable<VTI,PC,MED>* x = static_cast<Variable<VTI,PC,MED>*>(vb);
     do {
       x->forward()->update(x,sub); x = x->next();
@@ -1627,10 +1975,14 @@ namespace Gecode {
   forceinline void
   Variable<VTI,PC,MED>::process(Space* home,
                                 PropCond pc1, PropCond pc2, ModEvent me) {
-    Propagator** b = idx[pc1];
-    Propagator** p = idx[pc2+1];
+    SubscriberType* b = idx[pc1];
+    SubscriberType* p = idx[pc2+1];
     while (p-- > b)
+#if GECODE_USE_DEMONS
+      home->process<VTI,MED>(p->p(),me);
+#else
       home->process<VTI,MED>(*p,me);
+#endif
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
@@ -1638,15 +1990,20 @@ namespace Gecode {
   Variable<VTI,PC,MED>::process(Space* home) {
     // Entries in index structure are disabled. However they
     // must still work for cloning (idx[0]) and degree (idx[PC+1])
-    Propagator** b = idx[0];    idx[0] = NULL;
-    Propagator** p = idx[PC+1]; idx[PC+1] = NULL;
+    SubscriberType* b = idx[0];    idx[0] = NULL;
+    SubscriberType* p = idx[PC+1]; idx[PC+1] = NULL;
     home->n_sub -= p-b;
     // Information needed to release the dependency array
     unsigned int n = free() + (p-b);
-    Propagator** s = p-n;
+    SubscriberType* s = p-n;
     while (p-- > b)
+#if GECODE_USE_DEMONS
+      if (!p->is_demon())
+        home->process<VTI,MED>(p->p());
+#else
       home->process<VTI,MED>(*p);
-    home->reuse(s,n*sizeof(Propagator*));
+#endif
+    home->reuse(s,n*sizeof(SubscriberType));
   }
 
 }

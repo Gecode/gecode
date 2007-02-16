@@ -200,7 +200,7 @@ namespace Gecode { namespace Set {
      * with modification event \a me provided that \a pc is different
      * from \a PC_GEN_ASSIGNED.
      */
-    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
+    void subscribe(Space* home, SubscriberType p, PropCond pc, bool assigned, bool process);
     /// Notify that variable implementation has been modified with modification event \a me
     void notify(Space* home, ModEvent me);
     //@}
@@ -225,7 +225,7 @@ namespace Gecode { namespace Set {
     : Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>(home,share,x) {}
 
   forceinline void
-  SetVarImpBase::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
+  SetVarImpBase::subscribe(Space* home, SubscriberType p, PropCond pc, bool assigned, bool process) {
     Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>::subscribe(home,p,pc,assigned,ME_SET_CBB,process);
   }
 

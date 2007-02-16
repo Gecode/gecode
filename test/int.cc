@@ -222,6 +222,7 @@ public:
       Log::print(c->x, "x");
       if (!r) {
         it.post(c,c->x);
+        Log::log("Post again","//Post again");
         Log::fixpoint();
         if (c->status() == SS_FAILED) {
           Log::print(c->x, "x");

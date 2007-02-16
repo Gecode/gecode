@@ -190,14 +190,14 @@ namespace Gecode { namespace Set {
 
   template <class View>
   forceinline void
-  OffsetSetView<View>::subscribe(Space* home, Propagator* p, PropCond pc,
+  OffsetSetView<View>::subscribe(Space* home, SubscriberType p, PropCond pc,
                                   bool process) {
     view.subscribe(home,p, pc,process);
   }
 
   template <class View>
   forceinline void
-  OffsetSetView<View>::cancel(Space* home, Propagator* p, PropCond pc) {
+  OffsetSetView<View>::cancel(Space* home, SubscriberType p, PropCond pc) {
     view.cancel(home,p, pc);
   }
 

@@ -103,9 +103,15 @@ namespace Gecode { namespace Int {
       }
     }
     notify(home,ME_INT_BND);
+#if GECODE_USE_DEMONS
+    demons(home,ME_INT_BND, m+1, Limits::Int::int_max+1);
+#endif /* GECODE_USE_DEMONS */
     return;
   notify_val:
     notify(home,ME_INT_VAL);
+#if GECODE_USE_DEMONS
+    demons(home,ME_INT_VAL, m+1, Limits::Int::int_max+1);
+#endif /* GECODE_USE_DEMONS */
   }
 
   void
@@ -137,9 +143,15 @@ namespace Gecode { namespace Int {
       }
     }
     notify(home,ME_INT_BND);
+#if GECODE_USE_DEMONS
+    demons(home,ME_INT_BND, Limits::Int::int_min-1, m-1);
+#endif /* GECODE_USE_DEMONS */
     return;
   notify_val:
     notify(home,ME_INT_VAL);
+#if GECODE_USE_DEMONS
+    demons(home,ME_INT_VAL, Limits::Int::int_min-1, m-1);
+#endif /* GECODE_USE_DEMONS */
   }
 
   bool
@@ -287,14 +299,23 @@ namespace Gecode { namespace Int {
       }
     }
     notify(home,ME_INT_DOM);
+#if GECODE_USE_DEMONS
+    if (!demons(home,ME_INT_DOM, m, m)) return ME_GEN_FAILED;
+#endif /* GECODE_USE_DEMONS */
     return ME_INT_DOM;
   notify_bnd_or_val:
     if (assigned()) {
       notify(home,ME_INT_VAL);
+#if GECODE_USE_DEMONS
+      if (!demons(home,ME_INT_VAL, m, m)) return ME_GEN_FAILED;
+#endif /* GECODE_USE_DEMONS */
       return ME_INT_VAL;
     }
   notify_bnd:
     notify(home,ME_INT_BND);
+#if GECODE_USE_DEMONS
+    if (!demons(home,ME_INT_BND, m, m)) return ME_GEN_FAILED;
+#endif /* GECODE_USE_DEMONS */
     return ME_INT_BND;
   }
 
@@ -347,6 +368,29 @@ namespace Gecode { namespace Int {
     return new (home) IntVarImp(home,share,*this);
   }
 
+  /*
+   * Demons
+   *
+   */
+#if GECODE_USE_DEMONS
+  bool
+  IntVarImp::demons(Space *home, ModEvent me, int lo, int hi) {
+    SubscriberType* b = idx[PC_INT_DEMON];
+    SubscriberType* p = idx[PC_INT_DEMON+1];
+    while (p-- > b) {
+      switch(static_cast<IntDemon*>(p->d())->propagate(home, me, lo, hi)) {
+      case __ES_SUBSUMED:
+        break;
+      case ES_FAILED:
+        return false;
+        break;
+      default:
+        break;
+      }
+    }
+    return true;
+  }
+#endif
 }}
 
 // STATISTICS: int-var

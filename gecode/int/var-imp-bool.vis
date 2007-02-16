@@ -140,6 +140,14 @@ ModEvents:	VAL
    * condition PC_BOOL_VAL, then \a p is propagated when a domain
    * update operation on \a x returns the modification event ME_BOOL_VAL.
    */
+[PropCond]
+Name:           DEMON
+ModEvents:      
+  /**
+   * \brief Propagation condition for demons.
+   *
+   * The subscriber must be a demon, and will be run on all domain changes.
+   */
 [PropCondFooter]
   //@}
 ##

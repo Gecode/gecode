@@ -389,6 +389,20 @@ AC_DEFUN([AC_GECODE_PROFILE],
 	    AC_MSG_RESULT(no)
 	 fi])
 
+AC_DEFUN([AC_GECODE_DEMONS],
+	[AC_ARG_ENABLE([demons],
+	   AC_HELP_STRING([--enable-demons],
+	     [build with demons @<:@default=no@:>@]))
+	 AC_MSG_CHECKING(whether to build with demons)
+	 if test "${enable_demons:-no}" = "yes"; then
+	    AC_DEFINE(GECODE_USE_DEMONS, 1)
+	    AC_MSG_RESULT(yes)
+	 else
+	    AC_DEFINE(GECODE_USE_DEMONS, 0)
+	    AC_MSG_RESULT(no)
+	 fi])
+
+
 # Test for platform specific behaviour of arithmetic
 
 AC_DEFUN([AC_GECODE_CHECK_ARITH],
