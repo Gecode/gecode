@@ -121,7 +121,7 @@ public:
     {
       int j=0;
       for (int i=0; i<n*n; i++) {
-        jump[i]=j; j=succ[j].min();
+        jump[j]=i; j=succ[j].min();
       }
     }
     std::cout << "\t";
