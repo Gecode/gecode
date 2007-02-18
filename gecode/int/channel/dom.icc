@@ -234,26 +234,27 @@ namespace Gecode { namespace Int { namespace Channel {
         xv[i] = x[i].view;
       GECODE_ES_CHECK(dc.init(home,n,&xv[0]));
     }
-    dc.propagate(home);
-    // This might assign some more views in x which goes unnoticed
-    // (that is, not recorded in xa). This must be checked and propagated
-    // to the y views, however the distinctness on x is already
-    // propagated.
-    for (int i=n; i--; )
-      if (x[i].doval()) {
-        int j = x[i].view.val();
-        // Assign the y variable to i (or test if already assigned!)
-        ModEvent me = y[j].view.eq(home,i);
-        if (me_failed(me))
-          return ES_FAILED;
-        if (me_modified(me)) {
-          // Record that y[j] has been assigned and must be propagated
-          assert(me == ME_INT_VAL);
-          // Otherwise the modification event would not be ME_INT_VAL
-          ya.push(j);
+    if (dc.propagate(home)) {
+      // This has assigned some more views in x which goes unnoticed
+      // (that is, not recorded in xa). This must be checked and propagated
+      // to the y views, however the distinctness on x is already
+      // propagated.
+      for (int i=n; i--; )
+        if (x[i].doval()) {
+          int j = x[i].view.val();
+          // Assign the y variable to i (or test if already assigned!)
+          ModEvent me = y[j].view.eq(home,i);
+          if (me_failed(me))
+            return ES_FAILED;
+          if (me_modified(me)) {
+            // Record that y[j] has been assigned and must be propagated
+            assert(me == ME_INT_VAL);
+            // Otherwise the modification event would not be ME_INT_VAL
+            ya.push(j);
+          }
+          x[i].assigned(); n_na--;
         }
-        x[i].assigned(); n_na--;
-      }
+    }
 
     // Process changed views for x
     // This propagates from x to y and possibly records ys that

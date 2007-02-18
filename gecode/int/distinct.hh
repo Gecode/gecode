@@ -176,8 +176,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     ExecStatus init(Space* home, int n, View* x);
     /// Synchronize available view-value graph
     ExecStatus sync(void);
-    /// Perform propagation
-    void propagate(Space* home);
+    /// Perform propagation and return true if a view gets assigned
+    bool propagate(Space* home);
     /// Deallocate view-value graph
     void dispose(void);
   };

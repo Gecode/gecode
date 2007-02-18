@@ -123,16 +123,18 @@ namespace Gecode { namespace Int { namespace Circuit {
     } else {
       GECODE_ES_CHECK(dc.init(home,y.size(),&y[0]));
     }
-    dc.propagate(home);
+    bool assigned = dc.propagate(home);
 
     if (!connected())
       return ES_FAILED;
 
     // Elminiate assigned views from y, as they have been assigned
-    // and propagated by domain consistent propagation.
-    for (int i=y.size(); i--; )
-      if (y[i].assigned())
-        y.move_lst(i);
+    // and propagated by domain consistent propagation. This is required
+    // as we need to know how many assigned views actually exist.
+    if (assigned)
+      for (int i=y.size(); i--; )
+        if (y[i].assigned())
+          y.move_lst(i);
 
     ExecStatus es = ES_FIX;
     {
