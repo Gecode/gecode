@@ -56,9 +56,8 @@ namespace Gecode { namespace Int { namespace Circuit {
     Simple(Space* home, bool share, Simple& p);
     /// Constructor for posting
     Simple(Space* home, ViewArray<View>& x);
-void
-    Simple<View>::scc(SccInfo* si, int &cnt0, int &cnt1, 
-                      Support::SentinelStack<int>& s, int i) const;
+    bool
+    Simple<View>::scc(SccInfo* si, int &cnt, int i) const;
     /// Check whether the view value graph is strongly connected
     bool connected(void) const;
   public:

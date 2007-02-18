@@ -20,8 +20,6 @@
  *
  */
 
-#include "gecode/support/sentinel-stack.hh"
-
 namespace Gecode { namespace Int { namespace Circuit {
 
   /*
@@ -62,81 +60,44 @@ namespace Gecode { namespace Int { namespace Circuit {
 
   class SccInfo {
   public:
-    int low, sc, pre;
+    int low, pre;
   };
 
   template <class View>
-  void
-  Simple<View>::scc(SccInfo* si, int &cnt0, int &cnt1, 
-                    Support::SentinelStack<int>& s, int i) const {
-    int min = si[i].pre = si[i].low = cnt0++;
-    s.push(i);
+  bool
+  Simple<View>::scc(SccInfo* si, int &cnt, int i) const {
+    int min = si[i].pre = si[i].low = cnt++;
     ViewValues<View> v(x[i]);
     while (v()) {
       if (si[v.val()].pre < 0)
-        scc(si,cnt0,cnt1,s,v.val());
+        if (!scc(si,cnt,v.val()))
+          return false;
       if (si[v.val()].low < min)
         min = si[v.val()].low;
       ++v;
     }
     if (min < si[i].low) {
       si[i].low = min;
-      return;
+      return true;
+    } else {
+      // If it is not the first node visited, there is more than one SCC
+      return i == 0;
     }
-    do {
-      int j=s.pop();
-      si[j].sc=cnt1; si[j].low = INT_MAX;
-    } while (s.last() != i);
-    cnt1++;
   }
 
   template <class View>
   bool 
   Simple<View>::connected(void) const {
-    int n = x.size();
-    int cnt0=0;
-    int cnt1=0;
+    int n   = x.size();
+    int cnt = 0;
     GECODE_AUTOARRAY(SccInfo,si,n);
-    GECODE_AUTOSTACK(int,-1,s,n);
     for (int i=n; i--; )
       si[i].pre=-1;
-    for (int i=n; i--; )
-      if (si[i].pre < 0)
-        scc(si,cnt0,cnt1,s,i);
-    if (cnt1 > 1)
+    if (!scc(si,cnt,0))
+      return false;
+    if (cnt < n)
       return false;
     return true;
-    /*
-    // Just a mock up, SCC comes later
-    int n = x.size();
-    GECODE_AUTOARRAY(bool,visited,n);
-    GECODE_AUTOARRAY(int,_stack,n+1);
-    for (int i=n; i--; )
-      for (int j=n; j--; ) {
-        // Check whether there is a path from i to j
-        for (int k=n; k--; )
-          visited[k]=false;
-        Support::SentinelStack<int> s(_stack,-1);
-        s.push(i);
-        visited[i] = true;
-        while (!s.empty()) {
-          int v = s.pop();
-          ViewValues<View> w(x[v]);
-          while (w()) {
-            if (w.val() == j)
-              goto done;
-            if (!visited[w.val()]) {
-              visited[w.val()] = true;
-              s.push(w.val());
-            }
-            ++w;
-          }
-        }
-        return false;
-      done: ;
-      }
-    return true;
-    */
   }
 
   template <class View>
@@ -221,6 +182,8 @@ namespace Gecode { namespace Int { namespace Circuit {
         }
     done:
       // Now do the tells based on the end information
+      ;
+      /*
       for (int i=n; i--; ) 
         if (end[i] >= 0) {
           ModEvent me = x[end[i]].nq(home,i);
@@ -229,6 +192,7 @@ namespace Gecode { namespace Int { namespace Circuit {
           if (me_modified(me))
             es = ES_NOFIX;
         }
+      */
     }
 
     return es;
