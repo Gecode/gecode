@@ -23,88 +23,39 @@
 #include "examples/support.hh"
 #include "gecode/minimodel.hh"
 
-/**
- * \brief %Example: n-%Knights tour
- *
- * Fill an n times n chess board with knights such that the
- * knights do a full tour by knights move (last knight reaches
- * first knight again). The formulation is due to Gert Smolka.
- *
- * \ingroup ExProblem
- *
- */
+/// Base-class for Knights tour example
 class Knights : public Example {
-private:
+protected:
   /// Size of board
   const int n;
   /// Maps board field to successor field
   IntVarArray succ;
 public:
-  /// Return field at position \a i, \a j
+  /// Return field at position \a x, \a y
   int
-  field(int i, int j) {
-    return i*n+j;
+  field(int x, int y) {
+    return x*n+y;
   }
-  /// The actual model
-  Knights(const Options& opt)
-    : n(opt.size), succ(this,n*n,0,n*n-1) {
-    const int nn = n*n;
-
-    // Map knight to its predecessor of succesor on board
-    IntVarArgs jump(nn);
-    IntVarArgs pred(nn);
-
-    for (int i = nn; i--; ) {
-      IntVar p(this,0,nn-1); pred[i]=p;
-      IntVar j(this,0,nn-1); jump[i]=j;
-    }
-
-    // Place the first two knights
-    rel(this, jump[field(0,0)], IRT_EQ, 0);
-    rel(this, jump[field(1,2)], IRT_EQ, 1);
-
-    distinct(this, succ, opt.icl);
-
-    for (int f = 0; f < nn; f++) {
-      int i = f / n;
-      int j = f % n;
-      // Compute array of neighbours
-      int nbs[8];
-      int n_nbs = 0;
-
+  /// Compute array of neighbours
+  void
+  neighbours(int f, int nbs[8], int& n_nbs) {
+    n_nbs=0;
+    int x = f / n;
+    int y = f % n;
+    for (int i=0;i<8;i++) {
       static const int moves[8][2] = {
         {-2,-1}, {-2,1}, {-1,-2}, {-1,2}, {1,-2}, {1,2}, {2,-1}, {2,1}
       };
-
-      for (int nij = 0; nij<8 ; nij++) {
-        int id = i + moves[nij][0];
-        int jd = j + moves[nij][1];
-        
-        if ((id >= 0) && (jd >= 0) && (id < n) && (jd < n)) {
-          int g = field(id,jd);
-          nbs[n_nbs++] = g;
-        
-          BoolVar b(this,0,1);
-
-          rel(this, succ[f], IRT_EQ, g, b);
-          rel(this, pred[g], IRT_EQ, f, b);
-
-          rel(this,
-              post(this, ~(jump[g]-jump[f] == 1)),
-              BOT_XOR,
-              post(this, ~(jump[g]-jump[f] == 1-nn)),
-              b);
-        }
-      }
-        
-      IntSet ds(nbs, n_nbs);
-      dom(this, pred[f], ds);
-      dom(this, succ[f], ds);
-      rel(this, succ[f], IRT_NQ, pred[f]);
+      int nx=x+moves[i][0];
+      int ny=y+moves[i][1];
+      if ((nx >= 0) && (nx < n) && (ny >= 0) && (ny < n))
+        nbs[n_nbs++]=field(nx,ny);
     }
-    branch(this, succ, BVAR_NONE, BVAL_MIN);
   }
-
+  /// Constructor
+  Knights(const Options& opt)
+    : n(opt.size), succ(this,n*n,0,n*n-1) {
+  }
   /// Constructor for cloning \a s
   Knights(bool share, Knights& s) : Example(share,s), n(s.n) {
     succ.update(this, share, s.succ);
@@ -137,6 +88,86 @@ public:
   }
 };
 
+/**
+ * \brief %Example: n-%Knights tour (Simple Model)
+ *
+ * Fill an n times n chess board with knights such that the
+ * knights do a full tour by knights move (last knight reaches
+ * first knight again). The formulation is due to Gert Smolka.
+ *
+ * \ingroup ExProblem
+ *
+ */
+class KnightsSimple : public Knights {
+public:
+  KnightsSimple(const Options& opt) : Knights(opt) {
+    const int nn = n*n;
+
+    // Map knight to its predecessor of succesor on board
+    IntVarArgs jump(nn);
+    IntVarArgs pred(nn);
+
+    for (int i = nn; i--; ) {
+      IntVar p(this,0,nn-1); pred[i]=p;
+      IntVar j(this,0,nn-1); jump[i]=j;
+    }
+
+    // Place the first two knights
+    rel(this, jump[field(0,0)], IRT_EQ, 0);
+    rel(this, jump[field(1,2)], IRT_EQ, 1);
+
+    distinct(this, jump, opt.icl);
+    channel(this, succ, pred, opt.icl);
+
+    for (int f = 0; f < nn; f++) {
+      // Array of neighbours
+      int nbs[8]; int n_nbs = 0;
+      neighbours(f, nbs, n_nbs);
+      for (int i=n_nbs; i--; )
+        rel(this,
+            post(this, ~(jump[nbs[i]]-jump[f] == 1)),
+            BOT_XOR,
+            post(this, ~(jump[nbs[i]]-jump[f] == 1-nn)),
+            post(this, ~(succ[f] == nbs[i])));
+
+      IntSet ds(nbs, n_nbs);
+      dom(this, pred[f], ds);
+      dom(this, succ[f], ds);
+      rel(this, succ[f], IRT_NQ, pred[f]);
+    }
+    branch(this, succ, BVAR_NONE, BVAL_MIN);
+  }
+};
+
+/**
+ * \brief %Example: n-%Knights tour (Model using Circuit)
+ *
+ * Fill an n times n chess board with knights such that the
+ * knights do a full tour by knights move (last knight reaches
+ * first knight again).
+ *
+ * \ingroup ExProblem
+ *
+ */
+class KnightsCircuit : public Knights {
+public:
+  KnightsCircuit(const Options& opt) : Knights(opt) {
+    // Fix the first move
+    rel(this, succ[0], IRT_EQ, field(1,2));
+
+    circuit(this, succ, opt.icl);
+
+    for (int f = 0; f < n*n; f++) {
+      // Array of neighbours
+      int nbs[8]; int n_nbs = 0;
+      neighbours(f, nbs, n_nbs);
+      IntSet ds(nbs, n_nbs);
+      dom(this, succ[f], ds);
+    }
+    branch(this, succ, BVAR_NONE, BVAL_MIN);
+  }
+};
+
 /** \brief Main-function
  *  \relates Knights
  */
@@ -146,7 +177,11 @@ main(int argc, char** argv) {
   opt.iterations = 100;
   opt.size       = 8;
   opt.parse(argc,argv);
-  Example::run<Knights,DFS>(opt);
+  if (opt.naive) {
+    Example::run<KnightsSimple,DFS>(opt);
+  } else {
+    Example::run<KnightsCircuit,DFS>(opt);
+  }
   return 0;
 }
 
