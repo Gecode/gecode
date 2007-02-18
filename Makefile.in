@@ -207,7 +207,7 @@ INTHDR0 = \
 	channel.hh channel/dom.icc channel/val.icc \
 	channel/base.icc \
 	link.hh \
-	circuit.hh circuit/simple.icc
+	circuit.hh circuit/base.icc circuit/val.icc circuit/dom.icc
 
 INTSRC		= $(INTSRC0:%=gecode/int/%)
 INTHDR		= gecode/int.hh $(INTHDR0:%=gecode/int/%)

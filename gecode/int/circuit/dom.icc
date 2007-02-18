@@ -1,0 +1,128 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2007
+ *
+ *  Last modified:
+ *     $Date: 2007-02-13 20:47:50 +0100 (Tue, 13 Feb 2007) $ by $Author: schulte $
+ *     $Revision: 4148 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Circuit {
+
+  /*
+   * The actual propagator
+   *
+   */
+  template <class View>
+  forceinline
+  Dom<View>::Dom(Space* home, ViewArray<View>& x)
+    : Base<View,PC_INT_DOM>(home,x) {}
+
+  template <class View>
+  forceinline
+  Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
+    : Base<View,PC_INT_DOM>(home,share,p) {}
+
+  template <class View>
+  forceinline size_t
+  Dom<View>::dispose(Space* home) {
+    dc.dispose();
+    (void) Base<View,PC_INT_DOM>::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class View>
+  Actor*
+  Dom<View>::copy(Space* home, bool share) {
+    return new (home) Dom<View>(home,share,*this);
+  }
+
+  template <class View>
+  PropCost
+  Dom<View>::cost(void) const {
+    return (View::pme(this) == ME_INT_VAL) ? PC_LINEAR_HI : PC_QUADRATIC_HI;
+  }
+
+  template <class View>
+  ExecStatus
+  Dom<View>::propagate(Space* home) {
+    if (View::pme(this) == ME_INT_VAL) {
+      ExecStatus es = Distinct::prop_val<View,false>(home,y);
+      GECODE_ES_CHECK(es);
+      if (es == ES_FIX) {
+        if (!connected())
+          return ES_FAILED;
+        if (y.size() < 2)
+          return ES_SUBSUMED(this,home);
+        return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
+      }
+      es = Distinct::prop_bnd<View>(home,x);
+      GECODE_ES_CHECK(es);
+      es = Distinct::prop_val<View,true>(home,y);
+      GECODE_ES_CHECK(es);
+      if (!connected())
+        return ES_FAILED;
+      if (y.size() < 2)
+        return ES_SUBSUMED(this,home);
+      return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
+    }
+
+    if (dc.available()) {
+      GECODE_ES_CHECK(dc.sync());
+    } else {
+      GECODE_ES_CHECK(dc.init(home,y.size(),&y[0]));
+    }
+    bool assigned = dc.propagate(home);
+
+    if (!connected())
+      return ES_FAILED;
+
+    // Elminiate assigned views from y, as they have been assigned
+    // and propagated by domain consistent propagation. This is required
+    // as we need to know how many assigned views actually exist.
+    if (assigned)
+      for (int i=y.size(); i--; )
+        if (y[i].assigned())
+          y.move_lst(i);
+
+    // How many views are known to be assigned
+    return path(home,x.size()-y.size());
+  }
+
+  template <class View>
+  ExecStatus
+  Dom<View>::post(Space* home, ViewArray<View>& x) {
+    int n = x.size();
+    if (n == 1) {
+      GECODE_ME_CHECK(x[0].eq(home,0));
+    } else if (n == 2) {
+      GECODE_ME_CHECK(x[0].eq(home,1));
+      GECODE_ME_CHECK(x[1].eq(home,0));
+    } else {
+      for (int i=n; i--; ) {
+        GECODE_ME_CHECK(x[i].gq(home,0));
+        GECODE_ME_CHECK(x[i].le(home,n));
+        GECODE_ME_CHECK(x[i].nq(home,i));
+      }
+      (void) new (home) Dom<View>(home,x);
+    }
+    return ES_OK;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

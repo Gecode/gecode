@@ -1,0 +1,104 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2007
+ *
+ *  Last modified:
+ *     $Date: 2007-02-13 20:47:50 +0100 (Tue, 13 Feb 2007) $ by $Author: schulte $
+ *     $Revision: 4148 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Circuit {
+
+  /*
+   * The actual propagator
+   *
+   */
+  template <class View>
+  forceinline
+  Val<View>::Val(Space* home, ViewArray<View>& x)
+    : Base<View,PC_INT_VAL>(home,x) {}
+
+  template <class View>
+  forceinline
+  Val<View>::Val(Space* home, bool share, Val<View>& p)
+    : Base<View,PC_INT_VAL>(home,share,p) {}
+
+  template <class View>
+  Actor*
+  Val<View>::copy(Space* home, bool share) {
+    return new (home) Val<View>(home,share,*this);
+  }
+
+  template <class View>
+  PropCost
+  Val<View>::cost(void) const {
+    return PC_LINEAR_HI;
+  }
+
+  template <class View>
+  ExecStatus
+  Val<View>::propagate(Space* home) {
+    std::cout << "Propagate: x[]={";
+    for (int i=0;i<x.size();i++)
+      std::cout << x[i] << ", ";
+    std::cout << std::endl;
+    ExecStatus es = Distinct::prop_val<View,true>(home,y);
+    GECODE_ES_CHECK(es);
+    std::cout << "Distinct: x[]={";
+    for (int i=0;i<x.size();i++)
+      std::cout << x[i] << ", ";
+    std::cout << std::endl;
+    /*
+    if (es != ES_FIX) {
+      es = Distinct::prop_bnd<View>(home,x);
+      GECODE_ES_CHECK(es);
+      es = Distinct::prop_val<View,true>(home,y);
+      GECODE_ES_CHECK(es);
+    }
+    */
+    if (!connected())
+      return ES_FAILED;
+    std::cout << "Connected!" << std::endl;
+    if (y.size() < 2)
+      return ES_SUBSUMED(this,home);
+    // How many views are known to be assigned
+    return path(home,x.size()-y.size());
+  }
+
+  template <class View>
+  ExecStatus
+  Val<View>::post(Space* home, ViewArray<View>& x) {
+    int n = x.size();
+    if (n == 1) {
+      GECODE_ME_CHECK(x[0].eq(home,0));
+    } else if (n == 2) {
+      GECODE_ME_CHECK(x[0].eq(home,1));
+      GECODE_ME_CHECK(x[1].eq(home,0));
+    } else {
+      for (int i=n; i--; ) {
+        GECODE_ME_CHECK(x[i].gq(home,0));
+        GECODE_ME_CHECK(x[i].le(home,n));
+        GECODE_ME_CHECK(x[i].nq(home,i));
+      }
+      (void) new (home) Val<View>(home,x);
+    }
+    return ES_OK;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

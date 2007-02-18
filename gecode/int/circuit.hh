@@ -34,27 +34,22 @@
 namespace Gecode { namespace Int { namespace Circuit {
 
   /**
-   * \brief Simple circuit propagator
+   * \brief Base-class for circuit propagator
    *
-   * Propagates domain-consistent distinct and checks that
-   * the induced variable value graph has a single connected
-   * component.
+   * Provides routines for checking that the induced variable value graph
+   * is strongly connected and for pruning short cycles.
    *
-   * Requires \code #include "gecode/int/circuit.hh" \endcode
-   * \ingroup FuncIntProp
    */
-  template <class View>
-  class Simple : public NaryPropagator<View,PC_INT_DOM> {
+  template <class View, PropCond pc>
+  class Base : public NaryPropagator<View,pc> {
  protected:
-    using NaryPropagator<View,PC_INT_DOM>::x;
+    using NaryPropagator<View,pc>::x;
     /// Array for performing value propagation for distinct
     ViewArray<View> y;
-    /// Propagation controller for propagating distinct
-    Distinct::DomCtrl<View> dc;
     /// Constructor for cloning \a p
-    Simple(Space* home, bool share, Simple& p);
+    Base(Space* home, bool share, Base& p);
     /// Constructor for posting
-    Simple(Space* home, ViewArray<View>& x);
+    Base(Space* home, ViewArray<View>& x);
     /// Check whether the view value graph is strongly connected
     bool connected(void) const;
     /** 
@@ -64,6 +59,62 @@ namespace Gecode { namespace Int { namespace Circuit {
      *
      */
     ExecStatus path(Space* home, int a);
+  public:
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
+  };
+
+  /**
+   * \brief "Value-consistent" circuit propagator
+   *
+   * Propagates value-consistent distinct, checks that
+   * the induced variable value graph is stronlgy connected, and
+   * prunes too shot cycles.
+   *
+   * Requires \code #include "gecode/int/circuit.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class View>
+  class Val : public Base<View,PC_INT_VAL> {
+ protected:
+    using Base<View,PC_INT_VAL>::x;
+    using Base<View,PC_INT_VAL>::y;
+    /// Constructor for cloning \a p
+    Val(Space* home, bool share, Val& p);
+    /// Constructor for posting
+    Val(Space* home, ViewArray<View>& x);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Cost function (returns PC_LINEAR_HI)
+    virtual PropCost cost(void) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator for circuit on \a x
+    static  ExecStatus post(Space* home, ViewArray<View>& x);
+  };
+
+  /**
+   * \brief "Domain-consistent" circuit propagator
+   *
+   * Propagates domain-consistent distinct, checks that
+   * the induced variable value graph is stronlgy connected, and
+   * prunes too shot cycles.
+   *
+   * Requires \code #include "gecode/int/circuit.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class View>
+  class Dom : public Base<View,PC_INT_DOM> {
+ protected:
+    using Base<View,PC_INT_DOM>::x;
+    using Base<View,PC_INT_DOM>::y;
+    /// Propagation controller for propagating distinct
+    Distinct::DomCtrl<View> dc;
+    /// Constructor for cloning \a p
+    Dom(Space* home, bool share, Dom& p);
+    /// Constructor for posting
+    Dom(Space* home, ViewArray<View>& x);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
@@ -84,7 +135,9 @@ namespace Gecode { namespace Int { namespace Circuit {
 
 }}}
 
-#include "gecode/int/circuit/simple.icc"
+#include "gecode/int/circuit/base.icc"
+#include "gecode/int/circuit/val.icc"
+#include "gecode/int/circuit/dom.icc"
 
 #endif
 

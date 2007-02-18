@@ -22,40 +22,16 @@
 
 namespace Gecode { namespace Int { namespace Circuit {
 
-  /*
-   * The actual propagator
-   *
-   */
-  template <class View>
+  template <class View, PropCond pc>
   forceinline
-  Simple<View>::Simple(Space* home, ViewArray<View>& x)
-    : NaryPropagator<View,PC_INT_DOM>(home,x), y(home,x) {}
+  Base<View,pc>::Base(Space* home, ViewArray<View>& x)
+    : NaryPropagator<View,pc>(home,x), y(home,x) {}
 
-  template <class View>
+  template <class View, PropCond pc>
   forceinline
-  Simple<View>::Simple(Space* home, bool share, Simple<View>& p)
-    : NaryPropagator<View,PC_INT_DOM>(home,share,p) {
+  Base<View,pc>::Base(Space* home, bool share, Base<View,pc>& p)
+    : NaryPropagator<View,pc>(home,share,p) {
     y.update(home,share,p.y);
-  }
-
-  template <class View>
-  forceinline size_t
-  Simple<View>::dispose(Space* home) {
-    dc.dispose();
-    (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
-    return sizeof(*this);
-  }
-
-  template <class View>
-  Actor*
-  Simple<View>::copy(Space* home, bool share) {
-    return new (home) Simple<View>(home,share,*this);
-  }
-
-  template <class View>
-  PropCost
-  Simple<View>::cost(void) const {
-    return (View::pme(this) == ME_INT_VAL) ? PC_LINEAR_HI : PC_QUADRATIC_HI;
   }
 
   /// Information required for non-recursive checking for a single scc
@@ -66,9 +42,9 @@ namespace Gecode { namespace Int { namespace Circuit {
     ViewValues<View> v;
   };
 
-  template <class View>
+  template <class View, PropCond pc>
   bool 
-  Simple<View>::connected(void) const {
+  Base<View,pc>::connected(void) const {
     int n   = x.size();
     int cnt = 0;
     /// Information needed for checking scc's
@@ -110,9 +86,9 @@ namespace Gecode { namespace Int { namespace Circuit {
     return cnt == n;
   }
 
-  template <class View>
+  template <class View, PropCond pc>
   ExecStatus
-  Simple<View>::path(Space* home, int a) {
+  Base<View,pc>::path(Space* home, int a) {
     // Prunes that partial assigned paths are not completed to cycles
     ExecStatus es = ES_FIX;
 
@@ -156,76 +132,22 @@ namespace Gecode { namespace Int { namespace Circuit {
         ModEvent me = x[end[i]].nq(home,i);
         if (me_failed(me))
           return ES_FAILED;
-        if (me_modified(me))
-          es = ES_NOFIX;
+        if (pc == PC_INT_DOM) {
+          if (me_modified(me))
+            es = ES_NOFIX;
+        } else {
+          if (me == ME_INT_VAL)
+            es = ES_NOFIX;
+        }
       }
     return es;
   }
 
-  template <class View>
-  ExecStatus
-  Simple<View>::propagate(Space* home) {
-    if (View::pme(this) == ME_INT_VAL) {
-      ExecStatus es = Distinct::prop_val<View,false>(home,y);
-      GECODE_ES_CHECK(es);
-      if (es == ES_FIX) {
-        if (!connected())
-          return ES_FAILED;
-        if (y.size() < 2)
-          return ES_SUBSUMED(this,home);
-        return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
-      }
-      es = Distinct::prop_bnd<View>(home,x);
-      GECODE_ES_CHECK(es);
-      es = Distinct::prop_val<View,true>(home,y);
-      GECODE_ES_CHECK(es);
-      if (!connected())
-        return ES_FAILED;
-      if (y.size() < 2)
-        return ES_SUBSUMED(this,home);
-      return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
-    }
-
-    if (dc.available()) {
-      GECODE_ES_CHECK(dc.sync());
-    } else {
-      GECODE_ES_CHECK(dc.init(home,y.size(),&y[0]));
-    }
-    bool assigned = dc.propagate(home);
-
-    if (!connected())
-      return ES_FAILED;
-
-    // Elminiate assigned views from y, as they have been assigned
-    // and propagated by domain consistent propagation. This is required
-    // as we need to know how many assigned views actually exist.
-    if (assigned)
-      for (int i=y.size(); i--; )
-        if (y[i].assigned())
-          y.move_lst(i);
-
-    // How many views are known to be assigned
-    return path(home,x.size()-y.size());
-  }
-
-  template <class View>
-  ExecStatus
-  Simple<View>::post(Space* home, ViewArray<View>& x) {
-    int n = x.size();
-    if (n == 1) {
-      GECODE_ME_CHECK(x[0].eq(home,0));
-    } else if (n == 2) {
-      GECODE_ME_CHECK(x[0].eq(home,1));
-      GECODE_ME_CHECK(x[1].eq(home,0));
-    } else {
-      for (int i=n; i--; ) {
-        GECODE_ME_CHECK(x[i].gq(home,0));
-        GECODE_ME_CHECK(x[i].le(home,n));
-        GECODE_ME_CHECK(x[i].nq(home,i));
-      }
-      (void) new (home) Simple<View>(home,x);
-    }
-    return ES_OK;
+  template <class View, PropCond pc>
+  forceinline size_t
+  Base<View,pc>::dispose(Space* home) {
+    (void) NaryPropagator<View,pc>::dispose(home);
+    return sizeof(*this);
   }
 
 }}}

@@ -25,7 +25,7 @@
 namespace Gecode {
 
   void
-  circuit(Space* home, const IntVarArgs& x, IntConLevel) {
+  circuit(Space* home, const IntVarArgs& x, IntConLevel icl) {
     using namespace Int;
     if (x.same())
       throw ArgumentSame("Int::circuit");
@@ -33,7 +33,11 @@ namespace Gecode {
     if (x.size() == 0)
       return;
     ViewArray<IntView> xv(home,x);
-    GECODE_ES_FAIL(home,Circuit::Simple<IntView>::post(home,xv));
+    if (icl == ICL_DOM) {
+      GECODE_ES_FAIL(home,Circuit::Dom<IntView>::post(home,xv));
+    } else {
+      GECODE_ES_FAIL(home,Circuit::Val<IntView>::post(home,xv));
+    }
   }
 
 }
