@@ -60,9 +60,53 @@ namespace Gecode { namespace Int { namespace Circuit {
     return (View::pme(this) == ME_INT_VAL) ? PC_LINEAR_HI : PC_QUADRATIC_HI;
   }
 
+  class SccInfo {
+  public:
+    int low, sc, pre;
+  };
+
+  template <class View>
+  void
+  Simple<View>::scc(SccInfo* si, int &cnt0, int &cnt1, 
+                    Support::SentinelStack<int>& s, int i) const {
+    int min = si[i].pre = si[i].low = cnt0++;
+    s.push(i);
+    ViewValues<View> v(x[i]);
+    while (v()) {
+      if (si[v.val()].pre < 0)
+        scc(si,cnt0,cnt1,s,v.val());
+      if (si[v.val()].low < min)
+        min = si[v.val()].low;
+      ++v;
+    }
+    if (min < si[i].low) {
+      si[i].low = min;
+      return;
+    }
+    do {
+      int j=s.pop();
+      si[j].sc=cnt1; si[j].low = INT_MAX;
+    } while (s.last() != i);
+    cnt1++;
+  }
+
   template <class View>
   bool 
   Simple<View>::connected(void) const {
+    int n = x.size();
+    int cnt0=0;
+    int cnt1=0;
+    GECODE_AUTOARRAY(SccInfo,si,n);
+    GECODE_AUTOSTACK(int,-1,s,n);
+    for (int i=n; i--; )
+      si[i].pre=-1;
+    for (int i=n; i--; )
+      if (si[i].pre < 0)
+        scc(si,cnt0,cnt1,s,i);
+    if (cnt1 > 1)
+      return false;
+    return true;
+    /*
     // Just a mock up, SCC comes later
     int n = x.size();
     GECODE_AUTOARRAY(bool,visited,n);
@@ -92,6 +136,7 @@ namespace Gecode { namespace Int { namespace Circuit {
       done: ;
       }
     return true;
+    */
   }
 
   template <class View>
