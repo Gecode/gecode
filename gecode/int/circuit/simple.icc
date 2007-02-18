@@ -20,6 +20,8 @@
  *
  */
 
+#include "gecode/support/sentinel-stack.hh"
+
 namespace Gecode { namespace Int { namespace Circuit {
 
   /*
@@ -64,12 +66,13 @@ namespace Gecode { namespace Int { namespace Circuit {
     // Just a mock up, SCC comes later
     int n = x.size();
     GECODE_AUTOARRAY(bool,visited,n);
+    GECODE_AUTOARRAY(int,_stack,n+1);
     for (int i=n; i--; )
       for (int j=n; j--; ) {
         // Check whether there is a path from i to j
         for (int k=n; k--; )
           visited[k]=false;
-        GECODE_AUTOSTACK(int,-1,s,n);
+        Support::SentinelStack<int> s(_stack,-1);
         s.push(i);
         visited[i] = true;
         while (!s.empty()) {
@@ -94,7 +97,6 @@ namespace Gecode { namespace Int { namespace Circuit {
   template <class View>
   ExecStatus
   Simple<View>::propagate(Space* home) {
-    /*
     if (View::pme(this) == ME_INT_VAL) {
       ExecStatus es = Distinct::prop_val<View,false>(home,y);
       GECODE_ES_CHECK(es);
@@ -125,16 +127,64 @@ namespace Gecode { namespace Int { namespace Circuit {
 
     if (!connected())
       return ES_FAILED;
-    return ES_FIX;
-    */
-    if (View::pme(this) == ME_INT_VAL) {
-      ExecStatus es = Distinct::prop_val<View,true>(home,y);
+
+    // Elminiate assigned views from y, as they have been assigned
+    // and propagated by domain consistent propagation.
+    for (int i=y.size(); i--; )
+      if (y[i].assigned())
+        y.move_lst(i);
+
+    ExecStatus es = ES_FIX;
+    {
+      // Prunes that partial assigned paths are not completed to cycles
+      int n=x.size();
+      // How many views are known to be assigned
+      int a=n-y.size();
+      // The path starting at assigned x[i] ends at x[end[j]] which is
+      // not assigned.
+      GECODE_AUTOARRAY(int,end,n);
+      for (int i=n; i--; )
+        end[i]=-1;
+      for (int i=n; i--; )
+        if (!x[i].assigned()) {
+          // Non-assigned views serve as starting points for assigned paths
+          ViewValues<View> v(x[i]);
+          // Try all connected values
+          while (v()) {
+            int j=v.val();
+            // Starting point for assigned path found
+            if (x[j].assigned() && (end[j] < 0)) {
+              // Follow assigned path until non-assigned view:
+              // all assigned view on the paths can be skipped, as
+              // if x[i] is assigned to j, then x[j] will only have
+              // x[i] as predecessor due to propagating distinct.
+              do {
+                j=x[j].val(); a--;
+              } while (x[j].assigned());
+              // Now there cannot be a cycle from x[j] to x[v.val()]!
+              // However, the tell cannot be done here as j might be
+              // equal to i and might hence kill the iterator v!
+              end[v.val()] = j;
+            }
+            // Check whether there is a chance to find more assigned paths
+            if (a == 0)
+              goto done;
+            ++v;
+          }
+        }
+    done:
+      // Now do the tells based on the end information
+      for (int i=n; i--; ) 
+        if (end[i] >= 0) {
+          ModEvent me = x[end[i]].nq(home,i);
+          if (me_failed(me))
+            return ES_FAILED;
+          if (me_modified(me))
+            es = ES_NOFIX;
+        }
     }
-    if (!connected())
-      return ES_FAILED;
-    if (y.size() < 2)
-      return ES_SUBSUMED(this,home);
-    return ES_FIX;
+
+    return es;
   }
 
   template <class View>

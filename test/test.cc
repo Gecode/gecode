@@ -233,7 +233,7 @@ Options::parse(int argc, char** argv) {
     }
     i++;
   }
-  //  testpat.push_back(make_pair(false,"Linear::Bool::Int"));
+  //  testpat.push_back(make_pair(false,"Circuit::4"));
   return;
  missing:
   e = "missing parameter";

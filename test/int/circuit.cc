@@ -22,34 +22,59 @@
 
 #include "test/int.hh"
 
-static IntSet ds_04(0,4);
+namespace {
 
-class Circuit : public IntTest {
-public:
-  Circuit(void)
-    : IntTest("Circuit",5,ds_04,false,ICL_DEF) {}
-  virtual bool solution(const Assignment& x) const {
-    for (int i=x.size(); i--; )
-      for (int j=x.size(); j--; )
-        if ((i!=j) && (x[i]==x[j]))
+  class Circuit : public IntTest {
+  private:
+    bool* reachable;
+  public:
+    Circuit(const char* t, int n, const IntSet& ds)
+      : IntTest(t,n,ds,false,ICL_DEF),
+        reachable(new bool[n]) {}
+    virtual bool solution(const Assignment& x) const {
+      int n = x.size();
+      for (int i=n; i--; ) {
+        if ((x[i] < 0) || (x[i] > n-1))
           return false;
-    bool reachable[] = {false,false,false,false,false};
-    int i0=x[ 0]; reachable[i0] = true;
-    int i1=x[i0]; reachable[i1] = true;
-    int i2=x[i1]; reachable[i2] = true;
-    int i3=x[i2]; reachable[i3] = true;
-    int i4=x[i3]; reachable[i4] = true;
-    for (int i=x.size(); i--; )
-      if (!reachable[i])
-        return false;
-    return true;
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    circuit(home, x, icl);
-  }
-};
+        for (int j=n; j--; )
+          if ((i!=j) && (x[i]==x[j]))
+            return false;
+      }
+      for (int i=n; i--; )
+        reachable[i]=false;
+      {
+        int j=0;
+        for (int i=n; i--; ) {
+          j=x[j]; reachable[j]=true;
+        }
+      }
+      for (int i=n; i--; )
+        if (!reachable[i])
+          return false;
+      return true;
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      circuit(home, x, icl);
+    }
+    virtual ~Circuit(void) {
+      delete [] reachable;
+    }
+  };
 
-Circuit _circuit;
+  IntSet ds_00(0,0);
+  IntSet ds_01(0,1);
+  IntSet ds_02(0,2);
+  IntSet ds_03(0,3);
+  IntSet ds_04(0,4);
+  IntSet ds_05(0,5);
+
+  Circuit c1("Circuit::1",1,ds_00);
+  Circuit c2("Circuit::2",2,ds_01);
+  Circuit c3("Circuit::3",3,ds_02);
+  Circuit c4("Circuit::4",4,ds_03);
+  Circuit c5("Circuit::5",5,ds_04);
+  Circuit c6("Circuit::6",6,ds_05);
+
+}
 
 // STATISTICS: test-int
-
