@@ -44,8 +44,6 @@ namespace Gecode { namespace Int { namespace Circuit {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class SsccInfo;
-  template <class View>
   class Simple : public NaryPropagator<View,PC_INT_DOM> {
  protected:
     using NaryPropagator<View,PC_INT_DOM>::x;
@@ -57,10 +55,15 @@ namespace Gecode { namespace Int { namespace Circuit {
     Simple(Space* home, bool share, Simple& p);
     /// Constructor for posting
     Simple(Space* home, ViewArray<View>& x);
-    bool
-    Simple<View>::sscc(SsccInfo<View>* si, int &cnt, int i) const;
     /// Check whether the view value graph is strongly connected
     bool connected(void) const;
+    /** 
+     * \brief Ensure path property: prune edges that could give to small cycles
+     *
+     * \a a is the number of assigned views.
+     *
+     */
+    ExecStatus path(Space* home, int a);
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
