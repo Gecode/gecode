@@ -58,31 +58,44 @@ namespace Gecode { namespace Int { namespace Circuit {
     return (View::pme(this) == ME_INT_VAL) ? PC_LINEAR_HI : PC_QUADRATIC_HI;
   }
 
-  class SccInfo {
+  template <class View>
+  class SsccInfo {
   public:
-    int low, pre;
+    int min, low, pre;
+    ViewValues<View> v;
   };
 
   template <class View>
   bool
-  Simple<View>::scc(SccInfo* si, int &cnt, int i) const {
-    int min = si[i].pre = si[i].low = cnt++;
-    ViewValues<View> v(x[i]);
-    while (v()) {
-      if (si[v.val()].pre < 0)
-        if (!scc(si,cnt,v.val()))
-          return false;
-      if (si[v.val()].low < min)
-        min = si[v.val()].low;
-      ++v;
+  Simple<View>::sscc(SsccInfo<View>* si, int &cnt, int i) const {
+    // Check whether there is a single strongly connected component
+    // This is a downstripped version of Tarjan's algorithm as
+    // the computation of sccs proper is not needed
+    GECODE_AUTOSTACK(int,-1,stack,x.size());
+  start:
+    si[i].min = si[i].pre = si[i].low = cnt++;
+    si[i].v.init(x[i]);
+    while (si[i].v()) {
+      if (si[si[i].v.val()].pre < 0) {
+        stack.push(i);
+        i=si[i].v.val();
+        goto start;
+      }
+    cont:
+      if (si[si[i].v.val()].low < si[i].min)
+        si[i].min = si[si[i].v.val()].low;
+      ++si[i].v;
     }
-    if (min < si[i].low) {
-      si[i].low = min;
-      return true;
-    } else {
+    if (si[i].min < si[i].low) {
+      si[i].low = si[i].min;
+    } else if (i != 0) {
       // If it is not the first node visited, there is more than one SCC
-      return i == 0;
+      return false;
     }
+    if (!stack.empty()) {
+      i=stack.pop(); goto cont;
+    }
+    return true;
   }
 
   template <class View>
@@ -90,14 +103,12 @@ namespace Gecode { namespace Int { namespace Circuit {
   Simple<View>::connected(void) const {
     int n   = x.size();
     int cnt = 0;
-    GECODE_AUTOARRAY(SccInfo,si,n);
+    GECODE_AUTOARRAY(SsccInfo<View>,si,n);
     for (int i=n; i--; )
       si[i].pre=-1;
-    if (!scc(si,cnt,0))
+    if (!sscc(si,cnt,0))
       return false;
-    if (cnt < n)
-      return false;
-    return true;
+    return cnt == n;
   }
 
   template <class View>

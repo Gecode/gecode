@@ -43,7 +43,8 @@ namespace Gecode { namespace Int { namespace Circuit {
    * Requires \code #include "gecode/int/circuit.hh" \endcode
    * \ingroup FuncIntProp
    */
-  class SccInfo;
+  template <class View>
+  class SsccInfo;
   template <class View>
   class Simple : public NaryPropagator<View,PC_INT_DOM> {
  protected:
@@ -57,7 +58,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     /// Constructor for posting
     Simple(Space* home, ViewArray<View>& x);
     bool
-    Simple<View>::scc(SccInfo* si, int &cnt, int i) const;
+    Simple<View>::sscc(SsccInfo<View>* si, int &cnt, int i) const;
     /// Check whether the view value graph is strongly connected
     bool connected(void) const;
   public:
