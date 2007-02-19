@@ -39,15 +39,7 @@ namespace Gecode {
     if (n == 0)
       return;
 
-    if (icl == ICL_VAL) {
-      ValInfo<IntView>* vi
-        = ValInfo<IntView>::allocate(home,2*n);
-      for (int i=n; i--; ) {
-        vi[i  ].init(x[i],n);
-        vi[i+n].init(y[i],n);
-      }
-      GECODE_ES_FAIL(home,Val<IntView>::post(home,n,vi));
-    } else {
+    if (icl == ICL_DOM) {
       DomInfo<IntView>* di
         = DomInfo<IntView>::allocate(home,2*n);
       for (int i=n; i--; ) {
@@ -55,6 +47,14 @@ namespace Gecode {
         di[i+n].init(y[i],n);
       }
       GECODE_ES_FAIL(home,Dom<IntView>::post(home,n,di));
+    } else {
+      ValInfo<IntView>* vi
+        = ValInfo<IntView>::allocate(home,2*n);
+      for (int i=n; i--; ) {
+        vi[i  ].init(x[i],n);
+        vi[i+n].init(y[i],n);
+      }
+      GECODE_ES_FAIL(home,Val<IntView>::post(home,n,vi));
     }
   }
 

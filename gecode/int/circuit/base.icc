@@ -63,7 +63,7 @@ namespace Gecode { namespace Int { namespace Circuit {
   start:
     si[i].min = si[i].pre = si[i].low = cnt++;
     si[i].v.init(x[i]);
-    while (si[i].v()) {
+    do {
       if (si[si[i].v.val()].pre < 0) {
         next.push(i);
         i=si[i].v.val();
@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Circuit {
       if (si[si[i].v.val()].low < si[i].min)
         si[i].min = si[si[i].v.val()].low;
       ++si[i].v;
-    }
+    } while (si[i].v());
     if (si[i].min < si[i].low) {
       si[i].low = si[i].min;
     } else if (i != 0) {

@@ -53,6 +53,13 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module:	int
+What:	new
+Rank:	major
+[DESCRIPTION]
+Added propagators for the circuit constraint.
+
+[ENTRY]
 Module:	kernel
 What:	performance
 Rank:	minor

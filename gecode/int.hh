@@ -617,7 +617,7 @@ namespace Gecode {
   //@{
   /** \brief Post propagator for \f$ x_i = j\leftrightarrow y_j=i\f$ for all \f$0\leq i<|x|\f$
    *
-   * \li Supports value (\a icl = ICL_VAL) and domain propagation (all other
+   * \li Supports domain (\a icl = ICL_DOM) and value propagation (all other
    *     values for \a icl).
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a n are of different size.
@@ -640,6 +640,10 @@ namespace Gecode {
    *
    * \a x forms a circuit if the graph with edges \f$i\to j\f$ where
    * \f$x_i=j\f$ has a single cycle covering all nodes.
+   *
+   * Supports domain (\a icl = ICL_DOM) and value propagation (all
+   * other values for \a icl), where this refers to whether value or
+   * domain-consistent distinct in enforced on \a x.
    *
    * Throws an exception of type Int::ArgumentSame, if \a x 
    * contains the same variable multiply.
