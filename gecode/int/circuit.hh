@@ -64,7 +64,7 @@ namespace Gecode { namespace Int { namespace Circuit {
    *
    * Propagates value-consistent distinct, checks that
    * the induced variable value graph is stronlgy connected, and
-   * prunes too shot cycles.
+   * prunes too short cycles.
    *
    * Requires \code #include "gecode/int/circuit.hh" \endcode
    * \ingroup FuncIntProp

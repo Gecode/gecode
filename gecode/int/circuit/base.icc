@@ -98,39 +98,45 @@ namespace Gecode { namespace Int { namespace Circuit {
     GECODE_AUTOARRAY(int,end,n);
     for (int i=n; i--; )
       end[i]=-1;
+
+    // A stack that records all indices i such that end[i] != -1
+    GECODE_AUTOSTACK(int,-1,tell,n);
+
     for (int i=y.size(); i--; ) {
       assert(!y[i].assigned());
       // Non-assigned views serve as starting points for assigned paths
       ViewValues<View> v(y[i]);
       // Try all connected values
-      while (v()) {
-        int j=v.val();
+      do {
+        int j0=v.val();
         // Starting point for assigned path found
-        if (x[j].assigned() && (end[j] < 0)) {
+        if (x[j0].assigned() && (end[j0] < 0)) {
           // Follow assigned path until non-assigned view:
           // all assigned view on the paths can be skipped, as
           // if x[i] is assigned to j, then x[j] will only have
           // x[i] as predecessor due to propagating distinct.
+          int j = j0;
           do {
             j=x[j].val();
           } while (x[j].assigned());
           // Now there cannot be a cycle from x[j] to x[v.val()]!
           // However, the tell cannot be done here as j might be
           // equal to i and might hence kill the iterator v!
-          end[v.val()] = j;
+          end[j0]=j; tell.push(j0);
         }
         ++v;
-      }
+      } while (v());
     }
     // Now do the tells based on the end information
-    for (int i=n; i--; ) 
-      if (end[i] >= 0) {
-        ModEvent me = x[end[i]].nq(home,i);
-        if (me_failed(me))
-          return ES_FAILED;
-        if (me_modified(me))
-          es = ES_NOFIX;
-      }
+    while (!tell.empty()) {
+      int i = tell.pop();
+      assert(end[i] >= 0);
+      ModEvent me = x[end[i]].nq(home,i);
+      if (me_failed(me))
+        return ES_FAILED;
+      if (me_modified(me))
+        es = ES_NOFIX;
+    }
     return es;
   }
 
