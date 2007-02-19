@@ -620,9 +620,11 @@ namespace Gecode {
    * \li Supports domain (\a icl = ICL_DOM) and value propagation (all other
    *     values for \a icl).
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
-   *     \a x and \a n are of different size.
-   * \li Throws an exception of type Int::ArgumentSame, if \a x together
-   *     with \a y contains the same variable multiply.
+   *     \a x and \a y are of different size.
+   * \li Throws an exception of type Int::ArgumentSame, if \a x or
+   *     \a y contain the same variable multiply. Note that, a
+   *     variable can occur in both \a x and \a y, but not more than
+   *     once in either \a x or \a y.
    */
   GECODE_INT_EXPORT void
   channel(Space* home, const IntVarArgs& x, const IntVarArgs& y,

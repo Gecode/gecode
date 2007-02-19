@@ -33,7 +33,7 @@ namespace Gecode {
     int n = x.size();
     if (n != y.size())
       throw ArgumentSizeMismatch("Int::channel");
-    if (x.same(y))
+    if (x.same() || y.same())
       throw ArgumentSame("Int::channel");
     if (home->failed()) return;
     if (n == 0)
@@ -46,7 +46,11 @@ namespace Gecode {
         di[i  ].init(x[i],n);
         di[i+n].init(y[i],n);
       }
-      GECODE_ES_FAIL(home,Dom<IntView>::post(home,n,di));
+      if (x.same(y)) {
+        GECODE_ES_FAIL(home,(Dom<IntView,true>::post(home,n,di)));
+      } else {
+        GECODE_ES_FAIL(home,(Dom<IntView,false>::post(home,n,di)));
+      }
     } else {
       ValInfo<IntView>* vi
         = ValInfo<IntView>::allocate(home,2*n);
@@ -54,7 +58,11 @@ namespace Gecode {
         vi[i  ].init(x[i],n);
         vi[i+n].init(y[i],n);
       }
-      GECODE_ES_FAIL(home,Val<IntView>::post(home,n,vi));
+      if (x.same(y)) {
+        GECODE_ES_FAIL(home,(Val<IntView,true>::post(home,n,vi)));
+      } else {
+        GECODE_ES_FAIL(home,(Val<IntView,false>::post(home,n,vi)));
+      }
     }
   }
 

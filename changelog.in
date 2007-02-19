@@ -55,6 +55,14 @@ The best Gecode ever... Done with supernatural powers!
 [ENTRY]
 Module:	int
 What:	new
+Rank:	minor
+[DESCRIPTION]
+Relaxed sharing restrictions for channel, in particular 
+channel(this, x, x) is allowed.
+
+[ENTRY]
+Module:	int
+What:	new
 Rank:	major
 [DESCRIPTION]
 Added propagators for the circuit constraint.

@@ -72,12 +72,13 @@ namespace Gecode { namespace Int { namespace Channel {
   /**
    * \brief Naive channel propagator
    *
-   * Only propagates if views become assigned.
+   * Only propagates if views become assigned. If \a shared is true,
+   * the same views can be contained in both \a x and \a y.
    *
    * Requires \code #include "gecode/int/channel.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template <class View, bool shared>
   class Val : public Base<ValInfo<View>,PC_INT_VAL> {
  protected:
     using Base<ValInfo<View>,PC_INT_VAL>::n;
@@ -105,10 +106,13 @@ namespace Gecode { namespace Int { namespace Channel {
   /**
    * \brief Domain-consistent channel propagator
    *
+   * If \a shared is true, the same views can be contained in both 
+   * \a x and \a y.   
+   *
    * Requires \code #include "gecode/int/channel.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template <class View, bool shared>
   class Dom : public Base<DomInfo<View>,PC_INT_DOM> {
   protected:
     using Base<DomInfo<View>,PC_INT_DOM>::n;

@@ -171,25 +171,25 @@ namespace Gecode { namespace Int { namespace Channel {
    * The actual propagator
    *
    */
-  template <class View>
+  template <class View, bool shared>
   forceinline
-  Val<View>::Val(Space* home, int n, ValInfo<View>* xy)
+  Val<View,shared>::Val(Space* home, int n, ValInfo<View>* xy)
     : Base<ValInfo<View>,PC_INT_VAL>(home,n,xy) {}
 
-  template <class View>
+  template <class View, bool shared>
   forceinline
-  Val<View>::Val(Space* home, bool share, Val<View>& p)
+  Val<View,shared>::Val(Space* home, bool share, Val<View,shared>& p)
     : Base<ValInfo<View>,PC_INT_VAL>(home,share,p) {}
 
-  template <class View>
+  template <class View, bool shared>
   Actor*
-  Val<View>::copy(Space* home, bool share) {
-    return new (home) Val<View>(home,share,*this);
+  Val<View,shared>::copy(Space* home, bool share) {
+    return new (home) Val<View,shared>(home,share,*this);
   }
 
-  template <class View>
+  template <class View, bool shared>
   ExecStatus
-  Val<View>::propagate(Space* home) {
+  Val<View,shared>::propagate(Space* home) {
     GECODE_AUTOSTACK(int,-1, xa, n);
     GECODE_AUTOSTACK(int,-1, ya, n);
 
@@ -210,12 +210,14 @@ namespace Gecode { namespace Int { namespace Channel {
       assert(ya.empty());
     } while (!xa.empty());
 
-    return (n_na == 0) ? ES_SUBSUMED(this,home) : ES_FIX;
+    if (n_na == 0) 
+      return ES_SUBSUMED(this,home);
+    return shared ? ES_NOFIX : ES_FIX;
   }
 
-  template <class View>
+  template <class View, bool shared>
   ExecStatus
-  Val<View>::post(Space* home, int n, ValInfo<View>* xy) {
+  Val<View,shared>::post(Space* home, int n, ValInfo<View>* xy) {
     assert(n > 0);
     if (n == 1) {
       GECODE_ME_CHECK(xy[0].view.eq(home,0));
@@ -226,7 +228,7 @@ namespace Gecode { namespace Int { namespace Channel {
       GECODE_ME_CHECK(xy[i].view.gq(home,0));
       GECODE_ME_CHECK(xy[i].view.le(home,n));
     }
-    (void) new (home) Val<View>(home,n,xy);
+    (void) new (home) Val<View,shared>(home,n,xy);
     return ES_OK;
   }
 

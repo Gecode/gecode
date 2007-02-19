@@ -159,39 +159,39 @@ namespace Gecode { namespace Int { namespace Channel {
    * The actual propagator
    *
    */
-  template <class View>
+  template <class View, bool shared>
   forceinline
-  Dom<View>::Dom(Space* home, int n, DomInfo<View>* xy)
+  Dom<View,shared>::Dom(Space* home, int n, DomInfo<View>* xy)
     : Base<DomInfo<View>,PC_INT_DOM>(home,n,xy) {}
 
-  template <class View>
+  template <class View, bool shared>
   forceinline size_t
-  Dom<View>::dispose(Space* home) {
+  Dom<View,shared>::dispose(Space* home) {
     dc.dispose();
     (void) Base<DomInfo<View>,PC_INT_DOM>::dispose(home);
     return sizeof(*this);
   }
 
-  template <class View>
+  template <class View, bool shared>
   forceinline
-  Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
+  Dom<View,shared>::Dom(Space* home, bool share, Dom<View,shared>& p)
     : Base<DomInfo<View>,PC_INT_DOM>(home,share,p) {}
 
-  template <class View>
+  template <class View, bool shared>
   Actor*
-  Dom<View>::copy(Space* home, bool share) {
-    return new (home) Dom<View>(home,share,*this);
+  Dom<View,shared>::copy(Space* home, bool share) {
+    return new (home) Dom<View,shared>(home,share,*this);
   }
 
-  template <class View>
+  template <class View, bool shared>
   PropCost
-  Dom<View>::cost(void) const {
+  Dom<View,shared>::cost(void) const {
     return (View::pme(this) == ME_INT_VAL) ? PC_QUADRATIC_LO : PC_CUBIC_HI;
   }
 
-  template <class View>
+  template <class View, bool shared>
   ExecStatus
-  Dom<View>::propagate(Space* home) {
+  Dom<View,shared>::propagate(Space* home) {
     GECODE_AUTOSTACK(int,-1, xa, n);
     GECODE_AUTOSTACK(int,-1, ya, n);
 
@@ -205,16 +205,29 @@ namespace Gecode { namespace Int { namespace Channel {
         if (y[i].doval()) ya.push(i);
       }
 
-      do {
-        // Propagate assigned views for x
-        GECODE_ES_CHECK((prop_val<View,DomInfo<View> >
-                         (home,n,x,y,n_na,xa,ya)));
-        // Propagate assigned views for y
-        GECODE_ES_CHECK((prop_val<View,DomInfo<View> >
-                         (home,n,y,x,n_na,ya,xa)));
-        assert(ya.empty());
-      } while (!xa.empty());
-      ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
+      if (shared) {
+        do {
+          // Propagate assigned views for x
+          GECODE_ES_CHECK((prop_val<View,DomInfo<View> >
+                           (home,n,x,y,n_na,xa,ya)));
+          // Propagate assigned views for y
+          GECODE_ES_CHECK((prop_val<View,DomInfo<View> >
+                           (home,n,y,x,n_na,ya,xa)));
+          assert(ya.empty());
+        } while (!xa.empty() || !ya.empty());
+        return ES_NOFIX_PARTIAL(this,View::pme(ME_INT_DOM));
+      } else {
+        do {
+          // Propagate assigned views for x
+          GECODE_ES_CHECK((prop_val<View,DomInfo<View> >
+                           (home,n,x,y,n_na,xa,ya)));
+          // Propagate assigned views for y
+          GECODE_ES_CHECK((prop_val<View,DomInfo<View> >
+                           (home,n,y,x,n_na,ya,xa)));
+          assert(ya.empty());
+        } while (!xa.empty());
+        return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
+      }
     }
 
     // Process changed views for y
@@ -269,12 +282,19 @@ namespace Gecode { namespace Int { namespace Channel {
       GECODE_ES_CHECK((prop_val<View,DomInfo<View> >(home,n,y,x,n_na,ya,xa)));
     };
 
-    return (n_na == 0) ? ES_SUBSUMED(this,home) : ES_FIX;
+    if (shared) {
+      for (int i=2*n; i--; )
+        if (!xy[i].view.assigned())
+          return ES_NOFIX;
+      return ES_SUBSUMED(this,home);
+    } else {
+      return (n_na == 0) ? ES_SUBSUMED(this,home) : ES_FIX;
+    }
   }
 
-  template <class View>
+  template <class View, bool shared>
   ExecStatus
-  Dom<View>::post(Space* home, int n, DomInfo<View>* xy) {
+  Dom<View,shared>::post(Space* home, int n, DomInfo<View>* xy) {
     assert(n > 0);
     if (n == 1) {
       GECODE_ME_CHECK(xy[0].view.eq(home,0));
@@ -285,7 +305,7 @@ namespace Gecode { namespace Int { namespace Channel {
       GECODE_ME_CHECK(xy[i].view.gq(home,0));
       GECODE_ME_CHECK(xy[i].view.le(home,n));
     }
-    (void) new (home) Dom<View>(home,n,xy);
+    (void) new (home) Dom<View,shared>(home,n,xy);
     return ES_OK;
   }
 
