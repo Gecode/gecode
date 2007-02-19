@@ -90,9 +90,9 @@ namespace Gecode { namespace Int { namespace Circuit {
   ExecStatus
   Base<View>::path(Space* home) {
     // Prunes that partial assigned paths are not completed to cycles
-    ExecStatus es = ES_FIX;
 
     int n=x.size();
+
     // The path starting at assigned x[i] ends at x[end[j]] which is
     // not assigned.
     GECODE_AUTOARRAY(int,end,n);
@@ -109,7 +109,7 @@ namespace Gecode { namespace Int { namespace Circuit {
       // Try all connected values
       do {
         int j0=v.val();
-        // Starting point for assigned path found
+        // Starting point for not yet followed assigned path found
         if (x[j0].assigned() && (end[j0] < 0)) {
           // Follow assigned path until non-assigned view:
           // all assigned view on the paths can be skipped, as
@@ -127,7 +127,9 @@ namespace Gecode { namespace Int { namespace Circuit {
         ++v;
       } while (v());
     }
+
     // Now do the tells based on the end information
+    ExecStatus es = ES_FIX;
     while (!tell.empty()) {
       int i = tell.pop();
       assert(end[i] >= 0);
