@@ -393,8 +393,7 @@ namespace Gecode {
         m_trans++;
 
     // All done... Construct the automaton
-    DFAI* d = reinterpret_cast<DFAI*>
-      (Memory::malloc(sizeof(DFAI) + sizeof(Transition)*(m_trans-1)));
+    DFAI* d = new DFAI(m_trans);
     d->use_cnt   = 1;
     d->n_states  = m_states;
     d->n_trans   = m_trans;
@@ -449,8 +448,7 @@ namespace Gecode {
 
   DFA::DFAI*
   DFA::DFAI::copy(void) {
-    DFAI* d = reinterpret_cast<DFAI*>
-      (Memory::malloc(sizeof(DFAI) + sizeof(Transition)*(n_trans-1)));
+    DFAI* d = new DFAI(n_trans);
     d->use_cnt   = 1;
     d->n_states  = n_states;
     d->n_trans   = n_trans;

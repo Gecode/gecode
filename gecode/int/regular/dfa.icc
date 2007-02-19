@@ -59,12 +59,40 @@ namespace Gecode {
     int          final_fst;
     /// Last final state
     int          final_lst;
-    /// The transitions (actual size depends on number of transitions)
-    Transition   trans[1];
+    /// The transitions
+    Transition*  trans;
+    /// Initialize automation implementation with \nt transitions
+    DFAI(unsigned int nt);
+    /// Delete automation implemenentation
+    ~DFAI(void);
     /// Create a copy
     GECODE_INT_EXPORT DFAI* copy(void);
+    /// Allocate memory from heap for new space
+    static void* operator new(size_t);
+    /// Free memory allocated from heap
+    static void  operator delete(void*);
   };
 
+
+  forceinline
+  DFA::DFAI::DFAI(unsigned int nt)
+    : trans(reinterpret_cast<Transition*>
+    (Memory::malloc(sizeof(Transition)*nt))) {}
+
+  forceinline
+  DFA::DFAI::~DFAI(void) {
+    Memory::free(trans);
+  }
+
+  forceinline void*
+  DFA::DFAI::operator new(size_t s) {
+    return Memory::malloc(s);
+  }
+
+  forceinline void
+  DFA::DFAI::operator delete(void* p) {
+    Memory::free(p);
+  }
 
   forceinline
   DFA::DFA(void) {}
@@ -94,14 +122,14 @@ namespace Gecode {
   forceinline
   DFA::~DFA(void) {
     if (--dfai->use_cnt == 0)
-      Memory::free(dfai);
+      delete dfai;
   }
 
   forceinline const DFA&
   DFA::operator=(const DFA& d) {
     if (&d != this) {
       if (--dfai->use_cnt == 0)
-        Memory::free(dfai);
+        delete dfai;
       dfai = d.dfai;
       dfai->use_cnt++;
     }
