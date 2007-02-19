@@ -29,18 +29,18 @@ namespace Gecode { namespace Int { namespace Circuit {
   template <class View>
   forceinline
   Dom<View>::Dom(Space* home, ViewArray<View>& x)
-    : Base<View,PC_INT_DOM>(home,x) {}
+    : Base<View>(home,x) {}
 
   template <class View>
   forceinline
   Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
-    : Base<View,PC_INT_DOM>(home,share,p) {}
+    : Base<View>(home,share,p) {}
 
   template <class View>
   forceinline size_t
   Dom<View>::dispose(Space* home) {
     dc.dispose();
-    (void) Base<View,PC_INT_DOM>::dispose(home);
+    (void) Base<View>::dispose(home);
     return sizeof(*this);
   }
 
@@ -62,17 +62,12 @@ namespace Gecode { namespace Int { namespace Circuit {
     if (View::pme(this) == ME_INT_VAL) {
       ExecStatus es = Distinct::prop_val<View,false>(home,y);
       GECODE_ES_CHECK(es);
-      if (es == ES_FIX) {
-        if (!connected())
-          return ES_FAILED;
-        if (y.size() < 2)
-          return ES_SUBSUMED(this,home);
-        return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
+      if (es != ES_FIX) {
+        es = Distinct::prop_bnd<View>(home,x);
+        GECODE_ES_CHECK(es);
+        es = Distinct::prop_val<View,true>(home,y);
+        GECODE_ES_CHECK(es);
       }
-      es = Distinct::prop_bnd<View>(home,x);
-      GECODE_ES_CHECK(es);
-      es = Distinct::prop_val<View,true>(home,y);
-      GECODE_ES_CHECK(es);
       if (!connected())
         return ES_FAILED;
       if (y.size() < 2)
@@ -97,9 +92,7 @@ namespace Gecode { namespace Int { namespace Circuit {
       for (int i=y.size(); i--; )
         if (y[i].assigned())
           y.move_lst(i);
-
-    // How many views are known to be assigned
-    return path(home,x.size()-y.size());
+    return path(home);
   }
 
   template <class View>

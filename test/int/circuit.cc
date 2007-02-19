@@ -25,43 +25,28 @@
 namespace {
 
   class Circuit : public IntTest {
-  private:
-    bool* reachable;
   public:
     Circuit(const char* t, int n, const IntSet& ds, IntConLevel icl)
-      : IntTest(t,n,ds,false,icl),
-        reachable(new bool[n]) {}
+      : IntTest(t,n,ds,false,icl) {}
     virtual bool solution(const Assignment& x) const {
       int n = x.size();
-      for (int i=n; i--; ) {
+      for (int i=n; i--; )
         if ((x[i] < 0) || (x[i] > n-1))
           return false;
-        for (int j=n; j--; )
-          if ((i!=j) && (x[i]==x[j]))
-            return false;
-      }
-      for (int i=n; i--; )
-        reachable[i]=false;
+      int reachable = 0;
       {
         int j=0;
-        for (int i=n+1; i--; ) {
-          j=x[j]; reachable[j]=true;
+        for (int i=n; i--; ) {
+          j=x[j]; reachable |= (1 << j);
         }
       }
       for (int i=n; i--; )
-        if (!reachable[i])
+        if (!(reachable & (1 << i)))
           return false;
-      std::cout << "Solution: ";
-      for (int i=0; i<n; i++)
-        std::cout << x[i] << ", ";
-      std::cout << std::endl;
       return true;
     }
     virtual void post(Space* home, IntVarArray& x) {
       circuit(home, x, icl);
-    }
-    virtual ~Circuit(void) {
-      delete [] reachable;
     }
   };
 

@@ -40,10 +40,10 @@ namespace Gecode { namespace Int { namespace Circuit {
    * is strongly connected and for pruning short cycles.
    *
    */
-  template <class View, PropCond pc>
-  class Base : public NaryPropagator<View,pc> {
+  template <class View>
+  class Base : public NaryPropagator<View,PC_INT_DOM> {
  protected:
-    using NaryPropagator<View,pc>::x;
+    using NaryPropagator<View,PC_INT_DOM>::x;
     /// Array for performing value propagation for distinct
     ViewArray<View> y;
     /// Constructor for cloning \a p
@@ -52,13 +52,8 @@ namespace Gecode { namespace Int { namespace Circuit {
     Base(Space* home, ViewArray<View>& x);
     /// Check whether the view value graph is strongly connected
     bool connected(void) const;
-    /** 
-     * \brief Ensure path property: prune edges that could give to small cycles
-     *
-     * \a a is the number of assigned views.
-     *
-     */
-    ExecStatus path(Space* home, int a);
+    /// Ensure path property: prune edges that could give to small cycles
+    ExecStatus path(Space* home);
   public:
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
@@ -75,10 +70,10 @@ namespace Gecode { namespace Int { namespace Circuit {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Val : public Base<View,PC_INT_VAL> {
+  class Val : public Base<View> {
  protected:
-    using Base<View,PC_INT_VAL>::x;
-    using Base<View,PC_INT_VAL>::y;
+    using Base<View>::x;
+    using Base<View>::y;
     using Base<View,PC_INT_VAL>::connected;
     /// Constructor for cloning \a p
     Val(Space* home, bool share, Val& p);
@@ -106,10 +101,10 @@ namespace Gecode { namespace Int { namespace Circuit {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Dom : public Base<View,PC_INT_DOM> {
+  class Dom : public Base<View> {
  protected:
-    using Base<View,PC_INT_DOM>::x;
-    using Base<View,PC_INT_DOM>::y;
+    using Base<View>::x;
+    using Base<View>::y;
     using Base<View,PC_INT_DOM>::connected;
     /// Propagation controller for propagating distinct
     Distinct::DomCtrl<View> dc;

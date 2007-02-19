@@ -22,15 +22,15 @@
 
 namespace Gecode { namespace Int { namespace Circuit {
 
-  template <class View, PropCond pc>
+  template <class View>
   forceinline
-  Base<View,pc>::Base(Space* home, ViewArray<View>& x)
-    : NaryPropagator<View,pc>(home,x), y(home,x) {}
+  Base<View>::Base(Space* home, ViewArray<View>& x)
+    : NaryPropagator<View,PC_INT_DOM>(home,x), y(home,x) {}
 
-  template <class View, PropCond pc>
+  template <class View>
   forceinline
-  Base<View,pc>::Base(Space* home, bool share, Base<View,pc>& p)
-    : NaryPropagator<View,pc>(home,share,p) {
+  Base<View>::Base(Space* home, bool share, Base<View>& p)
+    : NaryPropagator<View,PC_INT_DOM>(home,share,p) {
     y.update(home,share,p.y);
   }
 
@@ -42,24 +42,24 @@ namespace Gecode { namespace Int { namespace Circuit {
     ViewValues<View> v;
   };
 
-  template <class View, PropCond pc>
+  template <class View>
   bool 
-  Base<View,pc>::connected(void) const {
+  Base<View>::connected(void) const {
     int n   = x.size();
-    int cnt = 0;
     /// Information needed for checking scc's
     GECODE_AUTOARRAY(SsccInfo<View>,si,n);
     for (int i=n; i--; )
       si[i].pre=-1;
     // Stack to remember which nodes have not been processed completely
-    GECODE_AUTOSTACK(int,-1,next,x.size());
+    GECODE_AUTOSTACK(int,-1,next,n);
 
     // Check whether there is a single strongly connected component.
     // This is a downstripped version of Tarjan's algorithm as
     // the computation of sccs proper is not needed.
 
     // Start always at node 0
-    int i=0;
+    int i = 0;
+    int cnt = 0;
   start:
     si[i].min = si[i].pre = si[i].low = cnt++;
     si[i].v.init(x[i]);
@@ -86,9 +86,9 @@ namespace Gecode { namespace Int { namespace Circuit {
     return cnt == n;
   }
 
-  template <class View, PropCond pc>
+  template <class View>
   ExecStatus
-  Base<View,pc>::path(Space* home, int a) {
+  Base<View>::path(Space* home) {
     // Prunes that partial assigned paths are not completed to cycles
     ExecStatus es = ES_FIX;
 
@@ -98,55 +98,46 @@ namespace Gecode { namespace Int { namespace Circuit {
     GECODE_AUTOARRAY(int,end,n);
     for (int i=n; i--; )
       end[i]=-1;
-    for (int i=n; i--; )
-      if (!x[i].assigned()) {
-        // Non-assigned views serve as starting points for assigned paths
-        ViewValues<View> v(x[i]);
-        // Try all connected values
-        while (v()) {
-          int j=v.val();
-          // Starting point for assigned path found
-          if (x[j].assigned() && (end[j] < 0)) {
-            // Follow assigned path until non-assigned view:
-            // all assigned view on the paths can be skipped, as
-            // if x[i] is assigned to j, then x[j] will only have
-            // x[i] as predecessor due to propagating distinct.
-            do {
-              j=x[j].val(); a--;
-            } while (x[j].assigned());
-            // Now there cannot be a cycle from x[j] to x[v.val()]!
-            // However, the tell cannot be done here as j might be
-            // equal to i and might hence kill the iterator v!
-            end[v.val()] = j;
-          }
-          // Check whether there is a chance to find more assigned paths
-          if (a == 0)
-            goto done;
-          ++v;
+    for (int i=y.size(); i--; ) {
+      assert(!y[i].assigned());
+      // Non-assigned views serve as starting points for assigned paths
+      ViewValues<View> v(y[i]);
+      // Try all connected values
+      while (v()) {
+        int j=v.val();
+        // Starting point for assigned path found
+        if (x[j].assigned() && (end[j] < 0)) {
+          // Follow assigned path until non-assigned view:
+          // all assigned view on the paths can be skipped, as
+          // if x[i] is assigned to j, then x[j] will only have
+          // x[i] as predecessor due to propagating distinct.
+          do {
+            j=x[j].val();
+          } while (x[j].assigned());
+          // Now there cannot be a cycle from x[j] to x[v.val()]!
+          // However, the tell cannot be done here as j might be
+          // equal to i and might hence kill the iterator v!
+          end[v.val()] = j;
         }
+        ++v;
       }
-  done:
+    }
     // Now do the tells based on the end information
     for (int i=n; i--; ) 
       if (end[i] >= 0) {
         ModEvent me = x[end[i]].nq(home,i);
         if (me_failed(me))
           return ES_FAILED;
-        if (pc == PC_INT_DOM) {
-          if (me_modified(me))
-            es = ES_NOFIX;
-        } else {
-          if (me == ME_INT_VAL)
-            es = ES_NOFIX;
-        }
+        if (me_modified(me))
+          es = ES_NOFIX;
       }
     return es;
   }
 
-  template <class View, PropCond pc>
+  template <class View>
   forceinline size_t
-  Base<View,pc>::dispose(Space* home) {
-    (void) NaryPropagator<View,pc>::dispose(home);
+  Base<View>::dispose(Space* home) {
+    (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
     return sizeof(*this);
   }
 
