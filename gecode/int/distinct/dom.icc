@@ -489,7 +489,10 @@ namespace Gecode { namespace Int { namespace Distinct {
       } else {
         for (Edge<View>* e = view[i]->val_edges(); e!=NULL; e = e->next_edge())
           if (!e->used(view[i])) {
-            ModEvent me = view[i]->view().nq(home,e->val(view[i])->val());
+#ifndef NDEBUG
+            ModEvent me = 
+#endif
+              view[i]->view().nq(home,e->val(view[i])->val());
             assert(me != ME_INT_VAL);
           }
       }
