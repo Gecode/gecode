@@ -120,11 +120,11 @@ namespace Gecode {
     /// Default constructor (array of size 0)
     ViewArray(void);
     /// Allocate array with \a m variables
-    ViewArray(Space*, int m);
+    ViewArray(Space* home, int m);
     /// Initialize from view array \a a (share elements)
     ViewArray(const ViewArray<View>& a);
     /// Initialize from view array \a a (copy elements)
-    ViewArray(Space*,const ViewArray<View>& a);
+    ViewArray(Space* home, const ViewArray<View>& a);
     /// Initialize from view array \a a (share elements)
     const ViewArray<View>& operator=(const ViewArray<View>& a);
     /**
