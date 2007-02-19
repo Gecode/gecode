@@ -74,7 +74,8 @@ namespace Gecode { namespace Int { namespace Circuit {
  protected:
     using Base<View>::x;
     using Base<View>::y;
-    using Base<View,PC_INT_VAL>::connected;
+    using Base<View>::connected;
+    using Base<View>::path;
     /// Constructor for cloning \a p
     Val(Space* home, bool share, Val& p);
     /// Constructor for posting
@@ -105,7 +106,8 @@ namespace Gecode { namespace Int { namespace Circuit {
  protected:
     using Base<View>::x;
     using Base<View>::y;
-    using Base<View,PC_INT_DOM>::connected;
+    using Base<View>::connected;
+    using Base<View>::path;
     /// Propagation controller for propagating distinct
     Distinct::DomCtrl<View> dc;
     /// Constructor for cloning \a p
