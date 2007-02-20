@@ -54,6 +54,13 @@ The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
 Module:	int
+What:	bug
+Rank:	minor
+[DESCRIPTION]
+Fixed bug in copying of n-ary or-propagator for a special boundary case.
+
+[ENTRY]
+Module:	int
 What:	new
 Rank:	minor
 [DESCRIPTION]

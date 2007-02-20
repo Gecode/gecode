@@ -612,6 +612,8 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   Actor*
   NaryOrTrue<BV>::copy(Space* home, bool share) {
+    if (x.size() == 0)
+      return new (home) BinOrTrue<BV,BV>(home,share,*this,x0,x1);
     // Check whether the original has already been purged
     if (x[0].one()) {
       x.size(1); // The rest does not matter any longer
@@ -629,14 +631,16 @@ namespace Gecode { namespace Int { namespace Bool {
         x[i]=x[--n];
       }
     x.size(n);
-    if (n == 0)
+    switch (n) {
+    case 0:
       return new (home) BinOrTrue<BV,BV>(home,share,*this,x0,x1);
-    else if (n == 1)
+    case 1:
       return new (home) TerOrTrue<BV>(home,share,*this,x0,x1,x[0]);
-    else if (n == 2)
+    case 2:
       return new (home) QuadOrTrue<BV>(home,share,*this,x0,x1,x[0],x[1]);
-    else
+    default:
       return new (home) NaryOrTrue<BV>(home,share,*this);
+    }
   }
 
   template<class BV>
