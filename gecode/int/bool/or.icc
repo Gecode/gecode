@@ -612,25 +612,25 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   Actor*
   NaryOrTrue<BV>::copy(Space* home, bool share) {
-    if (x.size() == 0)
-      return new (home) BinOrTrue<BV,BV>(home,share,*this,x0,x1);
-    // Check whether the original has already been purged
-    if (x[0].one()) {
-      x.size(1); // The rest does not matter any longer
-      return new (home) OrTrueSubsumed<BV>(home,share,*this,x0,x1);
-    }
-    // Eliminate all zeros and find a one
     int n = x.size();
-    for (int i=n; i--; )
-      if (x[i].one()) {
-        // Only keep the one
-        x[0]=x[i]; x.size(1);
+    if (n > 0) {
+      // Check whether the original has already been purged
+      if (x[0].one()) {
+        x.size(1); // The rest does not matter any longer
         return new (home) OrTrueSubsumed<BV>(home,share,*this,x0,x1);
-      } else if (x[i].zero()) {
-        // Eliminate the zero
-        x[i]=x[--n];
       }
-    x.size(n);
+      // Eliminate all zeros and find a one
+      for (int i=n; i--; )
+        if (x[i].one()) {
+          // Only keep the one
+          x[0]=x[i]; x.size(1);
+          return new (home) OrTrueSubsumed<BV>(home,share,*this,x0,x1);
+        } else if (x[i].zero()) {
+          // Eliminate the zero
+          x[i]=x[--n];
+        }
+      x.size(n);
+    }
     switch (n) {
     case 0:
       return new (home) BinOrTrue<BV,BV>(home,share,*this,x0,x1);
