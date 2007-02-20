@@ -216,6 +216,7 @@ public:
     }
     if (Test::randgen(opt.fixprob) == 0) {                
       Log::fixpoint();
+      Log::print(x, "x");
       if (status() == SS_FAILED)
         return true;
       IntTestSpace* c = static_cast<IntTestSpace*>(clone());

@@ -605,7 +605,7 @@ namespace Gecode {
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a y are of different size.
    * \li Throws an exception of type Int::ArgumentSame, if \a x or
-   *     \a y contain the same variable multiply. Note that, a
+   *     \a y contain the same variable multiply. Note that a
    *     variable can occur in both \a x and \a y, but not more than
    *     once in either \a x or \a y.
    */
@@ -618,9 +618,11 @@ namespace Gecode {
   channel(Space* home, BoolVar x0, IntVar x1,
           IntConLevel icl=ICL_DEF);
   /// Post propagator for channeling an integer and a Boolean variable \f$ x_0 = x_1\f$
-  GECODE_INT_EXPORT void
+  forceinline void
   channel(Space* home, IntVar x0, BoolVar x1,
-          IntConLevel icl=ICL_DEF);
+          IntConLevel icl=ICL_DEF) {
+    channel(home,x1,x0,icl);
+  }
 
   /// Post propagator for channeling Boolean and integer variables \f$ x_i = 1\leftrightarrow y=i+o\f$
   GECODE_INT_EXPORT void

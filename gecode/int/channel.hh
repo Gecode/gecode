@@ -184,7 +184,7 @@ namespace Gecode { namespace Int { namespace Channel {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
-    /// Cost function 
+    /// Cost function (PC_UNARY_LO if \a y is assigned, PC_LINEAR_LO otherwise)
     virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
@@ -198,6 +198,9 @@ namespace Gecode { namespace Int { namespace Channel {
 #include "gecode/int/channel/base.icc"
 #include "gecode/int/channel/val.icc"
 #include "gecode/int/channel/dom.icc"
+
+#include "gecode/int/channel/link-single.icc"
+#include "gecode/int/channel/link-multi.icc"
 
 #endif
 

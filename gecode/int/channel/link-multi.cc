@@ -4,11 +4,11 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2006
+ *     Christian Schulte, 2007
  *
  *  Last modified:
- *     $Date: 2006-11-25 19:48:19 +0100 (Sat, 25 Nov 2006) $ by $Author: schulte $
- *     $Revision: 3996 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -24,46 +24,45 @@
 
 namespace Gecode { namespace Int { namespace Channel {
 
-  /*
-   * Iterator over Boolean array
-   *
-   */
+  /// Iterates the values as defined by an array of Boolean views
   class BoolIter {
   private:
+    /// The array of Boolean views
     const ViewArray<BoolView>& x;
+    /// The offset
     const int o;
+    /// Current position in the array
     int i;
   public:
-    BoolIter(const ViewArray<BoolView>& x0, int o0) :
-      x(x0), o(o0), i(0) {
-      while (x[i].zero()) i++;
-    }
-    bool operator()(void) const {
-      return i<x.size();
-    }
-    int val(void) const {
-      return i+o;
-    }
-    void operator++(void) {
-      do {
-        i++;
-      } while ((i<x.size()) && x[i].zero());
-    }
+    /// Initialize iterator
+    BoolIter(const ViewArray<BoolView>& x0, int o0);
+    /// Test whether further values available
+    bool operator()(void) const;
+    /// Return value
+    int val(void) const;
+    /// Move to the next value
+    void operator++(void);
   };
 
-
   forceinline
-  LinkMulti::LinkMulti(Space* home, ViewArray<BoolView>& x, IntView y, int o0)
-    : MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM>
-  (home,x,y), o(o0) {}
-
-  ExecStatus
-  LinkMulti::post(Space* home, ViewArray<BoolView>& x, IntView y, int o) {
-    int n=x.size();
-    GECODE_ME_CHECK(y.gq(home,o));
-    GECODE_ME_CHECK(y.le(home,o+n));
-    (void) new (home) LinkMulti(home,x,y,o);
-    return ES_OK;
+  BoolIter::BoolIter(const ViewArray<BoolView>& x0, int o0) :
+    x(x0), o(o0), i(0) {
+    // As there is at least one not assigned view in the array
+    while (x[i].zero()) i++;
+  }
+  forceinline bool
+  BoolIter::operator()(void) const {
+    return i<x.size();
+  }
+  forceinline int 
+  BoolIter::val(void) const {
+    return i+o;
+  }
+  forceinline void
+  BoolIter::operator++(void) {
+    do {
+      i++;
+    } while ((i<x.size()) && x[i].zero());
   }
 
 
@@ -79,102 +78,122 @@ namespace Gecode { namespace Int { namespace Channel {
 
   PropCost
   LinkMulti::cost(void) const {
-    return PC_UNARY_LO;
+    return (IntView::pme(this) == ME_INT_VAL) ? 
+      PC_UNARY_LO : cost_lo(x.size(),PC_LINEAR_LO);
   }
 
   ExecStatus
   LinkMulti::propagate(Space* home) {
+    int n = x.size();
+
+    // Always maintain the invariant that y lies inside the x-array
     assert((y.min()-o >= 0) && (y.max()-o < n));
-    if (IntView::pme(this) == ME_INT_VAL) {
-      assert(y.assigned());
+
+    if (y.assigned()) {
       int j=y.val()-o;
+      GECODE_ME_CHECK(x[j].one(home));
       for (int i=0; i<j; i++)
         GECODE_ME_CHECK(x[i].zero(home));
-      GECODE_ME_CHECK(x[j].one(home));
-      for (int i=j+1; i<x.size(); i++)
+      for (int i=j+1; i<n; i++)
         GECODE_ME_CHECK(x[i].zero(home));
       return ES_SUBSUMED(this,sizeof(*this));
     }
-    if (IntView::pme(this) == ME_INT_BND) {
-      // Assign all Boolean views zero that are outside bounds
+
+  redo:
+
+    // Assign all Boolean views to zero that are outside bounds
+    {
       int min=y.min()-o;
       for (int i=0; i<min; i++)
         GECODE_ME_CHECK(x[i].zero(home));
+      x.drop_fst(min); o += min; n = x.size();
+
       int max=y.max()-o;
-      for (int i=max+1; i<x.size(); i++)
+      for (int i=max+1; i<n; i++)
         GECODE_ME_CHECK(x[i].zero(home));
-      x.drop_fst(min); 
-      x.drop_lst(max-min); 
-      o += min;
+      x.drop_lst(max); n = x.size();
     }
-    if (BoolView::pme(this) == ME_BOOL_VAL) {
-      {
-        // Remove zeros on the left
-        int i=0;
-        while ((i < x.size()) && x[i].zero()) i++;
-        if (i >= x.size())
-          return ES_FAILED;
-        x.drop_fst(i); o += i;
-      }
-      {
-        // Remove zeros on the right
-        int i=x.size()-1;
-        while ((i >= 0) && x[i].zero()) i--;
-        assert(i >= 0);
-        x.drop_lst(i);
-      }
-      assert(x.size() >= 1);
-      // Is there only one left?
-      if (x.size() == 1) {
-        GECODE_ME_CHECK(x[0].one(home));
-        GECODE_ME_CHECK(y.eq(home,o));
+
+    {
+      // Remove zeros on the left
+      int i=0;
+      while ((i < n) && x[i].zero()) i++;
+      if (i >= n)
+        return ES_FAILED;
+      x.drop_fst(i); o += i; n = x.size();
+    }
+
+    {
+      // Remove zeros on the right
+      int i=n-1;
+      while ((i >= 0) && x[i].zero()) i--;
+      assert(i >= 0);
+      x.drop_lst(i); n = x.size();
+    }
+
+    assert(n >= 1);
+
+    // Is there only one left?
+    if (n == 1) {
+      GECODE_ME_CHECK(x[0].one(home));
+      GECODE_ME_CHECK(y.eq(home,o));
+      return ES_SUBSUMED(this,sizeof(*this));
+    }
+
+    // Update bounds
+    GECODE_ME_CHECK(y.gq(home,o));
+    GECODE_ME_CHECK(y.lq(home,o+n-1));
+    if ((y.min() > o) || (y.max() < o+n-1))
+      goto redo;
+
+    // Check whether there is a one somewhere else
+    for (int i=n; i--; )
+      if (x[i].one()) {
+        for (int j=0; j<i; j++)
+          GECODE_ME_CHECK(x[j].zero(home));
+        for (int j=i+1; j<n; j++)
+          GECODE_ME_CHECK(x[j].zero(home));
+        GECODE_ME_CHECK(y.eq(home,i+o));
         return ES_SUBSUMED(this,sizeof(*this));
       }
-      // Check whether there is a one somewhere else
-      for (int i=x.size(); i--; )
-        if (x[i].one()) {
-          for (int j=0; j<i; j++)
-            GECODE_ME_CHECK(x[j].zero(home));
-          for (int j=i+1; j<x.size(); j++)
-            GECODE_ME_CHECK(x[j].zero(home));
-          GECODE_ME_CHECK(y.eq(home,i+o));
-          return ES_SUBSUMED(this,sizeof(*this));
-        }
-      // Update bounds
-      GECODE_ME_CHECK(y.gq(home,o));
-      GECODE_ME_CHECK(y.le(home,o+x.size()));
-    }
+
+    assert((n >= 2) && x[0].none() && x[n-1].none());
+    assert((y.min()-o == 0) && (y.max()-o == n-1));
+
     // Propagate from y to Boolean views
-    if ((IntView::pme(this) == ME_INT_BND) ||
+    if ((IntView::pme(this) == ME_INT_BND) || 
         (IntView::pme(this) == ME_INT_DOM)) {
       ViewValues<IntView> v(y);
       int i=0; 
       do {
-        if (i < v.val()-o) {
-          ModEvent me = x[i].zero(home);
+        int j = v.val()-o;
+        if (i < j) {
+#ifndef NDEBUG
+          ModEvent me = 
+#endif
+          x[i].zero(home);
           assert(!me_failed(me));
           ++i;
-        } else if (i > v.val()-o) {
+        } else if (i > j) {
           ++v;
         } else {
-          assert(i == v.val()-o);
+          assert(i == j);
           ++i; ++v;
         }
-      } while (v() && (i < x.size()));
+      } while (v() && (i < n));
     }
+
     // Propagate from Boolean views to y
     if (BoolView::pme(this) == ME_BOOL_VAL) {
       BoolIter bv(x,o);
       Iter::Values::ToRanges<BoolIter> br(bv);
-      ModEvent me = y.narrow(home,br);
-      if (me_failed(me))
-        return ES_FAILED;
-      if (me == ME_INT_VAL) {
-        GECODE_ME_CHECK(x[y.val()-o].one(home));
-        return ES_SUBSUMED(this,sizeof(*this));
-      }
+#ifndef NDEBUG
+      ModEvent me = 
+#endif
+      y.narrow(home,br);
+      assert(!me_failed(me) && (me != ME_INT_VAL));
     }
-    return ES_NOFIX;
+    return ES_FIX;
   }
 
 }}}

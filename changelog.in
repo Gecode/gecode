@@ -54,6 +54,14 @@ The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
 Module:	int
+What:	new
+Rank:	major
+[DESCRIPTION]
+Added channel constraints that channel an integer variable to
+either a single or an array of Boolean variables.
+
+[ENTRY]
+Module:	int
 What:	bug
 Rank:	minor
 [DESCRIPTION]
@@ -373,7 +381,7 @@ What:   change
 Rank:   minor
 [DESCRIPTION]
 Boolean variables cannot langer be initialized from an integer 
-variable. If needed, a link propagator must be posted (added).
+variable. If needed, a channel propagator must be posted (added).
 
 [ENTRY]
 Module: int

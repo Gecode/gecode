@@ -1,0 +1,55 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2007
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Channel {
+
+  forceinline
+  LinkMulti::LinkMulti(Space* home, ViewArray<BoolView>& x, IntView y, int o0)
+    : MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM>
+  (home,x,y), o(o0) {}
+
+  forceinline ExecStatus
+  LinkMulti::post(Space* home, ViewArray<BoolView>& x, IntView y, int o) {
+    int n=x.size();
+    GECODE_ME_CHECK(y.gq(home,o));
+    GECODE_ME_CHECK(y.lq(home,o+n-1));
+    assert(n > 0);
+    if (n == 1) {
+      GECODE_ME_CHECK(x[0].one(home));
+      assert(y.val() == o);
+    } else if (y.assigned()) {
+      int j=y.val()-o;
+      GECODE_ME_CHECK(x[j].one(home));
+      for (int i=0; i<j; i++)
+        GECODE_ME_CHECK(x[i].zero(home));
+      for (int i=j+1; i<n; i++)
+        GECODE_ME_CHECK(x[i].zero(home));
+    } else {
+      (void) new (home) LinkMulti(home,x,y,o);
+    }
+    return ES_OK;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

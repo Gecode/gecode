@@ -73,13 +73,6 @@ namespace Gecode {
   }
 
   void
-  channel(Space* home, IntVar x0, BoolVar x1, IntConLevel) {
-    using namespace Int;
-    if (home->failed()) return;
-    GECODE_ES_FAIL(home,Channel::LinkSingle::post(home,x1,x0));
-  }
-
-  void
   channel(Space* home, const BoolVarArgs& x, IntVar y, int o, IntConLevel) {
     using namespace Int;
     if (home->failed()) return;

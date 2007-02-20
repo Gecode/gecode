@@ -108,7 +108,7 @@ namespace {
     int o;
   public:
     ChannelLinkMulti(const char* t, IntSet& ds, int o0)
-      : IntTest(t,6,ds,false,ICL_DEF,false), o(o0) {}
+      : IntTest(t,7,ds,false,ICL_DEF,false), o(o0) {}
     virtual bool solution(const Assignment& x) const {
       int n = x.size()-1;
       for (int i=n; i--; )
@@ -145,10 +145,12 @@ namespace {
 
   ChannelLinkSingle cls;
 
-  IntSet ds_15(-1,5);
-  ChannelLinkMulti clma("Channel::Bool::Multi::A",ds_15, 0);
-  ChannelLinkMulti clmb("Channel::Bool::Multi::B",ds_15, 1);
-  ChannelLinkMulti clmc("Channel::Bool::Multi::C",ds_15,-1);
+  IntSet dlm_05(0,5);
+  IntSet dlm_16(1,6);
+  IntSet dlm_14(-1,4);
+  ChannelLinkMulti clma("Channel::Bool::Multi::A",dlm_05, 0);
+  ChannelLinkMulti clmb("Channel::Bool::Multi::B",dlm_16, 1);
+  ChannelLinkMulti clmc("Channel::Bool::Multi::C",dlm_14,-1);
 
 }
 

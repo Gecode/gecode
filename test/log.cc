@@ -461,12 +461,6 @@ namespace Log {
   }
 #endif
 
-  void flush() {
-    if (!do_logging) return;
-    hops.push_back("Flush caches");
-    cops.push_back("\tflush();");
-  }
-
   void fixpoint() {
     if (!do_logging) return;
     hops.push_back("Compute fixpoint");
