@@ -24,11 +24,10 @@
 
 namespace Gecode {
 
-  using namespace Int;
-
   void
   channel(Space* home, const IntVarArgs& x, const IntVarArgs& y,
           IntConLevel icl) {
+    using namespace Int;
     using namespace Channel;
     int n = x.size();
     if (n != y.size())
@@ -64,6 +63,28 @@ namespace Gecode {
         GECODE_ES_FAIL(home,(Val<IntView,false>::post(home,n,vi)));
       }
     }
+  }
+
+  void
+  channel(Space* home, BoolVar x0, IntVar x1, IntConLevel) {
+    using namespace Int;
+    if (home->failed()) return;
+    GECODE_ES_FAIL(home,Channel::LinkSingle::post(home,x0,x1));
+  }
+
+  void
+  channel(Space* home, IntVar x0, BoolVar x1, IntConLevel) {
+    using namespace Int;
+    if (home->failed()) return;
+    GECODE_ES_FAIL(home,Channel::LinkSingle::post(home,x1,x0));
+  }
+
+  void
+  channel(Space* home, const BoolVarArgs& x, IntVar y, int o, IntConLevel) {
+    using namespace Int;
+    if (home->failed()) return;
+    ViewArray<BoolView> xv(home,x);
+    GECODE_ES_FAIL(home,Channel::LinkMulti::post(home,xv,y,o));
   }
 
 }

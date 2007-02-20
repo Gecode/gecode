@@ -33,7 +33,7 @@ public:
     return x[0]==x[1];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    rel(home, link(home,x[0]), IRT_EQ, link(home,x[1]));
+    rel(home, channel(home,x[0]), IRT_EQ, channel(home,x[1]));
   }
 };
 BoolEq _booleq("Bool::Eq");
@@ -46,7 +46,7 @@ public:
     return x[0]!=x[1];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    rel(home, link(home,x[0]), IRT_NQ, link(home,x[1]));
+    rel(home, channel(home,x[0]), IRT_NQ, channel(home,x[1]));
   }
 };
 BoolNot _boolnot("Bool::Not");
@@ -59,7 +59,7 @@ public:
     return (x[0]&x[1])==x[2];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    rel(home, link(home,x[0]), BOT_AND, link(home,x[1]), link(home,x[2]));
+    rel(home, channel(home,x[0]), BOT_AND, channel(home,x[1]), channel(home,x[2]));
   }
 };
 BoolAnd _booland("Bool::And::Binary");
@@ -72,7 +72,7 @@ public:
     return (x[0]|x[1])==x[2];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    rel(home, link(home,x[0]), BOT_OR, link(home,x[1]), link(home,x[2]));
+    rel(home, channel(home,x[0]), BOT_OR, channel(home,x[1]), channel(home,x[2]));
   }
 };
 BoolOr _boolor("Bool::Or::Binary");
@@ -85,7 +85,7 @@ public:
     return ((x[0] == 0 ? 1 : 0)|x[1])==x[2];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    rel(home, link(home,x[0]), BOT_IMP, link(home,x[1]), link(home,x[2]));
+    rel(home, channel(home,x[0]), BOT_IMP, channel(home,x[1]), channel(home,x[2]));
   }
 };
 BoolImp _boolimp("Bool::Imp");
@@ -98,7 +98,7 @@ public:
     return (x[0] == x[1])==x[2];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    rel(home, link(home,x[0]), BOT_EQV, link(home,x[1]), link(home,x[2]));
+    rel(home, channel(home,x[0]), BOT_EQV, channel(home,x[1]), channel(home,x[2]));
   }
 };
 BoolEqv _booleqv("Bool::Eqv");
@@ -111,7 +111,7 @@ public:
     return (x[0] != x[1])==x[2];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    rel(home, link(home,x[0]), BOT_XOR, link(home,x[1]), link(home,x[2]));
+    rel(home, channel(home,x[0]), BOT_XOR, channel(home,x[1]), channel(home,x[2]));
   }
 };
 BoolXor _boolxor("Bool::Xor");
@@ -130,10 +130,10 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     BoolVarArgs b(2*(x.size()-1));
     for (int i=x.size()-1; i--; ) {
-      BoolVar bx = link(home,x[i]);
+      BoolVar bx = channel(home,x[i]);
       b[2*i+0] = bx; b[2*i+1] = bx;
     }
-    rel(home, b, BOT_AND, link(home,x[x.size()-1]));
+    rel(home, b, BOT_AND, channel(home,x[x.size()-1]));
   }
 };
 BoolAndNary _boolandnary("Bool::And::Nary");
@@ -151,10 +151,10 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     BoolVarArgs b(2*(x.size()-1));
     for (int i=x.size()-1; i--; ) {
-      BoolVar bx = link(home,x[i]);
+      BoolVar bx = channel(home,x[i]);
       b[2*i+0] = bx; b[2*i+1] = bx;
     }
-    rel(home, b, BOT_OR, link(home,x[x.size()-1]));
+    rel(home, b, BOT_OR, channel(home,x[x.size()-1]));
   }
 };
 BoolOrNary _boolornary("Bool::Or::Nary");

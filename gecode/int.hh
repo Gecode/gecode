@@ -502,23 +502,6 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntIntLink Link constraints between Boolean and Integer variables
-   * \ingroup TaskIntInt
-   */
-
-  //@{
-  /// Post propagator for \f$ x_0 = x_1\f$
-  GECODE_INT_EXPORT void
-  link(Space* home, IntVar x0, BoolVar x1, IntConLevel icl=ICL_DEF);
-  /// Post propagator for \f$ x_0 = x_1\f$
-  forceinline void
-  link(Space* home, BoolVar x0, IntVar x1, IntConLevel icl=ICL_DEF) {
-    link(home,x1,x0,icl);
-  }
-  //@}
-
-
-  /**
    * \defgroup TaskIntIntElement Element constraints
    * \ingroup TaskIntInt
    */
@@ -628,6 +611,20 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   channel(Space* home, const IntVarArgs& x, const IntVarArgs& y,
+          IntConLevel icl=ICL_DEF);
+
+  /// Post propagator for channeling a Boolean and an integer variable \f$ x_0 = x_1\f$
+  GECODE_INT_EXPORT void
+  channel(Space* home, BoolVar x0, IntVar x1,
+          IntConLevel icl=ICL_DEF);
+  /// Post propagator for channeling an integer and a Boolean variable \f$ x_0 = x_1\f$
+  GECODE_INT_EXPORT void
+  channel(Space* home, IntVar x0, BoolVar x1,
+          IntConLevel icl=ICL_DEF);
+
+  /// Post propagator for channeling Boolean and integer variables \f$ x_i = 1\leftrightarrow y=i+o\f$
+  GECODE_INT_EXPORT void
+  channel(Space* home, const BoolVarArgs& x, IntVar y, int o=0,
           IntConLevel icl=ICL_DEF);
   //@}
 

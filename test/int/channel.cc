@@ -21,9 +21,11 @@
  */
 
 #include "test/int.hh"
+#include "gecode/minimodel.hh"
 
 namespace {
 
+  IntSet ds_12(-1,2);
   IntSet ds_03(0,3);
   IntSet ds_05(0,5);
 
@@ -87,14 +89,66 @@ namespace {
     }
   };
   
-  ChannelFull cfd("Channel::Full::Dom",ICL_DOM);
-  ChannelFull cfv("Channel::Full::Val",ICL_VAL);
+  class ChannelLinkSingle : public IntTest {
+  public:
+    ChannelLinkSingle(void)
+      : IntTest("Channel::Bool::Single",2,ds_12,false,ICL_DEF,false) {}
+    virtual bool solution(const Assignment& x) const {
+      return ((x[0]==0) || (x[0]==1)) && (x[0]==x[1]);
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      BoolVar b(home,0,1);
+      channel(home, x[0], b);
+      channel(home, x[1], b);
+    }
+  };
+  
+  class ChannelLinkMulti : public IntTest {
+  private:
+    int o;
+  public:
+    ChannelLinkMulti(const char* t, IntSet& ds, int o0)
+      : IntTest(t,6,ds,false,ICL_DEF,false), o(o0) {}
+    virtual bool solution(const Assignment& x) const {
+      int n = x.size()-1;
+      for (int i=n; i--; )
+        if ((x[i] != 0) && (x[i] != 1))
+          return false;
+      int k=x[n]-o;
+      if ((k<0) || (k>=n))
+        return false;
+      for (int i=0; i<k; i++)
+        if (x[i] != 0)
+          return false;
+      for (int i=k+1; i<n; i++)
+        if (x[i] != 0)
+          return false;
+      return x[k] == 1;
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      int n=x.size()-1;
+      BoolVarArgs b(n);
+      for (int i=n; i--; )
+        b[i]=channel(home,x[i]);
+      channel(home, b, x[n], o);
+    }
+  };
+  
+  ChannelFull cfd("Channel::Int::Full::Dom",ICL_DOM);
+  ChannelFull cfv("Channel::Int::Full::Val",ICL_VAL);
 
-  ChannelHalf chd("Channel::Half::Dom",ICL_DOM);
-  ChannelHalf chv("Channel::Half::Val",ICL_VAL);
+  ChannelHalf chd("Channel::Int::Half::Dom",ICL_DOM);
+  ChannelHalf chv("Channel::Int::Half::Val",ICL_VAL);
 
-  ChannelShared csd("Channel::Shared::Dom",ICL_DOM);
-  ChannelShared csv("Channel::Shared::Val",ICL_VAL);
+  ChannelShared csd("Channel::Int::Shared::Dom",ICL_DOM);
+  ChannelShared csv("Channel::Int::Shared::Val",ICL_VAL);
+
+  ChannelLinkSingle cls;
+
+  IntSet ds_15(-1,5);
+  ChannelLinkMulti clma("Channel::Bool::Multi::A",ds_15, 0);
+  ChannelLinkMulti clmb("Channel::Bool::Multi::B",ds_15, 1);
+  ChannelLinkMulti clmc("Channel::Bool::Multi::C",ds_15,-1);
 
 }
 

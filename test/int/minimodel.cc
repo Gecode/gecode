@@ -151,7 +151,7 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     BoolVarArray y(home,x.size());
     for (int i=x.size(); i--; )
-      y[i] = link(home,x[i]);
+      y[i] = channel(home,x[i]);
     Gecode::post(home, 2*y[0]+1 == y[1]+y[2]-1);
   }
 };
@@ -184,7 +184,7 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     BoolVarArray y(home,x.size()-1);
     for (int i=x.size()-1; i--; )
-      y[i] = link(home,x[i]);
+      y[i] = channel(home,x[i]);
     IntVar z = Gecode::post(home, -2*y[0] + 3*y[1] - y[2]);
     Gecode::rel(home,z,IRT_EQ,x[3]);
   }
@@ -206,7 +206,7 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     BoolVarArgs b(4);
     for (int i=x.size(); i--; )
-      b[i]=link(home,x[i]);
+      b[i]=channel(home,x[i]);
     Gecode::post(home, tt((b[0] && b[1]) || !eqv(b[2],b[3])));
   }
 };
@@ -225,7 +225,7 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     BoolVarArgs b(4);
     for (int i=x.size(); i--; )
-      b[i]=link(home,x[i]);
+      b[i]=channel(home,x[i]);
     Gecode::post(home, tt((b[0] && b[1]) && (b[2] && b[3])));
   }
 };
@@ -244,7 +244,7 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     BoolVarArgs b(4);
     for (int i=x.size(); i--; )
-      b[i]=link(home,x[i]);
+      b[i]=channel(home,x[i]);
     Gecode::post(home, tt(!!(b[0] && b[1]) && !(!b[2] || !b[3])));
   }
 };
@@ -263,7 +263,7 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     BoolVarArgs b(4);
     for (int i=x.size(); i--; )
-      b[i]=link(home,x[i]);
+      b[i]=channel(home,x[i]);
     Gecode::post(home, tt(eqv(b[0] && b[1], b[2]) && eqv(b[0],b[3])));
   }
 };
@@ -282,7 +282,7 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     BoolVarArgs b(4);
     for (int i=x.size(); i--; )
-      b[i]=link(home,x[i]);
+      b[i]=channel(home,x[i]);
     Gecode::post(home, ff(b[0] && b[1] && b[2] && b[3]));
   }
 };
@@ -301,7 +301,7 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     BoolVarArgs b(4);
     for (int i=x.size(); i--; )
-      b[i]=link(home,x[i]);
+      b[i]=channel(home,x[i]);
     Gecode::post(home, tt(b[0] || b[1] || b[2] || b[3]));
   }
 };

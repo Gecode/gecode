@@ -84,7 +84,7 @@ public:
   }
   virtual void post(Space* home, IntVarArray& x) {
     IntArgs ia(n,c);
-    element(home, ia, x[0], link(home,x[1]), 0);
+    element(home, ia, x[0], channel(home,x[1]), 0);
   }
 };
 static const int bc1[5] = {0,1,1,0,1};
@@ -172,8 +172,8 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     BoolVarArgs ia(n);
     for (int i=0;i<n;i++)
-      ia[i]=link(home,x[2+i]);
-    element(home, ia, x[0], link(home,x[1]), 0);
+      ia[i]=channel(home,x[2+i]);
+    element(home, ia, x[0], channel(home,x[1]), 0);
   }
 };
 

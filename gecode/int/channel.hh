@@ -93,7 +93,7 @@ namespace Gecode { namespace Int { namespace Channel {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Post propagator for channeling on \a xy
+    /// Post propagator for channeling
     static  ExecStatus post(Space* home, int n, ValInfo<View>* xy);
   };
 
@@ -135,6 +135,62 @@ namespace Gecode { namespace Int { namespace Channel {
     static  ExecStatus post(Space* home, int n, DomInfo<View>* xy);
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
+  };
+
+  /**
+   * \brief Link propagator for a single Boolean view
+   *
+   * Requires \code #include "gecode/int/channel.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  class LinkSingle :
+    public MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL> {
+  private:
+    using MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL>::x0;
+    using MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL>::x1;
+
+    /// Constructor for cloning \a p
+    LinkSingle(Space* home, bool share, LinkSingle& p);
+    /// Constructor for posting
+    LinkSingle(Space* home, BoolView x0, IntView x1);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Cost function (defined as PC_UNARY_LO)
+    virtual PropCost cost(void) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator for \f$ x_0 = x_1\f$
+    static  ExecStatus post(Space* home, BoolView x0, IntView x1);
+  };
+
+  /**
+   * \brief Link propagator for multiple Boolean views
+   *
+   * Requires \code #include "gecode/int/channel.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  class LinkMulti :
+    public MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM> {
+  private:
+    using MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM>::x;
+    using MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM>::y;
+    /// Offset value
+    int o;
+    /// Constructor for cloning \a p
+    LinkMulti(Space* home, bool share, LinkMulti& p);
+    /// Constructor for posting
+    LinkMulti(Space* home, ViewArray<BoolView>& x, IntView y, int o0);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Cost function 
+    virtual PropCost cost(void) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator for \f$ x_i = 1\leftrightarrow y=i+o\f$
+    static  ExecStatus post(Space* home, 
+                            ViewArray<BoolView>& x, IntView y, int o);
   };
 
 }}}

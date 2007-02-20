@@ -278,7 +278,7 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     BoolVarArgs y(n); BoolVarArgs z(n);
     for (int i=0; i<n; i++) {
-      y[i]=link(home,x[i]);; z[i]=link(home,x[n+i]);
+      y[i]=channel(home,x[i]);; z[i]=channel(home,x[n+i]);
     }
     rel(home, y, strict ? IRT_LE : IRT_LQ, z);
   }
