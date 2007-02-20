@@ -30,3 +30,15 @@ for ext in ${KEYWORDEXTS}; do
     -exec svn propset svn:keywords 'Author Date Id Revision' "{}" ";"
 done
 
+# List of normal directories to set ignore properties on
+NORMALDIRS="int iter kernel minimodel search set support"
+
+for dir in ${NORMALDIRS}; do
+    find . -type d -wholename "./gecode/$dir*" \
+	! -wholename '*.svn*' \
+	-exec svn propset svn:ignore -F misc/svn-ignore.txt '{}' \;
+done
+find . -type d -wholename "./test*" \
+    ! -wholename '*.svn*' \
+    -exec svn propset svn:ignore -F misc/svn-ignore.txt '{}' \;
+

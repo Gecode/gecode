@@ -1,0 +1,14 @@
+.deps
+.libs
+*~
+*.la
+*.lo
+*.o
+*.s
+*.obj
+*.sbj
+*.ilk
+*.pdb
+*.suo
+*.sln
+*.exe
