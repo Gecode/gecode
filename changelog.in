@@ -119,7 +119,7 @@ unneeded) and actors and spaces now have allocated member
 functions for returning how much memory is allocated by a space.
 
 Moreover, the memory reported by some propagators has been
-ingnored. Note that this flow did not affect the bechmark figures
+ingnored. Note that this flaw did not affect the bechmark figures
 on the Gecode webpage.
 
 [ENTRY]
@@ -146,7 +146,7 @@ What:	change
 Rank:	major
 [DESCRIPTION]
 Linear expressions and relations can also be created from Boolean
-variables, iwth the reification that Boolean relations cannot be
+variables, with the restriction that Boolean relations cannot be
 reified.
 
 [ENTRY]
@@ -244,10 +244,11 @@ Module: set
 What: 	change
 Rank: 	minor
 [DESCRIPTION]
-The finite set selection propagators accept an additional argument
-that specifies where the indexing should start. It should make some
-models more natural to express, and helps in porting code from Mozart.
-In addition, the selectUnion propagator is now hand-written again,
+The finite set selection propagators accept an additional
+argument that specifies where the indexing should start. It
+should make some models more natural to express, and helps in
+porting code from other systems, such as Prolog or Mozart.  In
+addition, the selectUnion propagator is now hand-written again,
 resulting in better performance.
 
 [ENTRY]
@@ -380,7 +381,7 @@ Module: int
 What:   change
 Rank:   minor
 [DESCRIPTION]
-Boolean variables cannot langer be initialized from an integer 
+Boolean variables cannot longer be initialized from an integer 
 variable. If needed, a channel propagator must be posted (added).
 
 [ENTRY]
@@ -411,7 +412,7 @@ What:   performance
 Rank:   major
 [DESCRIPTION]
 Explicit disposal of actors has been reimplemented (the old
-design was nothing short of darn stupid). The memory overhead of
+design was nothing but darn stupid). The memory overhead of
 propagators is reduced by 40% for most propagators and 20% for
 all. That is, a binary propagator takes 30% less memory and a
 ternary propagator takes 25% less memory. Programs with many
