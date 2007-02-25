@@ -133,6 +133,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     Edge<View>** val_edges_ref(void);
 
     View view(void) const;
+    Edge<View>* iter_edge;
   };
 
   /**
@@ -208,8 +209,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   protected:
     typedef Support::SentinelStack<Node<View>*> SccStack;
-    bool search_match(ViewNode<View>*);
-    bool match(ViewNode<View>*);
+    bool match(Support::SentinelStack<ViewNode<View>*>&, ViewNode<View>*);
     void scc(SccStack&, Node<View>*);
 
   public:
@@ -344,10 +344,14 @@ namespace Gecode { namespace Int { namespace Distinct {
     return new (home) ViewValGraph(home, n_view,x,val_inf,n_val,size);
   }
 
+#define GECODE_UNVISITED (reinterpret_cast<Edge<View>*>(1))
+
   template <class View>
-  bool
-  DomCtrl<View>::ViewValGraph::search_match(ViewNode<View>* x) {
-    x->comp = count;
+  forceinline bool
+  DomCtrl<View>::ViewValGraph::match
+  (Support::SentinelStack<ViewNode<View>*>& s, ViewNode<View>* x) {
+    assert(x->edge_fst() == x->edge_lst());
+  start:
     // Try to find matching edge cheaply: is there a free edge around?
     {
       Edge<View>* e = x->val_edges();
@@ -356,6 +360,13 @@ namespace Gecode { namespace Int { namespace Distinct {
       do {
         if (!e->val(x)->matching()) {
           e->revert(x); e->val(x)->matching(e);
+          // Found a matching, revert all edges on stack
+          while (!s.empty()) {
+            x = s.pop(); e = x->iter_edge;
+            x->iter_edge = GECODE_UNVISITED;
+            e->val(x)->matching()->revert(e->val(x));
+            e->revert(x); e->val(x)->matching(e);
+          }
           return true;
         }
         e = e->next_edge();
@@ -363,34 +374,34 @@ namespace Gecode { namespace Int { namespace Distinct {
     }
     // No, find matching edge by augmenting path method
     {
-      Edge<View>* e = x->val_edges();
+      x->iter_edge = x->val_edges();
       do {
-        ValNode<View>*  n = e->val(x);
-        ViewNode<View>* y = n->matching()->view(n);
-        if ((y->comp < count) && search_match(y)) {
-          n->matching()->revert(n);
-          e->revert(x); n->matching(e);
-          return true;
+        Edge<View>* e = x->iter_edge;
+        if (e->val(x)->matching()->view(e->val(x))->iter_edge 
+            == GECODE_UNVISITED) {
+          s.push(x);
+          x = e->val(x)->matching()->view(e->val(x));
+          goto start;
         }
-        e = e->next_edge();
-      } while (e != NULL);
+      next:
+        x->iter_edge = x->iter_edge->next_edge();
+      } while (x->iter_edge != NULL);
     }
+    if (!s.empty()) {
+      x = s.pop(); goto next;
+    }
+    // All nodes and edges unsuccessfully tried
     return false;
-  }
-
-  template <class View>
-  forceinline bool
-  DomCtrl<View>::ViewValGraph::match(ViewNode<View>* x) {
-    assert(x->edge_fst() == x->edge_lst());
-    count++;
-    return search_match(x);
   }
 
   template <class View>
   bool
   DomCtrl<View>::ViewValGraph::initial_match(void) {
+    GECODE_AUTOSTACK(ViewNode<View>*,NULL,s,n_view);
     for (int i = n_view; i--; )
-      if (!match(view[i]))
+      view[i]->iter_edge = GECODE_UNVISITED;
+    for (int i = n_view; i--; )
+      if (!match(s,view[i]))
         return false;
     return true;
   }
@@ -552,8 +563,11 @@ namespace Gecode { namespace Int { namespace Distinct {
         }
       }
     }
+    GECODE_AUTOSTACK(ViewNode<View>*,NULL,s,n_view);
+    for (int i = n_view; i--; )
+      view[i]->iter_edge = GECODE_UNVISITED;
     while (n_re--)
-      if (!match(re[n_re]))
+      if (!match(s,re[n_re]))
         return false;
     return true;
   }
