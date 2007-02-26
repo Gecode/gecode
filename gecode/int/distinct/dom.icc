@@ -376,12 +376,14 @@ namespace Gecode { namespace Int { namespace Distinct {
     {
       x->iter_edge = x->val_edges();
       do {
-        Edge<View>* e = x->iter_edge;
-        if (e->val(x)->matching()->view(e->val(x))->iter_edge 
-            == GECODE_UNVISITED) {
-          s.push(x);
-          x = e->val(x)->matching()->view(e->val(x));
-          goto start;
+        {
+          Edge<View>* e = x->iter_edge;
+          if (e->val(x)->matching()->view(e->val(x))->iter_edge 
+              == GECODE_UNVISITED) {
+            s.push(x);
+            x = e->val(x)->matching()->view(e->val(x));
+            goto start;
+          }
         }
       next:
         x->iter_edge = x->iter_edge->next_edge();
