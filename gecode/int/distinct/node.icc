@@ -106,54 +106,6 @@ namespace Gecode { namespace Int { namespace Distinct {
     return _view;
   }
 
-  template <class View>
-  forceinline bool 
-  ViewNode<View>::m_visited(void) const {
-    return _m_edge != reinterpret_cast<Edge<View>*>(1);
-  }
-  template <class View>
-  forceinline void 
-  ViewNode<View>::m_unvisit(void) {
-    _m_edge = reinterpret_cast<Edge<View>*>(1);
-  }
-  template <class View>
-  forceinline void 
-  ViewNode<View>::m_visit(void) {
-    _m_edge = _val_edges;
-  }
-  template <class View>
-  forceinline void 
-  ViewNode<View>::m_next_edge(void) {
-    _m_edge = _m_edge->next_edge();
-  }
-  template <class View>
-  forceinline Edge<View>* 
-  ViewNode<View>::m_edge(void) const {
-    return _m_edge;
-  }
-
-
-  template<class View>
-  forceinline
-  MatchStack<View>::MatchStack(void) : _tos(NULL) {}
-  template<class View>
-  forceinline bool 
-  MatchStack<View>::empty(void) const {
-    return _tos == NULL;
-  }
-  template<class View>
-  forceinline void 
-  MatchStack<View>::push(ViewNode<View>* x) {
-    x->_m_stack = _tos; _tos = x;
-  }
-  template<class View>
-  forceinline ViewNode<View>* 
-  MatchStack<View>::pop(void) {
-    ViewNode<View>* x = _tos;
-    _tos = _tos->_m_stack;
-    return x;
-  }
-
 }}}
 
 // STATISTICS: int-prop

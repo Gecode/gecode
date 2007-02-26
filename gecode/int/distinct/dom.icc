@@ -92,7 +92,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   class Node : public BiLink {
   public:
-    unsigned int pre, low, comp;
+    unsigned int pre, low, min, comp;
+    Edge<View>* iter;
 
     Node(void);
 
@@ -119,52 +120,20 @@ namespace Gecode { namespace Int { namespace Distinct {
     Edge<View>* matching(void) const;
   };
 
-  template<class View>
-  class MatchStack;
-
   /**
    * \brief View nodes in view-value graph
    *
    */
   template <class View>
   class ViewNode : public Node<View> {
-    friend class MatchStack<View>;
   protected:
     Edge<View>* _val_edges; View _view;
-    Edge<View>*     _m_edge;
-    ViewNode<View>* _m_stack;
   public:
     ViewNode(View);
     Edge<View>*  val_edges(void) const;
     Edge<View>** val_edges_ref(void);
 
     View view(void) const;
-
-    /// Check whether node has been visited during matching
-    bool m_visited(void) const;
-    /// Mark node unvisited for matching
-    void m_unvisit(void);
-    /// Start visiting node during matching
-    void m_visit(void);
-    /// Move to the next edge to be checked for matching
-    void m_next_edge(void);
-    /// Return current edge
-    Edge<View>* m_edge(void) const;
-  };
-
-  /**
-   * \brief Stack used during matching, entries are stored inside the nodes
-   *
-   */
-  template<class View>
-  class MatchStack {
-  private:
-    ViewNode<View>* _tos;
-  public:
-    MatchStack(void);
-    bool empty(void) const;
-    void push(ViewNode<View>* x);
-    ViewNode<View>* pop(void);
   };
 
   /**
@@ -218,11 +187,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   protected:
     ViewNode<View>** view; int n_view;
     ValNode<View>**  val;  int n_val;
-
     unsigned int count;
-    unsigned int cnt0;
-    unsigned int cnt1;
-
   public:
     ViewValGraph(Space*,int, View*, const int*, int, unsigned int);
     ViewValGraph(Space*,int, View*, int, unsigned int, int);
@@ -239,9 +204,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     bool sync(void);
 
   protected:
-    typedef Support::SentinelStack<Node<View>*> SccStack;
-    bool match(ViewNode<View>*);
-    void scc(SccStack&, Node<View>*);
+    typedef Support::SentinelStack<ViewNode<View>*> MatchStack;
+    bool match(MatchStack&,ViewNode<View>*);
 
   public:
     // Memory management
@@ -269,8 +233,7 @@ namespace Gecode { namespace Int { namespace Distinct {
                                             int n_view0, View* x,
                                             int n_val0,
                                             unsigned int n_edges, int min)
-    :  n_view(n_view0), n_val(n_val0),
-       count(0), cnt0(0), cnt1(0) {
+    :  n_view(n_view0), n_val(n_val0), count(0) {
     view = reinterpret_cast<ViewNode<View>**>
       (home->alloc(n_view*sizeof(ViewNode<View>*)));
     val  = reinterpret_cast<ValNode<View>**>
@@ -303,8 +266,7 @@ namespace Gecode { namespace Int { namespace Distinct {
                                             int n_view0, View* x,
                                             const int* val_inf,
                                             int n_val0, unsigned int n_edges)
-    :  n_view(n_view0), n_val(n_val0),
-       count(0), cnt0(0), cnt1(0) {
+    :  n_view(n_view0), n_val(n_val0), count(0) {
     view = reinterpret_cast<ViewNode<View>**>
       (home->alloc(n_view*sizeof(ViewNode<View>*)));
     val  = reinterpret_cast<ValNode<View>**>
@@ -377,12 +339,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline bool
-  DomCtrl<View>::ViewValGraph::match(ViewNode<View>* x) {
-    for (int i = n_view; i--; )
-      view[i]->m_unvisit();
-
-    MatchStack<View> m;
-
+  DomCtrl<View>::ViewValGraph::match(MatchStack& m, ViewNode<View>* x) {
+    count++;
   start:
     // Try to find matching edge cheaply: is there a free edge around?
     {
@@ -394,7 +352,7 @@ namespace Gecode { namespace Int { namespace Distinct {
           e->revert(x); e->val(x)->matching(e);
           // Found a matching, revert all edges on stack
           while (!m.empty()) {
-            x = m.pop(); e = x->m_edge();
+            x = m.pop(); e = x->iter;
             e->val(x)->matching()->revert(e->val(x));
             e->revert(x); e->val(x)->matching(e);
           }
@@ -404,23 +362,19 @@ namespace Gecode { namespace Int { namespace Distinct {
       } while (e != NULL);
     }
     // No, find matching edge by augmenting path method
-    {
-      x->m_visit();
-      do {
-        {
-          Edge<View>* e = x->m_edge();
-          if (!e->val(x)->matching()->view(e->val(x))->m_visited()) { 
-            m.push(x);
-            x = e->val(x)->matching()->view(e->val(x));
-            goto start;
-          }
-        }
-      next:
-        x->m_next_edge();
-      } while (x->m_edge() != NULL);
-    }
+    Edge<View>* e = x->val_edges();
+    do {
+      if (e->val(x)->matching()->view(e->val(x))->pre < count) { 
+        e->val(x)->matching()->view(e->val(x))->pre = count;
+        m.push(x); x->iter = e;
+        x = e->val(x)->matching()->view(e->val(x));
+        goto start;
+      }
+    next:
+      e = e->next_edge();
+    } while (e != NULL);
     if (!m.empty()) {
-      x = m.pop(); goto next;
+      x = m.pop(); e = x->iter; goto next;
     }
     // All nodes and edges unsuccessfully tried
     return false;
@@ -429,36 +383,11 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline bool
   DomCtrl<View>::ViewValGraph::initial_match(void) {
+    GECODE_AUTOSTACK(ViewNode<View>*,NULL,m,n_view);
     for (int i = n_view; i--; )
-      if (!match(view[i]))
+      if (!match(m,view[i]))
         return false;
     return true;
-  }
-
-  template <class View>
-  void
-  DomCtrl<View>::ViewValGraph::scc(SccStack& n_s, Node<View>* w) {
-    w->pre = cnt0;
-    w->low = cnt0;
-    unsigned int min = cnt0++;
-    n_s.push(w);
-    for (Edge<View>* e = w->edge_fst(); e != w->edge_lst(); e = e->next()) {
-      Node<View>* v = e->dst(w);
-      if (v->pre < count)
-        scc(n_s,v);
-      if (v->low < min)
-        min = v->low;
-    }
-    if (min < w->low) {
-      w->low = min;
-      return;
-    }
-    do {
-      Node<View>* v = n_s.pop();
-      v->comp = cnt1;
-      v->low  = UINT_MAX;
-    } while (n_s.last() != w);
-    cnt1++;
   }
 
   template <class View>
@@ -467,7 +396,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     {
       // Marks all edges as used that are on simple paths in the graph
       // that start from a free (unmatched node) by depth-first-search
-      GECODE_AUTOSTACK(ValNode<View>*,NULL,n_s,n_val);
+      GECODE_AUTOSTACK(ValNode<View>*,NULL,visit,n_val);
       
       // Insert all free nodes: they can be only value nodes as we
       // have a maximum matching covering all view nodes
@@ -478,25 +407,25 @@ namespace Gecode { namespace Int { namespace Distinct {
           if (val[i]->empty()) {
             val[i] = val[--n_val];
           } else {
-            val[i]->comp = count;
-            n_s.push(val[i]);
+            val[i]->pre = count;
+            visit.push(val[i]);
           }
       
       // Invariant: only value nodes are on the stack!
-      while (!n_s.empty()) {
-        ValNode<View>* n = n_s.pop();
+      while (!visit.empty()) {
+        ValNode<View>* n = visit.pop();
         for (Edge<View>* e = n->edge_fst(); e != n->edge_lst(); e=e->next()) {
           // Get the value node
           e->use();
           ViewNode<View>* x = e->view(n);
-          if (x->comp < count) {
-            x->comp = count;
+          if (x->pre < count) {
+            x->pre = count;
             assert(x->edge_fst()->next() == x->edge_lst());
             ValNode<View>* m = x->edge_fst()->val(x);
             x->edge_fst()->use();
-            if (m->comp < count) {
-              m->comp = count;
-              n_s.push(m);
+            if (m->pre < count) {
+              m->pre = count;
+              visit.push(m);
             }
           }
         }
@@ -504,13 +433,46 @@ namespace Gecode { namespace Int { namespace Distinct {
     }
 
     {
+      GECODE_AUTOSTACK(Node<View>*,NULL,scc,n_val+n_view);
+      GECODE_AUTOSTACK(Node<View>*,NULL,visit,n_val+n_view);
+
       count++;
-      cnt0 = count;
-      cnt1 = count;
-      GECODE_AUTOSTACK(Node<View>*,NULL,n_s,n_val+n_view);
+      unsigned int cnt0 = count;
+      unsigned int cnt1 = count;
+
       for (int i = n_view; i--; )
-        if (view[i]->comp < count)
-          scc(n_s,view[i]);
+        if (view[i]->pre < count) {
+          Node<View>* w = view[i];
+        start:
+          w->pre = w->low = w->min = cnt0++;
+          scc.push(w);
+          Edge<View>* e = w->edge_fst();
+          while (e != w->edge_lst()) {
+            if (e->dst(w)->pre < count) {
+              visit.push(w); w->iter = e;
+              w=e->dst(w);
+              goto start;
+            }
+          next:
+            if (e->dst(w)->low < w->min)
+              w->min = e->dst(w)->low;
+            e = e->next();
+          }
+          if (w->min < w->low) {
+            w->low = w->min;
+          } else {
+            Node<View>* v;
+            do {
+              v = scc.pop();
+              v->comp = cnt1;
+              v->low  = UINT_MAX;
+            } while (v != w);
+            cnt1++;
+          }
+          if (!visit.empty()) {
+            w=visit.pop(); e=w->iter; goto next;
+          }
+        }
       count = cnt0+1;
     }
   }
@@ -549,8 +511,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   bool
   DomCtrl<View>::ViewValGraph::sync(void) {
     // Stack for view nodes to be rematched
-    GECODE_AUTOARRAY(ViewNode<View>*,re,n_view);
-    int n_re = 0;
+    GECODE_AUTOSTACK(ViewNode<View>*,NULL,re,n_view);
     // Synchronize nodes
     for (int i = n_view; i--; ) {
       ViewNode<View>* x = view[i];
@@ -569,8 +530,8 @@ namespace Gecode { namespace Int { namespace Distinct {
             // Skip edge
             e->unlink(); e->mark();
             e = e->next_edge();
-            *p = e;
           }
+          *p = e;
           assert(r.min() == e->val(x)->val());
           // This edges must be kept
           for (unsigned int i=r.width(); i--; ) {
@@ -588,12 +549,13 @@ namespace Gecode { namespace Int { namespace Distinct {
         if (m->marked()) {
           // Matching has been deleted!
           m->val(x)->matching(NULL);
-          re[n_re++] = x;
+          re.push(x);
         }
       }
     }
-    while (n_re--)
-      if (!match(re[n_re]))
+    GECODE_AUTOSTACK(ViewNode<View>*,NULL,m,n_view);
+    while (!re.empty())
+      if (!match(m,re.pop()))
         return false;
     return true;
   }
