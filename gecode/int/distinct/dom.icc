@@ -250,7 +250,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       return ES_FAILED;
 
     // Test whether the values are dense or sparse
-    if (static_cast<unsigned int>(n)*2 >= width) {
+    if (((3*static_cast<unsigned int>(n)) >> 1) >= width) {
       n_view = n; 
       view = reinterpret_cast<ViewNode<View>**>
         (home->alloc(n_view*sizeof(ViewNode<View>*)));

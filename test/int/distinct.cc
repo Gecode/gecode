@@ -25,9 +25,9 @@
 #include "test/int.hh"
 
 namespace {
-  IntSet ds_dense(-2,2);
-  const int v_sparse[5] = {-100,-10,0,10,100};
-  IntSet ds_sparse(v_sparse,5);
+  IntSet ds_dense(-3,3);
+  const int v_sparse[7] = {-1001,-1000,-10,0,10,1000,1001};
+  IntSet ds_sparse(v_sparse,7);
   IntSet ds_rn(-500,500);
   IntSet ds_rnsmall(-50,50);
 }
@@ -35,10 +35,10 @@ namespace {
 class Distinct : public IntTest {
 public:
   Distinct(const char* t, const IntSet& ds, IntConLevel icl)
-    : IntTest(t,4,ds,false,icl) {}
+    : IntTest(t,6,ds,false,icl) {}
   virtual bool solution(const Assignment& x) const {
-    for (int i=0; i<4; i++)
-      for (int j=i+1; j<4; j++)
+    for (int i=0; i<x.size(); i++)
+      for (int j=i+1; j<x.size(); j++)
         if (x[i]==x[j])
           return false;
     return true;
@@ -92,17 +92,17 @@ namespace {
 class DistinctOffset : public IntTest {
 public:
   DistinctOffset(const char* t, const IntSet& ds, IntConLevel icl)
-    : IntTest(t,4,ds,false,icl) {}
+    : IntTest(t,6,ds,false,icl) {}
   virtual bool solution(const Assignment& x) const {
-    for (int i=0; i<4; i++)
-      for (int j=i+1; j<4; j++)
+    for (int i=0; i<x.size(); i++)
+      for (int j=i+1; j<x.size(); j++)
         if (x[i]+i==x[j]+j)
           return false;
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
-    IntArgs c(4);
-    for (int i=0; i<4; i++)
+    IntArgs c(x.size());
+    for (int i=0; i<x.size(); i++)
       c[i]=i;
     distinct(home, c, x, icl);
   }
