@@ -32,6 +32,7 @@
 #include "gecode/int.hh"
 
 #include "gecode/int/rel.hh"
+#include "gecode/support/sentinel-stack.hh"
 
 /**
  * \namespace Gecode::Int::Distinct
@@ -149,6 +150,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   ExecStatus prop_bnd(Space* home, ViewArray<View>& x, int m);
 
+  template <class View> class ViewNode;
+  template <class View> class ValNode;
 
   /**
    * \brief Propagation controller for domain-consistent distinct
@@ -164,11 +167,43 @@ namespace Gecode { namespace Int { namespace Distinct {
   class DomCtrl {
   protected:
     /// View-value graph for propagation
-    class ViewValGraph;
+    class ViewValGraph {
+    protected:
+      /// Array of view nodes
+      ViewNode<View>** view; 
+      /// Number of view nodes
+      int n_view;
+      /// Array of value nodes
+      ValNode<View>** val;
+      /// Number of value nodes
+      int n_val;
+      /// Marking counter
+      unsigned int count;
+    public:
+      /// Construct graph as not yet initialized
+      ViewValGraph(void);
+      /// Test whether graph has been initialized
+      bool initialized(void) const;
+      /// Initialize graph
+      ExecStatus init(Space* home, int n, View* x);
+      /// Mark edges in graph
+      void mark(void);
+      /// Prune unmarked edges
+      bool tell(Space* home);
+      /// Purge graph if necessary
+      void purge(void);
+      /// Synchronize graph with new view domains
+      bool sync(void);
+    protected:
+      /// Stack used during matching
+      typedef Support::SentinelStack<ViewNode<View>*> MatchStack;
+      /// Find a matching for node \a x
+      bool match(MatchStack& m, ViewNode<View>* x);
+    };
     /// Propagation is performed on a view-value graph
-    ViewValGraph* vvg;
+    ViewValGraph vvg;
   public:
-    /// Initialize with non-existing view-value graph
+    /// Initialize with non-initialized view-value graph
     DomCtrl(void);
     /// Check whether a view-value graph is available
     bool available(void);
@@ -178,8 +213,6 @@ namespace Gecode { namespace Int { namespace Distinct {
     ExecStatus sync(void);
     /// Perform propagation and return true if a view gets assigned
     bool propagate(Space* home);
-    /// Deallocate view-value graph
-    void dispose(void);
   };
 
   /**
@@ -222,8 +255,6 @@ namespace Gecode { namespace Int { namespace Distinct {
     virtual Actor* copy(Space* home, bool share);
     /// Post propagator for views \a x
     static  ExecStatus post(Space* home, ViewArray<View>& x);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
   };
 
   /**

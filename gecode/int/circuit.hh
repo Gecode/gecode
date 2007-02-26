@@ -128,8 +128,6 @@ namespace Gecode { namespace Int { namespace Circuit {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for circuit on \a x
     static  ExecStatus post(Space* home, ViewArray<View>& x);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
   };
 
 }}}

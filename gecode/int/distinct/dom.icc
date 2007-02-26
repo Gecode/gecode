@@ -23,7 +23,6 @@
 #include <climits>
 
 #include "gecode/support/dynamic-array.hh"
-#include "gecode/support/sentinel-stack.hh"
 
 #include "gecode/iter.hh"
 
@@ -178,163 +177,16 @@ namespace Gecode { namespace Int { namespace Distinct {
 
 namespace Gecode { namespace Int { namespace Distinct {
 
-  /**
-   * \brief View-value graph for propagating domain-consistent distinct
-   *
-   */
-  template <class View>
-  class DomCtrl<View>::ViewValGraph {
-  protected:
-    ViewNode<View>** view; int n_view;
-    ValNode<View>**  val;  int n_val;
-    unsigned int count;
-  public:
-    ViewValGraph(Space*,int, View*, const int*, int, unsigned int);
-    ViewValGraph(Space*,int, View*, int, unsigned int, int);
-
-    static ViewValGraph* init(Space*,int,View*);
-
-    bool initial_match(void);
-
-    void mark(void);
-    bool tell(Space* home);
-
-    bool overflow(void) const;
-
-    bool sync(void);
-
-  protected:
-    typedef Support::SentinelStack<ViewNode<View>*> MatchStack;
-    bool match(MatchStack&,ViewNode<View>*);
-
-  public:
-    // Memory management
-    static void  operator delete(void*, size_t);
-    static void  operator delete(void*,Space*);
-    static void* operator new(size_t, Space*);
-  };
-
-
-  template <class View>
-  forceinline void
-  DomCtrl<View>::ViewValGraph::operator delete(void*, size_t) {}
-  template <class View>
-  forceinline void
-  DomCtrl<View>::ViewValGraph::operator delete(void*,Space*) {}
-  template <class View>
-  forceinline void*
-  DomCtrl<View>::ViewValGraph::operator new(size_t s, Space* home) {
-    return home->alloc(s);
-  }
 
   template <class View>
   forceinline
-  DomCtrl<View>::ViewValGraph::ViewValGraph(Space* home,
-                                            int n_view0, View* x,
-                                            int n_val0,
-                                            unsigned int n_edges, int min)
-    :  n_view(n_view0), n_val(n_val0), count(0) {
-    view = reinterpret_cast<ViewNode<View>**>
-      (home->alloc(n_view*sizeof(ViewNode<View>*)));
-    val  = reinterpret_cast<ValNode<View>**>
-      (home->alloc(n_val*sizeof(ValNode<View>*)));
-
-    // Init value nodes
-    {
-      int v = min+n_val;
-      for (int i = n_val; i--; )
-        val[i] = new (home) ValNode<View>(--v);
-    }
-
-    // Init view nodes and edges
-    for (int i = n_view; i--; ) {
-      view[i] = new (home) ViewNode<View>(x[i]);
-      Edge<View>** edge_p = view[i]->val_edges_ref();
-      ViewValues<View> x_i(x[i]);
-      while (x_i()) {
-        *edge_p = new (home) Edge<View>(val[x_i.val()-min],view[i]);
-        edge_p = (*edge_p)->next_edge_ref();
-        ++x_i;
-      }
-      *edge_p = NULL;
-    }
-  }
+  DomCtrl<View>::ViewValGraph::ViewValGraph(void)
+    : view(NULL), val(NULL), count(0) {}
 
   template <class View>
-  forceinline
-  DomCtrl<View>::ViewValGraph::ViewValGraph(Space* home,
-                                            int n_view0, View* x,
-                                            const int* val_inf,
-                                            int n_val0, unsigned int n_edges)
-    :  n_view(n_view0), n_val(n_val0), count(0) {
-    view = reinterpret_cast<ViewNode<View>**>
-      (home->alloc(n_view*sizeof(ViewNode<View>*)));
-    val  = reinterpret_cast<ValNode<View>**>
-      (home->alloc(n_val*sizeof(ValNode<View>*)));
-
-    // Init value nodes
-    for (int i = n_val; i--; )
-      val[i] = new (home) ValNode<View>(val_inf[i]);
-
-    // Init view nodes
-    for (int i = n_view; i--; ) {
-      view[i] = new (home) ViewNode<View>(x[i]);
-      Edge<View>** edge_p = view[i]->val_edges_ref();
-      ViewValues<View> x_i(x[i]);
-      int j = 0;
-      while (x_i()) {
-        while (val_inf[j] < x_i.val())
-          j++;
-        *edge_p = new (home) Edge<View>(val[j],view[i]);
-        edge_p = (*edge_p)->next_edge_ref();
-        ++x_i;
-      }
-      *edge_p = NULL;
-    }
-  }
-
-  template <class View>
-  typename DomCtrl<View>::ViewValGraph*
-  DomCtrl<View>::ViewValGraph::init(Space* home, int n_view, View* x) {
-    // Find value information for construction of view value graph
-    int min = x[n_view-1].min();
-    int max = x[n_view-1].max();
-    unsigned int size = x[n_view-1].size();
-    for (int i=n_view-1; i--; ) {
-      size += x[i].size();
-      min = std::min(min,x[i].min());
-      max = std::max(max,x[i].max());
-    }
-
-    unsigned int width = max-min+1;
-
-    // Definitly not enough values
-    if (width < static_cast<unsigned int>(n_view))
-      return NULL;
-
-    // Test whether the values are dense or sparse
-    if (static_cast<unsigned int>(n_view)*2 >= width)
-      return new (home) ViewValGraph(home,n_view,x,
-                                     static_cast<int>(width),size,min);
-
-    Support::DynamicArray<int> val_inf(64);
-    // Compute set of values
-    int n_val = 0;
-    GECODE_AUTOARRAY(ViewRanges<View>,x_r,n_view);
-    for (int i = n_view; i--; )
-      x_r[i].init(x[i]);
-    Iter::Ranges::NaryUnion<ViewRanges<View> > xu(x_r, n_view);
-    // Of course, the union of non-empty iterators is non-empty
-    assert(xu());
-    // Fill array of values
-    do {
-      for (int v = xu.min(); v <= xu.max(); v++)
-        val_inf[n_val++] = v;
-      ++xu;
-    } while (xu());
-    if (n_val < n_view)
-      return NULL;
-    return new (home) ViewValGraph(home, n_view,x,val_inf,n_val,size);
+  forceinline bool
+  DomCtrl<View>::ViewValGraph::initialized(void) const {
+    return view != NULL;
   }
 
   template <class View>
@@ -381,13 +233,95 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  forceinline bool
-  DomCtrl<View>::ViewValGraph::initial_match(void) {
+  ExecStatus
+  DomCtrl<View>::ViewValGraph::init(Space* home, int n, View* x) {
+    // Find value information for construction of view value graph
+    int min = x[n-1].min();
+    int max = x[n-1].max();
+    for (int i=n-1; i--; ) {
+      min = std::min(min,x[i].min());
+      max = std::max(max,x[i].max());
+    }
+
+    unsigned int width = max-min+1;
+
+    // Definitly not enough values
+    if (width < static_cast<unsigned int>(n))
+      return ES_FAILED;
+
+    // Test whether the values are dense or sparse
+    if (static_cast<unsigned int>(n)*2 >= width) {
+      n_view = n; 
+      view = reinterpret_cast<ViewNode<View>**>
+        (home->alloc(n_view*sizeof(ViewNode<View>*)));
+      n_val = static_cast<int>(width);
+      val  = reinterpret_cast<ValNode<View>**>
+        (home->alloc(n_val*sizeof(ValNode<View>*)));
+      // Init value nodes
+      {
+        int v = min+n_val;
+        for (int i = n_val; i--; )
+          val[i] = new (home) ValNode<View>(--v);
+      }
+      // Init view nodes and edges
+      for (int i = n_view; i--; ) {
+        view[i] = new (home) ViewNode<View>(x[i]);
+        Edge<View>** edge_p = view[i]->val_edges_ref();
+        ViewValues<View> x_i(x[i]);
+        while (x_i()) {
+          *edge_p = new (home) Edge<View>(val[x_i.val()-min],view[i]);
+          edge_p = (*edge_p)->next_edge_ref();
+          ++x_i;
+        }
+        *edge_p = NULL;
+      }
+    } else {
+      n_view = n;
+      Support::DynamicArray<int> val_inf(64);
+      // Compute set of values
+      n_val = 0;
+      GECODE_AUTOARRAY(ViewRanges<View>,x_r,n_view);
+      for (int i = n_view; i--; )
+        x_r[i].init(x[i]);
+      Iter::Ranges::NaryUnion<ViewRanges<View> > xu(x_r, n_view);
+      // Of course, the union of non-empty iterators is non-empty
+      assert(xu());
+      // Fill array of values
+      do {
+        for (int v = xu.min(); v <= xu.max(); v++)
+          val_inf[n_val++] = v;
+        ++xu;
+      } while (xu());
+      if (n_val < n_view)
+        return ES_FAILED;
+      view = reinterpret_cast<ViewNode<View>**>
+        (home->alloc(n_view*sizeof(ViewNode<View>*)));
+      val  = reinterpret_cast<ValNode<View>**>
+        (home->alloc(n_val*sizeof(ValNode<View>*)));
+      // Init value nodes
+      for (int i = n_val; i--; )
+        val[i] = new (home) ValNode<View>(val_inf[i]);
+      // Init view nodes
+      for (int i = n_view; i--; ) {
+        view[i] = new (home) ViewNode<View>(x[i]);
+        Edge<View>** edge_p = view[i]->val_edges_ref();
+        ViewValues<View> x_i(x[i]);
+        int j = 0;
+        while (x_i()) {
+          while (val_inf[j] < x_i.val())
+            j++;
+          *edge_p = new (home) Edge<View>(val[j],view[i]);
+          edge_p = (*edge_p)->next_edge_ref();
+          ++x_i;
+        }
+        *edge_p = NULL;
+      }
+    }
     GECODE_AUTOSTACK(ViewNode<View>*,NULL,m,n_view);
     for (int i = n_view; i--; )
       if (!match(m,view[i]))
-        return false;
-    return true;
+        return ES_FAILED;
+    return ES_OK;
   }
 
   template <class View>
@@ -502,9 +436,15 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  forceinline bool
-  DomCtrl<View>::ViewValGraph::overflow(void) const {
-    return count > (UINT_MAX >> 1);
+  forceinline void
+  DomCtrl<View>::ViewValGraph::purge(void) {
+    if (count > (UINT_MAX >> 1)) {
+      count = 1;
+      for (int i=n_view; i--; )
+        view[i]->pre = 0;
+      for (int i=n_val; i--; )
+        val[i]->pre = 0;
+    }
   }
 
   template <class View>
@@ -568,45 +508,32 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline
-  DomCtrl<View>::DomCtrl(void) : vvg(NULL) {}
+  DomCtrl<View>::DomCtrl(void) {}
 
   template <class View>
   forceinline bool
   DomCtrl<View>::available(void) {
-    if ((vvg != NULL) && vvg->overflow()) {
-      delete vvg;
-      vvg = NULL;
-    }
-    return vvg != NULL;
+    return vvg.initialized();
   }
 
   template <class View>
   forceinline ExecStatus
   DomCtrl<View>::init(Space* home, int n, View* x) {
-    assert(vvg == NULL);
-    vvg = ViewValGraph::init(home,n,x);
-    if ((vvg == NULL) || !vvg->initial_match())
-      return ES_FAILED;
-    return ES_OK;
+    return vvg.init(home,n,x);
   }
 
   template <class View>
   forceinline ExecStatus
   DomCtrl<View>::sync(void) {
-    return vvg->sync() ? ES_OK : ES_FAILED;
+    vvg.purge();
+    return vvg.sync() ? ES_OK : ES_FAILED;
   }
 
   template <class View>
   forceinline bool
   DomCtrl<View>::propagate(Space* home) {
-    vvg->mark();
-    return vvg->tell(home);
-  }
-
-  template <class View>
-  forceinline void
-  DomCtrl<View>::dispose(void) {
-    delete vvg;
+    vvg.mark();
+    return vvg.tell(home);
   }
 
 
@@ -620,14 +547,6 @@ namespace Gecode { namespace Int { namespace Distinct {
   forceinline
   Dom<View>::Dom(Space* home, ViewArray<View>& x)
     : NaryPropagator<View,PC_INT_DOM>(home,x) {}
-
-  template <class View>
-  forceinline size_t
-  Dom<View>::dispose(Space* home) {
-    dc.dispose();
-    (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
-    return sizeof(*this);
-  }
 
   template <class View>
   ExecStatus

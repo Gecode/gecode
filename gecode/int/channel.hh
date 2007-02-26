@@ -133,8 +133,6 @@ namespace Gecode { namespace Int { namespace Channel {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for channeling on \a xy
     static  ExecStatus post(Space* home, int n, DomInfo<View>* xy);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
   };
 
   /**
