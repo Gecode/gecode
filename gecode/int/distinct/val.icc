@@ -48,7 +48,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     do {
       t++;
       if (!complete && (t > 16)) {
-        // Give up after sixteeen iterations, but the values must be
+        // Give up after sixteen iterations, but the values must be
         // propagated first
         // Maybe we are lucky in that this iteration does the trick...
         ExecStatus es = ES_FIX;
