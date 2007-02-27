@@ -91,7 +91,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   class Node : public BiLink {
   public:
-    unsigned int pre, low, min, comp;
+    unsigned int low, min, comp;
     Edge<View>* iter;
 
     Node(void);
@@ -181,7 +181,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline
   DomCtrl<View>::ViewValGraph::ViewValGraph(void)
-    : view(NULL), val(NULL), count(0) {}
+    : view(NULL), val(NULL), count(1) {}
 
   template <class View>
   forceinline bool
@@ -216,8 +216,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     // No, find matching edge by augmenting path method
     Edge<View>* e = x->val_edges();
     do {
-      if (e->val(x)->matching()->view(e->val(x))->pre < count) { 
-        e->val(x)->matching()->view(e->val(x))->pre = count;
+      if (e->val(x)->matching()->view(e->val(x))->min < count) { 
+        e->val(x)->matching()->view(e->val(x))->min = count;
         m.push(x); x->iter = e;
         x = e->val(x)->matching()->view(e->val(x));
         goto start;
@@ -341,7 +341,7 @@ namespace Gecode { namespace Int { namespace Distinct {
           if (val[i]->empty()) {
             val[i] = val[--n_val];
           } else {
-            val[i]->pre = count;
+            val[i]->min = count;
             visit.push(val[i]);
           }
       
@@ -352,13 +352,13 @@ namespace Gecode { namespace Int { namespace Distinct {
           // Get the value node
           e->use();
           ViewNode<View>* x = e->view(n);
-          if (x->pre < count) {
-            x->pre = count;
+          if (x->min < count) {
+            x->min = count;
             assert(x->edge_fst()->next() == x->edge_lst());
             ValNode<View>* m = x->edge_fst()->val(x);
             x->edge_fst()->use();
-            if (m->pre < count) {
-              m->pre = count;
+            if (m->min < count) {
+              m->min = count;
               visit.push(m);
             }
           }
@@ -375,14 +375,14 @@ namespace Gecode { namespace Int { namespace Distinct {
       unsigned int cnt1 = count;
 
       for (int i = n_view; i--; )
-        if (view[i]->pre < count) {
+        if (view[i]->min < count) {
           Node<View>* w = view[i];
         start:
-          w->pre = w->low = w->min = cnt0++;
+          w->low = w->min = cnt0++;
           scc.push(w);
           Edge<View>* e = w->edge_fst();
           while (e != w->edge_lst()) {
-            if (e->dst(w)->pre < count) {
+            if (e->dst(w)->min < count) {
               visit.push(w); w->iter = e;
               w=e->dst(w);
               goto start;
@@ -441,9 +441,9 @@ namespace Gecode { namespace Int { namespace Distinct {
     if (count > (UINT_MAX >> 1)) {
       count = 1;
       for (int i=n_view; i--; )
-        view[i]->pre = 0;
+        view[i]->min = 0;
       for (int i=n_val; i--; )
-        val[i]->pre = 0;
+        val[i]->min = 0;
     }
   }
 

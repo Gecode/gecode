@@ -30,7 +30,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline
   Node<View>::Node(void)
-    : pre(0), low(0), comp(0) {}
+    : low(0), min(0), comp(0) {}
   template <class View>
   forceinline Edge<View>*
   Node<View>::edge_fst(void) const {
