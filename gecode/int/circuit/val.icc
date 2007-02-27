@@ -51,10 +51,10 @@ namespace Gecode { namespace Int { namespace Circuit {
   template <class View>
   ExecStatus
   Val<View>::propagate(Space* home) {
-    ExecStatus es = Distinct::prop_val<View,true>(home,y);
-    GECODE_ES_CHECK(es);
-    if (!connected())
-      return ES_FAILED;
+    GECODE_ES_CHECK((Distinct::prop_val<View,true>(home,y)));
+    ExecStatus esc = connected(home);
+    if (esc != ES_FIX)
+      return esc;
     if (y.size() < 2)
       return ES_SUBSUMED(this,home);
     return path(home);

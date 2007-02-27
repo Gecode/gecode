@@ -43,23 +43,48 @@ namespace Gecode { namespace Int { namespace Circuit {
   };
 
   template <class View>
-  bool 
-  Base<View>::connected(void) const {
-    int n   = x.size();
+  ExecStatus
+  Base<View>::connected(Space* home) {
+    int n = x.size();
+
     /// Information needed for checking scc's
     GECODE_AUTOARRAY(SsccInfo<View>,si,n);
     for (int i=n; i--; )
       si[i].pre=-1;
+
     // Stack to remember which nodes have not been processed completely
     GECODE_AUTOSTACK(int,-1,next,n);
 
-    // Check whether there is a single strongly connected component.
-    // This is a downstripped version of Tarjan's algorithm as
-    // the computation of sccs proper is not needed.
+    /* 
+     * Check whether there is a single strongly connected component.
+     * This is a downstripped version of Tarjan's algorithm as
+     * the computation of sccs proper is not needed. In addition, it
+     * checks a mandatory condition for a graph to be Hamiltonian
+     * (due to Mats Carlsson).
+     *
+     * To quote Mats: Suppose you do a depth-first search of the graph. 
+     * In that search, the root node will have a number of child subtrees 
+     * T1, ..., Tn. By construction, if i<j then there is no edge from 
+     * Ti to Tj. The necessary condition for Hamiltonianicity is that 
+     * there be an edge from Ti+1 to Ti, for 0 < i < n.
+     *
+     */
+
+    ExecStatus es = ES_FIX;
 
     // Start always at node 0
     int i = 0;
+    // Counter for scc
     int cnt = 0;
+    // Smallest preorder number of last subtree
+    int subtree_min = 0;
+    // Largest preorder number of last subtree
+    int subtree_max = 0;
+    // Number of back edges into last subtree
+    // Assume for the first tree that there are some
+    unsigned int back = 2;
+    // The last back edge seem is from back_src to back_dst
+    int back_src = 0;  int back_dst = 0;
   start:
     si[i].min = si[i].pre = si[i].low = cnt++;
     si[i].v.init(x[i]);
@@ -68,6 +93,12 @@ namespace Gecode { namespace Int { namespace Circuit {
         next.push(i);
         i=si[i].v.val();
         goto start;
+      } else if ((si[i].v.val() != 0) &&
+                 (subtree_min <= si[si[i].v.val()].pre) &&
+                 (si[si[i].v.val()].pre <= subtree_max)) {
+        back++;
+        back_src = i; 
+        back_dst = si[i].v.val();
       }
     cont:
       if (si[si[i].v.val()].low < si[i].min)
@@ -78,12 +109,31 @@ namespace Gecode { namespace Int { namespace Circuit {
       si[i].low = si[i].min;
     } else if (i != 0) {
       // If it is not the first node visited, there is more than one SCC
-      return false;
+      return ES_FAILED;
     }
     if (!next.empty()) {
-      i=next.pop(); goto cont;
+      i=next.pop(); 
+      if (i == 0) {
+        // No back edge
+        if (back == 0)
+          return ES_FAILED;
+        // Exactly one back edge, make it mandatory
+        if (back == 1) {
+          /*
+          ModEvent me = x[back_src].eq(home,back_dst);
+          if (me_failed(me))
+            return ES_FAILED;
+          if (me_modified(me))
+            es = ES_NOFIX;
+          */
+        }
+        back        = 0;
+        subtree_min = subtree_max+1;
+        subtree_max = cnt-1;
+      }
+      goto cont;
     }
-    return cnt == n;
+    return (cnt == n) ? es : ES_FAILED;
   }
 
   template <class View>

@@ -52,16 +52,10 @@ namespace Gecode { namespace Int { namespace Circuit {
   ExecStatus
   Dom<View>::propagate(Space* home) {
     if (View::pme(this) == ME_INT_VAL) {
-      ExecStatus es = Distinct::prop_val<View,false>(home,y);
-      GECODE_ES_CHECK(es);
-      if (es != ES_FIX) {
-        es = Distinct::prop_bnd<View>(home,x);
-        GECODE_ES_CHECK(es);
-        es = Distinct::prop_val<View,true>(home,y);
-        GECODE_ES_CHECK(es);
-      }
-      if (!connected())
-        return ES_FAILED;
+      GECODE_ES_CHECK((Distinct::prop_val<View,true>(home,y)));
+      ExecStatus escv = connected(home);
+      if (escv != ES_FIX)
+        return escv;
       if (y.size() < 2)
         return ES_SUBSUMED(this,home);
       return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
@@ -74,8 +68,9 @@ namespace Gecode { namespace Int { namespace Circuit {
     }
     bool assigned = dc.propagate(home);
 
-    if (!connected())
-      return ES_FAILED;
+    ExecStatus esc = connected(home);
+    if (esc != ES_FIX)
+      return esc;
 
     // Elminiate assigned views from y, as they have been assigned
     // and propagated by domain consistent propagation. This is required
@@ -84,6 +79,7 @@ namespace Gecode { namespace Int { namespace Circuit {
       for (int i=y.size(); i--; )
         if (y[i].assigned())
           y.move_lst(i);
+
     return path(home);
   }
 

@@ -37,9 +37,23 @@ public:
   StressCircuit(const Options& opt)
     : x(this,opt.size,0,opt.size-1) {
 
-    circuit(this, x);
+    circuit(this, x, opt.icl);
+    //	x[]={[3..5], [3..4], 0, 2, 1, [1..4], ;
+    rel(this, x[0], IRT_NQ, 0);
+    rel(this, x[0], IRT_NQ, 1);
+    rel(this, x[0], IRT_NQ, 2);
+    rel(this, x[1], IRT_NQ, 0);
+    rel(this, x[1], IRT_NQ, 1);
+    rel(this, x[1], IRT_NQ, 2);
+    rel(this, x[1], IRT_NQ, 5);
+    rel(this, x[2], IRT_EQ, 0);
+    rel(this, x[3], IRT_EQ, 2);
+    rel(this, x[4], IRT_EQ, 1);
+    rel(this, x[5], IRT_NQ, 0);
+    rel(this, x[5], IRT_NQ, 5);
+    //    rel(this, x[1], IRT_EQ; 0);
 
-    branch(this, x, BVAR_NONE, BVAL_MIN);
+    //    branch(this, x, BVAR_NONE, BVAL_MIN);
   }
 
   /// Constructor for cloning \a s
@@ -72,7 +86,7 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("StressCircuit");
-  opt.size = 59;
+  opt.size = 6;
   opt.parse(argc,argv);
   Example::run<StressCircuit,DFS>(opt);
   return 0;

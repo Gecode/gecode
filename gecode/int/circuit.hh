@@ -51,7 +51,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     /// Constructor for posting
     Base(Space* home, ViewArray<View>& x);
     /// Check whether the view value graph is strongly connected
-    bool connected(void) const;
+    ExecStatus connected(Space* home);
     /// Ensure path property: prune edges that could give to small cycles
     ExecStatus path(Space* home);
   public:

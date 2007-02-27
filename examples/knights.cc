@@ -164,7 +164,11 @@ public:
       IntSet ds(nbs, n_nbs);
       dom(this, succ[f], ds);
     }
-    branch(this, succ, BVAR_NONE, BVAL_MIN);
+    IntVarArgs r(succ.size());
+    int j=0;
+    for (int i=succ.size();i--; )
+      r[j++]=succ[i];
+    branch(this, r, BVAR_NONE, BVAL_MIN);
   }
 };
 
