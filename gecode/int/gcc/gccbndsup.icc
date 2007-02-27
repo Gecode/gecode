@@ -224,6 +224,8 @@ namespace Gecode { namespace Int { namespace GCC {
   private:
     /// memory allocation
     char* mem;
+    /// How much memory is allocated
+    size_t _allocated;
     /// sum[i] contains the partial sum from 0 to i
     int* sum;
     /**
@@ -253,7 +255,8 @@ namespace Gecode { namespace Int { namespace GCC {
     void print(void);
     bool check_update_max(ViewArray<Card>& k);
     bool check_update_min(ViewArray<Card>& k);
-    int getsize(void);
+    int getsize(void) const;
+    size_t allocated(void) const;
     //@}
   };
 
@@ -269,8 +272,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class Card>
   forceinline void*
   PartialSum<Card>::operator new(size_t t){
-    void* allocated = Memory::malloc(t);
-    return allocated;
+    return Memory::malloc(t);
   }
 
   /// \brief Free memory used by partial sum structure
@@ -306,6 +308,7 @@ namespace Gecode { namespace Int { namespace GCC {
     size_t sum_size = (size) * sizeof(int);
     size_t ds_size  = (size) * sizeof(int);
     size_t total    = sum_size + ds_size;
+    _allocated = total;
 
     mem = reinterpret_cast<char*> (Memory::malloc(total));
     sum = reinterpret_cast<int*> (mem);
@@ -502,8 +505,13 @@ namespace Gecode { namespace Int { namespace GCC {
   /// \brief Return the size of the partial sum structure.
   template <class Card>
   forceinline int
-  PartialSum<Card>::getsize(void){
+  PartialSum<Card>::getsize(void) const {
     return size;
+  }
+  template <class Card>
+  forceinline size_t
+  PartialSum<Card>::allocated(void) const {
+    return sizeof(PartialSum<Card>) + _allocated;
   }
 
 

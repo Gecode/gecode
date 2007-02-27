@@ -153,6 +153,8 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     /// Destructor
     virtual size_t dispose(Space* home);
+    /// Return how much extra memory is allocated by the propagator
+    virtual size_t allocated(void) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Cost funtion returning dynamic PC_LINEAR_HI.
@@ -235,6 +237,8 @@ namespace Gecode { namespace Int { namespace GCC {
   public:
     /// Destructor including deallocation of variable-value graph
     virtual size_t dispose(Space* home);
+    /// Return how much extra memory is allocated by the propagator
+    virtual size_t allocated(void) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /**

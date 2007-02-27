@@ -447,12 +447,14 @@ namespace Gecode { namespace Int { namespace GCC {
    *
    */
   template <class View, class Card, bool isView>
-  class VarValGraph{
+  class VarValGraph {
   private:
     /// failure flag
     bool fail;
     /// Allocated memory for nodes and edges
     char* mem;
+    /// How much memory is allocated
+    size_t _allocated;
     /// Problem variables
     ViewArray<View>& x;
     /// Copy keeping track of removed variables
@@ -503,6 +505,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Destructor
     ~VarValGraph(void);
     //@}
+    size_t allocated(void) const;
     /// \name Graph-interface
     //@{
     /**
@@ -511,7 +514,7 @@ namespace Gecode { namespace Int { namespace GCC {
      *  occuring in functions returing only a boolean value
      *  and not an ExecStatus.
      */
-    bool failed(void);
+    bool failed(void) const;
     /**
      * \brief Set the failure flag of the graph
      */
@@ -1274,6 +1277,8 @@ namespace Gecode { namespace Int { namespace GCC {
     size_t  size           = edge_size + var_size + var_ptr_size +
       val_size + val_ptr_size;
 
+    _allocated = size;
+
     mem      = reinterpret_cast<char*>
       (Memory::malloc(size));
     edges    = reinterpret_cast<Edge*>
@@ -1355,8 +1360,14 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView>
+  forceinline size_t
+  VarValGraph<View, Card, isView>::allocated(void) const {
+    return _allocated + sizeof(VarValGraph<View, Card, isView>);
+  }
+
+  template <class View, class Card, bool isView>
   forceinline bool
-  VarValGraph<View, Card, isView>::failed(void){
+  VarValGraph<View, Card, isView>::failed(void) const {
     return fail;
   }
 

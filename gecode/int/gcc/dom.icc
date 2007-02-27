@@ -84,6 +84,12 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView>
+  size_t
+  Dom<View, Card, isView>::allocated(void) const {
+    return (vvg == NULL) ? 0 : vvg->allocated();
+  }
+
+  template <class View, class Card, bool isView>
   Actor*
   Dom<View, Card, isView>::copy(Space* home, bool share) {
     return new (home) Dom<View, Card, isView>(home, share, *this);

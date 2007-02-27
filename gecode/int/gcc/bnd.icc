@@ -66,6 +66,17 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView, bool shared>
+  size_t
+  BndImp<View, Card, isView, shared>::allocated(void) const {
+    size_t s = 0;
+    if (lps != NULL)
+      s += lps->allocated();
+    if (ups != NULL)
+      s += ups->allocated();
+    return s;
+  }
+
+  template <class View, class Card, bool isView, bool shared>
   Actor*
   BndImp<View, Card, isView, shared>::copy(Space* home, bool share){
     return new (home) BndImp<View, Card, isView, shared>
@@ -82,8 +93,7 @@ namespace Gecode { namespace Int { namespace GCC {
      *   n = number of variables
      *   t = time needed to sort the domain bounds of the variables
      */
-    PropCost pc = PC_LINEAR_HI;
-    return cost_hi(x.size(),pc);
+    return cost_hi(x.size(),PC_LINEAR_HI);
   }
 
   template <class View, class Card, bool isView, bool shared>
