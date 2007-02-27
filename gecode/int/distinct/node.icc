@@ -29,8 +29,9 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline
-  Node<View>::Node(void)
-    : low(0), min(0), comp(0) {}
+  Node<View>::Node(void) : min(0) {
+    // Must be initialized such that the node is considered unvisited initially
+  }
   template <class View>
   forceinline Edge<View>*
   Node<View>::edge_fst(void) const {
