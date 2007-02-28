@@ -412,7 +412,7 @@ namespace Gecode { namespace Int { namespace Regular {
   forceinline
   Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
     : NaryPropagator<View,PC_INT_DOM>(home,share,p) {
-    dfa.update(share,p.dfa);
+    dfa.update(home,share,p.dfa);
   }
 
   template <class View>

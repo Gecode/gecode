@@ -394,7 +394,6 @@ namespace Gecode {
 
     // All done... Construct the automaton
     DFAI* d = new DFAI(m_trans);
-    d->use_cnt   = 1;
     d->n_states  = m_states;
     d->n_trans   = m_trans;
     d->final_fst = final_fst;
@@ -411,7 +410,7 @@ namespace Gecode {
         }
       TransBySymbol::sort(r,m_trans);
     }
-    dfai = d;
+    object(d);
   }
 
 }
@@ -444,21 +443,20 @@ operator<<(std::ostream& os, const Gecode::DFA& dfa) {
   return os;
 }
 
-namespace Gecode {
+namespace Gecode { namespace Int { namespace Regular {
 
-  DFA::DFAI*
-  DFA::DFAI::copy(void) {
+  DFAI*
+  DFAI::copy(void) {
     DFAI* d = new DFAI(n_trans);
-    d->use_cnt   = 1;
     d->n_states  = n_states;
     d->n_trans   = n_trans;
     d->final_fst = final_fst;
     d->final_lst = final_lst;
-    memcpy(&d->trans[0], &trans[0], sizeof(Transition)*n_trans);
+    memcpy(&d->trans[0], &trans[0], sizeof(DFA::Transition)*n_trans);
     return d;
   }
 
-}
+}}}
 
 // STATISTICS: int-prop
 

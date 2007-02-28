@@ -55,6 +55,7 @@ namespace Gecode {
     b_status = static_cast<Branching*>(&a_actors);
     b_commit = static_cast<Branching*>(&a_actors);
     n_sub = 0;
+    shared = NULL;
   }
 
 
@@ -294,6 +295,7 @@ namespace Gecode {
     pool_next = 0;
     for (int i=0; i<=PC_MAX; i++)
       pool[i].init();
+    shared = NULL;
     // Copy all actors
     {
       ActorLink* p  = &a_actors;
@@ -400,6 +402,10 @@ namespace Gecode {
       a->prev(p); p = a; a = a->next();
     }
     assert(a->prev() == p);
+    // Reset links for shared objects
+    for (SharedObject* s = c->shared; s != NULL; s = s->next)
+      s->fwd = NULL;
+    c->shared = NULL;
     return c;
   }
 

@@ -773,62 +773,6 @@ namespace Gecode {
    * \ingroup TaskIntInt
    */
 
-  class SharedObjectBase {
-  private:
-    unsigned int use_cnt;
-  public:
-    SharedObjectBase(void) : use_cnt(0) {}
-    ~SharedObjectBase(void) {}
-    /// Allocate memory from heap
-    static void* operator new(size_t s) {
-      return Memory::malloc(s);
-    }
-    /// Free memory allocated from heap
-    static void  operator delete(void* p) {
-      Memory::free(p);
-    }
-  };
-  
-  template<class Object>
-  class SharedObject {
-  private:
-    Object* o;
-  protected:
-    SharedObject(void) : o(NULL) {}
-    SharedObject(Object* n) : o(n) {
-      if (o != NULL) o->use_cnt++;
-    }
-    SharedObject(const SharedObject& so)
-      : o(so.o) {
-      if (o != NULL) o->use_cnt++;
-    }
-    SharedObject& operator=(const SharedObject& so) {
-      if (&so != this) {
-        if ((o != NULL) && (--o->use_cnt == 0))
-          delete o;
-        o = so.o; 
-        if (o != NULL) o->use_cnt++;
-      }
-      return *this;
-    }
-    void update(bool share, SharedObject& so) {
-      assert(o == NULL);
-      if (share) {
-        o = so.o;
-      } else {
-        o = so.o->copy();
-      }
-      if (o != NULL) o->use_cnt++;
-    }
-    ~SharedObject(void) {
-      if ((o != NULL) && (--o->use_cnt == 0))
-        delete o;
-    }
-    Object* object(void) const {
-      return o;
-    }
-  };
-
   class DFA;
 
   //@{
@@ -879,7 +823,11 @@ namespace Gecode {
    * The final states are contiguous ranging from the first to the
    * last final state.
    */
-  class DFA {
+  namespace Int { namespace Regular {
+    class DFAI;
+  }}
+
+  class DFA : public SharedHandle<Int::Regular::DFAI> {
   public:
     /// Specification of a %DFA transition
     class Transition {
@@ -890,11 +838,6 @@ namespace Gecode {
     };
     /// Iterator for %DFA transitions
     class Transitions;
-  private:
-    /// Class for %DFA implementation
-    class DFAI;
-    /// %DFA implementation
-    DFAI* dfai;
   protected:
     GECODE_INT_EXPORT
     /**
@@ -926,17 +869,6 @@ namespace Gecode {
     DFA(REG& r);
     /// Initialize by DFA \a d (DFA is shared)
     DFA(const DFA& d);
-    /// Initialize by DFA \a d (DFA is shared)
-    const DFA& operator=(const DFA&);
-    /// Destructor
-    ~DFA(void);
-    /**
-     * \brief Update this DFA to \a d
-     *
-     * If \a share is true, share the same \a d. If not, create
-     * an independent copy from \a d.
-     */
-    void update(bool share, DFA& d);
     /// Return the number of states
     unsigned int n_states(void) const;
     /// Return the number of transitions

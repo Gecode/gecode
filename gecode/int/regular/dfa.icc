@@ -43,56 +43,43 @@ namespace Gecode {
     const Transition* transition(void) const;
   };
 
-  /**
-   * \brief Data stored for a DFA
-   *
-   */
-  class DFA::DFAI {
-  public:
-    /// How often is the DFA implementation referred to
-    unsigned int use_cnt;
-    /// Number of states
-    unsigned int n_states;
-    /// Number of transitions
-    unsigned int n_trans;
-    /// First final state
-    int          final_fst;
-    /// Last final state
-    int          final_lst;
-    /// The transitions
-    Transition*  trans;
-    /// Initialize automation implementation with \nt transitions
-    DFAI(unsigned int nt);
-    /// Delete automation implemenentation
-    ~DFAI(void);
-    /// Create a copy
-    GECODE_INT_EXPORT DFAI* copy(void);
-    /// Allocate memory from heap for new space
-    static void* operator new(size_t);
-    /// Free memory allocated from heap
-    static void  operator delete(void*);
-  };
+  namespace Int { namespace Regular {
 
+    /**
+     * \brief Data stored for a DFA
+     *
+     */
+    class DFAI : public SharedObject {
+    public:
+      /// Number of states
+      unsigned int n_states;
+      /// Number of transitions
+      unsigned int n_trans;
+      /// First final state
+      int          final_fst;
+      /// Last final state
+      int          final_lst;
+      /// The transitions
+      DFA::Transition*  trans;
+      /// Initialize automation implementation with \nt transitions
+      DFAI(unsigned int nt);
+      /// Delete automation implemenentation
+      ~DFAI(void);
+      /// Create a copy
+      GECODE_INT_EXPORT DFAI* copy(void);
+    };
 
-  forceinline
-  DFA::DFAI::DFAI(unsigned int nt)
-    : trans(reinterpret_cast<Transition*>
-    (Memory::malloc(sizeof(Transition)*nt))) {}
-
-  forceinline
-  DFA::DFAI::~DFAI(void) {
-    Memory::free(trans);
-  }
-
-  forceinline void*
-  DFA::DFAI::operator new(size_t s) {
-    return Memory::malloc(s);
-  }
-
-  forceinline void
-  DFA::DFAI::operator delete(void* p) {
-    Memory::free(p);
-  }
+    forceinline
+    DFAI::DFAI(unsigned int nt)
+      : trans(reinterpret_cast<DFA::Transition*>
+              (Memory::malloc(sizeof(DFA::Transition)*nt))) {}
+    
+    forceinline
+    DFAI::~DFAI(void) {
+      Memory::free(trans);
+    }
+    
+  }}
 
   forceinline
   DFA::DFA(void) {}
@@ -105,67 +92,38 @@ namespace Gecode {
 
   forceinline
   DFA::DFA(const DFA& d)
-    : dfai(d.dfai) {
-    dfai->use_cnt++;
-  }
-
-  inline void
-  DFA::update(bool share, DFA& d) {
-    if (share) {
-      dfai = d.dfai;
-      dfai->use_cnt++;
-    } else {
-      dfai = d.dfai->copy();
-    }
-  }
-
-  forceinline
-  DFA::~DFA(void) {
-    if (--dfai->use_cnt == 0)
-      delete dfai;
-  }
-
-  forceinline const DFA&
-  DFA::operator=(const DFA& d) {
-    if (&d != this) {
-      if (--dfai->use_cnt == 0)
-        delete dfai;
-      dfai = d.dfai;
-      dfai->use_cnt++;
-    }
-    return *this;
-  }
+    : SharedHandle(d) {}
 
   forceinline unsigned int
   DFA::n_states(void) const {
-    return dfai->n_states;
+    return object()->n_states;
   }
 
   forceinline unsigned int
   DFA::n_transitions(void) const {
-    return dfai->n_trans;
+    return object()->n_trans;
   }
 
   forceinline int
   DFA::final_fst(void) const {
-    return dfai->final_fst;
+    return object()->final_fst;
   }
 
   forceinline int
   DFA::final_lst(void) const {
-    return dfai->final_lst;
+    return object()->final_lst;
   }
 
   forceinline int
   DFA::symbol_min(void) const {
-    int n = dfai->n_trans;
-    return (n > 0) ? dfai->trans[0].symbol : Limits::Int::int_min;
+    int n = object()->n_trans;
+    return (n > 0) ? object()->trans[0].symbol : Limits::Int::int_min;
   }
 
   forceinline int
   DFA::symbol_max(void) const {
-    int n = dfai->n_trans;
-    return (n > 0) ? dfai->trans[n-1].symbol : Limits::Int::int_max;
+    int n = object()->n_trans;
+    return (n > 0) ? object()->trans[n-1].symbol : Limits::Int::int_max;
   }
 
 
@@ -177,7 +135,8 @@ namespace Gecode {
 
   forceinline
   DFA::Transitions::Transitions(const DFA& d)
-    : c_trans(&d.dfai->trans[0]), e_trans(c_trans+d.dfai->n_trans) {}
+    : c_trans(&d.object()->trans[0]), 
+      e_trans(c_trans+d.object()->n_trans) {}
 
   forceinline bool
   DFA::Transitions::operator()(void) const {
