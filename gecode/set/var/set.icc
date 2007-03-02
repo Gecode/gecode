@@ -37,6 +37,12 @@ namespace Gecode {
     //Use init() instead!
   }
 
+  forceinline
+  SetVar::SetVar(const SetVar& x0) : x(x0.x) {}
+
+  forceinline
+  SetVar::SetVar(const Set::SetView& x0) : x(x0.variable()) {}
+
   forceinline void
   SetVar::init(Space* home) {
     x = new (home) Set::SetVarImp(home);

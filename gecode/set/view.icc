@@ -1199,6 +1199,7 @@ namespace Gecode {
 
 }
 
+#include "gecode/set/var/set.icc"
 #include "gecode/set/view/set.icc"
 #include "gecode/set/view/const.icc"
 #include "gecode/set/view/singleton.icc"

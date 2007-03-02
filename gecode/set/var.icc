@@ -646,6 +646,8 @@ namespace Gecode { namespace Set {
 
   };
 
+  class SetView;
+
 }}
 
 #include "gecode/set/var/imp.icc"
@@ -665,7 +667,11 @@ namespace Gecode {
     /// \name Constructors and initialization
     //@{
     /// Default constructor
-    GECODE_SET_EXPORT SetVar(void);
+    SetVar(void);
+    /// Initialize from set variable \a x0
+    SetVar(const SetVar& x0);
+    /// Initialize from set view \a x0
+    SetVar(const Set::SetView& x0);
 
     /// Initialize variable with empty greatest lower and full least upper bound
     GECODE_SET_EXPORT SetVar(Space* home);
@@ -1073,8 +1079,6 @@ namespace Gecode {
 
   //@}
 }
-
-#include "gecode/set/var/set.icc"
 
 /**
  * \brief Print set variable \a x
