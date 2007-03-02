@@ -231,7 +231,7 @@ export INTLIB		=
 export LINKINT      	=
 endif
 INTBUILDDIRS	= \
-	int int/var int/view int/regular int/linear int/bool int/branch
+	int int/var int/view int/regular int/channel int/linear int/bool int/branch
 
 #
 # SET COMPONENTS

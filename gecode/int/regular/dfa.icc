@@ -92,7 +92,7 @@ namespace Gecode {
 
   forceinline
   DFA::DFA(const DFA& d)
-    : SharedHandle(d) {}
+    : SharedHandle<Int::Regular::DFAI>(d) {}
 
   forceinline unsigned int
   DFA::n_states(void) const {
