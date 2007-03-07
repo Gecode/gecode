@@ -318,7 +318,7 @@ public:
         x[i] = v[*c];
       distinct(this, x, opt.icl);
       if (!opt.naive)
-        rel(this, m, IRT_GQ, n);
+        rel(this, m, IRT_GQ, n-1);
     }
     IntVarArgs ma(1);
     ma[0] = m;

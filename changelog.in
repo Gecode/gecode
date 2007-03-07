@@ -53,6 +53,14 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module:	example
+What:	bug
+Rank:	minor
+Bug:	50
+[DESCRIPTION]
+The number of colors in graph-color was off by one.
+
+[ENTRY]
 Module:	int
 What:	new
 Rank:	major
