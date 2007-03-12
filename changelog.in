@@ -53,6 +53,15 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module:	kernel
+What:	new
+Rank:	major
+[DESCRIPTION]
+Added classes for shared objects and handles. Handles to shared
+objects allow to either share copies among spaces when being
+copied or to create a new shared copy, if requested.
+
+[ENTRY]
 Module:	int
 What:	new
 Rank:	minor

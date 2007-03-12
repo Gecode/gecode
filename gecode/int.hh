@@ -839,7 +839,6 @@ namespace Gecode {
     /// Iterator for %DFA transitions
     class Transitions;
   protected:
-    GECODE_INT_EXPORT
     /**
      * \brief Initialize automaton
      *
@@ -847,6 +846,7 @@ namespace Gecode {
      * final state specification \a f_spec and a flag \a minimize whether
      * the automaton should be minimized
      */
+    GECODE_INT_EXPORT
     void init(int start, Transition t_spec[], int f_spec[],
               bool minimize);
   public:
@@ -864,8 +864,8 @@ namespace Gecode {
      * - Minimizes the DFA, if \a minimize is true.
      */
     DFA(int s, Transition t[], int f[], bool minimize=true);
-    GECODE_INT_EXPORT
     /// Initialize DFA by regular expression \a r
+    GECODE_INT_EXPORT
     DFA(REG& r);
     /// Initialize by DFA \a d (DFA is shared)
     DFA(const DFA& d);

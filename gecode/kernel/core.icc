@@ -32,13 +32,13 @@ namespace Gecode {
   class Space;
 
   /**
-   * \defgroup FuncSupportShared Support for shared objects and handles to them
+   * \defgroup FuncSupportShared Support for shared objects and handles
    *
    * Shared handles provide access to reference counted objects
    * used by entities inside spaces. In particular, they support
    * updates with and without sharing. An update with sharing
    * just updates the handle. An update without sharing creates
-   * a single copy during updating.
+   * a single copy per space during updating.
    *
    * \ingroup FuncSupport
    */
@@ -63,7 +63,7 @@ namespace Gecode {
     /// The forwarding pointer used for forwarding
     SharedObject* fwd;
   public:
-    /// Initialize with appropriate reference count
+    /// Initialize but do not regard object as being used!
     SharedObject(void);
     /// Allocate memory from heap
     static void* operator new(size_t s);
@@ -1424,6 +1424,7 @@ namespace Gecode {
       sh.o->fwd = o;
       sh.o->next = home->shared; 
       home->shared = sh.o;
+      subscribe();
     }
   }
   template<class Object>
