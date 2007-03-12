@@ -28,7 +28,7 @@ namespace Gecode { namespace Set { namespace Select {
   forceinline
   SelectUnionConst<SView,RView>::
   SelectUnionConst(Space* home, SView y0,
-                     Support::SharedArray<IntSet,true>& iv0,
+                     Support::SharedArray<IntSet>& iv0,
                      RView y1)
     : Propagator(home), x0(y0), iv(iv0), x1(y1) {
     force(home);
@@ -69,7 +69,7 @@ namespace Gecode { namespace Set { namespace Select {
   template <class SView, class RView>
   ExecStatus
   SelectUnionConst<SView,RView>::
-  post(Space* home, SView x0, Support::SharedArray<IntSet,true>& xs,
+  post(Space* home, SView x0, Support::SharedArray<IntSet>& xs,
        RView x1) {
     int n = xs.size();
 

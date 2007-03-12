@@ -47,7 +47,7 @@ namespace Gecode {
 
   void
   selectUnion(Space* home, const IntSetArgs& s, SetVar y, SetVar z, int offset) {
-    Support::SharedArray<IntSet,true> x(s.size());
+    Support::SharedArray<IntSet> x(s.size());
     for (int i=s.size(); i--;)
       new (&x[i]) IntSet(s[i]);
     if (home->failed()) return;
@@ -127,7 +127,7 @@ namespace Gecode {
   selectSet(Space* home, const IntSetArgs& s, IntVar y, SetVar z, int offset) {
     if (home->failed()) return;
     SetView zv(z);
-    Support::SharedArray<IntSet,true> x(s.size());
+    Support::SharedArray<IntSet> x(s.size());
     for (int i=s.size(); i--;)
       new (&x[i]) IntSet(s[i]);
 

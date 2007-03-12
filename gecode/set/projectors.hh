@@ -196,7 +196,7 @@ namespace Gecode {
    */
   class ProjectorSet {
   private:
-    Support::SharedArray<Projector,true> _ps; ///< The projectors
+    Support::SharedArray<Projector> _ps; ///< The projectors
     int _count; ///< The number of projectors in the set
     int _arity; ///< The maximum arity of the projectors in the set
   public:
