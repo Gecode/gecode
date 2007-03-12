@@ -721,6 +721,18 @@ namespace Gecode {
          IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_LQ,m,icl);
   }
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq m\f$
+   *
+   * Supports domain-consistent propagation only.
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   *  \a x and \a y are of different size.
+   */
+  inline void
+  atmost(Space* home, const IntVarArgs& x, const IntArgs& y, int m,
+         IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_LQ,m,icl);
+  }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\leq z\f$
    *
    * Supports domain-consistent propagation only.
@@ -736,6 +748,18 @@ namespace Gecode {
    */
   inline void
   atmost(Space* home, const IntVarArgs& x, IntVar y, IntVar z,
+         IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_LQ,z,icl);
+  }
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\leq z\f$
+   *
+   * Supports domain-consistent propagation only.
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   *  \a x and \a y are of different size.
+   */
+  inline void
+  atmost(Space* home, const IntVarArgs& x, const IntArgs& y, IntVar z,
          IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_LQ,z,icl);
   }
@@ -758,6 +782,18 @@ namespace Gecode {
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_GQ,m,icl);
   }
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq m\f$
+   *
+   * Supports domain-consistent propagation only.
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   *  \a x and \a y are of different size.
+   */
+  inline void
+  atleast(Space* home, const IntVarArgs& x, const IntArgs& y, int m,
+          IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_GQ,m,icl);
+  }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\geq z\f$
    *
    * Supports domain-consistent propagation only.
@@ -773,6 +809,18 @@ namespace Gecode {
    */
   inline void
   atleast(Space* home, const IntVarArgs& x, IntVar y, IntVar z,
+          IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_GQ,z,icl);
+  }
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\geq z\f$
+   *
+   * Supports domain-consistent propagation only.
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   *  \a x and \a y are of different size.
+   */
+  inline void
+  atleast(Space* home, const IntVarArgs& x, const IntArgs& y, IntVar z,
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_GQ,z,icl);
   }
@@ -795,6 +843,18 @@ namespace Gecode {
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_EQ,m,icl);
   }
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}=m\f$
+   *
+   * Supports domain-consistent propagation only.
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   *  \a x and \a y are of different size.
+   */
+  inline void
+  exactly(Space* home, const IntVarArgs& x, const IntArgs& y, int m,
+          IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_EQ,m,icl);
+  }
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}=z\f$
    *
    * Supports domain-consistent propagation only.
@@ -810,6 +870,18 @@ namespace Gecode {
    */
   inline void
   exactly(Space* home, const IntVarArgs& x, IntVar y, IntVar z,
+          IntConLevel icl=ICL_DEF) {
+    count(home,x,y,IRT_EQ,z,icl);
+  }
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}=z\f$
+   *
+   * Supports domain-consistent propagation only.
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   *  \a x and \a y are of different size.
+   */
+  inline void
+  exactly(Space* home, const IntVarArgs& x, const IntArgs& y, IntVar z,
           IntConLevel icl=ICL_DEF) {
     count(home,x,y,IRT_EQ,z,icl);
   }

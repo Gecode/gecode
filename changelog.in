@@ -58,8 +58,9 @@ What:	new
 Rank:	minor
 Thanks:	Martin Mann
 [DESCRIPTION]
-Added a new version of count that counts the number of variables
-equal to integers in an array.
+Added a new version of count (and also atleast, atmost, exactly)
+that counts the number of variables equal to integers in an
+array.
 
 [ENTRY]
 Module:	example
