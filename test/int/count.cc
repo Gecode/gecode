@@ -25,6 +25,8 @@
 
 static IntSet ds_22(-2,2);
 
+static const int ints[4] = {1,0,3,2};
+
 static inline int
 compare(int x, IntRelType r, int y) {
   switch (r) {
@@ -63,6 +65,36 @@ CountIntInt _clqii("Count::Lq::IntInt",IRT_LQ);
 CountIntInt _cleii("Count::Le::IntInt",IRT_LE);
 CountIntInt _cgrii("Count::Gr::IntInt",IRT_GR);
 CountIntInt _cgqii("Count::Gq::IntInt",IRT_GQ);
+
+class CountIntsInt : public IntTest {
+private:
+  IntRelType irt;
+public:
+  CountIntsInt(const char* t, IntRelType irt0)
+    : IntTest(t,5,ds_22), irt(irt0) {}
+  virtual bool solution(const Assignment& x) const {
+    int m = 0;
+    for (int i=0; i<4; i++)
+      if (x[i] == ints[i])
+        m++;
+    return compare(m,irt,2);
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    IntVarArgs y(4); IntArgs a(4);
+    for (int i=0; i<4; i++) {
+      y[i]=x[i]; a[i]=ints[i];
+    }
+    count(home, y, a, irt, 2);
+  }
+};
+
+CountIntsInt _ceqiis("Count::Eq::IntsInt",IRT_EQ);
+CountIntsInt _cnqiis("Count::Nq::IntsInt",IRT_NQ);
+CountIntsInt _clqiis("Count::Lq::IntsInt",IRT_LQ);
+CountIntsInt _cleiis("Count::Le::IntsInt",IRT_LE);
+CountIntsInt _cgriis("Count::Gr::IntsInt",IRT_GR);
+CountIntsInt _cgqiis("Count::Gq::IntsInt",IRT_GQ);
+
 
 class CountIntIntDup : public IntTest {
 private:
@@ -120,6 +152,36 @@ CountIntVar _clqiv("Count::Lq::IntVar",IRT_LQ);
 CountIntVar _cleiv("Count::Le::IntVar",IRT_LE);
 CountIntVar _cgriv("Count::Gr::IntVar",IRT_GR);
 CountIntVar _cgqiv("Count::Gq::IntVar",IRT_GQ);
+
+
+class CountIntsVar : public IntTest {
+private:
+  IntRelType irt;
+public:
+  CountIntsVar(const char* t, IntRelType irt0)
+    : IntTest(t,5,ds_22), irt(irt0) {}
+  virtual bool solution(const Assignment& x) const {
+    int m = 0;
+    for (int i=0; i<4; i++)
+      if (x[i] == ints[i])
+        m++;
+    return compare(m,irt,x[4]);
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    IntVarArgs y(4); IntArgs a(4);
+    for (int i=0; i<4; i++) {
+      y[i]=x[i]; a[i]=ints[i];
+    }
+    count(home, y, a, irt, x[4]);
+  }
+};
+
+CountIntsVar _ceqisv("Count::Eq::IntsVar",IRT_EQ);
+CountIntsVar _cnqisv("Count::Nq::IntsVar",IRT_NQ);
+CountIntsVar _clqisv("Count::Lq::IntsVar",IRT_LQ);
+CountIntsVar _cleisv("Count::Le::IntsVar",IRT_LE);
+CountIntsVar _cgrisv("Count::Gr::IntsVar",IRT_GR);
+CountIntsVar _cgqisv("Count::Gq::IntsVar",IRT_GQ);
 
 
 class CountIntVarShared : public IntTest {

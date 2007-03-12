@@ -991,6 +991,16 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   count(Space* home, const IntVarArgs& x, IntVar y, IntRelType r, int m,
         IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\sim_r m\f$
+   *
+   * Supports domain-consistent propagation only.
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   *  \a x and \a y are of different size.
+   */
+  GECODE_INT_EXPORT void
+  count(Space* home, const IntVarArgs& x, const IntArgs& y, IntRelType r, int m,
+        IntConLevel icl=ICL_DEF);
   /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=n\}\sim_r z\f$
    *
    * Supports domain-consistent propagation only.
@@ -1004,6 +1014,16 @@ namespace Gecode {
    */
   GECODE_INT_EXPORT void
   count(Space* home, const IntVarArgs& x, IntVar y, IntRelType r, IntVar z,
+        IntConLevel icl=ICL_DEF);
+  /** \brief Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y_i\}\sim_r z\f$
+   *
+   * Supports domain-consistent propagation only.
+   *
+   * Throws an exception of type Int::ArgumentSizeMismatch, if
+   *  \a x and \a y are of different size.
+   */
+  GECODE_INT_EXPORT void
+  count(Space* home, const IntVarArgs& x, const IntArgs& y, IntRelType r, IntVar z,
         IntConLevel icl=ICL_DEF);
 
 

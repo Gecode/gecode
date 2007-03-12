@@ -53,6 +53,15 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module:	int
+What:	new
+Rank:	minor
+Thanks:	Martin Mann
+[DESCRIPTION]
+Added a new version of count that counts the number of variables
+equal to integers in an array.
+
+[ENTRY]
 Module:	example
 What:	bug
 Rank:	minor
