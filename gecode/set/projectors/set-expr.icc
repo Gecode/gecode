@@ -34,8 +34,8 @@ namespace Gecode {
   SetExprCode::SetExprCode(const SetExprCode& sc) : c(sc.c), n(sc.n) {}
 
   forceinline void
-  SetExprCode::update(bool share, SetExprCode& sc) {
-    n=sc.n; c.update(share, sc.c);
+  SetExprCode::update(Space* home, bool share, SetExprCode& sc) {
+    n=sc.n; c.update(home, share, sc.c);
   }
   
   forceinline void

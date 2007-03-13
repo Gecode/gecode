@@ -350,7 +350,7 @@ namespace Gecode { namespace Int { namespace Element {
   forceinline
   Int<ViewA,ViewB>::Int(Space* home, bool share, Int& p)
     : Propagator(home,share,p), ivm(NULL) {
-    c.update(share,p.c);
+    c.update(home,share,p.c);
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
   }

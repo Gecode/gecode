@@ -74,7 +74,7 @@ namespace Gecode {
     //@}
 
     /// Copying
-    void update(bool share, SetExprCode& sc);
+    void update(Space* home, bool share, SetExprCode& sc);
     
     /// Add instruction \a i to the end of the current code
     void add(int i);

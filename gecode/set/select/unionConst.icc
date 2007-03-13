@@ -44,7 +44,7 @@ namespace Gecode { namespace Set { namespace Select {
     : Propagator(home,share,p) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
-    iv.update(share,p.iv);
+    iv.update(home,share,p.iv);
   }
 
   template <class SView, class RView>

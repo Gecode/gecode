@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     duration.update(home, share, p.duration);
     end.update(home, share, p.end);
     height.update(home, share, p.height);
-    limit.update(share, p.limit);
+    limit.update(home, share, p.limit);
   }
 
   template <class ViewM, class ViewD, class ViewH, class View>

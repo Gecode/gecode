@@ -36,7 +36,7 @@ namespace Gecode { namespace Set { namespace Distinct {
   forceinline
   Distinct::Distinct(Space* home, bool share, Distinct& p)
     : NaryPropagator<SetView, PC_SET_ANY>(home,share,p), bin(0), c(p.c) {
-    bin.update(share, p.bin);
+    bin.update(home, share, p.bin);
   }
 
   forceinline ExecStatus

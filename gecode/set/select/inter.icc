@@ -47,7 +47,7 @@ namespace Gecode { namespace Set { namespace Select {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
     iv.update(home,share,p.iv);
-    universe.update(share,p.universe);
+    universe.update(home,share,p.universe);
   }
 
   template <class SView, class RView>

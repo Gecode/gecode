@@ -60,8 +60,8 @@ namespace Gecode {
   IntSet::IntSet(int n, int m) : sar(1) { init(n,m); }
 
   forceinline void
-  IntSet::update(bool share, IntSet& s) {
-    sar.update(share, s.sar);
+  IntSet::update(Space* home, bool share, IntSet& s) {
+    sar.update(home, share, s.sar);
   }
 
   forceinline int

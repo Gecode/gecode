@@ -27,7 +27,7 @@ namespace Gecode {
 
   forceinline void
   ProjectorSet::update(Space* home, bool share, ProjectorSet& p) {
-    _ps.update(share, p._ps);
+    _ps.update(home, share, p._ps);
     _count = p._count;
     _arity = p._arity;
   }

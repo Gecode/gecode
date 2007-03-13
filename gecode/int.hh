@@ -163,7 +163,7 @@ namespace Gecode {
      * If \a share is true, the copy is identical. Otherwise an independent
      * copy is created.
      */
-    void update(bool share, IntSet& s);
+    void update(Space* home, bool share, IntSet& s);
     //@}
 
     /// \name Predefined value

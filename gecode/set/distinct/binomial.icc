@@ -71,7 +71,7 @@ namespace Gecode { namespace Set { namespace Distinct {
      * If \a share is true, the copy is identical. Otherwise an independent
      * copy is created.
      */
-    void update(bool share, Binomial& b);
+    void update(Space* home, bool share, Binomial& b);
     //@}
   };
   
@@ -149,9 +149,9 @@ namespace Gecode { namespace Set { namespace Distinct {
   }
 
   forceinline void
-  Binomial::update(bool share, Binomial& b) {
+  Binomial::update(Space* home, bool share, Binomial& b) {
     nmax = b.nmax;
-    sar.update(share, b.sar);
+    sar.update(home, share, b.sar);
   }
 }}}
 

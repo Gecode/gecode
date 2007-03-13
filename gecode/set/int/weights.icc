@@ -151,8 +151,8 @@ namespace Gecode { namespace Set { namespace Int {
     : Propagator(home,share,p) {
     x.update(home,share,p.x);
     y.update(home,share,p.y);
-    elements.update(share,p.elements);
-    weights.update(share,p.weights);
+    elements.update(home,share,p.elements);
+    weights.update(home,share,p.weights);
   }
 
   inline ExecStatus

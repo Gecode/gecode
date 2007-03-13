@@ -45,7 +45,7 @@ namespace Gecode { namespace Set { namespace Projection {
     : Propagator(home,share,p), proj(p.proj) {
     x.update(home,share,p.x);
     i.update(home,share,p.i);
-    pc.update(share, p.pc);
+    pc.update(home,share, p.pc);
   }
 
   forceinline PropCost

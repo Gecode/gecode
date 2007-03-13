@@ -47,7 +47,7 @@ namespace Gecode { namespace Set { namespace Projection {
   (Space* home, bool share, NaryProjection& p)
     : Propagator(home,share,p), ps(p.ps) {
     x.update(home,share,p.x);
-    pc.update(share, p.pc);
+    pc.update(home, share, p.pc);
   }
 
   template <bool negated>

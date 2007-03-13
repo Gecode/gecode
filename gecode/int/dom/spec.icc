@@ -57,7 +57,7 @@ namespace Gecode { namespace Int { namespace Dom {
   forceinline
   ReIntSet<View>::ReIntSet(Space* home, bool share, ReIntSet& p)
     : ReUnaryPropagator<View,PC_INT_DOM,BoolView>(home,share,p) {
-    is.update(share,p.is);
+    is.update(home,share,p.is);
   }
 
   template <class View>
