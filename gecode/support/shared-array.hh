@@ -29,6 +29,35 @@
 
 namespace Gecode { namespace Support {
 
+  /// Implementation of object for shared arrays
+  template <class T>
+  class SAO {
+  public:
+    /// Reference count
+    unsigned int use;
+    /// Elements
+    T*  a;
+    /// Number of elements
+    int n;
+    
+    /// Allocate for \a n elements
+    SAO(int n);
+    /// Create copy of elements
+    SAO* copy(void) const;
+    /// Delete object
+    ~SAO(void);
+
+    /// Shrink array to \a n elements
+    void shrink(int n);
+    /// Ensure that array has at least \a n elements
+    void ensure(int n);
+    
+    /// Register new object
+    void subscribe(void);
+    /// Delete object
+    void release(void);
+  };
+
   /**
    * \brief Shared array with arbitrary number of elements
    *
@@ -41,35 +70,11 @@ namespace Gecode { namespace Support {
   template <class T>
   class SharedArray {
   private:
-    /// Information for array elements
-    class Object {
-    public:
-      /// Reference count
-      unsigned int use;
-      /// Elements
-      T*  a;
-      /// Number of elements
-      int n;
-
-      /// Allocate for \a n elements
-      Object(int n);
-      /// Create copy of elements
-      Object* copy(void) const;
-      /// Delete object
-      ~Object(void);
-
-      /// Register new object
-      void subscribe(void);
-      /// Delete object
-      void release(void);
-    };
     /// The object referenced
-    Object* sao;
+    SAO<T>* sao;
   public:
-    /// Initialize as empty array
-    SharedArray(void);
     /// Initialize as array with \a n elements
-    SharedArray(int n);
+    SharedArray(int n=0);
     /// Initialize from shared array \a a (share elements)
     SharedArray(const SharedArray& a);
     /// Initialize from shared array \a a (share elements)
@@ -100,15 +105,14 @@ namespace Gecode { namespace Support {
 
   template <class T>
   forceinline
-  SharedArray<T>::Object::Object(int n0) :
-    use(1), a(reinterpret_cast<T*>(Memory::malloc(sizeof(T)*n0))), n(n0) {
+  SAO<T>::SAO(int n0) : use(1), n(n0) {
+    a = (n>0) ? reinterpret_cast<T*>(Memory::malloc(sizeof(T)*n0)) : NULL;
   }
 
   template <class T>
-  forceinline typename SharedArray<T>::Object*
-  SharedArray<T>::Object::copy(void) const {
-    assert(n>0);
-    Object* o = new Object(n);
+  forceinline typename SAO<T>*
+  SAO<T>::copy(void) const {
+    SAO<T>* o = new SAO<T>(n);
     for (int i=n; i--;)
       new (&(o->a[i])) T(a[i]);
     return o;
@@ -116,35 +120,64 @@ namespace Gecode { namespace Support {
 
   template <class T>
   forceinline
-  SharedArray<T>::Object::~Object(void) {
-    for (int i=n; i--;)
-      a[i].~T();
-    Memory::free(a);
+  SAO<T>::~SAO(void) {
+    if (n>0) {
+      for (int i=n; i--;)
+        a[i].~T();
+      Memory::free(a);
+    }
   }
 
   template <class T>
   forceinline void
-  SharedArray<T>::Object::subscribe(void) {
+  SAO<T>::subscribe(void) {
     use++;
   }
 
   template <class T>
   forceinline void
-  SharedArray<T>::Object::release(void) {
+  SAO<T>::release(void) {
     if (--use == 0)
       delete this;
   }
 
-
   template <class T>
-  forceinline
-  SharedArray<T>::SharedArray(void) : sao(NULL) {}
-
-  template <class T>
-  forceinline
-  SharedArray<T>::SharedArray(int n) {
-    sao = (n>0) ? new Object(n) : NULL;
+  forceinline void
+  SAO<T>::shrink(int m) {
+    assert(m < n);
+    T* na;
+    if (m>0) {
+      na = reinterpret_cast<T*>(Memory::malloc(sizeof(T)*m));
+      for (int i=m; i--; )
+        new (&na[i]) T(a[i]);
+    } else {
+      na = NULL;
+    }
+    if (n>0) {
+      Memory::free(a);
+    }
+    n=m; a=na;
   }
+
+  template <class T>
+  forceinline void
+  SAO<T>::ensure(int i) {
+    if (i >= n) {
+      int m = std::max(2*n,i);
+      T* na = reinterpret_cast<T*>(Memory::malloc(sizeof(T)*m));
+      for (int i = n; i--; )
+        new (&na[i]) T(a[i]);
+      if (n > 0)
+        Memory::free(a);
+      n=m; a=na;
+    }
+  }
+
+
+  template <class T>
+  forceinline
+  SharedArray<T>::SharedArray(int n) : sao(new SAO<T>(n)) {}
+
   template <class T>
   forceinline
   SharedArray<T>::SharedArray(const SharedArray<T>& a) {
@@ -220,30 +253,13 @@ namespace Gecode { namespace Support {
   template <class T>
   inline void
   SharedArray<T>::shrink(int n) {
-    assert(n < sao->n);
-    Object* nsao = new Object(n);
-    for (int i = n; i--; )
-      new (&(nsao->a[i])) T(sao->a[i]);
-    sao->release();
-    sao = nsao;
+    if (sao != NULL) sao->shrink(n);
   }
 
   template <class T>
   inline void
   SharedArray<T>::ensure(int n) {
-    if (sao == NULL) {
-      if (n>0)
-        sao = new Object(n);
-      return;
-    }
-    if (n >= sao->n) {
-      int m = std::max(2*sao->n,n);
-      Object* nsao = new Object(m);
-      for (int i = sao->n; i--; )
-        new (&(nsao->a[i])) T(sao->a[i]);
-      sao->release();
-      sao = nsao;
-    }
+    if (sao != NULL) sao->ensure(n);
   }
 
 }}
