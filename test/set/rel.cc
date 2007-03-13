@@ -129,7 +129,7 @@ RelBinSubS _relsubs("Rel::Sharing::BinSubS");
 class RelBinDisj : public SetTest {
 public:
   RelBinDisj(const char* t)
-    : SetTest(t,2,ds_33,true) {}
+    : SetTest(t,2,ds_33) {}
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
@@ -137,9 +137,6 @@ public:
   }
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SRT_DISJ, x[1]);
-  }
-  virtual void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
-    Gecode::rel(home, x[0], SRT_DISJ, x[1], b);
   }
 };
 RelBinDisj _reldisj("Rel::BinDisj");
