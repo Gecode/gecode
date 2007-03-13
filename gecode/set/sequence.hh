@@ -75,6 +75,10 @@ namespace Gecode { namespace Set { namespace Sequence {
     SeqU(Space* home, bool share,SeqU& p);
     /// Constructor for posting
     SeqU(Space* home,ViewArray<SetView>&, SetView);
+    ExecStatus propagateSeqUnion(Space* home,
+                                 bool& modified, ViewArray<SetView>& x,
+                                 SetView& y);
+    
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*     copy(Space* home, bool);

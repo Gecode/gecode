@@ -41,6 +41,53 @@ namespace Gecode { namespace Set { namespace Sequence {
     return new (home) SeqU(home,share,*this);
   }
 
+  ExecStatus
+  SeqU::propagateSeqUnion(Space* home,
+                          bool& modified, ViewArray<SetView>& x,
+                          SetView& y) {
+    GECODE_AUTOARRAY(GlbRanges<SetView>, XLBs,x.size());
+    for (int i=x.size(); i--; ){
+      GlbRanges<SetView> lb(x[i]);
+      XLBs[i]=lb;
+    }
+    Iter::Ranges::NaryAppend<GlbRanges<SetView> > u(XLBs,x.size());
+    GECODE_ME_CHECK_MODIFIED(modified, y.includeI(home,u));
+
+    GLBndSet before(home);
+    for (int i=0; i<x.size(); i++) {
+      LubRanges<SetView> xiub(x[i]);
+      before.includeI(home, xiub);
+      BndSetRanges beforeR(before);
+      GlbRanges<SetView> ylb(y);
+      Iter::Ranges::Diff<GlbRanges<SetView>, BndSetRanges> diff(ylb, beforeR);
+      if (diff()) {
+        GECODE_ME_CHECK_MODIFIED(modified, x[i].exclude(home, diff.min(),
+                                                        Limits::Set::int_max));
+      }
+    }
+    before.dispose(home);
+
+    GLBndSet after(home);
+    for (int i=x.size(); i--; ) {
+      LubRanges<SetView> xiub(x[i]);
+      after.includeI(home, xiub);
+      BndSetRanges afterR(after);
+      GlbRanges<SetView> ylb(y);
+      Iter::Ranges::Diff<GlbRanges<SetView>, BndSetRanges> diff(ylb, afterR);
+      if (diff()) {
+        int max = diff.max();
+        for (; diff(); ++diff)
+          max = diff.max();
+        GECODE_ME_CHECK_MODIFIED(modified, x[i].exclude(home,
+                                                        Limits::Set::int_min,
+                                                        max));
+      }
+    }    
+    after.dispose(home);
+    
+    return ES_FIX;
+  }
+
   //Enforces sequentiality and ensures y contains union of Xi lower bounds.
   ExecStatus
   SeqU::propagate(Space* home) {
