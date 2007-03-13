@@ -30,9 +30,6 @@ namespace Gecode {
   forceinline
   IntSet::IntSet(void) {}
 
-  forceinline
-  IntSet::IntSet(const IntSet& s) : sar(s.sar) {}
-
   template <class I>
   forceinline
   IntSet::IntSet(I& i) {
@@ -44,6 +41,14 @@ namespace Gecode {
     }
     sar.size(j);
   }
+
+  template <>
+  forceinline
+  IntSet::IntSet(const IntSet& s) : sar(s.sar) {}
+
+  template <>
+  forceinline
+  IntSet::IntSet(IntSet& s) : sar(s.sar) {}
 
   forceinline
   IntSet::IntSet(const int r[][2], int n) : sar(n) { init(r,n); }

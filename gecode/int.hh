@@ -114,8 +114,6 @@ namespace Gecode {
     //@{
     /// Initialize as empty set
     IntSet(void);
-    /// Copy constructor
-    IntSet(const IntSet& is);
     /** \brief Initialize as range with minimum \a n and maximum \a m
      *
      * Note that the set is empty if \a n is larger than \a m
