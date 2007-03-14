@@ -1412,7 +1412,6 @@ namespace Gecode {
   template<class Object>
   forceinline void 
   SharedHandle<Object>::update(Space* home, bool share, SharedHandle& sh) {
-    assert(o == NULL);
     if (sh.o == NULL) {
       o = NULL;
     } else if (share) {
