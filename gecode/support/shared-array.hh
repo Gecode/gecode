@@ -110,7 +110,7 @@ namespace Gecode { namespace Support {
   }
 
   template <class T>
-  forceinline typename SAO<T>*
+  forceinline SAO<T>*
   SAO<T>::copy(void) const {
     SAO<T>* o = new SAO<T>(n);
     for (int i=n; i--;)
