@@ -23,7 +23,7 @@
 namespace Gecode {
 
   forceinline
-  ProjectorSet::ProjectorSet(void) : _ps(0), _count(0), _arity(0) {}
+  ProjectorSet::ProjectorSet(int n) : _ps(n), _count(0), _arity(0) {}
 
   forceinline void
   ProjectorSet::update(Space* home, bool share, ProjectorSet& p) {

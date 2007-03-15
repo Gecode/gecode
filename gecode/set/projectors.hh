@@ -3,8 +3,12 @@
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
  *
+ *  Contributing authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
  *  Copyright:
  *     Guido Tack, 2006
+ *     Christian Schulte, 2007
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -45,40 +49,52 @@ namespace Gecode {
    */
   class SetExprCode {
   private:
-    /// The actual code
+    /// The actual instructions
     Support::SharedArray<int> c;
-    /// The number of instructions
-    int n;
   public:
     /// Instructions for set-valued expression code
     enum Instruction {
       COMPLEMENT, ///< Complement
-      INTER,          ///< Intersection
-      UNION,          ///< Union
-      GLB,          ///< Greatest lower bound
-      LUB,          ///< Least upper bound
-      EMPTY,          ///< Constant empty set
+      INTER,      ///< Intersection
+      UNION,      ///< Union
+      GLB,        ///< Greatest lower bound
+      LUB,        ///< Least upper bound
+      EMPTY,      ///< Constant empty set
       UNIVERSE,   ///< Constant universal set
-      LAST          ///< First integer to use for immediate arguments
+      LAST        ///< First integer to use for immediate arguments
     };
 
+    /// To incrementally build up the instructions
+    class Stream {
+    private:
+      /// Instruction stream
+      Support::DynamicArray<int> is;
+      /// Current instruction
+      int n;
+    public:
+      /// Initialize stream to be empty
+      Stream(void);
+      /// Add instruction or variable reference to stream
+      void add(int i);
+      /// Return size of code stream
+      int size(void) const;
+      /// Return instruction at position \a i
+      int operator[](int i) const;
+    };
+ 
     ///\name Construction and initialization
     //@{
-        
     /// Default constructor
     SetExprCode(void);
-
+    /// Construct from code Stream
+    SetExprCode(const Stream& s);
     /// Copy constructor
     SetExprCode(const SetExprCode& sc);
-
     //@}
 
     /// Copying
     void update(Space* home, bool share, SetExprCode& sc);
     
-    /// Add instruction \a i to the end of the current code
-    void add(int i);
-
     /// Return number of instructions
     int size(void) const;
 
@@ -201,8 +217,8 @@ namespace Gecode {
     int _arity; ///< The maximum arity of the projectors in the set
   public:
     
-    /// Construct empty projector set
-    ProjectorSet(void);
+    /// Construct projector set for \a n projectors
+    ProjectorSet(int n);
 
     /// Used for copying
     void update(Space* home, bool share, ProjectorSet& p);
