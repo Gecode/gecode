@@ -34,7 +34,7 @@ namespace Gecode { namespace Set { namespace Distinct {
       nn += n2;
 
     //    sar.ensure(n*(n-1)/2);
-    sar.ensure(nn);
+    // FIX IT:    sar.ensure(nn);
     unsigned int oldnmax = nmax;
     nmax = n;
     for (unsigned int i=oldnmax+1; i<=n; i++)

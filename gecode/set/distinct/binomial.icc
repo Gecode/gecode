@@ -125,7 +125,7 @@ namespace Gecode { namespace Set { namespace Distinct {
   }
 
   forceinline
-  Binomial::Binomial(void) : sar(1), nmax(0) {
+  Binomial::Binomial(void) : sar(1024), nmax(0) {
     init(10);
   }
   
@@ -135,7 +135,7 @@ namespace Gecode { namespace Set { namespace Distinct {
   
   forceinline
   Binomial::Binomial(unsigned int _nmax)
-    : sar(1), nmax(0) {
+    : sar(1024), nmax(0) {
     init(_nmax);
   }
 
