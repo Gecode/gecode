@@ -47,61 +47,11 @@ namespace Gecode { namespace Support {
     /// Delete object
     ~SAO(void);
 
-    /// Shrink array to \a n elements
-    void shrink(int n);
-    /// Ensure that array has at least \a n elements
-    void ensure(int n);
-    
     /// Register new object
     void subscribe(void);
     /// Delete object
     void release(void);
   };
-
-  /**
-   * \brief Shared array with arbitrary number of elements
-   *
-   * Sharing is implemented by reference counting: the same elements
-   * are shared among several objects.
-   *
-   * Requires \code #include "gecode/support/shared-array.hh" \endcode
-   * \ingroup FuncSupport
-   */
-  template <class T>
-  class SharedArray {
-  private:
-    /// The object referenced
-    SAO<T>* sao;
-  public:
-    /// Initialize as array with \a n elements
-    SharedArray(int n=0);
-    /// Initialize from shared array \a a (share elements)
-    SharedArray(const SharedArray& a);
-    /// Initialize from shared array \a a (share elements)
-    const SharedArray& operator=(const SharedArray&);
-
-    /// Update this array from array \a a (share elements if \a share is true)
-    void update(Space* home, bool share, SharedArray& a);
-
-    /// Delete array (elements might be still in use)
-    ~SharedArray(void);
-
-    /// Access element at position \a i
-    T& operator[](int i);
-    /// Access element at position \a i
-    const T& operator[](int i) const;
-
-    /// Return number of elements
-    int size(void) const;
-    /// Change size to \a n
-    void size(int n);
-
-    /// Shrink array to \a n elements
-    void shrink(int n);
-    /// Ensure that array has at least \a n elements
-    void ensure(int n);
-  };
-
 
   template <class T>
   forceinline
@@ -141,54 +91,87 @@ namespace Gecode { namespace Support {
       delete this;
   }
 
+  /**
+   * \brief Shared array with arbitrary number of elements
+   *
+   * Sharing is implemented by reference counting: the same elements
+   * are shared among several objects.
+   *
+   * Requires \code #include "gecode/support/shared-array.hh" \endcode
+   * \ingroup FuncSupport
+   */
   template <class T>
-  forceinline void
-  SAO<T>::shrink(int m) {
-    assert(m < n);
-    T* na;
-    if (m>0) {
-      na = reinterpret_cast<T*>(Memory::malloc(sizeof(T)*m));
-      for (int i=m; i--; )
-        new (&na[i]) T(a[i]);
-    } else {
-      na = NULL;
-    }
-    if (n>0) {
-      Memory::free(a);
-    }
-    n=m; a=na;
-  }
+  class SharedArray {
+  private:
+    /// The object referenced
+    SAO<T>* sao;
+  public:
+    /** 
+     * \brief Construct as not yet intialized
+     *
+     * The only member functions that can be used on a constructed but not
+     * yet initialized shared array is init and the assignment operator.
+     *
+     */
+    SharedArray(void);
+    /// Initialize as array with \a n elements
+    SharedArray(int n);
+    /**
+     * \brief Initialize as array with \a n elements
+     *
+     * This member function can only be used once and only if the shared
+     * array has been constructed with the default constructor.
+     *
+     */
+    void init(int n);
+    /// Initialize from shared array \a a (share elements)
+    SharedArray(const SharedArray& a);
+    /// Initialize from shared array \a a (share elements)
+    const SharedArray& operator=(const SharedArray&);
+
+    /// Update this array from array \a a (share elements if \a share is true)
+    void update(Space* home, bool share, SharedArray& a);
+
+    /// Delete array (elements might be still in use)
+    ~SharedArray(void);
+
+    /// Access element at position \a i
+    T& operator[](int i);
+    /// Access element at position \a i
+    const T& operator[](int i) const;
+
+    /// Return number of elements
+    int size(void) const;
+  };
+
 
   template <class T>
-  forceinline void
-  SAO<T>::ensure(int i) {
-    if (i >= n) {
-      int m = std::max(2*n,i);
-      T* na = reinterpret_cast<T*>(Memory::malloc(sizeof(T)*m));
-      for (int i = n; i--; )
-        new (&na[i]) T(a[i]);
-      if (n > 0)
-        Memory::free(a);
-      n=m; a=na;
-    }
-  }
-
+  forceinline
+  SharedArray<T>::SharedArray(void) : sao(NULL) {}
 
   template <class T>
   forceinline
   SharedArray<T>::SharedArray(int n) : sao(new SAO<T>(n)) {}
 
   template <class T>
+  forceinline void
+  SharedArray<T>::init(int n) {
+    assert(sao == NULL);
+    sao = new SAO<T>(n);
+  }
+
+  template <class T>
   forceinline
   SharedArray<T>::SharedArray(const SharedArray<T>& a) {
+    assert(a.sao != NULL);
     sao = a.sao;
-    if (sao != NULL)
-      sao->subscribe();
+    sao->subscribe();
   }
 
   template <class T>
   forceinline
   SharedArray<T>::~SharedArray(void) {
+    assert(sao != NULL);
     if (sao != NULL)
       sao->release();
   }
@@ -209,57 +192,34 @@ namespace Gecode { namespace Support {
   template <class T>
   inline void
   SharedArray<T>::update(Space* home, bool share, SharedArray<T>& a) {
-    if (sao != NULL)
-      sao->release();
+    assert(a.sao != NULL);
     if (share) {
       sao = a.sao;
-      if (sao != NULL)
-        sao->subscribe();
+      sao->subscribe();
     } else {
-      sao = (a.sao == NULL) ? NULL : a.sao->copy();
+      sao = a.sao->copy();
     }
   }
 
   template <class T>
   forceinline T&
   SharedArray<T>::operator[](int i) {
+    assert(sao != NULL);
     return sao->a[i];
   }
 
   template <class T>
   forceinline const T&
   SharedArray<T>::operator[](int i) const {
+    assert(sao != NULL);
     return sao->a[i];
   }
 
   template <class T>
   forceinline int
   SharedArray<T>::size(void) const {
-    return (sao == NULL) ? 0 : sao->n;
-  }
-
-  template <class T>
-  forceinline void
-  SharedArray<T>::size(int n) {
-    if (n==0) {
-      if (sao != NULL)
-        sao->release();
-      sao = NULL;
-    } else {
-      sao->n = n;
-    }
-  }
-
-  template <class T>
-  inline void
-  SharedArray<T>::shrink(int n) {
-    if (sao != NULL) sao->shrink(n);
-  }
-
-  template <class T>
-  inline void
-  SharedArray<T>::ensure(int n) {
-    if (sao != NULL) sao->ensure(n);
+    assert(sao != NULL);
+    return sao->n;
   }
 
 }}

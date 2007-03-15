@@ -20,6 +20,8 @@
  *
  */
 
+#include "gecode/support/dynamic-array.hh"
+
 namespace Gecode {
 
   /*
@@ -33,13 +35,15 @@ namespace Gecode {
   template <class I>
   forceinline
   IntSet::IntSet(I& i) {
-    int j=0;
+    Support::DynamicArray<Range> d;
+    int n=0;
     while (i()) {
-      sar.ensure(j+1);
-      sar[j].min = i.min(); sar[j].max = i.max();
-      ++j; ++i;
+      d[n].min = i.min(); d[n].max = i.max();
+      ++n; ++i;
     }
-    sar.size(j);
+    sar.init(n);
+    for (int j=n; j--; )
+      sar[j]=d[j];
   }
 
   template <>
@@ -51,13 +55,19 @@ namespace Gecode {
   IntSet::IntSet(IntSet& s) : sar(s.sar) {}
 
   forceinline
-  IntSet::IntSet(const int r[][2], int n) : sar(n) { init(r,n); }
+  IntSet::IntSet(const int r[][2], int n) { 
+    init(r,n); 
+  }
 
   forceinline
-  IntSet::IntSet(const int r[], int n) : sar(n) { init(r,n); }
+  IntSet::IntSet(const int r[], int n) { 
+    init(r,n);
+  }
 
   forceinline
-  IntSet::IntSet(int n, int m) : sar(1) { init(n,m); }
+  IntSet::IntSet(int n, int m) { 
+    init(n,m); 
+  }
 
   forceinline void
   IntSet::update(Space* home, bool share, IntSet& s) {

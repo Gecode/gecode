@@ -41,7 +41,7 @@ namespace Projection {
     virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
       Gecode::Projector p(0, Gecode::SetExpr(1), Gecode::SetExpr(1));
       Gecode::Projector q(1, Gecode::SetExpr(0), Gecode::SetExpr(0));
-      Gecode::ProjectorSet ps;
+      Gecode::ProjectorSet ps(2);
       ps.add(p); ps.add(q);
       Gecode::projector(home, x[0], x[1], ps, true);
     }
@@ -62,7 +62,7 @@ namespace Projection {
       Gecode::SetExpr ye(1);
       Gecode::Projector p(0, ye, ye);
       Gecode::Projector q(1, xe, xe);
-      Gecode::ProjectorSet ps;
+      Gecode::ProjectorSet ps(2);
       ps.add(p);
       ps.add(q);
       Gecode::projector(home, x[0], x[1], ps);
@@ -70,7 +70,7 @@ namespace Projection {
     virtual void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
       Gecode::Projector p(0, Gecode::SetExpr(1), Gecode::SetExpr(1));
       Gecode::Projector q(1, Gecode::SetExpr(0), Gecode::SetExpr(0));
-      Gecode::ProjectorSet ps;
+      Gecode::ProjectorSet ps(2);
       ps.add(p); ps.add(q);
       Gecode::projector(home, x[0], x[1], b, ps);
     }
@@ -89,14 +89,14 @@ namespace Projection {
     virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
       Gecode::Projector p(0, Gecode::SetExpr(), Gecode::SetExpr(1));
       Gecode::Projector q(1, Gecode::SetExpr(0), -Gecode::SetExpr());
-      Gecode::ProjectorSet ps;
+      Gecode::ProjectorSet ps(2);
       ps.add(p); ps.add(q);
       Gecode::projector(home, x[0], x[1], ps);
     }
     virtual void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
       Gecode::Projector p(0, Gecode::SetExpr(), Gecode::SetExpr(1));
       Gecode::Projector q(1, Gecode::SetExpr(0), -Gecode::SetExpr());
-      Gecode::ProjectorSet ps;
+      Gecode::ProjectorSet ps(2);
       ps.add(p); ps.add(q);
       Gecode::projector(home, x[0], x[1], b, ps);
     }
@@ -115,14 +115,14 @@ namespace Projection {
     virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
       Gecode::Projector p(0, Gecode::SetExpr(), -Gecode::SetExpr(1));
       Gecode::Projector q(1, Gecode::SetExpr(), -Gecode::SetExpr(0));
-      Gecode::ProjectorSet ps;
+      Gecode::ProjectorSet ps(2);
       ps.add(p); ps.add(q);
       Gecode::projector(home, x[0], x[1], ps);
     }
     virtual void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
       Gecode::Projector p(0, Gecode::SetExpr(), -Gecode::SetExpr(1));
       Gecode::Projector q(1, Gecode::SetExpr(), -Gecode::SetExpr(0));
-      Gecode::ProjectorSet ps;
+      Gecode::ProjectorSet ps(2);
       ps.add(p); ps.add(q);
       Gecode::projector(home, x[0], x[1], b, ps);
     }
@@ -142,14 +142,14 @@ namespace Projection {
     virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
       Gecode::Projector p(0, -Gecode::SetExpr(1), -Gecode::SetExpr(1));
       Gecode::Projector q(1, -Gecode::SetExpr(0), -Gecode::SetExpr(0));
-      Gecode::ProjectorSet ps;
+      Gecode::ProjectorSet ps(2);
       ps.add(p); ps.add(q);
       Gecode::projector(home, x[0], x[1], ps);
     }
     virtual void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
       Gecode::Projector p(0, -Gecode::SetExpr(1), -Gecode::SetExpr(1));
       Gecode::Projector q(1, -Gecode::SetExpr(0), -Gecode::SetExpr(0));
-      Gecode::ProjectorSet ps;
+      Gecode::ProjectorSet ps(2);
       ps.add(p); ps.add(q);
       Gecode::projector(home, x[0], x[1], b, ps);
     }
@@ -180,7 +180,7 @@ namespace Projection {
                            Gecode::SetExpr(0) || Gecode::SetExpr(1),
                            Gecode::SetExpr(0) || Gecode::SetExpr(1)
                            );
-      Gecode::ProjectorSet ps;
+      Gecode::ProjectorSet ps(3);
       ps.add(p0); ps.add(p1); ps.add(p2);
       Gecode::projector(home, x[0], x[1], x[2], ps);
 
@@ -228,7 +228,7 @@ namespace Projection {
                            Gecode::SetExpr(0) || Gecode::SetExpr(1),
                            Gecode::SetExpr(0) || Gecode::SetExpr(1)
                            );
-      Gecode::ProjectorSet ps;
+      Gecode::ProjectorSet ps(3);
       ps.add(p0); ps.add(p1); ps.add(p2);
       Gecode::projector(home, x[0], x[1], x[2], b, ps);
     }
@@ -259,7 +259,7 @@ namespace Projection {
                            Gecode::SetExpr(0) && Gecode::SetExpr(1),
                            Gecode::SetExpr(0) && Gecode::SetExpr(1)
                            );
-      Gecode::ProjectorSet ps;
+      Gecode::ProjectorSet ps(3);
       ps.add(p0); ps.add(p1); ps.add(p2);
       Gecode::projector(home, x[0], x[1], x[2], ps);
 
@@ -322,7 +322,7 @@ namespace Projection {
                            Gecode::SetExpr(0) || Gecode::SetExpr(1),
                            Gecode::SetExpr(0) || Gecode::SetExpr(1)
                            );
-      Gecode::ProjectorSet ps;
+      Gecode::ProjectorSet ps(3);
       ps.add(p0); ps.add(p1); ps.add(p2);
       Gecode::projector(home, x[0], x[1], x[2], ps, true);
     }

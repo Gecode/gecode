@@ -49,8 +49,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
     Support::SharedArray<Range> r;
     /// Current range
     int c;
-    /// Number of ranges
-    int n;
   public:
     /// \name Constructors and initialization
     //@{
@@ -84,25 +82,26 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I>
   forceinline
-  Minus<I>::Minus(void)
-    : r(8) {}
+  Minus<I>::Minus(void) {}
 
   template <class I>
   inline void
   Minus<I>::init(I& i) {
-    int j = 0;
+    Support::DynamicArray<Range> d;
+    int n=0;
     while (i()) {
-      r.ensure(j);
-      r[j].min = -i.max(); r[j].max = -i.min();
-      ++j; ++i;
+      d[n].min = -i.max(); d[n].max = -i.min();
+      ++n; ++i;
     }
-    n = j;
+    r.init(n);
+    for (int j=n; j--; )
+      r[j]=d[j];
     c = n-1;
   }
 
   template <class I>
   inline
-  Minus<I>::Minus(I& i) : r(8) {
+  Minus<I>::Minus(I& i) {
     init(i);
   }
 

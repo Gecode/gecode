@@ -104,8 +104,8 @@ namespace Gecode {
     Support::SharedArray<Range> sar;
     /// Sort ranges according to increasing minimum
     class MinInc;
-    /// Normalize the first \a n elements
-    GECODE_INT_EXPORT void normalize(int n);
+    /// Normalize the first \a n elements of \a r
+    GECODE_INT_EXPORT void normalize(Range* r, int n);
     GECODE_INT_EXPORT void init(int n, int m);
     GECODE_INT_EXPORT void init(const int r[], int n);
     GECODE_INT_EXPORT void init(const int r[][2], int n);
