@@ -26,12 +26,11 @@ namespace Gecode { namespace Set { namespace Projection {
   forceinline
   NaryProjection<negated>::NaryProjection
   (Space* home, ViewArray<SetView>& x0, ProjectorSet& ps0)
-    : Propagator(home), x(x0), ps(ps0) {
+    : Propagator(home), x(x0), pc(x.size()), ps(ps0) {
     force(home);
     Support::DynamicArray<int> scope;
-    ps.scope(scope, x0.size());
-    pc.ensure(x.size());
-    for (int i=x0.size(); i--;) {
+    ps.scope(scope, x.size());
+    for (int i=x.size(); i--;) {
       pc[i] = scope[i];
       if (pc[i] != PC_SET_ANY + 1) {
         if (negated)
