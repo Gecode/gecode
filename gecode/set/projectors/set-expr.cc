@@ -54,7 +54,7 @@ namespace Gecode {
     GECODE_SET_EXPORT bool decrement(void);
     
     /// Adds code representation of the node to \a ret
-    void encode(SetExprCode& ret, bool monotone) const;
+    void encode(SetExprCode::Stream& ret, bool monotone) const;
     /// Returns the arity of the node
     int arity(void) const;
 
@@ -124,7 +124,7 @@ namespace Gecode {
   }
 
   void
-  SetExpr::Node::encode(SetExprCode& ret, bool monotone) const {
+  SetExpr::Node::encode(SetExprCode::Stream& ret, bool monotone) const {
     if (left==NULL && right==NULL) {
       assert(x>=0);
       ret.add(SetExprCode::LAST+x);
@@ -206,15 +206,16 @@ namespace Gecode {
 
   SetExprCode
   SetExpr::encode(void) const {
-    SetExprCode ret;
+    SetExprCode::Stream s;
     if (ax==NULL) {
-      ret.add((sign==1) ? SetExprCode::EMPTY : SetExprCode::UNIVERSE);
+      s.add((sign==1) ? SetExprCode::EMPTY : SetExprCode::UNIVERSE);
     } else if (sign==-1) {
-      ax->encode(ret, false);
-      ret.add(SetExprCode::COMPLEMENT);
+      ax->encode(s, false);
+      s.add(SetExprCode::COMPLEMENT);
     } else {
-      ax->encode(ret, true);
+      ax->encode(s, true);
     }
+    SetExprCode ret(s);
     return ret;
   }
 

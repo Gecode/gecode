@@ -2,9 +2,13 @@
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
+ *  
+ *  Contributing authors:
+ *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
  *     Guido Tack, 2006
+ *     Christian Schulte, 2007
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -28,28 +32,49 @@ namespace Gecode {
    */
 
   forceinline
-  SetExprCode::SetExprCode(void) : c(5), n(0) {}
+  SetExprCode::Stream::Stream(void) : n(0) {}
+
+  forceinline void 
+  SetExprCode::Stream::add(int i) {
+    is[n++] = i;
+  }
+
+  forceinline int 
+  SetExprCode::Stream::size(void) const {
+    return n;
+  }
+
+  forceinline int 
+  SetExprCode::Stream::operator[](int i) const {
+    return is[i];
+  }
+
+ 
 
   forceinline
-  SetExprCode::SetExprCode(const SetExprCode& sc) : c(sc.c), n(sc.n) {}
+  SetExprCode::SetExprCode(void) {}
+
+  forceinline
+  SetExprCode::SetExprCode(const SetExprCode::Stream& s) 
+    : c(s.size()) {
+    for (int i=s.size(); i--; )
+      c[i]=s[i];
+  }
+
+  forceinline
+  SetExprCode::SetExprCode(const SetExprCode& sc) : c(sc.c) {}
 
   forceinline void
   SetExprCode::update(Space* home, bool share, SetExprCode& sc) {
-    n=sc.n; c.update(home, share, sc.c);
+    c.update(home, share, sc.c);
   }
   
-  forceinline void
-  SetExprCode::add(int i) {
-    c.ensure(n+1);
-    c[n] = i;
-    n++;
-  }
-
   forceinline int
-  SetExprCode::size(void) const { return n; }
+  SetExprCode::size(void) const { return c.size(); }
 
   forceinline int
   SetExprCode::operator[](int i) const { return c[i]; }
+
 
   /*
    * Operations for expressions
