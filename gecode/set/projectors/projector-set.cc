@@ -26,12 +26,7 @@ namespace Gecode {
 
   void
   ProjectorSet::add(const Projector& p) {
-    //    _ps.ensure(_count+1);    
     new (&_ps[_count]) Projector(p);
-    /*
-    for (int i=_count+1; i<_ps.size(); i++)
-      new (&_ps[i]) Projector();
-    */
     _count++;
 
     _arity = std::max(_arity, p.arity());
