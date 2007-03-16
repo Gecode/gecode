@@ -53,6 +53,14 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module:	example
+What:	bug
+Rank:	minor
+[DESCRIPTION]
+Examples reported wrong number of propagator invocations (the
+invocations for problem setup were missing).
+
+[ENTRY]
 Module:	kernel
 What:	new
 Rank:	major
