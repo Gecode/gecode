@@ -1016,14 +1016,17 @@ clean:
 	$(RMF) $(TESTOBJ) $(TESTSBJ)
 
 veryclean: clean
-	$(RMF) $(LIBTARGETS)
-	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%.exp) $(LIBTARGETS:%$(DLLSUFFIX)=%.lib)
-	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%.ilk) $(LIBTARGETS:%$(DLLSUFFIX)=%.pdb)
-	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
-	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%$(SOSUFFIX))
-	$(RMF) $(EXAMPLEEXE:%.exe=%.pdb) $(TESTEXE:%.exe=%.pdb)
+	$(RMF) $(LIBTARGETS) \
+		$(LIBTARGETS:%$(DLLSUFFIX)=%.exp) \
+		$(LIBTARGETS:%$(DLLSUFFIX)=%.lib) \
+		$(LIBTARGETS:%$(DLLSUFFIX)=%.ilk) \
+		$(LIBTARGETS:%$(DLLSUFFIX)=%.pdb)
+	$(RMF) $(LIBTARGETS:%$(DLLSUFFIX)=%$(SOLINKSUFFIX)) \
+		$(LIBTARGETS:%$(DLLSUFFIX)=%$(SOSUFFIX))
+	$(RMF) $(EXAMPLEEXE) $(EXAMPLEEXE:%.exe=%.pdb) \
+		$(EXAMPLEEXE:%.exe=%.ilk)
+	$(RMF) $(TESTEXE) $(TESTEXE:%.exe=%.pdb) $(TESTEXE:%.exe=%.ilk)
 	$(RMF) doc GecodeReference.chm
-	$(RMF) $(EXAMPLEEXE) $(TESTEXE)
 
 distclean: veryclean
 	$(RMF) $(ALLVARIMP:%=$(top_srcdir)/%)
