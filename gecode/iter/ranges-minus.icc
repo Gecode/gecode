@@ -21,6 +21,7 @@
  */
 
 #include "gecode/support/shared-array.hh"
+#include "gecode/support/dynamic-array.hh"
 
 namespace Gecode { namespace Iter { namespace Ranges {
 
