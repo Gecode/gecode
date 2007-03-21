@@ -53,6 +53,17 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module:	kernel
+What:	new
+Rank:	major
+[DESCRIPTION]
+Support for reference-counted shared objects added: they handle
+both reference counting as well as non-shared copying. This fixes
+some bugs with the handling os shared arrays, integer sets, and
+finite automata.
+
+
+[ENTRY]
 Module:	example
 What:	bug
 Rank:	minor

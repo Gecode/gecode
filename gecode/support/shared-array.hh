@@ -31,15 +31,14 @@ namespace Gecode { namespace Support {
 
   /// Implementation of object for shared arrays
   template <class T>
-  class SAO {
-  public:
-    /// Reference count
-    unsigned int use;
+  class SAO : public SharedObject {
+  private:
     /// Elements
     T*  a;
     /// Number of elements
     int n;
-    
+
+  public:
     /// Allocate for \a n elements
     SAO(int n);
     /// Create copy of elements
@@ -47,16 +46,19 @@ namespace Gecode { namespace Support {
     /// Delete object
     ~SAO(void);
 
-    /// Register new object
-    void subscribe(void);
-    /// Delete object
-    void release(void);
+    /// Access element at position \a i
+    T& operator[](int i);
+    /// Access element at position \a i
+    const T& operator[](int i) const;
+
+    /// Return number of elements
+    int size(void) const;
   };
 
   template <class T>
   forceinline
-  SAO<T>::SAO(int n0) : use(1), n(n0) {
-    a = (n>0) ? reinterpret_cast<T*>(Memory::malloc(sizeof(T)*n0)) : NULL;
+  SAO<T>::SAO(int n0) : n(n0) {
+    a = (n>0) ? reinterpret_cast<T*>(Memory::malloc(sizeof(T)*n)) : NULL;
   }
 
   template <class T>
@@ -79,17 +81,26 @@ namespace Gecode { namespace Support {
   }
 
   template <class T>
-  forceinline void
-  SAO<T>::subscribe(void) {
-    use++;
+  forceinline T&
+  SAO<T>::operator[](int i) {
+    //    assert((i>=0) && (i<n));
+    return a[i];
   }
 
   template <class T>
-  forceinline void
-  SAO<T>::release(void) {
-    if (--use == 0)
-      delete this;
+  forceinline const T&
+  SAO<T>::operator[](int i) const {
+    //    assert((i>=0) && (i<n));
+    return a[i];
   }
+
+  template <class T>
+  forceinline int
+  SAO<T>::size(void) const {
+    return n;
+  }
+
+
 
   /**
    * \brief Shared array with arbitrary number of elements
@@ -101,11 +112,9 @@ namespace Gecode { namespace Support {
    * \ingroup FuncSupport
    */
   template <class T>
-  class SharedArray {
-  private:
-    /// The object referenced
-    SAO<T>* sao;
+  class SharedArray : public SharedHandle<SAO<T> > {
   public:
+    using SharedHandle<SAO<T> >::object;
     /** 
      * \brief Construct as not yet intialized
      *
@@ -126,14 +135,6 @@ namespace Gecode { namespace Support {
     void init(int n);
     /// Initialize from shared array \a a (share elements)
     SharedArray(const SharedArray& a);
-    /// Initialize from shared array \a a (share elements)
-    const SharedArray& operator=(const SharedArray&);
-
-    /// Update this array from array \a a (share elements if \a share is true)
-    void update(Space* home, bool share, SharedArray& a);
-
-    /// Delete array (elements might be still in use)
-    ~SharedArray(void);
 
     /// Access element at position \a i
     T& operator[](int i);
@@ -147,79 +148,44 @@ namespace Gecode { namespace Support {
 
   template <class T>
   forceinline
-  SharedArray<T>::SharedArray(void) : sao(NULL) {}
+  SharedArray<T>::SharedArray(void) {}
 
   template <class T>
   forceinline
-  SharedArray<T>::SharedArray(int n) : sao(new SAO<T>(n)) {}
+  SharedArray<T>::SharedArray(int n) 
+    : SharedHandle<SAO<T> >(new SAO<T>(n)) {}
+
+  template <class T>
+  forceinline
+  SharedArray<T>::SharedArray(const SharedArray<T>& sa) 
+    : SharedHandle<SAO<T> >(sa) {}
 
   template <class T>
   forceinline void
   SharedArray<T>::init(int n) {
-    assert(sao == NULL);
-    sao = new SAO<T>(n);
-  }
-
-  template <class T>
-  forceinline
-  SharedArray<T>::SharedArray(const SharedArray<T>& a) {
-    assert(a.sao != NULL);
-    sao = a.sao;
-    sao->subscribe();
-  }
-
-  template <class T>
-  forceinline
-  SharedArray<T>::~SharedArray(void) {
-    assert(sao != NULL);
-    if (sao != NULL)
-      sao->release();
-  }
-
-  template <class T>
-  forceinline const SharedArray<T>&
-  SharedArray<T>::operator=(const SharedArray<T>& a) {
-    if (this != &a) {
-      if (sao != NULL)
-        sao->release();
-      sao = a.sao;
-      if (sao != NULL)
-        sao->subscribe();
-    }
-    return *this;
-  }
-
-  template <class T>
-  inline void
-  SharedArray<T>::update(Space* home, bool share, SharedArray<T>& a) {
-    assert(a.sao != NULL);
-    if (share) {
-      sao = a.sao;
-      sao->subscribe();
-    } else {
-      sao = a.sao->copy();
-    }
+    assert(object() == NULL);
+    object(new SAO<T>(n));
   }
 
   template <class T>
   forceinline T&
   SharedArray<T>::operator[](int i) {
-    assert(sao != NULL);
-    return sao->a[i];
+    assert(object() != NULL);
+    return (*object())[i];
   }
 
   template <class T>
   forceinline const T&
   SharedArray<T>::operator[](int i) const {
-    assert(sao != NULL);
-    return sao->a[i];
+    assert(object() != NULL);
+    return (*object())[i];
   }
 
   template <class T>
   forceinline int
   SharedArray<T>::size(void) const {
-    assert(sao != NULL);
-    return sao->n;
+    assert(object() != NULL);
+    return object()->size();
   }
 
 }}
