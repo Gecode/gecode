@@ -22,8 +22,6 @@
 
 #include "gecode/iter.hh"
 
-#include "gecode/support/block-allocator.hh"
-
 namespace Gecode { namespace Int { namespace Regular {
 
 
