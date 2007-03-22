@@ -368,7 +368,7 @@ OTHERHDR = gecode/iter.hh \
 
 INTEXAMPLESRC0 = \
 	alpha bacp bibd cars donald \
-	eq20 golomb \
+	eq20 golomb tsp \
 	graph-color grocery ind-set knights \
 	magic-sequence magic-sequence-gcc magic-square \
 	money ortho-latin packing \
