@@ -58,7 +58,7 @@ What:   new
 Rank:   minor
 [DESCRIPTION]
 Added a model for the travelling salesman problem, mostly
-intended to exercise the new circuit constraint (as it is not
+intended to exercise the new circuit constraint (as the model is not
 very competitive).
 
 [ENTRY]
