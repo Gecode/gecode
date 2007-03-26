@@ -879,6 +879,8 @@ namespace Gecode {
     int symbol_min(void) const;
     /// Return largest symbol in DFA
     int symbol_max(void) const;
+    /// Return set of all symbols
+    IntSet symbols(void) const;
   };
 
   /**

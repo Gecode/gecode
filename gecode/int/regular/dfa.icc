@@ -56,9 +56,11 @@ namespace Gecode {
       /// Number of transitions
       unsigned int n_trans;
       /// First final state
-      int          final_fst;
+      int final_fst;
       /// Last final state
-      int          final_lst;
+      int final_lst;
+      /// Set of all symbols
+      IntSet symbols;
       /// The transitions
       DFA::Transition*  trans;
       /// Initialize automation implementation with \nt transitions
@@ -126,6 +128,10 @@ namespace Gecode {
     return (n > 0) ? object()->trans[n-1].symbol : Limits::Int::int_max;
   }
 
+  forceinline IntSet
+  DFA::symbols(void) const {
+    return object()->symbols;
+  }
 
 
   /*
