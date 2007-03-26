@@ -139,19 +139,19 @@ namespace Gecode { namespace Int { namespace Regular {
    *
    */
 
-  template <class View>
+  template <class View, bool shared>
   forceinline
-  Dom<View>::LayeredGraph::LayeredGraph(void) : layers(NULL) {}
+  Dom<View,shared>::LayeredGraph::LayeredGraph(void) : layers(NULL) {}
 
-  template <class View>
+  template <class View, bool shared>
   forceinline bool
-  Dom<View>::LayeredGraph::constructed(void) const {
+  Dom<View,shared>::LayeredGraph::constructed(void) const {
     return layers != NULL;
   }
 
-  template <class View>
+  template <class View, bool shared>
   forceinline void
-  Dom<View>::LayeredGraph::construct(Space* home,
+  Dom<View,shared>::LayeredGraph::construct(Space* home,
                                      ViewArray<View> x, const DFA& dfa) {
     int n = x.size();
     layers = reinterpret_cast<Layer*>
@@ -243,9 +243,9 @@ namespace Gecode { namespace Int { namespace Regular {
     }
   }
 
-  template <class View>
+  template <class View, bool shared>
   forceinline void
-  Dom<View>::LayeredGraph::prune(Space* home, ViewArray<View> x) {
+  Dom<View,shared>::LayeredGraph::prune(Space* home, ViewArray<View> x) {
     int n = x.size();
     // Forward pass
     for (int i = 0; i < n; i++)
@@ -387,40 +387,62 @@ namespace Gecode { namespace Int { namespace Regular {
       }
   }
 
-  template <class View>
+  template <class View, bool shared>
   forceinline ExecStatus
-  Dom<View>::LayeredGraph::tell(Space* home, Propagator* p,
-                                ViewArray<View> x) {
+  Dom<View,shared>::LayeredGraph::tell(Space* home, Propagator* p,
+                                       ViewArray<View> x) {
     // Tell back variable domains
-    ExecStatus es = ES_FIX;
-    for (int i=x.size(); i--; ) {
-      if (layers[i].size == 0)
-        return ES_FAILED;
-      if (x[i].modified())
-        es = ES_NOFIX;
-      if ((x[i].size() != layers[i].size) ||
-          x[i].modified()) {
-        LayerValues lv(layers[i]);
-        Iter::Values::ToRanges<LayerValues> lr(lv);
-        if (x[i].modified()) {
-          GECODE_ME_CHECK(x[i].inter(home,lr));
-        } else {
+    if (shared) {
+      ExecStatus es = ES_FIX;
+      for (int i=x.size(); i--; ) {
+        if (layers[i].size == 0)
+          return ES_FAILED;
+        if (x[i].modified())
+          es = ES_NOFIX;
+        if ((x[i].size() != layers[i].size) ||
+            x[i].modified()) {
+          LayerValues lv(layers[i]);
+          Iter::Values::ToRanges<LayerValues> lr(lv);
+          if (x[i].modified()) {
+            GECODE_ME_CHECK(x[i].inter(home,lr));
+          } else {
+            x[i].narrow(home,lr);
+          }
+        }
+        // Reset modification data
+        layers[i].modified = MOD_NONE;
+      }
+      for (int i=x.size(); i--; )
+        if (!x[i].assigned())
+          return es;
+      x.size(0);
+      return ES_SUBSUMED(p,home);
+    } else {
+      int n=x.size();
+      for (int i=x.size(); i--; ) {
+        if (layers[i].size == 0)
+          return ES_FAILED;
+        if (x[i].size() != layers[i].size) {
+          LayerValues lv(layers[i]);
+          Iter::Values::ToRanges<LayerValues> lr(lv);
           x[i].narrow(home,lr);
         }
+        if (x[i].assigned())
+          n--;
+        // Reset modification data
+        layers[i].modified = MOD_NONE;
       }
-      // Reset modification data
-      layers[i].modified = MOD_NONE;
+      if (n == 0) {
+        x.size(0);
+        return ES_SUBSUMED(p,home);
+      }
+      return ES_FIX;
     }
-    for (int i=x.size(); i--; )
-      if (!x[i].assigned())
-        return es;
-    x.size(0);
-    return ES_SUBSUMED(p,home);
   }
 
-  template <class View>
+  template <class View, bool shared>
   ExecStatus
-  Dom<View>::propagate(Space* home) {
+  Dom<View,shared>::propagate(Space* home) {
     if (lg.constructed()) {
       lg.prune(home,this->x);
     } else {
@@ -429,46 +451,50 @@ namespace Gecode { namespace Int { namespace Regular {
     return lg.tell(home,this,this->x);
   }
 
-  template <class View>
+  template <class View, bool shared>
   forceinline
-  Dom<View>::Dom(Space* home, ViewArray<View>& x, DFA& d)
+  Dom<View,shared>::Dom(Space* home, ViewArray<View>& x, DFA& d)
     : NaryPropagator<View,PC_INT_DOM>(home,x), dfa(d) {
     this->force(home);
   }
 
-  template <class View>
+  template <class View, bool shared>
   forceinline size_t
-  Dom<View>::dispose(Space* home) {
+  Dom<View,shared>::dispose(Space* home) {
     this->unforce(home);
     dfa.~DFA();
     (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
     return sizeof(*this);
   }
 
-  template <class View>
+  template <class View, bool shared>
   ExecStatus
-  Dom<View>::post(Space* home, ViewArray<View>& x, DFA& d) {
-    (void) new (home) Dom<View>(home,x,d);
+  Dom<View,shared>::post(Space* home, ViewArray<View>& x, DFA& d) {
+    if (x.shared()) {
+      (void) new (home) Dom<View,true>(home,x,d);
+    } else {
+      (void) new (home) Dom<View,false>(home,x,d);
+    }
     return ES_OK;
   }
 
-  template <class View>
+  template <class View, bool shared>
   forceinline
-  Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
+  Dom<View,shared>::Dom(Space* home, bool share, Dom<View,shared>& p)
     : NaryPropagator<View,PC_INT_DOM>(home,share,p) {
     dfa.update(home,share,p.dfa);
   }
 
-  template <class View>
+  template <class View, bool shared>
   PropCost
-  Dom<View>::cost(void) const {
+  Dom<View,shared>::cost(void) const {
     return cost_hi(this->x.size(), PC_LINEAR_HI);
   }
 
-  template <class View>
+  template <class View, bool shared>
   Actor*
-  Dom<View>::copy(Space* home, bool share) {
-    return new (home) Dom<View>(home,share,*this);
+  Dom<View,shared>::copy(Space* home, bool share) {
+    return new (home) Dom<View,shared>(home,share,*this);
   }
 
 }}}

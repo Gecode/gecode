@@ -43,10 +43,13 @@ namespace Gecode { namespace Int { namespace Regular {
    *   for Finite Sequences of Variables, CP 2004.
    *   Pages 482-495, LNCS 3258, Springer-Verlag, 2004.
    *
+   * If \a shared is true, the propagator is capable of multiple
+   * occurences of the same view.
+   *
    * Requires \code #include "gecode/int/regular.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class View>
+  template <class View, bool shared>
   class Dom : public NaryPropagator<View,PC_INT_DOM> {
   protected:
     /// The %DFA describing the language
@@ -71,10 +74,10 @@ namespace Gecode { namespace Int { namespace Regular {
     LayeredGraph lg;
 
     /// Constructor for cloning \a p (use \a shared for \a dfa)
-    Dom(Space* home, bool shared, Dom<View>& p);
+    Dom(Space* home, bool share, Dom<View,shared>& p);
+  public:
     /// Constructor for posting
     Dom(Space* home, ViewArray<View>& x, DFA& d);
-  public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Cost function (defined as dynamic PC_LINEAR_HI)

@@ -30,14 +30,14 @@ namespace Gecode {
   regular(Space* home, const IntVarArgs& x, DFA& dfa, IntConLevel) {
     if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
-    GECODE_ES_FAIL(home,Regular::Dom<IntView>::post(home,xv,dfa));
+    GECODE_ES_FAIL(home,(Regular::Dom<IntView,true>::post(home,xv,dfa)));
   }
 
   void
   regular(Space* home, const BoolVarArgs& x, DFA& dfa, IntConLevel) {
     if (home->failed()) return;
     ViewArray<BoolView> xv(home,x);
-    GECODE_ES_FAIL(home,Regular::Dom<BoolView>::post(home,xv,dfa));
+    GECODE_ES_FAIL(home,(Regular::Dom<BoolView,true>::post(home,xv,dfa)));
   }
 
 }
