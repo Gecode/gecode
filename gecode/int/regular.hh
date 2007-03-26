@@ -62,11 +62,10 @@ namespace Gecode { namespace Int { namespace Regular {
       bool constructed(void) const;
       /// Construct layered graph
       void construct(Space* home, ViewArray<View> x, const DFA& d);
-
-      /// Prune initially for view sequence \a x
-      ExecStatus prune_initial(Space* home, Propagator* p, ViewArray<View> x);
       /// Prune incrementally for view sequence \a x
-      ExecStatus prune(Space* home, Propagator* p, ViewArray<View> x);
+      void prune(Space* home, ViewArray<View> x);
+      /// Tell back modifications to \a x for propagator \a p
+      ExecStatus tell(Space* home, Propagator* p, ViewArray<View> x);
     };
     /// Propagation is performed on a layered graph (cnstructed lazily)
     LayeredGraph lg;
