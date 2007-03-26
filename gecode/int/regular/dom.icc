@@ -150,9 +150,10 @@ namespace Gecode { namespace Int { namespace Regular {
   }
 
   template <class View, bool shared>
-  forceinline void
+  forceinline ExecStatus
   Dom<View,shared>::LayeredGraph::construct(Space* home,
-                                     ViewArray<View> x, const DFA& dfa) {
+                                            ViewArray<View> x, 
+                                            const DFA& dfa) {
     int n = x.size();
     layers = reinterpret_cast<Layer*>
       (home->alloc(sizeof(Layer)*(n+2))) + 1;
@@ -216,6 +217,8 @@ namespace Gecode { namespace Int { namespace Regular {
           ++nx;
         }
       }
+      if (j == 0)
+        return ES_FAILED;
       layers[i].size = j;
     }
 
@@ -239,12 +242,15 @@ namespace Gecode { namespace Int { namespace Regular {
         if (layers[i].support[j].edges != NULL)
           layers[i].support[k++]=layers[i].support[j];
       }
+      if (k == 0)
+        return ES_FAILED;
       layers[i].size = k;
     }
+    return ES_OK;
   }
 
   template <class View, bool shared>
-  forceinline void
+  forceinline ExecStatus
   Dom<View,shared>::LayeredGraph::prune(Space* home, ViewArray<View> x) {
     int n = x.size();
     // Forward pass
@@ -299,6 +305,8 @@ namespace Gecode { namespace Int { namespace Regular {
               layers[i+1].modified |= MOD_IDEG;
           }
         // Update size
+        if (k == 0)
+          return ES_FAILED;
         layers[i].size = k;
       } else if (layers[i].size != x[i].size()) {
         int j=0;
@@ -330,6 +338,8 @@ namespace Gecode { namespace Int { namespace Regular {
               layers[i+1].modified |= MOD_IDEG;
           }
         // Update size
+        if (k == 0)
+          return ES_FAILED;
         layers[i].size = k;
       } else if (layers[i].modified & MOD_IDEG) {
         int k=0;
@@ -356,6 +366,8 @@ namespace Gecode { namespace Int { namespace Regular {
             layers[i].support[k++]=layers[i].support[j];
         }
         // Update size
+        if (k == 0)
+          return ES_FAILED;
         layers[i].size = k;
       }
 
@@ -383,8 +395,11 @@ namespace Gecode { namespace Int { namespace Regular {
             layers[i].support[k++]=layers[i].support[j];
         }
         // Update size
+        if (k == 0)
+          return ES_FAILED;
         layers[i].size = k;
       }
+    return ES_OK;
   }
 
   template <class View, bool shared>
@@ -395,8 +410,7 @@ namespace Gecode { namespace Int { namespace Regular {
     if (shared) {
       ExecStatus es = ES_FIX;
       for (int i=x.size(); i--; ) {
-        if (layers[i].size == 0)
-          return ES_FAILED;
+        assert(layers[i].size > 0);
         if (x[i].modified())
           es = ES_NOFIX;
         if ((x[i].size() != layers[i].size) ||
@@ -420,8 +434,7 @@ namespace Gecode { namespace Int { namespace Regular {
     } else {
       int n=x.size();
       for (int i=x.size(); i--; ) {
-        if (layers[i].size == 0)
-          return ES_FAILED;
+        assert(layers[i].size > 0);
         if (x[i].size() != layers[i].size) {
           LayerValues lv(layers[i]);
           Iter::Values::ToRanges<LayerValues> lr(lv);
@@ -444,9 +457,9 @@ namespace Gecode { namespace Int { namespace Regular {
   ExecStatus
   Dom<View,shared>::propagate(Space* home) {
     if (lg.constructed()) {
-      lg.prune(home,this->x);
+      GECODE_ES_CHECK(lg.prune(home,this->x));
     } else {
-      lg.construct(home,this->x,dfa);
+      GECODE_ES_CHECK(lg.construct(home,this->x,dfa));
     }
     return lg.tell(home,this,this->x);
   }

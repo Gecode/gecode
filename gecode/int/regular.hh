@@ -64,9 +64,9 @@ namespace Gecode { namespace Int { namespace Regular {
       /// Test whether layered graph has already been constructed
       bool constructed(void) const;
       /// Construct layered graph
-      void construct(Space* home, ViewArray<View> x, const DFA& d);
+      ExecStatus construct(Space* home, ViewArray<View> x, const DFA& d);
       /// Prune incrementally for view sequence \a x
-      void prune(Space* home, ViewArray<View> x);
+      ExecStatus prune(Space* home, ViewArray<View> x);
       /// Tell back modifications to \a x for propagator \a p
       ExecStatus tell(Space* home, Propagator* p, ViewArray<View> x);
     };
