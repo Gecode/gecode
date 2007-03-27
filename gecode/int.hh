@@ -834,8 +834,27 @@ namespace Gecode {
       int symbol;  ///< symbol
       int o_state; ///< output state
     };
-    /// Iterator for %DFA transitions
-    class Transitions;
+    /// Iterator for %DFA transitions (sorted by symbols)
+    class Transitions {
+    private:
+      /// Current transition
+      const Transition* c_trans;
+      /// End of transitions
+      const Transition* e_trans;
+    public:
+      /// Initialize to transitions of DFA \a d
+      Transitions(const DFA& d);
+      /// Test whether iterator still at a transition
+      bool operator()(void) const;
+      /// Move iterator to next transition
+      void operator++(void);
+      /// Return in-state of current transition
+      int i_state(void) const;
+      /// Return symbol of current transition
+      int symbol(void) const;
+      /// Return out-state of current transition
+      int o_state(void) const;
+    };
   protected:
     /**
      * \brief Initialize automaton

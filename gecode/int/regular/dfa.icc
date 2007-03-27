@@ -22,27 +22,6 @@
 
 namespace Gecode {
 
-  /**
-   * \brief Iterator for transitions (sorted by symbols/values)
-   *
-   */
-  class DFA::Transitions {
-  private:
-    /// Current transition
-    const Transition* c_trans;
-    /// End of transitions
-    const Transition* e_trans;
-  public:
-    /// Initialize to transitions of DFA \a d
-    Transitions(const DFA& d);
-    /// Test whether iterator still at a transition
-    bool operator()(void) const;
-    /// Move iterator to next transition
-    void operator++(void);
-    /// Return pointer to transition
-    const Transition* transition(void) const;
-  };
-
   namespace Int { namespace Regular {
 
     /**
@@ -148,9 +127,19 @@ namespace Gecode {
     c_trans++;
   }
 
-  forceinline const DFA::Transition*
-  DFA::Transitions::transition(void) const {
-    return c_trans;
+  forceinline int
+  DFA::Transitions::i_state(void) const {
+    return c_trans->i_state;
+  }
+
+  forceinline int
+  DFA::Transitions::symbol(void) const {
+    return c_trans->symbol;
+  }
+
+  forceinline int
+  DFA::Transitions::o_state(void) const {
+    return c_trans->o_state;
   }
 
 }

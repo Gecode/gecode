@@ -174,10 +174,8 @@ namespace Gecode { namespace Int { namespace Regular {
       (home->alloc(sizeof(State)*(n+1)*n_states));
 
     // Initialize states (indegree and outdegree)
-    for (int i = (n+1)*n_states; i--; ) {
-      states[i].i_deg = 0;
-      states[i].o_deg = 0;
-    }
+    for (int i = (n+1)*n_states; i--; )
+      states[i].i_deg = states[i].o_deg = 0;
 
     // Mark initial state as being reachable
     states[0].i_deg = 1;
@@ -192,39 +190,37 @@ namespace Gecode { namespace Int { namespace Regular {
         reinterpret_cast<Support*>(home->alloc(x[i].size()*sizeof(Support)));
       int j=0;
       // Enter links leaving reachable states (indegree != 0)
-      DFA::Transitions ta(dfa);
+      DFA::Transitions t(dfa);
       ViewValues<View> nx(x[i]);
-      while (nx() && ta()) {
-        if (ta.transition()->symbol > nx.val()) {
+      while (nx() && t()) {
+        if (t.symbol() > nx.val()) {
           info[i].removed = nx.val();
           ++nx;
-        } else if (ta.transition()->symbol < nx.val()) {
-          ++ta;
+        } else if (t.symbol() < nx.val()) {
+          ++t;
         } else {
-          int v = nx.val();
-          assert(ta.transition()->symbol == v);
+          assert(t.symbol() == nx.val());
           Edge* e = NULL;
           do {
-            // Compute pointers to states
-            State* i_state = &states[(i  )*n_states + 
-                                     ta.transition()->i_state];
+            // Compute pointer to in-state
+            State* i_state = &states[i*n_states + t.i_state()];
             if (i_state->i_deg != 0) {
               // Add new transition as state is reachable
-              State* o_state = &states[(i+1)*n_states + 
-                                       ta.transition()->o_state];
+              // Compute pointer to out-state
+              State* o_state = &states[(i+1)*n_states +  t.o_state()];
               i_state->o_deg++; 
               o_state->i_deg++;
               e = new (home) Edge(i_state,o_state,e);
             }
-            ++ta;
-          } while (ta() && (ta.transition()->symbol == v));
+            ++t;
+          } while (t() && (t.symbol() == nx.val()));
           // Found support for value
           if (e != NULL) {
-            layers[i].support[j].val   = v;
+            layers[i].support[j].val   = nx.val();
             layers[i].support[j].edges = e;
             j++;
           } else {
-            info[i].removed = v;
+            info[i].removed = nx.val();
           }
           ++nx;
         }

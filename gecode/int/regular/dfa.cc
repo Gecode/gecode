@@ -424,12 +424,12 @@ operator<<(std::ostream& os, const Gecode::DFA& dfa) {
     Gecode::DFA::Transitions t(dfa);
     int n = 0;
     while (t()) {
-      if (t.transition()->i_state == s) {
+      if (t.i_state() == s) {
         if ((n % 4) == 0)
           os << std::endl << "\t";
-        os << "[" << t.transition()->i_state << "]"
-           << "- " << t.transition()->symbol << " >"
-           << "[" << t.transition()->o_state << "]  ";
+        os << "[" << t.i_state() << "]"
+           << "- " << t.symbol() << " >"
+           << "[" << t.o_state() << "]  ";
         ++n;
       }
       ++t;
