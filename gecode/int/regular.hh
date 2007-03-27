@@ -32,9 +32,7 @@
 
 namespace Gecode { namespace Int { namespace Regular {
 
-  /// A layer in the layered graph
   class Layer;
-  /// Adinitional information for propagation
   class Info;
 
   /**
