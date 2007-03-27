@@ -61,7 +61,9 @@ namespace Gecode {
   }}
 
   forceinline
-  DFA::DFA(void) {}
+  DFA::DFA(void) {
+    assert(object() == NULL);
+  }
 
   forceinline
   DFA::DFA(int start, Transition t_spec[], int f_spec[], bool minimize) {
@@ -140,6 +142,34 @@ namespace Gecode {
   forceinline int
   DFA::Transitions::o_state(void) const {
     return c_trans->o_state;
+  }
+
+  /*
+   * Iterating over symbols
+   *
+   */
+
+  forceinline
+  DFA::Symbols::Symbols(const DFA& d)
+    : c_trans(&d.object()->trans[0]), 
+      e_trans(c_trans+d.object()->n_trans) {}
+
+  forceinline bool
+  DFA::Symbols::operator()(void) const {
+    return c_trans < e_trans;
+  }
+
+  forceinline void
+  DFA::Symbols::operator++(void) {
+    int s = c_trans->symbol;
+    do {
+      c_trans++;
+    } while ((c_trans < e_trans) && (s == c_trans->symbol));
+  }
+
+  forceinline int
+  DFA::Symbols::val(void) const {
+    return c_trans->symbol;
   }
 
 }

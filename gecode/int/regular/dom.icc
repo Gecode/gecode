@@ -517,6 +517,14 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View, bool shared>
   ExecStatus
   Dom<View,shared>::post(Space* home, ViewArray<View>& x, DFA& d) {
+    /*
+    for (int i=x.size(); i--; ) {
+      // @FIXME@: SEGFAULTS!
+      DFA::Symbols s(d);
+      Iter::Values::ToRanges<DFA::Symbols> r(s);
+      GECODE_ME_CHECK(x[i].inter(home,r));
+    }
+    */
     if (x.shared()) {
       (void) new (home) Dom<View,true>(home,x,d);
     } else {
