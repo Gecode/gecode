@@ -517,11 +517,6 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View, bool shared>
   ExecStatus
   Dom<View,shared>::post(Space* home, ViewArray<View>& x, DFA& d) {
-    // Restrict to symbols in DFA
-    for (int i=x.size(); i--; ) {
-      IntSetRanges r(d.symbols());
-      GECODE_ME_CHECK(x[i].inter(home,r));
-    }
     if (x.shared()) {
       (void) new (home) Dom<View,true>(home,x,d);
     } else {

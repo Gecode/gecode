@@ -399,7 +399,6 @@ namespace Gecode {
     d->final_fst = final_fst;
     d->final_lst = final_lst;
     {
-      GECODE_AUTOARRAY(int,s,m_trans);
       int j = 0;
       Transition* r = &d->trans[0];
       for (int i = 0; i<n_trans; i++)
@@ -407,12 +406,9 @@ namespace Gecode {
           r[j].symbol  = trans[i].symbol;
           r[j].i_state = re[trans[i].i_state];
           r[j].o_state = re[trans[i].o_state];
-          s[j] = trans[i].symbol;
           j++;
         }
       TransBySymbol::sort(r,m_trans);
-      IntSet syms(s,m_trans);
-      d->symbols = syms;
     }
     object(d);
   }
@@ -456,7 +452,6 @@ namespace Gecode { namespace Int { namespace Regular {
     d->n_trans   = n_trans;
     d->final_fst = final_fst;
     d->final_lst = final_lst;
-    d->symbols   = symbols;
     memcpy(&d->trans[0], &trans[0], sizeof(DFA::Transition)*n_trans);
     return d;
   }
