@@ -51,6 +51,7 @@ namespace Gecode { namespace Int { namespace Regular {
    */
   template <class View, bool shared>
   class Dom : public NaryPropagator<View,PC_INT_DOM> {
+    using NaryPropagator<View,PC_INT_DOM>::x;
   protected:
     /// The %DFA describing the language
     DFA dfa;
