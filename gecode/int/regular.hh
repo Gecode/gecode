@@ -33,7 +33,6 @@
 namespace Gecode { namespace Int { namespace Regular {
 
   class Layer;
-  class Info;
 
   /**
    * \brief Domain-consistent regular propagator
@@ -65,13 +64,11 @@ namespace Gecode { namespace Int { namespace Regular {
       /// Test whether layered graph has already been constructed
       bool constructed(void) const;
       /// Construct layered graph
-      ExecStatus construct(Space* home, ViewArray<View> x, const DFA& d,
-                           Info* info);
+      ExecStatus construct(Space* home, ViewArray<View> x, const DFA& d);
       /// Prune incrementally for view sequence \a x
-      ExecStatus prune(Space* home, ViewArray<View> x, Info* info);
+      ExecStatus prune(Space* home, ViewArray<View> x);
       /// Tell back modifications to \a x for propagator \a p
-      ExecStatus tell(Space* home, Propagator* p, ViewArray<View> x,
-                      Info* info);
+      ExecStatus tell(Space* home, Propagator* p, ViewArray<View> x);
     };
     /// Propagation is performed on a layered graph (cnstructed lazily)
     LayeredGraph lg;

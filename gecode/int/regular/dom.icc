@@ -74,14 +74,6 @@ namespace Gecode { namespace Int { namespace Regular {
     Edge* edges; ///< Supporting edges in layered graph
   };
 
-  /// Layer for a view in the layered graph
-  class Layer {
-  public:
-    unsigned int size;    ///< Number of supported values
-    Support*     support; ///< Supported values
-  };
-
-
   /**
    * \name Flags for modification in layer
    */
@@ -91,11 +83,13 @@ namespace Gecode { namespace Int { namespace Regular {
   const int MOD_ODEG  = 2; ///< Outdegree has become zero
   //@}
 
-  /// Additional information for propagation
-  class Info {
+  /// Layer for a view in the layered graph
+  class Layer {
   public:
-    int modified; ///< Modification information
-    int lost;     ///< One of the values that lost support
+    unsigned int size;     ///< Number of supported values
+    int          modified; ///< Modification information
+    int          lost;     ///< One of the values that lost support
+    Support*     support;  ///< Supported values
   };
 
   /// Iterator for telling variable domains by scanning support
@@ -160,11 +154,10 @@ namespace Gecode { namespace Int { namespace Regular {
   forceinline ExecStatus
   Dom<View,shared>::LayeredGraph::construct(Space* home,
                                             ViewArray<View> x, 
-                                            const DFA& dfa,
-                                            Info* info) {
+                                            const DFA& dfa) {
     int n = x.size();
-    layers = reinterpret_cast<Layer*>(home->alloc(sizeof(Layer)*n));
-
+    layers = reinterpret_cast<Layer*>(home->alloc(sizeof(Layer)*(n+2)))+1;
+    
     unsigned int n_states = dfa.n_states();
 
     // Allocate memory
@@ -185,7 +178,7 @@ namespace Gecode { namespace Int { namespace Regular {
     // First pass: add transitions
     for (int i=0; i<n; i++) {
       Layer& l = layers[i];
-      l.support = 
+      layers[i].support = 
         reinterpret_cast<Support*>(home->alloc(x[i].size()*sizeof(Support)));
       int j=0;
       // Enter links leaving reachable states (indegree != 0)
@@ -193,7 +186,7 @@ namespace Gecode { namespace Int { namespace Regular {
       ViewValues<View> nx(x[i]);
       while (nx() && t()) {
         if (t.symbol() > nx.val()) {
-          info[i].lost = nx.val();
+          layers[i].lost = nx.val();
           ++nx;
         } else if (t.symbol() < nx.val()) {
           ++t;
@@ -215,26 +208,26 @@ namespace Gecode { namespace Int { namespace Regular {
           } while (t() && (t.symbol() == nx.val()));
           // Found support for value
           if (e != NULL) {
-            l.support[j].val   = nx.val();
-            l.support[j].edges = e;
+            layers[i].support[j].val   = nx.val();
+            layers[i].support[j].edges = e;
             j++;
           } else {
-            info[i].lost = nx.val();
+            layers[i].lost = nx.val();
           }
           ++nx;
         }
       }
       if (j == 0)
         return ES_FAILED;
-      l.size = j;
+      layers[i].size = j;
     }
 
     // Second pass: prune all transitions that do not lead to final state
     for (int i=n; i--; ) {
       Layer& l = layers[i];
       int k=0;
-      for (int j=0; j<l.size; j++) {
-        Edge** p = &l.support[j].edges;
+      for (int j=0; j<layers[i].size; j++) {
+        Edge** p = &layers[i].support[j].edges;
         for (Edge* e = *p; e != NULL; e = e->next)
           if (e->o_state->o_deg != 0) {
             // This state is still reachable, keep edge
@@ -247,59 +240,51 @@ namespace Gecode { namespace Int { namespace Regular {
         // Write endmarker for edges
         *p = NULL;
         // Value has support, copy the support information
-        if (l.support[j].edges != NULL)
-          l.support[k++]=l.support[j];
+        if (layers[i].support[j].edges != NULL)
+          layers[i].support[k++]=layers[i].support[j];
         else
-          info[i].lost = l.support[j].val;
+          layers[i].lost = layers[i].support[j].val;
       }
       if (k == 0)
         return ES_FAILED;
-      l.size = k;
+      layers[i].size = k;
     }
     return ES_OK;
   }
 
   template <class View, bool shared>
   forceinline ExecStatus
-  Dom<View,shared>::LayeredGraph::prune(Space* home, ViewArray<View> x,
-                                        Info* info) {
-    // Reset modification information of first layer
-    info[0].modified = MOD_NONE;
-
+  Dom<View,shared>::LayeredGraph::prune(Space* home, ViewArray<View> x) {
     // Forward pass
     for (int i=0; i<x.size(); i++) {
-      Layer& l = layers[i];
-      // Reset modification information of next layer
-      info[i+1].modified = MOD_NONE;
-
-      if ((l.size != x[i].size()) && (info[i].modified & MOD_IDEG)) {
+      if ((layers[i].size != x[i].size()) && (layers[i].modified & MOD_IDEG)) {
         // Both the view as well some in states have changed
         int j=0;
         int k=0;
         ViewValues<View> vx(x[i]);
-        for ( ; vx() && (j<l.size); j++) {
-          assert(l.support[j].val <= vx.val());
-          if (l.support[j].val != vx.val()) {
+        for ( ; vx() && (j<layers[i].size); j++) {
+          assert(layers[i].support[j].val <= vx.val());
+          if (layers[i].support[j].val != vx.val()) {
             // Value has lost support
-            for (Edge* e=l.support[j].edges; e!=NULL; e=e->next) {
+            for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
               // Adapt states
               if ((--e->i_state->o_deg) == 0)
-                info[i-1].modified |= MOD_ODEG;
+                layers[i-1].modified |= MOD_ODEG;
               if ((--e->o_state->i_deg) == 0)
-                info[i+1].modified |= MOD_IDEG;
+                layers[i+1].modified |= MOD_IDEG;
             }
-            info[i].lost = l.support[j].val;
+            layers[i].lost = layers[i].support[j].val;
           } else {
-            assert(l.support[j].val == vx.val());
+            assert(layers[i].support[j].val == vx.val());
             // Some edges might have lost support
-            Edge** p = &l.support[j].edges;
+            Edge** p = &layers[i].support[j].edges;
             for (Edge* e = *p; e != NULL; e = e->next) 
               if (e->i_state->i_deg == 0) {
                 // Adapt states
                 if ((--e->i_state->o_deg) == 0)
-                  info[i-1].modified |= MOD_ODEG;
+                  layers[i-1].modified |= MOD_ODEG;
                 if ((--e->o_state->i_deg) == 0)
-                  info[i+1].modified |= MOD_IDEG;
+                  layers[i+1].modified |= MOD_IDEG;
                 // Remove edge
                 *p = e->next;
               } else {
@@ -309,78 +294,78 @@ namespace Gecode { namespace Int { namespace Regular {
             // Write endmarker for edges
             *p=NULL;
             // Value still has support
-            if (l.support[j].edges != NULL)
-              l.support[k++]=l.support[j];
+            if (layers[i].support[j].edges != NULL)
+              layers[i].support[k++]=layers[i].support[j];
             else
-              info[i].lost = l.support[j].val;
+              layers[i].lost = layers[i].support[j].val;
             ++vx;
           }
         }
         // Remove remaining values
-        for (; j < l.size; j++) {
-          for (Edge* e=l.support[j].edges; e!=NULL; e=e->next) {
+        for (; j < layers[i].size; j++) {
+          for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
             // Adapt states
             if ((--e->i_state->o_deg) == 0)
-              info[i-1].modified |= MOD_ODEG;
+              layers[i-1].modified |= MOD_ODEG;
             if ((--e->o_state->i_deg) == 0)
-              info[i+1].modified |= MOD_IDEG;
+              layers[i+1].modified |= MOD_IDEG;
           }
-          info[i].lost = l.support[j].val;
+          layers[i].lost = layers[i].support[j].val;
         }
         // Update size
         if (k == 0)
           return ES_FAILED;
-        l.size = k;
-      } else if (l.size != x[i].size()) {
+        layers[i].size = k;
+      } else if (layers[i].size != x[i].size()) {
         // Only the view has changed
         int j=0;
         int k=0;
         ViewValues<View> vx(x[i]);
-        for ( ; vx() && (j<l.size); j++) {
-          assert(l.support[j].val <= vx.val());
-          if (l.support[j].val != vx.val()) {
+        for ( ; vx() && (j<layers[i].size); j++) {
+          assert(layers[i].support[j].val <= vx.val());
+          if (layers[i].support[j].val != vx.val()) {
             // Value has lost support
-            for (Edge* e=l.support[j].edges; e!=NULL; e=e->next) {
+            for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
               // Adapt states
               if ((--e->i_state->o_deg) == 0)
-                info[i-1].modified |= MOD_ODEG;
+                layers[i-1].modified |= MOD_ODEG;
               if ((--e->o_state->i_deg) == 0)
-                info[i+1].modified |= MOD_IDEG;
+                layers[i+1].modified |= MOD_IDEG;
             }
-            info[i].lost = l.support[j].val;
+            layers[i].lost = layers[i].support[j].val;
           } else {
-            l.support[k++]=l.support[j];
+            layers[i].support[k++]=layers[i].support[j];
             ++vx;
           }
         }
         // Remove remaining values
-        for (; j < l.size; j++) {
-          for (Edge* e=l.support[j].edges; e!=NULL; e=e->next) {
+        for (; j < layers[i].size; j++) {
+          for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
             // Adapt states
             if ((--e->i_state->o_deg) == 0)
-              info[i-1].modified |= MOD_ODEG;
+              layers[i-1].modified |= MOD_ODEG;
             if ((--e->o_state->i_deg) == 0)
-              info[i+1].modified |= MOD_IDEG;
+              layers[i+1].modified |= MOD_IDEG;
           }
-          info[i].lost = l.support[j].val;
+          layers[i].lost = layers[i].support[j].val;
         }
         // Update size
         if (k == 0)
           return ES_FAILED;
-        l.size = k;
-      } else if (info[i].modified & MOD_IDEG) {
+        layers[i].size = k;
+      } else if (layers[i].modified & MOD_IDEG) {
         // Only some in states have changed
         int k=0;
-        for (int j=0; j<l.size; j++) {
+        for (int j=0; j<layers[i].size; j++) {
           // Some edges might have lost support
-          Edge** p = &l.support[j].edges;
+          Edge** p = &layers[i].support[j].edges;
           for (Edge* e = *p; e != NULL; e = e->next) 
             if (e->i_state->i_deg == 0) {
               // Adapt states
               if ((--e->i_state->o_deg) == 0)
-                info[i-1].modified |= MOD_ODEG;
+                layers[i-1].modified |= MOD_ODEG;
               if ((--e->o_state->i_deg) == 0)
-                info[i+1].modified |= MOD_IDEG;
+                layers[i+1].modified |= MOD_IDEG;
               // Remove edge
               *p = e->next;
             } else {
@@ -390,25 +375,25 @@ namespace Gecode { namespace Int { namespace Regular {
           // Write endmarker for edges
           *p=NULL;
           // Value still has support
-          if (l.support[j].edges != NULL)
-            l.support[k++]=l.support[j];
+          if (layers[i].support[j].edges != NULL)
+            layers[i].support[k++]=layers[i].support[j];
           else
-            info[i].lost = l.support[j].val;
+            layers[i].lost = layers[i].support[j].val;
         }
         // Update size
         if (k == 0)
           return ES_FAILED;
-        l.size = k;
+        layers[i].size = k;
       }
     }
 
     // Backward pass
     for (int i=x.size(); i--; ) {
       Layer& l = layers[i];
-      if (info[i].modified & MOD_ODEG) {
+      if (layers[i].modified & MOD_ODEG) {
         int k=0;
-        for (int j=0; j<l.size; j++) {
-          Edge** p = &l.support[j].edges;
+        for (int j=0; j<layers[i].size; j++) {
+          Edge** p = &layers[i].support[j].edges;
           for (Edge* e = *p; e != NULL; e = e->next)
             if (e->o_state->o_deg != 0) {
               // This state is still reachable, keep edge
@@ -416,22 +401,22 @@ namespace Gecode { namespace Int { namespace Regular {
             } else {
               // Unreachable state, prune edge
               if (--e->i_state->o_deg == 0)
-                info[i-1].modified |= MOD_ODEG;
+                layers[i-1].modified |= MOD_ODEG;
               --e->o_state->i_deg;
               *p = e->next;
             }
           // Write endmarker for edges
           *p = NULL;
           // Value still has support
-          if (l.support[j].edges != NULL)
-            l.support[k++]=l.support[j];
+          if (layers[i].support[j].edges != NULL)
+            layers[i].support[k++]=layers[i].support[j];
           else
-            info[i].lost = l.support[j].val;
+            layers[i].lost = layers[i].support[j].val;
         }
         // Update size
         if (k == 0)
           return ES_FAILED;
-        l.size = k;
+        layers[i].size = k;
       }
     }
 
@@ -441,18 +426,21 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View, bool shared>
   forceinline ExecStatus
   Dom<View,shared>::LayeredGraph::tell(Space* home, Propagator* p,
-                                       ViewArray<View> x,
-                                       Info* info) {
+                                       ViewArray<View> x) {
+    // Reset modification information for border areas
+    layers[-1].modified = MOD_NONE;
+    layers[x.size()].modified = MOD_NONE;
     // Tell back variable domains
     if (shared) {
       ExecStatus es = ES_FIX;
       for (int i=x.size(); i--; ) {
+        layers[i].modified = MOD_NONE;
         assert(layers[i].size > 0);
         if (x[i].modified())
           es = ES_NOFIX;
         if ((x[i].size() != layers[i].size) || x[i].modified()) {
           if (((x[i].size() - layers[i].size) == 1) && !x[i].modified()) {
-            GECODE_ME_CHECK(x[i].nq(home,info[i].lost));
+            GECODE_ME_CHECK(x[i].nq(home,layers[i].lost));
           } else {
             LayerValues lv(layers[i]);
             Iter::Values::ToRanges<LayerValues> lr(lv);
@@ -472,10 +460,11 @@ namespace Gecode { namespace Int { namespace Regular {
     } else {
       int n=x.size();
       for (int i=x.size(); i--; ) {
+        layers[i].modified = MOD_NONE;
         assert(layers[i].size > 0);
         if (x[i].size() != layers[i].size) {
           if ((x[i].size() - layers[i].size) == 1) {
-            x[i].nq(home,info[i].lost);
+            x[i].nq(home,layers[i].lost);
           } else {
             LayerValues lv(layers[i]);
             Iter::Values::ToRanges<LayerValues> lr(lv);
@@ -496,14 +485,12 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View, bool shared>
   ExecStatus
   Dom<View,shared>::propagate(Space* home) {
-    GECODE_AUTOARRAY(Info,_i,x.size()+2);
-    Info* info = &_i[0]+1;
     if (lg.constructed()) {
-      GECODE_ES_CHECK(lg.prune(home,this->x,info));
+      GECODE_ES_CHECK(lg.prune(home,this->x));
     } else {
-      GECODE_ES_CHECK(lg.construct(home,this->x,dfa,info));
+      GECODE_ES_CHECK(lg.construct(home,this->x,dfa));
     }
-    return lg.tell(home,this,this->x,info);
+    return lg.tell(home,this,this->x);
   }
 
   template <class View, bool shared>
