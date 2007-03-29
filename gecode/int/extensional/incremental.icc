@@ -1,0 +1,342 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *
+ *  Copyright:
+ *     Mikael Lagerkvist, 2007
+ *
+ *  Last modified:
+ *     $Date: 2007-02-27 11:26:59 +0100 (tis, 27 feb 2007) $ by $Author: schulte $
+ *     $Revision: 4205 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#if GECODE_USE_DEMONS
+
+#include "gecode/support/bitset.hh"
+
+namespace Gecode { namespace Int { namespace Extensional {
+  const bool incremental_debug = true;
+
+
+  /*
+   * The propagator proper
+   *
+   */
+
+  template <class View>
+  forceinline
+  Incremental<View>::Incremental(Space* home, ViewArray<View>& x, const Table& t)
+    : NaryPropagator<View,PC_INT_VAL>(home,x), 
+      table(t), dc(home, this, x.size()) {
+    int literals = t.tablei->domsize*x.size();
+    last_data = static_cast<tuple***>(home->alloc(literals*sizeof(tuple***)));
+    support_data = static_cast<SupportEntry**>(home->alloc(literals*sizeof(SupportEntry*)));
+    for (int i = literals; i--; ) {
+      last_data[i]    = t.tablei->last[i];
+      support_data[i] = NULL;
+    }
+
+    for (int i = x.size(); i--; ) {
+      SupportDemon *d = new (home) SupportDemon(home, this, x[i], i);
+      dc.add(home, this, d);
+    }
+  }
+
+  template <class View>
+  ExecStatus
+  Incremental<View>::post(Space* home, ViewArray<View>& x, const Table& t) {
+    (void) new (home) Incremental<View>(home,x,t);
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline
+  Incremental<View>::Incremental(Space* home, bool share, Incremental<View>& p)
+    : NaryPropagator<View,PC_INT_VAL>(home,share,p),
+      dc(home, this, share, p.dc) {
+    table.update(home, share, p.table);
+
+    int literals = table.tablei->domsize*x.size();
+    last_data = static_cast<tuple***>(home->alloc(literals*sizeof(tuple***)));
+    support_data = static_cast<SupportEntry**>(home->alloc(literals*sizeof(SupportEntry*)));
+    for (int i = literals; i--; ) {
+      last_data[i]    = p.last_data[i];
+      support_data[i] = p.support_data[i];
+    }
+
+  }
+
+  template <class View>
+  PropCost
+  Incremental<View>::cost(void) const {
+    return (View::pme(this) == ME_INT_VAL)
+      ? PC_QUADRATIC_HI : PC_CUBIC_HI;
+  }
+
+  template <class View>
+  Actor*
+  Incremental<View>::copy(Space* home, bool share) {
+    return new (home) Incremental<View>(home,share,*this);
+  }
+
+  template <class View>
+  size_t
+  Incremental<View>::dispose(Space* home) {
+      (void) dc.dispose(home);
+      (void) NaryPropagator<View,PC_INT_VAL>::dispose(home);
+      return sizeof(*this);
+  }
+
+
+  template <class View>
+  ExecStatus
+  Incremental<View>::propagate(Space* home) {
+    /// Staging...
+    /*
+    if (View::pme(this) == ME_INT_VAL) {
+      ExecStatus es = prop_val<View>(home,x);
+      GECODE_ES_CHECK(es);
+      if (es == ES_FIX)
+        return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
+      return ES_NOFIX_PARTIAL(this,View::pme(ME_INT_DOM));
+    }
+    */
+    ///// Domain consistent propagation
+    //// Set up datastructures
+    /// Bit-sets for amortized O(1) access to domains
+    GECODE_AUTOARRAY(Support::BitSet<unsigned long>, dom, x.size());
+    int domsize = table.tablei->max - table.tablei->min + 1;
+    for (int i = x.size(); i--; ) {
+      dom[i].init(home, domsize);
+      ViewRanges<View> vr(x[i]);
+      Iter::Ranges::ToValues<ViewRanges<View> > vv(vr);
+      while (vv()) {
+        dom[i].set(vv.val());
+        ++vv;
+      }
+      if (incremental_debug) {
+        for (int j = table.tablei->min; j < table.tablei->max; ++j)
+          std::cerr << (x[i].in(j) ? "1" : "0");
+        std::cerr << std::endl;
+        for (int j = table.tablei->min; j < table.tablei->max; ++j)
+          std::cerr << (dom[i].get(j) ? "1" : "0");
+        std::cerr << std::endl << std::endl;
+      }
+    }
+
+    /// Values to prune
+    GECODE_AUTOARRAY(TellInfo<View>,nq,domsize*x.size());
+    int n_nq = 0;
+
+    
+#ifndef  GECODE_EXT_INCREMENTAL_SUPPORT
+    /// Bit-sets for processed values.
+    GECODE_AUTOARRAY(Support::BitSet<unsigned long>, has_support, x.size());
+    for (int i = x.size(); i--; ) {
+      has_support[i].init(home, domsize);
+    }
+
+    //// Run algorithm
+    /// Check consistency for each variable-value pair
+    /// that has lost support
+    for (int var = 0; var < x.size(); ++var) {
+      ViewRanges<View> vr(x[var]);
+      Iter::Ranges::ToValues<ViewRanges<View> > vv(vr);
+      while (vv()) {
+        // Value offset for indexing
+        int val = vv.val() - table.tablei->min;
+        if (!has_support[var].get(val)) {
+          // Find support for value vv.val() in variable var
+          tuple l = last(var, val);
+          if (!valid(l, dom)) {
+            while (l != NULL && l[var] == vv.val()) {
+              l = last_next(var, val);
+            }
+          }
+          if (l == NULL) {
+            // No possible supports left
+            nq[n_nq].x = x[var];
+            nq[n_nq].n = vv.val();
+            n_nq++;
+          } else {
+            // Mark values as supported 
+            // Only forward direction marking is needed since all
+            // previous values have been checked
+            for (int i = x.size(); i-- >var; ) {
+              has_support[i].set(l[i]);
+            }
+#ifndef NDEBUG
+            for (int i = var; i--; )
+              assert(has_support[i].get(l[i]));
+#endif
+          }
+        }
+        ++vv;
+      }
+
+      ExecStatus es = ES_FIX;
+      // Prune values for var which do not have support anymore
+      while (n_nq-- > 0) {
+        ModEvent me = nq[n_nq].x.nq(home,nq[n_nq].n);
+        if (me_failed(me))
+          return ES_FAILED;
+        if (me_modified(me))
+          es = ES_NOFIX;
+      }
+
+      return es;
+#else 
+      bool mod;
+      do {
+        mod = false;
+        for (int var = x.size(); var--; ) {
+          ViewRanges<View> vr(x[var]);
+          Iter::Ranges::ToValues<ViewRanges<View> > vv(vr);
+          while (vv()) {
+            if (support(var, vv.val()) == NULL) {
+              // Find support for value vv.val() in variable var
+              tuple l = last(var, val);
+              if (!valid(l, dom)) {
+                while (l != NULL && l[var] == vv.val()) {
+                  l = last_next(var, val);
+                }
+              }
+              if (l == NULL) {
+                // No possible supports left
+                nq[n_nq].x = x[var];
+                nq[n_nq].n = vv.val();
+                n_nq++;
+              } else {
+                // Mark values as supported 
+                // add to all support-lists in tuple
+                for (int i = x.size(); i--; ) {
+                  // add support l to support(i, l[i])
+                }
+              }
+            }
+            ++vv;
+          }
+          // Prune values for var which do not have support anymore
+          while (n_nq-- > 0) {
+            ModEvent me = nq[n_nq].x.nq(home,nq[n_nq].n);
+            if (me_failed(me))
+              return ES_FAILED;
+            if (me_modified(me))
+              mod = true;;
+          }
+        
+        }
+      } while (mod);
+#endif
+    }
+
+    
+    
+
+    return ES_FIX;
+  }
+
+#define GECODE_LAST_TUPLE(l) (**(l))
+
+  template <class View>
+  forceinline tuple
+  Incremental<View>::last(int var, int val) {
+    if (GECODE_LAST_TUPLE(last_data[(var*(table.tablei->domsize)) + val])[var]
+        != val) return NULL;
+    return GECODE_LAST_TUPLE(last_data[(var*(table.tablei->domsize)) + val]);
+  }
+
+  template <class View>
+  forceinline tuple
+  Incremental<View>::last_next(int var, int val) {
+    ++(last_data[(var*(table.tablei->domsize)) + val]);
+    if (GECODE_LAST_TUPLE(last_data[(var*(table.tablei->domsize)) + val])[var] 
+        != val) return NULL;
+    return GECODE_LAST_TUPLE(last_data[(var*(table.tablei->domsize)) + val]);
+  }
+
+
+  template <class View>
+  forceinline bool
+  Incremental<View>::valid(tuple t, Support::BitSet<unsigned long>* dom) {
+    for (int i = x.size(); i--; )
+      if (!dom[i].get(t[i]))
+        return false;
+    return true;
+  }
+
+  template <class View>
+  forceinline SupportEntry*
+  Incremental<View>::support(int var, int val) {
+    return support_data[(var*(table.tablei->domsize)) + val];
+  }
+
+
+  // 
+  // Demon proper
+  //
+  template <class View>
+  forceinline ExecStatus
+  Incremental<View>::SupportDemon::_propagate(Space *home, ModEvent me, 
+                                              int lo, int hi) {
+    Incremental<View>* p = static_cast<Incremental<View>*>(pp.p());
+
+#ifndef GECODE_EXT_INCREMENTAL_SUPPORT
+    if (hi < lo) {
+      // Something has happend, so just schedule the propagator
+      pp.schedule<VTI_INT,IntMeDiff>(home, me);
+      if (me == ME_INT_VAL) return ES_SUBSUMED(this,sizeof(*this));
+      return ES_OK;
+    }
+    
+    // Slow and imprecise
+    for (int var = p->x.size(); var--; ) {
+      for (int val = p->table.tablei->domsize; val--; ) {
+        tuple l = p->last(var, val);
+        if (l != NULL && l[pos] >= lo && l[pos] <= hi) {
+          pp.schedule<VTI_INT,IntMeDiff>(home, me);
+          if (me == ME_INT_VAL) return ES_SUBSUMED(this,sizeof(*this));
+          return ES_OK;
+        }
+      }
+    }
+#else
+    if (hi < lo) {
+      // Runover values removed
+      for (int val = lo; val <= hi; ++val) {
+        int sp = (pos*(p->table.tablei->domsize)) + val;
+        while (p->support_data[sp]) {
+          // This value supports something
+          tuple t = p->support_data[sp]->t;
+          for (int var = p->x.size(); var--; ) {
+            if (var == pos) continue;
+            // Remove support from tuple t from support(var, t[var])
+            
+          }
+        }
+      }
+    } else {
+      // Run over all values not in domain...
+    }
+#endif
+
+    if (me == ME_INT_VAL) return ES_SUBSUMED(this,sizeof(*this));
+    return ES_OK;
+  }
+
+}}}
+
+#endif
+
+// STATISTICS: int-prop
+
