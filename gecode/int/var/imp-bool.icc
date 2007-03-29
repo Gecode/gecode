@@ -433,12 +433,12 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline void
-  BoolVarImp::subscribe(Space* home, SubscriberType p, PropCond, bool process) {
-    BoolVarImpBase::subscribe(home,p,PC_BOOL_VAL,assigned(),process);
+  BoolVarImp::subscribe(Space* home, SubscriberType p, PropCond pc, bool process) {
+    BoolVarImpBase::subscribe(home,p,pc,assigned(),process);
   }
   forceinline void
-  BoolVarImp::cancel(Space* home, SubscriberType p, PropCond) {
-    BoolVarImpBase::cancel(home,p,PC_BOOL_VAL,assigned());
+  BoolVarImp::cancel(Space* home, SubscriberType p, PropCond pc) {
+    BoolVarImpBase::cancel(home,p,pc,assigned());
   }
 
 }}

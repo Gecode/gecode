@@ -1,0 +1,91 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *
+ *  Copyright:
+ *     Mikael Lagerkvist, 2007
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int { namespace Extensional {
+
+  /*
+   * Eliminating singleton variables
+   *
+   */
+  template <class View>
+  ExecStatus
+  prop_val(Space* home, ViewArray<View>& x, const Table& t) {
+    assert(x.size() > 1);
+    int n = x.size();
+
+    GECODE_AUTOARRAY(int, stack, n);
+    // c_n is the current number of values on stack
+    int c_n = 0;
+
+    // Collect all assigned variables on stack
+    for (int i = n; i--; )
+      if (x[i].assigned()) {
+        stack[c_n++]= i;
+      }
+    
+    return ES_NOFIX;
+  }
+
+
+  /*
+   * The propagator proper
+   *
+   */
+  template <class View>
+  forceinline
+  Val<View>::Val(Space* home, ViewArray<View>& x, const Table& t)
+    : NaryPropagator<View,PC_INT_VAL>(home,x), table(t) {}
+
+  template <class View>
+  forceinline
+  Val<View>::Val(Space* home, bool share, Val<View>& p)
+    : NaryPropagator<View,PC_INT_VAL>(home,share,p) {
+    table.update(home, share, p.table);
+  }
+  
+  template <class View>
+  Actor*
+  Val<View>::copy(Space* home, bool share) {
+    return new (home) Val<View>(home,share,*this);
+  }
+
+  template <class View>
+  ExecStatus
+  Val<View>::propagate(Space* home) {
+    GECODE_ES_CHECK((prop_val<View>(home,x,table)));
+    for (int i = x.size(); i--; )
+      if (!x.assigned())
+        return ES_NOFIX;
+    return ES_SUBSUMED(this,home);
+  }
+
+  template <class View>
+  ExecStatus
+  Val<View>::post(Space* home, ViewArray<View>& x, const Table& t) {
+    (void) new (home) Val<View>(home, x, t);
+    return ES_OK;
+  }
+
+}}}
+
+// STATISTICS: int-prop
+

@@ -1295,6 +1295,95 @@ namespace Gecode {
 
 
   /**
+   * \defgroup TaskIntIntExt Extensional constraints
+   * \ingroup TaskIntInt
+   */
+  //@{
+  /** \brief Options for choosing the algorithm for extensional constraints
+   */
+  enum ExtensionalAlgorithm {
+    EA_BASIC,       ///< Basic algorithm
+    EA_INCREMENTAL, ///< Based on GAC-Schema
+    EA_REGULAR      ///< Rewrite constraint to regular
+  };
+
+
+  /** \brief Class represeting table of tuples.
+   */
+  class Table {
+  public:
+    /** \brief Type of a tuple. 
+     *
+     * The arity of the tuple is left implicit.
+     */
+    typedef int* tuple;
+
+    /// Class for table data
+    class TableI;
+    TableI* tablei;
+
+    /// Default construction of table
+    Table(void);
+    /// Initialize by Table \a d (Table is shared)
+    Table(const Table& d);
+    /// Initialize by Table \a d (Table is shared)
+    const Table& operator=(const Table&);
+    /// Destructor
+    ~Table(void);
+    /**
+     * \brief Update this Table to \a d
+     *
+     * If \a share is true, share the same \a d. If not, create
+     * an independent copy from \a d.
+     */
+    void update(Space* home, bool share, Table& d);
+
+    /// Add tuple to table
+    void add(const IntArgs& tuple);
+  };
+
+  /** \brief Post propagator for \f$x\in T\f$.
+   *
+   *
+   * \li Supports domain-consistency (\a icl = ICL_DOM, default) only.
+   *
+   * \warning If the domains for the \f$x_i\f$ are not dense and
+   * have similar bounds, lots of memory will be wasted (memory
+   * consumption is in \f$
+   * O\left(|x|\cdot\min_i(\underline{x_i})\cdot\max_i(\overline{x_i})\right)\f$
+   * for the basic algorithm and additionally \f$
+   * O\left(|x|^2\cdot\min_i(\underline{x_i})\cdot\max_i(\overline{x_i})\right)\f$
+   * for the incremental algorithm.
+   */
+  GECODE_INT_EXPORT void
+  extensional(Space* home, const IntVarArray& x, const Table& t, 
+              ExtensionalAlgorithm ea=EA_BASIC,
+              IntConLevel=ICL_DEF);
+  
+  /** \brief Post propagator for \f$\rangle x_0+O_0, x_1+O_1, \cdots, x_{n-1}+O_{n-1}\langle\in T\f$.
+   *
+   * \li Supports domain-consistency (\a icl = ICL_DOM, default) only.
+   * \li Throws an exception of type Int::NumericalOverflow, if
+   *     the integers in \a n exceed the limits in Limits::Int.
+   * \li Throws an exception of type Int::ArgumentSizeMismatch, if
+   *     \a x and \a c are of different size.
+   *
+   * \warning If the domains for the \f$x_i\f$ are not dense and
+   * have similar bounds, lots of memory will be wasted (memory
+   * consumption is in \f$
+   * O\left(|x|\cdot\min_i(\underline{x_i})\cdot\max_i(\overline{x_i})\right)\f$
+   * for the basic algorithm and additionally \f$
+   * O\left(|x|^2\cdot\min_i(\underline{x_i})\cdot\max_i(\overline{x_i})\right)\f$
+   * for the incremental algorithm.
+   */
+  GECODE_INT_EXPORT void
+  extensional(Space* home, const IntArgs& c, const IntVarArray& x, const Table& t, 
+              ExtensionalAlgorithm ea=EA_BASIC,
+              IntConLevel=ICL_DEF);
+  //@}
+
+
+  /**
    * \defgroup TaskIntIntArith Arithmetic constraints
    * \ingroup TaskIntInt
    */

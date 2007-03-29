@@ -41,7 +41,6 @@ namespace {
         : IntUnaryViewDemon<IntView>(home,p,v), pp(p) {
         if (_v.assigned()) {
           pp.schedule<VTI_INT,IntMeDiff>(home, Int::ME_INT_VAL);
-          derr << "Posting on assigned val, scheduled p with v=" << _v.val() << std::endl;
         }
       }
       BndDemon(Space* home, Propagator* p, bool share, BndDemon& d) 
@@ -50,15 +49,12 @@ namespace {
         return new (home) BndDemon(home, p, share, *this); 
       }
       size_t dispose(Space* home) {
-        derr << "Disposing demon" << std::endl;
         (void) IntUnaryViewDemon<IntView>::dispose(home);
         return sizeof(*this);
       }
     private:
       ExecStatus _propagate(Space *home, ModEvent me, int lo, int hi) {
-        derr << "Demon invoked _v=" << _v << " lo=" << lo << " hi=" << hi << " me=" << me << std::endl;
         if (me == ME_INT_VAL || me == ME_INT_BND) {
-          std::cerr << "Scheduling propagator" << std::endl;
           pp.schedule<VTI_INT,IntMeDiff>(home, me);
         }
         if (me == ME_INT_VAL) return ES_SUBSUMED(this,sizeof(*this));
@@ -133,20 +129,15 @@ namespace {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share) {
-      derr << "Copying actor..." << std::endl;
       Actor* res =  new (home) Eq(home, share, *this);
-      derr << "...copying finished" << std::endl;
       return res;
     }
     virtual PropCost cost(void) const { return PC_BINARY_LO; }
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home) {
-      std::cerr << "Eq: Propagating x0=" << x0 << " x1=" << x1 << std::endl;
-
 #define GECODE_ME_MOD(me) {\
   ModEvent m = me; \
   if (me_failed(m))  { \
-      derr << "Eq: Failure with x0=" << x0 << " x1=" << x1 << std::endl; \
       return ES_FAILED; \
   } \
   if (me_modified(m)) mod |= true; \
@@ -160,14 +151,11 @@ namespace {
         GECODE_ME_MOD(x1.lq(home, x0.max()));
         GECODE_ME_MOD(x1.gq(home, x0.min()));
         if (x0.assigned() && x1.assigned()) {
-          derr << "Eq: Propagation gave x0=" << x0 
-               << " x1=" << x1 << ", subsuming" << std::endl;
           return ES_SUBSUMED(this, dispose(home));
         }
       } while(mod);
 
 #undef GECODE_ME_MOD
-      derr << "Eq: Propagation gave x0=" << x0 << " x1=" << x1 << std::endl;
       return ES_NOFIX;
     }
     /// Post bounds-consistent propagator \f$ x_0=x_1\f$
@@ -194,9 +182,7 @@ public:
   }
   virtual void post(Space* home, IntVarArray& x) {
     Int::IntView x0(x[0]), x1(x[1]);
-    derr << std::endl;
     Eq::post(home, x0, x1);
-    derr << "Posting finished" << std::endl;
   }
 };
 
@@ -220,23 +206,20 @@ namespace {
         : IntUnaryViewDemon<BoolView, Int::PC_BOOL_DEMON>(home,p,v), pp(p) {
         if (_v.assigned()) {
           pp.schedule<VTI_BOOL,BoolMeDiff>(home, Int::ME_BOOL_VAL);
-          derr << "Posting on assigned val, scheduled p with v=" << _v.val() << std::endl;
         }
       }
       BndDemon(Space* home, Propagator* p, bool share, BndDemon& d) 
-        : IntUnaryViewDemon<BoolView, Int::PC_BOOL_DEMON>(home, p, share, d), pp(p) {}
+        : IntUnaryViewDemon<BoolView, Int::PC_BOOL_DEMON>(home, p, share, d), 
+          pp(p) {}
       Demon *copy(Space *home, Propagator* p, bool share) {
         return new (home) BndDemon(home, p, share, *this); 
       }
       size_t dispose(Space* home) {
-        derr << "Disposing demon" << std::endl;
         (void) IntUnaryViewDemon<BoolView, Int::PC_BOOL_DEMON>::dispose(home);
         return sizeof(*this);
       }
     private:
       ExecStatus _propagate(Space *home, ModEvent me, int lo, int hi) {
-        derr << "Demon invoked _v=" << _v << " lo=" << lo << " hi=" << hi << " me=" << me << std::endl;
-        std::cerr << "Scheduling propagator" << std::endl;
         pp.schedule<VTI_BOOL,BoolMeDiff>(home, me);
         return ES_SUBSUMED(this,sizeof(*this));
       }
@@ -309,16 +292,12 @@ namespace {
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share) {
-      derr << "Copying actor..." << std::endl;
       Actor* res =  new (home) BoolEq(home, share, *this);
-      derr << "...copying finished" << std::endl;
       return res;
     }
     virtual PropCost cost(void) const { return PC_BINARY_LO; }
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home) {
-      std::cerr << "BoolEq: Propagating x0=" << x0 << " x1=" << x1 << std::endl;
-
       if (x1.assigned()) {
         if (me_failed(x0.eq(home, x1.val())))
           return ES_FAILED;
@@ -352,10 +331,8 @@ public:
     return x[0] == x[1];
   }
   virtual void post(Space* home, IntVarArray& x) {
-    Int::BoolView x0(link(home,x[0])), x1(link(home,x[1]));
-    derr << std::endl;
+    Int::BoolView x0(channel(home,x[0])), x1(channel(home,x[1]));
     BoolEq::post(home, x0, x1);
-    derr << "Posting finished" << std::endl;
   }
 };
 

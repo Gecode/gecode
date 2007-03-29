@@ -77,6 +77,9 @@ namespace Gecode { namespace Int {
   void
   IntVarImp::lq_full(Space* home, int m) {
     assert((m >= dom.min()) && (m <= dom.max()));
+#if GECODE_USE_DEMONS
+    int old_max = dom.max();
+#endif /* GECODE_USE_DEMONS */
     if (range()) { // Is already range...
       dom.max(m);
       if (assigned()) goto notify_val;
@@ -104,19 +107,22 @@ namespace Gecode { namespace Int {
     }
     notify(home,ME_INT_BND);
 #if GECODE_USE_DEMONS
-    demons(home,ME_INT_BND, m+1, Limits::Int::int_max+1);
+    demons(home,ME_INT_BND, m+1, old_max);
 #endif /* GECODE_USE_DEMONS */
     return;
   notify_val:
     notify(home,ME_INT_VAL);
 #if GECODE_USE_DEMONS
-    demons(home,ME_INT_VAL, m+1, Limits::Int::int_max+1);
+    demons(home,ME_INT_VAL, m+1, old_max);
 #endif /* GECODE_USE_DEMONS */
   }
 
   void
   IntVarImp::gq_full(Space* home, int m) {
     assert((m >= dom.min()) && (m <= dom.max()));
+#if GECODE_USE_DEMONS
+    int old_min = dom.min();
+#endif /* GECODE_USE_DEMONS */
     if (range()) { // Is already range...
       dom.min(m);
       if (assigned()) goto notify_val;
@@ -144,13 +150,13 @@ namespace Gecode { namespace Int {
     }
     notify(home,ME_INT_BND);
 #if GECODE_USE_DEMONS
-    demons(home,ME_INT_BND, Limits::Int::int_min-1, m-1);
+    demons(home,ME_INT_BND, old_min, m-1);
 #endif /* GECODE_USE_DEMONS */
     return;
   notify_val:
     notify(home,ME_INT_VAL);
 #if GECODE_USE_DEMONS
-    demons(home,ME_INT_VAL, Limits::Int::int_min-1, m-1);
+    demons(home,ME_INT_VAL, old_min, m-1);
 #endif /* GECODE_USE_DEMONS */
   }
 

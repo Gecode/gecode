@@ -169,7 +169,7 @@ INTSRC0 = \
 	linear/int-post.cc linear-int.cc \
 	linear/bool-post.cc linear-bool.cc \
 	branch.cc \
-	distinct.cc cumulatives.cc \
+	distinct.cc cumulatives.cc extensional.cc extensional/table.cc \
 	sortedness.cc gcc.cc \
 	channel.cc channel/link-single.cc channel/link-multi.cc \
 	circuit.cc
@@ -187,6 +187,7 @@ INTHDR0 = \
 	distinct/val.icc distinct/ter-dom.icc \
 	dom/range.icc dom/spec.icc \
 	element/int.icc element/view.icc \
+	extensional/table.icc extensional/val.icc extensional/basic.icc extensional/incremental.icc \
 	gcc/bnd.icc gcc/dom.icc gcc/gccbndsup.icc gcc/graphsup.icc \
 	gcc/lbc.icc gcc/ubc.icc gcc/val.icc gcc/occur.icc \
 	linear/post.icc \
@@ -231,7 +232,8 @@ export INTLIB		=
 export LINKINT      	=
 endif
 INTBUILDDIRS	= \
-	int int/var int/view int/regular int/channel int/linear int/bool int/branch
+	int int/var int/view int/regular int/extensional \
+	int/channel int/linear int/bool int/branch
 
 #
 # SET COMPONENTS
@@ -346,8 +348,8 @@ MMBUILDDIRS	= minimodel
 #
 
 SUPPORTHDR0 = \
-	block-allocator.hh dynamic-array.hh dynamic-stack.hh \
-	random.hh shared-array.hh sort.hh \
+	bitset.hh block-allocator.hh dynamic-array.hh dynamic-stack.hh \
+	random.hh search.hh shared-array.hh sort.hh \
 	static-pqueue.hh static-stack.hh sentinel-stack.hh
 ITERHDR0 = \
 	ranges-add.icc ranges-append.icc ranges-array.icc ranges-cache.icc \

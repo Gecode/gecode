@@ -1,0 +1,216 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *
+ *  Copyright:
+ *     Mikael Lagerkvist, 2007
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#include "gecode/support/bitset.hh"
+
+namespace Gecode { namespace Int { namespace Extensional {
+  const bool basic_debug = true;
+
+
+  /*
+   * The propagator proper
+   *
+   */
+
+  template <class View>
+  forceinline
+  Basic<View>::Basic(Space* home, ViewArray<View>& x, const Table& t)
+    : NaryPropagator<View,PC_INT_DOM>(home,x), table(t) {
+    int literals = t.tablei->domsize*x.size();
+    last_data = static_cast<tuple***>(home->alloc(literals*sizeof(tuple**)));
+    for (int i = literals; i--; ) {
+      last_data[i]    = t.tablei->last[i];
+    }
+  }
+
+  template <class View>
+  ExecStatus
+  Basic<View>::post(Space* home, ViewArray<View>& x, const Table& t) {
+    (void) new (home) Basic<View>(home,x,t);
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline
+  Basic<View>::Basic(Space* home, bool share, Basic<View>& p)
+    : NaryPropagator<View,PC_INT_DOM>(home,share,p) {
+    table.update(home, share, p.table);
+    int literals = table.tablei->domsize*x.size();
+    last_data = static_cast<tuple***>(home->alloc(literals*sizeof(tuple**)));
+    for (int i = literals; i--; ) {
+      last_data[i]    = p.last_data[i];
+    }
+  }
+
+  template <class View>
+  PropCost
+  Basic<View>::cost(void) const {
+    return (View::pme(this) == ME_INT_VAL)
+      ? PC_QUADRATIC_HI : PC_CUBIC_HI;
+  }
+
+  template <class View>
+  Actor*
+  Basic<View>::copy(Space* home, bool share) {
+    return new (home) Basic<View>(home,share,*this);
+  }
+
+
+  template<class View>
+  class TellInfo {
+  public:
+    View x; int n;
+  };
+
+
+  template <class View>
+  ExecStatus
+  Basic<View>::propagate(Space* home) {
+    /// Staging...
+#if 0
+    if (View::pme(this) == ME_INT_VAL) {
+      ExecStatus es = prop_val<View>(home,x);
+      GECODE_ES_CHECK(es);
+      if (es == ES_FIX)
+        return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
+      return ES_NOFIX_PARTIAL(this,View::pme(ME_INT_DOM));
+    }
+#endif
+    ///// Domain consistent propagation
+    //// Set up datastructures
+    /// Bit-sets for amortized O(1) access to domains
+    GECODE_AUTOARRAY(Support::BitSet<unsigned long>, dom, x.size());
+    int domsize = table.tablei->max - table.tablei->min + 1;
+    for (int i = x.size(); i--; ) {
+      dom[i].init(home, domsize);
+      ViewRanges<View> vr(x[i]);
+      Iter::Ranges::ToValues<ViewRanges<View> > vv(vr);
+      while (vv()) {
+        dom[i].set(vv.val());
+        ++vv;
+      }
+      if (basic_debug) {
+        for (int j = table.tablei->min; j < table.tablei->max; ++j)
+          std::cerr << (x[i].in(j) ? "1" : "0");
+        std::cerr << std::endl;
+        for (int j = table.tablei->min; j < table.tablei->max; ++j)
+          std::cerr << (dom[i].get(j) ? "1" : "0");
+        std::cerr << std::endl << std::endl;
+      }
+    }
+    /// Bit-sets for processed values.
+    GECODE_AUTOARRAY(Support::BitSet<unsigned long>, has_support, x.size());
+    for (int i = x.size(); i--; ) {
+      has_support[i].init(home, domsize);
+    }
+
+    /// Values to prune
+    GECODE_AUTOARRAY(TellInfo<View>,nq,domsize*x.size());
+    int n_nq = 0;
+
+    
+    //// Run algorithm
+    /// Check consistency for each variable-value pair
+    for (int var = 0; var < x.size(); ++var) {
+      ViewRanges<View> vr(x[var]);
+      Iter::Ranges::ToValues<ViewRanges<View> > vv(vr);
+      while (vv()) {
+        // Value offset for indexing
+        int val = vv.val() - table.tablei->min;
+        if (!has_support[var].get(val)) {
+          // Find support for value vv.val() in variable var
+          tuple l = last(var, val);
+          if (!valid(l, dom)) {
+            while (l != NULL && l[var] == vv.val()) {
+              l = last_next(var, val);
+            }
+          }
+          if (l == NULL) {
+            // No possible supports left
+            nq[n_nq].x = x[var];
+            nq[n_nq].n = vv.val();
+            n_nq++;
+          } else {
+            // Mark values as supported 
+            // Only forward direction marking is needed since all
+            // previous values have been checked
+            for (int i = x.size(); i-- >var; ) {
+              has_support[i].set(l[i]);
+            }
+#ifndef NDEBUG
+            for (int i = var; i--; )
+              assert(has_support[i].get(l[i]));
+#endif
+          }
+        }
+        ++vv;
+      }
+
+      ExecStatus es = ES_FIX;
+      // Prune values for var which do not have support anymore
+      while (n_nq-- > 0) {
+        ModEvent me = nq[n_nq].x.nq(home,nq[n_nq].n);
+        if (me_failed(me))
+          return ES_FAILED;
+        if (me_modified(me))
+          es = ES_NOFIX;
+      }
+
+      return es;
+    }
+
+    
+    
+
+    return ES_FIX;
+  }
+
+#define GECODE_LAST_TUPLE(l) (**(l))
+
+  template <class View>
+  forceinline tuple
+  Basic<View>::last(int var, int val) {
+    if (GECODE_LAST_TUPLE(last_data[(var*(table.tablei->max - table.tablei->min + 1)) + val])[var] != val) return NULL;
+    return GECODE_LAST_TUPLE(last_data[(var*(table.tablei->max - table.tablei->min + 1)) + val]);
+  }
+
+  template <class View>
+  forceinline tuple
+  Basic<View>::last_next(int var, int val) {
+    ++(last_data[(var*(table.tablei->max - table.tablei->min + 1)) + val]);
+    if (GECODE_LAST_TUPLE(last_data[(var*(table.tablei->max - table.tablei->min + 1)) + val])[var] != val) return NULL;
+    return GECODE_LAST_TUPLE(last_data[(var*(table.tablei->max - table.tablei->min + 1)) + val]);
+  }
+
+  template <class View>
+  forceinline bool
+  Basic<View>::valid(tuple t, Support::BitSet<unsigned long>* dom) {
+    for (int i = x.size(); i--; )
+      if (!dom[i].get(t[i]))
+        return false;
+    return true;
+  }
+#undef GECODE_LAST_TUPLE
+}}}
+
+// STATISTICS: int-prop
+
