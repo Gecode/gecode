@@ -41,7 +41,7 @@ namespace Gecode {
     switch (icl) {
     default:
       switch (ea) {
-#if GECODE_USE_DEMONS
+#if GECODE_USE_ADVISORS
       case EA_INCREMENTAL:
         GECODE_ES_FAIL(home,(Extensional::Incremental<IntView>::post(home,xv,table)));
         break;

@@ -139,12 +139,12 @@
 
 
 /*
- * Managing demons
+ * Managing advisors
  *
  */
-#if GECODE_USE_DEMONS
+#if GECODE_USE_ADVISORS
 
-#include "gecode/kernel/demon.icc"
+#include "gecode/kernel/advisor.icc"
 
 #endif
 

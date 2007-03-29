@@ -35,8 +35,8 @@ namespace Gecode { namespace Int {
   void
   IntVarImpBase::Processor::process(Space* home, VarBase* _x) {
     // Process modified variables
-    Gecode::Variable<VTI_INT,PC_INT_DEMON,IntMeDiff>* x = 
-      static_cast<Gecode::Variable<VTI_INT,PC_INT_DEMON,IntMeDiff>*>(_x);
+    Gecode::Variable<VTI_INT,PC_INT_ADVISOR,IntMeDiff>* x = 
+      static_cast<Gecode::Variable<VTI_INT,PC_INT_ADVISOR,IntMeDiff>*>(_x);
     do {
       switch (x->modevent()) {
       case ME_INT_VAL:

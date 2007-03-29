@@ -245,14 +245,14 @@ operator<<(std::ostream&, const Gecode::IntSet& s);
 #include "gecode/int/int-set.icc"
 
 
-#if GECODE_USE_DEMONS
-#include "gecode/int/demon.icc"
+#if GECODE_USE_ADVISORS
+#include "gecode/int/advisor.icc"
 #endif
 #include "gecode/int/var.icc"
 #include "gecode/int/view.icc"
 #include "gecode/int/propagator.icc"
-#if GECODE_USE_DEMONS
-#include "gecode/int/demon-imp.icc"
+#if GECODE_USE_ADVISORS
+#include "gecode/int/advisor-imp.icc"
 #endif
 #include "gecode/int/array.icc"
 

@@ -90,11 +90,11 @@ namespace Gecode { namespace Int {
   const Gecode::PropCond PC_INT_DOM = Gecode::PC_GEN_ASSIGNED + 2;
 
   /**
-   * \brief Propagation condition for demons.
+   * \brief Propagation condition for advisors.
    *
-   * The subscriber must be a demon, and will be run on all domain changes.
+   * The subscriber must be a advisor, and will be run on all domain changes.
    */
-  const Gecode::PropCond PC_INT_DEMON = Gecode::PC_GEN_ASSIGNED + 3;
+  const Gecode::PropCond PC_INT_ADVISOR = Gecode::PC_GEN_ASSIGNED + 3;
 
   //@}
 
@@ -106,10 +106,10 @@ namespace Gecode { namespace Int {
   };
 
   /// Base-class for Int-variable implementations
-  class IntVarImpBase : public Gecode::Variable<VTI_INT,PC_INT_DEMON,IntMeDiff> {
+  class IntVarImpBase : public Gecode::Variable<VTI_INT,PC_INT_ADVISOR,IntMeDiff> {
   protected:
     /// Variable procesor for variables of this type
-    class Processor : public Gecode::VarTypeProcessor<VTI_INT,PC_INT_DEMON,IntMeDiff> {
+    class Processor : public Gecode::VarTypeProcessor<VTI_INT,PC_INT_ADVISOR,IntMeDiff> {
     public:
       /// Process modified variables linked from \a x
       GECODE_INT_EXPORT virtual void process(Space* home, VarBase* x);
@@ -181,20 +181,20 @@ namespace Gecode { namespace Int {
 
   forceinline
   IntVarImpBase::IntVarImpBase(Space* home)
-    : Gecode::Variable<VTI_INT,PC_INT_DEMON,IntMeDiff>(home) {}
+    : Gecode::Variable<VTI_INT,PC_INT_ADVISOR,IntMeDiff>(home) {}
 
   forceinline
   IntVarImpBase::IntVarImpBase(Space* home, bool share, IntVarImpBase& x)
-    : Gecode::Variable<VTI_INT,PC_INT_DEMON,IntMeDiff>(home,share,x) {}
+    : Gecode::Variable<VTI_INT,PC_INT_ADVISOR,IntMeDiff>(home,share,x) {}
 
   forceinline void
   IntVarImpBase::subscribe(Space* home, SubscriberType p, PropCond pc, bool assigned, bool process) {
-    Gecode::Variable<VTI_INT,PC_INT_DEMON,IntMeDiff>::subscribe(home,p,pc,assigned,ME_INT_BND,process);
+    Gecode::Variable<VTI_INT,PC_INT_ADVISOR,IntMeDiff>::subscribe(home,p,pc,assigned,ME_INT_BND,process);
   }
 
   forceinline void
   IntVarImpBase::notify(Space* home, ModEvent me) {
-    Gecode::Variable<VTI_INT,PC_INT_DEMON,IntMeDiff>::notify(home,me);
+    Gecode::Variable<VTI_INT,PC_INT_ADVISOR,IntMeDiff>::notify(home,me);
   }
 
 }}

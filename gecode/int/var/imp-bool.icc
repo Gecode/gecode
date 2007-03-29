@@ -139,9 +139,9 @@ namespace Gecode { namespace Int {
     assert(none());
     dom = ZERO;
     notify(home,ME_BOOL_VAL);
-#if GECODE_USE_DEMONS
-    if(!demons(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_DEMONS */
+#if GECODE_USE_ADVISORS
+    if(!advisors(home)) return ME_INT_FAILED;
+#endif /* GECODE_USE_ADVISORS */
     return ME_BOOL_VAL;
   }
   forceinline ModEvent
@@ -156,9 +156,9 @@ namespace Gecode { namespace Int {
     assert(none());
     dom = ONE;
     notify(home,ME_BOOL_VAL);
-#if GECODE_USE_DEMONS
-    if(!demons(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_DEMONS */
+#if GECODE_USE_ADVISORS
+    if(!advisors(home)) return ME_INT_FAILED;
+#endif /* GECODE_USE_ADVISORS */
     return ME_BOOL_VAL;
   }
   forceinline ModEvent
@@ -186,9 +186,9 @@ namespace Gecode { namespace Int {
       assert(n == 1);
       dom = ONE;
       notify(home,ME_BOOL_VAL);
-#if GECODE_USE_DEMONS
-    if(!demons(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_DEMONS */
+#if GECODE_USE_ADVISORS
+    if(!advisors(home)) return ME_INT_FAILED;
+#endif /* GECODE_USE_ADVISORS */
       return ME_INT_VAL;
     } else {
       return ME_INT_NONE;
@@ -207,9 +207,9 @@ namespace Gecode { namespace Int {
       assert(n == 1);
       dom = ONE;
       notify(home,ME_BOOL_VAL);
-#if GECODE_USE_DEMONS
-    if(!demons(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_DEMONS */
+#if GECODE_USE_ADVISORS
+    if(!advisors(home)) return ME_INT_FAILED;
+#endif /* GECODE_USE_ADVISORS */
       return ME_INT_VAL;
     } else {
       return ME_INT_NONE;
@@ -229,9 +229,9 @@ namespace Gecode { namespace Int {
     if (n == 0) {
       dom = ZERO;
       notify(home,ME_BOOL_VAL);
-#if GECODE_USE_DEMONS
-    if(!demons(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_DEMONS */
+#if GECODE_USE_ADVISORS
+    if(!advisors(home)) return ME_INT_FAILED;
+#endif /* GECODE_USE_ADVISORS */
       return ME_INT_VAL;
     } else {
       return ME_INT_NONE;
@@ -249,9 +249,9 @@ namespace Gecode { namespace Int {
     if (n == 0) {
       dom = ZERO;
       notify(home,ME_BOOL_VAL);
-#if GECODE_USE_DEMONS
-    if(!demons(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_DEMONS */
+#if GECODE_USE_ADVISORS
+    if(!advisors(home)) return ME_INT_FAILED;
+#endif /* GECODE_USE_ADVISORS */
       return ME_INT_VAL;
     } else {
       return ME_INT_NONE;
@@ -275,9 +275,9 @@ namespace Gecode { namespace Int {
       dom = ONE;
     }
     notify(home,ME_BOOL_VAL);
-#if GECODE_USE_DEMONS
-    if(!demons(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_DEMONS */
+#if GECODE_USE_ADVISORS
+    if(!advisors(home)) return ME_INT_FAILED;
+#endif /* GECODE_USE_ADVISORS */
     return ME_INT_VAL;
   }
   forceinline ModEvent
@@ -296,9 +296,9 @@ namespace Gecode { namespace Int {
       dom = ONE;
     }
     notify(home,ME_BOOL_VAL);
-#if GECODE_USE_DEMONS
-    if(!demons(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_DEMONS */
+#if GECODE_USE_ADVISORS
+    if(!advisors(home)) return ME_INT_FAILED;
+#endif /* GECODE_USE_ADVISORS */
     return ME_INT_VAL;
   }
 
@@ -319,9 +319,9 @@ namespace Gecode { namespace Int {
       dom = ZERO;
     }
     notify(home,ME_BOOL_VAL);
-#if GECODE_USE_DEMONS
-    if(!demons(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_DEMONS */
+#if GECODE_USE_ADVISORS
+    if(!advisors(home)) return ME_INT_FAILED;
+#endif /* GECODE_USE_ADVISORS */
     return ME_INT_VAL;
   }
   forceinline ModEvent
@@ -340,9 +340,9 @@ namespace Gecode { namespace Int {
       dom = ZERO;
     }
     notify(home,ME_BOOL_VAL);
-#if GECODE_USE_DEMONS
-    if(!demons(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_DEMONS */
+#if GECODE_USE_ADVISORS
+    if(!advisors(home)) return ME_INT_FAILED;
+#endif /* GECODE_USE_ADVISORS */
     return ME_INT_VAL;
   }
 

@@ -122,7 +122,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 #include "gecode/int/extensional/val.icc"
 #include "gecode/int/extensional/basic.icc"
 
-#if GECODE_USE_DEMONS
+#if GECODE_USE_ADVISORS
 
 namespace Gecode { namespace Int { namespace Extensional {
   struct SupportEntry {
@@ -175,27 +175,27 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 
     //
-    // Demon proper
+    // Advisor proper
     //
   private:
-    class SupportDemon : public IntUnaryViewDemon<View> {
+    class SupportAdvisor : public IntUnaryViewAdvisor<View> {
       PropagatorPointer pp;
-      using IntUnaryViewDemon<View>::_v;
+      using IntUnaryViewAdvisor<View>::_v;
       unsigned int pos;
     public:
-      SupportDemon(Space* home, Propagator* p, View v, unsigned int position) 
-        : IntUnaryViewDemon<View>(home,p,v), pp(p), pos(position) {
+      SupportAdvisor(Space* home, Propagator* p, View v, unsigned int position) 
+        : IntUnaryViewAdvisor<View>(home,p,v), pp(p), pos(position) {
         if (_v.assigned()) {
           pp.schedule<VTI_INT,IntMeDiff>(home, Int::ME_INT_VAL);
         }
       }
-      SupportDemon(Space* home, Propagator* p, bool share, SupportDemon& d) 
-        : IntUnaryViewDemon<View>(home, p, share, d), pp(p), pos(d.pos) {}
-      Demon *copy(Space *home, Propagator* p, bool share) {
-        return new (home) SupportDemon(home, p, share, *this); 
+      SupportAdvisor(Space* home, Propagator* p, bool share, SupportAdvisor& d) 
+        : IntUnaryViewAdvisor<View>(home, p, share, d), pp(p), pos(d.pos) {}
+      Advisor *copy(Space *home, Propagator* p, bool share) {
+        return new (home) SupportAdvisor(home, p, share, *this); 
       }
       size_t dispose(Space* home) {
-        (void) IntUnaryViewDemon<View>::dispose(home);
+        (void) IntUnaryViewAdvisor<View>::dispose(home);
         return sizeof(*this);
       }
     private:
@@ -203,7 +203,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     };
     
   public:
-    typedef DynamicDemonCollection<SupportDemon> DC;
+    typedef DynamicAdvisorCollection<SupportAdvisor> DC;
   private:
     DC dc;
   };

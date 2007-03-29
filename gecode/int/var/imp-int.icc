@@ -342,9 +342,9 @@ namespace Gecode { namespace Int {
       return ME_INT_NONE;
     dom.min(n); dom.max(n);
     notify(home,ME_INT_VAL);
-#if GECODE_USE_DEMONS
-    if(!demons(home,ME_INT_VAL)) return ME_INT_FAILED;
-#endif /* GECODE_USE_DEMONS */
+#if GECODE_USE_ADVISORS
+    if(!advisors(home,ME_INT_VAL)) return ME_INT_FAILED;
+#endif /* GECODE_USE_ADVISORS */
     if (!range() && eq_full(home))
       return ME_INT_FAILED;
     return ME_INT_VAL;
@@ -358,9 +358,9 @@ namespace Gecode { namespace Int {
       return ME_INT_NONE;
     dom.min(n); dom.max(n);
     notify(home,ME_INT_VAL);
-#if GECODE_USE_DEMONS
-    if(!demons(home,ME_INT_VAL)) return ME_INT_FAILED;
-#endif /* GECODE_USE_DEMONS */
+#if GECODE_USE_ADVISORS
+    if(!advisors(home,ME_INT_VAL)) return ME_INT_FAILED;
+#endif /* GECODE_USE_ADVISORS */
     if (!range() && eq_full(home))
       return ME_INT_FAILED;
     return ME_INT_VAL;
@@ -407,9 +407,9 @@ namespace Gecode { namespace Int {
         return ME_INT_NONE;
       if (min0 == max0) {
         notify(home,ME_INT_VAL);
-#if GECODE_USE_DEMONS
-        if (!demons(home,ME_INT_VAL)) return ME_GEN_FAILED;
-#endif /* GECODE_USE_DEMONS */
+#if GECODE_USE_ADVISORS
+        if (!advisors(home,ME_INT_VAL)) return ME_GEN_FAILED;
+#endif /* GECODE_USE_ADVISORS */
         return ME_INT_VAL;
       }
     } else {
@@ -435,16 +435,16 @@ namespace Gecode { namespace Int {
       holes = width() - s;
       if ((min0 == min1) && (max0 == max1)) {
         notify(home,ME_INT_DOM);
-#if GECODE_USE_DEMONS
-        if (!demons(home,ME_INT_DOM)) return ME_GEN_FAILED;
-#endif /* GECODE_USE_DEMONS */
+#if GECODE_USE_ADVISORS
+        if (!advisors(home,ME_INT_DOM)) return ME_GEN_FAILED;
+#endif /* GECODE_USE_ADVISORS */
         return ME_INT_DOM;
       }
     }
     notify(home,ME_INT_BND);
-#if GECODE_USE_DEMONS
-    if (!demons(home,ME_INT_BND)) return ME_GEN_FAILED;
-#endif /* GECODE_USE_DEMONS */
+#if GECODE_USE_ADVISORS
+    if (!advisors(home,ME_INT_BND)) return ME_GEN_FAILED;
+#endif /* GECODE_USE_ADVISORS */
     return ME_INT_BND;
   }
 

@@ -20,7 +20,7 @@
  *
  */
 
-#if GECODE_USE_DEMONS
+#if GECODE_USE_ADVISORS
 
 #include "gecode/support/bitset.hh"
 
@@ -47,7 +47,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
 
     for (int i = x.size(); i--; ) {
-      SupportDemon *d = new (home) SupportDemon(home, this, x[i], i);
+      SupportAdvisor *d = new (home) SupportAdvisor(home, this, x[i], i);
       dc.add(home, this, d);
     }
   }
@@ -283,11 +283,11 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 
   // 
-  // Demon proper
+  // Advisor proper
   //
   template <class View>
   forceinline ExecStatus
-  Incremental<View>::SupportDemon::_propagate(Space *home, ModEvent me, 
+  Incremental<View>::SupportAdvisor::_propagate(Space *home, ModEvent me, 
                                               int lo, int hi) {
     Incremental<View>* p = static_cast<Incremental<View>*>(pp.p());
 

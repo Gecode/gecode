@@ -183,12 +183,12 @@ ModEvents:	VAL, BND, DOM
    * ME_INT_BND, or ME_INT_DOM.
    */
 [PropCond]
-Name:           DEMON
+Name:           ADVISOR
 ModEvents:      
   /**
-   * \brief Propagation condition for demons.
+   * \brief Propagation condition for advisors.
    *
-   * The subscriber must be a demon, and will be run on all domain changes.
+   * The subscriber must be a advisor, and will be run on all domain changes.
    */
 [PropCondFooter]
   //@}

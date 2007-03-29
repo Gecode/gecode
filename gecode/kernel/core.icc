@@ -169,11 +169,11 @@ namespace Gecode {
 
 
   /*
-   * Demons
+   * Advisors
    *
    */
-#if GECODE_USE_DEMONS
-  class Demon;
+#if GECODE_USE_ADVISORS
+  class Advisor;
   class PropagatorPointer;
   /// This class encapsulates a subscriber-reference.
   class Subscriber {
@@ -184,14 +184,14 @@ namespace Gecode {
       assert(p);
       v = reinterpret_cast<ptrdiff_t>(p);
     }
-    Subscriber(Demon *d) {
-      assert(sizeof(ptrdiff_t) >= sizeof(Demon*));
+    Subscriber(Advisor *d) {
+      assert(sizeof(ptrdiff_t) >= sizeof(Advisor*));
       assert(d);
       v = reinterpret_cast<ptrdiff_t>(d);
       v |= 1;
     }
-    /// Returns if this subscriber was constructed from a Demon.
-    bool is_demon() { 
+    /// Returns if this subscriber was constructed from a Advisor.
+    bool is_advisor() { 
       assert(v > 1);
       return v & 1;
     }
@@ -202,18 +202,18 @@ namespace Gecode {
      */
     Propagator *p() {
       assert(v > 1);
-      assert(!is_demon());
+      assert(!is_advisor());
       return reinterpret_cast<Propagator*>(v);
     }
     /**
-     * Return the Demon pointer stored.
+     * Return the Advisor pointer stored.
      *
-     * \pre this must have been constructed from a Demon pointer.
+     * \pre this must have been constructed from a Advisor pointer.
      */
-    Demon *d() {
+    Advisor *d() {
       assert(v > 1);
-      assert(is_demon());
-      return reinterpret_cast<Demon*>(v&~1);
+      assert(is_advisor());
+      return reinterpret_cast<Advisor*>(v&~1);
     }
 
     /** Return the forward pointer.
@@ -221,7 +221,7 @@ namespace Gecode {
     Subscriber prev(void);
     /** Set the forward pointer.
      *
-     * \pre \a f must match demons status of this
+     * \pre \a f must match advisors status of this
      */
     void prev(Subscriber f);
     
@@ -231,10 +231,10 @@ namespace Gecode {
 
   /// This is the type of a subscriber
   typedef Subscriber SubscriberType;
-#else /* GECODE_USE_DEMONS == 0 */
+#else /* GECODE_USE_ADVISORS == 0 */
   /// This is the type of a subscriber
   typedef Propagator* SubscriberType;
-#endif /* GECODE_USE_DEMONS */
+#endif /* GECODE_USE_ADVISORS */
 
 
   /*
@@ -350,15 +350,15 @@ namespace Gecode {
       /// Store the forwarding pointer during copying
       Variable* fwd;
     } u;
-#ifdef GECODE_USE_DEMONS
-    // In the case of demons in the system, we must allow access to
+#ifdef GECODE_USE_ADVISORS
+    // In the case of advisors in the system, we must allow access to
     // the index structure to subclasses.
     // This is unfortunate, but hard to overcome, since 
-    // variable-type specific processing for the demons is needed.
+    // variable-type specific processing for the advisors is needed.
   protected:
 #endif
     SubscriberType* idx[PC+2]; ///< Stores where entries start (idx[pc]}
-#ifdef GECODE_USE_DEMONS
+#ifdef GECODE_USE_ADVISORS
   private:
 #endif
 
@@ -561,7 +561,7 @@ namespace Gecode {
     friend class Propagator;
     friend class Branching;
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
-#if GECODE_USE_DEMONS
+#if GECODE_USE_ADVISORS
     friend class Subscriber;
     friend class PropagatorPointer;
 #endif
@@ -671,9 +671,9 @@ namespace Gecode {
     friend ExecStatus ES_SUBSUMED(Propagator*, Space*);
     friend ExecStatus ES_FIX_PARTIAL(Propagator*, PropModEvent);
     friend ExecStatus ES_NOFIX_PARTIAL(Propagator*, PropModEvent);
-#if GECODE_USE_DEMONS
+#if GECODE_USE_ADVISORS
     friend class Subscriber;
-    friend class Demon;
+    friend class Advisor;
     friend class PropagatorPointer;
 #endif
   private:
@@ -698,41 +698,41 @@ namespace Gecode {
   };
 
 
-#if GECODE_USE_DEMONS
+#if GECODE_USE_ADVISORS
   /**
-   * \brief %Demon \a p is subsumed
+   * \brief %Advisor \a p is subsumed
    *
-   * The size of the demon is \a s.
+   * The size of the advisor is \a s.
    *
-   * Note that the demon must be subsumed and also disposed. So
+   * Note that the advisor must be subsumed and also disposed. So
    * in general, there should be code such as 
    * \code return ES_SUBSUMED(this,dispose(home)) \endcode.
    * 
-   * However, in case the demon has nothing to dispose (all its
+   * However, in case the advisor has nothing to dispose (all its
    * views are assigned and no external resources) it is sufficient
    * to do 
    * \code return ES_SUBSUMED(this,sizeof(*this)) \endcode.
    *
-   * \warning Has a side-effect on the demon. Use only directly with
+   * \warning Has a side-effect on the advisor. Use only directly with
    *          returning from propagation.
    * \ingroup TaskActorStatus
    */
-  ExecStatus ES_SUBSUMED(Demon* d, size_t s);
+  ExecStatus ES_SUBSUMED(Advisor* d, size_t s);
   /**
-   * \brief %Demon \a p is subsumed
+   * \brief %Advisor \a p is subsumed
    *
-   * First disposes the demon and then returns subsumtion.
+   * First disposes the advisor and then returns subsumtion.
    *
-   * \warning Has a side-effect on the demon. Use only directly with
+   * \warning Has a side-effect on the advisor. Use only directly with
    *          returning from propagation.
    * \ingroup TaskActorStatus
    */
-  ExecStatus ES_SUBSUMED(Demon* d, Space* home);
+  ExecStatus ES_SUBSUMED(Advisor* d, Space* home);
 
   /** \brief Propagator maintainer
    */
   class PropagatorPointer {
-    friend class Demon;
+    friend class Advisor;
   protected:
     Propagator* _p;
   public:
@@ -763,50 +763,50 @@ namespace Gecode {
 
 
   /**
-   * \brief Base-class for demons
+   * \brief Base-class for advisors
    *
-   * Demons are subclassed for each kind of variable that they
+   * Advisors are subclassed for each kind of variable that they
    * support. The subclasses define the kinds of propagate-methods
    * that might be called.
    *
    * \ingroup TaskActor
    */
-  class Demon {
+  class Advisor {
     friend class Subscriber;
-    friend ExecStatus ES_SUBSUMED(Demon*, size_t);
-    friend ExecStatus ES_SUBSUMED(Demon*, Space*);
-    Demon* _forward; ///< Forward pointer for cloning.
+    friend ExecStatus ES_SUBSUMED(Advisor*, size_t);
+    friend ExecStatus ES_SUBSUMED(Advisor*, Space*);
+    Advisor* _forward; ///< Forward pointer for cloning.
   protected:
     /// Access forward pointer
-    Demon* forward(void)   { return _forward;}
+    Advisor* forward(void)   { return _forward;}
     // Set disposed flag and size
     void disposed(bool v, size_t size) { 
-      _forward = reinterpret_cast<Demon*>((size << 1) | 1); 
+      _forward = reinterpret_cast<Advisor*>((size << 1) | 1); 
     }
   public:
     /// Constructor for creation
     GECODE_KERNEL_EXPORT
-    Demon(Space*, Propagator*) : _forward(NULL) {}
+    Advisor(Space*, Propagator*) : _forward(NULL) {}
     /// Copying constructor
     GECODE_KERNEL_EXPORT
-    Demon(Space*, Propagator*, bool, Demon&) : _forward(NULL) {}
+    Advisor(Space*, Propagator*, bool, Advisor&) : _forward(NULL) {}
 
 
     /// Create copy
-    virtual Demon* copy(Space* home, Propagator *p, bool share) = 0;
+    virtual Advisor* copy(Space* home, Propagator *p, bool share) = 0;
 
     
-    /// Is this Demon disposed?
+    /// Is this Advisor disposed?
     bool disposed()  { 
       return reinterpret_cast<ptrdiff_t>(_forward)&1 == 1;
     }
-    // Get size of disposed demon
+    // Get size of disposed advisor
     size_t size() { 
       assert(disposed());
       return reinterpret_cast<ptrdiff_t>(_forward)>>1;
     }
     /// Set forward pointer
-    void forward(Demon* f) { 
+    void forward(Advisor* f) { 
       _forward = f;   
     }
 
@@ -829,12 +829,12 @@ namespace Gecode {
 #ifdef __GNUC__
   public:
     /// To avoid warnings from GCC
-    virtual ~Demon(void) {}
+    virtual ~Advisor(void) {}
     /// Not used (uses dispose instead)
     static void  operator delete(void* p, size_t s);
 #endif
   };
-#endif /* GECODE_USE_DEMONS */
+#endif /* GECODE_USE_ADVISORS */
 
 
   /*
@@ -952,7 +952,7 @@ namespace Gecode {
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
     template <VarTypeId VTI, PropCond PC, class MED> friend class VarTypeProcessor;
     template<class Object> friend class SharedHandle;
-#if GECODE_USE_DEMONS
+#if GECODE_USE_ADVISORS
     friend class PropagatorPointer;
 #endif
   private:
@@ -1447,20 +1447,20 @@ namespace Gecode {
 
 
   /*
-   * Demon class members
+   * Advisor class members
    *
    */
-#if GECODE_USE_DEMONS
+#if GECODE_USE_ADVISORS
   /*
    * Subsumption
    */
   forceinline ExecStatus
-  ES_SUBSUMED(Demon* d, size_t s) {
+  ES_SUBSUMED(Advisor* d, size_t s) {
     d->disposed(true, s);
     return __ES_SUBSUMED;
   }
   forceinline ExecStatus
-  ES_SUBSUMED(Demon* d, Space* home) {
+  ES_SUBSUMED(Advisor* d, Space* home) {
     d->dispose(home);
     // dispose will set the size correctly
     return __ES_SUBSUMED;
@@ -1473,7 +1473,7 @@ namespace Gecode {
   forceinline Subscriber
   Subscriber::prev(void) {
     assert(v > 1);
-    if (is_demon())
+    if (is_advisor())
       return d()->forward();
     else
       return static_cast<Propagator*>(p()->prev());
@@ -1481,7 +1481,7 @@ namespace Gecode {
   forceinline void
   Subscriber::prev(Subscriber f) {
     assert(v > 1);
-    if (is_demon())
+    if (is_advisor())
       d()->forward(f.d());
     else
       p()->prev(f.p());
@@ -1505,20 +1505,20 @@ namespace Gecode {
 
 
   /*
-   * Demons
+   * Advisors
    *
    */
   forceinline void
-  Demon::operator delete(void*, size_t) {}
+  Advisor::operator delete(void*, size_t) {}
   forceinline void
-  Demon::operator delete(void*,Space*) {}
+  Advisor::operator delete(void*,Space*) {}
   forceinline void*
-  Demon::operator new(size_t s, Space* home) {
+  Advisor::operator new(size_t s, Space* home) {
     return home->alloc(s);
   }
 
   forceinline size_t
-  Demon::dispose(Space*) {
+  Advisor::dispose(Space*) {
     disposed(true, sizeof(*this));
     return sizeof(*this);
   }
@@ -1928,8 +1928,8 @@ namespace Gecode {
                                   bool assigned, ModEvent me, bool process) {
     if (assigned) {
       // Do not subscribe, just process the propagator
-#if GECODE_USE_DEMONS
-      if (!p.is_demon())
+#if GECODE_USE_ADVISORS
+      if (!p.is_advisor())
         if (process)
           home->process<VTI,MED>(p.p());
 #else
@@ -1948,8 +1948,8 @@ namespace Gecode {
         *(idx[i]) = *(--idx[i+1]);
       *idx[pc]=p;
       // Process propagator
-#if GECODE_USE_DEMONS
-      if (!p.is_demon())
+#if GECODE_USE_ADVISORS
+      if (!p.is_advisor())
         if (process && (pc != PC_GEN_ASSIGNED))
           home->process<VTI,MED>(p.p(),me);
 #else
@@ -1962,8 +1962,8 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::propagate(Space* home, SubscriberType p, ModEvent me) {
-#if GECODE_USE_DEMONS
-    if (!p.is_demon())
+#if GECODE_USE_ADVISORS
+    if (!p.is_advisor())
       home->process<VTI,MED>(p.p(),me);
 #else
       home->process<VTI,MED>(p,me);
@@ -2081,7 +2081,7 @@ namespace Gecode {
     ptrdiff_t o = t - f;
     for (PropCond i = PC+1; i>0; i--)
       idx[i] = x->idx[i]+o;
-#if GECODE_USE_DEMONS
+#if GECODE_USE_ADVISORS
     while ((n-4) >= 0) {
       n -= 4;
       t[0] = static_cast<SubscriberType>(f[0].prev());
@@ -2149,7 +2149,7 @@ namespace Gecode {
     SubscriberType* b = idx[pc1];
     SubscriberType* p = idx[pc2+1];
     while (p-- > b)
-#if GECODE_USE_DEMONS
+#if GECODE_USE_ADVISORS
       home->process<VTI,MED>(p->p(),me);
 #else
       home->process<VTI,MED>(*p,me);
@@ -2168,8 +2168,8 @@ namespace Gecode {
     unsigned int n = free() + (p-b);
     SubscriberType* s = p-n;
     while (p-- > b)
-#if GECODE_USE_DEMONS
-      if (!p->is_demon())
+#if GECODE_USE_ADVISORS
+      if (!p->is_advisor())
         home->process<VTI,MED>(p->p());
 #else
       home->process<VTI,MED>(*p);

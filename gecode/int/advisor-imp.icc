@@ -22,9 +22,9 @@
 
 namespace Gecode {
   /**
-   * \defgroup TaskDemonInt Integer demons
+   * \defgroup TaskAdvisorInt Integer advisors
    *
-   * \ingroup TaskDemon
+   * \ingroup TaskAdvisor
    */
 
   //@{
@@ -91,22 +91,22 @@ namespace Gecode {
   }
 
   forceinline int 
-  IntDemon::_mod(int val) {
+  IntAdvisor::_mod(int val) {
     return val;
   }
 
   
-  /** \brief Base demonclass for demons that subscribe to views of type \a View. 
+  /** \brief Base advisorclass for advisors that subscribe to views of type \a View. 
    */
   template <class View>
-  class IntViewDemon : public IntDemon {
+  class IntViewAdvisor : public IntAdvisor {
   public:
-    IntViewDemon(Space* home, Propagator* p) : IntDemon(home,p) {}
-    IntViewDemon(Space* home, Propagator* p, bool share, IntViewDemon<View>& d) 
-      : IntDemon(home, p, share, d) {}
+    IntViewAdvisor(Space* home, Propagator* p) : IntAdvisor(home,p) {}
+    IntViewAdvisor(Space* home, Propagator* p, bool share, IntViewAdvisor<View>& d) 
+      : IntAdvisor(home, p, share, d) {}
 
     virtual size_t dispose(Space* home) {
-      (void) IntDemon::dispose(home);
+      (void) IntAdvisor::dispose(home);
       return sizeof(*this);
     }
   private:
@@ -116,28 +116,28 @@ namespace Gecode {
   };
 
 
-  /** \brief Base demonclass for unary demons that subscribe to
+  /** \brief Base advisorclass for unary advisors that subscribe to
    * one view (possibly carrying state).
    *
    * The primary kind of view that carries state is the OffsetView and ScaleView.
    */
-  template <class View, PropCond dc = Int::PC_INT_DEMON>
-  class IntUnaryViewDemon : public IntViewDemon<View> {
+  template <class View, PropCond dc = Int::PC_INT_ADVISOR>
+  class IntUnaryViewAdvisor : public IntViewAdvisor<View> {
   protected:
     View _v;
   public:
-    IntUnaryViewDemon(Space* home, Propagator* p, View v) 
-      : IntViewDemon<View>(home,p), _v(v) {
+    IntUnaryViewAdvisor(Space* home, Propagator* p, View v) 
+      : IntViewAdvisor<View>(home,p), _v(v) {
       _v.subscribe(home, this, dc, false);
     }
-    IntUnaryViewDemon(Space* home, Propagator* p, 
-                      bool share, IntUnaryViewDemon<View,dc>& d) 
-      : IntViewDemon<View>(home, p, share, d) {
+    IntUnaryViewAdvisor(Space* home, Propagator* p, 
+                      bool share, IntUnaryViewAdvisor<View,dc>& d) 
+      : IntViewAdvisor<View>(home, p, share, d) {
       _v.update(home, share, d._v);
     }
     virtual size_t dispose(Space* home) {
       _v.cancel(home, this, dc);
-      (void) IntViewDemon<View>::dispose(home);
+      (void) IntViewAdvisor<View>::dispose(home);
       return sizeof(*this);
     }
   private:

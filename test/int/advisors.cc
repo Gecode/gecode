@@ -27,29 +27,29 @@
 #include <cmath>
 #include <algorithm>
 
-#if GECODE_USE_DEMONS
+#if GECODE_USE_ADVISORS
 
 namespace {
   IntSet s(-5,5);
 
   class Eq : public Propagator {
-    class BndDemon : public IntUnaryViewDemon<IntView> {
+    class BndAdvisor : public IntUnaryViewAdvisor<IntView> {
       PropagatorPointer pp;
-      using IntUnaryViewDemon<IntView>::_v;
+      using IntUnaryViewAdvisor<IntView>::_v;
     public:
-      BndDemon(Space* home, Propagator* p, IntView v) 
-        : IntUnaryViewDemon<IntView>(home,p,v), pp(p) {
+      BndAdvisor(Space* home, Propagator* p, IntView v) 
+        : IntUnaryViewAdvisor<IntView>(home,p,v), pp(p) {
         if (_v.assigned()) {
           pp.schedule<VTI_INT,IntMeDiff>(home, Int::ME_INT_VAL);
         }
       }
-      BndDemon(Space* home, Propagator* p, bool share, BndDemon& d) 
-        : IntUnaryViewDemon<IntView>(home, p, share, d), pp(p) {}
-      Demon *copy(Space *home, Propagator* p, bool share) {
-        return new (home) BndDemon(home, p, share, *this); 
+      BndAdvisor(Space* home, Propagator* p, bool share, BndAdvisor& d) 
+        : IntUnaryViewAdvisor<IntView>(home, p, share, d), pp(p) {}
+      Advisor *copy(Space *home, Propagator* p, bool share) {
+        return new (home) BndAdvisor(home, p, share, *this); 
       }
       size_t dispose(Space* home) {
-        (void) IntUnaryViewDemon<IntView>::dispose(home);
+        (void) IntUnaryViewAdvisor<IntView>::dispose(home);
         return sizeof(*this);
       }
     private:
@@ -63,7 +63,7 @@ namespace {
     };
     
   public:
-    typedef DynamicDemonCollection<BndDemon> DC;
+    typedef DynamicAdvisorCollection<BndAdvisor> DC;
   private:
     DC dc;
   protected:
@@ -81,26 +81,26 @@ namespace {
       : Propagator(home),
         dc(home, this, 2),
         x0(_x0), x1(_x1) {
-      BndDemon *bd0 = new (home) BndDemon(home, this, x0);
-      BndDemon *bd1 = new (home) BndDemon(home, this, x1);
+      BndAdvisor *bd0 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor *bd1 = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd0);
       dc.add(home, this, bd1);
 
-      BndDemon *bd2 = new (home) BndDemon(home, this, x0);
-      BndDemon *bd3 = new (home) BndDemon(home, this, x1);
+      BndAdvisor *bd2 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor *bd3 = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd2);
       dc.add(home, this, bd3);
 
 
-      BndDemon *bd4 = new (home) BndDemon(home, this, x0);
-      BndDemon *bd5 = new (home) BndDemon(home, this, x1);
+      BndAdvisor *bd4 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor *bd5 = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd4);
       dc.add(home, this, bd5);
 
       bd2->dispose(home);
 
-      BndDemon *bd6 = new (home) BndDemon(home, this, x0);
-      BndDemon *bd7 = new (home) BndDemon(home, this, x1);
+      BndAdvisor *bd6 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor *bd7 = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd6);
       dc.add(home, this, bd7);
 
@@ -109,14 +109,14 @@ namespace {
       bd3->dispose(home);
       bd7->dispose(home);
 
-      BndDemon *bd8 = new (home) BndDemon(home, this, x0);
-      BndDemon *bd9 = new (home) BndDemon(home, this, x1);
-      BndDemon *bda = new (home) BndDemon(home, this, x0);
-      BndDemon *bdb = new (home) BndDemon(home, this, x1);
-      BndDemon *bdc = new (home) BndDemon(home, this, x0);
-      BndDemon *bdd = new (home) BndDemon(home, this, x1);
-      BndDemon *bde = new (home) BndDemon(home, this, x0);
-      BndDemon *bdf = new (home) BndDemon(home, this, x1);
+      BndAdvisor *bd8 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor *bd9 = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor *bda = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor *bdb = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor *bdc = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor *bdd = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor *bde = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor *bdf = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd8);
       dc.add(home, this, bd9);
       dc.add(home, this, bda);
@@ -173,10 +173,10 @@ namespace {
   };
 }
 
-class BasicIntDemon : public IntTest {
+class BasicIntAdvisor : public IntTest {
 public:
-  BasicIntDemon(void)
-    : IntTest("Int::Demon",2,s) {}
+  BasicIntAdvisor(void)
+    : IntTest("Int::Advisor",2,s) {}
   virtual bool solution(const Assignment& x) const {
     return x[0] == x[1];
   }
@@ -187,7 +187,7 @@ public:
 };
 
 namespace {
-  BasicIntDemon _basicintdemon;
+  BasicIntAdvisor _basicintadvisor;
 }
 
 
@@ -198,24 +198,24 @@ namespace {
 
 
   class BoolEq : public Propagator {
-    class BndDemon : public IntUnaryViewDemon<BoolView, Int::PC_BOOL_DEMON> {
+    class BndAdvisor : public IntUnaryViewAdvisor<BoolView, Int::PC_BOOL_ADVISOR> {
       PropagatorPointer pp;
-      using IntUnaryViewDemon<BoolView, Int::PC_BOOL_DEMON>::_v;
+      using IntUnaryViewAdvisor<BoolView, Int::PC_BOOL_ADVISOR>::_v;
     public:
-      BndDemon(Space* home, Propagator* p, BoolView v) 
-        : IntUnaryViewDemon<BoolView, Int::PC_BOOL_DEMON>(home,p,v), pp(p) {
+      BndAdvisor(Space* home, Propagator* p, BoolView v) 
+        : IntUnaryViewAdvisor<BoolView, Int::PC_BOOL_ADVISOR>(home,p,v), pp(p) {
         if (_v.assigned()) {
           pp.schedule<VTI_BOOL,BoolMeDiff>(home, Int::ME_BOOL_VAL);
         }
       }
-      BndDemon(Space* home, Propagator* p, bool share, BndDemon& d) 
-        : IntUnaryViewDemon<BoolView, Int::PC_BOOL_DEMON>(home, p, share, d), 
+      BndAdvisor(Space* home, Propagator* p, bool share, BndAdvisor& d) 
+        : IntUnaryViewAdvisor<BoolView, Int::PC_BOOL_ADVISOR>(home, p, share, d), 
           pp(p) {}
-      Demon *copy(Space *home, Propagator* p, bool share) {
-        return new (home) BndDemon(home, p, share, *this); 
+      Advisor *copy(Space *home, Propagator* p, bool share) {
+        return new (home) BndAdvisor(home, p, share, *this); 
       }
       size_t dispose(Space* home) {
-        (void) IntUnaryViewDemon<BoolView, Int::PC_BOOL_DEMON>::dispose(home);
+        (void) IntUnaryViewAdvisor<BoolView, Int::PC_BOOL_ADVISOR>::dispose(home);
         return sizeof(*this);
       }
     private:
@@ -226,7 +226,7 @@ namespace {
     };
     
   public:
-    typedef DynamicDemonCollection<BndDemon> DC;
+    typedef DynamicAdvisorCollection<BndAdvisor> DC;
   private:
     DC dc;
   protected:
@@ -244,26 +244,26 @@ namespace {
       : Propagator(home),
         dc(home, this, 2),
         x0(_x0), x1(_x1) {
-      BndDemon *bd0 = new (home) BndDemon(home, this, x0);
-      BndDemon *bd1 = new (home) BndDemon(home, this, x1);
+      BndAdvisor *bd0 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor *bd1 = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd0);
       dc.add(home, this, bd1);
 
-      BndDemon *bd2 = new (home) BndDemon(home, this, x0);
-      BndDemon *bd3 = new (home) BndDemon(home, this, x1);
+      BndAdvisor *bd2 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor *bd3 = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd2);
       dc.add(home, this, bd3);
 
 
-      BndDemon *bd4 = new (home) BndDemon(home, this, x0);
-      BndDemon *bd5 = new (home) BndDemon(home, this, x1);
+      BndAdvisor *bd4 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor *bd5 = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd4);
       dc.add(home, this, bd5);
 
       bd2->dispose(home);
 
-      BndDemon *bd6 = new (home) BndDemon(home, this, x0);
-      BndDemon *bd7 = new (home) BndDemon(home, this, x1);
+      BndAdvisor *bd6 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor *bd7 = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd6);
       dc.add(home, this, bd7);
 
@@ -272,14 +272,14 @@ namespace {
       bd3->dispose(home);
       bd7->dispose(home);
 
-      BndDemon *bd8 = new (home) BndDemon(home, this, x0);
-      BndDemon *bd9 = new (home) BndDemon(home, this, x1);
-      BndDemon *bda = new (home) BndDemon(home, this, x0);
-      BndDemon *bdb = new (home) BndDemon(home, this, x1);
-      BndDemon *bdc = new (home) BndDemon(home, this, x0);
-      BndDemon *bdd = new (home) BndDemon(home, this, x1);
-      BndDemon *bde = new (home) BndDemon(home, this, x0);
-      BndDemon *bdf = new (home) BndDemon(home, this, x1);
+      BndAdvisor *bd8 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor *bd9 = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor *bda = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor *bdb = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor *bdc = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor *bdd = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor *bde = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor *bdf = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd8);
       dc.add(home, this, bd9);
       dc.add(home, this, bda);
@@ -323,10 +323,10 @@ namespace {
   };
 }
 
-class BasicBoolDemon : public IntTest {
+class BasicBoolAdvisor : public IntTest {
 public:
-  BasicBoolDemon(void)
-    : IntTest("Bool::Demon",2,bs) {}
+  BasicBoolAdvisor(void)
+    : IntTest("Bool::Advisor",2,bs) {}
   virtual bool solution(const Assignment& x) const {
     return x[0] == x[1];
   }
@@ -337,7 +337,7 @@ public:
 };
 
 namespace {
-  BasicBoolDemon _basicbooldemon;
+  BasicBoolAdvisor _basicbooladvisor;
 }
 
 #endif

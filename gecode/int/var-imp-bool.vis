@@ -141,12 +141,12 @@ ModEvents:	VAL
    * update operation on \a x returns the modification event ME_BOOL_VAL.
    */
 [PropCond]
-Name:           DEMON
+Name:           ADVISOR
 ModEvents:      
   /**
-   * \brief Propagation condition for demons.
+   * \brief Propagation condition for advisors.
    *
-   * The subscriber must be a demon, and will be run on all domain changes.
+   * The subscriber must be a advisor, and will be run on all domain changes.
    */
 [PropCondFooter]
   //@}

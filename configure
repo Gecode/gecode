@@ -1315,7 +1315,7 @@ Optional Features:
   --enable-leak-debug     build with support for finding memory leaks
                           [default=no]
   --enable-audit          build with auditing code [default=no]
-  --enable-demons         build with demons [default=no]
+  --enable-advisors       build with advisors [default=no]
   --enable-gcc-visibility use gcc visibility attributes [default=no]
   --enable-profile        build with profiling information [default=no]
   --enable-doc-dot        enable graphs in documentation [default=yes]
@@ -4131,23 +4131,23 @@ _ACEOF
 echo "${ECHO_T}no" >&6; }
 	 fi
 
-# Check whether --enable-demons was given.
-if test "${enable_demons+set}" = set; then
-  enableval=$enable_demons;
+# Check whether --enable-advisors was given.
+if test "${enable_advisors+set}" = set; then
+  enableval=$enable_advisors;
 fi
 
-	 { echo "$as_me:$LINENO: checking whether to build with demons" >&5
-echo $ECHO_N "checking whether to build with demons... $ECHO_C" >&6; }
-	 if test "${enable_demons:-no}" = "yes"; then
+	 { echo "$as_me:$LINENO: checking whether to build with advisors" >&5
+echo $ECHO_N "checking whether to build with advisors... $ECHO_C" >&6; }
+	 if test "${enable_advisors:-no}" = "yes"; then
 	    cat >>confdefs.h <<\_ACEOF
-#define GECODE_USE_DEMONS 1
+#define GECODE_USE_ADVISORS 1
 _ACEOF
 
 	    { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
 	 else
 	    cat >>confdefs.h <<\_ACEOF
-#define GECODE_USE_DEMONS 0
+#define GECODE_USE_ADVISORS 0
 _ACEOF
 
 	    { echo "$as_me:$LINENO: result: no" >&5

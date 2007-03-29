@@ -204,8 +204,8 @@ namespace Gecode {
      */
     forceinline void
     ConstIntView::subscribe(Space* home, SubscriberType p, PropCond,bool) {
-#if GECODE_USE_DEMONS
-      if (!p.is_demon())
+#if GECODE_USE_ADVISORS
+      if (!p.is_advisor())
         IntVarImp::propagate(home,p.p(),ME_INT_VAL);
 #else
       IntVarImp::propagate(home,p,ME_INT_VAL);

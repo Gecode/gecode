@@ -23,18 +23,18 @@
 namespace Gecode {
 
   /**
-   * \defgroup TaskDemonInt Integer demons
+   * \defgroup TaskAdvisorInt Integer advisors
    *
-   * \ingroup TaskDemon
+   * \ingroup TaskAdvisor
    */
 
   //@{
-  /** \brief Demon for integer variables.
+  /** \brief Advisor for integer variables.
    *
    * Derived classes can override the private \a _propagate method to
-   * adapt the behaviour of the Demon.
+   * adapt the behaviour of the Advisor.
    */
-  class IntDemon : public Demon {
+  class IntAdvisor : public Advisor {
   public:    
     ExecStatus propagate(Space* home, ModEvent me, int lo, int hi) {
       if (disposed())
@@ -43,12 +43,12 @@ namespace Gecode {
         return _propagate(home, me, _mod(lo), _mod(hi));
     }
 
-    IntDemon(Space* home, Propagator* p) : Demon(home,p) {}
-    IntDemon(Space* home, Propagator* p, bool share, IntDemon& d) 
-      : Demon(home, p, share, d) {}
+    IntAdvisor(Space* home, Propagator* p) : Advisor(home,p) {}
+    IntAdvisor(Space* home, Propagator* p, bool share, IntAdvisor& d) 
+      : Advisor(home, p, share, d) {}
     
     virtual size_t dispose(Space *home) {
-      (void) Demon::dispose(home);
+      (void) Advisor::dispose(home);
       return sizeof(*this);
     }
   private:

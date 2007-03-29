@@ -29,18 +29,18 @@ namespace Gecode { namespace Int {
   BoolVarImp BoolVarImp::s_zero(0);
 
   /*
-   * Demons
+   * Advisors
    *
    */
-#if GECODE_USE_DEMONS
+#if GECODE_USE_ADVISORS
   bool
-  BoolVarImp::demons(Space *home) {
-    SubscriberType* b = idx[PC_BOOL_DEMON];
-    SubscriberType* p = idx[PC_BOOL_DEMON+1];
+  BoolVarImp::advisors(Space *home) {
+    SubscriberType* b = idx[PC_BOOL_ADVISOR];
+    SubscriberType* p = idx[PC_BOOL_ADVISOR+1];
     ModEvent me = dom==NONE ? ME_BOOL_NONE : ME_BOOL_VAL;
     int lo = dom==ONE, hi = dom==ZERO;
     while (p-- > b) {
-      switch (static_cast<IntDemon*>(p->d())
+      switch (static_cast<IntAdvisor*>(p->d())
               ->propagate(home,me,lo,hi)) {
       case __ES_SUBSUMED:
         break;
