@@ -292,6 +292,7 @@ namespace Gecode { namespace Int {
      * that the values removed are not known. 
      *
      */ 
+    GECODE_INT_EXPORT
     bool demons(Space *home, ModEvent me, int lo = 1, int hi = -1);
 #endif
   };
