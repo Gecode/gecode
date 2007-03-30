@@ -563,6 +563,7 @@ namespace Gecode { namespace Int {
      *
      * The advisors associated to this variable will be executed.
      */ 
+    GECODE_INT_EXPORT
     bool advisors(Space *home);
 #endif
   };
