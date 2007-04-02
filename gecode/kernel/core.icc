@@ -174,7 +174,7 @@ namespace Gecode {
    */
 #if GECODE_USE_ADVISORS
   class Advisor;
-  class PropagatorPointer;
+
   /// This class encapsulates a subscriber-reference.
   class Subscriber {
     ptrdiff_t v;
@@ -565,7 +565,7 @@ namespace Gecode {
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
 #if GECODE_USE_ADVISORS
     friend class Subscriber;
-    friend class PropagatorPointer;
+    friend class Advisor;
 #endif
   public:
     /// Create copy
@@ -676,7 +676,6 @@ namespace Gecode {
 #if GECODE_USE_ADVISORS
     friend class Subscriber;
     friend class Advisor;
-    friend class PropagatorPointer;
 #endif
   private:
     union {
@@ -731,44 +730,12 @@ namespace Gecode {
    */
   ExecStatus ES_SUBSUMED(Advisor* d, Space* home);
 
-  /** \brief Propagator maintainer
-   */
-  class PropagatorPointer {
-    friend class Advisor;
-  protected:
-    Propagator* _p;
-  public:
-    /// Create propagator pointer.
-    PropagatorPointer(Propagator *p) : _p(p) {}
-
-    /** \brief Schedule propagator for execution.
-     *
-     * The propagator is scheduled for exectuion with a ModEvent of \a
-     * me.
-     *
-     * \warning If the propagator is currently propagating, then
-     *scheduling it will not make the propagator run again.
-     */
-    template <VarTypeId VTI, class MED>
-    void schedule(Space* home, ModEvent me);
-
-    /** \brief Subsume propagator.
-     *
-     * \warning If the propagator is currently propagating, then
-     *running subsume on it will crash the system.
-     */
-    void subsume(Space* home);
-
-    /// Get propagator pointer.
-    Propagator* p() { return _p; }
-  };
-
 
   /**
    * \brief Base-class for advisors
    *
    * Advisors are subclassed for each kind of variable that they
-   * support. The subclasses define the kinds of propagate-methods
+   * support. The subclasses define the kinds of advise-methods
    * that might be called.
    *
    * \ingroup TaskActor
@@ -778,26 +745,35 @@ namespace Gecode {
     friend ExecStatus ES_SUBSUMED(Advisor*, size_t);
     friend ExecStatus ES_SUBSUMED(Advisor*, Space*);
     Advisor* _forward; ///< Forward pointer for cloning.
+    Propagator* _parent;
   protected:
     /// Access forward pointer
     Advisor* forward(void)   { return _forward;}
+    /// Access parent propagator
+    Propagator* parent(void) { return _parent; }
     // Set disposed flag and size
     void disposed(bool v, size_t size) { 
       _forward = reinterpret_cast<Advisor*>((size << 1) | 1); 
     }
+
+    /** \brief Subsume parent propagator.
+     *
+     * \warning If the propagator is currently propagating, then
+     *running subsume on it will crash the system.
+     */
+    void subsume(Space* home);
   public:
     /// Constructor for creation
     GECODE_KERNEL_EXPORT
-    Advisor(Space*, Propagator*) : _forward(NULL) {}
+    Advisor(Space*, Propagator* p0) : _forward(NULL), _parent(p0) {}
     /// Copying constructor
     GECODE_KERNEL_EXPORT
-    Advisor(Space*, Propagator*, bool, Advisor&) : _forward(NULL) {}
-
+    Advisor(Space*, Propagator* p0, bool, Advisor&) : _forward(NULL), _parent(p0) {}
 
     /// Create copy
     virtual Advisor* copy(Space* home, Propagator *p, bool share) = 0;
 
-    
+
     /// Is this Advisor disposed?
     bool disposed()  { 
       return reinterpret_cast<ptrdiff_t>(_forward)&1 == 1;
@@ -955,7 +931,7 @@ namespace Gecode {
     template <VarTypeId VTI, PropCond PC, class MED> friend class VarTypeProcessor;
     template<class Object> friend class SharedHandle;
 #if GECODE_USE_ADVISORS
-    friend class PropagatorPointer;
+    friend class Advisor;
 #endif
   private:
     MemoryManager   mm; ///< Performs memory management for space
@@ -1490,27 +1466,18 @@ namespace Gecode {
       p()->prev(f.p());
   }
   
-  /*
-   * Propagator pointers
-   */
-  template <VarTypeId VTI, class MED>
-  forceinline void
-  PropagatorPointer::schedule(Space* home, ModEvent me) {
-    home->process<VTI,MED>(_p, me);
-  }
-
-  forceinline void
-  PropagatorPointer::subsume(Space* home) {
-    size_t s = _p->dispose(home);
-    _p->unlink();
-    home->reuse(_p, s);
-  }
-
 
   /*
    * Advisors
    *
    */
+  forceinline void
+  Advisor::subsume(Space* home) {
+    size_t s = _parent->dispose(home);
+    _parent->unlink();
+    home->reuse(_parent, s);
+  }
+
   forceinline void
   Advisor::operator delete(void*, size_t) {}
   forceinline void

@@ -344,16 +344,15 @@ namespace Gecode { namespace Int { namespace Bool {
 
     // Advisors
     class WLAdvisor : public IntUnaryViewAdvisor<BV, PC_BOOL_ADVISOR> {
-      PropagatorPointer pp;
       using IntUnaryViewAdvisor<BV, PC_BOOL_ADVISOR>::x;
     public:
       WLAdvisor(Space* home, Propagator* p, BV v) 
-        : IntUnaryViewAdvisor<BV, PC_BOOL_ADVISOR>(home,p,v), pp(p) {
+        : IntUnaryViewAdvisor<BV, PC_BOOL_ADVISOR>(home,p,v) {
         assert(!x.assigned());
       }
       WLAdvisor(Space* home, Propagator* p, bool share, WLAdvisor& d) 
-        : IntUnaryViewAdvisor<BV, PC_BOOL_ADVISOR>(home, p, share, d), 
-          pp(p) {}
+        : IntUnaryViewAdvisor<BV, PC_BOOL_ADVISOR>(home, p, share, d)
+      {}
       Advisor *copy(Space *home, Propagator* p, bool share) {
         return new (home) WLAdvisor(home, p, share, *this); 
       }

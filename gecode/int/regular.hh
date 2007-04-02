@@ -54,29 +54,29 @@ namespace Gecode { namespace Int { namespace Regular {
     /// The views
     ViewArray<View> x;
 #ifdef GECODE_REGULAR_SCHEDULE
-    class Index : public IntAdvisor {
+    class Index : public IntViewAdvisor<View> {
     public:
-      PropagatorPointer p;
       int i;
       Index(Space* home, Propagator* p0, int i0)
-        : IntAdvisor(home,p0), p(p0), i(i0) {
+        : IntViewAdvisor<View>(home,p0), i(i0) {
       }
       Index(Space* home, Propagator* p0, bool share, Index& j)
-        : IntAdvisor(home,p0,share,j), p(p0), i(j.i) {}
+        : IntViewAdvisor<View>(home,p0,share,j), i(j.i) {}
       virtual Advisor* 
       copy(Space* home, Propagator* p, bool share) {
         return new (home) Index(home,p,share,*this);
       }
       virtual size_t 
       dispose(Space* home) {
-        Dom<View,shared>* d = static_cast<Dom<View,shared>*>(p.p());
+        Dom<View,shared>* d = static_cast<Dom<View,shared>*>
+          (Advisor::parent());
         d->x[i].cancel(home,this,PC_INT_ADVISOR);
-        (void) IntAdvisor::dispose(home);
+        (void) IntViewAdvisor<View>::dispose(home);
         return sizeof(*this);
       }
       virtual ExecStatus
       advise(Space* home, ModEvent me, int min, int max) {
-        p.schedule<VTI_INT,IntMeDiff>(home,me);
+        IntViewAdvisor<View>::schedule(home,me);
         return (me == ME_INT_VAL) ? ES_SUBSUMED(this,home) : ES_OK;
       }
     };

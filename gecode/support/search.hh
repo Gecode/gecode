@@ -33,29 +33,27 @@ namespace Gecode { namespace Support {
    * occurence of the element \a e. The order of the elements are
    * described by the ordering \a lt.
    *
-   * The array \a x must be sorted according to .
-   *
-   * If the key is not found in the array, -1 is returned.
+   * If the key is not found in the array, NULL is returned.
    *
    * Requires \code #include "gecode/support/search.hh" \endcode
    * \ingroup FuncSupport
    */
   template <class Type, class Key, class LessThan>
   forceinline Type*
-  binarysearch(Type* x, int n, const Key& e, LessThan &lt) {
+  binarysearch(Type* x, int n, const Key& key, LessThan &lt) {
     int low = 0;
     int high = n - 1;
     
     while (low <= high) {
       int mid = low + ((high - low) / 2);
       
-      if (lt(x[mid], e)) {
+      if (lt(x[mid], key)) {
         low = mid + 1;
-      } else if (lt(e, x[mid])) {
+      } else if (lt(key, x[mid])) {
         high = mid - 1;
       } else {
         if (lt(x[mid-1], x[mid]))
-          return mid; // first occurence of key found
+          return x+mid; // first occurence of key found
         high = mid;
       }
     }

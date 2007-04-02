@@ -109,6 +109,19 @@ namespace Gecode {
       (void) IntAdvisor::dispose(home);
       return sizeof(*this);
     }
+  protected:
+    /** \brief Schedule parent propagator for execution.
+     *
+     * The propagator is scheduled for exectuion with a ModEvent of \a
+     * me.
+     *
+     * \warning If the propagator is currently propagating, then
+     * scheduling it will not make the propagator run again.
+     */
+    forceinline void
+    schedule(Space* home, ModEvent me) {
+      View::schedule(home, parent(), me);
+    }
   private:
     int _mod(int val) {
       return ViewIntMod<View>::mod(val);
@@ -119,7 +132,8 @@ namespace Gecode {
   /** \brief Base advisorclass for unary advisors that subscribe to
    * one view (possibly carrying state).
    *
-   * The primary kind of view that carries state is the OffsetView and ScaleView.
+   * The primary kind of view that carries state for integer
+   * variables are OffsetView and ScaleView.
    */
   template <class View, PropCond dc = Int::PC_INT_ADVISOR>
   class IntUnaryViewAdvisor : public IntViewAdvisor<View> {

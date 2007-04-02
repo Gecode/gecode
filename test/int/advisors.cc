@@ -34,17 +34,16 @@ namespace {
 
   class Eq : public Propagator {
     class BndAdvisor : public IntUnaryViewAdvisor<IntView> {
-      PropagatorPointer pp;
       using IntUnaryViewAdvisor<IntView>::x;
     public:
       BndAdvisor(Space* home, Propagator* p, IntView v) 
-        : IntUnaryViewAdvisor<IntView>(home,p,v), pp(p) {
+        : IntUnaryViewAdvisor<IntView>(home,p,v) {
         if (x.assigned()) {
-          pp.schedule<VTI_INT,IntMeDiff>(home, Int::ME_INT_VAL);
+          IntViewAdvisor<IntView>::schedule(home, Int::ME_INT_VAL);
         }
       }
       BndAdvisor(Space* home, Propagator* p, bool share, BndAdvisor& d) 
-        : IntUnaryViewAdvisor<IntView>(home, p, share, d), pp(p) {}
+        : IntUnaryViewAdvisor<IntView>(home, p, share, d) {}
       Advisor *copy(Space *home, Propagator* p, bool share) {
         return new (home) BndAdvisor(home, p, share, *this); 
       }
@@ -54,7 +53,7 @@ namespace {
       }
       ExecStatus advise(Space *home, ModEvent me, int lo, int hi) {
         if (me == ME_INT_VAL || me == ME_INT_BND) {
-          pp.schedule<VTI_INT,IntMeDiff>(home, me);
+          IntViewAdvisor<IntView>::schedule(home, me);
         }
         if (me == ME_INT_VAL) return ES_SUBSUMED(this,sizeof(*this));
         return ES_OK;
@@ -198,18 +197,16 @@ namespace {
 
   class BoolEq : public Propagator {
     class BndAdvisor : public IntUnaryViewAdvisor<BoolView, Int::PC_BOOL_ADVISOR> {
-      PropagatorPointer pp;
       using IntUnaryViewAdvisor<BoolView, Int::PC_BOOL_ADVISOR>::x;
     public:
       BndAdvisor(Space* home, Propagator* p, BoolView v) 
-        : IntUnaryViewAdvisor<BoolView, Int::PC_BOOL_ADVISOR>(home,p,v), pp(p) {
+        : IntUnaryViewAdvisor<BoolView, Int::PC_BOOL_ADVISOR>(home,p,v) {
         if (x.assigned()) {
-          pp.schedule<VTI_BOOL,BoolMeDiff>(home, Int::ME_BOOL_VAL);
+          IntViewAdvisor<BoolView>::schedule(home, Int::ME_BOOL_VAL);
         }
       }
       BndAdvisor(Space* home, Propagator* p, bool share, BndAdvisor& d) 
-        : IntUnaryViewAdvisor<BoolView, Int::PC_BOOL_ADVISOR>(home, p, share, d), 
-          pp(p) {}
+        : IntUnaryViewAdvisor<BoolView, Int::PC_BOOL_ADVISOR>(home, p, share, d) {}
       Advisor *copy(Space *home, Propagator* p, bool share) {
         return new (home) BndAdvisor(home, p, share, *this); 
       }
@@ -218,7 +215,7 @@ namespace {
         return sizeof(*this);
       }
       ExecStatus advise(Space *home, ModEvent me, int lo, int hi) {
-        pp.schedule<VTI_BOOL,BoolMeDiff>(home, me);
+        IntViewAdvisor<BoolView>::schedule(home, me);
         return ES_SUBSUMED(this,sizeof(*this));
       }
     };

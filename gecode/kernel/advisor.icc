@@ -99,7 +99,7 @@ namespace Gecode {
                                                     bool share,
                                                     AdvisorCollection<D, size>& ac)
   {
-    int nactive = ac.compact(home, p);
+    ac.compact(home, p);
     for (int i = size; i--; ) {
       if (active(ac.advisors[i])) {
         advisors[i] = static_cast<D*>(ac.advisors[i]->copy(home, p, share));
@@ -148,8 +148,8 @@ namespace Gecode {
   template <class D, int size>
   int
   AdvisorCollection<D, size>::compact(Space *home, Propagator* p) const {
-    D** left  = &(const_cast<D*>(advisors[0]));
-    D** right = &(const_cast<D*>(advisors[size-1]));
+    D** left  = const_cast<D**>(advisors);
+    D** right = left+size-1;
     D** lo    = left-1;
     D** hi    = right+1;
 
@@ -323,7 +323,7 @@ namespace Gecode {
     }
 
     D** left  = &(advisors[0]);
-    D** right = &(advisors[siz-1]);
+    D** right = left+siz-1;
     D** lo = left-1;
     D** hi = right+1;
 

@@ -289,22 +289,22 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline ExecStatus
   Incremental<View>::SupportAdvisor::advise(Space *home, ModEvent me, 
                                               int lo, int hi) {
-    Incremental<View>* p = static_cast<Incremental<View>*>(pp.p());
+    Incremental<View>* ip = static_cast<Incremental<View>*>(Advisor::parent());
 
 #ifndef GECODE_EXT_INCREMENTAL_SUPPORT
     if (hi < lo) {
       // Something has happend, so just schedule the propagator
-      pp.schedule<VTI_INT,IntMeDiff>(home, me);
+      IntViewAdvisor<View>::schedule(home, me);
       if (me == ME_INT_VAL) return ES_SUBSUMED(this,sizeof(*this));
       return ES_OK;
     }
     
     // Slow and imprecise
-    for (int var = p->x.size(); var--; ) {
-      for (int val = p->table.tablei->domsize; val--; ) {
-        tuple l = p->last(var, val);
+    for (int var = ip->x.size(); var--; ) {
+      for (int val = ip->table.tablei->domsize; val--; ) {
+        tuple l = ip->last(var, val);
         if (l != NULL && l[pos] >= lo && l[pos] <= hi) {
-          pp.schedule<VTI_INT,IntMeDiff>(home, me);
+          IntViewAdvisor<View>::schedule(home, me);
           if (me == ME_INT_VAL) return ES_SUBSUMED(this,sizeof(*this));
           return ES_OK;
         }
@@ -314,11 +314,11 @@ namespace Gecode { namespace Int { namespace Extensional {
     if (hi < lo) {
       // Runover values removed
       for (int val = lo; val <= hi; ++val) {
-        int sp = (pos*(p->table.tablei->domsize)) + val;
-        while (p->support_data[sp]) {
+        int sp = (pos*(ip->table.tablei->domsize)) + val;
+        while (ip->support_data[sp]) {
           // This value supports something
-          tuple t = p->support_data[sp]->t;
-          for (int var = p->x.size(); var--; ) {
+          tuple t = ip->support_data[sp]->t;
+          for (int var = ip->x.size(); var--; ) {
             if (var == pos) continue;
             // Remove support from tuple t from support(var, t[var])
             
