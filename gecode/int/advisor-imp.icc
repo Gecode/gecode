@@ -135,22 +135,22 @@ namespace Gecode {
    * The primary kind of view that carries state for integer
    * variables are OffsetView and ScaleView.
    */
-  template <class View, PropCond dc = Int::PC_INT_ADVISOR>
+  template <class View>
   class IntUnaryViewAdvisor : public IntViewAdvisor<View> {
   protected:
     View x;
   public:
     IntUnaryViewAdvisor(Space* home, Propagator* p, View v) 
       : IntViewAdvisor<View>(home,p), x(v) {
-      x.subscribe(home, this, dc, false);
+      x.subscribe(home, this);
     }
     IntUnaryViewAdvisor(Space* home, Propagator* p, 
-                      bool share, IntUnaryViewAdvisor<View,dc>& d) 
+                      bool share, IntUnaryViewAdvisor<View>& d) 
       : IntViewAdvisor<View>(home, p, share, d) {
       x.update(home, share, d.x);
     }
     virtual size_t dispose(Space* home) {
-      x.cancel(home, this, dc);
+      x.cancel(home, this);
       (void) IntViewAdvisor<View>::dispose(home);
       return sizeof(*this);
     }

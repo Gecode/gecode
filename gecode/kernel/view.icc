@@ -34,7 +34,7 @@ namespace Gecode {
     //@{
     /// Test whether view has been modified during propagation
     bool modified(void) const;
-    /// Return degree (number of subscribed propagators)
+    /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
     /// Return whether this view is derived from a VariableViewBase
     static bool varderived(void);
@@ -71,7 +71,7 @@ namespace Gecode {
     Var* variable(void) const;
     /// Test whether view has been modified during propagation
     bool modified(void) const;
-    /// Return degree (number of subscribed propagators)
+    /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
     //@}
 
@@ -90,15 +90,19 @@ namespace Gecode {
     /// \name Dependencies
     //@{
     /**
-     * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+     * \brief Subscribe propagator \a p with propagation condition \a pc to view
      *
      * In case \a process is false, the propagator is just subscribed but
      * not processed for execution (this must be used when creating
      * subscriptions during propagation).
      */
-    void subscribe(Space*, SubscriberType p, PropCond pc, bool process=true);
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-    void cancel(Space* home, SubscriberType p, PropCond pc);
+    void cancel(Space* home, Propagator* p, PropCond pc);
+    /// Subscribe advisor \a a to view
+    void subscribe(Space* home, Advisor* a);
+    /// Cancel subscription of advisor \a a
+    void cancel(Space* home, Advisor* a);
     //@}
   private:
     static void* operator new(size_t);
@@ -265,9 +269,13 @@ namespace Gecode {
      * not processed for execution (this must be used when creating
      * subscriptions during propagation).
      */
-    void subscribe(Space*, SubscriberType p, PropCond pc, bool process=true);
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-    void cancel(Space* home, SubscriberType p, PropCond pc);
+    void cancel(Space* home, Propagator* p, PropCond pc);
+    /// Subscribe advisor \a a to variable
+    void subscribe(Space* home, Advisor* a);
+    /// Cancel subscription of advisor \a a
+    void cancel(Space* home, Advisor* a);
     //@}
 
     /// \name Cloning
@@ -362,14 +370,24 @@ namespace Gecode {
   }
   template <class Var>
   forceinline void
-  VariableViewBase<Var>::subscribe(Space* home, SubscriberType p, PropCond pc,
+  VariableViewBase<Var>::subscribe(Space* home, Propagator* p, PropCond pc,
                                    bool process) {
     var->subscribe(home,p,pc,process);
   }
   template <class Var>
   forceinline void
-  VariableViewBase<Var>::cancel(Space* home, SubscriberType p, PropCond pc) {
+  VariableViewBase<Var>::cancel(Space* home, Propagator* p, PropCond pc) {
     var->cancel(home,p,pc);
+  }
+  template <class Var>
+  forceinline void
+  VariableViewBase<Var>::subscribe(Space* home, Advisor* a) {
+    var->subscribe(home,a);
+  }
+  template <class Var>
+  forceinline void
+  VariableViewBase<Var>::cancel(Space* home, Advisor* a) {
+    var->cancel(home,a);
   }
   template <class Var>
   forceinline void
@@ -538,16 +556,28 @@ namespace Gecode {
 
   template <class View, unsigned int n>
   forceinline void
-  ViewTuple<View,n>::subscribe(Space* home, SubscriberType p, PropCond pc,
+  ViewTuple<View,n>::subscribe(Space* home, Propagator* p, PropCond pc,
                                bool process) {
     for (unsigned int i=0; i<n; i++)
       x[i].subscribe(home,p,pc,process);
   }
   template <class View, unsigned int n>
   forceinline void
-  ViewTuple<View,n>::cancel(Space* home, SubscriberType p, PropCond pc) {
+  ViewTuple<View,n>::cancel(Space* home, Propagator* p, PropCond pc) {
     for (unsigned int i=0; i<n; i++)
       x[i].cancel(home,p,pc);
+  }
+  template <class View, unsigned int n>
+  forceinline void
+  ViewTuple<View,n>::subscribe(Space* home, Advisor* a) {
+    for (unsigned int i=0; i<n; i++)
+      x[i].subscribe(home,a);
+  }
+  template <class View, unsigned int n>
+  forceinline void
+  ViewTuple<View,n>::cancel(Space* home, Advisor* a) {
+    for (unsigned int i=0; i<n; i++)
+      x[i].cancel(home,a);
   }
   template <class View, unsigned int n>
   forceinline void

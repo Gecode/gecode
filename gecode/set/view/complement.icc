@@ -226,15 +226,27 @@ namespace Gecode { namespace Set {
 
   template <class View>
   forceinline void
-  ComplementView<View>::subscribe(Space* home, SubscriberType p, PropCond pc,
+  ComplementView<View>::subscribe(Space* home, Propagator* p, PropCond pc,
                                   bool process) {
     view.subscribe(home,p, pc_negateset(pc),process);
   }
 
   template <class View>
   forceinline void
-  ComplementView<View>::cancel(Space* home, SubscriberType p, PropCond pc) {
+  ComplementView<View>::cancel(Space* home, Propagator* p, PropCond pc) {
     view.cancel(home,p, pc_negateset(pc));
+  }
+
+  template <class View>
+  forceinline void
+  ComplementView<View>::subscribe(Space* home, Advisor* a) {
+    view.subscribe(home,a);
+  }
+
+  template <class View>
+  forceinline void
+  ComplementView<View>::cancel(Space* home, Advisor* a) {
+    view.cancel(home,a);
   }
 
   template <class View>

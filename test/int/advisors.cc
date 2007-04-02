@@ -196,22 +196,22 @@ namespace {
 
 
   class BoolEq : public Propagator {
-    class BndAdvisor : public IntUnaryViewAdvisor<BoolView, Int::PC_BOOL_ADVISOR> {
-      using IntUnaryViewAdvisor<BoolView, Int::PC_BOOL_ADVISOR>::x;
+    class BndAdvisor : public IntUnaryViewAdvisor<BoolView> {
+      using IntUnaryViewAdvisor<BoolView>::x;
     public:
       BndAdvisor(Space* home, Propagator* p, BoolView v) 
-        : IntUnaryViewAdvisor<BoolView, Int::PC_BOOL_ADVISOR>(home,p,v) {
+        : IntUnaryViewAdvisor<BoolView>(home,p,v) {
         if (x.assigned()) {
           IntViewAdvisor<BoolView>::schedule(home, Int::ME_BOOL_VAL);
         }
       }
       BndAdvisor(Space* home, Propagator* p, bool share, BndAdvisor& d) 
-        : IntUnaryViewAdvisor<BoolView, Int::PC_BOOL_ADVISOR>(home, p, share, d) {}
+        : IntUnaryViewAdvisor<BoolView>(home, p, share, d) {}
       Advisor *copy(Space *home, Propagator* p, bool share) {
         return new (home) BndAdvisor(home, p, share, *this); 
       }
       size_t dispose(Space* home) {
-        (void) IntUnaryViewAdvisor<BoolView, Int::PC_BOOL_ADVISOR>::dispose(home);
+        (void) IntUnaryViewAdvisor<BoolView>::dispose(home);
         return sizeof(*this);
       }
       ExecStatus advise(Space *home, ModEvent me, int lo, int hi) {

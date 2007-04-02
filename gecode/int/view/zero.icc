@@ -202,16 +202,15 @@ namespace Gecode {
      *
      */
     forceinline void
-    ZeroIntView::subscribe(Space* home, SubscriberType p, PropCond,bool) {
-#if GECODE_USE_ADVISORS
-      if (!p.is_advisor())
-        IntVarImp::propagate(home,p.p(),ME_INT_VAL);
-#else
+    ZeroIntView::subscribe(Space* home, Propagator* p, PropCond,bool) {
       IntVarImp::propagate(home,p,ME_INT_VAL);
-#endif
     }
     forceinline void
-    ZeroIntView::cancel(Space*,SubscriberType,PropCond) {}
+    ZeroIntView::cancel(Space*,Propagator*,PropCond) {}
+    forceinline void
+    ZeroIntView::subscribe(Space*, Advisor*) {}
+    forceinline void
+    ZeroIntView::cancel(Space*,Advisor*) {}
 
 
 

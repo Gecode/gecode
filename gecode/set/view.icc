@@ -296,15 +296,19 @@ namespace Gecode {
       /// \name Dependencies
       //@{
       /**
-       * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+       * \brief Subscribe propagator \a p with propagation condition \a pc to view
        *
        * In case \a process is false, the propagator is just subscribed but
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, SubscriberType p, PropCond pc, bool process=true);
+      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, SubscriberType p, PropCond pc);
+      void cancel(Space* home, Propagator* p, PropCond pc);
+      /// Subscribe advisor \a a to view
+      void subscribe(Space* home, Advisor* a);
+      /// Cancel subscription of advisor \a a
+      void cancel(Space* home, Advisor* a);
       //@}
 
       /// \name Cloning
@@ -449,15 +453,19 @@ namespace Gecode {
       /// \name Dependencies
       //@{
       /**
-       * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+       * \brief Subscribe propagator \a p with propagation condition \a pc to view
        *
        * In case \a process is false, the propagator is just subscribed but
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, SubscriberType p, PropCond pc, bool process=true);
+      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, SubscriberType p, PropCond pc);
+      void cancel(Space* home, Propagator* p, PropCond pc);
+      /// Subscribe advisor \a a to view
+      void subscribe(Space* home, Advisor* a);
+      /// Cancel subscription of advisor \a a
+      void cancel(Space* home, Advisor* a);
       //@}
 
       /// \name Cloning
@@ -603,15 +611,19 @@ namespace Gecode {
       /// \name Dependencies
       //@{
       /**
-       * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+       * \brief Subscribe propagator \a p with propagation condition \a pc to view
        *
        * In case \a process is false, the propagator is just subscribed but
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, SubscriberType p, PropCond pc, bool process=true);
+      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, SubscriberType p, PropCond pc);
+      void cancel(Space* home, Propagator* p, PropCond pc);
+      /// Subscribe advisor \a a to view
+      void subscribe(Space* home, Advisor* a);
+      /// Cancel subscription of advisor \a a
+      void cancel(Space* home, Advisor* a);
       //@}
 
       /// \name Cloning
@@ -771,15 +783,19 @@ namespace Gecode {
       /// \name Dependencies
       //@{
       /**
-       * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+       * \brief Subscribe propagator \a p with propagation condition \a pc to view
        *
        * In case \a process is false, the propagator is just subscribed but
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, SubscriberType p, PropCond pc, bool process=true);
+      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, SubscriberType p, PropCond pc);
+      void cancel(Space* home, Propagator* p, PropCond pc);
+      /// Subscribe advisor \a a to view
+      void subscribe(Space* home, Advisor* a);
+      /// Cancel subscription of advisor \a a
+      void cancel(Space* home, Advisor* a);
       //@}
 
 
@@ -939,15 +955,19 @@ namespace Gecode {
       /// \name Dependencies
       //@{
       /**
-       * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+       * \brief Subscribe propagator \a p with propagation condition \a pc to view
        *
        * In case \a process is false, the propagator is just subscribed but
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, SubscriberType p, PropCond pc, bool process=true);
+      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, SubscriberType p, PropCond pc);
+      void cancel(Space* home, Propagator* p, PropCond pc);
+      /// Subscribe advisor \a a to view
+      void subscribe(Space* home, Advisor* a);
+      /// Cancel subscription of advisor \a a
+      void cancel(Space* home, Advisor* a);
       //@}
 
 
@@ -1161,15 +1181,19 @@ namespace Gecode {
       /// \name Dependencies
       //@{
       /**
-       * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+       * \brief Subscribe propagator \a p with propagation condition \a pc to view
        *
        * In case \a process is false, the propagator is just subscribed but
        * not processed for execution (this must be used when creating
        * subscriptions during propagation).
        */
-      void subscribe(Space* home, SubscriberType p, PropCond pc, bool process=true);
+      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
       /// Cancel subscription of propagator \a p with propagation condition \a pc to view
-      void cancel(Space* home, SubscriberType p, PropCond pc);
+      void cancel(Space* home, Propagator* p, PropCond pc);
+      /// Subscribe advisor \a a to view
+      void subscribe(Space* home, Advisor* a);
+      /// Cancel subscription of advisor \a a
+      void cancel(Space* home, Advisor* a);
       //@}
 
 

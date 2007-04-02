@@ -802,7 +802,7 @@ namespace Gecode { namespace Int { namespace Bool {
     }
     // New variable to watch
     x = np->x[pos];
-    x.subscribe(home, this, PC_BOOL_ADVISOR, false);
+    x.subscribe(home, this);
     return ES_OK;
   }
   

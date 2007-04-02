@@ -450,12 +450,20 @@ namespace Gecode { namespace Set {
    *
    */
   forceinline void
-  SetVarImp::subscribe(Space* home, SubscriberType p, PropCond pc, bool process) {
+  SetVarImp::subscribe(Space* home, Propagator* p, PropCond pc, bool process) {
     SetVarImpBase::subscribe(home,p,pc,assigned(),process);
   }
   forceinline void
-  SetVarImp::cancel(Space* home, SubscriberType p, PropCond pc) {
+  SetVarImp::cancel(Space* home, Propagator* p, PropCond pc) {
     SetVarImpBase::cancel(home,p,pc,assigned());
+  }
+  forceinline void
+  SetVarImp::subscribe(Space* home, Advisor* a) {
+    SetVarImpBase::subscribe(home,a,assigned());
+  }
+  forceinline void
+  SetVarImp::cancel(Space* home, Advisor* a) {
+    SetVarImpBase::cancel(home,a,assigned());
   }
 
 }}

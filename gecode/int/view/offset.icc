@@ -204,13 +204,21 @@ namespace Gecode {
      *
      */
     forceinline void
-    OffsetView::subscribe(Space* home, SubscriberType p, PropCond pc, 
+    OffsetView::subscribe(Space* home, Propagator* p, PropCond pc, 
                           bool process) {
       view.subscribe(home,p,pc,process);
     }
     forceinline void
-    OffsetView::cancel(Space* home, SubscriberType p, PropCond pc) {
+    OffsetView::cancel(Space* home, Propagator* p, PropCond pc) {
       view.cancel(home,p,pc);
+    }
+    forceinline void
+    OffsetView::subscribe(Space* home, Advisor* a) {
+      view.subscribe(home,a);
+    }
+    forceinline void
+    OffsetView::cancel(Space* home, Advisor* a) {
+      view.cancel(home,a);
     }
 
 

@@ -343,27 +343,27 @@ namespace Gecode { namespace Int { namespace Bool {
     size_t dispose(Space* home);
 
     // Advisors
-    class WLAdvisor : public IntUnaryViewAdvisor<BV, PC_BOOL_ADVISOR> {
-      using IntUnaryViewAdvisor<BV, PC_BOOL_ADVISOR>::x;
+    class WLAdvisor : public IntUnaryViewAdvisor<BV> {
+      using IntUnaryViewAdvisor<BV>::x;
     public:
       WLAdvisor(Space* home, Propagator* p, BV v) 
-        : IntUnaryViewAdvisor<BV, PC_BOOL_ADVISOR>(home,p,v) {
+        : IntUnaryViewAdvisor<BV>(home,p,v) {
         assert(!x.assigned());
       }
       WLAdvisor(Space* home, Propagator* p, bool share, WLAdvisor& d) 
-        : IntUnaryViewAdvisor<BV, PC_BOOL_ADVISOR>(home, p, share, d)
+        : IntUnaryViewAdvisor<BV>(home, p, share, d)
       {}
       Advisor *copy(Space *home, Propagator* p, bool share) {
         return new (home) WLAdvisor(home, p, share, *this); 
       }
       size_t dispose(Space* home) {
-        (void) IntUnaryViewAdvisor<BV, PC_BOOL_ADVISOR>::dispose(home);
+        (void) IntUnaryViewAdvisor<BV>::dispose(home);
         return sizeof(*this);
       }
       ExecStatus advise(Space *home, ModEvent me, int lo, int hi);
     };
     //typedef AdvisorCollection<WLAdvisor, 2> AC;
-    AdvisorCollection<WLAdvisor, 2> ac;
+    AdvisorCollection<WLAdvisor,2> ac;
 
   public:
     /// Copy propagator during cloning

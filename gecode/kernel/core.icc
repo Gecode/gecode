@@ -232,6 +232,7 @@ namespace Gecode {
   /// This is the type of a subscriber
   typedef Subscriber SubscriberType;
 #else /* GECODE_USE_ADVISORS == 0 */
+  class Advisor {};
   /// This is the type of a subscriber
   typedef Propagator* SubscriberType;
 #endif /* GECODE_USE_ADVISORS */
@@ -402,22 +403,34 @@ namespace Gecode {
      * with modification event \a me provided that \a pc is different
      * from \a PC_GEN_ASSIGNED.
      */
-    void subscribe(Space* home, SubscriberType p, PropCond pc,
+    void subscribe(Space* home, Propagator* p, PropCond pc,
                    bool assigned, ModEvent me, bool process);
-    /** \brief Propagate propagator \a p with propagation condition \a pc
-     *
-     * The propagator \a p is processed for execution with modification 
-     * event \a me.
-     */
-    static void propagate(Space* home, SubscriberType p, ModEvent me);
     /** \brief Cancel subscription of propagator \a p with propagation condition \a pc
      *
      * If the variables is assigned, \a assigned must be true.
      *
      */
-    void cancel(Space* home, SubscriberType p, PropCond pc,
+    void cancel(Space* home, Propagator* p, PropCond pc,
                 bool assigned);
-    /// Return degree (number of subscribed propagators)
+    /** \brief Propagate propagator \a p with propagation condition \a pc
+     *
+     * The propagator \a p is processed for execution with modification 
+     * event \a me.
+     */
+    static void propagate(Space* home, Propagator* p, ModEvent me);
+    /** \brief Subscribe advisor \a a to variable
+     *
+     * The advisor \a a is only subscribed if \a assigned is false.
+     *
+     */
+    void subscribe(Space* home, Advisor* a, bool assigned);
+    /** \brief Cancel subscription of advisor \a a
+     *
+     * If the variables is assigned, \a assigned must be true.
+     *
+     */
+    void cancel(Space* home, Advisor* p, bool assigned);
+    /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
     /// Notify that variable implementation has been modified with modification event \a me
     void notify(Space* home, ModEvent me);
@@ -1900,19 +1913,14 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
-  Variable<VTI,PC,MED>::subscribe(Space* home, SubscriberType p, PropCond pc,
+  Variable<VTI,PC,MED>::subscribe(Space* home, Propagator* p, PropCond pc,
                                   bool assigned, ModEvent me, bool process) {
     if (assigned) {
       // Do not subscribe, just process the propagator
-#if GECODE_USE_ADVISORS
-      if (!p.is_advisor())
-        if (process)
-          home->process<VTI,MED>(p.p());
-#else
       if (process)
         home->process<VTI,MED>(p);
-#endif
     } else {
+      SubscriberType s = p;
       // Count one new subscription
       home->n_sub += 1;
       if (free() == 0)
@@ -1922,28 +1930,37 @@ namespace Gecode {
       --idx[0];
       for (PropCond i = 0; i < pc; i++)
         *(idx[i]) = *(--idx[i+1]);
-      *idx[pc]=p;
+      *idx[pc]=s;
       // Process propagator
-#if GECODE_USE_ADVISORS
-      if (!p.is_advisor())
-        if (process && (pc != PC_GEN_ASSIGNED))
-          home->process<VTI,MED>(p.p(),me);
-#else
       if (process && (pc != PC_GEN_ASSIGNED))
         home->process<VTI,MED>(p,me);
-#endif
     }
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
-  Variable<VTI,PC,MED>::propagate(Space* home, SubscriberType p, ModEvent me) {
+  Variable<VTI,PC,MED>::subscribe(Space* home, Advisor* a, bool assigned) {
 #if GECODE_USE_ADVISORS
-    if (!p.is_advisor())
-      home->process<VTI,MED>(p.p(),me);
-#else
-      home->process<VTI,MED>(p,me);
+    SubscriberType s = a;
+    if (!assigned) {
+      // Count one new subscription
+      home->n_sub += 1;
+      if (free() == 0)
+        resize(home);
+      free_dec();
+      // Enter advisor
+      --idx[0];
+      for (PropCond i = 0; i < PC; i++)
+        *(idx[i]) = *(--idx[i+1]);
+      *idx[PC]=s;
+    }
 #endif
+  }
+
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline void
+  Variable<VTI,PC,MED>::propagate(Space* home, Propagator* p, ModEvent me) {
+    home->process<VTI,MED>(p,me);
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
@@ -1990,20 +2007,21 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
-  Variable<VTI,PC,MED>::cancel(Space* home, SubscriberType p, PropCond pc,
+  Variable<VTI,PC,MED>::cancel(Space* home, Propagator* p, PropCond pc,
                                bool assigned) {
+    SubscriberType s = p;
     if (!assigned) {
       SubscriberType* f = idx[pc];
 #if GECODE_AUDIT
       while (f < idx[pc+1])
-        if (*f == p)
+        if (*f == s)
           goto found;
         else
           f++;
       GECODE_NEVER;
     found: ;
 #else
-      while (*f != p) f++;
+      while (*f != s) f++;
 #endif
       *f=*idx[pc];
       for (PropCond i=pc; i>0; i--)
@@ -2012,6 +2030,34 @@ namespace Gecode {
       free_inc();
       home->n_sub -= 1;
     }
+  }
+
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline void
+  Variable<VTI,PC,MED>::cancel(Space* home, Advisor* a, bool assigned) {
+#if GECODE_USE_ADVISORS
+    SubscriberType s = a;
+    if (!assigned) {
+      SubscriberType* f = idx[PC];
+#if GECODE_AUDIT
+      while (f < idx[PC+1])
+        if (*f == s)
+          goto found;
+        else
+          f++;
+      GECODE_NEVER;
+    found: ;
+#else
+      while (*f != s) f++;
+#endif
+      *f=*idx[PC];
+      for (PropCond i=PC; i>0; i--)
+        *(idx[i]++)=*(idx[i-1]);
+      idx[0]++;
+      free_inc();
+      home->n_sub -= 1;
+    }
+#endif
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>

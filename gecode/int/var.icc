@@ -263,9 +263,13 @@ namespace Gecode { namespace Int {
      * subscriptions during propagation).
      *
      */
-    void subscribe(Space* home, SubscriberType p, PropCond pc, bool process=true);
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc
-    void cancel(Space* home, SubscriberType p, PropCond pc);
+    void cancel(Space* home, Propagator* p, PropCond pc);
+    /// Subscribe advisor \a a to variable
+    void subscribe(Space* home, Advisor* a);
+    /// Cancel subscription of advisor \a a
+    void cancel(Space* home, Advisor* a);
     //@}
 
   private:
@@ -546,9 +550,13 @@ namespace Gecode { namespace Int {
      * subscriptions during propagation).
      *
      */
-    void subscribe(Space* home, SubscriberType p, PropCond pc, bool process=true);
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
     /// Cancel subscription of propagator \a p with propagation condition \a pc
-    void cancel(Space* home, SubscriberType p, PropCond pc);
+    void cancel(Space* home, Propagator* p, PropCond pc);
+    /// Subscribe advisor \a a to variable
+    void subscribe(Space* home, Advisor* a);
+    /// Cancel subscription of advisor \a a
+    void cancel(Space* home, Advisor* a);
     //@}
 
     /// \name Cloning

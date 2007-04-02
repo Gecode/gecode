@@ -369,7 +369,9 @@ print <<EOF
      * with modification event \\a me provided that \\a pc is different
      * from \\a PC_GEN_ASSIGNED.
      */
-    void subscribe(Space* home, SubscriberType p, PropCond pc, bool assigned, bool process);
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
+    /// Subscribe advisor \\a a
+    void subscribe(Space* home, Advisor* a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \\a me
     void notify(Space* home, ModEvent me);
     //\@}
@@ -500,8 +502,12 @@ EOF
   print <<EOF
 
   $forceinline void
-  ${class}::subscribe(Space* home, SubscriberType p, PropCond pc, bool assigned, bool process) {
+  ${class}::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
     ${base}::subscribe(home,p,pc,assigned,$me_subscribe,process);
+  }
+  $forceinline void
+  ${class}::subscribe(Space* home, Advisor* a, bool assigned) {
+    ${base}::subscribe(home,a,assigned);
   }
 
 EOF
