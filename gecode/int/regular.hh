@@ -49,9 +49,39 @@ namespace Gecode { namespace Int { namespace Regular {
    * \ingroup FuncIntProp
    */
   template <class View, bool shared>
-  class Dom : public NaryPropagator<View,PC_INT_DOM> {
-    using NaryPropagator<View,PC_INT_DOM>::x;
+  class Dom : public Propagator {
   protected:
+    /// The views
+    ViewArray<View> x;
+#ifdef GECODE_REGULAR_SCHEDULE
+    class Index : public IntAdvisor {
+    public:
+      PropagatorPointer p;
+      int i;
+      Index(Space* home, Propagator* p0, int i0)
+        : IntAdvisor(home,p0), p(p0), i(i0) {
+      }
+      Index(Space* home, Propagator* p0, bool share, Index& j)
+        : IntAdvisor(home,p0,share,j), p(p0), i(j.i) {}
+      virtual Advisor* 
+      copy(Space* home, Propagator* p, bool share) {
+        return new (home) Index(home,p,share,*this);
+      }
+      virtual size_t 
+      dispose(Space* home) {
+        Dom<View,shared>* d = static_cast<Dom<View,shared>*>(p.p());
+        d->x[i].cancel(home,this,PC_INT_ADVISOR);
+        (void) IntAdvisor::dispose(home);
+        return sizeof(*this);
+      }
+      virtual ExecStatus
+      advise(Space* home, ModEvent me, int min, int max) {
+        p.schedule<VTI_INT,IntMeDiff>(home,me);
+        return (me == ME_INT_VAL) ? ES_SUBSUMED(this,home) : ES_OK;
+      }
+    };
+    DynamicAdvisorCollection<Index> dac;
+#endif
     /// The %DFA describing the language
     DFA dfa;
     /// %LayeredGraph as data structure used for propagation

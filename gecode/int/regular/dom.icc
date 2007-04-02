@@ -262,9 +262,8 @@ namespace Gecode { namespace Int { namespace Regular {
         int j=0;
         int k=0;
         ViewValues<View> vx(x[i]);
-        for ( ; vx() && (j<layers[i].size); j++) {
-          assert(layers[i].support[j].val <= vx.val());
-          if (layers[i].support[j].val != vx.val()) {
+        while (vx() && (j<layers[i].size)) {
+          if (layers[i].support[j].val < vx.val()) {
             // Value has lost support
             for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
               // Adapt states
@@ -274,6 +273,9 @@ namespace Gecode { namespace Int { namespace Regular {
                 layers[i+1].modified |= MOD_IDEG;
             }
             layers[i].lost = layers[i].support[j].val;
+            ++j;
+          } else if (layers[i].support[j].val > vx.val()) {
+            ++vx;
           } else {
             assert(layers[i].support[j].val == vx.val());
             // Some edges might have lost support
@@ -298,7 +300,7 @@ namespace Gecode { namespace Int { namespace Regular {
               layers[i].support[k++]=layers[i].support[j];
             else
               layers[i].lost = layers[i].support[j].val;
-            ++vx;
+            ++vx; ++j;
           }
         }
         // Remove remaining values
@@ -321,9 +323,8 @@ namespace Gecode { namespace Int { namespace Regular {
         int j=0;
         int k=0;
         ViewValues<View> vx(x[i]);
-        for ( ; vx() && (j<layers[i].size); j++) {
-          assert(layers[i].support[j].val <= vx.val());
-          if (layers[i].support[j].val != vx.val()) {
+        while (vx() && (j<layers[i].size)) {
+          if (layers[i].support[j].val < vx.val()) {
             // Value has lost support
             for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
               // Adapt states
@@ -333,9 +334,12 @@ namespace Gecode { namespace Int { namespace Regular {
                 layers[i+1].modified |= MOD_IDEG;
             }
             layers[i].lost = layers[i].support[j].val;
+            ++j;
+          } else if (layers[i].support[j].val > vx.val()) {
+            ++vx;
           } else {
             layers[i].support[k++]=layers[i].support[j];
-            ++vx;
+            ++vx; j++;
           }
         }
         // Remove remaining values
@@ -495,9 +499,23 @@ namespace Gecode { namespace Int { namespace Regular {
 
   template <class View, bool shared>
   forceinline
-  Dom<View,shared>::Dom(Space* home, ViewArray<View>& x, DFA& d)
-    : NaryPropagator<View,PC_INT_DOM>(home,x), dfa(d) {
+  Dom<View,shared>::Dom(Space* home, ViewArray<View>& x0, DFA& d)
+    : Propagator(home), x(x0), 
+#ifdef GECODE_REGULAR_SCHEDULE
+      dac(home,this,x.size()), 
+#endif
+      dfa(d) {
     this->force(home);
+#ifdef GECODE_REGULAR_SCHEDULE
+    for (int i=x.size(); i--; ) {
+      Index* j = new (home) Index(home,this,i);
+      dac.add(home,this,j);
+      x[i].subscribe(home,j,PC_INT_ADVISOR,false);
+    }
+    home->process<VTI_INT,IntMeDiff>(this,ME_INT_BND);
+#else
+    x.subscribe(home,this,PC_INT_DOM);
+#endif
   }
 
   template <class View, bool shared>
@@ -505,7 +523,12 @@ namespace Gecode { namespace Int { namespace Regular {
   Dom<View,shared>::dispose(Space* home) {
     this->unforce(home);
     dfa.~DFA();
-    (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
+#ifdef GECODE_REGULAR_SCHEDULE
+    dac.dispose(home);
+#else
+    x.cancel(home,this,PC_INT_DOM);
+#endif
+    (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
@@ -531,7 +554,12 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View, bool shared>
   forceinline
   Dom<View,shared>::Dom(Space* home, bool share, Dom<View,shared>& p)
-    : NaryPropagator<View,PC_INT_DOM>(home,share,p) {
+    : Propagator(home,share,p)
+#ifdef GECODE_REGULAR_SCHEDULE
+    , dac(home,this,share,p.dac) 
+#endif
+  {
+    x.update(home,share,p.x);
     dfa.update(home,share,p.dfa);
   }
 
