@@ -41,7 +41,7 @@ namespace Gecode { namespace Int {
     int lo = dom==ONE, hi = dom==ZERO;
     while (p-- > b) {
       switch (static_cast<IntAdvisor*>(p->d())
-              ->propagate(home,me,lo,hi)) {
+              ->_advise(home,me,lo,hi)) {
       case __ES_SUBSUMED:
         break;
       case ES_FAILED:

@@ -159,6 +159,49 @@ public:
 };
 BoolOrNary _boolornary("Bool::Or::Nary");
 
+class BoolOrTrueNary : public IntTest {
+public:
+  BoolOrTrueNary(const char* t)
+    : IntTest(t,14,ds) {}
+  virtual bool solution(const Assignment& x) const {
+    for (int i = x.size(); i--; )
+      if (x[i] == 1)
+        return true;
+    return false;
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    BoolVarArgs b(2*(x.size()));
+    for (int i=x.size(); i--; ) {
+      BoolVar bx = channel(home,x[i]);
+      b[2*i+0] = bx; b[2*i+1] = bx;
+    }
+    rel(home, b, BOT_OR, 1);
+  }
+};
+BoolOrTrueNary _boolortruenary("Bool::Or::True::Nary");
+
+#if GECODE_USE_ADVISORS
+class BoolOrWLTrueNary : public IntTest {
+public:
+  BoolOrWLTrueNary(const char* t)
+    : IntTest(t,14,ds) {}
+  virtual bool solution(const Assignment& x) const {
+    for (int i = x.size(); i--; )
+      if (x[i] == 1)
+        return true;
+    return false;
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    BoolVarArgs b(2*(x.size()));
+    for (int i=x.size(); i--; ) {
+      BoolVar bx = channel(home,x[i]);
+      b[2*i+0] = bx; b[2*i+1] = bx;
+    }
+    rel(home, b, BOT_OR_WL, 1);
+  }
+};
+BoolOrWLTrueNary _boolorwltruenary("Bool::Advisors::WL::Or::True::Nary");
+#endif
 
 // STATISTICS: test-int
 

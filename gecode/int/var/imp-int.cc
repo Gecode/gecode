@@ -384,7 +384,7 @@ namespace Gecode { namespace Int {
     SubscriberType* b = idx[PC_INT_ADVISOR];
     SubscriberType* p = idx[PC_INT_ADVISOR+1];
     while (p-- > b) {
-      switch(static_cast<IntAdvisor*>(p->d())->propagate(home, me, lo, hi)) {
+      switch(static_cast<IntAdvisor*>(p->d())->_advise(home, me, lo, hi)) {
       case __ES_SUBSUMED:
         break;
       case ES_FAILED:

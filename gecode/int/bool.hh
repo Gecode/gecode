@@ -321,6 +321,63 @@ namespace Gecode { namespace Int { namespace Bool {
   };
 
 
+#if GECODE_USE_ADVISORS
+  /**
+   * \brief Boolean n-ary disjunction propagator (true)
+   *
+   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class BV>
+  class NaryOrWLTrue : public Propagator {
+  protected:
+    /// Views not yet subscribed to
+    ViewArray<BV> x;
+    /// Update subscription
+    ExecStatus resubscribe(Space* home, BV& x0, BV x1);
+    /// Constructor for posting
+    NaryOrWLTrue(Space* home,  ViewArray<BV>& b);
+    /// Constructor for cloning \a p
+    NaryOrWLTrue(Space* home, bool share, NaryOrWLTrue<BV>& p);
+    /// Disposing
+    size_t dispose(Space* home);
+
+    // Advisors
+    class WLAdvisor : public IntUnaryViewAdvisor<BV, PC_BOOL_ADVISOR> {
+      PropagatorPointer pp;
+      using IntUnaryViewAdvisor<BV, PC_BOOL_ADVISOR>::x;
+    public:
+      WLAdvisor(Space* home, Propagator* p, BV v) 
+        : IntUnaryViewAdvisor<BV, PC_BOOL_ADVISOR>(home,p,v), pp(p) {
+        assert(!x.assigned());
+      }
+      WLAdvisor(Space* home, Propagator* p, bool share, WLAdvisor& d) 
+        : IntUnaryViewAdvisor<BV, PC_BOOL_ADVISOR>(home, p, share, d), 
+          pp(p) {}
+      Advisor *copy(Space *home, Propagator* p, bool share) {
+        return new (home) WLAdvisor(home, p, share, *this); 
+      }
+      size_t dispose(Space* home) {
+        (void) IntUnaryViewAdvisor<BV, PC_BOOL_ADVISOR>::dispose(home);
+        return sizeof(*this);
+      }
+      ExecStatus advise(Space *home, ModEvent me, int lo, int hi);
+    };
+    //typedef AdvisorCollection<WLAdvisor, 2> AC;
+    AdvisorCollection<WLAdvisor, 2> ac;
+
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Cost function (defined as PC_LINEAR_LO)
+    virtual PropCost cost(void) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = 0\f$
+    static  ExecStatus post(Space* home, ViewArray<BV>& b);
+  };
+#endif
+
   /**
    * \brief Boolean equivalence propagator
    *

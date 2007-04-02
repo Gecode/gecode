@@ -28,6 +28,156 @@ namespace Gecode {
    */
 
   //@{
+
+  /** \brief  Advisor collection
+   * 
+   * This is a utility class that maintains a collection of
+   * advisors. The class is not meant to be allocated from the space,
+   * it is designed to be used as a member of the propagator that uses
+   * advisors.
+   *
+   * This class can hold up to \a size Advisors.
+   *
+   * A advisor is owned by the AdvisorCollection that contains it.
+   */
+  template <class D, int size>
+  class AdvisorCollection {
+    D* advisors[size];
+  public:
+    /** \brief Construct advisor collection
+     */
+    AdvisorCollection(Space* home, Propagator* p);
+
+    /** \brief Copy constructor
+     * 
+     */
+    AdvisorCollection(Space* home, Propagator* p, bool share, 
+                      AdvisorCollection<D, size>& dac);
+
+
+    /** \brief Add a advisor to the collection.
+     *
+     */
+    void add(Space* home, Propagator* p, D* d);
+
+    /** \brief Dispose of this colelction
+     */
+    size_t dispose(Space *home);
+  private:
+    /** \brief Is the D* \a d an active advisor?
+     *
+     * \todo static? macro?
+     */
+    bool active(D* d) const;
+
+    /** \brief Compact representation. 
+     * 
+     * Compact the storage to the end of the array. Returns memory for
+     * disposed advisors.
+     *
+     * Returns number of used spots.
+     */
+    int compact(Space* home, Propagator* p) const;
+  };
+
+
+  /*
+   *  Advisor Collections
+   *
+   */
+
+  template <class D, int size>
+  AdvisorCollection<D, size>::AdvisorCollection(Space* home, Propagator* p)
+  {
+    // Set up free-linkage in array
+    for (int i = size; i--; ) 
+      advisors[i] = reinterpret_cast<D*>((i+1)%size);
+  }
+
+  template <class D, int size>
+  AdvisorCollection<D, size>::AdvisorCollection(Space* home, Propagator* p,
+                                                    bool share,
+                                                    AdvisorCollection<D, size>& ac)
+  {
+    int nactive = ac.compact(home, p);
+    for (int i = size; i--; ) {
+      if (active(ac.advisors[i])) {
+        advisors[i] = static_cast<D*>(ac.advisors[i]->copy(home, p, share));
+        ac.advisors[i]->forward(advisors[i]);
+      } else {
+        advisors[i] = ac.advisors[i];
+      }
+    }
+  }
+
+  
+  template <class D, int size>
+  forceinline void
+  AdvisorCollection<D, size>::add(Space *home, Propagator* p, D* d) {
+    if (reinterpret_cast<ptrdiff_t>(advisors[0])>size) {
+      compact(home, p);
+      assert(reinterpret_cast<ptrdiff_t>(advisors[0])>size);
+    }
+    int d0 = reinterpret_cast<ptrdiff_t>(advisors[0]);
+    if (d0 != 0) {
+      advisors[0] = advisors[d0];
+    }
+    advisors[d0] = d;
+  }
+
+
+  template <class D, int size>
+  size_t
+  AdvisorCollection<D, size>::dispose(Space *home) {
+    for (int i = size; i--; ) {
+      if (active(advisors[i])) {
+        (void) advisors[i]->dispose(home);
+      }
+    }
+    return sizeof(*this);
+  }
+
+  template <class D, int size>
+  forceinline bool
+  AdvisorCollection<D, size>::active(D* d) const {
+    return 
+      reinterpret_cast<ptrdiff_t>(d) > size &&
+      !d->disposed();
+  }
+
+  template <class D, int size>
+  int
+  AdvisorCollection<D, size>::compact(Space *home, Propagator* p) const {
+    D** left  = &(const_cast<D*>(advisors[0]));
+    D** right = &(const_cast<D*>(advisors[size-1]));
+    D** lo    = left-1;
+    D** hi    = right+1;
+
+    while (true) {
+      while (!active(*(++lo)))
+        if (lo == right) break;
+      while ( active(*(--hi)))
+        if (hi ==  left) break;
+      if (lo >= hi) break;
+      std::swap(*lo,*hi);
+    }
+
+    for (D** i = lo-1; i >= left; --i) {
+      if (reinterpret_cast<ptrdiff_t>(*i) > size) {
+        assert((*i)->disposed());
+        home->reuse(*i, (*i)->size());
+      }
+      *i = reinterpret_cast<D*>((i-left)+1);
+    }
+    if (!active(*hi)) {
+      *hi = reinterpret_cast<D*>(0);
+    }
+
+    return (right-lo)+1;
+  }
+
+
+
   /** \brief Dynamic collection of advisors
    * 
    * This is a utility class that maintains a collection of
@@ -38,10 +188,6 @@ namespace Gecode {
    * This class will adjust dynamically to support more advisors.
    *
    * A advisor is owned by the AdvisorCollection that contains it.
-   *
-   * \warning This class requires the exact type of advisors to be
-   * stored. Adding advisors of a subclass of \a D will result in memory
-   * leaks.
    */
   template <class D>
   class DynamicAdvisorCollection {
@@ -60,7 +206,7 @@ namespace Gecode {
      * 
      */
     DynamicAdvisorCollection(Space* home, Propagator* p, bool share, 
-                           DynamicAdvisorCollection<D>& ddc);
+                           DynamicAdvisorCollection<D>& dac);
 
 
     /** \brief Add a advisor to the collection.
@@ -108,15 +254,15 @@ namespace Gecode {
   template <class D>
   DynamicAdvisorCollection<D>::DynamicAdvisorCollection(Space* home, Propagator* p,
                                                     bool share,
-                                                    DynamicAdvisorCollection<D>& ddc)
-    : siz(ddc.compact(home, p)), 
+                                                    DynamicAdvisorCollection<D>& dac)
+    : siz(dac.compact(home, p)), 
       advisors(static_cast<D**>(home->alloc(sizeof(D*)*siz)))
   {
 
-    for (int ddci = ddc.siz, i = siz; ddci-- && i--; ) {
-      assert(active(ddc.advisors[ddci]));
-      advisors[i] = static_cast<D*>(ddc.advisors[ddci]->copy(home, p, share));
-      ddc.advisors[ddci]->forward(advisors[i]);
+    for (int daci = dac.siz, i = siz; daci-- && i--; ) {
+      assert(active(dac.advisors[daci]));
+      advisors[i] = static_cast<D*>(dac.advisors[daci]->copy(home, p, share));
+      dac.advisors[daci]->forward(advisors[i]);
     }
   }
 

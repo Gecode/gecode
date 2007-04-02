@@ -710,6 +710,117 @@ namespace Gecode { namespace Int { namespace Bool {
     return ES_FIX;
   }
 
+#if GECODE_USE_ADVISORS
+  /*
+   * N-ary Boolean disjunction propagator (true)
+   *
+   */
+
+  template<class BV>
+  forceinline
+  NaryOrWLTrue<BV>::NaryOrWLTrue(Space* home, ViewArray<BV>& b)
+    : Propagator(home), x(b), ac(home, this) {
+    // post advisors
+    ac.add(home, this, new (home) WLAdvisor(home, this, x[0]));
+    ac.add(home, this, new (home) WLAdvisor(home, this, x[1]));
+  }
+
+  template<class BV>
+  PropCost
+  NaryOrWLTrue<BV>::cost(void) const {
+    return PC_BINARY_LO;
+  }
+
+  template<class BV>
+  forceinline
+  NaryOrWLTrue<BV>::NaryOrWLTrue(Space* home, bool share, NaryOrWLTrue<BV>& p)
+    : Propagator(home,share,p), ac(home, this, share, p.ac) {
+    x.update(home,share,p.x);
+  }
+
+  template<class BV>
+  Actor*
+  NaryOrWLTrue<BV>::copy(Space* home, bool share) {
+    return new (home) NaryOrWLTrue<BV>(home,share,*this);
+  }
+
+  template<class BV>
+  size_t
+  NaryOrWLTrue<BV>::dispose(Space* home) {
+    (void) ac.dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template<class BV>
+  forceinline ExecStatus
+  NaryOrWLTrue<BV>::post(Space* home, ViewArray<BV>& b) {
+    for (int i=b.size(); i--; )
+      if (b[i].one())
+        return ES_OK;
+      else if (b[i].zero())
+        b.move_lst(i);
+    if (b.size() == 0)
+      return ES_FAILED;
+    if (b.size() == 1) {
+      GECODE_ME_CHECK(b[0].one(home));
+    } else if (b.size() == 2) {
+       return BinOrTrue<BV,BV>::post(home,b[0],b[1]);
+    } else if (b.size() == 3) {
+       return TerOrTrue<BV>::post(home,b[0],b[1],b[2]);
+    } else if (b.size() == 4) {
+       return QuadOrTrue<BV>::post(home,b[0],b[1],b[2],b[3]);
+    } else {
+      (void) new (home) NaryOrWLTrue(home,b);
+    }
+    return ES_OK;
+  }
+
+  template<class BV>
+  ExecStatus
+  NaryOrWLTrue<BV>::WLAdvisor::advise(Space *home, ModEvent me, int lo, int hi){
+    if (lo == 0 && hi == 0) {
+      // Subsume parent
+      pp.subsume(home);
+      return ES_OK; // this are disposed via parent
+    }
+    NaryOrWLTrue<BV>* p = static_cast<NaryOrWLTrue<BV>* >(pp.p());
+    int pos = same(x, p->x[1]);
+    while (p->x.size() > 2 && p->x[pos].assigned()) {
+      if (p->x[pos].one()) {
+        pp.subsume(home);
+        return ES_OK; // this are disposed via parent
+      }
+      p->x.move_lst(pos);
+    }
+    if (p->x.size() == 2 && 
+        (p->x[0].assigned() ||
+         p->x[1].assigned())) {
+          
+      pp.schedule<VTI_BOOL,BoolMeDiff>(home, me);
+      return ES_OK;
+    }
+    // New variable to watch
+    x = p->x[pos];
+    x.subscribe(home, this, PC_BOOL_ADVISOR, false);
+    return ES_OK;
+  }
+  
+  template<class BV>
+  ExecStatus
+  NaryOrWLTrue<BV>::propagate(Space* home) {
+    assert(x.size() == 2);
+    assert(x[0].assigned() || x[1].assigned());
+
+    if (x[0].one() || x[1].one())
+      return ES_SUBSUMED(this,home);
+    
+    int pos = x[0].assigned();
+    GECODE_ME_CHECK(x[pos].one(home));
+
+    return ES_SUBSUMED(this,home);
+  }
+#endif
 
   /*
    * N-ary Boolean disjunction propagator

@@ -124,25 +124,25 @@ namespace Gecode {
   template <class View, PropCond dc = Int::PC_INT_ADVISOR>
   class IntUnaryViewAdvisor : public IntViewAdvisor<View> {
   protected:
-    View _v;
+    View x;
   public:
     IntUnaryViewAdvisor(Space* home, Propagator* p, View v) 
-      : IntViewAdvisor<View>(home,p), _v(v) {
-      _v.subscribe(home, this, dc, false);
+      : IntViewAdvisor<View>(home,p), x(v) {
+      x.subscribe(home, this, dc, false);
     }
     IntUnaryViewAdvisor(Space* home, Propagator* p, 
                       bool share, IntUnaryViewAdvisor<View,dc>& d) 
       : IntViewAdvisor<View>(home, p, share, d) {
-      _v.update(home, share, d._v);
+      x.update(home, share, d.x);
     }
     virtual size_t dispose(Space* home) {
-      _v.cancel(home, this, dc);
+      x.cancel(home, this, dc);
       (void) IntViewAdvisor<View>::dispose(home);
       return sizeof(*this);
     }
   private:
     int _mod(int val) {
-      return ViewIntMod<View>::state_mod(val, _v);
+      return ViewIntMod<View>::state_mod(val, x);
     }
   };
   //@}

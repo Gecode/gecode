@@ -30,18 +30,12 @@ namespace Gecode {
 
   //@{
   /** \brief Advisor for integer variables.
-   *
-   * Derived classes can override the private \a _propagate method to
-   * adapt the behaviour of the Advisor.
    */
   class IntAdvisor : public Advisor {
+    friend class  IntVarImp;
+    friend class BoolVarImp;
   public:    
-    ExecStatus propagate(Space* home, ModEvent me, int lo, int hi) {
-      if (disposed())
-        return ES_OK;
-      else
-        return _propagate(home, me, _mod(lo), _mod(hi));
-    }
+    virtual ExecStatus advise(Space* home, ModEvent me, int lo, int hi) = 0;
 
     IntAdvisor(Space* home, Propagator* p) : Advisor(home,p) {}
     IntAdvisor(Space* home, Propagator* p, bool share, IntAdvisor& d) 
@@ -51,10 +45,12 @@ namespace Gecode {
       (void) Advisor::dispose(home);
       return sizeof(*this);
     }
-  private:
+  protected:
     virtual int _mod(int val);
-    virtual ExecStatus _propagate(Space* home, ModEvent me, int lo, int hi) {
-      return ES_OK;
+  public:
+    ExecStatus _advise(Space* home, ModEvent me, int lo, int hi) {
+      assert(!disposed());
+      return advise(home, me, _mod(lo), _mod(hi));
     }
   };
   //@}

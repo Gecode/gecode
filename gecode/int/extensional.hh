@@ -180,12 +180,12 @@ namespace Gecode { namespace Int { namespace Extensional {
   private:
     class SupportAdvisor : public IntUnaryViewAdvisor<View> {
       PropagatorPointer pp;
-      using IntUnaryViewAdvisor<View>::_v;
+      using IntUnaryViewAdvisor<View>::x;
       unsigned int pos;
     public:
       SupportAdvisor(Space* home, Propagator* p, View v, unsigned int position) 
         : IntUnaryViewAdvisor<View>(home,p,v), pp(p), pos(position) {
-        if (_v.assigned()) {
+        if (x.assigned()) {
           pp.schedule<VTI_INT,IntMeDiff>(home, Int::ME_INT_VAL);
         }
       }
@@ -198,8 +198,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         (void) IntUnaryViewAdvisor<View>::dispose(home);
         return sizeof(*this);
       }
-    private:
-      ExecStatus _propagate(Space *home, ModEvent me, int lo, int hi);
+      ExecStatus advise(Space *home, ModEvent me, int lo, int hi);
     };
     
   public:
