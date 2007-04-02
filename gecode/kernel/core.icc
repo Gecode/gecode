@@ -192,7 +192,7 @@ namespace Gecode {
     }
     /// Returns if this subscriber was constructed from a Advisor.
     bool is_advisor() { 
-      //      assert(v > 1);
+      assert(v > 1);
       return v & 1;
     }
     /**
@@ -201,7 +201,7 @@ namespace Gecode {
      * \pre this must have been constructed from a Propagator pointer.
      */
     Propagator *p() {
-      //      assert(v > 1);
+      assert(v > 1);
       assert(!is_advisor());
       return reinterpret_cast<Propagator*>(v);
     }
@@ -211,7 +211,7 @@ namespace Gecode {
      * \pre this must have been constructed from a Advisor pointer.
      */
     Advisor *d() {
-      //      assert(v > 1);
+      assert(v > 1);
       assert(is_advisor());
       return reinterpret_cast<Advisor*>(v&~1);
     }
@@ -1467,7 +1467,7 @@ namespace Gecode {
    */
   forceinline Subscriber
   Subscriber::prev(void) {
-    //    assert(v > 1);
+    assert(v > 1);
     if (is_advisor())
       return d()->forward();
     else
@@ -1475,7 +1475,7 @@ namespace Gecode {
   }
   forceinline void
   Subscriber::prev(Subscriber f) {
-    //    assert(v > 1);
+    assert(v > 1);
     if (is_advisor())
       d()->forward(f.d());
     else
