@@ -571,13 +571,13 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
 
   if test "${enable_debug:-no}" = "no"; then
     dnl compiler flags for an optimized build
-    AC_GECODE_ADD_TO_CXXFLAGS([-Ox -fp:fast])
+    AC_GECODE_ADD_TO_CXXFLAGS([-Ox -fp:fast -wd4355])
 
     dnl flags for creating optimized dlls
     AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LD -MD])
   else
     dnl compiler flags for a debug build
-    AC_GECODE_ADD_TO_CXXFLAGS([-Zi])  
+    AC_GECODE_ADD_TO_CXXFLAGS([-Zi -wd4355])  
 
     dnl flags for creating debug dlls
     AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LDd -MDd])
@@ -617,7 +617,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_SUBST(COMPILEOBJ, "-c -Fo")
   AC_SUBST(COMPILESBJ, "-c -Fa")
   AC_SUBST(COMPILERIN, "-Tp")
-  AC_SUBST(EXAMPLES_EXTRA_CXXFLAGS, "-wd4355")
+  AC_SUBST(EXAMPLES_EXTRA_CXXFLAGS, "")
 
   dnl Install stub .lib files (required for msvc)
   AC_SUBST(INSTALLLIBS, "yes")

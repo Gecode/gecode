@@ -6524,11 +6524,11 @@ _ACEOF
 
 
   if test "${enable_debug:-no}" = "no"; then
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox -fp:fast"
+        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox -fp:fast -wd4355"
 
         DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }${CXXFLAGS} -LD -MD"
   else
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Zi"
+        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Zi -wd4355"
 
         DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }${CXXFLAGS} -LDd -MDd"
   fi
@@ -6593,7 +6593,7 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
 
   COMPILERIN="-Tp"
 
-  EXAMPLES_EXTRA_CXXFLAGS="-wd4355"
+  EXAMPLES_EXTRA_CXXFLAGS=""
 
 
     INSTALLLIBS="yes"
@@ -7350,11 +7350,11 @@ _ACEOF
 
 
   if test "${enable_debug:-no}" = "no"; then
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox -fp:fast"
+        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Ox -fp:fast -wd4355"
 
         DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }${CXXFLAGS} -LD -MD"
   else
-        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Zi"
+        CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }-Zi -wd4355"
 
         DLLFLAGS="${DLLFLAGS}${DLLFLAGS:+ }${CXXFLAGS} -LDd -MDd"
   fi
@@ -7419,7 +7419,7 @@ echo "$as_me: error: Static linking not supported for Windows/cl." >&2;}
 
   COMPILERIN="-Tp"
 
-  EXAMPLES_EXTRA_CXXFLAGS="-wd4355"
+  EXAMPLES_EXTRA_CXXFLAGS=""
 
 
     INSTALLLIBS="yes"
