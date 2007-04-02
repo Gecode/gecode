@@ -238,6 +238,11 @@ namespace Gecode { namespace Set {
   }
 
   template <class View>
+  forceinline void
+  ComplementView<View>::schedule(Space* home, Propagator* p, ModEvent me) {
+    return View::schedule(home,p,me_negateset(me));
+  }
+  template <class View>
   forceinline ModEvent
   ComplementView<View>::pme(const Propagator* p) {
     return me_negateset(View::pme(p));

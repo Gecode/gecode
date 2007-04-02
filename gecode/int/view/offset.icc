@@ -185,6 +185,10 @@ namespace Gecode {
      * Propagator modification events
      *
      */
+    forceinline void
+    OffsetView::schedule(Space* home, Propagator* p, ModEvent me) {
+      return IntView::schedule(home,p,me);
+    }
     forceinline ModEvent
     OffsetView::pme(const Propagator* p) {
       return IntView::pme(p);

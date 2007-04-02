@@ -340,10 +340,12 @@ namespace Gecode {
       template <class I> ModEvent minus(Space* home, I& i);
       //@}
 
-      /// \name Propagator modification events
+      /// \name View-dependent propagator support
       //@{
+      /// Schedule propagator \a p with modification event \a me
+      static void schedule(Space* home, Propagator* p, ModEvent me);
       /// Return modification event of propagator \a p for view
-      static ModEvent     pme(const Propagator* p);
+      static ModEvent pme(const Propagator* p);
       /// Translate modification event \a me to propagator modification event for view
       static PropModEvent pme(ModEvent me);
       //@}
@@ -495,10 +497,12 @@ namespace Gecode {
       template <class I> ModEvent minus(Space* home, I& i);
       //@}
 
-      /// \name Propagator modification events
+      /// \name View-dependent propagator support
       //@{
+      /// Schedule propagator \a p with modification event \a me
+      static void schedule(Space* home, Propagator* p, ModEvent me);
       /// Return modification event of propagator \a p for view
-      static ModEvent     pme(const Propagator* p);
+      static ModEvent pme(const Propagator* p);
       /// Translate modification event \a me to propagator modification event for view
       static PropModEvent pme(ModEvent me);
       //@}
@@ -664,10 +668,12 @@ namespace Gecode {
       ModEvent eq(Space* home, Val n);
       //@}
 
-      /// \name Propagator modification events
+      /// \name View-dependent propagator support
       //@{
+      /// Schedule propagator \a p with modification event \a me
+      static void schedule(Space* home, Propagator* p, ModEvent me);
       /// Return modification event of propagator \a p for view
-      static ModEvent     pme(const Propagator* p);
+      static ModEvent pme(const Propagator* p);
       /// Translate modification event \a me to propagator modification event for view
       static PropModEvent pme(ModEvent me);
       //@}
@@ -832,10 +838,12 @@ namespace Gecode {
       template <class I> ModEvent minus(Space* home, I& i);
       //@}
 
-      /// \name Propagator modification events
+      /// \name View-dependent propagator support
       //@{
+      /// Schedule propagator \a p with modification event \a me
+      static void schedule(Space* home, Propagator* p, ModEvent me);
       /// Return modification event of propagator \a p for view
-      static ModEvent     pme(const Propagator* p);
+      static ModEvent pme(const Propagator* p);
       /// Translate modification event \a me to propagator modification event for view
       static PropModEvent pme(ModEvent me);
       //@}
@@ -978,10 +986,12 @@ namespace Gecode {
       template <class I> ModEvent minus(Space* home, I& i);
       //@}
 
-      /// \name Propagator modification events
+      /// \name View-dependent propagator support
       //@{
+      /// Schedule propagator \a p with modification event \a me
+      static void schedule(Space* home, Propagator* p, ModEvent me);
       /// Return modification event of propagator \a p for view
-      static ModEvent     pme(const Propagator* p);
+      static ModEvent pme(const Propagator* p);
       /// Translate modification event \a me to propagator modification event for view
       static PropModEvent pme(ModEvent me);
       //@}
@@ -1276,10 +1286,12 @@ namespace Gecode {
       bool assigned(void) const;
       //@}
 
-      /// \name Propagator modification events
+      /// \name View-dependent propagator support
       //@{
+      /// Schedule propagator \a p with modification event \a me
+      static void schedule(Space* home, Propagator* p, ModEvent me);
       /// Return modification event of propagator \a p for view
-      static ModEvent     pme(const Propagator* p);
+      static ModEvent pme(const Propagator* p);
       /// Translate modification event \a me to propagator modification event for view
       static PropModEvent pme(ModEvent me);
       //@}

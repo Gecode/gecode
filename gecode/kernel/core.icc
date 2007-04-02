@@ -441,14 +441,16 @@ namespace Gecode {
     Variable* forward(void) const;
     //@}
 
-    /// \name Propagator modification events
+    /// \name Variable-dependent propagator support
     //@{
+    /// Schedule propagator \a p with modification event \a me
+    static void schedule(Space* home, Propagator* p, ModEvent me);
     /// Return modification event for variable from propagator \a p
-    static ModEvent     pme(const Propagator* p);
+    static ModEvent pme(const Propagator* p);
     /// Translate modification event \a me into propagator modification event
     static PropModEvent pme(ModEvent me);
     /// Combine modifications events \a me1 and \a me2
-    static ModEvent     combine(ModEvent me1, ModEvent me2);
+    static ModEvent combine(ModEvent me1, ModEvent me2);
     //@}
 
     /// \name Processing modified variables
@@ -1896,6 +1898,12 @@ namespace Gecode {
     p->u.pme ^= (com_me << (VTI << 2));
     // Put propagator into right queue
     pool_put(p);
+  }
+
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline void
+  Variable<VTI,PC,MED>::schedule(Space* home, Propagator* p, ModEvent me) {
+    home->process<VTI,MED>(p,me);
   }
 
   forceinline ExecStatus

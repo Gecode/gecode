@@ -327,6 +327,10 @@ namespace Gecode {
      * Propagator modification events
      *
      */
+    forceinline void
+    NegBoolView::schedule(Space* home, Propagator* p, ModEvent me) {
+      return BoolView::schedule(home,p,me);
+    }
     forceinline ModEvent
     NegBoolView::pme(const Propagator* p) {
       return BoolView::pme(p);

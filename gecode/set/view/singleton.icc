@@ -63,6 +63,20 @@ namespace Gecode {
       }
     }
 
+    forceinline ModEvent
+    SingletonView::me_settoint(ModEvent me) {
+      switch(me) {
+      case ME_SET_FAILED:
+        return Gecode::Int::ME_INT_FAILED;
+      case ME_SET_NONE:
+        return Gecode::Int::ME_INT_NONE;
+      case ME_SET_VAL:
+        return Gecode::Int::ME_INT_VAL;
+      default:
+        return Gecode::Int::ME_INT_DOM;
+      }
+    }
+
     forceinline bool
     SingletonView::assigned(void) const { return view.assigned(); }
 
@@ -207,14 +221,17 @@ namespace Gecode {
     }
 
 
+    forceinline void
+    SingletonView::schedule(Space* home, Propagator* p, ModEvent me) {
+      return Gecode::Int::IntView::schedule(home,p,me_settoint(me));
+    }
     forceinline ModEvent
     SingletonView::pme(const Propagator* p) {
       return me_inttoset(Int::IntView::pme(p));
     }
     forceinline PropModEvent
     SingletonView::pme(ModEvent me) {
-      // CHECK THIS
-      return SetView::pme(me);
+      return SetView::pme(me_settoint(me));
     }
 
     forceinline void

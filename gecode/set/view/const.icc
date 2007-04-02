@@ -209,6 +209,10 @@ namespace Gecode { namespace Set {
   forceinline void
   ConstantView::cancel(Space*,SubscriberType,PropCond) {}
 
+  forceinline void
+  ConstantView::schedule(Space* home, Propagator* p, ModEvent me) {
+    return SetView::schedule(home,p,me);
+  }
   forceinline ModEvent
   ConstantView::pme(const Propagator*) {
     return ME_SET_NONE;

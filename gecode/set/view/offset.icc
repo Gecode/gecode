@@ -202,6 +202,11 @@ namespace Gecode { namespace Set {
   }
 
   template <class View>
+  forceinline void
+  OffsetSetView<View>::schedule(Space* home, Propagator* p, ModEvent me) {
+    return View::schedule(home,p,me);
+  }
+  template <class View>
   forceinline ModEvent
   OffsetSetView<View>::pme(const Propagator* p) {
     return View::pme(p);

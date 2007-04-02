@@ -100,8 +100,10 @@ namespace Gecode {
       ModEvent eq(Space* home, double n) { return ME_INT_NONE; }
       //@}
 
-      /// \name Propagator modification events
+      /// \name View-dependent propagator support
       //@{
+      /// Schedule propagator \a p with modification event \a me
+      static void schedule(Space* home, Propagator* p, ModEvent me) {}
       /// Return modification event of propagator \a p for view
       static ModEvent pme(const Propagator* p) { return ME_INT_NONE; }
       /// Translate modification event \a me to propagator modification event for view

@@ -183,6 +183,10 @@ namespace Gecode {
      * Propagator modification events
      *
      */
+    forceinline void
+    ZeroIntView::schedule(Space* home, Propagator* p, ModEvent me) {
+      return IntView::schedule(home,p,me);
+    }
     forceinline ModEvent
     ZeroIntView::pme(const Propagator*) {
       return ME_INT_NONE;

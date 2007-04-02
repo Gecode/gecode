@@ -235,6 +235,11 @@ namespace Gecode {
      *
      */
     template <class Val, class UnsVal>
+    forceinline void
+    ScaleView<Val,UnsVal>::schedule(Space* home, Propagator* p, ModEvent me) {
+      return IntView::schedule(home,p,me);
+    }
+    template <class Val, class UnsVal>
     forceinline ModEvent
     ScaleView<Val,UnsVal>::pme(const Propagator* p) {
       return IntView::pme(p);
