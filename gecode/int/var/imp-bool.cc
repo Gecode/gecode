@@ -35,8 +35,8 @@ namespace Gecode { namespace Int {
 #if GECODE_USE_ADVISORS
   bool
   BoolVarImp::advisors(Space *home) {
-    SubscriberType* b = idx[PC_BOOL_ADVISOR];
-    SubscriberType* p = idx[PC_BOOL_ADVISOR+1];
+    SubscriberType* b = advisor_start();
+    SubscriberType* p = advisor_end();
     ModEvent me = dom==NONE ? ME_BOOL_NONE : ME_BOOL_VAL;
     int lo = dom==ONE, hi = dom==ZERO;
     while (p-- > b) {

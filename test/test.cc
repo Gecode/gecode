@@ -233,7 +233,7 @@ Options::parse(int argc, char** argv) {
     }
     i++;
   }
-  //  testpat.push_back(make_pair(false,"Circuit::4"));
+  //  testpat.push_back(make_pair(false,"Set::"));
   return;
  missing:
   e = "missing parameter";

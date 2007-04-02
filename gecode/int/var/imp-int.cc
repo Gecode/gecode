@@ -380,11 +380,11 @@ namespace Gecode { namespace Int {
    */
 #if GECODE_USE_ADVISORS
   bool
-  IntVarImp::advisors(Space *home, ModEvent me, int lo, int hi) {
-    SubscriberType* b = idx[PC_INT_ADVISOR];
-    SubscriberType* p = idx[PC_INT_ADVISOR+1];
+  IntVarImp::advisors(Space* home, ModEvent me, int lo, int hi) {
+    SubscriberType* b = advisor_start();
+    SubscriberType* p = advisor_end();
     while (p-- > b) {
-      switch(static_cast<IntAdvisor*>(p->d())->_advise(home, me, lo, hi)) {
+      switch (static_cast<IntAdvisor*>(p->d())->_advise(home, me, lo, hi)) {
       case __ES_SUBSUMED:
         break;
       case ES_FAILED:

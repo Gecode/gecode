@@ -51,13 +51,6 @@ namespace Gecode { namespace Int {
    */
   const Gecode::PropCond PC_BOOL_VAL = Gecode::PC_GEN_ASSIGNED;
 
-  /**
-   * \brief Propagation condition for advisors.
-   *
-   * The subscriber must be a advisor, and will be run on all domain changes.
-   */
-  const Gecode::PropCond PC_BOOL_ADVISOR = Gecode::PC_GEN_ASSIGNED + 1;
-
   //@}
 
   /// Modification event difference for Bool-variable implementations
@@ -68,10 +61,10 @@ namespace Gecode { namespace Int {
   };
 
   /// Base-class for Bool-variable implementations
-  class BoolVarImpBase : public Gecode::Variable<VTI_BOOL,PC_BOOL_ADVISOR,BoolMeDiff> {
+  class BoolVarImpBase : public Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff> {
   protected:
     /// Variable procesor for variables of this type
-    class Processor : public Gecode::VarTypeProcessor<VTI_BOOL,PC_BOOL_ADVISOR,BoolMeDiff> {
+    class Processor : public Gecode::VarTypeProcessor<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff> {
     public:
       /// Process modified variables linked from \a x
       GECODE_INT_EXPORT virtual void process(Space* home, VarBase* x);
@@ -127,24 +120,24 @@ namespace Gecode { namespace Int {
 
   forceinline
   BoolVarImpBase::BoolVarImpBase(Space* home)
-    : Gecode::Variable<VTI_BOOL,PC_BOOL_ADVISOR,BoolMeDiff>(home) {}
+    : Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>(home) {}
 
   forceinline
   BoolVarImpBase::BoolVarImpBase(Space* home, bool share, BoolVarImpBase& x)
-    : Gecode::Variable<VTI_BOOL,PC_BOOL_ADVISOR,BoolMeDiff>(home,share,x) {}
+    : Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>(home,share,x) {}
 
   forceinline void
   BoolVarImpBase::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
-    Gecode::Variable<VTI_BOOL,PC_BOOL_ADVISOR,BoolMeDiff>::subscribe(home,p,pc,assigned,ME_BOOL_VAL,process);
+    Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>::subscribe(home,p,pc,assigned,ME_BOOL_VAL,process);
   }
   forceinline void
   BoolVarImpBase::subscribe(Space* home, Advisor* a, bool assigned) {
-    Gecode::Variable<VTI_BOOL,PC_BOOL_ADVISOR,BoolMeDiff>::subscribe(home,a,assigned);
+    Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>::subscribe(home,a,assigned);
   }
 
   forceinline void
   BoolVarImpBase::notify(Space* home, ModEvent) {
-    Gecode::Variable<VTI_BOOL,PC_BOOL_ADVISOR,BoolMeDiff>::notify(home);
+    Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>::notify(home);
   }
 
 }}

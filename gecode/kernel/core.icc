@@ -192,7 +192,7 @@ namespace Gecode {
     }
     /// Returns if this subscriber was constructed from a Advisor.
     bool is_advisor() { 
-      assert(v > 1);
+      //      assert(v > 1);
       return v & 1;
     }
     /**
@@ -201,7 +201,7 @@ namespace Gecode {
      * \pre this must have been constructed from a Propagator pointer.
      */
     Propagator *p() {
-      assert(v > 1);
+      //      assert(v > 1);
       assert(!is_advisor());
       return reinterpret_cast<Propagator*>(v);
     }
@@ -211,7 +211,7 @@ namespace Gecode {
      * \pre this must have been constructed from a Advisor pointer.
      */
     Advisor *d() {
-      assert(v > 1);
+      //      assert(v > 1);
       assert(is_advisor());
       return reinterpret_cast<Advisor*>(v&~1);
     }
@@ -351,16 +351,11 @@ namespace Gecode {
       /// Store the forwarding pointer during copying
       Variable* fwd;
     } u;
-#ifdef GECODE_USE_ADVISORS
-    // In the case of advisors in the system, we must allow access to
-    // the index structure to subclasses.
-    // This is unfortunate, but hard to overcome, since 
-    // variable-type specific processing for the advisors is needed.
-  protected:
-#endif
+#if GECODE_USE_ADVISORS
+    // Leave one extra slot for advisors
+    SubscriberType* idx[PC+3]; ///< Stores where entries start (idx[pc]}
+#else
     SubscriberType* idx[PC+2]; ///< Stores where entries start (idx[pc]}
-#ifdef GECODE_USE_ADVISORS
-  private:
 #endif
 
     /// Manage number of free entries internally
@@ -478,6 +473,14 @@ namespace Gecode {
     void process(Space* home, PropCond pc1, PropCond pc2, ModEvent me);
     /// Process subscribed propagators for assigned variable
     void process(Space* home);
+    //@}
+
+    /// \name Access to advisors
+    //@{
+    /// Return pointer to first advisor
+    SubscriberType* advisor_start(void) const;
+    /// Return pointer to last advisor
+    SubscriberType* advisor_end(void) const;
     //@}
 
     /// \name Memory management
@@ -1464,7 +1467,7 @@ namespace Gecode {
    */
   forceinline Subscriber
   Subscriber::prev(void) {
-    assert(v > 1);
+    //    assert(v > 1);
     if (is_advisor())
       return d()->forward();
     else
@@ -1472,7 +1475,7 @@ namespace Gecode {
   }
   forceinline void
   Subscriber::prev(Subscriber f) {
-    assert(v > 1);
+    //    assert(v > 1);
     if (is_advisor())
       d()->forward(f.d());
     else
@@ -1617,8 +1620,13 @@ namespace Gecode {
   Variable<VTI,PC,MED>::Variable(Space*) :
     _next(reinterpret_cast<Variable<VTI,PC,MED>*>(1)) {
     u.free_me = 0;
+#if GECODE_USE_ADVISORS
+    for (int i=PC+3; i--; )
+      idx[i] = NULL;
+#else
     for (int i=PC+2; i--; )
       idx[i] = NULL;
+#endif
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
@@ -1626,15 +1634,24 @@ namespace Gecode {
   Variable<VTI,PC,MED>::Variable(void) :
     _next(reinterpret_cast<Variable<VTI,PC,MED>*>(1)) {
     u.free_me = 0;
+#if GECODE_USE_ADVISORS
+    for (int i=PC+3; i--; )
+      idx[i] = NULL;
+#else
     for (int i=PC+2; i--; )
       idx[i] = NULL;
+#endif
   }
 
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline unsigned int
   Variable<VTI,PC,MED>::degree(void) const {
+#if GECODE_USE_ADVISORS
+    return static_cast<unsigned int>(idx[PC+2] - idx[0]);
+#else
     return static_cast<unsigned int>(idx[PC+1] - idx[0]);
+#endif
   }
 
 
@@ -1704,8 +1721,13 @@ namespace Gecode {
     if (x.idx[0] == NULL) {
       // Variable needs no index structure
       u.free_me = 0;
+#if GECODE_USE_ADVISORS
+      for (int i=PC+3; i--; )
+        idx[i] = NULL;
+#else
       for (int i=PC+2; i--; )
         idx[i] = NULL;
+#endif
       reg = &home->vars_noidx;
     } else {
       // Recover original value in copy
@@ -1950,9 +1972,9 @@ namespace Gecode {
       free_dec();
       // Enter advisor
       --idx[0];
-      for (PropCond i = 0; i < PC; i++)
+      for (PropCond i = 0; i < PC+1; i++)
         *(idx[i]) = *(--idx[i+1]);
-      *idx[PC]=s;
+      *idx[PC+1]=s;
     }
 #endif
   }
@@ -1972,11 +1994,20 @@ namespace Gecode {
       free(4);
       SubscriberType* prop = reinterpret_cast<SubscriberType*>
         (home->alloc(4*sizeof(SubscriberType))) + 4;
+#if GECODE_USE_ADVISORS
+      for (PropCond i = PC+3; i--; )
+        idx[i] = prop;
+#else
       for (PropCond i = PC+2; i--; )
         idx[i] = prop;
+#endif
     } else {
       // Resize dependency array
+#if GECODE_USE_ADVISORS
+      unsigned int n = static_cast<unsigned int>(idx[PC+2] - idx[0]);
+#else
       unsigned int n = static_cast<unsigned int>(idx[PC+1] - idx[0]);
+#endif
       // Find out whether the area is most likely in the special area
       // reserved for subscriptions. If yes, just resize mildly otherwise
       // more agressively
@@ -1994,8 +2025,13 @@ namespace Gecode {
       // Update index pointers
       ptrdiff_t o = prop - idx[0];
       idx[0] = prop;
+#if GECODE_USE_ADVISORS
+      for (PropCond i = PC+2; i > 0; i--)
+        idx[i] += o;
+#else
       for (PropCond i = PC+1; i > 0; i--)
         idx[i] += o;
+#endif
     }
   }
 
@@ -2038,9 +2074,9 @@ namespace Gecode {
 #if GECODE_USE_ADVISORS
     SubscriberType s = a;
     if (!assigned) {
-      SubscriberType* f = idx[PC];
+      SubscriberType* f = idx[PC+1];
 #if GECODE_AUDIT
-      while (f < idx[PC+1])
+      while (f < idx[PC+2])
         if (*f == s)
           goto found;
         else
@@ -2050,8 +2086,8 @@ namespace Gecode {
 #else
       while (*f != s) f++;
 #endif
-      *f=*idx[PC];
-      for (PropCond i=PC; i>0; i--)
+      *f=*idx[PC+1];
+      for (PropCond i=PC+1; i>0; i--)
         *(idx[i]++)=*(idx[i-1]);
       idx[0]++;
       free_inc();
@@ -2095,14 +2131,23 @@ namespace Gecode {
     // Recover from copy (also overwrites forwarding pointer)
     x->u.free_me = u.free_me;
     SubscriberType* f = x->idx[0];
+#if GECODE_USE_ADVISORS
+    int n = static_cast<int>(x->idx[PC+2] - f);
+#else
     int n = static_cast<int>(x->idx[PC+1] - f);
+#endif
     u.free_me = 0;
     SubscriberType* t = sub;
     sub += n;
     idx[0] = t;
     ptrdiff_t o = t - f;
+#if GECODE_USE_ADVISORS
+    for (PropCond i = PC+2; i>0; i--)
+      idx[i] = x->idx[i]+o;
+#else
     for (PropCond i = PC+1; i>0; i--)
       idx[i] = x->idx[i]+o;
+#endif
 #if GECODE_USE_ADVISORS
     while ((n-4) >= 0) {
       n -= 4;
@@ -2170,17 +2215,41 @@ namespace Gecode {
                                 PropCond pc1, PropCond pc2, ModEvent me) {
     SubscriberType* b = idx[pc1];
     SubscriberType* p = idx[pc2+1];
-    while (p-- > b)
+    while (p-- > b) {
 #if GECODE_USE_ADVISORS
+      assert(!p->is_advisor());
       home->process<VTI,MED>(p->p(),me);
 #else
       home->process<VTI,MED>(*p,me);
 #endif
+    }
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::process(Space* home) {
+#if GECODE_USE_ADVISORS
+    {
+      SubscriberType* b = idx[0];
+      SubscriberType* p = idx[PC+1];
+      while (p-- > b) {
+        assert(!p->is_advisor());
+        home->process<VTI,MED>(p->p());
+      }
+    }
+    // Entries in index structure are disabled. However they
+    // must still work for cloning (idx[0]) and degree (idx[PC+2])
+    {
+      SubscriberType* b = idx[0];
+      SubscriberType* p = idx[PC+2];
+      home->n_sub -= (p-b);
+      // Information needed to release the dependency array
+      unsigned int n = free() + (p-b);
+      home->reuse(p-n,n*sizeof(SubscriberType));
+      for (int i=PC+3; i--; )
+        idx[i] = NULL;
+    }
+#else
     // Entries in index structure are disabled. However they
     // must still work for cloning (idx[0]) and degree (idx[PC+1])
     SubscriberType* b = idx[0];    idx[0] = NULL;
@@ -2190,13 +2259,21 @@ namespace Gecode {
     unsigned int n = free() + (p-b);
     SubscriberType* s = p-n;
     while (p-- > b)
-#if GECODE_USE_ADVISORS
-      if (!p->is_advisor())
-        home->process<VTI,MED>(p->p());
-#else
       home->process<VTI,MED>(*p);
-#endif
     home->reuse(s,n*sizeof(SubscriberType));
+#endif
+  }
+
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline SubscriberType*
+  Variable<VTI,PC,MED>::advisor_start(void) const {
+    return idx[PC+1];
+  }
+
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline SubscriberType*
+  Variable<VTI,PC,MED>::advisor_end(void) const {
+    return idx[PC+2];
   }
 
 }

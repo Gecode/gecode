@@ -182,14 +182,6 @@ ModEvents:	VAL, BND, DOM
    * update operation on \a x returns the modification event ME_INT_VAL,
    * ME_INT_BND, or ME_INT_DOM.
    */
-[PropCond]
-Name:           ADVISOR
-ModEvents:      
-  /**
-   * \brief Propagation condition for advisors.
-   *
-   * The subscriber must be a advisor, and will be run on all domain changes.
-   */
 [PropCondFooter]
   //@}
 ##
