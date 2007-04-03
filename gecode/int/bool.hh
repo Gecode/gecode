@@ -362,7 +362,7 @@ namespace Gecode { namespace Int { namespace Bool {
       }
       ExecStatus advise(Space *home, ModEvent me, int lo, int hi);
     };
-    Council ac;
+    Council<WLAdvisor> ac;
 
   public:
     /// Copy propagator during cloning

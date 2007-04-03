@@ -60,8 +60,10 @@ namespace {
       }
     };
     
+  public:
+    typedef Council<BndAdvisor> DC;
   private:
-    Council dc;
+    DC dc;
   protected:
     IntView x0, x1;
 
@@ -218,8 +220,10 @@ namespace {
       }
     };
     
+  public:
+    typedef Council<BndAdvisor> DC;
   private:
-    Council dc;
+    DC dc;
   protected:
     BoolView x0, x1;
 
