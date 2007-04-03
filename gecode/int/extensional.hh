@@ -200,10 +200,8 @@ namespace Gecode { namespace Int { namespace Extensional {
       ExecStatus advise(Space *home, ModEvent me, int lo, int hi);
     };
     
-  public:
-    typedef Council<SupportAdvisor> DC;
   private:
-    DC dc;
+    Council dc;
   };
 }}}
 

@@ -38,10 +38,9 @@ namespace Gecode {
    * Lifetime of an advisor is controlled by its council.
    *
    */
-  template <class D>
   class Council {
     int siz;
-    D** advisors;
+    Advisor** advisors;
   public:
     /** \brief Construct advisor collection
      *
@@ -54,24 +53,17 @@ namespace Gecode {
     /** \brief Copy constructor
      * 
      */
-    Council(Space* home, Propagator* p, bool share, 
-                           Council<D>& dac);
-
-
-    /** \brief Add a advisor to the collection.
-     *
-     */
-    void add(Space* home, Propagator* p, D* d);
-
-    /** \brief Dispose of this colelction
-     */
+    Council(Space* home, Propagator* p, bool share, Council& dac);
+    /// Add advisor \a for propagator \a p to collection
+    void add(Space* home, Propagator* p, Advisor* a);
+    /// Dispose council
     size_t dispose(Space *home);
   private:
-    /** \brief Is the D* \a d an active advisor?
+    /** \brief Is the Advisor* \a d an active advisor?
      *
      * \todo static? macro?
      */
-    bool active(D* d) const;
+    bool active(Advisor* d) const;
 
     /** \brief Compact representation. 
      * 
@@ -84,47 +76,46 @@ namespace Gecode {
   };
 
 
-  template <class D>
-  Council<D>::Council(Space* home, unsigned int reserve)
+  inline
+  Council::Council(Space* home, unsigned int reserve)
     : siz(reserve > 1 ? reserve : 1), 
-      advisors(static_cast<D**>(home->alloc(sizeof(D*)*siz))) {
+      advisors(static_cast<Advisor**>(home->alloc(sizeof(Advisor*)*siz))) {
     // Set up free-linkage in array
     for (int i = siz; i--; ) 
-      advisors[i] = reinterpret_cast<D*>((i+1)%siz);
+      advisors[i] = reinterpret_cast<Advisor*>((i+1)%siz);
   }
 
-  template <class D>
-  Council<D>::Council(Space* home, Propagator* p,
-                      bool share,
-                      Council<D>& dac)
+  inline
+  Council::Council(Space* home, Propagator* p,
+                   bool share,
+                   Council& dac)
     : siz(dac.compact(home, p)), 
-      advisors(static_cast<D**>(home->alloc(sizeof(D*)*siz)))
+      advisors(static_cast<Advisor**>(home->alloc(sizeof(Advisor*)*siz)))
   {
 
     for (int daci = dac.siz, i = siz; daci-- && i--; ) {
       assert(active(dac.advisors[daci]));
-      advisors[i] = static_cast<D*>(dac.advisors[daci]->copy(home, p, share));
+      advisors[i] = static_cast<Advisor*>(dac.advisors[daci]->copy(home, p, share));
       dac.advisors[daci]->forward(advisors[i]);
     }
   }
 
   
-  template <class D>
   forceinline void
-  Council<D>::add(Space *home, Propagator* p, D* d) {
+  Council::add(Space *home, Propagator* p, Advisor* d) {
     if (reinterpret_cast<ptrdiff_t>(advisors[0])>siz) {
       compact(home, p);
       if (reinterpret_cast<ptrdiff_t>(advisors[0])>siz) {
         // @todo better resizing strategy
         int nsiz = static_cast<int>(1.5*static_cast<double>(siz))+1;
-        D** newd = static_cast<D**>(home->alloc(sizeof(D*)*nsiz));
+        Advisor** newd = static_cast<Advisor**>(home->alloc(sizeof(Advisor*)*nsiz));
         for (int pos = nsiz, oldpos = siz; pos-- && oldpos--; )
           newd[pos] = advisors[oldpos]; 
         for (int i = nsiz-siz-1; i--; ) {
-          newd[i] = reinterpret_cast<D*>((i+1)%nsiz);
+          newd[i] = reinterpret_cast<Advisor*>((i+1)%nsiz);
         }
-        newd[nsiz-siz-1] = reinterpret_cast<D*>(0);
-        home->reuse(advisors, sizeof(D*)*siz);
+        newd[nsiz-siz-1] = reinterpret_cast<Advisor*>(0);
+        home->reuse(advisors, sizeof(Advisor*)*siz);
         advisors = newd;
         siz = nsiz;
       }
@@ -137,37 +128,34 @@ namespace Gecode {
   }
 
 
-  template <class D>
-  size_t
-  Council<D>::dispose(Space *home) {
+  inline size_t
+  Council::dispose(Space *home) {
     for (int i = siz; i--; ) {
       if (active(advisors[i])) {
         (void) advisors[i]->dispose(home);
       }
     }
-    home->reuse(advisors, sizeof(D*)*siz);
+    home->reuse(advisors, sizeof(Advisor*)*siz);
     return sizeof(*this);
   }
 
-  template <class D>
   forceinline bool
-  Council<D>::active(D* d) const {
+  Council::active(Advisor* d) const {
     return 
       reinterpret_cast<ptrdiff_t>(d) > siz &&
       !d->disposed();
   }
 
-  template <class D>
-  int
-  Council<D>::compact(Space *home, Propagator* p) const {
+  inline int
+  Council::compact(Space *home, Propagator* p) const {
     if (siz == 0) {
       return 0;
     }
 
-    D** left  = &(advisors[0]);
-    D** right = left+siz-1;
-    D** lo = left-1;
-    D** hi = right+1;
+    Advisor** left  = &(advisors[0]);
+    Advisor** right = left+siz-1;
+    Advisor** lo = left-1;
+    Advisor** hi = right+1;
 
     while (true) {
       while (!active(*(++lo)))
@@ -178,15 +166,15 @@ namespace Gecode {
       std::swap(*lo,*hi);
     }
 
-    for (D** i = lo-1; i >= left; --i) {
+    for (Advisor** i = lo-1; i >= left; --i) {
       if (reinterpret_cast<ptrdiff_t>(*i) > siz) {
         assert((*i)->disposed());
         home->reuse(*i, (*i)->size());
       }
-      *i = reinterpret_cast<D*>((i-left)+1);
+      *i = reinterpret_cast<Advisor*>((i-left)+1);
     }
     if (!active(*hi)) {
-      *hi = reinterpret_cast<D*>(0);
+      *hi = reinterpret_cast<Advisor*>(0);
     }
 
     return (right-lo)+1;
