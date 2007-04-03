@@ -70,7 +70,7 @@ namespace Gecode { namespace Int { namespace Regular {
       dispose(Space* home) {
         Dom<View,shared>* d = static_cast<Dom<View,shared>*>
           (Advisor::parent());
-        d->x[i].cancel(home,this,PC_INT_ADVISOR);
+        d->x[i].cancel(home,this);
         (void) IntViewAdvisor<View>::dispose(home);
         return sizeof(*this);
       }

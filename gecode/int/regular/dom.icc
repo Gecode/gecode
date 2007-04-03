@@ -510,7 +510,7 @@ namespace Gecode { namespace Int { namespace Regular {
     for (int i=x.size(); i--; ) {
       Index* j = new (home) Index(home,this,i);
       dac.add(home,this,j);
-      x[i].subscribe(home,j,PC_INT_ADVISOR,false);
+      x[i].subscribe(home,j);
     }
     home->process<VTI_INT,IntMeDiff>(this,ME_INT_BND);
 #else
