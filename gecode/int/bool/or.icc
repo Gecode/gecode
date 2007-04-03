@@ -778,17 +778,19 @@ namespace Gecode { namespace Int { namespace Bool {
 
   template<class BV>
   ExecStatus
-  NaryOrWLTrue<BV>::WLAdvisor::advise(Space *home, ModEvent me, int lo, int hi){
-    if (lo == 0 && hi == 0) {
+  NaryOrWLTrue<BV>::WLAdvisor::advise(Space* home, ModEvent me, 
+                                      int lo, int hi) {
+    assert(lo == hi);
+    if (lo == 0) {
       // Subsume parent
-      IntAdvisor::subsume(home);
+      IntViewAdvisor<BV>::schedule(home, me);
       return ES_OK; // this are disposed via parent
     }
     NaryOrWLTrue<BV>* np = static_cast<NaryOrWLTrue<BV>* >(Advisor::parent());
     int pos = same(x, np->x[1]);
     while (np->x.size() > 2 && np->x[pos].assigned()) {
       if (np->x[pos].one()) {
-        IntAdvisor::subsume(home);
+        IntViewAdvisor<BV>::schedule(home, me);
         return ES_OK; // this are disposed via parent
       }
       np->x.move_lst(pos);
@@ -809,7 +811,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   ExecStatus
   NaryOrWLTrue<BV>::propagate(Space* home) {
-    assert(x.size() == 2);
+    assert(x.size() >= 2);
     assert(x[0].assigned() || x[1].assigned());
 
     if (x[0].one() || x[1].one())

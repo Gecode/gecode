@@ -381,10 +381,9 @@ namespace Gecode { namespace Int {
 #if GECODE_USE_ADVISORS
   bool
   IntVarImp::advisors(Space* home, ModEvent me, int lo, int hi) {
-    SubscriberType* b = advisor_start();
-    SubscriberType* p = advisor_end();
-    while (p-- > b) {
-      switch (static_cast<IntAdvisor*>(p->d())->_advise(home, me, lo, hi)) {
+    for (Advisors a(*this); a(); ++a)
+      switch (static_cast<IntAdvisor*>(a.advisor())
+              ->_advise(home, me, lo, hi)) {
       case __ES_SUBSUMED:
         break;
       case ES_FAILED:
@@ -393,7 +392,6 @@ namespace Gecode { namespace Int {
       default:
         break;
       }
-    }
     return true;
   }
 #endif

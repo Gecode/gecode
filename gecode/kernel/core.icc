@@ -475,14 +475,29 @@ namespace Gecode {
     void process(Space* home);
     //@}
 
+  protected:
     /// \name Access to advisors
     //@{
-    /// Return pointer to first advisor
-    SubscriberType* advisor_start(void) const;
-    /// Return pointer to last advisor
-    SubscriberType* advisor_end(void) const;
+    /// Test whether variable has advisors
+    bool advisors(void) const;
+    /// Iterator for all advisors of a variable
+    class Advisors {
+    private:
+      SubscriberType* c; ///< Current advisor
+      SubscriberType* e; ///< End of advisors
+    public:
+      /// Initialize iterator for variable \a x
+      Advisors(const Variable& x);
+      /// Test whether all advisors have been iterated
+      bool operator()(void) const;
+      /// Move to next advisor
+      void operator++(void);
+      /// Return advisor
+      Advisor* advisor(void) const;
+    };
     //@}
 
+  public:
     /// \name Memory management
     //@{
     /// Allocate memory from space
@@ -2264,16 +2279,32 @@ namespace Gecode {
 #endif
   }
 
+
   template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline SubscriberType*
-  Variable<VTI,PC,MED>::advisor_start(void) const {
-    return idx[PC+1];
+  forceinline bool
+  Variable<VTI,PC,MED>::advisors(void) const {
+    return x.idx[PC+1] != x.idx[PC+2];
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline SubscriberType*
-  Variable<VTI,PC,MED>::advisor_end(void) const {
-    return idx[PC+2];
+  forceinline
+  Variable<VTI,PC,MED>::Advisors::Advisors(const Variable& x)
+    : c(x.idx[PC+1]), e(x.idx[PC+2]) {}
+
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline bool
+  Variable<VTI,PC,MED>::Advisors::operator()(void) const {
+    return c<e;
+  }
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline void
+  Variable<VTI,PC,MED>::Advisors::operator++(void) {
+    c++;
+  }
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline Advisor*
+  Variable<VTI,PC,MED>::Advisors::advisor(void) const {
+    return c->d();
   }
 
 }

@@ -35,13 +35,15 @@ namespace Gecode { namespace Int {
 #if GECODE_USE_ADVISORS
   bool
   BoolVarImp::advisors(Space *home) {
-    SubscriberType* b = advisor_start();
-    SubscriberType* p = advisor_end();
-    ModEvent me = dom==NONE ? ME_BOOL_NONE : ME_BOOL_VAL;
-    int lo = dom==ONE, hi = dom==ZERO;
-    while (p-- > b) {
-      switch (static_cast<IntAdvisor*>(p->d())
-              ->_advise(home,me,lo,hi)) {
+    int lo, hi;
+    switch (status()) {
+    case NONE: GECODE_NEVER; lo=1; hi=0; break;
+    case ZERO: lo=hi=1; break;
+    case ONE:  lo=hi=0; break;
+    }
+    for (Advisors a(*this); a(); ++a) 
+      switch (static_cast<IntAdvisor*>(a.advisor())
+              ->_advise(home,ME_INT_VAL,lo,hi)) {
       case __ES_SUBSUMED:
         break;
       case ES_FAILED:
@@ -50,7 +52,6 @@ namespace Gecode { namespace Int {
       default:
         break;
       }
-    }
     return true;
   }
 #endif
