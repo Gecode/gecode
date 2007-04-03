@@ -80,7 +80,7 @@ namespace Gecode { namespace Int { namespace Regular {
         return (me == ME_INT_VAL) ? ES_SUBSUMED(this,home) : ES_OK;
       }
     };
-    DynamicAdvisorCollection<Index> dac;
+    Council<Index> dac;
 #endif
     /// The %DFA describing the language
     DFA dfa;

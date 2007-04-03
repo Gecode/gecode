@@ -61,7 +61,7 @@ namespace {
     };
     
   public:
-    typedef DynamicAdvisorCollection<BndAdvisor> DC;
+    typedef Council<BndAdvisor> DC;
   private:
     DC dc;
   protected:
@@ -77,28 +77,28 @@ namespace {
     /// Constructor for posting
     Eq(Space* home, IntView _x0, IntView _x1) 
       : Propagator(home),
-        dc(home, this, 2),
+        dc(home, 2),
         x0(_x0), x1(_x1) {
-      BndAdvisor *bd0 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor *bd1 = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor* bd0 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor* bd1 = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd0);
       dc.add(home, this, bd1);
 
-      BndAdvisor *bd2 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor *bd3 = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor* bd2 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor* bd3 = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd2);
       dc.add(home, this, bd3);
 
 
-      BndAdvisor *bd4 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor *bd5 = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor* bd4 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor* bd5 = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd4);
       dc.add(home, this, bd5);
 
       bd2->dispose(home);
 
-      BndAdvisor *bd6 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor *bd7 = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor* bd6 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor* bd7 = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd6);
       dc.add(home, this, bd7);
 
@@ -107,14 +107,14 @@ namespace {
       bd3->dispose(home);
       bd7->dispose(home);
 
-      BndAdvisor *bd8 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor *bd9 = new (home) BndAdvisor(home, this, x1);
-      BndAdvisor *bda = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor *bdb = new (home) BndAdvisor(home, this, x1);
-      BndAdvisor *bdc = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor *bdd = new (home) BndAdvisor(home, this, x1);
-      BndAdvisor *bde = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor *bdf = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor* bd8 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor* bd9 = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor* bda = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor* bdb = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor* bdc = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor* bdd = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor* bde = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor* bdf = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd8);
       dc.add(home, this, bd9);
       dc.add(home, this, bda);
@@ -221,7 +221,7 @@ namespace {
     };
     
   public:
-    typedef DynamicAdvisorCollection<BndAdvisor> DC;
+    typedef Council<BndAdvisor> DC;
   private:
     DC dc;
   protected:
@@ -237,28 +237,28 @@ namespace {
     /// Constructor for posting
     BoolEq(Space* home, BoolView _x0, BoolView _x1) 
       : Propagator(home),
-        dc(home, this, 2),
+        dc(home, 2),
         x0(_x0), x1(_x1) {
-      BndAdvisor *bd0 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor *bd1 = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor* bd0 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor* bd1 = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd0);
       dc.add(home, this, bd1);
 
-      BndAdvisor *bd2 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor *bd3 = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor* bd2 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor* bd3 = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd2);
       dc.add(home, this, bd3);
 
 
-      BndAdvisor *bd4 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor *bd5 = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor* bd4 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor* bd5 = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd4);
       dc.add(home, this, bd5);
 
       bd2->dispose(home);
 
-      BndAdvisor *bd6 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor *bd7 = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor* bd6 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor* bd7 = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd6);
       dc.add(home, this, bd7);
 
@@ -267,14 +267,14 @@ namespace {
       bd3->dispose(home);
       bd7->dispose(home);
 
-      BndAdvisor *bd8 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor *bd9 = new (home) BndAdvisor(home, this, x1);
-      BndAdvisor *bda = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor *bdb = new (home) BndAdvisor(home, this, x1);
-      BndAdvisor *bdc = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor *bdd = new (home) BndAdvisor(home, this, x1);
-      BndAdvisor *bde = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor *bdf = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor* bd8 = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor* bd9 = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor* bda = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor* bdb = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor* bdc = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor* bdd = new (home) BndAdvisor(home, this, x1);
+      BndAdvisor* bde = new (home) BndAdvisor(home, this, x0);
+      BndAdvisor* bdf = new (home) BndAdvisor(home, this, x1);
       dc.add(home, this, bd8);
       dc.add(home, this, bd9);
       dc.add(home, this, bda);

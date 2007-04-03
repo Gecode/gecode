@@ -719,7 +719,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   forceinline
   NaryOrWLTrue<BV>::NaryOrWLTrue(Space* home, ViewArray<BV>& b)
-    : Propagator(home), x(b), ac(home, this) {
+    : Propagator(home), x(b), ac(home) {
     // post advisors
     ac.add(home, this, new (home) WLAdvisor(home, this, x[0]));
     ac.add(home, this, new (home) WLAdvisor(home, this, x[1]));

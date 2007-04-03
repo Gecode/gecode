@@ -201,7 +201,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     };
     
   public:
-    typedef DynamicAdvisorCollection<SupportAdvisor> DC;
+    typedef Council<SupportAdvisor> DC;
   private:
     DC dc;
   };

@@ -37,7 +37,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   Incremental<View>::Incremental(Space* home, ViewArray<View>& x, const Table& t)
     : NaryPropagator<View,PC_INT_VAL>(home,x), 
-      table(t), dc(home, this, x.size()) {
+      table(t), dc(home, x.size()) {
     int literals = t.tablei->domsize*x.size();
     last_data = static_cast<tuple***>(home->alloc(literals*sizeof(tuple***)));
     support_data = static_cast<SupportEntry**>(home->alloc(literals*sizeof(SupportEntry*)));

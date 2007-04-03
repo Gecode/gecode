@@ -362,8 +362,7 @@ namespace Gecode { namespace Int { namespace Bool {
       }
       ExecStatus advise(Space *home, ModEvent me, int lo, int hi);
     };
-    //typedef AdvisorCollection<WLAdvisor, 2> AC;
-    AdvisorCollection<WLAdvisor,2> ac;
+    Council<WLAdvisor> ac;
 
   public:
     /// Copy propagator during cloning
