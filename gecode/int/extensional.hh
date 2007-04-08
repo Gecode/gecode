@@ -59,7 +59,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     Val(Space* home, bool share, Val<View>& p);
   public:
     /// Copy propagator during cloning
-    virtual Actor*     copy(Space* home, bool share);
+    virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for view array \a x
@@ -188,11 +188,8 @@ namespace Gecode { namespace Int { namespace Extensional {
           IntViewAdvisor<View>::schedule(home, Int::ME_INT_VAL);
         }
       }
-      SupportAdvisor(Space* home, Propagator* p, bool share, SupportAdvisor& d) 
-        : IntUnaryViewAdvisor<View>(home, p, share, d), pos(d.pos) {}
-      Advisor *copy(Space *home, Propagator* p, bool share) {
-        return new (home) SupportAdvisor(home, p, share, *this); 
-      }
+      SupportAdvisor(Space* home, bool share, SupportAdvisor& d) 
+        : IntUnaryViewAdvisor<View>(home, share, d), pos(d.pos) {}
       size_t dispose(Space* home) {
         (void) IntUnaryViewAdvisor<View>::dispose(home);
         return sizeof(*this);

@@ -54,8 +54,7 @@ namespace Gecode {
     /** \brief Copy constructor
      * 
      */
-    Council(Space* home, Propagator* p, bool share, 
-                           Council<D>& dac);
+    Council(Space* home, bool share, Council<D>& dac);
 
 
     /** \brief Add a advisor to the collection.
@@ -80,7 +79,7 @@ namespace Gecode {
      *
      * Returns number of used spots.
      */
-    int compact(Space* home, Propagator* p) const;
+    int compact(Space* home) const;
   };
 
 
@@ -94,17 +93,13 @@ namespace Gecode {
   }
 
   template <class D>
-  Council<D>::Council(Space* home, Propagator* p,
-                      bool share,
-                      Council<D>& dac)
-    : siz(dac.compact(home, p)), 
+  Council<D>::Council(Space* home, bool share, Council<D>& dac)
+    : siz(dac.compact(home)), 
       advisors(static_cast<D**>(home->alloc(sizeof(D*)*siz)))
   {
-
     for (int daci = dac.siz, i = siz; daci-- && i--; ) {
       assert(active(dac.advisors[daci]));
-      advisors[i] = static_cast<D*>(dac.advisors[daci]->copy(home, p, share));
-      dac.advisors[daci]->forward(advisors[i]);
+      advisors[i] = new (home) D(home,share,*dac.advisors[daci]);
     }
   }
 
@@ -113,7 +108,7 @@ namespace Gecode {
   forceinline void
   Council<D>::add(Space *home, Propagator* p, D* d) {
     if (reinterpret_cast<ptrdiff_t>(advisors[0])>siz) {
-      compact(home, p);
+      compact(home);
       if (reinterpret_cast<ptrdiff_t>(advisors[0])>siz) {
         // @todo better resizing strategy
         int nsiz = static_cast<int>(1.5*static_cast<double>(siz))+1;
@@ -140,11 +135,9 @@ namespace Gecode {
   template <class D>
   size_t
   Council<D>::dispose(Space *home) {
-    for (int i = siz; i--; ) {
-      if (active(advisors[i])) {
+    for (int i = siz; i--; )
+      if (active(advisors[i]))
         (void) advisors[i]->dispose(home);
-      }
-    }
     home->reuse(advisors, sizeof(D*)*siz);
     return sizeof(*this);
   }
@@ -153,13 +146,13 @@ namespace Gecode {
   forceinline bool
   Council<D>::active(D* d) const {
     return 
-      reinterpret_cast<ptrdiff_t>(d) > siz &&
+      (reinterpret_cast<ptrdiff_t>(d) > siz) &&
       !d->disposed();
   }
 
   template <class D>
   int
-  Council<D>::compact(Space *home, Propagator* p) const {
+  Council<D>::compact(Space *home) const {
     if (siz == 0) {
       return 0;
     }

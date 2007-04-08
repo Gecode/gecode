@@ -42,11 +42,8 @@ namespace {
           IntViewAdvisor<IntView>::schedule(home, Int::ME_INT_VAL);
         }
       }
-      BndAdvisor(Space* home, Propagator* p, bool share, BndAdvisor& d) 
-        : IntUnaryViewAdvisor<IntView>(home, p, share, d) {}
-      Advisor *copy(Space *home, Propagator* p, bool share) {
-        return new (home) BndAdvisor(home, p, share, *this); 
-      }
+      BndAdvisor(Space* home, bool share, BndAdvisor& d) 
+        : IntUnaryViewAdvisor<IntView>(home, share, d) {}
       size_t dispose(Space* home) {
         (void) IntUnaryViewAdvisor<IntView>::dispose(home);
         return sizeof(*this);
@@ -70,7 +67,7 @@ namespace {
     /// Constructor for cloning \a p
     Eq(Space* home, bool share, Eq& p) 
       : Propagator(home, share, p),
-        dc(home, this, share, p.dc) {
+        dc(home, share, p.dc) {
       x0.update(home,share,p.x0);
       x1.update(home,share,p.x1);
     }
@@ -205,11 +202,8 @@ namespace {
           IntViewAdvisor<BoolView>::schedule(home, Int::ME_BOOL_VAL);
         }
       }
-      BndAdvisor(Space* home, Propagator* p, bool share, BndAdvisor& d) 
-        : IntUnaryViewAdvisor<BoolView>(home, p, share, d) {}
-      Advisor *copy(Space *home, Propagator* p, bool share) {
-        return new (home) BndAdvisor(home, p, share, *this); 
-      }
+      BndAdvisor(Space* home, bool share, BndAdvisor& d) 
+        : IntUnaryViewAdvisor<BoolView>(home, share, d) {}
       size_t dispose(Space* home) {
         (void) IntUnaryViewAdvisor<BoolView>::dispose(home);
         return sizeof(*this);
@@ -230,7 +224,7 @@ namespace {
     /// Constructor for cloning \a p
     BoolEq(Space* home, bool share, BoolEq& p) 
       : Propagator(home, share, p),
-        dc(home, this, share, p.dc) {
+        dc(home, share, p.dc) {
       x0.update(home,share,p.x0);
       x1.update(home,share,p.x1);
     }

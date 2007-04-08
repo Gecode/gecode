@@ -102,8 +102,8 @@ namespace Gecode {
   class IntViewAdvisor : public IntAdvisor {
   public:
     IntViewAdvisor(Space* home, Propagator* p) : IntAdvisor(home,p) {}
-    IntViewAdvisor(Space* home, Propagator* p, bool share, IntViewAdvisor<View>& d) 
-      : IntAdvisor(home, p, share, d) {}
+    IntViewAdvisor(Space* home, bool share, IntViewAdvisor<View>& d) 
+      : IntAdvisor(home, share, d) {}
 
     virtual size_t dispose(Space* home) {
       (void) IntAdvisor::dispose(home);
@@ -144,9 +144,8 @@ namespace Gecode {
       : IntViewAdvisor<View>(home,p), x(v) {
       x.subscribe(home, this);
     }
-    IntUnaryViewAdvisor(Space* home, Propagator* p, 
-                      bool share, IntUnaryViewAdvisor<View>& d) 
-      : IntViewAdvisor<View>(home, p, share, d) {
+    IntUnaryViewAdvisor(Space* home, bool share, IntUnaryViewAdvisor<View>& d) 
+      : IntViewAdvisor<View>(home, share, d) {
       x.update(home, share, d.x);
     }
     virtual size_t dispose(Space* home) {

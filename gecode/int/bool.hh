@@ -350,12 +350,9 @@ namespace Gecode { namespace Int { namespace Bool {
         : IntUnaryViewAdvisor<BV>(home,p,v) {
         assert(!x.assigned());
       }
-      WLAdvisor(Space* home, Propagator* p, bool share, WLAdvisor& d) 
-        : IntUnaryViewAdvisor<BV>(home, p, share, d)
+      WLAdvisor(Space* home, bool share, WLAdvisor& d) 
+        : IntUnaryViewAdvisor<BV>(home, share, d)
       {}
-      Advisor *copy(Space *home, Propagator* p, bool share) {
-        return new (home) WLAdvisor(home, p, share, *this); 
-      }
       size_t dispose(Space* home) {
         (void) IntUnaryViewAdvisor<BV>::dispose(home);
         return sizeof(*this);

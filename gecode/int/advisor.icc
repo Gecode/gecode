@@ -32,14 +32,14 @@ namespace Gecode {
   /** \brief Advisor for integer variables.
    */
   class IntAdvisor : public Advisor {
-    friend class  IntVarImp;
+    friend class IntVarImp;
     friend class BoolVarImp;
   public:    
     virtual ExecStatus advise(Space* home, ModEvent me, int lo, int hi) = 0;
 
     IntAdvisor(Space* home, Propagator* p) : Advisor(home,p) {}
-    IntAdvisor(Space* home, Propagator* p, bool share, IntAdvisor& d) 
-      : Advisor(home, p, share, d) {}
+    IntAdvisor(Space* home, bool share, IntAdvisor& d) 
+      : Advisor(home, share, d) {}
     
     virtual size_t dispose(Space *home) {
       (void) Advisor::dispose(home);

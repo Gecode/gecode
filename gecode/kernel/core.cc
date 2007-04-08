@@ -304,8 +304,7 @@ namespace Gecode {
         ActorLink* c = static_cast<Actor*>(a)->copy(this,share);
         // Link copied actor
         p->next(c); c->prev(p);
-        // Forward
-        a->prev(c);
+        // Note that forwarding is done in the constructors
         p = c;
       }
       // Link last actor
@@ -386,7 +385,7 @@ namespace Gecode {
     c->vars_noidx = NULL;
     // Update variables with indexing structure
     {
-      SubscriberType* s = reinterpret_cast<SubscriberType*>(c->mm.subscriptions());
+      ActorLink** s = reinterpret_cast<ActorLink**>(c->mm.subscriptions());
       c->n_sub = n_sub;
       for (int vti=VTI_LAST; vti--; ) {
         VarBase* vs = c->vars[vti].entry;

@@ -734,7 +734,7 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   forceinline
   NaryOrWLTrue<BV>::NaryOrWLTrue(Space* home, bool share, NaryOrWLTrue<BV>& p)
-    : Propagator(home,share,p), ac(home, this, share, p.ac) {
+    : Propagator(home,share,p), ac(home, share, p.ac) {
     x.update(home,share,p.x);
   }
 

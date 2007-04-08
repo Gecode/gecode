@@ -63,7 +63,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   Incremental<View>::Incremental(Space* home, bool share, Incremental<View>& p)
     : NaryPropagator<View,PC_INT_VAL>(home,share,p),
-      dc(home, this, share, p.dc) {
+      dc(home, share, p.dc) {
     table.update(home, share, p.table);
 
     int literals = table.tablei->domsize*x.size();
