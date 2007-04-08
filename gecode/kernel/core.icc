@@ -714,7 +714,7 @@ namespace Gecode {
     /// Copy constructor
     CouncilBase(Space* home, bool share, CouncilBase& c);
     /// Add advisor to council
-    void add(Space* home, Propagator* p, Advisor* a);
+    void _add(Space* home, Propagator* p, Advisor* a);
     /// Test whether advisor \a a is active
     bool active(Advisor* a) const;
     /// Compact representation
@@ -775,9 +775,10 @@ namespace Gecode {
     void subsume(Space* home);
   public:
     /// Constructor for creation
-    Advisor(Space* home, Propagator* p) {
+    Advisor(Space* home, Propagator* p, CouncilBase& c) {
       ActorLink::prev(NULL);
       ActorLink::next(p);
+      c._add(home,p,this);
     }
     /// Copying constructor
     Advisor(Space* home, bool share, Advisor& a) {
@@ -1781,7 +1782,7 @@ namespace Gecode {
   {}
   
   inline void
-  CouncilBase::add(Space* home, Propagator* p, Advisor* a) {
+  CouncilBase::_add(Space* home, Propagator* p, Advisor* a) {
     if (reinterpret_cast<ptrdiff_t>(advisors[0])>siz) {
       compact(home);
       if (reinterpret_cast<ptrdiff_t>(advisors[0])>siz) {

@@ -37,7 +37,8 @@ namespace Gecode {
   public:    
     virtual ExecStatus advise(Space* home, ModEvent me, int lo, int hi) = 0;
 
-    IntAdvisor(Space* home, Propagator* p) : Advisor(home,p) {}
+    IntAdvisor(Space* home, Propagator* p, CouncilBase& c) 
+      : Advisor(home,p,c) {}
     IntAdvisor(Space* home, bool share, IntAdvisor& d) 
       : Advisor(home, share, d) {}
     

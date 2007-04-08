@@ -182,8 +182,9 @@ namespace Gecode { namespace Int { namespace Extensional {
       using IntUnaryViewAdvisor<View>::x;
       unsigned int pos;
     public:
-      SupportAdvisor(Space* home, Propagator* p, View v, unsigned int position) 
-        : IntUnaryViewAdvisor<View>(home,p,v), pos(position) {
+      SupportAdvisor(Space* home, Propagator* p, CouncilBase& c,
+                     View v, unsigned int position) 
+        : IntUnaryViewAdvisor<View>(home,p,c,v), pos(position) {
         if (x.assigned()) {
           IntViewAdvisor<View>::schedule(home, Int::ME_INT_VAL);
         }

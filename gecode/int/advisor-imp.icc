@@ -101,7 +101,8 @@ namespace Gecode {
   template <class View>
   class IntViewAdvisor : public IntAdvisor {
   public:
-    IntViewAdvisor(Space* home, Propagator* p) : IntAdvisor(home,p) {}
+    IntViewAdvisor(Space* home, Propagator* p, CouncilBase& c) 
+      : IntAdvisor(home,p,c) {}
     IntViewAdvisor(Space* home, bool share, IntViewAdvisor<View>& d) 
       : IntAdvisor(home, share, d) {}
 
@@ -140,8 +141,8 @@ namespace Gecode {
   protected:
     View x;
   public:
-    IntUnaryViewAdvisor(Space* home, Propagator* p, View v) 
-      : IntViewAdvisor<View>(home,p), x(v) {
+    IntUnaryViewAdvisor(Space* home, Propagator* p, CouncilBase& c, View v) 
+      : IntViewAdvisor<View>(home,p,c), x(v) {
       x.subscribe(home, this);
     }
     IntUnaryViewAdvisor(Space* home, bool share, IntUnaryViewAdvisor<View>& d) 

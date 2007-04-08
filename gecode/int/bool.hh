@@ -346,8 +346,8 @@ namespace Gecode { namespace Int { namespace Bool {
     class WLAdvisor : public IntUnaryViewAdvisor<BV> {
       using IntUnaryViewAdvisor<BV>::x;
     public:
-      WLAdvisor(Space* home, Propagator* p, BV v) 
-        : IntUnaryViewAdvisor<BV>(home,p,v) {
+      WLAdvisor(Space* home, Propagator* p, CouncilBase& c, BV v) 
+        : IntUnaryViewAdvisor<BV>(home,p,c,v) {
         assert(!x.assigned());
       }
       WLAdvisor(Space* home, bool share, WLAdvisor& d) 

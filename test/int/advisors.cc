@@ -36,8 +36,8 @@ namespace {
     class BndAdvisor : public IntUnaryViewAdvisor<IntView> {
       using IntUnaryViewAdvisor<IntView>::x;
     public:
-      BndAdvisor(Space* home, Propagator* p, IntView v) 
-        : IntUnaryViewAdvisor<IntView>(home,p,v) {
+      BndAdvisor(Space* home, Propagator* p, CouncilBase& c, IntView v) 
+        : IntUnaryViewAdvisor<IntView>(home,p,c,v) {
         if (x.assigned()) {
           IntViewAdvisor<IntView>::schedule(home, Int::ME_INT_VAL);
         }
@@ -76,50 +76,32 @@ namespace {
       : Propagator(home),
         dc(home, 2),
         x0(_x0), x1(_x1) {
-      BndAdvisor* bd0 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor* bd1 = new (home) BndAdvisor(home, this, x1);
-      dc.add(home, this, bd0);
-      dc.add(home, this, bd1);
+      (void) new (home) BndAdvisor(home, this, dc, x0);
+      BndAdvisor* bd1 = new (home) BndAdvisor(home, this, dc, x1);
 
-      BndAdvisor* bd2 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor* bd3 = new (home) BndAdvisor(home, this, x1);
-      dc.add(home, this, bd2);
-      dc.add(home, this, bd3);
+      BndAdvisor* bd2 = new (home) BndAdvisor(home, this, dc, x0);
+      BndAdvisor* bd3 = new (home) BndAdvisor(home, this, dc, x1);
 
-
-      BndAdvisor* bd4 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor* bd5 = new (home) BndAdvisor(home, this, x1);
-      dc.add(home, this, bd4);
-      dc.add(home, this, bd5);
+      (void) new (home) BndAdvisor(home, this, dc, x0);
+      (void) new (home) BndAdvisor(home, this, dc, x1);
 
       bd2->dispose(home);
 
-      BndAdvisor* bd6 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor* bd7 = new (home) BndAdvisor(home, this, x1);
-      dc.add(home, this, bd6);
-      dc.add(home, this, bd7);
-
+      BndAdvisor* bd7 = new (home) BndAdvisor(home, this, dc, x0);
+      (void) new (home) BndAdvisor(home, this, dc, x1);
 
       bd1->dispose(home);
       bd3->dispose(home);
       bd7->dispose(home);
 
-      BndAdvisor* bd8 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor* bd9 = new (home) BndAdvisor(home, this, x1);
-      BndAdvisor* bda = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor* bdb = new (home) BndAdvisor(home, this, x1);
-      BndAdvisor* bdc = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor* bdd = new (home) BndAdvisor(home, this, x1);
-      BndAdvisor* bde = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor* bdf = new (home) BndAdvisor(home, this, x1);
-      dc.add(home, this, bd8);
-      dc.add(home, this, bd9);
-      dc.add(home, this, bda);
-      dc.add(home, this, bdb);
-      dc.add(home, this, bdc);
-      dc.add(home, this, bdd);
-      dc.add(home, this, bde);
-      dc.add(home, this, bdf);
+      (void) new (home) BndAdvisor(home, this, dc, x0);
+      (void) new (home) BndAdvisor(home, this, dc, x1);
+      (void) new (home) BndAdvisor(home, this, dc, x0);
+      (void) new (home) BndAdvisor(home, this, dc, x1);
+      (void) new (home) BndAdvisor(home, this, dc, x0);
+      (void) new (home) BndAdvisor(home, this, dc, x1);
+      (void) new (home) BndAdvisor(home, this, dc, x0);
+      (void) new (home) BndAdvisor(home, this, dc, x1);
     }
   public:
     /// Copy propagator during cloning
@@ -196,8 +178,8 @@ namespace {
     class BndAdvisor : public IntUnaryViewAdvisor<BoolView> {
       using IntUnaryViewAdvisor<BoolView>::x;
     public:
-      BndAdvisor(Space* home, Propagator* p, BoolView v) 
-        : IntUnaryViewAdvisor<BoolView>(home,p,v) {
+      BndAdvisor(Space* home, Propagator* p, CouncilBase& c, BoolView v) 
+        : IntUnaryViewAdvisor<BoolView>(home,p,c,v) {
         if (x.assigned()) {
           IntViewAdvisor<BoolView>::schedule(home, Int::ME_BOOL_VAL);
         }
@@ -233,50 +215,32 @@ namespace {
       : Propagator(home),
         dc(home, 2),
         x0(_x0), x1(_x1) {
-      BndAdvisor* bd0 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor* bd1 = new (home) BndAdvisor(home, this, x1);
-      dc.add(home, this, bd0);
-      dc.add(home, this, bd1);
+      (void) new (home) BndAdvisor(home, this, dc, x0);
+      BndAdvisor* bd1 = new (home) BndAdvisor(home, this, dc, x1);
 
-      BndAdvisor* bd2 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor* bd3 = new (home) BndAdvisor(home, this, x1);
-      dc.add(home, this, bd2);
-      dc.add(home, this, bd3);
+      BndAdvisor* bd2 = new (home) BndAdvisor(home, this, dc, x0);
+      BndAdvisor* bd3 = new (home) BndAdvisor(home, this, dc, x1);
 
-
-      BndAdvisor* bd4 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor* bd5 = new (home) BndAdvisor(home, this, x1);
-      dc.add(home, this, bd4);
-      dc.add(home, this, bd5);
+      (void) new (home) BndAdvisor(home, this, dc, x0);
+      (void) new (home) BndAdvisor(home, this, dc, x1);
 
       bd2->dispose(home);
 
-      BndAdvisor* bd6 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor* bd7 = new (home) BndAdvisor(home, this, x1);
-      dc.add(home, this, bd6);
-      dc.add(home, this, bd7);
-
+      BndAdvisor* bd7 = new (home) BndAdvisor(home, this, dc, x0);
+      (void) new (home) BndAdvisor(home, this, dc, x1);
 
       bd1->dispose(home);
       bd3->dispose(home);
       bd7->dispose(home);
 
-      BndAdvisor* bd8 = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor* bd9 = new (home) BndAdvisor(home, this, x1);
-      BndAdvisor* bda = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor* bdb = new (home) BndAdvisor(home, this, x1);
-      BndAdvisor* bdc = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor* bdd = new (home) BndAdvisor(home, this, x1);
-      BndAdvisor* bde = new (home) BndAdvisor(home, this, x0);
-      BndAdvisor* bdf = new (home) BndAdvisor(home, this, x1);
-      dc.add(home, this, bd8);
-      dc.add(home, this, bd9);
-      dc.add(home, this, bda);
-      dc.add(home, this, bdb);
-      dc.add(home, this, bdc);
-      dc.add(home, this, bdd);
-      dc.add(home, this, bde);
-      dc.add(home, this, bdf);
+      (void) new (home) BndAdvisor(home, this, dc, x0);
+      (void) new (home) BndAdvisor(home, this, dc, x1);
+      (void) new (home) BndAdvisor(home, this, dc, x0);
+      (void) new (home) BndAdvisor(home, this, dc, x1);
+      (void) new (home) BndAdvisor(home, this, dc, x0);
+      (void) new (home) BndAdvisor(home, this, dc, x1);
+      (void) new (home) BndAdvisor(home, this, dc, x0);
+      (void) new (home) BndAdvisor(home, this, dc, x1);
     }
   public:
     /// Copy propagator during cloning
