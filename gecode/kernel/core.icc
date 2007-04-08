@@ -284,11 +284,11 @@ namespace Gecode {
       Variable* fwd;
     } u;
 #if GECODE_USE_ADVISORS
-    // Leave one extra slot for advisors
-    ActorLink** idx[PC+3]; ///< Stores where entries start (idx[pc]}
+    static const PropCond PC_SIZE = PC + 3; ///< Number of slots for index struxture
 #else
-    ActorLink** idx[PC+2]; ///< Stores where entries start (idx[pc]}
+    static const PropCond PC_SIZE = PC + 2; ///< Number of slots for index struxture
 #endif
+    ActorLink** idx[PC_SIZE]; ///< Stores where entries start (idx[pc]}
 
     /// Manage number of free entries internally
     unsigned int free(void) const;
@@ -667,16 +667,15 @@ namespace Gecode {
    * in general, there should be code such as 
    * \code return ES_SUBSUMED(this,dispose(home)) \endcode.
    * 
-   * However, in case the advisor has nothing to dispose (all its
-   * views are assigned and no external resources) it is sufficient
+   * However, in case the advisor has nothing to dispose it is sufficient
    * to do 
    * \code return ES_SUBSUMED(this,sizeof(*this)) \endcode.
    *
    * \warning Has a side-effect on the advisor. Use only directly with
-   *          returning from propagation.
+   *          returning from the advise member function.
    * \ingroup TaskActorStatus
    */
-  ExecStatus ES_SUBSUMED(Advisor* d, size_t s);
+  ExecStatus ES_SUBSUMED(Advisor* a, size_t s);
   /**
    * \brief %Advisor \a p is subsumed
    *
@@ -686,7 +685,7 @@ namespace Gecode {
    *          returning from propagation.
    * \ingroup TaskActorStatus
    */
-  ExecStatus ES_SUBSUMED(Advisor* d, Space* home);
+  ExecStatus ES_SUBSUMED(Advisor* a, Space* home);
 
 
   /**
@@ -883,12 +882,10 @@ namespace Gecode {
     friend class Actor;
     friend class Propagator;
     friend class Branching;
+    friend class Advisor;
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
     template <VarTypeId VTI, PropCond PC, class MED> friend class VarTypeProcessor;
-    template<class Object> friend class SharedHandle;
-#if GECODE_USE_ADVISORS
-    friend class Advisor;
-#endif
+    template <class Object> friend class SharedHandle;
   private:
     MemoryManager   mm; ///< Performs memory management for space
 
@@ -1390,13 +1387,13 @@ namespace Gecode {
    * Subsumption
    */
   forceinline ExecStatus
-  ES_SUBSUMED(Advisor* d, size_t s) {
-    d->disposed(s);
+  ES_SUBSUMED(Advisor* a, size_t s) {
+    a->disposed(s);
     return __ES_SUBSUMED;
   }
   forceinline ExecStatus
-  ES_SUBSUMED(Advisor* d, Space* home) {
-    d->dispose(home);
+  ES_SUBSUMED(Advisor* a, Space* home) {
+    a->dispose(home);
     // dispose will set the size correctly
     return __ES_SUBSUMED;
   }
@@ -1539,13 +1536,8 @@ namespace Gecode {
   Variable<VTI,PC,MED>::Variable(Space*) :
     _next(reinterpret_cast<Variable<VTI,PC,MED>*>(1)) {
     u.free_me = 0;
-#if GECODE_USE_ADVISORS
-    for (int i=PC+3; i--; )
+    for (int i=PC_SIZE; i--; )
       idx[i] = NULL;
-#else
-    for (int i=PC+2; i--; )
-      idx[i] = NULL;
-#endif
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
@@ -1553,24 +1545,15 @@ namespace Gecode {
   Variable<VTI,PC,MED>::Variable(void) :
     _next(reinterpret_cast<Variable<VTI,PC,MED>*>(1)) {
     u.free_me = 0;
-#if GECODE_USE_ADVISORS
-    for (int i=PC+3; i--; )
+    for (int i=PC_SIZE; i--; )
       idx[i] = NULL;
-#else
-    for (int i=PC+2; i--; )
-      idx[i] = NULL;
-#endif
   }
 
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline unsigned int
   Variable<VTI,PC,MED>::degree(void) const {
-#if GECODE_USE_ADVISORS
-    return static_cast<unsigned int>(idx[PC+2] - idx[0]);
-#else
-    return static_cast<unsigned int>(idx[PC+1] - idx[0]);
-#endif
+    return static_cast<unsigned int>(idx[PC_SIZE-1] - idx[0]);
   }
 
 
@@ -1640,13 +1623,8 @@ namespace Gecode {
     if (x.idx[0] == NULL) {
       // Variable needs no index structure
       u.free_me = 0;
-#if GECODE_USE_ADVISORS
-      for (int i=PC+3; i--; )
+      for (int i=PC_SIZE; i--; )
         idx[i] = NULL;
-#else
-      for (int i=PC+2; i--; )
-        idx[i] = NULL;
-#endif
       reg = &home->vars_noidx;
     } else {
       // Recover original value in copy
@@ -1918,20 +1896,11 @@ namespace Gecode {
       free(4);
       ActorLink** prop = reinterpret_cast<ActorLink**>
         (home->alloc(4*sizeof(ActorLink*))) + 4;
-#if GECODE_USE_ADVISORS
-      for (PropCond i = PC+3; i--; )
+      for (PropCond i = PC_SIZE; i--; )
         idx[i] = prop;
-#else
-      for (PropCond i = PC+2; i--; )
-        idx[i] = prop;
-#endif
     } else {
       // Resize dependency array
-#if GECODE_USE_ADVISORS
-      unsigned int n = static_cast<unsigned int>(idx[PC+2] - idx[0]);
-#else
-      unsigned int n = static_cast<unsigned int>(idx[PC+1] - idx[0]);
-#endif
+      unsigned int n = static_cast<unsigned int>(idx[PC_SIZE-1] - idx[0]);
       // Find out whether the area is most likely in the special area
       // reserved for subscriptions. If yes, just resize mildly otherwise
       // more agressively
@@ -1949,13 +1918,8 @@ namespace Gecode {
       // Update index pointers
       ptrdiff_t o = prop - idx[0];
       idx[0] = prop;
-#if GECODE_USE_ADVISORS
-      for (PropCond i = PC+2; i > 0; i--)
+      for (PropCond i = PC_SIZE-1; i > 0; i--)
         idx[i] += o;
-#else
-      for (PropCond i = PC+1; i > 0; i--)
-        idx[i] += o;
-#endif
     }
   }
 
@@ -2055,23 +2019,14 @@ namespace Gecode {
     // Recover from copy (also overwrites forwarding pointer)
     x->u.free_me = u.free_me;
     ActorLink** f = x->idx[0];
-#if GECODE_USE_ADVISORS
-    int n = static_cast<int>(x->idx[PC+2] - f);
-#else
-    int n = static_cast<int>(x->idx[PC+1] - f);
-#endif
+    int n = static_cast<int>(x->idx[PC_SIZE-1] - f);
     u.free_me = 0;
     ActorLink** t = sub;
     sub += n;
     idx[0] = t;
     ptrdiff_t o = t - f;
-#if GECODE_USE_ADVISORS
-    for (PropCond i = PC+2; i>0; i--)
+    for (PropCond i = PC_SIZE-1; i>0; i--)
       idx[i] = x->idx[i]+o;
-#else
-    for (PropCond i = PC+1; i>0; i--)
-      idx[i] = x->idx[i]+o;
-#endif
     while ((n-4) >= 0) {
       n -= 4;
       t[0]=f[0]->prev(); t[1]=f[1]->prev();
