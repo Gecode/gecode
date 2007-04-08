@@ -731,7 +731,7 @@ namespace Gecode {
 
     /** \brief Dispose of this colelction
      */
-    size_t dispose(Space *home);
+    size_t dispose(Space* home);
   private:
     /** \brief Is the A* \a a an active advisor?
      *
@@ -1794,7 +1794,7 @@ namespace Gecode {
   
   template <class A>
   forceinline void
-  Council<A>::add(Space *home, Propagator* p, A* a) {
+  Council<A>::add(Space* home, Propagator* p, A* a) {
     if (reinterpret_cast<ptrdiff_t>(advisors[0])>siz) {
       compact(home);
       if (reinterpret_cast<ptrdiff_t>(advisors[0])>siz) {
@@ -1822,7 +1822,7 @@ namespace Gecode {
 
   template <class A>
   size_t
-  Council<A>::dispose(Space *home) {
+  Council<A>::dispose(Space* home) {
     for (int i = siz; i--; )
       if (active(advisors[i]))
         (void) advisors[i]->dispose(home);
@@ -1840,7 +1840,7 @@ namespace Gecode {
 
   template <class A>
   int
-  Council<A>::compact(Space *home) const {
+  Council<A>::compact(Space* home) const {
     if (siz == 0) {
       return 0;
     }
