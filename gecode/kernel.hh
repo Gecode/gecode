@@ -137,19 +137,6 @@
 #include "gecode/kernel/propagator.icc"
 #include "gecode/kernel/branching.icc"
 
-
-/*
- * Managing advisors
- *
- */
-#if GECODE_USE_ADVISORS
-
-#include "gecode/kernel/advisor.icc"
-
 #endif
-
-
-#endif
-
 
 // STATISTICS: kernel-other
