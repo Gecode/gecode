@@ -758,21 +758,10 @@ namespace Gecode {
     friend ExecStatus ES_SUBSUMED(Advisor*, Space*);
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
   protected:
-    /// Access parent propagator
-    Propagator* parent(void) { 
-      return static_cast<Propagator*>(ActorLink::next()); 
-    }
     // Set disposed flag and size
     void disposed(size_t size) { 
       ActorLink::prev(reinterpret_cast<ActorLink*>((size << 1) | 1)); 
     }
-
-    /** \brief Subsume parent propagator.
-     *
-     * \warning If the propagator is currently propagating, then
-     *running subsume on it will crash the system.
-     */
-    void subsume(Space* home);
   public:
     /// Constructor for creation
     Advisor(Space* home, Propagator* p, CouncilBase& c) {
@@ -788,12 +777,16 @@ namespace Gecode {
       // Set propagator pointer
       ActorLink::next(a.next()->prev());
     }
+    /// Access parent propagator
+    Propagator* parent(void) const { 
+      return static_cast<Propagator*>(ActorLink::next()); 
+    }
     /// Is this Advisor disposed?
-    bool disposed()  { 
+    bool disposed(void) const { 
       return reinterpret_cast<ptrdiff_t>(prev())&1 == 1;
     }
     // Get size of disposed advisor
-    size_t size() { 
+    size_t size(void) const { 
       assert(disposed());
       return reinterpret_cast<ptrdiff_t>(prev())>>1;
     }
@@ -1460,13 +1453,6 @@ namespace Gecode {
    * Advisors
    *
    */
-  forceinline void
-  Advisor::subsume(Space* home) {
-    size_t s = parent()->dispose(home);
-    parent()->unlink();
-    home->reuse(parent(), s);
-  }
-
   forceinline void
   Advisor::operator delete(void*, size_t) {}
   forceinline void

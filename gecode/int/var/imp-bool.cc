@@ -44,13 +44,16 @@ namespace Gecode { namespace Int {
     for (Advisors a(*this); a(); ++a) 
       switch (static_cast<IntAdvisor*>(a.advisor())
               ->_advise(home,ME_INT_VAL,lo,hi)) {
-      case __ES_SUBSUMED:
+      case ES_FIX:
+      case __ES_SUBSUMED: 
         break;
-      case ES_FAILED:
+      case ES_FAILED:     
         return false;
+      case ES_NOFIX:
+        schedule(home,a.advisor()->parent(),ME_INT_VAL);
         break;
       default:
-        break;
+        GECODE_NEVER;
       }
     return true;
   }

@@ -292,9 +292,9 @@ namespace Gecode { namespace Int { namespace Extensional {
 #ifndef GECODE_EXT_INCREMENTAL_SUPPORT
     if (hi < lo) {
       // Something has happend, so just schedule the propagator
-      IntViewAdvisor<View>::schedule(home, me);
-      if (me == ME_INT_VAL) return ES_SUBSUMED(this,sizeof(*this));
-      return ES_OK;
+      if (me == ME_INT_VAL) 
+        return ES_SUBSUMED(this,sizeof(*this));
+      return ES_NOFIX;
     }
     
     // Slow and imprecise
@@ -302,9 +302,9 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (int val = ip->table.tablei->domsize; val--; ) {
         tuple l = ip->last(var, val);
         if (l != NULL && l[pos] >= lo && l[pos] <= hi) {
-          IntViewAdvisor<View>::schedule(home, me);
-          if (me == ME_INT_VAL) return ES_SUBSUMED(this,sizeof(*this));
-          return ES_OK;
+          if (me == ME_INT_VAL) 
+            return ES_SUBSUMED(this,sizeof(*this));
+          return ES_NOFIX;
         }
       }
     }
@@ -328,8 +328,9 @@ namespace Gecode { namespace Int { namespace Extensional {
     }
 #endif
 
-    if (me == ME_INT_VAL) return ES_SUBSUMED(this,sizeof(*this));
-    return ES_OK;
+    if (me == ME_INT_VAL) 
+      return ES_SUBSUMED(this,sizeof(*this));
+    return ES_FIX;
   }
 
 }}}

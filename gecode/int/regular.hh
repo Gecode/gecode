@@ -76,8 +76,7 @@ namespace Gecode { namespace Int { namespace Regular {
       }
       virtual ExecStatus
       advise(Space* home, ModEvent me, int min, int max) {
-        IntViewAdvisor<View>::schedule(home,me);
-        return (me == ME_INT_VAL) ? ES_SUBSUMED(this,home) : ES_OK;
+        return (me == ME_INT_VAL) ? ES_SUBSUMED(this,home) : ES_NOFIX;
       }
     };
     Council<Index> dac;

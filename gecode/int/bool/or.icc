@@ -781,31 +781,23 @@ namespace Gecode { namespace Int { namespace Bool {
   NaryOrWLTrue<BV>::WLAdvisor::advise(Space* home, ModEvent me, 
                                       int lo, int hi) {
     assert(lo == hi);
-    if (lo == 0) {
-      // Subsume parent
-      IntViewAdvisor<BV>::schedule(home, me);
-      return ES_OK; // this are disposed via parent
-    }
+    // Schedule parent for subsumption
+    if (lo == 0)
+      return ES_NOFIX;
+
     NaryOrWLTrue<BV>* np = static_cast<NaryOrWLTrue<BV>* >(Advisor::parent());
     int pos = same(x, np->x[1]);
     while (np->x.size() > 2 && np->x[pos].assigned()) {
-      if (np->x[pos].one()) {
-        IntViewAdvisor<BV>::schedule(home, me);
-        return ES_OK; // this are disposed via parent
-      }
+      if (np->x[pos].one())
+        return ES_NOFIX;
       np->x.move_lst(pos);
     }
-    if (np->x.size() == 2 && 
-        (np->x[0].assigned() ||
-         np->x[1].assigned())) {
-          
-      IntViewAdvisor<BV>::schedule(home, me);
-      return ES_OK;
-    }
+    if ((np->x.size() == 2) && (np->x[0].assigned() || np->x[1].assigned()))
+      return ES_NOFIX;
     // New variable to watch
     x = np->x[pos];
     x.subscribe(home, this);
-    return ES_OK;
+    return ES_FIX;
   }
   
   template<class BV>
