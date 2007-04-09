@@ -657,8 +657,30 @@ namespace Gecode {
   public:
     /// \name Propagation
     //@{
-    /// Propagation function
-    virtual ExecStatus propagate(Space*) = 0;
+    /**
+     * \brief Propagation function
+     *
+     * The propagation function must return an execution status as
+     * follows:
+     *  - ES_FAILED: the propagator has detected failure
+     *  - ES_NOFIX: the propagator has done propagation
+     *  - ES_FIX: the propgator has done propagation and has computed
+     *    a fixpoint. That is, running the propagator immediately
+     *    again will do nothing.
+     *
+     * Apart from the above values, a propagator can return
+     * the result from calling one of the functions 
+     *  - ES_SUBSUMED: the propagator is subsumed and has been already
+     *    deleted.
+     *  - ES_NOFIX_PARTIAL: the propagator has consumed some of its
+     *    propagation events.
+     *  - ES_FIX_PARTIAL: the propagator has consumed some of its
+     *    propagation events and with respect to these events is
+     *    at fixpoint
+     * For more details, see the individual functions.
+     *
+     */
+    virtual ExecStatus propagate(Space* home) = 0;
     /// Cost function
     virtual PropCost cost(void) const  = 0;
     //@}
@@ -782,11 +804,31 @@ namespace Gecode {
       // Set propagator pointer
       ActorLink::next(a.next()->prev());
     }
-    /// Access the advisor's propagator
+    /// Return the advisor's propagator
     Propagator* propagator(void) const { 
       return static_cast<Propagator*>(ActorLink::next()); 
     }
-    /// Function that performs the actual task
+    /**
+     * \brief Advise function
+     *
+     * The advise function must return an execution status as
+     * follows:
+     *  - ES_FAILED: the advisor has detected failure
+     *  - ES_NOFIX: the advisor's propagator does not need to be run
+     *  - ES_FIX: the advisor's propagator must be run
+     *
+     * Apart from the above values, an advisor can return
+     * the result from calling the function
+     *  - ES_SUBSUMED: the advisor is subsumed
+     * For more details, see the function documentation.
+     *
+     * The delta \a d describes how the variable has been changed
+     * by an operation on the advisor's variable. Typically,
+     * the delta information can only be utilized by either 
+     * static or member functions of views as the actual delta 
+     * information is both domain and view dependent.
+     *
+     */
     virtual ExecStatus advise(Space* home, const Delta& d) = 0;
     /// Is this Advisor disposed?
     bool disposed(void) const { 
