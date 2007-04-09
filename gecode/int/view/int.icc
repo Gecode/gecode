@@ -175,6 +175,30 @@ namespace Gecode { namespace Int {
   }
 
 
+
+  /*
+   * Delta information for advisors
+   *
+   */
+  forceinline ModEvent
+  IntView::modevent(const Delta& d) const {
+    return var->modevent(d);
+  }
+  forceinline int
+  IntView::min(const Delta& d) const {
+    return var->min(d);
+  }
+  forceinline int
+  IntView::max(const Delta& d) const {
+    return var->max(d);
+  }
+  forceinline bool
+  IntView::any(const Delta& d) const {
+    return var->any(d);
+  }
+
+
+
   /*
    * Cloning
    *

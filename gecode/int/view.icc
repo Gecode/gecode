@@ -211,6 +211,18 @@ namespace Gecode {
       template <class I> ModEvent minus(Space* home, I& i);
       //@}
 
+      /// \name Delta information for advisors
+      //@{
+      /// Return modification event
+      ModEvent modevent(const Delta& d) const;
+      /// Return minimum value just pruned
+      int min(const Delta& d) const;
+      /// Return maximum value just pruned
+      int max(const Delta& d) const;
+      /// Test whether arbitrary values got pruned
+      bool any(const Delta& d) const;
+      //@}
+
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
@@ -366,6 +378,18 @@ namespace Gecode {
       void subscribe(Space* home, Advisor* a);
       /// Cancel subscription of advisor \a a
       void cancel(Space* home, Advisor* a);
+      //@}
+
+      /// \name Delta information for advisors
+      //@{
+      /// Return modification event
+      ModEvent modevent(const Delta& d) const;
+      /// Return minimum value just pruned
+      int min(const Delta& d) const;
+      /// Return maximum value just pruned
+      int max(const Delta& d) const;
+      /// Test whether arbitrary values got pruned
+      bool any(const Delta& d) const;
       //@}
 
       /// \name Cloning
@@ -527,6 +551,18 @@ namespace Gecode {
       void subscribe(Space* home, Advisor* a);
       /// Cancel subscription of advisor \a a
       void cancel(Space* home, Advisor* a);
+      //@}
+
+      /// \name Delta information for advisors
+      //@{
+      /// Return modification event
+      ModEvent modevent(const Delta& d) const;
+      /// Return minimum value just pruned
+      int min(const Delta& d) const;
+      /// Return maximum value just pruned
+      int max(const Delta& d) const;
+      /// Test whether arbitrary values got pruned
+      bool any(const Delta& d) const;
       //@}
 
       /// \name Cloning
@@ -704,6 +740,18 @@ namespace Gecode {
       void cancel(Space* home, Advisor* a);
       //@}
 
+      /// \name Delta information for advisors
+      //@{
+      /// Return modification event
+      ModEvent modevent(const Delta& d) const;
+      /// Return minimum value just pruned
+      Val min(const Delta& d) const;
+      /// Return maximum value just pruned
+      Val max(const Delta& d) const;
+      /// Test whether arbitrary values got pruned
+      bool any(const Delta& d) const;
+      //@}
+
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
@@ -878,6 +926,18 @@ namespace Gecode {
       void cancel(Space* home, Advisor* a);
       //@}
 
+      /// \name Delta information for advisors
+      //@{
+      /// Return modification event
+      ModEvent modevent(const Delta& d) const;
+      /// Return minimum value just pruned
+      int min(const Delta& d) const;
+      /// Return maximum value just pruned
+      int max(const Delta& d) const;
+      /// Test whether arbitrary values got pruned
+      bool any(const Delta& d) const;
+      //@}
+
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
@@ -1028,6 +1088,18 @@ namespace Gecode {
       void subscribe(Space* home, Advisor* a);
       /// Cancel subscription of advisor \a a
       void cancel(Space* home, Advisor* a);
+      //@}
+
+      /// \name Delta information for advisors
+      //@{
+      /// Return modification event
+      ModEvent modevent(const Delta& d) const;
+      /// Return minimum value just pruned
+      int min(const Delta& d) const;
+      /// Return maximum value just pruned
+      int max(const Delta& d) const;
+      /// Test whether arbitrary values got pruned
+      bool any(const Delta& d) const;
       //@}
 
       /// \name Cloning
@@ -1196,6 +1268,18 @@ namespace Gecode {
       template <class I> ModEvent minus(Space* home, I& i);
       //@}
 
+      /// \name Delta information for advisors
+      //@{
+      /// Return modification event
+      ModEvent modevent(const Delta& d) const;
+      /// Return minimum value just pruned
+      int min(const Delta& d) const;
+      /// Return maximum value just pruned
+      int max(const Delta& d) const;
+      /// Test whether arbitrary values got pruned
+      bool any(const Delta& d) const;
+      //@}
+
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
@@ -1332,6 +1416,18 @@ namespace Gecode {
       void subscribe(Space* home, Advisor* a);
       /// Cancel subscription of advisor \a a
       void cancel(Space* home, Advisor* a);
+      //@}
+
+      /// \name Delta information for advisors
+      //@{
+      /// Return modification event
+      ModEvent modevent(const Delta& d) const;
+      /// Return minimum value just pruned
+      int min(const Delta& d) const;
+      /// Return maximum value just pruned
+      int max(const Delta& d) const;
+      /// Test whether arbitrary values got pruned
+      bool any(const Delta& d) const;
       //@}
 
       /// \name Cloning

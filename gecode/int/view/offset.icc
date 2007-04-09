@@ -223,6 +223,29 @@ namespace Gecode {
 
 
     /*
+     * Delta information for advisors
+     *
+     */
+    forceinline ModEvent
+    OffsetView::modevent(const Delta& d) const {
+      return view.modevent(d);
+    }
+    forceinline int
+    OffsetView::min(const Delta& d) const {
+      return view.min(d)+c;
+    }
+    forceinline int
+    OffsetView::max(const Delta& d) const {
+      return view.max(d)+c;
+    }
+    forceinline bool
+    OffsetView::any(const Delta& d) const {
+      return view.any(d);
+    }
+
+
+
+    /*
      * Cloning
      *
      */
