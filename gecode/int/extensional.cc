@@ -4,7 +4,7 @@
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
  *  Copyright:
- *     Mikael Lagerkvbist, 2007
+ *     Mikael Lagerkvist, 2007
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -41,7 +41,7 @@ namespace Gecode {
     switch (icl) {
     default:
       switch (ea) {
-#if GECODE_USE_ADVISORS
+#ifdef GECODE_USE_ADVISORS
       case EA_INCREMENTAL:
         GECODE_ES_FAIL(home,(Extensional::Incremental<IntView>::post(home,xv,table)));
         break;

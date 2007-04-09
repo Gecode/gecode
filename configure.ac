@@ -72,9 +72,6 @@ AC_GECODE_LEAK_DEBUG
 dnl check whether we want audit code in our build
 AC_GECODE_AUDIT
 
-dnl check whether we want advisors in our build
-AC_GECODE_ADVISORS
-
 dnl check whether we want to use visibility attributes with gcc
 AC_GECODE_GCC_VISIBILITY
 

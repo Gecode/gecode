@@ -301,7 +301,7 @@ namespace Gecode {
       /// Store the forwarding pointer during copying
       Variable* fwd;
     } u;
-#if GECODE_USE_ADVISORS
+#ifdef GECODE_USE_ADVISORS
     static const PropCond PC_SIZE = PC + 3; ///< Number of slots for index struxture
 #else
     static const PropCond PC_SIZE = PC + 2; ///< Number of slots for index struxture
@@ -2081,7 +2081,7 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::subscribe(Space* home, Advisor* a, bool assigned) {
-#if GECODE_USE_ADVISORS
+#ifdef GECODE_USE_ADVISORS
     if (!assigned)
       enter(home,a,PC+1);
 #endif
@@ -2127,7 +2127,7 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::cancel(Space* home, Advisor* a, bool assigned) {
-#if GECODE_USE_ADVISORS
+#ifdef GECODE_USE_ADVISORS
     if (!assigned)
       remove(home,a,PC+1);
 #endif
@@ -2136,7 +2136,7 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline bool
   Variable<VTI,PC,MED>::advise(Space* home, ModEvent me, Delta& d) {
-#if GECODE_USE_ADVISORS
+#ifdef GECODE_USE_ADVISORS
     ActorLink** a = idx[PC+1];
     ActorLink** e = idx[PC+2];
     if (a != e) {
@@ -2259,7 +2259,7 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::process(Space* home) {
-#if GECODE_USE_ADVISORS
+#ifdef GECODE_USE_ADVISORS
     {
       ActorLink** b = idx[0];
       ActorLink** p = idx[PC+1];

@@ -710,7 +710,7 @@ namespace Gecode { namespace Int { namespace Bool {
     return ES_FIX;
   }
 
-#if GECODE_USE_ADVISORS
+#ifdef GECODE_USE_ADVISORS
   /*
    * N-ary Boolean disjunction propagator (true)
    *

@@ -122,7 +122,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 #include "gecode/int/extensional/val.icc"
 #include "gecode/int/extensional/basic.icc"
 
-#if GECODE_USE_ADVISORS
+#ifdef GECODE_USE_ADVISORS
 
 namespace Gecode { namespace Int { namespace Extensional {
   struct SupportEntry {

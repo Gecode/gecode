@@ -321,7 +321,7 @@ namespace Gecode { namespace Int { namespace Bool {
   };
 
 
-#if GECODE_USE_ADVISORS
+#ifdef GECODE_USE_ADVISORS
   /**
    * \brief Boolean n-ary disjunction propagator (true)
    *

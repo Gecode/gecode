@@ -180,7 +180,7 @@ public:
 };
 BoolOrTrueNary _boolortruenary("Bool::Or::True::Nary");
 
-#if GECODE_USE_ADVISORS
+#ifdef GECODE_USE_ADVISORS
 class BoolOrWLTrueNary : public IntTest {
 public:
   BoolOrWLTrueNary(const char* t)

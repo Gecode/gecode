@@ -27,7 +27,7 @@
 #include <cmath>
 #include <algorithm>
 
-#if GECODE_USE_ADVISORS
+#ifdef GECODE_USE_ADVISORS
 
 namespace {
   IntSet s(-5,5);

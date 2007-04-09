@@ -273,7 +273,7 @@ namespace Gecode {
   enum BoolOpType {
     BOT_AND, ///< Conjunction
     BOT_OR,  ///< Disjunction
-#if GECODE_USE_ADVISORS
+#ifdef GECODE_USE_ADVISORS
     BOT_OR_WL,  ///< Disjunction using advisors
     BOT_AND_WL,  ///< Conjunction using advisors
 #endif

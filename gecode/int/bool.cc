@@ -438,7 +438,7 @@ namespace Gecode {
         }
       }
       break;
-#if GECODE_USE_ADVISORS
+#ifdef GECODE_USE_ADVISORS
     case BOT_AND_WL:
       if (n == 0) {
         ViewArray<NegBoolView> b(home,m);
@@ -465,7 +465,7 @@ namespace Gecode {
         GECODE_ES_FAIL(home,Bool::NaryOrTrue<BoolView>::post(home,b));
       }
       break;
-#if GECODE_USE_ADVISORS
+#ifdef GECODE_USE_ADVISORS
     case BOT_OR_WL:
       if (n == 0) {
         for (int i=m; i--; ) {

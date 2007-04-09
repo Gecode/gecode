@@ -389,19 +389,6 @@ AC_DEFUN([AC_GECODE_PROFILE],
 	    AC_MSG_RESULT(no)
 	 fi])
 
-AC_DEFUN([AC_GECODE_ADVISORS],
-	[AC_ARG_ENABLE([advisors],
-	   AC_HELP_STRING([--enable-advisors],
-	     [build with advisors @<:@default=no@:>@]))
-	 AC_MSG_CHECKING(whether to build with advisors)
-	 if test "${enable_advisors:-no}" = "yes"; then
-	    AC_DEFINE(GECODE_USE_ADVISORS, 1)
-	    AC_MSG_RESULT(yes)
-	 else
-	    AC_DEFINE(GECODE_USE_ADVISORS, 0)
-	    AC_MSG_RESULT(no)
-	 fi])
-
 
 # Test for platform specific behaviour of arithmetic
 

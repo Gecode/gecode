@@ -20,7 +20,7 @@
  *
  */
 
-#if GECODE_USE_ADVISORS
+#ifdef GECODE_USE_ADVISORS
 
 #include "gecode/support/bitset.hh"
 
