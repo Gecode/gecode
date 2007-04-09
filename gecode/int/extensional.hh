@@ -186,7 +186,7 @@ namespace Gecode { namespace Int { namespace Extensional {
                      View v, unsigned int position) 
         : ViewAdvisor<View>(home,p,c,v), pos(position) {
         if (x.assigned())
-          schedule(home, Int::ME_INT_VAL);
+          ViewAdvisor<View>::schedule(home, Int::ME_INT_VAL);
       }
       SupportAdvisor(Space* home, bool share, SupportAdvisor& a) 
         : ViewAdvisor<View>(home, share, a), pos(a.pos) {}
