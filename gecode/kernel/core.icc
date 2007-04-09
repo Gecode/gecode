@@ -257,13 +257,20 @@ namespace Gecode {
   typedef int PropModEvent;
 
 
-  /// Domain change information to be supplied to advisors
+  /**
+   * \brief Domain change information to be supplied to advisors
+   *
+   * Generically, this class only manages modification events. More
+   * information is of course dependent on the particular variable
+   * types and is managed by subclassing.
+   *
+   */
   class Delta {
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
   private:
-    ModEvent me; ///< Only modification events are generic
+    ModEvent me; ///< Store modification event
   public:
-    /// Return the modification event
+    /// Return modification event
     ModEvent modevent(void) const;
   };
 
@@ -318,8 +325,15 @@ namespace Gecode {
      */
     void update(Variable* x, ActorLink**& sub);
 
+    /// Enter propagator or advisor to subscription array
+    void enter(Space* home, ActorLink* a, PropCond pc);
     /// Resize subscription array
     void resize(Space* home);
+    /// Remove propagator or advisor from subscription array
+    void remove(Space* home, ActorLink* a, PropCond pc);
+
+    /// Execute advisors during notification
+    bool advise(Space* home, ModEvent me, Delta& d);
 
   public:
     /// Creation
@@ -358,16 +372,12 @@ namespace Gecode {
     void subscribe(Space* home, Advisor* a, bool assigned);
     /** \brief Cancel subscription of advisor \a a
      *
-     * If the variables is assigned, \a assigned must be true.
+     * If the variable is assigned, \a assigned must be true.
      *
      */
     void cancel(Space* home, Advisor* p, bool assigned);
     /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
-  private:
-    /// Execute advisors during notification
-    bool advice(Space* home, const Delta& d);
-  public:
     /**
      * \brief Notify that variable implementation has been modified with modification event \a me and domain change \a d
      *
@@ -425,28 +435,6 @@ namespace Gecode {
     void process(Space* home, PropCond pc1, PropCond pc2, ModEvent me);
     /// Process subscribed propagators for assigned variable
     void process(Space* home);
-    //@}
-
-  protected:
-    /// \name Access to advisors
-    //@{
-    /// Test whether variable has advisors
-    bool advisors(void) const;
-    /// Iterator for all advisors of a variable
-    class Advisors {
-    private:
-      ActorLink** c; ///< Current advisor
-      ActorLink** e; ///< End of advisors
-    public:
-      /// Initialize iterator for variable \a x
-      Advisors(const Variable& x);
-      /// Test whether all advisors have been iterated
-      bool operator()(void) const;
-      /// Move to next advisor
-      void operator++(void);
-      /// Return advisor
-      Advisor* advisor(void) const;
-    };
     //@}
 
   public:
@@ -2011,48 +1999,17 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
-  Variable<VTI,PC,MED>::subscribe(Space* home, Propagator* p, PropCond pc,
-                                  bool assigned, ModEvent me, bool process) {
-    if (assigned) {
-      // Do not subscribe, just process the propagator
-      if (process)
-        home->process<VTI,MED>(p);
-    } else {
-      ActorLink* a = p;
-      // Count one new subscription
-      home->n_sub += 1;
-      if (free() == 0)
-        resize(home);
-      free_dec();
-      // Enter propagator
-      --idx[0];
-      for (PropCond i = 0; i < pc; i++)
-        *(idx[i]) = *(--idx[i+1]);
-      *idx[pc]=a;
-      // Process propagator
-      if (process && (pc != PC_GEN_ASSIGNED))
-        home->process<VTI,MED>(p,me);
-    }
-  }
-
-  template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline void
-  Variable<VTI,PC,MED>::subscribe(Space* home, Advisor* a, bool assigned) {
-#if GECODE_USE_ADVISORS
-    ActorLink* s = a;
-    if (!assigned) {
-      // Count one new subscription
-      home->n_sub += 1;
-      if (free() == 0)
-        resize(home);
-      free_dec();
-      // Enter advisor
-      --idx[0];
-      for (PropCond i = 0; i < PC+1; i++)
-        *(idx[i]) = *(--idx[i+1]);
-      *idx[PC+1]=s;
-    }
-#endif
+  Variable<VTI,PC,MED>::enter(Space* home, ActorLink* a, PropCond pc) {
+    // Count one new subscription
+    home->n_sub += 1;
+    if (free() == 0)
+      resize(home);
+    free_dec();
+    // Enter subscription
+    --idx[0];
+    for (PropCond i = 0; i < pc; i++)
+      *(idx[i]) = *(--idx[i+1]);
+    *idx[pc]=a;
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
@@ -2091,6 +2048,31 @@ namespace Gecode {
     }
   }
 
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline void
+  Variable<VTI,PC,MED>::subscribe(Space* home, Propagator* p, PropCond pc,
+                                  bool assigned, ModEvent me, bool process) {
+    if (assigned) {
+      // Do not subscribe, just process the propagator
+      if (process)
+        home->process<VTI,MED>(p);
+    } else {
+      enter(home,p,pc);
+      // Process propagator
+      if (process && (pc != PC_GEN_ASSIGNED))
+        home->process<VTI,MED>(p,me);
+    }
+  }
+
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline void
+  Variable<VTI,PC,MED>::subscribe(Space* home, Advisor* a, bool assigned) {
+#if GECODE_USE_ADVISORS
+    if (!assigned)
+      enter(home,a,PC+1);
+#endif
+  }
+
 
   /*
    * Cancelling a subscription
@@ -2099,103 +2081,69 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
+  Variable<VTI,PC,MED>::remove(Space* home, ActorLink* a, PropCond pc) {
+    ActorLink** f = idx[pc];
+#if GECODE_AUDIT
+    while (f < idx[pc+1])
+      if (*f == a)
+        goto found;
+      else
+        f++;
+    GECODE_NEVER;
+  found: ;
+#else
+    while (*f != a) f++;
+#endif
+    *f=*idx[pc];
+    for (PropCond i=pc; i>0; i--)
+      *(idx[i]++)=*(idx[i-1]);
+    idx[0]++;
+    free_inc();
+    home->n_sub -= 1;
+  }
+
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline void
   Variable<VTI,PC,MED>::cancel(Space* home, Propagator* p, PropCond pc,
                                bool assigned) {
-    ActorLink* s = p;
-    if (!assigned) {
-      ActorLink** f = idx[pc];
-#if GECODE_AUDIT
-      while (f < idx[pc+1])
-        if (*f == s)
-          goto found;
-        else
-          f++;
-      GECODE_NEVER;
-    found: ;
-#else
-      while (*f != s) f++;
-#endif
-      *f=*idx[pc];
-      for (PropCond i=pc; i>0; i--)
-        *(idx[i]++)=*(idx[i-1]);
-      idx[0]++;
-      free_inc();
-      home->n_sub -= 1;
-    }
+    if (!assigned)
+      remove(home,p,pc);
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::cancel(Space* home, Advisor* a, bool assigned) {
 #if GECODE_USE_ADVISORS
-    ActorLink* s = a;
-    if (!assigned) {
-      ActorLink** f = idx[PC+1];
-#if GECODE_AUDIT
-      while (f < idx[PC+2])
-        if (*f == s)
-          goto found;
-        else
-          f++;
-      GECODE_NEVER;
-    found: ;
-#else
-      while (*f != s) f++;
+    if (!assigned)
+      remove(home,a,PC+1);
 #endif
-      *f=*idx[PC+1];
-      for (PropCond i=PC+1; i>0; i--)
-        *(idx[i]++)=*(idx[i-1]);
-      idx[0]++;
-      free_inc();
-      home->n_sub -= 1;
+  }
+
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline bool
+  Variable<VTI,PC,MED>::advise(Space* home, ModEvent me, Delta& d) {
+#if GECODE_USE_ADVISORS
+    ActorLink** a = idx[PC+1];
+    ActorLink** e = idx[PC+2];
+    if (a != e) {
+      d.me = me;
+      do {
+        switch (static_cast<Advisor*>(*a)->advise(home, d)) {
+        case ES_FIX:
+        case __ES_SUBSUMED: 
+          break;
+        case ES_FAILED:     
+          return false;
+        case ES_NOFIX:
+          schedule(home,static_cast<Advisor*>(*a)->parent(),me);
+          break;
+        default:
+          GECODE_NEVER;
+        }
+        a++;
+      } while (a != e);
     }
 #endif
-  }
-
-  template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline bool
-  Variable<VTI,PC,MED>::advisors(void) const {
-    return idx[PC+1] != idx[PC+2];
-  }
-
-  template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline
-  Variable<VTI,PC,MED>::Advisors::Advisors(const Variable& x)
-    : c(x.idx[PC+1]), e(x.idx[PC+2]) {}
-
-  template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline bool
-  Variable<VTI,PC,MED>::Advisors::operator()(void) const {
-    return c<e;
-  }
-  template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline void
-  Variable<VTI,PC,MED>::Advisors::operator++(void) {
-    c++;
-  }
-  template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline Advisor*
-  Variable<VTI,PC,MED>::Advisors::advisor(void) const {
-    return static_cast<Advisor*>(*c);
-  }
-
-  template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline bool
-  Variable<VTI,PC,MED>::advice(Space* home, const Delta& d) {
-    assert(advisors());
-    for (Advisors a(*this); a(); ++a)
-      switch (a.advisor()->advise(home, d)) {
-      case ES_FIX:
-      case __ES_SUBSUMED: 
-        break;
-      case ES_FAILED:     
-        return false;
-      case ES_NOFIX:
-        schedule(home,a.advisor()->parent(),d.modevent());
-        break;
-      default:
-        GECODE_NEVER;
-      }
     return true;
   }
 
@@ -2210,11 +2158,7 @@ namespace Gecode {
       home->vars[VTI].entry = this;
       modevent(new_me);
     }
-    if (advisors()) {
-      d.me = new_me;
-      return advice(home,d);
-    }
-    return true;
+    return advise(home,new_me,d);
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
@@ -2223,11 +2167,7 @@ namespace Gecode {
     assert(!modified());
     _next = static_cast<Variable<VTI,PC,MED>*>(home->vars[VTI].entry);
     home->vars[VTI].entry = this;
-    if (advisors()) {
-      d.me = ME_GEN_ASSIGNED;
-      return advice(home,d);
-    }
-    return true;
+    return advise(home,ME_GEN_ASSIGNED,d);
   }
 
 
