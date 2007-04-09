@@ -245,10 +245,10 @@ operator<<(std::ostream&, const Gecode::IntSet& s);
 #include "gecode/int/int-set.icc"
 
 
+#include "gecode/int/var.icc"
 #if GECODE_USE_ADVISORS
 #include "gecode/int/advisor.icc"
 #endif
-#include "gecode/int/var.icc"
 #include "gecode/int/view.icc"
 #include "gecode/int/propagator.icc"
 #if GECODE_USE_ADVISORS

@@ -74,12 +74,11 @@ namespace Gecode { namespace Int {
    *
    */
 
-  void
+  ModEvent
   IntVarImp::lq_full(Space* home, int m) {
     assert((m >= dom.min()) && (m <= dom.max()));
-#if GECODE_USE_ADVISORS
-    int old_max = dom.max();
-#endif /* GECODE_USE_ADVISORS */
+    IntVarImpDelta d;
+    d.min = m+1; d.max = dom.max();
     if (range()) { // Is already range...
       dom.max(m);
       if (assigned()) goto notify_val;
@@ -105,24 +104,20 @@ namespace Gecode { namespace Int {
         c->next(n,NULL); lst(c);
       }
     }
-    notify(home,ME_INT_BND);
-#if GECODE_USE_ADVISORS
-    advisors(home,ME_INT_BND, m+1, old_max);
-#endif /* GECODE_USE_ADVISORS */
-    return;
+    if (!notify(home,ME_INT_BND,d))
+      return ME_INT_FAILED;
+    return ME_INT_BND;
   notify_val:
-    notify(home,ME_INT_VAL);
-#if GECODE_USE_ADVISORS
-    advisors(home,ME_INT_VAL, m+1, old_max);
-#endif /* GECODE_USE_ADVISORS */
+    if (!notify(home,ME_INT_VAL,d))
+      return ME_INT_FAILED;
+    return ME_INT_VAL;
   }
 
-  void
+  ModEvent
   IntVarImp::gq_full(Space* home, int m) {
     assert((m >= dom.min()) && (m <= dom.max()));
-#if GECODE_USE_ADVISORS
-    int old_min = dom.min();
-#endif /* GECODE_USE_ADVISORS */
+    IntVarImpDelta d;
+    d.min = dom.min(); d.max = m-1;
     if (range()) { // Is already range...
       dom.min(m);
       if (assigned()) goto notify_val;
@@ -148,16 +143,13 @@ namespace Gecode { namespace Int {
         c->prev(p,NULL); fst(c);
       }
     }
-    notify(home,ME_INT_BND);
-#if GECODE_USE_ADVISORS
-    advisors(home,ME_INT_BND, old_min, m-1);
-#endif /* GECODE_USE_ADVISORS */
-    return;
+    if (!notify(home,ME_INT_BND,d))
+      return ME_INT_FAILED;
+    return ME_INT_BND;
   notify_val:
-    notify(home,ME_INT_VAL);
-#if GECODE_USE_ADVISORS
-    advisors(home,ME_INT_VAL, old_min, m-1);
-#endif /* GECODE_USE_ADVISORS */
+    if (!notify(home,ME_INT_VAL,d))
+      return ME_INT_FAILED;
+    return ME_INT_VAL;
   }
 
   bool
@@ -184,6 +176,8 @@ namespace Gecode { namespace Int {
   ModEvent
   IntVarImp::nq_full(Space* home, int m) {
     assert(!((m < dom.min()) || (m > dom.max())));
+    IntVarImpDelta d;
+    d.min = d.max = m;
     if (range()) {
       if ((m == dom.min()) && (m == dom.max()))
         return ME_INT_FAILED;
@@ -304,24 +298,18 @@ namespace Gecode { namespace Int {
         }
       }
     }
-    notify(home,ME_INT_DOM);
-#if GECODE_USE_ADVISORS
-    if (!advisors(home,ME_INT_DOM, m, m)) return ME_GEN_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+    if (!notify(home,ME_INT_DOM,d))
+      return ME_INT_FAILED;
     return ME_INT_DOM;
   notify_bnd_or_val:
     if (assigned()) {
-      notify(home,ME_INT_VAL);
-#if GECODE_USE_ADVISORS
-      if (!advisors(home,ME_INT_VAL, m, m)) return ME_GEN_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+      if (!notify(home,ME_INT_VAL,d))
+        return ME_INT_FAILED;
       return ME_INT_VAL;
     }
   notify_bnd:
-    notify(home,ME_INT_BND);
-#if GECODE_USE_ADVISORS
-    if (!advisors(home,ME_INT_BND, m, m)) return ME_GEN_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+    if (!notify(home,ME_INT_BND,d))
+      return ME_INT_FAILED;
     return ME_INT_BND;
   }
 
@@ -374,30 +362,6 @@ namespace Gecode { namespace Int {
     return new (home) IntVarImp(home,share,*this);
   }
 
-  /*
-   * Advisors
-   *
-   */
-#if GECODE_USE_ADVISORS
-  bool
-  IntVarImp::advisors(Space* home, ModEvent me, int lo, int hi) {
-    for (Advisors a(*this); a(); ++a)
-      switch (static_cast<IntAdvisor*>(a.advisor())
-              ->_advise(home, me, lo, hi)) {
-      case ES_FIX:
-      case __ES_SUBSUMED: 
-        break;
-      case ES_FAILED:     
-        return false;
-      case ES_NOFIX:
-        schedule(home,a.advisor()->parent(),me);
-        break;
-      default:
-        GECODE_NEVER;
-      }
-    return true;
-  }
-#endif
 }}
 
 // STATISTICS: int-var

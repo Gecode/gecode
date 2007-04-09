@@ -131,6 +131,29 @@ namespace Gecode { namespace Int {
 
 
   /*
+   * Support for delta information
+   *
+   */
+  forceinline ModEvent
+  BoolVarImp::modevent(const Delta& d) const {
+    return d.modevent();
+  }
+  forceinline int 
+  BoolVarImp::min(const Delta& d) const {
+    return static_cast<const BoolVarImpDelta&>(d).min;
+  }
+  forceinline int 
+  BoolVarImp::max(const Delta& d) const {
+    return static_cast<const BoolVarImpDelta&>(d).max;
+  }
+  forceinline bool 
+  BoolVarImp::any(const Delta& d) const {
+    return (static_cast<const BoolVarImpDelta&>(d).min > 
+            static_cast<const BoolVarImpDelta&>(d).max);
+  }
+
+
+  /*
    * Boolean tell operations (assume not yet assigned 0/1 variable)
    *
    */
@@ -138,10 +161,10 @@ namespace Gecode { namespace Int {
   BoolVarImp::zero_none(Space* home) {
     assert(none());
     dom = ZERO;
-    notify(home,ME_BOOL_VAL);
-#if GECODE_USE_ADVISORS
-    if(!advisors(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+    BoolVarImpDelta d;
+    d.min = d.max = 1;
+    if (!notify(home,ME_BOOL_VAL,d))
+      return ME_INT_FAILED;
     return ME_BOOL_VAL;
   }
   forceinline ModEvent
@@ -155,10 +178,10 @@ namespace Gecode { namespace Int {
   BoolVarImp::one_none(Space* home) {
     assert(none());
     dom = ONE;
-    notify(home,ME_BOOL_VAL);
-#if GECODE_USE_ADVISORS
-    if(!advisors(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+    BoolVarImpDelta d;
+    d.min = d.max = 0;
+    if (!notify(home,ME_BOOL_VAL,d))
+      return ME_INT_FAILED;
     return ME_BOOL_VAL;
   }
   forceinline ModEvent
@@ -185,10 +208,10 @@ namespace Gecode { namespace Int {
     if (n != 0) {
       assert(n == 1);
       dom = ONE;
-      notify(home,ME_BOOL_VAL);
-#if GECODE_USE_ADVISORS
-    if(!advisors(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+      BoolVarImpDelta d;
+      d.min = d.max = 0;
+      if (!notify(home,ME_BOOL_VAL,d))
+        return ME_INT_FAILED;
       return ME_INT_VAL;
     } else {
       return ME_INT_NONE;
@@ -206,10 +229,10 @@ namespace Gecode { namespace Int {
     if (n != 0) {
       assert(n == 1);
       dom = ONE;
-      notify(home,ME_BOOL_VAL);
-#if GECODE_USE_ADVISORS
-    if(!advisors(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+      BoolVarImpDelta d;
+      d.min = d.max = 0;
+      if (!notify(home,ME_BOOL_VAL,d))
+        return ME_INT_FAILED;
       return ME_INT_VAL;
     } else {
       return ME_INT_NONE;
@@ -228,10 +251,10 @@ namespace Gecode { namespace Int {
     assert(none());
     if (n == 0) {
       dom = ZERO;
-      notify(home,ME_BOOL_VAL);
-#if GECODE_USE_ADVISORS
-    if(!advisors(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+      BoolVarImpDelta d;
+      d.min = d.max = 1;
+      if (!notify(home,ME_BOOL_VAL,d))
+        return ME_INT_FAILED;
       return ME_INT_VAL;
     } else {
       return ME_INT_NONE;
@@ -248,10 +271,10 @@ namespace Gecode { namespace Int {
     assert(none());
     if (n == 0) {
       dom = ZERO;
-      notify(home,ME_BOOL_VAL);
-#if GECODE_USE_ADVISORS
-    if(!advisors(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+      BoolVarImpDelta d;
+      d.min = d.max = 1;
+      if (!notify(home,ME_BOOL_VAL,d))
+        return ME_INT_FAILED;
       return ME_INT_VAL;
     } else {
       return ME_INT_NONE;
@@ -262,43 +285,45 @@ namespace Gecode { namespace Int {
   forceinline ModEvent
   BoolVarImp::eq(Space* home, int n) {
     if ((n < 0) || (n > 1)) return ME_INT_FAILED;
+    BoolVarImpDelta d;
     if (n == 0) {
       if (zero()) return ME_INT_NONE;
       if (one())  return ME_INT_FAILED;
       assert(none());
       dom = ZERO;
+      d.min = d.max = 1;
     } else {
       assert(n == 1);
       if (zero()) return ME_INT_FAILED;
       if (one())  return ME_INT_NONE;
       assert(none());
       dom = ONE;
+      d.min = d.max = 0;
     }
-    notify(home,ME_BOOL_VAL);
-#if GECODE_USE_ADVISORS
-    if(!advisors(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+    if (!notify(home,ME_BOOL_VAL,d))
+      return ME_INT_FAILED;
     return ME_INT_VAL;
   }
   forceinline ModEvent
   BoolVarImp::eq(Space* home, double n) {
     if ((n < 0) || (n > 1)) return ME_INT_FAILED;
+    BoolVarImpDelta d;
     if (n == 0) {
       if (zero()) return ME_INT_NONE;
       if (one())  return ME_INT_FAILED;
       assert(none());
       dom = ZERO;
+      d.min = d.max = 1;
     } else {
       assert(n == 1);
       if (zero()) return ME_INT_FAILED;
       if (one())  return ME_INT_NONE;
       assert(none());
       dom = ONE;
+      d.min = d.max = 0;
     }
-    notify(home,ME_BOOL_VAL);
-#if GECODE_USE_ADVISORS
-    if(!advisors(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+    if (!notify(home,ME_BOOL_VAL,d))
+      return ME_INT_FAILED;
     return ME_INT_VAL;
   }
 
@@ -306,43 +331,45 @@ namespace Gecode { namespace Int {
   forceinline ModEvent
   BoolVarImp::nq(Space* home, int n) {
     if ((n < 0) || (n > 1)) return ME_INT_NONE;
+    BoolVarImpDelta d;
     if (n == 0) {
       if (zero()) return ME_INT_FAILED;
       if (one())  return ME_INT_NONE;
       assert(none());
       dom = ONE;
+      d.min = d.max = 0;
     } else {
       assert(n == 1);
       if (zero()) return ME_INT_NONE;
       if (one())  return ME_INT_FAILED;
       assert(none());
       dom = ZERO;
+      d.min = d.max = 1;
     }
-    notify(home,ME_BOOL_VAL);
-#if GECODE_USE_ADVISORS
-    if(!advisors(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+    if (!notify(home,ME_BOOL_VAL,d))
+      return ME_INT_FAILED;
     return ME_INT_VAL;
   }
   forceinline ModEvent
   BoolVarImp::nq(Space* home, double n) {
     if ((n < 0) || (n > 1)) return ME_INT_NONE;
+    BoolVarImpDelta d;
     if (n == 0) {
       if (zero()) return ME_INT_FAILED;
       if (one())  return ME_INT_NONE;
       assert(none());
       dom = ONE;
+      d.min = d.max = 0;
     } else {
       assert(n == 1);
       if (zero()) return ME_INT_NONE;
       if (one())  return ME_INT_FAILED;
       assert(none());
       dom = ZERO;
+      d.min = d.max = 1;
     }
-    notify(home,ME_BOOL_VAL);
-#if GECODE_USE_ADVISORS
-    if(!advisors(home)) return ME_INT_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+    if (!notify(home,ME_BOOL_VAL,d))
+      return ME_INT_FAILED;
     return ME_INT_VAL;
   }
 

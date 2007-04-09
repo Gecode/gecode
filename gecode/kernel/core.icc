@@ -56,7 +56,7 @@ namespace Gecode {
    */
   class SharedObject {
     friend class Space;
-    template<class Object> friend class SharedHandle;
+    template <class Object> friend class SharedHandle;
   private:
     /// The counter used for reference counting
     unsigned int use_cnt;
@@ -83,7 +83,7 @@ namespace Gecode {
    *
    * \ingroup FuncSupportShared
    */
-  template<class Object>
+  template <class Object>
   class SharedHandle {
   private:
     /// The shared object
@@ -257,6 +257,15 @@ namespace Gecode {
   typedef int PropModEvent;
 
 
+  /// Domain change information to be supplied to advisors
+  class Delta {
+    template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
+  private:
+    ModEvent me; ///< Only modification events are generic
+  public:
+    /// Return the modification event
+    ModEvent modevent(void) const;
+  };
 
 
   /**
@@ -355,10 +364,25 @@ namespace Gecode {
     void cancel(Space* home, Advisor* p, bool assigned);
     /// Return degree (number of subscribed propagators and advisors)
     unsigned int degree(void) const;
-    /// Notify that variable implementation has been modified with modification event \a me
-    void notify(Space* home, ModEvent me);
-    /// Notify that variable implementation has been assigned (only if variable has single modification event)
-    void notify(Space* home);
+  private:
+    /// Execute advisors during notification
+    bool advice(Space* home, const Delta& d);
+  public:
+    /**
+     * \brief Notify that variable implementation has been modified with modification event \a me and domain change \a d
+     *
+     * Returns false if notification has failed.
+     */
+    bool notify(Space* home, ModEvent me, Delta& d);
+    /**
+     * \brief Notify that variable implementation has been assigned with domain change \a d
+     *
+     * This routine can only be used, if the variable implementation supports
+     * a single modification event.
+     *
+     * Returns false if notification has failed.
+     */
+    bool notify(Space* home, Delta& d);
     //@}
 
     /// \name Processing modified variables
@@ -774,6 +798,8 @@ namespace Gecode {
     Propagator* parent(void) const { 
       return static_cast<Propagator*>(ActorLink::next()); 
     }
+    /// Function that performs the actual task
+    virtual ExecStatus newadvise(Space* home, const Delta& d) = 0;
     /// Is this Advisor disposed?
     bool disposed(void) const { 
       return reinterpret_cast<ptrdiff_t>(prev())&1 == 1;
@@ -1693,6 +1719,16 @@ namespace Gecode {
   }
 
   /*
+   * Delta information for advisors
+   *
+   */
+  forceinline ModEvent
+  Delta::modevent(void) const {
+    return me;
+  };
+
+
+  /*
    * Propagators
    *
    */
@@ -2117,8 +2153,55 @@ namespace Gecode {
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline bool
+  Variable<VTI,PC,MED>::advisors(void) const {
+    return idx[PC+1] != idx[PC+2];
+  }
+
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline
+  Variable<VTI,PC,MED>::Advisors::Advisors(const Variable& x)
+    : c(x.idx[PC+1]), e(x.idx[PC+2]) {}
+
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline bool
+  Variable<VTI,PC,MED>::Advisors::operator()(void) const {
+    return c<e;
+  }
+  template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
-  Variable<VTI,PC,MED>::notify(Space* home, ModEvent new_me) {
+  Variable<VTI,PC,MED>::Advisors::operator++(void) {
+    c++;
+  }
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline Advisor*
+  Variable<VTI,PC,MED>::Advisors::advisor(void) const {
+    return static_cast<Advisor*>(*c);
+  }
+
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline bool
+  Variable<VTI,PC,MED>::advice(Space* home, const Delta& d) {
+    assert(advisors());
+    for (Advisors a(*this); a(); ++a)
+      switch (a.advisor()->newadvise(home, d)) {
+      case ES_FIX:
+      case __ES_SUBSUMED: 
+        break;
+      case ES_FAILED:     
+        return false;
+      case ES_NOFIX:
+        schedule(home,a.advisor()->parent(),d.modevent());
+        break;
+      default:
+        GECODE_NEVER;
+      }
+    return true;
+  }
+
+  template <VarTypeId VTI, PropCond PC, class MED>
+  forceinline bool
+  Variable<VTI,PC,MED>::notify(Space* home, ModEvent new_me, Delta& d) {
     if (modified()) {
       MED med;
       u.free_me ^= med(new_me,modevent());
@@ -2127,15 +2210,27 @@ namespace Gecode {
       home->vars[VTI].entry = this;
       modevent(new_me);
     }
+    if (advisors()) {
+      d.me = new_me;
+      return advice(home,d);
+    }
+    return true;
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline void
-  Variable<VTI,PC,MED>::notify(Space* home) {
+  forceinline bool
+  Variable<VTI,PC,MED>::notify(Space* home, Delta& d) {
     assert(!modified());
     _next = static_cast<Variable<VTI,PC,MED>*>(home->vars[VTI].entry);
     home->vars[VTI].entry = this;
+    if (advisors()) {
+      d.me = ME_GEN_ASSIGNED;
+      return advice(home,d);
+    }
+    return true;
   }
+
+
 
 
   /*
@@ -2244,33 +2339,6 @@ namespace Gecode {
 #endif
   }
 
-
-  template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline bool
-  Variable<VTI,PC,MED>::advisors(void) const {
-    return x.idx[PC+1] != x.idx[PC+2];
-  }
-
-  template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline
-  Variable<VTI,PC,MED>::Advisors::Advisors(const Variable& x)
-    : c(x.idx[PC+1]), e(x.idx[PC+2]) {}
-
-  template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline bool
-  Variable<VTI,PC,MED>::Advisors::operator()(void) const {
-    return c<e;
-  }
-  template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline void
-  Variable<VTI,PC,MED>::Advisors::operator++(void) {
-    c++;
-  }
-  template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline Advisor*
-  Variable<VTI,PC,MED>::Advisors::advisor(void) const {
-    return static_cast<Advisor*>(*c);
-  }
 
 }
 

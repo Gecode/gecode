@@ -32,8 +32,8 @@ namespace Gecode {
   /** \brief Advisor for integer variables.
    */
   class IntAdvisor : public Advisor {
-    friend class IntVarImp;
-    friend class BoolVarImp;
+    friend class Int::IntVarImp;
+    friend class Int::BoolVarImp;
   public:    
     virtual ExecStatus advise(Space* home, ModEvent me, int lo, int hi) = 0;
 
@@ -49,9 +49,12 @@ namespace Gecode {
   protected:
     virtual int _mod(int val);
   public:
-    ExecStatus _advise(Space* home, ModEvent me, int lo, int hi) {
+    virtual ExecStatus newadvise(Space* home, const Delta& d) {
       assert(!disposed());
-      return advise(home, me, _mod(lo), _mod(hi));
+      return advise(home, 
+                    d.modevent(), 
+                    _mod(static_cast<const Int::IntVarImpDelta&>(d).min), 
+                    _mod(static_cast<const Int::IntVarImpDelta&>(d).max));
     }
   };
   //@}

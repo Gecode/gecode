@@ -95,8 +95,8 @@ namespace Gecode { namespace Int {
     void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
     /// Subscribe advisor \a a
     void subscribe(Space* home, Advisor* a, bool assigned);
-    /// Notify that variable implementation has been modified with modification event \a me
-    void notify(Space* home, ModEvent me);
+    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
+    bool notify(Space* home, ModEvent me, Delta& d);
     //@}
     /// Return the current modification event
     ModEvent modevent(void) const;
@@ -135,9 +135,9 @@ namespace Gecode { namespace Int {
     Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>::subscribe(home,a,assigned);
   }
 
-  forceinline void
-  BoolVarImpBase::notify(Space* home, ModEvent) {
-    Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>::notify(home);
+  forceinline bool
+  BoolVarImpBase::notify(Space* home, ModEvent, Delta& d) {
+    return Gecode::Variable<VTI_BOOL,PC_BOOL_VAL,BoolMeDiff>::notify(home,d);
   }
 
 }}

@@ -51,7 +51,6 @@ namespace {
       ExecStatus advise(Space *home, ModEvent me, int lo, int hi) {
         if (me == ME_INT_VAL || me == ME_INT_BND)
           IntViewAdvisor<IntView>::schedule(home, me);
-        }
         if (me == ME_INT_VAL) return ES_SUBSUMED(this,sizeof(*this));
         return ES_OK;
       }

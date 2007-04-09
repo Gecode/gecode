@@ -203,8 +203,8 @@ namespace Gecode { namespace Set {
     void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
     /// Subscribe advisor \a a
     void subscribe(Space* home, Advisor* a, bool assigned);
-    /// Notify that variable implementation has been modified with modification event \a me
-    void notify(Space* home, ModEvent me);
+    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
+    bool notify(Space* home, ModEvent me, Delta& d);
     //@}
 
   };
@@ -235,9 +235,9 @@ namespace Gecode { namespace Set {
     Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>::subscribe(home,a,assigned);
   }
 
-  forceinline void
-  SetVarImpBase::notify(Space* home, ModEvent me) {
-    Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>::notify(home,me);
+  forceinline bool
+  SetVarImpBase::notify(Space* home, ModEvent me, Delta& d) {
+    return Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>::notify(home,me,d);
   }
 
 }}

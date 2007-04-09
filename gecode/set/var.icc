@@ -482,6 +482,14 @@ namespace Gecode { namespace Set {
   protected:
     /// Constructor for cloning \a x
     SetVarImp(Space* home, bool share, SetVarImp& x);
+    /*
+     * FIXME: JUST A HACK FOR MISSING ADVISORS
+     */
+    forceinline
+    void notify(Space* home, ModEvent me) {
+      Delta d;
+      (void) SetVarImpBase::notify(home,me,d);
+    }
   public:
     /// \name Constructors and initialization
     //@{

@@ -290,6 +290,29 @@ namespace Gecode { namespace Int {
 
 
   /*
+   * Support for delta information
+   *
+   */
+  forceinline ModEvent
+  IntVarImp::modevent(const Delta& d) const {
+    return d.modevent();
+  }
+  forceinline int 
+  IntVarImp::min(const Delta& d) const {
+    return static_cast<const IntVarImpDelta&>(d).min;
+  }
+  forceinline int 
+  IntVarImp::max(const Delta& d) const {
+    return static_cast<const IntVarImpDelta&>(d).max;
+  }
+  forceinline bool 
+  IntVarImp::any(const Delta& d) const {
+    return (static_cast<const IntVarImpDelta&>(d).min > 
+            static_cast<const IntVarImpDelta&>(d).max);
+  }
+
+
+  /*
    * Tell operations (to be inlined: performing bounds checks first)
    *
    */
@@ -298,19 +321,13 @@ namespace Gecode { namespace Int {
   IntVarImp::gq(Space* home, int n) {
     if (n <= dom.min()) return ME_INT_NONE;
     if (n > dom.max())  return ME_INT_FAILED;
-    gq_full(home,n);
-    if (assigned())
-      return ME_INT_VAL;
-    return ME_INT_BND;
+    return gq_full(home,n);
   }
   forceinline ModEvent
   IntVarImp::gq(Space* home, double n) {
     if (n <= dom.min()) return ME_INT_NONE;
     if (n > dom.max())  return ME_INT_FAILED;
-    gq_full(home,static_cast<int>(n));
-    if (assigned())
-      return ME_INT_VAL;
-    return ME_INT_BND;
+    return gq_full(home,static_cast<int>(n));
   }
 
 
@@ -318,19 +335,13 @@ namespace Gecode { namespace Int {
   IntVarImp::lq(Space* home, int n) {
     if (n >= dom.max()) return ME_INT_NONE;
     if (n < dom.min())  return ME_INT_FAILED;
-    lq_full(home,n);
-    if (dom.min() == n)
-      return ME_INT_VAL;
-    return ME_INT_BND;
+    return lq_full(home,n);
   }
   forceinline ModEvent
   IntVarImp::lq(Space* home, double n) {
     if (n >= dom.max()) return ME_INT_NONE;
     if (n < dom.min())  return ME_INT_FAILED;
-    lq_full(home,static_cast<int>(n));
-    if (dom.max() == n)
-      return ME_INT_VAL;
-    return ME_INT_BND;
+    return lq_full(home,static_cast<int>(n));
   }
 
 
@@ -341,10 +352,10 @@ namespace Gecode { namespace Int {
     if ((n == dom.min()) && (n == dom.max()))
       return ME_INT_NONE;
     dom.min(n); dom.max(n);
-    notify(home,ME_INT_VAL);
-#if GECODE_USE_ADVISORS
-    if(!advisors(home,ME_INT_VAL)) return ME_INT_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+    IntVarImpDelta d;
+    d.min = 1; d.max = 0;
+    if (!notify(home,ME_INT_VAL,d))
+      return ME_INT_FAILED;
     if (!range() && eq_full(home))
       return ME_INT_FAILED;
     return ME_INT_VAL;
@@ -357,10 +368,10 @@ namespace Gecode { namespace Int {
     if ((n == dom.min()) && (n == dom.max()))
       return ME_INT_NONE;
     dom.min(n); dom.max(n);
-    notify(home,ME_INT_VAL);
-#if GECODE_USE_ADVISORS
-    if(!advisors(home,ME_INT_VAL)) return ME_INT_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+    IntVarImpDelta d;
+    d.min = 1; d.max = 0;
+    if (!notify(home,ME_INT_VAL,d))
+      return ME_INT_FAILED;
     if (!range() && eq_full(home))
       return ME_INT_FAILED;
     return ME_INT_VAL;
@@ -369,12 +380,14 @@ namespace Gecode { namespace Int {
 
   forceinline ModEvent
   IntVarImp::nq(Space* home, int n) {
-    if ((n < dom.min()) || (n > dom.max())) return ME_INT_NONE;
+    if ((n < dom.min()) || (n > dom.max())) 
+      return ME_INT_NONE;
     return nq_full(home,n);
   }
   forceinline ModEvent
   IntVarImp::nq(Space* home, double d) {
-    if ((d < dom.min()) || (d > dom.max())) return ME_INT_NONE;
+    if ((d < dom.min()) || (d > dom.max())) 
+      return ME_INT_NONE;
     return nq_full(home,static_cast<int>(d));
   }
 
@@ -406,10 +419,10 @@ namespace Gecode { namespace Int {
       if ((min0 == min1) && (max0 == max1))
         return ME_INT_NONE;
       if (min0 == max0) {
-        notify(home,ME_INT_VAL);
-#if GECODE_USE_ADVISORS
-        if (!advisors(home,ME_INT_VAL)) return ME_GEN_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+        IntVarImpDelta d;
+        d.min = 1; d.max = 0;
+        if (!notify(home,ME_INT_VAL,d))
+          return ME_INT_FAILED;
         return ME_INT_VAL;
       }
     } else {
@@ -434,17 +447,19 @@ namespace Gecode { namespace Int {
       const int max1 = dom.max(); max0 = l->max(); dom.max(max0);
       holes = width() - s;
       if ((min0 == min1) && (max0 == max1)) {
-        notify(home,ME_INT_DOM);
-#if GECODE_USE_ADVISORS
-        if (!advisors(home,ME_INT_DOM)) return ME_GEN_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+        IntVarImpDelta d;
+        d.min = 1; d.max = 0;
+        if (!notify(home,ME_INT_DOM,d))
+          return ME_INT_FAILED;
         return ME_INT_DOM;
       }
     }
-    notify(home,ME_INT_BND);
-#if GECODE_USE_ADVISORS
-    if (!advisors(home,ME_INT_BND)) return ME_GEN_FAILED;
-#endif /* GECODE_USE_ADVISORS */
+    {
+      IntVarImpDelta d;
+      d.min = 1; d.max = 0;
+      if (!notify(home,ME_INT_BND,d))
+        return ME_INT_FAILED;
+    }
     return ME_INT_BND;
   }
 
