@@ -428,6 +428,63 @@ namespace Gecode {
     return n;
   }
 
+
+  /*
+   * Advisor councils
+   *
+   */
+  void
+  CouncilBase::resize(Space* home) {
+    compact(home);
+    if (reinterpret_cast<ptrdiff_t>(advisors[0])>siz) {
+      // @todo better resizing strategy
+      int nsiz = static_cast<int>(1.5*static_cast<double>(siz))+1;
+      Advisor** newd = static_cast<Advisor**>(home->alloc(sizeof(Advisor*)*nsiz));
+      for (int pos = nsiz, oldpos = siz; pos-- && oldpos--; )
+        newd[pos] = advisors[oldpos]; 
+      for (int i = nsiz-siz-1; i--; ) {
+        newd[i] = reinterpret_cast<Advisor*>((i+1)%nsiz);
+      }
+      newd[nsiz-siz-1] = reinterpret_cast<Advisor*>(0);
+      home->reuse(advisors, sizeof(Advisor*)*siz);
+      advisors = newd;
+      siz = nsiz;
+    }
+  }
+
+  int
+  CouncilBase::compact(Space* home) const {
+    if (siz == 0)
+      return 0;
+    
+    Advisor** left  = &(advisors[0]);
+    Advisor** right = left+siz-1;
+    Advisor** lo = left-1;
+    Advisor** hi = right+1;
+
+    while (true) {
+      while (!active(*(++lo)))
+        if (lo == right) break;
+      while ( active(*(--hi)))
+        if (hi ==  left) break;
+      if (lo >= hi) break;
+      std::swap(*lo,*hi);
+    }
+
+    for (Advisor** i = lo-1; i >= left; --i) {
+      if (reinterpret_cast<ptrdiff_t>(*i) > siz) {
+        assert((*i)->disposed());
+        home->reuse(*i, (*i)->size());
+      }
+      *i = reinterpret_cast<Advisor*>((i-left)+1);
+    }
+    if (!active(*hi)) {
+      *hi = reinterpret_cast<Advisor*>(0);
+    }
+
+    return (right-lo)+1;
+  }
+
 }
 
 // STATISTICS: kernel-core

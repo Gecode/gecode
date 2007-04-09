@@ -697,9 +697,20 @@ namespace Gecode {
    *
    */
   class CouncilBase {
+    friend class Advisor;
   protected:
-    int       siz;
-    Advisor** advisors;
+    int       siz;      ///< Size of array for advisors
+    Advisor** advisors; ///< Array of advisors
+    /// Resize advisor array
+    GECODE_KERNEL_EXPORT
+    void resize(Space* home);
+    /// Add advisor \a a to council
+    void add(Space* home, Advisor* a);
+    /// Test whether advisor \a a is active
+    bool active(Advisor* a) const;
+    /// Compact representation
+    GECODE_KERNEL_EXPORT
+    int compact(Space* home) const;
   public:
     /** \brief Construct advisor council
      *
@@ -710,12 +721,6 @@ namespace Gecode {
     CouncilBase(Space* home, unsigned int reserve = 1);
     /// Copy constructor
     CouncilBase(Space* home, bool share, CouncilBase& c);
-    /// Add advisor to council
-    void _add(Space* home, Propagator* p, Advisor* a);
-    /// Test whether advisor \a a is active
-    bool active(Advisor* a) const;
-    /// Compact representation
-    int compact(Space* home) const;
   };
 
 
@@ -731,6 +736,7 @@ namespace Gecode {
    */
   template <class A>
   class Council : public CouncilBase {
+    friend class Advisor;
   public:
     /// Construct advisor council
     Council(Space* home, unsigned int reserve = 1);
@@ -754,11 +760,15 @@ namespace Gecode {
     friend ExecStatus ES_SUBSUMED(Advisor*, size_t);
     friend ExecStatus ES_SUBSUMED(Advisor*, Space*);
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
-  protected:
-    // Set disposed flag and size
-    void disposed(size_t size) { 
-      ActorLink::prev(reinterpret_cast<ActorLink*>((size << 1) | 1)); 
-    }
+    friend class CouncilBase;
+    template <class A> friend class Council;
+  private:
+    /// Set disposed flag and size
+    void disposed(size_t size);
+    /// Is the advisor disposed?
+    bool disposed(void) const;
+    /// Get size of disposed advisor
+    size_t size(void) const;
   public:
     /// Constructor for creation
     Advisor(Space* home, Propagator* p, CouncilBase& c);
@@ -789,18 +799,6 @@ namespace Gecode {
      *
      */
     virtual ExecStatus advise(Space* home, const Delta& d) = 0;
-
-
-
-    /// Is this Advisor disposed?
-    bool disposed(void) const { 
-      return reinterpret_cast<ptrdiff_t>(prev())&1 == 1;
-    }
-    // Get size of disposed advisor
-    size_t size(void) const { 
-      assert(disposed());
-      return reinterpret_cast<ptrdiff_t>(prev())>>1;
-    }
 
     /// \name Memory management
     //@{
@@ -1575,6 +1573,23 @@ namespace Gecode {
 
 
   /*
+   * Advisors
+   *
+   */
+
+  forceinline void
+  CouncilBase::add(Space* home, Advisor* a) {
+    if (reinterpret_cast<ptrdiff_t>(advisors[0])>siz)
+      resize(home);
+    int a0 = reinterpret_cast<ptrdiff_t>(advisors[0]);
+    if (a0 != 0) {
+      advisors[0] = advisors[a0];
+    }
+    advisors[a0] = a;
+  }
+
+
+  /*
    * Advisor class members
    *
    */
@@ -1583,7 +1598,7 @@ namespace Gecode {
   Advisor::Advisor(Space* home, Propagator* p, CouncilBase& c) {
     ActorLink::prev(NULL);
     ActorLink::next(p);
-    c._add(home,p,this);
+    c.add(home,this);
   }
   forceinline 
   Advisor::Advisor(Space* home, bool share, Advisor& a) {
@@ -1596,6 +1611,19 @@ namespace Gecode {
   forceinline Propagator* 
   Advisor::propagator(void) const { 
     return static_cast<Propagator*>(ActorLink::next()); 
+  }
+  forceinline void 
+  Advisor::disposed(size_t size) { 
+    ActorLink::prev(reinterpret_cast<ActorLink*>((size << 1) | 1)); 
+  }
+  forceinline bool
+  Advisor::disposed(void) const { 
+    return reinterpret_cast<ptrdiff_t>(prev())&1 == 1;
+  }
+  forceinline size_t 
+  Advisor::size(void) const { 
+    assert(disposed());
+    return reinterpret_cast<ptrdiff_t>(prev())>>1;
   }
   forceinline size_t
   Advisor::dispose(Space*) {
@@ -1613,6 +1641,54 @@ namespace Gecode {
     a->dispose(home);
     // dispose will set the size correctly
     return __ES_SUBSUMED;
+  }
+
+
+  inline
+  CouncilBase::CouncilBase(Space* home, unsigned int reserve)
+    : siz(reserve > 1 ? reserve : 1), 
+      advisors(static_cast<Advisor**>(home->alloc(sizeof(Advisor*)*siz))) {
+    // Set up free-linkage in array
+    for (int i = siz; i--; ) 
+      advisors[i] = reinterpret_cast<Advisor*>((i+1)%siz);
+  }
+
+  inline
+  CouncilBase::CouncilBase(Space* home, bool share, CouncilBase& c)
+    : siz(c.compact(home)), 
+      advisors(static_cast<Advisor**>(home->alloc(sizeof(Advisor*)*siz)))
+  {}
+  
+  forceinline bool
+  CouncilBase::active(Advisor* a) const {
+    return ((reinterpret_cast<ptrdiff_t>(a) > siz) &&
+            !a->disposed());
+  }
+
+  template <class A>
+  forceinline
+  Council<A>::Council(Space* home, unsigned int reserve)
+    : CouncilBase(home,reserve) {}
+
+  template <class A>
+  forceinline
+  Council<A>::Council(Space* home, bool share, Council<A>& c)
+    : CouncilBase(home,share,c) {
+    for (int ci = c.siz, i = siz; ci-- && i--; ) {
+      assert(active(c.advisors[ci]));
+      advisors[i] = new (home) A(home,share,
+                                 *static_cast<A*>(c.advisors[ci]));
+    }
+  }
+  
+  template <class A>
+  inline size_t
+  Council<A>::dispose(Space* home) {
+    for (int i = siz; i--; )
+      if (active(advisors[i]))
+        (void) static_cast<A*>(advisors[i])->dispose(home);
+    home->reuse(advisors, sizeof(Advisor*)*siz);
+    return sizeof(A);
   }
 
 
@@ -1801,119 +1877,6 @@ namespace Gecode {
     u.pme = 0;
     // Set forwarding pointer
     p.prev(this);
-  }
-
-
-  /*
-   * Council of advisors
-   *
-   */
-
-  inline
-  CouncilBase::CouncilBase(Space* home, unsigned int reserve)
-    : siz(reserve > 1 ? reserve : 1), 
-      advisors(static_cast<Advisor**>(home->alloc(sizeof(Advisor*)*siz))) {
-    // Set up free-linkage in array
-    for (int i = siz; i--; ) 
-      advisors[i] = reinterpret_cast<Advisor*>((i+1)%siz);
-  }
-
-  inline
-  CouncilBase::CouncilBase(Space* home, bool share, CouncilBase& c)
-    : siz(c.compact(home)), 
-      advisors(static_cast<Advisor**>(home->alloc(sizeof(Advisor*)*siz)))
-  {}
-  
-  inline void
-  CouncilBase::_add(Space* home, Propagator* p, Advisor* a) {
-    if (reinterpret_cast<ptrdiff_t>(advisors[0])>siz) {
-      compact(home);
-      if (reinterpret_cast<ptrdiff_t>(advisors[0])>siz) {
-        // @todo better resizing strategy
-        int nsiz = static_cast<int>(1.5*static_cast<double>(siz))+1;
-        Advisor** newd = static_cast<Advisor**>(home->alloc(sizeof(Advisor*)*nsiz));
-        for (int pos = nsiz, oldpos = siz; pos-- && oldpos--; )
-          newd[pos] = advisors[oldpos]; 
-        for (int i = nsiz-siz-1; i--; ) {
-          newd[i] = reinterpret_cast<Advisor*>((i+1)%nsiz);
-        }
-        newd[nsiz-siz-1] = reinterpret_cast<Advisor*>(0);
-        home->reuse(advisors, sizeof(Advisor*)*siz);
-        advisors = newd;
-        siz = nsiz;
-      }
-    }
-    int a0 = reinterpret_cast<ptrdiff_t>(advisors[0]);
-    if (a0 != 0) {
-      advisors[0] = advisors[a0];
-    }
-    advisors[a0] = a;
-  }
-
-  forceinline bool
-  CouncilBase::active(Advisor* a) const {
-    return 
-      (reinterpret_cast<ptrdiff_t>(a) > siz) &&
-      !a->disposed();
-  }
-
-  inline int
-  CouncilBase::compact(Space* home) const {
-    if (siz == 0) {
-      return 0;
-    }
-
-    Advisor** left  = &(advisors[0]);
-    Advisor** right = left+siz-1;
-    Advisor** lo = left-1;
-    Advisor** hi = right+1;
-
-    while (true) {
-      while (!active(*(++lo)))
-        if (lo == right) break;
-      while ( active(*(--hi)))
-        if (hi ==  left) break;
-      if (lo >= hi) break;
-      std::swap(*lo,*hi);
-    }
-
-    for (Advisor** i = lo-1; i >= left; --i) {
-      if (reinterpret_cast<ptrdiff_t>(*i) > siz) {
-        assert((*i)->disposed());
-        home->reuse(*i, (*i)->size());
-      }
-      *i = reinterpret_cast<Advisor*>((i-left)+1);
-    }
-    if (!active(*hi)) {
-      *hi = reinterpret_cast<Advisor*>(0);
-    }
-
-    return (right-lo)+1;
-  }
-
-
-  template <class A>
-  Council<A>::Council(Space* home, unsigned int reserve)
-    : CouncilBase(home,reserve) {}
-
-  template <class A>
-  Council<A>::Council(Space* home, bool share, Council<A>& c)
-    : CouncilBase(home,share,c) {
-    for (int ci = c.siz, i = siz; ci-- && i--; ) {
-      assert(active(c.advisors[ci]));
-      advisors[i] = new (home) A(home,share,
-                                 *static_cast<A*>(c.advisors[ci]));
-    }
-  }
-  
-  template <class A>
-  size_t
-  Council<A>::dispose(Space* home) {
-    for (int i = siz; i--; )
-      if (active(advisors[i]))
-        (void) static_cast<A*>(advisors[i])->dispose(home);
-    home->reuse(advisors, sizeof(Advisor*)*siz);
-    return sizeof(A);
   }
 
 
