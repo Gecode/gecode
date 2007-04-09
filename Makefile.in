@@ -187,7 +187,8 @@ INTHDR0 = \
 	distinct/val.icc distinct/ter-dom.icc \
 	dom/range.icc dom/spec.icc \
 	element/int.icc element/view.icc \
-	extensional/table.icc extensional/val.icc extensional/basic.icc extensional/incremental.icc \
+	extensional/table.icc extensional/val.icc extensional/basic.icc \
+	extensional/incremental.icc \
 	gcc/bnd.icc gcc/dom.icc gcc/gccbndsup.icc gcc/graphsup.icc \
 	gcc/lbc.icc gcc/ubc.icc gcc/val.icc gcc/occur.icc \
 	linear/post.icc \
@@ -198,8 +199,10 @@ INTHDR0 = \
 	rel/eq.icc rel/lex.icc rel/lq-le.icc rel/nq.icc \
 	sortedness/matching.icc sortedness/narrowing.icc \
 	sortedness/order.icc sortedness/sortedness.icc sortedness/sortsup.icc \
-	int-set.icc var/bool.icc var/imp-int.icc var/imp-bool.icc var/int.icc \
-	view/bool.icc view/constint.icc view/zero.icc view/int.icc view/minus.icc \
+	int-set.icc var/delta.icc var/bool.icc \
+	var/imp-int.icc var/imp-bool.icc var/int.icc \
+	view/bool.icc view/constint.icc view/zero.icc view/int.icc \
+	view/minus.icc \
 	view/offset.icc view/rtest.icc view/scale.icc view/iter.icc \
 	arithmetic.hh array.icc bool.hh branch.hh \
 	count.hh cumulatives.hh distinct.hh dom.hh \

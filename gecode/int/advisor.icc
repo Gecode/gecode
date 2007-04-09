@@ -53,8 +53,8 @@ namespace Gecode {
       assert(!disposed());
       return advise(home, 
                     d.modevent(), 
-                    _mod(static_cast<const Int::IntVarImpDelta&>(d).min), 
-                    _mod(static_cast<const Int::IntVarImpDelta&>(d).max));
+                    _mod(static_cast<const Int::IntDelta&>(d).min()), 
+                    _mod(static_cast<const Int::IntDelta&>(d).max()));
     }
   };
   //@}

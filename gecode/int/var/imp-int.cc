@@ -77,8 +77,7 @@ namespace Gecode { namespace Int {
   ModEvent
   IntVarImp::lq_full(Space* home, int m) {
     assert((m >= dom.min()) && (m <= dom.max()));
-    IntVarImpDelta d;
-    d.min = m+1; d.max = dom.max();
+    IntDelta d(m+1,dom.max());
     if (range()) { // Is already range...
       dom.max(m);
       if (assigned()) goto notify_val;
@@ -116,8 +115,7 @@ namespace Gecode { namespace Int {
   ModEvent
   IntVarImp::gq_full(Space* home, int m) {
     assert((m >= dom.min()) && (m <= dom.max()));
-    IntVarImpDelta d;
-    d.min = dom.min(); d.max = m-1;
+    IntDelta d(dom.min(),m-1);
     if (range()) { // Is already range...
       dom.min(m);
       if (assigned()) goto notify_val;
@@ -176,8 +174,7 @@ namespace Gecode { namespace Int {
   ModEvent
   IntVarImp::nq_full(Space* home, int m) {
     assert(!((m < dom.min()) || (m > dom.max())));
-    IntVarImpDelta d;
-    d.min = d.max = m;
+    IntDelta d(m,m);
     if (range()) {
       if ((m == dom.min()) && (m == dom.max()))
         return ME_INT_FAILED;

@@ -35,15 +35,41 @@ namespace Gecode { namespace Int {
   class IntVarImpBwd;
 
   class IntVarImp;
+  class BoolVarImp;
 
-  /// Delta information for advisors
-  class IntVarImpDelta : public Delta {
+  /**
+   * \brief Integer delta information for advisors
+   *
+   * Note that the same delta information is used for both
+   * integer and Boolean variables and views.
+   */
+  class IntDelta : public Delta {
     friend class IntVarImp;
+    friend class BoolVarImp;
+  private:
+    int _min; ///< Minimum value just pruned
+    int _max; ///< Largest value just pruned
+  public:
+    /// Create integer delta as providing no information (any)
+    IntDelta(void);
+    /// Create integer delta with \a min and \a max
+    IntDelta(int min, int max);
     //  private: FIXME
   public:
-    int min; ///< Minimum value just pruned
-    int max; ///< Largest value just pruned
+    /// Return minimum
+    int min(void) const;
+    /// Return maximum
+    int max(void) const;
+    /// Test whether any domain change has happened
+    bool any(void) const;
   };
+
+}}
+
+#include "gecode/int/var/delta.icc"
+
+namespace Gecode { namespace Int {
+
 
   /**
    * \brief Integer variable implementation
@@ -410,17 +436,6 @@ namespace Gecode { namespace Int {
   /// Type for status of a Boolean variable
   typedef unsigned int BoolStatus;
 
-  class BoolVarImp;
-
-  /// Delta information for advisors
-  class BoolVarImpDelta : public Delta {
-    friend class BoolVarImp;
-    //  private: FIXME
-  public:
-    int min; ///< Minimum value just pruned
-    int max; ///< Largest value just pruned
-  };
-
   /**
    * \brief Boolean variable implementation
    *
@@ -448,6 +463,8 @@ namespace Gecode { namespace Int {
     BoolVarImp(Space* home, bool share, BoolVarImp& x);
     /// Initialize static instance assigned to \a n
     BoolVarImp(int n);
+    /// Specialized notify with delta construction
+    bool notify(Space* home, ModEvent me);
   public:
     /// Initialize with range domain
     BoolVarImp(Space* home, int min, int max);

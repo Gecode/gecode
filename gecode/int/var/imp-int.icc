@@ -299,16 +299,15 @@ namespace Gecode { namespace Int {
   }
   forceinline int 
   IntVarImp::min(const Delta& d) const {
-    return static_cast<const IntVarImpDelta&>(d).min;
+    return static_cast<const IntDelta&>(d).min();
   }
   forceinline int 
   IntVarImp::max(const Delta& d) const {
-    return static_cast<const IntVarImpDelta&>(d).max;
+    return static_cast<const IntDelta&>(d).max();
   }
   forceinline bool 
   IntVarImp::any(const Delta& d) const {
-    return (static_cast<const IntVarImpDelta&>(d).min > 
-            static_cast<const IntVarImpDelta&>(d).max);
+    return static_cast<const IntDelta&>(d).any(); 
   }
 
 
@@ -352,8 +351,7 @@ namespace Gecode { namespace Int {
     if ((n == dom.min()) && (n == dom.max()))
       return ME_INT_NONE;
     dom.min(n); dom.max(n);
-    IntVarImpDelta d;
-    d.min = 1; d.max = 0;
+    IntDelta d;
     if (!notify(home,ME_INT_VAL,d))
       return ME_INT_FAILED;
     if (!range() && eq_full(home))
@@ -368,8 +366,7 @@ namespace Gecode { namespace Int {
     if ((n == dom.min()) && (n == dom.max()))
       return ME_INT_NONE;
     dom.min(n); dom.max(n);
-    IntVarImpDelta d;
-    d.min = 1; d.max = 0;
+    IntDelta d;
     if (!notify(home,ME_INT_VAL,d))
       return ME_INT_FAILED;
     if (!range() && eq_full(home))
@@ -419,8 +416,7 @@ namespace Gecode { namespace Int {
       if ((min0 == min1) && (max0 == max1))
         return ME_INT_NONE;
       if (min0 == max0) {
-        IntVarImpDelta d;
-        d.min = 1; d.max = 0;
+        IntDelta d;
         if (!notify(home,ME_INT_VAL,d))
           return ME_INT_FAILED;
         return ME_INT_VAL;
@@ -447,16 +443,14 @@ namespace Gecode { namespace Int {
       const int max1 = dom.max(); max0 = l->max(); dom.max(max0);
       holes = width() - s;
       if ((min0 == min1) && (max0 == max1)) {
-        IntVarImpDelta d;
-        d.min = 1; d.max = 0;
+        IntDelta d;
         if (!notify(home,ME_INT_DOM,d))
           return ME_INT_FAILED;
         return ME_INT_DOM;
       }
     }
     {
-      IntVarImpDelta d;
-      d.min = 1; d.max = 0;
+      IntDelta d;
       if (!notify(home,ME_INT_BND,d))
         return ME_INT_FAILED;
     }

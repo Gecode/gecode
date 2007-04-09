@@ -1,0 +1,46 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2007
+ *
+ *  Last modified:
+ *     $Date: 2007-04-09 14:40:24 +0200 (Mon, 09 Apr 2007) $ by $Author: schulte $
+ *     $Revision: 4331 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Int {
+
+  forceinline
+  IntDelta::IntDelta(void) 
+    : _min(1), _max(0) {}
+  forceinline
+  IntDelta::IntDelta(int min, int max)
+    : _min(min), _max(max) {}
+  forceinline int 
+  IntDelta::min(void) const {
+    return _min;
+  }
+  forceinline int 
+  IntDelta::max(void) const {
+    return _max;
+  }
+  forceinline bool 
+  IntDelta::any(void) const {
+    return _min > _max;
+  }
+
+}}
+
+// STATISTICS: int-var

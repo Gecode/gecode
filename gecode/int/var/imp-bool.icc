@@ -129,6 +129,18 @@ namespace Gecode { namespace Int {
     return dom == NONE;
   }
 
+  
+  /*
+   * Specialized notification
+   *
+   */
+  forceinline bool
+  BoolVarImp::notify(Space* home, ModEvent me) {
+    int n = 1 - val();
+    IntDelta d(n,n);
+    return BoolVarImpBase::notify(home,me,d);
+  }
+
 
   /*
    * Support for delta information
@@ -140,16 +152,15 @@ namespace Gecode { namespace Int {
   }
   forceinline int 
   BoolVarImp::min(const Delta& d) const {
-    return static_cast<const BoolVarImpDelta&>(d).min;
+    return static_cast<const IntDelta&>(d).min();
   }
   forceinline int 
   BoolVarImp::max(const Delta& d) const {
-    return static_cast<const BoolVarImpDelta&>(d).max;
+    return static_cast<const IntDelta&>(d).max();
   }
   forceinline bool 
   BoolVarImp::any(const Delta& d) const {
-    return (static_cast<const BoolVarImpDelta&>(d).min > 
-            static_cast<const BoolVarImpDelta&>(d).max);
+    return static_cast<const IntDelta&>(d).any();
   }
 
 
@@ -161,9 +172,7 @@ namespace Gecode { namespace Int {
   BoolVarImp::zero_none(Space* home) {
     assert(none());
     dom = ZERO;
-    BoolVarImpDelta d;
-    d.min = d.max = 1;
-    if (!notify(home,ME_BOOL_VAL,d))
+    if (!notify(home,ME_BOOL_VAL))
       return ME_INT_FAILED;
     return ME_BOOL_VAL;
   }
@@ -178,9 +187,7 @@ namespace Gecode { namespace Int {
   BoolVarImp::one_none(Space* home) {
     assert(none());
     dom = ONE;
-    BoolVarImpDelta d;
-    d.min = d.max = 0;
-    if (!notify(home,ME_BOOL_VAL,d))
+    if (!notify(home,ME_BOOL_VAL))
       return ME_INT_FAILED;
     return ME_BOOL_VAL;
   }
@@ -208,9 +215,7 @@ namespace Gecode { namespace Int {
     if (n != 0) {
       assert(n == 1);
       dom = ONE;
-      BoolVarImpDelta d;
-      d.min = d.max = 0;
-      if (!notify(home,ME_BOOL_VAL,d))
+      if (!notify(home,ME_BOOL_VAL))
         return ME_INT_FAILED;
       return ME_INT_VAL;
     } else {
@@ -229,9 +234,7 @@ namespace Gecode { namespace Int {
     if (n != 0) {
       assert(n == 1);
       dom = ONE;
-      BoolVarImpDelta d;
-      d.min = d.max = 0;
-      if (!notify(home,ME_BOOL_VAL,d))
+      if (!notify(home,ME_BOOL_VAL))
         return ME_INT_FAILED;
       return ME_INT_VAL;
     } else {
@@ -251,9 +254,7 @@ namespace Gecode { namespace Int {
     assert(none());
     if (n == 0) {
       dom = ZERO;
-      BoolVarImpDelta d;
-      d.min = d.max = 1;
-      if (!notify(home,ME_BOOL_VAL,d))
+      if (!notify(home,ME_BOOL_VAL))
         return ME_INT_FAILED;
       return ME_INT_VAL;
     } else {
@@ -271,9 +272,7 @@ namespace Gecode { namespace Int {
     assert(none());
     if (n == 0) {
       dom = ZERO;
-      BoolVarImpDelta d;
-      d.min = d.max = 1;
-      if (!notify(home,ME_BOOL_VAL,d))
+      if (!notify(home,ME_BOOL_VAL))
         return ME_INT_FAILED;
       return ME_INT_VAL;
     } else {
@@ -285,44 +284,38 @@ namespace Gecode { namespace Int {
   forceinline ModEvent
   BoolVarImp::eq(Space* home, int n) {
     if ((n < 0) || (n > 1)) return ME_INT_FAILED;
-    BoolVarImpDelta d;
     if (n == 0) {
       if (zero()) return ME_INT_NONE;
       if (one())  return ME_INT_FAILED;
       assert(none());
       dom = ZERO;
-      d.min = d.max = 1;
     } else {
       assert(n == 1);
       if (zero()) return ME_INT_FAILED;
       if (one())  return ME_INT_NONE;
       assert(none());
       dom = ONE;
-      d.min = d.max = 0;
     }
-    if (!notify(home,ME_BOOL_VAL,d))
+    if (!notify(home,ME_BOOL_VAL))
       return ME_INT_FAILED;
     return ME_INT_VAL;
   }
   forceinline ModEvent
   BoolVarImp::eq(Space* home, double n) {
     if ((n < 0) || (n > 1)) return ME_INT_FAILED;
-    BoolVarImpDelta d;
     if (n == 0) {
       if (zero()) return ME_INT_NONE;
       if (one())  return ME_INT_FAILED;
       assert(none());
       dom = ZERO;
-      d.min = d.max = 1;
     } else {
       assert(n == 1);
       if (zero()) return ME_INT_FAILED;
       if (one())  return ME_INT_NONE;
       assert(none());
       dom = ONE;
-      d.min = d.max = 0;
     }
-    if (!notify(home,ME_BOOL_VAL,d))
+    if (!notify(home,ME_BOOL_VAL))
       return ME_INT_FAILED;
     return ME_INT_VAL;
   }
@@ -331,44 +324,38 @@ namespace Gecode { namespace Int {
   forceinline ModEvent
   BoolVarImp::nq(Space* home, int n) {
     if ((n < 0) || (n > 1)) return ME_INT_NONE;
-    BoolVarImpDelta d;
     if (n == 0) {
       if (zero()) return ME_INT_FAILED;
       if (one())  return ME_INT_NONE;
       assert(none());
       dom = ONE;
-      d.min = d.max = 0;
     } else {
       assert(n == 1);
       if (zero()) return ME_INT_NONE;
       if (one())  return ME_INT_FAILED;
       assert(none());
       dom = ZERO;
-      d.min = d.max = 1;
     }
-    if (!notify(home,ME_BOOL_VAL,d))
+    if (!notify(home,ME_BOOL_VAL))
       return ME_INT_FAILED;
     return ME_INT_VAL;
   }
   forceinline ModEvent
   BoolVarImp::nq(Space* home, double n) {
     if ((n < 0) || (n > 1)) return ME_INT_NONE;
-    BoolVarImpDelta d;
     if (n == 0) {
       if (zero()) return ME_INT_FAILED;
       if (one())  return ME_INT_NONE;
       assert(none());
       dom = ONE;
-      d.min = d.max = 0;
     } else {
       assert(n == 1);
       if (zero()) return ME_INT_NONE;
       if (one())  return ME_INT_FAILED;
       assert(none());
       dom = ZERO;
-      d.min = d.max = 1;
     }
-    if (!notify(home,ME_BOOL_VAL,d))
+    if (!notify(home,ME_BOOL_VAL))
       return ME_INT_FAILED;
     return ME_INT_VAL;
   }
