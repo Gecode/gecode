@@ -2134,29 +2134,28 @@ namespace Gecode {
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline bool
+  bool
   Variable<VTI,PC,MED>::advise(Space* home, ModEvent me, Delta& d) {
 #ifdef GECODE_USE_ADVISORS
     ActorLink** a = idx[PC+1];
     ActorLink** e = idx[PC+2];
-    if (a != e) {
-      d.me = me;
-      do {
-        switch (static_cast<Advisor*>(*a)->advise(home, d)) {
-        case ES_FIX:
-        case __ES_SUBSUMED: 
-          break;
-        case ES_FAILED:     
-          return false;
-        case ES_NOFIX:
-          schedule(home,static_cast<Advisor*>(*a)->propagator(),me);
-          break;
-        default:
-          GECODE_NEVER;
-        }
-        a++;
-      } while (a != e);
-    }
+    assert (a != e);
+    d.me = me;
+    do {
+      switch (static_cast<Advisor*>(*a)->advise(home, d)) {
+      case ES_FIX:
+      case __ES_SUBSUMED: 
+        break;
+      case ES_FAILED:     
+        return false;
+      case ES_NOFIX:
+        schedule(home,static_cast<Advisor*>(*a)->propagator(),me);
+        break;
+      default:
+        GECODE_NEVER;
+      }
+      a++;
+    } while (a != e);
 #endif
     return true;
   }
@@ -2172,7 +2171,11 @@ namespace Gecode {
       home->vars[VTI].entry = this;
       modevent(new_me);
     }
-    return advise(home,new_me,d);
+#ifdef GECODE_USE_ADVISORS
+    if (idx[PC+1] != idx[PC+2])
+      return advise(home,new_me,d);
+#endif
+    return true;
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
@@ -2181,7 +2184,11 @@ namespace Gecode {
     assert(!modified());
     _next = static_cast<Variable<VTI,PC,MED>*>(home->vars[VTI].entry);
     home->vars[VTI].entry = this;
-    return advise(home,ME_GEN_ASSIGNED,d);
+#ifdef GECODE_USE_ADVISORS
+    if (idx[PC+1] != idx[PC+2])
+      return advise(home,ME_GEN_ASSIGNED,d);
+#endif
+    return true;
   }
 
 
