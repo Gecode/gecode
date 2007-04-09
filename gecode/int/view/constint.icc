@@ -208,7 +208,7 @@ namespace Gecode {
      */
     forceinline void
     ConstIntView::subscribe(Space* home, Propagator* p, PropCond,bool) {
-      IntVarImp::propagate(home,p,ME_INT_VAL);
+      schedule(home,p,ME_INT_VAL);
     }
     forceinline void
     ConstIntView::cancel(Space*,Propagator*,PropCond) {}

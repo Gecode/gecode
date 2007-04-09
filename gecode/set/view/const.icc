@@ -35,7 +35,7 @@ namespace Gecode { namespace Set {
     /// \name Constructors and initialization
     //@{
     /// Default constructor
-    ArrayRanges() : _ranges(NULL), _size(0), _pos(0) {}
+    ArrayRanges(void) : _ranges(NULL), _size(0), _pos(0) {}
     /// Initialize with ranges for array \a ranges which is of size \a size
     ArrayRanges(int *ranges, int size)
       : _ranges(ranges), _size(size), _pos(0) {}
@@ -113,26 +113,26 @@ namespace Gecode { namespace Set {
   }
 
   forceinline unsigned int
-  ConstantView::cardMin() const { return domSize; }
+  ConstantView::cardMin(void) const { return domSize; }
 
   forceinline unsigned int
-  ConstantView::cardMax() const { return domSize; }
+  ConstantView::cardMax(void) const { return domSize; }
 
   forceinline int
-  ConstantView::lubMin() const {
+  ConstantView::lubMin(void) const {
     return size==0 ? BndSet::MIN_OF_EMPTY : ranges[0];
   }
 
   forceinline int
-  ConstantView::lubMax() const {
+  ConstantView::lubMax(void) const {
     return size==0 ? BndSet::MAX_OF_EMPTY : ranges[size*2-1];
   }
 
   forceinline int
-  ConstantView::glbMin() const { return lubMin(); }
+  ConstantView::glbMin(void) const { return lubMin(); }
 
   forceinline int
-  ConstantView::glbMax() const { return lubMax(); }
+  ConstantView::glbMax(void) const { return lubMax(); }
 
   forceinline ModEvent
   ConstantView::cardMin(Space* home,unsigned int c) {
@@ -203,18 +203,6 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  ConstantView::subscribe(Space* home, Propagator* p, PropCond,bool) {
-    SetVarImp::propagate(home,p,ME_SET_VAL);    
-  }
-  forceinline void
-  ConstantView::cancel(Space*,Propagator*,PropCond) {}
-
-  forceinline void
-  ConstantView::subscribe(Space*, Advisor*) {}
-  forceinline void
-  ConstantView::cancel(Space*,Advisor*) {}
-
-  forceinline void
   ConstantView::schedule(Space* home, Propagator* p, ModEvent me) {
     return SetView::schedule(home,p,me);
   }
@@ -226,6 +214,18 @@ namespace Gecode { namespace Set {
   ConstantView::pme(ModEvent me) {
     return SetVarImp::pme(me);
   }
+
+  forceinline void
+  ConstantView::subscribe(Space* home, Propagator* p, PropCond,bool) {
+    schedule(home,p,ME_SET_VAL);    
+  }
+  forceinline void
+  ConstantView::cancel(Space*,Propagator*,PropCond) {}
+
+  forceinline void
+  ConstantView::subscribe(Space*, Advisor*) {}
+  forceinline void
+  ConstantView::cancel(Space*,Advisor*) {}
 
   forceinline void
   ConstantView::update(Space* home, bool share, ConstantView& p) {
@@ -271,22 +271,22 @@ namespace Gecode { namespace Set {
   EmptyView::notContains(int) const { return true; }
 
   forceinline unsigned int
-  EmptyView::cardMin() const { return 0; }
+  EmptyView::cardMin(void) const { return 0; }
 
   forceinline unsigned int
-  EmptyView::cardMax() const { return 0; }
+  EmptyView::cardMax(void) const { return 0; }
 
   forceinline int
-  EmptyView::lubMin() const { return 0; }
+  EmptyView::lubMin(void) const { return 0; }
 
   forceinline int
-  EmptyView::lubMax() const { return 0; }
+  EmptyView::lubMax(void) const { return 0; }
 
   forceinline int
-  EmptyView::glbMin() const { return 0; }
+  EmptyView::glbMin(void) const { return 0; }
 
   forceinline int
-  EmptyView::glbMax() const { return 0; }
+  EmptyView::glbMax(void) const { return 0; }
 
   forceinline ModEvent
   EmptyView::cardMin(Space* home,unsigned int c) {
@@ -334,16 +334,9 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  EmptyView::subscribe(Space* home, Propagator* p, PropCond,bool) {
-    SetVarImp::propagate(home,p,ME_SET_VAL);    
+  EmptyView::schedule(Space* home, Propagator* p, ModEvent me) {
+    return SetView::schedule(home,p,me);
   }
-  forceinline void
-  EmptyView::cancel(Space*,Propagator*,PropCond) {}
-  forceinline void
-  EmptyView::subscribe(Space*, Advisor*) {}
-  forceinline void
-  EmptyView::cancel(Space*,Advisor*) {}
-
   forceinline ModEvent
   EmptyView::pme(const Propagator*) {
     return ME_SET_NONE;
@@ -352,6 +345,18 @@ namespace Gecode { namespace Set {
   EmptyView::pme(ModEvent me) {
     return SetVarImp::pme(me);
   }
+
+  forceinline void
+  EmptyView::subscribe(Space* home, Propagator* p, PropCond,bool) {
+    schedule(home,p,ME_SET_VAL);    
+  }
+  forceinline void
+  EmptyView::cancel(Space*,Propagator*,PropCond) {}
+  forceinline void
+  EmptyView::subscribe(Space*, Advisor*) {}
+  forceinline void
+  EmptyView::cancel(Space*,Advisor*) {}
+
 
   forceinline void
   EmptyView::update(Space* home, bool, EmptyView&) {}
@@ -382,22 +387,22 @@ namespace Gecode { namespace Set {
   UniverseView::notContains(int) const { return false; }
 
   forceinline unsigned int
-  UniverseView::cardMin() const { return Limits::Set::card_max; }
+  UniverseView::cardMin(void) const { return Limits::Set::card_max; }
 
   forceinline unsigned int
-  UniverseView::cardMax() const { return Limits::Set::card_max; }
+  UniverseView::cardMax(void) const { return Limits::Set::card_max; }
 
   forceinline int
-  UniverseView::lubMin() const { return Limits::Set::card_max; }
+  UniverseView::lubMin(void) const { return Limits::Set::card_max; }
 
   forceinline int
-  UniverseView::lubMax() const { return Limits::Set::card_max; }
+  UniverseView::lubMax(void) const { return Limits::Set::card_max; }
 
   forceinline int
-  UniverseView::glbMin() const { return Limits::Set::card_max; }
+  UniverseView::glbMin(void) const { return Limits::Set::card_max; }
 
   forceinline int
-  UniverseView::glbMax() const { return Limits::Set::card_max; }
+  UniverseView::glbMax(void) const { return Limits::Set::card_max; }
 
   forceinline ModEvent
   UniverseView::cardMin(Space* home,unsigned int c) {
@@ -450,8 +455,20 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
+  UniverseView::schedule(Space* home, Propagator* p, ModEvent me) {
+    return SetView::schedule(home,p,me);
+  }
+  forceinline ModEvent
+  UniverseView::pme(const Propagator*) {
+    return ME_SET_NONE;
+  }
+  forceinline PropModEvent
+  UniverseView::pme(ModEvent me) {
+    return SetVarImp::pme(me);
+  }
+  forceinline void
   UniverseView::subscribe(Space* home, Propagator* p, PropCond,bool) {
-    SetVarImp::propagate(home,p,ME_SET_VAL);    
+    schedule(home,p,ME_SET_VAL);    
   }
   forceinline void
   UniverseView::cancel(Space*,Propagator*,PropCond) {}
@@ -461,14 +478,6 @@ namespace Gecode { namespace Set {
   forceinline void
   UniverseView::cancel(Space*,Advisor*) {}
 
-  forceinline ModEvent
-  UniverseView::pme(const Propagator*) {
-    return ME_SET_NONE;
-  }
-  forceinline PropModEvent
-  UniverseView::pme(ModEvent me) {
-    return SetVarImp::pme(me);
-  }
 
   forceinline void
   UniverseView::update(Space* home, bool, UniverseView&) {}

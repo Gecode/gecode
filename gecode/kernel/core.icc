@@ -341,12 +341,6 @@ namespace Gecode {
      */
     void cancel(Space* home, Propagator* p, PropCond pc,
                 bool assigned);
-    /** \brief Propagate propagator \a p with propagation condition \a pc
-     *
-     * The propagator \a p is processed for execution with modification 
-     * event \a me.
-     */
-    static void propagate(Space* home, Propagator* p, ModEvent me);
     /** \brief Subscribe advisor \a a to variable
      *
      * The advisor \a a is only subscribed if \a assigned is false.
@@ -659,7 +653,6 @@ namespace Gecode {
   };
 
 
-#if GECODE_USE_ADVISORS
   /**
    * \brief %Advisor \a p is subsumed
    *
@@ -815,9 +808,6 @@ namespace Gecode {
     static void  operator delete(void* p, size_t s);
 #endif
   };
-#else /* GECODE_USE_ADVISORS == 0 */
-  class Advisor {};
-#endif /* GECODE_USE_ADVISORS */
 
 
   /*
@@ -1432,10 +1422,7 @@ namespace Gecode {
    * Advisor class members
    *
    */
-#if GECODE_USE_ADVISORS
-  /*
-   * Subsumption
-   */
+
   forceinline ExecStatus
   ES_SUBSUMED(Advisor* a, size_t s) {
     a->disposed(s);
@@ -1448,11 +1435,6 @@ namespace Gecode {
     return __ES_SUBSUMED;
   }
 
-
-  /*
-   * Advisors
-   *
-   */
   forceinline void
   Advisor::operator delete(void*, size_t) {}
   forceinline void
@@ -1467,7 +1449,7 @@ namespace Gecode {
     disposed(sizeof(*this));
     return sizeof(*this);
   }
-#endif
+
 
   /*
    * ActorLinks as common superclass for propagators and branchings
@@ -2035,12 +2017,6 @@ namespace Gecode {
       *idx[PC+1]=s;
     }
 #endif
-  }
-
-  template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline void
-  Variable<VTI,PC,MED>::propagate(Space* home, Propagator* p, ModEvent me) {
-    home->process<VTI,MED>(p,me);
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
