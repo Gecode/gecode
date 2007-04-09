@@ -54,8 +54,7 @@ namespace Gecode { namespace Int {
     IntDelta(void);
     /// Create integer delta with \a min and \a max
     IntDelta(int min, int max);
-    //  private: FIXME
-  public:
+  private:
     /// Return minimum
     int min(void) const;
     /// Return maximum
@@ -322,7 +321,7 @@ namespace Gecode { namespace Int {
     /// \name Delta information for advisors
     //@{
     /// Return modification event
-    ModEvent modevent(const Delta& d) const;
+    static ModEvent modevent(const Delta& d);
     /// Return minimum value just pruned
     int min(const Delta& d) const;
     /// Return maximum value just pruned
@@ -595,7 +594,7 @@ namespace Gecode { namespace Int {
     /// \name Support for delta information for advisors
     //@{
     /// Return modification event
-    ModEvent modevent(const Delta& d) const;
+    static ModEvent modevent(const Delta& d);
     /// Return minimum value just pruned
     int min(const Delta& d) const;
     /// Return maximum value just pruned

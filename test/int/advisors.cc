@@ -33,24 +33,20 @@ namespace {
   IntSet s(-5,5);
 
   class Eq : public Propagator {
-    class BndAdvisor : public IntUnaryViewAdvisor<IntView> {
-      using IntUnaryViewAdvisor<IntView>::x;
+    class BndAdvisor : public ViewAdvisor<IntView> {
+      using ViewAdvisor<IntView>::x;
     public:
       BndAdvisor(Space* home, Propagator* p, CouncilBase& c, IntView v) 
-        : IntUnaryViewAdvisor<IntView>(home,p,c,v) {
-        if (x.assigned()) {
-          IntViewAdvisor<IntView>::schedule(home, Int::ME_INT_VAL);
-        }
+        : ViewAdvisor<IntView>(home,p,c,v) {
+        if (x.assigned())
+          schedule(home, Int::ME_INT_VAL);
       }
-      BndAdvisor(Space* home, bool share, BndAdvisor& d) 
-        : IntUnaryViewAdvisor<IntView>(home, share, d) {}
-      size_t dispose(Space* home) {
-        (void) IntUnaryViewAdvisor<IntView>::dispose(home);
-        return sizeof(*this);
-      }
-      ExecStatus advise(Space *home, ModEvent me, int lo, int hi) {
+      BndAdvisor(Space* home, bool share, BndAdvisor& a) 
+        : ViewAdvisor<IntView>(home, share, a) {}
+      virtual ExecStatus advise(Space* home, const Delta& d) {
+        ModEvent me = IntView::modevent(d);
         if (me == ME_INT_VAL || me == ME_INT_BND)
-          IntViewAdvisor<IntView>::schedule(home, me);
+          schedule(home, me);
         if (me == ME_INT_VAL) return ES_SUBSUMED(this,sizeof(*this));
         return ES_OK;
       }
@@ -174,23 +170,18 @@ namespace {
 
 
   class BoolEq : public Propagator {
-    class BndAdvisor : public IntUnaryViewAdvisor<BoolView> {
-      using IntUnaryViewAdvisor<BoolView>::x;
+    class BndAdvisor : public ViewAdvisor<BoolView> {
+      using ViewAdvisor<BoolView>::x;
     public:
       BndAdvisor(Space* home, Propagator* p, CouncilBase& c, BoolView v) 
-        : IntUnaryViewAdvisor<BoolView>(home,p,c,v) {
-        if (x.assigned()) {
-          IntViewAdvisor<BoolView>::schedule(home, Int::ME_BOOL_VAL);
-        }
+        : ViewAdvisor<BoolView>(home,p,c,v) {
+        if (x.assigned())
+          schedule(home, Int::ME_BOOL_VAL);
       }
-      BndAdvisor(Space* home, bool share, BndAdvisor& d) 
-        : IntUnaryViewAdvisor<BoolView>(home, share, d) {}
-      size_t dispose(Space* home) {
-        (void) IntUnaryViewAdvisor<BoolView>::dispose(home);
-        return sizeof(*this);
-      }
-      ExecStatus advise(Space *home, ModEvent me, int lo, int hi) {
-        IntViewAdvisor<BoolView>::schedule(home, me);
+      BndAdvisor(Space* home, bool share, BndAdvisor& a) 
+        : ViewAdvisor<BoolView>(home, share, a) {}
+      virtual ExecStatus advise(Space* home, const Delta& d) {
+        schedule(home, BoolView::modevent(d));
         return ES_SUBSUMED(this,sizeof(*this));
       }
     };

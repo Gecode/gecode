@@ -799,7 +799,7 @@ namespace Gecode {
       return static_cast<Propagator*>(ActorLink::next()); 
     }
     /// Function that performs the actual task
-    virtual ExecStatus newadvise(Space* home, const Delta& d) = 0;
+    virtual ExecStatus advise(Space* home, const Delta& d) = 0;
     /// Is this Advisor disposed?
     bool disposed(void) const { 
       return reinterpret_cast<ptrdiff_t>(prev())&1 == 1;
@@ -2184,7 +2184,7 @@ namespace Gecode {
   Variable<VTI,PC,MED>::advice(Space* home, const Delta& d) {
     assert(advisors());
     for (Advisors a(*this); a(); ++a)
-      switch (a.advisor()->newadvise(home, d)) {
+      switch (a.advisor()->advise(home, d)) {
       case ES_FIX:
       case __ES_SUBSUMED: 
         break;

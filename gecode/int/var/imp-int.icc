@@ -294,7 +294,7 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline ModEvent
-  IntVarImp::modevent(const Delta& d) const {
+  IntVarImp::modevent(const Delta& d) {
     return d.modevent();
   }
   forceinline int 

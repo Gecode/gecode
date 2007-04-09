@@ -178,24 +178,24 @@ namespace Gecode { namespace Int { namespace Extensional {
     // Advisor proper
     //
   private:
-    class SupportAdvisor : public IntUnaryViewAdvisor<View> {
-      using IntUnaryViewAdvisor<View>::x;
+    class SupportAdvisor : public ViewAdvisor<View> {
+      using ViewAdvisor<View>::x;
       unsigned int pos;
     public:
       SupportAdvisor(Space* home, Propagator* p, CouncilBase& c,
                      View v, unsigned int position) 
-        : IntUnaryViewAdvisor<View>(home,p,c,v), pos(position) {
-        if (x.assigned()) {
-          IntViewAdvisor<View>::schedule(home, Int::ME_INT_VAL);
-        }
+        : ViewAdvisor<View>(home,p,c,v), pos(position) {
+        if (x.assigned())
+          schedule(home, Int::ME_INT_VAL);
       }
-      SupportAdvisor(Space* home, bool share, SupportAdvisor& d) 
-        : IntUnaryViewAdvisor<View>(home, share, d), pos(d.pos) {}
-      size_t dispose(Space* home) {
-        (void) IntUnaryViewAdvisor<View>::dispose(home);
+      SupportAdvisor(Space* home, bool share, SupportAdvisor& a) 
+        : ViewAdvisor<View>(home, share, a), pos(a.pos) {}
+
+      virtual size_t dispose(Space* home) {
+        (void) ViewAdvisor<View>::dispose(home);
         return sizeof(*this);
       }
-      ExecStatus advise(Space *home, ModEvent me, int lo, int hi);
+      virtual ExecStatus advise(Space* home, const Delta& d);
     };
     
   public:

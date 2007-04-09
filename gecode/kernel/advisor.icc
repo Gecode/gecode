@@ -1,0 +1,86 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Mikael Lagerkvist, 2006
+ *     Christian Schulte, 2007
+ *
+ *  Last modified:
+ *     $Date: 2007-04-08 18:54:06 +0200 (Sun, 08 Apr 2007) $ by $Author: schulte $
+ *     $Revision: 4328 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  /** 
+   * \brief Advisor storing a single view
+   *
+   */
+  template <class View>
+  class ViewAdvisor : public Advisor {
+  protected:
+    View x; ///< The single view
+  public:
+    /// Constructor for creation
+    ViewAdvisor(Space* home, Propagator* p, CouncilBase& c, View x0);
+    /// Constructor for cloning \a a
+    ViewAdvisor(Space* home, bool share, ViewAdvisor<View>& a);
+    /** 
+     * \brief Schedule parent propagator for execution
+     *
+     * The propagator is scheduled for execution with modification
+     * event \a me.
+     *
+     * If the propagator is currently propagating, then
+     * scheduling it will not make the propagator run again.
+     *
+     */
+    void schedule(Space* home, ModEvent me) const;
+    /// Delete advisor and return its size
+    virtual size_t dispose(Space* home);
+  };
+
+
+  template <class View>
+  forceinline
+  ViewAdvisor<View>::ViewAdvisor(Space* home, Propagator* p, CouncilBase& c, 
+                           View x0) 
+    : Advisor(home,p,c), x(x0) {
+    x.subscribe(home, this);
+  }
+  template <class View>
+  forceinline
+  ViewAdvisor<View>::ViewAdvisor(Space* home, bool share, 
+                                 ViewAdvisor<View>& a) 
+    : Advisor(home, share, a) {
+    x.update(home, share, a.x);
+  }
+  template <class View>
+  forceinline void
+  ViewAdvisor<View>::schedule(Space* home, ModEvent me) const {
+    View::schedule(home, parent(), me);
+  }
+  template <class View>
+  forceinline size_t 
+  ViewAdvisor<View>::dispose(Space* home) {
+    x.cancel(home, this);
+    (void) Advisor::dispose(home);
+    return sizeof(*this);
+  }
+
+}
+
+// STATISTICS: kernel-prop
+

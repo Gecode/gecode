@@ -227,8 +227,8 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    BoolView::modevent(const Delta& d) const {
-      return var->modevent(d);
+    BoolView::modevent(const Delta& d) {
+      return BoolVarImp::modevent(d);
     }
     forceinline int
     BoolView::min(const Delta& d) const {
@@ -392,8 +392,8 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    NegBoolView::modevent(const Delta& d) const {
-      return view.modevent(d);
+    NegBoolView::modevent(const Delta& d) {
+      return BoolView::modevent(d);
     }
     forceinline int
     NegBoolView::min(const Delta& d) const {

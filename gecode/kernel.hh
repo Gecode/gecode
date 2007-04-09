@@ -135,6 +135,7 @@
  */
 
 #include "gecode/kernel/propagator.icc"
+#include "gecode/kernel/advisor.icc"
 #include "gecode/kernel/branching.icc"
 
 #endif

@@ -224,7 +224,7 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    ConstIntView::modevent(const Delta& d) const {
+    ConstIntView::modevent(const Delta& d) {
       return ME_INT_NONE;
     }
     forceinline int

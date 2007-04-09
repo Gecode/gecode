@@ -285,8 +285,12 @@ namespace Gecode { namespace Int { namespace Extensional {
   //
   template <class View>
   forceinline ExecStatus
-  Incremental<View>::SupportAdvisor::advise(Space *home, ModEvent me, 
-                                            int lo, int hi) {
+  Incremental<View>::SupportAdvisor::advise(Space *home, const Delta& d) {
+
+    ModEvent me = x.modevent(d);
+    int lo = x.min(d);
+    int hi = x.max(d);
+    
     Incremental<View>* ip = static_cast<Incremental<View>*>(Advisor::parent());
 
 #ifndef GECODE_EXT_INCREMENTAL_SUPPORT

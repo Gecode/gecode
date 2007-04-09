@@ -181,8 +181,8 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline ModEvent
-  IntView::modevent(const Delta& d) const {
-    return var->modevent(d);
+  IntView::modevent(const Delta& d) {
+    return IntVarImp::modevent(d);
   }
   forceinline int
   IntView::min(const Delta& d) const {

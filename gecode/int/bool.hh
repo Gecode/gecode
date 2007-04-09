@@ -342,22 +342,17 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Disposing
     size_t dispose(Space* home);
 
-    // Advisors
-    class WLAdvisor : public IntUnaryViewAdvisor<BV> {
-      using IntUnaryViewAdvisor<BV>::x;
+    /// Advisor for Boolean disjunction
+    class WLAdvisor : public ViewAdvisor<BV> {
+      using ViewAdvisor<BV>::x;
     public:
-      WLAdvisor(Space* home, Propagator* p, CouncilBase& c, BV v) 
-        : IntUnaryViewAdvisor<BV>(home,p,c,v) {
+      WLAdvisor(Space* home, Propagator* p, CouncilBase& c, BV x) 
+        : ViewAdvisor<BV>(home,p,c,x) {
         assert(!x.assigned());
       }
-      WLAdvisor(Space* home, bool share, WLAdvisor& d) 
-        : IntUnaryViewAdvisor<BV>(home, share, d)
-      {}
-      size_t dispose(Space* home) {
-        (void) IntUnaryViewAdvisor<BV>::dispose(home);
-        return sizeof(*this);
-      }
-      ExecStatus advise(Space *home, ModEvent me, int lo, int hi);
+      WLAdvisor(Space* home, bool share, WLAdvisor& a) 
+        : ViewAdvisor<BV>(home, share, a) {}
+      virtual ExecStatus advise(Space* home, const Delta& d);
     };
     Council<WLAdvisor> ac;
 
