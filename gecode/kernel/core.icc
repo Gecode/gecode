@@ -687,36 +687,6 @@ namespace Gecode {
   };
 
 
-  /**
-   * \brief %Advisor \a p is subsumed
-   *
-   * The size of the advisor is \a s.
-   *
-   * Note that the advisor must be subsumed and also disposed. So
-   * in general, there should be code such as 
-   * \code return ES_SUBSUMED(this,dispose(home)) \endcode.
-   * 
-   * However, in case the advisor has nothing to dispose it is sufficient
-   * to do 
-   * \code return ES_SUBSUMED(this,sizeof(*this)) \endcode.
-   *
-   * \warning Has a side-effect on the advisor. Use only directly with
-   *          returning from the advise member function.
-   * \ingroup TaskActorStatus
-   */
-  ExecStatus ES_SUBSUMED(Advisor* a, size_t s);
-  /**
-   * \brief %Advisor \a p is subsumed
-   *
-   * First disposes the advisor and then returns subsumtion.
-   *
-   * \warning Has a side-effect on the advisor. Use only directly with
-   *          returning from propagation.
-   * \ingroup TaskActorStatus
-   */
-  ExecStatus ES_SUBSUMED(Advisor* a, Space* home);
-
-
   /** \brief Type-independent base-class for council of advisors
    * 
    * This is a utility class that maintains a council (that is, a 
@@ -791,23 +761,12 @@ namespace Gecode {
     }
   public:
     /// Constructor for creation
-    Advisor(Space* home, Propagator* p, CouncilBase& c) {
-      ActorLink::prev(NULL);
-      ActorLink::next(p);
-      c._add(home,p,this);
-    }
+    Advisor(Space* home, Propagator* p, CouncilBase& c);
     /// Copying constructor
-    Advisor(Space* home, bool share, Advisor& a) {
-      // Set forwarding pointer
-      a.prev(this);
-      ActorLink::prev(NULL);
-      // Set propagator pointer
-      ActorLink::next(a.next()->prev());
-    }
+    Advisor(Space* home, bool share, Advisor& a);
+
     /// Return the advisor's propagator
-    Propagator* propagator(void) const { 
-      return static_cast<Propagator*>(ActorLink::next()); 
-    }
+    Propagator* propagator(void) const; 
     /**
      * \brief Advise function
      *
@@ -830,6 +789,9 @@ namespace Gecode {
      *
      */
     virtual ExecStatus advise(Space* home, const Delta& d) = 0;
+
+
+
     /// Is this Advisor disposed?
     bool disposed(void) const { 
       return reinterpret_cast<ptrdiff_t>(prev())&1 == 1;
@@ -843,11 +805,11 @@ namespace Gecode {
     /// \name Memory management
     //@{
     virtual size_t dispose(Space* home);
-
     /// Allocate memory from space
     static void* operator new(size_t s, Space* home);
     /// No-op for exceptions
     static void  operator delete(void* p, Space* home);
+    //@}
   private:
 #ifndef __GNUC__
     /// Not used (uses dispose instead)
@@ -855,7 +817,6 @@ namespace Gecode {
 #endif
     /// Not used
     static void* operator new(size_t s);
-    //@}
 #ifdef __GNUC__
   public:
     /// To avoid warnings from GCC
@@ -864,6 +825,36 @@ namespace Gecode {
     static void  operator delete(void* p, size_t s);
 #endif
   };
+
+  /**
+   * \brief %Advisor \a p is subsumed
+   *
+   * The size of the advisor is \a s.
+   *
+   * Note that the advisor must be subsumed and also disposed. So
+   * in general, there should be code such as 
+   * \code return ES_SUBSUMED(this,dispose(home)) \endcode.
+   * 
+   * However, in case the advisor has nothing to dispose it is sufficient
+   * to do 
+   * \code return ES_SUBSUMED(this,sizeof(*this)) \endcode.
+   *
+   * \warning Has a side-effect on the advisor. Use only directly with
+   *          returning from the advise member function.
+   * \ingroup TaskActorStatus
+   */
+  ExecStatus ES_SUBSUMED(Advisor* a, size_t s);
+  /**
+   * \brief %Advisor \a p is subsumed
+   *
+   * First disposes the advisor and then returns subsumtion.
+   *
+   * \warning Has a side-effect on the advisor. Use only directly with
+   *          returning from propagation.
+   * \ingroup TaskActorStatus
+   */
+  ExecStatus ES_SUBSUMED(Advisor* a, Space* home);
+
 
 
   /*
@@ -1362,7 +1353,7 @@ namespace Gecode {
   }
 
   /*
-   * Space allocated entities: Actors and Variables
+   * Space allocated entities: Actors, Variables, and Advisors
    *
    */
 
@@ -1384,6 +1375,15 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void*
   Variable<VTI,PC,MED>::operator new(size_t s, Space* home) {
+    return home->alloc(s);
+  }
+
+  forceinline void
+  Advisor::operator delete(void*, size_t) {}
+  forceinline void
+  Advisor::operator delete(void*,Space*) {}
+  forceinline void*
+  Advisor::operator new(size_t s, Space* home) {
     return home->alloc(s);
   }
 
@@ -1472,39 +1472,6 @@ namespace Gecode {
     }
   }
 
-
-
-  /*
-   * Advisor class members
-   *
-   */
-
-  forceinline ExecStatus
-  ES_SUBSUMED(Advisor* a, size_t s) {
-    a->disposed(s);
-    return __ES_SUBSUMED;
-  }
-  forceinline ExecStatus
-  ES_SUBSUMED(Advisor* a, Space* home) {
-    a->dispose(home);
-    // dispose will set the size correctly
-    return __ES_SUBSUMED;
-  }
-
-  forceinline void
-  Advisor::operator delete(void*, size_t) {}
-  forceinline void
-  Advisor::operator delete(void*,Space*) {}
-  forceinline void*
-  Advisor::operator new(size_t s, Space* home) {
-    return home->alloc(s);
-  }
-
-  forceinline size_t
-  Advisor::dispose(Space*) {
-    disposed(sizeof(*this));
-    return sizeof(*this);
-  }
 
 
   /*
@@ -1604,6 +1571,48 @@ namespace Gecode {
     }
     // No branching with alternatives left, space is solved
     return SS_SOLVED;
+  }
+
+
+  /*
+   * Advisor class members
+   *
+   */
+
+  forceinline 
+  Advisor::Advisor(Space* home, Propagator* p, CouncilBase& c) {
+    ActorLink::prev(NULL);
+    ActorLink::next(p);
+    c._add(home,p,this);
+  }
+  forceinline 
+  Advisor::Advisor(Space* home, bool share, Advisor& a) {
+    // Set forwarding pointer
+    a.prev(this);
+    ActorLink::prev(NULL);
+    // Set propagator pointer
+    ActorLink::next(a.next()->prev());
+  }
+  forceinline Propagator* 
+  Advisor::propagator(void) const { 
+    return static_cast<Propagator*>(ActorLink::next()); 
+  }
+  forceinline size_t
+  Advisor::dispose(Space*) {
+    disposed(sizeof(*this));
+    return sizeof(*this);
+  }
+
+  forceinline ExecStatus
+  ES_SUBSUMED(Advisor* a, size_t s) {
+    a->disposed(s);
+    return __ES_SUBSUMED;
+  }
+  forceinline ExecStatus
+  ES_SUBSUMED(Advisor* a, Space* home) {
+    a->dispose(home);
+    // dispose will set the size correctly
+    return __ES_SUBSUMED;
   }
 
 
