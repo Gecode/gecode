@@ -38,7 +38,7 @@ namespace Gecode {
     /// Constructor for cloning \a a
     ViewAdvisor(Space* home, bool share, ViewAdvisor<View>& a);
     /** 
-     * \brief Schedule parent propagator for execution
+     * \brief Schedule advisor's propagator for execution
      *
      * The propagator is scheduled for execution with modification
      * event \a me.
@@ -70,7 +70,7 @@ namespace Gecode {
   template <class View>
   forceinline void
   ViewAdvisor<View>::schedule(Space* home, ModEvent me) const {
-    View::schedule(home, parent(), me);
+    View::schedule(home, propagator(), me);
   }
   template <class View>
   forceinline size_t 

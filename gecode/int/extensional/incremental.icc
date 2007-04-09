@@ -291,7 +291,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     int lo = x.min(d);
     int hi = x.max(d);
     
-    Incremental<View>* ip = static_cast<Incremental<View>*>(Advisor::parent());
+    Incremental<View>* ip = static_cast<Incremental<View>*>(Advisor::propagator());
 
 #ifndef GECODE_EXT_INCREMENTAL_SUPPORT
     if (hi < lo) {

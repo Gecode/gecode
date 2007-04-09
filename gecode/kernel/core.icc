@@ -782,8 +782,8 @@ namespace Gecode {
       // Set propagator pointer
       ActorLink::next(a.next()->prev());
     }
-    /// Access parent propagator
-    Propagator* parent(void) const { 
+    /// Access the advisor's propagator
+    Propagator* propagator(void) const { 
       return static_cast<Propagator*>(ActorLink::next()); 
     }
     /// Function that performs the actual task
@@ -2135,7 +2135,7 @@ namespace Gecode {
         case ES_FAILED:     
           return false;
         case ES_NOFIX:
-          schedule(home,static_cast<Advisor*>(*a)->parent(),me);
+          schedule(home,static_cast<Advisor*>(*a)->propagator(),me);
           break;
         default:
           GECODE_NEVER;

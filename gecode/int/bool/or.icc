@@ -779,8 +779,8 @@ namespace Gecode { namespace Int { namespace Bool {
   template<class BV>
   ExecStatus
   NaryOrWLTrue<BV>::WLAdvisor::advise(Space* home, const Delta&) {
-    NaryOrWLTrue<BV>* p = static_cast<NaryOrWLTrue<BV>*>(Advisor::parent());
-    // Schedule parent for subsumption
+    NaryOrWLTrue<BV>* p = static_cast<NaryOrWLTrue<BV>*>(Advisor::propagator());
+    // Schedule for subsumption
     if (p->x[0].one() || p->x[1].one())
       return ES_NOFIX;
 

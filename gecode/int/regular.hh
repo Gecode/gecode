@@ -54,29 +54,25 @@ namespace Gecode { namespace Int { namespace Regular {
     /// The views
     ViewArray<View> x;
 #ifdef GECODE_REGULAR_SCHEDULE
-    class Index : public IntViewAdvisor<View> {
+    class Index : public Advisor {
     public:
       int i;
-      Index(Space* home, Propagator* p0, int i0)
-        : IntViewAdvisor<View>(home,p0), i(i0) {
-      }
-      Index(Space* home, Propagator* p0, bool share, Index& j)
-        : IntViewAdvisor<View>(home,p0,share,j), i(j.i) {}
-      virtual Advisor* 
-      copy(Space* home, Propagator* p, bool share) {
-        return new (home) Index(home,p,share,*this);
-      }
+      Index(Space* home, Propagator* p, int i0)
+        : Advisor(home,p), i(i0) {}
+      Index(Space* home, bool share, Index& j)
+        : Advisor(home,share,j), i(j.i) {}
       virtual size_t 
       dispose(Space* home) {
-        Dom<View,shared>* d = static_cast<Dom<View,shared>*>
-          (Advisor::parent());
+        Dom<View,shared>* d = 
+          static_cast<Dom<View,shared>*>(propagator());
         d->x[i].cancel(home,this);
-        (void) IntViewAdvisor<View>::dispose(home);
+        (void) Advisor::dispose(home);
         return sizeof(*this);
       }
       virtual ExecStatus
-      advise(Space* home, ModEvent me, int min, int max) {
-        return (me == ME_INT_VAL) ? ES_SUBSUMED(this,home) : ES_NOFIX;
+      advise(Space* home, const Delta& d) {
+        return (View::modevent(d) == ME_INT_VAL) ? 
+          ES_SUBSUMED(this,home) : ES_NOFIX;
       }
     };
     Council<Index> dac;
