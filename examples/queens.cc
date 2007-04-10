@@ -84,7 +84,7 @@ public:
 };
 
 /** \brief Main-function
- *  \relates Alpha
+ *  \relates Queens
  */
 int
 main(int argc, char** argv) {
