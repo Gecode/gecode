@@ -180,6 +180,74 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include "gecode/int/linear.hh" \endcode
    * \ingroup FuncIntProp
    */
+#if defined(BINLIN_NQ_NO_EVENTS)
+  template <class Val, class A, class B>
+  class NqBin : public LinBin<Val,A,B,PC_INT_DOM> {
+  protected:
+    using LinBin<Val,A,B,PC_INT_DOM>::x0;
+    using LinBin<Val,A,B,PC_INT_DOM>::x1;
+    using LinBin<Val,A,B,PC_INT_DOM>::c;
+
+    /// Constructor for cloning \a p
+    NqBin(Space* home, bool share, NqBin& p);
+    /// Constructor for creation
+    NqBin(Space* home, A x0, B x1, Val c);
+  public:
+    /// Constructor for rewriting \a p during cloning
+    NqBin(Space* home, bool share, Propagator& p, A x0, B x1, Val c);
+    /// Create copy during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Cost function (defined as PC_UNARY_LO)
+    virtual PropCost cost(void) const;
+    /// Post propagator for \f$x_0+x_1 \neq c\f$
+    static ExecStatus post(Space* home, A x0, B x1, Val c);
+  };
+#elif defined(BINLIN_NQ_ADVISOR_BASE) || defined(BINLIN_NQ_ADVISOR_AVOID)
+  template <class Val, class A, class B>
+  class NqBin : public Propagator {
+  protected:
+    A x0;
+    B x1;
+    Val c;
+    class AD : public Advisor {
+    public:
+      AD(Space* home, Propagator* p, Council<AD>& c) 
+        : Advisor(home,p,c) {}
+      AD(Space* home, bool share, AD& a)
+        : Advisor(home,share,a) {}
+      virtual ExecStatus advise(Space* home, const Delta& d) {
+#if defined(BINLIN_NQ_ADVISOR_BASE)
+        return ES_NOFIX;
+#endif
+#if defined(BINLIN_NQ_ADVISOR_AVOID)
+        if (A::modevent(d) == ME_INT_VAL)
+          return ES_NOFIX;
+        return ES_FIX;
+#endif
+      }
+    };
+    Council<AD> co;
+    /// Constructor for cloning \a p
+    NqBin(Space* home, bool share, NqBin& p);
+    /// Constructor for creation
+    NqBin(Space* home, A x0, B x1, Val c);
+  public:
+    /// Constructor for rewriting \a p during cloning
+    NqBin(Space* home, bool share, Propagator& p, A x0, B x1, Val c);
+    /// Create copy during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Cost function (defined as PC_UNARY_LO)
+    virtual PropCost cost(void) const;
+    /// Post propagator for \f$x_0+x_1 \neq c\f$
+    static ExecStatus post(Space* home, A x0, B x1, Val c);
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
+  };
+#else
   template <class Val, class A, class B>
   class NqBin : public LinBin<Val,A,B,PC_INT_VAL> {
   protected:
@@ -203,6 +271,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Post propagator for \f$x_0+x_1 \neq c\f$
     static ExecStatus post(Space* home, A x0, B x1, Val c);
   };
+#endif
 
   /**
    * \brief %Propagator for bounds-consistent binary linear less or equal

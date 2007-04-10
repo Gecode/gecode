@@ -297,6 +297,69 @@ namespace Gecode { namespace Int { namespace Rel {
    * \ingroup FuncIntProp
    */
 
+#if defined(NQ_NO_EVENTS)
+  template <class View>
+  class Nq : public BinaryPropagator<View,PC_INT_DOM> {
+  protected:
+    using BinaryPropagator<View,PC_INT_DOM>::x0;
+    using BinaryPropagator<View,PC_INT_DOM>::x1;
+
+    /// Constructor for cloning \a p
+    Nq(Space* home, bool share, Nq<View>& p);
+    /// Constructor for posting
+    Nq(Space* home, View x0, View x1);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Cost function (defined as PC_UNARY_LO)
+    virtual PropCost cost(void) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator \f$x_0\neq x_1\f$
+    static  ExecStatus post(Space* home, View x0, View x1);
+  };
+#elif defined(NQ_ADVISOR_BASE) || defined(NQ_ADVISOR_AVOID)
+  template <class View>
+  class Nq : public Propagator {
+  protected:
+    View x0;
+    View x1;
+    class A : public Advisor {
+    public:
+      A(Space* home, Propagator* p, Council<A>& c) 
+        : Advisor(home,p,c) {}
+      A(Space* home, bool share, A& a)
+        : Advisor(home,share,a) {}
+      virtual ExecStatus advise(Space* home, const Delta& d) {
+#if defined(NQ_ADVISOR_BASE)
+        return ES_NOFIX;
+#endif
+#if defined(NQ_ADVISOR_AVOID)
+        if (View::modevent(d) == ME_INT_VAL)
+          return ES_NOFIX;
+        else
+          return ES_FIX;
+#endif
+      }
+    };
+    Council<A> c;
+    /// Constructor for cloning \a p
+    Nq(Space* home, bool share, Nq& p);
+    /// Constructor for posting
+    Nq(Space* home, View x0, View x1);
+  public:
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Cost function (defined as PC_UNARY_LO)
+    virtual PropCost cost(void) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator \f$x_0\neq x_1\f$
+    static  ExecStatus post(Space* home, View x0, View x1);
+  };
+#else
   template <class View>
   class Nq : public BinaryPropagator<View,PC_INT_VAL> {
   protected:
@@ -317,7 +380,7 @@ namespace Gecode { namespace Int { namespace Rel {
     /// Post propagator \f$x_0\neq x_1\f$
     static  ExecStatus post(Space* home, View x0, View x1);
   };
-
+#endif
   /*
    * Order propagators
    *
@@ -356,6 +419,53 @@ namespace Gecode { namespace Int { namespace Rel {
    * \ingroup FuncIntProp
    */
 
+#if defined(LE_ADVISOR_BASE) || defined(LE_ADVISOR_AVOID)
+  template <class View>
+  class Le : public Propagator {
+  protected:
+    View x0;
+    View x1;
+    class A : public Advisor {
+    public:
+      A(Space* home, Propagator* p, Council<A>& c) 
+        : Advisor(home,p,c) {}
+      A(Space* home, bool share, A& a)
+        : Advisor(home,share,a) {}
+      virtual ExecStatus advise(Space* home, const Delta& d) {
+#if defined(LE_ADVISOR_BASE)
+        return ES_NOFIX;
+#endif
+#if defined(LE_ADVISOR_AVOID)
+        if (View::modevent(d) == ME_INT_DOM)
+          return ES_FIX;
+        Le<View>* p = static_cast<Le<View>*>(Advisor::propagator());
+        if (p->x0.max() >= p->x1.min())
+          return ES_NOFIX;
+        if ((p->x0.max() < p->x1.max()) && 
+            (p->x1.min() > p->x1.min()))
+          return ES_FIX;
+        return ES_NOFIX;
+#endif
+      }
+    };
+    Council<A> c;
+    /// Constructor for cloning \a p
+    Le(Space* home, bool share, Le& p);
+    /// Constructor for posting
+    Le(Space* home, View x0, View x1);
+  public:
+    /// Cost function (defined as PC_BINARY_LO)
+    virtual PropCost cost(void) const;
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator \f$x_0 \le x_1\f$
+    static  ExecStatus post(Space* home, View x0, View x1);
+  };
+#else
   template <class View>
   class Le : public BinaryPropagator<View,PC_INT_BND> {
   protected:
@@ -374,6 +484,7 @@ namespace Gecode { namespace Int { namespace Rel {
     /// Post propagator \f$x_0 \le x_1\f$
     static  ExecStatus post(Space* home, View x0, View x1);
   };
+#endif
 
 
 

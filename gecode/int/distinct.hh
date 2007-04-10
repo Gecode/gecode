@@ -49,6 +49,66 @@ namespace Gecode { namespace Int { namespace Distinct {
    * Requires \code #include "gecode/int/distinct.hh" \endcode
    * \ingroup FuncIntProp
    */
+
+#if defined(DISTINCT_NAIVE_NO_EVENTS)
+  template <class View>
+  class Val : public NaryPropagator<View,PC_INT_DOM> {
+  protected:
+    using NaryPropagator<View,PC_INT_DOM>::x;
+
+    /// Constructor for posting
+    Val(Space* home, ViewArray<View>& x);
+    /// Constructor for cloning \a p
+    Val(Space* home, bool share, Val<View>& p);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor*     copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator for view array \a x
+    static ExecStatus post(Space* home, ViewArray<View>& x);
+  };
+#elif defined(DISTINCT_NAIVE_ADVISOR_BASE) || defined(DISTINCT_NAIVE_ADVISOR_AVOID)
+  template <class View>
+  class Val : public Propagator {
+  protected:
+    ViewArray<View> x;
+    class A : public Advisor {
+    public:
+      A(Space* home, Propagator* p, Council<A>& c) 
+        : Advisor(home,p,c) {}
+      A(Space* home, bool share, A& a)
+        : Advisor(home,share,a) {}
+      virtual ExecStatus advise(Space* home, const Delta& d) {
+#if defined(DISTINCT_NAIVE_ADVISOR_BASE)
+        return ES_NOFIX;
+#endif
+#if defined(DISTINCT_NAIVE_ADVISOR_AVOID)
+        if (View::modevent(d) == ME_INT_VAL)
+          return ES_NOFIX;
+        else
+          return ES_FIX;
+#endif
+      }
+    };
+    Council<A> c;
+    /// Constructor for posting
+    Val(Space* home, ViewArray<View>& x);
+    /// Constructor for cloning \a p
+    Val(Space* home, bool share, Val<View>& p);
+  public:
+    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    virtual PropCost cost(void) const;
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
+    /// Copy propagator during cloning
+    virtual Actor*     copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator for view array \a x
+    static ExecStatus post(Space* home, ViewArray<View>& x);
+  };
+#else
   template <class View>
   class Val : public NaryPropagator<View,PC_INT_VAL> {
   protected:
@@ -66,6 +126,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Post propagator for view array \a x
     static ExecStatus post(Space* home, ViewArray<View>& x);
   };
+#endif
 
   /**
    * \brief Eliminate singletons by naive value propagation

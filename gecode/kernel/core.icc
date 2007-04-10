@@ -1018,6 +1018,8 @@ namespace Gecode {
     void pool_put(Propagator* p);
     /// Get propagator \a p from pool
     bool pool_get(Propagator*& p);
+    /// Test whether the propagator \a p currently propagates
+    bool propagates(Propagator* p) const;
     //@}
 
     /**
@@ -1941,6 +1943,13 @@ namespace Gecode {
       pool_next = c;
   }
 
+  forceinline bool
+  Space::propagates(Propagator* p) const {
+    if (pool_next < 0)
+      return false;
+    return p == static_cast<Propagator*>(pool[pool_next].next());
+  }
+
   forceinline void
   Space::fail(void) {
     b_status = NULL;
@@ -1983,6 +1992,7 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::schedule(Space* home, Propagator* p, ModEvent me) {
+    //    if (!home->propagates(p)) 
     home->process<VTI,MED>(p,me);
   }
 
