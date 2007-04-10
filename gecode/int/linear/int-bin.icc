@@ -293,9 +293,12 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B>
   forceinline
   NqBin<Val,A,B>::NqBin(Space* home, A _x0, B _x1, Val _c)
-    : Propagator(home), x0(_x0), x1(_x1), c(_c), co(home,2) {
-    x0.subscribe(home, new (home) AD(home,this,co));
-    x1.subscribe(home, new (home) AD(home,this,co));
+    : Propagator(home), x0(_x0), x1(_x1), c(_c) {
+    x0.subscribe(home, this, PC_INT_DOM);
+    x1.subscribe(home, this, PC_INT_DOM);
+    //    : Propagator(home), x0(_x0), x1(_x1), c(_c), co(home,2) {
+    //    x0.subscribe(home, new (home) AD(home,this,co));
+    //    x1.subscribe(home, new (home) AD(home,this,co));
     /*
     if (x0.assigned())
       A::schedule(home,this,ME_INT_VAL);
@@ -325,7 +328,8 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline
   NqBin<Val,A,B>::NqBin(Space* home, bool share, Propagator& p,
                         A y0, B y1, Val c0)
-    : Propagator(home,share,p), c(c0), co(home,share,co) {
+    : Propagator(home,share,p), c(c0) {
+    //    : Propagator(home,share,p), c(c0), co(home,share,co) {
     std::cout << "AAARGH" << std::endl;
     assert(false);
     x0.update(home,share,y0);
@@ -336,7 +340,9 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline size_t
   NqBin<Val,A,B>::dispose(Space* home) {
     assert(!home->failed());
-    co.dispose(home);
+    x0.cancel(home, this, PC_INT_DOM);
+    x1.cancel(home, this, PC_INT_DOM);
+    //    co.dispose(home);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -345,7 +351,8 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B>
   forceinline
   NqBin<Val,A,B>::NqBin(Space* home, bool share, NqBin<Val,A,B>& p)
-    : Propagator(home,share,p), c(p.c), co(home,share,p.co) {
+    //    : Propagator(home,share,p), c(p.c), co(home,share,p.co) {
+    : Propagator(home,share,p), c(p.c) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
   }

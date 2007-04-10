@@ -211,6 +211,7 @@ namespace Gecode { namespace Int { namespace Linear {
     A x0;
     B x1;
     Val c;
+    /*
     class AD : public Advisor {
     public:
       AD(Space* home, Propagator* p, Council<AD>& c) 
@@ -229,6 +230,7 @@ namespace Gecode { namespace Int { namespace Linear {
       }
     };
     Council<AD> co;
+    */
     /// Constructor for cloning \a p
     NqBin(Space* home, bool share, NqBin& p);
     /// Constructor for creation

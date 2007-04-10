@@ -2,6 +2,11 @@
  * Switches for our experiments
  */
 
+/*
+ * BASE EXPERIMENTS
+ *
+ */
+
 // Base system: no advisors: OK
 #ifdef SYSTEM_BASE
 #undef GECODE_USE_ADVISORS
@@ -28,7 +33,7 @@
 // OK
 #define NQ_ADVISOR_BASE
 // CRASHES
-// #define BINLIN_NQ_ADVISOR_BASE
+#define BINLIN_NQ_ADVISOR_BASE
 // OK
 #define DISTINCT_NAIVE_ADVISOR_BASE
 #endif
@@ -41,23 +46,29 @@
 // Avoids by checking modification events: OK
 #define NQ_ADVISOR_AVOID
 // Avoids by checking modification events: CRASHES
-// #define BINLIN_NQ_ADVISOR_AVOID
+#define BINLIN_NQ_ADVISOR_AVOID
 // Avoids by checking modification events: OK
 #define DISTINCT_NAIVE_ADVISOR_AVOID
 #endif
 
 
+/*
+ * REAL EXPERIMENTS
+ *
+ */
 
-// Boolean disjunction/conjunction
+// Try to avoid execution
+#ifdef SYSTEM_ADVISOR_AVOID
+#define GECODE_USE_ADVISORS
+#endif
 
-// Boolean linear constraints
+// Try to improve execution, cheap approach
+#ifdef SYSTEM_ADVISOR_IMPROVE_CHEAP
+#define GECODE_USE_ADVISORS
+#endif
 
-// Less or equal
-
-// Lex constraint
-
-// Distinct
-
-// Regular
-
+// Try to improve execution, expensive approach
+#ifdef SYSTEM_ADVISOR_IMPROVE_EXPENSIVE
+#define GECODE_USE_ADVISORS
+#endif
 
