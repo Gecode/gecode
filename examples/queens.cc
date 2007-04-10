@@ -51,9 +51,9 @@ public:
     } else {
       IntArgs c(n);
       for (int i = n; i--; ) c[i] = i;
-      distinct(this, c,q, opt.icl);
+      distinct(this, c, q, opt.icl);
       for (int i = n; i--; ) c[i] = -i;
-      distinct(this, c,q, opt.icl);
+      distinct(this, c, q, opt.icl);
       distinct(this, q, opt.icl);
     }
     branch(this, q, BVAR_SIZE_MIN, BVAL_MIN);
