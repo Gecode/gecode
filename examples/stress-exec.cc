@@ -25,6 +25,9 @@
 /**
  * \brief %Example: Execution stress test
  *
+ * The size argument defines how many duplicate propagators
+ * are created.
+ *
  * \ingroup ExStress
  *
  */
@@ -32,13 +35,17 @@ class StressExec : public Example {
 protected:
   /// Variables
   IntVarArray x;
+  /// Initial domain size
+  static const int n = 1000000;
 public:
   /// The actual problem
   StressExec(const Options& opt)
-    : x(this,2,0,opt.size) {
+    : x(this,2,0,n) {
 
-    rel(this, x[0], IRT_LE, x[1]);
-    rel(this, x[1], IRT_LE, x[0]);
+    for (unsigned int i=0; i<opt.size; i++) {
+      rel(this, x[0], IRT_LE, x[1]);
+      rel(this, x[1], IRT_LE, x[0]);
+    }
 
   }
 
@@ -65,7 +72,7 @@ int
 main(int argc, char** argv) {
   Options opt("StressExec");
   opt.iterations = 20;
-  opt.size       = 1000000;
+  opt.size       = 1;
   opt.parse(argc,argv);
   Example::run<StressExec,DFS>(opt);
   return 0;
