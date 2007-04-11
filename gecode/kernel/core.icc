@@ -461,13 +461,15 @@ namespace Gecode {
    * \ingroup TaskActor
    */
   enum ExecStatus {
-    __ES_SUBSUMED      = -2, ///< Internal: propagator is subsumed, do not use
-    ES_FAILED          = -1, ///< Execution has resulted in failure
-    ES_NOFIX           =  0, ///< Propagation has not computed fixpoint
-    ES_OK              =  0, ///< Execution is okay
-    ES_FIX             =  1, ///< Propagation has computed fixpoint
-    __ES_FIX_PARTIAL   =  2, ///< Internal: propagator has computed partial fixpoint, do not use
-    __ES_NOFIX_PARTIAL =  3  ///< Internal: propagator has computed no partial fixpoint, do not use
+    __ES_SUBSUMED_FIX   = -3, ///< Internal: advisor is subsumed, do not use
+    __ES_SUBSUMED_NOFIX = -2, ///< Internal: advisor is subsumed, do not use
+    __ES_SUBSUMED       = -2, ///< Internal: propagator is subsumed, do not use
+    ES_FAILED           = -1, ///< Execution has resulted in failure
+    ES_NOFIX            =  0, ///< Propagation has not computed fixpoint
+    ES_OK               =  0, ///< Execution is okay
+    ES_FIX              =  1, ///< Propagation has computed fixpoint
+    __ES_FIX_PARTIAL    =  2, ///< Internal: propagator has computed partial fixpoint, do not use
+    __ES_NOFIX_PARTIAL  =  3  ///< Internal: propagator has computed no partial fixpoint, do not use
   };
 
   /**
@@ -683,6 +685,37 @@ namespace Gecode {
     virtual ExecStatus propagate(Space* home) = 0;
     /// Cost function
     virtual PropCost cost(void) const  = 0;
+    /**
+     * \brief Advise function
+     *
+     * The advisor is passed as argument \a a.
+     *
+     * A propagator must specialize this advise function, if it
+     * uses advisors. The advise function must return an execution
+     * status as follows:
+     *  - ES_FAILED: the advisor has detected failure
+     *  - ES_NOFIX: the advisor's propagator (that is, this propagator) 
+     *    does not need to be run
+     *  - ES_FIX: the advisor's propagator (that is, this propagator)
+     *    must be run
+     *
+     * Apart from the above values, an advisor can return
+     * the result from calling the function
+     *  - ES_SUBSUMED_NOFIX: the advisor is subsumed, the advisor's
+     *    propagator does not need to be run
+     *  - ES_SUBSUMED_FIX: the advisor is subsumed, the advisor's
+     *    propagator does not need to be run
+     * For more details, see the function documentation.
+     *
+     * The delta \a d describes how the variable has been changed
+     * by an operation on the advisor's variable. Typically,
+     * the delta information can only be utilized by either 
+     * static or member functions of views as the actual delta 
+     * information is both domain and view dependent.
+     *
+     */
+    GECODE_KERNEL_EXPORT
+    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
     //@}
   };
 
@@ -750,9 +783,10 @@ namespace Gecode {
   /**
    * \brief Base-class for advisors
    *
-   * Advisors are subclassed for each kind of variable that they
-   * support. The subclasses define the kinds of advise-methods
-   * that might be called.
+   * Advisors are typically subclassed for each propagator that
+   * wants to use advisors. The actual member function that
+   * is executed when a variable is changed, must be implemented
+   * by the advisor's propagator.
    *
    * \ingroup TaskActor
    */
@@ -777,28 +811,6 @@ namespace Gecode {
 
     /// Return the advisor's propagator
     Propagator* propagator(void) const; 
-    /**
-     * \brief Advise function
-     *
-     * The advise function must return an execution status as
-     * follows:
-     *  - ES_FAILED: the advisor has detected failure
-     *  - ES_NOFIX: the advisor's propagator does not need to be run
-     *  - ES_FIX: the advisor's propagator must be run
-     *
-     * Apart from the above values, an advisor can return
-     * the result from calling the function
-     *  - ES_SUBSUMED: the advisor is subsumed
-     * For more details, see the function documentation.
-     *
-     * The delta \a d describes how the variable has been changed
-     * by an operation on the advisor's variable. Typically,
-     * the delta information can only be utilized by either 
-     * static or member functions of views as the actual delta 
-     * information is both domain and view dependent.
-     *
-     */
-    virtual ExecStatus advise(Space* home, const Delta& d) = 0;
 
     /// \name Memory management
     //@{
@@ -2147,25 +2159,26 @@ namespace Gecode {
   bool
   Variable<VTI,PC,MED>::advise(Space* home, ModEvent me, Delta& d) {
 #ifdef GECODE_USE_ADVISORS
-    ActorLink** a = idx[PC+1];
-    ActorLink** e = idx[PC+2];
-    assert (a != e);
+    ActorLink** la = idx[PC+1];
+    ActorLink** le = idx[PC+2];
+    assert (la != le);
     d.me = me;
     do {
-      switch (static_cast<Advisor*>(*a)->advise(home, d)) {
+      Advisor* a = static_cast<Advisor*>(*la);
+      switch (a->propagator()->advise(home, *a, d)) {
       case ES_FIX:
       case __ES_SUBSUMED: 
         break;
       case ES_FAILED:     
         return false;
       case ES_NOFIX:
-        schedule(home,static_cast<Advisor*>(*a)->propagator(),me);
+        schedule(home,a->propagator(),me);
         break;
       default:
         GECODE_NEVER;
       }
-      a++;
-    } while (a != e);
+      la++;
+    } while (la != le);
 #endif
     return true;
   }

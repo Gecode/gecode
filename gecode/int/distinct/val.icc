@@ -141,7 +141,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   Val<View>::Val(Space* home, ViewArray<View>& x0)
     : Propagator(home), x(x0), c(home,x.size()) {
     for (int i=x.size(); i--; )
-      x[i].subscribe(home, new (home) A(home,this,c));
+      x[i].subscribe(home, new (home) Advisor(home,this,c));
     View::schedule(home,this,ME_INT_BND);
   }
 

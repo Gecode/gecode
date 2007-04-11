@@ -73,30 +73,23 @@ namespace Gecode { namespace Int { namespace Distinct {
   class Val : public Propagator {
   protected:
     ViewArray<View> x;
-    class A : public Advisor {
-    public:
-      A(Space* home, Propagator* p, Council<A>& c) 
-        : Advisor(home,p,c) {}
-      A(Space* home, bool share, A& a)
-        : Advisor(home,share,a) {}
-      virtual ExecStatus advise(Space* home, const Delta& d) {
-#if defined(DISTINCT_NAIVE_ADVISOR_BASE)
-        return ES_NOFIX;
-#endif
-#if defined(DISTINCT_NAIVE_ADVISOR_AVOID)
-        if (View::modevent(d) == ME_INT_VAL)
-          return ES_NOFIX;
-        else
-          return ES_FIX;
-#endif
-      }
-    };
-    Council<A> c;
+    Council<Advisor> c;
     /// Constructor for posting
     Val(Space* home, ViewArray<View>& x);
     /// Constructor for cloning \a p
     Val(Space* home, bool share, Val<View>& p);
   public:
+    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d) {
+#if defined(DISTINCT_NAIVE_ADVISOR_BASE)
+      return ES_NOFIX;
+#endif
+#if defined(DISTINCT_NAIVE_ADVISOR_AVOID)
+      if (View::modevent(d) == ME_INT_VAL)
+        return ES_NOFIX;
+      else
+        return ES_FIX;
+#endif
+    }
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
     /// Delete propagator and return its size

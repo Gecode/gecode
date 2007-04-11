@@ -96,8 +96,8 @@ namespace Gecode { namespace Int { namespace Rel {
   forceinline
   Nq<View>::Nq(Space* home, View _x0, View _x1)
     : Propagator(home), x0(_x0), x1(_x1), c(home,2) {
-    x0.subscribe(home, new (home) A(home,this,c));
-    x1.subscribe(home, new (home) A(home,this,c));
+    x0.subscribe(home, new (home) Advisor(home,this,c));
+    x1.subscribe(home, new (home) Advisor(home,this,c));
   }
 
   template <class View>

@@ -211,31 +211,23 @@ namespace Gecode { namespace Int { namespace Linear {
     A x0;
     B x1;
     Val c;
-    /*
-    class AD : public Advisor {
-    public:
-      AD(Space* home, Propagator* p, Council<AD>& c) 
-        : Advisor(home,p,c) {}
-      AD(Space* home, bool share, AD& a)
-        : Advisor(home,share,a) {}
-      virtual ExecStatus advise(Space* home, const Delta& d) {
-#if defined(BINLIN_NQ_ADVISOR_BASE)
-        return ES_NOFIX;
-#endif
-#if defined(BINLIN_NQ_ADVISOR_AVOID)
-        if (A::modevent(d) == ME_INT_VAL)
-          return ES_NOFIX;
-        return ES_FIX;
-#endif
-      }
-    };
-    Council<AD> co;
-    */
+    Council<Advisor> co;
     /// Constructor for cloning \a p
     NqBin(Space* home, bool share, NqBin& p);
     /// Constructor for creation
     NqBin(Space* home, A x0, B x1, Val c);
   public:
+    virtual ExecStatus 
+    advise(Space* home, Advisor& a, const Delta& d) {
+#if defined(BINLIN_NQ_ADVISOR_BASE)
+      return ES_NOFIX;
+#endif
+#if defined(BINLIN_NQ_ADVISOR_AVOID)
+      if (A::modevent(d) == ME_INT_VAL)
+        return ES_NOFIX;
+      return ES_FIX;
+#endif
+    }
     /// Constructor for rewriting \a p during cloning
     NqBin(Space* home, bool share, Propagator& p, A x0, B x1, Val c);
     /// Create copy during cloning

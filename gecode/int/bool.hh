@@ -344,19 +344,19 @@ namespace Gecode { namespace Int { namespace Bool {
 
     /// Advisor for Boolean disjunction
     class WLAdvisor : public ViewAdvisor<BV> {
-      using ViewAdvisor<BV>::x;
     public:
+      using ViewAdvisor<BV>::x;
       WLAdvisor(Space* home, Propagator* p, CouncilBase& c, BV x) 
         : ViewAdvisor<BV>(home,p,c,x) {
         assert(!x.assigned());
       }
       WLAdvisor(Space* home, bool share, WLAdvisor& a) 
         : ViewAdvisor<BV>(home, share, a) {}
-      virtual ExecStatus advise(Space* home, const Delta& d);
     };
     Council<WLAdvisor> ac;
 
   public:
+    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Cost function (defined as PC_LINEAR_LO)

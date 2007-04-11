@@ -430,6 +430,17 @@ namespace Gecode {
 
 
   /*
+   * Propagator
+   *
+   */
+  ExecStatus 
+  Propagator::advise(Space*, Advisor&, const Delta&) {
+    assert(false);
+    return ES_FAILED;
+  }
+
+
+  /*
    * Advisor councils
    *
    */

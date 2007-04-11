@@ -33,6 +33,7 @@ namespace {
   IntSet s(-5,5);
 
   class Eq : public Propagator {
+  protected:
     class BndAdvisor : public ViewAdvisor<IntView> {
       using ViewAdvisor<IntView>::x;
     public:
@@ -43,13 +44,6 @@ namespace {
       }
       BndAdvisor(Space* home, bool share, BndAdvisor& a) 
         : ViewAdvisor<IntView>(home, share, a) {}
-      virtual ExecStatus advise(Space* home, const Delta& d) {
-        ModEvent me = IntView::modevent(d);
-        if (me == ME_INT_VAL || me == ME_INT_BND)
-          schedule(home, me);
-        if (me == ME_INT_VAL) return ES_SUBSUMED(this,sizeof(*this));
-        return ES_OK;
-      }
     };
     
   public:
@@ -59,6 +53,15 @@ namespace {
   protected:
     IntView x0, x1;
 
+    virtual ExecStatus advise(Space* home, Advisor& _a, const Delta& d) {
+      BndAdvisor& a = static_cast<BndAdvisor&>(_a);
+      ModEvent me = IntView::modevent(d);
+      if (me == ME_INT_VAL || me == ME_INT_BND)
+        a.schedule(home, me);
+      if (me == ME_INT_VAL) 
+        return ES_SUBSUMED(&a,sizeof(a));
+      return ES_FIX;
+    }
     /// Constructor for cloning \a p
     Eq(Space* home, bool share, Eq& p) 
       : Propagator(home, share, p),
@@ -180,10 +183,6 @@ namespace {
       }
       BndAdvisor(Space* home, bool share, BndAdvisor& a) 
         : ViewAdvisor<BoolView>(home, share, a) {}
-      virtual ExecStatus advise(Space* home, const Delta& d) {
-        schedule(home, BoolView::modevent(d));
-        return ES_SUBSUMED(this,sizeof(*this));
-      }
     };
     
   public:
@@ -192,6 +191,11 @@ namespace {
     DC dc;
   protected:
     BoolView x0, x1;
+    virtual ExecStatus advise(Space* home, Advisor& _a, const Delta& d) {
+      BndAdvisor& a = static_cast<BndAdvisor&>(_a);
+      a.schedule(home, BoolView::modevent(d));
+      return ES_SUBSUMED(&a,sizeof(a));
+    }
 
     /// Constructor for cloning \a p
     BoolEq(Space* home, bool share, BoolEq& p) 

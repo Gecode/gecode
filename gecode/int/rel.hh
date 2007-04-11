@@ -324,30 +324,23 @@ namespace Gecode { namespace Int { namespace Rel {
   protected:
     View x0;
     View x1;
-    class A : public Advisor {
-    public:
-      A(Space* home, Propagator* p, Council<A>& c) 
-        : Advisor(home,p,c) {}
-      A(Space* home, bool share, A& a)
-        : Advisor(home,share,a) {}
-      virtual ExecStatus advise(Space* home, const Delta& d) {
-#if defined(NQ_ADVISOR_BASE)
-        return ES_NOFIX;
-#endif
-#if defined(NQ_ADVISOR_AVOID)
-        if (View::modevent(d) == ME_INT_VAL)
-          return ES_NOFIX;
-        else
-          return ES_FIX;
-#endif
-      }
-    };
-    Council<A> c;
+    Council<Advisor> c;
     /// Constructor for cloning \a p
     Nq(Space* home, bool share, Nq& p);
     /// Constructor for posting
     Nq(Space* home, View x0, View x1);
   public:
+    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d) {
+#if defined(NQ_ADVISOR_BASE)
+      return ES_NOFIX;
+#endif
+#if defined(NQ_ADVISOR_AVOID)
+      if (View::modevent(d) == ME_INT_VAL)
+        return ES_NOFIX;
+      else
+        return ES_FIX;
+#endif
+    }
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -425,35 +418,27 @@ namespace Gecode { namespace Int { namespace Rel {
   protected:
     View x0;
     View x1;
-    class A : public Advisor {
-    public:
-      A(Space* home, Propagator* p, Council<A>& c) 
-        : Advisor(home,p,c) {}
-      A(Space* home, bool share, A& a)
-        : Advisor(home,share,a) {}
-      virtual ExecStatus advise(Space* home, const Delta& d) {
-#if defined(LE_ADVISOR_BASE)
-        return ES_NOFIX;
-#endif
-#if defined(LE_ADVISOR_AVOID)
-        if (View::modevent(d) == ME_INT_DOM)
-          return ES_FIX;
-        Le<View>* p = static_cast<Le<View>*>(Advisor::propagator());
-        if (p->x0.max() >= p->x1.min())
-          return ES_NOFIX;
-        if ((p->x0.max() < p->x1.max()) && 
-            (p->x1.min() > p->x1.min()))
-          return ES_FIX;
-        return ES_NOFIX;
-#endif
-      }
-    };
-    Council<A> c;
+    Council<Advisor> c;
     /// Constructor for cloning \a p
     Le(Space* home, bool share, Le& p);
     /// Constructor for posting
     Le(Space* home, View x0, View x1);
   public:
+    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d) {
+#if defined(LE_ADVISOR_BASE)
+      return ES_NOFIX;
+#endif
+#if defined(LE_ADVISOR_AVOID)
+      if (View::modevent(d) == ME_INT_DOM)
+        return ES_FIX;
+      if (x0.max() >= x1.min())
+        return ES_NOFIX;
+      if ((x0.max() < x1.max()) && 
+          (x1.min() > x1.min()))
+        return ES_FIX;
+      return ES_NOFIX;
+#endif
+    }
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
     /// Delete propagator and return its size
