@@ -288,7 +288,7 @@ namespace Gecode { namespace Int { namespace Linear {
     return ES_FIX;
   }
 
-#elif !defined(BINLIN_NQ_ADVISOR_AVOID) && !defined(BINLIN_NQ_ADVISOR_BASE)
+#else
 
   template <class Val, class A, class B>
   forceinline

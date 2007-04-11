@@ -324,19 +324,22 @@ namespace Gecode { namespace Int { namespace Rel {
   protected:
     View x0;
     View x1;
-    Council<Advisor> c;
+    Council<ViewAdvisor<View> > c;
     /// Constructor for cloning \a p
     Nq(Space* home, bool share, Nq& p);
     /// Constructor for posting
     Nq(Space* home, View x0, View x1);
   public:
-    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d) {
+    virtual ExecStatus advise(Space* home, Advisor& _a, const Delta& d) {
+      ViewAdvisor<View>& a = static_cast<ViewAdvisor<View>&>(_a);
 #if defined(NQ_ADVISOR_BASE)
+      if (View::modevent(d) == ME_INT_VAL)
+        return ES_SUBSUMED_NOFIX(a,home);
       return ES_NOFIX;
 #endif
 #if defined(NQ_ADVISOR_AVOID)
       if (View::modevent(d) == ME_INT_VAL)
-        return ES_NOFIX;
+        return ES_SUBSUMED_NOFIX(a,home);
       else
         return ES_FIX;
 #endif
@@ -418,17 +421,22 @@ namespace Gecode { namespace Int { namespace Rel {
   protected:
     View x0;
     View x1;
-    Council<Advisor> c;
+    Council<ViewAdvisor<View> > c;
     /// Constructor for cloning \a p
     Le(Space* home, bool share, Le& p);
     /// Constructor for posting
     Le(Space* home, View x0, View x1);
   public:
-    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d) {
+    virtual ExecStatus advise(Space* home, Advisor& _a, const Delta& d) {
+      ViewAdvisor<View>& a = static_cast<ViewAdvisor<View>&>(_a);
 #if defined(LE_ADVISOR_BASE)
+      if (View::modevent(d) == ME_INT_VAL)
+        return ES_SUBSUMED_NOFIX(a,home);
       return ES_NOFIX;
 #endif
 #if defined(LE_ADVISOR_AVOID)
+      if (View::modevent(d) == ME_INT_VAL)
+        return ES_SUBSUMED_NOFIX(a,home);
       if (View::modevent(d) == ME_INT_DOM)
         return ES_FIX;
       if (x0.max() >= x1.min())

@@ -204,8 +204,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Post propagator for \f$x_0+x_1 \neq c\f$
     static ExecStatus post(Space* home, A x0, B x1, Val c);
   };
-#endif
-#if !defined(BINLIN_NQ_ADVISOR_BASE) && !defined(BINLIN_NQ_ADVISOR_AVOID)
+#else
   template <class Val, class A, class B>
   class NqBin : public LinBin<Val,A,B,PC_INT_VAL> {
   protected:

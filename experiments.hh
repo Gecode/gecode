@@ -33,7 +33,7 @@
 // OK
 #define NQ_ADVISOR_BASE
 // CRASHES
-// #define BINLIN_NQ_ADVISOR_BASE
+#define BINLIN_NQ_ADVISOR_BASE
 // OK
 #define DISTINCT_NAIVE_ADVISOR_BASE
 #endif
@@ -46,7 +46,7 @@
 // Avoids by checking modification events: OK
 #define NQ_ADVISOR_AVOID
 // Avoids by checking modification events: CRASHES
-// #define BINLIN_NQ_ADVISOR_AVOID
+#define BINLIN_NQ_ADVISOR_AVOID
 // Avoids by checking modification events: OK
 #define DISTINCT_NAIVE_ADVISOR_AVOID
 #endif

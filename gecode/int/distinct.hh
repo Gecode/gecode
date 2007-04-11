@@ -73,21 +73,24 @@ namespace Gecode { namespace Int { namespace Distinct {
   class Val : public Propagator {
   protected:
     ViewArray<View> x;
-    Council<Advisor> c;
+    Council<ViewAdvisor<View> > c;
     /// Constructor for posting
     Val(Space* home, ViewArray<View>& x);
     /// Constructor for cloning \a p
     Val(Space* home, bool share, Val<View>& p);
   public:
-    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d) {
+    virtual ExecStatus 
+    advise(Space* home, Advisor& _a, const Delta& d) {
+      ViewAdvisor<View>& a = static_cast<ViewAdvisor<View>&>(_a);
 #if defined(DISTINCT_NAIVE_ADVISOR_BASE)
+      if (View::modevent(d) == ME_INT_VAL)
+        return ES_SUBSUMED_NOFIX(a,home);
       return ES_NOFIX;
 #endif
 #if defined(DISTINCT_NAIVE_ADVISOR_AVOID)
       if (View::modevent(d) == ME_INT_VAL)
-        return ES_NOFIX;
-      else
-        return ES_FIX;
+        return ES_SUBSUMED_NOFIX(a,home);
+      return ES_FIX;
 #endif
     }
     /// Cost function (defined as dynamic PC_LINEAR_LO)

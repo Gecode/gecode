@@ -25,6 +25,8 @@
 
 #if defined(BINLIN_NQ_ADVISOR_BASE) || defined(BINLIN_NQ_ADVISOR_AVOID)
 
+using namespace Int;
+
   class NQC : public Propagator {
   protected:
     IntView x0;
@@ -34,21 +36,22 @@
     /// Constructor for cloning \a p
     NQC(Space* home, bool share, NQC& p);
     /// Constructor for creation
-    NQC(Space* home, A x0, B x1, Val c);
+    NQC(Space* home, IntView x0, IntView x1, int c);
   public:
     virtual ExecStatus 
-    advise(Space* home, Advisor& a, const Delta& d) {
+    advise(Space* home, Advisor& _a, const Delta& d) {
+      ViewAdvisor<IntView>& a = static_cast<ViewAdvisor<IntView>&>(_a);
 #if defined(BINLIN_NQ_ADVISOR_BASE)
+      if (IntView::modevent(d) == ME_INT_VAL)
+        return ES_SUBSUMED_NOFIX(a,home);
       return ES_NOFIX;
 #endif
 #if defined(BINLIN_NQ_ADVISOR_AVOID)
-      if (A::modevent(d) == ME_INT_VAL)
-        return ES_NOFIX;
+      if (IntView::modevent(d) == ME_INT_VAL)
+        return ES_SUBSUMED_NOFIX(a,home);
       return ES_FIX;
 #endif
     }
-    /// Constructor for rewriting \a p during cloning
-    NQC(Space* home, bool share, Propagator& p, A x0, B x1, Val c);
     /// Create copy during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
@@ -56,52 +59,38 @@
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(void) const;
     /// Post propagator for \f$x_0+x_1 \neq c\f$
-    static ExecStatus post(Space* home, A x0, B x1, Val c);
+    static ExecStatus post(Space* home, IntView x0, IntView x1, int c);
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
 
   forceinline
-  NQC<Val,A,B>::NQC(Space* home, A _x0, B _x1, Val _c)
+  NQC::NQC(Space* home, IntView _x0, IntView _x1, int _c)
     : Propagator(home), x0(_x0), x1(_x1), c(_c), co(home,2) {
-    x0.subscribe(home, new (home) Advisor(home,this,co));
-    x1.subscribe(home, new (home) Advisor(home,this,co));
-    if (x0.assigned())
-      A::schedule(home,this,ME_INT_VAL);
-    if (x1.assigned())
-      B::schedule(home,this,ME_INT_VAL);
+    new (home) ViewAdvisor<IntView>(home,this,co,x0);
+    new (home) ViewAdvisor<IntView>(home,this,co,x1);
+    if (x0.assigned() || x1.assigned())
+      IntView::schedule(home,this,ME_INT_VAL);
   }
 
   ExecStatus
-  NQC<Val,A,B>::post(Space* home, A x0, B x1, Val c) {
+  NQC::post(Space* home, IntView x0, IntView x1, int c) {
     /*
     if (x0.assigned()) {
       GECODE_ME_CHECK(x1.nq(home,c-x0.val()));
     } else if (x1.assigned()) {
       GECODE_ME_CHECK(x0.nq(home,c-x1.val()));
     } else {
-      (void) new (home) NQC<Val,A,B>(home,x0,x1,c);
+      (void) new (home) NQC(home,x0,x1,c);
     }
     */
-    (void) new (home) NQC<Val,A,B>(home,x0,x1,c);
+    (void) new (home) NQC(home,x0,x1,c);
     return ES_OK;
   }
 
 
-  template <class Val, class A, class B>
-  forceinline
-  NQC<Val,A,B>::NQC(Space* home, bool share, Propagator& p,
-                        A y0, B y1, Val c0)
-    : Propagator(home,share,p), c(c0), co(home,share,co) {
-    std::cout << "AAARGH" << std::endl;
-    assert(false);
-    x0.update(home,share,y0);
-    x1.update(home,share,y1);
-  }
-
-  template <class Val, class A, class B>
   forceinline size_t
-  NQC<Val,A,B>::dispose(Space* home) {
+  NQC::dispose(Space* home) {
     assert(!home->failed());
     co.dispose(home);
     (void) Propagator::dispose(home);
@@ -109,35 +98,31 @@
   }
 
 
-  template <class Val, class A, class B>
   forceinline
-  NQC<Val,A,B>::NQC(Space* home, bool share, NQC<Val,A,B>& p)
+  NQC::NQC(Space* home, bool share, NQC& p)
     : Propagator(home,share,p), c(p.c), co(home,share,p.co) {
     x0.update(home,share,p.x0);
     x1.update(home,share,p.x1);
   }
   
-  template <class Val, class A, class B>
   Actor*
-  NQC<Val,A,B>::copy(Space* home, bool share) {
-    return new (home) NQC<Val,A,B>(home,share,*this);
+  NQC::copy(Space* home, bool share) {
+    return new (home) NQC(home,share,*this);
   }
 
-  template <class Val, class A, class B>
   PropCost
-  NQC<Val,A,B>::cost(void) const {
+  NQC::cost(void) const {
     return PC_UNARY_LO;
   }
 
-  template <class Val, class A, class B>
   ExecStatus
-  NQC<Val,A,B>::propagate(Space* home) {
+  NQC::propagate(Space* home) {
     if (x0.assigned()) {
-      GECODE_ME_CHECK(x1.nq(home,c-x0.val()));
+      GECODE_ME_CHECK(x1.nq(home,x0.val()-c));
       return ES_SUBSUMED(this,home);
     } 
     if (x1.assigned()) {
-      GECODE_ME_CHECK(x0.nq(home,c-x1.val()));
+      GECODE_ME_CHECK(x0.nq(home,c+x1.val()));
       return ES_SUBSUMED(this,home);
     }
     return ES_FIX;
@@ -169,8 +154,13 @@ public:
       for (int i = 0; i<n; i++)
         for (int j = i+1; j<n; j++) {
           post(this, q[i] != q[j]);
+#if defined(BINLIN_NQ_ADVISOR_BASE) || defined(BINLIN_NQ_ADVISOR_AVOID)
+          NQC::post(this, q[i], q[j], j-i); 
+          NQC::post(this, q[i], q[j], i-j); 
+#else
           post(this, q[i]+i != q[j]+j);
           post(this, q[i]-i != q[j]-j);
+#endif
         }
     } else {
       IntArgs c(n);
