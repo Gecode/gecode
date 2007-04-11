@@ -30,9 +30,9 @@ namespace Gecode {
    */
   template <class View>
   class ViewAdvisor : public Advisor {
-  protected:
-    View x; ///< The single view
   public:
+    /// The single view
+    View x; 
     /// Constructor for creation
     ViewAdvisor(Space* home, Propagator* p, CouncilBase& c, View x0);
     /// Constructor for cloning \a a
@@ -48,8 +48,8 @@ namespace Gecode {
      *
      */
     void schedule(Space* home, ModEvent me) const;
-    /// Delete advisor and return its size
-    virtual size_t dispose(Space* home);
+    /// Delete advisor
+    void dispose(Space* home);
   };
 
 
@@ -73,11 +73,10 @@ namespace Gecode {
     View::schedule(home, propagator(), me);
   }
   template <class View>
-  forceinline size_t 
+  forceinline void
   ViewAdvisor<View>::dispose(Space* home) {
     x.cancel(home, this);
     (void) Advisor::dispose(home);
-    return sizeof(*this);
   }
 
 }

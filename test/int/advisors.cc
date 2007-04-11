@@ -56,10 +56,10 @@ namespace {
     virtual ExecStatus advise(Space* home, Advisor& _a, const Delta& d) {
       BndAdvisor& a = static_cast<BndAdvisor&>(_a);
       ModEvent me = IntView::modevent(d);
-      if (me == ME_INT_VAL || me == ME_INT_BND)
-        a.schedule(home, me);
-      if (me == ME_INT_VAL) 
-        return ES_SUBSUMED(&a,sizeof(a));
+      if (me == ME_INT_VAL)
+        return ES_SUBSUMED_NOFIX(a,home);
+      if (me == ME_INT_BND) 
+        return ES_NOFIX;
       return ES_FIX;
     }
     /// Constructor for cloning \a p
@@ -193,8 +193,7 @@ namespace {
     BoolView x0, x1;
     virtual ExecStatus advise(Space* home, Advisor& _a, const Delta& d) {
       BndAdvisor& a = static_cast<BndAdvisor&>(_a);
-      a.schedule(home, BoolView::modevent(d));
-      return ES_SUBSUMED(&a,sizeof(a));
+      return ES_SUBSUMED_NOFIX(a,home);
     }
 
     /// Constructor for cloning \a p

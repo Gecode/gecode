@@ -297,7 +297,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     if (hi < lo) {
       // Something has happend, so just schedule the propagator
       if (me == ME_INT_VAL) 
-        return ES_SUBSUMED(this,sizeof(*this));
+        return ES_SUBSUMED_FIX(*this,home);
       return ES_NOFIX;
     }
     
@@ -307,7 +307,7 @@ namespace Gecode { namespace Int { namespace Extensional {
         tuple l = ip->last(var, val);
         if (l != NULL && l[pos] >= lo && l[pos] <= hi) {
           if (me == ME_INT_VAL) 
-            return ES_SUBSUMED(this,sizeof(*this));
+            return ES_SUBSUMED_FIX(*this,home);
           return ES_NOFIX;
         }
       }
@@ -333,7 +333,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 #endif
 
     if (me == ME_INT_VAL) 
-      return ES_SUBSUMED(this,sizeof(*this));
+      return ES_SUBSUMED_FIX(*this,home);
     return ES_FIX;
   }
 

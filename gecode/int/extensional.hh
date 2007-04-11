@@ -191,10 +191,6 @@ namespace Gecode { namespace Int { namespace Extensional {
       SupportAdvisor(Space* home, bool share, SupportAdvisor& a) 
         : ViewAdvisor<View>(home, share, a), pos(a.pos) {}
 
-      virtual size_t dispose(Space* home) {
-        (void) ViewAdvisor<View>::dispose(home);
-        return sizeof(*this);
-      }
       virtual ExecStatus advise(Space* home, const Delta& d);
     };
     

@@ -461,8 +461,6 @@ namespace Gecode {
    * \ingroup TaskActor
    */
   enum ExecStatus {
-    __ES_SUBSUMED_FIX   = -3, ///< Internal: advisor is subsumed, do not use
-    __ES_SUBSUMED_NOFIX = -2, ///< Internal: advisor is subsumed, do not use
     __ES_SUBSUMED       = -2, ///< Internal: propagator is subsumed, do not use
     ES_FAILED           = -1, ///< Execution has resulted in failure
     ES_NOFIX            =  0, ///< Propagation has not computed fixpoint
@@ -776,7 +774,7 @@ namespace Gecode {
     /// Copy constructor
     Council(Space* home, bool share, Council<A>& c);
     /// Dispose council
-    size_t dispose(Space* home);
+    void dispose(Space* home);
   };
 
 
@@ -791,18 +789,18 @@ namespace Gecode {
    * \ingroup TaskActor
    */
   class Advisor : private ActorLink {
-    friend ExecStatus ES_SUBSUMED(Advisor*, size_t);
-    friend ExecStatus ES_SUBSUMED(Advisor*, Space*);
-    template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
+    template <class Advisor>
+    friend ExecStatus ES_SUBSUMED_FIX(Advisor&, Space*);
+    template <class Advisor>
+    friend ExecStatus ES_SUBSUMED_NOFIX(Advisor&, Space*);
+    template <VarTypeId VTI, PropCond PC, class MED> 
+    friend class Variable;
     friend class CouncilBase;
-    template <class A> friend class Council;
+    template <class A> 
+    friend class Council;
   private:
-    /// Set disposed flag and size
-    void disposed(size_t size);
     /// Is the advisor disposed?
     bool disposed(void) const;
-    /// Get size of disposed advisor
-    size_t size(void) const;
   public:
     /// Constructor for creation
     Advisor(Space* home, Propagator* p, CouncilBase& c);
@@ -814,7 +812,13 @@ namespace Gecode {
 
     /// \name Memory management
     //@{
-    virtual size_t dispose(Space* home);
+    /**
+     * \brief Dispose the advisor
+     *
+     * Note that currently the memory occupied by an advisor
+     * is not released.
+     */
+    void dispose(Space* home);
     /// Allocate memory from space
     static void* operator new(size_t s, Space* home);
     /// No-op for exceptions
@@ -827,43 +831,34 @@ namespace Gecode {
 #endif
     /// Not used
     static void* operator new(size_t s);
-#ifdef __GNUC__
-  public:
-    /// To avoid warnings from GCC
-    virtual ~Advisor(void) {}
-    /// Not used (uses dispose instead)
-    static void  operator delete(void* p, size_t s);
-#endif
   };
 
   /**
-   * \brief %Advisor \a p is subsumed
+   * \brief %Advisor \a a is subsumed
    *
-   * The size of the advisor is \a s.
+   * Disposes the advisor and: 
+   *  - returns subsumption.
+   *  - returns that the propagator of \a a need not be run.
    *
-   * Note that the advisor must be subsumed and also disposed. So
-   * in general, there should be code such as 
-   * \code return ES_SUBSUMED(this,dispose(home)) \endcode.
-   * 
-   * However, in case the advisor has nothing to dispose it is sufficient
-   * to do 
-   * \code return ES_SUBSUMED(this,sizeof(*this)) \endcode.
-   *
-   * \warning Has a side-effect on the advisor. Use only directly with
-   *          returning from the advise member function.
+   * \warning Has a side-effect on the advisor. Use only directly when
+   *          returning from advise.
    * \ingroup TaskActorStatus
    */
-  ExecStatus ES_SUBSUMED(Advisor* a, size_t s);
+  template <class Advisor>
+  ExecStatus ES_SUBSUMED_FIX(Advisor& a, Space* home);
   /**
-   * \brief %Advisor \a p is subsumed
+   * \brief %Advisor \a a is subsumed
    *
-   * First disposes the advisor and then returns subsumtion.
+   * Disposes the advisor and: 
+   *  - returns subsumption.
+   *  - returns that the propagator of \a a must be run.
    *
-   * \warning Has a side-effect on the advisor. Use only directly with
-   *          returning from propagation.
+   * \warning Has a side-effect on the advisor. Use only directly when
+   *          returning from advise.
    * \ingroup TaskActorStatus
    */
-  ExecStatus ES_SUBSUMED(Advisor* a, Space* home);
+  template <class Advisor>
+  ExecStatus ES_SUBSUMED_NOFIX(Advisor& a, Space* home);
 
 
 
@@ -1610,7 +1605,8 @@ namespace Gecode {
 
   forceinline 
   Advisor::Advisor(Space* home, Propagator* p, CouncilBase& c) {
-    ActorLink::prev(NULL);
+    //    ActorLink::prev(NULL);
+    assert(p != NULL);
     ActorLink::next(p);
     c.add(home,this);
   }
@@ -1618,45 +1614,37 @@ namespace Gecode {
   Advisor::Advisor(Space* home, bool share, Advisor& a) {
     // Set forwarding pointer
     a.prev(this);
-    ActorLink::prev(NULL);
+    //    ActorLink::prev(NULL);
     // Set propagator pointer
     ActorLink::next(a.next()->prev());
   }
   forceinline Propagator* 
   Advisor::propagator(void) const { 
-    return static_cast<Propagator*>(ActorLink::next()); 
-  }
-  forceinline void 
-  Advisor::disposed(size_t size) { 
-    ActorLink::prev(reinterpret_cast<ActorLink*>((size << 1) | 1)); 
+    Propagator* p = static_cast<Propagator*>(ActorLink::next()); 
+    assert(p != NULL);
+    return p;
   }
   forceinline bool
   Advisor::disposed(void) const { 
-    return reinterpret_cast<ptrdiff_t>(prev())&1 == 1;
+    return ActorLink::next() == NULL;
   }
-  forceinline size_t 
-  Advisor::size(void) const { 
-    assert(disposed());
-    return reinterpret_cast<ptrdiff_t>(prev())>>1;
-  }
-  forceinline size_t
+  forceinline void
   Advisor::dispose(Space*) {
-    disposed(sizeof(*this));
-    return sizeof(*this);
+    ActorLink::next(NULL); 
   }
 
+  template <class Advisor>
   forceinline ExecStatus
-  ES_SUBSUMED(Advisor* a, size_t s) {
-    a->disposed(s);
-    return __ES_SUBSUMED;
+  ES_SUBSUMED_FIX(Advisor& a, Space* home) {
+    a.dispose(home);
+    return ES_FIX;
   }
+  template <class Advisor>
   forceinline ExecStatus
-  ES_SUBSUMED(Advisor* a, Space* home) {
-    a->dispose(home);
-    // dispose will set the size correctly
-    return __ES_SUBSUMED;
+  ES_SUBSUMED_NOFIX(Advisor& a, Space* home) {
+    a.dispose(home);
+    return ES_NOFIX;
   }
-
 
   inline
   CouncilBase::CouncilBase(Space* home, unsigned int reserve)
@@ -1696,13 +1684,12 @@ namespace Gecode {
   }
   
   template <class A>
-  inline size_t
+  inline void
   Council<A>::dispose(Space* home) {
     for (int i = siz; i--; )
       if (active(advisors[i]))
         (void) static_cast<A*>(advisors[i])->dispose(home);
     home->reuse(advisors, sizeof(Advisor*)*siz);
-    return sizeof(A);
   }
 
 
@@ -2165,14 +2152,14 @@ namespace Gecode {
     d.me = me;
     do {
       Advisor* a = static_cast<Advisor*>(*la);
-      switch (a->propagator()->advise(home, *a, d)) {
+      Propagator* p = a->propagator();
+      switch (p->advise(home, *a, d)) {
       case ES_FIX:
-      case __ES_SUBSUMED: 
         break;
       case ES_FAILED:     
         return false;
       case ES_NOFIX:
-        schedule(home,a->propagator(),me);
+        schedule(home,p,me);
         break;
       default:
         GECODE_NEVER;

@@ -462,7 +462,6 @@ namespace Gecode {
       siz = nsiz;
     }
   }
-
   int
   CouncilBase::compact(Space* home) const {
     if (siz == 0)
@@ -481,7 +480,7 @@ namespace Gecode {
       if (lo >= hi) break;
       std::swap(*lo,*hi);
     }
-
+    /*
     for (Advisor** i = lo-1; i >= left; --i) {
       if (reinterpret_cast<ptrdiff_t>(*i) > siz) {
         assert((*i)->disposed());
@@ -492,6 +491,7 @@ namespace Gecode {
     if (!active(*hi)) {
       *hi = reinterpret_cast<Advisor*>(0);
     }
+    */
 
     return (right-lo)+1;
   }
