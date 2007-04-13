@@ -164,6 +164,7 @@ namespace Gecode {
   Space::propagate(void) {
     if (failed())
       return 0;
+
     const PropModEvent PME_NONE = 0;
     const PropModEvent PME_ASSIGNED  =
       ((ME_GEN_ASSIGNED <<  0) | (ME_GEN_ASSIGNED <<  4) |
@@ -492,6 +493,14 @@ namespace Gecode {
       *hi = reinterpret_cast<Advisor*>(0);
     }
     */
+    for (Advisor** i = lo-1; i >= left; --i) {
+      assert(reinterpret_cast<ptrdiff_t>(*i) <= siz ||
+             (*i)->disposed());
+      *i = reinterpret_cast<Advisor*>(((i-left)+1)%siz);
+    }
+    if (!active(*hi)) {
+      *hi = reinterpret_cast<Advisor*>(0);
+    }
 
     return (right-lo)+1;
   }

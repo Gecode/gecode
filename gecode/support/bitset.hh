@@ -35,20 +35,21 @@ namespace Gecode { namespace Support {
   template<typename Base>
   class BitSet {
     Base* data;
-    int size;
+    unsigned int size;
   public:
     /// Default (empty) initialization of BitSet
     BitSet(void) : data(NULL), size(0) {}
 
     /// BitSet with space for \a s bits. The bits are  set to \a value.
-    BitSet(Space *home, int s, bool value = false) {
+    BitSet(Space *home, int s, bool value = false) 
+      : data(NULL), size(0) {
       init(home, s, value);
     }
 
     /// Copy BitSet \a bs.
     BitSet(Space *home, const BitSet<Base>& bs)
       : data(home->alloc(bs.size*sizeof(Base))), size(bs.size) {
-      std::memcpy(data, bs->data, size*sizeof(Base));
+      for (int i = size; i--; ) data[i] = bs.data[i];
     }
     
     /// Initialise BitSet with space for \a s bits. The bits are  set to \a value.
@@ -64,27 +65,26 @@ namespace Gecode { namespace Support {
   template<typename Base>
   forceinline void
   BitSet<Base>::init(Space* home, int s, bool value) {
-    if (data) home->reuse(data, size*sizeof(Base));
     size = static_cast<int>(std::ceil(static_cast<double>(s)/(8*sizeof(Base))));
     data = static_cast<Base*>(home->alloc(size*sizeof(Base)));
-    unsigned char ival = value ? 0 : ~0;
-    std::memset(data, size*sizeof(Base), ival);
+    Base ival = value ? ~0 : 0;
+    for (int i = size; i--; ) data[i] = ival;
   }
 
   template<typename Base>
   forceinline bool
   BitSet<Base>::get(unsigned int i) {
-    int pos = i / (sizeof(Base)*8);
-    int bit = i % (sizeof(Base)*8);
-    assert(i < size);
+    unsigned int pos = i / (sizeof(Base)*8);
+    unsigned int bit = i % (sizeof(Base)*8);
+    assert(pos < size);
     return data[pos] & (1 << bit);
   }
   template<typename Base>
   forceinline void
   BitSet<Base>::set(unsigned int i, bool value) {
-    int pos = i / (sizeof(Base)*8);
-    int bit = i % (sizeof(Base)*8);
-    assert(i < size);
+    unsigned int pos = i / (sizeof(Base)*8);
+    unsigned int bit = i % (sizeof(Base)*8);
+    assert(pos < size);
     if (value)
       data[pos] |= (1 << bit);
     else

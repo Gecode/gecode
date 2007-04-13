@@ -181,6 +181,27 @@ public:
 BoolOrTrueNary _boolortruenary("Bool::Or::True::Nary");
 
 #ifdef GECODE_USE_ADVISORS
+class BoolOrWLNary : public IntTest {
+public:
+  BoolOrWLNary(const char* t)
+    : IntTest(t,14,ds) {}
+  virtual bool solution(const Assignment& x) const {
+    for (int i = x.size()-1; i--; )
+      if (x[i] == 1)
+        return x[x.size()-1] == 1;
+    return x[x.size()-1] == 0;
+  }
+  virtual void post(Space* home, IntVarArray& x) {
+    BoolVarArgs b(2*(x.size()-1));
+    for (int i=x.size()-1; i--; ) {
+      BoolVar bx = channel(home,x[i]);
+      b[2*i+0] = bx; b[2*i+1] = bx;
+    }
+    rel(home, b, BOT_OR_WL, channel(home,x[x.size()-1]));
+  }
+};
+BoolOrNary _boolorwlnary("Bool::Advisors::WL::Or::Nary");
+
 class BoolOrWLTrueNary : public IntTest {
 public:
   BoolOrWLTrueNary(const char* t)

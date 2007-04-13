@@ -40,25 +40,48 @@ namespace Gecode { namespace Support {
    */
   template <class Type, class Key, class LessThan>
   forceinline Type*
-  binarysearch(Type* x, int n, const Key& key, LessThan &lt) {
+  binarysearch(Type* x, int n, const Key& key, LessThan &lt, int pos = -1) {
+#if 0
     int low = 0;
     int high = n - 1;
-    
-    while (low <= high) {
+
+    std::cerr << "Searching for " << key << std::endl;
+
+    while (low < high) {
       int mid = low + ((high - low) / 2);
-      
+      for (int i = 0; i < n; ++i) {
+        std::cerr << (i==low ? "," : " ");
+        std::cerr << lt(x[i], key);
+        std::cerr << (i==high ? "'" : " ");
+      }
+      std::cerr << std::endl << " ";
+      for (int i = 0; i < mid; ++i) std::cerr << "   ";
+      std::cerr << "M" << std::endl;
+
       if (lt(x[mid], key)) {
         low = mid + 1;
       } else if (lt(key, x[mid])) {
         high = mid - 1;
       } else {
+        if (mid == 0)
+          return x+mid;
         if (lt(x[mid-1], x[mid]))
           return x+mid; // first occurence of key found
         high = mid;
       }
     }
+    
 
     return NULL;  // key not found.
+#endif
+    for (int i = 0; i < n; ++i) {
+      if (lt(x[i], key)) continue;
+      if (!lt(key, x[i])) {
+        return x+i;
+      } else
+        return NULL;
+    }
+    return NULL;
   }
 
 }}

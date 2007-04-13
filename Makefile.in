@@ -187,8 +187,8 @@ INTHDR0 = \
 	distinct/val.icc distinct/ter-dom.icc \
 	dom/range.icc dom/spec.icc \
 	element/int.icc element/view.icc \
-	extensional/table.icc extensional/val.icc extensional/basic.icc \
-	extensional/incremental.icc \
+	extensional/table.icc extensional/val.icc extensional/base.icc \
+	extensional/basic.icc extensional/incremental.icc \
 	gcc/bnd.icc gcc/dom.icc gcc/gccbndsup.icc gcc/graphsup.icc \
 	gcc/lbc.icc gcc/ubc.icc gcc/val.icc gcc/occur.icc \
 	linear/post.icc \
@@ -206,7 +206,7 @@ INTHDR0 = \
 	view/offset.icc view/rtest.icc view/scale.icc view/iter.icc \
 	arithmetic.hh array.icc bool.hh branch.hh \
 	count.hh cumulatives.hh distinct.hh dom.hh \
-	element.hh exception.icc gcc.hh linear.hh \
+	element.hh exception.icc extensional.hh gcc.hh linear.hh \
 	propagator.icc regular.hh rel.hh \
 	sortedness.hh var.icc view.icc \
 	channel.hh channel/dom.icc channel/val.icc \
@@ -380,7 +380,7 @@ INTEXAMPLESRC0 = \
 	partition photo queens \
 	sudoku picture-puzzle placement-puzzle placement-puzzle-01 \
 	crowded-chess black-hole minesweeper domino \
-	sports-league all-interval all-interval-sort \
+	sports-league all-interval all-interval-sort all-interval-table \
 	langfordnum langfordnum-regular warehouses \
 	stress-domain stress-exec stress-search baseline \
 	stress-element stress-min stress-distinct \
@@ -476,7 +476,8 @@ endif
 
 INTTESTSRC0 = \
 	channel arithmetic basic bool count dom distinct element regular \
-	rel linear scheduling minimodel gcc sortedness circuit advisors
+	rel linear scheduling minimodel gcc sortedness circuit advisors  \
+	extensional
 ifeq "@enable_set_vars@" "yes"
 SETTESTSRC0 = \
 	dom rel rel-op convex sequence int select distinct projection 

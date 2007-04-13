@@ -20,11 +20,9 @@
  *
  */
 
-#include "gecode/support/bitset.hh"
-
 namespace Gecode { namespace Int { namespace Extensional {
-  const bool basic_debug = true;
-
+  const bool basic_debug = false;
+#define derr if (basic_debug) std::cerr
 
   /*
    * The propagator proper
@@ -34,12 +32,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View>
   forceinline
   Basic<View>::Basic(Space* home, ViewArray<View>& x, const Table& t)
-    : NaryPropagator<View,PC_INT_DOM>(home,x), table(t) {
-    int literals = t.tablei->domsize*x.size();
-    last_data = static_cast<tuple***>(home->alloc(literals*sizeof(tuple**)));
-    for (int i = literals; i--; ) {
-      last_data[i]    = t.tablei->last[i];
-    }
+    : Base<View>(home,x,t) {
   }
 
   template <class View>
@@ -52,13 +45,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View>
   forceinline
   Basic<View>::Basic(Space* home, bool share, Basic<View>& p)
-    : NaryPropagator<View,PC_INT_DOM>(home,share,p) {
-    table.update(home, share, p.table);
-    int literals = table.tablei->domsize*x.size();
-    last_data = static_cast<tuple***>(home->alloc(literals*sizeof(tuple**)));
-    for (int i = literals; i--; ) {
-      last_data[i]    = p.last_data[i];
-    }
+    : Base<View>(home,share,p) {
   }
 
   template <class View>
@@ -73,13 +60,6 @@ namespace Gecode { namespace Int { namespace Extensional {
   Basic<View>::copy(Space* home, bool share) {
     return new (home) Basic<View>(home,share,*this);
   }
-
-
-  template<class View>
-  class TellInfo {
-  public:
-    View x; int n;
-  };
 
 
   template <class View>
@@ -99,35 +79,20 @@ namespace Gecode { namespace Int { namespace Extensional {
     //// Set up datastructures
     /// Bit-sets for amortized O(1) access to domains
     GECODE_AUTOARRAY(Support::BitSet<unsigned long>, dom, x.size());
-    int domsize = table.tablei->max - table.tablei->min + 1;
-    for (int i = x.size(); i--; ) {
-      dom[i].init(home, domsize);
-      ViewRanges<View> vr(x[i]);
-      Iter::Ranges::ToValues<ViewRanges<View> > vv(vr);
-      while (vv()) {
-        dom[i].set(vv.val());
-        ++vv;
-      }
-      if (basic_debug) {
-        for (int j = table.tablei->min; j < table.tablei->max; ++j)
-          std::cerr << (x[i].in(j) ? "1" : "0");
-        std::cerr << std::endl;
-        for (int j = table.tablei->min; j < table.tablei->max; ++j)
-          std::cerr << (dom[i].get(j) ? "1" : "0");
-        std::cerr << std::endl << std::endl;
-      }
-    }
+    init_dom(home, dom);
+
     /// Bit-sets for processed values.
     GECODE_AUTOARRAY(Support::BitSet<unsigned long>, has_support, x.size());
-    for (int i = x.size(); i--; ) {
-      has_support[i].init(home, domsize);
-    }
+    for (int i = x.size(); i--; ) has_support[i].init(home, table.tablei->domsize);
+ 
 
     /// Values to prune
-    GECODE_AUTOARRAY(TellInfo<View>,nq,domsize*x.size());
+    GECODE_AUTOARRAY(int,nq, table.tablei->domsize*x.size());
     int n_nq = 0;
 
     
+    ExecStatus es = ES_FIX;
+
     //// Run algorithm
     /// Check consistency for each variable-value pair
     for (int var = 0; var < x.size(); ++var) {
@@ -136,81 +101,59 @@ namespace Gecode { namespace Int { namespace Extensional {
       while (vv()) {
         // Value offset for indexing
         int val = vv.val() - table.tablei->min;
+        derr << "Processing var " << var << " val " << val << std::endl;
         if (!has_support[var].get(val)) {
           // Find support for value vv.val() in variable var
-          tuple l = last(var, val);
-          if (!valid(l, dom)) {
-            while (l != NULL && l[var] == vv.val()) {
-              l = last_next(var, val);
-            }
-          }
+          tuple l = find_support(dom, var, val);
           if (l == NULL) {
             // No possible supports left
-            nq[n_nq].x = x[var];
-            nq[n_nq].n = vv.val();
+            derr << "\tx[" << var << "] != " << vv.val() 
+                      << "  (" << val << ")" << std::endl;
+            nq[n_nq] = vv.val();
             n_nq++;
           } else {
+            derr << "\tx[" << var << "]=" << val << ":  \t";
+            for (int i = 0; i < x.size(); ++i) {
+              derr << l[i] << " ";
+            }
+            derr << std::endl;
             // Mark values as supported 
             // Only forward direction marking is needed since all
             // previous values have been checked
             for (int i = x.size(); i-- >var; ) {
-              has_support[i].set(l[i]);
+              derr << "\tVar " << i << " val " << l[i] << " has support ";
+              has_support[i].set(l[i]- table.tablei->min);
+              assert(has_support[i].get(l[i]- table.tablei->min));
+              derr << has_support[i].get(l[i]- table.tablei->min) << std::endl;
             }
 #ifndef NDEBUG
-            for (int i = var; i--; )
-              assert(has_support[i].get(l[i]));
+            for (int i = var; i-->1; )
+              assert(has_support[i].get(l[i]- table.tablei->min));
 #endif
           }
         }
         ++vv;
       }
 
-      ExecStatus es = ES_FIX;
       // Prune values for var which do not have support anymore
+      derr << "After " << n_nq << " deletions x[" << var << "]=";
       while (n_nq-- > 0) {
-        ModEvent me = nq[n_nq].x.nq(home,nq[n_nq].n);
+        ModEvent me = x[var].nq(home,nq[n_nq]);
         if (me_failed(me))
           return ES_FAILED;
         if (me_modified(me))
           es = ES_NOFIX;
       }
-
-      return es;
+      n_nq = 0;
+      derr << x[var] << std::endl;
     }
 
-    
-    
-
-    return ES_FIX;
-  }
-
-#define GECODE_LAST_TUPLE(l) (**(l))
-
-  template <class View>
-  forceinline tuple
-  Basic<View>::last(int var, int val) {
-    if (GECODE_LAST_TUPLE(last_data[(var*(table.tablei->max - table.tablei->min + 1)) + val])[var] != val) return NULL;
-    return GECODE_LAST_TUPLE(last_data[(var*(table.tablei->max - table.tablei->min + 1)) + val]);
-  }
-
-  template <class View>
-  forceinline tuple
-  Basic<View>::last_next(int var, int val) {
-    ++(last_data[(var*(table.tablei->max - table.tablei->min + 1)) + val]);
-    if (GECODE_LAST_TUPLE(last_data[(var*(table.tablei->max - table.tablei->min + 1)) + val])[var] != val) return NULL;
-    return GECODE_LAST_TUPLE(last_data[(var*(table.tablei->max - table.tablei->min + 1)) + val]);
-  }
-
-  template <class View>
-  forceinline bool
-  Basic<View>::valid(tuple t, Support::BitSet<unsigned long>* dom) {
     for (int i = x.size(); i--; )
-      if (!dom[i].get(t[i]))
-        return false;
-    return true;
+      if (!x[i].assigned())
+        return es;
+    return ES_SUBSUMED(this, home);
   }
-#undef GECODE_LAST_TUPLE
+#undef derr
 }}}
-
 // STATISTICS: int-prop
 

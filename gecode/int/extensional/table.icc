@@ -20,7 +20,8 @@
  *
  */
 
-#include "gecode/support/dynamic-array.hh"
+#ifndef __GECODE_TABLE_ICC__
+#define __GECODE_TABLE_ICC__
 
 namespace Gecode {
   /**
@@ -30,7 +31,8 @@ namespace Gecode {
   class Table::TableI {
   private:
     /// Possible dfa for rewriting into regular
-    DFA _dfa;
+    //DFA _dfa;
+    //bool dfa_exists;
   public:
     /// How often is the Table implementation referred to
     unsigned int use_cnt;
@@ -49,7 +51,7 @@ namespace Gecode {
     /// Domainsize
     int domsize;
     /// Initial last structure
-    tuple*** last;
+    tuple** last;
 
     // Default initialization
     void init(void) {
@@ -63,43 +65,72 @@ namespace Gecode {
       max = Limits::Int::int_min;
       domsize = -1;
       last = NULL;
+      //_dfa = DFA();
+      //dfa_exists = false;
     }
     /// Add tuple. Assumes that arity matches.
     template <class T>
-    void add(T t) {
-      assert(arity  != -1); // Arity has been set
-      assert(excess != -1); // Tuples may still be added
-      if (excess == 0) {
-        int ndatasize = static_cast<int>(1+size*1.5);
-        data = Memory::brealloc<int>(data, ndatasize * arity);
-        excess = ndatasize - size;
-      }
-      --excess;
-      int end = size*arity;
-      for (int i = arity; i--; ) {
-        data[end+i] = t[i];
-        if (t[i] < min) min = t[i];
-        if (t[i] > max) max = t[i];
-      }
-      ++size;
-    }
+    void add(T t);
     /// Create a copy
     GECODE_INT_EXPORT TableI* copy(void);
     /// Finalize datastructure (disallows additions of more tuples)
     GECODE_INT_EXPORT void finalize(void);
     /// Is datastructure finalized
-    bool finalized(void) { return excess == -1; }
+    bool finalized(void) { 
+      assert((excess == -1 && domsize >= 0) ||
+             (excess != -1 && domsize == -1)); 
+      return excess == -1; 
+    }
 
     /// Get DFA (datastructure must be finalized first)
-    DFA dfa(void);
+    //GECODE_INT_EXPORT DFA dfa(void);
   };
 
+  template <class T>
+  void
+  Table::TableI::add(T t){
+    assert(arity  != -1); // Arity has been set
+    assert(excess != -1); // Tuples may still be added
+    if (excess == 0) {
+      int ndatasize = static_cast<int>(1+size*1.5);
+      data = Memory::brealloc<int>(data, size * arity, ndatasize * arity);
+      excess = ndatasize - size;
+    }
+    --excess;
+    int end = size*arity;
+    for (int i = arity; i--; ) {
+      data[end+i] = t[i];
+      if (t[i] < min) min = t[i];
+      if (t[i] > max) max = t[i];
+    }
+    ++size;
+  }
+  
 
   forceinline
   Table::Table(void) : tablei(Memory::bmalloc<TableI>(1)) {
     tablei->init();
   }
 
+  inline void
+  Table::add(const IntArgs& tuple) {
+    assert(tablei->arity == -1 ||
+           tablei->arity == tuple.size());
+    tablei->arity = tuple.size();
+    tablei->add(tuple);
+  }
+
+  inline void
+  Table::finalize(void) {
+    tablei->finalize();
+  }
+  /*
+  inline DFA
+  Table::dfa(void) {
+    if (!tablei->finalized()) tablei->finalize();
+    return tablei->dfa();
+  }
+  */
   forceinline
   Table::Table(const Table& d)
     : tablei(d.tablei) {
@@ -143,6 +174,7 @@ namespace Gecode {
 
 }
 
+#endif
 
 // STATISTICS: int-prop
 

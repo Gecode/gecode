@@ -20,13 +20,11 @@
  *
  */
 
-#ifdef GECODE_USE_ADVISORS
-
 #include "gecode/support/bitset.hh"
 
 namespace Gecode { namespace Int { namespace Extensional {
-  const bool incremental_debug = true;
-
+  const bool incremental_debug = false;
+#define derr if(incremental_debug) std::cerr
 
   /*
    * The propagator proper
@@ -36,18 +34,26 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View>
   forceinline
   Incremental<View>::Incremental(Space* home, ViewArray<View>& x, const Table& t)
-    : NaryPropagator<View,PC_INT_VAL>(home,x), 
-      table(t), dc(home, x.size()) {
-    int literals = t.tablei->domsize*x.size();
-    last_data = static_cast<tuple***>(home->alloc(literals*sizeof(tuple***)));
-    support_data = static_cast<SupportEntry**>(home->alloc(literals*sizeof(SupportEntry*)));
-    for (int i = literals; i--; ) {
-      last_data[i]    = t.tablei->last[i];
-      support_data[i] = NULL;
-    }
+    : Base<View,false>(home,x,t), support_data(NULL), 
+      work(x.size()), unassigned(x.size()), ac(home) {
+    init_support(home);
 
-    for (int i = x.size(); i--; )
-      (void) new (home) SupportAdvisor(home, this, dc, x[i], i);
+    GECODE_AUTOARRAY(Support::BitSet<unsigned long>, dom, x.size());
+    init_dom(home, dom);
+    for (int i = x.size(); i--; ) {
+      if (x[i].assigned()) {
+        --unassigned;
+      } else {
+        (void) new (home) SupportAdvisor(home, this, ac, x[i], i);
+      }
+      ViewValues<View> vv(x[i]);
+      while (vv()) {
+        find_support(home, dom, i, vv.val());
+        ++vv;
+      }
+    }
+    if (!work.empty() || unassigned==0)
+      View::schedule(home,this,ME_INT_BND);
   }
 
   template <class View>
@@ -60,18 +66,26 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View>
   forceinline
   Incremental<View>::Incremental(Space* home, bool share, Incremental<View>& p)
-    : NaryPropagator<View,PC_INT_VAL>(home,share,p),
-      dc(home, share, p.dc) {
-    table.update(home, share, p.table);
-
-    int literals = table.tablei->domsize*x.size();
-    last_data = static_cast<tuple***>(home->alloc(literals*sizeof(tuple***)));
-    support_data = static_cast<SupportEntry**>(home->alloc(literals*sizeof(SupportEntry*)));
+    : Base<View,false>(home,share,p), support_data(NULL), 
+      work(2), unassigned(p.unassigned), ac(home,share,p.ac) {
+    init_support(home);
+    int literals = table.tablei->domsize*x.size();    
     for (int i = literals; i--; ) {
-      last_data[i]    = p.last_data[i];
-      support_data[i] = p.support_data[i];
+      SupportEntry** n = &(support_data[i]);
+      SupportEntry*  o = p.support_data[i];
+      while (o) {
+        // Allocate new support entry
+        SupportEntry* s = static_cast<SupportEntry*>
+          (home->fl_alloc<sizeof(SupportEntry)>());
+        s->t = o->t;
+        s->next  = NULL;
+        // Link in support entry
+        (*n) = s;
+        n = &(s->next);
+        // move to next one
+        o = o->next;
+      }
     }
-
   }
 
   template <class View>
@@ -87,196 +101,145 @@ namespace Gecode { namespace Int { namespace Extensional {
     return new (home) Incremental<View>(home,share,*this);
   }
 
-  template <class View>
-  size_t
-  Incremental<View>::dispose(Space* home) {
-      (void) dc.dispose(home);
-      (void) NaryPropagator<View,PC_INT_VAL>::dispose(home);
-      return sizeof(*this);
-  }
-
 
   template <class View>
   ExecStatus
   Incremental<View>::propagate(Space* home) {
-    /// Staging...
-    /*
-    if (View::pme(this) == ME_INT_VAL) {
-      ExecStatus es = prop_val<View>(home,x);
-      GECODE_ES_CHECK(es);
-      if (es == ES_FIX)
-        return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
-      return ES_NOFIX_PARTIAL(this,View::pme(ME_INT_DOM));
-    }
-    */
-    ///// Domain consistent propagation
-    //// Set up datastructures
+    assert(!work.empty() || unassigned==0);
+
+    /// Set up datastructures
     /// Bit-sets for amortized O(1) access to domains
     GECODE_AUTOARRAY(Support::BitSet<unsigned long>, dom, x.size());
-    int domsize = table.tablei->max - table.tablei->min + 1;
-    for (int i = x.size(); i--; ) {
-      dom[i].init(home, domsize);
-      ViewRanges<View> vr(x[i]);
-      Iter::Ranges::ToValues<ViewRanges<View> > vv(vr);
-      while (vv()) {
-        dom[i].set(vv.val());
-        ++vv;
-      }
-      if (incremental_debug) {
-        for (int j = table.tablei->min; j < table.tablei->max; ++j)
-          std::cerr << (x[i].in(j) ? "1" : "0");
-        std::cerr << std::endl;
-        for (int j = table.tablei->min; j < table.tablei->max; ++j)
-          std::cerr << (dom[i].get(j) ? "1" : "0");
-        std::cerr << std::endl << std::endl;
-      }
-    }
+    init_dom(home, dom);
 
-    /// Values to prune
-    GECODE_AUTOARRAY(TellInfo<View>,nq,domsize*x.size());
-    int n_nq = 0;
-
-    
-#ifndef  GECODE_EXT_INCREMENTAL_SUPPORT
-    /// Bit-sets for processed values.
-    GECODE_AUTOARRAY(Support::BitSet<unsigned long>, has_support, x.size());
-    for (int i = x.size(); i--; ) {
-      has_support[i].init(home, domsize);
-    }
-
-    //// Run algorithm
-    /// Check consistency for each variable-value pair
-    /// that has lost support
-    for (int var = 0; var < x.size(); ++var) {
-      ViewRanges<View> vr(x[var]);
-      Iter::Ranges::ToValues<ViewRanges<View> > vv(vr);
-      while (vv()) {
-        // Value offset for indexing
-        int val = vv.val() - table.tablei->min;
-        if (!has_support[var].get(val)) {
-          // Find support for value vv.val() in variable var
-          tuple l = last(var, val);
-          if (!valid(l, dom)) {
-            while (l != NULL && l[var] == vv.val()) {
-              l = last_next(var, val);
-            }
-          }
-          if (l == NULL) {
-            // No possible supports left
-            nq[n_nq].x = x[var];
-            nq[n_nq].n = vv.val();
-            n_nq++;
-          } else {
-            // Mark values as supported 
-            // Only forward direction marking is needed since all
-            // previous values have been checked
-            for (int i = x.size(); i-- >var; ) {
-              has_support[i].set(l[i]);
-            }
-#ifndef NDEBUG
-            for (int i = var; i--; )
-              assert(has_support[i].get(l[i]));
-#endif
-          }
+    /// Work loop
+    while (!work.empty()) {
+      Work w = work.pop();
+      switch (w.work) {
+      case WT_FIND_SUPPORT:
+        if (dom[w.var].get(w.val) == false) {
+          break;
         }
-        ++vv;
-      }
-
-      ExecStatus es = ES_FIX;
-      // Prune values for var which do not have support anymore
-      while (n_nq-- > 0) {
-        ModEvent me = nq[n_nq].x.nq(home,nq[n_nq].n);
-        if (me_failed(me))
+        find_support(home, dom, w.var, w.val);
+        break;
+      case WT_REMOVE_VALUE:
+        assert(support(w.var, w.val) == NULL);
+        ModEvent me = x[w.var].nq(home,w.val);
+        if (me_failed(me)) {
           return ES_FAILED;
-        if (me_modified(me))
-          es = ES_NOFIX;
-      }
-
-      return es;
-#else 
-      bool mod;
-      do {
-        mod = false;
-        for (int var = x.size(); var--; ) {
-          ViewRanges<View> vr(x[var]);
-          Iter::Ranges::ToValues<ViewRanges<View> > vv(vr);
-          while (vv()) {
-            if (support(var, vv.val()) == NULL) {
-              // Find support for value vv.val() in variable var
-              tuple l = last(var, val);
-              if (!valid(l, dom)) {
-                while (l != NULL && l[var] == vv.val()) {
-                  l = last_next(var, val);
-                }
-              }
-              if (l == NULL) {
-                // No possible supports left
-                nq[n_nq].x = x[var];
-                nq[n_nq].n = vv.val();
-                n_nq++;
-              } else {
-                // Mark values as supported 
-                // add to all support-lists in tuple
-                for (int i = x.size(); i--; ) {
-                  // add support l to support(i, l[i])
-                }
-              }
-            }
-            ++vv;
-          }
-          // Prune values for var which do not have support anymore
-          while (n_nq-- > 0) {
-            ModEvent me = nq[n_nq].x.nq(home,nq[n_nq].n);
-            if (me_failed(me))
-              return ES_FAILED;
-            if (me_modified(me))
-              mod = true;;
-          }
-        
         }
-      } while (mod);
-#endif
+        dom[w.var].set(w.val, false);
+        break;
+      };
     }
-
-    
-    
-
-    return ES_FIX;
-  }
-
-#define GECODE_LAST_TUPLE(l) (**(l))
-
-  template <class View>
-  forceinline tuple
-  Incremental<View>::last(int var, int val) {
-    if (GECODE_LAST_TUPLE(last_data[(var*(table.tablei->domsize)) + val])[var]
-        != val) return NULL;
-    return GECODE_LAST_TUPLE(last_data[(var*(table.tablei->domsize)) + val]);
-  }
-
-  template <class View>
-  forceinline tuple
-  Incremental<View>::last_next(int var, int val) {
-    ++(last_data[(var*(table.tablei->domsize)) + val]);
-    if (GECODE_LAST_TUPLE(last_data[(var*(table.tablei->domsize)) + val])[var] 
-        != val) return NULL;
-    return GECODE_LAST_TUPLE(last_data[(var*(table.tablei->domsize)) + val]);
+    if (unassigned != 0) {
+      return ES_FIX;
+    }
+    return ES_SUBSUMED(this, home);
   }
 
 
+
   template <class View>
-  forceinline bool
-  Incremental<View>::valid(tuple t, Support::BitSet<unsigned long>* dom) {
-    for (int i = x.size(); i--; )
-      if (!dom[i].get(t[i]))
-        return false;
-    return true;
+  forceinline void
+  Incremental<View>::print_support(int var, int val, int tabs) {
+    for (int t = tabs; t--; ) derr << "\t";
+    SupportEntry* s = support(var, val);
+    derr << "Support for var=" << var << " val=" << val 
+         << " at s=" << (unsigned long long)s << " is:";
+    if (!s)
+      derr << "empty";
+    while (s) {
+      derr << " {t(" << (unsigned long long)s->t <<"):[";
+      for (int i = 0; i < x.size(); ++i) derr << s->t[i];
+      derr << "], next:" << (unsigned long long)s->next << "} ";
+      s = s->next;
+    }
+    derr << std::endl;
+  }
+
+  template <class View>
+  forceinline void
+  Incremental<View>::add_support(Space* home, tuple l) {
+    for (int i = x.size(); i--; ) {
+      int oval = l[i] - table.tablei->min;
+
+      SupportEntry* s = static_cast<SupportEntry*>
+        (home->fl_alloc<sizeof(SupportEntry)>());
+      s->t = l;
+      s->next = support_data[(i*(table.tablei->domsize)) + oval];
+      support_data[(i*(table.tablei->domsize)) + oval] = s;
+    }
+  }
+
+  template <class View>
+  forceinline void
+  Incremental<View>::remove_support(Space* home, tuple l, int var, int val
+#if defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
+                                    , Domain dom
+#endif
+                                    ) {
+    for (int i = x.size(); i--; ) {
+      int v = l[i];
+      int ov = v - table.tablei->min;
+
+      assert(support_data[(i*(table.tablei->domsize)) + ov] != NULL);
+      
+      SupportEntry** a = &(support_data[(i*(table.tablei->domsize)) + ov]);
+      while ((*a)->t != l) {
+        a = &((*a)->next);
+      }
+      SupportEntry* old = *a;
+      *a = (*a)->next;
+      
+      FreeList* fl = reinterpret_cast<FreeList*>(old);
+      fl->next(NULL);
+      home->fl_dispose<sizeof(SupportEntry)>(fl, fl);
+      if (i != var && support_data[(i*(table.tablei->domsize)) + ov] == NULL) {
+#if defined(SYSTEM_ADVISOR_IMPROVE_CHEAP)
+        work.push(Work(WT_FIND_SUPPORT, i, v));
+#elif defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
+        find_support(home, dom, i, v);
+#endif
+      }
+    }
+  }
+
+  template <class View>
+  forceinline void
+  Incremental<View>::find_support(Space* home, Domain dom, int var, int val) {
+    if (support(var, val) == NULL) {
+      int oval = val - table.tablei->min;
+      // Find support for value vv.val() in variable var
+      tuple l = Base<View,false>::find_support(dom, var, oval);
+      if (l == NULL) {
+        // No possible supports left
+        work.push(Work(WT_REMOVE_VALUE, var, val));
+      } else {
+        // Mark values in support as supported
+        add_support(home, l);
+      }
+    }
+  }
+
+  template <class View>
+  forceinline void
+  Incremental<View>::init_support(Space* home) {
+    if (support_data == NULL) {
+      int literals = table.tablei->domsize*x.size();
+      support_data = static_cast<SupportEntry**>
+        (home->alloc(literals*sizeof(SupportEntry*)));
+      for (int i = literals; i--; ) {
+        support_data[i] = NULL;
+      }
+    }
   }
 
   template <class View>
   forceinline SupportEntry*
   Incremental<View>::support(int var, int val) {
-    return support_data[(var*(table.tablei->domsize)) + val];
+    int oval = val - table.tablei->min;
+    return support_data[(var*(table.tablei->domsize)) + oval];
   }
 
 
@@ -284,62 +247,100 @@ namespace Gecode { namespace Int { namespace Extensional {
   // Advisor proper
   //
   template <class View>
-  forceinline ExecStatus
-  Incremental<View>::SupportAdvisor::advise(Space *home, const Delta& d) {
-
-    ModEvent me = x.modevent(d);
-    int lo = x.min(d);
-    int hi = x.max(d);
+  ExecStatus
+  Incremental<View>::advise(Space *home, Advisor& a0, const Delta& d) {
+    SupportAdvisor& a = static_cast<SupportAdvisor&>(a0);
+    ModEvent me = a.x.modevent(d);
+    int lo = a.x.min(d);
+    int hi = a.x.max(d);
+    bool westart = work.empty();
     
-    Incremental<View>* ip = static_cast<Incremental<View>*>(Advisor::propagator());
-
-#ifndef GECODE_EXT_INCREMENTAL_SUPPORT
-    if (hi < lo) {
-      // Something has happend, so just schedule the propagator
-      if (me == ME_INT_VAL) 
-        return ES_SUBSUMED_FIX(*this,home);
-      return ES_NOFIX;
-    }
-    
-    // Slow and imprecise
-    for (int var = ip->x.size(); var--; ) {
-      for (int val = ip->table.tablei->domsize; val--; ) {
-        tuple l = ip->last(var, val);
-        if (l != NULL && l[pos] >= lo && l[pos] <= hi) {
-          if (me == ME_INT_VAL) 
-            return ES_SUBSUMED_FIX(*this,home);
-          return ES_NOFIX;
+#if defined(SYSTEM_ADVISOR_IMPROVE_CHEAP) || defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
+#if defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
+    GECODE_AUTOARRAY(Support::BitSet<unsigned long>, dom, x.size());
+    init_dom(home, dom);
+#endif
+    if (lo <= hi) {
+      for (int val = lo; val <= hi; ++val) {
+        while (SupportEntry* s = support(a.pos, val)) {
+#if defined(SYSTEM_ADVISOR_IMPROVE_CHEAP)
+          remove_support(home, s->t, a.pos, val);
+#else //defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
+          remove_support(home, s->t, a.pos, val, dom);
+#endif
+        }
+      }
+    } else {
+      ViewValues<View> vv(a.x);
+      for (int i = table.tablei->min; i <= table.tablei->max; ++i) {
+        if (vv() && i == vv.val()) {
+          ++vv;
+          continue;
+        }
+        while (SupportEntry* s = support(a.pos, i)) {
+#if defined(SYSTEM_ADVISOR_IMPROVE_CHEAP)
+          remove_support(home, s->t, a.pos, i);
+#else //defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
+          remove_support(home, s->t, a.pos, i, dom);
+#endif
         }
       }
     }
-#else
-    if (hi < lo) {
-      // Runover values removed
-      for (int val = lo; val <= hi; ++val) {
-        int sp = (pos*(ip->table.tablei->domsize)) + val;
-        while (ip->support_data[sp]) {
-          // This value supports something
-          tuple t = ip->support_data[sp]->t;
-          for (int var = ip->x.size(); var--; ) {
-            if (var == pos) continue;
-            // Remove support from tuple t from support(var, t[var])
-            
+#elif defined(SYSTEM_ADVISOR_BASE_AVOID)
+    assert(0);
+    // Slow and imprecise
+    if (a.x.any(d)) {
+      for (unsigned int var = x.size(); var--; ) {
+        if (var == a.pos) continue;
+        for (int val = table.tablei->domsize; val--; ) {
+          tuple l = last(var, val);
+          if (l != NULL && 
+              ((me != ME_INT_VAL && l[a.pos] >= lo && l[a.pos] <= hi) ||
+               (me == ME_INT_VAL && l[a.pos] != a.x.val()))) {
+            if (me == ME_INT_VAL) {
+              --unassigned;
+              return ES_SUBSUMED_NOFIX(a,home);
+            }
+            return ES_NOFIX;
           }
         }
       }
     } else {
-      // Run over all values not in domain...
+      if (me == ME_INT_VAL) {
+        --unassigned;
+        return ES_SUBSUMED_NOFIX(a,home);
+      }
+      return ES_NOFIX;
     }
 #endif
+    
+    if (me == ME_INT_VAL) {
+      --unassigned;
+      if ((work.empty() || !westart) && unassigned!=0) {
+        // nothing to do or already scheduled
+        return ES_SUBSUMED_FIX(a,home);
+      }
+      return ES_SUBSUMED_NOFIX(a,home);
+    }
+    if (work.empty() || !westart) {
+      // nothing to do or already scheduled
+      return ES_FIX;
+    }
+    return ES_NOFIX;
+  }
+  
 
-    if (me == ME_INT_VAL) 
-      return ES_SUBSUMED_FIX(*this,home);
-    return ES_FIX;
+  template <class View>
+  size_t
+  Incremental<View>::dispose(Space* home) {
+    (void) Base<View,false>::dispose(home);
+    /// @todo take care of support    
+    (void) ac.dispose(home);
+    (void) work.~DynamicStack<Work>();
+    return sizeof(*this);
   }
 
 }}}
-
-#endif
 
 // STATISTICS: int-prop
 

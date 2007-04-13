@@ -1301,8 +1301,8 @@ namespace Gecode {
    */
   enum ExtensionalAlgorithm {
     EA_BASIC,       ///< Basic algorithm
-    EA_INCREMENTAL, ///< Based on GAC-Schema
-    EA_REGULAR      ///< Rewrite constraint to regular
+    EA_INCREMENTAL ///< Based on GAC-Schema
+    //,EA_REGULAR      ///< Rewrite constraint to regular
   };
 
 
@@ -1338,6 +1338,9 @@ namespace Gecode {
 
     /// Add tuple to table
     void add(const IntArgs& tuple);
+    //DFA dfa(void);
+
+    void finalize(void);
   };
 
   /** \brief Post propagator for \f$x\in T\f$.
@@ -1354,7 +1357,7 @@ namespace Gecode {
    * for the incremental algorithm.
    */
   GECODE_INT_EXPORT void
-  extensional(Space* home, const IntVarArray& x, const Table& t, 
+  extensional(Space* home, const IntVarArgs& x, const Table& t, 
               ExtensionalAlgorithm ea=EA_BASIC,
               IntConLevel=ICL_DEF);
   
@@ -1375,10 +1378,15 @@ namespace Gecode {
    * for the incremental algorithm.
    */
   GECODE_INT_EXPORT void
-  extensional(Space* home, const IntArgs& c, const IntVarArray& x, const Table& t, 
+  extensional(Space* home, const IntArgs& c, const IntVarArgs& x, const Table& t, 
               ExtensionalAlgorithm ea=EA_BASIC,
               IntConLevel=ICL_DEF);
   //@}
+}
+
+#include "gecode/int/extensional/table.icc"
+
+namespace Gecode {
 
 
   /**

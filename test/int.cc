@@ -26,6 +26,9 @@
 #include "test/log.hh"
 #include <algorithm>
 
+const bool int_test_debug = false;
+#define derr if (int_test_debug) std::cerr
+
 Assignment::Assignment(int n0, const IntSet& d0)
   : n(n0), dsv(new IntSetValues[n]), d(d0) {
   reset();
@@ -130,6 +133,13 @@ public:
   }
   void assign(const Assignment& a) {
     for (int i=a.size(); i--; ) {
+      Log::assign(Log::mk_name("x", i), a[i]);
+      rel(this, x[i], IRT_EQ, a[i]);
+      FORCE_FIX;
+    }
+  }
+  void assign(const Assignment& a, int skip_lo, int skip_hi) {
+    for (int i=a.size()-skip_hi; i-->skip_lo; ) {
       Log::assign(Log::mk_name("x", i), a[i]);
       rel(this, x[i], IRT_EQ, a[i]);
       FORCE_FIX;
@@ -304,7 +314,12 @@ IntTest::run(const Options& opt) {
     bool is_sol = solution(a);
    {
       test = "Assignment (after posting)";
-      IntTestSpace* s = new IntTestSpace(arity,dom,opt);
+      
+      derr << "************************************" << std::endl;
+      derr << "      "  << test << std::endl;
+      derr << "************************************" << std::endl;
+      IntTestSpace
+        * s = new IntTestSpace(arity,dom,opt);
       post(s,s->x);
       log_posting();
       s->assign(a);
@@ -319,7 +334,12 @@ IntTest::run(const Options& opt) {
     {
       test = "Assignment (before posting)";
       Log::reset();
-      IntTestSpace* s = new IntTestSpace(arity,dom,opt);
+      
+      derr << "************************************" << std::endl;
+      derr << "      "  << test << std::endl;
+      derr << "************************************" << std::endl;
+      IntTestSpace
+        * s = new IntTestSpace(arity,dom,opt);
       s->assign(a); 
       post(s,s->x);
       log_posting();
@@ -331,10 +351,46 @@ IntTest::run(const Options& opt) {
       }
       delete s;
     }
+    {
+      test = "Partial assignment (before posting)";
+      Log::reset();
+      
+      derr << "************************************" << std::endl;
+      derr << "      "  << test << std::endl;
+      derr << "************************************" << std::endl;
+      IntTestSpace
+        *s = new IntTestSpace(arity,dom,opt);
+      int lo = 0, hi = 0;
+      while (lo + hi == 0) {
+        lo = Test::randgen(2);
+        hi = Test::randgen(2);
+      }
+      s->assign(a,lo,hi); 
+      post(s,s->x);
+      log_posting();
+      while (!s->failed() && !s->assigned())
+        if (!s->prune(a,*this,false)) {
+          problem = "No fixpoint";
+          delete s;
+          goto failed;
+        }
+      if (is_sol) {
+        CHECK(!s->is_failed(), "Failed on solution");
+        CHECK(s->propagators()==0, "No subsumtion");
+      } else {
+        CHECK(s->is_failed(), "Solved on non-solution");
+      }
+      delete s;
+    }
     if (reified) {
       test = "Assignment reified (rewrite after post)";
       Log::reset();
-      IntTestSpace* s = new IntTestSpace(arity,dom,opt);
+      
+      derr << "************************************" << std::endl;
+      derr << "      "  << test << std::endl;
+      derr << "************************************" << std::endl;
+      IntTestSpace
+        * s = new IntTestSpace(arity,dom,opt);
       BoolVar b(s,0,1);
       Log::initial(b, "b");
       post(s,s->x,b);
@@ -352,7 +408,12 @@ IntTest::run(const Options& opt) {
     if (reified) {
       test = "Assignment reified (immediate rewrite)";
       Log::reset();
-      IntTestSpace* s = new IntTestSpace(arity,dom,opt);
+      
+      derr << "************************************" << std::endl;
+      derr << "      "  << test << std::endl;
+      derr << "************************************" << std::endl;
+      IntTestSpace
+        * s = new IntTestSpace(arity,dom,opt);
       BoolVar b(s,0,1);
       Log::initial(b, "b");
       if (is_sol) {
@@ -370,7 +431,12 @@ IntTest::run(const Options& opt) {
     if (reified) {
       test = "Assignment reified (before posting)";
       Log::reset();
-      IntTestSpace* s = new IntTestSpace(arity,dom,opt);
+      
+      derr << "************************************" << std::endl;
+      derr << "      "  << test << std::endl;
+      derr << "************************************" << std::endl;
+      IntTestSpace
+        * s = new IntTestSpace(arity,dom,opt);
       BoolVar b(s,0,1);
       Log::initial(b, "b");
       s->assign(a); 
@@ -389,7 +455,12 @@ IntTest::run(const Options& opt) {
     if (reified) {
       test = "Assignment reified (after posting)";
       Log::reset();
-      IntTestSpace* s = new IntTestSpace(arity,dom,opt);
+      
+      derr << "************************************" << std::endl;
+      derr << "      "  << test << std::endl;
+      derr << "************************************" << std::endl;
+      IntTestSpace
+        * s = new IntTestSpace(arity,dom,opt);
       BoolVar b(s,0,1);
       Log::initial(b, "b");
       post(s,s->x,b);
@@ -408,7 +479,12 @@ IntTest::run(const Options& opt) {
     {
       test = "Prune";
       Log::reset();
-      IntTestSpace* s = new IntTestSpace(arity,dom,opt);
+      
+      derr << "************************************" << std::endl;
+      derr << "      "  << test << std::endl;
+      derr << "************************************" << std::endl;
+      IntTestSpace
+        * s = new IntTestSpace(arity,dom,opt);
       post(s,s->x);
       log_posting();
       while (!s->failed() && !s->assigned())
@@ -429,7 +505,12 @@ IntTest::run(const Options& opt) {
     if (reified) {
       test = "Prune reified";
       Log::reset();
-      IntTestSpace* s = new IntTestSpace(arity,dom,opt);
+      
+      derr << "************************************" << std::endl;
+      derr << "      "  << test << std::endl;
+      derr << "************************************" << std::endl;
+      IntTestSpace
+        * s = new IntTestSpace(arity,dom,opt);
       BoolVar b(s,0,1);
       Log::initial(b, "b");
       post(s,s->x,b);
@@ -454,7 +535,12 @@ IntTest::run(const Options& opt) {
       Log::reset();
       test = "Search";
       if (is_sol) {
-        IntTestSpace* s = e_s.next();
+        
+        derr << "************************************" << std::endl;
+        derr << "      "  << test << std::endl;
+        derr << "************************************" << std::endl;
+        IntTestSpace
+          * s = e_s.next();
         CHECK(s != NULL,    "Solutions exhausted");
         CHECK(s->propagators()==0, "No subsumtion");
         for (int i=a.size(); i--; ) {
@@ -477,7 +563,12 @@ IntTest::run(const Options& opt) {
     has_assignment = false;
     test = "Full domain consistency";
     Log::reset();
-    IntTestSpace* s = new IntTestSpace(arity,dom,opt);
+    
+    derr << "************************************" << std::endl;
+    derr << "      "  << test << std::endl;
+    derr << "************************************" << std::endl;
+    IntTestSpace
+      * s = new IntTestSpace(arity,dom,opt);
     post(s,s->x);
     log_posting();
     while (!s->is_failed() && !s->assigned()) {

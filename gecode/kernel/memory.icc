@@ -44,9 +44,9 @@ namespace Gecode {
     /// Allocate block of \a n objects of type \a T from heap
     template <class T>
     T* bmalloc(size_t n);
-    /// Reallocate block of \a n object starting at \a b to \a m objects of type \a T from heap
+    /// Reallocate block of \a n objects starting at \a b to \a m objects of type \a T from heap
     template <class T>
-    T* brealloc(T* b, size_t n);
+    T* brealloc(T* b, size_t n, size_t m);
     /// Copy \a n objects starting at \a s to \a d
     template <class T>
     T* bcopy(T* d, const T* s, size_t n);

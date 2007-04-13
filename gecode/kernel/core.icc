@@ -739,10 +739,10 @@ namespace Gecode {
     void add(Space* home, Advisor* a);
     /// Test whether advisor \a a is active
     bool active(Advisor* a) const;
+  public:
     /// Compact representation
     GECODE_KERNEL_EXPORT
     int compact(Space* home) const;
-  public:
     /** \brief Construct advisor council
      *
      * \param reserve When given a number larger than 0, this allows
@@ -1385,8 +1385,10 @@ namespace Gecode {
     return home->alloc(s);
   }
 
+#ifndef __GNUC__
   forceinline void
   Advisor::operator delete(void*, size_t) {}
+#endif
   forceinline void
   Advisor::operator delete(void*,Space*) {}
   forceinline void*
@@ -1553,8 +1555,9 @@ namespace Gecode {
   Space::status(unsigned long int& pn) {
     // Perform propagation and do not continue when failed
     pn += propagate();
-    if (failed())
+    if (failed()) {
       return SS_FAILED;
+    }
     /*
      * Find the next branching that has still alternatives left
      *
@@ -1630,6 +1633,7 @@ namespace Gecode {
   }
   forceinline void
   Advisor::dispose(Space*) {
+    assert(!disposed());
     ActorLink::next(NULL); 
   }
 
@@ -1657,9 +1661,11 @@ namespace Gecode {
 
   inline
   CouncilBase::CouncilBase(Space* home, bool share, CouncilBase& c)
-    : siz(c.compact(home)), 
-      advisors(static_cast<Advisor**>(home->alloc(sizeof(Advisor*)*siz)))
-  {}
+  {
+    int s = c.compact(home);
+    siz = s > 1 ? s : 1;
+    advisors = static_cast<Advisor**>(home->alloc(sizeof(Advisor*)*siz));
+  }
   
   forceinline bool
   CouncilBase::active(Advisor* a) const {
@@ -1676,10 +1682,14 @@ namespace Gecode {
   forceinline
   Council<A>::Council(Space* home, bool share, Council<A>& c)
     : CouncilBase(home,share,c) {
-    for (int ci = c.siz, i = siz; ci-- && i--; ) {
-      assert(active(c.advisors[ci]));
-      advisors[i] = new (home) A(home,share,
-                                 *static_cast<A*>(c.advisors[ci]));
+    if (c.active(c.advisors[c.siz-1])) {
+      for (int ci = c.siz, i = siz; ci-- && i--; ) {
+        assert(c.active(c.advisors[ci]));
+        advisors[i] = new (home) A(home,share,
+                                   *static_cast<A*>(c.advisors[ci]));
+      }
+    } else {
+      advisors[0] = reinterpret_cast<Advisor*>(0);
     }
   }
   
@@ -2156,7 +2166,7 @@ namespace Gecode {
       switch (p->advise(home, *a, d)) {
       case ES_FIX:
         break;
-      case ES_FAILED:     
+      case ES_FAILED:
         return false;
       case ES_NOFIX:
         schedule(home,p,me);

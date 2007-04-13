@@ -233,7 +233,6 @@ Options::parse(int argc, char** argv) {
     }
     i++;
   }
-  //  testpat.push_back(make_pair(false,"Advis"));
   return;
  missing:
   e = "missing parameter";

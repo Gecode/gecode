@@ -4,7 +4,7 @@
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
  *  Copyright:
- *     Miakel Lagerkvist, 2007
+ *     Mikael Lagerkvist, 2007
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -22,11 +22,16 @@
 
 #include "gecode/int.hh"
 #include "gecode/support/sort.hh"
+#include "gecode/support/search.hh"
 
 #include "gecode/int/extensional/table.icc"
 
-namespace Gecode { namespace Int { namespace Extensional {
-#if 0
+namespace {
+  const bool table_debug = false;
+#define derr if (table_debug) std::cerr
+
+  typedef ::Gecode::Table::tuple tuple;
+
   /**
    * \brief Full tuple compare
    */
@@ -36,10 +41,22 @@ namespace Gecode { namespace Int { namespace Extensional {
     FullTupleCompare(int a) : arity(a) {}
     bool
     operator()(const tuple& a, const tuple& b) {
+      derr << "Comparing ";
+      for (int i = 0; i < arity; ++i) derr << a[i] << " ";
+      derr << " and ";
+      for (int i = 0; i < arity; ++i) derr << b[i] << " ";
+      
       for (int i = 0; i < arity; ++i) {
-        if (a[i] < b[i]) return true;
-        if (a[i] > b[i]) return false;
+        if (a[i] < b[i]) {
+          derr << "is true on " << i << std::endl;
+          return true;
+        }
+        if (a[i] > b[i]) {
+          derr << "is false on " << i << std::endl;
+          return false;
+        }
       }
+      derr << "is true for full" << std::endl;
       return true;
     }
   };
@@ -87,8 +104,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       return a[pos] < b;
     }
   };
-#endif
-}}}
+}
 
 
 std::ostream&
@@ -107,7 +123,7 @@ operator<<(std::ostream& os, const Gecode::Table& table) {
 }
 
 namespace Gecode {
-  const bool table_debug = true;
+
   void
   Table::TableI::finalize(void) {
     assert(!finalized());
@@ -118,21 +134,33 @@ namespace Gecode {
 
     // Allocate tuple indexing data-structures
     tuples = Memory::bmalloc<tuple*>(arity);
-    tuple* tuple_data = Memory::bmalloc<tuple>(size*arity);
+    tuple* tuple_data = Memory::bmalloc<tuple>(size*arity+arity);
+    for (int i = arity; i--; ) tuple_data[size*arity + i] = NULL;
 
     // Rearrange the tuples for faster comparisons.
     for (int i = arity; i--; )
       tuples[i] = tuple_data + (i * size);
     for (int i = size; i--; )
       tuples[0][i] = data + (i * arity);
-    //Support::quicksort<tuple, Int::Extensional::FullTupleCompare>
-    //  (tuples[0], size, Int::Extensional::FullTupleCompare(arity));
+
+    FullTupleCompare ftc(arity);
+    derr << "starting sort" << std::endl;
+    Support::quicksort(tuples[0], size, ftc);
     int* new_data = Memory::bmalloc<int>(size*arity);
+    derr << "Ending sort" << std::endl;
     for (int t = size; t--; ) {
       for (int i = arity; i--; ) {
-        new_data[t*arity + i] = data[tuples[0][t][arity] + i];
+        new_data[t*arity + i] = tuples[0][t][i];
       }
     }
+
+    for (int t = 0; t < size; t++ ) {
+      for (int i = 0; i < arity; i++ ) {
+        derr << new_data[t*arity + i] << " ";
+      }
+      derr << std::endl;
+    }
+
     Memory::free(data);
     data = new_data;
     excess = -1;
@@ -142,52 +170,71 @@ namespace Gecode {
       for (int t = size; t--; )
         tuples[i][t] = data + (t * arity);
     for (int i = arity; i-->1; ) {      
-      //Support::quicksort<tuple, Int::Extensional::TuplePosCompare>
-      //  (tuples[i], size, Int::Extensional::TuplePosCompare(i));
+      TuplePosCompare tpc(i);
+      Support::quicksort(tuples[i], size, tpc);
+    }
+    for (int s = 0; s < arity; ++s) {
+      derr << "Sorting on var " << s << std::endl;
+      for (int t = 0; t < size; ++t) {
+        for (int var = 0; var < arity; ++var) {
+          derr << tuples[s][t][var] << " ";
+        }
+        derr << std::endl;
+      }
+      derr << std::endl;
     }
 
     // Set up initial last-structure
-    last = Memory::bmalloc<tuple**>(domsize*arity);
+    last = Memory::bmalloc<tuple*>(domsize*arity);
     for (int i = arity; i--; ) {
+      TupleKeyCompare tkc(i);
       for (int d = domsize; d--; ) {
-        last[(i*domsize) + d] = 
-          NULL;//Support::binarysearch<tuple, int, Int::Extensional::TupleKeyCompare>
-        //(tuples[i], size, min+d, Int::Extensional::TupleKeyCompare(i));
+        last[(i*domsize) + d] = Support::binarysearch(tuples[i], size, min+d, tkc);
       }
     }
     
     // Debug output
     if (table_debug) {
-      std::cout << "Finalization finished: "  << std::endl;
+      derr << "Finalization finished: "  << std::endl;
       for (int i = 0; i < arity; ++i) {
-        std::cout << "Index " << i << ":  ";
+        derr << "Variable " << i << ":  ";
         for (int d = 0; d < domsize; ++d) {
-          std::cout << "[" << (min+d) << "]=" << last[i][d] << "  ";
+          derr << "[" << (min+d) << "]=" 
+                    << (last[(i*domsize) + d] 
+                        ? (*(last[(i*domsize) + d]))[i] 
+                        : -1) 
+                    << "  ";
         }
-        std::cout << std::endl;
+        derr << std::endl;
       }
+      assert(finalized());
     }
   }
 
   Table::TableI*
   Table::TableI::copy(void) {
     assert(finalized());
-    TableI* d  = new TableI();
-    d->use_cnt = 1;
-    d->arity   = arity;
-    d->size    = size;
-    d->tuples  = tuples;
-    d->data    = data;
-    d->excess  = -1;
-    d->_dfa    = _dfa;
+    TableI* d     = new TableI();
+    d->use_cnt    = 1;
+    d->arity      = arity;
+    d->size       = size;
+    d->tuples     = tuples;
+    d->data       = data;
+    d->excess     = -1;
+    //d->_dfa       = _dfa;
+    //d->dfa_exists = dfa_exists;
+    d->min        = min;
+    d->max        = max;
+    d->domsize    = domsize;
     return d;
   }
-
+  /*
   DFA
   Table::TableI::dfa(void) {
     assert(finalized());
-    if (_dfa.n_states())
+    if (dfa_exists)
       return _dfa;
+    dfa_exists = true;
 
     // Set up regular expression
     REG r;
@@ -197,13 +244,13 @@ namespace Gecode {
         tuple = tuple + REG(tuples[0][t][i]);
       r = r | tuple;
     }
-    if (table_debug)
-      std::cout << "Regular expression for table is " << r << std::endl;
+    derr << "Regular expression for table is " << r << std::endl;
     _dfa = DFA(r);
-    if (table_debug)
-      std::cout << "DFA for table is " << _dfa << std::endl;
+    derr << "DFA for table is " << _dfa << std::endl;
     return _dfa;
   }
+  */
+#undef derr
 }
 
 // STATISTICS: int-prop

@@ -28,8 +28,7 @@
 #include "gecode/int/rel.hh"
 
 #include "gecode/support/bitset.hh"
-
-#include "gecode/int/extensional/table.icc"
+#include "gecode/support/dynamic-stack.hh"
 
 /**
  * \namespace Gecode::Int::Extensional
@@ -38,6 +37,7 @@
 
 namespace Gecode { namespace Int { namespace Extensional {
   typedef Table::tuple tuple;
+  typedef Support::BitSet<unsigned long>* Domain;
 
   /**
    * \brief Naive value extensional propagator
@@ -78,6 +78,43 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 
   /**
+   * \brief Base for domain-consistent extensional proipagation.
+   *
+   * This class contains support for implementing domain consistent
+   * extensional propagation algorithms that use positive tables and
+   * the \a last data structure.
+   *
+   * Requires \code #include "gecode/int/extensional.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template <class View, bool subscribe = true>
+  class Base : public Propagator {
+  protected:
+    ViewArray<View> x;
+    Table table;
+    tuple** last_data;
+
+    /// Constructor for cloning \a p
+    Base(Space* home, bool share, Base<View,subscribe>& p);
+    /// Constructor for posting
+    Base(Space* home, ViewArray<View>& x, const Table& t);
+
+    void  init_last(Space* home, tuple** source);
+    tuple last(int var, int val);
+    tuple last_next(int var, int val);
+    void  init_dom(Space* home, Domain dom);
+    bool  valid(tuple t, Domain dom);
+    tuple find_support(Domain dom, int var, int val);
+
+  public:
+    virtual PropCost cost() const;
+
+    // Dispose propagator
+    virtual size_t dispose(Space* home);
+  };
+
+
+  /**
    * \brief Domain-consistent extensional propagator
    *
    * This propagator implements a basic extensional propagation
@@ -88,20 +125,21 @@ namespace Gecode { namespace Int { namespace Extensional {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Basic : public NaryPropagator<View,PC_INT_DOM> {
+  class Basic : public Base<View> {
   protected:
-    using NaryPropagator<View,PC_INT_DOM>::x;
-    Table table;
-    tuple*** last_data;
+    using Base<View>::x;
+    using Base<View>::table;
+    using Base<View>::last;
+    using Base<View>::last_next;
+    using Base<View>::init_last;
+    using Base<View>::init_dom;
+    using Base<View>::find_support;
 
     /// Constructor for cloning \a p
     Basic(Space* home, bool share, Basic<View>& p);
     /// Constructor for posting
     Basic(Space* home, ViewArray<View>& x, const Table& t);
 
-    tuple last(int var, int val);
-    tuple last_next(int var, int val);
-    bool  valid(tuple t, Support::BitSet<unsigned long>* dom);
   public:
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
@@ -120,7 +158,9 @@ namespace Gecode { namespace Int { namespace Extensional {
 }}}
 
 #include "gecode/int/extensional/val.icc"
+#include "gecode/int/extensional/base.icc"
 #include "gecode/int/extensional/basic.icc"
+
 
 #ifdef GECODE_USE_ADVISORS
 
@@ -128,6 +168,19 @@ namespace Gecode { namespace Int { namespace Extensional {
   struct SupportEntry {
     tuple t;
     SupportEntry* next;
+    SupportEntry(tuple t0=NULL, SupportEntry* n0=NULL)
+      : t(t0), next(n0) {}
+  };
+  enum WorkType {
+    WT_FIND_SUPPORT,
+    WT_REMOVE_VALUE
+  };
+  struct Work {
+    WorkType work;
+    int var;
+    int val;
+    Work(WorkType w0, int var0, int val0)
+      : work(w0), var(var0), val(val0) {}
   };
 
   /**
@@ -140,21 +193,34 @@ namespace Gecode { namespace Int { namespace Extensional {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Incremental : public NaryPropagator<View,PC_INT_VAL> {
+  class Incremental : public Base<View, false> {
   protected:
-    using NaryPropagator<View,PC_INT_VAL>::x;
-    Table table;
-    tuple*** last_data;
+    using Base<View, false>::x;
+    using Base<View, false>::table;
+    using Base<View, false>::last;
+    using Base<View, false>::last_next;
+    using Base<View, false>::init_last;
+    using Base<View, false>::init_dom;
+    typedef Support::DynamicStack<Work> WorkStack;
+
     SupportEntry** support_data;
+    WorkStack work;
+    int unassigned;
 
     /// Constructor for cloning \a p
     Incremental(Space* home, bool share, Incremental<View>& p);
     /// Constructor for posting
     Incremental(Space* home, ViewArray<View>& x, const Table& t);
 
-    tuple last(int var, int val);
-    tuple last_next(int var, int val);
-    bool  valid(tuple t, Support::BitSet<unsigned long>* dom);
+    void  print_support(int var, int val, int tabs = 0);
+    void   find_support(Space* home, Domain dom, int var, int val);
+    void   init_support(Space* home);
+    void    add_support(Space* home, tuple l);
+    void remove_support(Space* home, tuple l, int var, int val
+#if defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
+                        , Domain dom
+#endif
+                        );
     SupportEntry* support(int var, int val);
   public:
     /// Perform propagation
@@ -179,26 +245,21 @@ namespace Gecode { namespace Int { namespace Extensional {
     //
   private:
     class SupportAdvisor : public ViewAdvisor<View> {
+    public:
       using ViewAdvisor<View>::x;
       unsigned int pos;
-    public:
       SupportAdvisor(Space* home, Propagator* p, CouncilBase& c,
                      View v, unsigned int position) 
-        : ViewAdvisor<View>(home,p,c,v), pos(position) {
-        if (x.assigned())
-          ViewAdvisor<View>::schedule(home, Int::ME_INT_VAL);
-      }
+        : ViewAdvisor<View>(home,p,c,v), pos(position) {}
       SupportAdvisor(Space* home, bool share, SupportAdvisor& a) 
-        : ViewAdvisor<View>(home, share, a), pos(a.pos) {}
-
-      virtual ExecStatus advise(Space* home, const Delta& d);
+        : ViewAdvisor<View>(home, share, a), pos(a.pos) {
+      }
     };
-    
+    Council<SupportAdvisor> ac;
   public:
-    typedef Council<SupportAdvisor> DC;
-  private:
-    DC dc;
+    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
   };
+  
 }}}
 
 #include "gecode/int/extensional/incremental.icc"
