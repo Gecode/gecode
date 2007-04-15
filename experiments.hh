@@ -67,10 +67,14 @@
 // Try to improve execution, cheap approach
 #ifdef SYSTEM_ADVISOR_IMPROVE_CHEAP
 #define GECODE_USE_ADVISORS
+// Boolean linear to integer
+#define BOOL_LINEAR_INT_ADVISOR
 #endif
 
 // Try to improve execution, expensive approach
 #ifdef SYSTEM_ADVISOR_IMPROVE_EXPENSIVE
 #define GECODE_USE_ADVISORS
+// Boolean linear to integer
+#define BOOL_LINEAR_INT_ADVISOR
 #endif
 
