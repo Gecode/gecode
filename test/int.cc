@@ -374,6 +374,10 @@ IntTest::run(const Options& opt) {
           delete s;
           goto failed;
         }
+
+      // Check whether it agrees with assignment
+      s->assign(a);
+      
       if (is_sol) {
         CHECK(!s->is_failed(), "Failed on solution");
         CHECK(s->propagators()==0, "No subsumtion");
