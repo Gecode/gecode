@@ -177,10 +177,9 @@ namespace Gecode { namespace Int { namespace Regular {
 
     // First pass: add transitions
     for (int i=0; i<n; i++) {
-      Layer& l = layers[i];
       layers[i].support = 
         reinterpret_cast<Support*>(home->alloc(x[i].size()*sizeof(Support)));
-      int j=0;
+      unsigned int j=0;
       // Enter links leaving reachable states (indegree != 0)
       DFA::Transitions t(dfa);
       ViewValues<View> nx(x[i]);
@@ -220,13 +219,15 @@ namespace Gecode { namespace Int { namespace Regular {
       if (j == 0)
         return ES_FAILED;
       layers[i].size = j;
+      while (nx()) {
+        layers[i].lost = nx.val(); ++nx;
+      }
     }
 
     // Second pass: prune all transitions that do not lead to final state
     for (int i=n; i--; ) {
-      Layer& l = layers[i];
-      int k=0;
-      for (int j=0; j<layers[i].size; j++) {
+      unsigned int k=0;
+      for (unsigned int j=0; j<layers[i].size; j++) {
         Edge** p = &layers[i].support[j].edges;
         for (Edge* e = *p; e != NULL; e = e->next)
           if (e->o_state->o_deg != 0) {
@@ -259,8 +260,8 @@ namespace Gecode { namespace Int { namespace Regular {
     for (int i=0; i<x.size(); i++) {
       if ((layers[i].size != x[i].size()) && (layers[i].modified & MOD_IDEG)) {
         // Both the view as well some in states have changed
-        int j=0;
-        int k=0;
+        unsigned int j=0;
+        unsigned int k=0;
         ViewValues<View> vx(x[i]);
         while (vx() && (j<layers[i].size)) {
           if (layers[i].support[j].val < vx.val()) {
@@ -393,10 +394,9 @@ namespace Gecode { namespace Int { namespace Regular {
 
     // Backward pass
     for (int i=x.size(); i--; ) {
-      Layer& l = layers[i];
       if (layers[i].modified & MOD_ODEG) {
-        int k=0;
-        for (int j=0; j<layers[i].size; j++) {
+        unsigned int k=0;
+        for (unsigned int j=0; j<layers[i].size; j++) {
           Edge** p = &layers[i].support[j].edges;
           for (Edge* e = *p; e != NULL; e = e->next)
             if (e->o_state->o_deg != 0) {
@@ -543,6 +543,10 @@ namespace Gecode { namespace Int { namespace Regular {
       GECODE_ME_CHECK(x[i].inter(home,r));
     }
     */
+    for (int i=x.size(); i--; ) {
+      GECODE_ME_CHECK(x[i].gq(home,d.symbol_min()));
+      GECODE_ME_CHECK(x[i].lq(home,d.symbol_max()));
+    }
     if (x.shared()) {
       (void) new (home) Dom<View,true>(home,x,d);
     } else {
