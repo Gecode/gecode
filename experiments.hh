@@ -60,6 +60,8 @@
 // Try to avoid execution
 #ifdef SYSTEM_ADVISOR_AVOID
 #define GECODE_USE_ADVISORS
+// Boolean linear to integer
+#define BOOL_LINEAR_INT_ADVISOR
 #endif
 
 // Try to improve execution, cheap approach

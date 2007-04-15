@@ -176,6 +176,140 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
 
+#ifdef BOOL_LINEAR_INT_ADVISOR
+
+  /*
+   * Equal propagator (integer rhs)
+   *
+   */
+  template <class VX>
+  PropCost
+  EqBoolInt<VX>::cost(void) const {
+    return PC_UNARY_HI;
+  }
+
+  template <class VX>
+  forceinline size_t
+  EqBoolInt<VX>::dispose(Space* home) {
+    assert(!home->failed());
+    co.dispose(home);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class VX>
+  forceinline
+  EqBoolInt<VX>::EqBoolInt(Space* home, ViewArray<VX>& x0,
+                           int n_s0, int c0)
+    : Propagator(home), x(x0), c(c0), n_s(n_s0), n_0(0), n_1(0), co(home,n_s) {
+    for (int i=n_s; i--; )
+      (void) new (home) A(home,this,co,i);
+  }
+
+  template <class VX>
+  ExecStatus
+  EqBoolInt<VX>::post(Space* home, ViewArray<VX>& x, int c) {
+    // Eliminate assigned views
+    int n_x = x.size();
+    for (int i=n_x; i--; )
+      if (x[i].zero()) {
+        x[i] = x[--n_x];
+      } else if (x[i].one()) {
+        x[i] = x[--n_x]; c--;
+      }
+    // RHS too small or too large
+    if ((c < 0) || (c > n_x))
+      return ES_FAILED;
+    // All views must be zero to satisfy equality
+    if (c == 0) {
+      for (int i=n_x; i--; )
+        GECODE_ME_CHECK(x[i].zero_none(home));
+      return ES_OK;
+    }
+    // All views must be one to satisfy equality
+    if (c == n_x) {
+      for (int i=n_x; i--; )
+        GECODE_ME_CHECK(x[i].one_none(home));
+      return ES_OK;
+    }
+    x.size(n_x);
+    // Compute how many subscriptions must be created
+    int n_s = std::max(c,n_x-c)+1;
+    assert(n_s <= n_x);
+    (void) new (home) EqBoolInt<VX>(home,x,n_s,c);
+    return ES_OK;
+  }
+
+  template <class VX>
+  forceinline
+  EqBoolInt<VX>::EqBoolInt(Space* home, bool share, EqBoolInt<VX>& p)
+    : Propagator(home,share,p), c(p.c), n_s(p.n_s), n_0(p.n_0), n_1(p.n_1),
+      co(home,share,p.co) {
+    x.update(home,share,p.x);
+  }
+
+  template <class VX>
+  Actor*
+  EqBoolInt<VX>::copy(Space* home, bool share) {
+    return new (home) EqBoolInt<VX>(home,share,*this);
+  }
+
+  template <class VX>
+  ExecStatus
+  EqBoolInt<VX>::advise(Space* home, Advisor& _a, const Delta&) {
+    A& a = static_cast<A&>(_a);
+    if (n_s == 0)
+      return ES_SUBSUMED_FIX(a,home);
+    int n=x.size();
+    while (n-- > n_s) {
+      if (x[n].none()) {
+        c -= x[a.i].val();
+        x[a.i]=x[n];
+        x[n].subscribe(home,&a);
+        x.size(n);
+        assert((n_0 == 0) && (n_1 == 0));
+        assert((c > 0) && (c < x.size()));
+        return ES_FIX;
+      } else if (x[n].one()) {
+        c--;
+      }
+    }
+    assert(n == n_s);
+    // No more variables for subscriptions
+    x.size(n_s);
+    if (x[a.i].one())
+      n_1++;
+    else
+      n_0++;
+    if ((c-n_1 < 0) || (c > x.size()-n_0))
+      return ES_FAILED;
+    if ((c-n_1 == 0) || (c == x.size()-n_0))
+      return ES_SUBSUMED_NOFIX(a,home);
+    return ES_SUBSUMED_FIX(a,home);
+  }
+
+  template <class VX>
+  ExecStatus
+  EqBoolInt<VX>::propagate(Space* home) {
+    assert(n == n_s);
+    n_s = 0; // As signal to remaining advisors
+    int n = x.size();
+    assert((c-n_1 >= 0) && (c <= n-n_0));
+    if (c-n_1 == 0) {
+      for (int i=n; i--; )
+        if (x[i].none())
+          GECODE_ME_CHECK(x[i].zero_none(home));
+    } else {
+      assert(c == n-n_0);
+      for (int i=n; i--; )
+        if (x[i].none())
+          GECODE_ME_CHECK(x[i].one_none(home));
+    }
+    return ES_SUBSUMED(this,home);
+  }
+
+#else
+
   /*
    * Equal propagator (integer rhs)
    *
@@ -282,6 +416,7 @@ namespace Gecode { namespace Int { namespace Linear {
     return ES_FIX;
   }
 
+#endif
 
   /*
    * Integer disequal to Boolean sum
