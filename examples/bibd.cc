@@ -64,14 +64,24 @@ public:
       BoolVarArgs row(par.b);
       for (int j=par.b; j--; )
         row[j] = p(i,j);
-      linear(this, row, IRT_EQ, par.r);
+      if (opt.naive) {
+        linear(this, row, IRT_LQ, par.r);
+        linear(this, row, IRT_GQ, par.r);
+      } else {
+        linear(this, row, IRT_EQ, par.r);
+      }
     }
     // k ones per column
     for (int j=par.b; j--; ) {
       BoolVarArgs col(par.v);
       for (int i=par.v; i--; )
         col[i] = p(i,j);
-      linear(this, col, IRT_EQ, par.k);
+      if (opt.naive) {
+        linear(this, col, IRT_LQ, par.k);
+        linear(this, col, IRT_GQ, par.k);
+      } else {
+        linear(this, col, IRT_EQ, par.k);
+      }
     }
     // Exactly lambda ones in scalar product between two different rows
     for (int i1=0; i1<par.v; i1++)
@@ -82,7 +92,12 @@ public:
           rel(this,p(i1,j),BOT_AND,p(i2,j),b);
           row[j] = b;
         }
-        linear(this, row, IRT_EQ, par.lambda);
+        if (opt.naive) {
+          linear(this, row, IRT_LQ, par.lambda);
+          linear(this, row, IRT_GQ, par.lambda);
+        } else {
+          linear(this, row, IRT_EQ, par.lambda);
+        }
       }
 
     for (int i=1;i<par.v;i++) {
@@ -104,8 +119,7 @@ public:
       rel(this, col1, IRT_GQ, col2);
     }
 
-    branch(this, _p, BVAR_NONE,
-           (opt.naive ? BVAL_MIN : BVAL_MAX));
+    branch(this, _p, BVAR_NONE, BVAL_MIN);
   }
 
   /// Print solution
@@ -148,7 +162,7 @@ main(int argc, char** argv) {
   Options opt("BIBD");
   opt.solutions = 1;
   opt.size      = 9;
-  opt.naive     = true;
+  opt.naive     = false;
   opt.parse(argc,argv);
   switch (opt.size) {
   case 0: { BIBD::Par p(7,3,1);  BIBD::par = p; break; }
@@ -161,8 +175,10 @@ main(int argc, char** argv) {
   case 7: { BIBD::Par p(7,3,50); BIBD::par = p; break; }
   case 8: { BIBD::Par p(7,3,55); BIBD::par = p; break; }
   case 9: { BIBD::Par p(7,3,60); BIBD::par = p; break; }
+  case 10: { BIBD::Par p(7,3,100); BIBD::par = p; break; }
+  case 11: { BIBD::Par p(7,3,200); BIBD::par = p; break; }
   default:
-    std::cerr << "Error: size must be between 0 and 9" << std::endl;
+    std::cerr << "Error: size must be between 0 and 11" << std::endl;
     return 1;
   }
 
