@@ -384,7 +384,7 @@ INTEXAMPLESRC0 = \
 	langfordnum langfordnum-regular warehouses \
 	stress-domain stress-exec stress-search baseline \
 	stress-element stress-min stress-distinct \
-	stress-regular stress-circuit
+	stress-regular stress-circuit stress-linear-bool
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cc)
 INTEXAMPLEOBJ  = $(INTEXAMPLESRC:%.cc=%$(OBJSUFFIX))
 INTEXAMPLESBJ  = $(INTEXAMPLESRC:%.cc=%$(SBJSUFFIX))
