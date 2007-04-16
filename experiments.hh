@@ -18,6 +18,8 @@
 #define NQ_NO_EVENTS
 #define BINLIN_NQ_NO_EVENTS
 #define DISTINCT_NAIVE_NO_EVENTS
+// Switches off dynamic events
+#define BOOL_LINEAR_INT_NO_EVENTS
 #endif
 
 // System with advisor on, but nothing else changed: OK
