@@ -361,8 +361,9 @@ namespace Gecode {
   Space*
   Space::clone(bool share, unsigned long int& pn) {
     pn += propagate();
-    if (failed())
+    if (failed()) {
       throw SpaceFailed("Space::clone");
+    }
 
     /*
      * Stage one

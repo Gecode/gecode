@@ -26,6 +26,8 @@
 #include <algorithm>
 
 namespace Gecode { namespace Support {
+  const bool search_debug = true;
+#define derr if (search_debug) std::cerr
   /**
    * \brief Binary search.
    *
@@ -45,27 +47,34 @@ namespace Gecode { namespace Support {
     int low = 0;
     int high = n - 1;
 
-    std::cerr << "Searching for " << key << std::endl;
+    derr << "Searching for " << key << std::endl;
 
     while (low < high) {
       int mid = low + ((high - low) / 2);
-      for (int i = 0; i < n; ++i) {
-        std::cerr << (i==low ? "," : " ");
-        std::cerr << lt(x[i], key);
-        std::cerr << (i==high ? "'" : " ");
+      if (search_debug) {
+        for (int i = 0; i < n; ++i) {
+          derr << (i==low ? "," : " ");
+          derr << lt(x[i], key);
+          derr << (i==high ? "'" : " ");
+        }
+        derr << std::endl << " ";
+        for (int i = 0; i < mid; ++i) derr << "   ";
+        derr << "M" << std::endl;
       }
-      std::cerr << std::endl << " ";
-      for (int i = 0; i < mid; ++i) std::cerr << "   ";
-      std::cerr << "M" << std::endl;
 
       if (lt(x[mid], key)) {
-        low = mid + 1;
-      } else if (lt(key, x[mid])) {
+        // x[mid] < key
+        derr << "x[mid] < key" << std::endl;
         high = mid - 1;
+      } else if (lt(key, x[mid])) {
+        // key < x[mid] 
+        derr << "key < x[mid]" << std::endl;
+        low = mid + 1;
       } else {
+        derr << "key <> x[mid]" << std::endl;
         if (mid == 0)
-          return x+mid;
-        if (lt(x[mid-1], x[mid]))
+          return x+mid; // first occurence of key found at pos 0
+        else if (lt(x[mid-1], x[mid]))
           return x+mid; // first occurence of key found
         high = mid;
       }
@@ -73,7 +82,7 @@ namespace Gecode { namespace Support {
     
 
     return NULL;  // key not found.
-#endif
+#else
     for (int i = 0; i < n; ++i) {
       if (lt(x[i], key)) continue;
       if (!lt(key, x[i])) {
@@ -82,8 +91,9 @@ namespace Gecode { namespace Support {
         return NULL;
     }
     return NULL;
+#endif
   }
-
+#undef derr
 }}
 
 #endif

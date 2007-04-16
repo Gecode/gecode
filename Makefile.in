@@ -379,7 +379,7 @@ INTEXAMPLESRC0 = \
 	money ortho-latin packing \
 	partition photo queens \
 	sudoku picture-puzzle placement-puzzle placement-puzzle-01 \
-	crowded-chess black-hole minesweeper domino \
+	crowded-chess crowded-chess-table black-hole minesweeper domino \
 	sports-league all-interval all-interval-sort all-interval-table \
 	langfordnum langfordnum-regular warehouses \
 	stress-domain stress-exec stress-search baseline \

@@ -41,22 +41,14 @@ namespace {
     FullTupleCompare(int a) : arity(a) {}
     bool
     operator()(const tuple& a, const tuple& b) {
-      derr << "Comparing ";
-      for (int i = 0; i < arity; ++i) derr << a[i] << " ";
-      derr << " and ";
-      for (int i = 0; i < arity; ++i) derr << b[i] << " ";
-      
       for (int i = 0; i < arity; ++i) {
         if (a[i] < b[i]) {
-          derr << "is true on " << i << std::endl;
           return true;
         }
         if (a[i] > b[i]) {
-          derr << "is false on " << i << std::endl;
           return false;
         }
       }
-      derr << "is true for full" << std::endl;
       return true;
     }
   };
@@ -129,13 +121,22 @@ namespace Gecode {
     assert(!finalized());
     assert(tuples == NULL);
 
+    // Add final largest tuple
+    IntArgs ia(arity);
+    for (int i = arity; i--; ) ia[i] = Limits::Int::int_max+1;
+    int smin = min, smax = max;
+    add(ia);
+    min = smin; max = smax;
+
     // Domainsize
     domsize = max - min + 1;
 
     // Allocate tuple indexing data-structures
     tuples = Memory::bmalloc<tuple*>(arity);
-    tuple* tuple_data = Memory::bmalloc<tuple>(size*arity+arity);
-    for (int i = arity; i--; ) tuple_data[size*arity + i] = NULL;
+    tuple* tuple_data = Memory::bmalloc<tuple>(size*arity+1);
+    tuple_data[size*arity] = NULL;
+    nullptr = tuple_data+(size*arity);
+    derr << "tuple_data allocated" << std::endl;
 
     // Rearrange the tuples for faster comparisons.
     for (int i = arity; i--; )
@@ -146,6 +147,7 @@ namespace Gecode {
     FullTupleCompare ftc(arity);
     derr << "starting sort" << std::endl;
     Support::quicksort(tuples[0], size, ftc);
+    assert(tuples[0][size-1][0] == ia[0]);
     int* new_data = Memory::bmalloc<int>(size*arity);
     derr << "Ending sort" << std::endl;
     for (int t = size; t--; ) {
@@ -154,61 +156,71 @@ namespace Gecode {
       }
     }
 
-    for (int t = 0; t < size; t++ ) {
-      for (int i = 0; i < arity; i++ ) {
-        derr << new_data[t*arity + i] << " ";
+    if (false)
+      for (int t = 0; t < size; t++ ) {
+        for (int i = 0; i < arity; i++ ) {
+          derr << new_data[t*arity + i] << " ";
+        }
+        derr << std::endl;
       }
-      derr << std::endl;
-    }
 
     Memory::free(data);
     data = new_data;
     excess = -1;
+    derr << "tuple_data set up" << std::endl;
 
     // Set up indexing structure
     for (int i = arity; i--; )
       for (int t = size; t--; )
         tuples[i][t] = data + (t * arity);
     for (int i = arity; i-->1; ) {      
+      derr << "Sorting on var " << i << std::endl;
       TuplePosCompare tpc(i);
       Support::quicksort(tuples[i], size, tpc);
     }
-    for (int s = 0; s < arity; ++s) {
-      derr << "Sorting on var " << s << std::endl;
-      for (int t = 0; t < size; ++t) {
-        for (int var = 0; var < arity; ++var) {
-          derr << tuples[s][t][var] << " ";
+    if (false)
+      for (int s = 0; s < arity; ++s) {
+        derr << "Sorting on var " << s << std::endl;
+        for (int t = 0; t < size; ++t) {
+          for (int var = 0; var < arity; ++var) {
+            derr << tuples[s][t][var] << " ";
+          }
+          derr << std::endl;
         }
         derr << std::endl;
       }
-      derr << std::endl;
-    }
 
     // Set up initial last-structure
+    derr << "set up initial last-structure" << std::endl;
     last = Memory::bmalloc<tuple*>(domsize*arity);
     for (int i = arity; i--; ) {
       TupleKeyCompare tkc(i);
       for (int d = domsize; d--; ) {
-        last[(i*domsize) + d] = Support::binarysearch(tuples[i], size, min+d, tkc);
+        tuple* l = Support::binarysearch(tuples[i], size, min+d, tkc);
+        if (l && *l && (*l)[i] == min+d)
+          last[(i*domsize) + d] = l;
+        else
+          last[(i*domsize) + d] = nullptr;
       }
     }
     
     // Debug output
-    if (table_debug) {
-      derr << "Finalization finished: "  << std::endl;
-      for (int i = 0; i < arity; ++i) {
-        derr << "Variable " << i << ":  ";
-        for (int d = 0; d < domsize; ++d) {
-          derr << "[" << (min+d) << "]=" 
-                    << (last[(i*domsize) + d] 
-                        ? (*(last[(i*domsize) + d]))[i] 
-                        : -1) 
-                    << "  ";
+    if (false)
+      if (table_debug) {
+        derr << "Finalization finished: "  << std::endl;
+        for (int i = 0; i < arity; ++i) {
+          derr << "Variable " << i << ":  ";
+          for (int d = 0; d < domsize; ++d) {
+            derr << "[" << (min+d) << "]=" 
+                 << (last[(i*domsize) + d] 
+                     ? (*(last[(i*domsize) + d]))[i] 
+                     : -1) 
+                 << "  ";
+          }
+          derr << std::endl;
         }
-        derr << std::endl;
+        assert(finalized());
       }
-      assert(finalized());
-    }
   }
 
   Table::TableI*
@@ -226,6 +238,8 @@ namespace Gecode {
     d->min        = min;
     d->max        = max;
     d->domsize    = domsize;
+    d->last       = last;
+    d->nullptr    = nullptr;
     return d;
   }
   /*

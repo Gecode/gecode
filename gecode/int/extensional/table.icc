@@ -52,6 +52,8 @@ namespace Gecode {
     int domsize;
     /// Initial last structure
     tuple** last;
+    /// Pointer to NULL-pointer
+    tuple* nullptr;
 
     // Default initialization
     void init(void) {
@@ -65,6 +67,7 @@ namespace Gecode {
       max = Limits::Int::int_min;
       domsize = -1;
       last = NULL;
+      nullptr = NULL;
       //_dfa = DFA();
       //dfa_exists = false;
     }

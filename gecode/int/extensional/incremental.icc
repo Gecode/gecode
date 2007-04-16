@@ -53,6 +53,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       }
     }
     if (!work.empty() || unassigned==0)
+      // Work to be done or subsumption
       View::schedule(home,this,ME_INT_BND);
   }
 
@@ -75,10 +76,12 @@ namespace Gecode { namespace Int { namespace Extensional {
       SupportEntry*  o = p.support_data[i];
       while (o) {
         // Allocate new support entry
+        //SupportEntry* s = static_cast<SupportEntry*>
+        //  (home->fl_alloc<sizeof(SupportEntry)>());
         SupportEntry* s = static_cast<SupportEntry*>
-          (home->fl_alloc<sizeof(SupportEntry)>());
+          (home->alloc(sizeof(SupportEntry)));
         s->t = o->t;
-        s->next  = NULL;
+        s->next = NULL;
         // Link in support entry
         (*n) = s;
         n = &(s->next);
@@ -115,26 +118,28 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Work loop
     while (!work.empty()) {
       Work w = work.pop();
-      switch (w.work) {
-      case WT_FIND_SUPPORT:
-        if (dom[w.var].get(w.val) == false) {
+      if (dom[w.var].get(w.val)) {
+        // Work is still relevant
+        switch (w.work) {
+        case WT_FIND_SUPPORT:
+          find_support(home, dom, w.var, w.val);
           break;
-        }
-        find_support(home, dom, w.var, w.val);
-        break;
-      case WT_REMOVE_VALUE:
-        assert(support(w.var, w.val) == NULL);
-        ModEvent me = x[w.var].nq(home,w.val);
-        if (me_failed(me)) {
-          return ES_FAILED;
-        }
-        dom[w.var].set(w.val, false);
-        break;
-      };
+        case WT_REMOVE_VALUE:
+          assert(support(w.var, w.val) == NULL);
+          ModEvent me = x[w.var].nq(home,w.val);
+          if (me_failed(me)) {
+            return ES_FAILED;
+          }
+          dom[w.var].set(w.val, false);
+          break;
+        };
+      }
     }
     if (unassigned != 0) {
       return ES_FIX;
     }
+    assert(support(0, x[0].val()) != NULL);
+    assert(valid(support(0, x[0].val())->t, dom));
     return ES_SUBSUMED(this, home);
   }
 
@@ -162,13 +167,15 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline void
   Incremental<View>::add_support(Space* home, tuple l) {
     for (int i = x.size(); i--; ) {
-      int oval = l[i] - table.tablei->min;
+      int pos = (i*table.tablei->domsize) + (l[i] - table.tablei->min);
 
+      //SupportEntry* s = static_cast<SupportEntry*>
+      //  (home->fl_alloc<sizeof(SupportEntry)>());
       SupportEntry* s = static_cast<SupportEntry*>
-        (home->fl_alloc<sizeof(SupportEntry)>());
+        (home->alloc(sizeof(SupportEntry)));
       s->t = l;
-      s->next = support_data[(i*(table.tablei->domsize)) + oval];
-      support_data[(i*(table.tablei->domsize)) + oval] = s;
+      s->next = support_data[pos];
+      support_data[pos] = s;
     }
   }
 
@@ -182,20 +189,23 @@ namespace Gecode { namespace Int { namespace Extensional {
     for (int i = x.size(); i--; ) {
       int v = l[i];
       int ov = v - table.tablei->min;
+      int pos = (i*(table.tablei->domsize)) + ov;
 
-      assert(support_data[(i*(table.tablei->domsize)) + ov] != NULL);
+      assert(support_data[pos] != NULL);
       
-      SupportEntry** a = &(support_data[(i*(table.tablei->domsize)) + ov]);
+      SupportEntry** a = &(support_data[pos]);
       while ((*a)->t != l) {
+        assert((*a)->next != NULL);
         a = &((*a)->next);
       }
       SupportEntry* old = *a;
       *a = (*a)->next;
       
-      FreeList* fl = reinterpret_cast<FreeList*>(old);
-      fl->next(NULL);
-      home->fl_dispose<sizeof(SupportEntry)>(fl, fl);
-      if (i != var && support_data[(i*(table.tablei->domsize)) + ov] == NULL) {
+      //FreeList* fl = reinterpret_cast<FreeList*>(old);
+      //fl->next(NULL);
+      //home->fl_dispose<sizeof(SupportEntry)>(fl, fl);
+      home->reuse(old, sizeof(SupportEntry));
+      if (i != var && support_data[pos] == NULL) {
 #if defined(SYSTEM_ADVISOR_IMPROVE_CHEAP)
         work.push(Work(WT_FIND_SUPPORT, i, v));
 #elif defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
@@ -225,13 +235,12 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View>
   forceinline void
   Incremental<View>::init_support(Space* home) {
-    if (support_data == NULL) {
-      int literals = table.tablei->domsize*x.size();
-      support_data = static_cast<SupportEntry**>
-        (home->alloc(literals*sizeof(SupportEntry*)));
-      for (int i = literals; i--; ) {
-        support_data[i] = NULL;
-      }
+    assert(support_data == NULL);
+    int literals = table.tablei->domsize*x.size();
+    support_data = static_cast<SupportEntry**>
+      (home->alloc(literals*sizeof(SupportEntry*)));
+    for (int i = literals; i--; ) {
+      support_data[i] = NULL;
     }
   }
 

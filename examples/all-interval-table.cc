@@ -21,6 +21,7 @@
  */        
 
 #include "examples/support.hh"
+#include "examples/assignment.hh"
 #include "gecode/minimodel.hh"
 
 #include <cstdlib>
@@ -31,15 +32,29 @@ namespace {
   Table diffb;
   
   void init_diff(Table& tab, int lo, int hi) {
-    int size = hi-lo+1;
-    GECODE_AUTOARRAY(int, perm, size);
-    for (int i = 0; i < size; ++i) perm[i] = lo+i;
+    const int size = 4;
+    IntSet is(lo, hi);
+    Assignment ass(size, is);
+
     do {
-      IntArgs t(size, perm);
-      //for (int i = 0; i < size; ++i) std::cerr << t[i] << " ";
-      //std::cerr << std::endl;
-      tab.add(t);
-    } while (std::next_permutation(perm, perm+size));
+      // Valid tuple?
+      for (int i = 0; i < size-1; ++i) {
+        for (int j = i+1; j < size; ++j) {
+          if (ass[i] == ass[j]) goto next;
+        }
+      }
+      { // Add to table
+        IntArgs t(size);
+        for (int i = 0; i < size; ++i) {
+          t[i] = ass[i];
+          //std::cerr << t[i] << " ";
+        }
+        //std::cerr << std::endl;
+        tab.add(t);
+      }
+    next:
+      ++ass;
+    } while (ass());
     //std::cerr << std::endl;
     tab.finalize();
   }
@@ -87,16 +102,41 @@ public:
     // Constrain them to be between 1 and n-1
     dom(this, d, 1, n-1);
 
-    if (opt.naive) {
-      //distinct(this, x, opt.icl);
-      extensional(this, x, diffa, EA_BASIC);
-      //distinct(this, d, opt.icl);
-      extensional(this, d, diffb, EA_BASIC);
-    } else {
-      //distinct(this, x, opt.icl);
-      extensional(this, x, diffa, EA_INCREMENTAL);
-      //distinct(this, d, opt.icl);
-      extensional(this, d, diffb, EA_INCREMENTAL);
+    ExtensionalAlgorithm ea = EA_BASIC;
+    if (!opt.naive) {
+      ea = EA_INCREMENTAL;
+    }
+    //std::cerr << "Posting for x:" << std::endl;
+    int a = 0, b = 0;
+    for (int i = 0; i < x.size(); ++i) {
+      for (int j = i+1; j < x.size(); ++j) {
+        a = (i+1)%x.size();
+        while (a==i || a==j)         { a = (a+1)%x.size(); }
+        b = (j+1)%x.size();
+        while (b==i || b==j || b==a) { b = (b+1)%x.size(); } 
+        //std::cerr << i << ", " << j << ", " << a << ", " << b << std::endl;
+        IntVarArgs iva(4);
+        iva[0] = x[i]; iva[1] = x[j]; 
+        iva[2] = x[a]; iva[3] = x[b]; 
+        extensional(this, iva, diffa, ea);
+        // distinct(this, iva, opt.icl);
+      }
+    }
+    //std::cerr << "Posting for d:" << std::endl;
+    a = 0; b = 0;
+    for (int i = 0; i < d.size(); ++i) {
+      for (int j = i+1; j < d.size(); ++j) {
+        a = (i+1)%d.size();
+        while (a==i || a==j)         { a = (a+1)%d.size(); }
+        b = (j+1)%d.size();
+        while (b==i || b==j || b==a) { b = (b+1)%d.size(); } 
+        //std::cerr << i << ", " << j << ", " << a << ", " << b << std::endl;
+        IntVarArgs iva(4);
+        iva[0] = d[i]; iva[1] = d[j]; 
+        iva[2] = d[a]; iva[3] = d[b]; 
+        extensional(this, iva, diffb, ea);
+        // distinct(this, iva, opt.icl);
+      }
     }
 
     // Break mirror symmetry

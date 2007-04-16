@@ -80,11 +80,13 @@ namespace Gecode { namespace Int { namespace Extensional {
         derr << "Variable " << i << ":  ";
         int domsize = table.tablei->domsize;
         for (int d = 0; d < domsize; ++d) {
-          derr << "[" << (table.tablei->min+d) << "]=" 
-                    << (last_data[(i*domsize) + d] 
-                        ? (*(last_data[(i*domsize) + d]))[i] 
-                        : -1) 
-                    << "  ";
+          derr << "[" << (table.tablei->min+d) << "]=";
+          tuple* l = last_data[(i*domsize) + d];
+          if (l && *l)
+            for (int i = 0; i < x.size(); ++i) derr << (*l)[i];
+          else
+            derr << "NULL";
+          derr << "  ";
         }
         derr << std::endl;
       }
@@ -106,23 +108,18 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View, bool subscribe>
   forceinline tuple
   Base<View,subscribe>::last(int var, int val) {
-    int domsize = table.tablei->max - table.tablei->min + 1;
-    if (last_data[(var*domsize) + val] == NULL) 
-      return NULL;
-    if (GECODE_LAST_TUPLE(last_data[(var*domsize) + val]) == NULL) 
-      return NULL;
-    if (GECODE_LAST_TUPLE(last_data[(var*domsize) + val])[var] != 
-        (val+table.tablei->min)) 
-      return NULL;
-    return GECODE_LAST_TUPLE(last_data[(var*domsize) + val]);
+    return GECODE_LAST_TUPLE(last_data[(var*table.tablei->domsize) + val]);
   }
 
   template <class View, bool subscribe>
   forceinline tuple
   Base<View,subscribe>::last_next(int var, int val) {
     assert(last(var, val) != NULL);
-    int domsize = table.tablei->max - table.tablei->min + 1;
-    ++(last_data[(var*domsize) + val]);
+    assert(last(var, val)[var] == val+table.tablei->min);
+    int pos = (var*table.tablei->domsize) + val;
+    ++(last_data[pos]);
+    if (last(var,val)[var] != (val+table.tablei->min))
+      last_data[pos] = table.tablei->nullptr;
     return last(var, val);
   }
 
@@ -131,11 +128,10 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline void
   Base<View,subscribe>::init_dom(Space* home, Domain dom) {
     // \todo use offset!!!
-    int domsize = table.tablei->max - table.tablei->min + 1;
+    int domsize = table.tablei->domsize;
     for (int i = x.size(); i--; ) {
       dom[i].init(home, domsize);
-      ViewRanges<View> vr(x[i]);
-      Iter::Ranges::ToValues<ViewRanges<View> > vv(vr);
+      ViewValues<View> vv(x[i]);
       while (vv()) {
         dom[i].set(vv.val());
         ++vv;
@@ -174,9 +170,11 @@ namespace Gecode { namespace Int { namespace Extensional {
       l = last_next(var, val);
       derr << "\tlast is l=" << l << std::endl;
     }
-    if (l)
-      derr << "\t...last valid" << std::endl;
-    else
+    if (l) {
+      derr << "\t";
+      for (int i = 0; i < x.size(); ++i) derr << l[i] << " ";
+      derr << " is a valid last" << std::endl;
+    } else
       derr << "\t...last invalid" << std::endl;
     return l;
   }

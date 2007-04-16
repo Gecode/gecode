@@ -9,8 +9,8 @@
  *     Mikael Lagerkvist, 2005
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2007-02-01 13:13:10 +0100 (tor, 01 feb 2007) $ by $Author: schulte $
+ *     $Revision: 4133 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -34,80 +34,134 @@ const int kval[] = {
 };
 const int nkval = 16;
 
+namespace {
+  Table knight_table;
+  class Knights : public Space {
+  public:
+    const int n;
+    BoolVarArray k;
+    bool valid_pos(int i, int j) {
+      return (i >= 0 && i < n) && (j >= 0 && j < n);
+    }
+    Knights(int size)
+      : n(size), k(this,n*n,0,1) {
+      static const int kmoves[4][2] = {
+        {-1,2}, {1,2}, {2,-1}, {2,1}
+      };
+      MiniModel::Matrix<BoolVarArray> kb(k, n, n);
+      for (int x = n; x--; )
+        for (int y = n; y--; )
+          for (int i = 4; i--; )
+            if (valid_pos(x+kmoves[i][0], y+kmoves[i][1]))
+              rel(this, 
+                  kb(x, y),
+                  BOT_AND,
+                  kb(x+kmoves[i][0], y+kmoves[i][1]),
+                  0);
+      linear(this, k, IRT_EQ, n <= nkval ? kval[n-1] : kval[nkval-1]);
+      // Incorporate bishop-negation
+      rel(this, kb(n-1,   0), IRT_NQ, 1);
+      rel(this, kb(n-1, n-1), IRT_NQ, 1);
+      branch(this, k, BVAR_DEGREE_MAX, BVAL_MAX);
+    }
+    Knights(bool share, Knights& s) : Space(share,s), n(s.n) {
+      k.update(this, share, s.k);
+    }
+    virtual Space* copy(bool share) {
+      return new Knights(share,*this);
+    }
+  };
+  void init_knight(int size) {
+    Knights* prob = new Knights(size);
+    DFS<Knights> e(prob); IntArgs ia(size*size);
+    delete prob;
+    int cnt = 0;
+    while (Knights* s = e.next()) {
+      for (int i = 0; i < size*size; ++i) { //size*size; i--; ) {
+        ia[i] = s->k[i].val();
+        //std::cerr << (ia[i] ? "K" : "·");
+        //if ((i+1)%size == 0) std::cerr << std::endl;
+      }
+      ++cnt;
+      knight_table.add(ia);
+      delete s;
+    }
+    std::cerr << "Count == " << cnt << std::endl;
+    knight_table.finalize();
+  }
+
+
+  Table bishop_table;
+  class Bishops : public Space {
+  public:
+    const int n;
+    BoolVarArray k;
+    bool valid_pos(int i, int j) {
+      return (i >= 0 && i < n) && (j >= 0 && j < n);
+    }
+    Bishops(int size)
+      : n(size), k(this,n*n,0,1) {
+      MiniModel::Matrix<BoolVarArray> kb(k, n, n);
+      for (int l = n; l--; ) {
+        const int il = (n-1) - l;
+        BoolVarArgs d1(l+1), d2(l+1), d3(l+1), d4(l+1);
+        for (int i = 0; i <= l; ++i) {
+          d1[i] = kb(i+il, i);
+          d2[i] = kb(i, i+il);
+          d3[i] = kb((n-1)-i-il, i);
+          d4[i] = kb((n-1)-i, i+il);
+        }
+
+        linear(this, d1, IRT_LQ, 1);
+        linear(this, d2, IRT_LQ, 1);
+        linear(this, d3, IRT_LQ, 1);
+        linear(this, d4, IRT_LQ, 1);
+      }
+
+      linear(this, k, IRT_EQ, 2*n - 2);
+      // Incorporate bishop-placement
+      rel(this, kb(n-1,   0), IRT_EQ, 1);
+      rel(this, kb(n-1, n-1), IRT_EQ, 1);
+      branch(this, k, BVAR_DEGREE_MAX, BVAL_MAX);
+    }
+    Bishops(bool share, Bishops& s) : Space(share,s), n(s.n) {
+      k.update(this, share, s.k);
+    }
+    virtual Space* copy(bool share) {
+      return new Bishops(share,*this);
+    }
+  };
+  void init_bishop(int size) {
+    Bishops* prob = new Bishops(size);
+    DFS<Bishops> e(prob); IntArgs ia(size*size);
+    delete prob;
+    int cnt = 0;
+    while (Bishops* s = e.next()) {
+      for (int i = 0; i < size*size; ++i) { //size*size; i--; ) {
+        ia[i] = s->k[i].val();
+        //std::cerr << (ia[i] ? "K" : "·");
+        //if ((i+1)%size == 0) std::cerr << std::endl;
+      }
+      ++cnt;
+      bishop_table.add(ia);
+      delete s;
+    }
+    std::cerr << "Count == " << cnt << std::endl;
+    bishop_table.finalize();
+  }
+}
+
 /**
-   \brief %Example: Crowded Chessboard
-
-   "You are given a chessboard together with 8 queens, 8 rooks, 14
-   bishops, and 21 knights. The puzzle is to arrange the 51 pieces on
-   the chessboard so that no queen shall attack another queen, no rook
-   attack another rook, no bishop attack another bishop, and no knight
-   attack another knight. No notice is to be taken of the intervention
-   of pieces of another type from that under consideration - that is,
-   two queens will be considered to attack one another although there
-   may be, say, a rook, a bishop, and a knight between them. It is not
-   difficult to dispose of each type of piece separately; the
-   difficulty comes in when you have to find room for all the
-   arrangements on the board simultaneously."
-   <em>Dudeney, H.E., (1917), Amusements in Mathematics,
-   Thomas Nelson and Sons.</em>
-
-   This puzzle can be generalized to chess-boards of size \f$n\f$, where the
-   number of pieces to place are:
-     - \f$ n \f$ queens
-     - \f$ n \f$ rooks
-     - \f$ 2n-1 \f$ bishops
-     - \f$ k \f$ knights
-   where k is a number to maximize.
-
-   The maximum k for some different values of \f$ n \f$ are presented
-   below (from Jesper Hansen and Joachim Schimpf, <a
-   href="http://www.icparc.ic.ac.uk/eclipse/examples/crowded_chess.ecl.txt">
-   ECLiPSe solution</a>
-   <TABLE>
-   <TR> <TD> n </TD> <TD> k </TD> </TR>
-   <TR> <TD> 8 </TD> <TD> 21 </TD> </TR>
-   <TR> <TD> 9 </TD> <TD> 29 </TD> </TR>
-   <TR> <TD> 10 </TD> <TD> 37 </TD> </TR>
-   <TR> <TD> 11 </TD> <TD> 47 </TD> </TR>
-   <TR> <TD> 12 </TD> <TD> 57 </TD> </TR>
-   <TR> <TD> 13 </TD> <TD> 69 </TD> </TR>
-   <TR> <TD> 14 </TD> <TD> 81 </TD> </TR>
-   <TR> <TD> 15 </TD> <TD> 94 </TD> </TR>
-   <TR> <TD> 16 </TD> <TD> 109 </TD> </TR>
-   </TABLE>
-
-   A solution for n = 8 is:
-   <TABLE>
-   <TR><TD>Q</TD><TD>B</TD><TD>K</TD><TD>.</TD>
-   <TD>K</TD><TD>B</TD><TD>K</TD><TD>R</TD></TR>
-   <TR><TD>.</TD><TD>K</TD><TD>.</TD><TD>K</TD>
-   <TD>Q</TD><TD>K</TD><TD>R</TD><TD>B</TD></TR>
-   <TR><TD>B</TD><TD>.</TD><TD>K</TD><TD>R</TD>
-   <TD>K</TD><TD>.</TD><TD>K</TD><TD>Q</TD></TR>
-   <TR><TD>B</TD><TD>K</TD><TD>R</TD><TD>K</TD>
-   <TD>.</TD><TD>Q</TD><TD>.</TD><TD>B</TD></TR>
-   <TR><TD>B</TD><TD>R</TD><TD>Q</TD><TD>.</TD>
-   <TD>K</TD><TD>.</TD><TD>K</TD><TD>B</TD></TR>
-   <TR><TD>R</TD><TD>K</TD><TD>.</TD><TD>K</TD>
-   <TD>.</TD><TD>K</TD><TD>Q</TD><TD>B</TD></TR>
-   <TR><TD>B</TD><TD>Q</TD><TD>K</TD><TD>.</TD>
-   <TD>K</TD><TD>R</TD><TD>K</TD><TD>.</TD></TR>
-   <TR><TD>B</TD><TD>K</TD><TD>B</TD><TD>Q</TD>
-   <TD>R</TD><TD>K</TD><TD>B</TD><TD>B</TD></TR>
- </TABLE>
-
- \todo Currently this script finds a solution. Instead, it should find
- the maximum number of knights for a given size.
-
+   \brief %Example: Crowded Chessboard using tables
    \ingroup ExProblem
 */
-class CrowdedChess : public Example {
+class CrowdedChessTable : public Example {
 protected:
   const int n;          ///< Board-size
   IntVarArray s;        ///< The board
   IntVarArray queens,   ///< Row of queen in column x
     rooks;              ///< Row of rook in column x
-  BoolVarArray knights; ///< True iff the corresponding place has a knight
+  IntVarArray knights; ///< True iff the corresponding place has a knight
 
   /** Symbolic names of pieces. The order determines which piece will
    * be placed first.
@@ -127,27 +181,9 @@ protected:
       (j >= 0 && j < n);
   }
 
-  /// Post knight-constraints
-  void knight_constraints(void) {
-    static const int kmoves[4][2] = {
-      {-1,2}, {1,2}, {2,-1}, {2,1}
-    };
-    MiniModel::Matrix<BoolVarArray> kb(knights, n, n);
-    for (int x = n; x--; )
-      for (int y = n; y--; )
-        for (int i = 4; i--; )
-          if (valid_pos(x+kmoves[i][0], y+kmoves[i][1]))
-            rel(this, 
-                kb(x, y),
-                BOT_AND,
-                kb(x+kmoves[i][0], y+kmoves[i][1]),
-                0);
-  }
-
-
 public:
   /// The model of the problem
-  CrowdedChess(const Options& o)
+  CrowdedChessTable(const Options& o)
     : n(o.size), s(this, n*n, 0, PMAX-1), queens(this, n, 0, n-1),
       rooks(this, n, 0, n-1), knights(this, n*n, 0, 1) {
     const int nn = n*n, q = n, r = n, b = (2*n)-2,
@@ -183,6 +219,11 @@ public:
     }
 
     // N-queens constraints
+    ExtensionalAlgorithm ea = EA_BASIC;
+    if (!o.naive) {
+      ea = EA_INCREMENTAL;
+    }
+    // N-queens constraints
     distinct(this, queens, ICL_DOM);
     IntArgs koff(n);
     for (int i = n; i--; ) koff[i] = i;
@@ -190,35 +231,40 @@ public:
     for (int i = n; i--; ) koff[i] = -i;
     distinct(this, koff, queens, ICL_DOM);
 
+
     // N-rooks constraints
     distinct(this,  rooks, ICL_DOM);
 
     // Collect diagonals for handling queens and bishops
-    for (int l = n; l--; ) {
-      const int il = (n-1) - l;
-      IntVarArgs d1(l+1), d2(l+1), d3(l+1), d4(l+1);
-      for (int i = 0; i <= l; ++i) {
-        d1[i] = m(i+il, i);
-        d2[i] = m(i, i+il);
-        d3[i] = m((n-1)-i-il, i);
-        d4[i] = m((n-1)-i, i+il);
+    if (false && o.naive) {
+      for (int l = n; l--; ) {
+        const int il = (n-1) - l;
+        IntVarArgs d1(l+1), d2(l+1), d3(l+1), d4(l+1);
+        for (int i = 0; i <= l; ++i) {
+          d1[i] = m(i+il, i);
+          d2[i] = m(i, i+il);
+          d3[i] = m((n-1)-i-il, i);
+          d4[i] = m((n-1)-i, i+il);
+        }
+        
+        count(this, d1, B, IRT_LQ, 1, o.icl);
+        count(this, d2, B, IRT_LQ, 1, o.icl);
+        count(this, d3, B, IRT_LQ, 1, o.icl);
+        count(this, d4, B, IRT_LQ, 1, o.icl);
       }
-
-      count(this, d1, Q, IRT_LQ, 1, o.icl);
-      count(this, d2, Q, IRT_LQ, 1, o.icl);
-      count(this, d3, Q, IRT_LQ, 1, o.icl);
-      count(this, d4, Q, IRT_LQ, 1, o.icl);
-      count(this, d1, B, IRT_LQ, 1, o.icl);
-      count(this, d2, B, IRT_LQ, 1, o.icl);
-      count(this, d3, B, IRT_LQ, 1, o.icl);
-      count(this, d4, B, IRT_LQ, 1, o.icl);
+    } else {
+      IntVarArgs iva(n*n);
+      for (int i = iva.size(); i--; ) 
+        iva[i] = channel(this, post(this, ~(s[i] == B)));
+      extensional(this, iva, bishop_table);
     }
 
     // Handle knigths
     //Connect knigths to board
     for(int i = n*n; i--; )
-      knights[i] = post(this, ~(s[i] == K));
-    knight_constraints();
+      knights[i] = channel(this, post(this, ~(s[i] == K)));
+    //knight_constraints();
+    extensional(this, knights, knight_table, ea);
 
 
     // ***********************
@@ -245,7 +291,7 @@ public:
   }
 
   /// Constructor for cloning e
-  CrowdedChess(bool share, CrowdedChess& e)
+  CrowdedChessTable(bool share, CrowdedChessTable& e)
     : Example(share,e), n(e.n) {
     s.update(this, share, e.s);
     queens.update(this, share, e.queens);
@@ -256,7 +302,7 @@ public:
   /// Copy during cloning
   virtual Space*
   copy(bool share) {
-    return new CrowdedChess(share,*this);
+    return new CrowdedChessTable(share,*this);
   }
 
   /// Print solution
@@ -290,19 +336,23 @@ public:
 };
 
 /** \brief Main function
- * \relates CrowdedChess
+ * \relates CrowdedChessTable
  */
 int
 main(int argc, char** argv) {
-  Options o("CrowdedChess");
+  Options o("CrowdedChessTable");
   o.icl        = ICL_DOM;
-  o.size       = 7;
+  o.size       = 6;
   o.parse(argc,argv);
   if(o.size < 5) {
     std::cerr << "Error: Size must be at least 5" << std::endl;
     return 1;
   }
-  Example::run<CrowdedChess,DFS>(o);
+
+  init_knight(o.size);
+  init_bishop(o.size);
+
+  Example::run<CrowdedChessTable,DFS>(o);
   return 0;
 }
 
