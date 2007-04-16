@@ -3711,6 +3711,35 @@ examples/stress-circuit$(OBJSUFFIX) examples/stress-circuit$(SBJSUFFIX): \
 	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support/dynamic-array.hh \
 	./gecode/support/dynamic-stack.hh ./gecode/support/shared-array.hh ./gecode/support/sort.hh \
 	./gecode/support/static-pqueue.hh ./gecode/vti.icc 
+examples/stress-linear-bool$(OBJSUFFIX) examples/stress-linear-bool$(SBJSUFFIX): \
+	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
+	./experiments.hh ./gecode/config.icc ./gecode/int.hh \
+	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/table.icc \
+	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc \
+	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
+	./gecode/int/var/imp-bool-hdr.icc ./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc \
+	./gecode/int/var/imp-int.icc ./gecode/int/var/int.icc ./gecode/int/view.icc \
+	./gecode/int/view/bool.icc ./gecode/int/view/constint.icc ./gecode/int/view/int.icc \
+	./gecode/int/view/iter.icc ./gecode/int/view/minus.icc ./gecode/int/view/offset.icc \
+	./gecode/int/view/rtest.icc ./gecode/int/view/scale.icc ./gecode/int/view/zero.icc \
+	./gecode/iter.hh ./gecode/iter/ranges-add.icc ./gecode/iter/ranges-append.icc \
+	./gecode/iter/ranges-array.icc ./gecode/iter/ranges-cache.icc ./gecode/iter/ranges-compl.icc \
+	./gecode/iter/ranges-diff.icc ./gecode/iter/ranges-empty.icc ./gecode/iter/ranges-inter.icc \
+	./gecode/iter/ranges-minmax.icc ./gecode/iter/ranges-minus.icc ./gecode/iter/ranges-offset.icc \
+	./gecode/iter/ranges-operations.icc ./gecode/iter/ranges-scale.icc ./gecode/iter/ranges-singleton-append.icc \
+	./gecode/iter/ranges-singleton.icc ./gecode/iter/ranges-size.icc ./gecode/iter/ranges-union.icc \
+	./gecode/iter/ranges-values.icc ./gecode/iter/values-ranges.icc ./gecode/iter/virtual-ranges-compl.icc \
+	./gecode/iter/virtual-ranges-inter.icc ./gecode/iter/virtual-ranges-union.icc ./gecode/iter/virtual-ranges.icc \
+	./gecode/kernel.hh ./gecode/kernel/advisor.icc ./gecode/kernel/array.icc \
+	./gecode/kernel/branching.icc ./gecode/kernel/core.icc ./gecode/kernel/exception.icc \
+	./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc ./gecode/kernel/memory.icc \
+	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/var.icc \
+	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/search.hh \
+	./gecode/search/bab.icc ./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc \
+	./gecode/search/lds.icc ./gecode/search/reco-stack.icc ./gecode/search/restart.icc \
+	./gecode/search/statistics.icc ./gecode/search/stop.icc ./gecode/support/dynamic-array.hh \
+	./gecode/support/dynamic-stack.hh ./gecode/support/shared-array.hh ./gecode/support/sort.hh \
+	./gecode/support/static-pqueue.hh ./gecode/vti.icc 
 examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./experiments.hh ./gecode/config.icc ./gecode/int.hh \

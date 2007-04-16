@@ -367,19 +367,6 @@ namespace Gecode {
         GECODE_ES_FAIL(home,Bool::NaryOr<NegBoolView>::post(home,b,ny));
       }
       break;
-#ifdef GECODE_USE_ADVISORS
-    case BOT_AND_WL:
-      {
-        ViewArray<NegBoolView> b(home,m);
-        for (int i=m; i--; ) {
-          NegBoolView nb(x[i]); b[i]=nb;
-        }
-        NegBoolView ny(y);
-        b.unique();
-        GECODE_ES_FAIL(home,Bool::NaryOrWL<NegBoolView>::post(home,b,ny));
-      }
-      break;
-#endif
     case BOT_OR:
       {
         ViewArray<BoolView> b(home,x);
@@ -387,15 +374,6 @@ namespace Gecode {
         GECODE_ES_FAIL(home,Bool::NaryOr<BoolView>::post(home,b,y));
       }
       break;
-#ifdef GECODE_USE_ADVISORS
-    case BOT_OR_WL:
-      {
-        ViewArray<BoolView> b(home,x);
-        b.unique();
-        GECODE_ES_FAIL(home,Bool::NaryOrWL<BoolView>::post(home,b,y));
-      }
-      break;
-#endif
     case BOT_IMP:
       if (m < 2) {
         throw TooFewArguments("Int::rel");
@@ -460,22 +438,6 @@ namespace Gecode {
         }
       }
       break;
-#ifdef GECODE_USE_ADVISORS
-    case BOT_AND_WL:
-      if (n == 0) {
-        ViewArray<NegBoolView> b(home,m);
-        for (int i=m; i--; ) {
-          NegBoolView nb(x[i]); b[i]=nb;
-        }
-        b.unique();
-        GECODE_ES_FAIL(home,Bool::NaryOrWLTrue<NegBoolView>::post(home,b));
-      } else {
-        for (int i=m; i--; ) {
-          BoolView b(x[i]); GECODE_ME_FAIL(home,b.one(home));
-        }
-      }
-      break;
-#endif
     case BOT_OR:
       if (n == 0) {
         for (int i=m; i--; ) {
@@ -487,19 +449,6 @@ namespace Gecode {
         GECODE_ES_FAIL(home,Bool::NaryOrTrue<BoolView>::post(home,b));
       }
       break;
-#ifdef GECODE_USE_ADVISORS
-    case BOT_OR_WL:
-      if (n == 0) {
-        for (int i=m; i--; ) {
-          BoolView b(x[i]); GECODE_ME_FAIL(home,b.zero(home));
-        }
-      } else {
-        ViewArray<BoolView> b(home,x);
-        b.unique();
-        GECODE_ES_FAIL(home,Bool::NaryOrWLTrue<BoolView>::post(home,b));
-      }
-      break;
-#endif
     case BOT_IMP:
       if (m < 2) {
         throw TooFewArguments("Int::rel");

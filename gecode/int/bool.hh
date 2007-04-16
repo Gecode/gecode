@@ -265,6 +265,7 @@ namespace Gecode { namespace Int { namespace Bool {
     static  ExecStatus post(Space* home, BVA b0, BVB b1, BVC b2);
   };
 
+#ifdef BOOL_OR_ADVISOR
   /**
    * \brief Boolean n-ary disjunction propagator
    *
@@ -272,73 +273,16 @@ namespace Gecode { namespace Int { namespace Bool {
    * \ingroup FuncIntProp
    */
   template<class BV>
-  class NaryOr : public NaryOnePropagator<BV,PC_BOOL_VAL> {
-  protected:
-    using NaryOnePropagator<BV,PC_BOOL_VAL>::x;
-    using NaryOnePropagator<BV,PC_BOOL_VAL>::y;
-    /// Constructor for posting
-    NaryOr(Space* home,  ViewArray<BV>& b, BV c);
-    /// Constructor for cloning \a p
-    NaryOr(Space* home, bool share, NaryOr<BV>& p);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = c\f$
-    static  ExecStatus post(Space* home, ViewArray<BV>& b, BV c);
-  };
-
-
-  /**
-   * \brief Boolean n-ary disjunction propagator (true)
-   *
-   * Requires \code #include "gecode/int/bool.hh" \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class BV>
-  class NaryOrTrue : public BinaryPropagator<BV,PC_BOOL_VAL> {
-  protected:
-    using BinaryPropagator<BV,PC_BOOL_VAL>::x0;
-    using BinaryPropagator<BV,PC_BOOL_VAL>::x1;
-    /// Views not yet subscribed to
-    ViewArray<BV> x;
-    /// Update subscription
-    ExecStatus resubscribe(Space* home, BV& x0, BV x1);
-    /// Constructor for posting
-    NaryOrTrue(Space* home,  ViewArray<BV>& b);
-    /// Constructor for cloning \a p
-    NaryOrTrue(Space* home, bool share, NaryOrTrue<BV>& p);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
-    /// Cost function (defined as PC_LINEAR_LO)
-    virtual PropCost cost(void) const;
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = 0\f$
-    static  ExecStatus post(Space* home, ViewArray<BV>& b);
-  };
-
-
-#ifdef GECODE_USE_ADVISORS
-  /**
-   * \brief Boolean n-ary disjunction propagator
-   *
-   * Requires \code #include "gecode/int/bool.hh" \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class BV>
-  class NaryOrWL : public Propagator {
+  class NaryOr : public Propagator {
   protected:
     /// Views (advisors watch x[0] and x[1])
     ViewArray<BV> x;
     /// Result
     BV y;
     /// Constructor for posting
-    NaryOrWL(Space* home,  ViewArray<BV>& b, BV c);
+    NaryOr(Space* home,  ViewArray<BV>& b, BV c);
     /// Constructor for cloning \a p
-    NaryOrWL(Space* home, bool share, NaryOrWL<BV>& p);
+    NaryOr(Space* home, bool share, NaryOr<BV>& p);
     /// Disposing
     size_t dispose(Space* home);
 
@@ -398,14 +342,14 @@ namespace Gecode { namespace Int { namespace Bool {
    * \ingroup FuncIntProp
    */
   template<class BV>
-  class NaryOrWLTrue : public Propagator {
+  class NaryOrTrue : public Propagator {
   protected:
     /// Views (advisors watch x[0] and x[1])
     ViewArray<BV> x;
     /// Constructor for posting
-    NaryOrWLTrue(Space* home,  ViewArray<BV>& b);
+    NaryOrTrue(Space* home,  ViewArray<BV>& b);
     /// Constructor for cloning \a p
-    NaryOrWLTrue(Space* home, bool share, NaryOrWLTrue<BV>& p);
+    NaryOrTrue(Space* home, bool share, NaryOrTrue<BV>& p);
     /// Disposing
     size_t dispose(Space* home);
 
@@ -433,6 +377,64 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = 1\f$
     static  ExecStatus post(Space* home, ViewArray<BV>& b);
   };
+
+#else
+
+  /**
+   * \brief Boolean n-ary disjunction propagator
+   *
+   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class BV>
+  class NaryOr : public NaryOnePropagator<BV,PC_BOOL_VAL> {
+  protected:
+    using NaryOnePropagator<BV,PC_BOOL_VAL>::x;
+    using NaryOnePropagator<BV,PC_BOOL_VAL>::y;
+    /// Constructor for posting
+    NaryOr(Space* home,  ViewArray<BV>& b, BV c);
+    /// Constructor for cloning \a p
+    NaryOr(Space* home, bool share, NaryOr<BV>& p);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = c\f$
+    static  ExecStatus post(Space* home, ViewArray<BV>& b, BV c);
+  };
+
+
+  /**
+   * \brief Boolean n-ary disjunction propagator (true)
+   *
+   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class BV>
+  class NaryOrTrue : public BinaryPropagator<BV,PC_BOOL_VAL> {
+  protected:
+    using BinaryPropagator<BV,PC_BOOL_VAL>::x0;
+    using BinaryPropagator<BV,PC_BOOL_VAL>::x1;
+    /// Views not yet subscribed to
+    ViewArray<BV> x;
+    /// Update subscription
+    ExecStatus resubscribe(Space* home, BV& x0, BV x1);
+    /// Constructor for posting
+    NaryOrTrue(Space* home,  ViewArray<BV>& b);
+    /// Constructor for cloning \a p
+    NaryOrTrue(Space* home, bool share, NaryOrTrue<BV>& p);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Cost function (defined as PC_LINEAR_LO)
+    virtual PropCost cost(void) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = 0\f$
+    static  ExecStatus post(Space* home, ViewArray<BV>& b);
+  };
+
 #endif
 
   /**

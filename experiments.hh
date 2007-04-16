@@ -38,6 +38,8 @@
 #define BINLIN_NQ_ADVISOR_BASE
 // OK
 #define DISTINCT_NAIVE_ADVISOR_BASE
+// OK
+#define BOOL_OR_ADVISOR
 #endif
 
 // System with advisors on and try to avoid execution
@@ -51,6 +53,8 @@
 #define BINLIN_NQ_ADVISOR_AVOID
 // Avoids by checking modification events: OK
 #define DISTINCT_NAIVE_ADVISOR_AVOID
+// OK
+#define BOOL_OR_ADVISOR
 #endif
 
 
@@ -64,6 +68,8 @@
 #define GECODE_USE_ADVISORS
 // Boolean linear to integer
 #define BOOL_LINEAR_INT_ADVISOR
+// OK
+#define BOOL_OR_ADVISOR
 #endif
 
 // Try to improve execution, cheap approach
@@ -71,6 +77,8 @@
 #define GECODE_USE_ADVISORS
 // Boolean linear to integer
 #define BOOL_LINEAR_INT_ADVISOR
+// OK
+#define BOOL_OR_ADVISOR
 #endif
 
 // Try to improve execution, expensive approach
@@ -78,5 +86,7 @@
 #define GECODE_USE_ADVISORS
 // Boolean linear to integer
 #define BOOL_LINEAR_INT_ADVISOR
+// OK
+#define BOOL_OR_ADVISOR
 #endif
 
