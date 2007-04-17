@@ -381,7 +381,7 @@ INTEXAMPLESRC0 = \
 	sudoku picture-puzzle placement-puzzle placement-puzzle-01 \
 	crowded-chess crowded-chess-table black-hole minesweeper domino \
 	sports-league all-interval all-interval-sort all-interval-table \
-	langfordnum langfordnum-regular warehouses \
+	langfordnum langfordnum-regular warehouses table \
 	stress-domain stress-exec stress-search baseline \
 	stress-element stress-min stress-distinct \
 	stress-regular stress-circuit stress-linear-bool
