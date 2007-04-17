@@ -53,29 +53,29 @@ namespace Gecode { namespace Int { namespace Regular {
   protected:
     /// The views
     ViewArray<View> x;
-#ifdef GECODE_REGULAR_SCHEDULE
+#ifdef REGULAR_ADVISOR_CHEAP
     class Index : public Advisor {
     public:
       int i;
-      Index(Space* home, Propagator* p, int i0)
-        : Advisor(home,p), i(i0) {}
+      Index(Space* home, Propagator* p, Council<Index>& c, int i0)
+        : Advisor(home,p,c), i(i0) {
+      }
       Index(Space* home, bool share, Index& j)
         : Advisor(home,share,j), i(j.i) {}
-      virtual size_t 
+      void
       dispose(Space* home) {
-        Dom<View,shared>* d = 
-          static_cast<Dom<View,shared>*>(propagator());
+        Dom<View,shared>* d = static_cast<Dom<View,shared>*>(propagator());
         d->x[i].cancel(home,this);
-        (void) Advisor::dispose(home);
-        return sizeof(*this);
-      }
-      virtual ExecStatus
-      advise(Space* home, const Delta& d) {
-        return (View::modevent(d) == ME_INT_VAL) ? 
-          ES_SUBSUMED(this,home) : ES_NOFIX;
+        Advisor::dispose(home);
       }
     };
     Council<Index> dac;
+    virtual ExecStatus
+    advise(Space* home, Advisor& _a, const Delta& d) {
+      Index& a = static_cast<Index&>(_a);
+      return (View::modevent(d) == ME_INT_VAL) ? 
+        ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX;
+    }
 #endif
     /// The %DFA describing the language
     DFA dfa;

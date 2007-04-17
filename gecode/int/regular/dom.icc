@@ -501,18 +501,15 @@ namespace Gecode { namespace Int { namespace Regular {
   forceinline
   Dom<View,shared>::Dom(Space* home, ViewArray<View>& x0, DFA& d)
     : Propagator(home), x(x0), 
-#ifdef GECODE_REGULAR_SCHEDULE
-      dac(home,this,x.size()), 
+#ifdef REGULAR_ADVISOR_CHEAP
+      dac(home,x.size()), 
 #endif
       dfa(d) {
     this->force(home);
-#ifdef GECODE_REGULAR_SCHEDULE
-    for (int i=x.size(); i--; ) {
-      Index* j = new (home) Index(home,this,i);
-      dac.add(home,this,j);
-      x[i].subscribe(home,j);
-    }
-    home->process<VTI_INT,IntMeDiff>(this,ME_INT_BND);
+#ifdef REGULAR_ADVISOR_CHEAP
+    for (int i=x.size(); i--; )
+      x[i].subscribe(home, new (home) Index(home,this,dac,i));
+    View::schedule(home,this,ME_INT_BND);
 #else
     x.subscribe(home,this,PC_INT_DOM);
 #endif
@@ -523,7 +520,7 @@ namespace Gecode { namespace Int { namespace Regular {
   Dom<View,shared>::dispose(Space* home) {
     this->unforce(home);
     dfa.~DFA();
-#ifdef GECODE_REGULAR_SCHEDULE
+#ifdef REGULAR_ADVISOR_CHEAP
     dac.dispose(home);
 #else
     x.cancel(home,this,PC_INT_DOM);
@@ -559,8 +556,8 @@ namespace Gecode { namespace Int { namespace Regular {
   forceinline
   Dom<View,shared>::Dom(Space* home, bool share, Dom<View,shared>& p)
     : Propagator(home,share,p)
-#ifdef GECODE_REGULAR_SCHEDULE
-    , dac(home,this,share,p.dac) 
+#ifdef REGULAR_ADVISOR_CHEAP
+    , dac(home,share,p.dac) 
 #endif
   {
     x.update(home,share,p.x);

@@ -191,7 +191,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX>
   ExecStatus
   GqBoolInt<VX>::propagate(Space* home) {
-    assert(n == n_s);
+    assert(x.size() == n_s);
     n_s = 0; // As signal to remaining advisors
     int n = x.size();
     if (c == n-n_0) {
@@ -414,7 +414,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX>
   ExecStatus
   EqBoolInt<VX>::propagate(Space* home) {
-    assert(n == n_s);
+    assert(x.size() == n_s);
     n_s = 0; // As signal to remaining advisors
     int n = x.size();
     assert((c-n_1 >= 0) && (c <= n-n_0));

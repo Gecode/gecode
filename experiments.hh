@@ -79,6 +79,7 @@
 #define BOOL_LINEAR_INT_ADVISOR
 // OK
 #define BOOL_OR_ADVISOR
+#define REGULAR_ADVISOR_CHEAP
 #endif
 
 // Try to improve execution, expensive approach
