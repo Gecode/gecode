@@ -32,7 +32,7 @@ namespace {
   Table diffb;
   
   void init_diff(Table& tab, int lo, int hi) {
-    const int size = 4;
+    const int size = 3;
     IntSet is(lo, hi);
     Assignment ass(size, is);
 
@@ -107,33 +107,27 @@ public:
       ea = EA_INCREMENTAL;
     }
     //std::cerr << "Posting for x:" << std::endl;
-    int a = 0, b = 0;
+    int a = x.size();
     for (int i = 0; i < x.size(); ++i) {
       for (int j = i+1; j < x.size(); ++j) {
-        a = (i+1)%x.size();
-        while (a==i || a==j)         { a = (a+1)%x.size(); }
-        b = (j+1)%x.size();
-        while (b==i || b==j || b==a) { b = (b+1)%x.size(); } 
+        do { a = (a-1+x.size())%x.size(); } while (a==i || a==j);
         //std::cerr << i << ", " << j << ", " << a << ", " << b << std::endl;
-        IntVarArgs iva(4);
+        IntVarArgs iva(3);
         iva[0] = x[i]; iva[1] = x[j]; 
-        iva[2] = x[a]; iva[3] = x[b]; 
+        iva[2] = x[a];
         extensional(this, iva, diffa, ea);
         // distinct(this, iva, opt.icl);
       }
     }
     //std::cerr << "Posting for d:" << std::endl;
-    a = 0; b = 0;
+    a = d.size();
     for (int i = 0; i < d.size(); ++i) {
       for (int j = i+1; j < d.size(); ++j) {
-        a = (i+1)%d.size();
-        while (a==i || a==j)         { a = (a+1)%d.size(); }
-        b = (j+1)%d.size();
-        while (b==i || b==j || b==a) { b = (b+1)%d.size(); } 
+        do { a = (a-1+d.size())%d.size(); } while (a==i || a==j);
         //std::cerr << i << ", " << j << ", " << a << ", " << b << std::endl;
-        IntVarArgs iva(4);
+        IntVarArgs iva(3);
         iva[0] = d[i]; iva[1] = d[j]; 
-        iva[2] = d[a]; iva[3] = d[b]; 
+        iva[2] = d[a];
         extensional(this, iva, diffb, ea);
         // distinct(this, iva, opt.icl);
       }

@@ -186,8 +186,10 @@ namespace Gecode { namespace Int { namespace Extensional {
     if (subscribe)
       x.cancel(home,this,PC_INT_DOM);
     (void) Propagator::dispose(home);
-    //(void) table.dispose(home);    
+    (void) table.~Table();    
     // take care of last_data
+    int literals = table.tablei->domsize*x.size();    
+    home->reuse(last_data, sizeof(tuple*)*literals);
     return sizeof(*this);
   }
 #undef derr

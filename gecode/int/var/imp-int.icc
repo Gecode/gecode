@@ -351,10 +351,10 @@ namespace Gecode { namespace Int {
     if ((n == dom.min()) && (n == dom.max()))
       return ME_INT_NONE;
     dom.min(n); dom.max(n);
+    if (!range() && eq_full(home))
+      return ME_INT_FAILED;
     IntDelta d;
     if (!notify(home,ME_INT_VAL,d))
-      return ME_INT_FAILED;
-    if (!range() && eq_full(home))
       return ME_INT_FAILED;
     return ME_INT_VAL;
   }

@@ -35,7 +35,7 @@ namespace Gecode {
     //bool dfa_exists;
   public:
     /// How often is the Table implementation referred to
-    unsigned int use_cnt;
+    unsigned int* use_cnt;
     /// Arity
     int arity;
     /// Number of tuples
@@ -57,7 +57,8 @@ namespace Gecode {
 
     // Default initialization
     void init(void) {
-      use_cnt = 1;
+      use_cnt = Memory::bmalloc<unsigned int>(1);
+      *use_cnt = 1;
       arity = -1;
       size = 0;
       tuples = NULL;
@@ -80,9 +81,21 @@ namespace Gecode {
     GECODE_INT_EXPORT void finalize(void);
     /// Is datastructure finalized
     bool finalized(void) { 
+      assert(*use_cnt);
       assert((excess == -1 && domsize >= 0) ||
              (excess != -1 && domsize == -1)); 
       return excess == -1; 
+    }
+
+    /// Dispose
+    void dispose(void) {
+      --*use_cnt;
+      if (*use_cnt == 0) {
+        Memory::free(use_cnt);
+        Memory::free(tuples);
+        Memory::free(data);
+        Memory::free(last);
+      }
     }
 
     /// Get DFA (datastructure must be finalized first)
@@ -96,7 +109,8 @@ namespace Gecode {
     assert(excess != -1); // Tuples may still be added
     if (excess == 0) {
       int ndatasize = static_cast<int>(1+size*1.5);
-      data = Memory::brealloc<int>(data, size * arity, ndatasize * arity);
+      data = Memory::brealloc<int>(data, size * arity, 
+                                   ndatasize * arity);
       excess = ndatasize - size;
     }
     --excess;
@@ -127,6 +141,23 @@ namespace Gecode {
   Table::finalize(void) {
     tablei->finalize();
   }
+
+  inline int
+  Table::arity(void) {
+    assert(tablei->arity != -1);
+    return tablei->arity;
+  }
+  inline int
+  Table::tuples(void) {
+    assert(tablei->finalized());
+    return tablei->size;
+  }
+  inline Table::tuple
+  Table::operator[](int i) {
+    assert(tablei->finalized());
+    return tablei->data + i*tablei->arity;
+  }
+
   /*
   inline DFA
   Table::dfa(void) {
@@ -137,25 +168,24 @@ namespace Gecode {
   forceinline
   Table::Table(const Table& d)
     : tablei(d.tablei) {
-    tablei->use_cnt++;
+    ++*tablei->use_cnt;
   }
 
   inline void
   Table::update(Space* home, bool share, Table& d) {
     if (share) {
+      tablei->dispose();
       tablei = d.tablei;
-      tablei->use_cnt++;
     } else {
       tablei = d.tablei->copy();
     }
+    ++*tablei->use_cnt;
   }
 
   forceinline
   Table::~Table(void) {
-    if (--tablei->use_cnt == 0) {
-      Memory::free(tablei->last);
-      Memory::free(tablei->tuples);
-      Memory::free(tablei->data);
+    tablei->dispose();
+    if (tablei->use_cnt == 0) {
       Memory::free(tablei);
     }
   }
@@ -163,14 +193,12 @@ namespace Gecode {
   forceinline const Table&
   Table::operator=(const Table& d) {
     if (&d != this) {
-      if (--tablei->use_cnt == 0) {
-        Memory::free(tablei->last);
-        Memory::free(tablei->tuples);
-        Memory::free(tablei->data);
+      tablei->dispose();
+      if (tablei->use_cnt == 0) {
         Memory::free(tablei);
       }
       tablei = d.tablei;
-      tablei->use_cnt++;
+      ++*tablei->use_cnt;
     }
     return *this;
   }

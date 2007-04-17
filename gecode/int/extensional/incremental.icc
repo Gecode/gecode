@@ -115,9 +115,18 @@ namespace Gecode { namespace Int { namespace Extensional {
     GECODE_AUTOARRAY(Support::BitSet<unsigned long>, dom, x.size());
     init_dom(home, dom);
 
+    derr << "Starting work loop with work.entries()=" << work.entries() << std::endl;
+    
     /// Work loop
     while (!work.empty()) {
       Work w = work.pop();
+      derr << "Process w.work=" 
+           << (w.work==WT_FIND_SUPPORT
+               ? "FIND_SUPPORT"
+               : (w.work==WT_REMOVE_VALUE
+                  ? "REMOVE_VALUE"
+                  :"ARRRGH"))
+           << " withw.var=" << w.var << " and w.val=" << w.val << std::endl;
       if (dom[w.var].get(w.val)) {
         // Work is still relevant
         switch (w.work) {
@@ -125,14 +134,34 @@ namespace Gecode { namespace Int { namespace Extensional {
           find_support(home, dom, w.var, w.val);
           break;
         case WT_REMOVE_VALUE:
-          assert(support(w.var, w.val) == NULL);
-          ModEvent me = x[w.var].nq(home,w.val);
-          if (me_failed(me)) {
-            return ES_FAILED;
+          {
+            assert(support(w.var, w.val) == NULL);
+            derr << "Removing value " << w.val << " from " << x[w.var] << std::endl;
+            ModEvent me = x[w.var].nq(home,w.val);
+            if (me_failed(me)) {
+              derr << "\t... gave failure" << std::endl;
+              return ES_FAILED;
+            }
+            dom[w.var].set(w.val, false);
           }
-          dom[w.var].set(w.val, false);
+          break;
+        default:
+          GECODE_NEVER;
           break;
         };
+      }
+    }
+    derr << "After propagation, results are:" << std::endl;
+    if (incremental_debug) {
+      for (int i = 0; i < x.size(); ++i) {
+        derr << "x[" << i << "]=" << x[i] << " with supports" << std::endl;
+        ViewValues<View> vv(x[i]);
+        while (vv()) {
+          //derr << "\tx[" << i << "]=" << vv.val() << ": ";
+          print_support(i, vv.val());
+          ++vv;
+        }
+        derr << std::endl;
       }
     }
     if (unassigned != 0) {
@@ -186,6 +215,8 @@ namespace Gecode { namespace Int { namespace Extensional {
                                     , Domain dom
 #endif
                                     ) {
+    derr << "\tREMOVE SUPPORT l=" << ((unsigned long long)l) << " from var=" << var
+         << " val=" << val << std::endl;
     for (int i = x.size(); i--; ) {
       int v = l[i];
       int ov = v - table.tablei->min;
@@ -263,7 +294,13 @@ namespace Gecode { namespace Int { namespace Extensional {
     int lo = a.x.min(d);
     int hi = a.x.max(d);
     bool westart = work.empty();
-    
+    if (incremental_debug) {
+      derr << "ADVISING ON: var=" << a.pos 
+           << " lo=" << lo << " hi=" << hi << " x=" << a.x << std::endl;
+      ViewValues<View> vvt(a.x);
+      while (vvt()) { derr << vvt.val() << " "; ++vvt; }
+      derr << std::endl;
+    }
 #if defined(SYSTEM_ADVISOR_IMPROVE_CHEAP) || defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
 #if defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
     GECODE_AUTOARRAY(Support::BitSet<unsigned long>, dom, x.size());
@@ -282,17 +319,19 @@ namespace Gecode { namespace Int { namespace Extensional {
     } else {
       ViewValues<View> vv(a.x);
       for (int i = table.tablei->min; i <= table.tablei->max; ++i) {
-        if (vv() && i == vv.val()) {
-          ++vv;
-          continue;
+         if (vv() && i == vv.val()) {
+          ++vv;  
+           continue;
         }
-        while (SupportEntry* s = support(a.pos, i)) {
+         while (SupportEntry* s = support(a.pos, i)) {
 #if defined(SYSTEM_ADVISOR_IMPROVE_CHEAP)
+          derr << "\t\t\t removing support " << s->t << std::endl;
           remove_support(home, s->t, a.pos, i);
 #else //defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
           remove_support(home, s->t, a.pos, i, dom);
 #endif
         }
+        derr << "\tsupports removed from var=" << a.pos << " val=" << i << std::endl;
       }
     }
 #elif defined(SYSTEM_ADVISOR_BASE_AVOID)
@@ -344,6 +383,15 @@ namespace Gecode { namespace Int { namespace Extensional {
   Incremental<View>::dispose(Space* home) {
     (void) Base<View,false>::dispose(home);
     /// @todo take care of support    
+    int literals = table.tablei->domsize*x.size();    
+    for (int i = literals; i--; ) {
+      while (support_data[i]) {
+        SupportEntry* n = support_data[i]->next;
+        home->reuse(support_data[i], sizeof(SupportEntry));
+        support_data[i] = n;
+      }
+    }
+    home->reuse(support_data, sizeof(SupportEntry*)*literals);
     (void) ac.dispose(home);
     (void) work.~DynamicStack<Work>();
     return sizeof(*this);

@@ -1339,8 +1339,14 @@ namespace Gecode {
     /// Add tuple to table
     void add(const IntArgs& tuple);
     //DFA dfa(void);
-
+    /// Finalize table
     void finalize(void);
+    /// get arity of table
+    int  arity(void);
+    /// get number of tuples
+    int tuples(void);
+    /// Get tuple i
+    tuple operator[](int i);
   };
 
   /** \brief Post propagator for \f$x\in T\f$.

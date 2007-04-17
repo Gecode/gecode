@@ -227,7 +227,7 @@ namespace Gecode {
   Table::TableI::copy(void) {
     assert(finalized());
     TableI* d     = new TableI();
-    d->use_cnt    = 1;
+    d->use_cnt    = use_cnt;
     d->arity      = arity;
     d->size       = size;
     d->tuples     = tuples;
