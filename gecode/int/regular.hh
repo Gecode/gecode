@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace Regular {
   protected:
     /// The views
     ViewArray<View> x;
-#ifdef REGULAR_ADVISOR_CHEAP
+#ifdef REGULAR_ADVISOR
     class Index : public Advisor {
     public:
       int i;
@@ -71,11 +71,7 @@ namespace Gecode { namespace Int { namespace Regular {
     };
     Council<Index> dac;
     virtual ExecStatus
-    advise(Space* home, Advisor& _a, const Delta& d) {
-      Index& a = static_cast<Index&>(_a);
-      return (View::modevent(d) == ME_INT_VAL) ? 
-        ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX;
-    }
+    advise(Space* home, Advisor& _a, const Delta& d);
 #endif
     /// The %DFA describing the language
     DFA dfa;
@@ -94,6 +90,10 @@ namespace Gecode { namespace Int { namespace Regular {
       ExecStatus prune(Space* home, ViewArray<View> x);
       /// Tell back modifications to \a x for propagator \a p
       ExecStatus tell(Space* home, Propagator* p, ViewArray<View> x);
+#ifdef REGULAR_ADVISOR
+      ExecStatus advise(Space* home, ViewArray<View> x, 
+                        Index& a, const Delta& d);
+#endif
     };
     /// Propagation is performed on a layered graph (cnstructed lazily)
     LayeredGraph lg;

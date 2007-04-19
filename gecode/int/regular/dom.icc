@@ -265,7 +265,7 @@ namespace Gecode { namespace Int { namespace Regular {
         ViewValues<View> vx(x[i]);
         while (vx() && (j<layers[i].size)) {
           if (layers[i].support[j].val < vx.val()) {
-            // Value has lost support
+            // Supported value not any longer in variable
             for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
               // Adapt states
               if ((--e->i_state->o_deg) == 0)
@@ -273,10 +273,7 @@ namespace Gecode { namespace Int { namespace Regular {
               if ((--e->o_state->i_deg) == 0)
                 layers[i+1].modified |= MOD_IDEG;
             }
-            layers[i].lost = layers[i].support[j].val;
             ++j;
-          } else if (layers[i].support[j].val > vx.val()) {
-            ++vx;
           } else {
             assert(layers[i].support[j].val == vx.val());
             // Some edges might have lost support
@@ -304,8 +301,10 @@ namespace Gecode { namespace Int { namespace Regular {
             ++vx; ++j;
           }
         }
+        if (k == 0)
+          return ES_FAILED;
         // Remove remaining values
-        for (; j < layers[i].size; j++) {
+        for (; j < layers[i].size; j++)
           for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
             // Adapt states
             if ((--e->i_state->o_deg) == 0)
@@ -313,20 +312,16 @@ namespace Gecode { namespace Int { namespace Regular {
             if ((--e->o_state->i_deg) == 0)
               layers[i+1].modified |= MOD_IDEG;
           }
-          layers[i].lost = layers[i].support[j].val;
-        }
         // Update size
-        if (k == 0)
-          return ES_FAILED;
         layers[i].size = k;
       } else if (layers[i].size != x[i].size()) {
         // Only the view has changed
-        int j=0;
-        int k=0;
+        unsigned int j=0;
+        unsigned int k=0;
         ViewValues<View> vx(x[i]);
         while (vx() && (j<layers[i].size)) {
           if (layers[i].support[j].val < vx.val()) {
-            // Value has lost support
+            // Supported value not any longer in view
             for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
               // Adapt states
               if ((--e->i_state->o_deg) == 0)
@@ -334,17 +329,17 @@ namespace Gecode { namespace Int { namespace Regular {
               if ((--e->o_state->i_deg) == 0)
                 layers[i+1].modified |= MOD_IDEG;
             }
-            layers[i].lost = layers[i].support[j].val;
             ++j;
-          } else if (layers[i].support[j].val > vx.val()) {
-            ++vx;
           } else {
+            assert(layers[i].support[j].val == vx.val());
             layers[i].support[k++]=layers[i].support[j];
             ++vx; j++;
           }
         }
+        if (k == 0)
+          return ES_FAILED;
         // Remove remaining values
-        for (; j < layers[i].size; j++) {
+        for (; j < layers[i].size; j++)
           for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
             // Adapt states
             if ((--e->i_state->o_deg) == 0)
@@ -352,16 +347,12 @@ namespace Gecode { namespace Int { namespace Regular {
             if ((--e->o_state->i_deg) == 0)
               layers[i+1].modified |= MOD_IDEG;
           }
-          layers[i].lost = layers[i].support[j].val;
-        }
         // Update size
-        if (k == 0)
-          return ES_FAILED;
         layers[i].size = k;
       } else if (layers[i].modified & MOD_IDEG) {
         // Only some in states have changed
-        int k=0;
-        for (int j=0; j<layers[i].size; j++) {
+        unsigned int k=0;
+        for (unsigned int j=0; j<layers[i].size; j++) {
           // Some edges might have lost support
           Edge** p = &layers[i].support[j].edges;
           for (Edge* e = *p; e != NULL; e = e->next) 
@@ -486,6 +477,81 @@ namespace Gecode { namespace Int { namespace Regular {
     }
   }
 
+#ifdef REGULAR_ADVISOR
+
+  template <class View, bool shared>
+  forceinline ExecStatus
+  Dom<View,shared>::LayeredGraph::advise(Space* home, ViewArray<View> x,
+                                         Index& a, const Delta& d) {
+#ifdef REGULAR_ADVISOR_SCHEDULE
+    return (View::modevent(d) == ME_INT_VAL) ? 
+      ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX;
+#endif
+#ifdef REGULAR_ADVISOR_CHEAP
+    if (!constructed())
+      return (View::modevent(d) == ME_INT_VAL) ? 
+        ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX;
+    int i = a.i;
+    if (layers[i].size != x[i].size()) {
+      unsigned int j=0;
+      unsigned int k=0;
+      ViewValues<View> vx(x[i]);
+      while (vx() && (j<layers[i].size)) {
+        if (layers[i].support[j].val < vx.val()) {
+          // Value has lost support
+          for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
+            // Adapt states
+            if ((--e->i_state->o_deg) == 0)
+              layers[i-1].modified |= MOD_ODEG;
+            if ((--e->o_state->i_deg) == 0)
+              layers[i+1].modified |= MOD_IDEG;
+          }
+          layers[i].lost = layers[i].support[j].val;
+          ++j;
+        } else if (layers[i].support[j].val > vx.val()) {
+          ++vx;
+        } else {
+          layers[i].support[k++]=layers[i].support[j];
+          ++vx; j++;
+        }
+      }
+      // Remove remaining values
+      for (; j < layers[i].size; j++) {
+        for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
+          // Adapt states
+          if ((--e->i_state->o_deg) == 0)
+            layers[i-1].modified |= MOD_ODEG;
+          if ((--e->o_state->i_deg) == 0)
+            layers[i+1].modified |= MOD_IDEG;
+        }
+        layers[i].lost = layers[i].support[j].val;
+      }
+      // Update size
+      if (k == 0)
+        return ES_FAILED;
+      layers[i].size = k;
+    }
+    if ((layers[i-1].modified != MOD_NONE) ||
+        (layers[i+1].modified != MOD_NONE))
+      return (View::modevent(d) == ME_INT_VAL) ? 
+        ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX;
+    return (View::modevent(d) == ME_INT_VAL) ? 
+      ES_SUBSUMED_FIX(a,home) : ES_FIX;
+#endif
+#ifdef REGULAR_ADVISOR_EXPENSIVE
+    return (View::modevent(d) == ME_INT_VAL) ? 
+      ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX;
+#endif
+  }
+
+  template <class View, bool shared>
+  ExecStatus
+  Dom<View,shared>::advise(Space* home, Advisor& _a, const Delta& d) {
+    return lg.advise(home, x, static_cast<Index&>(_a), d);
+  }
+
+#endif
+
   template <class View, bool shared>
   ExecStatus
   Dom<View,shared>::propagate(Space* home) {
@@ -501,12 +567,12 @@ namespace Gecode { namespace Int { namespace Regular {
   forceinline
   Dom<View,shared>::Dom(Space* home, ViewArray<View>& x0, DFA& d)
     : Propagator(home), x(x0), 
-#ifdef REGULAR_ADVISOR_CHEAP
+#ifdef REGULAR_ADVISOR
       dac(home,x.size()), 
 #endif
       dfa(d) {
     this->force(home);
-#ifdef REGULAR_ADVISOR_CHEAP
+#ifdef REGULAR_ADVISOR
     for (int i=x.size(); i--; )
       x[i].subscribe(home, new (home) Index(home,this,dac,i));
     View::schedule(home,this,ME_INT_BND);
@@ -520,7 +586,7 @@ namespace Gecode { namespace Int { namespace Regular {
   Dom<View,shared>::dispose(Space* home) {
     this->unforce(home);
     dfa.~DFA();
-#ifdef REGULAR_ADVISOR_CHEAP
+#ifdef REGULAR_ADVISOR
     dac.dispose(home);
 #else
     x.cancel(home,this,PC_INT_DOM);
@@ -556,7 +622,7 @@ namespace Gecode { namespace Int { namespace Regular {
   forceinline
   Dom<View,shared>::Dom(Space* home, bool share, Dom<View,shared>& p)
     : Propagator(home,share,p)
-#ifdef REGULAR_ADVISOR_CHEAP
+#ifdef REGULAR_ADVISOR
     , dac(home,share,p.dac) 
 #endif
   {

@@ -40,6 +40,8 @@
 #define DISTINCT_NAIVE_ADVISOR_BASE
 // OK
 #define BOOL_OR_ADVISOR
+// OK
+#define REGULAR_ADVISOR_SCHEDULE
 #endif
 
 // System with advisors on and try to avoid execution
@@ -89,5 +91,12 @@
 #define BOOL_LINEAR_INT_ADVISOR
 // OK
 #define BOOL_OR_ADVISOR
+#define REGULAR_ADVISOR_EXPENSIVE
 #endif
 
+
+
+// Regular config
+#if defined(REGULAR_ADVISOR_SCHEDULE) || defined(REGULAR_ADVISOR_CHEAP) || defined(REGULAR_ADVISOR_EXPENSIVE)
+#define REGULAR_ADVISOR
+#endif
