@@ -21,9 +21,6 @@
  */
 
 namespace Gecode { namespace Int { namespace Extensional {
-  const bool basic_debug = false;
-#define derr if (basic_debug) std::cerr
-
   /*
    * The propagator proper
    *
@@ -101,30 +98,20 @@ namespace Gecode { namespace Int { namespace Extensional {
       while (vv()) {
         // Value offset for indexing
         int val = vv.val() - table.tablei->min;
-        derr << "Processing var " << var << " val " << val << std::endl;
         if (!has_support[var].get(val)) {
           // Find support for value vv.val() in variable var
           tuple l = find_support(dom, var, val);
           if (l == NULL) {
             // No possible supports left
-            derr << "\tx[" << var << "] != " << vv.val() 
-                      << "  (" << val << ")" << std::endl;
             nq[n_nq] = vv.val();
             n_nq++;
           } else {
-            derr << "\tx[" << var << "]=" << val << ":  \t";
-            for (int i = 0; i < x.size(); ++i) {
-              derr << l[i] << " ";
-            }
-            derr << std::endl;
             // Mark values as supported 
             // Only forward direction marking is needed since all
             // previous values have been checked
             for (int i = x.size(); i-- >var; ) {
-              derr << "\tVar " << i << " val " << l[i] << " has support ";
               has_support[i].set(l[i]- table.tablei->min);
               assert(has_support[i].get(l[i]- table.tablei->min));
-              derr << has_support[i].get(l[i]- table.tablei->min) << std::endl;
             }
 #ifndef NDEBUG
             for (int i = var; i-->1; )
@@ -136,7 +123,6 @@ namespace Gecode { namespace Int { namespace Extensional {
       }
 
       // Prune values for var which do not have support anymore
-      derr << "After " << n_nq << " deletions x[" << var << "]=";
       while (n_nq-- > 0) {
         ModEvent me = x[var].nq(home,nq[n_nq]);
         if (me_failed(me))
@@ -145,7 +131,6 @@ namespace Gecode { namespace Int { namespace Extensional {
           es = ES_NOFIX;
       }
       n_nq = 0;
-      derr << x[var] << std::endl;
     }
 
     for (int i = x.size(); i--; )
@@ -153,7 +138,6 @@ namespace Gecode { namespace Int { namespace Extensional {
         return es;
     return ES_SUBSUMED(this, home);
   }
-#undef derr
 }}}
 // STATISTICS: int-prop
 

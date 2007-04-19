@@ -165,23 +165,14 @@ namespace Gecode { namespace Int { namespace Extensional {
 #ifdef GECODE_USE_ADVISORS
 
 namespace Gecode { namespace Int { namespace Extensional {
+  /*
   struct SupportEntry {
     tuple t;
     SupportEntry* next;
     SupportEntry(tuple t0=NULL, SupportEntry* n0=NULL)
       : t(t0), next(n0) {}
   };
-  enum WorkType {
-    WT_FIND_SUPPORT,
-    WT_REMOVE_VALUE
-  };
-  struct Work {
-    WorkType work;
-    int var;
-    int val;
-    Work(WorkType w0, int var0, int val0)
-      : work(w0), var(var0), val(val0) {}
-  };
+  */
 
   /**
    * \brief Domain-consistent extensional propagator
@@ -201,8 +192,55 @@ namespace Gecode { namespace Int { namespace Extensional {
     using Base<View, false>::last_next;
     using Base<View, false>::init_last;
     using Base<View, false>::init_dom;
-    typedef Support::DynamicStack<Work> WorkStack;
+    struct SupportEntry : public FreeList {
+    public:
+      /// Supporting tuple
+      tuple t;
+      /// Next support
+      SupportEntry* next;
+      
+      /// \name Constructors
+      //@{
+      /// Default constructor (noop)
+      SupportEntry(void);
+      /// Initialize with tuple and next (defaulting to NULL)
+      SupportEntry(tuple t0, SupportEntry* n0 = NULL);
+      //@}
+      
+      /// \name Memory management
+      //@{
+      /**
+       * \brief Free memory for all elements between this and \a l (inclusive)
+       *
+       * This routine assumes that the list has already been fixed.
+       */
+      void dispose(Space* home, SupportEntry* l);
+      /// Free memory for this element
+      void dispose(Space* home);
+      
+      /// Allocate memory from space
+      static void* operator new(size_t s, Space* home);
+      /// No-op (for exceptions)
+      static void  operator delete(void*);
+      /// No-op (use dispose instead)
+      static void  operator delete(void*, Space*);
+      //@}
+    };
+    enum WorkType {
+      WT_FIND_SUPPORT,
+      WT_REMOVE_VALUE
+    };
+    struct Work {
+      WorkType work;
+      int var;
+      int val;
+      Work(WorkType w0, int var0, int val0)
+        : work(w0), var(var0), val(val0) {}
+    };
 
+
+
+    typedef Support::DynamicStack<Work> WorkStack;
     SupportEntry** support_data;
     WorkStack work;
     int unassigned;
@@ -212,7 +250,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     /// Constructor for posting
     Incremental(Space* home, ViewArray<View>& x, const Table& t);
 
-    void  print_support(int var, int val, int tabs = 0);
     void   find_support(Space* home, Domain dom, int var, int val);
     void   init_support(Space* home);
     void    add_support(Space* home, tuple l);

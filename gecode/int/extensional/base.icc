@@ -20,9 +20,6 @@
  *
  */
 namespace Gecode { namespace Int { namespace Extensional {
-  const bool base_debug = false;
-#define derr if (base_debug) std::cerr
-
   /*
    * The propagator proper
    *
@@ -47,54 +44,25 @@ namespace Gecode { namespace Int { namespace Extensional {
     table.update(home, share, p.table);
 
     init_last(home, p.last_data);
-    derr << "Copying of last finished: "  << std::endl;
-    for (int i = 0; i < x.size(); ++i) {
-      derr << "Variable " << i << ":  ";
-      int domsize = table.tablei->domsize;
-      for (int d = 0; d < domsize; ++d) {
-        derr << "[" << (table.tablei->min+d) << "]=" 
-                  << ((last_data[(i*domsize) + d] && *(last_data[(i*domsize) + d]))
-                      ? (*(last_data[(i*domsize) + d]))[i] 
-                      : -1) 
-                  << "  ";
-      }
-      derr << std::endl;
-    }
-
-    if (last_data != NULL && last_data[3] != NULL)
-      derr << last_data[3][0] << std::endl;
   }
 
   template <class View, bool subscribe>
   forceinline void
   Base<View,subscribe>::init_last(Space* home, tuple** source) {
     if (last_data == NULL) {
-      derr << "Initializing last" << std::endl;
       int literals = table.tablei->domsize*x.size();
       last_data = static_cast<tuple**>(home->alloc(literals*sizeof(tuple*)));
       for (int i = literals; i--; ) {
         last_data[i] = source[i];
       }
-      derr << "Initialization of last=" << ((long long)last_data) << " finished: "  << std::endl;
       for (int i = 0; i < x.size(); ++i) {
-        derr << "Variable " << i << ":  ";
         int domsize = table.tablei->domsize;
         for (int d = 0; d < domsize; ++d) {
-          derr << "[" << (table.tablei->min+d) << "]=";
           tuple* l = last_data[(i*domsize) + d];
-          if (l && *l)
-            for (int i = 0; i < x.size(); ++i) derr << (*l)[i];
-          else
-            derr << "NULL";
-          derr << "  ";
         }
-        derr << std::endl;
       }
 
     }
-
-    if (last_data != NULL && last_data[3] != NULL)
-      derr << last_data[3][0] << std::endl;
   }
 
   template <class View, bool subscribe>
@@ -136,15 +104,6 @@ namespace Gecode { namespace Int { namespace Extensional {
         dom[i].set(vv.val());
         ++vv;
       }
-      if (base_debug) {
-        derr << "Copying variable " << i << ": " << x[i] << std::endl;
-        for (int j = table.tablei->min; j <= table.tablei->max; ++j)
-          derr << (x[i].in(j) ? "1" : "0");
-        derr << std::endl;
-        for (int j = table.tablei->min; j <= table.tablei->max; ++j)
-          derr << (dom[i].get(j) ? "1" : "0");
-        derr << std::endl;
-      }
     }
   }
 
@@ -160,22 +119,10 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View, bool subscribe>
   forceinline tuple
   Base<View,subscribe>::find_support(Domain dom, int var, int val) {
-    derr << "\tFind support for var=" << var << " val=" << val << std::endl;
     tuple l = last(var, val);
-    derr << "\tlast is l=" << l << std::endl;
     while (l != NULL && !valid(l, dom)) {
-      derr << "\t";
-      for (int i = 0; i < x.size(); ++i) derr << l[i] << " ";
-      derr << " as last not valid" << std::endl;
       l = last_next(var, val);
-      derr << "\tlast is l=" << l << std::endl;
     }
-    if (l) {
-      derr << "\t";
-      for (int i = 0; i < x.size(); ++i) derr << l[i] << " ";
-      derr << " is a valid last" << std::endl;
-    } else
-      derr << "\t...last invalid" << std::endl;
     return l;
   }
 
@@ -192,7 +139,6 @@ namespace Gecode { namespace Int { namespace Extensional {
     home->reuse(last_data, sizeof(tuple*)*literals);
     return sizeof(*this);
   }
-#undef derr
 }}}
 
 // STATISTICS: int-prop

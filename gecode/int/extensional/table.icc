@@ -91,10 +91,10 @@ namespace Gecode {
     void dispose(void) {
       --*use_cnt;
       if (*use_cnt == 0) {
-        Memory::free(use_cnt);
-        Memory::free(tuples);
-        Memory::free(data);
-        Memory::free(last);
+        //Memory::free(use_cnt);
+        //Memory::free(tuples);
+        //Memory::free(data);
+        //Memory::free(last);
       }
     }
 
@@ -186,7 +186,7 @@ namespace Gecode {
   Table::~Table(void) {
     tablei->dispose();
     if (tablei->use_cnt == 0) {
-      Memory::free(tablei);
+      //Memory::free(tablei);
     }
   }
 
@@ -195,7 +195,7 @@ namespace Gecode {
     if (&d != this) {
       tablei->dispose();
       if (tablei->use_cnt == 0) {
-        Memory::free(tablei);
+        //Memory::free(tablei);
       }
       tablei = d.tablei;
       ++*tablei->use_cnt;

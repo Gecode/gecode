@@ -156,7 +156,7 @@ namespace Gecode {
       }
     }
 
-    if (false)
+    if (table_debug)
       for (int t = 0; t < size; t++ ) {
         for (int i = 0; i < arity; i++ ) {
           derr << new_data[t*arity + i] << " ";
@@ -164,7 +164,7 @@ namespace Gecode {
         derr << std::endl;
       }
 
-    Memory::free(data);
+    //Memory::free(data);
     data = new_data;
     excess = -1;
     derr << "tuple_data set up" << std::endl;
@@ -178,7 +178,8 @@ namespace Gecode {
       TuplePosCompare tpc(i);
       Support::quicksort(tuples[i], size, tpc);
     }
-    if (false)
+
+    if (table_debug)
       for (int s = 0; s < arity; ++s) {
         derr << "Sorting on var " << s << std::endl;
         for (int t = 0; t < size; ++t) {
@@ -205,22 +206,21 @@ namespace Gecode {
     }
     
     // Debug output
-    if (false)
-      if (table_debug) {
-        derr << "Finalization finished: "  << std::endl;
-        for (int i = 0; i < arity; ++i) {
-          derr << "Variable " << i << ":  ";
-          for (int d = 0; d < domsize; ++d) {
-            derr << "[" << (min+d) << "]=" 
-                 << (last[(i*domsize) + d] 
-                     ? (*(last[(i*domsize) + d]))[i] 
-                     : -1) 
-                 << "  ";
-          }
-          derr << std::endl;
+    if (table_debug) {
+      derr << "Finalization finished: "  << std::endl;
+      for (int i = 0; i < arity; ++i) {
+        derr << "Variable " << i << ":  ";
+        for (int d = 0; d < domsize; ++d) {
+          derr << "[" << (min+d) << "]=" 
+               << (last[(i*domsize) + d]  && *(last[(i*domsize) + d])
+                   ? (*(last[(i*domsize) + d]))[i] 
+                   : -1) 
+               << "  ";
         }
-        assert(finalized());
+        derr << std::endl;
       }
+      assert(finalized());
+    }
   }
 
   Table::TableI*
