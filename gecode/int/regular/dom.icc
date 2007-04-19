@@ -256,6 +256,43 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View, bool shared>
   forceinline ExecStatus
   Dom<View,shared>::LayeredGraph::prune(Space* home, ViewArray<View> x) {
+#if defined(REGULAR_ADVISOR_CHEAP) || defined(REGULAR_ADVISOR_EXPENSIVE)
+    // Forward pass
+    for (int i=0; i<x.size(); i++)
+      if (layers[i].modified & MOD_IDEG) {
+        // Only some in states have changed
+        unsigned int k=0;
+        for (unsigned int j=0; j<layers[i].size; j++) {
+          // Some edges might have lost support
+          Edge** p = &layers[i].support[j].edges;
+          for (Edge* e = *p; e != NULL; e = e->next) 
+            if (e->i_state->i_deg == 0) {
+              // Adapt states
+              if ((--e->i_state->o_deg) == 0)
+                layers[i-1].modified |= MOD_ODEG;
+              if ((--e->o_state->i_deg) == 0)
+                layers[i+1].modified |= MOD_IDEG;
+              // Remove edge
+              *p = e->next;
+            } else {
+              // Keep edge
+              p = &e->next;
+            }
+          // Write endmarker for edges
+          *p=NULL;
+          // Value still has support
+          if (layers[i].support[j].edges != NULL)
+            layers[i].support[k++]=layers[i].support[j];
+          else
+            layers[i].lost = layers[i].support[j].val;
+        }
+        // Update size
+        if (k == 0)
+          return ES_FAILED;
+        layers[i].size = k;
+      }
+
+#else
     // Forward pass
     for (int i=0; i<x.size(); i++) {
       if ((layers[i].size != x[i].size()) && (layers[i].modified & MOD_IDEG)) {
@@ -383,8 +420,10 @@ namespace Gecode { namespace Int { namespace Regular {
       }
     }
 
+#endif
+
     // Backward pass
-    for (int i=x.size(); i--; ) {
+    for (int i=x.size(); i--; )
       if (layers[i].modified & MOD_ODEG) {
         unsigned int k=0;
         for (unsigned int j=0; j<layers[i].size; j++) {
@@ -413,8 +452,7 @@ namespace Gecode { namespace Int { namespace Regular {
           return ES_FAILED;
         layers[i].size = k;
       }
-    }
-
+    
     return ES_OK;
   }
 
@@ -498,7 +536,7 @@ namespace Gecode { namespace Int { namespace Regular {
       ViewValues<View> vx(x[i]);
       while (vx() && (j<layers[i].size)) {
         if (layers[i].support[j].val < vx.val()) {
-          // Value has lost support
+          // Supported value not any longer in view
           for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
             // Adapt states
             if ((--e->i_state->o_deg) == 0)
@@ -506,17 +544,17 @@ namespace Gecode { namespace Int { namespace Regular {
             if ((--e->o_state->i_deg) == 0)
               layers[i+1].modified |= MOD_IDEG;
           }
-          layers[i].lost = layers[i].support[j].val;
           ++j;
-        } else if (layers[i].support[j].val > vx.val()) {
-          ++vx;
         } else {
+          assert(layers[i].support[j].val == vx.val());
           layers[i].support[k++]=layers[i].support[j];
           ++vx; j++;
         }
       }
+      if (k == 0)
+        return ES_FAILED;
       // Remove remaining values
-      for (; j < layers[i].size; j++) {
+      for (; j < layers[i].size; j++)
         for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
           // Adapt states
           if ((--e->i_state->o_deg) == 0)
@@ -524,23 +562,87 @@ namespace Gecode { namespace Int { namespace Regular {
           if ((--e->o_state->i_deg) == 0)
             layers[i+1].modified |= MOD_IDEG;
         }
-        layers[i].lost = layers[i].support[j].val;
-      }
       // Update size
-      if (k == 0)
-        return ES_FAILED;
       layers[i].size = k;
+      if ((layers[i-1].modified != MOD_NONE) ||
+          (layers[i+1].modified != MOD_NONE))
+        return (View::modevent(d) == ME_INT_VAL) ? 
+          ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX;
     }
-    if ((layers[i-1].modified != MOD_NONE) ||
-        (layers[i+1].modified != MOD_NONE))
-      return (View::modevent(d) == ME_INT_VAL) ? 
-        ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX;
     return (View::modevent(d) == ME_INT_VAL) ? 
       ES_SUBSUMED_FIX(a,home) : ES_FIX;
 #endif
 #ifdef REGULAR_ADVISOR_EXPENSIVE
+    if (!constructed())
+      return (View::modevent(d) == ME_INT_VAL) ? 
+        ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX;
+    int i = a.i;
+    if (layers[i].size != x[i].size()) {
+      if (x[i].any(d)) {
+        unsigned int j=0;
+        unsigned int k=0;
+        ViewValues<View> vx(x[i]);
+        while (vx() && (j<layers[i].size)) {
+          if (layers[i].support[j].val < vx.val()) {
+            // Supported value not any longer in view
+            for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
+              // Adapt states
+              if ((--e->i_state->o_deg) == 0)
+                layers[i-1].modified |= MOD_ODEG;
+              if ((--e->o_state->i_deg) == 0)
+                layers[i+1].modified |= MOD_IDEG;
+            }
+            ++j;
+          } else {
+            assert(layers[i].support[j].val == vx.val());
+            layers[i].support[k++]=layers[i].support[j];
+            ++vx; j++;
+          }
+        }
+        if (k == 0)
+          return ES_FAILED;
+        // Remove remaining values
+        for (; j < layers[i].size; j++)
+          for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
+            // Adapt states
+            if ((--e->i_state->o_deg) == 0)
+              layers[i-1].modified |= MOD_ODEG;
+            if ((--e->o_state->i_deg) == 0)
+              layers[i+1].modified |= MOD_IDEG;
+        }
+        // Update size
+        layers[i].size = k;
+      } else {
+        int min = x[i].min(d);
+        int max = x[i].max(d);
+        unsigned int j=0;
+        while (layers[i].support[j].val < min)
+          j++;
+        unsigned int k=j;
+        while ((j<layers[i].size) && (layers[i].support[j].val <= max)) {
+          // Supported value not any longer in view
+          for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
+            // Adapt states
+            if ((--e->i_state->o_deg) == 0)
+              layers[i-1].modified |= MOD_ODEG;
+            if ((--e->o_state->i_deg) == 0)
+              layers[i+1].modified |= MOD_IDEG;
+          }
+          j++;
+        }
+        while (j < layers[i].size)
+          layers[i].support[k++]=layers[i].support[j++];
+        if (k == 0)
+          return ES_FAILED;
+        layers[i].size = k;
+      }
+      if (((i>0) && (layers[i-1].modified != MOD_NONE)) ||
+          ((i<x.size()-1) && (layers[i+1].modified != MOD_NONE)))
+        return (View::modevent(d) == ME_INT_VAL) ? 
+          ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX;
+    }
     return (View::modevent(d) == ME_INT_VAL) ? 
-      ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX;
+      ES_SUBSUMED_FIX(a,home) : ES_FIX;
 #endif
   }
 
