@@ -155,7 +155,11 @@ main(int argc, char** argv) {
   Options opt("Extensional");
   opt.solutions = 1;
   opt.size      = 1000000;
+#if defined(SYSTEM_ADVISOR_IMPROVE_CHEAP) || defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
+  opt.naive     = false;
+#else
   opt.naive     = true;
+#endif
   opt.parse(argc,argv);
   if (opt.size == 1000000)
     read_spec(std::cin);

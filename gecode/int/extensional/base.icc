@@ -34,6 +34,8 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     if (!table.tablei->finalized()) table.tablei->finalize();
     init_last(home, table.tablei->last);
+
+    this->force(home);
   }
 
   template <class View, bool subscribe>
@@ -130,6 +132,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View, bool subscribe>
   size_t
   Base<View,subscribe>::dispose(Space* home) {
+    this->unforce(home);
     if (subscribe)
       x.cancel(home,this,PC_INT_DOM);
     (void) Propagator::dispose(home);
