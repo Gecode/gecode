@@ -578,7 +578,34 @@ namespace Gecode { namespace Int { namespace Regular {
         ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX;
     int i = a.i;
     if (layers[i].size != x[i].size()) {
-      if (x[i].any(d)) {
+      if (x[i].assigned()) {
+        int n = x[i].val();
+        unsigned int j=0;
+        while (layers[i].support[j].val < n) {
+          // Supported value not any longer in view
+          for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
+            // Adapt states
+            if ((--e->i_state->o_deg) == 0)
+              layers[i-1].modified |= MOD_ODEG;
+            if ((--e->o_state->i_deg) == 0)
+              layers[i+1].modified |= MOD_IDEG;
+          }
+          j++;
+        }
+        layers[i].support[0]=layers[i].support[j++];
+        while (j < layers[i].size) {
+          // Supported value not any longer in view
+          for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
+            // Adapt states
+            if ((--e->i_state->o_deg) == 0)
+              layers[i-1].modified |= MOD_ODEG;
+            if ((--e->o_state->i_deg) == 0)
+              layers[i+1].modified |= MOD_IDEG;
+          }
+          j++;
+        }
+        layers[i].size = 1;
+      } else if (x[i].any(d)) {
         unsigned int j=0;
         unsigned int k=0;
         ViewValues<View> vx(x[i]);
