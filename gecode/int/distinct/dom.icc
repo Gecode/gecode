@@ -540,6 +540,48 @@ namespace Gecode { namespace Int { namespace Distinct {
     return vvg.tell(home);
   }
 
+#ifdef DISTINCT_DOM_ADVISOR
+  template <class View>
+  forceinline ExecStatus
+  DomCtrl<View>::advise(Space* home, Advisor& _a, const Delta& d,
+                        ViewArray<View> x) {
+    Dom<View>::Index& a = static_cast<Dom<View>::Index&>(_a);
+#ifdef DISTINCT_DOM_ADVISOR_SCHEDULE
+    return (View::modevent(d) == ME_INT_VAL) ? 
+      ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX; 
+#endif
+#ifdef DISTINCT_DOM_ADVISOR_AVOID
+    if (!available())
+      return (View::modevent(d) == ME_INT_VAL) ?
+        ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX; 
+      
+    int i = a.i;
+    assert(same(x[i],vvg.iview[i]->view()));
+
+    if (x[i].size() > vvg.n_view) {
+      return (View::modevent(d) == ME_INT_VAL) ?
+        ES_SUBSUMED_FIX(a,home) : ES_FIX; 
+    }
+    return (View::modevent(d) == ME_INT_VAL) ?
+      ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX; 
+#endif
+#ifdef DISTINCT_DOM_ADVISOR_IMPROVE
+    if (!available())
+      return (View::modevent(d) == ME_INT_VAL) ?
+        ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX; 
+      
+    int i = a.i;
+    assert(same(x[i],vvg.iview[i]->view()));
+
+    if (x[i].size() > vvg.n_view) {
+      return (View::modevent(d) == ME_INT_VAL) ?
+        ES_SUBSUMED_FIX(a,home) : ES_FIX; 
+    }
+    return (View::modevent(d) == ME_INT_VAL) ?
+      ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX; 
+#endif
+  }
+#endif
 
 
   /*
@@ -621,9 +663,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   ExecStatus
   Dom<View>::advise(Space* home, Advisor& _a, const Delta& d) {
-    Index& a = static_cast<Index&>(_a);
-    return (View::modevent(d) == ME_INT_VAL) ? 
-      ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX;    
+    return dc.advise(home,_a,d,y);
   }
 #endif
 

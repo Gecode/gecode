@@ -225,7 +225,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   protected:
     /// View-value graph for propagation
     class ViewValGraph {
-    protected:
+    public:
       /// Array of view nodes
       ViewNode<View>** view; 
       /// Initial array of view nodes
@@ -253,7 +253,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       void purge(void);
       /// Synchronize graph with new view domains
       bool sync(void);
-    protected:
+    public:
       /// Stack used during matching
       typedef Support::SentinelStack<ViewNode<View>*> MatchStack;
       /// Find a matching for node \a x
@@ -272,6 +272,9 @@ namespace Gecode { namespace Int { namespace Distinct {
     ExecStatus sync(void);
     /// Perform propagation and return true if a view gets assigned
     bool propagate(Space* home);
+#ifdef DISTINCT_DOM_ADVISOR
+    ExecStatus advise(Space* home, Advisor& _a, const Delta& d, ViewArray<View> x);
+#endif
   };
 
   /**
@@ -301,6 +304,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Constructor for posting
     Dom(Space* home, ViewArray<View>& x);
 #ifdef DISTINCT_DOM_ADVISOR
+  public:
     class Index : public Advisor {
     public:
       int i;
