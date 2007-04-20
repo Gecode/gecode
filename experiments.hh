@@ -42,6 +42,7 @@
 #define BOOL_OR_ADVISOR
 // OK
 #define REGULAR_ADVISOR_SCHEDULE
+#define DISTINCT_DOM_ADVISOR_SCHEDULE
 #endif
 
 // System with advisors on and try to avoid execution
@@ -72,6 +73,7 @@
 #define BOOL_LINEAR_INT_ADVISOR
 // OK
 #define BOOL_OR_ADVISOR
+#define DISTINCT_DOM_ADVISOR_AVOID
 #endif
 
 // Try to improve execution, cheap approach
@@ -82,6 +84,7 @@
 // OK
 #define BOOL_OR_ADVISOR
 #define REGULAR_ADVISOR_CHEAP
+#define DISTINCT_DOM_ADVISOR_IMPROVE
 #endif
 
 // Try to improve execution, expensive approach
@@ -92,6 +95,7 @@
 // OK
 #define BOOL_OR_ADVISOR
 #define REGULAR_ADVISOR_EXPENSIVE
+#define DISTINCT_DOM_ADVISOR_IMPROVE
 #endif
 
 
@@ -100,3 +104,10 @@
 #if defined(REGULAR_ADVISOR_SCHEDULE) || defined(REGULAR_ADVISOR_CHEAP) || defined(REGULAR_ADVISOR_EXPENSIVE)
 #define REGULAR_ADVISOR
 #endif
+
+// Domain consistent distinct config
+#if defined(DISTINCT_DOM_ADVISOR_SCHEDULE) || defined(DISTINCT_DOM_ADVISOR_AVOID) || defined(DISTINCT_DOM_ADVISOR_IMPROVE)
+#define DISTINCT_DOM_ADVISOR
+#endif
+
+

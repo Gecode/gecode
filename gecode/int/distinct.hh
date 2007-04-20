@@ -228,6 +228,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     protected:
       /// Array of view nodes
       ViewNode<View>** view; 
+      /// Initial array of view nodes
+      ViewNode<View>** iview; 
       /// Number of view nodes
       int n_view;
       /// Array of value nodes
@@ -288,16 +290,36 @@ namespace Gecode { namespace Int { namespace Distinct {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Dom : public NaryPropagator<View,PC_INT_DOM> {
+  class Dom : public Propagator {
   protected:
-    using NaryPropagator<View,PC_INT_DOM>::x;
-
+    ViewArray<View> x;
+    ViewArray<View> y;
     /// Propagation controller
     DomCtrl<View> dc;
     /// Constructor for cloning \a p
     Dom(Space* home, bool share, Dom<View>& p);
     /// Constructor for posting
     Dom(Space* home, ViewArray<View>& x);
+#ifdef DISTINCT_DOM_ADVISOR
+    class Index : public Advisor {
+    public:
+      int i;
+      Index(Space* home, Propagator* p, Council<Index>& c, int i0)
+        : Advisor(home,p,c), i(i0) {
+      }
+      Index(Space* home, bool share, Index& j)
+        : Advisor(home,share,j), i(j.i) {}
+      void
+      dispose(Space* home) {
+        Dom<View>* d = static_cast<Dom<View>*>(propagator());
+        d->y[i].cancel(home,this);
+        Advisor::dispose(home);
+      }
+    };
+    Council<Index> c;
+    virtual ExecStatus
+    advise(Space* home, Advisor& _a, const Delta& d);
+#endif
   public:
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
@@ -312,6 +334,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     virtual Actor* copy(Space* home, bool share);
     /// Post propagator for views \a x
     static  ExecStatus post(Space* home, ViewArray<View>& x);
+    virtual size_t dispose(Space* home);
   };
 
   /**

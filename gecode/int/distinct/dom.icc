@@ -254,6 +254,8 @@ namespace Gecode { namespace Int { namespace Distinct {
       n_view = n; 
       view = reinterpret_cast<ViewNode<View>**>
         (home->alloc(n_view*sizeof(ViewNode<View>*)));
+      iview = reinterpret_cast<ViewNode<View>**>
+        (home->alloc(n_view*sizeof(ViewNode<View>*)));
       n_val = static_cast<int>(width);
       val  = reinterpret_cast<ValNode<View>**>
         (home->alloc(n_val*sizeof(ValNode<View>*)));
@@ -264,8 +266,8 @@ namespace Gecode { namespace Int { namespace Distinct {
           val[i] = new (home) ValNode<View>(--v);
       }
       // Init view nodes and edges
-      for (int i = n_view; i--; ) {
-        view[i] = new (home) ViewNode<View>(x[i]);
+      for (int i = n; i--; ) {
+        iview[i] = view[i] = new (home) ViewNode<View>(x[i]);
         Edge<View>** edge_p = view[i]->val_edges_ref();
         ViewValues<View> x_i(x[i]);
         while (x_i()) {
@@ -296,6 +298,8 @@ namespace Gecode { namespace Int { namespace Distinct {
         return ES_FAILED;
       view = reinterpret_cast<ViewNode<View>**>
         (home->alloc(n_view*sizeof(ViewNode<View>*)));
+      iview = reinterpret_cast<ViewNode<View>**>
+        (home->alloc(n_view*sizeof(ViewNode<View>*)));
       val  = reinterpret_cast<ValNode<View>**>
         (home->alloc(n_val*sizeof(ValNode<View>*)));
       // Init value nodes
@@ -303,7 +307,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         val[i] = new (home) ValNode<View>(val_inf[i]);
       // Init view nodes
       for (int i = n_view; i--; ) {
-        view[i] = new (home) ViewNode<View>(x[i]);
+        iview[i] = view[i] = new (home) ViewNode<View>(x[i]);
         Edge<View>** edge_p = view[i]->val_edges_ref();
         ViewValues<View> x_i(x[i]);
         int j = 0;
@@ -545,8 +549,32 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline
-  Dom<View>::Dom(Space* home, ViewArray<View>& x)
-    : NaryPropagator<View,PC_INT_DOM>(home,x) {}
+  Dom<View>::Dom(Space* home, ViewArray<View>& x0)
+    : Propagator(home), x(x0), y(home,x) 
+#ifdef DISTINCT_DOM_ADVISOR
+    , c(home,x.size())
+#endif
+  {
+#ifdef DISTINCT_DOM_ADVISOR
+    for (int i=x.size(); i--; )
+      x[i].subscribe(home, new (home) Index(home,this,c,i));
+    View::schedule(home,this,ME_INT_VAL);    
+#else
+    x.subscribe(home, this, PC_INT_DOM);
+#endif
+  }
+
+  template <class View>
+  forceinline size_t
+  Dom<View>::dispose(Space* home) {
+#ifdef DISTINCT_DOM_ADVISOR
+    c.dispose(home);
+#else
+    x.cancel(home,this,PC_INT_DOM);
+#endif
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
 
   template <class View>
   ExecStatus
@@ -566,7 +594,14 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline
   Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
-    : NaryPropagator<View,PC_INT_DOM>(home,share,p) {}
+    : Propagator(home,share,p) 
+#ifdef DISTINCT_DOM_ADVISOR
+      , c(home,share,p.c)
+#endif
+  {
+    x.update(home,share,p.x);
+    y.update(home,share,p.y);
+  }
 
   template <class View>
   PropCost
@@ -581,6 +616,16 @@ namespace Gecode { namespace Int { namespace Distinct {
   Dom<View>::copy(Space* home, bool share) {
     return new (home) Dom<View>(home,share,*this);
   }
+
+#ifdef DISTINCT_DOM_ADVISOR
+  template <class View>
+  ExecStatus
+  Dom<View>::advise(Space* home, Advisor& _a, const Delta& d) {
+    Index& a = static_cast<Index&>(_a);
+    return (View::modevent(d) == ME_INT_VAL) ? 
+      ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX;    
+  }
+#endif
 
   template <class View>
   ExecStatus
@@ -611,7 +656,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     if (dc.available()) {
       GECODE_ES_CHECK(dc.sync());
     } else {
-      GECODE_ES_CHECK(dc.init(home,x.size(),&x[0]));
+      GECODE_ES_CHECK(dc.init(home,y.size(),&y[0]));
     }
 
     (void) dc.propagate(home);
