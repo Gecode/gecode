@@ -475,7 +475,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   bool
   DomCtrl<View>::ViewValGraph::sync(void) {
-#ifdef DISTINCT_DOM_ADVISOR_IMPROVE
+#if defined(DISTINCT_DOM_ADVISOR_IMPROVE_CHEAP) || defined(DISTINCT_DOM_ADVISOR_IMPROVE_EXPENSIVE)
     return true;
 #else
     // Stack for view nodes to be rematched
@@ -532,6 +532,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   bool
   DomCtrl<View>::ViewValGraph::sync(int i) {
+#ifdef DISTINCT_DOM_ADVISOR_IMPROVE_CHEAP
     ViewNode<View>* x = iview[i];
     ViewRanges<View> r(x->view());
     Edge<View>*  m = x->edge_fst();      // Matching edge
@@ -564,6 +565,41 @@ namespace Gecode { namespace Int { namespace Distinct {
       GECODE_AUTOSTACK(ViewNode<View>*,NULL,ms,n_view);
       return match(ms,x);
     }
+#endif
+#ifdef DISTINCT_DOM_ADVISOR_IMPROVE_EXPENSIVE
+    ViewNode<View>* x = iview[i];
+    ViewRanges<View> r(x->view());
+    Edge<View>*  m = x->edge_fst();      // Matching edge
+    Edge<View>** p = x->val_edges_ref();
+    Edge<View>*  e = *p;
+    do {
+      while (e->val(x)->val() < r.min()) {
+        // Skip edge
+        e->unlink(); e->mark();
+        e = e->next_edge();
+      }
+      *p = e;
+      assert(r.min() == e->val(x)->val());
+      // This edges must be kept
+      for (unsigned int i=r.width(); i--; ) {
+        e->free();
+          p = e->next_edge_ref();
+          e = e->next_edge();
+      }
+      ++r;
+    } while (r());
+    *p = NULL;
+    while (e != NULL) {
+      e->unlink(); e->mark();
+      e = e->next_edge();
+    }
+    if (m->marked()) {
+      // Matching has been deleted!
+      m->val(x)->matching(NULL);
+      GECODE_AUTOSTACK(ViewNode<View>*,NULL,ms,n_view);
+      return match(ms,x);
+    }
+#endif
     return true;
   }
 
@@ -628,7 +664,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     return (View::modevent(d) == ME_INT_VAL) ?
       ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX; 
 #endif
-#ifdef DISTINCT_DOM_ADVISOR_IMPROVE
+#if defined(DISTINCT_DOM_ADVISOR_IMPROVE_CHEAP) || defined(DISTINCT_DOM_ADVISOR_IMPROVE_EXPENSIVE)
     if (!available())
       return (View::modevent(d) == ME_INT_VAL) ?
         ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX; 
