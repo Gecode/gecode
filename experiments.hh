@@ -45,6 +45,12 @@
 #define DISTINCT_DOM_ADVISOR_SCHEDULE
 #endif
 
+// System for scaling test with unintrusive memory management
+#ifdef SYSTEM_ADVISOR_BASE_SCALE
+#define GECODE_USE_ADVISORS
+#define BOOL_LINEAR_INT_ADVISOR
+#endif
+
 // System with advisors on and try to avoid execution
 #ifdef SYSTEM_ADVISOR_BASE_AVOID
 #define GECODE_USE_ADVISORS
@@ -52,7 +58,7 @@
 #define LE_ADVISOR_AVOID
 // Avoids by checking modification events: OK
 #define NQ_ADVISOR_AVOID
-// Avoids by checking modification events: CRASHES
+// Avoids by checking modification events: OK
 #define BINLIN_NQ_ADVISOR_AVOID
 // Avoids by checking modification events: OK
 #define DISTINCT_NAIVE_ADVISOR_AVOID
