@@ -68,6 +68,7 @@ public:
     // Order marks
     rel(this, m, IRT_LE);
 
+    /*
     if (opt.naive) {
       // d[diag(i,j)] must be at least sum of first j-i integers
       for (int i=0; i<n; i++)
@@ -85,6 +86,15 @@ public:
         for (int j=i+1; j<n; j++)
           rel(this, d[diag(i,j)], IRT_GQ, length[j-i+1]);
     }
+    */
+
+    if (!opt.naive) {
+      // d[diag(i,j)] must be at least sum of first j-i integers
+      for (int i=0; i<n; i++)
+        for (int j=i+1; j<n; j++)
+          rel(this, d[diag(i,j)], IRT_GQ, (j-i)*(j-i+1)/2);
+    }
+
     distinct(this, d, opt.icl);
 
     if (n > 2)
@@ -106,7 +116,6 @@ public:
     for (int i = 0; i < n; i++)
       std::cout << m[i] << ((i<n-1)?",":"};\n");
   }
-
 
   /// Constructor for cloning \a s
   Golomb(bool share, Golomb& s)

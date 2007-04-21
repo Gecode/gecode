@@ -420,13 +420,34 @@ namespace Gecode { namespace Int { namespace Distinct {
   DomCtrl<View>::ViewValGraph::tell(Space* home) {
     bool assigned = false;
     // Tell constraints and also eliminate nodes and edges
-    for (int i = n_view; i--; )
-      if (!view[i]->edge_fst()->used(view[i])) {
-        view[i]->view().eq(home,view[i]->edge_fst()->val(view[i])->val());
-        view[i]->edge_fst()->val(view[i])->matching(NULL);
+    for (int i = n_view; i--; ) {
+      ViewNode<View>* x = view[i];
+      if (!x->edge_fst()->used(x)) {
+        x->view().eq(home,x->edge_fst()->val(x)->val());
+        x->edge_fst()->val(x)->matching(NULL);
         view[i] = view[--n_view];
         assigned = true;
       } else {
+        Edge<View>** p = x->val_edges_ref();
+        Edge<View>*  e = *p;
+        while (e != NULL) {
+          if (e->used(x)) {
+            // Keep edge
+            e->free();
+            p = e->next_edge_ref();
+            e = e->next_edge();
+          } else {
+            // Skip edge
+            x->view().nq(home,e->val(x)->val());
+            e->unlink();
+            e = e->next_edge();
+            *p = e;
+          }
+        }
+        *p = NULL;
+      }
+    }
+        /*
         for (Edge<View>* e = view[i]->val_edges(); e!=NULL; e = e->next_edge())
           if (!e->used(view[i])) {
 #ifndef NDEBUG
@@ -435,7 +456,7 @@ namespace Gecode { namespace Int { namespace Distinct {
               view[i]->view().nq(home,e->val(view[i])->val());
             assert(me != ME_INT_VAL);
           }
-      }
+        */
     return assigned;
   }
 
@@ -454,6 +475,9 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   bool
   DomCtrl<View>::ViewValGraph::sync(void) {
+#ifdef DISTINCT_DOM_ADVISOR_IMPROVE
+    return true;
+#else
     // Stack for view nodes to be rematched
     GECODE_AUTOSTACK(ViewNode<View>*,NULL,re,n_view);
     // Synchronize nodes
@@ -502,6 +526,45 @@ namespace Gecode { namespace Int { namespace Distinct {
       if (!match(m,re.pop()))
         return false;
     return true;
+#endif
+  }
+
+  template <class View>
+  bool
+  DomCtrl<View>::ViewValGraph::sync(int i) {
+    ViewNode<View>* x = iview[i];
+    ViewRanges<View> r(x->view());
+    Edge<View>*  m = x->edge_fst();      // Matching edge
+    Edge<View>** p = x->val_edges_ref();
+    Edge<View>*  e = *p;
+    do {
+      while (e->val(x)->val() < r.min()) {
+        // Skip edge
+        e->unlink(); e->mark();
+        e = e->next_edge();
+      }
+      *p = e;
+      assert(r.min() == e->val(x)->val());
+      // This edges must be kept
+      for (unsigned int i=r.width(); i--; ) {
+        e->free();
+          p = e->next_edge_ref();
+          e = e->next_edge();
+      }
+      ++r;
+    } while (r());
+    *p = NULL;
+    while (e != NULL) {
+      e->unlink(); e->mark();
+      e = e->next_edge();
+    }
+    if (m->marked()) {
+      // Matching has been deleted!
+      m->val(x)->matching(NULL);
+      GECODE_AUTOSTACK(ViewNode<View>*,NULL,ms,n_view);
+      return match(ms,x);
+    }
+    return true;
   }
 
 
@@ -544,7 +607,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline ExecStatus
   DomCtrl<View>::advise(Space* home, Advisor& _a, const Delta& d,
-                        ViewArray<View> x) {
+                        ViewArray<View> x, bool ignore) {
     Dom<View>::Index& a = static_cast<Dom<View>::Index&>(_a);
 #ifdef DISTINCT_DOM_ADVISOR_SCHEDULE
     return (View::modevent(d) == ME_INT_VAL) ? 
@@ -573,10 +636,14 @@ namespace Gecode { namespace Int { namespace Distinct {
     int i = a.i;
     assert(same(x[i],vvg.iview[i]->view()));
 
-    if (x[i].size() > vvg.n_view) {
+    if (ignore || (x[i].size() > vvg.n_view)) {
       return (View::modevent(d) == ME_INT_VAL) ?
         ES_SUBSUMED_FIX(a,home) : ES_FIX; 
     }
+
+    if (!vvg.sync(i))
+      return ES_FAILED;
+    
     return (View::modevent(d) == ME_INT_VAL) ?
       ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX; 
 #endif
@@ -592,7 +659,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline
   Dom<View>::Dom(Space* home, ViewArray<View>& x0)
-    : Propagator(home), x(x0), y(home,x) 
+    : Propagator(home), x(x0), y(home,x), ignore(false)
 #ifdef DISTINCT_DOM_ADVISOR
     , c(home,x.size())
 #endif
@@ -636,7 +703,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline
   Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
-    : Propagator(home,share,p) 
+    : Propagator(home,share,p), ignore(false)
 #ifdef DISTINCT_DOM_ADVISOR
       , c(home,share,p.c)
 #endif
@@ -663,7 +730,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   ExecStatus
   Dom<View>::advise(Space* home, Advisor& _a, const Delta& d) {
-    return dc.advise(home,_a,d,y);
+    return dc.advise(home,_a,d,y,ignore);
   }
 #endif
 
@@ -698,8 +765,9 @@ namespace Gecode { namespace Int { namespace Distinct {
     } else {
       GECODE_ES_CHECK(dc.init(home,y.size(),&y[0]));
     }
-
+    ignore = true;
     (void) dc.propagate(home);
+    ignore = false;
     return ES_FIX;
   }
 

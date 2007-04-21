@@ -253,6 +253,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       void purge(void);
       /// Synchronize graph with new view domains
       bool sync(void);
+      bool sync(int i);
     public:
       /// Stack used during matching
       typedef Support::SentinelStack<ViewNode<View>*> MatchStack;
@@ -273,7 +274,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Perform propagation and return true if a view gets assigned
     bool propagate(Space* home);
 #ifdef DISTINCT_DOM_ADVISOR
-    ExecStatus advise(Space* home, Advisor& _a, const Delta& d, ViewArray<View> x);
+    ExecStatus advise(Space* home, Advisor& _a, const Delta& d, 
+                      ViewArray<View> x, bool ignore);
 #endif
   };
 
@@ -297,6 +299,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   protected:
     ViewArray<View> x;
     ViewArray<View> y;
+    bool ignore;
     /// Propagation controller
     DomCtrl<View> dc;
     /// Constructor for cloning \a p
