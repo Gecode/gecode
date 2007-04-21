@@ -253,7 +253,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       void purge(void);
       /// Synchronize graph with new view domains
       bool sync(void);
-      bool sync(int i);
+      bool sync(int i, const Delta& d);
     public:
       /// Stack used during matching
       typedef Support::SentinelStack<ViewNode<View>*> MatchStack;

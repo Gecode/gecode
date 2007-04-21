@@ -530,8 +530,8 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  bool
-  DomCtrl<View>::ViewValGraph::sync(int i) {
+  forceinline bool
+  DomCtrl<View>::ViewValGraph::sync(int i, const Delta& d) {
 #ifdef DISTINCT_DOM_ADVISOR_IMPROVE_CHEAP
     ViewNode<View>* x = iview[i];
     ViewRanges<View> r(x->view());
@@ -568,36 +568,96 @@ namespace Gecode { namespace Int { namespace Distinct {
 #endif
 #ifdef DISTINCT_DOM_ADVISOR_IMPROVE_EXPENSIVE
     ViewNode<View>* x = iview[i];
-    ViewRanges<View> r(x->view());
-    Edge<View>*  m = x->edge_fst();      // Matching edge
-    Edge<View>** p = x->val_edges_ref();
-    Edge<View>*  e = *p;
-    do {
-      while (e->val(x)->val() < r.min()) {
+    if (x->view().assigned()) {
+      int n = x->view().val();
+      bool rematch = (x->edge_fst()->val(x)->val() != n);
+      Edge<View>*  m = x->edge_fst();      // Matching edge
+      Edge<View>** p = x->val_edges_ref();
+      Edge<View>*  e = *p;
+      while (e->val(x)->val() < n) {
         // Skip edge
+        e->unlink(); e = e->next_edge();
+      }
+      *p = e;
+      assert(n == e->val(x)->val());
+      // This edge must be kept
+      e->free();
+      p = e->next_edge_ref();
+      e = e->next_edge();
+      *p = NULL;
+      while (e != NULL) {
+        e->unlink(); e = e->next_edge();
+      }
+      if (rematch) {
+        // Matching has been deleted!
+        assert(rematch);
+        m->val(x)->matching(NULL);
+        GECODE_AUTOSTACK(ViewNode<View>*,NULL,ms,n_view);
+        return match(ms,x);
+      } else {
+        assert(!rematch);
+      }
+    } else if (x->view().any(d)) {
+      ViewRanges<View> r(x->view());
+      Edge<View>*  m = x->edge_fst();      // Matching edge
+      Edge<View>** p = x->val_edges_ref();
+      Edge<View>*  e = *p;
+      do {
+        while (e->val(x)->val() < r.min()) {
+          // Skip edge
+          e->unlink(); e->mark();
+          e = e->next_edge();
+        }
+        *p = e;
+        assert(r.min() == e->val(x)->val());
+        // This edges must be kept
+        for (unsigned int i=r.width(); i--; ) {
+          e->free();
+          p = e->next_edge_ref();
+          e = e->next_edge();
+        }
+        ++r;
+      } while (r());
+      *p = NULL;
+      while (e != NULL) {
         e->unlink(); e->mark();
         e = e->next_edge();
       }
-      *p = e;
-      assert(r.min() == e->val(x)->val());
-      // This edges must be kept
-      for (unsigned int i=r.width(); i--; ) {
-        e->free();
-          p = e->next_edge_ref();
-          e = e->next_edge();
+      if (m->marked()) {
+        // Matching has been deleted!
+        m->val(x)->matching(NULL);
+        GECODE_AUTOSTACK(ViewNode<View>*,NULL,ms,n_view);
+        return match(ms,x);
       }
-      ++r;
-    } while (r());
-    *p = NULL;
-    while (e != NULL) {
-      e->unlink(); e->mark();
-      e = e->next_edge();
-    }
-    if (m->marked()) {
-      // Matching has been deleted!
-      m->val(x)->matching(NULL);
-      GECODE_AUTOSTACK(ViewNode<View>*,NULL,ms,n_view);
-      return match(ms,x);
+    } else {
+      int min = x->view().min(d);
+      int max = x->view().max(d);
+      int n_m = x->edge_fst()->val(x)->val();
+      bool rematch = ((min <= n_m) && (n_m <= max));
+      Edge<View>*  m = x->edge_fst();      // Matching edge
+      Edge<View>** p = x->val_edges_ref();
+      Edge<View>*  e = *p;
+      // Keep
+      while (e->val(x)->val() < min) {
+        e->free();
+        p = e->next_edge_ref();
+        e = e->next_edge();
+      }
+      // Skip
+      while ((e != NULL) && e->val(x)->val() <= max) {
+        e->unlink(); e = e->next_edge();
+      }
+      *p = e;
+      // Keep
+      while (e != NULL) {
+        e->free(); e = e->next_edge();
+      }
+      if (rematch) {
+        // Matching has been deleted!
+        m->val(x)->matching(NULL);
+        GECODE_AUTOSTACK(ViewNode<View>*,NULL,ms,n_view);
+        return match(ms,x);
+      }
     }
 #endif
     return true;
@@ -664,7 +724,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     return (View::modevent(d) == ME_INT_VAL) ?
       ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX; 
 #endif
-#if defined(DISTINCT_DOM_ADVISOR_IMPROVE_CHEAP) || defined(DISTINCT_DOM_ADVISOR_IMPROVE_EXPENSIVE)
+#ifdef DISTINCT_DOM_ADVISOR_IMPROVE_CHEAP
     if (!available())
       return (View::modevent(d) == ME_INT_VAL) ?
         ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX; 
@@ -677,7 +737,26 @@ namespace Gecode { namespace Int { namespace Distinct {
         ES_SUBSUMED_FIX(a,home) : ES_FIX; 
     }
 
-    if (!vvg.sync(i))
+    if (!vvg.sync(i,d))
+      return ES_FAILED;
+    
+    return (View::modevent(d) == ME_INT_VAL) ?
+      ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX; 
+#endif
+#ifdef DISTINCT_DOM_ADVISOR_IMPROVE_EXPENSIVE
+    if (!available())
+      return (View::modevent(d) == ME_INT_VAL) ?
+        ES_SUBSUMED_NOFIX(a,home) : ES_NOFIX; 
+      
+    int i = a.i;
+    assert(same(x[i],vvg.iview[i]->view()));
+
+    if (ignore) {
+      return (View::modevent(d) == ME_INT_VAL) ?
+        ES_SUBSUMED_FIX(a,home) : ES_FIX; 
+    }
+
+    if (!vvg.sync(i,d))
       return ES_FAILED;
     
     return (View::modevent(d) == ME_INT_VAL) ?
