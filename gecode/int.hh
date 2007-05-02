@@ -1291,7 +1291,7 @@ namespace Gecode {
       IntConLevel icl);
   //@}
 
-
+#if 0
   /**
    * \defgroup TaskIntIntExt Extensional constraints
    * \ingroup TaskIntInt
@@ -1393,7 +1393,7 @@ namespace Gecode {
 #include "gecode/int/extensional/table.icc"
 
 namespace Gecode {
-
+#endif /* removal of extensional */
 
   /**
    * \defgroup TaskIntIntArith Arithmetic constraints

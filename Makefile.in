@@ -169,7 +169,7 @@ INTSRC0 = \
 	linear/int-post.cc linear-int.cc \
 	linear/bool-post.cc linear-bool.cc \
 	branch.cc \
-	distinct.cc cumulatives.cc extensional.cc extensional/table.cc \
+	distinct.cc cumulatives.cc \
 	sortedness.cc gcc.cc \
 	channel.cc channel/link-single.cc channel/link-multi.cc \
 	circuit.cc
@@ -187,8 +187,6 @@ INTHDR0 = \
 	distinct/val.icc distinct/ter-dom.icc \
 	dom/range.icc dom/spec.icc \
 	element/int.icc element/view.icc \
-	extensional/table.icc extensional/val.icc extensional/base.icc \
-	extensional/basic.icc extensional/incremental.icc \
 	gcc/bnd.icc gcc/dom.icc gcc/gccbndsup.icc gcc/graphsup.icc \
 	gcc/lbc.icc gcc/ubc.icc gcc/val.icc gcc/occur.icc \
 	linear/post.icc \
@@ -206,7 +204,7 @@ INTHDR0 = \
 	view/offset.icc view/rtest.icc view/scale.icc view/iter.icc \
 	arithmetic.hh array.icc bool.hh branch.hh \
 	count.hh cumulatives.hh distinct.hh dom.hh \
-	element.hh exception.icc extensional.hh gcc.hh linear.hh \
+	element.hh exception.icc  gcc.hh linear.hh \
 	propagator.icc regular.hh rel.hh \
 	sortedness.hh var.icc view.icc \
 	channel.hh channel/dom.icc channel/val.icc \
@@ -235,7 +233,7 @@ export INTLIB		=
 export LINKINT      	=
 endif
 INTBUILDDIRS	= \
-	int int/var int/view int/regular int/extensional \
+	int int/var int/view int/regular \
 	int/channel int/linear int/bool int/branch
 
 #
@@ -350,19 +348,19 @@ MMBUILDDIRS	= minimodel
 # OTHER HEADERS
 #
 
-SUPPORTHDR0 = \
-	bitset.hh block-allocator.hh dynamic-array.hh dynamic-stack.hh \
-	random.hh search.hh shared-array.hh sort.hh \
+SUPPORTHDR0 =								\
+	bitset.hh block-allocator.hh dynamic-array.hh dynamic-stack.hh	\
+	random.hh search.hh shared-array.hh sort.hh			\
 	static-pqueue.hh static-stack.hh sentinel-stack.hh
-ITERHDR0 = \
-	ranges-add.icc ranges-append.icc ranges-array.icc ranges-cache.icc \
-	ranges-compl.icc ranges-diff.icc ranges-empty.icc \
-	ranges-inter.icc ranges-minmax.icc ranges-minus.icc \
-	ranges-offset.icc ranges-operations.icc ranges-scale.icc \
-	ranges-singleton.icc ranges-singleton-append.icc \
-	ranges-size.icc ranges-union.icc \
-	ranges-values.icc values-ranges.icc virtual-ranges.icc \
-	virtual-ranges-union.icc virtual-ranges-inter.icc  \
+ITERHDR0 =									\
+	ranges-add.icc ranges-append.icc ranges-array.icc ranges-cache.icc	\
+	ranges-compl.icc ranges-diff.icc ranges-empty.icc			\
+	ranges-inter.icc ranges-minmax.icc ranges-minus.icc			\
+	ranges-offset.icc ranges-operations.icc ranges-scale.icc		\
+	ranges-singleton.icc ranges-singleton-append.icc			\
+	ranges-size.icc ranges-union.icc					\
+	ranges-values.icc values-ranges.icc virtual-ranges.icc			\
+	virtual-ranges-union.icc virtual-ranges-inter.icc			\
 	virtual-ranges-compl.icc
 OTHERHDR = gecode/iter.hh \
 	$(SUPPORTHDR0:%=gecode/support/%) $(ITERHDR0:%=gecode/iter/%)
@@ -371,19 +369,19 @@ OTHERHDR = gecode/iter.hh \
 # EXAMPLES
 #
 
-INTEXAMPLESRC0 = \
-	alpha bacp bibd cars donald \
-	eq20 golomb tsp \
-	graph-color grocery ind-set knights \
-	magic-sequence magic-sequence-gcc magic-square \
-	money ortho-latin packing \
-	partition photo queens \
-	sudoku picture-puzzle placement-puzzle placement-puzzle-01 \
-	crowded-chess crowded-chess-table black-hole minesweeper domino \
-	sports-league all-interval all-interval-sort all-interval-table \
-	langfordnum langfordnum-regular warehouses table \
-	stress-domain stress-exec stress-search baseline \
-	stress-element stress-min stress-distinct \
+INTEXAMPLESRC0 =							\
+	alpha bacp bibd cars donald					\
+	eq20 golomb tsp							\
+	graph-color grocery ind-set knights				\
+	magic-sequence magic-sequence-gcc magic-square			\
+	money ortho-latin packing					\
+	partition photo queens						\
+	sudoku picture-puzzle placement-puzzle placement-puzzle-01	\
+	crowded-chess black-hole minesweeper domino			\
+	sports-league all-interval all-interval-sort			\
+	langfordnum langfordnum-regular warehouses			\
+	stress-domain stress-exec stress-search baseline		\
+	stress-element stress-min stress-distinct			\
 	stress-regular stress-circuit stress-linear-bool
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cc)
 INTEXAMPLEOBJ  = $(INTEXAMPLESRC:%.cc=%$(OBJSUFFIX))
@@ -476,8 +474,7 @@ endif
 
 INTTESTSRC0 = \
 	channel arithmetic basic bool count dom distinct element regular \
-	rel linear scheduling minimodel gcc sortedness circuit advisors  \
-	extensional
+	rel linear scheduling minimodel gcc sortedness circuit advisors
 ifeq "@enable_set_vars@" "yes"
 SETTESTSRC0 = \
 	dom rel rel-op convex sequence int select distinct projection 
