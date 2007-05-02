@@ -49,30 +49,9 @@ namespace Gecode { namespace Int { namespace Regular {
    * \ingroup FuncIntProp
    */
   template <class View, bool shared>
-  class Dom : public Propagator {
+  class Dom : public NaryPropagator<View,PC_INT_DOM> {
   protected:
-    /// The views
-    ViewArray<View> x;
-#ifdef REGULAR_ADVISOR
-    class Index : public Advisor {
-    public:
-      int i;
-      Index(Space* home, Propagator* p, Council<Index>& c, int i0)
-        : Advisor(home,p,c), i(i0) {
-      }
-      Index(Space* home, bool share, Index& j)
-        : Advisor(home,share,j), i(j.i) {}
-      void
-      dispose(Space* home) {
-        Dom<View,shared>* d = static_cast<Dom<View,shared>*>(propagator());
-        d->x[i].cancel(home,this);
-        Advisor::dispose(home);
-      }
-    };
-    Council<Index> dac;
-    virtual ExecStatus
-    advise(Space* home, Advisor& _a, const Delta& d);
-#endif
+    using NaryPropagator<View,PC_INT_DOM>::x;
     /// The %DFA describing the language
     DFA dfa;
     /// %LayeredGraph as data structure used for propagation
@@ -90,10 +69,6 @@ namespace Gecode { namespace Int { namespace Regular {
       ExecStatus prune(Space* home, ViewArray<View> x);
       /// Tell back modifications to \a x for propagator \a p
       ExecStatus tell(Space* home, Propagator* p, ViewArray<View> x);
-#ifdef REGULAR_ADVISOR
-      ExecStatus advise(Space* home, ViewArray<View> x, 
-                        Index& a, const Delta& d);
-#endif
     };
     /// Propagation is performed on a layered graph (cnstructed lazily)
     LayeredGraph lg;
