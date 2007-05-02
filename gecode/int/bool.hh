@@ -265,121 +265,6 @@ namespace Gecode { namespace Int { namespace Bool {
     static  ExecStatus post(Space* home, BVA b0, BVB b1, BVC b2);
   };
 
-#ifdef BOOL_OR_ADVISOR
-  /**
-   * \brief Boolean n-ary disjunction propagator
-   *
-   * Requires \code #include "gecode/int/bool.hh" \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class BV>
-  class NaryOr : public Propagator {
-  protected:
-    /// Views (advisors watch x[0] and x[1])
-    ViewArray<BV> x;
-    /// Result
-    BV y;
-    /// Constructor for posting
-    NaryOr(Space* home,  ViewArray<BV>& b, BV c);
-    /// Constructor for cloning \a p
-    NaryOr(Space* home, bool share, NaryOr<BV>& p);
-    /// Disposing
-    size_t dispose(Space* home);
-
-    // Watched literal advisors
-    class WLAdvisor : public ViewAdvisor<BV> {
-      using ViewAdvisor<BV>::x;
-    public:
-      WLAdvisor(Space* home, Propagator* p, CouncilBase& c, BV v) 
-        : ViewAdvisor<BV>(home,p,c,v) {
-        assert(!x.assigned());
-      }
-      WLAdvisor(Space* home, bool share, WLAdvisor& d) 
-        : ViewAdvisor<BV>(home, share, d)
-      {}
-      size_t dispose(Space* home) {
-        (void) ViewAdvisor<BV>::dispose(home);
-        return sizeof(*this);
-      }
-      ExecStatus advise(Space *home, const Delta&);
-    };
-    Council<WLAdvisor> ac;
-
-    // Result advisor
-    class RESAdvisor : public ViewAdvisor<BV> {
-      using ViewAdvisor<BV>::x;
-    public:
-      RESAdvisor(Space* home, Propagator* p, CouncilBase& c, BV v) 
-        : ViewAdvisor<BV>(home,p,c,v) {
-        assert(!x.assigned());
-      }
-      RESAdvisor(Space* home, bool share, RESAdvisor& d) 
-        : ViewAdvisor<BV>(home, share, d)
-      {}
-      size_t dispose(Space* home) {
-        (void) ViewAdvisor<BV>::dispose(home);
-        return sizeof(*this);
-      }
-      ExecStatus advise(Space *home, const Delta&);
-    };
-    Council<RESAdvisor> rac;
-
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
-    /// Cost function (defined as PC_LINEAR_LO)
-    virtual PropCost cost(void) const;
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = c\f$
-    static  ExecStatus post(Space* home, ViewArray<BV>& b, BV c);
-  };
-
-  /**
-   * \brief Boolean n-ary disjunction propagator (true)
-   *
-   * Requires \code #include "gecode/int/bool.hh" \endcode
-   * \ingroup FuncIntProp
-   */
-  template<class BV>
-  class NaryOrTrue : public Propagator {
-  protected:
-    /// Views (advisors watch x[0] and x[1])
-    ViewArray<BV> x;
-    /// Constructor for posting
-    NaryOrTrue(Space* home,  ViewArray<BV>& b);
-    /// Constructor for cloning \a p
-    NaryOrTrue(Space* home, bool share, NaryOrTrue<BV>& p);
-    /// Disposing
-    size_t dispose(Space* home);
-
-    /// Advisor for Boolean disjunction
-    class WLAdvisor : public ViewAdvisor<BV> {
-    public:
-      using ViewAdvisor<BV>::x;
-      WLAdvisor(Space* home, Propagator* p, CouncilBase& c, BV x) 
-        : ViewAdvisor<BV>(home,p,c,x) {
-        assert(!x.assigned());
-      }
-      WLAdvisor(Space* home, bool share, WLAdvisor& a) 
-        : ViewAdvisor<BV>(home, share, a) {}
-    };
-    Council<WLAdvisor> ac;
-
-  public:
-    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
-    /// Cost function (defined as PC_LINEAR_LO)
-    virtual PropCost cost(void) const;
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = 1\f$
-    static  ExecStatus post(Space* home, ViewArray<BV>& b);
-  };
-
-#else
-
   /**
    * \brief Boolean n-ary disjunction propagator
    *
@@ -435,7 +320,6 @@ namespace Gecode { namespace Int { namespace Bool {
     static  ExecStatus post(Space* home, ViewArray<BV>& b);
   };
 
-#endif
 
   /**
    * \brief Boolean equivalence propagator
