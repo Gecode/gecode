@@ -70,68 +70,6 @@ namespace Gecode { namespace Int { namespace Rel {
    * Less propagator
    *
    */
-
-#if defined(LE_ADVISOR_BASE) || defined(LE_ADVISOR_AVOID)
-
-  template <class View>
-  PropCost
-  Le<View>::cost(void) const {
-    return PC_BINARY_LO;
-  }
-
-  template <class View>
-  forceinline size_t
-  Le<View>::dispose(Space* home) {
-    c.dispose(home);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
-
-  template <class View>
-  forceinline
-  Le<View>::Le(Space* home, View _x0, View _x1)
-    : Propagator(home), x0(_x0), x1(_x1), c(home,2) {
-    (void) new (home) ViewAdvisor<View>(home,this,c,x0);
-    (void) new (home) ViewAdvisor<View>(home,this,c,x1);
-    View::schedule(home,this,ME_INT_BND);
-  }
-
-  template <class View>
-  ExecStatus
-  Le<View>::post(Space* home, View x0, View x1) {
-    if (same(x0,x1))
-      return ES_FAILED;
-    GECODE_ME_CHECK(x0.le(home,x1.max()));
-    GECODE_ME_CHECK(x1.gr(home,x0.min()));
-    if (x0.max() >= x1.min())
-      (void) new (home) Le<View>(home,x0,x1);
-    return ES_OK;
-  }
-
-  template <class View>
-  forceinline
-  Le<View>::Le(Space* home, bool share, Le<View>& p)
-    : Propagator(home,share,p), c(home,share,p.c) {
-    x0.update(home,share,p.x0);
-    x1.update(home,share,p.x1);
-  }
-
-  template <class View>
-  Actor*
-  Le<View>::copy(Space* home, bool share) {
-    return new (home) Le<View>(home,share,*this);
-  }
-
-  template <class View>
-  ExecStatus
-  Le<View>::propagate(Space* home) {
-    GECODE_ME_CHECK(x0.le(home,x1.max()));
-    GECODE_ME_CHECK(x1.gr(home,x0.min()));
-    return (x0.max() < x1.min()) ? ES_SUBSUMED(this,home) : ES_FIX;
-  }
-
-#else
-
   template <class View>
   forceinline
   Le<View>::Le(Space* home, View x0, View x1)
@@ -169,7 +107,6 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
 
-#endif
 
   /*
    * Reified less or equal propagator
