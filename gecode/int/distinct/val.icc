@@ -134,74 +134,6 @@ namespace Gecode { namespace Int { namespace Distinct {
    * The propagator proper
    *
    */
-#if defined(DISTINCT_NAIVE_ADVISOR_BASE) || defined(DISTINCT_NAIVE_ADVISOR_AVOID)
-
-  template <class View>
-  forceinline
-  Val<View>::Val(Space* home, ViewArray<View>& x0)
-    : Propagator(home), x(x0), c(home,x.size()) {
-    for (int i=x.size(); i--; )
-      new (home) ViewAdvisor<View>(home,this,c,x[i]);
-    View::schedule(home,this,ME_INT_BND);
-  }
-
-  template <class View>
-  forceinline
-  Val<View>::Val(Space* home, bool share, Val<View>& p)
-    : Propagator(home,share,p), c(home,share,p.c) {
-    x.update(home,share,p.x);
-  }
-
-  template <class View>
-  Actor*
-  Val<View>::copy(Space* home, bool share) {
-    return new (home) Val<View>(home,share,*this);
-  }
-
-  template <class View>
-  ExecStatus
-  Val<View>::propagate(Space* home) {
-    GECODE_ES_CHECK((prop_val<View,true>(home,x)));
-    return (x.size() < 2) ? ES_SUBSUMED(this,home) : ES_FIX;
-  }
-
-  template <class View>
-  ExecStatus
-  Val<View>::post(Space* home, ViewArray<View>& x) {
-    if (x.size() == 2)
-      return Rel::Nq<View>::post(home,x[0],x[1]);
-    if (x.size() > 2)
-      (void) new (home) Val<View>(home,x);
-    return ES_OK;
-  }
-
-  template <class View>
-  PropCost
-  Val<View>::cost(void) const {
-    return cost_lo(x.size(), PC_LINEAR_LO);
-  }
-
-  template <class View>
-  forceinline size_t
-  Val<View>::dispose(Space* home) {
-    c.dispose(home);
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
-
-#else
-
-#if defined(DISTINCT_NAIVE_NO_EVENTS)
-  template <class View>
-  forceinline
-  Val<View>::Val(Space* home, ViewArray<View>& x)
-    : NaryPropagator<View,PC_INT_DOM>(home,x) {}
-
-  template <class View>
-  forceinline
-  Val<View>::Val(Space* home, bool share, Val<View>& p)
-    : NaryPropagator<View,PC_INT_DOM>(home,share,p) {}
-#else
   template <class View>
   forceinline
   Val<View>::Val(Space* home, ViewArray<View>& x)
@@ -211,7 +143,6 @@ namespace Gecode { namespace Int { namespace Distinct {
   forceinline
   Val<View>::Val(Space* home, bool share, Val<View>& p)
     : NaryPropagator<View,PC_INT_VAL>(home,share,p) {}
-#endif
 
   template <class View>
   Actor*
@@ -235,8 +166,6 @@ namespace Gecode { namespace Int { namespace Distinct {
       (void) new (home) Val<View>(home,x);
     return ES_OK;
   }
-
-#endif
 
 }}}
 

@@ -49,62 +49,6 @@ namespace Gecode { namespace Int { namespace Distinct {
    * Requires \code #include "gecode/int/distinct.hh" \endcode
    * \ingroup FuncIntProp
    */
-
-#if defined(DISTINCT_NAIVE_NO_EVENTS)
-  template <class View>
-  class Val : public NaryPropagator<View,PC_INT_DOM> {
-  protected:
-    using NaryPropagator<View,PC_INT_DOM>::x;
-
-    /// Constructor for posting
-    Val(Space* home, ViewArray<View>& x);
-    /// Constructor for cloning \a p
-    Val(Space* home, bool share, Val<View>& p);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor*     copy(Space* home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    /// Post propagator for view array \a x
-    static ExecStatus post(Space* home, ViewArray<View>& x);
-  };
-#elif defined(DISTINCT_NAIVE_ADVISOR_BASE) || defined(DISTINCT_NAIVE_ADVISOR_AVOID)
-  template <class View>
-  class Val : public Propagator {
-  protected:
-    ViewArray<View> x;
-    Council<ViewAdvisor<View> > c;
-    /// Constructor for posting
-    Val(Space* home, ViewArray<View>& x);
-    /// Constructor for cloning \a p
-    Val(Space* home, bool share, Val<View>& p);
-  public:
-    virtual ExecStatus 
-    advise(Space* home, Advisor& _a, const Delta& d) {
-      ViewAdvisor<View>& a = static_cast<ViewAdvisor<View>&>(_a);
-#if defined(DISTINCT_NAIVE_ADVISOR_BASE)
-      if (View::modevent(d) == ME_INT_VAL)
-        return ES_SUBSUMED_NOFIX(a,home);
-      return ES_NOFIX;
-#endif
-#if defined(DISTINCT_NAIVE_ADVISOR_AVOID)
-      if (View::modevent(d) == ME_INT_VAL)
-        return ES_SUBSUMED_NOFIX(a,home);
-      return ES_FIX;
-#endif
-    }
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(void) const;
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
-    /// Copy propagator during cloning
-    virtual Actor*     copy(Space* home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    /// Post propagator for view array \a x
-    static ExecStatus post(Space* home, ViewArray<View>& x);
-  };
-#else
   template <class View>
   class Val : public NaryPropagator<View,PC_INT_VAL> {
   protected:
@@ -122,7 +66,6 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Post propagator for view array \a x
     static ExecStatus post(Space* home, ViewArray<View>& x);
   };
-#endif
 
   /**
    * \brief Eliminate singletons by naive value propagation
@@ -228,8 +171,6 @@ namespace Gecode { namespace Int { namespace Distinct {
     public:
       /// Array of view nodes
       ViewNode<View>** view; 
-      /// Initial array of view nodes
-      ViewNode<View>** iview; 
       /// Number of view nodes
       int n_view;
       /// Array of value nodes
@@ -253,7 +194,6 @@ namespace Gecode { namespace Int { namespace Distinct {
       void purge(void);
       /// Synchronize graph with new view domains
       bool sync(void);
-      bool sync(int i, const Delta& d);
     public:
       /// Stack used during matching
       typedef Support::SentinelStack<ViewNode<View>*> MatchStack;
@@ -273,10 +213,6 @@ namespace Gecode { namespace Int { namespace Distinct {
     ExecStatus sync(void);
     /// Perform propagation and return true if a view gets assigned
     bool propagate(Space* home);
-#ifdef DISTINCT_DOM_ADVISOR
-    ExecStatus advise(Space* home, Advisor& _a, const Delta& d, 
-                      ViewArray<View> x, bool ignore);
-#endif
   };
 
   /**
@@ -295,38 +231,15 @@ namespace Gecode { namespace Int { namespace Distinct {
    * \ingroup FuncIntProp
    */
   template <class View>
-  class Dom : public Propagator {
+  class Dom : public NaryPropagator<View,PC_INT_DOM> {
   protected:
-    ViewArray<View> x;
-    ViewArray<View> y;
-    bool ignore;
+    using NaryPropagator<View,PC_INT_DOM>::x;
     /// Propagation controller
     DomCtrl<View> dc;
     /// Constructor for cloning \a p
     Dom(Space* home, bool share, Dom<View>& p);
     /// Constructor for posting
     Dom(Space* home, ViewArray<View>& x);
-#ifdef DISTINCT_DOM_ADVISOR
-  public:
-    class Index : public Advisor {
-    public:
-      int i;
-      Index(Space* home, Propagator* p, Council<Index>& c, int i0)
-        : Advisor(home,p,c), i(i0) {
-      }
-      Index(Space* home, bool share, Index& j)
-        : Advisor(home,share,j), i(j.i) {}
-      void
-      dispose(Space* home) {
-        Dom<View>* d = static_cast<Dom<View>*>(propagator());
-        d->y[i].cancel(home,this);
-        Advisor::dispose(home);
-      }
-    };
-    Council<Index> c;
-    virtual ExecStatus
-    advise(Space* home, Advisor& _a, const Delta& d);
-#endif
   public:
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
@@ -341,7 +254,6 @@ namespace Gecode { namespace Int { namespace Distinct {
     virtual Actor* copy(Space* home, bool share);
     /// Post propagator for views \a x
     static  ExecStatus post(Space* home, ViewArray<View>& x);
-    virtual size_t dispose(Space* home);
   };
 
   /**
