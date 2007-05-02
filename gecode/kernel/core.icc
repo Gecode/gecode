@@ -2158,6 +2158,7 @@ namespace Gecode {
       }
       la++;
     } while (la != le);
+    return true;
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
