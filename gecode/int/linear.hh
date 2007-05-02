@@ -180,31 +180,6 @@ namespace Gecode { namespace Int { namespace Linear {
    * Requires \code #include "gecode/int/linear.hh" \endcode
    * \ingroup FuncIntProp
    */
-#if defined(BINLIN_NQ_NO_EVENTS)
-  template <class Val, class A, class B>
-  class NqBin : public LinBin<Val,A,B,PC_INT_DOM> {
-  protected:
-    using LinBin<Val,A,B,PC_INT_DOM>::x0;
-    using LinBin<Val,A,B,PC_INT_DOM>::x1;
-    using LinBin<Val,A,B,PC_INT_DOM>::c;
-
-    /// Constructor for cloning \a p
-    NqBin(Space* home, bool share, NqBin& p);
-    /// Constructor for creation
-    NqBin(Space* home, A x0, B x1, Val c);
-  public:
-    /// Constructor for rewriting \a p during cloning
-    NqBin(Space* home, bool share, Propagator& p, A x0, B x1, Val c);
-    /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    /// Cost function (defined as PC_UNARY_LO)
-    virtual PropCost cost(void) const;
-    /// Post propagator for \f$x_0+x_1 \neq c\f$
-    static ExecStatus post(Space* home, A x0, B x1, Val c);
-  };
-#else
   template <class Val, class A, class B>
   class NqBin : public LinBin<Val,A,B,PC_INT_VAL> {
   protected:
@@ -228,7 +203,6 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Post propagator for \f$x_0+x_1 \neq c\f$
     static ExecStatus post(Space* home, A x0, B x1, Val c);
   };
-#endif
 
   /**
    * \brief %Propagator for bounds-consistent binary linear less or equal
@@ -799,60 +773,6 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual size_t dispose(Space* home);
   };
 
-#ifdef BOOL_LINEAR_INT_ADVISOR
-
-  /**
-   * \brief %Propagator for integer equal to Boolean sum (cardinality)
-   *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
-   * \ingroup FuncIntProp
-   */
-  template <class VX>
-  class EqBoolInt : public Propagator {
-  protected:
-    ViewArray<VX> x;
-    int c;
-    int n_s;
-    int n_0;
-    int n_1;
-    class A : public Advisor {
-    public:
-      int i;
-      A(Space* home, Propagator* _p, Council<A>& c, int i0)
-        : Advisor(home,_p,c), i(i0) {
-        EqBoolInt<VX>* p = static_cast<EqBoolInt<VX>*>(_p);
-        p->x[i].subscribe(home,this);
-      }
-      A(Space* home, bool share, A& a)
-        : Advisor(home,share,a), i(a.i) {}
-      void dispose(Space* home) {
-        EqBoolInt<VX>* p = static_cast<EqBoolInt<VX>*>(propagator());
-        p->x[i].cancel(home,this);
-        Advisor::dispose(home);
-      }
-    };
-    Council<A> co;
-    /// Constructor for cloning \a p
-    EqBoolInt(Space* home, bool share, EqBoolInt& p);
-    /// Constructor for creation
-    EqBoolInt(Space* home, ViewArray<VX>& x, int n_s, int c);
-  public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(void) const;
-    /// Give advice
-    virtual ExecStatus advise(Space* home, Advisor& _a, const Delta& d);
-    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = c\f$
-    static ExecStatus post(Space* home, ViewArray<VX>& x, int c);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
-  };
-
-#else
-
   /**
    * \brief %Propagator for integer equal to Boolean sum (cardinality)
    *
@@ -878,62 +798,6 @@ namespace Gecode { namespace Int { namespace Linear {
     static ExecStatus post(Space* home, ViewArray<VX>& x, int c);
   };
 
-#endif
-
-#ifdef BOOL_LINEAR_INT_ADVISOR
-
-  /**
-   * \brief %Propagator for integer less or equal to Boolean sum (cardinality)
-   *
-   * Requires \code #include "gecode/int/linear.hh" \endcode
-   * \ingroup FuncIntProp
-   */
-  template <class VX>
-  class GqBoolInt : public Propagator {
-  protected:
-    ViewArray<VX> x;
-    int c;
-    int n_s;
-    int n_0;
-    int n_1;
-    class A : public Advisor {
-    public:
-      int i;
-      A(Space* home, Propagator* _p, Council<A>& c, int i0)
-        : Advisor(home,_p,c), i(i0) {
-        GqBoolInt<VX>* p = static_cast<GqBoolInt<VX>*>(_p);
-        p->x[i].subscribe(home,this);
-      }
-      A(Space* home, bool share, A& a)
-        : Advisor(home,share,a), i(a.i) {}
-      void dispose(Space* home) {
-        GqBoolInt<VX>* p = static_cast<GqBoolInt<VX>*>(propagator());
-        p->x[i].cancel(home,this);
-        Advisor::dispose(home);
-      }
-    };
-    Council<A> co;
-    /// Constructor for cloning \a p
-    GqBoolInt(Space* home, bool share, GqBoolInt& p);
-    /// Constructor for creation
-    GqBoolInt(Space* home, ViewArray<VX>& x, int n_s, int c);
-  public:
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(void) const;
-    /// Give advice
-    virtual ExecStatus advise(Space* home, Advisor& _a, const Delta& d);
-    /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq c\f$
-    static ExecStatus post(Space* home, ViewArray<VX>& x, int c);
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
-  };
-
-#else
-
   /**
    * \brief %Propagator for integer less or equal to Boolean sum (cardinality)
    *
@@ -958,8 +822,6 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, int c);
   };
-
-#endif
 
   /**
    * \brief %Propagator for integer disequal to Boolean sum (cardinality)

@@ -76,48 +76,6 @@ namespace Gecode { namespace Int { namespace Linear {
   post_pos_unit(Space* home, 
                 Term<BoolView>* t_p, int n_p,
                 IntRelType r, ZeroIntView, int c) {
-#ifdef BOOL_LINEAR_INT_NO_EVENTS
-    ZeroIntView z;
-    switch (r) {
-    case IRT_EQ:
-      {
-        ViewArray<BoolView> x(home,n_p);
-        for (int i=n_p; i--; )
-          x[i]=t_p[i].x;
-        GECODE_ES_FAIL(home,(EqBoolView<BoolView,ZeroIntView>
-                             ::post(home,x,z,c)));
-      }
-      break;
-    case IRT_NQ:
-      {
-        ViewArray<BoolView> x(home,n_p);
-        for (int i=n_p; i--; )
-          x[i]=t_p[i].x;
-        GECODE_ES_FAIL(home,(NqBoolView<BoolView,ZeroIntView>
-                             ::post(home,x,z,c)));
-      }
-      break;
-    case IRT_GQ:
-      {
-        ViewArray<BoolView> x(home,n_p);
-        for (int i=n_p; i--; )
-          x[i]=t_p[i].x;
-        GECODE_ES_FAIL(home,(GqBoolView<BoolView,ZeroIntView>
-                             ::post(home,x,z,c)));
-      }
-      break;
-    case IRT_LQ:
-      {
-        ViewArray<NegBoolView> x(home,n_p);
-        for (int i=n_p; i--; )
-          x[i]=t_p[i].x;
-        GECODE_ES_FAIL(home,(GqBoolView<NegBoolView,ZeroIntView>
-                             ::post(home,x,z,n_p-c)));
-      }
-      break;
-    default: GECODE_NEVER;
-    }
-#else
     switch (r) {
     case IRT_EQ:
       {
@@ -153,7 +111,6 @@ namespace Gecode { namespace Int { namespace Linear {
       break;
     default: GECODE_NEVER;
     }
-#endif
   }
   
   void
