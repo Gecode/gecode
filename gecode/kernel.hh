@@ -34,8 +34,6 @@
 
 #include "gecode/config.icc"
 
-#include "experiments.hh"
-
 /*
  * Support for DLLs under Windows
  *

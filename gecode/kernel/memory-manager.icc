@@ -35,11 +35,7 @@ namespace Gecode {
       /**
        * \brief Minimal size of a heap chunk requested from the OS
        */
-#ifdef SYSTEM_ADVISOR_BASE_SCALE
-      const size_t hcsz_min =  64 * 1024;
-#else
       const size_t hcsz_min =  2 * 1024;
-#endif
       /**
        * \brief Maximal size of a heap chunk requested from the OS
        *

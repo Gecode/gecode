@@ -301,11 +301,7 @@ namespace Gecode {
       /// Store the forwarding pointer during copying
       Variable* fwd;
     } u;
-#ifdef GECODE_USE_ADVISORS
     static const PropCond PC_SIZE = PC + 3; ///< Number of slots for index struxture
-#else
-    static const PropCond PC_SIZE = PC + 2; ///< Number of slots for index struxture
-#endif
     ActorLink** idx[PC_SIZE]; ///< Stores where entries start (idx[pc]}
 
     /// Manage number of free entries internally
@@ -1025,8 +1021,6 @@ namespace Gecode {
     void pool_put(Propagator* p);
     /// Get propagator \a p from pool
     bool pool_get(Propagator*& p);
-    /// Test whether the propagator \a p currently propagates
-    bool propagates(Propagator* p) const;
     //@}
 
     /**
@@ -1952,13 +1946,6 @@ namespace Gecode {
       pool_next = c;
   }
 
-  forceinline bool
-  Space::propagates(Propagator* p) const {
-    if (pool_next < 0)
-      return false;
-    return p == static_cast<Propagator*>(pool[pool_next].next());
-  }
-
   forceinline void
   Space::fail(void) {
     b_status = NULL;
@@ -2100,10 +2087,8 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::subscribe(Space* home, Advisor* a, bool assigned) {
-#ifdef GECODE_USE_ADVISORS
     if (!assigned)
       enter(home,a,PC+1);
-#endif
   }
 
 
@@ -2146,16 +2131,13 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::cancel(Space* home, Advisor* a, bool assigned) {
-#ifdef GECODE_USE_ADVISORS
     if (!assigned)
       remove(home,a,PC+1);
-#endif
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
   bool
   Variable<VTI,PC,MED>::advise(Space* home, ModEvent me, Delta& d) {
-#ifdef GECODE_USE_ADVISORS
     ActorLink** la = idx[PC+1];
     ActorLink** le = idx[PC+2];
     assert (la != le);
@@ -2176,8 +2158,6 @@ namespace Gecode {
       }
       la++;
     } while (la != le);
-#endif
-    return true;
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
@@ -2191,10 +2171,8 @@ namespace Gecode {
       home->vars[VTI].entry = this;
       modevent(new_me);
     }
-#ifdef GECODE_USE_ADVISORS
     if (idx[PC+1] != idx[PC+2])
       return advise(home,new_me,d);
-#endif
     return true;
   }
 
@@ -2204,10 +2182,8 @@ namespace Gecode {
     assert(!modified());
     _next = static_cast<Variable<VTI,PC,MED>*>(home->vars[VTI].entry);
     home->vars[VTI].entry = this;
-#ifdef GECODE_USE_ADVISORS
     if (idx[PC+1] != idx[PC+2])
       return advise(home,ME_GEN_ASSIGNED,d);
-#endif
     return true;
   }
 
@@ -2286,7 +2262,6 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::process(Space* home) {
-#ifdef GECODE_USE_ADVISORS
     {
       ActorLink** b = idx[0];
       ActorLink** p = idx[PC+1];
@@ -2305,21 +2280,7 @@ namespace Gecode {
       for (int i=PC+3; i--; )
         idx[i] = NULL;
     }
-#else
-    // Entries in index structure are disabled. However they
-    // must still work for cloning (idx[0]) and degree (idx[PC+1])
-    ActorLink** b = idx[0];    idx[0] = NULL;
-    ActorLink** p = idx[PC+1]; idx[PC+1] = NULL;
-    home->n_sub -= p-b;
-    // Information needed to release the dependency array
-    unsigned int n = free() + (p-b);
-    ActorLink** s = p-n;
-    while (p-- > b)
-      home->process<VTI,MED>(static_cast<Propagator*>(*p));
-    home->reuse(s,n*sizeof(ActorLink*));
-#endif
   }
-
 
 }
 
