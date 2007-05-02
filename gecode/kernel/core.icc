@@ -327,7 +327,6 @@ namespace Gecode {
     void resize(Space* home);
     /// Remove propagator or advisor from subscription array
     void remove(Space* home, ActorLink* a, PropCond pc);
-
     /// Execute advisors during notification
     bool advise(Space* home, ModEvent me, Delta* d);
 
@@ -2136,7 +2135,7 @@ namespace Gecode {
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
-  bool
+  forceinline bool
   Variable<VTI,PC,MED>::advise(Space* home, ModEvent me, Delta* d) {
     ActorLink** la = idx[PC+1];
     ActorLink** le = idx[PC+2];
