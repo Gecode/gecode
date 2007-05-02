@@ -329,7 +329,7 @@ namespace Gecode {
     void remove(Space* home, ActorLink* a, PropCond pc);
 
     /// Execute advisors during notification
-    bool advise(Space* home, ModEvent me, Delta& d);
+    bool advise(Space* home, ModEvent me, Delta* d);
 
   public:
     /// Creation
@@ -379,7 +379,7 @@ namespace Gecode {
      *
      * Returns false if notification has failed.
      */
-    bool notify(Space* home, ModEvent me, Delta& d);
+    bool notify(Space* home, ModEvent me, Delta* d);
     /**
      * \brief Notify that variable implementation has been assigned with domain change \a d
      *
@@ -388,7 +388,7 @@ namespace Gecode {
      *
      * Returns false if notification has failed.
      */
-    bool notify(Space* home, Delta& d);
+    bool notify(Space* home, Delta* d);
     //@}
 
     /// \name Processing modified variables
@@ -709,7 +709,7 @@ namespace Gecode {
      *
      */
     GECODE_KERNEL_EXPORT
-    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
+    virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
     //@}
   };
 
@@ -841,7 +841,7 @@ namespace Gecode {
    * \ingroup TaskActorStatus
    */
   template <class Advisor>
-  ExecStatus ES_SUBSUMED_FIX(Advisor& a, Space* home);
+  ExecStatus ES_SUBSUMED_FIX(Advisor* a, Space* home);
   /**
    * \brief %Advisor \a a is subsumed
    *
@@ -854,7 +854,7 @@ namespace Gecode {
    * \ingroup TaskActorStatus
    */
   template <class Advisor>
-  ExecStatus ES_SUBSUMED_NOFIX(Advisor& a, Space* home);
+  ExecStatus ES_SUBSUMED_NOFIX(Advisor* a, Space* home);
 
 
 
@@ -1633,14 +1633,14 @@ namespace Gecode {
 
   template <class Advisor>
   forceinline ExecStatus
-  ES_SUBSUMED_FIX(Advisor& a, Space* home) {
-    a.dispose(home);
+  ES_SUBSUMED_FIX(Advisor* a, Space* home) {
+    a->dispose(home);
     return ES_FIX;
   }
   template <class Advisor>
   forceinline ExecStatus
-  ES_SUBSUMED_NOFIX(Advisor& a, Space* home) {
-    a.dispose(home);
+  ES_SUBSUMED_NOFIX(Advisor* a, Space* home) {
+    a->dispose(home);
     return ES_NOFIX;
   }
 
@@ -2137,15 +2137,15 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC, class MED>
   bool
-  Variable<VTI,PC,MED>::advise(Space* home, ModEvent me, Delta& d) {
+  Variable<VTI,PC,MED>::advise(Space* home, ModEvent me, Delta* d) {
     ActorLink** la = idx[PC+1];
     ActorLink** le = idx[PC+2];
     assert (la != le);
-    d.me = me;
+    d->me = me;
     do {
       Advisor* a = static_cast<Advisor*>(*la);
       Propagator* p = a->propagator();
-      switch (p->advise(home, *a, d)) {
+      switch (p->advise(home,a,d)) {
       case ES_FIX:
         break;
       case ES_FAILED:
@@ -2163,7 +2163,7 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline bool
-  Variable<VTI,PC,MED>::notify(Space* home, ModEvent new_me, Delta& d) {
+  Variable<VTI,PC,MED>::notify(Space* home, ModEvent new_me, Delta* d) {
     if (modified()) {
       MED med;
       u.free_me ^= med(new_me,modevent());
@@ -2179,7 +2179,7 @@ namespace Gecode {
 
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline bool
-  Variable<VTI,PC,MED>::notify(Space* home, Delta& d) {
+  Variable<VTI,PC,MED>::notify(Space* home, Delta* d) {
     assert(!modified());
     _next = static_cast<Variable<VTI,PC,MED>*>(home->vars[VTI].entry);
     home->vars[VTI].entry = this;

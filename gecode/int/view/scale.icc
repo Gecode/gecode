@@ -286,22 +286,22 @@ namespace Gecode {
      */
     template <class Val, class UnsVal>
     forceinline ModEvent
-    ScaleView<Val,UnsVal>::modevent(const Delta& d) {
+    ScaleView<Val,UnsVal>::modevent(const Delta* d) {
       return IntView::modevent(d);
     }
     template <class Val, class UnsVal>
     forceinline Val
-    ScaleView<Val,UnsVal>::min(const Delta& d) const {
+    ScaleView<Val,UnsVal>::min(const Delta* d) const {
       Val c = view.min(d); c *= a; return c;
     }
     template <class Val, class UnsVal>
     forceinline Val
-    ScaleView<Val,UnsVal>::max(const Delta& d) const {
+    ScaleView<Val,UnsVal>::max(const Delta* d) const {
       Val c = view.max(d); c *= a; return c;
     }
     template <class Val, class UnsVal>
     forceinline bool
-    ScaleView<Val,UnsVal>::any(const Delta& d) const {
+    ScaleView<Val,UnsVal>::any(const Delta* d) const {
       return view.any(d);
     }
 

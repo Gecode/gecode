@@ -204,7 +204,7 @@ namespace Gecode { namespace Set {
     /// Subscribe advisor \a a
     void subscribe(Space* home, Advisor* a, bool assigned);
     /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
-    bool notify(Space* home, ModEvent me, Delta& d);
+    bool notify(Space* home, ModEvent me, Delta* d);
     //@}
 
   };
@@ -236,7 +236,7 @@ namespace Gecode { namespace Set {
   }
 
   forceinline bool
-  SetVarImpBase::notify(Space* home, ModEvent me, Delta& d) {
+  SetVarImpBase::notify(Space* home, ModEvent me, Delta* d) {
     return Gecode::Variable<VTI_SET,PC_SET_ANY,SetMeDiff>::notify(home,me,d);
   }
 

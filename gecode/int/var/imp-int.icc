@@ -294,20 +294,20 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline ModEvent
-  IntVarImp::modevent(const Delta& d) {
-    return d.modevent();
+  IntVarImp::modevent(const Delta* d) {
+    return d->modevent();
   }
   forceinline int 
-  IntVarImp::min(const Delta& d) const {
-    return static_cast<const IntDelta&>(d).min();
+  IntVarImp::min(const Delta* d) const {
+    return static_cast<const IntDelta*>(d)->min();
   }
   forceinline int 
-  IntVarImp::max(const Delta& d) const {
-    return static_cast<const IntDelta&>(d).max();
+  IntVarImp::max(const Delta* d) const {
+    return static_cast<const IntDelta*>(d)->max();
   }
   forceinline bool 
-  IntVarImp::any(const Delta& d) const {
-    return static_cast<const IntDelta&>(d).any(); 
+  IntVarImp::any(const Delta* d) const {
+    return static_cast<const IntDelta*>(d)->any(); 
   }
 
 
@@ -354,7 +354,7 @@ namespace Gecode { namespace Int {
     if (!range() && eq_full(home))
       return ME_INT_FAILED;
     IntDelta d;
-    if (!notify(home,ME_INT_VAL,d))
+    if (!notify(home,ME_INT_VAL,&d))
       return ME_INT_FAILED;
     return ME_INT_VAL;
   }
@@ -367,7 +367,7 @@ namespace Gecode { namespace Int {
       return ME_INT_NONE;
     dom.min(n); dom.max(n);
     IntDelta d;
-    if (!notify(home,ME_INT_VAL,d))
+    if (!notify(home,ME_INT_VAL,&d))
       return ME_INT_FAILED;
     if (!range() && eq_full(home))
       return ME_INT_FAILED;
@@ -417,7 +417,7 @@ namespace Gecode { namespace Int {
         return ME_INT_NONE;
       if (min0 == max0) {
         IntDelta d;
-        if (!notify(home,ME_INT_VAL,d))
+        if (!notify(home,ME_INT_VAL,&d))
           return ME_INT_FAILED;
         return ME_INT_VAL;
       }
@@ -444,14 +444,14 @@ namespace Gecode { namespace Int {
       holes = width() - s;
       if ((min0 == min1) && (max0 == max1)) {
         IntDelta d;
-        if (!notify(home,ME_INT_DOM,d))
+        if (!notify(home,ME_INT_DOM,&d))
           return ME_INT_FAILED;
         return ME_INT_DOM;
       }
     }
     {
       IntDelta d;
-      if (!notify(home,ME_INT_BND,d))
+      if (!notify(home,ME_INT_BND,&d))
         return ME_INT_FAILED;
     }
     return ME_INT_BND;

@@ -321,13 +321,13 @@ namespace Gecode { namespace Int {
     /// \name Delta information for advisors
     //@{
     /// Return modification event
-    static ModEvent modevent(const Delta& d);
+    static ModEvent modevent(const Delta* d);
     /// Return minimum value just pruned
-    int min(const Delta& d) const;
+    int min(const Delta* d) const;
     /// Return maximum value just pruned
-    int max(const Delta& d) const;
+    int max(const Delta* d) const;
     /// Test whether arbitrary values got pruned
-    bool any(const Delta& d) const;
+    bool any(const Delta* d) const;
     //@}
   };
 
@@ -594,13 +594,13 @@ namespace Gecode { namespace Int {
     /// \name Support for delta information for advisors
     //@{
     /// Return modification event
-    static ModEvent modevent(const Delta& d);
+    static ModEvent modevent(const Delta* d);
     /// Return minimum value just pruned
-    int min(const Delta& d) const;
+    int min(const Delta* d) const;
     /// Return maximum value just pruned
-    int max(const Delta& d) const;
+    int max(const Delta* d) const;
     /// Test whether arbitrary values got pruned
-    bool any(const Delta& d) const;
+    bool any(const Delta* d) const;
     //@}
 
     /// \name Cloning

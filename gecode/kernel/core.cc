@@ -436,7 +436,7 @@ namespace Gecode {
    *
    */
   ExecStatus 
-  Propagator::advise(Space*, Advisor&, const Delta&) {
+  Propagator::advise(Space*, Advisor*, const Delta*) {
     assert(false);
     return ES_FAILED;
   }

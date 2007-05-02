@@ -488,7 +488,7 @@ namespace Gecode { namespace Set {
     forceinline
     void notify(Space* home, ModEvent me) {
       Delta d;
-      (void) SetVarImpBase::notify(home,me,d);
+      (void) SetVarImpBase::notify(home,me,&d);
     }
   public:
     /// \name Constructors and initialization

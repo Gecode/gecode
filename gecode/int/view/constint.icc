@@ -224,19 +224,19 @@ namespace Gecode {
      *
      */
     forceinline ModEvent
-    ConstIntView::modevent(const Delta& d) {
+    ConstIntView::modevent(const Delta*) {
       return ME_INT_NONE;
     }
     forceinline int
-    ConstIntView::min(const Delta& d) const {
+    ConstIntView::min(const Delta*) const {
       return 1;
     }
     forceinline int
-    ConstIntView::max(const Delta& d) const {
+    ConstIntView::max(const Delta*) const {
       return 0;
     }
     forceinline bool
-    ConstIntView::any(const Delta& d) const {
+    ConstIntView::any(const Delta*) const {
       return true;
     }
 

@@ -103,11 +103,11 @@ namespace Gecode { namespace Int {
         c->next(n,NULL); lst(c);
       }
     }
-    if (!notify(home,ME_INT_BND,d))
+    if (!notify(home,ME_INT_BND,&d))
       return ME_INT_FAILED;
     return ME_INT_BND;
   notify_val:
-    if (!notify(home,ME_INT_VAL,d))
+    if (!notify(home,ME_INT_VAL,&d))
       return ME_INT_FAILED;
     return ME_INT_VAL;
   }
@@ -141,11 +141,11 @@ namespace Gecode { namespace Int {
         c->prev(p,NULL); fst(c);
       }
     }
-    if (!notify(home,ME_INT_BND,d))
+    if (!notify(home,ME_INT_BND,&d))
       return ME_INT_FAILED;
     return ME_INT_BND;
   notify_val:
-    if (!notify(home,ME_INT_VAL,d))
+    if (!notify(home,ME_INT_VAL,&d))
       return ME_INT_FAILED;
     return ME_INT_VAL;
   }
@@ -295,17 +295,17 @@ namespace Gecode { namespace Int {
         }
       }
     }
-    if (!notify(home,ME_INT_DOM,d))
+    if (!notify(home,ME_INT_DOM,&d))
       return ME_INT_FAILED;
     return ME_INT_DOM;
   notify_bnd_or_val:
     if (assigned()) {
-      if (!notify(home,ME_INT_VAL,d))
+      if (!notify(home,ME_INT_VAL,&d))
         return ME_INT_FAILED;
       return ME_INT_VAL;
     }
   notify_bnd:
-    if (!notify(home,ME_INT_BND,d))
+    if (!notify(home,ME_INT_BND,&d))
       return ME_INT_FAILED;
     return ME_INT_BND;
   }
