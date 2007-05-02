@@ -68,7 +68,6 @@ public:
     // Order marks
     rel(this, m, IRT_LE);
 
-    /*
     if (opt.naive) {
       // d[diag(i,j)] must be at least sum of first j-i integers
       for (int i=0; i<n; i++)
@@ -85,14 +84,6 @@ public:
       for (int i=0; i<n; i++)
         for (int j=i+1; j<n; j++)
           rel(this, d[diag(i,j)], IRT_GQ, length[j-i+1]);
-    }
-    */
-
-    if (!opt.naive) {
-      // d[diag(i,j)] must be at least sum of first j-i integers
-      for (int i=0; i<n; i++)
-        for (int j=i+1; j<n; j++)
-          rel(this, d[diag(i,j)], IRT_GQ, (j-i)*(j-i+1)/2);
     }
 
     distinct(this, d, opt.icl);

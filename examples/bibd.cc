@@ -64,24 +64,14 @@ public:
       BoolVarArgs row(par.b);
       for (int j=par.b; j--; )
         row[j] = p(i,j);
-      if (opt.naive) {
-        linear(this, row, IRT_LQ, par.r);
-        linear(this, row, IRT_GQ, par.r);
-      } else {
-        linear(this, row, IRT_EQ, par.r);
-      }
+      linear(this, row, IRT_EQ, par.r);
     }
     // k ones per column
     for (int j=par.b; j--; ) {
       BoolVarArgs col(par.v);
       for (int i=par.v; i--; )
         col[i] = p(i,j);
-      if (opt.naive) {
-        linear(this, col, IRT_LQ, par.k);
-        linear(this, col, IRT_GQ, par.k);
-      } else {
-        linear(this, col, IRT_EQ, par.k);
-      }
+      linear(this, col, IRT_EQ, par.k);
     }
     // Exactly lambda ones in scalar product between two different rows
     for (int i1=0; i1<par.v; i1++)
@@ -92,12 +82,7 @@ public:
           rel(this,p(i1,j),BOT_AND,p(i2,j),b);
           row[j] = b;
         }
-        if (opt.naive) {
-          linear(this, row, IRT_LQ, par.lambda);
-          linear(this, row, IRT_GQ, par.lambda);
-        } else {
-          linear(this, row, IRT_EQ, par.lambda);
-        }
+        linear(this, row, IRT_EQ, par.lambda);
       }
 
     for (int i=1;i<par.v;i++) {
@@ -162,19 +147,18 @@ main(int argc, char** argv) {
   Options opt("BIBD");
   opt.solutions = 1;
   opt.size      = 9;
-  opt.naive     = false;
   opt.parse(argc,argv);
   switch (opt.size) {
-  case 0: { BIBD::Par p(7,3,1);  BIBD::par = p; break; }
-  case 1: { BIBD::Par p(6,3,2);  BIBD::par = p; break; }
-  case 2: { BIBD::Par p(8,4,3);  BIBD::par = p; break; }
-  case 3: { BIBD::Par p(7,3,20); BIBD::par = p; break; }
-  case 4: { BIBD::Par p(7,3,30); BIBD::par = p; break; }
-  case 5: { BIBD::Par p(7,3,40); BIBD::par = p; break; }
-  case 6: { BIBD::Par p(7,3,45); BIBD::par = p; break; }
-  case 7: { BIBD::Par p(7,3,50); BIBD::par = p; break; }
-  case 8: { BIBD::Par p(7,3,55); BIBD::par = p; break; }
-  case 9: { BIBD::Par p(7,3,60); BIBD::par = p; break; }
+  case  0: { BIBD::Par p(7,3,1);   BIBD::par = p; break; }
+  case  1: { BIBD::Par p(6,3,2);   BIBD::par = p; break; }
+  case  2: { BIBD::Par p(8,4,3);   BIBD::par = p; break; }
+  case  3: { BIBD::Par p(7,3,20);  BIBD::par = p; break; }
+  case  4: { BIBD::Par p(7,3,30);  BIBD::par = p; break; }
+  case  5: { BIBD::Par p(7,3,40);  BIBD::par = p; break; }
+  case  6: { BIBD::Par p(7,3,45);  BIBD::par = p; break; }
+  case  7: { BIBD::Par p(7,3,50);  BIBD::par = p; break; }
+  case  8: { BIBD::Par p(7,3,55);  BIBD::par = p; break; }
+  case  9: { BIBD::Par p(7,3,60);  BIBD::par = p; break; }
   case 10: { BIBD::Par p(7,3,100); BIBD::par = p; break; }
   case 11: { BIBD::Par p(7,3,200); BIBD::par = p; break; }
   default:
