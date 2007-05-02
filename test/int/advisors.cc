@@ -27,8 +27,6 @@
 #include <cmath>
 #include <algorithm>
 
-#ifdef GECODE_USE_ADVISORS
-
 namespace {
   IntSet s(-5,5);
 
@@ -53,8 +51,8 @@ namespace {
   protected:
     IntView x0, x1;
 
-    virtual ExecStatus advise(Space* home, Advisor& _a, const Delta& d) {
-      BndAdvisor& a = static_cast<BndAdvisor&>(_a);
+    virtual ExecStatus advise(Space* home, Advisor* _a, const Delta* d) {
+      BndAdvisor* a = static_cast<BndAdvisor*>(_a);
       ModEvent me = IntView::modevent(d);
       if (me == ME_INT_VAL)
         return ES_SUBSUMED_NOFIX(a,home);
@@ -191,8 +189,8 @@ namespace {
     DC dc;
   protected:
     BoolView x0, x1;
-    virtual ExecStatus advise(Space* home, Advisor& _a, const Delta& d) {
-      BndAdvisor& a = static_cast<BndAdvisor&>(_a);
+    virtual ExecStatus advise(Space* home, Advisor* _a, const Delta* d) {
+      BndAdvisor* a = static_cast<BndAdvisor*>(_a);
       return ES_SUBSUMED_NOFIX(a,home);
     }
 
@@ -286,6 +284,5 @@ namespace {
   BasicBoolAdvisor _basicbooladvisor;
 }
 
-#endif
 
 // STATISTICS: test-int
