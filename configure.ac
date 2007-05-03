@@ -36,6 +36,7 @@ AC_SUBST(GECODE_SOVERSION, ${ac_gecode_soversion})
 # checks for programs
 
 : ${CXXFLAGS=""} dnl we do not want autoconf's default
+: ${CFLAGS=""}   dnl we do not want autoconf's default
 
 AC_PROG_CXX
 AC_PROG_CC
