@@ -341,8 +341,8 @@ BUDDYHDR0 = \
 	kernel.h \
 	prime.h
 
-BUDDYSRC = $(BUDDYSRC0:%=gecode/support/buddy/src/%)
-BUDDYHDR = $(BUDDYHDR0:%=gecode/support/buddy/src/%)
+BUDDYSRC = $(BUDDYSRC0:%=gecode/support/buddy/%)
+BUDDYHDR = $(BUDDYHDR0:%=gecode/support/buddy/%)
 BUDDYOBJ0 = $(BUDDYSRC:%.c=%$(OBJSUFFIX))
 BUDDYOBJ = $(BUDDYOBJ0:%.cc=%$(OBJSUFFIX))
 
@@ -356,7 +356,7 @@ export BUDDYSONAME     = \
 else
 export BUDDYSONAME     = 
 endif
-BUDDYBUILDDIRS = support/buddy/src
+BUDDYBUILDDIRS = support/buddy
 
 #
 # MINIMODEL COMPONENTS
@@ -665,16 +665,16 @@ gecode/set/%$(SBJSUFFIX): $(top_srcdir)/gecode/set/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SET_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
-gecode/support/buddy/src/%$(OBJSUFFIX): $(top_srcdir)/gecode/support/buddy/src/%.cc
+gecode/support/buddy/%$(OBJSUFFIX): $(top_srcdir)/gecode/support/buddy/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_BUDDY_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/support/buddy/src/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/buddy/src/%.cc
+gecode/support/buddy/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/buddy/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_BUDDY_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
-gecode/support/buddy/src/%$(OBJSUFFIX): $(top_srcdir)/gecode/support/buddy/src/%.c
+gecode/support/buddy/%$(OBJSUFFIX): $(top_srcdir)/gecode/support/buddy/%.c
 	$(CC) $(CFLAGS) @GECODE_BUILD_BUDDY_FLAG@ \
 	@COMPILEOBJ@$@ @CCIN@$<
-gecode/support/buddy/src/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/buddy/src/%.c
+gecode/support/buddy/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/buddy/%.c
 	$(CC) $(CFLAGS) @GECODE_BUILD_BUDDY_FLAG@ \
 	@COMPILESBJ@$@ @CCIN@$<
 

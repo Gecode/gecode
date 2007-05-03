@@ -37,7 +37,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
-#include "gecode/support/buddy/src/prime.h"
+#include "gecode/support/buddy/prime.h"
 
 
 #define Random(i) ( (rand() % (i)) + 1 )

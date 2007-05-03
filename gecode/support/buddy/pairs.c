@@ -36,7 +36,7 @@
 *************************************************************************/
 #include <stdlib.h>
 #include <limits.h>
-#include "gecode/support/buddy/src/kernel.h"
+#include "gecode/support/buddy/kernel.h"
 
 /*======================================================================*/
 

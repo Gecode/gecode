@@ -28,122 +28,75 @@
 ========================================================================*/
 
 /*************************************************************************
-  FILE:  imatrix.cc
-  DESCR: Interaction matrix
+  $Header: /cvsroot/buddy/buddy/src/cache.c,v 1.1.1.1 2004/06/25 13:22:34 haimcohen Exp $
+  FILE:  cache.c
+  DESCR: Cache class for caching apply/exist etc. results in BDD package
   AUTH:  Jorn Lind
-  DATE:  (C) february 2000
+  DATE:  (C) june 1997
 *************************************************************************/
 #include <stdlib.h>
-#include <assert.h>
-#include <string.h>
-#include "gecode/support/buddy/src/kernel.h"
-#include "gecode/support/buddy/src/imatrix.h"
+#include "gecode/support/buddy/kernel.h"
+#include "gecode/support/buddy/cache.h"
+#include "gecode/support/buddy/prime.h"
 
 /*************************************************************************
 *************************************************************************/
 
-imatrix* imatrixNew(int size)
+int BddCache_init(BddCache *cache, int size)
 {
-   imatrix *mtx = NEW(imatrix,1);
-   int n,m;
+  // printf("BddCache_init(%d)\n", size);
+   int n;
+
+   size = bdd_prime_gte(size);
+
+   // printf("size modified: %d\n", size);
+
+   if ((cache->table=NEW(BddCacheData,size)) == NULL) {
+     // printf("cache->table error: %d\n", cache->table);
+      return bdd_error(BDD_MEMORY);
+   }
    
-   if (!mtx)
-      return NULL;
-
-   if ((mtx->rows=NEW(char*,size)) == NULL)
-   {
-      free(mtx);
-      return NULL;
-   }
-
    for (n=0 ; n<size ; n++)
-   {
-      if ((mtx->rows[n]=NEW(char,size/8+1)) == NULL)
-      {
-	 for (m=0 ; m<n ; m++)
-	    free(mtx->rows[m]);
-	 free(mtx);
-	 return NULL;
-      }
-
-      memset(mtx->rows[n], 0, size/8+1);
-   }
-
-   mtx->size = size;
-
-   return mtx;
+      cache->table[n].a = -1;
+   cache->tablesize = size;
+   
+   return 0;
 }
 
 
-void imatrixDelete(imatrix *mtx)
+void BddCache_done(BddCache *cache)
+{
+   free(cache->table);
+   cache->table = NULL;
+   cache->tablesize = 0;
+}
+
+
+int BddCache_resize(BddCache *cache, int newsize)
 {
    int n;
 
-   for (n=0 ; n<mtx->size ; n++)
-      free(mtx->rows[n]);
-   free(mtx->rows);
-   free(mtx);
-}
+   free(cache->table);
 
-
-/*======================================================================*/
-
-void imatrixFPrint(imatrix *mtx, FILE *ofile)
-{
-   int x,y;
-
-   fprintf(ofile, "    ");
-   for (x=0 ; x<mtx->size ; x++)
-      fprintf(ofile, "%c", x < 26 ? (x+'a') : (x-26)+'A');
-   fprintf(ofile, "\n");
+   newsize = bdd_prime_gte(newsize);
    
-   for (y=0 ; y<mtx->size ; y++)
-   {
-      fprintf(ofile, "%2d %c", y, y < 26 ? (y+'a') : (y-26)+'A');
-      for (x=0 ; x<mtx->size ; x++)
-	 fprintf(ofile, "%c", imatrixDepends(mtx,y,x) ? 'x' : ' ');
-      fprintf(ofile, "\n");
-   }
-}
-
-
-void imatrixPrint(imatrix *mtx)
-{
-   imatrixFPrint(mtx, stdout);
-}
-
-
-void imatrixSet(imatrix *mtx, int a, int b)
-{
-   mtx->rows[a][b/8] |= 1<<(b%8);
-}
-
-
-void imatrixClr(imatrix *mtx, int a, int b)
-{
-   mtx->rows[a][b/8] &= ~(1<<(b%8));
-}
-
-
-int imatrixDepends(imatrix *mtx, int a, int b)
-{
-   return mtx->rows[a][b/8] & (1<<(b%8));
-}
-
-
-/*======================================================================*/
-
-#if 0
-void main(void)
-{
-   imatrix *m = imatrixNew(16);
-
-   imatrixSet(m,0,2);
-   imatrixSet(m,8,8);
-   imatrixSet(m,15,15);
+   if ((cache->table=NEW(BddCacheData,newsize)) == NULL)
+      return bdd_error(BDD_MEMORY);
    
-   imatrixPrint(m);
+   for (n=0 ; n<newsize ; n++)
+      cache->table[n].a = -1;
+   cache->tablesize = newsize;
+   
+   return 0;
 }
-#endif
+
+
+void BddCache_reset(BddCache *cache)
+{
+   register int n;
+   for (n=0 ; n<cache->tablesize ; n++)
+      cache->table[n].a = -1;
+}
+
 
 /* EOF */
