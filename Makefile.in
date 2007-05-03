@@ -332,14 +332,14 @@ BUDDYSRC0 = \
 	tree.c
 
 BUDDYHDR0 = \
-	bdd.hh \
-	bddtree.hh \
-	bvec.hh \
-	cache.hh \
-	fdd.hh \
-	imatrix.hh \
-	kernel.hh \
-	prime.hh
+	bdd.h \
+	bddtree.h \
+	bvec.h \
+	cache.h \
+	fdd.h \
+	imatrix.h \
+	kernel.h \
+	prime.h
 
 BUDDYSRC = $(BUDDYSRC0:%=gecode/support/buddy/src/%)
 BUDDYHDR = $(BUDDYHDR0:%=gecode/support/buddy/src/%)
@@ -556,6 +556,7 @@ TESTBUILDDIRS = test test/int test/set test/branch
 
 BUILDDIRS = $(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
 	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
+	$(BUDDYBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%) $(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
 
 ifeq "@enable_examples@" "yes"
