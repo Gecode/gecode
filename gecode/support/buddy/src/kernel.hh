@@ -42,7 +42,7 @@
 
 #include <limits.h>
 #include <setjmp.h>
-#include "bdd.h"
+#include "gecode/support/buddy/src/bdd.hh"
 
 /*=== SANITY CHECKS ====================================================*/
 

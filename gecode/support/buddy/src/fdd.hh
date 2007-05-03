@@ -38,7 +38,7 @@
 #ifndef _FDD_H
 #define _FDD_H
 
-#include "bdd.h"
+#include "gecode/support/buddy/src/bdd.hh"
 
 
 #ifdef CPLUSPLUS

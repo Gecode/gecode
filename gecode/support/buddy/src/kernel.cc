@@ -38,16 +38,16 @@
            as makenode may resize/move the nodetable.
 
 *************************************************************************/
-#include "config.h"
+#include "gecode/support/buddy/src/config.hh"
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 #include <time.h>
 #include <assert.h>
 
-#include "kernel.h"
-#include "cache.h"
-#include "prime.h"
+#include "gecode/support/buddy/src/kernel.hh"
+#include "gecode/support/buddy/src/cache.hh"
+#include "gecode/support/buddy/src/prime.hh"
 
 /*************************************************************************
   Various definitions and global variables
