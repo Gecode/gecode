@@ -54,6 +54,7 @@ CPPFLAGS=-I$(top_builddir) -I$(top_srcdir)
 endif
 export CPPFLAGS
 export CXXFLAGS = $(CPPFLAGS) @CXXFLAGS@ $(CXXUSR)
+export CFLAGS = $(CPPFLAGS) $(CUSR)
 export EXAMPLES_EXTRA_CXXFLAGS = @EXAMPLES_EXTRA_CXXFLAGS@
 
 export LINKFLAGS = @LDFLAGS@
@@ -663,10 +664,16 @@ gecode/set/%$(SBJSUFFIX): $(top_srcdir)/gecode/set/%.cc
 	@COMPILESBJ@$@ @COMPILERIN@$<
 
 gecode/support/buddy/src/%$(OBJSUFFIX): $(top_srcdir)/gecode/support/buddy/src/%.cc
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SET_FLAG@ \
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_BUDDY_FLAG@ \
 	@COMPILEOBJ@$@ @COMPILERIN@$<
 gecode/support/buddy/src/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/buddy/src/%.cc
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SET_FLAG@ \
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_BUDDY_FLAG@ \
+	@COMPILESBJ@$@ @COMPILERIN@$<
+gecode/support/buddy/src/%$(OBJSUFFIX): $(top_srcdir)/gecode/support/buddy/src/%.c
+	$(CC) $(CFLAGS) @GECODE_BUILD_BUDDY_FLAG@ \
+	@COMPILEOBJ@$@ @COMPILERIN@$<
+gecode/support/buddy/src/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/buddy/src/%.c
+	$(CC) $(CFLAGS) @GECODE_BUILD_BUDDY_FLAG@ \
 	@COMPILESBJ@$@ @COMPILERIN@$<
 
 gecode/minimodel/%$(OBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cc
