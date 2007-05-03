@@ -39,10 +39,10 @@
 #include <time.h>
 #include <math.h>
 #include <assert.h>
-#include "gecode/support/buddy/src/kernel.hh"
-#include "gecode/support/buddy/src/bddtree.hh"
-#include "gecode/support/buddy/src/imatrix.hh"
-#include "gecode/support/buddy/src/prime.hh"
+#include "gecode/support/buddy/src/kernel.h"
+#include "gecode/support/buddy/src/bddtree.h"
+#include "gecode/support/buddy/src/imatrix.h"
+#include "gecode/support/buddy/src/prime.h"
 
 /* IMPORTANT:
  * The semantics of the "level" field in the BddNode struct changes during

@@ -39,7 +39,7 @@
 #include <fcntl.h>
 #include <assert.h>
 #include <sys/stat.h>
-#include "gecode/support/buddy/src/kernel.hh"
+#include "gecode/support/buddy/src/kernel.h"
 
 static void bdd_printset_rec(FILE *, int, int *);
 static void bdd_fprintdot_rec(FILE*, BDD);

@@ -515,6 +515,7 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
        AC_SUBST(DLLEXT, "${ac_gecode_soversion}.0.dylib")
        AC_SUBST(SOSUFFIX, ".${ac_gecode_soversion}.dylib")
        AC_SUBST(SOLINKSUFFIX, ".dylib")
+       AC_SUBST(BUDDYDLLFLAGS, ['-Wl,-single_module'])
        AC_SUBST(sharedlibdir, "${libdir}")
        AC_SUBST(WLSONAME, "-compatibility_version ${ac_gecode_soversion}.0 -current_version ${ac_gecode_soversion}.0 -install_name ${libdir}/")
        AC_GECODE_NO_BUILDFLAGS
@@ -526,6 +527,7 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
          AC_MSG_ERROR([Only either static or shared libraries can be built.])
        fi
        AC_GECODE_ADD_TO_DLLFLAGS("-shared")
+       AC_SUBST(BUDDYDLLFLAGS, "")
        AC_SUBST(DLLEXT, "dll")
        AC_SUBST(SOSUFFIX, "")
        AC_SUBST(SOLINKSUFFIX, "")
@@ -540,6 +542,7 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
      *)
        AC_SUBST(need_soname, "yes")
        AC_GECODE_ADD_TO_DLLFLAGS("-shared")
+       AC_SUBST(BUDDYDLLFLAGS, "")
        AC_SUBST(DLLEXT, "so.${ac_gecode_soversion}.0")
        AC_SUBST(SOSUFFIX, ".so.${ac_gecode_soversion}")
        AC_SUBST(SOLINKSUFFIX, ".so")
@@ -579,6 +582,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   dnl linker flags
   AC_GECODE_ADD_TO_LDFLAGS([-link])
   AC_SUBST(DLLPATH, "")
+  AC_SUBST(BUDDYDLLFLAGS, "")
 
   dnl file extensions
   AC_SUBST(SBJEXT, "sbj")

@@ -38,7 +38,7 @@
 #ifndef _BVEC_H
 #define _BVEC_H
 
-#include "gecode/support/buddy/src/fdd.hh"
+#include "gecode/support/buddy/src/fdd.h"
 
    /* Boolean (BDD) vector */
 /*

@@ -37,8 +37,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <iomanip>
-#include "gecode/support/buddy/src/kernel.hh"
-#include "gecode/support/buddy/src/bvec.hh"
+#include "gecode/support/buddy/src/kernel.h"
+#include "gecode/support/buddy/src/bvec.h"
 
 using namespace std;
 

@@ -38,8 +38,8 @@
 *************************************************************************/
 #include <stdlib.h>
 #include <string.h>
-#include "gecode/support/buddy/src/kernel.hh"
-#include "gecode/support/buddy/src/fdd.hh"
+#include "gecode/support/buddy/src/kernel.h"
+#include "gecode/support/buddy/src/fdd.h"
 
 
 static void fdd_printset_rec(FILE *, int, int *);

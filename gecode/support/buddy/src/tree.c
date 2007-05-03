@@ -36,8 +36,8 @@
 *************************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
-#include "gecode/support/buddy/src/kernel.hh"
-#include "gecode/support/buddy/src/bddtree.hh"
+#include "gecode/support/buddy/src/kernel.h"
+#include "gecode/support/buddy/src/bddtree.h"
 
 /*************************************************************************
 *************************************************************************/

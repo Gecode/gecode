@@ -36,8 +36,8 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
-#include "gecode/support/buddy/src/kernel.hh"
-#include "gecode/support/buddy/src/imatrix.hh"
+#include "gecode/support/buddy/src/kernel.h"
+#include "gecode/support/buddy/src/imatrix.h"
 
 /*************************************************************************
 *************************************************************************/
