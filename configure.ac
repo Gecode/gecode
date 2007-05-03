@@ -38,6 +38,7 @@ AC_SUBST(GECODE_SOVERSION, ${ac_gecode_soversion})
 : ${CXXFLAGS=""} dnl we do not want autoconf's default
 
 AC_PROG_CXX
+AC_PROG_CC
 AC_LANG(C++)
 
 AC_PROG_RANLIB

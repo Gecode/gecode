@@ -47,6 +47,7 @@ export subdirs = @subdirs@
 export VERSION		= @VERSION@
 
 export CXX = @CXX@
+export CC = @CC@
 ifeq "$(top_srcdir)" "$(top_builddir)"
 CPPFLAGS=-I$(top_srcdir)
 else
@@ -637,66 +638,66 @@ $(top_srcdir)/gecode/set/var/imp-body.icc: $(top_srcdir)/gecode/set/var-imp.vis
 
 gecode/kernel/%$(OBJSUFFIX): $(top_srcdir)/gecode/kernel/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_KERNEL_FLAG@ \
-	@COMPILEOBJ@$@ @COMPILERIN@$<
+	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/kernel/%$(SBJSUFFIX): $(top_srcdir)/gecode/kernel/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_KERNEL_FLAG@ \
-	@COMPILESBJ@$@ @COMPILERIN@$<
+	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/search/%$(OBJSUFFIX): $(top_srcdir)/gecode/search/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SEARCH_FLAG@ \
-	@COMPILEOBJ@$@ @COMPILERIN@$<
+	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/search/%$(SBJSUFFIX): $(top_srcdir)/gecode/search/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SEARCH_FLAG@ \
-	@COMPILESBJ@$@ @COMPILERIN@$<
+	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/int/%$(OBJSUFFIX): $(top_srcdir)/gecode/int/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_INT_FLAG@ \
-	@COMPILEOBJ@$@ @COMPILERIN@$<
+	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/int/%$(SBJSUFFIX): $(top_srcdir)/gecode/int/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_INT_FLAG@ \
-	@COMPILESBJ@$@ @COMPILERIN@$<
+	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/set/%$(OBJSUFFIX): $(top_srcdir)/gecode/set/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SET_FLAG@ \
-	@COMPILEOBJ@$@ @COMPILERIN@$<
+	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/set/%$(SBJSUFFIX): $(top_srcdir)/gecode/set/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SET_FLAG@ \
-	@COMPILESBJ@$@ @COMPILERIN@$<
+	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/support/buddy/src/%$(OBJSUFFIX): $(top_srcdir)/gecode/support/buddy/src/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_BUDDY_FLAG@ \
-	@COMPILEOBJ@$@ @COMPILERIN@$<
+	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/support/buddy/src/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/buddy/src/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_BUDDY_FLAG@ \
-	@COMPILESBJ@$@ @COMPILERIN@$<
+	@COMPILESBJ@$@ @CXXIN@$<
 gecode/support/buddy/src/%$(OBJSUFFIX): $(top_srcdir)/gecode/support/buddy/src/%.c
 	$(CC) $(CFLAGS) @GECODE_BUILD_BUDDY_FLAG@ \
-	@COMPILEOBJ@$@ @COMPILERIN@$<
+	@COMPILEOBJ@$@ @CCIN@$<
 gecode/support/buddy/src/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/buddy/src/%.c
 	$(CC) $(CFLAGS) @GECODE_BUILD_BUDDY_FLAG@ \
-	@COMPILESBJ@$@ @COMPILERIN@$<
+	@COMPILESBJ@$@ @CCIN@$<
 
 gecode/minimodel/%$(OBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_MINIMODEL_FLAG@ \
-	@COMPILEOBJ@$@ @COMPILERIN@$<
+	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/minimodel/%$(SBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_MINIMODEL_FLAG@ \
-	@COMPILESBJ@$@ @COMPILERIN@$<
+	@COMPILESBJ@$@ @CXXIN@$<
 
 examples/%$(OBJSUFFIX): $(top_srcdir)/examples/%.cc
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
-	@COMPILEOBJ@$@ @COMPILERIN@$<
+	@COMPILEOBJ@$@ @CXXIN@$<
 examples/%$(SBJSUFFIX): $(top_srcdir)/examples/%.cc
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
-	@COMPILESBJ@$@ @COMPILERIN@$<
+	@COMPILESBJ@$@ @CXXIN@$<
 
 
 test/%$(OBJSUFFIX): $(top_srcdir)/test/%.cc
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
-		@COMPILEOBJ@$@ @COMPILERIN@$<
+		@COMPILEOBJ@$@ @CXXIN@$<
 test/%$(SBJSUFFIX): $(top_srcdir)/test/%.cc
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
-		@COMPILESBJ@$@ @COMPILERIN@$<
+		@COMPILESBJ@$@ @CXXIN@$<
 
 
 #

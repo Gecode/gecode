@@ -444,7 +444,8 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
 
   AC_SUBST(COMPILEOBJ, "-c -o ")
   AC_SUBST(COMPILESBJ, "-S -o ")
-  AC_SUBST(COMPILERIN, " ")
+  AC_SUBST(CXXIN, " ")
+  AC_SUBST(CCIN, " ")
   AC_SUBST(EXAMPLES_EXTRA_CXXFLAGS, "")
 
   dnl Do not install stub .lib files (required for msvc)
@@ -609,7 +610,8 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   dnl compiler options
   AC_SUBST(COMPILEOBJ, "-c -Fo")
   AC_SUBST(COMPILESBJ, "-c -Fa")
-  AC_SUBST(COMPILERIN, "-Tp")
+  AC_SUBST(CXXIN, "-Tp")
+  AC_SUBST(CCIN, "-Tc")
   AC_SUBST(EXAMPLES_EXTRA_CXXFLAGS, "")
 
   dnl Install stub .lib files (required for msvc)
