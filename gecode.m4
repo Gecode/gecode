@@ -73,6 +73,9 @@ dnl   Marco Kuhlmann <kuhlmann@ps.uni-sb.de>
 dnl
 AC_DEFUN([AC_GECODE_ADD_TO_CXXFLAGS],
    [CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1"])
+AC_DEFUN([AC_GECODE_ADD_TO_COMPILERFLAGS],
+   [CFLAGS="${CFLAGS}${CFLAGS:+ }$1"
+    CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1"])
 AC_DEFUN([AC_GECODE_ADD_TO_LDFLAGS],
    [LDFLAGS="${LDFLAGS}${LDFLAGS:+ }$1"])
 AC_DEFUN([AC_GECODE_ADD_TO_PKG_CXXFLAGS],
@@ -107,6 +110,30 @@ AC_DEFUN([AC_GECODE_CHECK_CXXFLAG],
      [AC_MSG_RESULT(no)
       CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
       ifelse([$3], , :, [$3])])
+   AC_LANG_POP])dnl
+
+AC_DEFUN([AC_GECODE_CHECK_COMPILERFLAG],
+  [AC_MSG_CHECKING(whether ${CXX} accepts [$1])
+   ac_gecode_save_CXXFLAGS="${CXXFLAGS}"
+   CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1 -Werror"
+   AC_LANG_PUSH(C++)
+   AC_COMPILE_IFELSE(AC_LANG_PROGRAM(),
+     [AC_MSG_RESULT(yes)
+      CXXFLAGS="${ac_gecode_save_CXXFLAGS}"
+      CXXFLAGS="${CXXFLAGS}${CXXFLAGS:+ }$1"],
+     [AC_MSG_RESULT(no)
+      CXXFLAGS="${ac_gecode_save_CXXFLAGS}"])
+   AC_LANG_POP
+   
+   ac_gecode_save_CFLAGS="${CFLAGS}"
+   CFLAGS="${CFLAGS}${CFLAGS:+ }$1 -Werror"
+   AC_LANG_PUSH(C)
+   AC_COMPILE_IFELSE(AC_LANG_PROGRAM(),
+     [AC_MSG_RESULT(yes)
+      CFLAGS="${ac_gecode_save_CFLAGS}"
+      CFLAGS="${CFLAGS}${CFLAGS:+ }$1"],
+     [AC_MSG_RESULT(no)
+      CFLAGS="${ac_gecode_save_CFLAGS}"])
    AC_LANG_POP])dnl
 
 dnl Macro:
@@ -343,7 +370,7 @@ AC_DEFUN([AC_GECODE_DEBUG],
 	    AC_MSG_RESULT(yes)
 	 else
 	    AC_MSG_RESULT(no)
-       	    AC_GECODE_ADD_TO_CXXFLAGS(-DNDEBUG)
+       	    AC_GECODE_ADD_TO_COMPILERFLAGS(-DNDEBUG)
 	 fi])
 
 AC_DEFUN([AC_GECODE_LEAK_DEBUG],
@@ -383,8 +410,8 @@ AC_DEFUN([AC_GECODE_PROFILE],
 	 if test "${enable_profile:-no}" = "yes"; then
 	    AC_MSG_RESULT(yes)
 	    AC_GECODE_CHECK_CXXFLAG(-pg,
-	       AC_GECODE_ADD_TO_CXXFLAGS(-pg),
-	       AC_GECODE_CHECK_CXXFLAG(-p))
+	       AC_GECODE_ADD_TO_COMPILERFLAGS(-pg),
+	       AC_GECODE_CHECK_COMPILERFLAG(-p))
 	 else
 	    AC_MSG_RESULT(no)
 	 fi])
@@ -421,12 +448,12 @@ AC_DEFUN([AC_GECODE_CHECK_ARITH],
 
 AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
  [AC_DEFINE(forceinline, [inline])
-  AC_GECODE_CHECK_CXXFLAG([-fPIC])
-  AC_GECODE_CHECK_CXXFLAG([-Wall])
-  AC_GECODE_CHECK_CXXFLAG([-pipe])
+  AC_GECODE_CHECK_COMPILERFLAG([-fPIC])
+  AC_GECODE_CHECK_COMPILERFLAG([-Wall])
+  AC_GECODE_CHECK_COMPILERFLAG([-pipe])
   AC_GECODE_CHECK_CXXFLAG(-ggdb,
-     AC_GECODE_ADD_TO_CXXFLAGS(-ggdb),
-     AC_GECODE_CHECK_CXXFLAG(-g))
+     AC_GECODE_ADD_TO_COMPILERFLAGS(-ggdb),
+     AC_GECODE_CHECK_COMPILERFLAG(-g))
 
   AC_SUBST(docdir, "${datadir}/doc/gecode")
 
@@ -468,8 +495,8 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
 
 
 AC_DEFUN([AC_GECODE_GCC_OPTIMIZED_SWITCHES],
- [AC_GECODE_CHECK_CXXFLAG([-O3])
-  AC_GECODE_CHECK_CXXFLAG([-fno-strict-aliasing])])
+ [AC_GECODE_CHECK_COMPILERFLAG([-O3])
+  AC_GECODE_CHECK_COMPILERFLAG([-fno-strict-aliasing])])
 
 AC_DEFUN([AC_GECODE_GCC_VISIBILITY],
   	[AC_ARG_ENABLE([gcc-visibility],
@@ -480,7 +507,7 @@ AC_DEFUN([AC_GECODE_GCC_VISIBILITY],
 	    AC_MSG_RESULT(yes)
 	    AC_GECODE_CHECK_CXXFLAG([-fvisibility=hidden],
 	      [AC_DEFINE(GCC_HASCLASSVISIBILITY)
-	        AC_GECODE_ADD_TO_CXXFLAGS([-fvisibility=hidden])
+	        AC_GECODE_ADD_TO_COMPILERFLAGS([-fvisibility=hidden])
 	        AC_GECODE_CHECK_CXXFLAG([-fno-rtti])],
 	       [])
 	 else
@@ -488,8 +515,8 @@ AC_DEFUN([AC_GECODE_GCC_VISIBILITY],
 	 fi])
 
 AC_DEFUN([AC_GECODE_GCC_DEBUG_SWITCHES],
-  [AC_GECODE_CHECK_CXXFLAG([-fno-inline-functions])
-   AC_GECODE_CHECK_CXXFLAG([-fimplement-inlines])])
+  [AC_GECODE_CHECK_COMPILERFLAG([-fno-inline-functions])
+   AC_GECODE_CHECK_COMPILERFLAG([-fimplement-inlines])])
 
 AC_DEFUN([AC_GECODE_NO_BUILDFLAGS],
   [AC_SUBST(GECODE_BUILD_KERNEL_FLAG, "")
@@ -558,19 +585,19 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
 AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
  [dnl general compiler flags
   AC_DEFINE(forceinline,[__forceinline])
-  AC_GECODE_ADD_TO_CXXFLAGS([-nologo])
+  AC_GECODE_ADD_TO_COMPILERFLAGS([-nologo])
   AC_GECODE_ADD_TO_CXXFLAGS([-EHsc])
   AC_DEFINE(GECODE_MEMORY_ALIGNMENT, 4)
 
   if test "${enable_debug:-no}" = "no"; then
     dnl compiler flags for an optimized build
-    AC_GECODE_ADD_TO_CXXFLAGS([-Ox -fp:fast -wd4355])
+    AC_GECODE_ADD_TO_COMPILERFLAGS([-Ox -fp:fast -wd4355])
 
     dnl flags for creating optimized dlls
     AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LD -MD])
   else
     dnl compiler flags for a debug build
-    AC_GECODE_ADD_TO_CXXFLAGS([-Zi -wd4355])  
+    AC_GECODE_ADD_TO_COMPILERFLAGS([-Zi -wd4355])  
 
     dnl flags for creating debug dlls
     AC_GECODE_ADD_TO_DLLFLAGS([${CXXFLAGS} -LDd -MDd])
@@ -725,7 +752,7 @@ AC_DEFUN([AC_GECODE_UNIVERSAL],
 	[SDK to use on Mac OS X]))
   if test "${host_os}" = "darwin"; then
     if test "${with_sdk:-no}" != "no"; then
-      AC_GECODE_CHECK_CXXFLAG([-isysroot ${with_sdk}])
+      AC_GECODE_CHECK_COMPILERFLAG([-isysroot ${with_sdk}])
       AC_GECODE_ADD_TO_DLLFLAGS([-Wl,-syslibroot,${with_sdk}])
     fi
   fi
@@ -736,7 +763,7 @@ AC_DEFUN([AC_GECODE_UNIVERSAL],
     AC_MSG_CHECKING(whether to build universal binaries on Mac OS X)
     if test "${enable_universal:-no}" = "yes"; then
       AC_MSG_RESULT(yes)
-      AC_GECODE_CHECK_CXXFLAG([-arch i386 -arch ppc])
+      AC_GECODE_CHECK_COMPILERFLAG([-arch i386 -arch ppc])
       AC_GECODE_ADD_TO_DLLFLAGS([-arch i386 -arch ppc])
     else
       AC_MSG_RESULT(no)

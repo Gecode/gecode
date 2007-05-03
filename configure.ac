@@ -92,9 +92,9 @@ gnu)
     dnl compiler flags for an optimized build
     AC_GECODE_GCC_OPTIMIZED_SWITCHES
 
-    AC_GECODE_CHECK_CXXFLAG([-finline-limit=3000])
-    AC_GECODE_CHECK_CXXFLAG([-ffast-math])
-    AC_GECODE_CHECK_CXXFLAG([-mthreads])
+    AC_GECODE_CHECK_COMPILERFLAG([-finline-limit=3000])
+    AC_GECODE_CHECK_COMPILERFLAG([-ffast-math])
+    AC_GECODE_CHECK_COMPILERFLAG([-mthreads])
   else
     dnl compiler flags for a debug build
     AC_GECODE_GCC_DEBUG_SWITCHES

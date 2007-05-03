@@ -55,7 +55,7 @@ CPPFLAGS=-I$(top_builddir) -I$(top_srcdir)
 endif
 export CPPFLAGS
 export CXXFLAGS = $(CPPFLAGS) @CXXFLAGS@ $(CXXUSR)
-export CFLAGS = $(CPPFLAGS) $(CUSR)
+export CFLAGS = $(CPPFLAGS) @CFLAGS@ $(CUSR)
 export EXAMPLES_EXTRA_CXXFLAGS = @EXAMPLES_EXTRA_CXXFLAGS@
 
 export LINKFLAGS = @LDFLAGS@
