@@ -174,7 +174,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       /// Number of view nodes
       int n_view;
       /// Array of value nodes
-      ValNode<View>** val;
+      ValNode<View>* val;
       /// Number of value nodes
       int n_val;
       /// Marking counter

@@ -111,8 +111,10 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   class ValNode : public Node<View> {
   protected:
-    const int _val; Edge<View>* _matching;
+    const int      _val; 
+    Edge<View>*    _matching;
   public:
+    ValNode<View>* next_val;
     ValNode(int);
     int val(void) const;
     void matching(Edge<View>*);
@@ -235,88 +237,48 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   ExecStatus
   DomCtrl<View>::ViewValGraph::init(Space* home, int n, View* x) {
-    // Find value information for construction of view value graph
-    int min = x[n-1].min();
-    int max = x[n-1].max();
-    for (int i=n-1; i--; ) {
-      min = std::min(min,x[i].min());
-      max = std::max(max,x[i].max());
+    n_view = n; 
+    view = reinterpret_cast<ViewNode<View>**>
+      (home->alloc(n_view*sizeof(ViewNode<View>*)));
+
+    n_val = 0;
+    val = NULL;
+
+    for (int i=n; i--; ) {
+      view[i] = new (home) ViewNode<View>(x[i]);
+      Edge<View>** edge_p = view[i]->val_edges_ref();
+      ViewValues<View> xi(x[i]);
+      ValNode<View>** v = &val;
+      while (xi() && (*v != NULL)) {
+        if ((*v)->val() == xi.val()) {
+          *edge_p = new (home) Edge<View>(*v,view[i]);
+          edge_p = (*edge_p)->next_edge_ref();
+          v = &((*v)->next_val);
+          ++xi;
+        } else if ((*v)->val() < xi.val()) {
+          v = &((*v)->next_val);
+        } else {
+          ValNode<View>* nv = new (home) ValNode<View>(xi.val());
+          nv->next_val = *v; *v = nv; v = &nv->next_val;
+          *edge_p = new (home) Edge<View>(nv,view[i]);
+          edge_p = (*edge_p)->next_edge_ref();
+          ++xi; n_val++;
+        }
+      }
+      while (xi()) {
+        ValNode<View>* nv = new (home) ValNode<View>(xi.val());
+        nv->next_val = *v; *v = nv; v = &nv->next_val;
+        *edge_p = new (home) Edge<View>(nv,view[i]);
+        edge_p = (*edge_p)->next_edge_ref();
+        ++xi; n_val++;
+      }
+      *edge_p = NULL;
     }
-
-    unsigned int width = max-min+1;
-
+    
     // Definitly not enough values
-    if (width < static_cast<unsigned int>(n))
+    if (n_val < n)
       return ES_FAILED;
 
-    // Test whether the values are dense or sparse
-    if (((3*static_cast<unsigned int>(n)) >> 1) >= width) {
-      n_view = n; 
-      view = reinterpret_cast<ViewNode<View>**>
-        (home->alloc(n_view*sizeof(ViewNode<View>*)));
-      n_val = static_cast<int>(width);
-      val  = reinterpret_cast<ValNode<View>**>
-        (home->alloc(n_val*sizeof(ValNode<View>*)));
-      // Init value nodes
-      {
-        int v = min+n_val;
-        for (int i = n_val; i--; )
-          val[i] = new (home) ValNode<View>(--v);
-      }
-      // Init view nodes and edges
-      for (int i = n; i--; ) {
-        view[i] = new (home) ViewNode<View>(x[i]);
-        Edge<View>** edge_p = view[i]->val_edges_ref();
-        ViewValues<View> x_i(x[i]);
-        while (x_i()) {
-          *edge_p = new (home) Edge<View>(val[x_i.val()-min],view[i]);
-          edge_p = (*edge_p)->next_edge_ref();
-          ++x_i;
-        }
-        *edge_p = NULL;
-      }
-    } else {
-      n_view = n;
-      Support::DynamicArray<int> val_inf(64);
-      // Compute set of values
-      n_val = 0;
-      GECODE_AUTOARRAY(ViewRanges<View>,x_r,n_view);
-      for (int i = n_view; i--; )
-        x_r[i].init(x[i]);
-      Iter::Ranges::NaryUnion<ViewRanges<View> > xu(x_r, n_view);
-      // Of course, the union of non-empty iterators is non-empty
-      assert(xu());
-      // Fill array of values
-      do {
-        for (int v = xu.min(); v <= xu.max(); v++)
-          val_inf[n_val++] = v;
-        ++xu;
-      } while (xu());
-      if (n_val < n_view)
-        return ES_FAILED;
-      view = reinterpret_cast<ViewNode<View>**>
-        (home->alloc(n_view*sizeof(ViewNode<View>*)));
-      val  = reinterpret_cast<ValNode<View>**>
-        (home->alloc(n_val*sizeof(ValNode<View>*)));
-      // Init value nodes
-      for (int i = n_val; i--; )
-        val[i] = new (home) ValNode<View>(val_inf[i]);
-      // Init view nodes
-      for (int i = n_view; i--; ) {
-        view[i] = new (home) ViewNode<View>(x[i]);
-        Edge<View>** edge_p = view[i]->val_edges_ref();
-        ViewValues<View> x_i(x[i]);
-        int j = 0;
-        while (x_i()) {
-          while (val_inf[j] < x_i.val())
-            j++;
-          *edge_p = new (home) Edge<View>(val[j],view[i]);
-          edge_p = (*edge_p)->next_edge_ref();
-          ++x_i;
-        }
-        *edge_p = NULL;
-      }
-    }
     GECODE_AUTOSTACK(ViewNode<View>*,NULL,m,n_view);
     for (int i = n_view; i--; )
       if (!match(m,view[i]))
@@ -335,15 +297,22 @@ namespace Gecode { namespace Int { namespace Distinct {
       // Insert all free nodes: they can be only value nodes as we
       // have a maximum matching covering all view nodes
       count++;
-      for (int i = n_val; i--; )
-        if (!val[i]->matching())
-          // Is it orphaned?
-          if (val[i]->empty()) {
-            val[i] = val[--n_val];
+      {
+        ValNode<View>** v = &val; 
+        while (*v != NULL)
+          if (!(*v)->matching()) {
+            if ((*v)->empty()) {
+              *v = (*v)->next_val;
+              n_val--;
+            } else {
+              (*v)->min = count;
+              visit.push(*v);
+              v = &((*v)->next_val);
+            }
           } else {
-            val[i]->min = count;
-            visit.push(val[i]);
+            v = &((*v)->next_val);
           }
+      }
       
       // Invariant: only value nodes are on the stack!
       while (!visit.empty()) {
@@ -424,25 +393,6 @@ namespace Gecode { namespace Int { namespace Distinct {
         view[i] = view[--n_view];
         assigned = true;
       } else {
-        /*
-        Edge<View>** p = x->val_edges_ref();
-        Edge<View>*  e = *p;
-        while (e != NULL) {
-          if (e->used(x)) {
-            // Keep edge
-            e->free();
-            p = e->next_edge_ref();
-            e = e->next_edge();
-          } else {
-            // Skip edge
-            x->view().nq(home,e->val(x)->val());
-            e->unlink();
-            e = e->next_edge();
-            *p = e;
-          }
-        }
-        *p = NULL;
-        */
         for (Edge<View>* e = view[i]->val_edges(); e!=NULL; e = e->next_edge())
           if (!e->used(view[i])) {
 #ifndef NDEBUG
@@ -463,8 +413,8 @@ namespace Gecode { namespace Int { namespace Distinct {
       count = 1;
       for (int i=n_view; i--; )
         view[i]->min = 0;
-      for (int i=n_val; i--; )
-        val[i]->min = 0;
+      for (ValNode<View>* v = val; v != NULL; v = v->next_val)
+        v->min = 0;
     }
   }
 
