@@ -111,14 +111,25 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   class ValNode : public Node<View> {
   protected:
+    /// The value of the node
     const int      _val; 
+    /// The matching edge
     Edge<View>*    _matching;
+    /// The next value node
+    ValNode<View>* _next_val;
   public:
-    ValNode<View>* next_val;
-    ValNode(int);
+    /// Initialize with value \a v and successor \a n
+    ValNode(int v, ValNode<View>* n);
+    /// Return value of node
     int val(void) const;
-    void matching(Edge<View>*);
+    /// Set matching edge to \a m
+    void matching(Edge<View>* m);
+    /// Return matching edge (NULL if unmatched)
     Edge<View>* matching(void) const;
+    /// Return pointer to next value node fields
+    ValNode<View>** next_val_ref(void);
+    /// Return next value node
+    ValNode<View>* next_val(void) const;
   };
 
   /**
@@ -128,12 +139,18 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   class ViewNode : public Node<View> {
   protected:
-    Edge<View>* _val_edges; View _view;
+    /// The node's view
+    View        _view;    
+    /// The first value edge
+    Edge<View>* _val_edges; 
   public:
-    ViewNode(View);
+    /// Initialize new node for view \a x
+    ViewNode(View x);
+    /// Return first edge of all value edges
     Edge<View>*  val_edges(void) const;
+    /// Return pointer to first edge fields of all value edges
     Edge<View>** val_edges_ref(void);
-
+    /// Return view
     View view(void) const;
   };
 
@@ -144,15 +161,20 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   class Edge : public BiLink {
   protected:
+    /// Next edge in chain of value edges
     Edge<View>*              _next_edge;
+    /// Combine source and destination node anf flag
     CombPtrFlag<Node<View> > sd;
   public:
-    Edge(Node<View>*, Node<View>*);
+    /// Construct new edge between \a x and \a v
+    Edge(ValNode<View>* v, ViewNode<View>* x);
+    /// Return destination of edge when source \a s is given
+    Node<View>* dst(Node<View>* s) const;
 
-    Node<View>* dst(Node<View>*) const;
-
-    ViewNode<View>* view(ValNode<View>*) const;
-    ValNode<View>* val(ViewNode<View>*) const;
+    /// Return view node when value node \a v is given
+    ViewNode<View>* view(ValNode<View>* v) const;
+    /// Return value node when view node \a x is given
+    ValNode<View>* val(ViewNode<View>* x) const;
 
     bool used(Node<View>*) const;
     void use(void);
@@ -251,23 +273,27 @@ namespace Gecode { namespace Int { namespace Distinct {
       ValNode<View>** v = &val;
       while (xi() && (*v != NULL)) {
         if ((*v)->val() == xi.val()) {
+          // Value node does already exist, create new edge
           *edge_p = new (home) Edge<View>(*v,view[i]);
           edge_p = (*edge_p)->next_edge_ref();
-          v = &((*v)->next_val);
+          v = (*v)->next_val_ref();
           ++xi;
         } else if ((*v)->val() < xi.val()) {
-          v = &((*v)->next_val);
+          // Skip to next value node
+          v = (*v)->next_val_ref();
         } else {
-          ValNode<View>* nv = new (home) ValNode<View>(xi.val());
-          nv->next_val = *v; *v = nv; v = &nv->next_val;
+          // Value node does not yet exist, create and link it
+          ValNode<View>* nv = new (home) ValNode<View>(xi.val(),*v);
+          *v = nv; v = nv->next_val_ref();
           *edge_p = new (home) Edge<View>(nv,view[i]);
           edge_p = (*edge_p)->next_edge_ref();
           ++xi; n_val++;
         }
       }
+      // Create missing value nodes
       while (xi()) {
-        ValNode<View>* nv = new (home) ValNode<View>(xi.val());
-        nv->next_val = *v; *v = nv; v = &nv->next_val;
+        ValNode<View>* nv = new (home) ValNode<View>(xi.val(),*v);
+        *v = nv; v = nv->next_val_ref();
         *edge_p = new (home) Edge<View>(nv,view[i]);
         edge_p = (*edge_p)->next_edge_ref();
         ++xi; n_val++;
@@ -302,15 +328,15 @@ namespace Gecode { namespace Int { namespace Distinct {
         while (*v != NULL)
           if (!(*v)->matching()) {
             if ((*v)->empty()) {
-              *v = (*v)->next_val;
+              *v = (*v)->next_val();
               n_val--;
             } else {
               (*v)->min = count;
               visit.push(*v);
-              v = &((*v)->next_val);
+              v = (*v)->next_val_ref();
             }
           } else {
-            v = &((*v)->next_val);
+            v = (*v)->next_val_ref();
           }
       }
       
@@ -413,7 +439,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       count = 1;
       for (int i=n_view; i--; )
         view[i]->min = 0;
-      for (ValNode<View>* v = val; v != NULL; v = v->next_val)
+      for (ValNode<View>* v = val; v != NULL; v = v->next_val())
         v->min = 0;
     }
   }

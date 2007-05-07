@@ -24,7 +24,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline
-  Edge<View>::Edge(Node<View>* s, Node<View>* d)
+  Edge<View>::Edge(ValNode<View>* s, ViewNode<View>* d)
     : sd(s,d) {
     s->add(this);
   }

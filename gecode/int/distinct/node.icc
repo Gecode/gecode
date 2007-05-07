@@ -62,8 +62,8 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline
-  ValNode<View>::ValNode(int v)
-    : _val(v), _matching(NULL) {}
+  ValNode<View>::ValNode(int v, ValNode<View>* n)
+    : _val(v), _matching(NULL), _next_val(n) {}
   template <class View>
   forceinline int
   ValNode<View>::val(void) const {
@@ -71,13 +71,23 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
   template <class View>
   forceinline void
-  ValNode<View>::matching(Edge<View>* e) {
-    _matching = e;
+  ValNode<View>::matching(Edge<View>* m) {
+    _matching = m;
   }
   template <class View>
   forceinline Edge<View>*
   ValNode<View>::matching(void) const {
     return _matching;
+  }
+  template <class View>
+  forceinline ValNode<View>**
+  ValNode<View>::next_val_ref(void) {
+    return &_next_val;
+  }
+  template <class View>
+  forceinline ValNode<View>*
+  ValNode<View>::next_val(void) const {
+    return _next_val;
   }
 
 
