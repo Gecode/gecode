@@ -493,7 +493,8 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   AC_SUBST(SEARCH,  "search")
   AC_SUBST(INT,     "int")
   AC_SUBST(SET,     "set")
-  AC_SUBST(MM,      "minimodel")])
+  AC_SUBST(MM,      "minimodel")
+  AC_SUBST(BUDDY,   "buddy")])
 
 
 AC_DEFUN([AC_GECODE_GCC_OPTIMIZED_SWITCHES],
@@ -657,7 +658,8 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_SUBST(SEARCH,  "Search")
   AC_SUBST(INT,     "Int")
   AC_SUBST(SET,     "Set")
-  AC_SUBST(MM,      "Minimodel")])
+  AC_SUBST(MM,      "Minimodel")
+  AC_SUBST(BUDDY,   "Buddy")])
 
 dnl Macro:
 dnl   AC_GECODE_DOC_SWITCHES
