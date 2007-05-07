@@ -128,8 +128,8 @@ int
 main(int argc, char** argv) {
   Options o("Golomb");
   o.solutions = 0;
-  o.size      = 5;
-  o.icl       = ICL_DOM;
+  o.size      = 10;
+  o.icl       = ICL_BND;
   o.naive     = true;
   o.parse(argc,argv);
   if (o.size > 0)
