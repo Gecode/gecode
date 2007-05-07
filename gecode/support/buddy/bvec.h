@@ -74,39 +74,39 @@ extern "C" {
 #endif
    
    /* Prototypes for bvec.c */
-extern BVEC bvec_copy(BVEC v);
-extern BVEC bvec_true(int bitnum);
-extern BVEC bvec_false(int bitnum);
-extern BVEC bvec_con(int bitnum, int val);
-extern BVEC bvec_var(int bitnum, int offset, int step);
-extern BVEC bvec_varfdd(int var);
-extern BVEC bvec_varvec(int bitnum, int *var);
-extern BVEC bvec_coerce(int bitnum, BVEC v);
-extern int  bvec_isconst(BVEC e);   
-extern int  bvec_val(BVEC e);   
-extern void bvec_free(BVEC v);
-extern BVEC bvec_addref(BVEC v);
-extern BVEC bvec_delref(BVEC v);
-extern BVEC bvec_map1(BVEC a, BDD (*fun)(BDD));
-extern BVEC bvec_map2(BVEC a, BVEC b, BDD (*fun)(BDD,BDD));
-extern BVEC bvec_map3(BVEC a, BVEC b, BVEC c, BDD (*fun)(BDD,BDD,BDD));
-extern BVEC bvec_add(BVEC left, BVEC right);
-extern BVEC bvec_sub(BVEC left, BVEC right);
-extern BVEC bvec_mulfixed(BVEC e, int c);
-extern BVEC bvec_mul(BVEC left, BVEC right);
-extern int  bvec_divfixed(BVEC e, int c, BVEC *res, BVEC *rem);
-extern int  bvec_div(BVEC left, BVEC right, BVEC *res, BVEC *rem);
-extern BVEC bvec_ite(BDD a, BVEC b, BVEC c);
-extern BVEC bvec_shlfixed(BVEC e, int pos, BDD c);
-extern BVEC bvec_shl(BVEC l, BVEC r, BDD c);
-extern BVEC bvec_shrfixed(BVEC e, int pos, BDD c);
-extern BVEC bvec_shr(BVEC l, BVEC r, BDD c);
-extern BDD  bvec_lth(BVEC left, BVEC right);
-extern BDD  bvec_lte(BVEC left, BVEC right);
-extern BDD  bvec_gth(BVEC left, BVEC right);
-extern BDD  bvec_gte(BVEC left, BVEC right);
-extern BDD  bvec_equ(BVEC left, BVEC right);
-extern BDD  bvec_neq(BVEC left, BVEC right);
+extern GECODE_BUDDY_EXPORT BVEC bvec_copy(BVEC v);
+extern GECODE_BUDDY_EXPORT BVEC bvec_true(int bitnum);
+extern GECODE_BUDDY_EXPORT BVEC bvec_false(int bitnum);
+extern GECODE_BUDDY_EXPORT BVEC bvec_con(int bitnum, int val);
+extern GECODE_BUDDY_EXPORT BVEC bvec_var(int bitnum, int offset, int step);
+extern GECODE_BUDDY_EXPORT BVEC bvec_varfdd(int var);
+extern GECODE_BUDDY_EXPORT BVEC bvec_varvec(int bitnum, int *var);
+extern GECODE_BUDDY_EXPORT BVEC bvec_coerce(int bitnum, BVEC v);
+extern GECODE_BUDDY_EXPORT int  bvec_isconst(BVEC e);   
+extern GECODE_BUDDY_EXPORT int  bvec_val(BVEC e);   
+extern GECODE_BUDDY_EXPORT void bvec_free(BVEC v);
+extern GECODE_BUDDY_EXPORT BVEC bvec_addref(BVEC v);
+extern GECODE_BUDDY_EXPORT BVEC bvec_delref(BVEC v);
+extern GECODE_BUDDY_EXPORT BVEC bvec_map1(BVEC a, BDD (*fun)(BDD));
+extern GECODE_BUDDY_EXPORT BVEC bvec_map2(BVEC a, BVEC b, BDD (*fun)(BDD,BDD));
+extern GECODE_BUDDY_EXPORT BVEC bvec_map3(BVEC a, BVEC b, BVEC c, BDD (*fun)(BDD,BDD,BDD));
+extern GECODE_BUDDY_EXPORT BVEC bvec_add(BVEC left, BVEC right);
+extern GECODE_BUDDY_EXPORT BVEC bvec_sub(BVEC left, BVEC right);
+extern GECODE_BUDDY_EXPORT BVEC bvec_mulfixed(BVEC e, int c);
+extern GECODE_BUDDY_EXPORT BVEC bvec_mul(BVEC left, BVEC right);
+extern GECODE_BUDDY_EXPORT int  bvec_divfixed(BVEC e, int c, BVEC *res, BVEC *rem);
+extern GECODE_BUDDY_EXPORT int  bvec_div(BVEC left, BVEC right, BVEC *res, BVEC *rem);
+extern GECODE_BUDDY_EXPORT BVEC bvec_ite(BDD a, BVEC b, BVEC c);
+extern GECODE_BUDDY_EXPORT BVEC bvec_shlfixed(BVEC e, int pos, BDD c);
+extern GECODE_BUDDY_EXPORT BVEC bvec_shl(BVEC l, BVEC r, BDD c);
+extern GECODE_BUDDY_EXPORT BVEC bvec_shrfixed(BVEC e, int pos, BDD c);
+extern GECODE_BUDDY_EXPORT BVEC bvec_shr(BVEC l, BVEC r, BDD c);
+extern GECODE_BUDDY_EXPORT BDD  bvec_lth(BVEC left, BVEC right);
+extern GECODE_BUDDY_EXPORT BDD  bvec_lte(BVEC left, BVEC right);
+extern GECODE_BUDDY_EXPORT BDD  bvec_gth(BVEC left, BVEC right);
+extern GECODE_BUDDY_EXPORT BDD  bvec_gte(BVEC left, BVEC right);
+extern GECODE_BUDDY_EXPORT BDD  bvec_equ(BVEC left, BVEC right);
+extern GECODE_BUDDY_EXPORT BDD  bvec_neq(BVEC left, BVEC right);
 
 #ifdef CPLUSPLUS
 }
@@ -131,11 +131,11 @@ class bvec
    bvec(const bvec &v)       { roots=bvec_copy(v.roots); }
    ~bvec(void)               { bvec_free(roots); }
 
-   void set(int i, const bdd &b);
+   GECODE_BUDDY_EXPORT void set(int i, const bdd &b);
    bdd operator[](int i)  const { return roots.bitvec[i]; }
    int bitnum(void) const       { return roots.bitnum; }
    int empty(void) const        { return roots.bitnum==0; }
-   bvec operator=(const bvec &src);
+   GECODE_BUDDY_EXPORT bvec operator=(const bvec &src);
    
 private:
    BVEC roots;
@@ -197,7 +197,7 @@ public:
    bdd operator!=(const bvec &a) const { return bvec_neq(*this, a); }
 };
 
-std::ostream &operator<<(std::ostream &, const bvec &);
+GECODE_BUDDY_EXPORT std::ostream &operator<<(std::ostream &, const bvec &);
 
 inline bvec bvec_truepp(int bitnum)
 { return bvec_true(bitnum); }

@@ -47,30 +47,30 @@ extern "C" {
 
 /* In file fdd.c */
    
-extern int  fdd_extdomain(int*, int);
-extern int  fdd_overlapdomain(int, int);
-extern void fdd_clearall(void);
-extern int  fdd_domainnum(void);
-extern int  fdd_domainsize(int);
-extern int  fdd_varnum(int);
-extern int* fdd_vars(int);
-extern BDD  fdd_ithvar(int, int);
-extern int  fdd_scanvar(BDD, int);
-extern int* fdd_scanallvar(BDD);
-extern BDD  fdd_ithset(int);
-extern BDD  fdd_domain(int);
-extern BDD  fdd_equals(int, int);
-extern bddfilehandler fdd_file_hook(bddfilehandler);
+extern GECODE_BUDDY_EXPORT int  fdd_extdomain(int*, int);
+extern GECODE_BUDDY_EXPORT int  fdd_overlapdomain(int, int);
+extern GECODE_BUDDY_EXPORT void fdd_clearall(void);
+extern GECODE_BUDDY_EXPORT int  fdd_domainnum(void);
+extern GECODE_BUDDY_EXPORT int  fdd_domainsize(int);
+extern GECODE_BUDDY_EXPORT int  fdd_varnum(int);
+extern GECODE_BUDDY_EXPORT int* fdd_vars(int);
+extern GECODE_BUDDY_EXPORT BDD  fdd_ithvar(int, int);
+extern GECODE_BUDDY_EXPORT int  fdd_scanvar(BDD, int);
+extern GECODE_BUDDY_EXPORT int* fdd_scanallvar(BDD);
+extern GECODE_BUDDY_EXPORT BDD  fdd_ithset(int);
+extern GECODE_BUDDY_EXPORT BDD  fdd_domain(int);
+extern GECODE_BUDDY_EXPORT BDD  fdd_equals(int, int);
+extern GECODE_BUDDY_EXPORT bddfilehandler fdd_file_hook(bddfilehandler);
 #ifdef CPLUSPLUS
-extern bddstrmhandler fdd_strm_hook(bddstrmhandler);
+extern GECODE_BUDDY_EXPORT bddstrmhandler fdd_strm_hook(bddstrmhandler);
 #endif
-extern void fdd_printset(BDD);
-extern void fdd_fprintset(FILE*, BDD);
-extern int  fdd_scanset(BDD, int**, int*);
-extern BDD  fdd_makeset(int*, int);
-extern int  fdd_intaddvarblock(int, int, int);
-extern int  fdd_setpair(bddPair*, int, int);
-extern int  fdd_setpairs(bddPair*, int*, int*, int);
+extern GECODE_BUDDY_EXPORT void fdd_printset(BDD);
+extern GECODE_BUDDY_EXPORT void fdd_fprintset(FILE*, BDD);
+extern GECODE_BUDDY_EXPORT int  fdd_scanset(BDD, int**, int*);
+extern GECODE_BUDDY_EXPORT BDD  fdd_makeset(int*, int);
+extern GECODE_BUDDY_EXPORT int  fdd_intaddvarblock(int, int, int);
+extern GECODE_BUDDY_EXPORT int  fdd_setpair(bddPair*, int, int);
+extern GECODE_BUDDY_EXPORT int  fdd_setpairs(bddPair*, int*, int*, int);
 
 #ifdef CPLUSPLUS
 }
