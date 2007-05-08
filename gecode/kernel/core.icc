@@ -784,10 +784,6 @@ namespace Gecode {
    * \ingroup TaskActor
    */
   class Advisor : private ActorLink {
-    template <class Advisor>
-    friend ExecStatus ES_SUBSUMED_FIX(Advisor&, Space*);
-    template <class Advisor>
-    friend ExecStatus ES_SUBSUMED_NOFIX(Advisor&, Space*);
     template <VarTypeId VTI, PropCond PC, class MED> 
     friend class Variable;
     friend class CouncilBase;
