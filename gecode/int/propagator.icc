@@ -34,6 +34,10 @@ namespace Gecode {
    *
    * Stores single view of type \a View with propagation condition \a pc
    * and a Boolean control view of type \a CtrlView.
+   *
+   * If the propagation condition \a pc has the value PC_GEN_NONE, no
+   * subscriptions are created for \a View.
+   *
    */
   template <class View, PropCond pc, class CtrlView>
   class ReUnaryPropagator : public Propagator {
@@ -61,6 +65,10 @@ namespace Gecode {
    *
    * Stores two views of type \a View with propagation condition \a pc
    * and a Boolean control view of type \a CtrlView.
+   *
+   * If the propagation condition \a pc has the value PC_GEN_NONE, no
+   * subscriptions are created for \a View.
+   *
    */
   template <class View, PropCond pc, class CtrlView>
   class ReBinaryPropagator : public Propagator {
@@ -94,7 +102,8 @@ namespace Gecode {
   ReUnaryPropagator<View,pc,CtrlView>::ReUnaryPropagator
   (Space* home, View y0, CtrlView b0)
     : Propagator(home), x0(y0), b(b0) {
-    x0.subscribe(home,this,pc);
+    if (pc != PC_GEN_NONE)
+      x0.subscribe(home,this,pc);
     b.subscribe(home,this,Int::PC_INT_VAL);
   }
 
@@ -125,7 +134,8 @@ namespace Gecode {
   template <class View, PropCond pc, class CtrlView>
   forceinline size_t
   ReUnaryPropagator<View,pc,CtrlView>::dispose(Space* home) {
-    x0.cancel(home,this,pc);
+    if (pc != PC_GEN_NONE)
+      x0.cancel(home,this,pc);
     b.cancel(home,this,Int::PC_INT_VAL);
     (void) Propagator::dispose(home);
     return sizeof(*this);
@@ -141,8 +151,10 @@ namespace Gecode {
   ReBinaryPropagator<View,pc,CtrlView>::ReBinaryPropagator
   (Space* home, View y0, View y1, CtrlView b1)
     : Propagator(home), x0(y0), x1(y1), b(b1) {
-    x0.subscribe(home,this,pc);
-    x1.subscribe(home,this,pc);
+    if (pc != PC_GEN_NONE) {
+      x0.subscribe(home,this,pc);
+      x1.subscribe(home,this,pc);
+    }
     b.subscribe(home,this,Int::PC_INT_VAL);
   }
 
@@ -175,8 +187,10 @@ namespace Gecode {
   template <class View, PropCond pc, class CtrlView>
   forceinline size_t
   ReBinaryPropagator<View,pc,CtrlView>::dispose(Space* home) {
-    x0.cancel(home,this,pc);
-    x1.cancel(home,this,pc);
+    if (pc != PC_GEN_NONE) {
+      x0.cancel(home,this,pc);
+      x1.cancel(home,this,pc);
+    }
     b.cancel(home,this,Int::PC_INT_VAL);
     (void) Propagator::dispose(home);
     return sizeof(*this);

@@ -53,6 +53,15 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: kernel
+What:   new
+Rank:   minor
+[DESCRIPTION]
+A new propagation condition PC_GEN_NONE (and hence, PC_INT_NONE,
+...) has been introduced. Propagator patterns with this
+propagation condition now do not create any subscriptions.
+
+[ENTRY]
 Module: int
 What:   performance
 Rank:   major

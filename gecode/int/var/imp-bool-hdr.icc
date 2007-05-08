@@ -42,6 +42,7 @@ namespace Gecode { namespace Int {
 
   const Gecode::ModEvent ME_BOOL_VAL = Gecode::ME_GEN_ASSIGNED;
 
+  const Gecode::PropCond PC_BOOL_NONE = Gecode::PC_GEN_NONE;
   /**
    * \brief Propagate when a view becomes assigned (single value)
    *

@@ -103,6 +103,7 @@ namespace Gecode { namespace Set {
 
   const Gecode::ModEvent ME_SET_CBB = Gecode::ME_GEN_ASSIGNED + 7;
 
+  const Gecode::PropCond PC_SET_NONE = Gecode::PC_GEN_NONE;
   /**
    * \brief Propagate when a view becomes assigned (single value)
    *

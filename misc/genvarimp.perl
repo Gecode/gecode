@@ -279,6 +279,7 @@ if ($gen_header) {
   print "$meftr";
   print "$pchdr";
 
+  print "  const Gecode::PropCond PC_${VTI}_NONE = Gecode::PC_GEN_NONE;\n";
   $o = 1;
   for ($i=0; $i<$pc_n; $i++) {
     $n = $pcn[$i];

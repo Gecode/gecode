@@ -134,6 +134,8 @@ namespace Gecode {
 
   /// Type for propagation conditions
   typedef int PropCond;
+  /// Propagation condition to be ignored (convenience)
+  const PropCond PC_GEN_NONE     = -1;
   /// Propagation condition for an assigned variable
   const PropCond PC_GEN_ASSIGNED = 0;
   /// Propagation conditions must be between 0 and 15

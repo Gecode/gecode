@@ -60,6 +60,7 @@ namespace Gecode { namespace Int {
 
   const Gecode::ModEvent ME_INT_DOM = Gecode::ME_GEN_ASSIGNED + 2;
 
+  const Gecode::PropCond PC_INT_NONE = Gecode::PC_GEN_NONE;
   /**
    * \brief Propagate when a view becomes assigned (single value)
    *
