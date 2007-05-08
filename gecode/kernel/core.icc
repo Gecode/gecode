@@ -750,6 +750,21 @@ namespace Gecode {
     void update(Space* home, bool share, Propagator& p, Council<A>& c);
     /// Dispose council
     void dispose(Space* home, Propagator* p);
+    /// Class to iterate over advisors of a council
+    class Advisors {
+    private:
+      /// The current advisor
+      A* a;
+    public:
+      /// Initialize
+      Advisors(Propagator* p, Council<A>& c);
+      /// Test whether there advisors left
+      bool operator()(void) const;
+      /// Move iterator to next advisor
+      void operator++(void);
+      /// Return advisor
+      A* advisor(void) const;
+    };
   };
 
 
@@ -1645,6 +1660,32 @@ namespace Gecode {
         a->dispose(home,p,*this); 
       a = static_cast<A*>(a->next_advisor);
     }
+  }
+
+  
+  template <class A>
+  forceinline
+  Council<A>::Advisors::Advisors(Propagator* p, Council<A>&)
+    : a(static_cast<A*>(p->advisors)) {
+    while ((a != NULL) && a->disposed())
+      a = static_cast<A*>(a->next_advisor);
+  }
+  template <class A>
+  forceinline bool
+  Council<A>::Advisors::operator()(void) const {
+    return a != NULL;
+  }
+  template <class A>
+  forceinline void
+  Council<A>::Advisors::operator++(void) {
+    do {
+      a = static_cast<A*>(a->next_advisor);
+    } while ((a != NULL) && a->disposed());
+  }
+  template <class A>
+  forceinline A*
+  Council<A>::Advisors::advisor(void) const {
+    return a;
   }
 
 
