@@ -32,80 +32,57 @@ namespace {
 
   class Eq : public Propagator {
   protected:
+
     class BndAdvisor : public ViewAdvisor<IntView> {
       using ViewAdvisor<IntView>::x;
     public:
-      BndAdvisor(Space* home, Propagator* p, CouncilBase& c, IntView v) 
+      BndAdvisor(Space* home, Propagator* p, 
+                 Council<BndAdvisor>& c, IntView v) 
         : ViewAdvisor<IntView>(home,p,c,v) {
         if (x.assigned())
           schedule(home, Int::ME_INT_VAL);
       }
-      BndAdvisor(Space* home, bool share, BndAdvisor& a) 
-        : ViewAdvisor<IntView>(home, share, a) {}
+      BndAdvisor(Space* home, bool share, Propagator* p, BndAdvisor& a) 
+        : ViewAdvisor<IntView>(home, share, p, a) {}
     };
     
-  public:
-    typedef Council<BndAdvisor> DC;
-  private:
-    DC dc;
-  protected:
+    Council<BndAdvisor> c;
     IntView x0, x1;
 
     virtual ExecStatus advise(Space* home, Advisor* _a, const Delta* d) {
       BndAdvisor* a = static_cast<BndAdvisor*>(_a);
       ModEvent me = IntView::modevent(d);
       if (me == ME_INT_VAL)
-        return ES_SUBSUMED_NOFIX(a,home);
+        return ES_SUBSUMED_NOFIX(a,home,this,c);
       if (me == ME_INT_BND) 
         return ES_NOFIX;
       return ES_FIX;
     }
+
     /// Constructor for cloning \a p
     Eq(Space* home, bool share, Eq& p) 
       : Propagator(home, share, p),
-        dc(home, share, p.dc) {
+        c(home, share, p.c) {
       x0.update(home,share,p.x0);
       x1.update(home,share,p.x1);
     }
+
     /// Constructor for posting
     Eq(Space* home, IntView _x0, IntView _x1) 
       : Propagator(home),
-        dc(home, 2),
+        c(home, 2),
         x0(_x0), x1(_x1) {
-      (void) new (home) BndAdvisor(home, this, dc, x0);
-      BndAdvisor* bd1 = new (home) BndAdvisor(home, this, dc, x1);
-
-      BndAdvisor* bd2 = new (home) BndAdvisor(home, this, dc, x0);
-      BndAdvisor* bd3 = new (home) BndAdvisor(home, this, dc, x1);
-
-      (void) new (home) BndAdvisor(home, this, dc, x0);
-      (void) new (home) BndAdvisor(home, this, dc, x1);
-
-      bd2->dispose(home);
-
-      BndAdvisor* bd7 = new (home) BndAdvisor(home, this, dc, x0);
-      (void) new (home) BndAdvisor(home, this, dc, x1);
-
-      bd1->dispose(home);
-      bd3->dispose(home);
-      bd7->dispose(home);
-
-      (void) new (home) BndAdvisor(home, this, dc, x0);
-      (void) new (home) BndAdvisor(home, this, dc, x1);
-      (void) new (home) BndAdvisor(home, this, dc, x0);
-      (void) new (home) BndAdvisor(home, this, dc, x1);
-      (void) new (home) BndAdvisor(home, this, dc, x0);
-      (void) new (home) BndAdvisor(home, this, dc, x1);
-      (void) new (home) BndAdvisor(home, this, dc, x0);
-      (void) new (home) BndAdvisor(home, this, dc, x1);
+      (void) new (home) BndAdvisor(home, this, c, x0);
+      (void) new (home) BndAdvisor(home, this, c, x1);
     }
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share) {
-      Actor* res =  new (home) Eq(home, share, *this);
-      return res;
+      return new (home) Eq(home, share, *this);
     }
-    virtual PropCost cost(void) const { return PC_BINARY_LO; }
+    virtual PropCost cost(void) const { 
+      return PC_BINARY_LO; 
+    }
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home) {
 #define GECODE_ME_MOD(me) {\
@@ -139,7 +116,7 @@ namespace {
 
     size_t
     dispose(Space* home) {
-      (void) dc.dispose(home);
+      (void) c.dispose(home);
       (void) Propagator::dispose(home);
       return sizeof(*this);
     }
@@ -171,77 +148,53 @@ namespace {
 
 
   class BoolEq : public Propagator {
+  protected:
     class BndAdvisor : public ViewAdvisor<BoolView> {
       using ViewAdvisor<BoolView>::x;
     public:
-      BndAdvisor(Space* home, Propagator* p, CouncilBase& c, BoolView v) 
+      BndAdvisor(Space* home, Propagator* p, Council<BndAdvisor>& c, 
+                 BoolView v) 
         : ViewAdvisor<BoolView>(home,p,c,v) {
         if (x.assigned())
           schedule(home, Int::ME_BOOL_VAL);
       }
-      BndAdvisor(Space* home, bool share, BndAdvisor& a) 
-        : ViewAdvisor<BoolView>(home, share, a) {}
+      BndAdvisor(Space* home, bool share, Propagator* p, BndAdvisor& a) 
+        : ViewAdvisor<BoolView>(home, share, p, a) {}
     };
     
-  public:
-    typedef Council<BndAdvisor> DC;
-  private:
-    DC dc;
-  protected:
+    Council<BndAdvisor> c;
+
     BoolView x0, x1;
     virtual ExecStatus advise(Space* home, Advisor* _a, const Delta* d) {
       BndAdvisor* a = static_cast<BndAdvisor*>(_a);
-      return ES_SUBSUMED_NOFIX(a,home);
+      return ES_SUBSUMED_NOFIX(a,home,this,c);
     }
 
     /// Constructor for cloning \a p
     BoolEq(Space* home, bool share, BoolEq& p) 
       : Propagator(home, share, p),
-        dc(home, share, p.dc) {
+        c(home, share, p.c) {
       x0.update(home,share,p.x0);
       x1.update(home,share,p.x1);
     }
     /// Constructor for posting
     BoolEq(Space* home, BoolView _x0, BoolView _x1) 
       : Propagator(home),
-        dc(home, 2),
+        c(home, 2),
         x0(_x0), x1(_x1) {
-      (void) new (home) BndAdvisor(home, this, dc, x0);
-      BndAdvisor* bd1 = new (home) BndAdvisor(home, this, dc, x1);
-
-      BndAdvisor* bd2 = new (home) BndAdvisor(home, this, dc, x0);
-      BndAdvisor* bd3 = new (home) BndAdvisor(home, this, dc, x1);
-
-      (void) new (home) BndAdvisor(home, this, dc, x0);
-      (void) new (home) BndAdvisor(home, this, dc, x1);
-
-      bd2->dispose(home);
-
-      BndAdvisor* bd7 = new (home) BndAdvisor(home, this, dc, x0);
-      (void) new (home) BndAdvisor(home, this, dc, x1);
-
-      bd1->dispose(home);
-      bd3->dispose(home);
-      bd7->dispose(home);
-
-      (void) new (home) BndAdvisor(home, this, dc, x0);
-      (void) new (home) BndAdvisor(home, this, dc, x1);
-      (void) new (home) BndAdvisor(home, this, dc, x0);
-      (void) new (home) BndAdvisor(home, this, dc, x1);
-      (void) new (home) BndAdvisor(home, this, dc, x0);
-      (void) new (home) BndAdvisor(home, this, dc, x1);
-      (void) new (home) BndAdvisor(home, this, dc, x0);
-      (void) new (home) BndAdvisor(home, this, dc, x1);
+      (void) new (home) BndAdvisor(home, this, c, x0);
+      (void) new (home) BndAdvisor(home, this, c, x1);
     }
   public:
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share) {
-      Actor* res =  new (home) BoolEq(home, share, *this);
-      return res;
+      return new (home) BoolEq(home, share, *this);
     }
-    virtual PropCost cost(void) const { return PC_BINARY_LO; }
+    virtual PropCost cost(void) const { 
+      return PC_BINARY_LO; 
+    }
     /// Perform propagation
-    virtual ExecStatus  propagate(Space* home) {
+    virtual ExecStatus propagate(Space* home) {
       if (x1.assigned()) {
         if (me_failed(x0.eq(home, x1.val())))
           return ES_FAILED;
@@ -260,7 +213,7 @@ namespace {
 
     size_t
     dispose(Space* home) {
-      (void) dc.dispose(home);
+      (void) c.dispose(home);
       (void) Propagator::dispose(home);
       return sizeof(*this);
     }

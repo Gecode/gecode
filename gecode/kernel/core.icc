@@ -798,7 +798,7 @@ namespace Gecode {
     /// Constructor for creation
     Advisor(Space* home, Propagator* p, CouncilBase& c);
     /// Copying constructor
-    Advisor(Space* home, bool share, Advisor& a);
+    Advisor(Space* home, bool share, Propagator* p, Advisor& a);
 
     /// Return the advisor's propagator
     Propagator* propagator(void) const; 
@@ -811,7 +811,7 @@ namespace Gecode {
      * Note that currently the memory occupied by an advisor
      * is not released.
      */
-    void dispose(Space* home);
+    void dispose(Space* home, Propagator* p, CouncilBase& c);
     /// Allocate memory from space
     static void* operator new(size_t s, Space* home);
     /// No-op for exceptions
@@ -838,7 +838,8 @@ namespace Gecode {
    * \ingroup TaskActorStatus
    */
   template <class Advisor>
-  ExecStatus ES_SUBSUMED_FIX(Advisor* a, Space* home);
+  ExecStatus ES_SUBSUMED_FIX(Advisor* a, Space* home, Propagator* p,
+                             Council<Advisor>& c);
   /**
    * \brief %Advisor \a a is subsumed
    *
@@ -851,7 +852,8 @@ namespace Gecode {
    * \ingroup TaskActorStatus
    */
   template <class Advisor>
-  ExecStatus ES_SUBSUMED_NOFIX(Advisor* a, Space* home);
+  ExecStatus ES_SUBSUMED_NOFIX(Advisor* a, Space* home, Propagator* p,
+                               Council<Advisor>& c);
 
 
 
@@ -1599,13 +1601,12 @@ namespace Gecode {
 
   forceinline 
   Advisor::Advisor(Space* home, Propagator* p, CouncilBase& c) {
-    //    ActorLink::prev(NULL);
     assert(p != NULL);
     ActorLink::next(p);
     c.add(home,this);
   }
   forceinline 
-  Advisor::Advisor(Space* home, bool share, Advisor& a) {
+  Advisor::Advisor(Space* home, bool share, Propagator* p, Advisor& a) {
     // Set forwarding pointer
     a.prev(this);
     //    ActorLink::prev(NULL);
@@ -1623,21 +1624,23 @@ namespace Gecode {
     return ActorLink::next() == NULL;
   }
   forceinline void
-  Advisor::dispose(Space*) {
+  Advisor::dispose(Space*,Propagator*,CouncilBase&) {
     assert(!disposed());
     ActorLink::next(NULL); 
   }
 
   template <class Advisor>
   forceinline ExecStatus
-  ES_SUBSUMED_FIX(Advisor* a, Space* home) {
-    a->dispose(home);
+  ES_SUBSUMED_FIX(Advisor* a, Space* home, Propagator* p,
+                  Council<Advisor>& c) {
+    a->dispose(home,p,c);
     return ES_FIX;
   }
   template <class Advisor>
   forceinline ExecStatus
-  ES_SUBSUMED_NOFIX(Advisor* a, Space* home) {
-    a->dispose(home);
+  ES_SUBSUMED_NOFIX(Advisor* a, Space* home, Propagator* p,
+                    Council<Advisor>& c) {
+    a->dispose(home,p,c);
     return ES_NOFIX;
   }
 
@@ -1676,7 +1679,7 @@ namespace Gecode {
     if (c.active(c.advisors[c.siz-1])) {
       for (int ci = c.siz, i = siz; ci-- && i--; ) {
         assert(c.active(c.advisors[ci]));
-        advisors[i] = new (home) A(home,share,
+        advisors[i] = new (home) A(home,share,NULL,
                                    *static_cast<A*>(c.advisors[ci]));
       }
     } else {
@@ -1689,7 +1692,7 @@ namespace Gecode {
   Council<A>::dispose(Space* home) {
     for (int i = siz; i--; )
       if (active(advisors[i]))
-        (void) static_cast<A*>(advisors[i])->dispose(home);
+        (void) static_cast<A*>(advisors[i])->dispose(home,NULL,*this);
     home->reuse(advisors, sizeof(Advisor*)*siz);
   }
 
