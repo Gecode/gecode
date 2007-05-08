@@ -61,17 +61,15 @@ namespace {
 
     /// Constructor for cloning \a p
     Eq(Space* home, bool share, Eq& p) 
-      : Propagator(home, share, p),
-        c(home, share, p.c) {
+      : Propagator(home, share, p) {
+      c.update(home,share,p,p.c);
       x0.update(home,share,p.x0);
       x1.update(home,share,p.x1);
     }
 
     /// Constructor for posting
     Eq(Space* home, IntView _x0, IntView _x1) 
-      : Propagator(home),
-        c(home, 2),
-        x0(_x0), x1(_x1) {
+      : Propagator(home), c(home,this), x0(_x0), x1(_x1) {
       (void) new (home) BndAdvisor(home, this, c, x0);
       (void) new (home) BndAdvisor(home, this, c, x1);
     }
@@ -116,7 +114,7 @@ namespace {
 
     size_t
     dispose(Space* home) {
-      (void) c.dispose(home);
+      (void) c.dispose(home,this);
       (void) Propagator::dispose(home);
       return sizeof(*this);
     }
@@ -172,16 +170,14 @@ namespace {
 
     /// Constructor for cloning \a p
     BoolEq(Space* home, bool share, BoolEq& p) 
-      : Propagator(home, share, p),
-        c(home, share, p.c) {
+      : Propagator(home, share, p) {
+      c.update(home,share,p,p.c);
       x0.update(home,share,p.x0);
       x1.update(home,share,p.x1);
     }
     /// Constructor for posting
     BoolEq(Space* home, BoolView _x0, BoolView _x1) 
-      : Propagator(home),
-        c(home, 2),
-        x0(_x0), x1(_x1) {
+      : Propagator(home), c(home,this), x0(_x0), x1(_x1) {
       (void) new (home) BndAdvisor(home, this, c, x0);
       (void) new (home) BndAdvisor(home, this, c, x1);
     }
@@ -213,7 +209,7 @@ namespace {
 
     size_t
     dispose(Space* home) {
-      (void) c.dispose(home);
+      (void) c.dispose(home,this);
       (void) Propagator::dispose(home);
       return sizeof(*this);
     }

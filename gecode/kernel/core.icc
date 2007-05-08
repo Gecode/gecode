@@ -170,7 +170,7 @@ namespace Gecode {
   class Actor;
   class Propagator;
   class Advisor;
-  class Space;
+  template <class A> class Council;
   template <VarTypeId VTI, PropCond PC, class MED> class Variable;
 
 
@@ -533,6 +533,7 @@ namespace Gecode {
     friend class Advisor;
     friend class Branching;
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
+    template <class A> friend class Council;
   public:
     /// Create copy
     virtual Actor* copy(Space*,bool) = 0;
@@ -640,11 +641,16 @@ namespace Gecode {
     friend ExecStatus ES_FIX_PARTIAL(Propagator*, PropModEvent);
     friend ExecStatus ES_NOFIX_PARTIAL(Propagator*, PropModEvent);
     friend class Advisor;
+    template <class A> friend class Council;
   private:
     union {
+      /// A set of modification events
       PropModEvent pme;
+      /// The size of the propagator (used during subsumtion)
       size_t       size;
     } u;
+    /// A list of advisors
+    Advisor* advisors;
   protected:
     /// Constructor for creation
     Propagator(Space* home);
@@ -714,44 +720,6 @@ namespace Gecode {
     //@}
   };
 
-
-  /** \brief Type-independent base-class for council of advisors
-   * 
-   * This is a utility class that maintains a council (that is, a 
-   * collection) of advisors. The class should be used as a member 
-   * of the propagator that wants to use advisors.
-   *
-   * Lifetime of an advisor is controlled by its council.
-   *
-   */
-  class CouncilBase {
-    friend class Advisor;
-  protected:
-    int       siz;      ///< Size of array for advisors
-    Advisor** advisors; ///< Array of advisors
-    /// Resize advisor array
-    GECODE_KERNEL_EXPORT
-    void resize(Space* home);
-    /// Add advisor \a a to council
-    void add(Space* home, Advisor* a);
-    /// Test whether advisor \a a is active
-    bool active(Advisor* a) const;
-  public:
-    /// Compact representation
-    GECODE_KERNEL_EXPORT
-    int compact(Space* home) const;
-    /** \brief Construct advisor council
-     *
-     * \param reserve When given a number larger than 0, this allows
-     * the propagator to suggest pre-allocation of a fixed number of
-     * slots for advisors.
-     */
-    CouncilBase(Space* home, unsigned int reserve = 1);
-    /// Copy constructor
-    CouncilBase(Space* home, bool share, CouncilBase& c);
-  };
-
-
   /** \brief Council of advisors
    * 
    * This is a utility class that maintains a council (that is, a 
@@ -760,18 +728,28 @@ namespace Gecode {
    *
    * Lifetime of an advisor is controlled by its council.
    *
+   * \warning A propagator can only have at most one council!
+   *
    * \ingroup TaskActor
    */
   template <class A>
-  class Council : public CouncilBase {
+  class Council {
     friend class Advisor;
   public:
+    /// Default constructor
+    Council(void);
     /// Construct advisor council
-    Council(Space* home, unsigned int reserve = 1);
-    /// Copy constructor
-    Council(Space* home, bool share, Council<A>& c);
+    Council(Space* home, Propagator* p);
+    /**
+     * \brief Update during cloning
+     *
+     * Note that the propagator \a p must be the propagator that is
+     * copied and not the copy!
+     *
+     */
+    void update(Space* home, bool share, Propagator& p, Council<A>& c);
     /// Dispose council
-    void dispose(Space* home);
+    void dispose(Space* home, Propagator* p);
   };
 
 
@@ -788,15 +766,17 @@ namespace Gecode {
   class Advisor : private ActorLink {
     template <VarTypeId VTI, PropCond PC, class MED> 
     friend class Variable;
-    friend class CouncilBase;
     template <class A> 
     friend class Council;
   private:
     /// Is the advisor disposed?
     bool disposed(void) const;
   public:
+    /// Link to next advisor (used by Council)
+    Advisor* next_advisor;
     /// Constructor for creation
-    Advisor(Space* home, Propagator* p, CouncilBase& c);
+    template <class A>
+    Advisor(Space* home, Propagator* p, Council<A>& c);
     /// Copying constructor
     Advisor(Space* home, bool share, Propagator* p, Advisor& a);
 
@@ -805,13 +785,9 @@ namespace Gecode {
 
     /// \name Memory management
     //@{
-    /**
-     * \brief Dispose the advisor
-     *
-     * Note that currently the memory occupied by an advisor
-     * is not released.
-     */
-    void dispose(Space* home, Propagator* p, CouncilBase& c);
+    /// Dispose the advisor
+    template <class A>
+    void dispose(Space* home, Propagator* p, Council<A>& c);
     /// Allocate memory from space
     static void* operator new(size_t s, Space* home);
     /// No-op for exceptions
@@ -837,9 +813,9 @@ namespace Gecode {
    *          returning from advise.
    * \ingroup TaskActorStatus
    */
-  template <class Advisor>
-  ExecStatus ES_SUBSUMED_FIX(Advisor* a, Space* home, Propagator* p,
-                             Council<Advisor>& c);
+  template <class A>
+  ExecStatus ES_SUBSUMED_FIX(A* a, Space* home, Propagator* p,
+                             Council<A>& c);
   /**
    * \brief %Advisor \a a is subsumed
    *
@@ -851,9 +827,9 @@ namespace Gecode {
    *          returning from advise.
    * \ingroup TaskActorStatus
    */
-  template <class Advisor>
-  ExecStatus ES_SUBSUMED_NOFIX(Advisor* a, Space* home, Propagator* p,
-                               Council<Advisor>& c);
+  template <class A>
+  ExecStatus ES_SUBSUMED_NOFIX(A* a, Space* home, Propagator* p, 
+                               Council<A>& c);
 
 
 
@@ -1581,29 +1557,13 @@ namespace Gecode {
    * Advisors
    *
    */
-
-  forceinline void
-  CouncilBase::add(Space* home, Advisor* a) {
-    if (reinterpret_cast<ptrdiff_t>(advisors[0])>siz)
-      resize(home);
-    int a0 = reinterpret_cast<ptrdiff_t>(advisors[0]);
-    if (a0 != 0) {
-      advisors[0] = advisors[a0];
-    }
-    advisors[a0] = a;
-  }
-
-
-  /*
-   * Advisor class members
-   *
-   */
-
+  template <class A>
   forceinline 
-  Advisor::Advisor(Space* home, Propagator* p, CouncilBase& c) {
+  Advisor::Advisor(Space* home, Propagator* p, Council<A>&) {
     assert(p != NULL);
     ActorLink::next(p);
-    c.add(home,this);
+    next_advisor = p->advisors;
+    p->advisors = this;
   }
   forceinline 
   Advisor::Advisor(Space* home, bool share, Propagator* p, Advisor& a) {
@@ -1623,77 +1583,68 @@ namespace Gecode {
   Advisor::disposed(void) const { 
     return ActorLink::next() == NULL;
   }
+  template <class A>
   forceinline void
-  Advisor::dispose(Space*,Propagator*,CouncilBase&) {
+  Advisor::dispose(Space*,Propagator*,Council<A>&) {
     assert(!disposed());
     ActorLink::next(NULL); 
   }
 
-  template <class Advisor>
+  template <class A>
   forceinline ExecStatus
-  ES_SUBSUMED_FIX(Advisor* a, Space* home, Propagator* p,
-                  Council<Advisor>& c) {
+  ES_SUBSUMED_FIX(A* a, Space* home, Propagator* p, Council<A>& c) {
     a->dispose(home,p,c);
     return ES_FIX;
   }
-  template <class Advisor>
+  template <class A>
   forceinline ExecStatus
-  ES_SUBSUMED_NOFIX(Advisor* a, Space* home, Propagator* p,
-                    Council<Advisor>& c) {
+  ES_SUBSUMED_NOFIX(A* a, Space* home, Propagator* p, Council<A>& c) {
     a->dispose(home,p,c);
     return ES_NOFIX;
   }
 
-  inline
-  CouncilBase::CouncilBase(Space* home, unsigned int reserve)
-    : siz(reserve > 1 ? reserve : 1), 
-      advisors(static_cast<Advisor**>(home->alloc(sizeof(Advisor*)*siz))) {
-    // Set up free-linkage in array
-    for (int i = siz; i--; ) 
-      advisors[i] = reinterpret_cast<Advisor*>((i+1)%siz);
-  }
-
-  inline
-  CouncilBase::CouncilBase(Space* home, bool share, CouncilBase& c)
-  {
-    int s = c.compact(home);
-    siz = s > 1 ? s : 1;
-    advisors = static_cast<Advisor**>(home->alloc(sizeof(Advisor*)*siz));
-  }
-  
-  forceinline bool
-  CouncilBase::active(Advisor* a) const {
-    return ((reinterpret_cast<ptrdiff_t>(a) > siz) &&
-            !a->disposed());
-  }
+  template <class A>
+  forceinline
+  Council<A>::Council(void) {}
 
   template <class A>
   forceinline
-  Council<A>::Council(Space* home, unsigned int reserve)
-    : CouncilBase(home,reserve) {}
+  Council<A>::Council(Space*, Propagator* p) {
+    p->advisors = NULL;
+  }
 
   template <class A>
-  forceinline
-  Council<A>::Council(Space* home, bool share, Council<A>& c)
-    : CouncilBase(home,share,c) {
-    if (c.active(c.advisors[c.siz-1])) {
-      for (int ci = c.siz, i = siz; ci-- && i--; ) {
-        assert(c.active(c.advisors[ci]));
-        advisors[i] = new (home) A(home,share,NULL,
-                                   *static_cast<A*>(c.advisors[ci]));
+  forceinline void
+  Council<A>::update(Space* home, bool share, Propagator& p, Council<A>&) {
+    // The propagator in from-space
+    Propagator* p_f = &p;
+    // The propagator in to-space
+    Propagator* p_t = static_cast<Propagator*>(p_f->prev());
+    // Advisors in from-space
+    A* a_f = static_cast<A*>(p_f->advisors);
+    // Advisors in to-space
+    A* a_t = NULL;
+    while (a_f != NULL) {
+      if (!a_f->disposed()) {
+        A* a = new (home) A(home,share,p_t,*a_f);
+        a->next_advisor = a_t;
+        a_t = a;
       }
-    } else {
-      advisors[0] = reinterpret_cast<Advisor*>(0);
+      a_f = static_cast<A*>(a_f->next_advisor);
     }
+    p_t->advisors = a_t;
   }
   
   template <class A>
-  inline void
-  Council<A>::dispose(Space* home) {
-    for (int i = siz; i--; )
-      if (active(advisors[i]))
-        (void) static_cast<A*>(advisors[i])->dispose(home,NULL,*this);
-    home->reuse(advisors, sizeof(Advisor*)*siz);
+  forceinline void
+  Council<A>::dispose(Space* home, Propagator* p) {
+    A* a = static_cast<A*>(p->advisors);
+    p->advisors = NULL;
+    while (a != NULL) {
+      if (!a->disposed())
+        a->dispose(home,p,*this); 
+      a = static_cast<A*>(a->next_advisor);
+    }
   }
 
 
@@ -1874,12 +1825,14 @@ namespace Gecode {
   forceinline
   Propagator::Propagator(Space* home) {
     u.pme = 0;
+    advisors = NULL;
     home->a_actors.head(this);
   }
 
   forceinline
   Propagator::Propagator(Space*, bool, Propagator& p) {
     u.pme = 0;
+    advisors = NULL;
     // Set forwarding pointer
     p.prev(this);
   }
