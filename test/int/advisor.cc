@@ -24,10 +24,89 @@
 #include "gecode/minimodel.hh"
 #include "test/log.hh"
 
+#include "gecode/int/distinct.hh"
+
 #include <cmath>
 #include <algorithm>
 
 namespace {
+
+  IntSet ds(0,5);
+
+  class AD : public NaryPropagator<IntView,PC_INT_NONE> {
+  protected:
+    using NaryPropagator<IntView,PC_INT_NONE>::x;
+    Council<ViewAdvisor<IntView> > c;
+    /// Constructor for posting
+    AD(Space* home, ViewArray<IntView>& x)
+      : NaryPropagator<IntView,PC_INT_NONE>(home,x), c(home) {
+      std::cout << "AD()" << std::endl;
+      for (int i=x.size(); i--; ) {
+        x[i].subscribe(home,
+                       new (home) ViewAdvisor<IntView>(home,this,c,x[i]));
+        if (x[i].assigned())
+          IntView::schedule(home,this,ME_INT_VAL);
+      }
+    }
+    /// Constructor for cloning \a p
+    AD(Space* home, bool share, AD& p) 
+      : NaryPropagator<IntView,PC_INT_NONE>(home,share,p) {
+      std::cout << "AD::clone" << std::endl;
+      c.update(home,share,p.c);
+    }
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share) {
+      return new (home) AD(home,share,*this);
+    }
+    virtual ExecStatus advise(Space* home, Advisor* _a, const Delta* d) {
+      ViewAdvisor<IntView>* a = static_cast<ViewAdvisor<IntView>*>(_a);
+      ModEvent me = IntView::modevent(d);
+      if (me == ME_INT_VAL)
+        return ES_SUBSUMED_NOFIX(a,home,c);
+      return ES_FIX;
+    }
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home) {
+      GECODE_ES_CHECK((Gecode::Int::Distinct::prop_val<IntView,true>(home,x)));
+      return (x.size() < 2) ? ES_SUBSUMED(this,home) : ES_FIX;
+    }
+    /// Post propagator for view array \a x
+    static ExecStatus post(Space* home, ViewArray<IntView>& x) {
+      if (x.size() > 1)
+        (void) new (home) AD(home,x);
+      return ES_OK;
+    }
+    size_t dispose(Space* home) {
+      c.dispose(home);
+      (void) NaryPropagator<IntView,PC_INT_NONE>::dispose(home);
+      return sizeof(*this);
+    }
+  };
+
+  class AdviseDistinct : public IntTest {
+  public:
+    AdviseDistinct(void)
+      : IntTest("Int::Advisor::Distinct",5,ds,false,ICL_DEF) {}
+    virtual bool solution(const Assignment& x) const {
+      for (int i=0; i<x.size(); i++)
+        for (int j=i+1; j<x.size(); j++)
+          if (x[i]==x[j])
+            return false;
+      return true;
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      if (home->failed())
+        return;
+      ViewArray<IntView> xv(home,x.size());
+      for (int i=x.size(); i--; )
+        xv[i]=x[i];
+      AD::post(home,xv);
+    }
+  };
+
+  AdviseDistinct _ad;
+
   IntSet s(-5,5);
 
   class Eq : public Propagator {
@@ -83,27 +162,12 @@ namespace {
     }
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home) {
-#define GECODE_ME_MOD(me) {\
-  ModEvent m = me; \
-  if (me_failed(m))  { \
-      return ES_FAILED; \
-  } \
-  if (me_modified(m)) mod |= true; \
-}
-      bool mod = false;
-      do {
-        mod = false;
-
-        GECODE_ME_MOD(x0.lq(home, x1.max()));
-        GECODE_ME_MOD(x0.gq(home, x1.min()));
-        GECODE_ME_MOD(x1.lq(home, x0.max()));
-        GECODE_ME_MOD(x1.gq(home, x0.min()));
-        if (x0.assigned() && x1.assigned()) {
-          return ES_SUBSUMED(this, dispose(home));
-        }
-      } while(mod);
-
-#undef GECODE_ME_MOD
+      GECODE_ME_CHECK(x0.lq(home, x1.max()));
+      GECODE_ME_CHECK(x0.gq(home, x1.min()));
+      GECODE_ME_CHECK(x1.lq(home, x0.max()));
+      GECODE_ME_CHECK(x1.gq(home, x0.min()));
+      if (x0.assigned() && x1.assigned())
+        return ES_SUBSUMED(this, dispose(home));
       return ES_NOFIX;
     }
     /// Post bounds-consistent propagator \f$ x_0=x_1\f$
@@ -111,7 +175,6 @@ namespace {
       (void) new (home) Eq(home, x0, x1);
       return ES_OK;
     }
-
     size_t
     dispose(Space* home) {
       c.dispose(home);
@@ -119,31 +182,23 @@ namespace {
       return sizeof(*this);
     }
   };
-}
 
-class BasicIntAdvisor : public IntTest {
-public:
-  BasicIntAdvisor(void)
-    : IntTest("Int::Advisor",2,s) {}
-  virtual bool solution(const Assignment& x) const {
-    return x[0] == x[1];
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    Int::IntView x0(x[0]), x1(x[1]);
-    Eq::post(home, x0, x1);
-  }
-};
+  class BasicIntAdvisor : public IntTest {
+  public:
+    BasicIntAdvisor(void)
+      : IntTest("Int::Advisor::Eq",2,s) {}
+    virtual bool solution(const Assignment& x) const {
+      return x[0] == x[1];
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      Int::IntView x0(x[0]), x1(x[1]);
+      Eq::post(home, x0, x1);
+    }
+  };
 
-namespace {
   BasicIntAdvisor _basicintadvisor;
-}
 
-
-
-
-namespace {
   IntSet bs(0,1);
-
 
   class BoolEq : public Propagator {
   protected:
@@ -198,7 +253,6 @@ namespace {
         if (me_failed(x1.eq(home, x0.val())))
           return ES_FAILED;
       }
-
       return ES_SUBSUMED(this, dispose(home));
     }
     /// Post bounds-consistent propagator \f$ x_0=x_1\f$
@@ -206,7 +260,6 @@ namespace {
       (void) new (home) BoolEq(home, x0, x1);
       return ES_OK;
     }
-
     size_t
     dispose(Space* home) {
       c.dispose(home);
@@ -214,22 +267,20 @@ namespace {
       return sizeof(*this);
     }
   };
-}
 
-class BasicBoolAdvisor : public IntTest {
-public:
-  BasicBoolAdvisor(void)
-    : IntTest("Bool::Advisor",2,bs) {}
-  virtual bool solution(const Assignment& x) const {
-    return x[0] == x[1];
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    Int::BoolView x0(channel(home,x[0])), x1(channel(home,x[1]));
-    BoolEq::post(home, x0, x1);
-  }
-};
+  class BasicBoolAdvisor : public IntTest {
+  public:
+    BasicBoolAdvisor(void)
+      : IntTest("Bool::Advisor::Eq",2,bs) {}
+    virtual bool solution(const Assignment& x) const {
+      return x[0] == x[1];
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      Int::BoolView x0(channel(home,x[0])), x1(channel(home,x[1]));
+      BoolEq::post(home, x0, x1);
+    }
+  };
 
-namespace {
   BasicBoolAdvisor _basicbooladvisor;
 }
 

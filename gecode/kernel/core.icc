@@ -1584,25 +1584,32 @@ namespace Gecode {
   }
   forceinline Propagator* 
   Advisor::propagator(void) const { 
-    assert(!disposed());
+    //    assert(!disposed());
+    if (disposed())
+      __debugbreak();
     return static_cast<Propagator*>(ActorLink::next()); 
   }
   template <class A>
   forceinline void
   Advisor::dispose(Space*,Council<A>&) {
-    assert(!disposed());
+    //    std::cout << "Advisor::dispose(" << this << ")" << std::endl;
+    //    assert(!disposed());
+    //    if (disposed())
+    //      __debugbreak();
     ActorLink::next(NULL); 
   }
 
   template <class A>
   forceinline ExecStatus
   ES_SUBSUMED_FIX(A* a, Space* home, Council<A>& c) {
+    // std::cout << "ES_SUBSUMED_FIX(" << a << ")" << std::endl;
     a->dispose(home,c);
     return ES_FIX;
   }
   template <class A>
   forceinline ExecStatus
   ES_SUBSUMED_NOFIX(A* a, Space* home, Council<A>& c) {
+    //    std::cout << "ES_SUBSUMED_NOFIX(" << a << ")" << std::endl;
     a->dispose(home,c);
     return ES_NOFIX;
   }
@@ -1628,6 +1635,7 @@ namespace Gecode {
     }
     // Are there any advisors to be cloned?
     if (c.advisors != NULL) {
+      assert(!c.advisors->disposed());
       // The propagator in from-space
       Propagator* p_f = c.advisors->propagator();
       // The propagator in to-space
@@ -1647,11 +1655,31 @@ namespace Gecode {
           // Link
           a->next_advisor = a_t;
           a_t = a;
+          /*
+          std::cout << "A-F(" << a_f << ")"
+                    << ": p_f=" << a_f->propagator()
+                    << ", p_t=" << static_cast<Propagator*>(a_f->propagator()->prev())
+                    << ", a_t=" << a_t
+                    << std::endl;
+          */
         }
         a_f = static_cast<A*>(a_f->next_advisor);
       }
       advisors = a_t;
     }
+    /*
+    {
+      A* a = advisors;
+      while (a != NULL) {
+        std::cout << "A-T(" << a << ")"
+                  << ": p_t=" << a->propagator()
+                  << std::endl;
+        if (a->disposed())
+          __debugbreak();
+        a = static_cast<A*>(a->next_advisor);
+      }
+    }
+    */
   }
   
   template <class A>
@@ -2095,6 +2123,8 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::remove(Space* home, ActorLink* a, PropCond pc) {
+    // The entries are removed from back to front, so when iterating
+    // over dependencies wile removing them it must be done backwards
     ActorLink** f = idx[pc];
 #if GECODE_AUDIT
     while (f < idx[pc+1])
@@ -2137,8 +2167,22 @@ namespace Gecode {
     ActorLink** le = idx[PC+2];
     assert (la != le);
     d->me = me;
+    // An advisor that is run, might be removed during execution.
+    // As removal is done from the back the advisors have to be executed
+    // in inverse order.
     do {
-      Advisor* a = static_cast<Advisor*>(*la);
+      /*
+      {
+        std::cout << "BEFORE (" 
+                  << idx[PC+1] << ", " << idx[PC+2]-1 << "): ";
+        for (ActorLink** al=idx[PC+1]; al<idx[PC+2]; al++)
+          std::cout << static_cast<Advisor*>(*al) << ", ";
+        std::cout << std::endl;
+      }
+      */
+      le--;
+      Advisor* a = static_cast<Advisor*>(*le);
+      //      std::cout << "Variable::advise(" << a << ")" << std::endl;
       Propagator* p = a->propagator();
       switch (p->advise(home,a,d)) {
       case ES_FIX:
@@ -2151,8 +2195,16 @@ namespace Gecode {
       default:
         GECODE_NEVER;
       }
-      la++;
-    } while (la != le);
+      /*
+      {
+        std::cout << "AFTER ("
+                  << idx[PC+1] << ", " << idx[PC+2] << "): ";
+        for (ActorLink** al=idx[PC+1]; al<idx[PC+2]; al++)
+          std::cout << static_cast<Advisor*>(*al) << ", ";
+        std::cout << std::endl;
+      }
+      */
+    } while (la < le);
     return true;
   }
 

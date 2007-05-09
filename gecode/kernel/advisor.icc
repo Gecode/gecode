@@ -61,6 +61,7 @@ namespace Gecode {
   ViewAdvisor<View>::ViewAdvisor(Space* home, Propagator* p, 
                                  Council<A>& c, View x0)
     : Advisor(home,p,c), x(x0) {
+    //    std::cout << "ViewAdvisor::ViewAdvisor(" << this << ")" << std::endl;
     x.subscribe(home, this);
   }
   template <class View>
@@ -79,6 +80,7 @@ namespace Gecode {
   template <class A>
   forceinline void
   ViewAdvisor<View>::dispose(Space* home, Council<A>& c) {
+    //    std::cout << "ViewAdvisor::dispose(" << this << ")" << std::endl;
     x.cancel(home,this);
     Advisor::dispose(home,c);
   }
