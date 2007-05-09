@@ -40,10 +40,8 @@ namespace {
     /// Constructor for posting
     AD(Space* home, ViewArray<IntView>& x)
       : NaryPropagator<IntView,PC_INT_NONE>(home,x), c(home) {
-      std::cout << "AD()" << std::endl;
       for (int i=x.size(); i--; ) {
-        x[i].subscribe(home,
-                       new (home) ViewAdvisor<IntView>(home,this,c,x[i]));
+        (void) new (home) ViewAdvisor<IntView>(home,this,c,x[i]);
         if (x[i].assigned())
           IntView::schedule(home,this,ME_INT_VAL);
       }
@@ -51,7 +49,6 @@ namespace {
     /// Constructor for cloning \a p
     AD(Space* home, bool share, AD& p) 
       : NaryPropagator<IntView,PC_INT_NONE>(home,share,p) {
-      std::cout << "AD::clone" << std::endl;
       c.update(home,share,p.c);
     }
   public:
@@ -120,6 +117,8 @@ namespace {
         : ViewAdvisor<IntView>(home,p,c,v) {
         if (x.assigned())
           schedule(home, Int::ME_INT_VAL);
+        else
+          schedule(home, Int::ME_INT_BND);
       }
       BndAdvisor(Space* home, bool share, BndAdvisor& a) 
         : ViewAdvisor<IntView>(home,share,a) {}
@@ -133,9 +132,7 @@ namespace {
       ModEvent me = IntView::modevent(d);
       if (me == ME_INT_VAL)
         return ES_SUBSUMED_NOFIX(a,home,c);
-      if (me == ME_INT_BND) 
-        return ES_NOFIX;
-      return ES_FIX;
+      return ES_NOFIX;
     }
 
     /// Constructor for cloning \a p
@@ -161,7 +158,7 @@ namespace {
       return PC_BINARY_LO; 
     }
     /// Perform propagation
-    virtual ExecStatus  propagate(Space* home) {
+    virtual ExecStatus propagate(Space* home) {
       GECODE_ME_CHECK(x0.lq(home, x1.max()));
       GECODE_ME_CHECK(x0.gq(home, x1.min()));
       GECODE_ME_CHECK(x1.lq(home, x0.max()));
