@@ -53,7 +53,7 @@ namespace {
       BndAdvisor* a = static_cast<BndAdvisor*>(_a);
       ModEvent me = IntView::modevent(d);
       if (me == ME_INT_VAL)
-        return ES_SUBSUMED_NOFIX(a,home,this,c);
+        return ES_SUBSUMED_NOFIX(a,home,c);
       if (me == ME_INT_BND) 
         return ES_NOFIX;
       return ES_FIX;
@@ -69,7 +69,7 @@ namespace {
 
     /// Constructor for posting
     Eq(Space* home, IntView _x0, IntView _x1) 
-      : Propagator(home), c(home,this), x0(_x0), x1(_x1) {
+      : Propagator(home), c(home), x0(_x0), x1(_x1) {
       (void) new (home) BndAdvisor(home, this, c, x0);
       (void) new (home) BndAdvisor(home, this, c, x1);
     }
@@ -114,7 +114,7 @@ namespace {
 
     size_t
     dispose(Space* home) {
-      (void) c.dispose(home,this);
+      c.dispose(home);
       (void) Propagator::dispose(home);
       return sizeof(*this);
     }
@@ -165,7 +165,7 @@ namespace {
     BoolView x0, x1;
     virtual ExecStatus advise(Space* home, Advisor* _a, const Delta* d) {
       BndAdvisor* a = static_cast<BndAdvisor*>(_a);
-      return ES_SUBSUMED_NOFIX(a,home,this,c);
+      return ES_SUBSUMED_NOFIX(a,home,c);
     }
 
     /// Constructor for cloning \a p
@@ -177,7 +177,7 @@ namespace {
     }
     /// Constructor for posting
     BoolEq(Space* home, BoolView _x0, BoolView _x1) 
-      : Propagator(home), c(home,this), x0(_x0), x1(_x1) {
+      : Propagator(home), c(home), x0(_x0), x1(_x1) {
       (void) new (home) BndAdvisor(home, this, c, x0);
       (void) new (home) BndAdvisor(home, this, c, x1);
     }
@@ -209,7 +209,7 @@ namespace {
 
     size_t
     dispose(Space* home) {
-      (void) c.dispose(home,this);
+      c.dispose(home);
       (void) Propagator::dispose(home);
       return sizeof(*this);
     }

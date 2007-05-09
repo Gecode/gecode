@@ -743,7 +743,7 @@ namespace Gecode {
     /// Default constructor
     Council(void);
     /// Construct advisor council
-    Council(Space* home, Propagator* p);
+    Council(Space* home);
     /**
      * \brief Update during cloning
      *
@@ -753,7 +753,7 @@ namespace Gecode {
      */
     void update(Space* home, bool share, Propagator& p, Council<A>& c);
     /// Dispose council
-    void dispose(Space* home, Propagator* p);
+    void dispose(Space* home);
     /// Class to iterate over advisors of a council
     class Advisors {
     private:
@@ -806,7 +806,7 @@ namespace Gecode {
     //@{
     /// Dispose the advisor
     template <class A>
-    void dispose(Space* home, Propagator* p, Council<A>& c);
+    void dispose(Space* home, Council<A>& c);
     /// Allocate memory from space
     static void* operator new(size_t s, Space* home);
     /// No-op for exceptions
@@ -833,8 +833,7 @@ namespace Gecode {
    * \ingroup TaskActorStatus
    */
   template <class A>
-  ExecStatus ES_SUBSUMED_FIX(A* a, Space* home, Propagator* p,
-                             Council<A>& c);
+  ExecStatus ES_SUBSUMED_FIX(A* a, Space* home, Council<A>& c);
   /**
    * \brief %Advisor \a a is subsumed
    *
@@ -847,8 +846,7 @@ namespace Gecode {
    * \ingroup TaskActorStatus
    */
   template <class A>
-  ExecStatus ES_SUBSUMED_NOFIX(A* a, Space* home, Propagator* p, 
-                               Council<A>& c);
+  ExecStatus ES_SUBSUMED_NOFIX(A* a, Space* home, Council<A>& c);
 
 
 
@@ -1603,21 +1601,21 @@ namespace Gecode {
   }
   template <class A>
   forceinline void
-  Advisor::dispose(Space*,Propagator*,Council<A>&) {
+  Advisor::dispose(Space*,Council<A>&) {
     assert(!disposed());
     ActorLink::next(NULL); 
   }
 
   template <class A>
   forceinline ExecStatus
-  ES_SUBSUMED_FIX(A* a, Space* home, Propagator* p, Council<A>& c) {
-    a->dispose(home,p,c);
+  ES_SUBSUMED_FIX(A* a, Space* home, Council<A>& c) {
+    a->dispose(home,c);
     return ES_FIX;
   }
   template <class A>
   forceinline ExecStatus
-  ES_SUBSUMED_NOFIX(A* a, Space* home, Propagator* p, Council<A>& c) {
-    a->dispose(home,p,c);
+  ES_SUBSUMED_NOFIX(A* a, Space* home, Council<A>& c) {
+    a->dispose(home,c);
     return ES_NOFIX;
   }
 
@@ -1627,7 +1625,7 @@ namespace Gecode {
 
   template <class A>
   forceinline
-  Council<A>::Council(Space*, Propagator* p) 
+  Council<A>::Council(Space*) 
     : advisors(NULL) {}
 
   template <class A>
@@ -1654,12 +1652,12 @@ namespace Gecode {
   
   template <class A>
   forceinline void
-  Council<A>::dispose(Space* home, Propagator* p) {
+  Council<A>::dispose(Space* home) {
     A* a = advisors;
     advisors = NULL;
     while (a != NULL) {
       if (!a->disposed())
-        a->dispose(home,p,*this); 
+        a->dispose(home,*this); 
       a = static_cast<A*>(a->next_advisor);
     }
   }
@@ -1982,7 +1980,6 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::schedule(Space* home, Propagator* p, ModEvent me) {
-    //    if (!home->propagates(p)) 
     home->process<VTI,MED>(p,me);
   }
 

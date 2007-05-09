@@ -34,8 +34,8 @@ namespace Gecode {
     /// The single view
     View x; 
     /// Constructor for creation
-    template <class Advisor>
-    ViewAdvisor(Space* home, Propagator* p, Council<Advisor>& c, View x0);
+    template <class A>
+    ViewAdvisor(Space* home, Propagator* p, Council<A>& c, View x0);
     /// Constructor for cloning \a a
     ViewAdvisor(Space* home, bool share, Propagator* p, 
                 ViewAdvisor<View>& a);
@@ -51,16 +51,16 @@ namespace Gecode {
      */
     void schedule(Space* home, ModEvent me) const;
     /// Delete advisor
-    template <class Advisor>
-    void dispose(Space* home, Propagator* p, Council<Advisor>& c);
+    template <class A>
+    void dispose(Space* home, Council<A>& c);
   };
 
 
   template <class View>
-  template <class Adv>
+  template <class A>
   forceinline
   ViewAdvisor<View>::ViewAdvisor(Space* home, Propagator* p, 
-                                 Council<Adv>& c, View x0)
+                                 Council<A>& c, View x0)
     : Advisor(home,p,c), x(x0) {
     x.subscribe(home, this);
   }
@@ -77,11 +77,11 @@ namespace Gecode {
     View::schedule(home, propagator(), me);
   }
   template <class View>
-  template <class Adv>
+  template <class A>
   forceinline void
-  ViewAdvisor<View>::dispose(Space* home, Propagator* p, Council<Adv>& c) {
+  ViewAdvisor<View>::dispose(Space* home, Council<A>& c) {
     x.cancel(home,this);
-    Advisor::dispose(home,p,c);
+    Advisor::dispose(home,c);
   }
 
 }
