@@ -25,6 +25,21 @@
 namespace Gecode {
 
   /**
+   * \brief Propagation variant
+   *
+   * Signals that a particular variant is used in propagation for
+   * the implementation of a particular constraint.
+   *
+   * \ingroup TaskActor
+   */
+  enum PropVar {
+    PV_DEF,    ///< Make a default decision
+    PV_SPEED,  ///< Prefer speed over memory consumption
+    PV_MEMORY  ///< Prefer little memory over speed
+  };
+
+
+  /**
    * \brief Dynamic low-propagation cost computation
    *
    * If \a n is less than 4, use constant low-costs, otherwise use \a pc.
