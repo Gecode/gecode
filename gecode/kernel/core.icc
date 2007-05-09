@@ -744,14 +744,8 @@ namespace Gecode {
     Council(void);
     /// Construct advisor council
     Council(Space* home);
-    /**
-     * \brief Update during cloning
-     *
-     * Note that the propagator \a p must be the propagator that is
-     * copied and not the copy!
-     *
-     */
-    void update(Space* home, bool share, Propagator& p, Council<A>& c);
+    /// Update during cloning (copies all advisors)
+    void update(Space* home, bool share, Council<A>& c);
     /// Dispose council
     void dispose(Space* home);
     /// Class to iterate over advisors of a council
@@ -797,7 +791,7 @@ namespace Gecode {
     template <class A>
     Advisor(Space* home, Propagator* p, Council<A>& c);
     /// Copying constructor
-    Advisor(Space* home, bool share, Propagator* p, Advisor& a);
+    Advisor(Space* home, bool share, Advisor& a);
 
     /// Return the advisor's propagator
     Propagator* propagator(void) const; 
@@ -1583,13 +1577,7 @@ namespace Gecode {
     c.advisors = static_cast<A*>(this);
   }
   forceinline 
-  Advisor::Advisor(Space* home, bool share, Propagator* p, Advisor& a) {
-    // Set forwarding pointer
-    a.prev(this);
-    //    ActorLink::prev(NULL);
-    // Set propagator pointer
-    ActorLink::next(a.next()->prev());
-  }
+  Advisor::Advisor(Space*, bool, Advisor&) {}
   forceinline bool
   Advisor::disposed(void) const { 
     return ActorLink::next() == NULL;
@@ -1630,24 +1618,40 @@ namespace Gecode {
 
   template <class A>
   forceinline void
-  Council<A>::update(Space* home, bool share, Propagator& p, Council<A>& c) {
-    // The propagator in from-space
-    Propagator* p_f = &p;
-    // The propagator in to-space
-    Propagator* p_t = static_cast<Propagator*>(p_f->prev());
-    // Advisors in from-space
-    A* a_f = static_cast<A*>(c.advisors);
-    // Advisors in to-space
-    A* a_t = NULL;
-    while (a_f != NULL) {
-      if (!a_f->disposed()) {
-        A* a = new (home) A(home,share,p_t,*a_f);
-        a->next_advisor = a_t;
-        a_t = a;
-      }
-      a_f = static_cast<A*>(a_f->next_advisor);
+  Council<A>::update(Space* home, bool share, Council<A>& c) {
+    // Skip all disposed advisors
+    {
+      A* a = c.advisors;
+      while ((a != NULL) && a->disposed())
+        a = static_cast<A*>(a->next_advisor);
+      c.advisors = a;
     }
-    advisors = a_t;
+    // Are there any advisors to be cloned?
+    if (c.advisors != NULL) {
+      // The propagator in from-space
+      Propagator* p_f = c.advisors->propagator();
+      // The propagator in to-space
+      Propagator* p_t = static_cast<Propagator*>(p_f->prev());
+      // Advisors in from-space
+      A* a_f = c.advisors;
+      // Advisors in to-space
+      A* a_t = NULL;
+      while (a_f != NULL) {
+        if (!a_f->disposed()) {
+          // Run specific copying part
+          A* a = new (home) A(home,share,*a_f);
+          // Set propagator pointer
+          a->next(p_t);
+          // Set forwarding pointer
+          a_f->prev(a);
+          // Link
+          a->next_advisor = a_t;
+          a_t = a;
+        }
+        a_f = static_cast<A*>(a_f->next_advisor);
+      }
+      advisors = a_t;
+    }
   }
   
   template <class A>

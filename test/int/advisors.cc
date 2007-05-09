@@ -42,8 +42,8 @@ namespace {
         if (x.assigned())
           schedule(home, Int::ME_INT_VAL);
       }
-      BndAdvisor(Space* home, bool share, Propagator* p, BndAdvisor& a) 
-        : ViewAdvisor<IntView>(home, share, p, a) {}
+      BndAdvisor(Space* home, bool share, BndAdvisor& a) 
+        : ViewAdvisor<IntView>(home,share,a) {}
     };
     
     Council<BndAdvisor> c;
@@ -62,7 +62,7 @@ namespace {
     /// Constructor for cloning \a p
     Eq(Space* home, bool share, Eq& p) 
       : Propagator(home, share, p) {
-      c.update(home,share,p,p.c);
+      c.update(home,share,p.c);
       x0.update(home,share,p.x0);
       x1.update(home,share,p.x1);
     }
@@ -156,8 +156,8 @@ namespace {
         if (x.assigned())
           schedule(home, Int::ME_BOOL_VAL);
       }
-      BndAdvisor(Space* home, bool share, Propagator* p, BndAdvisor& a) 
-        : ViewAdvisor<BoolView>(home, share, p, a) {}
+      BndAdvisor(Space* home, bool share, BndAdvisor& a) 
+        : ViewAdvisor<BoolView>(home,share,a) {}
     };
     
     Council<BndAdvisor> c;
@@ -171,7 +171,7 @@ namespace {
     /// Constructor for cloning \a p
     BoolEq(Space* home, bool share, BoolEq& p) 
       : Propagator(home, share, p) {
-      c.update(home,share,p,p.c);
+      c.update(home,share,p.c);
       x0.update(home,share,p.x0);
       x1.update(home,share,p.x1);
     }
