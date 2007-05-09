@@ -644,13 +644,13 @@ namespace Gecode {
     template <class A> friend class Council;
   private:
     union {
-      /// A set of modification events
+      /// A set of modification events (used during propagation)
       PropModEvent pme;
       /// The size of the propagator (used during subsumtion)
       size_t       size;
+      /// A list of advisors (used during cloning)
+      Advisor*     advisors;
     } u;
-    /// A list of advisors
-    Advisor* advisors;
   protected:
     /// Constructor for creation
     Propagator(Space* home);
@@ -720,7 +720,8 @@ namespace Gecode {
     //@}
   };
 
-  /** \brief Council of advisors
+  /** 
+   * \brief Council of advisors
    * 
    * This is a utility class that maintains a council (that is, a 
    * collection) of advisors. The class should be used as a member 
@@ -735,6 +736,9 @@ namespace Gecode {
   template <class A>
   class Council {
     friend class Advisor;
+  private:
+    /// Starting point for a linked list of advisors
+    A* advisors;
   public:
     /// Default constructor
     Council(void);
@@ -757,7 +761,7 @@ namespace Gecode {
       A* a;
     public:
       /// Initialize
-      Advisors(Propagator* p, Council<A>& c);
+      Advisors(Council<A>& c);
       /// Test whether there advisors left
       bool operator()(void) const;
       /// Move iterator to next advisor
@@ -1574,11 +1578,11 @@ namespace Gecode {
    */
   template <class A>
   forceinline 
-  Advisor::Advisor(Space* home, Propagator* p, Council<A>&) {
+  Advisor::Advisor(Space* home, Propagator* p, Council<A>& c) {
     assert(p != NULL);
     ActorLink::next(p);
-    next_advisor = p->advisors;
-    p->advisors = this;
+    next_advisor = c.advisors; 
+    c.advisors = static_cast<A*>(this);
   }
   forceinline 
   Advisor::Advisor(Space* home, bool share, Propagator* p, Advisor& a) {
@@ -1588,15 +1592,14 @@ namespace Gecode {
     // Set propagator pointer
     ActorLink::next(a.next()->prev());
   }
-  forceinline Propagator* 
-  Advisor::propagator(void) const { 
-    Propagator* p = static_cast<Propagator*>(ActorLink::next()); 
-    assert(p != NULL);
-    return p;
-  }
   forceinline bool
   Advisor::disposed(void) const { 
     return ActorLink::next() == NULL;
+  }
+  forceinline Propagator* 
+  Advisor::propagator(void) const { 
+    assert(!disposed());
+    return static_cast<Propagator*>(ActorLink::next()); 
   }
   template <class A>
   forceinline void
@@ -1624,19 +1627,18 @@ namespace Gecode {
 
   template <class A>
   forceinline
-  Council<A>::Council(Space*, Propagator* p) {
-    p->advisors = NULL;
-  }
+  Council<A>::Council(Space*, Propagator* p) 
+    : advisors(NULL) {}
 
   template <class A>
   forceinline void
-  Council<A>::update(Space* home, bool share, Propagator& p, Council<A>&) {
+  Council<A>::update(Space* home, bool share, Propagator& p, Council<A>& c) {
     // The propagator in from-space
     Propagator* p_f = &p;
     // The propagator in to-space
     Propagator* p_t = static_cast<Propagator*>(p_f->prev());
     // Advisors in from-space
-    A* a_f = static_cast<A*>(p_f->advisors);
+    A* a_f = static_cast<A*>(c.advisors);
     // Advisors in to-space
     A* a_t = NULL;
     while (a_f != NULL) {
@@ -1647,14 +1649,14 @@ namespace Gecode {
       }
       a_f = static_cast<A*>(a_f->next_advisor);
     }
-    p_t->advisors = a_t;
+    advisors = a_t;
   }
   
   template <class A>
   forceinline void
   Council<A>::dispose(Space* home, Propagator* p) {
-    A* a = static_cast<A*>(p->advisors);
-    p->advisors = NULL;
+    A* a = advisors;
+    advisors = NULL;
     while (a != NULL) {
       if (!a->disposed())
         a->dispose(home,p,*this); 
@@ -1665,8 +1667,8 @@ namespace Gecode {
   
   template <class A>
   forceinline
-  Council<A>::Advisors::Advisors(Propagator* p, Council<A>&)
-    : a(static_cast<A*>(p->advisors)) {
+  Council<A>::Advisors::Advisors(Council<A>& c)
+    : a(c.advisors) {
     while ((a != NULL) && a->disposed())
       a = static_cast<A*>(a->next_advisor);
   }
@@ -1866,14 +1868,12 @@ namespace Gecode {
   forceinline
   Propagator::Propagator(Space* home) {
     u.pme = 0;
-    advisors = NULL;
     home->a_actors.head(this);
   }
 
   forceinline
   Propagator::Propagator(Space*, bool, Propagator& p) {
     u.pme = 0;
-    advisors = NULL;
     // Set forwarding pointer
     p.prev(this);
   }
