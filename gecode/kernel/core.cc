@@ -397,12 +397,25 @@ namespace Gecode {
       }
     }
     // Re-establish prev links (reset forwarding information)
-    ActorLink* p = &a_actors;
-    ActorLink* a = p->next();
-    while (a != &a_actors) {
-      a->prev(p); p = a; a = a->next();
+    ActorLink* p_a = &a_actors;
+    ActorLink* c_a = p_a->next();
+    // First update propagators and check for advisors that also must be reset
+    while (c_a != b_commit) {
+      Propagator* p = static_cast<Propagator*>(c_a);
+      if (p->u.advisors != NULL) {
+        ActorLink* a = p->u.advisors;
+        p->u.advisors = NULL;
+        do {
+          a->prev(p); a = a->next();
+        } while (a != NULL);
+      }
+      c_a->prev(p_a); p_a = c_a; c_a = c_a->next();
     }
-    assert(a->prev() == p);
+    // Now the branchings
+    while (c_a != &a_actors) {
+      c_a->prev(p_a); p_a = c_a; c_a = c_a->next();
+    }
+    assert(c_a->prev() == p_a);
     // Reset links for shared objects
     for (SharedObject* s = c->shared; s != NULL; s = s->next)
       s->fwd = NULL;

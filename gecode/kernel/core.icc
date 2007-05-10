@@ -650,7 +650,7 @@ namespace Gecode {
       /// The size of the propagator (used during subsumtion)
       size_t       size;
       /// A list of advisors (used during cloning)
-      Advisor*     advisors;
+      ActorLink*   advisors;
     } u;
   protected:
     /// Constructor for creation
@@ -786,8 +786,6 @@ namespace Gecode {
     /// Is the advisor disposed?
     bool disposed(void) const;
   public:
-    /// Link to next advisor (used by Council)
-    Propagator* _prop;
     /// Constructor for creation
     template <class A>
     Advisor(Space* home, Propagator* p, Council<A>& c);
@@ -1575,28 +1573,27 @@ namespace Gecode {
   forceinline 
   Advisor::Advisor(Space* home, Propagator* p, Council<A>& c) {
     assert(p != NULL);
-    _prop = p;
-    ActorLink::next(c.advisors); 
-    c.advisors = static_cast<A*>(this);
+    // Store propagator and forwarding in prev()
+    ActorLink::prev(p);
+    // Link to next advisor in next()
+    ActorLink::next(c.advisors); c.advisors = static_cast<A*>(this);
   }
   forceinline 
   Advisor::Advisor(Space*, bool, Advisor&) {}
   forceinline bool
   Advisor::disposed(void) const { 
-    return _prop == NULL;
+    return prev() == NULL;
   }
   forceinline Propagator* 
   Advisor::propagator(void) const { 
     assert(!disposed());
-    //    return static_cast<Propagator*>(ActorLink::next()); 
-    return _prop;
+    return static_cast<Propagator*>(ActorLink::prev()); 
   }
   template <class A>
   forceinline void
   Advisor::dispose(Space*,Council<A>&) {
     assert(!disposed());
-    //    ActorLink::next(NULL); 
-    _prop = NULL;
+    ActorLink::prev(NULL); 
     // Shorten chains of disposed advisors by one, if possible
     Advisor* n = static_cast<Advisor*>(next());
     if ((n != NULL) && n->disposed())
@@ -1652,8 +1649,7 @@ namespace Gecode {
           // Run specific copying part
           A* a = new (home) A(home,share,*static_cast<A*>(*a_f));
           // Set propagator pointer
-          //          a->next(p_t);
-          a->_prop = p_t;
+          a->prev(p_t);
           // Set forwarding pointer
           (*a_f)->prev(a);
           // Link
@@ -1663,6 +1659,9 @@ namespace Gecode {
         }
       }
       advisors = a_t;
+      // Enter advisor link for reset
+      assert(p_f->u.advisors == NULL);
+      p_f->u.advisors = c.advisors;
     }
   }
   
