@@ -31,6 +31,85 @@
 
 namespace {
 
+  IntSet nl(0,3);
+
+  class Keep : public NaryPropagator<IntView,PC_INT_NONE> {
+    using NaryPropagator<IntView,PC_INT_NONE>::x;
+    Council<ViewAdvisor<IntView> > c;
+    int n;
+    /// Constructor for posting
+    Keep(Space* home, ViewArray<IntView>& x)
+      : NaryPropagator<IntView,PC_INT_NONE>(home,x), c(home), n(0) {
+      for (int i=x.size(); i--; ) {
+        if (x[i].assigned()) {
+          IntView::schedule(home,this,ME_INT_VAL);
+        } else {
+          for (int j=10*(i+1); j--; ) {
+            (void) new (home) ViewAdvisor<IntView>(home,this,c,x[i]);
+            n++;
+          }
+          IntView::schedule(home,this,ME_INT_BND);
+        }
+      }
+    }
+    /// Constructor for cloning \a p
+    Keep(Space* home, bool share, Keep& p) 
+      : NaryPropagator<IntView,PC_INT_NONE>(home,share,p), n(p.n) {
+      c.update(home,share,p.c);
+    }
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share) {
+      return new (home) Keep(home,share,*this);
+    }
+    virtual ExecStatus advise(Space* home, Advisor* _a, const Delta* d) {
+      ViewAdvisor<IntView>* a = static_cast<ViewAdvisor<IntView>*>(_a);
+      ModEvent me = IntView::modevent(d);
+      if (me == ME_INT_VAL) {
+        n--;
+        return ES_SUBSUMED_NOFIX(a,home,c);
+      }
+      if (n > 0)
+        return ES_FIX;
+      return ES_NOFIX;
+    }
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home) {
+      if (n == 0)
+        return ES_SUBSUMED(this,home);
+      return ES_FIX;
+    }
+    /// Post propagator for view array \a x
+    static ExecStatus post(Space* home, ViewArray<IntView>& x) {
+      (void) new (home) Keep(home,x);
+      return ES_OK;
+    }
+    size_t dispose(Space* home) {
+      c.dispose(home);
+      (void) NaryPropagator<IntView,PC_INT_NONE>::dispose(home);
+      return sizeof(*this);
+    }
+  };
+
+  class AdviseKeep : public IntTest {
+  public:
+    AdviseKeep(void)
+      : IntTest("Advisor::Keep",4,nl,false,ICL_DEF) {}
+    virtual bool solution(const Assignment& x) const {
+      return true;
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      if (home->failed())
+        return;
+      ViewArray<IntView> xv(home,x.size());
+      for (int i=x.size(); i--; )
+        xv[i]=x[i];
+      Keep::post(home,xv);
+    }
+  };
+
+  AdviseKeep _ak;
+
   IntSet ds(0,5);
 
   class AD : public NaryPropagator<IntView,PC_INT_NONE> {
