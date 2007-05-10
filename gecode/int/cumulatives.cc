@@ -30,18 +30,16 @@ namespace Gecode {
 
   namespace {
     ViewArray<IntView>
-    make_view_array(Space *home, const IntVarArgs& in)
-    {
+    make_view_array(Space *home, const IntVarArgs& in) {
       return ViewArray<IntView>(home, in);
     }
 
     ViewArray<ConstIntView>
-    make_view_array(Space *home, const IntArgs& in)
-    {
+    make_view_array(Space *home, const IntArgs& in) {
       ViewArray<ConstIntView> res(home, in.size());
       for (int i = in.size(); i--; ) {
-        if(in[i] < Limits::Int::int_min ||
-           in[i] > Limits::Int::int_max)
+        if (in[i] < Limits::Int::int_min ||
+            in[i] > Limits::Int::int_max)
           throw new NumericalOverflow("Int::cumulatives");
         res[i] = ConstIntView(in[i]);
       }
@@ -64,8 +62,7 @@ namespace Gecode {
     };
 
     void
-    sum(Space *home, const IntVar& s, const IntVar& d, const IntVar& e)
-    {
+    sum(Space *home, const IntVar& s, const IntVar& d, const IntVar& e) {
       GECODE_AUTOARRAY(Linear::Term<IntView>, t, 3);
       t[0].a= 1; t[0].x=s;
       t[1].a= 1; t[1].x=d;
@@ -74,8 +71,7 @@ namespace Gecode {
     }
 
     void
-    sum(Space *home, const IntVar& s, int d, const IntVar& e)
-    {
+    sum(Space *home, const IntVar& s, int d, const IntVar& e) {
       GECODE_AUTOARRAY(Linear::Term<IntView>, t, 2);
       t[0].a= 1; t[0].x=s;
       t[1].a=-1; t[1].x=e;
@@ -91,10 +87,10 @@ namespace Gecode {
                      IntConLevel cl) {
       if (home->failed()) return;
 
-      if(machine.size() != start.size()  ||
-         start.size() != duration.size() ||
-         duration.size() != end.size()   ||
-         end.size() != height.size())
+      if (machine.size() != start.size()  ||
+          start.size() != duration.size() ||
+          duration.size() != end.size()   ||
+          end.size() != height.size())
         throw new ArgumentSizeMismatch("Int::cumulatives");
 
       ViewArray<typename ViewType<Machine>::Result>
@@ -130,7 +126,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most,
-              IntConLevel cl) {
+              IntConLevel cl, PropVar) {
     post_cumulatives(home, machine, start, duration, end,
                      height, limit, at_most, cl);
   }
@@ -140,7 +136,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most,
-              IntConLevel cl) {
+              IntConLevel cl, PropVar) {
     post_cumulatives(home, machine, start, duration, end,
                      height, limit, at_most, cl);
   }
@@ -150,7 +146,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most,
-              IntConLevel cl) {
+              IntConLevel cl, PropVar) {
     post_cumulatives(home, machine, start, duration, end,
                      height, limit, at_most, cl);
   }
@@ -160,7 +156,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most,
-              IntConLevel cl) {
+              IntConLevel cl, PropVar) {
     post_cumulatives(home, machine, start, duration, end,
                      height, limit, at_most, cl);
   }
@@ -170,7 +166,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most,
-              IntConLevel cl) {
+              IntConLevel cl, PropVar) {
     post_cumulatives(home, machine, start, duration, end,
                      height, limit, at_most, cl);
   }
@@ -180,7 +176,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most,
-              IntConLevel cl) {
+              IntConLevel cl, PropVar) {
     post_cumulatives(home, machine, start, duration, end,
                      height, limit, at_most, cl);
   }
@@ -190,7 +186,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most,
-              IntConLevel cl) {
+              IntConLevel cl, PropVar) {
     post_cumulatives(home, machine, start, duration, end,
                      height, limit, at_most, cl);
   }
@@ -200,7 +196,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most,
-              IntConLevel cl) {
+              IntConLevel cl, PropVar) {
     post_cumulatives(home, machine, start, duration, end,
                      height, limit, at_most, cl);
   }

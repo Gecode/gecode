@@ -26,7 +26,7 @@ namespace Gecode {
 
   void
   channel(Space* home, const IntVarArgs& x, const IntVarArgs& y,
-          IntConLevel icl) {
+          IntConLevel icl, PropVar) {
     using namespace Int;
     using namespace Channel;
     int n = x.size();
@@ -66,14 +66,15 @@ namespace Gecode {
   }
 
   void
-  channel(Space* home, BoolVar x0, IntVar x1, IntConLevel) {
+  channel(Space* home, BoolVar x0, IntVar x1, IntConLevel, PropVar) {
     using namespace Int;
     if (home->failed()) return;
     GECODE_ES_FAIL(home,Channel::LinkSingle::post(home,x0,x1));
   }
 
   void
-  channel(Space* home, const BoolVarArgs& x, IntVar y, int o, IntConLevel) {
+  channel(Space* home, const BoolVarArgs& x, IntVar y, int o, 
+          IntConLevel, PropVar) {
     using namespace Int;
     if (home->failed()) return;
     ViewArray<BoolView> xv(home,x);

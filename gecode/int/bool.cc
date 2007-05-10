@@ -64,7 +64,8 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, BoolVar x0, IntRelType r, BoolVar x1, IntConLevel) {
+  rel(Space* home, BoolVar x0, IntRelType r, BoolVar x1, 
+      IntConLevel, PropVar) {
     using namespace Int;
     if (home->failed()) return;
     switch (r) {
@@ -97,7 +98,7 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, BoolVar x0, IntRelType r, int n, IntConLevel) {
+  rel(Space* home, BoolVar x0, IntRelType r, int n, IntConLevel, PropVar) {
     using namespace Int;
     if (home->failed()) return;
     BoolView x(x0);
@@ -137,7 +138,7 @@ namespace Gecode {
   }
 
   void
-  rel(Space* home, const BoolVarArgs& x, IntRelType r, IntConLevel) {
+  rel(Space* home, const BoolVarArgs& x, IntRelType r, IntConLevel, PropVar) {
     using namespace Int;
     if (home->failed() || (x.size() < 2)) return;
     switch (r) {
@@ -184,7 +185,7 @@ namespace Gecode {
 
   void
   rel(Space* home, const BoolVarArgs& x, IntRelType r, const BoolVarArgs& y,
-      IntConLevel) {
+      IntConLevel, PropVar) {
     using namespace Int;
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::rel");
@@ -249,7 +250,7 @@ namespace Gecode {
 
   void
   rel(Space* home, BoolVar x0, BoolOpType o, BoolVar x1, BoolVar x2, 
-      IntConLevel) {
+      IntConLevel, PropVar) {
     using namespace Int;
     if (home->failed()) return;
     switch (o) {
@@ -270,7 +271,7 @@ namespace Gecode {
 
   void
   rel(Space* home, BoolVar x0, BoolOpType o, BoolVar x1, int n, 
-      IntConLevel) {
+      IntConLevel, PropVar) {
     using namespace Int;
     if (home->failed()) return;
     if (n == 0) {
@@ -351,7 +352,7 @@ namespace Gecode {
 
   void
   rel(Space* home, const BoolVarArgs& x, BoolOpType o, BoolVar y, 
-      IntConLevel) {
+      IntConLevel, PropVar) {
     using namespace Int;
     if (home->failed()) return;
     int m = x.size();
@@ -417,7 +418,7 @@ namespace Gecode {
 
   void
   rel(Space* home, const BoolVarArgs& x, BoolOpType o, int n, 
-      IntConLevel) {
+      IntConLevel, PropVar) {
     using namespace Int;
     if ((n < 0) || (n > 1))
       throw NotZeroOne("Int::rel");

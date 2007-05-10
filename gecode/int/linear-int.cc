@@ -28,7 +28,8 @@ namespace Gecode {
 
   void
   linear(Space* home,
-         const IntVarArgs& x, IntRelType r, int c, IntConLevel icl) {
+         const IntVarArgs& x, IntRelType r, int c, 
+         IntConLevel icl, PropVar) {
     if (home->failed()) return;
     GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size());
     for (int i = x.size(); i--; ) {
@@ -39,7 +40,8 @@ namespace Gecode {
 
   void
   linear(Space* home,
-         const IntVarArgs& x, IntRelType r, int c, BoolVar b, IntConLevel icl) {
+         const IntVarArgs& x, IntRelType r, int c, BoolVar b, 
+         IntConLevel icl, PropVar) {
     if (home->failed()) return;
     GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size());
     for (int i = x.size(); i--; ) {
@@ -51,7 +53,7 @@ namespace Gecode {
   void
   linear(Space* home,
          const IntArgs& a, const IntVarArgs& x, IntRelType r, int c,
-         IntConLevel icl) {
+         IntConLevel icl, PropVar) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) return;
@@ -65,7 +67,7 @@ namespace Gecode {
   void
   linear(Space* home,
          const IntArgs& a, const IntVarArgs& x, IntRelType r, int c, BoolVar b,
-         IntConLevel) {
+         IntConLevel, PropVar) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) return;
@@ -78,7 +80,8 @@ namespace Gecode {
 
   void
   linear(Space* home,
-         const IntVarArgs& x, IntRelType r, IntVar y, IntConLevel icl) {
+         const IntVarArgs& x, IntRelType r, IntVar y, 
+         IntConLevel icl, PropVar) {
     if (home->failed()) return;
     GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size()+1);
     for (int i = x.size(); i--; ) {
@@ -91,7 +94,7 @@ namespace Gecode {
   void
   linear(Space* home,
          const IntVarArgs& x, IntRelType r, IntVar y, BoolVar b,
-         IntConLevel) {
+         IntConLevel, PropVar) {
     if (home->failed()) return;
     GECODE_AUTOARRAY(Linear::Term<IntView>, t, x.size()+1);
     for (int i = x.size(); i--; ) {
@@ -104,7 +107,7 @@ namespace Gecode {
   void
   linear(Space* home,
          const IntArgs& a, const IntVarArgs& x, IntRelType r, IntVar y,
-         IntConLevel icl) {
+         IntConLevel icl, PropVar) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) return;
@@ -119,7 +122,7 @@ namespace Gecode {
   void
   linear(Space* home,
          const IntArgs& a, const IntVarArgs& x, IntRelType r, IntVar y,
-         BoolVar b, IntConLevel) {
+         BoolVar b, IntConLevel, PropVar) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) return;
