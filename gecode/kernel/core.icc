@@ -510,6 +510,7 @@ namespace Gecode {
     /// Routines for double-linked list
     ActorLink* prev(void) const; void prev(ActorLink*);
     ActorLink* next(void) const; void next(ActorLink*);
+    ActorLink** next_ref(void);
     //@}
 
     /// Initialize links (self-linked)
@@ -738,7 +739,7 @@ namespace Gecode {
     friend class Advisor;
   private:
     /// Starting point for a linked list of advisors
-    A* advisors;
+    ActorLink* advisors;
   public:
     /// Default constructor
     Council(void);
@@ -752,7 +753,7 @@ namespace Gecode {
     class Advisors {
     private:
       /// The current advisor
-      A* a;
+      ActorLink* a;
     public:
       /// Initialize
       Advisors(Council<A>& c);
@@ -1472,6 +1473,8 @@ namespace Gecode {
   ActorLink::prev(void) const { return _prev; }
   forceinline ActorLink*
   ActorLink::next(void) const { return _next; }
+  forceinline ActorLink**
+  ActorLink::next_ref(void) { return &_next; }
   forceinline void
   ActorLink::prev(ActorLink* al) { _prev = al; }
   forceinline void
@@ -1623,36 +1626,36 @@ namespace Gecode {
   Council<A>::update(Space* home, bool share, Council<A>& c) {
     // Skip all disposed advisors
     {
-      A* a = c.advisors;
-      while ((a != NULL) && a->disposed())
-        a = static_cast<A*>(a->next());
+      ActorLink* a = c.advisors;
+      while ((a != NULL) && static_cast<A*>(a)->disposed())
+        a = a->next();
       c.advisors = a;
     }
     // Are there any advisors to be cloned?
     if (c.advisors != NULL) {
-      assert(!c.advisors->disposed());
       // The propagator in from-space
-      Propagator* p_f = c.advisors->propagator();
+      Propagator* p_f = static_cast<A*>(c.advisors)->propagator();
       // The propagator in to-space
       Propagator* p_t = static_cast<Propagator*>(p_f->prev());
       // Advisors in from-space
-      A* a_f = c.advisors;
+      ActorLink** a_f = &c.advisors;
       // Advisors in to-space
       A* a_t = NULL;
-      while (a_f != NULL) {
-        if (!a_f->disposed()) {
+      while (*a_f != NULL) {
+        if (static_cast<A*>(*a_f)->disposed()) {
+        } else {
           // Run specific copying part
-          A* a = new (home) A(home,share,*a_f);
+          A* a = new (home) A(home,share,*static_cast<A*>(*a_f));
           // Set propagator pointer
           //          a->next(p_t);
           a->_prop = p_t;
           // Set forwarding pointer
-          a_f->prev(a);
+          (*a_f)->prev(a);
           // Link
           a->next(a_t);
           a_t = a;
         }
-        a_f = static_cast<A*>(a_f->next());
+        a_f = (*a_f)->next_ref();
       }
       advisors = a_t;
     }
@@ -1661,12 +1664,12 @@ namespace Gecode {
   template <class A>
   forceinline void
   Council<A>::dispose(Space* home) {
-    A* a = advisors;
+    ActorLink* a = advisors;
     advisors = NULL;
     while (a != NULL) {
-      if (!a->disposed())
-        a->dispose(home,*this); 
-      a = static_cast<A*>(a->next());
+      if (!static_cast<A*>(a)->disposed())
+        static_cast<A*>(a)->dispose(home,*this); 
+      a = a->next();
     }
   }
 
@@ -1675,8 +1678,8 @@ namespace Gecode {
   forceinline
   Council<A>::Advisors::Advisors(Council<A>& c)
     : a(c.advisors) {
-    while ((a != NULL) && a->disposed())
-      a = static_cast<A*>(a->next());
+    while ((a != NULL) && static_cast<A*>(a)->disposed())
+      a = a->next();
   }
   template <class A>
   forceinline bool
@@ -1687,13 +1690,13 @@ namespace Gecode {
   forceinline void
   Council<A>::Advisors::operator++(void) {
     do {
-      a = static_cast<A*>(a->next());
-    } while ((a != NULL) && a->disposed());
+      a = a->next();
+    } while ((a != NULL) && static_cast<A*>(a)->disposed());
   }
   template <class A>
   forceinline A*
   Council<A>::Advisors::advisor(void) const {
-    return a;
+    return static_cast<A*>(a);
   }
 
 
