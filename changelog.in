@@ -53,6 +53,13 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: int
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed a border-case bug for n-ary Boolean conjunction and disjunction.
+
+[ENTRY]
 Module: kernel
 What:   new
 Rank:   minor

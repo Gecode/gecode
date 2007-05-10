@@ -747,18 +747,20 @@ namespace Gecode { namespace Int { namespace Bool {
     }
     for (int i=b.size(); i--; )
       if (b[i].one()) {
-        GECODE_ME_CHECK(c.one(home));
+        GECODE_ME_CHECK(c.one_none(home));
         return ES_OK;
       } else if (b[i].zero()) {
         b.move_lst(i);
       }
-    if (b.size() == 0)
-      return ES_FAILED;
-    if (b.size() == 1)
+    if (b.size() == 0) {
+      GECODE_ME_CHECK(c.zero_none(home));
+    } else if (b.size() == 1) {
       return Eq<BV,BV>::post(home,b[0],c);
-    if (b.size() == 2)
+    } else if (b.size() == 2) {
       return Or<BV,BV,BV>::post(home,b[0],b[1],c);
-    (void) new (home) NaryOr(home,b,c);
+    } else {
+      (void) new (home) NaryOr(home,b,c);
+    }
     return ES_OK;
   }
 
