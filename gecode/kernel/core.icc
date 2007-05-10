@@ -650,7 +650,7 @@ namespace Gecode {
       /// The size of the propagator (used during subsumtion)
       size_t       size;
       /// A list of advisors (used during cloning)
-      ActorLink*   advisors;
+      Gecode::ActorLink*   advisors;
     } u;
   protected:
     /// Constructor for creation
