@@ -1597,6 +1597,10 @@ namespace Gecode {
     assert(!disposed());
     //    ActorLink::next(NULL); 
     _prop = NULL;
+    // Shorten chains of disposed advisors by one, if possible
+    Advisor* n = static_cast<Advisor*>(next());
+    if ((n != NULL) && n->disposed())
+      next(n->next());
   }
 
   template <class A>
@@ -1643,6 +1647,7 @@ namespace Gecode {
       A* a_t = NULL;
       while (*a_f != NULL) {
         if (static_cast<A*>(*a_f)->disposed()) {
+          *a_f = (*a_f)->next();
         } else {
           // Run specific copying part
           A* a = new (home) A(home,share,*static_cast<A*>(*a_f));
@@ -1654,8 +1659,8 @@ namespace Gecode {
           // Link
           a->next(a_t);
           a_t = a;
+          a_f = (*a_f)->next_ref();
         }
-        a_f = (*a_f)->next_ref();
       }
       advisors = a_t;
     }
