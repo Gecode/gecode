@@ -2106,8 +2106,11 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline void
   Variable<VTI,PC,MED>::remove(Space* home, ActorLink* a, PropCond pc) {
-    // The entries are removed from back to front, so when iterating
-    // over dependencies wile removing them it must be done backwards
+    /*
+     * The entries are removed from front to back, so when iterating
+     * over dependencies wile removing them it must be done in
+     * forward direction.
+     */
     ActorLink** f = idx[pc];
 #if GECODE_AUDIT
     while (f < idx[pc+1])
@@ -2146,6 +2149,11 @@ namespace Gecode {
   template <VarTypeId VTI, PropCond PC, class MED>
   forceinline bool
   Variable<VTI,PC,MED>::advise(Space* home, ModEvent me, Delta* d) {
+    /*
+     * An advisor that is executed might remove itself due to subsumtion.
+     * As entries are removed from front to back, the advisors must
+     * be iterated in forward direction.
+     */
     ActorLink** la = idx[PC+1];
     ActorLink** le = idx[PC+2];
     assert (la != le);
@@ -2154,8 +2162,7 @@ namespace Gecode {
     // As removal is done from the back the advisors have to be executed
     // in inverse order.
     do {
-      le--;
-      Advisor* a = static_cast<Advisor*>(*le);
+      Advisor* a = static_cast<Advisor*>(*la);
       Propagator* p = a->propagator();
       switch (p->advise(home,a,d)) {
       case ES_FIX:
@@ -2168,7 +2175,7 @@ namespace Gecode {
       default:
         GECODE_NEVER;
       }
-    } while (la < le);
+    } while (++la < le);
     return true;
   }
 
