@@ -84,7 +84,7 @@ namespace {
   class AdviseDistinct : public IntTest {
   public:
     AdviseDistinct(void)
-      : IntTest("Int::Advisor::Distinct",5,ds,false,ICL_DEF) {}
+      : IntTest("Advisor::Distinct",5,ds,false,ICL_DEF) {}
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<x.size(); i++)
         for (int j=i+1; j<x.size(); j++)
@@ -159,10 +159,13 @@ namespace {
     }
     /// Perform propagation
     virtual ExecStatus propagate(Space* home) {
-      GECODE_ME_CHECK(x0.lq(home, x1.max()));
-      GECODE_ME_CHECK(x0.gq(home, x1.min()));
-      GECODE_ME_CHECK(x1.lq(home, x0.max()));
-      GECODE_ME_CHECK(x1.gq(home, x0.min()));
+      while ((x0.min() != x1.min()) &&
+             (x0.max() != x1.max())) {
+        GECODE_ME_CHECK(x0.lq(home, x1.max()));
+        GECODE_ME_CHECK(x0.gq(home, x1.min()));
+        GECODE_ME_CHECK(x1.lq(home, x0.max()));
+        GECODE_ME_CHECK(x1.gq(home, x0.min()));
+      }
       if (x0.assigned() && x1.assigned())
         return ES_SUBSUMED(this, dispose(home));
       return ES_NOFIX;
@@ -183,7 +186,7 @@ namespace {
   class BasicIntAdvisor : public IntTest {
   public:
     BasicIntAdvisor(void)
-      : IntTest("Int::Advisor::Eq",2,s) {}
+      : IntTest("Advisor::Eq::Int",2,s) {}
     virtual bool solution(const Assignment& x) const {
       return x[0] == x[1];
     }
@@ -268,7 +271,7 @@ namespace {
   class BasicBoolAdvisor : public IntTest {
   public:
     BasicBoolAdvisor(void)
-      : IntTest("Bool::Advisor::Eq",2,bs) {}
+      : IntTest("Advisor::Eq::Bool",2,bs) {}
     virtual bool solution(const Assignment& x) const {
       return x[0] == x[1];
     }
