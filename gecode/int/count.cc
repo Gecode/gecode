@@ -26,7 +26,7 @@ namespace Gecode {
 
   void
   count(Space* home, const IntVarArgs& x, int n,
-        IntRelType r, int m, IntConLevel, PropVar) {
+        IntRelType r, int m, IntConLevel, PropKind) {
     using namespace Int;
     if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
@@ -63,7 +63,7 @@ namespace Gecode {
 
   void
   count(Space* home, const IntVarArgs& x, IntVar y,
-        IntRelType r, int m, IntConLevel, PropVar) {
+        IntRelType r, int m, IntConLevel, PropKind) {
     using namespace Int;
     if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
@@ -99,7 +99,7 @@ namespace Gecode {
 
   void
   count(Space* home, const IntVarArgs& x, const IntArgs& y,
-        IntRelType r, int m, IntConLevel, PropVar) {
+        IntRelType r, int m, IntConLevel, PropKind) {
     using namespace Int;
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::count");
@@ -142,7 +142,7 @@ namespace Gecode {
 
   void
   count(Space* home, const IntVarArgs& x, int n,
-        IntRelType r, IntVar z, IntConLevel, PropVar) {
+        IntRelType r, IntVar z, IntConLevel, PropKind) {
     using namespace Int;
     if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
@@ -179,7 +179,7 @@ namespace Gecode {
 
   void
   count(Space* home, const IntVarArgs& x, IntVar y,
-        IntRelType r, IntVar z, IntConLevel, PropVar) {
+        IntRelType r, IntVar z, IntConLevel, PropKind) {
     using namespace Int;
     if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
@@ -215,7 +215,7 @@ namespace Gecode {
 
   void
   count(Space* home, const IntVarArgs& x, const IntArgs& y,
-        IntRelType r, IntVar z, IntConLevel, PropVar) {
+        IntRelType r, IntVar z, IntConLevel, PropKind) {
     using namespace Int;
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::count");

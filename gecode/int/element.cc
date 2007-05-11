@@ -28,7 +28,7 @@ namespace Gecode {
 
   void
   element(Space* home, const IntArgs& c, IntVar x0, IntVar x1,
-          int offset, IntConLevel, PropVar) {
+          int offset, IntConLevel, PropKind) {
     if (home->failed()) return;
     Element::IntSharedArray cs(c.size());
     for (int i = c.size(); i--; )
@@ -46,7 +46,7 @@ namespace Gecode {
 
   void
   element(Space* home, const IntArgs& c, IntVar x0, BoolVar x1,
-          int offset, IntConLevel, PropVar) {
+          int offset, IntConLevel, PropKind) {
     if (home->failed()) return;
     Element::IntSharedArray cs(c.size());
     for (int i = c.size(); i--; )
@@ -64,7 +64,7 @@ namespace Gecode {
 
   void
   element(Space* home, const IntArgs& c, IntVar x0, int x1,
-          int offset, IntConLevel, PropVar) {
+          int offset, IntConLevel, PropKind) {
     if (home->failed()) return;
     Element::IntSharedArray cs(c.size());
     for (int i = c.size(); i--; )
@@ -85,7 +85,7 @@ namespace Gecode {
 
   void
   element(Space* home, const IntVarArgs& c, IntVar x0, IntVar x1,
-          int offset, IntConLevel icl, PropVar) {
+          int offset, IntConLevel icl, PropKind) {
     if (home->failed()) return;
     Element::IdxView<IntView>* iv = 
       Element::IdxView<IntView>::init(home,c);
@@ -112,7 +112,7 @@ namespace Gecode {
 
   void
   element(Space* home, const IntVarArgs& c, IntVar x0, int x1,
-          int offset, IntConLevel icl, PropVar) {
+          int offset, IntConLevel icl, PropKind) {
     if (home->failed()) return;
     Element::IdxView<IntView>* iv = 
       Element::IdxView<IntView>::init(home,c);
@@ -140,7 +140,7 @@ namespace Gecode {
 
   void
   element(Space* home, const BoolVarArgs& c, IntVar x0, BoolVar x1,
-          int offset, IntConLevel, PropVar) {
+          int offset, IntConLevel, PropKind) {
     if (home->failed()) return;
     Element::IdxView<BoolView>* iv = 
       Element::IdxView<BoolView>::init(home,c);
@@ -156,7 +156,7 @@ namespace Gecode {
 
   void
   element(Space* home, const BoolVarArgs& c, IntVar x0, int x1,
-          int offset, IntConLevel, PropVar) {
+          int offset, IntConLevel, PropKind) {
     if (home->failed()) return;
     Element::IdxView<BoolView>* iv = 
       Element::IdxView<BoolView>::init(home,c);

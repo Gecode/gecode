@@ -27,7 +27,7 @@ namespace Gecode {
   using namespace Int;
 
   void
-  abs(Space* home, IntVar x0, IntVar x1, IntConLevel cl, PropVar) {
+  abs(Space* home, IntVar x0, IntVar x1, IntConLevel cl, PropKind) {
     if (home->failed()) return;
     switch (cl) {
     case ICL_DOM:
@@ -41,13 +41,13 @@ namespace Gecode {
 
 
   void
-  max(Space* home, IntVar x0, IntVar x1, IntVar x2, IntConLevel, PropVar) {
+  max(Space* home, IntVar x0, IntVar x1, IntVar x2, IntConLevel, PropKind) {
     if (home->failed()) return;
     GECODE_ES_FAIL(home,Arithmetic::Max<IntView>::post(home,x0,x1,x2));
   }
 
   void
-  max(Space* home, const IntVarArgs& x, IntVar y, IntConLevel, PropVar) {
+  max(Space* home, const IntVarArgs& x, IntVar y, IntConLevel, PropKind) {
     if (x.size() == 0)
       throw TooFewArguments("Int::max");
     if (home->failed()) return;
@@ -57,14 +57,14 @@ namespace Gecode {
 
 
   void
-  min(Space* home, IntVar x0, IntVar x1, IntVar x2, IntConLevel, PropVar) {
+  min(Space* home, IntVar x0, IntVar x1, IntVar x2, IntConLevel, PropKind) {
     if (home->failed()) return;
     MinusView m0(x0); MinusView m1(x1); MinusView m2(x2);
     GECODE_ES_FAIL(home,Arithmetic::Max<MinusView>::post(home,m0,m1,m2));
   }
 
   void
-  min(Space* home, const IntVarArgs& x, IntVar y, IntConLevel, PropVar) {
+  min(Space* home, const IntVarArgs& x, IntVar y, IntConLevel, PropKind) {
     if (x.size() == 0)
       throw TooFewArguments("Int::min");
     if (home->failed()) return;
@@ -77,7 +77,7 @@ namespace Gecode {
 
 
   void
-  mult(Space* home, IntVar x0, IntVar x1, IntVar x2, IntConLevel, PropVar) {
+  mult(Space* home, IntVar x0, IntVar x1, IntVar x2, IntConLevel, PropKind) {
     if (home->failed()) return;
     GECODE_ES_FAIL(home,Arithmetic::Mult<IntView>::post(home,x0,x1,x2));
   }

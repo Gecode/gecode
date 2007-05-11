@@ -427,7 +427,7 @@ namespace Gecode { namespace Int { namespace GCC {
   // Interfacing gcc with fixed cardinalities
   void gcc(Space* home, const IntVarArgs& x, const IntArgs& c,
            int m, int unspec_low, int unspec_up, int min, int max,
-           IntConLevel icl, PropVar) {
+           IntConLevel icl, PropKind) {
     if (home->failed()) {
       return;
     }
@@ -495,12 +495,12 @@ namespace Gecode { namespace Int { namespace GCC {
 
   void gcc(Space* home, const IntVarArgs& x, const IntArgs& c,
            int m, int unspec, int min, int max,
-           IntConLevel icl, PropVar) {
+           IntConLevel icl, PropKind) {
     gcc(home, x, c, m, 0, unspec, min, max, icl);
   }
 
   void gcc(Space* home, const IntVarArgs& x, int lb, int ub,
-           IntConLevel icl, PropVar) {
+           IntConLevel icl, PropKind) {
     if (home->failed()) {
       return;
     }
@@ -522,14 +522,14 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   void gcc(Space* home, const IntVarArgs& x, int ub, 
-           IntConLevel icl, PropVar) {
+           IntConLevel icl, PropKind) {
     gcc(home, x, ub, ub, icl);
   }
 
   // Interfacing gcc with cardinality variables
 
   void gcc(Space* home, const IntVarArgs& x, const IntVarArgs& c,
-           int min, int max, IntConLevel icl, PropVar) {
+           int min, int max, IntConLevel icl, PropKind) {
 
     if (home->failed()) {
       return;
@@ -590,14 +590,14 @@ namespace Gecode { namespace Int { namespace GCC {
   void gcc(Space* home,
            const IntVarArgs& x, const IntArgs& v, const IntVarArgs& c,
            int m, int unspec, bool all, int min, int max,
-           IntConLevel icl, PropVar) {
+           IntConLevel icl, PropKind) {
     gcc(home, x, v, c, m, 0, unspec, all, min, max, icl);
   }
 
   void gcc(Space* home,
            const IntVarArgs& x, const IntArgs& v, const IntVarArgs& c,
            int m, int unspec_low, int unspec_up, bool all, int min, int max,
-           IntConLevel icl, PropVar) {
+           IntConLevel icl, PropKind) {
 
     if (m != c.size()) {
       throw ArgumentSizeMismatch("Int::gcc");

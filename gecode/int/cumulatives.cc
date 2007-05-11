@@ -126,7 +126,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most,
-              IntConLevel cl, PropVar) {
+              IntConLevel cl, PropKind) {
     post_cumulatives(home, machine, start, duration, end,
                      height, limit, at_most, cl);
   }
@@ -136,7 +136,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most,
-              IntConLevel cl, PropVar) {
+              IntConLevel cl, PropKind) {
     post_cumulatives(home, machine, start, duration, end,
                      height, limit, at_most, cl);
   }
@@ -146,7 +146,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most,
-              IntConLevel cl, PropVar) {
+              IntConLevel cl, PropKind) {
     post_cumulatives(home, machine, start, duration, end,
                      height, limit, at_most, cl);
   }
@@ -156,7 +156,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntVarArgs& height,
               const IntArgs& limit, bool at_most,
-              IntConLevel cl, PropVar) {
+              IntConLevel cl, PropKind) {
     post_cumulatives(home, machine, start, duration, end,
                      height, limit, at_most, cl);
   }
@@ -166,7 +166,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most,
-              IntConLevel cl, PropVar) {
+              IntConLevel cl, PropKind) {
     post_cumulatives(home, machine, start, duration, end,
                      height, limit, at_most, cl);
   }
@@ -176,7 +176,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntVarArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most,
-              IntConLevel cl, PropVar) {
+              IntConLevel cl, PropKind) {
     post_cumulatives(home, machine, start, duration, end,
                      height, limit, at_most, cl);
   }
@@ -186,7 +186,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most,
-              IntConLevel cl, PropVar) {
+              IntConLevel cl, PropKind) {
     post_cumulatives(home, machine, start, duration, end,
                      height, limit, at_most, cl);
   }
@@ -196,7 +196,7 @@ namespace Gecode {
               const IntVarArgs& start, const IntArgs& duration,
               const IntVarArgs& end, const IntArgs& height,
               const IntArgs& limit, bool at_most,
-              IntConLevel cl, PropVar) {
+              IntConLevel cl, PropKind) {
     post_cumulatives(home, machine, start, duration, end,
                      height, limit, at_most, cl);
   }

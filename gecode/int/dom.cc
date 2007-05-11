@@ -28,7 +28,7 @@ namespace Gecode {
   using namespace Int;
 
   void
-  dom(Space* home, IntVar x, int min, int max, IntConLevel, PropVar) {
+  dom(Space* home, IntVar x, int min, int max, IntConLevel, PropKind) {
     if (home->failed()) return;
     IntView xv(x);
     GECODE_ME_FAIL(home,xv.gq(home,min));
@@ -36,7 +36,7 @@ namespace Gecode {
   }
 
   void
-  dom(Space* home, IntVarArgs& x, int min, int max, IntConLevel, PropVar) {
+  dom(Space* home, IntVarArgs& x, int min, int max, IntConLevel, PropKind) {
     if (home->failed()) return;
     for (int i=x.size(); i--; ) {
       IntView xv(x[i]);
@@ -46,7 +46,7 @@ namespace Gecode {
   }
 
   void
-  dom(Space* home, IntVar x, const IntSet& is, IntConLevel, PropVar) {
+  dom(Space* home, IntVar x, const IntSet& is, IntConLevel, PropKind) {
     if (home->failed()) return;
     IntView xv(x);
     IntSetRanges ris(is);
@@ -54,7 +54,7 @@ namespace Gecode {
   }
 
   void
-  dom(Space* home, IntVarArgs& x, const IntSet& is, IntConLevel, PropVar) {
+  dom(Space* home, IntVarArgs& x, const IntSet& is, IntConLevel, PropKind) {
     if (home->failed()) return;
     for (int i = x.size(); i--; ) {
       IntSetRanges ris(is);
@@ -65,7 +65,7 @@ namespace Gecode {
 
   void
   dom(Space* home, IntVar x, int min, int max, BoolVar b, IntConLevel, 
-      PropVar) {
+      PropKind) {
     if (home->failed()) return;
     GECODE_ES_FAIL(home,Dom::ReRange<IntView>::post(home,x,min,max,b));
   }
@@ -73,7 +73,7 @@ namespace Gecode {
 
   void
   dom(Space* home, IntVar x, const IntSet& is, BoolVar b, IntConLevel, 
-      PropVar) {
+      PropKind) {
     if (home->failed()) return;
     GECODE_ES_FAIL(home,Dom::ReIntSet<IntView>::post(home,x,is,b));
   }

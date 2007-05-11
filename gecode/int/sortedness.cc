@@ -27,7 +27,7 @@ namespace Gecode {
   void sortedness(Space* home,
                   const IntVarArgs& x,
                   const IntVarArgs& y,
-                  IntConLevel, PropVar) {
+                  IntConLevel, PropKind) {
 
     if (home->failed()) {
       return;
@@ -68,7 +68,7 @@ namespace Gecode {
                   const IntVarArgs& x,
                   const IntVarArgs& y,
                   const IntVarArgs& z,
-                  IntConLevel, PropVar) {
+                  IntConLevel, PropKind) {
     int n = x.size();
     int n2 = 2*n;
     int n3 = 3*n;

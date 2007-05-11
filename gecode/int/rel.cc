@@ -30,7 +30,7 @@ namespace Gecode {
 
   void
   rel(Space* home, IntVar x0, IntRelType r, int n, 
-      IntConLevel, PropVar) {
+      IntConLevel, PropKind) {
     if (home->failed()) return;
     IntView x(x0);
     switch (r) {
@@ -53,7 +53,7 @@ namespace Gecode {
 
   void
   rel(Space* home, IntVar x0, IntRelType r, IntVar x1, 
-      IntConLevel icl, PropVar) {
+      IntConLevel icl, PropKind) {
     if (home->failed()) return;
     switch (r) {
     case IRT_EQ:
@@ -81,7 +81,7 @@ namespace Gecode {
 
   void
   rel(Space* home, IntVar x0, IntRelType r, IntVar x1, BoolVar b,
-      IntConLevel icl, PropVar) {
+      IntConLevel icl, PropKind) {
     if (home->failed()) return;
     switch (r) {
     case IRT_EQ:
@@ -125,7 +125,7 @@ namespace Gecode {
 
   void
   rel(Space* home, IntVar x, IntRelType r, int n, BoolVar b,
-      IntConLevel icl, PropVar) {
+      IntConLevel icl, PropKind) {
     if (home->failed()) return;
     switch (r) {
     case IRT_EQ:
@@ -171,7 +171,7 @@ namespace Gecode {
 
   void
   rel(Space* home, const IntVarArgs& x, IntRelType r, 
-      IntConLevel icl, PropVar) {
+      IntConLevel icl, PropKind) {
     if (home->failed() || (x.size() < 2)) return;
     switch (r) {
     case IRT_EQ:
@@ -210,7 +210,7 @@ namespace Gecode {
 
   void
   rel(Space* home, const IntVarArgs& x, IntRelType r, const IntVarArgs& y,
-      IntConLevel icl, PropVar) {
+      IntConLevel icl, PropKind) {
     if (x.size() != y.size())
       throw ArgumentSizeMismatch("Int::rel");
     if (home->failed()) return;

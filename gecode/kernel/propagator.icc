@@ -25,17 +25,17 @@
 namespace Gecode {
 
   /**
-   * \brief Propagation variant
+   * \brief Propagation kind
    *
-   * Signals that a particular variant is used in propagation for
+   * Signals that a particular kind is used in propagation for
    * the implementation of a particular constraint.
    *
    * \ingroup TaskActor
    */
-  enum PropVar {
-    PV_DEF,    ///< Make a default decision
-    PV_SPEED,  ///< Prefer speed over memory consumption
-    PV_MEMORY  ///< Prefer little memory over speed
+  enum PropKind {
+    PK_DEF,    ///< Make a default decision
+    PK_SPEED,  ///< Prefer speed over memory consumption
+    PK_MEMORY  ///< Prefer little memory over speed
   };
 
 
