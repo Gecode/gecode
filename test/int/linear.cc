@@ -199,9 +199,11 @@ class LinearBoolIntUnitPos : public IntTest {
 private:
   const int rhs;
   const IntRelType irt;
+  const PropVar pv;
 public:
-  LinearBoolIntUnitPos(const char* t, int n, int rhs0, IntRelType irt0)
-    : IntTest(t,n,db,false), rhs(rhs0), irt(irt0) {}
+  LinearBoolIntUnitPos(const char* t, int n, int rhs0, 
+                       IntRelType irt0, PropVar pv0)
+    : IntTest(t,n,db,false), rhs(rhs0), irt(irt0), pv(pv0) {}
   virtual bool solution(const Assignment& x) const {
     double m = 0;
     for (int i=0; i<x.size(); i++)
@@ -212,60 +214,104 @@ public:
     BoolVarArgs b(x.size());
     for (int i=x.size(); i--; )
       b[i]=channel(home,x[i]);
-    linear(home, b, irt, rhs);
+    linear(home, b, irt, rhs, ICL_DEF, pv);
   }
 };
 
-LinearBoolIntUnitPos _lb_i_up_1_1_eq("Linear::Bool::Int::Unit::Pos::Eq::1::1",1,1,IRT_EQ);
-LinearBoolIntUnitPos _lb_i_up_1_1_nq("Linear::Bool::Int::Unit::Pos::Nq::1::1",1,1,IRT_NQ);
-LinearBoolIntUnitPos _lb_i_up_1_1_lq("Linear::Bool::Int::Unit::Pos::Lq::1::1",1,1,IRT_LQ);
-LinearBoolIntUnitPos _lb_i_up_1_1_le("Linear::Bool::Int::Unit::Pos::Le::1::1",1,1,IRT_LE);
-LinearBoolIntUnitPos _lb_i_up_1_1_gq("Linear::Bool::Int::Unit::Pos::Gq::1::1",1,1,IRT_GQ);
-LinearBoolIntUnitPos _lb_i_up_1_1_gr("Linear::Bool::Int::Unit::Pos::Gr::1::1",1,1,IRT_GR);
+LinearBoolIntUnitPos _lb_i_up_1_1_eq_s("Linear::Bool::Int::Unit::Pos::Eq::1::1::Speed",1,1,IRT_EQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_1_1_nq_s("Linear::Bool::Int::Unit::Pos::Nq::1::1::Speed",1,1,IRT_NQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_1_1_lq_s("Linear::Bool::Int::Unit::Pos::Lq::1::1::Speed",1,1,IRT_LQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_1_1_le_s("Linear::Bool::Int::Unit::Pos::Le::1::1::Speed",1,1,IRT_LE,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_1_1_gq_s("Linear::Bool::Int::Unit::Pos::Gq::1::1::Speed",1,1,IRT_GQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_1_1_gr_s("Linear::Bool::Int::Unit::Pos::Gr::1::1::Speed",1,1,IRT_GR,PV_SPEED);
 
-LinearBoolIntUnitPos _lb_i_up_3_1_eq("Linear::Bool::Int::Unit::Pos::Eq::3::1",3,1,IRT_EQ);
-LinearBoolIntUnitPos _lb_i_up_3_1_nq("Linear::Bool::Int::Unit::Pos::Nq::3::1",3,1,IRT_NQ);
-LinearBoolIntUnitPos _lb_i_up_3_1_lq("Linear::Bool::Int::Unit::Pos::Lq::3::1",3,1,IRT_LQ);
-LinearBoolIntUnitPos _lb_i_up_3_1_le("Linear::Bool::Int::Unit::Pos::Le::3::1",3,1,IRT_LE);
-LinearBoolIntUnitPos _lb_i_up_3_1_gq("Linear::Bool::Int::Unit::Pos::Gq::3::1",3,1,IRT_GQ);
-LinearBoolIntUnitPos _lb_i_up_3_1_gr("Linear::Bool::Int::Unit::Pos::Gr::3::1",3,1,IRT_GR);
+LinearBoolIntUnitPos _lb_i_up_3_1_eq_s("Linear::Bool::Int::Unit::Pos::Eq::3::1::Speed",3,1,IRT_EQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_3_1_nq_s("Linear::Bool::Int::Unit::Pos::Nq::3::1::Speed",3,1,IRT_NQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_3_1_lq_s("Linear::Bool::Int::Unit::Pos::Lq::3::1::Speed",3,1,IRT_LQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_3_1_le_s("Linear::Bool::Int::Unit::Pos::Le::3::1::Speed",3,1,IRT_LE,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_3_1_gq_s("Linear::Bool::Int::Unit::Pos::Gq::3::1::Speed",3,1,IRT_GQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_3_1_gr_s("Linear::Bool::Int::Unit::Pos::Gr::3::1::Speed",3,1,IRT_GR,PV_SPEED);
 
-LinearBoolIntUnitPos _lb_i_up_5_1_eq("Linear::Bool::Int::Unit::Pos::Eq::5::1",5,1,IRT_EQ);
-LinearBoolIntUnitPos _lb_i_up_5_1_nq("Linear::Bool::Int::Unit::Pos::Nq::5::1",5,1,IRT_NQ);
-LinearBoolIntUnitPos _lb_i_up_5_1_lq("Linear::Bool::Int::Unit::Pos::Lq::5::1",5,1,IRT_LQ);
-LinearBoolIntUnitPos _lb_i_up_5_1_le("Linear::Bool::Int::Unit::Pos::Le::5::1",5,1,IRT_LE);
-LinearBoolIntUnitPos _lb_i_up_5_1_gq("Linear::Bool::Int::Unit::Pos::Gq::5::1",5,1,IRT_GQ);
-LinearBoolIntUnitPos _lb_i_up_5_1_gr("Linear::Bool::Int::Unit::Pos::Gr::5::1",5,1,IRT_GR);
+LinearBoolIntUnitPos _lb_i_up_5_1_eq_s("Linear::Bool::Int::Unit::Pos::Eq::5::1::Speed",5,1,IRT_EQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_5_1_nq_s("Linear::Bool::Int::Unit::Pos::Nq::5::1::Speed",5,1,IRT_NQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_5_1_lq_s("Linear::Bool::Int::Unit::Pos::Lq::5::1::Speed",5,1,IRT_LQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_5_1_le_s("Linear::Bool::Int::Unit::Pos::Le::5::1::Speed",5,1,IRT_LE,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_5_1_gq_s("Linear::Bool::Int::Unit::Pos::Gq::5::1::Speed",5,1,IRT_GQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_5_1_gr_s("Linear::Bool::Int::Unit::Pos::Gr::5::1::Speed",5,1,IRT_GR,PV_SPEED);
 
-LinearBoolIntUnitPos _lb_i_up_5_3_eq("Linear::Bool::Int::Unit::Pos::Eq::5::3",5,3,IRT_EQ);
-LinearBoolIntUnitPos _lb_i_up_5_3_nq("Linear::Bool::Int::Unit::Pos::Nq::5::3",5,3,IRT_NQ);
-LinearBoolIntUnitPos _lb_i_up_5_3_lq("Linear::Bool::Int::Unit::Pos::Lq::5::3",5,3,IRT_LQ);
-LinearBoolIntUnitPos _lb_i_up_5_3_le("Linear::Bool::Int::Unit::Pos::Le::5::3",5,3,IRT_LE);
-LinearBoolIntUnitPos _lb_i_up_5_3_gq("Linear::Bool::Int::Unit::Pos::Gq::5::3",5,3,IRT_GQ);
-LinearBoolIntUnitPos _lb_i_up_5_3_gr("Linear::Bool::Int::Unit::Pos::Gr::5::3",5,3,IRT_GR);
+LinearBoolIntUnitPos _lb_i_up_5_3_eq_s("Linear::Bool::Int::Unit::Pos::Eq::5::3::Speed",5,3,IRT_EQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_5_3_nq_s("Linear::Bool::Int::Unit::Pos::Nq::5::3::Speed",5,3,IRT_NQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_5_3_lq_s("Linear::Bool::Int::Unit::Pos::Lq::5::3::Speed",5,3,IRT_LQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_5_3_le_s("Linear::Bool::Int::Unit::Pos::Le::5::3::Speed",5,3,IRT_LE,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_5_3_gq_s("Linear::Bool::Int::Unit::Pos::Gq::5::3::Speed",5,3,IRT_GQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_5_3_gr_s("Linear::Bool::Int::Unit::Pos::Gr::5::3::Speed",5,3,IRT_GR,PV_SPEED);
 
-LinearBoolIntUnitPos _lb_i_up_10_3_eq("Linear::Bool::Int::Unit::Pos::Eq::10::3",10,3,IRT_EQ);
-LinearBoolIntUnitPos _lb_i_up_10_3_nq("Linear::Bool::Int::Unit::Pos::Nq::10::3",10,3,IRT_NQ);
-LinearBoolIntUnitPos _lb_i_up_10_3_lq("Linear::Bool::Int::Unit::Pos::Lq::10::3",10,3,IRT_LQ);
-LinearBoolIntUnitPos _lb_i_up_10_3_le("Linear::Bool::Int::Unit::Pos::Le::10::3",10,3,IRT_LE);
-LinearBoolIntUnitPos _lb_i_up_10_3_gq("Linear::Bool::Int::Unit::Pos::Gq::10::3",10,3,IRT_GQ);
-LinearBoolIntUnitPos _lb_i_up_10_3_gr("Linear::Bool::Int::Unit::Pos::Gr::10::3",10,3,IRT_GR);
+LinearBoolIntUnitPos _lb_i_up_10_3_eq_s("Linear::Bool::Int::Unit::Pos::Eq::10::3::Speed",10,3,IRT_EQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_10_3_nq_s("Linear::Bool::Int::Unit::Pos::Nq::10::3::Speed",10,3,IRT_NQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_10_3_lq_s("Linear::Bool::Int::Unit::Pos::Lq::10::3::Speed",10,3,IRT_LQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_10_3_le_s("Linear::Bool::Int::Unit::Pos::Le::10::3::Speed",10,3,IRT_LE,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_10_3_gq_s("Linear::Bool::Int::Unit::Pos::Gq::10::3::Speed",10,3,IRT_GQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_10_3_gr_s("Linear::Bool::Int::Unit::Pos::Gr::10::3::Speed",10,3,IRT_GR,PV_SPEED);
 
-LinearBoolIntUnitPos _lb_i_up_10_5_eq("Linear::Bool::Int::Unit::Pos::Eq::10::5",10,5,IRT_EQ);
-LinearBoolIntUnitPos _lb_i_up_10_5_nq("Linear::Bool::Int::Unit::Pos::Nq::10::5",10,5,IRT_NQ);
-LinearBoolIntUnitPos _lb_i_up_10_5_lq("Linear::Bool::Int::Unit::Pos::Lq::10::5",10,5,IRT_LQ);
-LinearBoolIntUnitPos _lb_i_up_10_5_le("Linear::Bool::Int::Unit::Pos::Le::10::5",10,5,IRT_LE);
-LinearBoolIntUnitPos _lb_i_up_10_5_gq("Linear::Bool::Int::Unit::Pos::Gq::10::5",10,5,IRT_GQ);
-LinearBoolIntUnitPos _lb_i_up_10_5_gr("Linear::Bool::Int::Unit::Pos::Gr::10::5",10,5,IRT_GR);
+LinearBoolIntUnitPos _lb_i_up_10_5_eq_s("Linear::Bool::Int::Unit::Pos::Eq::10::5::Speed",10,5,IRT_EQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_10_5_nq_s("Linear::Bool::Int::Unit::Pos::Nq::10::5::Speed",10,5,IRT_NQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_10_5_lq_s("Linear::Bool::Int::Unit::Pos::Lq::10::5::Speed",10,5,IRT_LQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_10_5_le_s("Linear::Bool::Int::Unit::Pos::Le::10::5::Speed",10,5,IRT_LE,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_10_5_gq_s("Linear::Bool::Int::Unit::Pos::Gq::10::5::Speed",10,5,IRT_GQ,PV_SPEED);
+LinearBoolIntUnitPos _lb_i_up_10_5_gr_s("Linear::Bool::Int::Unit::Pos::Gr::10::5::Speed",10,5,IRT_GR,PV_SPEED);
+
+LinearBoolIntUnitPos _lb_i_up_1_1_eq_m("Linear::Bool::Int::Unit::Pos::Eq::1::1::Memory",1,1,IRT_EQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_1_1_nq_m("Linear::Bool::Int::Unit::Pos::Nq::1::1::Memory",1,1,IRT_NQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_1_1_lq_m("Linear::Bool::Int::Unit::Pos::Lq::1::1::Memory",1,1,IRT_LQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_1_1_le_m("Linear::Bool::Int::Unit::Pos::Le::1::1::Memory",1,1,IRT_LE,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_1_1_gq_m("Linear::Bool::Int::Unit::Pos::Gq::1::1::Memory",1,1,IRT_GQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_1_1_gr_m("Linear::Bool::Int::Unit::Pos::Gr::1::1::Memory",1,1,IRT_GR,PV_MEMORY);
+
+LinearBoolIntUnitPos _lb_i_up_3_1_eq_m("Linear::Bool::Int::Unit::Pos::Eq::3::1::Memory",3,1,IRT_EQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_3_1_nq_m("Linear::Bool::Int::Unit::Pos::Nq::3::1::Memory",3,1,IRT_NQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_3_1_lq_m("Linear::Bool::Int::Unit::Pos::Lq::3::1::Memory",3,1,IRT_LQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_3_1_le_m("Linear::Bool::Int::Unit::Pos::Le::3::1::Memory",3,1,IRT_LE,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_3_1_gq_m("Linear::Bool::Int::Unit::Pos::Gq::3::1::Memory",3,1,IRT_GQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_3_1_gr_m("Linear::Bool::Int::Unit::Pos::Gr::3::1::Memory",3,1,IRT_GR,PV_MEMORY);
+
+LinearBoolIntUnitPos _lb_i_up_5_1_eq_m("Linear::Bool::Int::Unit::Pos::Eq::5::1::Memory",5,1,IRT_EQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_5_1_nq_m("Linear::Bool::Int::Unit::Pos::Nq::5::1::Memory",5,1,IRT_NQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_5_1_lq_m("Linear::Bool::Int::Unit::Pos::Lq::5::1::Memory",5,1,IRT_LQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_5_1_le_m("Linear::Bool::Int::Unit::Pos::Le::5::1::Memory",5,1,IRT_LE,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_5_1_gq_m("Linear::Bool::Int::Unit::Pos::Gq::5::1::Memory",5,1,IRT_GQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_5_1_gr_m("Linear::Bool::Int::Unit::Pos::Gr::5::1::Memory",5,1,IRT_GR,PV_MEMORY);
+
+LinearBoolIntUnitPos _lb_i_up_5_3_eq_m("Linear::Bool::Int::Unit::Pos::Eq::5::3::Memory",5,3,IRT_EQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_5_3_nq_m("Linear::Bool::Int::Unit::Pos::Nq::5::3::Memory",5,3,IRT_NQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_5_3_lq_m("Linear::Bool::Int::Unit::Pos::Lq::5::3::Memory",5,3,IRT_LQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_5_3_le_m("Linear::Bool::Int::Unit::Pos::Le::5::3::Memory",5,3,IRT_LE,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_5_3_gq_m("Linear::Bool::Int::Unit::Pos::Gq::5::3::Memory",5,3,IRT_GQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_5_3_gr_m("Linear::Bool::Int::Unit::Pos::Gr::5::3::Memory",5,3,IRT_GR,PV_MEMORY);
+
+LinearBoolIntUnitPos _lb_i_up_10_3_eq_m("Linear::Bool::Int::Unit::Pos::Eq::10::3::Memory",10,3,IRT_EQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_10_3_nq_m("Linear::Bool::Int::Unit::Pos::Nq::10::3::Memory",10,3,IRT_NQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_10_3_lq_m("Linear::Bool::Int::Unit::Pos::Lq::10::3::Memory",10,3,IRT_LQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_10_3_le_m("Linear::Bool::Int::Unit::Pos::Le::10::3::Memory",10,3,IRT_LE,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_10_3_gq_m("Linear::Bool::Int::Unit::Pos::Gq::10::3::Memory",10,3,IRT_GQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_10_3_gr_m("Linear::Bool::Int::Unit::Pos::Gr::10::3::Memory",10,3,IRT_GR,PV_MEMORY);
+
+LinearBoolIntUnitPos _lb_i_up_10_5_eq_m("Linear::Bool::Int::Unit::Pos::Eq::10::5::Memory",10,5,IRT_EQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_10_5_nq_m("Linear::Bool::Int::Unit::Pos::Nq::10::5::Memory",10,5,IRT_NQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_10_5_lq_m("Linear::Bool::Int::Unit::Pos::Lq::10::5::Memory",10,5,IRT_LQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_10_5_le_m("Linear::Bool::Int::Unit::Pos::Le::10::5::Memory",10,5,IRT_LE,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_10_5_gq_m("Linear::Bool::Int::Unit::Pos::Gq::10::5::Memory",10,5,IRT_GQ,PV_MEMORY);
+LinearBoolIntUnitPos _lb_i_up_10_5_gr_m("Linear::Bool::Int::Unit::Pos::Gr::10::5::Memory",10,5,IRT_GR,PV_MEMORY);
 
 
 class LinearBoolIntUnitNeg : public IntTest {
 private:
   const int rhs;
   const IntRelType irt;
+  const PropVar pv;
 public:
-  LinearBoolIntUnitNeg(const char* t, int n, int rhs0, IntRelType irt0)
-    : IntTest(t,n,db,false), rhs(rhs0), irt(irt0) {}
+  LinearBoolIntUnitNeg(const char* t, int n, int rhs0, 
+                       IntRelType irt0, PropVar pv0)
+    : IntTest(t,n,db,false), rhs(rhs0), irt(irt0), pv(pv0) {}
   virtual bool solution(const Assignment& x) const {
     double m = 0;
     for (int i=0; i<x.size(); i++)
@@ -279,51 +325,93 @@ public:
     IntArgs c(x.size());
     for (int i=x.size(); i--; )
       c[i]=-1;
-    linear(home, c, b, irt, -rhs);
+    linear(home, c, b, irt, -rhs, ICL_DEF, pv);
   }
 };
 
-LinearBoolIntUnitNeg _lb_i_un_1_1_eq("Linear::Bool::Int::Unit::Neg::Eq::1::1",1,1,IRT_EQ);
-LinearBoolIntUnitNeg _lb_i_un_1_1_nq("Linear::Bool::Int::Unit::Neg::Nq::1::1",1,1,IRT_NQ);
-LinearBoolIntUnitNeg _lb_i_un_1_1_lq("Linear::Bool::Int::Unit::Neg::Lq::1::1",1,1,IRT_LQ);
-LinearBoolIntUnitNeg _lb_i_un_1_1_le("Linear::Bool::Int::Unit::Neg::Le::1::1",1,1,IRT_LE);
-LinearBoolIntUnitNeg _lb_i_un_1_1_gq("Linear::Bool::Int::Unit::Neg::Gq::1::1",1,1,IRT_GQ);
-LinearBoolIntUnitNeg _lb_i_un_1_1_gr("Linear::Bool::Int::Unit::Neg::Gr::1::1",1,1,IRT_GR);
+LinearBoolIntUnitNeg _lb_i_un_1_1_eq_s("Linear::Bool::Int::Unit::Neg::Eq::1::1::Speed",1,1,IRT_EQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_1_1_nq_s("Linear::Bool::Int::Unit::Neg::Nq::1::1::Speed",1,1,IRT_NQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_1_1_lq_s("Linear::Bool::Int::Unit::Neg::Lq::1::1::Speed",1,1,IRT_LQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_1_1_le_s("Linear::Bool::Int::Unit::Neg::Le::1::1::Speed",1,1,IRT_LE,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_1_1_gq_s("Linear::Bool::Int::Unit::Neg::Gq::1::1::Speed",1,1,IRT_GQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_1_1_gr_s("Linear::Bool::Int::Unit::Neg::Gr::1::1::Speed",1,1,IRT_GR,PV_SPEED);
 
-LinearBoolIntUnitNeg _lb_i_un_3_1_eq("Linear::Bool::Int::Unit::Neg::Eq::3::1",3,1,IRT_EQ);
-LinearBoolIntUnitNeg _lb_i_un_3_1_nq("Linear::Bool::Int::Unit::Neg::Nq::3::1",3,1,IRT_NQ);
-LinearBoolIntUnitNeg _lb_i_un_3_1_lq("Linear::Bool::Int::Unit::Neg::Lq::3::1",3,1,IRT_LQ);
-LinearBoolIntUnitNeg _lb_i_un_3_1_le("Linear::Bool::Int::Unit::Neg::Le::3::1",3,1,IRT_LE);
-LinearBoolIntUnitNeg _lb_i_un_3_1_gq("Linear::Bool::Int::Unit::Neg::Gq::3::1",3,1,IRT_GQ);
-LinearBoolIntUnitNeg _lb_i_un_3_1_gr("Linear::Bool::Int::Unit::Neg::Gr::3::1",3,1,IRT_GR);
+LinearBoolIntUnitNeg _lb_i_un_3_1_eq_s("Linear::Bool::Int::Unit::Neg::Eq::3::1::Speed",3,1,IRT_EQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_3_1_nq_s("Linear::Bool::Int::Unit::Neg::Nq::3::1::Speed",3,1,IRT_NQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_3_1_lq_s("Linear::Bool::Int::Unit::Neg::Lq::3::1::Speed",3,1,IRT_LQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_3_1_le_s("Linear::Bool::Int::Unit::Neg::Le::3::1::Speed",3,1,IRT_LE,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_3_1_gq_s("Linear::Bool::Int::Unit::Neg::Gq::3::1::Speed",3,1,IRT_GQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_3_1_gr_s("Linear::Bool::Int::Unit::Neg::Gr::3::1::Speed",3,1,IRT_GR,PV_SPEED);
 
-LinearBoolIntUnitNeg _lb_i_un_5_1_eq("Linear::Bool::Int::Unit::Neg::Eq::5::1",5,1,IRT_EQ);
-LinearBoolIntUnitNeg _lb_i_un_5_1_nq("Linear::Bool::Int::Unit::Neg::Nq::5::1",5,1,IRT_NQ);
-LinearBoolIntUnitNeg _lb_i_un_5_1_lq("Linear::Bool::Int::Unit::Neg::Lq::5::1",5,1,IRT_LQ);
-LinearBoolIntUnitNeg _lb_i_un_5_1_le("Linear::Bool::Int::Unit::Neg::Le::5::1",5,1,IRT_LE);
-LinearBoolIntUnitNeg _lb_i_un_5_1_gq("Linear::Bool::Int::Unit::Neg::Gq::5::1",5,1,IRT_GQ);
-LinearBoolIntUnitNeg _lb_i_un_5_1_gr("Linear::Bool::Int::Unit::Neg::Gr::5::1",5,1,IRT_GR);
+LinearBoolIntUnitNeg _lb_i_un_5_1_eq_s("Linear::Bool::Int::Unit::Neg::Eq::5::1::Speed",5,1,IRT_EQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_5_1_nq_s("Linear::Bool::Int::Unit::Neg::Nq::5::1::Speed",5,1,IRT_NQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_5_1_lq_s("Linear::Bool::Int::Unit::Neg::Lq::5::1::Speed",5,1,IRT_LQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_5_1_le_s("Linear::Bool::Int::Unit::Neg::Le::5::1::Speed",5,1,IRT_LE,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_5_1_gq_s("Linear::Bool::Int::Unit::Neg::Gq::5::1::Speed",5,1,IRT_GQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_5_1_gr_s("Linear::Bool::Int::Unit::Neg::Gr::5::1::Speed",5,1,IRT_GR,PV_SPEED);
 
-LinearBoolIntUnitNeg _lb_i_un_5_3_eq("Linear::Bool::Int::Unit::Neg::Eq::5::3",5,3,IRT_EQ);
-LinearBoolIntUnitNeg _lb_i_un_5_3_nq("Linear::Bool::Int::Unit::Neg::Nq::5::3",5,3,IRT_NQ);
-LinearBoolIntUnitNeg _lb_i_un_5_3_lq("Linear::Bool::Int::Unit::Neg::Lq::5::3",5,3,IRT_LQ);
-LinearBoolIntUnitNeg _lb_i_un_5_3_le("Linear::Bool::Int::Unit::Neg::Le::5::3",5,3,IRT_LE);
-LinearBoolIntUnitNeg _lb_i_un_5_3_gq("Linear::Bool::Int::Unit::Neg::Gq::5::3",5,3,IRT_GQ);
-LinearBoolIntUnitNeg _lb_i_un_5_3_gr("Linear::Bool::Int::Unit::Neg::Gr::5::3",5,3,IRT_GR);
+LinearBoolIntUnitNeg _lb_i_un_5_3_eq_s("Linear::Bool::Int::Unit::Neg::Eq::5::3::Speed",5,3,IRT_EQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_5_3_nq_s("Linear::Bool::Int::Unit::Neg::Nq::5::3::Speed",5,3,IRT_NQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_5_3_lq_s("Linear::Bool::Int::Unit::Neg::Lq::5::3::Speed",5,3,IRT_LQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_5_3_le_s("Linear::Bool::Int::Unit::Neg::Le::5::3::Speed",5,3,IRT_LE,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_5_3_gq_s("Linear::Bool::Int::Unit::Neg::Gq::5::3::Speed",5,3,IRT_GQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_5_3_gr_s("Linear::Bool::Int::Unit::Neg::Gr::5::3::Speed",5,3,IRT_GR,PV_SPEED);
 
-LinearBoolIntUnitNeg _lb_i_un_10_3_eq("Linear::Bool::Int::Unit::Neg::Eq::10::3",10,3,IRT_EQ);
-LinearBoolIntUnitNeg _lb_i_un_10_3_nq("Linear::Bool::Int::Unit::Neg::Nq::10::3",10,3,IRT_NQ);
-LinearBoolIntUnitNeg _lb_i_un_10_3_lq("Linear::Bool::Int::Unit::Neg::Lq::10::3",10,3,IRT_LQ);
-LinearBoolIntUnitNeg _lb_i_un_10_3_le("Linear::Bool::Int::Unit::Neg::Le::10::3",10,3,IRT_LE);
-LinearBoolIntUnitNeg _lb_i_un_10_3_gq("Linear::Bool::Int::Unit::Neg::Gq::10::3",10,3,IRT_GQ);
-LinearBoolIntUnitNeg _lb_i_un_10_3_gr("Linear::Bool::Int::Unit::Neg::Gr::10::3",10,3,IRT_GR);
+LinearBoolIntUnitNeg _lb_i_un_10_3_eq_s("Linear::Bool::Int::Unit::Neg::Eq::10::3::Speed",10,3,IRT_EQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_10_3_nq_s("Linear::Bool::Int::Unit::Neg::Nq::10::3::Speed",10,3,IRT_NQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_10_3_lq_s("Linear::Bool::Int::Unit::Neg::Lq::10::3::Speed",10,3,IRT_LQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_10_3_le_s("Linear::Bool::Int::Unit::Neg::Le::10::3::Speed",10,3,IRT_LE,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_10_3_gq_s("Linear::Bool::Int::Unit::Neg::Gq::10::3::Speed",10,3,IRT_GQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_10_3_gr_s("Linear::Bool::Int::Unit::Neg::Gr::10::3::Speed",10,3,IRT_GR,PV_SPEED);
 
-LinearBoolIntUnitNeg _lb_i_un_10_5_eq("Linear::Bool::Int::Unit::Neg::Eq::10::5",10,5,IRT_EQ);
-LinearBoolIntUnitNeg _lb_i_un_10_5_nq("Linear::Bool::Int::Unit::Neg::Nq::10::5",10,5,IRT_NQ);
-LinearBoolIntUnitNeg _lb_i_un_10_5_lq("Linear::Bool::Int::Unit::Neg::Lq::10::5",10,5,IRT_LQ);
-LinearBoolIntUnitNeg _lb_i_un_10_5_le("Linear::Bool::Int::Unit::Neg::Le::10::5",10,5,IRT_LE);
-LinearBoolIntUnitNeg _lb_i_un_10_5_gq("Linear::Bool::Int::Unit::Neg::Gq::10::5",10,5,IRT_GQ);
-LinearBoolIntUnitNeg _lb_i_un_10_5_gr("Linear::Bool::Int::Unit::Neg::Gr::10::5",10,5,IRT_GR);
+LinearBoolIntUnitNeg _lb_i_un_10_5_eq_s("Linear::Bool::Int::Unit::Neg::Eq::10::5::Speed",10,5,IRT_EQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_10_5_nq_s("Linear::Bool::Int::Unit::Neg::Nq::10::5::Speed",10,5,IRT_NQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_10_5_lq_s("Linear::Bool::Int::Unit::Neg::Lq::10::5::Speed",10,5,IRT_LQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_10_5_le_s("Linear::Bool::Int::Unit::Neg::Le::10::5::Speed",10,5,IRT_LE,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_10_5_gq_s("Linear::Bool::Int::Unit::Neg::Gq::10::5::Speed",10,5,IRT_GQ,PV_SPEED);
+LinearBoolIntUnitNeg _lb_i_un_10_5_gr_s("Linear::Bool::Int::Unit::Neg::Gr::10::5::Speed",10,5,IRT_GR,PV_SPEED);
+
+LinearBoolIntUnitNeg _lb_i_un_1_1_eq_m("Linear::Bool::Int::Unit::Neg::Eq::1::1::Memory",1,1,IRT_EQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_1_1_nq_m("Linear::Bool::Int::Unit::Neg::Nq::1::1::Memory",1,1,IRT_NQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_1_1_lq_m("Linear::Bool::Int::Unit::Neg::Lq::1::1::Memory",1,1,IRT_LQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_1_1_le_m("Linear::Bool::Int::Unit::Neg::Le::1::1::Memory",1,1,IRT_LE,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_1_1_gq_m("Linear::Bool::Int::Unit::Neg::Gq::1::1::Memory",1,1,IRT_GQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_1_1_gr_m("Linear::Bool::Int::Unit::Neg::Gr::1::1::Memory",1,1,IRT_GR,PV_MEMORY);
+
+LinearBoolIntUnitNeg _lb_i_un_3_1_eq_m("Linear::Bool::Int::Unit::Neg::Eq::3::1::Memory",3,1,IRT_EQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_3_1_nq_m("Linear::Bool::Int::Unit::Neg::Nq::3::1::Memory",3,1,IRT_NQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_3_1_lq_m("Linear::Bool::Int::Unit::Neg::Lq::3::1::Memory",3,1,IRT_LQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_3_1_le_m("Linear::Bool::Int::Unit::Neg::Le::3::1::Memory",3,1,IRT_LE,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_3_1_gq_m("Linear::Bool::Int::Unit::Neg::Gq::3::1::Memory",3,1,IRT_GQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_3_1_gr_m("Linear::Bool::Int::Unit::Neg::Gr::3::1::Memory",3,1,IRT_GR,PV_MEMORY);
+
+LinearBoolIntUnitNeg _lb_i_un_5_1_eq_m("Linear::Bool::Int::Unit::Neg::Eq::5::1::Memory",5,1,IRT_EQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_5_1_nq_m("Linear::Bool::Int::Unit::Neg::Nq::5::1::Memory",5,1,IRT_NQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_5_1_lq_m("Linear::Bool::Int::Unit::Neg::Lq::5::1::Memory",5,1,IRT_LQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_5_1_le_m("Linear::Bool::Int::Unit::Neg::Le::5::1::Memory",5,1,IRT_LE,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_5_1_gq_m("Linear::Bool::Int::Unit::Neg::Gq::5::1::Memory",5,1,IRT_GQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_5_1_gr_m("Linear::Bool::Int::Unit::Neg::Gr::5::1::Memory",5,1,IRT_GR,PV_MEMORY);
+
+LinearBoolIntUnitNeg _lb_i_un_5_3_eq_m("Linear::Bool::Int::Unit::Neg::Eq::5::3::Memory",5,3,IRT_EQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_5_3_nq_m("Linear::Bool::Int::Unit::Neg::Nq::5::3::Memory",5,3,IRT_NQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_5_3_lq_m("Linear::Bool::Int::Unit::Neg::Lq::5::3::Memory",5,3,IRT_LQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_5_3_le_m("Linear::Bool::Int::Unit::Neg::Le::5::3::Memory",5,3,IRT_LE,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_5_3_gq_m("Linear::Bool::Int::Unit::Neg::Gq::5::3::Memory",5,3,IRT_GQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_5_3_gr_m("Linear::Bool::Int::Unit::Neg::Gr::5::3::Memory",5,3,IRT_GR,PV_MEMORY);
+
+LinearBoolIntUnitNeg _lb_i_un_10_3_eq_m("Linear::Bool::Int::Unit::Neg::Eq::10::3::Memory",10,3,IRT_EQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_10_3_nq_m("Linear::Bool::Int::Unit::Neg::Nq::10::3::Memory",10,3,IRT_NQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_10_3_lq_m("Linear::Bool::Int::Unit::Neg::Lq::10::3::Memory",10,3,IRT_LQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_10_3_le_m("Linear::Bool::Int::Unit::Neg::Le::10::3::Memory",10,3,IRT_LE,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_10_3_gq_m("Linear::Bool::Int::Unit::Neg::Gq::10::3::Memory",10,3,IRT_GQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_10_3_gr_m("Linear::Bool::Int::Unit::Neg::Gr::10::3::Memory",10,3,IRT_GR,PV_MEMORY);
+
+LinearBoolIntUnitNeg _lb_i_un_10_5_eq_m("Linear::Bool::Int::Unit::Neg::Eq::10::5::Memory",10,5,IRT_EQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_10_5_nq_m("Linear::Bool::Int::Unit::Neg::Nq::10::5::Memory",10,5,IRT_NQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_10_5_lq_m("Linear::Bool::Int::Unit::Neg::Lq::10::5::Memory",10,5,IRT_LQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_10_5_le_m("Linear::Bool::Int::Unit::Neg::Le::10::5::Memory",10,5,IRT_LE,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_10_5_gq_m("Linear::Bool::Int::Unit::Neg::Gq::10::5::Memory",10,5,IRT_GQ,PV_MEMORY);
+LinearBoolIntUnitNeg _lb_i_un_10_5_gr_m("Linear::Bool::Int::Unit::Neg::Gr::10::5::Memory",10,5,IRT_GR,PV_MEMORY);
 
 
 IntSet dbv(0,5);
