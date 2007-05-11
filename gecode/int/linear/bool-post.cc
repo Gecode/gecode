@@ -29,7 +29,8 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   post_pos_unit(Space* home, 
                 Term<BoolView>* t_p, int n_p,
-                IntRelType r, IntView y, int c) {
+                IntRelType r, IntView y, int c,
+                PropKind) {
     switch (r) {
     case IRT_EQ:
       {
@@ -75,7 +76,8 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   post_pos_unit(Space* home, 
                 Term<BoolView>* t_p, int n_p,
-                IntRelType r, ZeroIntView, int c) {
+                IntRelType r, ZeroIntView, int c, 
+                PropKind pk) {
     switch (r) {
     case IRT_EQ:
       {
@@ -98,7 +100,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<BoolView> x(home,n_p);
         for (int i=n_p; i--; )
           x[i]=t_p[i].x;
-        GECODE_ES_FAIL(home,(GqBoolInt<BoolView>::post(home,x,c)));
+        GECODE_ES_FAIL(home,(GqBoolInt<BoolView>::post(home,x,c,pk)));
       }
       break;
     case IRT_LQ:
@@ -106,7 +108,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<NegBoolView> x(home,n_p);
         for (int i=n_p; i--; )
           x[i]=t_p[i].x;
-        GECODE_ES_FAIL(home,(GqBoolInt<NegBoolView>::post(home,x,n_p-c)));
+        GECODE_ES_FAIL(home,(GqBoolInt<NegBoolView>::post(home,x,n_p-c,pk)));
       }
       break;
     default: GECODE_NEVER;
@@ -116,7 +118,8 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   post_neg_unit(Space* home, 
                 Term<BoolView>* t_n, int n_n,
-                IntRelType r, IntView y, int c) {
+                IntRelType r, IntView y, int c,
+                PropKind) {
     switch (r) {
     case IRT_EQ:
       {
@@ -164,7 +167,8 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   post_neg_unit(Space* home, 
                 Term<BoolView>* t_n, int n_n,
-                IntRelType r, ZeroIntView, int c) {
+                IntRelType r, ZeroIntView, int c, 
+                PropKind pk) {
     switch (r) {
     case IRT_EQ:
       {
@@ -187,7 +191,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<NegBoolView> x(home,n_n);
         for (int i=n_n; i--; )
           x[i]=t_n[i].x;
-        GECODE_ES_FAIL(home,(GqBoolInt<NegBoolView>::post(home,x,n_n+c)));
+        GECODE_ES_FAIL(home,(GqBoolInt<NegBoolView>::post(home,x,n_n+c,pk)));
       }
       break;
     case IRT_LQ:
@@ -195,7 +199,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<BoolView> x(home,n_n);
         for (int i=n_n; i--; )
           x[i]=t_n[i].x;
-        GECODE_ES_FAIL(home,(GqBoolInt<BoolView>::post(home,x,-c)));
+        GECODE_ES_FAIL(home,(GqBoolInt<BoolView>::post(home,x,-c,pk)));
       }
       break;
     default: GECODE_NEVER;
@@ -301,7 +305,7 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline void
   post_all(Space* home, 
            Term<BoolView>* t, int n,
-           IntRelType r, View x, int c) {
+           IntRelType r, View x, int c, PropKind pk) {
 
     if ((c < Limits::Int::int_min) || (c > Limits::Int::int_max))
       throw NumericalOverflow("Int::linear");
@@ -364,10 +368,10 @@ namespace Gecode { namespace Int { namespace Linear {
     
     if (unit && (n_n == 0)) {
       /// All coefficients are 1
-      post_pos_unit(home,t_p,n_p,r,x,c);
+      post_pos_unit(home,t_p,n_p,r,x,c,pk);
     } else if (unit && (n_p == 0)) {
       // All coefficients are -1
-      post_neg_unit(home,t_n,n_n,r,x,c);
+      post_neg_unit(home,t_n,n_n,r,x,c,pk);
     } else {
       // Mixed coefficients
       post_mixed(home,t_p,n_p,t_n,n_n,r,x,c);
@@ -377,15 +381,17 @@ namespace Gecode { namespace Int { namespace Linear {
 
   void
   post(Space* home, 
-       Term<BoolView>* t, int n, IntRelType r, IntView x, int c, IntConLevel) {
-    post_all(home,t,n,r,x,c);
+       Term<BoolView>* t, int n, IntRelType r, IntView x, int c, 
+       IntConLevel, PropKind pk) {
+    post_all(home,t,n,r,x,c,pk);
   }
   
   void
   post(Space* home, 
-       Term<BoolView>* t, int n, IntRelType r, int c, IntConLevel) {
+       Term<BoolView>* t, int n, IntRelType r, int c, 
+       IntConLevel, PropKind pk) {
     ZeroIntView x;
-    post_all(home,t,n,r,x,c);
+    post_all(home,t,n,r,x,c,pk);
   }
 
 }}}

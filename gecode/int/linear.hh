@@ -805,22 +805,53 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   template <class VX>
-  class GqBoolInt : public LinBoolInt<VX> {
+  class GqBoolInt {
   protected:
-    using LinBoolInt<VX>::x;
-    using LinBoolInt<VX>::n_s;
-    using LinBoolInt<VX>::c;
-    /// Constructor for cloning \a p
-    GqBoolInt(Space* home, bool share, GqBoolInt& p);
-    /// Constructor for creation
-    GqBoolInt(Space* home, ViewArray<VX>& x, int n_s, int c);
+    /// Threshold of whether to prefer speed or memory
+    static const int threshold = 32;
+    /// Propagator using less memory but with linear runtime
+    class Memory : public LinBoolInt<VX> {
+    protected:
+      using LinBoolInt<VX>::x;
+      using LinBoolInt<VX>::n_s;
+      using LinBoolInt<VX>::c;
+    public:
+      /// Constructor for cloning \a p
+      Memory(Space* home, bool share, Memory& p);
+      /// Constructor for creation
+      Memory(Space* home, ViewArray<VX>& x, int c);
+      /// Create copy during cloning
+      virtual Actor* copy(Space* home, bool share);
+      /// Perform propagation
+      virtual ExecStatus propagate(Space* home);
+    };
+    /// Propagator using more memory but with constant runtime
+    class Speed : public Propagator {
+    protected:
+      ViewArray<VX> x;
+      int n_s;
+      int c;
+      Council<ViewAdvisor<VX> > co;
+    public:
+      /// Constructor for cloning \a p
+      Speed(Space* home, bool share, Speed& p);
+      /// Constructor for creation
+      Speed(Space* home, ViewArray<VX>& x, int c);
+      /// Create copy during cloning
+      virtual Actor* copy(Space* home, bool share);
+      /// Cost function (defined as PC_UNARY_HI)
+      virtual PropCost cost(void) const;
+      /// Give advice to propagator
+      virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
+      /// Perform propagation
+      virtual ExecStatus propagate(Space* home);
+      /// Delete propagator and return its size
+      virtual size_t dispose(Space* home);
+    };
   public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq c\f$
-    static ExecStatus post(Space* home, ViewArray<VX>& x, int c);
+    static ExecStatus post(Space* home, ViewArray<VX>& x, int c,
+                           PropKind pk=PK_DEF);
   };
 
   /**
@@ -1314,7 +1345,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Space* home, Term<BoolView>* t, int n, IntRelType r, int c, 
-       IntConLevel=ICL_DEF);
+       IntConLevel=ICL_DEF, PropKind=PK_DEF);
 
   /**
    * \brief Post propagator for linear constraint over Booleans
@@ -1345,7 +1376,7 @@ namespace Gecode { namespace Int { namespace Linear {
    */
   GECODE_INT_EXPORT void
   post(Space* home, Term<BoolView>* t, int n, IntRelType r, IntView y, int c=0,
-       IntConLevel=ICL_DEF);
+       IntConLevel=ICL_DEF, PropKind=PK_DEF);
 
 }}}
 

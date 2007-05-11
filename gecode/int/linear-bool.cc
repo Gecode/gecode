@@ -28,7 +28,7 @@ namespace Gecode {
 
   void
   linear(Space* home, const BoolVarArgs& x, IntRelType r, int c,
-         IntConLevel, PropKind) {
+         IntConLevel, PropKind pk) {
     if (home->failed()) return;
 
     int n=x.size();
@@ -37,12 +37,12 @@ namespace Gecode {
       t[i].a=1; t[i].x=x[i];
     }
 
-    Linear::post(home,t,n,r,c);
+    Linear::post(home,t,n,r,c,ICL_DEF,pk);
   }
 
   void
   linear(Space* home, const BoolVarArgs& x, IntRelType r, IntVar y,
-         IntConLevel, PropKind) {
+         IntConLevel, PropKind pk) {
     if (home->failed()) return;
 
     int n=x.size();
@@ -51,13 +51,13 @@ namespace Gecode {
       t[i].a=1; t[i].x=x[i];
     }
 
-    Linear::post(home,t,n,r,y);
+    Linear::post(home,t,n,r,y,0,ICL_DEF,pk);
   }
 
   void
   linear(Space* home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType r, int c,
-         IntConLevel, PropKind) {
+         IntConLevel, PropKind pk) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) 
@@ -69,13 +69,13 @@ namespace Gecode {
       t[i].a=a[i]; t[i].x=x[i];
     }
 
-    Linear::post(home,t,n,r,c);
+    Linear::post(home,t,n,r,c,ICL_DEF,pk);
   }
 
   void
   linear(Space* home,
          const IntArgs& a, const BoolVarArgs& x, IntRelType r, IntVar y,
-         IntConLevel, PropKind) {
+         IntConLevel, PropKind pk) {
     if (a.size() != x.size())
       throw ArgumentSizeMismatch("Int::linear");
     if (home->failed()) 
@@ -87,7 +87,7 @@ namespace Gecode {
       t[i].a=a[i]; t[i].x=x[i];
     }
 
-    Linear::post(home,t,n,r,y);
+    Linear::post(home,t,n,r,y,0,ICL_DEF,pk);
   }
 
 }
