@@ -42,7 +42,7 @@ namespace Gecode {
     /// Access view
     View view(void) const;
     /// Replace view (also replaces subscription to view)
-    void view(View y);
+    void view(Space* home, View y);
     /** 
      * \brief Schedule advisor's propagator for execution
      *
@@ -82,7 +82,7 @@ namespace Gecode {
   }
   template <class View>
   forceinline void
-  ViewAdvisor<View>::view(View y) {
+  ViewAdvisor<View>::view(Space* home, View y) {
     x.cancel(home, this);
     x=y;
     x.subscribe(home, this);
