@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<BoolView> x(home,n_p);
         for (int i=n_p; i--; )
           x[i]=t_p[i].x;
-        GECODE_ES_FAIL(home,(EqBoolInt<BoolView>::post(home,x,c)));
+        GECODE_ES_FAIL(home,(EqBoolInt<BoolView>::post(home,x,c,pk)));
       }
       break;
     case IRT_NQ:
@@ -175,7 +175,7 @@ namespace Gecode { namespace Int { namespace Linear {
         ViewArray<BoolView> x(home,n_n);
         for (int i=n_n; i--; )
           x[i]=t_n[i].x;
-        GECODE_ES_FAIL(home,(EqBoolInt<BoolView>::post(home,x,-c)));
+        GECODE_ES_FAIL(home,(EqBoolInt<BoolView>::post(home,x,-c,pk)));
       }
       break;
     case IRT_NQ:

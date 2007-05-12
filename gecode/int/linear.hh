@@ -750,11 +750,11 @@ namespace Gecode { namespace Int { namespace Linear {
    */
 
   /**
-   * \brief Baseclass for integer Boolean sum
+   * \brief Baseclass for integer Boolean sum using dependencies
    *
    */
   template <class VX>
-  class LinBoolInt : public Propagator {
+  class MemoryLinBoolInt : public Propagator {
   protected:
     /// Boolean views
     ViewArray<VX> x;
@@ -763,11 +763,37 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Righthandside
     int c;
     /// Constructor for cloning \a p
-    LinBoolInt(Space* home, bool share, LinBoolInt& p);
+    MemoryLinBoolInt(Space* home, bool share, MemoryLinBoolInt& p);
     /// Constructor for creation
-    LinBoolInt(Space* home, ViewArray<VX>& x, int n_s, int c);
+    MemoryLinBoolInt(Space* home, ViewArray<VX>& x, int n_s, int c);
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
+    virtual PropCost cost(void) const;
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
+  };
+
+  /**
+   * \brief Baseclass for integer Boolean sum using advisors
+   *
+   */
+  template <class VX>
+  class SpeedLinBoolInt : public Propagator {
+  protected:
+    /// Boolean views
+    ViewArray<VX> x;
+    /// How many views are attached to advisors
+    int n_s;
+    /// Righthandside
+    int c;
+    /// Council for managing advisors
+    Council<ViewAdvisor<VX> > co;
+    /// Constructor for cloning \a p
+    SpeedLinBoolInt(Space* home, bool share, SpeedLinBoolInt& p);
+    /// Constructor for creation
+    SpeedLinBoolInt(Space* home, ViewArray<VX>& x, int n_s, int c);
+  public:
+    /// Cost function (defined as dynamic PC_UNARY_HI)
     virtual PropCost cost(void) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
@@ -780,22 +806,49 @@ namespace Gecode { namespace Int { namespace Linear {
    * \ingroup FuncIntProp
    */
   template <class VX>
-  class EqBoolInt : public LinBoolInt<VX> {
+  class EqBoolInt {
   protected:
-    using LinBoolInt<VX>::x;
-    using LinBoolInt<VX>::n_s;
-    using LinBoolInt<VX>::c;
-    /// Constructor for cloning \a p
-    EqBoolInt(Space* home, bool share, EqBoolInt& p);
-    /// Constructor for creation
-    EqBoolInt(Space* home, ViewArray<VX>& x, int n_s, int c);
+    /// Threshold of whether to prefer speed or memory
+    static const int threshold = 32;
+    /// Propagator using less memory but with linear runtime
+    class Memory : public MemoryLinBoolInt<VX> {
+    protected:
+      using MemoryLinBoolInt<VX>::x;
+      using MemoryLinBoolInt<VX>::n_s;
+      using MemoryLinBoolInt<VX>::c;
+    public:
+      /// Constructor for cloning \a p
+      Memory(Space* home, bool share, Memory& p);
+      /// Constructor for creation
+      Memory(Space* home, ViewArray<VX>& x, int c);
+      /// Create copy during cloning
+      virtual Actor* copy(Space* home, bool share);
+      /// Perform propagation
+      virtual ExecStatus propagate(Space* home);
+    };
+    /// Propagator using more memory but with constant runtime
+    class Speed : public SpeedLinBoolInt<VX> {
+    protected:
+      using SpeedLinBoolInt<VX>::x;
+      using SpeedLinBoolInt<VX>::n_s;
+      using SpeedLinBoolInt<VX>::c;
+      using SpeedLinBoolInt<VX>::co;
+    public:
+      /// Constructor for cloning \a p
+      Speed(Space* home, bool share, Speed& p);
+      /// Constructor for creation
+      Speed(Space* home, ViewArray<VX>& x, int c);
+      /// Create copy during cloning
+      virtual Actor* copy(Space* home, bool share);
+      /// Give advice to propagator
+      virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
+      /// Perform propagation
+      virtual ExecStatus propagate(Space* home);
+    };
   public:
-    /// Create copy during cloning
-    virtual Actor* copy(Space* home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = c\f$
-    static ExecStatus post(Space* home, ViewArray<VX>& x, int c);
+    static ExecStatus post(Space* home, ViewArray<VX>& x, int c,
+                           PropKind pk=PK_DEF);
   };
 
   /**
@@ -810,11 +863,11 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Threshold of whether to prefer speed or memory
     static const int threshold = 32;
     /// Propagator using less memory but with linear runtime
-    class Memory : public LinBoolInt<VX> {
+    class Memory : public MemoryLinBoolInt<VX> {
     protected:
-      using LinBoolInt<VX>::x;
-      using LinBoolInt<VX>::n_s;
-      using LinBoolInt<VX>::c;
+      using MemoryLinBoolInt<VX>::x;
+      using MemoryLinBoolInt<VX>::n_s;
+      using MemoryLinBoolInt<VX>::c;
     public:
       /// Constructor for cloning \a p
       Memory(Space* home, bool share, Memory& p);
@@ -826,12 +879,12 @@ namespace Gecode { namespace Int { namespace Linear {
       virtual ExecStatus propagate(Space* home);
     };
     /// Propagator using more memory but with constant runtime
-    class Speed : public Propagator {
+    class Speed : public SpeedLinBoolInt<VX> {
     protected:
-      ViewArray<VX> x;
-      int n_s;
-      int c;
-      Council<ViewAdvisor<VX> > co;
+      using SpeedLinBoolInt<VX>::x;
+      using SpeedLinBoolInt<VX>::n_s;
+      using SpeedLinBoolInt<VX>::c;
+      using SpeedLinBoolInt<VX>::co;
     public:
       /// Constructor for cloning \a p
       Speed(Space* home, bool share, Speed& p);
@@ -839,14 +892,10 @@ namespace Gecode { namespace Int { namespace Linear {
       Speed(Space* home, ViewArray<VX>& x, int c);
       /// Create copy during cloning
       virtual Actor* copy(Space* home, bool share);
-      /// Cost function (defined as PC_UNARY_HI)
-      virtual PropCost cost(void) const;
       /// Give advice to propagator
       virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
       /// Perform propagation
       virtual ExecStatus propagate(Space* home);
-      /// Delete propagator and return its size
-      virtual size_t dispose(Space* home);
     };
   public:
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq c\f$

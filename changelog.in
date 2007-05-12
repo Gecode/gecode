@@ -54,6 +54,27 @@ The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
 Module: int
+What:   performance
+Rank:   major
+[DESCRIPTION]
+Boolean linear equations and inequalities with constant
+right-hand sides use constant time propagators whenever
+appropriate (linear time with less overhead and memory for
+propagators with few variables).
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+Added advisors as an abstraction for incremental propagation:
+advisors are executed for their propagator whenever their view
+changes. Advisors, when not being used, add one word of overhead
+to each variable and slow down the system in the worst case by
+less than 5%. In average, no slowdown can be observed.
+
+[ENTRY]
+Module: int
 What:   bug
 Rank:   minor
 [DESCRIPTION]
