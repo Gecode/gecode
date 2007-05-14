@@ -155,6 +155,16 @@ namespace Gecode { namespace Int {
 
 
   /*
+   * Domain update by value iterator
+   *
+   */
+  template <class I>
+  forceinline ModEvent
+  IntView::prune(Space* home, I& i) {
+    return var->prune(home,i);
+  }
+
+  /*
    * Domain update by range iterator
    *
    */

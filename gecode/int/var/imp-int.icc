@@ -390,7 +390,130 @@ namespace Gecode { namespace Int {
 
 
   /*
-   * Tell operations with respect to iterators
+   * Tell operations with respect to value iterators
+   *
+   */
+
+  template <class I>
+  forceinline ModEvent
+  IntVarImp::prune(Space* home, I& i) {
+    // Skip all values that are too small
+    while (i() && (i.val() < dom.min())) 
+      ++i;
+
+    // Is there no value left or all are too large?
+    if (!i() || (i.val() > dom.max()))
+      return ME_INT_NONE;
+
+    int v = i.val(); ++i;
+    // Is there only a single value to be pruned?
+    if (!i())
+      return nq_full(home,v);
+
+    // Set up two sentinel elements
+    RangeList f, l;
+    // Put all ranges between sentinels
+    if (range()) {
+      // Create a new rangelist just for simplicity
+      RangeList* n = new (home) RangeList(min(),max(),&f,&l);
+      f.prevnext(NULL,n); l.prevnext(n,NULL);
+    } else {
+      // Link the two sentinel elements
+      f.prevnext(NULL,fst()); l.prevnext(lst(),NULL);
+      fst()->prev(NULL,&f);   lst()->next(NULL,&l);
+    }
+
+    // Number of values removed (potential holes)
+    unsigned int h = 0;
+    // The previous range
+    RangeList* p = &f;
+    // The current range
+    RangeList* r = f.next(NULL);
+
+    while (true) {
+      if (v > r->max()) {
+        // Move to next range
+        RangeList* n=r->next(p); p=r; r=n;
+        if (n == &l)
+          break;
+      } else {
+        if ((v == r->min()) && (v == r->max())) {
+          // Remove range
+          h++;
+          RangeList* n=r->next(p);
+          p->next(r,n); n->prev(r,p);
+          r->dispose(home);
+          r=n;
+        } else if (v == r->min()) {
+          h++; r->min(v+1);
+        } else if (v == r->max()) {
+          h++; r->max(v-1);
+        } else if (v > r->min()) {
+          // Create new range before the current one
+          assert(v < r->max());
+          h++; 
+          RangeList* n = new (home) RangeList(r->min(),v-1,p,r);
+          r->min(v+1);
+          p->next(r,n); r->prev(p,n);
+          p=n;
+        }
+        if (!i())
+          break;
+        // Move to next value
+        v = i.val(); ++i;
+      }
+    }
+
+    // New first and last ranges
+    RangeList* fn = f.next(NULL);
+    RangeList* ln = l.prev(NULL);
+    // All ranges pruned?
+    if (fn == &l) {
+      fst(NULL); lst(NULL); holes=0;
+      return ME_INT_FAILED;
+    }
+    IntDelta d;
+    // Only a single range left?
+    if (fn == ln) {
+      assert(h > 0);
+      dom.min(fn->min()); dom.max(fn->max());
+      fn->dispose(home);
+      fst(NULL); lst(NULL);
+      holes = 0;
+      if (assigned()) {
+        if (!notify(home,ME_INT_VAL,&d))
+          return ME_INT_FAILED;
+        return ME_INT_VAL;
+      } else {
+        if (!notify(home,ME_INT_BND,&d))
+          return ME_INT_FAILED;
+        return ME_INT_BND;
+      }
+    } else {
+      // Unlink sentinel ranges
+      fn->prev(&f,NULL); ln->next(&l,NULL);
+      // How many values where removed at the bounds
+      unsigned int b = ((fn->min()-dom.min()) +
+                        (dom.max()-ln->max()));
+      // Set new first and last ranges
+      fst(fn); lst(ln);
+      if (b > 0) {
+        holes += h-b;
+        if (!notify(home,ME_INT_BND,&d))
+          return ME_INT_FAILED;
+        return ME_INT_BND;
+      } else if (h > 0) {
+        holes += h;
+        if (!notify(home,ME_INT_DOM,&d))
+          return ME_INT_FAILED;
+        return ME_INT_DOM;
+      }
+      return ME_INT_NONE;
+    }
+  }
+
+  /*
+   * Tell operations with respect to range iterators
    *
    */
 

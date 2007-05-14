@@ -279,6 +279,18 @@ namespace Gecode { namespace Int {
     ModEvent eq(Space* home, double n);
     //@}
 
+    /// \name Domain update by value iterator
+    //@{
+    /**
+     * \brief Restrict domain values to be different from the values of \a i
+     *
+     * \a i must be a value iterator. Note that the update is destructive,
+     * that is, the iterator \a i can not depend on the variable to be updated.
+     *
+     */
+    template <class I> ModEvent prune(Space* home, I& i);
+    //@}
+
     /// \name Domain update by range iterator
     //@{
     /// Replace domain by range sequence described by \a i
@@ -547,6 +559,18 @@ namespace Gecode { namespace Int {
     ModEvent eq(Space* home, int n);
     /// Restrict domain values to be equal to \a n
     ModEvent eq(Space* home, double n);
+    //@}
+
+    /// \name Domain update by value iterator
+    //@{
+    /**
+     * \brief Restrict domain values to be different from the values of \a i
+     *
+     * \a i must be a value iterator. Note that the update is destructive,
+     * that is, the iterator \a i can not depend on the variable to be updated.
+     *
+     */
+    template <class I> ModEvent prune(Space* home, I& i);
     //@}
 
     /// \name Domain update by range iterator

@@ -161,6 +161,16 @@ namespace Gecode {
     
     
     /*
+     * Domain update by value iterator
+     *
+     */
+    template <class I>
+    forceinline ModEvent
+    BoolView::prune(Space* home, I& i) {
+      return var->prune(home,i);
+    }
+
+    /*
      * Domain update by range iterator
      *
      */
