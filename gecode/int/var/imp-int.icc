@@ -397,6 +397,21 @@ namespace Gecode { namespace Int {
   template <class I>
   forceinline ModEvent
   IntVarImp::prune(Space* home, I& i) {
+    ModEvent me = ME_INT_NONE;
+    while (i()) {
+      ModEvent me1 = nq(home, i.val());
+      if (me1 == ME_INT_FAILED)
+        return ME_INT_FAILED;
+      if (me1 == ME_INT_VAL)
+        me = ME_INT_VAL;
+      if ((me1 == ME_INT_BND) && (me != ME_INT_VAL))
+        me = ME_INT_BND;
+      if ((me1 == ME_INT_DOM) && (me != ME_INT_VAL)&& (me != ME_INT_BND))
+        me = ME_INT_DOM;
+      ++i;
+    }
+    return me;
+    /*
     // Skip all values that are too small
     while (i() && (i.val() < dom.min())) 
       ++i;
@@ -510,6 +525,7 @@ namespace Gecode { namespace Int {
       }
       return ME_INT_NONE;
     }
+    */
   }
 
   /*

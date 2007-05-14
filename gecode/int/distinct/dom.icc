@@ -407,6 +407,48 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
+  class PruneVal {
+  protected:
+    /// View node
+    ViewNode<View>* x;
+    /// Current value edge
+    Edge<View>* e;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Initialize with edges for view node \a y
+    PruneVal(ViewNode<View>* y)
+      : x(y), e(y->val_edges()) {
+      while ((e != NULL) && e->used(x))
+        e = e->next_edge();
+    }
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a value or done
+    bool operator()(void) const {
+      return e != NULL;
+    }
+    /// Move iterator to next value (if possible)
+    void operator++(void) {
+      do {
+        e = e->next_edge();
+      } while ((e != NULL) && e->used(x));
+    }
+    //@}
+
+    /// \name Value access
+    //@{
+    /// Return current value
+    int val(void) const {
+      assert(!e->used(x));
+      return e->val(x)->val();
+    }
+    //@}
+  };
+
+  template <class View>
   forceinline bool
   DomCtrl<View>::ViewValGraph::tell(Space* home) {
     bool assigned = false;
@@ -419,6 +461,9 @@ namespace Gecode { namespace Int { namespace Distinct {
         view[i] = view[--n_view];
         assigned = true;
       } else {
+        PruneVal<View> pv(view[i]);
+        ModEvent me = view[i]->view().prune(home,pv);
+        /*
         for (Edge<View>* e = view[i]->val_edges(); e!=NULL; e = e->next_edge())
           if (!e->used(view[i])) {
 #ifndef NDEBUG
@@ -427,6 +472,7 @@ namespace Gecode { namespace Int { namespace Distinct {
               view[i]->view().nq(home,e->val(view[i])->val());
             assert(me != ME_INT_VAL);
           }
+        */
       }
     }
     return assigned;
