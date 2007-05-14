@@ -782,6 +782,8 @@ namespace Gecode {
     friend class Variable;
     template <class A> 
     friend class Council;
+    template <class A> 
+    friend class Council<A>::Advisors;
   private:
     /// Is the advisor disposed?
     bool disposed(void) const;
