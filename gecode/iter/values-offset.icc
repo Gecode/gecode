@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2004
+ *     Christian Schulte, 2007
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -23,67 +23,74 @@
 namespace Gecode { namespace Iter { namespace Values {
 
   /**
-   * \brief Range iterator from value iterator
-   *
-   * The iterator only requires that the value iterator
-   * iterates values in increasing order. Duplicates in the
-   * iterated value sequence are okay.
+   * \brief Value iterator for pointwise offset (by some constant)
    *
    * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterValues
    */
   template <class I>
-  class ToRanges : public Ranges::MinMax {
+  class Offset {
   protected:
-    /// Value iterator used
+    /// Input iterator
     I i;
+    /// Offset for ranges
+    int c;
   public:
     /// \name Constructors and initialization
     //@{
     /// Default constructor
-    ToRanges(void);
-    /// Initialize with value iterator \a i
-    ToRanges(I& i);
-    /// Initialize with value iterator \a i
-    void init(I& i);
+    Offset(void);
+    /// Initialize with values from \a i and offset \a c
+    Offset(I& i, int c);
+    /// Initialize with values from \a i and offset \a c
+    void init(I& i, int c);
     //@}
 
     /// \name Iteration control
     //@{
-    /// Move iterator to next range (if possible)
+    /// Test whether iterator is still at a value or done
+    bool operator()(void) const;
+    /// Move iterator to next value (if possible)
     void operator++(void);
+    //@}
+
+    /// \name Value access
+    //@{
+    /// Return current value
+    int val(void) const;
     //@}
   };
 
+
   template <class I>
   forceinline
-  ToRanges<I>::ToRanges(void) {}
+  Offset<I>::Offset(void) {}
 
   template <class I>
   forceinline void
-  ToRanges<I>::operator++(void) {
-    if (!i()) {
-      finish(); return;
-    }
-    mi = i.val(); ma = i.val();
+  Offset<I>::init(I& i0, int c0) {
+    i = i0; c = c0;
+  }
+
+  template <class I>
+  forceinline
+  Offset<I>::Offset(I& i0, int c0) : i(i0), c(c0) {}
+
+  template <class I>
+  forceinline void
+  Offset<I>::operator++(void) {
     ++i;
-    while (i() && (ma+1 >= i.val())) {
-      ma = i.val(); ++i;
-    }
+  }
+  template <class I>
+  forceinline bool
+  Offset<I>::operator()(void) const {
+    return i();
   }
 
   template <class I>
-  forceinline
-  ToRanges<I>::ToRanges(I& i0)
-    : i(i0) {
-    operator++();
-  }
-
-  template <class I>
-  forceinline void
-  ToRanges<I>::init(I& i0) {
-    i = i0;
-    operator++();
+  forceinline int
+  Offset<I>::val(void) const {
+    return i.val()+c;
   }
 
 }}}

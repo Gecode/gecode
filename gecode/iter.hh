@@ -52,9 +52,12 @@ namespace Gecode {
 #include "gecode/iter/ranges-add.icc"
 #include "gecode/iter/ranges-singleton-append.icc"
 
-#include "gecode/iter/ranges-size.icc"
-
+#include "gecode/iter/values-minus.icc"
+#include "gecode/iter/values-offset.icc"
 #include "gecode/iter/values-ranges.icc"
+#include "gecode/iter/values-unique.icc"
+
+#include "gecode/iter/ranges-size.icc"
 
 #include "gecode/iter/virtual-ranges.icc"
 #include "gecode/iter/virtual-ranges-union.icc"

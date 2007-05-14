@@ -155,6 +155,15 @@ namespace Gecode {
     }
 
 
+    /*
+     * Domain update by value iterator
+     *
+     */
+    template <class I>
+    ModEvent
+    MinusView::prune(Space* home, I& i) {
+      Iter::Values::Minus<I> mi(i); return view.prune(home,mi);
+    }
 
     /*
      * Domain update by range iterator

@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2004
+ *     Christian Schulte, 2007
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -23,17 +23,17 @@
 namespace Gecode { namespace Iter { namespace Values {
 
   /**
-   * \brief Range iterator from value iterator
+   * \brief Remove duplicate values from from value iterator
    *
    * The iterator only requires that the value iterator
    * iterates values in increasing order. Duplicates in the
-   * iterated value sequence are okay.
+   * iterated value sequence are removed.
    *
    * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterValues
    */
   template <class I>
-  class ToRanges : public Ranges::MinMax {
+  class Unique {
   protected:
     /// Value iterator used
     I i;
@@ -41,49 +41,61 @@ namespace Gecode { namespace Iter { namespace Values {
     /// \name Constructors and initialization
     //@{
     /// Default constructor
-    ToRanges(void);
+    Unique(void);
     /// Initialize with value iterator \a i
-    ToRanges(I& i);
+    Unique(I& i);
     /// Initialize with value iterator \a i
     void init(I& i);
     //@}
 
     /// \name Iteration control
     //@{
-    /// Move iterator to next range (if possible)
+    /// Test whether iterator is still at a value or done
+    bool operator()(void) const;
+    /// Move iterator to next unique value (if possible)
     void operator++(void);
+    //@}
+
+    /// \name Value access
+    //@{
+    /// Return current value
+    int val(void) const;
     //@}
   };
 
   template <class I>
   forceinline
-  ToRanges<I>::ToRanges(void) {}
-
-  template <class I>
-  forceinline void
-  ToRanges<I>::operator++(void) {
-    if (!i()) {
-      finish(); return;
-    }
-    mi = i.val(); ma = i.val();
-    ++i;
-    while (i() && (ma+1 >= i.val())) {
-      ma = i.val(); ++i;
-    }
-  }
+  Unique<I>::Unique(void) {}
 
   template <class I>
   forceinline
-  ToRanges<I>::ToRanges(I& i0)
-    : i(i0) {
-    operator++();
+  Unique<I>::Unique(I& i0)
+    : i(i0) {}
+
+  template <class I>
+  forceinline void
+  Unique<I>::init(I& i0) {
+    i = i0;
   }
 
   template <class I>
   forceinline void
-  ToRanges<I>::init(I& i0) {
-    i = i0;
-    operator++();
+  Unique<I>::operator++(void) {
+    int n=i;
+    do {
+      ++i;
+    } while (i() && (i.val() == n));
+  }
+  template <class I>
+  forceinline bool
+  Unique<I>::operator()(void) const {
+    return i();
+  }
+
+  template <class I>
+  forceinline int
+  Unique<I>::val(void) const {
+    return i.val();
   }
 
 }}}

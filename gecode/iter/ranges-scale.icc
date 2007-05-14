@@ -28,7 +28,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * \brief Range iterator for pointwise product with a positive integer
    *
    * Note that this iterator has a different interface as it can be used
-   * for both integer precision as well as souble precision (depending
+   * for both integer precision as well as double precision (depending
    * on the type \a Val (\c int or \c double) and
    * on the type \a UnsVal (\c unsigned \c int or \c double).
    *

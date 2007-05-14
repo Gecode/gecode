@@ -206,8 +206,9 @@ namespace Gecode {
       /**
        * \brief Restrict domain values to be different from the values of \a i
        *
-       * \a i must be a value iterator. Note that the update is destructive,
-       * that is, the iterator \a i can not depend on the view to be updated.
+       * \a i must be a value iterator without duplicate values. Note that 
+       * the update is destructive, that is, the iterator \a i can not 
+       * depend on the view to be updated.
        *
        */
       template <class I> ModEvent prune(Space* home, I& i);
@@ -359,8 +360,9 @@ namespace Gecode {
       /**
        * \brief Restrict domain values to be different from the values of \a i
        *
-       * \a i must be a value iterator. Note that the update is destructive,
-       * that is, the iterator \a i can not depend on the view to be updated.
+       * \a i must be a value iterator without duplicate values. Note that 
+       * the update is destructive, that is, the iterator \a i can not 
+       * depend on the view to be updated.
        *
        */
       template <class I> ModEvent prune(Space* home, I& i);
@@ -544,8 +546,9 @@ namespace Gecode {
       /**
        * \brief Restrict domain values to be different from the values of \a i
        *
-       * \a i must be a value iterator. Note that the update is destructive,
-       * that is, the iterator \a i can not depend on the view to be updated.
+       * \a i must be a value iterator without duplicate values. Note that 
+       * the update is destructive, that is, the iterator \a i can not 
+       * depend on the view to be updated.
        *
        */
       template <class I> ModEvent prune(Space* home, I& i);
@@ -929,8 +932,9 @@ namespace Gecode {
       /**
        * \brief Restrict domain values to be different from the values of \a i
        *
-       * \a i must be a value iterator. Note that the update is destructive,
-       * that is, the iterator \a i can not depend on the view to be updated.
+       * \a i must be a value iterator without duplicate values. Note that 
+       * the update is destructive, that is, the iterator \a i can not 
+       * depend on the view to be updated.
        *
        */
       template <class I> ModEvent prune(Space* home, I& i);
@@ -1105,8 +1109,9 @@ namespace Gecode {
       /**
        * \brief Restrict domain values to be different from the values of \a i
        *
-       * \a i must be a value iterator. Note that the update is destructive,
-       * that is, the iterator \a i can not depend on the view to be updated.
+       * \a i must be a value iterator without duplicate values. Note that 
+       * the update is destructive, that is, the iterator \a i can not 
+       * depend on the view to be updated.
        *
        */
       template <class I> ModEvent prune(Space* home, I& i);
@@ -1323,8 +1328,9 @@ namespace Gecode {
       /**
        * \brief Restrict domain values to be different from the values of \a i
        *
-       * \a i must be a value iterator. Note that the update is destructive,
-       * that is, the iterator \a i can not depend on the view to be updated.
+       * \a i must be a value iterator without duplicate values. Note that 
+       * the update is destructive, that is, the iterator \a i can not 
+       * depend on the view to be updated.
        *
        */
       template <class I> ModEvent prune(Space* home, I& i);

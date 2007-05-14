@@ -156,6 +156,18 @@ namespace Gecode {
 
 
     /*
+     * Domain update by value iterator
+     *
+     */
+    template <class I>
+    forceinline ModEvent
+    ZeroIntView::prune(Space* home, I& i) {
+      while (i() && (i.val() < 0)) ++i;
+      return (i() && (i.val() > 0)) ? ME_INT_NONE : ME_INT_FAILED;
+    }
+
+
+    /*
      * Domain update by range iterator
      *
      */

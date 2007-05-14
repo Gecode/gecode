@@ -396,22 +396,23 @@ MMBUILDDIRS	= minimodel
 # OTHER HEADERS
 #
 
-SUPPORTHDR0 =								\
-	bitset.hh block-allocator.hh dynamic-array.hh dynamic-stack.hh	\
-	random.hh search.hh shared-array.hh sort.hh			\
-	static-pqueue.hh static-stack.hh sentinel-stack.hh
-ITERHDR0 =									\
-	ranges-add.icc ranges-append.icc ranges-array.icc ranges-cache.icc	\
-	ranges-compl.icc ranges-diff.icc ranges-empty.icc			\
-	ranges-inter.icc ranges-minmax.icc ranges-minus.icc			\
-	ranges-offset.icc ranges-operations.icc ranges-scale.icc		\
-	ranges-singleton.icc ranges-singleton-append.icc			\
-	ranges-size.icc ranges-union.icc					\
-	ranges-values.icc values-ranges.icc virtual-ranges.icc			\
-	virtual-ranges-union.icc virtual-ranges-inter.icc			\
-	virtual-ranges-compl.icc
+SUPPORTHDR0 =							\
+	bitset block-allocator dynamic-array dynamic-stack	\
+	random search shared-array sort				\
+	static-pqueue static-stack sentinel-stack
+ITERHDR0 =							\
+	ranges-add ranges-append ranges-array ranges-cache	\
+	ranges-compl ranges-diff ranges-empty			\
+	ranges-inter ranges-minmax ranges-minus			\
+	ranges-offset ranges-operations ranges-scale		\
+	ranges-singleton ranges-singleton-append		\
+	ranges-size ranges-union ranges-values			\
+	values-minus values-offset values-ranges values-unique	\
+	virtual-ranges virtual-ranges-union			\
+	virtual-ranges-inter virtual-ranges-compl
 OTHERHDR = gecode/iter.hh \
-	$(SUPPORTHDR0:%=gecode/support/%) $(ITERHDR0:%=gecode/iter/%)
+	$(SUPPORTHDR0:%=gecode/support/%.hh) \
+	$(ITERHDR0:%=gecode/iter/%.icc)
 
 #
 # EXAMPLES

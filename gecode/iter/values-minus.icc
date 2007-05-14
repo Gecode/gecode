@@ -1,0 +1,119 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2007
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#include "gecode/support/shared-array.hh"
+#include "gecode/support/dynamic-array.hh"
+
+namespace Gecode { namespace Iter { namespace Values {
+
+  /**
+   * \brief Range iterator for pointwise minus of a value iterator
+   *
+   * This iterator in effect changes the order of how values
+   * are iterated: the first values of the input iterator defines
+   * the last value of the Minus iterator. Upon initialization
+   * all values of the input iterator are stored in an array
+   * which later allows iteration in inverse direction.
+   *
+   * Requires \code #include "gecode/iter.hh" \endcode
+   * \ingroup FuncIterValues
+   */
+
+  template <class I>
+  class Minus  {
+  private:
+    /// %Values stored
+    Support::SharedArray<int> v;
+    /// Current value position
+    int c;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    Minus(void);
+    /// Initialize with values from \a i
+    Minus(I& i);
+    /// Initialize with values from \a i
+    void init(I& i);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a value or done
+    bool operator()(void) const;
+    /// Move iterator to next value (if possible)
+    void operator++(void);
+    //@}
+
+    /// \name Value access
+    //@{
+    /// Return current value
+    int val(void) const;
+    //@}
+  };
+
+
+  template <class I>
+  forceinline
+  Minus<I>::Minus(void) {}
+
+  template <class I>
+  inline void
+  Minus<I>::init(I& i) {
+    Support::DynamicArray<int> d;
+    int n=0;
+    while (i()) {
+      d[n] = -i.val();
+      ++n; ++i;
+    }
+    v.init(n);
+    for (int j=n; j--; )
+      v[j]=d[j];
+    c = n-1;
+  }
+
+  template <class I>
+  forceinline
+  Minus<I>::Minus(I& i) {
+    init(i);
+  }
+
+  template <class I>
+  forceinline void
+  Minus<I>::operator++(void) {
+    c--;
+  }
+  template <class I>
+  forceinline bool
+  Minus<I>::operator()(void) const {
+    return c >= 0;
+  }
+
+  template <class I>
+  forceinline int
+  Minus<I>::val(void) const {
+    return v[c];
+  }
+
+}}}
+
+// STATISTICS: iter-any
