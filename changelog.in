@@ -53,6 +53,13 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Modul:  kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+VarArrays can now be resized dynamically.
+
+[ENTRY]
 Module: int
 What:   performance
 Rank:   major

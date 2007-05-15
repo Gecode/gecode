@@ -44,7 +44,9 @@ namespace Gecode {
   class VarArray {
   protected:
     /// Number of variables (size)
-    int  n;
+    int  used;
+    /// Allocated size of the array
+    int n;
     /// Array of variables
     Var* x;
   public:
@@ -60,12 +62,19 @@ namespace Gecode {
     VarArray(const VarArray<Var>& a);
     /// Initialize from variable array \a a (share elements)
     const VarArray<Var>& operator=(const VarArray<Var>& a);
+    /// Destructor
+    ~VarArray(void);
     //@}
 
     /// \name Array size
     //@{
     /// Return size of array (number of elements)
     int size(void) const;
+    /** 
+      * \brief Insert or remove (uninitialized!) elements at the end such 
+      * that size becomes \a m
+      */
+    void resize(Space*, int m);
     //@}
 
     /// \name Array elements
@@ -74,6 +83,8 @@ namespace Gecode {
     Var& operator[](int i);
     /// Return variable at position \a i
     const Var& operator[](int i) const;
+    /// Insert a new element \a v at the end of the array (increase size by 1)
+    void add(Space*, const Var& v);
     //@}
 
     /// \name Cloning
@@ -444,32 +455,64 @@ namespace Gecode {
 
   template <class Var>
   forceinline
-  VarArray<Var>::VarArray(void) : n(0), x(NULL) {}
+  VarArray<Var>::VarArray(void) : used(0), n(0), x(NULL) {}
 
   template <class Var>
   forceinline
   VarArray<Var>::VarArray(Space* home, int n0)
-    : n(n0) {
+    : used(n0), n(n0) {
     x = (n>0) ? static_cast<Var*>(home->alloc(sizeof(Var)*n)) : NULL;
   }
 
   template <class Var>
   forceinline
   VarArray<Var>::VarArray(const VarArray<Var>& a) {
-    n = a.n; x = a.x;
+    used = a.used; n = a.n; x = a.x;
+  }
+
+  template <class Var>
+  forceinline
+  VarArray<Var>::~VarArray(void) {
+    if (used != n) {
+      // Array was allocated on the heap instead of the space
+      Memory::free(x);
+    }
   }
 
   template <class Var>
   forceinline const VarArray<Var>&
   VarArray<Var>::operator=(const VarArray<Var>& a) {
-    n = a.n; x = a.x;
+    used = a.used; n = a.n; x = a.x;
     return *this;
   }
 
   template <class Var>
   forceinline int
   VarArray<Var>::size(void) const {
-    return n;
+    return used;
+  }
+
+  template <class Var>
+  forceinline void
+  VarArray<Var>::resize(Space* home, int m) {
+    int newsize;
+    if (m<used) {
+      newsize = m;
+    } else if (m<n) {
+      used = m; n = m;
+      return;
+    } else {
+      newsize = std::max(m, (3*n)/2);
+    }
+    Var* oldx = x;
+    x = static_cast<Var*>(Memory::malloc(sizeof(Var)*newsize));
+    for (int i=used; i--;)
+      x[i] = oldx[i];
+    if (used != n)
+      Memory::free(oldx);
+    else
+      home->reuse(oldx, n);
+    n = newsize; used = m;
   }
 
   template <class Var>
@@ -488,8 +531,16 @@ namespace Gecode {
 
   template <class Var>
   forceinline void
+  VarArray<Var>::add(Space* home, const Var& v) {
+    resize(home, used+1);
+    (*this)[used-1] = v;
+  }
+
+  template <class Var>
+  forceinline void
   VarArray<Var>::update(Space* home, bool share, VarArray<Var>& a) {
-    n = a.n;
+    n = a.used;
+    used = n;
     if (n > 0) {
       x = static_cast<Var*>(home->alloc(sizeof(Var)*n));
       for (int i = n; i--; )
