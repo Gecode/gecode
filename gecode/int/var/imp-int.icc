@@ -397,21 +397,6 @@ namespace Gecode { namespace Int {
   template <class I>
   forceinline ModEvent
   IntVarImp::prune(Space* home, I& i) {
-    ModEvent me = ME_INT_NONE;
-    while (i()) {
-      ModEvent me1 = nq(home, i.val());
-      if (me1 == ME_INT_FAILED)
-        return ME_INT_FAILED;
-      if (me1 == ME_INT_VAL)
-        me = ME_INT_VAL;
-      if ((me1 == ME_INT_BND) && (me != ME_INT_VAL))
-        me = ME_INT_BND;
-      if ((me1 == ME_INT_DOM) && (me != ME_INT_VAL)&& (me != ME_INT_BND))
-        me = ME_INT_DOM;
-      ++i;
-    }
-    return me;
-    /*
     // Skip all values that are too small
     while (i() && (i.val() < dom.min())) 
       ++i;
@@ -422,7 +407,7 @@ namespace Gecode { namespace Int {
 
     int v = i.val(); ++i;
     // Is there only a single value to be pruned?
-    if (!i())
+    if (!i() || (i.val() > dom.max()))
       return nq_full(home,v);
 
     // Set up two sentinel elements
@@ -446,10 +431,11 @@ namespace Gecode { namespace Int {
     RangeList* r = f.next(NULL);
 
     while (true) {
+      assert((r != &f) && (r != &l));
       if (v > r->max()) {
         // Move to next range
         RangeList* n=r->next(p); p=r; r=n;
-        if (n == &l)
+        if (r == &l)
           break;
       } else {
         if ((v == r->min()) && (v == r->max())) {
@@ -459,6 +445,8 @@ namespace Gecode { namespace Int {
           p->next(r,n); n->prev(r,p);
           r->dispose(home);
           r=n;
+          if (r == &l)
+            break;
         } else if (v == r->min()) {
           h++; r->min(v+1);
         } else if (v == r->max()) {
@@ -478,6 +466,7 @@ namespace Gecode { namespace Int {
         v = i.val(); ++i;
       }
     }
+    assert((r == &l) || !i());
 
     // New first and last ranges
     RangeList* fn = f.next(NULL);
@@ -487,7 +476,9 @@ namespace Gecode { namespace Int {
       fst(NULL); lst(NULL); holes=0;
       return ME_INT_FAILED;
     }
+
     IntDelta d;
+
     // Only a single range left?
     if (fn == ln) {
       assert(h > 0);
@@ -504,28 +495,35 @@ namespace Gecode { namespace Int {
           return ME_INT_FAILED;
         return ME_INT_BND;
       }
-    } else {
-      // Unlink sentinel ranges
-      fn->prev(&f,NULL); ln->next(&l,NULL);
-      // How many values where removed at the bounds
-      unsigned int b = ((fn->min()-dom.min()) +
-                        (dom.max()-ln->max()));
-      // Set new first and last ranges
-      fst(fn); lst(ln);
-      if (b > 0) {
-        holes += h-b;
-        if (!notify(home,ME_INT_BND,&d))
-          return ME_INT_FAILED;
-        return ME_INT_BND;
-      } else if (h > 0) {
-        holes += h;
-        if (!notify(home,ME_INT_DOM,&d))
-          return ME_INT_FAILED;
-        return ME_INT_DOM;
-      }
-      return ME_INT_NONE;
     }
-    */
+
+    // The number of removed values
+    holes += h;
+    // Unlink sentinel ranges
+    fn->prev(&f,NULL); ln->next(&l,NULL);
+    // How many values where removed at the bounds
+    unsigned int b = ((fn->min()-dom.min()) +
+                      (dom.max()-ln->max()));
+    // Set new first and last ranges
+    fst(fn); lst(ln);
+
+    if (b > 0) {
+      assert((dom.min() != fn->min()) || (dom.max() != ln->max()));
+      dom.min(fn->min()); dom.max(ln->max());
+      holes -= b;
+      if (!notify(home,ME_INT_BND,&d))
+        return ME_INT_FAILED;
+      return ME_INT_BND;
+    }
+
+    if (h > 0) {
+      assert((dom.min() == fn->min()) && (dom.max() == ln->max()));
+      if (!notify(home,ME_INT_DOM,&d))
+        return ME_INT_FAILED;
+      return ME_INT_DOM;
+    }
+
+    return ME_INT_NONE;
   }
 
   /*

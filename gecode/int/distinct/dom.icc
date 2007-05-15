@@ -406,6 +406,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     }
   }
 
+  /// Prunes the values read from a view node
   template <class View>
   class PruneVal {
   protected:
@@ -417,36 +418,49 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// \name Constructors and initialization
     //@{
     /// Initialize with edges for view node \a y
-    PruneVal(ViewNode<View>* y)
-      : x(y), e(y->val_edges()) {
-      while ((e != NULL) && e->used(x))
-        e = e->next_edge();
-    }
+    PruneVal(ViewNode<View>* y);
     //@}
 
     /// \name Iteration control
     //@{
     /// Test whether iterator is still at a value or done
-    bool operator()(void) const {
-      return e != NULL;
-    }
+    bool operator()(void) const;
     /// Move iterator to next value (if possible)
-    void operator++(void) {
-      do {
-        e = e->next_edge();
-      } while ((e != NULL) && e->used(x));
-    }
+    void operator++(void);
     //@}
 
     /// \name Value access
     //@{
     /// Return current value
-    int val(void) const {
-      assert(!e->used(x));
-      return e->val(x)->val();
-    }
+    int val(void) const;
     //@}
   };
+
+  template <class View>
+  forceinline
+  PruneVal<View>::PruneVal(ViewNode<View>* y)
+    : x(y), e(y->val_edges()) {
+    while ((e != NULL) && e->used(x))
+      e = e->next_edge();
+  }
+  template <class View>
+  forceinline bool 
+  PruneVal<View>::operator()(void) const {
+    return e != NULL;
+  }
+  template <class View>
+  forceinline void 
+  PruneVal<View>::operator++(void) {
+    do {
+      e = e->next_edge();
+    } while ((e != NULL) && e->used(x));
+  }
+  template <class View>
+  forceinline int 
+  PruneVal<View>::val(void) const {
+    assert(!e->used(x));
+    return e->val(x)->val();
+  }
 
   template <class View>
   forceinline bool
@@ -462,17 +476,11 @@ namespace Gecode { namespace Int { namespace Distinct {
         assigned = true;
       } else {
         PruneVal<View> pv(view[i]);
-        ModEvent me = view[i]->view().prune(home,pv);
-        /*
-        for (Edge<View>* e = view[i]->val_edges(); e!=NULL; e = e->next_edge())
-          if (!e->used(view[i])) {
 #ifndef NDEBUG
-            ModEvent me = 
+        ModEvent me = 
 #endif
-              view[i]->view().nq(home,e->val(view[i])->val());
-            assert(me != ME_INT_VAL);
-          }
-        */
+          view[i]->view().prune(home,pv);
+        assert(me != ME_INT_VAL);
       }
     }
     return assigned;
