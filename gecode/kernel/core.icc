@@ -171,6 +171,7 @@ namespace Gecode {
   class Propagator;
   class Advisor;
   template <class A> class Council;
+  template <class A> class Advisors;
   template <VarTypeId VTI, PropCond PC, class MED> class Variable;
 
 
@@ -737,6 +738,7 @@ namespace Gecode {
   template <class A>
   class Council {
     friend class Advisor;
+    friend class Advisors<A>;
   private:
     /// Starting point for a linked list of advisors
     ActorLink* advisors;
@@ -749,21 +751,27 @@ namespace Gecode {
     void update(Space* home, bool share, Council<A>& c);
     /// Dispose council
     void dispose(Space* home);
-    /// Class to iterate over advisors of a council
-    class Advisors {
-    private:
-      /// The current advisor
-      ActorLink* a;
-    public:
-      /// Initialize
-      Advisors(Council<A>& c);
-      /// Test whether there advisors left
-      bool operator()(void) const;
-      /// Move iterator to next advisor
-      void operator++(void);
-      /// Return advisor
-      A* advisor(void) const;
-    };
+  };
+
+
+  /**
+   * \brief Class to iterate over advisors of a council
+   *
+   */
+  template <class A>
+  class Advisors {
+  private:
+    /// The current advisor
+    ActorLink* a;
+  public:
+    /// Initialize
+    Advisors(Council<A>& c);
+    /// Test whether there advisors left
+    bool operator()(void) const;
+    /// Move iterator to next advisor
+    void operator++(void);
+    /// Return advisor
+    A* advisor(void) const;
   };
 
 
@@ -783,7 +791,7 @@ namespace Gecode {
     template <class A> 
     friend class Council;
     template <class A> 
-    friend class Council<A>::Advisors;
+    friend class Advisors;
   private:
     /// Is the advisor disposed?
     bool disposed(void) const;
@@ -1682,26 +1690,26 @@ namespace Gecode {
   
   template <class A>
   forceinline
-  Council<A>::Advisors::Advisors(Council<A>& c)
+  Advisors<A>::Advisors(Council<A>& c)
     : a(c.advisors) {
     while ((a != NULL) && static_cast<A*>(a)->disposed())
       a = a->next();
   }
   template <class A>
   forceinline bool
-  Council<A>::Advisors::operator()(void) const {
+  Advisors<A>::operator()(void) const {
     return a != NULL;
   }
   template <class A>
   forceinline void
-  Council<A>::Advisors::operator++(void) {
+  Advisors<A>::operator++(void) {
     do {
       a = a->next();
     } while ((a != NULL) && static_cast<A*>(a)->disposed());
   }
   template <class A>
   forceinline A*
-  Council<A>::Advisors::advisor(void) const {
+  Advisors<A>::advisor(void) const {
     return static_cast<A*>(a);
   }
 

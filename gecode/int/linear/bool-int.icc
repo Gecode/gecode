@@ -265,7 +265,7 @@ namespace Gecode { namespace Int { namespace Linear {
       // Signal to advisors that propagator runs
       n_s = 0;
       // All views must be one to satisfy inequality
-      for (typename Council<ViewAdvisor<VX> >::Advisors as(co); as(); ++as)
+      for (typename Advisors<ViewAdvisor<VX> > as(co); as(); ++as)
         GECODE_ME_CHECK(as.advisor()->view().one_none(home));
     }
     return ES_SUBSUMED(this,home);
@@ -441,11 +441,11 @@ namespace Gecode { namespace Int { namespace Linear {
     n_s = 0;
     if (c == 0) {
       // All views must be zero to satisfy equality
-      for (typename Council<ViewAdvisor<VX> >::Advisors as(co); as(); ++as)
+      for (typename Advisors<ViewAdvisor<VX> > as(co); as(); ++as)
         GECODE_ME_CHECK(as.advisor()->view().zero_none(home));
     } else {
       // All views must be one to satisfy equality
-      for (typename Council<ViewAdvisor<VX> >::Advisors as(co); as(); ++as)
+      for (typename Advisors<ViewAdvisor<VX> > as(co); as(); ++as)
         GECODE_ME_CHECK(as.advisor()->view().one_none(home));
     }
     return ES_SUBSUMED(this,home);
