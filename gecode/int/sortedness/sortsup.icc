@@ -124,7 +124,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
    */
 
   template<class View, class Tuple, bool Perm>
-  forceinline bool
+  inline bool
   check_subsumption(Space* home,
                     ViewArray<Tuple>& xz,
                     ViewArray<View>& y,
@@ -302,7 +302,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
   }
 
   /// Print an OfflineMin sequence
-  forceinline std::ostream&
+  inline std::ostream&
   operator<<(std::ostream& os,  OfflineMin seq){
     for (int i = 0; i < seq.size();i++) {
       os << "Succ(" <<seq[i].succ   << ") "
@@ -473,7 +473,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
    */
 
   template<class View, class Tuple, bool Perm>
-  forceinline bool
+  inline bool
   array_assigned(Space* home,
                  ViewArray<Tuple>& xz,
                  ViewArray<View>& y,

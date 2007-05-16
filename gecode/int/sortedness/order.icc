@@ -32,7 +32,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
    */
 
   template <class View, class Tuple, bool Perm>
-  forceinline void
+  inline void
   sort_sigma(ViewArray<Tuple>& xz, bool fixed) {
     int xs = xz.size();
 
@@ -74,7 +74,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
    */
 
   template <class View, class Tuple, bool Perm>
-  forceinline void
+  inline void
   sort_tau(ViewArray<Tuple>& xz, int tau[]) {
     int xs = xz.size();
 
@@ -110,7 +110,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
    *  max(y_0) \leq \dots \leq max(y_{n-1})\f$ holds.
    */
   template <class View, class Tuple>
-  forceinline bool
+  inline bool
   normalize(Space* home,
             ViewArray<View>& y,
             ViewArray<Tuple>& xz,
@@ -161,7 +161,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
    */
 
   template<class View, class Tuple, bool Perm>
-  forceinline bool
+  inline bool
   perm_bc(Space* home, int tau[],
           SccComponent sinfo[],        
           int scclist[],

@@ -263,7 +263,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
       }
     }
 
-    if(!yval) {
+    if (!yval) {
       // phiprime is not needed to narrow the domains of the x-variables
       if (!match_fixed) {
         if (!revglover<View, Tuple, Perm>

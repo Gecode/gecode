@@ -666,7 +666,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
 
   /// \brief Debugging: print a cardinality variable
-  forceinline std::ostream&
+  inline std::ostream&
   operator<<(std::ostream& os, GCC::CardView& v) {
     os << "("<<v.card() << ","<< v.counter() <<",";
     if (v.min() == v.max()) {
