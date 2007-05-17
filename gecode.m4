@@ -127,6 +127,7 @@ AC_DEFUN([AC_GECODE_CHECK_COMPILERFLAG],
       CXXFLAGS="${ac_gecode_save_CXXFLAGS}"])
    AC_LANG_POP
    
+   AC_MSG_CHECKING(whether ${CC} accepts [$1])
    ac_gecode_save_CFLAGS="${CFLAGS}"
    CFLAGS="${CFLAGS}${CFLAGS:+ }$1 -Werror"
    AC_LANG_PUSH(C)
