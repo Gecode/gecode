@@ -48,7 +48,7 @@ namespace Gecode { namespace Int { namespace Linear {
     bool supported(unsigned int i) const;
 
   private:
-    /// Support-based iterator
+    /// Support-based iterator: iterates values to be removed
     class ResultIter : public ViewValues<IntView> {
     protected:
       /// The support set used
@@ -176,7 +176,7 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline
   SupportSet::ResultIter::ResultIter(const SupportSet* s0, const IntView& x)
     : ViewValues<IntView>(x), s(s0), p(0) {
-    while (ViewValues<IntView>::operator()() && !s->supported(p)) {
+    while (ViewValues<IntView>::operator()() && s->supported(p)) {
       ViewValues<IntView>::operator++(); ++p;
     }
   }
@@ -184,7 +184,7 @@ namespace Gecode { namespace Int { namespace Linear {
   SupportSet::ResultIter::operator++(void) {
     do {
       ViewValues<IntView>::operator++(); ++p;
-    } while (ViewValues<IntView>::operator()() && !s->supported(p));
+    } while (ViewValues<IntView>::operator()() && s->supported(p));
   }
 
 
@@ -209,7 +209,7 @@ namespace Gecode { namespace Int { namespace Linear {
   tell:
     {
       ResultIter i(this,x);
-      return x.narrow_v(home,i);
+      return x.minus_v(home,i);
     }
   }
 
