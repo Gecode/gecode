@@ -475,6 +475,7 @@ namespace Gecode { namespace Int {
     // Is new domain empty?
     if (!ri())
       return ME_INT_FAILED;
+
     int min0 = ri.min();
     int max0 = ri.max();
     ++ri;
@@ -502,39 +503,154 @@ namespace Gecode { namespace Int {
       return ME_INT_BND;
     }
 
-    // Construct new rangelist
-    RangeList*   f = new (home) RangeList(min0,max0,NULL,NULL);
-    RangeList*   l = f;
-    unsigned int s = max0-min0+1;
-    do {
-      RangeList* n = new (home) RangeList(ri.min(),ri.max(),l,NULL);
-      l->next(NULL,n);
-      l = n;
-      s += ri.width();
-      ++ri;
-    } while (ri());
-    if (fst() != NULL)
-      fst()->dispose(home,NULL,lst());
-    fst(f); lst(l);
-
-    // Check for modification
-    if (size() == s)
-      return ME_INT_NONE;
-
-    IntDelta d;
-    const int min1 = dom.min(); min0 = f->min(); dom.min(min0);
-    const int max1 = dom.max(); max0 = l->max(); dom.max(max0);
-    holes = width() - s;
-
-    if ((min0 == min1) && (max0 == max1)) {
-      if (!notify(home,ME_INT_DOM,&d))
+    if (depends || range()) {
+      // Construct new rangelist
+      RangeList*   f = new (home) RangeList(min0,max0,NULL,NULL);
+      RangeList*   l = f;
+      unsigned int s = max0-min0+1;
+      do {
+        RangeList* n = new (home) RangeList(ri.min(),ri.max(),l,NULL);
+        l->next(NULL,n);
+        l = n;
+        s += ri.width();
+        ++ri;
+      } while (ri());
+      if (fst() != NULL)
+        fst()->dispose(home,NULL,lst());
+      fst(f); lst(l);
+      
+      // Check for modification
+      if (size() == s)
+        return ME_INT_NONE;
+      
+      IntDelta d;
+      const int min1 = dom.min(); min0 = f->min(); dom.min(min0);
+      const int max1 = dom.max(); max0 = l->max(); dom.max(max0);
+      holes = width() - s;
+      
+      if ((min0 == min1) && (max0 == max1)) {
+        if (!notify(home,ME_INT_DOM,&d))
+          return ME_INT_FAILED;
+        return ME_INT_DOM;
+      }
+      
+      if (!notify(home,ME_INT_BND,&d))
         return ME_INT_FAILED;
-      return ME_INT_DOM;
-    }
+      return ME_INT_BND;
+    } else {
+      // Set up two sentinel elements
+      RangeList f, l;
+      // Put all ranges between sentinels
+      f.prevnext(NULL,fst()); l.prevnext(lst(),NULL);
+      fst()->prev(NULL,&f);   lst()->next(NULL,&l);
 
-    if (!notify(home,ME_INT_BND,&d))
-      return ME_INT_FAILED;
-    return ME_INT_BND;
+      // Number of values removed (potential holes)
+      unsigned int h = 0;
+      // The previous range
+      RangeList* p = &f;
+      // The current range
+      RangeList* r = f.next(NULL);
+
+      while (true) {
+        assert((r != &f) && (r != &l));
+        if (r->max() < min0) {
+          // Entire range removed
+          h += r->width();
+          RangeList* n=r->next(p);
+          p->next(r,n); n->prev(r,p);
+          r->dispose(home);
+          r=n;
+          if (r == &l)
+            goto done;
+        } else if ((r->min() == min0) && (r->max() == max0)) {
+          // Range unchanged
+          RangeList* n=r->next(p); p=r; r=n;
+          if (r == &l)
+            goto done;
+          if (!ri())
+            goto done;
+          min0=ri.min(); max0=ri.max(); ++ri;
+        } else {
+          // Range might have been split into many small ranges
+          assert((r->min() <= min0) && (max0 <= r->max()));
+          h += r->width();
+          int end = r->max();
+          // Copy first range
+          r->min(min0); r->max(max0);
+          assert(h > r->width());
+          h -= r->width();
+          { 
+            RangeList* n=r->next(p); p=r; r=n;
+          }
+          while (true) {
+            if (!ri())
+              goto done;
+            min0=ri.min(); max0=ri.max(); ++ri;
+            if (max0 > end)
+              break;
+            assert(h > max0-min0+1);
+            h -= max0-min0+1;
+            RangeList* n = new (home) RangeList(min0,max0,p,r);
+            p->next(r,n); r->prev(p,n);
+            p=n;
+          }
+          if (r == &l)
+            goto done;
+        }
+      }
+    done:
+
+      // Remove remaining ranges
+      while (r != &l) {
+        h += r->width();
+        RangeList* n=r->next(p);
+        p->next(r,n); n->prev(r,p);
+        r->dispose(home);
+        r=n;
+      }
+
+      assert((r == &l) && !ri());
+
+      // New first and last ranges
+      RangeList* fn = f.next(NULL);
+      RangeList* ln = l.prev(NULL);
+
+      // All ranges pruned?
+      assert(fn != &l);
+
+      // Only a single range left?
+      assert(fn != ln);
+
+      // The number of removed values
+      holes += h;
+      // Unlink sentinel ranges
+      fn->prev(&f,NULL); ln->next(&l,NULL);
+      // How many values where removed at the bounds
+      unsigned int b = ((fn->min()-dom.min()) +
+                        (dom.max()-ln->max()));
+      // Set new first and last ranges
+      fst(fn); lst(ln);
+
+      IntDelta d;
+
+      if (b > 0) {
+        assert((dom.min() != fn->min()) || (dom.max() != ln->max()));
+        dom.min(fn->min()); dom.max(ln->max());
+        holes -= b;
+        if (!notify(home,ME_INT_BND,&d))
+          return ME_INT_FAILED;
+        return ME_INT_BND;
+      }
+
+      if (h > 0) {
+        assert((dom.min() == fn->min()) && (dom.max() == ln->max()));
+        if (!notify(home,ME_INT_DOM,&d))
+          return ME_INT_FAILED;
+        return ME_INT_DOM;
+      }
+
+      return ME_INT_NONE;
+    }
   }
 
   template <class I>
