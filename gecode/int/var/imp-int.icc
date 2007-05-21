@@ -543,8 +543,7 @@ namespace Gecode { namespace Int {
   template <class I>
   forceinline ModEvent
   IntVarImp::minus_r(Space* home, I& i, bool depends) {
-    //    if (depends) {
-      {
+    if (depends) {
       IntVarImpFwd j(this);
       Iter::Ranges::Diff<IntVarImpFwd,I> ij(j,i);
       return narrow_r(home,ij,true);
@@ -582,9 +581,8 @@ namespace Gecode { namespace Int {
     RangeList* r = f.next(NULL);
 
     while (true) {
-      assert((r != &f) && (r != &l));
+      assert((r != &f) && (r != &l) && i());
       if (i.min() > r->max()) {
-        // Move to next range
         RangeList* n=r->next(p); p=r; r=n;
         if (r == &l)
           break;
@@ -592,7 +590,7 @@ namespace Gecode { namespace Int {
         ++i;
         if (!i())
           break;
-      } else if ((i.min() <= r->min()) && (i.max() >= r->max())) {
+      } else if ((i.min() <= r->min()) && (r->max() <= i.max())) {
         // r is included in i: remove entire range r
         h += r->width();
         RangeList* n=r->next(p);
@@ -603,7 +601,7 @@ namespace Gecode { namespace Int {
           break;
       } else if ((i.min() > r->min()) && (i.max() < r->max())) {
         // i is included in r: create new range before the current one
-        h += (i.min()-r->min()) + (r->max()-i.max());
+        h += i.width();
         RangeList* n = new (home) RangeList(r->min(),i.min()-1,p,r);
         r->min(i.max()+1);
         p->next(r,n); r->prev(p,n);
@@ -614,21 +612,22 @@ namespace Gecode { namespace Int {
       } else if (i.max() < r->max()) {
         assert(i.min() <= r->min());
         // i ends before r: adjust minimum of r
-        h += r->max()-i.max();
+        h += i.max()-r->min()+1;
         r->min(i.max()+1);
         ++i;
         if (!i())
           break;
       } else {
-        assert((i.max() > r->max()) && (i.min() > r->min()));
+        assert((i.max() >= r->max()) && (r->min() < i.min()));
         // r ends before i: adjust maximum of r
-        h += i.min()-r->min();
+        h += r->max()-i.min()+1;
         r->max(i.min()-1);
         RangeList* n=r->next(p); p=r; r=n;
         if (r == &l)
           break;
       }
     }
+
     assert((r == &l) || !i());
 
     // New first and last ranges
@@ -707,12 +706,6 @@ namespace Gecode { namespace Int {
   template <class I>
   forceinline ModEvent
   IntVarImp::minus_v(Space* home, I& i, bool depends) {
-    /*
-    {
-      Iter::Values::ToRanges<I> r(i);
-      return minus_r(home, r, depends);
-    }
-    */
     if (depends) {
       Iter::Values::ToRanges<I> r(i);
       return minus_r(home, r, true);
