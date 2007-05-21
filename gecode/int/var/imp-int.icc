@@ -478,6 +478,7 @@ namespace Gecode { namespace Int {
     int min0 = ri.min();
     int max0 = ri.max();
     ++ri;
+
     // Is new domain range?
     if (!ri()) {
       // Remove possible rangelist (if it was not a range, the domain
@@ -490,45 +491,49 @@ namespace Gecode { namespace Int {
       const int max1 = dom.max(); dom.max(max0);
       if ((min0 == min1) && (max0 == max1))
         return ME_INT_NONE;
+      IntDelta d;
       if (min0 == max0) {
-        IntDelta d;
         if (!notify(home,ME_INT_VAL,&d))
           return ME_INT_FAILED;
         return ME_INT_VAL;
       }
-    } else {
-      // Construct new rangelist
-      RangeList*   f = new (home) RangeList(min0,max0,NULL,NULL);
-      RangeList*   l = f;
-      unsigned int s = max0-min0+1;
-      do {
-        RangeList* n = new (home) RangeList(ri.min(),ri.max(),l,NULL);
-        l->next(NULL,n);
-        l = n;
-        s += ri.width();
-        ++ri;
-      } while (ri());
-      if (fst() != NULL)
-        fst()->dispose(home,NULL,lst());
-      fst(f); lst(l);
-      // Check for modification
-      if (size() == s)
-        return ME_INT_NONE;
-      const int min1 = dom.min(); min0 = f->min(); dom.min(min0);
-      const int max1 = dom.max(); max0 = l->max(); dom.max(max0);
-      holes = width() - s;
-      if ((min0 == min1) && (max0 == max1)) {
-        IntDelta d;
-        if (!notify(home,ME_INT_DOM,&d))
-          return ME_INT_FAILED;
-        return ME_INT_DOM;
-      }
-    }
-    {
-      IntDelta d;
       if (!notify(home,ME_INT_BND,&d))
         return ME_INT_FAILED;
+      return ME_INT_BND;
     }
+
+    // Construct new rangelist
+    RangeList*   f = new (home) RangeList(min0,max0,NULL,NULL);
+    RangeList*   l = f;
+    unsigned int s = max0-min0+1;
+    do {
+      RangeList* n = new (home) RangeList(ri.min(),ri.max(),l,NULL);
+      l->next(NULL,n);
+      l = n;
+      s += ri.width();
+      ++ri;
+    } while (ri());
+    if (fst() != NULL)
+      fst()->dispose(home,NULL,lst());
+    fst(f); lst(l);
+
+    // Check for modification
+    if (size() == s)
+      return ME_INT_NONE;
+
+    IntDelta d;
+    const int min1 = dom.min(); min0 = f->min(); dom.min(min0);
+    const int max1 = dom.max(); max0 = l->max(); dom.max(max0);
+    holes = width() - s;
+
+    if ((min0 == min1) && (max0 == max1)) {
+      if (!notify(home,ME_INT_DOM,&d))
+        return ME_INT_FAILED;
+      return ME_INT_DOM;
+    }
+
+    if (!notify(home,ME_INT_BND,&d))
+      return ME_INT_FAILED;
     return ME_INT_BND;
   }
 
