@@ -578,10 +578,11 @@ namespace Gecode { namespace Int {
     if (!i() || (i.val() > dom.max()))
       return ME_INT_NONE;
 
-    int v = i.val(); ++i;
+    int v = i.val();
     // Skip values that are the same
-    while (i() && (i.val() == v))
+    do {
       ++i;
+    } while (i() && (i.val() == v));
 
     // Is there only a single value to be pruned?
     if (!i() || (i.val() > dom.max()))
@@ -628,6 +629,9 @@ namespace Gecode { namespace Int {
           h++; r->min(v+1);
         } else if (v == r->max()) {
           h++; r->max(v-1);
+          RangeList* n=r->next(p); p=r; r=n;
+          if (r == &l)
+            break;
         } else if (v > r->min()) {
           // Create new range before the current one
           assert(v < r->max());
@@ -648,6 +652,7 @@ namespace Gecode { namespace Int {
     // New first and last ranges
     RangeList* fn = f.next(NULL);
     RangeList* ln = l.prev(NULL);
+
     // All ranges pruned?
     if (fn == &l) {
       fst(NULL); lst(NULL); holes=0;
