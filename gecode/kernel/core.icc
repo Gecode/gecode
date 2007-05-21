@@ -331,7 +331,7 @@ namespace Gecode {
     /// Remove propagator or advisor from subscription array
     void remove(Space* home, ActorLink* a, PropCond pc);
     /// Execute advisors during notification
-    bool advise(Space* home, ModEvent me, Delta* d);
+    bool advise(Space* home, const Delta* d);
 
   public:
     /// Creation
@@ -2157,8 +2157,8 @@ namespace Gecode {
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline bool
-  Variable<VTI,PC,MED>::advise(Space* home, ModEvent me, Delta* d) {
+  bool
+  Variable<VTI,PC,MED>::advise(Space* home, const Delta* d) {
     /*
      * An advisor that is executed might remove itself due to subsumtion.
      * As entries are removed from front to back, the advisors must
@@ -2167,7 +2167,6 @@ namespace Gecode {
     ActorLink** la = idx[PC+1];
     ActorLink** le = idx[PC+2];
     assert (la != le);
-    d->me = me;
     // An advisor that is run, might be removed during execution.
     // As removal is done from the back the advisors have to be executed
     // in inverse order.
@@ -2180,7 +2179,7 @@ namespace Gecode {
       case ES_FAILED:
         return false;
       case ES_NOFIX:
-        schedule(home,p,me);
+        schedule(home,p,d->me);
         break;
       default:
         GECODE_NEVER;
@@ -2200,8 +2199,10 @@ namespace Gecode {
       home->vars[VTI].entry = this;
       modevent(new_me);
     }
-    if (idx[PC+1] != idx[PC+2])
-      return advise(home,new_me,d);
+    if (idx[PC+1] != idx[PC+2]) {
+      d->me = new_me;
+      return advise(home,d);
+    }
     return true;
   }
 
@@ -2211,8 +2212,10 @@ namespace Gecode {
     assert(!modified());
     _next = static_cast<Variable<VTI,PC,MED>*>(home->vars[VTI].entry);
     home->vars[VTI].entry = this;
-    if (idx[PC+1] != idx[PC+2])
-      return advise(home,ME_GEN_ASSIGNED,d);
+    if (idx[PC+1] != idx[PC+2]) {
+      d->me = ME_GEN_ASSIGNED;
+      return advise(home,d);
+    }
     return true;
   }
 
