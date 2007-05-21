@@ -283,12 +283,10 @@ namespace Gecode { namespace Int { namespace Element {
   forceinline ExecStatus
   IdxValMap::tell(Space* home, ViewA x0, ViewB x1) {
     IterIdx i(iv[0]);
-    if (!i())
-      return ES_FAILED;
-    x0.narrow_v(home,i,false);
+    GECODE_ME_CHECK(x0.narrow_v(home,i,false));
     IterVal v(iv[0]);
     ExecStatus es = x1.modified() ? ES_NOFIX : ES_FIX;
-    x1.narrow_v(home,v,false);
+    GECODE_ME_CHECK(x1.narrow_v(home,v,false));
     return es;
   }
 
