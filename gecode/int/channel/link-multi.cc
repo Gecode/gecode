@@ -24,7 +24,7 @@
 
 namespace Gecode { namespace Int { namespace Channel {
 
-  /// Iterates the values as defined by an array of Boolean views
+  /// Iterates the values to be removed as defined by an array of Boolean views
   class BoolIter {
   private:
     /// The array of Boolean views
@@ -47,8 +47,8 @@ namespace Gecode { namespace Int { namespace Channel {
   forceinline
   BoolIter::BoolIter(const ViewArray<BoolView>& x0, int o0) :
     x(x0), o(o0), i(0) {
-    // As there is at least one not assigned view in the array
-    while (x[i].zero()) i++;
+    while ((i<x.size()) && !x[i].zero()) 
+      i++;
   }
   forceinline bool
   BoolIter::operator()(void) const {
@@ -56,13 +56,14 @@ namespace Gecode { namespace Int { namespace Channel {
   }
   forceinline int 
   BoolIter::val(void) const {
+    assert(x[i].zero());
     return i+o;
   }
   forceinline void
   BoolIter::operator++(void) {
     do {
       i++;
-    } while ((i<x.size()) && x[i].zero());
+    } while ((i<x.size()) && !x[i].zero());
   }
 
 
@@ -189,7 +190,7 @@ namespace Gecode { namespace Int { namespace Channel {
 #ifndef NDEBUG
       ModEvent me = 
 #endif
-      y.narrow_v(home,bv,false);
+      y.minus_v(home,bv,false);
       assert(!me_failed(me) && (me != ME_INT_VAL));
     }
     return ES_FIX;

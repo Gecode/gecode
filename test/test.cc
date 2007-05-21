@@ -233,7 +233,7 @@ Options::parse(int argc, char** argv) {
     }
     i++;
   }
-  //  testpat.push_back(make_pair(false, "Unit::Pos::Gq::10::3::Speed"));
+  //  testpat.push_back(make_pair(false, "Channel::Bool"));
   return;
  missing:
   e = "missing parameter";
