@@ -542,10 +542,152 @@ namespace Gecode { namespace Int {
 
   template <class I>
   forceinline ModEvent
-  IntVarImp::minus_r(Space* home, I& i, bool) {
-    IntVarImpFwd j(this);
-    Iter::Ranges::Diff<IntVarImpFwd,I> ij(j,i);
-    return narrow_r(home,ij,true);
+  IntVarImp::minus_r(Space* home, I& i, bool depends) {
+    //    if (depends) {
+      {
+      IntVarImpFwd j(this);
+      Iter::Ranges::Diff<IntVarImpFwd,I> ij(j,i);
+      return narrow_r(home,ij,true);
+    }
+
+    // Skip all ranges that are too small
+    while (i() && (i.max() < dom.min())) 
+      ++i;
+
+    // Is there no range left or all are too large?
+    if (!i() || (i.min() > dom.max()))
+      return ME_INT_NONE;
+
+    if ((i.min() <= dom.min()) && (i.max() >= dom.max()))
+      return ME_INT_FAILED;
+        
+    // Set up two sentinel elements
+    RangeList f, l;
+    // Put all ranges between sentinels
+    if (range()) {
+      // Create a new rangelist just for simplicity
+      RangeList* n = new (home) RangeList(min(),max(),&f,&l);
+      f.prevnext(NULL,n); l.prevnext(n,NULL);
+    } else {
+      // Link the two sentinel elements
+      f.prevnext(NULL,fst()); l.prevnext(lst(),NULL);
+      fst()->prev(NULL,&f);   lst()->next(NULL,&l);
+    }
+
+    // Number of values removed (potential holes)
+    unsigned int h = 0;
+    // The previous range
+    RangeList* p = &f;
+    // The current range
+    RangeList* r = f.next(NULL);
+
+    while (true) {
+      assert((r != &f) && (r != &l));
+      if (i.min() > r->max()) {
+        // Move to next range
+        RangeList* n=r->next(p); p=r; r=n;
+        if (r == &l)
+          break;
+      } else if (i.max() < r->min()) {
+        ++i;
+        if (!i())
+          break;
+      } else if ((i.min() <= r->min()) && (i.max() >= r->max())) {
+        // r is included in i: remove entire range r
+        h += r->width();
+        RangeList* n=r->next(p);
+        p->next(r,n); n->prev(r,p);
+        r->dispose(home);
+        r=n;
+        if (r == &l)
+          break;
+      } else if ((i.min() > r->min()) && (i.max() < r->max())) {
+        // i is included in r: create new range before the current one
+        h += (i.min()-r->min()) + (r->max()-i.max());
+        RangeList* n = new (home) RangeList(r->min(),i.min()-1,p,r);
+        r->min(i.max()+1);
+        p->next(r,n); r->prev(p,n);
+        p=n;
+        ++i;
+        if (!i())
+          break;
+      } else if (i.max() < r->max()) {
+        assert(i.min() <= r->min());
+        // i ends before r: adjust minimum of r
+        h += r->max()-i.max();
+        r->min(i.max()+1);
+        ++i;
+        if (!i())
+          break;
+      } else {
+        assert((i.max() > r->max()) && (i.min() > r->min()));
+        // r ends before i: adjust maximum of r
+        h += i.min()-r->min();
+        r->max(i.min()-1);
+        RangeList* n=r->next(p); p=r; r=n;
+        if (r == &l)
+          break;
+      }
+    }
+    assert((r == &l) || !i());
+
+    // New first and last ranges
+    RangeList* fn = f.next(NULL);
+    RangeList* ln = l.prev(NULL);
+
+    // All ranges pruned?
+    if (fn == &l) {
+      fst(NULL); lst(NULL); holes=0;
+      return ME_INT_FAILED;
+    }
+
+    IntDelta d;
+
+    // Only a single range left?
+    if (fn == ln) {
+      assert(h > 0);
+      dom.min(fn->min()); dom.max(fn->max());
+      fn->dispose(home);
+      fst(NULL); lst(NULL);
+      holes = 0;
+      if (assigned()) {
+        if (!notify(home,ME_INT_VAL,&d))
+          return ME_INT_FAILED;
+        return ME_INT_VAL;
+      } else {
+        if (!notify(home,ME_INT_BND,&d))
+          return ME_INT_FAILED;
+        return ME_INT_BND;
+      }
+    }
+
+    // The number of removed values
+    holes += h;
+    // Unlink sentinel ranges
+    fn->prev(&f,NULL); ln->next(&l,NULL);
+    // How many values where removed at the bounds
+    unsigned int b = ((fn->min()-dom.min()) +
+                      (dom.max()-ln->max()));
+    // Set new first and last ranges
+    fst(fn); lst(ln);
+
+    if (b > 0) {
+      assert((dom.min() != fn->min()) || (dom.max() != ln->max()));
+      dom.min(fn->min()); dom.max(ln->max());
+      holes -= b;
+      if (!notify(home,ME_INT_BND,&d))
+        return ME_INT_FAILED;
+      return ME_INT_BND;
+    }
+
+    if (h > 0) {
+      assert((dom.min() == fn->min()) && (dom.max() == ln->max()));
+      if (!notify(home,ME_INT_DOM,&d))
+        return ME_INT_FAILED;
+      return ME_INT_DOM;
+    }
+
+    return ME_INT_NONE;
   }
 
   template <class I>
@@ -565,6 +707,12 @@ namespace Gecode { namespace Int {
   template <class I>
   forceinline ModEvent
   IntVarImp::minus_v(Space* home, I& i, bool depends) {
+    /*
+    {
+      Iter::Values::ToRanges<I> r(i);
+      return minus_r(home, r, depends);
+    }
+    */
     if (depends) {
       Iter::Values::ToRanges<I> r(i);
       return minus_r(home, r, true);
