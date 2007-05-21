@@ -407,7 +407,8 @@ ITERHDR0 =							\
 	ranges-offset ranges-operations ranges-scale		\
 	ranges-singleton ranges-singleton-append		\
 	ranges-size ranges-union ranges-values			\
-	values-minus values-offset values-ranges values-unique	\
+	values-array values-minus values-offset values-ranges 	\
+	values-singleton values-unique				\
 	virtual-ranges virtual-ranges-union			\
 	virtual-ranges-inter virtual-ranges-compl
 OTHERHDR = gecode/iter.hh \

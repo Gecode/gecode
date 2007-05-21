@@ -46,10 +46,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
         GECODE_ME_CHECK(x0.eq(home,0));
         return ES_SUBSUMED(p,sizeof(*p));
       } else {
-        Iter::Ranges::Array::Range r[2]
-          = { {-x1.val(),-x1.val()}, {x1.val(),x1.val()} };
-        Iter::Ranges::Array i(r,2);
-        GECODE_ME_CHECK(x0.inter_r(home,i,false));
+        int mp[2] = {-x1.val(),x1.val()};
+        Iter::Values::Array i(mp,2);
+        GECODE_ME_CHECK(x0.inter_v(home,i,false));
         return ES_SUBSUMED(p,home);
       }
     }

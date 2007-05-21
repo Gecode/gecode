@@ -1,0 +1,105 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2007
+ *
+ *  Last modified:
+ *     $Date: 2006-10-25 15:21:37 +0200 (Wed, 25 Oct 2006) $ by $Author: tack $
+ *     $Revision: 3791 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Iter { namespace Values {
+
+  /**
+   * \brief %Value iterator for array of integers
+   *
+   * Allows to iterate the integers as defined by an array.
+   * The integers can be iterated several times provided the iterator
+   * is %reset by the reset member function.
+   *
+   * Requires \code #include "gecode/iter.hh" \endcode
+   * \ingroup FuncIterValues
+   */
+  class Array  {
+  protected:
+    /// Array for values
+    int* v;
+    /// Current value
+    int c;
+    /// Number of ranges in array
+    int n;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    Array(void);
+    /// Initialize with \a n values from \a v
+    Array(int* v, int n);
+    /// Initialize with \a n ranges from \a v
+    void init(int* v, int n);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a value or done
+    bool operator()(void) const;
+    /// Move iterator to next value (if possible)
+    void operator++(void);
+    /// Reset iterator to start from beginning
+    void reset(void);
+    //@}
+
+    /// \name %Value access
+    //@{
+    /// Return current value
+    int val(void) const;
+    //@}
+  };
+
+
+  forceinline
+  Array::Array(void) {}
+
+  forceinline
+  Array::Array(int* v0, int n0)
+    : v(v0), c(0), n(n0) {}
+
+  forceinline void
+  Array::init(int* v0, int n0) {
+    v=v0; c=0; n=n0;
+  }
+
+  forceinline void
+  Array::operator++(void) {
+    c++;
+  }
+  forceinline bool
+  Array::operator()(void) const {
+    return c<n;
+  }
+  forceinline void
+  Array::reset(void) {
+    c=0;
+  }
+
+  forceinline int
+  Array::val(void) const {
+    return v[c];
+  }
+
+}}}
+
+// STATISTICS: iter-any
+
