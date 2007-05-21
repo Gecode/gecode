@@ -158,36 +158,45 @@ namespace Gecode {
     }
 
 
-
     /*
-     * Domain update by value iterator
+     * Iterator-based domain update
      *
      */
     template <class I>
-    ModEvent
-    OffsetView::prune(Space* home, I& i) {
-      Iter::Values::Offset<I> oi(i,-c); return view.prune(home,oi);
-    }
-
-
-    /*
-     * Domain update by range iterator
-     *
-     */
-    template <class I>
-    ModEvent
-    OffsetView::narrow(Space* home, I& i) {
-      Iter::Ranges::Offset<I> oi(i,-c); return view.narrow(home,oi);
+    forceinline ModEvent
+    OffsetView::narrow_r(Space* home, I& i, bool depend) {
+      Iter::Ranges::Offset<I> oi(i,-c); 
+      return view.narrow_r(home,oi,depend);
     }
     template <class I>
-    ModEvent
-    OffsetView::inter(Space* home, I& i) {
-      Iter::Ranges::Offset<I> oi(i,-c); return view.inter(home,oi);
+    forceinline ModEvent
+    OffsetView::inter_r(Space* home, I& i, bool depend) {
+      Iter::Ranges::Offset<I> oi(i,-c); 
+      return view.inter_r(home,oi,depend);
     }
     template <class I>
-    ModEvent
-    OffsetView::minus(Space* home, I& i) {
-      Iter::Ranges::Offset<I> oi(i,-c); return view.minus(home,oi);
+    forceinline ModEvent
+    OffsetView::minus_r(Space* home, I& i, bool depend) {
+      Iter::Ranges::Offset<I> oi(i,-c); 
+      return view.minus_r(home,oi,depend);
+    }
+    template <class I>
+    forceinline ModEvent
+    OffsetView::narrow_v(Space* home, I& i, bool depend) {
+      Iter::Values::Offset<I> oi(i,-c); 
+      return view.narrow_v(home,oi,depend);
+    }
+    template <class I>
+    forceinline ModEvent
+    OffsetView::inter_v(Space* home, I& i, bool depend) {
+      Iter::Values::Offset<I> oi(i,-c); 
+      return view.inter_v(home,oi,depend);
+    }
+    template <class I>
+    forceinline ModEvent
+    OffsetView::minus_v(Space* home, I& i, bool depend) {
+      Iter::Values::Offset<I> oi(i,-c); 
+      return view.minus_v(home,oi,depend);
     }
 
 

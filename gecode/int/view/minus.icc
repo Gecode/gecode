@@ -156,33 +156,44 @@ namespace Gecode {
 
 
     /*
-     * Domain update by value iterator
+     * Iterator-based domain update
      *
      */
     template <class I>
-    ModEvent
-    MinusView::prune(Space* home, I& i) {
-      Iter::Values::Minus<I> mi(i); return view.prune(home,mi);
-    }
-
-    /*
-     * Domain update by range iterator
-     *
-     */
-    template <class I>
-    ModEvent
-    MinusView::narrow(Space* home, I& i) {
-      Iter::Ranges::Minus<I> mi(i); return view.narrow(home,mi);
+    forceinline ModEvent
+    MinusView::narrow_r(Space* home, I& i, bool) {
+      Iter::Ranges::Minus<I> mi(i); 
+      return view.narrow_r(home,mi,false);
     }
     template <class I>
-    ModEvent
-    MinusView::inter(Space* home, I& i) {
-      Iter::Ranges::Minus<I> mi(i); return view.inter(home,mi);
+    forceinline ModEvent
+    MinusView::inter_r(Space* home, I& i, bool) {
+      Iter::Ranges::Minus<I> mi(i); 
+      return view.inter_r(home,mi,false);
     }
     template <class I>
-    ModEvent
-    MinusView::minus(Space* home, I& i) {
-      Iter::Ranges::Minus<I> mi(i); return view.minus(home,mi);
+    forceinline ModEvent
+    MinusView::minus_r(Space* home, I& i, bool) {
+      Iter::Ranges::Minus<I> mi(i); 
+      return view.minus_r(home,mi,false);
+    }
+    template <class I>
+    forceinline ModEvent
+    MinusView::narrow_v(Space* home, I& i, bool) {
+      Iter::Values::Minus<I> mi(i); 
+      return view.narrow_v(home,mi,false);
+    }
+    template <class I>
+    forceinline ModEvent
+    MinusView::inter_v(Space* home, I& i, bool) {
+      Iter::Values::Minus<I> mi(i); 
+      return view.inter_v(home,mi,false);
+    }
+    template <class I>
+    forceinline ModEvent
+    MinusView::minus_v(Space* home, I& i, bool) {
+      Iter::Values::Minus<I> mi(i); 
+      return view.minus_v(home,mi,false);
     }
 
 

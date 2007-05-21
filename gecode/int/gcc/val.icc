@@ -268,10 +268,10 @@ namespace Gecode { namespace Int { namespace GCC {
     // remove alredy satisfied values
     if (rs > 0) {
       IntSet remset(&rem[0], rs);
-      IntSetRanges rr(remset);
       for (int i = x.size(); i--;) {
+        IntSetRanges rr(remset);
         if (!x[i].assigned()) {
-          ModEvent me = x[i].minus(home, rr);
+          ModEvent me = x[i].minus_r(home, rr);
           if (me_failed(me))
             return ES_FAILED;
           mod |= x[i].assigned();

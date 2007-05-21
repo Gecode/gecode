@@ -209,8 +209,7 @@ namespace Gecode { namespace Int { namespace Linear {
   tell:
     {
       ResultIter i(this,x);
-      Iter::Values::ToRanges<ResultIter> r(i);
-      return x.narrow(home,r);
+      return x.narrow_v(home,i);
     }
   }
 

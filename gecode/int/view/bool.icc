@@ -161,33 +161,38 @@ namespace Gecode {
     
     
     /*
-     * Domain update by value iterator
+     * Iterator-based domain update
      *
      */
     template <class I>
     forceinline ModEvent
-    BoolView::prune(Space* home, I& i) {
-      return var->prune(home,i);
-    }
-
-    /*
-     * Domain update by range iterator
-     *
-     */
-    template <class I>
-    forceinline ModEvent
-    BoolView::narrow(Space* home, I& i) {
-      return var->narrow(home,i);
+    BoolView::narrow_r(Space* home, I& i, bool depend) {
+      return var->narrow_r(home,i,depend);
     }
     template <class I>
     forceinline ModEvent
-    BoolView::inter(Space* home, I& i) {
-      return var->inter(home,i);
+    BoolView::inter_r(Space* home, I& i, bool depend) {
+      return var->inter_r(home,i,depend);
     }
     template <class I>
     forceinline ModEvent
-    BoolView::minus(Space* home, I& i) {
-      return var->minus(home,i);
+    BoolView::minus_r(Space* home, I& i, bool depend) {
+      return var->minus_r(home,i,depend);
+    }
+    template <class I>
+    forceinline ModEvent
+    BoolView::narrow_v(Space* home, I& i, bool depend) {
+      return var->narrow_v(home,i,depend);
+    }
+    template <class I>
+    forceinline ModEvent
+    BoolView::inter_v(Space* home, I& i, bool depend) {
+      return var->inter_v(home,i,depend);
+    }
+    template <class I>
+    forceinline ModEvent
+    BoolView::minus_v(Space* home, I& i, bool depend) {
+      return var->minus_v(home,i,depend);
     }
 
 

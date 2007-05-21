@@ -71,10 +71,10 @@ namespace Gecode { namespace Int { namespace Dom {
   ReIntSet<View>::propagate(Space* home) {
     IntSetRanges i_is(is);
     if (b.one()) {
-      GECODE_ME_CHECK(x0.inter(home,i_is)); goto subsumed;
+      GECODE_ME_CHECK(x0.inter_r(home,i_is,false)); goto subsumed;
     }
     if (b.zero()) {
-      GECODE_ME_CHECK(x0.minus(home,i_is)); goto subsumed;
+      GECODE_ME_CHECK(x0.minus_r(home,i_is,false)); goto subsumed;
     }
 
     {

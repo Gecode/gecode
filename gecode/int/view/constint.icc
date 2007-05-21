@@ -161,37 +161,46 @@ namespace Gecode {
 
 
     /*
-     * Domain update by value iterator
+     * Iterator-based domain update
      *
      */
     template <class I>
     forceinline ModEvent
-    ConstIntView::prune(Space* home, I& i) {
-      while (i() && (i.val() < x)) ++i;
-      return (i() && (i.val() > x)) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-
-
-    /*
-     * Domain update by range iterator
-     *
-     */
-    template <class I>
-    forceinline ModEvent
-    ConstIntView::narrow(Space*, I& i) {
+    ConstIntView::narrow_r(Space* home, I& i, bool) {
       return i() ? ME_INT_NONE : ME_INT_FAILED;
     }
     template <class I>
-    ModEvent
-    ConstIntView::inter(Space*, I& i) {
-      while (i() && (i.max() < x)) ++i;
+    forceinline ModEvent
+    ConstIntView::inter_r(Space* home, I& i, bool) {
+      while (i() && (i.max() < x)) 
+        ++i;
       return (i() && (i.min() <= x)) ? ME_INT_NONE : ME_INT_FAILED;
     }
     template <class I>
-    ModEvent
-    ConstIntView::minus(Space*, I& i) {
-      while (i() && (i.max() < x)) ++i;
+    forceinline ModEvent
+    ConstIntView::minus_r(Space* home, I& i, bool) {
+      while (i() && (i.max() < x)) 
+        ++i;
       return (i() && (i.min() <= x)) ? ME_INT_FAILED : ME_INT_NONE;
+    }
+    template <class I>
+    forceinline ModEvent
+    ConstIntView::narrow_v(Space* home, I& i, bool) {
+      return i() ? ME_INT_NONE : ME_INT_FAILED;
+    }
+    template <class I>
+    forceinline ModEvent
+    ConstIntView::inter_v(Space* home, I& i, bool) {
+      while (i() && (i.val() < x)) 
+        ++i;
+      return (i() && (i.val() == x)) ? ME_INT_NONE : ME_INT_FAILED;
+    }
+    template <class I>
+    forceinline ModEvent
+    ConstIntView::minus_v(Space* home, I& i, bool) {
+      while (i() && (i.val() < x)) 
+        ++i;
+      return (i() && (i.val() == x)) ? ME_INT_FAILED : ME_INT_NONE;
     }
 
 

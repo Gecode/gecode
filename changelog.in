@@ -53,6 +53,16 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Modul:  int
+What:   change
+Rank:   major
+[DESCRIPTION]
+Iterator-based domain operations have been renamed,
+reimplemented, and extended. Now operations for both range and
+value iterators are supported and the operations can be told to
+perform more efficient destructive updates.
+
+[ENTRY]
 Modul:  kernel
 What:   change
 Rank:   minor

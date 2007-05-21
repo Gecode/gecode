@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace Dom {
     }
     if (b.zero()) {
       Iter::Ranges::Singleton r(min,max);
-      GECODE_ME_CHECK(x0.minus(home,r));
+      GECODE_ME_CHECK(x0.minus_r(home,r,false));
       goto subsumed;
     }
     if ((x0.max() <= max) && (x0.min() >= min)) {

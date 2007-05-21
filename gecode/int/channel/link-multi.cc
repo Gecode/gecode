@@ -186,11 +186,10 @@ namespace Gecode { namespace Int { namespace Channel {
     // Propagate from Boolean views to y
     if (BoolView::pme(this) == ME_BOOL_VAL) {
       BoolIter bv(x,o);
-      Iter::Values::ToRanges<BoolIter> br(bv);
 #ifndef NDEBUG
       ModEvent me = 
 #endif
-      y.narrow(home,br);
+      y.narrow_v(home,bv,false);
       assert(!me_failed(me) && (me != ME_INT_VAL));
     }
     return ES_FIX;

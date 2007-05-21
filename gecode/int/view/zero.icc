@@ -156,39 +156,47 @@ namespace Gecode {
 
 
     /*
-     * Domain update by value iterator
+     * Iterator-based domain update
      *
      */
     template <class I>
     forceinline ModEvent
-    ZeroIntView::prune(Space* home, I& i) {
-      while (i() && (i.val() < 0)) ++i;
-      return (i() && (i.val() > 0)) ? ME_INT_NONE : ME_INT_FAILED;
-    }
-
-
-    /*
-     * Domain update by range iterator
-     *
-     */
-    template <class I>
-    forceinline ModEvent
-    ZeroIntView::narrow(Space*, I& i) {
+    ZeroIntView::narrow_r(Space* home, I& i, bool) {
       return i() ? ME_INT_NONE : ME_INT_FAILED;
     }
     template <class I>
-    ModEvent
-    ZeroIntView::inter(Space*, I& i) {
-      while (i() && (i.max() < 0)) ++i;
+    forceinline ModEvent
+    ZeroIntView::inter_r(Space* home, I& i, bool) {
+      while (i() && (i.max() < 0)) 
+        ++i;
       return (i() && (i.min() <= 0)) ? ME_INT_NONE : ME_INT_FAILED;
     }
     template <class I>
-    ModEvent
-    ZeroIntView::minus(Space*, I& i) {
-      while (i() && (i.max() < 0)) ++i;
+    forceinline ModEvent
+    ZeroIntView::minus_r(Space* home, I& i, bool) {
+      while (i() && (i.max() < 0)) 
+        ++i;
       return (i() && (i.min() <= 0)) ? ME_INT_FAILED : ME_INT_NONE;
     }
-
+    template <class I>
+    forceinline ModEvent
+    ZeroIntView::narrow_v(Space* home, I& i, bool) {
+      return i() ? ME_INT_NONE : ME_INT_FAILED;
+    }
+    template <class I>
+    forceinline ModEvent
+    ZeroIntView::inter_v(Space* home, I& i, bool) {
+      while (i() && (i.val() < 0)) 
+        ++i;
+      return (i() && (i.val() == 0)) ? ME_INT_NONE : ME_INT_FAILED;
+    }
+    template <class I>
+    forceinline ModEvent
+    ZeroIntView::minus_v(Space* home, I& i, bool) {
+      while (i() && (i.val() < 0)) 
+        ++i;
+      return (i() && (i.val() == 0)) ? ME_INT_FAILED : ME_INT_NONE;
+    }
 
 
     /*

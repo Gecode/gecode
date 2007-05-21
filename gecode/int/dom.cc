@@ -50,7 +50,7 @@ namespace Gecode {
     if (home->failed()) return;
     IntView xv(x);
     IntSetRanges ris(is);
-    GECODE_ME_FAIL(home,xv.inter(home,ris));
+    GECODE_ME_FAIL(home,xv.inter_r(home,ris,false));
   }
 
   void
@@ -59,7 +59,7 @@ namespace Gecode {
     for (int i = x.size(); i--; ) {
       IntSetRanges ris(is);
       IntView xv(x[i]);
-      GECODE_ME_FAIL(home,xv.inter(home,ris));
+      GECODE_ME_FAIL(home,xv.inter_r(home,ris,false));
     }
   }
 

@@ -215,8 +215,8 @@ namespace Gecode { namespace Int { namespace Cumulatives {
             if (dtmin > 0) {
               Iter::Ranges::Singleton
                 a(low-dtmin+1, up), b(low+1, up+dtmin);
-                if (me_failed(start[t].minus(home,a)) ||
-                    me_failed(end[t].minus(home, b)))
+                if (me_failed(start[t].minus_r(home,a,false)) ||
+                    me_failed(end[t].minus_r(home, b,false)))
                   return ES_FAILED;
             }
             if (me_failed(duration[t].lq(home,

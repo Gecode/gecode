@@ -479,7 +479,7 @@ namespace Gecode { namespace Int { namespace Distinct {
 #ifndef NDEBUG
         ModEvent me = 
 #endif
-          view[i]->view().prune(home,pv);
+          view[i]->view().minus_v(home,pv,false);
         assert(me != ME_INT_VAL);
       }
     }

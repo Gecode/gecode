@@ -290,8 +290,7 @@ namespace Gecode { namespace Int { namespace Element {
       (void) x0.eq(home,iv[0].idx);
     } else if (adjust) {
       IterIdxView<VA> i(&iv[0],&iv[n]);
-      Iter::Values::ToRanges<IterIdxView<VA> > ri(i);
-      (void) x0.narrow(home,ri);
+      (void) x0.narrow_v(home,i,false);
       assert(x0.size() == static_cast<unsigned int>(n));
     }
   }
@@ -476,7 +475,7 @@ namespace Gecode { namespace Int { namespace Element {
     for (int i = n; i--; )
       i_view[i].init(iv[i].view);
     Iter::Ranges::NaryUnion<ViewRanges<VA> > i_val(i_view, n);
-    GECODE_ME_CHECK(x1.inter(home,i_val));
+    GECODE_ME_CHECK(x1.inter_r(home,i_val));
     return x1.modified() ? ES_NOFIX : ES_FIX;
   }
 

@@ -84,7 +84,7 @@ namespace Gecode { namespace Set { namespace Int {
       // intersect every y in xs with lub(x0)
       for (int i=xs_size; i--; ) {
         LubRanges<SetView> ub(x0);
-        GECODE_ME_CHECK_MODIFIED(loopFlag, xs[i].inter(home,ub));
+        GECODE_ME_CHECK_MODIFIED(loopFlag, xs[i].inter_r(home,ub,false));
       }
 
       // remove gaps between vars in xs from lub(x0)

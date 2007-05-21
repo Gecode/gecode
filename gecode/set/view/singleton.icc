@@ -186,7 +186,7 @@ namespace Gecode {
 
     template <class I> ModEvent
     SingletonView::excludeI(Space* home, I& iter) {
-      return me_inttoset(view.minus(home,iter));
+      return me_inttoset(view.minus_r(home,iter));
     }
 
     template <class I> ModEvent
@@ -207,7 +207,7 @@ namespace Gecode {
 
     template <class I> ModEvent
     SingletonView::intersectI(Space* home, I& iter) {
-      return me_inttoset(view.inter(home,iter));
+      return me_inttoset(view.inter_r(home,iter));
     }
 
     forceinline void

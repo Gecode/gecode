@@ -55,7 +55,7 @@ namespace Gecode { namespace Set { namespace Int {
     //x0 lacks everything smaller than smallest possible x1.
 
     LubRanges<SetView> ub(x0);
-    GECODE_ME_CHECK(x1.inter(home,ub));
+    GECODE_ME_CHECK(x1.inter_r(home,ub,false));
     GECODE_ME_CHECK(x1.lq(home,x0.glbMin()));
     //if cardMin>lbSize?
     assert(x0.cardMin()>=1);
@@ -88,7 +88,7 @@ namespace Gecode { namespace Set { namespace Int {
   ExecStatus
   MaxElement::propagate(Space* home) {
     LubRanges<SetView> ub(x0);
-    GECODE_ME_CHECK(x1.inter(home,ub));
+    GECODE_ME_CHECK(x1.inter_r(home,ub,false));
     GECODE_ME_CHECK(x1.gq(home,x0.glbMax()));
     assert(x0.cardMin()>=1);
     GECODE_ME_CHECK(x1.gq(home,x0.lubMinN(x0.cardMin()-1)));

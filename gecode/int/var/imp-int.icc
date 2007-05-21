@@ -390,13 +390,186 @@ namespace Gecode { namespace Int {
 
 
   /*
-   * Tell operations with respect to value iterators
+   * Forward range iterator for rangelists
    *
    */
 
+  forceinline
+  IntVarImpFwd::IntVarImpFwd(void) {}
+  forceinline
+  IntVarImpFwd::IntVarImpFwd(const IntVarImp* x)
+    : p(NULL), c(x->ranges_fwd()) {}
+  forceinline void
+  IntVarImpFwd::init(const IntVarImp* x) {
+    p=NULL; c=x->ranges_fwd();
+  }
+
+  forceinline bool
+  IntVarImpFwd::operator()(void) const {
+    return c != NULL;
+  }
+  forceinline void
+  IntVarImpFwd::operator++(void) {
+    const IntVarImp::RangeList* n=c->next(p); p=c; c=n;
+  }
+
+  forceinline int
+  IntVarImpFwd::min(void) const {
+    return c->min();
+  }
+  forceinline int
+  IntVarImpFwd::max(void) const {
+    return c->max();
+  }
+  forceinline unsigned int
+  IntVarImpFwd::width(void) const {
+    return c->width();
+  }
+
+
+  /*
+   * Backward range iterator for rangelists
+   *
+   */
+
+  forceinline
+  IntVarImpBwd::IntVarImpBwd(void) {}
+  forceinline
+  IntVarImpBwd::IntVarImpBwd(const IntVarImp* x)
+    : n(NULL), c(x->ranges_bwd()) {}
+  forceinline void
+  IntVarImpBwd::init(const IntVarImp* x) {
+    n=NULL; c=x->ranges_bwd();
+  }
+
+  forceinline bool
+  IntVarImpBwd::operator()(void) const {
+    return c != NULL;
+  }
+  forceinline void
+  IntVarImpBwd::operator++(void) {
+    const IntVarImp::RangeList* p=c->prev(n); n=c; c=p;
+  }
+
+  forceinline int
+  IntVarImpBwd::min(void) const {
+    return c->min();
+  }
+  forceinline int
+  IntVarImpBwd::max(void) const {
+    return c->max();
+  }
+  forceinline unsigned int
+  IntVarImpBwd::width(void) const {
+    return c->width();
+  }
+
+
+  /*
+   * Iterator-based domain operations
+   *
+   */
   template <class I>
   forceinline ModEvent
-  IntVarImp::prune(Space* home, I& i) {
+  IntVarImp::narrow_r(Space* home, I& ri, bool depends) {
+    // Is new domain empty?
+    if (!ri())
+      return ME_INT_FAILED;
+    int min0 = ri.min();
+    int max0 = ri.max();
+    ++ri;
+    // Is new domain range?
+    if (!ri()) {
+      // Remove possible rangelist (if it was not a range, the domain
+      // must have been narrowed!)
+      if (fst()) {
+        fst()->dispose(home,NULL,lst());
+        fst(NULL); holes = 0;
+      }
+      const int min1 = dom.min(); dom.min(min0);
+      const int max1 = dom.max(); dom.max(max0);
+      if ((min0 == min1) && (max0 == max1))
+        return ME_INT_NONE;
+      if (min0 == max0) {
+        IntDelta d;
+        if (!notify(home,ME_INT_VAL,&d))
+          return ME_INT_FAILED;
+        return ME_INT_VAL;
+      }
+    } else {
+      // Construct new rangelist
+      RangeList*   f = new (home) RangeList(min0,max0,NULL,NULL);
+      RangeList*   l = f;
+      unsigned int s = max0-min0+1;
+      do {
+        RangeList* n = new (home) RangeList(ri.min(),ri.max(),l,NULL);
+        l->next(NULL,n);
+        l = n;
+        s += ri.width();
+        ++ri;
+      } while (ri());
+      if (fst() != NULL)
+        fst()->dispose(home,NULL,lst());
+      fst(f); lst(l);
+      // Check for modification
+      if (size() == s)
+        return ME_INT_NONE;
+      const int min1 = dom.min(); min0 = f->min(); dom.min(min0);
+      const int max1 = dom.max(); max0 = l->max(); dom.max(max0);
+      holes = width() - s;
+      if ((min0 == min1) && (max0 == max1)) {
+        IntDelta d;
+        if (!notify(home,ME_INT_DOM,&d))
+          return ME_INT_FAILED;
+        return ME_INT_DOM;
+      }
+    }
+    {
+      IntDelta d;
+      if (!notify(home,ME_INT_BND,&d))
+        return ME_INT_FAILED;
+    }
+    return ME_INT_BND;
+  }
+
+  template <class I>
+  forceinline ModEvent
+  IntVarImp::inter_r(Space* home, I& i, bool) {
+    IntVarImpFwd j(this);
+    Iter::Ranges::Inter<I,IntVarImpFwd> ij(i,j);
+    return narrow_r(home,ij,true);
+  }
+
+  template <class I>
+  forceinline ModEvent
+  IntVarImp::minus_r(Space* home, I& i, bool) {
+    IntVarImpFwd j(this);
+    Iter::Ranges::Diff<IntVarImpFwd,I> ij(j,i);
+    return narrow_r(home,ij,true);
+  }
+
+  template <class I>
+  forceinline ModEvent
+  IntVarImp::narrow_v(Space* home, I& i, bool depends) {
+    Iter::Values::ToRanges<I> r(i);
+    return narrow_r(home,r,depends);
+  }
+
+  template <class I>
+  forceinline ModEvent
+  IntVarImp::inter_v(Space* home, I& i, bool depends) {
+    Iter::Values::ToRanges<I> r(i);
+    return inter_r(home,r,depends);
+  }
+
+  template <class I>
+  forceinline ModEvent
+  IntVarImp::minus_v(Space* home, I& i, bool depends) {
+    if (depends) {
+      Iter::Values::ToRanges<I> r(i);
+      return minus_r(home, r, true);
+    }
+      
     // Skip all values that are too small
     while (i() && (i.val() < dom.min())) 
       ++i;
@@ -406,6 +579,10 @@ namespace Gecode { namespace Int {
       return ME_INT_NONE;
 
     int v = i.val(); ++i;
+    // Skip values that are the same
+    while (i() && (i.val() == v))
+      ++i;
+
     // Is there only a single value to be pruned?
     if (!i() || (i.val() > dom.max()))
       return nq_full(home,v);
@@ -526,73 +703,6 @@ namespace Gecode { namespace Int {
     return ME_INT_NONE;
   }
 
-  /*
-   * Tell operations with respect to range iterators
-   *
-   */
-
-  template <class I>
-  forceinline ModEvent
-  IntVarImp::narrow(Space* home, I& ri) {
-    // Is new domain empty?
-    if (!ri())
-      return ME_INT_FAILED;
-    int min0 = ri.min();
-    int max0 = ri.max();
-    ++ri;
-    // Is new domain range?
-    if (!ri()) {
-      // Remove possible rangelist (if it was not a range, the domain
-      // must have been narrowed!)
-      if (fst()) {
-        fst()->dispose(home,NULL,lst());
-        fst(NULL); holes = 0;
-      }
-      const int min1 = dom.min(); dom.min(min0);
-      const int max1 = dom.max(); dom.max(max0);
-      if ((min0 == min1) && (max0 == max1))
-        return ME_INT_NONE;
-      if (min0 == max0) {
-        IntDelta d;
-        if (!notify(home,ME_INT_VAL,&d))
-          return ME_INT_FAILED;
-        return ME_INT_VAL;
-      }
-    } else {
-      // Construct new rangelist
-      RangeList*   f = new (home) RangeList(min0,max0,NULL,NULL);
-      RangeList*   l = f;
-      unsigned int s = max0-min0+1;
-      do {
-        RangeList* n = new (home) RangeList(ri.min(),ri.max(),l,NULL);
-        l->next(NULL,n);
-        l = n;
-        s += ri.width();
-        ++ri;
-      } while (ri());
-      if (fst() != NULL)
-        fst()->dispose(home,NULL,lst());
-      fst(f); lst(l);
-      // Check for modification
-      if (size() == s)
-        return ME_INT_NONE;
-      const int min1 = dom.min(); min0 = f->min(); dom.min(min0);
-      const int max1 = dom.max(); max0 = l->max(); dom.max(max0);
-      holes = width() - s;
-      if ((min0 == min1) && (max0 == max1)) {
-        IntDelta d;
-        if (!notify(home,ME_INT_DOM,&d))
-          return ME_INT_FAILED;
-        return ME_INT_DOM;
-      }
-    }
-    {
-      IntDelta d;
-      if (!notify(home,ME_INT_BND,&d))
-        return ME_INT_FAILED;
-    }
-    return ME_INT_BND;
-  }
 
   /*
    * Copying a variable
@@ -605,102 +715,6 @@ namespace Gecode { namespace Int {
       : perform_copy(home,share);
   }
 
-
-  /*
-   * Forward range iterator for rangelists
-   *
-   */
-
-  forceinline
-  IntVarImpFwd::IntVarImpFwd(void) {}
-  forceinline
-  IntVarImpFwd::IntVarImpFwd(const IntVarImp* x)
-    : p(NULL), c(x->ranges_fwd()) {}
-  forceinline void
-  IntVarImpFwd::init(const IntVarImp* x) {
-    p=NULL; c=x->ranges_fwd();
-  }
-
-  forceinline bool
-  IntVarImpFwd::operator()(void) const {
-    return c != NULL;
-  }
-  forceinline void
-  IntVarImpFwd::operator++(void) {
-    const IntVarImp::RangeList* n=c->next(p); p=c; c=n;
-  }
-
-  forceinline int
-  IntVarImpFwd::min(void) const {
-    return c->min();
-  }
-  forceinline int
-  IntVarImpFwd::max(void) const {
-    return c->max();
-  }
-  forceinline unsigned int
-  IntVarImpFwd::width(void) const {
-    return c->width();
-  }
-
-
-  /*
-   * Backward range iterator for rangelists
-   *
-   */
-
-  forceinline
-  IntVarImpBwd::IntVarImpBwd(void) {}
-  forceinline
-  IntVarImpBwd::IntVarImpBwd(const IntVarImp* x)
-    : n(NULL), c(x->ranges_bwd()) {}
-  forceinline void
-  IntVarImpBwd::init(const IntVarImp* x) {
-    n=NULL; c=x->ranges_bwd();
-  }
-
-  forceinline bool
-  IntVarImpBwd::operator()(void) const {
-    return c != NULL;
-  }
-  forceinline void
-  IntVarImpBwd::operator++(void) {
-    const IntVarImp::RangeList* p=c->prev(n); n=c; c=p;
-  }
-
-  forceinline int
-  IntVarImpBwd::min(void) const {
-    return c->min();
-  }
-  forceinline int
-  IntVarImpBwd::max(void) const {
-    return c->max();
-  }
-  forceinline unsigned int
-  IntVarImpBwd::width(void) const {
-    return c->width();
-  }
-
-
-  /*
-   * More domain operations
-   *
-   */
-  template <class I>
-  forceinline ModEvent
-  IntVarImp::inter(Space* home, I& i) {
-    IntVarImpFwd j(this);
-    Iter::Ranges::Inter<I,IntVarImpFwd> ij(i,j);
-    return narrow(home,ij);
-  }
-
-  template <class I>
-  forceinline ModEvent
-  IntVarImp::minus(Space* home, I& i) {
-    IntVarImpFwd j(this);
-    Iter::Ranges::Diff<IntVarImpFwd,I> ij(j,i);
-    return narrow(home,ij);
-  }
 
   /*
    * Dependencies

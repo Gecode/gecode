@@ -383,34 +383,12 @@ namespace Gecode { namespace Int {
 
 
   /*
-   * Tell operations with respect to value iterators
-   *
-   */
-
-  template <class I>
-  forceinline ModEvent
-  BoolVarImp::prune(Space* home, I& i) {
-    while (i() && (i.val() < 0)) ++i;
-    if (!i() || (i.val() > 1))
-      return ME_INT_NONE;
-    if (i.val() == 0) {
-      ++i;
-      if (!i() || (i.val() > 1))
-        return one(home);
-      return ME_INT_FAILED;
-    } else {
-      assert(i.val() == 1);
-      return zero(home);
-    }
-  }
-
-  /*
-   * More domain operations
+   * Iterator-based domain operations
    *
    */
   template <class I>
   forceinline ModEvent
-  BoolVarImp::narrow(Space* home, I& i) {
+  BoolVarImp::narrow_r(Space* home, I& i, bool) {
     // Is new domain empty?
     if (!i())
       return ME_INT_FAILED;
@@ -431,7 +409,7 @@ namespace Gecode { namespace Int {
   }
   template <class I>
   forceinline ModEvent
-  BoolVarImp::inter(Space* home, I& i) {
+  BoolVarImp::inter_r(Space* home, I& i, bool) {
     // Skip all ranges that are too small
     while (i() && (i.max() < 0))
       ++i;
@@ -448,7 +426,7 @@ namespace Gecode { namespace Int {
   }
   template <class I>
   forceinline ModEvent
-  BoolVarImp::minus(Space* home, I& i) {
+  BoolVarImp::minus_r(Space* home, I& i, bool) {
     // Skip all ranges that are too small
     while (i() && (i.max() < 0))
       ++i;
@@ -463,6 +441,66 @@ namespace Gecode { namespace Int {
     assert((i.min() <= 0) && (i.max() >= 1));
     return ME_INT_FAILED;
   }
+
+  template <class I>
+  forceinline ModEvent
+  BoolVarImp::narrow_v(Space* home, I& i, bool) {
+    if (!i())
+      return ME_INT_FAILED;
+    if (!none())
+      return ME_INT_NONE;
+    if (i.val() == 0) {
+      do {
+        ++i;
+      } while (i() && (i.val() == 0));
+      if (!i())
+        return one(home);
+      return ME_INT_FAILED;
+    } else {
+      assert(i.val() == 1);
+      return zero(home);
+    }
+  }
+  template <class I>
+  forceinline ModEvent
+  BoolVarImp::inter_v(Space* home, I& i, bool) {
+    while (i() && (i.val() < 0)) 
+      ++i;
+    if (!i() || (i.val() > 1))
+      return ME_INT_FAILED;
+    if (i.val() == 0) {
+      do {
+        ++i;
+      } while (i() && (i.val() == 0));
+      if (!i() || (i.val() > 1))
+        return zero(home);
+      return ME_INT_NONE;
+    } else {
+      assert(i.val() == 1);
+      return one(home);
+    }
+  }
+  template <class I>
+  forceinline ModEvent
+  BoolVarImp::minus_v(Space* home, I& i, bool) {
+    while (i() && (i.val() < 0)) 
+      ++i;
+    if (!i() || (i.val() > 1))
+      return ME_INT_NONE;
+    if (i.val() == 0) {
+      do {
+        ++i;
+      } while (i() && (i.val() == 0));
+      if (!i() || (i.val() > 1))
+        return one(home);
+      return ME_INT_FAILED;
+    } else {
+      assert(i.val() == 1);
+      return zero(home);
+    }
+  }
+
+
 
   /*
    * Dependencies

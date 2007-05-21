@@ -437,11 +437,10 @@ namespace Gecode { namespace Int { namespace Regular {
             GECODE_ME_CHECK(x[i].nq(home,layers[i].lost));
           } else {
             LayerValues lv(layers[i]);
-            Iter::Values::ToRanges<LayerValues> lr(lv);
             if (x[i].modified()) {
-              GECODE_ME_CHECK(x[i].inter(home,lr));
+              GECODE_ME_CHECK(x[i].inter_v(home,lv,false));
             } else {
-              x[i].narrow(home,lr);
+              x[i].narrow_v(home,lv,false);
             }
           }
         }
@@ -461,8 +460,7 @@ namespace Gecode { namespace Int { namespace Regular {
             x[i].nq(home,layers[i].lost);
           } else {
             LayerValues lv(layers[i]);
-            Iter::Values::ToRanges<LayerValues> lr(lv);
-            x[i].narrow(home,lr);
+            x[i].narrow_v(home,lv,false);
           }
         }
         if (x[i].assigned())

@@ -200,28 +200,39 @@ namespace Gecode {
       ModEvent eq(Space* home, double n);
       //@}
 
-
-      /// \name Domain update by value iterator
-      //@{
       /**
-       * \brief Restrict domain values to be different from the values of \a i
+       * \name Domain update by iterator
+       * 
+       * Views can be both updated by range and value iterators.
+       * Value iterators do not need to be strict in that the same value
+       * is allowed to occur more than once in the iterated sequence.
        *
-       * \a i must be a value iterator without duplicate values. Note that 
-       * the update is destructive, that is, the iterator \a i can not 
-       * depend on the view to be updated.
+       * The argument \a depends must be true, if the iterator
+       * passed as argument depends on the view on which the operation 
+       * is invoked. In this case, the view is only updated after the 
+       * iterator has been consumed. Otherwise, the domain might be updated 
+       * concurrently while following the iterator.
        *
        */
-      template <class I> ModEvent prune(Space* home, I& i);
-      //@}
-
-      /// \name Domain update by range iterator
       //@{
-      /// Replace domain by range sequence described by \a i
-      template <class I> ModEvent narrow(Space* home, I& i);
-      /// Intersect domain with range sequence described by \a i
-      template <class I> ModEvent inter(Space* home, I& i);
-      /// Remove from domain the range sequence described by \a i
-      template <class I> ModEvent minus(Space* home, I& i);
+      /// Replace domain by ranges described by \a i
+      template <class I> 
+      ModEvent narrow_r(Space* home, I& i, bool depends=true);
+      /// Intersect domain with ranges described by \a i
+      template <class I> 
+      ModEvent inter_r(Space* home, I& i, bool depends=true);
+      /// Remove from domain the ranges described by \a i
+      template <class I> 
+      ModEvent minus_r(Space* home, I& i, bool depends=true);
+      /// Replace domain by values described by \a i
+      template <class I> 
+      ModEvent narrow_v(Space* home, I& i, bool depends=true);
+      /// Intersect domain with values described by \a i
+      template <class I> 
+      ModEvent inter_v(Space* home, I& i, bool depends=true);
+      /// Remove from domain the values described by \a i
+      template <class I> 
+      ModEvent minus_v(Space* home, I& i, bool depends=true);
       //@}
 
       /// \name Delta information for advisors
@@ -355,27 +366,39 @@ namespace Gecode {
       ModEvent eq(Space* home, double n);
       //@}
 
-      /// \name Domain update by value iterator
-      //@{
       /**
-       * \brief Restrict domain values to be different from the values of \a i
+       * \name Domain update by iterator
+       * 
+       * Views can be both updated by range and value iterators.
+       * Value iterators do not need to be strict in that the same value
+       * is allowed to occur more than once in the iterated sequence.
        *
-       * \a i must be a value iterator without duplicate values. Note that 
-       * the update is destructive, that is, the iterator \a i can not 
-       * depend on the view to be updated.
+       * The argument \a depends must be true, if the iterator
+       * passed as argument depends on the view on which the operation 
+       * is invoked. In this case, the view is only updated after the 
+       * iterator has been consumed. Otherwise, the domain might be updated 
+       * concurrently while following the iterator.
        *
        */
-      template <class I> ModEvent prune(Space* home, I& i);
-      //@}
-
-      /// \name Domain update by range iterator
       //@{
-      /// Replace domain by range sequence described by \a i
-      template <class I> ModEvent narrow(Space* home, I& i);
-      /// Intersect domain with range sequence described by \a i
-      template <class I> ModEvent inter(Space* home, I& i);
-      /// Remove from domain the range sequence described by \a i
-      template <class I> ModEvent minus(Space* home, I& i);
+      /// Replace domain by ranges described by \a i
+      template <class I> 
+      ModEvent narrow_r(Space* home, I& i, bool depends=true);
+      /// Intersect domain with ranges described by \a i
+      template <class I> 
+      ModEvent inter_r(Space* home, I& i, bool depends=true);
+      /// Remove from domain the ranges described by \a i
+      template <class I> 
+      ModEvent minus_r(Space* home, I& i, bool depends=true);
+      /// Replace domain by values described by \a i
+      template <class I> 
+      ModEvent narrow_v(Space* home, I& i, bool depends=true);
+      /// Intersect domain with values described by \a i
+      template <class I> 
+      ModEvent inter_v(Space* home, I& i, bool depends=true);
+      /// Remove from domain the values described by \a i
+      template <class I> 
+      ModEvent minus_v(Space* home, I& i, bool depends=true);
       //@}
 
       /// \name View-dependent propagator support
@@ -541,27 +564,39 @@ namespace Gecode {
       ModEvent eq(Space* home, double n);
       //@}
 
-      /// \name Domain update by value iterator
-      //@{
       /**
-       * \brief Restrict domain values to be different from the values of \a i
+       * \name Domain update by iterator
+       * 
+       * Views can be both updated by range and value iterators.
+       * Value iterators do not need to be strict in that the same value
+       * is allowed to occur more than once in the iterated sequence.
        *
-       * \a i must be a value iterator without duplicate values. Note that 
-       * the update is destructive, that is, the iterator \a i can not 
-       * depend on the view to be updated.
+       * The argument \a depends must be true, if the iterator
+       * passed as argument depends on the view on which the operation 
+       * is invoked. In this case, the view is only updated after the 
+       * iterator has been consumed. Otherwise, the domain might be updated 
+       * concurrently while following the iterator.
        *
        */
-      template <class I> ModEvent prune(Space* home, I& i);
-      //@}
-
-      /// \name Domain update by range iterator
       //@{
-      /// Replace domain by range sequence described by \a i
-      template <class I> ModEvent narrow(Space* home, I& i);
-      /// Intersect domain with range sequence described by \a i
-      template <class I> ModEvent inter(Space* home, I& i);
-      /// Remove from domain the range sequence described by \a i
-      template <class I> ModEvent minus(Space* home, I& i);
+      /// Replace domain by ranges described by \a i
+      template <class I> 
+      ModEvent narrow_r(Space* home, I& i, bool depends=true);
+      /// Intersect domain with ranges described by \a i
+      template <class I> 
+      ModEvent inter_r(Space* home, I& i, bool depends=true);
+      /// Remove from domain the ranges described by \a i
+      template <class I> 
+      ModEvent minus_r(Space* home, I& i, bool depends=true);
+      /// Replace domain by values described by \a i
+      template <class I> 
+      ModEvent narrow_v(Space* home, I& i, bool depends=true);
+      /// Intersect domain with values described by \a i
+      template <class I> 
+      ModEvent inter_v(Space* home, I& i, bool depends=true);
+      /// Remove from domain the values described by \a i
+      template <class I> 
+      ModEvent minus_v(Space* home, I& i, bool depends=true);
       //@}
 
       /// \name View-dependent propagator support
@@ -927,27 +962,39 @@ namespace Gecode {
       ModEvent eq(Space* home, double n);
       //@}
 
-      /// \name Domain update by value iterator
-      //@{
       /**
-       * \brief Restrict domain values to be different from the values of \a i
+       * \name Domain update by iterator
+       * 
+       * Views can be both updated by range and value iterators.
+       * Value iterators do not need to be strict in that the same value
+       * is allowed to occur more than once in the iterated sequence.
        *
-       * \a i must be a value iterator without duplicate values. Note that 
-       * the update is destructive, that is, the iterator \a i can not 
-       * depend on the view to be updated.
+       * The argument \a depends must be true, if the iterator
+       * passed as argument depends on the view on which the operation 
+       * is invoked. In this case, the view is only updated after the 
+       * iterator has been consumed. Otherwise, the domain might be updated 
+       * concurrently while following the iterator.
        *
        */
-      template <class I> ModEvent prune(Space* home, I& i);
-      //@}
-
-      /// \name Domain update by range iterator
       //@{
-      /// Replace domain by range sequence described by \a i
-      template <class I> ModEvent narrow(Space* home, I& i);
-      /// Intersect domain with range sequence described by \a i
-      template <class I> ModEvent inter(Space* home, I& i);
-      /// Remove from domain the range sequence described by \a i
-      template <class I> ModEvent minus(Space* home, I& i);
+      /// Replace domain by ranges described by \a i
+      template <class I> 
+      ModEvent narrow_r(Space* home, I& i, bool depends=true);
+      /// Intersect domain with ranges described by \a i
+      template <class I> 
+      ModEvent inter_r(Space* home, I& i, bool depends=true);
+      /// Remove from domain the ranges described by \a i
+      template <class I> 
+      ModEvent minus_r(Space* home, I& i, bool depends=true);
+      /// Replace domain by values described by \a i
+      template <class I> 
+      ModEvent narrow_v(Space* home, I& i, bool depends=true);
+      /// Intersect domain with values described by \a i
+      template <class I> 
+      ModEvent inter_v(Space* home, I& i, bool depends=true);
+      /// Remove from domain the values described by \a i
+      template <class I> 
+      ModEvent minus_v(Space* home, I& i, bool depends=true);
       //@}
 
       /// \name View-dependent propagator support
@@ -1104,27 +1151,39 @@ namespace Gecode {
       ModEvent eq(Space* home, double n);
       //@}
 
-      /// \name Domain update by value iterator
-      //@{
       /**
-       * \brief Restrict domain values to be different from the values of \a i
+       * \name Domain update by iterator
+       * 
+       * Views can be both updated by range and value iterators.
+       * Value iterators do not need to be strict in that the same value
+       * is allowed to occur more than once in the iterated sequence.
        *
-       * \a i must be a value iterator without duplicate values. Note that 
-       * the update is destructive, that is, the iterator \a i can not 
-       * depend on the view to be updated.
+       * The argument \a depends must be true, if the iterator
+       * passed as argument depends on the view on which the operation 
+       * is invoked. In this case, the view is only updated after the 
+       * iterator has been consumed. Otherwise, the domain might be updated 
+       * concurrently while following the iterator.
        *
        */
-      template <class I> ModEvent prune(Space* home, I& i);
-      //@}
-
-      /// \name Domain update by range iterator
       //@{
-      /// Replace domain by range sequence described by \a i
-      template <class I> ModEvent narrow(Space* home, I& i);
-      /// Intersect domain with range sequence described by \a i
-      template <class I> ModEvent inter(Space* home, I& i);
-      /// Remove from domain the range sequence described by \a i
-      template <class I> ModEvent minus(Space* home, I& i);
+      /// Replace domain by ranges described by \a i
+      template <class I> 
+      ModEvent narrow_r(Space* home, I& i, bool depends=true);
+      /// Intersect domain with ranges described by \a i
+      template <class I> 
+      ModEvent inter_r(Space* home, I& i, bool depends=true);
+      /// Remove from domain the ranges described by \a i
+      template <class I> 
+      ModEvent minus_r(Space* home, I& i, bool depends=true);
+      /// Replace domain by values described by \a i
+      template <class I> 
+      ModEvent narrow_v(Space* home, I& i, bool depends=true);
+      /// Intersect domain with values described by \a i
+      template <class I> 
+      ModEvent inter_v(Space* home, I& i, bool depends=true);
+      /// Remove from domain the values described by \a i
+      template <class I> 
+      ModEvent minus_v(Space* home, I& i, bool depends=true);
       //@}
 
       /// \name View-dependent propagator support
@@ -1323,27 +1382,39 @@ namespace Gecode {
       ModEvent eq(Space* home, double n);
       //@}
 
-      /// \name Domain update by value iterator
-      //@{
       /**
-       * \brief Restrict domain values to be different from the values of \a i
+       * \name Domain update by iterator
+       * 
+       * Views can be both updated by range and value iterators.
+       * Value iterators do not need to be strict in that the same value
+       * is allowed to occur more than once in the iterated sequence.
        *
-       * \a i must be a value iterator without duplicate values. Note that 
-       * the update is destructive, that is, the iterator \a i can not 
-       * depend on the view to be updated.
+       * The argument \a depends must be true, if the iterator
+       * passed as argument depends on the view on which the operation 
+       * is invoked. In this case, the view is only updated after the 
+       * iterator has been consumed. Otherwise, the domain might be updated 
+       * concurrently while following the iterator.
        *
        */
-      template <class I> ModEvent prune(Space* home, I& i);
-      //@}
-
-      /// \name Domain update by range iterator
       //@{
-      /// Replace domain by range sequence described by \a i
-      template <class I> ModEvent narrow(Space* home, I& i);
-      /// Intersect domain with range sequence described by \a i
-      template <class I> ModEvent inter(Space* home, I& i);
-      /// Remove from domain the range sequence described by \a i
-      template <class I> ModEvent minus(Space* home, I& i);
+      /// Replace domain by ranges described by \a i
+      template <class I> 
+      ModEvent narrow_r(Space* home, I& i, bool depends=true);
+      /// Intersect domain with ranges described by \a i
+      template <class I> 
+      ModEvent inter_r(Space* home, I& i, bool depends=true);
+      /// Remove from domain the ranges described by \a i
+      template <class I> 
+      ModEvent minus_r(Space* home, I& i, bool depends=true);
+      /// Replace domain by values described by \a i
+      template <class I> 
+      ModEvent narrow_v(Space* home, I& i, bool depends=true);
+      /// Intersect domain with values described by \a i
+      template <class I> 
+      ModEvent inter_v(Space* home, I& i, bool depends=true);
+      /// Remove from domain the values described by \a i
+      template <class I> 
+      ModEvent minus_v(Space* home, I& i, bool depends=true);
       //@}
 
       /// \name Delta information for advisors

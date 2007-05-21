@@ -87,7 +87,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         for (int i = n; i--; )
           if ((d.min() <= x[i].max()) && (d.max() >= x[i].min())) {
             IntSetRanges dr(d);
-            ModEvent me = x[i].minus(home,dr);
+            ModEvent me = x[i].minus_r(home,dr,false);
             if (me_failed(me))
               goto failed;
             if (me == ME_INT_VAL) {

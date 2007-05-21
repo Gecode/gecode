@@ -485,7 +485,7 @@ namespace Gecode { namespace Int { namespace GCC {
       int n = xv.size();
       for (int i = n; i--; ) {
         IntSetRanges remzero(zero);
-        GECODE_ME_FAIL(home, xv[i].minus(home, remzero));
+        GECODE_ME_FAIL(home, xv[i].minus_r(home, remzero, false));
       }
       GCC::post_template<IntView,OccurBndsView,false>(home, xv, red, icl, all);
     } else {

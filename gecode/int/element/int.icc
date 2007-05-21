@@ -285,11 +285,10 @@ namespace Gecode { namespace Int { namespace Element {
     IterIdx i(iv[0]);
     if (!i())
       return ES_FAILED;
-    Iter::Values::ToRanges<IterIdx> ri(i);
-    x0.narrow(home,ri);
-    IterVal v(iv[0]); Iter::Values::ToRanges<IterVal> rv(v);
+    x0.narrow_v(home,i,false);
+    IterVal v(iv[0]);
     ExecStatus es = x1.modified() ? ES_NOFIX : ES_FIX;
-    x1.narrow(home,rv);
+    x1.narrow_v(home,v,false);
     return es;
   }
 
