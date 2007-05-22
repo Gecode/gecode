@@ -130,6 +130,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     ValNode<View>** next_val_ref(void);
     /// Return next value node
     ValNode<View>* next_val(void) const;
+    /// Set next value node to \a v
+    void next_val(ValNode<View>* v);
   };
 
   /**
@@ -263,47 +265,88 @@ namespace Gecode { namespace Int { namespace Distinct {
     view = reinterpret_cast<ViewNode<View>**>
       (home->alloc(n_view*sizeof(ViewNode<View>*)));
 
+    // Find value information for construction of view value graph
+    int min = x[n_view-1].min();
+    int max = x[n_view-1].max();
+    for (int i=n_view-1; i--; ) {
+      min = std::min(min,x[i].min());
+      max = std::max(max,x[i].max());
+    }
+
+    unsigned int width = max-min+1;
+
+    // Definitly not enough values
+    if (width < static_cast<unsigned int>(n_view))
+      return ES_FAILED;
+
     n_val = 0;
     val = NULL;
 
-    for (int i=n; i--; ) {
-      view[i] = new (home) ViewNode<View>(x[i]);
-      Edge<View>** edge_p = view[i]->val_edges_ref();
-      ViewValues<View> xi(x[i]);
-      ValNode<View>** v = &val;
-      while (xi() && (*v != NULL)) {
-        if ((*v)->val() == xi.val()) {
-          // Value node does already exist, create new edge
-          *edge_p = new (home) Edge<View>(*v,view[i]);
+    if (static_cast<unsigned int>(n_view)*4 >= width) {
+      // Values are dense: use a mapping
+      GECODE_AUTOARRAY(ValNode<View>*,val2node,width);
+
+      for (unsigned int i=width; i--; )
+        val2node[i]=NULL;
+
+      for (int i=n; i--; ) {
+        view[i] = new (home) ViewNode<View>(x[i]);
+        Edge<View>** edge_p = view[i]->val_edges_ref();
+        ViewValues<View> xi(x[i]);
+        while (xi()) {
+          if (val2node[xi.val()-min] == NULL)
+            val2node[xi.val()-min] = new (home) ValNode<View>(xi.val(),NULL);
+          *edge_p = new (home) Edge<View>(val2node[xi.val()-min],view[i]);
           edge_p = (*edge_p)->next_edge_ref();
-          v = (*v)->next_val_ref();
           ++xi;
-        } else if ((*v)->val() < xi.val()) {
-          // Skip to next value node
-          v = (*v)->next_val_ref();
-        } else {
-          // Value node does not yet exist, create and link it
+        }
+        *edge_p = NULL;
+      }
+
+      for (unsigned int i=width; i--; )
+        if (val2node[i] != NULL) {
+          val2node[i]->next_val(val);
+          val = val2node[i];
+          n_val++;
+        }
+
+    } else {
+      // Values are sparse
+      for (int i=n; i--; ) {
+        view[i] = new (home) ViewNode<View>(x[i]);
+        Edge<View>** edge_p = view[i]->val_edges_ref();
+        ViewValues<View> xi(x[i]);
+        ValNode<View>** v = &val;
+        while (xi() && (*v != NULL)) {
+          if ((*v)->val() == xi.val()) {
+            // Value node does already exist, create new edge
+            *edge_p = new (home) Edge<View>(*v,view[i]);
+            edge_p = (*edge_p)->next_edge_ref();
+            v = (*v)->next_val_ref();
+            ++xi;
+          } else if ((*v)->val() < xi.val()) {
+            // Skip to next value node
+            v = (*v)->next_val_ref();
+          } else {
+            // Value node does not yet exist, create and link it
+            ValNode<View>* nv = new (home) ValNode<View>(xi.val(),*v);
+            *v = nv; v = nv->next_val_ref();
+            *edge_p = new (home) Edge<View>(nv,view[i]);
+            edge_p = (*edge_p)->next_edge_ref();
+            ++xi; n_val++;
+          }
+        }
+        // Create missing value nodes
+        while (xi()) {
           ValNode<View>* nv = new (home) ValNode<View>(xi.val(),*v);
           *v = nv; v = nv->next_val_ref();
           *edge_p = new (home) Edge<View>(nv,view[i]);
           edge_p = (*edge_p)->next_edge_ref();
           ++xi; n_val++;
         }
+        *edge_p = NULL;
       }
-      // Create missing value nodes
-      while (xi()) {
-        ValNode<View>* nv = new (home) ValNode<View>(xi.val(),*v);
-        *v = nv; v = nv->next_val_ref();
-        *edge_p = new (home) Edge<View>(nv,view[i]);
-        edge_p = (*edge_p)->next_edge_ref();
-        ++xi; n_val++;
-      }
-      *edge_p = NULL;
     }
-    
-    // Definitly not enough values
-    if (n_val < n)
-      return ES_FAILED;
 
     GECODE_AUTOSTACK(ViewNode<View>*,NULL,m,n_view);
     for (int i = n_view; i--; )

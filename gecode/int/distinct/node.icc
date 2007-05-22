@@ -89,6 +89,11 @@ namespace Gecode { namespace Int { namespace Distinct {
   ValNode<View>::next_val(void) const {
     return _next_val;
   }
+  template <class View>
+  forceinline void
+  ValNode<View>::next_val(ValNode<View>* n) {
+    _next_val = n;
+  }
 
 
 
