@@ -1403,7 +1403,8 @@ namespace Gecode { namespace Int { namespace GCC {
             assert(vrn->noe == 1);
             modified |= x[vi].modified();
 
-            x[vi].eq(home, vln->val);
+            if (me_failed(x[vi].eq(home, vln->val)))
+              failed(true);
             vars[vi] = vars[--n_var];
             vars[vi]->set_info(vi);
 
@@ -1419,7 +1420,8 @@ namespace Gecode { namespace Int { namespace GCC {
 
           int vidx = vln->kindex();
           if (isView)
-            k[vidx].eq(home, k[vidx].min());
+            if (me_failed(k[vidx].eq(home, k[vidx].min())))
+              failed(true);
 
           k[vidx].counter(k[vidx].min());
           modified |= k[vidx].modified();
@@ -1448,12 +1450,9 @@ namespace Gecode { namespace Int { namespace GCC {
       }
 
       if (isView) {
-        if (k[i].counter() == 0) {
-          ModEvent klq = k[i].lq(home, vals[i]->noe);
-          if (me_failed(klq)) {
+        if (k[i].counter() == 0)
+          if (me_failed(k[i].lq(home, vals[i]->noe)))
             failed(true);
-          }
-        }
         modified |= k[i].modified() && k[i].max() != vals[i]->noe;
       }
     }
@@ -1689,7 +1688,6 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView> template <BC direction>
   inline bool
   VarValGraph<View, Card, isView>::narrow(Space* home){
-
     bool shared  = false;
     for (int i = n_var; i--; ) {
       VarNode* vrn = vars[i];
@@ -1698,31 +1696,29 @@ namespace Gecode { namespace Int { namespace GCC {
         shared |= x[i].modified();
         ValNode* v = e->getVal();
         e->template free<direction>();        
-        x[i].eq(home, v->val);
+        if (me_failed(x[i].eq(home, v->val))) {
+          failed(true);
+          return false;
+        }
         v->inc();
       }
     }
     for (int i = n_val; i--; ) {
       ValNode* v = vals[i];
-      if (isView) {
-        if (k[i].counter() == 0) {
-          ModEvent klq = k[i].lq(home, v->noe);
-          if (me_failed(klq)) {
+      if (isView)
+        if (k[i].counter() == 0)
+          if (me_failed(k[i].lq(home, v->noe))) {
             failed(true);
             return false;
           }
-        }
-      }
-
+      
       if (v->noe > 0) {
 
-        if (isView) {
-          ModEvent klq = k[i].lq(home, v->noe);
-          if (me_failed(klq)) {
+        if (isView)
+          if (me_failed(k[i].lq(home, v->noe))) {
             failed(true);
             return false;
           }
-        }
         
         // If the maximum number of occurences of a value is reached
         // it cannot be consumed by another view

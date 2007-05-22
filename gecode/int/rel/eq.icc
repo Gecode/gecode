@@ -55,7 +55,7 @@ namespace Gecode { namespace Int { namespace Rel {
   EqBnd<View0,View1>::EqBnd(Space* home, bool share, Propagator& p,
                             View0 x0, View1 x1)
     : MixBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND>(home,share,p,
-                                                               x0,x1) {}
+                                                             x0,x1) {}
 
   template <class View0, class View1>
   Actor*

@@ -239,7 +239,9 @@ namespace Gecode { namespace Int { namespace Channel {
         xv[i] = x[i].view;
       GECODE_ES_CHECK(dc.init(home,n,&xv[0]));
     }
-    if (dc.propagate(home)) {
+    bool assigned;
+    GECODE_ES_CHECK(dc.propagate(home,assigned));
+    if (assigned) {
       // This has assigned some more views in x which goes unnoticed
       // (that is, not recorded in xa). This must be checked and propagated
       // to the y views, however the distinctness on x is already

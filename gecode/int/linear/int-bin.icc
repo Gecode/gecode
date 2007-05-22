@@ -153,10 +153,10 @@ namespace Gecode { namespace Int { namespace Linear {
     BM_ALL    = BM_X0_MIN|BM_X0_MAX|BM_X1_MIN|BM_X1_MAX
   };
 
-#define GECODE_INT_PV(CASE,TELL,UPDATE)                \
-  if (bm & (CASE)) {                                \
-    bm -= (CASE); ModEvent me = (TELL);                \
-    if (me_failed(me))   return ES_FAILED;        \
+#define GECODE_INT_PV(CASE,TELL,UPDATE)         \
+  if (bm & (CASE)) {                            \
+    bm -= (CASE); ModEvent me = (TELL);         \
+    if (me_failed(me))   return ES_FAILED;      \
     if (me_modified(me)) bm |= (UPDATE);        \
   }
 

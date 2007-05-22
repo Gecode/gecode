@@ -463,27 +463,23 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  forceinline bool
-  DomCtrl<View>::ViewValGraph::tell(Space* home) {
-    bool assigned = false;
+  forceinline ExecStatus
+  DomCtrl<View>::ViewValGraph::tell(Space* home, bool& assigned) {
+    assigned = false;
     // Tell constraints and also eliminate nodes and edges
     for (int i = n_view; i--; ) {
       ViewNode<View>* x = view[i];
       if (!x->edge_fst()->used(x)) {
-        x->view().eq(home,x->edge_fst()->val(x)->val());
+        GECODE_ME_CHECK(x->view().eq(home,x->edge_fst()->val(x)->val()));
         x->edge_fst()->val(x)->matching(NULL);
         view[i] = view[--n_view];
         assigned = true;
       } else {
         PruneVal<View> pv(view[i]);
-#ifndef NDEBUG
-        ModEvent me = 
-#endif
-          view[i]->view().minus_v(home,pv,false);
-        assert(me != ME_INT_VAL);
+        GECODE_ME_CHECK(view[i]->view().minus_v(home,pv,false));
       }
     }
-    return assigned;
+    return ES_OK;
   }
 
   template <class View>
@@ -582,10 +578,10 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  forceinline bool
-  DomCtrl<View>::propagate(Space* home) {
+  forceinline ExecStatus
+  DomCtrl<View>::propagate(Space* home, bool& assigned) {
     vvg.mark();
-    return vvg.tell(home);
+    return vvg.tell(home,assigned);
   }
 
 
@@ -665,7 +661,8 @@ namespace Gecode { namespace Int { namespace Distinct {
       GECODE_ES_CHECK(dc.init(home,x.size(),&x[0]));
     }
 
-    (void) dc.propagate(home);
+    bool assigned;
+    GECODE_ES_CHECK(dc.propagate(home,assigned));
 
     return ES_FIX;
   }

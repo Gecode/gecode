@@ -188,8 +188,8 @@ namespace Gecode { namespace Int { namespace Distinct {
       ExecStatus init(Space* home, int n, View* x);
       /// Mark edges in graph
       void mark(void);
-      /// Prune unmarked edges
-      bool tell(Space* home);
+      /// Prune unmarked edges, \a assigned is true if a view got assigned
+      ExecStatus tell(Space* home, bool& assigned);
       /// Purge graph if necessary
       void purge(void);
       /// Synchronize graph with new view domains
@@ -211,8 +211,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     ExecStatus init(Space* home, int n, View* x);
     /// Synchronize available view-value graph
     ExecStatus sync(void);
-    /// Perform propagation and return true if a view gets assigned
-    bool propagate(Space* home);
+    /// Perform propagation, \a assigned is true if a view gets assigned
+    ExecStatus propagate(Space* home, bool& assigned);
   };
 
   /**
