@@ -62,6 +62,10 @@ namespace Gecode { namespace Int { namespace Distinct {
 
   template <class View>
   forceinline
+  ValNode<View>::ValNode(int v)
+    : _val(v), _matching(NULL) {}
+  template <class View>
+  forceinline
   ValNode<View>::ValNode(int v, ValNode<View>* n)
     : _val(v), _matching(NULL), _next_val(n) {}
   template <class View>

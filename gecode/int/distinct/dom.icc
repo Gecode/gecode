@@ -118,6 +118,8 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// The next value node
     ValNode<View>* _next_val;
   public:
+    /// Initialize with value \a v
+    ValNode(int v);
     /// Initialize with value \a v and successor \a n
     ValNode(int v, ValNode<View>* n);
     /// Return value of node
@@ -295,7 +297,7 @@ namespace Gecode { namespace Int { namespace Distinct {
         ViewValues<View> xi(x[i]);
         while (xi()) {
           if (val2node[xi.val()-min] == NULL)
-            val2node[xi.val()-min] = new (home) ValNode<View>(xi.val(),NULL);
+            val2node[xi.val()-min] = new (home) ValNode<View>(xi.val());
           *edge_p = new (home) Edge<View>(val2node[xi.val()-min],view[i]);
           edge_p = (*edge_p)->next_edge_ref();
           ++xi;
