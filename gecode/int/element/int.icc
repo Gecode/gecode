@@ -285,9 +285,13 @@ namespace Gecode { namespace Int { namespace Element {
     IterIdx i(iv[0]);
     GECODE_ME_CHECK(x0.narrow_v(home,i,false));
     IterVal v(iv[0]);
-    ExecStatus es = x1.modified() ? ES_NOFIX : ES_FIX;
-    GECODE_ME_CHECK(x1.narrow_v(home,v,false));
-    return es;
+    if (x1.modified()) {
+      GECODE_ME_CHECK(x1.inter_v(home,v,false));
+      return ES_NOFIX;
+    } else {
+      GECODE_ME_CHECK(x1.narrow_v(home,v,false));
+      return ES_FIX;
+    }
   }
 
   forceinline void
