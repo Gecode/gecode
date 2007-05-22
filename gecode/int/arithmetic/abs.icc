@@ -56,10 +56,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (x0.min() >= 0)
       GECODE_REWRITE(p,(Eq<View,View>::post(home,x0,x1)));
 
-    if (x0.max() <= 0) {
-      MinusView mx0(x0);
-      GECODE_REWRITE(p,(Eq<MinusView,View>::post(home,mx0,x1)));
-    }
+    if (x0.max() <= 0)
+      GECODE_REWRITE(p,(Eq<MinusView,View>::post(home,x0,x1)));
 
     GECODE_ME_CHECK(x1.lq(home,std::max(x0.max(),-x0.min())));
     GECODE_ME_CHECK(x0.lq(home,x1.max()));
@@ -75,9 +73,20 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   template <class View>
   ExecStatus
   AbsBnd<View>::post(Space* home, View x0, View x1) {
-    GECODE_ME_CHECK(x1.gq(home,0));
-    if (!same(x0,x1)) {
-      (void) new (home) AbsBnd<View>(home,x0,x1);
+    if (x0.min() >= 0) {
+      return Rel::EqBnd<View,View>::post(home,x0,x1);
+    } else if (x0.max() <= 0) {
+      return Rel::EqBnd<MinusView,View>::post(home,x0,x1);
+    } else {
+      assert(!x0.assigned());
+      GECODE_ME_CHECK(x1.gq(home,0));
+      if (x1.assigned()) {
+        int mp[2] = {-x1.val(),x1.val()};
+        Iter::Values::Array i(mp,2);
+        GECODE_ME_CHECK(x0.inter_v(home,i,false));
+      } else if (!same(x0,x1)) {
+        (void) new (home) AbsBnd<View>(home,x0,x1);
+      }
     }
     return ES_OK;
   }
@@ -119,12 +128,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (x0.min() >= 0) {
       return Rel::EqDom<View,View>::post(home,x0,x1);
     } else if (x0.max() <= 0) {
-      MinusView mx0(x0);
-      return Rel::EqDom<MinusView,View>::post(home,mx0,x1);
-    }
-    GECODE_ME_CHECK(x1.gq(home,0));
-    if (!same(x0,x1)) {
-      (void) new (home) AbsDom<View>(home,x0,x1);
+      return Rel::EqDom<MinusView,View>::post(home,x0,x1);
+    } else {
+      assert(!x0.assigned());
+      GECODE_ME_CHECK(x1.gq(home,0));
+      if (x1.assigned()) {
+        int mp[2] = {-x1.val(),x1.val()};
+        Iter::Values::Array i(mp,2);
+        GECODE_ME_CHECK(x0.inter_v(home,i,false));
+      } else if (!same(x0,x1)) {
+        (void) new (home) AbsDom<View>(home,x0,x1);
+      }
     }
     return ES_OK;
   }
