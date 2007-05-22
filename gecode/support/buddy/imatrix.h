@@ -57,3 +57,5 @@ extern int      imatrixDepends(imatrix*,int,int);
 
 
 /* EOF */
+
+// STATISTICS: buddy-any

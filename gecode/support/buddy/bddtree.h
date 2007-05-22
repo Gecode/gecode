@@ -58,3 +58,5 @@ void     bddtree_print(FILE *, BddTree *, int);
 
 
 /* EOF */
+
+// STATISTICS: buddy-any

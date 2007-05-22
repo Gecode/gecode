@@ -16,3 +16,5 @@
 /* Define to 1 to count number of fundamental variable swaps (for debugging).
    */
 #undef SWAPCOUNT
+
+// STATISTICS: buddy-any

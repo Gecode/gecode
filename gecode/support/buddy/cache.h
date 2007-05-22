@@ -68,3 +68,5 @@ extern void BddCache_reset(BddCache *);
 
 
 /* EOF */
+
+// STATISTICS: buddy-any

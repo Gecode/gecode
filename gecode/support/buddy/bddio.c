@@ -592,3 +592,5 @@ static int loadhash_get(int key)
 
 
 /* EOF */
+
+// STATISTICS: buddy-any

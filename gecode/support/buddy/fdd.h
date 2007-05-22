@@ -171,3 +171,5 @@ inline bdd fdd_neq(int bitnum, bdd *left, bdd *right)
 
 
 /* EOF */
+
+// STATISTICS: buddy-any

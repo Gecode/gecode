@@ -1075,3 +1075,5 @@ int *fdddec2bin(int var, int val)
 
 
 /* EOF */
+
+// STATISTICS: buddy-any

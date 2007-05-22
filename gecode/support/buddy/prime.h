@@ -46,3 +46,5 @@ unsigned int bdd_prime_lte(unsigned int src);
 
 
 /* EOF */
+
+// STATISTICS: buddy-any

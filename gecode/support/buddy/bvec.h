@@ -295,3 +295,5 @@ inline bdd  bvec_neq(const bvec &left, const bvec &right)
 #endif /* _BVEC_H */
 
 /* EOF */
+
+// STATISTICS: buddy-any

@@ -2364,3 +2364,5 @@ void bdd_fprintorder(FILE *ofile)
 
 
 /* EOF */
+
+// STATISTICS: buddy-any

@@ -928,3 +928,5 @@ extern GECODE_BUDDY_EXPORT bddstrmhandler bdd_strm_hook(bddstrmhandler);
 #endif /* _BDD_H */
 
 /* EOF */
+
+// STATISTICS: buddy-any

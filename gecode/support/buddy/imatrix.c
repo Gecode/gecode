@@ -147,3 +147,5 @@ void main(void)
 #endif
 
 /* EOF */
+
+// STATISTICS: buddy-any

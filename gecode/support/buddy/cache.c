@@ -100,3 +100,5 @@ void BddCache_reset(BddCache *cache)
 
 
 /* EOF */
+
+// STATISTICS: buddy-any

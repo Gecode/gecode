@@ -230,3 +230,5 @@ extern void   bdd_cpp_init(void);
 
 
 /* EOF */
+
+// STATISTICS: buddy-any

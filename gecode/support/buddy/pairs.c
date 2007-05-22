@@ -333,3 +333,4 @@ void bdd_resetpair(bddPair *p)
 
 /* EOF */
 
+// STATISTICS: buddy-any

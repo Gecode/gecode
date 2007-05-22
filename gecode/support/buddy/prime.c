@@ -319,3 +319,4 @@ int main()
 
 /* EOF */
 
+// STATISTICS: buddy-any

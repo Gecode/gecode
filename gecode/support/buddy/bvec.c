@@ -1350,3 +1350,5 @@ bdd bvec_neq(bvec l, bvec r)
 
 
 /* EOF */
+
+// STATISTICS: buddy-any

@@ -2845,3 +2845,5 @@ static int varset2svartable(BDD r)
 
 
 /* EOF */
+
+// STATISTICS: buddy-any

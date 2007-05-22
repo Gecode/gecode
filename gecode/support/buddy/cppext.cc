@@ -622,3 +622,5 @@ ostream &operator<<(ostream &o, const bvec &v)
 }
 
 /* EOF */
+
+// STATISTICS: buddy-any

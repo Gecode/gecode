@@ -1549,3 +1549,5 @@ BDD bdd_makeset(int *varset, int varnum)
 
 
 /* EOF */
+
+// STATISTICS: buddy-any
