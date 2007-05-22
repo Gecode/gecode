@@ -588,7 +588,7 @@ namespace Gecode { namespace Int {
             min0=ri.min(); max0=ri.max(); ++ri;
             if (max0 > end)
               break;
-            assert(h > max0-min0+1);
+            assert(h > static_cast<unsigned int>(max0-min0+1));
             h -= max0-min0+1;
             RangeList* n = new (home) RangeList(min0,max0,p,r);
             p->next(r,n); r->prev(p,n);
