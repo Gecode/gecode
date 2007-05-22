@@ -1890,13 +1890,15 @@ namespace Gecode {
 
   forceinline
   Propagator::Propagator(Space* home) {
-    u.pme = 0;
+    u.advisors = NULL;
+    assert(u.pme == 0 && u.size == 0);
     home->a_actors.head(this);
   }
 
   forceinline
   Propagator::Propagator(Space*, bool, Propagator& p) {
-    u.pme = 0;
+    u.advisors = NULL;
+    assert(u.pme == 0 && u.size == 0);
     // Set forwarding pointer
     p.prev(this);
   }
