@@ -244,7 +244,7 @@ namespace Gecode { namespace Int { namespace Element {
    */
 
   template <class VA, class VB, class VC, PropCond pc_ac, class RelTest>
-  void
+  ExecStatus
   scan(Space* home, IdxView<VA>* iv, int& n,
        VB x0, VC x1, Propagator* p, RelTest rt) {
     assert(n > 1);
@@ -284,15 +284,16 @@ namespace Gecode { namespace Int { namespace Element {
     n = j;
 
     if (n == 0)
-      return;
+      return ES_FAILED;
 
     if (n == 1) {
-      (void) x0.eq(home,iv[0].idx);
+      GECODE_ME_CHECK(x0.eq(home,iv[0].idx));
     } else if (adjust) {
       IterIdxView<VA> i(&iv[0],&iv[n]);
-      (void) x0.narrow_v(home,i,false);
+      GECODE_ME_CHECK(x0.narrow_v(home,i,false));
       assert(x0.size() == static_cast<unsigned int>(n));
     }
+    return ES_OK;
   }
 
 
@@ -343,10 +344,8 @@ namespace Gecode { namespace Int { namespace Element {
   ViewBnd<VA,VB,VC>::propagate(Space* home) {
     assert(n > 1);
     RelTestBnd<VA,VC> rt;
-    scan<VA,VB,VC,PC_INT_BND,RelTestBnd<VA,VC> >
-      (home,iv,n,x0,x1,this,rt);
-    if (n == 0)
-      return ES_FAILED;
+    GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_BND,RelTestBnd<VA,VC> >
+                     (home,iv,n,x0,x1,this,rt)));
     if (n == 1) {
       size_t s = this->dispose(home);
       (void) new (home) Rel::EqBnd<VA,VC>(home,iv[0].view,x1);
@@ -438,10 +437,8 @@ namespace Gecode { namespace Int { namespace Element {
     assert(n > 1);
     if (VA::pme(this) != ME_INT_DOM) {
       RelTestBnd<VA,VC> rt;
-      scan<VA,VB,VC,PC_INT_DOM,RelTestBnd<VA,VC> >
-        (home,iv,n,x0,x1,this,rt);
-      if (n == 0)
-        return ES_FAILED;
+      GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestBnd<VA,VC> >
+                       (home,iv,n,x0,x1,this,rt)));
       if (n == 1) {
         size_t s = this->dispose(home);
         (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);
@@ -461,10 +458,8 @@ namespace Gecode { namespace Int { namespace Element {
         ES_NOFIX_PARTIAL(this,VA::pme(ME_INT_DOM));
     }
     RelTestDom<VA,VC> rt;
-    scan<VA,VB,VC,PC_INT_DOM,RelTestDom<VA,VC> >
-      (home,iv,n,x0,x1,this,rt);
-    if (n == 0)
-      return ES_FAILED;
+    GECODE_ME_CHECK((scan<VA,VB,VC,PC_INT_DOM,RelTestDom<VA,VC> >
+                     (home,iv,n,x0,x1,this,rt)));
     if (n == 1) {
       size_t s = this->dispose(home);
       (void) new (home) Rel::EqDom<VA,VC>(home,iv[0].view,x1);

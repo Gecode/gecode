@@ -440,7 +440,7 @@ namespace Gecode { namespace Int { namespace Regular {
             if (x[i].modified()) {
               GECODE_ME_CHECK(x[i].inter_v(home,lv,false));
             } else {
-              x[i].narrow_v(home,lv,false);
+              GECODE_ME_CHECK(x[i].narrow_v(home,lv,false));
             }
           }
         }
@@ -457,10 +457,10 @@ namespace Gecode { namespace Int { namespace Regular {
         assert(layers[i].size > 0);
         if (x[i].size() != layers[i].size) {
           if ((x[i].size() - layers[i].size) == 1) {
-            x[i].nq(home,layers[i].lost);
+            GECODE_ME_CHECK(x[i].nq(home,layers[i].lost));
           } else {
             LayerValues lv(layers[i]);
-            x[i].narrow_v(home,lv,false);
+            GECODE_ME_CHECK(x[i].narrow_v(home,lv,false));
           }
         }
         if (x[i].assigned())

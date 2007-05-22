@@ -169,11 +169,7 @@ namespace Gecode { namespace Int { namespace Channel {
       do {
         int j = v.val()-o;
         if (i < j) {
-#ifndef NDEBUG
-          ModEvent me = 
-#endif
-          x[i].zero(home);
-          assert(!me_failed(me));
+          GECODE_ME_CHECK(x[i].zero(home));
           ++i;
         } else if (i > j) {
           ++v;
@@ -187,11 +183,7 @@ namespace Gecode { namespace Int { namespace Channel {
     // Propagate from Boolean views to y
     if (BoolView::pme(this) == ME_BOOL_VAL) {
       BoolIter bv(x,o);
-#ifndef NDEBUG
-      ModEvent me = 
-#endif
-      y.minus_v(home,bv,false);
-      assert(!me_failed(me) && (me != ME_INT_VAL));
+      GECODE_ME_CHECK(y.minus_v(home,bv,false));
     }
     return ES_FIX;
   }

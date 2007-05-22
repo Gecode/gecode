@@ -1769,7 +1769,10 @@ namespace Gecode { namespace Int { namespace GCC {
 
             } else {
               if (delall) {
-                x[vrn->get_info()].nq(home, v->val);
+                if (me_failed(x[vrn->get_info()].nq(home, v->val))) {
+                  failed(true);
+                  return false;
+                }
                 vrn->noe--;
                 v->noe--;
                 e->del_edge();
@@ -1819,7 +1822,10 @@ namespace Gecode { namespace Int { namespace GCC {
           if (!keepedge) {
             ValNode* v = e->getVal();
             shared |= x[i].modified();
-            x[i].nq(home, v->val);
+            if (me_failed(x[i].nq(home, v->val))) {
+              failed(true);
+              return false;
+            }
           } else {
             e->template free<direction>();        
           }
