@@ -1390,9 +1390,6 @@ namespace Gecode {
    * Shared objects and handles
    *
    */
-  forceinline
-  SharedObject::SharedObject(void) 
-    : use_cnt(0), fwd(NULL) {}
   forceinline void* 
   SharedObject::operator new(size_t s) {
     return Memory::malloc(s);
@@ -1401,6 +1398,10 @@ namespace Gecode {
   SharedObject::operator delete(void* p) {
     Memory::free(p);
   }
+
+  forceinline
+  SharedObject::SharedObject(void) 
+    : use_cnt(0), fwd(NULL) {}
 
   template<class Object>
   forceinline void 
@@ -1862,7 +1863,7 @@ namespace Gecode {
   forceinline ModEvent
   Delta::modevent(void) const {
     return me;
-  };
+  }
 
 
   /*

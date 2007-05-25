@@ -24,14 +24,14 @@
 
 namespace Gecode {
 
-  unsigned long int Space::unused_uli;
+  GECODE_KERNEL_EXPORT unsigned long int Space::unused_uli;
 
   /*
    * Spaces
    *
    */
 
-  VarTypeProcessorBase* Space::vtp[VTI_LAST];
+  GECODE_KERNEL_EXPORT VarTypeProcessorBase* Space::vtp[VTI_LAST];
 
   VarTypeProcessorBase::~VarTypeProcessorBase(void) {}
 
