@@ -233,7 +233,7 @@ Options::parse(int argc, char** argv) {
     }
     i++;
   }
-  //  testpat.push_back(make_pair(false, "Distinct::Dom"));
+  testpat.push_back(make_pair(false, "Regular"));
   return;
  missing:
   e = "missing parameter";

@@ -151,17 +151,38 @@ namespace Gecode { namespace Int { namespace Regular {
   }
 
   template <class View, bool shared>
+  forceinline int
+  Dom<View,shared>::LayeredGraph::eliminate(const DFA& d, int& start) {
+    if (!constructed() || (layers[0].size > 1))
+      return 0;
+    assert(layers[0].size == 1);
+    // Skip all layers corresponding to assigned views
+    int i = 0;
+    do {
+      i++;
+    } while (layers[i].size == 1);
+    // There is only a single edge
+    Edge* e = layers[i-1].support[0].edges;
+    assert((e->next == NULL) && (e->o_state->i_deg == 1));
+    // Map the state address to the state
+    start = static_cast<int>(e->o_state-states) % d.n_states();
+    layers += i;
+    return i;
+  }
+
+  template <class View, bool shared>
   forceinline ExecStatus
   Dom<View,shared>::LayeredGraph::construct(Space* home,
                                             ViewArray<View> x, 
-                                            const DFA& dfa) {
+                                            const DFA& dfa,
+                                            int start) {
     int n = x.size();
     layers = reinterpret_cast<Layer*>(home->alloc(sizeof(Layer)*(n+2)))+1;
     
     unsigned int n_states = dfa.n_states();
 
     // Allocate memory
-    State* states = reinterpret_cast<State*>
+    states = reinterpret_cast<State*>
       (home->alloc(sizeof(State)*(n+1)*n_states));
 
     // Initialize states (indegree and outdegree)
@@ -169,7 +190,7 @@ namespace Gecode { namespace Int { namespace Regular {
       states[i].i_deg = states[i].o_deg = 0;
 
     // Mark initial state as being reachable
-    states[0].i_deg = 1;
+    states[start].i_deg = 1;
 
     // Mark final states as reachable as well
     for (int s = dfa.final_fst(); s < dfa.final_lst(); s++)
@@ -480,15 +501,19 @@ namespace Gecode { namespace Int { namespace Regular {
     if (lg.constructed()) {
       GECODE_ES_CHECK(lg.prune(home,this->x));
     } else {
-      GECODE_ES_CHECK(lg.construct(home,this->x,dfa));
+      GECODE_ES_CHECK(lg.construct(home,this->x,dfa,start));
     }
     return lg.tell(home,this,this->x);
   }
 
   template <class View, bool shared>
   forceinline
-  Dom<View,shared>::Dom(Space* home, ViewArray<View>& x, DFA& d)
-    : NaryPropagator<View,PC_INT_DOM>(home,x), dfa(d) {
+  Dom<View,shared>::Dom(Space* home, ViewArray<View>& x0, DFA& d)
+    : Propagator(home), x(x0), dfa(d), start(0) {
+    if (x.size() == 0)
+      __debugbreak();
+    assert(x.size() > 0);
+    x.subscribe(home,this,PC_INT_DOM);
     this->force(home);
   }
 
@@ -496,17 +521,25 @@ namespace Gecode { namespace Int { namespace Regular {
   forceinline size_t
   Dom<View,shared>::dispose(Space* home) {
     this->unforce(home);
+    // Subscriptions don't need to be cancelled as all views are assigned
     dfa.~DFA();
-    (void) NaryPropagator<View,PC_INT_DOM>::dispose(home);
+    (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
   template <class View, bool shared>
   ExecStatus
   Dom<View,shared>::post(Space* home, ViewArray<View>& x, DFA& d) {
+    if (x.size() == 0) {
+      // Check whether the start state 0 is also a final state
+      if ((d.final_fst() <= 0) && (d.final_lst() >= 0))
+        return ES_OK;
+      return ES_FAILED;
+    }
+    assert(x.size() > 0);
     for (int i=x.size(); i--; ) {
       DFA::Symbols s(d);
-      GECODE_ME_CHECK(x[i].inter_v(home,r,false));
+      GECODE_ME_CHECK(x[i].inter_v(home,s,false));
     }
     if (x.shared()) {
       (void) new (home) Dom<View,true>(home,x,d);
@@ -519,8 +552,12 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View, bool shared>
   forceinline
   Dom<View,shared>::Dom(Space* home, bool share, Dom<View,shared>& p)
-    : NaryPropagator<View,PC_INT_DOM>(home,share,p) {
+    : Propagator(home,share,p) {
+    assert(p.x.size() > 0);
+    p.x.drop_fst(p.lg.eliminate(p.dfa,p.start));
+    x.update(home,share,p.x);
     dfa.update(home,share,p.dfa);
+    start = p.start;
   }
 
   template <class View, bool shared>

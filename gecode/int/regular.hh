@@ -33,6 +33,7 @@
 namespace Gecode { namespace Int { namespace Regular {
 
   class Layer;
+  class State;
 
   /**
    * \brief Domain-consistent regular propagator
@@ -49,22 +50,30 @@ namespace Gecode { namespace Int { namespace Regular {
    * \ingroup FuncIntProp
    */
   template <class View, bool shared>
-  class Dom : public NaryPropagator<View,PC_INT_DOM> {
+  class Dom : public Propagator {
   protected:
-    using NaryPropagator<View,PC_INT_DOM>::x;
+    /// The views
+    ViewArray<View> x;
     /// The %DFA describing the language
     DFA dfa;
+    /// The start state for graph construction
+    int start;
     /// %LayeredGraph as data structure used for propagation
     class LayeredGraph {
-    private:
-      Layer* layers;
     public:
+      /// The layers of the graph
+      Layer* layers;
+      /// The states
+      State* states;
       /// Mark layered graph as not yet constructed
       LayeredGraph(void);
       /// Test whether layered graph has already been constructed
       bool constructed(void) const;
+      /// Eliminate assigned prefix, return how many layers removed
+      int eliminate(const DFA& d, int& start);
       /// Construct layered graph
-      ExecStatus construct(Space* home, ViewArray<View> x, const DFA& d);
+      ExecStatus construct(Space* home, ViewArray<View> x, 
+                           const DFA& d, int start);
       /// Prune incrementally for view sequence \a x
       ExecStatus prune(Space* home, ViewArray<View> x);
       /// Tell back modifications to \a x for propagator \a p
