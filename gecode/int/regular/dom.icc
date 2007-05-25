@@ -204,45 +204,37 @@ namespace Gecode { namespace Int { namespace Regular {
       // Enter links leaving reachable states (indegree != 0)
       DFA::Transitions t(dfa);
       ViewValues<View> nx(x[i]);
-      while (nx() && t()) {
-        if (t.symbol() > nx.val()) {
-          layers[i].lost = nx.val();
-          ++nx;
-        } else if (t.symbol() < nx.val()) {
+      while (nx()) {
+        while (t.symbol() < nx.val())
           ++t;
-        } else {
-          assert(t.symbol() == nx.val());
-          Edge* e = NULL;
-          do {
-            // Compute pointer to in-state
-            State* i_state = &states[i*n_states + t.i_state()];
-            if (i_state->i_deg != 0) {
-              // Add new transition as state is reachable
-              // Compute pointer to out-state
-              State* o_state = &states[(i+1)*n_states +  t.o_state()];
-              i_state->o_deg++; 
-              o_state->i_deg++;
-              e = new (home) Edge(i_state,o_state,e);
-            }
-            ++t;
-          } while (t() && (t.symbol() == nx.val()));
-          // Found support for value
-          if (e != NULL) {
-            layers[i].support[j].val   = nx.val();
-            layers[i].support[j].edges = e;
-            j++;
-          } else {
-            layers[i].lost = nx.val();
+        assert(t.symbol() == nx.val());
+        Edge* e = NULL;
+        do {
+          // Compute pointer to in-state
+          State* i_state = &states[i*n_states + t.i_state()];
+          if (i_state->i_deg != 0) {
+            // Add new transition as state is reachable
+            // Compute pointer to out-state
+            State* o_state = &states[(i+1)*n_states +  t.o_state()];
+            i_state->o_deg++; 
+            o_state->i_deg++;
+            e = new (home) Edge(i_state,o_state,e);
           }
-          ++nx;
+          ++t;
+        } while (t() && (t.symbol() == nx.val()));
+        // Found support for value
+        if (e != NULL) {
+          layers[i].support[j].val   = nx.val();
+          layers[i].support[j].edges = e;
+          j++;
+        } else {
+          layers[i].lost = nx.val();
         }
+        ++nx;
       }
       if (j == 0)
         return ES_FAILED;
       layers[i].size = j;
-      while (nx()) {
-        layers[i].lost = nx.val(); ++nx;
-      }
     }
 
     // Second pass: prune all transitions that do not lead to final state
