@@ -309,7 +309,7 @@ namespace Gecode {
 
   forceinline
   MemoryManager::MemoryManager(void)
-    : cur_hcsz(Memory::Config::hcsz_min), slack(NULL) {
+    : cur_hcsz(Memory::Config::hcsz_min), requested(0), slack(NULL) {
     alloc_fill(cur_hcsz,true);
     for (size_t i = Memory::Config::fl_size_max-Memory::Config::fl_size_min+1;
          i--; )
@@ -318,7 +318,7 @@ namespace Gecode {
 
   forceinline
   MemoryManager::MemoryManager(MemoryManager& mm, size_t s_sub)
-    : cur_hcsz(mm.cur_hcsz), slack(NULL) {
+    : cur_hcsz(mm.cur_hcsz), requested(0), slack(NULL) {
 #if GECODE_MEMORY_ALIGNMENT == 8
     s_sub += s_sub & 4;
 #endif
