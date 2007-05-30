@@ -97,13 +97,13 @@ namespace Gecode {
 
   forceinline int
   DFA::symbol_min(void) const {
-    int n = object()->n_trans;
+    unsigned int n = object()->n_trans;
     return (n > 0) ? object()->trans[0].symbol : Limits::Int::int_min;
   }
 
   forceinline int
   DFA::symbol_max(void) const {
-    int n = object()->n_trans;
+    unsigned int n = object()->n_trans;
     return (n > 0) ? object()->trans[n-1].symbol : Limits::Int::int_max;
   }
 

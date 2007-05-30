@@ -93,7 +93,7 @@ namespace Gecode { namespace Int {
   }
   forceinline unsigned int
   IntVarImp::RangeList::width(void) const {
-    return _max - _min + 1;
+    return static_cast<unsigned int>(_max - _min) + 1;
   }
 
 
@@ -176,7 +176,7 @@ namespace Gecode { namespace Int {
       RangeList* r = reinterpret_cast<RangeList*>
         (home->alloc(sizeof(RangeList)*n));
       fst(r); lst(r+n-1);
-      unsigned int h = d.max()-d.min()+1;
+      unsigned int h = static_cast<unsigned int>(d.max()-d.min())+1;
       for (int i = n; i--; ) {
         h -= d.width(i);
         r[i].min(d.min(i)); r[i].max(d.max(i));
@@ -233,21 +233,21 @@ namespace Gecode { namespace Int {
   forceinline unsigned int
   IntVarImp::regret_min(void) const {
     if (fst() == NULL) {
-      return (dom.min() == dom.max()) ? 0 : 1;
+      return (dom.min() == dom.max()) ? 0U : 1U;
     } else if (dom.min() == fst()->max()) {
-      return fst()->next(NULL)->min()-dom.min();
+      return static_cast<unsigned int>(fst()->next(NULL)->min()-dom.min());
     } else {
-      return 1;
+      return 1U;
     }
   }
   forceinline unsigned int
   IntVarImp::regret_max(void) const {
     if (fst() == NULL) {
-      return (dom.min() == dom.max()) ? 0 : 1;
+      return (dom.min() == dom.max()) ? 0U : 1U;
     } else if (dom.max() == lst()->min()) {
-      return dom.max()-lst()->prev(NULL)->max();
+      return static_cast<unsigned int>(dom.max()-lst()->prev(NULL)->max());
     } else {
-      return 1;
+      return 1U;
     }
   }
 

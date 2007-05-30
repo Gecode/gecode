@@ -28,10 +28,10 @@ namespace Gecode { namespace Int {
    */
   forceinline
   BoolVarImp::BoolVarImp(int n)
-    : dom((n << 1) | n) {}
+    : dom(static_cast<unsigned int>((n << 1) | n)) {}
   forceinline
   BoolVarImp::BoolVarImp(Space* home, int min, int max)
-    : BoolVarImpBase(home), dom((max << 1) | min) {}
+    : BoolVarImpBase(home), dom(static_cast<unsigned int>((max << 1) | min)) {}
 
 
   /*
@@ -78,21 +78,21 @@ namespace Gecode { namespace Int {
 
   forceinline unsigned int
   BoolVarImp::width(void) const {
-    return (dom != NONE) ? 1 : 2;
+    return (dom != NONE) ? 1U : 2U;
   }
 
   forceinline unsigned int
   BoolVarImp::size(void) const {
-    return (dom != NONE) ? 1 : 2;
+    return (dom != NONE) ? 1U : 2U;
   }
 
   forceinline unsigned int
   BoolVarImp::regret_min(void) const {
-    return (dom != NONE) ? 1 : 0;
+    return (dom != NONE) ? 1U : 0U;
   }
   forceinline unsigned int
   BoolVarImp::regret_max(void) const {
-    return (dom != NONE) ? 1 : 0;
+    return (dom != NONE) ? 1U : 0U;
   }
 
 
@@ -507,14 +507,14 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline void
-  BoolVarImp::subscribe(Space* home, Propagator* p, PropCond pc, 
+  BoolVarImp::subscribe(Space* home, Propagator* p, PropCond, 
                         bool process) {
     // Subscription can be used with integer propagation conditions,
     // which must be remapped to the single Boolean propagation condition.
     BoolVarImpBase::subscribe(home,p,PC_BOOL_VAL,assigned(),process);
   }
   forceinline void
-  BoolVarImp::cancel(Space* home, Propagator* p, PropCond pc) {
+  BoolVarImp::cancel(Space* home, Propagator* p, PropCond) {
     BoolVarImpBase::cancel(home,p,PC_BOOL_VAL,assigned());
   }
 

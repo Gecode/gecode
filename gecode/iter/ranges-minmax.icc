@@ -95,7 +95,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   }
   forceinline unsigned int
   MinMax::width(void) const {
-    return ma-mi+1;
+    return static_cast<unsigned int>(ma-mi)+1;
   }
 
 }}}

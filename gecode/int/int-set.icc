@@ -86,7 +86,7 @@ namespace Gecode {
 
   forceinline unsigned int
   IntSet::width(int i) const {
-    return sar[i].max-sar[i].min+1;
+    return static_cast<unsigned int>(sar[i].max-sar[i].min)+1;
   }
 
   forceinline int
@@ -139,7 +139,7 @@ namespace Gecode {
   }
   forceinline unsigned int
   IntSetRanges::width(void) const {
-    return i->max - i->min +1;
+    return static_cast<unsigned int>(i->max - i->min) + 1;
   }
 
   /*

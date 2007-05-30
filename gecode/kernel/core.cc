@@ -326,8 +326,10 @@ namespace Gecode {
         d_cur = a+n;
         d_lst = a+n+1;
         Actor** f = s.d_fst;
-        for (unsigned int i=n; i--; )
-          a[i] = static_cast<Actor*>(f[i]->prev());
+        do {
+          n--;
+          a[n] = static_cast<Actor*>(f[n]->prev());
+        } while (n != 0);
       }
     }
     // Setup branching pointers

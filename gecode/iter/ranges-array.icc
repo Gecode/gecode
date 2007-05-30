@@ -115,7 +115,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   }
   forceinline unsigned int
   Array::width(void) const {
-    return r[c].max-r[c].min+1;
+    return static_cast<unsigned int>(r[c].max-r[c].min)+1;
   }
 
 }}}

@@ -615,7 +615,7 @@ namespace Gecode {
   forceinline void
   channel(Space* home, IntVar x0, BoolVar x1,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF) {
-    channel(home,x1,x0,icl);
+    channel(home,x1,x0,icl,pk);
   }
 
   /// Post propagator for channeling Boolean and integer variables \f$ x_i = 1\leftrightarrow y=i+o\f$
