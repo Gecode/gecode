@@ -741,12 +741,14 @@ namespace Gecode {
     friend class Advisors<A>;
   private:
     /// Starting point for a linked list of advisors
-    ActorLink* advisors;
+    mutable ActorLink* advisors;
   public:
     /// Default constructor
     Council(void);
     /// Construct advisor council
     Council(Space* home);
+    /// Test whether council has advisor left
+    bool empty(void) const;
     /// Update during cloning (copies all advisors)
     void update(Space* home, bool share, Council<A>& c);
     /// Dispose council
@@ -1634,6 +1636,16 @@ namespace Gecode {
     : advisors(NULL) {}
 
   template <class A>
+  forceinline bool
+  Council<A>::empty(void) const {
+    ActorLink* a = advisors;
+    while ((a != NULL) && static_cast<A*>(a)->disposed())
+      a = a->next();
+    advisors = a;
+    return a == NULL;
+  }
+
+  template <class A>
   forceinline void
   Council<A>::update(Space* home, bool share, Council<A>& c) {
     // Skip all disposed advisors
@@ -1680,7 +1692,7 @@ namespace Gecode {
   forceinline void
   Council<A>::dispose(Space* home) {
     ActorLink* a = advisors;
-    advisors = NULL;
+    //    advisors = NULL;
     while (a != NULL) {
       if (!static_cast<A*>(a)->disposed())
         static_cast<A*>(a)->dispose(home,*this); 

@@ -52,6 +52,22 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View, bool shared>
   class Dom : public Propagator {
   protected:
+    /// Advisors for views (by position in array)
+    class Index : public Advisor {
+    public:
+      /// The position of the view in the view array
+      int i;
+      /// Create index advisor
+      Index(Space* home, Propagator* p, Council<Index>& c, int i);
+      /// Clone index advisor \a a
+      Index(Space* home, bool share, Index& a);
+      /// Dispose advisor
+      void dispose(Space* home, Council<Index>& c);
+    };
+    /// The advisor council
+    Council<Index> c;
+    /// The index of a view that is currently processed
+    int processed;
     /// The views
     ViewArray<View> x;
     /// The %DFA describing the language
@@ -81,6 +97,8 @@ namespace Gecode { namespace Int { namespace Regular {
     virtual Actor* copy(Space* home, bool share);
     /// Cost function (defined as dynamic PC_LINEAR_HI)
     virtual PropCost cost(void) const;
+    /// Give advice to propagator
+    virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Delete propagator and return its size
