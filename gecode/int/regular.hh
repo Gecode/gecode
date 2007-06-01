@@ -71,8 +71,6 @@ namespace Gecode { namespace Int { namespace Regular {
     ExecStatus construct(Space* home);
     /// Prune incrementally
     ExecStatus prune(Space* home);
-    /// Tell back modifications
-    ExecStatus tell(Space* home);
 
     /// Constructor for cloning \a p (use \a shared for \a dfa)
     Dom(Space* home, bool share, Dom<View,shared>& p);
