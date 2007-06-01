@@ -47,16 +47,18 @@ namespace Gecode { namespace Int { namespace Regular {
     State* i_state; ///< Pointer to in-state
     State* o_state; ///< Pointer to out-state
     Edge*  next;    ///< Next edge in support list
-    /// Construct new edge
-    Edge(State* i, State* o, Edge* n);
+    /// Construct new edge and increment states
+    Edge(State& i, State& o, Edge* n);
     static void  operator delete(void*, size_t);
     static void  operator delete(void*,Space*);
     static void* operator new(size_t, Space*);
   };
 
   forceinline
-  Edge::Edge(State* i, State* o, Edge* n)
-    : i_state(i), o_state(o), next(n) {}
+  Edge::Edge(State& i, State& o, Edge* n)
+    : i_state(&i), o_state(&o), next(n) {
+    i_state->o_deg++; o_state->i_deg++;
+  }
   forceinline void
   Edge::operator delete(void*, size_t) {}
   forceinline void
@@ -87,9 +89,9 @@ namespace Gecode { namespace Int { namespace Regular {
   class Layer {
   public:
     unsigned int size;     ///< Number of supported values
-    int          modified; ///< Modification information
     int          lost;     ///< One of the values that lost support
     Support*     support;  ///< Supported values
+    int          modified; ///< Modification information
   };
 
   /// Iterator for telling variable domains by scanning support
@@ -188,7 +190,7 @@ namespace Gecode { namespace Int { namespace Regular {
     for (int s = dfa.final_fst(); s < dfa.final_lst(); s++)
       states[n*n_states + s].o_deg = 1;
 
-    // First pass: add transitions
+    // Forward pass: add transitions
     for (int i=0; i<n; i++) {
       layers[i].modified = MOD_NONE;
       layers[i].support = 
@@ -203,16 +205,11 @@ namespace Gecode { namespace Int { namespace Regular {
         assert(t.symbol() == nx.val());
         Edge* e = NULL;
         do {
-          // Compute pointer to in-state
-          State* i_state = &states[i*n_states + t.i_state()];
-          if (i_state->i_deg != 0) {
-            // Add new transition as state is reachable
-            // Compute pointer to out-state
-            State* o_state = &states[(i+1)*n_states +  t.o_state()];
-            i_state->o_deg++; 
-            o_state->i_deg++;
-            e = new (home) Edge(i_state,o_state,e);
-          }
+          // Is in-state of transition reachable?
+          if (states[i*n_states + t.i_state()].i_deg != 0)
+            e = new (home) Edge(states[i*n_states + t.i_state()],
+                                states[(i+1)*n_states +  t.o_state()],
+                                e);
           ++t;
         } while (t() && (t.symbol() == nx.val()));
         // Found support for value
@@ -223,12 +220,15 @@ namespace Gecode { namespace Int { namespace Regular {
         }
         ++nx;
       }
+      layers[i].size = j;
       if (j == 0)
         return ES_FAILED;
-      layers[i].size = j;
     }
 
-    // Second pass: prune all transitions that do not lead to final state
+    bool mod      = false;
+    bool assigned = true;
+    
+    // Backward pass: prune all transitions that do not lead to final state
     for (int i=n; i--; ) {
       unsigned int k=0;
       for (unsigned int j=0; j<layers[i].size; j++) {
@@ -248,49 +248,27 @@ namespace Gecode { namespace Int { namespace Regular {
         if (layers[i].support[j].edges != NULL)
           layers[i].support[k++]=layers[i].support[j];
       }
+      layers[i].size = k;
       if (k == 0)
         return ES_FAILED;
-      layers[i].size = k;
+      if (shared && x[i].modified()) {
+        LayerValues lv(layers[i]);
+        ModEvent me = x[i].inter_v(home,lv,false);
+        if (me_failed(me))
+          return ES_FAILED;
+        if (me_modified(me))
+          mod = true;
+      } else if (x[i].size() != layers[i].size) {
+        LayerValues lv(layers[i]);
+        GECODE_ME_CHECK(x[i].narrow_v(home,lv,false));
+      }
+      if (!x[i].assigned())
+        assigned = false;
     }
 
-    // Tell back variable domains
-    if (shared) {
-      ExecStatus es = ES_FIX;
-      for (int i=x.size(); i--; ) {
-        assert(layers[i].size > 0);
-        if (x[i].modified())
-          es = ES_NOFIX;
-        if ((x[i].size() != layers[i].size) || x[i].modified()) {
-          LayerValues lv(layers[i]);
-          if (x[i].modified()) {
-            GECODE_ME_CHECK(x[i].inter_v(home,lv,false));
-          } else {
-            GECODE_ME_CHECK(x[i].narrow_v(home,lv,false));
-          }
-        }
-      }
-      for (int i=x.size(); i--; )
-        if (!x[i].assigned())
-          return es;
-      x.size(0);
+    if (assigned)
       return ES_SUBSUMED(this,home);
-    } else {
-      int n=x.size();
-      for (int i=x.size(); i--; ) {
-        assert(layers[i].size > 0);
-        if (x[i].size() != layers[i].size) {
-          LayerValues lv(layers[i]);
-          GECODE_ME_CHECK(x[i].narrow_v(home,lv,false));
-        }
-        if (x[i].assigned())
-          n--;
-      }
-      if (n == 0) {
-        x.size(0);
-        return ES_SUBSUMED(this,home);
-      }
-      return ES_FIX;
-    }
+    return (shared && mod) ? ES_NOFIX : ES_FIX;
   }
 
   template <class View, bool shared>
@@ -299,45 +277,41 @@ namespace Gecode { namespace Int { namespace Regular {
     // Synchronize views
     for (int i=0; i<x.size(); i++)
       if (layers[i].size != x[i].size()) {
-        // Only the view has changed
+        int mod = MOD_NONE;
         unsigned int j=0;
         unsigned int k=0;
-        ViewValues<View> vx(x[i]);
-        while (vx() && (j<layers[i].size)) {
+        for (ViewValues<View> vx(x[i]); vx() && (j<layers[i].size); j++)
           if (layers[i].support[j].val < vx.val()) {
             // Supported value not any longer in view
             for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
               // Adapt states
-              if ((--e->i_state->o_deg) == 0)
-                layers[i-1].modified |= MOD_ODEG;
-              if ((--e->o_state->i_deg) == 0)
-                layers[i+1].modified |= MOD_IDEG;
+              if ((--e->i_state->o_deg) == 0) mod |= MOD_ODEG;
+              if ((--e->o_state->i_deg) == 0) mod |= MOD_IDEG;
             }
-            ++j;
           } else {
             assert(layers[i].support[j].val == vx.val());
             layers[i].support[k++]=layers[i].support[j];
-            ++vx; j++;
+            ++vx;
           }
-        }
         if (k == 0)
           return ES_FAILED;
         // Remove remaining values
         for (; j < layers[i].size; j++)
           for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
             // Adapt states
-            if ((--e->i_state->o_deg) == 0)
-              layers[i-1].modified |= MOD_ODEG;
-            if ((--e->o_state->i_deg) == 0)
-              layers[i+1].modified |= MOD_IDEG;
+            if ((--e->i_state->o_deg) == 0) mod |= MOD_ODEG;
+            if ((--e->o_state->i_deg) == 0) mod |= MOD_IDEG;
           }
-        // Update size
+        // Update size and modification information
         layers[i].size = k;
+        layers[i-1].modified |= (mod & MOD_ODEG);
+        layers[i+1].modified |= (mod & MOD_IDEG);
       }
 
     // Forward pass
     for (int i=0; i<x.size(); i++)
       if (layers[i].modified & MOD_IDEG) {
+        int mod = MOD_NONE;
         unsigned int k=0;
         for (unsigned int j=0; j<layers[i].size; j++) {
           // Some edges might have lost support
@@ -345,10 +319,8 @@ namespace Gecode { namespace Int { namespace Regular {
           for (Edge* e = *p; e != NULL; e = e->next) 
             if (e->i_state->i_deg == 0) {
               // Adapt states
-              if ((--e->i_state->o_deg) == 0)
-                layers[i-1].modified |= MOD_ODEG;
-              if ((--e->o_state->i_deg) == 0)
-                layers[i+1].modified |= MOD_IDEG;
+              if ((--e->i_state->o_deg) == 0) mod |= MOD_ODEG;
+              if ((--e->o_state->i_deg) == 0) mod |= MOD_IDEG;
               // Remove edge
               *p = e->next;
             } else {
@@ -363,15 +335,18 @@ namespace Gecode { namespace Int { namespace Regular {
           else
             layers[i].lost = layers[i].support[j].val;
         }
-        // Update size
         if (k == 0)
           return ES_FAILED;
+        // Update size and modification information
         layers[i].size = k;
+        layers[i-1].modified |= (mod & MOD_ODEG);
+        layers[i+1].modified |= (mod & MOD_IDEG);
       }
 
     // Backward pass
     for (int i=x.size(); i--; )
       if (layers[i].modified & MOD_ODEG) {
+        int mod = MOD_NONE;
         unsigned int k=0;
         for (unsigned int j=0; j<layers[i].size; j++) {
           Edge** p = &layers[i].support[j].edges;
@@ -381,8 +356,7 @@ namespace Gecode { namespace Int { namespace Regular {
               p = &e->next;
             } else {
               // Unreachable state, prune edge
-              if (--e->i_state->o_deg == 0)
-                layers[i-1].modified |= MOD_ODEG;
+              if (--e->i_state->o_deg == 0) mod |= MOD_ODEG;
               --e->o_state->i_deg;
               *p = e->next;
             }
@@ -394,10 +368,11 @@ namespace Gecode { namespace Int { namespace Regular {
           else
             layers[i].lost = layers[i].support[j].val;
         }
-        // Update size
         if (k == 0)
           return ES_FAILED;
+        // Update size and modification information
         layers[i].size = k;
+        layers[i-1].modified |= mod;
       }
     
     // Tell back variable domains
@@ -424,7 +399,6 @@ namespace Gecode { namespace Int { namespace Regular {
       for (int i=x.size(); i--; )
         if (!x[i].assigned())
           return es;
-      x.size(0);
       return ES_SUBSUMED(this,home);
     } else {
       int n=x.size();
@@ -443,7 +417,6 @@ namespace Gecode { namespace Int { namespace Regular {
           n--;
       }
       if (n == 0) {
-        x.size(0);
         return ES_SUBSUMED(this,home);
       }
       return ES_FIX;
