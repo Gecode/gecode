@@ -24,6 +24,12 @@
 
 namespace Gecode { namespace Int { namespace Regular {
 
+
+  /*
+   * Classes for the layered graph
+   *
+   */
+
   /**
    * \brief States are described by number of incoming and outgoing edges
    */
@@ -129,15 +135,47 @@ namespace Gecode { namespace Int { namespace Regular {
   }
 
 
+  /*
+   * The layered graph
+   *
+   */
+
+  template <class View, bool shared>
+  forceinline
+  Dom<View,shared>::LayeredGraph::LayeredGraph(void) : layers(NULL) {}
+
   template <class View, bool shared>
   forceinline bool
-  Dom<View,shared>::constructed(void) const {
+  Dom<View,shared>::LayeredGraph::constructed(void) const {
     return layers != NULL;
   }
 
   template <class View, bool shared>
+  forceinline int
+  Dom<View,shared>::LayeredGraph::eliminate(const DFA& d, int& start) {
+    if (!constructed() || (layers[0].size > 1))
+      return 0;
+    assert(layers[0].size == 1);
+    // Skip all layers corresponding to assigned views
+    int i = 0;
+    do {
+      i++;
+    } while (layers[i].size == 1);
+    // There is only a single edge
+    Edge* e = layers[i-1].support[0].edges;
+    assert((e->next == NULL) && (e->o_state->i_deg == 1));
+    // Map the state address to the state
+    start = static_cast<int>(e->o_state-states) % d.n_states();
+    layers += i;
+    return i;
+  }
+
+  template <class View, bool shared>
   forceinline ExecStatus
-  Dom<View,shared>::construct(Space* home) { 
+  Dom<View,shared>::LayeredGraph::construct(Space* home,
+                                            ViewArray<View> x, 
+                                            const DFA& dfa,
+                                            int start) {
     int n = x.size();
     layers = reinterpret_cast<Layer*>(home->alloc(sizeof(Layer)*(n+2)))+1;
     
@@ -225,16 +263,72 @@ namespace Gecode { namespace Int { namespace Regular {
         return ES_FAILED;
       layers[i].size = k;
     }
-
     return ES_OK;
   }
 
   template <class View, bool shared>
   forceinline ExecStatus
-  Dom<View,shared>::prune(Space* home) {
-    // Synchronize variables (to be replaced by advisors)
-    for (int i=0; i<x.size(); i++)
-      if (layers[i].size != x[i].size()) {
+  Dom<View,shared>::LayeredGraph::prune(Space* home, ViewArray<View> x) {
+    // Forward pass
+    for (int i=0; i<x.size(); i++) {
+      if ((layers[i].size != x[i].size()) && (layers[i].modified & MOD_IDEG)) {
+        // Both the view as well some in states have changed
+        unsigned int j=0;
+        unsigned int k=0;
+        ViewValues<View> vx(x[i]);
+        while (vx() && (j<layers[i].size)) {
+          if (layers[i].support[j].val < vx.val()) {
+            // Supported value not any longer in variable
+            for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
+              // Adapt states
+              if ((--e->i_state->o_deg) == 0)
+                layers[i-1].modified |= MOD_ODEG;
+              if ((--e->o_state->i_deg) == 0)
+                layers[i+1].modified |= MOD_IDEG;
+            }
+            ++j;
+          } else {
+            assert(layers[i].support[j].val == vx.val());
+            // Some edges might have lost support
+            Edge** p = &layers[i].support[j].edges;
+            for (Edge* e = *p; e != NULL; e = e->next) 
+              if (e->i_state->i_deg == 0) {
+                // Adapt states
+                if ((--e->i_state->o_deg) == 0)
+                  layers[i-1].modified |= MOD_ODEG;
+                if ((--e->o_state->i_deg) == 0)
+                  layers[i+1].modified |= MOD_IDEG;
+                // Remove edge
+                *p = e->next;
+              } else {
+                // Keep edge
+                p = &e->next;
+              }
+            // Write endmarker for edges
+            *p=NULL;
+            // Value still has support
+            if (layers[i].support[j].edges != NULL)
+              layers[i].support[k++]=layers[i].support[j];
+            else
+              layers[i].lost = layers[i].support[j].val;
+            ++vx; ++j;
+          }
+        }
+        if (k == 0)
+          return ES_FAILED;
+        // Remove remaining values
+        for (; j < layers[i].size; j++)
+          for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
+            // Adapt states
+            if ((--e->i_state->o_deg) == 0)
+              layers[i-1].modified |= MOD_ODEG;
+            if ((--e->o_state->i_deg) == 0)
+              layers[i+1].modified |= MOD_IDEG;
+          }
+        // Update size
+        layers[i].size = k;
+      } else if (layers[i].size != x[i].size()) {
+        // Only the view has changed
         unsigned int j=0;
         unsigned int k=0;
         ViewValues<View> vx(x[i]);
@@ -257,7 +351,6 @@ namespace Gecode { namespace Int { namespace Regular {
         }
         if (k == 0)
           return ES_FAILED;
-        layers[i].size = k;
         // Remove remaining values
         for (; j < layers[i].size; j++)
           for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
@@ -268,12 +361,9 @@ namespace Gecode { namespace Int { namespace Regular {
               layers[i+1].modified |= MOD_IDEG;
           }
         // Update size
-      }
-
-    // Forward pass
-    for (int i=0; i<x.size(); i++) 
-      if (layers[i].modified & MOD_IDEG) {
-        // Some in states have changed
+        layers[i].size = k;
+      } else if (layers[i].modified & MOD_IDEG) {
+        // Only some in states have changed
         unsigned int k=0;
         for (unsigned int j=0; j<layers[i].size; j++) {
           // Some edges might have lost support
@@ -304,6 +394,7 @@ namespace Gecode { namespace Int { namespace Regular {
           return ES_FAILED;
         layers[i].size = k;
       }
+    }
 
     // Backward pass
     for (int i=x.size(); i--; )
@@ -341,8 +432,11 @@ namespace Gecode { namespace Int { namespace Regular {
 
   template <class View, bool shared>
   forceinline ExecStatus
-  Dom<View,shared>::tell(Space* home) {
-
+  Dom<View,shared>::LayeredGraph::tell(Space* home, Propagator* p,
+                                       ViewArray<View> x) {
+    // Reset modification information for border areas
+    layers[-1].modified = MOD_NONE;
+    layers[x.size()].modified = MOD_NONE;
     // Tell back variable domains
     if (shared) {
       ExecStatus es = ES_FIX;
@@ -368,7 +462,7 @@ namespace Gecode { namespace Int { namespace Regular {
         if (!x[i].assigned())
           return es;
       x.size(0);
-      return ES_SUBSUMED(this,home);
+      return ES_SUBSUMED(p,home);
     } else {
       int n=x.size();
       for (int i=x.size(); i--; ) {
@@ -387,7 +481,7 @@ namespace Gecode { namespace Int { namespace Regular {
       }
       if (n == 0) {
         x.size(0);
-        return ES_SUBSUMED(this,home);
+        return ES_SUBSUMED(p,home);
       }
       return ES_FIX;
     }
@@ -396,18 +490,20 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View, bool shared>
   ExecStatus
   Dom<View,shared>::propagate(Space* home) {
-    if (constructed()) {
-      GECODE_ES_CHECK(prune(home));
+    if (lg.constructed()) {
+      GECODE_ES_CHECK(lg.prune(home,this->x));
     } else {
-      GECODE_ES_CHECK(construct(home));
+      GECODE_ES_CHECK(lg.construct(home,this->x,dfa,start));
     }
-    return tell(home);
+    return lg.tell(home,this,this->x);
   }
 
   template <class View, bool shared>
   forceinline
   Dom<View,shared>::Dom(Space* home, ViewArray<View>& x0, DFA& d)
-    : Propagator(home), x(x0), layers(NULL), dfa(d), start(0) {
+    : Propagator(home), x(x0), dfa(d), start(0) {
+    if (x.size() == 0)
+      __debugbreak();
     assert(x.size() > 0);
     x.subscribe(home,this,PC_INT_DOM);
     this->force(home);
@@ -446,31 +542,11 @@ namespace Gecode { namespace Int { namespace Regular {
   }
 
   template <class View, bool shared>
-  forceinline void
-  Dom<View,shared>::eliminate(void) {
-    if (!constructed() || (layers[0].size > 1))
-      return;
-    assert(layers[0].size == 1);
-    // Skip all layers corresponding to assigned views
-    int i = 0;
-    do {
-      i++;
-    } while (layers[i].size == 1);
-    // There is only a single edge
-    Edge* e = layers[i-1].support[0].edges;
-    assert((e->next == NULL) && (e->o_state->i_deg == 1));
-    // Map the state address to the state
-    start = static_cast<int>(e->o_state-states) % dfa.n_states();
-    layers += i;
-    x.drop_fst(i);
-  }
-
-  template <class View, bool shared>
   forceinline
   Dom<View,shared>::Dom(Space* home, bool share, Dom<View,shared>& p)
-    : Propagator(home,share,p), layers(0) {
+    : Propagator(home,share,p) {
     assert(p.x.size() > 0);
-    p.eliminate();
+    p.x.drop_fst(p.lg.eliminate(p.dfa,p.start));
     x.update(home,share,p.x);
     dfa.update(home,share,p.dfa);
     start = p.start;
