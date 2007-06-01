@@ -54,6 +54,7 @@ namespace Gecode {
     a_actors.init();
     b_status = static_cast<Branching*>(&a_actors);
     b_commit = static_cast<Branching*>(&a_actors);
+    branch_id = 0;
     n_sub = 0;
     shared = NULL;
   }
@@ -285,7 +286,7 @@ namespace Gecode {
    */
 
   Space::Space(bool share, Space& s) 
-    : mm(s.mm,s.n_sub*sizeof(Propagator**)) {
+    : mm(s.mm,s.n_sub*sizeof(Propagator**)), branch_id(s.branch_id) {
     // Initialize variable entry points
     for (int i=0; i<VTI_LAST; i++) {
       vars[i].entry   = NULL;

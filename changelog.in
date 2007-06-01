@@ -53,7 +53,15 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
-Modul:  int
+Module: kernel
+What:   bug
+Rank:   major
+[DESCRIPTION]
+Branching ids were not properly initialized. This was a serious problem if you 
+posted branchings in spaces other than the root space.
+
+[ENTRY]
+Module: int
 What:   change
 Rank:   major
 [DESCRIPTION]
@@ -63,7 +71,7 @@ value iterators are supported and the operations can be told to
 perform more efficient destructive updates.
 
 [ENTRY]
-Modul:  kernel
+Module: kernel
 What:   change
 Rank:   minor
 [DESCRIPTION]
