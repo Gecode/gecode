@@ -141,41 +141,33 @@ namespace Gecode { namespace Int { namespace Regular {
    */
 
   template <class View, bool shared>
-  forceinline
-  Dom<View,shared>::LayeredGraph::LayeredGraph(void) : layers(NULL) {}
-
-  template <class View, bool shared>
   forceinline bool
-  Dom<View,shared>::LayeredGraph::constructed(void) const {
+  Dom<View,shared>::constructed(void) const {
     return layers != NULL;
   }
 
   template <class View, bool shared>
-  forceinline int
-  Dom<View,shared>::LayeredGraph::eliminate(const DFA& d, int& start) {
+  forceinline void
+  Dom<View,shared>::eliminate(void) {
     if (!constructed() || (layers[0].size > 1))
-      return 0;
+      return;
     assert(layers[0].size == 1);
     // Skip all layers corresponding to assigned views
-    int i = 0;
-    do {
+    int i = 1;
+    while (layers[i].size == 1)
       i++;
-    } while (layers[i].size == 1);
     // There is only a single edge
     Edge* e = layers[i-1].support[0].edges;
     assert((e->next == NULL) && (e->o_state->i_deg == 1));
     // Map the state address to the state
-    start = static_cast<int>(e->o_state-states) % d.n_states();
+    start = static_cast<int>(e->o_state-states) % dfa.n_states();
     layers += i;
-    return i;
+    x.drop_fst(i);
   }
 
   template <class View, bool shared>
   forceinline ExecStatus
-  Dom<View,shared>::LayeredGraph::construct(Space* home,
-                                            ViewArray<View> x, 
-                                            const DFA& dfa,
-                                            int start) {
+  Dom<View,shared>::construct(Space* home) {
     int n = x.size();
     layers = reinterpret_cast<Layer*>(home->alloc(sizeof(Layer)*(n+2)))+1;
     
@@ -268,7 +260,7 @@ namespace Gecode { namespace Int { namespace Regular {
 
   template <class View, bool shared>
   forceinline ExecStatus
-  Dom<View,shared>::LayeredGraph::prune(Space* home, ViewArray<View> x) {
+  Dom<View,shared>::prune(Space* home) {
     // Forward pass
     for (int i=0; i<x.size(); i++) {
       if ((layers[i].size != x[i].size()) && (layers[i].modified & MOD_IDEG)) {
@@ -432,8 +424,7 @@ namespace Gecode { namespace Int { namespace Regular {
 
   template <class View, bool shared>
   forceinline ExecStatus
-  Dom<View,shared>::LayeredGraph::tell(Space* home, Propagator* p,
-                                       ViewArray<View> x) {
+  Dom<View,shared>::tell(Space* home) {
     // Reset modification information for border areas
     layers[-1].modified = MOD_NONE;
     layers[x.size()].modified = MOD_NONE;
@@ -462,7 +453,7 @@ namespace Gecode { namespace Int { namespace Regular {
         if (!x[i].assigned())
           return es;
       x.size(0);
-      return ES_SUBSUMED(p,home);
+      return ES_SUBSUMED(this,home);
     } else {
       int n=x.size();
       for (int i=x.size(); i--; ) {
@@ -481,7 +472,7 @@ namespace Gecode { namespace Int { namespace Regular {
       }
       if (n == 0) {
         x.size(0);
-        return ES_SUBSUMED(p,home);
+        return ES_SUBSUMED(this,home);
       }
       return ES_FIX;
     }
@@ -490,20 +481,18 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View, bool shared>
   ExecStatus
   Dom<View,shared>::propagate(Space* home) {
-    if (lg.constructed()) {
-      GECODE_ES_CHECK(lg.prune(home,this->x));
+    if (constructed()) {
+      GECODE_ES_CHECK(prune(home));
     } else {
-      GECODE_ES_CHECK(lg.construct(home,this->x,dfa,start));
+      GECODE_ES_CHECK(construct(home));
     }
-    return lg.tell(home,this,this->x);
+    return tell(home);
   }
 
   template <class View, bool shared>
   forceinline
   Dom<View,shared>::Dom(Space* home, ViewArray<View>& x0, DFA& d)
-    : Propagator(home), x(x0), dfa(d), start(0) {
-    if (x.size() == 0)
-      __debugbreak();
+    : Propagator(home), x(x0), dfa(d), start(0), layers(NULL) {
     assert(x.size() > 0);
     x.subscribe(home,this,PC_INT_DOM);
     this->force(home);
@@ -544,9 +533,9 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View, bool shared>
   forceinline
   Dom<View,shared>::Dom(Space* home, bool share, Dom<View,shared>& p)
-    : Propagator(home,share,p) {
+    : Propagator(home,share,p), layers(NULL) {
     assert(p.x.size() > 0);
-    p.x.drop_fst(p.lg.eliminate(p.dfa,p.start));
+    p.eliminate();
     x.update(home,share,p.x);
     dfa.update(home,share,p.dfa);
     start = p.start;

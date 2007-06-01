@@ -58,29 +58,21 @@ namespace Gecode { namespace Int { namespace Regular {
     DFA dfa;
     /// The start state for graph construction
     int start;
-    /// %LayeredGraph as data structure used for propagation
-    class LayeredGraph {
-    public:
-      /// The layers of the graph
-      Layer* layers;
-      /// The states
-      State* states;
-      /// Mark layered graph as not yet constructed
-      LayeredGraph(void);
-      /// Test whether layered graph has already been constructed
-      bool constructed(void) const;
-      /// Eliminate assigned prefix, return how many layers removed
-      int eliminate(const DFA& d, int& start);
-      /// Construct layered graph
-      ExecStatus construct(Space* home, ViewArray<View> x, 
-                           const DFA& d, int start);
-      /// Prune incrementally for view sequence \a x
-      ExecStatus prune(Space* home, ViewArray<View> x);
-      /// Tell back modifications to \a x for propagator \a p
-      ExecStatus tell(Space* home, Propagator* p, ViewArray<View> x);
-    };
-    /// Propagation is performed on a layered graph (cnstructed lazily)
-    LayeredGraph lg;
+    /// The layers of the graph
+    Layer* layers;
+    /// The states used in the graph
+    State* states;
+    
+    /// Test whether layered graph has already been constructed
+    bool constructed(void) const;
+    /// Eliminate assigned prefix, return how many layers removed
+    void eliminate(void);
+    /// Construct layered graph
+    ExecStatus construct(Space* home);
+    /// Prune incrementally
+    ExecStatus prune(Space* home);
+    /// Tell back modifications
+    ExecStatus tell(Space* home);
 
     /// Constructor for cloning \a p (use \a shared for \a dfa)
     Dom(Space* home, bool share, Dom<View,shared>& p);
