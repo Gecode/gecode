@@ -193,7 +193,6 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View>
   forceinline ExecStatus
   Dom<View>::construct(Space* home) {
-    //    std::cout << "construct()" << std::endl;
     int n = x.size();
     layers = reinterpret_cast<Layer*>(home->alloc(sizeof(Layer)*(n+2)))+1;
     
@@ -284,47 +283,11 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View>
   forceinline ExecStatus
   Dom<View>::prune(Space* home) {
-    // Synchronize views
-    /*
-    for (int i=0; i<x.size(); i++)
-      if (layers[i].size != x[i].size()) {
-        int moddeg = MOD_NONE;
-        unsigned int j=0;
-        unsigned int k=0;
-        for (ViewValues<View> vx(x[i]); vx() && (j<layers[i].size); j++)
-          if (layers[i].support[j].val < vx.val()) {
-            // Supported value not any longer in view
-            for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
-              // Adapt states
-              if ((--e->i_state->o_deg) == 0) moddeg |= MOD_ODEG;
-              if ((--e->o_state->i_deg) == 0) moddeg |= MOD_IDEG;
-            }
-          } else {
-            assert(layers[i].support[j].val == vx.val());
-            layers[i].support[k++]=layers[i].support[j];
-            ++vx;
-          }
-        if (k == 0)
-          return ES_FAILED;
-        // Remove remaining values
-        for (; j < layers[i].size; j++)
-          for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
-            // Adapt states
-            if ((--e->i_state->o_deg) == 0) moddeg |= MOD_ODEG;
-            if ((--e->o_state->i_deg) == 0) moddeg |= MOD_IDEG;
-          }
-        // Update size and modification information
-        layers[i].size = k;
-        layers[i-1].modified |= (moddeg & MOD_ODEG);
-        layers[i+1].modified |= (moddeg & MOD_IDEG);
-      }
-    */
-
     // Forward pass
     for (int i=0; i<x.size(); i++) 
       if (layers[i].modified & MOD_IDEG) {
         layers[i].modified -= MOD_IDEG;
-        int  moddeg = MOD_NONE;
+        int modified = MOD_NONE;
         unsigned int k=0;
         for (unsigned int j=0; j<layers[i].size; j++) {
           // Some edges might have lost support
@@ -332,8 +295,8 @@ namespace Gecode { namespace Int { namespace Regular {
           for (Edge* e = *p; e != NULL; e = e->next) 
             if (e->i_state->i_deg == 0) {
               // Adapt states
-              if ((--e->i_state->o_deg) == 0) moddeg |= MOD_ODEG;
-              if ((--e->o_state->i_deg) == 0) moddeg |= MOD_IDEG;
+              if ((--e->i_state->o_deg) == 0) modified |= MOD_ODEG;
+              if ((--e->o_state->i_deg) == 0) modified |= MOD_IDEG;
               // Remove edge
               *p = e->next;
             } else {
@@ -352,15 +315,15 @@ namespace Gecode { namespace Int { namespace Regular {
         assert(k > 0);
         // Update size and modification information
         layers[i].size = k;
-        layers[i-1].modified |= (moddeg & MOD_ODEG);
-        layers[i+1].modified |= (moddeg & MOD_IDEG);
+        layers[i-1].modified |= (modified & MOD_ODEG);
+        layers[i+1].modified |= (modified & MOD_IDEG);
       }
 
     // Backward pass
     for (int i=x.size(); i--; ) {
       if (layers[i].modified & MOD_ODEG) {
         layers[i].modified -= MOD_ODEG;
-        int moddeg = MOD_NONE;
+        int modified = MOD_NONE;
         unsigned int k=0;
         for (unsigned int j=0; j<layers[i].size; j++) {
           Edge** p = &layers[i].support[j].edges;
@@ -370,7 +333,7 @@ namespace Gecode { namespace Int { namespace Regular {
               p = &e->next;
             } else {
               // Unreachable state, prune edge
-              if (--e->i_state->o_deg == 0) moddeg |= MOD_ODEG;
+              if (--e->i_state->o_deg == 0) modified |= MOD_ODEG;
               --e->o_state->i_deg;
               *p = e->next;
             }
@@ -386,7 +349,7 @@ namespace Gecode { namespace Int { namespace Regular {
         assert(k > 0);
         // Update size and modification information
         layers[i].size = k;
-        layers[i-1].modified |= moddeg;
+        layers[i-1].modified |= modified;
       }
     }
     
@@ -406,7 +369,7 @@ namespace Gecode { namespace Int { namespace Regular {
     if (propagating)
       goto fix;
     assert(layers[i].size != x[i].size());
-    int moddeg = MOD_NONE;
+    int modified = MOD_NONE;
     unsigned int j=0;
     unsigned int k=0;
     for (ViewValues<View> vx(x[i]); vx() && (j<layers[i].size); j++)
@@ -414,8 +377,8 @@ namespace Gecode { namespace Int { namespace Regular {
         // Supported value not any longer in view
         for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
           // Adapt states
-          if ((--e->i_state->o_deg) == 0) moddeg |= MOD_ODEG;
-          if ((--e->o_state->i_deg) == 0) moddeg |= MOD_IDEG;
+          if ((--e->i_state->o_deg) == 0) modified |= MOD_ODEG;
+          if ((--e->o_state->i_deg) == 0) modified |= MOD_IDEG;
         }
       } else {
         assert(layers[i].support[j].val == vx.val());
@@ -428,22 +391,24 @@ namespace Gecode { namespace Int { namespace Regular {
     for (; j < layers[i].size; j++)
       for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
         // Adapt states
-        if ((--e->i_state->o_deg) == 0) moddeg |= MOD_ODEG;
-        if ((--e->o_state->i_deg) == 0) moddeg |= MOD_IDEG;
+        if ((--e->i_state->o_deg) == 0) modified |= MOD_ODEG;
+        if ((--e->o_state->i_deg) == 0) modified |= MOD_IDEG;
       }
     // Update size and modification information
     layers[i].size = k;
-    /*
-    if (moddeg == MOD_NONE)
+    if (modified == MOD_NONE)
       goto fix;
-    */
-    layers[i-1].modified |= (moddeg & MOD_ODEG);
-    layers[i+1].modified |= (moddeg & MOD_IDEG);
+    layers[i-1].modified |= (modified & MOD_ODEG);
+    layers[i+1].modified |= (modified & MOD_IDEG);
     goto nofix;
   nofix:
     return x[i].assigned() ? ES_SUBSUMED_NOFIX(a,home,c) : ES_NOFIX;
   fix:
-    return x[i].assigned() ? ES_SUBSUMED_FIX(a,home,c) : ES_FIX;
+    if (x[i].assigned()) {
+      a->dispose(home,c);
+      return c.empty() ? ES_NOFIX : ES_FIX;
+    }
+    return ES_FIX;
   }
 
   template <class View>
