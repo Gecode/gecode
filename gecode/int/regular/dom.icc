@@ -140,20 +140,20 @@ namespace Gecode { namespace Int { namespace Regular {
    * Index advisors
    *
    */
-  template <class View, bool shared>
+  template <class View>
   forceinline
-  Dom<View,shared>::Index::Index(Space* home, Propagator* p,
+  Dom<View>::Index::Index(Space* home, Propagator* p,
                                  Council<Index>& c, int i0)
     : Advisor(home,p,c), i(i0) {}
 
-  template <class View, bool shared>
+  template <class View>
   forceinline
-  Dom<View,shared>::Index::Index(Space* home, bool share, Index& a)
+  Dom<View>::Index::Index(Space* home, bool share, Index& a)
     : Advisor(home,share,a), i(a.i) {}
 
-  template <class View, bool shared>
+  template <class View>
   forceinline void
-  Dom<View,shared>::Index::dispose(Space* home, Council<Index>& c) {
+  Dom<View>::Index::dispose(Space* home, Council<Index>& c) {
     Advisor::dispose(home,c);
   }
 
@@ -163,15 +163,15 @@ namespace Gecode { namespace Int { namespace Regular {
    *
    */
 
-  template <class View, bool shared>
+  template <class View>
   forceinline bool
-  Dom<View,shared>::constructed(void) const {
+  Dom<View>::constructed(void) const {
     return layers != NULL;
   }
 
-  template <class View, bool shared>
+  template <class View>
   forceinline void
-  Dom<View,shared>::eliminate(void) {
+  Dom<View>::eliminate(void) {
     if (!constructed() || (layers[0].size > 1))
       return;
     assert(layers[0].size == 1);
@@ -190,9 +190,9 @@ namespace Gecode { namespace Int { namespace Regular {
       as.advisor()->i -= i;
   }
 
-  template <class View, bool shared>
+  template <class View>
   forceinline ExecStatus
-  Dom<View,shared>::construct(Space* home) {
+  Dom<View>::construct(Space* home) {
     //    std::cout << "construct()" << std::endl;
     int n = x.size();
     layers = reinterpret_cast<Layer*>(home->alloc(sizeof(Layer)*(n+2)))+1;
@@ -249,8 +249,6 @@ namespace Gecode { namespace Int { namespace Regular {
         return ES_FAILED;
     }
 
-    ExecStatus es = ES_FIX;
-    
     // Backward pass: prune all transitions that do not lead to final state
     for (int i=n; i--; ) {
       unsigned int k=0;
@@ -274,29 +272,20 @@ namespace Gecode { namespace Int { namespace Regular {
       layers[i].size = k;
       if (k == 0)
         return ES_FAILED;
-      if (shared && x[i].modified()) {
-        LayerValues lv(layers[i]);
-        ModEvent me = x[i].inter_v(home,lv,false);
-        if (me_failed(me))
-          return ES_FAILED;
-        if (me_modified(me))
-          es = ES_NOFIX;
-      } else if (x[i].size() != layers[i].size) {
-        LayerValues lv(layers[i]);
-        GECODE_ME_CHECK(x[i].narrow_v(home,lv,false));
-      }
+      LayerValues lv(layers[i]);
+      GECODE_ME_CHECK(x[i].narrow_v(home,lv,false));
     }
 
     if (c.empty())
       return ES_SUBSUMED(this,home);
-    return es;
+    return ES_FIX;
   }
 
-  template <class View, bool shared>
+  template <class View>
   forceinline ExecStatus
-  Dom<View,shared>::prune(Space* home) {
-    //    std::cout << "prune()" << std::endl;
+  Dom<View>::prune(Space* home) {
     // Synchronize views
+    /*
     for (int i=0; i<x.size(); i++)
       if (layers[i].size != x[i].size()) {
         int moddeg = MOD_NONE;
@@ -329,12 +318,12 @@ namespace Gecode { namespace Int { namespace Regular {
         layers[i-1].modified |= (moddeg & MOD_ODEG);
         layers[i+1].modified |= (moddeg & MOD_IDEG);
       }
+    */
 
-    ExecStatus es = ES_FIX;
     // Forward pass
     for (int i=0; i<x.size(); i++) 
       if (layers[i].modified & MOD_IDEG) {
-        bool premod = shared & x[i].modified();
+        layers[i].modified -= MOD_IDEG;
         int  moddeg = MOD_NONE;
         unsigned int k=0;
         for (unsigned int j=0; j<layers[i].size; j++) {
@@ -362,17 +351,15 @@ namespace Gecode { namespace Int { namespace Regular {
         }
         assert(k > 0);
         // Update size and modification information
-        if (premod && (layers[i].size != k))
-          es = ES_NOFIX;
         layers[i].size = k;
         layers[i-1].modified |= (moddeg & MOD_ODEG);
         layers[i+1].modified |= (moddeg & MOD_IDEG);
       }
 
     // Backward pass
-    for (int i=x.size(); i--; )
+    for (int i=x.size(); i--; ) {
       if (layers[i].modified & MOD_ODEG) {
-        bool premod = shared & x[i].modified();
+        layers[i].modified -= MOD_ODEG;
         int moddeg = MOD_NONE;
         unsigned int k=0;
         for (unsigned int j=0; j<layers[i].size; j++) {
@@ -398,72 +385,81 @@ namespace Gecode { namespace Int { namespace Regular {
         }
         assert(k > 0);
         // Update size and modification information
-        if (premod && (layers[i].size != k))
-          es = ES_NOFIX;
         layers[i].size = k;
         layers[i-1].modified |= moddeg;
       }
+    }
     
     // Check subsumtion
     if (c.empty())
       return ES_SUBSUMED(this,home);
-    return es;
+    return ES_FIX;
   }
 
-  template <class View, bool shared>
+  template <class View>
   ExecStatus
-  Dom<View,shared>::advise(Space* home, Advisor* _a, const Delta* d) {
+  Dom<View>::advise(Space* home, Advisor* _a, const Delta* d) {
     Index* a = static_cast<Index*>(_a);
     int i = a->i;
+    if (!constructed())
+      goto nofix;
+    if (propagating)
+      goto fix;
+    assert(layers[i].size != x[i].size());
+    int moddeg = MOD_NONE;
+    unsigned int j=0;
+    unsigned int k=0;
+    for (ViewValues<View> vx(x[i]); vx() && (j<layers[i].size); j++)
+      if (layers[i].support[j].val < vx.val()) {
+        // Supported value not any longer in view
+        for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
+          // Adapt states
+          if ((--e->i_state->o_deg) == 0) moddeg |= MOD_ODEG;
+          if ((--e->o_state->i_deg) == 0) moddeg |= MOD_IDEG;
+        }
+      } else {
+        assert(layers[i].support[j].val == vx.val());
+        layers[i].support[k++]=layers[i].support[j];
+        ++vx;
+      }
+    if (k == 0)
+      return ES_FAILED;
+    // Remove remaining values
+    for (; j < layers[i].size; j++)
+      for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
+        // Adapt states
+        if ((--e->i_state->o_deg) == 0) moddeg |= MOD_ODEG;
+        if ((--e->o_state->i_deg) == 0) moddeg |= MOD_IDEG;
+      }
+    // Update size and modification information
+    layers[i].size = k;
     /*
-    if (i == processed)
-      if (x[i].assigned())
-        return ES_SUBSUMED_NOFIX(a,home,c);
-    else
-      return ES_NOFIX;
+    if (moddeg == MOD_NONE)
+      goto fix;
     */
-    if (processed == 0) {
-      //      std::cout << "advise,other: x[" << i << "] = " << x[i] << std::endl;
-      if (x[i].assigned()) {
-        //        x[i].cancel(home,a);
-        return ES_SUBSUMED_NOFIX(a,home,c);
-      } else {
-        return ES_NOFIX;
-      }
-    } else {
-      //      std::cout << "advise,self: x[" << i << "] = " << x[i] << std::endl;
-      if (x[i].assigned()) {
-        //        x[i].cancel(home,a);
-        return ES_SUBSUMED_FIX(a,home,c);
-      } else {
-        return ES_FIX;
-      }
-    }
+    layers[i-1].modified |= (moddeg & MOD_ODEG);
+    layers[i+1].modified |= (moddeg & MOD_IDEG);
+    goto nofix;
+  nofix:
+    return x[i].assigned() ? ES_SUBSUMED_NOFIX(a,home,c) : ES_NOFIX;
+  fix:
+    return x[i].assigned() ? ES_SUBSUMED_FIX(a,home,c) : ES_FIX;
   }
 
-  template <class View, bool shared>
+  template <class View>
   ExecStatus
-  Dom<View,shared>::propagate(Space* home) {
-    /*
-        std::cout << "propagate()" << std::endl << "\tx[]={";
-    for (int i=0;i<x.size(); i++)
-      std::cout << x[i] << ",";
-    std::cout << std::endl;
-    */
-    processed = 1;
+  Dom<View>::propagate(Space* home) {
+    propagating = true;
     ExecStatus es = constructed() ? prune(home) : construct(home);
-    processed = 0;
-    /*
-    if (c.empty())
-      std::cout << "ADVISORS EMPTY" << std::endl;
-    */
+    propagating = false;
     return es;
   }
 
-  template <class View, bool shared>
+  template <class View>
   forceinline
-  Dom<View,shared>::Dom(Space* home, ViewArray<View>& x0, DFA& d)
-    : Propagator(home), c(home), processed(0), x(x0), dfa(d), start(0), layers(NULL) {
+  Dom<View>::Dom(Space* home, ViewArray<View>& x0, DFA& d)
+    : Propagator(home), c(home), x(x0), dfa(d), start(0), 
+      layers(NULL), propagating(false) {
     assert(x.size() > 0);
     ModEvent me = ME_INT_BND;
     for (int i=x.size(); i--; )
@@ -476,20 +472,19 @@ namespace Gecode { namespace Int { namespace Regular {
     this->force(home);
   }
 
-  template <class View, bool shared>
+  template <class View>
   forceinline size_t
-  Dom<View,shared>::dispose(Space* home) {
+  Dom<View>::dispose(Space* home) {
     this->unforce(home);
-    //    c.dispose(home);
+    assert(home->failed() || c.empty());
     dfa.~DFA();
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
-  template <class View, bool shared>
+  template <class View>
   ExecStatus
-  Dom<View,shared>::post(Space* home, ViewArray<View>& x, DFA& d) {
-    //    std::cout << "post()" << std::endl;
+  Dom<View>::post(Space* home, ViewArray<View>& x, DFA& d) {
     if (x.size() == 0) {
       // Check whether the start state 0 is also a final state
       if ((d.final_fst() <= 0) && (d.final_lst() >= 0))
@@ -501,18 +496,14 @@ namespace Gecode { namespace Int { namespace Regular {
       DFA::Symbols s(d);
       GECODE_ME_CHECK(x[i].inter_v(home,s,false));
     }
-    if (x.shared()) {
-      (void) new (home) Dom<View,true>(home,x,d);
-    } else {
-      (void) new (home) Dom<View,false>(home,x,d);
-    }
+    (void) new (home) Dom<View>(home,x,d);
     return ES_OK;
   }
 
-  template <class View, bool shared>
+  template <class View>
   forceinline
-  Dom<View,shared>::Dom(Space* home, bool share, Dom<View,shared>& p)
-    : Propagator(home,share,p), processed(0), layers(NULL) {
+  Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
+    : Propagator(home,share,p), layers(NULL), propagating(false) {
     assert(p.x.size() > 0);
     p.eliminate();
     c.update(home,share,p.c);
@@ -521,16 +512,16 @@ namespace Gecode { namespace Int { namespace Regular {
     start = p.start;
   }
 
-  template <class View, bool shared>
+  template <class View>
   PropCost
-  Dom<View,shared>::cost(void) const {
-    return cost_hi(this->x.size(), PC_LINEAR_HI);
+  Dom<View>::cost(void) const {
+    return cost_hi(x.size(), PC_LINEAR_HI);
   }
 
-  template <class View, bool shared>
+  template <class View>
   Actor*
-  Dom<View,shared>::copy(Space* home, bool share) {
-    return new (home) Dom<View,shared>(home,share,*this);
+  Dom<View>::copy(Space* home, bool share) {
+    return new (home) Dom<View>(home,share,*this);
   }
 
 }}}

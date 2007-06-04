@@ -43,13 +43,13 @@ namespace Gecode { namespace Int { namespace Regular {
    *   for Finite Sequences of Variables, CP 2004.
    *   Pages 482-495, LNCS 3258, Springer-Verlag, 2004.
    *
-   * If \a shared is true, the propagator is capable of multiple
-   * occurences of the same view.
+   * The propagator is not capable of multiple occurences of the same
+   * view, see gecode/regular.cc for the necessary preprocessing.
    *
    * Requires \code #include "gecode/int/regular.hh" \endcode
    * \ingroup FuncIntProp
    */
-  template <class View, bool shared>
+  template <class View>
   class Dom : public Propagator {
   protected:
     /// Advisors for views (by position in array)
@@ -66,8 +66,6 @@ namespace Gecode { namespace Int { namespace Regular {
     };
     /// The advisor council
     Council<Index> c;
-    /// The index of a view that is currently processed
-    int processed;
     /// The views
     ViewArray<View> x;
     /// The %DFA describing the language
@@ -78,6 +76,8 @@ namespace Gecode { namespace Int { namespace Regular {
     Layer* layers;
     /// The states used in the graph
     State* states;
+    /// Whether propagator is currently propagating
+    bool propagating;
     
     /// Test whether layered graph has already been constructed
     bool constructed(void) const;
@@ -88,8 +88,8 @@ namespace Gecode { namespace Int { namespace Regular {
     /// Prune incrementally
     ExecStatus prune(Space* home);
 
-    /// Constructor for cloning \a p (use \a shared for \a dfa)
-    Dom(Space* home, bool share, Dom<View,shared>& p);
+    /// Constructor for cloning \a p
+    Dom(Space* home, bool share, Dom<View>& p);
   public:
     /// Constructor for posting
     Dom(Space* home, ViewArray<View>& x, DFA& d);
