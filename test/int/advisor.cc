@@ -195,9 +195,9 @@ namespace {
                  Council<BndAdvisor>& c, IntView v) 
         : ViewAdvisor<IntView>(home,p,c,v) {
         if (x.assigned())
-          schedule(home, Int::ME_INT_VAL);
+          IntView::schedule(home,p,ME_INT_VAL);
         else
-          schedule(home, Int::ME_INT_BND);
+          IntView::schedule(home,p,ME_INT_BND);
       }
       BndAdvisor(Space* home, bool share, BndAdvisor& a) 
         : ViewAdvisor<IntView>(home,share,a) {}
@@ -288,7 +288,7 @@ namespace {
                  BoolView v) 
         : ViewAdvisor<BoolView>(home,p,c,v) {
         if (x.assigned())
-          schedule(home, Int::ME_BOOL_VAL);
+          BoolView::schedule(home,p,ME_INT_BND);
       }
       BndAdvisor(Space* home, bool share, BndAdvisor& a) 
         : ViewAdvisor<BoolView>(home,share,a) {}

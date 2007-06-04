@@ -797,15 +797,14 @@ namespace Gecode {
   private:
     /// Is the advisor disposed?
     bool disposed(void) const;
+    /// Return the advisor's propagator
+    Propagator* propagator(void) const; 
   public:
     /// Constructor for creation
     template <class A>
     Advisor(Space* home, Propagator* p, Council<A>& c);
     /// Copying constructor
     Advisor(Space* home, bool share, Advisor& a);
-
-    /// Return the advisor's propagator
-    Propagator* propagator(void) const; 
 
     /// \name Memory management
     //@{

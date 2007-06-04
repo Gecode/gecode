@@ -43,17 +43,6 @@ namespace Gecode {
     View view(void) const;
     /// Replace view (also replaces subscription to view)
     void view(Space* home, View y);
-    /** 
-     * \brief Schedule advisor's propagator for execution
-     *
-     * The propagator is scheduled for execution with modification
-     * event \a me.
-     *
-     * If the propagator is currently propagating, then
-     * scheduling it will not make the propagator run again.
-     *
-     */
-    void schedule(Space* home, ModEvent me) const;
     /// Delete advisor
     template <class A>
     void dispose(Space* home, Council<A>& c);
@@ -86,11 +75,6 @@ namespace Gecode {
     x.cancel(home, this);
     x=y;
     x.subscribe(home, this);
-  }
-  template <class View>
-  forceinline void
-  ViewAdvisor<View>::schedule(Space* home, ModEvent me) const {
-    View::schedule(home, propagator(), me);
   }
   template <class View>
   template <class A>
