@@ -233,7 +233,7 @@ Options::parse(int argc, char** argv) {
     }
     i++;
   }
-  testpat.push_back(make_pair(false, "Regular"));
+  testpat.push_back(make_pair(false, "Regular::Shared"));
   return;
  missing:
   e = "missing parameter";

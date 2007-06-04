@@ -193,6 +193,7 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View, bool shared>
   forceinline ExecStatus
   Dom<View,shared>::construct(Space* home) {
+    //    std::cout << "construct()" << std::endl;
     int n = x.size();
     layers = reinterpret_cast<Layer*>(home->alloc(sizeof(Layer)*(n+2)))+1;
     
@@ -248,8 +249,7 @@ namespace Gecode { namespace Int { namespace Regular {
         return ES_FAILED;
     }
 
-    bool mod      = false;
-    bool assigned = true;
+    ExecStatus es = ES_FIX;
     
     // Backward pass: prune all transitions that do not lead to final state
     for (int i=n; i--; ) {
@@ -280,23 +280,22 @@ namespace Gecode { namespace Int { namespace Regular {
         if (me_failed(me))
           return ES_FAILED;
         if (me_modified(me))
-          mod = true;
+          es = ES_NOFIX;
       } else if (x[i].size() != layers[i].size) {
         LayerValues lv(layers[i]);
         GECODE_ME_CHECK(x[i].narrow_v(home,lv,false));
       }
-      if (!x[i].assigned())
-        assigned = false;
     }
 
-    if (assigned)
+    if (c.empty())
       return ES_SUBSUMED(this,home);
-    return (shared && mod) ? ES_NOFIX : ES_FIX;
+    return es;
   }
 
   template <class View, bool shared>
   forceinline ExecStatus
   Dom<View,shared>::prune(Space* home) {
+    //    std::cout << "prune()" << std::endl;
     // Synchronize views
     for (int i=0; i<x.size(); i++)
       if (layers[i].size != x[i].size()) {
@@ -406,10 +405,9 @@ namespace Gecode { namespace Int { namespace Regular {
       }
     
     // Check subsumtion
-    for (int i=x.size(); i--; )
-      if (!x[i].assigned())
-        return es;
-    return ES_SUBSUMED(this,home);
+    if (c.empty())
+      return ES_SUBSUMED(this,home);
+    return es;
   }
 
   template <class View, bool shared>
@@ -425,6 +423,7 @@ namespace Gecode { namespace Int { namespace Regular {
       return ES_NOFIX;
     */
     if (processed == 0) {
+      //      std::cout << "advise,other: x[" << i << "] = " << x[i] << std::endl;
       if (x[i].assigned()) {
         //        x[i].cancel(home,a);
         return ES_SUBSUMED_NOFIX(a,home,c);
@@ -432,6 +431,7 @@ namespace Gecode { namespace Int { namespace Regular {
         return ES_NOFIX;
       }
     } else {
+      //      std::cout << "advise,self: x[" << i << "] = " << x[i] << std::endl;
       if (x[i].assigned()) {
         //        x[i].cancel(home,a);
         return ES_SUBSUMED_FIX(a,home,c);
@@ -444,9 +444,19 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View, bool shared>
   ExecStatus
   Dom<View,shared>::propagate(Space* home) {
+    /*
+        std::cout << "propagate()" << std::endl << "\tx[]={";
+    for (int i=0;i<x.size(); i++)
+      std::cout << x[i] << ",";
+    std::cout << std::endl;
+    */
     processed = 1;
     ExecStatus es = constructed() ? prune(home) : construct(home);
     processed = 0;
+    /*
+    if (c.empty())
+      std::cout << "ADVISORS EMPTY" << std::endl;
+    */
     return es;
   }
 
@@ -479,6 +489,7 @@ namespace Gecode { namespace Int { namespace Regular {
   template <class View, bool shared>
   ExecStatus
   Dom<View,shared>::post(Space* home, ViewArray<View>& x, DFA& d) {
+    //    std::cout << "post()" << std::endl;
     if (x.size() == 0) {
       // Check whether the start state 0 is also a final state
       if ((d.final_fst() <= 0) && (d.final_lst() >= 0))
