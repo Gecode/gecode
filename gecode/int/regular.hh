@@ -25,6 +25,8 @@
 
 #include "gecode/int.hh"
 
+#include <climits>
+
 /**
  * \namespace Gecode::Int::Regular
  * \brief %Regular propagators
@@ -34,6 +36,25 @@ namespace Gecode { namespace Int { namespace Regular {
 
   class Layer;
   class State;
+  class IndexRange {
+  private:
+    int _fst; int _lst;
+  public:
+    IndexRange(void) 
+      : _fst(INT_MAX), _lst(INT_MIN) {}
+    void reset(void) {
+      _fst=INT_MAX; _lst=INT_MIN;
+    }
+    void add(int i) {
+      _fst=std::min(_fst,i); _lst=std::max(_lst,i);
+    }
+    int fst(void) const {
+      return _fst;
+    }
+    int lst(void) const {
+      return _lst;
+    }
+  };
 
   /**
    * \brief Domain-consistent regular propagator
@@ -78,6 +99,10 @@ namespace Gecode { namespace Int { namespace Regular {
     State* states;
     /// Whether propagator is currently propagating
     bool propagating;
+    /// Index range with in-degree modifications
+    IndexRange i_ch;
+    /// Index range with out-degree modifications
+    IndexRange o_ch;
     
     /// Test whether layered graph has already been constructed
     bool constructed(void) const;

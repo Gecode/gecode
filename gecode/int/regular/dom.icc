@@ -284,7 +284,7 @@ namespace Gecode { namespace Int { namespace Regular {
   forceinline ExecStatus
   Dom<View>::prune(Space* home) {
     // Forward pass
-    for (int i=0; i<x.size(); i++) 
+    for (int i=i_ch.fst(); i<=i_ch.lst(); i++) 
       if (layers[i].modified & MOD_IDEG) {
         layers[i].modified -= MOD_IDEG;
         int modified = MOD_NONE;
@@ -315,12 +315,17 @@ namespace Gecode { namespace Int { namespace Regular {
         assert(k > 0);
         // Update size and modification information
         layers[i].size = k;
-        layers[i-1].modified |= (modified & MOD_ODEG);
-        layers[i+1].modified |= (modified & MOD_IDEG);
+        if (modified & MOD_ODEG) {
+          layers[i-1].modified |= MOD_ODEG; o_ch.add(i-1);
+        }
+        if (modified & MOD_IDEG) {
+          layers[i+1].modified |= MOD_IDEG; i_ch.add(i+1);
+        }
       }
+    i_ch.reset();
 
     // Backward pass
-    for (int i=x.size(); i--; ) {
+    for (int i=o_ch.lst(); i>=o_ch.fst(); i--) {
       if (layers[i].modified & MOD_ODEG) {
         layers[i].modified -= MOD_ODEG;
         int modified = MOD_NONE;
@@ -349,10 +354,13 @@ namespace Gecode { namespace Int { namespace Regular {
         assert(k > 0);
         // Update size and modification information
         layers[i].size = k;
-        layers[i-1].modified |= modified;
+        if (modified & MOD_ODEG) {
+          layers[i-1].modified |= MOD_ODEG; o_ch.add(i-1);
+        }
       }
     }
-    
+    o_ch.reset();
+
     // Check subsumtion
     if (c.empty())
       return ES_SUBSUMED(this,home);
@@ -398,8 +406,12 @@ namespace Gecode { namespace Int { namespace Regular {
     layers[i].size = k;
     if (modified == MOD_NONE)
       goto fix;
-    layers[i-1].modified |= (modified & MOD_ODEG);
-    layers[i+1].modified |= (modified & MOD_IDEG);
+    if (modified & MOD_ODEG) {
+      layers[i-1].modified |= MOD_ODEG; o_ch.add(i-1);
+    }
+    if (modified & MOD_IDEG) {
+      layers[i+1].modified |= MOD_IDEG; i_ch.add(i+1);
+    }
     goto nofix;
   nofix:
     return x[i].assigned() ? ES_SUBSUMED_NOFIX(a,home,c) : ES_NOFIX;
