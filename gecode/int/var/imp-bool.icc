@@ -454,11 +454,11 @@ namespace Gecode { namespace Int {
         ++i;
       } while (i() && (i.val() == 0));
       if (!i())
-        return one(home);
-      return ME_INT_FAILED;
+        return zero_none(home);
+      return ME_INT_NONE;
     } else {
       assert(i.val() == 1);
-      return zero(home);
+      return one_none(home);
     }
   }
   template <class I>
