@@ -847,8 +847,10 @@ namespace Gecode {
       /// End of transitions
       const Transition* e_trans;
     public:
-      /// Initialize to transitions of DFA \a d
+      /// Initialize to all transitions of DFA \a d
       Transitions(const DFA& d);
+      /// Initialize to transitions of DFA \a d for symbol \a n
+      Transitions(const DFA& d, int n);
       /// Test whether iterator still at a transition
       bool operator()(void) const;
       /// Move iterator to next transition
@@ -910,6 +912,8 @@ namespace Gecode {
     DFA(const DFA& d);
     /// Return the number of states
     unsigned int n_states(void) const;
+    /// Return the number of symbols
+    unsigned int n_symbols(void) const;
     /// Return the number of transitions
     unsigned int n_transitions(void) const;
     /// Return the number of the first final state

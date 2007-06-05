@@ -410,6 +410,17 @@ namespace Gecode {
         }
       TransBySymbol::sort(r,m_trans);
     }
+    // Count number of symbols
+    {
+      unsigned int n_symbols = 0;
+      for (int i = 0; i<m_trans; ) {
+        int s = d->trans[i++].symbol;
+        n_symbols++;
+        while ((i<m_trans) && (d->trans[i].symbol == s))
+          i++;
+      }
+      d->n_symbols = n_symbols;
+    }
     object(d);
   }
 

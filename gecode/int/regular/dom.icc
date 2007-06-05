@@ -237,28 +237,19 @@ namespace Gecode { namespace Int { namespace Regular {
         reinterpret_cast<Support*>(home->alloc(x[i].size()*sizeof(Support)));
       unsigned int j=0;
       // Enter links leaving reachable states (indegree != 0)
-      DFA::Transitions t(dfa);
-      ViewValues<View> nx(x[i]);
-      while (nx()) {
-        while (t.symbol() < nx.val())
-          ++t;
-        assert(t.symbol() == nx.val());
+      for (ViewValues<View> nx(x[i]); nx(); ++nx) {
         Edge* e = NULL;
-        do {
-          // Is in-state of transition reachable?
+        for (DFA::Transitions t(dfa,nx.val()); t(); ++t)
           if (states[i*n_states + t.i_state()].i_deg != 0)
             e = new (home) Edge(states[i*n_states + t.i_state()],
                                 states[(i+1)*n_states +  t.o_state()],
                                 e);
-          ++t;
-        } while (t() && (t.symbol() == nx.val()));
         // Found support for value
         if (e != NULL) {
           layers[i].support[j].val   = nx.val();
           layers[i].support[j].edges = e;
           j++;
         }
-        ++nx;
       }
       if ((layers[i].size = j) == 0)
         return ES_FAILED;
