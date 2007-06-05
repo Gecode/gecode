@@ -107,7 +107,7 @@ namespace Gecode {
       }
       ViewPos<View>::sort(y,n);
       // Replace all shared views with new and equal views
-      for (int i=0; i<n; i) {
+      for (int i=0; i<n;) {
         View z = y[i++].x;
         while ((i<n) && shared(z,y[i].x))
           GECODE_ES_CHECK(link(home,z,x[y[i++].i]));

@@ -377,40 +377,42 @@ namespace Gecode { namespace Int { namespace Regular {
     if (propagating)
       goto fix;
     assert(layers[i].size != x[i].size());
-    int modified = MOD_NONE;
-    unsigned int j=0;
-    unsigned int k=0;
-    for (ViewValues<View> vx(x[i]); vx() && (j<layers[i].size); j++)
-      if (layers[i].support[j].val < vx.val()) {
-        // Supported value not any longer in view
+    {
+      int modified = MOD_NONE;
+      unsigned int j=0;
+      unsigned int k=0;
+      for (ViewValues<View> vx(x[i]); vx() && (j<layers[i].size); j++)
+        if (layers[i].support[j].val < vx.val()) {
+          // Supported value not any longer in view
+          for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
+            // Adapt states
+            if ((--e->i_state->o_deg) == 0) modified |= MOD_ODEG;
+            if ((--e->o_state->i_deg) == 0) modified |= MOD_IDEG;
+          }
+        } else {
+          assert(layers[i].support[j].val == vx.val());
+          layers[i].support[k++]=layers[i].support[j];
+          ++vx;
+        }
+      if (k == 0)
+        return ES_FAILED;
+      // Remove remaining values
+      for (; j < layers[i].size; j++)
         for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
           // Adapt states
           if ((--e->i_state->o_deg) == 0) modified |= MOD_ODEG;
           if ((--e->o_state->i_deg) == 0) modified |= MOD_IDEG;
         }
-      } else {
-        assert(layers[i].support[j].val == vx.val());
-        layers[i].support[k++]=layers[i].support[j];
-        ++vx;
+      // Update size and modification information
+      layers[i].size = k;
+      if (modified == MOD_NONE)
+        goto fix;
+      if (modified & MOD_ODEG) {
+        layers[i-1].modified |= MOD_ODEG; o_ch.add(i-1);
       }
-    if (k == 0)
-      return ES_FAILED;
-    // Remove remaining values
-    for (; j < layers[i].size; j++)
-      for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
-        // Adapt states
-        if ((--e->i_state->o_deg) == 0) modified |= MOD_ODEG;
-        if ((--e->o_state->i_deg) == 0) modified |= MOD_IDEG;
+      if (modified & MOD_IDEG) {
+        layers[i+1].modified |= MOD_IDEG; i_ch.add(i+1);
       }
-    // Update size and modification information
-    layers[i].size = k;
-    if (modified == MOD_NONE)
-      goto fix;
-    if (modified & MOD_ODEG) {
-      layers[i-1].modified |= MOD_ODEG; o_ch.add(i-1);
-    }
-    if (modified & MOD_IDEG) {
-      layers[i+1].modified |= MOD_IDEG; i_ch.add(i+1);
     }
     goto nofix;
   nofix:
