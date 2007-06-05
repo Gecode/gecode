@@ -50,8 +50,8 @@ namespace Gecode { namespace Int {
     int _min; ///< Minimum value just pruned
     int _max; ///< Largest value just pruned
   public:
-    /// Create integer delta as providing no information (any)
-    IntDelta(void);
+    /// Create integer delta as providing no information (if \a any is true)
+    IntDelta(bool any=true);
     /// Create integer delta with \a min and \a max
     IntDelta(int min, int max);
   private:

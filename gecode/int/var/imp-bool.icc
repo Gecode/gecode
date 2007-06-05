@@ -136,8 +136,7 @@ namespace Gecode { namespace Int {
    */
   forceinline bool
   BoolVarImp::notify(Space* home, ModEvent me) {
-    int n = 1 - val();
-    IntDelta d(n,n);
+    IntDelta d(false);
     return BoolVarImpBase::notify(home,me,&d);
   }
 

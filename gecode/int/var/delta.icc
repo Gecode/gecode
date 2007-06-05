@@ -23,8 +23,11 @@
 namespace Gecode { namespace Int {
 
   forceinline
-  IntDelta::IntDelta(void) 
-    : _min(1), _max(0) {}
+  IntDelta::IntDelta(bool any) {
+    if (any) {
+      _min=1; _max=0;
+    }
+  }
   forceinline
   IntDelta::IntDelta(int min, int max)
     : _min(min), _max(max) {}
