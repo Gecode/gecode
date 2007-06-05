@@ -80,9 +80,9 @@ namespace Gecode { namespace Int { namespace Regular {
    * \name Flags for modification in layer
    */
   //@{
-  const int MOD_NONE  = 0; ///< No modification
-  const int MOD_IDEG  = 1; ///< Indegree has become zero
-  const int MOD_ODEG  = 2; ///< Outdegree has become zero
+  const unsigned int MOD_NONE  = 0; ///< No modification
+  const unsigned int MOD_IDEG  = 1; ///< Indegree has become zero
+  const unsigned int MOD_ODEG  = 2; ///< Outdegree has become zero
   //@}
 
   /// Layer for a view in the layered graph
@@ -90,7 +90,7 @@ namespace Gecode { namespace Int { namespace Regular {
   public:
     unsigned int size;     ///< Number of supported values
     Support*     support;  ///< Supported values
-    int          modified; ///< Modification information
+    unsigned int modified; ///< Modification information
   };
 
   /// Iterator for telling variable domains by scanning support
@@ -253,7 +253,8 @@ namespace Gecode { namespace Int { namespace Regular {
       unsigned int k=0;
       for (unsigned int j=0; j<layers[i].size; j++) {
         Edge** p = &layers[i].support[j].edges;
-        for (Edge* e = *p; e != NULL; e = e->next)
+        Edge*  e = *p;
+        do {
           if (e->o_state->o_deg != 0) {
             // This state is still reachable, keep edge
             p = &e->next;
@@ -262,6 +263,8 @@ namespace Gecode { namespace Int { namespace Regular {
             e->i_state->o_deg--; e->o_state->i_deg--;
             *p = e->next;
           }
+          e = e->next;
+        } while (e != NULL);
         // Write endmarker for edges
         *p = NULL;
         // Value has support, copy the support information
@@ -287,12 +290,14 @@ namespace Gecode { namespace Int { namespace Regular {
     for (int i=i_ch.fst(); i<=i_ch.lst(); i++) 
       if (layers[i].modified & MOD_IDEG) {
         layers[i].modified -= MOD_IDEG;
-        int modified = MOD_NONE;
+        unsigned int modified = MOD_NONE;
+        unsigned int j=0;
         unsigned int k=0;
-        for (unsigned int j=0; j<layers[i].size; j++) {
+        do {
           // Some edges might have lost support
           Edge** p = &layers[i].support[j].edges;
-          for (Edge* e = *p; e != NULL; e = e->next) 
+          Edge*  e = *p;
+          do {
             if (e->i_state->i_deg == 0) {
               // Adapt states
               if ((--e->i_state->o_deg) == 0) modified |= MOD_ODEG;
@@ -303,15 +308,17 @@ namespace Gecode { namespace Int { namespace Regular {
               // Keep edge
               p = &e->next;
             }
+            e = e->next;
+          } while (e != NULL);
           // Write endmarker for edges
           *p=NULL;
           // Check whether value is still supported
           if (layers[i].support[j].edges == NULL) {
-            GECODE_ME_CHECK(x[i].nq(home,layers[i].support[j].val));
+            GECODE_ME_CHECK(x[i].nq(home,layers[i].support[j++].val));
           } else {
-            layers[i].support[k++]=layers[i].support[j];
+            layers[i].support[k++]=layers[i].support[j++];
           }
-        }
+        } while (j<layers[i].size);
         assert(k > 0);
         // Update size and modification information
         layers[i].size = k;
@@ -328,11 +335,13 @@ namespace Gecode { namespace Int { namespace Regular {
     for (int i=o_ch.lst(); i>=o_ch.fst(); i--) {
       if (layers[i].modified & MOD_ODEG) {
         layers[i].modified -= MOD_ODEG;
-        int modified = MOD_NONE;
+        unsigned int modified = MOD_NONE;
+        unsigned int j=0;
         unsigned int k=0;
-        for (unsigned int j=0; j<layers[i].size; j++) {
+        do {
           Edge** p = &layers[i].support[j].edges;
-          for (Edge* e = *p; e != NULL; e = e->next)
+          Edge*  e = *p;
+          do {
             if (e->o_state->o_deg != 0) {
               // This state is still reachable, keep edge
               p = &e->next;
@@ -342,15 +351,17 @@ namespace Gecode { namespace Int { namespace Regular {
               --e->o_state->i_deg;
               *p = e->next;
             }
+            e = e->next;
+          } while (e != NULL);
           // Write endmarker for edges
           *p = NULL;
           // Check whether value has still support
           if (layers[i].support[j].edges == NULL) {
-            GECODE_ME_CHECK(x[i].nq(home,layers[i].support[j].val));
+            GECODE_ME_CHECK(x[i].nq(home,layers[i].support[j++].val));
           } else {
-            layers[i].support[k++]=layers[i].support[j];
+            layers[i].support[k++]=layers[i].support[j++];
           }
-        }
+        } while (j<layers[i].size);
         assert(k > 0);
         // Update size and modification information
         layers[i].size = k;
@@ -378,7 +389,7 @@ namespace Gecode { namespace Int { namespace Regular {
       goto fix;
     assert(layers[i].size != x[i].size());
     {
-      int modified = MOD_NONE;
+      unsigned int modified = MOD_NONE;
       unsigned int j=0;
       unsigned int k=0;
       for (ViewValues<View> vx(x[i]); vx() && (j<layers[i].size); j++)
