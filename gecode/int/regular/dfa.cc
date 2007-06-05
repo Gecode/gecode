@@ -410,8 +410,8 @@ namespace Gecode {
         }
       TransBySymbol::sort(r,m_trans);
     }
-    // Count number of symbols
     {
+      // Count number of symbols
       unsigned int n_symbols = 0;
       for (int i = 0; i<m_trans; ) {
         int s = d->trans[i++].symbol;
@@ -420,6 +420,37 @@ namespace Gecode {
           i++;
       }
       d->n_symbols = n_symbols;
+      // Compute smallest logarithm larger than n_symbols
+      int n_log = 1;
+      while (n_symbols >= static_cast<unsigned int>(1<<n_log))
+        n_log++;
+      d->n_log = n_log;
+      // Allocate memory
+      HashEntry* table = reinterpret_cast<HashEntry*>
+        (Memory::malloc(sizeof(HashEntry)*(1<<n_log)));
+      d->table = table;
+      // Initialize table
+      for (int i=(1<<n_log); i--; ) {
+        table[i].symbol = Limits::Int::int_min-1;
+        table[i].fst = table[i].lst = NULL;
+      }
+      int mask = (1 << n_log) - 1;
+      // Enter transitions to table
+      for (int i = 0; i<m_trans; ) {
+        int s = d->trans[i].symbol;
+        DFA::Transition* fst = &d->trans[i];
+        i++;
+        while ((i<m_trans) && (d->trans[i].symbol == s))
+          i++;
+        DFA::Transition* lst = &d->trans[i];
+        // Enter with linear collision resolution
+        int p = s & mask;
+        while (table[p].fst != NULL)
+          p = (p+1) & mask;
+        table[p].symbol = s;
+        table[p].fst    = fst;
+        table[p].lst    = lst;
+      }
     }
     object(d);
   }

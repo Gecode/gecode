@@ -24,6 +24,14 @@ namespace Gecode {
 
   namespace Int { namespace Regular {
 
+    /// Specification of transition range
+    class HashEntry {
+    public:
+      int symbol;                 ///< Symbol
+      const DFA::Transition* fst; ///< First transition for the symbol
+      const DFA::Transition* lst; ///< Last transition for the symbol
+    };
+
     /**
      * \brief Data stored for a DFA
      *
@@ -41,7 +49,11 @@ namespace Gecode {
       /// Last final state
       int final_lst;
       /// The transitions
-      DFA::Transition*  trans;
+      DFA::Transition* trans;
+      /// The transition hash table by symbol
+      HashEntry* table;
+      /// Size of table (as binary logarithm)
+      int n_log;
       /// Initialize automation implementation with \nt transitions
       DFAI(unsigned int nt);
       /// Delete automation implemenentation
@@ -58,6 +70,7 @@ namespace Gecode {
     forceinline
     DFAI::~DFAI(void) {
       Memory::free(trans);
+      Memory::free(table);
     }
     
   }}
@@ -127,14 +140,13 @@ namespace Gecode {
       e_trans(c_trans+d.object()->n_trans) {}
 
   forceinline
-  DFA::Transitions::Transitions(const DFA& d, int n)
-    : c_trans(&d.object()->trans[0]) {
-    const Transition* e = c_trans+d.object()->n_trans;
-    while ((c_trans < e) && (n>c_trans->symbol))
-      c_trans++;
-    e_trans = c_trans;
-    while ((e_trans < e) && (n==e_trans->symbol))
-      e_trans++;
+  DFA::Transitions::Transitions(const DFA& d, int n) {
+    int mask = (1<<d.object()->n_log)-1;
+    int p = n & mask;
+    while (d.object()->table[p].symbol != n)
+      p = (p+1) & mask;
+    c_trans = d.object()->table[p].fst;
+    e_trans = d.object()->table[p].lst;
   }
 
   forceinline bool
