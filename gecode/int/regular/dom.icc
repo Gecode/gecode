@@ -22,13 +22,10 @@
 
 #include "gecode/iter.hh"
 
+#include <climits>
+#include <algorithm>
+
 namespace Gecode { namespace Int { namespace Regular {
-
-
-  /*
-   * Classes for the layered graph
-   *
-   */
 
   /**
    * \brief States are described by number of incoming and outgoing edges
@@ -146,6 +143,37 @@ namespace Gecode { namespace Int { namespace Regular {
   Dom<View>::Index::dispose(Space* home, Council<Index>& c) {
     Advisor::dispose(home,c);
   }
+
+
+  /*
+   * Index ranges
+   *
+   */
+  template <class View>
+  forceinline
+  Dom<View>::IndexRange::IndexRange(void) 
+    : _fst(INT_MAX), _lst(INT_MIN) {}
+  template <class View>
+  forceinline void
+  Dom<View>::IndexRange::reset(void) {
+    _fst=INT_MAX; _lst=INT_MIN;
+  }
+  template <class View>
+  forceinline void
+  Dom<View>::IndexRange::add(int i) {
+    _fst=std::min(_fst,i); _lst=std::max(_lst,i);
+  }
+  template <class View>
+  forceinline int
+  Dom<View>::IndexRange::fst(void) const {
+    return _fst;
+  }
+  template <class View>
+  forceinline int
+  Dom<View>::IndexRange::lst(void) const {
+    return _lst;
+  }
+
 
   
   /*

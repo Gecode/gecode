@@ -25,8 +25,6 @@
 
 #include "gecode/int.hh"
 
-#include <climits>
-
 /**
  * \namespace Gecode::Int::Regular
  * \brief %Regular propagators
@@ -36,25 +34,6 @@ namespace Gecode { namespace Int { namespace Regular {
 
   class Layer;
   class State;
-  class IndexRange {
-  private:
-    int _fst; int _lst;
-  public:
-    IndexRange(void) 
-      : _fst(INT_MAX), _lst(INT_MIN) {}
-    void reset(void) {
-      _fst=INT_MAX; _lst=INT_MIN;
-    }
-    void add(int i) {
-      _fst=std::min(_fst,i); _lst=std::max(_lst,i);
-    }
-    int fst(void) const {
-      return _fst;
-    }
-    int lst(void) const {
-      return _lst;
-    }
-  };
 
   /**
    * \brief Domain-consistent regular propagator
@@ -84,6 +63,23 @@ namespace Gecode { namespace Int { namespace Regular {
       Index(Space* home, bool share, Index& a);
       /// Dispose advisor
       void dispose(Space* home, Council<Index>& c);
+    };
+    /// Range approximation of which positions have changed
+    class IndexRange {
+    private:
+      int _fst; ///< First index
+      int _lst; ///< Last index
+    public:
+      /// Initialize range as empty
+      IndexRange(void);
+      /// Reset range to be empty
+      void reset(void);
+      /// Add index \a i to range
+      void add(int i);
+      /// Return first position
+      int fst(void) const;
+      /// Return last position
+      int lst(void) const;
     };
     /// The advisor council
     Council<Index> c;
