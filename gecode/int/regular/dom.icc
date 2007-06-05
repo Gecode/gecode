@@ -76,21 +76,11 @@ namespace Gecode { namespace Int { namespace Regular {
     Edge* edges; ///< Supporting edges in layered graph
   };
 
-  /**
-   * \name Flags for modification in layer
-   */
-  //@{
-  const unsigned int MOD_NONE  = 0; ///< No modification
-  const unsigned int MOD_IDEG  = 1; ///< Indegree has become zero
-  const unsigned int MOD_ODEG  = 2; ///< Outdegree has become zero
-  //@}
-
   /// Layer for a view in the layered graph
   class Layer {
   public:
     unsigned int size;     ///< Number of supported values
     Support*     support;  ///< Supported values
-    unsigned int modified; ///< Modification information
   };
 
   /// Iterator for telling variable domains by scanning support
@@ -215,7 +205,6 @@ namespace Gecode { namespace Int { namespace Regular {
 
     // Forward pass: add transitions
     for (int i=0; i<n; i++) {
-      layers[i].modified = MOD_NONE;
       layers[i].support = 
         reinterpret_cast<Support*>(home->alloc(x[i].size()*sizeof(Support)));
       unsigned int j=0;
@@ -243,8 +232,7 @@ namespace Gecode { namespace Int { namespace Regular {
         }
         ++nx;
       }
-      layers[i].size = j;
-      if (j == 0)
+      if ((layers[i].size = j) == 0)
         return ES_FAILED;
     }
 
@@ -271,8 +259,7 @@ namespace Gecode { namespace Int { namespace Regular {
         if (layers[i].support[j].edges != NULL)
           layers[i].support[k++]=layers[i].support[j];
       }
-      layers[i].size = k;
-      if (k == 0)
+      if ((layers[i].size = k) == 0)
         return ES_FAILED;
       LayerValues lv(layers[i]);
       GECODE_ME_CHECK(x[i].narrow_v(home,lv,false));
@@ -287,88 +274,78 @@ namespace Gecode { namespace Int { namespace Regular {
   forceinline ExecStatus
   Dom<View>::prune(Space* home) {
     // Forward pass
-    for (int i=i_ch.fst(); i<=i_ch.lst(); i++) 
-      if (layers[i].modified & MOD_IDEG) {
-        layers[i].modified -= MOD_IDEG;
-        unsigned int modified = MOD_NONE;
-        unsigned int j=0;
-        unsigned int k=0;
+    for (int i=i_ch.fst(); i<=i_ch.lst(); i++) {
+      bool i_mod = false;
+      bool o_mod = false;
+      unsigned int j=0;
+      unsigned int k=0;
+      do {
+        // Some edges might have lost support
+        Edge** p = &layers[i].support[j].edges;
+        Edge*  e = *p;
         do {
-          // Some edges might have lost support
-          Edge** p = &layers[i].support[j].edges;
-          Edge*  e = *p;
-          do {
-            if (e->i_state->i_deg == 0) {
-              // Adapt states
-              if ((--e->i_state->o_deg) == 0) modified |= MOD_ODEG;
-              if ((--e->o_state->i_deg) == 0) modified |= MOD_IDEG;
-              // Remove edge
-              *p = e->next;
-            } else {
-              // Keep edge
-              p = &e->next;
-            }
-            e = e->next;
-          } while (e != NULL);
-          // Write endmarker for edges
-          *p=NULL;
-          // Check whether value is still supported
-          if (layers[i].support[j].edges == NULL) {
-            GECODE_ME_CHECK(x[i].nq(home,layers[i].support[j++].val));
+          if (e->i_state->i_deg == 0) {
+            // Adapt states
+            o_mod |= ((--e->i_state->o_deg) == 0);
+            i_mod |= ((--e->o_state->i_deg) == 0);
+            // Remove edge
+            *p = e->next;
           } else {
-            layers[i].support[k++]=layers[i].support[j++];
+            // Keep edge
+            p = &e->next;
           }
-        } while (j<layers[i].size);
-        assert(k > 0);
-        // Update size and modification information
-        layers[i].size = k;
-        if (modified & MOD_ODEG) {
-          layers[i-1].modified |= MOD_ODEG; o_ch.add(i-1);
+          e = e->next;
+        } while (e != NULL);
+        // Write endmarker for edges
+        *p=NULL;
+        // Check whether value is still supported
+        if (layers[i].support[j].edges == NULL) {
+          GECODE_ME_CHECK(x[i].nq(home,layers[i].support[j++].val));
+        } else {
+          layers[i].support[k++]=layers[i].support[j++];
         }
-        if (modified & MOD_IDEG) {
-          layers[i+1].modified |= MOD_IDEG; i_ch.add(i+1);
-        }
-      }
+      } while (j<layers[i].size);
+      assert(k > 0);
+      // Update size and modification information
+      layers[i].size = k;
+      if (o_mod) o_ch.add(i-1);
+      if (i_mod) i_ch.add(i+1);
+    }
     i_ch.reset();
 
     // Backward pass
     for (int i=o_ch.lst(); i>=o_ch.fst(); i--) {
-      if (layers[i].modified & MOD_ODEG) {
-        layers[i].modified -= MOD_ODEG;
-        unsigned int modified = MOD_NONE;
-        unsigned int j=0;
-        unsigned int k=0;
+      bool o_mod = false;
+      unsigned int j=0;
+      unsigned int k=0;
+      do {
+        Edge** p = &layers[i].support[j].edges;
+        Edge*  e = *p;
         do {
-          Edge** p = &layers[i].support[j].edges;
-          Edge*  e = *p;
-          do {
-            if (e->o_state->o_deg != 0) {
-              // This state is still reachable, keep edge
-              p = &e->next;
-            } else {
-              // Unreachable state, prune edge
-              if (--e->i_state->o_deg == 0) modified |= MOD_ODEG;
-              --e->o_state->i_deg;
-              *p = e->next;
-            }
-            e = e->next;
-          } while (e != NULL);
-          // Write endmarker for edges
-          *p = NULL;
-          // Check whether value has still support
-          if (layers[i].support[j].edges == NULL) {
-            GECODE_ME_CHECK(x[i].nq(home,layers[i].support[j++].val));
+          if (e->o_state->o_deg != 0) {
+            // This state is still reachable, keep edge
+            p = &e->next;
           } else {
-            layers[i].support[k++]=layers[i].support[j++];
+            // Unreachable state, prune edge
+            o_mod |= (--e->i_state->o_deg == 0);
+            --e->o_state->i_deg;
+            *p = e->next;
           }
-        } while (j<layers[i].size);
-        assert(k > 0);
-        // Update size and modification information
-        layers[i].size = k;
-        if (modified & MOD_ODEG) {
-          layers[i-1].modified |= MOD_ODEG; o_ch.add(i-1);
+          e = e->next;
+        } while (e != NULL);
+        // Write endmarker for edges
+        *p = NULL;
+        // Check whether value has still support
+        if (layers[i].support[j].edges == NULL) {
+          GECODE_ME_CHECK(x[i].nq(home,layers[i].support[j++].val));
+        } else {
+          layers[i].support[k++]=layers[i].support[j++];
         }
-      }
+      } while (j<layers[i].size);
+      assert(k > 0);
+      // Update size and modification information
+      layers[i].size = k;
+      if (o_mod) o_ch.add(i-1);
     }
     o_ch.reset();
 
@@ -389,7 +366,8 @@ namespace Gecode { namespace Int { namespace Regular {
       goto fix;
     assert(layers[i].size != x[i].size());
     {
-      unsigned int modified = MOD_NONE;
+      bool i_mod = false;
+      bool o_mod = false;
       unsigned int j=0;
       unsigned int k=0;
       for (ViewValues<View> vx(x[i]); vx() && (j<layers[i].size); j++)
@@ -397,8 +375,8 @@ namespace Gecode { namespace Int { namespace Regular {
           // Supported value not any longer in view
           for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
             // Adapt states
-            if ((--e->i_state->o_deg) == 0) modified |= MOD_ODEG;
-            if ((--e->o_state->i_deg) == 0) modified |= MOD_IDEG;
+            o_mod |= ((--e->i_state->o_deg) == 0);
+            i_mod |= ((--e->o_state->i_deg) == 0);
           }
         } else {
           assert(layers[i].support[j].val == vx.val());
@@ -411,19 +389,15 @@ namespace Gecode { namespace Int { namespace Regular {
       for (; j < layers[i].size; j++)
         for (Edge* e=layers[i].support[j].edges; e!=NULL; e=e->next) {
           // Adapt states
-          if ((--e->i_state->o_deg) == 0) modified |= MOD_ODEG;
-          if ((--e->o_state->i_deg) == 0) modified |= MOD_IDEG;
+          o_mod |= ((--e->i_state->o_deg) == 0);
+          i_mod |= ((--e->o_state->i_deg) == 0);
         }
       // Update size and modification information
       layers[i].size = k;
-      if (modified == MOD_NONE)
+      if (!i_mod && !o_mod)
         goto fix;
-      if (modified & MOD_ODEG) {
-        layers[i-1].modified |= MOD_ODEG; o_ch.add(i-1);
-      }
-      if (modified & MOD_IDEG) {
-        layers[i+1].modified |= MOD_IDEG; i_ch.add(i+1);
-      }
+      if (o_mod) o_ch.add(i-1);
+      if (i_mod) i_ch.add(i+1);
     }
     goto nofix;
   nofix:
