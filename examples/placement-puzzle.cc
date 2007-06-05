@@ -43,7 +43,7 @@ struct tilespec {
  *
  * Each board specification repurposes the first two tilespecs to
  * record width and height of the board (tilespec 0) as well as the
- * number of tiles and wheter the board is filled (tilespec 1).
+ * number of tiles and whether the board is filled (tilespec 1).
  *
  * \relates PlacementPuzzle
  */
@@ -281,7 +281,7 @@ private:
   int width, height;
   /// Number of tiles to place
   int ntiles;
-  /// Wheter the board is fileld or not
+  /// Whether the board is fileld or not
   bool filled;
 
   /// The variables for the board.
@@ -449,7 +449,7 @@ static const tilespec puzzle0[] =
   {
     // Width and height of board
     {4, 4, ""},
-    // Number of tiles and wheter the board is filled
+    // Number of tiles and whether the board is filled
     {5, true, ""},
     {2, 3,
      "XX"
@@ -471,7 +471,7 @@ static const tilespec puzzle1[] =
   {
     // Width and height of board
     {8, 8, ""},
-    // Number of tiles and wheter the board is filled
+    // Number of tiles and whether the board is filled
     {10, true, ""},
     {3, 3,
      "XXX"
@@ -523,7 +523,7 @@ static const tilespec packing2[] =
   {
     // Width and height of board
     {10, 10, ""},
-    // Number of tiles and wheter the board is filled
+    // Number of tiles and whether the board is filled
     {8, true, ""},
     {6, 6,
      "XXXXXX"
@@ -566,7 +566,7 @@ static const tilespec pentomino6x10[] =
   {
     // Width and height of board
     {10, 6, ""},
-    // Number of tiles and wheter the board is filled
+    // Number of tiles and whether the board is filled
     {12, true, ""},
     {2, 4,
      "X "
@@ -620,7 +620,7 @@ static const tilespec pentomino5x12[] =
   {
     // Width and height of board
     {12, 5, ""},
-    // Number of tiles and wheter the board is filled
+    // Number of tiles and whether the board is filled
     {12, true, ""},
     {2, 4,
      "X "
@@ -674,7 +674,7 @@ static const tilespec pentomino4x15[] =
   {
     // Width and height of board
     {15, 4, ""},
-    // Number of tiles and wheter the board is filled
+    // Number of tiles and whether the board is filled
     {12, true, ""},
     {2, 4,
      "X "
@@ -728,7 +728,7 @@ static const tilespec pentomino3x20[] =
   {
     // Width and height of board
     {20, 3, ""},
-    // Number of tiles and wheter the board is filled
+    // Number of tiles and whether the board is filled
     {12, true, ""},
     {2, 4,
      "X "
