@@ -388,7 +388,7 @@ namespace Gecode { namespace Int { namespace Regular {
       goto fix;
     bool i_mod = false;
     bool o_mod = false;
-    if (x[i].assigned()) {
+    if (View::modevent(d) == ME_INT_VAL) {
       int n = x[i].val();
       unsigned int j=0;
       for (; l.support[j].val < n; j++)
@@ -462,9 +462,10 @@ namespace Gecode { namespace Int { namespace Regular {
     if (i_mod) i_ch.add(i+1);
     goto nofix;
   nofix:
-    return x[i].assigned() ? ES_SUBSUMED_NOFIX(a,home,c) : ES_NOFIX;
+    return (View::modevent(d) == ME_INT_VAL) 
+      ? ES_SUBSUMED_NOFIX(a,home,c) : ES_NOFIX;
   fix:
-    if (x[i].assigned()) {
+    if (View::modevent(d) == ME_INT_VAL) {
       a->dispose(home,c);
       return c.empty() ? ES_NOFIX : ES_FIX;
     }

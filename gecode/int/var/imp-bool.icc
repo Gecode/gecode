@@ -147,20 +147,20 @@ namespace Gecode { namespace Int {
    *
    */
   forceinline ModEvent
-  BoolVarImp::modevent(const Delta* d) {
-    return d->modevent();
+  BoolVarImp::modevent(const Delta*) {
+    return ME_BOOL_VAL;
   }
   forceinline int 
-  BoolVarImp::min(const Delta* d) const {
-    return static_cast<const IntDelta*>(d)->min();
+  BoolVarImp::min(const Delta*) const {
+    return 1-val();
   }
   forceinline int 
-  BoolVarImp::max(const Delta* d) const {
-    return static_cast<const IntDelta*>(d)->max();
+  BoolVarImp::max(const Delta*) const {
+    return 1-val();
   }
   forceinline bool 
-  BoolVarImp::any(const Delta* d) const {
-    return static_cast<const IntDelta*>(d)->any();
+  BoolVarImp::any(const Delta*) const {
+    return false;
   }
 
 
