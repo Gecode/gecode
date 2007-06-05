@@ -370,8 +370,8 @@ namespace Gecode { namespace Int { namespace Regular {
     bool i_mod = false;
     bool o_mod = false;
     if (x[i].assigned()) {
-      unsigned int j=0;
       int n = x[i].val();
+      unsigned int j=0;
       for (; l.support[j].val < n; j++)
         // Supported value not any longer in view
         for (Edge* e=l.support[j].edges; e!=NULL; e=e->next) {
@@ -389,7 +389,7 @@ namespace Gecode { namespace Int { namespace Regular {
           o_mod |= ((--e->i_state->o_deg) == 0);
           i_mod |= ((--e->o_state->i_deg) == 0);
         }
-    } else {
+    } else if (x[i].any(d)) {
       unsigned int j=0;
       unsigned int k=0;
       unsigned int s=l.size;
@@ -416,6 +416,26 @@ namespace Gecode { namespace Int { namespace Regular {
           o_mod |= ((--e->i_state->o_deg) == 0);
           i_mod |= ((--e->o_state->i_deg) == 0);
         }
+    } else {
+      int min = x[i].min(d);
+      unsigned int j=0;
+      // Skip values smaller than min (to keep)
+      for (; l.support[j].val < min; j++) {}
+      int max = x[i].max(d);
+      unsigned int k=j;
+      unsigned int s=l.size;
+      // Remove pruned values
+      for (; (j<s) && (l.support[j].val <= max); j++)
+        for (Edge* e=l.support[j].edges; e!=NULL; e=e->next) {
+          // Adapt states
+          o_mod |= ((--e->i_state->o_deg) == 0);
+          i_mod |= ((--e->o_state->i_deg) == 0);
+        }
+      // Keep remaining values
+      while (j<s)
+        l.support[k++]=l.support[j++];
+      l.size =k;
+      assert(k > 0);        
     }
     if (!i_mod && !o_mod)
       goto fix;
