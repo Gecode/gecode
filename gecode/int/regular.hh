@@ -97,8 +97,6 @@ namespace Gecode { namespace Int { namespace Regular {
     Layer* layers;
     /// The states used in the graph
     State* states;
-    /// Whether propagator is currently propagating
-    bool propagating;
     /// Index range with in-degree modifications
     IndexRange i_ch;
     /// Index range with out-degree modifications
