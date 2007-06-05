@@ -367,9 +367,29 @@ namespace Gecode { namespace Int { namespace Regular {
     Layer& l = layers[i];
     if (l.size == x[i].size())
       goto fix;
-    {
-      bool i_mod = false;
-      bool o_mod = false;
+    bool i_mod = false;
+    bool o_mod = false;
+    if (x[i].assigned()) {
+      unsigned int j=0;
+      int n = x[i].val();
+      for (; l.support[j].val < n; j++)
+        // Supported value not any longer in view
+        for (Edge* e=l.support[j].edges; e!=NULL; e=e->next) {
+          // Adapt states
+          o_mod |= ((--e->i_state->o_deg) == 0);
+          i_mod |= ((--e->o_state->i_deg) == 0);
+        }
+      assert(l.support[j].val == n);
+      l.support[0] = l.support[j++];
+      unsigned int s=l.size;
+      l.size = 1;
+      for (; j<s; j++)
+        for (Edge* e=l.support[j].edges; e!=NULL; e=e->next) {
+          // Adapt states
+          o_mod |= ((--e->i_state->o_deg) == 0);
+          i_mod |= ((--e->o_state->i_deg) == 0);
+        }
+    } else {
       unsigned int j=0;
       unsigned int k=0;
       unsigned int s=l.size;
@@ -387,8 +407,8 @@ namespace Gecode { namespace Int { namespace Regular {
         } else {
           l.support[k++]=l.support[j++];
         }
-      if (k == 0)
-        return ES_FAILED;
+      assert(k > 0);
+      l.size = k;
       // Remove remaining values
       for (; j<s; j++)
         for (Edge* e=l.support[j].edges; e!=NULL; e=e->next) {
@@ -396,13 +416,11 @@ namespace Gecode { namespace Int { namespace Regular {
           o_mod |= ((--e->i_state->o_deg) == 0);
           i_mod |= ((--e->o_state->i_deg) == 0);
         }
-      // Update size and modification information
-      l.size = k;
-      if (!i_mod && !o_mod)
-        goto fix;
-      if (o_mod) o_ch.add(i-1);
-      if (i_mod) i_ch.add(i+1);
     }
+    if (!i_mod && !o_mod)
+      goto fix;
+    if (o_mod) o_ch.add(i-1);
+    if (i_mod) i_ch.add(i+1);
     goto nofix;
   nofix:
     return x[i].assigned() ? ES_SUBSUMED_NOFIX(a,home,c) : ES_NOFIX;
