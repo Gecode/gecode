@@ -381,13 +381,16 @@ namespace Gecode { namespace Int { namespace Regular {
   Dom<View>::advise(Space* home, Advisor* _a, const Delta* d) {
     Index* a = static_cast<Index*>(_a);
     int i = a->i;
-    if (!constructed())
-      goto nofix;
-    Layer& l = layers[i];
-    if (l.size == x[i].size())
-      goto fix;
     bool i_mod = false;
     bool o_mod = false;
+    Layer& l = layers[i];
+    if (!constructed())
+      goto nofix;
+
+    if (l.size == x[i].size())
+      goto fix;
+
+
     if (View::modevent(d) == ME_INT_VAL) {
       int n = x[i].val();
       unsigned int j=0;
