@@ -35,6 +35,12 @@
 /* Whether set variables are built */
 #undef GECODE_HAVE_SET_VARS
 
+/* Whether set variables are built */
+#undef GECODE_HAVE_SET_VARS
+
+/* Whether bdd variables are built */
+#undef GECODE_HAVE_BDD_VARS
+
 /* Whether we are compiling static libraries */
 #undef GECODE_STATIC_LIBS
 

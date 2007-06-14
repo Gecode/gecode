@@ -1,0 +1,606 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-09-04 19:25:19 +0000 (Mon, 04 Sep 2006) $ by $Author: pekczynski $
+ *     $Revision: 3585 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+
+namespace Gecode { namespace Bdd {
+
+  /*
+   * Constructors and access
+   *
+   */
+
+  forceinline
+  SplitBddView::SplitBddView(void) {}
+
+  forceinline
+  SplitBddView::~SplitBddView(void)  {
+    manager()->dispose(bounds);
+    manager()->dispose(remain);
+  }
+
+  forceinline
+  SplitBddView::SplitBddView(const BddView& x) 
+    : DerivedViewBase<BddView>(x) {
+    GecodeBdd d = view.bdd_domain();
+    BMI* mgr = manager();
+    bounds.init();
+    remain.init();
+    bounds = BDDTOP;
+    remain = BDDTOP;
+    if (!mgr->ctrue(d)) {
+//       bounds  = conv_hull(mgr, d);
+//       GecodeBdd bvars = conv_project(mgr, bounds);
+      GecodeBdd bvars = BDDTOP;
+      conv_hull_project(mgr, d, bounds, bvars);
+      remain = mgr->eliminate(d, bvars);
+    }
+  }
+
+  forceinline void
+  SplitBddView::init(const BddView& x) {
+    view = x; 
+    GecodeBdd d = view.bdd_domain();
+    BMI* mgr = manager();
+    bounds.init();
+    remain.init();
+    bounds = BDDTOP;
+    remain = BDDTOP;
+    if (!mgr->ctrue(d)) {
+//       bounds  = conv_hull(mgr, d);
+//       GecodeBdd bvars = conv_project(mgr, bounds);
+//       remain = mgr->eliminate(d, bvars);
+      GecodeBdd bvars = BDDTOP;
+      conv_hull_project(mgr, d, bounds, bvars);
+      remain = mgr->eliminate(d, bvars);
+    }
+  }
+
+
+  /* 
+   * Set information
+   *
+   */
+  
+  forceinline unsigned int
+  SplitBddView::glbSize(void) const { 
+    BMI* mgr = manager();
+    if (mgr->ctrue(bounds)) { return 0; }
+    BddIterator iter(mgr, bounds);
+    int size = 0;
+    while (iter()) {
+      if (iter.status() == FIX_GLB) { size++; }
+      ++iter;
+    }
+    return size;
+  }
+
+  forceinline unsigned int
+  SplitBddView::lubSize(void) const { 
+    BMI* mgr = manager();
+    if (mgr->ctrue(bounds) && 
+	mgr->ctrue(remain)) { return table_width(); }
+    BddIterator iter(mgr, bounds);
+    int out = 0;
+    while (iter()) {
+      if (iter.status() == FIX_NOT_LUB) { out++; }
+      ++iter;
+    }
+    return table_width() - out;
+  }
+
+  forceinline unsigned int
+  SplitBddView::unknownSize(void) const {
+    BMI* mgr = manager();
+    int size = table_width();
+    if (mgr->ctrue(bounds)) { return size; }
+    BddIterator iter(mgr, bounds);
+    while (iter()) {
+      NodeStatus status = iter.status();
+      if (status == FIX_GLB || status == FIX_NOT_LUB) { size--; }
+      ++iter;
+    }
+    return size;
+  };
+
+  forceinline unsigned int
+  SplitBddView::cardMin(void) const { return view.cardMin(); }
+
+  forceinline unsigned int
+  SplitBddView::cardMax(void) const { return view.cardMax(); }
+
+  forceinline int
+  SplitBddView::lubMin(void) const { return view.lubMin(); }
+
+  forceinline int
+  SplitBddView::lubMax(void) const { return view.lubMax(); }
+
+  forceinline int
+  SplitBddView::lubMinN(int n) const { return view.lubMinN(n); }
+
+  forceinline int
+  SplitBddView::lubMaxN(int n) const { return view.lubMaxN(n); }
+
+  forceinline int
+  SplitBddView::glbMin(void) const { 
+    BMI* mgr = manager();
+    if (mgr->ctrue(bounds)) { return BddVarImp::MIN_OF_EMPTY; }
+    BddIterator iter(mgr, bounds);
+    while (iter()) {
+      if (iter.status() == FIX_GLB) {
+	int idx = iter.label() - offset();
+	return mgr_min() + idx;
+      }
+      ++iter;
+    }
+    return BddVarImp::MIN_OF_EMPTY;
+  }
+
+  forceinline int 
+  SplitBddView::glbMax(void) const {
+    BMI* mgr = manager();
+    if (mgr->ctrue(bounds)) { return BddVarImp::MAX_OF_EMPTY; } 
+    BddIterator iter(mgr, bounds);
+    int lastglb = -1;
+    while (iter()) {
+      if (iter.status() == FIX_GLB) {
+	int idx = iter.label() - offset();
+	lastglb = mgr_min() + idx;
+      } 
+      ++iter;
+    }
+    return (lastglb == -1) ? BddVarImp::MAX_OF_EMPTY : lastglb;
+  };
+
+
+  /*
+   * Bdd information
+   *
+   */
+  
+  forceinline unsigned int 
+  SplitBddView::offset(void) const { return view.offset(); }
+
+  forceinline unsigned int 
+  SplitBddView::table_width(void) const { return view.table_width(); }
+
+  forceinline int 
+  SplitBddView::size(void) const { return view.size(); }
+
+  forceinline GecodeBdd
+  SplitBddView::getbdd(int i) const { return view.getbdd(i); }
+
+  forceinline GecodeBdd
+  SplitBddView::getnegbdd(int i) const { return view.getnegbdd(i); }
+
+  forceinline int 
+  SplitBddView::getlevel(int i) { return view.getlevel(i); }
+
+  forceinline int 
+  SplitBddView::getvar(int i) { return view.getvar(i); }
+
+  forceinline void
+  SplitBddView::dom_and(GecodeBdd& d) { view.dom_and(d); }
+
+  forceinline void
+  SplitBddView::dom_or(GecodeBdd& d) { view.dom_or(d); }
+
+  forceinline int
+  SplitBddView::mgr_min(void) const { return view.mgr_min(); };
+
+  forceinline int
+  SplitBddView::mgr_max(void) const { return view.mgr_max(); };
+
+  forceinline int
+  SplitBddView::valididx(int v)  const { return view.valididx(v); }
+
+  forceinline BMI*
+  SplitBddView::manager(void) const { return view.manager(); }
+
+  forceinline GecodeBdd 
+  SplitBddView::bdd_domain(void) const { return view.bdd_domain(); }
+
+  forceinline GecodeBdd 
+  SplitBddView::bdd_remain(void) const { return remain; }
+
+  forceinline GecodeBdd 
+  SplitBddView::bdd_bounds(void) const { return bounds; }
+
+
+  /*
+   * Domain tests
+   *
+   */
+
+  forceinline bool
+  SplitBddView::assigned(void)  const { 
+    BMI* mgr = manager();
+    return !mgr->ctrue(bounds) && mgr->ctrue(remain); 
+  }
+
+  forceinline bool
+  SplitBddView::contains(int i) const { 
+    BMI* mgr = manager();
+    int idx = base().variable()->valididx(i);
+    if (mgr->ctrue(bounds)) { return false; }
+    GecodeBdd bv = getnegbdd(idx);
+    return (mgr->cfalse(bounds & bv));
+  }
+  
+  forceinline bool
+  SplitBddView::notContains(int i) const { 
+    BMI* mgr = manager();
+    int idx = base().variable()->valididx(i);
+    if (mgr->ctrue(bounds)) { return false; }
+    GecodeBdd bv = getbdd(idx);
+    return (mgr->cfalse(bounds & bv));
+  }
+
+  /*
+   * Tells
+   *
+   */
+
+  forceinline ModEvent 
+  SplitBddView::cardinality(Space* home, unsigned int l, unsigned int u) {
+    return view.cardinality(home, l, u);
+  }
+
+  forceinline ModEvent
+  SplitBddView::cardMin(Space* home, unsigned int m) {
+    return view.cardMin(home, m);
+  }
+
+  forceinline ModEvent
+  SplitBddView::cardMax(Space* home, unsigned int m) {
+    return view.cardMax(home, m);
+  }
+
+  forceinline ModEvent 
+  SplitBddView::include(Space* home, int i, int j) { 
+    return view.include(home, i, j); 
+  }
+
+  forceinline ModEvent 
+  SplitBddView::include(Space* home, int i) { return include(home, i, i); }
+
+  forceinline ModEvent 
+  SplitBddView::exclude(Space* home, int i, int j) { 
+    return view.exclude(home, i, j); 
+  }
+
+  forceinline ModEvent 
+  SplitBddView::exclude(Space* home, int i) { return exclude(home, i, i); }
+
+  forceinline ModEvent
+  SplitBddView::nq(Space* home, int v) { return view.nq(home, v, v); }
+
+  forceinline ModEvent
+  SplitBddView::nq(Space* home, int a, int b) {
+    if (b < view.mgr_min() || a > view.mgr_max()) { return ME_BDD_NONE; }
+    Iter::Ranges::Singleton m(a, b);
+    GecodeBdd ass = !(view.variable()->gen_assignment(m));
+    return tell_formula(home, ass);
+  }
+
+  forceinline ModEvent
+  SplitBddView::eq(Space* home, int v) { return eq(home, v, v); }
+
+  forceinline ModEvent
+  SplitBddView::eq(Space* home, int a, int b) {
+    if (b < view.mgr_min() || a > view.mgr_max()) { return ME_BDD_FAILED; }
+    Iter::Ranges::Singleton m(a, b);
+    GecodeBdd ass = view.variable()->gen_assignment(m);
+    return tell_formula(home, ass);
+  } 
+
+  forceinline ModEvent 
+  SplitBddView::tell_formula(Space* home, GecodeBdd& d) {
+    BMI* mgr = manager();
+
+//     GecodeBdd beta  = conv_hull(mgr, d);
+//     GecodeBdd bvars = conv_project(mgr, beta);
+//     GecodeBdd delta = mgr->eliminate(d, bvars);
+
+    GecodeBdd beta  = BDDTOP;
+    GecodeBdd bvars = BDDTOP;
+    conv_hull_project(mgr, d, beta, bvars);
+    GecodeBdd delta = mgr->eliminate(d, bvars);
+
+    return tell_formula(home, beta, delta);
+  }
+
+  forceinline ModEvent 
+  SplitBddView::tell_formula(Space* home, GecodeBdd& beta, GecodeBdd& delta) {
+    GecodeBdd dom = beta & delta;
+    GecodeBdd oldbnd = bounds;
+    GecodeBdd oldrem = remain;
+    bounds &= beta;
+    remain &= delta;
+    return view.tell_formula(home, dom);
+  }
+
+  forceinline ModEvent
+  SplitBddView::intersect(Space* home, int i, int j) {
+    return view.intersect(home, i, j);
+  }
+
+  forceinline ModEvent
+  SplitBddView::intersect(Space* home, int i) { return intersect(home, i, i); }
+
+  template <class I>
+  forceinline ModEvent
+  SplitBddView::excludeI(Space* home, I& i) { return view.excludeI(home, i); }
+
+  template <class I>
+  forceinline ModEvent
+  SplitBddView::includeI(Space* home, I& i) { return view.includeI(home, i); }
+
+  template <class I>
+  forceinline ModEvent
+  SplitBddView::intersectI(Space* home, I& i) { return view.intersectI(home, i); }
+
+  template <class I>
+  forceinline ModEvent
+  SplitBddView::eqI(Space* home, I& i) {
+    int mi = view.mgr_min();
+    int ma = view.mgr_max();
+    if (i()) {
+      if (i.min() < mi || i.min() > ma) { return ME_BDD_FAILED; }
+    }
+
+    GecodeBdd ass = view.variable()->gen_assignment(i);
+    return tell_formula(home, ass);
+  }
+
+  template <class I>
+  forceinline ModEvent
+  SplitBddView::nqI(Space* home, I& i) {
+    GecodeBdd ass = !(view.variable()->gen_assignment(i));
+    return tell_formula(home, ass);
+  }
+
+  /*
+   * Dependencies
+   *
+   */
+
+  forceinline void
+  SplitBddView::subscribe(Space* home, Propagator* p, PropCond pc,
+			  bool process) {
+    view.subscribe(home, p, pc, process);
+  }
+
+  forceinline void
+  SplitBddView::cancel(Space* home, Propagator* p, PropCond pc) {
+    view.cancel(home, p, pc);
+  }
+  
+  /*
+   * Propagator Modification Events
+   *
+   */
+
+  forceinline ModEvent
+  SplitBddView::pme(const Propagator* p) { return BddView::pme(p); }
+  
+  forceinline ModEvent
+  SplitBddView::pme(ModEvent me) { return BddView::pme(me); }
+
+  /*
+   * Cloning
+   *
+   */
+
+  forceinline void
+  SplitBddView::update(Space* home, bool share, SplitBddView& y) {
+    view.update(home, share, y.view);
+    bounds.init();
+    remain.init();
+    bounds = y.bdd_bounds();
+    remain = y.bdd_remain();
+  }
+
+  forceinline void 
+  SplitBddView::viewdot(void) const { return view.viewdot(); }
+
+  template <>
+  class DomValues<SplitBddView> : public DomValues<BddVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    DomValues(void);
+    /// Initialize with ranges for variable implementation \a x
+    DomValues(const SplitBddView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const SplitBddView& x);
+    //@}    
+  };
+
+  forceinline
+  DomValues<SplitBddView>::DomValues(void) {}
+
+  forceinline
+  DomValues<SplitBddView>::DomValues(const SplitBddView& x) 
+    : DomValues<BddVarImp*>(x.base().variable()) {}
+
+  forceinline void
+  DomValues<SplitBddView>::init(const SplitBddView& x) {
+    DomValues<BddVarImp*>::init(x.base().variable());
+  }
+
+  template <>
+  class GlbValues<SplitBddView> : public GlbValues<BddVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    GlbValues(void);
+    /// Initialize with ranges for variable implementation \a x
+    GlbValues(const SplitBddView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const SplitBddView& x);
+    //@}    
+  };
+
+  forceinline
+  GlbValues<SplitBddView>::GlbValues(void) {}
+
+  forceinline
+  GlbValues<SplitBddView>::GlbValues(const SplitBddView& x) 
+    : GlbValues<BddVarImp*>(x.base().variable()) {}
+
+  forceinline void
+  GlbValues<SplitBddView>::init(const SplitBddView& x) {
+    GlbValues<BddVarImp*>::init(x.base().variable());
+  }
+
+}
+  namespace Set {
+  template <>
+  class GlbRanges<Bdd::SplitBddView> : public GlbRanges<Bdd::BddVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    GlbRanges(void);
+    /// Initialize with ranges for variable implementation \a x
+    GlbRanges(const Bdd::SplitBddView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const Bdd::SplitBddView& x);
+    //@}    
+  };
+
+  forceinline
+  GlbRanges<Bdd::SplitBddView>::GlbRanges(void) {}
+
+  forceinline
+  GlbRanges<Bdd::SplitBddView>::GlbRanges(const Bdd::SplitBddView& x) 
+    : GlbRanges<Bdd::BddVarImp*>(x.base().variable()) {}
+
+  forceinline void
+  GlbRanges<Bdd::SplitBddView>::init(const Bdd::SplitBddView& x) {
+    GlbRanges<Bdd::BddVarImp*>::init(x.base().variable());
+  }
+
+  template <>
+  class LubRanges<Bdd::SplitBddView> : public LubRanges<Bdd::BddVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    LubRanges(void);
+    /// Initialize with ranges for variable implementation \a x
+    LubRanges(const Bdd::SplitBddView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const Bdd::SplitBddView& x);
+    //@}    
+  };
+
+  forceinline
+  LubRanges<Bdd::SplitBddView>::LubRanges(void) {}
+
+  forceinline
+  LubRanges<Bdd::SplitBddView>::LubRanges(const Bdd::SplitBddView& x) 
+    : LubRanges<Bdd::BddVarImp*>(x.base().variable()) {}
+
+  forceinline void
+  LubRanges<Bdd::SplitBddView>::init(const Bdd::SplitBddView& x) {
+    LubRanges<Bdd::BddVarImp*>::init(x.base().variable());
+  }
+  }
+  namespace Bdd {
+
+  template <>
+  class UnknownValues<SplitBddView> : public UnknownValues<BddVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    UnknownValues(void);
+    /// Initialize with ranges for variable implementation \a x
+    UnknownValues(const SplitBddView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const SplitBddView& x);
+    //@}    
+  };
+
+  forceinline
+  UnknownValues<SplitBddView>::UnknownValues(void) {}
+
+  forceinline
+  UnknownValues<SplitBddView>::UnknownValues(const SplitBddView& x) 
+    : UnknownValues<BddVarImp*>(x.base().variable()) {}
+
+  forceinline void
+  UnknownValues<SplitBddView>::init(const SplitBddView& x) {
+    UnknownValues<BddVarImp*>::init(x.base().variable());
+  }
+  }
+  namespace Set {
+  template <>
+  class UnknownRanges<Bdd::SplitBddView> : 
+      public UnknownRanges<Bdd::BddVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    UnknownRanges(void);
+    /// Initialize with ranges for variable implementation \a x
+    UnknownRanges(const Bdd::SplitBddView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const Bdd::SplitBddView& x);
+    //@}    
+  };
+
+  forceinline
+  UnknownRanges<Bdd::SplitBddView>::UnknownRanges(void) {}
+
+  forceinline
+  UnknownRanges<Bdd::SplitBddView>::UnknownRanges(const Bdd::SplitBddView& x) 
+    : UnknownRanges<Bdd::BddVarImp*>(x.base().variable()) {}
+
+  forceinline void
+  UnknownRanges<Bdd::SplitBddView>::init(const Bdd::SplitBddView& x) {
+    UnknownRanges<Bdd::BddVarImp*>::init(x.base().variable());
+  }
+
+  }
+
+  /*
+   * Testing
+   *
+   */
+  forceinline bool
+  same(const Bdd::SplitBddView& x, const Bdd::SplitBddView& y) {
+    return same(x.base(),y.base());
+  }
+
+  forceinline bool
+  before(const Bdd::SplitBddView& x, const Bdd::SplitBddView& y) {
+    return before(x.base(),y.base());
+  }
+
+}
+
+
+// STATISTICS: bdd-var
+

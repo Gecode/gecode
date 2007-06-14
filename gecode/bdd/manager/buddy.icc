@@ -1,0 +1,653 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-07-27 23:37:39 +0000 (Thu, 27 Jul 2006) $ by $Author: pekczynski $
+ *     $Revision: 3476 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { 
+
+
+  /// %Exception: Unknown value or variable selection passed as argument
+  class BuddyException : public Exception {
+  public:
+    /// Initialize with location \a l
+    BuddyException(const char* l);
+  };
+
+  inline
+  BuddyException::BuddyException(const char* l)
+    : Exception(l,"Error in Buddy Manager") {}
+
+
+  /**
+   * \brief Manager for BddVars. 
+   *
+   * Used for initialization and destruction of the global lookup table for
+   * Bdd nodes and for keeping track between BddVars and their corresponding
+   * indices in the lookup table. 
+   */
+
+  // the implementation
+  class BMI : public SharedObject {
+  private:
+    BddOutput _level;
+    bddStat info;
+    /// Number of registered variables
+    int _size;
+    /// Number of used nodes
+    int _offset;
+    int dummy_offset;
+    int dummy_range;
+    bool _debug;
+  public:
+    /// Default constructor
+    BMI(void);
+    /// Constructor manager with initial nodesize \a n and cachesize \a c.
+    BMI(int n, int c);
+    /// Copy constructor 
+    BMI(const BMI& m);
+
+    /// Test destructor
+    ~BMI(void);
+    
+    /// Initialize manager with initial nodesize \a n and cachesize \a c.
+    void init(int n, int c);
+    /// Test whether bdd \a b is either constant true or constant false
+    bool leaf(const GecodeBdd& b) const;
+    /// Tests whether bdd \a b is constant false
+    bool cfalse(const GecodeBdd& b) const;
+    /// Tests whether bdd \a b is constant true
+    bool ctrue(const GecodeBdd& b) const;
+    /// Sets the variable ordering in the bdd according to the orddering given in \a hls.
+    void setorder(int* hls);
+    /// Return the size of bdd \a b
+    unsigned int bddsize(const GecodeBdd& b) const;
+    /// Return the number of paths of bdd leading to a true node\a b
+    unsigned int bddpath(const GecodeBdd& b) const;
+    /// Return the total number of paths of bdd \a b
+    unsigned int number_of_paths(GecodeBdd& b);
+    /// Return bdd at position \a i in bdd lookup table
+    GecodeBdd bddpos(int i) const;
+    /// Return negated bdd at position \a i in bdd lookup table
+    GecodeBdd negbddpos(int i) const;
+
+    /// Get lower cardinality bound for breadth-first iteration
+    int lbCard(const GecodeBdd& b);
+    /// Get upper cardinality bound for breadth-first iteration
+    int ubCard(const GecodeBdd& b);
+
+    /// Set lower cardinality bound for breadth-first iteration
+    void lbCard(const GecodeBdd& b, int l);
+    /// Set upper cardinality bound for breadth-first iteration
+    void ubCard(const GecodeBdd& b, int r);
+
+    /// Construct the Bdd for \f$ \mbox{if} v \mbox{then} t \mbox{else} f
+    GecodeBdd ite(const GecodeBdd& v, const GecodeBdd& t, const GecodeBdd& f);
+    /// Marks the bdd \a b
+    void mark(const GecodeBdd& b);
+    /// Unmarks the bdd \a b
+    void unmark(const GecodeBdd& b);
+    /// Check whether \a b is marked
+    bool marked(const GecodeBdd& b) const;
+
+    int node_level(const GecodeBdd& b) const;
+    /// Returns the position of the variable \a i in the current variable order
+    int bdd2var(int i);
+    /// Returns the variable placed at position \a i in the current variable order
+    int var2bdd(int i);
+    /// Returns the offset of the first dummy var if there is any
+    int dummy(void);
+    /// Return the true branch of a bdd \a b.
+    GecodeBdd iftrue(GecodeBdd& b);
+    /// Return the false branch of a bdd \a b.
+    GecodeBdd iffalse(GecodeBdd& b);
+    /// Returns the index of the variable labeling the bdd \a b
+    const unsigned int bddidx(const GecodeBdd& b);
+    
+    /// Set the bdd \a dom to \f$ \exists_{V(var)} \left(dom \wedge d\right)\f$
+    void existquant(GecodeBdd& dom, GecodeBdd& d, int* var, int s);
+    /// Set the bdd \a dom to \f$ \exists_{V([x_a,\dots,x_b])} \left(dom \wedge d\right)\f$
+    void existquant(GecodeBdd& dom, GecodeBdd& d, int a, int b);
+    /// Set the bdd \a dom to \f$ \exists_{V(pr)} \left(dom \wedge d\right)\f$
+    void existquant(GecodeBdd& dom, GecodeBdd& d, GecodeBdd& pr);
+    /// Set the bdd \a d to \f$ \exists_{V([x_a,\dots,x_b])} d\f$
+    GecodeBdd eliminate(GecodeBdd& d, int a, int b);
+    /// Set the bdd \a d to \f$ \exists_{V(e)} d\f$
+    GecodeBdd eliminate(GecodeBdd& d, GecodeBdd& e);
+    /// Set the bdd \a d to \f$ \exists_{V(var)} d\f$
+    GecodeBdd eliminate(GecodeBdd& d, int* var, int s);
+    /// Marks in the table, whether dummy nodes have been allocated so far.
+    void markdummy(int a, int b);
+
+    /// Free the node table
+    void dispose(void);
+    /// Free variable in the node table
+    void dispose(int offset, int range, int freenodes = 0);
+    /// Free nodes for bdd \a d in the table
+    void dispose(GecodeBdd& d);
+    /** 
+     * \brief Subscribe a variable to the lookup table
+     *  Should return the offset, where the first node starts.
+     */
+    int allocate(int r);
+    void debug(std::ostream&);
+    // show budd debug output after space has been destroyed
+    void debug(void);
+    /// return the number of used bdd variables
+    int varnum(void);
+    /// Prints a bdd node \a b with its true edge and its false edge.
+    void bddntf(std::ostream&, GecodeBdd& b);
+    /// Prints dot-output of a bdd \a b.
+    void bdd2dot(const GecodeBdd& b) const;
+    /// Return the number of allocated bdd variables for the set elements in the table
+    unsigned int allocated(void);
+    /// Set print of a bdd
+    void print_set(const GecodeBdd& b);
+    /// Set the output level to level \a l.
+    void level(BddOutput l);
+    /// Return the output level
+    BddOutput level(void);
+    /// Return the current offset of the manager
+    int offset(void) const;
+    /// Memory Management
+    void setmaxinc(int max);
+    // void operator delete(void* p);
+    BMI* copy(void);
+    /// Check whether the buddy library has already been initialized 
+    bool available(void);
+  };
+
+  forceinline bool 
+  BMI::leaf(const GecodeBdd& b) const{ return b == BDDTOP || b == BDDBOT; }
+
+  forceinline bool 
+  BMI::cfalse(const GecodeBdd& b) const{ return b == BDDBOT; }
+
+  forceinline bool 
+  BMI::ctrue(const GecodeBdd& b) const{ return b == BDDTOP; }
+
+  forceinline
+  BMI::BMI(void) 
+    : _level(BDD_BND),  _size(0), _offset(0), 
+      dummy_offset( -1), dummy_range(-1), _debug(false) {}
+
+  forceinline
+  BMI::BMI(int n, int c)
+    : _level(BDD_BND),  _size(0), _offset(0), 
+      dummy_offset(-1), dummy_range(-1), _debug(false)  {  
+    // intialize the library
+    std::cerr << "initialize libary with n="<< n << " and c=" << c << "\n";
+    assert(!available());
+    bdd_init(n, c);
+    
+    info.produced = -1;
+    info.nodenum = -1;
+    info.maxnodenum = -1;
+    info.freenodes= -1;
+    info.minfreenodes= -1;
+    info.varnum= -1;
+    info.cachesize= -1;
+    info.gbcnum= -1;
+    std::cerr << "finished init()\n";
+  }
+
+  
+  forceinline
+  BMI::BMI(const BMI& m)
+    : _level(m._level),  _size(m._size), _offset(m._offset), 
+      dummy_offset(m.dummy_offset), dummy_range(m.dummy_range), _debug(m._debug)  {
+    std::cerr << "BMI copy\n";
+    info.produced     = m.info.produced;
+    info.nodenum      = m.info.produced;
+    info.maxnodenum   = m.info.maxnodenum;
+    info.freenodes    = m.info.freenodes;
+    info.minfreenodes = m.info.minfreenodes;
+    info.varnum       = m.info.varnum;
+    info.cachesize    = m.info.cachesize;
+    info.gbcnum       = m.info.gbcnum;
+  }
+
+  forceinline
+  BMI::~BMI(void) {
+    std::cerr << "destruct BMI\n";
+    if (_debug) {
+      debug(std::cerr);
+    }
+    // are we allowed to dispose ?
+    dispose();
+  }
+   
+  forceinline void
+  BMI::init(int n, int c) {  
+    // std::cerr << "init() initialize libary with n="<< n << " and c=" << c << "\n";
+    _size = 0;
+    _offset = 0;
+    dummy_offset = -1; 
+    dummy_range = -1;
+    _debug = false;
+    bdd_init(n, c);
+  }
+
+
+  forceinline void
+  BMI::print_set(const GecodeBdd& b) {
+    bdd_printset(b);
+  }
+
+  forceinline int 
+  BMI::allocate(int r) {
+    if (this == NULL) throw BuddyException("allocating on NULL manager!\n");
+    //if (!available()) throw BuddyException("allocating with Buddylibrary not started!\n");
+    assert(available());
+    _size++;
+    bdd_stats(&info);
+    if (dummy_offset > - 1) {
+      if (dummy_range < r) {
+	for (int i = dummy_range; i < r; i++) { GecodeBdd v = bddpos(i); }
+      } else {
+	int initoffset = dummy_offset;
+	if (dummy_range > r) {
+	  _offset = dummy_offset;
+	  _offset += r;
+	} else {
+	  dummy_offset = -1;
+	}
+	return initoffset;
+      }
+    }
+
+    // increase on number of allocated bdd variables
+    // debug(std::cerr);
+    // std::cerr << "extvarnum with r=" << r << "\n";
+    bdd_extvarnum(r);
+
+    for (int i = _offset; i < _offset + r; i++) { GecodeBdd v = bddpos(i); }
+
+    int initoffset = _offset;
+    _offset += r;
+    return initoffset;
+  }
+
+  forceinline unsigned int
+  BMI::allocated(void) {
+    bdd_stats(&info);
+    return info.varnum;
+  }
+
+  forceinline GecodeBdd
+  BMI::bddpos(int i) const{ return bdd_ithvarpp(i); }
+
+  forceinline GecodeBdd
+  BMI::negbddpos(int i) const{ return bdd_nithvarpp(i); }
+
+  forceinline void 
+  BMI::mark(const GecodeBdd& b) { bdd_mark_node(b); }
+
+  forceinline void
+  BMI::unmark(const GecodeBdd& b) { bdd_unmark_node(b); }
+
+  forceinline bool
+  BMI::marked(const GecodeBdd& b) const { return bdd_marked_node(b); }
+
+  forceinline int
+  BMI::node_level(const GecodeBdd& b) const{ return bdd_level_node(b); }
+
+  forceinline int
+  BMI::lbCard(const GecodeBdd& b) { return bdd_card_lo(b); }
+
+  forceinline int
+  BMI::ubCard(const GecodeBdd& b) { return bdd_card_hi(b); }
+
+  forceinline void
+  BMI::lbCard(const GecodeBdd& b, int l) {  bdd_set_card_lo(b, l); }
+
+  forceinline void
+  BMI::ubCard(const GecodeBdd& b, int r) {  bdd_set_card_hi(b, r); }
+  
+  forceinline GecodeBdd
+  BMI::ite(const GecodeBdd& v, const GecodeBdd& t, const GecodeBdd& f) {
+    return bdd_ite(v, t, f);
+  }
+
+  forceinline int
+  BMI::bdd2var(int i){ return bdd_level2var(i); }
+
+  forceinline int
+  BMI::var2bdd(int i){ return bdd_var2level(i); }
+
+  forceinline int
+  BMI::dummy(void){ return dummy_offset; }
+
+  forceinline void
+  BMI::setorder(int* hls) {
+    bdd_setvarorder(hls);
+    bdd_disable_reorder();
+  }
+
+  forceinline unsigned int
+  BMI::bddsize(const GecodeBdd& b) const{ return bdd_nodecount(b); }
+
+  forceinline unsigned int
+  BMI::bddpath(const GecodeBdd& b) const{
+    return static_cast<unsigned int> (bdd_pathcount(b));
+  }
+
+  forceinline unsigned int
+  BMI::number_of_paths(GecodeBdd& b){
+    if (leaf(b)) { return 1; }
+    GecodeBdd t = iftrue(b);
+    GecodeBdd f = iffalse(b);
+    return number_of_paths(t) + number_of_paths(f);
+  }
+
+  forceinline GecodeBdd 
+  BMI::iftrue(GecodeBdd& b) { return bdd_high(b); }
+
+  forceinline GecodeBdd 
+  BMI::iffalse(GecodeBdd& b) { return bdd_low(b); }
+
+  forceinline const unsigned int
+  BMI::bddidx(const GecodeBdd& b) {
+    if (marked(b)) {
+      unmark(b);
+      int i = bdd_var(b);
+      mark(b);
+      return i;
+    } else {
+      return bdd_var(b);
+    }
+  }
+
+  forceinline void
+  BMI::bdd2dot(const GecodeBdd& b) const{ bdd_printdot(b); }
+
+  forceinline void
+  BMI::existquant(GecodeBdd& dom, GecodeBdd& d, int* var, int s) {
+    GecodeBdd outvar = bdd_makeset(var, s);
+    GecodeBdd newdom = bdd_appex(dom, d, bddop_and, outvar);
+    dom     = newdom;
+  }
+
+  forceinline void
+  BMI::existquant(GecodeBdd& dom, GecodeBdd& d, int a, int b) {
+    GecodeBdd outvar = BDDTOP;
+    for (int i = a; i <= b; i++) {
+      GecodeBdd cur = bddpos(i);
+      assert(!marked(cur));
+      assert(!leaf(cur));
+      outvar &= cur;
+    }
+    GecodeBdd newdom = bdd_appex(dom, d, bddop_and, outvar);
+    dom = newdom;
+  }
+
+  forceinline void 
+  BMI::existquant(GecodeBdd& dom, GecodeBdd& d, GecodeBdd& pr) {
+    dom = bdd_appex(dom, d, bddop_and, pr);
+  }
+
+  forceinline GecodeBdd
+  BMI::eliminate(GecodeBdd& d, int a, int b) {
+    GecodeBdd outvar = BDDTOP;
+    for (int i = a; i <= b; i++) {
+      GecodeBdd cur = bddpos(i);
+      assert(!marked(cur));
+      outvar &= cur;
+    }
+    return bdd_exist(d, outvar);
+  }
+
+  forceinline GecodeBdd
+  BMI::eliminate(GecodeBdd& d, GecodeBdd& e) { return bdd_exist(d, e); }
+
+  forceinline GecodeBdd
+  BMI::eliminate(GecodeBdd& d, int* var, int s) {
+    GecodeBdd outvar = bdd_makeset(var, s);
+    return bdd_exist(d, outvar);
+  }
+
+  forceinline void
+  BMI::markdummy(int a, int b) {
+    dummy_offset = a;
+    dummy_range  = b;
+    _size--;
+  }
+
+  forceinline void
+  BMI::dispose(void) {
+    std::cerr << "dispose manager \n";
+    if (available()) { 
+      std::cerr << "bdd_done()\n";
+      bdd_done(); 
+    }
+    _size = 0;
+    _offset = 0;
+    dummy_offset = -1; 
+    dummy_range = -1;
+    //debug(std::cerr);
+    std::cerr << "finished dispose()\n";
+  }
+
+  forceinline void
+  BMI::dispose(int offset, int range, int freenodes) {
+    if (available()) {
+      for (int i = 0; i < range; i++) {	bddpos(offset + i).dispose(); }
+      if (_offset == offset + range) { _offset -= range; }
+      // this is done in dipose(bdd d)
+      info.freenodes += freenodes;
+      if (offset == dummy_offset && dummy_offset > -1) {
+	dummy_offset = -1;
+	dummy_range  = -1;
+      }
+    }
+  }
+
+  forceinline void
+  BMI::dispose(GecodeBdd& d) {
+    if (available()) {
+      int freenodes = bddsize(d);
+      d = BDDBOT;
+      info.freenodes += freenodes;
+    }
+  }
+
+  forceinline void
+  BMI::bddntf(std::ostream& os, GecodeBdd& b) {
+    os << "(N" << b;
+    os <<", T"<< iftrue(b);
+    os << ", F" << iffalse(b) << ")";
+    os << "[" << bddidx(b) << "]\n";
+  }
+
+  forceinline int
+  BMI::varnum(void) {
+    bdd_stats(&info);
+    return info.varnum;
+  }
+  
+  forceinline void
+  BMI::debug(std::ostream& os) {
+
+    // WE DEFINITELY SHOULD PRINT THE TIME SPENT ON GARB.COLL.
+
+    bdd_stats(&info);
+    os << "Buddy-Information:\n" 
+       << "\tregistered vars: " << _size << "\n"
+       << "\tallocated nodes: " << info.nodenum << "\n"
+       << "\tused for vars:   " << info.varnum << "\n"
+       << "\tfree nodes:      " << info.freenodes << "\n" 
+       << "\tused nodes:      " << info.nodenum - info.freenodes << "\n";
+
+    if (dummy_offset > -1) {
+      os << " Dummy from " << dummy_offset << " to "<< dummy_range<<"\n";
+    }
+
+  }
+
+  forceinline void
+  BMI::debug(void) { _debug = true; }
+
+  forceinline void
+  BMI::level(BddOutput l) { _level = l; }
+
+  forceinline BddOutput
+  BMI::level(void) { return _level; }
+
+  forceinline int
+  BMI::offset(void) const{
+    assert(_offset <= bdd_varnum());
+    return _offset;
+  }
+
+  forceinline void
+  BMI::setmaxinc(int max) {
+    int o = -1;
+    o = bdd_setmaxincrease(max);
+  }
+
+  class BuddyMgr : public SharedHandle<BMI> {
+  public:
+    BuddyMgr(void);
+    BuddyMgr(int n, int c);
+    BuddyMgr(const BuddyMgr& m);
+    BuddyMgr(BMI*);
+
+    /// Initialize manager with initial nodesize \a n and cachesize \a c.
+    void init(int n, int c);
+    /// Free the node table
+    void dispose(void);
+
+    /// Set the output level to level \a l.
+    void level(BddOutput l);
+    /// Return the output level
+    BddOutput level(void);
+    /// Memory Management
+    void setmaxinc(int max);
+    /// Debugging Output
+    void debug(std::ostream&);
+    /// Checking buddy library status
+    bool available(void);
+
+    /// Show debugoutput after the example space has been destroyed
+    void debug(void);
+    
+  };
+  
+  forceinline BMI*
+  BMI::copy(void) {
+    throw BuddyException("Copying not allowed!");
+  }
+
+  forceinline bool
+  BMI::available(void) { return bdd_isrunning(); }
+
+  forceinline
+  BuddyMgr::BuddyMgr(void) { assert(object() == NULL); }
+
+  forceinline
+  BuddyMgr::BuddyMgr(int n, int c) { 
+    std::cerr << "\nBuddyMgr(" <<n <<","<<c<<")\t"<< bdd_isrunning() << "\n";
+    assert(object() == NULL);
+    // allocate dummy object to acces buddy library
+//     BMI dummy;
+//     if (dummy.available()) {
+//       std::cerr << "dispose dummy\n";
+//       dummy.dispose();
+//     }
+    BMI* bm = new BMI(n, c);  
+    object(bm);
+    std::cerr << "\n finis BuddyMgr("<<n<<","<<c<<")";
+  }
+  
+  forceinline
+  BuddyMgr::BuddyMgr(const BuddyMgr& m) : SharedHandle<BMI>(m) {}
+
+  forceinline
+  BuddyMgr::BuddyMgr(BMI* m) : SharedHandle<BMI>(m){} 
+
+  forceinline void 
+  BuddyMgr::level(BddOutput l) { 
+    assert(object() != NULL);
+    object()->level(l); 
+  }
+
+  forceinline BddOutput
+  BuddyMgr::level(void) { return object()->level(); }
+
+  forceinline void
+  BuddyMgr::init(int n, int c) { 
+    std::cerr << "buddy mgr init(n,c)\n";
+    if (object() == NULL) {
+      // throw BuddyException("Trying initialization on empty manager");
+      BMI* bm = new BMI(n, c);
+      object(bm);
+    } else {
+      if (!object()->available()) {
+	object()->init(n,c); 
+	// std::cerr << "initialization old object \n";
+      } else {
+	// std::cerr << "already running\n";
+      }
+    }
+  }
+
+  forceinline void
+  BuddyMgr::dispose(void) { 
+    if (object() == NULL) {
+      throw BuddyException("Trying disposal on empty manager");
+    } else {
+      object()->dispose();
+    }
+  }
+
+  forceinline void
+  BuddyMgr::setmaxinc(int max) { 
+    if (object() == NULL) {
+      throw BuddyException("Trying setmaxinc on empty manager");
+    } else {
+      object()->setmaxinc(max); 
+    }
+  }
+
+  forceinline void 
+  BuddyMgr::debug(std::ostream& out) {
+    if (object() == NULL) {
+      throw BuddyException("Trying debug on empty manager");
+    } else {
+      object()->debug(out);
+    }
+  }
+
+  forceinline bool
+  BuddyMgr::available(void) {
+    if (object() == NULL) {
+      throw BuddyException("Trying available on empty manager");
+    }
+    return object()->available();
+  }
+
+  forceinline void 
+  BuddyMgr::debug(void) {
+    if (object() == NULL) {
+      throw BuddyException("Trying to set debug on empty manager");
+    } else {
+      object()->debug();
+    }
+  }
+
+}

@@ -494,6 +494,7 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   AC_SUBST(SEARCH,  "search")
   AC_SUBST(INT,     "int")
   AC_SUBST(SET,     "set")
+  AC_SUBST(BDD,     "bdd")
   AC_SUBST(MM,      "minimodel")
   AC_SUBST(BUDDY,   "buddy")])
 

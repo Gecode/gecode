@@ -1,0 +1,908 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-09-04 19:25:19 +0000 (Mon, 04 Sep 2006) $ by $Author: pekczynski $
+ *     $Revision: 3585 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+
+namespace Gecode { namespace Bdd {
+
+  /*
+   * Constructors and access
+   *
+   */
+
+  forceinline
+  CrdBddView::CrdBddView(void) : cardmin(0), cardmax(Limits::Set::card_max) {}
+
+  forceinline
+  CrdBddView::~CrdBddView(void)  {
+    manager()->dispose(bounds);
+    manager()->dispose(remain);
+  }
+
+  forceinline
+  CrdBddView::CrdBddView(const BddView& x) 
+    : DerivedViewBase<BddView>(x) {
+    GecodeBdd d = view.bdd_domain();
+    BMI* mgr = manager();
+    bounds.init();
+    remain.init();
+    bounds = BDDTOP;
+    remain = BDDTOP;
+    cardmin = 0;
+    // std::cout << "change cardmax constr(x)\n";
+    cardmax = view.table_width();
+    if (!mgr->ctrue(d)) {
+
+      GecodeBdd bvars = BDDTOP;
+      conv_hull_project(mgr, d, bounds, bvars);
+
+      if (!mgr->ctrue(bounds)) {
+
+	GecodeBdd b = bvars;
+	remain = mgr->eliminate(d, b);
+	unsigned int off = offset();
+	unsigned int range = table_width();
+// 	GecodeBdd card  = card_bounds(mgr, remain, bvars, off, range);
+
+	int l = 0;
+	int u = 0;
+	b = bvars,
+	card_count(mgr, remain, b, 0, off, range, l, u);
+	GecodeBdd card = BDDTOP;
+	if (l == static_cast<int> (Limits::Set::card_max)) { 
+	  card = BDDBOT;
+	  assert(false);
+	} else {
+	  int glbsize = glbSize();
+	  // std::cout << "constr cardmin = " << cardmin << " = " << l << "+"<< glbsize << "\n";
+	  cardmin = l + glbsize;
+	  // std::cout << "change cardmax constr(x)"<< u <<"+"<< glbsize <<"\n";
+	  cardmax = std::min(cardmax, u + glbsize);
+	  assert(cardmin <= cardmax);
+	  b = bvars;
+	  GecodeBdd card = cardrec(mgr, b, 0, off, range, l, u);
+	}
+	remain = card;
+      }
+    }
+    // std::cout << "done constructing\n";
+  }
+
+  forceinline void
+  CrdBddView::init(const BddView& x) {
+    view = x; 
+    GecodeBdd d = view.bdd_domain();
+    BMI* mgr = manager();
+    bounds.init();
+    remain.init();
+    bounds = BDDTOP;
+    remain = BDDTOP;
+    cardmin = 0;
+    // std::cout << "change cardmax init(x)\n";
+    cardmax = view.table_width();
+    assert(cardmin <= cardmax);
+    assert(cardmax > 0);
+
+    GecodeBdd bvars = BDDTOP;
+    conv_hull_project(mgr, d, bounds, bvars);
+
+	remain = mgr->eliminate(d, bvars);
+	unsigned int off = offset();
+	unsigned int range = table_width();
+// 	GecodeBdd card  = card_bounds(mgr, remain, bvars, off, range);
+
+	int l = 0;
+	int u = 0;
+	GecodeBdd b = bvars;
+	card_count(mgr, remain, b, 0, off, range, l, u);
+	GecodeBdd card = BDDTOP;
+	if (l == static_cast<int> (Limits::Set::card_max)) { 
+	  card = BDDBOT;
+	  assert(false);
+	} else {
+	  int glbsize = glbSize();
+	  // std::cout << "init cardmin = " << cardmin << " = " << l << "+"<< glbsize << "\n";
+	  cardmin = l + glbsize;
+	  // std::cout << "change cardmax constr(x)"<< u <<"+"<< glbsize <<"\n";
+	  cardmax = std::min(cardmax, u + glbsize);
+	  assert(cardmin <= cardmax);
+	  b = bvars;
+	  GecodeBdd card = cardrec(mgr, b, 0, off, range, l, u);
+	}
+
+	remain = card;
+//       }
+//     }
+  }
+
+  forceinline ModEvent
+  CrdBddView::process(Space* home, ModEvent me) {
+//     GecodeBdd btrue = BDDTOP;
+//     ModEvent tmp = tell_formula(home, btrue);
+//     if (tmp != me) {
+//       // std::cout << "error\n";
+//     }
+//     return tmp;
+    return me;
+  }
+
+  /* 
+   * Set information
+   *
+   */
+  
+  forceinline unsigned int
+  CrdBddView::glbSize(void) const { 
+    if (manager()->ctrue(bounds)) { return 0; }
+    BddIterator iter(manager(), bounds);
+    int size = 0;
+    while (iter()) {
+      if (iter.status() == FIX_GLB) { size++; }
+      ++iter;
+    }
+    return size;
+  }
+
+  forceinline unsigned int
+  CrdBddView::lubSize(void) const { 
+    if (manager()->ctrue(bounds) && 
+	manager()->ctrue(remain)) { return table_width(); }
+    BddIterator iter(manager(), bounds);
+    int out = 0;
+    while (iter()) {
+      if (iter.status() == FIX_NOT_LUB) { out++; }
+      ++iter;
+    }
+    return table_width() - out;
+  }
+
+  forceinline unsigned int
+  CrdBddView::unknownSize(void) const { 
+    BMI* mgr = manager();
+    int size = table_width();
+    if (manager()->ctrue(bounds)) { return size; }
+    BddIterator iter(mgr, bounds);
+    while (iter()) {
+      NodeStatus status = iter.status();
+      if (status == FIX_GLB || status == FIX_NOT_LUB) { size--; }
+      ++iter;
+    }
+    return size;
+  }
+
+  forceinline unsigned int
+  CrdBddView::cardMin(void) const { return cardmin; }
+
+  forceinline unsigned int
+  CrdBddView::cardMax(void) const { return cardmax; }
+
+  forceinline int
+  CrdBddView::lubMin(void) const { return view.lubMin(); }
+
+  forceinline int
+  CrdBddView::lubMax(void) const { return view.lubMax(); }
+
+  forceinline int
+  CrdBddView::lubMinN(int n) const { return view.lubMinN(n); }
+
+  forceinline int
+  CrdBddView::lubMaxN(int n) const { return view.lubMaxN(n); }
+
+  forceinline int
+  CrdBddView::glbMin(void) const { 
+    BMI* mgr = manager();
+    if (mgr->ctrue(bounds)) { return BddVarImp::MIN_OF_EMPTY; }
+    BddIterator iter(mgr, bounds);
+    while (iter()) {
+      if (iter.status() == FIX_GLB) {
+	int idx = iter.label() - offset();
+	// std::cout << "idx = " << idx << "\n";
+	return mgr_min() + idx;
+      }
+      ++iter;
+    }
+    return BddVarImp::MIN_OF_EMPTY;
+  }
+
+  forceinline int 
+  CrdBddView::glbMax(void) const {
+    BMI* mgr = manager();
+    if (mgr->ctrue(bounds)) { return BddVarImp::MAX_OF_EMPTY; } 
+    BddIterator iter(mgr, bounds);
+    int lastglb = -1;
+    while (iter()) {
+      if (iter.status() == FIX_GLB) {
+	int idx = iter.label() - offset();
+	// std::cout << "idx = " << idx << "\n";
+	lastglb = mgr_min() + idx;
+      } 
+      ++iter;
+    }
+    return (lastglb == -1) ? BddVarImp::MAX_OF_EMPTY : lastglb;
+  };
+
+  /*
+   * Bdd information
+   *
+   */
+  
+  forceinline unsigned int 
+  CrdBddView::offset(void) const { return view.offset(); }
+
+  forceinline unsigned int 
+  CrdBddView::table_width(void) const { return view.table_width(); }
+
+  forceinline int 
+  CrdBddView::size(void) const { return view.size(); }
+
+  forceinline GecodeBdd
+  CrdBddView::getbdd(int i) const { return view.getbdd(i); }
+
+  forceinline GecodeBdd
+  CrdBddView::getnegbdd(int i) const { return view.getnegbdd(i); }
+
+  forceinline int 
+  CrdBddView::getlevel(int i) { return view.getlevel(i); }
+
+  forceinline int 
+  CrdBddView::getvar(int i) { return view.getvar(i); }
+
+  forceinline void
+  CrdBddView::dom_and(GecodeBdd& d) { view.dom_and(d); }
+
+  forceinline void
+  CrdBddView::dom_or(GecodeBdd& d) { view.dom_or(d); }
+
+  forceinline int
+  CrdBddView::mgr_min(void) const { return view.mgr_min(); };
+
+  forceinline int
+  CrdBddView::mgr_max(void) const { return view.mgr_max(); };
+
+  forceinline int
+  CrdBddView::valididx(int v)  const { return view.valididx(v); }
+
+  forceinline BMI*
+  CrdBddView::manager(void) const { return view.manager(); }
+
+  forceinline GecodeBdd 
+  CrdBddView::bdd_domain(void) const { return view.bdd_domain(); }
+
+  forceinline GecodeBdd 
+  CrdBddView::bdd_remain(void) const { return remain; }
+
+  forceinline GecodeBdd 
+  CrdBddView::bdd_bounds(void) const { return bounds; }
+
+  /*
+   * Domain Tests
+   *
+   */
+  forceinline bool
+  CrdBddView::assigned(void) const { 
+//     // return view.assigned(); 
+    bool cond1 = (unsigned int) manager()->bddpath(bounds) == 1;
+    // (C2) the solution talks about all elements 
+    //      (i.e. the number of nodes used for the bdd uses the bdd nodes
+    //      of all elements for the BddVar)
+    bool cond2 = (unsigned int) manager()->bddsize(bounds) == table_width();
+    return cond1 && cond2;
+
+//     // std::cout << "assigned? " << offset() << "\n";
+//     // std::cout << "var dom = " << base().variable()->bdd_domain() << "\n";
+//     BMI* mgr = manager();
+//     return !mgr->ctrue(bounds) && mgr->ctrue(remain); 
+  }
+
+  forceinline bool
+  CrdBddView::contains(int i) const { return view.contains(i); }
+  
+  forceinline bool
+  CrdBddView::notContains(int i) const { return view.notContains(i); }
+
+  /*
+   * Tells
+   *
+   */
+
+  forceinline ModEvent 
+  CrdBddView::cardinality(Space* home, int l, int u) {
+    assert(l <= u);
+    if (l > cardmax || u < cardmin) { return process(home, ME_BDD_FAILED); }
+    if (l <= cardmin && cardmax <= u) { return process(home, ME_BDD_NONE); }
+    
+    // std::cout << "CrdBddView newcardinality = " <<l<<"#"<<u <<" \n";
+    BMI* mgr = manager();
+    GecodeBdd b = BDDTOP;
+    conv_project(mgr, bounds, b);
+    unsigned int off = offset();
+    unsigned int range = table_width();
+    GecodeBdd card = cardrec(mgr, b, 0, off, range, l, u);
+    GecodeBdd tell = mgr->eliminate(card, b);
+//     return tell_formula(home, card);
+    if (mgr->ctrue(bounds) && mgr->ctrue(remain)) {
+      // std::cout << "bounds true remain true\n";
+      cardmin = l; 
+      // std::cout << "change cardmax cardinality"<< u <<"\n";
+      cardmax = u;
+      assert(cardmin <= cardmax);
+      // std::cout << "card["<<l<<"#"<<u<<"]\n";
+      return view.tell_formula(home, tell);
+    } else {
+      return tell_formula(home, tell);
+    }
+
+//     return view.cardinality(home, l, u);
+  }
+
+  forceinline ModEvent
+  CrdBddView::cardMin(Space* home, int m) { 
+
+    if (m > cardmax) { return process(home, ME_BDD_FAILED); }
+    if (m <= cardmin) { return process(home, ME_BDD_NONE); }
+    
+    // std::cout << "CrdBddView newcardMin = " <<m <<" \n";
+    BMI* mgr = manager();
+    GecodeBdd b = BDDTOP;
+    conv_project(mgr, bounds, b);
+    int l = m;
+    int u = cardmax;
+    unsigned int off = offset();
+    unsigned int range = table_width();
+    GecodeBdd card =   cardcheck(mgr, range, off, l, u);
+    // old // GecodeBdd card = cardrec(mgr, b, 0, off, range, l, u);
+    //     return tell_formula(home, card);
+    if (mgr->ctrue(bounds) && mgr->ctrue(remain)) {
+      // std::cout << "bounds true remain true\n";
+      cardmin = l; 
+      // std::cout << "change cardmax cardMin"<< u <<"\n";
+      cardmax = u;
+      assert(cardmin <= cardmax);
+      // std::cout << "card["<<l<<"#"<<u<<"]\n";
+      return view.tell_formula(home, card);
+    } else {
+      return tell_formula(home, card);
+    }
+
+//     return view.cardMin(home, m); 
+  }
+
+  forceinline ModEvent
+  CrdBddView::cardMax(Space* home, int m) { 
+    if (m < cardmin) { return process(home, ME_BDD_FAILED); }
+    if (cardmax <= m) { return process(home, ME_BDD_NONE); }
+    
+    // std::cout << "CrdBddView newcardMax = " <<m <<" \n";
+    BMI* mgr = manager();
+    GecodeBdd b = bounds;
+    int l = cardmin;
+    int u = m;
+    unsigned int off = offset();
+    unsigned int range = table_width();
+    GecodeBdd card = cardrec(mgr, b, 0, off, range, l, u);
+//     return tell_formula(home, card);
+
+    if (mgr->ctrue(bounds) && mgr->ctrue(remain)) {
+      // std::cout << "bounds true remain true\n";
+      cardmin = l; 
+      // std::cout << "change cardmax cardMax"<< u <<"\n";
+      cardmax = u;
+      // std::cout << "card["<<l<<"#"<<u<<"]\n";
+      return view.tell_formula(home, card);
+    } else {
+      return tell_formula(home, card);
+    }
+
+//     return view.cardMax(home, m); 
+  }
+
+  forceinline ModEvent 
+  CrdBddView::include(Space* home, int i, int j) { 
+#ifdef GECODE_HAVE_LIB_CUDD
+    BMI* mgr = manager();
+#endif
+    // std::cout << "include: " << i << "#"<< j << "\n";
+    if (i < mgr_min() || j > mgr_max()) { return process(home, ME_BDD_FAILED); }
+    
+    GecodeBdd in_glb  = BDDTOP;
+    for (int v = i; v <= j; v++) {
+      int idx = v - mgr_min();
+      // std::cout << "idx = " << idx << "\n";
+      in_glb &= getbdd(idx);
+    }
+    return tell_formula(home, in_glb);
+  }
+
+  forceinline ModEvent 
+  CrdBddView::include(Space* home, int i) { return include(home, i, i); }
+
+  forceinline ModEvent 
+  CrdBddView::exclude(Space* home, int i, int j) { 
+#ifdef GECODE_HAVE_LIB_CUDD
+    BMI* mgr = manager();
+#endif
+    // std::cout << "exclude: " << i << "#"<< j << "\n";
+    if (i > mgr_max()  || j < mgr_min()) { return process(home, ME_BDD_NONE); }
+    
+    int mi = std::max(mgr_min(), i);
+    int ma = std::min(j, mgr_max());
+
+    GecodeBdd notinlub  = BDDTOP;
+    for (int v = mi; v <= ma; v++) {
+      // get the negated bdds for value i in [a..b]
+      int idx = v - mgr_min();
+      // std::cout << "idx = " << idx << "\n";
+      notinlub &= getnegbdd(idx);
+    }
+    return tell_formula(home, notinlub);
+  }
+
+  forceinline ModEvent 
+  CrdBddView::exclude(Space* home, int i) { return exclude(home, i, i); }
+
+  forceinline ModEvent
+  CrdBddView::nq(Space* home, int v) { return view.nq(home, v, v); }
+
+  forceinline ModEvent
+  CrdBddView::nq(Space* home, int a, int b) {
+    if (b < view.mgr_min() || a > view.mgr_max()) { 
+      return process(home,ME_BDD_NONE); 
+    }
+    Iter::Ranges::Singleton m(a, b);
+    GecodeBdd ass = !(view.variable()->gen_assignment(m));
+    
+    return tell_formula(home, ass);
+  }
+
+  forceinline ModEvent
+  CrdBddView::eq(Space* home, int v) { return eq(home, v, v); }
+
+  forceinline ModEvent
+  CrdBddView::eq(Space* home, int a, int b) {
+    if (b < view.mgr_min() || a > view.mgr_max()) { 
+      return process(home, ME_BDD_FAILED); 
+    }
+    Iter::Ranges::Singleton m(a, b);
+    GecodeBdd ass = view.variable()->gen_assignment(m);
+    
+    return tell_formula(home, ass);
+  }
+  
+  forceinline ModEvent 
+  CrdBddView::tell_formula(Space* home, GecodeBdd& d) {
+#ifdef GECODE_HAVE_LIB_CUDD    
+    BMI* mgr = manager();
+#endif
+    GecodeBdd ctrue = BDDTOP;
+    return tell_formula(home, ctrue, d);
+  }
+
+  forceinline ModEvent 
+  CrdBddView::tell_formula(Space* home, GecodeBdd& beta, GecodeBdd& delta) {
+    GecodeBdd oldbnd = bounds;
+    BMI* mgr = manager();
+    // std::cout << "crd tell formula:" << offset() << " \n";
+    
+    // new EXPERIMENTAL
+    // keep the view consistent with the underlying view / var
+//     GecodeBdd update = bdd_domain();
+//     bounds &= conv_hull(mgr, update);
+
+//     std::cout << "formula: " << delta << "\n";
+//     std::cout << "domain: " << bdd_domain() << "\n";
+//     std::cout << "old bounds = " << bounds << "\n";
+    delta &= bdd_domain(); 
+    GecodeBdd bvars = BDDTOP;
+//     std::cout << "before bounds = " << delta << "\n";
+    conv_hull_project(mgr, delta, beta, bvars);
+
+    bounds &= beta;
+//     std::cout << "new bounds = " << bounds << "\n";
+//     // std::cout << "oldbnd: " << oldbnd << "\n";
+//     // std::cout << "bounds: " << bounds << "\n";
+//     if (bounds != oldbnd) {
+
+      GecodeBdd b = bvars;
+      delta = mgr->eliminate(delta, b);
+      unsigned int off   = offset();
+      unsigned int range = table_width();
+      b = bvars;
+
+//       GecodeBdd card = card_bounds(mgr, delta, b, off, range);
+
+      int l = 0;
+      int u = 0;
+      card_count(mgr, delta, b, 0, off, range, l, u);
+
+      // COMPARISON WITH DOMAIN COUNT
+      // test whether cardinsality was channeled correctly
+      unsigned int domoff = view.variable()->offset();
+      unsigned int domtab = view.variable()->table_width();
+      GecodeBdd dummy = BDDTOP;
+      GecodeBdd xdom   = view.variable()->bdd_domain();
+      int xl = 0;
+      int xu = 0;
+      card_count(mgr, xdom, dummy, 0, domoff, domtab, xl, xu);
+
+      // end test
+
+      if (l == static_cast<int> (Limits::Set::card_max)) { 
+	return ME_BDD_FAILED;
+      }
+      int glbsize = glbSize();
+      // std::cout << "cardmin = " << cardmin << " = " << l << "+"<< glbsize << "\n";
+      // std::cout << "card_count count result for"<< offset() <<" CCR["<< l<<".."<< u<<"]\n";
+      // std::cout << "dom count result for"<< offset() <<" DC["<< xl<<".."<< xu<<"]\n";
+      cardmin = l + glbsize;
+      // std::cout << "change cardmax tell formula"<< u <<"+"<< glbsize <<"\n";
+
+      cardmax = std::min(cardmax, u + glbsize);
+      assert(cardmin <= cardmax);
+      b = bvars;
+      // // std::cout << "b = " << b << "\n";
+      GecodeBdd card = cardrec(mgr, b, 0, off, range, l, u);
+
+      b = bvars;
+//       // std::cout << "remain = " << remain << "\n";
+//       // std::cout << "card = " << card << "\n";
+
+      mgr->existquant(remain, card, b);   
+//       // std::cout << "remain = " << remain << "\n";
+      GecodeBdd dom = bounds & remain;
+      return view.tell_formula(home, dom);
+//     } else {
+//       assert(cardmin <= cardmax);
+//       // std::cout << "NO MOD since no BOUNDS MOD\n";
+//       return ME_BDD_NONE;
+//     }
+  }
+
+  forceinline ModEvent
+  CrdBddView::intersect(Space* home, int i, int j) {
+    
+    ModEvent me_left = exclude(home, Limits::Set::int_min, i - 1);
+    if (me_failed(me_left) || me_left == ME_BDD_VAL) { 
+      return process(home, me_left);
+    }
+
+    ModEvent me_right = exclude(home, j + 1, Limits::Set::int_max);
+
+    if (me_failed(me_right) || me_right == ME_BDD_VAL) { 
+      return process(home, me_right); 
+    }
+    if (me_left > 0 || me_right > 0) { 
+      return process(home, ME_BDD_DOM); 
+    }
+    return process(home, ME_BDD_NONE);
+  }
+
+  forceinline ModEvent
+  CrdBddView::intersect(Space* home, int i) { return intersect(home, i, i); }
+
+  template <class I>
+  forceinline ModEvent
+  CrdBddView::excludeI(Space* home, I& i) { 
+
+    int min = mgr_min();
+    int max = mgr_max();
+    
+    if (!i()) { return process(home, ME_BDD_NONE); }
+    if (max < i.min()) { return process(home, ME_BDD_NONE); }
+    while (i() && i.max() < min) { 
+      // std::cout << "skip: " << i.min() << ".."<< i.max() << "\n";
+      ++i; 
+    }
+    if (!i()) { return process(home, ME_BDD_NONE); }
+    if (i.min() > max) { return process(home, ME_BDD_NONE); }
+    GecodeBdd not_lub = BDDTOP;    
+    while(i()) {
+      // std::cout << "valid iter at: " << i.min() << ".."<< i.max() << "\n";
+      int mi = std::max(i.min(), min);
+      int ma = std::min(max, i.max());
+      // std::cout << "exclude: " << mi << "#" << ma << "\n";
+      for (int k = mi; k <= ma; k++) {
+	int idx = k - mgr_min();
+	// std::cout << "idx = " << idx << "\n";
+	not_lub &= getnegbdd(idx);
+      }
+      ++i;
+    }
+    return tell_formula(home, not_lub);
+  }
+
+  template <class I>
+  forceinline ModEvent
+  CrdBddView::includeI(Space* home, I& i) { 
+    // std::cout << "includeI: \n";
+
+    if (!i()) { return process(home, ME_BDD_NONE);} 
+    int min = mgr_min();
+    int max = mgr_max();
+    GecodeBdd in_glb  = BDDTOP;
+    while(i()) {
+      if (i.min() < min || i.max() < min) { return process(home, ME_BDD_FAILED); }
+      if (max < i.min() || max < i.max()) { return process(home, ME_BDD_FAILED); }
+      // std::cout << "include " << i.min() << "#" << i.max() << "\n";
+      for (int k = i.min(); k <= i.max(); k++) {
+	int idx = k - mgr_min();
+	// std::cout << "offset = " << offset() << " mgr off = " << manager()->offset() <<" idx = " << idx << "\n";
+	in_glb &= getbdd(idx);
+      }
+      ++i;
+    }
+    return tell_formula(home, in_glb);  
+  }
+
+  template <class I>
+  forceinline ModEvent
+  CrdBddView::intersectI(Space* home, I& i) { 
+    Iter::Ranges::Compl<Limits::Set::int_min, Limits::Set::int_max, I> compI(i);
+    return excludeI(home, compI); 
+  }
+
+  template <class I>
+  forceinline ModEvent
+  CrdBddView::eqI(Space* home, I& i) {
+    
+    int mi = view.mgr_min();
+    int ma = view.mgr_max();
+    if (i()) {
+      if (i.min() < mi || i.min() > ma) { return process(home, ME_BDD_FAILED); }
+    }
+    GecodeBdd ass = view.variable()->gen_assignment(i);
+    return tell_formula(home, ass);
+  }
+
+  template <class I>
+  forceinline ModEvent
+  CrdBddView::nqI(Space* home, I& i) {
+    
+    GecodeBdd ass = !(view.variable()->gen_assignment(i));
+    return tell_formula(home, ass);
+  }
+
+  /*
+   * Dependencies
+   *
+   */
+
+  forceinline void
+  CrdBddView::subscribe(Space* home, Propagator* p, PropCond pc,
+			  bool process) {
+    view.subscribe(home, p, pc, process);
+  }
+
+  forceinline void
+  CrdBddView::cancel(Space* home, Propagator* p, PropCond pc) {
+    view.cancel(home, p, pc);
+  }
+  
+  /*
+   * Propagator Modification Events
+   *
+   */
+
+  forceinline ModEvent
+  CrdBddView::pme(const Propagator* p) { return BddView::pme(p); }
+  
+  forceinline ModEvent
+  CrdBddView::pme(ModEvent me) { return BddView::pme(me); }
+
+  /*
+   * Cloning
+   *
+   */
+
+  forceinline void
+  CrdBddView::update(Space* home, bool share, CrdBddView& y) {
+    view.update(home, share, y.view);
+    bounds.init();
+    remain.init();
+    bounds = y.bdd_bounds();
+    remain = y.bdd_remain();
+    cardmin = y.cardmin;
+    cardmax = y.cardmax;
+  }
+
+  forceinline void 
+  CrdBddView::viewdot(void) const { return view.viewdot(); }
+
+  template <>
+  class DomValues<CrdBddView> : public DomValues<BddVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    DomValues(void);
+    /// Initialize with ranges for variable implementation \a x
+    DomValues(const CrdBddView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const CrdBddView& x);
+    //@}    
+  };
+
+  forceinline
+  DomValues<CrdBddView>::DomValues(void) {}
+
+  forceinline
+  DomValues<CrdBddView>::DomValues(const CrdBddView& x) 
+    : DomValues<BddVarImp*>(x.base().variable()) {}
+
+  forceinline void
+  DomValues<CrdBddView>::init(const CrdBddView& x) {
+    DomValues<BddVarImp*>::init(x.base().variable());
+  }
+
+  template <>
+  class GlbValues<CrdBddView> : public GlbValues<BddVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    GlbValues(void);
+    /// Initialize with ranges for variable implementation \a x
+    GlbValues(const CrdBddView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const CrdBddView& x);
+    //@}    
+  };
+
+  forceinline
+  GlbValues<CrdBddView>::GlbValues(void) {}
+
+  forceinline
+  GlbValues<CrdBddView>::GlbValues(const CrdBddView& x) 
+    : GlbValues<BddVarImp*>(x.base().variable()) {}
+
+  forceinline void
+  GlbValues<CrdBddView>::init(const CrdBddView& x) {
+    GlbValues<BddVarImp*>::init(x.base().variable());
+  }
+
+}
+namespace Set {
+  template <>
+  class GlbRanges<Bdd::CrdBddView> : public Set::GlbRanges<Bdd::BddVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    GlbRanges(void);
+    /// Initialize with ranges for variable implementation \a x
+    GlbRanges(const Bdd::CrdBddView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const Bdd::CrdBddView& x);
+    //@}    
+  };
+
+  forceinline
+  GlbRanges<Bdd::CrdBddView>::GlbRanges(void) {}
+
+  forceinline
+  GlbRanges<Bdd::CrdBddView>::GlbRanges(const Bdd::CrdBddView& x) 
+    : GlbRanges<Bdd::BddVarImp*>(x.base().variable()) {}
+
+  forceinline void
+  GlbRanges<Bdd::CrdBddView>::init(const Bdd::CrdBddView& x) {
+    GlbRanges<Bdd::BddVarImp*>::init(x.base().variable());
+  }
+
+  template <>
+  class LubRanges<Bdd::CrdBddView> : public Set::LubRanges<Bdd::BddVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    LubRanges(void);
+    /// Initialize with ranges for variable implementation \a x
+    LubRanges(const Bdd::CrdBddView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const Bdd::CrdBddView& x);
+    //@}    
+  };
+
+  forceinline
+  LubRanges<Bdd::CrdBddView>::LubRanges(void) {}
+
+  forceinline
+  LubRanges<Bdd::CrdBddView>::LubRanges(const Bdd::CrdBddView& x) 
+    : LubRanges<Bdd::BddVarImp*>(x.base().variable()) {}
+
+  forceinline void
+  LubRanges<Bdd::CrdBddView>::init(const Bdd::CrdBddView& x) {
+    LubRanges<Bdd::BddVarImp*>::init(x.base().variable());
+  }
+}
+namespace Bdd {
+
+  template <>
+  class UnknownValues<CrdBddView> : public UnknownValues<BddVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    UnknownValues(void);
+    /// Initialize with ranges for variable implementation \a x
+    UnknownValues(const CrdBddView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const CrdBddView& x);
+    //@}    
+  };
+
+  forceinline
+  UnknownValues<CrdBddView>::UnknownValues(void) {}
+
+  forceinline
+  UnknownValues<CrdBddView>::UnknownValues(const CrdBddView& x) 
+    : UnknownValues<BddVarImp*>(x.base().variable()) {}
+
+  forceinline void
+  UnknownValues<CrdBddView>::init(const CrdBddView& x) {
+    UnknownValues<BddVarImp*>::init(x.base().variable());
+  }
+}
+  namespace Set {
+  template <>
+  class UnknownRanges<Bdd::CrdBddView> : 
+      public Set::UnknownRanges<Bdd::BddVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    UnknownRanges(void);
+    /// Initialize with ranges for variable implementation \a x
+    UnknownRanges(const Bdd::CrdBddView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const Bdd::CrdBddView& x);
+    //@}    
+  };
+
+  forceinline
+  UnknownRanges<Bdd::CrdBddView>::UnknownRanges(void) {}
+
+  forceinline
+  UnknownRanges<Bdd::CrdBddView>::UnknownRanges(const Bdd::CrdBddView& x) 
+    : UnknownRanges<Bdd::BddVarImp*>(x.base().variable()) {}
+
+  forceinline void
+  UnknownRanges<Bdd::CrdBddView>::init(const Bdd::CrdBddView& x) {
+    UnknownRanges<Bdd::BddVarImp*>::init(x.base().variable());
+  }
+
+}
+  /*
+   * Testing
+   *
+   */
+  forceinline bool
+  same(const Bdd::CrdBddView& x, const Bdd::CrdBddView& y) {
+    return same(x.base(),y.base());
+  }
+
+  forceinline bool
+  before(const Bdd::CrdBddView& x, const Bdd::CrdBddView& y) {
+    return before(x.base(),y.base());
+  }
+
+}
+
+
+// STATISTICS: bdd-var
+

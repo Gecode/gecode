@@ -1,0 +1,106 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-09-04 19:25:19 +0000 (Mon, 04 Sep 2006) $ by $Author: pekczynski $
+ *     $Revision: 3585 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Bdd {
+
+  template <class View0, class View1>
+  forceinline
+  Bin<View0, View1>::Bin(Space* home, View0 x, View1 y, GecodeBdd& d0)
+    : MixBinaryPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, x, y), 
+      d(d0) {
+    MixBinaryPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::force(home);
+  }
+
+  template <class View0, class View1>
+  forceinline
+  Bin<View0, View1>::Bin(Space* home, bool share, Bin& p)
+    : MixBinaryPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, share, p), 
+      d(p.d) {}
+
+  template <class View0, class View1>
+  forceinline ExecStatus
+  Bin<View0, View1>::post(Space* home, View0 x, View1 y, GecodeBdd& d0) {
+    (void) new (home) Bin(home, x, y, d0);
+    return ES_OK;
+  }
+
+  template <class View0, class View1>
+  forceinline Actor*
+  Bin<View0, View1>::copy(Space* home, bool share) {
+    return new (home) Bin(home, share, *this);
+  }
+  
+  template <class View0, class View1>
+  forceinline ExecStatus 
+  Bin<View0, View1>::propagate(Space* home) {
+
+    BMI* mgr   = x0.manager();
+    bool assigned = true;
+    
+    std::cout << "bin inhom propagate\n";
+    {
+      std::cout << "tell x0\n";
+      GecodeBdd dom = x1.bdd_domain();
+      int s = x1.offset();
+      int w = s + x1.table_width() - 1;
+      mgr->existquant(dom, d, s, w);
+      std::cout << "check x0 ...";
+      GECODE_ME_CHECK(x0.tell_formula(home, dom));
+      std::cout << "DONE\n";
+    }
+    {
+      std::cout << "tell x1\n";
+      GecodeBdd dom = x0.bdd_domain();
+      int s = x0.offset();
+      int w = s + x0.table_width() - 1;
+      mgr->existquant(dom, d, s, w);
+      std::cout << "check x1...";
+      GECODE_ME_CHECK(x1.tell_formula(home, dom));
+      std::cout << "DONE";
+    }
+
+    assigned = true;
+    assigned &= (x0.assigned() && x1.assigned());
+
+    if (assigned) {
+      return ES_SUBSUMED(this, home);
+    }
+
+    return ES_FIX;
+  }
+
+  template <class View0, class View1>
+  size_t
+  Bin<View0, View1>::dispose(Space* home) {
+    MixBinaryPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::unforce(home);
+    if (!home->failed()) {
+      x0.cancel(home, this, PC_BDD_DOM);
+      x1.cancel(home, this, PC_BDD_DOM);
+    }
+    BMI* mgr = x0.manager();
+    mgr->dispose(d);
+    MixBinaryPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::dispose(home);
+    return sizeof(*this);
+  }
+
+}}
+
+// STATISTICS: bdd-prop

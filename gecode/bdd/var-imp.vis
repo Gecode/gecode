@@ -1,0 +1,105 @@
+#
+#  Main authors:
+#     Guido Tack <tack@gecode.org>
+#
+#  Contributing authors:
+#     Christian Schulte <schulte@gecode.org>
+#
+#  Copyright:
+#     Guido Tack, 2004
+#     Christian Schulte, 2006
+#
+#  Last modified:
+#     $Date: 2006-07-28 16:27:48 +0200 (Fri, 28 Jul 2006) $ by $Author: tack $
+#     $Revision: 3477 $
+#
+#  This file is part of Gecode, the generic constraint
+#  development environment:
+#     http://www.gecode.org
+#
+#  See the file "LICENSE" for information on usage and
+#  redistribution of this file, and for a
+#     DISCLAIMER OF ALL WARRANTIES.
+#
+
+#
+# Header of file to be generated
+#
+[Header]
+
+namespace Gecode { namespace Bdd {
+
+#
+# General settings
+#
+[General]
+Name:		Bdd
+VTI:		BDD
+Export:		GECODE_BDD_EXPORT
+Forceinline:	forceinline
+Forcedispose:   true
+
+#
+# Definition of modification events
+#
+[ModEventHeader]
+  /**
+   * \defgroup TaskActorBddMEPC Bdd modification events and propagation conditions
+   * \ingroup TaskActorBdd
+   */
+
+  //@{
+[ModEvent]
+Name:		FAILED=FAILED
+  /// Domain operation has resulted in failure
+[ModEvent]
+Name:		NONE=NONE
+  /// Domain operation has not changed domain
+[ModEvent]
+Name:		VAL=ASSIGNED
+Combine:	VAL=VAL,DOM=VAL
+  /// Domain operation has resulted in a value (assigned variable)
+[ModEvent]
+Name:		DOM=SUBSCRIBE
+Combine:	VAL=VAL,DOM=DOM
+  /**
+   * \brief \brief Domain operation has modified the represented set
+   */
+# [ModEventFooter]: Nothing
+
+##
+## Definition of propagation conditions
+##
+# [PropCondHeader]: Nothing
+[PropCond]
+Name:		VAL=ASSIGNED
+ModEvents:	VAL
+  /**
+   * \brief Propagate when a view becomes assigned (single value)
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_BDD_VAL, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_BDD_VAL.
+   */
+[PropCond]
+Name:		DOM
+ModEvents:	VAL,DOM
+ /**
+   * \brief Propagate when the domain of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_BDD_DOM, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_BDD_VAL or 
+   * ME_BDD_DOM.
+   */
+[PropCondFooter]
+  //@}
+##
+## Footer of file to be generated
+##
+[Footer]
+
+}}
+
+// STATISTICS: set-var
+[End]

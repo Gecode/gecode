@@ -1,0 +1,887 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-07-27 10:17:36 +0000 (Thu, 27 Jul 2006) $ by $Author: pekczynski $
+ *     $Revision: 3474 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  template <class View>
+  void 
+  variableorder(ViewArray<View>& x) {
+    // std::cout << "start order\n";
+    BMI* mgr = x[0].manager();
+    // std::cout << "allocated \n";
+    unsigned int var_in_tab = mgr->allocated();
+    
+    // std::cout << "var_in_tab = " << var_in_tab << "\n";
+
+    unsigned int min_offset = x[0].offset();
+    unsigned int max_width  = x[0].table_width();
+    for (int i = 0; i < x.size(); i++) {
+      if (x[i].offset() < min_offset) {
+	min_offset = x[i].offset();
+      }
+      if (x[i].table_width() > max_width) {
+	max_width = x[i].table_width();
+      }
+    }
+    
+    // std::cout << "max_width = " << max_width  << " min_offset = " << min_offset << "\n";
+
+    // constraint order as specified by Hawkins, Lagoon and Stuckey
+    GECODE_AUTOARRAY(int, hls_order, var_in_tab);
+
+    // we do not care about variables 
+    // that are not in the scope of the constraint
+    int c = 0;
+    for (unsigned int i = 0; i < min_offset; i++, c++) {
+      hls_order[i] = i;
+    }
+
+    // ordering those that lie in the scope
+    for (unsigned int f = 0; f < max_width; f++) {
+      for (int i = 0; i < x.size(); i++) {
+	int xo = x[i].offset();
+	// std::cout << "order " << xo << "\t";
+	int xw = x[i].table_width();
+	int cur= xo + f;
+	// std::cout << "cur " << cur << "\t" << xw << "\t" << xo + xw << "\n";
+	if (cur <= xo + xw) {
+	  hls_order[c] = cur;
+	  c++;
+	}
+      }
+    }
+
+    // IMPORTANT DO NOT FORGET REMAINING LARGER VARIABLES
+    for (unsigned int i = c; i < var_in_tab; i++, c++) {
+      // std::cout << "rem = " <<i<<"\n";
+      hls_order[i] = i;
+    }   
+    // std::cout << "set order\n";
+    mgr->setorder(&hls_order[0]);
+    // std::cout << "ordering done\n";
+  }
+
+  template <class View, class View1>
+  void 
+  variableorder(ViewArray<View>& x, ViewArray<View1>& y = NULL) {
+    std::cerr << "start order\n";
+    BMI* mgr = x[0].manager();
+    std::cerr << "allocated \n";
+    unsigned int var_in_tab = mgr->allocated();
+    
+    std::cerr << "var_in_tab = " << var_in_tab << "\n";
+
+    unsigned int min_offset = x[0].offset();
+    unsigned int max_width  = x[0].table_width();
+    for (int i = 0; i < x.size(); i++) {
+      if (x[i].offset() < min_offset) {
+	min_offset = x[i].offset();
+      }
+      if (x[i].table_width() > max_width) {
+	max_width = x[i].table_width();
+      }
+    }
+    
+    std::cerr << "max_width = " << max_width  << " min_offset = " << min_offset << "\n";
+
+    // constraint order as specified by Hawkins, Lagoon and Stuckey
+//     for (int i = 0; i < y.size(); i++) {
+//       var_in_tab += y[i].table_width();
+//     }
+
+    GECODE_AUTOARRAY(int, hls_order, var_in_tab);
+
+    // we do not care about variables 
+    // that are not in the scope of the constraint
+    int c = 0;
+    for (unsigned int i = 0; i < min_offset; i++, c++) {
+      hls_order[i] = i;
+    }
+
+    // ordering those that lie in the scope
+    for (unsigned int f = 0; f < max_width; f++) {
+      for (int i = 0; i < x.size(); i++) {
+	int xo = x[i].offset();
+	std::cerr << "order " << xo << "\n";
+	int xw = x[i].table_width();
+	int cur= xo + f;
+	if (cur <= xo + xw) {
+	  hls_order[c] = cur;
+	  c++;
+	}
+      }
+      // INVARIANT: Here we should assume that variables of the same array
+      //            have the same initial values for min and max of the set bounds
+      std::cerr << "check \t";
+      std::cerr << "f=" << f << " xmin: " << x[0].mgr_min() << " and ymin " << y[0].mgr_min() << "\n";
+      // invariant new arrays have subranges of old arrays
+	for (int i = 0; i < y.size(); i++) {
+	  if ( (x[0].mgr_min() + (int) f >= y[i].mgr_min()) &&
+	       (x[0].mgr_min() + (int) f <= y[i].mgr_max())) {
+	    std::cerr << "do y \t";
+	    int xyshift = y[i].mgr_min()  - x[0].mgr_min();
+	    int yo = y[i].offset();
+	    std::cerr << "order " << yo << "\n";
+	    int yw = y[i].table_width();
+	    int cur= yo + f - xyshift;
+	    if (cur <= yo + yw) {
+	      hls_order[c] = cur;
+	      c++;
+	    }
+	  }
+	}
+    }
+
+    // IMPORTANT DO NOT FORGET REMAINING LARGER VARIABLES
+    for (unsigned int i = c; i < var_in_tab; i++, c++) {
+      hls_order[i] = i;
+    }   
+
+    for (unsigned int i = 0; i < var_in_tab; i++) {
+      std::cerr << hls_order[i] << " ";
+    }   
+    std::cerr << "\n";
+
+
+    std::cerr << "set order\n";
+    mgr->setorder(&hls_order[0]);
+    std::cerr << "ordering done\n";
+  }
+
+  template <class View>
+  void 
+  variableorder(ViewArray<View>** x, int xs) {
+    std::cerr << "start order\n";
+    
+    BMI* mgr = (*(x[0]))[0].manager();
+    std::cerr << "allocated \n";
+    unsigned int var_in_tab = mgr->allocated();
+    
+    std::cerr << "var_in_tab = " << var_in_tab << "\n";
+
+    unsigned int min_offset = (*(x[0]))[0].offset();
+    unsigned int max_width  = (*(x[0]))[0].table_width();
+    unsigned int minv = (*(x[0]))[0].mgr_min();
+    unsigned int maxv = (*(x[0]))[0].mgr_max();
+
+    for (int i = 0; i < xs; i++) {
+
+      int n = x[i]->size();
+      for (int j = 0; j < n; j++) {
+	int off   = (*(x[i]))[j].offset();
+	int width = (*(x[i]))[j].table_width();
+	int cmin  = (*(x[i]))[j].mgr_min();
+	int cmax  = (*(x[i]))[j].mgr_max();
+	std::cerr << "off= " << off << " width=" << width << " cmin=" << cmin << " cmax= " << cmax << "\n";
+	if (off < min_offset) {
+	  min_offset = off;
+	}
+	if (width > max_width) {
+	  max_width = width;
+	}
+	if (cmax > maxv) {
+	  maxv = cmax;
+	}
+	if (cmin < minv) {
+	  minv = cmin;
+	}
+      }
+    }
+    
+    std::cerr << "max_width = " << max_width  << " min_offset = " << min_offset << "\n";
+
+    GECODE_AUTOARRAY(int, hls_order, var_in_tab);
+
+    // we do not care about variables 
+    // that are not in the scope of the constraint
+    int c = 0;
+    for (unsigned int i = 0; i < min_offset; i++, c++) {
+      hls_order[i] = i;
+    }
+
+    // ordering those that lie in the scope
+    for (unsigned int f = 0; f < max_width; f++) {
+      for (int z = 0; z < xs; z++) {
+	for (int i = 0; i < x[z]->size(); i++) {
+	  if ( ((*(x[z]))[i].mgr_min() <= minv + f) && 
+	       (minv + f <= (*(x[z]))[i].mgr_max())) {
+	    std::cerr << "do (*(x[z])) \t";
+	    int xshift = (*(x[z]))[i].mgr_min() - minv;
+	    int xo = (*(x[z]))[i].offset();
+	    std::cerr << "order " << xo << "\n";
+	    int xw = (*(x[z]))[i].table_width();
+	    int cur= xo + f - xshift;
+	    if (cur <= xo + xw) {
+	      hls_order[c] = cur;
+	      c++;
+	    }
+	  }
+	}
+      }
+    }
+
+    // IMPORTANT DO NOT FORGET REMAINING LARGER VARIABLES
+    for (unsigned int i = c; i < var_in_tab; i++, c++) {
+      hls_order[i] = i;
+    }   
+
+    for (unsigned int i = 0; i < var_in_tab; i++) {
+      std::cerr << hls_order[i] << " ";
+    }   
+    std::cerr << "\n";
+
+
+    std::cerr << "set order\n";
+    mgr->setorder(&hls_order[0]);
+    std::cerr << "ordering done\n";
+  }
+
+  /// Function used for computing the convex_hull and the variables of it
+  GECODE_BDD_EXPORT void conv_hull_project(BMI* mgr, GecodeBdd& robdd, 
+					   GecodeBdd& hull, GecodeBdd& poshull);
+  /// Returns a bdd representing all variables taking part in the convex hull of \a domain
+  GECODE_BDD_EXPORT void conv_project(BMI* mgr, GecodeBdd& robdd, 
+				      GecodeBdd& poshull);
+  /// Returns a bdd representing the convex hull of \a robdd
+  GECODE_BDD_EXPORT void conv_hull(BMI* mgr, GecodeBdd& robdd, 
+					GecodeBdd& hull);
+
+  /// Returns a bdd representing all variables of \a domain
+  GECODE_BDD_EXPORT GecodeBdd bdd_vars(BMI* mgr, GecodeBdd& domain);
+
+
+  /// Build the ROBDD for $\f |x|=c\f$
+  GECODE_BDD_EXPORT GecodeBdd 
+  cardeq(BMI* mgr, int offset, int c, int n, int r);
+
+  /// Build the ROBDD for $\f cl \leq |x| \leq cr\f$
+  GECODE_BDD_EXPORT GecodeBdd 
+  cardlqgq(BMI* mgr, int offset, int cl, int cr, int n, int r);
+
+  /// Build the ROBDD for $\f cl \leq |x| \leq cr\f$
+  GECODE_BDD_EXPORT GecodeBdd 
+  cardcheck(BMI* mgr, int xtab, int offset, int cl, int cr);
+
+  /// Computes the cardinality bdd excluding variables represented in the bdd \a boundvars
+  GECODE_BDD_EXPORT GecodeBdd 
+  cardrec(BMI*& mgr, GecodeBdd& boundvars, int j, unsigned int& offset, 
+	  unsigned int& range, int l, int u);
+  
+  GECODE_BDD_EXPORT GecodeBdd 
+  cardrec_bin(BMI*& mgr, int j, unsigned int& off1, unsigned int& range1, 
+	      unsigned int& off2, unsigned int& range2, int l, int u);
+
+
+  // EXTENDED CARDINALITY FOR REPLACING INTERMEDIATE VARIABLES
+  // using namespace Gecode::Iter::Ranges;
+  // typedef ValCache<ToValues<Inter<Gecode::BddVarLubRanges, Gecode::BddVarLubRanges> > > BddInter;
+
+  /// Build the ROBDD for $\f |x|=c\f$
+  template <class I, class View0, class View1>
+  Gecode::GecodeBdd 
+  extcardeq(Gecode::Iter::Ranges::ValCache<I>& inter, 
+	    View0& x, View1& y, unsigned int c, int n, int r) {
+    // std::cerr << "start extcardeq()\n";
+    // std::cerr << x << " " << y << " " << c << " " << n << " " << r << "\n";
+    BMI* mgr = x.manager();
+    int xmin = x.mgr_min();
+    int ymin = y.mgr_min();
+    GecodeBdd layer[n];
+
+    // build nodes for lowest layer
+    // std::cerr << "build lowest layer\n";
+    layer[0] = BDDTOP;
+    inter.last();
+    for (unsigned int i = 1; i <= c; i++) {
+      int k = inter.min();
+      layer[i].init();
+      layer[i] = x.getbdd(k - xmin);
+      layer[i] &= y.getbdd(k - ymin);
+    }
+
+    // std::cerr << "connect nodes in lowest layer\n";
+    // connect nodes in lowest layer
+    for (int i = 1; i < n; i++) {
+      layer[i] = mgr->ite(layer[i], layer[i - 1], BDDBOT);
+    }
+
+    inter.last();
+
+    // std::cerr << "build the remaining layers on top\n";
+    // build the remaining layers on top
+    for (; inter(); --inter) {
+      unsigned int pos = inter.index();
+      for (int i = 0; i < n; i++) {
+	int col = inter.min();
+	GecodeBdd t = BDDTOP;
+	if (i == 0) {
+	  t = BDDBOT;
+	} else {
+	  t = layer[i-1]; 
+	}
+        GecodeBdd both = mgr->ite(y.getbdd(col - ymin), t,layer[i]);
+	layer[i] = mgr->ite(x.getbdd(col - xmin), both ,layer[i]);
+	--inter;
+	if (!inter()) { break;}
+      }
+      if (!inter()) { break;}
+      inter.index(pos);
+    }
+    // std::cerr << "end extcardeq()\n";
+    return layer[n - 1];
+  }
+
+ 
+  /// Build the ROBDD for $\f cl \leq |x| \leq cr\f$
+  template <class I, class View0, class View1>
+  Gecode::GecodeBdd 
+  extcardlqgq(Gecode::Iter::Ranges::ValCache<I>& inter, View0& x, View1& y, 
+	      unsigned int cl, unsigned int cr, int n, int r) {
+    // std::cerr << "start extcardlqgq() yoff\n";
+    // std::cerr << x << " " << y << "\n";
+    // std::cerr << "cl: " << cl << " cr: " << cr << " n:" << n << " r:" << r << "\n";
+    BMI* mgr = x.manager();
+    GecodeBdd layer[n];
+    // creates TOP v(c) v(c-1) ... v(c - cl + 1)
+    layer[n - cl - 1] = BDDTOP;
+    
+    inter.last();
+
+    int k    = inter.min();
+    int xmin = x.mgr_min();
+    int ymin = y.mgr_min();
+
+    // build nodes for lowest layer
+    // std::cerr << "build nodes for lowest layer\n";
+    for (int i = n - cl ; i < n; i++, --inter) {
+      k    = inter.min();
+      GecodeBdd both = mgr->ite(y.getbdd(k - ymin), layer[i - 1], BDDBOT);
+      layer[i] = mgr->ite(x.getbdd(k - xmin), both, BDDBOT);
+    }
+
+    // std::cerr << "testoutput: \n";
+    // std::cerr << "x =  " << x << " and y =" << y << "\n";
+//     inter.reset();
+//     while (inter()) {
+//       std::cerr << inter.min() << ".." << inter.max() << "\n";
+//       ++inter;
+//     }
+//     inter.reset();
+
+    // start with a shift and build layers up to the connection layer
+    inter.last();
+    --inter;
+
+    // IMPORTANT we have to argue about the intersection cache like
+    // an array with index acces k = kth range in the cache
+    // hence we need an additional function that returns the index c
+    // of the cache iterator
+    // I changed the WRONG class (CACHEREQ) instead of CACHE
+
+    // for (k = r - 1; k > 0; k--) {
+    for (; inter(); --inter) {
+      unsigned int pos = inter.index(); // save position of k
+      // std::cerr << "inter position = " << pos << "\n";
+      // cl < cr <= tab  ==> n - cl > 0 
+      for (int i = n - cl; i < n; i++) { 
+	int col = inter.min();
+	// std::cerr << "col = " << col << "\n";
+	GecodeBdd t = layer[i-1]; 
+        GecodeBdd both = mgr->ite(y.getbdd(col - ymin), t, layer[i]);
+	layer[i] = mgr->ite(x.getbdd(col - xmin), both, layer[i]);
+	--inter;
+	if ((int) inter.index() + 1 < r + 1 - (int) cr) { 
+	  // std::cerr << "break\n"; 
+	  inter.finish(); break;
+	}
+      }
+      if (!inter()) break;
+      inter.index(pos);     
+      // std::cerr << "k=" << k << "\n";
+    }
+
+    if ((int) cr == r + 1) { 
+      // max card equals table width, all elements allowed
+      // std::cerr << "all elements allowed\n";      
+      return layer[n - 1];
+    }
+    
+    if ((int) cr == r) {
+      // only one single layer
+      // std::cerr << "only one single at the end\n";      
+      inter.last();
+      int col  = inter.min();
+      {
+	GecodeBdd t = BDDTOP;
+	GecodeBdd f = BDDTOP;
+	GecodeBdd zerot = BDDBOT;
+	GecodeBdd zerof = t;
+	for (int i = 0; i < n; i++) {
+	  col  = inter.min();
+	  if (i == 0) {
+	    t = zerot;
+	    f = zerof;
+	  } else {
+	    t = layer[i-1];
+	    if (i > n - (int) cl - 1) { // connect lower layer
+	      f = layer[i];
+	    }
+	  }
+          GecodeBdd both = mgr->ite(y.getbdd(col - ymin), t ,f);
+	  layer[i] = mgr->ite(x.getbdd(col - xmin), both ,f);
+	  --inter;
+	  if (!inter()) { break;}
+	}
+      }
+      return layer[n- 1];
+    }
+  
+    inter.last();
+    // connection layer between cl and cr
+    // std::cerr << "connection layer\n";      
+    // std::cerr << inter.min() << ".." << inter.max() << "\n";
+    {
+      GecodeBdd t = BDDTOP;
+      GecodeBdd f = BDDTOP;
+      for (int i = 0; i < n; i++) {
+	int col = inter.min();
+	// std::cerr << inter.min() << ".." << inter.max() << "\n";
+	if (i == 0) {
+	  t = BDDBOT;
+	} else {
+	  t = layer[i-1];
+	  // NOTE: ONLY CONNECT if cl > 0
+	  // std::cerr << "(" << i << " " << (n - cl - 1) << " " << cl << "\n";
+	  if (i > n - (int) cl - 1 && cl > 0) { // connect lower layer
+	    f = layer[i];
+	  }
+	}
+        GecodeBdd both = mgr->ite(y.getbdd(col - ymin), t ,f);
+	layer[i] = mgr->ite(x.getbdd(col - xmin), both ,f);
+	--inter;
+	if (!inter()) { break;}
+      }
+    }
+
+    // the remaining layers for cr
+    inter.last();
+    --inter;
+    // std::cerr << "remaining layers for cr\n";      
+    for (; inter(); --inter) {
+      unsigned int pos = inter.index();
+      // std::cerr << "start at pos: " << pos << "\n";
+      for (int i = 0; i < n; i++) {
+	int col  = inter.min();
+	// std::cerr << inter.min() << ".." << inter.max() << "\n";
+	GecodeBdd t = BDDTOP;
+	if (i == 0) {
+	  t = BDDBOT;
+	} else {
+	  t = layer[i-1]; 
+	}
+	// i guess here we do a little too much
+//         GecodeBdd both = mgr->ite(y.getbdd(col - ymin), t, layer[i]);
+// 	layer[i] = mgr->ite(x.getbdd(col - xmin), both, layer[i]);
+        GecodeBdd both = y.getbdd(col - ymin) & x.getbdd(col - xmin);
+	layer[i] = mgr->ite(both, t, layer[i]);
+
+	--inter;
+	if (!inter()) { 
+	  // std::cerr << "inner break\n";
+	  break;
+	}
+      }
+      if (!inter()) { 
+	// std::cerr << "outer break\n";
+	break;
+      }
+      inter.index(pos);
+    }
+
+    // std::cerr << "returning\n";
+    
+    return layer[n - 1];
+  }
+  
+  /// Build the ROBDD for $\f cl \leq |x \cap y| \leq cr\f$
+  template <class View0, class View1>
+  Gecode::GecodeBdd 
+  extcardcheck(View0& x, View1& y, unsigned int cl, unsigned int cr) {
+    // std::cerr << "extcardcheck x y\n";
+  // Ad 1)
+  // we need bddview instead of bddvar in the interface
+  // this requires us to publish the protected valididx function
+  //
+  // Ad 2)
+  // we need manager and variable offset for the bddtable
+  // because we do not want to rewrite the code for the simple checks
+  // everytime
+
+  // Ad 3) 
+  // the same extensions for the respective proper cardinality functions
+  
+    // Compute the intersection of x and y  and bring it into a data structure
+    // where iteration may start with the greatest element of the intersection
+    Set::LubRanges<View0> lubx(x);
+    Set::LubRanges<View1> luby(y);
+    // common values
+    Gecode::Iter::Ranges::Inter<Set::LubRanges<View0>, Set::LubRanges<View1> > common(lubx, luby);
+    // get it cached
+    Gecode::Iter::Ranges::ToValues<
+      Gecode::Iter::Ranges::Inter<Set::LubRanges<View0>, Set::LubRanges<View1> >
+      > values(common);
+
+    Gecode::Iter::Ranges::ValCache<
+      Gecode::Iter::Ranges::ToValues<
+        Gecode::Iter::Ranges::Inter<Set::LubRanges<View0>, Set::LubRanges<View1> >
+        > 
+      > inter(values);
+
+    // compute the size of the intersection
+    unsigned int isize = inter.size();
+    
+    // std::cerr << "parameters:" << isize << "," << x.offset()  << "," << y.offset();
+    // std::cerr << "," << cl << "," << cr << "\n";
+    if (cr > isize) { 
+      cr = isize;
+    }
+    int r = isize - 1; // rightmost bit in bitvector
+    int n = cr + 1; // layer size
+    if (cl > isize || cl > cr) { // inconsistent cardinality
+      // std::cerr << "inconsistenc cardinality\n";
+      return BDDBOT;
+    }
+
+    if (cr == 0) {    // cl <= cr
+      // build the emptyset
+      // std::cerr << "build empty set\n";
+      GecodeBdd empty = BDDTOP;
+
+      // maybe backwards iteration would be more efficient here
+      for (; inter(); ++inter) {
+	int v = inter.min();
+	int xidx = x.valididx(v);
+	int yidx = y.valididx(v);
+	assert(xidx > -1 && yidx > -1);
+	empty &= (x.getnegbdd(xidx) & y.getnegbdd(yidx));
+      }
+      return empty;
+    }
+  
+    if (cl == cr) {
+      if (cr == isize) {
+	// std::cerr << "build full set\n";
+	// build the full set
+	GecodeBdd full = BDDTOP;
+	// maybe backwards iteration would be more efficient here
+	for (; inter(); ++inter) {
+	  int v = inter.min();
+	  int xidx = x.valididx(v);
+	  int yidx = y.valididx(v);
+	  assert(xidx > -1 && yidx > -1);
+	  full &= (x.getbdd(xidx) & y.getbdd(yidx));
+	}
+	return full;
+      } else {
+	// std::cerr << "extcardeq()\n";
+	return extcardeq(inter, x, y, cr, n, r);
+      }
+    }
+
+    // cl < cr
+    if (cr == isize) {
+      if (cl == 0) {   // no cardinality restriction
+	return BDDTOP;
+      }
+    }
+    // std::cerr << "extcardlqgq()\n";
+    return extcardlqgq(inter, x, y, cl, cr, n, r);
+  }
+
+
+  // extcard with const intset
+  template <class I>
+  Gecode::GecodeBdd 
+  cardConst(BMI* mgr, int xtab, int xoff, int xmin, int cl, int cr, I& is) {
+    // Invariant: We require that the IntSet provided is a subset of the variable range
+    Gecode::Iter::Ranges::ToValues<I> ir(is);
+    Gecode::Iter::Ranges::ValCache<Gecode::Iter::Ranges::ToValues<I> > inter(ir);
+
+    int r = inter.size() - 1;    
+    int n = cr + 1;
+
+    // if (n > r) return BDDBOT;
+    // WHY IS THIS WRONG ?
+    
+    GecodeBdd layer[n];
+    // creates TOP v(c) v(c-1) ... v(c - cl + 1)
+    layer[n - cl - 1] = BDDTOP;
+    
+    inter.last();
+
+    int k    = inter.min();
+
+    // build nodes for lowest layer
+    for (int i = n - cl ; i < n; i++, --inter) {
+      k    = inter.min();
+      layer[i] = mgr->ite(mgr->bddpos(xoff + k - xmin), layer[i - 1], BDDBOT);
+    }
+
+    // start with a shift and build layers up to the connection layer
+    inter.last();
+    --inter;
+
+    for (; inter(); --inter) {
+      // save position of k
+      unsigned int pos = inter.index(); 
+
+      // cl < cr <= tab  ==> n - cl > 0 
+      for (int i = n - cl; i < n; i++) { 
+	int col = inter.min();
+	GecodeBdd t = layer[i-1]; 
+	layer[i] = mgr->ite(mgr->bddpos(xoff + col - xmin), t, layer[i]);
+	--inter;
+	if ((int) inter.index() + 1 < r + 1 - (int) cr) { 
+	  inter.finish(); break;
+	}
+      }
+      if (!inter()) break;
+      inter.index(pos);     
+    }
+
+    if ((int) cr == r + 1) { 
+      // max card equals table width, all elements allowed
+      return layer[n - 1];
+    }
+    
+    if ((int) cr == r) {
+      // only one single layer
+      inter.last();
+      int col  = inter.min();
+      {
+	GecodeBdd t = BDDTOP;
+	GecodeBdd f = BDDTOP;
+	GecodeBdd zerot = BDDBOT;
+	GecodeBdd zerof = t;
+	for (int i = 0; i < n; i++) {
+	  col  = inter.min();
+	  if (i == 0) {
+	    t = zerot;
+	    f = zerof;
+	  } else {
+	    t = layer[i-1];
+	    if (i > n - (int) cl - 1) { // connect lower layer
+	      f = layer[i];
+	    }
+	  }
+	  layer[i] = mgr->ite(mgr->bddpos(xoff + col - xmin), t ,f);
+	  --inter;
+	  if (!inter()) { break;}
+	}
+      }
+      return layer[n- 1];
+    }
+  
+    inter.last();
+    // connection layer between cl and cr
+    {
+      GecodeBdd t = BDDTOP;
+      GecodeBdd f = BDDTOP;
+      for (int i = 0; i < n; i++) {
+	int col = inter.min();
+	if (i == 0) {
+	  t = BDDBOT;
+	} else {
+	  t = layer[i-1];
+	  // NOTE: ONLY CONNECT if cl > 0
+	  if (i > n - (int) cl - 1 && cl > 0) { // connect lower layer
+	    f = layer[i];
+	  }
+	}
+	layer[i] = mgr->ite(mgr->bddpos(xoff + col - xmin), t ,f);
+	--inter;
+	if (!inter()) { break;}
+      }
+    }
+
+    // the remaining layers for cr
+    inter.last();
+    --inter;
+    for (; inter(); --inter) {
+      unsigned int pos = inter.index();
+      for (int i = 0; i < n; i++) {
+	int col  = inter.min();
+	GecodeBdd t = BDDTOP;
+	if (i == 0) {
+	  t = BDDBOT;
+	} else {
+	  t = layer[i-1]; 
+	}
+	layer[i] = mgr->ite(mgr->bddpos(xoff + col - xmin), t, layer[i]);
+	--inter;
+	if (!inter()) { 
+	  break;
+	}
+      }
+      if (!inter()) { 
+	break;
+      }
+      inter.index(pos);
+    }
+
+    return layer[n - 1];
+  }
+
+  // end extcard
+
+  // END EXTENDED CARDINALITY FOR REPLACING INTERMEDIATE VARIABLES
+
+
+  // EXTRACT CARDINALITY
+
+  // mark all nodes in the dqueue
+  GECODE_BDD_EXPORT void
+  extcache_mark(BMI* mgr, Support::SharedArray<GecodeBdd>& nodes, 
+		int n, int& l, int& r, int& markref);
+
+  // unmark all nodes in the dqueue
+  GECODE_BDD_EXPORT void
+  extcache_unmark(BMI* mgr, Support::SharedArray<GecodeBdd>& nodes, 
+		  int n, int& l, int& r, int& markref);
+
+  // iterate to the next level of nodes
+  GECODE_BDD_EXPORT void 
+  extcardbounds(BMI* mgr, int& markref, GecodeBdd& c, int& n, int& l, int& r,
+		bool& singleton, int& _level, 
+		Support::SharedArray<GecodeBdd>& nodes, 
+		int& curmin, int& curmax, Gecode::IntSet& out);
+
+
+  GECODE_BDD_EXPORT void 
+  getcardbounds(BMI* mgr, GecodeBdd& c, int& curmin, int& curmax);
+  // END EXTRACT CARDINALITY
+
+  GECODE_BDD_EXPORT GecodeBdd 
+  lexlt(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, 
+	unsigned int& range, int n);
+
+  GECODE_BDD_EXPORT GecodeBdd 
+  lexlq(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, 
+	unsigned int& range, int n);
+
+  GECODE_BDD_EXPORT GecodeBdd 
+  lexltrev(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, 
+	unsigned int& range, int n);
+
+  GECODE_BDD_EXPORT GecodeBdd 
+  lexlqrev(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, 
+	unsigned int& range, int n);
+
+
+  /// Counts the minium and maximum cardinality of the set represented by \a remain
+  GECODE_BDD_EXPORT 
+  void card_count(BMI* mgr, GecodeBdd& remain, GecodeBdd& boundvars,
+		  unsigned int n, unsigned int& offset, 
+		  unsigned int& range, int& l, int& u);
+
+  /// Computes a bdd representing the lower and upper cardinality bounds of the bdd \a remain
+  forceinline
+  GecodeBdd card_bounds(BMI* mgr, GecodeBdd& remain, GecodeBdd& boundvars,
+		  unsigned int& offset, unsigned int& range) {
+    int l = 0;
+    int u = 0;
+    GecodeBdd b = boundvars;
+    card_count(mgr, remain, b, 0, offset, range, l, u);
+    if (l == static_cast<int> (Limits::Set::card_max)) {
+      return BDDBOT;
+    }
+    b = boundvars;
+    // std::cout << "card("<< offset <<")=["<<l <<".."<<u<<"]\n";
+    return cardrec(mgr, b, 0, offset, range, l, u);
+  }
+
+  /// Compute the lexicographic lower bound of a bdd
+  GECODE_BDD_EXPORT
+  GecodeBdd lex_lb(BMI*& mgr, GecodeBdd& remain, 
+	      GecodeBdd& bounds, 
+	      unsigned int n, unsigned int& offset, unsigned int& range);
+
+  /// Compute the lexicographic upper bound of a bdd
+  GECODE_BDD_EXPORT
+  GecodeBdd lex_ub(BMI*& mgr, GecodeBdd& remain, GecodeBdd& bounds, 
+	      unsigned int n, unsigned int& offset, unsigned int& range);
+
+  forceinline GecodeBdd 
+  lex_bounds(BMI*& mgr, GecodeBdd& remain, 
+	     GecodeBdd& bounds, 
+	     unsigned int& offset, unsigned int& range) {
+    if (mgr->cfalse(remain) || mgr->cfalse(bounds)) {
+      return BDDBOT;
+    }
+    GecodeBdd b = bounds;
+    // std::cout << "doing lower lex bounds\n";
+    GecodeBdd lexlb = lex_lb(mgr, remain, b, 0, offset, range);
+    b = bounds;
+    // std::cout << "doing upper lex bounds\n";
+    GecodeBdd lexub = lex_ub(mgr, remain, b, 0, offset, range);
+    // std::cout << "returning\n";
+
+//     GecodeBdd low = lexlb;
+//     std::cout << "lex("<<offset<<")=[";
+//     std::cout << lexlb;
+//     while (!mgr->leaf(low)) {
+//       GecodeBdd tlow = mgr->iftrue(low);
+//       GecodeBdd flow = mgr->iffalse(low);
+//       if (mgr->cfalse(flow)) {
+// 	// + 1 works for simple domains 1#... just for steiner example tests
+// 	std::cout << mgr->bddidx(low) - offset + 1<<",";
+// 	// std::cout << "1";
+// 	low = tlow;
+//       } else {
+// 	std::cout << "N("<<mgr->bddidx(low) - offset<<"),";
+// 	// std::cout << "0";
+// 	low = flow;
+//       } 
+//     }
+//     std::cout << "..";
+
+//     GecodeBdd hi = lexub;
+//     while (!mgr->leaf(hi)) {
+//       GecodeBdd thi = mgr->iftrue(hi);
+//       GecodeBdd fhi = mgr->iffalse(hi);
+//       if (mgr->cfalse(thi)) {
+// 	std::cout << "N("<<mgr->bddidx(hi) - offset<<"),";
+// 	// std::cout << "0";
+// 	hi = fhi;
+//       } else {
+// 	std::cout << mgr->bddidx(hi) - offset + 1<<",";
+// 	// std::cout << "1";
+// 	hi = thi;
+//       }
+//     }
+//     std::cout << lexub;
+//     std::cout << "]";
+    return (lexlb & lexub);
+  }
+
+}
+
+// STATISTICS: bdd-support

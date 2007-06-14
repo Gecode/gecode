@@ -1,0 +1,139 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-08-21 23:11:21 +0000 (Mon, 21 Aug 2006) $ by $Author: pekczynski $
+ *     $Revision: 3551 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Bdd {
+
+  template <class View>
+  void quantify(GecodeBdd& p, View& x) {
+    BMI* m = x.manager();
+    GecodeBdd dom = x.bdd_domain();
+    int s = x.offset();
+    int w = s + x.table_width() - 1;
+    m->existquant(p, dom, s, w);
+  }
+
+  template <class View0, class View1>
+  ExecStatus
+  Range<View0, View1>::divide_conquer(Space* home, BMI* m, GecodeBdd& p, int l, int r, int ypos, int zpos) {
+    if (l == r) {
+      ModEvent me = ME_BDD_NONE;
+      if (l == ypos) {
+	me  = y.tell_formula(home, p);
+      } else {
+	if (l == zpos) {
+	  me = z.tell_formula(home, p);
+	} else {
+	  me = x[l].tell_formula(home, p);
+	}
+      }
+      if (me_failed(me)) {
+	return ES_FAILED;
+      }
+      return ES_OK;
+    }
+    int h = (r + l) / 2;
+
+    // computing psi without recursion
+    GecodeBdd left = p;
+    for (int i = r; i >= h + 1; i--) {
+      if (i == zpos) {
+	quantify(left, z);
+      } else {
+	if (i == ypos) {
+	  quantify(left, y);
+	} else {
+	  quantify(left, x[i]);
+	}
+      }
+    }
+   
+    ExecStatus es = ES_OK;
+    es = divide_conquer(home, m, left, l, h, ypos, zpos);
+    if (es == ES_FAILED) {
+      return es;
+    }
+
+    GecodeBdd right = p;
+    for (int i = h; i >= l; i-- ) {
+      if (i == zpos) {
+	quantify(right, z);
+      } else {
+	if (i == ypos) {
+	  quantify(right, y);
+	} else {
+	  quantify(right, x[i]);
+	}
+      }
+    }
+
+    es = divide_conquer(home, m, right, h + 1, r , ypos, zpos);
+    return es;
+  }
+
+  template <class View0, class View1>
+  ExecStatus
+  RangeTwice<View0, View1>::divide_conquer(Space* home, BMI* m, GecodeBdd& p, int l, int r, int ypos) {
+    std::cout << "twice div conqu: " << l << " " << r << " " << ypos << "\n";
+    if (l == r) {
+      ModEvent me = ME_BDD_NONE;
+      if (l >= ypos) {
+	me  = y[l - ypos].tell_formula(home, p);
+      } else {
+	me = x[l].tell_formula(home, p);
+      }
+      if (me_failed(me)) {
+	return ES_FAILED;
+      }
+      return ES_OK;
+    }
+    int h = (r + l) / 2;
+
+    // computing psi without recursion
+    GecodeBdd left = p;
+    for (int i = r; i >= h + 1; i--) {
+      if (i >= ypos) {
+	quantify(left, y[i - ypos]);
+      } else {
+	quantify(left, x[i]);
+      }
+    }
+   
+    ExecStatus es = ES_OK;
+    es = divide_conquer(home, m, left, l, h, ypos);
+    if (es == ES_FAILED) {
+      return es;
+    }
+
+    GecodeBdd right = p;
+    for (int i = h; i >= l; i-- ) {
+      if (i >= ypos) {
+	quantify(right, y[i - ypos]);
+      } else {
+	quantify(right, x[i]);
+      }
+    }
+
+    es = divide_conquer(home, m, right, h + 1, r , ypos);
+    return es;
+  }
+}}
+
+// STATISTICS: bdd-prop

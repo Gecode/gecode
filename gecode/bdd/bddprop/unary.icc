@@ -1,0 +1,106 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-09-04 19:25:19 +0000 (Mon, 04 Sep 2006) $ by $Author: pekczynski $
+ *     $Revision: 3585 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Bdd {
+
+  template <class View>
+  forceinline
+  UnaryBddProp<View>::UnaryBddProp(Space* home, View x0, GecodeBdd& d0, SetConLevel scl0)
+    : Propagator(home), x(x0), d(d0), scl(scl0) {
+    force(home);
+    x.subscribe(home, this, PC_BDD_DOM);
+  }
+
+  template <class View>
+  forceinline
+  UnaryBddProp<View>::UnaryBddProp(Space* home, bool share, UnaryBddProp& p)
+    : Propagator(home,share,p) {
+    d = p.d;
+    scl = p.scl;
+    x.update(home, share, p.x);
+  }
+  
+  template <class View>
+  forceinline PropCost
+  UnaryBddProp<View>::cost(void) const {
+    // we have only linear costs (in terms of the size of a bdd) 
+    // if one of the bdds is constant
+    BMI* mgr = x.manager();
+    if (mgr->ctrue(x.bdd_domain()) || mgr->ctrue(d)) {
+      return PC_LINEAR_LO;
+    } else {
+      return PC_QUADRATIC_HI;
+    }
+  }
+  
+  template <class View>
+  size_t
+  UnaryBddProp<View>::dispose(Space* home) {
+    // std::cout << "dispose propagator\n";
+    unforce(home);
+    if (!home->failed()) {
+      x.cancel(home, this, PC_BDD_DOM);
+    }
+    BMI* mgr = x.manager();
+    mgr->dispose(d);
+    Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class View>
+  forceinline ExecStatus
+  UnaryBddProp<View>::post(Space* home, View x0, GecodeBdd& d0, SetConLevel scl) {
+    (void) new (home) UnaryBddProp(home, x0, d0, scl);
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline Actor*
+  UnaryBddProp<View>::copy(Space* home, bool share) {
+    return new (home) UnaryBddProp(home, share, *this);
+  }
+
+  template <class View>
+  forceinline ExecStatus 
+  UnaryBddProp<View>::propagate(Space* home) {
+    // std::cerr << "propagate unary: \n";
+    // std::cerr << x << " " << x.glbSize() << " " << x.unknownSize() << "\n";
+//     UnknownRanges<BddView> delta(x);
+//     for (; delta(); ++delta) { 
+//       std::cerr << delta.min() << ".." << delta.max() <<",";
+//     }
+//     std::cerr << "\n";
+    ModEvent me = x.tell_formula(home, d);
+    GECODE_ME_CHECK(me);
+//     if (x.assigned()) {
+//       std::cerr << "SUBS-ASSIGNED\n";
+//       return ES_SUBSUMED(this, home);
+//     }
+//     std::cerr << "tell done\n";
+    return ES_SUBSUMED(this, home);
+  }
+
+
+
+
+}}
+
+// STATISTICS: bdd-prop

@@ -31,6 +31,11 @@
 
 #include "gecode/kernel.hh"
 #include "gecode/int.hh"
+
+#ifdef GECODE_HAVE_BDD_VARS
+#include "gecode/bdd.hh"
+#endif
+
 #include "gecode/search.hh"
 
 #include "examples/timer.hh"
@@ -66,6 +71,13 @@ public:
   unsigned int size;       ///< problem size/variant
   const char*  name;       ///< name of problem
 
+#ifdef GECODE_HAVE_BDD_VARS
+  /// Additional Bdd parameters
+  unsigned int initvarnum; ///< initial number of bdd nodes in the table
+  unsigned int initcache;  ///< initial cachesize for bdd operations
+  SetConLevel  scl;        ///< bdd consistency level
+#endif 
+  
   /// Initialize options for example with name \a s
   Options(const char* s);
   /// Parse options from arguments \a argv (number is \a argc)

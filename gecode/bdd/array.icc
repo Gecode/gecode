@@ -1,0 +1,130 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2007-05-11 15:34:01 +0000 (Fr, 11 Mai 2007) $ by $Author: pekczynski $
+ *     $Revision: 4588 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  /**
+   * \defgroup TaskIntSetArgs Argument arrays
+   * 
+   * Argument arrays are just good enough for passing arguments
+   * with automatic memory management.
+   * \ingroup TaskIntSet
+   */
+
+  //@{
+  /// Passing set variables
+  typedef VarArgArray<BddVar>  BddVarArgs;
+  //@}
+
+  /**
+   * \defgroup TaskIntSetVarArrays Variable arrays
+   * 
+   * Variable arrays can store variables. They are typically used
+   * for storing the variables being part of a solution. However,
+   * they can also be used for temporary purposes (even though
+   * memory is not reclaimed until the space it is created for
+   * is deleted).
+   * \ingroup TaskIntSet
+   */
+
+  /**
+   * \brief %Set variable array
+   * \ingroup TaskIntSetVarArrays
+   */
+  class GECODE_BDD_EXPORT BddVarArray : public VarArray<BddVar> {
+  public:
+    BddVarArray(void);
+    BddVarArray(const BddVarArray&);
+    /// Create an uninitialized array of size \a n
+    BddVarArray(Space* home, BMI* m,int n);
+    /// Create an uninitialized array of size \a n
+    BddVarArray(Space* home, BMI* m,int n, int a, int b);
+    /**
+     * \brief Create an array of size \a n.
+     *
+     * Each variable is initialized with the bounds and cardinality as
+     * given by the arguments.
+     */
+    BddVarArray(Space* home, BMI* m, int n,int glbMin,int glbMax,int lubMin,int lubMax,
+		unsigned int minCard = 0,
+		unsigned int maxCard = Limits::Set::card_max);
+    /**
+     * \brief Create an array of size \a n.
+     *
+     * Each variable is initialized with the bounds and cardinality as
+     * given by the arguments.
+     */
+    BddVarArray(Space* home, BMI* m, int n,const IntSet& glb, int lubMin, int lubMax,
+		unsigned int minCard = 0,
+		unsigned int maxCard = Limits::Set::card_max);
+    /**
+     * \brief Create an array of size \a n.
+     *
+     * Each variable is initialized with the bounds and cardinality as
+     * given by the arguments.
+     */
+    BddVarArray(Space* home, BMI* m, int n,int glbMin,int glbMax,const IntSet& lub,
+		unsigned int minCard = 0,
+		unsigned int maxCard = Limits::Set::card_max);
+    /**
+     * \brief Create an array of size \a n.
+     *
+     * Each variable is initialized with the bounds and cardinality as
+     * given by the arguments.
+     */
+    BddVarArray(Space* home, BMI* m, int n,
+		const IntSet& glb,const IntSet& lub,
+		unsigned int minCard = 0,
+		unsigned int maxCard = Limits::Set::card_max);
+  };
+  
+  /// Traits of BddVarArray
+  template <>
+  class ArrayTraits<BddVarArray> {
+  public:
+    typedef BddVarArgs   storage_type;
+    typedef BddVar       value_type;
+    typedef BddVarArgs   args_type;
+  };
+  /// Traits of BddVarArgs
+  template <>
+  class ArrayTraits<BddVarArgs> {
+  public:
+    typedef BddVarArgs storage_type;
+    typedef BddVar     value_type;
+    typedef BddVarArgs args_type;
+  };
+
+  /*
+   * Implementation
+   *
+   */
+
+  forceinline
+  BddVarArray::BddVarArray(void) {}
+
+  forceinline
+  BddVarArray::BddVarArray(const BddVarArray& a)
+    : VarArray<BddVar>(a) {}
+
+}
+
+// STATISTICS: bdd-other

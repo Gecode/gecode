@@ -1,0 +1,861 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2007-05-11 15:34:01 +0000 (Fr, 11 Mai 2007) $ by $Author: pekczynski $
+ *     $Revision: 4588 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#include <iostream>
+#include "gecode/bdd/var/imp-hdr.icc"
+#include "gecode/support/shared-array.hh"
+
+namespace Gecode { namespace Bdd {
+
+  enum NodeStatus {INIT = -1, FIX_GLB = 1, FIX_NOT_LUB = 0, FIX_UNKNOWN = 2, UNDET = 5};
+  /**
+   * \brief Types for complete bdd iteration of the bdd \a dom of a variable
+   *
+   * - BDD_FULL   \f$ dom = \top  \f$ 
+   * - BDD_LESS,  \f$ |x| > |dom| \f$ 
+   * - BDD_SAME,  \f$ |x| = |dom| \f$ 
+   */
+
+  template <class T> class DomValues {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    DomValues(void);
+    /// Initialize with least upper bound ranges for set variable \a x
+    DomValues(const T& x);
+    /// Initialize with least upper bound ranges for set variable \a x
+    void init(const T& x);
+    //@}
+
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a range or done
+    bool operator()(void) const;
+    /// Move iterator to next range (if possible)
+    void operator++(void);
+    //@}
+    /// \name Value access
+    //@{
+    /// Return current value
+    IntSet val(void) const;
+    //@}
+  };
+
+  template <class T> class GlbValues {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    GlbValues(void);
+    /// Initialize with least upper bound ranges for set variable \a x
+    GlbValues(const T& x);
+    /// Initialize with least upper bound ranges for set variable \a x
+    void init(const T& x);
+    //@}
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a range or done
+    bool operator()(void) const;
+    /// Move iterator to next range (if possible)
+    void operator++(void);
+    //@}
+    /// \name Value access
+    //@{
+    /// Return current value
+    int val(void) const;
+    //@}
+  };
+
+  template <class T> class LubValues {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    LubValues(void);
+    /// Initialize with least upper bound ranges for set variable \a x
+    LubValues(const T& x);
+    /// Initialize with least upper bound ranges for set variable \a x
+    void init(const T& x);
+    //@}
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a range or done
+    bool operator()(void) const;
+    /// Move iterator to next range (if possible)
+    void operator++(void);
+    //@}
+    /// \name Value access
+    //@{
+    /// Return minimum of current range
+    int min(void) const;
+    /// Return maximum of current range
+    int max(void) const;
+    //@}
+  };
+
+  template <class T> class UnknownValues {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    UnknownValues(void);
+    /// Initialize with least upper bound ranges for set variable \a x
+    UnknownValues(const T& x);
+    /// Initialize with least upper bound ranges for set variable \a x
+    void init(const T& x);
+    //@}
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still at a range or done
+    bool operator()(void) const;
+    /// Move iterator to next range (if possible)
+    void operator++(void);
+    //@}
+    /// \name Value access
+    //@{
+    /// Return current value
+    int val(void) const;
+    //@}
+  };
+
+  class BddVarImp : public BddVarImpBase {
+    friend class BddIterator;
+    friend class DomBddIterator;
+    friend class SplitBddView;
+    friend class BndBddView;
+    friend class CrdBddView;
+    friend class LexBddView;
+
+    friend class DomValues<BddVarImp*>;
+    friend class GlbValues<BddVarImp*>;
+    friend class LubValues<BddVarImp*>;
+    friend class UnknownValues<BddVarImp*>;
+
+  public:
+    /// Returned by empty sets when asked for their maximum element
+    static const int MAX_OF_EMPTY = Gecode::Limits::Set::int_min-1;
+    /// Returned by empty sets when asked for their minimum element
+    static const int MIN_OF_EMPTY = Gecode::Limits::Set::int_max+1;
+
+    void printdom(void) const;
+    void printall(void) const;
+  private:
+    /// pointer to the space-allocated bdd manager instance
+    BMI* mgr;
+
+    /**
+     * \brief Bdd representing the set of all possible sets the variable can
+     *        be instantiated to
+     */
+    GecodeBdd domain;
+    /// initial minimum
+    int min;
+    /// initial maximum
+    int max;
+    /** \brief Starting position of the boolean vector in the bdd table
+     *         
+     */
+    unsigned int _offset;
+    /// cache, whether variable is already assigned
+    bool assignment;
+  public:
+    /// Construct empty BddVar without allocation for boolean vector
+    BddVarImp(Space* home, BMI* m);
+  protected:
+    /// Constructor for cloning \a x
+    BddVarImp(Space* home, bool share, BddVarImp& x);
+    /// Generate assignment to in or exclude from the set of values
+    template <class I>
+    GecodeBdd gen_assignment(I& i);
+
+    /*
+     * \todo FIXME: JUST A HACK FOR MISSING ADVISORS similar to the one used for SetVars
+     */
+    forceinline
+    void notify(Space* home, ModEvent me) {
+      Delta d;
+      (void) BddVarImpBase::notify(home,me,&d);
+    }
+
+  public:
+    /// Constructing the powerset of $\f {a, \dots, b} \f$
+    BddVarImp(Space* home, BMI* m, int a, int b);
+    void init(Space* home, BMI* m, int a, int b);
+    BddVarImp(Space* home, BMI* m, int glbMin, int glbMax, int lubMin, int lubMax, 
+	      unsigned int cardMin, unsigned int cardMax);
+    BddVarImp(Space* home, BMI* m, const IntSet& glbD, int lubMin, int lubMax, 
+	      unsigned int cardMin, unsigned int cardMax);
+    BddVarImp(Space* home, BMI* m, int glbMin, int glbMax, const IntSet& lubD,
+	      unsigned int cardMin, unsigned int cardMax);
+    BddVarImp(Space* home, BMI* m, const IntSet& glbD,const IntSet& lubD,
+	      unsigned int cardMin, unsigned int cardMax);
+    // Delete a bdd variable
+    void dispose(Space* home);
+  public:
+    /// \name Set bounds update by value
+    //@{
+    /// Exclude value \a v from lub
+    ModEvent exclude(Space* home, int v);
+    /// Exclude range \f$ [a,\dots, b] \f$ from
+    ModEvent exclude(Space* home, int a, int b);
+
+    /// Include value \a v in glb
+    ModEvent include(Space* home, int v);
+    /// Include range \f$ [a,\dots, b] \f$ in glb
+    ModEvent include(Space* home, int a, int b);
+
+    /// Intersect domain with singleton set \f$ \{i\} \f$
+    ModEvent intersect(Space* home, int i);
+    /// Intersect domain with range \f$ [a..b] \f$
+    ModEvent intersect(Space* home, int a, int b);
+    //@}
+
+    /// \name Set bounds update by range iterator
+    //@{
+    /// Intersect domain with range sequence described by \a i
+    template <class I> ModEvent intersectI(Space* home, I& i);
+    /// Exclude set described by range sequence \a i from lub
+    template <class I> ModEvent excludeI(Space* home, I& i);  
+    /// Include set described by range list \a i in glb
+    template <class I> ModEvent includeI(Space* home, I& i);  
+    //@}
+
+    /// \name Set cardinality update 
+    //@{
+    /// Restrict cardinality to be at least l and at most u
+    ModEvent cardinality(Space* home, int l, int u);
+    /// Restrict cardinality to be at least n
+    ModEvent cardMin(Space* home,unsigned int n);
+    /// Restrict cardinality to be at most n
+    ModEvent cardMax(Space* home,unsigned int n);
+    //@}
+
+    /// \name Set domain update by value
+    //@{
+    /// Restrict domain values to be different from singleton set \f$\{v\}\f$.
+    ModEvent nq(Space* home, int v);
+    /// Restrict domain values to be different from range \f$[a,b]\f$.
+    ModEvent nq(Space* home, int a, int b);
+
+    /// Restrict domain to be equal to singleton set \f$\{v\}\f$.
+    ModEvent eq(Space* home, int v);
+    /// Restrict domain to be equal to range \f$[a,b]\f$.
+    ModEvent eq(Space* home, int a, int b);
+
+    /// Compute modified variable domain \f$ dom'\f$ as \f$ dom' = dom \wedge d \f$
+    ModEvent tell_formula(Space* home, GecodeBdd& d);
+    //@}
+
+    /// \name Set domain update by range iterator
+    //@{
+    /// Restrict domain values to be different from set described by \a i.
+    template <class I> ModEvent nqI(Space* home, I& i);
+    /// Restrict domain to be equal to the range sequence \a i
+    template <class I> ModEvent eqI(Space* home, I& i);
+    //@}
+    
+    /// \name Value access
+    //@{
+
+    /// Return current cardinality minimum
+    unsigned int cardMin(void) const;
+    /// Return current cardinality maximum
+    unsigned int cardMax(void) const;
+
+    /// Return minimum of the greatest lower bound
+    int glbMin(void) const;
+    /// Return maximum of the greatest lower bound
+    int glbMax(void) const;
+    /// Return the size of the greatest lower bound
+    unsigned int glbSize(void) const;
+    /// Return minimum of the least upper bound
+    int lubMin(void) const;
+    /// Return maximum of the least upper bound
+    int lubMax(void) const;
+    /// Return the size of the least upper bound
+    unsigned int lubSize(void) const;
+    /// Return \a n -th smallest element in the least upper bound
+    int lubMinN(int n) const;
+    /// Return \a n -th largest element in the least upper bound
+    int lubMaxN(int n) const;
+
+    /// Return minimum of the difference between the greatest lower and the least upper bound
+    int unknownMin(void) const;
+    /// Return maximum of the difference between the greatest lower and the least upper bound
+    int unknownMax(void) const;
+    /// Return the size of the difference between the greatest lower and the least upper bound
+    unsigned int unknownSize(void) const;
+
+    //@}
+
+
+    /// \name Bdd information 
+    //@{
+    /// Return a pointer to the bdd manager
+    BMI* manager(void) const;
+    /// Return the initial minimum of the implementation
+    int mgr_min(void) const;
+    /// Return the initial maximum of the implementation
+    int mgr_max(void) const;
+    /// Return the number of variables allocated in the table
+    unsigned int table_width(void) const;
+    /// Return the offset in the table where the BddVariable starts
+    unsigned int offset(void) const;
+    /// Returns the variable placed at position \a i in the current variable order
+    int getlevel(int i) ;
+    /// Returns the position of the variable \a i in the current variable order
+    int getvar(int i) ;
+    /// Return the i-th boolean bdd variable starting with the variable's offset
+    GecodeBdd getbdd(int i) const;
+    /// Return the negated i-th boolean bdd variable starting with the variable's offset
+    GecodeBdd getnegbdd(int i) const;
+    /// Return the bdd representing the current domain
+    GecodeBdd bdd_domain(void) const;
+    //@}
+
+    /// \name Bdd operations 
+    //@{
+    /// Build the conjunction \f$ dom \wedge d \f$ and store the result in \a d
+    void dom_and(GecodeBdd& d);
+    /// Build the disjunction \f$ dom \vee d \f$ and store the result in \a d
+    void dom_or(GecodeBdd& d);
+    //@}
+
+    /// \name Domain tests
+    //@{
+    /// Test whether variable is assigned
+    bool assigned(void) ;
+    /// Test whether \a i is contained in the greatest lower bound
+    bool knownIn(int i) const;
+    /// Test whether \a i is not contained in the least upper bound
+    bool knownOut(int i) const;
+    /// Test whether domain is a range 
+    bool range(void) const;
+    /// Compute a valid index for set element v in the bdd node representation or return -1.
+    int valididx(int v) const;
+    //@}
+    
+    /// \name Dependencies
+    //@{
+    /// Subscribe propagator \a p with propagation condition \a pc to variable
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+    /// Cancel subscription of propagator \a p with propagation condition \a pc
+    void cancel(Space* home, Propagator* p, PropCond pc);
+    //@}
+
+  private:
+    /// Return copy of not-yet copied variable
+    GECODE_BDD_EXPORT 
+    BddVarImp* perform_copy(Space* home, bool share);
+    /// \name Common methods for the tell operations
+    //@{
+    /// Computes ModEvent that resulted from updating the variable domain
+    GECODE_BDD_EXPORT 
+    ModEvent 
+    processDomChange(Space* home, GecodeBdd& oldddom,
+		     bool assigned_before, bool assigned);
+    //@}
+
+  public:
+    /// \name Cloning
+    //@{
+    /// Return copy of this variable
+    BddVarImp* copy(Space* home, bool share);
+    //@}  
+
+    /// Print the domain of the variable in Dot-output format
+    void viewdot(void) const;
+    
+  };
+
+
+  /**
+   * \brief Iterator for level-wise iteration over a given bdd
+   *
+   * \note This iterator computes the complete node information in its
+   *       constructor and init function in \f$ O(N)\f$, where N is the
+   *       number of nodes of the iterated bdd
+   */
+  class BddIterator {
+  private:
+    // Stores the bdd to be iterated
+    GecodeBdd c;
+    // Stores the current sub-bdd under exploration
+    GecodeBdd cur;
+    // ensure that there are no marked nodes when we leave the iterator
+    int markref;
+    // Number of nodes of c
+    int n;
+    // Range size of the initial variable domain, i.e. \f$ |[min, max]| \f$
+    int m;
+    // Stores for each node whether it is fixed, nonfixed or undetermined
+    NodeStatus flag;
+    bool singleton;
+    // Explores the iterated bdd
+    Support::DynamicArray<GecodeBdd> nodes;
+    // Left end of the nodes array
+    int l;
+    // Right end of the nodes array
+    int r;
+    // If bypassed is true the current level cannot be fixed
+    bool bypassed;
+    // If on the same level an internal node has only leaf childs
+    // and on another path has at least some internal child
+    // then this child cannot be fixed
+    bool onlyleaves;
+    // The number of the current level in the bdd
+    int _level;
+    // The manager
+    BMI* mgr;
+    
+    // marks all nodes in the cache 
+    GECODE_BDD_EXPORT void cache_mark(void);
+    // marks all nodes in the cache 
+    GECODE_BDD_EXPORT void cache_unmark(void);
+  public:
+    /// \name Constructors and initialization
+    //@{
+    BddIterator(void);
+    BddIterator(BMI*, const GecodeBdd&);
+    GECODE_BDD_EXPORT void init(BMI*, const GecodeBdd&);
+    //@}
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still valid or done
+    bool operator()(void) const;
+    /// Move iterator to next level in the bdd
+    GECODE_BDD_EXPORT void operator++(void);
+    //@}
+    /// \name Status information
+    //@{
+    /// Retrieves the status of the current level
+    NodeStatus status(void) const;
+    /// Retrieves the current level
+    int level(void) const;
+    /// Retrieves the current label
+    int label(void) const;
+    /// Test whether agenda is empty
+    bool empty(void) const;
+    /// Retrieve number of nodes of iterated bdd
+    int size(void) const;
+    //@}
+  };
+
+
+  /// Iterator for level-wise iteration of a variable domain
+  class DomBddIterator : public BddIterator {
+  private:
+    /// denotes the index in the boolean vector representing the set variable
+    int vector_level;
+    int mi;
+    int ma;
+    int off;
+    /// denotes the level in the bdd representing the set variable
+    int bdd_level;
+  protected:
+    /// tests whether vector_level and bdd_level are equal
+    bool same(void) const;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    DomBddIterator(void);
+    DomBddIterator(const BddVarImp* x);
+    DomBddIterator(const BddVarImp* x, GecodeBdd& remain);
+    void init(const BddVarImp* x);
+    void init(const BddVarImp* x, GecodeBdd& remain);
+    //@}
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator is still valid or done
+    bool operator()(void) const;
+    /// Move iterator to next level in the bdd
+    void operator++(void);
+    //@}
+    /// \name Status information
+    //@{
+    /// Retrieves the status of the current level
+    NodeStatus status(void) const;
+    /// Retrieves the current position in the boolean vector
+    int getlevel(void) const;
+    /// Retrieves the current value
+    int val(void) const;
+    //@}
+  };
+
+}}
+
+#include "gecode/bdd/var/imp.icc"
+
+namespace Gecode { 
+  /**
+   * \brief Bdd variable as complete domain representation for finite integer sets
+   *
+   */  
+  class BddVar {
+  private:
+    /// Bdd variable implementation using 
+    Bdd::BddVarImp* var;  
+  public:
+    /// Default constructor
+    GECODE_BDD_EXPORT BddVar(void);
+    /// Construct BddVar from range $\f {Min set limit, \dots, Max setlimit } \f$
+    GECODE_BDD_EXPORT BddVar(Space* home, BMI* m);
+    /// Initialize from range $\f {Min set limit, \dots, Max setlimit } \f$
+    void init(Space* home, BMI* m);
+    /// Construct a Bdd for P(U=[min,...,max]) 
+    GECODE_BDD_EXPORT BddVar(Space* home, BMI* m, int min ,int max);
+    /// Initialize from range $\f {min, \dots, \max } \f$
+    void init(Space* home, BMI* m, int min ,int max);
+    void dispose(Space* home);
+
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+     * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    GECODE_BDD_EXPORT 
+    BddVar(Space* home, BMI* m, int glbMin,int glbMax,int lubMin,int lubMax,
+	   unsigned int cardMin = 0,
+	   unsigned int cardMax = Limits::Set::card_max);
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+     * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    void init(Space* home, BMI* m, int glbMin,int glbMax,int lubMin,int lubMax,
+	      unsigned int cardMin = 0,
+	      unsigned int cardMax = Limits::Set::card_max);
+
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \a glbD,
+     * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    GECODE_BDD_EXPORT 
+    BddVar(Space* home, BMI* m, const IntSet& glbD,int lubMin,int lubMax,
+	   unsigned int cardMin = 0,
+	   unsigned int cardMax = Limits::Set::card_max);
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \a glbD,
+     * least upper bound \f$\{\mathit{lubMin},\dots,\mathit{lubMax}\}\f$, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    void init(Space* home, BMI* m, const IntSet& glbD,int lubMin,int lubMax,
+	      unsigned int cardMin = 0,
+	      unsigned int cardMax = Limits::Set::card_max);
+
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+     * least upper bound \a lubD, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    GECODE_BDD_EXPORT 
+    BddVar(Space* home, BMI* m, int glbMin,int glbMax,const IntSet& lubD,
+	   unsigned int cardMin = 0,
+	   unsigned int cardMax = Limits::Set::card_max);
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \f$\{\mathit{glbMin},\dots,\mathit{glbMax}\}\f$,
+     * least upper bound \a lubD, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    void init(Space* home, BMI* m, int glbMin,int glbMax,const IntSet& lubD,
+	      unsigned int cardMin = 0,
+	      unsigned int cardMax = Limits::Set::card_max);
+
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with
+     * greatest lower bound \a glbD,
+     * least upper bound \a lubD, and
+     * cardinality minimum \a cardMin and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    GECODE_BDD_EXPORT 
+    BddVar(Space* home, BMI* m, const IntSet& glbD,const IntSet& lubD,
+	   unsigned int cardMin = 0,
+	   unsigned int cardMax = Limits::Set::card_max);
+    /**
+     * \brief Initialize variable with given bounds and cardinality
+     *
+     * The variable is created with greatest lower bound \a glbD,
+     * least upper bound \a lubD, and cardinality minimum \a cardMin 
+     * and maximum \a cardMax.
+     * The following exceptions might be thrown:
+     *  - If the bounds are no legal set bounds (between Limits::Set::int_min
+     *    and Limits::Set::int_max), an exception of type
+     *    Gecode::Set::VariableOutOfRangeDomain is thrown.
+     *  - If the cardinality is greater than Limits::Set::max_set_size, an
+     *    exception of type Gecode::Set::VariableOutOfRangeCardinality is
+     *    thrown.
+     *  - If \a minCard > \a maxCard, an exception of type
+     *    Gecode::Set::VariableFailedDomain is thrown.
+     */
+    void init(Space* home, BMI* m, const IntSet& glbD,const IntSet& lubD,
+	      unsigned int cardMin = 0,
+	      unsigned int cardMax = Limits::Set::card_max);
+    //@}
+
+    BMI* manager(void) const;
+    /// \name Variable implementation access
+    //@{
+    /// Return bdd variable implementation
+    Bdd::BddVarImp* variable(void) const;
+    //@}
+
+    /// \name Value access
+    //@{
+    /// Returns the initial domain minimum
+    int mgr_min(void) const;
+    /// Returns the initial domain maximum
+    int mgr_max(void) const;
+
+    /// Return the size of the greatest lower bound
+    unsigned int glbSize(void) const;
+    /// Return the size of the least upper bound
+    unsigned int lubSize(void) const;
+    /// Return the size of the least upper bound
+    unsigned int unknownSize(void) const;
+    /// Return current cardinality minimum
+    unsigned int cardMin(void) const;
+    /// Return current cardinality maximum
+    unsigned int cardMax(void) const;
+    /// Return minimum of the least upper bound
+    int lubMin(void) const;
+    /// Return maximum of the least upper bound
+    int lubMax(void) const;
+    /// Return minimum of the greatest lower bound
+    int glbMin(void) const;
+    /// Return maximum of the greatest lower bound
+    int glbMax(void) const;
+    //@}
+
+    /// Return the bdd representing the current domain
+    GecodeBdd bdd_domain(void) const;
+
+    /// Build the conjunction \f$ b \wedge dom \f$
+    void dom_and(GecodeBdd& b);
+
+    /// Return the offset where the variable starts in the bdd table
+    unsigned int offset(void) const;
+    /// Return the number of boolean bdd variables a BddVar is using
+    unsigned int table_width(void) const;
+    /// Return the i-th boolean bdd variable this variable uses
+    GecodeBdd getbdd(int i) const;
+    /// Return the i-th boolean bdd variable this variable uses
+    GecodeBdd getnegbdd(int i) const;
+    /// Returns the variable placed at position \a i in the current variable order
+    int getlevel(int i) ;
+    /// Returns the position of the variable \a i in the current variable order
+    int getvar(int i) ;
+
+    /// \name Domain tests
+    //@{
+    /// Test whether \a i is in greatest lower bound
+    bool contains(int i) const;
+    /// Test whether \a i is not in the least upper bound
+    bool notContains(int i) const;
+    /// Test whether this variable is assigned
+    bool assigned(void) const;
+    //@}
+
+    /// Compute a valid index for set element v in the bdd node representation or return -1.
+    int valididx(int v) const;
+
+    
+    /// \name Cloning
+    //@{
+    /// Update this variable to be a clone of variable \a x
+    void update(Space* home, bool share, BddVar& x);
+    //@}
+
+  };
+
+  class BddVarGlbRanges {
+  private:
+    Set::GlbRanges<Bdd::BddVarImp*> iter;
+  public:
+    BddVarGlbRanges(void);
+    BddVarGlbRanges(const BddVar& x);
+    bool operator()(void) const;
+    void operator++(void);
+    int min(void) const;
+    int max(void) const;
+  };
+
+  class BddVarGlbValues {
+  private:
+    Bdd::GlbValues<Bdd::BddVarImp*> iter;
+  public:
+    BddVarGlbValues(void);
+    BddVarGlbValues(const BddVar& x);
+    bool operator()(void) const;
+    void operator++(void);
+    int val(void) const;
+  };
+
+  class BddVarLubRanges {
+  private:
+    Set::LubRanges<Bdd::BddVarImp*> iter;
+  public:
+    BddVarLubRanges(void);
+    BddVarLubRanges(const BddVar& x);
+    bool operator()(void) const;
+    void operator++(void);
+    int min(void) const;
+    int max(void) const;
+  };
+
+  class BddVarLubValues {
+  private:
+    Bdd::LubValues<Bdd::BddVarImp*> iter;
+  public:
+    BddVarLubValues(void);
+    BddVarLubValues(const BddVar& x);
+    bool operator()(void) const;
+    void operator++(void);
+    int val(void) const;
+  };
+
+  class BddVarDomValues {
+  private:
+    Bdd::DomValues<Bdd::BddVarImp*> iter;
+  public:
+    BddVarDomValues(void);
+    BddVarDomValues(const BddVar& x);
+    bool operator()(void) const;
+    void operator++(void);
+    IntSet val(void) ;
+  };
+
+
+  class BddVarUnknownRanges {
+  private:
+    Set::UnknownRanges<Bdd::BddVarImp*> iter;
+  public:
+    BddVarUnknownRanges(void);
+    BddVarUnknownRanges(const BddVar& x);
+    bool operator()(void) const;
+    void operator++(void);
+    int min(void) const;
+    int max(void) const;
+  };
+
+
+}
+
+/**
+ * \brief Print bdd variable \a x
+ * \relates Gecode::BddVar
+ */
+GECODE_BDD_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::BddVar& x);
+
+/**
+ * \brief Print debug information from the bdd manager \a m
+ * \relates Gecode::BMI
+ */
+GECODE_BDD_EXPORT std::ostream&
+operator<<(std::ostream&, Gecode::BMI* x);
+
+#include "gecode/bdd/var/bdd.icc"
+// STATISTICS: bdd-var

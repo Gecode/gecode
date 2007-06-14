@@ -1,0 +1,639 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-07-29 15:55:20 +0000 (Sat, 29 Jul 2006) $ by $Author: pekczynski $
+ *     $Revision: 3478 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+using namespace Gecode::Bdd;
+
+namespace Gecode {
+
+  template <class View>
+  void rel_post(Space* home, View x, BddSetRelType r, View y, 
+		SetConLevel scl) {
+
+    if (home->failed()) return;
+    // important:
+    // the offset order is linear from left to right for the viewarray
+
+    BMI* mgr = x.manager();
+
+    unsigned int xoff = x.offset();
+    unsigned int yoff = y.offset();
+    unsigned int tab = std::max(x.table_width(), y.table_width());
+    
+    // Initialize the bdd representing the constraint
+    GecodeBdd d0 = BDDTOP;
+
+    switch(r) {
+    case SRT_LE: 
+      {
+	d0 = lexlt(mgr, xoff, yoff, tab, tab - 1);
+      }
+      break;
+    case SRT_GR: 
+      {
+	d0 = lexlt(mgr, yoff, xoff, tab, tab - 1);
+      }
+      break;
+    case SRT_LQ: 
+      {
+	d0 = lexlq(mgr, xoff, yoff, tab, tab - 1);
+      }
+      break;
+    case SRT_GQ: 
+      {
+	d0 = lexlt(mgr, yoff, xoff, tab, tab - 1);
+      }
+      break;
+    case SRT_LE_REV: 
+      {
+	d0 = lexltrev(mgr, xoff, yoff, tab, 0);
+      }
+      break;
+    case SRT_GR_REV: 
+      {
+	d0 = lexltrev(mgr, yoff, xoff, tab, 0);
+      }
+      break;
+    case SRT_LQ_REV: 
+      {
+	d0 = lexlqrev(mgr, xoff, yoff, tab, 0);
+      }
+      break;
+    case SRT_GQ_REV: 
+      {
+	d0 = lexltrev(mgr, yoff, xoff, tab, 0);
+      }
+      break;
+    default:
+      {
+	throw Bdd::InvalidRelation (" COMPL = EQ NEG y ??? ");
+	return;
+      }
+    }
+
+    GECODE_ES_FAIL(home, (BinBddProp<View>::post(home, x, y, d0, scl)));
+  }
+
+  template <class View>
+  void rel_post(Space* home, View x, SetRelType r, View y, 
+		SetConLevel scl) {
+
+    if (home->failed()) return;
+    // important:
+    // the offset order is linear from left to right for the viewarray
+
+    unsigned int tab = std::max(x.table_width(), y.table_width());
+    
+    // Initialize the bdd representing the constraint
+    GecodeBdd d0 = BDDTOP;
+
+    switch(r) {
+    case SRT_SUB: 
+      {
+	for (int i = 0; i < (int) tab; i++) {
+	  d0 &= (x.getbdd(i)) >>= (y.getbdd(i));
+	}
+      }
+      break;
+    case SRT_SUP: 
+      {
+	for (int i = 0; i < (int) tab; i++) {
+	  d0 &= (y.getbdd(i)) >>= (x.getbdd(i));
+	}
+      }
+      break;
+      // try whether changing the bit order is faster for conjunction
+    case SRT_DISJ: 
+      {
+// 	for (int i = 0; i < (int) tab; i++) {
+// 	  d0 &= !(y.getbdd(i) & x.getbdd(i));
+// 	}
+
+// 	std::cerr << "DISJ: " << x << " and " << y << "\n";
+
+// 	for (int i = (int) tab ; i--; ) {
+// 	  d0 &= !(y.getbdd(i) & x.getbdd(i));
+// 	}
+
+	Set::LubRanges<View> lubx(x);
+	Set::LubRanges<View> luby(y);
+	Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+	  inter(lubx, luby);
+	Gecode::Iter::Ranges::ToValues<
+	  Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+	  > ival(inter);
+
+	Gecode::Iter::Ranges::ValCache<
+	  Gecode::Iter::Ranges::ToValues<
+    	     Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+	  >
+	  > cache(ival);
+	
+	if (!cache()) {
+	  std::cerr << "no post SRT_DISJ needed\n";
+	  return; 
+	} else {
+	  cache.last();
+	  for (; cache(); --cache) {
+	    int v = cache.min();
+	    int minx = x.mgr_min();
+	    int miny = y.mgr_min();
+	    d0 &= (!(x.getbdd(v - minx) & y.getbdd(v - miny)));
+	  }
+	}
+	std::cout << "post disjoint\n";
+	GECODE_ES_FAIL(home, (BinRelDisj<View>::post(home, x, y, d0, scl)));
+	return;
+      }
+      break;
+    case SRT_EQ: 
+      {
+	int xshift = 0;
+	for (int i = 0; i < (int) tab; i++) {
+	  if (y.mgr_min() + i < x.mgr_min() || y.mgr_min() + i > x.mgr_max()) {
+	    d0 &= (BDDBOT % y.getbdd(i));
+	    xshift++;
+	  } else {
+	    d0 &= (x.getbdd(i - xshift) % y.getbdd(i));
+	  }
+	}
+      }
+      break;
+    case SRT_NQ: 
+      {
+	Set::LubRanges<View> lubx(x);
+	Set::LubRanges<View> luby(y);
+	Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+	  inter(lubx, luby);
+	Gecode::Iter::Ranges::ToValues<
+	  Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+	  > ival(inter);
+	if (!ival()) {
+	  std::cerr << "no post SRT_NQ needed\n";
+	  return; 
+	} else {
+	  for (; ival(); ++ival) {
+	    int v = ival.val();
+	    int ix = x.valididx(v);
+	    int iy = y.valididx(v);
+	    d0 &= (x.getbdd(ix) % y.getbdd(iy));
+	  }
+	}
+	d0 = !d0;
+// 	for (int i = 0; i < (int) tab; i++) {
+// 	  d0 &= ((x.getbdd(i)) % (y.getbdd(i)));
+// 	}
+// 	d0 = !d0;
+      }
+      break;
+    default:
+      {
+	throw Bdd::InvalidRelation (" COMPL = EQ NEG y ??? ");
+	return;
+      }
+    }
+
+    GECODE_ES_FAIL(home, (BinBddProp<View>::post(home, x, y, d0, scl)));
+  }
+
+  template <class View0, class View1>
+  void rel_post(Space* home, View0 x, BddSetRelType r, View1 s, 
+		SetConLevel scl) {
+
+    std::cout << "rel_post with intvar\n";
+    if (home->failed()) return;
+    // important:
+    // the offset order is linear from left to right for the viewarray
+
+    BMI* mgr = x.manager();
+
+    unsigned int xoff = x.offset();
+    unsigned int yoff = s.offset();
+    unsigned int tab = std::max(x.table_width(), s.table_width());
+    
+    std::cout << x.mgr_min() << ".." << x.mgr_max() << " and " << s.mgr_min() << " " << s.mgr_max() << "\n";
+
+    // Initialize the bdd representing the constraint
+    GecodeBdd d0 = BDDTOP;
+
+    switch(r) {
+      // introducing lexicographic ordering constraint
+      // over the bitvectors of the corresponding sets
+      // x[0] <_lex x[1], i.e. {2} <_lex {1} because 010 <_lex 100
+    case SRT_LE: 
+      {
+	d0 = lexlt(mgr, xoff, yoff, tab, tab - 1);
+      }
+      break;
+    case SRT_GR: 
+      {
+	d0 = lexlt(mgr, yoff, xoff, tab, tab - 1);
+      }
+      break;
+    case SRT_LQ: 
+      {
+	d0 = lexlq(mgr, xoff, yoff, tab, tab - 1);
+      }
+      break;
+    case SRT_GQ: 
+      {
+	d0 = lexlt(mgr, yoff, xoff, tab, tab - 1);
+      }
+      break;
+    default:
+      {
+	throw Bdd::InvalidRelation (" COMPL = EQ NEG y ??? ");
+	return;
+      }
+    }
+
+    GECODE_ES_FAIL(home, (Bin<View0, View1>::post(home, x, s, d0)));
+  }
+
+
+  template <class View0, class View1>
+  void rel_post(Space* home, View0 x, SetRelType r, View1 s, 
+		SetConLevel scl) {
+
+    std::cout << "rel_post with intvar\n";
+    if (home->failed()) return;
+    // important:
+    // the offset order is linear from left to right for the viewarray
+
+    unsigned int tab = std::max(x.table_width(), s.table_width());
+    
+    std::cout << x.mgr_min() << ".." << x.mgr_max() << " and " << s.mgr_min() << " " << s.mgr_max() << "\n";
+
+    // Initialize the bdd representing the constraint
+    GecodeBdd d0 = BDDTOP;
+
+    switch(r) {
+    case SRT_SUB: 
+      {
+	
+	// x < s
+	std::cout << "SRT_SUB\n";
+	std::cout << "x = " << x.bdd_domain() << "\n";
+	std::cout << "s = " << s.bdd_domain() << "\n";
+	int xshift = x.mgr_min() - s.mgr_min();
+	for (int i = 0; i < (int) tab; i++) {
+	  if (s.mgr_min() + i >= x.mgr_min()) {
+	    std::cout << ">= " << "i=" << i << "\n";
+	    if (s.mgr_min() + i <= x.mgr_max()) {
+	      std::cout << "<= " << "i=" << i << "\n";
+	      d0 &= (x.getbdd(i - xshift)) >>= (s.getbdd(i));
+	    } else {
+	      std::cout << "s("<< i << ")\n";
+	      // d0 &= s.getbdd(i);
+	    }
+	  } else {
+	    std::cout << "s("<< i << ")\n";
+	    // d0 &= s.getbdd(i);
+	  }
+	}
+      }
+
+      if (s.assigned()) {
+	// assigned
+	std::cout << "s assigned!\n";
+	d0 &= s.bdd_domain();
+      }
+      std::cout << "resulting bdd = " << d0 << "\n";
+      break;
+    case SRT_SUP: 
+      {
+	for (int i = 0; i < (int) tab; i++) {
+	  d0 &= (s.getbdd(i)) >>= (x.getbdd(i));
+	}
+      }
+      break;
+    case SRT_DISJ: 
+      {
+	for (int i = 0; i < (int) tab; i++) {
+	  d0 &= !(s.getbdd(i) & x.getbdd(i));
+	}
+      }
+      break;
+    case SRT_EQ: 
+      {
+	int xshift = 0;
+	for (int i = 0; i < (int) tab; i++) {
+	  if (s.mgr_min() + i < x.mgr_min() || s.mgr_min() + i > x.mgr_max()) {
+	    d0 &= (BDDBOT % s.getbdd(i));
+	    xshift++;
+	  } else {
+	    std::cout << "tab = " << tab << "\t";
+	    std::cout << x.offset() << " " << x.table_width() << " "  << s.offset() << " " << s.table_width() << "\n";
+	    
+	    d0 &= (x.getbdd(i - xshift) % s.getbdd(i));
+	  }
+	}
+	std::cout << "BLF_POS built\n";
+      }
+      break;
+    case SRT_NQ: 
+      {
+	for (int i = 0; i < (int) tab; i++) {
+	  d0 &= ((x.getbdd(i)) % (s.getbdd(i)));
+	}
+	d0 = !d0;
+      }
+      break;
+    default:
+      {
+	throw Bdd::InvalidRelation (" COMPL = EQ NEG y ??? ");
+	return;
+      }
+    }
+
+    GECODE_ES_FAIL(home, (Bin<View0, View1>::post(home, x, s, d0)));
+  }
+
+  // BddOp and BddRel
+  // 
+  template <class View>
+  void rel_post(Space* home, ViewArray<View>& x, BddSetOpType o, BddSetRelType r, 
+		SetConLevel scl) {
+    throw Bdd::InvalidRelation(" no bdd rel implemented lex smaller ....");
+  }
+
+  // BddOp and SetRel
+  template <class View>
+  void rel_post(Space* home, ViewArray<View>& x, BddSetOpType o, SetRelType r, 
+		SetConLevel scl) {
+    if (home->failed()) return;
+    // important:
+    // the offset order is linear from left to right for the viewarray
+
+    int x0_tab = x[0].table_width();
+    
+    // Initialize the bdd representing the constraint
+    GecodeBdd d0 = BDDTOP;
+
+    for (int i = x0_tab; i--; ) {
+      GecodeBdd op = BDDTOP;
+      switch(o) {
+      case SOT_SYMDIFF:
+	{
+	  op = ((x[0].getbdd(i) & (!x[1].getbdd(i))) | 
+		(!x[0].getbdd(i) & (x[1].getbdd(i)))) ;
+	  break;
+	}
+      default:
+	{
+	  throw Bdd::InvalidRelation(" other op rel relations not yet implemented ");
+	  return;
+	}
+      }
+      switch (r) {
+      case SRT_EQ:
+	{
+	  d0 &= (op % x[2].getbdd(i));
+	  break;
+	}
+      default:
+	{
+	  throw Bdd::InvalidRelation(" other rel relations not yet implemented ");
+	  return;
+	}
+      }
+    }
+    
+    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
+  }
+  
+  // SetOp and BddRel
+  // 
+  template <class View>
+  void rel_post(Space* home, ViewArray<View>& x, SetOpType o, BddSetRelType r, 
+		SetConLevel scl) {
+    throw Bdd::InvalidRelation(" no bdd rel implemented lex smaller with setoptype....");
+  }
+  // not yet implemented Bddrel SRT_LE and lex-stuff
+  
+  // SetOp and SetRel
+  template <class View>
+  void rel_post(Space* home, ViewArray<View>& x, SetOpType o, SetRelType r, 
+		SetConLevel scl) {
+    if (home->failed()) return;
+    // important:
+    // the offset order is linear from left to right for the viewarray
+
+    int x0_tab = x[0].table_width();
+    
+    // Initialize the bdd representing the constraint
+    GecodeBdd d0 = BDDTOP;
+
+    for (int i = x0_tab; i--; ) {
+      GecodeBdd op = BDDTOP;
+      switch(o) {
+      case SOT_UNION:
+	{     
+	  op = (x[0].getbdd(i) | x[1].getbdd(i));
+	  break;
+	}
+      case SOT_DUNION:
+	{
+	  op = (x[0].getbdd(i) | x[1].getbdd(i));
+	  // for disjointness see below
+	  break;
+	}
+      case SOT_INTER:
+	{ 
+	  op = x[0].getbdd(i) & x[1].getbdd(i);
+	  break; 
+	}
+      case SOT_MINUS:
+	{
+	  op = x[0].getbdd(i) & (!x[1].getbdd(i)); 
+	  break;
+	}
+      default:
+	{
+	  throw Bdd::InvalidRelation(" other op rel relations not yet implemented ");
+	  return;
+	}
+      }
+      switch (r) {
+      case SRT_EQ:
+	{
+	  d0 &= (op % x[2].getbdd(i));
+	  if (o == SOT_DUNION)
+	    d0 &= !(x[0].getbdd(i) &  x[1].getbdd(i));
+	  break;
+	}
+      default:
+	{
+	  throw Bdd::InvalidRelation(" other rel relations not yet implemented ");
+	  return;
+	}
+      }
+    }
+    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
+  }
+
+
+  template <class Rel>
+  forceinline void 
+  rel_con(Space* home, const BddVar& x, Rel r, const BddVar& y, 
+	  SetConLevel scl) {
+    BddView xv(x);
+    BddView yv(y);
+    switch (scl) {
+    case SCL_SPL:
+      {
+	SplitBddView spx(xv);
+	SplitBddView spy(yv);
+	rel_post(home, spx, r, spy, scl);
+	break;
+      }
+    case SCL_BND_BDD:
+      {
+	BndBddView bndx(xv);
+	BndBddView bndy(yv);
+	rel_post(home, bndx, r, bndy, scl);
+	break;
+      }
+    case SCL_CRD:
+      {
+	CrdBddView crdx(xv);
+	CrdBddView crdy(yv);
+	rel_post(home, crdx, r, crdy, scl);
+	break;
+      }
+    case SCL_LEX:
+      {
+	LexBddView lexx(xv);
+	LexBddView lexy(yv);
+	rel_post(home, lexx, r, lexy, scl);
+	break;
+      }
+    default:
+      {
+	rel_post(home, xv, r, yv, scl);
+      }
+    }
+  }  
+
+
+  template <class Rel>
+  forceinline void 
+  rel_con(Space* home, const IntVar& x, Rel r, const BddVar& s, 
+	  SetConLevel scl) {
+    std::cout << "rel_con with intvar\n";
+    Gecode::Int::IntView iv(x);
+    BddView bv(s);
+//     int rmin = std::min(iv.min(), bv.mgr_min());
+//     int rmax = std::max(iv.max(), bv.mgr_max());
+//     SingletonBddView single(s.manager(), rmin, rmax, iv);
+    SingletonBddView single(s.manager(), iv.min(), iv.max(), iv);
+    rel_post(home, single, r, bv, scl);
+  }  
+
+  forceinline void
+  rel_con_sbr(Space* home, const BddVar& x, SetOpType o, const BddVar& y, 
+	      SetRelType r, const BddVar& z, SetConLevel scl) {
+    ViewArray<BddView> bv(home, 3);
+    bv[0] = x;
+    bv[1] = y;
+    bv[2] = z;
+    switch (scl) {
+    case SCL_BND_SBR:
+      {
+	BddView xv(x); 
+	BddView yv(y); 
+	BddView zv(z); 
+	
+	CrdBddView cx(xv); 
+	CrdBddView cy(yv); 
+	CrdBddView cz(zv); 
+	
+	SetBddView sx(cx); 
+	SetBddView sy(cy); 
+	SetBddView sz(cz); 
+	
+	Gecode::Set::RelOp::rel_op_post<SetBddView, SetBddView, SetBddView>(home, sx, o, sy, r, sz);
+	break;
+      }
+
+    default:
+      {
+	  throw Bdd::InvalidRelation("wrong relation for setconlevel SCL_BND_SBR ");
+      }
+    }
+
+  }
+
+
+  template <class Rel, class Op>
+  forceinline void
+  rel_con_bdd(Space* home, const BddVar& x, Op o, const BddVar& y, Rel r, 
+	  const BddVar& z, SetConLevel scl) {
+    ViewArray<BddView> bv(home, 3);
+    bv[0] = x;
+    bv[1] = y;
+    bv[2] = z;
+    switch (scl) {
+    case SCL_SPL:
+      {
+	ViewArray<SplitBddView> sv(home, 3);
+	for (int i = 3; i--; ) {
+	  sv[i].init(bv[i]);
+	}
+	rel_post(home, sv, o, r, scl);
+	break;
+      }
+    case SCL_BND_BDD:
+      {
+	ViewArray<BndBddView> bndv(home, 3);
+	for (int i = 3; i--; ) {
+	  bndv[i].init(bv[i]);
+	}
+	rel_post(home, bndv, o, r, scl);
+	break;
+      }
+    case SCL_CRD:
+      {
+	ViewArray<CrdBddView> crdv(home, 3);
+	for (int i = 3; i--; ) {
+	  crdv[i].init(bv[i]);
+	}
+	rel_post(home, crdv, o, r, scl);
+	break;
+      }
+    case SCL_LEX:
+      {
+	ViewArray<LexBddView> lexv(home, 3);
+	for (int i = 3; i--; ) {
+	  lexv[i].init(bv[i]);
+	}
+	rel_post(home, lexv, o, r, scl);
+	break;
+      }
+    default:
+      {
+	rel_post(home, bv, o, r, scl);
+      }
+    }
+  }
+
+}
+
+// STATISTICS: bdd-post

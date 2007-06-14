@@ -1,0 +1,187 @@
+/*
+ *  CAUTION:
+ *    This file has been automatically generated.
+ *    Do not edit, edit the file "gecode/bdd/var-imp.vis" instead.
+ *
+ *  This file contains generated code fragments which are 
+ *  copyrighted as follows:
+ *
+ *  Main author:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2006
+ *
+ *  The generated code fragments are part of Gecode, the generic
+ *  constraint development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+
+namespace Gecode { namespace Bdd {
+
+  /**
+   * \defgroup TaskActorBddMEPC Bdd modification events and propagation conditions
+   * \ingroup TaskActorBdd
+   */
+
+  //@{
+  /// Domain operation has resulted in failure
+  const Gecode::ModEvent ME_BDD_FAILED = Gecode::ME_GEN_FAILED;
+
+  /// Domain operation has not changed domain
+  const Gecode::ModEvent ME_BDD_NONE = Gecode::ME_GEN_NONE;
+
+  /// Domain operation has resulted in a value (assigned variable)
+  const Gecode::ModEvent ME_BDD_VAL = Gecode::ME_GEN_ASSIGNED;
+
+  /**
+   * \brief \brief Domain operation has modified the represented set
+   */
+
+  const Gecode::ModEvent ME_BDD_DOM = Gecode::ME_GEN_ASSIGNED + 1;
+
+  const Gecode::PropCond PC_BDD_NONE = Gecode::PC_GEN_NONE;
+  /**
+   * \brief Propagate when a view becomes assigned (single value)
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_BDD_VAL, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_BDD_VAL.
+   */
+  const Gecode::PropCond PC_BDD_VAL = Gecode::PC_GEN_ASSIGNED;
+
+ /**
+   * \brief Propagate when the domain of a view changes
+   *
+   * If a propagator \a p depends on a view \a x with propagation
+   * condition PC_BDD_DOM, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_BDD_VAL or 
+   * ME_BDD_DOM.
+   */
+  const Gecode::PropCond PC_BDD_DOM = Gecode::PC_GEN_ASSIGNED + 1;
+
+  //@}
+
+  /// Modification event difference for Bdd-variable implementations
+  class BddMeDiff {
+  public:
+    /// Return difference when changing modification event \a me2 to \a me1
+    ModEvent operator()(ModEvent me1, ModEvent me2) const;
+  };
+
+  /// Base-class for Bdd-variable implementations
+  class BddVarImpBase : public Gecode::Variable<VTI_BDD,PC_BDD_DOM,BddMeDiff> {
+  protected:
+    /// Variable procesor for variables of this type
+    class Processor : public Gecode::VarTypeProcessor<VTI_BDD,PC_BDD_DOM,BddMeDiff> {
+    public:
+      /// Process modified variables linked from \a x
+      GECODE_BDD_EXPORT virtual void process(Space* home, VarBase* x);
+      /// Dispose registered variables
+      GECODE_BDD_EXPORT virtual void dispose(Space* home, VarBase* x);
+    };
+    /// The processor used
+    GECODE_BDD_EXPORT static Processor p;
+    /// Link to next variable, used for disposal
+    VarBase* _nextDispose;
+    /// Constructor for cloning \a x
+    BddVarImpBase(Space* home, bool share, BddVarImpBase& x);
+  public:
+    /// Constructor for creating static instance of variable
+    BddVarImpBase(void);
+    /// Constructor for creating variable
+    BddVarImpBase(Space* home);
+    /// \name Dependencies
+    //@{
+    /** \brief Subscribe propagator \a p with propagation condition \a pc to variable
+     *
+     * In case \a process is false, the propagator is just subscribed but
+     * not processed for execution (this must be used when creating
+     * subscriptions during propagation).
+     *
+     * In case the variable is assigned (that is, \a assigned is 
+     * true), the subscribing propagator is processed for execution.
+     * Otherwise, the propagator subscribes and is processed for execution
+     * with modification event \a me provided that \a pc is different
+     * from \a PC_GEN_ASSIGNED.
+     */
+    void subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process);
+    /// Subscribe advisor \a a
+    void subscribe(Space* home, Advisor* a, bool assigned);
+    /// Notify that variable implementation has been modified with modification event \a me and delta information \a d
+    bool notify(Space* home, ModEvent me, Delta* d);
+    //@}
+    /// Return link to next variable, used for dispose
+    BddVarImpBase* nextDispose(void);
+    /// Set link to next variable, used for dispose
+    void nextDispose(BddVarImpBase* next);
+
+  };
+
+
+  forceinline ModEvent
+  BddMeDiff::operator()(ModEvent me1, ModEvent me2) const {
+    const int med = (
+      (
+        ((ME_BDD_NONE ^ ME_BDD_NONE) << 0) |  // [ME_BDD_NONE][ME_BDD_NONE]
+        ((ME_BDD_VAL ^ ME_BDD_VAL) << 2) |  // [ME_BDD_NONE][ME_BDD_VAL]
+        ((ME_BDD_DOM ^ ME_BDD_DOM) << 4)    // [ME_BDD_NONE][ME_BDD_DOM]
+      ) |
+      (
+        ((ME_BDD_NONE ^ ME_BDD_VAL) << 8) |  // [ME_BDD_VAL][ME_BDD_NONE]
+        ((ME_BDD_VAL ^ ME_BDD_VAL) << 10) |  // [ME_BDD_VAL][ME_BDD_VAL]
+        ((ME_BDD_DOM ^ ME_BDD_VAL) << 12)    // [ME_BDD_VAL][ME_BDD_DOM]
+      ) |
+      (
+        ((ME_BDD_NONE ^ ME_BDD_DOM) << 16) |  // [ME_BDD_DOM][ME_BDD_NONE]
+        ((ME_BDD_VAL ^ ME_BDD_VAL) << 18) |  // [ME_BDD_DOM][ME_BDD_VAL]
+        ((ME_BDD_DOM ^ ME_BDD_DOM) << 20)    // [ME_BDD_DOM][ME_BDD_DOM]
+      )
+    );
+    return (((med >> (me1 << 3)) >> (me2 << 1)) & 3);
+  }
+
+  forceinline
+  BddVarImpBase::BddVarImpBase(void) {}
+
+  forceinline
+  BddVarImpBase::BddVarImpBase(Space* home)
+    : Gecode::Variable<VTI_BDD,PC_BDD_DOM,BddMeDiff>(home), _nextDispose(home->varsDisposeList<VTI_BDD>()) {
+    home->varsDisposeList<VTI_BDD>(this);
+  }
+
+  forceinline
+  BddVarImpBase::BddVarImpBase(Space* home, bool share, BddVarImpBase& x)
+    : Gecode::Variable<VTI_BDD,PC_BDD_DOM,BddMeDiff>(home,share,x), _nextDispose(home->varsDisposeList<VTI_BDD>()) {
+    home->varsDisposeList<VTI_BDD>(this);
+  }
+
+  forceinline BddVarImpBase*
+  BddVarImpBase::nextDispose(void) {
+    return static_cast<BddVarImpBase*>(_nextDispose);
+  }
+
+
+  forceinline void
+  BddVarImpBase::subscribe(Space* home, Propagator* p, PropCond pc, bool assigned, bool process) {
+    Gecode::Variable<VTI_BDD,PC_BDD_DOM,BddMeDiff>::subscribe(home,p,pc,assigned,ME_BDD_DOM,process);
+  }
+  forceinline void
+  BddVarImpBase::subscribe(Space* home, Advisor* a, bool assigned) {
+    Gecode::Variable<VTI_BDD,PC_BDD_DOM,BddMeDiff>::subscribe(home,a,assigned);
+  }
+
+  forceinline bool
+  BddVarImpBase::notify(Space* home, ModEvent me, Delta* d) {
+    return Gecode::Variable<VTI_BDD,PC_BDD_DOM,BddMeDiff>::notify(home,me,d);
+  }
+
+}}
+
+// STATISTICS: set-var

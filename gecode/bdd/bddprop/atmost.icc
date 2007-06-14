@@ -1,0 +1,460 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-07-29 15:55:20 +0000 (Sat, 29 Jul 2006) $ by $Author: pekczynski $
+ *     $Revision: 3478 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+using namespace Gecode::Bdd;
+
+namespace Gecode {
+
+  template <class View>
+  void 
+  atmostOne_post(Space* home, ViewArray<View>& x, int c, SetConLevel scl) {
+    if (home->failed()) return;
+    int n = x.size();
+    BMI* mgr = x[0].manager();
+
+    int minx = x[0].mgr_min();
+    int maxx = x[0].mgr_max(); 
+    unsigned int xtab = x[0].table_width();  
+    for (int i = n; i--;) {
+      if (x[i].mgr_min() < minx) {
+	minx = x[i].mgr_min();
+      }
+      if (x[i].mgr_max() > maxx) {
+	maxx = x[i].mgr_max();
+      }
+      if (x[i].table_width() > xtab) {
+	xtab = x[i].table_width();
+      }
+    }
+
+    GecodeBdd d0 = BDDTOP;     
+    for (int i = 0; i < n; i++) {
+      unsigned int xoff = x[i].offset();
+      unsigned int xtab = x[i].table_width();
+      //d0 &= cardrec(mgr, 0, xoff, xtab, c, c);    
+      d0 &= cardcheck(mgr, xtab, xoff, c, c);    
+    }
+    // std::cout << "cardrec done = " << mgr->bddsize(d0) << "\n";
+
+    for (int i = 0; i < n - 1; i++) {
+      for (int j = i + 1; j < n; j++) {
+// 	unsigned int xoff = x[i].offset();
+// 	unsigned int xtab = x[i].table_width();
+// 	unsigned int yoff = x[j].offset();
+// 	unsigned int ytab = x[j].table_width();
+	//d0 &= cardrec_bin(mgr, 0, xoff, xtab, yoff, ytab, 0, 1);
+	d0 &= extcardcheck(x[i], x[j], 0, 1);
+      }
+    }
+    // std::cout << "bddsize = " << mgr->bddsize(d0) << "\n";
+    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
+  }
+
+  template <class View>
+  void 
+  atmost_post(Space* home, ViewArray<View>& x, int c, 
+	      SetRelType lex, int card, SetConLevel scl) {
+    if (home->failed()) return;
+    BMI* mgr = x[0].manager();
+
+    unsigned int x1_tab = x[1].table_width();
+
+    // cardinality description for the intersection x \cap y
+    GecodeBdd d0 = BDDTOP;
+
+    // equivalence of intersection x \cap y with intermediate variable z
+    //for (unsigned int i = 0; i < x1_tab; i++) {
+    for (unsigned int i = x1_tab; i--;) {
+      d0 &= ((x[0].getbdd(i) & x[1].getbdd(i)) % (x[2].getbdd(i)));
+    }
+      
+    // cardinality description of intermediate variable z
+    GecodeBdd c0 = BDDTOP;
+    unsigned int off = x[2].offset();
+    unsigned int tab = x[2].table_width();
+      
+    // c0 = cardrec(mgr, 0, off, tab, 0, c);
+    c0 = cardcheck(mgr, tab, off, 0, c);
+      
+    // combination of intersection and cardinality
+    d0 &= c0;
+      
+    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
+      
+  }
+
+  template <class View>
+  void 
+  atmost_post(Space* home, ViewArray<View>& x, int c, 
+	      BddSetRelType lex, int card, SetConLevel scl) {
+    if (home->failed()) return;
+    BMI* mgr = x[0].manager();
+
+    unsigned int x1_tab = x[1].table_width();
+
+    // cardinality description for the intersection x \cap y
+    GecodeBdd d0 = BDDTOP;
+
+    // equivalence of intersection x \cap y with intermediate variable z
+    //for (unsigned int i = 0; i < x1_tab; i++) {
+    for (unsigned int i = x1_tab; i--;) {
+      d0 &= ((x[0].getbdd(i) & x[1].getbdd(i)) % (x[2].getbdd(i)));
+    }
+      
+    // cardinality description of intermediate variable z
+    GecodeBdd c0 = BDDTOP;
+    unsigned int off = x[2].offset();
+    unsigned int tab = x[2].table_width();
+      
+    // c0 = cardrec(mgr, 0, off, tab, 0, c);
+    c0 = cardcheck(mgr, tab, off, 0, c);
+      
+    // combination of intersection and cardinality
+    d0 &= c0;
+
+    // lexicographic constraint x[0] < x[1]
+
+    unsigned int xoff = x[0].offset();
+    unsigned int yoff = x[1].offset();
+    unsigned int xtab = x[0].table_width();
+    unsigned int ytab = x[1].table_width();
+    switch (lex) {
+    case SRT_LE:
+      {
+	d0 &= lexlt(mgr, xoff, yoff, xtab, xtab - 1);
+	break;
+      }
+    case SRT_GR:
+      {
+	d0 &= lexlt(mgr, yoff, xoff, xtab, xtab - 1);
+	break;
+      }
+    case SRT_LQ:
+      {
+	d0 &= lexlq(mgr, xoff, yoff, xtab, xtab - 1);
+	break;
+      }
+    case SRT_GQ:
+      {
+	d0 &= lexlq(mgr, yoff, xoff, xtab, xtab - 1);
+	break;
+      }
+    case SRT_LE_REV:
+      {
+	d0 &= lexltrev(mgr, xoff, yoff, xtab, 0);
+	break;
+      }
+    case SRT_GR_REV:
+      {
+	d0 &= lexltrev(mgr, yoff, xoff, xtab, 0);
+	break;
+      }
+    case SRT_LQ_REV:
+      {
+	d0 &= lexlqrev(mgr, xoff, yoff, xtab, 0);
+	break;
+      }
+    case SRT_GQ_REV:
+      {
+	d0 &= lexlqrev(mgr, yoff, xoff, xtab, 0);
+	break;
+      }
+    default:
+      {
+	// dont use additional lexicographic ordering
+	break;
+      }
+    }
+
+      
+    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
+      
+  }
+
+  template <class View>
+  void 
+  atmost_post(Space* home, View& x, View& y, int c, BddSetRelType lex, int card, SetConLevel scl) {
+    if (home->failed()) return;
+    BMI* mgr = x.manager();
+
+    unsigned int xoff = x.offset();
+    unsigned int yoff = y.offset();
+    unsigned int xtab = x.table_width();
+    unsigned int ytab = y.table_width();
+
+    // cardinality description for the intersection x \cap y
+    GecodeBdd d0 = BDDTOP;
+    d0 = extcardcheck(x, y, 0, c);
+    
+    // extra lexicographic order on bit strings x \sim_{lex} y
+    switch (lex) {
+    case SRT_LE:
+      {
+	d0 &= lexlt(mgr, xoff, yoff, xtab, xtab - 1);
+	break;
+      }
+    case SRT_GR:
+      {
+	d0 &= lexlt(mgr, yoff, xoff, xtab, xtab - 1);
+	break;
+      }
+    case SRT_LQ:
+      {
+	d0 &= lexlq(mgr, xoff, yoff, xtab, xtab - 1);
+	break;
+      }
+    case SRT_GQ:
+      {
+	d0 &= lexlq(mgr, yoff, xoff, xtab, xtab - 1);
+	break;
+      }
+    case SRT_LE_REV:
+      {
+	d0 &= lexltrev(mgr, xoff, yoff, xtab, 0);
+	break;
+      }
+    case SRT_GR_REV:
+      {
+	d0 &= lexltrev(mgr, yoff, xoff, xtab, 0);
+	break;
+      }
+    case SRT_LQ_REV:
+      {
+	d0 &= lexlqrev(mgr, xoff, yoff, xtab, 0);
+	break;
+      }
+    case SRT_GQ_REV:
+      {
+	d0 &= lexlqrev(mgr, yoff, xoff, xtab, 0);
+	break;
+      }
+    default:
+      {
+	// dont use additional lexicographic ordering
+	break;
+      }
+    }
+    
+    // extra cardinality information on x and y
+    if (card > -1) {
+      d0 &= cardcheck(mgr, xtab, xoff, card, card);
+      d0 &= cardcheck(mgr, ytab, yoff, card, card);
+    }
+
+    if (x.assigned()) {
+      // std::cout << "atmost: x assigned\n";
+      d0 &= x.bdd_domain();
+    }
+
+    if (y.assigned()) {
+      // std::cout << "atmost: y assigned\n";
+      d0 &= y.bdd_domain();
+    }
+    // std::cerr << "star prop\n";
+    GECODE_ES_FAIL(home, BinBddProp<View>::post(home, x, y, d0, scl));
+  }
+
+  template <class View>
+  void 
+  atmost_post(Space* home, View& x, View& y, int c, SetRelType lex, int card, SetConLevel scl) {
+    if (home->failed()) return;
+    BMI* mgr = x.manager();
+
+    unsigned int xoff = x.offset();
+    unsigned int yoff = y.offset();
+    unsigned int xtab = x.table_width();
+    unsigned int ytab = y.table_width();
+
+    // cardinality description for the intersection x \cap y
+    GecodeBdd d0 = BDDTOP;
+    d0 = extcardcheck(x, y, 0, c);
+
+    // dont use additional lexicographic ordering
+    
+    // extra cardinality information on x and y
+    if (card > -1) {
+      d0 &= cardcheck(mgr, xtab, xoff, card, card);
+      d0 &= cardcheck(mgr, ytab, yoff, card, card);
+    }
+
+    if (x.assigned()) {
+      // std::cout << "atmost: x assigned\n";
+      d0 &= x.bdd_domain();
+    }
+
+    if (y.assigned()) {
+      // std::cout << "atmost: y assigned\n";
+      d0 &= y.bdd_domain();
+    }
+    // std::cerr << "star prop\n";
+    GECODE_ES_FAIL(home, BinBddProp<View>::post(home, x, y, d0, scl));
+  }
+
+  template <class Rel>
+  forceinline void 
+  atmost_con(Space* home, const BddVar& x, const BddVar& y, int c, 
+	     Rel lex, int card, SetConLevel scl) {
+    BddView xv(x);
+    BddView yv(y);
+
+    switch (scl) {
+    case SCL_SPL:
+      {
+	SplitBddView spx(xv);
+	SplitBddView spy(yv);
+	atmost_post(home, spx, spy, c, lex, card, scl);
+	break;
+      }
+    case SCL_BND_BDD:
+      {
+	BndBddView bndx(xv);
+	BndBddView bndy(yv);
+	atmost_post(home, bndx, bndy, c, lex, card, scl);
+	break;
+      }
+    case SCL_CRD:
+      {
+	CrdBddView crdx(xv);
+	CrdBddView crdy(yv);
+	atmost_post(home, crdx, crdy, c, lex, card, scl);
+	break;
+      }
+    case SCL_LEX:
+      {
+	LexBddView lexx(xv);
+	LexBddView lexy(yv);
+	atmost_post(home, lexx, lexy, c, lex, card, scl);
+	break;
+      }
+    default:
+      {
+	atmost_post(home, xv, yv, c, lex, card, scl);
+      }
+    }
+  }
+
+  template <class Rel>
+  forceinline void 
+  atmost_con(Space* home, const BddVar& x, const BddVar& y, const BddVar& z, 
+	     int c, Rel lex, int card, SetConLevel scl) {
+    ViewArray<BddView> bv(home, 3);
+    bv[0] = x;
+    bv[1] = y;
+    bv[2] = z;
+    switch (scl) {
+    case SCL_SPL:
+      {
+	ViewArray<SplitBddView> sv(home, 3);
+	for (int i = 3; i--; ) {
+	  sv[i].init(bv[i]);
+	}
+	atmost_post(home, sv, c, lex, card, scl);
+	break;
+      }
+    case SCL_BND_BDD:
+      {
+	ViewArray<BndBddView> bndv(home, 3);
+	for (int i = 3; i--; ) {
+	  bndv[i].init(bv[i]);
+	}
+	atmost_post(home, bndv, c, lex, card, scl);
+	break;
+      }
+    case SCL_CRD:
+      {
+	ViewArray<CrdBddView> crdv(home, 3);
+	for (int i = 3; i--; ) {
+	  crdv[i].init(bv[i]);
+	}
+	atmost_post(home, crdv, c, lex, card, scl);
+	break;
+      }
+    case SCL_LEX:
+      {
+	ViewArray<LexBddView> lexv(home, 3);
+	for (int i = 3; i--; ) {
+	  lexv[i].init(bv[i]);
+	}
+	atmost_post(home, lexv, c, lex, card, scl);
+	break;
+      }
+    default:
+      {
+	atmost_post(home, bv, c, lex, card, scl);
+      }
+    }
+  }
+
+
+  forceinline void 
+  atmostOne_con(Space* home, const BddVarArgs& x, int c, SetConLevel scl) {
+    int n = x.size();
+    ViewArray<BddView> bv(home, n);
+    for (int i = 0; i < n; i++) {
+      bv[i] = x[i];
+    }
+    switch (scl) {
+    case SCL_SPL:
+      {
+	ViewArray<SplitBddView> sv(home, n);
+	for (int i = n; i--; ) {
+	  sv[i].init(bv[i]);
+	}
+	atmostOne_post(home, sv, c, scl);
+	break;
+      }
+    case SCL_BND_BDD:
+      {
+	ViewArray<BndBddView> bndv(home, n);
+	for (int i = n; i--; ) {
+	  bndv[i].init(bv[i]);
+	}
+	atmostOne_post(home, bndv, c, scl);
+	break;
+      }
+    case SCL_CRD:
+      {
+	ViewArray<CrdBddView> crdv(home, n);
+	for (int i = n; i--; ) {
+	  crdv[i].init(bv[i]);
+	}
+	atmostOne_post(home, crdv, c, scl);
+	break;
+      }
+    case SCL_LEX:
+      {
+	ViewArray<LexBddView> lexv(home, n);
+	for (int i = n; i--; ) {
+	  lexv[i].init(bv[i]);
+	}
+	atmostOne_post(home, lexv, c, scl);
+	break;
+      }
+    default:
+      {
+	atmostOne_post(home, bv, c, scl);
+      }
+    }
+  }
+
+}
+
+// STATISTICS: bdd-post

@@ -1,0 +1,664 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-09-04 19:25:19 +0000 (Mon, 04 Sep 2006) $ by $Author: pekczynski $
+ *     $Revision: 3585 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Bdd {
+
+  /// Constructs \a d0 as the bdd representing the Range constraint for the given variables
+  template <class View0, class View1>
+  forceinline void
+  buildRange(Space* home, ViewArray<View0>& seq, View1 selview, View1 unionview, 
+	     SetConLevel scl, GecodeBdd& d0) {
+
+    if (home->failed()) return;
+    int n = seq.size();
+    
+    unsigned int xrange = seq[0].table_width();
+    int xmax            = seq[0].mgr_max();
+    int xmin            = seq[0].mgr_min();
+    // compute maximum value
+    for (int i = n; i--; ) {
+      if (seq[i].mgr_max() > xmax) {
+	xmax = seq[i].mgr_max();
+      }
+      if (seq[i].mgr_min() < xmin) {
+	xmin = seq[i].mgr_min();
+      }
+      if (seq[i].table_width() > xrange) {
+	xrange = seq[i].table_width();
+      }
+    }
+
+    GECODE_ME_FAIL(home, unionview.intersect(home, xmin, xmax));
+
+//     if (unionview.mgr_min() < xmin) {
+//       int a = unionview.mgr_min();
+//       int b = xmin - 1;
+//       GECODE_ME_FAIL(home, unionview.exclude(home, a, b));
+//     }
+
+//     if (unionview.mgr_max() > xmax) {
+//       int a = xmax + 1;
+//       int b = unionview.mgr_max();
+//       GECODE_ME_FAIL(home, unionview.exclude(home, a, b));
+//     }
+
+    // std::cout << "X("<<xmin << ".." << xmax <<")[" << xrange << "]\n";
+
+    int unionmin = unionview.mgr_min();
+//     int unionmax = unionview.mgr_max();
+
+//     if (unionview.assigned()) {
+//       xmin = unionview.glbMin();
+//       xmax = unionview.glbMax();
+//       xrange = xmax - xmin + 1;
+//     } else {
+//       if (unionmin < xmin) { xmin = unionmin; }
+//       if (unionmax < xmax) { xmax = unionmax; }
+//       if (unionview.table_width() > xrange) {
+// 	xrange = unionview.table_width();
+//       }
+//     }
+//     std::cout << "U("<<unionmin << ".." << unionmax <<")["<<unionview.table_width() << "]\n";
+//     std::cout << "changed \n";
+//     std::cout << "X("<<xmin << ".." << xmax <<")[" << xrange << "]\n";
+
+
+//     int unionshift = 0;
+//     if (unionview.mgr_min() < xmin) {
+//       unionshift = xmin - unionview.mgr_min();
+//       int a = unionview.mgr_min();
+//       int b = xmin - 1;
+//       GECODE_ME_FAIL(home, unionview.exclude(home, a, b));
+//     }
+
+//     if (unionview.mgr_max() > xmax) {
+//       int a = xmax + 1;
+//       int b = unionview.mgr_max();
+//       GECODE_ME_FAIL(home, unionview.exclude(home, a, b));
+//     }
+
+    // restrict selector variable s to be \f$ s\subseteq \{0, n - 1\}\f$
+    Iter::Ranges::Singleton idx(0, n - 1);
+    // shift selection view to the right index
+    int shift = 0 - selview.mgr_min();
+    GECODE_ME_FAIL(home, selview.intersectI(home, idx));
+
+    // check for different ranges
+
+    // std::cout << (int) xrange << " bits and " << n << " seq vars\n";
+    for (int k = 0; k < (int) xrange; k++) {
+      // std::cout << "bit k=" << k << "\t";
+
+      GecodeBdd inter = BDDBOT;
+//       bool kthbitempty = true;
+      for (int j = 0; j < n; j++) {
+      // std::cout << "seq j=" << j << ": ";
+	LubValues<View0> lub(seq[j]);
+	int seqmin = seq[j].mgr_min();
+	int seqmax = seq[j].mgr_max();
+	int cur    = xmin + k;
+	if (seqmin <= cur && cur <= seqmax) {
+	  while (lub() && cur != lub.val()) {
+	    ++lub;
+	  }
+	  if (lub() && cur == lub.val()) {
+	    // check & or %
+	    // std::cout << "inter or (" << j + shift << " and " << (k - (seqmin - xmin)) << "\n";
+	    inter |= (selview.getbdd(j + shift) & seq[j].getbdd(k - (seqmin - xmin)));
+	    ++lub;
+	  }
+// 	  kthbitempty &= !lub();
+	}
+
+// 	if (xmin + k >= seq[j].mgr_min() && xmin + k <= seq[j].mgr_max()) {
+// 	  cur |= (selview.getbdd(j + shift) & seq[j].getbdd(k));
+// 	}
+      }
+
+      // shouldnt we allow inter to be BDDBOT ?
+//       if (inter != BDDBOT) {
+// 	d0 &= (unionview.getbdd(k - (unionmin - xmin)) % inter);
+//       }
+	d0 &= (unionview.getbdd(k - (unionmin - xmin)) % inter);
+
+//       if (kthbitempty) {
+// 	std::cout << "kthbitempty\n";
+// 	d0 &= (!unionview.getbdd(k - (unionmin - xmin)));
+//       }
+    }
+
+    for (int i = 0; i < n; i++) {
+      if (seq[i].assigned()) {
+	d0 &= seq[i].bdd_domain();
+      }
+    }
+    if (selview.assigned()) {
+      // std::cout << "selview: " << selview.bdd_domain() << "\n";
+      d0 &= selview.bdd_domain();
+    }
+    if (unionview.assigned()) {
+      d0 &= unionview.bdd_domain();
+    }
+
+//     std::cout << "d0 = ";
+//     selview.manager()->bdd2dot(d0);
+//     std::cout << "\n";
+//     std::cout << "buildRange size = " << selview.manager()->bddsize(d0) << "\n";
+  }
+
+  template <class View0, class View1>
+  forceinline void 
+  range_post(Space* home, ViewArray<View0>& seq, View1 selview, View1 unionview, SetConLevel scl) {
+    if (home->failed())  return;
+
+    GecodeBdd d0 = BDDTOP;
+    buildRange(home, seq, selview, unionview, scl, d0);
+    if (home->failed())  return;
+    GECODE_ES_FAIL(home, (Range<View0, View1>::post(home, seq, selview, unionview, d0)));
+  }
+
+  forceinline void 
+  range_con(Space* home, const IntVarArgs& x, const BddVar& s, const BddVar& t, 
+	    SetConLevel scl) {
+    BMI* mgr = s.manager();
+    int n = x.size();
+    BddView selview(s);
+    BddView unionview(t);
+
+    ViewArray<Gecode::Int::IntView> iv(home, n);
+    for (int i = 0; i < n; i++) {
+      iv[i] = x[i];
+    }
+    ViewArray<SingletonBddView> sbv(home, n);
+    for (int i = 0; i < n; i++) {
+      int rmin = std::min(unionview.mgr_min(), iv[i].min());
+      int rmax = std::max(unionview.mgr_max(), iv[i].max());
+      sbv[i].init(mgr, rmin, rmax, iv[i]);
+    }
+    
+
+    switch(scl) {
+    default:
+      {
+	range_post(home, sbv, selview, unionview, scl);
+      }
+    }
+  }
+
+  /// Constructs \a d0 as the bdd representing the Roots constraint for the given variables
+  template <class View0, class View1>
+  forceinline void
+  buildRoots(Space* home, ViewArray<View0>& seq, View1 selview, View1 unionview, SetConLevel scl, 
+	     GecodeBdd& d0) {
+    BMI* mgr = unionview.manager();
+    if (home->failed()) return;
+    int n = seq.size();
+
+    unsigned int xrange = seq[0].table_width();
+    int xmax            = seq[0].mgr_max();
+    int xmin            = seq[0].mgr_min();
+    // compute maximum value
+    for (int i = n; i--; ) {
+      if (seq[i].table_width() > xrange) {
+	xrange = seq[i].table_width();
+      }
+      if (seq[i].mgr_max() > xmax) {
+	xmax = seq[i].mgr_max();
+      }
+      if (seq[i].mgr_min() < xmin) {
+	xmin = seq[i].mgr_min();
+      }
+    }
+
+    int unionmin = unionview.mgr_min();
+    int unionmax = unionview.mgr_max();
+    if (unionview.assigned()) {
+      xmin = unionview.glbMin();
+      xmax = unionview.glbMax();
+      xrange = xmax - xmin + 1;
+    } else {
+      if (unionmin < xmin) { xmin = unionmin; }
+      if (unionmax < xmax) { xmax = unionmax; }
+      if (unionview.table_width() > xrange) {
+	xrange = unionview.table_width();
+      }
+    }
+
+    // restrict selection variable s to be \f$ s\subseteq \{0, n - 1\}\f$
+    Iter::Ranges::Singleton idx(0, n - 1);
+    GECODE_ME_FAIL(home, selview.intersectI(home, idx));
+    // in case the selection variable ranges over negative values
+    int shift = 0 - selview.mgr_min();
+
+    for (int j = 0; j < n; j++) {    
+      GecodeBdd subset = BDDTOP;
+      LubValues<SingletonBddView> lub(seq[j]);
+      for (unsigned int k = 0; k < xrange; k++) {
+	int seqmin = seq[j].mgr_min();
+	int seqmax = seq[j].mgr_max();
+	int cur    = xmin + k;
+	if (seqmin <= cur && cur <= seqmax) {
+	  while (lub() && cur != lub.val()) {
+	    ++lub;
+	  }
+	  if (lub() && cur == lub.val()) {
+	    if (unionmin <= cur && cur <= unionmax) {
+	      subset &= (seq[j].getbdd(k - (seqmin - xmin)) >>= unionview.getbdd(k - (unionmin - xmin)));
+	    }
+	    ++lub;
+	  }
+	}
+      }
+      if (!mgr->ctrue(subset)) {
+	d0 &= (selview.getbdd(j + shift) % (subset));
+      }
+      if (seq[j].assigned()) {
+	d0 &= seq[j].bdd_domain();
+      }
+    }
+
+    if (unionview.assigned()) {
+      d0 &= unionview.bdd_domain();
+    }   
+    if (selview.assigned()) {
+      d0 &= selview.bdd_domain();
+    }
+
+    std::cout << "d0 size = " << mgr->bddsize(d0) << "\n";
+//     std::cout << "d0 = " << d0 << "\n";
+  }
+
+  template <class View0, class View1>
+  forceinline void 
+  roots_post(Space* home, ViewArray<View0>& seq, View1 selview, View1 unionview, SetConLevel scl) {
+    if (home->failed()) return;
+
+    GecodeBdd d0 = BDDTOP;
+    buildRoots(home, seq, selview, unionview, scl, d0);
+    if (home->failed()) return;
+    GECODE_ES_FAIL(home, (Range<View0, View1>::post(home, seq, selview, unionview, d0)));
+  }
+
+  forceinline void 
+  roots_con(Space* home, const IntVarArgs& x, const BddVar& s, const BddVar& t, 
+	    const BddVarArgs& allvars, 
+	    SetConLevel scl) {
+
+    BMI* mgr = s.manager();
+    int n = x.size();
+
+    BddView selview(s);
+    BddView unionview(t);
+
+    ViewArray<Gecode::Int::IntView> iv(home, n);
+    for (int i = 0; i < n; i++) {
+      iv[i] = x[i];
+    }
+    ViewArray<SingletonBddView> sbv(home, n);
+    for (int i = 0; i < n; i++) {
+//       int rmin = std::min(unionview.mgr_min(), iv[i].min());
+//       int rmax = std::max(unionview.mgr_max(), iv[i].max());
+//       sbv[i].init(mgr, rmin, rmax, iv[i]);
+      sbv[i].init(mgr, iv[i].min(), iv[i].max(), iv[i]);
+    }
+    
+    
+    // do ordering
+    ViewArray<BddView> vars(home, allvars.size());
+    for (int i = allvars.size(); i--; ) {
+      vars[i] = allvars[i];
+    }
+
+    variableorder(vars, sbv);
+
+    switch(scl) {
+    default:
+      {
+	roots_post(home, sbv, selview, unionview, scl);
+      }
+    }
+    
+  }
+
+
+  /*
+   * Range Propagators
+   *
+   */
+
+  template <class View0, class View1>
+  forceinline
+  Range<View0, View1>::Range(Space* home, ViewArray<View0>& x, View1 y, View1 z, 
+			     GecodeBdd& d0)
+    : MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, x, y, z), 
+      d(d0) {
+    MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::force(home);
+  }
+
+  template <class View0, class View1>
+  forceinline
+  Range<View0, View1>::Range(Space* home, bool share, Range& p)
+    : MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, share, p), 
+      d(p.d) {}
+
+  template <class View0, class View1>
+  forceinline ExecStatus
+  Range<View0, View1>::post(Space* home, ViewArray<View0>& x, View1 y, View1 z, GecodeBdd& d0) {
+    (void) new (home) Range(home, x, y, z, d0);
+    return ES_OK;
+  }
+
+  template <class View0, class View1>
+  forceinline Actor*
+  Range<View0, View1>::copy(Space* home, bool share) {
+    return new (home) Range(home, share, *this);
+  }
+  
+  template <class View0, class View1>
+  forceinline ExecStatus 
+  Range<View0, View1>::propagate(Space* home) {
+
+    BMI* mgr   = x[0].manager();
+    bool assigned = true;
+    int n = x.size();
+    ExecStatus es = ES_OK;
+    int ypos = n;
+    int zpos = n + 1;
+
+    GECODE_ES_CHECK(es = divide_conquer(home, mgr, d, 0, n + 1, ypos, zpos));
+
+    assigned = true;
+    for (int i = x.size(); i--; ) {
+      assigned &= x[i].assigned();
+    }
+    if (assigned) {
+      return ES_SUBSUMED(this, home);
+    }
+
+    return ES_FIX;
+  }
+
+  template <class View0, class View1>
+  size_t
+  Range<View0, View1>::dispose(Space* home) {
+    MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::unforce(home);
+    if (!home->failed()) {
+      x.cancel(home, this, PC_BDD_DOM);
+      y.cancel(home, this, PC_BDD_DOM);
+      z.cancel(home, this, PC_BDD_DOM);
+    }
+    BMI* mgr = y.manager();
+    mgr->dispose(d);
+    MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::dispose(home);
+    return sizeof(*this);
+  }
+
+
+  template <class View0, class View1>
+  forceinline
+  RangeTwice<View0, View1>::RangeTwice(Space* home, ViewArray<View0>& x, 
+				       ViewArray<View1>& y, GecodeBdd& d0)
+    : MixNaryTwicePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, x, y), 
+      d(d0) {
+    MixNaryTwicePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::force(home);
+  }
+
+  template <class View0, class View1>
+  forceinline
+  RangeTwice<View0, View1>::RangeTwice(Space* home, bool share, RangeTwice& p)
+    : MixNaryTwicePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, share, p), 
+      d(p.d) {
+    MixNaryTwicePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::force(home);
+  }
+
+  template <class View0, class View1>
+  forceinline ExecStatus
+  RangeTwice<View0, View1>::post(Space* home, ViewArray<View0>& x, ViewArray<View1>& y,
+				 GecodeBdd& d0) {
+    (void) new (home) RangeTwice(home, x, y, d0);
+    return ES_OK;
+  }
+
+  template <class View0, class View1>
+  forceinline Actor*
+  RangeTwice<View0, View1>::copy(Space* home, bool share) {
+    return new (home) RangeTwice(home, share, *this);
+  }
+  
+  template <class View0, class View1>
+  forceinline ExecStatus 
+  RangeTwice<View0, View1>::propagate(Space* home) {
+
+    BMI* mgr   = x[0].manager();
+    bool assigned = true;
+    int n = x.size();
+    ExecStatus es = ES_OK;
+    int ypos = n;
+
+    GECODE_ES_CHECK(es = divide_conquer(home, mgr, d, 0, 2 * n, ypos));
+
+    assigned = true;
+    for (int i = n; i--; ) {
+      assigned &= x[i].assigned();
+      assigned &= y[i].assigned();
+    }
+
+    if (assigned) {
+      return ES_SUBSUMED(this, home);
+    }
+
+    return ES_FIX;
+  }
+
+  template <class View0, class View1>
+  size_t
+  RangeTwice<View0, View1>::dispose(Space* home) {
+    MixNaryTwicePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::unforce(home);
+    if (!home->failed()) {
+      x.cancel(home, this, PC_BDD_DOM);
+      y.cancel(home, this, PC_BDD_DOM);
+    }
+    BMI* mgr = y[0].manager();
+    mgr->dispose(d);
+    MixNaryTwicePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::dispose(home);
+    return sizeof(*this);
+  }
+
+
+  /*
+   * Posting functions
+   *
+   */
+
+  template <class View0, class View1>
+  forceinline void 
+  nvalue_post(Space* home, ViewArray<View0>& seq, View1 selview, View1 unionview, 
+	      int usedvalues, SetConLevel scl) {
+    std::cout << "nvalue_post\n";
+    if (home->failed())  return;
+    // WE HAVE TO ORDER ALL BDD VARS AVAILABLE SO FAR
+    variableorder(seq);
+
+    GecodeBdd d0 = BDDTOP;
+    int n = seq.size();
+    Iter::Ranges::Singleton idx(0, n - 1);
+    // select all variables in the sequence
+    GECODE_ME_FAIL(home, selview.eqI(home, idx));
+    // n values must be used (alldiff uses all |seq| values)
+    GECODE_ME_FAIL(home, unionview.cardinality(home, usedvalues, usedvalues));
+    // build the bdd for the range constraint
+    buildRange(home, seq, selview, unionview, scl, d0);
+    if (home->failed())  return;
+    GECODE_ES_FAIL(home, (Range<View0, View1>::post(home, seq, selview, unionview, d0)));
+  }
+
+
+  forceinline void 
+  nvalue_con(Space* home, const IntVarArgs& x, const BddVar& s, const BddVar& t, 
+	    int usedvalues, const BddVarArgs& allvars, SetConLevel scl) {
+    std::cout << "nvalue con\n";
+    BMI* mgr = s.manager();
+    int n = x.size();
+    BddView selview(s);
+    BddView unionview(t);
+
+    ViewArray<Gecode::Int::IntView> iv(home, n);
+    for (int i = 0; i < n; i++) {
+      iv[i] = x[i];
+    }
+    ViewArray<SingletonBddView> sbv(home, n);
+    for (int i = 0; i < n; i++) {
+      int rmin = std::min(unionview.mgr_min(), iv[i].min());
+      int rmax = std::max(unionview.mgr_max(), iv[i].max());
+      sbv[i].init(mgr, rmin, rmax, iv[i]);
+    }
+    
+    // do ordering
+    ViewArray<BddView> vars(home, allvars.size());
+    for (int i = allvars.size(); i--; ) {
+      vars[i] = allvars[i];
+    }
+
+    variableorder(vars, sbv);
+
+    switch(scl) {
+    default:
+      {
+	nvalue_post(home, sbv, selview, unionview, usedvalues, scl);
+      }
+    }
+  }
+
+  template <class View0, class View1>
+  forceinline void 
+  uses_post(Space* home, ViewArray<View0>& seq, View1 selview, View1 unionview, 
+	    ViewArray<View0>& seqprime, View1 selviewprime, View1 unionviewprime, 
+	    SetConLevel scl) {
+    std::cout << "usespost\n";
+    if (home->failed())  return;
+
+    GecodeBdd d0 = BDDTOP;
+    int n = seq.size();
+    Iter::Ranges::Singleton idx(0, n - 1);
+    // select all variables in the sequence
+    GECODE_ME_FAIL(home, selview.eqI(home, idx));
+
+    std::cout << "selection intersected ok\n";
+    // build the bdd for the range constraint
+    buildRange(home, seq, selview, unionview, scl, d0);
+    if (home->failed())  return;
+    std::cout << "first range built ok\n";
+
+    int m = seqprime.size();
+    Iter::Ranges::Singleton idx2(0, m - 1);
+    // select all variables in the sequence
+    GECODE_ME_FAIL(home, selviewprime.eqI(home, idx2));
+
+    std::cout << "second selection intersection ok\n";
+    // build the bdd for the range constraint
+
+    GecodeBdd e0 = BDDTOP;
+    buildRange(home, seqprime, selviewprime, unionviewprime, scl, e0);
+    if (home->failed())  return;
+
+    std::cout << "second range ok\n";
+    // unionviewprime is a subset of unionview
+    GecodeBdd r0 = BDDTOP;
+    int tab = std::max(unionview.table_width(), unionviewprime.table_width());
+    for (int i = 0; i < (int) tab; i++) {
+      r0 &= (unionviewprime.getbdd(i)) >>= (unionview.getbdd(i));
+    }
+    std::cout << "subset ok\n";
+
+//     std::cout << "join ranges\n";
+//     d0 &= e0;
+//     std::cout << "joining done\n";
+
+//     ViewArray<View0> intsetviews(home, 2 * n);
+//     for (int i = 0; i < n; i++) {
+//       intsetviews[i] = seq[i];
+//       intsetviews[i + n] = seqprime[i];
+//     }
+
+//     ViewArray<View1> setviews(home, 4);
+//     setviews[0] = selview;
+//     setviews[1] = unionview;
+//     setviews[2] = selviewprime;
+//     setviews[3] = unionviewprime;
+
+//     std::cout << "post\n";
+//     GECODE_ES_FAIL(home, (RangeTwice<View0, View1>::post(home, intsetviews, setviews, d0)));
+
+    
+   GECODE_ES_FAIL(home, (Range<View0, View1>::post(home, seq, selview, unionview, d0)));
+   GECODE_ES_FAIL(home, (Range<View0, View1>::post(home, seqprime, selviewprime, unionviewprime, e0)));
+   GECODE_ES_FAIL(home, (BinBddProp<View1>::post(home, unionview, unionviewprime, r0, scl)));
+       
+  }
+
+
+  forceinline void 
+  uses_con(Space* home, const IntVarArgs& x, const BddVar& s, const BddVar& t, 
+	   const IntVarArgs& y, const BddVar& u, const BddVar& v,
+	   SetConLevel scl) {
+    BMI* mgr = s.manager();
+    int n = x.size();
+    BddView selview(s);
+    BddView unionview(t);
+
+    ViewArray<Gecode::Int::IntView> iv(home, n);
+    for (int i = 0; i < n; i++) {
+      iv[i] = x[i];
+    }
+    ViewArray<SingletonBddView> sbv(home, n);
+    for (int i = 0; i < n; i++) {
+      int rmin = std::min(unionview.mgr_min(), iv[i].min());
+      int rmax = std::max(unionview.mgr_max(), iv[i].max());
+      sbv[i].init(mgr, rmin, rmax, iv[i]);
+    }
+    
+    BddView selviewprime(u);
+    BddView unionviewprime(v);
+    int m = y.size();
+    ViewArray<Gecode::Int::IntView> ivprime(home, m);
+    for (int i = 0; i < m; i++) {
+      ivprime[i] = y[i];
+    }
+    ViewArray<SingletonBddView> sbvprime(home, m);
+    for (int i = 0; i < m; i++) {
+      int rmin = std::min(unionviewprime.mgr_min(), ivprime[i].min());
+      int rmax = std::max(unionviewprime.mgr_max(), ivprime[i].max());
+      sbvprime[i].init(mgr, rmin, rmax, ivprime[i]);
+    }
+
+    switch(scl) {
+    default:
+      {
+	uses_post(home, sbv, selview, unionview, 
+		  sbvprime, selviewprime, unionviewprime,
+		  scl);
+      }
+    }
+  }
+
+}}
+
+// STATISTICS: bdd-prop

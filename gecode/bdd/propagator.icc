@@ -1,0 +1,189 @@
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2002
+ *     Guido Tack, 2004
+ *
+ *  Last modified:
+ *     $Date: 2006-08-05 14:04:22 +0000 (Sat, 05 Aug 2006) $ by $Author: pekczynski $
+ *     $Revision: 3522 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  /**
+   * \brief Inhomogeneous (n+2)-ary propagator
+   *
+   * Stores array of views of type \a View0 with propagation condition \a pc0
+   * and two views of type \a View1 with propagation condition \a pc1.
+   */
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  class MixNaryTwoPropagator : public Propagator {
+  protected:
+    /// Array of views of type View0
+    ViewArray<View0> x;
+    /// First view of type View1
+    View1 y;
+    /// Second view of type View1
+    View1 z;
+    /// Constructor for cloning \a p
+    MixNaryTwoPropagator(Space* home, bool share, MixNaryTwoPropagator& p);
+    /// Constructor for creation
+    MixNaryTwoPropagator(Space* home, ViewArray<View0>& x, View1 y, View1 z);
+    /// Constructor for rewriting \a p during cloning
+    MixNaryTwoPropagator(Space* home, bool share, Propagator& p,
+			   ViewArray<View0>& x, View1 y, View1 z);
+  public:
+    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    virtual PropCost cost(void) const;
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
+  };
+
+  /**
+   * \brief Inhomogeneous (2*n)-ary propagator
+   *
+   * Stores array of views of type \a View0 with propagation condition \a pc0
+   * and arry of views of type \a View1 with propagation condition \a pc1.
+   */
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  class MixNaryTwicePropagator : public Propagator {
+  protected:
+    /// Array of views with View0
+    ViewArray<View0> x;
+    /// Array of views with View1
+    ViewArray<View1> y;
+    /// Constructor for cloning \a p
+    MixNaryTwicePropagator(Space* home, bool share, 
+			     MixNaryTwicePropagator& p);
+    /// Constructor for creation
+    MixNaryTwicePropagator(Space* home, ViewArray<View0>& x, ViewArray<View1>& y);
+    /// Constructor for rewriting \a p during cloning
+    MixNaryTwicePropagator(Space* home, bool share, Propagator& p, 
+			     ViewArray<View0>& x, ViewArray<View1>& y);
+  public:
+    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    virtual PropCost cost(void) const;
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
+  };
+
+  //@}
+
+  /*
+   * InhomNaryTwo (two additional variables) propagators
+   *
+   */
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  MixNaryTwoPropagator<View0,pc0,View1,pc1>::MixNaryTwoPropagator
+  (Space* home, ViewArray<View0>& x0, View1 y0, View1 z0)
+    : Propagator(home), x(x0), y(y0), z(z0) {
+    x.subscribe(home,this,pc0);
+    y.subscribe(home,this,pc1);
+    z.subscribe(home,this,pc1);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  forceinline
+  MixNaryTwoPropagator<View0,pc0,View1,pc1>::MixNaryTwoPropagator
+  (Space* home, bool share, MixNaryTwoPropagator<View0,pc0,View1,pc1>& p)
+    : Propagator(home,share,p) {
+    x.update(home,share,p.x);
+    y.update(home,share,p.y);
+    z.update(home,share,p.z);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  forceinline
+  MixNaryTwoPropagator<View0,pc0,View1,pc1>::MixNaryTwoPropagator
+  (Space* home, bool share, Propagator& p, ViewArray<View0>& x0, View1 y0, View1 z0)
+    : Propagator(home,share,p) {
+    x.update(home,share,x0);
+    y.update(home,share,y0);
+    z.update(home,share,z0);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  PropCost
+  MixNaryTwoPropagator<View0,pc0,View1,pc1>::cost(void) const {
+    return cost_lo(x.size()+2, PC_LINEAR_LO);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  size_t
+  MixNaryTwoPropagator<View0,pc0,View1,pc1>::dispose(Space* home) {
+    if (!home->failed()) {
+      x.cancel(home,this,pc0);
+      y.cancel(home,this,pc1);
+      z.cancel(home,this,pc1);
+    }
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+
+  /*
+   * InhomNaryTwice (two arrays with two different views) propagators
+   *
+   */
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  MixNaryTwicePropagator<View0,pc0,View1,pc1>::MixNaryTwicePropagator
+  (Space* home, ViewArray<View0>& x0, ViewArray<View1>& y0)
+    : Propagator(home), x(x0), y(y0) {
+    x.subscribe(home, this, pc0);
+    y.subscribe(home, this, pc1);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  forceinline
+  MixNaryTwicePropagator<View0,pc0,View1,pc1>::MixNaryTwicePropagator
+  (Space* home, bool share, MixNaryTwicePropagator<View0,pc0,View1,pc1>& p)
+    : Propagator(home, share, p) {
+    x.update(home,share,p.x);
+    y.update(home,share,p.y);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  forceinline
+  MixNaryTwicePropagator<View0,pc0,View1,pc1>::MixNaryTwicePropagator
+  (Space* home, bool share, Propagator& p, ViewArray<View0>& x0, ViewArray<View1>&  y0)
+    : Propagator(home,share,p) {
+    x.update(home,share,x0);
+    y.update(home,share,y0);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  PropCost
+  MixNaryTwicePropagator<View0,pc0,View1,pc1>::cost(void) const {
+    return cost_lo(2 * x.size(), PC_LINEAR_HI);
+  }
+
+  template <class View0, PropCond pc0, class View1, PropCond pc1>
+  size_t
+  MixNaryTwicePropagator<View0,pc0,View1,pc1>::dispose(Space* home) {
+    if (!home->failed()) {
+      x.cancel(home,this,pc0);
+      y.cancel(home,this,pc1);
+    }
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+
+}
+
+// STATISTICS: bdd-other

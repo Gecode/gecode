@@ -1,0 +1,626 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2007-05-11 15:34:01 +0000 (Fr, 11 Mai 2007) $ by $Author: pekczynski $
+ *     $Revision: 4588 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Bdd {
+  template <class View>
+  forceinline GecodeBdd 
+  NaryBddProp<View>::bnd_phi(BMI* mgr, int j) {
+    // std::cout << "bnd_phi\n";
+    /// \f$ B(c)\f$
+    if (j == -1) {
+      // std::cout << "return d\n";
+      return d;
+    }
+
+    /// \f$ D_j \f$
+    GecodeBdd cur = x[j].bdd_domain();
+    /// \f$ \phi_{j - 1}\f$
+    GecodeBdd phires = bnd_phi(mgr, j - 1);
+    /// \f$ \exists_{V(D_j)} D_j \wedge phi_{j - 1}\f$
+    // std::cout << "eliminate on phi\n";
+
+    // strange
+    if (!mgr->ctrue(cur)) {    
+      GecodeBdd outvars = bdd_vars(mgr, cur);
+      mgr->existquant(cur, phires, outvars);
+    } else {
+      cur &= phires;
+    }
+    return cur;
+  }
+
+  // used in eeq propagation with n*n and-abstractions
+  template <class View>
+  forceinline GecodeBdd 
+  NaryBddProp<View>::phi(BMI* mgr, int i, int j) {
+    /// \f$ B(c)\f$
+    if (j == -1) {
+      return d;
+    }
+    /// \f$ phi_i^{j - 1}\f$
+    // 
+    if (j == i) {
+      return phi(mgr, i, j - 1);
+    }
+
+    GecodeBdd cur = BDDTOP;
+    /// \f$ D_j \f$
+    x[j].dom_and(cur);
+    /// \f$ \phi_i^{j - 1}\f$
+    cur &= phi(mgr, i, j - 1);
+    /// \f$ \exists_{V(x_j)} D_j \wedge phi_i^{j - 1}\f$
+    int start = x[j].offset();
+    int end   = start + x[j].table_width() - 1;
+    // std::cout << "eliminate on phi\n";
+    return mgr->eliminate(cur, start, end);
+  }
+
+  template <class View>
+  forceinline
+  NaryBddProp<View>::NaryBddProp(Space* home, ViewArray<View>& x0, GecodeBdd& d0, SetConLevel scl0)
+    : Propagator(home), x(x0), d(d0), scl(scl0) {
+    force(home);
+    for (int i = x.size(); i--;) {
+      x[i].subscribe(home, this, PC_BDD_DOM);
+    }
+  }
+
+  template <class View>
+  forceinline
+  NaryBddProp<View>::NaryBddProp(Space* home, bool share, NaryBddProp& p)
+    : Propagator(home,share,p) {
+    d = p.d;
+    scl = p.scl;
+    x.update(home,share,p.x);
+  }
+  
+  template <class View>
+  forceinline PropCost
+  NaryBddProp<View>::cost(void) const {
+//     if (x.size() == 1) {
+//       // std::cout << "unary low card cost\n";
+//       return PC_UNARY_LO;
+//     }
+    return PC_CRAZY_HI;
+  }
+  
+  template <class View>
+  size_t
+  NaryBddProp<View>::dispose(Space* home) {
+    unforce(home);
+    // std::cout << "dispose propagator\n";
+    if (!home->failed()) {
+      for (int i = x.size(); i--;) {
+	x[i].cancel(home, this, PC_BDD_DOM);
+      }
+    }
+    BMI* mgr = x[0].manager();
+    mgr->dispose(d);
+    Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class View>
+  forceinline ExecStatus
+  NaryBddProp<View>::post(Space* home, ViewArray<View>& x, GecodeBdd& d, SetConLevel scl) {
+    (void) new (home) NaryBddProp(home,x, d, scl);
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline Actor*
+  NaryBddProp<View>::copy(Space* home, bool share) {
+    return new (home) NaryBddProp(home,share,*this);
+  }
+
+  template <class View>
+  forceinline ExecStatus
+  NaryBddProp<View>::propagate_ddc(Space* home) {
+    // std::cout << "propagate_ddc\n";
+
+    BMI* mgr = x[0].manager();
+    bool assigned = true;
+    int n = x.size();
+
+    // for (int i = x.size(); i--; ) {
+//       assigned &= x[i].assigned();
+//     }
+
+    // std::cout << "all assigned = " << assigned << "\n";
+    
+    // if we do not check for assignment
+    // quantification tries to quantify values
+    // not in the domain --> check that
+
+    ExecStatus es = ES_OK;
+//     if (!assigned) {
+    // std::cout << "divide " << 0 << ".." << n - 1<< "\n";
+      es = divide_conquer(home, mgr, d, 0, n - 1);
+      if (es == ES_FAILED) {
+	// std::cout << "propagation failed\n";
+	return es;
+      }
+//     } else {
+//       GecodeBdd xs = BDDTOP;
+//       for (int i = 0; i < n; i++) {
+// 	x[i].dom_and(xs);
+//       }
+//       if ( (!d & xs) != BDDBOT) {
+// 	return ES_FAILED;
+//       }
+//     }
+
+    assigned = true;
+    for (int i = x.size(); i--; ) {
+      assigned &= x[i].assigned();
+    }
+    if (assigned) {
+      // std::cout << "SUBSUMED\n";
+      return ES_SUBSUMED(this, home);
+    }
+
+    // std::cout << "FIX\n";
+    return ES_FIX;
+  }
+
+  template <class View>
+  forceinline ExecStatus
+  NaryBddProp<View>::propagate_eeq(Space* home) {
+    // std::cout << "propagate_eeq\n";
+
+    BMI* mgr = x[0].manager();
+
+//     bool assigned = true;
+//     bdd xs = BDDTOP;
+//     for (int i = x.size(); i--;) {
+//       x[i].dom_and(xs);
+//       assigned &= x[i].assigned();
+//     }
+
+//     d &= xs;
+//     if (mgr->cfalse(d)) {
+//       return ES_FAILED;
+//     }
+
+//     if (assigned) {
+//       return ES_SUBSUMED(this, home);
+//     }
+
+
+    int n = x.size();
+    for (int i = 0; i < n; i++) {
+      ModEvent me;
+      GecodeBdd xphi = phi(mgr, i, n - 1);
+      me = x[i].tell_formula(home, xphi);
+      if (me_failed(me)) {
+	return ES_FAILED;
+      }
+    }
+
+
+//     // std::cout << "again test subsumption\n";
+//     assigned = true;
+//     for (int i = x.size(); i--; ) {
+//       assigned &= x[i].assigned();
+//       // std::cout << x[i] << " assigned = " << assigned << "\n";
+//     }
+
+//     d &= xs;
+//     if (mgr->cfalse(d)) {
+//       return ES_FAILED;
+//     }
+//     if (assigned) {
+//       return ES_SUBSUMED(this, home);
+//     }
+
+    return ES_FIX;
+  }
+
+  template <class View>
+  forceinline ExecStatus
+  NaryBddProp<View>::propagate_bnd_eeq(Space* home) {
+    BMI* mgr = x[0].manager();
+
+    int n = x.size();
+//     // ensure that domains are sticks
+//     for (int i = n; i--; ) {
+//       GecodeBdd dom  = x[i].bdd_domain();
+//       GecodeBdd hull = BDDTOP;
+    //   conv_hull(mgr, dom, hull);
+//       ModEvent me = x[i].tell_formula(home, hull);
+//       if (me_failed(me)) {
+// 	std::cout << "not convex hull\n";
+// 	return ES_FAILED;
+//       }
+//     }
+
+
+    // compute \f$\phi_n\f$
+    GecodeBdd xphi_n = bnd_phi(mgr, n - 1);
+
+    if (xphi_n == BDDBOT) {
+      std::cout << "xphi_n = bot\n";
+      return ES_FAILED;
+    }
+
+    // std::cout << "xphi_n = " << xphi_n << "\n";
+    // mgr->bdd2dot(xphi_n);
+
+    //  compute the fixed variables of \f$\phi_n\f$, 
+    //  \f$\lbracket\phi_n\rbracketf$, 
+    GecodeBdd conv_hull_xphi = BDDTOP;
+    conv_hull(mgr, xphi_n, conv_hull_xphi);
+    // std::cout << "conv_xphi_n = " << conv_hull_xphi << "\n";
+    // mgr->bdd2dot(conv_hull_xphi);
+
+    // project on x_i
+    for (int i = 0; i < n; i++) {
+      ModEvent me;
+
+      int s = 0;     
+      for (int j = 0; j < n; j++) {
+	if (j != i) {
+	  s += x[j].table_width();
+	}
+      }
+      // collect all bdd nodes that have to be projected out
+      int c = 0;     
+      GECODE_AUTOARRAY(int, var, s);
+      for (int j = 0; j < n; j++) {
+	if (j != i) {
+	  int o = x[j].offset();
+	  int w = x[j].table_width();
+	  for (int k = o; k < o + w; k++, c++) {
+	    var[c] = k;
+	  }
+	}
+      }
+
+      // me = x[i].tell_project(home, conv_hull_xphi, &var[0], s);
+      GecodeBdd proj = mgr->eliminate(conv_hull_xphi, &var[0], s);
+      me = x[i].tell_formula(home, proj);
+      if (me_failed(me)) {
+	std::cout << "tell formula failed\n";
+	return ES_FAILED;
+      }
+    }
+
+    // after propgation update B(C)
+    // ensures that the fixed parts of all variables have been projected out
+    if (!mgr->ctrue(xphi_n)) {
+      // strongly depends on update rule
+      d = xphi_n;
+      
+
+// //       GecodeBdd hull_proj = conv_project(mgr, xphi_n);
+// //       d = mgr->eliminate(d, hull_proj);
+    }
+    // std::cout << "new constraint description\n";
+//     mgr->bdd2dot(d);
+
+
+    bool assigned = true;
+    for (int i = n; i--; ) {
+      assigned &= x[i].assigned();
+    }
+
+    if (assigned) {
+      std::cout << "ES_SUBSUMED\n";
+      return ES_SUBSUMED(this, home);
+    }
+
+    std::cout << "ES_FIX\n";
+    return ES_FIX;
+  }
+
+  template <class View>
+  forceinline ExecStatus
+  NaryBddProp<View>::propagate_bnd_ddc(Space* home) {
+    // std::cout << "propagate_ddc\n";
+
+    BMI* mgr = x[0].manager();
+    bool assigned = true;
+    int n = x.size();
+
+    // ensure that domains are sticks
+    // std::cout << "ensure that domains are sticks...";
+
+//     for (int i = n; i--; ) {
+//       GecodeBdd dom  = x[i].bdd_domain();
+//       GecodeBdd hull = BDDTOP;
+    //   conv_hull(mgr, dom, hull);
+//       ModEvent me = x[i].replace_formula(home, hull);
+//       if (me_failed(me)) {
+// 	return ES_FAILED;
+//       }
+//     }
+
+    // std::cout << "DONE\n";
+
+      // projecting fixed domain parts out of B(c)
+//       GecodeBdd fixed = BDDTOP;
+//       GecodeBdd xs = BDDTOP;
+//       for (int i = n; i--; ) {
+// 	GecodeBdd dom = x[i].bdd_domain();
+// // 	std::cout << "DOM(x["<<i<<"])="<< dom << "\n";
+// 	GecodeBdd fp  = BDDTOP;
+    //  conv_project(mgr, dom, fp);
+// // 	std::cout << "FP(x["<<i<<"])="<< fp << "\n";
+// 	fixed &= fp;
+// 	x[i].dom_and(xs);
+//       }
+
+//       if (!mgr->ctrue(fixed)) {
+// 	mgr->existquant(d, xs, fixed);
+//       }
+
+
+
+    // std::cout << "divide_conquer_conv...";
+    ExecStatus es = ES_OK;
+//     std::cout << "starting with descrip\n";
+//     mgr->bdd2dot(d);
+
+//     if (n == 1) {
+//       std::cout << "new unary conjunction\n";
+//       // IMPORTANT: in the unary case (bounds consistent)
+//       // where we have propagators instead of direct tells
+//       // divide_and_conquer does not do the domain conjunction for us 
+//       d &= x[0].bdd_domain();
+//     }
+
+//     es = divide_conquer_conv(home, mgr, d, 0, n - 1);
+//     es = divide_conquer(home, mgr, d, 0, n - 1);
+    if (es == ES_FAILED) {
+      // std::cout << "ES_FAILED\n";
+      return es;
+    }
+    // std::cout << "DONE\n";
+
+
+    GecodeBdd fixed = BDDTOP;
+    for (int i = 0; i < n; i++) {
+      GecodeBdd dom = x[i].bdd_domain();
+      GecodeBdd fp  = BDDTOP;
+      conv_project(mgr, dom, fp);
+      fixed &= fp;
+      mgr->eliminate(d, fp);
+    }
+
+    assigned = true;
+    for (int i = n; i--; ) {
+      assigned &= x[i].assigned();
+    }
+    if (assigned) {
+      // std::cout << "SUBSUMED\n";
+      return ES_SUBSUMED(this, home);
+    } 
+
+    // std::cout << "FIX\n";
+    return ES_FIX;
+  }
+
+
+//   forceinline ExecStatus
+//   NaryBddProp<View>::propagate_split(Space* home) {
+//     BMI* mgr = x[0].manager();
+//     bool assigned = true;
+//     int n = x.size();
+//     ExecStatus es = ES_OK;
+
+//     // computing phi
+//     GecodeBdd phi_n = d;
+//     for (int i = n; i--; ) {
+//       GecodeBdd bnd = x[i].bdd_bounds();
+//       GecodeBdd proj = BDDTOP;
+  //     conv_project(mgr, bnd, proj);
+//       mgr->existquant(phi_n, bnd, proj);
+//     }
+   
+//     // using divide and conquer to compute the remainder part of the variables
+//     es = divide_conquer_split(home, mgr, phi_n, 0, n - 1);
+//     if (es == ES_FAILED) {
+//       return ES_FAILED;
+//     }
+
+//     // update the description
+//     d = phi_n;
+
+//     assigned = true;
+//     for (int i = n; i--; ) {
+//       assigned &= x[i].assigned();
+//     }
+//     if (assigned) {
+//       // std::cout << "SUBSUMED\n";
+//       return ES_SUBSUMED(this, home);
+//     } 
+
+//     // std::cout << "FIX\n";
+//     return ES_FIX;
+
+//   }
+
+
+//   forceinline ExecStatus
+//   NaryBddProp<View>::propagate_card(Space* home) {
+//     // std::cout << "propagate card\n";
+//     BMI* mgr = x[0].manager();
+//     bool assigned = true;
+//     int n = x.size();
+//     ExecStatus es = ES_OK;
+
+// //     // computing phi
+// //     GecodeBdd phi_n = d;
+// //     for (int i = n; i--; ) {
+// //       GecodeBdd bnd = x[i].bdd_bounds();
+// //       phi_n &= bnd;
+// //       GecodeBdd proj = BDDTOP;
+  // //     conv_project(mgr, bnd, proj);
+// //       mgr->eliminate(phi_n, proj);
+// //     }
+
+//     // computing phi
+//     GecodeBdd phi_n = d;
+//     for (int i = n; i--; ) {
+//       GecodeBdd bnd = x[i].bdd_bounds();
+//       GecodeBdd proj = BDDTOP;
+  //     conv_project(mgr, bnd, proj);
+//       mgr->existquant(phi_n, bnd, proj);
+//     }
+    
+//     // using divide and conquer to compute the remainder part of the variables
+//     es = divide_conquer_split_card(home, mgr, phi_n, 0, n - 1);
+//     if (es == ES_FAILED) {
+//       return ES_FAILED;
+//     }
+
+//     // update the description
+//     d = phi_n;
+
+// //     for (int i = n; i--; ) {
+// //       GecodeBdd rem = x[i].bdd_remain();
+// //       GecodeBdd conv = BDDTOP;
+  // //     conv_hull(mgr, rem, conv);
+// //       ModEvent me = x[i].tell_bounds(home, conv);
+// //       if (me_failed(me)) {
+// // 	return ES_FAILED;
+// //       }
+// //       GecodeBdd bnd = x[i].bdd_bounds();
+// //       GecodeBdd proj = BDDTOP;
+  // //     conv_project(mgr, bnd, proj);
+// //       rem = mgr->eliminate(rem, proj);
+// //       unsigned int off = x[i].offset();
+// //       unsigned int range = x[i].table_width();
+// //       GecodeBdd card = card_bounds(mgr, rem, bnd, off, range);
+// //       me = x[i].tell_remain(home, card);
+// //       if (me_failed(me)) {
+// // 	return ES_FAILED;
+// //       }
+// //     }
+
+//     assigned = true;
+//     for (int i = n; i--; ) {
+//       assigned &= x[i].assigned();
+//     }
+//     if (assigned) {
+//       // std::cout << "SUBSUMED\n";
+//       return ES_SUBSUMED(this, home);
+//     } 
+
+//     // std::cout << "FIX\n";
+//     return ES_FIX;
+
+//   }
+
+
+//   forceinline ExecStatus
+//   NaryBddProp<View>::propagate_lex(Space* home) {
+//     // std::cout << "propagate card\n";
+//     BMI* mgr = x[0].manager();
+//     bool assigned = true;
+//     int n = x.size();
+//     ExecStatus es = ES_OK;
+
+//     // computing phi
+//     GecodeBdd phi_n = d;
+//     for (int i = n; i--;) {
+//       GecodeBdd bnd = x[i].bdd_bounds();
+//       GecodeBdd proj = BDDTOP;
+  //     conv_project(mgr, bnd, proj);
+//       mgr->existquant(phi_n, bnd, proj);
+//     }
+
+
+//     // using divide and conquer to compute the remainder part of the variables
+//     es = divide_conquer_split_lex(home, mgr, phi_n, 0, n - 1);
+//     if (es == ES_FAILED) {
+//       return ES_FAILED;
+//     }
+
+//     // update the description
+//     d = phi_n;
+
+//     assigned = true;
+//     for (int i = n; i--; ) {
+//       assigned &= x[i].assigned();
+//     }
+//     if (assigned) {
+//       // std::cout << "SUBSUMED\n";
+//       return ES_SUBSUMED(this, home);
+//     } 
+
+//     // std::cout << "FIX\n";
+//     return ES_FIX;
+
+//   }
+
+  template <class View>
+  forceinline ExecStatus 
+  NaryBddProp<View>::propagate(Space* home) {
+
+
+    // std::cerr << "prop-n\t";
+//     std::cerr << x[0] << "\n";
+    BMI* mgr   = x[0].manager();
+    bool assigned = true;
+    int n = x.size();
+    
+    ExecStatus es = ES_OK;
+    if (n == 1) {
+      // std::cerr << "tell direct\n";
+      GECODE_ME_CHECK(x[0].tell_formula(home, d));
+    } else {
+      // std::cerr << "xprop\n";
+//       std::cout << "XPROP: ";
+//       for (int k = 0; k < x.size(); k++) {
+// 	std::cout << x[k] << "["<<x[k].offset() << "] ";
+//       }
+//       std::cout << "\n";
+
+//       std::cout << "check div conquer...";
+	GECODE_ES_CHECK(es = divide_conquer(home, mgr, d, 0, n - 1));
+//       std::cout << "DONE\n";
+    }
+
+    assigned = true;
+    for (int i = x.size(); i--; ) {
+      assigned &= x[i].assigned();
+    }
+
+//     std::cout << "AFTERXPROP: ";
+//     for (int k = 0; k < x.size(); k++) {
+//       std::cout << x[k] << "["<<x[k].offset() << "] ";
+//     }
+//     std::cout << "\n";
+
+    // std::cerr << "end prop-n\t";
+    if (assigned) {
+      return ES_SUBSUMED(this, home);
+    }
+
+    return ES_FIX;
+  }
+
+
+
+}}
+
+// STATISTICS: bdd-prop

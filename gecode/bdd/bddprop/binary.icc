@@ -1,0 +1,267 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-09-04 19:25:19 +0000 (Mon, 04 Sep 2006) $ by $Author: pekczynski $
+ *     $Revision: 3585 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Bdd {
+
+  template <class View>
+  forceinline
+  BinBddProp<View>::BinBddProp(Space* home, View x0, View y0, GecodeBdd& d0, SetConLevel scl0)
+    : Propagator(home), x(x0), y(y0), d(d0), scl(scl0) {
+    force(home);
+    x.subscribe(home, this, PC_BDD_DOM);
+    y.subscribe(home, this, PC_BDD_DOM);
+  }
+
+  template <class View>
+  forceinline
+  BinBddProp<View>::BinBddProp(Space* home, bool share, BinBddProp& p)
+    : Propagator(home,share,p) {
+    d = p.d;
+    scl = p.scl;
+    x.update(home, share, p.x);
+    y.update(home, share, p.y);
+  }
+  
+  template <class View>
+  forceinline PropCost
+  BinBddProp<View>::cost(void) const {
+    BMI* mgr = x.manager();
+    if (mgr->ctrue(x.bdd_domain()) || mgr->ctrue(d)) {
+      return PC_LINEAR_LO;
+    } else {
+      return PC_QUADRATIC_HI;
+    }
+  }
+  
+  template <class View>
+  size_t
+  BinBddProp<View>::dispose(Space* home) {
+    // std::cerr << "dispose propagator\n";
+    unforce(home);
+    if (!home->failed()) {
+      x.cancel(home, this, PC_BDD_DOM);
+      y.cancel(home, this, PC_BDD_DOM);
+    }
+    BMI* mgr = x.manager();
+    mgr->dispose(d);
+    Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class View>
+  forceinline ExecStatus
+  BinBddProp<View>::post(Space* home, View x0, View y0, GecodeBdd& d0, SetConLevel scl) {
+    (void) new (home) BinBddProp(home, x0, y0, d0, scl);
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline Actor*
+  BinBddProp<View>::copy(Space* home, bool share) {
+    return new (home) BinBddProp(home, share, *this);
+  }
+
+  template <class View>
+  forceinline ExecStatus 
+  BinBddProp<View>::propagate(Space* home) {
+    BMI* mgr   = x.manager();
+    bool assigned = true;
+    {
+      GecodeBdd dom = y.bdd_domain();
+      int s = y.offset();
+      int w = s + y.table_width() - 1;
+      mgr->existquant(dom, d, s, w);
+      ModEvent me = x.tell_formula(home, dom);
+      GECODE_ME_CHECK(me);
+    }
+    {
+      GecodeBdd dom = x.bdd_domain();
+      int s = x.offset();
+      int w = s + x.table_width() - 1;
+      mgr->existquant(dom, d, s, w);
+      ModEvent me = y.tell_formula(home, dom);
+      GECODE_ME_CHECK(me);
+    }
+
+    assigned = true;
+    assigned &= (x.assigned() && y.assigned());
+
+    if (assigned) {
+      return ES_SUBSUMED(this, home);
+    }
+    return ES_FIX;
+  }
+
+
+
+  template <class View>
+  forceinline
+  BinRelDisj<View>::BinRelDisj(Space* home, View x0, View y0, GecodeBdd& d0, SetConLevel scl0)
+    : BinBddProp<View>(home, x0, y0, d0, scl0) { }
+
+  template <class View>
+  forceinline
+  BinRelDisj<View>::BinRelDisj(Space* home, bool share, BinRelDisj& p)
+    : BinBddProp<View>(home,share,p) { }
+  
+
+  template <class View>
+  size_t
+  BinRelDisj<View>::dispose(Space* home) {
+    // std::cerr << "dispose propagator\n";
+//     if (!home->failed()) {
+//       x.cancel(home, this, PC_BDD_DOM);
+//       y.cancel(home, this, PC_BDD_DOM);
+//     }
+//     BMI* mgr = x.manager();
+//     mgr->dispose(d);
+    BinBddProp<View>::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class View>
+  forceinline ExecStatus
+  BinRelDisj<View>::post(Space* home, View x0, View y0, GecodeBdd& d0, SetConLevel scl) {
+    (void) new (home) BinRelDisj(home, x0, y0, d0, scl);
+    return ES_OK;
+  }
+
+  template <class View>
+  forceinline Actor*
+  BinRelDisj<View>::copy(Space* home, bool share) {
+    return new (home) BinRelDisj(home, share, *this);
+  }
+
+  template <class View>
+  forceinline ExecStatus 
+  BinRelDisj<View>::propagate(Space* home) {
+    // std::cerr << "binreldisj\n";
+    BMI* mgr   = x.manager();
+    bool assigned = true;
+
+
+//     std::cerr <<  x << "\t ";
+//     std::cerr << x.mgr_min() << ".." << x.mgr_max() << "\t";
+//     std::cerr << x.offset() << ".." << x.table_width() << "\n";
+//     std::cerr <<  y << "\t";
+//     std::cerr << y.mgr_min() << ".." << y.mgr_max() << "\t";
+//     std::cerr << y.offset() << ".." << y.table_width() << "\n";
+
+    if (x.assigned()) {
+      std::cerr << "xass\t";
+      Set::GlbRanges<View> glbx(x);
+      if (y.assigned()) {
+      std::cerr << "yass\t";
+	Set::GlbRanges<View> glby(y);
+	Gecode::Iter::Ranges::Inter<Set::GlbRanges<View>, Set::GlbRanges<View> > 
+	  inter(glbx, glby);
+	if (inter())
+	  return ES_FAILED;
+	std::cerr << "subsumed x y det\n";
+	return ES_SUBSUMED(this, home);
+      }
+      ModEvent me = y.excludeI(home, glbx);
+      std::cerr << "DONE\n";
+      GECODE_ME_CHECK(me);
+      return ES_SUBSUMED(this, home);
+    }
+
+    if (y.assigned()) {
+      // std::cerr << "yass \t";
+      Set::GlbRanges<View> glby(y);
+      ModEvent me = x.excludeI(home, glby);
+      GECODE_ME_CHECK(me);
+      // std::cerr << "DONE\n";
+      // return ES_SUBSUMED(this, home);
+    }
+
+    // std::cerr << "not ass \t";
+    Set::LubRanges<View> lubx(x);
+    Set::LubRanges<View> luby(y);
+    Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+      inter(lubx, luby);
+    Gecode::Iter::Ranges::ToValues<
+      Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+      > ival(inter);
+
+    Gecode::Iter::Ranges::ValCache<
+      Gecode::Iter::Ranges::ToValues<
+         Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+      >
+      > cache(ival);
+
+    if (!cache()) {
+      // std::cerr << "no post BRT_NQ needed\n";
+      return ES_SUBSUMED(this, home);
+    } else {
+      d = BDDTOP;
+      cache.last();
+      for (; cache(); --cache) {
+	int v = cache.min();
+	// std::cerr << v << " ";
+	int xmin = x.mgr_min();
+	int ymin = y.mgr_min();
+	d &= (!(x.getbdd(v - xmin) & y.getbdd(v - ymin)));
+      }
+      // std::cerr << "\n";
+    }
+
+    {
+      GecodeBdd dom = y.bdd_domain();
+      int s = y.offset();
+      int w = s + y.table_width() - 1;
+      mgr->existquant(dom, d, s, w);
+      ModEvent me = x.tell_formula(home, dom);
+//       if (me_failed(me)) {
+// 	// std::cerr << "x-tell FAILED\n";
+//       }
+      GECODE_ME_CHECK(me);
+    }
+    {
+      GecodeBdd dom = x.bdd_domain();
+      int s = x.offset();
+      int w = s + x.table_width() - 1;
+      mgr->existquant(dom, d, s, w);
+      ModEvent me = y.tell_formula(home, dom);
+//       if (me_failed(me)) {
+// 	// std::cerr << "y-tell FAILED\n";
+//       }
+      GECODE_ME_CHECK(me);
+    }
+
+    assigned = true;
+    assigned &= (x.assigned() && y.assigned());
+
+    // std::cerr << "AFTERBINPROP: " << x << "("<<x.offset()<<") ";
+    // std::cerr << y << "("<< y.offset()<<") \n";
+    // std::cerr << "end prop-bin\t";
+    if (assigned) {
+      // std::cerr << "subsumed\n";
+      return ES_SUBSUMED(this, home);
+    }
+
+    return ES_FIX;
+  }
+
+
+}}
+
+// STATISTICS: bdd-prop

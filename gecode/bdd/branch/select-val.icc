@@ -1,0 +1,197 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-10-02 06:26:15 +0000 (Mon, 02 Oct 2006) $ by $Author: pekczynski $
+ *     $Revision: 3711 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Bdd { namespace Branch {
+
+  template <bool exclude>
+  forceinline IntSet
+  ValMin<exclude>::val(const Space*, BddView x) {
+//     std::cout << "************* val  *************\n";
+//     DomValues<BddView> domt(x);
+//     while(domt()) {
+//       std::cout << domt.val() << " ";
+//       ++domt;
+//     }
+//     std::cout << "\n";
+    DomValues<BddView> dom(x);
+//     std::cout << "returning: ";
+//     std::cout << "dom.val() =" << dom.val() << "\n";
+//     is = IntSetRanges(dom.val());
+//     IntSetRanges t;
+//     t = IntSetRanges(dom.val());
+//     std::cout << "returning\n";
+//     while(t()) {
+//       std::cout << t.min() <<".." << t.max() << ",";
+//       ++t;
+//     }
+//     std::cout << "\n";
+    return dom.val();
+  }
+
+  template <bool exclude>
+  forceinline ModEvent
+  ValMin<exclude>::tell(Space* home, unsigned int a, BddView x, IntSet v) {
+//     std::cout << "telling on: " << x << "\n";
+//     IntSetRanges ir(v);
+//     while (ir()) {
+//       std::cout << ir.min() << ".." << ir.max() << ", ";
+//       ++ir;
+//     }
+    ModEvent me = ME_BDD_NONE;
+    // try to exclude first
+    if (a == (int) exclude) {
+      if (v.size() == 1) {
+	// std::cout << "v = " << v << " " ;
+	// std::cout << "tell eq..";
+	me = x.eq(home, v.min(), v.max());
+	// std::cout << "me = " << me << "DONE\n";
+      } else {
+	IntSetRanges ir(v);
+	// std::cout << "v = " << v << " " ;
+	// std::cout << "tell eq..";
+	me = x.eqI(home,ir);
+	// std::cout << "me = " << me << "DONE\n";
+      }
+    } else {
+
+      if (v.size() == 1) {
+	// std::cout << "v = " << v << " " ;
+	// std::cout << "tell nq..";
+	me = x.nq(home, v.min(), v.max());
+	// std::cout << "me = " << me << "DONE\n";
+      } else {
+	IntSetRanges ir(v);
+	// std::cout << "v = " << v << " " ;
+	// std::cout << "tell nq..";
+	me = x.nqI(home, ir);
+	// std::cout << "me = " << me << "DONE\n";
+      }
+    }
+    return me;
+//     return (a == 0) ?  x.eq(home,ir) : x.nq(home,ir);
+  }
+
+  template <bool exclude>
+  forceinline IntSet
+  ValMax<exclude>::val(const Space*, BddView x) const{
+    // std::cout << "max val \n";
+    IntSetRanges ir = IntSet::empty;
+    DomValues<BddView> dom(x);
+    while (dom()) {
+      IntSetRanges d(dom.val());
+      ir = d;
+      ++dom;
+    }
+    const IntSet is(ir);
+    return is;
+  }
+
+  template <bool exclude>
+  forceinline ModEvent
+  ValMax<exclude>::tell(Space* home, unsigned int a, BddView x, IntSet v) {
+    // std::cout << "telling max\n";
+    IntSetRanges ir(v);
+    return (a == (int) exclude) ? x.eqI(home,ir) : x.nqI(home,ir);
+  }
+
+  template <bool exclude>
+  forceinline int
+  ValMinUnknown<exclude>::val(const Space*, BddView x) const {
+//     std::cout << "x range?" << x.manager()->leaf(x.bdd_domain()) << " assigned? " << x.assigned() << "\n";
+    UnknownValues<BddView> unknown(x);
+    int v = unknown.val();
+//     std::cout << "val min un select: " << v  << "\n";
+    return v;
+  }
+
+  template <bool exclude>
+  forceinline ModEvent
+  ValMinUnknown<exclude>::tell(Space* home, unsigned int a, BddView x, int v) {
+    return (a == (int) exclude) ? x.include(home,v) : x.exclude(home,v);
+  }
+
+  template <bool exclude>
+  forceinline int
+  ValMaxUnknown<exclude>::val(const Space*, BddView x) const {
+    int maxElem = 0;
+    Set::UnknownRanges<BddView> unknown(x);
+    while (unknown()) {
+      maxElem = unknown.max();
+      ++unknown;
+    }
+    return maxElem;
+  }
+
+  template <bool exclude>
+  forceinline ModEvent
+  ValMaxUnknown<exclude>::tell(Space* home, unsigned int a, BddView x, int v) {
+    return (a == (int) exclude) ? x.include(home,v) : x.exclude(home,v);
+  }
+
+//   template <class SelView>
+//   static void
+//   create(Space* home, ViewArray<BddView>& x, BddBvalSel vals) {
+//     switch (vals) {
+//     case SETBVAL_MAX:
+//       (void) new (home) ViewValBranching<BddView,int,SelView,ValMax>(home,x);
+//       break;
+//     default:
+//       throw UnknownBranching("Int::branch");
+//     }
+//   }
+
+  template <class SelView>
+  static void
+  create(Space* home, ViewArray<BddView>& x, BddBvalSel vals) {
+    // std::cout << "create branch \n";
+    switch (vals) {
+    case BDD_BVAL_MIN:
+      (void) new (home) ViewValBranching<BddView,const IntSet,SelView,ValMin<false> >(home,x);
+      break;
+    case BDD_BVAL_MIN_EX_FIRST:
+      (void) new (home) ViewValBranching<BddView,const IntSet,SelView,ValMin<true> >(home,x);
+      break;
+    case BDD_BVAL_MAX:
+      (void) new (home) ViewValBranching<BddView,const IntSet,SelView,ValMax<false> >(home,x);
+      break;
+    case BDD_BVAL_MAX_EX_FIRST:
+      (void) new (home) ViewValBranching<BddView,const IntSet,SelView,ValMax<true> >(home,x);
+      break;
+    case BDD_BVAL_MIN_UNKNOWN:
+      (void) new (home) ViewValBranching<BddView,int,SelView,ValMinUnknown<false> >(home,x);
+      break;
+    case BDD_BVAL_MIN_UNKNOWN_EX_FIRST:
+      (void) new (home) ViewValBranching<BddView,int,SelView,ValMinUnknown<true> >(home,x);
+      break;
+    case BDD_BVAL_MAX_UNKNOWN:
+      (void) new (home) ViewValBranching<BddView,int,SelView,ValMaxUnknown<false> >(home,x);
+      break;
+    case BDD_BVAL_MAX_UNKNOWN_EX_FIRST:
+      (void) new (home) ViewValBranching<BddView,int,SelView,ValMaxUnknown<true> >(home,x);
+      break;
+//     default:
+//       throw UnknownBranching("Int::branch");
+    }
+  }
+
+}}}
+
+// STATISTICS: set-branch

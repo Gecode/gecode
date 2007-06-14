@@ -1,0 +1,1583 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2007-05-11 15:34:01 +0000 (Fr, 11 Mai 2007) $ by $Author: pekczynski $
+ *     $Revision: 4588 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { 
+
+  namespace Bdd {
+
+    /**
+     * \brief %Bdd view for bdd set variables
+     * \ingroup TaskActorSetView
+     */
+
+    class BddView : public VariableViewBase<BddVarImp> {
+    protected:
+      using VariableViewBase<BddVarImp>::var;
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      BddView(void);
+      /// Initialize from set variable \a x
+      BddView(const BddVar& x);
+      //@}
+
+      /// \name Value access
+      //@{
+      /// Return minimum cardinality
+      unsigned int cardMin(void) const;
+      /// Return maximum cardinality
+      unsigned int cardMax(void) const;
+      /// Return minimum of the least upper bound
+      int lubMin(void) const;
+      /// Return maximum of the least upper bound
+      int lubMax(void) const;
+      /// Return n-th smallest element of the least upper bound
+      int lubMinN(int n) const;
+      /// Return the n-th largest element of the least upper bound
+      int lubMaxN(int n) const;
+      /// Return minimum of the greatest lower bound
+      int glbMin(void) const;
+      /// Return maximum of the greatest lower bound
+      int glbMax(void) const;
+      /// Return the number of elements in the greatest lower bound
+      unsigned int glbSize(void) const;
+      /// Return the number of elements in the least upper bound
+      unsigned int lubSize(void) const;
+      /// Return the number of unknown elements
+      unsigned int unknownSize(void) const;
+      //@}
+
+      /// \name View information
+      //@{
+      /// Return the offset in the bdd table where bdd nodes for this view start.
+      unsigned int offset(void) const;
+      /// Return distance between minimum and maximum
+      unsigned int table_width(void) const;
+      /// Return size (cardinality) of the domain
+      int size(void) const;
+      /// Return the bdd at position i
+      GecodeBdd getbdd(int i) const;    
+      /// Return the negated bdd at position i
+      GecodeBdd getnegbdd(int i) const;    
+      /// Returns the variable placed at position \a i in the current variable order
+      int getlevel(int i);    
+      /// Returns the position of the variable \a i in the current variable order
+      int getvar(int i);    
+      /// Build the conjunction of \a d and the current view
+      void dom_and(GecodeBdd& d);
+      /// Build the disjunction of \a d and the current view
+      void dom_or(GecodeBdd& d);
+      /// Get a pointer to the current manager
+      BMI* manager(void) const;
+
+      /// Return the initial minimum of the variable
+      int mgr_min(void) const; 
+      /// Return the initial minimum of the variable
+      int mgr_max(void) const; 
+      /// Return the bdd representing the current domain
+      GecodeBdd bdd_domain(void) const;
+      /// Return the corresponding bdd table index for set element v in the bdd node representation.
+      int valididx(int v) const;
+      
+      //@}
+
+      /// \name Domain tests
+      //@{
+      /// Test whether view is assigned
+      bool assigned(void) const;
+      /// Test whether \a i is in the greatest lower bound
+      bool contains(int i) const;
+      /// Test whether \a i is not in the least upper bound
+      bool notContains(int i) const;
+      //@}
+
+
+      /// \name Domain update by value
+      //@{
+      /** 
+       * \brief Restrict cardinality to be greater than or equal to \a l
+       *        and to be less than or equal to \a u.
+       */
+      ModEvent cardinality(Space* home, int l, int u);
+      /// Restrict cardinality to be greater than or equal to \a m
+      ModEvent cardMin(Space* home, unsigned int m);
+      /// Restrict cardinality to be less than or equal to \a m
+      ModEvent cardMax(Space* home, unsigned int m);
+
+      /// Include all elements in range \f$[a..b]\f$ in greatest lower bound
+      ModEvent include(Space* home, int i,int j);
+      /// Include elements \a i in greatest lower bound
+      ModEvent include(Space* home, int i); 
+
+      /// Exclude all elements in range \f$[a..b]\f$ from least upper bound 
+      ModEvent exclude(Space* home, int i,int j);
+      /// Exclude element \a i from least upper bound 
+      ModEvent exclude(Space* home, int i);
+
+      /// Restrict domain values to be different from singleton set \f$ \{v\} \f$
+      ModEvent nq(Space* home, int v);
+      /// Restrict domain values to be different from set \f$ [a,b] \f$
+      ModEvent nq(Space* home, int a, int b);
+
+      /// Restrict domain to be equal to the singleton set \f$ \{v\} \f$
+      ModEvent eq(Space* home, int v);
+      /// Restrict domain to be equal to the set \f$ [a,b] \f$
+      ModEvent eq(Space* home, int a, int b);
+       
+      /// Restrict least upper bound to contain at most all elements in the range \f$ [a,b] \f$
+      ModEvent intersect(Space* home,int i,int j);
+      /// Restrict least upper bound to contain at most the element \a i
+      ModEvent intersect(Space* home,int i);
+
+      /// Restrict domain values to be a solution to the logical formula described by the bdd \a d
+      ModEvent tell_formula(Space* home, GecodeBdd& d);   
+      //@}
+
+      /// \name Domain update by range iterator
+      //@{
+
+      /// Remove range sequence described by \a i from least upper bound
+      template <class I> ModEvent excludeI(Space* home, I& i);
+      /// Include set described by range list \a i in greatest lower bound
+      template <class I> ModEvent includeI(Space* home, I& i);  
+      /// Intersect least upper bound with range sequence described by \a i
+      template <class I> ModEvent intersectI(Space* home, I& iter);
+      /// Restrict domain to be equal to the set described by the range sequence \a i
+      template <class I> ModEvent eqI(Space* home, I& i);
+      /// Restrict domain values to be different from set described by the range sequence \a i
+      template <class I> ModEvent nqI(Space* home, I& i);
+      //@}
+
+      /// \name Cloning
+      //@{
+      /// Update this view to be a clone of view \a x
+      void update(Space* home, bool share, BddView& x);
+      //@}
+      /// Debug output
+      void viewdot(void) const;
+    };
+
+  }
+  /**
+   * \brief Traits class for views and variable implementations
+   *
+   * This class specializes the ViewVarTraits for BddView.
+   * \ingroup TaskActorBddView
+   */
+  template<>
+  class ViewVarTraits<Bdd::BddView> {
+  public:
+    /// The variable type of a BddView
+    typedef Bdd::BddVarImp Var;
+  };
+
+  namespace Bdd {
+    /**
+     * \brief Split Bdd View
+     *
+     * A split bdd view \f$s\f$ for a bdd view \f$x\f$ and
+     * a bdd \f$r\f$ provides operations such that 
+     * \f$dom(s) = dom(x) \wedge r\f$.
+     * \ingroup TaskActorBddView
+     */
+
+    class SplitBddView : public DerivedViewBase<Bdd::BddView> {
+    protected:
+      /// Bounds storing the fixed part of the original bdd domain
+      GecodeBdd bounds;
+      /// Remainder storing the unfixed part of the original bdd domain
+      GecodeBdd remain;
+      using DerivedViewBase<BddView>::view;
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      SplitBddView(void);
+      /// Initialize from bdd view \a x
+      SplitBddView(const BddView& x);
+      /// Initialize from bdd view \a x
+      void init(const BddView& x);
+      ~SplitBddView(void);
+      //@}
+
+      /// \name Value access
+      //@{
+      /// Return minimum cardinality
+      unsigned int cardMin(void) const;
+      /// Return maximum cardinality
+      unsigned int cardMax(void) const;
+      /// Return minimum of the least upper bound
+      int lubMin(void) const;
+      /// Return maximum of the least upper bound
+      int lubMax(void) const;
+      /// Return n-th smallest element of the least upper bound
+      int lubMinN(int n) const;
+      /// Return the n-th largest element of the least upper bound
+      int lubMaxN(int n) const;
+      /// Return minimum of the greatest lower bound
+      int glbMin(void) const;
+      /// Return maximum of the greatest lower bound
+      int glbMax(void) const;
+      /// Return the number of elements in the greatest lower bound
+      unsigned int glbSize(void) const;
+      /// Return the number of elements in the least upper bound
+      unsigned int lubSize(void) const;
+      /// Return the number of unknown elements
+      unsigned int unknownSize(void) const;
+      //@}
+
+      /// \name View information
+      //@{
+      /// Return the offset in the bdd table where bdd nodes for this view start.
+      unsigned int offset(void) const;
+      /// Return distance between minimum and maximum
+      unsigned int table_width(void) const;
+      /// Return size (cardinality) of the domain
+      int size(void) const;
+      /// Return the bdd at position i
+      GecodeBdd getbdd(int i) const;    
+      /// Return the negated bdd at position i
+      GecodeBdd getnegbdd(int i) const;    
+      /// Returns the variable placed at position \a i in the current variable order
+      int getlevel(int i);    
+      /// Returns the position of the variable \a i in the current variable order
+      int getvar(int i);    
+      /// Build the conjunction of \a d and the current view
+      void dom_and(GecodeBdd& d);
+      /// Build the disjunction of \a d and the current view
+      void dom_or(GecodeBdd& d);
+      /// Get a pointer to the current manager
+      BMI* manager(void) const;
+      
+      /// Return the initial minimum of the variable
+      int mgr_min(void) const; 
+      /// Return the initial minimum of the variable
+      int mgr_max(void) const; 
+      /// Return the corresponding bdd table index for set element v in the bdd node representation.
+      int valididx(int v) const;
+
+      /// Return the bdd representing the current domain
+      GecodeBdd bdd_domain(void) const;
+      /// Return the bdd representing the unfixed part of the variable domain
+      GecodeBdd bdd_remain(void) const;
+      /// Return the bdd representing the fixed part of the variable domain
+      GecodeBdd bdd_bounds(void) const;
+
+      //@}
+
+      /// \name Domain tests
+      //@{
+      /// Test whether view is assigned
+      bool assigned(void) const;
+      /// Test whether \a i is in the greatest lower bound
+      bool contains(int i) const;
+      /// Test whether \a i is not in the least upper bound
+      bool notContains(int i) const;
+      //@}
+
+      /// \name Domain update by value
+      //@{
+      /** 
+       * \brief Restrict cardinality to be greater than or equal to \a l
+       *        and to be less than or equal to \a u.
+       */
+      ModEvent cardinality(Space* home, unsigned int l, unsigned int u);
+      /// Restrict cardinality to be greater than or equal to \a m
+      ModEvent cardMin(Space* home, unsigned int m);
+      /// Restrict cardinality to be less than or equal to \a m
+      ModEvent cardMax(Space* home, unsigned int m);
+
+      /// Include all elements in range \f$[a..b]\f$ in greatest lower bound
+      ModEvent include(Space* home, int i,int j);
+      /// Include elements \a i in greatest lower bound
+      ModEvent include(Space* home, int i); 
+
+      /// Exclude all elements in range \f$[a..b]\f$ from least upper bound 
+      ModEvent exclude(Space* home, int i,int j);
+      /// Exclude element \a i from least upper bound 
+      ModEvent exclude(Space* home, int i);
+
+      /// Restrict domain values to be different from singleton set \f$ \{v\} \f$
+      ModEvent nq(Space* home, int v);
+      /// Restrict domain values to be different from set \f$ [a,b] \f$
+      ModEvent nq(Space* home, int a, int b);
+
+      /// Restrict domain to be equal to the singleton set \f$ \{v\} \f$
+      ModEvent eq(Space* home, int v);
+      /// Restrict domain to be equal to the set \f$ [a,b] \f$
+      ModEvent eq(Space* home, int a, int b);
+
+      /// Restrict least upper bound to contain at most all elements in the range \f$ [a,b] \f$
+      ModEvent intersect(Space* home,int i,int j);
+      /// Restrict least upper bound to contain at most the element \a i
+      ModEvent intersect(Space* home,int i);
+   
+      /// Restrict domain values to be a solution to the logical formula described by the bdd \a d
+      ModEvent tell_formula(Space* home, GecodeBdd& d);   
+      /// Restrict domain values to be a solution to the logical formula described by the bdd \a beta and \delta
+      ModEvent tell_formula(Space* home, GecodeBdd& beta, GecodeBdd& delta);   
+      //@}
+
+      /// \name Domain update by range iterator
+      //@{
+      /// Remove range sequence described by \a i from least upper bound
+      template <class I> ModEvent excludeI(Space* home, I& i);
+      /// Include set described by range list \a i in greatest lower bound
+      template <class I> ModEvent includeI(Space* home, I& i);  
+      /// Intersect least upper bound with range sequence described by \a i
+      template <class I> ModEvent intersectI(Space* home, I& iter);
+      /// Restrict domain to be equal to the set described by the range sequence \a i
+      template <class I> ModEvent eqI(Space* home, I& i);
+      /// Restrict domain values to be different from set described by the range sequence \a i
+      template <class I> ModEvent nqI(Space* home, I& i);
+      //@}
+
+      /// \name Propagator modification events
+      //@{
+      /// Return modification event of propagator \a p for view
+      static ModEvent     pme(const Propagator* p);
+      /// Translate modification event \a me to propagator modification event for view
+      static PropModEvent pme(ModEvent);
+      //@}
+
+      /// \name Dependencies
+      //@{
+      /**
+       * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+       *
+       * In case \a process is false, the propagator is just subscribed but
+       * not processed for execution (this must be used when creating
+       * subscriptions during propagation).
+       */
+      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+      void cancel(Space* home, Propagator* p, PropCond pc);
+      //@}
+
+      /// \name Cloning
+      //@{
+      /// Update this view to be a clone of view \a x
+      void update(Space* home, bool share, SplitBddView& x);
+      //@}
+
+      /// Debug output
+      void viewdot(void) const;
+    };
+
+  }
+
+  /** \name View comparison
+   *  \relates Gecode::Bdd::SplitBddView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  bool same(const Bdd::SplitBddView& x, const Bdd::SplitBddView& y);
+  /// Test whether view \a x comes before \a y (arbitrary order)
+  bool before(const Bdd::SplitBddView& x, const Bdd::SplitBddView& y);
+  //@}
+
+
+  /**
+   * \brief Traits class for views and variable implementations
+   *
+   * This class specializes the ViewVarTraits for SplitBddView.
+   * \ingroup TaskActorSplitBddView
+   */
+  template<>
+  class ViewVarTraits<Bdd::SplitBddView> {
+  public:
+    /// The variable type of a SplitBddView
+    typedef VarBase Var;
+  };
+
+
+  namespace Bdd {
+    /**
+     * \brief Bnd Bdd View
+     *
+     * A bnd bdd view \f$s\f$ for a bdd view \f$x\f$ and
+     * a bdd \f$r\f$ provides operations such that 
+     * \f$dom(s) = conv(dom(x))\f$.
+     * \ingroup TaskActorBddView
+     */
+
+    class BndBddView : public DerivedViewBase<Bdd::BddView> {
+    protected:
+      using DerivedViewBase<BddView>::view;
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      BndBddView(void);
+      /// Initialize from bdd view \a x
+      BndBddView(const BddView& x);
+      /// Initialize from bdd view \a x
+      void init(const BddView& x);
+      //@}
+
+      /// \name Value access
+      //@{
+      /// Return minimum cardinality
+      unsigned int cardMin(void) const;
+      /// Return maximum cardinality
+      unsigned int cardMax(void) const;
+      /// Return minimum of the least upper bound
+      int lubMin(void) const;
+      /// Return maximum of the least upper bound
+      int lubMax(void) const;
+      /// Return n-th smallest element of the least upper bound
+      int lubMinN(int n) const;
+      /// Return the n-th largest element of the least upper bound
+      int lubMaxN(int n) const;
+      /// Return minimum of the greatest lower bound
+      int glbMin(void) const;
+      /// Return maximum of the greatest lower bound
+      int glbMax(void) const;
+      /// Return the number of elements in the greatest lower bound
+      unsigned int glbSize(void) const;
+      /// Return the number of elements in the least upper bound
+      unsigned int lubSize(void) const;
+      /// Return the number of unknown elements
+      unsigned int unknownSize(void) const;
+      //@}
+
+      /// \name View information
+      //@{
+      /// Return the offset in the bdd table where bdd nodes for this view start.
+      unsigned int offset(void) const;
+      /// Return distance between minimum and maximum
+      unsigned int table_width(void) const;
+      /// Return size (cardinality) of the domain
+      int size(void) const;
+      /// Return the bdd at position i
+      GecodeBdd getbdd(int i) const;    
+      /// Return the negated bdd at position i
+      GecodeBdd getnegbdd(int i) const;    
+      /// Returns the variable placed at position \a i in the current variable order
+      int getlevel(int i);    
+      /// Returns the position of the variable \a i in the current variable order
+      int getvar(int i);    
+      /// Build the conjunction of \a d and the current view
+      void dom_and(GecodeBdd& d);
+      /// Build the disjunction of \a d and the current view
+      void dom_or(GecodeBdd& d);
+      /// Get a pointer to the current manager
+      BMI* manager(void) const;
+      
+      /// Return the initial minimum of the variable
+      int mgr_min(void) const; 
+      /// Return the initial minimum of the variable
+      int mgr_max(void) const; 
+      /// Return the corresponding bdd table index for set element v in the bdd node representation.
+      int valididx(int v) const;
+
+      /// Return the bdd representing the current domain
+      GecodeBdd bdd_domain(void) const;
+      /// Return the bdd representing the unfixed part of the variable domain
+      GecodeBdd bdd_remain(void) const;
+      /// Return the bdd representing the fixed part of the variable domain
+      GecodeBdd bdd_bounds(void) const;
+
+      //@}
+
+      /// \name Domain tests
+      //@{
+      /// Test whether view is assigned
+      bool assigned(void) const;
+      /// Test whether \a i is in the greatest lower bound
+      bool contains(int i) const;
+      /// Test whether \a i is not in the least upper bound
+      bool notContains(int i) const;
+      //@}
+
+      /// \name Domain update by value
+      //@{
+      /** 
+       * \brief Restrict cardinality to be greater than or equal to \a l
+       *        and to be less than or equal to \a u.
+       */
+      ModEvent cardinality(Space* home, unsigned int l, unsigned int u);
+      /// Restrict cardinality to be greater than or equal to \a m
+      ModEvent cardMin(Space* home, unsigned int m);
+      /// Restrict cardinality to be less than or equal to \a m
+      ModEvent cardMax(Space* home, unsigned int m);
+
+      /// Include all elements in range \f$[a..b]\f$ in greatest lower bound
+      ModEvent include(Space* home, int i,int j);
+      /// Include elements \a i in greatest lower bound
+      ModEvent include(Space* home, int i); 
+
+      /// Exclude all elements in range \f$[a..b]\f$ from least upper bound 
+      ModEvent exclude(Space* home, int i,int j);
+      /// Exclude element \a i from least upper bound 
+      ModEvent exclude(Space* home, int i);
+
+      /// Restrict domain values to be different from singleton set \f$ \{v\} \f$
+      ModEvent nq(Space* home, int v);
+      /// Restrict domain values to be different from set \f$ [a,b] \f$
+      ModEvent nq(Space* home, int a, int b);
+
+      /// Restrict domain to be equal to the singleton set \f$ \{v\} \f$
+      ModEvent eq(Space* home, int v);
+      /// Restrict domain to be equal to the set \f$ [a,b] \f$
+      ModEvent eq(Space* home, int a, int b);
+   
+      /// Restrict domain values to be a solution to the logical formula described by the bdd \a d
+      ModEvent tell_formula(Space* home, GecodeBdd& d);   
+
+      /// Restrict least upper bound to contain at most all elements in the range \f$ [a,b] \f$
+      ModEvent intersect(Space* home,int i,int j);
+      /// Restrict least upper bound to contain at most the element \a i
+      ModEvent intersect(Space* home,int i);
+      //@}
+
+      /// \name Domain update by range iterator
+      //@{
+      /// Remove range sequence described by \a i from least upper bound
+      template <class I> ModEvent excludeI(Space* home, I& i);
+      /// Include set described by range list \a i in greatest lower bound
+      template <class I> ModEvent includeI(Space* home, I& i);  
+      /// Intersect least upper bound with range sequence described by \a i
+      template <class I> ModEvent intersectI(Space* home, I& iter);
+      /// Restrict domain to be equal to the set described by the range sequence \a i
+      template <class I> ModEvent eqI(Space* home, I& i);
+      /// Restrict domain values to be different from set described by the range sequence \a i
+      template <class I> ModEvent nqI(Space* home, I& i);
+      //@}
+
+      /// \name Propagator modification events
+      //@{
+      /// Return modification event of propagator \a p for view
+      static ModEvent     pme(const Propagator* p);
+      /// Translate modification event \a me to propagator modification event for view
+      static PropModEvent pme(ModEvent);
+      //@}
+
+      /// \name Dependencies
+      //@{
+      /**
+       * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+       *
+       * In case \a process is false, the propagator is just subscribed but
+       * not processed for execution (this must be used when creating
+       * subscriptions during propagation).
+       */
+      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+      void cancel(Space* home, Propagator* p, PropCond pc);
+      //@}
+
+      /// \name Cloning
+      //@{
+      /// Update this view to be a clone of view \a x
+      void update(Space* home, bool share, BndBddView& x);
+      //@}
+
+      /// Debug output
+      void viewdot(void) const;
+    };
+
+  }
+
+  /** \name View comparison
+   *  \relates Gecode::Bdd::BndBddView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  bool same(const Bdd::BndBddView& x, const Bdd::BndBddView& y);
+  /// Test whether view \a x comes before \a y (arbitrary order)
+  bool before(const Bdd::BndBddView& x, const Bdd::BndBddView& y);
+  //@}
+
+
+  /**
+   * \brief Traits class for views and variable implementations
+   *
+   * This class specializes the ViewVarTraits for BndBddView.
+   * \ingroup TaskActorBndBddView
+   */
+  template<>
+  class ViewVarTraits<Bdd::BndBddView> {
+  public:
+    /// The variable type of a BndBddView
+    typedef VarBase Var;
+  };
+
+  namespace Bdd {
+    /**
+     * \brief Split Bdd View
+     *
+     * A split bdd view \f$s\f$ for a bdd view \f$x\f$ and
+     * a bdd \f$r\f$ provides operations such that 
+     * \f$dom(s) = dom(x) \wedge r\f$.
+     * \ingroup TaskActorBddView
+     */
+
+    class CrdBddView : public DerivedViewBase<Bdd::BddView> {
+    protected:
+      /// Bounds storing the fixed part of the original bdd domain
+      GecodeBdd bounds;
+      /// Remainder storing the unfixed part of the original bdd domain
+      GecodeBdd remain;
+      using DerivedViewBase<BddView>::view;
+      /// cardinality minimum
+      int cardmin;
+      /// cardinality maximum
+      int cardmax;
+      /// updates bound and remain
+      ModEvent process(Space* home, ModEvent me);
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      CrdBddView(void);
+      /// Initialize from bdd view \a x
+      CrdBddView(const BddView& x);
+      /// Initialize from bdd view \a x
+      void init(const BddView& x);
+      ~CrdBddView(void);
+      //@}
+
+
+      /// \name Value access
+      //@{
+      /// Return minimum cardinality
+      unsigned int cardMin(void) const;
+      /// Return maximum cardinality
+      unsigned int cardMax(void) const;
+      /// Return minimum of the least upper bound
+      int lubMin(void) const;
+      /// Return maximum of the least upper bound
+      int lubMax(void) const;
+      /// Return n-th smallest element of the least upper bound
+      int lubMinN(int n) const;
+      /// Return the n-th largest element of the least upper bound
+      int lubMaxN(int n) const;
+      /// Return minimum of the greatest lower bound
+      int glbMin(void) const;
+      /// Return maximum of the greatest lower bound
+      int glbMax(void) const;
+      /// Return the number of elements in the greatest lower bound
+      unsigned int glbSize(void) const;
+      /// Return the number of elements in the least upper bound
+      unsigned int lubSize(void) const;
+      /// Return the number of unknown elements
+      unsigned int unknownSize(void) const;
+      //@}
+
+      /// \name View information
+      //@{
+      /// Return the offset in the bdd table where bdd nodes for this view start.
+      unsigned int offset(void) const;
+      /// Return distance between minimum and maximum
+      unsigned int table_width(void) const;
+      /// Return size (cardinality) of the domain
+      int size(void) const;
+      /// Return the bdd at position i
+      GecodeBdd getbdd(int i) const;    
+      /// Return the negated bdd at position i
+      GecodeBdd getnegbdd(int i) const;    
+      /// Returns the variable placed at position \a i in the current variable order
+      int getlevel(int i);    
+      /// Returns the position of the variable \a i in the current variable order
+      int getvar(int i);    
+      /// Build the conjunction of \a d and the current view
+      void dom_and(GecodeBdd& d);
+      /// Build the disjunction of \a d and the current view
+      void dom_or(GecodeBdd& d);
+      /// Get a pointer to the current manager
+      BMI* manager(void) const;
+      
+      /// Return the initial minimum of the variable
+      int mgr_min(void) const; 
+      /// Return the initial minimum of the variable
+      int mgr_max(void) const; 
+      /// Return the corresponding bdd table index for set element v in the bdd node representation.
+      int valididx(int v) const;
+
+      /// Return the bdd representing the current domain
+      GecodeBdd bdd_domain(void) const;
+      /// Return the bdd representing the unfixed part of the variable domain
+      GecodeBdd bdd_remain(void) const;
+      /// Return the bdd representing the fixed part of the variable domain
+      GecodeBdd bdd_bounds(void) const;
+
+      //@}
+
+      /// \name Domain tests
+      //@{
+      /// Test whether view is assigned
+      bool assigned(void) const;
+      /// Test whether \a i is in the greatest lower bound
+      bool contains(int i) const;
+      /// Test whether \a i is not in the least upper bound
+      bool notContains(int i) const;
+      //@}
+
+      /// \name Domain update by value
+      //@{
+      /** 
+       * \brief Restrict cardinality to be greater than or equal to \a l
+       *        and to be less than or equal to \a u.
+       */
+      ModEvent cardinality(Space* home, int l, int u);
+      /// Restrict cardinality to be greater than or equal to \a m
+      ModEvent cardMin(Space* home, int m);
+      /// Restrict cardinality to be less than or equal to \a m
+      ModEvent cardMax(Space* home, int m);
+
+      /// Include all elements in range \f$[a..b]\f$ in greatest lower bound
+      ModEvent include(Space* home, int i,int j);
+      /// Include elements \a i in greatest lower bound
+      ModEvent include(Space* home, int i); 
+
+      /// Exclude all elements in range \f$[a..b]\f$ from least upper bound 
+      ModEvent exclude(Space* home, int i,int j);
+      /// Exclude element \a i from least upper bound 
+      ModEvent exclude(Space* home, int i);
+
+      /// Restrict domain values to be different from singleton set \f$ \{v\} \f$
+      ModEvent nq(Space* home, int v);
+      /// Restrict domain values to be different from set \f$ [a,b] \f$
+      ModEvent nq(Space* home, int a, int b);
+
+      /// Restrict domain to be equal to the singleton set \f$ \{v\} \f$
+      ModEvent eq(Space* home, int v);
+      /// Restrict domain to be equal to the set \f$ [a,b] \f$
+      ModEvent eq(Space* home, int a, int b);
+   
+      /// Restrict domain values to be a solution to the logical formula described by the bdd \a d
+      ModEvent tell_formula(Space* home, GecodeBdd& d);   
+      /// Restrict domain values to be a solution to the logical formula described by the bdd \a beta and \delta
+      ModEvent tell_formula(Space* home, GecodeBdd& beta, GecodeBdd& delta);   
+
+      /// Restrict least upper bound to contain at most all elements in the range \f$ [a,b] \f$
+      ModEvent intersect(Space* home,int i,int j);
+      /// Restrict least upper bound to contain at most the element \a i
+      ModEvent intersect(Space* home,int i);
+      //@}
+
+      /// \name Domain update by range iterator
+      //@{
+      /// Remove range sequence described by \a i from least upper bound
+      template <class I> ModEvent excludeI(Space* home, I& i);
+      /// Include set described by range list \a i in greatest lower bound
+      template <class I> ModEvent includeI(Space* home, I& i);  
+      /// Intersect least upper bound with range sequence described by \a i
+      template <class I> ModEvent intersectI(Space* home, I& iter);
+      /// Restrict domain to be equal to the set described by the range sequence \a i
+      template <class I> ModEvent eqI(Space* home, I& i);
+      /// Restrict domain values to be different from set described by the range sequence \a i
+      template <class I> ModEvent nqI(Space* home, I& i);
+      //@}
+
+      /// \name Propagator modification events
+      //@{
+      /// Return modification event of propagator \a p for view
+      static ModEvent     pme(const Propagator* p);
+      /// Translate modification event \a me to propagator modification event for view
+      static PropModEvent pme(ModEvent);
+      //@}
+
+      /// \name Dependencies
+      //@{
+      /**
+       * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+       *
+       * In case \a process is false, the propagator is just subscribed but
+       * not processed for execution (this must be used when creating
+       * subscriptions during propagation).
+       */
+      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+      void cancel(Space* home, Propagator* p, PropCond pc);
+      //@}
+
+      /// \name Cloning
+      //@{
+      /// Update this view to be a clone of view \a x
+      void update(Space* home, bool share, CrdBddView& x);
+      //@}
+
+      /// Debug output
+      void viewdot(void) const;
+    };
+
+  }
+
+  /** \name View comparison
+   *  \relates Gecode::Bdd::CrdBddView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  bool same(const Bdd::CrdBddView& x, const Bdd::CrdBddView& y);
+  /// Test whether view \a x comes before \a y (arbitrary order)
+  bool before(const Bdd::CrdBddView& x, const Bdd::CrdBddView& y);
+  //@}
+
+
+  /**
+   * \brief Traits class for views and variable implementations
+   *
+   * This class specializes the ViewVarTraits for CrdBddView.
+   * \ingroup TaskActorCrdBddView
+   */
+  template<>
+  class ViewVarTraits<Bdd::CrdBddView> {
+  public:
+    /// The variable type of a CrdBddView
+    typedef VarBase Var;
+  };
+
+
+  namespace Bdd {
+    /**
+     * \brief Split Bdd View
+     *
+     * A split bdd view \f$s\f$ for a bdd view \f$x\f$ and
+     * a bdd \f$r\f$ provides operations such that 
+     * \f$dom(s) = dom(x) \wedge r\f$.
+     * \ingroup TaskActorBddView
+     */
+
+    class LexBddView : public DerivedViewBase<Bdd::BddView> {
+    protected:
+      /// Bounds storing the fixed part of the original bdd domain
+      GecodeBdd bounds;
+      /// Remainder storing the unfixed part of the original bdd domain
+      GecodeBdd remain;
+      using DerivedViewBase<BddView>::view;
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      LexBddView(void);
+      /// Initialize from bdd view \a x
+      LexBddView(const BddView& x);
+      /// Initialize from bdd view \a x
+      void init(const BddView& x);
+      ~LexBddView(void);
+      //@}
+
+      /// \name Value access
+      //@{
+      /// Return minimum cardinality
+      unsigned int cardMin(void) const;
+      /// Return maximum cardinality
+      unsigned int cardMax(void) const;
+      /// Return minimum of the least upper bound
+      int lubMin(void) const;
+      /// Return maximum of the least upper bound
+      int lubMax(void) const;
+      /// Return n-th smallest element of the least upper bound
+      int lubMinN(int n) const;
+      /// Return the n-th largest element of the least upper bound
+      int lubMaxN(int n) const;
+      /// Return minimum of the greatest lower bound
+      int glbMin(void) const;
+      /// Return maximum of the greatest lower bound
+      int glbMax(void) const;
+      /// Return the number of elements in the greatest lower bound
+      unsigned int glbSize(void) const;
+      /// Return the number of elements in the least upper bound
+      unsigned int lubSize(void) const;
+      /// Return the number of unknown elements
+      unsigned int unknownSize(void) const;
+      //@}
+
+      /// \name View information
+      //@{
+      /// Return the offset in the bdd table where bdd nodes for this view start.
+      unsigned int offset(void) const;
+      /// Return distance between minimum and maximum
+      unsigned int table_width(void) const;
+      /// Return size (cardinality) of the domain
+      int size(void) const;
+      /// Return the bdd at position i
+      GecodeBdd getbdd(int i) const;    
+      /// Return the negated bdd at position i
+      GecodeBdd getnegbdd(int i) const;    
+      /// Returns the variable placed at position \a i in the current variable order
+      int getlevel(int i);    
+      /// Returns the position of the variable \a i in the current variable order
+      int getvar(int i);    
+      /// Build the conjunction of \a d and the current view
+      void dom_and(GecodeBdd& d);
+      /// Build the disjunction of \a d and the current view
+      void dom_or(GecodeBdd& d);
+      /// Get a pointer to the current manager
+      BMI* manager(void) const;
+      
+      /// Return the initial minimum of the variable
+      int mgr_min(void) const; 
+      /// Return the initial minimum of the variable
+      int mgr_max(void) const; 
+      /// Return the corresponding bdd table index for set element v in the bdd node representation.
+      int valididx(int v) const;
+
+      /// Return the bdd representing the current domain
+      GecodeBdd bdd_domain(void) const;
+      /// Return the bdd representing the unfixed part of the variable domain
+      GecodeBdd bdd_remain(void) const;
+      /// Return the bdd representing the fixed part of the variable domain
+      GecodeBdd bdd_bounds(void) const;
+
+      //@}
+
+      /// \name Domain tests
+      //@{
+      /// Test whether view is assigned
+      bool assigned(void) const;
+      /// Test whether \a i is in the greatest lower bound
+      bool contains(int i) const;
+      /// Test whether \a i is not in the least upper bound
+      bool notContains(int i) const;
+      //@}
+
+      /// \name Domain update by value
+      //@{
+      /** 
+       * \brief Restrict cardinality to be greater than or equal to \a l
+       *        and to be less than or equal to \a u.
+       */
+      ModEvent cardinality(Space* home, unsigned int l, unsigned int u);
+      /// Restrict cardinality to be greater than or equal to \a m
+      ModEvent cardMin(Space* home, unsigned int m);
+      /// Restrict cardinality to be less than or equal to \a m
+      ModEvent cardMax(Space* home, unsigned int m);
+
+      /// Include all elements in range \f$[a..b]\f$ in greatest lower bound
+      ModEvent include(Space* home, int i,int j);
+      /// Include elements \a i in greatest lower bound
+      ModEvent include(Space* home, int i); 
+
+      /// Exclude all elements in range \f$[a..b]\f$ from least upper bound 
+      ModEvent exclude(Space* home, int i,int j);
+      /// Exclude element \a i from least upper bound 
+      ModEvent exclude(Space* home, int i);
+
+      /// Restrict domain values to be different from singleton set \f$ \{v\} \f$
+      ModEvent nq(Space* home, int v);
+      /// Restrict domain values to be different from set \f$ [a,b] \f$
+      ModEvent nq(Space* home, int a, int b);
+
+      /// Restrict domain to be equal to the singleton set \f$ \{v\} \f$
+      ModEvent eq(Space* home, int v);
+      /// Restrict domain to be equal to the set \f$ [a,b] \f$
+      ModEvent eq(Space* home, int a, int b);
+   
+      /// Restrict domain values to be a solution to the logical formula described by the bdd \a d
+      ModEvent tell_formula(Space* home, GecodeBdd& d);   
+      /// Restrict domain values to be a solution to the logical formula described by the bdd \a beta and \delta
+      ModEvent tell_formula(Space* home, GecodeBdd& beta, GecodeBdd& delta);   
+
+      /// Restrict least upper bound to contain at most all elements in the range \f$ [a,b] \f$
+      ModEvent intersect(Space* home,int i,int j);
+      /// Restrict least upper bound to contain at most the element \a i
+      ModEvent intersect(Space* home,int i);
+      //@}
+
+      /// \name Domain update by range iterator
+      //@{
+      /// Remove range sequence described by \a i from least upper bound
+      template <class I> ModEvent excludeI(Space* home, I& i);
+      /// Include set described by range list \a i in greatest lower bound
+      template <class I> ModEvent includeI(Space* home, I& i);  
+      /// Intersect least upper bound with range sequence described by \a i
+      template <class I> ModEvent intersectI(Space* home, I& iter);
+      /// Restrict domain to be equal to the set described by the range sequence \a i
+      template <class I> ModEvent eqI(Space* home, I& i);
+      /// Restrict domain values to be different from set described by the range sequence \a i
+      template <class I> ModEvent nqI(Space* home, I& i);
+      //@}
+
+      /// \name Propagator modification events
+      //@{
+      /// Return modification event of propagator \a p for view
+      static ModEvent     pme(const Propagator* p);
+      /// Translate modification event \a me to propagator modification event for view
+      static PropModEvent pme(ModEvent);
+      //@}
+
+      /// \name Dependencies
+      //@{
+      /**
+       * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+       *
+       * In case \a process is false, the propagator is just subscribed but
+       * not processed for execution (this must be used when creating
+       * subscriptions during propagation).
+       */
+      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+      void cancel(Space* home, Propagator* p, PropCond pc);
+      //@}
+
+      /// \name Cloning
+      //@{
+      /// Update this view to be a clone of view \a x
+      void update(Space* home, bool share, LexBddView& x);
+      //@}
+
+      /// Debug output
+      void viewdot(void) const;
+    };
+
+  }
+
+  /** \name View comparison
+   *  \relates Gecode::Bdd::LexBddView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  bool same(const Bdd::LexBddView& x, const Bdd::LexBddView& y);
+  /// Test whether view \a x comes before \a y (arbitrary order)
+  bool before(const Bdd::LexBddView& x, const Bdd::LexBddView& y);
+  //@}
+
+
+  /**
+   * \brief Traits class for views and variable implementations
+   *
+   * This class specializes the ViewVarTraits for LexBddView.
+   * \ingroup TaskActorLexBddView
+   */
+  template<>
+  class ViewVarTraits<Bdd::LexBddView> {
+  public:
+    /// The variable type of a LexBddView
+    typedef VarBase Var;
+  };
+
+
+  namespace Bdd {
+    /**
+     * \brief Singleton Bdd View
+     *
+     * A bnd bdd view \f$s\f$ for a bdd view \f$x\f$ and
+     * a bdd \f$r\f$ provides operations such that 
+     * \f$dom(s) = conv(dom(x))\f$.
+     * \ingroup TaskActorBddView
+     */
+
+    class SingletonBddView : public DerivedViewBase<Gecode::Int::IntView> {
+    protected:
+      using DerivedViewBase<Gecode::Int::IntView>::view;
+      BMI* mgr;
+      int min;
+      int max;
+      unsigned int range;
+      unsigned int _offset;     
+      GecodeBdd domain;
+      /// Convert bdd variable PropCond \a pc to a PropCond for integer variables
+      static PropCond pc_bddtoint(PropCond pc);
+      /// Convert integer variable ModEvent \a me to a ModEvent for bdd variables
+      static ModEvent me_inttobdd(ModEvent me);
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      SingletonBddView(void);
+      /// Initialize from IntView \a x
+      SingletonBddView(BMI* manager, int min, int max, const Gecode::Int::IntView& x);
+      /// Initialize from IntView \a x
+      void init(BMI* manager, int min, int max, const Gecode::Int::IntView& x);
+      //@}
+      /// \name Destructor
+      //@{
+      /// Destructor for disposal of temporary domain bdd and boolean vector
+      ~SingletonBddView(void);
+      //@}
+
+      /// \name Value access
+      //@{
+      /// Return minimum cardinality
+      unsigned int cardMin(void) const;
+      /// Return maximum cardinality
+      unsigned int cardMax(void) const;
+      /// Return minimum of the least upper bound
+      int lubMin(void) const;
+      /// Return maximum of the least upper bound
+      int lubMax(void) const;
+      /// Return minimum of the greatest lower bound
+      int glbMin(void) const;
+      /// Return maximum of the greatest lower bound
+      int glbMax(void) const;
+      /// Return the number of elements in the greatest lower bound
+      unsigned int glbSize(void) const;
+      /// Return the number of elements in the least upper bound
+      unsigned int lubSize(void) const;
+      /// Return the number of unknown elements
+      unsigned int unknownSize(void) const;
+      //@}
+
+      /// \name View information
+      //@{
+      /// Return the offset in the bdd table where bdd nodes for this view start.
+      unsigned int offset(void) const;
+      /// Return distance between minimum and maximum
+      unsigned int table_width(void) const;
+      /// Return size (cardinality) of the domain
+      int size(void) const;
+      /// Return the bdd at position i
+      GecodeBdd getbdd(int i) const;    
+      /// Return the negated bdd at position i
+      GecodeBdd getnegbdd(int i) const;    
+      /// Returns the variable placed at position \a i in the current variable order
+      int getlevel(int i);    
+      /// Returns the position of the variable \a i in the current variable order
+      int getvar(int i);    
+      /// Build the conjunction of \a d and the current view
+      void dom_and(GecodeBdd& d);
+      /// Build the disjunction of \a d and the current view
+      void dom_or(GecodeBdd& d);
+      /// Get a pointer to the current manager
+      BMI* manager(void) const;
+      
+      /// Return the initial minimum of the variable
+      int mgr_min(void) const; 
+      /// Return the initial minimum of the variable
+      int mgr_max(void) const; 
+      /// Return the corresponding bdd table index for set element v in the bdd node representation.
+      int valididx(int v) const;
+
+      /// Return the bdd representing the current domain
+      GecodeBdd bdd_domain(void) const;
+      /// Return the bdd representing the unfixed part of the variable domain
+      GecodeBdd bdd_remain(void) const;
+      /// Return the bdd representing the fixed part of the variable domain
+      GecodeBdd bdd_bounds(void) const;
+
+      //@}
+
+      /// \name Domain tests
+      //@{
+      /// Test whether view is assigned
+      bool assigned(void) const;
+      /// Test whether \a i is in the greatest lower bound
+      bool contains(int i) const;
+      /// Test whether \a i is not in the least upper bound
+      bool notContains(int i) const;
+
+      //@}
+
+      /// \name Domain update by value
+      //@{
+      /** 
+       * \brief Restrict cardinality to be greater than or equal to \a l
+       *        and to be less than or equal to \a u.
+       */
+      ModEvent cardinality(Space* home, unsigned int l, unsigned int u);
+      /// Restrict cardinality to be greater than or equal to \a m
+      ModEvent cardMin(Space* home, unsigned int m);
+      /// Restrict cardinality to be less than or equal to \a m
+      ModEvent cardMax(Space* home, unsigned int m);
+
+      /// Include all elements in range \f$[a..b]\f$ in greatest lower bound
+      ModEvent include(Space* home, int i,int j);
+      /// Include elements \a i in greatest lower bound
+      ModEvent include(Space* home, int i); 
+
+      /// Exclude all elements in range \f$[a..b]\f$ from least upper bound 
+      ModEvent exclude(Space* home, int i,int j);
+      /// Exclude element \a i from least upper bound 
+      ModEvent exclude(Space* home, int i);
+
+      /// Restrict domain values to be different from singleton set \f$ \{v\} \f$
+      ModEvent nq(Space* home, int v);
+      /// Restrict domain values to be different from set \f$ [a,b] \f$
+      ModEvent nq(Space* home, int a, int b);
+
+      /// Restrict domain to be equal to the singleton set \f$ \{v\} \f$
+      ModEvent eq(Space* home, int v);
+      /// Restrict domain to be equal to the set \f$ [a,b] \f$
+      ModEvent eq(Space* home, int a, int b);
+   
+      /// Restrict domain values to be a solution to the logical formula described by the bdd \a d
+      ModEvent tell_formula(Space* home, GecodeBdd& d);   
+
+      /// Restrict least upper bound to contain at most all elements in the range \f$ [a,b] \f$
+      ModEvent intersect(Space* home,int i,int j);
+      /// Restrict least upper bound to contain at most the element \a i
+      ModEvent intersect(Space* home,int i);
+      //@}
+
+      /// \name Domain update by range iterator
+      //@{
+      /// Remove range sequence described by \a i from least upper bound
+      template <class I> ModEvent excludeI(Space* home, I& i);
+      /// Include set described by range list \a i in greatest lower bound
+      template <class I> ModEvent includeI(Space* home, I& i);  
+      /// Intersect least upper bound with range sequence described by \a i
+      template <class I> ModEvent intersectI(Space* home, I& iter);
+      /// Restrict domain to be equal to the set described by the range sequence \a i
+      template <class I> ModEvent eqI(Space* home, I& i);
+      /// Restrict domain values to be different from set described by the range sequence \a i
+      template <class I> ModEvent nqI(Space* home, I& i);
+      //@}
+
+      /// \name Propagator modification events
+      //@{
+      /// Return modification event of propagator \a p for view
+      static ModEvent     pme(const Propagator* p);
+      /// Translate modification event \a me to propagator modification event for view
+      static PropModEvent pme(ModEvent);
+      //@}
+
+      /// \name Dependencies
+      //@{
+      /**
+       * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+       *
+       * In case \a process is false, the propagator is just subscribed but
+       * not processed for execution (this must be used when creating
+       * subscriptions during propagation).
+       */
+      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+      void cancel(Space* home, Propagator* p, PropCond pc);
+      //@}
+
+      /// \name Cloning
+      //@{
+      /// Update this view to be a clone of view \a x
+      void update(Space* home, bool share, SingletonBddView& x);
+      //@}
+
+      /// Debug output
+      void viewdot(void) const;
+    };
+
+
+  }
+
+  /** \name View comparison
+   *  \relates Gecode::Bdd::SingletonBddView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  bool same(const Bdd::SingletonBddView& x, const Bdd::SingletonBddView& y);
+  /// Test whether view \a x comes before \a y (arbitrary order)
+  bool before(const Bdd::SingletonBddView& x, const Bdd::SingletonBddView& y);
+  //@}
+
+
+  /**
+   * \brief Traits class for views and variable implementations
+   *
+   * This class specializes the ViewVarTraits for SingletonBddView.
+   * \ingroup TaskActorSingletonBddView
+   */
+  template<>
+  class ViewVarTraits<Bdd::SingletonBddView> {
+  public:
+    /// The variable type of a SingletonBddView
+    typedef VarBase Var;
+  };
+
+
+  namespace Bdd {
+    /**
+     * \brief Set Bdd View
+     *
+     * A bnd bdd view \f$s\f$ for a bdd view \f$x\f$ and
+     * a bdd \f$r\f$ provides operations such that 
+     * \f$dom(s) = conv(dom(x))\f$.
+     * \ingroup TaskActorBddView
+     */
+
+    class SetBddView : public DerivedViewBase<CrdBddView> {
+    protected:
+      using DerivedViewBase<CrdBddView>::view;
+      BMI* mgr;
+      int min;
+      int max;
+      unsigned int range;
+      unsigned int _offset;     
+      GecodeBdd domain;
+      /// Convert set variable PropCond \a pc to a PropCond for bdd variables
+      static PropCond pc_settobdd(PropCond pc);
+      /// Convert bdd variable ModEvent \a me to a ModEvent for set variables
+      static ModEvent me_bddtoset(ModEvent me);
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      SetBddView(void);
+      /// Initialize from Cardinality Set Bounds View \a x
+      SetBddView(const CrdBddView& x);
+      /// Initialize from Cardinality Set Bounds View \a x
+      void init(const CrdBddView& x);
+      //@}
+
+      /// \name Value access
+      //@{
+      /// Return minimum cardinality
+      unsigned int cardMin(void) const;
+      /// Return maximum cardinality
+      unsigned int cardMax(void) const;
+      /// Return minimum of the least upper bound
+      int lubMin(void) const;
+      /// Return maximum of the least upper bound
+      int lubMax(void) const;
+      /// Return n-th smallest element of the least upper bound
+      int lubMinN(int n) const;
+      /// Return the n-th largest element of the least upper bound
+      int lubMaxN(int n) const;
+      /// Return minimum of the greatest lower bound
+      int glbMin(void) const;
+      /// Return maximum of the greatest lower bound
+      int glbMax(void) const;
+      /// Return the number of elements in the greatest lower bound
+      unsigned int glbSize(void) const;
+      /// Return the number of elements in the least upper bound
+      unsigned int lubSize(void) const;
+      /// Return the number of unknown elements
+      unsigned int unknownSize(void) const;
+      //@}
+
+      /// \name View information
+      //@{
+      /// Return the offset in the bdd table where bdd nodes for this view start.
+      unsigned int offset(void) const;
+      /// Return distance between minimum and maximum
+      unsigned int table_width(void) const;
+      /// Return size (cardinality) of the domain
+      int size(void) const;
+      /// Return the bdd at position i
+      GecodeBdd getbdd(int i) const;    
+      /// Return the negated bdd at position i
+      GecodeBdd getnegbdd(int i) const;    
+      /// Returns the variable placed at position \a i in the current variable order
+      int getlevel(int i);    
+      /// Returns the position of the variable \a i in the current variable order
+      int getvar(int i);    
+      /// Build the conjunction of \a d and the current view
+      void dom_and(GecodeBdd& d);
+      /// Build the disjunction of \a d and the current view
+      void dom_or(GecodeBdd& d);
+      /// Get a pointer to the current manager
+      BMI* manager(void) const;
+      
+      /// Return the initial minimum of the variable
+      int mgr_min(void) const; 
+      /// Return the initial minimum of the variable
+      int mgr_max(void) const; 
+      /// Return the corresponding bdd table index for set element v in the bdd node representation.
+      int valididx(int v) const;
+
+      /// Return the bdd representing the current domain
+      GecodeBdd bdd_domain(void) const;
+      /// Return the bdd representing the unfixed part of the variable domain
+      GecodeBdd bdd_remain(void) const;
+      /// Return the bdd representing the fixed part of the variable domain
+      GecodeBdd bdd_bounds(void) const;
+
+      //@}
+
+      /// \name Domain tests
+      //@{
+      /// Test whether view is assigned
+      bool assigned(void) const;
+      /// Test whether \a i is in the greatest lower bound
+      bool contains(int i) const;
+      /// Test whether \a i is not in the least upper bound
+      bool notContains(int i) const;
+      //@}
+
+      /// \name Domain update by value
+      //@{
+      /** 
+       * \brief Restrict cardinality to be greater than or equal to \a l
+       *        and to be less than or equal to \a u.
+       */
+      ModEvent cardinality(Space* home, int l, int u);
+      /// Restrict cardinality to be greater than or equal to \a m
+      ModEvent cardMin(Space* home, int m);
+      /// Restrict cardinality to be less than or equal to \a m
+      ModEvent cardMax(Space* home, int m);
+
+      /// Include all elements in range \f$[a..b]\f$ in greatest lower bound
+      ModEvent include(Space* home, int i,int j);
+      /// Include elements \a i in greatest lower bound
+      ModEvent include(Space* home, int i); 
+
+      /// Exclude all elements in range \f$[a..b]\f$ from least upper bound 
+      ModEvent exclude(Space* home, int i,int j);
+      /// Exclude element \a i from least upper bound 
+      ModEvent exclude(Space* home, int i);
+
+      /// Restrict domain values to be different from singleton set \f$ \{v\} \f$
+      ModEvent nq(Space* home, int v);
+      /// Restrict domain values to be different from set \f$ [a,b] \f$
+      ModEvent nq(Space* home, int a, int b);
+
+      /// Restrict domain to be equal to the singleton set \f$ \{v\} \f$
+      ModEvent eq(Space* home, int v);
+      /// Restrict domain to be equal to the set \f$ [a,b] \f$
+      ModEvent eq(Space* home, int a, int b);
+
+      /// Restrict least upper bound to contain at most all elements in the range \f$ [a,b] \f$
+      ModEvent intersect(Space* home,int i,int j);
+      /// Restrict least upper bound to contain at most the element \a i
+      ModEvent intersect(Space* home,int i);
+
+   
+      /// Restrict domain values to be a solution to the logical formula described by the bdd \a d
+      ModEvent tell_formula(Space* home, GecodeBdd& d);   
+      //@}
+
+      /// \name Domain update by range iterator
+      //@{
+      /// Remove range sequence described by \a i from least upper bound
+      template <class I> ModEvent excludeI(Space* home, I& i);
+      /// Include set described by range list \a i in greatest lower bound
+      template <class I> ModEvent includeI(Space* home, I& i);  
+      /// Intersect least upper bound with range sequence described by \a i
+      template <class I> ModEvent intersectI(Space* home, I& iter);
+      /// Restrict domain to be equal to the set described by the range sequence \a i
+      template <class I> ModEvent eqI(Space* home, I& i);
+      /// Restrict domain values to be different from set described by the range sequence \a i
+      template <class I> ModEvent nqI(Space* home, I& i);
+      //@}
+
+      /// \name Propagator modification events
+      //@{
+      /// Return modification event of propagator \a p for view
+      static ModEvent     pme(const Propagator* p);
+      /// Translate modification event \a me to propagator modification event for view
+      static PropModEvent pme(ModEvent);
+      //@}
+
+      /// \name Dependencies
+      //@{
+      /**
+       * \brief Subscribe propagator \a p with propagation condition \a pc to variable
+       *
+       * In case \a process is false, the propagator is just subscribed but
+       * not processed for execution (this must be used when creating
+       * subscriptions during propagation).
+       */
+      void subscribe(Space* home, Propagator* p, PropCond pc, bool process=true);
+      /// Cancel subscription of propagator \a p with propagation condition \a pc to view
+      void cancel(Space* home, Propagator* p, PropCond pc);
+      //@}
+
+      /// \name Cloning
+      //@{
+      /// Update this view to be a clone of view \a x
+      void update(Space* home, bool share, SetBddView& x);
+      //@}
+
+      /// Debug output
+      void viewdot(void) const;
+    };
+
+
+  }
+
+  /** \name View comparison
+   *  \relates Gecode::Bdd::SetBddView
+   */
+  //@{
+  /// Test whether views \a x and \a y are the same
+  bool same(const Bdd::SetBddView& x, const Bdd::SetBddView& y);
+  /// Test whether view \a x comes before \a y (arbitrary order)
+  bool before(const Bdd::SetBddView& x, const Bdd::SetBddView& y);
+  //@}
+
+
+  /**
+   * \brief Traits class for views and variable implementations
+   *
+   * This class specializes the ViewVarTraits for SetBddView.
+   * \ingroup TaskActorSetBddView
+   */
+  template<>
+  class ViewVarTraits<Bdd::SetBddView> {
+  public:
+    /// The variable type of a SetBddView
+    typedef VarBase Var;
+  };
+
+
+}
+
+#include "gecode/bdd/view/bdd.icc"
+#include "gecode/bdd/view/splitbdd.icc"
+#include "gecode/bdd/view/bndbdd.icc"
+#include "gecode/bdd/view/crdbdd.icc"
+#include "gecode/bdd/view/lexbdd.icc"
+#include "gecode/bdd/view/singletonbdd.icc"
+#include "gecode/bdd/view/setview.icc"
+
+/**
+ * \brief Print set variable view
+ * \relates Gecode::Bdd::BddView
+ */
+GECODE_BDD_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::Bdd::BddView& x);
+
+/**
+ * \brief Print set variable view
+ * \relates Gecode::Bdd::SplitBddView
+ */
+GECODE_BDD_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::Bdd::SplitBddView& x);
+
+/**
+ * \brief Print set variable view
+ * \relates Gecode::Bdd::BndBddView
+ */
+GECODE_BDD_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::Bdd::BndBddView& x);
+
+/**
+ * \brief Print set variable view
+ * \relates Gecode::Bdd::CrdBddView
+ */
+GECODE_BDD_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::Bdd::CrdBddView& x);
+
+/**
+ * \brief Print set variable view
+ * \relates Gecode::Bdd::LexBddView
+ */
+GECODE_BDD_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::Bdd::LexBddView& x);
+
+/**
+ * \brief Print set variable view
+ * \relates Gecode::Bdd::SingletonBddView
+ */
+GECODE_BDD_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::Bdd::SingletonBddView& x);
+
+/**
+ * \brief Print set variable view
+ * \relates Gecode::Bdd::SingletonBddView
+ */
+GECODE_BDD_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::Bdd::SetBddView& x);
+
+
+// STATISTICS: set-var

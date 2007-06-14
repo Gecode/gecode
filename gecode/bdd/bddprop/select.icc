@@ -1,0 +1,134 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-07-29 15:55:20 +0000 (Sat, 29 Jul 2006) $ by $Author: pekczynski $
+ *     $Revision: 3478 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+using namespace Gecode::Bdd;
+
+namespace Gecode {
+  
+  template <class View>
+  forceinline void 
+  selectUnion_post(Space* home, ViewArray<View>& x, SetConLevel scl) {
+    if (home->failed()) return;   
+
+    GecodeBdd d0 = BDDTOP;
+    int n = x.size() - 2;
+    ViewArray<View> seq(home, n);
+    for (int i = 0; i < n; i++) {
+      seq[i] = x[i];
+    }
+    buildRange(home, seq, x[n], x[n + 1], scl, d0);
+    if (home->failed()) return;    
+    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
+  }
+
+  forceinline void 
+  selectUnion_con(Space* home, const BddVarArgs& x, const BddVar& s, const BddVar& t, 
+	    SetConLevel scl) {
+    int n = x.size();
+    int m = n + 2;
+    ViewArray<BddView> bv(home, m);
+    for (int i = 0; i < n; i++) {
+      bv[i] = x[i];
+    }
+    bv[n] = s;
+    bv[n + 1] = t;
+    switch(scl) {
+    default:
+      {
+	selectUnion_post(home, bv, scl);
+      }
+    }
+    
+  }
+
+  template <class View>
+  forceinline void 
+  findNonEmptySub_post(Space* home, ViewArray<View> x, SetConLevel scl) {
+    if (home->failed()) return;
+    int n = x.size() - 2;
+    int s = n;
+    int t = n + 1;
+    // just assume that they all have the same range
+    
+    unsigned int xrange = x[0].table_width();
+
+    // compute maximum value
+    for (int i = n; i--; ) {
+      if (x[i].table_width() > xrange) {
+	xrange = x[i].table_width();
+      }
+    }
+
+    if (x[t].table_width() > xrange) {
+      int a = x[t].mgr_min() + xrange;
+      int b = x[t].mgr_min() + x[t].table_width();
+      // std::cout << "t=" << t << " " << a << ","<< b << "\n";
+      GECODE_ME_FAIL(home, x[t].exclude(home, a, b));
+    } 
+    
+    GecodeBdd d0 = BDDTOP;
+
+    // restrict selector variable s to be \f$ s\subseteq \{0, n - 1\}\f$
+    // int range = xrange;
+    int shift = 0;
+    if (x[s].mgr_min() < 0) {
+      shift = 0 - x[s].mgr_min();
+    }
+
+    Iter::Ranges::Singleton idx(0, n - 1);
+    GECODE_ME_FAIL(home, x[s].intersectI(home, idx));
+
+    for (int j = 0; j < n; j++) {    
+      GecodeBdd subset = BDDTOP;
+      GecodeBdd inter  = BDDBOT;
+      for (unsigned int k = 0; k < xrange; k++) {
+	subset &= (x[j].getbdd(k) >>= x[t].getbdd(k));
+	inter  |= (x[j].getbdd(k) & x[t].getbdd(k));
+      }     
+      d0 &= (x[s].getbdd(j + shift) % (subset & inter));
+    }
+    
+    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
+  }
+
+  forceinline void 
+  findNonEmptySub_con(Space* home, const BddVarArgs& x, const BddVar& s, const BddVar& t, 
+	    SetConLevel scl) {
+    int n = x.size();
+    int m = n + 2;
+    ViewArray<BddView> bv(home, m);
+    for (int i = 0; i < n; i++) {
+      bv[i] = x[i];
+    }
+    bv[n] = s;
+    bv[n + 1] = t;
+    switch(scl) {
+    default:
+      {
+	findNonEmptySub_post(home, bv, scl);
+      }
+    }
+    
+  }
+
+}
+
+// STATISTICS: bdd-post

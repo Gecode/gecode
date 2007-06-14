@@ -1,0 +1,1451 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2007-05-19 15:22:46 +0000 (Sa, 19 Mai 2007) $ by $Author: pekczynski $
+ *     $Revision: 4610 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#include <cmath>
+#include "gecode/limits.hh"
+#include "gecode/iter.hh"
+#include "gecode/int.hh"
+
+namespace Gecode { namespace Bdd {
+
+  template <> 
+  class DomValues<BddVarImp*> {
+  private:
+    IntSet is;
+    bool valid;
+    GecodeBdd d;
+    int o;
+    int mi;
+    int ma;
+    int i;
+    BMI* mgr;
+    int range;
+    int total;
+
+  protected:
+    bool assignment(IntSet& r, int& i);
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    DomValues(void);
+    /// Initialize with ranges for variable implementation \a x
+    DomValues(const BddVarImp* x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const BddVarImp* x);
+    //@}
+    /// \name Iteration control
+    //@{
+    /// Test whether iterator has reachead a leaf of the bdd or not
+    bool operator()(void) const;
+    void operator++(void);
+    //@}
+    /// Set the domain \a d to be iterated to \f$ d \wedge remain\f$
+    void dom_and(GecodeBdd& remain);   
+    IntSet val(void) const;
+  };
+
+  inline  bool
+  DomValues<BddVarImp*>::assignment(IntSet& r, int& i) {
+    // int value = i;
+    GecodeBdd b = d;
+
+    // \todo FIXME: REPLACE INTSET WITH DYNARRAY
+
+// //     std::cout << "assignment for i="<< i << "\n ";
+// //     int testv = value;
+// //     for (int z = 0 ; z < range; z++, testv >>= 1) {
+// //       std::cout << (testv & 1) << " ";
+// //     }
+// //     std::cout << "\n";
+
+// //     mgr->bdd2dot(b);
+// //     std::cout << "type.value=" << b.getNode()->type.value << "\n";
+// //     std::cout << "******* END START ASS DOT *****\n";
+
+//     IntSet out = IntSet::empty;
+
+//     // given an integer i, such that 0 <= i <= range
+//     // we can interpret i as a bitvector whose k-th bit
+//     // tells us whether element (mi + k) belongs to the set or not
+//     for (int z = 0 ; z < range; z++, value >>= 1) {
+//       if (mgr->cfalse(b)) {
+// 	// std::cout << "NOT VALID\n";
+// 	return false;
+//       }
+
+//       bool flag    = value & 1;
+//       // now finally respecting negative values d'oh
+//       int val = mi + z;
+//       bool outside = false;
+//       if (!mgr->leaf(b)) {
+// 	// the assignment talks about a variable
+// 	// which is not in the current reduced ROBDD
+// 	if (mgr->bddidx(b) - o > (unsigned int) z) { 
+// 	  outside = true;
+// 	}
+//       }
+//       if (! outside ) {
+// 	if (flag) {
+// 	  IntSetRanges ir(r);
+// 	  // std::cout << "have " << r << " ";
+// 	  Iter::Ranges::Singleton s(val, val);
+// 	  Iter::Ranges::Union<IntSetRanges, Iter::Ranges::Singleton> a(ir, s);
+  
+// 	  IntSet ur(a);
+// 	  // std::cout << " update to " << ur << "\n";
+// 	  r.update(false, ur);
+// 	  // std::cout << " gives us " <<  r << "\n";
+// 	  if (!mgr->leaf(b)) {
+// 	      b = mgr->iftrue(b);
+// 	      // std::cout << "branch true is \n" << b << "\n";
+// 	      // mgr->bdd2dot(b);
+// // 	      std::cout << "type.value=" << b.getNode()->type.value << "\n";
+// // 	      std::cout << "******* END BRANCH TRUE *****\n";
+// 	  }
+// 	} else {
+// 	  if (!mgr->leaf(b)) {
+// 	    b = mgr->iffalse(b);
+// // 	    std::cout << "branch false is \n" << b << "\n";
+// // 	    mgr->bdd2dot(b);
+// // 	    std::cout << "type.value=" << b.getNode()->type.value << "\n";
+// // 	    std::cout << "******* END BRANCH FALSE *****\n";
+// // 	    std::cout << "test whether valid?";
+// // 	    std::cout << "leaf = " << mgr->leaf(b) << " top ?" << mgr->ctrue(b) << "\n";
+	    
+// 	  }
+// 	}
+//       } else {
+// 	if (flag) {
+// 	  IntSetRanges ir(out);
+// 	  Iter::Ranges::Singleton s(val, val);
+// 	  Iter::Ranges::Union<IntSetRanges, Iter::Ranges::Singleton> a(ir, s);
+// 	  IntSet ur(a);
+// 	  out.update(false, ur);
+// 	}
+//       }
+//     }
+
+//     bool isvalid = mgr->ctrue(b);
+//     // std::cout << "VALID ? " << isvalid << "\n";
+//     if (isvalid) {
+//       IntSetRanges irout(out);
+//       IntSetRanges ir(r);
+//       Iter::Ranges::Union<IntSetRanges, IntSetRanges> a(ir, irout);
+//       IntSet ur(a);
+//       r.update(false, ur);
+//     }
+//     return isvalid;
+
+    return true;
+  }
+
+  forceinline
+  DomValues<BddVarImp*>::DomValues(void) {}
+
+  forceinline
+  DomValues<BddVarImp*>::DomValues(const BddVarImp* x)
+    : valid(false), d((x->bdd_domain())), o(x->_offset), 
+      mi(x->min), ma(x->max), i(-1), mgr(x->mgr), 
+      range(ma - mi + 1),
+      total(static_cast<int> (std::pow(2.0, static_cast<double> (range)))) {
+    // std::cerr << "DomValues(x): ";
+    // std::cerr << x->min << " " << x->max << " ";
+    // std::cerr << x->_offset << " " << x->table_width() << "\n";
+    // int testtotal = static_cast<int> (std::pow(2.0, static_cast<double> (x->table_width())));
+    // std::cerr << testtotal << "\n";
+    operator++();
+  }
+
+  forceinline void 
+  DomValues<BddVarImp*>::init(const BddVarImp* x) {
+    valid = false;
+    d = x->bdd_domain();
+    o = x->_offset;
+    mi = x->min;
+    ma = x->max;
+    i = -1;
+    mgr = x->mgr;
+    range = (ma - mi + 1);
+    total = static_cast<int> (std::pow(2.0, static_cast<double> (range)));
+    operator++();
+  }
+
+  forceinline bool
+  DomValues<BddVarImp*>::operator()(void) const{
+    // std::cerr << "operator(): ";
+    // std::cerr << i << " < " << total << "\n";
+    return i < total;
+  }
+
+  forceinline void 
+  DomValues<BddVarImp*>::operator++(void) {
+    // std::cerr << "operator++()\t";
+    valid = false;
+    is = IntSet::empty;
+    
+    while (!valid && operator()()) {
+      // std::cerr << "!val-ass ";
+      ++i;
+      valid = assignment(is,i);
+      if (!valid) {
+	is = IntSet::empty;
+      }
+    }
+    // std::cerr << "end op++\n";
+  }
+
+  forceinline IntSet
+  DomValues<BddVarImp*>::val(void)  const {
+    return is;
+  }
+
+  template <> 
+  class GlbValues<BddVarImp*> : public DomBddIterator {
+  private:
+    int mi;
+    int ma;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    GlbValues(void);
+    /// Initialize with ranges for variable implementation \a x
+    GlbValues(const BddVarImp* x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const BddVarImp* x);
+    //@}
+    /// \name Iteration control
+    //@{
+    /// Iterate to the next glb value
+    void operator++(void);
+    //@}    
+    int val(void) const;
+  };
+
+  forceinline
+  GlbValues<BddVarImp*>::GlbValues(void) {}
+
+  forceinline
+  GlbValues<BddVarImp*>::GlbValues(const BddVarImp* x) 
+    : mi(x->min), ma(x->max) {
+    DomBddIterator::init(x);
+    while (operator()() && status() != FIX_GLB) {
+      DomBddIterator::operator++();
+    }
+
+  }
+
+  forceinline void 
+  GlbValues<BddVarImp*>::init(const BddVarImp* x) {
+    mi = x->min;  
+    ma = x->max;
+    DomBddIterator::init(x);
+    while (operator()() && status() != FIX_GLB) {
+      DomBddIterator::operator++();
+    }
+  }
+
+  forceinline void 
+  GlbValues<BddVarImp*>::operator++(void) {
+    DomBddIterator::operator++();
+    // std::cout << "increase further\n";
+    while (operator()() && status() != FIX_GLB) {
+      DomBddIterator::operator++();
+    }
+  }
+
+  forceinline int
+  GlbValues<BddVarImp*>::val(void) const {
+//     return mi + DomBddIterator::getlevel();
+    return DomBddIterator::val();
+  }
+
+}
+  namespace Set {
+  template <> 
+  class GlbRanges<Bdd::BddVarImp*> 
+    : public Iter::Values::ToRanges<Bdd::GlbValues<Bdd::BddVarImp*> > {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    GlbRanges(void);
+    /// Initialize with ranges for variable implementation \a x
+    GlbRanges(const Bdd::BddVarImp* x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const Bdd::BddVarImp* x);
+    //@}
+  };
+
+  forceinline
+  GlbRanges<Bdd::BddVarImp*>::GlbRanges(void) {}
+
+  forceinline
+  GlbRanges<Bdd::BddVarImp*>::GlbRanges(const Bdd::BddVarImp* x) {
+    Bdd::GlbValues<Bdd::BddVarImp*> v(x);
+    Iter::Values::ToRanges<Bdd::GlbValues<Bdd::BddVarImp*> >::init(v);
+  }
+
+  forceinline void 
+  GlbRanges<Bdd::BddVarImp*>::init(const Bdd::BddVarImp* x) {
+    Bdd::GlbValues<Bdd::BddVarImp*> v(x);
+    Iter::Values::ToRanges<Bdd::GlbValues<Bdd::BddVarImp*> >::init(v);
+  }
+
+  }
+  namespace Bdd {
+  template <> 
+  class LubValues<BddVarImp*> : public DomBddIterator {
+  private:
+    int mi;
+    int ma;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    LubValues(void);
+    /// Initialize with ranges for variable implementation \a x
+    LubValues(const BddVarImp* x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const BddVarImp* x);
+    //@}
+    /// \name Iteration control
+    //@{
+    /// Iterate to the next glb value
+    void operator++(void);
+    /// Check validity
+    bool operator()(void) const;
+    //@}    
+    int val(void) const;
+  };
+
+  forceinline
+  LubValues<BddVarImp*>::LubValues(void) {}
+
+  forceinline
+  LubValues<BddVarImp*>::LubValues(const BddVarImp* x) 
+    : mi(x->min), ma(x->max) {
+    DomBddIterator::init(x);
+    while (DomBddIterator::operator()() && status() == FIX_NOT_LUB) {
+      DomBddIterator::operator++();
+    }
+  }
+
+  forceinline void 
+  LubValues<BddVarImp*>::init(const BddVarImp* x) {
+    mi = x->min;  
+    ma = x->max;
+
+    DomBddIterator::init(x);
+    while (DomBddIterator::operator()() && status() == FIX_NOT_LUB) {
+      DomBddIterator::operator++();
+    }
+  }
+
+  forceinline void 
+  LubValues<BddVarImp*>::operator++(void) {
+    DomBddIterator::operator++();
+    // std::cout << "increase further\n";
+    while (DomBddIterator::operator()() && status() == FIX_NOT_LUB) {
+      DomBddIterator::operator++();
+    }
+  }
+
+  forceinline bool
+  LubValues<BddVarImp*>::operator()(void) const {
+    // std::cout << DomBddIterator::label() << ">>" << DomBddIterator::getlevel() << " ~ " << status() << "\n";
+    return DomBddIterator::operator()() && status() != FIX_NOT_LUB;
+  }
+
+  forceinline int
+  LubValues<BddVarImp*>::val(void) const {
+    return DomBddIterator::val();
+//     return mi + DomBddIterator::getlevel();
+  }
+
+  }
+  namespace Set {
+
+  template <> 
+  class LubRanges<Bdd::BddVarImp*> 
+  : public Iter::Values::ToRanges<Bdd::LubValues<Bdd::BddVarImp*> > {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    LubRanges(void);
+    /// Initialize with ranges for variable implementation \a x
+    LubRanges(const Bdd::BddVarImp* x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const Bdd::BddVarImp* x);
+    //@}
+  };
+
+  forceinline
+  LubRanges<Bdd::BddVarImp*>::LubRanges(void) {}
+
+  forceinline
+  LubRanges<Bdd::BddVarImp*>::LubRanges(const Bdd::BddVarImp* x) {
+    Bdd::LubValues<Bdd::BddVarImp*> v(x);
+    Iter::Values::ToRanges<Bdd::LubValues<Bdd::BddVarImp*> >::init(v);
+  }
+
+  forceinline void 
+  LubRanges<Bdd::BddVarImp*>::init(const Bdd::BddVarImp* x) {
+    Bdd::LubValues<Bdd::BddVarImp*> v(x);
+    Iter::Values::ToRanges<Bdd::LubValues<Bdd::BddVarImp*> >::init(v);
+  }
+  }
+  namespace Bdd {
+
+  template <> 
+  class UnknownValues<BddVarImp*> : public DomBddIterator {
+  private:
+    int mi;
+    int ma;
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    UnknownValues(void);
+    /// Initialize with ranges for variable implementation \a x
+    UnknownValues(const BddVarImp* x);
+    /// Initialize with ranges for variable implementation \a x 
+    UnknownValues(const BddVarImp* x, GecodeBdd& remain);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const BddVarImp* x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const BddVarImp* x, GecodeBdd& remain);
+    //@}
+    /// \name Iteration control
+    //@{
+    /// Iterate to the next glb value
+    void operator++(void);
+    //@}    
+    int val(void) const;
+  };
+
+  forceinline
+  UnknownValues<BddVarImp*>::UnknownValues(void) {
+    // std::cout << "UnknownValues<BddVarImp*>(void)\n";
+  }
+
+  forceinline
+  UnknownValues<BddVarImp*>::UnknownValues(const BddVarImp* x) 
+    : mi(x->min), ma(x->max) {
+    DomBddIterator::init(x);
+    while (operator()() && 
+	   !(status() == FIX_UNKNOWN || status() == UNDET)) {
+      DomBddIterator::operator++();
+    }
+  }
+
+  forceinline void 
+  UnknownValues<BddVarImp*>::init(const BddVarImp* x) {
+    mi = x->min;  
+    ma = x->max;
+
+    DomBddIterator::init(x);
+    while (operator()() && 
+	   !(status() == FIX_UNKNOWN || status() == UNDET)) {
+      DomBddIterator::operator++();
+    }
+  }
+
+  forceinline void 
+  UnknownValues<BddVarImp*>::operator++(void) {
+    DomBddIterator::operator++();
+    while (operator()() && 
+	   !(status() == FIX_UNKNOWN || status() == UNDET)) {
+      DomBddIterator::operator++();
+    }
+  }
+
+  forceinline int
+  UnknownValues<BddVarImp*>::val(void) const {
+    // std::cout << "val = " << iter.val() << "\n";
+    return DomBddIterator::val();
+//     return mi + DomBddIterator::getlevel();
+  }
+  }
+
+  namespace Set {
+  template <> 
+  class UnknownRanges<Bdd::BddVarImp*> 
+   : public Iter::Values::ToRanges<Bdd::UnknownValues<Bdd::BddVarImp*> > {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    UnknownRanges(void);
+    /// Initialize with ranges for variable implementation \a x
+    UnknownRanges(const Bdd::BddVarImp* x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const Bdd::BddVarImp* x);
+    //@}
+  };
+
+  forceinline
+  UnknownRanges<Bdd::BddVarImp*>::UnknownRanges(void) {
+    // std::cout << "UnknownRanges<BddVarImp*>::UnknownRanges(void)\n";
+  }
+
+  forceinline
+  UnknownRanges<Bdd::BddVarImp*>::UnknownRanges(const Bdd::BddVarImp* x) {
+    // std::cout << "UnknownRanges<BddVarImp*>::UnknownRanges(x)\n";
+    Bdd::UnknownValues<Bdd::BddVarImp*> v(x);
+    Iter::Values::ToRanges<Bdd::UnknownValues<Bdd::BddVarImp*> >::init(v);
+    // std::cout << "END UnknownRanges<BddVarImp*>::UnknownRanges(x)\n";
+  }
+
+  forceinline void 
+  UnknownRanges<Bdd::BddVarImp*>::init(const Bdd::BddVarImp* x) {
+    // std::cout << "UnknownRanges<BddVarImp*>::init(x)\n";
+    Bdd::UnknownValues<Bdd::BddVarImp*> v(x);
+    Iter::Values::ToRanges<Bdd::UnknownValues<Bdd::BddVarImp*> >::init(v);
+    // std::cout << "END UnknownRanges<BddVarImp*>::init(x)\n";
+  }
+  }
+  namespace Bdd {
+
+  forceinline void 
+  BddVarImp::printdom(void) const {
+    // std::cout << "printdom: ";
+    // mgr->print_set(bounds & remain);
+    mgr->print_set(domain);
+  }
+
+  forceinline void 
+  BddVarImp::printall(void) const{
+//     if (mgr->ctrue(domain)) {
+//       std::cout << "P(|";
+//       std::cout << min;
+//       for (int i = min + 1; i <= max; i++) {
+// 	std::cout <<","<< i;
+//       }
+//       std::cout << "|)";
+//     } 
+    // std::cout << "print all \n";
+    DomValues<BddVarImp*> d(this);
+    // std::cout << "domvalues are valid ? " << d() << "\n";
+    while(d()) {
+      IntSet is;
+      is = d.val();
+      std::cout << "{";
+      IntSetRanges ir(is);
+      if (ir()) {
+	if (ir.min() == ir.max()) {
+	  std::cout << ir.min();
+	} else {
+	  std::cout << ir.min()<<"#"<<ir.max();
+	}
+	++ir;
+      }
+      while(ir()) {
+	std::cout << ",";
+	if (ir.min() == ir.max()) {
+	  std::cout << ir.min();
+	} else {
+	  std::cout << ir.min()<<"#"<<ir.max();
+	}
+	++ir;
+      }
+      std::cout << "}";
+      ++d;
+    }
+  }
+
+  forceinline
+  BddVarImp::BddVarImp(Space* home, BMI* m) 
+    : BddVarImpBase(home), mgr(m), domain(BDDTOP),
+      min(Limits::Int::int_min), max(Limits::Int::int_max), 
+      _offset(0), assignment(false) {}
+
+    // the problem with cudd at this position is
+    // BDDTOP for cudd needs mgr->top()
+    // mgr(m) before domain(BDDTOP) 
+    // does not give the desired result
+  forceinline
+  BddVarImp::BddVarImp(Space* home, BMI* m, int a, int b)
+    : BddVarImpBase(home), mgr(m), domain(BDDTOP), min(a), max(b), 
+      assignment(false) {
+    _offset = mgr->allocate(table_width());
+  }
+
+  forceinline
+  BddVarImp::BddVarImp(Space* home, BMI* m, 
+		       int glbMin, int glbMax, int lubMin, int lubMax,
+		       unsigned int cardMin, unsigned int cardMax) 
+    : BddVarImpBase(home), mgr(m), domain(BDDTOP), 
+      min(lubMin), max(lubMax), assignment(false) {
+
+    _offset = mgr->allocate(table_width());
+
+    for (int i = glbMin; i <= glbMax; i++) {
+      int idx = valididx(i);
+      if (idx < 0) { domain = BDDBOT; break;}
+      domain &= mgr->bddpos(idx);
+    } 
+
+    unsigned int range = table_width();
+//     domain &= cardrec(mgr, 0, _offset, range,
+// 		      static_cast<int> (cardMin), 
+// 		      static_cast<int> (cardMax));   
+    domain &= cardcheck(mgr, range, _offset,
+		      static_cast<int> (cardMin), 
+ 		      static_cast<int> (cardMax));   
+  }
+
+  forceinline
+  BddVarImp::BddVarImp(Space* home, BMI* m, 
+		       int glbMin, int glbMax, const IntSet& lubD,
+		       unsigned int cardMin, unsigned int cardMax) 
+    : BddVarImpBase(home), mgr(m), domain(BDDTOP), 
+      min(lubD.min()), max(lubD.max()),
+      assignment(false) {
+
+    IntSetRanges lub(lubD);
+    Iter::Ranges::ToValues<IntSetRanges> lval(lub);
+
+    _offset = mgr->allocate(table_width());
+
+    for (int i = min; i <= max; i++) {
+      if (i != lval.val()) {
+	int idx = valididx(i);
+	if (idx < 0) { domain = BDDBOT; break;}
+	domain &= mgr->negbddpos(idx);
+      } else {
+	++lval;
+      }
+    }
+
+    for (int i = glbMin; i <= glbMax; i++) {
+      int idx = valididx(i);
+      if (idx < 0) { domain = BDDBOT; break;}
+      domain &= mgr->bddpos(idx);
+    } 
+
+    unsigned int range = table_width();
+//     domain &= cardrec(mgr, 0, _offset, range,
+// 		      static_cast<int> (cardMin), 
+// 		      static_cast<int> (cardMax));   
+    domain &= cardcheck(mgr, range, _offset,
+		      static_cast<int> (cardMin), 
+ 		      static_cast<int> (cardMax));   
+  }
+
+  forceinline
+  BddVarImp::BddVarImp(Space* home, BMI* m, 
+		       const IntSet& glbD, int lubMin, int lubMax,
+		       unsigned int cardMin, unsigned int cardMax) 
+    : BddVarImpBase(home), mgr(m), domain(BDDTOP), 
+      min(lubMin), max(lubMax), assignment(false) {
+
+    IntSetRanges glb(glbD);
+    Iter::Ranges::ToValues<IntSetRanges> gval(glb);
+
+    _offset = mgr->allocate(table_width());
+
+    while (gval()) {
+      int idx = valididx(gval.val());
+      if (idx < 0) { domain = BDDBOT; break;}
+      domain &= mgr->bddpos(idx);
+      ++gval;
+    } 
+
+    unsigned int range = table_width();
+//     domain &= cardrec(mgr, 0, _offset, range,
+// 		      static_cast<int> (cardMin), 
+// 		      static_cast<int> (cardMax));   
+    domain &= cardcheck(mgr, range, _offset,
+		      static_cast<int> (cardMin), 
+ 		      static_cast<int> (cardMax));   
+    // std::cout << "constructed\n";
+  }
+
+  forceinline
+  BddVarImp::BddVarImp(Space* home, BMI* m, 
+		       const IntSet& glbD,const IntSet& lubD,
+		       unsigned int cardMin, unsigned int cardMax) 
+    : BddVarImpBase(home), mgr(m), domain(BDDTOP), 
+      min(lubD.min()), max(lubD.max()),
+      assignment(false) {
+
+//     std::cerr << "varimp: ";
+//     std::cerr << "coming from " << m << "\n";
+//     std::cerr << "allocating on" << mgr <<  "\n";;
+
+    
+//     m->debug(std::cerr);
+//     mgr->debug(std::cerr);
+    
+    // std::cerr << "glb= " << glbD << "\n";    
+    // std::cerr << "lub= " << lubD << "\n";
+
+    IntSetRanges glb(glbD);
+    Iter::Ranges::ToValues<IntSetRanges> gval(glb);
+    IntSetRanges lub(lubD);
+    Iter::Ranges::ToValues<IntSetRanges> lval(lub);
+
+    // std::cerr << "allocating on" << mgr <<  "\n";;
+    
+    _offset = mgr->allocate(table_width());
+    
+    for (int i = min; i <= max; i++) {
+      // std::cout << "("<<i << ","<<lval.val() << ") ";
+      if (i != lval.val()) {
+	int idx = valididx(i);
+	if (idx < 0) { domain = BDDBOT; break;}
+	// std::cout << "negate\n";
+	domain &= mgr->negbddpos(idx);
+      } else {
+	++lval;
+      }
+      // std::cout << "\n";
+    }
+
+    while (gval()) {
+      // std::cout << "positive: " <<gval.val() << "\n";
+      int idx = valididx(gval.val());
+      if (idx < 0) { domain = BDDBOT; break;}
+      domain &= mgr->bddpos(idx);
+      ++gval;
+    } 
+
+    unsigned int range = table_width();
+//     domain &= cardrec(mgr, 0, _offset, range,
+// 		      static_cast<int> (cardMin), 
+// 		      static_cast<int> (cardMax));   
+    // std::cout << "assigned ? " << assigned() <<  "\n";
+    // std::cout << "before cardinality\n";
+    // mgr->bdd2dot(domain);
+    domain &= cardcheck(mgr, range, _offset,
+		      static_cast<int> (cardMin), 
+ 		      static_cast<int> (cardMax));   
+    // std::cout << "after cardinality\n";
+  }
+
+  forceinline void 
+  BddVarImp::init(Space* home, BMI* m, int a, int b) {
+    // allocate (b - a + 1) indices in the manager
+    mgr     = m;
+    domain  = BDDTOP;
+    min     = a;
+    max     = b;
+    assignment = false;
+    _offset  = mgr->allocate(table_width());
+    assert(mgr == m);
+  }
+
+  forceinline GecodeBdd 
+  BddVarImp::bdd_domain(void) const { return domain; };
+
+  forceinline void 
+  BddVarImp::dispose(Space* home) {
+    mgr->dispose(domain);
+    // only variables with nodes in the table need to dipose them 
+    if (!(_offset == 0 && 
+	  min == Limits::Int::int_min &&
+	  max == Limits::Int::int_max)
+	) {
+      mgr->dispose(_offset, (int) table_width());
+    }
+  }
+
+  // a variable is only assigned if all bdd variables representing
+  // the elements of the set have either a constant false or a constant true
+  forceinline bool
+  BddVarImp::assigned(void) {
+    if (!assignment) {
+      // (C1) there is only one solution (i.e. only one path)
+      bool cond1 = (unsigned int) mgr->bddpath(domain) == 1;
+      // (C2) the solution talks about all elements 
+      //      (i.e. the number of nodes used for the bdd uses the bdd nodes
+      //      of all elements for the BddVar)
+      bool cond2 = (unsigned int) mgr->bddsize(domain) == table_width();
+      assignment = cond1 && cond2;
+   } 
+    return assignment;
+  }
+
+  forceinline unsigned int
+  BddVarImp::offset(void) const { return _offset; }
+
+  forceinline GecodeBdd
+  BddVarImp::getbdd(int i) const { 
+    // std::cout << "bdd var imp: " << _offset << "+" << i << "\n";
+    return mgr->bddpos(_offset + i); 
+  }
+
+  forceinline GecodeBdd
+  BddVarImp::getnegbdd(int i) const { return mgr->negbddpos(_offset + i); }
+
+  forceinline int
+  BddVarImp::getlevel(int i) { return mgr->var2bdd(_offset + i); }
+
+  forceinline int
+  BddVarImp::getvar(int i) { return mgr->bdd2var(_offset + i); }
+
+  forceinline int
+  BddVarImp::mgr_min(void) const { return min; }
+
+  forceinline int
+  BddVarImp::mgr_max(void) const { return max; }
+  
+  forceinline void
+  BddVarImp::dom_and(GecodeBdd& d) { d &= domain; }
+
+  forceinline void
+  BddVarImp::dom_or(GecodeBdd& d) { d |= domain; }
+
+  forceinline unsigned int 
+  BddVarImp::table_width(void) const { return max - min + 1; }
+
+  forceinline BMI*
+  BddVarImp::manager(void) const { return mgr; }
+
+  forceinline unsigned int 
+  BddVarImp::cardMin(void) const {
+    if (mgr->ctrue(domain)) { return 0; }
+    // GecodeBdd b = BDDTOP;
+    GecodeBdd d = domain;
+    int l = 0;
+    int u = 0;
+    // unsigned int off   = offset();
+    // unsigned int range = table_width();
+    // card_count(mgr, d, b, 0, off, range, l, u);    
+    getcardbounds(mgr, d, l, u);
+    return l;
+  };
+
+  forceinline unsigned int 
+  BddVarImp::cardMax(void) const {
+    if (mgr->ctrue(domain)) { return table_width(); }
+    // GecodeBdd b = BDDTOP;
+    GecodeBdd d = domain;
+    int l = 0;
+    int u = 0;
+    // unsigned int off   = offset();
+    // unsigned int range = table_width();
+    // card_count(mgr, d, b, 0, off, range, l, u);    
+    getcardbounds(mgr, d, l, u);
+    return u;
+  };
+
+  forceinline int 
+  BddVarImp::lubMin(void) const {
+    if (mgr->ctrue(domain)) { return mgr_min(); }
+    Gecode::Set::LubRanges<BddVarImp*> lub(this);
+    return !lub() ? MIN_OF_EMPTY : lub.min();
+  };
+
+  forceinline int 
+  BddVarImp::lubMax(void) const {
+    if (mgr->ctrue(domain)) { return mgr_max(); }
+    Gecode::Set::LubRanges<BddVarImp*> lub(this);
+    if (!lub()) { return MAX_OF_EMPTY; }
+    int maxlub = mgr_max();
+    while (lub()) {
+      maxlub = lub.max();
+      ++lub;
+    }
+    return maxlub;
+  };
+
+  forceinline int 
+  BddVarImp::lubMinN(int n) const {
+    if (mgr->ctrue(domain)) { return mgr_min() + n; }
+    Gecode::Set::LubRanges<BddVarImp*> lub(this);
+    if (!lub()) { return MIN_OF_EMPTY; }
+    while (lub()) {
+      if (n < (int) lub.width()) {
+	return lub.min() + n;
+      } else {
+	n -= lub.width();	
+      }
+      ++lub;
+    }
+    // what to return if n is greater than the number of possible values ?
+    // we should throw an exception here
+    return MIN_OF_EMPTY;
+  };
+
+  forceinline int 
+  BddVarImp::lubMaxN(int n) const {
+    if (mgr->ctrue(domain)) { return mgr_max() - n; }
+    GECODE_AUTOARRAY(NodeStatus, status, table_width());
+    DomBddIterator iter(this);
+    if (!iter()) { return MAX_OF_EMPTY; }
+    for (int i = 0; iter(); i++, ++iter) {
+      status[i] = iter.status();     
+    }
+    int c = 0;
+    for (int j = table_width() - 1; j--; ) {
+      if (status[j] != FIX_NOT_LUB) {
+	if (c == n) { c = j; break; } 
+	c++;
+      }
+    }
+    return mgr_max() - c;
+  };
+
+  forceinline unsigned int
+  BddVarImp::lubSize(void) const {
+    if (mgr->ctrue(domain)) { return table_width(); }
+    BddIterator iter(mgr, domain);
+    int out = 0;
+    while (iter()) {
+      if (iter.status() == FIX_NOT_LUB) {
+	out++;
+      }
+      ++iter;
+    }
+    return table_width() - out;
+  };
+
+  forceinline int 
+  BddVarImp::glbMin(void) const {
+    if (mgr->ctrue(domain)) { return mgr_min(); } 
+    BddIterator iter(mgr, domain);
+    while (iter()) {
+      if (iter.status() == FIX_GLB) {
+	int idx = iter.label() - offset();
+	return mgr_min() + idx;
+      } 
+      ++iter;
+    }
+    return MIN_OF_EMPTY;
+  };
+
+  forceinline int 
+  BddVarImp::glbMax(void) const {
+    if (mgr->ctrue(domain)) { return mgr_max(); } 
+    BddIterator iter(mgr, domain);
+    int lastglb = -1;
+    while (iter()) {
+      if (iter.status() == FIX_GLB) {
+	int idx = iter.label() - offset();
+	lastglb = mgr_min() + idx;
+      } 
+      ++iter;
+    }
+    return (lastglb == -1) ? MAX_OF_EMPTY : lastglb;
+  };
+
+  forceinline unsigned int
+  BddVarImp::glbSize(void) const {
+    if (mgr->ctrue(domain)) { return 0; }
+    BddIterator iter(mgr, domain);
+    int size = 0;
+    while (iter()) {
+      if (iter.status() == FIX_GLB) { size++; }
+      ++iter;
+    }
+    return size;
+  };
+
+  forceinline int 
+  BddVarImp::unknownMin(void) const {
+    if (mgr->ctrue(domain)) { return mgr_min(); } 
+    BddIterator iter(mgr, domain);
+    while (iter()) {
+      NodeStatus status = iter.status();
+      if (status == FIX_UNKNOWN || status == UNDET) {
+	int idx = iter.label() - offset();
+	return mgr_min() + idx;
+      } 
+      ++iter;
+    }
+    return MIN_OF_EMPTY;
+  };
+
+  forceinline int 
+  BddVarImp::unknownMax(void) const {
+    if (mgr->ctrue(domain)) { return mgr_max(); } 
+    BddIterator iter(mgr, domain);
+    int lastunknown = -1;
+    while (iter()) {
+      NodeStatus status = iter.status();
+      if (status == FIX_UNKNOWN || status == UNDET) {
+	int idx = iter.label() - offset();
+	lastunknown = mgr_min() + idx;
+      } 
+      ++iter;
+    }
+    return (lastunknown == -1) ?  MAX_OF_EMPTY : lastunknown;
+  };
+
+  forceinline unsigned int
+  BddVarImp::unknownSize(void) const {
+    int size = table_width();
+    if (mgr->ctrue(domain)) { return size; }
+    BddIterator iter(mgr, domain);
+    while (iter()) {
+      NodeStatus status = iter.status();
+      if (status == FIX_GLB || status == FIX_NOT_LUB) { size--; }
+      ++iter;
+    }
+    return size;
+  };
+
+  forceinline ModEvent 
+  BddVarImp::exclude(Space* home, int a, int b) {
+    // std::cout << "exclude:" << a << ".." <<b << " of "<< offset() <<"\n";
+
+    // values are already excluded
+    if (a > max  || b < min) { return ME_BDD_NONE; }
+
+    int mi = std::max(min, a);
+    int ma = std::min(b, max);
+
+    GecodeBdd notinlub  = BDDTOP;
+    for (int i = ma; i >= mi; i--) {
+      // get the negated bdds for value i in [a..b]
+      notinlub &= getnegbdd(i - min);
+    }
+    return tell_formula(home, notinlub);
+  }
+
+  forceinline ModEvent 
+  BddVarImp::exclude(Space* home, int v) {  return exclude(home, v, v); }
+
+  template <class I> 
+  forceinline ModEvent 
+  BddVarImp::excludeI(Space* home, I& i) {
+    // std::cout << "excludeI: \n";
+    // we can only exclude what intersects the min and max element of the variable
+    Iter::Ranges::Singleton s(min, max);
+    Iter::Ranges::Inter<Iter::Ranges::Singleton, I> inter(s, i);
+    
+    if (!inter()) { return ME_BDD_NONE; }
+    
+    GecodeBdd not_lub = BDDTOP;
+    Iter::Ranges::ToValues<
+      Iter::Ranges::Inter<Iter::Ranges::Singleton, I>
+      > val(inter);
+
+    Iter::Ranges::ValCache<
+      Iter::Ranges::ToValues<
+         Iter::Ranges::Inter<Iter::Ranges::Singleton, I> >
+      > cache(val);
+    
+    for (cache.last(); cache(); --cache) {
+      int v = cache.min();
+      not_lub &= getnegbdd(v - min);
+    }
+    return tell_formula(home, not_lub);
+  };  
+
+  forceinline ModEvent 
+  BddVarImp::include(Space* home, int a, int b) {
+    // std::cout << "include:" << a << ".." << b << " in "<< offset() << "\n";  
+    if (a < min || b > max) { return ME_BDD_FAILED; }
+
+    GecodeBdd in_glb  = BDDTOP;
+    for (int i = b; i >= a; i--) {
+      in_glb &= getbdd(i - min);
+    }
+    return tell_formula(home, in_glb);
+  }
+
+  forceinline ModEvent 
+  BddVarImp::include(Space* home, int v) { return include(home, v, v); }
+
+  template <class I> 
+  forceinline ModEvent 
+  BddVarImp::includeI(Space* home, I& i) {
+    if (!i()) { return ME_BDD_NONE; } 
+    GecodeBdd in_glb  = BDDTOP;
+    Iter::Ranges::ToValues<I> val(i);
+    Iter::Ranges::ValCache<Iter::Ranges::ToValues<I> > cache(val);
+    for (cache.last(); cache(); --cache) {
+      int v = cache.min();
+      if (v < min || max < v) { return ME_BDD_FAILED; }
+      in_glb &= getbdd(v - min);
+    }
+    return tell_formula(home, in_glb);  
+  }
+
+  
+  forceinline ModEvent
+  BddVarImp::nq(Space* home, int a, int b) {
+    if (b < min || a > max) { return ME_BDD_NONE; }
+    Iter::Ranges::Singleton m(a, b);
+    GecodeBdd ass = !(gen_assignment(m));    
+    return tell_formula(home, ass);
+  }
+
+  forceinline ModEvent
+  BddVarImp::nq(Space* home, int v) { return nq(home, v, v); }
+
+  template <class I>
+  forceinline ModEvent
+  BddVarImp::nqI(Space* home, I& i) {
+    GecodeBdd ass = !(gen_assignment(i));
+    return tell_formula(home, ass);
+  }
+
+  forceinline ModEvent
+  BddVarImp::eq(Space* home, int a, int b) {
+    //std::cerr << "eq =" << a << "#" << b << "\n";
+    if (b < min || a > max) { return ME_BDD_FAILED; }
+
+    Iter::Ranges::Singleton m(a, b);
+    GecodeBdd ass = gen_assignment(m);
+    // std::cerr << "assignment = " << ass << "\n";
+    return tell_formula(home, ass);
+  }
+
+  forceinline ModEvent
+  BddVarImp::eq(Space* home, int v) { return eq(home, v, v); }
+
+  // gen assignment needs a test in case
+  // we try to build an assignment
+  // that is not allowed by the variable domain
+  template <class I>
+  forceinline ModEvent
+  BddVarImp::eqI(Space* home, I& i) {
+    if (i()) {
+      if (i.min() < min || i.min() > max) { return ME_BDD_FAILED; }
+    }
+    GecodeBdd ass = gen_assignment(i);
+    return tell_formula(home, ass);
+  }
+
+  forceinline ModEvent 
+  BddVarImp::intersect(Space* home, int a, int b) {
+    ModEvent me_left = exclude(home, Limits::Set::int_min, a - 1);
+    if (me_failed(me_left) || me_left == ME_BDD_VAL) { return me_left; }
+
+    ModEvent me_right = exclude(home, b + 1, Limits::Set::int_max);
+    if (me_failed(me_right) || me_right == ME_BDD_VAL) { return me_right; }
+    if (me_left > 0 || me_right > 0) { return ME_BDD_DOM; }
+
+    return ME_BDD_NONE;    
+  }
+
+  forceinline ModEvent 
+  BddVarImp::intersect(Space* home, int i) { return intersect(home, i, i); }
+
+  template <class I> 
+  forceinline ModEvent 
+  BddVarImp::intersectI(Space* home, I& i) {
+    Iter::Ranges::Compl<Limits::Set::int_min, Limits::Set::int_max, I> compI(i);
+    return excludeI(home, compI); 
+  }
+  
+  forceinline ModEvent 
+  BddVarImp::cardinality(Space* home, int l, int u) {
+    unsigned int maxcard = table_width();
+    // compute the cardinality formula
+    //GecodeBdd c = cardrec(mgr, 0, _offset, maxcard, l, u);
+    GecodeBdd c = cardcheck(mgr, maxcard, _offset, l, u);
+    return tell_formula(home, c);
+  }
+
+  forceinline ModEvent 
+  BddVarImp::cardMin(Space* home, unsigned int newMin) {
+    return cardinality(home, newMin, table_width());
+  }
+
+  forceinline ModEvent 
+  BddVarImp::cardMax(Space* home, unsigned int newMax) {
+    return cardinality(home, 0, newMax);
+  }
+
+  forceinline ModEvent 
+  BddVarImp::tell_formula(Space* home, GecodeBdd& d) {
+    bool assigned_before = assigned();
+    GecodeBdd olddom = domain;
+    // 130507: maybe we should first check for equality and then perform the conjunction ?
+    domain &= d;
+    return processDomChange(home, olddom, assigned_before, assigned());
+  }
+
+  // given the empty iterator we should produce an 
+  // assignment for the empty set.
+  template <class I>
+  forceinline GecodeBdd
+  BddVarImp::gen_assignment(I& i) {
+
+    // initial variable domain m = [min, max]
+    Iter::Ranges::Singleton m(min, max);
+    // consider only those values of the required assignment
+    // belonging to the variables initial domain
+    // inter = i \cap m
+    Iter::Ranges::Inter<I, Iter::Ranges::Singleton> inter(i, m);  
+    Iter::Ranges::Cache<Iter::Ranges::Inter<I, Iter::Ranges::Singleton> > 
+      cinter(inter);
+
+    // compute the difference dmi = m \setminus inter
+    Iter::Ranges::Diff<
+      Iter::Ranges::Singleton, 
+      Iter::Ranges::Cache<Iter::Ranges::Inter<I, Iter::Ranges::Singleton> > 
+     > dmi(m, cinter);
+
+    // get all values v \in dmi
+    Iter::Ranges::ToValues<
+      Iter::Ranges::Diff<
+      Iter::Ranges::Singleton, 
+      Iter::Ranges::Cache<Iter::Ranges::Inter<I, Iter::Ranges::Singleton> > 
+     > > v(dmi);
+
+    GecodeBdd ass = BDDTOP;
+
+    // construct the negated literal for every value to be excluded
+    // std::cerr << "neg-exc: ";
+    while(v()) {
+      // std::cerr << v.val() << ",";
+      int idx = valididx(v.val());
+      if (idx > -1) {
+	ass &= mgr->negbddpos(idx);
+      }
+      ++v;
+    }
+    // std::cerr << "\n";
+
+    cinter.reset();
+    Iter::Ranges::ToValues<
+      Iter::Ranges::Cache<Iter::Ranges::Inter<I, Iter::Ranges::Singleton> >
+     > vc(cinter);
+    // construct the positive literal for all remaining values
+    // std::cerr << "pos-inc: ";
+    while(vc()) {
+      // std::cerr << vc.val() << ",";
+      int idx = valididx(vc.val());
+      if (idx < 0) { ass = BDDBOT; break; }
+      ass &= mgr->bddpos(idx);
+      ++vc;
+    }
+    // std::cerr << "\n";
+
+    return ass;
+  }
+
+  forceinline bool
+  BddVarImp::range(void) const { return mgr->ctrue(domain); }
+
+  /*
+   * Copying a variable
+   *
+   */
+
+  forceinline BddVarImp*
+  BddVarImp::copy(Space* home, bool share) {
+    return copied() ? static_cast<BddVarImp*>(forward())
+      : perform_copy(home,share);
+  }
+
+  /*
+   * Subscribing to variables
+   *
+   */
+  forceinline void
+  BddVarImp::subscribe(Space* home, Propagator* p, PropCond pc, bool process) {
+    BddVarImpBase::subscribe(home,p,pc,assigned(), process);
+  }
+
+  forceinline void
+  BddVarImp::cancel(Space* home, Propagator* p, PropCond pc) {
+    BddVarImpBase::cancel(home,p,pc,assigned());
+  }
+
+  forceinline void
+  BddVarImp::viewdot(void) const { mgr->bdd2dot(domain); }
+
+  forceinline int 
+  BddVarImp::valididx(int v) const{
+    int idx = _offset + v - min;
+    // std::cout << "valididx:" << _offset << "+"<<v <<"-" << min << "=" << idx << "\n";
+    if ((idx < (int) _offset) || (idx > (int) (_offset + table_width() - 1))) {
+      return -1;
+    }
+    return idx;
+  }
+
+  forceinline bool
+  BddVarImp::knownIn(int v) const {
+    if (mgr->ctrue(domain)) { return false; }
+    int idx = valididx(v);
+    if (idx < 0) { return false; }
+    GecodeBdd bv = mgr->negbddpos(idx);
+    return (mgr->cfalse(domain & bv));
+  }
+
+  forceinline bool
+  BddVarImp::knownOut(int v) const {
+    if (mgr->ctrue(domain)) { return false; }
+    int idx = valididx(v);
+    if (idx < 0) { return false; }
+    GecodeBdd bv = mgr->bddpos(idx);
+    return (mgr->cfalse(domain & bv));
+  }
+
+  forceinline ModEvent 
+  BddVarImp::processDomChange(Space* home, GecodeBdd& olddom, 
+			      bool assigned_before, bool assigned) {
+    if (mgr->cfalse(domain)) { return ME_BDD_FAILED; }
+    ModEvent me = ME_BDD_NONE;
+    if (assigned) {
+      if (assigned_before) {
+	me = ME_BDD_NONE;
+	return me;
+      } else {
+	me =  ME_BDD_VAL;
+      }
+      notify(home, me);
+    } else {
+      if (olddom != domain) {
+	me = ME_BDD_DOM;
+	notify(home, me);
+      }
+    }
+    return me;
+  }
+
+    /*
+     * BddIterator
+     *
+     */
+
+    forceinline
+    BddIterator::BddIterator(void) {}
+
+    forceinline
+    BddIterator::BddIterator(BMI* manager, const GecodeBdd& b) {
+      init(manager, b);
+    }
+
+    forceinline NodeStatus 
+    BddIterator::status(void) const { return flag; }
+
+    forceinline int 
+    BddIterator::level(void) const { return _level; }
+
+    forceinline int 
+    BddIterator::label(void) const { 
+      if (!operator()()) { 
+	return -1; 
+      } else {
+	return mgr->bddidx(cur); 
+      }
+    }
+  
+    forceinline bool
+    BddIterator::empty(void) const { return (l == 0) && (r == n - 1); }
+
+    forceinline bool 
+    BddIterator::operator()(void) const {
+      bool valid = (!empty() || singleton );
+      return valid;
+    }
+
+    forceinline int
+    BddIterator::size(void) const {
+      return n;
+    }
+    
+    /*
+     * DomBddIterator
+     *
+     */
+
+    forceinline   
+    DomBddIterator::DomBddIterator(void) {}
+
+    forceinline
+    DomBddIterator::DomBddIterator(const BddVarImp* x) {
+      GecodeBdd dom = x->bdd_domain();
+      DomBddIterator::init(x, dom);
+    }
+
+    forceinline
+    DomBddIterator::DomBddIterator(const BddVarImp* x, GecodeBdd& remain) {
+      // std::cout <<"DomBddIterator::DomBddIterator(x)\n";
+      vector_level = 0;
+      mi    = x->min;
+      ma    = x->max;
+      off   = x->_offset;
+      GecodeBdd dom = x->bdd_domain();
+      if (dom != remain) {
+	dom &= remain;
+      }
+      BddIterator::init(x->mgr, dom);
+      bdd_level = BddIterator::label() - off;
+    }
+
+    forceinline void
+    DomBddIterator::init(const BddVarImp* x) {
+      GecodeBdd dom = x->bdd_domain();
+      init(x, dom);
+    }
+
+    forceinline void
+    DomBddIterator::init(const BddVarImp* x, GecodeBdd& remain) {
+      // std::cout <<"DomBddIterator::init(x)\n";
+      vector_level = 0;
+      mi    = x->min;
+      ma    = x->max;
+      off   = x->_offset;
+
+      GecodeBdd dom = x->bdd_domain();
+      if (dom != remain) {
+	dom &= remain;
+      }
+      BddIterator::init(x->mgr, dom);
+      bdd_level   = BddIterator::label() - off;
+
+    }
+
+    forceinline bool
+    DomBddIterator::same(void) const {
+      return bdd_level == vector_level;
+    }
+
+    forceinline bool
+    DomBddIterator::operator()(void) const {
+      return vector_level < (ma - mi + 1);
+    }
+
+    forceinline void
+    DomBddIterator::operator++(void) {
+      if (same()) {
+	BddIterator::operator++();
+	bdd_level   = BddIterator::label() - off;
+      } 
+      vector_level++;
+    }
+
+    forceinline NodeStatus
+    DomBddIterator::status(void) const{
+      return same() ? BddIterator::status() : FIX_UNKNOWN;
+    }
+  
+    forceinline int
+    DomBddIterator::getlevel(void) const{ return vector_level; }
+
+    forceinline int
+    DomBddIterator::val(void) const {
+      return same() ? mi + BddIterator::label() - off : mi + vector_level;
+    }
+
+}}

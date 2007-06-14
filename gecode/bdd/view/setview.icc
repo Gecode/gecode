@@ -1,0 +1,442 @@
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Contributing authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *     Christian Schulte, 2004
+ *
+ *  Last modified:
+ *     $Date: 2006-08-31 15:10:50 +0000 (Thu, 31 Aug 2006) $ by $Author: pekczynski $
+ *     $Revision: 3578 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#ifdef GECODE_HAVE_SET_VARS
+
+namespace Gecode { 
+
+  namespace Bdd {
+
+    forceinline
+    SetBddView::SetBddView(void) {}
+
+    forceinline
+    SetBddView::SetBddView(const CrdBddView& x)
+      : DerivedViewBase<CrdBddView>(x) {}
+
+    forceinline void
+    SetBddView::init(const CrdBddView& x) { view = x; }
+
+    forceinline PropCond
+    SetBddView::pc_settobdd(PropCond pc) { return PC_BDD_DOM; }
+
+    forceinline ModEvent
+    SetBddView::me_bddtoset(ModEvent me) {
+      switch(me) {
+      case ME_BDD_FAILED: 
+	return Gecode::Set::ME_SET_FAILED;
+      case ME_BDD_NONE: 
+	return Gecode::Set::ME_SET_NONE;
+      case ME_BDD_VAL: 
+	return Gecode::Set::ME_SET_VAL;
+      case ME_BDD_DOM: 
+	return Gecode::Set::ME_SET_BB;
+      default:
+	return Gecode::Set::ME_SET_LUB;
+      }
+    }
+
+
+    /*
+     * Domain Tests
+     *
+     */
+
+    forceinline bool
+    SetBddView::assigned(void) const { return view.assigned(); }
+
+    forceinline bool
+    SetBddView::contains(int n) const { return view.contains(n); }
+
+    forceinline bool
+    SetBddView::notContains(int n) const { return view.notContains(n); }
+
+    /*
+     * Set information
+     *
+     */
+
+    forceinline unsigned int
+    SetBddView::glbSize(void) const { return view.glbSize(); }
+
+    forceinline unsigned int
+    SetBddView::lubSize(void) const { return view.lubSize(); }
+
+    forceinline unsigned int
+    SetBddView::unknownSize(void) const { return view.unknownSize(); }
+
+    forceinline unsigned int
+    SetBddView::cardMin() const { return view.cardMin(); }
+
+    forceinline unsigned int
+    SetBddView::cardMax() const { return view.cardMax(); }
+
+    forceinline int
+    SetBddView::lubMin() const { return view.lubMin(); }
+
+    forceinline int
+    SetBddView::lubMax() const { return view.lubMax(); }
+
+    forceinline int
+    SetBddView::lubMinN(int n) const { return view.lubMinN(n); }
+
+    forceinline int
+    SetBddView::lubMaxN(int n) const { return view.lubMaxN(n); }
+
+    forceinline int
+    SetBddView::glbMin() const { return view.glbMin(); }
+
+    forceinline int
+    SetBddView::glbMax() const { return view.glbMax(); }
+
+
+    /*
+     * Bdd information
+     *
+     */
+
+    forceinline unsigned int
+    SetBddView::offset(void)  const { return view.offset(); }
+
+    forceinline unsigned int
+    SetBddView::table_width(void)  const { return view.table_width(); }
+
+    forceinline GecodeBdd
+    SetBddView::getbdd(int i)  const { return view.getbdd(i); }
+
+    forceinline GecodeBdd
+    SetBddView::getnegbdd(int i)  const { return view.getnegbdd(i); }
+
+    forceinline int
+    SetBddView::getlevel(int i) { return getlevel(i); }
+    
+    forceinline int
+    SetBddView::getvar(int i) { return getvar(i); }
+
+    forceinline void
+    SetBddView::dom_and(GecodeBdd& d) { view.dom_and(d); }
+    
+    forceinline void
+    SetBddView::dom_or(GecodeBdd& d) { view.dom_or(d); }
+    
+    forceinline BMI*
+    SetBddView::manager(void) const { return view.manager(); }
+    
+    forceinline int
+    SetBddView::mgr_min(void)  const { return view.mgr_min(); }
+    
+    forceinline int
+    SetBddView::mgr_max(void)  const { return view.mgr_max(); }
+
+    forceinline int
+    SetBddView::valididx(int v)  const { return view.valididx(v); }
+
+    forceinline GecodeBdd 
+    SetBddView::bdd_domain(void) const { return view.bdd_domain(); }
+
+    forceinline GecodeBdd 
+    SetBddView::bdd_remain(void) const { return view.bdd_remain(); }
+
+    forceinline GecodeBdd 
+    SetBddView::bdd_bounds(void) const { return view.bdd_bounds(); }
+
+
+    /*
+     * Domain Tells
+     *
+     */
+
+    forceinline ModEvent
+    SetBddView::cardinality(Space* home, int l, int u) {
+      return me_bddtoset(view.cardinality(home, l, u));
+    }
+    
+    forceinline ModEvent
+    SetBddView::cardMin(Space* home, int c) {
+      return me_bddtoset(view.cardMin(home, c));
+    }
+
+    forceinline ModEvent
+    SetBddView::cardMax(Space* home, int c) {
+      return me_bddtoset(view.cardMax(home, c));
+    }
+
+    forceinline ModEvent
+    SetBddView::include(Space* home, int c) { 
+//       std::cout << "setbddview include: " << c << "\n";
+      return me_bddtoset(view.include(home, c));
+    }
+
+    forceinline ModEvent
+    SetBddView::intersect(Space* home, int c) { 
+      return me_bddtoset(view.intersect(home, c)); 
+    }
+
+    forceinline ModEvent
+    SetBddView::intersect(Space* home, int i, int j) { 
+      return me_bddtoset(view.intersect(home, i, j)); 
+    }
+
+    forceinline ModEvent
+    SetBddView::exclude(Space* home, int c) { 
+      return me_bddtoset(view.exclude(home, c));
+    }
+
+    forceinline ModEvent
+    SetBddView::include(Space* home, int j, int k) {
+      return me_bddtoset(view.include(home, j, k));
+    }
+
+    forceinline ModEvent
+    SetBddView::exclude(Space* home, int j, int k) {
+      return me_bddtoset(view.exclude(home, j, k));
+    }
+
+    template <class I> ModEvent
+    SetBddView::excludeI(Space* home, I& iter) {
+      return me_bddtoset(view.excludeI(home, iter));
+    }
+
+    template <class I> ModEvent
+    SetBddView::includeI(Space* home, I& iter) {
+      return me_bddtoset(view.includeI(home, iter));
+    }
+
+    template <class I> ModEvent
+    SetBddView::intersectI(Space* home, I& iter) {
+      return me_bddtoset(view.intersectI(home, iter));
+    }
+
+    forceinline ModEvent
+    SetBddView::nq(Space* home, int a, int b) {
+      return me_bddtoset(view.nq(home, a, b));
+    }
+
+    template <class I>
+    forceinline ModEvent
+    SetBddView::nqI(Space* home, I& iter) {
+      return me_bddtoset(view.nqI(home, iter));
+    }
+    
+    forceinline ModEvent
+    SetBddView::eq(Space* home, int v) {
+      return me_bddtoset(view.eq(home, v));
+    }
+    
+    forceinline ModEvent
+    SetBddView::eq(Space* home, int a, int b) {
+      return me_bddtoset(view.eq(home, a, b));
+    }
+
+    template <class I>
+    forceinline ModEvent
+    SetBddView::eqI(Space* home, I& iter) {
+      return me_bddtoset(view.eqI(home, iter));
+    }
+
+    forceinline ModEvent 
+    SetBddView::tell_formula(Space* home, GecodeBdd& d) {
+      return me_bddtoset(view.tell_formula(home, d));
+    }
+
+    forceinline void
+    SetBddView::subscribe(Space* home, Propagator* p, PropCond pc,
+			     bool process) {
+      view.subscribe(home, p, pc_settobdd(pc), process);
+    }
+    forceinline void
+    SetBddView::cancel(Space* home, Propagator* p, PropCond pc) {
+      view.cancel(home, p, pc_settobdd(pc));
+    }
+
+    forceinline ModEvent
+    SetBddView::pme(const Propagator* p) {     
+      return me_bddtoset(CrdBddView::pme(p));
+    }
+
+    forceinline PropModEvent
+    SetBddView::pme(ModEvent me) {
+      return Gecode::Set::SetView::pme(me);
+    }
+
+    forceinline void
+    SetBddView::update(Space* home, bool share, SetBddView& y) {
+      view.update(home,share,y.view);
+    }
+
+  }
+  namespace Set {
+
+    /*
+     * Iterators
+     *
+     */
+
+    /**
+     * \brief %Range iterator for least upper bound of  set view
+     * \ingroup TaskActorSetView
+     */
+    template <>
+    class LubRanges<Bdd::SetBddView> : public LubRanges<Bdd::CrdBddView> {
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      LubRanges(void);
+      /// Initialize with ranges for view \a x
+      LubRanges(const Bdd::SetBddView& x);
+      /// Initialize with ranges for view \a x
+      void init(const Bdd::SetBddView& x);
+      //@}
+    };
+
+    forceinline
+    LubRanges<Bdd::SetBddView>::LubRanges(void) {}
+
+    forceinline
+    LubRanges<Bdd::SetBddView>::LubRanges(const Bdd::SetBddView& s) :
+      LubRanges<Bdd::CrdBddView>(s.base()) {}
+
+    forceinline void
+    LubRanges<Bdd::SetBddView>::init(const Bdd::SetBddView& s) {
+      LubRanges<Bdd::CrdBddView>::init(s.base());
+    }
+
+  }
+  namespace Bdd {
+    /**
+     * \brief %Value iterator for least upper bound of  set view
+     * \ingroup TaskActorSetView
+     */
+    template <>
+    class LubValues<SetBddView> : 
+      public Iter::Ranges::ToValues<Set::LubRanges<SetBddView> > {
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      LubValues(void);
+      /// Initialize with ranges for view \a x
+      LubValues(const SetBddView& x);
+      /// Initialize with ranges for view \a x
+      void init(const SetBddView& x);
+      //@}
+    };
+
+    forceinline
+    LubValues<SetBddView>::LubValues(void) {}
+
+    forceinline
+    LubValues<SetBddView>::LubValues(const SetBddView& s) {
+      Set::LubRanges<SetBddView> lub(s);
+      Iter::Ranges::ToValues<Set::LubRanges<SetBddView> >::init(lub);
+    }
+
+    forceinline void
+    LubValues<SetBddView>::init(const SetBddView& s) {
+      Set::LubRanges<SetBddView> lub(s);
+      Iter::Ranges::ToValues<Set::LubRanges<SetBddView> >::init(lub);
+    }
+  }
+  namespace Set {
+    /**
+     * \brief %Range iterator for greatest lower bound of  set view
+     * \ingroup TaskActorSetView
+     */
+    template <>
+    class GlbRanges<Bdd::SetBddView> : public GlbRanges<Bdd::CrdBddView> {
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      GlbRanges(void);
+      /// Initialize with ranges for view \a x
+      GlbRanges(const Bdd::SetBddView& x);
+      /// Initialize with ranges for view \a x
+      void init(const Bdd::SetBddView& x);
+      //@}
+    };
+
+    forceinline
+    GlbRanges<Bdd::SetBddView>::GlbRanges(void) {}
+
+    forceinline
+    GlbRanges<Bdd::SetBddView>::GlbRanges(const Bdd::SetBddView& s) :
+      GlbRanges<Bdd::CrdBddView>(s.base()) {}
+
+    forceinline void
+    GlbRanges<Bdd::SetBddView>::init(const Bdd::SetBddView& s) {
+      GlbRanges<Bdd::CrdBddView>::init(s.base());
+    }
+
+    template <>
+    class UnknownRanges<Bdd::SetBddView> : 
+      public UnknownRanges<Bdd::CrdBddView> {
+    public:
+      /// \name Constructors and initialization
+      //@{
+      /// Default constructor
+      UnknownRanges(void);
+      /// Initialize with ranges for view \a x
+      UnknownRanges(const Bdd::SetBddView& x);
+      /// Initialize with ranges for view \a x
+      void init(const Bdd::SetBddView& x);
+      //@}
+    };
+
+    forceinline
+    UnknownRanges<Bdd::SetBddView>::UnknownRanges(void) {}
+
+    forceinline
+    UnknownRanges<Bdd::SetBddView>::UnknownRanges(const Bdd::SetBddView& s) :
+      UnknownRanges<Bdd::CrdBddView>(s.base()) {}
+
+    forceinline void
+    UnknownRanges<Bdd::SetBddView>::init(const Bdd::SetBddView& s) {
+      UnknownRanges<Bdd::CrdBddView>::init(s.base());
+    }
+
+  }
+
+
+  /*
+   * Testing
+   *
+   */
+  forceinline bool
+  same(const Bdd::SetBddView& x, const Bdd::SetBddView& y) {
+    return same(x.base(),y.base());
+  }
+  forceinline bool
+  before(const Bdd::SetBddView& x, const Bdd::SetBddView& y) {
+    return before(x.base(),y.base());
+  }
+
+
+}
+#endif 
+
+// STATISTICS: set-var
+

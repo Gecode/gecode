@@ -1,0 +1,326 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-07-29 15:55:20 +0000 (Sat, 29 Jul 2006) $ by $Author: pekczynski $
+ *     $Revision: 3478 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+using namespace Gecode::Bdd;
+
+namespace Gecode {
+
+  template <class View>
+  void partition_post(Space* home, ViewArray<View>& x, bool withlex, 
+		      BddSetRelType lex, bool withcard, int d, 
+		      SetConLevel scl) {
+    // std::cerr << "partition_post()" << "\n";
+    if (home->failed()) return;
+
+    int n = x.size();
+    BMI* mgr = x[0].manager();
+
+    int minx = x[0].mgr_min();
+    int maxx = x[0].mgr_max(); 
+    unsigned int xtab = x[0].table_width();  
+    for (int i = n; i--;) {
+      if (x[i].mgr_min() < minx) {
+	minx = x[i].mgr_min();
+      }
+      if (x[i].mgr_max() > maxx) {
+	maxx = x[i].mgr_max();
+      }
+      if (x[i].table_width() > xtab) {
+	xtab = x[i].table_width();
+      }
+    }
+
+    // build partition
+    GecodeBdd d0 = BDDTOP;     
+
+    // Guidos formula of disjointness does not need
+    // dummy variables quite nice
+
+    // NOTE do only & over variables in the intersection !!
+
+    // std::cerr << "start disjointness" << "\n";
+    // std::cerr << "k=" << k << " ";
+      for (int i = 0; i < n - 1; i++) {
+	for (int j = i + 1; j < n; j++) {
+	  // std::cerr << "x["<< i <<"]=" << x[i] << "\n";
+	  // std::cerr << "y["<< j <<"]=" << x[j] << "\n";
+	  Set::LubRanges<View> lubx(x[i]);
+	  Set::LubRanges<View> luby(x[j]);
+	  Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> >
+	    inter(lubx, luby);
+	  Gecode::Iter::Ranges::ToValues<
+	    Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> >
+	    > values(inter);
+	  Gecode::Iter::Ranges::ValCache<
+	    Gecode::Iter::Ranges::ToValues<
+  	      Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> >
+	    >
+	    > cache(values);
+	    
+	  cache.last();
+	  for (; cache(); --cache) {
+	    int ximin = x[i].mgr_min();
+	    int xjmin = x[j].mgr_min();
+	    int v = cache.min();
+	    d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
+	  }
+	  
+	}
+	//std::cerr << "\n";
+    }
+
+    // forall i: x_{i - 1} \prec_{lex_{bit}} x_i
+    if (withlex) {
+      std::cerr << "with lex \n";
+      for (int i = 0; i < n - 1; i++) {
+	for (int j = i + 1; j < n; j++) {
+	  unsigned int xai_off = x[i].offset();
+	  unsigned int xaj_off = x[j].offset();
+	  switch (lex) {
+	  case SRT_LE: 
+	    {
+	    d0 &= lexlt(mgr, xai_off, xaj_off, xtab, xtab - 1);
+	    break;
+	    }
+	  case SRT_GR: 
+	    {
+	      d0 &= lexlt(mgr, xaj_off, xai_off, xtab, xtab - 1);
+	      break;
+	    }
+	  case SRT_LQ: 
+	    {
+	      d0 &= lexlq(mgr, xai_off, xaj_off, xtab, xtab - 1);
+	      break;
+	    }
+	  case SRT_GQ: 
+	    {
+	      d0 &= lexlq(mgr, xaj_off, xai_off, xtab, xtab - 1);
+	      break;
+	    }
+	  case SRT_LE_REV: 
+	    {
+	    d0 &= lexltrev(mgr, xai_off, xaj_off, xtab, 0);
+	    break;
+	    }
+	  case SRT_GR_REV: 
+	    {
+	      d0 &= lexltrev(mgr, xaj_off, xai_off, xtab, 0);
+	      break;
+	    }
+	  case SRT_LQ_REV: 
+	    {
+	      d0 &= lexlqrev(mgr, xai_off, xaj_off, xtab, 0);
+	      break;
+	    }
+	  case SRT_GQ_REV: 
+	    {
+	      d0 &= lexlqrev(mgr, xaj_off, xai_off, xtab, 0);
+	      break;
+	    }
+	  default:
+	    {
+	      throw Bdd::InvalidRelation(" partition rel not yet implemented ");
+	      break;
+	    }
+	  }
+	}
+      }
+    }
+
+    // just state that the union of all sets is us
+    // std::cerr << "union of all ";
+    for (unsigned int k = 0; k < xtab; k++) {
+      // std::cerr << "k=" << k << " ";
+      GecodeBdd c0 = BDDBOT;
+      for (int i = 0; i < n; i++) {
+	if (k < x[i].table_width()) {
+	  c0 |= x[i].getbdd(k);
+	}
+      }
+      d0 &= (c0  % BDDTOP);
+    }
+    // std::cerr << "\n";
+
+    if (withcard) {
+      // std::cerr << "with card";
+      for (int i = n; i--; ) {
+	// std::cerr << "card= " << i << "\n";
+	unsigned int off   = x[i].offset();
+	unsigned int range = x[i].table_width();
+	d0 &= cardcheck(mgr, range, off, d, d);
+      }
+    }
+
+    // std::cerr << "start propagation\n";
+    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
+  }
+
+  template <class View>
+  void partition_post(Space* home, ViewArray<View>& x, bool withlex, 
+		      SetRelType lex, bool withcard, int d, 
+		      SetConLevel scl) {
+    // std::cerr << "partition_post()" << "\n";
+    if (home->failed()) return;
+
+    int n = x.size();
+    BMI* mgr = x[0].manager();
+
+    int minx = x[0].mgr_min();
+    int maxx = x[0].mgr_max(); 
+    unsigned int xtab = x[0].table_width();  
+    for (int i = n; i--;) {
+      if (x[i].mgr_min() < minx) {
+	minx = x[i].mgr_min();
+      }
+      if (x[i].mgr_max() > maxx) {
+	maxx = x[i].mgr_max();
+      }
+      if (x[i].table_width() > xtab) {
+	xtab = x[i].table_width();
+      }
+    }
+    
+    // build partition
+    GecodeBdd d0 = BDDTOP;     
+
+    // Guidos formula of disjointness does not need
+    // dummy variables quite nice
+
+    // NOTE do only & over variables in the intersection !!
+
+    // std::cerr << "start disjointness" << "\n";
+    // std::cerr << "k=" << k << " ";
+      for (int i = 0; i < n - 1; i++) {
+	for (int j = i + 1; j < n; j++) {
+	  // std::cerr << "x["<< i <<"]=" << x[i] << "\n";
+	  // std::cerr << "y["<< j <<"]=" << x[j] << "\n";
+	  Set::LubRanges<View> lubx(x[i]);
+	  Set::LubRanges<View> luby(x[j]);
+	  Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> >
+	    inter(lubx, luby);
+	  Gecode::Iter::Ranges::ToValues<
+	    Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> >
+	    > values(inter);
+	  Gecode::Iter::Ranges::ValCache<
+	    Gecode::Iter::Ranges::ToValues<
+  	      Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> >
+	    >
+	    > cache(values);
+	    
+	  cache.last();
+	  for (; cache(); --cache) {
+	    int ximin = x[i].mgr_min();
+	    int xjmin = x[j].mgr_min();
+	    int v = cache.min();
+	    d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
+	  }
+	  
+	}
+	//std::cerr << "\n";
+      }
+      
+      // no lex ordering
+
+      // just state that the union of all sets is us
+      // std::cerr << "union of all ";
+      for (unsigned int k = 0; k < xtab; k++) {
+      // std::cerr << "k=" << k << " ";
+	GecodeBdd c0 = BDDBOT;
+	for (int i = 0; i < n; i++) {
+	  if (k < x[i].table_width()) {
+	    c0 |= x[i].getbdd(k);
+	  }
+	}
+	d0 &= (c0  % BDDTOP);
+      }
+      // std::cerr << "\n";
+      
+      if (withcard) {
+	// std::cerr << "with card";
+	for (int i = n; i--; ) {
+	  // std::cerr << "card= " << i << "\n";
+	  unsigned int off   = x[i].offset();
+	  unsigned int range = x[i].table_width();
+	  d0 &= cardcheck(mgr, range, off, d, d);
+	}
+      }
+      
+      // std::cerr << "start propagation\n";
+      GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
+  }
+
+  template <class Rel>
+  forceinline void 
+  partition_con(Space* home, const BddVarArgs& x, bool withlex, Rel lex, 
+		bool withcard, int d, SetConLevel scl) {
+    ViewArray<BddView> bv(home, x);
+    switch(scl) {
+    case SCL_SPL:
+      {
+	int n = bv.size();
+	ViewArray<SplitBddView> sv(home, n);
+	for (int i = n; i--; ) {
+	  sv[i].init(bv[i]);
+	}
+	partition_post(home, sv, withlex, lex, withcard, d, scl);
+	break;
+      }
+    case SCL_BND_BDD:
+      {
+	int n = bv.size();
+	ViewArray<BndBddView> bndv(home, n);
+	for (int i = n; i--; ) {
+	  bndv[i].init(bv[i]);
+	}
+	partition_post(home, bndv, withlex, lex, withcard, d, scl);
+	break;
+      }
+    case SCL_CRD:
+      {
+	int n = bv.size();
+	ViewArray<CrdBddView> crdv(home, n);
+	for (int i = n; i--; ) {
+	  crdv[i].init(bv[i]);
+	}
+	partition_post(home, crdv, withlex, lex, withcard, d, scl);
+	break;
+      }
+    case SCL_LEX:
+      {
+	int n = bv.size();
+	ViewArray<LexBddView> lexv(home, n);
+	for (int i = n; i--; ) {
+	  lexv[i].init(bv[i]);
+	}
+	partition_post(home, lexv, withlex, lex, withcard, d, scl);
+	break;
+      }
+    default:
+      {
+	partition_post(home, bv, withlex, lex, withcard, d, scl);
+      }
+    }
+  }
+
+
+}
+
+// STATISTICS: bdd-post
