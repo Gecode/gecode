@@ -760,10 +760,10 @@ gecode/support/buddy/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/buddy/%.c
 
 gecode/bdd/%$(OBJSUFFIX): $(top_srcdir)/gecode/bdd/%.cc
 	$(CXX) $(CXXFLAGS)  \
-	@COMPILEOBJ@$@ @CCIN@$<
+	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/bdd/%$(SBJSUFFIX): $(top_srcdir)/gecode/bdd/%.cc
 	$(CXX) $(CXXFLAGS)  \
-	@COMPILESBJ@$@ @CCIN@$<
+	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/minimodel/%$(OBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_MINIMODEL_FLAG@ \

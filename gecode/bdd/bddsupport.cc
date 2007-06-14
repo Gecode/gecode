@@ -271,7 +271,7 @@ namespace Gecode {
   GecodeBdd 
   cardeq(BMI* mgr, int offset, int c, int n, int r) {
     // std::cout << "cardeq:" <<  offset << ","  << c << " " << n << " " << r << "\n";
-    GecodeBdd layer[n];
+    GECODE_AUTOARRAY(GecodeBdd, layer, n);
 
     // build the nodes of the lowest layer
     layer[0] = BDDTOP;
@@ -307,7 +307,7 @@ namespace Gecode {
   GecodeBdd 
   cardlqgq(BMI* mgr, int offset, int cl, int cr, int n, int r) {
     // std::cout << "cardlqgq:" <<  offset << "," << cl << "," << cr << " " << n << " " << r << "\n";
-    GecodeBdd layer[n];
+    GECODE_AUTOARRAY(GecodeBdd, layer, n);
     // creates TOP v(c) v(c-1) ... v(c - cl + 1)
     layer[n - cl - 1] = BDDTOP;
     int k = r;

@@ -50,7 +50,7 @@ namespace Gecode { namespace Bdd {
     /// (EEQ) Earliest Existential Quantification
     GecodeBdd phi(BMI* mgr, int i, int j);
     /// Apply existential quantification for all variables
-    GECODE_BDD_EXPORT ExecStatus 
+    ExecStatus 
     divide_conquer(Space* home, BMI* mgr, GecodeBdd& p, int i, int j);
     /// Apply bounds consistent existential quantification for all variables
 //     GECODE_BDD_EXPORT ExecStatus 

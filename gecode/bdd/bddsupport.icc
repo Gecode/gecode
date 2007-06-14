@@ -304,7 +304,7 @@ namespace Gecode {
     BMI* mgr = x.manager();
     int xmin = x.mgr_min();
     int ymin = y.mgr_min();
-    GecodeBdd layer[n];
+    GECODE_AUTOARRAY(GecodeBdd, layer, n);
 
     // build nodes for lowest layer
     // std::cerr << "build lowest layer\n";
@@ -359,7 +359,7 @@ namespace Gecode {
     // std::cerr << x << " " << y << "\n";
     // std::cerr << "cl: " << cl << " cr: " << cr << " n:" << n << " r:" << r << "\n";
     BMI* mgr = x.manager();
-    GecodeBdd layer[n];
+    GECODE_AUTOARRAY(GecodeBdd, layer, n);
     // creates TOP v(c) v(c-1) ... v(c - cl + 1)
     layer[n - cl - 1] = BDDTOP;
     
@@ -630,8 +630,8 @@ namespace Gecode {
 
     // if (n > r) return BDDBOT;
     // WHY IS THIS WRONG ?
-    
-    GecodeBdd layer[n];
+    GECODE_AUTOARRAY(GecodeBdd, layer, n);
+
     // creates TOP v(c) v(c-1) ... v(c - cl + 1)
     layer[n - cl - 1] = BDDTOP;
     
