@@ -19,7 +19,6 @@
  *
  */
 
-#include "gecode/bdd.hh"
 #include "gecode/bdd/bddprop.hh"
 
 using namespace Gecode::Bdd;

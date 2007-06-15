@@ -475,7 +475,7 @@ class bdd
 
    int id(void) const;
    
-   bdd operator=(const bdd &r);
+   GECODE_BUDDY_EXPORT bdd operator=(const bdd &r);
    // declare own biimp operator % is almost <=>
    bdd operator%(const bdd &r) const;
    // end declare
@@ -504,8 +504,8 @@ private:
    bdd(BDD r) { bdd_addref(root=r); }
    bdd operator=(BDD r);
 
-   friend int      bdd_init(int, int);
-   friend int      bdd_setvarnum(int);
+   GECODE_BUDDY_EXPORT friend int      bdd_init(int, int);
+   GECODE_BUDDY_EXPORT friend int      bdd_setvarnum(int);
    friend bdd      bdd_true(void);
    friend bdd      bdd_false(void);
    friend bdd      bdd_ithvarpp(int);

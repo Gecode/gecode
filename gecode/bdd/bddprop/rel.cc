@@ -19,39 +19,38 @@
  *
  */
 
-#include "gecode/bdd.hh"
 #include "gecode/bdd/bddprop.hh"
 
 // for set bounds propagators with bdds
-#include "gecode/set/rel.hh"
-#include "gecode/set/rel-op.hh"
-#include "gecode/set/int.hh"
-#include "gecode/set/convex.hh"
-#include "gecode/set/sequence.hh"
-#include "gecode/set/distinct.hh"
-#include "gecode/set/select.hh"
+// #include "gecode/set/rel.hh"
+// #include "gecode/set/rel-op.hh"
+// #include "gecode/set/int.hh"
+// #include "gecode/set/convex.hh"
+// #include "gecode/set/sequence.hh"
+// #include "gecode/set/distinct.hh"
+// #include "gecode/set/select.hh"
 
 using namespace Gecode::Bdd;
 
 namespace Gecode {
 
   void rel(Space* home, BddVar x, SetRelType r, BddVar y, SetConLevel scl) {
-    switch (scl) {
-    case SCL_BND_SBR:
-      {
-	std::cout << "rel set\n";
-	BddView bx(x);
-	BddView by(y);
-	CrdBddView cx(bx);
-	CrdBddView cy(by);
-	SetBddView sx(cx);
-	SetBddView sy(cy);
-	rel_post<SetBddView, SetBddView>(home, sx, r, sy, scl); 
-	break;
-      }
-    default:
+//     switch (scl) {
+//     case SCL_BND_SBR:
+//       {
+// 	std::cout << "rel set\n";
+// 	BddView bx(x);
+// 	BddView by(y);
+// 	CrdBddView cx(bx);
+// 	CrdBddView cy(by);
+// 	SetBddView sx(cx);
+// 	SetBddView sy(cy);
+// 	rel_post<SetBddView, SetBddView>(home, sx, r, sy, scl); 
+// 	break;
+//       }
+//     default:
       rel_con(home, x, r, y, scl);      
-    }
+//     }
   }
 
   void rel(Space* home, IntVar x, SetRelType r, BddVar y, SetConLevel scl) {

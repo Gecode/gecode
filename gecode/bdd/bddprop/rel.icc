@@ -272,15 +272,12 @@ namespace Gecode {
   void rel_post(Space* home, View0 x, SetRelType r, View1 s, 
 		SetConLevel scl) {
 
-    std::cout << "rel_post with intvar\n";
     if (home->failed()) return;
     // important:
     // the offset order is linear from left to right for the viewarray
 
     unsigned int tab = std::max(x.table_width(), s.table_width());
     
-    std::cout << x.mgr_min() << ".." << x.mgr_max() << " and " << s.mgr_min() << " " << s.mgr_max() << "\n";
-
     // Initialize the bdd representing the constraint
     GecodeBdd d0 = BDDTOP;
 
@@ -289,22 +286,15 @@ namespace Gecode {
       {
 	
 	// x < s
-	std::cout << "SRT_SUB\n";
-	std::cout << "x = " << x.bdd_domain() << "\n";
-	std::cout << "s = " << s.bdd_domain() << "\n";
 	int xshift = x.mgr_min() - s.mgr_min();
 	for (int i = 0; i < (int) tab; i++) {
 	  if (s.mgr_min() + i >= x.mgr_min()) {
-	    std::cout << ">= " << "i=" << i << "\n";
 	    if (s.mgr_min() + i <= x.mgr_max()) {
-	      std::cout << "<= " << "i=" << i << "\n";
 	      d0 &= (x.getbdd(i - xshift)) >>= (s.getbdd(i));
 	    } else {
-	      std::cout << "s("<< i << ")\n";
 	      // d0 &= s.getbdd(i);
 	    }
 	  } else {
-	    std::cout << "s("<< i << ")\n";
 	    // d0 &= s.getbdd(i);
 	  }
 	}
@@ -312,10 +302,8 @@ namespace Gecode {
 
       if (s.assigned()) {
 	// assigned
-	std::cout << "s assigned!\n";
 	d0 &= s.bdd_domain();
       }
-      std::cout << "resulting bdd = " << d0 << "\n";
       break;
     case SRT_SUP: 
       {
@@ -491,9 +479,8 @@ namespace Gecode {
 
 
   template <class Rel>
-  forceinline void 
-  rel_con(Space* home, const BddVar& x, Rel r, const BddVar& y, 
-	  SetConLevel scl) {
+  void rel_con(Space* home, const BddVar& x, Rel r, const BddVar& y, 
+	       SetConLevel scl) {
     BddView xv(x);
     BddView yv(y);
     switch (scl) {
@@ -534,8 +521,7 @@ namespace Gecode {
 
 
   template <class Rel>
-  forceinline void 
-  rel_con(Space* home, const IntVar& x, Rel r, const BddVar& s, 
+  void rel_con(Space* home, const IntVar& x, Rel r, const BddVar& s, 
 	  SetConLevel scl) {
     std::cout << "rel_con with intvar\n";
     Gecode::Int::IntView iv(x);
@@ -569,10 +555,9 @@ namespace Gecode {
 	SetBddView sy(cy); 
 	SetBddView sz(cz); 
 	
-	Gecode::Set::RelOp::rel_op_post<SetBddView, SetBddView, SetBddView>(home, sx, o, sy, r, sz);
+// 	Gecode::Set::RelOp::rel_op_post<SetBddView, SetBddView, SetBddView>(home, sx, o, sy, r, sz);
 	break;
       }
-
     default:
       {
 	  throw Bdd::InvalidRelation("wrong relation for setconlevel SCL_BND_SBR ");

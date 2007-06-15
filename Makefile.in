@@ -557,7 +557,7 @@ export LINKALL = $(LINKMM) $(LINKBUDDY) $(LINKSET) $(LINKINT) $(LINKBDD) \
 
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
-	$(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(SETDLL) $(BUDDYDLL) $(BDDDLL) $(MMDLL)
+	$(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(BUDDYDLL) $(SETDLL) $(BDDDLL) $(MMDLL)
 export ALLLIB = \
 	$(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) $(BUDDYLIB) $(BDDLIB) $(MMLIB)
 else
@@ -759,10 +759,10 @@ gecode/support/buddy/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/buddy/%.c
 	@COMPILESBJ@$@ @CCIN@$<
 
 gecode/bdd/%$(OBJSUFFIX): $(top_srcdir)/gecode/bdd/%.cc
-	$(CXX) $(CXXFLAGS)  \
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_BDD_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/bdd/%$(SBJSUFFIX): $(top_srcdir)/gecode/bdd/%.cc
-	$(CXX) $(CXXFLAGS)  \
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_BDD_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/minimodel/%$(OBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cc
