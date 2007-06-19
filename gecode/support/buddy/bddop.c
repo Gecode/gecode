@@ -173,30 +173,22 @@ static int    varset2svartable(BDD);
 
 int bdd_operator_init(int cachesize)
 {
-  printf("bdd_operator_init(cs=%d)\n", cachesize);
    if (BddCache_init(&applycache,cachesize) < 0)
       return bdd_error(BDD_MEMORY);
-   printf("passed applycache\n");
    if (BddCache_init(&itecache,cachesize) < 0)
       return bdd_error(BDD_MEMORY);
-   printf("passed itecache\n");
    if (BddCache_init(&quantcache,cachesize) < 0)
       return bdd_error(BDD_MEMORY);
-   printf("passed quantcache\n");
    if (BddCache_init(&appexcache,cachesize) < 0)
       return bdd_error(BDD_MEMORY);
-   printf("passed appexcache\n");
    if (BddCache_init(&replacecache,cachesize) < 0)
       return bdd_error(BDD_MEMORY);
-   printf("passed replacecache\n");
    if (BddCache_init(&misccache,cachesize) < 0)
       return bdd_error(BDD_MEMORY);
-   printf("passed miscache\n");
    quantvarsetID = 0;
    quantvarset = NULL;
    cacheratio = 0;
    supportSet = NULL;
-   printf("end bdd_operator_init()\n");
    return 0;
 }
 

@@ -191,7 +191,6 @@ namespace Gecode {
     : _level(BDD_BND),  _size(0), _offset(0), 
       dummy_offset(-1), dummy_range(-1), _debug(false)  {  
     // intialize the library
-    std::cerr << "initialize libary with n="<< n << " and c=" << c << "\n";
     assert(!available());
     bdd_init(n, c);
     
@@ -203,7 +202,7 @@ namespace Gecode {
     info.varnum= -1;
     info.cachesize= -1;
     info.gbcnum= -1;
-    std::cerr << "finished init()\n";
+
   }
 
   
@@ -211,7 +210,6 @@ namespace Gecode {
   BMI::BMI(const BMI& m)
     : _level(m._level),  _size(m._size), _offset(m._offset), 
       dummy_offset(m.dummy_offset), dummy_range(m.dummy_range), _debug(m._debug)  {
-    std::cerr << "BMI copy\n";
     info.produced     = m.info.produced;
     info.nodenum      = m.info.produced;
     info.maxnodenum   = m.info.maxnodenum;
@@ -224,7 +222,6 @@ namespace Gecode {
 
   forceinline
   BMI::~BMI(void) {
-    std::cerr << "destruct BMI\n";
     if (_debug) {
       debug(std::cerr);
     }
@@ -234,7 +231,7 @@ namespace Gecode {
    
   forceinline void
   BMI::init(int n, int c) {  
-    // std::cerr << "init() initialize libary with n="<< n << " and c=" << c << "\n";
+
     _size = 0;
     _offset = 0;
     dummy_offset = -1; 
@@ -252,7 +249,6 @@ namespace Gecode {
   forceinline int 
   BMI::allocate(int r) {
     if (this == NULL) throw BuddyException("allocating on NULL manager!\n");
-    //if (!available()) throw BuddyException("allocating with Buddylibrary not started!\n");
     assert(available());
     _size++;
     bdd_stats(&info);
@@ -272,8 +268,6 @@ namespace Gecode {
     }
 
     // increase on number of allocated bdd variables
-    // debug(std::cerr);
-    // std::cerr << "extvarnum with r=" << r << "\n";
     bdd_extvarnum(r);
 
     for (int i = _offset; i < _offset + r; i++) { GecodeBdd v = bddpos(i); }
@@ -430,17 +424,13 @@ namespace Gecode {
 
   forceinline void
   BMI::dispose(void) {
-    std::cerr << "dispose manager \n";
     if (available()) { 
-      std::cerr << "bdd_done()\n";
       bdd_done(); 
     }
     _size = 0;
     _offset = 0;
     dummy_offset = -1; 
     dummy_range = -1;
-    //debug(std::cerr);
-    std::cerr << "finished dispose()\n";
   }
 
   forceinline void
@@ -482,8 +472,6 @@ namespace Gecode {
   
   forceinline void
   BMI::debug(std::ostream& os) {
-
-    // WE DEFINITELY SHOULD PRINT THE TIME SPENT ON GARB.COLL.
 
     bdd_stats(&info);
     os << "Buddy-Information:\n" 
@@ -561,17 +549,9 @@ namespace Gecode {
 
   forceinline
   BuddyMgr::BuddyMgr(int n, int c) { 
-    std::cerr << "\nBuddyMgr(" <<n <<","<<c<<")\t"<< bdd_isrunning() << "\n";
     assert(object() == NULL);
-    // allocate dummy object to acces buddy library
-//     BMI dummy;
-//     if (dummy.available()) {
-//       std::cerr << "dispose dummy\n";
-//       dummy.dispose();
-//     }
     BMI* bm = new BMI(n, c);  
     object(bm);
-    std::cerr << "\n finis BuddyMgr("<<n<<","<<c<<")";
   }
   
   forceinline
@@ -591,18 +571,13 @@ namespace Gecode {
 
   forceinline void
   BuddyMgr::init(int n, int c) { 
-    std::cerr << "buddy mgr init(n,c)\n";
     if (object() == NULL) {
-      // throw BuddyException("Trying initialization on empty manager");
       BMI* bm = new BMI(n, c);
       object(bm);
     } else {
       if (!object()->available()) {
 	object()->init(n,c); 
-	// std::cerr << "initialization old object \n";
-      } else {
-	// std::cerr << "already running\n";
-      }
+      } 
     }
   }
 
