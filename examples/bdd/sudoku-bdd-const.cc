@@ -308,9 +308,9 @@ main(int argc, char** argv) {
 
   // extra options for the bddexample
   // initial bdd nodes in the table
-  opt.initvarnum = 10000;
+  opt.initvarnum = 5000000;
   // initial cache size for bdd operations
-  opt.initcache  = 1000;
+  opt.initcache  = 2000000;
   // granularity of debugging output
   opt.level      = Gecode::BDD_BND;
   // print final measurement of bdd nodes used
