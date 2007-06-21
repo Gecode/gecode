@@ -311,10 +311,28 @@ main(int argc, char** argv) {
   opt.initvarnum = 5000000;
   // initial cache size for bdd operations
   opt.initcache  = 2000000;
+
+  if (opt.size <18) {
+    opt.initvarnum = 200000;
+    // initial cache size for bdd operations
+    opt.initcache  = 8000;
+  }
+
   // granularity of debugging output
   opt.level      = Gecode::BDD_BND;
+
   // print final measurement of bdd nodes used
-  opt.debug      = true;
+  // setting debug to true will give a more detailed output like this
+  /*
+  Buddy-Information:
+        registered vars: 9
+        allocated nodes: 200003
+        used for vars:   729
+        free nodes:      145682
+        used nodes:      54321
+  */
+  opt.debug      = false;
+
   // consistency level for set constraints
   opt.scl        = SCL_DOM;
 
