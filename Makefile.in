@@ -510,7 +510,7 @@ SETEXAMPLESBJ  = $(SETEXAMPLESRC:%.cc=%$(SBJSUFFIX))
 SETEXAMPLEEXE  = $(SETEXAMPLESRC:%.cc=%$(EXESUFFIX))
 
 BDDEXAMPLESRC0 = \
-	bdd/bddtest bdd/bddsteiner bdd/bddgolf
+	bdd/bddsteiner bdd/sudoku-bdd-const
 BDDEXAMPLESRC  = $(BDDEXAMPLESRC0:%=examples/%.cc)
 BDDEXAMPLEOBJ  = $(BDDEXAMPLESRC:%.cc=%$(OBJSUFFIX))
 BDDEXAMPLESBJ  = $(BDDEXAMPLESRC:%.cc=%$(SBJSUFFIX))

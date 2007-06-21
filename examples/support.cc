@@ -30,6 +30,11 @@
 static const char* icl2str[] =
   { "val", "bnd", "dom", "def" };
 
+#ifdef GECODE_HAVE_BDD_VARS
+static const char* scl2str[] =
+  { "bnd_bdd", "bnd_sbr", "spl", "crd", "lex", "dom", "def" };
+#endif
+
 static const char* em2str[] =
   { "solution", "time", "stat" };
 
@@ -48,6 +53,17 @@ Options::parse(int argc, char** argv) {
            << "\t-icl (def,val,bnd,dom) default: " << icl2str[icl]
            << endl
            << "\t\tinteger consistency level" << endl
+#ifdef GECODE_HAVE_BDD_VARS
+	   << "\t-scl (def,bnd_bdd, bnd_sbr,,spl,crd,lex,dom) default: " << scl2str[scl]
+	   << endl
+	   << "\t\tbdd consistency level" << endl
+	   << "\t-ivn (unsigned int) default: " << initvarnum
+	   << endl
+	   << "\t\tinitial number of bdd nodes in the table" << endl
+	   << "\t-ics (unsigned int) default: " << initcache
+	   << endl
+	   << "\t\tinitial cachesize for bdd operations" << endl
+#endif
            << "\t-c_d (unsigned int) default: " << c_d << endl
            << "\t\tcopying recomputation distance" << endl
            << "\t-a_d (unsigned int) default: " << a_d << endl
@@ -99,7 +115,37 @@ Options::parse(int argc, char** argv) {
         e = "expecting: def, val, bnd, or dom";
         goto error;
       }
-    } else if (!strcmp(argv[i],"-c_d")) {
+    } 
+#ifdef GECODE_HAVE_BDD_VARS
+    else if (!strcmp(argv[i],"-scl")) {
+      if (++i == argc) goto missing;
+      if (!strcmp(argv[i],"def")) {
+	scl = SCL_DEF;
+      } else if (!strcmp(argv[i],"bnd_bdd")) {
+	scl = SCL_BND_BDD;
+      } else if (!strcmp(argv[i],"bnd_sbr")) {
+	scl = SCL_BND_SBR;
+      } else if (!strcmp(argv[i],"spl")) {
+	scl = SCL_SPL;
+      } else if (!strcmp(argv[i],"crd")) {
+	scl = SCL_CRD;
+      } else if (!strcmp(argv[i],"lex")) {
+	scl = SCL_LEX;
+      } else if (!strcmp(argv[i],"dom")) {
+	scl = SCL_DOM;
+      } else {
+	e = "expecting: def, bnd_bdd, bnd_sbr, spl, crd, lex or dom";
+	goto error;
+      }
+    } else if (!strcmp(argv[i],"-ivn")) {
+      if (++i == argc) goto missing;
+      initvarnum = atoi(argv[i]);
+    } else if (!strcmp(argv[i],"-ics")) {
+      if (++i == argc) goto missing;
+      initcache = atoi(argv[i]);
+    }
+#endif 
+    else if (!strcmp(argv[i],"-c_d")) {
       if (++i == argc) goto missing;
       c_d = atoi(argv[i]);
     } else if (!strcmp(argv[i],"-a_d")) {

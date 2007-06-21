@@ -34,7 +34,14 @@ Options::Options(const char* n)
     time(-1),
     naive(false),
     size(0),
-    name(n) {}
+    name(n) 
+#ifdef GECODE_HAVE_BDD_VARS
+  /// Additional Bdd parameters
+  ,initvarnum(100),
+  initcache(100),
+  scl(SCL_DEF)
+#endif 
+{}
 
 namespace {
   /// Stop opbject for controlling stoppage based on both time and
