@@ -29,6 +29,10 @@
 #include "gecode/set.hh"
 #endif
 
+#ifdef GECODE_HAVE_BDD_VARS
+#include "gecode/bdd.hh"
+#endif
+
 namespace Log {
 
   using namespace Gecode;
@@ -60,6 +64,15 @@ namespace Log {
              unsigned int cardMin, unsigned int cardMax);
   void prune_result(const SetVar& v);
   void print(const SetVarArray& a, const char* name=NULL);
+#endif
+
+#ifdef GECODE_HAVE_BDD_VARS
+  void initial(const BddVarArray& a, const char*name);
+  void prune(const BddVar& v, std::string name, SetRelType irt, int val);
+  void prune(const BddVar& v, std::string name,
+	     unsigned int cardMin, unsigned int cardMax);
+  void prune_result(const BddVar& v);
+  void print(const BddVarArray& a, const char* name=NULL);
 #endif
 
   std::string iclh(IntConLevel icl);

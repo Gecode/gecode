@@ -89,7 +89,7 @@ namespace Gecode {
 
     // forall i: x_{i - 1} \prec_{lex_{bit}} x_i
     if (withlex) {
-      std::cerr << "with lex \n";
+      // std::cerr << "with lex \n";
       for (int i = 0; i < n - 1; i++) {
 	for (int j = i + 1; j < n; j++) {
 	  unsigned int xai_off = x[i].offset();

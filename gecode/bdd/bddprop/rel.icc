@@ -147,7 +147,7 @@ namespace Gecode {
 	  > cache(ival);
 	
 	if (!cache()) {
-	  std::cerr << "no post SRT_DISJ needed\n";
+	  // std::cerr << "no post SRT_DISJ needed\n";
 	  return; 
 	} else {
 	  cache.last();

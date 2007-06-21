@@ -327,6 +327,61 @@ namespace Log {
   }
 #endif
 
+#ifdef GECODE_HAVE_BDD_VARS  
+  void initial(const BddVarArray& a, const char* name) {
+    if (!do_logging) return;
+    // Display
+    ostringstream hiva;
+    hiva << "BddVarArray " << name << " = ";
+    hinitial.push_back(hiva.str());
+
+    for (int i = 0; i < a.size(); ++i) {
+      ostringstream ai;
+      ai << "\t" << name << "[" << i << "]="
+	 << a[i];
+      hinitial.push_back(ai.str());
+    }
+
+    // Execution
+    ostringstream civa;
+    civa << "\tSetVarArray " << name << ";";
+    cdecla.push_back(civa.str());
+
+    ostringstream initlist;
+    initlist << name << "(this," << a.size() << ")";
+    cinitlist.push_back(initlist.str());
+
+    ostringstream update;
+    update << "\t" <<  name << ".update(this, share, s." << name << ");";
+    cupdate.push_back(update.str());    
+
+    cnames.push_back(psb(name, true));
+
+    for (int i = 0; i < a.size(); ++i) {
+      ostringstream init;
+      init << "\tconst int arrGlb" << i << "[][2] = {";
+      int n = 0;
+      for (BddVarGlbRanges it(a[i]); it(); ++it, ++n) {
+	if (n) init << ",";
+	init << "{" << it.min() << "," << it.max() << "}";
+      }
+      init << "};\n";
+      init << "\tconst int arrLub" << i << "[][2] = {";
+      int m = 0;
+      for (BddVarLubRanges it(a[i]); it(); ++it, ++m) {
+	if(m) init << ",";
+	init << "{" << it.min() << "," << it.max() << "}";
+      }
+      init << "};\n\t";
+      init << name << "[" << i << "] = SetVar(this, IntSet(arrGlb"
+	   << i << ", " << n << "), IntSet(arrLub";
+// 	   << i << ", " << m << "), " << a[i].cardMin()
+// 	   << ", " << a[i].cardMax() << ");";
+      cinit.push_back(init.str());
+    }
+  }
+#endif
+
   void log(const std::string hlog, const std::string clog = "") {
     if (!do_logging) return;
     hops.push_back(hlog);
@@ -445,6 +500,50 @@ namespace Log {
   }
 #endif
 
+#ifdef GECODE_HAVE_BDD_VARS
+  void prune(const BddVar& v, std::string name, SetRelType brt, int val) {
+    if(!do_logging) return;
+    ostringstream h;
+    switch(brt) {
+    case SRT_SUP:
+      h << "Include val=" << val << " in " << name << " =" << v;
+      break;
+    case SRT_DISJ:
+      h << "Exclude val=" << val << " from " << name << " =" << v;
+      break;
+    default: break;
+    }
+    hops.push_back(h.str());
+
+    ostringstream c;
+    switch(brt) {
+    case SRT_SUP:
+      c << "\tdom(this, " << name << ", SRT_SUP, " << val << ");";
+      break;
+    case SRT_DISJ:
+      c << "\tdom(this, " << name << ", SRT_DISJ, " << val << ");";
+      break;
+    default: break;
+    }
+    cops.push_back(c.str());
+  }
+
+
+  void prune(const BddVar& v, std::string name,
+	     unsigned int cardMin, unsigned int cardMax) {
+    if(!do_logging) return;
+    ostringstream h;
+    h << "Prune cardinality of " << name << " to "
+      << cardMin << "/" << cardMax;
+    hops.push_back(h.str());
+
+    ostringstream c;
+    c << "\tcardinality(this, " << name << ", "
+      << cardMin << ", " << cardMax << ");";
+    cops.push_back(c.str());
+  }
+#endif
+
   void prune_result(const IntVar& v) {
     if (!do_logging) return;
     ostringstream h;
@@ -454,6 +553,15 @@ namespace Log {
 
 #ifdef GECODE_HAVE_SET_VARS
   void prune_result(const SetVar& v) {
+    if (!do_logging) return;
+    ostringstream h;
+    h << "\tPruning resulted in domain " << v;
+    hops.push_back(h.str());
+  }
+#endif
+
+#ifdef GECODE_HAVE_BDD_VARS
+  void prune_result(const BddVar& v) {
     if (!do_logging) return;
     ostringstream h;
     h << "\tPruning resulted in domain " << v;
@@ -492,6 +600,21 @@ namespace Log {
 
 #ifdef GECODE_HAVE_SET_VARS
   void print(const SetVarArray& a, const char* name) {
+    if (!do_logging) return;
+    ostringstream h;
+    if (name) h << name << "[] = ";
+    h << "{";
+    for (int i = 0; i < a.size(); ++i) {
+      h << a[i];
+      if (i != a.size()-1) h << ", ";
+    }
+    hops.push_back(h.str());
+    cops.push_back("\tprint();");
+  }
+#endif
+
+#ifdef GECODE_HAVE_BDD_VARS
+  void print(const BddVarArray& a, const char* name) {
     if (!do_logging) return;
     ostringstream h;
     if (name) h << name << "[] = ";

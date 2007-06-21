@@ -607,15 +607,30 @@ endif
 
 BRANCHTESTSRC0 = \
 	distinct 
+
+
+ifeq "@enable_bdd_vars@" "yes"
+BDDTESTSRC0 = \
+	dom rel atmost partition cardinality select
+BDDTEST  = bdd 
+ALLBDDTESTSRC0 = $(BDDTESTSRC0:%=bdd/%) 
+
+else
+BDDTESTSRC0 =
+BDDTESTDIR  =
+ALLBDDTESTSRC0 = 
+endif
+
+
 ifeq "@enable_set_vars@" "yes"
 TESTSRC0 = \
-	test log int set branch \
-	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) \
+	test log int set branch $(BDDTEST) \
+	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) $(ALLBDDTESTSRC0) \
 	$(BRANCHTESTSRC0:%=branch/%)
 else
 TESTSRC0 = \
-	test log int branch \
-	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) \
+	test log int branch $(BDDTEST) \
+	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) $(ALLBDDTESTSRC0) \
 	$(BRANCHTESTSRC0:%=branch/%)
 endif
 
