@@ -311,7 +311,7 @@ namespace Gecode {
 
   GecodeBdd 
   cardlqgq(BMI* mgr, int offset, int cl, int cr, int n, int r) {
-    // std::cout << "cardlqgq:" <<  offset << "," << cl << "," << cr << " " << n << " " << r << "\n";
+    //std::cout << "cardlqgq:" <<  offset << "," << cl << "," << cr << " " << n << " " << r << "\n";
 
     GECODE_AUTOARRAY(GecodeBdd, layer, n);
     // the use of autoarray now requires explicit initialization
@@ -328,14 +328,16 @@ namespace Gecode {
     }
 
     //for (k = r - 1; k > 0; k--) {
-    for (k = r; --k; ) {
+    // for (k = r; --k; ) {
+    for (k = r; k--; ) {
       int col = k;
       // cl < cr <= tab  ==> n - cl > 0 
       for (int i = n - cl; i < n; i++) { 
+	//std::cerr << "i= " << i << " col test= " << col << " < " << (r + 1 - cr) << " and " << layer[i] << "\n";
 	GecodeBdd t = layer[i-1]; 
 	layer[i] = mgr->ite(mgr->bddpos(offset + col), t, layer[i]);
 	col--;
-	if (col < r + 1 - cr) { k = 1; break;}
+	if (col < r + 1 - cr) { k = 0; break;}
       }
     }
 
@@ -364,6 +366,7 @@ namespace Gecode {
 	col--;
 	if (col < 0) { break;}
       }
+
       return layer[n- 1];
     }
   

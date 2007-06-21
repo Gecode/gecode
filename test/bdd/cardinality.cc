@@ -81,4 +81,29 @@ public:
 BddCardEq _bddcardeq("Card::Eq");
 
 
+class BddCardMinInf : public BddTest {
+public:
+  BddCardMinInf(const char* t) : BddTest(t,1,d1,false) {}
+  virtual bool solution(const SetAssignment& x) const {
+    CountableSetRanges xr1(x.lub, x[0]);
+    
+    int c = 0;
+    while (xr1()) {
+      c += xr1.width();
+      ++xr1;
+    }
+    return (c >= 1);
+  }
+
+  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+    // Test lex-bit order
+    Gecode::hls_order(home, x);
+    Gecode::cardinality(home, x[0], 1, Gecode::Limits::Set::int_max);
+  }
+//   virtual void post(Space* home, BddVarArray& x, IntVarArray&, BoolVar b) {
+//     Gecode::dom(home, x[0], SRT_EQ, d1, b);
+//   }
+};
+BddCardMinInf _bddcardmininf("Card::MinInf");
+
 // STATISTICS: test-bdd

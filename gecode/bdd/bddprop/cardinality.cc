@@ -29,6 +29,7 @@ namespace Gecode {
   void
   cardinality(Space* home, BddVar x, unsigned int l, unsigned int u, 
 	      SetConLevel scl) {
+    // std::cerr << "calling card: " << l << "/" << u << " on " << x << "\n";
     if (home->failed()) return;
 
     ViewArray<BddView> bv(home, 1);

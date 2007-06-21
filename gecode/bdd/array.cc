@@ -23,16 +23,18 @@
 
 namespace Gecode {
 
-  BddVarArray::BddVarArray(Space* home, BMI* m, int n)
+  BddVarArray::BddVarArray(Space* home, BMI* m, int n) 
     : VarArray<BddVar>(home,n) {
-    for (int i = size(); i--; )
+    for (int i = size(); i--; ) {
       x[i].init(home, m);
-    hls_order(home, *this);
+    }
+    m->debug(std::cerr);
+    // at this place we MUST NOT use the ordering function
+    // since we did not allocate a variable so far
   }
 
   BddVarArray::BddVarArray(Space* home, BMI* m, int n, int a, int b)
     : VarArray<BddVar>(home,n) {
-    // std::cout << "initialize array\n";
     // dangerous use correct offsets
     for (int i = 0; i < size();i++) {
       x[i].init(home, m, a, b);
@@ -45,15 +47,11 @@ namespace Gecode {
 			   unsigned int minCard,
 			   unsigned int maxCard)
     : VarArray<BddVar>(home,n) {
-    if ((lbMin < Limits::Set::int_min) || 
-	(lbMax > Limits::Set::int_max) ||
-	(ubMin < Limits::Set::int_min) || 
-	(ubMax > Limits::Set::int_max))
-      throw Bdd::VariableOutOfRangeDomain("BddVarArray");
-    if (maxCard > Limits::Set::card_max)
-      throw Bdd::VariableOutOfRangeCardinality("BddVarArray");
-    if (minCard > maxCard)
-      throw Bdd::VariableFailedDomain("BddVarArray");
+    
+    IntSet glb(lbMin, lbMax);
+    IntSet lub(ubMin, ubMax);      
+    testConsistency(glb, lub, minCard, maxCard, "BddVarArray");
+
     for (int i = 0; i < size(); i++)
       x[i].init(home,m, lbMin,lbMax,ubMin,ubMax,minCard,maxCard);    
     
@@ -64,16 +62,10 @@ namespace Gecode {
 			   const IntSet& glb,int ubMin,int ubMax,
 			   unsigned int minCard,unsigned int maxCard)
     : VarArray<BddVar>(home,n) {
-    if ( ((glb.size() > 0) &&
-	  ((glb.min() < Limits::Set::int_min) ||
-	   (glb.max() > Limits::Set::int_max))) ||
-	 (ubMin < Limits::Set::int_min) || 
-	 (ubMax > Limits::Set::int_max))
-      throw Bdd::VariableOutOfRangeDomain("BddVar");
-    if (maxCard > Limits::Set::card_max)
-      throw Bdd::VariableOutOfRangeCardinality("BddVarArray");
-    if (minCard > maxCard)
-      throw Bdd::VariableFailedDomain("BddVarArray");
+
+    IntSet lub(ubMin, ubMax);      
+    testConsistency(glb, lub, minCard, maxCard, "BddVarArray");
+
     for (int i = 0; i < size(); i++)
       x[i].init(home, m, glb,ubMin,ubMax,minCard,maxCard);
 
@@ -84,40 +76,23 @@ namespace Gecode {
 			   int lbMin,int lbMax,const IntSet& lub,
 			   unsigned int minCard,unsigned int maxCard)
     : VarArray<BddVar>(home,n) {
-    if ( ((lub.size() > 0) &&
-	  ((lub.min() < Limits::Set::int_min) ||
-	   (lub.max() > Limits::Set::int_max))) ||
-	 (lbMin < Limits::Set::int_min) || 
-	 (lbMax > Limits::Set::int_max))
-      throw Bdd::VariableOutOfRangeDomain("BddVarArray");
-    if (maxCard > Limits::Set::card_max)
-      throw Bdd::VariableOutOfRangeCardinality("BddVarArray");
-    if (minCard > maxCard)
-      throw Bdd::VariableFailedDomain("BddVarArray");
+
+    IntSet glb(lbMin, lbMax);      
+    testConsistency(glb, lub, minCard, maxCard, "BddVarArray");
+
     for (int i = 0; i < size(); i++)
-      x[i].init(home, m, lbMin,lbMax,lub,minCard,maxCard);
+      x[i].init(home, m, lbMin, lbMax, lub, minCard, maxCard);
   }
 
   BddVarArray::BddVarArray(Space* home, BMI* m, int n,
 			   const IntSet& glb, const IntSet& lub,
 			   unsigned int minCard, unsigned int maxCard)
     : VarArray<BddVar>(home,n) {
-    // std::cerr << "BddVarArray glb="<<glb<<" lub="<<lub<<"\n";
-    assert(m != NULL);
-    // m->debug(std::cerr);
-//     if (((glb.size() > 0) &&
-// 	 ((glb.min() < Limits::Set::int_min) ||
-// 	  (glb.max() > Limits::Set::int_max)))  ||
-// 	((lub.size() > 0) &&
-// 	 ((lub.min() < Limits::Set::int_min) ||
-// 	  (lub.max() > Limits::Set::int_max))))
-//       throw Bdd::VariableOutOfRangeDomain("BddVar");
-//     if (maxCard > Limits::Set::card_max)
-//       throw Bdd::VariableOutOfRangeCardinality("BddVar");
+
+    testConsistency(glb, lub, minCard, maxCard, "BddVarArray");
+
     for (int i = 0; i < size(); i++)
       x[i].init(home, m, glb,lub,minCard,maxCard);
-//     if (minCard > maxCard)
-//       throw Bdd::VariableFailedDomain("BddVar");
     hls_order(home, *this);
   }
 

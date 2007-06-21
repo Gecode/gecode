@@ -374,9 +374,9 @@ namespace Log {
       }
       init << "};\n\t";
       init << name << "[" << i << "] = SetVar(this, IntSet(arrGlb"
-	   << i << ", " << n << "), IntSet(arrLub";
-// 	   << i << ", " << m << "), " << a[i].cardMin()
-// 	   << ", " << a[i].cardMax() << ");";
+	   << i << ", " << n << "), IntSet(arrLub"
+ 	   << i << ", " << m << "), " << a[i].cardMin()
+ 	   << ", " << a[i].cardMax() << ");";
       cinit.push_back(init.str());
     }
   }

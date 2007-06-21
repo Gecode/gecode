@@ -226,20 +226,20 @@ public:
 	return false;
       }
       // std::cerr << "testing sizes !!!\n";
-//       for (int i=x.size(); i--; ) {
-// 	std::cerr << "x["<<i<<"]=" << x[i] << " ";
-// 	std::cerr << "("<<x[i].glbSize() << "," << x[i].lubSize() <<")"<<"\n";
-// 	if (x[i].glbSize() != c->x[i].glbSize() ||
-// 	    x[i].lubSize() != c->x[i].lubSize() ||
-// 	    x[i].cardMin() != c->x[i].cardMin() ||
-// 	    x[i].cardMax() != c->x[i].cardMax()) {
-// 	  std::cerr << "sizes differ: " << x[i] << " != " << c->x[i] << "\n";
-// 	  Log::print(c->x, "x");
-// 	  if (c->y.size() > 0) Log::print(c->y, "y");
-// 	  delete c;
-// 	  return false;
-// 	}
-//       }
+      for (int i=x.size(); i--; ) {
+ 	// std::cerr << "x["<<i<<"]=" << x[i] << " ";
+ 	// std::cerr << "("<<x[i].glbSize() << "," << x[i].lubSize() <<")"<<"\n";
+ 	if (x[i].glbSize() != c->x[i].glbSize() ||
+ 	    x[i].lubSize() != c->x[i].lubSize() ||
+ 	    x[i].cardMin() != c->x[i].cardMin() ||
+ 	    x[i].cardMax() != c->x[i].cardMax()) {
+ 	  // std::cerr << "sizes differ: " << x[i] << " != " << c->x[i] << "\n";
+ 	  Log::print(c->x, "x");
+ 	  if (c->y.size() > 0) Log::print(c->y, "y");
+ 	  delete c;
+ 	  return false;
+ 	}
+      }
     } else {
       Log::print(b, "b");
       BoolVar cb(c,0,1);
@@ -260,17 +260,17 @@ public:
 	delete c;
 	return false;
       }
-//       for (int i=x.size(); i--; )
-// 	if (x[i].glbSize() != c->x[i].glbSize() ||
-// 	    x[i].lubSize() != c->x[i].lubSize() ||
-// 	    x[i].cardMin() != c->x[i].cardMin() ||
-// 	    x[i].cardMax() != c->x[i].cardMax() ) {
-// 	  Log::print(c->x, "x");
-// 	  if (c->y.size() > 0) Log::print(c->y, "y");
-// 	  Log::print(cb, "cb");
-// 	  delete c;
-// 	  return false;
-// 	}
+       for (int i=x.size(); i--; )
+ 	if (x[i].glbSize() != c->x[i].glbSize() ||
+ 	    x[i].lubSize() != c->x[i].lubSize() ||
+ 	    x[i].cardMin() != c->x[i].cardMin() ||
+ 	    x[i].cardMax() != c->x[i].cardMax() ) {
+ 	  Log::print(c->x, "x");
+ 	  if (c->y.size() > 0) Log::print(c->y, "y");
+ 	  Log::print(cb, "cb");
+ 	  delete c;
+ 	  return false;
+ 	}
     }
     delete c;
     return true;
@@ -373,7 +373,7 @@ public:
       inter(ur2, air2);
 
     CountableSetRanges aisizer(a.lub, a[i]);
-//     unsigned int aisize = Iter::Ranges::size(aisizer);
+    unsigned int aisize = Iter::Ranges::size(aisizer);
 
     // std::cerr << "prune setvar\n";
     // Select mode for pruning
@@ -386,38 +386,38 @@ public:
       int v = Test::randgen(Iter::Ranges::size(diff));
       // std::cerr << " remove from lub\n";
       removeFromLub(v, x[i], i, a);
-    } else // if (m==2 && x[i].cardMin() < aisize) {
-//       unsigned int newc = x[i].cardMin() + 1 + 
-// 	Test::randgen(aisize - x[i].cardMin());
-//       assert( newc > x[i].cardMin() );
-//       assert( newc <= aisize );
-//       Log::prune(x[i], Log::mk_name("x", i), newc, Limits::Set::card_max);
-//       std::cerr << " cardinalityboth"<< newc <<","<< Limits::Set::card_max<<"\n";
-//       cardinality(this, x[i], newc, Limits::Set::card_max);
-//       Log::prune_result(x[i]);
-//     } else if (m==3 && x[i].cardMax() > aisize) {
-//       unsigned int newc = x[i].cardMax() - 1 - 
-// 	Test::randgen(x[i].cardMax() - aisize);
-//       assert( newc < x[i].cardMax() );
-//       assert( newc >= aisize );
-//       Log::prune(x[i], Log::mk_name("x", i), 0, newc);
-//       std::cerr << " cardinalitymax 0," << newc << "\n";
-//       cardinality(this, x[i], 0, newc);
-//       std::cerr << " did cardmax 0," << newc << "\n";
-//       Log::prune_result(x[i]);
-//       std::cerr << "logged prune result\n";
-//     } else
+    } else  if (m==2 && x[i].cardMin() < aisize) {
+      unsigned int newc = x[i].cardMin() + 1 + 
+ 	Test::randgen(aisize - x[i].cardMin());
+      assert( newc > x[i].cardMin() );
+      assert( newc <= aisize );
+      Log::prune(x[i], Log::mk_name("x", i), newc, Limits::Set::card_max);
+      // std::cerr << " cardinalityboth"<< newc <<","<< Limits::Set::card_max<<"\n";
+      cardinality(this, x[i], newc, Limits::Set::card_max);
+      Log::prune_result(x[i]);
+    } else if (m==3 && x[i].cardMax() > aisize) {
+      unsigned int newc = x[i].cardMax() - 1 - 
+ 	Test::randgen(x[i].cardMax() - aisize);
+      assert( newc < x[i].cardMax() );
+      assert( newc >= aisize );
+      Log::prune(x[i], Log::mk_name("x", i), 0, newc);
+      // std::cerr << " cardinalitymax 0," << newc << "\n";
+      cardinality(this, x[i], 0, newc);
+      // std::cerr << " did cardmax 0," << newc << "\n";
+      Log::prune_result(x[i]);
+      // std::cerr << "logged prune result\n";
+    } else
       {
-      if (inter()) {
-	int v = Test::randgen(Iter::Ranges::size(inter));
-	// std::cerr << " inter add to glb \n";
-	addToGlb(v, x[i], i, a);
-      } else {
-	int v = Test::randgen(Iter::Ranges::size(diff));
-	// std::cerr << " inter remove from lub \n";
-	removeFromLub(v, x[i], i, a);
+	if (inter()) {
+	  int v = Test::randgen(Iter::Ranges::size(inter));
+	  // std::cerr << " inter add to glb \n";
+	  addToGlb(v, x[i], i, a);
+	} else {
+	  int v = Test::randgen(Iter::Ranges::size(diff));
+	  // std::cerr << " inter remove from lub \n";
+	  removeFromLub(v, x[i], i, a);
+	}
       }
-    }
     // do not output if failure detected
     if (!this->failed()) {
       // std::cerr << "pruning done with x["<< i<<"]=" << x[i] << "\n";

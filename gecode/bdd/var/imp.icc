@@ -584,6 +584,7 @@ namespace Gecode { namespace Bdd {
     // BDDTOP for cudd needs mgr->top()
     // mgr(m) before domain(BDDTOP) 
     // does not give the desired result
+
   forceinline
   BddVarImp::BddVarImp(Space* home, BMI* m, int a, int b)
     : BddVarImpBase(home), mgr(m), domain(BDDTOP), min(a), max(b), 
@@ -598,6 +599,10 @@ namespace Gecode { namespace Bdd {
     : BddVarImpBase(home), mgr(m), domain(BDDTOP), 
       min(lubMin), max(lubMax), assignment(false) {
 
+    IntSet glb(glbMin, glbMax);
+    IntSet lub(lubMin, lubMax);
+    testConsistency(glb, lub, cardMin, cardMax, "BddVarImp");
+
     _offset = mgr->allocate(table_width());
 
     for (int i = glbMin; i <= glbMax; i++) {
@@ -607,9 +612,6 @@ namespace Gecode { namespace Bdd {
     } 
 
     unsigned int range = table_width();
-//     domain &= cardrec(mgr, 0, _offset, range,
-// 		      static_cast<int> (cardMin), 
-// 		      static_cast<int> (cardMax));   
     domain &= cardcheck(mgr, range, _offset,
 		      static_cast<int> (cardMin), 
  		      static_cast<int> (cardMax));   
@@ -623,6 +625,9 @@ namespace Gecode { namespace Bdd {
       min(lubD.min()), max(lubD.max()),
       assignment(false) {
 
+    IntSet glb(glbMin, glbMax);
+    testConsistency(glb, lubD, cardMin, cardMax, "BddVarImp");
+
     IntSetRanges lub(lubD);
     Iter::Ranges::ToValues<IntSetRanges> lval(lub);
 
@@ -645,9 +650,6 @@ namespace Gecode { namespace Bdd {
     } 
 
     unsigned int range = table_width();
-//     domain &= cardrec(mgr, 0, _offset, range,
-// 		      static_cast<int> (cardMin), 
-// 		      static_cast<int> (cardMax));   
     domain &= cardcheck(mgr, range, _offset,
 		      static_cast<int> (cardMin), 
  		      static_cast<int> (cardMax));   
@@ -660,6 +662,9 @@ namespace Gecode { namespace Bdd {
     : BddVarImpBase(home), mgr(m), domain(BDDTOP), 
       min(lubMin), max(lubMax), assignment(false) {
 
+    IntSet lub(lubMin, lubMax);
+    testConsistency(glbD, lub, cardMin, cardMax, "BddVarImp");
+
     IntSetRanges glb(glbD);
     Iter::Ranges::ToValues<IntSetRanges> gval(glb);
 
@@ -673,13 +678,9 @@ namespace Gecode { namespace Bdd {
     } 
 
     unsigned int range = table_width();
-//     domain &= cardrec(mgr, 0, _offset, range,
-// 		      static_cast<int> (cardMin), 
-// 		      static_cast<int> (cardMax));   
     domain &= cardcheck(mgr, range, _offset,
 		      static_cast<int> (cardMin), 
- 		      static_cast<int> (cardMax));   
-    // std::cout << "constructed\n";
+ 		      static_cast<int> (cardMax));
   }
 
   forceinline
@@ -690,41 +691,26 @@ namespace Gecode { namespace Bdd {
       min(lubD.min()), max(lubD.max()),
       assignment(false) {
 
-//     std::cerr << "varimp: ";
-//     std::cerr << "coming from " << m << "\n";
-//     std::cerr << "allocating on" << mgr <<  "\n";;
-
-    
-//     m->debug(std::cerr);
-//     mgr->debug(std::cerr);
-    
-    // std::cerr << "glb= " << glbD << "\n";    
-    // std::cerr << "lub= " << lubD << "\n";
+    testConsistency(glbD, lubD, cardMin, cardMax, "BddVarImp");
 
     IntSetRanges glb(glbD);
     Iter::Ranges::ToValues<IntSetRanges> gval(glb);
     IntSetRanges lub(lubD);
     Iter::Ranges::ToValues<IntSetRanges> lval(lub);
-
-    // std::cerr << "allocating on" << mgr <<  "\n";;
     
     _offset = mgr->allocate(table_width());
     
     for (int i = min; i <= max; i++) {
-      // std::cout << "("<<i << ","<<lval.val() << ") ";
       if (i != lval.val()) {
 	int idx = valididx(i);
 	if (idx < 0) { domain = BDDBOT; break;}
-	// std::cout << "negate\n";
 	domain &= mgr->negbddpos(idx);
       } else {
 	++lval;
       }
-      // std::cout << "\n";
     }
 
     while (gval()) {
-      // std::cout << "positive: " <<gval.val() << "\n";
       int idx = valididx(gval.val());
       if (idx < 0) { domain = BDDBOT; break;}
       domain &= mgr->bddpos(idx);
@@ -732,16 +718,9 @@ namespace Gecode { namespace Bdd {
     } 
 
     unsigned int range = table_width();
-//     domain &= cardrec(mgr, 0, _offset, range,
-// 		      static_cast<int> (cardMin), 
-// 		      static_cast<int> (cardMax));   
-    // std::cout << "assigned ? " << assigned() <<  "\n";
-    // std::cout << "before cardinality\n";
-    // mgr->bdd2dot(domain);
     domain &= cardcheck(mgr, range, _offset,
 		      static_cast<int> (cardMin), 
  		      static_cast<int> (cardMax));   
-    // std::cout << "after cardinality\n";
   }
 
   forceinline void 
@@ -1106,12 +1085,13 @@ namespace Gecode { namespace Bdd {
 
   forceinline ModEvent
   BddVarImp::eq(Space* home, int a, int b) {
-    //std::cerr << "eq =" << a << "#" << b << "\n";
+    // std::cerr << "eq =" << a << "#" << b << "\n";
     if (b < min || a > max) { return ME_BDD_FAILED; }
 
     Iter::Ranges::Singleton m(a, b);
     GecodeBdd ass = gen_assignment(m);
-    // std::cerr << "assignment = " << ass << "\n";
+    //std::cerr << "assignment = " << ass << "\n";
+
     return tell_formula(home, ass);
   }
 
