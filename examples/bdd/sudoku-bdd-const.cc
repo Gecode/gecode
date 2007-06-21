@@ -312,12 +312,6 @@ main(int argc, char** argv) {
   // initial cache size for bdd operations
   opt.initcache  = 2000000;
 
-  if (opt.size <18) {
-    opt.initvarnum = 200000;
-    // initial cache size for bdd operations
-    opt.initcache  = 8000;
-  }
-
   // granularity of debugging output
   opt.level      = Gecode::BDD_BND;
 
@@ -331,12 +325,18 @@ main(int argc, char** argv) {
         free nodes:      145682
         used nodes:      54321
   */
-  opt.debug      = false;
+  opt.debug      = true;
 
   // consistency level for set constraints
   opt.scl        = SCL_DOM;
 
   opt.parse(argc,argv);
+
+  if (opt.size <18) {
+    opt.initvarnum = 200000;
+    // initial cache size for bdd operations
+    opt.initcache  = 8000;
+  }
     
   if (opt.size >= n_examples) {
     std::cout << "Error: size must be between 0 and "

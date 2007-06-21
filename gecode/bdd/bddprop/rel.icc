@@ -158,7 +158,6 @@ namespace Gecode {
 	    d0 &= (!(x.getbdd(v - minx) & y.getbdd(v - miny)));
 	  }
 	}
-	std::cout << "post disjoint\n";
 	GECODE_ES_FAIL(home, (BinRelDisj<View>::post(home, x, y, d0, scl)));
 	return;
       }
@@ -217,7 +216,6 @@ namespace Gecode {
   void rel_post(Space* home, View0 x, BddSetRelType r, View1 s, 
 		SetConLevel scl) {
 
-    std::cout << "rel_post with intvar\n";
     if (home->failed()) return;
     // important:
     // the offset order is linear from left to right for the viewarray
@@ -228,8 +226,6 @@ namespace Gecode {
     unsigned int yoff = s.offset();
     unsigned int tab = std::max(x.table_width(), s.table_width());
     
-    std::cout << x.mgr_min() << ".." << x.mgr_max() << " and " << s.mgr_min() << " " << s.mgr_max() << "\n";
-
     // Initialize the bdd representing the constraint
     GecodeBdd d0 = BDDTOP;
 
@@ -327,13 +323,9 @@ namespace Gecode {
 	    d0 &= (BDDBOT % s.getbdd(i));
 	    xshift++;
 	  } else {
-	    std::cout << "tab = " << tab << "\t";
-	    std::cout << x.offset() << " " << x.table_width() << " "  << s.offset() << " " << s.table_width() << "\n";
-	    
 	    d0 &= (x.getbdd(i - xshift) % s.getbdd(i));
 	  }
 	}
-	std::cout << "BLF_POS built\n";
       }
       break;
     case SRT_NQ: 
@@ -523,7 +515,6 @@ namespace Gecode {
   template <class Rel>
   void rel_con(Space* home, const IntVar& x, Rel r, const BddVar& s, 
 	  SetConLevel scl) {
-    std::cout << "rel_con with intvar\n";
     Gecode::Int::IntView iv(x);
     BddView bv(s);
 //     int rmin = std::min(iv.min(), bv.mgr_min());
