@@ -260,9 +260,6 @@ namespace Gecode { namespace Bdd {
     ModEvent eq(Space* home, int v);
     /// Restrict domain to be equal to range \f$[a,b]\f$.
     ModEvent eq(Space* home, int a, int b);
-
-    /// Compute modified variable domain \f$ dom'\f$ as \f$ dom' = dom \wedge d \f$
-    ModEvent tell_formula(Space* home, GecodeBdd& d);
     //@}
 
     /// \name Set domain update by range iterator
@@ -271,6 +268,14 @@ namespace Gecode { namespace Bdd {
     template <class I> ModEvent nqI(Space* home, I& i);
     /// Restrict domain to be equal to the range sequence \a i
     template <class I> ModEvent eqI(Space* home, I& i);
+    //@}
+
+    /// \name Common methods for the tell operations
+    //@{
+
+    /// Compute modified variable domain \f$ dom'\f$ as \f$ dom' = dom \wedge d \f$
+    ModEvent tell_formula(Space* home, GecodeBdd& d);
+
     //@}
     
     /// \name Value access
@@ -366,14 +371,6 @@ namespace Gecode { namespace Bdd {
     /// Return copy of not-yet copied variable
     GECODE_BDD_EXPORT 
     BddVarImp* perform_copy(Space* home, bool share);
-    /// \name Common methods for the tell operations
-    //@{
-    /// Computes ModEvent that resulted from updating the variable domain
-    GECODE_BDD_EXPORT 
-    ModEvent 
-    processDomChange(Space* home, GecodeBdd& oldddom,
-		     bool assigned_before, bool assigned);
-    //@}
 
   public:
     /// \name Cloning

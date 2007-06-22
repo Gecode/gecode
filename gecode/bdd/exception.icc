@@ -38,6 +38,13 @@ namespace Gecode { namespace Bdd {
     VariableOutOfRangeDomain(const char* l);
   };
 
+  /// %Exception: %Variable created with glb not a subset of lub
+  class GlbLubSpecNoSubset : public Exception {
+  public:
+    /// Initialize with location \a l
+    GlbLubSpecNoSubset(const char* l);
+  };
+
   /// %Exception: %Variable created with wrong cardinality
   class VariableOutOfRangeCardinality : public Exception {
   public:
@@ -98,6 +105,10 @@ namespace Gecode { namespace Bdd {
   inline
   VariableOutOfRangeDomain::VariableOutOfRangeDomain(const char* l)
     : Exception(l,"Attempt to create variable with wrong values") {}
+
+  inline
+  GlbLubSpecNoSubset::GlbLubSpecNoSubset(const char* l) 
+    : Exception(l,"Attempt to create variable where glb is not a subset of lub") {}
 
   inline
   VariableOutOfRangeCardinality::VariableOutOfRangeCardinality(const char* l)
