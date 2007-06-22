@@ -30,27 +30,29 @@
 #include "gecode/int.hh"
 
 namespace Gecode { namespace Set { namespace Int {
-
+      
+  template <class View, PropCond pc>
   forceinline
-  Channel::Channel(Space* home,
-                   ViewArray< Gecode::Int::IntView >& xs0,
-                   ViewArray< SetView >& ys0)
+  Channel<View, pc>::Channel(Space* home, 
+                             ViewArray<Gecode::Int::IntView>& xs0,
+                             ViewArray<View>& ys0)
     : Propagator(home), xs(xs0), ys(ys0) {
     xs.subscribe(home,this, Gecode::Int::PC_INT_DOM);
-    ys.subscribe(home,this, PC_SET_ANY);
+    ys.subscribe(home,this, pc);
   }
-
+      
+  template <class View, PropCond pc>
   forceinline
-  Channel::Channel(Space* home, bool share,
-                   Channel& p)
+  Channel<View, pc>::Channel(Space* home, bool share, Channel& p)
     : Propagator(home,share,p) {
     xs.update(home,share,p.xs);
     ys.update(home,share,p.ys);
   }
 
+  template <class View, PropCond pc>
   forceinline ExecStatus
-  Channel::post(Space* home, ViewArray<Gecode::Int::IntView>& xs,
-                ViewArray<SetView>& ys) {
+  Channel<View, pc>::post(Space* home, ViewArray<Gecode::Int::IntView>& xs,
+                          ViewArray<View>& ys) {
     // Sharing of ys is taken care of in the propagator:
     // The ys are propagated to be disjoint, so shared variables
     // result in failure.
@@ -69,6 +71,71 @@ namespace Gecode { namespace Set { namespace Int {
 
     (void) new (home) Channel(home,xs,ys);
     return ES_OK;
+  }
+
+  template <class View, PropCond pc>
+  forceinline 
+  PropCost
+  Channel<View, pc>::cost(void) const { return PC_QUADRATIC_LO; }
+
+  template <class View, PropCond pc>
+  forceinline 
+  size_t
+  Channel<View, pc>::dispose(Space* home) {
+    assert(!home->failed());
+    xs.cancel(home,this, Gecode::Int::PC_INT_DOM);
+    ys.cancel(home,this, pc);
+    (void) Propagator::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class View, PropCond pc>
+  forceinline 
+  Actor*
+  Channel<View, pc>::copy(Space* home, bool share) {
+    return new (home) Channel(home,share,*this);
+  }
+
+  template <class View, PropCond pc>
+  forceinline 
+  ExecStatus
+  Channel<View, pc>::propagate(Space* home) {
+    int assigned = 0;
+    for (int v=xs.size(); v--;) {
+      if (xs[v].assigned()) {
+        assigned += 1;
+        for (int i=ys.size(); i--;) {
+          if (i==xs[v].val()) {
+            GECODE_ME_CHECK(ys[i].include(home, v));
+          }
+          else {
+            GECODE_ME_CHECK(ys[i].exclude(home, v));
+          }
+        }
+      } else {
+
+        for (int i=ys.size(); i--;) {
+          if (ys[i].notContains(v)) {
+            GECODE_ME_CHECK(xs[v].nq(home, i));
+          }
+          if (ys[i].contains(v)) {
+            GECODE_ME_CHECK(xs[v].eq(home, i));
+          }
+        }
+
+        Gecode::Int::ViewRanges<Gecode::Int::IntView> xsv(xs[v]);
+        int min = 0;
+        for (; xsv(); ++xsv) {
+          for (int i=min; i<xsv.min(); i++) {
+            GECODE_ME_CHECK(ys[i].exclude(home, v));
+          }
+          min = xsv.max() + 1;
+        }
+
+      }
+    }
+
+    return (assigned==xs.size()) ? ES_SUBSUMED(this,home) : ES_NOFIX;
   }
 
 }}}

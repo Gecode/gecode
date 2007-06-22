@@ -57,8 +57,8 @@ namespace Gecode {
 //     CrdBddView cs(bs);
 //     SetBddView ss(cs);
 //     Gecode::Int::IntView ix(x);
-//     Gecode::Set::SingletonView xsingle(ix);
-//     Gecode::rel_post<SetBddView, Gecode::Set::SingletonView>(home, ss, r, xsingle); 
+//     Gecode::Gecode::Set::SingletonView xsingle(ix);
+//     Gecode::rel_post<SetBddView, Gecode::Gecode::Set::SingletonView>(home, ss, r, xsingle); 
 //   }
 
 //   void rel(Space* home, BddVar s, SetRelType r, IntVar x, BoolVar b, SetConLevel scl) {
@@ -66,8 +66,8 @@ namespace Gecode {
 //     CrdBddView cs(bs);
 //     SetBddView ss(cs);
 //     Gecode::Int::IntView ix(x);
-//     Gecode::Set::SingletonView xsingle(ix);
-//     rel_re<SetBddView, Gecode::Set::SingletonView>(home, ss, r, xsingle, b);
+//     Gecode::Gecode::Set::SingletonView xsingle(ix);
+//     rel_re<SetBddView, Gecode::Gecode::Set::SingletonView>(home, ss, r, xsingle, b);
 //   }
 
 //   void rel(Space* home, IntVar x, SetRelType r, BddVar s, BoolVar b, SetConLevel scl) {
@@ -93,18 +93,18 @@ namespace Gecode {
 //     case IRT_EQ:
 //       {
 // 	Gecode::Int::IntView xv(x);
-// 	Set::SingletonView xsingle(xv);
+// 	Gecode::Set::SingletonView xsingle(xv);
 // 	GECODE_ES_FAIL(home,
-// 		       (Set::Rel::Eq<SetBddView,Set::SingletonView>
+// 		       (Set::Rel::Eq<SetBddView,Gecode::Set::SingletonView>
 // 			::post(home,ss,xsingle)));
 //       }
 //       break;
 //     case IRT_NQ:
 //       {
 // 	Gecode::Int::IntView xv(x);
-// 	Set::SingletonView xsingle(xv);
+// 	Gecode::Set::SingletonView xsingle(xv);
 // 	GECODE_ES_FAIL(home,
-// 		       (Set::Rel::Distinct<SetBddView,Set::SingletonView>
+// 		       (Set::Rel::Distinct<SetBddView,Gecode::Set::SingletonView>
 // 			::post(home,ss,xsingle)));
 
 //       }
@@ -188,18 +188,13 @@ namespace Gecode {
 //     GECODE_ES_FAIL(home, (Set::Int::Match<SetBddView>::post(home,ss,xa)));
 //   }
 
-//   void
-//   channel(Space* home, const IntVarArgs& x, const BddVarArgs& y) {
-//     if (home->failed()) return;
-//     ViewArray<Gecode::Int::IntView> xa(home,x);
-
-//     ViewArray<BddView> bv(home,y);
-//     ViewArray<CrdBddView> cv(home,bv.size());
-//     for (int i = bv.size(); i--; ) { cv[i].init(bv[i]); }
-//     ViewArray<SetBddView> sv(home,cv.size());
-//     for (int i = cv.size(); i--; ) { sv[i].init(cv[i]); }
-//     GECODE_ES_FAIL(home, (Set::Int::Channel<SetBddView>::post(home,xa,sv)));
-//   }
+  void
+  channel(Space* home, const IntVarArgs& x, const BddVarArgs& y) {
+    if (home->failed()) return;
+    ViewArray<Gecode::Int::IntView> xa(home,x);
+    ViewArray<BddView> bv(home,y);
+    GECODE_ES_FAIL(home, (Set::Int::Channel<BddView, PC_BDD_DOM>::post(home,xa,bv)));
+  }
 
 //   void weights(Space* home, const IntArgs& elements, const IntArgs& weights,
 // 	       BddVar x, IntVar y) {
@@ -277,30 +272,32 @@ namespace Gecode {
 
 //   void  rel(Space* home, SetOpType op, const IntVarArgs& x, BddVar y) {
 //     if (home->failed()) return;
-//     ViewArray<SingletonView> xa(home,x.size());
+//     ViewArray<Gecode::Set::SingletonView> xa(home,x.size());
 //     for (int i=x.size(); i--;) {
 //       Gecode::Int::IntView iv(x[i]);
-//       SingletonView sv(iv);
+//       Gecode::Set::SingletonView sv(iv);
 //       xa[i] = sv;
 //     }
 
 //     BddView bs(y);
-//     CrdBddView cs(bs);
-//     SetBddView ss(cs);
-      
+//     CrdBddView cv(bs);
+//     SetBddView sv(cv);
+
+//     std::cerr << "allocating was successfull!\n";
+
 //     switch(op) {
 //     case SOT_UNION:
-//       GECODE_ES_FAIL(home,(Set::RelOp::UnionN<SingletonView,SetBddView>
-// 			   ::post(home, xa, ss)));
+//       GECODE_ES_FAIL(home,(Set::RelOp::UnionN<Gecode::Set::SingletonView,SetBddView>
+// 			   ::post(home, xa, sv)));
 //       break;
 //     case SOT_DUNION:
-//       GECODE_ES_FAIL(home,(Set::RelOp::PartitionN<SingletonView,SetBddView>
-// 			   ::post(home, xa, ss)));
+//       GECODE_ES_FAIL(home,(Set::RelOp::PartitionN<Gecode::Set::SingletonView,SetBddView>
+// 			   ::post(home, xa, sv)));
 //       break;
 //     case SOT_INTER:
 //       GECODE_ES_FAIL(home,
-// 		     (Set::RelOp::IntersectionN<SingletonView,SetBddView>
-// 		      ::post(home, xa, ss)));
+// 		     (Set::RelOp::IntersectionN<Gecode::Set::SingletonView,SetBddView>
+// 		      ::post(home, xa, sv)));
 //       break;
 //     case SOT_MINUS:
 //       throw InvalidRelation("rel minus");

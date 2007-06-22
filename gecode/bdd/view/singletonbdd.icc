@@ -324,7 +324,7 @@ namespace Gecode {
 	  ++ci;
 	}
       }
-      ci.rest();
+      ci.reset();
       return me_inttobdd(view.minus_r(home,ci));
     }
 

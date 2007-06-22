@@ -123,7 +123,8 @@ namespace Gecode {
     if (home->failed()) return;
     ViewArray<Int::IntView> xa(home,x);
     ViewArray<Set::SetView> ya(home,y);
-    GECODE_ES_FAIL(home,Set::Int::Channel::post(home,xa,ya));
+    GECODE_ES_FAIL(home,(Set::Int::Channel<Set::SetView, Gecode::Set::PC_SET_ANY>
+                         ::post(home,xa,ya)));
   }
 
   void weights(Space* home, const IntArgs& elements, const IntArgs& weights,

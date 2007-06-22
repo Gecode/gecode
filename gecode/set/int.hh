@@ -149,30 +149,30 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include "gecode/set/int.hh" \endcode
    * \ingroup FuncSetProp
    */
+  template <class View, PropCond pc>
   class Channel : public Propagator {
   protected:
     /// IntViews, \f$x_i\f$ reflects which set contains element \f$i\f$
     ViewArray< Gecode::Int::IntView > xs;
     /// SetViews that are constrained to be disjoint
-    ViewArray< SetView > ys;
+    ViewArray< View > ys;
 
     /// Constructor for cloning \a p
     Channel(Space* home, bool share,Channel& p);
     /// Constructor for posting
-    Channel(Space* home,ViewArray< Gecode::Int::IntView >&,
-            ViewArray< SetView >&);
+    Channel(Space* home,ViewArray< Gecode::Int::IntView >&, ViewArray< View >&);
   public:
     /// Copy propagator during cloning
-    GECODE_SET_EXPORT virtual Actor*   copy(Space* home,bool);
+    virtual Actor*   copy(Space* home,bool);
     /// Cost function (defined as PC_QUADRATIC_LO)
-    GECODE_SET_EXPORT virtual PropCost cost(void) const;
+    virtual PropCost cost(void) const;
     /// Delete propagator and return its size
-    GECODE_SET_EXPORT virtual size_t dispose(Space* home);
+    virtual size_t dispose(Space* home);
     /// Perform propagation
-    GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
+    virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
     static ExecStatus post(Space* home,ViewArray< Gecode::Int::IntView >& x,
-                           ViewArray< SetView >& y);
+                           ViewArray< View >& y);
   };
 
   /**
