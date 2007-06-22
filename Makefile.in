@@ -246,7 +246,7 @@ INTBUILDDIRS	= \
 SETSRC0 =								 \
 	branch.cc cardinality.cc convex.cc convex/conv.cc convex/hull.cc \
 	dom.cc rel.cc rel-op.cc rel-op-const.cc				 \
-	int/card.cc int.cc int/channel.cc int/match.cc			 \
+	int/card.cc int.cc int/match.cc			                 \
 	int/minmax.cc int/weights.cc					 \
 	select.cc select/disjoint.cc sequence.cc			 \
 	distinct.cc distinct/binomial.cc				 \
