@@ -108,8 +108,6 @@ public:
 
     if (!o.naive) {
 
-      //      atmostOne(this, groupsS, playersInGroup);
-
       /*
        * Redundant constraints and static symmetry breaking from
        * "Solving Kirkman's Schoolgirl Problem in a Few Seconds"
@@ -153,10 +151,8 @@ public:
       for (int w=0; w<weeks-1; w++) {
         SetVar g1(this, IntSet::empty, 1, players-1);
         SetVar g2(this, IntSet::empty, 1, players-1);
-        SetVar zero1(this, IntSet::empty,0,0);
-        SetVar zero2(this, IntSet::empty,0,0);
-        rel(this, g1, SOT_DUNION, zero1, SRT_EQ, group(w,0));
-        rel(this, g2, SOT_DUNION, zero2, SRT_EQ, group(w+1,0));
+        rel(this, g1, SOT_DUNION, IntSet(0,0), SRT_EQ, group(w,0));
+        rel(this, g2, SOT_DUNION, IntSet(0,0), SRT_EQ, group(w+1,0));
         IntVar minG1(this, 0, players-1);
         IntVar minG2(this, 0, players-1);
         min(this, g1, minG1);
