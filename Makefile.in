@@ -328,7 +328,8 @@ BDDSRC0 =	\
 	var/imp.cc var/bdd.cc  view/print.cc                  \
 	bddprop/dom.cc bddprop/rel.cc bddprop/cardinality.cc  \
 	bddprop/atmost.cc bddprop/partition.cc bddprop/select.cc  \
-	bddprop/singleton.cc bddprop/range.cc \
+	bddprop/singleton.cc bddprop/rangeroots.cc \
+	bddprop/disjointglb.cc bddprop/distinct.cc \
 	$(WITHSET)
 
 BDDVARIMP = \
@@ -342,10 +343,13 @@ BDDHDR0 =		                \
         var/imp.icc var/bdd.icc view/bdd.icc view/splitbdd.icc \
 	view/bndbdd.icc view/crdbdd.icc view/lexbdd.icc \
 	view/singletonbdd.icc view/setview.icc \
-	bddprop.hh bddprop/nary.icc bddprop/naryrec.icc \
+	bddprop.hh \
+	bddprop/unary.icc bddprop/binary.icc \
+	bddprop/nary.icc bddprop/naryrec.icc \
+	bddprop/rangeroots.icc bddprop/rangerec.icc  \
 	bddprop/atmost.icc bddprop/partition.icc bddprop/rel.icc \
 	bddprop/select.icc bddprop/singleton.icc bddprop/bin.icc \
-	bddprop/range.icc bddprop/binary.icc\
+	bddprop/common.icc bddprop/distinct.icc bddprop/disjointglb.icc \
 	branch.hh branch/select-val.icc branch/select-view.icc	
 
 BDDSRC		= $(BDDSRC0:%=gecode/bdd/%)

@@ -1,4 +1,4 @@
-
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -271,6 +271,9 @@ namespace Gecode {
   cardinality(Space* home, BddVar x, unsigned int c, 
 	      SetConLevel scl = SCL_DEF);
   
+  GECODE_BDD_EXPORT void 
+  singleton(Space* home, IntVar x, BddVar s, SetConLevel scl);
+  
   /// Post propagator for \f$ \bigcup_{i\neq index} glb(x_{i}) \parallel x_{index} \f$ 
   GECODE_BDD_EXPORT void
   disjointglb(Space* home, const BddVarArgs& x, int index);
@@ -326,6 +329,14 @@ namespace Gecode {
   /// Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \f$ 
   GECODE_BDD_EXPORT void
   partition(Space* home, const BddVarArgs& x, SetConLevel scl = SCL_DEF);
+
+  /// Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \f$ 
+  GECODE_BDD_EXPORT void
+  partition(Space* home, const BddVarArgs& x, const BddVar& y, SetConLevel scl = SCL_DEF);
+
+  /// Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \f$ 
+  GECODE_BDD_EXPORT void
+  partition(Space* home, const IntVarArgs& x, const BddVar& y, SetConLevel scl = SCL_DEF);
 
   /**
    * \brief Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \wedge 

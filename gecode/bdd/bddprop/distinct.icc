@@ -27,11 +27,10 @@ namespace Gecode {
   void distinct(Space* home, ViewArray<View>& x, SetConLevel scl) {
   
     int n = x.size();
-    BddMgr* mgr = x[0].manager();
     // build partition
     GecodeBdd d0 = BDDTOP;     
 
-    int width = x[0].table_width();
+    unsigned int width = x[0].table_width();
 
     for (int i = 0; i < n - 1; i++) {
       for (int j = i + 1; j < n; j++) {

@@ -59,6 +59,13 @@ namespace Gecode { namespace Bdd {
     VariableFailedDomain(const char* l);
   };
 
+  /// %Exception: %Variable created with invalid domain specification
+  class VariableInvalidDomainSpec : public Exception {
+  public:
+    /// Initialize with location \a l
+    VariableInvalidDomainSpec(const char* l);
+  };
+
   /// %Exception: No arguments available in argument array
   class ArgumentEmpty : public Exception {
   public:
@@ -117,6 +124,10 @@ namespace Gecode { namespace Bdd {
   inline
   VariableFailedDomain::VariableFailedDomain(const char* l)
     : Exception(l,"Attempt to create variable with initially failed domain") {}
+
+  inline
+    VariableInvalidDomainSpec::VariableInvalidDomainSpec(const char* l)
+    : Exception(l,"Attempt to create variable with invalid domain specification") {}
 
   inline
   ArgumentEmpty::ArgumentEmpty(const char* l)

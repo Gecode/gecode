@@ -23,7 +23,7 @@ namespace Gecode { namespace Bdd {
 
   template <class View0, class View1>
   forceinline
-  Bin<View0, View1>::Bin(Space* home, View0 x, View1 y, GecodeBdd& d0)
+  Bin<View0, View1>::Bin(Space* home, View0& x, View1& y, GecodeBdd& d0)
     : MixBinaryPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, x, y), 
       d(d0) {
     MixBinaryPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::force(home);
@@ -37,7 +37,7 @@ namespace Gecode { namespace Bdd {
 
   template <class View0, class View1>
   forceinline ExecStatus
-  Bin<View0, View1>::post(Space* home, View0 x, View1 y, GecodeBdd& d0) {
+  Bin<View0, View1>::post(Space* home, View0& x, View1& y, GecodeBdd& d0) {
     (void) new (home) Bin(home, x, y, d0);
     return ES_OK;
   }

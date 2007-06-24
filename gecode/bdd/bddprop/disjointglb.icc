@@ -205,8 +205,6 @@ namespace Gecode { namespace Bdd {
 	// std::cerr << "v=" << v << " at " << row << "," << col << "\n";
 	
 	// clear row
-// 	GECODE_AUTOARRAY(int, exrow, s - 1);
-// 	int crow = 0;
 	// std::cerr << "clear row exclude: ";
 	for (int k = 0; k < s; k++) {
 	  if (k + 1 != col) {
@@ -218,9 +216,6 @@ namespace Gecode { namespace Bdd {
 	    // 	    Iter::Ranges::Union<IntSetRanges, Iter::Ranges::Singleton> u(ir, vr);
 	    // 	    IntSet newset(u);
 	    // 	    exclude.update(false, newset);
-
-// 	    exrow[crow] = val;
-// 	    crow++;
 
  	    da[cda] = val;
  	    cda++;
@@ -241,16 +236,12 @@ namespace Gecode { namespace Bdd {
 	//	std::cerr << "results in " << x << "\n";
 
 	// clear col
-	GECODE_AUTOARRAY(int, excol, s - 1);
-	int ccol = 0;
+
 	// std::cerr << "clear col exclude: ";
 	for (int k = 0; k < s; k++) {
 	  if (k != row) {
 	    int val = (k * s) + col;
 	    // std::cerr << val << ",";
-
-// 	    excol[ccol] = val;
-// 	    ccol++;
 
 	    da[cda] = val;
 	    cda++;

@@ -34,8 +34,9 @@ namespace Gecode {
     SingletonBddView::SingletonBddView(void) {}
 
     forceinline
-    SingletonBddView::SingletonBddView(BMI* manager, int a, int b, const Gecode::Int::IntView& i0)
-      : DerivedViewBase<Gecode::Int::IntView>(i0) {
+    SingletonBddView::SingletonBddView(BMI* manager, int a, int b, 
+				       const Int::IntView& i0)
+      : DerivedViewBase<Int::IntView>(i0) {
       mgr     = manager;
       min     = a;
       max     = b;
@@ -44,32 +45,33 @@ namespace Gecode {
       domain.init();
       domain  = BDDTOP;
 
-      // exclude values not in dom(i0)
-      GecodeBdd bndvars = BDDTOP;
-      Gecode::Int::ViewRanges<Gecode::Int::IntView> values(view);
-      Iter::Ranges::Singleton s(min, max);
-      Iter::Ranges::Diff<Iter::Ranges::Singleton, 
-	Gecode::Int::ViewRanges<Gecode::Int::IntView> > diff(s, values);
+      // exclude values not in dom(i0)     
+      Int::ViewValues<Int::IntView> values(view);
+      if (!values())
+	throw Bdd::VariableInvalidDomainSpec("SingletonBddView");
+
+      Iter::Ranges::ValCache<Int::ViewValues<Int::IntView> > vc(values);
+      vc.last();
       
-      while (diff()) {
-	int mi = diff.min();
-	int ma = diff.max();
-	int idx = 0;
-	for (int i = mi; i <= ma; i++) {
-	  idx = i - min;
-	  domain  &= getnegbdd(idx);
-	  bndvars &= getbdd(idx);
+      for (int i = max; i >= min; i--) {
+	if (vc()) {
+	  if (vc.val() != i) {
+	    domain &= getnegbdd(i - min);
+	  } else {
+	    --vc;
+	  }
+	} else {
+	  domain &= getnegbdd(i - min);
 	}
-	++diff;
       }
-      // enforce singleton view
-      GecodeBdd card = cardrec(mgr, bndvars, 0, _offset, range, 1, 1);
+      
+      GecodeBdd card = cardcheck(mgr, range, _offset, 1, 1);
       domain &= card;
     }
 
 
     forceinline void
-    SingletonBddView::init(BMI* manager, int a, int b, const Gecode::Int::IntView& i0) {
+    SingletonBddView::init(BMI* manager, int a, int b, const Int::IntView& i0) {
       view = i0;
       mgr     = manager;
       min     = a;
@@ -80,26 +82,27 @@ namespace Gecode {
       domain.init();
       domain  = BDDTOP;
 
-      // exclude values not in dom(i0)
-      GecodeBdd bndvars = BDDTOP;
-      Gecode::Int::ViewRanges<Gecode::Int::IntView> values(view);
-      Iter::Ranges::Singleton s(min, max);
-      Iter::Ranges::Diff<Iter::Ranges::Singleton, 
-	Gecode::Int::ViewRanges<Gecode::Int::IntView> > diff(s, values);
+      // exclude values not in dom(i0)     
+      Int::ViewValues<Int::IntView> values(view);
+      if (!values())
+	throw Bdd::VariableInvalidDomainSpec("SingletonBddView");
+
+      Iter::Ranges::ValCache<Int::ViewValues<Int::IntView> > vc(values);
+      vc.last();
       
-      while (diff()) {
-	int mi = diff.min();
-	int ma = diff.max();
-	int idx = 0;
-	for (int i = mi; i <= ma; i++) {
-	  idx = i - min;
-	  domain  &= getnegbdd(idx);
-	  bndvars &= getbdd(idx);
+      for (int i = max; i >= min; i--) {
+	if (vc()) {
+	  if (vc.val() != i) {
+	    domain &= getnegbdd(i - min);
+	  } else {
+	    --vc;
+	  }
+	} else {
+	  domain &= getnegbdd(i - min);
 	}
-	++diff;
       }
-      // enforce singleton view
-      GecodeBdd card = cardrec(mgr, bndvars, 0, _offset, range, 1, 1);
+      
+      GecodeBdd card = cardcheck(mgr, range, _offset, 1, 1);
       domain &= card;
     }
 
@@ -113,24 +116,24 @@ namespace Gecode {
     SingletonBddView::pc_bddtoint(PropCond pc) {
       switch(pc) {
       case PC_BDD_DOM:
-	return Gecode::Int::PC_INT_DOM;
+	return Int::PC_INT_DOM;
       case PC_BDD_VAL:
-	return Gecode::Int::PC_INT_VAL;
+	return Int::PC_INT_VAL;
       default:
-	return Gecode::Int::PC_INT_DOM;
+	return Int::PC_INT_DOM;
       }
     }
 
     forceinline ModEvent
     SingletonBddView::me_inttobdd(ModEvent me) {
       switch(me) {
-      case Gecode::Int::ME_INT_FAILED: 
+      case Int::ME_INT_FAILED: 
 	return ME_BDD_FAILED;
-      case Gecode::Int::ME_INT_NONE: 
+      case Int::ME_INT_NONE: 
 	return ME_BDD_NONE;
-      case Gecode::Int::ME_INT_VAL: 
+      case Int::ME_INT_VAL: 
 	return ME_BDD_VAL;
-      case Gecode::Int::ME_INT_DOM: 
+      case Int::ME_INT_DOM: 
 	return ME_BDD_DOM;
       default:
 	return ME_BDD_DOM;
@@ -146,8 +149,9 @@ namespace Gecode {
 
 
     forceinline bool
-    SingletonBddView::contains(int n) const { return view.assigned() ?
-					     (view.val()==n) : false; }
+    SingletonBddView::contains(int n) const { 
+      return view.assigned() ? (view.val()==n) : false; 
+    }
 
     forceinline bool
     SingletonBddView::notContains(int n) const { return !view.in(n); }
@@ -164,9 +168,7 @@ namespace Gecode {
     SingletonBddView::lubSize(void) const { return view.size(); }
 
     forceinline unsigned int
-    SingletonBddView::unknownSize(void) const {
-      return lubSize() - glbSize();
-    }
+    SingletonBddView::unknownSize(void) const { return lubSize() - glbSize(); }
 
     forceinline unsigned int
     SingletonBddView::cardMin() const { return 1; }
@@ -181,12 +183,14 @@ namespace Gecode {
     SingletonBddView::lubMax() const { return view.max(); }
 
     forceinline int
-    SingletonBddView::glbMin() const { return view.assigned() ?
-				      view.val() : BddVarImp::MIN_OF_EMPTY; }
+    SingletonBddView::glbMin() const { 
+      return view.assigned() ? view.val() : BddVarImp::MIN_OF_EMPTY; 
+    }
 
     forceinline int
-    SingletonBddView::glbMax() const { return view.assigned() ?
-				      view.val() : BddVarImp::MAX_OF_EMPTY; }
+    SingletonBddView::glbMax() const { 
+      return view.assigned() ? view.val() : BddVarImp::MAX_OF_EMPTY; 
+    }
 
     /*
      * Bdd information
@@ -264,13 +268,19 @@ namespace Gecode {
 
     forceinline ModEvent
     SingletonBddView::intersect(Space* home,int i, int j) { 
-      for (int m = min; m < i; m++) { domain &= getnegbdd(m - min); }
-      for (int m = j + 1; m <= max; m++) { domain &= getnegbdd(m - min); }
-      
+
       ModEvent me1 = me_inttobdd(view.gq(home,i));
       ModEvent me2 = me_inttobdd(view.lq(home,j));
-      if (me_failed(me1) || me_failed(me2))
+      if (me_failed(me1) || me_failed(me2)) {
+	domain = BDDBOT;
 	return ME_BDD_FAILED;
+      }
+      
+      for (int r = max; r >= min; r--) {
+	if (r <= i || j <= r) 
+	  domain &= getnegbdd(r - min);
+      }
+      
       switch (me1) {
       case ME_BDD_NONE:
       case ME_BDD_DOM:
@@ -296,13 +306,18 @@ namespace Gecode {
 
     forceinline ModEvent
     SingletonBddView::exclude(Space* home, int j, int k) {
-      for (int i = j; i <= k; i++) {
-	domain &= getnegbdd(i - min);
-      }
+
       ModEvent me1 = me_inttobdd(view.gr(home,j));
       ModEvent me2 = me_inttobdd(view.le(home,k));
-      if (me_failed(me1) || me_failed(me2))
+      if (me_failed(me1) || me_failed(me2)) {
+	domain = BDDBOT;
 	return ME_BDD_FAILED;
+      }
+      
+      for (int i = k; i >= j; i--) {
+	domain &= getnegbdd(i - min);
+      }
+
       switch (me1) {
       case ME_BDD_NONE:
       case ME_BDD_DOM:
@@ -317,15 +332,14 @@ namespace Gecode {
 
     template <class I> ModEvent
     SingletonBddView::excludeI(Space* home, I& iter) {
-      Iter::Ranges::Cache<I> ci(iter);
-      while (ci()) {
-	for (int i = ci.min(); i <= ci.max(); i++) {
+      Iter::Ranges::ValCache<I> vci(iter);
+      for (vci.last(); vci(); --vci) {
+	for (int i = vci.max(); i>= vci.min(); i--) {
 	  domain &= getnegbdd(i - min);
-	  ++ci;
 	}
       }
-      ci.reset();
-      return me_inttobdd(view.minus_r(home,ci));
+      vci.reset();
+      return me_inttobdd(view.minus_r(home,vci));
     }
 
     template <class I> ModEvent
@@ -346,19 +360,24 @@ namespace Gecode {
 
     template <class I> ModEvent
     SingletonBddView::intersectI(Space* home, I& iter) {
-      Gecode::Int::ViewRanges<Gecode::Int::IntView> domx(view);
-      Iter::Ranges::Cache<I> ci(iter);
-      Iter::Ranges::Diff<
-	Gecode::Int::ViewRanges<Gecode::Int::IntView>,
-	Iter::Ranges::Cache<I> > diff(domx, ci);
-      while (ci()) {
-	for (int i = ci.min(); i <= ci.max(); i++) {
+
+      Iter::Ranges::ToValues<I> val(iter);
+      Iter::Ranges::ValCache<Iter::Ranges::ToValues<I> > vc(val);
+
+      for (int i = max; i >= min; i--) {
+	if (vc()) {
+	  if (vc.val() != i) {
+	    domain &= getnegbdd(i - min);
+	  } else {
+	    --vc;
+	  }
+	} else {
 	  domain &= getnegbdd(i - min);
 	}
-	++ci;
       }
-      ci.reset();
-      return me_inttobdd(view.inter_r(home, ci));
+
+      vc.reset();
+      return me_inttobdd(view.inter_r(home, vc));
     }
 
     forceinline ModEvent
@@ -386,7 +405,7 @@ namespace Gecode {
     SingletonBddView::tell_formula(Space* home, GecodeBdd& d) {
       if (assigned()) {
 	int v = view.val();
-	for (int i = min; i <= max; i++) {
+	for (int i = max; i >= min; i--) {
 	  if (i != v) {
 	    domain &= getnegbdd(i - min);
 	  } else {
@@ -396,11 +415,10 @@ namespace Gecode {
 	return ME_BDD_VAL;
       }
       d &= domain;
-      if (mgr->cfalse(d)) {
+      if (mgr->cfalse(d)) 
 	return ME_BDD_FAILED;
-      }
 
-      ModEvent me = Gecode::Int::ME_INT_NONE;
+      ModEvent me = Int::ME_INT_NONE;
       GecodeBdd conv = BDDTOP;
       conv_hull(mgr, d, conv);
       if (!mgr->ctrue(conv)) {
@@ -436,7 +454,7 @@ namespace Gecode {
 
     forceinline ModEvent
     SingletonBddView::pme(const Propagator* p) {     
-      return me_inttobdd(Gecode::Int::IntView::pme(p));
+      return me_inttobdd(Int::IntView::pme(p));
     }
 
     forceinline PropModEvent
@@ -466,7 +484,7 @@ namespace Gecode {
      * \ingroup TaskActorSetView
      */
     template <>
-    class LubRanges<Bdd::SingletonBddView> : public Gecode::Int::IntVarImpFwd {
+    class LubRanges<Bdd::SingletonBddView> : public Int::IntVarImpFwd {
     public:
       /// \name Constructors and initialization
       //@{
@@ -484,11 +502,11 @@ namespace Gecode {
 
     forceinline
     LubRanges<Bdd::SingletonBddView>::LubRanges(const Bdd::SingletonBddView& s) :
-      Gecode::Int::IntVarImpFwd(s.base().variable()) {}
+      Int::IntVarImpFwd(s.base().variable()) {}
 
     forceinline void
     LubRanges<Bdd::SingletonBddView>::init(const Bdd::SingletonBddView& s) {
-      Gecode::Int::IntVarImpFwd::init(s.base().variable());
+      Int::IntVarImpFwd::init(s.base().variable());
     }
   }
   namespace Bdd {

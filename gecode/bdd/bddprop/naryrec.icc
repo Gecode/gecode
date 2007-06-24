@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -20,44 +21,33 @@
  */
 
 namespace Gecode { namespace Bdd {
+
   template <class View>
   ExecStatus
-  NaryBddProp<View>::divide_conquer(Space* home, BMI* m, GecodeBdd& p, int l, int r) {
+  NaryBddProp<View>::divide_conquer(Space* home, BMI* m, 
+				    GecodeBdd& p, int l, int r) {
     if (l == r) {
-      ModEvent me = x[l].tell_formula(home, p);
-      if (me_failed(me)) {
-	return ES_FAILED;
-      }
+      GECODE_ME_CHECK(x[l].tell_formula(home, p));
       return ES_OK;
     }
+
     int h = (r + l) / 2;
 
     // computing psi without recursion
     GecodeBdd left = p;
     for (int i = r; i >= h + 1; i--) {
-      GecodeBdd dom = x[i].bdd_domain();
-      int s = x[i].offset();
-      int w = s + x[i].table_width() - 1;
-      m->existquant(dom, left, s, w);
-      left = dom;
+      quantify(left, x[i]);
     }
    
     ExecStatus es = ES_OK;
-    es = divide_conquer(home, m, left, l, h);
-    if (es == ES_FAILED) {
-      return es;
-    }
+    GECODE_ES_CHECK(es = divide_conquer(home, m, left, l, h));
 
     GecodeBdd right = p;
     for (int i = h; i >= l; i-- ) {
-      GecodeBdd dom = x[i].bdd_domain();
-      int s = x[i].offset();
-      int w = s + x[i].table_width() - 1;
-      m->existquant(dom, right, s, w);
-      right = dom;
+      quantify(right, x[i]);
     }
 
-    es = divide_conquer(home, m, right, h + 1, r);
+    GECODE_ES_CHECK(es = divide_conquer(home, m, right, h + 1, r));
     return es;
   }
 
@@ -272,6 +262,49 @@ namespace Gecode { namespace Bdd {
 //     return es;
 //   }
 
-}}
+    template <class View0, class View1>
+    ExecStatus
+    NaryOneBdd<View0, View1>::divide_conquer(Space* home, BMI* m, GecodeBdd& p,
+                                             int l, int r, int ypos) {
+      if (l == r) {
+        ModEvent me = ME_BDD_NONE;
+        if (l == ypos) {
+          GECODE_ME_CHECK(me = y.tell_formula(home, p));
+        } else {
+          GECODE_ME_CHECK(me = x[l].tell_formula(home, p));
+        }
+        return ES_OK;
+      }
+
+      int h = (r + l) / 2;
+
+      // computing psi without recursion
+      GecodeBdd left = p;
+      for (int i = r; i >= h + 1; i--) {
+        if (i == ypos) {
+          quantify(left, y);
+        } else {
+          quantify(left, x[i]);
+        }
+      }
+   
+      ExecStatus es = ES_OK;
+      GECODE_ES_CHECK(es = divide_conquer(home, m, left, l, h, ypos));
+
+      GecodeBdd right = p;
+      for (int i = h; i >= l; i-- ) {
+        if (i == ypos) {
+          quantify(right, y);
+        } else {
+          quantify(right, x[i]);
+        }
+      }
+
+      GECODE_ES_CHECK(es = divide_conquer(home, m, right, h + 1, r, ypos));
+      return es;
+    }
+
+  }
+}
 
 // STATISTICS: bdd-prop

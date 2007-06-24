@@ -21,18 +21,10 @@
 
 namespace Gecode { namespace Bdd {
 
-  template <class View>
-  void quantify(GecodeBdd& p, View& x) {
-    BMI* m = x.manager();
-    GecodeBdd dom = x.bdd_domain();
-    int s = x.offset();
-    int w = s + x.table_width() - 1;
-    m->existquant(p, dom, s, w);
-  }
-
   template <class View0, class View1>
   ExecStatus
-  Range<View0, View1>::divide_conquer(Space* home, BMI* m, GecodeBdd& p, int l, int r, int ypos, int zpos) {
+  Range<View0, View1>::divide_conquer(Space* home, BMI* m, GecodeBdd& p, 
+				      int l, int r, int ypos, int zpos) {
     if (l == r) {
       ModEvent me = ME_BDD_NONE;
       if (l == ypos) {
@@ -66,10 +58,7 @@ namespace Gecode { namespace Bdd {
     }
    
     ExecStatus es = ES_OK;
-    es = divide_conquer(home, m, left, l, h, ypos, zpos);
-    if (es == ES_FAILED) {
-      return es;
-    }
+    GECODE_ES_CHECK(es = divide_conquer(home, m, left, l, h, ypos, zpos));
 
     GecodeBdd right = p;
     for (int i = h; i >= l; i-- ) {
@@ -84,13 +73,14 @@ namespace Gecode { namespace Bdd {
       }
     }
 
-    es = divide_conquer(home, m, right, h + 1, r , ypos, zpos);
+    GECODE_ES_CHECK(es = divide_conquer(home, m, right, h + 1, r , ypos, zpos));
     return es;
   }
 
   template <class View0, class View1>
   ExecStatus
-  RangeTwice<View0, View1>::divide_conquer(Space* home, BMI* m, GecodeBdd& p, int l, int r, int ypos) {
+  RangeTwice<View0, View1>::divide_conquer(Space* home, BMI* m, GecodeBdd& p, 
+					   int l, int r, int ypos) {
     std::cout << "twice div conqu: " << l << " " << r << " " << ypos << "\n";
     if (l == r) {
       ModEvent me = ME_BDD_NONE;
@@ -117,10 +107,7 @@ namespace Gecode { namespace Bdd {
     }
    
     ExecStatus es = ES_OK;
-    es = divide_conquer(home, m, left, l, h, ypos);
-    if (es == ES_FAILED) {
-      return es;
-    }
+    GECODE_ES_CHECK(es = divide_conquer(home, m, left, l, h, ypos));
 
     GecodeBdd right = p;
     for (int i = h; i >= l; i-- ) {
@@ -131,7 +118,7 @@ namespace Gecode { namespace Bdd {
       }
     }
 
-    es = divide_conquer(home, m, right, h + 1, r , ypos);
+    GECODE_ES_CHECK(es = divide_conquer(home, m, right, h + 1, r , ypos));
     return es;
   }
 }}

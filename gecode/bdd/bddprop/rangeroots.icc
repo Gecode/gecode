@@ -346,8 +346,8 @@ namespace Gecode { namespace Bdd {
 
   template <class View0, class View1>
   forceinline
-  Range<View0, View1>::Range(Space* home, ViewArray<View0>& x, View1 y, View1 z, 
-			     GecodeBdd& d0)
+  Range<View0, View1>::Range(Space* home, ViewArray<View0>& x, 
+			     View1& y, View1& z, GecodeBdd& d0)
     : MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, x, y, z), 
       d(d0) {
     MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::force(home);
@@ -361,7 +361,8 @@ namespace Gecode { namespace Bdd {
 
   template <class View0, class View1>
   forceinline ExecStatus
-  Range<View0, View1>::post(Space* home, ViewArray<View0>& x, View1 y, View1 z, GecodeBdd& d0) {
+  Range<View0, View1>::post(Space* home, ViewArray<View0>& x, 
+			    View1& y, View1& z, GecodeBdd& d0) {
     (void) new (home) Range(home, x, y, z, d0);
     return ES_OK;
   }

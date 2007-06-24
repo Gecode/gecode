@@ -30,6 +30,16 @@ namespace Gecode {
     partition_con(home, x, false, SRT_EQ, false, -1, scl);
   }
 
+  void partition(Space* home, const BddVarArgs& x, const BddVar& y, 
+		 SetConLevel scl) {
+    partition_con(home, x, y, false, SRT_EQ, false, -1, scl);
+  }
+
+  void partition(Space* home, const IntVarArgs& x, const BddVar& y, 
+		 SetConLevel scl) {
+    partition_con(home, x, y, false, SRT_EQ, false, -1, scl);
+  }
+
   void partitionLex(Space* home, const BddVarArgs& x, BddSetRelType lex, 
 		    SetConLevel scl) {
     partition_con(home, x, true, lex, false, -1, scl);

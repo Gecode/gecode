@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -114,7 +115,7 @@ namespace Gecode { namespace Bdd {
     /// Constructor for cloning \a p
     BinBddProp(Space* home, bool share, BinBddProp& p);
     /// Constructor for posting
-    BinBddProp(Space* home, View x0, View y0, GecodeBdd& d, SetConLevel scl);
+    BinBddProp(Space* home, View& x0, View& y0, GecodeBdd& d, SetConLevel scl);
   public:
     /// Cost function
     virtual PropCost cost(void) const;
@@ -124,7 +125,7 @@ namespace Gecode { namespace Bdd {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, View x0, View y0, GecodeBdd& d, SetConLevel scl);
+    static  ExecStatus post(Space* home, View& x0, View& y0, GecodeBdd& d, SetConLevel scl);
   };
 
   /**
@@ -143,7 +144,7 @@ namespace Gecode { namespace Bdd {
     /// Constructor for cloning \a p
     UnaryBddProp(Space* home, bool share, UnaryBddProp& p);
     /// Constructor for posting
-    UnaryBddProp(Space* home, View x0, GecodeBdd& d, SetConLevel scl);
+    UnaryBddProp(Space* home, View& x0, GecodeBdd& d, SetConLevel scl);
   public:
     /// Cost function
     virtual PropCost cost(void) const;
@@ -153,7 +154,7 @@ namespace Gecode { namespace Bdd {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, View x0, GecodeBdd& d, SetConLevel scl);
+    static  ExecStatus post(Space* home, View& x0, GecodeBdd& d, SetConLevel scl);
   };
 
 
@@ -171,7 +172,7 @@ namespace Gecode { namespace Bdd {
     /// Constructor for cloning \a p
     BinRelDisj(Space* home, bool share, BinRelDisj& p);
     /// Constructor for posting
-    BinRelDisj(Space* home, View x0, View y0, GecodeBdd& d, SetConLevel scl);
+    BinRelDisj(Space* home, View& x0, View& y0, GecodeBdd& d, SetConLevel scl);
   public:
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -179,7 +180,7 @@ namespace Gecode { namespace Bdd {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, View x0, View y0, GecodeBdd& d, SetConLevel scl);
+    static  ExecStatus post(Space* home, View& x0, View& y0, GecodeBdd& d, SetConLevel scl);
   };
 
   /**
@@ -225,7 +226,7 @@ namespace Gecode { namespace Bdd {
     /// Constructor for cloning \a p
     Bin(Space* home, bool share,Bin& p);
     /// Constructor for posting
-    Bin(Space* home, View0, View1, GecodeBdd& d);
+    Bin(Space* home, View0&, View1&, GecodeBdd& d);
   public:
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -233,12 +234,38 @@ namespace Gecode { namespace Bdd {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, View0 x, View1 s, GecodeBdd& d);
+    static  ExecStatus post(Space* home, View0& x, View1& s, GecodeBdd& d);
   }; 
 
   template <class View0, class View1>
-  class Range : public MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM> {
-    
+  class NaryOneBdd : 
+    public MixNaryOnePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM> {
+  protected:
+    /// Bdd representation of the constraint
+    GecodeBdd d;
+    using MixNaryOnePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::x;
+    using MixNaryOnePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::y;
+    /// Constructor for cloning \a p
+    NaryOneBdd(Space* home, bool share, NaryOneBdd& p);
+    /// Constructor for posting
+    NaryOneBdd(Space* home, ViewArray<View0>&, View1&, GecodeBdd&);
+    /// Divide and conquer method including additional view \a y
+    ExecStatus divide_conquer(Space* home, BMI* m, GecodeBdd& p, 
+                              int l, int r, int ypos);
+  public:
+    /// Delete propagator
+    virtual size_t dispose(Space* home);
+    /// Copy propagator during cloning
+    virtual Actor*      copy(Space* home,bool);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    static  ExecStatus post(Space* home, ViewArray<View0>& x, View1& y, 
+                            GecodeBdd& d);
+  };
+
+  template <class View0, class View1>
+  class Range : 
+    public MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM> {
   protected:
     /// Bdd representation of the constraint
     GecodeBdd d;
@@ -248,7 +275,7 @@ namespace Gecode { namespace Bdd {
     /// Constructor for cloning \a p
     Range(Space* home, bool share, Range& p);
     /// Constructor for posting
-    Range(Space* home, ViewArray<View0>&, View1, View1, GecodeBdd&);
+    Range(Space* home, ViewArray<View0>&, View1&, View1&, GecodeBdd&);
     /// Divide and conquer method including additional \a y and \a z views
     ExecStatus divide_conquer(Space* home, BMI* m, GecodeBdd& p, int l, int r, 
 			int ypos, int zpos);
@@ -259,7 +286,8 @@ namespace Gecode { namespace Bdd {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, ViewArray<View0>& x, View1 y, View1 z, GecodeBdd& d);
+    static  ExecStatus post(Space* home, ViewArray<View0>& x, 
+                            View1& y, View1& z, GecodeBdd& d);
   };
 
 
@@ -276,7 +304,8 @@ namespace Gecode { namespace Bdd {
     /// Constructor for posting
     RangeTwice(Space* home, ViewArray<View0>&, ViewArray<View1>&, GecodeBdd&);
     /// Divide and conquer method including additional array \a y
-    ExecStatus divide_conquer(Space* home, BMI* m, GecodeBdd& p, int l, int r, int ypos);
+    ExecStatus divide_conquer(Space* home, BMI* m, GecodeBdd& p, 
+                              int l, int r, int ypos);
   public:
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -350,6 +379,9 @@ namespace Gecode { namespace Bdd {
 #include "gecode/bdd/bddprop/atmost.icc"
 #include "gecode/bdd/bddprop/rel.icc"
 #include "gecode/bdd/bddprop/select.icc"
+
+#include "gecode/bdd/bddprop/common.icc"
+
 #include "gecode/bdd/bddprop/naryrec.icc"
 #include "gecode/bdd/bddprop/nary.icc"
 #include "gecode/bdd/bddprop/binary.icc"
@@ -357,7 +389,7 @@ namespace Gecode { namespace Bdd {
 #include "gecode/bdd/bddprop/singleton.icc" 
 #include "gecode/bdd/bddprop/bin.icc"
 #include "gecode/bdd/bddprop/rangerec.icc"
-#include "gecode/bdd/bddprop/range.icc"
+#include "gecode/bdd/bddprop/rangeroots.icc"
 
 // check whether we need this in other propagators too
 #include "gecode/support/dynamic-array.hh"

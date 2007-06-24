@@ -620,6 +620,77 @@ namespace Gecode { namespace Bdd {
   }
 
 
+  /*
+   * NaryOne Propagator
+   *
+   */
+
+  template <class View0, class View1>
+  forceinline
+  NaryOneBdd<View0, View1>::NaryOneBdd(Space* home, ViewArray<View0>& x, 
+				       View1& y, GecodeBdd& d0)
+    : MixNaryOnePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, x, y),
+      d(d0) {
+    MixNaryOnePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::force(home);
+  }
+
+  template <class View0, class View1>
+  forceinline
+  NaryOneBdd<View0, View1>::NaryOneBdd(Space* home, bool share, NaryOneBdd& p)
+    : MixNaryOnePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, share, p), 
+      d(p.d) {}
+
+  template <class View0, class View1>
+  forceinline ExecStatus
+  NaryOneBdd<View0, View1>::post(Space* home, ViewArray<View0>& x, View1& y, 
+				 GecodeBdd& d0) {
+    (void) new (home) NaryOneBdd(home, x, y, d0);
+    return ES_OK;
+  }
+
+  template <class View0, class View1>
+  forceinline Actor*
+  NaryOneBdd<View0, View1>::copy(Space* home, bool share) {
+    return new (home) NaryOneBdd(home, share, *this);
+  }
+  
+  template <class View0, class View1>
+  forceinline ExecStatus 
+  NaryOneBdd<View0, View1>::propagate(Space* home) {
+
+    BMI* mgr   = x[0].manager();
+    bool assigned = true;
+    int n = x.size();
+    ExecStatus es = ES_OK;
+    int ypos = n;
+
+    GECODE_ES_CHECK(es = divide_conquer(home, mgr, d, 0, n, ypos));
+
+    assigned = true;
+    for (int i = x.size(); i--; ) {
+      assigned &= x[i].assigned();
+    }
+    if (assigned) {
+      return ES_SUBSUMED(this, home);
+    }
+
+    return ES_FIX;
+  }
+
+  template <class View0, class View1>
+  size_t
+  NaryOneBdd<View0, View1>::dispose(Space* home) {
+    MixNaryOnePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::unforce(home);
+    if (!home->failed()) {
+      x.cancel(home, this, PC_BDD_DOM);
+      y.cancel(home, this, PC_BDD_DOM);
+    }
+    BMI* mgr = y.manager();
+    mgr->dispose(d);
+    MixNaryOnePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::dispose(home);
+    return sizeof(*this);
+  }
+
 
 }}
 

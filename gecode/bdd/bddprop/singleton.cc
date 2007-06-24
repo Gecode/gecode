@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -27,10 +28,10 @@ using namespace Gecode::Bdd;
 namespace Gecode {
 
   void singleton(Space* home, IntVar x, BddVar s, SetConLevel scl) {
-    Gecode::Int::IntView iv(x);
+    Int::IntView iv(x);
     BddView bv(s);
-    std::cout << "post singleton\n";
-    GECODE_ES_FAIL(home, (Gecode::Bdd::Singleton<Gecode::Int::IntView, BddView>::post(home, iv, bv)));
+    GECODE_ES_FAIL(home, (Bdd::Singleton<Int::IntView, BddView>
+			  ::post(home, iv, bv)));
   }
 
 

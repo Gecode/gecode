@@ -214,8 +214,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I>
   forceinline
-  ValCache<I>::ValCache(void)
-    : r(8) {}
+  ValCache<I>::ValCache(void) {}
 
   template <class I>
   inline void
@@ -239,7 +238,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
 
   template <class I>
   inline
-  ValCache<I>::ValCache(I& i) : r(8) {
+  ValCache<I>::ValCache(I& i) {
     init(i);
   }
 
