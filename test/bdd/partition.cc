@@ -207,9 +207,7 @@ public:
 
   virtual void post(Space* home, BddVarArray& x, IntVarArray& y) {
     BddVar z = x[0];
-    std::cerr << "start of post\n";
     partition(home, y, z);
-    std::cerr << "end of post\n";
   }
 };
 

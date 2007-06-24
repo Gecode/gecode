@@ -468,11 +468,6 @@ namespace Gecode {
     // this wont work as there is no post function for different views
     // i.e. bddsingleton + bddview
     
-    std::cerr << "conversion done before posting\n";
-    for (int i = 0; i< sv.size(); i++) {
-      std::cerr << sv[i] << ",";
-    }
-    std::cerr << " u = " << yv << "\n";
     partition_post(home, sv, yv, withlex, lex, withcard, d, scl);
   }
 

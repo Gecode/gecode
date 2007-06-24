@@ -452,7 +452,7 @@ bool
 BddTest::run(const Options& opt) {
   const char* test    = "NONE";
   const char* problem = "NONE";
-  std::cerr << "test = " << test << "\n";
+  // std::cerr << "test = " << test << "\n";
   SetAssignment* ap = make_assignment();
   SetAssignment& a = *ap;
   
@@ -464,19 +464,19 @@ BddTest::run(const Options& opt) {
   //   }
   
   while (a()) {
-    std::cerr << "compute solution\n";    
+    // std::cerr << "compute solution\n";    
     bool is_sol;
     {
       BddTestSpace* search_s = new BddTestSpace(arity,lub,withInt,opt, varsize(), cachesize());
-      std::cerr << "pass manager\n";
+      // std::cerr << "pass manager\n";
       manager(search_s->manager());
-      std::cerr << "passed manager\n";
+      // std::cerr << "passed manager\n";
       post(search_s,search_s->x, search_s->y);
     
     //   branch(search_s,search_s->x,SETBVAR_NONE,SETBVAL_MIN);
     //   Gecode::DFS<BddTestSpace> e_s(search_s);
       is_sol = solution(a);    
-    std::cerr << "finished search\n";
+    // std::cerr << "finished search\n";
     // for sake of correct disposal
       delete search_s;
     }
@@ -485,7 +485,7 @@ BddTest::run(const Options& opt) {
 
     {
       test = "Assignment (after posting)";
-      std::cerr << "test = " << test << "\n";
+      // std::cerr << "test = " << test << "\n";
       Log::reset();
       BddTestSpace* s = new BddTestSpace(arity,lub,withInt,opt, varsize(), cachesize());;
       manager(s->manager());
@@ -504,7 +504,7 @@ BddTest::run(const Options& opt) {
 
     {
       test = "Assignment (before posting)";
-      std::cerr << "test = " << test << "\n";
+      // std::cerr << "test = " << test << "\n";
       Log::reset();
       BddTestSpace* s = new BddTestSpace(arity,lub,withInt,opt, varsize(), cachesize());;
       manager(s->manager());
@@ -522,7 +522,7 @@ BddTest::run(const Options& opt) {
 
     if (reified) {
       test = "Assignment reified (before posting)";
-      std::cerr << "test = " << test << "\n";
+      // std::cerr << "test = " << test << "\n";
       Log::reset();
       BddTestSpace* s = new BddTestSpace(arity,lub,withInt,opt, varsize(), cachesize());;
       manager(s->manager());
@@ -544,7 +544,7 @@ BddTest::run(const Options& opt) {
 
     if (reified) {
       test = "Assignment reified (after posting)";
-      std::cerr << "test = " << test << "\n";
+      // std::cerr << "test = " << test << "\n";
       Log::reset();
       BddTestSpace* s = new BddTestSpace(arity,lub,withInt,opt, varsize(), cachesize());;
       manager(s->manager());
@@ -565,26 +565,26 @@ BddTest::run(const Options& opt) {
 
     {
       test = "Prune";
-      std::cerr << "Assignment = " << a << "\n";
-      std::cerr << "test = " << test << "\n";
+      // std::cerr << "Assignment = " << a << "\n";
+      // std::cerr << "test = " << test << "\n";
       Log::reset();
-      std::cerr <<  "start FP-test\n";
+      // std::cerr <<  "start FP-test\n";
       BddTestSpace* s = new BddTestSpace(arity,lub,withInt,opt, varsize(), cachesize());;
       manager(s->manager());
-      std::cerr << "*********** FIRST POST *******\n";
+      // std::cerr << "*********** FIRST POST *******\n";
       post(s,s->x,s->y);
-      std::cerr << "start fp-loop\n";
+      // std::cerr << "start fp-loop\n";
       while (!s->failed() && !s->assigned()) {
-      std::cerr << "fp-looping\n";
+      // std::cerr << "fp-looping\n";
  	if (!s->prune(a,*this,false)) {
  	  problem = "No fixpoint";
  	  delete s;
 	  
  	  goto failed;
  	}
-	std::cerr << "still looping\n";
+	// std::cerr << "still looping\n";
       }
-      std::cerr << "finished loop\n";
+      // std::cerr << "finished loop\n";
       s->assign(a);
       if (is_sol) {
 	CHECK(!s->failed(), "Failed on solution");
@@ -599,7 +599,7 @@ BddTest::run(const Options& opt) {
 
     if (reified) {
       test = "Prune reified";
-      std::cerr << "test = " << test << "\n";
+      // std::cerr << "test = " << test << "\n";
       BddTestSpace* s = new BddTestSpace(arity,lub,withInt,opt, varsize(), cachesize());;
       manager(s->manager());
       BoolVar b(s,0,1);
@@ -626,7 +626,7 @@ BddTest::run(const Options& opt) {
 
     ++an;
     ++a;
-    std::cerr << "assignment loop\n";
+    // std::cerr << "assignment loop\n";
   }
 
   delete ap;
