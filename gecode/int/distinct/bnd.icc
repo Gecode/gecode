@@ -183,7 +183,7 @@ namespace Gecode { namespace Int { namespace Distinct {
       int i = 0;
       int j = 0;
       while (true) {
-        if (i < n && min < max) {
+        if ((i < n) && (min < max)) {
           if (min != last)
             hall[++nb].bounds = last = min;
           rank[GECODE_INT_MINSORTED(i)].min = nb;

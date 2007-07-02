@@ -37,15 +37,16 @@ namespace Gecode { namespace Support {
   /// Perform quicksort only for more elements
   int const QuickSortCutoff = 20;
 
-  /// Maximal stacksize quicksort ever needs
-  static const int QuickSortStack_maxsize = 32;
-
   /// Static stack for quicksort
   template <class Type>
   class QuickSortStack {
   private:
+    /// Maximal stacksize quicksort ever needs
+    static const int maxsize = 32;
+    /// Top of stack
     Type** tos;
-    Type*  stack[2*QuickSortStack_maxsize];
+    /// Stack entries (terminated by NULL entry)
+    Type*  stack[2*maxsize+1];
   public:
     QuickSortStack(void);
     bool empty(void) const;
@@ -56,13 +57,13 @@ namespace Gecode { namespace Support {
   template <class Type>
   forceinline
   QuickSortStack<Type>::QuickSortStack(void) : tos(&stack[0]) {
-    *(tos++) = 0;
+    *(tos++) = NULL;
   }
 
   template <class Type>
   forceinline bool
   QuickSortStack<Type>::empty(void) const {
-    return !*(tos-1);
+    return *(tos-1) == NULL;
   }
 
   template <class Type>
@@ -79,7 +80,7 @@ namespace Gecode { namespace Support {
 
   /// Standard insertion sort
   template <class Type, class LessThan>
-  inline void
+  forceinline void
   insertion(Type* l, Type* r, LessThan &lt) {
     for (Type* i = r; i > l; i--)
       exchange(*(i-1),*i,lt);
@@ -95,7 +96,7 @@ namespace Gecode { namespace Support {
 
   /// Standard partioning
   template <class Type, class LessThan>
-  inline Type*
+  forceinline Type*
   partition(Type* l, Type* r, LessThan &lt) {
     Type* i = l-1;
     Type* j = r;
@@ -115,22 +116,30 @@ namespace Gecode { namespace Support {
   inline void
   quicksort(Type* l, Type* r, LessThan &lt) {
     QuickSortStack<Type> s;
-    s.push(l,r);
-    while (!s.empty()) {
-      s.pop(l,r);
-    nopush:
-      if (r-l <= QuickSortCutoff)
-        continue;
+    while (true) {
       std::swap(*(l+((r-l) >> 1)),*(r-1));
       exchange(*l,*(r-1),lt);
       exchange(*l,*r,lt);
       exchange(*(r-1),*r,lt);
       Type* i = partition(l+1,r-1,lt);
       if (i-l > r-i) {
-        s.push(l,i-1); l=i+1; goto nopush;
+        if (r-i > QuickSortCutoff) {
+          s.push(l,i-1); l=i+1; continue;
+        }
+        if (i-l > QuickSortCutoff) {
+          r=i-1; continue;
+        }
       } else {
-        s.push(i+1,r); r=i-1; goto nopush;
+        if (i-l > QuickSortCutoff) {
+          s.push(i+1,r); r=i-1; continue;
+        }
+        if (r-i > QuickSortCutoff) {
+          l=i+1; continue;
+        }
       }
+      if (s.empty())
+        break;
+      s.pop(l,r);
     }
   }
 
