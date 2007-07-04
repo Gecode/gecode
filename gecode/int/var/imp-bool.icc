@@ -28,10 +28,10 @@ namespace Gecode { namespace Int {
    */
   forceinline
   BoolVarImp::BoolVarImp(int n)
-    : dom(static_cast<unsigned int>((n << 1) | n)) {}
+    : dom((n << 1) | n) {}
   forceinline
   BoolVarImp::BoolVarImp(Space* home, int min, int max)
-    : BoolVarImpBase(home), dom(static_cast<unsigned int>((max << 1) | min)) {}
+    : BoolVarImpBase(home), dom((max << 1) | min) {}
 
 
   /*
@@ -45,15 +45,11 @@ namespace Gecode { namespace Int {
   }
   forceinline int
   BoolVarImp::min(void) const {
-    int n = static_cast<int>(dom & 1);
-    GECODE_ASSUME(n >= 0); GECODE_ASSUME(n <= 1);
-    return n;
+    return status() & 1;
   }
   forceinline int
   BoolVarImp::max(void) const {
-    int n = static_cast<int>(dom >> 1);
-    GECODE_ASSUME(n >= 0); GECODE_ASSUME(n <= 1);
-    return n;
+    return status() >> 1;
   }
   forceinline int
   BoolVarImp::med(void) const {
@@ -62,7 +58,7 @@ namespace Gecode { namespace Int {
 
   forceinline int
   BoolVarImp::val(void) const {
-    assert(dom != NONE);    
+    assert(status() != NONE);    
     return min();
   }
 
@@ -72,27 +68,27 @@ namespace Gecode { namespace Int {
   }
   forceinline bool
   BoolVarImp::assigned(void) const {
-    return dom != NONE;
+    return status() != NONE;
   }
 
 
   forceinline unsigned int
   BoolVarImp::width(void) const {
-    return (dom != NONE) ? 1U : 2U;
+    return assigned() ? 1U : 2U;
   }
 
   forceinline unsigned int
   BoolVarImp::size(void) const {
-    return (dom != NONE) ? 1U : 2U;
+    return assigned() ? 1U : 2U;
   }
 
   forceinline unsigned int
   BoolVarImp::regret_min(void) const {
-    return (dom != NONE) ? 1U : 0U;
+    return assigned() ? 1U : 0U;
   }
   forceinline unsigned int
   BoolVarImp::regret_max(void) const {
-    return (dom != NONE) ? 1U : 0U;
+    return assigned() ? 1U : 0U;
   }
 
 
@@ -118,15 +114,15 @@ namespace Gecode { namespace Int {
    */
   forceinline bool
   BoolVarImp::zero(void) const {
-    return dom < NONE;
+    return status() < NONE;
   }
   forceinline bool
   BoolVarImp::one(void) const {
-    return dom > NONE;
+    return status() > NONE;
   }
   forceinline bool
   BoolVarImp::none(void) const {
-    return dom == NONE;
+    return status() == NONE;
   }
 
   
@@ -206,39 +202,13 @@ namespace Gecode { namespace Int {
   BoolVarImp::gq(Space* home, int n) {
     if (n <= 0) return ME_INT_NONE;
     if (n > 1)  return ME_INT_FAILED;
-    if (zero())
-      return (n == 0) ? ME_INT_NONE : ME_INT_FAILED;
-    if (one())
-      return ME_INT_NONE;
-    assert(none());
-    if (n != 0) {
-      assert(n == 1);
-      dom = ONE;
-      if (!notify(home,ME_BOOL_VAL))
-        return ME_INT_FAILED;
-      return ME_INT_VAL;
-    } else {
-      return ME_INT_NONE;
-    }
+    return one(home);
   }
   forceinline ModEvent
   BoolVarImp::gq(Space* home, double n) {
     if (n <= 0) return ME_INT_NONE;
     if (n > 1)  return ME_INT_FAILED;
-    if (zero())
-      return (n == 0) ? ME_INT_NONE : ME_INT_FAILED;
-    if (one())
-      return ME_INT_NONE;
-    assert(none());
-    if (n != 0) {
-      assert(n == 1);
-      dom = ONE;
-      if (!notify(home,ME_BOOL_VAL))
-        return ME_INT_FAILED;
-      return ME_INT_VAL;
-    } else {
-      return ME_INT_NONE;
-    }
+    return one(home);
   }
 
 
@@ -246,117 +216,37 @@ namespace Gecode { namespace Int {
   BoolVarImp::lq(Space* home, int n) {
     if (n < 0)  return ME_INT_FAILED;
     if (n >= 1) return ME_INT_NONE;
-    if (zero())
-      return ME_INT_NONE;
-    if (one())
-      return (n == 1) ? ME_INT_NONE : ME_INT_FAILED;
-    assert(none());
-    if (n == 0) {
-      dom = ZERO;
-      if (!notify(home,ME_BOOL_VAL))
-        return ME_INT_FAILED;
-      return ME_INT_VAL;
-    } else {
-      return ME_INT_NONE;
-    }
+    return zero(home);
   }
   forceinline ModEvent
   BoolVarImp::lq(Space* home, double n) {
     if (n < 0)  return ME_INT_FAILED;
     if (n >= 1) return ME_INT_NONE;
-    if (zero())
-      return ME_INT_NONE;
-    if (one())
-      return (n == 1) ? ME_INT_NONE : ME_INT_FAILED;
-    assert(none());
-    if (n == 0) {
-      dom = ZERO;
-      if (!notify(home,ME_BOOL_VAL))
-        return ME_INT_FAILED;
-      return ME_INT_VAL;
-    } else {
-      return ME_INT_NONE;
-    }
+    return zero(home);
   }
 
 
   forceinline ModEvent
   BoolVarImp::eq(Space* home, int n) {
     if ((n < 0) || (n > 1)) return ME_INT_FAILED;
-    if (n == 0) {
-      if (zero()) return ME_INT_NONE;
-      if (one())  return ME_INT_FAILED;
-      assert(none());
-      dom = ZERO;
-    } else {
-      assert(n == 1);
-      if (zero()) return ME_INT_FAILED;
-      if (one())  return ME_INT_NONE;
-      assert(none());
-      dom = ONE;
-    }
-    if (!notify(home,ME_BOOL_VAL))
-      return ME_INT_FAILED;
-    return ME_INT_VAL;
+    return (n == 0) ? zero(home): one(home);
   }
   forceinline ModEvent
   BoolVarImp::eq(Space* home, double n) {
     if ((n < 0) || (n > 1)) return ME_INT_FAILED;
-    if (n == 0) {
-      if (zero()) return ME_INT_NONE;
-      if (one())  return ME_INT_FAILED;
-      assert(none());
-      dom = ZERO;
-    } else {
-      assert(n == 1);
-      if (zero()) return ME_INT_FAILED;
-      if (one())  return ME_INT_NONE;
-      assert(none());
-      dom = ONE;
-    }
-    if (!notify(home,ME_BOOL_VAL))
-      return ME_INT_FAILED;
-    return ME_INT_VAL;
+    return (n == 0) ? zero(home): one(home);
   }
 
 
   forceinline ModEvent
   BoolVarImp::nq(Space* home, int n) {
     if ((n < 0) || (n > 1)) return ME_INT_NONE;
-    if (n == 0) {
-      if (zero()) return ME_INT_FAILED;
-      if (one())  return ME_INT_NONE;
-      assert(none());
-      dom = ONE;
-    } else {
-      assert(n == 1);
-      if (zero()) return ME_INT_NONE;
-      if (one())  return ME_INT_FAILED;
-      assert(none());
-      dom = ZERO;
-    }
-    if (!notify(home,ME_BOOL_VAL))
-      return ME_INT_FAILED;
-    return ME_INT_VAL;
+    return (n == 0) ? one(home): zero(home);
   }
   forceinline ModEvent
   BoolVarImp::nq(Space* home, double n) {
     if ((n < 0) || (n > 1)) return ME_INT_NONE;
-    if (n == 0) {
-      if (zero()) return ME_INT_FAILED;
-      if (one())  return ME_INT_NONE;
-      assert(none());
-      dom = ONE;
-    } else {
-      assert(n == 1);
-      if (zero()) return ME_INT_NONE;
-      if (one())  return ME_INT_FAILED;
-      assert(none());
-      dom = ZERO;
-    }
-    if (!notify(home,ME_BOOL_VAL))
-      return ME_INT_FAILED;
-    return ME_INT_VAL;
+    return (n == 0) ? one(home): zero(home);
   }
 
 
