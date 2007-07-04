@@ -427,8 +427,6 @@ namespace Gecode {
     Variable* next(void);
     /// Return current modification event of variable
     ModEvent modevent(void) const;
-    /// Set modification event to \a me
-    void modevent(ModEvent me);
     /// Process subscribed propagators
     void process(Space* home, PropCond pc1, PropCond pc2, ModEvent me);
     /// Process subscribed propagators for assigned variable
@@ -1765,11 +1763,6 @@ namespace Gecode {
   }
 
   template <VarTypeId VTI, PropCond PC, class MED>
-  forceinline void
-  Variable<VTI,PC,MED>::modevent(ModEvent me) {
-    u.free_me = (u.free_me & ~15) | me;
-  }
-  template <VarTypeId VTI, PropCond PC, class MED>
   forceinline unsigned int
   Variable<VTI,PC,MED>::free(void) const {
     return u.free_me >> 4;
@@ -2207,11 +2200,11 @@ namespace Gecode {
   Variable<VTI,PC,MED>::notify(Space* home, ModEvent new_me, Delta* d) {
     if (modified()) {
       MED med;
-      u.free_me ^= med(new_me,modevent());
+      u.free_me ^= med(new_me,u.free_me & 15);
     } else {
       _next = static_cast<Variable<VTI,PC,MED>*>(home->vars[VTI].entry);
       home->vars[VTI].entry = this;
-      modevent(new_me);
+      u.free_me = (u.free_me & ~15) | new_me;
     }
     if (idx[PC+1] != idx[PC+2]) {
       d->me = new_me;
