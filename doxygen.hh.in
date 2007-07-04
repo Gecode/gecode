@@ -470,11 +470,11 @@ reference documentation.
 
 \section GlossaryActor Actor
 
-An actor is either a branching (\ref GlossaryBranching) or a
-propagator (\ref GlossaryPropagator). Actors provide the
-functionality that is common for propagators and branchings such
-as member functions for copying during cloning, memory
-allocation, and so on. Actors are implemented by the class
+An actor is a branching (\ref GlossaryBranching), a propagator
+(\ref GlossaryPropagator), or an advisor (\ref
+GlossaryAdvisor). Actors provide common functionality such as
+member functions for copying during cloning, memory allocation,
+and so on. Actors are implemented by the class
 Gecode::Actor. More on programming actors can be found in the
 module \ref TaskActor.
 
@@ -542,6 +542,23 @@ propagator is implemented by inheriting from the class
 Gecode::Propagator. Common abstractions for propagators are also
 available (see \ref TaskPropPat, \ref TaskPropRePat, and \ref
 TaskPropSetPat).
+
+\section GlossaryAdvisor Advisor
+
+An advisor supports a single propagator. An advisor is executed
+whenever the view it has subscribed to is modified. Execution of
+an advisor amounts to executing the advise member function of the
+advisor's propagator where the advisor and delta information
+(\ref GlossaryDelta) are passed as arguments. An advisor is
+implemented by inheriting from the class Gecode::Advisor.
+
+\section GlossaryDelta Delta information
+
+Delta information is implemented as an object which is a subclass
+of Gecode::Delta. A Delta object describes how the domain of a
+variable has been changed by an operation on the variable. Delta
+objects are passed together with advisors to the advise member
+function of a propagator.
 
 \section GlossaryPME Propagator modification event
 
