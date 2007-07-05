@@ -41,6 +41,11 @@ namespace Gecode { namespace Set { namespace Int {
     return new (home) MinElement(home,share,*this);
   }
 
+  const char*
+  MinElement::name(void) const {
+    return "set.int.MinElement";
+  }
+
   ExecStatus
   MinElement::propagate(Space* home) {
     //x1 is an element of x0.ub
@@ -84,6 +89,12 @@ namespace Gecode { namespace Set { namespace Int {
   MaxElement::copy(Space* home, bool share) {
     return new (home) MaxElement(home,share,*this);
   }
+
+  const char*
+  MaxElement::name(void) const {
+    return "set.int.MaxElement";
+  }
+
 
   ExecStatus
   MaxElement::propagate(Space* home) {

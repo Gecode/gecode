@@ -38,6 +38,8 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Name of this propagator
+    virtual const char* name(void) const;        
   };
 
 
@@ -65,6 +67,11 @@ namespace Gecode { namespace Int { namespace Bool {
     return ES_SUBSUMED(this,home);
   }
 
+  template <class BV>
+  const char*
+  OrTrueSubsumed<BV>::name(void) const {
+    return "int.bool.OrTrueSubsumed";
+  }
 
 
   /*
@@ -148,6 +155,11 @@ namespace Gecode { namespace Int { namespace Bool {
 #undef GECODE_INT_STATUS
   }
 
+  template <class BVA, class BVB>
+  const char*
+  BinOrTrue<BVA,BVB>::name(void) const {
+    return "int.bool.BinOrTrue";
+  }
 
   /*
    * Boolean disjunction propagator (true)
@@ -191,6 +203,13 @@ namespace Gecode { namespace Int { namespace Bool {
       return new (home) BinOrTrue<BV,BV>(home,share,*this,x0,x1);
     else
       return new (home) TerOrTrue<BV>(home,share,*this);
+  }
+
+  template <class BV>
+  Reflection::ActorSpec&
+  TerOrTrue<BV>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = BoolBinary<BV,BV>::spec(home, m);
+    return s << Reflection::typedSpec(home, m, x2);
   }
 
   template <class BV>
@@ -255,6 +274,11 @@ namespace Gecode { namespace Int { namespace Bool {
 #undef GECODE_INT_STATUS
   }
 
+  template <class BV>
+  const char*
+  TerOrTrue<BV>::name(void) const {
+    return "int.bool.TerOrTrue";
+  }
 
   /*
    * Boolean disjunction propagator (true)
@@ -304,6 +328,14 @@ namespace Gecode { namespace Int { namespace Bool {
       return new (home) TerOrTrue<BV>(home,share,*this,x0,x1,x2);
     else
       return new (home) QuadOrTrue<BV>(home,share,*this);
+  }
+
+  template <class BV>
+  Reflection::ActorSpec&
+  QuadOrTrue<BV>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = BoolBinary<BV,BV>::spec(home, m);
+    return s << Reflection::typedSpec(home, m, x2)
+             << Reflection::typedSpec(home, m, x3);
   }
 
   template <class BV>
@@ -435,6 +467,11 @@ namespace Gecode { namespace Int { namespace Bool {
 #undef GECODE_INT_STATUS
   }
 
+  template <class BV>
+  const char*
+  QuadOrTrue<BV>::name(void) const {
+    return "int.bool.QuadOrTrue";
+  }
 
   /*
    * Boolean disjunction propagator
@@ -579,6 +616,11 @@ namespace Gecode { namespace Int { namespace Bool {
 #undef GECODE_INT_STATUS
   }
 
+  template <class BVA, class BVB, class BVC>
+  const char*
+  Or<BVA,BVB,BVC>::name(void) const {
+    return "int.bool.Or";
+  }
 
   /*
    * N-ary Boolean disjunction propagator (true)
@@ -640,6 +682,14 @@ namespace Gecode { namespace Int { namespace Bool {
     default:
       return new (home) NaryOrTrue<BV>(home,share,*this);
     }
+  }
+
+  template <class BV>
+  Reflection::ActorSpec&
+  NaryOrTrue<BV>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s =
+      BinaryPropagator<BV, PC_BOOL_VAL>::spec(home, m);
+    return s << x.spec(home, m);
   }
 
   template<class BV>
@@ -709,6 +759,11 @@ namespace Gecode { namespace Int { namespace Bool {
     return ES_FIX;
   }
 
+  template<class BV>
+  const char*
+  NaryOrTrue<BV>::name(void) const {
+    return "int.bool.NaryOrTrue";
+  }
 
   /*
    * N-ary Boolean disjunction propagator
@@ -787,6 +842,12 @@ namespace Gecode { namespace Int { namespace Bool {
       return ES_SUBSUMED(this,sizeof(*this));
     }
     return ES_FIX;
+  }
+
+  template<class BV>
+  const char*
+  NaryOr<BV>::name(void) const {
+    return "int.bool.NaryOr";
   }
 
 }}}

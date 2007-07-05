@@ -72,6 +72,16 @@ namespace Gecode { namespace Int { namespace Linear {
     return sizeof(*this);
   }
 
+  template <class Val, class A, class B, class C, PropCond pc>
+  Reflection::ActorSpec&
+  LinTer<Val,A,B,C,pc>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << Reflection::typedSpec(home, m, x0)
+             << Reflection::typedSpec(home, m, x1)
+             << Reflection::typedSpec(home, m, x2)
+             << c;
+  }
+
   /*
    * Equality propagator
    *
@@ -105,6 +115,12 @@ namespace Gecode { namespace Int { namespace Linear {
   Actor*
   EqTer<Val,A,B,C>::copy(Space* home, bool share) {
     return new (home) EqTer<Val,A,B,C>(home,share,*this);
+  }
+
+  template <class Val, class A, class B, class C>
+  const char*
+  EqTer<Val,A,B,C>::name(void) const {
+    return "int.linear.EqTer";
   }
 
   /// Describe which view has been modified how
@@ -181,6 +197,12 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, class C>
+  const char*
+  NqTer<Val,A,B,C>::name(void) const {
+    return "int.linear.NqTer";
+  }
+
+  template <class Val, class A, class B, class C>
   forceinline
   NqTer<Val,A,B,C>::NqTer(Space* home, bool share, Propagator& p,
                           A x0, B x1, C x2, Val c)
@@ -234,6 +256,13 @@ namespace Gecode { namespace Int { namespace Linear {
   Actor*
   LqTer<Val,A,B,C>::copy(Space* home, bool share) {
     return new (home) LqTer<Val,A,B,C>(home,share,*this);
+  }
+
+
+  template <class Val, class A, class B, class C>
+  const char*
+  LqTer<Val,A,B,C>::name(void) const {
+    return "int.linear.LqTer";
   }
 
   template <class Val, class A, class B, class C>

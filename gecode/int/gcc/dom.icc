@@ -126,6 +126,12 @@ namespace Gecode { namespace Int { namespace GCC {
 
   }
 
+  template <class View, class Card, bool isView>
+  const char*
+  Dom<View, Card, isView>::name(void) const {
+    return "int.gcc.Dom";
+  }
+  
   /// \brief Perform domain propagation.
   template <class View, class Card, bool isView>
   ExecStatus

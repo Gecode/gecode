@@ -58,6 +58,8 @@ namespace Gecode {
     virtual PropCost cost(void) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
+    /// Return specification for this propagator given a variable map \a m
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
   };
 
   /**
@@ -89,6 +91,8 @@ namespace Gecode {
     virtual PropCost cost(void) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
+    /// Return specification for this propagator given a variable map \a m
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
   };
   //@}
 
@@ -141,7 +145,13 @@ namespace Gecode {
     return sizeof(*this);
   }
 
-
+  template <class View, PropCond pc, class CtrlView>
+  Reflection::ActorSpec&
+  ReUnaryPropagator<View,pc,CtrlView>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << Reflection::typedSpec(home, m, x0)
+             << Reflection::typedSpec(home, m, b);
+  }
 
   /*
    * Reified binary propagators
@@ -194,6 +204,16 @@ namespace Gecode {
     b.cancel(home,this,Int::PC_INT_VAL);
     (void) Propagator::dispose(home);
     return sizeof(*this);
+  }
+
+  template <class View, PropCond pc, class CtrlView>
+  Reflection::ActorSpec&
+  ReBinaryPropagator<View,pc,CtrlView>::spec(Space* home,
+                                             Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << Reflection::typedSpec(home, m, x0)
+             << Reflection::typedSpec(home, m, x1)
+             << Reflection::typedSpec(home, m, b);
   }
 
 }

@@ -174,6 +174,18 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class VA, class VB, class VC, PropCond pc_ac>
+  Reflection::ActorSpec&
+  View<VA,VB,VC,pc_ac>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    Reflection::ArrayArg<Reflection::Arg*>* a = new Reflection::ArrayArg<Reflection::Arg*>(n);
+    for (int i=n; i--;)
+      (*a)[i] = iv[i].view.spec(home, m);
+    return s << Reflection::typedSpec(home, m, x0)
+             << Reflection::typedSpec(home, m, x1)
+             << new Reflection::TypedArg(VC::type(), a);
+  }
+
+  template <class VA, class VB, class VC, PropCond pc_ac>
   forceinline size_t
   View<VA,VB,VC,pc_ac>::dispose(Space* home) {
     x0.cancel(home,this,PC_INT_DOM);
@@ -338,6 +350,11 @@ namespace Gecode { namespace Int { namespace Element {
     return new (home) ViewBnd<VA,VB,VC>(home,share,*this);
   }
 
+  template <class VA, class VB, class VC>
+  const char*
+  ViewBnd<VA,VB,VC>::name(void) const {
+    return "int.element.ViewBnd";
+  }
 
   template <class VA, class VB, class VC>
   ExecStatus
@@ -429,6 +446,12 @@ namespace Gecode { namespace Int { namespace Element {
       return PC_LINEAR_LO;
     else
       return PC_LINEAR_HI;
+  }
+
+  template <class VA, class VB, class VC>
+  const char*
+  ViewDom<VA,VB,VC>::name(void) const {
+    return "int.element.ViewDom";
   }
 
   template <class VA, class VB, class VC>

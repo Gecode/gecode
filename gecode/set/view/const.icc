@@ -248,6 +248,26 @@ namespace Gecode { namespace Set {
     }
   }
 
+  forceinline Reflection::Arg*
+  ConstantView::spec(Space* home, Reflection::VarMap& m) {
+    int count = 0;
+    for (ArrayRanges ars(ranges, size); ars(); ++ars) {
+      count++;
+    }
+    Reflection::ArrayArg<int>* args = new Reflection::ArrayArg<int>(count*2);
+    count = 0;
+    for (ArrayRanges ars(ranges, size); ars(); ++ars) {
+      (*args)[count++] = ars.min();
+      (*args)[count++] = ars.max();
+    }
+    return args;
+  }
+
+  forceinline Reflection::Type*
+  ConstantView::type(void) {
+    return new Reflection::Type("set.ConstantView");
+  }
+
   forceinline
   EmptyView::EmptyView(void) {}
 
@@ -361,7 +381,15 @@ namespace Gecode { namespace Set {
   forceinline void
   EmptyView::update(Space* home, bool, EmptyView&) {}
 
+  forceinline Reflection::Arg*
+  EmptyView::spec(Space* home, Reflection::VarMap& m) {
+    return NULL;
+  }
 
+  forceinline Reflection::Type*
+  EmptyView::type(void) {
+    return new Reflection::Type("set.EmptyView");
+  }
 
   // Constant universe variable
 
@@ -482,8 +510,15 @@ namespace Gecode { namespace Set {
   forceinline void
   UniverseView::update(Space* home, bool, UniverseView&) {}
 
+  forceinline Reflection::Arg*
+  UniverseView::spec(Space* home, Reflection::VarMap& m) {
+    return NULL;
+  }
 
-
+  forceinline Reflection::Type*
+  UniverseView::type(void) {
+    return new Reflection::Type("set.UniverseView");
+  }
 
   /*
    * Iterators

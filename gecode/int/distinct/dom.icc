@@ -669,6 +669,12 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
+  const char*
+  Dom<View>::name(void) const {
+    return "int.distinct.Dom";
+  }
+
+  template <class View>
   Actor*
   Dom<View>::copy(Space* home, bool share) {
     return new (home) Dom<View>(home,share,*this);

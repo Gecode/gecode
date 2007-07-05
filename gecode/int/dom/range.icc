@@ -56,6 +56,19 @@ namespace Gecode { namespace Int { namespace Dom {
     return new (home) ReRange<View>(home,share,*this);
   }
 
+  template <class View>
+  Reflection::ActorSpec&
+  ReRange<View>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s =
+      ReUnaryPropagator<View,PC_INT_BND,BoolView>::spec(home, m);
+    return s << min << max;
+  }
+
+  template <class View>
+  const char*
+  ReRange<View>::name(void) const {
+    return "int.dom.ReRange";
+  }
 
   template <class View>
   ExecStatus

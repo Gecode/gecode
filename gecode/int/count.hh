@@ -86,6 +86,8 @@ namespace Gecode { namespace Int { namespace Count {
     /// Constructor for creation
     BaseInt(Space* home, ViewArray<VX>& x, int n_s, VY y, int c);
   public:
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
     /// Delete propagator and return its size
@@ -119,6 +121,8 @@ namespace Gecode { namespace Int { namespace Count {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
   };
 
   /**
@@ -146,6 +150,8 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
   };
@@ -175,6 +181,8 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
   };
@@ -212,6 +220,10 @@ namespace Gecode { namespace Int { namespace Count {
     virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\neq c\f$
     static  ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
     /// Delete propagator and return its size
@@ -249,6 +261,8 @@ namespace Gecode { namespace Int { namespace Count {
     virtual size_t dispose(Space* home);
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
   protected:
     /// Count how many views are equal now
     void count(Space* home);
@@ -289,6 +303,8 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Actor* copy(Space* home, bool shr);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=z+c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
@@ -322,6 +338,8 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Actor* copy(Space* home, bool shr);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\neq z+c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
@@ -355,6 +373,8 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Actor* copy(Space* home, bool shr);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq z+c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
@@ -388,6 +408,8 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq z+c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
   };

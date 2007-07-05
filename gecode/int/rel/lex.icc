@@ -41,6 +41,12 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
+  const char*
+  Lex<View>::name(void) const {
+    return strict ? "int.rel.LexStrict" : "int.rel.Lex";
+  }
+
+  template <class View>
   ExecStatus
   Lex<View>::propagate(Space* home) {
     /*

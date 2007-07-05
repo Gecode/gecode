@@ -57,6 +57,11 @@ namespace Gecode { namespace Set { namespace Projection {
     }
   }
 
+  forceinline const char*
+  CardProjection::name(void) const {
+    return "set.projectors.CardProjection";
+  }
+
   inline size_t
   CardProjection::dispose(Space* home) {
     unforce(home);

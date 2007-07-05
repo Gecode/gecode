@@ -49,6 +49,12 @@ namespace Gecode { namespace Int { namespace Circuit {
   }
 
   template <class View>
+  const char*
+  Val<View>::name(void) const {
+    return "int.Val";
+  }
+
+  template <class View>
   ExecStatus
   Val<View>::propagate(Space* home) {
     GECODE_ES_CHECK((Distinct::prop_val<View,true>(home,y)));

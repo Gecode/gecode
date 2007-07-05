@@ -128,6 +128,13 @@ namespace Gecode {
       void update(Space* home, bool share, NoView& x) {}
       //@}
 
+      /// \name Serialization
+      //@{
+      /// Return specification for this view, using variable map \a m
+      Reflection::Arg* spec(Space* home, Reflection::VarMap& m) { return NULL; }
+      static Reflection::Type* type(void) { return new Reflection::Type("int.NoView"); }
+      //@}
+
       /// \name View comparison
       //@{
       /// Test whether this view is the same as \a x
@@ -197,6 +204,15 @@ namespace Gecode {
      * copy is created.
      */
     void update(Space*, bool share, ViewArray<Int::Linear::NoView>& a) {}
+    //@}
+
+    /// \name Serialization
+    //@{
+    /// Return specification for this array, using variable map \a m
+    Reflection::Arg* spec(Space* home, Reflection::VarMap& m) {
+      return new Reflection::TypedArg(new Reflection::Type("int.NoView"),
+        new Reflection::ArrayArg<Reflection::Arg*>(0));
+    }
     //@}
 
 

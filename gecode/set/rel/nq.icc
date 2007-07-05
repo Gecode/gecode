@@ -57,6 +57,12 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template <class View0, class View1>
+  const char*
+  Distinct<View0,View1>::name(void) const {
+    return "set.rel.Distinct";
+  }
+
+  template <class View0, class View1>
   ExecStatus
   Distinct<View0,View1>::propagate(Space* home) {
     assert(x0.assigned()||x1.assigned());
@@ -78,6 +84,20 @@ namespace Gecode { namespace Set { namespace Rel {
   Actor*
   DistinctDoit<View0,View1>::copy(Space* home, bool share) {
     return new (home) DistinctDoit<View0,View1>(home,share,*this);
+  }
+
+  template <class View0, class View1>
+  const char*
+  DistinctDoit<View0,View1>::name(void) const {
+    return "set.rel.DistinctDoit";
+  }
+
+  template <class View0, class View1>
+  Reflection::ActorSpec&
+  DistinctDoit<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s =
+      UnaryPropagator<View0,PC_SET_ANY>::spec(home, m);
+    return s << Reflection::typedSpec(home, m, y);
   }
 
   template <class View0, class View1>

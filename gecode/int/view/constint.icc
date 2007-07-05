@@ -272,6 +272,19 @@ namespace Gecode {
       x = y.x;
     }
 
+    /*
+     * Serialization
+     *
+     */
+    forceinline Reflection::Arg*
+    ConstIntView::spec(Space* home, Reflection::VarMap& m) {
+      return new Reflection::IntArg(x);
+    }
+    forceinline Reflection::Type*
+    ConstIntView::type(void) {
+      return new Reflection::Type("int.ConstIntView");
+    }
+
     /**
      * \brief %Range iterator for constant integer views
      * \ingroup TaskActorIntView

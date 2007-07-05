@@ -36,6 +36,11 @@ namespace Gecode { namespace Set { namespace Convex {
     return new (home) ConvexHull(home,share,*this);
   }
 
+  const char*
+  ConvexHull::name(void) const {
+    return "set.convex.ConvexHull";
+  }
+
   ExecStatus
   ConvexHull::propagate(Space* home) {
     //x1 is the convex hull of x0

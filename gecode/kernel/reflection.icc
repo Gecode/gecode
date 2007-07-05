@@ -1,0 +1,708 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2007
+ *
+ *  Last modified:
+ *     $Date: 2007-05-14 16:34:56 +0200 (Mon, 14 May 2007) $ by $Author: zayenz $
+ *     $Revision: 4594 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#include <iostream>
+#include <cstring>
+
+namespace Gecode { namespace Reflection {
+  
+  class ReflectionException : public Exception {
+  public:
+    ReflectionException(const char* what) : Exception("Reflection", what) {}
+  };
+  
+  template <class T> class ArrayArg;
+  class StringArg;
+  
+  /**
+    * \brief View types of actor arguments
+    *
+    * \ingroup TaskIntReflect
+    */
+  class Type {
+  public:
+    /// Number of arguments
+    int n;
+    union {
+      /// If n==0, this is the name of the view type
+      const char* n;
+      /// If n>0, this is the tuple representing the type
+      Type** t;
+    } u;
+
+    /// Construct singleton type with \a name
+    Type(const char* name);
+    /// Construct \a n -ary tuple type
+    Type(int n);
+
+    GECODE_KERNEL_EXPORT bool equal(Type* t);
+
+    /// Destructor
+    ~Type(void);
+    /// Print string representation to \a os
+    GECODE_KERNEL_EXPORT void print(std::ostream& os);
+  };
+
+
+  /**
+    * \brief Arguments for actor and variable specifications
+    *
+    * \ingroup TaskIntReflect
+    */
+  class Arg {
+  public:
+    /// Test if this represents an integer
+    bool         isInt(void);
+    /// Return the integer that this argument represents
+    int          toInt(void);
+    /// Test if this represents a variable
+    bool         isVar(void);
+    /// Return the variable number that this argument represents
+    int          toVar(void);
+    /// Test if this represents an array
+    template <class T>
+    bool         isArray(void);
+    /// Return the array that this argument represents
+    template <class T>
+    ArrayArg<T>* toArray(void);
+    /// Test if this represents a string
+    bool         isString(void);
+    /// Return the string that this argument represents
+    const char*  toString(void);
+    /// Test if this represents a pair
+    bool         isPair(void);
+    /// Return the first component of the pair that this argument represents
+    Arg*         first(void);
+    /// Return the second component of the pair that this argument represents
+    Arg*         second(void);
+    /// Test if this represents a typed argument
+    bool         isTypedArg(void);
+    /// Return type of typed argument
+    Type*        type(void);
+    /// Return argument of typed argument
+    Arg*         typedArg(void);
+    /// Destructor
+    virtual ~Arg(void);
+  };
+  
+  /**
+    * \brief Integer arguments
+    * \ingroup TaskIntReflect
+    */
+  class IntArg : public Arg {
+  public:
+    /// Constructor
+    IntArg(int i0);
+    /// The integer represented by this argument
+    int i;
+  };
+
+  /**
+    * \brief Variable arguments
+    * \ingroup TaskIntReflect
+    */
+  class VarArg : public Arg {
+  public:
+    /// Constructor
+    VarArg(int i0);
+    /// The variable number represented by this argument
+    int i;
+  };
+
+  /**
+    * \brief Array arguments
+    * \ingroup TaskIntReflect
+    */
+  template <class T>
+  class ArrayArg : public Arg {
+  private:
+    /// Size of the array
+    int  n;
+    /// The actual array
+    T* a;    
+  public:
+    /// Constructor
+    ArrayArg(int n0);
+    /// Construct from given array
+    template <class A> ArrayArg(const A& a);
+    /// Destructor
+    virtual ~ArrayArg(void);
+    
+    const T& operator[](int i) const;
+    T& operator[](int i);
+    int size(void) const;
+    
+  };
+
+  /**
+    * \brief Argument paired with a type
+    * \ingroup TaskIntReflect
+    */
+  class TypedArg : public Arg {
+  public:
+    /// Constructor
+    TypedArg(Type* t0, Arg* a0);
+    /// Destructor
+    virtual ~TypedArg(void);
+    /// The type of this argument
+    Type* t;
+    /// The argument
+    Arg* a;
+  };
+
+  /**
+    * \brief String arguments
+    * \ingroup TaskIntReflect
+    */
+  class StringArg : public Arg {
+  public:
+    /// Constructor
+    StringArg(const char* s0);
+    /// The string represented by this argument
+    const char* s;
+  };
+  
+  /**
+    * \brief Pair arguments
+    * \ingroup TaskIntReflect
+    */
+  class PairArg : public Arg {
+  public:
+    /// Constructor
+    PairArg(Arg* a0, Arg* b0);
+    /// Destructor
+    virtual ~PairArg(void);
+    /// The first component
+    Arg* a;
+    /// The second component
+    Arg* b;
+  };
+  
+  /**
+    * \brief Variable specification
+    * \ingroup TaskIntReflect
+    */
+  class VarSpec {
+  private:
+    /// The variable type identifier for this variable
+    int  _vti;
+
+    class Domain {
+    public:
+      /// The name of this variable
+      char* _n;
+      /// A representation of the domain of this variable
+      Arg* _dom;
+      /// Reference count
+      int r;
+      /// Constructor
+      Domain(Arg* domain);
+      /// Destructor
+      ~Domain(void);
+    };
+    /// A representation of the domain of this variable
+    Domain* _dom;
+  public:
+    /// Construct specification for a variable
+    VarSpec(int vti, Arg* domain);
+    /// Copy constructor
+    VarSpec(const VarSpec& s);
+    /// Assignment operator
+    const VarSpec& operator=(const VarSpec& s);
+    /// Destructor
+    ~VarSpec(void);
+    /// Set the name for this variable
+    void name(const char* n0);
+    /// Get the name of this variable
+    const char* name(void) const;
+    /// Get the domain of this variable
+    Arg* dom(void) const;
+    // Get the variable type identifier for this variable
+    int vti(void) const;
+  };
+  
+  /**
+    * \brief Actor specification
+    * \ingroup TaskIntReflect
+    */
+  class ActorSpec {
+  private:
+    /// The name of this actor
+    const char* _name;
+    class Arguments {
+    public:
+      /// The size of the argument array
+      int   size;
+      /// The number of arguments of this actor
+      int   n;
+      /// The arguments of this actor
+      Arg** a;
+      /// Reference counter
+      int r;
+      /// Construct empty arguments
+      Arguments(void);
+      /// Destructor
+      ~Arguments(void);
+    };
+    Arguments* _args;
+  public:
+    /// Construct actor specification with \a name
+    ActorSpec(const char* name);
+    /// Copy constructor
+    ActorSpec(const ActorSpec& s);
+    /// Assignment operator
+    const ActorSpec& operator=(const ActorSpec& s);
+    /// Destructor
+    ~ActorSpec(void);
+    
+    /// Return argument \a i
+    Arg* operator[](int i);
+    /// Return number of arguments
+    int noOfArgs(void) const;
+    /// Add \a arg to the specification (as last argument)
+    void add(Arg* arg);
+    /// Return name
+    const char* name(void) const;
+    
+  };
+  
+  /// Add \a a to specification \a spec
+  ActorSpec& operator<<(ActorSpec& spec, Arg* a);
+  /// Add \a i to specification \a spec
+  ActorSpec& operator<<(ActorSpec& spec, int i);
+  /// Add \a i to specification \a spec
+  ActorSpec& operator<<(ActorSpec& spec, unsigned int i);
+  /// Add \a d to specification \a spec, where \a d is cast into an integer
+  ActorSpec& operator<<(ActorSpec& spec, double d);
+  
+  class VarMap;
+
+  /**
+    * \brief Iterating actor specifications
+    *
+    * Use this iterator to access specifications of all actors (propagators 
+    * and branchings) of a space. The iterator also provides access to the
+    * corresponding variables map.
+    *
+    * \ingroup TaskIntReflect
+    */
+  class SpecIter {
+  private:
+    /// The variable map used by this iterator
+    VarMap&    m;
+    /// The space for which to iterate the actors
+    Space*     s;
+    /// The current actor
+    ActorLink *cur;
+    /// The current ActorSpec
+    ActorSpec* curSpec;
+  public:
+    /// Constructor
+    SpecIter(Space*, VarMap&);
+    /// Test whether iterator still has actor specifications or is done
+    bool operator()(void) const;
+    /// Move iterator to next actor
+    void operator++(void);
+    /// Return actor specification for current iterator position
+    ActorSpec& actor(void) const;
+  };
+
+
+  /**************************************
+   * Implementations
+   **************************************/
+  
+  
+  /*
+   * Arguments
+   *
+   */
+  
+  forceinline bool
+  Arg::isInt(void) {
+    return (dynamic_cast<IntArg*>(this) != NULL);
+  }
+  forceinline int
+  Arg::toInt(void) {
+    return static_cast<IntArg*>(this)->i;
+  }
+
+  forceinline bool
+  Arg::isVar(void) {
+    return (dynamic_cast<VarArg*>(this) != NULL);
+  }
+  forceinline int
+  Arg::toVar(void) {
+    return static_cast<VarArg*>(this)->i;
+  }
+
+  template <class T>
+  forceinline bool
+  Arg::isArray(void) {
+    return (dynamic_cast<ArrayArg<T>*>(this) != NULL);
+  }
+  template <class T>
+  forceinline ArrayArg<T>*
+  Arg::toArray(void) {
+    return static_cast<ArrayArg<T>*>(this);
+  }
+
+  forceinline bool
+  Arg::isString(void) {
+    return (dynamic_cast<StringArg*>(this) != NULL);
+  }
+  forceinline const char*
+  Arg::toString(void) {
+    return static_cast<StringArg*>(this)->s;
+  }
+
+  forceinline bool
+  Arg::isPair(void) {
+    return (dynamic_cast<PairArg*>(this) != NULL);
+  }
+  forceinline Arg*
+  Arg::first(void) {
+    return static_cast<PairArg*>(this)->a;
+  }
+  forceinline Arg*
+  Arg::second(void) {
+    return static_cast<PairArg*>(this)->b;
+  }
+
+  forceinline bool
+  Arg::isTypedArg(void) {
+    return (dynamic_cast<TypedArg*>(this) != NULL);    
+  }
+  forceinline Type*
+  Arg::type(void) {
+    return static_cast<TypedArg*>(this)->t;
+  }
+  forceinline Arg*
+  Arg::typedArg(void) {
+    return static_cast<TypedArg*>(this)->a;
+  }
+
+  forceinline
+  Arg::~Arg(void) {}
+  
+  forceinline
+  IntArg::IntArg(int i0) : i(i0) {}
+
+  template <class T>
+  forceinline const T&
+  ArrayArg<T>::operator[](int i) const {
+    assert(i < n);
+    return a[i];
+  }
+  template <class T>
+  forceinline T&
+  ArrayArg<T>::operator[](int i) {
+    assert(i < n);
+    return a[i];
+  }
+  template <class T>
+  forceinline int
+  ArrayArg<T>::size(void) const {
+    return n;
+  }
+
+  template <class T>
+  forceinline
+  ArrayArg<T>::ArrayArg(int n0) : n(n0) {
+    a = static_cast<T*>(Memory::malloc(sizeof(T)*n));
+  }
+
+  template <class T> template<class A>
+  forceinline
+  ArrayArg<T>::ArrayArg(const A& a0) : n(a0.size()) {
+    a = static_cast<T*>(Memory::malloc(sizeof(T)*n));
+    for (int i=n; i--;)
+      a[i] = a0[i];
+  }
+  
+  template <class T>
+  forceinline
+  ArrayArg<T>::~ArrayArg(void) {
+    Memory::free(a);
+  }
+
+  template<>
+  forceinline
+  ArrayArg<Arg*>::~ArrayArg(void) {
+    for (int i=n; i--;)
+      delete a[i];
+    Memory::free(a);
+  }
+
+  forceinline
+  StringArg::StringArg(const char* s0) : s(s0) {}
+
+  forceinline
+  PairArg::PairArg(Arg* a0, Arg* b0) : a(a0), b(b0) {}
+
+  forceinline
+  PairArg::~PairArg(void) {
+    delete a;
+    delete b;
+  }
+
+  forceinline
+  VarArg::VarArg(int i0) : i(i0) {}
+  
+  forceinline
+  TypedArg::TypedArg(Type* t0, Arg* a0) : t(t0), a(a0) {}
+
+  forceinline
+  TypedArg::~TypedArg(void) {
+    delete t;
+    delete a;
+  }
+
+  template <class View>
+  forceinline TypedArg*
+  typedSpec(Space* home, VarMap& m, View& v) {
+    return new TypedArg(View::type(), v.spec(home, m));
+  }
+
+  /*
+   * Variable specifications
+   *
+   */
+
+  forceinline
+  VarSpec::Domain::Domain(Arg* domain) : _n(NULL), _dom(domain), r(1) {}
+
+  forceinline
+  VarSpec::Domain::~Domain(void) {
+    if (_n != NULL)
+      Memory::free(_n);
+    delete _dom;    
+  }
+
+  forceinline
+  VarSpec::VarSpec(int vti, Arg* dom) 
+  : _vti(vti), _dom(new Domain(dom)) {}
+
+  forceinline
+  VarSpec::VarSpec(const VarSpec& s) : _vti(s._vti), _dom(s._dom) {
+    _dom->r++;
+  }
+  
+  forceinline const VarSpec&
+  VarSpec::operator=(const VarSpec& s) {
+    if (this != &s) {
+      if (--_dom->r == 0)
+        delete _dom;
+      _dom = s._dom;
+      _dom->r++;
+    }
+    return *this;
+  }
+  
+  forceinline
+  VarSpec::~VarSpec(void) {
+    if (--_dom->r == 0)
+      delete _dom;
+  }
+
+  forceinline void
+  VarSpec::name(const char* n) {
+    if (_dom->_n != NULL)
+      Memory::free(_dom->_n);
+    int size = strlen(n);
+    _dom->_n = (char*) Memory::malloc(size+1);
+    memcpy(_dom->_n, n, size);
+    _dom->_n[size] = 0;
+  }
+
+  forceinline const char*
+  VarSpec::name(void) const {
+    return _dom->_n;
+  }
+
+  forceinline int
+  VarSpec::vti(void) const {
+    return _vti;
+  }
+
+  forceinline Arg*
+  VarSpec::dom(void) const {
+    return _dom->_dom;
+  }
+
+  /*
+   * Types
+   *
+   */
+
+  forceinline
+  Type::Type(const char* s) : n(0) {
+    u.n = s;
+  }
+  
+  forceinline
+  Type::Type(int n0) : n(n0) {
+    u.t = static_cast<Type**>(Memory::malloc(sizeof(Type*)*n));
+  }
+  
+  forceinline
+  Type::~Type(void) {
+    if (n>0) {
+      for (int i=n; i--;)
+        delete u.t[i];
+      Memory::free(u.t);
+    }
+  }
+
+
+  /*
+   * Actor specifications
+   *
+   */
+
+  forceinline
+  ActorSpec::Arguments::Arguments(void) : size(4), n(0), r(1) {
+    a = static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*size));
+  }
+
+  forceinline
+  ActorSpec::Arguments::~Arguments(void) {
+    for (int i=n; i--;)
+      delete a[i];
+    Memory::free(a);
+  }
+
+  forceinline
+  ActorSpec::ActorSpec(const char* name) : _name(name) {
+    _args = new Arguments();
+  }
+
+  forceinline
+  ActorSpec::ActorSpec(const ActorSpec& s) : _name(s._name), _args(s._args) {
+    _args->r++;
+  }
+  
+  forceinline
+  const ActorSpec&
+  ActorSpec::operator=(const ActorSpec& s) {
+    if (this != &s) {
+      if (--_args->r == 0)
+        delete _args;
+      _args = s._args;
+      _args->r++;
+    }
+    return *this;
+  }
+
+  forceinline Arg*
+  ActorSpec::operator[](int i) {
+    assert(i < _args->n);
+    return _args->a[i];
+  }
+
+  forceinline int
+  ActorSpec::noOfArgs(void) const {
+    return _args->n;
+  }
+
+  forceinline const char*
+  ActorSpec::name(void) const {
+    return _name;
+  }
+
+  forceinline
+  ActorSpec::~ActorSpec(void) {
+    if (--_args->r == 0)
+      delete _args;
+  }
+
+  forceinline void
+  ActorSpec::add(Arg* arg) {
+    if (_args->n == _args->size) {
+      // resize
+      _args->size = _args->size * 3 / 2;
+      Arg** newargs =
+        static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*_args->size));
+      for (int i=_args->n; i--;)
+        newargs[i] = _args->a[i];
+      Memory::free(_args->a);
+      _args->a = newargs;
+    }
+    _args->a[_args->n] = arg;
+    _args->n++;
+  }
+
+  forceinline
+  ActorSpec& operator<<(ActorSpec& spec, Arg* arg) {
+    spec.add(arg);
+    return spec;
+  }
+  
+  forceinline
+  ActorSpec& operator<<(ActorSpec& spec, int i) {
+    return spec << new IntArg(i);
+  }
+
+  forceinline
+  ActorSpec& operator<<(ActorSpec& spec, unsigned int i) {
+    return spec << new IntArg(static_cast<int>(i));
+  }
+
+  forceinline
+  ActorSpec& operator<<(ActorSpec& spec, double i) {
+    return spec << new IntArg(static_cast<int>(i));
+  }
+  
+  /*
+   * Specification iterator
+   *
+   */
+   
+  forceinline bool
+  SpecIter::operator()(void) const {
+    return cur != &s->a_actors;
+  }
+
+  forceinline
+  SpecIter::SpecIter(Space* s0, VarMap& m0) : m(m0), s(s0),
+    curSpec(NULL) {
+    cur = s->a_actors.next();
+    if ((*this)())
+      curSpec = &static_cast<Actor*>(cur)->spec(s,m);
+  }
+
+  forceinline void
+  SpecIter::operator++(void) {
+    delete curSpec;
+    cur = cur->next();
+    if ((*this)())
+      curSpec = &static_cast<Actor*>(cur)->spec(s,m);
+  }
+
+  forceinline ActorSpec&
+  SpecIter::actor(void) const {
+    return *curSpec;
+  }
+
+}}
+
+// STATISTICS: kernel-core

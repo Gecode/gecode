@@ -58,6 +58,16 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, PropCond pc>
+  Reflection::ActorSpec&
+  LinBin<Val,A,B,pc>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << Reflection::typedSpec(home, m, x0)
+             << Reflection::typedSpec(home, m, x1)
+             << c;
+  }
+
+
+  template <class Val, class A, class B, PropCond pc>
   forceinline size_t
   LinBin<Val,A,B,pc>::dispose(Space* home) {
     assert(!home->failed());
@@ -108,6 +118,15 @@ namespace Gecode { namespace Int { namespace Linear {
     return sizeof(*this);
   }
 
+  template <class Val, class A, class B, PropCond pc, class Ctrl>
+  Reflection::ActorSpec&
+  ReLinBin<Val,A,B,pc,Ctrl>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << Reflection::typedSpec(home, m, x0)
+             << Reflection::typedSpec(home, m, x1)
+             << c
+             << Reflection::typedSpec(home, m, b);
+  }
 
   /*
    * Binary bounds-consistent linear equality
@@ -142,6 +161,12 @@ namespace Gecode { namespace Int { namespace Linear {
   Actor*
   EqBin<Val,A,B>::copy(Space* home, bool share) {
     return new (home) EqBin<Val,A,B>(home,share,*this);
+  }
+
+  template <class Val, class A, class B>
+  const char*
+  EqBin<Val,A,B>::name(void) const {
+    return "int.linear.EqBin";
   }
 
   /// Describe which view has been modified how
@@ -209,6 +234,11 @@ namespace Gecode { namespace Int { namespace Linear {
     return new (home) ReEqBin<Val,A,B,Ctrl>(home,share,*this);
   }
 
+  template <class Val, class A, class B, class Ctrl>
+  const char*
+  ReEqBin<Val,A,B,Ctrl>::name(void) const {
+    return "int.linear.ReEqBin";
+  }
 
   template <class Val, class A, class B, class Ctrl>
   ExecStatus
@@ -273,6 +303,12 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B>
+  const char*
+  NqBin<Val,A,B>::name(void) const {
+    return "int.linear.NqBin";
+  }
+
+  template <class Val, class A, class B>
   ExecStatus
   NqBin<Val,A,B>::propagate(Space* home) {
     if (x0.assigned()) {
@@ -320,6 +356,11 @@ namespace Gecode { namespace Int { namespace Linear {
                         A x0, B x1, Val c)
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
 
+  template <class Val, class A, class B>
+  const char*
+  LqBin<Val,A,B>::name(void) const {
+    return "int.linear.LqBin";
+  }
 
 
   template <class Val, class A, class B>
@@ -368,6 +409,11 @@ namespace Gecode { namespace Int { namespace Linear {
                         A x0, B x1, Val c)
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
 
+  template <class Val, class A, class B>
+  const char*
+  GqBin<Val,A,B>::name(void) const {
+    return "int.linear.GqBin";
+  }
 
 
   template <class Val, class A, class B>
@@ -408,6 +454,12 @@ namespace Gecode { namespace Int { namespace Linear {
   Actor*
   ReLqBin<Val,A,B>::copy(Space* home, bool share) {
     return new (home) ReLqBin<Val,A,B>(home,share,*this);
+  }
+
+  template <class Val, class A, class B>
+  const char*
+  ReLqBin<Val,A,B>::name(void) const {
+    return "int.linear.ReLqBin";
   }
 
 

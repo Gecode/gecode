@@ -318,6 +318,21 @@ namespace Gecode {
       a=x.a; view.update(home,share,x.view);
     }
 
+    /*
+     * Serialization
+     *
+     */
+    template <class Val, class UnsVal>
+    forceinline Reflection::Arg*
+    ScaleView<Val,UnsVal>::spec(Space* home, Reflection::VarMap& m) {
+      return new Reflection::PairArg(new Reflection::IntArg(a), view.spec(home, m));
+    }
+    template <class Val, class UnsVal>
+    forceinline Reflection::Type*
+    ScaleView<Val,UnsVal>::type(void) {
+      return new Reflection::Type("int.ScaleView");
+    }
+
 
     /**
      * \brief %Range iterator for integer-precision scale integer views

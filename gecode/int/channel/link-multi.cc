@@ -83,6 +83,19 @@ namespace Gecode { namespace Int { namespace Channel {
       PC_UNARY_LO : cost_lo(x.size(),PC_LINEAR_LO);
   }
 
+  const char*
+  LinkMulti::name(void) const {
+    return "int.channel.LinkMulti";
+  }
+  
+  Reflection::ActorSpec&
+  LinkMulti::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s =
+      MixNaryOnePropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_DOM>
+        ::spec(home, m);
+    return s << o;
+  }
+
   ExecStatus
   LinkMulti::propagate(Space* home) {
     int n = x.size();

@@ -137,6 +137,12 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template <class View>
+  const char*
+  Incremental<View>::name(void) const {
+    return "int.extensional.Incremental";
+  }
+
+  template <class View>
   Actor*
   Incremental<View>::copy(Space* home, bool share) {
     return new (home) Incremental<View>(home,share,*this);

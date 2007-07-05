@@ -1,0 +1,126 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2007
+ *
+ *  Last modified:
+ *     $Date: 2007-05-14 16:34:56 +0200 (Mon, 14 May 2007) $ by $Author: zayenz $
+ *     $Revision: 4594 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+#include <sstream>
+
+namespace Gecode { namespace Reflection {
+  
+  class VarMapIter;
+
+  /**
+    * \brief Mapping Gecode variables to variable specifications
+    * \ingroup TaskIntReflect
+    */
+  class VarMap {
+    friend class VarMapIter;
+  private:
+    class VarMapImp;
+    /// The actual map
+    VarMapImp* m;
+    /// Register name \a n for variable \a x
+    void name(VarBase* x, const char* n);
+  public:
+    /// Default constructor
+    GECODE_KERNEL_EXPORT VarMap(void);
+    /// Destructor
+    GECODE_KERNEL_EXPORT ~VarMap(void);
+    /// Return variable specification for variable \a x
+    GECODE_KERNEL_EXPORT VarSpec& get(VarBase* x);
+    /// Return the index of variable \a x in the table
+    GECODE_KERNEL_EXPORT int      getIndex(VarBase* x);
+    /// Return the variable at index \a i in the table
+    GECODE_KERNEL_EXPORT VarSpec& get(int i);
+    /// Insert specification \a vs for variable \a x
+    GECODE_KERNEL_EXPORT int      put(VarBase* x, VarSpec* vs);
+    /// Get variable with name \a n
+    GECODE_KERNEL_EXPORT VarBase* variableByName(const char* n);
+    /// Insert specification for variable \a v with name \a n
+    template <class Var> void
+    put(Space* home, const Var& v, const char* n);
+    /// Insert specifications for variables in \a x with name \a n
+    template <class Var> void
+    putArray(Space* home, const VarArgArray<Var>& v, const char* n);
+    /// Insert specifications for variables in \a x with name \a n
+    template <class Var> void
+    putArray(Space* home, const VarArray<Var>& v, const char* n);
+  };
+  
+  /**
+    * \brief Iterating a variable map
+    *
+    * The variable map is filled dynamically while iterating over the
+    * actors of a space. The iterator will signal that it is done when all
+    * currently known variables have been iterated, but it will later become
+    * available again once new variables are encountered.
+    *
+    * \ingroup TaskIntReflect
+    */
+  class VarMapIter {
+  private:
+    /// The variable map to iterate
+    VarMap& m;
+    /// The current index
+    unsigned int i;
+  public:
+    /// Construct iterator for variable map \a m
+    GECODE_KERNEL_EXPORT VarMapIter(VarMap& m);
+    /// Test whether iterator still has variables or is done
+    GECODE_KERNEL_EXPORT bool operator()(void) const;
+    /// Return variable specification for current iterator position
+    GECODE_KERNEL_EXPORT VarSpec& var(void) const;
+    /// Move iterator to next variable
+    GECODE_KERNEL_EXPORT void operator++(void);
+  };
+
+  /*
+   * Variable maps
+   *
+   */
+
+  template <class Var> void
+  VarMap::put(Space* home, const Var& x, const char* n) {
+    typename VarViewTraits<Var>::View v(x);
+    Arg* a = v.spec(home, *this);
+    name(v.variable(), n);
+    delete a;
+  }
+
+  template <class Var> void
+  VarMap::putArray(Space* home, const VarArgArray<Var>& x, const char* n) {
+    for (int i=0; i<x.size(); i++) {
+      std::stringstream s;
+      s << i;
+      put(home, x[i], (std::string(n)+s.str()).c_str());
+    }
+  }
+  template <class Var> void
+  VarMap::putArray(Space* home, const VarArray<Var>& x, const char* n) {
+    for (int i=0; i<x.size(); i++) {
+      std::stringstream s;
+      s << i;
+      put(home, x[i], (std::string(n)+s.str()).c_str());
+    }
+  }
+
+}}
+
+// STATISTICS: kernel-core

@@ -1,0 +1,36 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2007
+ *
+ *  Last modified:
+ *     $Date: 2007-01-17 11:28:00 +0100 (Wed, 17 Jan 2007) $ by $Author: tack $
+ *     $Revision: 4060 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Serialization {
+  
+  forceinline
+  Deserializer::Deserializer(Space* home0, Reflection::VarMap& m0)
+    : home(home0), m(m0) {}
+    
+  forceinline Reflection::VarMap&
+  Deserializer::varMap(void) const {
+    return m;
+  }
+  
+}}
+
+// STATISTICS: serialization-any

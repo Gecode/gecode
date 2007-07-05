@@ -120,6 +120,8 @@ namespace Gecode { namespace Int { namespace Regular {
     virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
     /// Post propagator on views \a x and DFA \a d

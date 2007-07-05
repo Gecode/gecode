@@ -89,6 +89,8 @@ namespace Gecode { namespace Int { namespace Circuit {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for circuit on \a x
     static  ExecStatus post(Space* home, ViewArray<View>& x);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
   };
 
   /**
@@ -126,6 +128,8 @@ namespace Gecode { namespace Int { namespace Circuit {
     virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
     /// Post propagator for circuit on \a x
     static  ExecStatus post(Space* home, ViewArray<View>& x);
   };

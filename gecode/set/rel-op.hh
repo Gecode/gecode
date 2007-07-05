@@ -69,6 +69,8 @@ namespace Gecode { namespace Set { namespace RelOp {
      virtual ExecStatus  propagate(Space* home);
      /// Post propagator \f$ z \supseteq x \cap y\f$ 
      static  ExecStatus  post(Space* home, View0 x, View1 y, View2 z);
+     /// Name of this propagator
+     virtual const char* name(void) const;
    };
 
   /**
@@ -99,6 +101,8 @@ namespace Gecode { namespace Set { namespace RelOp {
     virtual ExecStatus  propagate(Space* home);
     /// Post propagator \f$ z \subseteq x \cap y\f$ 
     static  ExecStatus  post(Space* home,View0 x,View1 y,View2 z);
+     /// Name of this propagator
+     virtual const char* name(void) const;
   };
 
 
@@ -130,6 +134,8 @@ namespace Gecode { namespace Set { namespace RelOp {
      virtual ExecStatus  propagate(Space* home);
      /// Post propagator \f$ z=x\cap y\f$ 
      static  ExecStatus  post(Space* home,View0 x,View1 y,View2 z);
+     /// Name of this propagator
+     virtual const char* name(void) const;
    };
 
   /**
@@ -160,6 +166,8 @@ namespace Gecode { namespace Set { namespace RelOp {
     virtual ExecStatus  propagate(Space* home);
     /// Post propagator \f$ z=x\cup y\f$
     static  ExecStatus  post(Space* home,View0 x,View1 y,View2 z);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
    /**
@@ -190,6 +198,10 @@ namespace Gecode { namespace Set { namespace RelOp {
     virtual ExecStatus  propagate(Space* home);
     /// Post propagator \f$ x = \bigcap_{i\in\{0,\dots,n-1\}} y_i \f$
     static  ExecStatus  post(Space* home,ViewArray<View0>& y,View1 x);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
   /**
@@ -220,6 +232,10 @@ namespace Gecode { namespace Set { namespace RelOp {
     virtual PropCost    cost(void) const;
     /// Post propagator \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$ 
     static  ExecStatus  post(Space* home,ViewArray<View0>& y,View1 x);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
 
@@ -251,6 +267,10 @@ namespace Gecode { namespace Set { namespace RelOp {
     virtual PropCost    cost(void) const;
     /// Post propagator \f$ x = \biguplus_{i\in\{0,\dots,n-1\}} y_i \f$ 
     static  ExecStatus  post(Space* home,ViewArray<View0>& y,View1 x);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
 }}}

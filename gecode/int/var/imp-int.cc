@@ -359,6 +359,36 @@ namespace Gecode { namespace Int {
     return new (home) IntVarImp(home,share,*this);
   }
 
+  Reflection::Arg*
+  IntVarImp::spec(Space* home, Reflection::VarMap& m) {
+    int varIndex = m.getIndex(this);
+    if (varIndex != -1)
+      return new Reflection::VarArg(varIndex);
+
+    int count = 0;
+    const RangeList* p=NULL;
+    const RangeList* c=ranges_fwd();
+    while (c != NULL) {
+      const RangeList* n = c->next(p); p=c; c=n;
+      count++;
+    }
+    Reflection::ArrayArg<int>* args = new Reflection::ArrayArg<int>(count*2);
+
+    Reflection::VarSpec* spec = new Reflection::VarSpec(VTI_INT, args);
+
+    count = 0;
+    p=NULL;
+    c=ranges_fwd();
+    while (c != NULL) {
+      (*args)[count++] = c->min();
+      (*args)[count++] = c->max();
+      const RangeList* n = c->next(p); p=c; c=n;
+    }
+
+    return new Reflection::VarArg(m.put(this, spec));
+  }
+
+
 }}
 
 // STATISTICS: int-var

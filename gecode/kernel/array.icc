@@ -288,6 +288,11 @@ namespace Gecode {
     bool shared(const View& y) const;
     //@}
 
+    /// \name Serialization
+    //@{
+    Reflection::Arg*  spec(Space* home, Reflection::VarMap& m);
+    //@}
+
   private:
     static void* operator new(size_t);
     static void  operator delete(void*,size_t);
@@ -862,6 +867,18 @@ namespace Gecode {
       if (__shared(x[i],y))
         return true;
     return false;
+  }
+
+  template <class View>
+  Reflection::Arg*
+  ViewArray<View>::spec(Space* home, Reflection::VarMap& m) {
+    if (n == 0)
+      return NULL;
+    Reflection::ArrayArg<Reflection::Arg*>* s = new Reflection::ArrayArg<Reflection::Arg*>(n);
+    for (int i = 0; i<n; i++)
+      (*s)[i] = x[i].spec(home, m);
+    Reflection::TypedArg* ta = new Reflection::TypedArg(View::type(), s);
+    return ta;
   }
 
   template <class View>

@@ -41,6 +41,11 @@ namespace Gecode { namespace Set { namespace Int {
     return new (home) Card(home,share,*this);
   }
 
+  const char*
+  Card::name(void) const {
+    return "set.int.Card";
+  }
+
   ExecStatus
   Card::propagate(Space* home) {
     int x1min, x1max;

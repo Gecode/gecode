@@ -66,6 +66,12 @@ namespace Gecode { namespace Int { namespace Distinct {
       : cost_hi(x.size(),PC_LINEAR_HI);
   }
 
+  template <class View>
+  const char*
+  Bnd<View>::name(void) const {
+    return "int.distinct.Bnd";
+  }
+
 
   /// Rank information
   class Rank {

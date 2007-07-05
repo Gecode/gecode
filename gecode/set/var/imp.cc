@@ -119,6 +119,46 @@ namespace Gecode { namespace Set {
     return new (home) SetVarImp(home,share,*this);
   }
 
+  Reflection::Arg*
+  SetVarImp::spec(Space* home, Reflection::VarMap& m) {
+    int specIndex = m.getIndex(this);
+    if (specIndex != -1)
+      return new Reflection::VarArg(specIndex);
+
+    int glbsize = 0;
+    {
+      BndSetRanges lrs(glb);
+      while (lrs()) { glbsize++; ++lrs; }
+    }
+    
+    Reflection::ArrayArg<int>* glbdom = new Reflection::ArrayArg<int>(glbsize*2);
+    BndSetRanges lr(glb);
+    for (int count=0; lr(); ++lr) {
+      (*glbdom)[count++] = lr.min();
+      (*glbdom)[count++] = lr.max();
+    }
+
+    int lubsize = 0;
+    {
+      BndSetRanges urs(lub);
+      while (urs()) { lubsize++; ++urs; }
+    }
+    
+    BndSetRanges ur(lub);
+    Reflection::ArrayArg<int>* lubdom = new Reflection::ArrayArg<int>(lubsize*2);
+    for (int count=0; ur(); ++ur) {
+      (*lubdom)[count++] = ur.min();
+      (*lubdom)[count++] = ur.max();
+    }
+
+    Reflection::PairArg* pair =
+      new Reflection::PairArg(new Reflection::PairArg(glbdom, new Reflection::IntArg(_cardMin)),
+                        new Reflection::PairArg(lubdom, new Reflection::IntArg(_cardMax)));
+
+    Reflection::VarSpec* spec = new Reflection::VarSpec(VTI_SET, pair);
+    return (new Reflection::VarArg(m.put(this, spec)));
+  }
+
 }}
 
 // STATISTICS: set-var

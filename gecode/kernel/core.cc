@@ -446,6 +446,11 @@ namespace Gecode {
     return n;
   }
 
+  Reflection::SpecIter
+  Space::actorSpecs(Reflection::VarMap& m) {
+    Reflection::SpecIter i(this, m);
+    return i;
+  }
 
   /*
    * Propagator
@@ -455,6 +460,15 @@ namespace Gecode {
   Propagator::advise(Space*, Advisor*, const Delta*) {
     assert(false);
     return ES_FAILED;
+  }
+
+  /*
+   * Actor
+   *
+   */
+  Reflection::ActorSpec&
+  Actor::spec(Space*, Reflection::VarMap&) {
+    return *new Reflection::ActorSpec(name());
   }
 
 }

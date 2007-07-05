@@ -174,6 +174,27 @@ namespace Gecode { namespace Int { namespace Linear {
     n.update(home,share,n0);
   }
 
+  template<class SBAP, class SBAN, class VX, PropCond pcx>
+  Reflection::ActorSpec&
+  LinBoolScale<SBAP,SBAN,VX,pcx>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+
+    Reflection::ArrayArg<int>* coeff = new Reflection::ArrayArg<int>(p.size()+n.size());
+    Reflection::ArrayArg<Reflection::Arg*>* a =
+      new Reflection::ArrayArg<Reflection::Arg*>(p.size()+n.size());
+    int count = 0;
+    for (ScaleBool* f = p.fst(); f != p.lst(); f++) {
+      (*coeff)[count] = f->a;
+      (*a)[count++] = f->x.spec(home, m);
+    }
+    for (ScaleBool* f = n.fst(); f != n.lst(); f++) {
+      (*coeff)[count] = -(f->a);
+      (*a)[count++] = f->x.spec(home, m);
+    }
+
+    return s << coeff << a << Reflection::typedSpec(home, m, x)
+             << new Reflection::IntArg(static_cast<int>(c));
+  }
 
   /*
    * Boolean equality with coefficients
@@ -223,6 +244,12 @@ namespace Gecode { namespace Int { namespace Linear {
     }
   }
 
+  template<class SBAP, class SBAN, class VX>
+  const char*
+  EqBoolScale<SBAP,SBAN,VX>::name(void) const {
+    return "int.linear.EqBoolScale";
+  }
+  
   template<class SBAP, class SBAN, class VX>
   ExecStatus
   EqBoolScale<SBAP,SBAN,VX>::propagate(Space* home) {
@@ -439,6 +466,12 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class SBAP, class SBAN, class VX>
+  const char*
+  LqBoolScale<SBAP,SBAN,VX>::name(void) const {
+    return "int.linear.LqBoolScale";
+  }
+
+  template<class SBAP, class SBAN, class VX>
   ExecStatus
   LqBoolScale<SBAP,SBAN,VX>::propagate(Space* home) {
     int sl = 0;
@@ -590,6 +623,12 @@ namespace Gecode { namespace Int { namespace Linear {
     } else {
       return new (home) NqBoolScale<SBAP,SBAN,VX>(home,share,*this,p,n,x,c);
     }
+  }
+
+  template<class SBAP, class SBAN, class VX>
+  const char*
+  NqBoolScale<SBAP,SBAN,VX>::name(void) const {
+    return "int.linear.NqBoolScale";
   }
 
   template<class SBAP, class SBAN, class VX>

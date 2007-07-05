@@ -248,6 +248,16 @@ namespace Gecode {
       view.update(home,share,y.view);
     }
 
+    forceinline Reflection::Arg*
+    SingletonView::spec(Space* home, Reflection::VarMap& m) {
+      return view.spec(home, m);
+    }
+
+    forceinline Reflection::Type*
+    SingletonView::type(void) {
+      return new Reflection::Type("set.SingletonView");
+    }
+
     /*
      * Iterators
      *

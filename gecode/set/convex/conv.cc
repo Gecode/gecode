@@ -36,6 +36,11 @@ namespace Gecode { namespace Set { namespace Convex {
     return new (home) Convex(home,share,*this);
   }
 
+  const char*
+  Convex::name(void) const {
+    return "set.convex.Convex";
+  }
+
   ExecStatus
   Convex::propagate(Space* home) {
     //I, drop ranges from UB that are shorter than cardMin

@@ -56,6 +56,12 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
+  const char*
+  Lq<View>::name(void) const {
+    return "int.rel.Lq";
+  }
+
+  template <class View>
   ExecStatus
   Lq<View>::propagate(Space* home) {
     GECODE_ME_CHECK(x0.lq(home,x1.max()));
@@ -96,6 +102,12 @@ namespace Gecode { namespace Int { namespace Rel {
   Actor*
   Le<View>::copy(Space* home, bool share) {
     return new (home) Le<View>(home,share,*this);
+  }
+
+  template <class View>
+  const char*
+  Le<View>::name(void) const {
+    return "int.rel.Le";
   }
 
   template <class View>
@@ -150,6 +162,12 @@ namespace Gecode { namespace Int { namespace Rel {
   Actor*
   ReLq<View,CtrlView>::copy(Space* home, bool share) {
     return new (home) ReLq<View,CtrlView>(home,share,*this);
+  }
+
+  template <class View, class CtrlView>
+  const char*
+  ReLq<View,CtrlView>::name(void) const {
+    return "int.rel.ReLq";
   }
 
   template <class View, class CtrlView>
@@ -212,6 +230,20 @@ namespace Gecode { namespace Int { namespace Rel {
   Actor*
   ReLqInt<View,CtrlView>::copy(Space* home, bool share) {
     return new (home) ReLqInt<View,CtrlView>(home,share,*this);
+  }
+
+  template <class View, class CtrlView>
+  Reflection::ActorSpec&
+  ReLqInt<View,CtrlView>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s =
+      ReUnaryPropagator<View,PC_INT_BND,CtrlView>::spec(home, m);
+    return s << c;
+  }
+
+  template <class View, class CtrlView>
+  const char*
+  ReLqInt<View,CtrlView>::name(void) const {
+    return "int.rel.ReLqInt";
   }
 
   template <class View, class CtrlView>

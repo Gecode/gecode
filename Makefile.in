@@ -100,11 +100,11 @@ endif
 #
 
 KERNELSRC0 = \
-	exception core memory-manager
+	exception core memory-manager reflection
 KERNELHDR0 = \
 	array branching core exception \
 	macros memory-manager memory modevent \
-	propagator advisor view var
+	propagator advisor view var spec
 
 KERNELSRC	= $(KERNELSRC0:%=gecode/kernel/%.cc)
 KERNELHDR	= \
@@ -188,7 +188,7 @@ INTHDR0 = \
 	distinct/bilink.icc distinct/bnd.icc distinct/combptr.icc \
 	distinct/dom.icc distinct/edge.icc distinct/node.icc \
 	distinct/val.icc distinct/ter-dom.icc \
-	dom/range.icc dom/spec.icc \
+	dom/range.icc dom/reflection.icc \
 	element/int.icc element/view.icc \
 	gcc/bnd.icc gcc/dom.icc gcc/gccbndsup.icc gcc/graphsup.icc \
 	gcc/lbc.icc gcc/ubc.icc gcc/val.icc gcc/occur.icc \
@@ -461,6 +461,39 @@ endif
 MMBUILDDIRS	= minimodel
 
 #
+# SERIALIZATION COMPONENTS
+#
+
+SERSRC0 = \
+	flatzinc.cc deserializer.cc registry.cc
+SERHDR0 = \
+	deserializer.icc
+
+SERSRC 		= $(SERSRC0:%=gecode/serialization/%)
+SERHDR 		= gecode/serialization.hh $(SERHDR0:%=gecode/serialization/%)
+SEROBJ		= $(SERSRC:%.cc=%$(OBJSUFFIX))
+SERSBJ		= $(SERSRC:%.cc=%$(SBJSUFFIX))
+
+ifeq "@enable_serialization@" "yes"
+export SERDLL		= $(LIBPREFIX)@SER@$(DLLSUFFIX)
+export SERSTATICLIB	= $(LIBPREFIX)@SER@$(STATICLIBSUFFIX)
+export SERLIB		= $(LIBPREFIX)@SER@$(LIBSUFFIX)
+export LINKSER      	= $(LINKPREFIX)@SER@$(LINKSUFFIX)
+ifeq "@need_soname@" "yes"
+export SERSONAME     = \
+	@WLSONAME@$(LIBPREFIX)@SER@$(SOSUFFIX)
+else
+export SERSONAME     = 
+endif
+else
+export SERDLL		=
+export SERSTATICLIB	=
+export SERLIB		=
+export LINKSER      	=
+endif
+SERBUILDDIRS	= serialization
+
+#
 # OTHER HEADERS
 #
 
@@ -547,34 +580,39 @@ SUPPORTSBJ = $(SUPPORTSRC:%.cc=%$(SBJSUFFIX))
 
 ALLSRC =						\
 	$(KERNELSRC) $(SEARCHSRC) $(INTSRC) $(SETSRC) $(BUDDYSRC) $(BDDSRC) \
-	$(MMSRC) $(SUPPORTSRC) $(INTEXAMPLESRC) $(SETEXAMPLESRC) $(BDDEXAMPLESRC) 
+	$(MMSRC) $(SERSRC) $(SUPPORTSRC) $(INTEXAMPLESRC) $(SETEXAMPLESRC) \
+	$(BDDEXAMPLESRC)
 ALLVARIMP = $(INTVARIMP) $(SETVARIMP) $(BDDVARIMP)
 ALLHDR = $(KERNELHDR) $(SEARCHHDR) $(BUDDYHDR) $(INTHDR) $(SETHDR) $(BDDHR) $(MMHDR) \
-		$(OTHERHDR) $(ALLVARIMP)
+		$(SERHDR) $(OTHERHDR) $(ALLVARIMP)
 ALLOBJ0 = $(ALLSRC:%.cc=%$(OBJSUFFIX))
 ALLOBJ  = $(ALLOBJ0:%.c=%$(OBJSUFFIX))
 ALLSBJ0 = $(ALLSRC:%.cc=%$(SBJSUFFIX))
 ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 
-export LINKALL = $(LINKMM) $(LINKBUDDY) $(LINKSET) $(LINKINT) $(LINKBDD) \
-	$(LINKSEARCH) $(LINKKERNEL)
+export LINKALL = $(LINKMM) $(LINKBUDDY) $(LINKSER) $(LINKSET) $(LINKINT) \
+  $(LINKBDD) $(LINKSEARCH) $(LINKKERNEL)
 
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
-	$(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(BUDDYDLL) $(SETDLL) $(BDDDLL) $(MMDLL)
+	$(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(BUDDYDLL) $(SETDLL) $(BDDDLL) \
+	$(MMDLL) $(SERDLL)
 export ALLLIB = \
-	$(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) $(BUDDYLIB) $(BDDLIB) $(MMLIB)
+	$(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) $(BUDDYLIB) $(BDDLIB) \
+	$(MMLIB) $(SERLIB)
 else
 DLLTARGETS=
 export ALLLIB = \
 	$(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
-	$(INTSTATICLIB) $(SETSTATICLIB) $(BUDDYSTATICLIB) $(BDDSTATICLIB) $(MMSTATICLIB)
+	$(INTSTATICLIB) $(SETSTATICLIB) $(BUDDYSTATICLIB) $(BDDSTATICLIB)\
+	$(MMSTATICLIB) $(SERSTATICLIB)
 endif
 
 ifeq "@BUILDSTATIC@" "yes"
 STATICTARGETS = \
 	$(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
-	$(INTSTATICLIB) $(SETSTATICLIB) $(BUDDYSTATICLIB) $(BDDSTATICLIB) $(MMSTATICLIB)
+	$(INTSTATICLIB) $(SETSTATICLIB) $(BUDDYSTATICLIB) $(BDDSTATICLIB) \
+	$(MMSTATICLIB) $(SERSTATICLIB)
 else
 STATICTARGETS=
 endif
@@ -791,6 +829,13 @@ gecode/minimodel/%$(SBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_MINIMODEL_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
+gecode/serialization/%$(OBJSUFFIX): $(top_srcdir)/gecode/serialization/%.cc
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SERIALIZATION_FLAG@ \
+	@COMPILEOBJ@$@ @CXXIN@$<
+gecode/serialization/%$(SBJSUFFIX): $(top_srcdir)/gecode/serialization/%.cc
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SERIALIZATION_FLAG@ \
+	@COMPILESBJ@$@ @CXXIN@$<
+
 examples/%$(OBJSUFFIX): $(top_srcdir)/examples/%.cc
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
 	@COMPILEOBJ@$@ @CXXIN@$<
@@ -857,6 +902,12 @@ $(MMDLL): $(MMOBJ) $(KERNELDLL) $(INTDLL)
 		@LINKOUTPUT@$(MMDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
+$(SERDLL): $(SEROBJ) $(KERNELDLL)
+	$(CXX) $(DLLFLAGS) $(SEROBJ) $(SERSONAME) \
+		@DLLPATH@ $(LINKKERNEL) $(LINKINT) \
+		@LINKOUTPUT@$(SERDLL)
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
+	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 else
 $(KERNELDLL) $(KERNELLIB): $(KERNELOBJ)
 	$(CXX) $(DLLFLAGS) $(KERNELOBJ) \
@@ -884,6 +935,10 @@ $(MMDLL) $(MMLIB): $(MMOBJ) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) \
 		@DLLPATH@ $(LINKKERNEL) $(LINKINT) \
 		@LINKOUTPUT@$(MMDLL)
+$(SERDLL) $(SERLIB): $(SEROBJ) $(KERNELDLL)
+	$(CXX) $(DLLFLAGS) $(SEROBJ) \
+		@DLLPATH@ $(LINKKERNEL) \
+		@LINKOUTPUT@$(SERDLL)
 endif
 
 #
@@ -910,6 +965,9 @@ $(BDDSTATICLIB): $(BDDOBJ)
 	$(RANLIB) $@
 $(MMSTATICLIB): $(MMOBJ)
 	$(AR) $(ARFLAGS) $@ $(MMOBJ)
+	$(RANLIB) $@
+$(SERSTATICLIB): $(SEROBJ)
+	$(AR) $(ARFLAGS) $@ $(SEROBJ)
 	$(RANLIB) $@
 
 #

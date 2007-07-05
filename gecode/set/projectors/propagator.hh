@@ -52,6 +52,8 @@ namespace Gecode { namespace Set { namespace Projection {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Name of this propagator
+    virtual const char* name(void) const;
     static  ExecStatus post(Space* home, ViewArray<SetView>& x,
                             ProjectorSet& ps);
   };
@@ -82,6 +84,8 @@ namespace Gecode { namespace Set { namespace Projection {
     GECODE_SET_EXPORT virtual Actor* copy(Space* home,bool);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
+    /// Name of this propagator
+    virtual const char* name(void) const;
     GECODE_SET_EXPORT static  ExecStatus post(Space* home,
                                               ViewArray<SetView>& x,
                                               Gecode::Int::BoolView b,
@@ -115,6 +119,8 @@ namespace Gecode { namespace Set { namespace Projection {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Name of this propagator
+    virtual const char* name(void) const;
     static  ExecStatus post(Space* home, ViewArray<SetView>& x,
                             Gecode::Int::IntView i, Projector& p);
   };

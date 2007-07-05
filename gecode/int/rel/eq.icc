@@ -64,6 +64,12 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View0, class View1>
+  const char*
+  EqBnd<View0,View1>::name(void) const {
+    return "int.rel.EqBnd";
+  }
+
+  template <class View0, class View1>
   ExecStatus
   EqBnd<View0,View1>::propagate(Space* home) {
     if (x0.assigned()) {
@@ -125,6 +131,11 @@ namespace Gecode { namespace Int { namespace Rel {
     return new (home) EqDom<View0,View1>(home,share,*this);
   }
 
+  template <class View0, class View1>
+  const char*
+  EqDom<View0,View1>::name(void) const {
+    return "int.rel.EqDom";
+  }
 
   template <class View0, class View1>
   PropCost
@@ -204,6 +215,12 @@ namespace Gecode { namespace Int { namespace Rel {
   Actor*
   NaryEqDom<View>::copy(Space* home, bool share) {
     return new (home) NaryEqDom<View>(home,share,*this);
+  }
+
+  template <class View>
+  const char*
+  NaryEqDom<View>::name(void) const {
+    return "int.rel.NaryEqDom";
   }
 
   template <class View>
@@ -336,6 +353,12 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
+  const char*
+  NaryEqBnd<View>::name(void) const {
+    return "int.rel.NaryEqBnd";
+  }
+
+  template <class View>
   ExecStatus
   NaryEqBnd<View>::propagate(Space* home) {
     assert(x.size() > 2);
@@ -414,6 +437,11 @@ namespace Gecode { namespace Int { namespace Rel {
     return new (home) ReEqDom<View,CtrlView>(home,share,*this);
   }
 
+  template <class View, class CtrlView>
+  const char*
+  ReEqDom<View,CtrlView>::name(void) const {
+    return "int.rel.ReEqDom";
+  }
 
   template <class View, class CtrlView>
   ExecStatus
@@ -473,6 +501,11 @@ namespace Gecode { namespace Int { namespace Rel {
     return new (home) ReEqBnd<View,CtrlView>(home,share,*this);
   }
 
+  template <class View, class CtrlView>
+  const char*
+  ReEqBnd<View,CtrlView>::name(void) const {
+    return "int.rel.ReEqBnd";
+  }
 
   template <class View, class CtrlView>
   ExecStatus
@@ -537,6 +570,20 @@ namespace Gecode { namespace Int { namespace Rel {
   Actor*
   ReEqDomInt<View,CtrlView>::copy(Space* home, bool share) {
     return new (home) ReEqDomInt<View,CtrlView>(home,share,*this);
+  }
+
+  template <class View, class CtrlView>
+  Reflection::ActorSpec&
+  ReEqDomInt<View,CtrlView>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s =
+      ReUnaryPropagator<View,PC_INT_DOM,CtrlView>::spec(home, m);
+    return s << c;
+  }
+
+  template <class View, class CtrlView>
+  const char*
+  ReEqDomInt<View,CtrlView>::name(void) const {
+    return "int.rel.ReEqDomInt";
   }
 
   template <class View, class CtrlView>
@@ -614,6 +661,20 @@ namespace Gecode { namespace Int { namespace Rel {
   Actor*
   ReEqBndInt<View,CtrlView>::copy(Space* home, bool share) {
     return new (home) ReEqBndInt<View,CtrlView>(home,share,*this);
+  }
+
+  template <class View, class CtrlView>
+  Reflection::ActorSpec&
+  ReEqBndInt<View,CtrlView>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s =
+      ReUnaryPropagator<View,PC_INT_BND,CtrlView>::spec(home, m);
+    return s << c;
+  }
+
+  template <class View, class CtrlView>
+  const char*
+  ReEqBndInt<View,CtrlView>::name(void) const {
+    return "int.rel.ReEqBndInt";
   }
 
   template <class View, class CtrlView>

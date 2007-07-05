@@ -60,6 +60,10 @@ namespace Gecode { namespace Int { namespace Dom {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
     /// Post propagator for \f$ (l\leq x \leq m) \Leftrightarrow b\f$
     static ExecStatus post(Space* home, View x, int min, int max, BoolView b);
   };
@@ -87,6 +91,10 @@ namespace Gecode { namespace Int { namespace Dom {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
     /// Post propagator for \f$ (x \in d) \Leftrightarrow b\f$
     static ExecStatus post(Space* home, View x, const IntSet& s, BoolView b);
     /// Delete propagator and return its size

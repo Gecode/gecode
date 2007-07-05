@@ -144,6 +144,19 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_SUBSUMED(this,home);
   }
 
+  Reflection::ActorSpec&
+  Match::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << Reflection::typedSpec(home, m, x0)
+             << xs.spec(home, m);
+  }
+
+  const char*
+  Match::name(void) const {
+    return "set.int.Match";
+  }
+
+
 }}}
 
 // STATISTICS: set-prop

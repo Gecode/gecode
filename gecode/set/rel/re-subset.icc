@@ -50,6 +50,21 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template <class View0, class View1>
+  const char*
+  ReSubset<View0,View1>::name(void) const {
+    return "set.rel.ReSubset";
+  }
+
+  template <class View0, class View1>
+  Reflection::ActorSpec&
+  ReSubset<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << Reflection::typedSpec(home, m, x0)
+             << Reflection::typedSpec(home, m, x1)
+             << Reflection::typedSpec(home, m, b);
+  }
+
+  template <class View0, class View1>
   size_t
   ReSubset<View0,View1>::dispose(Space* home) {
     assert(!home->failed());

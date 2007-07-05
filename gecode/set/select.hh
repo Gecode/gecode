@@ -66,6 +66,10 @@ namespace Gecode { namespace Set { namespace Select {
     virtual size_t dispose(Space* home);
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    virtual const char* name(void) const;
     /** Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \a u as universe
      *
      * If \a y is empty, \a z will be constrained to be the given universe
@@ -101,6 +105,10 @@ namespace Gecode { namespace Set { namespace Select {
     virtual size_t dispose(Space* home);
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    virtual const char* name(void) const;
     /** Post propagator for \f$ z=\bigcup\langle x_0,\dots,x_{n-1}\rangle[y] \f$
      *
      * If \a y is empty, \a z will be constrained to be empty
@@ -136,6 +144,10 @@ namespace Gecode { namespace Set { namespace Select {
     virtual size_t dispose(Space* home);
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    virtual const char* name(void) const;
     /** Post propagator for \f$ z=\bigcup\langle s_0,\dots,s_{n-1}\rangle[y] \f$
      *
      * If \a y is empty, \a z will be constrained to be empty
@@ -169,6 +181,10 @@ namespace Gecode { namespace Set { namespace Select {
     GECODE_SET_EXPORT virtual size_t dispose(Space* home);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus  propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    virtual const char* name(void) const;
     /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
     static  ExecStatus  post(Space* home,IdxViewArray<SetView>& x,SetView y);
   };

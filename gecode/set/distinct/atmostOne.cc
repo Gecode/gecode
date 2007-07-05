@@ -44,6 +44,18 @@ namespace Gecode { namespace Set { namespace Distinct {
     return new (home) AtmostOne(home,share,*this);
   }
 
+  const char*
+  AtmostOne::name(void) const {
+    return "set.distinct.AtmostOne";
+  }
+
+  Reflection::ActorSpec&
+  AtmostOne::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s =
+      NaryPropagator<SetView, PC_SET_ANY>::spec(home, m);
+    return s << c;
+  }
+
   ExecStatus
   AtmostOne::propagate(Space* home) {
 

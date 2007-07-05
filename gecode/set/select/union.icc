@@ -55,6 +55,21 @@ namespace Gecode { namespace Set { namespace Select {
   }
 
   template <class SView, class RView>
+  const char*
+  SelectUnion<SView,RView>::name(void) const {
+    return "set.select.Union";
+  }
+
+  template <class SView, class RView>
+  Reflection::ActorSpec&
+  SelectUnion<SView,RView>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << Reflection::typedSpec(home, m, x0)
+             << iv.spec(home, m)
+             << Reflection::typedSpec(home, m, x1);
+  }
+
+  template <class SView, class RView>
   size_t
   SelectUnion<SView,RView>::dispose(Space* home) {
     unforce(home);

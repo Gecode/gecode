@@ -63,6 +63,8 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ x\subseteq y\f$
     static  ExecStatus post(Space* home,View0 x,View1 y);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
   /**
@@ -89,6 +91,8 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ x\subseteq y\f$
     static  ExecStatus post(Space* home,View0 x,View1 y);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
   /**
@@ -121,6 +125,10 @@ namespace Gecode { namespace Set { namespace Rel {
     /// Post propagator for \f$ (x\subseteq y) \Leftrightarrow b \f$ 
     static ExecStatus post(Space* home,View0 x, View1 y,
                            Gecode::Int::BoolView b);
+    /// Specification of this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
   /**
@@ -147,6 +155,8 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual ExecStatus  propagate(Space* home);
     /// Post propagator \f$ x=y \f$ 
     static  ExecStatus  post(Space* home,View0,View1);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
   /**
@@ -179,6 +189,10 @@ namespace Gecode { namespace Set { namespace Rel {
   /// Post propagator for \f$ (x=y) \Leftrightarrow b\f$ 
     static ExecStatus post(Space* home,View0 x, View1 y,
                            Gecode::Int::BoolView b);
+    /// Name of this propagator
+    virtual const char* name(void) const;
+    /// Specification of this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
   };
 
   /**
@@ -205,6 +219,8 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual ExecStatus  propagate(Space* home);
     /// Post propagator \f$ x\neq y \f$ 
     static  ExecStatus  post(Space* home,View0,View1);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
   /**
@@ -234,6 +250,10 @@ namespace Gecode { namespace Set { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ x\neq y \f$ 
     static ExecStatus post(Space* home, View0, View1);
+    /// Specification of this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
 }}}

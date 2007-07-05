@@ -270,6 +270,19 @@ namespace Gecode {
     }
 
     /*
+     * Serialization
+     *
+     */
+    forceinline Reflection::Arg*
+    BoolView::spec(Space* home, Reflection::VarMap& m) {
+      return var->spec(home, m);
+    }
+    forceinline Reflection::Type*
+    BoolView::type(void) {
+      return new Reflection::Type("int.BoolView");
+    }
+
+    /*
      * Negated Boolean views
      *
      */
@@ -434,6 +447,18 @@ namespace Gecode {
       view.update(home,share,b.view);
     }
 
+    /*
+     * Serialization
+     *
+     */
+    forceinline Reflection::Arg*
+    NegBoolView::spec(Space* home, Reflection::VarMap& m) {
+      return view.spec(home, m);
+    }
+    forceinline Reflection::Type*
+    NegBoolView::type(void) {
+      return new Reflection::Type("int.NegBoolView");
+    }
 
     /**
      * \brief %Range iterator for Boolean variable views

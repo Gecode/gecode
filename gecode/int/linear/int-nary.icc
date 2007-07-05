@@ -77,6 +77,14 @@ namespace Gecode { namespace Int { namespace Linear {
     return sizeof(*this);
   }
 
+  template <class Val, class P, class N, PropCond pc>
+  Reflection::ActorSpec&
+  Lin<Val,P,N,pc>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << x.spec(home, m)
+             << y.spec(home, m)
+             << c;
+  }
 
   /*
    * Reified linear propagators
@@ -107,6 +115,15 @@ namespace Gecode { namespace Int { namespace Linear {
     return sizeof(*this);
   }
 
+  template <class Val, class P, class N, PropCond pc, class Ctrl>
+  Reflection::ActorSpec&
+  ReLin<Val,P,N,pc,Ctrl>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << Lin<Val,P,N,pc>::x.spec(home, m)
+             << Lin<Val,P,N,pc>::y.spec(home, m)
+             << Lin<Val,P,N,pc>::c
+             << Reflection::typedSpec(home, m, b);
+  }
 
   /*
    * Computing bounds
@@ -371,6 +388,12 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   template <class Val, class P, class N>
+  const char*
+  Eq<Val,P,N>::name(void) const {
+    return "int.linear.Eq";
+  }
+
+  template <class Val, class P, class N>
   ExecStatus
   Eq<Val,P,N>::propagate(Space* home) {
     return prop_bnd<Val,P,N>(home,this,x,y,c);
@@ -412,6 +435,12 @@ namespace Gecode { namespace Int { namespace Linear {
   Actor*
   ReEq<Val,P,N,Ctrl>::copy(Space* home, bool share) {
     return new (home) ReEq<Val,P,N,Ctrl>(home,share,*this);
+  }
+
+  template <class Val, class P, class N, class Ctrl>
+  const char*
+  ReEq<Val,P,N,Ctrl>::name(void) const {
+    return "int.linear.ReEq";
   }
 
   template <class Val, class P, class N, class Ctrl>
@@ -565,6 +594,12 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N>
+  const char*
+  Nq<Val,P,N>::name(void) const {
+    return "int.linear.Nq";
+  }
+
+  template <class Val, class P, class N>
   ExecStatus
   Nq<Val,P,N>::propagate(Space* home) {
     for (int i = x.size(); i--; )
@@ -714,6 +749,12 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N>
+  const char*
+  Lq<Val,P,N>::name(void) const {
+    return "int.linear.Lq";
+  }
+
+  template <class Val, class P, class N>
   ExecStatus
   Lq<Val,P,N>::propagate(Space* home) {
     // Eliminate singletons
@@ -823,6 +864,11 @@ namespace Gecode { namespace Int { namespace Linear {
     return new (home) ReLq<Val,P,N>(home,share,*this);
   }
 
+  template <class Val, class P, class N>
+  const char*
+  ReLq<Val,P,N>::name(void) const {
+    return "int.linear.ReLq";
+  }
 
   template <class Val, class P, class N>
   ExecStatus

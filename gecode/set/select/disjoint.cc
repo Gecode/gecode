@@ -38,6 +38,17 @@ namespace Gecode { namespace Set { namespace Select {
     return PC_QUADRATIC_LO;
   }
 
+  const char*
+  SelectDisjoint::name(void) const {
+    return "set.select.Disjoint";
+  }
+
+  Reflection::ActorSpec&
+  SelectDisjoint::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << iv.spec(home, m) << Reflection::typedSpec(home, m, x1);
+  }
+
   size_t
   SelectDisjoint::dispose(Space* home) {
     assert(!home->failed());

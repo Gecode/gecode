@@ -54,6 +54,16 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, bool shr>
+  Reflection::ActorSpec&
+  BaseView<VX,VY,VZ,shr>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << x.spec(home, m)
+             << Reflection::typedSpec(home, m, y)
+             << Reflection::typedSpec(home, m, z)
+             << c;
+  }
+
+  template <class VX, class VY, class VZ, bool shr>
   forceinline size_t
   BaseView<VX,VY,VZ,shr>::dispose(Space* home) {
     assert(!home->failed());
@@ -146,6 +156,12 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, bool shr>
+  const char*
+  EqView<VX,VY,VZ,shr>::name(void) const {
+    return "int.count.EqView";
+  }
+
+  template <class VX, class VY, class VZ, bool shr>
   ExecStatus
   EqView<VX,VY,VZ,shr>::propagate(Space* home) {
     count(home);
@@ -197,6 +213,12 @@ namespace Gecode { namespace Int { namespace Count {
   Actor*
   NqView<VX,VY,VZ,shr>::copy(Space* home, bool share) {
     return new (home) NqView<VX,VY,VZ,shr>(home,share,*this);
+  }
+
+  template <class VX, class VY, class VZ, bool shr>
+  const char*
+  NqView<VX,VY,VZ,shr>::name(void) const {
+    return "int.count.NqView";
   }
 
   template <class VX, class VY, class VZ, bool shr>
@@ -255,6 +277,12 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, bool shr>
+  const char*
+  LqView<VX,VY,VZ,shr>::name(void) const {
+    return "int.count.LqView";
+  }
+
+  template <class VX, class VY, class VZ, bool shr>
   ExecStatus
   LqView<VX,VY,VZ,shr>::propagate(Space* home) {
     count(home);
@@ -303,6 +331,12 @@ namespace Gecode { namespace Int { namespace Count {
   Actor*
   GqView<VX,VY,VZ,shr>::copy(Space* home, bool share) {
     return new (home) GqView<VX,VY,VZ,shr>(home,share,*this);
+  }
+
+  template <class VX, class VY, class VZ, bool shr>
+  const char*
+  GqView<VX,VY,VZ,shr>::name(void) const {
+    return "int.count.GqView";
   }
 
   template <class VX, class VY, class VZ, bool shr>

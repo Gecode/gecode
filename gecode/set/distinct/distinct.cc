@@ -61,6 +61,18 @@ namespace Gecode { namespace Set { namespace Distinct {
     return new (home) Distinct(home,share,*this);
   }
 
+  Reflection::ActorSpec&
+  Distinct::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s =
+      NaryPropagator<SetView, PC_SET_ANY>::spec(home, m);
+    return s << c;
+  }
+
+  const char*
+  Distinct::name(void) const {
+    return "set.distinct.Distinct";
+  }
+
   ExecStatus
   Distinct::propagate(Space* home) {
 

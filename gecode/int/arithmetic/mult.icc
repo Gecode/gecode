@@ -173,6 +173,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return x0.assigned() ? ES_SUBSUMED(this,sizeof(*this)) : ES_FIX;
   }
 
+  template <class VA, class VB>
+  const char*
+  SquarePlus<VA,VB>::name(void) const {
+    return "int.SquarePlus";
+  }
 
 
   /*
@@ -243,6 +248,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_NOFIX;
   }
 
+  template <class View>
+  const char*
+  Square<View>::name(void) const {
+    return "int.Square";
+  }
 
   /*
    * Positive bounds-consistent multiplication
@@ -324,6 +334,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
+  template <class Val, class VA, class VB, class VC>
+  const char*
+  MultPlus<Val,VA,VB,VC>::name(void) const {
+    return "int.MultPlus";
+  }
 
 
   /*
@@ -481,6 +496,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     std::swap(x0,x1);
   post_npn:
     return MultPlus<double,MinusView,IntView,MinusView>::post(home,x0,x1,x2);
+  }
+
+  template <class View>
+  const char*
+  Mult<View>::name(void) const {
+    return "int.Mult";
   }
 
 }}}

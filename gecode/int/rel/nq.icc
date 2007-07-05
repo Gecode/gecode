@@ -64,6 +64,12 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
+  const char*
+  Nq<View>::name(void) const {
+    return "int.rel.Nq";
+  }
+
+  template <class View>
   ExecStatus
   Nq<View>::propagate(Space* home) {
     if (x0.assigned()) {
@@ -127,6 +133,34 @@ namespace Gecode { namespace Int { namespace Rel {
   Actor*
   NaryNq<View>::copy(Space* home, bool share) {
     return new (home) NaryNq<View>(home,share,*this);
+  }
+
+  template <class View>
+  Reflection::ActorSpec&
+  NaryNq<View>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    Reflection::ArrayArg<Reflection::Arg*>* a = new Reflection::ArrayArg<Reflection::Arg*>(x.size()+2);
+    int count = 0;
+    for (int i=0; i<x.size(); i++)
+      (*a)[count++] = x[i][0].spec(home, m);
+    (*a)[count++] = x0[0].spec(home, m);
+    (*a)[count++] = x1[0].spec(home, m);
+
+    Reflection::ArrayArg<Reflection::Arg*>* b = new Reflection::ArrayArg<Reflection::Arg*>(x.size()+2);
+    count = 0;
+    for (int i=0; i<x.size(); i++)
+      (*b)[count++] = x[i][1].spec(home, m);
+    (*b)[count++] = x0[1].spec(home, m);
+    (*b)[count++] = x1[1].spec(home, m);
+
+    return s << new Reflection::TypedArg(View::type(), a)
+             << new Reflection::TypedArg(View::type(), b);
+  }
+
+  template<class View>
+  const char*
+  NaryNq<View>::name(void) const {
+    return "int.rel.NaryNq";
   }
 
   template<class View>

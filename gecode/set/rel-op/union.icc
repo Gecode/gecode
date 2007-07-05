@@ -59,6 +59,12 @@ namespace Gecode { namespace Set { namespace RelOp {
     return new (home) Union(home,share,*this);
   }
 
+  template <class View0, class View1, class View2>
+  const char*
+  Union<View0,View1,View2>::name(void) const {
+    return "set.relop.Union";
+  }
+
 
   template <class View0, class View1, class View2>
   ExecStatus
@@ -233,6 +239,29 @@ namespace Gecode { namespace Set { namespace RelOp {
   PropCost
   UnionN<View0,View1>::cost(void) const {
     return PC_QUADRATIC_LO;
+  }
+
+  template <class View0, class View1>
+  const char*
+  UnionN<View0,View1>::name(void) const {
+    return "set.relop.UnionN";
+  }
+
+  template <class View0, class View1>
+  Reflection::ActorSpec&
+  UnionN<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s =
+      MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::spec(home, m);
+    int count = 0;
+    for (BndSetRanges uod(unionOfDets); uod(); ++uod)
+      count++;
+    Reflection::ArrayArg<int>* a = new Reflection::ArrayArg<int>(count*2);
+    count = 0;
+    for (BndSetRanges uod(unionOfDets); uod(); ++uod) {
+      (*a)[count++] = uod.min();
+      (*a)[count++] = uod.max();
+    }
+    return s << a;
   }
 
   template <class View0, class View1>

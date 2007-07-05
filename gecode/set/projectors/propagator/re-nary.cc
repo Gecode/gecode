@@ -50,6 +50,11 @@ namespace Gecode { namespace Set { namespace Projection {
     return new (home) ReNaryProjection(home,share,*this);
   }
 
+  const char*
+  ReNaryProjection::name(void) const {
+    return "set.projectors.ReNaryProjection";
+  }
+
   ExecStatus
   ReNaryProjection::propagate(Space* home) {
     if (b.one())

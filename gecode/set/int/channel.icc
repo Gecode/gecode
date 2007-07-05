@@ -74,12 +74,10 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
   template <class View, PropCond pc>
-  forceinline 
   PropCost
   Channel<View, pc>::cost(void) const { return PC_QUADRATIC_LO; }
 
   template <class View, PropCond pc>
-  forceinline 
   size_t
   Channel<View, pc>::dispose(Space* home) {
     assert(!home->failed());
@@ -90,14 +88,12 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
   template <class View, PropCond pc>
-  forceinline 
   Actor*
   Channel<View, pc>::copy(Space* home, bool share) {
     return new (home) Channel(home,share,*this);
   }
 
   template <class View, PropCond pc>
-  forceinline 
   ExecStatus
   Channel<View, pc>::propagate(Space* home) {
     int assigned = 0;
@@ -137,6 +133,20 @@ namespace Gecode { namespace Set { namespace Int {
 
     return (assigned==xs.size()) ? ES_SUBSUMED(this,home) : ES_NOFIX;
   }
+
+  template <class View, PropCond pc>
+  const char*
+  Channel<View,pc>::name(void) const {
+    return "set.int.Channel";
+  }
+
+  template <class View, PropCond pc>
+  Reflection::ActorSpec&
+  Channel<View,pc>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << xs.spec(home, m) << ys.spec(home, m);
+  }
+
 
 }}}
 

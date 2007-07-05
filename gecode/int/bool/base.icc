@@ -59,6 +59,14 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BVA, class BVB>
+  Reflection::ActorSpec&
+  BoolBinary<BVA,BVB>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << Reflection::typedSpec(home, m, x0)
+             << Reflection::typedSpec(home, m, x1);
+  }
+
+  template<class BVA, class BVB>
   forceinline size_t
   BoolBinary<BVA,BVB>::dispose(Space* home) {
     x0.cancel(home,this,PC_BOOL_VAL);
@@ -105,6 +113,15 @@ namespace Gecode { namespace Int { namespace Bool {
   PropCost
   BoolTernary<BVA,BVB,BVC>::cost(void) const {
     return PC_BINARY_LO;
+  }
+
+  template<class BVA, class BVB, class BVC>
+  Reflection::ActorSpec&
+  BoolTernary<BVA,BVB,BVC>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << Reflection::typedSpec(home, m, x0)
+             << Reflection::typedSpec(home, m, x1)
+             << Reflection::typedSpec(home, m, x2);
   }
 
   template<class BVA, class BVB, class BVC>

@@ -89,6 +89,8 @@ namespace Gecode { namespace Int { namespace Sortedness {
     virtual PropCost cost (void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
     /// Post propagator for the views \a xz and \a y
     static  ExecStatus post(Space*, ViewArray<Tuple>&, ViewArray<View>&);
   };

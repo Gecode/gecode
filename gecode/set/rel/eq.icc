@@ -51,6 +51,12 @@ namespace Gecode { namespace Set { namespace Rel {
     return new (home) Eq(home,share,*this);
   }
 
+  template <class View0, class View1>
+  const char*
+  Eq<View0,View1>::name(void) const {
+    return "set.rel.Eq";
+  }
+
 
   template <class View0, class View1>
   ExecStatus

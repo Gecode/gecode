@@ -54,6 +54,8 @@ namespace Gecode { namespace Set { namespace Int {
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator for \a x is the minimal element of \a s 
     static ExecStatus post(Space* home,SetView s, Gecode::Int::IntView x);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
   /**
@@ -76,6 +78,8 @@ namespace Gecode { namespace Set { namespace Int {
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator for \a x is the largest element of \a s 
     static ExecStatus post(Space* home,SetView s, Gecode::Int::IntView x);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
   /**
@@ -98,6 +102,8 @@ namespace Gecode { namespace Set { namespace Int {
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$ |s|=x \f$ 
     static ExecStatus post(Space* home,SetView s, Gecode::Int::IntView x);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
 
@@ -130,6 +136,11 @@ namespace Gecode { namespace Set { namespace Int {
     /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order 
     static ExecStatus post(Space* home,SetView s,
                            ViewArray< Gecode::Int::IntView >& x);
+    /// Specification for this propagator
+    GECODE_SET_EXPORT
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    GECODE_SET_EXPORT virtual const char* name(void) const;
   };
 
   /**
@@ -173,6 +184,11 @@ namespace Gecode { namespace Set { namespace Int {
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
     static ExecStatus post(Space* home,ViewArray< Gecode::Int::IntView >& x,
                            ViewArray< View >& y);
+    /// Specification for this propagator
+    GECODE_SET_EXPORT
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
   /**
@@ -211,6 +227,11 @@ namespace Gecode { namespace Set { namespace Int {
     static ExecStatus post(Space* home,
                            const IntArgs& elements, const IntArgs& weights,
                            SetView x, Gecode::Int::IntView y);
+    /// Specification for this propagator
+    GECODE_SET_EXPORT
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
 }}}

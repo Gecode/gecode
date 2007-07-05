@@ -182,6 +182,12 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   template <class View, bool shared>
+  const char*
+  Dom<View,shared>::name(void) const {
+    return "int.channel.Dom";
+  }
+
+  template <class View, bool shared>
   ExecStatus
   Dom<View,shared>::propagate(Space* home) {
     GECODE_AUTOSTACK(int,-1, xa, n);

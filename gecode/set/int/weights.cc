@@ -41,6 +41,11 @@ namespace Gecode { namespace Set { namespace Int {
     return PC_LINEAR_LO;
   }
 
+  const char*
+  Weights::name(void) const {
+    return "set.int.Weights";
+  }
+
   size_t
   Weights::dispose(Space* home) {
     assert(!home->failed());
@@ -177,6 +182,14 @@ namespace Gecode { namespace Set { namespace Int {
     return me_modified(me) ? ES_NOFIX : ES_FIX;
   }
 
+  Reflection::ActorSpec&
+  Weights::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << new Reflection::ArrayArg<int>(elements)
+             << new Reflection::ArrayArg<int>(weights)
+             << Reflection::typedSpec(home, m, x)
+             << Reflection::typedSpec(home, m, y);
+  }
 
 }}}
 

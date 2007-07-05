@@ -57,6 +57,31 @@ namespace Gecode { namespace Set { namespace Select {
   }
 
   template <class SView, class RView>
+  const char*
+  SelectIntersection<SView,RView>::name(void) const {
+    return "set.select.Intersection";
+  }
+
+  template <class SView, class RView>
+  Reflection::ActorSpec&
+  SelectIntersection<SView,RView>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    int count = 0;
+    for (IntSetRanges ur(universe); ur(); ++ur)
+      count++;
+    Reflection::ArrayArg<int>* a = new Reflection::ArrayArg<int>(count*2);
+    count = 0;
+    for (IntSetRanges ur(universe); ur(); ++ur) {
+      (*a)[count++] = ur.min();
+      (*a)[count++] = ur.max();
+    }
+    return s << a
+             << Reflection::typedSpec(home, m, x0)
+             << iv.spec(home, m)
+             << Reflection::typedSpec(home, m, x1);
+  }
+
+  template <class SView, class RView>
   size_t
   SelectIntersection<SView,RView>::dispose(Space* home) {
     unforce(home);

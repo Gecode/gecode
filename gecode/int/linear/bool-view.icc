@@ -58,6 +58,14 @@ namespace Gecode { namespace Int { namespace Linear {
     return cost_lo(x.size(),PC_LINEAR_LO);
   }
 
+  template <class XV, class YV>
+  Reflection::ActorSpec&
+  LinBoolView<XV,YV>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << x.spec(home, m)
+             << Reflection::typedSpec(home, m, y)
+             << c;
+  }
 
 
   /*
@@ -113,6 +121,12 @@ namespace Gecode { namespace Int { namespace Linear {
     return new (home) EqBoolView<XV,YV>(home,share,*this);
   }
 
+  template <class XV, class YV>
+  const char*
+  EqBoolView<XV,YV>::name(void) const {
+    return "int.linear.EqBoolView";
+  }
+    
   template <class XV, class YV>
   ExecStatus
   EqBoolView<XV,YV>::propagate(Space* home) {
@@ -199,6 +213,11 @@ namespace Gecode { namespace Int { namespace Linear {
     return new (home) NqBoolView<XV,YV>(home,share,*this);
   }
 
+  template <class XV, class YV>
+  const char*
+  NqBoolView<XV,YV>::name(void) const {
+    return "int.linear.NqBoolView";
+  }
 
   template <class XV, class YV>
   ExecStatus
@@ -277,6 +296,11 @@ namespace Gecode { namespace Int { namespace Linear {
     return new (home) GqBoolView<XV,YV>(home,share,*this);
   }
 
+  template <class XV, class YV>
+  const char*
+  GqBoolView<XV,YV>::name(void) const {
+    return "int.linear.GqBoolView";
+  }
 
   template <class XV, class YV>
   ExecStatus

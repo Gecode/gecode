@@ -56,6 +56,11 @@ namespace Gecode { namespace Set { namespace Distinct {
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$\forall 0\leq i\leq |x| : |x_i|=c\f$ and \f$\forall 0\leq i<j\leq |x| : |x_i\cap x_j|\leq 1\f$
     static ExecStatus post(Space* home,ViewArray<SetView> x,unsigned int c);
+    /// Specification for this propagator
+    GECODE_SET_EXPORT
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    GECODE_SET_EXPORT virtual const char* name(void) const;
   };
 
   /**
@@ -85,6 +90,11 @@ namespace Gecode { namespace Set { namespace Distinct {
     static ExecStatus post(Space* home,ViewArray<SetView> x,unsigned int c);
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
+    /// Specification for this propagator
+    GECODE_SET_EXPORT
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    GECODE_SET_EXPORT virtual const char* name(void) const;
   };
 
 

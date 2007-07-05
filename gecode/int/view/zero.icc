@@ -264,6 +264,19 @@ namespace Gecode {
     forceinline void
     ZeroIntView::update(Space*, bool, ZeroIntView&) {}
 
+    /*
+     * Serialization
+     *
+     */
+    forceinline Reflection::Arg*
+    ZeroIntView::spec(Space* home, Reflection::VarMap& m) {
+      return new Reflection::IntArg(0);
+    }
+    forceinline Reflection::Type*
+    ZeroIntView::type(void) {
+      return new Reflection::Type("ZeroIntView");
+    }
+
     /**
      * \brief %Range iterator for constant integer views
      * \ingroup TaskActorIntView

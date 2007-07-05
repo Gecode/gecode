@@ -49,6 +49,12 @@ namespace Gecode { namespace Int { namespace Circuit {
   }
 
   template <class View>
+  const char*
+  Dom<View>::name(void) const {
+    return "int.circuit.Dom";
+  }
+
+  template <class View>
   ExecStatus
   Dom<View>::propagate(Space* home) {
     if (View::pme(this) == ME_INT_VAL) {

@@ -274,6 +274,18 @@ namespace Gecode {
       c=x.c; view.update(home,share,x.view);
     }
 
+    /*
+     * Serialization
+     *
+     */
+    forceinline Reflection::Arg*
+    OffsetView::spec(Space* home, Reflection::VarMap& m) {
+      return new Reflection::PairArg(new Reflection::IntArg(c), view.spec(home, m));
+    }
+    forceinline Reflection::Type*
+    OffsetView::type(void) {
+      return new Reflection::Type("int.OffsetView");
+    }
 
     /**
      * \brief %Range iterator for offset integer views

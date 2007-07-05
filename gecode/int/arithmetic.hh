@@ -68,6 +68,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus  propagate(Space* home);
     /// Post bounds-consistent propagator \f$ |x_0|=x_1\f$
     static  ExecStatus  post(Space* home, View x0, View x1);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
   /**
@@ -111,6 +113,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus  propagate(Space* home);
     /// Post domain-consistent propagator \f$ |x_0|=x_1\f$
     static  ExecStatus  post(Space* home, View x0, View x1);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
   /**
@@ -139,6 +143,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ \max\{x_0,x_1\}=x_2\f$
     static  ExecStatus post(Space* home, View x0, View x1, View x2);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
   /**
@@ -164,6 +170,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ \max x=y\f$
     static  ExecStatus post(Space* home, ViewArray<View>& x, View y);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
 
@@ -190,6 +198,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
   /**
@@ -217,6 +227,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual PropCost cost(void) const;
     /// Post propagator \f$x_0\cdot x_0=x_1\f$
     static  ExecStatus post(Space* home, View x0, View x1);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
   /**
@@ -242,6 +254,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
   /**
@@ -271,6 +285,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus propagate(Space* home);
     /// Cost function (defined as PC_TERNARY_HI)
     virtual PropCost cost(void) const;
+    /// Name of this propagator
+    virtual const char* name(void) const;
   };
 
 }}}

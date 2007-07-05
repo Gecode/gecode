@@ -132,6 +132,8 @@ namespace Gecode {
       IntView(void);
       /// Initialize from integer variable \a x
       IntView(const IntVar& x);
+      /// Initialize from integer variable \a x
+      IntView(IntVarImp* x);
       //@}
 
       /// \name Value access
@@ -252,6 +254,14 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, IntView& x);
       //@}
+      
+      /// \name Serialization
+      //@{
+      /// Return specification for this view, using variable map \a m
+      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      static Reflection::Type* type(void);
+      //@}
+      
     };
 
   }
@@ -445,6 +455,13 @@ namespace Gecode {
       //@{
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, MinusView& x);
+      //@}
+      
+      /// \name Serialization
+      //@{
+      /// Return specification for this view, using variable map \a m
+      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      static Reflection::Type* type(void);
       //@}
     };
 
@@ -644,6 +661,13 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, OffsetView& x);
       //@}
+      
+      /// \name Serialization
+      //@{
+      /// Return specification for this view, using variable map \a m
+      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      static Reflection::Type* type(void);
+      //@}
     };
 
   }
@@ -830,6 +854,13 @@ namespace Gecode {
       //@{
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, ScaleView<Val,UnsVal>& x);
+      //@}
+      
+      /// \name Serialization
+      //@{
+      /// Return specification for this view, using variable map \a m
+      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      static Reflection::Type* type(void);
       //@}
     };
 
@@ -1042,6 +1073,13 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, ConstIntView& x);
       //@}
+      
+      /// \name Serialization
+      //@{
+      /// Return specification for this view, using variable map \a m
+      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      static Reflection::Type* type(void);
+      //@}
     };
 
   }
@@ -1230,6 +1268,13 @@ namespace Gecode {
       //@{
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, ZeroIntView& x);
+      //@}
+      
+      /// \name Serialization
+      //@{
+      /// Return specification for this view, using variable map \a m
+      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      static Reflection::Type* type(void);
       //@}
     };
 
@@ -1434,6 +1479,13 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, BoolView& x);
       //@}
+      
+      /// \name Serialization
+      //@{
+      /// Return specification for this view, using variable map \a m
+      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      static Reflection::Type* type(void);
+      //@}
     };
 
   }
@@ -1583,6 +1635,13 @@ namespace Gecode {
       //@{
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, NegBoolView& x);
+      //@}
+      
+      /// \name Serialization
+      //@{
+      /// Return specification for this view, using variable map \a m
+      Reflection::Arg*  spec(Space* home, Reflection::VarMap& m);
+      static Reflection::Type* type(void);
       //@}
     };
 

@@ -53,6 +53,12 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template <class View>
+  const char*
+  Basic<View>::name(void) const {
+    return "int.extensional.Basic";
+  }
+
+  template <class View>
   Actor*
   Basic<View>::copy(Space* home, bool share) {
     return new (home) Basic<View>(home,share,*this);

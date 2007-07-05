@@ -41,6 +41,11 @@ namespace Gecode { namespace Set { namespace Sequence {
     return new (home) Seq(home,share,*this);
   }
 
+  const char*
+  Seq::name(void) const {
+    return "set.sequence.Sequence";
+  }
+
   ExecStatus
   Seq::propagate(Space* home) {
     bool modified = false;

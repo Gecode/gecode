@@ -37,6 +37,10 @@ namespace Gecode { namespace Set { namespace Branch {
   ValMin::tell(Space* home, unsigned int a, SetView x, int v) {
     return (a == 0) ? x.include(home,v) : x.exclude(home,v);
   }
+  forceinline Reflection::Type*
+  ValMin::type(void) {
+    return new Reflection::Type("set.ValMin");
+  }
 
   forceinline int
   ValMax::val(const Space*, SetView x) const {
@@ -51,6 +55,10 @@ namespace Gecode { namespace Set { namespace Branch {
   forceinline ModEvent
   ValMax::tell(Space* home, unsigned int a, SetView x, int v) {
     return (a == 0) ? x.include(home,v) : x.exclude(home,v);
+  }
+  forceinline Reflection::Type*
+  ValMax::type(void) {
+    return new Reflection::Type("set.ValMax");
   }
 
   template <class SelView>

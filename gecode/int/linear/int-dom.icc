@@ -401,6 +401,12 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class View>
+  const char*
+  DomEq<Val,View>::name(void) const {
+    return "int.linear.DomEq";
+  }
+
+  template <class Val, class View>
   ExecStatus
   DomEq<Val,View>::propagate(Space* home) {
     if (View::pme(this) != ME_INT_DOM) {

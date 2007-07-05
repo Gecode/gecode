@@ -61,6 +61,15 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   template <bool negated>
+  const char*
+  NaryProjection<negated>::name(void) const {
+    if (negated)
+      return "set.projectors.NaryProjection<true>";
+    else
+      return "set.projectors.NaryProjection<false>";
+  }
+
+  template <bool negated>
   size_t
   NaryProjection<negated>::dispose(Space* home) {
     unforce(home);

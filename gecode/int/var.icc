@@ -344,6 +344,12 @@ namespace Gecode { namespace Int {
     IntVarImp* copy(Space* home, bool share);
     //@}
 
+    /// \name Serialization
+    //@{
+    GECODE_INT_EXPORT Reflection::Arg*
+    spec(Space* home, Reflection::VarMap& m);
+    //@}
+
     /// \name Delta information for advisors
     //@{
     /// Return modification event
@@ -660,6 +666,13 @@ namespace Gecode { namespace Int {
     /// Return copy of this variable
     BoolVarImp* copy(Space* home, bool share);
     //@}
+    
+    /// \name Serialization
+    //@{
+    GECODE_INT_EXPORT Reflection::Arg*
+    spec(Space* home, Reflection::VarMap& m);
+    //@}
+    
   };
 
 }}

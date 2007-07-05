@@ -284,6 +284,13 @@ namespace Gecode {
     void update(Space* home, bool share, ViewTuple& xs);
     //@}
 
+    /// \name Serialization
+    //@{
+    /// Return specification for this view, using variable map \a m
+    Reflection::Arg*  spec(Space* home, Reflection::VarMap& m);
+    static Reflection::Type* type(void);
+    //@}
+
   private:
     static void* operator new(size_t);
     static void operator delete(void*);
@@ -335,7 +342,6 @@ namespace Gecode {
   ConstantViewBase::variable(void) const {
     return NULL;
   }
-
 
   /*
    * Variable view: contains a pointer to a variable implementation
@@ -584,6 +590,18 @@ namespace Gecode {
   ViewTuple<View,n>::update(Space* home, bool share, ViewTuple& xs) {
     for (unsigned int i=0; i<n; i++)
       x[i].update(home,share,xs.x[i]);
+  }
+  template <class View, unsigned int n>
+  forceinline Reflection::Arg*
+  ViewTuple<View,n>::spec(Space*, Reflection::VarMap&) {
+    assert(false); /// TODO!
+    return NULL;
+  }
+  template <class View, unsigned int n>
+  forceinline Reflection::Type*
+  ViewTuple<View,n>::type(void) {
+    assert(false); /// TODO!
+    return NULL;
   }
 
   template <class View, unsigned int n>

@@ -78,6 +78,12 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView>
+  const char*
+  Val<View, Card, isView>::name(void) const {
+    return "int.gcc.Val";
+  }
+
+  template <class View, class Card, bool isView>
   ExecStatus
   Val<View, Card, isView>::propagate(Space* home) {
     assert(x.size() > 0);

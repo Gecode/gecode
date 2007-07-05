@@ -137,6 +137,12 @@ namespace Gecode { namespace Int { namespace Bool {
 #undef GECODE_INT_STATUS
   }
 
+  template <class BVA, class BVB, class BVC>
+  const char*
+  Eqv<BVA,BVB,BVC>::name(void) const {
+    return "int.bool.Eqv";
+  }
+
 }}}
 
 // STATISTICS: int-prop

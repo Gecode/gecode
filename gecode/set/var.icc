@@ -659,6 +659,12 @@ namespace Gecode { namespace Set {
     SetVarImp* copy(Space* home, bool share);
     //@}
 
+    /// \name Serialization
+    //@{
+    GECODE_SET_EXPORT Reflection::Arg*
+    spec(Space* home, Reflection::VarMap& m);
+    //@}
+
   };
 
   class SetView;

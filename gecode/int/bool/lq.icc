@@ -91,6 +91,11 @@ namespace Gecode { namespace Int { namespace Bool {
 #undef GECODE_INT_STATUS
   }
 
+  template<class BV>
+  const char*
+  Lq<BV>::name(void) const {
+    return "int.bool.Lq";
+  }
 
   /*
    * Less posting

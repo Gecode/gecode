@@ -39,6 +39,11 @@ namespace Gecode { namespace Int { namespace Channel {
     return PC_UNARY_LO;
   }
 
+  const char*
+  LinkSingle::name(void) const {
+    return "int.channel.LinkSingle";
+  }
+
   ExecStatus
   LinkSingle::propagate(Space* home) {
     if (x0.zero()) {

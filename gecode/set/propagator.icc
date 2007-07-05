@@ -53,6 +53,8 @@ namespace Gecode {
     virtual PropCost cost(void) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
+    /// Return specification for this propagator given a variable map \a m
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
   };
 
   //@}
@@ -89,6 +91,14 @@ namespace Gecode {
     }
     (void) Propagator::dispose(home);
     return sizeof(*this);
+  }
+
+  template <class View, PropCond pcs, PropCond pci>
+  Reflection::ActorSpec&
+  IntSetPropagator<View,pcs,pci>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << Reflection::typedSpec(home, m, x0)
+             << Reflection::typedSpec(home, m, x1);
   }
 
 }

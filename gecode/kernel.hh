@@ -110,14 +110,19 @@
 
 
 /*
+ * Access to the constraint graph
+ *
+ */
+
+#include "gecode/kernel/reflection.icc"
+
+/*
  * Variables, views and testing for shared variables
  *
  */
 
 #include "gecode/kernel/view.icc"
 #include "gecode/kernel/var.icc"
-
-
 
 /*
  * Variable and argument arrays
@@ -126,8 +131,12 @@
 
 #include "gecode/kernel/array.icc"
 
+/*
+ * Access to the constraint graph
+ *
+ */
 
-
+#include "gecode/kernel/varmap.icc"
 
 /*
  * Common propagator and branching patterns

@@ -53,6 +53,12 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template <class View0, class View1>
+  const char*
+  SubSet<View0,View1>::name(void) const {
+    return "set.rel.SubSet";
+  }
+
+  template <class View0, class View1>
   ExecStatus
   SubSet<View0,View1>::propagate(Space* home) {
     bool oneassigned = x0.assigned() || x1.assigned();

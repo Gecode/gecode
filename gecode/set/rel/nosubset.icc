@@ -60,6 +60,12 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template <class View0, class View1>
+  const char*
+  NoSubSet<View0,View1>::name(void) const {
+    return "set.rel.NoSubSet";
+  }
+
+  template <class View0, class View1>
   ExecStatus
   NoSubSet<View0,View1>::propagate(Space* home) {
     GlbRanges<View0> x0lb(x0);

@@ -152,6 +152,16 @@ namespace Gecode { namespace Set {
     var = y.var->copy(home,share);
   }
 
+  forceinline Reflection::Arg*
+  SetView::spec(Space* home, Reflection::VarMap& m) {
+    return var->spec(home, m);
+  }
+
+  forceinline Reflection::Type*
+  SetView::type(void) {
+    return new Reflection::Type("set.SetView");
+  }
+
   /**
    * \brief %Range iterator for least upper bound of set variable views
    * \ingroup TaskActorSetView

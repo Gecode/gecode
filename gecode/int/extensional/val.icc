@@ -69,6 +69,12 @@ namespace Gecode { namespace Int { namespace Extensional {
   }
 
   template <class View>
+  const char*
+  Val<View>::name(void) const {
+    return "int.extensional.Val";
+  }
+
+  template <class View>
   ExecStatus
   Val<View>::propagate(Space* home) {
     GECODE_ES_CHECK((prop_val<View>(home,x,table)));

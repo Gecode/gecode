@@ -41,6 +41,27 @@ namespace Gecode { namespace Set { namespace Sequence {
     return new (home) SeqU(home,share,*this);
   }
 
+  const char*
+  SeqU::name(void) const {
+    return "set.sequence.Union";
+  }
+
+  Reflection::ActorSpec&
+  SeqU::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s =
+     NaryOnePropagator<SetView,PC_SET_ANY>::spec(home, m);
+    int count = 0;
+    for (BndSetRanges uod(unionOfDets); uod(); ++uod)
+      count++;
+    Reflection::ArrayArg<int>* a = new Reflection::ArrayArg<int>(count*2);
+    count = 0;
+    for (BndSetRanges uod(unionOfDets); uod(); ++uod) {
+      (*a)[count++] = uod.min();
+      (*a)[count++] = uod.max();
+    }
+    return s << a;
+  }
+
   ExecStatus
   SeqU::propagateSeqUnion(Space* home,
                           bool& modified, ViewArray<SetView>& x,

@@ -424,6 +424,11 @@ namespace Gecode { namespace Int { namespace Sortedness {
   }
 
   template<class View, class Tuple, bool Perm>
+  const char* Sortedness<View, Tuple, Perm>::name(void) const {
+    return "int.sortedness.Sortedness";
+  }
+
+  template<class View, class Tuple, bool Perm>
   ExecStatus
   Sortedness<View, Tuple, Perm>::propagate(Space* home) {
 

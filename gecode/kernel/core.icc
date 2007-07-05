@@ -443,10 +443,15 @@ namespace Gecode {
     /// Needed for exceptions
     static void  operator delete(void*);
     //@}
+    
   };
 
 
-
+  namespace Reflection {
+    class ActorSpec;
+    class VarMap;
+    class SpecIter;
+  }
 
   /**
    * \defgroup TaskActorStatus Status of constraint propagation and branching commit
@@ -532,6 +537,7 @@ namespace Gecode {
     friend class Propagator;
     friend class Advisor;
     friend class Branching;
+    friend class Reflection::SpecIter;
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
     template <class A> friend class Council;
   public:
@@ -554,6 +560,11 @@ namespace Gecode {
     static void* operator new(size_t s, Space* home);
     /// No-op for exceptions
     static void  operator delete(void* p, Space* home);
+    /// Return specification for this actor given a variable map \a m
+    GECODE_KERNEL_EXPORT
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Return name of this actor
+    virtual const char* name(void) const = 0;
   private:
 #ifndef __GNUC__
     /// Not used (uses dispose instead)
@@ -965,6 +976,7 @@ namespace Gecode {
     friend class Propagator;
     friend class Branching;
     friend class Advisor;
+    friend class Reflection::SpecIter;
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
     template <VarTypeId VTI, PropCond PC, class MED> friend class VarTypeProcessor;
     template <class Object> friend class SharedHandle;
@@ -1074,6 +1086,15 @@ namespace Gecode {
     void process(Propagator* p);
     //@}
 
+
+    /**
+      * \name Reflection
+      */
+    //@{
+    /// Return iterator over specifications of the propagators in this space
+    GECODE_KERNEL_EXPORT
+    Reflection::SpecIter actorSpecs(Reflection::VarMap& m);
+    //@}
 
   public:
     /**

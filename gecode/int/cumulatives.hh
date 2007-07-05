@@ -102,6 +102,10 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     virtual Actor*     copy(Space* home, bool share);
     virtual PropCost   cost(void) const;
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
     static  ExecStatus post(Space* home, const ViewArray<ViewM>&,
                             const ViewArray<View>&, const ViewArray<ViewD>&,
                             const ViewArray<View>&, const ViewArray<ViewH>&,

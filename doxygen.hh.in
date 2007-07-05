@@ -90,6 +90,16 @@
  */
 
 /**
+ * \defgroup TaskIntReflect Reflection API
+ *
+ * The reflection API provides information about the propagators, branchings,
+ * and variables in a space.
+ * Requires \code #include "gecode/kernel.hh" \endcode
+ *
+ * \ingroup TaskInt
+ */
+
+/**
  * \defgroup TaskIntSetVars Set variables
  * \ingroup TaskIntSet
  */

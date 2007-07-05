@@ -62,6 +62,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
     /// Post propagator for view array \a x
     static ExecStatus post(Space* home, ViewArray<View>& x, const Table& t);
   };
@@ -152,6 +154,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual PropCost cost(void) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
     /// Post propagator for views \a x
     static ExecStatus post(Space* home, ViewArray<View>& x, const Table& t);
   };
@@ -271,6 +275,8 @@ namespace Gecode { namespace Int { namespace Extensional {
     virtual PropCost cost(void) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
+    /// Name of this propagator
+    virtual const char* name(void) const;    
     /// Post propagator for views \a x
     static ExecStatus post(Space* home, ViewArray<View>& x, const Table& t);
     // Dispose propagator

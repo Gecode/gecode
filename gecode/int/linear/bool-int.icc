@@ -79,6 +79,12 @@ namespace Gecode { namespace Int { namespace Linear {
     return cost_lo(x.size(),PC_LINEAR_LO);
   }
 
+  template <class VX>
+  Reflection::ActorSpec&
+  MemoryLinBoolInt<VX>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << x.spec(home, m) << c;
+  }
 
   /*
    * Baseclass for integer Boolean sum using advisors
@@ -132,7 +138,12 @@ namespace Gecode { namespace Int { namespace Linear {
     return PC_UNARY_HI;
   }
 
-
+  template <class VX>
+  Reflection::ActorSpec&
+  SpeedLinBoolInt<VX>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    return s << x.spec(home, m) << c;
+  }
 
   /*
    * Greater or equal propagator (integer rhs)
@@ -154,6 +165,12 @@ namespace Gecode { namespace Int { namespace Linear {
   Actor*
   GqBoolInt<VX>::Memory::copy(Space* home, bool share) {
     return new (home) Memory(home,share,*this);
+  }
+
+  template <class VX>
+  const char*
+  GqBoolInt<VX>::Memory::name(void) const {
+    return "int.linear.GqBoolInt.memory";
   }
 
   template <class VX>
@@ -216,6 +233,12 @@ namespace Gecode { namespace Int { namespace Linear {
   Actor*
   GqBoolInt<VX>::Speed::copy(Space* home, bool share) {
     return new (home) Speed(home,share,*this);
+  }
+
+  template <class VX>
+  const char*
+  GqBoolInt<VX>::Speed::name(void) const {
+    return "int.linear.GqBoolInt.Speed";
   }
 
   template <class VX>
@@ -329,6 +352,12 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class VX>
+  const char*
+  EqBoolInt<VX>::Memory::name(void) const {
+    return "int.linear.EqBoolInt.memory";
+  }
+
+  template <class VX>
   ExecStatus
   EqBoolInt<VX>::Memory::propagate(Space* home) {
     // Eliminate assigned views from subscribed views
@@ -396,6 +425,12 @@ namespace Gecode { namespace Int { namespace Linear {
   Actor*
   EqBoolInt<VX>::Speed::copy(Space* home, bool share) {
     return new (home) Speed(home,share,*this);
+  }
+
+  template <class VX>
+  const char*
+  EqBoolInt<VX>::Speed::name(void) const {
+    return "int.linear.EqBoolInt.speed";
   }
 
   template <class VX>
@@ -558,6 +593,19 @@ namespace Gecode { namespace Int { namespace Linear {
   PropCost
   NqBoolInt<VX>::cost(void) const {
     return PC_LINEAR_LO;
+  }
+
+  template<class VX>
+  Reflection::ActorSpec&
+  NqBoolInt<VX>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s = BinaryPropagator<VX, PC_INT_VAL>::spec(home, m);
+    return s << x.spec(home, m) << c;
+  }
+
+  template<class VX>
+  const char*
+  NqBoolInt<VX>::name(void) const {
+    return "int.linear.NqBoolInt";
   }
 
   template<class VX>

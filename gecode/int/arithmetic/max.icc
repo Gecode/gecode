@@ -99,6 +99,11 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       ES_SUBSUMED(this,sizeof(*this)) : ES_FIX;
   }
 
+  template <class View>
+  const char*
+  Max<View>::name(void) const {
+    return "int.Max";
+  }
 
 
   /*
@@ -186,6 +191,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     if (((status & MPS_ASSIGNED) != 0) && y.assigned())
       return ES_SUBSUMED(this,sizeof(*this));
     return ((status & MPS_NEW_BOUND) != 0) ? ES_NOFIX : ES_FIX;
+  }
+
+  template <class View>
+  const char*
+  NaryMax<View>::name(void) const {
+    return "int.NaryMax";
   }
 
 }}}

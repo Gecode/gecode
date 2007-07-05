@@ -238,6 +238,21 @@ namespace Gecode { namespace Set {
     view.update(home,share,y.view);
   }
 
+  template <class View>
+  forceinline Reflection::Arg*
+  OffsetSetView<View>::spec(Space* home, Reflection::VarMap& m) {
+    return new Reflection::PairArg(new Reflection::IntArg(k), view.spec(home, m));
+  }
+
+  template <class View>
+  forceinline Reflection::Type*
+  OffsetSetView<View>::type(void) {
+    Reflection::Type* t = new Reflection::Type(2);
+    t->u.t[0] = new Reflection::Type("set.OffsetSetView");
+    t->u.t[1] = View::type();
+    return t;
+  }
+
   /**
    * \brief %Range iterator for least upper bound of offset set views
    * \ingroup TaskActorSetView

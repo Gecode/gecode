@@ -118,6 +118,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
+  const char*
+  AbsBnd<View>::name(void) const {
+    return "int.AbsBnd";
+  }
+
+  template <class View>
   forceinline
   AbsDom<View>::AbsDom(Space* home, View x0, View x1)
     : BinaryPropagator<View,PC_INT_DOM>(home,x0,x1) {}
@@ -215,6 +221,12 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     }
 
     return ES_FIX;
+  }
+
+  template <class View>
+  const char*
+  AbsDom<View>::name(void) const {
+    return "int.AbsDom";
   }
 
 }}}

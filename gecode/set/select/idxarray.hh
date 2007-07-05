@@ -82,6 +82,9 @@ namespace Gecode { namespace Set { namespace Select {
 
     /// Cloning
     void update(Space* home, bool share, IdxViewArray<View>& x);
+    
+    // Specification
+    Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
   };
 
 }}}
