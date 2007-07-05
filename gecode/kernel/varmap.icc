@@ -37,7 +37,7 @@ namespace Gecode { namespace Reflection {
     /// The actual map
     VarMapImp* m;
     /// Register name \a n for variable \a x
-    void name(VarBase* x, const char* n);
+    GECODE_KERNEL_EXPORT void name(VarBase* x, const char* n);
   public:
     /// Default constructor
     GECODE_KERNEL_EXPORT VarMap(void);
