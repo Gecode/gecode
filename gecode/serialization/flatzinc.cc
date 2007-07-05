@@ -70,6 +70,7 @@ namespace Gecode {
       else
         os << ": _v" << varNo << ";" << endl;
     }
+#ifdef GECODE_HAVE_SET_VARS
     void emitSetVar(ostream& os, int varNo, VarSpec& vs) {
       os << "var set of ";
       Arg* dom = vs.dom();
@@ -139,6 +140,7 @@ namespace Gecode {
       }
 
     }
+#endif
     
     void emitType(ostream& os, ActorSpec& s) {
       bool first = true;
@@ -274,7 +276,9 @@ namespace Gecode {
         switch (vs.vti()) {
         case VTI_INT: emitIntVar(os, varCount, vs); break;
         case VTI_BOOL: emitBoolVar(os, varCount, vs); break;
+#ifdef GECODE_HAVE_SET_VARS
         case VTI_SET: emitSetVar(os, varCount, vs); break;
+#endif
         }
       }
 

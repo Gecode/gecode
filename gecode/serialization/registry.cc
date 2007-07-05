@@ -86,9 +86,11 @@ namespace Gecode { namespace Serialization {
     VarBase* createBoolVar(Space* home, Reflection::VarSpec& spec) {
       return NULL;
     }
+#ifdef GECODE_HAVE_SET_VARS
     VarBase* createSetVar(Space* home, Reflection::VarSpec& spec) {
       return NULL;
     }
+#endif
 
     void distinct_val(Space* home, const std::vector<VarBase*>& v,
                       Reflection::ActorSpec& spec) {
@@ -124,8 +126,9 @@ namespace Gecode { namespace Serialization {
         SomeIntConstraints() {
         registry.add(VTI_INT, createIntVar);
         registry.add(VTI_BOOL, createBoolVar);
+#ifdef GECODE_HAVE_SET_VARS
         registry.add(VTI_SET, createSetVar);
-        
+#endif
         registry.add("int.distinct.Val", distinct_val);
       }
     };
