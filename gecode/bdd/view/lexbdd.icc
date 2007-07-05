@@ -408,6 +408,19 @@ namespace Gecode { namespace Bdd {
     remain = y.bdd_remain();
   }
 
+  /*
+   * Serialization
+   *
+   */
+  forceinline Reflection::Arg*
+  LexBddView::spec(Space* home, Reflection::VarMap& m) {
+    return view.spec(home, m);
+  }
+  forceinline Reflection::Type*
+  LexBddView::type(void) {
+    return new Reflection::Type("bdd.LexBddView");
+  }
+
   forceinline void 
   LexBddView::viewdot(void) const {
     return view.viewdot();

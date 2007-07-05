@@ -721,6 +721,19 @@ namespace Gecode { namespace Bdd {
     cardmax = y.cardmax;
   }
 
+  /*
+   * Serialization
+   *
+   */
+  forceinline Reflection::Arg*
+  CrdBddView::spec(Space* home, Reflection::VarMap& m) {
+    return view.spec(home, m);
+  }
+  forceinline Reflection::Type*
+  CrdBddView::type(void) {
+    return new Reflection::Type("bdd.CrdBddView");
+  }
+
   forceinline void 
   CrdBddView::viewdot(void) const { return view.viewdot(); }
 

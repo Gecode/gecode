@@ -288,6 +288,19 @@ namespace Gecode { namespace Bdd {
     view.update(home, share, y.view);
   }
 
+  /*
+   * Serialization
+   *
+   */
+  forceinline Reflection::Arg*
+  BndBddView::spec(Space* home, Reflection::VarMap& m) {
+    return view.spec(home, m);
+  }
+  forceinline Reflection::Type*
+  BndBddView::type(void) {
+    return new Reflection::Type("bdd.BndBddView");
+  }
+
   forceinline void 
   BndBddView::viewdot(void) const {
     return view.viewdot();

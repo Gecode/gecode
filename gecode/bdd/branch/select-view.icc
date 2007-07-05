@@ -34,6 +34,11 @@ namespace Gecode { namespace Bdd { namespace Branch {
     return VSS_NONE;
   }
 
+  forceinline Reflection::Type*
+  ByNone::type(void) {
+    return new Reflection::Type("bdd.ByNone");
+  }
+
   forceinline ViewSelStatus
   ByMinCard::init(const Space*, BddView x) { 
     minCard = x.unknownSize();
@@ -48,6 +53,10 @@ namespace Gecode { namespace Bdd { namespace Branch {
     }
     return VSS_NONE;
   }
+  forceinline Reflection::Type*
+  ByMinCard::type(void) {
+    return new Reflection::Type("bdd.ByMinCard");
+  }
 
   forceinline ViewSelStatus
   ByMaxCard::init(const Space*, BddView x) { 
@@ -61,6 +70,10 @@ namespace Gecode { namespace Bdd { namespace Branch {
       maxCard = us; return VSS_SELECT;
     }
     return VSS_NONE;
+  }
+  forceinline Reflection::Type*
+  ByMaxCard::type(void) {
+    return new Reflection::Type("bdd.ByMaxCard");
   }
 
   forceinline ViewSelStatus
@@ -77,6 +90,10 @@ namespace Gecode { namespace Bdd { namespace Branch {
       minUnknown = um; return VSS_SELECT;
     }
     return VSS_NONE;
+  }
+  forceinline Reflection::Type*
+  ByMinUnknown::type(void) {
+    return new Reflection::Type("bdd.ByMinUnknown");
   }
 
   forceinline ViewSelStatus
@@ -101,6 +118,10 @@ namespace Gecode { namespace Bdd { namespace Branch {
       maxUnknown = um; return VSS_SELECT;
     }
     return VSS_NONE;
+  }
+  forceinline Reflection::Type*
+  ByMaxUnknown::type(void) {
+    return new Reflection::Type("bdd.ByMaxUnknown");
   }
 
 }}}

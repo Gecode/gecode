@@ -89,6 +89,12 @@ namespace Gecode { namespace Bdd { namespace Branch {
 //     return (a == 0) ?  x.eq(home,ir) : x.nq(home,ir);
   }
 
+  template<bool exclude>
+  forceinline Reflection::Type*
+  ValMin<exclude>::type(void) {
+    return new Reflection::Type("bdd.ValMin");
+  }
+
   template <bool exclude>
   forceinline IntSet
   ValMax<exclude>::val(const Space*, BddView x) const{
@@ -112,6 +118,12 @@ namespace Gecode { namespace Bdd { namespace Branch {
     return (a == (int) exclude) ? x.eqI(home,ir) : x.nqI(home,ir);
   }
 
+  template<bool exclude>
+  forceinline Reflection::Type*
+  ValMax<exclude>::type(void) {
+    return new Reflection::Type("bdd.ValMax");
+  }
+
   template <bool exclude>
   forceinline int
   ValMinUnknown<exclude>::val(const Space*, BddView x) const {
@@ -126,6 +138,12 @@ namespace Gecode { namespace Bdd { namespace Branch {
   forceinline ModEvent
   ValMinUnknown<exclude>::tell(Space* home, unsigned int a, BddView x, int v) {
     return (a == (int) exclude) ? x.include(home,v) : x.exclude(home,v);
+  }
+
+  template<bool exclude>
+  forceinline Reflection::Type*
+  ValMinUnknown<exclude>::type(void) {
+    return new Reflection::Type("bdd.ValMinUnknown");
   }
 
   template <bool exclude>
@@ -144,6 +162,12 @@ namespace Gecode { namespace Bdd { namespace Branch {
   forceinline ModEvent
   ValMaxUnknown<exclude>::tell(Space* home, unsigned int a, BddView x, int v) {
     return (a == (int) exclude) ? x.include(home,v) : x.exclude(home,v);
+  }
+
+  template<bool exclude>
+  forceinline Reflection::Type*
+  ValMaxUnknown<exclude>::type(void) {
+    return new Reflection::Type("bdd.ValMaxUnknown");
   }
 
 //   template <class SelView>

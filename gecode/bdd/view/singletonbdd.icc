@@ -473,6 +473,19 @@ namespace Gecode {
     }
 
     /*
+     * Serialization
+     *
+     */
+    forceinline Reflection::Arg*
+    SingletonBddView::spec(Space* home, Reflection::VarMap& m) {
+      return view.spec(home, m);
+    }
+    forceinline Reflection::Type*
+    SingletonBddView::type(void) {
+      return new Reflection::Type("bdd.SingletonBddView");
+    }
+
+    /*
      * Iterators
      *
      */

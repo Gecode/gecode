@@ -225,6 +225,19 @@ namespace Gecode { namespace Bdd {
     var = y.var->copy(home,share);
   }
 
+  /*
+   * Serialization
+   *
+   */
+  forceinline Reflection::Arg*
+  BddView::spec(Space* home, Reflection::VarMap& m) {
+    return var->spec(home, m);
+  }
+  forceinline Reflection::Type*
+  BddView::type(void) {
+    return new Reflection::Type("bdd.BddView");
+  }
+
   forceinline void 
   BddView::viewdot(void) const {
     var->viewdot();

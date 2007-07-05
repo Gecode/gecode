@@ -172,6 +172,15 @@ namespace Gecode {
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, BddView& x);
       //@}
+
+      /// \name Serialization
+      //@{
+      /// Return specification for this view, using variable map \a m
+      Reflection::Arg*  spec(Space* home, Reflection::VarMap& m);
+      static Reflection::Type* type(void);
+      //@}
+
+
       /// Debug output
       void viewdot(void) const;
     };
@@ -377,6 +386,13 @@ namespace Gecode {
       //@{
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, SplitBddView& x);
+      //@}
+
+      /// \name Serialization
+      //@{
+      /// Return specification for this view, using variable map \a m
+      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      static Reflection::Type* type(void);
       //@}
 
       /// Debug output
@@ -590,6 +606,13 @@ namespace Gecode {
       //@{
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, BndBddView& x);
+      //@}
+
+      /// \name Serialization
+      //@{
+      /// Return specification for this view, using variable map \a m
+      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      static Reflection::Type* type(void);
       //@}
 
       /// Debug output
@@ -818,6 +841,13 @@ namespace Gecode {
       void update(Space* home, bool share, CrdBddView& x);
       //@}
 
+      /// \name Serialization
+      //@{
+      /// Return specification for this view, using variable map \a m
+      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      static Reflection::Type* type(void);
+      //@}
+
       /// Debug output
       void viewdot(void) const;
     };
@@ -1036,6 +1066,13 @@ namespace Gecode {
       //@{
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, LexBddView& x);
+      //@}
+
+      /// \name Serialization
+      //@{
+      /// Return specification for this view, using variable map \a m
+      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      static Reflection::Type* type(void);
       //@}
 
       /// Debug output
@@ -1263,6 +1300,13 @@ namespace Gecode {
       void update(Space* home, bool share, SingletonBddView& x);
       //@}
 
+      /// \name Serialization
+      //@{
+      /// Return specification for this view, using variable map \a m
+      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      static Reflection::Type* type(void);
+      //@}
+
       /// Debug output
       void viewdot(void) const;
     };
@@ -1486,6 +1530,13 @@ namespace Gecode {
       //@{
       /// Update this view to be a clone of view \a x
       void update(Space* home, bool share, SetBddView& x);
+      //@}
+
+      /// \name Serialization
+      //@{
+      /// Return specification for this view, using variable map \a m
+      Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+      static Reflection::Type* type(void);
       //@}
 
       /// Debug output

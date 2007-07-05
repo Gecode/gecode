@@ -379,6 +379,12 @@ namespace Gecode { namespace Bdd {
     BddVarImp* copy(Space* home, bool share);
     //@}  
 
+    /// \name Serialization
+    //@{
+    GECODE_SET_EXPORT Reflection::Arg*
+    spec(Space* home, Reflection::VarMap& m);
+    //@}
+
     /// Print the domain of the variable in Dot-output format
     void viewdot(void) const;
     

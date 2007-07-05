@@ -286,6 +286,19 @@ namespace Gecode {
       view.update(home,share,y.view);
     }
 
+    /*
+   	 * Serialization
+     *
+     */
+    forceinline Reflection::Arg*
+  	SetBddView::spec(Space* home, Reflection::VarMap& m) {
+      return view.spec(home, m);
+  	}
+  	forceinline Reflection::Type*
+    SetBddView::type(void) {
+      return new Reflection::Type("bdd.SetBddView");
+    }
+
   }
   namespace Set {
 

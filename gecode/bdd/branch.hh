@@ -52,6 +52,8 @@ namespace Gecode { namespace Bdd { namespace Branch {
     IntSet val(const Space*, BddView x);
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, BddView x, IntSet v);
+    /// Type of this value selection (for reflection)
+    static Reflection::Type* type(void);
   };
 
   /**
@@ -68,6 +70,8 @@ namespace Gecode { namespace Bdd { namespace Branch {
     IntSet val(const Space*, BddView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, BddView x, IntSet v);
+    /// Type of this value selection (for reflection)
+    static Reflection::Type* type(void);
   };
 
   /**
@@ -84,6 +88,8 @@ namespace Gecode { namespace Bdd { namespace Branch {
     int val(const Space*, BddView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, BddView x, int v);
+    /// Type of this value selection (for reflection)
+    static Reflection::Type* type(void);
   };
 
   /**
@@ -100,6 +106,8 @@ namespace Gecode { namespace Bdd { namespace Branch {
     int val(const Space*, BddView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, BddView x, int v);
+    /// Type of this value selection (for reflection)
+    static Reflection::Type* type(void);
   };
 
   /// Create branchings for a given view selection strategy \a ViewSel
@@ -124,6 +132,8 @@ namespace Gecode { namespace Bdd { namespace Branch {
     ViewSelStatus init(const Space*, BddView);
     /// Possibly select better view \a x
     ViewSelStatus select(const Space*, BddView);
+    /// Type of this view selection (for reflection)
+    static Reflection::Type* type(void);
   };
 
   /**
@@ -141,6 +151,8 @@ namespace Gecode { namespace Bdd { namespace Branch {
     ViewSelStatus init(const Space*, BddView x);
     /// Possibly select better view \a x
     ViewSelStatus select(const Space*, BddView x);
+    /// Type of this view selection (for reflection)
+    static Reflection::Type* type(void);
   };
 
   /**
@@ -158,6 +170,8 @@ namespace Gecode { namespace Bdd { namespace Branch {
     ViewSelStatus init(const Space*, BddView x);
     /// Possibly select better view \a x
     ViewSelStatus select(const Space*, BddView x);
+    /// Type of this view selection (for reflection)
+    static Reflection::Type* type(void);
   };
 
   /**
@@ -175,6 +189,8 @@ namespace Gecode { namespace Bdd { namespace Branch {
     ViewSelStatus init(const Space*, BddView x);
     /// Possibly select better view \a x
     ViewSelStatus select(const Space*, BddView x);
+    /// Type of this view selection (for reflection)
+    static Reflection::Type* type(void);
   };
 
   /**
@@ -192,6 +208,8 @@ namespace Gecode { namespace Bdd { namespace Branch {
     ViewSelStatus init(const Space*, BddView x);
     /// Possibly select better view \a x
     ViewSelStatus select(const Space*, BddView x);
+    /// Type of this view selection (for reflection)
+    static Reflection::Type* type(void);
   };
 
 }}}
