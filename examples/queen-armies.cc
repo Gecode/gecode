@@ -177,6 +177,9 @@ public:
     virtual Actor* copy(Space *home, bool share) {
       return new (home) QueenBranch(home, share, *this);
     }
+    virtual const char* name(void) const {
+      return "QueenBranching";
+    }
 
     static void post(QueenArmies* home) {
       (void) new (home) QueenBranch(home);
