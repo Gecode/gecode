@@ -58,6 +58,9 @@ export CXXFLAGS = $(CPPFLAGS) @CXXFLAGS@ $(CXXUSR)
 export CFLAGS = $(CPPFLAGS) @CFLAGS@ $(CUSR)
 export EXAMPLES_EXTRA_CXXFLAGS = @EXAMPLES_EXTRA_CXXFLAGS@
 
+export BOOST_CPPFLAGS = @BOOST_CPPFLAGS@
+export BOOST_LINK = @BOOST_LINK@
+
 export LINKFLAGS = @LDFLAGS@
 export DLLFLAGS = @DLLFLAGS@
 export BUDDYDLLFLAGS = @BUDDYDLLFLAGS@
@@ -465,9 +468,9 @@ MMBUILDDIRS	= minimodel
 #
 
 SERSRC0 = \
-	flatzinc.cc deserializer.cc registry.cc
+	flatzinc.cc deserializer.cc registry.cc boost.cc
 SERHDR0 = \
-	deserializer.icc
+	deserializer.icc boost.icc
 
 SERSRC 		= $(SERSRC0:%=gecode/serialization/%)
 SERHDR 		= gecode/serialization.hh $(SERHDR0:%=gecode/serialization/%)
@@ -830,14 +833,16 @@ gecode/minimodel/%$(SBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cc
 	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/serialization/%$(OBJSUFFIX): $(top_srcdir)/gecode/serialization/%.cc
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SERIALIZATION_FLAG@ \
+	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) \
+	@GECODE_BUILD_SERIALIZATION_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/serialization/%$(SBJSUFFIX): $(top_srcdir)/gecode/serialization/%.cc
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SERIALIZATION_FLAG@ \
+	$(CXX) $(CXXFLAGS) $(BOOST_CPPFLAGS) \
+	@GECODE_BUILD_SERIALIZATION_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 examples/%$(OBJSUFFIX): $(top_srcdir)/examples/%.cc
-	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
+	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) $(BOOST_CPPFLAGS) \
 	@COMPILEOBJ@$@ @CXXIN@$<
 examples/%$(SBJSUFFIX): $(top_srcdir)/examples/%.cc
 	$(CXX) $(CXXFLAGS) $(EXAMPLES_EXTRA_CXXFLAGS) \
@@ -905,7 +910,7 @@ $(MMDLL): $(MMOBJ) $(KERNELDLL) $(INTDLL)
 $(SERDLL): $(SEROBJ) $(KERNELDLL)
 	$(CXX) $(DLLFLAGS) $(SEROBJ) $(SERSONAME) \
 		@DLLPATH@ $(LINKKERNEL) $(LINKINT) \
-		@LINKOUTPUT@$(SERDLL)
+		$(BOOST_LINK) @LINKOUTPUT@$(SERDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 else
@@ -938,7 +943,7 @@ $(MMDLL) $(MMLIB): $(MMOBJ) $(KERNELDLL) $(INTDLL)
 $(SERDLL) $(SERLIB): $(SEROBJ) $(KERNELDLL)
 	$(CXX) $(DLLFLAGS) $(SEROBJ) \
 		@DLLPATH@ $(LINKKERNEL) $(LINKINT) $(LINKSET) $(LINKBDD) \
-		@LINKOUTPUT@$(SERDLL)
+		$(BOOST_LINK) @LINKOUTPUT@$(SERDLL)
 endif
 
 #

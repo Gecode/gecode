@@ -53,4 +53,7 @@
 /* Whether to include audit code */
 #undef GECODE_AUDIT
 
+/* Whether to compile with boost serialization support */
+#undef GECODE_HAVE_BOOST_SERIALIZATION
+
 // STATISTICS: kernel-other

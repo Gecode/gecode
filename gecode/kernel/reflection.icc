@@ -275,13 +275,15 @@ namespace Gecode { namespace Reflection {
     ~ActorSpec(void);
     
     /// Return argument \a i
-    Arg* operator[](int i);
+    Arg* operator[](int i) const;
     /// Return number of arguments
     int noOfArgs(void) const;
     /// Add \a arg to the specification (as last argument)
     void add(Arg* arg);
     /// Return name
     const char* name(void) const;
+    /// Change name
+    void name(const char*);
     
   };
   
@@ -424,6 +426,7 @@ namespace Gecode { namespace Reflection {
   ArrayArg<T>::size(void) const {
     return n;
   }
+
 
   template <class T>
   forceinline
@@ -614,7 +617,7 @@ namespace Gecode { namespace Reflection {
   }
 
   forceinline Arg*
-  ActorSpec::operator[](int i) {
+  ActorSpec::operator[](int i) const {
     assert(i < _args->n);
     return _args->a[i];
   }
@@ -627,6 +630,11 @@ namespace Gecode { namespace Reflection {
   forceinline const char*
   ActorSpec::name(void) const {
     return _name;
+  }
+
+  forceinline void
+  ActorSpec::name(const char* n) {
+    _name = n;
   }
 
   forceinline

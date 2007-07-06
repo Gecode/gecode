@@ -110,6 +110,19 @@ namespace Gecode {
   
 }
 
+#ifdef GECODE_HAVE_BOOST_SERIALIZATION
+
+namespace Gecode {
+  void boostTextSerialization(std::ostream&,
+    const std::vector<Reflection::ActorSpec*>& actors);
+  void boostTextSerialization(std::istream&,
+    std::vector<Reflection::ActorSpec*>& actors);
+}
+
+#include "gecode/serialization/boost.icc"
+
+#endif
+
 #include "gecode/serialization/deserializer.icc"
 
 #endif

@@ -79,6 +79,9 @@ AC_GECODE_PROFILE
 dnl check platform specific behaviour of arithmetic
 AC_GECODE_CHECK_ARITH
 
+dnl check whether we compile with boost support
+AC_GECODE_BOOST_SERIALIZATION
+
 case $ac_gecode_compiler_vendor in
 gnu)
   dnl general compiler flags
