@@ -37,14 +37,9 @@ namespace boost { namespace serialization {
     const Gecode::Reflection::Type& arg,
     const unsigned int file_version
   ) {
-    if (arg.n == 0) {
-      std::string name(arg.u.n);
-      ar << name;
-    } else {
-      for (int i=0; i<arg.n; i++) {
-        Gecode::Reflection::Type* const t = arg.u.t[i];
-        ar << t;
-      }
+    for (int i=0; i<arg.arity(); i++) {
+      Gecode::Reflection::Type* const t = arg[i];
+      ar << t;
     }
   }
   template<class Archive>
@@ -53,16 +48,10 @@ namespace boost { namespace serialization {
     Gecode::Reflection::Type& arg,
     const unsigned int file_version
   ) {
-    if (arg.n == 0) {
-      std::string name;
-      ar >> name;
-      arg.u.n = strdup(name.c_str());
-    } else {
-      for (int i=0; i<arg.n; i++) {
-        Gecode::Reflection::Type* t;
-        ar >> t;
-        arg.u.t[i] = t;
-      }
+    for (int i=0; i<arg.arity(); i++) {
+      Gecode::Reflection::Type* t;
+      ar >> t;
+      arg[i] = t;
     }
   }
   template<class Archive>
@@ -79,8 +68,13 @@ namespace boost { namespace serialization {
       Archive & ar, const Gecode::Reflection::Type* t,
       const unsigned int file_version
   ){
-      // save data required to construct instance
-      ar << t->n;
+    // save data required to construct instance
+    int n = t->arity();
+    ar << n;
+    if (t->primitive()) {
+      std::string name(t->name());
+      ar << name;
+    }
   }
 
   template<class Archive>
@@ -91,8 +85,13 @@ namespace boost { namespace serialization {
       // retrieve data from archive required to construct new instance
       int m;
       ar >> m;
-      // invoke inplace constructor to initialize instance of my_class
-      ::new(t)Gecode::Reflection::Type(m);
+      if (m == 0) {
+        std::string name;
+        ar >> name;
+        ::new(t)Gecode::Reflection::Type(name.c_str());
+      } else {
+        ::new(t)Gecode::Reflection::Type(m);
+      }
   }
 
   /////////////////////////////////////////////////////////////////////////
@@ -409,7 +408,7 @@ namespace boost { namespace serialization {
     std::string n;
     ar >> n;
     // invoke inplace constructor to initialize instance of my_class
-    ::new(t)Gecode::Reflection::ActorSpec(strdup(n.c_str()));
+    ::new(t)Gecode::Reflection::ActorSpec(n.c_str());
   }
   template<class Archive>
   void save(

@@ -39,16 +39,16 @@ namespace Gecode { namespace Reflection {
     * \ingroup TaskIntReflect
     */
   class Type {
-  public:
+  private:
     /// Number of arguments
     int n;
     union {
       /// If n==0, this is the name of the view type
-      const char* n;
+      char* n;
       /// If n>0, this is the tuple representing the type
       Type** t;
     } u;
-
+  public:
     /// Construct singleton type with \a name
     Type(const char* name);
     /// Construct \a n -ary tuple type
@@ -58,6 +58,20 @@ namespace Gecode { namespace Reflection {
 
     /// Destructor
     ~Type(void);
+
+    /// Return whether this is a primitive type or a tuple of types
+    bool primitive(void) const;
+    /// Return arity of tuple type (or 0 for primitive type)
+    int arity(void) const;
+    
+    /// Access element of tuple type
+    Type* operator[](int) const;
+    /// Access element of tuple type
+    Type*& operator[](int);
+
+    /// Return name of primitive type
+    const char* name(void) const;
+    
     /// Print string representation to \a os
     GECODE_KERNEL_EXPORT void print(std::ostream& os);
   };
@@ -246,10 +260,10 @@ namespace Gecode { namespace Reflection {
     */
   class ActorSpec {
   private:
-    /// The name of this actor
-    const char* _name;
     class Arguments {
     public:
+      /// The name of this actor
+      char* _name;
       /// The size of the argument array
       int   size;
       /// The number of arguments of this actor
@@ -259,7 +273,7 @@ namespace Gecode { namespace Reflection {
       /// Reference counter
       int r;
       /// Construct empty arguments
-      Arguments(void);
+      Arguments(const char*);
       /// Destructor
       ~Arguments(void);
     };
@@ -282,9 +296,6 @@ namespace Gecode { namespace Reflection {
     void add(Arg* arg);
     /// Return name
     const char* name(void) const;
-    /// Change name
-    void name(const char*);
-    
   };
   
   /// Add \a a to specification \a spec
@@ -559,7 +570,10 @@ namespace Gecode { namespace Reflection {
 
   forceinline
   Type::Type(const char* s) : n(0) {
-    u.n = s;
+    int size = strlen(s);
+    u.n = (char*) Memory::malloc(size+1);
+    memcpy(u.n, s, size);
+    u.n[size] = 0;
   }
   
   forceinline
@@ -573,7 +587,34 @@ namespace Gecode { namespace Reflection {
       for (int i=n; i--;)
         delete u.t[i];
       Memory::free(u.t);
+    } else {
+      Memory::free(u.n);
     }
+  }
+
+  forceinline bool
+  Type::primitive(void) const {
+    return n == 0;
+  }
+
+  forceinline int
+  Type::arity(void) const {
+    return n;
+  }
+  
+  forceinline Type*
+  Type::operator[](int i) const {
+    return u.t[i];
+  }
+  
+  forceinline Type*&
+  Type::operator[](int i) {
+    return u.t[i];
+  }
+
+  forceinline const char*
+  Type::name(void) const {
+    return u.n;
   }
 
 
@@ -583,24 +624,30 @@ namespace Gecode { namespace Reflection {
    */
 
   forceinline
-  ActorSpec::Arguments::Arguments(void) : size(4), n(0), r(1) {
+  ActorSpec::Arguments::Arguments(const char* name)
+   :  size(4), n(0), r(1) {
     a = static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*size));
+    int size = strlen(name);
+    _name = (char*) Memory::malloc(size+1);
+    memcpy(_name, name, size);
+    _name[size] = 0;
   }
 
   forceinline
   ActorSpec::Arguments::~Arguments(void) {
+    Memory::free(_name);
     for (int i=n; i--;)
       delete a[i];
     Memory::free(a);
   }
 
   forceinline
-  ActorSpec::ActorSpec(const char* name) : _name(name) {
-    _args = new Arguments();
+  ActorSpec::ActorSpec(const char* name) {
+    _args = new Arguments(name);
   }
 
   forceinline
-  ActorSpec::ActorSpec(const ActorSpec& s) : _name(s._name), _args(s._args) {
+  ActorSpec::ActorSpec(const ActorSpec& s) : _args(s._args) {
     _args->r++;
   }
   
@@ -629,12 +676,7 @@ namespace Gecode { namespace Reflection {
 
   forceinline const char*
   ActorSpec::name(void) const {
-    return _name;
-  }
-
-  forceinline void
-  ActorSpec::name(const char* n) {
-    _name = n;
+    return _args->_name;
   }
 
   forceinline

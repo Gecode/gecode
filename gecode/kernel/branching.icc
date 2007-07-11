@@ -287,8 +287,8 @@ namespace Gecode {
     Reflection::VarMap& m) {
     Reflection::ActorSpec& s = Branching::spec(home, m);
     Reflection::Type* t = new Reflection::Type(2);
-    t->u.t[0] = ViewSel::type();
-    t->u.t[1] = ValSel::type();
+    (*t)[0] = ViewSel::type();
+    (*t)[1] = ValSel::type();
     return s << new Reflection::TypedArg(t, x.spec(home, m));
   }
 

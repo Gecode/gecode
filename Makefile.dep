@@ -3014,16 +3014,16 @@ gecode/serialization/flatzinc$(OBJSUFFIX) gecode/serialization/flatzinc$(SBJSUFF
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/memory.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
 	./gecode/kernel/reflection.icc ./gecode/kernel/var.icc ./gecode/kernel/varmap.icc \
-	./gecode/kernel/view.icc ./gecode/serialization.hh ./gecode/serialization/deserializer.icc \
-	./gecode/support/sort.hh ./gecode/vti.icc 
+	./gecode/kernel/view.icc ./gecode/serialization.hh ./gecode/serialization/boost.icc \
+	./gecode/serialization/deserializer.icc ./gecode/support/sort.hh ./gecode/vti.icc 
 gecode/serialization/deserializer$(OBJSUFFIX) gecode/serialization/deserializer$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
 	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/memory.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
 	./gecode/kernel/reflection.icc ./gecode/kernel/var.icc ./gecode/kernel/varmap.icc \
-	./gecode/kernel/view.icc ./gecode/serialization.hh ./gecode/serialization/deserializer.icc \
-	./gecode/support/sort.hh ./gecode/vti.icc 
+	./gecode/kernel/view.icc ./gecode/serialization.hh ./gecode/serialization/boost.icc \
+	./gecode/serialization/deserializer.icc ./gecode/support/sort.hh ./gecode/vti.icc 
 gecode/serialization/registry$(OBJSUFFIX) gecode/serialization/registry$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
@@ -3049,16 +3049,17 @@ gecode/serialization/registry$(OBJSUFFIX) gecode/serialization/registry$(SBJSUFF
 	./gecode/kernel/memory.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
 	./gecode/kernel/reflection.icc ./gecode/kernel/var.icc ./gecode/kernel/varmap.icc \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/serialization.hh \
-	./gecode/serialization/deserializer.icc ./gecode/support/dynamic-array.hh ./gecode/support/shared-array.hh \
-	./gecode/support/sort.hh ./gecode/support/static-pqueue.hh ./gecode/vti.icc 
+	./gecode/serialization/boost.icc ./gecode/serialization/deserializer.icc ./gecode/support/dynamic-array.hh \
+	./gecode/support/shared-array.hh ./gecode/support/sort.hh ./gecode/support/static-pqueue.hh \
+	./gecode/vti.icc 
 gecode/serialization/boost$(OBJSUFFIX) gecode/serialization/boost$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
 	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
 	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
 	./gecode/kernel/memory.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
 	./gecode/kernel/reflection.icc ./gecode/kernel/var.icc ./gecode/kernel/varmap.icc \
-	./gecode/kernel/view.icc ./gecode/serialization.hh ./gecode/serialization/deserializer.icc \
-	./gecode/support/sort.hh ./gecode/vti.icc 
+	./gecode/kernel/view.icc ./gecode/serialization.hh ./gecode/serialization/boost.icc \
+	./gecode/serialization/deserializer.icc ./gecode/support/sort.hh ./gecode/vti.icc 
 examples/support$(OBJSUFFIX) examples/support$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/bdd.hh ./gecode/bdd/array.icc ./gecode/bdd/bddsupport.icc \
@@ -4074,15 +4075,15 @@ examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./gecode/minimodel/matrix.icc ./gecode/search.hh ./gecode/search/bab.icc \
 	./gecode/search/dfs.icc ./gecode/search/engine-ctrl.icc ./gecode/search/lds.icc \
 	./gecode/search/reco-stack.icc ./gecode/search/restart.icc ./gecode/search/statistics.icc \
-	./gecode/search/stop.icc ./gecode/serialization.hh ./gecode/serialization/deserializer.icc \
-	./gecode/set.hh ./gecode/set/array.icc ./gecode/set/exception.icc \
-	./gecode/set/propagator.icc ./gecode/set/var.icc ./gecode/set/var/imp-hdr.icc \
-	./gecode/set/var/imp.icc ./gecode/set/var/integerset.icc ./gecode/set/var/iter.icc \
-	./gecode/set/var/set.icc ./gecode/set/view.icc ./gecode/set/view/complement.icc \
-	./gecode/set/view/const.icc ./gecode/set/view/offset.icc ./gecode/set/view/set.icc \
-	./gecode/set/view/singleton.icc ./gecode/support/buddy/bdd.h ./gecode/support/dynamic-array.hh \
-	./gecode/support/dynamic-stack.hh ./gecode/support/shared-array.hh ./gecode/support/sort.hh \
-	./gecode/support/static-pqueue.hh ./gecode/vti.icc 
+	./gecode/search/stop.icc ./gecode/serialization.hh ./gecode/serialization/boost.icc \
+	./gecode/serialization/deserializer.icc ./gecode/set.hh ./gecode/set/array.icc \
+	./gecode/set/exception.icc ./gecode/set/propagator.icc ./gecode/set/var.icc \
+	./gecode/set/var/imp-hdr.icc ./gecode/set/var/imp.icc ./gecode/set/var/integerset.icc \
+	./gecode/set/var/iter.icc ./gecode/set/var/set.icc ./gecode/set/view.icc \
+	./gecode/set/view/complement.icc ./gecode/set/view/const.icc ./gecode/set/view/offset.icc \
+	./gecode/set/view/set.icc ./gecode/set/view/singleton.icc ./gecode/support/buddy/bdd.h \
+	./gecode/support/dynamic-array.hh ./gecode/support/dynamic-stack.hh ./gecode/support/shared-array.hh \
+	./gecode/support/sort.hh ./gecode/support/static-pqueue.hh ./gecode/vti.icc 
 examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./examples/sudoku.icc ./examples/support.hh ./examples/support.icc \
 	./examples/timer.hh ./gecode/bdd.hh ./gecode/bdd/array.icc \

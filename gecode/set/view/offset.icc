@@ -248,8 +248,8 @@ namespace Gecode { namespace Set {
   forceinline Reflection::Type*
   OffsetSetView<View>::type(void) {
     Reflection::Type* t = new Reflection::Type(2);
-    t->u.t[0] = new Reflection::Type("set.OffsetSetView");
-    t->u.t[1] = View::type();
+    (*t)[0] = new Reflection::Type("set.OffsetSetView");
+    (*t)[1] = View::type();
     return t;
   }
 
