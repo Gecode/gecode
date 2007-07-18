@@ -421,6 +421,7 @@ namespace Gecode { namespace Bdd {
   forceinline void 
   SplitBddView::viewdot(void) const { return view.viewdot(); }
 
+  /// Iterator for the values of a SplitBddView
   template <>
   class DomValues<SplitBddView> : public DomValues<BddVarImp*> {
   public:
@@ -447,6 +448,7 @@ namespace Gecode { namespace Bdd {
     DomValues<BddVarImp*>::init(x.base().variable());
   }
 
+  /// Iterator for the values in the greatest lower bound of a SplitBddView
   template <>
   class GlbValues<SplitBddView> : public GlbValues<BddVarImp*> {
   public:
@@ -529,6 +531,7 @@ namespace Gecode { namespace Bdd {
   }
   namespace Bdd {
 
+  /// Iterator for the unknown values of a SplitBddView
   template <>
   class UnknownValues<SplitBddView> : public UnknownValues<BddVarImp*> {
   public:

@@ -27,7 +27,7 @@ namespace Gecode { namespace Reflection {
   class VarMapIter;
 
   /**
-    * \brief Mapping Gecode variables to variable specifications
+    * \brief Mapping %Gecode variables to variable specifications
     * \ingroup TaskIntReflect
     */
   class VarMap {

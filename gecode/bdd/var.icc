@@ -60,6 +60,7 @@ namespace Gecode { namespace Bdd {
     //@}
   };
 
+  /// Iterator for the values in the greatest lower bound of a bdd set variable
   template <class T> class GlbValues {
   public:
     /// \name Constructors and initialization
@@ -85,6 +86,7 @@ namespace Gecode { namespace Bdd {
     //@}
   };
 
+  /// Iterator for the values in the least upper bound of a bdd set variable
   template <class T> class LubValues {
   public:
     /// \name Constructors and initialization
@@ -112,6 +114,7 @@ namespace Gecode { namespace Bdd {
     //@}
   };
 
+  /// Iterator for the values lub-glb of a bdd set variable
   template <class T> class UnknownValues {
   public:
     /// \name Constructors and initialization
@@ -137,6 +140,11 @@ namespace Gecode { namespace Bdd {
     //@}
   };
 
+  /**
+   * \brief Finite integer set variable implementation using bdds
+   *
+   * \ingroup Other
+   */  
   class BddVarImp : public BddVarImpBase {
     friend class BddIterator;
     friend class DomBddIterator;
@@ -175,7 +183,7 @@ namespace Gecode { namespace Bdd {
      *         
      */
     unsigned int _offset;
-    /// cache, whether variable is already assigned
+    /// cache whether variable is already assigned
     bool assignment;
   public:
     /// Construct empty BddVar without allocation for boolean vector
@@ -188,7 +196,7 @@ namespace Gecode { namespace Bdd {
     GecodeBdd gen_assignment(I& i);
 
     /*
-     * \todo FIXME: JUST A HACK FOR MISSING ADVISORS similar to the one used for SetVars
+     * \todo FIXME: JUST A HACK FOR MISSING ADVISORS
      */
     forceinline
     void notify(Space* home, ModEvent me) {
@@ -773,6 +781,7 @@ namespace Gecode {
 
   };
 
+  /// Range iterator for the greatest lower bound of a bdd variable
   class BddVarGlbRanges {
   private:
     Set::GlbRanges<Bdd::BddVarImp*> iter;
@@ -785,6 +794,7 @@ namespace Gecode {
     int max(void) const;
   };
 
+  /// Value iterator for the greatest lower bound of a bdd variable
   class BddVarGlbValues {
   private:
     Bdd::GlbValues<Bdd::BddVarImp*> iter;
@@ -796,6 +806,7 @@ namespace Gecode {
     int val(void) const;
   };
 
+  /// Range iterator for the least upper bound of a bdd variable
   class BddVarLubRanges {
   private:
     Set::LubRanges<Bdd::BddVarImp*> iter;
@@ -808,6 +819,7 @@ namespace Gecode {
     int max(void) const;
   };
 
+  /// Value iterator for the least upper bound of a bdd variable
   class BddVarLubValues {
   private:
     Bdd::LubValues<Bdd::BddVarImp*> iter;
@@ -819,6 +831,7 @@ namespace Gecode {
     int val(void) const;
   };
 
+  /// Value iterator for the domain of a bdd variable
   class BddVarDomValues {
   private:
     Bdd::DomValues<Bdd::BddVarImp*> iter;
@@ -831,6 +844,7 @@ namespace Gecode {
   };
 
 
+  /// Range iterator for the unknown set of a bdd variable
   class BddVarUnknownRanges {
   private:
     Set::UnknownRanges<Bdd::BddVarImp*> iter;

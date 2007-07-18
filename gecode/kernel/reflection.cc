@@ -29,11 +29,16 @@ namespace Gecode { namespace Reflection {
   
   /* Variable map */
 
+  /// Implementation of variable maps
   class VarMap::VarMapImp {
   public:
+    /// Map variable names to variable implementations
     std::map<std::string,VarBase*> nameToVar;
+    /// Map variable implementations to indices in the VarSpec vector
     std::map<VarBase*,int> m;
+    /// Vector of variable specifications
     std::vector<VarSpec*>  v;
+    /// Destructor, deleting all specifications stored in \a v
     ~VarMapImp(void);
   };
   

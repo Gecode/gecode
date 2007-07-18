@@ -306,6 +306,7 @@ namespace Gecode { namespace Bdd {
     return view.viewdot();
   }
 
+  /// Iterator for the values of a BndBddView
   template <>
   class DomValues<BndBddView> : public DomValues<BddVarImp*> {
   public:
@@ -332,6 +333,7 @@ namespace Gecode { namespace Bdd {
     DomValues<BddVarImp*>::init(x.base().variable());
   }
 
+  /// Iterator for the values in the greatest lower bound of a BndBddView
   template <>
   class GlbValues<BndBddView> : public GlbValues<BddVarImp*> {
   public:
@@ -414,6 +416,8 @@ namespace Gecode { namespace Bdd {
 
   }
   namespace Bdd {
+
+  /// Iterator for the unknown values of a BndBddView
   template <>
   class UnknownValues<BndBddView> : public UnknownValues<BddVarImp*> {
   public:

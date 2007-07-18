@@ -33,15 +33,6 @@
 #include "gecode/set.hh"
 #endif
 
-// #ifdef GECODE_HAVE_LIB_BUDDY
-// #include "gecode/support/buddy/bdd.h"
-// #endif
-
-// #ifdef GECODE_HAVE_LIB_CUDD
-// #include "cuddObj.hh"
-// #include "cuddInt.h"
-// #endif 
-
 #include "gecode/support/buddy/bdd.h"
 
 /*
@@ -75,13 +66,6 @@
 namespace Gecode { 
   //@{
   /// Passing external bdd variables
-// #ifdef GECODE_HAVE_LIB_BUDDY
-//   typedef bdd  GecodeBdd;
-// #endif
-// #ifdef GECODE_HAVE_LIB_CUDD
-//   typedef BDD GecodeBdd;
-// #endif
-
   typedef bdd  GecodeBdd;
 
   //@}
@@ -98,26 +82,10 @@ namespace Bdd {
    * sets provided by %Gecode are contained as nested namespaces.
    *
    */
-// #ifdef GECODE_HAVE_LIB_BUDDY  
-//   const GecodeBdd Empty = bdd_false();
-//   const GecodeBdd Full = bdd_true();
-
-// #endif
-
   const GecodeBdd Empty = bdd_false();
   const GecodeBdd Full = bdd_true();
 
 }}
-
-// #ifdef GECODE_HAVE_LIB_BUDDY  
-// #define BDDTOP  Bdd::Full
-// #define BDDBOT  Bdd::Empty
-// #endif  
-
-// #ifdef GECODE_HAVE_LIB_CUDD
-// #define BDDTOP mgr->top()
-// #define BDDBOT mgr->bot()
-// #endif
 
 #define BDDTOP  Bdd::Full
 #define BDDBOT  Bdd::Empty
@@ -130,16 +98,6 @@ namespace Gecode {
     BDD_BND_DOM ///< Output full domain and bounds
   };
 }
-
-// #ifdef GECODE_HAVE_LIB_BUDDY
-// #include "gecode/bdd/manager/buddy.icc"
-// typedef Gecode::BuddyMgr BddMgr;
-// #endif
-
-// #ifdef GECODE_HAVE_LIB_CUDD
-// #include "gecode/bdd/manager/cudd.icc"  
-// typedef Gecode::CuddMgr BddMgr;
-// #endif 
 
 #include "gecode/bdd/manager/buddy.icc"
 typedef Gecode::BuddyMgr BddMgr;
@@ -399,12 +357,13 @@ namespace Gecode {
 	       const BddVarArgs& allvars, 
 	       SetConLevel scl = SCL_DOM);
 
-  /** \brief Post propagator \wedge r = \bigcup_{i\in s}  x_i \f$
+  /* \brief Post propagator \f$\wedge r = \bigcup_{i\in s}  x_i \f$
    */ 
-//   GECODE_BDD_EXPORT void
-//   permutation(Space* home, const IntVarArgs& x, const IntSet& r, 
-// 	      BddVar s, BddVar t, SetConLevel scl = SCL_DOM);
+/*   GECODE_BDD_EXPORT void
+     permutation(Space* home, const IntVarArgs& x, const IntSet& r, 
+   	      BddVar s, BddVar t, SetConLevel scl = SCL_DOM);
   // for permutation we need a CONST VIEW and DONT NEED Card = N THAT IS GOOD
+*/
 
   /** \brief Post propagator for \f$ |\displaystyle\bigcup_{i = 0}^{|x| - 1} x_i| = n 
    *  \wedge t = \bigcup_{i\in s}  x_i \f$
@@ -457,9 +416,6 @@ namespace Gecode {
   branch(Space* home, const BddVarArgs& x, BddBvarSel vars, BddBvalSel vals, 
 	 SetConLevel scl = SCL_DOM);
 
-
-
-  // we will always have BDD + SETS #ifdef GECODE_HAVE_SET_VARS
 
   ///\name Use bdd variables with set propagators
   //@{

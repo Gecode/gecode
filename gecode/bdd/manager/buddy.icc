@@ -508,12 +508,20 @@ namespace Gecode {
     o = bdd_setmaxincrease(max);
   }
 
+  /**
+   * \brief Manager for binary decision diagrams, using the buddy library
+   */
   class BuddyMgr : public SharedHandle<BMI> {
   public:
+    
+    /// Default constructor
     BuddyMgr(void);
+    /// Construct manager with initial nodesize \a n and cachesize \a c
     BuddyMgr(int n, int c);
+    /// Copy constructor
     BuddyMgr(const BuddyMgr& m);
-    BuddyMgr(BMI*);
+    /// Construct using manager implementation \a i
+    BuddyMgr(BMI* i);
 
     /// Initialize manager with initial nodesize \a n and cachesize \a c.
     void init(int n, int c);

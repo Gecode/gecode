@@ -29,6 +29,7 @@ namespace Gecode {
 
   namespace Bdd {
 
+    /// Iterator for the values of a bdd variable implementation
     template <> 
     class DomValues<BddVarImp*> {
     private:
@@ -221,6 +222,7 @@ namespace Gecode {
       return is;
     }
 
+    /// Iterator for the values in the greatest lower bound of a bdd variable implementation
     template <> 
     class GlbValues<BddVarImp*> : public DomBddIterator {
     private:
@@ -316,6 +318,8 @@ namespace Gecode {
 
   }
   namespace Bdd {
+
+    /// Iterator for the values in the least upper bound of a bdd variable implementation
     template <> 
     class LubValues<BddVarImp*> : public DomBddIterator {
     private:
@@ -420,6 +424,7 @@ namespace Gecode {
   }
   namespace Bdd {
 
+    /// Iterator for the unknown values of a bdd variable implementation
     template <> 
     class UnknownValues<BddVarImp*> : public DomBddIterator {
     private:
@@ -1014,8 +1019,6 @@ namespace Gecode {
 
     forceinline ModEvent 
     BddVarImp::exclude(Space* home, int a, int b) {
-      // std::cout << "exclude:" << a << ".." <<b << " of "<< offset() <<"\n";
-
       // values are already excluded
       if (a > max  || b < min) 
         return ME_BDD_NONE;
@@ -1037,7 +1040,6 @@ namespace Gecode {
     template <class I> 
     forceinline ModEvent 
     BddVarImp::excludeI(Space* home, I& i) {
-      // std::cout << "excludeI: \n";
       // we can only exclude what intersects the min and max element of the variable
       Iter::Ranges::Singleton s(min, max);
       Iter::Ranges::Inter<Iter::Ranges::Singleton, I> inter(s, i);
@@ -1064,7 +1066,6 @@ namespace Gecode {
 
     forceinline ModEvent 
     BddVarImp::include(Space* home, int a, int b) {
-      // std::cout << "include:" << a << ".." << b << " in "<< offset() << "\n";  
       if (a < min || b > max) 
         return ME_BDD_FAILED;
 
@@ -1120,14 +1121,11 @@ namespace Gecode {
 
     forceinline ModEvent
     BddVarImp::eq(Space* home, int a, int b) {
-      //std::cerr << "eq =" << a << "#" << b << "\n";
       if (b < min || a > max) 
         return ME_BDD_FAILED;
 
       Iter::Ranges::Singleton m(a, b);
       GecodeBdd ass = gen_assignment(m);
-      //std::cerr << "assignment = " << ass << "\n";
-
       return tell_formula(home, ass);
     }
 
@@ -1393,7 +1391,6 @@ namespace Gecode {
 
     forceinline void
     DomBddIterator::init(const BddVarImp* x, GecodeBdd& remain) {
-      // std::cout <<"DomBddIterator::init(x)\n";
       vector_level = 0;
       mi    = x->min;
       ma    = x->max;
@@ -1437,4 +1434,3 @@ namespace Gecode {
 
   }
 }
-// }}

@@ -216,6 +216,9 @@ namespace Gecode { namespace Bdd {
    *
    */
 
+  /**
+   * \brief Binary bdd propagator
+   */
   template <class View0, class View1>
   class Bin : public MixBinaryPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM> {
   protected:
@@ -237,6 +240,9 @@ namespace Gecode { namespace Bdd {
     static  ExecStatus post(Space* home, View0& x, View1& s, GecodeBdd& d);
   }; 
 
+  /**
+   * \brief Bdd propagator with n+1 arguments
+   */
   template <class View0, class View1>
   class NaryOneBdd : 
     public MixNaryOnePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM> {
