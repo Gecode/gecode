@@ -45,3 +45,6 @@ namespace Gecode {
     GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
   }
 }
+
+// STATISTICS: bdd-prop
+

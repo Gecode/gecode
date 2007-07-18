@@ -1434,3 +1434,5 @@ namespace Gecode {
 
   }
 }
+
+// STATISTICS: bdd-var

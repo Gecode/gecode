@@ -338,7 +338,6 @@ BDDSRC0 =	\
 BDDVARIMP = \
         gecode/bdd/var/imp-hdr.icc gecode/bdd/var/imp-body.icc
 
-# 	manager/cudd.icc          
 BDDHDR0 =		                \
 	view.icc manager/buddy.icc exception.icc array.icc \
 	bddsupport.icc \
@@ -352,7 +351,7 @@ BDDHDR0 =		                \
 	bddprop/rangeroots.icc bddprop/rangerec.icc  \
 	bddprop/atmost.icc bddprop/partition.icc bddprop/rel.icc \
 	bddprop/select.icc bddprop/singleton.icc bddprop/bin.icc \
-	bddprop/common.icc bddprop/distinct.icc bddprop/disjointglb.icc \
+	bddprop/distinct.icc bddprop/disjointglb.icc \
 	branch.hh branch/select-val.icc branch/select-view.icc	
 
 BDDSRC		= $(BDDSRC0:%=gecode/bdd/%)
@@ -586,7 +585,7 @@ ALLSRC =						\
 	$(MMSRC) $(SERSRC) $(SUPPORTSRC) $(INTEXAMPLESRC) $(SETEXAMPLESRC) \
 	$(BDDEXAMPLESRC)
 ALLVARIMP = $(INTVARIMP) $(SETVARIMP) $(BDDVARIMP)
-ALLHDR = $(KERNELHDR) $(SEARCHHDR) $(BUDDYHDR) $(INTHDR) $(SETHDR) $(BDDHR) $(MMHDR) \
+ALLHDR = $(KERNELHDR) $(SEARCHHDR) $(BUDDYHDR) $(INTHDR) $(SETHDR) $(BDDHDR) $(MMHDR) \
 		$(SERHDR) $(OTHERHDR) $(ALLVARIMP)
 ALLOBJ0 = $(ALLSRC:%.cc=%$(OBJSUFFIX))
 ALLOBJ  = $(ALLOBJ0:%.c=%$(OBJSUFFIX))

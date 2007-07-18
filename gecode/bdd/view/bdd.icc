@@ -440,4 +440,3 @@ namespace Gecode { namespace Bdd {
 
 
 // STATISTICS: bdd-var
-

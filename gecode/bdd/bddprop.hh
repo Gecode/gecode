@@ -401,3 +401,5 @@ namespace Gecode { namespace Bdd {
 #include "gecode/support/dynamic-array.hh"
 #include "gecode/bdd/bddprop/disjointglb.icc"
 #endif
+
+// STATISTICS: bdd-prop

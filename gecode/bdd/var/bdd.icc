@@ -256,3 +256,5 @@ namespace Gecode {
   BddVarUnknownRanges::max(void) const { return iter.max(); }
 
 }
+
+// STATISTICS: bdd-var
