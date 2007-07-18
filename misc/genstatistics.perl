@@ -68,22 +68,26 @@ while ($file = @ARGV[$i++]) {
   close FILE;
 }
 
-@modorder = ("kernel","search","int","set","minimodel",
-	     "iter","support","example","test");
+@modorder = ("kernel","search","int","set","bdd","minimodel",
+	     "serialization", "iter","support","buddy","example","test");
 
 @catorder = ("core","var","prop","branch","post",
-	     "int","set","stress","any","other");
+	     "int","set","bdd","stress","any","other");
 $i = 0;
 
 $modclear{"kernel"} = "Kernel";
 $modclear{"search"} = "Search engines";
 $modclear{"int"} = "Finite domain integers";
 $modclear{"set"} = "Finite integer sets";
+$modclear{"bdd"} = "BDD-based finite integer sets";
 $modclear{"minimodel"} = "Minimal modelling support";
+$modclear{"serialization"} = "Serialization support";
 $modclear{"iter"} = "Range and value iterators";
 $modclear{"support"} = "Support algorithms and datastructures";
 $modclear{"example"} = "\%Example scripts";
 $modclear{"test"} = "Systematic tests";
+$modclear{"buddy"} = "Buddy bdd library";
+
 
 $catclear{"core"} = "Core functionality";
 $catclear{"var"} = "Variables, views, and variable implementations";
@@ -94,6 +98,7 @@ $catclear{"any"} = "All";
 $catclear{"other"} = "Miscellaneous";
 $catclear{"int"} = "Finite domain integers";
 $catclear{"set"} = "Finite integer sets";
+$catclear{"bdd"} = "BDD-based finite integer sets";
 $catclear{"stress"} = "System stress";
 
 print <<EOF

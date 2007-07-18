@@ -126,5 +126,4 @@ namespace Gecode { namespace Bdd { namespace Branch {
 
 }}}
 
-// STATISTICS: set-branch
-
+// STATISTICS: bdd-branch

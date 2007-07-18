@@ -218,5 +218,5 @@ namespace Gecode { namespace Bdd { namespace Branch {
 #include "gecode/bdd/branch/select-view.icc"
 
 #endif
-// STATISTICS: set-branch
 
+// STATISTICS: bdd-branch

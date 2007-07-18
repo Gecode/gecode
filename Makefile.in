@@ -681,7 +681,7 @@ endif
 
 TESTSRC	= $(TESTSRC0:%=test/%.cc)
 TESTHDR0 = \
-	test int set branch
+	test int set bdd branch
 TESTHDR = $(TESTHDR0:%=test/%.hh)
 TESTOBJ	= $(TESTSRC:%.cc=%$(OBJSUFFIX))
 TESTSBJ	= $(TESTSRC:%.cc=%$(SBJSUFFIX))

@@ -643,4 +643,4 @@ BddTest::run(const Options& opt) {
 
 #undef CHECK
 
-// STATISTICS: test-set
+// STATISTICS: test-bdd

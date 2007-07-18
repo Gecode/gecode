@@ -66,4 +66,4 @@ namespace Gecode { namespace Bdd {
 
 }}
 
-// STATISTICS: set-var
+// STATISTICS: bdd-var

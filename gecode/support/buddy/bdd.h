@@ -461,8 +461,7 @@ extern GECODE_BUDDY_EXPORT const BDD bddtrue;
 
 class bvec;
 
-class bdd
-{
+class bdd {
  public:
 
    bdd(void)         { root=0; }
@@ -897,8 +896,7 @@ inline bdd bdd_false(void)
 
 /*=== Iostream printing ================================================*/
 
-class bdd_ioformat
-{
+class bdd_ioformat {
  public:
    bdd_ioformat(int f) { format=f; }
  private:

@@ -55,5 +55,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: set-post
-
+// STATISTICS: bdd-post

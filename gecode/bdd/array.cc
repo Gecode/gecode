@@ -98,5 +98,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: set-other
-
+// STATISTICS: bdd-other

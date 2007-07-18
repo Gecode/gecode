@@ -1631,4 +1631,4 @@ GECODE_BDD_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::Bdd::SetBddView& x);
 
 
-// STATISTICS: set-var
+// STATISTICS: bdd-var

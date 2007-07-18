@@ -451,5 +451,4 @@ namespace Gecode {
 }
 #endif 
 
-// STATISTICS: set-var
-
+// STATISTICS: bdd-var

@@ -99,4 +99,4 @@ public:
 };
 BddDomSupDom _bdddomsup("Dom::SupDom");
 
-// STATISTICS: test-set
+// STATISTICS: test-bdd

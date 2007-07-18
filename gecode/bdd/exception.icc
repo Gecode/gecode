@@ -152,5 +152,4 @@ namespace Gecode { namespace Bdd {
 
 }}
 
-// STATISTICS: set-other
-
+// STATISTICS: bdd-other

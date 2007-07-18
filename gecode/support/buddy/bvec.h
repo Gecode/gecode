@@ -121,8 +121,7 @@ extern GECODE_BUDDY_EXPORT BDD  bvec_neq(BVEC left, BVEC right);
 
 /*=== User BVEC class ==================================================*/
 
-class bvec
-{
+class bvec {
  public:
 
    bvec(void)                { roots.bitvec=NULL; roots.bitnum=0; }

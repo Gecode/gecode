@@ -647,5 +647,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: set-var
-
+// STATISTICS: bdd-var
