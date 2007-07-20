@@ -72,6 +72,13 @@ namespace Gecode { namespace Int { namespace Distinct {
     return "int.distinct.Bnd";
   }
 
+  template <class View>
+  Reflection::ActorSpec&
+  Bnd<View>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& spec = Propagator::spec(home, m);
+    return spec << x.spec(home, m);
+  }
+
 
   /// Rank information
   class Rank {

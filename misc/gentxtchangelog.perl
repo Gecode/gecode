@@ -42,6 +42,7 @@ $modclear{"kernel"} = "Kernel";
 $modclear{"search"} = "Search engines";
 $modclear{"int"} = "Finite domain integers";
 $modclear{"set"} = "Finite integer sets";
+$modclear{"bdd"} = "BDD-based finite integer sets";
 $modclear{"minimodel"} = "Minimal modelling support";
 $modclear{"iter"} = "Range and value iterators";
 $modclear{"support"} = "Support algorithms and datastructures";
@@ -58,7 +59,7 @@ $whatclear{"change"} = "Other changes";
 $rankclear{"minor"} = "minor";
 $rankclear{"major"} = "major";
 
-@modorder = ("kernel","search","int","set","minimodel",
+@modorder = ("kernel","search","int","set","bdd","minimodel",
 	     "iter","support","example","test","other");
 
 @whatorder = ("new","change","bug","performance","documentation");

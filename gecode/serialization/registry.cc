@@ -92,49 +92,98 @@ namespace Gecode { namespace Serialization {
     }
 #endif
 
-    void distinct_val(Space* home, const std::vector<VarBase*>& v,
-                      Reflection::ActorSpec& spec) {
-      Reflection::Type t_intview("int.IntView");
-      if (spec[0]->type()->equal(&t_intview)) {
-        Reflection::ArrayArg<Reflection::Arg*>* a =
-          spec[0]->typedArg()->toArray<Reflection::Arg*>();
-        IntVarArgs iva(a->size());
-        for (int i=a->size(); i--;) {
-          iva[i] = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[(*a)[i]->toVar()])));
-        }
-        distinct(home, iva, ICL_VAL);
-        return;
-      }
-
-      Reflection::Type t_offsetview("int.OffsetView");
-      if (spec[0]->type()->equal(&t_offsetview)) {
-        Reflection::ArrayArg<Reflection::Arg*>* a = spec[0]->typedArg()->toArray<Reflection::Arg*>();
-        IntVarArgs iva(a->size());
-        IntArgs ia(a->size());
-        for (int i=a->size(); i--;) {
-          ia[i] = (*a)[i]->first()->toInt();
-          iva[i] = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[(*a)[i]->second()->toVar()])));
-        }
-        distinct(home, ia, iva, ICL_VAL);
-        return;
-      }
-
-    }
-    
-    class SomeIntConstraints {
+    class VariableCreators {
     public:
-        SomeIntConstraints() {
+        VariableCreators() {
         registry.add(VTI_INT, createIntVar);
         registry.add(VTI_BOOL, createBoolVar);
 #ifdef GECODE_HAVE_SET_VARS
         registry.add(VTI_SET, createSetVar);
 #endif
-        registry.add("int.distinct.Val", distinct_val);
       }
     };
-    SomeIntConstraints __someIntConstraints;
+    VariableCreators __variableCreators;
   }
     
 }}
+
+namespace Gecode { namespace Serialization {
+  // Additional constraint posting functions
+  namespace {
+    void
+    my_count(Space* home, const IntVarArgs& x, IntVar y,
+          IntRelType r, IntVar z, int c) {
+      if (c == 0) {
+        count(home, x, y, r, z);
+      } else if (c == 1) {
+        assert(r == IRT_GQ);
+        count(home, x, y, IRT_GR, z);
+      } else if (c == -1) {
+        assert(r == IRT_LQ);
+        count(home, x, y, IRT_LE, z);        
+      }
+    }
+    void
+    my_count(Space* home, const IntVarArgs& x, int y,
+          IntRelType r, IntVar z, int c) {
+      if (c == 0) {
+        count(home, x, y, r, z);
+      } else if (c == 1) {
+        assert(r == IRT_GQ);
+        count(home, x, y, IRT_GR, z);
+      } else if (c == -1) {
+        assert(r == IRT_LQ);
+        count(home, x, y, IRT_LE, z);        
+      }
+    }
+    
+    void
+    my_count(Space* home, const IntVarArgs& x, const IntArgs& y,
+          IntRelType r, IntVar z, int c) {
+      if (c == 0) {
+        count(home, x, y, r, z);
+      } else if (c == 1) {
+        assert(r == IRT_GQ);
+        count(home, x, y, IRT_GR, z);
+      } else if (c == -1) {
+        assert(r == IRT_LQ);
+        count(home, x, y, IRT_LE, z);        
+      }
+    }
+    
+    void my_distinct(Space* home, int o0, int o1, int o2,
+                     IntVar x0, IntVar x1, IntVar x2, IntConLevel icl) {
+       IntArgs ia(3); 
+       IntVarArgs iva(3);
+       ia[0] = o0; ia[1] = o1; ia[2] = o2;
+       iva[0] = x0; iva[1] = x1; iva[2] = x2;
+       distinct(home, ia, iva, icl);
+    }
+    void my_distinct(Space* home, int o0, int o1,
+                     IntVar x0, IntVar x1, IntConLevel icl) {
+       IntArgs ia(2); 
+       IntVarArgs iva(2);
+       ia[0] = o0; ia[1] = o1;
+       iva[0] = x0; iva[1] = x1;
+       distinct(home, ia, iva, icl);
+    }
+    
+    class IntArrayIter {
+    private:
+      Reflection::ArrayArg<int>* a;
+      int n;
+    public:
+      IntArrayIter(Reflection::ArrayArg<int>* a0) : a(a0), n(0) {}
+      bool operator()(void) { return n+1 < a->size(); }
+      void operator++(void) { n+=2; }
+      int min(void) const { return (*a)[n]; }
+      int max(void) const { return (*a)[n+1]; }
+      unsigned int width(void) const { return max() - min() + 1; }
+    };
+    
+  }
+}}
+
+#include "gecode/serialization/registry_generated.icc"
 
 // STATISTICS: serialization-any

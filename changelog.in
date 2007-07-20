@@ -53,6 +53,22 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: bdd
+What:   new
+Rank:   major
+[DESCRIPTION]
+Finite integer set variables based on binary decision diagrams
+(BDDs) have been added as a new variable type.
+
+[ENTRY]
+Module: kernel
+What:   new
+Rank:   major
+[DESCRIPTION]
+A reflection API has been added, which allows to query spaces 
+about the variables and propagators they contain.
+
+[ENTRY]
 Module: kernel
 What:   bug
 Rank:   major
@@ -245,7 +261,7 @@ functions for returning how much memory is allocated by a space.
 
 Moreover, the memory reported by some propagators has been
 ingnored. Note that this flaw did not affect the bechmark figures
-on the Gecode webpage.
+on the %Gecode webpage.
 
 [ENTRY]
 Module:	int

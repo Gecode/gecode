@@ -459,7 +459,9 @@ INPUT                  = . @top_srcdir@
 # *.c *.cc *.cxx *.cpp *.c++ *.java *.ii *.ixx *.ipp *.i++ *.inl *.h *.hh *.hxx 
 # *.hpp *.h++ *.idl *.odl *.cs *.php *.php3 *.inc *.m *.mm
 
-FILE_PATTERNS          = *.hh \
+FILE_PATTERNS          = *.h \
+			 *.c \
+			 *.hh \
                          *.cc \
                          *.icc
 

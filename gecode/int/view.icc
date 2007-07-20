@@ -1320,8 +1320,10 @@ namespace Gecode {
       //@{
       /// Default constructor
       BoolView(void);
-      /// Initialize from integer variable \a x
+      /// Initialize from Boolean variable \a x
       BoolView(const BoolVar& x);
+      /// Initialize from Boolean variable \a x
+      BoolView(BoolVarImp* x);
       //@}
 
       /// \name Domain status access

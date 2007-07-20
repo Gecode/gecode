@@ -51,7 +51,7 @@ namespace Gecode { namespace Int { namespace Circuit {
   template <class View>
   const char*
   Val<View>::name(void) const {
-    return "int.Val";
+    return "int.circuit.Val";
   }
 
   template <class View>
