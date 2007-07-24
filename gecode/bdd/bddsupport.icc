@@ -83,12 +83,12 @@ namespace Gecode {
   template <class View>
   void 
   variableorder(ViewArray<View>& x) {
-    // std::cout << "start order\n";
+    // std::cerr << "start order on"<< x.size() << "\n";
     BMI* mgr = x[0].manager();
-    // std::cout << "allocated \n";
+    // std::cerr << "allocated \n";
     unsigned int var_in_tab = mgr->allocated();
     
-    // std::cout << "var_in_tab = " << var_in_tab << "\n";
+    // std::cerr << "var_in_tab = " << var_in_tab << "\n";
 
     unsigned int min_offset = x[0].offset();
     unsigned int max_width  = x[0].table_width();
@@ -101,7 +101,7 @@ namespace Gecode {
       }
     }
     
-    // std::cout << "max_width = " << max_width  << " min_offset = " << min_offset << "\n";
+    // std::cerr << "max_width = " << max_width  << " min_offset = " << min_offset << "\n";
 
     // constraint order as specified by Hawkins, Lagoon and Stuckey
     GECODE_AUTOARRAY(int, hls_order, var_in_tab);
@@ -115,13 +115,17 @@ namespace Gecode {
 
     // ordering those that lie in the scope
     for (unsigned int f = 0; f < max_width; f++) {
+      // std::cerr << "f="<<f << " ";
       for (int i = 0; i < x.size(); i++) {
+	// std::cerr << "i="<<i << " " << x[i] << " ";
 	int xo = x[i].offset();
-	// std::cout << "order " << xo << "\t";
+	// std::cerr << "order " << xo << "\t";
 	int xw = x[i].table_width();
 	int cur= xo + f;
-	// std::cout << "cur " << cur << "\t" << xw << "\t" << xo + xw << "\n";
-	if (cur <= xo + xw) {
+	// std::cerr << "cur " << cur << "\t" << xw << "\t" << xo + xw << "\t";
+	// std::cerr << " test " << (cur < xo + xw ) << "\n";
+	if (cur < xo + xw) {
+	  // std::cerr << "set\n";
 	  hls_order[c] = cur;
 	  c++;
 	}
@@ -130,23 +134,24 @@ namespace Gecode {
 
     // IMPORTANT DO NOT FORGET REMAINING LARGER VARIABLES
     for (unsigned int i = c; i < var_in_tab; i++, c++) {
-      // std::cout << "rem = " <<i<<"\n";
+      // std::cerr << "rem = " <<i<<"\n";
       hls_order[i] = i;
     }   
-    // std::cout << "set order\n";
+    
+    // std::cerr << "set order\n";
     mgr->setorder(&hls_order[0]);
-    // std::cout << "ordering done\n";
+    // std::cerr << "ordering done\n";
   }
 
   template <class View, class View1>
   void 
   variableorder(ViewArray<View>& x, ViewArray<View1>& y = NULL) {
-    std::cerr << "start order\n";
+    // std::cerr << "start order\n";
     BMI* mgr = x[0].manager();
-    std::cerr << "allocated \n";
+    // std::cerr << "allocated \n";
     unsigned int var_in_tab = mgr->allocated();
     
-    std::cerr << "var_in_tab = " << var_in_tab << "\n";
+    // std::cerr << "var_in_tab = " << var_in_tab << "\n";
 
     unsigned int min_offset = x[0].offset();
     unsigned int max_width  = x[0].table_width();
@@ -159,7 +164,7 @@ namespace Gecode {
       }
     }
     
-    std::cerr << "max_width = " << max_width  << " min_offset = " << min_offset << "\n";
+    // std::cerr << "max_width = " << max_width  << " min_offset = " << min_offset << "\n";
 
     // constraint order as specified by Hawkins, Lagoon and Stuckey
 //     for (int i = 0; i < y.size(); i++) {
@@ -179,26 +184,26 @@ namespace Gecode {
     for (unsigned int f = 0; f < max_width; f++) {
       for (int i = 0; i < x.size(); i++) {
 	int xo = x[i].offset();
-	std::cerr << "order " << xo << "\n";
+	// std::cerr << "order " << xo << "\n";
 	int xw = x[i].table_width();
 	int cur= xo + f;
-	if (cur <= xo + xw) {
+	if (cur < xo + xw) {
 	  hls_order[c] = cur;
 	  c++;
 	}
       }
       // INVARIANT: Here we should assume that variables of the same array
       //            have the same initial values for min and max of the set bounds
-      std::cerr << "check \t";
-      std::cerr << "f=" << f << " xmin: " << x[0].mgr_min() << " and ymin " << y[0].mgr_min() << "\n";
+      // std::cerr << "check \t";
+      // std::cerr << "f=" << f << " xmin: " << x[0].mgr_min() << " and ymin " << y[0].mgr_min() << "\n";
       // invariant new arrays have subranges of old arrays
 	for (int i = 0; i < y.size(); i++) {
 	  if ( (x[0].mgr_min() + (int) f >= y[i].mgr_min()) &&
 	       (x[0].mgr_min() + (int) f <= y[i].mgr_max())) {
-	    std::cerr << "do y \t";
+	    // std::cerr << "do y \t";
 	    int xyshift = y[i].mgr_min()  - x[0].mgr_min();
 	    int yo = y[i].offset();
-	    std::cerr << "order " << yo << "\n";
+	    // std::cerr << "order " << yo << "\n";
 	    int yw = y[i].table_width();
 	    int cur= yo + f - xyshift;
 	    if (cur <= yo + yw) {
@@ -215,26 +220,26 @@ namespace Gecode {
     }   
 
     for (unsigned int i = 0; i < var_in_tab; i++) {
-      std::cerr << hls_order[i] << " ";
+      // std::cerr << hls_order[i] << " ";
     }   
-    std::cerr << "\n";
+    // std::cerr << "\n";
 
 
-    std::cerr << "set order\n";
+    // std::cerr << "set order\n";
     mgr->setorder(&hls_order[0]);
-    std::cerr << "ordering done\n";
+    // std::cerr << "ordering done\n";
   }
 
   template <class View>
   void 
   variableorder(ViewArray<View>** x, int xs) {
-    std::cerr << "start order\n";
+    // std::cerr << "start order\n";
     
     BMI* mgr = (*(x[0]))[0].manager();
-    std::cerr << "allocated \n";
+    // std::cerr << "allocated \n";
     unsigned int var_in_tab = mgr->allocated();
     
-    std::cerr << "var_in_tab = " << var_in_tab << "\n";
+    // std::cerr << "var_in_tab = " << var_in_tab << "\n";
 
     unsigned int min_offset = (*(x[0]))[0].offset();
     unsigned int max_width  = (*(x[0]))[0].table_width();
@@ -249,7 +254,7 @@ namespace Gecode {
 	int width = (*(x[i]))[j].table_width();
 	int cmin  = (*(x[i]))[j].mgr_min();
 	int cmax  = (*(x[i]))[j].mgr_max();
-	std::cerr << "off= " << off << " width=" << width << " cmin=" << cmin << " cmax= " << cmax << "\n";
+	// std::cerr << "off= " << off << " width=" << width << " cmin=" << cmin << " cmax= " << cmax << "\n";
 	if (off < min_offset) {
 	  min_offset = off;
 	}
@@ -265,7 +270,7 @@ namespace Gecode {
       }
     }
     
-    std::cerr << "max_width = " << max_width  << " min_offset = " << min_offset << "\n";
+    // std::cerr << "max_width = " << max_width  << " min_offset = " << min_offset << "\n";
 
     GECODE_AUTOARRAY(int, hls_order, var_in_tab);
 
@@ -282,13 +287,13 @@ namespace Gecode {
 	for (int i = 0; i < x[z]->size(); i++) {
 	  if ( ((*(x[z]))[i].mgr_min() <= minv + f) && 
 	       (minv + f <= (*(x[z]))[i].mgr_max())) {
-	    std::cerr << "do (*(x[z])) \t";
+	    // std::cerr << "do (*(x[z])) \t";
 	    int xshift = (*(x[z]))[i].mgr_min() - minv;
 	    int xo = (*(x[z]))[i].offset();
-	    std::cerr << "order " << xo << "\n";
+	    // std::cerr << "order " << xo << "\n";
 	    int xw = (*(x[z]))[i].table_width();
 	    int cur= xo + f - xshift;
-	    if (cur <= xo + xw) {
+	    if (cur < xo + xw) {
 	      hls_order[c] = cur;
 	      c++;
 	    }
@@ -302,15 +307,15 @@ namespace Gecode {
       hls_order[i] = i;
     }   
 
-    for (unsigned int i = 0; i < var_in_tab; i++) {
-      std::cerr << hls_order[i] << " ";
-    }   
-    std::cerr << "\n";
+//     for (unsigned int i = 0; i < var_in_tab; i++) {
+//       std::cerr << hls_order[i] << " ";
+//     }   
+//     std::cerr << "\n";
 
 
-    std::cerr << "set order\n";
+    // std::cerr << "set order\n";
     mgr->setorder(&hls_order[0]);
-    std::cerr << "ordering done\n";
+    // std::cerr << "ordering done\n";
   }
 
   /// Function used for computing the convex_hull and the variables of it

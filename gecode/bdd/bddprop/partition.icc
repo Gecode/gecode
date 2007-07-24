@@ -463,7 +463,13 @@ namespace Gecode {
     for (int i = 0; i < n; i++) {
       sv[i].init(mgr, bv[i].min(), bv[i].max(), bv[i]);
     }
-    
+//     std::cerr << "partition_con with intvars\n";
+//     // add first shot on ordering the intvars
+//     for (int i = 0; i < n; i++) 
+//       std::cerr << x[i] << " ";
+//     std::cerr << "\n";
+//     variableorder(sv);
+
     BddView yv(y);
     // this wont work as there is no post function for different views
     // i.e. bddsingleton + bddview

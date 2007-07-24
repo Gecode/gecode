@@ -1235,7 +1235,7 @@ const char* examples[] = {
     ,
 
     // http://janko.at/Raetsel/Sudoku/509.a.htm
-    // 62
+    // 62 // problems
     "..EF96...8.5B.C."
     "D...FE....1.2A.."
     ".86..2..C...57.1"
@@ -1435,7 +1435,7 @@ const char* examples[] = {
     ,
 
     // http://janko.at/Raetsel/Sudoku/519.a.htm
-    // 72
+    // 72// problems
     "CD.E9.8......6.."
     ".62..3...E..85.7"
     ".G...6...AF5...D"

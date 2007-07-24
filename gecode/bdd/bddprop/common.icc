@@ -1,0 +1,36 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-08-21 23:11:21 +0000 (Mon, 21 Aug 2006) $ by $Author: pekczynski $
+ *     $Revision: 3551 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode { namespace Bdd {
+
+  template <class View>
+  void quantify(GecodeBdd& p, View& x) {
+    BMI* m = x.manager();
+    GecodeBdd dom = x.bdd_domain();
+    int s = x.offset();
+    int w = s + x.table_width() - 1;
+    m->existquant(p, dom, s, w);
+    // \todo check the update line from naryrec.icc "dom = p" ()
+  }
+    
+  }
+}
