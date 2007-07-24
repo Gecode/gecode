@@ -235,6 +235,25 @@ namespace Projection {
   };
   RelUnionEq _relunioneq("Proj::RelOp::UnionEq");
 
+  class RelUnionEqFormula : public SetTest {
+  public:
+    RelUnionEqFormula(const char* t)
+      : SetTest(t,3,ds_22,false) {}
+    virtual bool solution(const SetAssignment& x) const {
+      CountableSetRanges xr0(x.lub, x[0]);
+      CountableSetRanges xr1(x.lub, x[1]);
+      CountableSetRanges xr2(x.lub, x[2]);
+      Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> u(xr0,xr1);
+      return Iter::Ranges::equal(xr2, u);
+    }
+    virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+      Formula f = (Formula(0) | Formula(1)) == Formula(2);
+      Gecode::ProjectorSet ps = f.projectors();
+      Gecode::projector(home, x[0], x[1], x[2], ps);
+    }
+  };
+  RelUnionEqFormula _relunioneqfor("Proj::Formula::RelOp::UnionEq");
+  
   class RelInterEqCard : public SetTest {
   public:
     RelInterEqCard(const char* t)

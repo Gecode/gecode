@@ -249,6 +249,52 @@ namespace Gecode {
 
   };
 
+  ///\name Formulas for specifying set constraints
+  //@{
+
+  class Formula {
+  public:
+    enum Operator { AND, OR, IMPL, EQUIV };
+  private:
+    /// Nodes for formulas
+    class Node;
+    Node* ax; ///< Node for formula
+    int sign; ///< Sign for formula
+  public:
+    /// Copy constructor
+    GECODE_SET_EXPORT Formula(const Formula& f);
+    /// Assignment operator
+    GECODE_SET_EXPORT const Formula& operator=(const Formula& f);
+    /// Destructor
+    GECODE_SET_EXPORT ~Formula(void);
+    /// Construct formula for variable \a var
+    GECODE_SET_EXPORT Formula(int var);
+    /// Construct constant formula
+    GECODE_SET_EXPORT Formula(bool b);
+    /// Construct formula from \a f with sign \a s
+    GECODE_SET_EXPORT Formula(const Formula& f, int sign);
+    /// Construct formula for \f$\mathit{fs}\times f\mathit{op} \mathit{gs}\times g\f$
+    GECODE_SET_EXPORT Formula(const Formula& f, int fs,
+                              Operator r,
+                              const Formula& f, int gs);
+    /// Extract projectors from formula
+    GECODE_SET_EXPORT ProjectorSet projectors(void);
+    
+  };
+
+  /// Return formula \f$f\land g\f$
+  Formula operator&(const Formula& f, const Formula& g);
+  /// Return formula \f$f\lor g\f$
+  Formula operator|(const Formula& f, const Formula& g);
+  /// Return formula \f$\lnot f\f$
+  Formula operator-(const Formula& f);
+  /// Return formula \f$f\rightarrow f\f$
+  Formula operator>>(const Formula& f, const Formula& g);
+  /// Return formula \f$f\leftrightarrow g\f$
+  Formula operator==(const Formula& f, const Formula& g);
+
+  //@}
+
   ///\name Posting projection propagators
   //@{
 
@@ -331,7 +377,8 @@ namespace Gecode {
 #include "gecode/set/projectors/set-expr.icc"
 #include "gecode/set/projectors/projector.icc"
 #include "gecode/set/projectors/projector-set.icc"
-  
+#include "gecode/set/projectors/formula.icc"
+
 #endif
 
 // STATISTICS: set-prop

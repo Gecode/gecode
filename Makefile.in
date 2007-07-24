@@ -260,7 +260,8 @@ SETSRC0 =								 \
 	projectors/set-expr.cc projectors/projector.cc			 \
 	projectors/projector-set.cc					 \
 	projectors/propagator/re-nary.cc				 \
-	projectors/compiler.cc
+	projectors/compiler.cc						 \
+	projectors/formula.cc
 SETVARIMP = \
         gecode/set/var/imp-hdr.icc gecode/set/var/imp-body.icc
 SETHDR0 =								     \
@@ -288,7 +289,8 @@ SETHDR0 =								     \
 	projectors/projector.icc					     \
 	projectors/projector-set.icc projectors/set-expr.icc		     \
 	projectors/propagator/nary.icc					     \
-	projectors/propagator/re-nary.icc
+	projectors/propagator/re-nary.icc				     \
+	projectors/formula.icc
 
 SETSRC		= $(SETSRC0:%=gecode/set/%)
 SETHDR		= gecode/set.hh $(SETHDR0:%=gecode/set/%)
@@ -891,9 +893,9 @@ $(INTDLL): $(INTOBJ) $(KERNELDLL)
 		@LINKOUTPUT@$(INTDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(SETDLL): $(SETOBJ) $(KERNELDLL) $(INTDLL)
+$(SETDLL): $(SETOBJ) $(KERNELDLL) $(INTDLL) $(BUDDYDLL)
 	$(CXX) $(DLLFLAGS) $(SETOBJ) $(SETSONAME) \
-		@DLLPATH@ $(LINKKERNEL) $(LINKINT) $(EXTRALINK)\
+		@DLLPATH@ $(LINKKERNEL) $(LINKINT) $(LINKBUDDY) $(EXTRALINK)\
 		@LINKOUTPUT@$(SETDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
@@ -933,9 +935,9 @@ $(INTDLL) $(INTLIB): $(INTOBJ) $(KERNELDLL)
 	$(CXX) $(DLLFLAGS) $(INTOBJ) \
 		@DLLPATH@ $(LINKKERNEL) \
 		@LINKOUTPUT@$(INTDLL)
-$(SETDLL) $(SETLIB): $(SETOBJ) $(KERNELDLL) $(INTDLL)
+$(SETDLL) $(SETLIB): $(SETOBJ) $(KERNELDLL) $(INTDLL) $(BUDDYDLL)
 	$(CXX) $(DLLFLAGS) $(SETOBJ) \
-		@DLLPATH@ $(LINKKERNEL) $(LINKINT) $(EXTRALINK)\
+		@DLLPATH@ $(LINKKERNEL) $(LINKINT) $(LINKBUDDY) $(EXTRALINK)\
 		@LINKOUTPUT@$(SETDLL)
 $(BUDDYDLL) $(BUDDYLIB): $(BUDDYOBJ)
 	$(CXX) $(DLLFLAGS) $(BUDDYDLLFLAGS) $(BUDDYOBJ) \

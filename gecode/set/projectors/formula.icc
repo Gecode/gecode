@@ -1,0 +1,55 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2006
+ *
+ *  Last modified:
+ *     $Date: 2006-04-11 15:58:37 +0200 (Tue, 11 Apr 2006) $ by $Author: tack $
+ *     $Revision: 3188 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+namespace Gecode {
+
+  /*
+   * Operations for formulas
+   *
+   */
+
+  forceinline Formula
+  operator-(const Formula& f) { return Formula(f, -1); }
+
+  forceinline Formula
+  operator|(const Formula& f, const Formula& g) {
+    return Formula(f, 1, Formula::OR, g, 1);
+  }
+
+  forceinline Formula
+  operator&(const Formula& f, const Formula& g) {
+    return Formula(f, 1, Formula::AND, g, 1);
+  }
+
+  forceinline Formula
+  operator>>(const Formula& f, const Formula& g) {
+    return Formula(f, 1, Formula::IMPL, g, 1);
+  }
+
+  forceinline Formula
+  operator==(const Formula& f, const Formula& g) {
+    return Formula(f, 1, Formula::EQUIV, g, 1);
+  }
+
+}
+
+// STATISTICS: set-prop
