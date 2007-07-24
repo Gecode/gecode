@@ -64,6 +64,31 @@ namespace Gecode {
   }
 
   void
+  rel(Space* home, SetOpType op, const SetVarArgs& x, const IntSet& z, SetVar y) {
+    if (home->failed()) return;
+    ViewArray<SetView> xa(home,x);
+    switch(op) {
+    case SOT_UNION:
+      GECODE_ES_FAIL(home,(RelOp::UnionN<SetView,SetView>::post(home, xa, z, y)));
+      break;
+    case SOT_DUNION:
+      GECODE_ES_FAIL(home,
+                     (RelOp::PartitionN<SetView,SetView>::post(home, xa, z, y)));
+      break;
+    case SOT_INTER:
+      {
+        GECODE_ES_FAIL(home,
+                       (RelOp::IntersectionN<SetView,SetView>
+                        ::post(home, xa, z, y)));
+      }
+      break;
+    case SOT_MINUS:
+      throw InvalidRelation("rel minus");
+      break;
+    }
+  }
+
+  void
   rel(Space* home, SetOpType op, const IntVarArgs& x, SetVar y) {
     if (home->failed()) return;
     ViewArray<SingletonView> xa(home,x.size());
@@ -92,6 +117,37 @@ namespace Gecode {
       break;
     }
   }
+
+  void
+  rel(Space* home, SetOpType op, const IntVarArgs& x, const IntSet& z, SetVar y) {
+    if (home->failed()) return;
+    ViewArray<SingletonView> xa(home,x.size());
+    for (int i=x.size(); i--;) {
+      Int::IntView iv(x[i]);
+      SingletonView sv(iv);
+      xa[i] = sv;
+    }
+      
+    switch(op) {
+    case SOT_UNION:
+      GECODE_ES_FAIL(home,(RelOp::UnionN<SingletonView,SetView>
+                           ::post(home, xa, z, y)));
+      break;
+    case SOT_DUNION:
+      GECODE_ES_FAIL(home,(RelOp::PartitionN<SingletonView,SetView>
+                           ::post(home, xa, z, y)));
+      break;
+    case SOT_INTER:
+      GECODE_ES_FAIL(home,
+                     (RelOp::IntersectionN<SingletonView,SetView>
+                      ::post(home, xa, z, y)));
+      break;
+    case SOT_MINUS:
+      throw InvalidRelation("rel minus");
+      break;
+    }
+  }
+
 }
 
 // STATISTICS: set-post

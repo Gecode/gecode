@@ -207,6 +207,14 @@ namespace Gecode {
   GECODE_SET_EXPORT void
   rel(Space* home, SetOpType op, const SetVarArgs& x, SetVar y);
 
+  /// Post propagator for \f$ y = \diamond_{\mathit{op}} x \diamond_{\mathit{op}} z\f$
+  GECODE_SET_EXPORT void
+  rel(Space* home, SetOpType op, const SetVarArgs& x, const IntSet& z, SetVar y);
+
+  /// Post propagator for \f$ y = \diamond_{\mathit{op}} x \diamond_{\mathit{op}} z\f$
+  GECODE_SET_EXPORT void
+  rel(Space* home, SetOpType op, const IntVarArgs& x, const IntSet& z, SetVar y);
+
   /// Post propagator for \f$ y = \diamond_{\mathit{op}} x\f$
   GECODE_SET_EXPORT void
   rel(Space* home, SetOpType op, const IntVarArgs& x, SetVar y);

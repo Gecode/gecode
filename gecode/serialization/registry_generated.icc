@@ -7,9 +7,11 @@ public:
   Reflection::Type minusvar;
   Reflection::Type negboolvar;
   Reflection::Type constint;
+  Reflection::Type setvar;
   TypeDefs() : intvar("int.IntView"), boolvar("int.BoolView"), 
     offsetvar("int.OffsetView"), minusvar("int.MinusView"),
-    negboolvar("int.NegBoolView"), constint("int.ConstIntView") {}
+    negboolvar("int.NegBoolView"), constint("int.ConstIntView"),
+    setvar("set.SetView") {}
 };
 TypeDefs _typeDefs;
 class int_Pdistinct_PVal {
@@ -1330,11 +1332,11 @@ public:
         true) {
       IntVar arg0 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->toVar()])));
       IntVar arg1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[1]->typedArg()->toVar()])));
-      Reflection::ArrayArg<int>* a =
+      Reflection::ArrayArg<int>* a2 =
         spec[2]->toArray<int>();
-      IntArgs arg2(a->size());
-      for (int i=a->size(); i--;) {
-        arg2[i] = (*a)[i];
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
       }
       element(home,  arg2 ,  arg0 ,  arg1 );
       return;
@@ -1344,11 +1346,11 @@ public:
         true) {
       IntVar arg0 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->toVar()])));
       BoolVar arg1 = BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v[spec[1]->typedArg()->toVar()])));
-      Reflection::ArrayArg<int>* a =
+      Reflection::ArrayArg<int>* a2 =
         spec[2]->toArray<int>();
-      IntArgs arg2(a->size());
-      for (int i=a->size(); i--;) {
-        arg2[i] = (*a)[i];
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
       }
       element(home,  arg2 ,  arg0 ,  arg1 );
       return;
@@ -1358,11 +1360,11 @@ public:
         true) {
       IntVar arg0 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->toVar()])));
       int arg1 = spec[1]->typedArg()->toInt();
-      Reflection::ArrayArg<int>* a =
+      Reflection::ArrayArg<int>* a2 =
         spec[2]->toArray<int>();
-      IntArgs arg2(a->size());
-      for (int i=a->size(); i--;) {
-        arg2[i] = (*a)[i];
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
       }
       element(home,  arg2 ,  arg0 ,  arg1 );
       return;
@@ -1373,11 +1375,11 @@ public:
       int arg0_0 = spec[0]->typedArg()->first()->toInt();
       IntVar arg0_1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->second()->toVar()])));
       IntVar arg1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[1]->typedArg()->toVar()])));
-      Reflection::ArrayArg<int>* a =
+      Reflection::ArrayArg<int>* a2 =
         spec[2]->toArray<int>();
-      IntArgs arg2(a->size());
-      for (int i=a->size(); i--;) {
-        arg2[i] = (*a)[i];
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
       }
       element(home,  arg2 ,  arg0_1 ,  arg1 ,  arg0_0 );
       return;
@@ -1388,11 +1390,11 @@ public:
       int arg0_0 = spec[0]->typedArg()->first()->toInt();
       IntVar arg0_1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->second()->toVar()])));
       BoolVar arg1 = BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v[spec[1]->typedArg()->toVar()])));
-      Reflection::ArrayArg<int>* a =
+      Reflection::ArrayArg<int>* a2 =
         spec[2]->toArray<int>();
-      IntArgs arg2(a->size());
-      for (int i=a->size(); i--;) {
-        arg2[i] = (*a)[i];
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
       }
       element(home,  arg2 ,  arg0_1 ,  arg1 ,  arg0_0 );
       return;
@@ -1403,11 +1405,11 @@ public:
       int arg0_0 = spec[0]->typedArg()->first()->toInt();
       IntVar arg0_1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->second()->toVar()])));
       int arg1 = spec[1]->typedArg()->toInt();
-      Reflection::ArrayArg<int>* a =
+      Reflection::ArrayArg<int>* a2 =
         spec[2]->toArray<int>();
-      IntArgs arg2(a->size());
-      for (int i=a->size(); i--;) {
-        arg2[i] = (*a)[i];
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
       }
       element(home,  arg2 ,  arg0_1 ,  arg1 ,  arg0_0 );
       return;
@@ -1422,6 +1424,178 @@ class int_Pelement_PViewBnd {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+    if ( _typeDefs.intvar.equal(spec[ 0]->type()) &&
+         _typeDefs.intvar.equal(spec[ 1]->type()) &&
+         _typeDefs.intvar.equal(spec[ 3]->type()) &&
+        true) {
+      IntVar arg0 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      IntVar arg1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      Reflection::ArrayArg<int>* a2 =
+        spec[2]->toArray<int>();
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
+      }
+      Reflection::ArrayArg<Reflection::Arg*>* a3 =
+        spec[3]->typedArg()->toArray<Reflection::Arg*>();
+      IntVarArgs arg3(a3->size());
+      for (int i=a3->size(); i--;) {
+        arg3[i] = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[(*a3)[i]->toVar()])));
+      }
+      my_element(home,  arg2 ,  arg3 ,  arg0 ,  arg1 ,  0 ,  ICL_BND );
+      return;
+    }
+    if ( _typeDefs.intvar.equal(spec[ 0]->type()) &&
+         _typeDefs.constint.equal(spec[ 1]->type()) &&
+         _typeDefs.intvar.equal(spec[ 3]->type()) &&
+        true) {
+      IntVar arg0 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      int arg1 = spec[1]->typedArg()->toInt();
+      Reflection::ArrayArg<int>* a2 =
+        spec[2]->toArray<int>();
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
+      }
+      Reflection::ArrayArg<Reflection::Arg*>* a3 =
+        spec[3]->typedArg()->toArray<Reflection::Arg*>();
+      IntVarArgs arg3(a3->size());
+      for (int i=a3->size(); i--;) {
+        arg3[i] = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[(*a3)[i]->toVar()])));
+      }
+      my_element(home,  arg2 ,  arg3 ,  arg0 ,  arg1 ,  0 ,  ICL_BND );
+      return;
+    }
+    if ( _typeDefs.intvar.equal(spec[ 0]->type()) &&
+         _typeDefs.boolvar.equal(spec[ 1]->type()) &&
+         _typeDefs.boolvar.equal(spec[ 3]->type()) &&
+        true) {
+      IntVar arg0 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      BoolVar arg1 = BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      Reflection::ArrayArg<int>* a2 =
+        spec[2]->toArray<int>();
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
+      }
+      Reflection::ArrayArg<Reflection::Arg*>* a3 =
+        spec[3]->typedArg()->toArray<Reflection::Arg*>();
+      BoolVarArgs arg3(a3->size());
+      for (int i=a3->size(); i--;) {
+        arg3[i] = BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v[(*a3)[i]->toVar()])));
+      }
+      my_element(home,  arg2 ,  arg3 ,  arg0 ,  arg1 ,  0 ,  ICL_BND );
+      return;
+    }
+    if ( _typeDefs.intvar.equal(spec[ 0]->type()) &&
+         _typeDefs.constint.equal(spec[ 1]->type()) &&
+         _typeDefs.boolvar.equal(spec[ 3]->type()) &&
+        true) {
+      IntVar arg0 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      int arg1 = spec[1]->typedArg()->toInt();
+      Reflection::ArrayArg<int>* a2 =
+        spec[2]->toArray<int>();
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
+      }
+      Reflection::ArrayArg<Reflection::Arg*>* a3 =
+        spec[3]->typedArg()->toArray<Reflection::Arg*>();
+      BoolVarArgs arg3(a3->size());
+      for (int i=a3->size(); i--;) {
+        arg3[i] = BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v[(*a3)[i]->toVar()])));
+      }
+      my_element(home,  arg2 ,  arg3 ,  arg0 ,  arg1 ,  0 ,  ICL_BND );
+      return;
+    }
+    if ( _typeDefs.offsetvar.equal(spec[ 0]->type()) &&
+         _typeDefs.intvar.equal(spec[ 1]->type()) &&
+         _typeDefs.intvar.equal(spec[ 3]->type()) &&
+        true) {
+      int arg0_0 = spec[0]->typedArg()->first()->toInt();
+      IntVar arg0_1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->second()->toVar()])));
+      IntVar arg1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      Reflection::ArrayArg<int>* a2 =
+        spec[2]->toArray<int>();
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
+      }
+      Reflection::ArrayArg<Reflection::Arg*>* a3 =
+        spec[3]->typedArg()->toArray<Reflection::Arg*>();
+      IntVarArgs arg3(a3->size());
+      for (int i=a3->size(); i--;) {
+        arg3[i] = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[(*a3)[i]->toVar()])));
+      }
+      my_element(home,  arg2 ,  arg3 ,  arg0_1 ,  arg1 ,  arg0_0 ,  ICL_BND );
+      return;
+    }
+    if ( _typeDefs.offsetvar.equal(spec[ 0]->type()) &&
+         _typeDefs.constint.equal(spec[ 1]->type()) &&
+         _typeDefs.intvar.equal(spec[ 3]->type()) &&
+        true) {
+      int arg0_0 = spec[0]->typedArg()->first()->toInt();
+      IntVar arg0_1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->second()->toVar()])));
+      int arg1 = spec[1]->typedArg()->toInt();
+      Reflection::ArrayArg<int>* a2 =
+        spec[2]->toArray<int>();
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
+      }
+      Reflection::ArrayArg<Reflection::Arg*>* a3 =
+        spec[3]->typedArg()->toArray<Reflection::Arg*>();
+      IntVarArgs arg3(a3->size());
+      for (int i=a3->size(); i--;) {
+        arg3[i] = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[(*a3)[i]->toVar()])));
+      }
+      my_element(home,  arg2 ,  arg3 ,  arg0_1 ,  arg1 ,  arg0_0 ,  ICL_BND );
+      return;
+    }
+    if ( _typeDefs.offsetvar.equal(spec[ 0]->type()) &&
+         _typeDefs.boolvar.equal(spec[ 1]->type()) &&
+         _typeDefs.boolvar.equal(spec[ 3]->type()) &&
+        true) {
+      int arg0_0 = spec[0]->typedArg()->first()->toInt();
+      IntVar arg0_1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->second()->toVar()])));
+      BoolVar arg1 = BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      Reflection::ArrayArg<int>* a2 =
+        spec[2]->toArray<int>();
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
+      }
+      Reflection::ArrayArg<Reflection::Arg*>* a3 =
+        spec[3]->typedArg()->toArray<Reflection::Arg*>();
+      BoolVarArgs arg3(a3->size());
+      for (int i=a3->size(); i--;) {
+        arg3[i] = BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v[(*a3)[i]->toVar()])));
+      }
+      my_element(home,  arg2 ,  arg3 ,  arg0_1 ,  arg1 ,  arg0_0 ,  ICL_BND );
+      return;
+    }
+    if ( _typeDefs.offsetvar.equal(spec[ 0]->type()) &&
+         _typeDefs.constint.equal(spec[ 1]->type()) &&
+         _typeDefs.boolvar.equal(spec[ 3]->type()) &&
+        true) {
+      int arg0_0 = spec[0]->typedArg()->first()->toInt();
+      IntVar arg0_1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->second()->toVar()])));
+      int arg1 = spec[1]->typedArg()->toInt();
+      Reflection::ArrayArg<int>* a2 =
+        spec[2]->toArray<int>();
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
+      }
+      Reflection::ArrayArg<Reflection::Arg*>* a3 =
+        spec[3]->typedArg()->toArray<Reflection::Arg*>();
+      BoolVarArgs arg3(a3->size());
+      for (int i=a3->size(); i--;) {
+        arg3[i] = BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v[(*a3)[i]->toVar()])));
+      }
+      my_element(home,  arg2 ,  arg3 ,  arg0_1 ,  arg1 ,  arg0_0 ,  ICL_BND );
+      return;
+    }
     throw Exception("Registry","No suitable post function defined");
   }
   int_Pelement_PViewBnd() { registry.add("int.element.ViewBnd", &post); }
@@ -1432,6 +1606,178 @@ class int_Pelement_PViewDom {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+    if ( _typeDefs.intvar.equal(spec[ 0]->type()) &&
+         _typeDefs.intvar.equal(spec[ 1]->type()) &&
+         _typeDefs.intvar.equal(spec[ 3]->type()) &&
+        true) {
+      IntVar arg0 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      IntVar arg1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      Reflection::ArrayArg<int>* a2 =
+        spec[2]->toArray<int>();
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
+      }
+      Reflection::ArrayArg<Reflection::Arg*>* a3 =
+        spec[3]->typedArg()->toArray<Reflection::Arg*>();
+      IntVarArgs arg3(a3->size());
+      for (int i=a3->size(); i--;) {
+        arg3[i] = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[(*a3)[i]->toVar()])));
+      }
+      my_element(home,  arg2 ,  arg3 ,  arg0 ,  arg1 ,  0 ,  ICL_DOM );
+      return;
+    }
+    if ( _typeDefs.intvar.equal(spec[ 0]->type()) &&
+         _typeDefs.constint.equal(spec[ 1]->type()) &&
+         _typeDefs.intvar.equal(spec[ 3]->type()) &&
+        true) {
+      IntVar arg0 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      int arg1 = spec[1]->typedArg()->toInt();
+      Reflection::ArrayArg<int>* a2 =
+        spec[2]->toArray<int>();
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
+      }
+      Reflection::ArrayArg<Reflection::Arg*>* a3 =
+        spec[3]->typedArg()->toArray<Reflection::Arg*>();
+      IntVarArgs arg3(a3->size());
+      for (int i=a3->size(); i--;) {
+        arg3[i] = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[(*a3)[i]->toVar()])));
+      }
+      my_element(home,  arg2 ,  arg3 ,  arg0 ,  arg1 ,  0 ,  ICL_DOM );
+      return;
+    }
+    if ( _typeDefs.intvar.equal(spec[ 0]->type()) &&
+         _typeDefs.boolvar.equal(spec[ 1]->type()) &&
+         _typeDefs.boolvar.equal(spec[ 3]->type()) &&
+        true) {
+      IntVar arg0 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      BoolVar arg1 = BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      Reflection::ArrayArg<int>* a2 =
+        spec[2]->toArray<int>();
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
+      }
+      Reflection::ArrayArg<Reflection::Arg*>* a3 =
+        spec[3]->typedArg()->toArray<Reflection::Arg*>();
+      BoolVarArgs arg3(a3->size());
+      for (int i=a3->size(); i--;) {
+        arg3[i] = BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v[(*a3)[i]->toVar()])));
+      }
+      my_element(home,  arg2 ,  arg3 ,  arg0 ,  arg1 ,  0 ,  ICL_DOM );
+      return;
+    }
+    if ( _typeDefs.intvar.equal(spec[ 0]->type()) &&
+         _typeDefs.constint.equal(spec[ 1]->type()) &&
+         _typeDefs.boolvar.equal(spec[ 3]->type()) &&
+        true) {
+      IntVar arg0 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      int arg1 = spec[1]->typedArg()->toInt();
+      Reflection::ArrayArg<int>* a2 =
+        spec[2]->toArray<int>();
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
+      }
+      Reflection::ArrayArg<Reflection::Arg*>* a3 =
+        spec[3]->typedArg()->toArray<Reflection::Arg*>();
+      BoolVarArgs arg3(a3->size());
+      for (int i=a3->size(); i--;) {
+        arg3[i] = BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v[(*a3)[i]->toVar()])));
+      }
+      my_element(home,  arg2 ,  arg3 ,  arg0 ,  arg1 ,  0 ,  ICL_DOM );
+      return;
+    }
+    if ( _typeDefs.offsetvar.equal(spec[ 0]->type()) &&
+         _typeDefs.intvar.equal(spec[ 1]->type()) &&
+         _typeDefs.intvar.equal(spec[ 3]->type()) &&
+        true) {
+      int arg0_0 = spec[0]->typedArg()->first()->toInt();
+      IntVar arg0_1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->second()->toVar()])));
+      IntVar arg1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      Reflection::ArrayArg<int>* a2 =
+        spec[2]->toArray<int>();
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
+      }
+      Reflection::ArrayArg<Reflection::Arg*>* a3 =
+        spec[3]->typedArg()->toArray<Reflection::Arg*>();
+      IntVarArgs arg3(a3->size());
+      for (int i=a3->size(); i--;) {
+        arg3[i] = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[(*a3)[i]->toVar()])));
+      }
+      my_element(home,  arg2 ,  arg3 ,  arg0_1 ,  arg1 ,  arg0_0 ,  ICL_DOM );
+      return;
+    }
+    if ( _typeDefs.offsetvar.equal(spec[ 0]->type()) &&
+         _typeDefs.constint.equal(spec[ 1]->type()) &&
+         _typeDefs.intvar.equal(spec[ 3]->type()) &&
+        true) {
+      int arg0_0 = spec[0]->typedArg()->first()->toInt();
+      IntVar arg0_1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->second()->toVar()])));
+      int arg1 = spec[1]->typedArg()->toInt();
+      Reflection::ArrayArg<int>* a2 =
+        spec[2]->toArray<int>();
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
+      }
+      Reflection::ArrayArg<Reflection::Arg*>* a3 =
+        spec[3]->typedArg()->toArray<Reflection::Arg*>();
+      IntVarArgs arg3(a3->size());
+      for (int i=a3->size(); i--;) {
+        arg3[i] = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[(*a3)[i]->toVar()])));
+      }
+      my_element(home,  arg2 ,  arg3 ,  arg0_1 ,  arg1 ,  arg0_0 ,  ICL_DOM );
+      return;
+    }
+    if ( _typeDefs.offsetvar.equal(spec[ 0]->type()) &&
+         _typeDefs.boolvar.equal(spec[ 1]->type()) &&
+         _typeDefs.boolvar.equal(spec[ 3]->type()) &&
+        true) {
+      int arg0_0 = spec[0]->typedArg()->first()->toInt();
+      IntVar arg0_1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->second()->toVar()])));
+      BoolVar arg1 = BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      Reflection::ArrayArg<int>* a2 =
+        spec[2]->toArray<int>();
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
+      }
+      Reflection::ArrayArg<Reflection::Arg*>* a3 =
+        spec[3]->typedArg()->toArray<Reflection::Arg*>();
+      BoolVarArgs arg3(a3->size());
+      for (int i=a3->size(); i--;) {
+        arg3[i] = BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v[(*a3)[i]->toVar()])));
+      }
+      my_element(home,  arg2 ,  arg3 ,  arg0_1 ,  arg1 ,  arg0_0 ,  ICL_DOM );
+      return;
+    }
+    if ( _typeDefs.offsetvar.equal(spec[ 0]->type()) &&
+         _typeDefs.constint.equal(spec[ 1]->type()) &&
+         _typeDefs.boolvar.equal(spec[ 3]->type()) &&
+        true) {
+      int arg0_0 = spec[0]->typedArg()->first()->toInt();
+      IntVar arg0_1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[0]->typedArg()->second()->toVar()])));
+      int arg1 = spec[1]->typedArg()->toInt();
+      Reflection::ArrayArg<int>* a2 =
+        spec[2]->toArray<int>();
+      IntArgs arg2(a2->size());
+      for (int i=a2->size(); i--;) {
+        arg2[i] = (*a2)[i];
+      }
+      Reflection::ArrayArg<Reflection::Arg*>* a3 =
+        spec[3]->typedArg()->toArray<Reflection::Arg*>();
+      BoolVarArgs arg3(a3->size());
+      for (int i=a3->size(); i--;) {
+        arg3[i] = BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v[(*a3)[i]->toVar()])));
+      }
+      my_element(home,  arg2 ,  arg3 ,  arg0_1 ,  arg1 ,  arg0_0 ,  ICL_DOM );
+      return;
+    }
     throw Exception("Registry","No suitable post function defined");
   }
   int_Pelement_PViewDom() { registry.add("int.element.ViewDom", &post); }
@@ -2044,6 +2390,14 @@ class set_Pconvex_PConvex {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      convex(home,  arg0 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Pconvex_PConvex() { registry.add("set.convex.Convex", &post); }
@@ -2054,6 +2408,16 @@ class set_Pconvex_PConvexHull {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      convexHull(home,  arg0 ,  arg1 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Pconvex_PConvexHull() { registry.add("set.convex.ConvexHull", &post); }
@@ -2064,6 +2428,20 @@ class set_Pdistinct_PAtmostOne {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+        true) {
+      Reflection::ArrayArg<Reflection::Arg*>* a0 =
+        spec[0]->typedArg()->toArray<Reflection::Arg*>();
+      SetVarArgs arg0(a0->size());
+      for (int i=a0->size(); i--;) {
+        arg0[i] = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[(*a0)[i]->toVar()])));
+      }
+      int arg1 = spec[1]->toInt();
+      atmostOne(home,  arg0 ,  arg1 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Pdistinct_PAtmostOne() { registry.add("set.distinct.AtmostOne", &post); }
@@ -2074,6 +2452,20 @@ class set_Pdistinct_PDistinct {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+        true) {
+      Reflection::ArrayArg<Reflection::Arg*>* a0 =
+        spec[0]->typedArg()->toArray<Reflection::Arg*>();
+      SetVarArgs arg0(a0->size());
+      for (int i=a0->size(); i--;) {
+        arg0[i] = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[(*a0)[i]->toVar()])));
+      }
+      int arg1 = spec[1]->toInt();
+      distinct(home,  arg0 ,  arg1 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Pdistinct_PDistinct() { registry.add("set.distinct.Distinct", &post); }
@@ -2084,6 +2476,16 @@ class set_Pint_PCard {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.intvar.equal(spec[ 1]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      IntVar arg1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      cardinality(home,  arg0 ,  arg1 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Pint_PCard() { registry.add("set.int.Card", &post); }
@@ -2094,6 +2496,26 @@ class set_Pint_PChannel {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.intvar.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+        true) {
+      Reflection::ArrayArg<Reflection::Arg*>* a0 =
+        spec[0]->typedArg()->toArray<Reflection::Arg*>();
+      IntVarArgs arg0(a0->size());
+      for (int i=a0->size(); i--;) {
+        arg0[i] = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[(*a0)[i]->toVar()])));
+      }
+      Reflection::ArrayArg<Reflection::Arg*>* a1 =
+        spec[1]->typedArg()->toArray<Reflection::Arg*>();
+      SetVarArgs arg1(a1->size());
+      for (int i=a1->size(); i--;) {
+        arg1[i] = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[(*a1)[i]->toVar()])));
+      }
+      channel(home,  arg0 ,  arg1 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Pint_PChannel() { registry.add("set.int.Channel", &post); }
@@ -2104,6 +2526,21 @@ class set_Pint_PMatch {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.intvar.equal(spec[ 1]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      Reflection::ArrayArg<Reflection::Arg*>* a1 =
+        spec[1]->typedArg()->toArray<Reflection::Arg*>();
+      IntVarArgs arg1(a1->size());
+      for (int i=a1->size(); i--;) {
+        arg1[i] = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[(*a1)[i]->toVar()])));
+      }
+      match(home,  arg0 ,  arg1 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Pint_PMatch() { registry.add("set.int.Match", &post); }
@@ -2114,6 +2551,16 @@ class set_Pint_PMaxElement {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.intvar.equal(spec[ 1]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      IntVar arg1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      max(home,  arg0 ,  arg1 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Pint_PMaxElement() { registry.add("set.int.MaxElement", &post); }
@@ -2124,6 +2571,16 @@ class set_Pint_PMinElement {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.intvar.equal(spec[ 1]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      IntVar arg1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      min(home,  arg0 ,  arg1 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Pint_PMinElement() { registry.add("set.int.MinElement", &post); }
@@ -2134,6 +2591,28 @@ class set_Pint_PWeights {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if (          _typeDefs.setvar.equal(spec[ 2]->type()) &&
+         _typeDefs.intvar.equal(spec[ 3]->type()) &&
+        true) {
+      Reflection::ArrayArg<int>* a0 =
+        spec[0]->toArray<int>();
+      IntArgs arg0(a0->size());
+      for (int i=a0->size(); i--;) {
+        arg0[i] = (*a0)[i];
+      }
+      Reflection::ArrayArg<int>* a1 =
+        spec[1]->toArray<int>();
+      IntArgs arg1(a1->size());
+      for (int i=a1->size(); i--;) {
+        arg1[i] = (*a1)[i];
+      }
+      SetVar arg2 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[2]->typedArg()->toVar()])));
+      IntVar arg3 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[3]->typedArg()->toVar()])));
+      weights(home,  arg0 ,  arg1 ,  arg2 ,  arg3 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Pint_PWeights() { registry.add("set.int.Weights", &post); }
@@ -2164,6 +2643,16 @@ class set_Prel_PDistinct {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      rel(home,  arg0 ,  SRT_NQ ,  arg1 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Prel_PDistinct() { registry.add("set.rel.Distinct", &post); }
@@ -2174,6 +2663,16 @@ class set_Prel_PDistinctDoit {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      rel(home,  arg0 ,  SRT_NQ ,  arg1 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Prel_PDistinctDoit() { registry.add("set.rel.DistinctDoit", &post); }
@@ -2184,6 +2683,16 @@ class set_Prel_PEq {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      rel(home,  arg0 ,  SRT_EQ ,  arg1 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Prel_PEq() { registry.add("set.rel.Eq", &post); }
@@ -2204,6 +2713,18 @@ class set_Prel_PReEq {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+         _typeDefs.boolvar.equal(spec[ 2]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      BoolVar arg2 = BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v[spec[2]->typedArg()->toVar()])));
+      rel(home,  arg0 ,  SRT_EQ ,  arg1 ,  arg2 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Prel_PReEq() { registry.add("set.rel.ReEq", &post); }
@@ -2214,6 +2735,18 @@ class set_Prel_PReSubset {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+         _typeDefs.boolvar.equal(spec[ 2]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      BoolVar arg2 = BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v[spec[2]->typedArg()->toVar()])));
+      rel(home,  arg0 ,  SRT_SUB ,  arg1 ,  arg2 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Prel_PReSubset() { registry.add("set.rel.ReSubset", &post); }
@@ -2224,6 +2757,16 @@ class set_Prel_PSubSet {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      rel(home,  arg0 ,  SRT_SUB ,  arg1 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Prel_PSubSet() { registry.add("set.rel.SubSet", &post); }
@@ -2234,6 +2777,18 @@ class set_Prelop_PIntersection {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+         _typeDefs.setvar.equal(spec[ 2]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      SetVar arg2 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[2]->typedArg()->toVar()])));
+      rel(home,  arg0 ,  SOT_INTER ,  arg1 ,  SRT_EQ ,  arg2 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Prelop_PIntersection() { registry.add("set.relop.Intersection", &post); }
@@ -2244,6 +2799,21 @@ class set_Prelop_PIntersectionN {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+        true) {
+      Reflection::ArrayArg<Reflection::Arg*>* a0 =
+        spec[0]->typedArg()->toArray<Reflection::Arg*>();
+      SetVarArgs arg0(a0->size());
+      for (int i=a0->size(); i--;) {
+        arg0[i] = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[(*a0)[i]->toVar()])));
+      }
+      SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      rel(home,  SOT_INTER ,  arg0 ,  arg1 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Prelop_PIntersectionN() { registry.add("set.relop.IntersectionN", &post); }
@@ -2254,6 +2824,21 @@ class set_Prelop_PPartitionN {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+        true) {
+      Reflection::ArrayArg<Reflection::Arg*>* a0 =
+        spec[0]->typedArg()->toArray<Reflection::Arg*>();
+      SetVarArgs arg0(a0->size());
+      for (int i=a0->size(); i--;) {
+        arg0[i] = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[(*a0)[i]->toVar()])));
+      }
+      SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      rel(home,  SOT_DUNION ,  arg0 ,  arg1 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Prelop_PPartitionN() { registry.add("set.relop.PartitionN", &post); }
@@ -2264,6 +2849,18 @@ class set_Prelop_PSubOfUnion {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+         _typeDefs.setvar.equal(spec[ 2]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      SetVar arg2 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[2]->typedArg()->toVar()])));
+      rel(home,  arg0 ,  SOT_UNION ,  arg1 ,  SRT_SUP ,  arg2 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Prelop_PSubOfUnion() { registry.add("set.relop.SubOfUnion", &post); }
@@ -2274,6 +2871,18 @@ class set_Prelop_PSuperOfInter {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+         _typeDefs.setvar.equal(spec[ 2]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      SetVar arg2 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[2]->typedArg()->toVar()])));
+      rel(home,  arg0 ,  SOT_INTER ,  arg1 ,  SRT_SUB ,  arg2 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Prelop_PSuperOfInter() { registry.add("set.relop.SuperOfInter", &post); }
@@ -2284,6 +2893,18 @@ class set_Prelop_PUnion {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+         _typeDefs.setvar.equal(spec[ 2]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      SetVar arg2 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[2]->typedArg()->toVar()])));
+      rel(home,  arg0 ,  SOT_UNION ,  arg1 ,  SRT_EQ ,  arg2 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Prelop_PUnion() { registry.add("set.relop.Union", &post); }
@@ -2294,6 +2915,25 @@ class set_Prelop_PUnionN {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+        true) {
+      Reflection::ArrayArg<Reflection::Arg*>* a0 =
+        spec[0]->typedArg()->toArray<Reflection::Arg*>();
+      SetVarArgs arg0(a0->size());
+      for (int i=a0->size(); i--;) {
+        arg0[i] = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[(*a0)[i]->toVar()])));
+      }
+      SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      Reflection::ArrayArg<int>* a2 =
+        spec[2]->toArray<int>();
+      IntArrayIter iai2(a2);
+      IntSet arg2(iai2);
+      rel(home,  SOT_UNION ,  arg0 ,  arg2 ,  arg1 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Prelop_PUnionN() { registry.add("set.relop.UnionN", &post); }
@@ -2344,6 +2984,19 @@ class set_Psequence_PSequence {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+        true) {
+      Reflection::ArrayArg<Reflection::Arg*>* a0 =
+        spec[0]->typedArg()->toArray<Reflection::Arg*>();
+      SetVarArgs arg0(a0->size());
+      for (int i=a0->size(); i--;) {
+        arg0[i] = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[(*a0)[i]->toVar()])));
+      }
+      sequence(home,  arg0 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Psequence_PSequence() { registry.add("set.sequence.Sequence", &post); }
@@ -2354,6 +3007,21 @@ class set_Psequence_PUnion {
 public:
   static void post(Space* home, const std::vector<VarBase*>& v, 
                    Reflection::ActorSpec& spec) {
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+        true) {
+      Reflection::ArrayArg<Reflection::Arg*>* a0 =
+        spec[0]->typedArg()->toArray<Reflection::Arg*>();
+      SetVarArgs arg0(a0->size());
+      for (int i=a0->size(); i--;) {
+        arg0[i] = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[(*a0)[i]->toVar()])));
+      }
+      SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      sequentialUnion(home,  arg0 ,  arg1 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Psequence_PUnion() { registry.add("set.sequence.Union", &post); }

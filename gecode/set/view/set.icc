@@ -38,6 +38,9 @@ namespace Gecode { namespace Set {
   forceinline
   SetView::SetView(const SetVar& y)
     : VariableViewBase<SetVarImp>(y.variable()) {}
+  forceinline
+  SetView::SetView(SetVarImp* y)
+    : VariableViewBase<SetVarImp>(y) {}
 
 
   /*

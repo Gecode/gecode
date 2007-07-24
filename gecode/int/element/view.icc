@@ -177,11 +177,15 @@ namespace Gecode { namespace Int { namespace Element {
   Reflection::ActorSpec&
   View<VA,VB,VC,pc_ac>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s = Propagator::spec(home, m);
+    Reflection::ArrayArg<int>* ai = new Reflection::ArrayArg<int>(n);
+    for (int i=n; i--;)
+      (*ai)[i] = iv[i].idx;
     Reflection::ArrayArg<Reflection::Arg*>* a = new Reflection::ArrayArg<Reflection::Arg*>(n);
     for (int i=n; i--;)
       (*a)[i] = iv[i].view.spec(home, m);
     return s << Reflection::typedSpec(home, m, x0)
              << Reflection::typedSpec(home, m, x1)
+             << ai
              << new Reflection::TypedArg(VC::type(), a);
   }
 

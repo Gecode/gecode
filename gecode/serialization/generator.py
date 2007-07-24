@@ -16,6 +16,12 @@ def issetvartype(t):
 def isvartype(t):
   return isintvartype(t) or isboolvartype(t) or issetvartype(t)
 
+def hasSetType(t):
+  for ty in t:
+    if issetvartype(ty.replace("]","")):
+      return 1
+  return 0
+
 def checktype(t,args):
   print "    if (",
   for i, ty in enumerate(t):
@@ -30,11 +36,11 @@ def checktype(t,args):
     if ty.startswith("]"):
       aty = ty.replace("]","")
       if aty == 'int':
-        print '      Reflection::ArrayArg<int>* a ='
+        print '      Reflection::ArrayArg<int>* a'+repr(i)+' ='
         print '        spec['+repr(i)+']->toArray<int>();'
-        print '      IntArgs arg'+repr(i)+'(a->size());'
-        print '      for (int i=a->size(); i--;) {'
-        print '        arg'+repr(i)+'[i] = (*a)[i];'
+        print '      IntArgs arg'+repr(i)+'(a'+repr(i)+'->size());'
+        print '      for (int i=a'+repr(i)+'->size(); i--;) {'
+        print '        arg'+repr(i)+'[i] = (*a'+repr(i)+')[i];'
         print '      }'
       if aty == 'constint':
         print '      Reflection::ArrayArg<Reflection::Arg*>* a ='
@@ -72,6 +78,15 @@ def checktype(t,args):
         print '        arg'+repr(i)+'_1[i] = IntVar(Int::IntView(static_cast<Int::IntVarImp*>('+\
           'v[(*a'+repr(i)+')[i]->second()->toVar()])));'
         print '      }'
+      elif aty == 'setvar':
+        print '      Reflection::ArrayArg<Reflection::Arg*>* a'+repr(i)+' ='
+        print '        spec['+repr(i)+ \
+          ']->typedArg()->toArray<Reflection::Arg*>();'
+        print '      SetVarArgs arg'+repr(i)+'(a'+repr(i)+'->size());'
+        print '      for (int i=a'+repr(i)+'->size(); i--;) {'
+        print '        arg'+repr(i)+'[i] = SetVar(Set::SetView(static_cast<Set::SetVarImp*>('+\
+          'v[(*a'+repr(i)+')[i]->toVar()])));'
+        print '      }'
     else:
       if ty == 'int':
         print '      int arg'+repr(i)+' = spec['+repr(i)+']->toInt();'
@@ -96,6 +111,10 @@ def checktype(t,args):
         print '      IntVar arg'+repr(i)+'_1'+\
           ' = IntVar(Int::IntView(static_cast<Int::IntVarImp*>('+\
           'v[spec['+repr(i)+']->typedArg()->second()->toVar()])));'
+      elif ty == 'setvar':
+        print '      SetVar arg'+repr(i)+\
+          ' = SetVar(Set::SetView(static_cast<Set::SetVarImp*>('+\
+          'v[spec['+repr(i)+']->typedArg()->toVar()])));'
   for i,arg in enumerate(args):
     if type(arg) == types.ListType:
       if t[arg[0]] == 'int':
@@ -117,6 +136,9 @@ def emit(c):
   print 'public:\n  static void post(Space* home, const std::vector<VarBase*>& v, '
   print '                   Reflection::ActorSpec& spec) {'
   for inst in c['inst']:
+    hasSets = hasSetType(inst['type'])
+    if hasSets:
+      print '#ifdef GECODE_HAVE_SET_VARS'
     checktype(inst['type'], inst['post'][1:])
     print '      '+inst['post'][0]+'(home, ',
     last = len(inst['post'])-2
@@ -133,6 +155,8 @@ def emit(c):
     print ');'
     print '      return;'
     print '    }'
+    if hasSets:
+      print '#endif'
   print '    throw Exception("Registry","No suitable post function defined");'
   print '  }'
   print '  '+mangled+'() { registry.add("'+c['name']+'", &post); }'
@@ -149,9 +173,11 @@ print '  Reflection::Type offsetvar;'
 print '  Reflection::Type minusvar;'
 print '  Reflection::Type negboolvar;'
 print '  Reflection::Type constint;'
+print '  Reflection::Type setvar;'
 print '  TypeDefs() : intvar("int.IntView"), boolvar("int.BoolView"), '
 print '    offsetvar("int.OffsetView"), minusvar("int.MinusView"),'
-print '    negboolvar("int.NegBoolView"), constint("int.ConstIntView") {}'
+print '    negboolvar("int.NegBoolView"), constint("int.ConstIntView"),'
+print '    setvar("set.SetView") {}'
 print '};'
 print 'TypeDefs _typeDefs;'
 

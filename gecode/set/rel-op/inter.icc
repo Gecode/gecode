@@ -163,6 +163,17 @@ namespace Gecode { namespace Set { namespace RelOp {
 
   template <class View0, class View1>
   forceinline
+  IntersectionN<View0,View1>::IntersectionN(Space* home, ViewArray<View0>& x,
+                                            const IntSet& z, View1 y)
+    : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,x,y),
+      intOfDets(home) {
+    shared = x.shared() || viewarrayshared(x,y);
+    IntSetRanges rz(z);
+    intOfDets.intersectI(home, rz);
+  }
+
+  template <class View0, class View1>
+  forceinline
   IntersectionN<View0,View1>::IntersectionN(Space* home, bool share,
                                             IntersectionN& p)
     : MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>(home,share,p),
@@ -187,6 +198,14 @@ namespace Gecode { namespace Set { namespace RelOp {
       (void) new (home) IntersectionN<View0,View1>(home,x,y);
       return ES_OK;
     }
+  }
+
+  template <class View0, class View1>
+  ExecStatus
+  IntersectionN<View0,View1>::post(Space* home, ViewArray<View0>& x,
+                                   const IntSet& z, View1 y) {
+    (void) new (home) IntersectionN<View0,View1>(home,x,z,y);
+    return ES_OK;
   }
 
   template <class View0, class View1>

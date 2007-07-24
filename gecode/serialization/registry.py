@@ -435,11 +435,61 @@ registry = [
   },
   {
     'name' : "int.element.ViewBnd",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['intvar', 'intvar', ']int', ']intvar'],
+      'post' : ['my_element', 2, 3, 0, 1, '0', 'ICL_BND']
+    },
+    { 'type' : ['intvar', 'constint', ']int', ']intvar'],
+      'post' : ['my_element', 2, 3, 0, 1, '0', 'ICL_BND']
+    },
+    { 'type' : ['intvar', 'boolvar', ']int', ']boolvar'],
+      'post' : ['my_element', 2, 3, 0, 1, '0', 'ICL_BND']
+    },
+    { 'type' : ['intvar', 'constint', ']int', ']boolvar'],
+      'post' : ['my_element', 2, 3, 0, 1, '0', 'ICL_BND']
+    },
+    { 'type' : ['offsetvar', 'intvar', ']int', ']intvar'],
+      'post' : ['my_element', 2, 3, (0,1), 1, (0,0), 'ICL_BND']
+    },
+    { 'type' : ['offsetvar', 'constint', ']int', ']intvar'],
+      'post' : ['my_element', 2, 3, (0,1), 1, (0,0), 'ICL_BND']
+    },
+    { 'type' : ['offsetvar', 'boolvar', ']int', ']boolvar'],
+      'post' : ['my_element', 2, 3, (0,1), 1, (0,0), 'ICL_BND']
+    },
+    { 'type' : ['offsetvar', 'constint', ']int', ']boolvar'],
+      'post' : ['my_element', 2, 3, (0,1), 1, (0,0), 'ICL_BND']
+    }    
+    ]
   },
   {
     'name' : "int.element.ViewDom",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['intvar', 'intvar', ']int', ']intvar'],
+      'post' : ['my_element', 2, 3, 0, 1, '0', 'ICL_DOM']
+    },
+    { 'type' : ['intvar', 'constint', ']int', ']intvar'],
+      'post' : ['my_element', 2, 3, 0, 1, '0', 'ICL_DOM']
+    },
+    { 'type' : ['intvar', 'boolvar', ']int', ']boolvar'],
+      'post' : ['my_element', 2, 3, 0, 1, '0', 'ICL_DOM']
+    },
+    { 'type' : ['intvar', 'constint', ']int', ']boolvar'],
+      'post' : ['my_element', 2, 3, 0, 1, '0', 'ICL_DOM']
+    },
+    { 'type' : ['offsetvar', 'intvar', ']int', ']intvar'],
+      'post' : ['my_element', 2, 3, (0,1), 1, (0,0), 'ICL_DOM']
+    },
+    { 'type' : ['offsetvar', 'constint', ']int', ']intvar'],
+      'post' : ['my_element', 2, 3, (0,1), 1, (0,0), 'ICL_DOM']
+    },
+    { 'type' : ['offsetvar', 'boolvar', ']int', ']boolvar'],
+      'post' : ['my_element', 2, 3, (0,1), 1, (0,0), 'ICL_DOM']
+    },
+    { 'type' : ['offsetvar', 'constint', ']int', ']boolvar'],
+      'post' : ['my_element', 2, 3, (0,1), 1, (0,0), 'ICL_DOM']
+    }
+    ]
   },
   {
     'name' : "int.extensional.Basic",
@@ -684,43 +734,83 @@ registry = [
   },
   {
     'name' : "set.convex.Convex",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['setvar'],
+      'post' : ['convex', 0]
+    }
+    ]
   },
   {
     'name' : "set.convex.ConvexHull",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['setvar', 'setvar'],
+      'post' : ['convexHull', 0, 1]
+    }
+    ]
   },
   {
     'name' : "set.distinct.AtmostOne",
-    'inst' : []
+    'inst' : [
+    { 'type' : [']setvar', 'int'],
+      'post' : ['atmostOne', 0, 1]
+    }
+    ]
   },
   {
     'name' : "set.distinct.Distinct",
-    'inst' : []
+    'inst' : [
+    { 'type' : [']setvar', 'int'],
+      'post' : ['distinct', 0, 1]
+    }
+    ]
   },
   {
     'name' : "set.int.Card",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['setvar', 'intvar'],
+      'post' : ['cardinality', 0, 1]
+    }
+    ]
   },
   {
     'name' : "set.int.Channel",
-    'inst' : []
+    'inst' : [
+    { 'type' : [']intvar', ']setvar'],
+      'post' : ['channel', 0, 1]
+    }
+    ]
   },
   {
     'name' : "set.int.Match",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['setvar', ']intvar'],
+      'post' : ['match', 0, 1]
+    }
+    ]
   },
   {
     'name' : "set.int.MaxElement",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['setvar', 'intvar'],
+      'post' : ['max', 0, 1]
+    }
+    ]
   },
   {
     'name' : "set.int.MinElement",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['setvar', 'intvar'],
+      'post' : ['min', 0, 1]
+    }
+    ]
   },
   {
     'name' : "set.int.Weights",
-    'inst' : []
+    'inst' : [
+    { 'type' : [']int', ']int', 'setvar', 'intvar'],
+      'post' : ['weights', 0, 1, 2, 3]
+    }
+    ]
   },
   {
     'name' : "set.projectors.CardProjection",
@@ -732,15 +822,27 @@ registry = [
   },
   {
     'name' : "set.rel.Distinct",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['setvar', 'setvar'],
+      'post' : ['rel', 0, 'SRT_NQ', 1]
+    }
+    ]
   },
   {
     'name' : "set.rel.DistinctDoit",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['setvar', 'setvar'],
+      'post' : ['rel', 0, 'SRT_NQ', 1]
+    }
+    ]
   },
   {
     'name' : "set.rel.Eq",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['setvar', 'setvar'],
+      'post' : ['rel', 0, 'SRT_EQ', 1]
+    }
+    ]
   },
   {
     'name' : "set.rel.NoSubSet",
@@ -748,47 +850,88 @@ registry = [
   },
   {
     'name' : "set.rel.ReEq",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['setvar', 'setvar', 'boolvar'],
+      'post' : ['rel', 0, 'SRT_EQ', 1, 2]
+    }
+    ]
   },
   {
     'name' : "set.rel.ReSubset",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['setvar', 'setvar', 'boolvar'],
+      'post' : ['rel', 0, 'SRT_SUB', 1, 2]
+    }
+    ]
   },
   {
     'name' : "set.rel.SubSet",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['setvar', 'setvar'],
+      'post' : ['rel', 0, 'SRT_SUB', 1]
+    }
+    ]
   },
   {
     'name' : "set.relop.Intersection",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['setvar', 'setvar', 'setvar'],
+      'post' : ['rel', 0, 'SOT_INTER', 1, 'SRT_EQ', 2]
+    }
+    ]
   },
   {
     'name' : "set.relop.IntersectionN",
-    'inst' : []
+    'inst' : [
+    { 'type' : [']setvar', 'setvar'],
+      'post' : ['rel', 'SOT_INTER', 0, 1]
+    }
+    ]
   },
   {
     'name' : "set.relop.PartitionN",
-    'inst' : []
+    'inst' : [
+    { 'type' : [']setvar', 'setvar'],
+      'post' : ['rel', 'SOT_DUNION', 0, 1]
+    }
+    ]
   },
   {
     'name' : "set.relop.SubOfUnion",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['setvar', 'setvar', 'setvar'],
+      'post' : ['rel', 0, 'SOT_UNION', 1, 'SRT_SUP', 2]
+    }
+    ]
   },
   {
     'name' : "set.relop.SuperOfInter",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['setvar', 'setvar', 'setvar'],
+      'post' : ['rel', 0, 'SOT_INTER', 1, 'SRT_SUB', 2]
+    }
+    ]
   },
   {
     'name' : "set.relop.Union",
-    'inst' : []
+    'inst' : [
+    { 'type' : ['setvar', 'setvar', 'setvar'],
+      'post' : ['rel', 0, 'SOT_UNION', 1, 'SRT_EQ', 2]
+    }
+    ]
   },
   {
     'name' : "set.relop.UnionN",
-    'inst' : []
+    'inst' : [
+    { 'type' : [']setvar', 'setvar', 'intset'],
+      'post' : ['rel', 'SOT_UNION', 0, 2, 1]
+    }
+    ]
   },
   {
     'name' : "set.select.Disjoint",
-    'inst' : []
+    'inst' : [
+    ]
   },
   {
     'name' : "set.select.Intersection",
@@ -804,10 +947,18 @@ registry = [
   },
   {
     'name' : "set.sequence.Sequence",
-    'inst' : []
+    'inst' : [
+    { 'type' : [']setvar'],
+      'post' : ['sequence', 0]
+    }
+    ]
   },
   {
     'name' : "set.sequence.Union",
-    'inst' : []
+    'inst' : [
+    { 'type' : [']setvar', 'setvar'],
+      'post' : ['sequentialUnion', 0, 1]
+    }
+    ]
   }
   ]

@@ -190,6 +190,8 @@ namespace Gecode { namespace Set { namespace RelOp {
     IntersectionN(Space* home, bool share,IntersectionN& p);
     /// Constructor for posting
     IntersectionN(Space* home,ViewArray<View0>&, View1);
+    /// Constructor for posting
+    IntersectionN(Space* home,ViewArray<View0>&, const IntSet&, View1);
   public:
     virtual PropCost    cost(void) const;
     /// Copy propagator during cloning
@@ -198,6 +200,9 @@ namespace Gecode { namespace Set { namespace RelOp {
     virtual ExecStatus  propagate(Space* home);
     /// Post propagator \f$ x = \bigcap_{i\in\{0,\dots,n-1\}} y_i \f$
     static  ExecStatus  post(Space* home,ViewArray<View0>& y,View1 x);
+    /// Post propagator \f$ x = z\cap\bigcap_{i\in\{0,\dots,n-1\}} y_i \f$
+    static  ExecStatus  post(Space* home,ViewArray<View0>& y,
+                             const IntSet& z,View1 x);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
@@ -224,6 +229,8 @@ namespace Gecode { namespace Set { namespace RelOp {
     UnionN(Space* home, bool share,UnionN& p);
     /// Constructor for posting
     UnionN(Space* home,ViewArray<View0>&,View1);
+    /// Constructor for posting
+    UnionN(Space* home,ViewArray<View0>&,const IntSet&,View1);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space* home, bool);
@@ -232,6 +239,9 @@ namespace Gecode { namespace Set { namespace RelOp {
     virtual PropCost    cost(void) const;
     /// Post propagator \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$ 
     static  ExecStatus  post(Space* home,ViewArray<View0>& y,View1 x);
+    /// Post propagator \f$ x = z\cup\bigcup_{i\in\{0,\dots,n-1\}} y_i \f$ 
+    static  ExecStatus  post(Space* home,ViewArray<View0>& y,
+                             const IntSet& z,View1 x);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
@@ -259,6 +269,8 @@ namespace Gecode { namespace Set { namespace RelOp {
     PartitionN(Space* home, bool share,PartitionN& p);
     /// Constructor for posting
     PartitionN(Space* home,ViewArray<View0>&, View1);
+    /// Constructor for posting
+    PartitionN(Space* home,ViewArray<View0>&, const IntSet&, View1);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space* home,bool);
@@ -267,6 +279,9 @@ namespace Gecode { namespace Set { namespace RelOp {
     virtual PropCost    cost(void) const;
     /// Post propagator \f$ x = \biguplus_{i\in\{0,\dots,n-1\}} y_i \f$ 
     static  ExecStatus  post(Space* home,ViewArray<View0>& y,View1 x);
+    /// Post propagator \f$ x = z\uplus\biguplus_{i\in\{0,\dots,n-1\}} y_i \f$ 
+    static  ExecStatus  post(Space* home,ViewArray<View0>& y,
+                             const IntSet& z,View1 x);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator

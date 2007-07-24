@@ -23,10 +23,7 @@
 #include "gecode/set/projectors.hh"
 
 #include "gecode/support/buddy/bdd.h"
-#include <vector>
 #include <set>
-#include <map>
-#include <stack>
 
 using namespace Gecode::Set;
 

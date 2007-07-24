@@ -55,6 +55,8 @@ namespace Gecode {
       SetView(void);
       /// Initialize from set variable \a x
       SetView(const SetVar& x);
+      /// Initialize from set variable \a x
+      SetView(SetVarImp* x);
       //@}
 
       /// \name Value access
