@@ -368,6 +368,12 @@ namespace Gecode { namespace Bdd {
   }
 
   template <class View0, class View1>
+  const char*
+  Range<View0, View1>::name(void) const {
+    return "bdd.bddprop.Range";
+  }
+
+  template <class View0, class View1>
   forceinline Actor*
   Range<View0, View1>::copy(Space* home, bool share) {
     return new (home) Range(home, share, *this);

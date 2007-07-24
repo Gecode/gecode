@@ -389,7 +389,7 @@ namespace Gecode { namespace Bdd {
 
     /// \name Serialization
     //@{
-    GECODE_SET_EXPORT Reflection::Arg*
+    GECODE_BDD_EXPORT Reflection::Arg*
     spec(Space* home, Reflection::VarMap& m);
     //@}
 

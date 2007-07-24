@@ -101,7 +101,13 @@ namespace Gecode { namespace Bdd {
 //     }
     return PC_CRAZY_HI;
   }
-  
+
+  template <class View>
+  const char*
+  NaryBddProp<View>::name(void) const {
+    return "bdd.bddprop.NaryBddProp";
+  }
+ 
   template <class View>
   size_t
   NaryBddProp<View>::dispose(Space* home) {
@@ -646,6 +652,12 @@ namespace Gecode { namespace Bdd {
 				 GecodeBdd& d0) {
     (void) new (home) NaryOneBdd(home, x, y, d0);
     return ES_OK;
+  }
+
+  template <class View0, class View1>
+  const char*
+  NaryOneBdd<View0, View1>::name(void) const {
+    return "bdd.bddprop.NaryOneBdd";
   }
 
   template <class View0, class View1>

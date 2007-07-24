@@ -38,6 +38,13 @@ namespace Gecode { namespace Bdd {
       BddVarImp* ptr = new (home) BddVarImp(home,share,*this);
       return ptr;
     }
+
+    Reflection::Arg*
+    BddVarImp::spec(Space* home, Reflection::VarMap& m) {
+      // \todo FIXME implemente reflection
+      return NULL;
+    }
+
   
 #define OLDPRINTF(b) (mgr->cfalse(b) ? 0 : mgr->bddidx(b))
 #define OLDPRINTT(b) std::cout << (mgr->ctrue(b) ? 1 : OLDPRINTF(b)) <<" ";

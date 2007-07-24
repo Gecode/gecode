@@ -43,6 +43,12 @@ namespace Gecode { namespace Bdd {
   DisjointGlb<View>::cost(void) const {
     return PC_LINEAR_HI;
   }
+
+  template <class View>
+  const char*
+  DisjointGlb<View>::name(void) const {
+    return "bdd.bddprop.DisjointGlb";
+  }
   
   template <class View>
   size_t
@@ -143,6 +149,12 @@ namespace Gecode { namespace Bdd {
   forceinline PropCost
   DisjointSudoku<View>::cost(void) const {
     return PC_UNARY_HI;
+  }
+
+  template <class View>
+  const char*
+  DisjointSudoku<View>::name(void) const {
+    return "bdd.bddprop.DisjointSudoku";
   }
   
   template <class View>

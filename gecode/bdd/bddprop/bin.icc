@@ -43,6 +43,12 @@ namespace Gecode { namespace Bdd {
   }
 
   template <class View0, class View1>
+  const char*
+  Bin<View0, View1>::name(void) const {
+    return "bdd.bddprop.Bin";
+  }
+
+  template <class View0, class View1>
   forceinline Actor*
   Bin<View0, View1>::copy(Space* home, bool share) {
     return new (home) Bin(home, share, *this);

@@ -44,6 +44,12 @@ namespace Gecode { namespace Bdd {
   Singleton<View1, View2>::cost(void) const {
     return PC_BINARY_LO;
   }
+
+  template <class View1, class View2>
+  const char*
+  Singleton<View1, View2>::name(void) const {
+    return "bdd.bddprop.Singleton";
+  }
   
   template <class View1, class View2>
   size_t

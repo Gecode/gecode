@@ -68,6 +68,9 @@ namespace Gecode { namespace Bdd {
   public:
     /// Cost function
     virtual PropCost cost(void) const;
+    /// Name of this propagator
+    virtual const char* name(void) const;
+
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -119,6 +122,9 @@ namespace Gecode { namespace Bdd {
   public:
     /// Cost function
     virtual PropCost cost(void) const;
+    /// Name of this propagator
+    virtual const char* name(void) const;
+
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -148,6 +154,9 @@ namespace Gecode { namespace Bdd {
   public:
     /// Cost function
     virtual PropCost cost(void) const;
+    /// Name of this propagator
+    virtual const char* name(void) const;
+
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -201,6 +210,9 @@ namespace Gecode { namespace Bdd {
   public:
     /// Cost function
     virtual PropCost cost(void) const;
+    /// Name of this propagator
+    virtual const char* name(void) const;
+
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -231,6 +243,8 @@ namespace Gecode { namespace Bdd {
     /// Constructor for posting
     Bin(Space* home, View0&, View1&, GecodeBdd& d);
   public:
+    /// Name of this propagator
+    virtual const char* name(void) const;
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -259,6 +273,8 @@ namespace Gecode { namespace Bdd {
     ExecStatus divide_conquer(Space* home, BMI* m, GecodeBdd& p, 
                               int l, int r, int ypos);
   public:
+    /// Name of this propagator
+    virtual const char* name(void) const;
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -286,6 +302,8 @@ namespace Gecode { namespace Bdd {
     ExecStatus divide_conquer(Space* home, BMI* m, GecodeBdd& p, int l, int r, 
 			int ypos, int zpos);
   public:
+    /// Name of this propagator
+    virtual const char* name(void) const;
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -341,6 +359,9 @@ namespace Gecode { namespace Bdd {
   public:
     /// Cost function
     virtual PropCost cost(void) const;
+    /// Name of this propagator
+    virtual const char* name(void) const;
+
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -368,6 +389,9 @@ namespace Gecode { namespace Bdd {
   public:
     /// Cost function
     virtual PropCost cost(void) const;
+    /// Name of this propagator
+    virtual const char* name(void) const;
+
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning

@@ -51,6 +51,12 @@ namespace Gecode { namespace Bdd {
       return PC_QUADRATIC_HI;
     }
   }
+
+  template <class View>
+  const char*
+  BinBddProp<View>::name(void) const {
+    return "bdd.bddprop.BinBddProp";
+  }
   
   template <class View>
   size_t
