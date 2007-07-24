@@ -694,7 +694,8 @@ BUILDDIRS = $(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%) $(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
 
 ifeq "@enable_examples@" "yes"
-all: compilelib compileexamples
+all: compilelib
+	@$(MAKE) compileexamples
 	@$(MAKE) makecompletedmessage
 else
 all: compilelib
