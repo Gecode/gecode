@@ -73,6 +73,7 @@ namespace {
         return ES_FIX;
       return ES_NOFIX;
     }
+    virtual const char* name(void) const { return "Keep"; }
     /// Perform propagation
     virtual ExecStatus propagate(Space* home) {
       if (n == 0)
@@ -135,6 +136,7 @@ namespace {
     virtual Actor* copy(Space* home, bool share) {
       return new (home) AD(home,share,*this);
     }
+    virtual const char* name(void) const { return "AD"; }
     virtual ExecStatus advise(Space* home, Advisor* _a, const Delta* d) {
       ViewAdvisor<IntView>* a = static_cast<ViewAdvisor<IntView>*>(_a);
       ModEvent me = IntView::modevent(d);
@@ -233,6 +235,7 @@ namespace {
     virtual Actor* copy(Space* home, bool share) {
       return new (home) Eq(home, share, *this);
     }
+    virtual const char* name(void) const { return "Eq"; }
     virtual PropCost cost(void) const { 
       return PC_BINARY_LO; 
     }
@@ -320,6 +323,7 @@ namespace {
     virtual Actor* copy(Space* home, bool share) {
       return new (home) BoolEq(home, share, *this);
     }
+    virtual const char* name(void) const { return "BoolEq"; }
     virtual PropCost cost(void) const { 
       return PC_BINARY_LO; 
     }
