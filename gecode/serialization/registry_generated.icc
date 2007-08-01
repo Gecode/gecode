@@ -8,10 +8,13 @@ public:
   Reflection::Type negboolvar;
   Reflection::Type constint;
   Reflection::Type setvar;
+  Reflection::Type constset;
+  Reflection::Type singletonset;
   TypeDefs() : intvar("int.IntView"), boolvar("int.BoolView"), 
     offsetvar("int.OffsetView"), minusvar("int.MinusView"),
     negboolvar("int.NegBoolView"), constint("int.ConstIntView"),
-    setvar("set.SetView") {}
+    setvar("set.SetView"), constset("set.ConstantView"),
+    singletonset("set.SingletonView") {}
 };
 TypeDefs _typeDefs;
 class int_Pdistinct_PVal {
@@ -2653,6 +2656,42 @@ public:
       return;
     }
 #endif
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.singletonset.equal(spec[ 1]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      IntVar arg1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      rel(home,  arg0 ,  SRT_NQ ,  arg1 );
+      return;
+    }
+#endif
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.constset.equal(spec[ 1]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      Reflection::ArrayArg<int>* a1 =
+        spec[1]->typedArg()->toArray<int>();
+      IntArrayIter iai1(a1);
+      IntSet arg1(iai1);
+      dom(home,  arg0 ,  SRT_NQ ,  arg1 );
+      return;
+    }
+#endif
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.constset.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+        true) {
+      Reflection::ArrayArg<int>* a0 =
+        spec[0]->typedArg()->toArray<int>();
+      IntArrayIter iai0(a0);
+      IntSet arg0(iai0);
+      SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      dom(home,  arg1 ,  SRT_NQ ,  arg0 );
+      return;
+    }
+#endif
     throw Exception("Registry","No suitable post function defined");
   }
   set_Prel_PDistinct() { registry.add("set.rel.Distinct", &post); }
@@ -2670,6 +2709,42 @@ public:
       SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
       SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
       rel(home,  arg0 ,  SRT_NQ ,  arg1 );
+      return;
+    }
+#endif
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.singletonset.equal(spec[ 1]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      IntVar arg1 = IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      rel(home,  arg0 ,  SRT_NQ ,  arg1 );
+      return;
+    }
+#endif
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.setvar.equal(spec[ 0]->type()) &&
+         _typeDefs.constset.equal(spec[ 1]->type()) &&
+        true) {
+      SetVar arg0 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[0]->typedArg()->toVar()])));
+      Reflection::ArrayArg<int>* a1 =
+        spec[1]->typedArg()->toArray<int>();
+      IntArrayIter iai1(a1);
+      IntSet arg1(iai1);
+      dom(home,  arg0 ,  SRT_NQ ,  arg1 );
+      return;
+    }
+#endif
+#ifdef GECODE_HAVE_SET_VARS
+    if ( _typeDefs.constset.equal(spec[ 0]->type()) &&
+         _typeDefs.setvar.equal(spec[ 1]->type()) &&
+        true) {
+      Reflection::ArrayArg<int>* a0 =
+        spec[0]->typedArg()->toArray<int>();
+      IntArrayIter iai0(a0);
+      IntSet arg0(iai0);
+      SetVar arg1 = SetVar(Set::SetView(static_cast<Set::SetVarImp*>(v[spec[1]->typedArg()->toVar()])));
+      dom(home,  arg1 ,  SRT_NQ ,  arg0 );
       return;
     }
 #endif

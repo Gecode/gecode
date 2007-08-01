@@ -825,6 +825,15 @@ registry = [
     'inst' : [
     { 'type' : ['setvar', 'setvar'],
       'post' : ['rel', 0, 'SRT_NQ', 1]
+    },
+    { 'type' : ['setvar', 'singletonset'],
+      'post' : ['rel', 0, 'SRT_NQ', 1]
+    },
+    { 'type' : ['setvar', 'constset'],
+      'post' : ['dom', 0, 'SRT_NQ', 1]
+    },
+    { 'type' : ['constset', 'setvar'],
+      'post' : ['dom', 1, 'SRT_NQ', 0]
     }
     ]
   },
@@ -833,6 +842,15 @@ registry = [
     'inst' : [
     { 'type' : ['setvar', 'setvar'],
       'post' : ['rel', 0, 'SRT_NQ', 1]
+    },
+    { 'type' : ['setvar', 'singletonset'],
+      'post' : ['rel', 0, 'SRT_NQ', 1]
+    },
+    { 'type' : ['setvar', 'constset'],
+      'post' : ['dom', 0, 'SRT_NQ', 1]
+    },
+    { 'type' : ['constset', 'setvar'],
+      'post' : ['dom', 1, 'SRT_NQ', 0]
     }
     ]
   },

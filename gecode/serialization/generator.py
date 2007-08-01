@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import sys
 import types
 import registry
 
@@ -11,7 +12,7 @@ def isboolvartype(t):
  return t == 'boolvar' or t == 'negboolvar'
 
 def issetvartype(t):
-  return t == 'setvar'
+  return t == 'setvar' or t == 'constset' or t == 'singletonset'
 
 def isvartype(t):
   return isintvartype(t) or isboolvartype(t) or issetvartype(t)
@@ -42,14 +43,14 @@ def checktype(t,args):
         print '      for (int i=a'+repr(i)+'->size(); i--;) {'
         print '        arg'+repr(i)+'[i] = (*a'+repr(i)+')[i];'
         print '      }'
-      if aty == 'constint':
+      elif aty == 'constint':
         print '      Reflection::ArrayArg<Reflection::Arg*>* a ='
         print '        spec['+repr(i)+']->typedArg()->toArray<Reflection::Arg*>();'
         print '      IntArgs arg'+repr(i)+'(a->size());'
         print '      for (int i=a->size(); i--;) {'
         print '        arg'+repr(i)+'[i] = (*a)[i]->toInt();'
         print '      }'
-      elif aty == 'intvar' or aty == 'minusvar':
+      elif aty == 'intvar' or aty == 'minusvar' or aty == 'singletonset':
         print '      Reflection::ArrayArg<Reflection::Arg*>* a'+repr(i)+' ='
         print '        spec['+repr(i)+ \
           ']->typedArg()->toArray<Reflection::Arg*>();'
@@ -87,6 +88,9 @@ def checktype(t,args):
         print '        arg'+repr(i)+'[i] = SetVar(Set::SetView(static_cast<Set::SetVarImp*>('+\
           'v[(*a'+repr(i)+')[i]->toVar()])));'
         print '      }'
+      else:
+        sys.stderr.write("array type found:"+aty)
+        sys.exit(2)
     else:
       if ty == 'int':
         print '      int arg'+repr(i)+' = spec['+repr(i)+']->toInt();'
@@ -95,7 +99,7 @@ def checktype(t,args):
         print '        spec['+repr(i)+']->toArray<int>();'
         print '      IntArrayIter iai'+repr(i)+'(a'+repr(i)+');'
         print '      IntSet arg'+repr(i)+'(iai'+repr(i)+');'
-      elif ty == 'intvar' or ty == 'minusvar':
+      elif ty == 'intvar' or ty == 'minusvar' or ty == 'singletonset':
         print '      IntVar arg'+repr(i)+\
           ' = IntVar(Int::IntView(static_cast<Int::IntVarImp*>('+\
           'v[spec['+repr(i)+']->typedArg()->toVar()])));'
@@ -115,6 +119,14 @@ def checktype(t,args):
         print '      SetVar arg'+repr(i)+\
           ' = SetVar(Set::SetView(static_cast<Set::SetVarImp*>('+\
           'v[spec['+repr(i)+']->typedArg()->toVar()])));'
+      elif ty == 'constset':
+        print '      Reflection::ArrayArg<int>* a'+repr(i)+' ='
+        print '        spec['+repr(i)+']->typedArg()->toArray<int>();'
+        print '      IntArrayIter iai'+repr(i)+'(a'+repr(i)+');'
+        print '      IntSet arg'+repr(i)+'(iai'+repr(i)+');'
+      else:
+        sys.stderr.write("type found:"+ty+"\n")
+        sys.exit(2)
   for i,arg in enumerate(args):
     if type(arg) == types.ListType:
       if t[arg[0]] == 'int':
@@ -174,10 +186,13 @@ print '  Reflection::Type minusvar;'
 print '  Reflection::Type negboolvar;'
 print '  Reflection::Type constint;'
 print '  Reflection::Type setvar;'
+print '  Reflection::Type constset;'
+print '  Reflection::Type singletonset;'
 print '  TypeDefs() : intvar("int.IntView"), boolvar("int.BoolView"), '
 print '    offsetvar("int.OffsetView"), minusvar("int.MinusView"),'
 print '    negboolvar("int.NegBoolView"), constint("int.ConstIntView"),'
-print '    setvar("set.SetView") {}'
+print '    setvar("set.SetView"), constset("set.ConstantView"),'
+print '    singletonset("set.SingletonView") {}'
 print '};'
 print 'TypeDefs _typeDefs;'
 
