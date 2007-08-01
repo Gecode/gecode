@@ -77,8 +77,7 @@ namespace Gecode {
         } else {
           Set::ConstantView cv(home, is);
           GECODE_ES_FAIL(home,
-                         (Set::Rel::Distinct<Set::SetView,
-                          Set::ConstantView>::post(home, s, cv)));
+                         (Set::Rel::DistinctDoit<Set::SetView>::post(home, s, cv)));
         }
       break;
     case SRT_SUB:
@@ -180,41 +179,28 @@ namespace Gecode {
         // x||y <=> b is equivalent to
         // ( y <= complement(x) and x<=complement(y) ) <=> b
 
-        // set up BoolVars for the conjunction
-        BoolVar b1(home, 0, 1);
-        BoolVar b2(home, 0, 1);
-        rel(home, b1, BOT_AND, b2, b);        
-
         // compute complement of is
         IntSetRanges dr1(is);
         Set::RangesCompl<IntSetRanges > dc1(dr1);
-        
-        // First conjunct: ( s <= complement(is) ) <=> b1
         IntSet dcompl(dc1);
         Set::ConstantView cvcompl(home, dcompl);
         GECODE_ES_FAIL(home,
                        (Set::Rel::ReSubset<Set::SetView,Set::ConstantView>
-                        ::post(home, s, cvcompl, b1)));
-
-        // Second conjunct: ( complement(s) <= d ) <=> b2
-        Set::ConstantView cv(home, is);
-        Set::SetView sv(s);
-        Set::ComplementView<Set::SetView> cs(sv);
-        GECODE_ES_FAIL(home,
-                       (Set::Rel::ReSubset<Set::ConstantView,Set::ComplementView<Set::SetView> >
-                        ::post(home, cv, cs, b2)));
-
+                        ::post(home, s, cvcompl, b)));
       }
       break;
     case SRT_CMPL:
       {
         Set::SetView sv(s);
-        Set::ComplementView<Set::SetView> cs(sv);
-        Set::ConstantView cv(home, is);
+        
+        IntSetRanges dr1(is);
+        Set::RangesCompl<IntSetRanges> dc1(dr1);
+        IntSet dcompl(dc1);
+        Set::ConstantView cvcompl(home, dcompl);
+        
         GECODE_ES_FAIL(home,
-                       (Set::Rel::ReEq<Set::ComplementView<Set::SetView>,
-                        Set::ConstantView>
-                        ::post(home, cs, cv, b)));
+                       (Set::Rel::ReEq<Set::SetView,Set::ConstantView>
+                        ::post(home, sv, cvcompl, b)));
       }
       break;
     }

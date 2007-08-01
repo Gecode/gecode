@@ -233,23 +233,23 @@ namespace Gecode { namespace Set { namespace Rel {
    * Requires \code #include "gecode/set/rel.hh" \endcode
    * \ingroup FuncSetProp   
    */
-  template <class View0, class View1>
+  template <class View0>
   class DistinctDoit : public UnaryPropagator<View0,PC_SET_ANY> {
   protected:
     using UnaryPropagator<View0,PC_SET_ANY>::x0;
     /// The view that is already assigned
-    View1 y;
+    ConstantView y;
     /// Constructor for cloning \a p
     DistinctDoit(Space* home, bool share,DistinctDoit&);
     /// Constructor for posting
-    DistinctDoit(Space* home, View0, View1);
+    DistinctDoit(Space* home, View0, ConstantView);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space* home, bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ x\neq y \f$ 
-    static ExecStatus post(Space* home, View0, View1);
+    static ExecStatus post(Space* home, View0, ConstantView);
     /// Specification of this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator

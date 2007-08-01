@@ -116,30 +116,20 @@ namespace Gecode {
     case SRT_DISJ:
       {
         // x||y <=> b is equivalent to
-        // ( y <= complement(x) and x<=complement(y) ) <=> b
-
-        // set up BoolVars for the conjunction
-        BoolVar b1(home, 0, 1);
-        BoolVar b2(home, 0, 1);
-        rel(home, b1, BOT_AND, b2, b);        
+        // ( y <= complement(x) ) <=> b
 
         ComplementView<View0> xc(x);
-        ComplementView<View1> yc(y);
-
         GECODE_ES_FAIL(home,
-                       (ReSubset<View0,ComplementView<View1> >
-                        ::post(home, x, yc, b1)));
-        GECODE_ES_FAIL(home,
-                       (ReSubset<View1,ComplementView<View0> >
-                        ::post(home, y, xc, b2)));
+                       (ReSubset<ComplementView<View0>,View1>
+                        ::post(home, xc, y, b)));
       }
       break;
     case SRT_CMPL:
       {
-        ComplementView<View0> cx(x);
+        ComplementView<View0> xc(x);
         GECODE_ES_FAIL(home,
-                       (ReEq<ComplementView<View0>,
-                        View1>::post(home, cx, y, b)));
+                       (ReEq<ComplementView<View0>,View1>
+                       ::post(home, xc, y, b)));
       }
       break;
     }
@@ -179,7 +169,7 @@ namespace Gecode {
   void
   rel(Space* home, SetVar x, SetRelType r, const IntSet& s, BoolVar b) {
     ConstantView sv(home, s);
-    rel_re<SetView,ConstantView>(home,x,r,sv,b);
+    rel_re<SetView,ConstantView>(home, x, r, sv, b);
   }
 
   void

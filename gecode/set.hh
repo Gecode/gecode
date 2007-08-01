@@ -236,11 +236,6 @@ namespace Gecode {
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_SET_EXPORT void
-  rel(Space* home, const IntSet& x, SetOpType op, const IntSet& y,
-      SetRelType r, SetVar z);
-
-  /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
-  GECODE_SET_EXPORT void
   rel(Space* home, const IntSet& x, SetOpType op, SetVar y, SetRelType r,
       const IntSet& z);
 
