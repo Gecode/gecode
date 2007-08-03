@@ -53,6 +53,14 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Finite set projectors can now be specified using formulas, in addition to
+set expressions.
+
+[ENTRY]
 Module: bdd
 What:   new
 Rank:   major
