@@ -754,26 +754,6 @@ compilesubdirs:
 	done
 
 #
-# Generated variable implementations
-#
-$(top_srcdir)/gecode/int/var/imp-int-hdr.icc: $(top_srcdir)/gecode/int/var-imp-int.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -header $^ > $@
-$(top_srcdir)/gecode/int/var/imp-int-body.icc: $(top_srcdir)/gecode/int/var-imp-int.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -body $^ > $@
-$(top_srcdir)/gecode/int/var/imp-bool-hdr.icc: $(top_srcdir)/gecode/int/var-imp-bool.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -header $^ > $@
-$(top_srcdir)/gecode/int/var/imp-bool-body.icc: $(top_srcdir)/gecode/int/var-imp-bool.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -body $^ > $@
-$(top_srcdir)/gecode/set/var/imp-hdr.icc: $(top_srcdir)/gecode/set/var-imp.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -header $^ > $@
-$(top_srcdir)/gecode/set/var/imp-body.icc: $(top_srcdir)/gecode/set/var-imp.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -body $^ > $@
-$(top_srcdir)/gecode/bdd/var/imp-hdr.icc: $(top_srcdir)/gecode/bdd/var-imp.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -header $^ > $@
-$(top_srcdir)/gecode/bdd/var/imp-body.icc: $(top_srcdir)/gecode/bdd/var-imp.vis
-	perl $(top_srcdir)/misc/genvarimp.perl -body $^ > $@
-
-#
 # Generated registry of propagators
 #
 
@@ -1039,6 +1019,34 @@ config.status: $(top_srcdir)/configure
 Makefile: $(top_srcdir)/Makefile.in config.status
 	./config.status --file $@:$<
 doxygen.hh: $(top_srcdir)/doxygen.hh.in config.status
+	./config.status --file $@:$<
+
+#
+# Generated variable implementations
+#
+$(top_srcdir)/gecode/int/var/imp-int-hdr.icc: \
+	$(top_srcdir)/gecode/int/var-imp-int.vis
+	./config.status --file $@:$<
+$(top_srcdir)/gecode/int/var/imp-int-body.icc: \
+	$(top_srcdir)/gecode/int/var-imp-int.vis
+	./config.status --file $@:$<
+$(top_srcdir)/gecode/int/var/imp-bool-hdr.icc: \
+	$(top_srcdir)/gecode/int/var-imp-bool.vis
+	./config.status --file $@:$<
+$(top_srcdir)/gecode/int/var/imp-bool-body.icc: \
+	$(top_srcdir)/gecode/int/var-imp-bool.vis
+	./config.status --file $@:$<
+$(top_srcdir)/gecode/set/var/imp-hdr.icc: \
+	$(top_srcdir)/gecode/set/var-imp.vis
+	./config.status --file $@:$<
+$(top_srcdir)/gecode/set/var/imp-body.icc: \
+	$(top_srcdir)/gecode/set/var-imp.vis
+	./config.status --file $@:$<
+$(top_srcdir)/gecode/bdd/var/imp-hdr.icc: \
+	$(top_srcdir)/gecode/bdd/var-imp.vis
+	./config.status --file $@:$<
+$(top_srcdir)/gecode/bdd/var/imp-body.icc: \
+	$(top_srcdir)/gecode/bdd/var-imp.vis
 	./config.status --file $@:$<
 
 #
