@@ -400,8 +400,10 @@ namespace Gecode {
     l->next(fl[i]); fl[i] = f;
   }
 
-#define GECODE_KERNEL_PTR2FL(p) (reinterpret_cast<FreeList*>(p))
-#define GECODE_KERNEL_PTR2CH(p) (reinterpret_cast<char*>(p))
+#define GECODE_KERNEL_PTR2FL(p) \
+  (static_cast<FreeList*>(static_cast<void*>(p)))
+#define GECODE_KERNEL_PTR2CH(p) \
+  (static_cast<char*>(static_cast<void*>(p)))
 
   template <size_t sz>
   void
