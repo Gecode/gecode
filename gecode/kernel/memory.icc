@@ -84,19 +84,19 @@ namespace Gecode {
     template <class T>
     forceinline T*
     bmalloc(size_t n) {
-      return reinterpret_cast<T*>(Memory::malloc(sizeof(T)*n));
+      return static_cast<T*>(Memory::malloc(sizeof(T)*n));
     }
 
     template <class T>
     forceinline T*
     brealloc(T* b, size_t, size_t m) {
-      return reinterpret_cast<T*>(Memory::realloc(b,m*sizeof(T)));
+      return static_cast<T*>(Memory::realloc(b,m*sizeof(T)));
     }
 
     template <class T>
     forceinline T*
     bcopy(T* d, const T* s, size_t n) {
-      return reinterpret_cast<T*>(memcpy(d,s,n*sizeof(T)));
+      return static_cast<T*>(memcpy(d,s,n*sizeof(T)));
     }
 
   }
@@ -133,9 +133,9 @@ namespace Gecode {
 
 #if defined(__GNUC__) && (! defined(_WIN32) )
 
-#define GECODE_AUTOARRAY(T,X,N)                                        \
+#define GECODE_AUTOARRAY(T,X,N)                                  \
 char __GECODE__ ## X ## __LINE__ [(N)*sizeof(T)];                \
-T* X = reinterpret_cast<T*>(__GECODE__ ## X ## __LINE__);
+T* X = static_cast<T*>(__GECODE__ ## X ## __LINE__);
 
 #elif defined(_MSC_VER) || (defined(__GNUC__) && defined(_WIN32))
 
@@ -160,7 +160,7 @@ namespace Gecode { namespace Memory {
 
 #define GECODE_AUTOARRAY(T,X,N)                                 \
 T* X;                                                           \
-X = reinterpret_cast<T*>(_malloca(sizeof(T)*(N)));              \
+X = static_cast<T*>(_malloca(sizeof(T)*(N)));                   \
 ::Gecode::Memory::ManageMemory __GECODE__ ## X ## __LINE__(X);
 
 
@@ -179,7 +179,7 @@ namespace Gecode { namespace Memory {
     T* _x;
   public:
     AutoArray(const int n) {
-      _x = reinterpret_cast<T*>(::malloc(sizeof(T)*n));
+      _x = static_cast<T*>(::malloc(sizeof(T)*n));
     }
     ~AutoArray(void) {
       ::free(_x);

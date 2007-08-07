@@ -140,7 +140,12 @@ namespace Gecode {
       /// Next heap chunk already allocated
       HeapChunk* next;
       /// Start of memory area inside chunk
-      double area[1];
+      union {
+        /// For enforcing alignment
+        double d;
+        /// For access as char
+        char   c;
+      } area[1];
     };
   public:
     /// Constructor initialization
@@ -290,8 +295,8 @@ namespace Gecode {
     size_t allocate = ((sz > cur_hcsz) ?
                        (((size_t) (sz / cur_hcsz)) + 1) * cur_hcsz : cur_hcsz);
     // Request a chunk of size allocate
-    HeapChunk* hc = reinterpret_cast<HeapChunk*>(Memory::malloc(allocate));
-    start = reinterpret_cast<char*>(&(hc->area[0]));
+    HeapChunk* hc = static_cast<HeapChunk*>(Memory::malloc(allocate));
+    start = &(hc->area[0].c);
     lsz   = allocate - overhead;
     // Link heap chunk, where the first heap chunk is kept in place
     if (first) {
@@ -354,7 +359,7 @@ namespace Gecode {
   MemoryManager::reuse(void* p, size_t s) {
 #ifdef GECODE_MEMORY_CHECK
     {
-      char* c = reinterpret_cast<char*>(p);
+      char* c = static_cast<char*>(p);
       char* e = c + s;
       while (c < e) {
         *c = 0; c++;
@@ -362,7 +367,7 @@ namespace Gecode {
     }
 #endif
     if (s >= (Memory::Config::fl_size_max<<Memory::Config::fl_unit_size)) {
-      ReuseChunk* rc = reinterpret_cast<ReuseChunk*>(p);
+      ReuseChunk* rc = static_cast<ReuseChunk*>(p);
       rc->next = slack;
       rc->size = s;
       slack = rc;

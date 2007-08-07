@@ -91,14 +91,14 @@ namespace Gecode {
   Space::d_resize(void) {
     if (d_fst == NULL) {
       // Create new array
-      d_fst = reinterpret_cast<Actor**>(alloc(4*sizeof(Actor*)));
+      d_fst = static_cast<Actor**>(alloc(4*sizeof(Actor*)));
       d_cur = d_fst;
       d_lst = d_fst+4;
     } else {
       // Resize existing array
       ptrdiff_t n = d_lst - d_fst;
       assert(n != 0);
-      Actor** a = reinterpret_cast<Actor**>(alloc(2*n*sizeof(Actor*)));
+      Actor** a = static_cast<Actor**>(alloc(2*n*sizeof(Actor*)));
       memcpy(a, d_fst, n*sizeof(Actor*));
       reuse(d_fst,n*sizeof(Actor*));
       d_fst = a;
@@ -322,7 +322,7 @@ namespace Gecode {
         d_lst = NULL;
       } else {
         // Leave one entry free
-        Actor** a = reinterpret_cast<Actor**>(alloc((n+1)*sizeof(Actor*)));
+        Actor** a = static_cast<Actor**>(alloc((n+1)*sizeof(Actor*)));
         d_fst = a;
         d_cur = a+n;
         d_lst = a+n+1;
@@ -390,7 +390,7 @@ namespace Gecode {
     c->vars_noidx = NULL;
     // Update variables with indexing structure
     {
-      ActorLink** s = reinterpret_cast<ActorLink**>(c->mm.subscriptions());
+      ActorLink** s = static_cast<ActorLink**>(c->mm.subscriptions());
       c->n_sub = n_sub;
       for (int vti=VTI_LAST; vti--; ) {
         VarBase* vs = c->vars[vti].entry;

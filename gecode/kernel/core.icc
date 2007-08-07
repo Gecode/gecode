@@ -2087,7 +2087,7 @@ namespace Gecode {
     if (idx[0] == NULL) {
       // Create fresh dependency array
       free(4);
-      ActorLink** prop = reinterpret_cast<ActorLink**>
+      ActorLink** prop = static_cast<ActorLink**>
         (home->alloc(4*sizeof(ActorLink*))) + 4;
       for (PropCond i = PC_SIZE; i--; )
         idx[i] = prop;
@@ -2097,12 +2097,12 @@ namespace Gecode {
       // Find out whether the area is most likely in the special area
       // reserved for subscriptions. If yes, just resize mildly otherwise
       // more agressively
-      ActorLink** s = reinterpret_cast<ActorLink**>
+      ActorLink** s = static_cast<ActorLink**>
         (home->mm.subscriptions());
       unsigned int m = 
         ((s <= idx[0]) && (idx[0] < s+home->n_sub)) ?
         (n+4) : ((n+1)*3>>1);
-      ActorLink** prop = reinterpret_cast<ActorLink**>
+      ActorLink** prop = static_cast<ActorLink**>
         (home->alloc(m*sizeof(ActorLink*))) + m-n;
       free(m-n);
       // Copy entries
