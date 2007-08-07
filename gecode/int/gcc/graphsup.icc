@@ -20,6 +20,8 @@
  *
  */
 
+#include "gecode/support/cast.hh"
+
 namespace Gecode { namespace Int { namespace GCC {
 
   /**
@@ -32,7 +34,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
   class Edge;
   /// Base class for nodes in the variable-value-graph
-  class VVGNode{
+  class VVGNode {
   private:
     /// stores all incident edges on the node
     Edge* e;
@@ -102,7 +104,7 @@ namespace Gecode { namespace Int { namespace GCC {
   };
 
   /// %Variable Node
-  class VarNode : public VVGNode{
+  class VarNode : public VVGNode {
   private:
     /// stores the matching edge on this node in the UBC
     Edge* ubm;
@@ -158,7 +160,7 @@ namespace Gecode { namespace Int { namespace GCC {
   };
 
   /// Value node
-  class ValNode : public VVGNode{
+  class ValNode : public VVGNode {
   private:
     /// minimal required occurence of the value as stored in k
     int _klb;
@@ -1279,17 +1281,17 @@ namespace Gecode { namespace Int { namespace GCC {
 
     _allocated = size;
 
-    mem      = reinterpret_cast<char*>
+    mem      = static_cast<char*>
       (Memory::malloc(size));
-    edges    = reinterpret_cast<Edge*>
+    edges    = Support::ptr_cast<Edge*>
       (mem);
-    VarNode* vars_ptr = reinterpret_cast<VarNode*>
+    VarNode* vars_ptr = Support::ptr_cast<VarNode*>
       (mem + edge_size);
-    ValNode* vals_ptr = reinterpret_cast<ValNode*>
+    ValNode* vals_ptr = Support::ptr_cast<ValNode*>
       (mem + edge_size + var_size);
-    vars     = reinterpret_cast<VarNode**>
+    vars     = Support::ptr_cast<VarNode**>
       (mem + edge_size + var_size + val_size);
-    vals     = reinterpret_cast<ValNode**>
+    vals     = Support::ptr_cast<ValNode**>
       (mem + edge_size + var_size + val_size + var_ptr_size);
 
     for (int i = n_val; i--; ){
@@ -1665,13 +1667,13 @@ namespace Gecode { namespace Int { namespace GCC {
         assert(re[n_re] != NULL);
         if (!(re[n_re]->removed())) {
           if (!(re[n_re]->get_type())) {
-            VarNode* vrn = reinterpret_cast<VarNode*> (re[n_re]);
+            VarNode* vrn = static_cast<VarNode*>(re[n_re]);
             if (!vrn->template matched<UBC>()) {
               repaired &= augmenting_path<UBC>(vrn);
             }
           } else {
             assert(re[n_re]->get_type());
-            ValNode* vln = reinterpret_cast<ValNode*> (re[n_re]);
+            ValNode* vln = static_cast<ValNode*>(re[n_re]);
             while(!vln->template matched<LBC>()) {
               repaired &= augmenting_path<LBC>(vln);
               if (!repaired) {
@@ -2059,7 +2061,7 @@ namespace Gecode { namespace Int { namespace GCC {
       ns.pop();
       if (node->get_type()) {
         // ValNode
-        ValNode* vln  = reinterpret_cast<ValNode*> (node);
+        ValNode* vln = static_cast<ValNode*>(node);
         for (Edge* cur = vln->first(); cur != NULL; cur = cur->vnext()){
           VarNode* mate = cur->getVar();
           bool follow = false;
@@ -2086,7 +2088,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
       } else {
         // VarNode
-        VarNode* vrn = reinterpret_cast<VarNode*> (node);
+        VarNode* vrn = static_cast<VarNode*>(node);
         switch (direction) {
           // after LBC-matching we can follow every unmatched edge
         case LBC: {        

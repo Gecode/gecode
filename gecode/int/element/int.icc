@@ -194,7 +194,7 @@ namespace Gecode { namespace Int { namespace Element {
   forceinline IdxValMap*
   IdxValMap::allocate(int n) {
     size_t s = sizeof(IdxValMap)+n*sizeof(IdxValLink);
-    IdxValMap* ivm = reinterpret_cast<IdxValMap*>(Memory::malloc(s));
+    IdxValMap* ivm = static_cast<IdxValMap*>(Memory::malloc(s));
     ivm->_size = s;
     return ivm;
   }

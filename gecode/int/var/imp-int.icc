@@ -173,8 +173,7 @@ namespace Gecode { namespace Int {
     : IntVarImpBase(home), dom(d.min(),d.max()) {
     if (d.size() > 1) {
       int n = d.size();
-      RangeList* r = reinterpret_cast<RangeList*>
-        (home->alloc(sizeof(RangeList)*n));
+      RangeList* r = static_cast<RangeList*>(home->alloc(sizeof(RangeList)*n));
       fst(r); lst(r+n-1);
       unsigned int h = static_cast<unsigned int>(d.max()-d.min())+1;
       for (int i = n; i--; ) {

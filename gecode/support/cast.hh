@@ -1,10 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Guido Tack, 2007
+ *     Christian Schulte, 2007
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -20,17 +20,23 @@
  *
  */
 
-namespace Gecode { namespace Serialization {
-  
-  forceinline
-  Deserializer::Deserializer(Space* home0, Reflection::VarMap& m0)
-    : home(home0), m(m0) {}
-    
-  forceinline Reflection::VarMap&
-  Deserializer::varMap(void) const {
-    return m;
+#ifndef __GECODE_SUPPORT_CAST_HH__
+#define __GECODE_SUPPORT_CAST_HH__
+
+namespace Gecode { namespace Support {
+
+  /// Cast \a p into pointer of type \a T
+  template <class T>
+  T ptr_cast(void* p);
+
+  template <class T>
+  forceinline T
+  ptr_cast(void* p) {
+    return static_cast<T>(p);
   }
-  
+
 }}
 
-// STATISTICS: serialization-any
+#endif
+
+// STATISTICS: support-any

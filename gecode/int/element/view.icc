@@ -64,7 +64,7 @@ namespace Gecode { namespace Int { namespace Element {
   template <class View>
   forceinline IdxView<View>*
   IdxView<View>::allocate(Space* home, int n) {
-      return reinterpret_cast<IdxView<View>*>
+      return static_cast<IdxView<View>*>
         (home->alloc(sizeof(IdxView<View>)*n));
     }
 

@@ -24,6 +24,8 @@
  *
  */
 
+#include "gecode/support/cast.hh"
+
 namespace Gecode {
 
   namespace Memory {
@@ -140,12 +142,7 @@ namespace Gecode {
       /// Next heap chunk already allocated
       HeapChunk* next;
       /// Start of memory area inside chunk
-      union {
-        /// For enforcing alignment
-        double d;
-        /// For access as char
-        char   c;
-      } area[1];
+      double area[1];
     };
   public:
     /// Constructor initialization
@@ -296,7 +293,7 @@ namespace Gecode {
                        (((size_t) (sz / cur_hcsz)) + 1) * cur_hcsz : cur_hcsz);
     // Request a chunk of size allocate
     HeapChunk* hc = static_cast<HeapChunk*>(Memory::malloc(allocate));
-    start = &(hc->area[0].c);
+    start = Support::ptr_cast<char*>(&hc->area[0]);
     lsz   = allocate - overhead;
     // Link heap chunk, where the first heap chunk is kept in place
     if (first) {
@@ -400,11 +397,6 @@ namespace Gecode {
     l->next(fl[i]); fl[i] = f;
   }
 
-#define GECODE_KERNEL_PTR2FL(p) \
-  (static_cast<FreeList*>(static_cast<void*>(p)))
-#define GECODE_KERNEL_PTR2CH(p) \
-  (static_cast<char*>(static_cast<void*>(p)))
-
   template <size_t sz>
   void
   MemoryManager::fl_refill(void) {
@@ -413,33 +405,32 @@ namespace Gecode {
       ReuseChunk* m = slack;
       slack = NULL;
       do {
-        char*  block = GECODE_KERNEL_PTR2CH(m);
+        char*  block = Support::ptr_cast<char*>(m);
         size_t s     = m->size;
         assert(s >= sz);
         m = m->next;
-        fl[sz2i(sz)] = GECODE_KERNEL_PTR2FL(block);
+        fl[sz2i(sz)] = Support::ptr_cast<FreeList*>(block);
         while (s >= 2*sz) {
-          GECODE_KERNEL_PTR2FL(block)->next(GECODE_KERNEL_PTR2FL(block+sz));
+          Support::ptr_cast<FreeList*>(block)->next
+            (Support::ptr_cast<FreeList*>(block+sz));
           block += sz;
           s     -= sz;
         }
-        GECODE_KERNEL_PTR2FL(block)->next(NULL);
+        Support::ptr_cast<FreeList*>(block)->next(NULL);
       } while (m != NULL);
     } else {
-      char* block = GECODE_KERNEL_PTR2CH(alloc(Memory::Config::fl_refill*sz));
-      fl[sz2i(sz)] = GECODE_KERNEL_PTR2FL(block);
+      char* block = static_cast<char*>(alloc(Memory::Config::fl_refill*sz));
+      fl[sz2i(sz)] = Support::ptr_cast<FreeList*>(block);
       int i = Memory::Config::fl_refill-2;
       do {
-        GECODE_KERNEL_PTR2FL(block+i*sz)->next
-          (GECODE_KERNEL_PTR2FL(block+(i+1)*sz));
+        Support::ptr_cast<FreeList*>(block+i*sz)->next
+          (Support::ptr_cast<FreeList*>(block+(i+1)*sz));
       } while (--i >= 0);
-      GECODE_KERNEL_PTR2FL(block+(Memory::Config::fl_refill-1)*sz)->next
-        (GECODE_KERNEL_PTR2FL(NULL));
+      Support::ptr_cast<FreeList*>(block+
+                                   (Memory::Config::fl_refill-1)*sz)->next
+        (Support::ptr_cast<FreeList*>(NULL));
     }
   }
-
-#undef GECODE_KERNEL_PTR2FL
-#undef GECODE_KERNEL_PTR2CH
 
 }
 

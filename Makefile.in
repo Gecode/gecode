@@ -502,7 +502,7 @@ SERBUILDDIRS	= serialization
 #
 
 SUPPORTHDR0 =							\
-	bitset block-allocator dynamic-array dynamic-stack	\
+	bitset cast block-allocator dynamic-array dynamic-stack	\
 	random search shared-array sort				\
 	static-pqueue static-stack sentinel-stack
 ITERHDR0 =							\

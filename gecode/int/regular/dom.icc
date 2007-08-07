@@ -212,12 +212,12 @@ namespace Gecode { namespace Int { namespace Regular {
   forceinline ExecStatus
   Dom<View>::construct(Space* home) {
     int n = x.size();
-    layers = reinterpret_cast<Layer*>(home->alloc(sizeof(Layer)*(n+2)))+1;
+    layers = static_cast<Layer*>(home->alloc(sizeof(Layer)*(n+2)))+1;
     
     unsigned int n_states = dfa.n_states();
 
     // Allocate memory
-    states = reinterpret_cast<State*>
+    states = static_cast<State*>
       (home->alloc(sizeof(State)*(n+1)*n_states));
 
     // Initialize states (indegree and outdegree)
@@ -234,7 +234,7 @@ namespace Gecode { namespace Int { namespace Regular {
     // Forward pass: add transitions
     for (int i=0; i<n; i++) {
       layers[i].support = 
-        reinterpret_cast<Support*>(home->alloc(x[i].size()*sizeof(Support)));
+        static_cast<Support*>(home->alloc(x[i].size()*sizeof(Support)));
       unsigned int j=0;
       // Enter links leaving reachable states (indegree != 0)
       for (ViewValues<View> nx(x[i]); nx(); ++nx) {

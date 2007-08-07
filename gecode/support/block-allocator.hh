@@ -89,7 +89,7 @@ namespace Gecode { namespace Support {
   template <class T>
   forceinline
   BlockAllocator<T>::BlockAllocator(void) {
-    b = reinterpret_cast<Block*>(Memory::malloc(sizeof(Block)));
+    b = static_cast<Block*>(Memory::malloc(sizeof(Block)));
     b->next = NULL;
     n       = &b->b[Block::blocksize];
     _size = sizeof(Block);
@@ -117,7 +117,7 @@ namespace Gecode { namespace Support {
   void
   BlockAllocator<T>::allocate(void) {
     // Allocate another block
-    Block* nb = reinterpret_cast<Block*>(Memory::malloc(sizeof(Block)));
+    Block* nb = static_cast<Block*>(Memory::malloc(sizeof(Block)));
     nb->next = b; b = nb;
     n = &nb->b[Block::blocksize];
     _size += sizeof(Block);

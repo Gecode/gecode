@@ -64,7 +64,7 @@ namespace Gecode {
 
     forceinline
     DFAI::DFAI(unsigned int nt)
-      : trans(reinterpret_cast<DFA::Transition*>
+      : trans(static_cast<DFA::Transition*>
               (Memory::malloc(sizeof(DFA::Transition)*nt))) {}
     
     forceinline

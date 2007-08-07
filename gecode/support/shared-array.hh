@@ -58,7 +58,7 @@ namespace Gecode { namespace Support {
   template <class T>
   forceinline
   SAO<T>::SAO(int n0) : n(n0) {
-    a = (n>0) ? reinterpret_cast<T*>(Memory::malloc(sizeof(T)*n)) : NULL;
+    a = (n>0) ? static_cast<T*>(Memory::malloc(sizeof(T)*n)) : NULL;
   }
 
   template <class T>

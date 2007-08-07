@@ -27,8 +27,7 @@ namespace Gecode { namespace Set { namespace Select {
   template <class View>
   forceinline IdxView<View>*
   IdxView<View>::allocate(Space* home, int n) {
-    return
-    reinterpret_cast<IdxView<View>*>(home->alloc(sizeof(IdxView<View>)*n));
+    return static_cast<IdxView<View>*>(home->alloc(sizeof(IdxView<View>)*n));
   }
 
   template <class View>

@@ -108,7 +108,7 @@ namespace Gecode { namespace Support {
   forceinline typename PQueue<T,Less>::SharedPQueue*
   PQueue<T,Less>::SharedPQueue::allocate(int n, const Less& l) {
     SharedPQueue* spq
-      = reinterpret_cast<SharedPQueue*>
+      = static_cast<SharedPQueue*>
       (Memory::malloc(sizeof(SharedPQueue) + (n-1)*sizeof(T)));
     spq->size = n;
     spq->n    = 0;

@@ -426,7 +426,7 @@ namespace Gecode {
         n_log++;
       d->n_log = n_log;
       // Allocate memory
-      HashEntry* table = reinterpret_cast<HashEntry*>
+      HashEntry* table = static_cast<HashEntry*>
         (Memory::malloc(sizeof(HashEntry)*(1<<n_log)));
       d->table = table;
       // Initialize table

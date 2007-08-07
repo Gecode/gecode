@@ -10,8 +10,8 @@
  *     Mikael Lagerkvist, 2005
  *
  *  Last modified:
- *     $Date: 2006-07-27 12:17:36 +0200 (Thu, 27 Jul 2006) $ by $Author: pekczynski $
- *     $Revision: 3474 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:

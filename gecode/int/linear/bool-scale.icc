@@ -33,7 +33,7 @@ namespace Gecode { namespace Int { namespace Linear {
   forceinline
   ScaleBoolArray::ScaleBoolArray(Space* home, int n) {
     if (n > 0) {
-      _fst = reinterpret_cast<ScaleBool*>(home->alloc(n*sizeof(ScaleBool)));
+      _fst = static_cast<ScaleBool*>(home->alloc(n*sizeof(ScaleBool)));
       _lst = _fst+n;
     } else {
       _fst = _lst = NULL;
@@ -53,7 +53,7 @@ namespace Gecode { namespace Int { namespace Linear {
   ScaleBoolArray::update(Space* home, bool share, ScaleBoolArray& sba) {
     int n = sba._lst - sba._fst;
     if (n > 0) {
-      _fst = reinterpret_cast<ScaleBool*>(home->alloc(n*sizeof(ScaleBool)));
+      _fst = static_cast<ScaleBool*>(home->alloc(n*sizeof(ScaleBool)));
       _lst = _fst+n;
       for (int i=n; i--; ) {
         _fst[i].a = sba._fst[i].a;

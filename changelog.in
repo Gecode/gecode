@@ -53,6 +53,14 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: other
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Removed huge number of casts that could (only potentially)
+compromise portability.
+
+[ENTRY]
 Module: set
 What:   new
 Rank:   minor

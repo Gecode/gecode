@@ -20,6 +20,8 @@
  *
  */
 
+#include "gecode/support/cast.hh"
+
 namespace Gecode { namespace Int { namespace GCC {
 
   /// \name GCC-Bnd-Support
@@ -310,9 +312,9 @@ namespace Gecode { namespace Int { namespace GCC {
     size_t total    = sum_size + ds_size;
     _allocated = total;
 
-    mem = reinterpret_cast<char*> (Memory::malloc(total));
-    sum = reinterpret_cast<int*> (mem);
-    ds  = reinterpret_cast<int*> (mem + sum_size);
+    mem = static_cast<char*>(Memory::malloc(total));
+    sum = Support::ptr_cast<int*>(mem);
+    ds  = Support::ptr_cast<int*>(mem + sum_size);
 
     for (int z = 0; z < size; z++) {
       sum[z] = 0;

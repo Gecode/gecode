@@ -31,8 +31,7 @@ namespace Gecode { namespace Set {
       fst(NULL); lst(NULL); _size = 0;
     } else {
       int n = is.size();
-      RangeList* r = reinterpret_cast<RangeList*>
-        (home->alloc(sizeof(RangeList)*n));
+      RangeList* r = static_cast<RangeList*>(home->alloc(sizeof(RangeList)*n));
       fst(r); lst(r+n-1);
       unsigned int s = 0;
       for (int i = n; i--; ) {

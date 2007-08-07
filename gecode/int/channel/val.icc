@@ -60,7 +60,7 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View>
   forceinline ValInfo<View>*
   ValInfo<View>::allocate(Space* home, int n) {
-    return reinterpret_cast<ValInfo<View>*>
+    return static_cast<ValInfo<View>*>
       (home->alloc(n*sizeof(ValInfo<View>)));
   }
 
