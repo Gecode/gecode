@@ -276,7 +276,7 @@ namespace Gecode {
     /// Construct formula for \f$\mathit{fs}\times f\mathit{op} \mathit{gs}\times g\f$
     GECODE_SET_EXPORT Formula(const Formula& f, int fs,
                               Operator r,
-                              const Formula& f, int gs);
+                              const Formula& g, int gs);
     /// Extract projectors from formula
     GECODE_SET_EXPORT ProjectorSet projectors(void);
     
