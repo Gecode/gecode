@@ -23,7 +23,9 @@
 #include "gecode/serialization.hh"
 
 #include "gecode/int.hh"
+#ifdef GECODE_HAVE_SET_VARS
 #include "gecode/set.hh"
+#endif
 
 #include "gecode/int/element.hh"
 
