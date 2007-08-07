@@ -105,6 +105,7 @@ namespace Gecode {
     void update(Space* home, bool share, SharedHandle& sh);
     /// Destructor that maintains reference count
     ~SharedHandle(void);
+  protected:
     /// Access to the shared object
     Object* object(void) const;
     /// Modify shared object
@@ -291,7 +292,8 @@ namespace Gecode {
     friend class Propagator;
     friend class VarTypeProcessor<VTI,PC,MED>;
   private:
-    Variable* _next; ///< Either next modified or copied variable
+    /// Either next modified or next copied variable
+    Variable* _next; 
     union {
       /**
        * \brief Combines the number of free entries with modification events
@@ -304,8 +306,10 @@ namespace Gecode {
       /// Store the forwarding pointer during copying
       Variable* fwd;
     } u;
-    static const PropCond PC_SIZE = PC + 3; ///< Number of slots for index struxture
-    ActorLink** idx[PC_SIZE]; ///< Stores where entries start (idx[pc]}
+    /// Number of slots for index struxture
+    static const PropCond PC_SIZE = PC + 3;
+    /// Stores where entries start (idx[pc]}
+    ActorLink** idx[PC_SIZE];
 
     /// Manage number of free entries internally
     unsigned int free(void) const;
