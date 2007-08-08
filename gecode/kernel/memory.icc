@@ -135,7 +135,8 @@ namespace Gecode {
 
 #define GECODE_AUTOARRAY(T,X,N)                                  \
 char __GECODE__ ## X ## __LINE__ [(N)*sizeof(T)];                \
-T* X = static_cast<T*>(__GECODE__ ## X ## __LINE__);
+void* __GECODE__ ## X ## __LINE__ ## ptr = __GECODE__ ## X ## __LINE__; \
+T* X = static_cast<T*>(__GECODE__ ## X ## __LINE__ ## ptr);
 
 #elif defined(_MSC_VER) || (defined(__GNUC__) && defined(_WIN32))
 
