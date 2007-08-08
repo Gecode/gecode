@@ -23,7 +23,7 @@
 #include "examples/support.hh"
 #include "gecode/minimodel.hh"
 #include "examples/sudoku.icc"
-#include "gecode/bdd/bddexample.hh"
+#include "gecode/cpltset/bddexample.hh"
 
 /**
  * \brief %Example: Some %Sudoku puzzles using set constraints

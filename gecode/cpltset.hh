@@ -60,8 +60,8 @@
 
 #endif
 
-#include "gecode/bdd/exception.icc"
-#include "gecode/bdd/propagator.icc"
+#include "gecode/cpltset/exception.icc"
+#include "gecode/cpltset/propagator.icc"
 
 namespace Gecode { 
   //@{
@@ -99,14 +99,14 @@ namespace Gecode {
   };
 }
 
-#include "gecode/bdd/manager/buddy.icc"
+#include "gecode/cpltset/manager/buddy.icc"
 typedef Gecode::BuddyMgr BddMgr;
 
-#include "gecode/bdd/support.icc"
+#include "gecode/cpltset/support.icc"
 #include "gecode/set/var.icc"
-#include "gecode/bdd/var.icc"
-#include "gecode/bdd/view.icc"
-#include "gecode/bdd/array.icc"
+#include "gecode/cpltset/var.icc"
+#include "gecode/cpltset/view.icc"
+#include "gecode/cpltset/array.icc"
 
 
 namespace Gecode {

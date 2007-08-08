@@ -1573,13 +1573,13 @@ namespace Gecode {
 
 }
 
-#include "gecode/bdd/view/bdd.icc"
-#include "gecode/bdd/view/splitbdd.icc"
-#include "gecode/bdd/view/bndbdd.icc"
-#include "gecode/bdd/view/crdbdd.icc"
-#include "gecode/bdd/view/lexbdd.icc"
-#include "gecode/bdd/view/singletonbdd.icc"
-#include "gecode/bdd/view/setview.icc"
+#include "gecode/cpltset/view/bdd.icc"
+#include "gecode/cpltset/view/splitbdd.icc"
+#include "gecode/cpltset/view/bndbdd.icc"
+#include "gecode/cpltset/view/crdbdd.icc"
+#include "gecode/cpltset/view/lexbdd.icc"
+#include "gecode/cpltset/view/singletonbdd.icc"
+#include "gecode/cpltset/view/setview.icc"
 
 /**
  * \brief Print set variable view

@@ -19,7 +19,7 @@
  *
  */
 
-#include "gecode/bdd/branch.hh"
+#include "gecode/cpltset/branch.hh"
 
 namespace Gecode {
 

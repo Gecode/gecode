@@ -20,7 +20,7 @@
  */
 
 // #include "qtexplorer/explorer.hh"
-#include "gecode/bdd/bddexample.hh"
+#include "gecode/cpltset/bddexample.hh"
 
 /**
  * \name Parameters for Steiner systems

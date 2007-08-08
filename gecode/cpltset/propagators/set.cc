@@ -19,7 +19,7 @@
  *
  */
 
-#include "gecode/bdd.hh"
+#include "gecode/cpltset.hh"
 
 // for set bounds propagators with bdds
 #include "gecode/set/rel.hh"
@@ -31,7 +31,7 @@
 #include "gecode/set/select.hh"
 
 
-#include "gecode/bdd/propagators.hh"
+#include "gecode/cpltset/propagators.hh"
 
 
 

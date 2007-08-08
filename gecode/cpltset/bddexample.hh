@@ -22,7 +22,7 @@
 #ifndef __GECODE_CPLTSETEXAMPLE_HH__
 #define __GECODE_CPLTSETEXAMPLE_HH__
 
-#include "gecode/bdd.hh"
+#include "gecode/cpltset.hh"
 #include "examples/support.hh"
 
 /// Extending %Gecode options for passing a manager for bdds 

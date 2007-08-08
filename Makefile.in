@@ -324,7 +324,7 @@ SETBUILDDIRS	=						\
 
 CPLTSETSRC0 =	\
 	branch.cc array.cc support.cc             \
-	var/imp.cc var/bdd.cc  view/print.cc                  \
+	var/imp.cc var/cpltset.cc  view/print.cc                  \
 	propagators/dom.cc propagators/rel.cc propagators/cardinality.cc  \
 	propagators/atmost.cc propagators/partition.cc \
 	propagators/select.cc  \
@@ -333,15 +333,15 @@ CPLTSETSRC0 =	\
 	propagators/set.cc
 
 CPLTSETVARIMP = \
-        gecode/bdd/var/imp-hdr.icc gecode/bdd/var/imp-body.icc
+        gecode/cpltset/var/imp-hdr.icc gecode/cpltset/var/imp-body.icc
 
 CPLTSETHDR0 =		                \
 	view.icc manager/buddy.icc exception.icc array.icc \
 	support.icc \
 	var.icc  propagator.icc \
-        var/imp.icc var/bdd.icc view/bdd.icc view/splitbdd.icc \
-	view/bndbdd.icc view/crdbdd.icc view/lexbdd.icc \
-	view/singletonbdd.icc view/setview.icc \
+        var/imp.icc var/cpltset.icc view/cpltset.icc view/split.icc \
+	view/bnd.icc view/crd.icc view/lex.icc \
+	view/singleton.icc view/set.icc \
 	propagators.hh \
 	propagators/unary.icc propagators/binary.icc \
 	propagators/nary.icc propagators/naryrec.icc \
@@ -351,8 +351,8 @@ CPLTSETHDR0 =		                \
 	propagators/distinct.icc propagators/disjointglb.icc \
 	branch.hh branch/select-val.icc branch/select-view.icc	
 
-CPLTSETSRC	= $(CPLTSETSRC0:%=gecode/bdd/%)
-CPLTSETHDR		= gecode/bdd.hh $(CPLTSETHDR0:%=gecode/bdd/%)
+CPLTSETSRC	= $(CPLTSETSRC0:%=gecode/cpltset/%)
+CPLTSETHDR		= gecode/cpltset.hh $(CPLTSETHDR0:%=gecode/cpltset/%)
 CPLTSETOBJ		= $(CPLTSETSRC:%.cc=%$(OBJSUFFIX))
 
 ifeq "@enable_cpltset_vars@" "yes"
@@ -378,7 +378,8 @@ export CPLTSETLIB		=
 export LINKCPLTSET      	=
 endif
 CPLTSETBUILDDIRS	=						\
-	bdd bdd/var bdd/view bdd/bddprop bdd/branch bdd/manager
+	cpltset cpltset/var cpltset/view cpltset/propagators \
+	cpltset/branch cpltset/manager
 
 #
 # BUDDY CPLTSET LIBRARY COMPONENTS
@@ -546,7 +547,7 @@ SETEXAMPLESBJ  = $(SETEXAMPLESRC:%.cc=%$(SBJSUFFIX))
 SETEXAMPLEEXE  = $(SETEXAMPLESRC:%.cc=%$(EXESUFFIX))
 
 CPLTSETEXAMPLESRC0 = \
-	bdd/bddsteiner bdd/sudoku-bdd-const
+	cpltset/bddsteiner cpltset/sudoku-bdd-const
 CPLTSETEXAMPLESRC  = $(CPLTSETEXAMPLESRC0:%=examples/%.cc)
 CPLTSETEXAMPLEOBJ  = $(CPLTSETEXAMPLESRC:%.cc=%$(OBJSUFFIX))
 CPLTSETEXAMPLESBJ  = $(CPLTSETEXAMPLESRC:%.cc=%$(SBJSUFFIX))
@@ -653,8 +654,8 @@ BRANCHTESTSRC0 = \
 ifeq "@enable_cpltset_vars@" "yes"
 CPLTSETTESTSRC0 = \
 	dom rel atmost partition cardinality select
-CPLTSETTEST  = bdd 
-ALLCPLTSETTESTSRC0 = $(CPLTSETTESTSRC0:%=bdd/%) 
+CPLTSETTEST  = cpltset 
+ALLCPLTSETTESTSRC0 = $(CPLTSETTESTSRC0:%=cpltset/%) 
 
 else
 CPLTSETTESTSRC0 =
@@ -678,7 +679,7 @@ endif
 
 TESTSRC	= $(TESTSRC0:%=test/%.cc)
 TESTHDR0 = \
-	test int set bdd branch
+	test int set cpltset branch
 TESTHDR = $(TESTHDR0:%=test/%.hh)
 TESTOBJ	= $(TESTSRC:%.cc=%$(OBJSUFFIX))
 TESTSBJ	= $(TESTSRC:%.cc=%$(SBJSUFFIX))
@@ -803,10 +804,10 @@ gecode/support/buddy/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/buddy/%.c
 	$(CC) $(CFLAGS) @GECODE_BUILD_BUDDY_FLAG@ \
 	@COMPILESBJ@$@ @CCIN@$<
 
-gecode/bdd/%$(OBJSUFFIX): $(top_srcdir)/gecode/bdd/%.cc
+gecode/cpltset/%$(OBJSUFFIX): $(top_srcdir)/gecode/cpltset/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_CPLTSET_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/bdd/%$(SBJSUFFIX): $(top_srcdir)/gecode/bdd/%.cc
+gecode/cpltset/%$(SBJSUFFIX): $(top_srcdir)/gecode/cpltset/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_CPLTSET_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
@@ -1037,11 +1038,11 @@ $(top_srcdir)/gecode/set/var/imp-hdr.icc: \
 $(top_srcdir)/gecode/set/var/imp-body.icc: \
 	$(top_srcdir)/gecode/set/var-imp.vis
 	./config.status  $(top_srcdir)/$@
-$(top_srcdir)/gecode/bdd/var/imp-hdr.icc: \
-	$(top_srcdir)/gecode/bdd/var-imp.vis
+$(top_srcdir)/gecode/cpltset/var/imp-hdr.icc: \
+	$(top_srcdir)/gecode/cpltset/var-imp.vis
 	./config.status  $(top_srcdir)/$@
-$(top_srcdir)/gecode/bdd/var/imp-body.icc: \
-	$(top_srcdir)/gecode/bdd/var-imp.vis
+$(top_srcdir)/gecode/cpltset/var/imp-body.icc: \
+	$(top_srcdir)/gecode/cpltset/var-imp.vis
 	./config.status  $(top_srcdir)/$@
 
 #

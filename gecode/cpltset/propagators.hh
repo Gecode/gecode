@@ -23,7 +23,7 @@
 #ifndef __GECODE_CPLTSETPROP_HH
 #define __GECODE_CPLTSETPROP_HH
 
-#include "gecode/bdd.hh"
+#include "gecode/cpltset.hh"
 
 // #include "gecode/set/rel.hh"
 // #include "gecode/set/rel-op.hh"
@@ -404,26 +404,26 @@ namespace Gecode { namespace Bdd {
 
 }}
 
-#include "gecode/bdd/propagators/distinct.icc"
-#include "gecode/bdd/propagators/partition.icc"
-#include "gecode/bdd/propagators/atmost.icc"
-#include "gecode/bdd/propagators/rel.icc"
-#include "gecode/bdd/propagators/select.icc"
+#include "gecode/cpltset/propagators/distinct.icc"
+#include "gecode/cpltset/propagators/partition.icc"
+#include "gecode/cpltset/propagators/atmost.icc"
+#include "gecode/cpltset/propagators/rel.icc"
+#include "gecode/cpltset/propagators/select.icc"
 
-#include "gecode/bdd/propagators/common.icc"
+#include "gecode/cpltset/propagators/common.icc"
 
-#include "gecode/bdd/propagators/naryrec.icc"
-#include "gecode/bdd/propagators/nary.icc"
-#include "gecode/bdd/propagators/binary.icc"
-#include "gecode/bdd/propagators/unary.icc"
-#include "gecode/bdd/propagators/singleton.icc" 
-#include "gecode/bdd/propagators/bin.icc"
-#include "gecode/bdd/propagators/rangerec.icc"
-#include "gecode/bdd/propagators/rangeroots.icc"
+#include "gecode/cpltset/propagators/naryrec.icc"
+#include "gecode/cpltset/propagators/nary.icc"
+#include "gecode/cpltset/propagators/binary.icc"
+#include "gecode/cpltset/propagators/unary.icc"
+#include "gecode/cpltset/propagators/singleton.icc" 
+#include "gecode/cpltset/propagators/bin.icc"
+#include "gecode/cpltset/propagators/rangerec.icc"
+#include "gecode/cpltset/propagators/rangeroots.icc"
 
 // check whether we need this in other propagators too
 #include "gecode/support/dynamic-array.hh"
-#include "gecode/bdd/propagators/disjointglb.icc"
+#include "gecode/cpltset/propagators/disjointglb.icc"
 #endif
 
 // STATISTICS: bdd-prop

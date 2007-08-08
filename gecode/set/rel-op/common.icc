@@ -27,7 +27,7 @@
  */
 
 #ifdef GECODE_HAVE_BDD_VARS
-#include "gecode/bdd.hh"
+#include "gecode/cpltset.hh"
 #endif 
 
 #ifndef __GECODE_SET_RELOP_COMM_ICC__

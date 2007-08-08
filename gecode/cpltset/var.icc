@@ -20,7 +20,7 @@
  */
 
 #include <iostream>
-#include "gecode/bdd/var/imp-hdr.icc"
+#include "gecode/cpltset/var/imp-hdr.icc"
 #include "gecode/support/shared-array.hh"
 
 namespace Gecode { namespace Bdd {
@@ -514,7 +514,7 @@ namespace Gecode { namespace Bdd {
 
 }}
 
-#include "gecode/bdd/var/imp.icc"
+#include "gecode/cpltset/var/imp.icc"
 
 namespace Gecode { 
   /**
@@ -874,5 +874,5 @@ operator<<(std::ostream&, const Gecode::CpltSetVar& x);
 GECODE_CPLTSET_EXPORT std::ostream&
 operator<<(std::ostream&, Gecode::BMI* x);
 
-#include "gecode/bdd/var/bdd.icc"
+#include "gecode/cpltset/var/bdd.icc"
 // STATISTICS: bdd-var

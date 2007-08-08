@@ -24,7 +24,7 @@
 #ifndef __GECODE_TEST_BDD_HH__
 #define __GECODE_TEST_BDD_HH__
 
-#include "gecode/bdd.hh"
+#include "gecode/cpltset.hh"
 #include "test.hh"
 #include "int.hh"
 #ifdef GECODE_HAVE_SET_VARS

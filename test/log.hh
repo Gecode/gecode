@@ -30,7 +30,7 @@
 #endif
 
 #ifdef GECODE_HAVE_BDD_VARS
-#include "gecode/bdd.hh"
+#include "gecode/cpltset.hh"
 #endif
 
 namespace Log {

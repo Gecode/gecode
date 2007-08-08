@@ -22,7 +22,7 @@
 #ifndef __GECODE_CPLTSET_BRANCH_HH__
 #define __GECODE_CPLTSET_BRANCH_HH__
 
-#include "gecode/bdd.hh"
+#include "gecode/cpltset.hh"
 #include "gecode/iter.hh"
 
 /**
@@ -42,7 +42,7 @@ namespace Gecode { namespace Bdd { namespace Branch {
    * \brief Class for selecting minimum value
    *
    * All value selection classes require 
-   * \code #include "gecode/bdd/branch.hh" \endcode
+   * \code #include "gecode/cpltset/branch.hh" \endcode
    * \ingroup FuncSetSelVal
    */
   template <bool exclude>
@@ -177,7 +177,7 @@ namespace Gecode { namespace Bdd { namespace Branch {
   /**
    * \brief View selection class for view with smallest element in lub-glb
    *
-   * Requires \code #include "gecode/bdd/branch.hh" \endcode
+   * Requires \code #include "gecode/cpltset/branch.hh" \endcode
    * \ingroup FuncSetSelView
    */
   class ByMinUnknown {
@@ -214,8 +214,8 @@ namespace Gecode { namespace Bdd { namespace Branch {
 
 }}}
 
-#include "gecode/bdd/branch/select-val.icc"
-#include "gecode/bdd/branch/select-view.icc"
+#include "gecode/cpltset/branch/select-val.icc"
+#include "gecode/cpltset/branch/select-view.icc"
 
 #endif
 

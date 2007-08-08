@@ -19,8 +19,8 @@
  *
  */
 
-#include "gecode/bdd.hh"
-#include "gecode/bdd/var/imp-body.icc"
+#include "gecode/cpltset.hh"
+#include "gecode/cpltset/var/imp-body.icc"
 
 namespace Gecode { namespace Bdd {
 

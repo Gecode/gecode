@@ -19,7 +19,7 @@
  *
  */
 
-#include "gecode/bdd/propagators.hh"
+#include "gecode/cpltset/propagators.hh"
 
 using namespace Gecode::Bdd;
 

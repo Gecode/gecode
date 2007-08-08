@@ -33,7 +33,7 @@
 #include "gecode/int.hh"
 
 #ifdef GECODE_HAVE_BDD_VARS
-#include "gecode/bdd.hh"
+#include "gecode/cpltset.hh"
 #endif
 
 #include "gecode/search.hh"
