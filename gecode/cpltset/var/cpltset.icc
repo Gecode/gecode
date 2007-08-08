@@ -28,12 +28,12 @@ namespace Gecode {
 
   forceinline void
   CpltSetVar::init(Space* home, BMI* m) { 
-    var = new (home) Bdd::CpltSetVarImp(home, m); 
+    var = new (home) CpltSet::CpltSetVarImp(home, m); 
   }
   
   forceinline void
   CpltSetVar::init(Space* home, BMI* m, int min, int max) {
-    var = new (home) Bdd::CpltSetVarImp(home,m, min, max);
+    var = new (home) CpltSet::CpltSetVarImp(home,m, min, max);
     assert(m == var->manager());
   }
 
@@ -42,7 +42,7 @@ namespace Gecode {
   CpltSetVar::init(Space* home, BMI* m, int glbMin, int glbMax, 
 	       int lubMin, int lubMax,
 	       unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) Bdd::CpltSetVarImp(home, m, glbMin, glbMax, 
+    var = new (home) CpltSet::CpltSetVarImp(home, m, glbMin, glbMax, 
 				    lubMin, lubMax, cardMin, cardMax);
     assert(m == var->manager());
   }
@@ -51,21 +51,21 @@ namespace Gecode {
   forceinline void
   CpltSetVar::init(Space* home, BMI* m, int glbMin, int glbMax, const IntSet& lubD,
 	       unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) Bdd::CpltSetVarImp(home, m, glbMin, glbMax, lubD, cardMin, cardMax);
+    var = new (home) CpltSet::CpltSetVarImp(home, m, glbMin, glbMax, lubD, cardMin, cardMax);
     assert(m == var->manager());
   }
 
   forceinline void
   CpltSetVar::init(Space* home, BMI* m, const IntSet& glbD, int lubMin, int lubMax,
 	       unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) Bdd::CpltSetVarImp(home, m, glbD, lubMin, lubMax, cardMin, cardMax);
+    var = new (home) CpltSet::CpltSetVarImp(home, m, glbD, lubMin, lubMax, cardMin, cardMax);
     assert(m == var->manager());
   }
 
   forceinline void
   CpltSetVar::init(Space* home, BMI* m, const IntSet& glbD,const IntSet& lubD,
 	       unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) Bdd::CpltSetVarImp(home, m, glbD, lubD, cardMin, cardMax);
+    var = new (home) CpltSet::CpltSetVarImp(home, m, glbD, lubD, cardMin, cardMax);
     assert(m == var->manager());
   }
 
@@ -78,7 +78,7 @@ namespace Gecode {
   forceinline BMI*
   CpltSetVar::manager(void) const { return var->manager(); }    
 
-  forceinline Bdd::CpltSetVarImp*
+  forceinline CpltSet::CpltSetVarImp*
   CpltSetVar::variable(void) const { return var; }
 
   forceinline bool

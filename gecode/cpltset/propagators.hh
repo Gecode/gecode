@@ -28,7 +28,7 @@
 // #include "gecode/set/rel.hh"
 // #include "gecode/set/rel-op.hh"
 
-namespace Gecode { namespace Bdd { 
+namespace Gecode { namespace CpltSet { 
 
   /**
    * \brief Nary bdd propagator

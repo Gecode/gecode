@@ -21,7 +21,7 @@
 
 #include "gecode/cpltset.hh"
 using namespace Gecode;
-using namespace Gecode::Bdd;
+using namespace Gecode::CpltSet;
 
 template <class I>
 static void
@@ -80,11 +80,11 @@ printVar(bool assigned, std::ostream& os, I& glb, J& lub) {
 
 /**
  * \brief Print set variable view
- * \relates Gecode::Bdd::BddView
+ * \relates Gecode::CpltSet::CpltSetView
  */
 
 std::ostream&
-operator<<(std::ostream& os, const BddView& x) {
+operator<<(std::ostream& os, const CpltSetView& x) {
   BMI* mgr = x.manager();
   BddOutput l = mgr->level();
   bool assigned = x.assigned();
@@ -93,21 +93,21 @@ operator<<(std::ostream& os, const BddView& x) {
   case BDD_DOM: 
     {
       if (assigned) {
-	GlbValues<BddView> glb(x);
+	GlbValues<CpltSetView> glb(x);
 	printValue(os, glb);
       } else {
-	DomValues<BddView> dom(x);
+	DomValues<CpltSetView> dom(x);
 	printValue(os, dom);
       }
     }
     break;
   case BDD_BND:
     {
-      Gecode::Set::GlbRanges<BddView> glb(x);
+      Gecode::Set::GlbRanges<CpltSetView> glb(x);
       if (assigned) {
 	printRange(os, glb);
       } else {
-	Gecode::Set::LubRanges<BddView> lub(x);
+	Gecode::Set::LubRanges<CpltSetView> lub(x);
 	printVar(assigned, os, glb, lub);
       }
     }
@@ -116,18 +116,18 @@ operator<<(std::ostream& os, const BddView& x) {
     {
       os << "Conv(_";
       if (assigned) {
-	GlbValues<BddView> glb(x);
+	GlbValues<CpltSetView> glb(x);
 	printValue(os, glb);
       } else {
-	DomValues<BddView> dom(x);
+	DomValues<CpltSetView> dom(x);
 	printValue(os, dom);
       }
       os << "_) = ";
-      Gecode::Set::GlbRanges<BddView> glb(x);
+      Gecode::Set::GlbRanges<CpltSetView> glb(x);
       if (assigned) {
 	printRange(os, glb);
       } else {
-	Gecode::Set::LubRanges<BddView> lub(x);
+	Gecode::Set::LubRanges<CpltSetView> lub(x);
 	printVar(assigned, os, glb, lub);
       }
     }
@@ -141,19 +141,19 @@ operator<<(std::ostream& os, const BddView& x) {
  */
 
 std::ostream&
-operator<<(std::ostream& os, const SplitBddView& x) {
+operator<<(std::ostream& os, const SplitCpltSetView& x) {
   os << x.base();
   return os;
 }
 
 std::ostream&
-operator<<(std::ostream& os, const BndBddView& x) {
+operator<<(std::ostream& os, const BndCpltSetView& x) {
   os << x.base();
   return os;
 }
 
 std::ostream&
-operator<<(std::ostream& os, const CrdBddView& x) {
+operator<<(std::ostream& os, const CrdCpltSetView& x) {
   assert(x.cardMin() <= x.cardMax());
   
   // test whether cardinality was channeled correctly
@@ -177,19 +177,19 @@ operator<<(std::ostream& os, const CrdBddView& x) {
 }
 
 std::ostream&
-operator<<(std::ostream& os, const LexBddView& x) {
+operator<<(std::ostream& os, const LexCpltSetView& x) {
   os << x.base();
   return os;
 }
 
 std::ostream&
-operator<<(std::ostream& os, const SingletonBddView& x) {
+operator<<(std::ostream& os, const SingletonCpltSetView& x) {
   os << x.base();
   return os;
 }
 
 std::ostream&
-operator<<(std::ostream& os, const SetBddView& x) {
+operator<<(std::ostream& os, const SetCpltSetView& x) {
   os << x.base();
   return os;
 }

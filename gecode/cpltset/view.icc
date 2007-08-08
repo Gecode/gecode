@@ -21,23 +21,23 @@
 
 namespace Gecode { 
 
-  namespace Bdd {
+  namespace CpltSet {
 
     /**
      * \brief %Bdd view for bdd set variables
      * \ingroup TaskActorSetView
      */
 
-    class BddView : public VariableViewBase<CpltSetVarImp> {
+    class CpltSetView : public VariableViewBase<CpltSetVarImp> {
     protected:
       using VariableViewBase<CpltSetVarImp>::var;
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
-      BddView(void);
+      CpltSetView(void);
       /// Initialize from set variable \a x
-      BddView(const CpltSetVar& x);
+      CpltSetView(const CpltSetVar& x);
       //@}
 
       /// \name Value access
@@ -170,7 +170,7 @@ namespace Gecode {
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, BddView& x);
+      void update(Space* home, bool share, CpltSetView& x);
       //@}
 
       /// \name Serialization
@@ -189,43 +189,43 @@ namespace Gecode {
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for BddView.
-   * \ingroup TaskActorBddView
+   * This class specializes the ViewVarTraits for CpltSetView.
+   * \ingroup TaskActorCpltSetView
    */
   template<>
-  class ViewVarTraits<Bdd::BddView> {
+  class ViewVarTraits<CpltSet::CpltSetView> {
   public:
-    /// The variable type of a BddView
-    typedef Bdd::CpltSetVarImp Var;
+    /// The variable type of a CpltSetView
+    typedef CpltSet::CpltSetVarImp Var;
   };
 
-  namespace Bdd {
+  namespace CpltSet {
     /**
      * \brief Split Bdd View
      *
      * A split bdd view \f$s\f$ for a bdd view \f$x\f$ and
      * a bdd \f$r\f$ provides operations such that 
      * \f$dom(s) = dom(x) \wedge r\f$.
-     * \ingroup TaskActorBddView
+     * \ingroup TaskActorCpltSetView
      */
 
-    class SplitBddView : public DerivedViewBase<Bdd::BddView> {
+    class SplitCpltSetView : public DerivedViewBase<CpltSet::CpltSetView> {
     protected:
       /// Bounds storing the fixed part of the original bdd domain
       GecodeBdd bounds;
       /// Remainder storing the unfixed part of the original bdd domain
       GecodeBdd remain;
-      using DerivedViewBase<BddView>::view;
+      using DerivedViewBase<CpltSetView>::view;
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
-      SplitBddView(void);
+      SplitCpltSetView(void);
       /// Initialize from bdd view \a x
-      SplitBddView(const BddView& x);
+      SplitCpltSetView(const CpltSetView& x);
       /// Initialize from bdd view \a x
-      void init(const BddView& x);
-      ~SplitBddView(void);
+      void init(const CpltSetView& x);
+      ~SplitCpltSetView(void);
       //@}
 
       /// \name Value access
@@ -385,7 +385,7 @@ namespace Gecode {
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, SplitBddView& x);
+      void update(Space* home, bool share, SplitCpltSetView& x);
       //@}
 
       /// \name Serialization
@@ -402,52 +402,52 @@ namespace Gecode {
   }
 
   /** \name View comparison
-   *  \relates Gecode::Bdd::SplitBddView
+   *  \relates Gecode::CpltSet::SplitCpltSetView
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  bool same(const Bdd::SplitBddView& x, const Bdd::SplitBddView& y);
+  bool same(const CpltSet::SplitCpltSetView& x, const CpltSet::SplitCpltSetView& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const Bdd::SplitBddView& x, const Bdd::SplitBddView& y);
+  bool before(const CpltSet::SplitCpltSetView& x, const CpltSet::SplitCpltSetView& y);
   //@}
 
 
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for SplitBddView.
-   * \ingroup TaskActorSplitBddView
+   * This class specializes the ViewVarTraits for SplitCpltSetView.
+   * \ingroup TaskActorSplitCpltSetView
    */
   template<>
-  class ViewVarTraits<Bdd::SplitBddView> {
+  class ViewVarTraits<CpltSet::SplitCpltSetView> {
   public:
-    /// The variable type of a SplitBddView
+    /// The variable type of a SplitCpltSetView
     typedef VarBase Var;
   };
 
 
-  namespace Bdd {
+  namespace CpltSet {
     /**
      * \brief Bnd Bdd View
      *
      * A bnd bdd view \f$s\f$ for a bdd view \f$x\f$ and
      * a bdd \f$r\f$ provides operations such that 
      * \f$dom(s) = conv(dom(x))\f$.
-     * \ingroup TaskActorBddView
+     * \ingroup TaskActorCpltSetView
      */
 
-    class BndBddView : public DerivedViewBase<Bdd::BddView> {
+    class BndCpltSetView : public DerivedViewBase<CpltSet::CpltSetView> {
     protected:
-      using DerivedViewBase<BddView>::view;
+      using DerivedViewBase<CpltSetView>::view;
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
-      BndBddView(void);
+      BndCpltSetView(void);
       /// Initialize from bdd view \a x
-      BndBddView(const BddView& x);
+      BndCpltSetView(const CpltSetView& x);
       /// Initialize from bdd view \a x
-      void init(const BddView& x);
+      void init(const CpltSetView& x);
       //@}
 
       /// \name Value access
@@ -605,7 +605,7 @@ namespace Gecode {
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, BndBddView& x);
+      void update(Space* home, bool share, BndCpltSetView& x);
       //@}
 
       /// \name Serialization
@@ -622,46 +622,46 @@ namespace Gecode {
   }
 
   /** \name View comparison
-   *  \relates Gecode::Bdd::BndBddView
+   *  \relates Gecode::CpltSet::BndCpltSetView
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  bool same(const Bdd::BndBddView& x, const Bdd::BndBddView& y);
+  bool same(const CpltSet::BndCpltSetView& x, const CpltSet::BndCpltSetView& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const Bdd::BndBddView& x, const Bdd::BndBddView& y);
+  bool before(const CpltSet::BndCpltSetView& x, const CpltSet::BndCpltSetView& y);
   //@}
 
 
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for BndBddView.
-   * \ingroup TaskActorBndBddView
+   * This class specializes the ViewVarTraits for BndCpltSetView.
+   * \ingroup TaskActorBndCpltSetView
    */
   template<>
-  class ViewVarTraits<Bdd::BndBddView> {
+  class ViewVarTraits<CpltSet::BndCpltSetView> {
   public:
-    /// The variable type of a BndBddView
+    /// The variable type of a BndCpltSetView
     typedef VarBase Var;
   };
 
-  namespace Bdd {
+  namespace CpltSet {
     /**
      * \brief Split Bdd View
      *
      * A split bdd view \f$s\f$ for a bdd view \f$x\f$ and
      * a bdd \f$r\f$ provides operations such that 
      * \f$dom(s) = dom(x) \wedge r\f$.
-     * \ingroup TaskActorBddView
+     * \ingroup TaskActorCpltSetView
      */
 
-    class CrdBddView : public DerivedViewBase<Bdd::BddView> {
+    class CrdCpltSetView : public DerivedViewBase<CpltSet::CpltSetView> {
     protected:
       /// Bounds storing the fixed part of the original bdd domain
       GecodeBdd bounds;
       /// Remainder storing the unfixed part of the original bdd domain
       GecodeBdd remain;
-      using DerivedViewBase<BddView>::view;
+      using DerivedViewBase<CpltSetView>::view;
       /// cardinality minimum
       int cardmin;
       /// cardinality maximum
@@ -672,12 +672,12 @@ namespace Gecode {
       /// \name Constructors and initialization
       //@{
       /// Default constructor
-      CrdBddView(void);
+      CrdCpltSetView(void);
       /// Initialize from bdd view \a x
-      CrdBddView(const BddView& x);
+      CrdCpltSetView(const CpltSetView& x);
       /// Initialize from bdd view \a x
-      void init(const BddView& x);
-      ~CrdBddView(void);
+      void init(const CpltSetView& x);
+      ~CrdCpltSetView(void);
       //@}
 
 
@@ -838,7 +838,7 @@ namespace Gecode {
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, CrdBddView& x);
+      void update(Space* home, bool share, CrdCpltSetView& x);
       //@}
 
       /// \name Serialization
@@ -855,57 +855,57 @@ namespace Gecode {
   }
 
   /** \name View comparison
-   *  \relates Gecode::Bdd::CrdBddView
+   *  \relates Gecode::CpltSet::CrdCpltSetView
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  bool same(const Bdd::CrdBddView& x, const Bdd::CrdBddView& y);
+  bool same(const CpltSet::CrdCpltSetView& x, const CpltSet::CrdCpltSetView& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const Bdd::CrdBddView& x, const Bdd::CrdBddView& y);
+  bool before(const CpltSet::CrdCpltSetView& x, const CpltSet::CrdCpltSetView& y);
   //@}
 
 
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for CrdBddView.
-   * \ingroup TaskActorCrdBddView
+   * This class specializes the ViewVarTraits for CrdCpltSetView.
+   * \ingroup TaskActorCrdCpltSetView
    */
   template<>
-  class ViewVarTraits<Bdd::CrdBddView> {
+  class ViewVarTraits<CpltSet::CrdCpltSetView> {
   public:
-    /// The variable type of a CrdBddView
+    /// The variable type of a CrdCpltSetView
     typedef VarBase Var;
   };
 
 
-  namespace Bdd {
+  namespace CpltSet {
     /**
      * \brief Split Bdd View
      *
      * A split bdd view \f$s\f$ for a bdd view \f$x\f$ and
      * a bdd \f$r\f$ provides operations such that 
      * \f$dom(s) = dom(x) \wedge r\f$.
-     * \ingroup TaskActorBddView
+     * \ingroup TaskActorCpltSetView
      */
 
-    class LexBddView : public DerivedViewBase<Bdd::BddView> {
+    class LexCpltSetView : public DerivedViewBase<CpltSet::CpltSetView> {
     protected:
       /// Bounds storing the fixed part of the original bdd domain
       GecodeBdd bounds;
       /// Remainder storing the unfixed part of the original bdd domain
       GecodeBdd remain;
-      using DerivedViewBase<BddView>::view;
+      using DerivedViewBase<CpltSetView>::view;
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
-      LexBddView(void);
+      LexCpltSetView(void);
       /// Initialize from bdd view \a x
-      LexBddView(const BddView& x);
+      LexCpltSetView(const CpltSetView& x);
       /// Initialize from bdd view \a x
-      void init(const BddView& x);
-      ~LexBddView(void);
+      void init(const CpltSetView& x);
+      ~LexCpltSetView(void);
       //@}
 
       /// \name Value access
@@ -1065,7 +1065,7 @@ namespace Gecode {
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, LexBddView& x);
+      void update(Space* home, bool share, LexCpltSetView& x);
       //@}
 
       /// \name Serialization
@@ -1082,41 +1082,41 @@ namespace Gecode {
   }
 
   /** \name View comparison
-   *  \relates Gecode::Bdd::LexBddView
+   *  \relates Gecode::CpltSet::LexCpltSetView
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  bool same(const Bdd::LexBddView& x, const Bdd::LexBddView& y);
+  bool same(const CpltSet::LexCpltSetView& x, const CpltSet::LexCpltSetView& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const Bdd::LexBddView& x, const Bdd::LexBddView& y);
+  bool before(const CpltSet::LexCpltSetView& x, const CpltSet::LexCpltSetView& y);
   //@}
 
 
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for LexBddView.
-   * \ingroup TaskActorLexBddView
+   * This class specializes the ViewVarTraits for LexCpltSetView.
+   * \ingroup TaskActorLexCpltSetView
    */
   template<>
-  class ViewVarTraits<Bdd::LexBddView> {
+  class ViewVarTraits<CpltSet::LexCpltSetView> {
   public:
-    /// The variable type of a LexBddView
+    /// The variable type of a LexCpltSetView
     typedef VarBase Var;
   };
 
 
-  namespace Bdd {
+  namespace CpltSet {
     /**
      * \brief Singleton Bdd View
      *
      * A bnd bdd view \f$s\f$ for a bdd view \f$x\f$ and
      * a bdd \f$r\f$ provides operations such that 
      * \f$dom(s) = conv(dom(x))\f$.
-     * \ingroup TaskActorBddView
+     * \ingroup TaskActorCpltSetView
      */
 
-    class SingletonBddView : public DerivedViewBase<Gecode::Int::IntView> {
+    class SingletonCpltSetView : public DerivedViewBase<Gecode::Int::IntView> {
     protected:
       using DerivedViewBase<Gecode::Int::IntView>::view;
       BMI* mgr;
@@ -1133,16 +1133,16 @@ namespace Gecode {
       /// \name Constructors and initialization
       //@{
       /// Default constructor
-      SingletonBddView(void);
+      SingletonCpltSetView(void);
       /// Initialize from IntView \a x
-      SingletonBddView(BMI* manager, int min, int max, const Gecode::Int::IntView& x);
+      SingletonCpltSetView(BMI* manager, int min, int max, const Gecode::Int::IntView& x);
       /// Initialize from IntView \a x
       void init(BMI* manager, int min, int max, const Gecode::Int::IntView& x);
       //@}
       /// \name Destructor
       //@{
       /// Destructor for disposal of temporary domain bdd and boolean vector
-      ~SingletonBddView(void);
+      ~SingletonCpltSetView(void);
       //@}
 
       /// \name Value access
@@ -1297,7 +1297,7 @@ namespace Gecode {
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, SingletonBddView& x);
+      void update(Space* home, bool share, SingletonCpltSetView& x);
       //@}
 
       /// \name Serialization
@@ -1315,43 +1315,43 @@ namespace Gecode {
   }
 
   /** \name View comparison
-   *  \relates Gecode::Bdd::SingletonBddView
+   *  \relates Gecode::CpltSet::SingletonCpltSetView
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  bool same(const Bdd::SingletonBddView& x, const Bdd::SingletonBddView& y);
+  bool same(const CpltSet::SingletonCpltSetView& x, const CpltSet::SingletonCpltSetView& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const Bdd::SingletonBddView& x, const Bdd::SingletonBddView& y);
+  bool before(const CpltSet::SingletonCpltSetView& x, const CpltSet::SingletonCpltSetView& y);
   //@}
 
 
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for SingletonBddView.
-   * \ingroup TaskActorSingletonBddView
+   * This class specializes the ViewVarTraits for SingletonCpltSetView.
+   * \ingroup TaskActorSingletonCpltSetView
    */
   template<>
-  class ViewVarTraits<Bdd::SingletonBddView> {
+  class ViewVarTraits<CpltSet::SingletonCpltSetView> {
   public:
-    /// The variable type of a SingletonBddView
+    /// The variable type of a SingletonCpltSetView
     typedef VarBase Var;
   };
 
 
-  namespace Bdd {
+  namespace CpltSet {
     /**
      * \brief Set Bdd View
      *
      * A bnd bdd view \f$s\f$ for a bdd view \f$x\f$ and
      * a bdd \f$r\f$ provides operations such that 
      * \f$dom(s) = conv(dom(x))\f$.
-     * \ingroup TaskActorBddView
+     * \ingroup TaskActorCpltSetView
      */
 
-    class SetBddView : public DerivedViewBase<CrdBddView> {
+    class SetCpltSetView : public DerivedViewBase<CrdCpltSetView> {
     protected:
-      using DerivedViewBase<CrdBddView>::view;
+      using DerivedViewBase<CrdCpltSetView>::view;
       BMI* mgr;
       int min;
       int max;
@@ -1366,11 +1366,11 @@ namespace Gecode {
       /// \name Constructors and initialization
       //@{
       /// Default constructor
-      SetBddView(void);
+      SetCpltSetView(void);
       /// Initialize from Cardinality Set Bounds View \a x
-      SetBddView(const CrdBddView& x);
+      SetCpltSetView(const CrdCpltSetView& x);
       /// Initialize from Cardinality Set Bounds View \a x
-      void init(const CrdBddView& x);
+      void init(const CrdCpltSetView& x);
       //@}
 
       /// \name Value access
@@ -1529,7 +1529,7 @@ namespace Gecode {
       /// \name Cloning
       //@{
       /// Update this view to be a clone of view \a x
-      void update(Space* home, bool share, SetBddView& x);
+      void update(Space* home, bool share, SetCpltSetView& x);
       //@}
 
       /// \name Serialization
@@ -1547,88 +1547,88 @@ namespace Gecode {
   }
 
   /** \name View comparison
-   *  \relates Gecode::Bdd::SetBddView
+   *  \relates Gecode::CpltSet::SetCpltSetView
    */
   //@{
   /// Test whether views \a x and \a y are the same
-  bool same(const Bdd::SetBddView& x, const Bdd::SetBddView& y);
+  bool same(const CpltSet::SetCpltSetView& x, const CpltSet::SetCpltSetView& y);
   /// Test whether view \a x comes before \a y (arbitrary order)
-  bool before(const Bdd::SetBddView& x, const Bdd::SetBddView& y);
+  bool before(const CpltSet::SetCpltSetView& x, const CpltSet::SetCpltSetView& y);
   //@}
 
 
   /**
    * \brief Traits class for views and variable implementations
    *
-   * This class specializes the ViewVarTraits for SetBddView.
-   * \ingroup TaskActorSetBddView
+   * This class specializes the ViewVarTraits for SetCpltSetView.
+   * \ingroup TaskActorSetCpltSetView
    */
   template<>
-  class ViewVarTraits<Bdd::SetBddView> {
+  class ViewVarTraits<CpltSet::SetCpltSetView> {
   public:
-    /// The variable type of a SetBddView
+    /// The variable type of a SetCpltSetView
     typedef VarBase Var;
   };
 
 
 }
 
-#include "gecode/cpltset/view/bdd.icc"
-#include "gecode/cpltset/view/splitbdd.icc"
-#include "gecode/cpltset/view/bndbdd.icc"
-#include "gecode/cpltset/view/crdbdd.icc"
-#include "gecode/cpltset/view/lexbdd.icc"
-#include "gecode/cpltset/view/singletonbdd.icc"
-#include "gecode/cpltset/view/setview.icc"
+#include "gecode/cpltset/view/cpltset.icc"
+#include "gecode/cpltset/view/split.icc"
+#include "gecode/cpltset/view/bnd.icc"
+#include "gecode/cpltset/view/crd.icc"
+#include "gecode/cpltset/view/lex.icc"
+#include "gecode/cpltset/view/singleton.icc"
+#include "gecode/cpltset/view/set.icc"
 
 /**
  * \brief Print set variable view
- * \relates Gecode::Bdd::BddView
+ * \relates Gecode::CpltSet::CpltSetView
  */
 GECODE_CPLTSET_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::Bdd::BddView& x);
+operator<<(std::ostream&, const Gecode::CpltSet::CpltSetView& x);
 
 /**
  * \brief Print set variable view
- * \relates Gecode::Bdd::SplitBddView
+ * \relates Gecode::CpltSet::SplitCpltSetView
  */
 GECODE_CPLTSET_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::Bdd::SplitBddView& x);
+operator<<(std::ostream&, const Gecode::CpltSet::SplitCpltSetView& x);
 
 /**
  * \brief Print set variable view
- * \relates Gecode::Bdd::BndBddView
+ * \relates Gecode::CpltSet::BndCpltSetView
  */
 GECODE_CPLTSET_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::Bdd::BndBddView& x);
+operator<<(std::ostream&, const Gecode::CpltSet::BndCpltSetView& x);
 
 /**
  * \brief Print set variable view
- * \relates Gecode::Bdd::CrdBddView
+ * \relates Gecode::CpltSet::CrdCpltSetView
  */
 GECODE_CPLTSET_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::Bdd::CrdBddView& x);
+operator<<(std::ostream&, const Gecode::CpltSet::CrdCpltSetView& x);
 
 /**
  * \brief Print set variable view
- * \relates Gecode::Bdd::LexBddView
+ * \relates Gecode::CpltSet::LexCpltSetView
  */
 GECODE_CPLTSET_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::Bdd::LexBddView& x);
+operator<<(std::ostream&, const Gecode::CpltSet::LexCpltSetView& x);
 
 /**
  * \brief Print set variable view
- * \relates Gecode::Bdd::SingletonBddView
+ * \relates Gecode::CpltSet::SingletonCpltSetView
  */
 GECODE_CPLTSET_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::Bdd::SingletonBddView& x);
+operator<<(std::ostream&, const Gecode::CpltSet::SingletonCpltSetView& x);
 
 /**
  * \brief Print set variable view
- * \relates Gecode::Bdd::SingletonBddView
+ * \relates Gecode::CpltSet::SingletonCpltSetView
  */
 GECODE_CPLTSET_EXPORT std::ostream&
-operator<<(std::ostream&, const Gecode::Bdd::SetBddView& x);
+operator<<(std::ostream&, const Gecode::CpltSet::SetCpltSetView& x);
 
 
 // STATISTICS: bdd-var

@@ -19,7 +19,7 @@
  *
  */
 
-namespace Gecode { namespace Bdd {
+namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline
@@ -334,11 +334,11 @@ namespace Gecode { namespace Bdd {
       
       // std::cerr << "exclude " << exclude << "\n";
       // std::cerr << "from: " << x << "\n";
-      Set::UnknownRanges<BddView> delta(x);
+      Set::UnknownRanges<CpltSetView> delta(x);
       IntSetRanges ir(exclude);
-      Iter::Ranges::Inter<Set::UnknownRanges<BddView>, IntSetRanges> exclr(delta, ir);
+      Iter::Ranges::Inter<Set::UnknownRanges<CpltSetView>, IntSetRanges> exclr(delta, ir);
 
-//       Iter::Ranges::Cache<Iter::Ranges::Inter<Set::UnknownRanges<BddView>, IntSetRanges> > ca(exclr);
+//       Iter::Ranges::Cache<Iter::Ranges::Inter<Set::UnknownRanges<CpltSetView>, IntSetRanges> > ca(exclr);
 //       std::cerr << "cache excl: ";
 //       if (!ca()) std::cerr << "empty\n";
 //       for (; ca(); ++ca) {

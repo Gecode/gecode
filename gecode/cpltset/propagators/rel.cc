@@ -30,7 +30,7 @@
 // #include "gecode/set/distinct.hh"
 // #include "gecode/set/select.hh"
 
-using namespace Gecode::Bdd;
+using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
@@ -39,13 +39,13 @@ namespace Gecode {
 //     case SCL_BND_SBR:
 //       {
 // 	std::cout << "rel set\n";
-// 	BddView bx(x);
-// 	BddView by(y);
-// 	CrdBddView cx(bx);
-// 	CrdBddView cy(by);
-// 	SetBddView sx(cx);
-// 	SetBddView sy(cy);
-// 	rel_post<SetBddView, SetBddView>(home, sx, r, sy, scl); 
+// 	CpltSetView bx(x);
+// 	CpltSetView by(y);
+// 	CrdCpltSetView cx(bx);
+// 	CrdCpltSetView cy(by);
+// 	SetCpltSetView sx(cx);
+// 	SetCpltSetView sy(cy);
+// 	rel_post<SetCpltSetView, SetCpltSetView>(home, sx, r, sy, scl); 
 // 	break;
 //       }
 //     default:

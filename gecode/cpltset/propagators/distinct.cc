@@ -22,13 +22,13 @@
 #include "gecode/cpltset.hh"
 #include "gecode/cpltset/propagators.hh"
 
-using namespace Gecode::Bdd;
+using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
   void distinct(Space* home, const CpltSetVarArgs& x, SetConLevel scl) {
     if (home->failed()) return;
-    ViewArray<BddView> y(home, x);
+    ViewArray<CpltSetView> y(home, x);
 
     distinct(home, y, scl);
   }

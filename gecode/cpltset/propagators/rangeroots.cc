@@ -22,7 +22,7 @@
 #include "gecode/cpltset.hh"
 #include "gecode/cpltset/propagators.hh"
 
-using namespace Gecode::Bdd;
+using namespace Gecode::CpltSet;
 
 namespace Gecode {
 

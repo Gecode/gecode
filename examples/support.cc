@@ -30,7 +30,7 @@
 static const char* icl2str[] =
   { "val", "bnd", "dom", "def" };
 
-#ifdef GECODE_HAVE_BDD_VARS
+#ifdef GECODE_HAVE_CPLTSET_VARS
 static const char* scl2str[] =
   { "bnd_bdd", "bnd_sbr", "spl", "crd", "lex", "dom", "def" };
 #endif
@@ -53,7 +53,7 @@ Options::parse(int argc, char** argv) {
            << "\t-icl (def,val,bnd,dom) default: " << icl2str[icl]
            << endl
            << "\t\tinteger consistency level" << endl
-#ifdef GECODE_HAVE_BDD_VARS
+#ifdef GECODE_HAVE_CPLTSET_VARS
 	   << "\t-scl (def,bnd_bdd, bnd_sbr,,spl,crd,lex,dom) default: " << scl2str[scl]
 	   << endl
 	   << "\t\tbdd consistency level" << endl
@@ -116,7 +116,7 @@ Options::parse(int argc, char** argv) {
         goto error;
       }
     } 
-#ifdef GECODE_HAVE_BDD_VARS
+#ifdef GECODE_HAVE_CPLTSET_VARS
     else if (!strcmp(argv[i],"-scl")) {
       if (++i == argc) goto missing;
       if (!strcmp(argv[i],"def")) {

@@ -21,7 +21,7 @@
 
 #include "gecode/cpltset/propagators.hh"
 
-using namespace Gecode::Bdd;
+using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
@@ -31,7 +31,7 @@ namespace Gecode {
   exactly(Space* home, CpltSetVar x, IntSet& is, int c,  SetConLevel scl) {
     if (home->failed()) return;
 
-    ViewArray<BddView> bv(home, 1);
+    ViewArray<CpltSetView> bv(home, 1);
     bv[0] = x;
     // std::cerr << "exactly on " << x << "\n";
     // SUBSUMPTION CHECK
@@ -93,7 +93,7 @@ namespace Gecode {
     GecodeBdd d = cardConst(mgr, xtab, xoff, xmin, c, c, si);
     // std::cerr << "exactly: tell...";
     // GECODE_ME_FAIL(home, bv[0].tell_formula(home, d));
-    GECODE_ES_FAIL(home, UnaryBddProp<BddView>::post(home, bv[0], d, scl));
+    GECODE_ES_FAIL(home, UnaryBddProp<CpltSetView>::post(home, bv[0], d, scl));
     // std::cerr << "TELL-OK\n";
 
   }
@@ -109,7 +109,7 @@ namespace Gecode {
 //       std::cout << "SUBSUMED\n";
 //     }
 
-    ViewArray<BddView> bv(home, 1);
+    ViewArray<CpltSetView> bv(home, 1);
     bv[0] = x;
 
     BMI* mgr = bv[0].manager();
@@ -121,7 +121,7 @@ namespace Gecode {
 
     //GECODE_ME_FAIL(home, bv[0].tell_formula(home, d));
 
-    GECODE_ES_FAIL(home, UnaryBddProp<BddView>::post(home, bv[0], d, scl));
+    GECODE_ES_FAIL(home, UnaryBddProp<CpltSetView>::post(home, bv[0], d, scl));
 
   }
 

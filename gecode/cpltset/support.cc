@@ -21,7 +21,7 @@
 
 #include "gecode/cpltset.hh"
 
-using namespace Gecode::Bdd;
+using namespace Gecode::CpltSet;
 
 
 namespace Gecode {
@@ -30,14 +30,14 @@ namespace Gecode {
 
   /** \brief Set variable order as presented in HLS for CpltSetVars in \a x 
    *  It is possible to already order \a add additional variables not yet declared
-   *  as needed in the case of SingletonBddViews, i.e. while using hybrid 
+   *  as needed in the case of SingletonCpltSetViews, i.e. while using hybrid 
    *  Int Bdd constraints. 
    */
   void 
   hls_order(Space* home, const CpltSetVarArray& x) {
     // std::cout << "start hls_order()\n";
     int n = x.size();
-    ViewArray<BddView> view(home, n);
+    ViewArray<CpltSetView> view(home, n);
     for (int i = n; i--; ) {
       view[i] = x[i];
     }
@@ -47,20 +47,20 @@ namespace Gecode {
 
   /** \brief Set variable order as presented in HLS for CpltSetVars in \a x  and in \a y
    *  It is possible to already order \a add additional variables not yet declared
-   *  as needed in the case of SingletonBddViews, i.e. while using hybrid 
+   *  as needed in the case of SingletonCpltSetViews, i.e. while using hybrid 
    *  Int Bdd constraints. 
    */
   void 
   hls_order(Space* home, const CpltSetVarArray& x, const CpltSetVarArray& y) {
     // std::cout << "start hls_order(x, y)\n";
     int n = x.size();
-    ViewArray<BddView> viewx(home, n);
+    ViewArray<CpltSetView> viewx(home, n);
     for (int i = n; i--; ) {
       viewx[i] = x[i];
     }
 
     n = y.size();
-    ViewArray<BddView> viewy(home, n);
+    ViewArray<CpltSetView> viewy(home, n);
     for (int i = n; i--; ) {
       viewy[i] = y[i];
     }
@@ -70,17 +70,17 @@ namespace Gecode {
 
 //   /** \brief Set variable order as presented in HLS for CpltSetVars in \a x  and in \a y
 //    *  It is possible to already order \a add additional variables not yet declared
-//    *  as needed in the case of SingletonBddViews, i.e. while using hybrid 
+//    *  as needed in the case of SingletonCpltSetViews, i.e. while using hybrid 
 //    *  Int Bdd constraints. 
 //    */
 //   void 
 //   hls_order(Space* home, CpltSetVarArray** x, int xs) {
     
-//     GECODE_AUTOARRAY(ViewArray<BddView>*, viewptr, xs);
+//     GECODE_AUTOARRAY(ViewArray<CpltSetView>*, viewptr, xs);
 //     int c = 0;
 //     for (int i = 0; i < xs; i++) {
 //       int n = x[i]->size();
-//       ViewArray<BddView> viewx(home, n);
+//       ViewArray<CpltSetView> viewx(home, n);
 //       for (int j = n; j--; ) {
 // 	viewx[j] = (*(x[i]))[j];
 //       }
@@ -748,7 +748,7 @@ namespace Gecode {
        * if level(n_1) < level(n_2) move n_2 to the right end of the dqueue
        * maintain the invariant: 
        * for all nodes n_i, n_j in L: level(n_i) = level(n_j)
-       * difference detected set Gecode::Bdd::UNDET
+       * difference detected set Gecode::CpltSet::UNDET
        */
       // std::cout << "check shift1-LEFT\n";
       while ((l > 1) && 
@@ -757,7 +757,7 @@ namespace Gecode {
 	int shift = l - 2;
 	int norm  = l - 1;
 	mgr->unmark(nodes[shift]); markref--;
-	//flag = Gecode::Bdd::UNDET;
+	//flag = Gecode::CpltSet::UNDET;
 	if (r == n - 1) {
 	  nodes[r] = nodes[shift];
 	  mgr->mark(nodes[r]); markref++;
@@ -780,7 +780,7 @@ namespace Gecode {
 	// std::cout << "shift2 left: " << l << "\n";
 	int shift = l - 1;
 	mgr->unmark(nodes[shift]); markref--;
-	//flag = Gecode::Bdd::UNDET;
+	//flag = Gecode::CpltSet::UNDET;
 	if (r == n - 1) {
 	  nodes[r] = nodes[shift];
 	  mgr->mark(nodes[r]); markref++;
@@ -929,7 +929,7 @@ namespace Gecode {
         int shift = r + 2;
         int norm  = r + 1;
         mgr->unmark(nodes[shift]); markref--;
-        //flag = Gecode::Bdd::UNDET;
+        //flag = Gecode::CpltSet::UNDET;
         if (l == 0) {
           nodes[l] = nodes[shift];
           mgr->mark(nodes[l]); markref++;
@@ -951,7 +951,7 @@ namespace Gecode {
 	// std::cout << "shift2 right: " << l << "\n";
 	int shift = r + 1;
 	mgr->unmark(nodes[shift]); markref--;
-	//flag = Gecode::Bdd::UNDET;
+	//flag = Gecode::CpltSet::UNDET;
 	if (l == 0) {
 	  nodes[l] = nodes[shift];
 	  mgr->mark(nodes[l]); markref++;

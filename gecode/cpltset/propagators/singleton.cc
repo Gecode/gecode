@@ -23,14 +23,14 @@
 #include "gecode/cpltset.hh"
 #include "gecode/cpltset/propagators.hh"
 
-using namespace Gecode::Bdd;
+using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
   void singleton(Space* home, IntVar x, CpltSetVar s, SetConLevel scl) {
     Int::IntView iv(x);
-    BddView bv(s);
-    GECODE_ES_FAIL(home, (Bdd::Singleton<Int::IntView, BddView>
+    CpltSetView bv(s);
+    GECODE_ES_FAIL(home, (CpltSet::Singleton<Int::IntView, CpltSetView>
 			  ::post(home, iv, bv)));
   }
 

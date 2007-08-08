@@ -1,0 +1,442 @@
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *
+ *  Last modified:
+ *     $Date$ by $Author$
+ *     $Revision$
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  See the file "LICENSE" for information on usage and
+ *  redistribution of this file, and for a
+ *     DISCLAIMER OF ALL WARRANTIES.
+ *
+ */
+
+
+namespace Gecode { namespace CpltSet {
+
+  /*
+   * Constructors and access
+   *
+   */
+
+  forceinline
+  CpltSetView::CpltSetView(void) {}
+
+  forceinline
+  CpltSetView::CpltSetView(const CpltSetVar& y)
+    : VariableViewBase<CpltSetVarImp>(y.variable()) { }
+
+  /*
+   * Set information
+   *
+   */
+
+
+  forceinline unsigned int
+  CpltSetView::glbSize(void) const { return var->glbSize(); }
+
+  forceinline unsigned int
+  CpltSetView::lubSize(void) const { return var->lubSize(); }
+
+  forceinline unsigned int
+  CpltSetView::unknownSize(void) const { return var->unknownSize(); }
+  
+  forceinline unsigned int
+  CpltSetView::cardMin(void) const { return var->cardMin(); }
+
+  forceinline unsigned int
+  CpltSetView::cardMax(void) const { return var->cardMax(); }
+
+  forceinline int
+  CpltSetView::lubMin(void) const { return var->lubMin(); }
+
+  forceinline int
+  CpltSetView::lubMax(void) const { return var->lubMax(); }
+
+  forceinline int
+  CpltSetView::lubMinN(int n) const { return var->lubMinN(n); }
+
+  forceinline int
+  CpltSetView::lubMaxN(int n) const { return var->lubMaxN(n); }
+
+  forceinline int
+  CpltSetView::glbMin(void) const { return var->glbMin(); }
+
+  forceinline int
+  CpltSetView::glbMax(void) const { return var->glbMax(); }
+
+
+
+  /*
+   * Bdd information
+   *
+   */
+
+
+  forceinline unsigned int
+  CpltSetView::offset(void)  const { return var->offset(); }
+
+  forceinline unsigned int
+  CpltSetView::table_width(void)  const { return var->table_width(); }
+
+  forceinline GecodeBdd
+  CpltSetView::getbdd(int i)  const { return var->getbdd(i); }
+
+  forceinline GecodeBdd
+  CpltSetView::getnegbdd(int i)  const { return var->getnegbdd(i); }
+
+  forceinline int
+  CpltSetView::getlevel(int i)  { return var->getlevel(i); }
+
+  forceinline int
+  CpltSetView::getvar(int i)  { return var->getvar(i); }
+
+  forceinline void
+  CpltSetView::dom_and(GecodeBdd& d) { return var->dom_and(d); }
+
+  forceinline void
+  CpltSetView::dom_or(GecodeBdd& d) { return var->dom_or(d); }
+
+  forceinline BMI*
+  CpltSetView::manager(void) const { return var->manager(); }
+
+  forceinline int
+  CpltSetView::mgr_min(void)  const { return var->mgr_min(); }
+
+  forceinline int
+  CpltSetView::valididx(int v)  const { return var->valididx(v); }
+
+  forceinline int
+  CpltSetView::mgr_max(void)  const { return var->mgr_max(); }
+  
+  forceinline GecodeBdd 
+  CpltSetView::bdd_domain(void) const {  return var->bdd_domain(); };
+
+
+  /*
+   * Domain tests
+   *
+   */
+
+  forceinline bool
+  CpltSetView::assigned(void)  const { return var->assigned(); }
+
+  forceinline bool
+  CpltSetView::contains(int i) const { return (var->knownIn(i)); }
+  
+  forceinline bool
+  CpltSetView::notContains(int i) const { return (var->knownOut(i)); }
+
+  /*
+   * Tells
+   *
+   */
+
+  forceinline ModEvent 
+  CpltSetView::cardinality(Space* home, int l, int u) {
+    return var->cardinality(home, l, u);
+  }
+
+  forceinline ModEvent
+  CpltSetView::cardMin(Space* home, unsigned int m) {
+    return var->cardMin(home, m);
+  }
+
+  forceinline ModEvent
+  CpltSetView::cardMax(Space* home, unsigned int m) {
+    return var->cardMax(home, m);
+  }
+
+  forceinline ModEvent
+  CpltSetView::include(Space* home, int from, int to) { 
+    return var->include(home, from, to);
+  }
+
+  forceinline ModEvent
+  CpltSetView::include(Space* home, int n) { return var->include(home, n); }
+
+  template <class I> ModEvent
+  CpltSetView::includeI(Space* home, I& iter) { return var->includeI(home, iter); }
+
+  forceinline ModEvent
+  CpltSetView::exclude(Space* home, int from, int to) { 
+    return var->exclude(home, from, to);
+  }
+
+  forceinline ModEvent
+  CpltSetView::exclude(Space* home, int n) { return var->exclude(home, n); }
+
+  template <class I> ModEvent
+  CpltSetView::excludeI(Space* home, I& iter) { return var->excludeI(home, iter); }
+
+  forceinline ModEvent
+  CpltSetView::intersect(Space* home,int from, int to) {
+    return var->intersect(home,from,to);
+  }
+
+  forceinline ModEvent
+  CpltSetView::intersect(Space* home,int n) { return var->intersect(home,n); }
+
+  template <class I> ModEvent
+  CpltSetView::intersectI(Space* home, I& iter) { 
+    return var->intersectI(home, iter);
+  }
+
+  forceinline ModEvent
+  CpltSetView::nq(Space* home, int v) { return var->nq(home, v); }
+
+  forceinline ModEvent
+  CpltSetView::nq(Space* home, int a, int b) { return var->nq(home, a, b); }
+
+  template <class I>
+  forceinline ModEvent
+  CpltSetView::nqI(Space* home, I& i) { return var->nqI(home, i); }
+
+  forceinline ModEvent
+  CpltSetView::eq(Space* home, int v) { return var->eq(home, v); }
+
+  forceinline ModEvent
+  CpltSetView::eq(Space* home, int a, int b) { return var->eq(home, a, b); }
+  
+  template <class I>
+  forceinline ModEvent
+  CpltSetView::eqI(Space* home, I& i) { return var->eqI(home, i); }
+
+  forceinline ModEvent 
+  CpltSetView::tell_formula(Space* home, GecodeBdd& d) {
+    return var->tell_formula(home, d);
+  }
+
+  /*
+   * Cloning
+   *
+   */
+
+  forceinline void
+  CpltSetView::update(Space* home, bool share, CpltSetView& y) {
+    var = y.var->copy(home,share);
+  }
+
+  /*
+   * Serialization
+   *
+   */
+  forceinline Reflection::Arg*
+  CpltSetView::spec(Space* home, Reflection::VarMap& m) {
+    return var->spec(home, m);
+  }
+  forceinline Reflection::Type*
+  CpltSetView::type(void) {
+    return new Reflection::Type("bdd.CpltSetView");
+  }
+
+  forceinline void 
+  CpltSetView::viewdot(void) const {
+    var->viewdot();
+  }
+
+  /// Iterator for the values of a bdd view
+  template <>
+  class DomValues<CpltSetView> : public DomValues<CpltSetVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    DomValues(void);
+    /// Initialize with ranges for variable implementation \a x
+    DomValues(const CpltSetView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const CpltSetView& x);
+    //@}    
+  };
+
+  forceinline
+  DomValues<CpltSetView>::DomValues(void) {}
+
+  forceinline
+  DomValues<CpltSetView>::DomValues(const CpltSetView& x) 
+    : DomValues<CpltSetVarImp*>(x.variable()) {}
+
+  forceinline void
+  DomValues<CpltSetView>::init(const CpltSetView& x) {
+    DomValues<CpltSetVarImp*>::init(x.variable());
+  }
+
+  /// Iterator for the values in the greatest lower bound of a CpltSetView
+  template <>
+  class GlbValues<CpltSetView> : public GlbValues<CpltSetVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    GlbValues(void);
+    /// Initialize with ranges for variable implementation \a x
+    GlbValues(const CpltSetView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const CpltSetView& x);
+    //@}    
+  };
+
+  forceinline
+  GlbValues<CpltSetView>::GlbValues(void) {}
+
+  forceinline
+  GlbValues<CpltSetView>::GlbValues(const CpltSetView& x) 
+    : GlbValues<CpltSetVarImp*>(x.variable()) {}
+
+  forceinline void
+  GlbValues<CpltSetView>::init(const CpltSetView& x) {
+    GlbValues<CpltSetVarImp*>::init(x.variable());
+  }
+}
+  namespace Set {
+  template <>
+  class GlbRanges<CpltSet::CpltSetView> : public Set::GlbRanges<CpltSet::CpltSetVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    GlbRanges(void);
+    /// Initialize with ranges for variable implementation \a x
+    GlbRanges(const CpltSet::CpltSetView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const CpltSet::CpltSetView& x);
+    //@}    
+  };
+
+  forceinline
+  GlbRanges<CpltSet::CpltSetView>::GlbRanges(void) {}
+
+  forceinline
+  GlbRanges<CpltSet::CpltSetView>::GlbRanges(const CpltSet::CpltSetView& x) 
+    : GlbRanges<CpltSet::CpltSetVarImp*>(x.variable()) {}
+
+  forceinline void
+  GlbRanges<CpltSet::CpltSetView>::init(const CpltSet::CpltSetView& x) {
+    GlbRanges<CpltSet::CpltSetVarImp*>::init(x.variable());
+  }
+
+  template <>
+  class LubRanges<CpltSet::CpltSetView> : public Set::LubRanges<CpltSet::CpltSetVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    LubRanges(void);
+    /// Initialize with ranges for variable implementation \a x
+    LubRanges(const CpltSet::CpltSetView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const CpltSet::CpltSetView& x);
+    //@}    
+  };
+
+  forceinline
+  LubRanges<CpltSet::CpltSetView>::LubRanges(void) {}
+
+  forceinline
+  LubRanges<CpltSet::CpltSetView>::LubRanges(const CpltSet::CpltSetView& x) 
+    : Set::LubRanges<CpltSet::CpltSetVarImp*>(x.variable()) {}
+
+  forceinline void
+  LubRanges<CpltSet::CpltSetView>::init(const CpltSet::CpltSetView& x) {
+    Set::LubRanges<CpltSet::CpltSetVarImp*>::init(x.variable());
+  }
+  }
+  namespace CpltSet {
+  /**
+   * \brief %Value iterator for least upper bound of singleton set view
+   * \ingroup TaskActorSetView
+   */
+  template <>
+  class LubValues<CpltSetView> : public LubValues<CpltSetVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    LubValues(void);
+    /// Initialize with ranges for view \a x
+    LubValues(const CpltSetView& x);
+    /// Initialize with ranges for view \a x
+    void init(const CpltSetView& x);
+    //@}
+  };
+
+  forceinline
+  LubValues<CpltSetView>::LubValues(void) {}
+
+  forceinline
+  LubValues<CpltSetView>::LubValues(const CpltSetView& x) 
+  : LubValues<CpltSetVarImp*>(x.variable()) {}
+
+  forceinline void
+  LubValues<CpltSetView>::init(const CpltSetView& x) {
+    LubValues<CpltSetVarImp*>::init(x.variable());
+  }
+
+
+  /// Iterator for the unknown values of a CpltSetView
+  template <>
+  class UnknownValues<CpltSetView> : public UnknownValues<CpltSetVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    UnknownValues(void);
+    /// Initialize with ranges for variable implementation \a x
+    UnknownValues(const CpltSetView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const CpltSetView& x);
+    //@}    
+  };
+
+  forceinline
+  UnknownValues<CpltSetView>::UnknownValues(void) {}
+
+  forceinline
+  UnknownValues<CpltSetView>::UnknownValues(const CpltSetView& x) 
+    : UnknownValues<CpltSetVarImp*>(x.variable()) {}
+
+  forceinline void
+  UnknownValues<CpltSetView>::init(const CpltSetView& x) {
+    UnknownValues<CpltSetVarImp*>::init(x.variable());
+  }
+  }
+  namespace Set {
+  template <>
+  class UnknownRanges<CpltSet::CpltSetView> : public Set::UnknownRanges<CpltSet::CpltSetVarImp*> {
+  public:
+    /// \name Constructors and initialization
+    //@{
+    /// Default constructor
+    UnknownRanges(void);
+    /// Initialize with ranges for variable implementation \a x
+    UnknownRanges(const CpltSet::CpltSetView& x);
+    /// Initialize with ranges for variable implementation \a x
+    void init(const CpltSet::CpltSetView& x);
+    //@}    
+  };
+
+  forceinline
+  UnknownRanges<CpltSet::CpltSetView>::UnknownRanges(void) {}
+
+  forceinline
+  UnknownRanges<CpltSet::CpltSetView>::UnknownRanges(const CpltSet::CpltSetView& x) 
+    : Set::UnknownRanges<CpltSet::CpltSetVarImp*>(x.variable()) {}
+
+  forceinline void
+  UnknownRanges<CpltSet::CpltSetView>::init(const CpltSet::CpltSetView& x) {
+    Set::UnknownRanges<CpltSet::CpltSetVarImp*>::init(x.variable());
+  }
+  }
+}
+
+
+// STATISTICS: bdd-var

@@ -327,7 +327,7 @@ namespace Log {
   }
 #endif
 
-#ifdef GECODE_HAVE_BDD_VARS  
+#ifdef GECODE_HAVE_CPLTSET_VARS  
   void initial(const CpltSetVarArray& a, const char* name) {
     if (!do_logging) return;
     // Display
@@ -500,7 +500,7 @@ namespace Log {
   }
 #endif
 
-#ifdef GECODE_HAVE_BDD_VARS
+#ifdef GECODE_HAVE_CPLTSET_VARS
   void prune(const CpltSetVar& v, std::string name, SetRelType brt, int val) {
     if(!do_logging) return;
     ostringstream h;
@@ -560,7 +560,7 @@ namespace Log {
   }
 #endif
 
-#ifdef GECODE_HAVE_BDD_VARS
+#ifdef GECODE_HAVE_CPLTSET_VARS
   void prune_result(const CpltSetVar& v) {
     if (!do_logging) return;
     ostringstream h;
@@ -613,7 +613,7 @@ namespace Log {
   }
 #endif
 
-#ifdef GECODE_HAVE_BDD_VARS
+#ifdef GECODE_HAVE_CPLTSET_VARS
   void print(const CpltSetVarArray& a, const char* name) {
     if (!do_logging) return;
     ostringstream h;

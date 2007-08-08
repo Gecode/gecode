@@ -20,7 +20,7 @@
  */
 
 #include "gecode/cpltset.hh"
-using namespace Gecode::Bdd;
+using namespace Gecode::CpltSet;
 
 namespace Gecode {
 

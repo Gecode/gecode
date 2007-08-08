@@ -19,7 +19,7 @@
  *
  */
 
-using namespace Gecode::Bdd;
+using namespace Gecode::CpltSet;
 
 namespace Gecode {
   
@@ -44,7 +44,7 @@ namespace Gecode {
 	    SetConLevel scl) {
     int n = x.size();
     int m = n + 2;
-    ViewArray<BddView> bv(home, m);
+    ViewArray<CpltSetView> bv(home, m);
     for (int i = 0; i < n; i++) {
       bv[i] = x[i];
     }
@@ -114,7 +114,7 @@ namespace Gecode {
 	    SetConLevel scl) {
     int n = x.size();
     int m = n + 2;
-    ViewArray<BddView> bv(home, m);
+    ViewArray<CpltSetView> bv(home, m);
     for (int i = 0; i < n; i++) {
       bv[i] = x[i];
     }

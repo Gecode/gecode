@@ -26,11 +26,11 @@
 #include "gecode/iter.hh"
 
 /**
- * \namespace Gecode::Bdd::Branch
+ * \namespace Gecode::CpltSet::Branch
  * \brief %Bdd branchings
  */
 
-namespace Gecode { namespace Bdd { namespace Branch {
+namespace Gecode { namespace CpltSet { namespace Branch {
 
   /*
    * Value selection classes
@@ -49,9 +49,9 @@ namespace Gecode { namespace Bdd { namespace Branch {
   class ValMin {
   public:
     /// Return minimum value of view \a x
-    IntSet val(const Space*, BddView x);
+    IntSet val(const Space*, CpltSetView x);
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
-    ModEvent tell(Space* home, unsigned int a, BddView x, IntSet v);
+    ModEvent tell(Space* home, unsigned int a, CpltSetView x, IntSet v);
     /// Type of this value selection (for reflection)
     static Reflection::Type* type(void);
   };
@@ -67,9 +67,9 @@ namespace Gecode { namespace Bdd { namespace Branch {
   class ValMax {
   public:
     /// Return maximum value of view \a x
-    IntSet val(const Space*, BddView x) const;
+    IntSet val(const Space*, CpltSetView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
-    ModEvent tell(Space* home, unsigned int a, BddView x, IntSet v);
+    ModEvent tell(Space* home, unsigned int a, CpltSetView x, IntSet v);
     /// Type of this value selection (for reflection)
     static Reflection::Type* type(void);
   };
@@ -85,9 +85,9 @@ namespace Gecode { namespace Bdd { namespace Branch {
   class ValMinUnknown {
   public:
     /// Return minimum value of view \a x
-    int val(const Space*, BddView x) const;
+    int val(const Space*, CpltSetView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
-    ModEvent tell(Space* home, unsigned int a, BddView x, int v);
+    ModEvent tell(Space* home, unsigned int a, CpltSetView x, int v);
     /// Type of this value selection (for reflection)
     static Reflection::Type* type(void);
   };
@@ -103,9 +103,9 @@ namespace Gecode { namespace Bdd { namespace Branch {
   class ValMaxUnknown {
   public:
     /// Return minimum value of view \a x
-    int val(const Space*, BddView x) const;
+    int val(const Space*, CpltSetView x) const;
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
-    ModEvent tell(Space* home, unsigned int a, BddView x, int v);
+    ModEvent tell(Space* home, unsigned int a, CpltSetView x, int v);
     /// Type of this value selection (for reflection)
     static Reflection::Type* type(void);
   };
@@ -113,7 +113,7 @@ namespace Gecode { namespace Bdd { namespace Branch {
   /// Create branchings for a given view selection strategy \a ViewSel
   template <class SelView>
   static void
-  create(Space* home, ViewArray<BddView>&, BddBvalSel);
+  create(Space* home, ViewArray<CpltSetView>&, BddBvalSel);
 
   /*
    * View selection classes
@@ -129,9 +129,9 @@ namespace Gecode { namespace Bdd { namespace Branch {
   class ByNone {
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(const Space*, BddView);
+    ViewSelStatus init(const Space*, CpltSetView);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space*, BddView);
+    ViewSelStatus select(const Space*, CpltSetView);
     /// Type of this view selection (for reflection)
     static Reflection::Type* type(void);
   };
@@ -148,9 +148,9 @@ namespace Gecode { namespace Bdd { namespace Branch {
     unsigned int minCard;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(const Space*, BddView x);
+    ViewSelStatus init(const Space*, CpltSetView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space*, BddView x);
+    ViewSelStatus select(const Space*, CpltSetView x);
     /// Type of this view selection (for reflection)
     static Reflection::Type* type(void);
   };
@@ -167,9 +167,9 @@ namespace Gecode { namespace Bdd { namespace Branch {
     unsigned int maxCard;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(const Space*, BddView x);
+    ViewSelStatus init(const Space*, CpltSetView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space*, BddView x);
+    ViewSelStatus select(const Space*, CpltSetView x);
     /// Type of this view selection (for reflection)
     static Reflection::Type* type(void);
   };
@@ -186,9 +186,9 @@ namespace Gecode { namespace Bdd { namespace Branch {
     int minUnknown;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(const Space*, BddView x);
+    ViewSelStatus init(const Space*, CpltSetView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space*, BddView x);
+    ViewSelStatus select(const Space*, CpltSetView x);
     /// Type of this view selection (for reflection)
     static Reflection::Type* type(void);
   };
@@ -205,9 +205,9 @@ namespace Gecode { namespace Bdd { namespace Branch {
     int maxUnknown;
   public:
     /// Intialize with view \a x
-    ViewSelStatus init(const Space*, BddView x);
+    ViewSelStatus init(const Space*, CpltSetView x);
     /// Possibly select better view \a x
-    ViewSelStatus select(const Space*, BddView x);
+    ViewSelStatus select(const Space*, CpltSetView x);
     /// Type of this view selection (for reflection)
     static Reflection::Type* type(void);
   };

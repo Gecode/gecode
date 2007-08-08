@@ -27,7 +27,7 @@
 
 namespace Gecode { 
 
-  namespace Bdd {
+  namespace CpltSet {
 
     /// Iterator for the values of a bdd variable implementation
     template <> 
@@ -287,37 +287,37 @@ namespace Gecode {
   }
   namespace Set {
     template <> 
-    class GlbRanges<Bdd::CpltSetVarImp*> 
-      : public Iter::Values::ToRanges<Bdd::GlbValues<Bdd::CpltSetVarImp*> > {
+    class GlbRanges<CpltSet::CpltSetVarImp*> 
+      : public Iter::Values::ToRanges<CpltSet::GlbValues<CpltSet::CpltSetVarImp*> > {
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
       GlbRanges(void);
       /// Initialize with ranges for variable implementation \a x
-      GlbRanges(const Bdd::CpltSetVarImp* x);
+      GlbRanges(const CpltSet::CpltSetVarImp* x);
       /// Initialize with ranges for variable implementation \a x
-      void init(const Bdd::CpltSetVarImp* x);
+      void init(const CpltSet::CpltSetVarImp* x);
       //@}
     };
 
     forceinline
-    GlbRanges<Bdd::CpltSetVarImp*>::GlbRanges(void) {}
+    GlbRanges<CpltSet::CpltSetVarImp*>::GlbRanges(void) {}
 
     forceinline
-    GlbRanges<Bdd::CpltSetVarImp*>::GlbRanges(const Bdd::CpltSetVarImp* x) {
-      Bdd::GlbValues<Bdd::CpltSetVarImp*> v(x);
-      Iter::Values::ToRanges<Bdd::GlbValues<Bdd::CpltSetVarImp*> >::init(v);
+    GlbRanges<CpltSet::CpltSetVarImp*>::GlbRanges(const CpltSet::CpltSetVarImp* x) {
+      CpltSet::GlbValues<CpltSet::CpltSetVarImp*> v(x);
+      Iter::Values::ToRanges<CpltSet::GlbValues<CpltSet::CpltSetVarImp*> >::init(v);
     }
 
     forceinline void 
-    GlbRanges<Bdd::CpltSetVarImp*>::init(const Bdd::CpltSetVarImp* x) {
-      Bdd::GlbValues<Bdd::CpltSetVarImp*> v(x);
-      Iter::Values::ToRanges<Bdd::GlbValues<Bdd::CpltSetVarImp*> >::init(v);
+    GlbRanges<CpltSet::CpltSetVarImp*>::init(const CpltSet::CpltSetVarImp* x) {
+      CpltSet::GlbValues<CpltSet::CpltSetVarImp*> v(x);
+      Iter::Values::ToRanges<CpltSet::GlbValues<CpltSet::CpltSetVarImp*> >::init(v);
     }
 
   }
-  namespace Bdd {
+  namespace CpltSet {
 
     /// Iterator for the values in the least upper bound of a bdd variable implementation
     template <> 
@@ -393,36 +393,36 @@ namespace Gecode {
   namespace Set {
 
     template <> 
-    class LubRanges<Bdd::CpltSetVarImp*> 
-      : public Iter::Values::ToRanges<Bdd::LubValues<Bdd::CpltSetVarImp*> > {
+    class LubRanges<CpltSet::CpltSetVarImp*> 
+      : public Iter::Values::ToRanges<CpltSet::LubValues<CpltSet::CpltSetVarImp*> > {
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
       LubRanges(void);
       /// Initialize with ranges for variable implementation \a x
-      LubRanges(const Bdd::CpltSetVarImp* x);
+      LubRanges(const CpltSet::CpltSetVarImp* x);
       /// Initialize with ranges for variable implementation \a x
-      void init(const Bdd::CpltSetVarImp* x);
+      void init(const CpltSet::CpltSetVarImp* x);
       //@}
     };
 
     forceinline
-    LubRanges<Bdd::CpltSetVarImp*>::LubRanges(void) {}
+    LubRanges<CpltSet::CpltSetVarImp*>::LubRanges(void) {}
 
     forceinline
-    LubRanges<Bdd::CpltSetVarImp*>::LubRanges(const Bdd::CpltSetVarImp* x) {
-      Bdd::LubValues<Bdd::CpltSetVarImp*> v(x);
-      Iter::Values::ToRanges<Bdd::LubValues<Bdd::CpltSetVarImp*> >::init(v);
+    LubRanges<CpltSet::CpltSetVarImp*>::LubRanges(const CpltSet::CpltSetVarImp* x) {
+      CpltSet::LubValues<CpltSet::CpltSetVarImp*> v(x);
+      Iter::Values::ToRanges<CpltSet::LubValues<CpltSet::CpltSetVarImp*> >::init(v);
     }
 
     forceinline void 
-    LubRanges<Bdd::CpltSetVarImp*>::init(const Bdd::CpltSetVarImp* x) {
-      Bdd::LubValues<Bdd::CpltSetVarImp*> v(x);
-      Iter::Values::ToRanges<Bdd::LubValues<Bdd::CpltSetVarImp*> >::init(v);
+    LubRanges<CpltSet::CpltSetVarImp*>::init(const CpltSet::CpltSetVarImp* x) {
+      CpltSet::LubValues<CpltSet::CpltSetVarImp*> v(x);
+      Iter::Values::ToRanges<CpltSet::LubValues<CpltSet::CpltSetVarImp*> >::init(v);
     }
   }
-  namespace Bdd {
+  namespace CpltSet {
 
     /// Iterator for the unknown values of a bdd variable implementation
     template <> 
@@ -498,42 +498,42 @@ namespace Gecode {
 
   namespace Set {
     template <> 
-    class UnknownRanges<Bdd::CpltSetVarImp*> 
-      : public Iter::Values::ToRanges<Bdd::UnknownValues<Bdd::CpltSetVarImp*> > {
+    class UnknownRanges<CpltSet::CpltSetVarImp*> 
+      : public Iter::Values::ToRanges<CpltSet::UnknownValues<CpltSet::CpltSetVarImp*> > {
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
       UnknownRanges(void);
       /// Initialize with ranges for variable implementation \a x
-      UnknownRanges(const Bdd::CpltSetVarImp* x);
+      UnknownRanges(const CpltSet::CpltSetVarImp* x);
       /// Initialize with ranges for variable implementation \a x
-      void init(const Bdd::CpltSetVarImp* x);
+      void init(const CpltSet::CpltSetVarImp* x);
       //@}
     };
 
     forceinline
-    UnknownRanges<Bdd::CpltSetVarImp*>::UnknownRanges(void) {
+    UnknownRanges<CpltSet::CpltSetVarImp*>::UnknownRanges(void) {
       // std::cout << "UnknownRanges<CpltSetVarImp*>::UnknownRanges(void)\n";
     }
 
     forceinline
-    UnknownRanges<Bdd::CpltSetVarImp*>::UnknownRanges(const Bdd::CpltSetVarImp* x) {
+    UnknownRanges<CpltSet::CpltSetVarImp*>::UnknownRanges(const CpltSet::CpltSetVarImp* x) {
       // std::cout << "UnknownRanges<CpltSetVarImp*>::UnknownRanges(x)\n";
-      Bdd::UnknownValues<Bdd::CpltSetVarImp*> v(x);
-      Iter::Values::ToRanges<Bdd::UnknownValues<Bdd::CpltSetVarImp*> >::init(v);
+      CpltSet::UnknownValues<CpltSet::CpltSetVarImp*> v(x);
+      Iter::Values::ToRanges<CpltSet::UnknownValues<CpltSet::CpltSetVarImp*> >::init(v);
       // std::cout << "END UnknownRanges<CpltSetVarImp*>::UnknownRanges(x)\n";
     }
 
     forceinline void 
-    UnknownRanges<Bdd::CpltSetVarImp*>::init(const Bdd::CpltSetVarImp* x) {
+    UnknownRanges<CpltSet::CpltSetVarImp*>::init(const CpltSet::CpltSetVarImp* x) {
       // std::cout << "UnknownRanges<CpltSetVarImp*>::init(x)\n";
-      Bdd::UnknownValues<Bdd::CpltSetVarImp*> v(x);
-      Iter::Values::ToRanges<Bdd::UnknownValues<Bdd::CpltSetVarImp*> >::init(v);
+      CpltSet::UnknownValues<CpltSet::CpltSetVarImp*> v(x);
+      Iter::Values::ToRanges<CpltSet::UnknownValues<CpltSet::CpltSetVarImp*> >::init(v);
       // std::cout << "END UnknownRanges<CpltSetVarImp*>::init(x)\n";
     }
   }
-  namespace Bdd {
+  namespace CpltSet {
 
     forceinline void 
     CpltSetVarImp::printdom(void) const {
@@ -647,7 +647,7 @@ namespace Gecode {
       for (int i = max; i >= min; i--) {
         if (i != vc.val()) {
           if (c >= glbMin && c == i) {
-            throw Bdd::GlbLubSpecNoSubset("CpltSetVarImp");
+            throw CpltSet::GlbLubSpecNoSubset("CpltSetVarImp");
           }
           domain &= getnegbdd(i - min);
         } else {
@@ -721,7 +721,7 @@ namespace Gecode {
       for (int i = max; i >= min; i--) {
         if (i != vclub.val()) {
           if (vcglb() && vcglb.val() == i) {
-            throw Bdd::GlbLubSpecNoSubset("CpltSetVarImp");
+            throw CpltSet::GlbLubSpecNoSubset("CpltSetVarImp");
           }
           domain &= getnegbdd(i - min);
         } else {

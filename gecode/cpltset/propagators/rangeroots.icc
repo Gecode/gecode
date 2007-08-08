@@ -19,7 +19,7 @@
  *
  */
 
-namespace Gecode { namespace Bdd {
+namespace Gecode { namespace CpltSet {
 
   /// Constructs \a d0 as the bdd representing the Range constraint for the given variables
   template <class View0, class View1>
@@ -180,14 +180,14 @@ namespace Gecode { namespace Bdd {
 	    SetConLevel scl) {
     BMI* mgr = s.manager();
     int n = x.size();
-    BddView selview(s);
-    BddView unionview(t);
+    CpltSetView selview(s);
+    CpltSetView unionview(t);
 
     ViewArray<Gecode::Int::IntView> iv(home, n);
     for (int i = 0; i < n; i++) {
       iv[i] = x[i];
     }
-    ViewArray<SingletonBddView> sbv(home, n);
+    ViewArray<SingletonCpltSetView> sbv(home, n);
     for (int i = 0; i < n; i++) {
       int rmin = std::min(unionview.mgr_min(), iv[i].min());
       int rmax = std::max(unionview.mgr_max(), iv[i].max());
@@ -250,7 +250,7 @@ namespace Gecode { namespace Bdd {
 
     for (int j = 0; j < n; j++) {    
       GecodeBdd subset = BDDTOP;
-      LubValues<SingletonBddView> lub(seq[j]);
+      LubValues<SingletonCpltSetView> lub(seq[j]);
       for (unsigned int k = 0; k < xrange; k++) {
 	int seqmin = seq[j].mgr_min();
 	int seqmax = seq[j].mgr_max();
@@ -305,14 +305,14 @@ namespace Gecode { namespace Bdd {
     BMI* mgr = s.manager();
     int n = x.size();
 
-    BddView selview(s);
-    BddView unionview(t);
+    CpltSetView selview(s);
+    CpltSetView unionview(t);
 
     ViewArray<Gecode::Int::IntView> iv(home, n);
     for (int i = 0; i < n; i++) {
       iv[i] = x[i];
     }
-    ViewArray<SingletonBddView> sbv(home, n);
+    ViewArray<SingletonCpltSetView> sbv(home, n);
     for (int i = 0; i < n; i++) {
 //       int rmin = std::min(unionview.mgr_min(), iv[i].min());
 //       int rmax = std::max(unionview.mgr_max(), iv[i].max());
@@ -322,7 +322,7 @@ namespace Gecode { namespace Bdd {
     
     
     // do ordering
-    ViewArray<BddView> vars(home, allvars.size());
+    ViewArray<CpltSetView> vars(home, allvars.size());
     for (int i = allvars.size(); i--; ) {
       vars[i] = allvars[i];
     }
@@ -524,14 +524,14 @@ namespace Gecode { namespace Bdd {
     std::cout << "nvalue con\n";
     BMI* mgr = s.manager();
     int n = x.size();
-    BddView selview(s);
-    BddView unionview(t);
+    CpltSetView selview(s);
+    CpltSetView unionview(t);
 
     ViewArray<Gecode::Int::IntView> iv(home, n);
     for (int i = 0; i < n; i++) {
       iv[i] = x[i];
     }
-    ViewArray<SingletonBddView> sbv(home, n);
+    ViewArray<SingletonCpltSetView> sbv(home, n);
     for (int i = 0; i < n; i++) {
       int rmin = std::min(unionview.mgr_min(), iv[i].min());
       int rmax = std::max(unionview.mgr_max(), iv[i].max());
@@ -539,7 +539,7 @@ namespace Gecode { namespace Bdd {
     }
     
     // do ordering
-    ViewArray<BddView> vars(home, allvars.size());
+    ViewArray<CpltSetView> vars(home, allvars.size());
     for (int i = allvars.size(); i--; ) {
       vars[i] = allvars[i];
     }
@@ -628,28 +628,28 @@ namespace Gecode { namespace Bdd {
 	   SetConLevel scl) {
     BMI* mgr = s.manager();
     int n = x.size();
-    BddView selview(s);
-    BddView unionview(t);
+    CpltSetView selview(s);
+    CpltSetView unionview(t);
 
     ViewArray<Gecode::Int::IntView> iv(home, n);
     for (int i = 0; i < n; i++) {
       iv[i] = x[i];
     }
-    ViewArray<SingletonBddView> sbv(home, n);
+    ViewArray<SingletonCpltSetView> sbv(home, n);
     for (int i = 0; i < n; i++) {
       int rmin = std::min(unionview.mgr_min(), iv[i].min());
       int rmax = std::max(unionview.mgr_max(), iv[i].max());
       sbv[i].init(mgr, rmin, rmax, iv[i]);
     }
     
-    BddView selviewprime(u);
-    BddView unionviewprime(v);
+    CpltSetView selviewprime(u);
+    CpltSetView unionviewprime(v);
     int m = y.size();
     ViewArray<Gecode::Int::IntView> ivprime(home, m);
     for (int i = 0; i < m; i++) {
       ivprime[i] = y[i];
     }
-    ViewArray<SingletonBddView> sbvprime(home, m);
+    ViewArray<SingletonCpltSetView> sbvprime(home, m);
     for (int i = 0; i < m; i++) {
       int rmin = std::min(unionviewprime.mgr_min(), ivprime[i].min());
       int rmax = std::max(unionviewprime.mgr_max(), ivprime[i].max());

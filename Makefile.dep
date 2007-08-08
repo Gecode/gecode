@@ -1148,11 +1148,11 @@ gecode/set/dom$(OBJSUFFIX) gecode/set/dom$(SBJSUFFIX): \
 gecode/set/rel$(OBJSUFFIX) gecode/set/rel$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -1194,11 +1194,11 @@ gecode/set/rel$(OBJSUFFIX) gecode/set/rel$(SBJSUFFIX): \
 gecode/set/rel-op$(OBJSUFFIX) gecode/set/rel-op$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -1238,11 +1238,11 @@ gecode/set/rel-op$(OBJSUFFIX) gecode/set/rel-op$(SBJSUFFIX): \
 gecode/set/rel-op-const$(OBJSUFFIX) gecode/set/rel-op-const$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -1467,11 +1467,11 @@ gecode/set/int/weights$(OBJSUFFIX) gecode/set/int/weights$(SBJSUFFIX): \
 gecode/set/select$(OBJSUFFIX) gecode/set/select$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -1513,11 +1513,11 @@ gecode/set/select$(OBJSUFFIX) gecode/set/select$(SBJSUFFIX): \
 gecode/set/select/disjoint$(OBJSUFFIX) gecode/set/select/disjoint$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -1559,11 +1559,11 @@ gecode/set/select/disjoint$(OBJSUFFIX) gecode/set/select/disjoint$(SBJSUFFIX): \
 gecode/set/sequence$(OBJSUFFIX) gecode/set/sequence$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -1737,11 +1737,11 @@ gecode/set/distinct/distinct$(OBJSUFFIX) gecode/set/distinct/distinct$(SBJSUFFIX
 gecode/set/sequence/seq$(OBJSUFFIX) gecode/set/sequence/seq$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -1780,11 +1780,11 @@ gecode/set/sequence/seq$(OBJSUFFIX) gecode/set/sequence/seq$(SBJSUFFIX): \
 gecode/set/sequence/seq-u$(OBJSUFFIX) gecode/set/sequence/seq-u$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -2254,11 +2254,11 @@ gecode/cpltset/branch$(OBJSUFFIX) gecode/cpltset/branch$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/branch.hh ./gecode/cpltset/branch/select-val.icc ./gecode/cpltset/branch/select-view.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -2293,11 +2293,11 @@ gecode/cpltset/branch$(OBJSUFFIX) gecode/cpltset/branch$(SBJSUFFIX): \
 gecode/cpltset/array$(OBJSUFFIX) gecode/cpltset/array$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -2332,11 +2332,11 @@ gecode/cpltset/array$(OBJSUFFIX) gecode/cpltset/array$(SBJSUFFIX): \
 gecode/cpltset/support$(OBJSUFFIX) gecode/cpltset/support$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -2371,11 +2371,11 @@ gecode/cpltset/support$(OBJSUFFIX) gecode/cpltset/support$(SBJSUFFIX): \
 gecode/cpltset/var/imp$(OBJSUFFIX) gecode/cpltset/var/imp$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-body.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
-	./gecode/cpltset/view.icc ./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc \
-	./gecode/cpltset/view/crdbdd.icc ./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc \
-	./gecode/cpltset/view/singletonbdd.icc ./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh \
+	./gecode/cpltset/view.icc ./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc \
+	./gecode/cpltset/view/crd.icc ./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc \
+	./gecode/cpltset/view/singleton.icc ./gecode/cpltset/view/split.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/table.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
@@ -2407,15 +2407,53 @@ gecode/cpltset/var/imp$(OBJSUFFIX) gecode/cpltset/var/imp$(SBJSUFFIX): \
 	./gecode/set/view/singleton.icc ./gecode/support/buddy/bdd.h ./gecode/support/cast.hh \
 	./gecode/support/dynamic-array.hh ./gecode/support/shared-array.hh ./gecode/support/sort.hh \
 	./gecode/support/static-pqueue.hh ./gecode/vti.icc 
-gecode/cpltset/var/cpltset$(OBJSUFFIX) gecode/cpltset/var/cpltset$(SBJSUFFIX): 
+gecode/cpltset/var/cpltset$(OBJSUFFIX) gecode/cpltset/var/cpltset$(SBJSUFFIX): \
+	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
+	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
+	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
+	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
+	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
+	./gecode/int/var/imp-bool.icc ./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc \
+	./gecode/int/var/int.icc ./gecode/int/view.icc ./gecode/int/view/bool.icc \
+	./gecode/int/view/constint.icc ./gecode/int/view/int.icc ./gecode/int/view/iter.icc \
+	./gecode/int/view/minus.icc ./gecode/int/view/offset.icc ./gecode/int/view/rtest.icc \
+	./gecode/int/view/scale.icc ./gecode/int/view/zero.icc ./gecode/iter.hh \
+	./gecode/iter/ranges-add.icc ./gecode/iter/ranges-append.icc ./gecode/iter/ranges-array.icc \
+	./gecode/iter/ranges-cache.icc ./gecode/iter/ranges-compl.icc ./gecode/iter/ranges-diff.icc \
+	./gecode/iter/ranges-empty.icc ./gecode/iter/ranges-inter.icc ./gecode/iter/ranges-minmax.icc \
+	./gecode/iter/ranges-minus.icc ./gecode/iter/ranges-offset.icc ./gecode/iter/ranges-operations.icc \
+	./gecode/iter/ranges-scale.icc ./gecode/iter/ranges-singleton-append.icc ./gecode/iter/ranges-singleton.icc \
+	./gecode/iter/ranges-size.icc ./gecode/iter/ranges-union.icc ./gecode/iter/ranges-values.icc \
+	./gecode/iter/values-array.icc ./gecode/iter/values-minus.icc ./gecode/iter/values-offset.icc \
+	./gecode/iter/values-ranges.icc ./gecode/iter/values-singleton.icc ./gecode/iter/values-unique.icc \
+	./gecode/iter/virtual-ranges-compl.icc ./gecode/iter/virtual-ranges-inter.icc ./gecode/iter/virtual-ranges-union.icc \
+	./gecode/iter/virtual-ranges.icc ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
+	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
+	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
+	./gecode/kernel/memory.icc ./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc \
+	./gecode/kernel/reflection.icc ./gecode/kernel/var.icc ./gecode/kernel/varmap.icc \
+	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/set.hh \
+	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/propagator.icc \
+	./gecode/set/var.icc ./gecode/set/var/imp-hdr.icc ./gecode/set/var/imp.icc \
+	./gecode/set/var/integerset.icc ./gecode/set/var/iter.icc ./gecode/set/var/set.icc \
+	./gecode/set/view.icc ./gecode/set/view/complement.icc ./gecode/set/view/const.icc \
+	./gecode/set/view/offset.icc ./gecode/set/view/set.icc ./gecode/set/view/singleton.icc \
+	./gecode/support/buddy/bdd.h ./gecode/support/cast.hh ./gecode/support/dynamic-array.hh \
+	./gecode/support/shared-array.hh ./gecode/support/sort.hh ./gecode/support/static-pqueue.hh \
+	./gecode/vti.icc 
 gecode/cpltset/view/print$(OBJSUFFIX) gecode/cpltset/view/print$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -2450,11 +2488,11 @@ gecode/cpltset/view/print$(OBJSUFFIX) gecode/cpltset/view/print$(SBJSUFFIX): \
 gecode/cpltset/propagators/dom$(OBJSUFFIX) gecode/cpltset/propagators/dom$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -2495,10 +2533,10 @@ gecode/cpltset/propagators/rel$(OBJSUFFIX) gecode/cpltset/propagators/rel$(SBJSU
 	./gecode/cpltset/propagators/partition.icc ./gecode/cpltset/propagators/rangerec.icc ./gecode/cpltset/propagators/rangeroots.icc \
 	./gecode/cpltset/propagators/rel.icc ./gecode/cpltset/propagators/select.icc ./gecode/cpltset/propagators/singleton.icc \
 	./gecode/cpltset/propagators/unary.icc ./gecode/cpltset/support.icc ./gecode/cpltset/var.icc \
-	./gecode/cpltset/var/bdd.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
-	./gecode/cpltset/view.icc ./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc \
-	./gecode/cpltset/view/crdbdd.icc ./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc \
-	./gecode/cpltset/view/singletonbdd.icc ./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh \
+	./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
+	./gecode/cpltset/view.icc ./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc \
+	./gecode/cpltset/view/crd.icc ./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc \
+	./gecode/cpltset/view/singleton.icc ./gecode/cpltset/view/split.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/table.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
@@ -2539,10 +2577,10 @@ gecode/cpltset/propagators/cardinality$(OBJSUFFIX) gecode/cpltset/propagators/ca
 	./gecode/cpltset/propagators/partition.icc ./gecode/cpltset/propagators/rangerec.icc ./gecode/cpltset/propagators/rangeroots.icc \
 	./gecode/cpltset/propagators/rel.icc ./gecode/cpltset/propagators/select.icc ./gecode/cpltset/propagators/singleton.icc \
 	./gecode/cpltset/propagators/unary.icc ./gecode/cpltset/support.icc ./gecode/cpltset/var.icc \
-	./gecode/cpltset/var/bdd.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
-	./gecode/cpltset/view.icc ./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc \
-	./gecode/cpltset/view/crdbdd.icc ./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc \
-	./gecode/cpltset/view/singletonbdd.icc ./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh \
+	./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
+	./gecode/cpltset/view.icc ./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc \
+	./gecode/cpltset/view/crd.icc ./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc \
+	./gecode/cpltset/view/singleton.icc ./gecode/cpltset/view/split.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/table.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
@@ -2583,10 +2621,10 @@ gecode/cpltset/propagators/atmost$(OBJSUFFIX) gecode/cpltset/propagators/atmost$
 	./gecode/cpltset/propagators/partition.icc ./gecode/cpltset/propagators/rangerec.icc ./gecode/cpltset/propagators/rangeroots.icc \
 	./gecode/cpltset/propagators/rel.icc ./gecode/cpltset/propagators/select.icc ./gecode/cpltset/propagators/singleton.icc \
 	./gecode/cpltset/propagators/unary.icc ./gecode/cpltset/support.icc ./gecode/cpltset/var.icc \
-	./gecode/cpltset/var/bdd.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
-	./gecode/cpltset/view.icc ./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc \
-	./gecode/cpltset/view/crdbdd.icc ./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc \
-	./gecode/cpltset/view/singletonbdd.icc ./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh \
+	./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
+	./gecode/cpltset/view.icc ./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc \
+	./gecode/cpltset/view/crd.icc ./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc \
+	./gecode/cpltset/view/singleton.icc ./gecode/cpltset/view/split.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/table.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
@@ -2627,10 +2665,10 @@ gecode/cpltset/propagators/partition$(OBJSUFFIX) gecode/cpltset/propagators/part
 	./gecode/cpltset/propagators/partition.icc ./gecode/cpltset/propagators/rangerec.icc ./gecode/cpltset/propagators/rangeroots.icc \
 	./gecode/cpltset/propagators/rel.icc ./gecode/cpltset/propagators/select.icc ./gecode/cpltset/propagators/singleton.icc \
 	./gecode/cpltset/propagators/unary.icc ./gecode/cpltset/support.icc ./gecode/cpltset/var.icc \
-	./gecode/cpltset/var/bdd.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
-	./gecode/cpltset/view.icc ./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc \
-	./gecode/cpltset/view/crdbdd.icc ./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc \
-	./gecode/cpltset/view/singletonbdd.icc ./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh \
+	./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
+	./gecode/cpltset/view.icc ./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc \
+	./gecode/cpltset/view/crd.icc ./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc \
+	./gecode/cpltset/view/singleton.icc ./gecode/cpltset/view/split.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/table.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
@@ -2671,10 +2709,10 @@ gecode/cpltset/propagators/select$(OBJSUFFIX) gecode/cpltset/propagators/select$
 	./gecode/cpltset/propagators/partition.icc ./gecode/cpltset/propagators/rangerec.icc ./gecode/cpltset/propagators/rangeroots.icc \
 	./gecode/cpltset/propagators/rel.icc ./gecode/cpltset/propagators/select.icc ./gecode/cpltset/propagators/singleton.icc \
 	./gecode/cpltset/propagators/unary.icc ./gecode/cpltset/support.icc ./gecode/cpltset/var.icc \
-	./gecode/cpltset/var/bdd.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
-	./gecode/cpltset/view.icc ./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc \
-	./gecode/cpltset/view/crdbdd.icc ./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc \
-	./gecode/cpltset/view/singletonbdd.icc ./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh \
+	./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
+	./gecode/cpltset/view.icc ./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc \
+	./gecode/cpltset/view/crd.icc ./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc \
+	./gecode/cpltset/view/singleton.icc ./gecode/cpltset/view/split.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/table.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
@@ -2715,10 +2753,10 @@ gecode/cpltset/propagators/singleton$(OBJSUFFIX) gecode/cpltset/propagators/sing
 	./gecode/cpltset/propagators/partition.icc ./gecode/cpltset/propagators/rangerec.icc ./gecode/cpltset/propagators/rangeroots.icc \
 	./gecode/cpltset/propagators/rel.icc ./gecode/cpltset/propagators/select.icc ./gecode/cpltset/propagators/singleton.icc \
 	./gecode/cpltset/propagators/unary.icc ./gecode/cpltset/support.icc ./gecode/cpltset/var.icc \
-	./gecode/cpltset/var/bdd.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
-	./gecode/cpltset/view.icc ./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc \
-	./gecode/cpltset/view/crdbdd.icc ./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc \
-	./gecode/cpltset/view/singletonbdd.icc ./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh \
+	./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
+	./gecode/cpltset/view.icc ./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc \
+	./gecode/cpltset/view/crd.icc ./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc \
+	./gecode/cpltset/view/singleton.icc ./gecode/cpltset/view/split.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/table.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
@@ -2759,10 +2797,10 @@ gecode/cpltset/propagators/rangeroots$(OBJSUFFIX) gecode/cpltset/propagators/ran
 	./gecode/cpltset/propagators/partition.icc ./gecode/cpltset/propagators/rangerec.icc ./gecode/cpltset/propagators/rangeroots.icc \
 	./gecode/cpltset/propagators/rel.icc ./gecode/cpltset/propagators/select.icc ./gecode/cpltset/propagators/singleton.icc \
 	./gecode/cpltset/propagators/unary.icc ./gecode/cpltset/support.icc ./gecode/cpltset/var.icc \
-	./gecode/cpltset/var/bdd.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
-	./gecode/cpltset/view.icc ./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc \
-	./gecode/cpltset/view/crdbdd.icc ./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc \
-	./gecode/cpltset/view/singletonbdd.icc ./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh \
+	./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
+	./gecode/cpltset/view.icc ./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc \
+	./gecode/cpltset/view/crd.icc ./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc \
+	./gecode/cpltset/view/singleton.icc ./gecode/cpltset/view/split.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/table.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
@@ -2803,10 +2841,10 @@ gecode/cpltset/propagators/disjointglb$(OBJSUFFIX) gecode/cpltset/propagators/di
 	./gecode/cpltset/propagators/partition.icc ./gecode/cpltset/propagators/rangerec.icc ./gecode/cpltset/propagators/rangeroots.icc \
 	./gecode/cpltset/propagators/rel.icc ./gecode/cpltset/propagators/select.icc ./gecode/cpltset/propagators/singleton.icc \
 	./gecode/cpltset/propagators/unary.icc ./gecode/cpltset/support.icc ./gecode/cpltset/var.icc \
-	./gecode/cpltset/var/bdd.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
-	./gecode/cpltset/view.icc ./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc \
-	./gecode/cpltset/view/crdbdd.icc ./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc \
-	./gecode/cpltset/view/singletonbdd.icc ./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh \
+	./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
+	./gecode/cpltset/view.icc ./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc \
+	./gecode/cpltset/view/crd.icc ./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc \
+	./gecode/cpltset/view/singleton.icc ./gecode/cpltset/view/split.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/table.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
@@ -2847,10 +2885,10 @@ gecode/cpltset/propagators/distinct$(OBJSUFFIX) gecode/cpltset/propagators/disti
 	./gecode/cpltset/propagators/partition.icc ./gecode/cpltset/propagators/rangerec.icc ./gecode/cpltset/propagators/rangeroots.icc \
 	./gecode/cpltset/propagators/rel.icc ./gecode/cpltset/propagators/select.icc ./gecode/cpltset/propagators/singleton.icc \
 	./gecode/cpltset/propagators/unary.icc ./gecode/cpltset/support.icc ./gecode/cpltset/var.icc \
-	./gecode/cpltset/var/bdd.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
-	./gecode/cpltset/view.icc ./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc \
-	./gecode/cpltset/view/crdbdd.icc ./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc \
-	./gecode/cpltset/view/singletonbdd.icc ./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh \
+	./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
+	./gecode/cpltset/view.icc ./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc \
+	./gecode/cpltset/view/crd.icc ./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc \
+	./gecode/cpltset/view/singleton.icc ./gecode/cpltset/view/split.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/table.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
@@ -2891,10 +2929,10 @@ gecode/cpltset/propagators/set$(OBJSUFFIX) gecode/cpltset/propagators/set$(SBJSU
 	./gecode/cpltset/propagators/partition.icc ./gecode/cpltset/propagators/rangerec.icc ./gecode/cpltset/propagators/rangeroots.icc \
 	./gecode/cpltset/propagators/rel.icc ./gecode/cpltset/propagators/select.icc ./gecode/cpltset/propagators/singleton.icc \
 	./gecode/cpltset/propagators/unary.icc ./gecode/cpltset/support.icc ./gecode/cpltset/var.icc \
-	./gecode/cpltset/var/bdd.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
-	./gecode/cpltset/view.icc ./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc \
-	./gecode/cpltset/view/crdbdd.icc ./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc \
-	./gecode/cpltset/view/singletonbdd.icc ./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh \
+	./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
+	./gecode/cpltset/view.icc ./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc \
+	./gecode/cpltset/view/crd.icc ./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc \
+	./gecode/cpltset/view/singleton.icc ./gecode/cpltset/view/split.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/table.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc \
 	./gecode/int/var.icc ./gecode/int/var/bool.icc ./gecode/int/var/delta.icc \
@@ -3105,11 +3143,11 @@ examples/support$(OBJSUFFIX) examples/support$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -3150,11 +3188,11 @@ examples/alpha$(OBJSUFFIX) examples/alpha$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -3199,11 +3237,11 @@ examples/bacp$(OBJSUFFIX) examples/bacp$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -3248,11 +3286,11 @@ examples/bibd$(OBJSUFFIX) examples/bibd$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -3291,11 +3329,11 @@ examples/cars$(OBJSUFFIX) examples/cars$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -3334,11 +3372,11 @@ examples/donald$(OBJSUFFIX) examples/donald$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -3383,11 +3421,11 @@ examples/eq20$(OBJSUFFIX) examples/eq20$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -3426,11 +3464,11 @@ examples/golomb$(OBJSUFFIX) examples/golomb$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -3475,11 +3513,11 @@ examples/tsp$(OBJSUFFIX) examples/tsp$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -3524,11 +3562,11 @@ examples/graph-color$(OBJSUFFIX) examples/graph-color$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -3567,11 +3605,11 @@ examples/grocery$(OBJSUFFIX) examples/grocery$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -3616,11 +3654,11 @@ examples/ind-set$(OBJSUFFIX) examples/ind-set$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -3665,11 +3703,11 @@ examples/knights$(OBJSUFFIX) examples/knights$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -3714,11 +3752,11 @@ examples/magic-sequence$(OBJSUFFIX) examples/magic-sequence$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -3763,11 +3801,11 @@ examples/magic-sequence-gcc$(OBJSUFFIX) examples/magic-sequence-gcc$(SBJSUFFIX):
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -3812,11 +3850,11 @@ examples/magic-square$(OBJSUFFIX) examples/magic-square$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -3861,11 +3899,11 @@ examples/money$(OBJSUFFIX) examples/money$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -3910,11 +3948,11 @@ examples/ortho-latin$(OBJSUFFIX) examples/ortho-latin$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -3953,11 +3991,11 @@ examples/packing$(OBJSUFFIX) examples/packing$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -4002,11 +4040,11 @@ examples/partition$(OBJSUFFIX) examples/partition$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -4045,11 +4083,11 @@ examples/photo$(OBJSUFFIX) examples/photo$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -4094,11 +4132,11 @@ examples/queens$(OBJSUFFIX) examples/queens$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -4144,10 +4182,10 @@ examples/sudoku$(OBJSUFFIX) examples/sudoku$(SBJSUFFIX): \
 	./examples/timer.hh ./gecode/config.icc ./gecode/cpltset.hh \
 	./gecode/cpltset/array.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc \
 	./gecode/cpltset/propagator.icc ./gecode/cpltset/support.icc ./gecode/cpltset/var.icc \
-	./gecode/cpltset/var/bdd.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
-	./gecode/cpltset/view.icc ./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc \
-	./gecode/cpltset/view/crdbdd.icc ./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc \
-	./gecode/cpltset/view/singletonbdd.icc ./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh \
+	./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
+	./gecode/cpltset/view.icc ./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc \
+	./gecode/cpltset/view/crd.icc ./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc \
+	./gecode/cpltset/view/singleton.icc ./gecode/cpltset/view/split.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/table.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
@@ -4192,11 +4230,11 @@ examples/picture-puzzle$(OBJSUFFIX) examples/picture-puzzle$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -4241,11 +4279,11 @@ examples/placement-puzzle$(OBJSUFFIX) examples/placement-puzzle$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -4291,10 +4329,10 @@ examples/placement-puzzle-01$(OBJSUFFIX) examples/placement-puzzle-01$(SBJSUFFIX
 	./examples/timer.hh ./gecode/config.icc ./gecode/cpltset.hh \
 	./gecode/cpltset/array.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc \
 	./gecode/cpltset/propagator.icc ./gecode/cpltset/support.icc ./gecode/cpltset/var.icc \
-	./gecode/cpltset/var/bdd.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
-	./gecode/cpltset/view.icc ./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc \
-	./gecode/cpltset/view/crdbdd.icc ./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc \
-	./gecode/cpltset/view/singletonbdd.icc ./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh \
+	./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
+	./gecode/cpltset/view.icc ./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc \
+	./gecode/cpltset/view/crd.icc ./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc \
+	./gecode/cpltset/view/singleton.icc ./gecode/cpltset/view/split.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/table.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
@@ -4339,11 +4377,11 @@ examples/crowded-chess$(OBJSUFFIX) examples/crowded-chess$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -4388,11 +4426,11 @@ examples/black-hole$(OBJSUFFIX) examples/black-hole$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -4437,11 +4475,11 @@ examples/minesweeper$(OBJSUFFIX) examples/minesweeper$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -4486,11 +4524,11 @@ examples/domino$(OBJSUFFIX) examples/domino$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -4535,11 +4573,11 @@ examples/sports-league$(OBJSUFFIX) examples/sports-league$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -4584,11 +4622,11 @@ examples/all-interval$(OBJSUFFIX) examples/all-interval$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -4633,11 +4671,11 @@ examples/all-interval-sort$(OBJSUFFIX) examples/all-interval-sort$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -4682,11 +4720,11 @@ examples/langfordnum$(OBJSUFFIX) examples/langfordnum$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -4731,11 +4769,11 @@ examples/langfordnum-regular$(OBJSUFFIX) examples/langfordnum-regular$(SBJSUFFIX
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -4780,11 +4818,11 @@ examples/warehouses$(OBJSUFFIX) examples/warehouses$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -4829,11 +4867,11 @@ examples/stress-domain$(OBJSUFFIX) examples/stress-domain$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -4872,11 +4910,11 @@ examples/stress-exec$(OBJSUFFIX) examples/stress-exec$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -4915,11 +4953,11 @@ examples/stress-search$(OBJSUFFIX) examples/stress-search$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -4958,11 +4996,11 @@ examples/baseline$(OBJSUFFIX) examples/baseline$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -5001,11 +5039,11 @@ examples/stress-element$(OBJSUFFIX) examples/stress-element$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -5044,11 +5082,11 @@ examples/stress-min$(OBJSUFFIX) examples/stress-min$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -5087,11 +5125,11 @@ examples/stress-distinct$(OBJSUFFIX) examples/stress-distinct$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -5130,11 +5168,11 @@ examples/stress-regular$(OBJSUFFIX) examples/stress-regular$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -5173,11 +5211,11 @@ examples/stress-circuit$(OBJSUFFIX) examples/stress-circuit$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -5216,11 +5254,11 @@ examples/stress-linear-bool$(OBJSUFFIX) examples/stress-linear-bool$(SBJSUFFIX):
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -5259,11 +5297,11 @@ examples/crew$(OBJSUFFIX) examples/crew$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -5302,11 +5340,11 @@ examples/golf$(OBJSUFFIX) examples/golf$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -5345,11 +5383,11 @@ examples/hamming$(OBJSUFFIX) examples/hamming$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -5394,11 +5432,11 @@ examples/steiner$(OBJSUFFIX) examples/steiner$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -5438,10 +5476,10 @@ examples/sudoku-set$(OBJSUFFIX) examples/sudoku-set$(SBJSUFFIX): \
 	./examples/timer.hh ./gecode/config.icc ./gecode/cpltset.hh \
 	./gecode/cpltset/array.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc \
 	./gecode/cpltset/propagator.icc ./gecode/cpltset/support.icc ./gecode/cpltset/var.icc \
-	./gecode/cpltset/var/bdd.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
-	./gecode/cpltset/view.icc ./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc \
-	./gecode/cpltset/view/crdbdd.icc ./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc \
-	./gecode/cpltset/view/singletonbdd.icc ./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh \
+	./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
+	./gecode/cpltset/view.icc ./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc \
+	./gecode/cpltset/view/crd.icc ./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc \
+	./gecode/cpltset/view/singleton.icc ./gecode/cpltset/view/split.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/table.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
@@ -5487,10 +5525,10 @@ examples/sudoku-mixed$(OBJSUFFIX) examples/sudoku-mixed$(SBJSUFFIX): \
 	./examples/timer.hh ./gecode/config.icc ./gecode/cpltset.hh \
 	./gecode/cpltset/array.icc ./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc \
 	./gecode/cpltset/propagator.icc ./gecode/cpltset/support.icc ./gecode/cpltset/var.icc \
-	./gecode/cpltset/var/bdd.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
-	./gecode/cpltset/view.icc ./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc \
-	./gecode/cpltset/view/crdbdd.icc ./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc \
-	./gecode/cpltset/view/singletonbdd.icc ./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh \
+	./gecode/cpltset/var/cpltset.icc ./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc \
+	./gecode/cpltset/view.icc ./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc \
+	./gecode/cpltset/view/crd.icc ./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc \
+	./gecode/cpltset/view/singleton.icc ./gecode/cpltset/view/split.icc ./gecode/int.hh \
 	./gecode/int/array.icc ./gecode/int/exception.icc ./gecode/int/extensional/table.icc \
 	./gecode/int/int-set.icc ./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc \
 	./gecode/int/linear/bool-scale.icc ./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc \
@@ -5535,11 +5573,11 @@ examples/queen-armies$(OBJSUFFIX) examples/queen-armies$(SBJSUFFIX): \
 	./examples/support.hh ./examples/support.icc ./examples/timer.hh \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -5585,11 +5623,11 @@ examples/cpltset/sudoku-bdd-const$(OBJSUFFIX) examples/cpltset/sudoku-bdd-const$
 test/test$(OBJSUFFIX) test/test$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -5629,11 +5667,11 @@ test/log$(OBJSUFFIX) test/log$(SBJSUFFIX):
 test/int$(OBJSUFFIX) test/int$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -5668,11 +5706,11 @@ test/int$(OBJSUFFIX) test/int$(SBJSUFFIX): \
 test/set$(OBJSUFFIX) test/set$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -5707,11 +5745,11 @@ test/set$(OBJSUFFIX) test/set$(SBJSUFFIX): \
 test/branch$(OBJSUFFIX) test/branch$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -5784,11 +5822,11 @@ test/int/channel$(OBJSUFFIX) test/int/channel$(SBJSUFFIX): \
 test/int/arithmetic$(OBJSUFFIX) test/int/arithmetic$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -5823,11 +5861,11 @@ test/int/arithmetic$(OBJSUFFIX) test/int/arithmetic$(SBJSUFFIX): \
 test/int/basic$(OBJSUFFIX) test/int/basic$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -5895,11 +5933,11 @@ test/int/bool$(OBJSUFFIX) test/int/bool$(SBJSUFFIX): \
 test/int/count$(OBJSUFFIX) test/int/count$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -5988,11 +6026,11 @@ test/int/distinct$(OBJSUFFIX) test/int/distinct$(SBJSUFFIX): \
 test/int/element$(OBJSUFFIX) test/int/element$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -6033,11 +6071,11 @@ test/int/element$(OBJSUFFIX) test/int/element$(SBJSUFFIX): \
 test/int/regular$(OBJSUFFIX) test/int/regular$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -6138,11 +6176,11 @@ test/int/linear$(OBJSUFFIX) test/int/linear$(SBJSUFFIX): \
 test/int/scheduling$(OBJSUFFIX) test/int/scheduling$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -6186,11 +6224,11 @@ test/int/scheduling$(OBJSUFFIX) test/int/scheduling$(SBJSUFFIX): \
 test/int/minimodel$(OBJSUFFIX) test/int/minimodel$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/linear.hh ./gecode/int/linear/bool-int.icc ./gecode/int/linear/bool-scale.icc \
 	./gecode/int/linear/bool-view.icc ./gecode/int/linear/int-bin.icc ./gecode/int/linear/int-dom.icc \
@@ -6231,11 +6269,11 @@ test/int/minimodel$(OBJSUFFIX) test/int/minimodel$(SBJSUFFIX): \
 test/int/gcc$(OBJSUFFIX) test/int/gcc$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/gcc.hh \
 	./gecode/int/gcc/bnd.icc ./gecode/int/gcc/dom.icc ./gecode/int/gcc/gccbndsup.icc \
 	./gecode/int/gcc/graphsup.icc ./gecode/int/gcc/lbc.icc ./gecode/int/gcc/occur.icc \
@@ -6274,11 +6312,11 @@ test/int/gcc$(OBJSUFFIX) test/int/gcc$(SBJSUFFIX): \
 test/int/sortedness$(OBJSUFFIX) test/int/sortedness$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \
@@ -6340,11 +6378,11 @@ test/int/circuit$(OBJSUFFIX) test/int/circuit$(SBJSUFFIX): \
 test/int/advisor$(OBJSUFFIX) test/int/advisor$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/distinct.hh ./gecode/int/distinct/bilink.icc ./gecode/int/distinct/bnd.icc \
 	./gecode/int/distinct/combptr.icc ./gecode/int/distinct/dom.icc ./gecode/int/distinct/edge.icc \
 	./gecode/int/distinct/node.icc ./gecode/int/distinct/ter-dom.icc ./gecode/int/distinct/val.icc \
@@ -6555,11 +6593,11 @@ test/set/sequence$(OBJSUFFIX) test/set/sequence$(SBJSUFFIX): \
 test/set/int$(OBJSUFFIX) test/set/int$(SBJSUFFIX): \
 	./gecode/config.icc ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
-	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/bdd.icc \
+	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \
 	./gecode/cpltset/var/imp-hdr.icc ./gecode/cpltset/var/imp.icc ./gecode/cpltset/view.icc \
-	./gecode/cpltset/view/bdd.icc ./gecode/cpltset/view/bndbdd.icc ./gecode/cpltset/view/crdbdd.icc \
-	./gecode/cpltset/view/lexbdd.icc ./gecode/cpltset/view/setview.icc ./gecode/cpltset/view/singletonbdd.icc \
-	./gecode/cpltset/view/splitbdd.icc ./gecode/int.hh ./gecode/int/array.icc \
+	./gecode/cpltset/view/bnd.icc ./gecode/cpltset/view/cpltset.icc ./gecode/cpltset/view/crd.icc \
+	./gecode/cpltset/view/lex.icc ./gecode/cpltset/view/set.icc ./gecode/cpltset/view/singleton.icc \
+	./gecode/cpltset/view/split.icc ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
 	./gecode/int/propagator.icc ./gecode/int/regular/dfa.icc ./gecode/int/var.icc \
 	./gecode/int/var/bool.icc ./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc \

@@ -22,7 +22,7 @@
 #include "gecode/cpltset.hh"
 #include "gecode/cpltset/propagators.hh"
 
-using namespace Gecode::Bdd;
+using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
@@ -34,13 +34,13 @@ namespace Gecode {
 //   void range(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
 // 	     SetConLevel scl) {
 //     ViewArray<IntView> iv(home, x.size());
-//     ViewArray<SingletonBddView> sbv(home, iv.size());
+//     ViewArray<SingletonCpltSetView> sbv(home, iv.size());
 //     for (int i = sbv.size(); i--; ) {
 //       sbv[i].init(iv[i]);
 //       GECODE_ME_FAIL(home, sbv[i].cardinality(home, 1));
 //     }
-//     BddView selview(s);
-//     BddView unionview(t);
+//     CpltSetView selview(s);
+//     CpltSetView unionview(t);
     
 //     selectUnion_post(home, sbv, selview, unionview, scl);
 //   }

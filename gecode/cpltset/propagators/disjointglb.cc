@@ -22,7 +22,7 @@
 #include "gecode/cpltset.hh"
 #include "gecode/cpltset/propagators.hh"
 
-using namespace Gecode::Bdd;
+using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
@@ -31,19 +31,19 @@ namespace Gecode {
     if (home->failed()) return;
 
     int n = x.size();
-    ViewArray<BddView> bv(home, n);
+    ViewArray<CpltSetView> bv(home, n);
     for (int i = n; i--; )
       bv[i] = x[i];
-    GECODE_ES_FAIL(home, DisjointGlb<BddView>::post(home, bv, index));
+    GECODE_ES_FAIL(home, DisjointGlb<CpltSetView>::post(home, bv, index));
 
   }
 
   void
   disjointsudoku(Space* home, CpltSetVar x, int order) {
     if (home->failed()) return;
-    ViewArray<BddView> bv(home, 1);
+    ViewArray<CpltSetView> bv(home, 1);
     bv[0] = x;
-    GECODE_ES_FAIL(home, DisjointSudoku<BddView>::post(home, bv[0], order));
+    GECODE_ES_FAIL(home, DisjointSudoku<CpltSetView>::post(home, bv[0], order));
 
   }
 

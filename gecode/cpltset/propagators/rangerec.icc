@@ -19,7 +19,7 @@
  *
  */
 
-namespace Gecode { namespace Bdd {
+namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   ExecStatus

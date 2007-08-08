@@ -19,7 +19,7 @@
  *
  */
 
-using namespace Gecode::Bdd;
+using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
@@ -312,35 +312,35 @@ namespace Gecode {
   forceinline void 
   atmost_con(Space* home, const CpltSetVar& x, const CpltSetVar& y, int c, 
 	     Rel lex, int card, SetConLevel scl) {
-    BddView xv(x);
-    BddView yv(y);
+    CpltSetView xv(x);
+    CpltSetView yv(y);
 
     switch (scl) {
     case SCL_SPL:
       {
-	SplitBddView spx(xv);
-	SplitBddView spy(yv);
+	SplitCpltSetView spx(xv);
+	SplitCpltSetView spy(yv);
 	atmost_post(home, spx, spy, c, lex, card, scl);
 	break;
       }
     case SCL_BND_BDD:
       {
-	BndBddView bndx(xv);
-	BndBddView bndy(yv);
+	BndCpltSetView bndx(xv);
+	BndCpltSetView bndy(yv);
 	atmost_post(home, bndx, bndy, c, lex, card, scl);
 	break;
       }
     case SCL_CRD:
       {
-	CrdBddView crdx(xv);
-	CrdBddView crdy(yv);
+	CrdCpltSetView crdx(xv);
+	CrdCpltSetView crdy(yv);
 	atmost_post(home, crdx, crdy, c, lex, card, scl);
 	break;
       }
     case SCL_LEX:
       {
-	LexBddView lexx(xv);
-	LexBddView lexy(yv);
+	LexCpltSetView lexx(xv);
+	LexCpltSetView lexy(yv);
 	atmost_post(home, lexx, lexy, c, lex, card, scl);
 	break;
       }
@@ -355,14 +355,14 @@ namespace Gecode {
   forceinline void 
   atmost_con(Space* home, const CpltSetVar& x, const CpltSetVar& y, const CpltSetVar& z, 
 	     int c, Rel lex, int card, SetConLevel scl) {
-    ViewArray<BddView> bv(home, 3);
+    ViewArray<CpltSetView> bv(home, 3);
     bv[0] = x;
     bv[1] = y;
     bv[2] = z;
     switch (scl) {
     case SCL_SPL:
       {
-	ViewArray<SplitBddView> sv(home, 3);
+	ViewArray<SplitCpltSetView> sv(home, 3);
 	for (int i = 3; i--; ) {
 	  sv[i].init(bv[i]);
 	}
@@ -371,7 +371,7 @@ namespace Gecode {
       }
     case SCL_BND_BDD:
       {
-	ViewArray<BndBddView> bndv(home, 3);
+	ViewArray<BndCpltSetView> bndv(home, 3);
 	for (int i = 3; i--; ) {
 	  bndv[i].init(bv[i]);
 	}
@@ -380,7 +380,7 @@ namespace Gecode {
       }
     case SCL_CRD:
       {
-	ViewArray<CrdBddView> crdv(home, 3);
+	ViewArray<CrdCpltSetView> crdv(home, 3);
 	for (int i = 3; i--; ) {
 	  crdv[i].init(bv[i]);
 	}
@@ -389,7 +389,7 @@ namespace Gecode {
       }
     case SCL_LEX:
       {
-	ViewArray<LexBddView> lexv(home, 3);
+	ViewArray<LexCpltSetView> lexv(home, 3);
 	for (int i = 3; i--; ) {
 	  lexv[i].init(bv[i]);
 	}
@@ -407,14 +407,14 @@ namespace Gecode {
   forceinline void 
   atmostOne_con(Space* home, const CpltSetVarArgs& x, int c, SetConLevel scl) {
     int n = x.size();
-    ViewArray<BddView> bv(home, n);
+    ViewArray<CpltSetView> bv(home, n);
     for (int i = 0; i < n; i++) {
       bv[i] = x[i];
     }
     switch (scl) {
     case SCL_SPL:
       {
-	ViewArray<SplitBddView> sv(home, n);
+	ViewArray<SplitCpltSetView> sv(home, n);
 	for (int i = n; i--; ) {
 	  sv[i].init(bv[i]);
 	}
@@ -423,7 +423,7 @@ namespace Gecode {
       }
     case SCL_BND_BDD:
       {
-	ViewArray<BndBddView> bndv(home, n);
+	ViewArray<BndCpltSetView> bndv(home, n);
 	for (int i = n; i--; ) {
 	  bndv[i].init(bv[i]);
 	}
@@ -432,7 +432,7 @@ namespace Gecode {
       }
     case SCL_CRD:
       {
-	ViewArray<CrdBddView> crdv(home, n);
+	ViewArray<CrdCpltSetView> crdv(home, n);
 	for (int i = n; i--; ) {
 	  crdv[i].init(bv[i]);
 	}
@@ -441,7 +441,7 @@ namespace Gecode {
       }
     case SCL_LEX:
       {
-	ViewArray<LexBddView> lexv(home, n);
+	ViewArray<LexCpltSetView> lexv(home, n);
 	for (int i = n; i--; ) {
 	  lexv[i].init(bv[i]);
 	}

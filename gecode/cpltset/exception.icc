@@ -21,7 +21,7 @@
  *
  */
 
-namespace Gecode { namespace Bdd {
+namespace Gecode { namespace CpltSet {
 
   /**
    * \defgroup FuncThrowSet Set exceptions

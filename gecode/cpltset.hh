@@ -70,13 +70,13 @@ namespace Gecode {
 
   //@}
 
-namespace Bdd {
+namespace CpltSet {
 
   /** 
-   * \namespace Gecode::Bdd
+   * \namespace Gecode::CpltSet
    * \brief Complete representation of finite integer sets using ROBDD's
    * 
-   * The Gecode::Bdd namespace contains all functionality required
+   * The Gecode::CpltSet namespace contains all functionality required
    * to program propagators and branchings for finite integer sets.
    * In addition, all propagators and branchings for finite integer
    * sets provided by %Gecode are contained as nested namespaces.
@@ -87,8 +87,8 @@ namespace Bdd {
 
 }}
 
-#define BDDTOP  Bdd::Full
-#define BDDBOT  Bdd::Empty
+#define BDDTOP  CpltSet::Full
+#define BDDBOT  CpltSet::Empty
 
 
 namespace Gecode { 

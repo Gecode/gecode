@@ -23,7 +23,7 @@
  */
 
 
-namespace Gecode { namespace Bdd {
+namespace Gecode { namespace CpltSet {
 
 
 

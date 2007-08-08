@@ -25,16 +25,16 @@
 
 namespace Gecode { 
 
-  namespace Bdd {
+  namespace CpltSet {
 
-    // Unfortunately using an IntView as BddView
+    // Unfortunately using an IntView as CpltSetView
     // requires us to allocate boolean bdd nodes in the manager
     // note that these nodes are NOT ordered
     forceinline
-    SingletonBddView::SingletonBddView(void) {}
+    SingletonCpltSetView::SingletonCpltSetView(void) {}
 
     forceinline
-    SingletonBddView::SingletonBddView(BMI* manager, int a, int b, 
+    SingletonCpltSetView::SingletonCpltSetView(BMI* manager, int a, int b, 
 				       const Int::IntView& i0)
       : DerivedViewBase<Int::IntView>(i0) {
       mgr     = manager;
@@ -48,7 +48,7 @@ namespace Gecode {
       // exclude values not in dom(i0)     
       Int::ViewValues<Int::IntView> values(view);
       if (!values())
-	throw Bdd::VariableInvalidDomainSpec("SingletonBddView");
+	throw CpltSet::VariableInvalidDomainSpec("SingletonCpltSetView");
 
       Iter::Ranges::ValCache<Int::ViewValues<Int::IntView> > vc(values);
       vc.last();
@@ -71,7 +71,7 @@ namespace Gecode {
 
 
     forceinline void
-    SingletonBddView::init(BMI* manager, int a, int b, const Int::IntView& i0) {
+    SingletonCpltSetView::init(BMI* manager, int a, int b, const Int::IntView& i0) {
       view = i0;
       mgr     = manager;
       min     = a;
@@ -85,7 +85,7 @@ namespace Gecode {
       // exclude values not in dom(i0)     
       Int::ViewValues<Int::IntView> values(view);
       if (!values())
-	throw Bdd::VariableInvalidDomainSpec("SingletonBddView");
+	throw CpltSet::VariableInvalidDomainSpec("SingletonCpltSetView");
 
       Iter::Ranges::ValCache<Int::ViewValues<Int::IntView> > vc(values);
       vc.last();
@@ -107,13 +107,13 @@ namespace Gecode {
     }
 
     forceinline
-    SingletonBddView::~SingletonBddView(void) {
+    SingletonCpltSetView::~SingletonCpltSetView(void) {
       mgr->dispose(domain);
       mgr->dispose(_offset, (int) range);
     }
 
     forceinline PropCond
-    SingletonBddView::pc_bddtoint(PropCond pc) {
+    SingletonCpltSetView::pc_bddtoint(PropCond pc) {
       switch(pc) {
       case PC_CPLTSET_DOM:
 	return Int::PC_INT_DOM;
@@ -125,7 +125,7 @@ namespace Gecode {
     }
 
     forceinline ModEvent
-    SingletonBddView::me_inttobdd(ModEvent me) {
+    SingletonCpltSetView::me_inttobdd(ModEvent me) {
       switch(me) {
       case Int::ME_INT_FAILED: 
 	return ME_CPLTSET_FAILED;
@@ -145,16 +145,16 @@ namespace Gecode {
      *
      */ 
     forceinline bool
-    SingletonBddView::assigned(void) const { return view.assigned(); }
+    SingletonCpltSetView::assigned(void) const { return view.assigned(); }
 
 
     forceinline bool
-    SingletonBddView::contains(int n) const { 
+    SingletonCpltSetView::contains(int n) const { 
       return view.assigned() ? (view.val()==n) : false; 
     }
 
     forceinline bool
-    SingletonBddView::notContains(int n) const { return !view.in(n); }
+    SingletonCpltSetView::notContains(int n) const { return !view.in(n); }
 
     /*
      * Variable information
@@ -162,33 +162,33 @@ namespace Gecode {
      */
 
     forceinline unsigned int
-    SingletonBddView::glbSize(void) const { return view.assigned() ? 1 : 0; }
+    SingletonCpltSetView::glbSize(void) const { return view.assigned() ? 1 : 0; }
 
     forceinline unsigned int
-    SingletonBddView::lubSize(void) const { return view.size(); }
+    SingletonCpltSetView::lubSize(void) const { return view.size(); }
 
     forceinline unsigned int
-    SingletonBddView::unknownSize(void) const { return lubSize() - glbSize(); }
+    SingletonCpltSetView::unknownSize(void) const { return lubSize() - glbSize(); }
 
     forceinline unsigned int
-    SingletonBddView::cardMin() const { return 1; }
+    SingletonCpltSetView::cardMin() const { return 1; }
 
     forceinline unsigned int
-    SingletonBddView::cardMax() const { return 1; }
+    SingletonCpltSetView::cardMax() const { return 1; }
 
     forceinline int
-    SingletonBddView::lubMin() const { return view.min(); }
+    SingletonCpltSetView::lubMin() const { return view.min(); }
 
     forceinline int
-    SingletonBddView::lubMax() const { return view.max(); }
+    SingletonCpltSetView::lubMax() const { return view.max(); }
 
     forceinline int
-    SingletonBddView::glbMin() const { 
+    SingletonCpltSetView::glbMin() const { 
       return view.assigned() ? view.val() : CpltSetVarImp::MIN_OF_EMPTY; 
     }
 
     forceinline int
-    SingletonBddView::glbMax() const { 
+    SingletonCpltSetView::glbMax() const { 
       return view.assigned() ? view.val() : CpltSetVarImp::MAX_OF_EMPTY; 
     }
 
@@ -198,76 +198,76 @@ namespace Gecode {
      */
 
     forceinline unsigned int
-    SingletonBddView::offset(void)  const { return _offset; }
+    SingletonCpltSetView::offset(void)  const { return _offset; }
 
     forceinline unsigned int
-    SingletonBddView::table_width(void)  const { return range; }
+    SingletonCpltSetView::table_width(void)  const { return range; }
 
     forceinline GecodeBdd
-    SingletonBddView::getbdd(int i)  const { return mgr->bddpos(_offset + i); }
+    SingletonCpltSetView::getbdd(int i)  const { return mgr->bddpos(_offset + i); }
 
     forceinline GecodeBdd
-    SingletonBddView::getnegbdd(int i)  const { 
+    SingletonCpltSetView::getnegbdd(int i)  const { 
       return mgr->negbddpos(_offset + i); 
     }
 
     forceinline int
-    SingletonBddView::getlevel(int i) { return mgr->var2bdd(_offset + i); }
+    SingletonCpltSetView::getlevel(int i) { return mgr->var2bdd(_offset + i); }
     
     forceinline int
-    SingletonBddView::getvar(int i) { return mgr->bdd2var(_offset + i); }
+    SingletonCpltSetView::getvar(int i) { return mgr->bdd2var(_offset + i); }
 
     forceinline void
-    SingletonBddView::dom_and(GecodeBdd& d) { d &= bdd_domain(); }
+    SingletonCpltSetView::dom_and(GecodeBdd& d) { d &= bdd_domain(); }
     
     forceinline void
-    SingletonBddView::dom_or(GecodeBdd& d) { d |= bdd_domain(); }
+    SingletonCpltSetView::dom_or(GecodeBdd& d) { d |= bdd_domain(); }
     
     forceinline BMI*
-    SingletonBddView::manager(void) const { return mgr; }
+    SingletonCpltSetView::manager(void) const { return mgr; }
     
     forceinline int
-    SingletonBddView::mgr_min(void)  const { return min; }
+    SingletonCpltSetView::mgr_min(void)  const { return min; }
     
     forceinline int
-    SingletonBddView::mgr_max(void)  const { return max; }
+    SingletonCpltSetView::mgr_max(void)  const { return max; }
 
     forceinline int
-    SingletonBddView::valididx(int v)  const { 
+    SingletonCpltSetView::valididx(int v)  const { 
       if (v < min || v > max) return -1 ;
       return offset() +v - min;
     }
 
     forceinline GecodeBdd 
-    SingletonBddView::bdd_domain(void) const { return domain; };
+    SingletonCpltSetView::bdd_domain(void) const { return domain; };
 
     forceinline ModEvent
-    SingletonBddView::cardinality(Space* home,unsigned int l, unsigned int u) {
+    SingletonCpltSetView::cardinality(Space* home,unsigned int l, unsigned int u) {
       return u <=1 ? ME_CPLTSET_NONE : ME_CPLTSET_FAILED;
     }
     
     forceinline ModEvent
-    SingletonBddView::cardMin(Space* home,unsigned int c) {
+    SingletonCpltSetView::cardMin(Space* home,unsigned int c) {
       return c<=1 ? ME_CPLTSET_NONE : ME_CPLTSET_FAILED;
     }
 
     forceinline ModEvent
-    SingletonBddView::cardMax(Space* home,unsigned int c) {
+    SingletonCpltSetView::cardMax(Space* home,unsigned int c) {
       return c<1 ? ME_CPLTSET_FAILED : ME_CPLTSET_NONE;
     }
 
     forceinline ModEvent
-    SingletonBddView::include(Space* home,int c) { 
+    SingletonCpltSetView::include(Space* home,int c) { 
       return me_inttobdd(view.eq(home,c)); 
     }
 
     forceinline ModEvent
-    SingletonBddView::intersect(Space* home,int c) { 
+    SingletonCpltSetView::intersect(Space* home,int c) { 
       return me_inttobdd(view.eq(home,c)); 
     }
 
     forceinline ModEvent
-    SingletonBddView::intersect(Space* home,int i, int j) { 
+    SingletonCpltSetView::intersect(Space* home,int i, int j) { 
 
       ModEvent me1 = me_inttobdd(view.gq(home,i));
       ModEvent me2 = me_inttobdd(view.lq(home,j));
@@ -294,18 +294,18 @@ namespace Gecode {
     }
 
     forceinline ModEvent
-    SingletonBddView::exclude(Space* home,int c) { 
+    SingletonCpltSetView::exclude(Space* home,int c) { 
       domain &= getnegbdd(c - min);
       return me_inttobdd(view.nq(home,c)); 
     }
 
     forceinline ModEvent
-    SingletonBddView::include(Space* home, int j, int k) {
+    SingletonCpltSetView::include(Space* home, int j, int k) {
       return j==k ? me_inttobdd(view.eq(home,j)) : ME_CPLTSET_FAILED ;
     }
 
     forceinline ModEvent
-    SingletonBddView::exclude(Space* home, int j, int k) {
+    SingletonCpltSetView::exclude(Space* home, int j, int k) {
 
       ModEvent me1 = me_inttobdd(view.gr(home,j));
       ModEvent me2 = me_inttobdd(view.le(home,k));
@@ -331,7 +331,7 @@ namespace Gecode {
     }
 
     template <class I> ModEvent
-    SingletonBddView::excludeI(Space* home, I& iter) {
+    SingletonCpltSetView::excludeI(Space* home, I& iter) {
       Iter::Ranges::ValCache<I> vci(iter);
       for (vci.last(); vci(); --vci) {
 	for (int i = vci.max(); i>= vci.min(); i--) {
@@ -343,7 +343,7 @@ namespace Gecode {
     }
 
     template <class I> ModEvent
-    SingletonBddView::includeI(Space* home, I& iter) {
+    SingletonCpltSetView::includeI(Space* home, I& iter) {
       if (!iter())
 	return ME_CPLTSET_NONE;
 
@@ -359,7 +359,7 @@ namespace Gecode {
     }
 
     template <class I> ModEvent
-    SingletonBddView::intersectI(Space* home, I& iter) {
+    SingletonCpltSetView::intersectI(Space* home, I& iter) {
 
       Iter::Ranges::ToValues<I> val(iter);
       Iter::Ranges::ValCache<Iter::Ranges::ToValues<I> > vc(val);
@@ -381,28 +381,28 @@ namespace Gecode {
     }
 
     forceinline ModEvent
-    SingletonBddView::nq(Space* home, int a, int b) { 
+    SingletonCpltSetView::nq(Space* home, int a, int b) { 
       return exclude(home, a, b); 
     }
 
     template <class I>
     forceinline ModEvent
-    SingletonBddView::nqI(Space* home, I& i) { return excludeI(home, i); }
+    SingletonCpltSetView::nqI(Space* home, I& i) { return excludeI(home, i); }
 
     forceinline ModEvent
-    SingletonBddView::eq(Space* home, int v) { return include(home, v); }
+    SingletonCpltSetView::eq(Space* home, int v) { return include(home, v); }
     
     forceinline ModEvent
-    SingletonBddView::eq(Space* home, int a, int b) { 
+    SingletonCpltSetView::eq(Space* home, int a, int b) { 
       return include(home, a, b); 
     }
 
     template <class I>
     forceinline ModEvent
-    SingletonBddView::eqI(Space* home, I& i) { return includeI(home, i); }
+    SingletonCpltSetView::eqI(Space* home, I& i) { return includeI(home, i); }
 
     forceinline ModEvent 
-    SingletonBddView::tell_formula(Space* home, GecodeBdd& d) {
+    SingletonCpltSetView::tell_formula(Space* home, GecodeBdd& d) {
       if (assigned()) {
 	int v = view.val();
 	for (int i = max; i >= min; i--) {
@@ -443,25 +443,25 @@ namespace Gecode {
     }
 
     forceinline void
-    SingletonBddView::subscribe(Space* home, Propagator* p, PropCond pc,
+    SingletonCpltSetView::subscribe(Space* home, Propagator* p, PropCond pc,
 			     bool process) {
       view.subscribe(home,p,pc_bddtoint(pc),process);
     }
     forceinline void
-    SingletonBddView::cancel(Space* home, Propagator* p, PropCond pc) {
+    SingletonCpltSetView::cancel(Space* home, Propagator* p, PropCond pc) {
       view.cancel(home, p,pc_bddtoint(pc));
     }
 
     forceinline ModEvent
-    SingletonBddView::pme(const Propagator* p) {     
+    SingletonCpltSetView::pme(const Propagator* p) {     
       return me_inttobdd(Int::IntView::pme(p));
     }
 
     forceinline PropModEvent
-    SingletonBddView::pme(ModEvent me) { return BddView::pme(me); }
+    SingletonCpltSetView::pme(ModEvent me) { return CpltSetView::pme(me); }
 
     forceinline void
-    SingletonBddView::update(Space* home, bool share, SingletonBddView& y) {
+    SingletonCpltSetView::update(Space* home, bool share, SingletonCpltSetView& y) {
       view.update(home,share,y.view);
       mgr = y.mgr;
       min = y.min;
@@ -477,12 +477,12 @@ namespace Gecode {
      *
      */
     forceinline Reflection::Arg*
-    SingletonBddView::spec(Space* home, Reflection::VarMap& m) {
+    SingletonCpltSetView::spec(Space* home, Reflection::VarMap& m) {
       return view.spec(home, m);
     }
     forceinline Reflection::Type*
-    SingletonBddView::type(void) {
-      return new Reflection::Type("bdd.SingletonBddView");
+    SingletonCpltSetView::type(void) {
+      return new Reflection::Type("bdd.SingletonCpltSetView");
     }
 
     /*
@@ -497,65 +497,65 @@ namespace Gecode {
      * \ingroup TaskActorSetView
      */
     template <>
-    class LubRanges<Bdd::SingletonBddView> : public Int::IntVarImpFwd {
+    class LubRanges<CpltSet::SingletonCpltSetView> : public Int::IntVarImpFwd {
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
       LubRanges(void);
       /// Initialize with ranges for view \a x
-      LubRanges(const Bdd::SingletonBddView& x);
+      LubRanges(const CpltSet::SingletonCpltSetView& x);
       /// Initialize with ranges for view \a x
-      void init(const Bdd::SingletonBddView& x);
+      void init(const CpltSet::SingletonCpltSetView& x);
       //@}
     };
 
     forceinline
-    LubRanges<Bdd::SingletonBddView>::LubRanges(void) {}
+    LubRanges<CpltSet::SingletonCpltSetView>::LubRanges(void) {}
 
     forceinline
-    LubRanges<Bdd::SingletonBddView>::LubRanges(const Bdd::SingletonBddView& s) :
+    LubRanges<CpltSet::SingletonCpltSetView>::LubRanges(const CpltSet::SingletonCpltSetView& s) :
       Int::IntVarImpFwd(s.base().variable()) {}
 
     forceinline void
-    LubRanges<Bdd::SingletonBddView>::init(const Bdd::SingletonBddView& s) {
+    LubRanges<CpltSet::SingletonCpltSetView>::init(const CpltSet::SingletonCpltSetView& s) {
       Int::IntVarImpFwd::init(s.base().variable());
     }
   }
-  namespace Bdd {
+  namespace CpltSet {
 
     /**
      * \brief %Value iterator for least upper bound of singleton set view
      * \ingroup TaskActorSetView
      */
     template <>
-    class LubValues<SingletonBddView> : 
-      public Iter::Ranges::ToValues<Set::LubRanges<SingletonBddView> > {
+    class LubValues<SingletonCpltSetView> : 
+      public Iter::Ranges::ToValues<Set::LubRanges<SingletonCpltSetView> > {
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
       LubValues(void);
       /// Initialize with ranges for view \a x
-      LubValues(const SingletonBddView& x);
+      LubValues(const SingletonCpltSetView& x);
       /// Initialize with ranges for view \a x
-      void init(const SingletonBddView& x);
+      void init(const SingletonCpltSetView& x);
       //@}
     };
 
     forceinline
-    LubValues<SingletonBddView>::LubValues(void) {}
+    LubValues<SingletonCpltSetView>::LubValues(void) {}
 
     forceinline
-    LubValues<SingletonBddView>::LubValues(const SingletonBddView& s) {
-      Set::LubRanges<SingletonBddView> lub(s);
-      Iter::Ranges::ToValues<Set::LubRanges<SingletonBddView> >::init(lub);
+    LubValues<SingletonCpltSetView>::LubValues(const SingletonCpltSetView& s) {
+      Set::LubRanges<SingletonCpltSetView> lub(s);
+      Iter::Ranges::ToValues<Set::LubRanges<SingletonCpltSetView> >::init(lub);
     }
 
     forceinline void
-    LubValues<SingletonBddView>::init(const SingletonBddView& s) {
-      Set::LubRanges<SingletonBddView> lub(s);
-      Iter::Ranges::ToValues<Set::LubRanges<SingletonBddView> >::init(lub);
+    LubValues<SingletonCpltSetView>::init(const SingletonCpltSetView& s) {
+      Set::LubRanges<SingletonCpltSetView> lub(s);
+      Iter::Ranges::ToValues<Set::LubRanges<SingletonCpltSetView> >::init(lub);
     }
   }
   namespace Set {
@@ -564,7 +564,7 @@ namespace Gecode {
      * \ingroup TaskActorSetView
      */
     template <>
-    class GlbRanges<Bdd::SingletonBddView> {
+    class GlbRanges<CpltSet::SingletonCpltSetView> {
     private:
       int  val;
       bool flag;
@@ -574,9 +574,9 @@ namespace Gecode {
       /// Default constructor
       GlbRanges(void);
       /// Initialize with ranges for view \a x
-      GlbRanges(const Bdd::SingletonBddView& x);
+      GlbRanges(const CpltSet::SingletonCpltSetView& x);
       /// Initialize with ranges for view \a x
-      void init(const Bdd::SingletonBddView& x);
+      void init(const CpltSet::SingletonCpltSetView& x);
 
       /// \name Iteration control
       //@{
@@ -598,10 +598,10 @@ namespace Gecode {
     };
 
     forceinline
-    GlbRanges<Bdd::SingletonBddView>::GlbRanges(void) {}
+    GlbRanges<CpltSet::SingletonCpltSetView>::GlbRanges(void) {}
 
     forceinline void
-    GlbRanges<Bdd::SingletonBddView>::init(const Bdd::SingletonBddView& s) {
+    GlbRanges<CpltSet::SingletonCpltSetView>::init(const CpltSet::SingletonCpltSetView& s) {
       if (s.base().assigned()) {
 	val = s.base().val();
 	flag = true;
@@ -612,22 +612,22 @@ namespace Gecode {
     }
 
     forceinline
-    GlbRanges<Bdd::SingletonBddView>::GlbRanges(const Bdd::SingletonBddView& s) {
+    GlbRanges<CpltSet::SingletonCpltSetView>::GlbRanges(const CpltSet::SingletonCpltSetView& s) {
       init(s);
     }
 
     forceinline bool
-    GlbRanges<Bdd::SingletonBddView>::operator()(void) const { return flag; }
+    GlbRanges<CpltSet::SingletonCpltSetView>::operator()(void) const { return flag; }
 
     forceinline void
-    GlbRanges<Bdd::SingletonBddView>::operator++(void) { flag=false; }
+    GlbRanges<CpltSet::SingletonCpltSetView>::operator++(void) { flag=false; }
 
     forceinline int
-    GlbRanges<Bdd::SingletonBddView>::min(void) const { return val; }
+    GlbRanges<CpltSet::SingletonCpltSetView>::min(void) const { return val; }
     forceinline int
-    GlbRanges<Bdd::SingletonBddView>::max(void) const { return val; }
+    GlbRanges<CpltSet::SingletonCpltSetView>::max(void) const { return val; }
     forceinline unsigned int
-    GlbRanges<Bdd::SingletonBddView>::width(void) const { return 1; }
+    GlbRanges<CpltSet::SingletonCpltSetView>::width(void) const { return 1; }
 
   }
 
@@ -636,11 +636,11 @@ namespace Gecode {
    *
    */
   forceinline bool
-  same(const Bdd::SingletonBddView& x, const Bdd::SingletonBddView& y) {
+  same(const CpltSet::SingletonCpltSetView& x, const CpltSet::SingletonCpltSetView& y) {
     return same(x.base(),y.base());
   }
   forceinline bool
-  before(const Bdd::SingletonBddView& x, const Bdd::SingletonBddView& y) {
+  before(const CpltSet::SingletonCpltSetView& x, const CpltSet::SingletonCpltSetView& y) {
     return before(x.base(),y.base());
   }
 

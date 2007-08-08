@@ -22,7 +22,7 @@
 #include "gecode/cpltset.hh"
 #include "gecode/cpltset/var/imp-body.icc"
 
-namespace Gecode { namespace Bdd {
+namespace Gecode { namespace CpltSet {
 
     /// copy bddvar
     forceinline

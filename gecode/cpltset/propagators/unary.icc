@@ -19,7 +19,7 @@
  *
  */
 
-namespace Gecode { namespace Bdd {
+namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline
@@ -91,7 +91,7 @@ namespace Gecode { namespace Bdd {
   UnaryBddProp<View>::propagate(Space* home) {
     // std::cerr << "propagate unary: \n";
     // std::cerr << x << " " << x.glbSize() << " " << x.unknownSize() << "\n";
-//     UnknownRanges<BddView> delta(x);
+//     UnknownRanges<CpltSetView> delta(x);
 //     for (; delta(); ++delta) { 
 //       std::cerr << delta.min() << ".." << delta.max() <<",";
 //     }

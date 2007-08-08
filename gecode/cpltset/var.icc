@@ -23,7 +23,7 @@
 #include "gecode/cpltset/var/imp-hdr.icc"
 #include "gecode/support/shared-array.hh"
 
-namespace Gecode { namespace Bdd {
+namespace Gecode { namespace CpltSet {
 
   enum NodeStatus {INIT = -1, FIX_GLB = 1, FIX_NOT_LUB = 0, FIX_UNKNOWN = 2, UNDET = 5};
   /**
@@ -148,10 +148,10 @@ namespace Gecode { namespace Bdd {
   class CpltSetVarImp : public CpltSetVarImpBase {
     friend class BddIterator;
     friend class DomBddIterator;
-    friend class SplitBddView;
-    friend class BndBddView;
-    friend class CrdBddView;
-    friend class LexBddView;
+    friend class SplitCpltSetView;
+    friend class BndCpltSetView;
+    friend class CrdCpltSetView;
+    friend class LexCpltSetView;
 
     friend class DomValues<CpltSetVarImp*>;
     friend class GlbValues<CpltSetVarImp*>;
@@ -524,7 +524,7 @@ namespace Gecode {
   class CpltSetVar {
   private:
     /// Bdd variable implementation using 
-    Bdd::CpltSetVarImp* var;  
+    CpltSet::CpltSetVarImp* var;  
   public:
     /// Default constructor
     GECODE_CPLTSET_EXPORT CpltSetVar(void);
@@ -710,7 +710,7 @@ namespace Gecode {
     /// \name Variable implementation access
     //@{
     /// Return bdd variable implementation
-    Bdd::CpltSetVarImp* variable(void) const;
+    CpltSet::CpltSetVarImp* variable(void) const;
     //@}
 
     /// \name Value access
@@ -784,7 +784,7 @@ namespace Gecode {
   /// Range iterator for the greatest lower bound of a bdd variable
   class CpltSetVarGlbRanges {
   private:
-    Set::GlbRanges<Bdd::CpltSetVarImp*> iter;
+    Set::GlbRanges<CpltSet::CpltSetVarImp*> iter;
   public:
     CpltSetVarGlbRanges(void);
     CpltSetVarGlbRanges(const CpltSetVar& x);
@@ -797,7 +797,7 @@ namespace Gecode {
   /// Value iterator for the greatest lower bound of a bdd variable
   class CpltSetVarGlbValues {
   private:
-    Bdd::GlbValues<Bdd::CpltSetVarImp*> iter;
+    CpltSet::GlbValues<CpltSet::CpltSetVarImp*> iter;
   public:
     CpltSetVarGlbValues(void);
     CpltSetVarGlbValues(const CpltSetVar& x);
@@ -809,7 +809,7 @@ namespace Gecode {
   /// Range iterator for the least upper bound of a bdd variable
   class CpltSetVarLubRanges {
   private:
-    Set::LubRanges<Bdd::CpltSetVarImp*> iter;
+    Set::LubRanges<CpltSet::CpltSetVarImp*> iter;
   public:
     CpltSetVarLubRanges(void);
     CpltSetVarLubRanges(const CpltSetVar& x);
@@ -822,7 +822,7 @@ namespace Gecode {
   /// Value iterator for the least upper bound of a bdd variable
   class CpltSetVarLubValues {
   private:
-    Bdd::LubValues<Bdd::CpltSetVarImp*> iter;
+    CpltSet::LubValues<CpltSet::CpltSetVarImp*> iter;
   public:
     CpltSetVarLubValues(void);
     CpltSetVarLubValues(const CpltSetVar& x);
@@ -834,7 +834,7 @@ namespace Gecode {
   /// Value iterator for the domain of a bdd variable
   class CpltSetVarDomValues {
   private:
-    Bdd::DomValues<Bdd::CpltSetVarImp*> iter;
+    CpltSet::DomValues<CpltSet::CpltSetVarImp*> iter;
   public:
     CpltSetVarDomValues(void);
     CpltSetVarDomValues(const CpltSetVar& x);
@@ -847,7 +847,7 @@ namespace Gecode {
   /// Range iterator for the unknown set of a bdd variable
   class CpltSetVarUnknownRanges {
   private:
-    Set::UnknownRanges<Bdd::CpltSetVarImp*> iter;
+    Set::UnknownRanges<CpltSet::CpltSetVarImp*> iter;
   public:
     CpltSetVarUnknownRanges(void);
     CpltSetVarUnknownRanges(const CpltSetVar& x);
@@ -874,5 +874,5 @@ operator<<(std::ostream&, const Gecode::CpltSetVar& x);
 GECODE_CPLTSET_EXPORT std::ostream&
 operator<<(std::ostream&, Gecode::BMI* x);
 
-#include "gecode/cpltset/var/bdd.icc"
+#include "gecode/cpltset/var/cpltset.icc"
 // STATISTICS: bdd-var

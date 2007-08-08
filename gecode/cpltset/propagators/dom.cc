@@ -38,7 +38,7 @@ namespace Gecode {
   void 
   dom(Space* home, CpltSetVar x, SetRelType r, const IntSet& s, SetConLevel) {
     if (home->failed()) return;
-    Bdd::BddView bv(x);
+    CpltSet::CpltSetView bv(x);
 
     switch(r) {
     case SRT_EQ:
@@ -118,7 +118,7 @@ namespace Gecode {
       {
 	// could implement here lex ordering constraints s < 1 or something
 	// thats nice
-	throw Bdd::InvalidRelation("rel lex not implemented");
+	throw CpltSet::InvalidRelation("rel lex not implemented");
 	return;
       }
     }

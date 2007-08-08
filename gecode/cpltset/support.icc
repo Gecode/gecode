@@ -36,13 +36,13 @@ namespace Gecode {
 	  !lubNonZero ||
 	  (glbMin > glbMax)
 	  )
-	throw Bdd::VariableFailedDomain(location);
+	throw CpltSet::VariableFailedDomain(location);
 
       if (
 	  (glbMin < Limits::Set::int_min) || 
 	  (glbMax > Limits::Set::int_max)
 	  ) 
-	throw Bdd::VariableOutOfRangeDomain(location);
+	throw CpltSet::VariableOutOfRangeDomain(location);
       
       int  lubMin = lub.min();
       int  lubMax = lub.max();
@@ -50,7 +50,7 @@ namespace Gecode {
 	  (glbMin < lubMin || glbMin > lubMax) ||
 	  (glbMax > lubMax || glbMax < lubMin)
 	  )
-	throw Bdd::VariableFailedDomain(location);
+	throw CpltSet::VariableFailedDomain(location);
     }
 
     if (lubNonZero) {
@@ -60,23 +60,23 @@ namespace Gecode {
 	  (lubMin < Limits::Set::int_min) || 
 	  (lubMax > Limits::Set::int_max)
 	 )
-	throw Bdd::VariableOutOfRangeDomain(location);
+	throw CpltSet::VariableOutOfRangeDomain(location);
 
       if (lubMin > lubMax)
-      throw Bdd::VariableFailedDomain(location);
+      throw CpltSet::VariableFailedDomain(location);
     }
 
     if (cardMax < 0)    
-      throw Bdd::VariableFailedDomain(location);
+      throw CpltSet::VariableFailedDomain(location);
 
     if ((unsigned int) cardMax > Limits::Set::card_max)
-      throw Bdd::VariableOutOfRangeCardinality(location);
+      throw CpltSet::VariableOutOfRangeCardinality(location);
 
     if ( 
 	(cardMin > cardMax) ||
 	(cardMin < 0)
 	)
-      throw Bdd::VariableFailedDomain(location);
+      throw CpltSet::VariableFailedDomain(location);
     return;
   }
 

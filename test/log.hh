@@ -29,7 +29,7 @@
 #include "gecode/set.hh"
 #endif
 
-#ifdef GECODE_HAVE_BDD_VARS
+#ifdef GECODE_HAVE_CPLTSET_VARS
 #include "gecode/cpltset.hh"
 #endif
 
@@ -66,7 +66,7 @@ namespace Log {
   void print(const SetVarArray& a, const char* name=NULL);
 #endif
 
-#ifdef GECODE_HAVE_BDD_VARS
+#ifdef GECODE_HAVE_CPLTSET_VARS
   void initial(const CpltSetVarArray& a, const char*name);
   void prune(const CpltSetVar& v, std::string name, SetRelType irt, int val);
   void prune(const CpltSetVar& v, std::string name,

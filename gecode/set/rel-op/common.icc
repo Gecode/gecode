@@ -26,7 +26,7 @@
  *
  */
 
-#ifdef GECODE_HAVE_BDD_VARS
+#ifdef GECODE_HAVE_CPLTSET_VARS
 #include "gecode/cpltset.hh"
 #endif 
 
@@ -43,11 +43,11 @@ namespace Gecode {
   }
 
 
-#ifdef GECODE_HAVE_BDD_VARS
+#ifdef GECODE_HAVE_CPLTSET_VARS
   template <>
   forceinline bool
-  viewarrayshared<Set::SingletonView,Bdd::SetBddView>
-  (const ViewArray<Set::SingletonView>& va, const Bdd::SetBddView& y) {
+  viewarrayshared<Set::SingletonView,CpltSet::SetCpltSetView>
+  (const ViewArray<Set::SingletonView>& va, const CpltSet::SetCpltSetView& y) {
     return false;
   }
 #endif 

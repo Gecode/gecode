@@ -20,7 +20,7 @@
  *
  */
 
-namespace Gecode { namespace Bdd {
+namespace Gecode { namespace CpltSet {
 
   template <class View>
   void quantify(GecodeBdd& p, View& x) {

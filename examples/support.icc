@@ -35,7 +35,7 @@ Options::Options(const char* n)
     naive(false),
     size(0),
     name(n) 
-#ifdef GECODE_HAVE_BDD_VARS
+#ifdef GECODE_HAVE_CPLTSET_VARS
   /// Additional Bdd parameters
   ,initvarnum(100),
   initcache(100),

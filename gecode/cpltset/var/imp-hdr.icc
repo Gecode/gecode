@@ -23,7 +23,7 @@
  */
 
 
-namespace Gecode { namespace Bdd {
+namespace Gecode { namespace CpltSet {
 
   /**
    * \defgroup TaskActorCpltSetMEPC CpltSet modification events and propagation conditions

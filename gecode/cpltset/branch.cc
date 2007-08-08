@@ -23,7 +23,7 @@
 
 namespace Gecode {
 
-  using namespace Bdd;
+  using namespace CpltSet;
 
   void
   branch(Space* home, const CpltSetVarArgs& xa, BddBvarSel vars, BddBvalSel vals, 
@@ -35,7 +35,7 @@ namespace Gecode {
 //     std::cout << xa[0].manager() << "\n";
 //     std::cout << "start branching\n";
 
-    ViewArray<BddView> x(home,xa);
+    ViewArray<CpltSetView> x(home,xa);
 
     switch (vars) {
     case BDD_BVAR_NONE:
@@ -49,7 +49,7 @@ namespace Gecode {
     case BDD_BVAR_MAX_UNKNOWN_ELEM:
       Branch::create<Branch::ByMaxUnknown>(home,x,vals); break;
     default:
-      throw Bdd::UnknownBranching("Bdd::branch not yet implemented");
+      throw CpltSet::UnknownBranching("CpltSet::branch not yet implemented");
     }
   }
 

@@ -33,7 +33,7 @@
 #include "log.hh"
 
 using namespace Gecode;
-using namespace Bdd;
+using namespace CpltSet;
 
 #ifdef GECODE_HAVE_SET_VARS
 

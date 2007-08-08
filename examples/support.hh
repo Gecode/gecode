@@ -32,7 +32,7 @@
 #include "gecode/kernel.hh"
 #include "gecode/int.hh"
 
-#ifdef GECODE_HAVE_BDD_VARS
+#ifdef GECODE_HAVE_CPLTSET_VARS
 #include "gecode/cpltset.hh"
 #endif
 
@@ -71,7 +71,7 @@ public:
   unsigned int size;       ///< problem size/variant
   const char*  name;       ///< name of problem
 
-#ifdef GECODE_HAVE_BDD_VARS
+#ifdef GECODE_HAVE_CPLTSET_VARS
   /// Additional Bdd parameters
   unsigned int initvarnum; ///< initial number of bdd nodes in the table
   unsigned int initcache;  ///< initial cachesize for bdd operations

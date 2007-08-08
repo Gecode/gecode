@@ -20,7 +20,7 @@
  *
  */
 
-using namespace Gecode::Bdd;
+using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
@@ -220,7 +220,7 @@ namespace Gecode {
 	  }
 	default:
 	  {
-	    throw Bdd::InvalidRelation(" partition rel not yet implemented ");
+	    throw CpltSet::InvalidRelation(" partition rel not yet implemented ");
 	    break;
 	  }
 	}
@@ -388,12 +388,12 @@ namespace Gecode {
   forceinline void 
   partition_con(Space* home, const CpltSetVarArgs& x, bool withlex, Rel lex, 
 		bool withcard, int d, SetConLevel scl) {
-    ViewArray<BddView> bv(home, x);
+    ViewArray<CpltSetView> bv(home, x);
     switch(scl) {
     case SCL_SPL:
       {
 	int n = bv.size();
-	ViewArray<SplitBddView> sv(home, n);
+	ViewArray<SplitCpltSetView> sv(home, n);
 	for (int i = n; i--; ) {
 	  sv[i].init(bv[i]);
 	}
@@ -403,7 +403,7 @@ namespace Gecode {
     case SCL_BND_BDD:
       {
 	int n = bv.size();
-	ViewArray<BndBddView> bndv(home, n);
+	ViewArray<BndCpltSetView> bndv(home, n);
 	for (int i = n; i--; ) {
 	  bndv[i].init(bv[i]);
 	}
@@ -413,7 +413,7 @@ namespace Gecode {
     case SCL_CRD:
       {
 	int n = bv.size();
-	ViewArray<CrdBddView> crdv(home, n);
+	ViewArray<CrdCpltSetView> crdv(home, n);
 	for (int i = n; i--; ) {
 	  crdv[i].init(bv[i]);
 	}
@@ -423,7 +423,7 @@ namespace Gecode {
     case SCL_LEX:
       {
 	int n = bv.size();
-	ViewArray<LexBddView> lexv(home, n);
+	ViewArray<LexCpltSetView> lexv(home, n);
 	for (int i = n; i--; ) {
 	  lexv[i].init(bv[i]);
 	}
@@ -444,8 +444,8 @@ namespace Gecode {
 		bool withlex, Rel lex, bool withcard, int d, 
 		SetConLevel scl) {
 
-    ViewArray<BddView> bv(home, x);
-    BddView yv(y);
+    ViewArray<CpltSetView> bv(home, x);
+    CpltSetView yv(y);
     partition_post(home, bv, yv, withlex, lex, withcard, d, scl);
   }
 
@@ -459,7 +459,7 @@ namespace Gecode {
     BMI* mgr = y.manager();
     ViewArray<Int::IntView> bv(home, x);
     int n = x.size();
-    ViewArray<SingletonBddView> sv(home, n);
+    ViewArray<SingletonCpltSetView> sv(home, n);
     for (int i = 0; i < n; i++) {
       sv[i].init(mgr, bv[i].min(), bv[i].max(), bv[i]);
     }
@@ -470,7 +470,7 @@ namespace Gecode {
 //     std::cerr << "\n";
 //     variableorder(sv);
 
-    BddView yv(y);
+    CpltSetView yv(y);
     // this wont work as there is no post function for different views
     // i.e. bddsingleton + bddview
     

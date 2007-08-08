@@ -19,7 +19,7 @@
  *
  */
 
-using namespace Gecode::Bdd;
+using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
@@ -83,7 +83,7 @@ namespace Gecode {
       break;
     default:
       {
-	throw Bdd::InvalidRelation (" COMPL = EQ NEG y ??? ");
+	throw CpltSet::InvalidRelation (" COMPL = EQ NEG y ??? ");
 	return;
       }
     }
@@ -204,7 +204,7 @@ namespace Gecode {
       break;
     default:
       {
-	throw Bdd::InvalidRelation (" COMPL = EQ NEG y ??? ");
+	throw CpltSet::InvalidRelation (" COMPL = EQ NEG y ??? ");
 	return;
       }
     }
@@ -255,7 +255,7 @@ namespace Gecode {
       break;
     default:
       {
-	throw Bdd::InvalidRelation (" COMPL = EQ NEG y ??? ");
+	throw CpltSet::InvalidRelation (" COMPL = EQ NEG y ??? ");
 	return;
       }
     }
@@ -338,7 +338,7 @@ namespace Gecode {
       break;
     default:
       {
-	throw Bdd::InvalidRelation (" COMPL = EQ NEG y ??? ");
+	throw CpltSet::InvalidRelation (" COMPL = EQ NEG y ??? ");
 	return;
       }
     }
@@ -351,7 +351,7 @@ namespace Gecode {
   template <class View>
   void rel_post(Space* home, ViewArray<View>& x, BddSetOpType o, BddSetRelType r, 
 		SetConLevel scl) {
-    throw Bdd::InvalidRelation(" no bdd rel implemented lex smaller ....");
+    throw CpltSet::InvalidRelation(" no bdd rel implemented lex smaller ....");
   }
 
   // BddOp and SetRel
@@ -378,7 +378,7 @@ namespace Gecode {
 	}
       default:
 	{
-	  throw Bdd::InvalidRelation(" other op rel relations not yet implemented ");
+	  throw CpltSet::InvalidRelation(" other op rel relations not yet implemented ");
 	  return;
 	}
       }
@@ -390,7 +390,7 @@ namespace Gecode {
 	}
       default:
 	{
-	  throw Bdd::InvalidRelation(" other rel relations not yet implemented ");
+	  throw CpltSet::InvalidRelation(" other rel relations not yet implemented ");
 	  return;
 	}
       }
@@ -404,7 +404,7 @@ namespace Gecode {
   template <class View>
   void rel_post(Space* home, ViewArray<View>& x, SetOpType o, BddSetRelType r, 
 		SetConLevel scl) {
-    throw Bdd::InvalidRelation(" no bdd rel implemented lex smaller with setoptype....");
+    throw CpltSet::InvalidRelation(" no bdd rel implemented lex smaller with setoptype....");
   }
   // not yet implemented Bddrel SRT_LE and lex-stuff
   
@@ -447,7 +447,7 @@ namespace Gecode {
 	}
       default:
 	{
-	  throw Bdd::InvalidRelation(" other op rel relations not yet implemented ");
+	  throw CpltSet::InvalidRelation(" other op rel relations not yet implemented ");
 	  return;
 	}
       }
@@ -461,7 +461,7 @@ namespace Gecode {
 	}
       default:
 	{
-	  throw Bdd::InvalidRelation(" other rel relations not yet implemented ");
+	  throw CpltSet::InvalidRelation(" other rel relations not yet implemented ");
 	  return;
 	}
       }
@@ -473,34 +473,34 @@ namespace Gecode {
   template <class Rel>
   void rel_con(Space* home, const CpltSetVar& x, Rel r, const CpltSetVar& y, 
 	       SetConLevel scl) {
-    BddView xv(x);
-    BddView yv(y);
+    CpltSetView xv(x);
+    CpltSetView yv(y);
     switch (scl) {
     case SCL_SPL:
       {
-	SplitBddView spx(xv);
-	SplitBddView spy(yv);
+	SplitCpltSetView spx(xv);
+	SplitCpltSetView spy(yv);
 	rel_post(home, spx, r, spy, scl);
 	break;
       }
     case SCL_BND_BDD:
       {
-	BndBddView bndx(xv);
-	BndBddView bndy(yv);
+	BndCpltSetView bndx(xv);
+	BndCpltSetView bndy(yv);
 	rel_post(home, bndx, r, bndy, scl);
 	break;
       }
     case SCL_CRD:
       {
-	CrdBddView crdx(xv);
-	CrdBddView crdy(yv);
+	CrdCpltSetView crdx(xv);
+	CrdCpltSetView crdy(yv);
 	rel_post(home, crdx, r, crdy, scl);
 	break;
       }
     case SCL_LEX:
       {
-	LexBddView lexx(xv);
-	LexBddView lexy(yv);
+	LexCpltSetView lexx(xv);
+	LexCpltSetView lexy(yv);
 	rel_post(home, lexx, r, lexy, scl);
 	break;
       }
@@ -516,42 +516,42 @@ namespace Gecode {
   void rel_con(Space* home, const IntVar& x, Rel r, const CpltSetVar& s, 
 	  SetConLevel scl) {
     Gecode::Int::IntView iv(x);
-    BddView bv(s);
+    CpltSetView bv(s);
 //     int rmin = std::min(iv.min(), bv.mgr_min());
 //     int rmax = std::max(iv.max(), bv.mgr_max());
-//     SingletonBddView single(s.manager(), rmin, rmax, iv);
-    SingletonBddView single(s.manager(), iv.min(), iv.max(), iv);
+//     SingletonCpltSetView single(s.manager(), rmin, rmax, iv);
+    SingletonCpltSetView single(s.manager(), iv.min(), iv.max(), iv);
     rel_post(home, single, r, bv, scl);
   }  
 
   forceinline void
   rel_con_sbr(Space* home, const CpltSetVar& x, SetOpType o, const CpltSetVar& y, 
 	      SetRelType r, const CpltSetVar& z, SetConLevel scl) {
-    ViewArray<BddView> bv(home, 3);
+    ViewArray<CpltSetView> bv(home, 3);
     bv[0] = x;
     bv[1] = y;
     bv[2] = z;
     switch (scl) {
     case SCL_BND_SBR:
       {
-	BddView xv(x); 
-	BddView yv(y); 
-	BddView zv(z); 
+	CpltSetView xv(x); 
+	CpltSetView yv(y); 
+	CpltSetView zv(z); 
 	
-	CrdBddView cx(xv); 
-	CrdBddView cy(yv); 
-	CrdBddView cz(zv); 
+	CrdCpltSetView cx(xv); 
+	CrdCpltSetView cy(yv); 
+	CrdCpltSetView cz(zv); 
 	
-	SetBddView sx(cx); 
-	SetBddView sy(cy); 
-	SetBddView sz(cz); 
+	SetCpltSetView sx(cx); 
+	SetCpltSetView sy(cy); 
+	SetCpltSetView sz(cz); 
 	
-// 	Gecode::Set::RelOp::rel_op_post<SetBddView, SetBddView, SetBddView>(home, sx, o, sy, r, sz);
+// 	Gecode::Set::RelOp::rel_op_post<SetCpltSetView, SetCpltSetView, SetCpltSetView>(home, sx, o, sy, r, sz);
 	break;
       }
     default:
       {
-	  throw Bdd::InvalidRelation("wrong relation for setconlevel SCL_BND_SBR ");
+	  throw CpltSet::InvalidRelation("wrong relation for setconlevel SCL_BND_SBR ");
       }
     }
 
@@ -562,14 +562,14 @@ namespace Gecode {
   forceinline void
   rel_con_bdd(Space* home, const CpltSetVar& x, Op o, const CpltSetVar& y, Rel r, 
 	  const CpltSetVar& z, SetConLevel scl) {
-    ViewArray<BddView> bv(home, 3);
+    ViewArray<CpltSetView> bv(home, 3);
     bv[0] = x;
     bv[1] = y;
     bv[2] = z;
     switch (scl) {
     case SCL_SPL:
       {
-	ViewArray<SplitBddView> sv(home, 3);
+	ViewArray<SplitCpltSetView> sv(home, 3);
 	for (int i = 3; i--; ) {
 	  sv[i].init(bv[i]);
 	}
@@ -578,7 +578,7 @@ namespace Gecode {
       }
     case SCL_BND_BDD:
       {
-	ViewArray<BndBddView> bndv(home, 3);
+	ViewArray<BndCpltSetView> bndv(home, 3);
 	for (int i = 3; i--; ) {
 	  bndv[i].init(bv[i]);
 	}
@@ -587,7 +587,7 @@ namespace Gecode {
       }
     case SCL_CRD:
       {
-	ViewArray<CrdBddView> crdv(home, 3);
+	ViewArray<CrdCpltSetView> crdv(home, 3);
 	for (int i = 3; i--; ) {
 	  crdv[i].init(bv[i]);
 	}
@@ -596,7 +596,7 @@ namespace Gecode {
       }
     case SCL_LEX:
       {
-	ViewArray<LexBddView> lexv(home, 3);
+	ViewArray<LexCpltSetView> lexv(home, 3);
 	for (int i = 3; i--; ) {
 	  lexv[i].init(bv[i]);
 	}

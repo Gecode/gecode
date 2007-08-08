@@ -19,19 +19,19 @@
  *
  */
 
-namespace Gecode { namespace Bdd { namespace Branch {
+namespace Gecode { namespace CpltSet { namespace Branch {
 
   template <bool exclude>
   forceinline IntSet
-  ValMin<exclude>::val(const Space*, BddView x) {
+  ValMin<exclude>::val(const Space*, CpltSetView x) {
 //     std::cout << "************* val  *************\n";
-//     DomValues<BddView> domt(x);
+//     DomValues<CpltSetView> domt(x);
 //     while(domt()) {
 //       std::cout << domt.val() << " ";
 //       ++domt;
 //     }
 //     std::cout << "\n";
-    DomValues<BddView> dom(x);
+    DomValues<CpltSetView> dom(x);
 //     std::cout << "returning: ";
 //     std::cout << "dom.val() =" << dom.val() << "\n";
 //     is = IntSetRanges(dom.val());
@@ -48,7 +48,7 @@ namespace Gecode { namespace Bdd { namespace Branch {
 
   template <bool exclude>
   forceinline ModEvent
-  ValMin<exclude>::tell(Space* home, unsigned int a, BddView x, IntSet v) {
+  ValMin<exclude>::tell(Space* home, unsigned int a, CpltSetView x, IntSet v) {
 //     std::cout << "telling on: " << x << "\n";
 //     IntSetRanges ir(v);
 //     while (ir()) {
@@ -97,10 +97,10 @@ namespace Gecode { namespace Bdd { namespace Branch {
 
   template <bool exclude>
   forceinline IntSet
-  ValMax<exclude>::val(const Space*, BddView x) const{
+  ValMax<exclude>::val(const Space*, CpltSetView x) const{
     // std::cout << "max val \n";
     IntSetRanges ir = IntSet::empty;
-    DomValues<BddView> dom(x);
+    DomValues<CpltSetView> dom(x);
     while (dom()) {
       IntSetRanges d(dom.val());
       ir = d;
@@ -112,7 +112,7 @@ namespace Gecode { namespace Bdd { namespace Branch {
 
   template <bool exclude>
   forceinline ModEvent
-  ValMax<exclude>::tell(Space* home, unsigned int a, BddView x, IntSet v) {
+  ValMax<exclude>::tell(Space* home, unsigned int a, CpltSetView x, IntSet v) {
     // std::cout << "telling max\n";
     IntSetRanges ir(v);
     return (a == (int) exclude) ? x.eqI(home,ir) : x.nqI(home,ir);
@@ -126,9 +126,9 @@ namespace Gecode { namespace Bdd { namespace Branch {
 
   template <bool exclude>
   forceinline int
-  ValMinUnknown<exclude>::val(const Space*, BddView x) const {
+  ValMinUnknown<exclude>::val(const Space*, CpltSetView x) const {
 //     std::cout << "x range?" << x.manager()->leaf(x.bdd_domain()) << " assigned? " << x.assigned() << "\n";
-    UnknownValues<BddView> unknown(x);
+    UnknownValues<CpltSetView> unknown(x);
     int v = unknown.val();
 //     std::cout << "val min un select: " << v  << "\n";
     return v;
@@ -136,7 +136,7 @@ namespace Gecode { namespace Bdd { namespace Branch {
 
   template <bool exclude>
   forceinline ModEvent
-  ValMinUnknown<exclude>::tell(Space* home, unsigned int a, BddView x, int v) {
+  ValMinUnknown<exclude>::tell(Space* home, unsigned int a, CpltSetView x, int v) {
     return (a == (int) exclude) ? x.include(home,v) : x.exclude(home,v);
   }
 
@@ -148,9 +148,9 @@ namespace Gecode { namespace Bdd { namespace Branch {
 
   template <bool exclude>
   forceinline int
-  ValMaxUnknown<exclude>::val(const Space*, BddView x) const {
+  ValMaxUnknown<exclude>::val(const Space*, CpltSetView x) const {
     int maxElem = 0;
-    Set::UnknownRanges<BddView> unknown(x);
+    Set::UnknownRanges<CpltSetView> unknown(x);
     while (unknown()) {
       maxElem = unknown.max();
       ++unknown;
@@ -160,7 +160,7 @@ namespace Gecode { namespace Bdd { namespace Branch {
 
   template <bool exclude>
   forceinline ModEvent
-  ValMaxUnknown<exclude>::tell(Space* home, unsigned int a, BddView x, int v) {
+  ValMaxUnknown<exclude>::tell(Space* home, unsigned int a, CpltSetView x, int v) {
     return (a == (int) exclude) ? x.include(home,v) : x.exclude(home,v);
   }
 
@@ -172,10 +172,10 @@ namespace Gecode { namespace Bdd { namespace Branch {
 
 //   template <class SelView>
 //   static void
-//   create(Space* home, ViewArray<BddView>& x, BddBvalSel vals) {
+//   create(Space* home, ViewArray<CpltSetView>& x, BddBvalSel vals) {
 //     switch (vals) {
 //     case SETBVAL_MAX:
-//       (void) new (home) ViewValBranching<BddView,int,SelView,ValMax>(home,x);
+//       (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMax>(home,x);
 //       break;
 //     default:
 //       throw UnknownBranching("Int::branch");
@@ -184,32 +184,32 @@ namespace Gecode { namespace Bdd { namespace Branch {
 
   template <class SelView>
   static void
-  create(Space* home, ViewArray<BddView>& x, BddBvalSel vals) {
+  create(Space* home, ViewArray<CpltSetView>& x, BddBvalSel vals) {
     // std::cout << "create branch \n";
     switch (vals) {
     case BDD_BVAL_MIN:
-      (void) new (home) ViewValBranching<BddView,const IntSet,SelView,ValMin<false> >(home,x);
+      (void) new (home) ViewValBranching<CpltSetView,const IntSet,SelView,ValMin<false> >(home,x);
       break;
     case BDD_BVAL_MIN_EX_FIRST:
-      (void) new (home) ViewValBranching<BddView,const IntSet,SelView,ValMin<true> >(home,x);
+      (void) new (home) ViewValBranching<CpltSetView,const IntSet,SelView,ValMin<true> >(home,x);
       break;
     case BDD_BVAL_MAX:
-      (void) new (home) ViewValBranching<BddView,const IntSet,SelView,ValMax<false> >(home,x);
+      (void) new (home) ViewValBranching<CpltSetView,const IntSet,SelView,ValMax<false> >(home,x);
       break;
     case BDD_BVAL_MAX_EX_FIRST:
-      (void) new (home) ViewValBranching<BddView,const IntSet,SelView,ValMax<true> >(home,x);
+      (void) new (home) ViewValBranching<CpltSetView,const IntSet,SelView,ValMax<true> >(home,x);
       break;
     case BDD_BVAL_MIN_UNKNOWN:
-      (void) new (home) ViewValBranching<BddView,int,SelView,ValMinUnknown<false> >(home,x);
+      (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMinUnknown<false> >(home,x);
       break;
     case BDD_BVAL_MIN_UNKNOWN_EX_FIRST:
-      (void) new (home) ViewValBranching<BddView,int,SelView,ValMinUnknown<true> >(home,x);
+      (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMinUnknown<true> >(home,x);
       break;
     case BDD_BVAL_MAX_UNKNOWN:
-      (void) new (home) ViewValBranching<BddView,int,SelView,ValMaxUnknown<false> >(home,x);
+      (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMaxUnknown<false> >(home,x);
       break;
     case BDD_BVAL_MAX_UNKNOWN_EX_FIRST:
-      (void) new (home) ViewValBranching<BddView,int,SelView,ValMaxUnknown<true> >(home,x);
+      (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMaxUnknown<true> >(home,x);
       break;
 //     default:
 //       throw UnknownBranching("Int::branch");
