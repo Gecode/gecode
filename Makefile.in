@@ -1026,28 +1026,28 @@ doxygen.hh: $(top_srcdir)/doxygen.hh.in config.status
 #
 $(top_srcdir)/gecode/int/var/imp-int-hdr.icc: \
 	$(top_srcdir)/gecode/int/var-imp-int.vis
-	./config.status --file $@:$<
+	./config.status  $(top_srcdir)/$@
 $(top_srcdir)/gecode/int/var/imp-int-body.icc: \
 	$(top_srcdir)/gecode/int/var-imp-int.vis
-	./config.status --file $@:$<
+	./config.status  $(top_srcdir)/$@
 $(top_srcdir)/gecode/int/var/imp-bool-hdr.icc: \
 	$(top_srcdir)/gecode/int/var-imp-bool.vis
-	./config.status --file $@:$<
+	./config.status  $(top_srcdir)/$@
 $(top_srcdir)/gecode/int/var/imp-bool-body.icc: \
 	$(top_srcdir)/gecode/int/var-imp-bool.vis
-	./config.status --file $@:$<
+	./config.status  $(top_srcdir)/$@
 $(top_srcdir)/gecode/set/var/imp-hdr.icc: \
 	$(top_srcdir)/gecode/set/var-imp.vis
-	./config.status --file $@:$<
+	./config.status  $(top_srcdir)/$@
 $(top_srcdir)/gecode/set/var/imp-body.icc: \
 	$(top_srcdir)/gecode/set/var-imp.vis
-	./config.status --file $@:$<
+	./config.status  $(top_srcdir)/$@
 $(top_srcdir)/gecode/bdd/var/imp-hdr.icc: \
 	$(top_srcdir)/gecode/bdd/var-imp.vis
-	./config.status --file $@:$<
+	./config.status  $(top_srcdir)/$@
 $(top_srcdir)/gecode/bdd/var/imp-body.icc: \
 	$(top_srcdir)/gecode/bdd/var-imp.vis
-	./config.status --file $@:$<
+	./config.status  $(top_srcdir)/$@
 
 #
 # Documentation
