@@ -151,7 +151,7 @@ namespace Gecode { namespace Bdd {
   forceinline int
   LexBddView::glbMin(void) const { 
     BMI* mgr = manager();
-    if (mgr->ctrue(bounds)) { return BddVarImp::MIN_OF_EMPTY; }
+    if (mgr->ctrue(bounds)) { return CpltSetVarImp::MIN_OF_EMPTY; }
     BddIterator iter(mgr, bounds);
     while (iter()) {
       if (iter.status() == FIX_GLB) {
@@ -160,13 +160,13 @@ namespace Gecode { namespace Bdd {
       }
       ++iter;
     }
-    return BddVarImp::MIN_OF_EMPTY;
+    return CpltSetVarImp::MIN_OF_EMPTY;
   }
 
   forceinline int 
   LexBddView::glbMax(void) const {
     BMI* mgr = manager();
-    if (mgr->ctrue(bounds)) { return BddVarImp::MAX_OF_EMPTY; } 
+    if (mgr->ctrue(bounds)) { return CpltSetVarImp::MAX_OF_EMPTY; } 
     BddIterator iter(mgr, bounds);
     int lastglb = -1;
     while (iter()) {
@@ -176,7 +176,7 @@ namespace Gecode { namespace Bdd {
       } 
       ++iter;
     }
-    return (lastglb == -1) ? BddVarImp::MAX_OF_EMPTY : lastglb;
+    return (lastglb == -1) ? CpltSetVarImp::MAX_OF_EMPTY : lastglb;
   };
 
   /*
@@ -276,7 +276,7 @@ namespace Gecode { namespace Bdd {
 
   forceinline ModEvent
   LexBddView::nq(Space* home, int a, int b) {
-    if (b < view.mgr_min() || a > view.mgr_max()) { return ME_BDD_NONE; }
+    if (b < view.mgr_min() || a > view.mgr_max()) { return ME_CPLTSET_NONE; }
     Iter::Ranges::Singleton m(a, b);
     GecodeBdd ass = !(view.variable()->gen_assignment(m));
     return tell_formula(home, ass);
@@ -287,7 +287,7 @@ namespace Gecode { namespace Bdd {
 
   forceinline ModEvent
   LexBddView::eq(Space* home, int a, int b) {
-    if (b < view.mgr_min() || a > view.mgr_max()) { return ME_BDD_FAILED; }
+    if (b < view.mgr_min() || a > view.mgr_max()) { return ME_CPLTSET_FAILED; }
     Iter::Ranges::Singleton m(a, b);
     GecodeBdd ass = view.variable()->gen_assignment(m);
     return tell_formula(home, ass);
@@ -354,7 +354,7 @@ namespace Gecode { namespace Bdd {
     int mi = view.mgr_min();
     int ma = view.mgr_max();
     if (i()) {
-      if (i.min() < mi || i.min() > ma) { return ME_BDD_FAILED; }
+      if (i.min() < mi || i.min() > ma) { return ME_CPLTSET_FAILED; }
     }
     GecodeBdd ass = view.variable()->gen_assignment(i);
     return tell_formula(home, ass);
@@ -428,7 +428,7 @@ namespace Gecode { namespace Bdd {
 
   /// Iterator for the values of a LexBddView
   template <>
-  class DomValues<LexBddView> : public DomValues<BddVarImp*> {
+  class DomValues<LexBddView> : public DomValues<CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -446,16 +446,16 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   DomValues<LexBddView>::DomValues(const LexBddView& x) 
-    : DomValues<BddVarImp*>(x.base().variable()) {}
+    : DomValues<CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   DomValues<LexBddView>::init(const LexBddView& x) {
-    DomValues<BddVarImp*>::init(x.base().variable());
+    DomValues<CpltSetVarImp*>::init(x.base().variable());
   }
 
   /// Iterator for the values in the greatest lower bound of a LexBddView
   template <>
-  class GlbValues<LexBddView> : public GlbValues<BddVarImp*> {
+  class GlbValues<LexBddView> : public GlbValues<CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -473,16 +473,16 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   GlbValues<LexBddView>::GlbValues(const LexBddView& x) 
-    : GlbValues<BddVarImp*>(x.base().variable()) {}
+    : GlbValues<CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   GlbValues<LexBddView>::init(const LexBddView& x) {
-    GlbValues<BddVarImp*>::init(x.base().variable());
+    GlbValues<CpltSetVarImp*>::init(x.base().variable());
   }
 }
   namespace Set {
   template <>
-  class GlbRanges<Bdd::LexBddView> : public GlbRanges<Bdd::BddVarImp*> {
+  class GlbRanges<Bdd::LexBddView> : public GlbRanges<Bdd::CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -500,15 +500,15 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   GlbRanges<Bdd::LexBddView>::GlbRanges(const Bdd::LexBddView& x) 
-    : GlbRanges<Bdd::BddVarImp*>(x.base().variable()) {}
+    : GlbRanges<Bdd::CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   GlbRanges<Bdd::LexBddView>::init(const Bdd::LexBddView& x) {
-    GlbRanges<Bdd::BddVarImp*>::init(x.base().variable());
+    GlbRanges<Bdd::CpltSetVarImp*>::init(x.base().variable());
   }
 
   template <>
-  class LubRanges<Bdd::LexBddView> : public LubRanges<Bdd::BddVarImp*> {
+  class LubRanges<Bdd::LexBddView> : public LubRanges<Bdd::CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -526,18 +526,18 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   LubRanges<Bdd::LexBddView>::LubRanges(const Bdd::LexBddView& x) 
-    : LubRanges<Bdd::BddVarImp*>(x.base().variable()) {}
+    : LubRanges<Bdd::CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   LubRanges<Bdd::LexBddView>::init(const Bdd::LexBddView& x) {
-    LubRanges<Bdd::BddVarImp*>::init(x.base().variable());
+    LubRanges<Bdd::CpltSetVarImp*>::init(x.base().variable());
   }
   }
   namespace Bdd {
 
   /// Iterator for the unknown values of a LexBddView
   template <>
-  class UnknownValues<LexBddView> : public UnknownValues<BddVarImp*> {
+  class UnknownValues<LexBddView> : public UnknownValues<CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -555,17 +555,17 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   UnknownValues<LexBddView>::UnknownValues(const LexBddView& x) 
-    : UnknownValues<BddVarImp*>(x.base().variable()) {}
+    : UnknownValues<CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   UnknownValues<LexBddView>::init(const LexBddView& x) {
-    UnknownValues<BddVarImp*>::init(x.base().variable());
+    UnknownValues<CpltSetVarImp*>::init(x.base().variable());
   }
   }
   namespace Set {
   template <>
   class UnknownRanges<Bdd::LexBddView> : 
-      public UnknownRanges<Bdd::BddVarImp*> {
+      public UnknownRanges<Bdd::CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -583,11 +583,11 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   UnknownRanges<Bdd::LexBddView>::UnknownRanges(const Bdd::LexBddView& x) 
-    : UnknownRanges<Bdd::BddVarImp*>(x.base().variable()) {}
+    : UnknownRanges<Bdd::CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   UnknownRanges<Bdd::LexBddView>::init(const Bdd::LexBddView& x) {
-    UnknownRanges<Bdd::BddVarImp*>::init(x.base().variable());
+    UnknownRanges<Bdd::CpltSetVarImp*>::init(x.base().variable());
   }
 
 }

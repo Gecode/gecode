@@ -310,7 +310,7 @@ namespace Gecode {
 
   template <class Rel>
   forceinline void 
-  atmost_con(Space* home, const BddVar& x, const BddVar& y, int c, 
+  atmost_con(Space* home, const CpltSetVar& x, const CpltSetVar& y, int c, 
 	     Rel lex, int card, SetConLevel scl) {
     BddView xv(x);
     BddView yv(y);
@@ -353,7 +353,7 @@ namespace Gecode {
 
   template <class Rel>
   forceinline void 
-  atmost_con(Space* home, const BddVar& x, const BddVar& y, const BddVar& z, 
+  atmost_con(Space* home, const CpltSetVar& x, const CpltSetVar& y, const CpltSetVar& z, 
 	     int c, Rel lex, int card, SetConLevel scl) {
     ViewArray<BddView> bv(home, 3);
     bv[0] = x;
@@ -405,7 +405,7 @@ namespace Gecode {
 
 
   forceinline void 
-  atmostOne_con(Space* home, const BddVarArgs& x, int c, SetConLevel scl) {
+  atmostOne_con(Space* home, const CpltSetVarArgs& x, int c, SetConLevel scl) {
     int n = x.size();
     ViewArray<BddView> bv(home, n);
     for (int i = 0; i < n; i++) {

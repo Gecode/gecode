@@ -31,7 +31,7 @@ namespace Gecode {
 
   //@{
   /// Passing set variables
-  typedef VarArgArray<BddVar>  BddVarArgs;
+  typedef VarArgArray<CpltSetVar>  CpltSetVarArgs;
   //@}
 
   /**
@@ -49,21 +49,21 @@ namespace Gecode {
    * \brief %Set variable array
    * \ingroup TaskIntSetVarArrays
    */
-  class GECODE_BDD_EXPORT BddVarArray : public VarArray<BddVar> {
+  class GECODE_CPLTSET_EXPORT CpltSetVarArray : public VarArray<CpltSetVar> {
   public:
-    BddVarArray(void);
-    BddVarArray(const BddVarArray&);
+    CpltSetVarArray(void);
+    CpltSetVarArray(const CpltSetVarArray&);
     /// Create an uninitialized array of size \a n
-    BddVarArray(Space* home, BMI* m,int n);
+    CpltSetVarArray(Space* home, BMI* m,int n);
     /// Create an uninitialized array of size \a n
-    BddVarArray(Space* home, BMI* m,int n, int a, int b);
+    CpltSetVarArray(Space* home, BMI* m,int n, int a, int b);
     /**
      * \brief Create an array of size \a n.
      *
      * Each variable is initialized with the bounds and cardinality as
      * given by the arguments.
      */
-    BddVarArray(Space* home, BMI* m, int n,int glbMin,int glbMax,int lubMin,int lubMax,
+    CpltSetVarArray(Space* home, BMI* m, int n,int glbMin,int glbMax,int lubMin,int lubMax,
 		unsigned int minCard = 0,
 		unsigned int maxCard = Limits::Set::card_max);
     /**
@@ -72,7 +72,7 @@ namespace Gecode {
      * Each variable is initialized with the bounds and cardinality as
      * given by the arguments.
      */
-    BddVarArray(Space* home, BMI* m, int n,const IntSet& glb, int lubMin, int lubMax,
+    CpltSetVarArray(Space* home, BMI* m, int n,const IntSet& glb, int lubMin, int lubMax,
 		unsigned int minCard = 0,
 		unsigned int maxCard = Limits::Set::card_max);
     /**
@@ -81,7 +81,7 @@ namespace Gecode {
      * Each variable is initialized with the bounds and cardinality as
      * given by the arguments.
      */
-    BddVarArray(Space* home, BMI* m, int n,int glbMin,int glbMax,const IntSet& lub,
+    CpltSetVarArray(Space* home, BMI* m, int n,int glbMin,int glbMax,const IntSet& lub,
 		unsigned int minCard = 0,
 		unsigned int maxCard = Limits::Set::card_max);
     /**
@@ -90,27 +90,27 @@ namespace Gecode {
      * Each variable is initialized with the bounds and cardinality as
      * given by the arguments.
      */
-    BddVarArray(Space* home, BMI* m, int n,
+    CpltSetVarArray(Space* home, BMI* m, int n,
 		const IntSet& glb,const IntSet& lub,
 		unsigned int minCard = 0,
 		unsigned int maxCard = Limits::Set::card_max);
   };
   
-  /// Traits of BddVarArray
+  /// Traits of CpltSetVarArray
   template <>
-  class ArrayTraits<BddVarArray> {
+  class ArrayTraits<CpltSetVarArray> {
   public:
-    typedef BddVarArgs   storage_type;
-    typedef BddVar       value_type;
-    typedef BddVarArgs   args_type;
+    typedef CpltSetVarArgs   storage_type;
+    typedef CpltSetVar       value_type;
+    typedef CpltSetVarArgs   args_type;
   };
-  /// Traits of BddVarArgs
+  /// Traits of CpltSetVarArgs
   template <>
-  class ArrayTraits<BddVarArgs> {
+  class ArrayTraits<CpltSetVarArgs> {
   public:
-    typedef BddVarArgs storage_type;
-    typedef BddVar     value_type;
-    typedef BddVarArgs args_type;
+    typedef CpltSetVarArgs storage_type;
+    typedef CpltSetVar     value_type;
+    typedef CpltSetVarArgs args_type;
   };
 
   /*
@@ -119,11 +119,11 @@ namespace Gecode {
    */
 
   forceinline
-  BddVarArray::BddVarArray(void) {}
+  CpltSetVarArray::CpltSetVarArray(void) {}
 
   forceinline
-  BddVarArray::BddVarArray(const BddVarArray& a)
-    : VarArray<BddVar>(a) {}
+  CpltSetVarArray::CpltSetVarArray(const CpltSetVarArray& a)
+    : VarArray<CpltSetVar>(a) {}
 
 }
 

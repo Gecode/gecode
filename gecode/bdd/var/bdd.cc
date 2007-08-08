@@ -24,40 +24,40 @@
 namespace Gecode {
 
   
-  BddVar::BddVar(Space* home, BMI* m) { 
-    var = new (home) Bdd::BddVarImp(home, m); 
+  CpltSetVar::CpltSetVar(Space* home, BMI* m) { 
+    var = new (home) Bdd::CpltSetVarImp(home, m); 
   }
 
-  BddVar::BddVar(Space* home, BMI* m, int min, int max) {
+  CpltSetVar::CpltSetVar(Space* home, BMI* m, int min, int max) {
     assert( m->level() < 4);
-    var = new (home) Bdd::BddVarImp(home,m, min,max);
+    var = new (home) Bdd::CpltSetVarImp(home,m, min,max);
     assert( var->manager()->level() < 4);
   } 
 
-  BddVar::BddVar(Space* home, BMI* m, int glbMin,int glbMax,
+  CpltSetVar::CpltSetVar(Space* home, BMI* m, int glbMin,int glbMax,
 		 int lubMin,int lubMax, 
 		 unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) Bdd::BddVarImp(home, m, glbMin, glbMax, 
+    var = new (home) Bdd::CpltSetVarImp(home, m, glbMin, glbMax, 
 				    lubMin, lubMax, cardMin, cardMax);
   }
 
-  BddVar::BddVar(Space* home, BMI* m, const IntSet& glbD,
+  CpltSetVar::CpltSetVar(Space* home, BMI* m, const IntSet& glbD,
 		 int lubMin,int lubMax, 
 		 unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) Bdd::BddVarImp(home, m, glbD, lubMin, lubMax, 
+    var = new (home) Bdd::CpltSetVarImp(home, m, glbD, lubMin, lubMax, 
 				    cardMin, cardMax);
   }
 
-  BddVar::BddVar(Space* home, BMI* m, int glbMin,int glbMax,
+  CpltSetVar::CpltSetVar(Space* home, BMI* m, int glbMin,int glbMax,
 		 const IntSet& lubD,
 		 unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) Bdd::BddVarImp(home, m, glbMin, glbMax, 
+    var = new (home) Bdd::CpltSetVarImp(home, m, glbMin, glbMax, 
 				    lubD, cardMin, cardMax);
   }
 
-  BddVar::BddVar(Space* home, BMI* m, const IntSet& glbD, const IntSet& lubD,
+  CpltSetVar::CpltSetVar(Space* home, BMI* m, const IntSet& glbD, const IntSet& lubD,
 		 unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) Bdd::BddVarImp(home, m,  glbD, lubD, cardMin, cardMax);
+    var = new (home) Bdd::CpltSetVarImp(home, m,  glbD, lubD, cardMin, cardMax);
   }
 
 }

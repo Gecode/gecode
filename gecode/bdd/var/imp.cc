@@ -26,21 +26,21 @@ namespace Gecode { namespace Bdd {
 
     /// copy bddvar
     forceinline
-    BddVarImp::BddVarImp(Space* home, bool share, BddVarImp& x)
-      : BddVarImpBase(home,share,x), 
+    CpltSetVarImp::CpltSetVarImp(Space* home, bool share, CpltSetVarImp& x)
+      : CpltSetVarImpBase(home,share,x), 
 	domain(x.domain), min(x.min), max(x.max),
 	_offset(x._offset), assignment(false) {
       mgr = x.mgr;
     }
   
-    BddVarImp*
-    BddVarImp::perform_copy(Space* home, bool share) {
-      BddVarImp* ptr = new (home) BddVarImp(home,share,*this);
+    CpltSetVarImp*
+    CpltSetVarImp::perform_copy(Space* home, bool share) {
+      CpltSetVarImp* ptr = new (home) CpltSetVarImp(home,share,*this);
       return ptr;
     }
 
     Reflection::Arg*
-    BddVarImp::spec(Space* home, Reflection::VarMap& m) {
+    CpltSetVarImp::spec(Space* home, Reflection::VarMap& m) {
       // \todo FIXME implemente reflection
       return NULL;
     }

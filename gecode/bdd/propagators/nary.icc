@@ -79,7 +79,7 @@ namespace Gecode { namespace Bdd {
     : Propagator(home), x(x0), d(d0), scl(scl0) {
     force(home);
     for (int i = x.size(); i--;) {
-      x[i].subscribe(home, this, PC_BDD_DOM);
+      x[i].subscribe(home, this, PC_CPLTSET_DOM);
     }
   }
 
@@ -115,7 +115,7 @@ namespace Gecode { namespace Bdd {
     // std::cout << "dispose propagator\n";
     if (!home->failed()) {
       for (int i = x.size(); i--;) {
-	x[i].cancel(home, this, PC_BDD_DOM);
+	x[i].cancel(home, this, PC_CPLTSET_DOM);
       }
     }
     BMI* mgr = x[0].manager();
@@ -635,15 +635,15 @@ namespace Gecode { namespace Bdd {
   forceinline
   NaryOneBdd<View0, View1>::NaryOneBdd(Space* home, ViewArray<View0>& x, 
 				       View1& y, GecodeBdd& d0)
-    : MixNaryOnePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, x, y),
+    : MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, x, y),
       d(d0) {
-    MixNaryOnePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::force(home);
+    MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::force(home);
   }
 
   template <class View0, class View1>
   forceinline
   NaryOneBdd<View0, View1>::NaryOneBdd(Space* home, bool share, NaryOneBdd& p)
-    : MixNaryOnePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, share, p), 
+    : MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, share, p), 
       d(p.d) {}
 
   template <class View0, class View1>
@@ -692,14 +692,14 @@ namespace Gecode { namespace Bdd {
   template <class View0, class View1>
   size_t
   NaryOneBdd<View0, View1>::dispose(Space* home) {
-    MixNaryOnePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::unforce(home);
+    MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::unforce(home);
     if (!home->failed()) {
-      x.cancel(home, this, PC_BDD_DOM);
-      y.cancel(home, this, PC_BDD_DOM);
+      x.cancel(home, this, PC_CPLTSET_DOM);
+      y.cancel(home, this, PC_CPLTSET_DOM);
     }
     BMI* mgr = y.manager();
     mgr->dispose(d);
-    MixNaryOnePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::dispose(home);
+    MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::dispose(home);
     return sizeof(*this);
   }
 

@@ -28,7 +28,7 @@ namespace Gecode { namespace Bdd {
     : Propagator(home), x(x0), s(s0) {
     force(home);
     x.subscribe(home, this, Gecode::Int::PC_INT_DOM);
-    s.subscribe(home, this, PC_BDD_DOM);
+    s.subscribe(home, this, PC_CPLTSET_DOM);
   }
 
   template <class View1, class View2>
@@ -57,7 +57,7 @@ namespace Gecode { namespace Bdd {
     unforce(home);
     if (!home->failed()) {
       x.cancel(home, this, Gecode::Int::PC_INT_DOM);
-      s.cancel(home, this, PC_BDD_DOM);
+      s.cancel(home, this, PC_CPLTSET_DOM);
     }
     Propagator::dispose(home);
     return sizeof(*this);

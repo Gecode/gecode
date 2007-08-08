@@ -28,13 +28,13 @@ namespace Gecode {
 
   // \todo FIXME similar replace intset with dynamicarray
 
-  /** \brief Set variable order as presented in HLS for BddVars in \a x 
+  /** \brief Set variable order as presented in HLS for CpltSetVars in \a x 
    *  It is possible to already order \a add additional variables not yet declared
    *  as needed in the case of SingletonBddViews, i.e. while using hybrid 
    *  Int Bdd constraints. 
    */
   void 
-  hls_order(Space* home, const BddVarArray& x) {
+  hls_order(Space* home, const CpltSetVarArray& x) {
     // std::cout << "start hls_order()\n";
     int n = x.size();
     ViewArray<BddView> view(home, n);
@@ -45,13 +45,13 @@ namespace Gecode {
     variableorder(view);
   }
 
-  /** \brief Set variable order as presented in HLS for BddVars in \a x  and in \a y
+  /** \brief Set variable order as presented in HLS for CpltSetVars in \a x  and in \a y
    *  It is possible to already order \a add additional variables not yet declared
    *  as needed in the case of SingletonBddViews, i.e. while using hybrid 
    *  Int Bdd constraints. 
    */
   void 
-  hls_order(Space* home, const BddVarArray& x, const BddVarArray& y) {
+  hls_order(Space* home, const CpltSetVarArray& x, const CpltSetVarArray& y) {
     // std::cout << "start hls_order(x, y)\n";
     int n = x.size();
     ViewArray<BddView> viewx(home, n);
@@ -68,13 +68,13 @@ namespace Gecode {
     variableorder(viewx, viewy);
   }
 
-//   /** \brief Set variable order as presented in HLS for BddVars in \a x  and in \a y
+//   /** \brief Set variable order as presented in HLS for CpltSetVars in \a x  and in \a y
 //    *  It is possible to already order \a add additional variables not yet declared
 //    *  as needed in the case of SingletonBddViews, i.e. while using hybrid 
 //    *  Int Bdd constraints. 
 //    */
 //   void 
-//   hls_order(Space* home, BddVarArray** x, int xs) {
+//   hls_order(Space* home, CpltSetVarArray** x, int xs) {
     
 //     GECODE_AUTOARRAY(ViewArray<BddView>*, viewptr, xs);
 //     int c = 0;
@@ -97,7 +97,7 @@ namespace Gecode {
 //   }
 
   void
-  hls_order(Space* home, BddVarArray** x, int xs) {
+  hls_order(Space* home, CpltSetVarArray** x, int xs) {
     // std::cerr << "start order\n";
     
     BMI* mgr = (*(x[0]))[0].manager();

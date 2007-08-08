@@ -1,4 +1,3 @@
-/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -21,19 +20,32 @@
  */
 
 #include "gecode/bdd.hh"
-#include "gecode/bdd/bddprop.hh"
+#include "gecode/bdd/propagators.hh"
 
 using namespace Gecode::Bdd;
 
 namespace Gecode {
 
-  void singleton(Space* home, IntVar x, BddVar s, SetConLevel scl) {
-    Int::IntView iv(x);
-    BddView bv(s);
-    GECODE_ES_FAIL(home, (Bdd::Singleton<Int::IntView, BddView>
-			  ::post(home, iv, bv)));
+  void
+  disjointglb(Space* home, const CpltSetVarArgs& x, int index) {
+    if (home->failed()) return;
+
+    int n = x.size();
+    ViewArray<BddView> bv(home, n);
+    for (int i = n; i--; )
+      bv[i] = x[i];
+    GECODE_ES_FAIL(home, DisjointGlb<BddView>::post(home, bv, index));
+
   }
 
+  void
+  disjointsudoku(Space* home, CpltSetVar x, int order) {
+    if (home->failed()) return;
+    ViewArray<BddView> bv(home, 1);
+    bv[0] = x;
+    GECODE_ES_FAIL(home, DisjointSudoku<BddView>::post(home, bv[0], order));
+
+  }
 
 }
 

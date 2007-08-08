@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __GECODE_BDDEXAMPLE_HH__
-#define __GECODE_BDDEXAMPLE_HH__
+#ifndef __GECODE_CPLTSETEXAMPLE_HH__
+#define __GECODE_CPLTSETEXAMPLE_HH__
 
 #include "gecode/bdd.hh"
 #include "examples/support.hh"

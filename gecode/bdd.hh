@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __GECODE_BDD_HH__
-#define __GECODE_BDD_HH__
+#ifndef __GECODE_CPLTSET_HH__
+#define __GECODE_CPLTSET_HH__
 
 #include "gecode/limits.hh"
 #include "gecode/kernel.hh"
@@ -44,18 +44,18 @@
     (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 
 #ifdef GECODE_BUILD_BDD
-#define GECODE_BDD_EXPORT __declspec( dllexport )
+#define GECODE_CPLTSET_EXPORT __declspec( dllexport )
 #else
-#define GECODE_BDD_EXPORT __declspec( dllimport )
+#define GECODE_CPLTSET_EXPORT __declspec( dllimport )
 #endif
 
 #else
 
 #ifdef GCC_HASCLASSVISIBILITY
 
-#define GECODE_BDD_EXPORT __attribute__ ((visibility("default")))
+#define GECODE_CPLTSET_EXPORT __attribute__ ((visibility("default")))
 #else
-#define GECODE_BDD_EXPORT
+#define GECODE_CPLTSET_EXPORT
 #endif
 
 #endif
@@ -102,7 +102,7 @@ namespace Gecode {
 #include "gecode/bdd/manager/buddy.icc"
 typedef Gecode::BuddyMgr BddMgr;
 
-#include "gecode/bdd/bddsupport.icc"
+#include "gecode/bdd/support.icc"
 #include "gecode/set/var.icc"
 #include "gecode/bdd/var.icc"
 #include "gecode/bdd/view.icc"
@@ -177,103 +177,103 @@ namespace Gecode {
   //@{
 
   /// Propagates \f$ x \sim_r \{i\}\f$
-  GECODE_BDD_EXPORT void
-  dom(Space* home, BddVar x, SetRelType r, int i, 
+  GECODE_CPLTSET_EXPORT void
+  dom(Space* home, CpltSetVar x, SetRelType r, int i, 
       SetConLevel scl = SCL_DEF);
 
   /// Propagates \f$ x \sim_r \{i,\dots,j\}\f$
-  GECODE_BDD_EXPORT void
-  dom(Space* home, BddVar x, SetRelType r, int i, int j, 
+  GECODE_CPLTSET_EXPORT void
+  dom(Space* home, CpltSetVar x, SetRelType r, int i, int j, 
       SetConLevel scl = SCL_DEF);
 
   /// Propagates \f$ x \sim_r s\f$
-  GECODE_BDD_EXPORT void
-  dom(Space* home, BddVar x, SetRelType r, const IntSet& s, 
+  GECODE_CPLTSET_EXPORT void
+  dom(Space* home, CpltSetVar x, SetRelType r, const IntSet& s, 
       SetConLevel scl = SCL_DEF);
   
   /// Post propagator for \f$ dom(x) \sim_r y\f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, IntVar x, BddSetRelType r, BddVar s, 
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, IntVar x, BddSetRelType r, CpltSetVar s, 
       SetConLevel scl = SCL_DEF);
 
 
   /// Post propagator for \f$ x \sim_r y\f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, BddVar x, BddSetRelType r, BddVar y, 
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, CpltSetVar x, BddSetRelType r, CpltSetVar y, 
       SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, BddVar x, BddSetOpType o, BddVar y, 
-      BddSetRelType r, BddVar z,  SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, CpltSetVar x, BddSetOpType o, CpltSetVar y, 
+      BddSetRelType r, CpltSetVar z,  SetConLevel scl = SCL_DEF);
 
-  GECODE_BDD_EXPORT void
-  rel(Space* home, BddVar x, BddSetOpType o, BddVar y, 
-      SetRelType r, BddVar z,  SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, CpltSetVar x, BddSetOpType o, CpltSetVar y, 
+      SetRelType r, CpltSetVar z,  SetConLevel scl = SCL_DEF);
 
-  GECODE_BDD_EXPORT void
-  rel(Space* home, BddVar x, SetOpType o, BddVar y, 
-      BddSetRelType r, BddVar z,  SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, CpltSetVar x, SetOpType o, CpltSetVar y, 
+      BddSetRelType r, CpltSetVar z,  SetConLevel scl = SCL_DEF);
 
-  GECODE_BDD_EXPORT void
-  rel(Space* home, BddVar x, SetOpType o, BddVar y, 
-      SetRelType r, BddVar z,  SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, CpltSetVar x, SetOpType o, CpltSetVar y, 
+      SetRelType r, CpltSetVar z,  SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ l \leq |x| \leq u \f$ 
-  GECODE_BDD_EXPORT void
-  cardinality(Space* home, BddVar x, unsigned int l, unsigned int u, 
+  GECODE_CPLTSET_EXPORT void
+  cardinality(Space* home, CpltSetVar x, unsigned int l, unsigned int u, 
 	      SetConLevel scl = SCL_DEF);
   
   /// Post propagator for \f$ l |x| = c \f$ 
-  GECODE_BDD_EXPORT void
-  cardinality(Space* home, BddVar x, unsigned int c, 
+  GECODE_CPLTSET_EXPORT void
+  cardinality(Space* home, CpltSetVar x, unsigned int c, 
 	      SetConLevel scl = SCL_DEF);
   
-  GECODE_BDD_EXPORT void 
-  singleton(Space* home, IntVar x, BddVar s, SetConLevel scl);
+  GECODE_CPLTSET_EXPORT void 
+  singleton(Space* home, IntVar x, CpltSetVar s, SetConLevel scl);
   
   /// Post propagator for \f$ \bigcup_{i\neq index} glb(x_{i}) \parallel x_{index} \f$ 
-  GECODE_BDD_EXPORT void
-  disjointglb(Space* home, const BddVarArgs& x, int index);
+  GECODE_CPLTSET_EXPORT void
+  disjointglb(Space* home, const CpltSetVarArgs& x, int index);
 
   /// Post propagator for \f$ \bigcup_{i\neq index} glb(x_{i}) \parallel x_{index} \f$ 
-  GECODE_BDD_EXPORT void
-  disjointsudoku(Space* home,  BddVar x, int order);
+  GECODE_CPLTSET_EXPORT void
+  disjointsudoku(Space* home,  CpltSetVar x, int order);
 
   /// Post propagator for \f$ |x \cap is| =  c \f$ 
-  GECODE_BDD_EXPORT void
-  exactly(Space* home, BddVar x, IntSet& is, int c, SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  exactly(Space* home, CpltSetVar x, IntSet& is, int c, SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ 0 \leq |x \cap is| \leq c \f$ 
-  GECODE_BDD_EXPORT void
-  atmost(Space* home, BddVar x, IntSet& is, int c, SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  atmost(Space* home, CpltSetVar x, IntSet& is, int c, SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ 0 \leq |x \cap y| \leq c \f$ 
-  GECODE_BDD_EXPORT void
-  atmost(Space* home, BddVar x, BddVar y, int c, 
+  GECODE_CPLTSET_EXPORT void
+  atmost(Space* home, CpltSetVar x, CpltSetVar y, int c, 
 	 SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ 0 \leq |x \cap y| \leq c \wedge x \sim_{lex} y\f$ 
-  GECODE_BDD_EXPORT void
-  atmostLex(Space* home, BddVar x, BddVar y, int c, 
+  GECODE_CPLTSET_EXPORT void
+  atmostLex(Space* home, CpltSetVar x, CpltSetVar y, int c, 
 	    BddSetRelType lex, SetConLevel scl = SCL_DEF);
 
   /**
    * \brief  Post propagator for \f$ 0 \leq |x \cap y| \leq c 
    *         \wedge x \sim_{lex} y \wedge |x| = |y| = d\f$ 
    */
-  GECODE_BDD_EXPORT void
-  atmostLexCard(Space* home, BddVar x, BddVar y, int c, 
+  GECODE_CPLTSET_EXPORT void
+  atmostLexCard(Space* home, CpltSetVar x, CpltSetVar y, int c, 
 		BddSetRelType lex, int d, SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ 0 \leq |x \cap y| \leq c \wedge |x| = |y| = d\f$ 
-  GECODE_BDD_EXPORT void
-  atmostCard(Space* home, BddVar x, BddVar y, int c, 
+  GECODE_CPLTSET_EXPORT void
+  atmostCard(Space* home, CpltSetVar x, CpltSetVar y, int c, 
 	     int d, SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ x \cap y = z \wedge 0 \leq |z| \leq c \f$ 
-  GECODE_BDD_EXPORT void
-  atmost(Space* home, BddVar x, BddVar y, BddVar z, int c, 
+  GECODE_CPLTSET_EXPORT void
+  atmost(Space* home, CpltSetVar x, CpltSetVar y, CpltSetVar z, int c, 
 	 SetConLevel scl = SCL_DEF);
 
   /** \brief Post propagator for \f$ |x_i \cap x_j| \leq 1 \f$ for all \f$0\leq i\neq j<|x| 
@@ -281,20 +281,20 @@ namespace Gecode {
    *  \note The bdd for this constraint becomes exponential with increasing universe
    *        and increasing |x|
    */ 
-  GECODE_BDD_EXPORT void
-  atmostOne(Space* home, const BddVarArgs& x, int c, SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  atmostOne(Space* home, const CpltSetVarArgs& x, int c, SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \f$ 
-  GECODE_BDD_EXPORT void
-  partition(Space* home, const BddVarArgs& x, SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  partition(Space* home, const CpltSetVarArgs& x, SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \f$ 
-  GECODE_BDD_EXPORT void
-  partition(Space* home, const BddVarArgs& x, const BddVar& y, SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  partition(Space* home, const CpltSetVarArgs& x, const CpltSetVar& y, SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \f$ 
-  GECODE_BDD_EXPORT void
-  partition(Space* home, const IntVarArgs& x, const BddVar& y, SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  partition(Space* home, const IntVarArgs& x, const CpltSetVar& y, SetConLevel scl = SCL_DEF);
 
   /**
    * \brief Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \wedge 
@@ -302,8 +302,8 @@ namespace Gecode {
    *                       x_i \sim_{lex} x_j\f$ 
    *
    */
-  GECODE_BDD_EXPORT void
-  partitionLex(Space* home, const BddVarArgs& x, BddSetRelType lex, 
+  GECODE_CPLTSET_EXPORT void
+  partitionLex(Space* home, const CpltSetVarArgs& x, BddSetRelType lex, 
 	       SetConLevel scl = SCL_DEF);
   /**
    * \brief Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \wedge 
@@ -311,57 +311,57 @@ namespace Gecode {
    *                       x_i \sim_{lex} x_j  \wedge 
    *                       \forall i \in \{0, \dots, n-1\}: |x_i| = c \f$ 
    */
-  GECODE_BDD_EXPORT void
-  partitionLexCard(Space* home, const BddVarArgs& x, BddSetRelType lex, int c, 
+  GECODE_CPLTSET_EXPORT void
+  partitionLexCard(Space* home, const CpltSetVarArgs& x, BddSetRelType lex, int c, 
 		   SetConLevel scl = SCL_DEF);
 
   /**
    * \brief Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \wedge 
    *                       \forall i \in \{0, \dots, n-1\}: |x_i| = c \f$ 
    */
-  GECODE_BDD_EXPORT void
-  partitionCard(Space* home, const BddVarArgs& x, int c, 
+  GECODE_CPLTSET_EXPORT void
+  partitionCard(Space* home, const CpltSetVarArgs& x, int c, 
 		   SetConLevel scl = SCL_DEF);
 
 
   /// Post propagator for \f$ t = \bigcup_{i\in s}  x_i \f$
-  GECODE_BDD_EXPORT void
-  selectUnion(Space* home, const BddVarArgs& x, BddVar s, BddVar t,
+  GECODE_CPLTSET_EXPORT void
+  selectUnion(Space* home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t,
 	      SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ s = \bigcup_{(x_i \subseteq t) \wedge x_i \neq \emptyset } i \f$
-  GECODE_BDD_EXPORT void
-  findNonEmptySub(Space* home, const BddVarArgs& x, BddVar s, BddVar t,
+  GECODE_CPLTSET_EXPORT void
+  findNonEmptySub(Space* home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t,
 		  SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ s = \{x\} \f$
-  GECODE_BDD_EXPORT void
-  singleton(Space* home, IntVar x, BddVar s, SetConLevel scl = SCL_DOM);
+  GECODE_CPLTSET_EXPORT void
+  singleton(Space* home, IntVar x, CpltSetVar s, SetConLevel scl = SCL_DOM);
 
   /// Post propagator for \f$ t = \bigcup_{i\in s}  x_i \f$
-  GECODE_BDD_EXPORT void
-  range(Space* home, const IntVarArgs& x, BddVar s, BddVar t, 
+  GECODE_CPLTSET_EXPORT void
+  range(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
 	SetConLevel scl = SCL_DOM);
 
   /// Post propagator for \f$ s = \bigcup_{x_i \in t} i \f$
-  GECODE_BDD_EXPORT void
-  roots(Space* home, const IntVarArgs& x, BddVar s, BddVar t, 
-	const BddVarArgs& allvars, 
+  GECODE_CPLTSET_EXPORT void
+  roots(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
+	const CpltSetVarArgs& allvars, 
 	SetConLevel scl = SCL_DOM);
 
   /** \brief Post propagator for \f$ x_i\neq x_j\f$ for all \f$0\leq i\neq j<|x| 
    *  \wedge t = \bigcup_{i\in s}  x_i \f$
    */ 
-  GECODE_BDD_EXPORT void
-  alldifferent(Space* home, const IntVarArgs& x, BddVar s, BddVar t, 
-	       const BddVarArgs& allvars, 
+  GECODE_CPLTSET_EXPORT void
+  alldifferent(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
+	       const CpltSetVarArgs& allvars, 
 	       SetConLevel scl = SCL_DOM);
 
   /* \brief Post propagator \f$\wedge r = \bigcup_{i\in s}  x_i \f$
    */ 
-/*   GECODE_BDD_EXPORT void
+/*   GECODE_CPLTSET_EXPORT void
      permutation(Space* home, const IntVarArgs& x, const IntSet& r, 
-   	      BddVar s, BddVar t, SetConLevel scl = SCL_DOM);
+   	      CpltSetVar s, CpltSetVar t, SetConLevel scl = SCL_DOM);
   // for permutation we need a CONST VIEW and DONT NEED Card = N THAT IS GOOD
 */
 
@@ -369,9 +369,9 @@ namespace Gecode {
    *  \wedge t = \bigcup_{i\in s}  x_i \f$
    * 
    */
-  GECODE_BDD_EXPORT void
-  nvalue(Space* home, const IntVarArgs& x, BddVar s, BddVar t, int n,
-	 const BddVarArgs& allvars, 
+  GECODE_CPLTSET_EXPORT void
+  nvalue(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, int n,
+	 const CpltSetVarArgs& allvars, 
 	 SetConLevel scl = SCL_DOM);
 
   /** \brief Post propagator for \f$ t = \bigcup_{i\in s} x_i \wedge v = \bigcup_{i\in u} y_i
@@ -379,9 +379,9 @@ namespace Gecode {
    * 
    *  |x| and |y| may be different
    */
-  GECODE_BDD_EXPORT void
-  uses(Space* home, const IntVarArgs& x, BddVar s, BddVar t,
-       const IntVarArgs& y, BddVar u, BddVar v,
+  GECODE_CPLTSET_EXPORT void
+  uses(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t,
+       const IntVarArgs& y, CpltSetVar u, CpltSetVar v,
        SetConLevel scl = SCL_DOM);
   
   //@}
@@ -392,28 +392,28 @@ namespace Gecode {
    * \f$ \forall i\in \{0, \dots, n - 1\}: x_{0_{1}} \prec x_{{n-1}_{1}}, \dots, x_{0_{k-1}} \prec x_{{n-1}_{k-1}}\f$
    */
   
-  GECODE_BDD_EXPORT void
-  hls_order(Space* home, const BddVarArray& x);
+  GECODE_CPLTSET_EXPORT void
+  hls_order(Space* home, const CpltSetVarArray& x);
 
   /**
    * \brief Ordering all declared bdd variables \f$ x_0, \dots, x_{n-1}\f$ and \f$ y_0, \dots, y_{n-1}\f$such that 
    * \f$ \forall i\in \{0, \dots, n - 1\}: x_{0_{1}} \prec \dots \prec x_{{n-1}_{1}} , \dots, x_{0_{k-1}} \prec x_{{n-1}_{k-1}}\f$
    */
   
-  GECODE_BDD_EXPORT void
-  hls_order(Space* home, const BddVarArray& x, const BddVarArray& y);
+  GECODE_CPLTSET_EXPORT void
+  hls_order(Space* home, const CpltSetVarArray& x, const CpltSetVarArray& y);
 
   /**
    * \brief Ordering all declared bdd variables \f$ x_0, \dots, x_{n-1}\f$ and \f$ y_0, \dots, y_{n-1}\f$such that 
    * \f$ \forall i\in \{0, \dots, n - 1\}: x_{0_{1}} \prec \dots \prec x_{{n-1}_{1}} , \dots, x_{0_{k-1}} \prec x_{{n-1}_{k-1}}\f$
    */
   
-  GECODE_BDD_EXPORT void
-  hls_order(Space* home, BddVarArray** x, int xs);
+  GECODE_CPLTSET_EXPORT void
+  hls_order(Space* home, CpltSetVarArray** x, int xs);
 
   /// Branch over all \a x with variable selection \a vars and value selection \a vals
-  GECODE_BDD_EXPORT void
-  branch(Space* home, const BddVarArgs& x, BddBvarSel vars, BddBvalSel vals, 
+  GECODE_CPLTSET_EXPORT void
+  branch(Space* home, const CpltSetVarArgs& x, BddBvarSel vars, BddBvalSel vals, 
 	 SetConLevel scl = SCL_DOM);
 
 
@@ -428,37 +428,37 @@ namespace Gecode {
   //@{
 
    /// Post propagator for \f$ x \sim_r y\f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, BddVar x, SetRelType r, BddVar y, 
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, CpltSetVar x, SetRelType r, CpltSetVar y, 
       SetConLevel scl = SCL_BND_SBR);
 
   /// Post propagator for \f$ (x \sim_r y) \Leftrightarrow b \f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, BddVar x, SetRelType r, BddVar y, BoolVar b, SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, CpltSetVar x, SetRelType r, CpltSetVar y, BoolVar b, SetConLevel scl = SCL_DEF);
   
   /// Post propagator for \f$ s \sim_r \{x\}\f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, BddVar s, SetRelType r, IntVar x, SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, CpltSetVar s, SetRelType r, IntVar x, SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ \{x\} \sim_r s\f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, IntVar x, SetRelType r, BddVar s, SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, IntVar x, SetRelType r, CpltSetVar s, SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ (s \sim_r \{x\}) \Leftrightarrow b \f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, BddVar s, SetRelType r, IntVar x, BoolVar b, SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, CpltSetVar s, SetRelType r, IntVar x, BoolVar b, SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ (\{x\} \sim_r s) \Leftrightarrow b \f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, IntVar x, SetRelType r, BddVar s, BoolVar b, SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, IntVar x, SetRelType r, CpltSetVar s, BoolVar b, SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$\forall i\in s:\ i \sim_r x\f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, BddVar s, IntRelType r, IntVar x, SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, CpltSetVar s, IntRelType r, IntVar x, SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$\forall i\in s:\ x \sim_r i\f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, IntVar x, IntRelType r, BddVar s, SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, IntVar x, IntRelType r, CpltSetVar s, SetConLevel scl = SCL_DEF);
 
   //@}
 
@@ -471,45 +471,45 @@ namespace Gecode {
   //@{
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, BddVar x, SetOpType op, BddVar y, SetRelType r, BddVar z);
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, CpltSetVar x, SetOpType op, CpltSetVar y, SetRelType r, CpltSetVar z);
 
   /// Post propagator for \f$ y = \diamond_{\mathit{op}} x\f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, SetOpType op, const BddVarArgs& x, BddVar y);
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, SetOpType op, const CpltSetVarArgs& x, CpltSetVar y);
 
   /// Post propagator for \f$ y = \diamond_{\mathit{op}} x\f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, SetOpType op, const IntVarArgs& x, BddVar y);
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, SetOpType op, const IntVarArgs& x, CpltSetVar y);
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, const IntSet& x, SetOpType op, BddVar y,
-      SetRelType r, BddVar z);
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, const IntSet& x, SetOpType op, CpltSetVar y,
+      SetRelType r, CpltSetVar z);
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, BddVar x, SetOpType op, const IntSet& y,
-      SetRelType r, BddVar z);
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, CpltSetVar x, SetOpType op, const IntSet& y,
+      SetRelType r, CpltSetVar z);
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, BddVar x, SetOpType op, BddVar y,
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, CpltSetVar x, SetOpType op, CpltSetVar y,
       SetRelType r, const IntSet& z);
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
-  GECODE_BDD_EXPORT void
+  GECODE_CPLTSET_EXPORT void
   rel(Space* home, const IntSet& x, SetOpType op, const IntSet& y,
-      SetRelType r, BddVar z);
+      SetRelType r, CpltSetVar z);
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, const IntSet& x, SetOpType op, BddVar y, SetRelType r,
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, const IntSet& x, SetOpType op, CpltSetVar y, SetRelType r,
       const IntSet& z);
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
-  GECODE_BDD_EXPORT void
-  rel(Space* home, BddVar x, SetOpType op, const IntSet& y, SetRelType r,
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, CpltSetVar x, SetOpType op, const IntSet& y, SetRelType r,
       const IntSet& z);
 
   //@}
@@ -522,12 +522,12 @@ namespace Gecode {
   //@{
 
   /// Post propagator that propagates that \a x is convex 
-  GECODE_BDD_EXPORT void
-  convex(Space* home, BddVar x);
+  GECODE_CPLTSET_EXPORT void
+  convex(Space* home, CpltSetVar x);
 
   /// Post propagator that propagates that \a y is the convex hull of \a x
-  GECODE_BDD_EXPORT void
-  convexHull(Space* home, BddVar x, BddVar y);
+  GECODE_CPLTSET_EXPORT void
+  convexHull(Space* home, CpltSetVar x, CpltSetVar y);
 
   //@}
 
@@ -539,12 +539,12 @@ namespace Gecode {
   //@{
 
   /// Post propagator for \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$
-  GECODE_BDD_EXPORT void
-  sequence(Space* home, const BddVarArgs& x);
+  GECODE_CPLTSET_EXPORT void
+  sequence(Space* home, const CpltSetVarArgs& x);
 
   /// Post propagator for \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$ and \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$ 
-  GECODE_BDD_EXPORT void
-  sequentialUnion(Space* home, const BddVarArgs& y, BddVar x);
+  GECODE_CPLTSET_EXPORT void
+  sequentialUnion(Space* home, const CpltSetVarArgs& y, CpltSetVar x);
 
   //@}
 
@@ -557,16 +557,16 @@ namespace Gecode {
 
 
   /// Post propagator for \f$\forall 0\leq i\leq |x| : |x_i|=c\f$ and \f$\forall 0\leq i<j\leq |x| : |x_i\cap x_j|\leq 1\f$
-  GECODE_BDD_EXPORT void
-  atmostOne(Space* home, const BddVarArgs& x, unsigned int c);
+  GECODE_CPLTSET_EXPORT void
+  atmostOne(Space* home, const CpltSetVarArgs& x, unsigned int c);
 
   /// Post propagator for \f$\forall 0\leq i\leq |x| : |x_i|=c\f$ and \f$\forall 0\leq i<j\leq |x| : x_i\neq x_j\f$
-  GECODE_BDD_EXPORT void
-  distinct(Space* home, const BddVarArgs& x, unsigned int c);
+  GECODE_CPLTSET_EXPORT void
+  distinct(Space* home, const CpltSetVarArgs& x, unsigned int c);
 
   /// Post propagator for \f$\forall 0\leq i\leq |x| : \forall 0\leq i<j\leq |x| : x_i\neq x_j\f$
-  GECODE_BDD_EXPORT void
-  distinct(Space* home, const BddVarArgs& x, SetConLevel scl = SCL_DEF);
+  GECODE_CPLTSET_EXPORT void
+  distinct(Space* home, const CpltSetVarArgs& x, SetConLevel scl = SCL_DEF);
 
   //@}
 
@@ -579,24 +579,24 @@ namespace Gecode {
   //@{
 
   /// Post propagator that propagates that \a x is the minimal element of \a s 
-  GECODE_BDD_EXPORT void
-  min(Space* home, BddVar s, IntVar x);
+  GECODE_CPLTSET_EXPORT void
+  min(Space* home, CpltSetVar s, IntVar x);
   
   /// Post propagator that propagates that \a x is the maximal element of \a s 
-  GECODE_BDD_EXPORT void
-  max(Space* home, BddVar s, IntVar x);
+  GECODE_CPLTSET_EXPORT void
+  max(Space* home, CpltSetVar s, IntVar x);
   
   /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order 
-  GECODE_BDD_EXPORT void
-  match(Space* home, BddVar s, const IntVarArgs& x);
+  GECODE_CPLTSET_EXPORT void
+  match(Space* home, CpltSetVar s, const IntVarArgs& x);
   
   /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
-  GECODE_BDD_EXPORT void
-  channel(Space* home, const IntVarArgs& x,const BddVarArgs& y);
+  GECODE_CPLTSET_EXPORT void
+  channel(Space* home, const IntVarArgs& x,const CpltSetVarArgs& y);
   
   /// Post propagator for \f$ |s|=x \f$ 
-  GECODE_BDD_EXPORT void
-  cardinality(Space* home, BddVar s, IntVar x);
+  GECODE_CPLTSET_EXPORT void
+  cardinality(Space* home, CpltSetVar s, IntVar x);
 
 
   /**
@@ -609,9 +609,9 @@ namespace Gecode {
    * \a elements. The weight of a set is the sum of the weights of its
    * elements.
    */
-  GECODE_BDD_EXPORT void
+  GECODE_CPLTSET_EXPORT void
   weights(Space* home, const IntArgs& elements, const IntArgs& weights,
-	  BddVar x, IntVar y);
+	  CpltSetVar x, IntVar y);
 
   //@}
 
@@ -620,33 +620,33 @@ namespace Gecode {
    * If \a y is the empty set, \a z will also be constrained to be empty
    * (as an empty union is empty).
    */
-  GECODE_BDD_EXPORT void
-  selectUnion(Space* home, const BddVarArgs& x, BddVar y, BddVar z);
+  GECODE_CPLTSET_EXPORT void
+  selectUnion(Space* home, const CpltSetVarArgs& x, CpltSetVar y, CpltSetVar z);
 
   /** Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \f$ \mathcal{U} \f$ as universe
    *
    * If \a y is empty, \a z will be constrained to be the universe
    * \f$ \mathcal{U} \f$ (as an empty intersection is the universe).
    */
-  GECODE_BDD_EXPORT void
-  selectInter(Space* home, const BddVarArgs& x, BddVar y, BddVar z);
+  GECODE_CPLTSET_EXPORT void
+  selectInter(Space* home, const CpltSetVarArgs& x, CpltSetVar y, CpltSetVar z);
 
   /** Post propagator for \f$ z=\bigcap\langle x_0,\dots,x_{n-1}\rangle[y] \f$ using \a u as universe
    *
    * If \a y is empty, \a z will be constrained to be the given universe
    * \a u (as an empty intersection is the universe).
    */
-  GECODE_BDD_EXPORT void
-  selectInterIn(Space* home, const BddVarArgs& x, BddVar y, BddVar z,
+  GECODE_CPLTSET_EXPORT void
+  selectInterIn(Space* home, const CpltSetVarArgs& x, CpltSetVar y, CpltSetVar z,
 		const IntSet& u);
 
   /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
-  GECODE_BDD_EXPORT void
-  selectDisjoint(Space* home, const BddVarArgs& x, BddVar y);
+  GECODE_CPLTSET_EXPORT void
+  selectDisjoint(Space* home, const CpltSetVarArgs& x, CpltSetVar y);
 
   /// Post propagator for \f$ z=\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
-  GECODE_BDD_EXPORT void
-  selectSet(Space* home, const BddVarArgs& x, IntVar y, BddVar z);
+  GECODE_CPLTSET_EXPORT void
+  selectSet(Space* home, const CpltSetVarArgs& x, IntVar y, CpltSetVar z);
 
   //@}
   //}@ 

@@ -20,31 +20,17 @@
  */
 
 #include "gecode/bdd.hh"
-#include "gecode/bdd/bddprop.hh"
+#include "gecode/bdd/propagators.hh"
 
 using namespace Gecode::Bdd;
 
 namespace Gecode {
 
-  void
-  disjointglb(Space* home, const BddVarArgs& x, int index) {
+  void distinct(Space* home, const CpltSetVarArgs& x, SetConLevel scl) {
     if (home->failed()) return;
+    ViewArray<BddView> y(home, x);
 
-    int n = x.size();
-    ViewArray<BddView> bv(home, n);
-    for (int i = n; i--; )
-      bv[i] = x[i];
-    GECODE_ES_FAIL(home, DisjointGlb<BddView>::post(home, bv, index));
-
-  }
-
-  void
-  disjointsudoku(Space* home, BddVar x, int order) {
-    if (home->failed()) return;
-    ViewArray<BddView> bv(home, 1);
-    bv[0] = x;
-    GECODE_ES_FAIL(home, DisjointSudoku<BddView>::post(home, bv[0], order));
-
+    distinct(home, y, scl);
   }
 
 }

@@ -40,7 +40,7 @@ namespace Gecode {
   }
 
   forceinline void 
-  selectUnion_con(Space* home, const BddVarArgs& x, const BddVar& s, const BddVar& t, 
+  selectUnion_con(Space* home, const CpltSetVarArgs& x, const CpltSetVar& s, const CpltSetVar& t, 
 	    SetConLevel scl) {
     int n = x.size();
     int m = n + 2;
@@ -110,7 +110,7 @@ namespace Gecode {
   }
 
   forceinline void 
-  findNonEmptySub_con(Space* home, const BddVarArgs& x, const BddVar& s, const BddVar& t, 
+  findNonEmptySub_con(Space* home, const CpltSetVarArgs& x, const CpltSetVar& s, const CpltSetVar& t, 
 	    SetConLevel scl) {
     int n = x.size();
     int m = n + 2;

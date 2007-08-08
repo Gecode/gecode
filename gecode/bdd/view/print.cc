@@ -195,7 +195,7 @@ operator<<(std::ostream& os, const SetBddView& x) {
 }
 
 std::ostream&
-operator<< (std::ostream& os, const BddVar& x) {
+operator<< (std::ostream& os, const CpltSetVar& x) {
   BMI* mgr = x.manager();
   BddOutput l = mgr->level();
   // std::cout << "print level = " << l << "\n";
@@ -204,21 +204,21 @@ operator<< (std::ostream& os, const BddVar& x) {
   case BDD_DOM: 
     {
       if (assigned) {
-	BddVarGlbValues glb(x);
+	CpltSetVarGlbValues glb(x);
 	printValue(os, glb);
       } else {
-	BddVarDomValues dom(x);
+	CpltSetVarDomValues dom(x);
 	printValue(os, dom);
       }
     }
     break;
   case BDD_BND:
     {
-      BddVarGlbRanges glb(x);
+      CpltSetVarGlbRanges glb(x);
       if (assigned) {
 	printRange(os, glb);
       } else {
-	BddVarLubRanges lub(x);
+	CpltSetVarLubRanges lub(x);
 	printVar(assigned, os, glb, lub);
       }
     }
@@ -227,18 +227,18 @@ operator<< (std::ostream& os, const BddVar& x) {
     {
       os << "Conv(_";
       if (assigned) {
-	BddVarGlbValues glb(x);
+	CpltSetVarGlbValues glb(x);
 	printValue(os, glb);
       } else {
-	BddVarDomValues dom(x);
+	CpltSetVarDomValues dom(x);
 	printValue(os, dom);
       }
       os << "_) = ";
-      BddVarGlbRanges glb(x);
+      CpltSetVarGlbRanges glb(x);
       if (assigned) {
 	printRange(os, glb);
       } else {
-	BddVarLubRanges lub(x);
+	CpltSetVarLubRanges lub(x);
 	printVar(assigned, os, glb, lub);
       }
     }

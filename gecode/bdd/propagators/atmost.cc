@@ -19,7 +19,7 @@
  *
  */
 
-#include "gecode/bdd/bddprop.hh"
+#include "gecode/bdd/propagators.hh"
 
 using namespace Gecode::Bdd;
 
@@ -28,17 +28,17 @@ namespace Gecode {
 
 
   void
-  exactly(Space* home, BddVar x, IntSet& is, int c,  SetConLevel scl) {
+  exactly(Space* home, CpltSetVar x, IntSet& is, int c,  SetConLevel scl) {
     if (home->failed()) return;
 
     ViewArray<BddView> bv(home, 1);
     bv[0] = x;
     // std::cerr << "exactly on " << x << "\n";
     // SUBSUMPTION CHECK
-    BddVarGlbRanges glb(x);
+    CpltSetVarGlbRanges glb(x);
     if (glb()) {
       IntSetRanges ir(is);
-      Gecode::Iter::Ranges::Inter<BddVarGlbRanges, IntSetRanges> inter(glb, ir);
+      Gecode::Iter::Ranges::Inter<CpltSetVarGlbRanges, IntSetRanges> inter(glb, ir);
       if (inter()) {
 	// int v = inter.min();
 	int s = inter.width();
@@ -56,9 +56,9 @@ namespace Gecode {
       // std::cerr << "DONE\n";
     }
 
-    BddVarUnknownRanges delta(x);
+    CpltSetVarUnknownRanges delta(x);
     IntSetRanges irange(is);
-    Gecode::Iter::Ranges::Inter<BddVarUnknownRanges, IntSetRanges> 
+    Gecode::Iter::Ranges::Inter<CpltSetVarUnknownRanges, IntSetRanges> 
       interdel(delta, irange);
     if (!interdel()) {
       // std::cerr << "EMPTY INTERSECT\n";
@@ -82,7 +82,7 @@ namespace Gecode {
     // std::cerr << "DONE\n";
 
     Iter::Ranges::SingletonAppend<
-      Gecode::Iter::Ranges::Inter<BddVarUnknownRanges, IntSetRanges>
+      Gecode::Iter::Ranges::Inter<CpltSetVarUnknownRanges, IntSetRanges>
       > si(mi,ma,interdel);
 
     BMI* mgr = bv[0].manager();
@@ -99,11 +99,11 @@ namespace Gecode {
   }
 
   void
-  atmost(Space* home, BddVar x, IntSet& is, int c,  SetConLevel scl) {
+  atmost(Space* home, CpltSetVar x, IntSet& is, int c,  SetConLevel scl) {
     if (home->failed()) return;
 
     // SUBSUMPTION CHECK
-//     BddVarLubRanges lub(x);
+//     CpltSetVarLubRanges lub(x);
 //     IntSetRanges ir(is);
 //     if (!Gecode::Iter::Ranges::subset(ir, lub)) {
 //       std::cout << "SUBSUMED\n";
@@ -126,35 +126,35 @@ namespace Gecode {
   }
 
   void 
-  atmost(Space* home, BddVar x, BddVar y, int c,  SetConLevel scl) {
+  atmost(Space* home, CpltSetVar x, CpltSetVar y, int c,  SetConLevel scl) {
     // std::cout << "call atmost\n";
     atmost_con(home, x, y, c, SRT_EQ, -1, scl);
   }
 
   void 
-  atmostLex(Space* home, BddVar x, BddVar y, int c, 
+  atmostLex(Space* home, CpltSetVar x, CpltSetVar y, int c, 
 	    BddSetRelType lex, SetConLevel scl) {
     atmost_con(home, x, y, c, lex, -1, scl);
   }
 
   void 
-  atmostLexCard(Space* home, BddVar x, BddVar y, int c, 
+  atmostLexCard(Space* home, CpltSetVar x, CpltSetVar y, int c, 
 		BddSetRelType lex, int d, SetConLevel scl) {
     atmost_con(home, x, y, c, lex, d, scl);
   }
 
   void 
-  atmostCard(Space* home, BddVar x, BddVar y, int c, int d, SetConLevel scl) {
+  atmostCard(Space* home, CpltSetVar x, CpltSetVar y, int c, int d, SetConLevel scl) {
     atmost_con(home, x, y, c, SRT_EQ, d, scl);
   }
 
   void 
-  atmost(Space* home, BddVar x, BddVar y, BddVar z, int c, SetConLevel scl) {
+  atmost(Space* home, CpltSetVar x, CpltSetVar y, CpltSetVar z, int c, SetConLevel scl) {
     atmost_con(home, x, y, z, c, SRT_EQ, -1, scl);
   }
 
   void 
-  atmostOne(Space* home, const BddVarArgs& x, int c, SetConLevel scl) {
+  atmostOne(Space* home, const CpltSetVarArgs& x, int c, SetConLevel scl) {
     atmostOne_con(home, x, c, scl);
   }
 

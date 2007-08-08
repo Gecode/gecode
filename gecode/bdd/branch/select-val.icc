@@ -55,7 +55,7 @@ namespace Gecode { namespace Bdd { namespace Branch {
 //       std::cout << ir.min() << ".." << ir.max() << ", ";
 //       ++ir;
 //     }
-    ModEvent me = ME_BDD_NONE;
+    ModEvent me = ME_CPLTSET_NONE;
     // try to exclude first
     if (a == (int) exclude) {
       if (v.size() == 1) {

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -20,18 +21,19 @@
  */
 
 #include "gecode/bdd.hh"
-#include "gecode/bdd/bddprop.hh"
+#include "gecode/bdd/propagators.hh"
 
 using namespace Gecode::Bdd;
 
 namespace Gecode {
 
-  void distinct(Space* home, const BddVarArgs& x, SetConLevel scl) {
-    if (home->failed()) return;
-    ViewArray<BddView> y(home, x);
-
-    distinct(home, y, scl);
+  void singleton(Space* home, IntVar x, CpltSetVar s, SetConLevel scl) {
+    Int::IntView iv(x);
+    BddView bv(s);
+    GECODE_ES_FAIL(home, (Bdd::Singleton<Int::IntView, BddView>
+			  ::post(home, iv, bv)));
   }
+
 
 }
 

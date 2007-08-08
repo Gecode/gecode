@@ -471,7 +471,7 @@ namespace Gecode {
 
 
   template <class Rel>
-  void rel_con(Space* home, const BddVar& x, Rel r, const BddVar& y, 
+  void rel_con(Space* home, const CpltSetVar& x, Rel r, const CpltSetVar& y, 
 	       SetConLevel scl) {
     BddView xv(x);
     BddView yv(y);
@@ -513,7 +513,7 @@ namespace Gecode {
 
 
   template <class Rel>
-  void rel_con(Space* home, const IntVar& x, Rel r, const BddVar& s, 
+  void rel_con(Space* home, const IntVar& x, Rel r, const CpltSetVar& s, 
 	  SetConLevel scl) {
     Gecode::Int::IntView iv(x);
     BddView bv(s);
@@ -525,8 +525,8 @@ namespace Gecode {
   }  
 
   forceinline void
-  rel_con_sbr(Space* home, const BddVar& x, SetOpType o, const BddVar& y, 
-	      SetRelType r, const BddVar& z, SetConLevel scl) {
+  rel_con_sbr(Space* home, const CpltSetVar& x, SetOpType o, const CpltSetVar& y, 
+	      SetRelType r, const CpltSetVar& z, SetConLevel scl) {
     ViewArray<BddView> bv(home, 3);
     bv[0] = x;
     bv[1] = y;
@@ -560,8 +560,8 @@ namespace Gecode {
 
   template <class Rel, class Op>
   forceinline void
-  rel_con_bdd(Space* home, const BddVar& x, Op o, const BddVar& y, Rel r, 
-	  const BddVar& z, SetConLevel scl) {
+  rel_con_bdd(Space* home, const CpltSetVar& x, Op o, const CpltSetVar& y, Rel r, 
+	  const CpltSetVar& z, SetConLevel scl) {
     ViewArray<BddView> bv(home, 3);
     bv[0] = x;
     bv[1] = y;

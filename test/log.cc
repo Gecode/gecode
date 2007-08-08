@@ -328,11 +328,11 @@ namespace Log {
 #endif
 
 #ifdef GECODE_HAVE_BDD_VARS  
-  void initial(const BddVarArray& a, const char* name) {
+  void initial(const CpltSetVarArray& a, const char* name) {
     if (!do_logging) return;
     // Display
     ostringstream hiva;
-    hiva << "BddVarArray " << name << " = ";
+    hiva << "CpltSetVarArray " << name << " = ";
     hinitial.push_back(hiva.str());
 
     for (int i = 0; i < a.size(); ++i) {
@@ -361,14 +361,14 @@ namespace Log {
       ostringstream init;
       init << "\tconst int arrGlb" << i << "[][2] = {";
       int n = 0;
-      for (BddVarGlbRanges it(a[i]); it(); ++it, ++n) {
+      for (CpltSetVarGlbRanges it(a[i]); it(); ++it, ++n) {
 	if (n) init << ",";
 	init << "{" << it.min() << "," << it.max() << "}";
       }
       init << "};\n";
       init << "\tconst int arrLub" << i << "[][2] = {";
       int m = 0;
-      for (BddVarLubRanges it(a[i]); it(); ++it, ++m) {
+      for (CpltSetVarLubRanges it(a[i]); it(); ++it, ++m) {
 	if(m) init << ",";
 	init << "{" << it.min() << "," << it.max() << "}";
       }
@@ -501,7 +501,7 @@ namespace Log {
 #endif
 
 #ifdef GECODE_HAVE_BDD_VARS
-  void prune(const BddVar& v, std::string name, SetRelType brt, int val) {
+  void prune(const CpltSetVar& v, std::string name, SetRelType brt, int val) {
     if(!do_logging) return;
     ostringstream h;
     switch(brt) {
@@ -529,7 +529,7 @@ namespace Log {
   }
 
 
-  void prune(const BddVar& v, std::string name,
+  void prune(const CpltSetVar& v, std::string name,
 	     unsigned int cardMin, unsigned int cardMax) {
     if(!do_logging) return;
     ostringstream h;
@@ -561,7 +561,7 @@ namespace Log {
 #endif
 
 #ifdef GECODE_HAVE_BDD_VARS
-  void prune_result(const BddVar& v) {
+  void prune_result(const CpltSetVar& v) {
     if (!do_logging) return;
     ostringstream h;
     h << "\tPruning resulted in domain " << v;
@@ -614,7 +614,7 @@ namespace Log {
 #endif
 
 #ifdef GECODE_HAVE_BDD_VARS
-  void print(const BddVarArray& a, const char* name) {
+  void print(const CpltSetVarArray& a, const char* name) {
     if (!do_logging) return;
     ostringstream h;
     if (name) h << name << "[] = ";

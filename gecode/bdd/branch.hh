@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef __GECODE_BDD_BRANCH_HH__
-#define __GECODE_BDD_BRANCH_HH__
+#ifndef __GECODE_CPLTSET_BRANCH_HH__
+#define __GECODE_CPLTSET_BRANCH_HH__
 
 #include "gecode/bdd.hh"
 #include "gecode/iter.hh"

@@ -319,74 +319,69 @@ SETBUILDDIRS	=						\
 	set/projectors/propagator
 
 #
-# BDD COMPONENTS
+# CpltSet COMPONENTS
 #
 
-ifeq "@enable_set_vars@" "yes"
-WITHSET = bddprop/set.cc
-else
-WITHSET =
-endif
-
-BDDSRC0 =	\
-	branch.cc array.cc bddsupport.cc             \
+CPLTSETSRC0 =	\
+	branch.cc array.cc support.cc             \
 	var/imp.cc var/bdd.cc  view/print.cc                  \
-	bddprop/dom.cc bddprop/rel.cc bddprop/cardinality.cc  \
-	bddprop/atmost.cc bddprop/partition.cc bddprop/select.cc  \
-	bddprop/singleton.cc bddprop/rangeroots.cc \
-	bddprop/disjointglb.cc bddprop/distinct.cc \
-	$(WITHSET)
+	propagators/dom.cc propagators/rel.cc propagators/cardinality.cc  \
+	propagators/atmost.cc propagators/partition.cc \
+	propagators/select.cc  \
+	propagators/singleton.cc propagators/rangeroots.cc \
+	propagators/disjointglb.cc propagators/distinct.cc \
+	propagators/set.cc
 
-BDDVARIMP = \
+CPLTSETVARIMP = \
         gecode/bdd/var/imp-hdr.icc gecode/bdd/var/imp-body.icc
 
-BDDHDR0 =		                \
+CPLTSETHDR0 =		                \
 	view.icc manager/buddy.icc exception.icc array.icc \
-	bddsupport.icc \
+	support.icc \
 	var.icc  propagator.icc \
         var/imp.icc var/bdd.icc view/bdd.icc view/splitbdd.icc \
 	view/bndbdd.icc view/crdbdd.icc view/lexbdd.icc \
 	view/singletonbdd.icc view/setview.icc \
-	bddprop.hh \
-	bddprop/unary.icc bddprop/binary.icc \
-	bddprop/nary.icc bddprop/naryrec.icc \
-	bddprop/rangeroots.icc bddprop/rangerec.icc  \
-	bddprop/atmost.icc bddprop/partition.icc bddprop/rel.icc \
-	bddprop/select.icc bddprop/singleton.icc bddprop/bin.icc \
-	bddprop/distinct.icc bddprop/disjointglb.icc \
+	propagators.hh \
+	propagators/unary.icc propagators/binary.icc \
+	propagators/nary.icc propagators/naryrec.icc \
+	propagators/rangeroots.icc propagators/rangerec.icc  \
+	propagators/atmost.icc propagators/partition.icc propagators/rel.icc \
+	propagators/select.icc propagators/singleton.icc propagators/bin.icc \
+	propagators/distinct.icc propagators/disjointglb.icc \
 	branch.hh branch/select-val.icc branch/select-view.icc	
 
-BDDSRC		= $(BDDSRC0:%=gecode/bdd/%)
-BDDHDR		= gecode/bdd.hh $(BDDHDR0:%=gecode/bdd/%)
-BDDOBJ		= $(BDDSRC:%.cc=%$(OBJSUFFIX))
+CPLTSETSRC	= $(CPLTSETSRC0:%=gecode/bdd/%)
+CPLTSETHDR		= gecode/bdd.hh $(CPLTSETHDR0:%=gecode/bdd/%)
+CPLTSETOBJ		= $(CPLTSETSRC:%.cc=%$(OBJSUFFIX))
 
-ifeq "@enable_bdd_vars@" "yes"
-export BDDDLL		= $(LIBPREFIX)@BDD@$(DLLSUFFIX)
-export BDDSTATICLIB	= $(LIBPREFIX)@BDD@$(STATICLIBSUFFIX)
-export BDDLIB		= $(LIBPREFIX)@BDD@$(LIBSUFFIX)
+ifeq "@enable_cpltset_vars@" "yes"
+export CPLTSETDLL		= $(LIBPREFIX)@CPLTSET@$(DLLSUFFIX)
+export CPLTSETSTATICLIB	= $(LIBPREFIX)@CPLTSET@$(STATICLIBSUFFIX)
+export CPLTSETLIB		= $(LIBPREFIX)@CPLTSET@$(LIBSUFFIX)
 ifeq "@CXX@" "cl"
-export LINKBDD      	= $(LINKPREFIX)@BDD@$(LINKSUFFIX) 
+export LINKCPLTSET      	= $(LINKPREFIX)@CPLTSET@$(LINKSUFFIX) 
 else
-export LINKBDD      	= $(LINKPREFIX)@BDD@$(LINKSUFFIX) $(BDDFLAG)
+export LINKCPLTSET      	= $(LINKPREFIX)@CPLTSET@$(LINKSUFFIX) $(CPLTSETFLAG)
 endif
 
 ifeq "@need_soname@" "yes"
-export BDDSONAME     = \
-	@WLSONAME@$(LIBPREFIX)@BDD@$(SOSUFFIX)
+export CPLTSETSONAME     = \
+	@WLSONAME@$(LIBPREFIX)@CPLTSET@$(SOSUFFIX)
 else
-export BDDSONAME     = 
+export CPLTSETSONAME     = 
 endif
 else
-export BDDDLL		=
-export BDDSTATICLIB	=
-export BDDLIB		=
-export LINKBDD      	=
+export CPLTSETDLL		=
+export CPLTSETSTATICLIB	=
+export CPLTSETLIB		=
+export LINKCPLTSET      	=
 endif
-BDDBUILDDIRS	=						\
+CPLTSETBUILDDIRS	=						\
 	bdd bdd/var bdd/view bdd/bddprop bdd/branch bdd/manager
 
 #
-# BUDDY BDD LIBRARY COMPONENTS
+# BUDDY CPLTSET LIBRARY COMPONENTS
 #
 
 BUDDYSRC0 = \
@@ -550,12 +545,12 @@ SETEXAMPLEOBJ  = $(SETEXAMPLESRC:%.cc=%$(OBJSUFFIX))
 SETEXAMPLESBJ  = $(SETEXAMPLESRC:%.cc=%$(SBJSUFFIX))
 SETEXAMPLEEXE  = $(SETEXAMPLESRC:%.cc=%$(EXESUFFIX))
 
-BDDEXAMPLESRC0 = \
+CPLTSETEXAMPLESRC0 = \
 	bdd/bddsteiner bdd/sudoku-bdd-const
-BDDEXAMPLESRC  = $(BDDEXAMPLESRC0:%=examples/%.cc)
-BDDEXAMPLEOBJ  = $(BDDEXAMPLESRC:%.cc=%$(OBJSUFFIX))
-BDDEXAMPLESBJ  = $(BDDEXAMPLESRC:%.cc=%$(SBJSUFFIX))
-BDDEXAMPLEEXE  = $(BDDEXAMPLESRC:%.cc=%$(EXESUFFIX))
+CPLTSETEXAMPLESRC  = $(CPLTSETEXAMPLESRC0:%=examples/%.cc)
+CPLTSETEXAMPLEOBJ  = $(CPLTSETEXAMPLESRC:%.cc=%$(OBJSUFFIX))
+CPLTSETEXAMPLESBJ  = $(CPLTSETEXAMPLESRC:%.cc=%$(SBJSUFFIX))
+CPLTSETEXAMPLEEXE  = $(CPLTSETEXAMPLESRC:%.cc=%$(EXESUFFIX))
 
 EXAMPLEBUILDDIRS = examples
 
@@ -583,11 +578,11 @@ SUPPORTSBJ = $(SUPPORTSRC:%.cc=%$(SBJSUFFIX))
 #
 
 ALLSRC =						\
-	$(KERNELSRC) $(SEARCHSRC) $(INTSRC) $(SETSRC) $(BUDDYSRC) $(BDDSRC) \
+	$(KERNELSRC) $(SEARCHSRC) $(INTSRC) $(SETSRC) $(BUDDYSRC) $(CPLTSETSRC) \
 	$(MMSRC) $(SERSRC) $(SUPPORTSRC) $(INTEXAMPLESRC) $(SETEXAMPLESRC) \
-	$(BDDEXAMPLESRC)
-ALLVARIMP = $(INTVARIMP) $(SETVARIMP) $(BDDVARIMP)
-ALLHDR = $(KERNELHDR) $(SEARCHHDR) $(BUDDYHDR) $(INTHDR) $(SETHDR) $(BDDHDR) $(MMHDR) \
+	$(CPLTSETEXAMPLESRC)
+ALLVARIMP = $(INTVARIMP) $(SETVARIMP) $(CPLTSETVARIMP)
+ALLHDR = $(KERNELHDR) $(SEARCHHDR) $(BUDDYHDR) $(INTHDR) $(SETHDR) $(CPLTSETHDR) $(MMHDR) \
 		$(SERHDR) $(OTHERHDR) $(ALLVARIMP)
 ALLOBJ0 = $(ALLSRC:%.cc=%$(OBJSUFFIX))
 ALLOBJ  = $(ALLOBJ0:%.c=%$(OBJSUFFIX))
@@ -595,27 +590,27 @@ ALLSBJ0 = $(ALLSRC:%.cc=%$(SBJSUFFIX))
 ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 
 export LINKALL = $(LINKMM) $(LINKBUDDY) $(LINKSER) $(LINKSET) $(LINKINT) \
-  $(LINKBDD) $(LINKSEARCH) $(LINKKERNEL)
+  $(LINKCPLTSET) $(LINKSEARCH) $(LINKKERNEL)
 
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
-	$(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(BUDDYDLL) $(SETDLL) $(BDDDLL) \
+	$(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(BUDDYDLL) $(SETDLL) $(CPLTSETDLL) \
 	$(MMDLL) $(SERDLL)
 export ALLLIB = \
-	$(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) $(BUDDYLIB) $(BDDLIB) \
+	$(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) $(BUDDYLIB) $(CPLTSETLIB) \
 	$(MMLIB) $(SERLIB)
 else
 DLLTARGETS=
 export ALLLIB = \
 	$(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
-	$(INTSTATICLIB) $(SETSTATICLIB) $(BUDDYSTATICLIB) $(BDDSTATICLIB)\
+	$(INTSTATICLIB) $(SETSTATICLIB) $(BUDDYSTATICLIB) $(CPLTSETSTATICLIB)\
 	$(MMSTATICLIB) $(SERSTATICLIB)
 endif
 
 ifeq "@BUILDSTATIC@" "yes"
 STATICTARGETS = \
 	$(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
-	$(INTSTATICLIB) $(SETSTATICLIB) $(BUDDYSTATICLIB) $(BDDSTATICLIB) \
+	$(INTSTATICLIB) $(SETSTATICLIB) $(BUDDYSTATICLIB) $(CPLTSETSTATICLIB) \
 	$(MMSTATICLIB) $(SERSTATICLIB)
 else
 STATICTARGETS=
@@ -655,28 +650,28 @@ BRANCHTESTSRC0 = \
 	distinct 
 
 
-ifeq "@enable_bdd_vars@" "yes"
-BDDTESTSRC0 = \
+ifeq "@enable_cpltset_vars@" "yes"
+CPLTSETTESTSRC0 = \
 	dom rel atmost partition cardinality select
-BDDTEST  = bdd 
-ALLBDDTESTSRC0 = $(BDDTESTSRC0:%=bdd/%) 
+CPLTSETTEST  = bdd 
+ALLCPLTSETTESTSRC0 = $(CPLTSETTESTSRC0:%=bdd/%) 
 
 else
-BDDTESTSRC0 =
-BDDTESTDIR  =
-ALLBDDTESTSRC0 = 
+CPLTSETTESTSRC0 =
+CPLTSETTESTDIR  =
+ALLCPLTSETTESTSRC0 = 
 endif
 
 
 ifeq "@enable_set_vars@" "yes"
 TESTSRC0 = \
-	test log int set branch $(BDDTEST) \
-	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) $(ALLBDDTESTSRC0) \
+	test log int set branch $(CPLTSETTEST) \
+	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) $(ALLCPLTSETTESTSRC0) \
 	$(BRANCHTESTSRC0:%=branch/%)
 else
 TESTSRC0 = \
-	test log int branch $(BDDTEST) \
-	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) $(ALLBDDTESTSRC0) \
+	test log int branch $(CPLTSETTEST) \
+	$(INTTESTSRC0:%=int/%) $(SETTESTSRC0:%=set/%) $(ALLCPLTSETTESTSRC0) \
 	$(BRANCHTESTSRC0:%=branch/%)
 endif
 
@@ -692,7 +687,7 @@ TESTBUILDDIRS = test test/int test/set test/branch
 
 BUILDDIRS = $(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
 	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
-	$(BUDDYBUILDDIRS:%=gecode/%) $(BDDBUILDDIRS:%=gecode/%) \
+	$(BUDDYBUILDDIRS:%=gecode/%) $(CPLTSETBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%) $(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
 
 ifeq "@enable_examples@" "yes"
@@ -809,10 +804,10 @@ gecode/support/buddy/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/buddy/%.c
 	@COMPILESBJ@$@ @CCIN@$<
 
 gecode/bdd/%$(OBJSUFFIX): $(top_srcdir)/gecode/bdd/%.cc
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_BDD_FLAG@ \
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_CPLTSET_FLAG@ \
 	@COMPILEOBJ@$@ @CXXIN@$<
 gecode/bdd/%$(SBJSUFFIX): $(top_srcdir)/gecode/bdd/%.cc
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_BDD_FLAG@ \
+	$(CXX) $(CXXFLAGS) @GECODE_BUILD_CPLTSET_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
 
 gecode/minimodel/%$(OBJSUFFIX): $(top_srcdir)/gecode/minimodel/%.cc
@@ -851,7 +846,7 @@ test/%$(SBJSUFFIX): $(top_srcdir)/test/%.cc
 # DLL Targets
 #
 EXTRALINK=
-ifeq "@enable_bdd_vars@" "yes"
+ifeq "@enable_cpltset_vars@" "yes"
 EXTRALINK=$(LINKBUDDY)
 endif 
 
@@ -884,11 +879,11 @@ $(BUDDYDLL): $(BUDDYOBJ)
 		@LINKOUTPUT@$(BUDDYDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(BDDDLL): $(BDDOBJ) $(KERNELDLL) $(INTDLL)
-	$(CXX) $(DLLFLAGS) $(BDDOBJ) $(BDDSONAME)  \
-		@DLLPATH@ $(BDDDIRLIB) $(LINKKERNEL) $(LINKINT) \
+$(CPLTSETDLL): $(CPLTSETOBJ) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(CPLTSETOBJ) $(CPLTSETSONAME)  \
+		@DLLPATH@ $(CPLTSETDIRLIB) $(LINKKERNEL) $(LINKINT) \
 		$(LINKSET) $(LINKBUDDY)\
-		@LINKOUTPUT@$(BDDDLL) 
+		@LINKOUTPUT@$(CPLTSETDLL) 
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
 $(MMDLL): $(MMOBJ) $(KERNELDLL) $(INTDLL)
@@ -922,17 +917,17 @@ $(SETDLL) $(SETLIB): $(SETOBJ) $(KERNELDLL) $(INTDLL) $(BUDDYDLL)
 $(BUDDYDLL) $(BUDDYLIB): $(BUDDYOBJ)
 	$(CXX) $(DLLFLAGS) $(BUDDYDLLFLAGS) $(BUDDYOBJ) \
 		@LINKOUTPUT@$(BUDDYDLL)
-$(BDDDLL) $(BDDLIB): $(BDDOBJ) $(KERNELDLL) $(INTDLL)
-	$(CXX) $(DLLFLAGS) $(BDDOBJ) \
-		@DLLPATH@ $(BDDDIRLIB) $(LINKKERNEL) $(LINKINT) $(LINKSET) $(LINKBUDDY)\
-		@LINKOUTPUT@$(BDDDLL)
+$(CPLTSETDLL) $(CPLTSETLIB): $(CPLTSETOBJ) $(KERNELDLL) $(INTDLL)
+	$(CXX) $(DLLFLAGS) $(CPLTSETOBJ) \
+		@DLLPATH@ $(CPLTSETDIRLIB) $(LINKKERNEL) $(LINKINT) $(LINKSET) $(LINKBUDDY)\
+		@LINKOUTPUT@$(CPLTSETDLL)
 $(MMDLL) $(MMLIB): $(MMOBJ) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) \
 		@DLLPATH@ $(LINKKERNEL) $(LINKINT) \
 		@LINKOUTPUT@$(MMDLL)
 $(SERDLL) $(SERLIB): $(SEROBJ) $(KERNELDLL)
 	$(CXX) $(DLLFLAGS) $(SEROBJ) \
-		@DLLPATH@ $(LINKKERNEL) $(LINKINT) $(LINKSET) $(LINKBDD) \
+		@DLLPATH@ $(LINKKERNEL) $(LINKINT) $(LINKSET) $(LINKCPLTSET) \
 		$(BOOST_LINK) @LINKOUTPUT@$(SERDLL)
 endif
 
@@ -955,8 +950,8 @@ $(SETSTATICLIB): $(SETOBJ)
 $(BUDDYSTATICLIB): $(BUDDYOBJ)
 	$(AR) $(ARFLAGS) $@ $(BUDDYOBJ)
 	$(RANLIB) $@
-$(BDDSTATICLIB): $(BDDOBJ)
-	$(AR) $(ARFLAGS) $@ $(BDDOBJ)
+$(CPLTSETSTATICLIB): $(CPLTSETOBJ)
+	$(AR) $(ARFLAGS) $@ $(CPLTSETOBJ)
 	$(RANLIB) $@
 $(MMSTATICLIB): $(MMOBJ)
 	$(AR) $(ARFLAGS) $@ $(MMOBJ)

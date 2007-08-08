@@ -67,12 +67,12 @@ namespace Log {
 #endif
 
 #ifdef GECODE_HAVE_BDD_VARS
-  void initial(const BddVarArray& a, const char*name);
-  void prune(const BddVar& v, std::string name, SetRelType irt, int val);
-  void prune(const BddVar& v, std::string name,
+  void initial(const CpltSetVarArray& a, const char*name);
+  void prune(const CpltSetVar& v, std::string name, SetRelType irt, int val);
+  void prune(const CpltSetVar& v, std::string name,
 	     unsigned int cardMin, unsigned int cardMax);
-  void prune_result(const BddVar& v);
-  void print(const BddVarArray& a, const char* name=NULL);
+  void prune_result(const CpltSetVar& v);
+  void print(const CpltSetVarArray& a, const char* name=NULL);
 #endif
 
   std::string iclh(IntConLevel icl);

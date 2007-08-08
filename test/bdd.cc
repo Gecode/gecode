@@ -121,7 +121,7 @@ do {                                            \
 class BddTestSpace : public Space {
 public:
   BuddyMgr mgr;
-  BddVarArray x;
+  CpltSetVarArray x;
   IntVarArray y;
 private:
   const Options opt;
@@ -177,12 +177,12 @@ public:
     return true;
   }
 
-  void removeFromLub(int v, BddVar& x, int i, const SetAssignment& a) {
-    BddVarUnknownRanges ur(x);
+  void removeFromLub(int v, CpltSetVar& x, int i, const SetAssignment& a) {
+    CpltSetVarUnknownRanges ur(x);
     CountableSetRanges air(a.lub, a[i]);
-    Iter::Ranges::Diff<BddVarUnknownRanges, CountableSetRanges> diff(ur, air);
+    Iter::Ranges::Diff<CpltSetVarUnknownRanges, CountableSetRanges> diff(ur, air);
     Iter::Ranges::ToValues<Iter::Ranges::Diff
-      <BddVarUnknownRanges, CountableSetRanges> > diffV(diff);
+      <CpltSetVarUnknownRanges, CountableSetRanges> > diffV(diff);
     for (int j=0; j<v; j++, ++diffV);
     Log::prune(x, Log::mk_name("x", i), SRT_DISJ, diffV.val());
     // std::cerr << " x [" << i << "] SRT_DISJ " << diffV.val() << "\n";
@@ -190,13 +190,13 @@ public:
     Log::prune_result(x);      
   }
 
-  void addToGlb(int v, BddVar& x, int i, const SetAssignment& a) {
-    BddVarUnknownRanges ur(x);
+  void addToGlb(int v, CpltSetVar& x, int i, const SetAssignment& a) {
+    CpltSetVarUnknownRanges ur(x);
     CountableSetRanges air(a.lub, a[i]);
-    Iter::Ranges::Inter<BddVarUnknownRanges, CountableSetRanges>
+    Iter::Ranges::Inter<CpltSetVarUnknownRanges, CountableSetRanges>
       inter(ur, air);
     Iter::Ranges::ToValues<Iter::Ranges::Inter
-      <BddVarUnknownRanges, CountableSetRanges> > interV(inter);
+      <CpltSetVarUnknownRanges, CountableSetRanges> > interV(inter);
     for (int j=0; j<v; j++, ++interV);
     Log::prune(x, Log::mk_name("x", i), SRT_SUP, interV.val());
     // std::cerr << " x ["<<i<<"] SRT_SUP " << interV.val() << "\n";
@@ -363,13 +363,13 @@ public:
       i = (i+1) % x.size();
     }
     // std::cerr << "choose x["<<i<<"]=" << x[i] << "\n";
-    BddVarUnknownRanges ur1(x[i]);
+    CpltSetVarUnknownRanges ur1(x[i]);
     CountableSetRanges air1(a.lub, a[i]);
-    Iter::Ranges::Diff<BddVarUnknownRanges, CountableSetRanges>
+    Iter::Ranges::Diff<CpltSetVarUnknownRanges, CountableSetRanges>
       diff(ur1, air1);
-    BddVarUnknownRanges ur2(x[i]);
+    CpltSetVarUnknownRanges ur2(x[i]);
     CountableSetRanges air2(a.lub, a[i]);
-    Iter::Ranges::Inter<BddVarUnknownRanges, CountableSetRanges>
+    Iter::Ranges::Inter<CpltSetVarUnknownRanges, CountableSetRanges>
       inter(ur2, air2);
 
     CountableSetRanges aisizer(a.lub, a[i]);

@@ -23,8 +23,8 @@
 
 namespace Gecode {
 
-  BddVarArray::BddVarArray(Space* home, BMI* m, int n) 
-    : VarArray<BddVar>(home,n) {
+  CpltSetVarArray::CpltSetVarArray(Space* home, BMI* m, int n) 
+    : VarArray<CpltSetVar>(home,n) {
     for (int i = size(); i--; ) {
       x[i].init(home, m);
     }
@@ -33,8 +33,8 @@ namespace Gecode {
     // since we did not allocate a variable so far
   }
 
-  BddVarArray::BddVarArray(Space* home, BMI* m, int n, int a, int b)
-    : VarArray<BddVar>(home,n) {
+  CpltSetVarArray::CpltSetVarArray(Space* home, BMI* m, int n, int a, int b)
+    : VarArray<CpltSetVar>(home,n) {
     // dangerous use correct offsets
     for (int i = 0; i < size();i++) {
       x[i].init(home, m, a, b);
@@ -42,15 +42,15 @@ namespace Gecode {
     hls_order(home, *this);
   }
 
-  BddVarArray::BddVarArray(Space* home, BMI* m, int n,
+  CpltSetVarArray::CpltSetVarArray(Space* home, BMI* m, int n,
 			   int lbMin,int lbMax,int ubMin,int ubMax,
 			   unsigned int minCard,
 			   unsigned int maxCard)
-    : VarArray<BddVar>(home,n) {
+    : VarArray<CpltSetVar>(home,n) {
     
     IntSet glb(lbMin, lbMax);
     IntSet lub(ubMin, ubMax);      
-    testConsistency(glb, lub, minCard, maxCard, "BddVarArray");
+    testConsistency(glb, lub, minCard, maxCard, "CpltSetVarArray");
 
     for (int i = 0; i < size(); i++)
       x[i].init(home,m, lbMin,lbMax,ubMin,ubMax,minCard,maxCard);    
@@ -58,13 +58,13 @@ namespace Gecode {
     hls_order(home, *this);
   }
 
-  BddVarArray::BddVarArray(Space* home, BMI* m, int n,
+  CpltSetVarArray::CpltSetVarArray(Space* home, BMI* m, int n,
 			   const IntSet& glb,int ubMin,int ubMax,
 			   unsigned int minCard,unsigned int maxCard)
-    : VarArray<BddVar>(home,n) {
+    : VarArray<CpltSetVar>(home,n) {
 
     IntSet lub(ubMin, ubMax);      
-    testConsistency(glb, lub, minCard, maxCard, "BddVarArray");
+    testConsistency(glb, lub, minCard, maxCard, "CpltSetVarArray");
 
     for (int i = 0; i < size(); i++)
       x[i].init(home, m, glb,ubMin,ubMax,minCard,maxCard);
@@ -72,24 +72,24 @@ namespace Gecode {
     hls_order(home, *this);
   }
 
-  BddVarArray::BddVarArray(Space* home, BMI* m, int n,
+  CpltSetVarArray::CpltSetVarArray(Space* home, BMI* m, int n,
 			   int lbMin,int lbMax,const IntSet& lub,
 			   unsigned int minCard,unsigned int maxCard)
-    : VarArray<BddVar>(home,n) {
+    : VarArray<CpltSetVar>(home,n) {
 
     IntSet glb(lbMin, lbMax);      
-    testConsistency(glb, lub, minCard, maxCard, "BddVarArray");
+    testConsistency(glb, lub, minCard, maxCard, "CpltSetVarArray");
 
     for (int i = 0; i < size(); i++)
       x[i].init(home, m, lbMin, lbMax, lub, minCard, maxCard);
   }
 
-  BddVarArray::BddVarArray(Space* home, BMI* m, int n,
+  CpltSetVarArray::CpltSetVarArray(Space* home, BMI* m, int n,
 			   const IntSet& glb, const IntSet& lub,
 			   unsigned int minCard, unsigned int maxCard)
-    : VarArray<BddVar>(home,n) {
+    : VarArray<CpltSetVar>(home,n) {
 
-    testConsistency(glb, lub, minCard, maxCard, "BddVarArray");
+    testConsistency(glb, lub, minCard, maxCard, "CpltSetVarArray");
 
     for (int i = 0; i < size(); i++)
       x[i].init(home, m, glb,lub,minCard,maxCard);

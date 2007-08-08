@@ -386,7 +386,7 @@ namespace Gecode {
 
   template <class Rel>
   forceinline void 
-  partition_con(Space* home, const BddVarArgs& x, bool withlex, Rel lex, 
+  partition_con(Space* home, const CpltSetVarArgs& x, bool withlex, Rel lex, 
 		bool withcard, int d, SetConLevel scl) {
     ViewArray<BddView> bv(home, x);
     switch(scl) {
@@ -440,7 +440,7 @@ namespace Gecode {
   // For testing purposes only supported for bddviews
   template <class Rel>
   forceinline void 
-  partition_con(Space* home, const BddVarArgs& x, const BddVar& y, 
+  partition_con(Space* home, const CpltSetVarArgs& x, const CpltSetVar& y, 
 		bool withlex, Rel lex, bool withcard, int d, 
 		SetConLevel scl) {
 
@@ -452,7 +452,7 @@ namespace Gecode {
   // For testing purposes only supported for bddviews
   template <class Rel>
   forceinline void 
-  partition_con(Space* home, const IntVarArgs& x, const BddVar& y, 
+  partition_con(Space* home, const IntVarArgs& x, const CpltSetVar& y, 
 		bool withlex, Rel lex, bool withcard, int d, 
 		SetConLevel scl) {
 

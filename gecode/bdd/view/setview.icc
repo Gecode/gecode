@@ -40,18 +40,18 @@ namespace Gecode {
     SetBddView::init(const CrdBddView& x) { view = x; }
 
     forceinline PropCond
-    SetBddView::pc_settobdd(PropCond pc) { return PC_BDD_DOM; }
+    SetBddView::pc_settobdd(PropCond pc) { return PC_CPLTSET_DOM; }
 
     forceinline ModEvent
     SetBddView::me_bddtoset(ModEvent me) {
       switch(me) {
-      case ME_BDD_FAILED: 
+      case ME_CPLTSET_FAILED: 
 	return Gecode::Set::ME_SET_FAILED;
-      case ME_BDD_NONE: 
+      case ME_CPLTSET_NONE: 
 	return Gecode::Set::ME_SET_NONE;
-      case ME_BDD_VAL: 
+      case ME_CPLTSET_VAL: 
 	return Gecode::Set::ME_SET_VAL;
-      case ME_BDD_DOM: 
+      case ME_CPLTSET_DOM: 
 	return Gecode::Set::ME_SET_BB;
       default:
 	return Gecode::Set::ME_SET_LUB;

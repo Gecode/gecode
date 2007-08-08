@@ -20,14 +20,14 @@
  */
 
 #include "gecode/bdd.hh"
-#include "gecode/bdd/bddprop.hh"
+#include "gecode/bdd/propagators.hh"
 
 using namespace Gecode::Bdd;
 
 namespace Gecode {
 
   void
-  cardinality(Space* home, BddVar x, unsigned int l, unsigned int u, 
+  cardinality(Space* home, CpltSetVar x, unsigned int l, unsigned int u, 
 	      SetConLevel scl) {
     // std::cerr << "calling card: " << l << "/" << u << " on " << x << "\n";
     if (home->failed()) return;
@@ -96,7 +96,7 @@ namespace Gecode {
   }
 
   void
-  cardinality(Space* home, BddVar x, unsigned int c, 
+  cardinality(Space* home, CpltSetVar x, unsigned int c, 
 	      SetConLevel scl) {
     cardinality(home, x, c, c, scl);
   }

@@ -28,23 +28,23 @@ namespace Gecode { namespace Bdd {
 
 
   /*
-   * The variable processor for BddVarImpBase
+   * The variable processor for CpltSetVarImpBase
    *
    */
 
   void
-  BddVarImpBase::Processor::process(Space* home, VarBase* _x) {
+  CpltSetVarImpBase::Processor::process(Space* home, VarBase* _x) {
     // Process modified variables
-    Gecode::Variable<VTI_BDD,PC_BDD_DOM,BddMeDiff>* x = 
-      static_cast<Gecode::Variable<VTI_BDD,PC_BDD_DOM,BddMeDiff>*>(_x);
+    Gecode::Variable<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff>* x = 
+      static_cast<Gecode::Variable<VTI_CPLTSET,PC_CPLTSET_DOM,CpltSetMeDiff>*>(_x);
     do {
       switch (x->modevent()) {
-      case ME_BDD_VAL:
+      case ME_CPLTSET_VAL:
         x->process(home);
         break;
-      case ME_BDD_DOM:
+      case ME_CPLTSET_DOM:
         // Conditions: DOM 
-        x->process(home,PC_BDD_DOM,PC_BDD_DOM,ME_BDD_DOM);
+        x->process(home,PC_CPLTSET_DOM,PC_CPLTSET_DOM,ME_CPLTSET_DOM);
         break;
       default: GECODE_NEVER;
       }
@@ -53,17 +53,17 @@ namespace Gecode { namespace Bdd {
   }
 
   void
-  BddVarImpBase::Processor::dispose(Space* home, VarBase* x) {
-    BddVarImp* _x = static_cast<BddVarImp*>(x);
+  CpltSetVarImpBase::Processor::dispose(Space* home, VarBase* x) {
+    CpltSetVarImp* _x = static_cast<CpltSetVarImp*>(x);
     while (_x != NULL) {
       _x->dispose(home);
-      _x = static_cast<BddVarImp*>(_x->nextDispose());
+      _x = static_cast<CpltSetVarImp*>(_x->nextDispose());
     }
   }
   
-  BddVarImpBase::Processor BddVarImpBase::p;
+  CpltSetVarImpBase::Processor CpltSetVarImpBase::p;
 
 
 }}
 
-// STATISTICS: bdd-var
+// STATISTICS: cpltset-var

@@ -141,7 +141,7 @@ namespace Gecode { namespace Bdd {
   forceinline int
   SplitBddView::glbMin(void) const { 
     BMI* mgr = manager();
-    if (mgr->ctrue(bounds)) { return BddVarImp::MIN_OF_EMPTY; }
+    if (mgr->ctrue(bounds)) { return CpltSetVarImp::MIN_OF_EMPTY; }
     BddIterator iter(mgr, bounds);
     while (iter()) {
       if (iter.status() == FIX_GLB) {
@@ -150,13 +150,13 @@ namespace Gecode { namespace Bdd {
       }
       ++iter;
     }
-    return BddVarImp::MIN_OF_EMPTY;
+    return CpltSetVarImp::MIN_OF_EMPTY;
   }
 
   forceinline int 
   SplitBddView::glbMax(void) const {
     BMI* mgr = manager();
-    if (mgr->ctrue(bounds)) { return BddVarImp::MAX_OF_EMPTY; } 
+    if (mgr->ctrue(bounds)) { return CpltSetVarImp::MAX_OF_EMPTY; } 
     BddIterator iter(mgr, bounds);
     int lastglb = -1;
     while (iter()) {
@@ -166,7 +166,7 @@ namespace Gecode { namespace Bdd {
       } 
       ++iter;
     }
-    return (lastglb == -1) ? BddVarImp::MAX_OF_EMPTY : lastglb;
+    return (lastglb == -1) ? CpltSetVarImp::MAX_OF_EMPTY : lastglb;
   };
 
 
@@ -294,7 +294,7 @@ namespace Gecode { namespace Bdd {
 
   forceinline ModEvent
   SplitBddView::nq(Space* home, int a, int b) {
-    if (b < view.mgr_min() || a > view.mgr_max()) { return ME_BDD_NONE; }
+    if (b < view.mgr_min() || a > view.mgr_max()) { return ME_CPLTSET_NONE; }
     Iter::Ranges::Singleton m(a, b);
     GecodeBdd ass = !(view.variable()->gen_assignment(m));
     return tell_formula(home, ass);
@@ -305,7 +305,7 @@ namespace Gecode { namespace Bdd {
 
   forceinline ModEvent
   SplitBddView::eq(Space* home, int a, int b) {
-    if (b < view.mgr_min() || a > view.mgr_max()) { return ME_BDD_FAILED; }
+    if (b < view.mgr_min() || a > view.mgr_max()) { return ME_CPLTSET_FAILED; }
     Iter::Ranges::Singleton m(a, b);
     GecodeBdd ass = view.variable()->gen_assignment(m);
     return tell_formula(home, ass);
@@ -363,7 +363,7 @@ namespace Gecode { namespace Bdd {
     int mi = view.mgr_min();
     int ma = view.mgr_max();
     if (i()) {
-      if (i.min() < mi || i.min() > ma) { return ME_BDD_FAILED; }
+      if (i.min() < mi || i.min() > ma) { return ME_CPLTSET_FAILED; }
     }
 
     GecodeBdd ass = view.variable()->gen_assignment(i);
@@ -423,7 +423,7 @@ namespace Gecode { namespace Bdd {
 
   /// Iterator for the values of a SplitBddView
   template <>
-  class DomValues<SplitBddView> : public DomValues<BddVarImp*> {
+  class DomValues<SplitBddView> : public DomValues<CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -441,16 +441,16 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   DomValues<SplitBddView>::DomValues(const SplitBddView& x) 
-    : DomValues<BddVarImp*>(x.base().variable()) {}
+    : DomValues<CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   DomValues<SplitBddView>::init(const SplitBddView& x) {
-    DomValues<BddVarImp*>::init(x.base().variable());
+    DomValues<CpltSetVarImp*>::init(x.base().variable());
   }
 
   /// Iterator for the values in the greatest lower bound of a SplitBddView
   template <>
-  class GlbValues<SplitBddView> : public GlbValues<BddVarImp*> {
+  class GlbValues<SplitBddView> : public GlbValues<CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -468,17 +468,17 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   GlbValues<SplitBddView>::GlbValues(const SplitBddView& x) 
-    : GlbValues<BddVarImp*>(x.base().variable()) {}
+    : GlbValues<CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   GlbValues<SplitBddView>::init(const SplitBddView& x) {
-    GlbValues<BddVarImp*>::init(x.base().variable());
+    GlbValues<CpltSetVarImp*>::init(x.base().variable());
   }
 
 }
   namespace Set {
   template <>
-  class GlbRanges<Bdd::SplitBddView> : public GlbRanges<Bdd::BddVarImp*> {
+  class GlbRanges<Bdd::SplitBddView> : public GlbRanges<Bdd::CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -496,15 +496,15 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   GlbRanges<Bdd::SplitBddView>::GlbRanges(const Bdd::SplitBddView& x) 
-    : GlbRanges<Bdd::BddVarImp*>(x.base().variable()) {}
+    : GlbRanges<Bdd::CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   GlbRanges<Bdd::SplitBddView>::init(const Bdd::SplitBddView& x) {
-    GlbRanges<Bdd::BddVarImp*>::init(x.base().variable());
+    GlbRanges<Bdd::CpltSetVarImp*>::init(x.base().variable());
   }
 
   template <>
-  class LubRanges<Bdd::SplitBddView> : public LubRanges<Bdd::BddVarImp*> {
+  class LubRanges<Bdd::SplitBddView> : public LubRanges<Bdd::CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -522,18 +522,18 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   LubRanges<Bdd::SplitBddView>::LubRanges(const Bdd::SplitBddView& x) 
-    : LubRanges<Bdd::BddVarImp*>(x.base().variable()) {}
+    : LubRanges<Bdd::CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   LubRanges<Bdd::SplitBddView>::init(const Bdd::SplitBddView& x) {
-    LubRanges<Bdd::BddVarImp*>::init(x.base().variable());
+    LubRanges<Bdd::CpltSetVarImp*>::init(x.base().variable());
   }
   }
   namespace Bdd {
 
   /// Iterator for the unknown values of a SplitBddView
   template <>
-  class UnknownValues<SplitBddView> : public UnknownValues<BddVarImp*> {
+  class UnknownValues<SplitBddView> : public UnknownValues<CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -551,17 +551,17 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   UnknownValues<SplitBddView>::UnknownValues(const SplitBddView& x) 
-    : UnknownValues<BddVarImp*>(x.base().variable()) {}
+    : UnknownValues<CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   UnknownValues<SplitBddView>::init(const SplitBddView& x) {
-    UnknownValues<BddVarImp*>::init(x.base().variable());
+    UnknownValues<CpltSetVarImp*>::init(x.base().variable());
   }
   }
   namespace Set {
   template <>
   class UnknownRanges<Bdd::SplitBddView> : 
-      public UnknownRanges<Bdd::BddVarImp*> {
+      public UnknownRanges<Bdd::CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -579,11 +579,11 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   UnknownRanges<Bdd::SplitBddView>::UnknownRanges(const Bdd::SplitBddView& x) 
-    : UnknownRanges<Bdd::BddVarImp*>(x.base().variable()) {}
+    : UnknownRanges<Bdd::CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   UnknownRanges<Bdd::SplitBddView>::init(const Bdd::SplitBddView& x) {
-    UnknownRanges<Bdd::BddVarImp*>::init(x.base().variable());
+    UnknownRanges<Bdd::CpltSetVarImp*>::init(x.base().variable());
   }
 
   }

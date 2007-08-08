@@ -69,14 +69,14 @@ public:
     // std::cout << (valid ? "valid\n" : "INVALID\n");
     return valid;
   }
-  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // access the space manager
     assert(this->manager().object() != NULL);
     BuddyMgr lm = this->manager();
     // lm.debug();
 
     int vars = selector_pos;
-    BddVarArgs xs(vars);
+    CpltSetVarArgs xs(vars);
     for (int i=vars; i--;)
       xs[i]=x[i];
     Gecode::selectUnion(home, xs, x[selector_pos], x[union_pos], SCL_DOM);
@@ -165,9 +165,9 @@ public:
     return valid;
   }
 
-  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     int vars = selector_pos;
-    BddVarArgs xs(vars);
+    CpltSetVarArgs xs(vars);
     for (int i=vars; i--;)
       xs[i]=x[i];
 

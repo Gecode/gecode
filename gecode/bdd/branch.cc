@@ -26,7 +26,7 @@ namespace Gecode {
   using namespace Bdd;
 
   void
-  branch(Space* home, const BddVarArgs& xa, BddBvarSel vars, BddBvalSel vals, 
+  branch(Space* home, const CpltSetVarArgs& xa, BddBvarSel vars, BddBvalSel vals, 
 	 SetConLevel scl) {
     // std::cout << "bdd branching\n";
 

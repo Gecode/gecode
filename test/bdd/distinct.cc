@@ -54,7 +54,7 @@ public:
     }
     return true;
   }
-  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     Gecode::hls_order(home, x);
     Gecode::distinct(home, x);
   }

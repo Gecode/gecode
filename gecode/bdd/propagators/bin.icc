@@ -24,15 +24,15 @@ namespace Gecode { namespace Bdd {
   template <class View0, class View1>
   forceinline
   Bin<View0, View1>::Bin(Space* home, View0& x, View1& y, GecodeBdd& d0)
-    : MixBinaryPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, x, y), 
+    : MixBinaryPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, x, y), 
       d(d0) {
-    MixBinaryPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::force(home);
+    MixBinaryPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::force(home);
   }
 
   template <class View0, class View1>
   forceinline
   Bin<View0, View1>::Bin(Space* home, bool share, Bin& p)
-    : MixBinaryPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, share, p), 
+    : MixBinaryPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, share, p), 
       d(p.d) {}
 
   template <class View0, class View1>
@@ -96,14 +96,14 @@ namespace Gecode { namespace Bdd {
   template <class View0, class View1>
   size_t
   Bin<View0, View1>::dispose(Space* home) {
-    MixBinaryPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::unforce(home);
+    MixBinaryPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::unforce(home);
     if (!home->failed()) {
-      x0.cancel(home, this, PC_BDD_DOM);
-      x1.cancel(home, this, PC_BDD_DOM);
+      x0.cancel(home, this, PC_CPLTSET_DOM);
+      x1.cancel(home, this, PC_CPLTSET_DOM);
     }
     BMI* mgr = x0.manager();
     mgr->dispose(d);
-    MixBinaryPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::dispose(home);
+    MixBinaryPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::dispose(home);
     return sizeof(*this);
   }
 

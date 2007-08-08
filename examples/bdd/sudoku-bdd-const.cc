@@ -41,7 +41,7 @@ protected:
   const int n;
   // nn number of cells per block 3*3=9
   const int s;
-  BddVarArray x;
+  CpltSetVarArray x;
 
 public:
   /// Actual model

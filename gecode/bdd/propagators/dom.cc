@@ -24,19 +24,19 @@
 namespace Gecode {
   
   void
-  dom(Space* home, BddVar x, SetRelType r, int i, SetConLevel) {
+  dom(Space* home, CpltSetVar x, SetRelType r, int i, SetConLevel) {
     IntSet d(i,i);
     dom(home, x, r, d);
   }
 
   void
-  dom(Space* home, BddVar x, SetRelType r, int i, int j, SetConLevel) {
+  dom(Space* home, CpltSetVar x, SetRelType r, int i, int j, SetConLevel) {
     IntSet d(i,j);
     dom(home, x, r, d);
   }
 
   void 
-  dom(Space* home, BddVar x, SetRelType r, const IntSet& s, SetConLevel) {
+  dom(Space* home, CpltSetVar x, SetRelType r, const IntSet& s, SetConLevel) {
     if (home->failed()) return;
     Bdd::BddView bv(x);
 

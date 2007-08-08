@@ -28,7 +28,7 @@ namespace Gecode { namespace Bdd {
     force(home);
     int n = x.size();
     for (int i = n; i--; ) 
-      x[i].subscribe(home, this, PC_BDD_DOM);
+      x[i].subscribe(home, this, PC_CPLTSET_DOM);
   }
   
   template <class View>
@@ -57,7 +57,7 @@ namespace Gecode { namespace Bdd {
     if (!home->failed()) {
       int n = x.size();
       for (int i = n; i--; ) 
-	x[i].cancel(home, this, PC_BDD_DOM);
+	x[i].cancel(home, this, PC_CPLTSET_DOM);
     }
     Propagator::dispose(home);
     return sizeof(*this);
@@ -112,7 +112,7 @@ namespace Gecode { namespace Bdd {
 	  ModEvent me = x[idx].excludeI(home, inter);
 	  GECODE_ME_CHECK(me);
 	  // std::cerr << "ME=" << me << " ";
-	  subsumed &= (me == ME_BDD_NONE);
+	  subsumed &= (me == ME_CPLTSET_NONE);
 	} // else {
 // 	  std::cerr << "NOGLB: ";
 // 	}
@@ -135,7 +135,7 @@ namespace Gecode { namespace Bdd {
   DisjointSudoku<View>::DisjointSudoku(Space* home, View& x0, int& ord) 
     : Propagator(home), x(x0), order(ord) {
     force(home);
-    x.subscribe(home, this, PC_BDD_DOM);
+    x.subscribe(home, this, PC_CPLTSET_DOM);
   }
   
   template <class View>
@@ -162,7 +162,7 @@ namespace Gecode { namespace Bdd {
   DisjointSudoku<View>::dispose(Space* home) {
     unforce(home);
     if (!home->failed()) {
-      x.cancel(home, this, PC_BDD_DOM);
+      x.cancel(home, this, PC_CPLTSET_DOM);
     }
     Propagator::dispose(home);
     return sizeof(*this);

@@ -158,8 +158,8 @@ AC_GECODE_VTI(int, finite domain library, yes,
 	      [AC_DEFINE(GECODE_HAVE_INT_VARS)
 	       AC_GECODE_ADD_VTI(BOOL)])
 
-AC_GECODE_VTI(bdd, finite set library using bdd variables, no,
-	     [AC_DEFINE(GECODE_HAVE_BDD_VARS)])
+AC_GECODE_VTI(cpltset, finite set library using complete domain representation, no,
+	     [AC_DEFINE(GECODE_HAVE_CPLTSET_VARS)])
 
 dnl End of definition of variable types
 dnl ------------------------------------------------------------------

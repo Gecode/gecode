@@ -19,7 +19,7 @@
  *
  */
 
-#include "gecode/bdd/bddprop.hh"
+#include "gecode/bdd/propagators.hh"
 
 // for set bounds propagators with bdds
 // #include "gecode/set/rel.hh"
@@ -34,7 +34,7 @@ using namespace Gecode::Bdd;
 
 namespace Gecode {
 
-  void rel(Space* home, BddVar x, SetRelType r, BddVar y, SetConLevel scl) {
+  void rel(Space* home, CpltSetVar x, SetRelType r, CpltSetVar y, SetConLevel scl) {
 //     switch (scl) {
 //     case SCL_BND_SBR:
 //       {
@@ -53,7 +53,7 @@ namespace Gecode {
 //     }
   }
 
-  void rel(Space* home, IntVar x, SetRelType r, BddVar y, SetConLevel scl) {
+  void rel(Space* home, IntVar x, SetRelType r, CpltSetVar y, SetConLevel scl) {
 //     switch (scl) {
 //     case SCL_BND_SBR:
 //       {
@@ -74,31 +74,31 @@ namespace Gecode {
 //     }
   }
 
-  void rel(Space* home, BddVar x, BddSetRelType r, BddVar y, SetConLevel scl) {
+  void rel(Space* home, CpltSetVar x, BddSetRelType r, CpltSetVar y, SetConLevel scl) {
     rel_con(home, x, r, y, scl);
   }
 
-  void rel(Space* home, IntVar x, BddSetRelType r, BddVar y, SetConLevel scl) {
+  void rel(Space* home, IntVar x, BddSetRelType r, CpltSetVar y, SetConLevel scl) {
     rel_con(home, x, r, y, scl);
   }
 
-  void rel(Space* home, BddVar x, BddSetOpType o, BddVar y, BddSetRelType r, 
-	   BddVar z, SetConLevel scl) {
+  void rel(Space* home, CpltSetVar x, BddSetOpType o, CpltSetVar y, BddSetRelType r, 
+	   CpltSetVar z, SetConLevel scl) {
     rel_con_bdd(home, x, o, y, r, z, scl);
   }
 
-  void rel(Space* home, BddVar x, BddSetOpType o, BddVar y, SetRelType r, 
-	   BddVar z, SetConLevel scl) {
+  void rel(Space* home, CpltSetVar x, BddSetOpType o, CpltSetVar y, SetRelType r, 
+	   CpltSetVar z, SetConLevel scl) {
     rel_con_bdd(home, x, o, y, r, z, scl);
   }
 
-  void rel(Space* home, BddVar x, SetOpType o, BddVar y, BddSetRelType r, 
-	   BddVar z, SetConLevel scl) {
+  void rel(Space* home, CpltSetVar x, SetOpType o, CpltSetVar y, BddSetRelType r, 
+	   CpltSetVar z, SetConLevel scl) {
     rel_con_bdd(home, x, o, y, r, z, scl);
   }
 
-  void rel(Space* home, BddVar x, SetOpType o, BddVar y, SetRelType r, 
-	   BddVar z, SetConLevel scl) {
+  void rel(Space* home, CpltSetVar x, SetOpType o, CpltSetVar y, SetRelType r, 
+	   CpltSetVar z, SetConLevel scl) {
     if (scl == SCL_BND_SBR) {
       rel_con_sbr(home, x, o, y, r, z, scl);
     } else {

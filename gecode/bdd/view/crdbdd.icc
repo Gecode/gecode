@@ -208,7 +208,7 @@ namespace Gecode { namespace Bdd {
   forceinline int
   CrdBddView::glbMin(void) const { 
     BMI* mgr = manager();
-    if (mgr->ctrue(bounds)) { return BddVarImp::MIN_OF_EMPTY; }
+    if (mgr->ctrue(bounds)) { return CpltSetVarImp::MIN_OF_EMPTY; }
     BddIterator iter(mgr, bounds);
     while (iter()) {
       if (iter.status() == FIX_GLB) {
@@ -218,13 +218,13 @@ namespace Gecode { namespace Bdd {
       }
       ++iter;
     }
-    return BddVarImp::MIN_OF_EMPTY;
+    return CpltSetVarImp::MIN_OF_EMPTY;
   }
 
   forceinline int 
   CrdBddView::glbMax(void) const {
     BMI* mgr = manager();
-    if (mgr->ctrue(bounds)) { return BddVarImp::MAX_OF_EMPTY; } 
+    if (mgr->ctrue(bounds)) { return CpltSetVarImp::MAX_OF_EMPTY; } 
     BddIterator iter(mgr, bounds);
     int lastglb = -1;
     while (iter()) {
@@ -235,7 +235,7 @@ namespace Gecode { namespace Bdd {
       } 
       ++iter;
     }
-    return (lastglb == -1) ? BddVarImp::MAX_OF_EMPTY : lastglb;
+    return (lastglb == -1) ? CpltSetVarImp::MAX_OF_EMPTY : lastglb;
   };
 
   /*
@@ -301,7 +301,7 @@ namespace Gecode { namespace Bdd {
     bool cond1 = (unsigned int) manager()->bddpath(bounds) == 1;
     // (C2) the solution talks about all elements 
     //      (i.e. the number of nodes used for the bdd uses the bdd nodes
-    //      of all elements for the BddVar)
+    //      of all elements for the CpltSetVar)
     bool cond2 = (unsigned int) manager()->bddsize(bounds) == table_width();
     return cond1 && cond2;
 
@@ -325,8 +325,8 @@ namespace Gecode { namespace Bdd {
   forceinline ModEvent 
   CrdBddView::cardinality(Space* home, int l, int u) {
     assert(l <= u);
-    if (l > cardmax || u < cardmin) { return process(home, ME_BDD_FAILED); }
-    if (l <= cardmin && cardmax <= u) { return process(home, ME_BDD_NONE); }
+    if (l > cardmax || u < cardmin) { return process(home, ME_CPLTSET_FAILED); }
+    if (l <= cardmin && cardmax <= u) { return process(home, ME_CPLTSET_NONE); }
     
     // std::cout << "CrdBddView newcardinality = " <<l<<"#"<<u <<" \n";
     BMI* mgr = manager();
@@ -355,8 +355,8 @@ namespace Gecode { namespace Bdd {
   forceinline ModEvent
   CrdBddView::cardMin(Space* home, int m) { 
 
-    if (m > cardmax) { return process(home, ME_BDD_FAILED); }
-    if (m <= cardmin) { return process(home, ME_BDD_NONE); }
+    if (m > cardmax) { return process(home, ME_CPLTSET_FAILED); }
+    if (m <= cardmin) { return process(home, ME_CPLTSET_NONE); }
     
     // std::cout << "CrdBddView newcardMin = " <<m <<" \n";
     BMI* mgr = manager();
@@ -386,8 +386,8 @@ namespace Gecode { namespace Bdd {
 
   forceinline ModEvent
   CrdBddView::cardMax(Space* home, int m) { 
-    if (m < cardmin) { return process(home, ME_BDD_FAILED); }
-    if (cardmax <= m) { return process(home, ME_BDD_NONE); }
+    if (m < cardmin) { return process(home, ME_CPLTSET_FAILED); }
+    if (cardmax <= m) { return process(home, ME_CPLTSET_NONE); }
     
     // std::cout << "CrdBddView newcardMax = " <<m <<" \n";
     BMI* mgr = manager();
@@ -419,7 +419,7 @@ namespace Gecode { namespace Bdd {
     BMI* mgr = manager();
 #endif
     // std::cout << "include: " << i << "#"<< j << "\n";
-    if (i < mgr_min() || j > mgr_max()) { return process(home, ME_BDD_FAILED); }
+    if (i < mgr_min() || j > mgr_max()) { return process(home, ME_CPLTSET_FAILED); }
     
     GecodeBdd in_glb  = BDDTOP;
     for (int v = i; v <= j; v++) {
@@ -439,7 +439,7 @@ namespace Gecode { namespace Bdd {
     BMI* mgr = manager();
 #endif
     // std::cout << "exclude: " << i << "#"<< j << "\n";
-    if (i > mgr_max()  || j < mgr_min()) { return process(home, ME_BDD_NONE); }
+    if (i > mgr_max()  || j < mgr_min()) { return process(home, ME_CPLTSET_NONE); }
     
     int mi = std::max(mgr_min(), i);
     int ma = std::min(j, mgr_max());
@@ -463,7 +463,7 @@ namespace Gecode { namespace Bdd {
   forceinline ModEvent
   CrdBddView::nq(Space* home, int a, int b) {
     if (b < view.mgr_min() || a > view.mgr_max()) { 
-      return process(home,ME_BDD_NONE); 
+      return process(home,ME_CPLTSET_NONE); 
     }
     Iter::Ranges::Singleton m(a, b);
     GecodeBdd ass = !(view.variable()->gen_assignment(m));
@@ -477,7 +477,7 @@ namespace Gecode { namespace Bdd {
   forceinline ModEvent
   CrdBddView::eq(Space* home, int a, int b) {
     if (b < view.mgr_min() || a > view.mgr_max()) { 
-      return process(home, ME_BDD_FAILED); 
+      return process(home, ME_CPLTSET_FAILED); 
     }
     Iter::Ranges::Singleton m(a, b);
     GecodeBdd ass = view.variable()->gen_assignment(m);
@@ -544,7 +544,7 @@ namespace Gecode { namespace Bdd {
       // end test
 
       if (l == static_cast<int> (Limits::Set::card_max)) { 
-	return ME_BDD_FAILED;
+	return ME_CPLTSET_FAILED;
       }
       int glbsize = glbSize();
       // std::cout << "cardmin = " << cardmin << " = " << l << "+"<< glbsize << "\n";
@@ -570,7 +570,7 @@ namespace Gecode { namespace Bdd {
 //     } else {
 //       assert(cardmin <= cardmax);
 //       // std::cout << "NO MOD since no BOUNDS MOD\n";
-//       return ME_BDD_NONE;
+//       return ME_CPLTSET_NONE;
 //     }
   }
 
@@ -578,19 +578,19 @@ namespace Gecode { namespace Bdd {
   CrdBddView::intersect(Space* home, int i, int j) {
     
     ModEvent me_left = exclude(home, Limits::Set::int_min, i - 1);
-    if (me_failed(me_left) || me_left == ME_BDD_VAL) { 
+    if (me_failed(me_left) || me_left == ME_CPLTSET_VAL) { 
       return process(home, me_left);
     }
 
     ModEvent me_right = exclude(home, j + 1, Limits::Set::int_max);
 
-    if (me_failed(me_right) || me_right == ME_BDD_VAL) { 
+    if (me_failed(me_right) || me_right == ME_CPLTSET_VAL) { 
       return process(home, me_right); 
     }
     if (me_left > 0 || me_right > 0) { 
-      return process(home, ME_BDD_DOM); 
+      return process(home, ME_CPLTSET_DOM); 
     }
-    return process(home, ME_BDD_NONE);
+    return process(home, ME_CPLTSET_NONE);
   }
 
   forceinline ModEvent
@@ -603,14 +603,14 @@ namespace Gecode { namespace Bdd {
     int min = mgr_min();
     int max = mgr_max();
     
-    if (!i()) { return process(home, ME_BDD_NONE); }
-    if (max < i.min()) { return process(home, ME_BDD_NONE); }
+    if (!i()) { return process(home, ME_CPLTSET_NONE); }
+    if (max < i.min()) { return process(home, ME_CPLTSET_NONE); }
     while (i() && i.max() < min) { 
       // std::cout << "skip: " << i.min() << ".."<< i.max() << "\n";
       ++i; 
     }
-    if (!i()) { return process(home, ME_BDD_NONE); }
-    if (i.min() > max) { return process(home, ME_BDD_NONE); }
+    if (!i()) { return process(home, ME_CPLTSET_NONE); }
+    if (i.min() > max) { return process(home, ME_CPLTSET_NONE); }
     GecodeBdd not_lub = BDDTOP;    
     while(i()) {
       // std::cout << "valid iter at: " << i.min() << ".."<< i.max() << "\n";
@@ -632,13 +632,13 @@ namespace Gecode { namespace Bdd {
   CrdBddView::includeI(Space* home, I& i) { 
     // std::cout << "includeI: \n";
 
-    if (!i()) { return process(home, ME_BDD_NONE);} 
+    if (!i()) { return process(home, ME_CPLTSET_NONE);} 
     int min = mgr_min();
     int max = mgr_max();
     GecodeBdd in_glb  = BDDTOP;
     while(i()) {
-      if (i.min() < min || i.max() < min) { return process(home, ME_BDD_FAILED); }
-      if (max < i.min() || max < i.max()) { return process(home, ME_BDD_FAILED); }
+      if (i.min() < min || i.max() < min) { return process(home, ME_CPLTSET_FAILED); }
+      if (max < i.min() || max < i.max()) { return process(home, ME_CPLTSET_FAILED); }
       // std::cout << "include " << i.min() << "#" << i.max() << "\n";
       for (int k = i.min(); k <= i.max(); k++) {
 	int idx = k - mgr_min();
@@ -664,7 +664,7 @@ namespace Gecode { namespace Bdd {
     int mi = view.mgr_min();
     int ma = view.mgr_max();
     if (i()) {
-      if (i.min() < mi || i.min() > ma) { return process(home, ME_BDD_FAILED); }
+      if (i.min() < mi || i.min() > ma) { return process(home, ME_CPLTSET_FAILED); }
     }
     GecodeBdd ass = view.variable()->gen_assignment(i);
     return tell_formula(home, ass);
@@ -739,7 +739,7 @@ namespace Gecode { namespace Bdd {
 
   /// Iterator for the values of a CrdBddView
   template <>
-  class DomValues<CrdBddView> : public DomValues<BddVarImp*> {
+  class DomValues<CrdBddView> : public DomValues<CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -757,16 +757,16 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   DomValues<CrdBddView>::DomValues(const CrdBddView& x) 
-    : DomValues<BddVarImp*>(x.base().variable()) {}
+    : DomValues<CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   DomValues<CrdBddView>::init(const CrdBddView& x) {
-    DomValues<BddVarImp*>::init(x.base().variable());
+    DomValues<CpltSetVarImp*>::init(x.base().variable());
   }
 
   /// Iterator for the values in the greatest lower bound of a CrdBddView
   template <>
-  class GlbValues<CrdBddView> : public GlbValues<BddVarImp*> {
+  class GlbValues<CrdBddView> : public GlbValues<CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -784,17 +784,17 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   GlbValues<CrdBddView>::GlbValues(const CrdBddView& x) 
-    : GlbValues<BddVarImp*>(x.base().variable()) {}
+    : GlbValues<CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   GlbValues<CrdBddView>::init(const CrdBddView& x) {
-    GlbValues<BddVarImp*>::init(x.base().variable());
+    GlbValues<CpltSetVarImp*>::init(x.base().variable());
   }
 
 }
 namespace Set {
   template <>
-  class GlbRanges<Bdd::CrdBddView> : public Set::GlbRanges<Bdd::BddVarImp*> {
+  class GlbRanges<Bdd::CrdBddView> : public Set::GlbRanges<Bdd::CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -812,15 +812,15 @@ namespace Set {
 
   forceinline
   GlbRanges<Bdd::CrdBddView>::GlbRanges(const Bdd::CrdBddView& x) 
-    : GlbRanges<Bdd::BddVarImp*>(x.base().variable()) {}
+    : GlbRanges<Bdd::CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   GlbRanges<Bdd::CrdBddView>::init(const Bdd::CrdBddView& x) {
-    GlbRanges<Bdd::BddVarImp*>::init(x.base().variable());
+    GlbRanges<Bdd::CpltSetVarImp*>::init(x.base().variable());
   }
 
   template <>
-  class LubRanges<Bdd::CrdBddView> : public Set::LubRanges<Bdd::BddVarImp*> {
+  class LubRanges<Bdd::CrdBddView> : public Set::LubRanges<Bdd::CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -838,18 +838,18 @@ namespace Set {
 
   forceinline
   LubRanges<Bdd::CrdBddView>::LubRanges(const Bdd::CrdBddView& x) 
-    : LubRanges<Bdd::BddVarImp*>(x.base().variable()) {}
+    : LubRanges<Bdd::CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   LubRanges<Bdd::CrdBddView>::init(const Bdd::CrdBddView& x) {
-    LubRanges<Bdd::BddVarImp*>::init(x.base().variable());
+    LubRanges<Bdd::CpltSetVarImp*>::init(x.base().variable());
   }
 }
 namespace Bdd {
 
   /// Iterator for the unknown values of a CrdBddView
   template <>
-  class UnknownValues<CrdBddView> : public UnknownValues<BddVarImp*> {
+  class UnknownValues<CrdBddView> : public UnknownValues<CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -867,17 +867,17 @@ namespace Bdd {
 
   forceinline
   UnknownValues<CrdBddView>::UnknownValues(const CrdBddView& x) 
-    : UnknownValues<BddVarImp*>(x.base().variable()) {}
+    : UnknownValues<CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   UnknownValues<CrdBddView>::init(const CrdBddView& x) {
-    UnknownValues<BddVarImp*>::init(x.base().variable());
+    UnknownValues<CpltSetVarImp*>::init(x.base().variable());
   }
 }
   namespace Set {
   template <>
   class UnknownRanges<Bdd::CrdBddView> : 
-      public Set::UnknownRanges<Bdd::BddVarImp*> {
+      public Set::UnknownRanges<Bdd::CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -895,11 +895,11 @@ namespace Bdd {
 
   forceinline
   UnknownRanges<Bdd::CrdBddView>::UnknownRanges(const Bdd::CrdBddView& x) 
-    : UnknownRanges<Bdd::BddVarImp*>(x.base().variable()) {}
+    : UnknownRanges<Bdd::CpltSetVarImp*>(x.base().variable()) {}
 
   forceinline void
   UnknownRanges<Bdd::CrdBddView>::init(const Bdd::CrdBddView& x) {
-    UnknownRanges<Bdd::BddVarImp*>::init(x.base().variable());
+    UnknownRanges<Bdd::CpltSetVarImp*>::init(x.base().variable());
   }
 
 }

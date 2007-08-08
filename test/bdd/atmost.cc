@@ -47,11 +47,11 @@ public:
     return (c <= 1);
   }
 
-  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::atmost(home, x[0], x[1], 1);
   }
-//   virtual void post(Space* home, BddVarArray& x, IntVarArray&, BoolVar b) {
+//   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
 };
@@ -80,7 +80,7 @@ public:
     return (c <= 1) && a < b;
   }
 
-  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::atmostLex(home, x[0], x[1], 1, SRT_LE, SCL_DOM);
   }
@@ -104,7 +104,7 @@ public:
     return (c <= 1);
   }
 
-  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::atmost(home, x[0], ds_33, 1, SCL_DOM);
   }

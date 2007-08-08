@@ -22,10 +22,10 @@
 namespace Gecode { 
 
   /**
-   * \brief Manager for BddVars. 
+   * \brief Manager for CpltSetVars. 
    *
    * Used for initialization and destruction of the global lookup table for
-   * Bdd nodes and for keeping track between BddVars and their corresponding
+   * Bdd nodes and for keeping track between CpltSetVars and their corresponding
    * indices in the lookup table. 
    */
   class CuddMgr {
@@ -572,7 +572,7 @@ namespace Gecode {
 	// 	      << "#var = " << info.varnum <<  "," 
 	// 	      << "#free nodes = " << info.freenodes << ")\n";
 	//     os << "Ouput level = " << _level << "\n";
-	//     os << "Registered BddVars = " << _size << "\n";
+	//     os << "Registered CpltSetVars = " << _size << "\n";
 	//     assert(_level < 4);
 	//     // os << "Table: " << bddtable << "\n";
       } else {

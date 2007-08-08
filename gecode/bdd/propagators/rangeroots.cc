@@ -20,36 +20,36 @@
  */
 
 #include "gecode/bdd.hh"
-#include "gecode/bdd/bddprop.hh"
+#include "gecode/bdd/propagators.hh"
 
 using namespace Gecode::Bdd;
 
 namespace Gecode {
 
-  void range(Space* home, const IntVarArgs& x, BddVar s, BddVar t, 
+  void range(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
 	     SetConLevel scl) {
     range_con(home, x, s, t, scl);
   }
 
-  void roots(Space* home, const IntVarArgs& x, BddVar s, BddVar t, 
-	     const BddVarArgs& allvars, 
+  void roots(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
+	     const CpltSetVarArgs& allvars, 
 	     SetConLevel scl) {
     roots_con(home, x, s, t, allvars, scl);
   }
 
   // constraints using the range constraint
-  void alldifferent(Space* home, const IntVarArgs& x, BddVar s, 
-		    BddVar t, const BddVarArgs& allvars, SetConLevel scl) {
+  void alldifferent(Space* home, const IntVarArgs& x, CpltSetVar s, 
+		    CpltSetVar t, const CpltSetVarArgs& allvars, SetConLevel scl) {
     nvalue_con(home, x, s, t, x.size(), allvars, scl);
   }
 
-  void nvalue(Space* home, const IntVarArgs& x, BddVar s, 
-		    BddVar t, int n, const BddVarArgs& allvars, SetConLevel scl) {
+  void nvalue(Space* home, const IntVarArgs& x, CpltSetVar s, 
+		    CpltSetVar t, int n, const CpltSetVarArgs& allvars, SetConLevel scl) {
     nvalue_con(home, x, s, t, n, allvars, scl);
   }
 
-  void uses(Space* home, const IntVarArgs& x, BddVar s, BddVar t, 
-	    const IntVarArgs& y, BddVar u, BddVar v,
+  void uses(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
+	    const IntVarArgs& y, CpltSetVar u, CpltSetVar v,
 	    SetConLevel scl) {
     uses_con(home, x, s, t, y, u, v, scl);
   }

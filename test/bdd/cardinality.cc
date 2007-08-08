@@ -44,12 +44,12 @@ public:
     return (0<= c && c <= 3);
   }
 
-  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::hls_order(home, x);
     Gecode::cardinality(home, x[0], 0, 3);
   }
-//   virtual void post(Space* home, BddVarArray& x, IntVarArray&, BoolVar b) {
+//   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
 };
@@ -69,12 +69,12 @@ public:
     return (c == 3);
   }
 
-  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::hls_order(home, x);
     Gecode::cardinality(home, x[0], 3, 3);
   }
-//   virtual void post(Space* home, BddVarArray& x, IntVarArray&, BoolVar b) {
+//   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
 };
@@ -95,12 +95,12 @@ public:
     return (c >= 1);
   }
 
-  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::hls_order(home, x);
     Gecode::cardinality(home, x[0], 1, Gecode::Limits::Set::int_max);
   }
-//   virtual void post(Space* home, BddVarArray& x, IntVarArray&, BoolVar b) {
+//   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
 };

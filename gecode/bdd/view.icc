@@ -28,16 +28,16 @@ namespace Gecode {
      * \ingroup TaskActorSetView
      */
 
-    class BddView : public VariableViewBase<BddVarImp> {
+    class BddView : public VariableViewBase<CpltSetVarImp> {
     protected:
-      using VariableViewBase<BddVarImp>::var;
+      using VariableViewBase<CpltSetVarImp>::var;
     public:
       /// \name Constructors and initialization
       //@{
       /// Default constructor
       BddView(void);
       /// Initialize from set variable \a x
-      BddView(const BddVar& x);
+      BddView(const CpltSetVar& x);
       //@}
 
       /// \name Value access
@@ -196,7 +196,7 @@ namespace Gecode {
   class ViewVarTraits<Bdd::BddView> {
   public:
     /// The variable type of a BddView
-    typedef Bdd::BddVarImp Var;
+    typedef Bdd::CpltSetVarImp Var;
   };
 
   namespace Bdd {
@@ -1585,49 +1585,49 @@ namespace Gecode {
  * \brief Print set variable view
  * \relates Gecode::Bdd::BddView
  */
-GECODE_BDD_EXPORT std::ostream&
+GECODE_CPLTSET_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::Bdd::BddView& x);
 
 /**
  * \brief Print set variable view
  * \relates Gecode::Bdd::SplitBddView
  */
-GECODE_BDD_EXPORT std::ostream&
+GECODE_CPLTSET_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::Bdd::SplitBddView& x);
 
 /**
  * \brief Print set variable view
  * \relates Gecode::Bdd::BndBddView
  */
-GECODE_BDD_EXPORT std::ostream&
+GECODE_CPLTSET_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::Bdd::BndBddView& x);
 
 /**
  * \brief Print set variable view
  * \relates Gecode::Bdd::CrdBddView
  */
-GECODE_BDD_EXPORT std::ostream&
+GECODE_CPLTSET_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::Bdd::CrdBddView& x);
 
 /**
  * \brief Print set variable view
  * \relates Gecode::Bdd::LexBddView
  */
-GECODE_BDD_EXPORT std::ostream&
+GECODE_CPLTSET_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::Bdd::LexBddView& x);
 
 /**
  * \brief Print set variable view
  * \relates Gecode::Bdd::SingletonBddView
  */
-GECODE_BDD_EXPORT std::ostream&
+GECODE_CPLTSET_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::Bdd::SingletonBddView& x);
 
 /**
  * \brief Print set variable view
  * \relates Gecode::Bdd::SingletonBddView
  */
-GECODE_BDD_EXPORT std::ostream&
+GECODE_CPLTSET_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::Bdd::SetBddView& x);
 
 

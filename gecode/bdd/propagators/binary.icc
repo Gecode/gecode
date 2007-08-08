@@ -27,8 +27,8 @@ namespace Gecode { namespace Bdd {
 			       GecodeBdd& d0, SetConLevel scl0)
     : Propagator(home), x(x0), y(y0), d(d0), scl(scl0) {
     force(home);
-    x.subscribe(home, this, PC_BDD_DOM);
-    y.subscribe(home, this, PC_BDD_DOM);
+    x.subscribe(home, this, PC_CPLTSET_DOM);
+    y.subscribe(home, this, PC_CPLTSET_DOM);
   }
 
   template <class View>
@@ -63,8 +63,8 @@ namespace Gecode { namespace Bdd {
   BinBddProp<View>::dispose(Space* home) {
     unforce(home);
     if (!home->failed()) {
-      x.cancel(home, this, PC_BDD_DOM);
-      y.cancel(home, this, PC_BDD_DOM);
+      x.cancel(home, this, PC_CPLTSET_DOM);
+      y.cancel(home, this, PC_CPLTSET_DOM);
     }
     BMI* mgr = x.manager();
     mgr->dispose(d);

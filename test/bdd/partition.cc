@@ -50,11 +50,11 @@ public:
     return empty && same;
   }
 
-  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::partition(home, x);
   }
-//   virtual void post(Space* home, BddVarArray& x, IntVarArray&, BoolVar b) {
+//   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
 };
@@ -104,11 +104,11 @@ public:
     return empty && same && (a < b);
   }
 
-  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::partitionLex(home, x, SRT_LE);
   }
-//   virtual void post(Space* home, BddVarArray& x, IntVarArray&, BoolVar b) {
+//   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
 };
@@ -134,13 +134,13 @@ public:
     return empty && same;
   }
 
-  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     int n = x.size() - 1;
-    BddVarArgs z(n);
+    CpltSetVarArgs z(n);
     for (int i = 0; i < n; i++)
       z[i] = x[i];
-    BddVar y = x[n];
+    CpltSetVar y = x[n];
     partition(home, z, y);
   }
 };
@@ -173,12 +173,12 @@ public:
     return empty && same && fixed;
   }
 
-  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     int n = x.size() - 1;
-    BddVarArgs z(n);
+    CpltSetVarArgs z(n);
     for (int i = 0; i < n; i++)
       z[i] = x[i];
-    BddVar y = x[n];
+    CpltSetVar y = x[n];
     partition(home, z, y);
     dom(home, y, SRT_EQ, 3, 5);
   }
@@ -205,8 +205,8 @@ public:
     return disjoint && isunion;
   }
 
-  virtual void post(Space* home, BddVarArray& x, IntVarArray& y) {
-    BddVar z = x[0];
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray& y) {
+    CpltSetVar z = x[0];
     partition(home, y, z);
   }
 };

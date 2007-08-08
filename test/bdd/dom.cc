@@ -37,10 +37,10 @@ public:
     IntSetRanges dr(ds_33);
     return Iter::Ranges::equal(xr, dr);
   }
-  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     Gecode::dom(home, x[0], SRT_EQ, ds_33);
   }
-//   virtual void post(Space* home, BddVarArray& x, IntVarArray&, BoolVar b) {
+//   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, ds_33, b);
 //   }
 };
@@ -54,10 +54,10 @@ public:
     IntSetRanges dr(d1);
     return Iter::Ranges::equal(xr, dr);
   }
-  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     Gecode::dom(home, x[0], SRT_EQ, d1);
   }
-//   virtual void post(Space* home, BddVarArray& x, IntVarArray&, BoolVar b) {
+//   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
 };
@@ -73,10 +73,10 @@ public:
     IntSetRanges dr(ds_33);
     return Iter::Ranges::subset(dr, xr);
   }
-  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     Gecode::dom(home, x[0], SRT_SUP, ds_33);
   }
-//   virtual void post(Space* home, BddVarArray& x, IntVarArray&, BoolVar b) {
+//   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_SUP, ds_33, b);
 //   }
 };
@@ -90,10 +90,10 @@ public:
     IntSetRanges dr(d1);
     return Iter::Ranges::subset(dr, xr);
   }
-  virtual void post(Space* home, BddVarArray& x, IntVarArray&) {
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     Gecode::dom(home, x[0], SRT_SUP, d1);
   }
-//   virtual void post(Space* home, BddVarArray& x, IntVarArray&, BoolVar b) {
+//   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_SUP, d1, b);
 //   }
 };

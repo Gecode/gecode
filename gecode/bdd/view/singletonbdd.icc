@@ -115,9 +115,9 @@ namespace Gecode {
     forceinline PropCond
     SingletonBddView::pc_bddtoint(PropCond pc) {
       switch(pc) {
-      case PC_BDD_DOM:
+      case PC_CPLTSET_DOM:
 	return Int::PC_INT_DOM;
-      case PC_BDD_VAL:
+      case PC_CPLTSET_VAL:
 	return Int::PC_INT_VAL;
       default:
 	return Int::PC_INT_DOM;
@@ -128,15 +128,15 @@ namespace Gecode {
     SingletonBddView::me_inttobdd(ModEvent me) {
       switch(me) {
       case Int::ME_INT_FAILED: 
-	return ME_BDD_FAILED;
+	return ME_CPLTSET_FAILED;
       case Int::ME_INT_NONE: 
-	return ME_BDD_NONE;
+	return ME_CPLTSET_NONE;
       case Int::ME_INT_VAL: 
-	return ME_BDD_VAL;
+	return ME_CPLTSET_VAL;
       case Int::ME_INT_DOM: 
-	return ME_BDD_DOM;
+	return ME_CPLTSET_DOM;
       default:
-	return ME_BDD_DOM;
+	return ME_CPLTSET_DOM;
       }
     }
 
@@ -184,12 +184,12 @@ namespace Gecode {
 
     forceinline int
     SingletonBddView::glbMin() const { 
-      return view.assigned() ? view.val() : BddVarImp::MIN_OF_EMPTY; 
+      return view.assigned() ? view.val() : CpltSetVarImp::MIN_OF_EMPTY; 
     }
 
     forceinline int
     SingletonBddView::glbMax() const { 
-      return view.assigned() ? view.val() : BddVarImp::MAX_OF_EMPTY; 
+      return view.assigned() ? view.val() : CpltSetVarImp::MAX_OF_EMPTY; 
     }
 
     /*
@@ -243,17 +243,17 @@ namespace Gecode {
 
     forceinline ModEvent
     SingletonBddView::cardinality(Space* home,unsigned int l, unsigned int u) {
-      return u <=1 ? ME_BDD_NONE : ME_BDD_FAILED;
+      return u <=1 ? ME_CPLTSET_NONE : ME_CPLTSET_FAILED;
     }
     
     forceinline ModEvent
     SingletonBddView::cardMin(Space* home,unsigned int c) {
-      return c<=1 ? ME_BDD_NONE : ME_BDD_FAILED;
+      return c<=1 ? ME_CPLTSET_NONE : ME_CPLTSET_FAILED;
     }
 
     forceinline ModEvent
     SingletonBddView::cardMax(Space* home,unsigned int c) {
-      return c<1 ? ME_BDD_FAILED : ME_BDD_NONE;
+      return c<1 ? ME_CPLTSET_FAILED : ME_CPLTSET_NONE;
     }
 
     forceinline ModEvent
@@ -273,7 +273,7 @@ namespace Gecode {
       ModEvent me2 = me_inttobdd(view.lq(home,j));
       if (me_failed(me1) || me_failed(me2)) {
 	domain = BDDBOT;
-	return ME_BDD_FAILED;
+	return ME_CPLTSET_FAILED;
       }
       
       for (int r = max; r >= min; r--) {
@@ -282,14 +282,14 @@ namespace Gecode {
       }
       
       switch (me1) {
-      case ME_BDD_NONE:
-      case ME_BDD_DOM:
+      case ME_CPLTSET_NONE:
+      case ME_CPLTSET_DOM:
 	return me2;
-      case ME_BDD_VAL:
-	return ME_BDD_VAL;
+      case ME_CPLTSET_VAL:
+	return ME_CPLTSET_VAL;
       default:
 	GECODE_NEVER;
-	return ME_BDD_VAL;
+	return ME_CPLTSET_VAL;
       }
     }
 
@@ -301,7 +301,7 @@ namespace Gecode {
 
     forceinline ModEvent
     SingletonBddView::include(Space* home, int j, int k) {
-      return j==k ? me_inttobdd(view.eq(home,j)) : ME_BDD_FAILED ;
+      return j==k ? me_inttobdd(view.eq(home,j)) : ME_CPLTSET_FAILED ;
     }
 
     forceinline ModEvent
@@ -311,7 +311,7 @@ namespace Gecode {
       ModEvent me2 = me_inttobdd(view.le(home,k));
       if (me_failed(me1) || me_failed(me2)) {
 	domain = BDDBOT;
-	return ME_BDD_FAILED;
+	return ME_CPLTSET_FAILED;
       }
       
       for (int i = k; i >= j; i--) {
@@ -319,14 +319,14 @@ namespace Gecode {
       }
 
       switch (me1) {
-      case ME_BDD_NONE:
-      case ME_BDD_DOM:
+      case ME_CPLTSET_NONE:
+      case ME_CPLTSET_DOM:
 	return me2;
-      case ME_BDD_VAL:
-	return ME_BDD_VAL;
+      case ME_CPLTSET_VAL:
+	return ME_CPLTSET_VAL;
       default:
 	GECODE_NEVER;
-	return ME_BDD_VAL;
+	return ME_CPLTSET_VAL;
       }
     }
 
@@ -345,15 +345,15 @@ namespace Gecode {
     template <class I> ModEvent
     SingletonBddView::includeI(Space* home, I& iter) {
       if (!iter())
-	return ME_BDD_NONE;
+	return ME_CPLTSET_NONE;
 
       if (iter.min()!=iter.max())
-	return ME_BDD_FAILED;
+	return ME_CPLTSET_FAILED;
 
       int val = iter.min();
       ++iter;
       if ( iter() )
-	return ME_BDD_FAILED;
+	return ME_CPLTSET_FAILED;
 
       return me_inttobdd(view.eq(home, val));
     }
@@ -412,11 +412,11 @@ namespace Gecode {
 	    domain &= getbdd(i - min);
 	  }
 	}
-	return ME_BDD_VAL;
+	return ME_CPLTSET_VAL;
       }
       d &= domain;
       if (mgr->cfalse(d)) 
-	return ME_BDD_FAILED;
+	return ME_CPLTSET_FAILED;
 
       ModEvent me = Int::ME_INT_NONE;
       GecodeBdd conv = BDDTOP;

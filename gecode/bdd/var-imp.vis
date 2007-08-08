@@ -33,9 +33,9 @@ namespace Gecode { namespace Bdd {
 # General settings
 #
 [General]
-Name:		Bdd
-VTI:		BDD
-Export:		GECODE_BDD_EXPORT
+Name:		CpltSet
+VTI:		CPLTSET
+Export:		GECODE_CPLTSET_EXPORT
 Forceinline:	forceinline
 Forcedispose:   true
 
@@ -44,8 +44,8 @@ Forcedispose:   true
 #
 [ModEventHeader]
   /**
-   * \defgroup TaskActorBddMEPC Bdd modification events and propagation conditions
-   * \ingroup TaskActorBdd
+   * \defgroup TaskActorCpltSetMEPC CpltSet modification events and propagation conditions
+   * \ingroup TaskActorCpltSet
    */
 
   //@{
@@ -78,8 +78,8 @@ ModEvents:	VAL
    * \brief Propagate when a view becomes assigned (single value)
    *
    * If a propagator \a p depends on a view \a x with propagation
-   * condition PC_BDD_VAL, then \a p is propagated when a domain
-   * update operation on \a x returns the modification event ME_BDD_VAL.
+   * condition PC_CPLTSET_VAL, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_CPLTSET_VAL.
    */
 [PropCond]
 Name:		DOM
@@ -88,9 +88,9 @@ ModEvents:	VAL,DOM
    * \brief Propagate when the domain of a view changes
    *
    * If a propagator \a p depends on a view \a x with propagation
-   * condition PC_BDD_DOM, then \a p is propagated when a domain
-   * update operation on \a x returns the modification event ME_BDD_VAL or 
-   * ME_BDD_DOM.
+   * condition PC_CPLTSET_DOM, then \a p is propagated when a domain
+   * update operation on \a x returns the modification event ME_CPLTSET_VAL or 
+   * ME_CPLTSET_DOM.
    */
 [PropCondFooter]
   //@}
@@ -101,5 +101,5 @@ ModEvents:	VAL,DOM
 
 }}
 
-// STATISTICS: bdd-var
+// STATISTICS: cpltset-var
 [End]

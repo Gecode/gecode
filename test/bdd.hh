@@ -140,8 +140,8 @@ private:
   int ivs;
   int ics;
 
-  void removeFromLub(int, BddVar&, int, const IntSet&);
-  void addToGlb(int, BddVar&, int, const IntSet&);
+  void removeFromLub(int, CpltSetVar&, int, const IntSet&);
+  void addToGlb(int, CpltSetVar&, int, const IntSet&);
   SetAssignment* make_assignment(void);
 public:
   BddTest(const char* t, int a, const IntSet& d, bool r=false, int w=0, 
@@ -152,9 +152,9 @@ public:
   /// Check for solution
   virtual bool solution(const SetAssignment&) const = 0;
   /// Post propagator
-  virtual void post(Space* home, BddVarArray& x, IntVarArray& y) = 0;
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray& y) = 0;
   /// Post reified propagator
-  virtual void post(Space* home, BddVarArray& x, IntVarArray& y, BoolVar b) {}
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray& y, BoolVar b) {}
   /// Perform test
   virtual bool run(const Options& opt);
 

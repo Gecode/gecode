@@ -25,7 +25,7 @@ using namespace Gecode::Bdd;
 namespace Gecode {
 
   void 
-  hls_order(const BddVarArray& x) {
+  hls_order(const CpltSetVarArray& x) {
     // std::cout << "start order\n";
     BddMgr* mgr = x[0].manager();
     unsigned int var_in_tab = mgr->allocated();

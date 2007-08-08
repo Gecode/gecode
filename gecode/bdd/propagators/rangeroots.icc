@@ -176,7 +176,7 @@ namespace Gecode { namespace Bdd {
   }
 
   forceinline void 
-  range_con(Space* home, const IntVarArgs& x, const BddVar& s, const BddVar& t, 
+  range_con(Space* home, const IntVarArgs& x, const CpltSetVar& s, const CpltSetVar& t, 
 	    SetConLevel scl) {
     BMI* mgr = s.manager();
     int n = x.size();
@@ -298,8 +298,8 @@ namespace Gecode { namespace Bdd {
   }
 
   forceinline void 
-  roots_con(Space* home, const IntVarArgs& x, const BddVar& s, const BddVar& t, 
-	    const BddVarArgs& allvars, 
+  roots_con(Space* home, const IntVarArgs& x, const CpltSetVar& s, const CpltSetVar& t, 
+	    const CpltSetVarArgs& allvars, 
 	    SetConLevel scl) {
 
     BMI* mgr = s.manager();
@@ -348,15 +348,15 @@ namespace Gecode { namespace Bdd {
   forceinline
   Range<View0, View1>::Range(Space* home, ViewArray<View0>& x, 
 			     View1& y, View1& z, GecodeBdd& d0)
-    : MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, x, y, z), 
+    : MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, x, y, z), 
       d(d0) {
-    MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::force(home);
+    MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::force(home);
   }
 
   template <class View0, class View1>
   forceinline
   Range<View0, View1>::Range(Space* home, bool share, Range& p)
-    : MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, share, p), 
+    : MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, share, p), 
       d(p.d) {}
 
   template <class View0, class View1>
@@ -406,15 +406,15 @@ namespace Gecode { namespace Bdd {
   template <class View0, class View1>
   size_t
   Range<View0, View1>::dispose(Space* home) {
-    MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::unforce(home);
+    MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::unforce(home);
     if (!home->failed()) {
-      x.cancel(home, this, PC_BDD_DOM);
-      y.cancel(home, this, PC_BDD_DOM);
-      z.cancel(home, this, PC_BDD_DOM);
+      x.cancel(home, this, PC_CPLTSET_DOM);
+      y.cancel(home, this, PC_CPLTSET_DOM);
+      z.cancel(home, this, PC_CPLTSET_DOM);
     }
     BMI* mgr = y.manager();
     mgr->dispose(d);
-    MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::dispose(home);
+    MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::dispose(home);
     return sizeof(*this);
   }
 
@@ -423,17 +423,17 @@ namespace Gecode { namespace Bdd {
   forceinline
   RangeTwice<View0, View1>::RangeTwice(Space* home, ViewArray<View0>& x, 
 				       ViewArray<View1>& y, GecodeBdd& d0)
-    : MixNaryTwicePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, x, y), 
+    : MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, x, y), 
       d(d0) {
-    MixNaryTwicePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::force(home);
+    MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::force(home);
   }
 
   template <class View0, class View1>
   forceinline
   RangeTwice<View0, View1>::RangeTwice(Space* home, bool share, RangeTwice& p)
-    : MixNaryTwicePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>(home, share, p), 
+    : MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, share, p), 
       d(p.d) {
-    MixNaryTwicePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::force(home);
+    MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::force(home);
   }
 
   template <class View0, class View1>
@@ -478,14 +478,14 @@ namespace Gecode { namespace Bdd {
   template <class View0, class View1>
   size_t
   RangeTwice<View0, View1>::dispose(Space* home) {
-    MixNaryTwicePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::unforce(home);
+    MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::unforce(home);
     if (!home->failed()) {
-      x.cancel(home, this, PC_BDD_DOM);
-      y.cancel(home, this, PC_BDD_DOM);
+      x.cancel(home, this, PC_CPLTSET_DOM);
+      y.cancel(home, this, PC_CPLTSET_DOM);
     }
     BMI* mgr = y[0].manager();
     mgr->dispose(d);
-    MixNaryTwicePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::dispose(home);
+    MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::dispose(home);
     return sizeof(*this);
   }
 
@@ -519,8 +519,8 @@ namespace Gecode { namespace Bdd {
 
 
   forceinline void 
-  nvalue_con(Space* home, const IntVarArgs& x, const BddVar& s, const BddVar& t, 
-	    int usedvalues, const BddVarArgs& allvars, SetConLevel scl) {
+  nvalue_con(Space* home, const IntVarArgs& x, const CpltSetVar& s, const CpltSetVar& t, 
+	    int usedvalues, const CpltSetVarArgs& allvars, SetConLevel scl) {
     std::cout << "nvalue con\n";
     BMI* mgr = s.manager();
     int n = x.size();
@@ -623,8 +623,8 @@ namespace Gecode { namespace Bdd {
 
 
   forceinline void 
-  uses_con(Space* home, const IntVarArgs& x, const BddVar& s, const BddVar& t, 
-	   const IntVarArgs& y, const BddVar& u, const BddVar& v,
+  uses_con(Space* home, const IntVarArgs& x, const CpltSetVar& s, const CpltSetVar& t, 
+	   const IntVarArgs& y, const CpltSetVar& u, const CpltSetVar& v,
 	   SetConLevel scl) {
     BMI* mgr = s.manager();
     int n = x.size();

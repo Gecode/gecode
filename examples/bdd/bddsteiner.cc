@@ -91,7 +91,7 @@ public:
   int k;
   int n;
   int len;
-  BddVarArray root;
+  CpltSetVarArray root;
 
   BddSteiner(const Options& op)
     : BddExample(op),
@@ -118,11 +118,11 @@ public:
       // std::cout << "atmost(" << i << ",";
       for (int j=i+1; j < len; j++) {
 	// std::cout << j <<",";
-        BddVar x = root[i];
-        BddVar y = root[j];
+        CpltSetVar x = root[i];
+        CpltSetVar y = root[j];
 	if (op.naive) {
 	  // create intermediate variable
-	  BddVar z(this, this->m.object(), 1, n);
+	  CpltSetVar z(this, this->m.object(), 1, n);
 
 	  rel(this, x, SOT_INTER, y, SRT_EQ, z, op.scl);
 	  // std::cout << "card intermediate\n";

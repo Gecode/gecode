@@ -31,8 +31,8 @@ namespace Gecode { namespace Bdd {
   BddView::BddView(void) {}
 
   forceinline
-  BddView::BddView(const BddVar& y)
-    : VariableViewBase<BddVarImp>(y.variable()) { }
+  BddView::BddView(const CpltSetVar& y)
+    : VariableViewBase<CpltSetVarImp>(y.variable()) { }
 
   /*
    * Set information
@@ -245,7 +245,7 @@ namespace Gecode { namespace Bdd {
 
   /// Iterator for the values of a bdd view
   template <>
-  class DomValues<BddView> : public DomValues<BddVarImp*> {
+  class DomValues<BddView> : public DomValues<CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -263,16 +263,16 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   DomValues<BddView>::DomValues(const BddView& x) 
-    : DomValues<BddVarImp*>(x.variable()) {}
+    : DomValues<CpltSetVarImp*>(x.variable()) {}
 
   forceinline void
   DomValues<BddView>::init(const BddView& x) {
-    DomValues<BddVarImp*>::init(x.variable());
+    DomValues<CpltSetVarImp*>::init(x.variable());
   }
 
   /// Iterator for the values in the greatest lower bound of a BddView
   template <>
-  class GlbValues<BddView> : public GlbValues<BddVarImp*> {
+  class GlbValues<BddView> : public GlbValues<CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -290,16 +290,16 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   GlbValues<BddView>::GlbValues(const BddView& x) 
-    : GlbValues<BddVarImp*>(x.variable()) {}
+    : GlbValues<CpltSetVarImp*>(x.variable()) {}
 
   forceinline void
   GlbValues<BddView>::init(const BddView& x) {
-    GlbValues<BddVarImp*>::init(x.variable());
+    GlbValues<CpltSetVarImp*>::init(x.variable());
   }
 }
   namespace Set {
   template <>
-  class GlbRanges<Bdd::BddView> : public Set::GlbRanges<Bdd::BddVarImp*> {
+  class GlbRanges<Bdd::BddView> : public Set::GlbRanges<Bdd::CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -317,15 +317,15 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   GlbRanges<Bdd::BddView>::GlbRanges(const Bdd::BddView& x) 
-    : GlbRanges<Bdd::BddVarImp*>(x.variable()) {}
+    : GlbRanges<Bdd::CpltSetVarImp*>(x.variable()) {}
 
   forceinline void
   GlbRanges<Bdd::BddView>::init(const Bdd::BddView& x) {
-    GlbRanges<Bdd::BddVarImp*>::init(x.variable());
+    GlbRanges<Bdd::CpltSetVarImp*>::init(x.variable());
   }
 
   template <>
-  class LubRanges<Bdd::BddView> : public Set::LubRanges<Bdd::BddVarImp*> {
+  class LubRanges<Bdd::BddView> : public Set::LubRanges<Bdd::CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -343,11 +343,11 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   LubRanges<Bdd::BddView>::LubRanges(const Bdd::BddView& x) 
-    : Set::LubRanges<Bdd::BddVarImp*>(x.variable()) {}
+    : Set::LubRanges<Bdd::CpltSetVarImp*>(x.variable()) {}
 
   forceinline void
   LubRanges<Bdd::BddView>::init(const Bdd::BddView& x) {
-    Set::LubRanges<Bdd::BddVarImp*>::init(x.variable());
+    Set::LubRanges<Bdd::CpltSetVarImp*>::init(x.variable());
   }
   }
   namespace Bdd {
@@ -356,7 +356,7 @@ namespace Gecode { namespace Bdd {
    * \ingroup TaskActorSetView
    */
   template <>
-  class LubValues<BddView> : public LubValues<BddVarImp*> {
+  class LubValues<BddView> : public LubValues<CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -374,17 +374,17 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   LubValues<BddView>::LubValues(const BddView& x) 
-  : LubValues<BddVarImp*>(x.variable()) {}
+  : LubValues<CpltSetVarImp*>(x.variable()) {}
 
   forceinline void
   LubValues<BddView>::init(const BddView& x) {
-    LubValues<BddVarImp*>::init(x.variable());
+    LubValues<CpltSetVarImp*>::init(x.variable());
   }
 
 
   /// Iterator for the unknown values of a BddView
   template <>
-  class UnknownValues<BddView> : public UnknownValues<BddVarImp*> {
+  class UnknownValues<BddView> : public UnknownValues<CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -402,16 +402,16 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   UnknownValues<BddView>::UnknownValues(const BddView& x) 
-    : UnknownValues<BddVarImp*>(x.variable()) {}
+    : UnknownValues<CpltSetVarImp*>(x.variable()) {}
 
   forceinline void
   UnknownValues<BddView>::init(const BddView& x) {
-    UnknownValues<BddVarImp*>::init(x.variable());
+    UnknownValues<CpltSetVarImp*>::init(x.variable());
   }
   }
   namespace Set {
   template <>
-  class UnknownRanges<Bdd::BddView> : public Set::UnknownRanges<Bdd::BddVarImp*> {
+  class UnknownRanges<Bdd::BddView> : public Set::UnknownRanges<Bdd::CpltSetVarImp*> {
   public:
     /// \name Constructors and initialization
     //@{
@@ -429,11 +429,11 @@ namespace Gecode { namespace Bdd {
 
   forceinline
   UnknownRanges<Bdd::BddView>::UnknownRanges(const Bdd::BddView& x) 
-    : Set::UnknownRanges<Bdd::BddVarImp*>(x.variable()) {}
+    : Set::UnknownRanges<Bdd::CpltSetVarImp*>(x.variable()) {}
 
   forceinline void
   UnknownRanges<Bdd::BddView>::init(const Bdd::BddView& x) {
-    Set::UnknownRanges<Bdd::BddVarImp*>::init(x.variable());
+    Set::UnknownRanges<Bdd::CpltSetVarImp*>::init(x.variable());
   }
   }
 }

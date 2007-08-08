@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __GECODE_BDDPROP_HH
-#define __GECODE_BDDPROP_HH
+#ifndef __GECODE_CPLTSETPROP_HH
+#define __GECODE_CPLTSETPROP_HH
 
 #include "gecode/bdd.hh"
 
@@ -54,16 +54,16 @@ namespace Gecode { namespace Bdd {
     ExecStatus 
     divide_conquer(Space* home, BMI* mgr, GecodeBdd& p, int i, int j);
     /// Apply bounds consistent existential quantification for all variables
-//     GECODE_BDD_EXPORT ExecStatus 
+//     GECODE_CPLTSET_EXPORT ExecStatus 
 //     divide_conquer_conv(Space* home, BMI* mgr, GecodeBdd& p, int i, int j);
 //     /// Apply existential quantification for the remainder part
-//     GECODE_BDD_EXPORT ExecStatus 
+//     GECODE_CPLTSET_EXPORT ExecStatus 
 //     divide_conquer_split(Space* home, BMI* mgr, GecodeBdd& p, int i, int j);
 //     /// Apply cardinality bounds existential quantification for the remainder part
-//     GECODE_BDD_EXPORT ExecStatus 
+//     GECODE_CPLTSET_EXPORT ExecStatus 
 //     divide_conquer_split_card(Space* home, BMI* mgr, GecodeBdd& p, int i, int j);
 //     /// Apply lexicographic bounds existential quantification for the remainder part
-//     GECODE_BDD_EXPORT ExecStatus 
+//     GECODE_CPLTSET_EXPORT ExecStatus 
 //     divide_conquer_split_lex(Space* home, BMI* mgr, GecodeBdd& p, int i, int j);
   public:
     /// Cost function
@@ -193,7 +193,7 @@ namespace Gecode { namespace Bdd {
   };
 
   /**
-   * \brief Singleton channel propagator from IntVar to BddVar
+   * \brief Singleton channel propagator from IntVar to CpltSetVar
    */
 
   template <class View1, class View2>
@@ -201,7 +201,7 @@ namespace Gecode { namespace Bdd {
   protected:
     /// View for the IntVar
     View1 x;
-    /// View for the BddVar
+    /// View for the CpltSetVar
     View2 s;
     /// Constructor for cloning \a p
     Singleton(Space* home, bool share, Singleton& p);
@@ -232,12 +232,12 @@ namespace Gecode { namespace Bdd {
    * \brief Binary bdd propagator
    */
   template <class View0, class View1>
-  class Bin : public MixBinaryPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM> {
+  class Bin : public MixBinaryPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM> {
   protected:
     /// Bdd representation of the constraint
     GecodeBdd d;
-    using MixBinaryPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::x0;
-    using MixBinaryPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::x1;
+    using MixBinaryPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::x0;
+    using MixBinaryPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::x1;
     /// Constructor for cloning \a p
     Bin(Space* home, bool share,Bin& p);
     /// Constructor for posting
@@ -259,12 +259,12 @@ namespace Gecode { namespace Bdd {
    */
   template <class View0, class View1>
   class NaryOneBdd : 
-    public MixNaryOnePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM> {
+    public MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM> {
   protected:
     /// Bdd representation of the constraint
     GecodeBdd d;
-    using MixNaryOnePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::x;
-    using MixNaryOnePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::y;
+    using MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::x;
+    using MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::y;
     /// Constructor for cloning \a p
     NaryOneBdd(Space* home, bool share, NaryOneBdd& p);
     /// Constructor for posting
@@ -287,13 +287,13 @@ namespace Gecode { namespace Bdd {
 
   template <class View0, class View1>
   class Range : 
-    public MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM> {
+    public MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM> {
   protected:
     /// Bdd representation of the constraint
     GecodeBdd d;
-    using MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::x;
-    using MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::y;
-    using MixNaryTwoPropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::z;
+    using MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::x;
+    using MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::y;
+    using MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::z;
     /// Constructor for cloning \a p
     Range(Space* home, bool share, Range& p);
     /// Constructor for posting
@@ -317,12 +317,12 @@ namespace Gecode { namespace Bdd {
 
   template <class View0, class View1>
   class RangeTwice : 
-    public MixNaryTwicePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM> {
+    public MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM> {
   protected:
     /// Bdd representation of the constraint
     GecodeBdd d;
-    using MixNaryTwicePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::x;
-    using MixNaryTwicePropagator<View0, PC_BDD_DOM, View1, PC_BDD_DOM>::y;
+    using MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::x;
+    using MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::y;
     /// Constructor for cloning \a p
     RangeTwice(Space* home, bool share, RangeTwice& p);
     /// Constructor for posting
@@ -404,26 +404,26 @@ namespace Gecode { namespace Bdd {
 
 }}
 
-#include "gecode/bdd/bddprop/distinct.icc"
-#include "gecode/bdd/bddprop/partition.icc"
-#include "gecode/bdd/bddprop/atmost.icc"
-#include "gecode/bdd/bddprop/rel.icc"
-#include "gecode/bdd/bddprop/select.icc"
+#include "gecode/bdd/propagators/distinct.icc"
+#include "gecode/bdd/propagators/partition.icc"
+#include "gecode/bdd/propagators/atmost.icc"
+#include "gecode/bdd/propagators/rel.icc"
+#include "gecode/bdd/propagators/select.icc"
 
-#include "gecode/bdd/bddprop/common.icc"
+#include "gecode/bdd/propagators/common.icc"
 
-#include "gecode/bdd/bddprop/naryrec.icc"
-#include "gecode/bdd/bddprop/nary.icc"
-#include "gecode/bdd/bddprop/binary.icc"
-#include "gecode/bdd/bddprop/unary.icc"
-#include "gecode/bdd/bddprop/singleton.icc" 
-#include "gecode/bdd/bddprop/bin.icc"
-#include "gecode/bdd/bddprop/rangerec.icc"
-#include "gecode/bdd/bddprop/rangeroots.icc"
+#include "gecode/bdd/propagators/naryrec.icc"
+#include "gecode/bdd/propagators/nary.icc"
+#include "gecode/bdd/propagators/binary.icc"
+#include "gecode/bdd/propagators/unary.icc"
+#include "gecode/bdd/propagators/singleton.icc" 
+#include "gecode/bdd/propagators/bin.icc"
+#include "gecode/bdd/propagators/rangerec.icc"
+#include "gecode/bdd/propagators/rangeroots.icc"
 
 // check whether we need this in other propagators too
 #include "gecode/support/dynamic-array.hh"
-#include "gecode/bdd/bddprop/disjointglb.icc"
+#include "gecode/bdd/propagators/disjointglb.icc"
 #endif
 
 // STATISTICS: bdd-prop

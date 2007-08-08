@@ -20,37 +20,37 @@
  */
 
 #include "gecode/bdd.hh"
-#include "gecode/bdd/bddprop.hh"
+#include "gecode/bdd/propagators.hh"
 
 using namespace Gecode::Bdd;
 
 namespace Gecode {
 
-  void partition(Space* home, const BddVarArgs& x, SetConLevel scl) {
+  void partition(Space* home, const CpltSetVarArgs& x, SetConLevel scl) {
     partition_con(home, x, false, SRT_EQ, false, -1, scl);
   }
 
-  void partition(Space* home, const BddVarArgs& x, const BddVar& y, 
+  void partition(Space* home, const CpltSetVarArgs& x, const CpltSetVar& y, 
 		 SetConLevel scl) {
     partition_con(home, x, y, false, SRT_EQ, false, -1, scl);
   }
 
-  void partition(Space* home, const IntVarArgs& x, const BddVar& y, 
+  void partition(Space* home, const IntVarArgs& x, const CpltSetVar& y, 
 		 SetConLevel scl) {
     partition_con(home, x, y, false, SRT_EQ, false, -1, scl);
   }
 
-  void partitionLex(Space* home, const BddVarArgs& x, BddSetRelType lex, 
+  void partitionLex(Space* home, const CpltSetVarArgs& x, BddSetRelType lex, 
 		    SetConLevel scl) {
     partition_con(home, x, true, lex, false, -1, scl);
   }
 
-  void partitionLexCard(Space* home, const BddVarArgs& x, BddSetRelType lex, 
+  void partitionLexCard(Space* home, const CpltSetVarArgs& x, BddSetRelType lex, 
 			int c, SetConLevel scl) {
     partition_con(home, x, true, lex, true, c, scl);
   }
 
-  void partitionCard(Space* home, const BddVarArgs& x, int c, 
+  void partitionCard(Space* home, const CpltSetVarArgs& x, int c, 
 		     SetConLevel scl) {
     partition_con(home, x, false, SRT_EQ, true, c, scl);
   }

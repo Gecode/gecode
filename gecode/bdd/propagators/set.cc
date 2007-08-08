@@ -31,7 +31,7 @@
 #include "gecode/set/select.hh"
 
 
-#include "gecode/bdd/bddprop.hh"
+#include "gecode/bdd/propagators.hh"
 
 
 
@@ -42,7 +42,7 @@ namespace Gecode {
   // set constraints using bdd variables
   // \todo put trunk template functions into icc files in order to include them here
 
-//   void rel(Space* home, BddVar x, SetRelType r, BddVar y, BoolVar b) {
+//   void rel(Space* home, CpltSetVar x, SetRelType r, CpltSetVar y, BoolVar b) {
 //     BddView bx(x);
 //     BddView by(y);
 //     CrdBddView cx(bx);
@@ -52,7 +52,7 @@ namespace Gecode {
 //     rel_re<SetBddView, SetBddView>(home, sx, r, sy, b);
 //   }
   
-//   void rel(Space* home, BddVar s, SetRelType r, IntVar x, SetConLevel scl) {
+//   void rel(Space* home, CpltSetVar s, SetRelType r, IntVar x, SetConLevel scl) {
 //     BddView bs(s);
 //     CrdBddView cs(bs);
 //     SetBddView ss(cs);
@@ -61,7 +61,7 @@ namespace Gecode {
 //     Gecode::rel_post<SetBddView, Gecode::Gecode::Set::SingletonView>(home, ss, r, xsingle); 
 //   }
 
-//   void rel(Space* home, BddVar s, SetRelType r, IntVar x, BoolVar b, SetConLevel scl) {
+//   void rel(Space* home, CpltSetVar s, SetRelType r, IntVar x, BoolVar b, SetConLevel scl) {
 //     BddView bs(s);
 //     CrdBddView cs(bs);
 //     SetBddView ss(cs);
@@ -70,7 +70,7 @@ namespace Gecode {
 //     rel_re<SetBddView, Gecode::Gecode::Set::SingletonView>(home, ss, r, xsingle, b);
 //   }
 
-//   void rel(Space* home, IntVar x, SetRelType r, BddVar s, BoolVar b, SetConLevel scl) {
+//   void rel(Space* home, IntVar x, SetRelType r, CpltSetVar s, BoolVar b, SetConLevel scl) {
 //     switch(r) {
 //     case SRT_SUB:
 //       rel(home, s, SRT_SUP, x, b, scl);
@@ -83,7 +83,7 @@ namespace Gecode {
 //     }
 //   }
 
-//   void rel(Space* home, BddVar s, IntRelType r, IntVar x, SetConLevel scl) {
+//   void rel(Space* home, CpltSetVar s, IntRelType r, IntVar x, SetConLevel scl) {
 //     if (home->failed()) return;
 //     BddView bs(s);
 //     CrdBddView cs(bs);
@@ -113,7 +113,7 @@ namespace Gecode {
 //       {
 // 	IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
 // 	rel(home, tmp, IRT_LQ, x);
-// 	GECODE_ES_FAIL(home, (Set::Int::MaxElement<SetBddView, PC_BDD_DOM>
+// 	GECODE_ES_FAIL(home, (Set::Int::MaxElement<SetBddView, PC_CPLTSET_DOM>
 // 			      ::post(home,ss,tmp)));
 //       }
 //       break;
@@ -121,7 +121,7 @@ namespace Gecode {
 //       {
 // 	IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
 // 	rel(home, tmp, IRT_LE, x);
-// 	GECODE_ES_FAIL(home, (Set::Int::MaxElement<SetBddView, PC_BDD_DOM>
+// 	GECODE_ES_FAIL(home, (Set::Int::MaxElement<SetBddView, PC_CPLTSET_DOM>
 // 			      ::post(home,ss,tmp)));
 //       }
 //       break;
@@ -129,7 +129,7 @@ namespace Gecode {
 //       {
 // 	IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
 // 	rel(home, tmp, IRT_GQ, x);
-// 	GECODE_ES_FAIL(home, (Set::Int::MinElement<SetBddView, PC_BDD_DOM>
+// 	GECODE_ES_FAIL(home, (Set::Int::MinElement<SetBddView, PC_CPLTSET_DOM>
 // 			      ::post(home,ss,tmp)));
 //       }
 //       break;
@@ -137,14 +137,14 @@ namespace Gecode {
 //       {
 // 	IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
 // 	rel(home, tmp, IRT_GR, x);
-// 	GECODE_ES_FAIL(home, (Set::Int::MinElement<SetBddView, PC_BDD_DOM>
+// 	GECODE_ES_FAIL(home, (Set::Int::MinElement<SetBddView, PC_CPLTSET_DOM>
 // 			      ::post(home,ss,tmp)));
 //       }
 //       break;
 //     }
 //   }
 
-//   void rel(Space* home, IntVar x, IntRelType r, BddVar s, SetConLevel scl) {
+//   void rel(Space* home, IntVar x, IntRelType r, CpltSetVar s, SetConLevel scl) {
 //     IntRelType rr;
 //     switch (r) {
 //     case IRT_LE: rr=IRT_GR; break;
@@ -157,28 +157,28 @@ namespace Gecode {
 //   }
 
 //   void
-//   min(Space* home, BddVar s, IntVar x){
+//   min(Space* home, CpltSetVar s, IntVar x){
 //     if (home->failed()) return;
 //     BddView bs(s);
 //     CrdBddView cs(bs);
 //     SetBddView ss(cs);
 
-//     GECODE_ES_FAIL(home, (Set::Int::MinElement<SetBddView, PC_BDD_DOM>
+//     GECODE_ES_FAIL(home, (Set::Int::MinElement<SetBddView, PC_CPLTSET_DOM>
 // 		   ::post(home,ss,x)));
 //   }
 //   void
-//   max(Space* home, BddVar s, IntVar x){
+//   max(Space* home, CpltSetVar s, IntVar x){
 //     if (home->failed()) return;
 //     BddView bs(s);
 //     CrdBddView cs(bs);
 //     SetBddView ss(cs);
 
-//     GECODE_ES_FAIL(home, (Set::Int::MaxElement<SetBddView, PC_BDD_DOM>
+//     GECODE_ES_FAIL(home, (Set::Int::MaxElement<SetBddView, PC_CPLTSET_DOM>
 // 		   ::post(home,ss,x)));
 //   }
 
 //   void
-//   match(Space* home, BddVar s, const IntVarArgs& x) {
+//   match(Space* home, CpltSetVar s, const IntVarArgs& x) {
 //     if (home->failed()) return;
 //     BddView bs(s);
 //     CrdBddView cs(bs);
@@ -189,15 +189,15 @@ namespace Gecode {
 //   }
 
   void
-  channel(Space* home, const IntVarArgs& x, const BddVarArgs& y) {
+  channel(Space* home, const IntVarArgs& x, const CpltSetVarArgs& y) {
     if (home->failed()) return;
     ViewArray<Gecode::Int::IntView> xa(home,x);
     ViewArray<BddView> bv(home,y);
-    GECODE_ES_FAIL(home, (Set::Int::Channel<BddView, PC_BDD_DOM>::post(home,xa,bv)));
+    GECODE_ES_FAIL(home, (Set::Int::Channel<BddView, PC_CPLTSET_DOM>::post(home,xa,bv)));
   }
 
 //   void weights(Space* home, const IntArgs& elements, const IntArgs& weights,
-// 	       BddVar x, IntVar y) {
+// 	       CpltSetVar x, IntVar y) {
 //     if (home->failed()) return;
 //     BddView bs(x);
 //     CrdBddView cs(bs);
@@ -209,16 +209,16 @@ namespace Gecode {
 //   }
 
 //   void
-//   cardinality(Space* home, BddVar s, IntVar x) {
+//   cardinality(Space* home, CpltSetVar s, IntVar x) {
 //     if (home->failed()) return;
 //     BddView bs(s);
 //     CrdBddView cs(bs);
 //     SetBddView ss(cs);
-//     GECODE_ES_FAIL(home, (Set::Int::Card<SetBddView, PC_BDD_DOM>::post(home, ss, x)));
+//     GECODE_ES_FAIL(home, (Set::Int::Card<SetBddView, PC_CPLTSET_DOM>::post(home, ss, x)));
 //   }
 
-//   void rel(Space* home, BddVar x, SetOpType op, BddVar y, 
-// 	   SetRelType r, BddVar z) {
+//   void rel(Space* home, CpltSetVar x, SetOpType op, CpltSetVar y, 
+// 	   SetRelType r, CpltSetVar z) {
 //     BddView xv(x); 
 //     BddView yv(y); 
 //     BddView zv(z); 
@@ -234,7 +234,7 @@ namespace Gecode {
 //     Gecode::Set::RelOp::rel_op_post<SetBddView, SetBddView, SetBddView>(home, sx, op, sy, r, sz);
 //   }
 
-//   void  rel(Space* home, SetOpType op, const BddVarArgs& x, BddVar y) {
+//   void  rel(Space* home, SetOpType op, const CpltSetVarArgs& x, CpltSetVar y) {
 //     if (home->failed()) return;
 //     ViewArray<BddView> bv(home,x);
 //     ViewArray<CrdBddView> cv(home, bv.size());
@@ -270,7 +270,7 @@ namespace Gecode {
 //     }
 //   }
 
-//   void  rel(Space* home, SetOpType op, const IntVarArgs& x, BddVar y) {
+//   void  rel(Space* home, SetOpType op, const IntVarArgs& x, CpltSetVar y) {
 //     if (home->failed()) return;
 //     ViewArray<Gecode::Set::SingletonView> xa(home,x.size());
 //     for (int i=x.size(); i--;) {
@@ -305,8 +305,8 @@ namespace Gecode {
 //     }
 //   }
 
-//   void  rel(Space* home, const IntSet& x, SetOpType op, BddVar y,
-// 	    SetRelType r, BddVar z) {
+//   void  rel(Space* home, const IntSet& x, SetOpType op, CpltSetVar y,
+// 	    SetRelType r, CpltSetVar z) {
 //     ConstantView xv(home, x);
 
 //     BddView by(y);
@@ -321,8 +321,8 @@ namespace Gecode {
 
 //   }
 
-//   void  rel(Space* home, BddVar x, SetOpType op, const IntSet& y,
-// 	    SetRelType r, BddVar z) {
+//   void  rel(Space* home, CpltSetVar x, SetOpType op, const IntSet& y,
+// 	    SetRelType r, CpltSetVar z) {
 //     ConstantView yv(home, y);
 //     BddView bx(x);
 //     CrdBddView cx(bx);
@@ -409,7 +409,7 @@ namespace Gecode {
 
 //   }
 
-//   void  rel(Space* home, BddVar x, SetOpType op, BddVar y,
+//   void  rel(Space* home, CpltSetVar x, SetOpType op, CpltSetVar y,
 // 	    SetRelType r, const IntSet& z) {
 //     ConstantView zv(home, z);
 //     BddView bx(x);
@@ -423,7 +423,7 @@ namespace Gecode {
 //   }
 
 //   void  rel(Space* home, const IntSet& x, SetOpType op, const IntSet& y,
-// 	    SetRelType r, BddVar z) {
+// 	    SetRelType r, CpltSetVar z) {
 //     ConstantView xv(home, x);
 //     ConstantView yv(home, y);
 
@@ -434,7 +434,7 @@ namespace Gecode {
 
 //   }
 
-//   void  rel(Space* home, const IntSet& x, SetOpType op, BddVar y, SetRelType r,
+//   void  rel(Space* home, const IntSet& x, SetOpType op, CpltSetVar y, SetRelType r,
 // 	    const IntSet& z) {
 //     ConstantView xv(home, x);
 //     ConstantView zv(home, z);
@@ -445,7 +445,7 @@ namespace Gecode {
 
 //   }
 
-//   void  rel(Space* home, BddVar x, SetOpType op, const IntSet& y, SetRelType r,
+//   void  rel(Space* home, CpltSetVar x, SetOpType op, const IntSet& y, SetRelType r,
 // 	    const IntSet& z) {
 //     ConstantView yv(home, y);
 //     ConstantView zv(home, z);
@@ -528,16 +528,16 @@ namespace Gecode {
 //   }
 
 
-//   void convex(Space* home, BddVar x) {
+//   void convex(Space* home, CpltSetVar x) {
 //     if (home->failed()) return;
 //     BddView bx(x);
 //     CrdBddView cx(bx);
 //     SetBddView sx(cx);
 
-//     GECODE_ES_FAIL(home, (Gecode::Set::Convex::Convex<SetBddView, PC_BDD_DOM>::post(home, sx)));
+//     GECODE_ES_FAIL(home, (Gecode::Set::Convex::Convex<SetBddView, PC_CPLTSET_DOM>::post(home, sx)));
 //   }
 
-//   void convexHull(Space* home, BddVar x, BddVar y) {
+//   void convexHull(Space* home, CpltSetVar x, CpltSetVar y) {
 //     if (home->failed()) return;
 //     BddView bx(x);
 //     CrdBddView cx(bx);
@@ -547,10 +547,10 @@ namespace Gecode {
 //     CrdBddView cy(by);
 //     SetBddView sy(cy);
 
-//     GECODE_ES_FAIL(home, (Gecode::Set::Convex::ConvexHull<SetBddView, PC_BDD_DOM>::post(home, sx, sy)));
+//     GECODE_ES_FAIL(home, (Gecode::Set::Convex::ConvexHull<SetBddView, PC_CPLTSET_DOM>::post(home, sx, sy)));
 //   }
 
-//   void sequence(Space* home, const BddVarArgs& x) {
+//   void sequence(Space* home, const CpltSetVarArgs& x) {
 //     if (home->failed()) return;
 //     if (x.size()==0)
 //       throw ArgumentEmpty("Set::seq");
@@ -561,10 +561,10 @@ namespace Gecode {
 //     ViewArray<SetBddView> sv(home,cv.size());
 //     for (int i = cv.size(); i--; ) { sv[i].init(cv[i]); }
 
-//     GECODE_ES_FAIL(home, (Gecode::Set::Sequence::Seq<SetBddView, PC_BDD_DOM>::post(home, sv)));
+//     GECODE_ES_FAIL(home, (Gecode::Set::Sequence::Seq<SetBddView, PC_CPLTSET_DOM>::post(home, sv)));
 //   }
 
-//   void sequentialUnion(Space* home, const BddVarArgs& y, BddVar x) {
+//   void sequentialUnion(Space* home, const CpltSetVarArgs& y, CpltSetVar x) {
 //     if (home->failed()) return;
 //     ViewArray<BddView> bv(home, y);
 //     ViewArray<CrdBddView> cv(home,bv.size());
@@ -576,11 +576,11 @@ namespace Gecode {
 //     CrdBddView cx(bx);
 //     SetBddView sx(cx);
 
-//     GECODE_ES_FAIL(home, (Gecode::Set::Sequence::SeqU<SetBddView, PC_BDD_DOM>::post(home, sv, sx)));
+//     GECODE_ES_FAIL(home, (Gecode::Set::Sequence::SeqU<SetBddView, PC_CPLTSET_DOM>::post(home, sv, sx)));
 
 //   }
 
-//   void atmostOne(Space* home, const BddVarArgs& x, unsigned int c) {
+//   void atmostOne(Space* home, const CpltSetVarArgs& x, unsigned int c) {
 //     if (home->failed()) return;
 //     if (x.size() < 2)
 //       return;
@@ -590,10 +590,10 @@ namespace Gecode {
 //     ViewArray<SetBddView> sv(home,cv.size());
 //     for (int i = cv.size(); i--; ) { sv[i].init(cv[i]); }
 
-//     GECODE_ES_FAIL(home, (Gecode::Set::Distinct::AtmostOne<SetBddView, PC_BDD_DOM>::post(home, sv, c)));
+//     GECODE_ES_FAIL(home, (Gecode::Set::Distinct::AtmostOne<SetBddView, PC_CPLTSET_DOM>::post(home, sv, c)));
 //   }
 
-//   void distinct(Space* home, const BddVarArgs& x, unsigned int c) {
+//   void distinct(Space* home, const CpltSetVarArgs& x, unsigned int c) {
 //     if (home->failed()) return;
 //     if (x.size() < 2)
 //       return;
@@ -603,10 +603,10 @@ namespace Gecode {
 //     ViewArray<SetBddView> sv(home,cv.size());
 //     for (int i = cv.size(); i--; ) { sv[i].init(cv[i]); }
 
-//     GECODE_ES_FAIL(home,(Gecode::Set::Distinct::Distinct<SetBddView, PC_BDD_DOM>::post(home, sv, c)));
+//     GECODE_ES_FAIL(home,(Gecode::Set::Distinct::Distinct<SetBddView, PC_CPLTSET_DOM>::post(home, sv, c)));
 //   }
 
-//   void selectUnion(Space* home, const BddVarArgs& x, BddVar y, BddVar z) {
+//   void selectUnion(Space* home, const CpltSetVarArgs& x, CpltSetVar y, CpltSetVar z) {
 //     if (home->failed()) return;
 //     Set::Select::IdxViewArray<ComplementView<SetBddView> > iv(home, x);
 //     IntSet universe(Limits::Set::int_min, Limits::Set::int_max);
@@ -625,7 +625,7 @@ namespace Gecode {
 
 //   }
 
-//   void selectInter(Space* home, const BddVarArgs& x, BddVar y, BddVar z) {
+//   void selectInter(Space* home, const CpltSetVarArgs& x, CpltSetVar y, CpltSetVar z) {
 //     if (home->failed()) return;
 //     Set::Select::IdxViewArray<SetBddView> iv(home, x);
 //     IntSet universe(Limits::Set::int_min,
@@ -644,7 +644,7 @@ namespace Gecode {
 //   }
 
 
-//   void selectInterIn(Space* home, const BddVarArgs& x, BddVar y, BddVar z,
+//   void selectInterIn(Space* home, const CpltSetVarArgs& x, CpltSetVar y, CpltSetVar z,
 // 		     const IntSet& universe) {
 //     if (home->failed()) return;
 //     Set::Select::IdxViewArray<SetBddView> iv(home, x);
@@ -662,7 +662,7 @@ namespace Gecode {
 //   }
 
 
-//   void selectDisjoint(Space* home, const BddVarArgs& x, BddVar y) {
+//   void selectDisjoint(Space* home, const CpltSetVarArgs& x, CpltSetVar y) {
 //     if (home->failed()) return;
 //     Set::Select::IdxViewArray<SetBddView> iv(home, x);
 
@@ -674,7 +674,7 @@ namespace Gecode {
 
 //   }
 
-//   void selectSet(Space* home, const BddVarArgs& x, IntVar y, BddVar z) {
+//   void selectSet(Space* home, const CpltSetVarArgs& x, IntVar y, CpltSetVar z) {
 //     if (home->failed()) return;
 //     Set::Select::IdxViewArray<ComplementView<SetBddView> > iv(home, x);
 //     Gecode::Int::IntView yv(y);

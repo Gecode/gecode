@@ -20,18 +20,18 @@
  */
 
 #include "gecode/bdd.hh"
-#include "gecode/bdd/bddprop.hh"
+#include "gecode/bdd/propagators.hh"
 
 using namespace Gecode::Bdd;
 
 namespace Gecode {
 
-  void selectUnion(Space* home, const BddVarArgs& x, BddVar s, BddVar t, 
+  void selectUnion(Space* home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t, 
 		   SetConLevel scl) {
     selectUnion_con(home, x, s, t, scl);
   }
 
-//   void range(Space* home, const IntVarArgs& x, BddVar s, BddVar t, 
+//   void range(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
 // 	     SetConLevel scl) {
 //     ViewArray<IntView> iv(home, x.size());
 //     ViewArray<SingletonBddView> sbv(home, iv.size());
@@ -45,7 +45,7 @@ namespace Gecode {
 //     selectUnion_post(home, sbv, selview, unionview, scl);
 //   }
 
-  void findNonEmptySub(Space* home, const BddVarArgs& x, BddVar s, BddVar t, 
+  void findNonEmptySub(Space* home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t, 
 		       SetConLevel scl) {
     findNonEmptySub_con(home, x, s, t, scl);
   }

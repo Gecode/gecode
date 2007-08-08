@@ -319,44 +319,44 @@ namespace Gecode {
   }
 
   /// Function used for computing the convex_hull and the variables of it
-  GECODE_BDD_EXPORT void conv_hull_project(BMI* mgr, GecodeBdd& robdd, 
+  GECODE_CPLTSET_EXPORT void conv_hull_project(BMI* mgr, GecodeBdd& robdd, 
 					   GecodeBdd& hull, GecodeBdd& poshull);
   /// Returns a bdd representing all variables taking part in the convex hull of \a domain
-  GECODE_BDD_EXPORT void conv_project(BMI* mgr, GecodeBdd& robdd, 
+  GECODE_CPLTSET_EXPORT void conv_project(BMI* mgr, GecodeBdd& robdd, 
 				      GecodeBdd& poshull);
   /// Returns a bdd representing the convex hull of \a robdd
-  GECODE_BDD_EXPORT void conv_hull(BMI* mgr, GecodeBdd& robdd, 
+  GECODE_CPLTSET_EXPORT void conv_hull(BMI* mgr, GecodeBdd& robdd, 
 					GecodeBdd& hull);
 
   /// Returns a bdd representing all variables of \a domain
-  GECODE_BDD_EXPORT GecodeBdd bdd_vars(BMI* mgr, GecodeBdd& domain);
+  GECODE_CPLTSET_EXPORT GecodeBdd bdd_vars(BMI* mgr, GecodeBdd& domain);
 
 
   /// Build the ROBDD for $\f |x|=c\f$
-  GECODE_BDD_EXPORT GecodeBdd 
+  GECODE_CPLTSET_EXPORT GecodeBdd 
   cardeq(BMI* mgr, int offset, int c, int n, int r);
 
   /// Build the ROBDD for $\f cl \leq |x| \leq cr\f$
-  GECODE_BDD_EXPORT GecodeBdd 
+  GECODE_CPLTSET_EXPORT GecodeBdd 
   cardlqgq(BMI* mgr, int offset, int cl, int cr, int n, int r);
 
   /// Build the ROBDD for $\f cl \leq |x| \leq cr\f$
-  GECODE_BDD_EXPORT GecodeBdd 
+  GECODE_CPLTSET_EXPORT GecodeBdd 
   cardcheck(BMI* mgr, int xtab, int offset, int cl, int cr);
 
   /// Computes the cardinality bdd excluding variables represented in the bdd \a boundvars
-  GECODE_BDD_EXPORT GecodeBdd 
+  GECODE_CPLTSET_EXPORT GecodeBdd 
   cardrec(BMI*& mgr, GecodeBdd& boundvars, int j, unsigned int& offset, 
 	  unsigned int& range, int l, int u);
   
-  GECODE_BDD_EXPORT GecodeBdd 
+  GECODE_CPLTSET_EXPORT GecodeBdd 
   cardrec_bin(BMI*& mgr, int j, unsigned int& off1, unsigned int& range1, 
 	      unsigned int& off2, unsigned int& range2, int l, int u);
 
 
   // EXTENDED CARDINALITY FOR REPLACING INTERMEDIATE VARIABLES
   // using namespace Gecode::Iter::Ranges;
-  // typedef ValCache<ToValues<Inter<Gecode::BddVarLubRanges, Gecode::BddVarLubRanges> > > BddInter;
+  // typedef ValCache<ToValues<Inter<Gecode::CpltSetVarLubRanges, Gecode::CpltSetVarLubRanges> > > BddInter;
 
   /// Build the ROBDD for $\f |x|=c\f$
   template <class I, class View0, class View1>
@@ -838,46 +838,46 @@ namespace Gecode {
   // EXTRACT CARDINALITY
 
   // mark all nodes in the dqueue
-  GECODE_BDD_EXPORT void
+  GECODE_CPLTSET_EXPORT void
   extcache_mark(BMI* mgr, Support::SharedArray<GecodeBdd>& nodes, 
 		int n, int& l, int& r, int& markref);
 
   // unmark all nodes in the dqueue
-  GECODE_BDD_EXPORT void
+  GECODE_CPLTSET_EXPORT void
   extcache_unmark(BMI* mgr, Support::SharedArray<GecodeBdd>& nodes, 
 		  int n, int& l, int& r, int& markref);
 
   // iterate to the next level of nodes
-  GECODE_BDD_EXPORT void 
+  GECODE_CPLTSET_EXPORT void 
   extcardbounds(BMI* mgr, int& markref, GecodeBdd& c, int& n, int& l, int& r,
 		bool& singleton, int& _level, 
 		Support::SharedArray<GecodeBdd>& nodes, 
 		int& curmin, int& curmax, Gecode::IntSet& out);
 
 
-  GECODE_BDD_EXPORT void 
+  GECODE_CPLTSET_EXPORT void 
   getcardbounds(BMI* mgr, GecodeBdd& c, int& curmin, int& curmax);
   // END EXTRACT CARDINALITY
 
-  GECODE_BDD_EXPORT GecodeBdd 
+  GECODE_CPLTSET_EXPORT GecodeBdd 
   lexlt(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, 
 	unsigned int& range, int n);
 
-  GECODE_BDD_EXPORT GecodeBdd 
+  GECODE_CPLTSET_EXPORT GecodeBdd 
   lexlq(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, 
 	unsigned int& range, int n);
 
-  GECODE_BDD_EXPORT GecodeBdd 
+  GECODE_CPLTSET_EXPORT GecodeBdd 
   lexltrev(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, 
 	unsigned int& range, int n);
 
-  GECODE_BDD_EXPORT GecodeBdd 
+  GECODE_CPLTSET_EXPORT GecodeBdd 
   lexlqrev(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, 
 	unsigned int& range, int n);
 
 
   /// Counts the minium and maximum cardinality of the set represented by \a remain
-  GECODE_BDD_EXPORT 
+  GECODE_CPLTSET_EXPORT 
   void card_count(BMI* mgr, GecodeBdd& remain, GecodeBdd& boundvars,
 		  unsigned int n, unsigned int& offset, 
 		  unsigned int& range, int& l, int& u);
@@ -899,13 +899,13 @@ namespace Gecode {
   }
 
   /// Compute the lexicographic lower bound of a bdd
-  GECODE_BDD_EXPORT
+  GECODE_CPLTSET_EXPORT
   GecodeBdd lex_lb(BMI*& mgr, GecodeBdd& remain, 
 	      GecodeBdd& bounds, 
 	      unsigned int n, unsigned int& offset, unsigned int& range);
 
   /// Compute the lexicographic upper bound of a bdd
-  GECODE_BDD_EXPORT
+  GECODE_CPLTSET_EXPORT
   GecodeBdd lex_ub(BMI*& mgr, GecodeBdd& remain, GecodeBdd& bounds, 
 	      unsigned int n, unsigned int& offset, unsigned int& range);
 
