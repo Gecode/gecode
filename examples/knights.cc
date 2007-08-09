@@ -46,6 +46,11 @@ protected:
   /// Maps board field to successor field
   IntVarArray succ;
 public:
+  /// Propagation to use for model
+  enum {
+    PROP_REIFIED, ///< Use reified constraints
+    PROP_CIRCUIT  ///< Use single circuit constraints
+  };
   /// Return field at position \a x, \a y
   int
   field(int x, int y) {
@@ -69,16 +74,10 @@ public:
   }
   /// Constructor
   Knights(const Options& opt)
-    : n(opt.size), succ(this,n*n,0,n*n-1) {
-  }
+    : n(opt.size), succ(this,n*n,0,n*n-1) {}
   /// Constructor for cloning \a s
   Knights(bool share, Knights& s) : Example(share,s), n(s.n) {
     succ.update(this, share, s.succ);
-  }
-  /// Copy during cloning
-  virtual Space*
-  copy(bool share) {
-    return new Knights(share,*this);
   }
   /// Print board
   virtual void
@@ -113,9 +112,9 @@ public:
  * \ingroup ExProblem
  *
  */
-class KnightsSimple : public Knights {
+class KnightsReified : public Knights {
 public:
-  KnightsSimple(const Options& opt) : Knights(opt) {
+  KnightsReified(const Options& opt) : Knights(opt) {
     const int nn = n*n;
 
     // Map knight to its predecessor of succesor on board
@@ -152,6 +151,13 @@ public:
     }
     branch(this, succ, BVAR_NONE, BVAL_MIN);
   }
+  /// Constructor for cloning \a s
+  KnightsReified(bool share, KnightsReified& s) : Knights(share,s) {}
+  /// Copy during cloning
+  virtual Space*
+  copy(bool share) {
+    return new KnightsReified(share,*this);
+  }
 };
 
 /**
@@ -181,6 +187,13 @@ public:
     }
     branch(this, succ, BVAR_NONE, BVAL_MIN);
   }
+  /// Constructor for cloning \a s
+  KnightsCircuit(bool share, KnightsCircuit& s) : Knights(share,s) {}
+  /// Copy during cloning
+  virtual Space*
+  copy(bool share) {
+    return new KnightsCircuit(share,*this);
+  }
 };
 
 /** \brief Main-function
@@ -191,9 +204,12 @@ main(int argc, char** argv) {
   Options opt("Knights");
   opt.iterations = 100;
   opt.size       = 8;
+  opt.propagation.value(Knights::PROP_CIRCUIT);
+  opt.propagation.add(Knights::PROP_REIFIED, "reified");
+  opt.propagation.add(Knights::PROP_CIRCUIT, "circuit");
   opt.parse(argc,argv);
-  if (opt.naive) {
-    Example::run<KnightsSimple,DFS>(opt);
+  if (opt.propagation.value() == Knights::PROP_REIFIED) {
+    Example::run<KnightsReified,DFS>(opt);
   } else {
     Example::run<KnightsCircuit,DFS>(opt);
   }

@@ -84,6 +84,11 @@ protected:
   IntVar           sat;
 
 public:
+  /// Branching to use for model
+  enum {
+    BRANCH_NONE,  ///< Choose variables from left to right
+    BRANCH_DEGREE ///< Choose variable with largest degree
+  };
   /// Actual model
   Photo(const Options& opt) :
     spec(opt.size == 0 ? p_small : p_large),
@@ -154,6 +159,9 @@ main(int argc, char** argv) {
   opt.size       = 1;
   opt.iterations = 10;
   opt.icl        = ICL_BND;
+  opt.branching.value(Photo::BRANCH_DEGREE);
+  opt.branching.add(Photo::BRANCH_NONE, "none");
+  opt.branching.add(Photo::BRANCH_DEGREE, "degree");
   opt.parse(argc,argv);
   Example::run<Photo,BAB>(opt);
   return 0;

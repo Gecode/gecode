@@ -111,9 +111,13 @@ Options::parse(int argc, char** argv) {
   while (i < argc) {
     if (!strcmp(argv[i],"-help") || !strcmp(argv[i],"--help")) {
       cerr << "Options for " << name << ":"
-           << endl
+           << endl;
 
-           << "\t-icl (def,val,bnd,dom) default: " << icl2str[icl] << endl
+      model.help("-model","model variants");
+      propagation.help("-propagation","propagation variants");
+      branching.help("-branching","branching variants");
+      search.help("-search","search engine variants");
+      cerr << "\t-icl (def,val,bnd,dom) default: " << icl2str[icl] << endl
            << "\t\tinteger consistency level" << endl
 #ifdef GECODE_HAVE_CPLTSET_VARS
 	   << "\t-scl (def,bnd_bdd, bnd_sbr,,spl,crd,lex,dom) default: " << scl2str[scl]
@@ -158,9 +162,6 @@ Options::parse(int argc, char** argv) {
 
            << "\t(unsigned int) default: " << size << endl
            << "\t\twhich version/size for example" << endl;
-      model.help("-model","model variants");
-      propagation.help("-propagation","propagation variants");
-      branching.help("-branching","branching variants");
       exit(EXIT_SUCCESS);
     } else if (!strcmp(argv[i],"-icl")) {
       if (++i == argc) goto missing;
@@ -250,6 +251,9 @@ Options::parse(int argc, char** argv) {
     } else if (!strcmp(argv[i],"-branching")) {
       if (++i == argc) goto missing;
       if (!branching.parse(argv[i])) goto error;
+    } else if (!strcmp(argv[i],"-search")) {
+      if (++i == argc) goto missing;
+      if (!search.parse(argv[i])) goto error;
     } else {
       char* unused;
       size = strtol(argv[i], &unused, 10);

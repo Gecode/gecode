@@ -57,6 +57,18 @@ protected:
   /// Array for ruler marks
   IntVarArray m;
 public:
+  /// Model variants
+  enum {
+    MODEL_NONE, ///< No lower bound
+    MODEL_SUM,  ///< Use sum of ticks as lower bound
+    MODEL_RULER ///< Use size of smaller rulers as lower bound
+  };
+  /// Search variants
+  enum {
+    SEARCH_DFS,    ///< Use depth first search to find the smallest tick
+    SEARCH_BAB,    ///< Use branch and bound to optimize
+    SEARCH_RESTART ///< Use restart to optimize
+  };
   /// Return index for mark difference between mark \a i and mark \a j
   int
   diag(int i, int j) {
@@ -83,28 +95,39 @@ public:
     // Order marks
     rel(this, m, IRT_LE);
 
-    if (opt.naive) {
+    switch (opt.model.value()) {
+    case MODEL_SUM:
       // d[diag(i,j)] must be at least sum of first j-i integers
       for (int i=0; i<n; i++)
         for (int j=i+1; j<n; j++)
           rel(this, d[diag(i,j)], IRT_GQ, (j-i)*(j-i+1)/2);
-    } else {
-      static const int length[] = {
-        // Length 0-9
-        0,0,1,3,6,11,17,25,34,44,
-        // Length 10-
-        55,72,85,106,127};
-
-      // Marks from i to j must be ruler of length j-1+i
-      for (int i=0; i<n; i++)
-        for (int j=i+1; j<n; j++)
-          rel(this, d[diag(i,j)], IRT_GQ, length[j-i+1]);
+      break;
+    case MODEL_RULER:
+      {
+        static const int length[] = {
+          // Length 0-9
+          0,0,1,3,6,11,17,25,34,44,
+          // Length 10-
+          55,72,85,106,127};
+        // Marks from i to j must be ruler of length j-1+i
+        for (int i=0; i<n; i++)
+          for (int j=i+1; j<n; j++)
+            rel(this, d[diag(i,j)], IRT_GQ, length[j-i+1]);
+      }
+      break;
+    default: ;
     }
 
     distinct(this, d, opt.icl);
 
     if (n > 2)
       rel(this, d[diag(0,1)], IRT_LE, d[diag(n-2,n-1)]);
+
+    if (opt.search.value() == SEARCH_DFS) {
+      IntVarArgs max(1);
+      max[0]=m[n-1];
+      branch(this, max, BVAR_NONE, BVAL_SPLIT_MIN);
+    }
 
     branch(this, m, BVAR_NONE, BVAL_MIN);
   }
@@ -141,14 +164,31 @@ public:
  */
 int
 main(int argc, char** argv) {
-  Options o("Golomb");
-  o.solutions = 0;
-  o.size      = 10;
-  o.icl       = ICL_BND;
-  o.naive     = true;
-  o.parse(argc,argv);
-  if (o.size > 0)
-    Example::run<Golomb,BAB>(o);
+  Options opt("Golomb");
+  opt.solutions = 0;
+  opt.size      = 10;
+  opt.icl       = ICL_BND;
+  opt.model.value(Golomb::MODEL_SUM);
+  opt.model.add(Golomb::MODEL_NONE, "none",
+                "no lower bound");
+  opt.model.add(Golomb::MODEL_SUM, "sum",
+                "use sum of ticks as lower bound");
+  opt.model.add(Golomb::MODEL_RULER, "ruler",
+                "use size of smaller rulers as lower bound");
+  opt.search.value(Golomb::SEARCH_BAB);
+  opt.search.add(Golomb::SEARCH_DFS, "dfs");
+  opt.search.add(Golomb::SEARCH_BAB, "bab");
+  opt.search.add(Golomb::SEARCH_RESTART, "restart");
+  opt.parse(argc,argv);
+  if (opt.size > 0)
+    switch (opt.search.value()) {
+    case Golomb::SEARCH_DFS:
+      Example::run<Golomb,DFS>(opt); break;
+    case Golomb::SEARCH_BAB:
+      Example::run<Golomb,BAB>(opt); break;
+    case Golomb::SEARCH_RESTART:
+      Example::run<Golomb,Restart>(opt); break;
+    }
   return 0;
 }
 

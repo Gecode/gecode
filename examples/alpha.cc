@@ -55,8 +55,8 @@ protected:
 public:
   /// Branching to use for model
   enum {
-    BRANCH_NONE, ///< Choose variables left to right
-    BRANCH_SIZE, ///< Choose variables with smallest size
+    BRANCH_NONE, ///< Choose variable left to right
+    BRANCH_SIZE  ///< Choose variable with smallest size
   };
   /// Actual model
   Alpha(const Options& opt) : le(this,n,1,n) {

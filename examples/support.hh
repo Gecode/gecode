@@ -122,6 +122,7 @@ public:
   OptValue     model;
   OptValue     propagation;
   OptValue     branching;
+  OptValue     search;
 
 #ifdef GECODE_HAVE_CPLTSET_VARS
   unsigned int initvarnum; ///< initial number of bdd nodes in the table
@@ -148,12 +149,17 @@ public:
  */
 class Example : public Space {
 public:
+  /// Default constructor
   Example(void) {}
+  /// Constructor used for cloning
   Example(bool share, Example& e) : Space(share,e) {}
+  /// Print a solution
   virtual void print(void) {}
+  /// Run example with search engine \a Engine and options \a opt
   template <class Script, template<class> class Engine>
-  static void run(const Options&);
+  static void run(const Options& opt);
 private:
+  /// Catch wrong definitions of copy constructor
   explicit Example(Example& e);
 };
 

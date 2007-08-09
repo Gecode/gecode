@@ -218,7 +218,6 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("PerfectSquare");
-  opt.naive = true;
   opt.size  = 7;
   opt.propagation.value(PerfectSquare::PROP_REIFIED);
   opt.propagation.add(PerfectSquare::PROP_REIFIED,     "reified");

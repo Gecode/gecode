@@ -52,24 +52,43 @@ protected:
   /// Position of queens on boards
   IntVarArray q;
 public:
+  /// Propagation to use for model
+  enum {
+    PROP_BINARY,  ///< Use only binary disequality constraints
+    PROP_MIXED,   ///< Use single distinct and binary disequality constraints
+    PROP_DISTINCT ///< Use three distinct constraints
+  };
   /// The actual problem
   Queens(const Options& opt)
     : q(this,opt.size,0,opt.size-1) {
     const int n = q.size();
-    if (opt.naive) {
+    switch (opt.propagation.value()) {
+    case PROP_BINARY:
       for (int i = 0; i<n; i++)
         for (int j = i+1; j<n; j++) {
           post(this, q[i] != q[j]);
           post(this, q[i]+i != q[j]+j);
           post(this, q[i]-i != q[j]-j);
         }
-    } else {
-      IntArgs c(n);
-      for (int i = n; i--; ) c[i] = i;
-      distinct(this, c, q, opt.icl);
-      for (int i = n; i--; ) c[i] = -i;
-      distinct(this, c, q, opt.icl);
+      break;
+    case PROP_MIXED:
+      for (int i = 0; i<n; i++)
+        for (int j = i+1; j<n; j++) {
+          post(this, q[i]+i != q[j]+j);
+          post(this, q[i]-i != q[j]-j);
+        }
       distinct(this, q, opt.icl);
+      break;
+    case PROP_DISTINCT:
+      {
+        IntArgs c(n);
+        for (int i = n; i--; ) c[i] = i;
+        distinct(this, c, q, opt.icl);
+        for (int i = n; i--; ) c[i] = -i;
+        distinct(this, c, q, opt.icl);
+      }
+      distinct(this, q, opt.icl);
+      break;
     }
     branch(this, q, BVAR_SIZE_MIN, BVAL_MIN);
   }
@@ -106,6 +125,13 @@ main(int argc, char** argv) {
   Options opt("Queens");
   opt.iterations = 500;
   opt.size       = 100;
+  opt.propagation.value(Queens::PROP_DISTINCT);
+  opt.propagation.add(Queens::PROP_BINARY, "binary",
+                      "only binary disequality constraints");
+  opt.propagation.add(Queens::PROP_MIXED, "mixed",
+                      "single distinct and binary disequality constraints");
+  opt.propagation.add(Queens::PROP_DISTINCT, "distinct",
+                      "three distinct constraints");
   opt.parse(argc,argv);
   Example::run<Queens,DFS>(opt);
   return 0;

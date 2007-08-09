@@ -313,6 +313,16 @@ private:
   /// Number of colors
   IntVar m;
 public:
+  /// Model variants
+  enum {
+    MODEL_NONE,  ///< No lower bound
+    MODEL_CLIQUE ///< Use maximal clique size as lower bound
+  };
+  /// Branching to use for model
+  enum {
+    BRANCH_DEGREE, ///< Choose variable with largest degree
+    BRANCH_SIZE    ///< Choose variable with smallest size
+  };
   /// The actual model
   GraphColor(const Options& opt)
     : g(opt.size == 1 ? g2 : g1),
@@ -332,13 +342,13 @@ public:
       for (int i = n; i--; c++)
         x[i] = v[*c];
       distinct(this, x, opt.icl);
-      if (!opt.naive)
+      if (opt.model.value() == MODEL_CLIQUE)
         rel(this, m, IRT_GQ, n-1);
     }
     IntVarArgs ma(1);
     ma[0] = m;
     branch(this, ma, BVAR_NONE, BVAL_MIN);
-    if (opt.naive) {
+    if (opt.branching.value() == BRANCH_SIZE) {
       branch(this, v, BVAR_SIZE_MIN, BVAL_MIN);
     } else {
       branch(this, v, BVAR_DEGREE_MAX, BVAL_MIN);
@@ -375,9 +385,16 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("GraphColor");
-  opt.naive      = false;
   opt.icl        = ICL_DOM;
   opt.iterations = 20;
+  opt.model.value(GraphColor::MODEL_NONE);
+  opt.model.add(GraphColor::MODEL_NONE, "none",
+                "no lower bound");
+  opt.model.add(GraphColor::MODEL_CLIQUE, "clique",
+                "use maximal clique size as lower bound");
+  opt.branching.value(GraphColor::BRANCH_DEGREE);
+  opt.branching.add(GraphColor::BRANCH_DEGREE, "degree");
+  opt.branching.add(GraphColor::BRANCH_SIZE, "size");
   opt.parse(argc,argv);
   Example::run<GraphColor,DFS>(opt);
   return 0;
