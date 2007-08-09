@@ -581,9 +581,10 @@ endif
 endif
 
 SUPPORTSRC0 = \
-	support timer
+	support/options support/example
 SUPPORTSRC = $(SUPPORTSRC0:%=examples/%.cc)
-INTEXAMPLEHDR0 = support.hh support.icc timer.hh
+INTEXAMPLEHDR0 = \
+	support.hh support/options.icc support/example.icc
 INTEXAMPLEHDR  = $(INTEXAMPLEHDR0:%=examples/%)
 export SUPPORTOBJ = $(SUPPORTSRC:%.cc=%$(OBJSUFFIX))
 SUPPORTSBJ = $(SUPPORTSRC:%.cc=%$(SBJSUFFIX))

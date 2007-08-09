@@ -14,6 +14,7 @@
  *  development environment:
  *     http://www.gecode.org
  *
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
  *  "Software"), to deal in the Software without restriction, including
@@ -35,53 +36,69 @@
  *
  */
 
-inline
-Options::Options(const char* n)
-  : icl(ICL_DEF),
-    c_d(Search::Config::c_d),
-    a_d(Search::Config::a_d),
-    mode(EM_SOLUTION),
-    quiet(false),
-    samples(1),
-    iterations(1),
-    solutions(1),
-    fails(-1),
-    time(-1),
-    naive(false),
-    size(0),
-    name(n) 
-#ifdef GECODE_HAVE_CPLTSET_VARS
-  /// Additional Bdd parameters
-  ,initvarnum(100),
-  initcache(100),
-  scl(SCL_DEF)
-#endif 
-{}
-
 namespace {
-  /// Stop opbject for controlling stoppage based on both time and
-  /// failures.
+
+  /**
+   * \brief Stop object based on both time and failures
+   *
+   */
   class FailTimeStop : public Search::Stop {
   private:
-    Search::TimeStop *ts;
-    Search::FailStop *fs;
+    Search::TimeStop *ts; ///< Used time stop object
+    Search::FailStop *fs; ///< Used fail stop object
+    /// Initialize stop object
     FailTimeStop(int fails, int time) {
       ts = new Search::TimeStop(time);
       fs = new Search::FailStop(fails);
     }
   public:
-    bool stop(const Search::Statistics& s) {
+    /// Test whether search must be stopped
+    virtual bool stop(const Search::Statistics& s) {
       return fs->stop(s) || ts->stop(s);
     }
     /// Create appropriate stop-object
     static Search::Stop* create(int fails, int time) {
-      if (fails < 0 && time < 0) return NULL;
-      if (fails < 0) return new Search::TimeStop( time);
-      if (time  < 0) return new Search::FailStop(fails);
-      return new FailTimeStop(fails, time);
+      if ((fails < 0) && (time < 0)) 
+        return NULL;
+      if (fails < 0) 
+        return new Search::TimeStop(time);
+      if (time  < 0) 
+        return new Search::FailStop(fails);
+      return new FailTimeStop(fails,time);
     }
   };
+
+  /// Timer interface used for examples
+  class Timer {
+  private:
+    clock_t t0; ///< Start time
+  public:
+    /// Start timer
+    void start(void) {
+      t0 = clock();
+    }
+    /// Stop timer
+    double stop(void) {
+      return (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC) * 1000.0;
+    }
+  };
+  
 }
+
+
+/**
+ * \brief Compute arithmetic mean of \a n elements in \a t
+ * \relates Timer
+ */
+double
+am(double t[], int n);
+
+/**
+ * \brief Compute deviation of \a n elements in \a t
+ * \relates Timer
+ */
+double
+dev(double t[], int n);
 
 
 template <class Script, template<class> class Engine>

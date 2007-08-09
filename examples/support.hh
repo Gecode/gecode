@@ -43,24 +43,22 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <ctime>
+#include <cmath>
 
 #include "gecode/kernel.hh"
 #include "gecode/int.hh"
-
 #ifdef GECODE_HAVE_CPLTSET_VARS
 #include "gecode/cpltset.hh"
 #endif
-
 #include "gecode/search.hh"
 
-#include "examples/timer.hh"
+using namespace Gecode;
 
 /*
  * Options for running the examples
  *
  */
-
-using namespace Gecode;
 
 /// Different modes for executing examples
 enum ExampleMode {
@@ -69,70 +67,42 @@ enum ExampleMode {
   EM_STAT      ///< Print statistics for example
 };
 
+/**
+ * \brief Configurable option values
+ *
+ */
 class OptValue {
 private:
+  /// Option value
   class Value {
   public:
-    int         val;
-    const char* opt;
-    const char* help;
-    Value*      next;
+    int         val;  ///< Value for an option value
+    const char* opt;  ///< String for option value
+    const char* help; ///< Optional help text
+    Value*      next; ///< Next option value
   };
-  int    cur;
-  Value* fst;
-  Value* lst;
+  int    cur; ///< Current value
+  Value* fst; ///< First option value
+  Value* lst; ///< Last option value
 public:
-  OptValue(void) : cur(0), fst(NULL), lst(NULL) {}
-  void value(int v) {
-    cur = v;
-  }
-  int value(void) const {
-    return cur;
-  }
-  void add(int v, const char* o, const char* h = NULL) {
-    Value* n = new Value;
-    n->val  = v;
-    n->opt  = o;
-    n->help = h;
-    n->next = NULL;
-    if (fst == NULL) {
-      fst = lst = n;
-    } else {
-      lst->next = n; lst = n;
-    }
-  }
-  bool parse(const char* o) {
-    if (fst == NULL)
-      return false;
-    for (Value* v = fst; v != NULL; v = v->next)
-      if (!strcmp(o,v->opt)) {
-        cur = v->val;
-        return true;
-      }
-    return false;
-  }
-  void help(const char* o, const char* t) {
-    if (fst == NULL)
-      return;
-    std::cerr << '\t' << o << " (";
-    const char* d = NULL;
-    for (Value* v = fst; v != NULL; v = v->next) {
-      std::cerr << v->opt << ((v->next != NULL) ? ", " : "");
-      if (v->val == cur)
-        d = v->opt;
-    }
-    std::cerr << ")";
-    if (d != NULL) 
-      std::cerr << " default: " << d;
-    std::cerr << std::endl
-              << "\t\t" << t << std::endl;
-    for (Value* v = fst; v != NULL; v = v->next)
-      if (v->help != NULL)
-        std::cerr << "\t\t  " << v->opt << ": " << v->help << std::endl;
-  }
+  /// Initialize
+  OptValue(void);
+  /// Set default value for option to \a v
+  void value(int v);
+  /// Return current option value
+  int value(void) const;
+  /// Add option value for value \a v, string \a o, and help text \a h
+  void add(int v, const char* o, const char* h = NULL);
+  /// Parse option value string \a o and return whether parsing is okay
+  bool parse(const char* o);
+  /// Print help text for option \a o with description \a t
+  void help(const char* o, const char* t);
 };
 
-/// Class for options for examples
+/**
+ * \brief Options for examples
+ *
+ */
 class Options {
 public:
   IntConLevel  icl;        ///< integer consistency level
@@ -165,6 +135,8 @@ public:
   void parse(int argc, char** argv);
 };
 
+#include "examples/support/options.icc"
+
 
 /**
  * \brief Base-class for %Gecode examples
@@ -185,7 +157,7 @@ private:
   explicit Example(Example& e);
 };
 
-#include "examples/support.icc"
+#include "examples/support/example.icc"
 
 #endif
 

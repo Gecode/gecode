@@ -14,6 +14,7 @@
  *  development environment:
  *     http://www.gecode.org
  *
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
  *  "Software"), to deal in the Software without restriction, including
@@ -35,7 +36,7 @@
  *
  */
 
-#include "examples/timer.hh"
+#include "examples/support.hh"
 
 double
 am(double t[], int n) {

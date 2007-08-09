@@ -6,9 +6,6 @@
  *  Copyright:
  *     Christian Schulte, 2004
  *
- *  Bugfixes provided by:
- *     Javier Andrés Mena Zapata <javimena@gmail.com>
- *
  *  Last modified:
  *     $Date$ by $Author$
  *     $Revision$
@@ -16,6 +13,7 @@
  *  This file is part of Gecode, the generic constraint
  *  development environment:
  *     http://www.gecode.org
+ *
  *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
@@ -38,51 +36,41 @@
  *
  */
 
-#ifndef __GECODE_EXAMPLES_TIMER_HH__
-#define __GECODE_EXAMPLES_TIMER_HH__
+inline
+OptValue::OptValue(void) 
+  : cur(0), fst(NULL), lst(NULL) {}
 
-#include <ctime>
-#include <cmath>
-
-#include "gecode/config.icc"
-
-/*
- * Support for measuring time
- *
- */
-
-/// Timer interface used for examples
-class Timer {
-private:
-  clock_t t0;
-public:
-  void start(void);
-  double stop(void);
-};
-
-forceinline void
-Timer::start(void) {
-  t0 = clock();
+inline void 
+OptValue::value(int v) {
+  cur = v;
 }
-forceinline double
-Timer::stop(void) {
-  return (static_cast<double>(clock()-t0) / CLOCKS_PER_SEC) * 1000.0;
+
+inline int 
+OptValue::value(void) const {
+  return cur;
 }
 
 
-/**
- * \brief Compute arithmetic mean of \a n elements in \a t
- * \relates Timer
- */
-double
-am(double t[], int n);
-/**
- * \brief Compute deviation of \a n elements in \a t
- * \relates Timer
- */
-double
-dev(double t[], int n);
-
-#endif
+inline
+Options::Options(const char* n)
+  : icl(ICL_DEF),
+    c_d(Search::Config::c_d),
+    a_d(Search::Config::a_d),
+    mode(EM_SOLUTION),
+    quiet(false),
+    samples(1),
+    iterations(1),
+    solutions(1),
+    fails(-1),
+    time(-1),
+    naive(false),
+    size(0),
+    name(n) 
+#ifdef GECODE_HAVE_CPLTSET_VARS
+    ,initvarnum(100),
+    initcache(100),
+    scl(SCL_DEF)
+#endif 
+{}
 
 // STATISTICS: example-any

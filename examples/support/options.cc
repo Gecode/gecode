@@ -14,6 +14,7 @@
  *  development environment:
  *     http://www.gecode.org
  *
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining
  *  a copy of this software and associated documentation files (the
  *  "Software"), to deal in the Software without restriction, including
@@ -37,24 +38,70 @@
 
 #include "examples/support.hh"
 
-/*
- * Parses options for examples
- *
- */
+void 
+OptValue::add(int v, const char* o, const char* h) {
+  Value* n = new Value;
+  n->val  = v;
+  n->opt  = o;
+  n->help = h;
+  n->next = NULL;
+  if (fst == NULL) {
+    fst = lst = n;
+  } else {
+    lst->next = n; lst = n;
+  }
+}
 
-static const char* icl2str[] =
-  { "val", "bnd", "dom", "def" };
+bool 
+OptValue::parse(const char* o) {
+  if (fst == NULL)
+    return false;
+  for (Value* v = fst; v != NULL; v = v->next)
+    if (!strcmp(o,v->opt)) {
+      cur = v->val;
+      return true;
+    }
+  return false;
+}
+
+void 
+OptValue::help(const char* o, const char* t) {
+  using namespace std;
+  if (fst == NULL)
+    return;
+  cerr << '\t' << o << " (";
+  const char* d = NULL;
+  for (Value* v = fst; v != NULL; v = v->next) {
+    cerr << v->opt << ((v->next != NULL) ? ", " : "");
+    if (v->val == cur)
+      d = v->opt;
+  }
+  cerr << ")";
+  if (d != NULL) 
+    cerr << " default: " << d;
+  cerr << endl << "\t\t" << t << endl;
+  for (Value* v = fst; v != NULL; v = v->next)
+    if (v->help != NULL)
+      cerr << "\t\t  " << v->opt << ": " << v->help << endl;
+}
+
+namespace {
+
+  const char* icl2str[] =
+    { "val", "bnd", "dom", "def" };
+
+  const char* em2str[] =
+    { "solution", "time", "stat" };
+
+  const char* bool2str[] =
+    { "false", "true" };
 
 #ifdef GECODE_HAVE_CPLTSET_VARS
-static const char* scl2str[] =
-  { "bnd_bdd", "bnd_sbr", "spl", "crd", "lex", "dom", "def" };
+  const char* scl2str[] =
+    { "bnd_bdd", "bnd_sbr", "spl", "crd", "lex", "dom", "def" };
 #endif
 
-static const char* em2str[] =
-  { "solution", "time", "stat" };
-
-static const char* bool2str[] =
-  { "false", "true" };
+}
 
 void
 Options::parse(int argc, char** argv) {
@@ -223,4 +270,3 @@ Options::parse(int argc, char** argv) {
 }
 
 // STATISTICS: example-any
-
