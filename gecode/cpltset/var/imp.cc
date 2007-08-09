@@ -25,7 +25,7 @@
 
 namespace Gecode { namespace CpltSet {
 
-    /// copy bddvar
+    // copy bddvar
     forceinline
     CpltSetVarImp::CpltSetVarImp(Space* home, bool share, CpltSetVarImp& x)
       : CpltSetVarImpBase(home,share,x), 

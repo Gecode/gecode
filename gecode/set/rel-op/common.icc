@@ -26,10 +26,6 @@
  *
  */
 
-#ifdef GECODE_HAVE_CPLTSET_VARS
-#include "gecode/cpltset.hh"
-#endif 
-
 #ifndef __GECODE_SET_RELOP_COMM_ICC__
 #define __GECODE_SET_RELOP_COMM_ICC__
 
@@ -41,16 +37,6 @@ namespace Gecode {
                        const View1& y) {
     return va.shared(y);
   }
-
-
-#ifdef GECODE_HAVE_CPLTSET_VARS
-  template <>
-  forceinline bool
-  viewarrayshared<Set::SingletonView,CpltSet::SetCpltSetView>
-  (const ViewArray<Set::SingletonView>& va, const CpltSet::SetCpltSetView& y) {
-    return false;
-  }
-#endif 
 
   template <>
   forceinline bool
