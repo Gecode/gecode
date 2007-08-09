@@ -828,43 +828,6 @@ AC_DEFUN([AC_GECODE_FRAMEWORK],
   fi
 ])
 
-dnl Macro:
-dnl   AC_GECODE_GENVARIMP
-dnl
-dnl Description:
-dnl   Generate variable implementations from description files
-dnl
-dnl Authors:
-dnl   Guido Tack <tack@gecode.org>
-AC_DEFUN([AC_GECODE_GENVARIMP],
-  [AC_CONFIG_COMMANDS([$srcdir/$2-hdr.icc],
-   [cd $srcdir
-    if test ! $2-hdr.icc -nt $1; then
-      rm -f $2-hdr.generated
-      perl misc/genvarimp.perl -header $1 > $2-hdr.generated
-      if (diff -N $2-hdr.icc $2-hdr.generated >/dev/null); then
-        rm -f $2-hdr.generated;
-      else
-        rm -f $2-hdr.icc;
-        mv $2-hdr.generated $2-hdr.icc;
-      fi
-    fi
-    cd -],[])
-   AC_CONFIG_COMMANDS([$srcdir/$2-body.icc],
-   [cd $srcdir
-    if test ! $2-body.icc -nt $1; then
-      rm -f $2-body.generated
-      perl misc/genvarimp.perl -body $1 > $2-body.generated
-      if (diff -N $2-body.icc $2-body.generated >/dev/null); \ 
-	then
-        rm -f $2-body.generated;
-      else
-        rm -f $2-body.icc;
-        mv $2-body.generated $2-body.icc;
-      fi
-    fi
-    cd -],[])])
-
 AC_DEFUN([AC_GECODE_BOOST_SERIALIZATION],
   [dnl build with support for the boost serialization library
   AC_ARG_WITH([boost],

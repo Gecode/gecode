@@ -196,11 +196,6 @@ dnl Configure contributions
 AC_CONFIG_SUBDIRS()
 dnl @SUBDIRS@
 
-AC_GECODE_GENVARIMP(gecode/int/var-imp-int.vis, gecode/int/var/imp-int)
-AC_GECODE_GENVARIMP(gecode/int/var-imp-bool.vis, gecode/int/var/imp-bool)
-AC_GECODE_GENVARIMP(gecode/set/var-imp.vis, gecode/set/var/imp)
-AC_GECODE_GENVARIMP(gecode/cpltset/var-imp.vis, gecode/cpltset/var/imp)
-
 AC_SUBST(PKG_CONFIG_CXXFLAGS, ${ac_gecode_pkg_cxxflags})
 AC_SUBST(VERSION, ${PACKAGE_VERSION})
 AC_SUBST(DLLFLAGS, ${DLLFLAGS})

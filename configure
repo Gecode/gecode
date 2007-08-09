@@ -2820,8 +2820,6 @@ fi
 
 
 
-
-
 if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.
 set dummy ${ac_tool_prefix}pkg-config; ac_word=$2
@@ -8886,23 +8884,6 @@ ac_configure="$SHELL $ac_aux_dir/configure" # This should be Cygnus configure.
 subdirs="$subdirs "
 
 
-          ac_config_commands="$ac_config_commands $srcdir/gecode/int/var/imp-int-hdr.icc"
-
-             ac_config_commands="$ac_config_commands $srcdir/gecode/int/var/imp-int-body.icc"
-
-          ac_config_commands="$ac_config_commands $srcdir/gecode/int/var/imp-bool-hdr.icc"
-
-             ac_config_commands="$ac_config_commands $srcdir/gecode/int/var/imp-bool-body.icc"
-
-          ac_config_commands="$ac_config_commands $srcdir/gecode/set/var/imp-hdr.icc"
-
-             ac_config_commands="$ac_config_commands $srcdir/gecode/set/var/imp-body.icc"
-
-          ac_config_commands="$ac_config_commands $srcdir/gecode/cpltset/var/imp-hdr.icc"
-
-             ac_config_commands="$ac_config_commands $srcdir/gecode/cpltset/var/imp-body.icc"
-
-
 PKG_CONFIG_CXXFLAGS=${ac_gecode_pkg_cxxflags}
 
 VERSION=${PACKAGE_VERSION}
@@ -9453,14 +9434,6 @@ do
   "misc/gecode-search.pc" ) CONFIG_FILES="$CONFIG_FILES misc/gecode-search.pc" ;;
   "misc/gecode-minimodel.pc" ) CONFIG_FILES="$CONFIG_FILES misc/gecode-minimodel.pc" ;;
   "vti.icc" ) CONFIG_COMMANDS="$CONFIG_COMMANDS vti.icc" ;;
-  "$srcdir/gecode/int/var/imp-int-hdr.icc" ) CONFIG_COMMANDS="$CONFIG_COMMANDS $srcdir/gecode/int/var/imp-int-hdr.icc" ;;
-  "$srcdir/gecode/int/var/imp-int-body.icc" ) CONFIG_COMMANDS="$CONFIG_COMMANDS $srcdir/gecode/int/var/imp-int-body.icc" ;;
-  "$srcdir/gecode/int/var/imp-bool-hdr.icc" ) CONFIG_COMMANDS="$CONFIG_COMMANDS $srcdir/gecode/int/var/imp-bool-hdr.icc" ;;
-  "$srcdir/gecode/int/var/imp-bool-body.icc" ) CONFIG_COMMANDS="$CONFIG_COMMANDS $srcdir/gecode/int/var/imp-bool-body.icc" ;;
-  "$srcdir/gecode/set/var/imp-hdr.icc" ) CONFIG_COMMANDS="$CONFIG_COMMANDS $srcdir/gecode/set/var/imp-hdr.icc" ;;
-  "$srcdir/gecode/set/var/imp-body.icc" ) CONFIG_COMMANDS="$CONFIG_COMMANDS $srcdir/gecode/set/var/imp-body.icc" ;;
-  "$srcdir/gecode/cpltset/var/imp-hdr.icc" ) CONFIG_COMMANDS="$CONFIG_COMMANDS $srcdir/gecode/cpltset/var/imp-hdr.icc" ;;
-  "$srcdir/gecode/cpltset/var/imp-body.icc" ) CONFIG_COMMANDS="$CONFIG_COMMANDS $srcdir/gecode/cpltset/var/imp-body.icc" ;;
   "gecode/config.icc" ) CONFIG_HEADERS="$CONFIG_HEADERS gecode/config.icc" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
@@ -10219,106 +10192,6 @@ echo "$as_me: executing $ac_dest commands" >&6;}
 	     rm -f gecode/vti.icc;
 	     mv gecode/vti.icc.new gecode/vti.icc;
 	   fi ;;
-    $srcdir/gecode/int/var/imp-int-hdr.icc ) cd $srcdir
-    if test ! gecode/int/var/imp-int-hdr.icc -nt gecode/int/var-imp-int.vis; then
-      rm -f gecode/int/var/imp-int-hdr.generated
-      perl misc/genvarimp.perl -header gecode/int/var-imp-int.vis > gecode/int/var/imp-int-hdr.generated
-      if (diff -N gecode/int/var/imp-int-hdr.icc gecode/int/var/imp-int-hdr.generated >/dev/null); then
-        rm -f gecode/int/var/imp-int-hdr.generated;
-      else
-        rm -f gecode/int/var/imp-int-hdr.icc;
-        mv gecode/int/var/imp-int-hdr.generated gecode/int/var/imp-int-hdr.icc;
-      fi
-    fi
-    cd - ;;
-    $srcdir/gecode/int/var/imp-int-body.icc ) cd $srcdir
-    if test ! gecode/int/var/imp-int-body.icc -nt gecode/int/var-imp-int.vis; then
-      rm -f gecode/int/var/imp-int-body.generated
-      perl misc/genvarimp.perl -body gecode/int/var-imp-int.vis > gecode/int/var/imp-int-body.generated
-      if (diff -N gecode/int/var/imp-int-body.icc gecode/int/var/imp-int-body.generated >/dev/null); \
-	then
-        rm -f gecode/int/var/imp-int-body.generated;
-      else
-        rm -f gecode/int/var/imp-int-body.icc;
-        mv gecode/int/var/imp-int-body.generated gecode/int/var/imp-int-body.icc;
-      fi
-    fi
-    cd - ;;
-    $srcdir/gecode/int/var/imp-bool-hdr.icc ) cd $srcdir
-    if test ! gecode/int/var/imp-bool-hdr.icc -nt gecode/int/var-imp-bool.vis; then
-      rm -f gecode/int/var/imp-bool-hdr.generated
-      perl misc/genvarimp.perl -header gecode/int/var-imp-bool.vis > gecode/int/var/imp-bool-hdr.generated
-      if (diff -N gecode/int/var/imp-bool-hdr.icc gecode/int/var/imp-bool-hdr.generated >/dev/null); then
-        rm -f gecode/int/var/imp-bool-hdr.generated;
-      else
-        rm -f gecode/int/var/imp-bool-hdr.icc;
-        mv gecode/int/var/imp-bool-hdr.generated gecode/int/var/imp-bool-hdr.icc;
-      fi
-    fi
-    cd - ;;
-    $srcdir/gecode/int/var/imp-bool-body.icc ) cd $srcdir
-    if test ! gecode/int/var/imp-bool-body.icc -nt gecode/int/var-imp-bool.vis; then
-      rm -f gecode/int/var/imp-bool-body.generated
-      perl misc/genvarimp.perl -body gecode/int/var-imp-bool.vis > gecode/int/var/imp-bool-body.generated
-      if (diff -N gecode/int/var/imp-bool-body.icc gecode/int/var/imp-bool-body.generated >/dev/null); \
-	then
-        rm -f gecode/int/var/imp-bool-body.generated;
-      else
-        rm -f gecode/int/var/imp-bool-body.icc;
-        mv gecode/int/var/imp-bool-body.generated gecode/int/var/imp-bool-body.icc;
-      fi
-    fi
-    cd - ;;
-    $srcdir/gecode/set/var/imp-hdr.icc ) cd $srcdir
-    if test ! gecode/set/var/imp-hdr.icc -nt gecode/set/var-imp.vis; then
-      rm -f gecode/set/var/imp-hdr.generated
-      perl misc/genvarimp.perl -header gecode/set/var-imp.vis > gecode/set/var/imp-hdr.generated
-      if (diff -N gecode/set/var/imp-hdr.icc gecode/set/var/imp-hdr.generated >/dev/null); then
-        rm -f gecode/set/var/imp-hdr.generated;
-      else
-        rm -f gecode/set/var/imp-hdr.icc;
-        mv gecode/set/var/imp-hdr.generated gecode/set/var/imp-hdr.icc;
-      fi
-    fi
-    cd - ;;
-    $srcdir/gecode/set/var/imp-body.icc ) cd $srcdir
-    if test ! gecode/set/var/imp-body.icc -nt gecode/set/var-imp.vis; then
-      rm -f gecode/set/var/imp-body.generated
-      perl misc/genvarimp.perl -body gecode/set/var-imp.vis > gecode/set/var/imp-body.generated
-      if (diff -N gecode/set/var/imp-body.icc gecode/set/var/imp-body.generated >/dev/null); \
-	then
-        rm -f gecode/set/var/imp-body.generated;
-      else
-        rm -f gecode/set/var/imp-body.icc;
-        mv gecode/set/var/imp-body.generated gecode/set/var/imp-body.icc;
-      fi
-    fi
-    cd - ;;
-    $srcdir/gecode/cpltset/var/imp-hdr.icc ) cd $srcdir
-    if test ! gecode/cpltset/var/imp-hdr.icc -nt gecode/cpltset/var-imp.vis; then
-      rm -f gecode/cpltset/var/imp-hdr.generated
-      perl misc/genvarimp.perl -header gecode/cpltset/var-imp.vis > gecode/cpltset/var/imp-hdr.generated
-      if (diff -N gecode/cpltset/var/imp-hdr.icc gecode/cpltset/var/imp-hdr.generated >/dev/null); then
-        rm -f gecode/cpltset/var/imp-hdr.generated;
-      else
-        rm -f gecode/cpltset/var/imp-hdr.icc;
-        mv gecode/cpltset/var/imp-hdr.generated gecode/cpltset/var/imp-hdr.icc;
-      fi
-    fi
-    cd - ;;
-    $srcdir/gecode/cpltset/var/imp-body.icc ) cd $srcdir
-    if test ! gecode/cpltset/var/imp-body.icc -nt gecode/cpltset/var-imp.vis; then
-      rm -f gecode/cpltset/var/imp-body.generated
-      perl misc/genvarimp.perl -body gecode/cpltset/var-imp.vis > gecode/cpltset/var/imp-body.generated
-      if (diff -N gecode/cpltset/var/imp-body.icc gecode/cpltset/var/imp-body.generated >/dev/null); \
-	then
-        rm -f gecode/cpltset/var/imp-body.generated;
-      else
-        rm -f gecode/cpltset/var/imp-body.icc;
-        mv gecode/cpltset/var/imp-body.generated gecode/cpltset/var/imp-body.icc;
-      fi
-    fi
-    cd - ;;
   esac
 done
 _ACEOF
