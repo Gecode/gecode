@@ -42,6 +42,12 @@ private:
   /// Sequence
   IntVarArray s;
 public:
+  /// Which propagation to use for the model
+  enum {
+    PROP_REIFIED, ///< Use reified constraints
+    PROP_COUNT,   ///< Use count constraints
+    PROP_GCC      ///< Use single global cardinality constraint
+  };
   /// Naive version for counting number of ocurrences of \a i
   void
   exactly(IntVarArray& v, IntVar& x, int i) {
@@ -54,13 +60,21 @@ public:
   /// The actual model
   MagicSequence(const Options& opt)
     : n(opt.size), s(this,n,0,n-1) {
-    if (opt.naive)
+    switch (opt.propagation.value()) {
+    case PROP_REIFIED:
       for (int i=n; i--; )
         exactly(s, s[i], i);
-    else
+      linear(this, s, IRT_EQ, n);
+      break;
+    case PROP_COUNT:
       for (int i=n; i--; )
         count(this, s, i, IRT_EQ, s[i]);
-    linear(this, s, IRT_EQ, n);
+      linear(this, s, IRT_EQ, n);
+      break;
+    case PROP_GCC:
+      gcc(this, s, s, 0, n-1, opt.icl);
+      break;
+    }
     IntArgs c(n);
     for (int j = n; j--; )
       c[j] = j-1;
@@ -100,6 +114,10 @@ main(int argc, char** argv) {
   opt.solutions  = 0;
   opt.iterations = 4;
   opt.size       = 500;
+  opt.propagation.value(MagicSequence::PROP_COUNT);
+  opt.propagation.add(MagicSequence::PROP_REIFIED, "reified");
+  opt.propagation.add(MagicSequence::PROP_COUNT,   "count");
+  opt.propagation.add(MagicSequence::PROP_GCC,     "gcc");
   opt.parse(argc,argv);
   Example::run<MagicSequence,DFS>(opt);
   return 0;

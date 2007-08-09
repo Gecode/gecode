@@ -48,10 +48,10 @@ Options::parse(int argc, char** argv) {
   const char* e = NULL;
   while (i < argc) {
     if (!strcmp(argv[i],"-help") || !strcmp(argv[i],"--help")) {
-      cerr << "Options for example " << name << ":"
+      cerr << "Options for " << name << ":"
            << endl
-           << "\t-icl (def,val,bnd,dom) default: " << icl2str[icl]
-           << endl
+
+           << "\t-icl (def,val,bnd,dom) default: " << icl2str[icl] << endl
            << "\t\tinteger consistency level" << endl
 #ifdef GECODE_HAVE_CPLTSET_VARS
 	   << "\t-scl (def,bnd_bdd, bnd_sbr,,spl,crd,lex,dom) default: " << scl2str[scl]
@@ -64,42 +64,41 @@ Options::parse(int argc, char** argv) {
 	   << endl
 	   << "\t\tinitial cachesize for bdd operations" << endl
 #endif
+
            << "\t-c_d (unsigned int) default: " << c_d << endl
            << "\t\tcopying recomputation distance" << endl
+
            << "\t-a_d (unsigned int) default: " << a_d << endl
-           << "\t\tadaption recomputation distance" << endl
+           << "\t\tadaptive recomputation distance" << endl
+
            << "\t-mode (solution, time, stat) default: "
            << em2str[mode] << endl
-           << "\t\twhether to print solutions, measure time, "
-           << "or print statistics" << endl
-           << "\t-samples (unsigned int) default: "
-           << samples << endl
+           << "\t\tprint solutions, measure time, or print statistics" << endl
+        
+           << "\t-samples (unsigned int) default: " << samples << endl
            << "\t\thow many samples (time-mode)" << endl
-           << "\t-iterations (unsigned int) default: "
-           << iterations << endl
+
+           << "\t-iterations (unsigned int) default: " << iterations << endl
            << "\t\thow many iterations per sample (time-mode)" << endl
-           << "\t-solutions (unsigned int) default: ";
-      if (solutions == 0)
-        cerr << "all (0)";
-      else
-        cerr << solutions;
-      cerr << endl
+
+           << "\t-solutions (unsigned int) default: "
+           << ((solutions == 0) ? "all " : "") << solutions << endl
            << "\t\thow many solutions to search (solution-mode)" << endl
+
            << "\t-fails (unsigned int) default: "
            << (fails<0 ? "(no limit) " : "") << fails << endl
-           << "\t\tset number of allowed fails before stopping (solution-mode)"
+           << "\t\tset number of fails before stopping (solution-mode)"
            << endl
+
            << "\t-time (unsigned int) default: "
-           << (fails<0 ? "(no limit) " : "") << time << endl
-           << "\t\tset allowed time before stopping (solution-mode)" << endl
-           << "\t-naive default: "
-           << bool2str[naive] << endl
-           << "\t\tuse naive version" << endl
-           << "\t-smart default: "
-           << bool2str[!naive] << endl
-           << "\t\tuse smart version" << endl
+           << (time<0 ? "(no limit) " : "") << time << endl
+           << "\t\tset time before stopping (solution-mode)" << endl
+
            << "\t(unsigned int) default: " << size << endl
            << "\t\twhich version/size for example" << endl;
+      model.help("-model","model variants");
+      propagation.help("-propagation","propagation variants");
+      branching.help("-branching","branching variants");
       exit(EXIT_SUCCESS);
     } else if (!strcmp(argv[i],"-icl")) {
       if (++i == argc) goto missing;
@@ -180,10 +179,15 @@ Options::parse(int argc, char** argv) {
     } else if (!strcmp(argv[i],"-iterations")) {
       if (++i == argc) goto missing;
       iterations = atoi(argv[i]);
-    } else if (!strcmp(argv[i],"-naive")) {
-      naive = true;
-    } else if (!strcmp(argv[i],"-smart")) {
-      naive = false;
+    } else if (!strcmp(argv[i],"-model")) {
+      if (++i == argc) goto missing;
+      if (!model.parse(argv[i])) goto error;
+    } else if (!strcmp(argv[i],"-propagation")) {
+      if (++i == argc) goto missing;
+      if (!propagation.parse(argv[i])) goto error;
+    } else if (!strcmp(argv[i],"-branching")) {
+      if (++i == argc) goto missing;
+      if (!branching.parse(argv[i])) goto error;
     } else {
       char* unused;
       size = strtol(argv[i], &unused, 10);

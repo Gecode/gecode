@@ -54,6 +54,69 @@ enum ExampleMode {
   EM_STAT      ///< Print statistics for example
 };
 
+class OptValue {
+private:
+  class Value {
+  public:
+    int         val;
+    const char* opt;
+    const char* help;
+    Value*      next;
+  };
+  int    cur;
+  Value* fst;
+  Value* lst;
+public:
+  OptValue(void) : cur(0), fst(NULL), lst(NULL) {}
+  void value(int v) {
+    cur = v;
+  }
+  int value(void) const {
+    return cur;
+  }
+  void add(int v, const char* o, const char* h = NULL) {
+    Value* n = new Value;
+    n->val  = v;
+    n->opt  = o;
+    n->help = h;
+    n->next = NULL;
+    if (fst == NULL) {
+      fst = lst = n;
+    } else {
+      lst->next = n; lst = n;
+    }
+  }
+  bool parse(const char* o) {
+    if (fst == NULL)
+      return false;
+    for (Value* v = fst; v != NULL; v = v->next)
+      if (!strcmp(o,v->opt)) {
+        cur = v->val;
+        return true;
+      }
+    return false;
+  }
+  void help(const char* o, const char* t) {
+    if (fst == NULL)
+      return;
+    std::cerr << '\t' << o << " (";
+    const char* d = NULL;
+    for (Value* v = fst; v != NULL; v = v->next) {
+      std::cerr << v->opt << ((v->next != NULL) ? ", " : "");
+      if (v->val == cur)
+        d = v->opt;
+    }
+    std::cerr << ")";
+    if (d != NULL) 
+      std::cerr << " default: " << d;
+    std::cerr << std::endl
+              << "\t\t" << t << std::endl;
+    for (Value* v = fst; v != NULL; v = v->next)
+      if (v->help != NULL)
+        std::cerr << "\t\t  " << v->opt << ": " << v->help << std::endl;
+  }
+};
+
 /// Class for options for examples
 class Options {
 public:
@@ -71,8 +134,11 @@ public:
   unsigned int size;       ///< problem size/variant
   const char*  name;       ///< name of problem
 
+  OptValue     model;
+  OptValue     propagation;
+  OptValue     branching;
+
 #ifdef GECODE_HAVE_CPLTSET_VARS
-  /// Additional Bdd parameters
   unsigned int initvarnum; ///< initial number of bdd nodes in the table
   unsigned int initcache;  ///< initial cachesize for bdd operations
   SetConLevel  scl;        ///< bdd consistency level
