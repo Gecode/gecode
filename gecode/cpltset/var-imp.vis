@@ -27,7 +27,7 @@
 #
 [Header]
 
-namespace Gecode { namespace Bdd {
+namespace Gecode { namespace CpltSet {
 
 #
 # General settings

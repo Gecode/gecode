@@ -524,7 +524,7 @@ INTEXAMPLESRC0 =							\
 	alpha bacp bibd cars donald					\
 	eq20 golomb tsp							\
 	graph-color grocery ind-set knights				\
-	magic-sequence magic-sequence-gcc magic-square			\
+	magic-sequence magic-square			\
 	money ortho-latin packing					\
 	partition photo queens						\
 	sudoku picture-puzzle placement-puzzle placement-puzzle-01	\
