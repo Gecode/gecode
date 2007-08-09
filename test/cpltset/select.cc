@@ -19,7 +19,7 @@
  *
  */
 
-#include "test/bdd.hh"
+#include "test/cpltset.hh"
 
 static IntSet ds_012(0,2);
 static IntSet ds_1012(-1,2);
@@ -71,7 +71,6 @@ public:
   }
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // access the space manager
-    assert(this->manager().object() != NULL);
     BuddyMgr lm = this->manager();
     // lm.debug();
 
@@ -172,7 +171,6 @@ public:
       xs[i]=x[i];
 
     // access the space manager
-    assert(this->manager().object() != NULL);
     BuddyMgr lm = this->manager();
     // lm.debug();
 

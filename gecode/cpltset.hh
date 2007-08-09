@@ -43,7 +43,7 @@
 #if !defined(GECODE_STATIC_LIBS) && \
     (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 
-#ifdef GECODE_BUILD_BDD
+#ifdef GECODE_BUILD_CPLTSET
 #define GECODE_CPLTSET_EXPORT __declspec( dllexport )
 #else
 #define GECODE_CPLTSET_EXPORT __declspec( dllimport )
@@ -92,10 +92,10 @@ namespace CpltSet {
 
 
 namespace Gecode { 
-  enum BddOutput {
-    BDD_DOM,    ///< Full domain output 
-    BDD_BND,    ///< Only greatest lower and least upper bound
-    BDD_BND_DOM ///< Output full domain and bounds
+  enum CpltSetOutput {
+    CPLTSET_DOM,    ///< Full domain output 
+    CPLTSET_BND,    ///< Only greatest lower and least upper bound
+    CPLTSET_BND_DOM ///< Output full domain and bounds
   };
 }
 
@@ -111,7 +111,7 @@ typedef Gecode::BuddyMgr BddMgr;
 
 namespace Gecode {
 
-  enum BddSetRelType {
+  enum CpltSetRelType {
     SRT_LE,    ///< Lexicographically less than on bitstring(\f$\prec_{lex}\f$)
     SRT_GR,    ///< Lexicographically greater than on bitstring (\f$\succ_{lex}\f$)
     SRT_LQ,    ///< Lexicographically less than or equal  (\f$\preceq_{lex}\f$)
@@ -122,7 +122,7 @@ namespace Gecode {
     SRT_GQ_REV,    ///< Lexicographically reversed greater than or equal  (\f$\preceq_{lex}\f$)
   };
 
-  enum BddSetOpType {
+  enum CpltSetOpType {
     SOT_SYMDIFF,  ///< Symmetric Difference
   };
 
@@ -153,24 +153,24 @@ namespace Gecode {
 //   };
 
   /// Which variable to select for branching
-  enum BddBvarSel {
-    BDD_BVAR_NONE,             ///< First unassigned
-    BDD_BVAR_MIN_CARD,         ///< With smallest unknown set
-    BDD_BVAR_MAX_CARD,         ///< With largest unknown set
-    BDD_BVAR_MIN_UNKNOWN_ELEM, ///< With smallest unknown element
-    BDD_BVAR_MAX_UNKNOWN_ELEM  ///< With largest unknown element 
+  enum CpltSetBvarSel {
+    CPLTSET_BVAR_NONE,             ///< First unassigned
+    CPLTSET_BVAR_MIN_CARD,         ///< With smallest unknown set
+    CPLTSET_BVAR_MAX_CARD,         ///< With largest unknown set
+    CPLTSET_BVAR_MIN_UNKNOWN_ELEM, ///< With smallest unknown element
+    CPLTSET_BVAR_MAX_UNKNOWN_ELEM  ///< With largest unknown element 
   };
   
   /// Which values to select first for branching. 
-  enum BddBvalSel { 
-    BDD_BVAL_MIN,                  ///< Select first domain value and try equality
-    BDD_BVAL_MAX,                  ///< Select last  domain value and try equality
-    BDD_BVAL_MIN_EX_FIRST,         ///< Select first domain value and try disequality
-    BDD_BVAL_MAX_EX_FIRST,         ///< Select last  domain value and try disequality
-    BDD_BVAL_MIN_UNKNOWN,          ///< Select smallest element in unknown set and try to include it
-    BDD_BVAL_MAX_UNKNOWN,          ///< Select largest  element in unknown set and try to include it
-    BDD_BVAL_MIN_UNKNOWN_EX_FIRST, ///< Select smallest element in unknown set and try to exclude it
-    BDD_BVAL_MAX_UNKNOWN_EX_FIRST  ///< Select largest  element in unknown set and try to exclude it
+  enum CpltSetBvalSel { 
+    CPLTSET_BVAL_MIN,                  ///< Select first domain value and try equality
+    CPLTSET_BVAL_MAX,                  ///< Select last  domain value and try equality
+    CPLTSET_BVAL_MIN_EX_FIRST,         ///< Select first domain value and try disequality
+    CPLTSET_BVAL_MAX_EX_FIRST,         ///< Select last  domain value and try disequality
+    CPLTSET_BVAL_MIN_UNKNOWN,          ///< Select smallest element in unknown set and try to include it
+    CPLTSET_BVAL_MAX_UNKNOWN,          ///< Select largest  element in unknown set and try to include it
+    CPLTSET_BVAL_MIN_UNKNOWN_EX_FIRST, ///< Select smallest element in unknown set and try to exclude it
+    CPLTSET_BVAL_MAX_UNKNOWN_EX_FIRST  ///< Select largest  element in unknown set and try to exclude it
   };
 
   ///\name Posting bdd propagators
@@ -193,27 +193,27 @@ namespace Gecode {
   
   /// Post propagator for \f$ dom(x) \sim_r y\f$
   GECODE_CPLTSET_EXPORT void
-  rel(Space* home, IntVar x, BddSetRelType r, CpltSetVar s, 
+  rel(Space* home, IntVar x, CpltSetRelType r, CpltSetVar s, 
       SetConLevel scl = SCL_DEF);
 
 
   /// Post propagator for \f$ x \sim_r y\f$
   GECODE_CPLTSET_EXPORT void
-  rel(Space* home, CpltSetVar x, BddSetRelType r, CpltSetVar y, 
+  rel(Space* home, CpltSetVar x, CpltSetRelType r, CpltSetVar y, 
       SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_CPLTSET_EXPORT void
-  rel(Space* home, CpltSetVar x, BddSetOpType o, CpltSetVar y, 
-      BddSetRelType r, CpltSetVar z,  SetConLevel scl = SCL_DEF);
+  rel(Space* home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, 
+      CpltSetRelType r, CpltSetVar z,  SetConLevel scl = SCL_DEF);
 
   GECODE_CPLTSET_EXPORT void
-  rel(Space* home, CpltSetVar x, BddSetOpType o, CpltSetVar y, 
+  rel(Space* home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, 
       SetRelType r, CpltSetVar z,  SetConLevel scl = SCL_DEF);
 
   GECODE_CPLTSET_EXPORT void
   rel(Space* home, CpltSetVar x, SetOpType o, CpltSetVar y, 
-      BddSetRelType r, CpltSetVar z,  SetConLevel scl = SCL_DEF);
+      CpltSetRelType r, CpltSetVar z,  SetConLevel scl = SCL_DEF);
 
   GECODE_CPLTSET_EXPORT void
   rel(Space* home, CpltSetVar x, SetOpType o, CpltSetVar y, 
@@ -256,7 +256,7 @@ namespace Gecode {
   /// Post propagator for \f$ 0 \leq |x \cap y| \leq c \wedge x \sim_{lex} y\f$ 
   GECODE_CPLTSET_EXPORT void
   atmostLex(Space* home, CpltSetVar x, CpltSetVar y, int c, 
-	    BddSetRelType lex, SetConLevel scl = SCL_DEF);
+	    CpltSetRelType lex, SetConLevel scl = SCL_DEF);
 
   /**
    * \brief  Post propagator for \f$ 0 \leq |x \cap y| \leq c 
@@ -264,7 +264,7 @@ namespace Gecode {
    */
   GECODE_CPLTSET_EXPORT void
   atmostLexCard(Space* home, CpltSetVar x, CpltSetVar y, int c, 
-		BddSetRelType lex, int d, SetConLevel scl = SCL_DEF);
+		CpltSetRelType lex, int d, SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ 0 \leq |x \cap y| \leq c \wedge |x| = |y| = d\f$ 
   GECODE_CPLTSET_EXPORT void
@@ -303,7 +303,7 @@ namespace Gecode {
    *
    */
   GECODE_CPLTSET_EXPORT void
-  partitionLex(Space* home, const CpltSetVarArgs& x, BddSetRelType lex, 
+  partitionLex(Space* home, const CpltSetVarArgs& x, CpltSetRelType lex, 
 	       SetConLevel scl = SCL_DEF);
   /**
    * \brief Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \wedge 
@@ -312,7 +312,7 @@ namespace Gecode {
    *                       \forall i \in \{0, \dots, n-1\}: |x_i| = c \f$ 
    */
   GECODE_CPLTSET_EXPORT void
-  partitionLexCard(Space* home, const CpltSetVarArgs& x, BddSetRelType lex, int c, 
+  partitionLexCard(Space* home, const CpltSetVarArgs& x, CpltSetRelType lex, int c, 
 		   SetConLevel scl = SCL_DEF);
 
   /**
@@ -413,7 +413,7 @@ namespace Gecode {
 
   /// Branch over all \a x with variable selection \a vars and value selection \a vals
   GECODE_CPLTSET_EXPORT void
-  branch(Space* home, const CpltSetVarArgs& x, BddBvarSel vars, BddBvalSel vals, 
+  branch(Space* home, const CpltSetVarArgs& x, CpltSetBvarSel vars, CpltSetBvalSel vals, 
 	 SetConLevel scl = SCL_DOM);
 
 

@@ -104,7 +104,7 @@ namespace Gecode {
   template <class View>
   void 
   atmost_post(Space* home, ViewArray<View>& x, int c, 
-	      BddSetRelType lex, int card, SetConLevel scl) {
+	      CpltSetRelType lex, int card, SetConLevel scl) {
     if (home->failed()) return;
     BMI* mgr = x[0].manager();
 
@@ -191,7 +191,7 @@ namespace Gecode {
 
   template <class View>
   void 
-  atmost_post(Space* home, View& x, View& y, int c, BddSetRelType lex, int card, SetConLevel scl) {
+  atmost_post(Space* home, View& x, View& y, int c, CpltSetRelType lex, int card, SetConLevel scl) {
     if (home->failed()) return;
     BMI* mgr = x.manager();
 

@@ -24,7 +24,7 @@ using namespace Gecode::CpltSet;
 namespace Gecode {
 
   template <class View>
-  void rel_post(Space* home, View x, BddSetRelType r, View y, 
+  void rel_post(Space* home, View x, CpltSetRelType r, View y, 
 		SetConLevel scl) {
 
     if (home->failed()) return;
@@ -213,7 +213,7 @@ namespace Gecode {
   }
 
   template <class View0, class View1>
-  void rel_post(Space* home, View0 x, BddSetRelType r, View1 s, 
+  void rel_post(Space* home, View0 x, CpltSetRelType r, View1 s, 
 		SetConLevel scl) {
 
     if (home->failed()) return;
@@ -349,14 +349,14 @@ namespace Gecode {
   // BddOp and BddRel
   // 
   template <class View>
-  void rel_post(Space* home, ViewArray<View>& x, BddSetOpType o, BddSetRelType r, 
+  void rel_post(Space* home, ViewArray<View>& x, CpltSetOpType o, CpltSetRelType r, 
 		SetConLevel scl) {
     throw CpltSet::InvalidRelation(" no bdd rel implemented lex smaller ....");
   }
 
   // BddOp and SetRel
   template <class View>
-  void rel_post(Space* home, ViewArray<View>& x, BddSetOpType o, SetRelType r, 
+  void rel_post(Space* home, ViewArray<View>& x, CpltSetOpType o, SetRelType r, 
 		SetConLevel scl) {
     if (home->failed()) return;
     // important:
@@ -402,7 +402,7 @@ namespace Gecode {
   // SetOp and BddRel
   // 
   template <class View>
-  void rel_post(Space* home, ViewArray<View>& x, SetOpType o, BddSetRelType r, 
+  void rel_post(Space* home, ViewArray<View>& x, SetOpType o, CpltSetRelType r, 
 		SetConLevel scl) {
     throw CpltSet::InvalidRelation(" no bdd rel implemented lex smaller with setoptype....");
   }

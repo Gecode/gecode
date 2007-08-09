@@ -74,25 +74,25 @@ namespace Gecode {
 //     }
   }
 
-  void rel(Space* home, CpltSetVar x, BddSetRelType r, CpltSetVar y, SetConLevel scl) {
+  void rel(Space* home, CpltSetVar x, CpltSetRelType r, CpltSetVar y, SetConLevel scl) {
     rel_con(home, x, r, y, scl);
   }
 
-  void rel(Space* home, IntVar x, BddSetRelType r, CpltSetVar y, SetConLevel scl) {
+  void rel(Space* home, IntVar x, CpltSetRelType r, CpltSetVar y, SetConLevel scl) {
     rel_con(home, x, r, y, scl);
   }
 
-  void rel(Space* home, CpltSetVar x, BddSetOpType o, CpltSetVar y, BddSetRelType r, 
+  void rel(Space* home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, CpltSetRelType r, 
 	   CpltSetVar z, SetConLevel scl) {
     rel_con_bdd(home, x, o, y, r, z, scl);
   }
 
-  void rel(Space* home, CpltSetVar x, BddSetOpType o, CpltSetVar y, SetRelType r, 
+  void rel(Space* home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, SetRelType r, 
 	   CpltSetVar z, SetConLevel scl) {
     rel_con_bdd(home, x, o, y, r, z, scl);
   }
 
-  void rel(Space* home, CpltSetVar x, SetOpType o, CpltSetVar y, BddSetRelType r, 
+  void rel(Space* home, CpltSetVar x, SetOpType o, CpltSetVar y, CpltSetRelType r, 
 	   CpltSetVar z, SetConLevel scl) {
     rel_con_bdd(home, x, o, y, r, z, scl);
   }

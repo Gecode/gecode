@@ -133,13 +133,13 @@ namespace Gecode {
 
   void 
   atmostLex(Space* home, CpltSetVar x, CpltSetVar y, int c, 
-	    BddSetRelType lex, SetConLevel scl) {
+	    CpltSetRelType lex, SetConLevel scl) {
     atmost_con(home, x, y, c, lex, -1, scl);
   }
 
   void 
   atmostLexCard(Space* home, CpltSetVar x, CpltSetVar y, int c, 
-		BddSetRelType lex, int d, SetConLevel scl) {
+		CpltSetRelType lex, int d, SetConLevel scl) {
     atmost_con(home, x, y, c, lex, d, scl);
   }
 

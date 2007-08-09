@@ -23,7 +23,7 @@
  *
  */
 
-#include "test/bdd.hh"
+#include "test/cpltset.hh"
 #include "test/log.hh"
 #include "gecode/iter.hh"
 #include <algorithm>
@@ -129,9 +129,9 @@ private:
 public:
   BddTestSpace(int n, IntSet& d, int _withInt, const Options& o, int ivs=10000, int ics=1000) 
     : mgr(ivs, ics), 
-      x(this, mgr.object(), n, IntSet::empty, d), y(this, _withInt, d),
+      x(this, mgr.manager(), n, IntSet::empty, d), y(this, _withInt, d),
       opt(o), withInt(_withInt) {  
-    mgr.level(BDD_BND);
+    mgr.level(CPLTSET_BND);
     Log::initial(x, "x");
   }
   BddTestSpace(bool share, BddTestSpace& s) 
@@ -481,7 +481,7 @@ BddTest::run(const Options& opt) {
       delete search_s;
     }
     
-    manager().object(NULL);
+    manager().clear();
 
     {
       test = "Assignment (after posting)";
@@ -499,7 +499,7 @@ BddTest::run(const Options& opt) {
       delete s;
     }
     
-    manager().object(NULL);
+    manager().clear();
 
 
     {
@@ -518,7 +518,7 @@ BddTest::run(const Options& opt) {
       delete s;      
     }
     
-    manager().object(NULL);
+    manager().clear();
 
     if (reified) {
       test = "Assignment reified (before posting)";
@@ -540,7 +540,7 @@ BddTest::run(const Options& opt) {
       
     }
     
-    manager().object(NULL);
+    manager().clear();
 
     if (reified) {
       test = "Assignment reified (after posting)";
@@ -561,7 +561,7 @@ BddTest::run(const Options& opt) {
       delete s;      
     }
     
-    manager().object(NULL);
+    manager().clear();
 
     {
       test = "Prune";
@@ -595,7 +595,7 @@ BddTest::run(const Options& opt) {
       delete s;      
     }
     
-    manager().object(NULL);
+    manager().clear();
 
     if (reified) {
       test = "Prune reified";
@@ -622,7 +622,7 @@ BddTest::run(const Options& opt) {
       delete s;      
     }
     
-    manager().object(NULL);
+    manager().clear();
 
     ++an;
     ++a;

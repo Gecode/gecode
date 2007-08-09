@@ -19,7 +19,7 @@
  *
  */
 
-#include "test/bdd.hh"
+#include "test/cpltset.hh"
 
 static const int d1r[4][2] = {
   {-4,-3},{-1,-1},{1,1},{3,5}
@@ -30,80 +30,85 @@ static IntSet ds_33(-3,3);
 static IntSet ds_4(4,4);
 static IntSet ds_13(1,3);
 
-class BddCardMinMax : public BddTest {
+class BddAtmost : public BddTest {
 public:
-  BddCardMinMax(const char* t) : BddTest(t,1,d1,false) {}
+  BddAtmost(const char* t) : BddTest(t,2,ds_13,false) {}
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
+    CountableSetRanges xr2(x.lub, x[1]);
 
+    Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges>
+      d(xr1, xr2);
     int c = 0;
-    while (xr1()) {
-      c += xr1.width();
-      ++xr1;
+    while (d()) {
+      c += d.width();
+      ++d;
     }
-    return (0<= c && c <= 3);
+    return (c <= 1);
   }
 
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
-    Gecode::hls_order(home, x);
-    Gecode::cardinality(home, x[0], 0, 3);
+    Gecode::atmost(home, x[0], x[1], 1);
   }
 //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
 };
-BddCardMinMax _bddcardminmax("Card::MinMax");
+BddAtmost _bddatmost("Atmost::1");
 
-class BddCardEq : public BddTest {
+class BddAtmostLexLe : public BddTest {
 public:
-  BddCardEq(const char* t) : BddTest(t,1,d1,false) {}
+  BddAtmostLexLe(const char* t) : BddTest(t,2,ds_13,false) {}
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
+    CountableSetRanges xr2(x.lub, x[1]);
+
+    Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges>
+      d(xr1, xr2);
+    int c = 0;
+    while (d()) {
+      c += d.width();
+      ++d;
+    }
+
+    CountableSetValues xv1(x.lub, x[0]);
+    CountableSetValues xv2(x.lub, x[1]);
+    int a = iter2int(xv1, 3);
+    int b = iter2int(xv2, 3);
     
-    int c = 0;
-    while (xr1()) {
-      c += xr1.width();
-      ++xr1;
-    }
-    return (c == 3);
+    return (c <= 1) && a < b;
   }
 
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
-    Gecode::hls_order(home, x);
-    Gecode::cardinality(home, x[0], 3, 3);
+    Gecode::atmostLex(home, x[0], x[1], 1, SRT_LE, SCL_DOM);
   }
-//   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-//     Gecode::dom(home, x[0], SRT_EQ, d1, b);
-//   }
 };
-BddCardEq _bddcardeq("Card::Eq");
+BddAtmostLexLe _bddatmostlexle("Atmost::Lex::Le");
 
 
-class BddCardMinInf : public BddTest {
+class BddAtmostIntSet : public BddTest {
 public:
-  BddCardMinInf(const char* t) : BddTest(t,1,d1,false) {}
+  BddAtmostIntSet(const char* t) : BddTest(t,1,ds_33,false) {}
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
-    
+    IntSetRanges ir(ds_33);
+    Iter::Ranges::Inter<CountableSetRanges, IntSetRanges>  d(xr1, ir);
     int c = 0;
-    while (xr1()) {
-      c += xr1.width();
-      ++xr1;
+    while (d()) {
+      c += d.width();
+      ++d;
     }
-    return (c >= 1);
+    
+    return (c <= 1);
   }
 
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
-    Gecode::hls_order(home, x);
-    Gecode::cardinality(home, x[0], 1, Gecode::Limits::Set::int_max);
+    Gecode::atmost(home, x[0], ds_33, 1, SCL_DOM);
   }
-//   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-//     Gecode::dom(home, x[0], SRT_EQ, d1, b);
-//   }
 };
-BddCardMinInf _bddcardmininf("Card::MinInf");
+BddAtmostIntSet _bddatmostintset("Atmost::IntSet");
 
 // STATISTICS: test-bdd

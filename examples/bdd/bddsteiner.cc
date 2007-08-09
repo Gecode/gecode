@@ -139,9 +139,9 @@ public:
     }
 
     // std::cout << "branch\n";
-    branch(this, root, BDD_BVAR_NONE, BDD_BVAL_MAX_UNKNOWN_EX_FIRST); 
+    branch(this, root, CPLTSET_BVAR_NONE, CPLTSET_BVAL_MAX_UNKNOWN_EX_FIRST); 
     // needed to simulate gecode branching
-    //branch(this, root, BDD_BVAR_NONE, BDD_BVAL_MIN_UNKNOWN); 
+    //branch(this, root, CPLTSET_BVAR_NONE, CPLTSET_BVAL_MIN_UNKNOWN); 
     // std::cout << "finished branching\n";
   }
   
@@ -182,7 +182,7 @@ main(int argc, char** argv) {
   o.initvarnum = 10000;
   o.initcache  = 1000;
 
-  o.level = Gecode::BDD_BND;
+  o.level = Gecode::CPLTSET_BND;
   o.debug = true;
   o.scl = Gecode::SCL_DOM;
 

@@ -20,7 +20,7 @@
  *
  */
 
-#include "test/bdd.hh"
+#include "test/cpltset.hh"
 
 static const int d1r[4][2] = {
   {-4,-3},{-1,-1},{1,1},{3,5}

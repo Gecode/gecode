@@ -26,7 +26,7 @@ namespace Gecode {
   using namespace CpltSet;
 
   void
-  branch(Space* home, const CpltSetVarArgs& xa, BddBvarSel vars, BddBvalSel vals, 
+  branch(Space* home, const CpltSetVarArgs& xa, CpltSetBvarSel vars, CpltSetBvalSel vals, 
 	 SetConLevel scl) {
     // std::cout << "bdd branching\n";
 
@@ -38,15 +38,15 @@ namespace Gecode {
     ViewArray<CpltSetView> x(home,xa);
 
     switch (vars) {
-    case BDD_BVAR_NONE:
+    case CPLTSET_BVAR_NONE:
       Branch::create<Branch::ByNone>(home,x,vals); break;
-    case BDD_BVAR_MIN_CARD:
+    case CPLTSET_BVAR_MIN_CARD:
       Branch::create<Branch::ByMinCard>(home,x,vals); break;
-    case BDD_BVAR_MAX_CARD:
+    case CPLTSET_BVAR_MAX_CARD:
       Branch::create<Branch::ByMaxCard>(home,x,vals); break;
-    case BDD_BVAR_MIN_UNKNOWN_ELEM:
+    case CPLTSET_BVAR_MIN_UNKNOWN_ELEM:
       Branch::create<Branch::ByMinUnknown>(home,x,vals); break;
-    case BDD_BVAR_MAX_UNKNOWN_ELEM:
+    case CPLTSET_BVAR_MAX_UNKNOWN_ELEM:
       Branch::create<Branch::ByMaxUnknown>(home,x,vals); break;
     default:
       throw CpltSet::UnknownBranching("CpltSet::branch not yet implemented");

@@ -172,7 +172,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
 //   template <class SelView>
 //   static void
-//   create(Space* home, ViewArray<CpltSetView>& x, BddBvalSel vals) {
+//   create(Space* home, ViewArray<CpltSetView>& x, CpltSetBvalSel vals) {
 //     switch (vals) {
 //     case SETBVAL_MAX:
 //       (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMax>(home,x);
@@ -184,31 +184,31 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
   template <class SelView>
   static void
-  create(Space* home, ViewArray<CpltSetView>& x, BddBvalSel vals) {
+  create(Space* home, ViewArray<CpltSetView>& x, CpltSetBvalSel vals) {
     // std::cout << "create branch \n";
     switch (vals) {
-    case BDD_BVAL_MIN:
+    case CPLTSET_BVAL_MIN:
       (void) new (home) ViewValBranching<CpltSetView,const IntSet,SelView,ValMin<false> >(home,x);
       break;
-    case BDD_BVAL_MIN_EX_FIRST:
+    case CPLTSET_BVAL_MIN_EX_FIRST:
       (void) new (home) ViewValBranching<CpltSetView,const IntSet,SelView,ValMin<true> >(home,x);
       break;
-    case BDD_BVAL_MAX:
+    case CPLTSET_BVAL_MAX:
       (void) new (home) ViewValBranching<CpltSetView,const IntSet,SelView,ValMax<false> >(home,x);
       break;
-    case BDD_BVAL_MAX_EX_FIRST:
+    case CPLTSET_BVAL_MAX_EX_FIRST:
       (void) new (home) ViewValBranching<CpltSetView,const IntSet,SelView,ValMax<true> >(home,x);
       break;
-    case BDD_BVAL_MIN_UNKNOWN:
+    case CPLTSET_BVAL_MIN_UNKNOWN:
       (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMinUnknown<false> >(home,x);
       break;
-    case BDD_BVAL_MIN_UNKNOWN_EX_FIRST:
+    case CPLTSET_BVAL_MIN_UNKNOWN_EX_FIRST:
       (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMinUnknown<true> >(home,x);
       break;
-    case BDD_BVAL_MAX_UNKNOWN:
+    case CPLTSET_BVAL_MAX_UNKNOWN:
       (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMaxUnknown<false> >(home,x);
       break;
-    case BDD_BVAL_MAX_UNKNOWN_EX_FIRST:
+    case CPLTSET_BVAL_MAX_UNKNOWN_EX_FIRST:
       (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMaxUnknown<true> >(home,x);
       break;
 //     default:

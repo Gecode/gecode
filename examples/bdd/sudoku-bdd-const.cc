@@ -142,9 +142,9 @@ public:
    
     if (s > 0) {
       if (opt.naive) {
-	branch(this, x, BDD_BVAR_NONE, BDD_BVAL_MIN_UNKNOWN);
+	branch(this, x, CPLTSET_BVAR_NONE, CPLTSET_BVAL_MIN_UNKNOWN);
       } else {
-	branch(this, x, BDD_BVAR_MIN_CARD, BDD_BVAL_MIN_UNKNOWN);
+	branch(this, x, CPLTSET_BVAR_MIN_CARD, CPLTSET_BVAL_MIN_UNKNOWN);
       }
     }
   }
@@ -313,7 +313,7 @@ main(int argc, char** argv) {
   opt.initcache  = 2000000;
 
   // granularity of debugging output
-  opt.level      = Gecode::BDD_BND;
+  opt.level      = Gecode::CPLTSET_BND;
 
   // print final measurement of bdd nodes used
   // setting debug to true will give a more detailed output like this

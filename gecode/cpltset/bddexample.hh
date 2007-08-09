@@ -29,11 +29,11 @@
 class BddOptions : public Options {
 public:
   BuddyMgr mgr;
-  BddOutput level;
+  CpltSetOutput level;
   bool debug;
 public:
   BddOptions(const char* s) 
-    : Options(s), level(Gecode::BDD_BND), debug(false){};
+    : Options(s), level(Gecode::CPLTSET_BND), debug(false){};
 };
 
 /**

@@ -162,7 +162,7 @@ namespace Gecode {
   }
 
   template <class View>
-  void build_lexorder(ViewArray<View>& x, GecodeBdd& d0, BddSetRelType lex) {
+  void build_lexorder(ViewArray<View>& x, GecodeBdd& d0, CpltSetRelType lex) {
 
     int n = x.size();
     unsigned int xtab = x[0].table_width();  
@@ -230,7 +230,7 @@ namespace Gecode {
 
   template <class View>
   void partition_post(Space* home, ViewArray<View>& x, bool withlex, 
-		      BddSetRelType lex, bool withcard, int d, 
+		      CpltSetRelType lex, bool withcard, int d, 
 		      SetConLevel scl) {
 
     if (home->failed()) return;

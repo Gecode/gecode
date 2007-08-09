@@ -86,11 +86,11 @@ printVar(bool assigned, std::ostream& os, I& glb, J& lub) {
 std::ostream&
 operator<<(std::ostream& os, const CpltSetView& x) {
   BMI* mgr = x.manager();
-  BddOutput l = mgr->level();
+  CpltSetOutput l = mgr->level();
   bool assigned = x.assigned();
   // std::cout << "print level = " << l << "\n";
   switch(l) {
-  case BDD_DOM: 
+  case CPLTSET_DOM: 
     {
       if (assigned) {
 	GlbValues<CpltSetView> glb(x);
@@ -101,7 +101,7 @@ operator<<(std::ostream& os, const CpltSetView& x) {
       }
     }
     break;
-  case BDD_BND:
+  case CPLTSET_BND:
     {
       Gecode::Set::GlbRanges<CpltSetView> glb(x);
       if (assigned) {
@@ -112,7 +112,7 @@ operator<<(std::ostream& os, const CpltSetView& x) {
       }
     }
     break;
-  case BDD_BND_DOM:
+  case CPLTSET_BND_DOM:
     {
       os << "Conv(_";
       if (assigned) {
@@ -197,11 +197,11 @@ operator<<(std::ostream& os, const SetCpltSetView& x) {
 std::ostream&
 operator<< (std::ostream& os, const CpltSetVar& x) {
   BMI* mgr = x.manager();
-  BddOutput l = mgr->level();
+  CpltSetOutput l = mgr->level();
   // std::cout << "print level = " << l << "\n";
   bool assigned = x.assigned();
   switch(l) {
-  case BDD_DOM: 
+  case CPLTSET_DOM: 
     {
       if (assigned) {
 	CpltSetVarGlbValues glb(x);
@@ -212,7 +212,7 @@ operator<< (std::ostream& os, const CpltSetVar& x) {
       }
     }
     break;
-  case BDD_BND:
+  case CPLTSET_BND:
     {
       CpltSetVarGlbRanges glb(x);
       if (assigned) {
@@ -223,7 +223,7 @@ operator<< (std::ostream& os, const CpltSetVar& x) {
       }
     }
     break;
-  case BDD_BND_DOM:
+  case CPLTSET_BND_DOM:
     {
       os << "Conv(_";
       if (assigned) {

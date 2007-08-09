@@ -31,7 +31,7 @@ namespace Gecode {
   class CuddMgr {
   private:
     Cudd* cmgr;
-    BddOutput _level;
+    CpltSetOutput _level;
     /// Number of registered variables
     int _size;
     /// Number of used nodes
@@ -132,9 +132,9 @@ namespace Gecode {
     void print_set(const GecodeBdd& b);
 
     /// Set the output level to level \a l.
-    void level(BddOutput l);
+    void level(CpltSetOutput l);
     /// Return the output level
-    BddOutput level(void);
+    CpltSetOutput level(void);
     /// Return the current offset of the manager
     int offset(void) const;
 
@@ -155,7 +155,7 @@ namespace Gecode {
 
   forceinline
   CuddMgr::CuddMgr(void) 
-    : _level(BDD_BND),  _size(0), _offset(0), 
+    : _level(CPLTSET_BND),  _size(0), _offset(0), 
       dummy_offset(-1), dummy_range(-1) {
     cmgr = NULL;
     std::cout << "CUDD default constr\n";
@@ -163,7 +163,7 @@ namespace Gecode {
 
   forceinline
   CuddMgr::CuddMgr(Cudd& m) 
-    : cmgr(&m), _level(BDD_BND),  _size(0), _offset(0), 
+    : cmgr(&m), _level(CPLTSET_BND),  _size(0), _offset(0), 
       dummy_offset(-1), dummy_range(-1) {
     std::cout << "CUDD provided \n";
     assert(cmgr != NULL);
@@ -171,7 +171,7 @@ namespace Gecode {
 
   forceinline
   CuddMgr::CuddMgr(int n, int c)
-    : _level(BDD_BND),  _size(0), _offset(0), 
+    : _level(CPLTSET_BND),  _size(0), _offset(0), 
       dummy_offset(-1), dummy_range(-1)  {  
     std::cout << "CUDD init  constr\n";
     Cudd mgr(n,0,CUDD_UNIQUE_SLOTS, c, 0);
@@ -582,11 +582,11 @@ namespace Gecode {
   }
 
   forceinline void
-  CuddMgr::level(BddOutput l) {
+  CuddMgr::level(CpltSetOutput l) {
     _level = l;
   }
 
-  forceinline BddOutput
+  forceinline CpltSetOutput
   CuddMgr::level(void) {
     return _level;
   }

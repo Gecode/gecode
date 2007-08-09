@@ -45,7 +45,7 @@ namespace Gecode {
   // the implementation
   class BMI : public SharedObject {
   private:
-    BddOutput _level;
+    CpltSetOutput _level;
     bddStat info;
     /// Number of registered variables
     int _size;
@@ -159,9 +159,9 @@ namespace Gecode {
     /// Set print of a bdd
     void print_set(const GecodeBdd& b);
     /// Set the output level to level \a l.
-    void level(BddOutput l);
+    void level(CpltSetOutput l);
     /// Return the output level
-    BddOutput level(void);
+    CpltSetOutput level(void);
     /// Return the current offset of the manager
     int offset(void) const;
     /// Memory Management
@@ -183,12 +183,12 @@ namespace Gecode {
 
   forceinline
   BMI::BMI(void) 
-    : _level(BDD_BND),  _size(0), _offset(0), 
+    : _level(CPLTSET_BND),  _size(0), _offset(0), 
       dummy_offset( -1), dummy_range(-1), _debug(false) {}
 
   forceinline
   BMI::BMI(int n, int c)
-    : _level(BDD_BND),  _size(0), _offset(0), 
+    : _level(CPLTSET_BND),  _size(0), _offset(0), 
       dummy_offset(-1), dummy_range(-1), _debug(false)  {  
     // intialize the library
     assert(!available());
@@ -491,9 +491,9 @@ namespace Gecode {
   BMI::debug(void) { _debug = true; }
 
   forceinline void
-  BMI::level(BddOutput l) { _level = l; }
+  BMI::level(CpltSetOutput l) { _level = l; }
 
-  forceinline BddOutput
+  forceinline CpltSetOutput
   BMI::level(void) { return _level; }
 
   forceinline int
@@ -529,9 +529,9 @@ namespace Gecode {
     void dispose(void);
 
     /// Set the output level to level \a l.
-    void level(BddOutput l);
+    void level(CpltSetOutput l);
     /// Return the output level
-    BddOutput level(void);
+    CpltSetOutput level(void);
     /// Memory Management
     void setmaxinc(int max);
     /// Debugging Output
@@ -542,6 +542,10 @@ namespace Gecode {
     /// Show debugoutput after the example space has been destroyed
     void debug(void);
     
+    /// Return manager instance
+    BMI* manager(void);
+    /// Clear manager instance
+    void clear(void);
   };
   
   forceinline BMI*
@@ -569,12 +573,12 @@ namespace Gecode {
   BuddyMgr::BuddyMgr(BMI* m) : SharedHandle<BMI>(m){} 
 
   forceinline void 
-  BuddyMgr::level(BddOutput l) { 
+  BuddyMgr::level(CpltSetOutput l) { 
     assert(object() != NULL);
     object()->level(l); 
   }
 
-  forceinline BddOutput
+  forceinline CpltSetOutput
   BuddyMgr::level(void) { return object()->level(); }
 
   forceinline void
@@ -632,6 +636,12 @@ namespace Gecode {
       object()->debug();
     }
   }
+
+  forceinline BMI*
+  BuddyMgr::manager(void) { return object(); }
+
+  forceinline void
+  BuddyMgr::clear(void) { object(NULL); }
 
 }
 

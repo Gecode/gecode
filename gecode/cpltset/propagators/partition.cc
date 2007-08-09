@@ -40,12 +40,12 @@ namespace Gecode {
     partition_con(home, x, y, false, SRT_EQ, false, -1, scl);
   }
 
-  void partitionLex(Space* home, const CpltSetVarArgs& x, BddSetRelType lex, 
+  void partitionLex(Space* home, const CpltSetVarArgs& x, CpltSetRelType lex, 
 		    SetConLevel scl) {
     partition_con(home, x, true, lex, false, -1, scl);
   }
 
-  void partitionLexCard(Space* home, const CpltSetVarArgs& x, BddSetRelType lex, 
+  void partitionLexCard(Space* home, const CpltSetVarArgs& x, CpltSetRelType lex, 
 			int c, SetConLevel scl) {
     partition_con(home, x, true, lex, true, c, scl);
   }
