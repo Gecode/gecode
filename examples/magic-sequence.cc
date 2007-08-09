@@ -59,7 +59,7 @@ private:
   /// Sequence
   IntVarArray s;
 public:
-  /// Which propagation to use for the model
+  /// Propagation to use for model
   enum {
     PROP_REIFIED, ///< Use reified constraints
     PROP_COUNT,   ///< Use count constraints

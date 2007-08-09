@@ -182,7 +182,6 @@ main(int argc, char** argv) {
   Options opt("Warehouses");
   opt.solutions  = 0;
   opt.iterations = 10;
-  opt.naive      = true;
   opt.parse(argc,argv);
   Example::run<Warehouses,BAB>(opt);
   return 0;

@@ -103,6 +103,11 @@ protected:
   /// Array of y-coordinates of squares
   IntVarArray y;
 public:
+  /// Propagation to use for model
+  enum {
+    PROP_REIFIED,     ///< Use reified constraints
+    PROP_CUMULATIVES, ///< Use cumulatives constraint
+  };
   /// Actual model
   Packing(const Options& opt)
     : s(*specs[opt.size]),
@@ -132,7 +137,7 @@ public:
      * Capacity constraints
      *
      */
-    if (opt.naive) {
+    if (opt.propagation.value() == PROP_REIFIED) {
       IntArgs sa(s.n,s.s);
       BoolVarArgs b(s.n);
       for (int cx=0; cx<s.x; cx++) {
@@ -213,6 +218,9 @@ main(int argc, char** argv) {
   Options opt("Packing");
   opt.naive = true;
   opt.size  = 7;
+  opt.propagation.value(Packing::PROP_REIFIED);
+  opt.propagation.add(Packing::PROP_REIFIED,     "reified");
+  opt.propagation.add(Packing::PROP_CUMULATIVES, "cumulatives");
   opt.parse(argc,argv);
   if (opt.size >= n_examples) {
     std::cerr << "Error: size must be between 0 and " << n_examples - 1

@@ -544,7 +544,7 @@ INTEXAMPLESRC0 =							\
 	partition photo queens						\
 	sudoku picture-puzzle placement-puzzle placement-puzzle-01	\
 	crowded-chess black-hole minesweeper domino			\
-	sports-league all-interval all-interval-sort			\
+	sports-league all-interval			\
 	langfordnum langfordnum-regular warehouses			\
 	stress-domain stress-exec stress-search baseline		\
 	stress-element stress-min stress-distinct			\

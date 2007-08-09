@@ -53,6 +53,11 @@ protected:
   /// Array for letters
   IntVarArray      le;
 public:
+  /// Branching to use for model
+  enum {
+    BRANCH_NONE, ///< Choose variables left to right
+    BRANCH_SIZE, ///< Choose variables with smallest size
+  };
   /// Actual model
   Alpha(const Options& opt) : le(this,n,1,n) {
     IntVar
@@ -85,7 +90,9 @@ public:
 
     distinct(this, le, opt.icl);
 
-    branch(this, le, opt.naive ? BVAR_NONE : BVAR_SIZE_MIN, BVAL_MIN);
+    branch(this, le, 
+           (opt.branching.value() == BRANCH_NONE) ? BVAR_NONE : BVAR_SIZE_MIN,
+           BVAL_MIN);
   }
 
   /// Constructor for cloning \a s
@@ -118,7 +125,9 @@ main(int argc, char** argv) {
   Options opt("Alpha");
   opt.solutions  = 0;
   opt.iterations = 10;
-  opt.naive      = true;
+  opt.branching.value(Alpha::BRANCH_SIZE);
+  opt.branching.add(Alpha::BRANCH_NONE, "none");
+  opt.branching.add(Alpha::BRANCH_SIZE, "size");
   opt.parse(argc,argv);
   Example::run<Alpha,DFS>(opt);
   return 0;
