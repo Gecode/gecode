@@ -397,10 +397,9 @@ AC_DEFUN([AC_GECODE_AUDIT],
 	     [build with auditing code @<:@default=no@:>@]))
 	 AC_MSG_CHECKING(whether to build with auditing code)
 	 if test "${enable_audit:-no}" = "yes"; then
-	    AC_DEFINE(GECODE_AUDIT, 1)
+	    AC_DEFINE(GECODE_AUDIT)
 	    AC_MSG_RESULT(yes)
 	 else
-	    AC_DEFINE(GECODE_AUDIT, 0)
 	    AC_MSG_RESULT(no)
 	 fi])
 
