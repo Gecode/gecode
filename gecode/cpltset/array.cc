@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -43,9 +44,9 @@ namespace Gecode {
   }
 
   CpltSetVarArray::CpltSetVarArray(Space* home, BMI* m, int n,
-			   int lbMin,int lbMax,int ubMin,int ubMax,
-			   unsigned int minCard,
-			   unsigned int maxCard)
+                           int lbMin,int lbMax,int ubMin,int ubMax,
+                           unsigned int minCard,
+                           unsigned int maxCard)
     : VarArray<CpltSetVar>(home,n) {
     
     IntSet glb(lbMin, lbMax);
@@ -59,8 +60,8 @@ namespace Gecode {
   }
 
   CpltSetVarArray::CpltSetVarArray(Space* home, BMI* m, int n,
-			   const IntSet& glb,int ubMin,int ubMax,
-			   unsigned int minCard,unsigned int maxCard)
+                           const IntSet& glb,int ubMin,int ubMax,
+                           unsigned int minCard,unsigned int maxCard)
     : VarArray<CpltSetVar>(home,n) {
 
     IntSet lub(ubMin, ubMax);      
@@ -73,8 +74,8 @@ namespace Gecode {
   }
 
   CpltSetVarArray::CpltSetVarArray(Space* home, BMI* m, int n,
-			   int lbMin,int lbMax,const IntSet& lub,
-			   unsigned int minCard,unsigned int maxCard)
+                           int lbMin,int lbMax,const IntSet& lub,
+                           unsigned int minCard,unsigned int maxCard)
     : VarArray<CpltSetVar>(home,n) {
 
     IntSet glb(lbMin, lbMax);      
@@ -85,8 +86,8 @@ namespace Gecode {
   }
 
   CpltSetVarArray::CpltSetVarArray(Space* home, BMI* m, int n,
-			   const IntSet& glb, const IntSet& lub,
-			   unsigned int minCard, unsigned int maxCard)
+                           const IntSet& glb, const IntSet& lub,
+                           unsigned int minCard, unsigned int maxCard)
     : VarArray<CpltSetVar>(home,n) {
 
     testConsistency(glb, lub, minCard, maxCard, "CpltSetVarArray");

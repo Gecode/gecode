@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -39,10 +40,10 @@ namespace Gecode {
     unsigned int max_width  = x[0].table_width();
     for (int i = 0; i < x.size(); i++) {
       if (x[i].offset() < min_offset) {
-	min_offset = x[i].offset();
+        min_offset = x[i].offset();
       }
       if (x[i].table_width() > max_width) {
-	max_width = x[i].table_width();
+        max_width = x[i].table_width();
       }
     }
     
@@ -58,14 +59,14 @@ namespace Gecode {
     // ordering those that lie in the scope
     for (unsigned int f = 0; f < max_width; f++) {
       for (int i = 0; i < x.size(); i++) {
-	int xo = x[i].offset();
-	// std::cout << "order " << xo << "\n";
-	int xw = x[i].table_width();
-	int cur= xo + f;
-	if (cur <= xo + xw) {
-	  hls_order[c] = cur;
-	  c++;
-	}
+        int xo = x[i].offset();
+        // std::cout << "order " << xo << "\n";
+        int xw = x[i].table_width();
+        int cur= xo + f;
+        if (cur <= xo + xw) {
+          hls_order[c] = cur;
+          c++;
+        }
       }
     }
 

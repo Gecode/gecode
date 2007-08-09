@@ -88,12 +88,12 @@ namespace Gecode { namespace CpltSet {
       Set::LubRanges<View2>  lub(s);
       Iter::Ranges::Inter<Gecode::Int::ViewRanges<View1>, Set::LubRanges<View2> > common(dom, lub);
       if (!common()) {
-	return ES_FAILED;
+        return ES_FAILED;
       }
       Iter::Ranges::Cache<
-	Iter::Ranges::Inter<Gecode::Int::ViewRanges<View1>, Set::LubRanges<View2> >
-	> cache_inter(common);
-	
+        Iter::Ranges::Inter<Gecode::Int::ViewRanges<View1>, Set::LubRanges<View2> >
+        > cache_inter(common);
+        
       GECODE_ME_CHECK(x.inter_r(home, cache_inter));
       cache_inter.reset();
       GECODE_ME_CHECK(s.intersectI(home, cache_inter));

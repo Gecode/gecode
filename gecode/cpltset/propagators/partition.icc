@@ -1,4 +1,4 @@
-
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -35,25 +35,25 @@ namespace Gecode {
     int n = x.size();
     for (int i = 0; i < n - 1; i++) {
       for (int j = i + 1; j < n; j++) {
-	SetLub lubx(x[i]);
-	SetLub luby(x[j]);
-	IR::Inter<SetLub, SetLub> inter(lubx, luby);
-	IR::ToValues<IR::Inter<SetLub, SetLub> > values(inter);
-	IR::ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > > cache(values);
-	    
-	for (cache.last(); cache(); --cache) {
-	  int ximin = x[i].mgr_min();
-	  int xjmin = x[j].mgr_min();
-	  int v = cache.min();
-	  d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
-	}
+        SetLub lubx(x[i]);
+        SetLub luby(x[j]);
+        IR::Inter<SetLub, SetLub> inter(lubx, luby);
+        IR::ToValues<IR::Inter<SetLub, SetLub> > values(inter);
+        IR::ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > > cache(values);
+            
+        for (cache.last(); cache(); --cache) {
+          int ximin = x[i].mgr_min();
+          int xjmin = x[j].mgr_min();
+          int v = cache.min();
+          d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
+        }
       }
     }
 
     unsigned int xtab = x[0].table_width();  
     for (int i = n; i--;) {
       if (x[i].table_width() > xtab)
-	xtab = x[i].table_width();
+        xtab = x[i].table_width();
     }
 
     // just state that the union of all sets is us
@@ -61,8 +61,8 @@ namespace Gecode {
     for (unsigned int k = 0; k < xtab; k++) {
       GecodeBdd c0 = BDDBOT;
       for (int i = 0; i < n; i++) {
-	if (k < x[i].table_width())
-	  c0 |= x[i].getbdd(k);
+        if (k < x[i].table_width())
+          c0 |= x[i].getbdd(k);
       }
       d0 &= (c0  % BDDTOP);
     }
@@ -78,18 +78,18 @@ namespace Gecode {
     int n = x.size();
     for (int i = 0; i < n - 1; i++) {
       for (int j = i + 1; j < n; j++) {
-	SetLub lubx(x[i]);
-	SetLub luby(x[j]);
-	IR::Inter<SetLub, SetLub> inter(lubx, luby);
-	IR::ToValues<IR::Inter<SetLub, SetLub> > values(inter);
-	IR::ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > > cache(values);
-	    
-	for (cache.last(); cache(); --cache) {
-	  int ximin = x[i].mgr_min();
-	  int xjmin = x[j].mgr_min();
-	  int v = cache.min();
-	  d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
-	}
+        SetLub lubx(x[i]);
+        SetLub luby(x[j]);
+        IR::Inter<SetLub, SetLub> inter(lubx, luby);
+        IR::ToValues<IR::Inter<SetLub, SetLub> > values(inter);
+        IR::ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > > cache(values);
+            
+        for (cache.last(); cache(); --cache) {
+          int ximin = x[i].mgr_min();
+          int xjmin = x[j].mgr_min();
+          int v = cache.min();
+          d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
+        }
       }
     }
 
@@ -98,12 +98,12 @@ namespace Gecode {
     for (unsigned int k = 0; k < ytab; k++) {
       GecodeBdd c0 = BDDBOT;
       for (int i = 0; i < n; i++) {
-	int xmin = x[i].mgr_min();
-	int xmax = x[i].mgr_max();
-	int shift = std::max(ymin, xmin) - std::min(xmin, ymin);
-	if (xmin <= ymin + (int) k && ymin + (int) k <= xmax) {
-	  c0 |= x[i].getbdd(k - shift);
-	}
+        int xmin = x[i].mgr_min();
+        int xmax = x[i].mgr_max();
+        int shift = std::max(ymin, xmin) - std::min(xmin, ymin);
+        if (xmin <= ymin + (int) k && ymin + (int) k <= xmax) {
+          c0 |= x[i].getbdd(k - shift);
+        }
       }
       d0 &= (c0  % y.getbdd(k));
     }
@@ -120,18 +120,18 @@ namespace Gecode {
     int n = x.size();
     for (int i = 0; i < n - 1; i++) {
       for (int j = i + 1; j < n; j++) {
-	SetLub lubx(x[i]);
-	SetLub luby(x[j]);
-	IR::Inter<SetLub, SetLub> inter(lubx, luby);
-	IR::ToValues<IR::Inter<SetLub, SetLub> > values(inter);
-	IR::ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > > cache(values);
-	    
-	for (cache.last(); cache(); --cache) {
-	  int ximin = x[i].mgr_min();
-	  int xjmin = x[j].mgr_min();
-	  int v = cache.min();
-	  d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
-	}
+        SetLub lubx(x[i]);
+        SetLub luby(x[j]);
+        IR::Inter<SetLub, SetLub> inter(lubx, luby);
+        IR::ToValues<IR::Inter<SetLub, SetLub> > values(inter);
+        IR::ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > > cache(values);
+            
+        for (cache.last(); cache(); --cache) {
+          int ximin = x[i].mgr_min();
+          int xjmin = x[j].mgr_min();
+          int v = cache.min();
+          d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
+        }
       }
     }
 
@@ -145,16 +145,16 @@ namespace Gecode {
       // std::cerr << "k=" << k<< " ";
       GecodeBdd c0 = BDDBOT;
       for (int i = 0; i < n; i++) {
-	// std::cerr << "i=" << i << " " << x[i];
-	// std::cerr << " " << x[i].offset() << " " << x[i].table_width() << "\n";
-	int xmin = x[i].mgr_min();
-	int xmax = x[i].mgr_max();
-	int shift = std::max(ymin, xmin) - std::min(xmin, ymin);
-	// std::cerr << " check\t" << xmin << ".." << xmax << " " << ymin << "\n";
-	if (xmin <= ymin + (int) k && ymin + (int) k <= xmax) {
-	  // std::cerr << "in\n";
-	  c0 |= x[i].getbdd(k - shift);
-	}
+        // std::cerr << "i=" << i << " " << x[i];
+        // std::cerr << " " << x[i].offset() << " " << x[i].table_width() << "\n";
+        int xmin = x[i].mgr_min();
+        int xmax = x[i].mgr_max();
+        int shift = std::max(ymin, xmin) - std::min(xmin, ymin);
+        // std::cerr << " check\t" << xmin << ".." << xmax << " " << ymin << "\n";
+        if (xmin <= ymin + (int) k && ymin + (int) k <= xmax) {
+          // std::cerr << "in\n";
+          c0 |= x[i].getbdd(k - shift);
+        }
       }
       // std::cerr << "d0 and\n";
       d0 &= (c0  % y.getbdd(k));
@@ -170,68 +170,68 @@ namespace Gecode {
 
     for (int i = n; i--;) 
       if (x[i].table_width() > xtab)
-	xtab = x[i].table_width();
+        xtab = x[i].table_width();
 
     // std::cerr << "with lex \n";
     for (int i = 0; i < n - 1; i++) {
       for (int j = i + 1; j < n; j++) {
-	unsigned int xai_off = x[i].offset();
-	unsigned int xaj_off = x[j].offset();
-	switch (lex) {
-	case SRT_LE: 
-	  {
-	    d0 &= lexlt(mgr, xai_off, xaj_off, xtab, xtab - 1);
-	    break;
-	  }
-	case SRT_GR: 
-	  {
-	    d0 &= lexlt(mgr, xaj_off, xai_off, xtab, xtab - 1);
-	    break;
-	  }
-	case SRT_LQ: 
-	  {
-	    d0 &= lexlq(mgr, xai_off, xaj_off, xtab, xtab - 1);
-	    break;
-	  }
-	case SRT_GQ: 
-	  {
-	    d0 &= lexlq(mgr, xaj_off, xai_off, xtab, xtab - 1);
-	    break;
-	  }
-	case SRT_LE_REV: 
-	  {
-	    d0 &= lexltrev(mgr, xai_off, xaj_off, xtab, 0);
-	    break;
-	  }
-	case SRT_GR_REV: 
-	  {
-	    d0 &= lexltrev(mgr, xaj_off, xai_off, xtab, 0);
-	    break;
-	  }
-	case SRT_LQ_REV: 
-	  {
-	    d0 &= lexlqrev(mgr, xai_off, xaj_off, xtab, 0);
-	    break;
-	  }
-	case SRT_GQ_REV: 
-	  {
-	    d0 &= lexlqrev(mgr, xaj_off, xai_off, xtab, 0);
-	    break;
-	  }
-	default:
-	  {
-	    throw CpltSet::InvalidRelation(" partition rel not yet implemented ");
-	    break;
-	  }
-	}
+        unsigned int xai_off = x[i].offset();
+        unsigned int xaj_off = x[j].offset();
+        switch (lex) {
+        case SRT_LE: 
+          {
+            d0 &= lexlt(mgr, xai_off, xaj_off, xtab, xtab - 1);
+            break;
+          }
+        case SRT_GR: 
+          {
+            d0 &= lexlt(mgr, xaj_off, xai_off, xtab, xtab - 1);
+            break;
+          }
+        case SRT_LQ: 
+          {
+            d0 &= lexlq(mgr, xai_off, xaj_off, xtab, xtab - 1);
+            break;
+          }
+        case SRT_GQ: 
+          {
+            d0 &= lexlq(mgr, xaj_off, xai_off, xtab, xtab - 1);
+            break;
+          }
+        case SRT_LE_REV: 
+          {
+            d0 &= lexltrev(mgr, xai_off, xaj_off, xtab, 0);
+            break;
+          }
+        case SRT_GR_REV: 
+          {
+            d0 &= lexltrev(mgr, xaj_off, xai_off, xtab, 0);
+            break;
+          }
+        case SRT_LQ_REV: 
+          {
+            d0 &= lexlqrev(mgr, xai_off, xaj_off, xtab, 0);
+            break;
+          }
+        case SRT_GQ_REV: 
+          {
+            d0 &= lexlqrev(mgr, xaj_off, xai_off, xtab, 0);
+            break;
+          }
+        default:
+          {
+            throw CpltSet::InvalidRelation(" partition rel not yet implemented ");
+            break;
+          }
+        }
       }
     }
   }
 
   template <class View>
   void partition_post(Space* home, ViewArray<View>& x, bool withlex, 
-		      CpltSetRelType lex, bool withcard, int d, 
-		      SetConLevel scl) {
+                      CpltSetRelType lex, bool withcard, int d, 
+                      SetConLevel scl) {
 
     if (home->failed()) return;
 
@@ -247,9 +247,9 @@ namespace Gecode {
 
     if (withcard) {
       for (int i = n; i--; ) {
-	unsigned int off   = x[i].offset();
-	unsigned int range = x[i].table_width();
-	d0 &= cardcheck(mgr, range, off, d, d);
+        unsigned int off   = x[i].offset();
+        unsigned int range = x[i].table_width();
+        d0 &= cardcheck(mgr, range, off, d, d);
       }
     }
 
@@ -259,9 +259,9 @@ namespace Gecode {
 
   template <class View>
   void partition_post(Space* home, ViewArray<View>& x, View& y, 
-		      bool withlex, SetRelType lex, 
-		      bool withcard, int d, 
-		      SetConLevel scl) {
+                      bool withlex, SetRelType lex, 
+                      bool withcard, int d, 
+                      SetConLevel scl) {
     if (home->failed()) return;
 
     int n = x.size();
@@ -279,9 +279,9 @@ namespace Gecode {
 
   template <class View0, class View1>
   void partition_post(Space* home, ViewArray<View0>& x, View1& y, 
-		      bool withlex, SetRelType lex, 
-		      bool withcard, int d, 
-		      SetConLevel scl) {
+                      bool withlex, SetRelType lex, 
+                      bool withcard, int d, 
+                      SetConLevel scl) {
     if (home->failed()) return;
 
     GecodeBdd d0 = BDDTOP;     
@@ -292,8 +292,8 @@ namespace Gecode {
 
   template <class View>
   void partition_post(Space* home, ViewArray<View>& x, bool withlex, 
-		      SetRelType lex, bool withcard, int d, 
-		      SetConLevel scl) {
+                      SetRelType lex, bool withcard, int d, 
+                      SetConLevel scl) {
     // std::cerr << "partition_post()" << "\n";
     if (home->failed()) return;
 
@@ -305,13 +305,13 @@ namespace Gecode {
     unsigned int xtab = x[0].table_width();  
     for (int i = n; i--;) {
       if (x[i].mgr_min() < minx) {
-	minx = x[i].mgr_min();
+        minx = x[i].mgr_min();
       }
       if (x[i].mgr_max() > maxx) {
-	maxx = x[i].mgr_max();
+        maxx = x[i].mgr_max();
       }
       if (x[i].table_width() > xtab) {
-	xtab = x[i].table_width();
+        xtab = x[i].table_width();
       }
     }
     
@@ -326,32 +326,32 @@ namespace Gecode {
     // std::cerr << "start disjointness" << "\n";
     // std::cerr << "k=" << k << " ";
       for (int i = 0; i < n - 1; i++) {
-	for (int j = i + 1; j < n; j++) {
-	  // std::cerr << "x["<< i <<"]=" << x[i] << "\n";
-	  // std::cerr << "y["<< j <<"]=" << x[j] << "\n";
-	  Set::LubRanges<View> lubx(x[i]);
-	  Set::LubRanges<View> luby(x[j]);
-	  Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> >
-	    inter(lubx, luby);
-	  Gecode::Iter::Ranges::ToValues<
-	    Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> >
-	    > values(inter);
-	  Gecode::Iter::Ranges::ValCache<
-	    Gecode::Iter::Ranges::ToValues<
-  	      Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> >
-	    >
-	    > cache(values);
-	    
-	  cache.last();
-	  for (; cache(); --cache) {
-	    int ximin = x[i].mgr_min();
-	    int xjmin = x[j].mgr_min();
-	    int v = cache.min();
-	    d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
-	  }
-	  
-	}
-	//std::cerr << "\n";
+        for (int j = i + 1; j < n; j++) {
+          // std::cerr << "x["<< i <<"]=" << x[i] << "\n";
+          // std::cerr << "y["<< j <<"]=" << x[j] << "\n";
+          Set::LubRanges<View> lubx(x[i]);
+          Set::LubRanges<View> luby(x[j]);
+          Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> >
+            inter(lubx, luby);
+          Gecode::Iter::Ranges::ToValues<
+            Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> >
+            > values(inter);
+          Gecode::Iter::Ranges::ValCache<
+            Gecode::Iter::Ranges::ToValues<
+                Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> >
+            >
+            > cache(values);
+            
+          cache.last();
+          for (; cache(); --cache) {
+            int ximin = x[i].mgr_min();
+            int xjmin = x[j].mgr_min();
+            int v = cache.min();
+            d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
+          }
+          
+        }
+        //std::cerr << "\n";
       }
       
       // no lex ordering
@@ -360,24 +360,24 @@ namespace Gecode {
       // std::cerr << "union of all ";
       for (unsigned int k = 0; k < xtab; k++) {
       // std::cerr << "k=" << k << " ";
-	GecodeBdd c0 = BDDBOT;
-	for (int i = 0; i < n; i++) {
-	  if (k < x[i].table_width()) {
-	    c0 |= x[i].getbdd(k);
-	  }
-	}
-	d0 &= (c0  % BDDTOP);
+        GecodeBdd c0 = BDDBOT;
+        for (int i = 0; i < n; i++) {
+          if (k < x[i].table_width()) {
+            c0 |= x[i].getbdd(k);
+          }
+        }
+        d0 &= (c0  % BDDTOP);
       }
       // std::cerr << "\n";
       
       if (withcard) {
-	// std::cerr << "with card";
-	for (int i = n; i--; ) {
-	  // std::cerr << "card= " << i << "\n";
-	  unsigned int off   = x[i].offset();
-	  unsigned int range = x[i].table_width();
-	  d0 &= cardcheck(mgr, range, off, d, d);
-	}
+        // std::cerr << "with card";
+        for (int i = n; i--; ) {
+          // std::cerr << "card= " << i << "\n";
+          unsigned int off   = x[i].offset();
+          unsigned int range = x[i].table_width();
+          d0 &= cardcheck(mgr, range, off, d, d);
+        }
       }
       
       // std::cerr << "start propagation\n";
@@ -387,52 +387,52 @@ namespace Gecode {
   template <class Rel>
   forceinline void 
   partition_con(Space* home, const CpltSetVarArgs& x, bool withlex, Rel lex, 
-		bool withcard, int d, SetConLevel scl) {
+                bool withcard, int d, SetConLevel scl) {
     ViewArray<CpltSetView> bv(home, x);
     switch(scl) {
     case SCL_SPL:
       {
-	int n = bv.size();
-	ViewArray<SplitCpltSetView> sv(home, n);
-	for (int i = n; i--; ) {
-	  sv[i].init(bv[i]);
-	}
-	partition_post(home, sv, withlex, lex, withcard, d, scl);
-	break;
+        int n = bv.size();
+        ViewArray<SplitCpltSetView> sv(home, n);
+        for (int i = n; i--; ) {
+          sv[i].init(bv[i]);
+        }
+        partition_post(home, sv, withlex, lex, withcard, d, scl);
+        break;
       }
     case SCL_BND_BDD:
       {
-	int n = bv.size();
-	ViewArray<BndCpltSetView> bndv(home, n);
-	for (int i = n; i--; ) {
-	  bndv[i].init(bv[i]);
-	}
-	partition_post(home, bndv, withlex, lex, withcard, d, scl);
-	break;
+        int n = bv.size();
+        ViewArray<BndCpltSetView> bndv(home, n);
+        for (int i = n; i--; ) {
+          bndv[i].init(bv[i]);
+        }
+        partition_post(home, bndv, withlex, lex, withcard, d, scl);
+        break;
       }
     case SCL_CRD:
       {
-	int n = bv.size();
-	ViewArray<CrdCpltSetView> crdv(home, n);
-	for (int i = n; i--; ) {
-	  crdv[i].init(bv[i]);
-	}
-	partition_post(home, crdv, withlex, lex, withcard, d, scl);
-	break;
+        int n = bv.size();
+        ViewArray<CrdCpltSetView> crdv(home, n);
+        for (int i = n; i--; ) {
+          crdv[i].init(bv[i]);
+        }
+        partition_post(home, crdv, withlex, lex, withcard, d, scl);
+        break;
       }
     case SCL_LEX:
       {
-	int n = bv.size();
-	ViewArray<LexCpltSetView> lexv(home, n);
-	for (int i = n; i--; ) {
-	  lexv[i].init(bv[i]);
-	}
-	partition_post(home, lexv, withlex, lex, withcard, d, scl);
-	break;
+        int n = bv.size();
+        ViewArray<LexCpltSetView> lexv(home, n);
+        for (int i = n; i--; ) {
+          lexv[i].init(bv[i]);
+        }
+        partition_post(home, lexv, withlex, lex, withcard, d, scl);
+        break;
       }
     default:
       {
-	partition_post(home, bv, withlex, lex, withcard, d, scl);
+        partition_post(home, bv, withlex, lex, withcard, d, scl);
       }
     }
   }
@@ -441,8 +441,8 @@ namespace Gecode {
   template <class Rel>
   forceinline void 
   partition_con(Space* home, const CpltSetVarArgs& x, const CpltSetVar& y, 
-		bool withlex, Rel lex, bool withcard, int d, 
-		SetConLevel scl) {
+                bool withlex, Rel lex, bool withcard, int d, 
+                SetConLevel scl) {
 
     ViewArray<CpltSetView> bv(home, x);
     CpltSetView yv(y);
@@ -453,8 +453,8 @@ namespace Gecode {
   template <class Rel>
   forceinline void 
   partition_con(Space* home, const IntVarArgs& x, const CpltSetVar& y, 
-		bool withlex, Rel lex, bool withcard, int d, 
-		SetConLevel scl) {
+                bool withlex, Rel lex, bool withcard, int d, 
+                SetConLevel scl) {
 
     BMI* mgr = y.manager();
     ViewArray<Int::IntView> bv(home, x);

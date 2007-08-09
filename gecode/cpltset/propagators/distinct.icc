@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -34,11 +35,11 @@ namespace Gecode {
 
     for (int i = 0; i < n - 1; i++) {
       for (int j = i + 1; j < n; j++) {
-	GecodeBdd nq = BDDBOT;
-	for (unsigned int k = 0; k < width; k++) {
-	  nq |= !(x[i].getbdd(k) % x[j].getbdd(k));
-	}
-	d0 &= nq;
+        GecodeBdd nq = BDDBOT;
+        for (unsigned int k = 0; k < width; k++) {
+          nq |= !(x[i].getbdd(k) % x[j].getbdd(k));
+        }
+        d0 &= nq;
       }
     } 
 

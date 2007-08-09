@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
@@ -46,15 +47,15 @@ namespace Gecode {
     SetCpltSetView::me_bddtoset(ModEvent me) {
       switch(me) {
       case ME_CPLTSET_FAILED: 
-	return Gecode::Set::ME_SET_FAILED;
+        return Gecode::Set::ME_SET_FAILED;
       case ME_CPLTSET_NONE: 
-	return Gecode::Set::ME_SET_NONE;
+        return Gecode::Set::ME_SET_NONE;
       case ME_CPLTSET_VAL: 
-	return Gecode::Set::ME_SET_VAL;
+        return Gecode::Set::ME_SET_VAL;
       case ME_CPLTSET_DOM: 
-	return Gecode::Set::ME_SET_BB;
+        return Gecode::Set::ME_SET_BB;
       default:
-	return Gecode::Set::ME_SET_LUB;
+        return Gecode::Set::ME_SET_LUB;
       }
     }
 
@@ -263,7 +264,7 @@ namespace Gecode {
 
     forceinline void
     SetCpltSetView::subscribe(Space* home, Propagator* p, PropCond pc,
-			     bool process) {
+                             bool process) {
       view.subscribe(home, p, pc_settobdd(pc), process);
     }
     forceinline void
@@ -287,14 +288,14 @@ namespace Gecode {
     }
 
     /*
-   	 * Serialization
+            * Serialization
      *
      */
     forceinline Reflection::Arg*
-  	SetCpltSetView::spec(Space* home, Reflection::VarMap& m) {
+    SetCpltSetView::spec(Space* home, Reflection::VarMap& m) {
       return view.spec(home, m);
-  	}
-  	forceinline Reflection::Type*
+    }
+    forceinline Reflection::Type*
     SetCpltSetView::type(void) {
       return new Reflection::Type("bdd.SetCpltSetView");
     }

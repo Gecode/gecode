@@ -25,7 +25,7 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   ExecStatus
   NaryBddProp<View>::divide_conquer(Space* home, BMI* m, 
-				    GecodeBdd& p, int l, int r) {
+                                    GecodeBdd& p, int l, int r) {
     if (l == r) {
       GECODE_ME_CHECK(x[l].tell_formula(home, p));
       return ES_OK;
@@ -54,7 +54,7 @@ namespace Gecode { namespace CpltSet {
 //   template <class View>
 //   ExecStatus
 //   NaryBddProp<View>::divide_conquer_conv(Space* home, BMI* m, 
-// 					 GecodeBdd& p, int l, int r) {
+//                                          GecodeBdd& p, int l, int r) {
 //     // std::cout << "divide_conquer_conv LR[" << l<< "," << r << "]\n";
 //     // m->bdd2dot(p);
 //     if (l == r) {
@@ -64,18 +64,18 @@ namespace Gecode { namespace CpltSet {
 // //       m->bdd2dot(dom_p);
 // //       std::cout << "conv hull\n";
 // //       if (x[l].offset() == 0) {
-// // 	// display cardinality error in convex hull
-// // 	std::cout << "conjunct\n";
-// // 	m->bdd2dot(dom_p);
-// // 	std::cout << "conv hull\n";
-// // 	m->bdd2dot(conv_p);
-// // 	std::cout << "telling on ["<<x[l].offset() << "," << x[l].table_width() <<"] ";
+// //         // display cardinality error in convex hull
+// //         std::cout << "conjunct\n";
+// //         m->bdd2dot(dom_p);
+// //         std::cout << "conv hull\n";
+// //         m->bdd2dot(conv_p);
+// //         std::cout << "telling on ["<<x[l].offset() << "," << x[l].table_width() <<"] ";
       
 // //       }
 
 //       ModEvent me = x[l].tell_formula(home, conv_p);
 //       if (me_failed(me)) {
-// 	return ES_FAILED;
+//         return ES_FAILED;
 //       }
 //       return ES_OK;
 //     }
@@ -129,7 +129,7 @@ namespace Gecode { namespace CpltSet {
 //       me = x[l].tell_formula(home, beta, delta);
 //       // std::cout << "me = " << me << "\n";
 //       if (me_failed(me)) {
-// 	return ES_FAILED;
+//         return ES_FAILED;
 //       }
 //       return ES_OK;
 //     }
@@ -178,7 +178,7 @@ namespace Gecode { namespace CpltSet {
 //     if (l == r) {
 //       ModEvent me = x[l].tell_formula(home, p);
 //       if (me_failed(me)) {
-// 	return ES_FAILED;
+//         return ES_FAILED;
 //       }
 //       return ES_OK;
 //     }
@@ -219,7 +219,7 @@ namespace Gecode { namespace CpltSet {
 //     if (l == r) {
 //       ModEvent me = x[l].tell_formula_lex(home, p);
 //       if (me_failed(me)) {
-// 	return ES_FAILED;
+//         return ES_FAILED;
 //       }
 //       return ES_OK;
 //     }

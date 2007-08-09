@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -27,12 +28,12 @@ using namespace Gecode::CpltSet;
 namespace Gecode {
 
   void selectUnion(Space* home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t, 
-		   SetConLevel scl) {
+                   SetConLevel scl) {
     selectUnion_con(home, x, s, t, scl);
   }
 
 //   void range(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
-// 	     SetConLevel scl) {
+//              SetConLevel scl) {
 //     ViewArray<IntView> iv(home, x.size());
 //     ViewArray<SingletonCpltSetView> sbv(home, iv.size());
 //     for (int i = sbv.size(); i--; ) {
@@ -45,8 +46,8 @@ namespace Gecode {
 //     selectUnion_post(home, sbv, selview, unionview, scl);
 //   }
 
-  void findNonEmptySub(Space* home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t, 
-		       SetConLevel scl) {
+  void findNonEmptySub(Space* home, const CpltSetVarArgs& x, CpltSetVar s, 
+                       CpltSetVar t, SetConLevel scl) {
     findNonEmptySub_con(home, x, s, t, scl);
   }
 

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -55,31 +56,31 @@ namespace Gecode { namespace CpltSet {
 
       if (!mgr->ctrue(bounds)) {
 
-	GecodeBdd b = bvars;
-	remain = mgr->eliminate(d, b);
-	unsigned int off = offset();
-	unsigned int range = table_width();
-// 	GecodeBdd card  = card_bounds(mgr, remain, bvars, off, range);
+        GecodeBdd b = bvars;
+        remain = mgr->eliminate(d, b);
+        unsigned int off = offset();
+        unsigned int range = table_width();
+//         GecodeBdd card  = card_bounds(mgr, remain, bvars, off, range);
 
-	int l = 0;
-	int u = 0;
-	b = bvars,
-	card_count(mgr, remain, b, 0, off, range, l, u);
-	GecodeBdd card = BDDTOP;
-	if (l == static_cast<int> (Limits::Set::card_max)) { 
-	  card = BDDBOT;
-	  assert(false);
-	} else {
-	  int glbsize = glbSize();
-	  // std::cout << "constr cardmin = " << cardmin << " = " << l << "+"<< glbsize << "\n";
-	  cardmin = l + glbsize;
-	  // std::cout << "change cardmax constr(x)"<< u <<"+"<< glbsize <<"\n";
-	  cardmax = std::min(cardmax, u + glbsize);
-	  assert(cardmin <= cardmax);
-	  b = bvars;
-	  GecodeBdd card = cardrec(mgr, b, 0, off, range, l, u);
-	}
-	remain = card;
+        int l = 0;
+        int u = 0;
+        b = bvars,
+        card_count(mgr, remain, b, 0, off, range, l, u);
+        GecodeBdd card = BDDTOP;
+        if (l == static_cast<int> (Limits::Set::card_max)) { 
+          card = BDDBOT;
+          assert(false);
+        } else {
+          int glbsize = glbSize();
+          // std::cout << "constr cardmin = " << cardmin << " = " << l << "+"<< glbsize << "\n";
+          cardmin = l + glbsize;
+          // std::cout << "change cardmax constr(x)"<< u <<"+"<< glbsize <<"\n";
+          cardmax = std::min(cardmax, u + glbsize);
+          assert(cardmin <= cardmax);
+          b = bvars;
+          GecodeBdd card = cardrec(mgr, b, 0, off, range, l, u);
+        }
+        remain = card;
       }
     }
     // std::cout << "done constructing\n";
@@ -103,31 +104,31 @@ namespace Gecode { namespace CpltSet {
     GecodeBdd bvars = BDDTOP;
     conv_hull_project(mgr, d, bounds, bvars);
 
-	remain = mgr->eliminate(d, bvars);
-	unsigned int off = offset();
-	unsigned int range = table_width();
-// 	GecodeBdd card  = card_bounds(mgr, remain, bvars, off, range);
+        remain = mgr->eliminate(d, bvars);
+        unsigned int off = offset();
+        unsigned int range = table_width();
+//         GecodeBdd card  = card_bounds(mgr, remain, bvars, off, range);
 
-	int l = 0;
-	int u = 0;
-	GecodeBdd b = bvars;
-	card_count(mgr, remain, b, 0, off, range, l, u);
-	GecodeBdd card = BDDTOP;
-	if (l == static_cast<int> (Limits::Set::card_max)) { 
-	  card = BDDBOT;
-	  assert(false);
-	} else {
-	  int glbsize = glbSize();
-	  // std::cout << "init cardmin = " << cardmin << " = " << l << "+"<< glbsize << "\n";
-	  cardmin = l + glbsize;
-	  // std::cout << "change cardmax constr(x)"<< u <<"+"<< glbsize <<"\n";
-	  cardmax = std::min(cardmax, u + glbsize);
-	  assert(cardmin <= cardmax);
-	  b = bvars;
-	  GecodeBdd card = cardrec(mgr, b, 0, off, range, l, u);
-	}
+        int l = 0;
+        int u = 0;
+        GecodeBdd b = bvars;
+        card_count(mgr, remain, b, 0, off, range, l, u);
+        GecodeBdd card = BDDTOP;
+        if (l == static_cast<int> (Limits::Set::card_max)) { 
+          card = BDDBOT;
+          assert(false);
+        } else {
+          int glbsize = glbSize();
+          // std::cout << "init cardmin = " << cardmin << " = " << l << "+"<< glbsize << "\n";
+          cardmin = l + glbsize;
+          // std::cout << "change cardmax constr(x)"<< u <<"+"<< glbsize <<"\n";
+          cardmax = std::min(cardmax, u + glbsize);
+          assert(cardmin <= cardmax);
+          b = bvars;
+          GecodeBdd card = cardrec(mgr, b, 0, off, range, l, u);
+        }
 
-	remain = card;
+        remain = card;
 //       }
 //     }
   }
@@ -163,7 +164,7 @@ namespace Gecode { namespace CpltSet {
   forceinline unsigned int
   CrdCpltSetView::lubSize(void) const { 
     if (manager()->ctrue(bounds) && 
-	manager()->ctrue(remain)) { return table_width(); }
+        manager()->ctrue(remain)) { return table_width(); }
     BddIterator iter(manager(), bounds);
     int out = 0;
     while (iter()) {
@@ -212,9 +213,9 @@ namespace Gecode { namespace CpltSet {
     BddIterator iter(mgr, bounds);
     while (iter()) {
       if (iter.status() == FIX_GLB) {
-	int idx = iter.label() - offset();
-	// std::cout << "idx = " << idx << "\n";
-	return mgr_min() + idx;
+        int idx = iter.label() - offset();
+        // std::cout << "idx = " << idx << "\n";
+        return mgr_min() + idx;
       }
       ++iter;
     }
@@ -229,9 +230,9 @@ namespace Gecode { namespace CpltSet {
     int lastglb = -1;
     while (iter()) {
       if (iter.status() == FIX_GLB) {
-	int idx = iter.label() - offset();
-	// std::cout << "idx = " << idx << "\n";
-	lastglb = mgr_min() + idx;
+        int idx = iter.label() - offset();
+        // std::cout << "idx = " << idx << "\n";
+        lastglb = mgr_min() + idx;
       } 
       ++iter;
     }
@@ -544,7 +545,7 @@ namespace Gecode { namespace CpltSet {
       // end test
 
       if (l == static_cast<int> (Limits::Set::card_max)) { 
-	return ME_CPLTSET_FAILED;
+        return ME_CPLTSET_FAILED;
       }
       int glbsize = glbSize();
       // std::cout << "cardmin = " << cardmin << " = " << l << "+"<< glbsize << "\n";
@@ -618,9 +619,9 @@ namespace Gecode { namespace CpltSet {
       int ma = std::min(max, i.max());
       // std::cout << "exclude: " << mi << "#" << ma << "\n";
       for (int k = mi; k <= ma; k++) {
-	int idx = k - mgr_min();
-	// std::cout << "idx = " << idx << "\n";
-	not_lub &= getnegbdd(idx);
+        int idx = k - mgr_min();
+        // std::cout << "idx = " << idx << "\n";
+        not_lub &= getnegbdd(idx);
       }
       ++i;
     }
@@ -641,9 +642,9 @@ namespace Gecode { namespace CpltSet {
       if (max < i.min() || max < i.max()) { return process(home, ME_CPLTSET_FAILED); }
       // std::cout << "include " << i.min() << "#" << i.max() << "\n";
       for (int k = i.min(); k <= i.max(); k++) {
-	int idx = k - mgr_min();
-	// std::cout << "offset = " << offset() << " mgr off = " << manager()->offset() <<" idx = " << idx << "\n";
-	in_glb &= getbdd(idx);
+        int idx = k - mgr_min();
+        // std::cout << "offset = " << offset() << " mgr off = " << manager()->offset() <<" idx = " << idx << "\n";
+        in_glb &= getbdd(idx);
       }
       ++i;
     }
@@ -685,7 +686,7 @@ namespace Gecode { namespace CpltSet {
 
   forceinline void
   CrdCpltSetView::subscribe(Space* home, Propagator* p, PropCond pc,
-			  bool process) {
+                            bool process) {
     view.subscribe(home, p, pc, process);
   }
 

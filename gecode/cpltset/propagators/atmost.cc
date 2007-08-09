@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -40,18 +41,18 @@ namespace Gecode {
       IntSetRanges ir(is);
       Gecode::Iter::Ranges::Inter<CpltSetVarGlbRanges, IntSetRanges> inter(glb, ir);
       if (inter()) {
-	// int v = inter.min();
-	int s = inter.width();
-	++inter;
-	if (!inter() && s == 1) {
-	  // std::cerr << "EXACTLY SUBSUMED!\n";
-	  // std::cerr << "IntSet = " << is << "\n";
-	  // std::cerr << "val = " << v << " and width = " << s << "\n";	
-	  return;
-	} else {
-	  home->fail();
-	  return;
-	}
+        // int v = inter.min();
+        int s = inter.width();
+        ++inter;
+        if (!inter() && s == 1) {
+          // std::cerr << "EXACTLY SUBSUMED!\n";
+          // std::cerr << "IntSet = " << is << "\n";
+          // std::cerr << "val = " << v << " and width = " << s << "\n";        
+          return;
+        } else {
+          home->fail();
+          return;
+        }
       }
       // std::cerr << "DONE\n";
     }
@@ -74,7 +75,7 @@ namespace Gecode {
       // std::cerr << "EXACTLY INCLUDE!\n";
       // std::cerr << "EXACTLY SUBSUMED!\n";
       // std::cerr << "IntSet = " << is << "\n";
-      // std::cerr << "val = " << mi << " and width = " << s << "\n";	
+      // std::cerr << "val = " << mi << " and width = " << s << "\n";        
       GECODE_ME_FAIL(home, bv[0].include(home, mi));
       // std::cerr << "OKDONE\n";
       return;
@@ -133,13 +134,13 @@ namespace Gecode {
 
   void 
   atmostLex(Space* home, CpltSetVar x, CpltSetVar y, int c, 
-	    CpltSetRelType lex, SetConLevel scl) {
+            CpltSetRelType lex, SetConLevel scl) {
     atmost_con(home, x, y, c, lex, -1, scl);
   }
 
   void 
   atmostLexCard(Space* home, CpltSetVar x, CpltSetVar y, int c, 
-		CpltSetRelType lex, int d, SetConLevel scl) {
+                CpltSetRelType lex, int d, SetConLevel scl) {
     atmost_con(home, x, y, c, lex, d, scl);
   }
 

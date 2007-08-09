@@ -31,7 +31,7 @@ namespace Gecode {
     Int::IntView iv(x);
     CpltSetView bv(s);
     GECODE_ES_FAIL(home, (CpltSet::Singleton<Int::IntView, CpltSetView>
-			  ::post(home, iv, bv)));
+                          ::post(home, iv, bv)));
   }
 
 

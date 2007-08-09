@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Christian Schulte <schulte@gecode.org>
@@ -44,7 +45,7 @@ namespace Gecode {
     MixNaryTwoPropagator(Space* home, ViewArray<View0>& x, View1 y, View1 z);
     /// Constructor for rewriting \a p during cloning
     MixNaryTwoPropagator(Space* home, bool share, Propagator& p,
-			   ViewArray<View0>& x, View1 y, View1 z);
+                           ViewArray<View0>& x, View1 y, View1 z);
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
@@ -67,12 +68,12 @@ namespace Gecode {
     ViewArray<View1> y;
     /// Constructor for cloning \a p
     MixNaryTwicePropagator(Space* home, bool share, 
-			     MixNaryTwicePropagator& p);
+                           MixNaryTwicePropagator& p);
     /// Constructor for creation
     MixNaryTwicePropagator(Space* home, ViewArray<View0>& x, ViewArray<View1>& y);
     /// Constructor for rewriting \a p during cloning
     MixNaryTwicePropagator(Space* home, bool share, Propagator& p, 
-			     ViewArray<View0>& x, ViewArray<View1>& y);
+                           ViewArray<View0>& x, ViewArray<View1>& y);
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;

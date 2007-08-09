@@ -254,16 +254,16 @@ namespace Gecode {
     bdd_stats(&info);
     if (dummy_offset > - 1) {
       if (dummy_range < r) {
-	for (int i = dummy_range; i < r; i++) { GecodeBdd v = bddpos(i); }
+        for (int i = dummy_range; i < r; i++) { GecodeBdd v = bddpos(i); }
       } else {
-	int initoffset = dummy_offset;
-	if (dummy_range > r) {
-	  _offset = dummy_offset;
-	  _offset += r;
-	} else {
-	  dummy_offset = -1;
-	}
-	return initoffset;
+        int initoffset = dummy_offset;
+        if (dummy_range > r) {
+          _offset = dummy_offset;
+          _offset += r;
+        } else {
+          dummy_offset = -1;
+        }
+        return initoffset;
       }
     }
 
@@ -436,13 +436,13 @@ namespace Gecode {
   forceinline void
   BMI::dispose(int offset, int range, int freenodes) {
     if (available()) {
-      for (int i = 0; i < range; i++) {	bddpos(offset + i).dispose(); }
+      for (int i = 0; i < range; i++) {  bddpos(offset + i).dispose(); }
       if (_offset == offset + range) { _offset -= range; }
       // this is done in dipose(bdd d)
       info.freenodes += freenodes;
       if (offset == dummy_offset && dummy_offset > -1) {
-	dummy_offset = -1;
-	dummy_range  = -1;
+  dummy_offset = -1;
+        dummy_range  = -1;
       }
     }
   }
@@ -588,7 +588,7 @@ namespace Gecode {
       object(bm);
     } else {
       if (!object()->available()) {
-	object()->init(n,c); 
+        object()->init(n,c); 
       } 
     }
   }

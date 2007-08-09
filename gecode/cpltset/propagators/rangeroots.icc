@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -25,7 +26,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline void
   buildRange(Space* home, ViewArray<View0>& seq, View1 selview, View1 unionview, 
-	     SetConLevel scl, GecodeBdd& d0) {
+             SetConLevel scl, GecodeBdd& d0) {
 
     if (home->failed()) return;
     int n = seq.size();
@@ -36,13 +37,13 @@ namespace Gecode { namespace CpltSet {
     // compute maximum value
     for (int i = n; i--; ) {
       if (seq[i].mgr_max() > xmax) {
-	xmax = seq[i].mgr_max();
+        xmax = seq[i].mgr_max();
       }
       if (seq[i].mgr_min() < xmin) {
-	xmin = seq[i].mgr_min();
+        xmin = seq[i].mgr_min();
       }
       if (seq[i].table_width() > xrange) {
-	xrange = seq[i].table_width();
+        xrange = seq[i].table_width();
       }
     }
 
@@ -73,7 +74,7 @@ namespace Gecode { namespace CpltSet {
 //       if (unionmin < xmin) { xmin = unionmin; }
 //       if (unionmax < xmax) { xmax = unionmax; }
 //       if (unionview.table_width() > xrange) {
-// 	xrange = unionview.table_width();
+//         xrange = unionview.table_width();
 //       }
 //     }
 //     std::cout << "U("<<unionmin << ".." << unionmax <<")["<<unionview.table_width() << "]\n";
@@ -111,43 +112,43 @@ namespace Gecode { namespace CpltSet {
 //       bool kthbitempty = true;
       for (int j = 0; j < n; j++) {
       // std::cout << "seq j=" << j << ": ";
-	LubValues<View0> lub(seq[j]);
-	int seqmin = seq[j].mgr_min();
-	int seqmax = seq[j].mgr_max();
-	int cur    = xmin + k;
-	if (seqmin <= cur && cur <= seqmax) {
-	  while (lub() && cur != lub.val()) {
-	    ++lub;
-	  }
-	  if (lub() && cur == lub.val()) {
-	    // check & or %
-	    // std::cout << "inter or (" << j + shift << " and " << (k - (seqmin - xmin)) << "\n";
-	    inter |= (selview.getbdd(j + shift) & seq[j].getbdd(k - (seqmin - xmin)));
-	    ++lub;
-	  }
-// 	  kthbitempty &= !lub();
-	}
+        LubValues<View0> lub(seq[j]);
+        int seqmin = seq[j].mgr_min();
+        int seqmax = seq[j].mgr_max();
+        int cur    = xmin + k;
+        if (seqmin <= cur && cur <= seqmax) {
+          while (lub() && cur != lub.val()) {
+            ++lub;
+          }
+          if (lub() && cur == lub.val()) {
+            // check & or %
+            // std::cout << "inter or (" << j + shift << " and " << (k - (seqmin - xmin)) << "\n";
+            inter |= (selview.getbdd(j + shift) & seq[j].getbdd(k - (seqmin - xmin)));
+            ++lub;
+          }
+//           kthbitempty &= !lub();
+        }
 
-// 	if (xmin + k >= seq[j].mgr_min() && xmin + k <= seq[j].mgr_max()) {
-// 	  cur |= (selview.getbdd(j + shift) & seq[j].getbdd(k));
-// 	}
+//         if (xmin + k >= seq[j].mgr_min() && xmin + k <= seq[j].mgr_max()) {
+//           cur |= (selview.getbdd(j + shift) & seq[j].getbdd(k));
+//         }
       }
 
       // shouldnt we allow inter to be BDDBOT ?
 //       if (inter != BDDBOT) {
-// 	d0 &= (unionview.getbdd(k - (unionmin - xmin)) % inter);
+//         d0 &= (unionview.getbdd(k - (unionmin - xmin)) % inter);
 //       }
-	d0 &= (unionview.getbdd(k - (unionmin - xmin)) % inter);
+        d0 &= (unionview.getbdd(k - (unionmin - xmin)) % inter);
 
 //       if (kthbitempty) {
-// 	std::cout << "kthbitempty\n";
-// 	d0 &= (!unionview.getbdd(k - (unionmin - xmin)));
+//         std::cout << "kthbitempty\n";
+//         d0 &= (!unionview.getbdd(k - (unionmin - xmin)));
 //       }
     }
 
     for (int i = 0; i < n; i++) {
       if (seq[i].assigned()) {
-	d0 &= seq[i].bdd_domain();
+        d0 &= seq[i].bdd_domain();
       }
     }
     if (selview.assigned()) {
@@ -177,7 +178,7 @@ namespace Gecode { namespace CpltSet {
 
   forceinline void 
   range_con(Space* home, const IntVarArgs& x, const CpltSetVar& s, const CpltSetVar& t, 
-	    SetConLevel scl) {
+            SetConLevel scl) {
     BMI* mgr = s.manager();
     int n = x.size();
     CpltSetView selview(s);
@@ -198,7 +199,7 @@ namespace Gecode { namespace CpltSet {
     switch(scl) {
     default:
       {
-	range_post(home, sbv, selview, unionview, scl);
+        range_post(home, sbv, selview, unionview, scl);
       }
     }
   }
@@ -207,7 +208,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline void
   buildRoots(Space* home, ViewArray<View0>& seq, View1 selview, View1 unionview, SetConLevel scl, 
-	     GecodeBdd& d0) {
+             GecodeBdd& d0) {
     BMI* mgr = unionview.manager();
     if (home->failed()) return;
     int n = seq.size();
@@ -218,13 +219,13 @@ namespace Gecode { namespace CpltSet {
     // compute maximum value
     for (int i = n; i--; ) {
       if (seq[i].table_width() > xrange) {
-	xrange = seq[i].table_width();
+        xrange = seq[i].table_width();
       }
       if (seq[i].mgr_max() > xmax) {
-	xmax = seq[i].mgr_max();
+        xmax = seq[i].mgr_max();
       }
       if (seq[i].mgr_min() < xmin) {
-	xmin = seq[i].mgr_min();
+        xmin = seq[i].mgr_min();
       }
     }
 
@@ -238,7 +239,7 @@ namespace Gecode { namespace CpltSet {
       if (unionmin < xmin) { xmin = unionmin; }
       if (unionmax < xmax) { xmax = unionmax; }
       if (unionview.table_width() > xrange) {
-	xrange = unionview.table_width();
+        xrange = unionview.table_width();
       }
     }
 
@@ -252,26 +253,26 @@ namespace Gecode { namespace CpltSet {
       GecodeBdd subset = BDDTOP;
       LubValues<SingletonCpltSetView> lub(seq[j]);
       for (unsigned int k = 0; k < xrange; k++) {
-	int seqmin = seq[j].mgr_min();
-	int seqmax = seq[j].mgr_max();
-	int cur    = xmin + k;
-	if (seqmin <= cur && cur <= seqmax) {
-	  while (lub() && cur != lub.val()) {
-	    ++lub;
-	  }
-	  if (lub() && cur == lub.val()) {
-	    if (unionmin <= cur && cur <= unionmax) {
-	      subset &= (seq[j].getbdd(k - (seqmin - xmin)) >>= unionview.getbdd(k - (unionmin - xmin)));
-	    }
-	    ++lub;
-	  }
-	}
+        int seqmin = seq[j].mgr_min();
+        int seqmax = seq[j].mgr_max();
+        int cur    = xmin + k;
+        if (seqmin <= cur && cur <= seqmax) {
+          while (lub() && cur != lub.val()) {
+            ++lub;
+          }
+          if (lub() && cur == lub.val()) {
+            if (unionmin <= cur && cur <= unionmax) {
+              subset &= (seq[j].getbdd(k - (seqmin - xmin)) >>= unionview.getbdd(k - (unionmin - xmin)));
+            }
+            ++lub;
+          }
+        }
       }
       if (!mgr->ctrue(subset)) {
-	d0 &= (selview.getbdd(j + shift) % (subset));
+        d0 &= (selview.getbdd(j + shift) % (subset));
       }
       if (seq[j].assigned()) {
-	d0 &= seq[j].bdd_domain();
+        d0 &= seq[j].bdd_domain();
       }
     }
 
@@ -299,8 +300,8 @@ namespace Gecode { namespace CpltSet {
 
   forceinline void 
   roots_con(Space* home, const IntVarArgs& x, const CpltSetVar& s, const CpltSetVar& t, 
-	    const CpltSetVarArgs& allvars, 
-	    SetConLevel scl) {
+            const CpltSetVarArgs& allvars, 
+            SetConLevel scl) {
 
     BMI* mgr = s.manager();
     int n = x.size();
@@ -332,7 +333,7 @@ namespace Gecode { namespace CpltSet {
     switch(scl) {
     default:
       {
-	roots_post(home, sbv, selview, unionview, scl);
+        roots_post(home, sbv, selview, unionview, scl);
       }
     }
     
@@ -347,7 +348,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline
   Range<View0, View1>::Range(Space* home, ViewArray<View0>& x, 
-			     View1& y, View1& z, GecodeBdd& d0)
+                             View1& y, View1& z, GecodeBdd& d0)
     : MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, x, y, z), 
       d(d0) {
     MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::force(home);
@@ -362,7 +363,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline ExecStatus
   Range<View0, View1>::post(Space* home, ViewArray<View0>& x, 
-			    View1& y, View1& z, GecodeBdd& d0) {
+                            View1& y, View1& z, GecodeBdd& d0) {
     (void) new (home) Range(home, x, y, z, d0);
     return ES_OK;
   }
@@ -422,7 +423,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline
   RangeTwice<View0, View1>::RangeTwice(Space* home, ViewArray<View0>& x, 
-				       ViewArray<View1>& y, GecodeBdd& d0)
+                                       ViewArray<View1>& y, GecodeBdd& d0)
     : MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, x, y), 
       d(d0) {
     MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::force(home);
@@ -439,7 +440,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline ExecStatus
   RangeTwice<View0, View1>::post(Space* home, ViewArray<View0>& x, ViewArray<View1>& y,
-				 GecodeBdd& d0) {
+                                 GecodeBdd& d0) {
     (void) new (home) RangeTwice(home, x, y, d0);
     return ES_OK;
   }
@@ -498,7 +499,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline void 
   nvalue_post(Space* home, ViewArray<View0>& seq, View1 selview, View1 unionview, 
-	      int usedvalues, SetConLevel scl) {
+              int usedvalues, SetConLevel scl) {
     std::cout << "nvalue_post\n";
     if (home->failed())  return;
     // WE HAVE TO ORDER ALL BDD VARS AVAILABLE SO FAR
@@ -520,7 +521,7 @@ namespace Gecode { namespace CpltSet {
 
   forceinline void 
   nvalue_con(Space* home, const IntVarArgs& x, const CpltSetVar& s, const CpltSetVar& t, 
-	    int usedvalues, const CpltSetVarArgs& allvars, SetConLevel scl) {
+            int usedvalues, const CpltSetVarArgs& allvars, SetConLevel scl) {
     std::cout << "nvalue con\n";
     BMI* mgr = s.manager();
     int n = x.size();
@@ -549,7 +550,7 @@ namespace Gecode { namespace CpltSet {
     switch(scl) {
     default:
       {
-	nvalue_post(home, sbv, selview, unionview, usedvalues, scl);
+        nvalue_post(home, sbv, selview, unionview, usedvalues, scl);
       }
     }
   }
@@ -557,8 +558,8 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline void 
   uses_post(Space* home, ViewArray<View0>& seq, View1 selview, View1 unionview, 
-	    ViewArray<View0>& seqprime, View1 selviewprime, View1 unionviewprime, 
-	    SetConLevel scl) {
+            ViewArray<View0>& seqprime, View1 selviewprime, View1 unionviewprime, 
+            SetConLevel scl) {
     std::cout << "usespost\n";
     if (home->failed())  return;
 
@@ -624,8 +625,8 @@ namespace Gecode { namespace CpltSet {
 
   forceinline void 
   uses_con(Space* home, const IntVarArgs& x, const CpltSetVar& s, const CpltSetVar& t, 
-	   const IntVarArgs& y, const CpltSetVar& u, const CpltSetVar& v,
-	   SetConLevel scl) {
+           const IntVarArgs& y, const CpltSetVar& u, const CpltSetVar& v,
+           SetConLevel scl) {
     BMI* mgr = s.manager();
     int n = x.size();
     CpltSetView selview(s);
@@ -659,9 +660,9 @@ namespace Gecode { namespace CpltSet {
     switch(scl) {
     default:
       {
-	uses_post(home, sbv, selview, unionview, 
-		  sbvprime, selviewprime, unionviewprime,
-		  scl);
+        uses_post(home, sbv, selview, unionview, 
+                  sbvprime, selviewprime, unionviewprime,
+                  scl);
       }
     }
   }

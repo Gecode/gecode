@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -35,28 +36,29 @@ namespace Gecode {
   } 
 
   CpltSetVar::CpltSetVar(Space* home, BMI* m, int glbMin,int glbMax,
-		 int lubMin,int lubMax, 
-		 unsigned int cardMin, unsigned int cardMax) {
+                 int lubMin,int lubMax, 
+                 unsigned int cardMin, unsigned int cardMax) {
     var = new (home) CpltSet::CpltSetVarImp(home, m, glbMin, glbMax, 
-				    lubMin, lubMax, cardMin, cardMax);
+                                    lubMin, lubMax, cardMin, cardMax);
   }
 
   CpltSetVar::CpltSetVar(Space* home, BMI* m, const IntSet& glbD,
-		 int lubMin,int lubMax, 
-		 unsigned int cardMin, unsigned int cardMax) {
+                 int lubMin,int lubMax, 
+                 unsigned int cardMin, unsigned int cardMax) {
     var = new (home) CpltSet::CpltSetVarImp(home, m, glbD, lubMin, lubMax, 
-				    cardMin, cardMax);
+                                    cardMin, cardMax);
   }
 
   CpltSetVar::CpltSetVar(Space* home, BMI* m, int glbMin,int glbMax,
-		 const IntSet& lubD,
-		 unsigned int cardMin, unsigned int cardMax) {
+                 const IntSet& lubD,
+                 unsigned int cardMin, unsigned int cardMax) {
     var = new (home) CpltSet::CpltSetVarImp(home, m, glbMin, glbMax, 
-				    lubD, cardMin, cardMax);
+                                    lubD, cardMin, cardMax);
   }
 
-  CpltSetVar::CpltSetVar(Space* home, BMI* m, const IntSet& glbD, const IntSet& lubD,
-		 unsigned int cardMin, unsigned int cardMax) {
+  CpltSetVar::CpltSetVar(Space* home, BMI* m, const IntSet& glbD,
+                 const IntSet& lubD,
+                 unsigned int cardMin, unsigned int cardMax) {
     var = new (home) CpltSet::CpltSetVarImp(home, m,  glbD, lubD, cardMin, cardMax);
   }
 

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -41,7 +42,7 @@ namespace Gecode {
 
   forceinline void 
   selectUnion_con(Space* home, const CpltSetVarArgs& x, const CpltSetVar& s, const CpltSetVar& t, 
-	    SetConLevel scl) {
+            SetConLevel scl) {
     int n = x.size();
     int m = n + 2;
     ViewArray<CpltSetView> bv(home, m);
@@ -53,7 +54,7 @@ namespace Gecode {
     switch(scl) {
     default:
       {
-	selectUnion_post(home, bv, scl);
+        selectUnion_post(home, bv, scl);
       }
     }
     
@@ -73,7 +74,7 @@ namespace Gecode {
     // compute maximum value
     for (int i = n; i--; ) {
       if (x[i].table_width() > xrange) {
-	xrange = x[i].table_width();
+        xrange = x[i].table_width();
       }
     }
 
@@ -100,8 +101,8 @@ namespace Gecode {
       GecodeBdd subset = BDDTOP;
       GecodeBdd inter  = BDDBOT;
       for (unsigned int k = 0; k < xrange; k++) {
-	subset &= (x[j].getbdd(k) >>= x[t].getbdd(k));
-	inter  |= (x[j].getbdd(k) & x[t].getbdd(k));
+        subset &= (x[j].getbdd(k) >>= x[t].getbdd(k));
+        inter  |= (x[j].getbdd(k) & x[t].getbdd(k));
       }     
       d0 &= (x[s].getbdd(j + shift) % (subset & inter));
     }
@@ -111,7 +112,7 @@ namespace Gecode {
 
   forceinline void 
   findNonEmptySub_con(Space* home, const CpltSetVarArgs& x, const CpltSetVar& s, const CpltSetVar& t, 
-	    SetConLevel scl) {
+            SetConLevel scl) {
     int n = x.size();
     int m = n + 2;
     ViewArray<CpltSetView> bv(home, m);
@@ -123,7 +124,7 @@ namespace Gecode {
     switch(scl) {
     default:
       {
-	findNonEmptySub_post(home, bv, scl);
+        findNonEmptySub_post(home, bv, scl);
       }
     }
     

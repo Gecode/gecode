@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -31,27 +32,27 @@ namespace Gecode {
   }
 
   void partition(Space* home, const CpltSetVarArgs& x, const CpltSetVar& y, 
-		 SetConLevel scl) {
+                 SetConLevel scl) {
     partition_con(home, x, y, false, SRT_EQ, false, -1, scl);
   }
 
   void partition(Space* home, const IntVarArgs& x, const CpltSetVar& y, 
-		 SetConLevel scl) {
+                 SetConLevel scl) {
     partition_con(home, x, y, false, SRT_EQ, false, -1, scl);
   }
 
   void partitionLex(Space* home, const CpltSetVarArgs& x, CpltSetRelType lex, 
-		    SetConLevel scl) {
+                    SetConLevel scl) {
     partition_con(home, x, true, lex, false, -1, scl);
   }
 
   void partitionLexCard(Space* home, const CpltSetVarArgs& x, CpltSetRelType lex, 
-			int c, SetConLevel scl) {
+                        int c, SetConLevel scl) {
     partition_con(home, x, true, lex, true, c, scl);
   }
 
   void partitionCard(Space* home, const CpltSetVarArgs& x, int c, 
-		     SetConLevel scl) {
+                     SetConLevel scl) {
     partition_con(home, x, false, SRT_EQ, true, c, scl);
   }
 }

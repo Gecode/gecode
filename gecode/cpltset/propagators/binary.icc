@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -24,7 +25,7 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline
   BinBddProp<View>::BinBddProp(Space* home, View& x0, View& y0, 
-			       GecodeBdd& d0, SetConLevel scl0)
+                               GecodeBdd& d0, SetConLevel scl0)
     : Propagator(home), x(x0), y(y0), d(d0), scl(scl0) {
     force(home);
     x.subscribe(home, this, PC_CPLTSET_DOM);
@@ -75,7 +76,7 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline ExecStatus
   BinBddProp<View>::post(Space* home, View& x0, View& y0, GecodeBdd& d0, 
-			 SetConLevel scl) {
+                         SetConLevel scl) {
     (void) new (home) BinBddProp(home, x0, y0, d0, scl);
     return ES_OK;
   }
@@ -122,7 +123,7 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline
   BinRelDisj<View>::BinRelDisj(Space* home, View& x0, View& y0, 
-			       GecodeBdd& d0, SetConLevel scl0)
+                               GecodeBdd& d0, SetConLevel scl0)
     : BinBddProp<View>(home, x0, y0, d0, scl0) { }
 
   template <class View>
@@ -141,7 +142,7 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline ExecStatus
   BinRelDisj<View>::post(Space* home, View& x0, View& y0, 
-			 GecodeBdd& d0, SetConLevel scl) {
+                         GecodeBdd& d0, SetConLevel scl) {
     (void) new (home) BinRelDisj(home, x0, y0, d0, scl);
     return ES_OK;
   }
@@ -161,12 +162,12 @@ namespace Gecode { namespace CpltSet {
     if (x.assigned()) {
       Set::GlbRanges<View> glbx(x);
       if (y.assigned()) {
-	Set::GlbRanges<View> glby(y);
-	Gecode::Iter::Ranges::Inter<Set::GlbRanges<View>, Set::GlbRanges<View> > 
-	  inter(glbx, glby);
-	if (inter())
-	  return ES_FAILED;
-	return ES_SUBSUMED(this, home);
+        Set::GlbRanges<View> glby(y);
+        Gecode::Iter::Ranges::Inter<Set::GlbRanges<View>, Set::GlbRanges<View> > 
+          inter(glbx, glby);
+        if (inter())
+          return ES_FAILED;
+        return ES_SUBSUMED(this, home);
       }
       ModEvent me = y.excludeI(home, glbx);
       GECODE_ME_CHECK(me);
@@ -199,10 +200,10 @@ namespace Gecode { namespace CpltSet {
       d = BDDTOP;
       cache.last();
       for (; cache(); --cache) {
-	int v = cache.min();
-	int xmin = x.mgr_min();
-	int ymin = y.mgr_min();
-	d &= (!(x.getbdd(v - xmin) & y.getbdd(v - ymin)));
+        int v = cache.min();
+        int xmin = x.mgr_min();
+        int ymin = y.mgr_min();
+        d &= (!(x.getbdd(v - xmin) & y.getbdd(v - ymin)));
       }
     }
 

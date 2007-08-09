@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -38,15 +39,15 @@ namespace Gecode {
 //     switch (scl) {
 //     case SCL_BND_SBR:
 //       {
-// 	std::cout << "rel set\n";
-// 	CpltSetView bx(x);
-// 	CpltSetView by(y);
-// 	CrdCpltSetView cx(bx);
-// 	CrdCpltSetView cy(by);
-// 	SetCpltSetView sx(cx);
-// 	SetCpltSetView sy(cy);
-// 	rel_post<SetCpltSetView, SetCpltSetView>(home, sx, r, sy, scl); 
-// 	break;
+//         std::cout << "rel set\n";
+//         CpltSetView bx(x);
+//         CpltSetView by(y);
+//         CrdCpltSetView cx(bx);
+//         CrdCpltSetView cy(by);
+//         SetCpltSetView sx(cx);
+//         SetCpltSetView sy(cy);
+//         rel_post<SetCpltSetView, SetCpltSetView>(home, sx, r, sy, scl); 
+//         break;
 //       }
 //     default:
       rel_con(home, x, r, y, scl);      
@@ -57,17 +58,17 @@ namespace Gecode {
 //     switch (scl) {
 //     case SCL_BND_SBR:
 //       {
-// 	switch(r) {
-// 	case SRT_SUB:
-// 	  rel(home, y, SRT_SUP, x, scl);
-// 	  break;
-// 	case SRT_SUP:
-// 	  rel(home, y, SRT_SUB, x, scl);
-// 	  break;
-// 	default:
-// 	  rel(home, y, r, x, scl);
-// 	}
-// 	break;
+//         switch(r) {
+//         case SRT_SUB:
+//           rel(home, y, SRT_SUP, x, scl);
+//           break;
+//         case SRT_SUP:
+//           rel(home, y, SRT_SUB, x, scl);
+//           break;
+//         default:
+//           rel(home, y, r, x, scl);
+//         }
+//         break;
 //       }
 //     default:
       rel_con(home, x, r, y, scl);
@@ -83,22 +84,22 @@ namespace Gecode {
   }
 
   void rel(Space* home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, CpltSetRelType r, 
-	   CpltSetVar z, SetConLevel scl) {
+           CpltSetVar z, SetConLevel scl) {
     rel_con_bdd(home, x, o, y, r, z, scl);
   }
 
   void rel(Space* home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, SetRelType r, 
-	   CpltSetVar z, SetConLevel scl) {
+           CpltSetVar z, SetConLevel scl) {
     rel_con_bdd(home, x, o, y, r, z, scl);
   }
 
   void rel(Space* home, CpltSetVar x, SetOpType o, CpltSetVar y, CpltSetRelType r, 
-	   CpltSetVar z, SetConLevel scl) {
+           CpltSetVar z, SetConLevel scl) {
     rel_con_bdd(home, x, o, y, r, z, scl);
   }
 
   void rel(Space* home, CpltSetVar x, SetOpType o, CpltSetVar y, SetRelType r, 
-	   CpltSetVar z, SetConLevel scl) {
+           CpltSetVar z, SetConLevel scl) {
     if (scl == SCL_BND_SBR) {
       rel_con_sbr(home, x, o, y, r, z, scl);
     } else {

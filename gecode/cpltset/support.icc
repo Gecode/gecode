@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -24,7 +25,7 @@ namespace Gecode {
   /// Check whether range specifications for initialization are consistent
   forceinline void
   testConsistency(const IntSet& glb, const IntSet& lub,
-		  const int cardMin, const int cardMax, const char* location) {
+                  const int cardMin, const int cardMax, const char* location) {
 
     bool glbNonZero = glb.size() > 0;
     bool lubNonZero = lub.size() > 0;
@@ -33,34 +34,34 @@ namespace Gecode {
       int  glbMin = glb.min();
       int  glbMax = glb.max();
       if (
-	  !lubNonZero ||
-	  (glbMin > glbMax)
-	  )
-	throw CpltSet::VariableFailedDomain(location);
+          !lubNonZero ||
+          (glbMin > glbMax)
+          )
+        throw CpltSet::VariableFailedDomain(location);
 
       if (
-	  (glbMin < Limits::Set::int_min) || 
-	  (glbMax > Limits::Set::int_max)
-	  ) 
-	throw CpltSet::VariableOutOfRangeDomain(location);
+          (glbMin < Limits::Set::int_min) || 
+          (glbMax > Limits::Set::int_max)
+          ) 
+        throw CpltSet::VariableOutOfRangeDomain(location);
       
       int  lubMin = lub.min();
       int  lubMax = lub.max();
       if (
-	  (glbMin < lubMin || glbMin > lubMax) ||
-	  (glbMax > lubMax || glbMax < lubMin)
-	  )
-	throw CpltSet::VariableFailedDomain(location);
+          (glbMin < lubMin || glbMin > lubMax) ||
+          (glbMax > lubMax || glbMax < lubMin)
+          )
+        throw CpltSet::VariableFailedDomain(location);
     }
 
     if (lubNonZero) {
       int  lubMin = lub.min();
       int  lubMax = lub.max();
       if (
-	  (lubMin < Limits::Set::int_min) || 
-	  (lubMax > Limits::Set::int_max)
-	 )
-	throw CpltSet::VariableOutOfRangeDomain(location);
+          (lubMin < Limits::Set::int_min) || 
+          (lubMax > Limits::Set::int_max)
+         )
+        throw CpltSet::VariableOutOfRangeDomain(location);
 
       if (lubMin > lubMax)
       throw CpltSet::VariableFailedDomain(location);
@@ -73,9 +74,9 @@ namespace Gecode {
       throw CpltSet::VariableOutOfRangeCardinality(location);
 
     if ( 
-	(cardMin > cardMax) ||
-	(cardMin < 0)
-	)
+        (cardMin > cardMax) ||
+        (cardMin < 0)
+        )
       throw CpltSet::VariableFailedDomain(location);
     return;
   }
@@ -94,10 +95,10 @@ namespace Gecode {
     unsigned int max_width  = x[0].table_width();
     for (int i = 0; i < x.size(); i++) {
       if (x[i].offset() < min_offset) {
-	min_offset = x[i].offset();
+        min_offset = x[i].offset();
       }
       if (x[i].table_width() > max_width) {
-	max_width = x[i].table_width();
+        max_width = x[i].table_width();
       }
     }
     
@@ -117,18 +118,18 @@ namespace Gecode {
     for (unsigned int f = 0; f < max_width; f++) {
       // std::cerr << "f="<<f << " ";
       for (int i = 0; i < x.size(); i++) {
-	// std::cerr << "i="<<i << " " << x[i] << " ";
-	int xo = x[i].offset();
-	// std::cerr << "order " << xo << "\t";
-	int xw = x[i].table_width();
-	int cur= xo + f;
-	// std::cerr << "cur " << cur << "\t" << xw << "\t" << xo + xw << "\t";
-	// std::cerr << " test " << (cur < xo + xw ) << "\n";
-	if (cur < xo + xw) {
-	  // std::cerr << "set\n";
-	  hls_order[c] = cur;
-	  c++;
-	}
+        // std::cerr << "i="<<i << " " << x[i] << " ";
+        int xo = x[i].offset();
+        // std::cerr << "order " << xo << "\t";
+        int xw = x[i].table_width();
+        int cur= xo + f;
+        // std::cerr << "cur " << cur << "\t" << xw << "\t" << xo + xw << "\t";
+        // std::cerr << " test " << (cur < xo + xw ) << "\n";
+        if (cur < xo + xw) {
+          // std::cerr << "set\n";
+          hls_order[c] = cur;
+          c++;
+        }
       }
     }
 
@@ -157,10 +158,10 @@ namespace Gecode {
     unsigned int max_width  = x[0].table_width();
     for (int i = 0; i < x.size(); i++) {
       if (x[i].offset() < min_offset) {
-	min_offset = x[i].offset();
+        min_offset = x[i].offset();
       }
       if (x[i].table_width() > max_width) {
-	max_width = x[i].table_width();
+        max_width = x[i].table_width();
       }
     }
     
@@ -183,35 +184,35 @@ namespace Gecode {
     // ordering those that lie in the scope
     for (unsigned int f = 0; f < max_width; f++) {
       for (int i = 0; i < x.size(); i++) {
-	int xo = x[i].offset();
-	// std::cerr << "order " << xo << "\n";
-	int xw = x[i].table_width();
-	int cur= xo + f;
-	if (cur < xo + xw) {
-	  hls_order[c] = cur;
-	  c++;
-	}
+        int xo = x[i].offset();
+        // std::cerr << "order " << xo << "\n";
+        int xw = x[i].table_width();
+        int cur= xo + f;
+        if (cur < xo + xw) {
+          hls_order[c] = cur;
+          c++;
+        }
       }
       // INVARIANT: Here we should assume that variables of the same array
       //            have the same initial values for min and max of the set bounds
       // std::cerr << "check \t";
       // std::cerr << "f=" << f << " xmin: " << x[0].mgr_min() << " and ymin " << y[0].mgr_min() << "\n";
       // invariant new arrays have subranges of old arrays
-	for (int i = 0; i < y.size(); i++) {
-	  if ( (x[0].mgr_min() + (int) f >= y[i].mgr_min()) &&
-	       (x[0].mgr_min() + (int) f <= y[i].mgr_max())) {
-	    // std::cerr << "do y \t";
-	    int xyshift = y[i].mgr_min()  - x[0].mgr_min();
-	    int yo = y[i].offset();
-	    // std::cerr << "order " << yo << "\n";
-	    int yw = y[i].table_width();
-	    int cur= yo + f - xyshift;
-	    if (cur <= yo + yw) {
-	      hls_order[c] = cur;
-	      c++;
-	    }
-	  }
-	}
+        for (int i = 0; i < y.size(); i++) {
+          if ( (x[0].mgr_min() + (int) f >= y[i].mgr_min()) &&
+               (x[0].mgr_min() + (int) f <= y[i].mgr_max())) {
+            // std::cerr << "do y \t";
+            int xyshift = y[i].mgr_min()  - x[0].mgr_min();
+            int yo = y[i].offset();
+            // std::cerr << "order " << yo << "\n";
+            int yw = y[i].table_width();
+            int cur= yo + f - xyshift;
+            if (cur <= yo + yw) {
+              hls_order[c] = cur;
+              c++;
+            }
+          }
+        }
     }
 
     // IMPORTANT DO NOT FORGET REMAINING LARGER VARIABLES
@@ -250,23 +251,23 @@ namespace Gecode {
 
       int n = x[i]->size();
       for (int j = 0; j < n; j++) {
-	int off   = (*(x[i]))[j].offset();
-	int width = (*(x[i]))[j].table_width();
-	int cmin  = (*(x[i]))[j].mgr_min();
-	int cmax  = (*(x[i]))[j].mgr_max();
-	// std::cerr << "off= " << off << " width=" << width << " cmin=" << cmin << " cmax= " << cmax << "\n";
-	if (off < min_offset) {
-	  min_offset = off;
-	}
-	if (width > max_width) {
-	  max_width = width;
-	}
-	if (cmax > maxv) {
-	  maxv = cmax;
-	}
-	if (cmin < minv) {
-	  minv = cmin;
-	}
+        int off   = (*(x[i]))[j].offset();
+        int width = (*(x[i]))[j].table_width();
+        int cmin  = (*(x[i]))[j].mgr_min();
+        int cmax  = (*(x[i]))[j].mgr_max();
+        // std::cerr << "off= " << off << " width=" << width << " cmin=" << cmin << " cmax= " << cmax << "\n";
+        if (off < min_offset) {
+          min_offset = off;
+        }
+        if (width > max_width) {
+          max_width = width;
+        }
+        if (cmax > maxv) {
+          maxv = cmax;
+        }
+        if (cmin < minv) {
+          minv = cmin;
+        }
       }
     }
     
@@ -284,21 +285,21 @@ namespace Gecode {
     // ordering those that lie in the scope
     for (unsigned int f = 0; f < max_width; f++) {
       for (int z = 0; z < xs; z++) {
-	for (int i = 0; i < x[z]->size(); i++) {
-	  if ( ((*(x[z]))[i].mgr_min() <= minv + f) && 
-	       (minv + f <= (*(x[z]))[i].mgr_max())) {
-	    // std::cerr << "do (*(x[z])) \t";
-	    int xshift = (*(x[z]))[i].mgr_min() - minv;
-	    int xo = (*(x[z]))[i].offset();
-	    // std::cerr << "order " << xo << "\n";
-	    int xw = (*(x[z]))[i].table_width();
-	    int cur= xo + f - xshift;
-	    if (cur < xo + xw) {
-	      hls_order[c] = cur;
-	      c++;
-	    }
-	  }
-	}
+        for (int i = 0; i < x[z]->size(); i++) {
+          if ( ((*(x[z]))[i].mgr_min() <= minv + f) && 
+               (minv + f <= (*(x[z]))[i].mgr_max())) {
+            // std::cerr << "do (*(x[z])) \t";
+            int xshift = (*(x[z]))[i].mgr_min() - minv;
+            int xo = (*(x[z]))[i].offset();
+            // std::cerr << "order " << xo << "\n";
+            int xw = (*(x[z]))[i].table_width();
+            int cur= xo + f - xshift;
+            if (cur < xo + xw) {
+              hls_order[c] = cur;
+              c++;
+            }
+          }
+        }
       }
     }
 
@@ -320,13 +321,13 @@ namespace Gecode {
 
   /// Function used for computing the convex_hull and the variables of it
   GECODE_CPLTSET_EXPORT void conv_hull_project(BMI* mgr, GecodeBdd& robdd, 
-					   GecodeBdd& hull, GecodeBdd& poshull);
+                                           GecodeBdd& hull, GecodeBdd& poshull);
   /// Returns a bdd representing all variables taking part in the convex hull of \a domain
   GECODE_CPLTSET_EXPORT void conv_project(BMI* mgr, GecodeBdd& robdd, 
-				      GecodeBdd& poshull);
+                                      GecodeBdd& poshull);
   /// Returns a bdd representing the convex hull of \a robdd
   GECODE_CPLTSET_EXPORT void conv_hull(BMI* mgr, GecodeBdd& robdd, 
-					GecodeBdd& hull);
+                                        GecodeBdd& hull);
 
   /// Returns a bdd representing all variables of \a domain
   GECODE_CPLTSET_EXPORT GecodeBdd bdd_vars(BMI* mgr, GecodeBdd& domain);
@@ -347,11 +348,11 @@ namespace Gecode {
   /// Computes the cardinality bdd excluding variables represented in the bdd \a boundvars
   GECODE_CPLTSET_EXPORT GecodeBdd 
   cardrec(BMI*& mgr, GecodeBdd& boundvars, int j, unsigned int& offset, 
-	  unsigned int& range, int l, int u);
+          unsigned int& range, int l, int u);
   
   GECODE_CPLTSET_EXPORT GecodeBdd 
   cardrec_bin(BMI*& mgr, int j, unsigned int& off1, unsigned int& range1, 
-	      unsigned int& off2, unsigned int& range2, int l, int u);
+              unsigned int& off2, unsigned int& range2, int l, int u);
 
 
   // EXTENDED CARDINALITY FOR REPLACING INTERMEDIATE VARIABLES
@@ -362,7 +363,7 @@ namespace Gecode {
   template <class I, class View0, class View1>
   Gecode::GecodeBdd 
   extcardeq(Gecode::Iter::Ranges::ValCache<I>& inter, 
-	    View0& x, View1& y, unsigned int c, int n, int r) {
+            View0& x, View1& y, unsigned int c, int n, int r) {
     // std::cerr << "start extcardeq()\n";
     // std::cerr << x << " " << y << " " << c << " " << n << " " << r << "\n";
     BMI* mgr = x.manager();
@@ -399,17 +400,17 @@ namespace Gecode {
     for (; inter(); --inter) {
       unsigned int pos = inter.index();
       for (int i = 0; i < n; i++) {
-	int col = inter.min();
-	GecodeBdd t = BDDTOP;
-	if (i == 0) {
-	  t = BDDBOT;
-	} else {
-	  t = layer[i-1]; 
-	}
+        int col = inter.min();
+        GecodeBdd t = BDDTOP;
+        if (i == 0) {
+          t = BDDBOT;
+        } else {
+          t = layer[i-1]; 
+        }
         GecodeBdd both = mgr->ite(y.getbdd(col - ymin), t,layer[i]);
-	layer[i] = mgr->ite(x.getbdd(col - xmin), both ,layer[i]);
-	--inter;
-	if (!inter()) { break;}
+        layer[i] = mgr->ite(x.getbdd(col - xmin), both ,layer[i]);
+        --inter;
+        if (!inter()) { break;}
       }
       if (!inter()) { break;}
       inter.index(pos);
@@ -423,7 +424,7 @@ namespace Gecode {
   template <class I, class View0, class View1>
   Gecode::GecodeBdd 
   extcardlqgq(Gecode::Iter::Ranges::ValCache<I>& inter, View0& x, View1& y, 
-	      unsigned int cl, unsigned int cr, int n, int r) {
+              unsigned int cl, unsigned int cr, int n, int r) {
     // std::cerr << "start extcardlqgq() yoff\n";
     // std::cerr << x << " " << y << "\n";
     // std::cerr << "cl: " << cl << " cr: " << cr << " n:" << n << " r:" << r << "\n";
@@ -477,16 +478,16 @@ namespace Gecode {
       // std::cerr << "inter position = " << pos << "\n";
       // cl < cr <= tab  ==> n - cl > 0 
       for (int i = n - cl; i < n; i++) { 
-	int col = inter.min();
-	// std::cerr << "col = " << col << "\n";
-	GecodeBdd t = layer[i-1]; 
+        int col = inter.min();
+        // std::cerr << "col = " << col << "\n";
+        GecodeBdd t = layer[i-1]; 
         GecodeBdd both = mgr->ite(y.getbdd(col - ymin), t, layer[i]);
-	layer[i] = mgr->ite(x.getbdd(col - xmin), both, layer[i]);
-	--inter;
-	if ((int) inter.index() + 1 < r + 1 - (int) cr) { 
-	  // std::cerr << "break\n"; 
-	  inter.finish(); break;
-	}
+        layer[i] = mgr->ite(x.getbdd(col - xmin), both, layer[i]);
+        --inter;
+        if ((int) inter.index() + 1 < r + 1 - (int) cr) { 
+          // std::cerr << "break\n"; 
+          inter.finish(); break;
+        }
       }
       if (!inter()) break;
       inter.index(pos);     
@@ -505,26 +506,26 @@ namespace Gecode {
       inter.last();
       int col  = inter.min();
       {
-	GecodeBdd t = BDDTOP;
-	GecodeBdd f = BDDTOP;
-	GecodeBdd zerot = BDDBOT;
-	GecodeBdd zerof = t;
-	for (int i = 0; i < n; i++) {
-	  col  = inter.min();
-	  if (i == 0) {
-	    t = zerot;
-	    f = zerof;
-	  } else {
-	    t = layer[i-1];
-	    if (i > n - (int) cl - 1) { // connect lower layer
-	      f = layer[i];
-	    }
-	  }
+        GecodeBdd t = BDDTOP;
+        GecodeBdd f = BDDTOP;
+        GecodeBdd zerot = BDDBOT;
+        GecodeBdd zerof = t;
+        for (int i = 0; i < n; i++) {
+          col  = inter.min();
+          if (i == 0) {
+            t = zerot;
+            f = zerof;
+          } else {
+            t = layer[i-1];
+            if (i > n - (int) cl - 1) { // connect lower layer
+              f = layer[i];
+            }
+          }
           GecodeBdd both = mgr->ite(y.getbdd(col - ymin), t ,f);
-	  layer[i] = mgr->ite(x.getbdd(col - xmin), both ,f);
-	  --inter;
-	  if (!inter()) { break;}
-	}
+          layer[i] = mgr->ite(x.getbdd(col - xmin), both ,f);
+          --inter;
+          if (!inter()) { break;}
+        }
       }
       return layer[n- 1];
     }
@@ -537,22 +538,22 @@ namespace Gecode {
       GecodeBdd t = BDDTOP;
       GecodeBdd f = BDDTOP;
       for (int i = 0; i < n; i++) {
-	int col = inter.min();
-	// std::cerr << inter.min() << ".." << inter.max() << "\n";
-	if (i == 0) {
-	  t = BDDBOT;
-	} else {
-	  t = layer[i-1];
-	  // NOTE: ONLY CONNECT if cl > 0
-	  // std::cerr << "(" << i << " " << (n - cl - 1) << " " << cl << "\n";
-	  if (i > n - (int) cl - 1 && cl > 0) { // connect lower layer
-	    f = layer[i];
-	  }
-	}
+        int col = inter.min();
+        // std::cerr << inter.min() << ".." << inter.max() << "\n";
+        if (i == 0) {
+          t = BDDBOT;
+        } else {
+          t = layer[i-1];
+          // NOTE: ONLY CONNECT if cl > 0
+          // std::cerr << "(" << i << " " << (n - cl - 1) << " " << cl << "\n";
+          if (i > n - (int) cl - 1 && cl > 0) { // connect lower layer
+            f = layer[i];
+          }
+        }
         GecodeBdd both = mgr->ite(y.getbdd(col - ymin), t ,f);
-	layer[i] = mgr->ite(x.getbdd(col - xmin), both ,f);
-	--inter;
-	if (!inter()) { break;}
+        layer[i] = mgr->ite(x.getbdd(col - xmin), both ,f);
+        --inter;
+        if (!inter()) { break;}
       }
     }
 
@@ -564,29 +565,29 @@ namespace Gecode {
       unsigned int pos = inter.index();
       // std::cerr << "start at pos: " << pos << "\n";
       for (int i = 0; i < n; i++) {
-	int col  = inter.min();
-	// std::cerr << inter.min() << ".." << inter.max() << "\n";
-	GecodeBdd t = BDDTOP;
-	if (i == 0) {
-	  t = BDDBOT;
-	} else {
-	  t = layer[i-1]; 
-	}
-	// i guess here we do a little too much
+        int col  = inter.min();
+        // std::cerr << inter.min() << ".." << inter.max() << "\n";
+        GecodeBdd t = BDDTOP;
+        if (i == 0) {
+          t = BDDBOT;
+        } else {
+          t = layer[i-1]; 
+        }
+        // i guess here we do a little too much
 //         GecodeBdd both = mgr->ite(y.getbdd(col - ymin), t, layer[i]);
-// 	layer[i] = mgr->ite(x.getbdd(col - xmin), both, layer[i]);
+//         layer[i] = mgr->ite(x.getbdd(col - xmin), both, layer[i]);
         GecodeBdd both = y.getbdd(col - ymin) & x.getbdd(col - xmin);
-	layer[i] = mgr->ite(both, t, layer[i]);
+        layer[i] = mgr->ite(both, t, layer[i]);
 
-	--inter;
-	if (!inter()) { 
-	  // std::cerr << "inner break\n";
-	  break;
-	}
+        --inter;
+        if (!inter()) { 
+          // std::cerr << "inner break\n";
+          break;
+        }
       }
       if (!inter()) { 
-	// std::cerr << "outer break\n";
-	break;
+        // std::cerr << "outer break\n";
+        break;
       }
       inter.index(pos);
     }
@@ -652,39 +653,39 @@ namespace Gecode {
 
       // maybe backwards iteration would be more efficient here
       for (; inter(); ++inter) {
-	int v = inter.min();
-	int xidx = x.valididx(v);
-	int yidx = y.valididx(v);
-	assert(xidx > -1 && yidx > -1);
-	empty &= (x.getnegbdd(xidx) & y.getnegbdd(yidx));
+        int v = inter.min();
+        int xidx = x.valididx(v);
+        int yidx = y.valididx(v);
+        assert(xidx > -1 && yidx > -1);
+        empty &= (x.getnegbdd(xidx) & y.getnegbdd(yidx));
       }
       return empty;
     }
   
     if (cl == cr) {
       if (cr == isize) {
-	// std::cerr << "build full set\n";
-	// build the full set
-	GecodeBdd full = BDDTOP;
-	// maybe backwards iteration would be more efficient here
-	for (; inter(); ++inter) {
-	  int v = inter.min();
-	  int xidx = x.valididx(v);
-	  int yidx = y.valididx(v);
-	  assert(xidx > -1 && yidx > -1);
-	  full &= (x.getbdd(xidx) & y.getbdd(yidx));
-	}
-	return full;
+        // std::cerr << "build full set\n";
+        // build the full set
+        GecodeBdd full = BDDTOP;
+        // maybe backwards iteration would be more efficient here
+        for (; inter(); ++inter) {
+          int v = inter.min();
+          int xidx = x.valididx(v);
+          int yidx = y.valididx(v);
+          assert(xidx > -1 && yidx > -1);
+          full &= (x.getbdd(xidx) & y.getbdd(yidx));
+        }
+        return full;
       } else {
-	// std::cerr << "extcardeq()\n";
-	return extcardeq(inter, x, y, cr, n, r);
+        // std::cerr << "extcardeq()\n";
+        return extcardeq(inter, x, y, cr, n, r);
       }
     }
 
     // cl < cr
     if (cr == isize) {
       if (cl == 0) {   // no cardinality restriction
-	return BDDTOP;
+        return BDDTOP;
       }
     }
     // std::cerr << "extcardlqgq()\n";
@@ -735,13 +736,13 @@ namespace Gecode {
 
       // cl < cr <= tab  ==> n - cl > 0 
       for (int i = n - cl; i < n; i++) { 
-	int col = inter.min();
-	GecodeBdd t = layer[i-1]; 
-	layer[i] = mgr->ite(mgr->bddpos(xoff + col - xmin), t, layer[i]);
-	--inter;
-	if ((int) inter.index() + 1 < r + 1 - (int) cr) { 
-	  inter.finish(); break;
-	}
+        int col = inter.min();
+        GecodeBdd t = layer[i-1]; 
+        layer[i] = mgr->ite(mgr->bddpos(xoff + col - xmin), t, layer[i]);
+        --inter;
+        if ((int) inter.index() + 1 < r + 1 - (int) cr) { 
+          inter.finish(); break;
+        }
       }
       if (!inter()) break;
       inter.index(pos);     
@@ -757,25 +758,25 @@ namespace Gecode {
       inter.last();
       int col  = inter.min();
       {
-	GecodeBdd t = BDDTOP;
-	GecodeBdd f = BDDTOP;
-	GecodeBdd zerot = BDDBOT;
-	GecodeBdd zerof = t;
-	for (int i = 0; i < n; i++) {
-	  col  = inter.min();
-	  if (i == 0) {
-	    t = zerot;
-	    f = zerof;
-	  } else {
-	    t = layer[i-1];
-	    if (i > n - (int) cl - 1) { // connect lower layer
-	      f = layer[i];
-	    }
-	  }
-	  layer[i] = mgr->ite(mgr->bddpos(xoff + col - xmin), t ,f);
-	  --inter;
-	  if (!inter()) { break;}
-	}
+        GecodeBdd t = BDDTOP;
+        GecodeBdd f = BDDTOP;
+        GecodeBdd zerot = BDDBOT;
+        GecodeBdd zerof = t;
+        for (int i = 0; i < n; i++) {
+          col  = inter.min();
+          if (i == 0) {
+            t = zerot;
+            f = zerof;
+          } else {
+            t = layer[i-1];
+            if (i > n - (int) cl - 1) { // connect lower layer
+              f = layer[i];
+            }
+          }
+          layer[i] = mgr->ite(mgr->bddpos(xoff + col - xmin), t ,f);
+          --inter;
+          if (!inter()) { break;}
+        }
       }
       return layer[n- 1];
     }
@@ -786,19 +787,19 @@ namespace Gecode {
       GecodeBdd t = BDDTOP;
       GecodeBdd f = BDDTOP;
       for (int i = 0; i < n; i++) {
-	int col = inter.min();
-	if (i == 0) {
-	  t = BDDBOT;
-	} else {
-	  t = layer[i-1];
-	  // NOTE: ONLY CONNECT if cl > 0
-	  if (i > n - (int) cl - 1 && cl > 0) { // connect lower layer
-	    f = layer[i];
-	  }
-	}
-	layer[i] = mgr->ite(mgr->bddpos(xoff + col - xmin), t ,f);
-	--inter;
-	if (!inter()) { break;}
+        int col = inter.min();
+        if (i == 0) {
+          t = BDDBOT;
+        } else {
+          t = layer[i-1];
+          // NOTE: ONLY CONNECT if cl > 0
+          if (i > n - (int) cl - 1 && cl > 0) { // connect lower layer
+            f = layer[i];
+          }
+        }
+        layer[i] = mgr->ite(mgr->bddpos(xoff + col - xmin), t ,f);
+        --inter;
+        if (!inter()) { break;}
       }
     }
 
@@ -808,21 +809,21 @@ namespace Gecode {
     for (; inter(); --inter) {
       unsigned int pos = inter.index();
       for (int i = 0; i < n; i++) {
-	int col  = inter.min();
-	GecodeBdd t = BDDTOP;
-	if (i == 0) {
-	  t = BDDBOT;
-	} else {
-	  t = layer[i-1]; 
-	}
-	layer[i] = mgr->ite(mgr->bddpos(xoff + col - xmin), t, layer[i]);
-	--inter;
-	if (!inter()) { 
-	  break;
-	}
+        int col  = inter.min();
+        GecodeBdd t = BDDTOP;
+        if (i == 0) {
+          t = BDDBOT;
+        } else {
+          t = layer[i-1]; 
+        }
+        layer[i] = mgr->ite(mgr->bddpos(xoff + col - xmin), t, layer[i]);
+        --inter;
+        if (!inter()) { 
+          break;
+        }
       }
       if (!inter()) { 
-	break;
+        break;
       }
       inter.index(pos);
     }
@@ -840,19 +841,19 @@ namespace Gecode {
   // mark all nodes in the dqueue
   GECODE_CPLTSET_EXPORT void
   extcache_mark(BMI* mgr, Support::SharedArray<GecodeBdd>& nodes, 
-		int n, int& l, int& r, int& markref);
+                int n, int& l, int& r, int& markref);
 
   // unmark all nodes in the dqueue
   GECODE_CPLTSET_EXPORT void
   extcache_unmark(BMI* mgr, Support::SharedArray<GecodeBdd>& nodes, 
-		  int n, int& l, int& r, int& markref);
+                  int n, int& l, int& r, int& markref);
 
   // iterate to the next level of nodes
   GECODE_CPLTSET_EXPORT void 
   extcardbounds(BMI* mgr, int& markref, GecodeBdd& c, int& n, int& l, int& r,
-		bool& singleton, int& _level, 
-		Support::SharedArray<GecodeBdd>& nodes, 
-		int& curmin, int& curmax, Gecode::IntSet& out);
+                bool& singleton, int& _level, 
+                Support::SharedArray<GecodeBdd>& nodes, 
+                int& curmin, int& curmax, Gecode::IntSet& out);
 
 
   GECODE_CPLTSET_EXPORT void 
@@ -861,31 +862,31 @@ namespace Gecode {
 
   GECODE_CPLTSET_EXPORT GecodeBdd 
   lexlt(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, 
-	unsigned int& range, int n);
+        unsigned int& range, int n);
 
   GECODE_CPLTSET_EXPORT GecodeBdd 
   lexlq(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, 
-	unsigned int& range, int n);
+        unsigned int& range, int n);
 
   GECODE_CPLTSET_EXPORT GecodeBdd 
   lexltrev(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, 
-	unsigned int& range, int n);
+        unsigned int& range, int n);
 
   GECODE_CPLTSET_EXPORT GecodeBdd 
   lexlqrev(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, 
-	unsigned int& range, int n);
+        unsigned int& range, int n);
 
 
   /// Counts the minium and maximum cardinality of the set represented by \a remain
   GECODE_CPLTSET_EXPORT 
   void card_count(BMI* mgr, GecodeBdd& remain, GecodeBdd& boundvars,
-		  unsigned int n, unsigned int& offset, 
-		  unsigned int& range, int& l, int& u);
+                  unsigned int n, unsigned int& offset, 
+                  unsigned int& range, int& l, int& u);
 
   /// Computes a bdd representing the lower and upper cardinality bounds of the bdd \a remain
   forceinline
   GecodeBdd card_bounds(BMI* mgr, GecodeBdd& remain, GecodeBdd& boundvars,
-		  unsigned int& offset, unsigned int& range) {
+                  unsigned int& offset, unsigned int& range) {
     int l = 0;
     int u = 0;
     GecodeBdd b = boundvars;
@@ -901,18 +902,18 @@ namespace Gecode {
   /// Compute the lexicographic lower bound of a bdd
   GECODE_CPLTSET_EXPORT
   GecodeBdd lex_lb(BMI*& mgr, GecodeBdd& remain, 
-	      GecodeBdd& bounds, 
-	      unsigned int n, unsigned int& offset, unsigned int& range);
+              GecodeBdd& bounds, 
+              unsigned int n, unsigned int& offset, unsigned int& range);
 
   /// Compute the lexicographic upper bound of a bdd
   GECODE_CPLTSET_EXPORT
   GecodeBdd lex_ub(BMI*& mgr, GecodeBdd& remain, GecodeBdd& bounds, 
-	      unsigned int n, unsigned int& offset, unsigned int& range);
+              unsigned int n, unsigned int& offset, unsigned int& range);
 
   forceinline GecodeBdd 
   lex_bounds(BMI*& mgr, GecodeBdd& remain, 
-	     GecodeBdd& bounds, 
-	     unsigned int& offset, unsigned int& range) {
+             GecodeBdd& bounds, 
+             unsigned int& offset, unsigned int& range) {
     if (mgr->cfalse(remain) || mgr->cfalse(bounds)) {
       return BDDBOT;
     }
@@ -931,14 +932,14 @@ namespace Gecode {
 //       GecodeBdd tlow = mgr->iftrue(low);
 //       GecodeBdd flow = mgr->iffalse(low);
 //       if (mgr->cfalse(flow)) {
-// 	// + 1 works for simple domains 1#... just for steiner example tests
-// 	std::cout << mgr->bddidx(low) - offset + 1<<",";
-// 	// std::cout << "1";
-// 	low = tlow;
+//         // + 1 works for simple domains 1#... just for steiner example tests
+//         std::cout << mgr->bddidx(low) - offset + 1<<",";
+//         // std::cout << "1";
+//         low = tlow;
 //       } else {
-// 	std::cout << "N("<<mgr->bddidx(low) - offset<<"),";
-// 	// std::cout << "0";
-// 	low = flow;
+//         std::cout << "N("<<mgr->bddidx(low) - offset<<"),";
+//         // std::cout << "0";
+//         low = flow;
 //       } 
 //     }
 //     std::cout << "..";
@@ -948,13 +949,13 @@ namespace Gecode {
 //       GecodeBdd thi = mgr->iftrue(hi);
 //       GecodeBdd fhi = mgr->iffalse(hi);
 //       if (mgr->cfalse(thi)) {
-// 	std::cout << "N("<<mgr->bddidx(hi) - offset<<"),";
-// 	// std::cout << "0";
-// 	hi = fhi;
+//         std::cout << "N("<<mgr->bddidx(hi) - offset<<"),";
+//         // std::cout << "0";
+//         hi = fhi;
 //       } else {
-// 	std::cout << mgr->bddidx(hi) - offset + 1<<",";
-// 	// std::cout << "1";
-// 	hi = thi;
+//         std::cout << mgr->bddidx(hi) - offset + 1<<",";
+//         // std::cout << "1";
+//         hi = thi;
 //       }
 //     }
 //     std::cout << lexub;

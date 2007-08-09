@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -96,7 +97,7 @@ namespace Gecode { namespace CpltSet {
   SplitCpltSetView::lubSize(void) const { 
     BMI* mgr = manager();
     if (mgr->ctrue(bounds) && 
-	mgr->ctrue(remain)) { return table_width(); }
+        mgr->ctrue(remain)) { return table_width(); }
     BddIterator iter(mgr, bounds);
     int out = 0;
     while (iter()) {
@@ -145,8 +146,8 @@ namespace Gecode { namespace CpltSet {
     BddIterator iter(mgr, bounds);
     while (iter()) {
       if (iter.status() == FIX_GLB) {
-	int idx = iter.label() - offset();
-	return mgr_min() + idx;
+        int idx = iter.label() - offset();
+        return mgr_min() + idx;
       }
       ++iter;
     }
@@ -161,8 +162,8 @@ namespace Gecode { namespace CpltSet {
     int lastglb = -1;
     while (iter()) {
       if (iter.status() == FIX_GLB) {
-	int idx = iter.label() - offset();
-	lastglb = mgr_min() + idx;
+        int idx = iter.label() - offset();
+        lastglb = mgr_min() + idx;
       } 
       ++iter;
     }
@@ -384,7 +385,7 @@ namespace Gecode { namespace CpltSet {
 
   forceinline void
   SplitCpltSetView::subscribe(Space* home, Propagator* p, PropCond pc,
-			  bool process) {
+                              bool process) {
     view.subscribe(home, p, pc, process);
   }
 

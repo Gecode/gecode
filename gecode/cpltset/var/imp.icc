@@ -92,8 +92,8 @@ namespace Gecode {
       //     // tells us whether element (mi + k) belongs to the set or not
       //     for (int z = 0 ; z < range; z++, value >>= 1) {
       //       if (mgr->cfalse(b)) {
-      // 	// std::cout << "NOT VALID\n";
-      // 	return false;
+      //         // std::cout << "NOT VALID\n";
+      //         return false;
       //       }
 
       //       bool flag    = value & 1;
@@ -101,50 +101,50 @@ namespace Gecode {
       //       int val = mi + z;
       //       bool outside = false;
       //       if (!mgr->leaf(b)) {
-      // 	// the assignment talks about a variable
-      // 	// which is not in the current reduced ROBDD
-      // 	if (mgr->bddidx(b) - o > (unsigned int) z) { 
-      // 	  outside = true;
-      // 	}
+      //         // the assignment talks about a variable
+      //         // which is not in the current reduced ROBDD
+      //         if (mgr->bddidx(b) - o > (unsigned int) z) { 
+      //           outside = true;
+      //         }
       //       }
       //       if (! outside ) {
-      // 	if (flag) {
-      // 	  IntSetRanges ir(r);
-      // 	  // std::cout << "have " << r << " ";
-      // 	  Iter::Ranges::Singleton s(val, val);
-      // 	  Iter::Ranges::Union<IntSetRanges, Iter::Ranges::Singleton> a(ir, s);
+      //         if (flag) {
+      //           IntSetRanges ir(r);
+      //           // std::cout << "have " << r << " ";
+      //           Iter::Ranges::Singleton s(val, val);
+      //           Iter::Ranges::Union<IntSetRanges, Iter::Ranges::Singleton> a(ir, s);
   
-      // 	  IntSet ur(a);
-      // 	  // std::cout << " update to " << ur << "\n";
-      // 	  r.update(false, ur);
-      // 	  // std::cout << " gives us " <<  r << "\n";
-      // 	  if (!mgr->leaf(b)) {
-      // 	      b = mgr->iftrue(b);
-      // 	      // std::cout << "branch true is \n" << b << "\n";
-      // 	      // mgr->bdd2dot(b);
-      // // 	      std::cout << "type.value=" << b.getNode()->type.value << "\n";
-      // // 	      std::cout << "******* END BRANCH TRUE *****\n";
-      // 	  }
-      // 	} else {
-      // 	  if (!mgr->leaf(b)) {
-      // 	    b = mgr->iffalse(b);
-      // // 	    std::cout << "branch false is \n" << b << "\n";
-      // // 	    mgr->bdd2dot(b);
-      // // 	    std::cout << "type.value=" << b.getNode()->type.value << "\n";
-      // // 	    std::cout << "******* END BRANCH FALSE *****\n";
-      // // 	    std::cout << "test whether valid?";
-      // // 	    std::cout << "leaf = " << mgr->leaf(b) << " top ?" << mgr->ctrue(b) << "\n";
-	    
-      // 	  }
-      // 	}
+      //           IntSet ur(a);
+      //           // std::cout << " update to " << ur << "\n";
+      //           r.update(false, ur);
+      //           // std::cout << " gives us " <<  r << "\n";
+      //           if (!mgr->leaf(b)) {
+      //               b = mgr->iftrue(b);
+      //               // std::cout << "branch true is \n" << b << "\n";
+      //               // mgr->bdd2dot(b);
+      // //               std::cout << "type.value=" << b.getNode()->type.value << "\n";
+      // //               std::cout << "******* END BRANCH TRUE *****\n";
+      //           }
+      //         } else {
+      //           if (!mgr->leaf(b)) {
+      //             b = mgr->iffalse(b);
+      // //             std::cout << "branch false is \n" << b << "\n";
+      // //             mgr->bdd2dot(b);
+      // //             std::cout << "type.value=" << b.getNode()->type.value << "\n";
+      // //             std::cout << "******* END BRANCH FALSE *****\n";
+      // //             std::cout << "test whether valid?";
+      // //             std::cout << "leaf = " << mgr->leaf(b) << " top ?" << mgr->ctrue(b) << "\n";
+            
+      //           }
+      //         }
       //       } else {
-      // 	if (flag) {
-      // 	  IntSetRanges ir(out);
-      // 	  Iter::Ranges::Singleton s(val, val);
-      // 	  Iter::Ranges::Union<IntSetRanges, Iter::Ranges::Singleton> a(ir, s);
-      // 	  IntSet ur(a);
-      // 	  out.update(false, ur);
-      // 	}
+      //         if (flag) {
+      //           IntSetRanges ir(out);
+      //           Iter::Ranges::Singleton s(val, val);
+      //           Iter::Ranges::Union<IntSetRanges, Iter::Ranges::Singleton> a(ir, s);
+      //           IntSet ur(a);
+      //           out.update(false, ur);
+      //         }
       //       }
       //     }
 
@@ -548,7 +548,7 @@ namespace Gecode {
       //       std::cout << "P(|";
       //       std::cout << min;
       //       for (int i = min + 1; i <= max; i++) {
-      // 	std::cout <<","<< i;
+      //         std::cout <<","<< i;
       //       }
       //       std::cout << "|)";
       //     } 
@@ -873,7 +873,7 @@ namespace Gecode {
         if (n < (int) lub.width()) {
           return lub.min() + n;
         } else {
-          n -= lub.width();	
+          n -= lub.width();
         }
         ++lub;
       }

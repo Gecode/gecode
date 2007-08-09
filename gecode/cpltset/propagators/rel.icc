@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -25,7 +26,7 @@ namespace Gecode {
 
   template <class View>
   void rel_post(Space* home, View x, CpltSetRelType r, View y, 
-		SetConLevel scl) {
+                SetConLevel scl) {
 
     if (home->failed()) return;
     // important:
@@ -43,48 +44,48 @@ namespace Gecode {
     switch(r) {
     case SRT_LE: 
       {
-	d0 = lexlt(mgr, xoff, yoff, tab, tab - 1);
+        d0 = lexlt(mgr, xoff, yoff, tab, tab - 1);
       }
       break;
     case SRT_GR: 
       {
-	d0 = lexlt(mgr, yoff, xoff, tab, tab - 1);
+        d0 = lexlt(mgr, yoff, xoff, tab, tab - 1);
       }
       break;
     case SRT_LQ: 
       {
-	d0 = lexlq(mgr, xoff, yoff, tab, tab - 1);
+        d0 = lexlq(mgr, xoff, yoff, tab, tab - 1);
       }
       break;
     case SRT_GQ: 
       {
-	d0 = lexlt(mgr, yoff, xoff, tab, tab - 1);
+        d0 = lexlt(mgr, yoff, xoff, tab, tab - 1);
       }
       break;
     case SRT_LE_REV: 
       {
-	d0 = lexltrev(mgr, xoff, yoff, tab, 0);
+        d0 = lexltrev(mgr, xoff, yoff, tab, 0);
       }
       break;
     case SRT_GR_REV: 
       {
-	d0 = lexltrev(mgr, yoff, xoff, tab, 0);
+        d0 = lexltrev(mgr, yoff, xoff, tab, 0);
       }
       break;
     case SRT_LQ_REV: 
       {
-	d0 = lexlqrev(mgr, xoff, yoff, tab, 0);
+        d0 = lexlqrev(mgr, xoff, yoff, tab, 0);
       }
       break;
     case SRT_GQ_REV: 
       {
-	d0 = lexltrev(mgr, yoff, xoff, tab, 0);
+        d0 = lexltrev(mgr, yoff, xoff, tab, 0);
       }
       break;
     default:
       {
-	throw CpltSet::InvalidRelation (" COMPL = EQ NEG y ??? ");
-	return;
+        throw CpltSet::InvalidRelation (" COMPL = EQ NEG y ??? ");
+        return;
       }
     }
 
@@ -93,7 +94,7 @@ namespace Gecode {
 
   template <class View>
   void rel_post(Space* home, View x, SetRelType r, View y, 
-		SetConLevel scl) {
+                SetConLevel scl) {
 
     if (home->failed()) return;
     // important:
@@ -107,105 +108,105 @@ namespace Gecode {
     switch(r) {
     case SRT_SUB: 
       {
-	for (int i = 0; i < (int) tab; i++) {
-	  d0 &= (x.getbdd(i)) >>= (y.getbdd(i));
-	}
+        for (int i = 0; i < (int) tab; i++) {
+          d0 &= (x.getbdd(i)) >>= (y.getbdd(i));
+        }
       }
       break;
     case SRT_SUP: 
       {
-	for (int i = 0; i < (int) tab; i++) {
-	  d0 &= (y.getbdd(i)) >>= (x.getbdd(i));
-	}
+        for (int i = 0; i < (int) tab; i++) {
+          d0 &= (y.getbdd(i)) >>= (x.getbdd(i));
+        }
       }
       break;
       // try whether changing the bit order is faster for conjunction
     case SRT_DISJ: 
       {
-// 	for (int i = 0; i < (int) tab; i++) {
-// 	  d0 &= !(y.getbdd(i) & x.getbdd(i));
-// 	}
+//         for (int i = 0; i < (int) tab; i++) {
+//           d0 &= !(y.getbdd(i) & x.getbdd(i));
+//         }
 
-// 	std::cerr << "DISJ: " << x << " and " << y << "\n";
+//         std::cerr << "DISJ: " << x << " and " << y << "\n";
 
-// 	for (int i = (int) tab ; i--; ) {
-// 	  d0 &= !(y.getbdd(i) & x.getbdd(i));
-// 	}
+//         for (int i = (int) tab ; i--; ) {
+//           d0 &= !(y.getbdd(i) & x.getbdd(i));
+//         }
 
-	Set::LubRanges<View> lubx(x);
-	Set::LubRanges<View> luby(y);
-	Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
-	  inter(lubx, luby);
-	Gecode::Iter::Ranges::ToValues<
-	  Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
-	  > ival(inter);
+        Set::LubRanges<View> lubx(x);
+        Set::LubRanges<View> luby(y);
+        Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+          inter(lubx, luby);
+        Gecode::Iter::Ranges::ToValues<
+          Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+          > ival(inter);
 
-	Gecode::Iter::Ranges::ValCache<
-	  Gecode::Iter::Ranges::ToValues<
-    	     Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
-	  >
-	  > cache(ival);
-	
-	if (!cache()) {
-	  // std::cerr << "no post SRT_DISJ needed\n";
-	  return; 
-	} else {
-	  cache.last();
-	  for (; cache(); --cache) {
-	    int v = cache.min();
-	    int minx = x.mgr_min();
-	    int miny = y.mgr_min();
-	    d0 &= (!(x.getbdd(v - minx) & y.getbdd(v - miny)));
-	  }
-	}
-	GECODE_ES_FAIL(home, (BinRelDisj<View>::post(home, x, y, d0, scl)));
-	return;
+        Gecode::Iter::Ranges::ValCache<
+          Gecode::Iter::Ranges::ToValues<
+                 Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+          >
+          > cache(ival);
+        
+        if (!cache()) {
+          // std::cerr << "no post SRT_DISJ needed\n";
+          return; 
+        } else {
+          cache.last();
+          for (; cache(); --cache) {
+            int v = cache.min();
+            int minx = x.mgr_min();
+            int miny = y.mgr_min();
+            d0 &= (!(x.getbdd(v - minx) & y.getbdd(v - miny)));
+          }
+        }
+        GECODE_ES_FAIL(home, (BinRelDisj<View>::post(home, x, y, d0, scl)));
+        return;
       }
       break;
     case SRT_EQ: 
       {
-	int xshift = 0;
-	for (int i = 0; i < (int) tab; i++) {
-	  if (y.mgr_min() + i < x.mgr_min() || y.mgr_min() + i > x.mgr_max()) {
-	    d0 &= (BDDBOT % y.getbdd(i));
-	    xshift++;
-	  } else {
-	    d0 &= (x.getbdd(i - xshift) % y.getbdd(i));
-	  }
-	}
+        int xshift = 0;
+        for (int i = 0; i < (int) tab; i++) {
+          if (y.mgr_min() + i < x.mgr_min() || y.mgr_min() + i > x.mgr_max()) {
+            d0 &= (BDDBOT % y.getbdd(i));
+            xshift++;
+          } else {
+            d0 &= (x.getbdd(i - xshift) % y.getbdd(i));
+          }
+        }
       }
       break;
     case SRT_NQ: 
       {
-	Set::LubRanges<View> lubx(x);
-	Set::LubRanges<View> luby(y);
-	Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
-	  inter(lubx, luby);
-	Gecode::Iter::Ranges::ToValues<
-	  Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
-	  > ival(inter);
-	if (!ival()) {
-	  std::cerr << "no post SRT_NQ needed\n";
-	  return; 
-	} else {
-	  for (; ival(); ++ival) {
-	    int v = ival.val();
-	    int ix = x.valididx(v);
-	    int iy = y.valididx(v);
-	    d0 &= (x.getbdd(ix) % y.getbdd(iy));
-	  }
-	}
-	d0 = !d0;
-// 	for (int i = 0; i < (int) tab; i++) {
-// 	  d0 &= ((x.getbdd(i)) % (y.getbdd(i)));
-// 	}
-// 	d0 = !d0;
+        Set::LubRanges<View> lubx(x);
+        Set::LubRanges<View> luby(y);
+        Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+          inter(lubx, luby);
+        Gecode::Iter::Ranges::ToValues<
+          Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+          > ival(inter);
+        if (!ival()) {
+          std::cerr << "no post SRT_NQ needed\n";
+          return; 
+        } else {
+          for (; ival(); ++ival) {
+            int v = ival.val();
+            int ix = x.valididx(v);
+            int iy = y.valididx(v);
+            d0 &= (x.getbdd(ix) % y.getbdd(iy));
+          }
+        }
+        d0 = !d0;
+//         for (int i = 0; i < (int) tab; i++) {
+//           d0 &= ((x.getbdd(i)) % (y.getbdd(i)));
+//         }
+//         d0 = !d0;
       }
       break;
     default:
       {
-	throw CpltSet::InvalidRelation (" COMPL = EQ NEG y ??? ");
-	return;
+        throw CpltSet::InvalidRelation (" COMPL = EQ NEG y ??? ");
+        return;
       }
     }
 
@@ -214,7 +215,7 @@ namespace Gecode {
 
   template <class View0, class View1>
   void rel_post(Space* home, View0 x, CpltSetRelType r, View1 s, 
-		SetConLevel scl) {
+                SetConLevel scl) {
 
     if (home->failed()) return;
     // important:
@@ -235,28 +236,28 @@ namespace Gecode {
       // x[0] <_lex x[1], i.e. {2} <_lex {1} because 010 <_lex 100
     case SRT_LE: 
       {
-	d0 = lexlt(mgr, xoff, yoff, tab, tab - 1);
+        d0 = lexlt(mgr, xoff, yoff, tab, tab - 1);
       }
       break;
     case SRT_GR: 
       {
-	d0 = lexlt(mgr, yoff, xoff, tab, tab - 1);
+        d0 = lexlt(mgr, yoff, xoff, tab, tab - 1);
       }
       break;
     case SRT_LQ: 
       {
-	d0 = lexlq(mgr, xoff, yoff, tab, tab - 1);
+        d0 = lexlq(mgr, xoff, yoff, tab, tab - 1);
       }
       break;
     case SRT_GQ: 
       {
-	d0 = lexlt(mgr, yoff, xoff, tab, tab - 1);
+        d0 = lexlt(mgr, yoff, xoff, tab, tab - 1);
       }
       break;
     default:
       {
-	throw CpltSet::InvalidRelation (" COMPL = EQ NEG y ??? ");
-	return;
+        throw CpltSet::InvalidRelation (" COMPL = EQ NEG y ??? ");
+        return;
       }
     }
 
@@ -266,7 +267,7 @@ namespace Gecode {
 
   template <class View0, class View1>
   void rel_post(Space* home, View0 x, SetRelType r, View1 s, 
-		SetConLevel scl) {
+                SetConLevel scl) {
 
     if (home->failed()) return;
     // important:
@@ -280,66 +281,66 @@ namespace Gecode {
     switch(r) {
     case SRT_SUB: 
       {
-	
-	// x < s
-	int xshift = x.mgr_min() - s.mgr_min();
-	for (int i = 0; i < (int) tab; i++) {
-	  if (s.mgr_min() + i >= x.mgr_min()) {
-	    if (s.mgr_min() + i <= x.mgr_max()) {
-	      d0 &= (x.getbdd(i - xshift)) >>= (s.getbdd(i));
-	    } else {
-	      // d0 &= s.getbdd(i);
-	    }
-	  } else {
-	    // d0 &= s.getbdd(i);
-	  }
-	}
+        
+        // x < s
+        int xshift = x.mgr_min() - s.mgr_min();
+        for (int i = 0; i < (int) tab; i++) {
+          if (s.mgr_min() + i >= x.mgr_min()) {
+            if (s.mgr_min() + i <= x.mgr_max()) {
+              d0 &= (x.getbdd(i - xshift)) >>= (s.getbdd(i));
+            } else {
+              // d0 &= s.getbdd(i);
+            }
+          } else {
+            // d0 &= s.getbdd(i);
+          }
+        }
       }
 
       if (s.assigned()) {
-	// assigned
-	d0 &= s.bdd_domain();
+        // assigned
+        d0 &= s.bdd_domain();
       }
       break;
     case SRT_SUP: 
       {
-	for (int i = 0; i < (int) tab; i++) {
-	  d0 &= (s.getbdd(i)) >>= (x.getbdd(i));
-	}
+        for (int i = 0; i < (int) tab; i++) {
+          d0 &= (s.getbdd(i)) >>= (x.getbdd(i));
+        }
       }
       break;
     case SRT_DISJ: 
       {
-	for (int i = 0; i < (int) tab; i++) {
-	  d0 &= !(s.getbdd(i) & x.getbdd(i));
-	}
+        for (int i = 0; i < (int) tab; i++) {
+          d0 &= !(s.getbdd(i) & x.getbdd(i));
+        }
       }
       break;
     case SRT_EQ: 
       {
-	int xshift = 0;
-	for (int i = 0; i < (int) tab; i++) {
-	  if (s.mgr_min() + i < x.mgr_min() || s.mgr_min() + i > x.mgr_max()) {
-	    d0 &= (BDDBOT % s.getbdd(i));
-	    xshift++;
-	  } else {
-	    d0 &= (x.getbdd(i - xshift) % s.getbdd(i));
-	  }
-	}
+        int xshift = 0;
+        for (int i = 0; i < (int) tab; i++) {
+          if (s.mgr_min() + i < x.mgr_min() || s.mgr_min() + i > x.mgr_max()) {
+            d0 &= (BDDBOT % s.getbdd(i));
+            xshift++;
+          } else {
+            d0 &= (x.getbdd(i - xshift) % s.getbdd(i));
+          }
+        }
       }
       break;
     case SRT_NQ: 
       {
-	for (int i = 0; i < (int) tab; i++) {
-	  d0 &= ((x.getbdd(i)) % (s.getbdd(i)));
-	}
-	d0 = !d0;
+        for (int i = 0; i < (int) tab; i++) {
+          d0 &= ((x.getbdd(i)) % (s.getbdd(i)));
+        }
+        d0 = !d0;
       }
       break;
     default:
       {
-	throw CpltSet::InvalidRelation (" COMPL = EQ NEG y ??? ");
-	return;
+        throw CpltSet::InvalidRelation (" COMPL = EQ NEG y ??? ");
+        return;
       }
     }
 
@@ -350,14 +351,14 @@ namespace Gecode {
   // 
   template <class View>
   void rel_post(Space* home, ViewArray<View>& x, CpltSetOpType o, CpltSetRelType r, 
-		SetConLevel scl) {
+                SetConLevel scl) {
     throw CpltSet::InvalidRelation(" no bdd rel implemented lex smaller ....");
   }
 
   // BddOp and SetRel
   template <class View>
   void rel_post(Space* home, ViewArray<View>& x, CpltSetOpType o, SetRelType r, 
-		SetConLevel scl) {
+                SetConLevel scl) {
     if (home->failed()) return;
     // important:
     // the offset order is linear from left to right for the viewarray
@@ -371,28 +372,28 @@ namespace Gecode {
       GecodeBdd op = BDDTOP;
       switch(o) {
       case SOT_SYMDIFF:
-	{
-	  op = ((x[0].getbdd(i) & (!x[1].getbdd(i))) | 
-		(!x[0].getbdd(i) & (x[1].getbdd(i)))) ;
-	  break;
-	}
+        {
+          op = ((x[0].getbdd(i) & (!x[1].getbdd(i))) | 
+                (!x[0].getbdd(i) & (x[1].getbdd(i)))) ;
+          break;
+        }
       default:
-	{
-	  throw CpltSet::InvalidRelation(" other op rel relations not yet implemented ");
-	  return;
-	}
+        {
+          throw CpltSet::InvalidRelation(" other op rel relations not yet implemented ");
+          return;
+        }
       }
       switch (r) {
       case SRT_EQ:
-	{
-	  d0 &= (op % x[2].getbdd(i));
-	  break;
-	}
+        {
+          d0 &= (op % x[2].getbdd(i));
+          break;
+        }
       default:
-	{
-	  throw CpltSet::InvalidRelation(" other rel relations not yet implemented ");
-	  return;
-	}
+        {
+          throw CpltSet::InvalidRelation(" other rel relations not yet implemented ");
+          return;
+        }
       }
     }
     
@@ -403,7 +404,7 @@ namespace Gecode {
   // 
   template <class View>
   void rel_post(Space* home, ViewArray<View>& x, SetOpType o, CpltSetRelType r, 
-		SetConLevel scl) {
+                SetConLevel scl) {
     throw CpltSet::InvalidRelation(" no bdd rel implemented lex smaller with setoptype....");
   }
   // not yet implemented Bddrel SRT_LE and lex-stuff
@@ -411,7 +412,7 @@ namespace Gecode {
   // SetOp and SetRel
   template <class View>
   void rel_post(Space* home, ViewArray<View>& x, SetOpType o, SetRelType r, 
-		SetConLevel scl) {
+                SetConLevel scl) {
     if (home->failed()) return;
     // important:
     // the offset order is linear from left to right for the viewarray
@@ -425,45 +426,45 @@ namespace Gecode {
       GecodeBdd op = BDDTOP;
       switch(o) {
       case SOT_UNION:
-	{     
-	  op = (x[0].getbdd(i) | x[1].getbdd(i));
-	  break;
-	}
+        {     
+          op = (x[0].getbdd(i) | x[1].getbdd(i));
+          break;
+        }
       case SOT_DUNION:
-	{
-	  op = (x[0].getbdd(i) | x[1].getbdd(i));
-	  // for disjointness see below
-	  break;
-	}
+        {
+          op = (x[0].getbdd(i) | x[1].getbdd(i));
+          // for disjointness see below
+          break;
+        }
       case SOT_INTER:
-	{ 
-	  op = x[0].getbdd(i) & x[1].getbdd(i);
-	  break; 
-	}
+        { 
+          op = x[0].getbdd(i) & x[1].getbdd(i);
+          break; 
+        }
       case SOT_MINUS:
-	{
-	  op = x[0].getbdd(i) & (!x[1].getbdd(i)); 
-	  break;
-	}
+        {
+          op = x[0].getbdd(i) & (!x[1].getbdd(i)); 
+          break;
+        }
       default:
-	{
-	  throw CpltSet::InvalidRelation(" other op rel relations not yet implemented ");
-	  return;
-	}
+        {
+          throw CpltSet::InvalidRelation(" other op rel relations not yet implemented ");
+          return;
+        }
       }
       switch (r) {
       case SRT_EQ:
-	{
-	  d0 &= (op % x[2].getbdd(i));
-	  if (o == SOT_DUNION)
-	    d0 &= !(x[0].getbdd(i) &  x[1].getbdd(i));
-	  break;
-	}
+        {
+          d0 &= (op % x[2].getbdd(i));
+          if (o == SOT_DUNION)
+            d0 &= !(x[0].getbdd(i) &  x[1].getbdd(i));
+          break;
+        }
       default:
-	{
-	  throw CpltSet::InvalidRelation(" other rel relations not yet implemented ");
-	  return;
-	}
+        {
+          throw CpltSet::InvalidRelation(" other rel relations not yet implemented ");
+          return;
+        }
       }
     }
     GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
@@ -472,41 +473,41 @@ namespace Gecode {
 
   template <class Rel>
   void rel_con(Space* home, const CpltSetVar& x, Rel r, const CpltSetVar& y, 
-	       SetConLevel scl) {
+               SetConLevel scl) {
     CpltSetView xv(x);
     CpltSetView yv(y);
     switch (scl) {
     case SCL_SPL:
       {
-	SplitCpltSetView spx(xv);
-	SplitCpltSetView spy(yv);
-	rel_post(home, spx, r, spy, scl);
-	break;
+        SplitCpltSetView spx(xv);
+        SplitCpltSetView spy(yv);
+        rel_post(home, spx, r, spy, scl);
+        break;
       }
     case SCL_BND_BDD:
       {
-	BndCpltSetView bndx(xv);
-	BndCpltSetView bndy(yv);
-	rel_post(home, bndx, r, bndy, scl);
-	break;
+        BndCpltSetView bndx(xv);
+        BndCpltSetView bndy(yv);
+        rel_post(home, bndx, r, bndy, scl);
+        break;
       }
     case SCL_CRD:
       {
-	CrdCpltSetView crdx(xv);
-	CrdCpltSetView crdy(yv);
-	rel_post(home, crdx, r, crdy, scl);
-	break;
+        CrdCpltSetView crdx(xv);
+        CrdCpltSetView crdy(yv);
+        rel_post(home, crdx, r, crdy, scl);
+        break;
       }
     case SCL_LEX:
       {
-	LexCpltSetView lexx(xv);
-	LexCpltSetView lexy(yv);
-	rel_post(home, lexx, r, lexy, scl);
-	break;
+        LexCpltSetView lexx(xv);
+        LexCpltSetView lexy(yv);
+        rel_post(home, lexx, r, lexy, scl);
+        break;
       }
     default:
       {
-	rel_post(home, xv, r, yv, scl);
+        rel_post(home, xv, r, yv, scl);
       }
     }
   }  
@@ -514,7 +515,7 @@ namespace Gecode {
 
   template <class Rel>
   void rel_con(Space* home, const IntVar& x, Rel r, const CpltSetVar& s, 
-	  SetConLevel scl) {
+          SetConLevel scl) {
     Gecode::Int::IntView iv(x);
     CpltSetView bv(s);
 //     int rmin = std::min(iv.min(), bv.mgr_min());
@@ -526,7 +527,7 @@ namespace Gecode {
 
   forceinline void
   rel_con_sbr(Space* home, const CpltSetVar& x, SetOpType o, const CpltSetVar& y, 
-	      SetRelType r, const CpltSetVar& z, SetConLevel scl) {
+              SetRelType r, const CpltSetVar& z, SetConLevel scl) {
     ViewArray<CpltSetView> bv(home, 3);
     bv[0] = x;
     bv[1] = y;
@@ -534,24 +535,24 @@ namespace Gecode {
     switch (scl) {
     case SCL_BND_SBR:
       {
-	CpltSetView xv(x); 
-	CpltSetView yv(y); 
-	CpltSetView zv(z); 
-	
-	CrdCpltSetView cx(xv); 
-	CrdCpltSetView cy(yv); 
-	CrdCpltSetView cz(zv); 
-	
-	SetCpltSetView sx(cx); 
-	SetCpltSetView sy(cy); 
-	SetCpltSetView sz(cz); 
-	
-// 	Gecode::Set::RelOp::rel_op_post<SetCpltSetView, SetCpltSetView, SetCpltSetView>(home, sx, o, sy, r, sz);
-	break;
+        CpltSetView xv(x); 
+        CpltSetView yv(y); 
+        CpltSetView zv(z); 
+        
+        CrdCpltSetView cx(xv); 
+        CrdCpltSetView cy(yv); 
+        CrdCpltSetView cz(zv); 
+        
+        SetCpltSetView sx(cx); 
+        SetCpltSetView sy(cy); 
+        SetCpltSetView sz(cz); 
+        
+//         Gecode::Set::RelOp::rel_op_post<SetCpltSetView, SetCpltSetView, SetCpltSetView>(home, sx, o, sy, r, sz);
+        break;
       }
     default:
       {
-	  throw CpltSet::InvalidRelation("wrong relation for setconlevel SCL_BND_SBR ");
+          throw CpltSet::InvalidRelation("wrong relation for setconlevel SCL_BND_SBR ");
       }
     }
 
@@ -561,7 +562,7 @@ namespace Gecode {
   template <class Rel, class Op>
   forceinline void
   rel_con_bdd(Space* home, const CpltSetVar& x, Op o, const CpltSetVar& y, Rel r, 
-	  const CpltSetVar& z, SetConLevel scl) {
+          const CpltSetVar& z, SetConLevel scl) {
     ViewArray<CpltSetView> bv(home, 3);
     bv[0] = x;
     bv[1] = y;
@@ -569,43 +570,43 @@ namespace Gecode {
     switch (scl) {
     case SCL_SPL:
       {
-	ViewArray<SplitCpltSetView> sv(home, 3);
-	for (int i = 3; i--; ) {
-	  sv[i].init(bv[i]);
-	}
-	rel_post(home, sv, o, r, scl);
-	break;
+        ViewArray<SplitCpltSetView> sv(home, 3);
+        for (int i = 3; i--; ) {
+          sv[i].init(bv[i]);
+        }
+        rel_post(home, sv, o, r, scl);
+        break;
       }
     case SCL_BND_BDD:
       {
-	ViewArray<BndCpltSetView> bndv(home, 3);
-	for (int i = 3; i--; ) {
-	  bndv[i].init(bv[i]);
-	}
-	rel_post(home, bndv, o, r, scl);
-	break;
+        ViewArray<BndCpltSetView> bndv(home, 3);
+        for (int i = 3; i--; ) {
+          bndv[i].init(bv[i]);
+        }
+        rel_post(home, bndv, o, r, scl);
+        break;
       }
     case SCL_CRD:
       {
-	ViewArray<CrdCpltSetView> crdv(home, 3);
-	for (int i = 3; i--; ) {
-	  crdv[i].init(bv[i]);
-	}
-	rel_post(home, crdv, o, r, scl);
-	break;
+        ViewArray<CrdCpltSetView> crdv(home, 3);
+        for (int i = 3; i--; ) {
+          crdv[i].init(bv[i]);
+        }
+        rel_post(home, crdv, o, r, scl);
+        break;
       }
     case SCL_LEX:
       {
-	ViewArray<LexCpltSetView> lexv(home, 3);
-	for (int i = 3; i--; ) {
-	  lexv[i].init(bv[i]);
-	}
-	rel_post(home, lexv, o, r, scl);
-	break;
+        ViewArray<LexCpltSetView> lexv(home, 3);
+        for (int i = 3; i--; ) {
+          lexv[i].init(bv[i]);
+        }
+        rel_post(home, lexv, o, r, scl);
+        break;
       }
     default:
       {
-	rel_post(home, bv, o, r, scl);
+        rel_post(home, bv, o, r, scl);
       }
     }
   }

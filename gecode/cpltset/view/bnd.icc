@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -237,7 +238,7 @@ namespace Gecode { namespace CpltSet {
     int ma = view.mgr_max();
     if (i()) {
       if (i.min() < mi || i.min() > ma) {
-	return ME_CPLTSET_FAILED;
+        return ME_CPLTSET_FAILED;
       }
     }
     GecodeBdd ass = view.variable()->gen_assignment(i);
@@ -258,7 +259,7 @@ namespace Gecode { namespace CpltSet {
 
   forceinline void
   BndCpltSetView::subscribe(Space* home, Propagator* p, PropCond pc,
-			  bool process) {
+                            bool process) {
     view.subscribe(home, p, pc, process);
   }
 

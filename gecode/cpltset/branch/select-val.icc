@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -59,30 +60,30 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     // try to exclude first
     if (a == (int) exclude) {
       if (v.size() == 1) {
-	// std::cout << "v = " << v << " " ;
-	// std::cout << "tell eq..";
-	me = x.eq(home, v.min(), v.max());
-	// std::cout << "me = " << me << "DONE\n";
+        // std::cout << "v = " << v << " " ;
+        // std::cout << "tell eq..";
+        me = x.eq(home, v.min(), v.max());
+        // std::cout << "me = " << me << "DONE\n";
       } else {
-	IntSetRanges ir(v);
-	// std::cout << "v = " << v << " " ;
-	// std::cout << "tell eq..";
-	me = x.eqI(home,ir);
-	// std::cout << "me = " << me << "DONE\n";
+        IntSetRanges ir(v);
+        // std::cout << "v = " << v << " " ;
+        // std::cout << "tell eq..";
+        me = x.eqI(home,ir);
+        // std::cout << "me = " << me << "DONE\n";
       }
     } else {
 
       if (v.size() == 1) {
-	// std::cout << "v = " << v << " " ;
-	// std::cout << "tell nq..";
-	me = x.nq(home, v.min(), v.max());
-	// std::cout << "me = " << me << "DONE\n";
+        // std::cout << "v = " << v << " " ;
+        // std::cout << "tell nq..";
+        me = x.nq(home, v.min(), v.max());
+        // std::cout << "me = " << me << "DONE\n";
       } else {
-	IntSetRanges ir(v);
-	// std::cout << "v = " << v << " " ;
-	// std::cout << "tell nq..";
-	me = x.nqI(home, ir);
-	// std::cout << "me = " << me << "DONE\n";
+        IntSetRanges ir(v);
+        // std::cout << "v = " << v << " " ;
+        // std::cout << "tell nq..";
+        me = x.nqI(home, ir);
+        // std::cout << "me = " << me << "DONE\n";
       }
     }
     return me;

@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -27,30 +28,30 @@ using namespace Gecode::CpltSet;
 namespace Gecode {
 
   void range(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
-	     SetConLevel scl) {
+             SetConLevel scl) {
     range_con(home, x, s, t, scl);
   }
 
   void roots(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
-	     const CpltSetVarArgs& allvars, 
-	     SetConLevel scl) {
+             const CpltSetVarArgs& allvars, 
+             SetConLevel scl) {
     roots_con(home, x, s, t, allvars, scl);
   }
 
   // constraints using the range constraint
   void alldifferent(Space* home, const IntVarArgs& x, CpltSetVar s, 
-		    CpltSetVar t, const CpltSetVarArgs& allvars, SetConLevel scl) {
+                    CpltSetVar t, const CpltSetVarArgs& allvars, SetConLevel scl) {
     nvalue_con(home, x, s, t, x.size(), allvars, scl);
   }
 
   void nvalue(Space* home, const IntVarArgs& x, CpltSetVar s, 
-		    CpltSetVar t, int n, const CpltSetVarArgs& allvars, SetConLevel scl) {
+                    CpltSetVar t, int n, const CpltSetVarArgs& allvars, SetConLevel scl) {
     nvalue_con(home, x, s, t, n, allvars, scl);
   }
 
   void uses(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
-	    const IntVarArgs& y, CpltSetVar u, CpltSetVar v,
-	    SetConLevel scl) {
+            const IntVarArgs& y, CpltSetVar u, CpltSetVar v,
+            SetConLevel scl) {
     uses_con(home, x, s, t, y, u, v, scl);
   }
 

@@ -28,11 +28,7 @@
 #include "gecode/int.hh"
 #include "gecode/iter.hh"
 #include "gecode/support/shared-array.hh"
-
-#ifdef GECODE_HAVE_SET_VARS
 #include "gecode/set.hh"
-#endif
-
 #include "gecode/support/buddy/bdd.h"
 
 /*
@@ -222,12 +218,12 @@ namespace Gecode {
   /// Post propagator for \f$ l \leq |x| \leq u \f$ 
   GECODE_CPLTSET_EXPORT void
   cardinality(Space* home, CpltSetVar x, unsigned int l, unsigned int u, 
-	      SetConLevel scl = SCL_DEF);
+              SetConLevel scl = SCL_DEF);
   
   /// Post propagator for \f$ l |x| = c \f$ 
   GECODE_CPLTSET_EXPORT void
   cardinality(Space* home, CpltSetVar x, unsigned int c, 
-	      SetConLevel scl = SCL_DEF);
+              SetConLevel scl = SCL_DEF);
   
   GECODE_CPLTSET_EXPORT void 
   singleton(Space* home, IntVar x, CpltSetVar s, SetConLevel scl);
@@ -251,12 +247,12 @@ namespace Gecode {
   /// Post propagator for \f$ 0 \leq |x \cap y| \leq c \f$ 
   GECODE_CPLTSET_EXPORT void
   atmost(Space* home, CpltSetVar x, CpltSetVar y, int c, 
-	 SetConLevel scl = SCL_DEF);
+         SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ 0 \leq |x \cap y| \leq c \wedge x \sim_{lex} y\f$ 
   GECODE_CPLTSET_EXPORT void
   atmostLex(Space* home, CpltSetVar x, CpltSetVar y, int c, 
-	    CpltSetRelType lex, SetConLevel scl = SCL_DEF);
+            CpltSetRelType lex, SetConLevel scl = SCL_DEF);
 
   /**
    * \brief  Post propagator for \f$ 0 \leq |x \cap y| \leq c 
@@ -264,17 +260,17 @@ namespace Gecode {
    */
   GECODE_CPLTSET_EXPORT void
   atmostLexCard(Space* home, CpltSetVar x, CpltSetVar y, int c, 
-		CpltSetRelType lex, int d, SetConLevel scl = SCL_DEF);
+                CpltSetRelType lex, int d, SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ 0 \leq |x \cap y| \leq c \wedge |x| = |y| = d\f$ 
   GECODE_CPLTSET_EXPORT void
   atmostCard(Space* home, CpltSetVar x, CpltSetVar y, int c, 
-	     int d, SetConLevel scl = SCL_DEF);
+             int d, SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ x \cap y = z \wedge 0 \leq |z| \leq c \f$ 
   GECODE_CPLTSET_EXPORT void
   atmost(Space* home, CpltSetVar x, CpltSetVar y, CpltSetVar z, int c, 
-	 SetConLevel scl = SCL_DEF);
+         SetConLevel scl = SCL_DEF);
 
   /** \brief Post propagator for \f$ |x_i \cap x_j| \leq 1 \f$ for all \f$0\leq i\neq j<|x| 
    *  \wedge \forall i \in \{0, \dots, |x|-1\}: |x_i| = c \f$
@@ -304,7 +300,7 @@ namespace Gecode {
    */
   GECODE_CPLTSET_EXPORT void
   partitionLex(Space* home, const CpltSetVarArgs& x, CpltSetRelType lex, 
-	       SetConLevel scl = SCL_DEF);
+               SetConLevel scl = SCL_DEF);
   /**
    * \brief Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \wedge 
    *                       \forall i,j\in \{0, \dots, n-1\}, i\neq j: 
@@ -313,7 +309,7 @@ namespace Gecode {
    */
   GECODE_CPLTSET_EXPORT void
   partitionLexCard(Space* home, const CpltSetVarArgs& x, CpltSetRelType lex, int c, 
-		   SetConLevel scl = SCL_DEF);
+                   SetConLevel scl = SCL_DEF);
 
   /**
    * \brief Post propagator for \f$ |\bigcup_{i=0}^{n-1} x_i = U \wedge 
@@ -321,18 +317,18 @@ namespace Gecode {
    */
   GECODE_CPLTSET_EXPORT void
   partitionCard(Space* home, const CpltSetVarArgs& x, int c, 
-		   SetConLevel scl = SCL_DEF);
+                   SetConLevel scl = SCL_DEF);
 
 
   /// Post propagator for \f$ t = \bigcup_{i\in s}  x_i \f$
   GECODE_CPLTSET_EXPORT void
   selectUnion(Space* home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t,
-	      SetConLevel scl = SCL_DEF);
+              SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ s = \bigcup_{(x_i \subseteq t) \wedge x_i \neq \emptyset } i \f$
   GECODE_CPLTSET_EXPORT void
   findNonEmptySub(Space* home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t,
-		  SetConLevel scl = SCL_DEF);
+                  SetConLevel scl = SCL_DEF);
 
   /// Post propagator for \f$ s = \{x\} \f$
   GECODE_CPLTSET_EXPORT void
@@ -341,27 +337,27 @@ namespace Gecode {
   /// Post propagator for \f$ t = \bigcup_{i\in s}  x_i \f$
   GECODE_CPLTSET_EXPORT void
   range(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
-	SetConLevel scl = SCL_DOM);
+        SetConLevel scl = SCL_DOM);
 
   /// Post propagator for \f$ s = \bigcup_{x_i \in t} i \f$
   GECODE_CPLTSET_EXPORT void
   roots(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
-	const CpltSetVarArgs& allvars, 
-	SetConLevel scl = SCL_DOM);
+        const CpltSetVarArgs& allvars, 
+        SetConLevel scl = SCL_DOM);
 
   /** \brief Post propagator for \f$ x_i\neq x_j\f$ for all \f$0\leq i\neq j<|x| 
    *  \wedge t = \bigcup_{i\in s}  x_i \f$
    */ 
   GECODE_CPLTSET_EXPORT void
   alldifferent(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
-	       const CpltSetVarArgs& allvars, 
-	       SetConLevel scl = SCL_DOM);
+               const CpltSetVarArgs& allvars, 
+               SetConLevel scl = SCL_DOM);
 
   /* \brief Post propagator \f$\wedge r = \bigcup_{i\in s}  x_i \f$
    */ 
 /*   GECODE_CPLTSET_EXPORT void
      permutation(Space* home, const IntVarArgs& x, const IntSet& r, 
-   	      CpltSetVar s, CpltSetVar t, SetConLevel scl = SCL_DOM);
+                 CpltSetVar s, CpltSetVar t, SetConLevel scl = SCL_DOM);
   // for permutation we need a CONST VIEW and DONT NEED Card = N THAT IS GOOD
 */
 
@@ -371,8 +367,8 @@ namespace Gecode {
    */
   GECODE_CPLTSET_EXPORT void
   nvalue(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, int n,
-	 const CpltSetVarArgs& allvars, 
-	 SetConLevel scl = SCL_DOM);
+         const CpltSetVarArgs& allvars, 
+         SetConLevel scl = SCL_DOM);
 
   /** \brief Post propagator for \f$ t = \bigcup_{i\in s} x_i \wedge v = \bigcup_{i\in u} y_i
    *  \wedge v \subseteq t \f$
@@ -414,7 +410,7 @@ namespace Gecode {
   /// Branch over all \a x with variable selection \a vars and value selection \a vals
   GECODE_CPLTSET_EXPORT void
   branch(Space* home, const CpltSetVarArgs& x, CpltSetBvarSel vars, CpltSetBvalSel vals, 
-	 SetConLevel scl = SCL_DOM);
+         SetConLevel scl = SCL_DOM);
 
 
   ///\name Use bdd variables with set propagators
@@ -611,7 +607,7 @@ namespace Gecode {
    */
   GECODE_CPLTSET_EXPORT void
   weights(Space* home, const IntArgs& elements, const IntArgs& weights,
-	  CpltSetVar x, IntVar y);
+          CpltSetVar x, IntVar y);
 
   //@}
 
@@ -638,7 +634,7 @@ namespace Gecode {
    */
   GECODE_CPLTSET_EXPORT void
   selectInterIn(Space* home, const CpltSetVarArgs& x, CpltSetVar y, CpltSetVar z,
-		const IntSet& u);
+                const IntSet& u);
 
   /// Post propagator for \f$ \parallel\langle x_0,\dots,x_{n-1}\rangle[y] \f$ 
   GECODE_CPLTSET_EXPORT void

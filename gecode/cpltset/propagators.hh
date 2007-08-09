@@ -97,7 +97,7 @@ namespace Gecode { namespace CpltSet {
 //     ExecStatus propagate_lex(Space* home);
 
     static  ExecStatus post(Space* home, ViewArray<View>& x, GecodeBdd& d, 
-			    SetConLevel scl);
+                            SetConLevel scl);
   };
 
 
@@ -300,7 +300,7 @@ namespace Gecode { namespace CpltSet {
     Range(Space* home, ViewArray<View0>&, View1&, View1&, GecodeBdd&);
     /// Divide and conquer method including additional \a y and \a z views
     ExecStatus divide_conquer(Space* home, BMI* m, GecodeBdd& p, int l, int r, 
-			int ypos, int zpos);
+                        int ypos, int zpos);
   public:
     /// Name of this propagator
     virtual const char* name(void) const;
@@ -338,7 +338,7 @@ namespace Gecode { namespace CpltSet {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     static  ExecStatus post(Space* home, ViewArray<View0>& x, 
-			    ViewArray<View1>&y, GecodeBdd& d);
+                            ViewArray<View1>&y, GecodeBdd& d);
   };
 
 

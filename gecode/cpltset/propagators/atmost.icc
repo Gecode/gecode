@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -35,13 +36,13 @@ namespace Gecode {
     unsigned int xtab = x[0].table_width();  
     for (int i = n; i--;) {
       if (x[i].mgr_min() < minx) {
-	minx = x[i].mgr_min();
+        minx = x[i].mgr_min();
       }
       if (x[i].mgr_max() > maxx) {
-	maxx = x[i].mgr_max();
+        maxx = x[i].mgr_max();
       }
       if (x[i].table_width() > xtab) {
-	xtab = x[i].table_width();
+        xtab = x[i].table_width();
       }
     }
 
@@ -56,12 +57,12 @@ namespace Gecode {
 
     for (int i = 0; i < n - 1; i++) {
       for (int j = i + 1; j < n; j++) {
-// 	unsigned int xoff = x[i].offset();
-// 	unsigned int xtab = x[i].table_width();
-// 	unsigned int yoff = x[j].offset();
-// 	unsigned int ytab = x[j].table_width();
-	//d0 &= cardrec_bin(mgr, 0, xoff, xtab, yoff, ytab, 0, 1);
-	d0 &= extcardcheck(x[i], x[j], 0, 1);
+//         unsigned int xoff = x[i].offset();
+//         unsigned int xtab = x[i].table_width();
+//         unsigned int yoff = x[j].offset();
+//         unsigned int ytab = x[j].table_width();
+        //d0 &= cardrec_bin(mgr, 0, xoff, xtab, yoff, ytab, 0, 1);
+        d0 &= extcardcheck(x[i], x[j], 0, 1);
       }
     }
     // std::cout << "bddsize = " << mgr->bddsize(d0) << "\n";
@@ -71,7 +72,7 @@ namespace Gecode {
   template <class View>
   void 
   atmost_post(Space* home, ViewArray<View>& x, int c, 
-	      SetRelType lex, int card, SetConLevel scl) {
+              SetRelType lex, int card, SetConLevel scl) {
     if (home->failed()) return;
     BMI* mgr = x[0].manager();
 
@@ -104,7 +105,7 @@ namespace Gecode {
   template <class View>
   void 
   atmost_post(Space* home, ViewArray<View>& x, int c, 
-	      CpltSetRelType lex, int card, SetConLevel scl) {
+              CpltSetRelType lex, int card, SetConLevel scl) {
     if (home->failed()) return;
     BMI* mgr = x[0].manager();
 
@@ -139,48 +140,48 @@ namespace Gecode {
     switch (lex) {
     case SRT_LE:
       {
-	d0 &= lexlt(mgr, xoff, yoff, xtab, xtab - 1);
-	break;
+        d0 &= lexlt(mgr, xoff, yoff, xtab, xtab - 1);
+        break;
       }
     case SRT_GR:
       {
-	d0 &= lexlt(mgr, yoff, xoff, xtab, xtab - 1);
-	break;
+        d0 &= lexlt(mgr, yoff, xoff, xtab, xtab - 1);
+        break;
       }
     case SRT_LQ:
       {
-	d0 &= lexlq(mgr, xoff, yoff, xtab, xtab - 1);
-	break;
+        d0 &= lexlq(mgr, xoff, yoff, xtab, xtab - 1);
+        break;
       }
     case SRT_GQ:
       {
-	d0 &= lexlq(mgr, yoff, xoff, xtab, xtab - 1);
-	break;
+        d0 &= lexlq(mgr, yoff, xoff, xtab, xtab - 1);
+        break;
       }
     case SRT_LE_REV:
       {
-	d0 &= lexltrev(mgr, xoff, yoff, xtab, 0);
-	break;
+        d0 &= lexltrev(mgr, xoff, yoff, xtab, 0);
+        break;
       }
     case SRT_GR_REV:
       {
-	d0 &= lexltrev(mgr, yoff, xoff, xtab, 0);
-	break;
+        d0 &= lexltrev(mgr, yoff, xoff, xtab, 0);
+        break;
       }
     case SRT_LQ_REV:
       {
-	d0 &= lexlqrev(mgr, xoff, yoff, xtab, 0);
-	break;
+        d0 &= lexlqrev(mgr, xoff, yoff, xtab, 0);
+        break;
       }
     case SRT_GQ_REV:
       {
-	d0 &= lexlqrev(mgr, yoff, xoff, xtab, 0);
-	break;
+        d0 &= lexlqrev(mgr, yoff, xoff, xtab, 0);
+        break;
       }
     default:
       {
-	// dont use additional lexicographic ordering
-	break;
+        // dont use additional lexicographic ordering
+        break;
       }
     }
 
@@ -208,48 +209,48 @@ namespace Gecode {
     switch (lex) {
     case SRT_LE:
       {
-	d0 &= lexlt(mgr, xoff, yoff, xtab, xtab - 1);
-	break;
+        d0 &= lexlt(mgr, xoff, yoff, xtab, xtab - 1);
+        break;
       }
     case SRT_GR:
       {
-	d0 &= lexlt(mgr, yoff, xoff, xtab, xtab - 1);
-	break;
+        d0 &= lexlt(mgr, yoff, xoff, xtab, xtab - 1);
+        break;
       }
     case SRT_LQ:
       {
-	d0 &= lexlq(mgr, xoff, yoff, xtab, xtab - 1);
-	break;
+        d0 &= lexlq(mgr, xoff, yoff, xtab, xtab - 1);
+        break;
       }
     case SRT_GQ:
       {
-	d0 &= lexlq(mgr, yoff, xoff, xtab, xtab - 1);
-	break;
+        d0 &= lexlq(mgr, yoff, xoff, xtab, xtab - 1);
+        break;
       }
     case SRT_LE_REV:
       {
-	d0 &= lexltrev(mgr, xoff, yoff, xtab, 0);
-	break;
+        d0 &= lexltrev(mgr, xoff, yoff, xtab, 0);
+        break;
       }
     case SRT_GR_REV:
       {
-	d0 &= lexltrev(mgr, yoff, xoff, xtab, 0);
-	break;
+        d0 &= lexltrev(mgr, yoff, xoff, xtab, 0);
+        break;
       }
     case SRT_LQ_REV:
       {
-	d0 &= lexlqrev(mgr, xoff, yoff, xtab, 0);
-	break;
+        d0 &= lexlqrev(mgr, xoff, yoff, xtab, 0);
+        break;
       }
     case SRT_GQ_REV:
       {
-	d0 &= lexlqrev(mgr, yoff, xoff, xtab, 0);
-	break;
+        d0 &= lexlqrev(mgr, yoff, xoff, xtab, 0);
+        break;
       }
     default:
       {
-	// dont use additional lexicographic ordering
-	break;
+        // dont use additional lexicographic ordering
+        break;
       }
     }
     
@@ -311,42 +312,42 @@ namespace Gecode {
   template <class Rel>
   forceinline void 
   atmost_con(Space* home, const CpltSetVar& x, const CpltSetVar& y, int c, 
-	     Rel lex, int card, SetConLevel scl) {
+             Rel lex, int card, SetConLevel scl) {
     CpltSetView xv(x);
     CpltSetView yv(y);
 
     switch (scl) {
     case SCL_SPL:
       {
-	SplitCpltSetView spx(xv);
-	SplitCpltSetView spy(yv);
-	atmost_post(home, spx, spy, c, lex, card, scl);
-	break;
+        SplitCpltSetView spx(xv);
+        SplitCpltSetView spy(yv);
+        atmost_post(home, spx, spy, c, lex, card, scl);
+        break;
       }
     case SCL_BND_BDD:
       {
-	BndCpltSetView bndx(xv);
-	BndCpltSetView bndy(yv);
-	atmost_post(home, bndx, bndy, c, lex, card, scl);
-	break;
+        BndCpltSetView bndx(xv);
+        BndCpltSetView bndy(yv);
+        atmost_post(home, bndx, bndy, c, lex, card, scl);
+        break;
       }
     case SCL_CRD:
       {
-	CrdCpltSetView crdx(xv);
-	CrdCpltSetView crdy(yv);
-	atmost_post(home, crdx, crdy, c, lex, card, scl);
-	break;
+        CrdCpltSetView crdx(xv);
+        CrdCpltSetView crdy(yv);
+        atmost_post(home, crdx, crdy, c, lex, card, scl);
+        break;
       }
     case SCL_LEX:
       {
-	LexCpltSetView lexx(xv);
-	LexCpltSetView lexy(yv);
-	atmost_post(home, lexx, lexy, c, lex, card, scl);
-	break;
+        LexCpltSetView lexx(xv);
+        LexCpltSetView lexy(yv);
+        atmost_post(home, lexx, lexy, c, lex, card, scl);
+        break;
       }
     default:
       {
-	atmost_post(home, xv, yv, c, lex, card, scl);
+        atmost_post(home, xv, yv, c, lex, card, scl);
       }
     }
   }
@@ -354,7 +355,7 @@ namespace Gecode {
   template <class Rel>
   forceinline void 
   atmost_con(Space* home, const CpltSetVar& x, const CpltSetVar& y, const CpltSetVar& z, 
-	     int c, Rel lex, int card, SetConLevel scl) {
+             int c, Rel lex, int card, SetConLevel scl) {
     ViewArray<CpltSetView> bv(home, 3);
     bv[0] = x;
     bv[1] = y;
@@ -362,43 +363,43 @@ namespace Gecode {
     switch (scl) {
     case SCL_SPL:
       {
-	ViewArray<SplitCpltSetView> sv(home, 3);
-	for (int i = 3; i--; ) {
-	  sv[i].init(bv[i]);
-	}
-	atmost_post(home, sv, c, lex, card, scl);
-	break;
+        ViewArray<SplitCpltSetView> sv(home, 3);
+        for (int i = 3; i--; ) {
+          sv[i].init(bv[i]);
+        }
+        atmost_post(home, sv, c, lex, card, scl);
+        break;
       }
     case SCL_BND_BDD:
       {
-	ViewArray<BndCpltSetView> bndv(home, 3);
-	for (int i = 3; i--; ) {
-	  bndv[i].init(bv[i]);
-	}
-	atmost_post(home, bndv, c, lex, card, scl);
-	break;
+        ViewArray<BndCpltSetView> bndv(home, 3);
+        for (int i = 3; i--; ) {
+          bndv[i].init(bv[i]);
+        }
+        atmost_post(home, bndv, c, lex, card, scl);
+        break;
       }
     case SCL_CRD:
       {
-	ViewArray<CrdCpltSetView> crdv(home, 3);
-	for (int i = 3; i--; ) {
-	  crdv[i].init(bv[i]);
-	}
-	atmost_post(home, crdv, c, lex, card, scl);
-	break;
+        ViewArray<CrdCpltSetView> crdv(home, 3);
+        for (int i = 3; i--; ) {
+          crdv[i].init(bv[i]);
+        }
+        atmost_post(home, crdv, c, lex, card, scl);
+        break;
       }
     case SCL_LEX:
       {
-	ViewArray<LexCpltSetView> lexv(home, 3);
-	for (int i = 3; i--; ) {
-	  lexv[i].init(bv[i]);
-	}
-	atmost_post(home, lexv, c, lex, card, scl);
-	break;
+        ViewArray<LexCpltSetView> lexv(home, 3);
+        for (int i = 3; i--; ) {
+          lexv[i].init(bv[i]);
+        }
+        atmost_post(home, lexv, c, lex, card, scl);
+        break;
       }
     default:
       {
-	atmost_post(home, bv, c, lex, card, scl);
+        atmost_post(home, bv, c, lex, card, scl);
       }
     }
   }
@@ -414,43 +415,43 @@ namespace Gecode {
     switch (scl) {
     case SCL_SPL:
       {
-	ViewArray<SplitCpltSetView> sv(home, n);
-	for (int i = n; i--; ) {
-	  sv[i].init(bv[i]);
-	}
-	atmostOne_post(home, sv, c, scl);
-	break;
+        ViewArray<SplitCpltSetView> sv(home, n);
+        for (int i = n; i--; ) {
+          sv[i].init(bv[i]);
+        }
+        atmostOne_post(home, sv, c, scl);
+        break;
       }
     case SCL_BND_BDD:
       {
-	ViewArray<BndCpltSetView> bndv(home, n);
-	for (int i = n; i--; ) {
-	  bndv[i].init(bv[i]);
-	}
-	atmostOne_post(home, bndv, c, scl);
-	break;
+        ViewArray<BndCpltSetView> bndv(home, n);
+        for (int i = n; i--; ) {
+          bndv[i].init(bv[i]);
+        }
+        atmostOne_post(home, bndv, c, scl);
+        break;
       }
     case SCL_CRD:
       {
-	ViewArray<CrdCpltSetView> crdv(home, n);
-	for (int i = n; i--; ) {
-	  crdv[i].init(bv[i]);
-	}
-	atmostOne_post(home, crdv, c, scl);
-	break;
+        ViewArray<CrdCpltSetView> crdv(home, n);
+        for (int i = n; i--; ) {
+          crdv[i].init(bv[i]);
+        }
+        atmostOne_post(home, crdv, c, scl);
+        break;
       }
     case SCL_LEX:
       {
-	ViewArray<LexCpltSetView> lexv(home, n);
-	for (int i = n; i--; ) {
-	  lexv[i].init(bv[i]);
-	}
-	atmostOne_post(home, lexv, c, scl);
-	break;
+        ViewArray<LexCpltSetView> lexv(home, n);
+        for (int i = n; i--; ) {
+          lexv[i].init(bv[i]);
+        }
+        atmostOne_post(home, lexv, c, scl);
+        break;
       }
     default:
       {
-	atmostOne_post(home, bv, c, scl);
+        atmostOne_post(home, bv, c, scl);
       }
     }
   }

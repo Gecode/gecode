@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -92,53 +93,53 @@ namespace Gecode {
 //     switch(r) {
 //     case IRT_EQ:
 //       {
-// 	Gecode::Int::IntView xv(x);
-// 	Gecode::Set::SingletonView xsingle(xv);
-// 	GECODE_ES_FAIL(home,
-// 		       (Set::Rel::Eq<SetCpltSetView,Gecode::Set::SingletonView>
-// 			::post(home,ss,xsingle)));
+//         Gecode::Int::IntView xv(x);
+//         Gecode::Set::SingletonView xsingle(xv);
+//         GECODE_ES_FAIL(home,
+//                        (Set::Rel::Eq<SetCpltSetView,Gecode::Set::SingletonView>
+//                         ::post(home,ss,xsingle)));
 //       }
 //       break;
 //     case IRT_NQ:
 //       {
-// 	Gecode::Int::IntView xv(x);
-// 	Gecode::Set::SingletonView xsingle(xv);
-// 	GECODE_ES_FAIL(home,
-// 		       (Set::Rel::Distinct<SetCpltSetView,Gecode::Set::SingletonView>
-// 			::post(home,ss,xsingle)));
+//         Gecode::Int::IntView xv(x);
+//         Gecode::Set::SingletonView xsingle(xv);
+//         GECODE_ES_FAIL(home,
+//                        (Set::Rel::Distinct<SetCpltSetView,Gecode::Set::SingletonView>
+//                         ::post(home,ss,xsingle)));
 
 //       }
 //       break;
 //     case IRT_LQ:
 //       {
-// 	IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
-// 	rel(home, tmp, IRT_LQ, x);
-// 	GECODE_ES_FAIL(home, (Set::Int::MaxElement<SetCpltSetView, PC_CPLTSET_DOM>
-// 			      ::post(home,ss,tmp)));
+//         IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
+//         rel(home, tmp, IRT_LQ, x);
+//         GECODE_ES_FAIL(home, (Set::Int::MaxElement<SetCpltSetView, PC_CPLTSET_DOM>
+//                               ::post(home,ss,tmp)));
 //       }
 //       break;
 //     case IRT_LE:
 //       {
-// 	IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
-// 	rel(home, tmp, IRT_LE, x);
-// 	GECODE_ES_FAIL(home, (Set::Int::MaxElement<SetCpltSetView, PC_CPLTSET_DOM>
-// 			      ::post(home,ss,tmp)));
+//         IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
+//         rel(home, tmp, IRT_LE, x);
+//         GECODE_ES_FAIL(home, (Set::Int::MaxElement<SetCpltSetView, PC_CPLTSET_DOM>
+//                               ::post(home,ss,tmp)));
 //       }
 //       break;
 //     case IRT_GQ:
 //       {
-// 	IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
-// 	rel(home, tmp, IRT_GQ, x);
-// 	GECODE_ES_FAIL(home, (Set::Int::MinElement<SetCpltSetView, PC_CPLTSET_DOM>
-// 			      ::post(home,ss,tmp)));
+//         IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
+//         rel(home, tmp, IRT_GQ, x);
+//         GECODE_ES_FAIL(home, (Set::Int::MinElement<SetCpltSetView, PC_CPLTSET_DOM>
+//                               ::post(home,ss,tmp)));
 //       }
 //       break;
 //     case IRT_GR:
 //       {
-// 	IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
-// 	rel(home, tmp, IRT_GR, x);
-// 	GECODE_ES_FAIL(home, (Set::Int::MinElement<SetCpltSetView, PC_CPLTSET_DOM>
-// 			      ::post(home,ss,tmp)));
+//         IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
+//         rel(home, tmp, IRT_GR, x);
+//         GECODE_ES_FAIL(home, (Set::Int::MinElement<SetCpltSetView, PC_CPLTSET_DOM>
+//                               ::post(home,ss,tmp)));
 //       }
 //       break;
 //     }
@@ -164,7 +165,7 @@ namespace Gecode {
 //     SetCpltSetView ss(cs);
 
 //     GECODE_ES_FAIL(home, (Set::Int::MinElement<SetCpltSetView, PC_CPLTSET_DOM>
-// 		   ::post(home,ss,x)));
+//                    ::post(home,ss,x)));
 //   }
 //   void
 //   max(Space* home, CpltSetVar s, IntVar x){
@@ -174,7 +175,7 @@ namespace Gecode {
 //     SetCpltSetView ss(cs);
 
 //     GECODE_ES_FAIL(home, (Set::Int::MaxElement<SetCpltSetView, PC_CPLTSET_DOM>
-// 		   ::post(home,ss,x)));
+//                    ::post(home,ss,x)));
 //   }
 
 //   void
@@ -197,7 +198,7 @@ namespace Gecode {
   }
 
 //   void weights(Space* home, const IntArgs& elements, const IntArgs& weights,
-// 	       CpltSetVar x, IntVar y) {
+//                CpltSetVar x, IntVar y) {
 //     if (home->failed()) return;
 //     CpltSetView bs(x);
 //     CrdCpltSetView cs(bs);
@@ -205,7 +206,7 @@ namespace Gecode {
 
 //     Gecode::Int::IntView yv(y);
 //     GECODE_ES_FAIL(home, (Set::Int::Weights<SetCpltSetView>
-// 			  ::post(home,elements,weights,ss,yv)));
+//                           ::post(home,elements,weights,ss,yv)));
 //   }
 
 //   void
@@ -218,7 +219,7 @@ namespace Gecode {
 //   }
 
 //   void rel(Space* home, CpltSetVar x, SetOpType op, CpltSetVar y, 
-// 	   SetRelType r, CpltSetVar z) {
+//            SetRelType r, CpltSetVar z) {
 //     CpltSetView xv(x); 
 //     CpltSetView yv(y); 
 //     CpltSetView zv(z); 
@@ -252,16 +253,16 @@ namespace Gecode {
 //       break;
 //     case SOT_DUNION: 
 //       GECODE_ES_FAIL(home,
-// 		     (Set::RelOp::PartitionN<SetCpltSetView,SetCpltSetView>::post(home, sv, ss)));
+//                      (Set::RelOp::PartitionN<SetCpltSetView,SetCpltSetView>::post(home, sv, ss)));
 // //       GECODE_ES_FAIL(home,
-// // 		     (Set::RelOp::PartitionN<CpltSetView,CpltSetView>::post(home, bv, bs)));
+// //                      (Set::RelOp::PartitionN<CpltSetView,CpltSetView>::post(home, bv, bs)));
       
 //       break;
 //     case SOT_INTER:
 //       {
-// 	GECODE_ES_FAIL(home,
-// 		       (Set::RelOp::IntersectionN<SetCpltSetView,SetCpltSetView>
-// 			::post(home, sv, ss)));
+//         GECODE_ES_FAIL(home,
+//                        (Set::RelOp::IntersectionN<SetCpltSetView,SetCpltSetView>
+//                         ::post(home, sv, ss)));
 //       }
 //       break;
 //     case SOT_MINUS:
@@ -288,16 +289,16 @@ namespace Gecode {
 //     switch(op) {
 //     case SOT_UNION:
 //       GECODE_ES_FAIL(home,(Set::RelOp::UnionN<Gecode::Set::SingletonView,SetCpltSetView>
-// 			   ::post(home, xa, sv)));
+//                            ::post(home, xa, sv)));
 //       break;
 //     case SOT_DUNION:
 //       GECODE_ES_FAIL(home,(Set::RelOp::PartitionN<Gecode::Set::SingletonView,SetCpltSetView>
-// 			   ::post(home, xa, sv)));
+//                            ::post(home, xa, sv)));
 //       break;
 //     case SOT_INTER:
 //       GECODE_ES_FAIL(home,
-// 		     (Set::RelOp::IntersectionN<Gecode::Set::SingletonView,SetCpltSetView>
-// 		      ::post(home, xa, sv)));
+//                      (Set::RelOp::IntersectionN<Gecode::Set::SingletonView,SetCpltSetView>
+//                       ::post(home, xa, sv)));
 //       break;
 //     case SOT_MINUS:
 //       throw InvalidRelation("rel minus");
@@ -306,7 +307,7 @@ namespace Gecode {
 //   }
 
 //   void  rel(Space* home, const IntSet& x, SetOpType op, CpltSetVar y,
-// 	    SetRelType r, CpltSetVar z) {
+//             SetRelType r, CpltSetVar z) {
 //     ConstantView xv(home, x);
 
 //     CpltSetView by(y);
@@ -322,7 +323,7 @@ namespace Gecode {
 //   }
 
 //   void  rel(Space* home, CpltSetVar x, SetOpType op, const IntSet& y,
-// 	    SetRelType r, CpltSetVar z) {
+//             SetRelType r, CpltSetVar z) {
 //     ConstantView yv(home, y);
 //     CpltSetView bx(x);
 //     CrdCpltSetView cx(bx);
@@ -335,73 +336,73 @@ namespace Gecode {
 //     if (op==SOT_MINUS) {
 //       switch(r) {
 //       case SRT_EQ:
-// 	{
-// 	  ComplementView<ConstantView> cy(yv);
-// 	  GECODE_ES_FAIL(home,
-// 			 (Set::RelOp::Intersection<ComplementView<ConstantView>,
-// 			  SetCpltSetView,SetCpltSetView>
-// 			  ::post(home,cy, sx, sz)));
-// 	}
-// 	break;
+//         {
+//           ComplementView<ConstantView> cy(yv);
+//           GECODE_ES_FAIL(home,
+//                          (Set::RelOp::Intersection<ComplementView<ConstantView>,
+//                           SetCpltSetView,SetCpltSetView>
+//                           ::post(home,cy, sx, sz)));
+//         }
+//         break;
 //       case SRT_NQ:
-// 	{
-// 	  SetVar tmp(home);
-// 	  GECODE_ES_FAIL(home,
-// 			 (Set::Rel::Distinct<SetCpltSetView,SetView>
-// 			  ::post(home,sz,tmp)));
-// 	  ComplementView<ConstantView> cy(yv);
-// 	  GECODE_ES_FAIL(home,
-// 			 (Set::RelOp::Intersection<ComplementView<ConstantView>,
-// 			  SetCpltSetView,SetView>
-// 			  ::post(home,cy,sx,tmp)));
-// 	}
-// 	break;
+//         {
+//           SetVar tmp(home);
+//           GECODE_ES_FAIL(home,
+//                          (Set::Rel::Distinct<SetCpltSetView,SetView>
+//                           ::post(home,sz,tmp)));
+//           ComplementView<ConstantView> cy(yv);
+//           GECODE_ES_FAIL(home,
+//                          (Set::RelOp::Intersection<ComplementView<ConstantView>,
+//                           SetCpltSetView,SetView>
+//                           ::post(home,cy,sx,tmp)));
+//         }
+//         break;
 //       case SRT_SUB:
-// 	{
-// 	  ComplementView<ConstantView> cy(yv);
-// 	  GECODE_ES_FAIL(home,
-// 			 (Set::RelOp::SuperOfInter<SetCpltSetView,
-// 			  ComplementView<ConstantView>,SetCpltSetView>
-// 			  ::post(home,sx,cy,sz)));
-// 	}
-// 	break;
+//         {
+//           ComplementView<ConstantView> cy(yv);
+//           GECODE_ES_FAIL(home,
+//                          (Set::RelOp::SuperOfInter<SetCpltSetView,
+//                           ComplementView<ConstantView>,SetCpltSetView>
+//                           ::post(home,sx,cy,sz)));
+//         }
+//         break;
 //       case SRT_SUP:
-// 	{
-// 	  SetVar tmp(home);
-// 	  GECODE_ES_FAIL(home,
-// 			 (Set::Rel::SubSet<SetCpltSetView,SetView>::post(home,sz,tmp)));
-	  
-// 	  ComplementView<SetCpltSetView> cx(sx);
-// 	  GECODE_ES_FAIL(home,
-// 			 (Set::RelOp::Intersection<ConstantView,
-// 			  ComplementView<SetCpltSetView>,SetView>
-// 			  ::post(home,yv,cx,tmp)));
-// 	}
-// 	break;
+//         {
+//           SetVar tmp(home);
+//           GECODE_ES_FAIL(home,
+//                          (Set::Rel::SubSet<SetCpltSetView,SetView>::post(home,sz,tmp)));
+          
+//           ComplementView<SetCpltSetView> cx(sx);
+//           GECODE_ES_FAIL(home,
+//                          (Set::RelOp::Intersection<ConstantView,
+//                           ComplementView<SetCpltSetView>,SetView>
+//                           ::post(home,yv,cx,tmp)));
+//         }
+//         break;
 //       case SRT_DISJ:
-// 	{
-// 	  SetVar tmp(home);
-// 	  EmptyView emptyset;
-// 	  GECODE_ES_FAIL(home,(Set::RelOp::SuperOfInter<SetCpltSetView,SetView,EmptyView>
-// 			       ::post(home, sz, tmp, emptyset)));
+//         {
+//           SetVar tmp(home);
+//           EmptyView emptyset;
+//           GECODE_ES_FAIL(home,(Set::RelOp::SuperOfInter<SetCpltSetView,SetView,EmptyView>
+//                                ::post(home, sz, tmp, emptyset)));
 
-// 	  ComplementView<ConstantView> cy(yv);
-// 	  GECODE_ES_FAIL(home,
-// 			 (Set::RelOp::Intersection<ComplementView<ConstantView>,
-// 			  SetCpltSetView,SetView>
-// 			  ::post(home,cy,sx,tmp)));
-// 	}
-// 	break;
+//           ComplementView<ConstantView> cy(yv);
+//           GECODE_ES_FAIL(home,
+//                          (Set::RelOp::Intersection<ComplementView<ConstantView>,
+//                           SetCpltSetView,SetView>
+//                           ::post(home,cy,sx,tmp)));
+//         }
+//         break;
 //       case SRT_CMPL:
-// 	{
+//         {
 
-// 	  ComplementView<SetCpltSetView> cx(sx);
-// 	  GECODE_ES_FAIL(home,
-// 			 (Set::RelOp::Union<ConstantView,
-// 			  ComplementView<SetCpltSetView>,
-// 			  SetCpltSetView>::post(home, yv, cx, sz)));
-// 	}
-// 	break;
+//           ComplementView<SetCpltSetView> cx(sx);
+//           GECODE_ES_FAIL(home,
+//                          (Set::RelOp::Union<ConstantView,
+//                           ComplementView<SetCpltSetView>,
+//                           SetCpltSetView>::post(home, yv, cx, sz)));
+//         }
+//         break;
 //       }
 //     } else {
 //       Gecode::Set::RelOp::rel_op_post<ConstantView,SetCpltSetView,SetCpltSetView>(home, yv, op, sx, r, sz);
@@ -410,7 +411,7 @@ namespace Gecode {
 //   }
 
 //   void  rel(Space* home, CpltSetVar x, SetOpType op, CpltSetVar y,
-// 	    SetRelType r, const IntSet& z) {
+//             SetRelType r, const IntSet& z) {
 //     ConstantView zv(home, z);
 //     CpltSetView bx(x);
 //     CrdCpltSetView cx(bx);
@@ -423,7 +424,7 @@ namespace Gecode {
 //   }
 
 //   void  rel(Space* home, const IntSet& x, SetOpType op, const IntSet& y,
-// 	    SetRelType r, CpltSetVar z) {
+//             SetRelType r, CpltSetVar z) {
 //     ConstantView xv(home, x);
 //     ConstantView yv(home, y);
 
@@ -435,7 +436,7 @@ namespace Gecode {
 //   }
 
 //   void  rel(Space* home, const IntSet& x, SetOpType op, CpltSetVar y, SetRelType r,
-// 	    const IntSet& z) {
+//             const IntSet& z) {
 //     ConstantView xv(home, x);
 //     ConstantView zv(home, z);
 //     CpltSetView by(y);
@@ -446,7 +447,7 @@ namespace Gecode {
 //   }
 
 //   void  rel(Space* home, CpltSetVar x, SetOpType op, const IntSet& y, SetRelType r,
-// 	    const IntSet& z) {
+//             const IntSet& z) {
 //     ConstantView yv(home, y);
 //     ConstantView zv(home, z);
 
@@ -456,71 +457,71 @@ namespace Gecode {
 //     if (op==SOT_MINUS) {
 //       switch(r) {
 //       case SRT_EQ:
-// 	{
-// 	  ComplementView<ConstantView> cy(yv);
-// 	  GECODE_ES_FAIL(home,
-// 			 (Set::RelOp::Intersection<ComplementView<ConstantView>,
-// 			  SetCpltSetView,ConstantView>
-// 			  ::post(home,cy,sx,zv)));
-// 	}
-// 	break;
+//         {
+//           ComplementView<ConstantView> cy(yv);
+//           GECODE_ES_FAIL(home,
+//                          (Set::RelOp::Intersection<ComplementView<ConstantView>,
+//                           SetCpltSetView,ConstantView>
+//                           ::post(home,cy,sx,zv)));
+//         }
+//         break;
 //       case SRT_NQ:
-// 	{
-// 	  SetVar tmp(home);
-// 	  GECODE_ES_FAIL(home,
-// 			 (Set::Rel::Distinct<ConstantView,SetView>
-// 			  ::post(home,zv,tmp)));
-// 	  ComplementView<ConstantView> cy(yv);
-// 	  GECODE_ES_FAIL(home,
-// 			 (Set::RelOp::Intersection<ComplementView<ConstantView>,
-// 			  SetCpltSetView,SetView>
-// 			  ::post(home,cy,sx,tmp)));
-// 	}
-// 	break;
+//         {
+//           SetVar tmp(home);
+//           GECODE_ES_FAIL(home,
+//                          (Set::Rel::Distinct<ConstantView,SetView>
+//                           ::post(home,zv,tmp)));
+//           ComplementView<ConstantView> cy(yv);
+//           GECODE_ES_FAIL(home,
+//                          (Set::RelOp::Intersection<ComplementView<ConstantView>,
+//                           SetCpltSetView,SetView>
+//                           ::post(home,cy,sx,tmp)));
+//         }
+//         break;
 //       case SRT_SUB:
-// 	{
-// 	  ComplementView<ConstantView> cy(yv);
-// 	  GECODE_ES_FAIL(home,
-// 			 (Set::RelOp::SuperOfInter<SetCpltSetView,
-// 			  ComplementView<ConstantView>,ConstantView>
-// 			  ::post(home,sx,cy,zv)));
-// 	}
-// 	break;
+//         {
+//           ComplementView<ConstantView> cy(yv);
+//           GECODE_ES_FAIL(home,
+//                          (Set::RelOp::SuperOfInter<SetCpltSetView,
+//                           ComplementView<ConstantView>,ConstantView>
+//                           ::post(home,sx,cy,zv)));
+//         }
+//         break;
 //       case SRT_SUP:
-// 	{
-// 	  // z <= tmp
-// 	  SetVar tmp(home,z,Limits::Set::int_min, Limits::Set::int_max);
-// 	  ComplementView<SetCpltSetView> cx(sx);
-	  
-// 	  GECODE_ES_FAIL(home,
-// 			 (Set::RelOp::Intersection<ConstantView,
-// 			  ComplementView<SetCpltSetView>,SetView>
-// 			  ::post(home,yv,cx,tmp)));
-// 	}
-// 	break;
+//         {
+//           // z <= tmp
+//           SetVar tmp(home,z,Limits::Set::int_min, Limits::Set::int_max);
+//           ComplementView<SetCpltSetView> cx(sx);
+          
+//           GECODE_ES_FAIL(home,
+//                          (Set::RelOp::Intersection<ConstantView,
+//                           ComplementView<SetCpltSetView>,SetView>
+//                           ::post(home,yv,cx,tmp)));
+//         }
+//         break;
 //       case SRT_DISJ:
-// 	{
-// 	  SetVar tmp(home);
-// 	  SetView tmpv(tmp);
-// 	  IntSetRanges zi(z);
-// 	  GECODE_ME_FAIL(home, tmpv.excludeI(home, zi));
-	  
-// 	  ComplementView<ConstantView> cy(yv);
-// 	  GECODE_ES_FAIL(home,
-// 			 (Set::RelOp::Intersection<ComplementView<ConstantView>,
-// 			  SetCpltSetView,SetView>
-// 			  ::post(home,cy,sx,tmp)));
-// 	}
-// 	break;
+//         {
+//           SetVar tmp(home);
+//           SetView tmpv(tmp);
+//           IntSetRanges zi(z);
+//           GECODE_ME_FAIL(home, tmpv.excludeI(home, zi));
+          
+//           ComplementView<ConstantView> cy(yv);
+//           GECODE_ES_FAIL(home,
+//                          (Set::RelOp::Intersection<ComplementView<ConstantView>,
+//                           SetCpltSetView,SetView>
+//                           ::post(home,cy,sx,tmp)));
+//         }
+//         break;
 //       case SRT_CMPL:
-// 	{
-// 	  ComplementView<SetCpltSetView> cx(sx);
-// 	  GECODE_ES_FAIL(home,
-// 			 (Set::RelOp::Union<ConstantView,
-// 			  ComplementView<SetCpltSetView>,
-// 			  ConstantView>::post(home, yv, cx, zv)));
-// 	}
-// 	break;
+//         {
+//           ComplementView<SetCpltSetView> cx(sx);
+//           GECODE_ES_FAIL(home,
+//                          (Set::RelOp::Union<ConstantView,
+//                           ComplementView<SetCpltSetView>,
+//                           ConstantView>::post(home, yv, cx, zv)));
+//         }
+//         break;
 //       }
 //     } else {
 //       Gecode::Set::RelOp::rel_op_post<ConstantView,SetCpltSetView,ConstantView>(home, yv, op, sx, r, zv);
@@ -621,7 +622,7 @@ namespace Gecode {
 //     SetCpltSetView sy(cy);
 
 //     GECODE_ES_FAIL(home,(Gecode::Set::Select::SelectIntersection<ComplementView<SetCpltSetView>,
-// 			 SetCpltSetView>::post(home,cz,iv,sy,universe)));
+//                          SetCpltSetView>::post(home,cz,iv,sy,universe)));
 
 //   }
 
@@ -629,7 +630,7 @@ namespace Gecode {
 //     if (home->failed()) return;
 //     Set::Select::IdxViewArray<SetCpltSetView> iv(home, x);
 //     IntSet universe(Limits::Set::int_min,
-// 		    Limits::Set::int_max);
+//                     Limits::Set::int_max);
 //     CpltSetView by(y);
 //     CrdCpltSetView cy(by);
 //     SetCpltSetView sy(cy);
@@ -640,12 +641,12 @@ namespace Gecode {
 
 //     GECODE_ES_FAIL(home,
 //                    (Gecode::Set::Select::SelectIntersection<SetCpltSetView,SetCpltSetView>::
-// 		    post(home,sz,iv,sy,universe)));
+//                     post(home,sz,iv,sy,universe)));
 //   }
 
 
 //   void selectInterIn(Space* home, const CpltSetVarArgs& x, CpltSetVar y, CpltSetVar z,
-// 		     const IntSet& universe) {
+//                      const IntSet& universe) {
 //     if (home->failed()) return;
 //     Set::Select::IdxViewArray<SetCpltSetView> iv(home, x);
 //     CpltSetView by(y);
@@ -658,7 +659,7 @@ namespace Gecode {
 
 //     GECODE_ES_FAIL(home,
 //                    (Gecode::Set::Select::SelectIntersection<SetCpltSetView,SetCpltSetView>::
-// 		    post(home,sz,iv,sy,universe)));
+//                     post(home,sz,iv,sy,universe)));
 //   }
 
 
@@ -687,8 +688,8 @@ namespace Gecode {
 
 //     IntSet universe(Limits::Set::int_min, Limits::Set::int_max);
 //     GECODE_ES_FAIL(home,(Gecode::Set::Select::SelectIntersection<ComplementView<SetCpltSetView>,
-// 			 SingletonView>::post(home, cz, iv,
-// 					      single, universe)));
+//                          SingletonView>::post(home, cz, iv,
+//                                               single, universe)));
 //   }
 
 

@@ -1,4 +1,5 @@
-/*
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+        /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
  *
@@ -57,7 +58,7 @@ namespace Gecode { namespace CpltSet {
     if (!home->failed()) {
       int n = x.size();
       for (int i = n; i--; ) 
-	x[i].cancel(home, this, PC_CPLTSET_DOM);
+        x[i].cancel(home, this, PC_CPLTSET_DOM);
     }
     Propagator::dispose(home);
     return sizeof(*this);
@@ -88,34 +89,34 @@ namespace Gecode { namespace CpltSet {
     // std::cerr << "p: " << idx <<": ";
     for (int i = n; i--; c--) {
       if (i != idx) {
-	// std::cerr << i << ",";
+        // std::cerr << i << ",";
 
-// 	Set::GlbRanges<View> glbtest(x[i]);
+//         Set::GlbRanges<View> glbtest(x[i]);
 
-// 	std::cerr << "testglb: ";
-// 	while (glbtest()) {
-// 	  std::cerr << glbtest.min() << ".." << glbtest.max() << ",";
-// 	  ++glbtest;
-// 	}
-// 	std::cerr << "\n";
-	
-	Set::LubRanges<View> lub(x[i]);
-	Set::LubRanges<View> lubidx(x[idx]);
-	Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > interlub(lub, lubidx);
-	subsumed &= !interlub();
+//         std::cerr << "testglb: ";
+//         while (glbtest()) {
+//           std::cerr << glbtest.min() << ".." << glbtest.max() << ",";
+//           ++glbtest;
+//         }
+//         std::cerr << "\n";
+        
+        Set::LubRanges<View> lub(x[i]);
+        Set::LubRanges<View> lubidx(x[idx]);
+        Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > interlub(lub, lubidx);
+        subsumed &= !interlub();
 
-	Set::GlbRanges<View> glb(x[i]);
-	if (glb()) {
-	  // std::cerr << "GLB: ";
-	  Set::LubRanges<View> lubx(x[idx]);
-	  Gecode::Iter::Ranges::Inter<Set::GlbRanges<View>, Set::LubRanges<View> > inter(glb, lubx);
-	  ModEvent me = x[idx].excludeI(home, inter);
-	  GECODE_ME_CHECK(me);
-	  // std::cerr << "ME=" << me << " ";
-	  subsumed &= (me == ME_CPLTSET_NONE);
-	} // else {
-// 	  std::cerr << "NOGLB: ";
-// 	}
+        Set::GlbRanges<View> glb(x[i]);
+        if (glb()) {
+          // std::cerr << "GLB: ";
+          Set::LubRanges<View> lubx(x[idx]);
+          Gecode::Iter::Ranges::Inter<Set::GlbRanges<View>, Set::LubRanges<View> > inter(glb, lubx);
+          ModEvent me = x[idx].excludeI(home, inter);
+          GECODE_ME_CHECK(me);
+          // std::cerr << "ME=" << me << " ";
+          subsumed &= (me == ME_CPLTSET_NONE);
+        } // else {
+//           std::cerr << "NOGLB: ";
+//         }
       }
       // std::cerr << "SUBS ?" <<  subsumed << " c=" << c << "\n";
     }
@@ -203,131 +204,131 @@ namespace Gecode { namespace CpltSet {
 
       GlbValues<View> glb(x);
       while (glb()) {
-	int v = glb.val();
-	// row shall denote the number of complete rows before the current entry
-	int row = v / s;
-	int col = v % s;
+        int v = glb.val();
+        // row shall denote the number of complete rows before the current entry
+        int row = v / s;
+        int col = v % s;
 
-	// value falls in the last column
-	if (col == 0) {
-	  row--;
-	  col = s;
-	}
-	
-	// std::cerr << "v=" << v << " at " << row << "," << col << "\n";
-	
-	// clear row
-	// std::cerr << "clear row exclude: ";
-	for (int k = 0; k < s; k++) {
-	  if (k + 1 != col) {
-	    int val = (row * s) + k + 1;
-	    // std::cerr << val << ",";
+        // value falls in the last column
+        if (col == 0) {
+          row--;
+          col = s;
+        }
+        
+        // std::cerr << "v=" << v << " at " << row << "," << col << "\n";
+        
+        // clear row
+        // std::cerr << "clear row exclude: ";
+        for (int k = 0; k < s; k++) {
+          if (k + 1 != col) {
+            int val = (row * s) + k + 1;
+            // std::cerr << val << ",";
 
-	    // 	    IntSetRanges ir(exclude);
-	    // 	    Iter::Ranges::Singleton vr(val, val);
-	    // 	    Iter::Ranges::Union<IntSetRanges, Iter::Ranges::Singleton> u(ir, vr);
-	    // 	    IntSet newset(u);
-	    // 	    exclude.update(false, newset);
+            //             IntSetRanges ir(exclude);
+            //             Iter::Ranges::Singleton vr(val, val);
+            //             Iter::Ranges::Union<IntSetRanges, Iter::Ranges::Singleton> u(ir, vr);
+            //             IntSet newset(u);
+            //             exclude.update(false, newset);
 
- 	    da[cda] = val;
- 	    cda++;
+             da[cda] = val;
+             cda++;
 
-	    // 	    ModEvent me = x.exclude(home, val);
-	    // 	    GECODE_ME_CHECK(me);
-	  }
-	}
-	
-// 	std::cerr << "exclude row....";
-// 	IntSet isexrow(exrow, crow);
-// 	IntSetRanges irr(isexrow);
-// 	ModEvent merow = x.excludeI(home, irr);
-// 	GECODE_ME_CHECK(merow);
-// 	std::cerr << "done!\n";
-// 	std::cerr << "\n";
+            //             ModEvent me = x.exclude(home, val);
+            //             GECODE_ME_CHECK(me);
+          }
+        }
+        
+//         std::cerr << "exclude row....";
+//         IntSet isexrow(exrow, crow);
+//         IntSetRanges irr(isexrow);
+//         ModEvent merow = x.excludeI(home, irr);
+//         GECODE_ME_CHECK(merow);
+//         std::cerr << "done!\n";
+//         std::cerr << "\n";
 
-	//	std::cerr << "results in " << x << "\n";
+        //        std::cerr << "results in " << x << "\n";
 
-	// clear col
+        // clear col
 
-	// std::cerr << "clear col exclude: ";
-	for (int k = 0; k < s; k++) {
-	  if (k != row) {
-	    int val = (k * s) + col;
-	    // std::cerr << val << ",";
+        // std::cerr << "clear col exclude: ";
+        for (int k = 0; k < s; k++) {
+          if (k != row) {
+            int val = (k * s) + col;
+            // std::cerr << val << ",";
 
-	    da[cda] = val;
-	    cda++;
+            da[cda] = val;
+            cda++;
 
-	    // 	    IntSetRanges ir(exclude);
-	    // 	    Iter::Ranges::Singleton vr(val, val);
-	    // 	    Iter::Ranges::Union<IntSetRanges, Iter::Ranges::Singleton> u(ir, vr);
-	    // 	    IntSet newset(u);
-	    // 	    exclude.update(false, newset);
+            //             IntSetRanges ir(exclude);
+            //             Iter::Ranges::Singleton vr(val, val);
+            //             Iter::Ranges::Union<IntSetRanges, Iter::Ranges::Singleton> u(ir, vr);
+            //             IntSet newset(u);
+            //             exclude.update(false, newset);
 
-	    // 	    ModEvent me = x.exclude(home, val);
-	    // 	    GECODE_ME_CHECK(me);
-	  }
-	}
-	// std::cerr << "\n";
+            //             ModEvent me = x.exclude(home, val);
+            //             GECODE_ME_CHECK(me);
+          }
+        }
+        // std::cerr << "\n";
 
-// 	std::cerr << "exclude col....";
-// 	IntSet isexcol(excol, ccol);
-// 	IntSetRanges irc(isexcol);
-// 	ModEvent mecol = x.excludeI(home, irc);
-// 	GECODE_ME_CHECK(mecol);
-// 	std::cerr << "done!\n";
-// 	std::cerr << "\n";
+//         std::cerr << "exclude col....";
+//         IntSet isexcol(excol, ccol);
+//         IntSetRanges irc(isexcol);
+//         ModEvent mecol = x.excludeI(home, irc);
+//         GECODE_ME_CHECK(mecol);
+//         std::cerr << "done!\n";
+//         std::cerr << "\n";
 
-	//	std::cerr << "results in " << x << "\n";
+        //        std::cerr << "results in " << x << "\n";
 
-	// clear block
-	// std::cerr << "clear block\n";
-// 	GECODE_AUTOARRAY(int, exblock, s - 1);
-// 	int cblock = 0;
-	int lob = row / order; // counted lines of  order * order blocks
-	int cob = col / order; // counted columns of order * order  blocks
-	// std::cerr << "lob= " << lob << " and cob = " << cob << "\n";
+        // clear block
+        // std::cerr << "clear block\n";
+//         GECODE_AUTOARRAY(int, exblock, s - 1);
+//         int cblock = 0;
+        int lob = row / order; // counted lines of  order * order blocks
+        int cob = col / order; // counted columns of order * order  blocks
+        // std::cerr << "lob= " << lob << " and cob = " << cob << "\n";
 
-	if ( (col % order) == 0) cob--;
-	// std::cerr << "lob= " << lob << " and cob = " << cob << "\n";
+        if ( (col % order) == 0) cob--;
+        // std::cerr << "lob= " << lob << " and cob = " << cob << "\n";
 
-	// std::cerr << "exclude: ";
-	for (int i = 0; i < order; i++) {
-	  for (int j = 0; j < order; j++) {
-	    int val =  (lob * order + i)  * s + cob * order + j + 1;
-	    int cur = row * s + col;
-	    if (val != cur) {
-	      // std::cerr << val<< ",";
+        // std::cerr << "exclude: ";
+        for (int i = 0; i < order; i++) {
+          for (int j = 0; j < order; j++) {
+            int val =  (lob * order + i)  * s + cob * order + j + 1;
+            int cur = row * s + col;
+            if (val != cur) {
+              // std::cerr << val<< ",";
 
-// 	      exblock[cblock] = val;
-// 	      cblock++;
-	      
- 	      da[cda] = val;
- 	      cda++;
+//               exblock[cblock] = val;
+//               cblock++;
+              
+               da[cda] = val;
+               cda++;
 
-	      // 	      IntSetRanges ir(exclude);
-	      // 	      Iter::Ranges::Singleton vr(val, val);
-	      // 	      Iter::Ranges::Union<IntSetRanges, Iter::Ranges::Singleton> u(ir, vr);
-	      // 	      IntSet newset(u);
-	      // 	      exclude.update(false, newset);
+              //               IntSetRanges ir(exclude);
+              //               Iter::Ranges::Singleton vr(val, val);
+              //               Iter::Ranges::Union<IntSetRanges, Iter::Ranges::Singleton> u(ir, vr);
+              //               IntSet newset(u);
+              //               exclude.update(false, newset);
 
-	      // 	      ModEvent me = x.exclude(home, val);
-	      // 	      GECODE_ME_CHECK(me);
-	    }
-	  }
-	}
-	// std::cerr << "\n";
-	//	std::cerr << "results in " << x << "\n";
-	++glb;
+              //               ModEvent me = x.exclude(home, val);
+              //               GECODE_ME_CHECK(me);
+            }
+          }
+        }
+        // std::cerr << "\n";
+        //        std::cerr << "results in " << x << "\n";
+        ++glb;
 
 
-// 	std::cerr << "exclude block....";
-// 	IntSet isexblock(exblock, cblock);
-// 	IntSetRanges irb(isexblock);
-// 	ModEvent meblock = x.excludeI(home, irb);
-// 	GECODE_ME_CHECK(meblock);
-// 	std::cerr << "done!\n";
-// 	std::cerr << "\n";
+//         std::cerr << "exclude block....";
+//         IntSet isexblock(exblock, cblock);
+//         IntSetRanges irb(isexblock);
+//         ModEvent meblock = x.excludeI(home, irb);
+//         GECODE_ME_CHECK(meblock);
+//         std::cerr << "done!\n";
+//         std::cerr << "\n";
       }
 
       IntSet exclude(da, cda);
@@ -342,17 +343,17 @@ namespace Gecode { namespace CpltSet {
 //       std::cerr << "cache excl: ";
 //       if (!ca()) std::cerr << "empty\n";
 //       for (; ca(); ++ca) {
-// 	std::cerr << ca.min() << ".." << ca.max() << ",";
+//         std::cerr << ca.min() << ".." << ca.max() << ",";
 //       }
 //       std::cerr << "\n";
 //       ca.reset();
 
       if (!exclr()) {
-	// std::cerr << "is SUBSUMED\n";
- 	return ES_SUBSUMED(this, home);
+        // std::cerr << "is SUBSUMED\n";
+         return ES_SUBSUMED(this, home);
       } else {
- 	ModEvent me = x.excludeI(home, exclr);
- 	GECODE_ME_CHECK(me);
+         ModEvent me = x.excludeI(home, exclr);
+         GECODE_ME_CHECK(me);
       }
       
 //       std::cerr << "\n";

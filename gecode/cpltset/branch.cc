@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -27,7 +28,7 @@ namespace Gecode {
 
   void
   branch(Space* home, const CpltSetVarArgs& xa, CpltSetBvarSel vars, CpltSetBvalSel vals, 
-	 SetConLevel scl) {
+         SetConLevel scl) {
     // std::cout << "bdd branching\n";
 
     if (home->failed()) return;

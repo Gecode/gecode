@@ -1,3 +1,4 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
@@ -93,11 +94,11 @@ operator<<(std::ostream& os, const CpltSetView& x) {
   case CPLTSET_DOM: 
     {
       if (assigned) {
-	GlbValues<CpltSetView> glb(x);
-	printValue(os, glb);
+        GlbValues<CpltSetView> glb(x);
+        printValue(os, glb);
       } else {
-	DomValues<CpltSetView> dom(x);
-	printValue(os, dom);
+        DomValues<CpltSetView> dom(x);
+        printValue(os, dom);
       }
     }
     break;
@@ -105,10 +106,10 @@ operator<<(std::ostream& os, const CpltSetView& x) {
     {
       Gecode::Set::GlbRanges<CpltSetView> glb(x);
       if (assigned) {
-	printRange(os, glb);
+        printRange(os, glb);
       } else {
-	Gecode::Set::LubRanges<CpltSetView> lub(x);
-	printVar(assigned, os, glb, lub);
+        Gecode::Set::LubRanges<CpltSetView> lub(x);
+        printVar(assigned, os, glb, lub);
       }
     }
     break;
@@ -116,19 +117,19 @@ operator<<(std::ostream& os, const CpltSetView& x) {
     {
       os << "Conv(_";
       if (assigned) {
-	GlbValues<CpltSetView> glb(x);
-	printValue(os, glb);
+        GlbValues<CpltSetView> glb(x);
+        printValue(os, glb);
       } else {
-	DomValues<CpltSetView> dom(x);
-	printValue(os, dom);
+        DomValues<CpltSetView> dom(x);
+        printValue(os, dom);
       }
       os << "_) = ";
       Gecode::Set::GlbRanges<CpltSetView> glb(x);
       if (assigned) {
-	printRange(os, glb);
+        printRange(os, glb);
       } else {
-	Gecode::Set::LubRanges<CpltSetView> lub(x);
-	printVar(assigned, os, glb, lub);
+        Gecode::Set::LubRanges<CpltSetView> lub(x);
+        printVar(assigned, os, glb, lub);
       }
     }
     break;
@@ -204,11 +205,11 @@ operator<< (std::ostream& os, const CpltSetVar& x) {
   case CPLTSET_DOM: 
     {
       if (assigned) {
-	CpltSetVarGlbValues glb(x);
-	printValue(os, glb);
+        CpltSetVarGlbValues glb(x);
+        printValue(os, glb);
       } else {
-	CpltSetVarDomValues dom(x);
-	printValue(os, dom);
+        CpltSetVarDomValues dom(x);
+        printValue(os, dom);
       }
     }
     break;
@@ -216,10 +217,10 @@ operator<< (std::ostream& os, const CpltSetVar& x) {
     {
       CpltSetVarGlbRanges glb(x);
       if (assigned) {
-	printRange(os, glb);
+        printRange(os, glb);
       } else {
-	CpltSetVarLubRanges lub(x);
-	printVar(assigned, os, glb, lub);
+        CpltSetVarLubRanges lub(x);
+        printVar(assigned, os, glb, lub);
       }
     }
     break;
@@ -227,19 +228,19 @@ operator<< (std::ostream& os, const CpltSetVar& x) {
     {
       os << "Conv(_";
       if (assigned) {
-	CpltSetVarGlbValues glb(x);
-	printValue(os, glb);
+        CpltSetVarGlbValues glb(x);
+        printValue(os, glb);
       } else {
-	CpltSetVarDomValues dom(x);
-	printValue(os, dom);
+        CpltSetVarDomValues dom(x);
+        printValue(os, dom);
       }
       os << "_) = ";
       CpltSetVarGlbRanges glb(x);
       if (assigned) {
-	printRange(os, glb);
+        printRange(os, glb);
       } else {
-	CpltSetVarLubRanges lub(x);
-	printVar(assigned, os, glb, lub);
+        CpltSetVarLubRanges lub(x);
+        printVar(assigned, os, glb, lub);
       }
     }
     break;
