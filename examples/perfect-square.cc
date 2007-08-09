@@ -41,17 +41,17 @@
 #include "gecode/minimodel.hh"
 
 /**
- * \name Specifications for packing problems
+ * \name Specifications for perfect square problems
  *
- * \relates Packing
+ * \relates PerfectSquare
  */
 //@
-/// Packing problem specification
-class PackingSpec {
+/// PerfectSquare problem specification
+class SquareSpec {
 public:
   int x; int y;
   int n; const int* s;
-  PackingSpec(int x0, int y0, const int s0[]) :
+  SquareSpec(int x0, int y0, const int s0[]) :
     x(x0), y(y0), s(s0) {
     int i = 0;
     while (s[i]) i++;
@@ -60,44 +60,46 @@ public:
 };
 
 static const int s0_s[] = {2,2,2,2,0};
-static const PackingSpec s0(4,4,s0_s);
+static const SquareSpec s0(4,4,s0_s);
 
 static const int s1_s[] = {3,2,2,1,1,1,0};
-static const PackingSpec s1(5,4,s1_s);
+static const SquareSpec s1(5,4,s1_s);
 
 static const int s2_s[] = {6,4,4,4,2,2,2,2,0};
-static PackingSpec s2(10,10,s2_s);
+static SquareSpec s2(10,10,s2_s);
 
 static const int s3_s[] = {9,8,8,7,5,4,4,4,4,4,3,3,3,2,2,1,1,0};
-static const PackingSpec s3(20,20,s3_s);
+static const SquareSpec s3(20,20,s3_s);
 
 static const int s4_s[] = {18,15,14,10,9,8,7,4,1,0};
-static const PackingSpec s4(32,33,s4_s);
+static const SquareSpec s4(32,33,s4_s);
 
 static const int s5_s[] = {25,24,23,22,19,17,11,6,5,3,0};
-static const PackingSpec s5(65,47,s5_s);
+static const SquareSpec s5(65,47,s5_s);
 
 static const int s6_s[] = {50,42,37,35,33,29,27,25,24,19,18,
                            17,16,15,11,9,8,7,6,4,2,0};
-static const PackingSpec s6(112,112,s6_s);
+static const SquareSpec s6(112,112,s6_s);
 
 static const int s7_s[] = {81,64,56,55,51,43,39,38,35,33,31,30,29,20,
                            18,16,14,9,8,5,4,3,2,1,0};
-static const PackingSpec s7(175,175,s7_s);
+static const SquareSpec s7(175,175,s7_s);
 
-static const PackingSpec* specs[] = {&s0,&s1,&s2,&s3,&s4,&s5,&s6,&s7};
-static const unsigned int n_examples = sizeof(specs) / sizeof(PackingSpec*);
+static const SquareSpec* specs[] = {&s0,&s1,&s2,&s3,&s4,&s5,&s6,&s7};
+static const unsigned int n_examples = sizeof(specs) / sizeof(SquareSpec*);
 //@}
 
 /**
  * \brief %Example: packing squares into a rectangle
  *
+ * See problem 9 at http://www.csplib.org/.
+ *
  * \ingroup ExProblem
  */
-class Packing : public Example {
+class PerfectSquare : public Example {
 protected:
   /// Specification used
-  const PackingSpec& s;
+  const SquareSpec& s;
   /// Array of x-coordinates of squares
   IntVarArray x;
   /// Array of y-coordinates of squares
@@ -109,7 +111,7 @@ public:
     PROP_CUMULATIVES, ///< Use cumulatives constraint
   };
   /// Actual model
-  Packing(const Options& opt)
+  PerfectSquare(const Options& opt)
     : s(*specs[opt.size]),
       x(this,s.n,0,s.x-1), y(this,s.n,0,s.y-1) {
 
@@ -191,14 +193,14 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Packing(bool share, Packing& s) : Example(share,s), s(s.s) {
+  PerfectSquare(bool share, PerfectSquare& s) : Example(share,s), s(s.s) {
     x.update(this, share, s.x);
     y.update(this, share, s.y);
   }
   /// Copy during cloning
   virtual Space*
   copy(bool share) {
-    return new Packing(share,*this);
+    return new PerfectSquare(share,*this);
   }
   /// Print solution
   virtual void
@@ -211,23 +213,23 @@ public:
 };
 
 /** \brief Main-function
- *  \relates Packing
+ *  \relates PerfectSquare
  */
 int
 main(int argc, char** argv) {
-  Options opt("Packing");
+  Options opt("PerfectSquare");
   opt.naive = true;
   opt.size  = 7;
-  opt.propagation.value(Packing::PROP_REIFIED);
-  opt.propagation.add(Packing::PROP_REIFIED,     "reified");
-  opt.propagation.add(Packing::PROP_CUMULATIVES, "cumulatives");
+  opt.propagation.value(PerfectSquare::PROP_REIFIED);
+  opt.propagation.add(PerfectSquare::PROP_REIFIED,     "reified");
+  opt.propagation.add(PerfectSquare::PROP_CUMULATIVES, "cumulatives");
   opt.parse(argc,argv);
   if (opt.size >= n_examples) {
     std::cerr << "Error: size must be between 0 and " << n_examples - 1
               << std::endl;
     return 1;
   }
-  Example::run<Packing,DFS>(opt);
+  Example::run<PerfectSquare,DFS>(opt);
   return 0;
 }
 

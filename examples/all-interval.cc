@@ -56,8 +56,7 @@
  *    with \f$d_i=\operatorname{abs}(x_i-x_{i-1})\f$ form a permutation of
  *    \f$\{1,2,\ldots,n-1\}\f$.
  *
- * Read more about this problem as prob007 in the category
- * "combinatorial mathematics" of http://www.csplib.org/.
+ * See also problem 7 at http://www.csplib.org/.
  *
  * \ingroup ExProblem
  */

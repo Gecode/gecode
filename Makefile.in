@@ -540,7 +540,7 @@ INTEXAMPLESRC0 =							\
 	eq20 golomb tsp							\
 	graph-color grocery ind-set knights				\
 	magic-sequence magic-square			\
-	money ortho-latin packing					\
+	money ortho-latin perfect-square				\
 	partition photo queens						\
 	sudoku picture-puzzle placement-puzzle placement-puzzle-01	\
 	crowded-chess black-hole minesweeper domino			\
