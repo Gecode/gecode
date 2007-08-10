@@ -96,6 +96,8 @@ public:
     rel(this, m, IRT_LE);
 
     switch (opt.model()) {
+    case MODEL_NONE:
+      break;
     case MODEL_SUM:
       // d[diag(i,j)] must be at least sum of first j-i integers
       for (int i=0; i<n; i++)
@@ -115,7 +117,6 @@ public:
             rel(this, d[diag(i,j)], IRT_GQ, length[j-i+1]);
       }
       break;
-    default: ;
     }
 
     distinct(this, d, opt.icl());

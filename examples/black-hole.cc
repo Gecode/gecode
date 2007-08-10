@@ -112,13 +112,16 @@ public:
     assert(pos >= 0 && pos < x.size() && val >= 1 && val < 52);
     return new PosValDesc<int>(this, pos, val);
   }
-  virtual ExecStatus commit(Space* home, const BranchingDesc* d, unsigned int a) {
+  virtual ExecStatus commit(Space* home, const BranchingDesc* d, 
+                            unsigned int a) {
     const PosValDesc<int> *desc = static_cast<const PosValDesc<int>*>(d);
     pos = val = -1;
     if (a)
-      return me_failed(x[desc->pos()].nq(home, desc->val())) ? ES_FAILED : ES_OK;
+      return me_failed(x[desc->pos()].nq(home, desc->val())) 
+        ? ES_FAILED : ES_OK;
     else 
-      return me_failed(x[desc->pos()].eq(home, desc->val())) ? ES_FAILED : ES_OK;
+      return me_failed(x[desc->pos()].eq(home, desc->val())) 
+        ? ES_FAILED : ES_OK;
   }
   virtual Actor* copy(Space *home, bool share) {
     return new (home) BlackHoleBranch(home, share, *this);
@@ -164,6 +167,11 @@ protected:
   }
 
 public:
+  /// Model variants
+  enum {
+    MODEL_NONE,    ///< No symmetry breaking
+    MODEL_SYMMETRY ///< Breaking conditional symmetries
+  };
   /// Actual model
   BlackHole(const Options& opt) 
     : x(this, 52, 0,51), y(this, 52, 0,51) 
@@ -191,17 +199,14 @@ public:
            == diff, ICL_DOM);
     }
 
-    // Set up instance
-    for (int i = 17; i--; ) {
-      for (int j = 2; j--; ) {
-        // A card must be played before the one under it.
+    // A card must be played before the one under it.
+    for (int i = 17; i--; )
+      for (int j = 2; j--; )
         post(this, y[layout[i][j]] < y[layout[i][j+1]]);
-      }
-    }
 
     // Compute and break the conditional symmetries that are dependent
     // on the current layout.
-    if (!opt.naive) {
+    if (opt.model() == MODEL_SYMMETRY) {
       // For all ranks
       for (int r = 13; r--; ) {
         // For all pairs of suits
@@ -245,6 +250,7 @@ public:
     // Install custom branching
     BlackHoleBranch::post(this, x);      
   }
+
   /// Print instance and solution
   virtual void
   print(void) {
@@ -287,8 +293,9 @@ public:
 int
 main(int argc, char* argv[]) {
   Options opt("Black Hole patience");
-  opt.solutions(1);
-  opt.naive      = false;
+  opt.model(BlackHole::MODEL_SYMMETRY);
+  opt.model(BlackHole::MODEL_NONE,"none");
+  opt.model(BlackHole::MODEL_SYMMETRY,"symmetry");
   opt.icl(ICL_DOM);
   opt.parse(argc,argv);
   // Generates the new board

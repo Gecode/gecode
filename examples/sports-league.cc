@@ -197,23 +197,20 @@ public:
   void init_rrs(void) {
 
     // Initialize the array
-    for(int p = 0; p < periods; p++)
-      for (int w = 0; w < weeks; w++) {
-        rrs(p, w).h = 0;
-        rrs(p, w).a = 0;
-        rrs(p, w).g = 0;
-      }
+    for (int p = 0; p < periods; p++)
+      for (int w = 0; w < weeks; w++)
+        rrs(p,w).h = rrs(p, w).a = rrs(p, w).g = 0;
 
     // Determine the first game (week 0 period 0)
-    rrs(0, 0).h = 1;
-    rrs(0, 0).a = 2;
-    rrs(0, 0).g = 2;
+    rrs(0,0).h = 1;
+    rrs(0,0).a = 2;
+    rrs(0,0).g = 2;
 
     // Determine the other games of the first week
-    for(int p = 1; p < periods; p++){
-      rrs(p, 0).h = (p + 1) + 1;
-      rrs(p, 0).a = t - (p + 1 - 2);
-      rrs(p, 0).g = gn(rrs(p, 0).h, rrs(p, 0).a);
+    for (int p = 1; p < periods; p++){
+      rrs(p,0).h = (p + 1) + 1;
+      rrs(p,0).a = t - (p + 1 - 2);
+      rrs(p,0).g = gn(rrs(p, 0).h, rrs(p, 0).a);
     }
 
     // Compute the games for the subsequent weeks
@@ -267,21 +264,19 @@ public:
       home[i].init(this, dom_home);
       away[i].init(this, dom_away);
     }
-    for (int i = season; i--; ) {
+    for (int i = season; i--; )
       game[i].init(this, dom_game);
-    }
 
-
-    // Initialize the round robin schedule
+    // Initialize round robin schedule
     init_rrs();
 
-    //    domain for the gamenumber of period
+    // Domain for gamenumber of period
     for (int w = 0; w < weeks; w++) {
       IntArgs gamenum(periods);
       IntArgs fst(periods);
       IntArgs snd(periods);
 
-      for(int p = 0; p < periods; p++){
+      for (int p = 0; p < periods; p++){
         gamenum[p] = rrs(p, w).g;
         fst[p]     = rrs(p, w).h;
         snd[p]     = rrs(p, w).a;
@@ -290,7 +285,7 @@ public:
       IntVarArray n(this, periods, 0, periods - 1);
       distinct(this, n, ICL_DOM);
         
-      for(int p = 0; p < periods; p++){
+      for (int p = 0; p < periods; p++) {
         element(this, gamenum, n[p], g(p, w), 0, op.icl());
         element(this, fst,     n[p], h(p, w), 0, op.icl());
         element(this, snd,     n[p], a(p, w), 0, op.icl());
@@ -298,37 +293,33 @@ public:
     }
 
 
-    /**
-     * Symmetrie breaking:
+    /*
+     * Symmetry breaking:
      * we consider (h, a) and (a, h) as the same game and focus
      * on the home game for h, i.e. (h, a) with h < a
      */
 
-    // fix the first pair
+    // Fix first pair
     rel(this, h(0,0), IRT_EQ, 1);
     rel(this, a(0,0), IRT_EQ, 2);
 
-    for (int p = 0; p < periods; p++) {
-      for (int w = 0; w < eweeks; w++) {
-            rel(this, h(p, w), IRT_LE, a(p, w));
-      }
-    }
-
-    // home teams in the first week are ordered
-    for (int p = 0; p < periods - 1; p++) {
+    for (int p = 0; p < periods; p++)
+      for (int w = 0; w < eweeks; w++)
+        rel(this, h(p, w), IRT_LE, a(p, w));
+    
+    // Home teams in first week are ordered
+    for (int p = 0; p < periods - 1; p++)
       rel(this, h(p, 0), IRT_LE, h(p + 1, 0));
-    }
 
-    /**
+    /*
      * Constraint on each column:
      * each team occurs exactly once.
      * (you need two teams in order to form a match).
      */
-
-    for(int w = 0; w < eweeks; w++ ) {
+    for (int w = 0; w < eweeks; w++) {
       IntVarArray col(this, t);
       int k = 0;
-      for( int p = 0; p < periods; p++ ) {
+      for ( int p = 0; p < periods; p++ ) {
         col[k] = h(p, w);
         k++;
         col[k] = a(p, w);
@@ -337,7 +328,7 @@ public:
       distinct(this, col, ICL_DOM);
     }
 
-    /**
+    /*
      * Constraint on each row:
      * no team appears more than twice
      * (you do not want a team to play more than twice a week in the same slot
@@ -345,27 +336,23 @@ public:
      *
      */
 
-    for(int p = 0; p < periods; p++) {
+    for (int p = 0; p < periods; p++) {
       IntVarArray row(this, 2 * eweeks);
       for (int w = 0; w < 2 * eweeks; w +=2) {
         row[w]     = h(p, w / 2);
         row[w + 1] = a(p, w / 2);
       }
-      gcc(this, row, 2, op.icl()); // cardvars
+      gcc(this, row, 2, op.icl());
     }
 
 
 
-    for(int p = 0; p < periods; p++) {
-      for(int w = 0; w < weeks; w ++) {
+    for (int p = 0; p < periods; p++)
+      for (int w = 0; w < weeks; w ++)
         post(this, t * h(p, w) + 1 * a(p, w) - 1* g(p, w) == t);
-      }
-    }
 
     distinct(this, game, ICL_DOM);
-
     branch(this, game, BVAR_NONE, BVAL_MIN);
-
   }
 
   SportsLeague(bool share, SportsLeague& s)
@@ -402,11 +389,11 @@ public:
     std::cout <<"\n";
 
     // print entries
-    for(int w = 0; w < weeks; w++){
+    for (int w = 0; w < weeks; w++){
       std::cout << "W[";
       blank(w + 1);
       std::cout <<"]: ";
-      for(int p = 0; p < periods; p++){
+      for (int p = 0; p < periods; p++){
         if (h(p, w).assigned() && a(p, w).assigned()) {
           std::cout <<" ";
           blank(h(p, w).val());
@@ -426,11 +413,11 @@ public:
     //print gamenumbers
     std::cout << "\nUnique game numbers:\n";
     std::cout <<"\n";
-    for(int p = 0; p < periods; p++){
+    for (int p = 0; p < periods; p++){
       std::cout << "Period[";
       blank(p + 1);
       std::cout <<"]: " ;
-      for(int w = 0; w < weeks; w++){
+      for (int w = 0; w < weeks; w++){
         if (g(p, w).assigned()) {
           blankv(g(p, w).val());
           std::cout << " ";
@@ -450,19 +437,18 @@ public:
 
 
 int main(int argc, char* argv[]){
-  Options o("Sports League Scheduling ");
-  o.solutions(1);
-  o.size      = 18;
-  o.parse(argc, argv);
-  if (o.size == 4) {
-    std::cerr<< "No Solution for t = 4!\n";
-    return -1;
+  Options opt("Sports League Scheduling ");
+  opt.size      = 18;
+  opt.parse(argc, argv);
+  if (opt.size == 4) {
+    std::cerr<< "No Solution for 4 teams!" << std::endl;
+    return 1;
   }
-  if (o.size % 2 != 0) {
-    std::cerr << "Number of t has to be even!\n";
-    return -1;
+  if (opt.size % 2 != 0) {
+    std::cerr << "Number of teams has to be even!" << std::endl;
+    return 1;
   }
-  Example::run<SportsLeague, DFS>(o);
+  Example::run<SportsLeague, DFS>(opt);
   return 0;
 }
 
