@@ -172,7 +172,7 @@ public:
     rel(this, x[0], IRT_EQ, 0);
 
     // x is order and y is placement
-    channel(this, x, y, opt.icl);
+    channel(this, x, y, opt.icl());
 
     // Build table for accessing the rank of a card
     IntArgs modtable(52);
@@ -289,7 +289,7 @@ main(int argc, char** argv) {
   Options opt("Black Hole patience");
   opt.solutions  = 1;
   opt.naive      = false;
-  opt.icl        = ICL_DOM;
+  opt.icl(ICL_DOM);
   opt.parse(argc,argv);
   // Generates the new board
   generate(opt.size);

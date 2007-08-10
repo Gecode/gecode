@@ -118,7 +118,7 @@ public:
      *
      * \f$ \forall i, j\in S_{kn}, i\neq j: x_i \neq x_j \f$
      */
-    distinct(this, pos, op.icl);
+    distinct(this, pos, op.icl());
 
 
     // Symmetry breaking
@@ -176,8 +176,7 @@ int main(int argc, char** argv){
     std::cerr << "n must be at least k!\n";
     return -1;
   }
-  o.naive = true;
-  o.icl   = ICL_BND;
+  o.icl(ICL_BND);
   o.parse(argc - 2, argv);
   Example::run<LangfordNum, DFS>(o);
   return 0;

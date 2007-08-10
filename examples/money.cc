@@ -66,9 +66,9 @@ public:
     post(this,            1000*s+100*e+10*n+d
                 +         1000*m+100*o+10*r+e
                == 10000*m+1000*o+100*n+10*e+y,
-         opt.icl);
+         opt.icl());
 
-    distinct(this, le, opt.icl);
+    distinct(this, le, opt.icl());
     branch(this, le, BVAR_SIZE_MIN, BVAL_MIN);
   }
   /// Print solution

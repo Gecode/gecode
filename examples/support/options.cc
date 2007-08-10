@@ -96,13 +96,33 @@ StringOption::help(void) {
       cerr << "\t\t  " << v->opt << ": " << v->help << endl;
 }
 
+
+
+bool
+UIntOption::parse(int argc, char* argv[], int& i) {
+  using namespace std;
+  if (strcmp(argv[i],opt))
+    return false;
+
+  if (++i == argc) {
+    cerr << "Missing argument for option \"" << opt << "\"" << endl;
+    exit(EXIT_FAILURE);
+  }
+  cur = atoi(argv[i++]);
+  return true;
+}
+
+void 
+UIntOption::help(void) {
+  using namespace std;
+  cerr << '\t' << opt << " (unsigned int) default: " << cur << endl
+       << "\t\t" << exp << endl;
+}
+
+
+
 Options::Options(const char* n)
-  : icl(ICL_DEF),
-    c_d(Search::Config::c_d),
-    a_d(Search::Config::a_d),
-    mode(EM_SOLUTION),
-    quiet(false),
-    samples(1),
+  : samples(1),
     iterations(1),
     solutions(1),
     fails(-1),
@@ -114,20 +134,37 @@ Options::Options(const char* n)
     initvarnum(100),
     initcache(100),
     scl(SCL_DEF),
-#endif 
+#endif
+    fst(NULL), lst(NULL),
+
     _model("-model","model variants"),
     _propagation("-propagation","propagation variants"),
+    _icl("-icl","integer consistency level",ICL_DEF),
     _branching("-branching","branching variants"),
-    _search("-search","search engine variants")
-{}
+    
+    _search("-search","search engine variants"),
+    _c_d("-c_d","recompution copy distance",Search::Config::c_d),
+    _a_d("-a_d","recompution adaption distance",Search::Config::a_d),
+
+    _mode("-mode","how to execute example",EM_SOLUTION)
+{
+
+  _icl.add(ICL_DEF, "def"); _icl.add(ICL_VAL, "val");
+  _icl.add(ICL_BND, "bnd"); _icl.add(ICL_DOM, "dom");
+
+  _mode.add(EM_SOLUTION, "solution"); 
+  _mode.add(EM_TIME, "time");
+  _mode.add(EM_STAT, "stat");
+
+  add(&_model); add(&_propagation); add(&_icl); add(&_branching); 
+
+  add(&_search); add(&_c_d); add(&_a_d);
+
+  add(&_mode);
+
+}
 
 namespace {
-
-  const char* icl2str[] =
-    { "val", "bnd", "dom", "def" };
-
-  const char* em2str[] =
-    { "solution", "time", "stat" };
 
   const char* bool2str[] =
     { "false", "true" };
@@ -146,15 +183,10 @@ Options::parse(int argc, char* argv[]) {
   const char* e = NULL;
   while (i < argc) {
     if (!strcmp(argv[i],"-help") || !strcmp(argv[i],"--help")) {
-      cerr << "Options for " << name << ":"
-           << endl;
-
-      _model.help();
-      _propagation.help();
-      _branching.help();
-      _search.help();
-      cerr << "\t-icl (def,val,bnd,dom) default: " << icl2str[icl] << endl
-           << "\t\tinteger consistency level" << endl
+      cerr << "Options for " << name << ":" << endl;
+      for (BaseOption* o = fst; o != NULL; o = o->next)
+        o->help();
+      cerr 
 #ifdef GECODE_HAVE_CPLTSET_VARS
 	   << "\t-scl (def,bnd_bdd, bnd_sbr,,spl,crd,lex,dom) default: " << scl2str[scl]
 	   << endl
@@ -167,16 +199,6 @@ Options::parse(int argc, char* argv[]) {
 	   << "\t\tinitial cachesize for bdd operations" << endl
 #endif
 
-           << "\t-c_d (unsigned int) default: " << c_d << endl
-           << "\t\tcopying recomputation distance" << endl
-
-           << "\t-a_d (unsigned int) default: " << a_d << endl
-           << "\t\tadaptive recomputation distance" << endl
-
-           << "\t-mode (solution, time, stat) default: "
-           << em2str[mode] << endl
-           << "\t\tprint solutions, measure time, or print statistics" << endl
-        
            << "\t-samples (unsigned int) default: " << samples << endl
            << "\t\thow many samples (time-mode)" << endl
 
@@ -199,21 +221,13 @@ Options::parse(int argc, char* argv[]) {
            << "\t(unsigned int) default: " << size << endl
            << "\t\twhich version/size for example" << endl;
       exit(EXIT_SUCCESS);
-    } else if (!strcmp(argv[i],"-icl")) {
-      if (++i == argc) goto missing;
-      if (!strcmp(argv[i],"def")) {
-        icl = ICL_DEF;
-      } else if (!strcmp(argv[i],"val")) {
-        icl = ICL_VAL;
-      } else if (!strcmp(argv[i],"bnd")) {
-        icl = ICL_BND;
-      } else if (!strcmp(argv[i],"dom")) {
-        icl = ICL_DOM;
-      } else {
-        e = "expecting: def, val, bnd, or dom";
-        goto error;
-      }
-    } 
+    }
+  redo:
+    for (BaseOption* o = fst; o != NULL; o = o->next)
+      if ((i < argc) && o->parse(argc,argv,i))
+        goto redo;
+    if (i >= argc)
+      break;
 #ifdef GECODE_HAVE_CPLTSET_VARS
     else if (!strcmp(argv[i],"-scl")) {
       if (++i == argc) goto missing;
@@ -243,27 +257,7 @@ Options::parse(int argc, char* argv[]) {
       initcache = atoi(argv[i]);
     }
 #endif 
-    else if (!strcmp(argv[i],"-c_d")) {
-      if (++i == argc) goto missing;
-      c_d = atoi(argv[i]);
-    } else if (!strcmp(argv[i],"-a_d")) {
-      if (++i == argc) goto missing;
-      a_d = atoi(argv[i]);
-    } else if (!strcmp(argv[i],"-quiet")) {
-      quiet = true;
-    } else if (!strcmp(argv[i],"-mode")) {
-      if (++i == argc) goto missing;
-      if (!strcmp(argv[i],"solution")) {
-        mode = EM_SOLUTION;
-      } else if (!strcmp(argv[i],"time")) {
-        mode = EM_TIME;
-      } else if (!strcmp(argv[i],"stat")) {
-        mode = EM_STAT;
-      } else {
-        e = "expecting: solution, time, or stat";
-        goto error;
-      }
-    } else if (!strcmp(argv[i],"-samples")) {
+    if (!strcmp(argv[i],"-samples")) {
       if (++i == argc) goto missing;
       samples = atoi(argv[i]);
     } else if (!strcmp(argv[i],"-solutions")) {
@@ -278,14 +272,6 @@ Options::parse(int argc, char* argv[]) {
     } else if (!strcmp(argv[i],"-iterations")) {
       if (++i == argc) goto missing;
       iterations = atoi(argv[i]);
-    } else if (_model.parse(argc,argv,i)) {
-      continue;
-    } else if (_propagation.parse(argc,argv,i)) {
-      continue;
-    } else if (_branching.parse(argc,argv,i)) {
-      continue;
-    } else if (_search.parse(argc,argv,i)) {
-      continue;
     } else {
       char* unused;
       size = strtol(argv[i], &unused, 10);

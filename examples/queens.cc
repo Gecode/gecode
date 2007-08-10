@@ -77,17 +77,17 @@ public:
           post(this, q[i]+i != q[j]+j);
           post(this, q[i]-i != q[j]-j);
         }
-      distinct(this, q, opt.icl);
+      distinct(this, q, opt.icl());
       break;
     case PROP_DISTINCT:
       {
         IntArgs c(n);
         for (int i = n; i--; ) c[i] = i;
-        distinct(this, c, q, opt.icl);
+        distinct(this, c, q, opt.icl());
         for (int i = n; i--; ) c[i] = -i;
-        distinct(this, c, q, opt.icl);
+        distinct(this, c, q, opt.icl());
       }
-      distinct(this, q, opt.icl);
+      distinct(this, q, opt.icl());
       break;
     }
     branch(this, q, BVAR_SIZE_MIN, BVAL_MIN);

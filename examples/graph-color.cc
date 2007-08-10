@@ -341,7 +341,7 @@ public:
       IntVarArgs x(n); c++;
       for (int i = n; i--; c++)
         x[i] = v[*c];
-      distinct(this, x, opt.icl);
+      distinct(this, x, opt.icl());
       if (opt.model() == MODEL_CLIQUE)
         rel(this, m, IRT_GQ, n-1);
     }
@@ -385,13 +385,13 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("GraphColor");
-  opt.icl        = ICL_DOM;
+  opt.icl(ICL_DOM);
   opt.iterations = 20;
   opt.model(GraphColor::MODEL_NONE);
   opt.model(GraphColor::MODEL_NONE, "none",
-                "no lower bound");
+            "no lower bound");
   opt.model(GraphColor::MODEL_CLIQUE, "clique",
-                "use maximal clique size as lower bound");
+            "use maximal clique size as lower bound");
   opt.branching(GraphColor::BRANCH_DEGREE);
   opt.branching(GraphColor::BRANCH_DEGREE, "degree");
   opt.branching(GraphColor::BRANCH_SIZE, "size");

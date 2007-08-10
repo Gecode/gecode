@@ -118,7 +118,7 @@ public:
     default: ;
     }
 
-    distinct(this, d, opt.icl);
+    distinct(this, d, opt.icl());
 
     if (n > 2)
       rel(this, d[diag(0,1)], IRT_LE, d[diag(n-2,n-1)]);
@@ -167,14 +167,14 @@ main(int argc, char** argv) {
   Options opt("Golomb");
   opt.solutions = 0;
   opt.size      = 10;
-  opt.icl       = ICL_BND;
+  opt.icl(ICL_BND);
   opt.model(Golomb::MODEL_SUM);
   opt.model(Golomb::MODEL_NONE, "none",
-                "no lower bound");
+            "no lower bound");
   opt.model(Golomb::MODEL_SUM, "sum",
-                "use sum of ticks as lower bound");
+            "use sum of ticks as lower bound");
   opt.model(Golomb::MODEL_RULER, "ruler",
-                "use size of smaller rulers as lower bound");
+            "use size of smaller rulers as lower bound");
   opt.search(Golomb::SEARCH_BAB);
   opt.search(Golomb::SEARCH_DFS, "dfs");
   opt.search(Golomb::SEARCH_BAB, "bab");

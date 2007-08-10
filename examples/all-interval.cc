@@ -74,13 +74,13 @@ public:
 
     // Set up variables for distance
     for (int i=0; i<n-1; i++)
-      d[i] = abs(this, minus(this,x[i+1],x[i],opt.icl),opt.icl);
+      d[i] = abs(this, minus(this,x[i+1],x[i],opt.icl()),opt.icl());
 
     // Constrain them to be between 1 and n-1
     dom(this, d, 1, n-1);
 
-    distinct(this, x, opt.icl);
-    distinct(this, d, opt.icl);
+    distinct(this, x, opt.icl());
+    distinct(this, d, opt.icl());
 
     // Break mirror symmetry
     rel(this, x[0], IRT_LE, x[1]);
@@ -115,7 +115,7 @@ int main(int argc, char** argv){
   Options opt("All-interval Series");
   opt.size       = 1000;
   opt.iterations = 5;
-  opt.icl        = ICL_BND;
+  opt.icl(ICL_BND);
   opt.parse(argc, argv);
   if (opt.size < 2) {
     std::cerr << "n must be at least 2!" << std::endl;

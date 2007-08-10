@@ -291,9 +291,9 @@ public:
       distinct(this, n, ICL_DOM);
         
       for(int p = 0; p < periods; p++){
-        element(this, gamenum, n[p], g(p, w), 0, op.icl);
-        element(this, fst,     n[p], h(p, w), 0, op.icl);
-        element(this, snd,     n[p], a(p, w), 0, op.icl);
+        element(this, gamenum, n[p], g(p, w), 0, op.icl());
+        element(this, fst,     n[p], h(p, w), 0, op.icl());
+        element(this, snd,     n[p], a(p, w), 0, op.icl());
       }
     }
 
@@ -351,7 +351,7 @@ public:
         row[w]     = h(p, w / 2);
         row[w + 1] = a(p, w / 2);
       }
-      gcc(this, row, 2, op.icl); // cardvars
+      gcc(this, row, 2, op.icl()); // cardvars
     }
 
 

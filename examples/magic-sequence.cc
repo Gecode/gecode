@@ -89,7 +89,7 @@ public:
       linear(this, s, IRT_EQ, n);
       break;
     case PROP_GCC:
-      gcc(this, s, s, 0, n-1, opt.icl);
+      gcc(this, s, s, 0, n-1, opt.icl());
       break;
     }
     IntArgs c(n);

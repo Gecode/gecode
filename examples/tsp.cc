@@ -252,7 +252,7 @@ public:
     linear(this, costs, IRT_EQ, cost);
 
     // Enforce that the succesors yield a tour
-    circuit(this, succ, opt.icl);
+    circuit(this, succ, opt.icl());
 
     // Just assume that the circle starts forwards
     rel(this, succ[0], IRT_LE, succ[1]);
@@ -301,7 +301,7 @@ int
 main(int argc, char** argv) {
   Options opt("TSP");
   opt.solutions = 0;
-  opt.icl       = ICL_DOM;
+  opt.icl(ICL_DOM);
   opt.parse(argc,argv);
 
   if (opt.size >= ps_n) {

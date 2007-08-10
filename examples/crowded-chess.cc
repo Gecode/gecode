@@ -177,20 +177,20 @@ public:
     // Basic model
     // ***********************
 
-    count(this, s, E, IRT_EQ, e, o.icl);
-    count(this, s, Q, IRT_EQ, q, o.icl);
-    count(this, s, R, IRT_EQ, r, o.icl);
-    count(this, s, B, IRT_EQ, b, o.icl);
-    count(this, s, K, IRT_EQ, k, o.icl);
+    count(this, s, E, IRT_EQ, e, o.icl());
+    count(this, s, Q, IRT_EQ, q, o.icl());
+    count(this, s, R, IRT_EQ, r, o.icl());
+    count(this, s, B, IRT_EQ, b, o.icl());
+    count(this, s, K, IRT_EQ, k, o.icl());
 
     // Collect rows and columns for handling rooks and queens.
     for (int i = 0; i < n; ++i) {
       IntVarArgs aa = m.row(i), bb = m.col(i);
 
-      count(this, aa, Q, IRT_EQ, 1, o.icl);
-      count(this, bb, Q, IRT_EQ, 1, o.icl);
-      count(this, aa, R, IRT_EQ, 1, o.icl);
-      count(this, bb, R, IRT_EQ, 1, o.icl);
+      count(this, aa, Q, IRT_EQ, 1, o.icl());
+      count(this, bb, Q, IRT_EQ, 1, o.icl());
+      count(this, aa, R, IRT_EQ, 1, o.icl());
+      count(this, bb, R, IRT_EQ, 1, o.icl());
 
       //Connect (queens|rooks)[i] to the row it is in
       element(this, aa, queens[i], Q, 0, ICL_DOM);
@@ -219,14 +219,14 @@ public:
         d4[i] = m((n-1)-i, i+il);
       }
 
-      count(this, d1, Q, IRT_LQ, 1, o.icl);
-      count(this, d2, Q, IRT_LQ, 1, o.icl);
-      count(this, d3, Q, IRT_LQ, 1, o.icl);
-      count(this, d4, Q, IRT_LQ, 1, o.icl);
-      count(this, d1, B, IRT_LQ, 1, o.icl);
-      count(this, d2, B, IRT_LQ, 1, o.icl);
-      count(this, d3, B, IRT_LQ, 1, o.icl);
-      count(this, d4, B, IRT_LQ, 1, o.icl);
+      count(this, d1, Q, IRT_LQ, 1, o.icl());
+      count(this, d2, Q, IRT_LQ, 1, o.icl());
+      count(this, d3, Q, IRT_LQ, 1, o.icl());
+      count(this, d4, Q, IRT_LQ, 1, o.icl());
+      count(this, d1, B, IRT_LQ, 1, o.icl());
+      count(this, d2, B, IRT_LQ, 1, o.icl());
+      count(this, d3, B, IRT_LQ, 1, o.icl());
+      count(this, d4, B, IRT_LQ, 1, o.icl());
     }
 
     // Handle knigths
@@ -309,15 +309,15 @@ public:
  */
 int
 main(int argc, char** argv) {
-  Options o("CrowdedChess");
-  o.icl        = ICL_DOM;
-  o.size       = 7;
-  o.parse(argc,argv);
-  if(o.size < 5) {
-    std::cerr << "Error: Size must be at least 5" << std::endl;
+  Options opt("CrowdedChess");
+  opt.icl(ICL_DOM);
+  opt.size       = 7;
+  opt.parse(argc,argv);
+  if (opt.size < 5) {
+    std::cerr << "Error: size must be at least 5" << std::endl;
     return 1;
   }
-  Example::run<CrowdedChess,DFS>(o);
+  Example::run<CrowdedChess,DFS>(opt);
   return 0;
 }
 

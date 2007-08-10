@@ -130,8 +130,8 @@ public:
     rel(this, jump[field(0,0)], IRT_EQ, 0);
     rel(this, jump[field(1,2)], IRT_EQ, 1);
 
-    distinct(this, jump, opt.icl);
-    channel(this, succ, pred, opt.icl);
+    distinct(this, jump, opt.icl());
+    channel(this, succ, pred, opt.icl());
 
     for (int f = 0; f < nn; f++) {
       // Array of neighbours
@@ -176,7 +176,7 @@ public:
     // Fix the first move
     rel(this, succ[0], IRT_EQ, field(1,2));
 
-    circuit(this, succ, opt.icl);
+    circuit(this, succ, opt.icl());
 
     for (int f = 0; f < n*n; f++) {
       // Array of neighbours

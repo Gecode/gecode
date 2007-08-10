@@ -55,7 +55,7 @@ public:
   /// The actual problem
   StressDistinct(const Options& opt)
     : x(this,opt.size+1,0,opt.size) {
-    distinct(this, x, opt.icl);
+    distinct(this, x, opt.icl());
     for (int i=0; i<opt.size; i++)
       rel(this, x[i], IRT_LQ, i);
   }

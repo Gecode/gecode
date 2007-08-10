@@ -67,12 +67,35 @@ enum ExampleMode {
   EM_STAT      ///< Print statistics for example
 };
 
+class Options;
+
 /**
- * \brief Configurable option values
+ * \brief Base class for options
  *
  */
-class StringOption {
-private:
+class BaseOption {
+  friend class Options;
+protected:
+  const char* opt;  ///< String for option (including hyphen)
+  const char* exp;  ///< Short explanation
+  BaseOption* next; ///< Next option
+public:
+  /// Initialize for option \a o and explanation \a e
+  BaseOption(const char* o, const char* e);
+  /// Parse option at position \a i
+  virtual bool parse(int argc, char* argv[], int& i) = NULL;
+  /// Print help text
+  virtual void help(void) = NULL;
+  /// Destructor
+  virtual ~BaseOption(void);
+};
+
+/**
+ * \brief String-valued option
+ *
+ */
+class StringOption : public BaseOption {
+protected:
   /// Option value
   class Value {
   public:
@@ -81,11 +104,9 @@ private:
     const char* help; ///< Optional help text
     Value*      next; ///< Next option value
   };
-  const char* opt; ///< String for option (including hyphen)
-  const char* exp; ///< Short explanation
-  int         cur; ///< Current value
-  Value*      fst; ///< First option value
-  Value*      lst; ///< Last option value
+  int    cur; ///< Current value
+  Value* fst; ///< First option value
+  Value* lst; ///< Last option value
 public:
   /// Initialize for option \a o and explanation \a e and default value \a v
   StringOption(const char* o, const char* e, int v=0);
@@ -96,9 +117,30 @@ public:
   /// Add option value for value \a v, string \a o, and help text \a h
   void add(int v, const char* o, const char* h = NULL);
   /// Parse option at position \a i
-  bool parse(int argc, char* argv[], int& i);
+  virtual bool parse(int argc, char* argv[], int& i);
   /// Print help text
-  void help(void);
+  virtual void help(void);
+};
+
+
+/**
+ * \brief Unsigned integer option
+ *
+ */
+class UIntOption : public BaseOption {
+protected:
+  unsigned int cur; ///< Current value
+public:
+  /// Initialize for option \a o and explanation \a e and default value \a v
+  UIntOption(const char* o, const char* e, unsigned int v=0);
+  /// Set default value to \a v
+  void value(unsigned int v);
+  /// Return current option value
+  unsigned int value(void) const;
+  /// Parse option at position \a i
+  virtual bool parse(int argc, char* argv[], int& i);
+  /// Print help text
+  virtual void help(void);
 };
 
 /**
@@ -107,11 +149,6 @@ public:
  */
 class Options {
 public:
-  IntConLevel  icl;        ///< integer consistency level
-  unsigned int c_d;        ///< recomputation copy distance
-  unsigned int a_d;        ///< recomputation adaption distance
-  ExampleMode  mode;       ///< in which mode to run
-  bool         quiet;      ///< quiet mode
   unsigned int samples;    ///< how many samples
   unsigned int iterations; ///< how many iterations per sample
   unsigned int solutions;  ///< how many solutions (0 == all)
@@ -127,19 +164,39 @@ public:
   SetConLevel  scl;        ///< bdd consistency level
 #endif 
 
-private:  
-  StringOption _model;       ///< Model options
+private:
+  BaseOption* fst; ///< First option
+  BaseOption* lst; ///< Last option
+
+  /// \name Model options
+  //@{
+  StringOption _model;       ///< General model options
   StringOption _propagation; ///< Propagation options
+  StringOption _icl;         ///< integer consistency level
   StringOption _branching;   ///< Branching options
-  StringOption _search;      ///< Search options
+  //@}
+
+  /// \name Search options
+  //@{
+  StringOption _search; ///< Search options
+  UIntOption   _c_d;    ///< copy recomputation distance
+  UIntOption   _a_d;    ///< adaptive recomputation distance
+  //@}
+
+  /// \name Execution options
+  //@{
+  StringOption _mode; ///< in which mode to run
+  //@}
 
 public:
   /// Initialize options for example with name \a s
   Options(const char* s);
+  /// Add new option \a o
+  void add(BaseOption* o);
   /// Parse options from arguments \a argv (number is \a argc)
   void parse(int argc, char* argv[]);
 
-  /// \name User-definable options
+  /// \name Model options
   //@{
   /// Set default model value
   void model(int v);
@@ -155,19 +212,44 @@ public:
   /// Return propagation value
   int propagation(void) const;
 
+  /// Set default integer consistency level
+  void icl(IntConLevel i);
+  /// Return integer consistency level
+  IntConLevel icl(void) const;
+
   /// Set default branching value
   void branching(int v);
   /// Add branching option value for value \a v, string \a o, and help \a h
   void branching(int v, const char* o, const char* h = NULL);
   /// Return branching value
   int branching(void) const;
+  //@}
 
+  /// \name Search options
+  //@{
   /// Set default search value
   void search(int v);
   /// Add search option value for value \a v, string \a o, and help \a h
   void search(int v, const char* o, const char* h = NULL);
   /// Return search value
   int search(void) const;
+
+  /// Set default copy recompution distance
+  void c_d(unsigned int d);
+  /// Return copy recomputation distance
+  unsigned int c_d(void) const;
+  /// Set default adaptive recompution distance
+  void a_d(unsigned int d);
+  /// Return adaptive recomputation distance
+  unsigned int a_d(void) const;
+  //@}
+
+  /// \name Execution options
+  //@{
+  /// Set default mode
+  void mode(ExampleMode em);
+  /// Return mode
+  ExampleMode mode(void) const;  
   //@}
 };
 

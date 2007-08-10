@@ -64,7 +64,7 @@ public:
     for (int i = n; i--; ) {
       xy[i] = x[i]; xy[n+i] = y[i];
     }
-    distinct(this, xy, opt.icl);
+    distinct(this, xy, opt.icl());
     IntArgs c(2*n);
     for (int i = n; i--; ) {
       c[i] = 1; c[n+i] = -1;
@@ -128,11 +128,11 @@ public:
  */
 int
 main(int argc, char** argv) {
-  Options o("Partition");
-  o.size = 32;
-  o.icl  = ICL_DOM;
-  o.parse(argc,argv);
-  Example::run<Partition,DFS>(o);
+  Options opt("Partition");
+  opt.size = 32;
+  opt.icl(ICL_DOM);
+  opt.parse(argc,argv);
+  Example::run<Partition,DFS>(opt);
   return 0;
 }
 

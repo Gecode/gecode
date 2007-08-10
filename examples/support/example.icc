@@ -106,9 +106,8 @@ void
 Example::run(const Options& o) {
   using namespace std;
   try {
-    if (!o.quiet)
-      cout << o.name << endl;
-    switch (o.mode) {
+    cout << o.name << endl;
+    switch (o.mode()) {
     case EM_SOLUTION:
       {
 	Timer t;
@@ -123,7 +122,7 @@ Example::run(const Options& o) {
 	  n_b = s->branchings();
 	}
 	Search::Stop* stop = FailTimeStop::create(o.fails, o.time);
-	Engine<Script> e(s,o.c_d,o.a_d,stop);
+	Engine<Script> e(s,o.c_d(),o.a_d(),stop);
 	delete s;
 	do {
 	  Example* ex = e.next();
@@ -161,7 +160,7 @@ Example::run(const Options& o) {
 	  n_p = s->propagators();
 	  n_b = s->branchings();
 	}
-	Engine<Script> e(s,o.c_d,o.a_d);
+	Engine<Script> e(s,o.c_d(),o.a_d());
 	delete s;
 	do {
 	  Example* ex = e.next();
@@ -192,7 +191,7 @@ Example::run(const Options& o) {
 	  for (int k = o.iterations; k--; ) {
 	    unsigned int i = o.solutions;
 	    Script* s = new Script(o);
-	    Engine<Script> e(s,o.c_d,o.a_d);
+	    Engine<Script> e(s,o.c_d(),o.a_d());
 	    delete s;
 	    do {
 	      Example* ex = e.next();
@@ -205,18 +204,12 @@ Example::run(const Options& o) {
 	}
 	double m = am(ts,o.samples);
 	double d = dev(ts,o.samples) * 100.0;
-	if (o.quiet) {
-	  cout << showpoint << setprecision(6) << m << " "
-	       << setprecision(2) << d
-	       << endl;
-	} else {
-	  cout << "\tRuntime: "
-	       << setw(20) << right
-	       << showpoint << fixed
-	       << setprecision(6) << m << "ms"
-	       << setprecision(2) << " (" << d << "% deviation)"
-	       << endl;
-	}
+        cout << "\tRuntime: "
+             << setw(20) << right
+             << showpoint << fixed
+             << setprecision(6) << m << "ms"
+             << setprecision(2) << " (" << d << "% deviation)"
+             << endl;
       }
       break;
     }

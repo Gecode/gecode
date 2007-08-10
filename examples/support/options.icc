@@ -37,8 +37,16 @@
  */
 
 inline
+BaseOption::BaseOption(const char* o, const char* e) 
+  : opt(o), exp(e) {}
+inline
+BaseOption::~BaseOption(void) {
+}
+
+
+inline
 StringOption::StringOption(const char* o, const char* e, int v) 
-  : opt(o), exp(e), cur(v), fst(NULL), lst(NULL) {}
+  : BaseOption(o,e), cur(v), fst(NULL), lst(NULL) {}
 inline void 
 StringOption::value(int v) {
   cur = v;
@@ -48,7 +56,34 @@ StringOption::value(void) const {
   return cur;
 }
 
+inline
+UIntOption::UIntOption(const char* o, const char* e, unsigned int v) 
+  : BaseOption(o,e), cur(v) {}
+inline void 
+UIntOption::value(unsigned int v) {
+  cur = v;
+}
+inline unsigned int 
+UIntOption::value(void) const {
+  return cur;
+}
 
+
+inline void
+Options::add(BaseOption* o) {
+  o->next = NULL;
+  if (fst == NULL) {
+    fst=o;
+  } else {
+    lst->next=o;
+  }
+  lst=o;
+}
+
+/*
+ * Model options
+ *
+ */
 inline void
 Options::model(int v) {
   _model.value(v);
@@ -76,6 +111,15 @@ Options::propagation(void) const {
 }
 
 inline void
+Options::icl(IntConLevel i) {
+  _icl.value(i);
+}
+inline IntConLevel
+Options::icl(void) const {
+  return static_cast<IntConLevel>(_icl.value());
+}
+
+inline void
 Options::branching(int v) {
   _branching.value(v);
 }
@@ -88,6 +132,11 @@ Options::branching(void) const {
   return _branching.value();
 }
 
+
+/*
+ * Search options
+ *
+ */
 inline void
 Options::search(int v) {
   _search.value(v);
@@ -100,6 +149,40 @@ inline int
 Options::search(void) const {
   return _search.value();
 }
+
+inline void
+Options::c_d(unsigned int d) {
+  _c_d.value(d);
+}
+inline unsigned int
+Options::c_d(void) const {
+  return _c_d.value();
+}
+
+inline void
+Options::a_d(unsigned int d) {
+  _a_d.value(d);
+}
+inline unsigned int
+Options::a_d(void) const {
+  return _a_d.value();
+}
+
+
+/*
+ * Execution options
+ *
+ */
+inline void
+Options::mode(ExampleMode em) {
+  _mode.value(em);
+}
+inline ExampleMode
+Options::mode(void) const {
+  return static_cast<ExampleMode>(_mode.value());
+}
+
+
 
 
 

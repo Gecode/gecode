@@ -89,14 +89,14 @@ public:
 
     // Constraints for rows and columns
     for (int i=0; i<nn; i++) {
-      distinct(this, m.row(i), opt.icl);
-      distinct(this, m.col(i), opt.icl);
+      distinct(this, m.row(i), opt.icl());
+      distinct(this, m.col(i), opt.icl());
     }
 
     // Constraints for squares
     for (int i=0; i<nn; i+=n)
       for (int j=0; j<nn; j+=n) {
-        distinct(this, m.slice(i, i+n, j, j+n), opt.icl);
+        distinct(this, m.slice(i, i+n, j, j+n), opt.icl());
       }
 
 #ifdef GECODE_HAVE_SET_VARS
@@ -187,7 +187,7 @@ int
 main(int argc, char** argv) {
   Options opt("Sudoku");
   opt.size       = 0;
-  opt.icl        = ICL_DOM;
+  opt.icl(ICL_DOM);
   opt.solutions  = 1;
   opt.naive      = true;
   opt.parse(argc,argv);

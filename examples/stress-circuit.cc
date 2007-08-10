@@ -52,7 +52,7 @@ public:
   StressCircuit(const Options& opt)
     : x(this,opt.size,0,opt.size-1) {
 
-    circuit(this, x, opt.icl);
+    circuit(this, x, opt.icl());
     //	x[]={[3..5], [3..4], 0, 2, 1, [1..4], ;
     rel(this, x[0], IRT_NQ, 0);
     rel(this, x[0], IRT_NQ, 1);

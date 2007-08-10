@@ -107,12 +107,12 @@ public:
     // Sum of fulfilment
     linear(this, ful, IRT_EQ, sat);
 
-    distinct(this, pos, opt.icl);
+    distinct(this, pos, opt.icl());
 
     // Break some symmetries
     rel(this, pos[0], IRT_LE, pos[1]);
 
-    if (opt.naive) {
+    if (opt.branching() == BRANCH_NONE) {
       branch(this, pos, BVAR_NONE, BVAL_MIN);
     } else {
       branch(this, pos, BVAR_DEGREE_MAX, BVAL_MIN);
@@ -158,7 +158,7 @@ main(int argc, char** argv) {
   opt.solutions  = 0;
   opt.size       = 1;
   opt.iterations = 10;
-  opt.icl        = ICL_BND;
+  opt.icl(ICL_BND);
   opt.branching(Photo::BRANCH_DEGREE);
   opt.branching(Photo::BRANCH_NONE, "none");
   opt.branching(Photo::BRANCH_DEGREE, "degree");
