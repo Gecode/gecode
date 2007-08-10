@@ -157,22 +157,6 @@ namespace Gecode {
     }
 #endif
     
-    void emitType(ostream& os, ActorSpec& s) {
-      bool first = true;
-      for (int i=0; i<s.noOfArgs(); i++) {
-        if (s[i]->isTypedArg()) {
-          if (first) {
-            os << "<"; first = false;
-          } else {
-            os << ",";
-          }
-          s[i]->type()->print(os);
-        }
-      }
-      if (!first)
-        os << ">";
-    }
-    
     void emitVar(ostream& os, int v, VarMap& vm) {
       VarSpec& vs = vm.get(v);
       if (vs.name() == NULL)
@@ -298,7 +282,6 @@ namespace Gecode {
       }
 
       os << "constraint " << s.name();
-      emitType(os, s);
       os << "(";
       for (int i=0; i<s.noOfArgs(); i++) {
         emitArg(os, s[i], vm);

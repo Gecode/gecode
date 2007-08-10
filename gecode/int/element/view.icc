@@ -190,8 +190,9 @@ namespace Gecode { namespace Int { namespace Element {
 
   template <class VA, class VB, class VC, PropCond pc_ac>
   Reflection::ActorSpec&
-  View<VA,VB,VC,pc_ac>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m);
+  View<VA,VB,VC,pc_ac>::spec(Space* home, Reflection::VarMap& m,
+                             const std::string& name) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     Reflection::ArrayArg<int>* ai = new Reflection::ArrayArg<int>(n);
     for (int i=n; i--;)
       (*ai)[i] = iv[i].idx;
@@ -370,9 +371,15 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class VA, class VB, class VC>
-  const char*
-  ViewBnd<VA,VB,VC>::name(void) const {
-    return "int.element.ViewBnd";
+  std::string
+  ViewBnd<VA,VB,VC>::name(void) {
+    return "Int::Element::ViewBnd";
+  }
+
+  template <class VA, class VB, class VC>
+  Reflection::ActorSpec&
+  ViewBnd<VA,VB,VC>::spec(Space* home, Reflection::VarMap& m) {
+    return View<VA,VB,VC,PC_INT_BND>::spec(home, m, name());
   }
 
   template <class VA, class VB, class VC>
@@ -468,9 +475,15 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class VA, class VB, class VC>
-  const char*
-  ViewDom<VA,VB,VC>::name(void) const {
-    return "int.element.ViewDom";
+  std::string
+  ViewDom<VA,VB,VC>::name(void) {
+    return "Int::Element::ViewDom";
+  }
+
+  template <class VA, class VB, class VC>
+  Reflection::ActorSpec&
+  ViewDom<VA,VB,VC>::spec(Space* home, Reflection::VarMap& m) {
+    return View<VA,VB,VC,PC_INT_DOM>::spec(home, m, name());
   }
 
   template <class VA, class VB, class VC>

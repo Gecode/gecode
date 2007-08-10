@@ -252,7 +252,7 @@ namespace Gecode { namespace Int {
   }
   forceinline Reflection::Type*
   IntView::type(void) {
-    return new Reflection::Type("int.IntView");
+    return new Reflection::Type("Int::IntView");
   }
 
 

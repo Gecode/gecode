@@ -73,8 +73,11 @@ namespace Gecode { namespace Set { namespace Convex {
     GECODE_SET_EXPORT virtual ExecStatus  propagate(Space* home);
     /// Post propagator that propagates that \a x is convex 
     static  ExecStatus  post(Space* home,SetView x);
+    /// Specification for this propagator
+    GECODE_SET_EXPORT
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    GECODE_SET_EXPORT virtual const char* name(void) const;
+    static std::string name(void);
   };
 
   /**
@@ -97,8 +100,11 @@ namespace Gecode { namespace Set { namespace Convex {
     GECODE_SET_EXPORT virtual ExecStatus  propagate(Space* home);
     /// Post propagator that propagates that \a y is the convex hull of \a x
     static  ExecStatus  post(Space* home,SetView x,SetView y);
+    /// Specification for this propagator
+    GECODE_SET_EXPORT
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    GECODE_SET_EXPORT virtual const char* name(void) const;
+    static std::string name(void);
   };
 
 

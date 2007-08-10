@@ -53,8 +53,8 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Name of this propagator
-    virtual const char* name(void) const;        
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
   };
 
 
@@ -83,9 +83,10 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BV>
-  const char*
-  OrTrueSubsumed<BV>::name(void) const {
-    return "int.bool.OrTrueSubsumed";
+  Reflection::ActorSpec&
+  OrTrueSubsumed<BV>::spec(Space* home, Reflection::VarMap& m) {
+    return BoolBinary<BV,BV>::spec(home, m, 
+      Reflection::mangle<BV>("Int::Bool::OrTrueSubsumed"));
   }
 
 
@@ -171,9 +172,10 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BVA, class BVB>
-  const char*
-  BinOrTrue<BVA,BVB>::name(void) const {
-    return "int.bool.BinOrTrue";
+  Reflection::ActorSpec&
+  BinOrTrue<BVA,BVB>::spec(Space* home, Reflection::VarMap& m) {
+    return BoolBinary<BVA,BVB>::spec(home, m, 
+      Reflection::mangle<BVA,BVB>("Int::Bool::BinOrTrue"));
   }
 
   /*
@@ -218,13 +220,6 @@ namespace Gecode { namespace Int { namespace Bool {
       return new (home) BinOrTrue<BV,BV>(home,share,*this,x0,x1);
     else
       return new (home) TerOrTrue<BV>(home,share,*this);
-  }
-
-  template <class BV>
-  Reflection::ActorSpec&
-  TerOrTrue<BV>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = BoolBinary<BV,BV>::spec(home, m);
-    return s << Reflection::typedSpec(home, m, x2);
   }
 
   template <class BV>
@@ -290,9 +285,11 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BV>
-  const char*
-  TerOrTrue<BV>::name(void) const {
-    return "int.bool.TerOrTrue";
+  Reflection::ActorSpec&
+  TerOrTrue<BV>::spec(Space* home, Reflection::VarMap& m) {
+    return BoolBinary<BV,BV>::spec(home, m, 
+      Reflection::mangle<BV>("Int::Bool::TerOrTrue"))
+      << Reflection::typedSpec(home, m, x2);;
   }
 
   /*
@@ -343,14 +340,6 @@ namespace Gecode { namespace Int { namespace Bool {
       return new (home) TerOrTrue<BV>(home,share,*this,x0,x1,x2);
     else
       return new (home) QuadOrTrue<BV>(home,share,*this);
-  }
-
-  template <class BV>
-  Reflection::ActorSpec&
-  QuadOrTrue<BV>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = BoolBinary<BV,BV>::spec(home, m);
-    return s << Reflection::typedSpec(home, m, x2)
-             << Reflection::typedSpec(home, m, x3);
   }
 
   template <class BV>
@@ -483,9 +472,12 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BV>
-  const char*
-  QuadOrTrue<BV>::name(void) const {
-    return "int.bool.QuadOrTrue";
+  Reflection::ActorSpec&
+  QuadOrTrue<BV>::spec(Space* home, Reflection::VarMap& m) {
+    return BoolBinary<BV,BV>::spec(home, m, 
+      Reflection::mangle<BV>("Int::Bool::QuadOrTrue"))
+      << Reflection::typedSpec(home, m, x2)
+      << Reflection::typedSpec(home, m, x3);
   }
 
   /*
@@ -632,9 +624,10 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BVA, class BVB, class BVC>
-  const char*
-  Or<BVA,BVB,BVC>::name(void) const {
-    return "int.bool.Or";
+  Reflection::ActorSpec&
+  Or<BVA,BVB,BVC>::spec(Space* home, Reflection::VarMap& m) {
+    return BoolTernary<BVA,BVB,BVC>::spec(home, m, 
+      Reflection::mangle<BVA,BVB,BVC>("Int::Bool::Or"));
   }
 
   /*
@@ -697,14 +690,6 @@ namespace Gecode { namespace Int { namespace Bool {
     default:
       return new (home) NaryOrTrue<BV>(home,share,*this);
     }
-  }
-
-  template <class BV>
-  Reflection::ActorSpec&
-  NaryOrTrue<BV>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s =
-      BinaryPropagator<BV, PC_BOOL_VAL>::spec(home, m);
-    return s << x.spec(home, m);
   }
 
   template<class BV>
@@ -775,9 +760,11 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BV>
-  const char*
-  NaryOrTrue<BV>::name(void) const {
-    return "int.bool.NaryOrTrue";
+  Reflection::ActorSpec&
+  NaryOrTrue<BV>::spec(Space* home, Reflection::VarMap& m) {
+    return BinaryPropagator<BV,PC_BOOL_VAL>::spec(home, m, 
+      Reflection::mangle<BV>("Int::Bool::NaryOrTrue"))
+      << x.spec(home, m);
   }
 
   /*
@@ -860,9 +847,10 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BV>
-  const char*
-  NaryOr<BV>::name(void) const {
-    return "int.bool.NaryOr";
+  Reflection::ActorSpec&
+  NaryOr<BV>::spec(Space* home, Reflection::VarMap& m) {
+    return NaryOnePropagator<BV,PC_BOOL_VAL>::spec(home, m, 
+      Reflection::mangle<BV>("Int::Bool::NaryOr"));
   }
 
 }}}

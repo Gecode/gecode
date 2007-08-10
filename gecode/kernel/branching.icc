@@ -100,7 +100,7 @@ namespace Gecode {
     /// Return specification for this branching given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this branching
-    virtual const char* name(void) const;
+    static std::string name(void);
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
   };
@@ -142,7 +142,7 @@ namespace Gecode {
     /// Return specification for this assignment given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this assignment
-    virtual const char* name(void) const;
+    static std::string name(void);
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
   };
@@ -291,16 +291,16 @@ namespace Gecode {
   }
 
   template <class View, class Val, class ViewSel, class ValSel>
-  const char*
-  ViewValBranching<View,Val,ViewSel,ValSel>::name(void) const {
-    return "ViewValBranching";
+  std::string
+  ViewValBranching<View,Val,ViewSel,ValSel>::name(void) {
+    return Reflection::mangle<View,Val,ViewSel,ValSel>("ViewValBranching");
   }
 
   template <class View, class Val, class ViewSel, class ValSel>
   Reflection::ActorSpec&
   ViewValBranching<View,Val,ViewSel,ValSel>::spec(Space* home,
     Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Branching::spec(home, m);
+    Reflection::ActorSpec& s = Branching::spec(home, m, name());
     Reflection::Type* t = new Reflection::Type(2);
     (*t)[0] = ViewSel::type();
     (*t)[1] = ValSel::type();
@@ -369,16 +369,16 @@ namespace Gecode {
   }
 
   template <class View, class Val, class ValSel>
-  const char*
-  ViewValAssignment<View,Val,ValSel>::name(void) const {
-    return "ViewValAssignment";
+  std::string
+  ViewValAssignment<View,Val,ValSel>::name(void) {
+    return Reflection::mangle<View,Val,ValSel>("ViewValAssignment");
   }
 
   template <class View, class Val, class ValSel>
   Reflection::ActorSpec&
   ViewValAssignment<View,Val,ValSel>::spec(Space* home,
     Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Branching::spec(home, m);
+    Reflection::ActorSpec& s = Branching::spec(home, m, name());
     return s << new Reflection::TypedArg(ValSel::type(), x.spec(home, m));
   }
 

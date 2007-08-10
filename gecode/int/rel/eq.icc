@@ -79,9 +79,10 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View0, class View1>
-  const char*
-  EqBnd<View0,View1>::name(void) const {
-    return "int.rel.EqBnd";
+  Reflection::ActorSpec&
+  EqBnd<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
+    return MixBinaryPropagator<View0,PC_INT_BND,View1,PC_INT_BND>
+      ::spec(home, m, Reflection::mangle<View0,View1>("Int::Rel::EqBnd"));
   }
 
   template <class View0, class View1>
@@ -147,9 +148,10 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View0, class View1>
-  const char*
-  EqDom<View0,View1>::name(void) const {
-    return "int.rel.EqDom";
+  Reflection::ActorSpec&
+  EqDom<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
+    return MixBinaryPropagator<View0,PC_INT_DOM,View1,PC_INT_DOM>
+      ::spec(home, m, Reflection::mangle<View0,View1>("Int::Rel::EqDom"));
   }
 
   template <class View0, class View1>
@@ -233,9 +235,10 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
-  const char*
-  NaryEqDom<View>::name(void) const {
-    return "int.rel.NaryEqDom";
+  Reflection::ActorSpec&
+  NaryEqDom<View>::spec(Space* home, Reflection::VarMap& m) {
+    return NaryPropagator<View,PC_INT_DOM>
+      ::spec(home, m, Reflection::mangle<View>("Int::Rel::NaryEqDom"));
   }
 
   template <class View>
@@ -368,9 +371,10 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
-  const char*
-  NaryEqBnd<View>::name(void) const {
-    return "int.rel.NaryEqBnd";
+  Reflection::ActorSpec&
+  NaryEqBnd<View>::spec(Space* home, Reflection::VarMap& m) {
+    return NaryPropagator<View,PC_INT_BND>
+      ::spec(home, m, Reflection::mangle<View>("Int::Rel::NaryEqBnd"));
   }
 
   template <class View>
@@ -453,9 +457,10 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View, class CtrlView>
-  const char*
-  ReEqDom<View,CtrlView>::name(void) const {
-    return "int.rel.ReEqDom";
+  Reflection::ActorSpec&
+  ReEqDom<View,CtrlView>::spec(Space* home, Reflection::VarMap& m) {
+    return ReBinaryPropagator<View,PC_INT_DOM,CtrlView>
+      ::spec(home, m, Reflection::mangle<View,CtrlView>("Int::Rel::ReEqDom"));
   }
 
   template <class View, class CtrlView>
@@ -517,9 +522,10 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View, class CtrlView>
-  const char*
-  ReEqBnd<View,CtrlView>::name(void) const {
-    return "int.rel.ReEqBnd";
+  Reflection::ActorSpec&
+  ReEqBnd<View,CtrlView>::spec(Space* home, Reflection::VarMap& m) {
+    return ReBinaryPropagator<View,PC_INT_BND,CtrlView>
+      ::spec(home, m, Reflection::mangle<View,CtrlView>("Int::Rel::ReEqBnd"));
   }
 
   template <class View, class CtrlView>
@@ -590,15 +596,9 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View, class CtrlView>
   Reflection::ActorSpec&
   ReEqDomInt<View,CtrlView>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s =
-      ReUnaryPropagator<View,PC_INT_DOM,CtrlView>::spec(home, m);
-    return s << c;
-  }
-
-  template <class View, class CtrlView>
-  const char*
-  ReEqDomInt<View,CtrlView>::name(void) const {
-    return "int.rel.ReEqDomInt";
+    return ReUnaryPropagator<View,PC_INT_DOM,CtrlView>
+      ::spec(home, m, Reflection::mangle<View,CtrlView>("Int::Rel::ReEqDom"))
+      << c;
   }
 
   template <class View, class CtrlView>
@@ -681,15 +681,10 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View, class CtrlView>
   Reflection::ActorSpec&
   ReEqBndInt<View,CtrlView>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s =
-      ReUnaryPropagator<View,PC_INT_BND,CtrlView>::spec(home, m);
-    return s << c;
-  }
-
-  template <class View, class CtrlView>
-  const char*
-  ReEqBndInt<View,CtrlView>::name(void) const {
-    return "int.rel.ReEqBndInt";
+    return ReUnaryPropagator<View,PC_INT_BND,CtrlView>
+      ::spec(home, m, 
+             Reflection::mangle<View,CtrlView>("Int::Rel::ReEqBndInt"))
+      << c;
   }
 
   template <class View, class CtrlView>

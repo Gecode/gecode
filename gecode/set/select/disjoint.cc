@@ -42,7 +42,6 @@
 #include "gecode/set/select.hh"
 #include "gecode/set/rel.hh"
 #include "gecode/set/rel-op.hh"
-#include "gecode/set.hh"
 
 #include "gecode/iter.hh"
 
@@ -53,14 +52,14 @@ namespace Gecode { namespace Set { namespace Select {
     return PC_QUADRATIC_LO;
   }
 
-  const char*
-  SelectDisjoint::name(void) const {
-    return "set.select.Disjoint";
+  std::string
+  SelectDisjoint::name(void) {
+    return std::string("Set::Select::Disjoint");
   }
 
   Reflection::ActorSpec&
   SelectDisjoint::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
     return s << iv.spec(home, m) << Reflection::typedSpec(home, m, x1);
   }
 

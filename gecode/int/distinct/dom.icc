@@ -684,9 +684,15 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  const char*
-  Dom<View>::name(void) const {
-    return "int.distinct.Dom";
+  std::string
+  Dom<View>::name(void) {
+    return Reflection::mangle<View>("Int::Distinct::Dom");
+  }
+
+  template <class View>
+  Reflection::ActorSpec&
+  Dom<View>::spec(Space* home, Reflection::VarMap& m) {
+    return NaryPropagator<View,PC_INT_DOM>::spec(home, m, name());
   }
 
   template <class View>

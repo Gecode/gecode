@@ -56,9 +56,15 @@ namespace Gecode { namespace Set { namespace Int {
     return new (home) MinElement(home,share,*this);
   }
 
-  const char*
-  MinElement::name(void) const {
-    return "set.int.MinElement";
+  std::string
+  MinElement::name(void) {
+    return std::string("Set::Int::MinElement");
+  }
+
+  Reflection::ActorSpec&
+  MinElement::spec(Space* home, Reflection::VarMap& m) {
+    return IntSetPropagator<SetView,PC_SET_ANY,Gecode::Int::PC_INT_BND>
+      ::spec(home, m, name());
   }
 
   ExecStatus
@@ -105,11 +111,16 @@ namespace Gecode { namespace Set { namespace Int {
     return new (home) MaxElement(home,share,*this);
   }
 
-  const char*
-  MaxElement::name(void) const {
-    return "set.int.MaxElement";
+  std::string
+  MaxElement::name(void) {
+    return std::string("Set::Int::MaxElement");
   }
 
+  Reflection::ActorSpec&
+  MaxElement::spec(Space* home, Reflection::VarMap& m) {
+    return IntSetPropagator<SetView,PC_SET_ANY,Gecode::Int::PC_INT_BND>
+      ::spec(home, m, name());
+  }
 
   ExecStatus
   MaxElement::propagate(Space* home) {

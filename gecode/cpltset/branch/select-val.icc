@@ -108,7 +108,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   template<bool exclude>
   forceinline Reflection::Type*
   ValMin<exclude>::type(void) {
-    return new Reflection::Type("bdd.ValMin");
+    return new Reflection::Type("CpltSet::Branch::ValMin");
   }
 
   template <bool exclude>
@@ -137,7 +137,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   template<bool exclude>
   forceinline Reflection::Type*
   ValMax<exclude>::type(void) {
-    return new Reflection::Type("bdd.ValMax");
+    return new Reflection::Type("CpltSet::Branch::ValMax");
   }
 
   template <bool exclude>
@@ -159,7 +159,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   template<bool exclude>
   forceinline Reflection::Type*
   ValMinUnknown<exclude>::type(void) {
-    return new Reflection::Type("bdd.ValMinUnknown");
+    return new Reflection::Type("CpltSet::Branch::ValMinUnknown");
   }
 
   template <bool exclude>
@@ -183,7 +183,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   template<bool exclude>
   forceinline Reflection::Type*
   ValMaxUnknown<exclude>::type(void) {
-    return new Reflection::Type("bdd.ValMaxUnknown");
+    return new Reflection::Type("CpltSet::Branch::ValMaxUnknown");
   }
 
 //   template <class SelView>

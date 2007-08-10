@@ -345,7 +345,7 @@ namespace Gecode {
     template <class Val, class UnsVal>
     forceinline Reflection::Type*
     ScaleView<Val,UnsVal>::type(void) {
-      return new Reflection::Type("int.ScaleView");
+      return new Reflection::Type("Int::ScaleView");
     }
 
 

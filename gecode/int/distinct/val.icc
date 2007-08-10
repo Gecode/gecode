@@ -152,7 +152,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   template <class View>
   forceinline
   Val<View>::Val(Space* home, ViewArray<View>& x)
-    : NaryPropagator<View,PC_INT_VAL>(home,x) {}
+  : NaryPropagator<View,PC_INT_VAL>(home,x) {}
 
   template <class View>
   forceinline
@@ -166,9 +166,15 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  const char*
-  Val<View>::name(void) const {
-    return "int.distinct.Val";
+  std::string
+  Val<View>::name(void) {
+    return Reflection::mangle<View>("Int::Distinct::Val");
+  }
+
+  template <class View>
+  Reflection::ActorSpec&
+  Val<View>::spec(Space* home, Reflection::VarMap& m) {
+    return NaryPropagator<View,PC_INT_VAL>::spec(home, m, name());
   }
 
   template <class View>

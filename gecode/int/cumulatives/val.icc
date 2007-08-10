@@ -142,9 +142,16 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   }
 
   template <class ViewM, class ViewD, class ViewH, class View>
+  std::string
+  Val<ViewM,ViewD,ViewH,View>::name(void) {
+    return 
+      Reflection::mangle<ViewM,ViewD,ViewH,View>("Int::Cumulatives::Val");
+  }
+
+  template <class ViewM, class ViewD, class ViewH, class View>
   Reflection::ActorSpec&
   Val<ViewM,ViewD,ViewH,View>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
 
     return s << machine.spec(home, m)
              << start.spec(home, m)
@@ -153,12 +160,6 @@ namespace Gecode { namespace Int { namespace Cumulatives {
              << height.spec(home, m)
              << new Reflection::ArrayArg<int>(limit)
              << at_most;
-  }
-
-  template <class ViewM, class ViewD, class ViewH, class View>
-  const char*
-  Val<ViewM,ViewD,ViewH,View>::name(void) const {
-    return "int.cumulatives.Val";
   }
 
   template <class ViewM, class ViewD, class ViewH, class View>

@@ -154,7 +154,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View>
   const char*
   Incremental<View>::name(void) const {
-    return "int.extensional.Incremental";
+    return "Int::Extensional::Incremental";
   }
 
   template <class View>

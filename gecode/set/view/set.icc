@@ -177,7 +177,7 @@ namespace Gecode { namespace Set {
 
   forceinline Reflection::Type*
   SetView::type(void) {
-    return new Reflection::Type("set.SetView");
+    return new Reflection::Type("Set::SetView");
   }
 
   /**

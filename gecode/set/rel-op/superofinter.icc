@@ -72,9 +72,16 @@ namespace Gecode { namespace Set { namespace RelOp {
   }
 
   template <class View0, class View1, class View2>
-  const char*
-  SuperOfInter<View0,View1,View2>::name(void) const {
-    return "set.relop.SuperOfInter";
+  std::string
+  SuperOfInter<View0,View1,View2>::name(void) {
+    return Reflection::mangle<View0,View1,View2>("Set::RelOp::SuperOfInter");
+  }
+
+  template <class View0, class View1, class View2>
+  Reflection::ActorSpec&
+  SuperOfInter<View0,View1,View2>::spec(Space* home, Reflection::VarMap& m) {
+    return MixTernaryPropagator<View0,PC_SET_ANY,View1,PC_SET_ANY,
+      View2,PC_SET_CLUB>::spec(home, m, name());
   }
 
   template <class View0, class View1, class View2>

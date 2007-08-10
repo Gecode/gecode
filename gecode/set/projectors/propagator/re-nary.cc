@@ -65,9 +65,14 @@ namespace Gecode { namespace Set { namespace Projection {
     return new (home) ReNaryProjection(home,share,*this);
   }
 
-  const char*
-  ReNaryProjection::name(void) const {
-    return "set.projectors.ReNaryProjection";
+  std::string
+  ReNaryProjection::name(void) {
+    return std::string("set.projectors.ReNaryProjection");
+  }
+
+  Reflection::ActorSpec&
+  ReNaryProjection::spec(Space* home, Reflection::VarMap& m) {
+    throw Reflection::ReflectionException("Not implemented");
   }
 
   ExecStatus

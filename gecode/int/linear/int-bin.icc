@@ -74,8 +74,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B, PropCond pc>
   Reflection::ActorSpec&
-  LinBin<Val,A,B,pc>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m);
+  LinBin<Val,A,B,pc>::spec(Space* home, Reflection::VarMap& m,
+                           const std::string& name) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << Reflection::typedSpec(home, m, x0)
              << Reflection::typedSpec(home, m, x1)
              << c;
@@ -135,8 +136,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class Val, class A, class B, PropCond pc, class Ctrl>
   Reflection::ActorSpec&
-  ReLinBin<Val,A,B,pc,Ctrl>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m);
+  ReLinBin<Val,A,B,pc,Ctrl>::spec(Space* home, Reflection::VarMap& m,
+                                  const std::string& name) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << Reflection::typedSpec(home, m, x0)
              << Reflection::typedSpec(home, m, x1)
              << c
@@ -179,9 +181,15 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B>
-  const char*
-  EqBin<Val,A,B>::name(void) const {
-    return "int.linear.EqBin";
+  std::string
+  EqBin<Val,A,B>::name(void) {
+    return Reflection::mangle<Val,A,B>("Int::Linear::EqBin");
+  }
+
+  template <class Val, class A, class B>
+  Reflection::ActorSpec&
+  EqBin<Val,A,B>::spec(Space* home, Reflection::VarMap& m) {
+    return LinBin<Val,A,B,PC_INT_BND>::spec(home, m, name());
   }
 
   /// Describe which view has been modified how
@@ -250,9 +258,15 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, class Ctrl>
-  const char*
-  ReEqBin<Val,A,B,Ctrl>::name(void) const {
-    return "int.linear.ReEqBin";
+  std::string
+  ReEqBin<Val,A,B,Ctrl>::name(void) {
+    return Reflection::mangle<Val,A,B,Ctrl>("Int::Linear::ReEqBin");
+  }
+
+  template <class Val, class A, class B, class Ctrl>
+  Reflection::ActorSpec&
+  ReEqBin<Val,A,B,Ctrl>::spec(Space* home, Reflection::VarMap& m) {
+    return ReLinBin<Val,A,B,PC_INT_BND,Ctrl>::spec(home, m, name());
   }
 
   template <class Val, class A, class B, class Ctrl>
@@ -318,9 +332,15 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B>
-  const char*
-  NqBin<Val,A,B>::name(void) const {
-    return "int.linear.NqBin";
+  std::string
+  NqBin<Val,A,B>::name(void) {
+    return Reflection::mangle<Val,A,B>("Int::Linear::NqBin");
+  }
+
+  template <class Val, class A, class B>
+  Reflection::ActorSpec&
+  NqBin<Val,A,B>::spec(Space* home, Reflection::VarMap& m) {
+    return LinBin<Val,A,B,PC_INT_VAL>::spec(home, m, name());
   }
 
   template <class Val, class A, class B>
@@ -372,11 +392,16 @@ namespace Gecode { namespace Int { namespace Linear {
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
 
   template <class Val, class A, class B>
-  const char*
-  LqBin<Val,A,B>::name(void) const {
-    return "int.linear.LqBin";
+  std::string
+  LqBin<Val,A,B>::name(void) {
+    return Reflection::mangle<Val,A,B>("Int::Linear::LqBin");
   }
 
+  template <class Val, class A, class B>
+  Reflection::ActorSpec&
+  LqBin<Val,A,B>::spec(Space* home, Reflection::VarMap& m) {
+    return LinBin<Val,A,B,PC_INT_BND>::spec(home, m, name());
+  }
 
   template <class Val, class A, class B>
   ExecStatus
@@ -425,11 +450,16 @@ namespace Gecode { namespace Int { namespace Linear {
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
 
   template <class Val, class A, class B>
-  const char*
-  GqBin<Val,A,B>::name(void) const {
-    return "int.linear.GqBin";
+  std::string
+  GqBin<Val,A,B>::name(void) {
+    return Reflection::mangle<Val,A,B>("Int::Linear::GqBin");
   }
 
+  template <class Val, class A, class B>
+  Reflection::ActorSpec&
+  GqBin<Val,A,B>::spec(Space* home, Reflection::VarMap& m) {
+    return LinBin<Val,A,B,PC_INT_BND>::spec(home, m, name());
+  }
 
   template <class Val, class A, class B>
   ExecStatus
@@ -472,9 +502,15 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B>
-  const char*
-  ReLqBin<Val,A,B>::name(void) const {
-    return "int.linear.ReLqBin";
+  std::string
+  ReLqBin<Val,A,B>::name(void) {
+    return Reflection::mangle<Val,A,B>("Int::Linear::ReLqBin");
+  }
+
+  template <class Val, class A, class B>
+  Reflection::ActorSpec&
+  ReLqBin<Val,A,B>::spec(Space* home, Reflection::VarMap& m) {
+    return ReLinBin<Val,A,B,PC_INT_BND,BoolView>::spec(home, m, name());
   }
 
 

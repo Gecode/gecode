@@ -52,7 +52,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ByNone<View>::type(void) {
-    return new Reflection::Type("int.ByNone");
+    return new Reflection::Type("Int::Branch::ByNone");
   }
 
   // Select variable with smallest min
@@ -73,7 +73,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ByMinMin<View>::type(void) {
-    return new Reflection::Type("int.ByMinMin");
+    return new Reflection::Type("Int::Branch::ByMinMin");
   }
 
   // Select variable with largest min
@@ -94,7 +94,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ByMinMax<View>::type(void) {
-    return new Reflection::Type("int.ByMinMax");
+    return new Reflection::Type("Int::Branch::ByMinMax");
   }
 
   // Select variable with smallest max
@@ -115,7 +115,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ByMaxMin<View>::type(void) {
-    return new Reflection::Type("int.ByMaxMin");
+    return new Reflection::Type("Int::Branch::ByMaxMin");
   }
 
   // Select variable with largest max
@@ -136,7 +136,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ByMaxMax<View>::type(void) {
-    return new Reflection::Type("int.ByMaxMax");
+    return new Reflection::Type("Int::Branch::ByMaxMax");
   }
 
   // Select variable with smallest size
@@ -158,7 +158,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   BySizeMin<View>::type(void) {
-    return new Reflection::Type("int.BySizeMin");
+    return new Reflection::Type("Int::Branch::BySizeMin");
   }
 
   // Select variable with largest size
@@ -179,7 +179,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   BySizeMax<View>::type(void) {
-    return new Reflection::Type("int.BySizeMax");
+    return new Reflection::Type("Int::Branch::BySizeMax");
   }
 
   // Select variable with smallest degree (and smallest size in case of ties)
@@ -205,7 +205,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ByDegreeMin<View>::type(void) {
-    return new Reflection::Type("int.ByDegreeMin");
+    return new Reflection::Type("Int::Branch::ByDegreeMin");
   }
 
   // Select variable with smallest degree (and smallest size in case of ties)
@@ -231,7 +231,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ByDegreeMax<View>::type(void) {
-    return new Reflection::Type("int.ByDegreeMax");
+    return new Reflection::Type("Int::Branch::ByDegreeMax");
   }
 
 
@@ -253,7 +253,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ByDegreeMinNoTies<View>::type(void) {
-    return new Reflection::Type("int.ByDegreeMinNoTies");
+    return new Reflection::Type("Int::Branch::ByDegreeMinNoTies");
   }
 
   // Select variable with smallest degree
@@ -274,7 +274,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ByDegreeMaxNoTies<View>::type(void) {
-    return new Reflection::Type("int.ByDegreeMaxNoTies");
+    return new Reflection::Type("Int::Branch::ByDegreeMaxNoTies");
   }
 
 
@@ -297,7 +297,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ByRegretMinMin<View>::type(void) {
-    return new Reflection::Type("int.ByRegretMinMin");
+    return new Reflection::Type("Int::Branch::ByRegretMinMin");
   }
 
   // Select variable with largest min-regret
@@ -318,7 +318,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ByRegretMinMax<View>::type(void) {
-    return new Reflection::Type("int.ByRegretMinMax");
+    return new Reflection::Type("Int::Branch::ByRegretMinMax");
   }
 
   // Select variable with smallest max-regret
@@ -340,7 +340,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ByRegretMaxMin<View>::type(void) {
-    return new Reflection::Type("int.ByRegretMaxMin");
+    return new Reflection::Type("Int::Branch::ByRegretMaxMin");
   }
 
   // Select variable with smallest min-regret
@@ -361,7 +361,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ByRegretMaxMax<View>::type(void) {
-    return new Reflection::Type("int.ByRegretMaxMax");
+    return new Reflection::Type("Int::Branch::ByRegretMaxMax");
   }
 
 }}}

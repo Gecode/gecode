@@ -64,9 +64,15 @@ namespace Gecode { namespace Int { namespace Circuit {
   }
 
   template <class View>
-  const char*
-  Dom<View>::name(void) const {
-    return "int.circuit.Dom";
+  std::string
+  Dom<View>::name(void) {
+    return Reflection::mangle<View>("Int::Circuit::Dom");
+  }
+
+  template <class View>
+  Reflection::ActorSpec&
+  Dom<View>::spec(Space* home, Reflection::VarMap& m) {
+    return Base<View>::spec(home, m, name());
   }
 
   template <class View>

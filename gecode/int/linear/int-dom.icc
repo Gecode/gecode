@@ -416,9 +416,15 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class View>
-  const char*
-  DomEq<Val,View>::name(void) const {
-    return "int.linear.DomEq";
+  std::string
+  DomEq<Val,View>::name(void) {
+    return Reflection::mangle<Val,View>("Int::Linear::DomEq");
+  }
+
+  template <class Val, class View>
+  Reflection::ActorSpec&
+  DomEq<Val,View>::spec(Space* home, Reflection::VarMap& m) {
+    return Lin<Val,View,View,PC_INT_DOM>::spec(home, m, name());
   }
 
   template <class Val, class View>

@@ -70,7 +70,7 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View>
   const char*
   Basic<View>::name(void) const {
-    return "int.extensional.Basic";
+    return "Int::Extensional::Basic";
   }
 
   template <class View>

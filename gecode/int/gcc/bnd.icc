@@ -112,9 +112,16 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView, bool shared>
-  const char*
-  BndImp<View, Card, isView, shared>::name(void) const {
-    return "int.gcc.Bnd";
+  std::string
+  BndImp<View, Card, isView, shared>::name(void) {
+    return Reflection::mangle<View,Card,bool,bool>("Int::GCC::Bnd");
+  }
+
+  template <class View, class Card, bool isView, bool shared>
+  Reflection::ActorSpec&
+  BndImp<View,Card,isView,shared>::spec(Space* home, Reflection::VarMap& m) {
+    return Propagator::spec(home, m, name())
+      << x.spec(home, m) << k.spec(home, m) << isView << shared;
   }
 
   template <class View, class Card, bool isView, bool shared>

@@ -54,9 +54,15 @@ namespace Gecode { namespace Int { namespace Channel {
     return PC_UNARY_LO;
   }
 
-  const char*
-  LinkSingle::name(void) const {
-    return "int.channel.LinkSingle";
+  std::string
+  LinkSingle::name(void) {
+    return std::string("Int::Channel::Val");
+  }
+
+  Reflection::ActorSpec&
+  LinkSingle::spec(Space* home, Reflection::VarMap& m) {
+    return MixBinaryPropagator<BoolView,PC_BOOL_VAL,IntView,PC_INT_VAL>
+      ::spec(home, m, name());
   }
 
   ExecStatus

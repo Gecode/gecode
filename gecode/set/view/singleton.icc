@@ -270,7 +270,7 @@ namespace Gecode {
 
     forceinline Reflection::Type*
     SingletonView::type(void) {
-      return new Reflection::Type("set.SingletonView");
+      return new Reflection::Type("Set::SingletonView");
     }
 
     /*

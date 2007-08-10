@@ -75,6 +75,10 @@ namespace Gecode { namespace Int { namespace GCC {
     void subscribe(Space*, Advisor*) {}
 
     void update(Space*, bool, OccurBndsView&);
+
+    Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+    static Reflection::Type* type(void);
+    
   };
 
   forceinline
@@ -195,6 +199,19 @@ namespace Gecode { namespace Int { namespace GCC {
     _max = oc._max;
     c = oc.c;
     count = oc.count;
+  }
+
+  forceinline Reflection::Arg*
+  OccurBndsView::spec(Space* home, Reflection::VarMap& m) {
+    return new Reflection::PairArg(
+      new Reflection::PairArg(new Reflection::IntArg(_min),
+        new Reflection::IntArg(_max)),
+      new Reflection::PairArg(new Reflection::IntArg(c),
+        new Reflection::IntArg(count)));
+  }
+  forceinline Reflection::Type*
+  OccurBndsView::type(void) {
+    return new Reflection::Type("Int::GCC::OccurBndsView");
   }
 
   /**
@@ -397,12 +414,21 @@ namespace Gecode { namespace Int { namespace GCC {
     void subscribe(Space* home, Advisor* a);
     /// Cancel subscription of advisor \a a
     void cancel(Space* home, Advisor* a);
+    
     ///@}
 
     /// \name Cloning
     ///@{
     /// Update this view to be a clone of view \a x
     void update(Space* home, bool share, CardView& x);
+    ///@}
+
+    /// \name Reflection
+    ///@{
+    /// Return specification for this view, using variable map \a m
+    Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
+    /// Return type of this view
+    static Reflection::Type* type(void);
     ///@}
 
     /// \name View comparison
@@ -702,6 +728,20 @@ namespace Gecode { namespace Int { namespace GCC {
     view.update(home,share,x.view);
   }
 
+  /*
+   * Serialization
+   *
+   */
+  forceinline Reflection::Arg*
+  CardView::spec(Space* home, Reflection::VarMap& m) {
+    return new Reflection::PairArg(
+      new Reflection::PairArg(new Reflection::IntArg(c),
+        new Reflection::IntArg(count)), view.spec(home, m));
+  }
+  forceinline Reflection::Type*
+  CardView::type(void) {
+    return new Reflection::Type("Int::GCC::CardView");
+  }
 
 
 }

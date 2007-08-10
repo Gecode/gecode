@@ -72,9 +72,14 @@ namespace Gecode { namespace Set { namespace Projection {
     }
   }
 
-  forceinline const char*
-  CardProjection::name(void) const {
-    return "set.projectors.CardProjection";
+  forceinline std::string
+  CardProjection::name(void) {
+    return std::string("set.projectors.CardProjection");
+  }
+
+  forceinline Reflection::ActorSpec&
+  CardProjection::spec(Space* home, Reflection::VarMap& m) {
+    throw Reflection::ReflectionException("Not implemented");
   }
 
   inline size_t

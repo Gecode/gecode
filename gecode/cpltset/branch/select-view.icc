@@ -52,7 +52,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
   forceinline Reflection::Type*
   ByNone::type(void) {
-    return new Reflection::Type("bdd.ByNone");
+    return new Reflection::Type("CpltSet::Branch::ByNone");
   }
 
   forceinline ViewSelStatus
@@ -71,7 +71,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   }
   forceinline Reflection::Type*
   ByMinCard::type(void) {
-    return new Reflection::Type("bdd.ByMinCard");
+    return new Reflection::Type("CpltSet::Branch::ByMinCard");
   }
 
   forceinline ViewSelStatus
@@ -89,7 +89,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   }
   forceinline Reflection::Type*
   ByMaxCard::type(void) {
-    return new Reflection::Type("bdd.ByMaxCard");
+    return new Reflection::Type("CpltSet::Branch::ByMaxCard");
   }
 
   forceinline ViewSelStatus
@@ -109,7 +109,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   }
   forceinline Reflection::Type*
   ByMinUnknown::type(void) {
-    return new Reflection::Type("bdd.ByMinUnknown");
+    return new Reflection::Type("CpltSet::Branch::ByMinUnknown");
   }
 
   forceinline ViewSelStatus
@@ -137,7 +137,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   }
   forceinline Reflection::Type*
   ByMaxUnknown::type(void) {
-    return new Reflection::Type("bdd.ByMaxUnknown");
+    return new Reflection::Type("CpltSet::Branch::ByMaxUnknown");
   }
 
 }}}

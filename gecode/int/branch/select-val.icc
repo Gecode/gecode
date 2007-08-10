@@ -50,7 +50,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ValMin<View>::type(void) {
-    return new Reflection::Type("int.ValMin");
+    return new Reflection::Type("Int::Branch::ValMin");
   }
 
 
@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ValMed<View>::type(void) {
-    return new Reflection::Type("int.ValMed");
+    return new Reflection::Type("Int::Branch::ValMed");
   }
 
 
@@ -84,7 +84,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ValMax<View>::type(void) {
-    return new Reflection::Type("int.ValMax");
+    return new Reflection::Type("Int::Branch::ValMax");
   }
 
 
@@ -101,7 +101,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ValSplitMin<View>::type(void) {
-    return new Reflection::Type("int.ValSplitMin");
+    return new Reflection::Type("Int::Branch::ValSplitMin");
   }
 
 
@@ -118,7 +118,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ValSplitMax<View>::type(void) {
-    return new Reflection::Type("int.ValSplitMax");
+    return new Reflection::Type("Int::Branch::ValSplitMax");
   }
 
 
@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace Branch {
 
   forceinline
   Reflection::Type* NoValue::type(void) {
-    return new Reflection::Type("int.NoValue");
+    return new Reflection::Type("Int::Branch::NoValue");
   }
 
   template<class View>
@@ -169,7 +169,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ValZeroOne<View>::type(void) {
-    return new Reflection::Type("int.ValZeroOne");
+    return new Reflection::Type("Int::Branch::ValZeroOne");
   }
 
 
@@ -186,7 +186,7 @@ namespace Gecode { namespace Int { namespace Branch {
   template<class View>
   forceinline Reflection::Type*
   ValOneZero<View>::type(void) {
-    return new Reflection::Type("int.ValOneZero");
+    return new Reflection::Type("Int::Branch::ValOneZero");
   }
 
 

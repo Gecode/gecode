@@ -72,15 +72,15 @@ namespace Gecode { namespace Set { namespace Select {
   }
 
   template <class SView, class RView>
-  const char*
-  SelectIntersection<SView,RView>::name(void) const {
-    return "set.select.Intersection";
+  std::string
+  SelectIntersection<SView,RView>::name(void) {
+    return Reflection::mangle<SView,RView>("Set::Select::Intersection");
   }
 
   template <class SView, class RView>
   Reflection::ActorSpec&
   SelectIntersection<SView,RView>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
     int count = 0;
     for (IntSetRanges ur(universe); ur(); ++ur)
       count++;

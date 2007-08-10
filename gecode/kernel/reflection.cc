@@ -39,6 +39,7 @@
 
 #include <map>
 #include <vector>
+#include <sstream>
 
 namespace Gecode { namespace Reflection {
   
@@ -163,6 +164,13 @@ namespace Gecode { namespace Reflection {
       }
       os << ">";
     }
+  }
+
+  std::string
+  Type::toString(void) {
+    std::ostringstream s;
+    print(s);
+    return s.str();
   }
 
 }}

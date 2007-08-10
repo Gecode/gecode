@@ -78,13 +78,14 @@ namespace Gecode { namespace Int { namespace Linear {
     LinBin(Space* home, bool share, Propagator& p, A x0, B x1, Val c);
     /// Constructor for creation
     LinBin(Space* home, A x0, B x1, Val c);
+    /// Return specification for this propagator given a variable map \a m
+    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
+                                const std::string& name);
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
-    /// Return specification for this propagator given a variable map \a m
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
   };
 
   /**
@@ -111,13 +112,14 @@ namespace Gecode { namespace Int { namespace Linear {
     ReLinBin(Space* home, bool share, ReLinBin& p);
     /// Constructor for creation
     ReLinBin(Space* home, A x0, B x1, Val c, Ctrl b);
+    /// Return specification for this propagator given a variable map \a m
+    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
+                                const std::string& name);
   public:
     /// Cost function (defined as PC_BINARY_LO)
     virtual PropCost cost(void) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
-    /// Return specification for this propagator given a variable map \a m
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
   };
 
   /**
@@ -150,8 +152,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$x_0+x_1 = c\f$
     static ExecStatus post(Space* home, A x0, B x1, Val c);
   };
@@ -185,8 +189,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$(x_0+x_1 = c)\Leftrightarrow b\f$
     static ExecStatus post(Space* home, A x0, B x1, Val c, Ctrl b);
   };
@@ -223,8 +229,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual ExecStatus propagate(Space* home);
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(void) const;
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$x_0+x_1 \neq c\f$
     static ExecStatus post(Space* home, A x0, B x1, Val c);
   };
@@ -259,8 +267,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$x_0+x_1 \leq c\f$
     static ExecStatus post(Space* home, A x0, B x1, Val c);
   };
@@ -295,8 +305,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$x_0+x_1 \geq c\f$
     static ExecStatus post(Space* home, A x0, B x1, Val c);
   };
@@ -330,8 +342,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$(x_0+x_1 \leq c)\Leftrightarrow b\f$
     static ExecStatus post(Space* home, A x0, B x1, Val c, BoolView b);
   };
@@ -373,11 +387,12 @@ namespace Gecode { namespace Int { namespace Linear {
     LinTer(Space* home, A x0, B x1, C x2, Val c);
     /// Constructor for rewriting \a p during cloning
     LinTer(Space* home, bool share, Propagator& p, A x0, B x1, C x2, Val c);
+    /// Return specification for this propagator given a variable map \a m
+    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
+                                const std::string& name);
   public:
     /// Cost function (defined as PC_TERNARY_LO)
     virtual PropCost cost(void) const;
-    /// Return specification for this propagator given a variable map \a m
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -413,8 +428,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$x_0+x_1+x_2 = c\f$
     static ExecStatus post(Space* home, A x0, B x1, C x2, Val c);
   };
@@ -450,8 +467,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$x_0+x_1+x_2 \neq c\f$
     static ExecStatus post(Space* home, A x0, B x1, C x2, Val c);
   };
@@ -487,8 +506,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$x_0+x_1+x_2 \leq c\f$
     static ExecStatus post(Space* home, A x0, B x1, C x2, Val c);
   };
@@ -527,13 +548,14 @@ namespace Gecode { namespace Int { namespace Linear {
     Lin(Space* home, bool share, Lin& p);
     /// Constructor for creation
     Lin(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c);
+    /// Return specification
+    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
+                                const std::string& name);
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
-    /// Return specification
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
   };
 
   /**
@@ -554,11 +576,12 @@ namespace Gecode { namespace Int { namespace Linear {
     ReLin(Space* home, bool share, ReLin& p);
     /// Constructor for creation
     ReLin(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
+    /// Return specification
+    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
+                                const std::string& name);
   public:
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
-    /// Return specification
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
   };
 
   /**
@@ -607,8 +630,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\f$
     static ExecStatus
     post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c);
@@ -643,8 +668,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\f$
     static ExecStatus
     post(Space* home, ViewArray<View>& x, ViewArray<View>& y, Val c);
@@ -679,8 +706,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i=c\right)\Leftrightarrow b\f$
     static ExecStatus
     post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c, Ctrl b);
@@ -714,8 +743,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\neq c\f$
     static ExecStatus
     post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c);
@@ -749,8 +780,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\leq c\f$
     static ExecStatus
     post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c);
@@ -785,8 +818,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$\left(\sum_{i=0}^{|x|-1}x_i-\sum_{i=0}^{|y|-1}y_i\leq c\right)\Leftrightarrow b\f$
     static ExecStatus
     post(Space* home, ViewArray<P>& x, ViewArray<N>& y, Val c, BoolView b);
@@ -821,11 +856,12 @@ namespace Gecode { namespace Int { namespace Linear {
     MemoryLinBoolInt(Space* home, bool share, MemoryLinBoolInt& p);
     /// Constructor for creation
     MemoryLinBoolInt(Space* home, ViewArray<VX>& x, int n_s, int c);
+    /// Return specification for this propagator given a variable map \a m
+    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
+                                const std::string& name);
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
-    /// Return specification for this propagator given a variable map \a m
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -849,11 +885,12 @@ namespace Gecode { namespace Int { namespace Linear {
     SpeedLinBoolInt(Space* home, bool share, SpeedLinBoolInt& p);
     /// Constructor for creation
     SpeedLinBoolInt(Space* home, ViewArray<VX>& x, int n_s, int c);
+    /// Return specification for this propagator given a variable map \a m
+    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
+                                const std::string& name);
   public:
     /// Cost function (defined as dynamic PC_UNARY_HI)
     virtual PropCost cost(void) const;
-    /// Return specification for this propagator given a variable map \a m
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -884,8 +921,10 @@ namespace Gecode { namespace Int { namespace Linear {
       virtual Actor* copy(Space* home, bool share);
       /// Perform propagation
       virtual ExecStatus propagate(Space* home);
+      /// Specification for this propagator
+      virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
       /// Name of this propagator
-      virtual const char* name(void) const;    
+      static std::string name(void);
     };
     /// Propagator using more memory but with constant runtime
     class Speed : public SpeedLinBoolInt<VX> {
@@ -905,8 +944,10 @@ namespace Gecode { namespace Int { namespace Linear {
       virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
       /// Perform propagation
       virtual ExecStatus propagate(Space* home);
+      /// Specification for this propagator
+      virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
       /// Name of this propagator
-      virtual const char* name(void) const;    
+      static std::string name(void);
     };
   public:
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i = c\f$
@@ -940,8 +981,10 @@ namespace Gecode { namespace Int { namespace Linear {
       virtual Actor* copy(Space* home, bool share);
       /// Perform propagation
       virtual ExecStatus propagate(Space* home);
+      /// Specification for this propagator
+      virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
       /// Name of this propagator
-      virtual const char* name(void) const;    
+      static std::string name(void);
     };
     /// Propagator using more memory but with constant runtime
     class Speed : public SpeedLinBoolInt<VX> {
@@ -961,8 +1004,10 @@ namespace Gecode { namespace Int { namespace Linear {
       virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
       /// Perform propagation
       virtual ExecStatus propagate(Space* home);
+      /// Specification for this propagator
+      virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
       /// Name of this propagator
-      virtual const char* name(void) const;    
+      static std::string name(void);
     };
   public:
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \geq c\f$
@@ -1001,7 +1046,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Return specification for this propagator given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i \neq c\f$
     static  ExecStatus post(Space* home, ViewArray<VX>& b, int c);
   };
@@ -1029,11 +1074,12 @@ namespace Gecode { namespace Int { namespace Linear {
     LinBoolView(Space* home, bool share, LinBoolView& p);
     /// Constructor for creation
     LinBoolView(Space* home, ViewArray<XV>& x, YV y, int c);
+    /// Return specification for this propagator given a variable map \a m
+    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
+                                const std::string& name);
   public:
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
-    /// Return specification for this propagator given a variable map \a m
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -1061,8 +1107,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Return specification for this propagator given a variable map \a m
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n = y\f$
     static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c);
   };
@@ -1089,8 +1137,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Return specification for this propagator given a variable map \a m
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n \neq y\f$
     static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c);
   };
@@ -1117,8 +1167,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Return specification for this propagator given a variable map \a m
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$\sum_{i=0}^{|x|-1}x_i+n \geq y\f$
     static ExecStatus post(Space* home, ViewArray<XV>& x, YV y, int c);
   };
@@ -1168,6 +1220,8 @@ namespace Gecode { namespace Int { namespace Linear {
     bool empty(void) const;
     /// Return number of elements
     int size(void) const;
+    /// Return type of array
+    static Reflection::Type* type(void);
   private:
     /// For sorting array in decreasing order of coefficients
     class ScaleDec {
@@ -1208,6 +1262,8 @@ namespace Gecode { namespace Int { namespace Linear {
     int size(void) const;
     /// Sort array in decreasing order of coefficients
     void sort(void);
+    /// Return type of array
+    static Reflection::Type* type(void);
   };
 
 
@@ -1226,6 +1282,9 @@ namespace Gecode { namespace Int { namespace Linear {
     VX   x;
     /// Integer constant on right-hand side
     int  c;
+    /// Return specification for this propagator given a variable map \a m
+    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
+                                const std::string& name);
   public:
     /// Constructor for creation
     LinBoolScale(Space* home, SBAP& p, SBAN& n, VX x, int c);
@@ -1234,8 +1293,6 @@ namespace Gecode { namespace Int { namespace Linear {
                  SBAP& p, SBAN& n, VX x, int c);
     /// Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
-    /// Return specification for this propagator given a variable map \a m
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -1263,8 +1320,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Return specification for this propagator given a variable map \a m
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator
     static ExecStatus post(Space* home, SBAP& p, SBAN& n, VX x, int c);
   };
@@ -1292,8 +1351,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Return specification for this propagator given a variable map \a m
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator
     static ExecStatus post(Space* home, SBAP& p, SBAN& n, VX x, int c);
   };
@@ -1321,8 +1382,10 @@ namespace Gecode { namespace Int { namespace Linear {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Return specification for this propagator given a variable map \a m
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator
     static ExecStatus post(Space* home, SBAP& p, SBAN& n, VX x, int c);
   };

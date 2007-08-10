@@ -299,7 +299,7 @@ namespace Gecode {
     }
     forceinline Reflection::Type*
     OffsetView::type(void) {
-      return new Reflection::Type("int.OffsetView");
+      return new Reflection::Type("Int::OffsetView");
     }
 
     /**

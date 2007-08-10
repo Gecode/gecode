@@ -297,7 +297,7 @@ namespace Gecode {
     }
     forceinline Reflection::Type*
     BoolView::type(void) {
-      return new Reflection::Type("int.BoolView");
+      return new Reflection::Type("Int::BoolView");
     }
 
     /*
@@ -475,7 +475,7 @@ namespace Gecode {
     }
     forceinline Reflection::Type*
     NegBoolView::type(void) {
-      return new Reflection::Type("int.NegBoolView");
+      return new Reflection::Type("Int::NegBoolView");
     }
 
     /**

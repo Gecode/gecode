@@ -142,9 +142,17 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView>
-  const char*
-  Dom<View, Card, isView>::name(void) const {
-    return "int.gcc.Dom";
+  std::string
+  Dom<View,Card,isView>::name(void) {
+    return Reflection::mangle<View,Card,bool>("Int::GCC::Dom");
+  }
+
+  template <class View, class Card, bool isView>
+  Reflection::ActorSpec&
+  Dom<View,Card,isView>::spec(Space* home, Reflection::VarMap& m) {
+    return Propagator::spec(home, m, name())
+      << x.spec(home, m) << y.spec(home, m) << k.spec(home, m) << isView
+      << card_fixed << card_all;
   }
   
   /// \brief Perform domain propagation.

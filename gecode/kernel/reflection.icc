@@ -37,6 +37,7 @@
 
 #include <iostream>
 #include <cstring>
+#include <vector>
 
 namespace Gecode { namespace Reflection {
   
@@ -91,6 +92,9 @@ namespace Gecode { namespace Reflection {
     
     /// Print string representation to \a os
     GECODE_KERNEL_EXPORT void print(std::ostream& os);
+
+    /// Return string representation
+    GECODE_KERNEL_EXPORT std::string toString(void);
   };
 
 
@@ -768,6 +772,67 @@ namespace Gecode { namespace Reflection {
   forceinline ActorSpec&
   SpecIter::actor(void) const {
     return *curSpec;
+  }
+
+  template <class View>
+  class TypeOf {
+  public:
+    static std::string t(void) { return View::type()->toString(); }
+  };
+  
+  template <>
+  class TypeOf<bool> {
+  public:
+    static std::string t(void) { return std::string("bool"); }
+  };
+
+  template <>
+  class TypeOf<int> {
+  public:
+    static std::string t(void) { return std::string("int"); }
+  };
+
+  template <>
+  class TypeOf<double> {
+  public:
+    static std::string t(void) { return std::string("double"); }
+  };
+
+}
+  class IntSet;
+namespace Reflection {
+  template <>
+  class TypeOf<const IntSet> {
+  public:
+    static std::string t(void) { return std::string("IntSet"); }    
+  };
+
+  template <class View0>
+  forceinline std::string
+  mangle(const char* name) {
+    return std::string(name) + "<" + std::string(TypeOf<View0>::t())
+           + ">";    
+  }
+  template <class View0, class View1>
+  forceinline std::string
+  mangle(const char* name) {
+    return std::string(name) + "<" + TypeOf<View0>::t()
+         + "," + TypeOf<View1>::t() + ">";
+  }
+  template <class View0, class View1, class View2>
+  forceinline std::string
+  mangle(const char* name) {
+    return std::string(name) + "<" + TypeOf<View0>::t()
+         + "," + TypeOf<View1>::t() + ","
+         + TypeOf<View2>::t() + ">";
+  }
+  template <class View0, class View1, class View2, class View3>
+  forceinline std::string
+  mangle(const char* name) {
+    return std::string(name) + "<" + TypeOf<View0>::t()
+         + "," + TypeOf<View1>::t() + ","
+         + "," + TypeOf<View2>::t() + ","
+         + TypeOf<View3>::t() + ">";
   }
 
 }}

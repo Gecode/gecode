@@ -82,15 +82,15 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  const char*
-  Bnd<View>::name(void) const {
-    return "int.distinct.Bnd";
+  std::string
+  Bnd<View>::name(void) {
+    return Reflection::mangle<View>("Int::Distinct::Bnd");
   }
 
   template <class View>
   Reflection::ActorSpec&
   Bnd<View>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& spec = Propagator::spec(home, m);
+    Reflection::ActorSpec& spec = Propagator::spec(home, m, name());
     return spec << x.spec(home, m);
   }
 
@@ -364,7 +364,6 @@ namespace Gecode { namespace Int { namespace Distinct {
       (void) new (home) Bnd<View>(home,x);
     return ES_OK;
   }
-
 
 }}}
 

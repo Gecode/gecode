@@ -75,9 +75,16 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template <class View0, class View1>
-  const char*
-  NoSubSet<View0,View1>::name(void) const {
-    return "set.rel.NoSubSet";
+  std::string
+  NoSubSet<View0,View1>::name(void) {
+    return Reflection::mangle<View0,View1>("Set::Rel::NoSubSet");
+  }
+
+  template <class View0, class View1>
+  Reflection::ActorSpec&
+  NoSubSet<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
+    return MixBinaryPropagator<View0,PC_SET_CLUB,View1,PC_SET_CGLB>
+      ::spec(home, m, name());
   }
 
   template <class View0, class View1>

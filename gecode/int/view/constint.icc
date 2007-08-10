@@ -297,7 +297,7 @@ namespace Gecode {
     }
     forceinline Reflection::Type*
     ConstIntView::type(void) {
-      return new Reflection::Type("int.ConstIntView");
+      return new Reflection::Type("Int::ConstIntView");
     }
 
     /**

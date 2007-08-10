@@ -79,9 +79,10 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
-  const char*
-  Nq<View>::name(void) const {
-    return "int.rel.Nq";
+  Reflection::ActorSpec&
+  Nq<View>::spec(Space* home, Reflection::VarMap& m) {
+    return BinaryPropagator<View,PC_INT_VAL>::spec(home, m, 
+      Reflection::mangle<View>("Int::Rel::Nq"));
   }
 
   template <class View>
@@ -153,7 +154,9 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View>
   Reflection::ActorSpec&
   NaryNq<View>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    Reflection::ActorSpec& s =
+      BinaryPropagator<ViewTuple<View,2>,PC_INT_DOM>
+      ::spec(home, m, Reflection::mangle<View>("Int::Rel::NaryNq"));
     Reflection::ArrayArg<Reflection::Arg*>* a = new Reflection::ArrayArg<Reflection::Arg*>(x.size()+2);
     int count = 0;
     for (int i=0; i<x.size(); i++)
@@ -170,12 +173,6 @@ namespace Gecode { namespace Int { namespace Rel {
 
     return s << new Reflection::TypedArg(View::type(), a)
              << new Reflection::TypedArg(View::type(), b);
-  }
-
-  template<class View>
-  const char*
-  NaryNq<View>::name(void) const {
-    return "int.rel.NaryNq";
   }
 
   template<class View>

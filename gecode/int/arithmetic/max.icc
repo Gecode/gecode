@@ -115,11 +115,16 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  const char*
-  Max<View>::name(void) const {
-    return "int.Max";
+  std::string
+  Max<View>::name(void) {
+    return Reflection::mangle<View>("Int::Arithmetic::Max");
   }
 
+  template <class View>
+  Reflection::ActorSpec&
+  Max<View>::spec(Space* home, Reflection::VarMap& m) {
+    return TernaryPropagator<View,PC_INT_BND>::spec(home, m, name());
+  }
 
   /*
    * Nary bounds-consistent maximum
@@ -209,9 +214,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  const char*
-  NaryMax<View>::name(void) const {
-    return "int.NaryMax";
+  std::string
+  NaryMax<View>::name(void) {
+    return Reflection::mangle<View>("Int::Arithmetic::NaryMax");
+  }
+
+  template <class View>
+  Reflection::ActorSpec&
+  NaryMax<View>::spec(Space* home, Reflection::VarMap& m) {
+    return NaryOnePropagator<View,PC_INT_BND>::spec(home, m, name());
   }
 
 }}}

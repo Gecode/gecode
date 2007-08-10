@@ -126,9 +126,6 @@ public:
   virtual Actor* copy(Space *home, bool share) {
     return new (home) BlackHoleBranch(home, share, *this);
   }
-  virtual const char* name(void) const {
-    return "BlackHoleBranching";
-  }
   static void post(Space* home, IntVarArgs x) {
     ViewArray<Int::IntView> xv(home, x);
     (void) new (home) BlackHoleBranch(home, xv);

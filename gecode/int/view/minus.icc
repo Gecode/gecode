@@ -296,7 +296,7 @@ namespace Gecode {
     }
     forceinline Reflection::Type*
     MinusView::type(void) {
-      return new Reflection::Type("int.MinusView");
+      return new Reflection::Type("Int::MinusView");
     }
 
     /**

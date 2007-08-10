@@ -78,8 +78,9 @@ namespace Gecode { namespace Int { namespace Count {
 
   template <class VX, class VY>
   Reflection::ActorSpec&
-  BaseInt<VX,VY>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m);
+  BaseInt<VX,VY>::spec(Space* home, Reflection::VarMap& m,
+                       const std::string& name) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x.spec(home, m)
              << Reflection::typedSpec(home, m, y)
              << c;
@@ -139,9 +140,15 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY>
-  const char*
-  EqInt<VX,VY>::name(void) const {
-    return "int.count.EqInt";
+  std::string
+  EqInt<VX,VY>::name(void) {
+    return Reflection::mangle<VX,VY>("Int::Count::EqInt");
+  }
+
+  template <class VX, class VY>
+  Reflection::ActorSpec&
+  EqInt<VX,VY>::spec(Space* home, Reflection::VarMap& m) {
+    return BaseInt<VX,VY>::spec(home, m, name());
   }
 
   template <class VX, class VY>
@@ -243,9 +250,15 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY>
-  const char*
-  GqInt<VX,VY>::name(void) const {
-    return "int.count.GqInt";
+  std::string
+  GqInt<VX,VY>::name(void) {
+    return Reflection::mangle<VX,VY>("Int::Count::GqInt");
+  }
+
+  template <class VX, class VY>
+  Reflection::ActorSpec&
+  GqInt<VX,VY>::spec(Space* home, Reflection::VarMap& m) {
+    return BaseInt<VX,VY>::spec(home, m, name());
   }
 
   template <class VX, class VY>
@@ -344,9 +357,15 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY>
-  const char*
-  LqInt<VX,VY>::name(void) const {
-    return "int.count.LqInt";
+  std::string
+  LqInt<VX,VY>::name(void) {
+    return Reflection::mangle<VX,VY>("Int::Count::LqInt");
+  }
+
+  template <class VX, class VY>
+  Reflection::ActorSpec&
+  LqInt<VX,VY>::spec(Space* home, Reflection::VarMap& m) {
+    return BaseInt<VX,VY>::spec(home, m, name());
   }
 
   template <class VX, class VY>
@@ -453,16 +472,6 @@ namespace Gecode { namespace Int { namespace Count {
     return ES_OK;
   }
 
-  template <class VX, class VY>
-  Reflection::ActorSpec&
-  NqInt<VX,VY>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s =
-      BinaryPropagator<VX, PC_INT_DOM>::spec(home, m);
-    return s << x.spec(home, m)
-             << Reflection::typedSpec(home, m, y)
-             << c;
-  }
-
   template<class VX, class VY>
   Actor*
   NqInt<VX,VY>::copy(Space* home, bool share) {
@@ -476,9 +485,19 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY>
-  const char*
-  NqInt<VX,VY>::name(void) const {
-    return "int.count.NqInt";
+  std::string
+  NqInt<VX,VY>::name(void) {
+    return Reflection::mangle<VX,VY>("Int::Count::NqInt");
+  }
+
+  template <class VX, class VY>
+  Reflection::ActorSpec&
+  NqInt<VX,VY>::spec(Space* home, Reflection::VarMap& m) {
+    Reflection::ActorSpec& s =
+      BinaryPropagator<VX, PC_INT_DOM>::spec(home, m, name());
+    return s << x.spec(home, m)
+             << Reflection::typedSpec(home, m, y)
+             << c;
   }
 
   template<class VX, class VY>

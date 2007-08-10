@@ -159,18 +159,17 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_SUBSUMED(this,home);
   }
 
+  std::string
+  Match::name(void) {
+    return std::string("Set::Int::Match");
+  }
+
   Reflection::ActorSpec&
   Match::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
     return s << Reflection::typedSpec(home, m, x0)
              << xs.spec(home, m);
   }
-
-  const char*
-  Match::name(void) const {
-    return "set.int.Match";
-  }
-
 
 }}}
 

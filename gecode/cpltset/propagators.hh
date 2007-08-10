@@ -83,8 +83,10 @@ namespace Gecode { namespace CpltSet {
   public:
     /// Cost function
     virtual PropCost cost(void) const;
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;
+    static std::string name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -137,8 +139,10 @@ namespace Gecode { namespace CpltSet {
   public:
     /// Cost function
     virtual PropCost cost(void) const;
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;
+    static std::string name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -169,8 +173,10 @@ namespace Gecode { namespace CpltSet {
   public:
     /// Cost function
     virtual PropCost cost(void) const;
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;
+    static std::string name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -225,8 +231,10 @@ namespace Gecode { namespace CpltSet {
   public:
     /// Cost function
     virtual PropCost cost(void) const;
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;
+    static std::string name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -258,8 +266,10 @@ namespace Gecode { namespace CpltSet {
     /// Constructor for posting
     Bin(Space* home, View0&, View1&, GecodeBdd& d);
   public:
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;
+    static std::string name(void);
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -288,8 +298,10 @@ namespace Gecode { namespace CpltSet {
     ExecStatus divide_conquer(Space* home, BMI* m, GecodeBdd& p, 
                               int l, int r, int ypos);
   public:
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;
+    static std::string name(void);
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -317,8 +329,10 @@ namespace Gecode { namespace CpltSet {
     ExecStatus divide_conquer(Space* home, BMI* m, GecodeBdd& p, int l, int r, 
                         int ypos, int zpos);
   public:
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;
+    static std::string name(void);
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -374,8 +388,10 @@ namespace Gecode { namespace CpltSet {
   public:
     /// Cost function
     virtual PropCost cost(void) const;
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;
+    static std::string name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -404,8 +420,10 @@ namespace Gecode { namespace CpltSet {
   public:
     /// Cost function
     virtual PropCost cost(void) const;
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;
+    static std::string name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);

@@ -75,8 +75,9 @@ namespace Gecode { namespace Int { namespace Linear {
 
   template <class XV, class YV>
   Reflection::ActorSpec&
-  LinBoolView<XV,YV>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m);
+  LinBoolView<XV,YV>::spec(Space* home, Reflection::VarMap& m,
+                           const std::string& name) {
+    Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x.spec(home, m)
              << Reflection::typedSpec(home, m, y)
              << c;
@@ -137,9 +138,15 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class XV, class YV>
-  const char*
-  EqBoolView<XV,YV>::name(void) const {
-    return "int.linear.EqBoolView";
+  std::string
+  EqBoolView<XV,YV>::name(void) {
+    return Reflection::mangle<XV,YV>("Int::Linear::EqBoolView");
+  }
+
+  template <class XV, class YV>
+  Reflection::ActorSpec&
+  EqBoolView<XV,YV>::spec(Space* home, Reflection::VarMap& m) {
+    return LinBoolView<XV,YV>::spec(home, m, name());
   }
     
   template <class XV, class YV>
@@ -229,9 +236,15 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class XV, class YV>
-  const char*
-  NqBoolView<XV,YV>::name(void) const {
-    return "int.linear.NqBoolView";
+  std::string
+  NqBoolView<XV,YV>::name(void) {
+    return Reflection::mangle<XV,YV>("Int::Linear::NqBoolView");
+  }
+
+  template <class XV, class YV>
+  Reflection::ActorSpec&
+  NqBoolView<XV,YV>::spec(Space* home, Reflection::VarMap& m) {
+    return LinBoolView<XV,YV>::spec(home, m, name());
   }
 
   template <class XV, class YV>
@@ -312,9 +325,15 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class XV, class YV>
-  const char*
-  GqBoolView<XV,YV>::name(void) const {
-    return "int.linear.GqBoolView";
+  std::string
+  GqBoolView<XV,YV>::name(void) {
+    return Reflection::mangle<XV,YV>("Int::Linear::GqBoolView");
+  }
+
+  template <class XV, class YV>
+  Reflection::ActorSpec&
+  GqBoolView<XV,YV>::spec(Space* home, Reflection::VarMap& m) {
+    return LinBoolView<XV,YV>::spec(home, m, name());
   }
 
   template <class XV, class YV>

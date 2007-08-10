@@ -70,12 +70,13 @@ namespace Gecode { namespace Int { namespace Channel {
     Base(Space* home, bool share, Base<Info,pc>& p);
     /// Constructor for posting
     Base(Space* home, int n, Info* xy);
+    // Specification for this propagator
+    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
+                                const std::string& name);
   public:
     /// Propagation cost
     virtual PropCost cost(void) const;
     /// Specification for this propagator
-    GECODE_INT_EXPORT
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -113,8 +114,10 @@ namespace Gecode { namespace Int { namespace Channel {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for channeling
     static  ExecStatus post(Space* home, int n, ValInfo<View>* xy);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
   };
 
   /**
@@ -153,8 +156,10 @@ namespace Gecode { namespace Int { namespace Channel {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for channeling on \a xy
     static  ExecStatus post(Space* home, int n, DomInfo<View>* xy);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
   };
 
   /**
@@ -182,8 +187,10 @@ namespace Gecode { namespace Int { namespace Channel {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$ x_0 = x_1\f$
     static  ExecStatus post(Space* home, BoolView x0, IntView x1);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
   };
 
   /**
@@ -216,7 +223,7 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
   };
 
 }}}

@@ -298,7 +298,7 @@ namespace Gecode { namespace Set {
   forceinline Reflection::Type*
   ComplementView<View>::type(void) {
     Reflection::Type* t = new Reflection::Type(2);
-    (*t)[0] = new Reflection::Type("set.ComplementView");
+    (*t)[0] = new Reflection::Type("Set::ComplementView");
     (*t)[1] = View::type();
     return t;
   }

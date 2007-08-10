@@ -56,10 +56,17 @@ namespace Gecode { namespace Set { namespace Int {
     return new (home) Card(home,share,*this);
   }
 
-  const char*
-  Card::name(void) const {
-    return "set.int.Card";
+  std::string
+  Card::name(void) {
+    return std::string("Set::Int::Card");
   }
+
+  Reflection::ActorSpec&
+  Card::spec(Space* home, Reflection::VarMap& m) {
+    return IntSetPropagator<SetView,PC_SET_CARD,Gecode::Int::PC_INT_BND>
+      ::spec(home, m, name());
+  }
+
 
   ExecStatus
   Card::propagate(Space* home) {

@@ -69,6 +69,9 @@ namespace Gecode { namespace Int { namespace Circuit {
     ExecStatus connected(Space* home);
     /// Ensure path property: prune edges that could give to small cycles
     ExecStatus path(Space* home);
+    /// Specification for this propagator
+    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
+                                const std::string& name);
   public:
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
@@ -104,8 +107,10 @@ namespace Gecode { namespace Int { namespace Circuit {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for circuit on \a x
     static  ExecStatus post(Space* home, ViewArray<View>& x);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
   };
 
   /**
@@ -143,8 +148,10 @@ namespace Gecode { namespace Int { namespace Circuit {
     virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for circuit on \a x
     static  ExecStatus post(Space* home, ViewArray<View>& x);
   };

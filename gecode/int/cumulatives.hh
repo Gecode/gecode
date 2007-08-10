@@ -120,7 +120,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     static  ExecStatus post(Space* home, const ViewArray<ViewM>&,
                             const ViewArray<View>&, const ViewArray<ViewD>&,
                             const ViewArray<View>&, const ViewArray<ViewH>&,

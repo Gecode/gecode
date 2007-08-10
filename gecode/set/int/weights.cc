@@ -56,9 +56,9 @@ namespace Gecode { namespace Set { namespace Int {
     return PC_LINEAR_LO;
   }
 
-  const char*
-  Weights::name(void) const {
-    return "set.int.Weights";
+  std::string
+  Weights::name(void) {
+    return std::string("Set::Int::Weights");
   }
 
   size_t
@@ -199,7 +199,7 @@ namespace Gecode { namespace Set { namespace Int {
 
   Reflection::ActorSpec&
   Weights::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
     return s << new Reflection::ArrayArg<int>(elements)
              << new Reflection::ArrayArg<int>(weights)
              << Reflection::typedSpec(home, m, x)

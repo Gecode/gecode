@@ -795,17 +795,6 @@ $(top_srcdir)/gecode/cpltset/var/imp-body.icc: \
 	perl $(top_srcdir)/misc/genvarimp.perl -body $< > $@
 
 #
-# Generated registry of propagators
-#
-
-gecode/serialization/registry_generated.icc: \
-	gecode/serialization/registry.py gecode/serialization/generator.py
-	python gecode/serialization/generator.py > \
-		gecode/serialization/registry_generated.icc
-
-
-
-#
 # Object targets
 #
 

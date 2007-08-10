@@ -153,9 +153,10 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BVA, class BVB, class BVC>
-  const char*
-  Eqv<BVA,BVB,BVC>::name(void) const {
-    return "int.bool.Eqv";
+  Reflection::ActorSpec&
+  Eqv<BVA,BVB,BVC>::spec(Space* home, Reflection::VarMap& m) {
+    return BoolTernary<BVA,BVB,BVC>::spec(home, m, 
+      Reflection::mangle<BVA,BVB,BVC>("Int::Bool::Eqv"));
   }
 
 }}}

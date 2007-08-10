@@ -78,8 +78,10 @@ namespace Gecode { namespace Int { namespace Distinct {
     virtual Actor*     copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for view array \a x
     static ExecStatus post(Space* home, ViewArray<View>& x);
   };
@@ -154,10 +156,10 @@ namespace Gecode { namespace Int { namespace Distinct {
     virtual Actor* copy(Space* home, bool share);
     /// Destructor
     virtual size_t dispose(Space* home);
-    /// Name of this propagator
-    virtual const char* name(void) const;
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    static std::string name(void);
   };
 
   /**
@@ -273,8 +275,10 @@ namespace Gecode { namespace Int { namespace Distinct {
     virtual PropCost cost(void) const;
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for views \a x
     static  ExecStatus post(Space* home, ViewArray<View>& x);
   };
@@ -301,8 +305,10 @@ namespace Gecode { namespace Int { namespace Distinct {
     virtual ExecStatus propagate(Space* home);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for views \a x
     static  ExecStatus post(Space* home, View x0, View x1, View x2);
   };

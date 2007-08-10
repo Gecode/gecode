@@ -390,16 +390,16 @@ namespace Gecode { namespace Int { namespace Element {
   template <class ViewA, class ViewB>
   Reflection::ActorSpec&
   Int<ViewA,ViewB>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
     return s << Reflection::typedSpec(home, m, x0)
              << Reflection::typedSpec(home, m, x1)
              << new Reflection::ArrayArg<int>(c);
   }
 
   template <class ViewA, class ViewB>
-  const char*
-  Int<ViewA,ViewB>::name(void) const {
-    return "int.element.Int";
+  std::string
+  Int<ViewA,ViewB>::name(void) {
+    return Reflection::mangle<ViewA,ViewB>("Int::Element::Int");
   }
 
   template <class ViewA, class ViewB>

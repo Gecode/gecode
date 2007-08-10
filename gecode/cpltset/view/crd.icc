@@ -747,7 +747,7 @@ namespace Gecode { namespace CpltSet {
   }
   forceinline Reflection::Type*
   CrdCpltSetView::type(void) {
-    return new Reflection::Type("bdd.CrdCpltSetView");
+    return new Reflection::Type("CpltSet::CrdCpltSetView");
   }
 
   forceinline void 

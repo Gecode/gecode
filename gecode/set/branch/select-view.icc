@@ -54,7 +54,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
   forceinline Reflection::Type*
   ByNone::type(void) {
-    return new Reflection::Type("set.ByNone");
+    return new Reflection::Type("Set::Branch::ByNone");
   }
 
   forceinline ViewSelStatus
@@ -73,7 +73,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
   forceinline Reflection::Type*
   ByMinCard::type(void) {
-    return new Reflection::Type("set.ByMinCard");
+    return new Reflection::Type("Set::Branch::ByMinCard");
   }
 
   forceinline ViewSelStatus
@@ -91,7 +91,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
   forceinline Reflection::Type*
   ByMaxCard::type(void) {
-    return new Reflection::Type("set.ByMaxCard");
+    return new Reflection::Type("Set::Branch::ByMaxCard");
   }
 
   forceinline ViewSelStatus
@@ -111,7 +111,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
   forceinline Reflection::Type*
   ByMinUnknown::type(void) {
-    return new Reflection::Type("set.ByMinUnknown");
+    return new Reflection::Type("Set::Branch::ByMinUnknown");
   }
 
   forceinline ViewSelStatus
@@ -139,7 +139,7 @@ namespace Gecode { namespace Set { namespace Branch {
   }
   forceinline Reflection::Type*
   ByMaxUnknown::type(void) {
-    return new Reflection::Type("set.ByMaxUnknown");
+    return new Reflection::Type("Set::Branch::ByMaxUnknown");
   }
 
 }}}

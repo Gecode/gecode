@@ -35,7 +35,6 @@
  *
  */
 
-#include "gecode/set.hh"
 #include "gecode/set/distinct.hh"
 
 /*
@@ -59,16 +58,15 @@ namespace Gecode { namespace Set { namespace Distinct {
     return new (home) AtmostOne(home,share,*this);
   }
 
-  const char*
-  AtmostOne::name(void) const {
-    return "set.distinct.AtmostOne";
+  std::string
+  AtmostOne::name(void) {
+    return std::string("Set::Distinct::AtmostOne");
   }
 
   Reflection::ActorSpec&
   AtmostOne::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s =
-      NaryPropagator<SetView, PC_SET_ANY>::spec(home, m);
-    return s << c;
+    return NaryPropagator<SetView, PC_SET_ANY>::spec(home, m, name())
+      << c;
   }
 
   ExecStatus

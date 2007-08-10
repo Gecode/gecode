@@ -133,9 +133,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  const char*
-  AbsBnd<View>::name(void) const {
-    return "int.AbsBnd";
+  std::string
+  AbsBnd<View>::name(void) {
+    return Reflection::mangle<View>("Int::Arithmetic::AbsBnd");
+  }
+
+  template <class View>
+  Reflection::ActorSpec&
+  AbsBnd<View>::spec(Space* home, Reflection::VarMap& m) {
+    return BinaryPropagator<View,PC_INT_BND>::spec(home, m, name());
   }
 
   template <class View>
@@ -239,9 +245,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  const char*
-  AbsDom<View>::name(void) const {
-    return "int.AbsDom";
+  std::string
+  AbsDom<View>::name(void) {
+    return Reflection::mangle<View>("Int::Arithmetic::AbsDom");
+  }
+
+  template <class View>
+  Reflection::ActorSpec&
+  AbsDom<View>::spec(Space* home, Reflection::VarMap& m) {
+    return BinaryPropagator<View,PC_INT_DOM>::spec(home, m, name());
   }
 
 }}}

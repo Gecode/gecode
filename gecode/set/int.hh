@@ -69,8 +69,11 @@ namespace Gecode { namespace Set { namespace Int {
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator for \a x is the minimal element of \a s 
     static ExecStatus post(Space* home,SetView s, Gecode::Int::IntView x);
+    /// Specification for this propagator
+    GECODE_SET_EXPORT
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;
+    static std::string name(void);
   };
 
   /**
@@ -93,8 +96,11 @@ namespace Gecode { namespace Set { namespace Int {
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator for \a x is the largest element of \a s 
     static ExecStatus post(Space* home,SetView s, Gecode::Int::IntView x);
+    /// Specification for this propagator
+    GECODE_SET_EXPORT
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;
+    static std::string name(void);
   };
 
   /**
@@ -117,8 +123,11 @@ namespace Gecode { namespace Set { namespace Int {
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$ |s|=x \f$ 
     static ExecStatus post(Space* home,SetView s, Gecode::Int::IntView x);
+    /// Specification for this propagator
+    GECODE_SET_EXPORT
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;
+    static std::string name(void);
   };
 
 
@@ -155,7 +164,7 @@ namespace Gecode { namespace Set { namespace Int {
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    GECODE_SET_EXPORT virtual const char* name(void) const;
+    static std::string name(void);
   };
 
   /**
@@ -203,7 +212,7 @@ namespace Gecode { namespace Set { namespace Int {
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;
+    static std::string name(void);
   };
 
   /**
@@ -246,7 +255,7 @@ namespace Gecode { namespace Set { namespace Int {
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;
+    static std::string name(void);
   };
 
 }}}

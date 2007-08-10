@@ -74,8 +74,10 @@ namespace Gecode { namespace Set { namespace Sequence {
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$
     static ExecStatus post(Space* home,ViewArray<SetView>);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    GECODE_SET_EXPORT virtual const char* name(void) const;
+    static std::string name(void);
   };
 
   /**
@@ -105,7 +107,7 @@ namespace Gecode { namespace Set { namespace Sequence {
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    GECODE_SET_EXPORT virtual const char* name(void) const;
+    static std::string name(void);
     /// Post propagator \f$\forall 0\leq i< |x|-1 : \max(x_i)<\min(x_{i+1})\f$ and \f$ x = \bigcup_{i\in\{0,\dots,n-1\}} y_i \f$ 
     static ExecStatus post(Space* home,ViewArray<SetView>, SetView);
   };

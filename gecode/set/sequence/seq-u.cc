@@ -41,7 +41,6 @@
  *
  */
 
-#include "gecode/set.hh"
 #include "gecode/set/sequence.hh"
 
 namespace Gecode { namespace Set { namespace Sequence {
@@ -56,15 +55,15 @@ namespace Gecode { namespace Set { namespace Sequence {
     return new (home) SeqU(home,share,*this);
   }
 
-  const char*
-  SeqU::name(void) const {
-    return "set.sequence.Union";
+  std::string
+  SeqU::name(void) {
+    return std::string("Set::Sequence::Union");
   }
 
   Reflection::ActorSpec&
   SeqU::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s =
-     NaryOnePropagator<SetView,PC_SET_ANY>::spec(home, m);
+     NaryOnePropagator<SetView,PC_SET_ANY>::spec(home, m, name());
     int count = 0;
     for (BndSetRanges uod(unionOfDets); uod(); ++uod)
       count++;

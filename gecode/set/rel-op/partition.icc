@@ -80,16 +80,17 @@ namespace Gecode { namespace Set { namespace RelOp {
   }
 
   template <class View0, class View1>
-  const char*
-  PartitionN<View0,View1>::name(void) const {
-    return "set.relop.PartitionN";
+  std::string
+  PartitionN<View0,View1>::name(void) {
+    return Reflection::mangle<View0,View1>("Set::RelOp::PartitionN");
   }
 
   template <class View0, class View1>
   Reflection::ActorSpec&
   PartitionN<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s =
-      MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>::spec(home, m);
+      MixNaryOnePropagator<View0,PC_SET_ANY,View1,PC_SET_ANY>
+        ::spec(home, m, name());
     int count = 0;
     for (BndSetRanges uod(unionOfDets); uod(); ++uod)
       count++;

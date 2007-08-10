@@ -582,8 +582,10 @@ namespace Gecode {
     /// Return specification for this actor given a variable map \a m
     GECODE_KERNEL_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Return name of this actor
-    virtual const char* name(void) const = 0;
+    /// Return specification given a variable map \a m and \a name
+    GECODE_KERNEL_EXPORT
+    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
+                                const std::string& name);
   private:
 #ifndef __GNUC__
     /// Not used (uses dispose instead)

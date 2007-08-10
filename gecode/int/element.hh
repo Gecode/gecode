@@ -95,8 +95,8 @@ namespace Gecode { namespace Int { namespace Element {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of this propagator
-    virtual const char* name(void) const;    
+    /// Mangled name of this propagator
+    static std::string name(void);
     /// Post propagator for \f$i_{x_0}=x_1\f$
     static  ExecStatus post(Space* home, IntSharedArray& i,
                             ViewA x0, ViewB x1);
@@ -133,9 +133,10 @@ namespace Gecode { namespace Int { namespace Element {
     View(Space* home, bool share, View& p);
     /// Constructor for creation
     View(Space* home, IdxView<VA>* iv, int n, VB x0, VC x1);
-  public:
     /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
+      const std::string& name);
+  public:
     // Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
     /// Delete propagator and return its size
@@ -166,8 +167,10 @@ namespace Gecode { namespace Int { namespace Element {
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
     static  ExecStatus post(Space* home, IdxView<VA>* iv, int n,
                             VB x0, VC x1);
@@ -208,8 +211,10 @@ namespace Gecode { namespace Int { namespace Element {
     virtual PropCost cost(void) const;
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    virtual const char* name(void) const;    
+    static std::string name(void);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
     static  ExecStatus post(Space* home, IdxView<VA>* iv, int n,
                             VB x0, VC x1);

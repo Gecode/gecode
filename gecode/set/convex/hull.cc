@@ -41,7 +41,6 @@
  *
  */
 
-#include "gecode/set.hh"
 #include "gecode/set/convex.hh"
 
 namespace Gecode { namespace Set { namespace Convex {
@@ -51,9 +50,14 @@ namespace Gecode { namespace Set { namespace Convex {
     return new (home) ConvexHull(home,share,*this);
   }
 
-  const char*
-  ConvexHull::name(void) const {
-    return "set.convex.ConvexHull";
+  std::string
+  ConvexHull::name(void) {
+    return std::string("Set::Convex::ConvexHull");
+  }
+
+  Reflection::ActorSpec&
+  ConvexHull::spec(Space* home, Reflection::VarMap& m) {
+    return BinaryPropagator<SetView,PC_SET_ANY>::spec(home, m, name());
   }
 
   ExecStatus

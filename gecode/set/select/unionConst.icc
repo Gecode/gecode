@@ -69,15 +69,15 @@ namespace Gecode { namespace Set { namespace Select {
   }
 
   template <class SView, class RView>
-  const char*
-  SelectUnionConst<SView,RView>::name(void) const {
-    return "set.select.UnionConst";
+  std::string
+  SelectUnionConst<SView,RView>::name(void) {
+    return Reflection::mangle<SView,RView>("Set::Select::UnionConst");
   }
 
   template <class SView, class RView>
   Reflection::ActorSpec&
   SelectUnionConst<SView,RView>::spec(Space* home, Reflection::VarMap& m) {
-    Reflection::ActorSpec& s = Propagator::spec(home, m);
+    Reflection::ActorSpec& s = Propagator::spec(home, m, name());
     Reflection::ArrayArg<Reflection::Arg*>* a = new Reflection::ArrayArg<Reflection::Arg*>(iv.size());
     for (int i=0; i<iv.size(); i++) {
       int count = 0;

@@ -68,7 +68,8 @@ namespace Gecode { namespace Int { namespace Bool {
     BoolBinary(Space* home, bool share, Propagator& p,
                BVA b0, BVB b1);
     /// Specification for this propagator
-    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m, 
+                                const std::string& name);
   public:
     /// Cost function (defined as PC_UNARY_LO)
     virtual PropCost cost(void) const;
@@ -88,7 +89,8 @@ namespace Gecode { namespace Int { namespace Bool {
     /// Constructor for cloning
     BoolTernary(Space* home, bool share, BoolTernary& p);
     /// Specification for this propagator
-    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
+                                const std::string& name);
   public:
     /// Constructor for rewriting \a p during cloning
     BoolTernary(Space* home, bool share, Propagator& p,
@@ -124,8 +126,8 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ b_0 = b_1\f$
     static  ExecStatus post(Space* home, BVA b0, BVB b1);
-    /// Name of this propagator
-    virtual const char* name(void) const;    
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
   };
 
 
@@ -151,8 +153,8 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ b_0 \leq b_1\f$
     static  ExecStatus post(Space* home, BV b0, BV b1);
-    /// Name of this propagator
-    virtual const char* name(void) const;    
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
   };
 
 
@@ -195,8 +197,8 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ b_0 \lor b_1 = 1 \f$
     static  ExecStatus post(Space* home, BVA b0, BVB b1);
-    /// Name of this propagator
-    virtual const char* name(void) const;    
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
   };
 
   /**
@@ -230,8 +232,6 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual size_t dispose(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of this propagator
-    virtual const char* name(void) const;    
   };
 
   /**
@@ -267,8 +267,6 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
-    /// Name of this propagator
-    virtual const char* name(void) const;    
   };
 
   /**
@@ -296,8 +294,8 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ b_0 \lor b_1 = b_2 \f$
     static  ExecStatus post(Space* home, BVA b0, BVB b1, BVC b2);
-    /// Name of this propagator
-    virtual const char* name(void) const;    
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
   };
 
   /**
@@ -322,8 +320,8 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ \bigvee_{i=0}^{|b|-1} b_i = c\f$
     static  ExecStatus post(Space* home, ViewArray<BV>& b, BV c);
-    /// Name of this propagator
-    virtual const char* name(void) const;    
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
   };
 
 
@@ -357,8 +355,6 @@ namespace Gecode { namespace Int { namespace Bool {
     static  ExecStatus post(Space* home, ViewArray<BV>& b);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of this propagator
-    virtual const char* name(void) const;    
   };
 
 
@@ -385,8 +381,8 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ b_0 \Leftrightarrow b_1 = b_2 \f$ (equivalence)
     static  ExecStatus post(Space* home, BVA b0, BVB b1, BVC b2);
-    /// Name of this propagator
-    virtual const char* name(void) const;    
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
   };
 
 }}}

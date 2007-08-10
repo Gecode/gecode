@@ -189,11 +189,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class VA, class VB>
-  const char*
-  SquarePlus<VA,VB>::name(void) const {
-    return "int.SquarePlus";
+  std::string
+  SquarePlus<VA,VB>::name(void) {
+    return Reflection::mangle<VA,VB>("Int::Arithmetic::SquarePlus");
   }
 
+  template <class VA, class VB>
+  Reflection::ActorSpec&
+  SquarePlus<VA,VB>::spec(Space* home, Reflection::VarMap& m) {
+    return MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>
+      ::spec(home, m, name());
+  }
 
   /*
    * Bounds-consistent Square
@@ -264,9 +270,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  const char*
-  Square<View>::name(void) const {
-    return "int.Square";
+  std::string
+  Square<View>::name(void) {
+    return Reflection::mangle<View>("Int::Arithmetic::Square");
+  }
+
+  template <class View>
+  Reflection::ActorSpec&
+  Square<View>::spec(Space* home, Reflection::VarMap& m) {
+    return BinaryPropagator<View,PC_INT_BND>::spec(home, m, name());
   }
 
   /*
@@ -350,11 +362,17 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class Val, class VA, class VB, class VC>
-  const char*
-  MultPlus<Val,VA,VB,VC>::name(void) const {
-    return "int.MultPlus";
+  std::string
+  MultPlus<Val,VA,VB,VC>::name(void) {
+    return Reflection::mangle<VA,VB,VC>("Int::Arithmetic::MultPlus");
   }
 
+  template <class Val, class VA, class VB, class VC>
+  Reflection::ActorSpec&
+  MultPlus<Val,VA,VB,VC>::spec(Space* home, Reflection::VarMap& m) {
+    return MixTernaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND,VC,PC_INT_BND>
+      ::spec(home, m, name());
+  }
 
   /*
    * Bounds-consistent multiplication
@@ -514,9 +532,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  const char*
-  Mult<View>::name(void) const {
-    return "int.Mult";
+  std::string
+  Mult<View>::name(void) {
+    return Reflection::mangle<View>("Int::Arithmetic::Mult");
+  }
+
+  template <class View>
+  Reflection::ActorSpec&
+  Mult<View>::spec(Space* home, Reflection::VarMap& m) {
+    return TernaryPropagator<View,PC_INT_BND>::spec(home, m, name());
   }
 
 }}}

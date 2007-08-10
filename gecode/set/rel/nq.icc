@@ -80,9 +80,16 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template <class View0, class View1>
-  const char*
-  Distinct<View0,View1>::name(void) const {
-    return "set.rel.Distinct";
+  std::string
+  Distinct<View0,View1>::name(void) {
+    return Reflection::mangle<View0,View1>("Set::Rel::Distinct");
+  }
+
+  template <class View0, class View1>
+  Reflection::ActorSpec&
+  Distinct<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
+    return MixBinaryPropagator<View0, PC_SET_VAL, View1, PC_SET_VAL>
+      ::spec(home, m, name());
   }
 
   template <class View0, class View1>
@@ -116,16 +123,16 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template <class View0>
-  const char*
-  DistinctDoit<View0>::name(void) const {
-    return "set.rel.DistinctDoit";
+  std::string
+  DistinctDoit<View0>::name(void) {
+    return Reflection::mangle<View0>("Set::Rel::DistinctDoit");
   }
 
   template <class View0>
   Reflection::ActorSpec&
   DistinctDoit<View0>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s =
-      UnaryPropagator<View0,PC_SET_ANY>::spec(home, m);
+      UnaryPropagator<View0,PC_SET_ANY>::spec(home, m, name());
     return s << Reflection::typedSpec(home, m, y);
   }
 

@@ -312,7 +312,7 @@ namespace Gecode {
     }
     forceinline Reflection::Type*
     SetCpltSetView::type(void) {
-      return new Reflection::Type("bdd.SetCpltSetView");
+      return new Reflection::Type("CpltSet::SetCpltSetView");
     }
 
   }

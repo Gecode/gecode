@@ -41,7 +41,6 @@
  *
  */
 
-#include "gecode/set.hh"
 #include "gecode/set/sequence.hh"
 
 namespace Gecode { namespace Set { namespace Sequence {
@@ -56,9 +55,14 @@ namespace Gecode { namespace Set { namespace Sequence {
     return new (home) Seq(home,share,*this);
   }
 
-  const char*
-  Seq::name(void) const {
-    return "set.sequence.Sequence";
+  std::string
+  Seq::name(void) {
+    return std::string("Set::Sequence::Sequence");
+  }
+
+  Reflection::ActorSpec&
+  Seq::spec(Space* home, Reflection::VarMap& m) {
+    return NaryPropagator<SetView, PC_SET_ANY>::spec(home, m, name());
   }
 
   ExecStatus

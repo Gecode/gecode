@@ -498,7 +498,7 @@ namespace Gecode {
     }
     forceinline Reflection::Type*
     SingletonCpltSetView::type(void) {
-      return new Reflection::Type("bdd.SingletonCpltSetView");
+      return new Reflection::Type("CpltSet::SingletonCpltSetView");
     }
 
     /*

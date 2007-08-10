@@ -483,10 +483,14 @@ namespace Gecode {
    */
   Reflection::ActorSpec&
   Actor::spec(Space*, Reflection::VarMap&) {
-    return *new Reflection::ActorSpec(name());
+    throw Reflection::ReflectionException("No reflection defined");
+  }
+
+  Reflection::ActorSpec&
+  Actor::spec(Space*, Reflection::VarMap&, const std::string& name) {
+    return *new Reflection::ActorSpec(name.c_str());
   }
 
 }
 
 // STATISTICS: kernel-core
-
