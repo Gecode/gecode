@@ -194,7 +194,7 @@ public:
   /// Initialize options for example with name \a s
   Options(const char* s);
   /// Add new option \a o
-  void add(BaseOption* o);
+  void add(BaseOption& o);
   /// Parse options from arguments \a argv (number is \a argc)
   void parse(int argc, char* argv[]);
 

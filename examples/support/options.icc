@@ -86,14 +86,14 @@ UIntOption::value(void) const {
  *
  */
 inline void
-Options::add(BaseOption* o) {
-  o->next = NULL;
+Options::add(BaseOption& o) {
+  o.next = NULL;
   if (fst == NULL) {
-    fst=o;
+    fst=&o;
   } else {
-    lst->next=o;
+    lst->next=&o;
   }
-  lst=o;
+  lst=&o;
 }
 inline const char*
 Options::name(void) const {

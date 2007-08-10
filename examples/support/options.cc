@@ -159,11 +159,11 @@ Options::Options(const char* n)
   _mode.add(EM_TIME, "time");
   _mode.add(EM_STAT, "stat");
 
-  add(&_model); add(&_propagation); add(&_icl); add(&_branching); 
+  add(_model); add(_propagation); add(_icl); add(_branching); 
 
-  add(&_search); add(&_solutions); add(&_c_d); add(&_a_d);
+  add(_search); add(_solutions); add(_c_d); add(_a_d);
 
-  add(&_mode); add(&_iterations); add(&_samples);
+  add(_mode); add(_iterations); add(_samples);
 
 }
 
