@@ -36,6 +36,12 @@
  *
  */
 
+#include <iostream>
+#include <iomanip>
+
+#include <ctime>
+#include <cmath>
+
 namespace {
 
   /**
@@ -57,14 +63,14 @@ namespace {
       return fs->stop(s) || ts->stop(s);
     }
     /// Create appropriate stop-object
-    static Search::Stop* create(int fails, int time) {
-      if ((fails < 0) && (time < 0)) 
+    static Search::Stop* create(unsigned int fail, unsigned int time) {
+      if ((fail == 0) && (time == 0)) 
         return NULL;
-      if (fails < 0) 
+      if (fail == 0) 
         return new Search::TimeStop(time);
-      if (time  < 0) 
-        return new Search::FailStop(fails);
-      return new FailTimeStop(fails,time);
+      if (time  == 0) 
+        return new Search::FailStop(fail);
+      return new FailTimeStop(fail,time);
     }
   };
 
@@ -121,7 +127,7 @@ Example::run(const Options& o) {
 	  n_p = s->propagators();
 	  n_b = s->branchings();
 	}
-	Search::Stop* stop = FailTimeStop::create(o.fails, o.time);
+	Search::Stop* stop = FailTimeStop::create(o.fail(), o.time());
 	Engine<Script> e(s,o.c_d(),o.a_d(),stop);
 	delete s;
 	do {

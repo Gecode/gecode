@@ -197,6 +197,25 @@ Options::a_d(void) const {
   return _a_d.value();
 }
 
+inline void
+Options::fail(unsigned int n) {
+  _fail.value(n);
+}
+inline unsigned int
+Options::fail(void) const {
+  return _fail.value();
+}
+
+inline void
+Options::time(unsigned int t) {
+  _time.value(t);
+}
+inline unsigned int
+Options::time(void) const {
+  return _time.value();
+}
+
+
 
 /*
  * Execution options
@@ -228,11 +247,5 @@ inline unsigned int
 Options::samples(void) const {
   return _samples.value();
 }
-
-
-
-
-
-
 
 // STATISTICS: example-any

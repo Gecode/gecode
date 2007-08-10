@@ -37,6 +37,32 @@
 // #include "qtexplorer/explorer.hh"
 #include "gecode/cpltset/bddexample.hh"
 
+#if 0
+
+#ifdef GECODE_HAVE_CPLTSET_VARS
+#include "gecode/cpltset.hh"
+#endif
+
+#ifdef GECODE_HAVE_CPLTSET_VARS
+    initvarnum(100),
+    initcache(100),
+    scl(SCL_DEF),
+#endif
+
+namespace {
+
+#ifdef GECODE_HAVE_CPLTSET_VARS
+  const char* scl2str[] =
+    { "bnd_bdd", "bnd_sbr", "spl", "crd", "lex", "dom", "def" };
+#endif
+
+}
+
+
+/// LEFT OVERS MOVED HERE
+
+#endif
+
 /**
  * \name Parameters for Steiner systems
  *

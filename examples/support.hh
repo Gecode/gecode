@@ -38,19 +38,8 @@
 #ifndef __GECODE_EXAMPLES_SUPPORT_HH__
 #define __GECODE_EXAMPLES_SUPPORT_HH__
 
-#include <iostream>
-#include <iomanip>
-
-#include <cstdlib>
-#include <cstring>
-#include <ctime>
-#include <cmath>
-
 #include "gecode/kernel.hh"
 #include "gecode/int.hh"
-#ifdef GECODE_HAVE_CPLTSET_VARS
-#include "gecode/cpltset.hh"
-#endif
 #include "gecode/search.hh"
 
 using namespace Gecode;
@@ -148,24 +137,10 @@ public:
  *
  */
 class Options {
-public:
-  int          fails;      ///< number of fails before stopping search
-  int          time;       ///< allowed time before stopping search
-  bool         naive;      ///< use naive version
-  unsigned int size;       ///< problem size/variant
-
-#ifdef GECODE_HAVE_CPLTSET_VARS
-  unsigned int initvarnum; ///< initial number of bdd nodes in the table
-  unsigned int initcache;  ///< initial cachesize for bdd operations
-  SetConLevel  scl;        ///< bdd consistency level
-#endif 
-
 private:
-  BaseOption* fst; ///< First option
-  BaseOption* lst; ///< Last option
-
-  /// Example name
-  const char* _name;
+  BaseOption* fst;   ///< First registered option
+  BaseOption* lst;   ///< Last registered option
+  const char* _name; ///< Example name
 
   /// \name Model options
   //@{
@@ -181,6 +156,8 @@ private:
   UIntOption   _solutions; ///< How many solutions
   UIntOption   _c_d;       ///< Copy recomputation distance
   UIntOption   _a_d;       ///< Adaptive recomputation distance
+  UIntOption   _fail;      ///< Cutoff for number of failures
+  UIntOption   _time;      ///< Cutoff for time
   //@}
 
   /// \name Execution options
@@ -189,6 +166,10 @@ private:
   UIntOption   _samples;    ///< How many samples
   UIntOption   _iterations; ///< How many iterations per sample
   //@}
+
+public:
+  bool         naive;      ///< use naive version
+  unsigned int size;       ///< problem size/variant
 
 public:
   /// Initialize options for example with name \a s
@@ -253,6 +234,16 @@ public:
   void a_d(unsigned int d);
   /// Return adaptive recomputation distance
   unsigned int a_d(void) const;
+
+  /// Set default failure cutoff
+  void fail(unsigned int n);
+  /// Return failure cutoff
+  unsigned int fail(void) const;
+
+  /// Set default time cutoff
+  void time(unsigned int t);
+  /// Return time cutoff
+  unsigned int time(void) const;
   //@}
 
   /// \name Execution options
