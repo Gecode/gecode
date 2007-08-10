@@ -98,6 +98,14 @@ StringOption::help(void) {
       std::cerr << "\t\t  " << v->opt << ": " << v->help << std::endl;
 }
 
+StringOption::~StringOption(void) {
+  Value* v = fst;
+  while (v != NULL) {
+    Value* n = v->next;
+    delete v;
+    v = n;
+  }
+}
 
 
 bool

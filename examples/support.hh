@@ -4,7 +4,7 @@
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2004
+ *     Christian Schulte, 2007
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -109,6 +109,8 @@ public:
   virtual bool parse(int argc, char* argv[], int& i);
   /// Print help text
   virtual void help(void);
+  /// Destructor
+  virtual ~StringOption(void);
 };
 
 
