@@ -72,9 +72,9 @@ public:
   /// Initialize for option \a o and explanation \a e
   BaseOption(const char* o, const char* e);
   /// Parse option at position \a i
-  virtual bool parse(int argc, char* argv[], int& i) = NULL;
+  virtual bool parse(int argc, char* argv[], int& i) = 0;
   /// Print help text
-  virtual void help(void) = NULL;
+  virtual void help(void) = 0;
   /// Destructor
   virtual ~BaseOption(void);
 };
