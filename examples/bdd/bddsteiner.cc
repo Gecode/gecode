@@ -208,7 +208,7 @@ public:
 };
 
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
 
 #ifdef GECODE_HAVE_LIB_CUDD  
     Cudd cm(0,0);

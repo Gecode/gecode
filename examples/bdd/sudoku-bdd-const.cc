@@ -313,7 +313,7 @@ public:
  *  \relates SudokuBddConst
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
 
   BddOptions opt("Sudoku (Bdd)");
   opt.iterations = 1;
