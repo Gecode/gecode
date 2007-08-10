@@ -159,7 +159,7 @@ public:
  * \relates OrthoLatinSquare
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("OrthoLatinSquare");
   opt.size = 7;
   opt.icl(ICL_DOM);

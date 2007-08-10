@@ -84,7 +84,7 @@ public:
  *  \relates StressExec
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("StressExec");
   opt.iterations(20);
   opt.size       = 1;

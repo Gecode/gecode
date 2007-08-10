@@ -82,7 +82,7 @@ public:
  *  \relates StressDistinct
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("StressDistinct");
   opt.size = 1000;
   opt.parse(argc,argv);

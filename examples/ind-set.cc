@@ -132,7 +132,7 @@ public:
  *  \relates IndSet
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("IndSet");
   opt.solutions(0);
   opt.size       = 1;

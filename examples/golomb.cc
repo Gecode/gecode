@@ -163,7 +163,7 @@ public:
  *  \relates Golomb
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("Golomb");
   opt.solutions(0);
   opt.size      = 10;

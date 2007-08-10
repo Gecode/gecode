@@ -184,7 +184,7 @@ public:
  *  \relates Sudoku
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("Sudoku");
   opt.size       = 0;
   opt.icl(ICL_DOM);

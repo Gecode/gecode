@@ -74,7 +74,7 @@ public:
  *  \relates Baseline
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("Baseline");
   opt.iterations(2000);
   opt.solutions(0);

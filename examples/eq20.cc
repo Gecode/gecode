@@ -112,7 +112,7 @@ public:
  *  \relates Eq20
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("Eq20");
   opt.solutions(0);
   opt.iterations(1000);

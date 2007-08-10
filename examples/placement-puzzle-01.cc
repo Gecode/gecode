@@ -415,7 +415,7 @@ public:
  *  \relates PlacementPuzzle
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options o("PlacementPuzzle");
   o.size  = 1;
   o.naive = true;

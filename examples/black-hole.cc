@@ -285,7 +285,7 @@ public:
  *  \relates BlackHole
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("Black Hole patience");
   opt.solutions(1);
   opt.naive      = false;

@@ -95,7 +95,7 @@ public:
  *  \relates Money
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("SEND+MORE=MONEY");
   opt.solutions(0);
   opt.iterations(20000);

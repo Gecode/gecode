@@ -86,7 +86,7 @@ public:
  *  \relates StressDomain
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("StressDomain");
   opt.iterations(200);
   opt.size       = 1000;

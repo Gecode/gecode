@@ -126,7 +126,7 @@ public:
  *  \relates StressRegular
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("StressRegular");
   opt.size = 7;
   opt.parse(argc,argv);

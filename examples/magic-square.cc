@@ -123,7 +123,7 @@ public:
  *  \relates MagicSquare
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("MagicSquare");
   opt.iterations(1);
   opt.size       = 7;

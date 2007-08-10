@@ -168,7 +168,7 @@ public:
 };
 
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options o("Cars");
   o.solutions(0);
   o.iterations(100);

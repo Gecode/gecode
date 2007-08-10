@@ -115,7 +115,7 @@ public:
  *  \relates SAT
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("SAT");
   opt.solutions(1);
   opt.size      = 0;

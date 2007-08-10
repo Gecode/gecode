@@ -149,7 +149,7 @@ public:
 };
 
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options o("Steiner");
   o.size = 9;
   o.naive = true;

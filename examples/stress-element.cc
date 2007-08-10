@@ -100,7 +100,7 @@ public:
  *  \relates StressElement
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("StressElement");
   opt.parse(argc,argv);
   Example::run<StressElement,DFS>(opt);

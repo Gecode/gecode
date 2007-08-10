@@ -59,9 +59,6 @@ extern const unsigned int n_examples;
  * The board is set up with a number in each field that must match the
  * number of the domino piece placed on that field.
  *
- * The instances are taken from
- *   http://www.janko.at/Raetsel/Minesweeper/index.htm
- *
  * \ingroup ExProblem
  *
  */
@@ -76,9 +73,14 @@ private:
   IntVarArray x;
 
 public:
-  /// Construction of the model.
-  Domino(const Options& o)
-    : spec(specs[o.size]), 
+  /// Propagation to use for model
+  enum {
+    PROP_ELEMENT, ///< Use element constraints
+    PROP_REGULAR  ///< Use regular constraints
+  };
+  /// Construction of model
+  Domino(const Options& opt)
+    : spec(specs[opt.size]), 
       width(spec[0]), height(spec[1]),
       x(this, (width+1)*height, 0, 28)
   {
@@ -102,7 +104,7 @@ public:
     IntVarArray p2(this, 28, 0, (width+1)*height-1);
     
 
-    if (o.naive) {
+    if (opt.propagation() == PROP_ELEMENT) {
       int dominoCount = 0;
       
       int possibleDiffsA[] = {1, width+1};
@@ -218,17 +220,19 @@ public:
  *  \relates Domino
  */
 int
-main(int argc, char** argv) {
-  Options o("Domino");
-  o.size  = 0;
-  o.naive = false;
-  o.parse(argc,argv);
-  if (o.size >= n_examples) {
+main(int argc, char* argv[]) {
+  Options opt("Domino");
+  opt.size  = 0;
+  opt.propagation(Domino::PROP_ELEMENT);  
+  opt.propagation(Domino::PROP_ELEMENT, "element");  
+  opt.propagation(Domino::PROP_REGULAR, "regular");  
+  opt.parse(argc,argv);
+  if (opt.size >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
 	      << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<Domino,DFS>(o);
+  Example::run<Domino,DFS>(opt);
   return 0;
 }
 

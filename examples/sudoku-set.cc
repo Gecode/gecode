@@ -152,7 +152,7 @@ public:
  *  \relates SudokuSet
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("Sudoku (Set)");
   opt.iterations(100);
   opt.size       = 0;

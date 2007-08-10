@@ -162,9 +162,12 @@ protected:
 
 public:
   /// The model of the problem
-  CrowdedChess(const Options& o)
-    : n(o.size), s(this, n*n, 0, PMAX-1), queens(this, n, 0, n-1),
-      rooks(this, n, 0, n-1), knights(this, n*n, 0, 1) {
+  CrowdedChess(const Options& opt)
+    : n(opt.size), 
+      s(this, n*n, 0, PMAX-1), 
+      queens(this, n, 0, n-1),
+      rooks(this, n, 0, n-1), 
+      knights(this, n*n, 0, 1) {
     const int nn = n*n, q = n, r = n, b = (2*n)-2,
       k = n <= nkval ? kval[n-1] : kval[nkval-1];
     const int e = nn - (q + r + b + k);
@@ -177,20 +180,20 @@ public:
     // Basic model
     // ***********************
 
-    count(this, s, E, IRT_EQ, e, o.icl());
-    count(this, s, Q, IRT_EQ, q, o.icl());
-    count(this, s, R, IRT_EQ, r, o.icl());
-    count(this, s, B, IRT_EQ, b, o.icl());
-    count(this, s, K, IRT_EQ, k, o.icl());
+    count(this, s, E, IRT_EQ, e, opt.icl());
+    count(this, s, Q, IRT_EQ, q, opt.icl());
+    count(this, s, R, IRT_EQ, r, opt.icl());
+    count(this, s, B, IRT_EQ, b, opt.icl());
+    count(this, s, K, IRT_EQ, k, opt.icl());
 
     // Collect rows and columns for handling rooks and queens.
     for (int i = 0; i < n; ++i) {
       IntVarArgs aa = m.row(i), bb = m.col(i);
 
-      count(this, aa, Q, IRT_EQ, 1, o.icl());
-      count(this, bb, Q, IRT_EQ, 1, o.icl());
-      count(this, aa, R, IRT_EQ, 1, o.icl());
-      count(this, bb, R, IRT_EQ, 1, o.icl());
+      count(this, aa, Q, IRT_EQ, 1, opt.icl());
+      count(this, bb, Q, IRT_EQ, 1, opt.icl());
+      count(this, aa, R, IRT_EQ, 1, opt.icl());
+      count(this, bb, R, IRT_EQ, 1, opt.icl());
 
       //Connect (queens|rooks)[i] to the row it is in
       element(this, aa, queens[i], Q, 0, ICL_DOM);
@@ -219,14 +222,14 @@ public:
         d4[i] = m((n-1)-i, i+il);
       }
 
-      count(this, d1, Q, IRT_LQ, 1, o.icl());
-      count(this, d2, Q, IRT_LQ, 1, o.icl());
-      count(this, d3, Q, IRT_LQ, 1, o.icl());
-      count(this, d4, Q, IRT_LQ, 1, o.icl());
-      count(this, d1, B, IRT_LQ, 1, o.icl());
-      count(this, d2, B, IRT_LQ, 1, o.icl());
-      count(this, d3, B, IRT_LQ, 1, o.icl());
-      count(this, d4, B, IRT_LQ, 1, o.icl());
+      count(this, d1, Q, IRT_LQ, 1, opt.icl());
+      count(this, d2, Q, IRT_LQ, 1, opt.icl());
+      count(this, d3, Q, IRT_LQ, 1, opt.icl());
+      count(this, d4, Q, IRT_LQ, 1, opt.icl());
+      count(this, d1, B, IRT_LQ, 1, opt.icl());
+      count(this, d2, B, IRT_LQ, 1, opt.icl());
+      count(this, d3, B, IRT_LQ, 1, opt.icl());
+      count(this, d4, B, IRT_LQ, 1, opt.icl());
     }
 
     // Handle knigths
@@ -294,8 +297,10 @@ public:
         if (p == E) continue;
         std::cout << sep;
         for (int c = 0; c < n; ++c) {
-          if (m(r, c).val() == p) std::cout << names[p];
-          else                   std::cout << names[E];
+          if (m(r, c).val() == p) 
+            std::cout << names[p];
+          else                   
+            std::cout << names[E];
         }
       }
       std::cout << std::endl;
@@ -308,7 +313,7 @@ public:
  * \relates CrowdedChess
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("CrowdedChess");
   opt.icl(ICL_DOM);
   opt.size       = 7;

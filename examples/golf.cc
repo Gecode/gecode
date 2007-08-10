@@ -237,7 +237,7 @@ public:
 };
 
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options o("Golf");
   o.parse(argc,argv);
   o.solutions(1);

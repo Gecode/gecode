@@ -166,7 +166,7 @@ public:
  *  \relates Extensional
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("Extensional");
   opt.solutions(1);
   opt.size      = 1000000;

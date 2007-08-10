@@ -130,7 +130,7 @@ public:
   }
 };
 
-int main(int argc, char** argv){
+int main(int argc, char* argv[]){
   ExtOptions o("Langford Numbers");
   if (argc < 2) {
     std::cerr << "specify parameters k and n\n";

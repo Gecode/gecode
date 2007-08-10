@@ -200,7 +200,7 @@ public:
  *  \relates Knights
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("Knights");
   opt.iterations(100);
   opt.size       = 8;

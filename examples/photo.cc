@@ -153,7 +153,7 @@ public:
  *  \relates Photo
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("Photo");
   opt.solutions(0);
   opt.size       = 1;

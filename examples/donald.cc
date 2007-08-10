@@ -96,7 +96,7 @@ public:
  *  \relates Donald
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("Donald+Gerald=Robert");
   opt.solutions(0);
   opt.iterations(1500);

@@ -108,8 +108,8 @@ private:
 
 public:
   /// Construction of the model.
-  MineSweeper(const Options& o)
-    : spec(specs[o.size]), 
+  MineSweeper(const Options& opt)
+    : spec(specs[opt.size]), 
       size(spec_size(spec)),
       b(this,size*size,0,1) {
     MiniModel::Matrix<BoolVarArray> m(b, size, size);
@@ -165,16 +165,16 @@ public:
  *  \relates MineSweeper
  */
 int
-main(int argc, char** argv) {
-  Options o("MineSweeper");
-  o.size  = 0;
-  o.parse(argc,argv);
-  if (o.size >= n_examples) {
+main(int argc, char* argv[]) {
+  Options opt("MineSweeper");
+  opt.size  = 0;
+  opt.parse(argc,argv);
+  if (opt.size >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
               << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<MineSweeper,DFS>(o);
+  Example::run<MineSweeper,DFS>(opt);
   return 0;
 }
 

@@ -150,7 +150,7 @@ public:
  *  \relates PicturePuzzle
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options o("PicturePuzzle");
   o.size  = 8;
   o.parse(argc,argv);

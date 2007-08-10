@@ -121,7 +121,7 @@ public:
  *  \relates Queens
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("Queens");
   opt.iterations(500);
   opt.size       = 100;

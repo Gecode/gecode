@@ -211,7 +211,7 @@ int pos(int i, int j, int n) {
  *  \relates QueenArmies
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options o("QueenArmies");
   o.size      = 6;
   o.naive     = false;

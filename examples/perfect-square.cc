@@ -216,7 +216,7 @@ public:
  *  \relates PerfectSquare
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("PerfectSquare");
   opt.size  = 7;
   opt.propagation(PerfectSquare::PROP_REIFIED);

@@ -110,7 +110,7 @@ public:
 
 
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options o("Hamming");
   o.size = 32;
   o.parse(argc,argv);

@@ -74,7 +74,7 @@ public:
  *  \relates StressSearch
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("StressSearch");
   opt.iterations(20);
   opt.size       = 6;

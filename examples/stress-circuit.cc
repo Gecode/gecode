@@ -99,7 +99,7 @@ public:
  *  \relates StressCircuit
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("StressCircuit");
   opt.size = 6;
   opt.parse(argc,argv);

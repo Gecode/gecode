@@ -111,7 +111,7 @@ public:
  *  \relates Grocery
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("Grocery");
   opt.iterations(20);
   opt.parse(argc,argv);

@@ -383,7 +383,7 @@ public:
  *  \relates GraphColor
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("GraphColor");
   opt.icl(ICL_DOM);
   opt.iterations(20);

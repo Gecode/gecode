@@ -223,7 +223,7 @@ public:
 };
 
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options o("Crew");
   o.iterations(100);
   o.parse(argc,argv);

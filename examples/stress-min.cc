@@ -89,7 +89,7 @@ public:
  *  \relates StressMin
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("StressMin");
   opt.parse(argc,argv);
   opt.size = 200;

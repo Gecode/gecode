@@ -126,7 +126,7 @@ public:
  *  \relates MagicSequence
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("MagicSequence");
   opt.solutions(0);
   opt.iterations(4);

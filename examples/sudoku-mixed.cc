@@ -272,7 +272,7 @@ public:
  *  \relates SudokuMixed
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("Sudoku (Mixed Model)");
   opt.iterations(200);
   opt.size       = 0;

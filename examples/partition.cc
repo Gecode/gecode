@@ -127,7 +127,7 @@ public:
  * \relates Partition
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("Partition");
   opt.size = 32;
   opt.icl(ICL_DOM);

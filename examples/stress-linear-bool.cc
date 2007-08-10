@@ -89,7 +89,7 @@ public:
  *  \relates StressLinearBool
  */
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   Options opt("StressLinearBool");
   opt.size = 1000;
   opt.parse(argc,argv);

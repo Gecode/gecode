@@ -198,8 +198,8 @@ protected:
 
 public:
   /// The model of the problem
-  CrowdedChessTable(const Options& o)
-    : n(o.size), s(this, n*n, 0, PMAX-1), queens(this, n, 0, n-1),
+  CrowdedChessTable(const Options& opt)
+    : n(opt.size), s(this, n*n, 0, PMAX-1), queens(this, n, 0, n-1),
       rooks(this, n, 0, n-1), knights(this, n*n, 0, 1) {
     const int nn = n*n, q = n, r = n, b = (2*n)-2,
       k = n <= nkval ? kval[n-1] : kval[nkval-1];
@@ -213,20 +213,20 @@ public:
     // Basic model
     // ***********************
 
-    count(this, s, E, IRT_EQ, e, o.icl());
-    count(this, s, Q, IRT_EQ, q, o.icl());
-    count(this, s, R, IRT_EQ, r, o.icl());
-    count(this, s, B, IRT_EQ, b, o.icl());
-    count(this, s, K, IRT_EQ, k, o.icl());
+    count(this, s, E, IRT_EQ, e, opt.icl());
+    count(this, s, Q, IRT_EQ, q, opt.icl());
+    count(this, s, R, IRT_EQ, r, opt.icl());
+    count(this, s, B, IRT_EQ, b, opt.icl());
+    count(this, s, K, IRT_EQ, k, opt.icl());
 
     // Collect rows and columns for handling rooks and queens.
     for (int i = 0; i < n; ++i) {
       IntVarArgs aa = m.row(i), bb = m.col(i);
 
-      count(this, aa, Q, IRT_EQ, 1, o.icl());
-      count(this, bb, Q, IRT_EQ, 1, o.icl());
-      count(this, aa, R, IRT_EQ, 1, o.icl());
-      count(this, bb, R, IRT_EQ, 1, o.icl());
+      count(this, aa, Q, IRT_EQ, 1, opt.icl());
+      count(this, bb, Q, IRT_EQ, 1, opt.icl());
+      count(this, aa, R, IRT_EQ, 1, opt.icl());
+      count(this, bb, R, IRT_EQ, 1, opt.icl());
 
       //Connect (queens|rooks)[i] to the row it is in
       element(this, aa, queens[i], Q, 0, ICL_DOM);
@@ -235,7 +235,7 @@ public:
 
     // N-queens constraints
     ExtensionalAlgorithm ea = EA_BASIC;
-    if (!o.naive) {
+    if (!opt.naive) {
       ea = EA_INCREMENTAL;
     }
     // N-queens constraints
@@ -251,7 +251,7 @@ public:
     distinct(this,  rooks, ICL_DOM);
 
     // Collect diagonals for handling queens and bishops
-    if (false && o.naive) {
+    if (false && opt.naive) {
       for (int l = n; l--; ) {
         const int il = (n-1) - l;
         IntVarArgs d1(l+1), d2(l+1), d3(l+1), d4(l+1);
@@ -262,10 +262,10 @@ public:
           d4[i] = m((n-1)-i, i+il);
         }
         
-        count(this, d1, B, IRT_LQ, 1, o.icl());
-        count(this, d2, B, IRT_LQ, 1, o.icl());
-        count(this, d3, B, IRT_LQ, 1, o.icl());
-        count(this, d4, B, IRT_LQ, 1, o.icl());
+        count(this, d1, B, IRT_LQ, 1, opt.icl());
+        count(this, d2, B, IRT_LQ, 1, opt.icl());
+        count(this, d3, B, IRT_LQ, 1, opt.icl());
+        count(this, d4, B, IRT_LQ, 1, opt.icl());
       }
     } else {
       IntVarArgs iva(n*n);
@@ -354,20 +354,21 @@ public:
  * \relates CrowdedChessTable
  */
 int
-main(int argc, char** argv) {
-  Options o("CrowdedChessTable");
-  o.icl()        = ICL_DOM;
-  o.size       = 6;
-  o.parse(argc,argv);
-  if(o.size < 5) {
+main(int argc, char* argv[]) {
+  Options opt("CrowdedChessTable");
+  opt.icl(ICL_DOM);
+  opt.size       = 6;
+  opt.parse(argc,argv);
+
+  if(opt.size < 5) {
     std::cerr << "Error: Size must be at least 5" << std::endl;
     return 1;
   }
 
-  init_knight(o.size);
-  init_bishop(o.size);
+  init_knight(opt.size);
+  init_bishop(opt.size);
 
-  Example::run<CrowdedChessTable,DFS>(o);
+  Example::run<CrowdedChessTable,DFS>(opt);
   return 0;
 }
 
