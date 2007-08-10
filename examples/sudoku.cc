@@ -188,7 +188,7 @@ main(int argc, char** argv) {
   Options opt("Sudoku");
   opt.size       = 0;
   opt.icl(ICL_DOM);
-  opt.solutions  = 1;
+  opt.solutions(1);
   opt.naive      = true;
   opt.parse(argc,argv);
   if (opt.size >= n_examples) {

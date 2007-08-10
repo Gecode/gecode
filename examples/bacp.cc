@@ -182,8 +182,8 @@ main(int argc, char** argv) {
   Options o("BACP");
   o.parse(argc,argv);
   o.size = 2;
-  o.solutions  = 0;
-  o.iterations = 20;
+  o.solutions(0);
+  o.iterations(20);
   if (o.size >= n_examples) {
     std::cerr << "Error: size must be between 0 and " << n_examples - 1
               << std::endl;

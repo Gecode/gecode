@@ -117,7 +117,7 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("SAT");
-  opt.solutions = 1;
+  opt.solutions(1);
   opt.size      = 0;
   opt.naive     = true;
   opt.parse(argc,argv);

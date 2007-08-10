@@ -123,7 +123,7 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("Queens");
-  opt.iterations = 500;
+  opt.iterations(500);
   opt.size       = 100;
   opt.propagation(Queens::PROP_DISTINCT);
   opt.propagation(Queens::PROP_BINARY, "binary",

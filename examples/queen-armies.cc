@@ -215,7 +215,7 @@ main(int argc, char** argv) {
   Options o("QueenArmies");
   o.size      = 6;
   o.naive     = false;
-  o.solutions = 0;
+  o.solutions(0);
   o.parse(argc,argv);
 
   // Set up the A-sets

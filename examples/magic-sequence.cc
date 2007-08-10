@@ -128,8 +128,8 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("MagicSequence");
-  opt.solutions  = 0;
-  opt.iterations = 4;
+  opt.solutions(0);
+  opt.iterations(4);
   opt.size       = 500;
   opt.propagation(MagicSequence::PROP_COUNT);
   opt.propagation(MagicSequence::PROP_REIFIED, "reified");

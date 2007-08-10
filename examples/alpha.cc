@@ -123,8 +123,8 @@ public:
 int
 main(int argc, char* argv[]) {
   Options opt("Alpha");
-  opt.solutions  = 0;
-  opt.iterations = 10;
+  opt.solutions(0);
+  opt.iterations(10);
   opt.branching(Alpha::BRANCH_SIZE);
   opt.branching(Alpha::BRANCH_NONE, "none");
   opt.branching(Alpha::BRANCH_SIZE, "size");

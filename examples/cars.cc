@@ -170,8 +170,8 @@ public:
 int
 main(int argc, char** argv) {
   Options o("Cars");
-  o.solutions  = 0;
-  o.iterations = 100;
+  o.solutions(0);
+  o.iterations(100);
   o.parse(argc,argv);
   Example::run<Cars,DFS>(o);
   return 0;

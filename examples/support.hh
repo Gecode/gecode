@@ -149,14 +149,10 @@ public:
  */
 class Options {
 public:
-  unsigned int samples;    ///< how many samples
-  unsigned int iterations; ///< how many iterations per sample
-  unsigned int solutions;  ///< how many solutions (0 == all)
   int          fails;      ///< number of fails before stopping search
   int          time;       ///< allowed time before stopping search
   bool         naive;      ///< use naive version
   unsigned int size;       ///< problem size/variant
-  const char*  name;       ///< name of problem
 
 #ifdef GECODE_HAVE_CPLTSET_VARS
   unsigned int initvarnum; ///< initial number of bdd nodes in the table
@@ -168,24 +164,30 @@ private:
   BaseOption* fst; ///< First option
   BaseOption* lst; ///< Last option
 
+  /// Example name
+  const char* _name;
+
   /// \name Model options
   //@{
   StringOption _model;       ///< General model options
   StringOption _propagation; ///< Propagation options
-  StringOption _icl;         ///< integer consistency level
+  StringOption _icl;         ///< Integer consistency level
   StringOption _branching;   ///< Branching options
   //@}
 
   /// \name Search options
   //@{
-  StringOption _search; ///< Search options
-  UIntOption   _c_d;    ///< copy recomputation distance
-  UIntOption   _a_d;    ///< adaptive recomputation distance
+  StringOption _search;    ///< Search options
+  UIntOption   _solutions; ///< How many solutions
+  UIntOption   _c_d;       ///< Copy recomputation distance
+  UIntOption   _a_d;       ///< Adaptive recomputation distance
   //@}
 
   /// \name Execution options
   //@{
-  StringOption _mode; ///< in which mode to run
+  StringOption _mode;       ///< Example mode to run
+  UIntOption   _samples;    ///< How many samples
+  UIntOption   _iterations; ///< How many iterations per sample
   //@}
 
 public:
@@ -195,6 +197,9 @@ public:
   void add(BaseOption* o);
   /// Parse options from arguments \a argv (number is \a argc)
   void parse(int argc, char* argv[]);
+
+  /// Return name of example
+  const char* name(void) const;
 
   /// \name Model options
   //@{
@@ -234,10 +239,16 @@ public:
   /// Return search value
   int search(void) const;
 
+  /// Set default number of solutions to search for
+  void solutions(unsigned int n);
+  /// Return number of solutions to search for
+  unsigned int solutions(void) const;
+
   /// Set default copy recompution distance
   void c_d(unsigned int d);
   /// Return copy recomputation distance
   unsigned int c_d(void) const;
+
   /// Set default adaptive recompution distance
   void a_d(unsigned int d);
   /// Return adaptive recomputation distance
@@ -250,6 +261,16 @@ public:
   void mode(ExampleMode em);
   /// Return mode
   ExampleMode mode(void) const;  
+
+  /// Set default number of iterations
+  void iterations(unsigned int i);
+  /// Return number of iterations
+  unsigned int iterations(void) const;
+
+  /// Set default number of samples
+  void samples(unsigned int s);
+  /// Return number of samples
+  unsigned int samples(void) const;
   //@}
 };
 

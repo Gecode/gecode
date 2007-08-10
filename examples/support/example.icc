@@ -106,12 +106,12 @@ void
 Example::run(const Options& o) {
   using namespace std;
   try {
-    cout << o.name << endl;
+    cout << o.name() << endl;
     switch (o.mode()) {
     case EM_SOLUTION:
       {
 	Timer t;
-	int i = o.solutions;
+	int i = o.solutions();
 	t.start();
 	Script* s = new Script(o);
 	unsigned int n_p = 0;
@@ -139,7 +139,8 @@ Example::run(const Options& o) {
 	     << endl
 	     << "Summary" << endl
 	     << "\truntime:       " << t.stop() << endl
-	     << "\tsolutions:     " << abs(static_cast<int>(o.solutions) - i) << endl
+	     << "\tsolutions:     " 
+             << abs(static_cast<int>(o.solutions()) - i) << endl
 	     << "\tpropagations:  " << p+stat.propagate << endl
 	     << "\tfailures:      " << stat.fail << endl
 	     << "\tclones:        " << stat.clone << endl
@@ -151,7 +152,7 @@ Example::run(const Options& o) {
       break;
     case EM_STAT:
       {
-	int i = o.solutions;
+	int i = o.solutions();
 	Script* s = new Script(o);
 	unsigned int n_p = 0;
 	unsigned int n_b = 0;
@@ -172,7 +173,8 @@ Example::run(const Options& o) {
 	cout << endl
 	     << "\tpropagators:   " << n_p << endl
 	     << "\tbranchings:    " << n_b << endl
-	     << "\tsolutions:     " << abs(static_cast<int>(o.solutions) - i) << endl
+	     << "\tsolutions:     " 
+             << abs(static_cast<int>(o.solutions()) - i) << endl
 	     << "\tpropagations:  " << p+stat.propagate << endl
 	     << "\tfailures:      " << stat.fail << endl
 	     << "\tclones:        " << stat.clone << endl
@@ -185,11 +187,11 @@ Example::run(const Options& o) {
     case EM_TIME:
       {
 	Timer t;
-	GECODE_AUTOARRAY(double,ts,o.samples);
-	for (int s = o.samples; s--; ) {
+	GECODE_AUTOARRAY(double,ts,o.samples());
+	for (unsigned int s = o.samples(); s--; ) {
 	  t.start();
-	  for (int k = o.iterations; k--; ) {
-	    unsigned int i = o.solutions;
+	  for (unsigned int k = o.iterations(); k--; ) {
+	    unsigned int i = o.solutions();
 	    Script* s = new Script(o);
 	    Engine<Script> e(s,o.c_d(),o.a_d());
 	    delete s;
@@ -200,10 +202,10 @@ Example::run(const Options& o) {
 	      delete ex;
 	    } while (--i != 0);
 	  }
-	  ts[s] = t.stop() / o.iterations;
+	  ts[s] = t.stop() / o.iterations();
 	}
-	double m = am(ts,o.samples);
-	double d = dev(ts,o.samples) * 100.0;
+	double m = am(ts,o.samples());
+	double d = dev(ts,o.samples()) * 100.0;
         cout << "\tRuntime: "
              << setw(20) << right
              << showpoint << fixed

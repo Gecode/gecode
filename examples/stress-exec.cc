@@ -86,7 +86,7 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("StressExec");
-  opt.iterations = 20;
+  opt.iterations(20);
   opt.size       = 1;
   opt.parse(argc,argv);
   Example::run<StressExec,DFS>(opt);

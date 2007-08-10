@@ -76,9 +76,9 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("StressSearch");
-  opt.iterations = 20;
+  opt.iterations(20);
   opt.size       = 6;
-  opt.solutions  = 0;
+  opt.solutions(0);
   opt.parse(argc,argv);
   Example::run<StressSearch,DFS>(opt);
   return 0;

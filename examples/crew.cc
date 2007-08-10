@@ -225,7 +225,7 @@ public:
 int
 main(int argc, char** argv) {
   Options o("Crew");
-  o.iterations = 100;
+  o.iterations(100);
   o.parse(argc,argv);
   Example::run<Crew,DFS>(o);
   return 0;

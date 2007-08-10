@@ -134,9 +134,9 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("IndSet");
-  opt.solutions  = 0;
+  opt.solutions(0);
   opt.size       = 1;
-  opt.iterations = 2000;
+  opt.iterations(2000);
   opt.parse(argc,argv);
   Example::run<IndSet,BAB>(opt);
   return 0;

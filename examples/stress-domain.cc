@@ -88,7 +88,7 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("StressDomain");
-  opt.iterations = 200;
+  opt.iterations(200);
   opt.size       = 1000;
   opt.parse(argc,argv);
   Example::run<StressDomain,DFS>(opt);

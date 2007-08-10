@@ -98,8 +98,8 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("Donald+Gerald=Robert");
-  opt.solutions  = 0;
-  opt.iterations = 1500;
+  opt.solutions(0);
+  opt.iterations(1500);
   opt.parse(argc,argv);
   Example::run<Donald,DFS>(opt);
   return 0;

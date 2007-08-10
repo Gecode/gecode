@@ -154,9 +154,9 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("Sudoku (Set)");
-  opt.iterations = 100;
+  opt.iterations(100);
   opt.size       = 0;
-  opt.solutions  = 1;
+  opt.solutions(1);
   opt.naive      = true;
   opt.parse(argc,argv);
   if (opt.size >= n_examples) {

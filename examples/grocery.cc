@@ -113,7 +113,7 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("Grocery");
-  opt.iterations = 20;
+  opt.iterations(20);
   opt.parse(argc,argv);
   Example::run<Grocery,DFS>(opt);
   return 0;

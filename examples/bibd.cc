@@ -160,7 +160,7 @@ BIBD::Par BIBD::par;
 int
 main(int argc, char** argv) {
   Options opt("BIBD");
-  opt.solutions = 1;
+  opt.solutions(1);
   opt.size      = 9;
   opt.parse(argc,argv);
   switch (opt.size) {

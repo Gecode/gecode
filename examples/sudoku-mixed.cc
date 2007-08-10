@@ -274,10 +274,10 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("Sudoku (Mixed Model)");
-  opt.iterations = 200;
+  opt.iterations(200);
   opt.size       = 0;
   opt.icl(ICL_DOM);
-  opt.solutions  = 1;
+  opt.solutions(1);
   opt.naive      = true;
   opt.parse(argc,argv);
   if (opt.size >= n_examples) {

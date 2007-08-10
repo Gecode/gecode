@@ -165,7 +165,7 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("Golomb");
-  opt.solutions = 0;
+  opt.solutions(0);
   opt.size      = 10;
   opt.icl(ICL_BND);
   opt.model(Golomb::MODEL_SUM);

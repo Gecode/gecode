@@ -122,14 +122,11 @@ UIntOption::help(void) {
 
 
 Options::Options(const char* n)
-  : samples(1),
-    iterations(1),
-    solutions(1),
+  : 
     fails(-1),
     time(-1),
     naive(false),
     size(0),
-    name(n),
 #ifdef GECODE_HAVE_CPLTSET_VARS
     initvarnum(100),
     initcache(100),
@@ -137,16 +134,22 @@ Options::Options(const char* n)
 #endif
     fst(NULL), lst(NULL),
 
+    _name(n),
+
     _model("-model","model variants"),
     _propagation("-propagation","propagation variants"),
     _icl("-icl","integer consistency level",ICL_DEF),
     _branching("-branching","branching variants"),
     
     _search("-search","search engine variants"),
+    _solutions("-solutions","number of solutions (0 = all)",1),
     _c_d("-c_d","recompution copy distance",Search::Config::c_d),
     _a_d("-a_d","recompution adaption distance",Search::Config::a_d),
 
-    _mode("-mode","how to execute example",EM_SOLUTION)
+    _mode("-mode","how to execute example",EM_SOLUTION),
+    _iterations("-iterations","iterations per sample (time mode)"),
+    _samples("-samples","how many samples (time mode)")
+
 {
 
   _icl.add(ICL_DEF, "def"); _icl.add(ICL_VAL, "val");
@@ -158,16 +161,13 @@ Options::Options(const char* n)
 
   add(&_model); add(&_propagation); add(&_icl); add(&_branching); 
 
-  add(&_search); add(&_c_d); add(&_a_d);
+  add(&_search); add(&_solutions); add(&_c_d); add(&_a_d);
 
-  add(&_mode);
+  add(&_mode); add(&_iterations); add(&_samples);
 
 }
 
 namespace {
-
-  const char* bool2str[] =
-    { "false", "true" };
 
 #ifdef GECODE_HAVE_CPLTSET_VARS
   const char* scl2str[] =
@@ -183,7 +183,7 @@ Options::parse(int argc, char* argv[]) {
   const char* e = NULL;
   while (i < argc) {
     if (!strcmp(argv[i],"-help") || !strcmp(argv[i],"--help")) {
-      cerr << "Options for " << name << ":" << endl;
+      cerr << "Options for " << name() << ":" << endl;
       for (BaseOption* o = fst; o != NULL; o = o->next)
         o->help();
       cerr 
@@ -198,16 +198,6 @@ Options::parse(int argc, char* argv[]) {
 	   << endl
 	   << "\t\tinitial cachesize for bdd operations" << endl
 #endif
-
-           << "\t-samples (unsigned int) default: " << samples << endl
-           << "\t\thow many samples (time-mode)" << endl
-
-           << "\t-iterations (unsigned int) default: " << iterations << endl
-           << "\t\thow many iterations per sample (time-mode)" << endl
-
-           << "\t-solutions (unsigned int) default: "
-           << ((solutions == 0) ? "all " : "") << solutions << endl
-           << "\t\thow many solutions to search (solution-mode)" << endl
 
            << "\t-fails (unsigned int) default: "
            << (fails<0 ? "(no limit) " : "") << fails << endl
@@ -257,21 +247,12 @@ Options::parse(int argc, char* argv[]) {
       initcache = atoi(argv[i]);
     }
 #endif 
-    if (!strcmp(argv[i],"-samples")) {
-      if (++i == argc) goto missing;
-      samples = atoi(argv[i]);
-    } else if (!strcmp(argv[i],"-solutions")) {
-      if (++i == argc) goto missing;
-      solutions = atoi(argv[i]);
-    } else if (!strcmp(argv[i],"-fails")) {
+    if (!strcmp(argv[i],"-fails")) {
       if (++i == argc) goto missing;
       fails = atoi(argv[i]);
     } else if (!strcmp(argv[i],"-time")) {
       if (++i == argc) goto missing;
       time = atoi(argv[i]);
-    } else if (!strcmp(argv[i],"-iterations")) {
-      if (++i == argc) goto missing;
-      iterations = atoi(argv[i]);
     } else {
       char* unused;
       size = strtol(argv[i], &unused, 10);

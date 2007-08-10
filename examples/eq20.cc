@@ -114,8 +114,8 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("Eq20");
-  opt.solutions  = 0;
-  opt.iterations = 1000;
+  opt.solutions(0);
+  opt.iterations(1000);
   opt.parse(argc,argv);
   Example::run<Eq20,DFS>(opt);
   return 0;

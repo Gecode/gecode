@@ -97,8 +97,8 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("SEND+MORE=MONEY");
-  opt.solutions  = 0;
-  opt.iterations = 20000;
+  opt.solutions(0);
+  opt.iterations(20000);
   opt.parse(argc,argv);
   Example::run<Money,DFS>(opt);
   return 0;

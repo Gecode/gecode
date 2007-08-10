@@ -155,9 +155,9 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("Photo");
-  opt.solutions  = 0;
+  opt.solutions(0);
   opt.size       = 1;
-  opt.iterations = 10;
+  opt.iterations(10);
   opt.icl(ICL_BND);
   opt.branching(Photo::BRANCH_DEGREE);
   opt.branching(Photo::BRANCH_NONE, "none");

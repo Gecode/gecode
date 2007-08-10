@@ -202,7 +202,7 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("Knights");
-  opt.iterations = 100;
+  opt.iterations(100);
   opt.size       = 8;
   opt.propagation(Knights::PROP_CIRCUIT);
   opt.propagation(Knights::PROP_REIFIED, "reified");

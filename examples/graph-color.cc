@@ -386,7 +386,7 @@ int
 main(int argc, char** argv) {
   Options opt("GraphColor");
   opt.icl(ICL_DOM);
-  opt.iterations = 20;
+  opt.iterations(20);
   opt.model(GraphColor::MODEL_NONE);
   opt.model(GraphColor::MODEL_NONE, "none",
             "no lower bound");

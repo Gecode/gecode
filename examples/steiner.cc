@@ -153,7 +153,7 @@ main(int argc, char** argv) {
   Options o("Steiner");
   o.size = 9;
   o.naive = true;
-  o.iterations = 20;
+  o.iterations(20);
   o.parse(argc,argv);
   Example::run<Steiner,DFS>(o);
   return 0;

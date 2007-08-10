@@ -180,8 +180,8 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("Warehouses");
-  opt.solutions  = 0;
-  opt.iterations = 10;
+  opt.solutions(0);
+  opt.iterations(10);
   opt.parse(argc,argv);
   Example::run<Warehouses,BAB>(opt);
   return 0;

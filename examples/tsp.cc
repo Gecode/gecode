@@ -300,7 +300,7 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("TSP");
-  opt.solutions = 0;
+  opt.solutions(0);
   opt.icl(ICL_DOM);
   opt.parse(argc,argv);
 

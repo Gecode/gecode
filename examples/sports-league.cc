@@ -451,7 +451,7 @@ public:
 
 int main(int argc, char** argv){
   Options o("Sports League Scheduling ");
-  o.solutions = 1;
+  o.solutions(1);
   o.size      = 18;
   o.parse(argc, argv);
   if (o.size == 4) {

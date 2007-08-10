@@ -240,7 +240,7 @@ int
 main(int argc, char** argv) {
   Options o("Golf");
   o.parse(argc,argv);
-  o.solutions  = 1;
+  o.solutions(1);
   if (o.size >= n_examples) {
     std::cerr << "Error: size must be between 0 and " << n_examples - 1
               << std::endl;

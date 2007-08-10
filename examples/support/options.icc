@@ -36,6 +36,10 @@
  *
  */
 
+/*
+ * Option baseclass
+ *
+ */
 inline
 BaseOption::BaseOption(const char* o, const char* e) 
   : opt(o), exp(e) {}
@@ -44,6 +48,10 @@ BaseOption::~BaseOption(void) {
 }
 
 
+/*
+ * String option
+ *
+ */
 inline
 StringOption::StringOption(const char* o, const char* e, int v) 
   : BaseOption(o,e), cur(v), fst(NULL), lst(NULL) {}
@@ -56,6 +64,10 @@ StringOption::value(void) const {
   return cur;
 }
 
+/*
+ * Unsigned integer option
+ *
+ */
 inline
 UIntOption::UIntOption(const char* o, const char* e, unsigned int v) 
   : BaseOption(o,e), cur(v) {}
@@ -69,6 +81,10 @@ UIntOption::value(void) const {
 }
 
 
+/*
+ * Options
+ *
+ */
 inline void
 Options::add(BaseOption* o) {
   o->next = NULL;
@@ -78,6 +94,10 @@ Options::add(BaseOption* o) {
     lst->next=o;
   }
   lst=o;
+}
+inline const char*
+Options::name(void) const {
+  return _name;
 }
 
 /*
@@ -151,6 +171,15 @@ Options::search(void) const {
 }
 
 inline void
+Options::solutions(unsigned int n) {
+  _solutions.value(n);
+}
+inline unsigned int
+Options::solutions(void) const {
+  return _solutions.value();
+}
+
+inline void
 Options::c_d(unsigned int d) {
   _c_d.value(d);
 }
@@ -180,6 +209,24 @@ Options::mode(ExampleMode em) {
 inline ExampleMode
 Options::mode(void) const {
   return static_cast<ExampleMode>(_mode.value());
+}
+
+inline void
+Options::iterations(unsigned int i) {
+  _iterations.value(i);
+}
+inline unsigned int
+Options::iterations(void) const {
+  return _iterations.value();
+}
+
+inline void
+Options::samples(unsigned int s) {
+  _samples.value(s);
+}
+inline unsigned int
+Options::samples(void) const {
+  return _samples.value();
 }
 
 

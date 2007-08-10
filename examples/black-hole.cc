@@ -287,7 +287,7 @@ public:
 int
 main(int argc, char** argv) {
   Options opt("Black Hole patience");
-  opt.solutions  = 1;
+  opt.solutions(1);
   opt.naive      = false;
   opt.icl(ICL_DOM);
   opt.parse(argc,argv);
