@@ -37,40 +37,72 @@
  */
 
 inline
-OptValue::OptValue(void) 
-  : cur(0), fst(NULL), lst(NULL) {}
-
+StringOption::StringOption(const char* o, const char* e, int v) 
+  : opt(o), exp(e), cur(v), fst(NULL), lst(NULL) {}
 inline void 
-OptValue::value(int v) {
+StringOption::value(int v) {
   cur = v;
 }
-
 inline int 
-OptValue::value(void) const {
+StringOption::value(void) const {
   return cur;
 }
 
 
-inline
-Options::Options(const char* n)
-  : icl(ICL_DEF),
-    c_d(Search::Config::c_d),
-    a_d(Search::Config::a_d),
-    mode(EM_SOLUTION),
-    quiet(false),
-    samples(1),
-    iterations(1),
-    solutions(1),
-    fails(-1),
-    time(-1),
-    naive(false),
-    size(0),
-    name(n) 
-#ifdef GECODE_HAVE_CPLTSET_VARS
-    ,initvarnum(100),
-    initcache(100),
-    scl(SCL_DEF)
-#endif 
-{}
+inline void
+Options::model(int v) {
+  _model.value(v);
+}
+inline void
+Options::model(int v, const char* o, const char* h) {
+  _model.add(v,o,h);
+}
+inline int
+Options::model(void) const {
+  return _model.value();
+}
+
+inline void
+Options::propagation(int v) {
+  _propagation.value(v);
+}
+inline void
+Options::propagation(int v, const char* o, const char* h) {
+  _propagation.add(v,o,h);
+}
+inline int
+Options::propagation(void) const {
+  return _propagation.value();
+}
+
+inline void
+Options::branching(int v) {
+  _branching.value(v);
+}
+inline void
+Options::branching(int v, const char* o, const char* h) {
+  _branching.add(v,o,h);
+}
+inline int
+Options::branching(void) const {
+  return _branching.value();
+}
+
+inline void
+Options::search(int v) {
+  _search.value(v);
+}
+inline void
+Options::search(int v, const char* o, const char* h) {
+  _search.add(v,o,h);
+}
+inline int
+Options::search(void) const {
+  return _search.value();
+}
+
+
+
+
 
 // STATISTICS: example-any

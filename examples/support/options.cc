@@ -39,7 +39,7 @@
 #include "examples/support.hh"
 
 void 
-OptValue::add(int v, const char* o, const char* h) {
+StringOption::add(int v, const char* o, const char* h) {
   Value* n = new Value;
   n->val  = v;
   n->opt  = o;
@@ -52,24 +52,35 @@ OptValue::add(int v, const char* o, const char* h) {
   }
 }
 
-bool 
-OptValue::parse(const char* o) {
-  if (fst == NULL)
+bool
+StringOption::parse(int argc, char* argv[], int& i) {
+  using namespace std;
+  if (strcmp(argv[i],opt))
     return false;
+
+  if (++i == argc) {
+    cerr << "Missing argument for option \"" << opt << "\"" << endl;
+    exit(EXIT_FAILURE);
+  }
+
   for (Value* v = fst; v != NULL; v = v->next)
-    if (!strcmp(o,v->opt)) {
-      cur = v->val;
+    if (!strcmp(argv[i],v->opt)) {
+      cur = v->val; i++;
       return true;
     }
-  return false;
+
+  cerr << "Wrong argument \"" << argv[i] 
+       << "\" for option \"" << opt << "\"" 
+       << endl;
+  exit(EXIT_FAILURE);
 }
 
 void 
-OptValue::help(const char* o, const char* t) {
+StringOption::help(void) {
   using namespace std;
   if (fst == NULL)
     return;
-  cerr << '\t' << o << " (";
+  cerr << '\t' << opt << " (";
   const char* d = NULL;
   for (Value* v = fst; v != NULL; v = v->next) {
     cerr << v->opt << ((v->next != NULL) ? ", " : "");
@@ -79,11 +90,36 @@ OptValue::help(const char* o, const char* t) {
   cerr << ")";
   if (d != NULL) 
     cerr << " default: " << d;
-  cerr << endl << "\t\t" << t << endl;
+  cerr << endl << "\t\t" << exp << endl;
   for (Value* v = fst; v != NULL; v = v->next)
     if (v->help != NULL)
       cerr << "\t\t  " << v->opt << ": " << v->help << endl;
 }
+
+Options::Options(const char* n)
+  : icl(ICL_DEF),
+    c_d(Search::Config::c_d),
+    a_d(Search::Config::a_d),
+    mode(EM_SOLUTION),
+    quiet(false),
+    samples(1),
+    iterations(1),
+    solutions(1),
+    fails(-1),
+    time(-1),
+    naive(false),
+    size(0),
+    name(n),
+#ifdef GECODE_HAVE_CPLTSET_VARS
+    initvarnum(100),
+    initcache(100),
+    scl(SCL_DEF),
+#endif 
+    _model("-model","model variants"),
+    _propagation("-propagation","propagation variants"),
+    _branching("-branching","branching variants"),
+    _search("-search","search engine variants")
+{}
 
 namespace {
 
@@ -104,7 +140,7 @@ namespace {
 }
 
 void
-Options::parse(int argc, char** argv) {
+Options::parse(int argc, char* argv[]) {
   using namespace std;
   int i = 1;
   const char* e = NULL;
@@ -113,10 +149,10 @@ Options::parse(int argc, char** argv) {
       cerr << "Options for " << name << ":"
            << endl;
 
-      model.help("-model","model variants");
-      propagation.help("-propagation","propagation variants");
-      branching.help("-branching","branching variants");
-      search.help("-search","search engine variants");
+      _model.help();
+      _propagation.help();
+      _branching.help();
+      _search.help();
       cerr << "\t-icl (def,val,bnd,dom) default: " << icl2str[icl] << endl
            << "\t\tinteger consistency level" << endl
 #ifdef GECODE_HAVE_CPLTSET_VARS
@@ -242,18 +278,14 @@ Options::parse(int argc, char** argv) {
     } else if (!strcmp(argv[i],"-iterations")) {
       if (++i == argc) goto missing;
       iterations = atoi(argv[i]);
-    } else if (!strcmp(argv[i],"-model")) {
-      if (++i == argc) goto missing;
-      if (!model.parse(argv[i])) goto error;
-    } else if (!strcmp(argv[i],"-propagation")) {
-      if (++i == argc) goto missing;
-      if (!propagation.parse(argv[i])) goto error;
-    } else if (!strcmp(argv[i],"-branching")) {
-      if (++i == argc) goto missing;
-      if (!branching.parse(argv[i])) goto error;
-    } else if (!strcmp(argv[i],"-search")) {
-      if (++i == argc) goto missing;
-      if (!search.parse(argv[i])) goto error;
+    } else if (_model.parse(argc,argv,i)) {
+      continue;
+    } else if (_propagation.parse(argc,argv,i)) {
+      continue;
+    } else if (_branching.parse(argc,argv,i)) {
+      continue;
+    } else if (_search.parse(argc,argv,i)) {
+      continue;
     } else {
       char* unused;
       size = strtol(argv[i], &unused, 10);

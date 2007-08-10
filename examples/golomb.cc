@@ -95,7 +95,7 @@ public:
     // Order marks
     rel(this, m, IRT_LE);
 
-    switch (opt.model.value()) {
+    switch (opt.model()) {
     case MODEL_SUM:
       // d[diag(i,j)] must be at least sum of first j-i integers
       for (int i=0; i<n; i++)
@@ -123,7 +123,7 @@ public:
     if (n > 2)
       rel(this, d[diag(0,1)], IRT_LE, d[diag(n-2,n-1)]);
 
-    if (opt.search.value() == SEARCH_DFS) {
+    if (opt.search() == SEARCH_DFS) {
       IntVarArgs max(1);
       max[0]=m[n-1];
       branch(this, max, BVAR_NONE, BVAL_SPLIT_MIN);
@@ -168,20 +168,20 @@ main(int argc, char** argv) {
   opt.solutions = 0;
   opt.size      = 10;
   opt.icl       = ICL_BND;
-  opt.model.value(Golomb::MODEL_SUM);
-  opt.model.add(Golomb::MODEL_NONE, "none",
+  opt.model(Golomb::MODEL_SUM);
+  opt.model(Golomb::MODEL_NONE, "none",
                 "no lower bound");
-  opt.model.add(Golomb::MODEL_SUM, "sum",
+  opt.model(Golomb::MODEL_SUM, "sum",
                 "use sum of ticks as lower bound");
-  opt.model.add(Golomb::MODEL_RULER, "ruler",
+  opt.model(Golomb::MODEL_RULER, "ruler",
                 "use size of smaller rulers as lower bound");
-  opt.search.value(Golomb::SEARCH_BAB);
-  opt.search.add(Golomb::SEARCH_DFS, "dfs");
-  opt.search.add(Golomb::SEARCH_BAB, "bab");
-  opt.search.add(Golomb::SEARCH_RESTART, "restart");
+  opt.search(Golomb::SEARCH_BAB);
+  opt.search(Golomb::SEARCH_DFS, "dfs");
+  opt.search(Golomb::SEARCH_BAB, "bab");
+  opt.search(Golomb::SEARCH_RESTART, "restart");
   opt.parse(argc,argv);
   if (opt.size > 0)
-    switch (opt.search.value()) {
+    switch (opt.search()) {
     case Golomb::SEARCH_DFS:
       Example::run<Golomb,DFS>(opt); break;
     case Golomb::SEARCH_BAB:

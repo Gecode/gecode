@@ -98,7 +98,7 @@ namespace {
         //if ((i+1)%size == 0) std::cerr << std::endl;
       }
       ++cnt;
-      knight_table.add(ia);
+      knight_table(ia);
       delete s;
     }
     std::cerr << "Count == " << cnt << std::endl;
@@ -158,7 +158,7 @@ namespace {
         //if ((i+1)%size == 0) std::cerr << std::endl;
       }
       ++cnt;
-      bishop_table.add(ia);
+      bishop_table(ia);
       delete s;
     }
     std::cerr << "Count == " << cnt << std::endl;

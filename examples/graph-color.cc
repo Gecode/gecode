@@ -342,13 +342,13 @@ public:
       for (int i = n; i--; c++)
         x[i] = v[*c];
       distinct(this, x, opt.icl);
-      if (opt.model.value() == MODEL_CLIQUE)
+      if (opt.model() == MODEL_CLIQUE)
         rel(this, m, IRT_GQ, n-1);
     }
     IntVarArgs ma(1);
     ma[0] = m;
     branch(this, ma, BVAR_NONE, BVAL_MIN);
-    if (opt.branching.value() == BRANCH_SIZE) {
+    if (opt.branching() == BRANCH_SIZE) {
       branch(this, v, BVAR_SIZE_MIN, BVAL_MIN);
     } else {
       branch(this, v, BVAR_DEGREE_MAX, BVAL_MIN);
@@ -387,14 +387,14 @@ main(int argc, char** argv) {
   Options opt("GraphColor");
   opt.icl        = ICL_DOM;
   opt.iterations = 20;
-  opt.model.value(GraphColor::MODEL_NONE);
-  opt.model.add(GraphColor::MODEL_NONE, "none",
+  opt.model(GraphColor::MODEL_NONE);
+  opt.model(GraphColor::MODEL_NONE, "none",
                 "no lower bound");
-  opt.model.add(GraphColor::MODEL_CLIQUE, "clique",
+  opt.model(GraphColor::MODEL_CLIQUE, "clique",
                 "use maximal clique size as lower bound");
-  opt.branching.value(GraphColor::BRANCH_DEGREE);
-  opt.branching.add(GraphColor::BRANCH_DEGREE, "degree");
-  opt.branching.add(GraphColor::BRANCH_SIZE, "size");
+  opt.branching(GraphColor::BRANCH_DEGREE);
+  opt.branching(GraphColor::BRANCH_DEGREE, "degree");
+  opt.branching(GraphColor::BRANCH_SIZE, "size");
   opt.parse(argc,argv);
   Example::run<GraphColor,DFS>(opt);
   return 0;

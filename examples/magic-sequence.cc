@@ -77,7 +77,7 @@ public:
   /// The actual model
   MagicSequence(const Options& opt)
     : n(opt.size), s(this,n,0,n-1) {
-    switch (opt.propagation.value()) {
+    switch (opt.propagation()) {
     case PROP_REIFIED:
       for (int i=n; i--; )
         exactly(s, s[i], i);
@@ -131,10 +131,10 @@ main(int argc, char** argv) {
   opt.solutions  = 0;
   opt.iterations = 4;
   opt.size       = 500;
-  opt.propagation.value(MagicSequence::PROP_COUNT);
-  opt.propagation.add(MagicSequence::PROP_REIFIED, "reified");
-  opt.propagation.add(MagicSequence::PROP_COUNT,   "count");
-  opt.propagation.add(MagicSequence::PROP_GCC,     "gcc");
+  opt.propagation(MagicSequence::PROP_COUNT);
+  opt.propagation(MagicSequence::PROP_REIFIED, "reified");
+  opt.propagation(MagicSequence::PROP_COUNT,   "count");
+  opt.propagation(MagicSequence::PROP_GCC,     "gcc");
   opt.parse(argc,argv);
   Example::run<MagicSequence,DFS>(opt);
   return 0;

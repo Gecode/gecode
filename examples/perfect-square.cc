@@ -139,7 +139,7 @@ public:
      * Capacity constraints
      *
      */
-    if (opt.propagation.value() == PROP_REIFIED) {
+    if (opt.propagation() == PROP_REIFIED) {
       IntArgs sa(s.n,s.s);
       BoolVarArgs b(s.n);
       for (int cx=0; cx<s.x; cx++) {
@@ -219,9 +219,9 @@ int
 main(int argc, char** argv) {
   Options opt("PerfectSquare");
   opt.size  = 7;
-  opt.propagation.value(PerfectSquare::PROP_REIFIED);
-  opt.propagation.add(PerfectSquare::PROP_REIFIED,     "reified");
-  opt.propagation.add(PerfectSquare::PROP_CUMULATIVES, "cumulatives");
+  opt.propagation(PerfectSquare::PROP_REIFIED);
+  opt.propagation(PerfectSquare::PROP_REIFIED,     "reified");
+  opt.propagation(PerfectSquare::PROP_CUMULATIVES, "cumulatives");
   opt.parse(argc,argv);
   if (opt.size >= n_examples) {
     std::cerr << "Error: size must be between 0 and " << n_examples - 1

@@ -204,11 +204,11 @@ main(int argc, char** argv) {
   Options opt("Knights");
   opt.iterations = 100;
   opt.size       = 8;
-  opt.propagation.value(Knights::PROP_CIRCUIT);
-  opt.propagation.add(Knights::PROP_REIFIED, "reified");
-  opt.propagation.add(Knights::PROP_CIRCUIT, "circuit");
+  opt.propagation(Knights::PROP_CIRCUIT);
+  opt.propagation(Knights::PROP_REIFIED, "reified");
+  opt.propagation(Knights::PROP_CIRCUIT, "circuit");
   opt.parse(argc,argv);
-  if (opt.propagation.value() == Knights::PROP_REIFIED) {
+  if (opt.propagation() == Knights::PROP_REIFIED) {
     Example::run<KnightsReified,DFS>(opt);
   } else {
     Example::run<KnightsCircuit,DFS>(opt);

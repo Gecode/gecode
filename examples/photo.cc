@@ -159,9 +159,9 @@ main(int argc, char** argv) {
   opt.size       = 1;
   opt.iterations = 10;
   opt.icl        = ICL_BND;
-  opt.branching.value(Photo::BRANCH_DEGREE);
-  opt.branching.add(Photo::BRANCH_NONE, "none");
-  opt.branching.add(Photo::BRANCH_DEGREE, "degree");
+  opt.branching(Photo::BRANCH_DEGREE);
+  opt.branching(Photo::BRANCH_NONE, "none");
+  opt.branching(Photo::BRANCH_DEGREE, "degree");
   opt.parse(argc,argv);
   Example::run<Photo,BAB>(opt);
   return 0;

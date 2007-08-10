@@ -62,7 +62,7 @@ public:
   Queens(const Options& opt)
     : q(this,opt.size,0,opt.size-1) {
     const int n = q.size();
-    switch (opt.propagation.value()) {
+    switch (opt.propagation()) {
     case PROP_BINARY:
       for (int i = 0; i<n; i++)
         for (int j = i+1; j<n; j++) {
@@ -125,12 +125,12 @@ main(int argc, char** argv) {
   Options opt("Queens");
   opt.iterations = 500;
   opt.size       = 100;
-  opt.propagation.value(Queens::PROP_DISTINCT);
-  opt.propagation.add(Queens::PROP_BINARY, "binary",
+  opt.propagation(Queens::PROP_DISTINCT);
+  opt.propagation(Queens::PROP_BINARY, "binary",
                       "only binary disequality constraints");
-  opt.propagation.add(Queens::PROP_MIXED, "mixed",
+  opt.propagation(Queens::PROP_MIXED, "mixed",
                       "single distinct and binary disequality constraints");
-  opt.propagation.add(Queens::PROP_DISTINCT, "distinct",
+  opt.propagation(Queens::PROP_DISTINCT, "distinct",
                       "three distinct constraints");
   opt.parse(argc,argv);
   Example::run<Queens,DFS>(opt);
