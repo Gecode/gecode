@@ -60,19 +60,23 @@ StringOption::add(int v, const char* o, const char* h) {
 }
 
 bool
-StringOption::parse(int argc, char* argv[], int& i) {
-  if (strcmp(argv[i],opt))
+StringOption::parse(int& argc, char* argv[]) {
+  if ((argc < 2) || strcmp(argv[1],opt))
     return false;
-  if (++i == argc) {
+  if (argc == 2) {
     std::cerr << "Missing argument for option \"" << opt << "\"" << std::endl;
     exit(EXIT_FAILURE);
   }
   for (Value* v = fst; v != NULL; v = v->next)
-    if (!strcmp(argv[i],v->opt)) {
-      cur = v->val; i++;
+    if (!strcmp(argv[2],v->opt)) {
+      cur = v->val;
+      // Remove options
+      argc -= 2;
+      for (int i=1; i<argc; i++)
+        argv[i] = argv[i+2];
       return true;
     }
-  std::cerr << "Wrong argument \"" << argv[i] 
+  std::cerr << "Wrong argument \"" << argv[2] 
             << "\" for option \"" << opt << "\"" 
             << std::endl;
   exit(EXIT_FAILURE);
@@ -109,20 +113,23 @@ StringOption::~StringOption(void) {
 
 
 bool
-UIntOption::parse(int argc, char* argv[], int& i) {
-  if (strcmp(argv[i],opt))
+UnsignedIntOption::parse(int& argc, char* argv[]) {
+  if ((argc < 2) || strcmp(argv[1],opt))
     return false;
-  if (++i == argc) {
-    std::cerr << "Missing argument for option \"" << opt << "\"" 
-              << std::endl;
+  if (argc == 2) {
+    std::cerr << "Missing argument for option \"" << opt << "\"" << std::endl;
     exit(EXIT_FAILURE);
   }
-  cur = atoi(argv[i++]);
+  cur = atoi(argv[2]);
+  // Remove options
+  argc -= 2;
+  for (int i=1; i<argc; i++)
+    argv[i] = argv[i+2];
   return true;
 }
 
 void 
-UIntOption::help(void) {
+UnsignedIntOption::help(void) {
   using namespace std;
   cerr << '\t' << opt << " (unsigned int) default: " << cur << endl
        << "\t\t" << exp << endl;
@@ -151,8 +158,6 @@ Options::Options(const char* n)
     _samples("-samples","how many samples (time mode)") ,
     _iterations("-iterations","iterations per sample (time mode)"),
 
-
-    naive(false),
     size(0)
 {
 
@@ -169,41 +174,38 @@ Options::Options(const char* n)
 }
 
 void
-Options::parse(int argc, char* argv[]) {
-  int i = 1;
-  while (i < argc) {
-    if (!strcmp(argv[i],"-help") || 
-        !strcmp(argv[i],"--help") ||
-        !strcmp(argv[i],"-?")) {
-      std::cerr << "Options for " << name() << ":" << std::endl
-                << "\t-help, --help, -?" << std::endl
-                << "\t\tprint this help message" << std::endl;
-      for (BaseOption* o = fst; o != NULL; o = o->next)
-        o->help();
-      std::cerr << "\t(unsigned int) default: " << size << std::endl
-                << "\t\twhich version/size for example" << std::endl;
+Options::help(void) {
+  std::cerr << "Options for " << name() << ":" << std::endl
+            << "\t-help, --help, -?" << std::endl
+            << "\t\tprint this help message" << std::endl;
+  for (BaseOption* o = fst; o != NULL; o = o->next)
+    o->help();
+  std::cerr << "\t(unsigned int) default: " << size << std::endl
+            << "\t\twhich version/size for example" << std::endl;
+  
+}
 
-
+void
+Options::parse(int& argc, char* argv[]) {
+  while (argc > 1) {
+    if (!strcmp(argv[1],"-help") || !strcmp(argv[1],"--help") ||
+        !strcmp(argv[1],"-?")) {
+      help();
       exit(EXIT_SUCCESS);
     }
-  redo:
     for (BaseOption* o = fst; o != NULL; o = o->next)
-      if ((i < argc) && o->parse(argc,argv,i))
-        goto redo;
-    if (i >= argc)
+      if (o->parse(argc,argv))
+        continue;
+    if (argc < 2)
       break;
     char* unused;
-    size = strtol(argv[i], &unused, 10);
+    size = strtol(argv[1], &unused, 10);
     if ('\0' != *unused) {
-      i++;
-      goto error;
+      std::cerr << "Erroneous value (" << argv[1] << ")" << std::endl;
+      exit(EXIT_FAILURE);
     }
-    i++;
   }
-  return;
- error:
-  std::cerr << "Erroneous argument (" << argv[i-1] << ")" << std::endl;
-  exit(EXIT_FAILURE);
 }
+
 
 // STATISTICS: example-any

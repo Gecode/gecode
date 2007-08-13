@@ -128,7 +128,7 @@ main(int argc, char* argv[]) {
   opt.iterations(1);
   opt.size       = 7;
   opt.parse(argc,argv);
-  Example::run<MagicSquare,DFS>(opt);
+  Example::run<MagicSquare,DFS,Options>(opt);
   return 0;
 }
 

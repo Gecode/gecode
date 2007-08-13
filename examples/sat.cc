@@ -79,10 +79,7 @@ public:
       BoolVarArgs c(csiz);
       for (int i = csiz; i--; )
         c[i] = v[i];
-      if (opt.naive)
-        rel(this, c, BOT_OR, 1);
-      else
-        rel(this, c, BOT_OR_WL, 1);
+      rel(this, c, BOT_OR, 1);
     }
     
     branch(this, x, BVAR_DEGREE_MAX, BVAL_MIN);
@@ -119,7 +116,6 @@ main(int argc, char* argv[]) {
   Options opt("SAT");
   opt.solutions(1);
   opt.size      = 0;
-  opt.naive     = true;
   opt.parse(argc,argv);
 
   std::string s;
@@ -127,7 +123,7 @@ main(int argc, char* argv[]) {
   std::cin >> nvars >> nclauses >> std::ws;
   std::cout << "p " << s << " " << nvars << " " << nclauses << std::endl;
 
-  Example::run<SAT,DFS>(opt);
+  Example::run<SAT,DFS,Options>(opt);
   return 0;
 }
 

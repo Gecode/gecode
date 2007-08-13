@@ -232,7 +232,7 @@ main(int argc, char* argv[]) {
 	      << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<Domino,DFS>(opt);
+  Example::run<Domino,DFS,Options>(opt);
   return 0;
 }
 

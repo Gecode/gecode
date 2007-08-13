@@ -101,7 +101,7 @@ main(int argc, char* argv[]) {
   opt.solutions(0);
   opt.iterations(1500);
   opt.parse(argc,argv);
-  Example::run<Donald,DFS>(opt);
+  Example::run<Donald,DFS,Options>(opt);
   return 0;
 }
 

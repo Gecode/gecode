@@ -121,7 +121,7 @@ int main(int argc, char* argv[]){
     std::cerr << "n must be at least 2!" << std::endl;
     return -1;
   }
-  Example::run<AllInterval,DFS>(opt);
+  Example::run<AllInterval,DFS,Options>(opt);
   return 0;
 }
 

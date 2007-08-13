@@ -130,7 +130,7 @@ main(int argc, char* argv[]) {
   Options opt("StressRegular");
   opt.size = 7;
   opt.parse(argc,argv);
-  Example::run<StressRegular,DFS>(opt);
+  Example::run<StressRegular,DFS,Options>(opt);
   return 0;
 }
 

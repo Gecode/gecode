@@ -143,6 +143,7 @@ int main(int argc, char* argv[]){
   argv[2] = name;
   argv++;
   argv++;
+  argc -= 2;
   if (o.k < 1) {
     std::cerr << "k must be at least 1!\n";
     return -1;
@@ -151,8 +152,8 @@ int main(int argc, char* argv[]){
     std::cerr << "n must be at least k!\n";
     return -1;
   }
-  o.parse(argc - 2, argv);
-  Example::run<LangfordNumRegular, DFS>(o);
+  o.parse(argc, argv);
+  Example::run<LangfordNumRegular, DFS,Options>(o);
   return 0;
 }
 

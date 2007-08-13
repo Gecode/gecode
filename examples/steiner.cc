@@ -79,7 +79,8 @@ public:
         IntVar y2(this,1,n);
         IntVar y3(this,1,n);
 
-        if (o.naive) {
+        //        if (o.naive) {
+        if (true) {
         
           /* Naive alternative:
            * just including the ints in the set
@@ -152,10 +153,10 @@ int
 main(int argc, char* argv[]) {
   Options o("Steiner");
   o.size = 9;
-  o.naive = true;
+  //  o.naive = true;
   o.iterations(20);
   o.parse(argc,argv);
-  Example::run<Steiner,DFS>(o);
+  Example::run<Steiner,DFS,Options>(o);
   return 0;
 }
 

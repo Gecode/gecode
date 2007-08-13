@@ -163,7 +163,7 @@ main(int argc, char* argv[]) {
   opt.branching(Photo::BRANCH_NONE, "none");
   opt.branching(Photo::BRANCH_DEGREE, "degree");
   opt.parse(argc,argv);
-  Example::run<Photo,BAB>(opt);
+  Example::run<Photo,BAB,Options>(opt);
   return 0;
 }
 

@@ -164,7 +164,7 @@ main(int argc, char* argv[]) {
   opt.size = 7;
   opt.icl(ICL_DOM);
   opt.parse(argc,argv);
-  Example::run<OrthoLatinSquare,DFS>(opt);
+  Example::run<OrthoLatinSquare,DFS,Options>(opt);
   return 0;
 }
 

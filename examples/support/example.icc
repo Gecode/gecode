@@ -107,7 +107,7 @@ double
 dev(double t[], int n);
 
 
-template <class Script, template<class> class Engine>
+template <class Script, template<class> class Engine, class Options>
 void
 Example::run(const Options& o) {
   using namespace std;

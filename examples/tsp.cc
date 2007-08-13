@@ -310,7 +310,7 @@ main(int argc, char* argv[]) {
     return 1;
   }
 
-  Example::run<TSP,BAB>(opt);
+  Example::run<TSP,BAB,Options>(opt);
   return 0;
 }
 

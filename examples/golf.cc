@@ -121,7 +121,8 @@ public:
       }
     }
 
-    if (!o.naive) {
+    //    if (!o.naive) {
+    if (false) {
 
       /*
        * Redundant constraints and static symmetry breaking from
@@ -246,7 +247,7 @@ main(int argc, char* argv[]) {
               << std::endl;
     return 1;
   }
-  Example::run<Golf,DFS>(o);
+  Example::run<Golf,DFS,Options>(o);
   return 0;
 }
 

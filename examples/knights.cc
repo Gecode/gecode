@@ -209,9 +209,9 @@ main(int argc, char* argv[]) {
   opt.propagation(Knights::PROP_CIRCUIT, "circuit");
   opt.parse(argc,argv);
   if (opt.propagation() == Knights::PROP_REIFIED) {
-    Example::run<KnightsReified,DFS>(opt);
+    Example::run<KnightsReified,DFS,Options>(opt);
   } else {
-    Example::run<KnightsCircuit,DFS>(opt);
+    Example::run<KnightsCircuit,DFS,Options>(opt);
   }
   return 0;
 }

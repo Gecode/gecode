@@ -122,9 +122,11 @@ public:
     : x(this,nvars,mind,maxd) {
 
     ExtensionalAlgorithm ea = EA_BASIC;
+    /*
     if (!opt.naive) {
       ea = EA_INCREMENTAL;
     }
+    */
     
     for (int i = cons.size(); i--; ) {
       IntVarArgs iva(tab[cons[i][0]].arity());
@@ -170,11 +172,6 @@ main(int argc, char* argv[]) {
   Options opt("Extensional");
   opt.solutions(1);
   opt.size      = 1000000;
-#if defined(SYSTEM_ADVISOR_IMPROVE_CHEAP) || defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
-  opt.naive     = false;
-#else
-  opt.naive     = true;
-#endif
   opt.parse(argc,argv);
   if (opt.size == 1000000)
     read_spec(std::cin);
@@ -190,7 +187,7 @@ main(int argc, char* argv[]) {
   }
   
   
-  Example::run<Extensional,DFS>(opt);
+  Example::run<Extensional,DFS,Options>(opt);
   return 0;
 }
 

@@ -114,7 +114,7 @@ main(int argc, char* argv[]) {
   Options o("Hamming");
   o.size = 32;
   o.parse(argc,argv);
-  Example::run<Hamming,DFS>(o);
+  Example::run<Hamming,DFS,Options>(o);
   return 0;
 }
 

@@ -396,7 +396,7 @@ main(int argc, char* argv[]) {
   opt.branching(GraphColor::BRANCH_DEGREE, "degree");
   opt.branching(GraphColor::BRANCH_SIZE, "size");
   opt.parse(argc,argv);
-  Example::run<GraphColor,DFS>(opt);
+  Example::run<GraphColor,DFS,Options>(opt);
   return 0;
 }
 

@@ -173,7 +173,7 @@ main(int argc, char* argv[]) {
   o.solutions(0);
   o.iterations(100);
   o.parse(argc,argv);
-  Example::run<Cars,DFS>(o);
+  Example::run<Cars,DFS,Options>(o);
   return 0;
 }
 

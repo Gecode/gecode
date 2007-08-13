@@ -227,7 +227,7 @@ main(int argc, char* argv[]) {
   Options o("Crew");
   o.iterations(100);
   o.parse(argc,argv);
-  Example::run<Crew,DFS>(o);
+  Example::run<Crew,DFS,Options>(o);
   return 0;
 }
 

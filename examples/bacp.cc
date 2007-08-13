@@ -189,7 +189,7 @@ main(int argc, char* argv[]) {
               << std::endl;
     return 1;
   }
-  Example::run<BACP,BAB>(opt);
+  Example::run<BACP,BAB,Options>(opt);
   return 0;
 }
 

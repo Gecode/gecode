@@ -278,7 +278,6 @@ main(int argc, char* argv[]) {
   opt.size       = 0;
   opt.icl(ICL_DOM);
   opt.solutions(1);
-  opt.naive      = true;
   opt.parse(argc,argv);
   if (opt.size >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
@@ -290,7 +289,7 @@ main(int argc, char* argv[]) {
               << std::endl;
     return 2;
   }
-  Example::run<SudokuMixed,DFS>(opt);
+  Example::run<SudokuMixed,DFS,Options>(opt);
   return 0;
 }
 

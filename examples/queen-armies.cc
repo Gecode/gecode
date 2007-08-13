@@ -75,8 +75,14 @@ public:
     b; ///< The placement of the black queens
   IntVar q; ///< The number of white queens placed.
 
-  QueenArmies(const Options& o) :
-    n(o.size),
+  /// Branching to use for model
+  enum {
+    BRANCH_NAIVE,   ///< Choose variables left to right
+    BRANCH_SPECIFIC ///< Choose variable with problem specific strategy
+  };
+  /// Constructor
+  QueenArmies(const Options& opt) :
+    n(opt.size),
     U(this, IntSet::empty, IntSet(0, n*n)),
     W(this, IntSet::empty, IntSet(0, n*n)),
     w(this, n*n, 0, 1),
@@ -103,7 +109,7 @@ public:
     post(this, q <= unknowns);
     linear(this, b, IRT_EQ, unknowns);
 
-    if (o.naive) {
+    if (opt.branching() == BRANCH_NAIVE) {
       branch(this, w, BVAR_NONE, BVAL_MAX);
       branch(this, b, BVAR_NONE, BVAL_MAX);
     } else {
@@ -212,11 +218,13 @@ int pos(int i, int j, int n) {
  */
 int
 main(int argc, char* argv[]) {
-  Options o("QueenArmies");
-  o.size      = 6;
-  o.naive     = false;
-  o.solutions(0);
-  o.parse(argc,argv);
+  Options opt("QueenArmies");
+  opt.size      = 6;
+  opt.branching(QueenArmies::BRANCH_SPECIFIC);
+  opt.branching(QueenArmies::BRANCH_NAIVE, "naive");
+  opt.branching(QueenArmies::BRANCH_SPECIFIC, "specific");
+  opt.solutions(0);
+  opt.parse(argc,argv);
 
   // Set up the A-sets
   // A[i] will contain the values attacked by a queen at position i
@@ -252,7 +260,7 @@ main(int argc, char* argv[]) {
   }
   delete [] p;
 
-  Example::run<QueenArmies,BAB>(o);
+  Example::run<QueenArmies,BAB,Options>(opt);
   return 0;
 }
 

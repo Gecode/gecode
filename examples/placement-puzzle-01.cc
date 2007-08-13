@@ -355,7 +355,8 @@ public:
     }
 
     // Remove symmetrical boards
-    if (!o.naive) {
+    //    if (!o.naive) {
+    if (true) {
       // Storage for board under symmetry operations
       IntVarArgs orig(b.size()-height), symm(b.size()-height);
       int pos = 0;
@@ -418,14 +419,14 @@ int
 main(int argc, char* argv[]) {
   Options o("PlacementPuzzle");
   o.size  = 1;
-  o.naive = true;
+  //  o.naive = true;
   o.parse(argc,argv);
   if (o.size >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
 	      << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<PlacementPuzzle,DFS>(o);
+  Example::run<PlacementPuzzle,DFS,Options>(o);
   return 0;
 }
 

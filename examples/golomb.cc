@@ -184,11 +184,11 @@ main(int argc, char* argv[]) {
   if (opt.size > 0)
     switch (opt.search()) {
     case Golomb::SEARCH_DFS:
-      Example::run<Golomb,DFS>(opt); break;
+      Example::run<Golomb,DFS,Options>(opt); break;
     case Golomb::SEARCH_BAB:
-      Example::run<Golomb,BAB>(opt); break;
+      Example::run<Golomb,BAB,Options>(opt); break;
     case Golomb::SEARCH_RESTART:
-      Example::run<Golomb,Restart>(opt); break;
+      Example::run<Golomb,Restart,Options>(opt); break;
     }
   return 0;
 }

@@ -181,7 +181,7 @@ main(int argc, char* argv[]) {
     return 1;
   }
 
-  Example::run<BIBD,DFS>(opt);
+  Example::run<BIBD,DFS,Options>(opt);
   return 0;
 }
 

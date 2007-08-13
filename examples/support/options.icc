@@ -69,14 +69,15 @@ StringOption::value(void) const {
  *
  */
 inline
-UIntOption::UIntOption(const char* o, const char* e, unsigned int v) 
+UnsignedIntOption::UnsignedIntOption(const char* o, const char* e, 
+                                     unsigned int v) 
   : BaseOption(o,e), cur(v) {}
 inline void 
-UIntOption::value(unsigned int v) {
+UnsignedIntOption::value(unsigned int v) {
   cur = v;
 }
 inline unsigned int 
-UIntOption::value(void) const {
+UnsignedIntOption::value(void) const {
   return cur;
 }
 
@@ -247,5 +248,8 @@ inline unsigned int
 Options::samples(void) const {
   return _samples.value();
 }
+
+inline
+Options::~Options(void) {}
 
 // STATISTICS: example-any

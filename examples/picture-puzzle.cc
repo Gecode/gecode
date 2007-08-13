@@ -159,7 +159,7 @@ main(int argc, char* argv[]) {
               << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<PicturePuzzle,DFS>(o);
+  Example::run<PicturePuzzle,DFS,Options>(o);
   return 0;
 }
 

@@ -235,9 +235,11 @@ public:
 
     // N-queens constraints
     ExtensionalAlgorithm ea = EA_BASIC;
+    /*
     if (!opt.naive) {
       ea = EA_INCREMENTAL;
     }
+    */
     // N-queens constraints
     distinct(this, queens, ICL_DOM);
     IntArgs koff(n);
@@ -251,7 +253,8 @@ public:
     distinct(this,  rooks, ICL_DOM);
 
     // Collect diagonals for handling queens and bishops
-    if (false && opt.naive) {
+    //    if (false && opt.naive) {
+    if (false) {
       for (int l = n; l--; ) {
         const int il = (n-1) - l;
         IntVarArgs d1(l+1), d2(l+1), d3(l+1), d4(l+1);
@@ -368,7 +371,7 @@ main(int argc, char* argv[]) {
   init_knight(opt.size);
   init_bishop(opt.size);
 
-  Example::run<CrowdedChessTable,DFS>(opt);
+  Example::run<CrowdedChessTable,DFS,Options>(opt);
   return 0;
 }
 

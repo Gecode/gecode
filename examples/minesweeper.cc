@@ -174,7 +174,7 @@ main(int argc, char* argv[]) {
               << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<MineSweeper,DFS>(opt);
+  Example::run<MineSweeper,DFS,Options>(opt);
   return 0;
 }
 

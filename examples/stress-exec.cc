@@ -89,7 +89,7 @@ main(int argc, char* argv[]) {
   opt.iterations(20);
   opt.size       = 1;
   opt.parse(argc,argv);
-  Example::run<StressExec,DFS>(opt);
+  Example::run<StressExec,DFS,Options>(opt);
   return 0;
 }
 

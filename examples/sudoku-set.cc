@@ -157,7 +157,6 @@ main(int argc, char* argv[]) {
   opt.iterations(100);
   opt.size       = 0;
   opt.solutions(1);
-  opt.naive      = true;
   opt.parse(argc,argv);
   if (opt.size >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
@@ -169,7 +168,7 @@ main(int argc, char* argv[]) {
               << std::endl;
     return 2;
   }
-  Example::run<SudokuSet,DFS>(opt);
+  Example::run<SudokuSet,DFS,Options>(opt);
   return 0;
 }
 

@@ -100,7 +100,8 @@ public:
       }
 
 #ifdef GECODE_HAVE_SET_VARS
-    if (!opt.naive) {
+    //    if (!opt.naive) {
+    if (false) {
       // Implied constraints linking squares and rows
       for (int b=0; b<n; b++) {
         int b1c = 0;
@@ -189,14 +190,14 @@ main(int argc, char* argv[]) {
   opt.size       = 0;
   opt.icl(ICL_DOM);
   opt.solutions(1);
-  opt.naive      = true;
+  //  opt.naive      = true;
   opt.parse(argc,argv);
   if (opt.size >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
               << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<Sudoku,DFS>(opt);
+  Example::run<Sudoku,DFS,Options>(opt);
   return 0;
 }
 

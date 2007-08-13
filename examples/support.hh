@@ -71,8 +71,8 @@ protected:
 public:
   /// Initialize for option \a o and explanation \a e
   BaseOption(const char* o, const char* e);
-  /// Parse option at position \a i
-  virtual bool parse(int argc, char* argv[], int& i) = 0;
+  /// Parse option at first position and possibly delete
+  virtual bool parse(int& argc, char* argv[]) = 0;
   /// Print help text
   virtual void help(void) = 0;
   /// Destructor
@@ -105,8 +105,8 @@ public:
   int value(void) const;
   /// Add option value for value \a v, string \a o, and help text \a h
   void add(int v, const char* o, const char* h = NULL);
-  /// Parse option at position \a i
-  virtual bool parse(int argc, char* argv[], int& i);
+  /// Parse option at first position
+  virtual bool parse(int& argc, char* argv[]);
   /// Print help text
   virtual void help(void);
   /// Destructor
@@ -118,18 +118,18 @@ public:
  * \brief Unsigned integer option
  *
  */
-class UIntOption : public BaseOption {
+class UnsignedIntOption : public BaseOption {
 protected:
   unsigned int cur; ///< Current value
 public:
   /// Initialize for option \a o and explanation \a e and default value \a v
-  UIntOption(const char* o, const char* e, unsigned int v=0);
+  UnsignedIntOption(const char* o, const char* e, unsigned int v=0);
   /// Set default value to \a v
   void value(unsigned int v);
   /// Return current option value
   unsigned int value(void) const;
-  /// Parse option at position \a i
-  virtual bool parse(int argc, char* argv[], int& i);
+  /// Parse option at first position
+  virtual bool parse(int& argc, char* argv[]);
   /// Print help text
   virtual void help(void);
 };
@@ -154,23 +154,22 @@ private:
 
   /// \name Search options
   //@{
-  StringOption _search;    ///< Search options
-  UIntOption   _solutions; ///< How many solutions
-  UIntOption   _c_d;       ///< Copy recomputation distance
-  UIntOption   _a_d;       ///< Adaptive recomputation distance
-  UIntOption   _fail;      ///< Cutoff for number of failures
-  UIntOption   _time;      ///< Cutoff for time
+  StringOption      _search;    ///< Search options
+  UnsignedIntOption _solutions; ///< How many solutions
+  UnsignedIntOption _c_d;       ///< Copy recomputation distance
+  UnsignedIntOption _a_d;       ///< Adaptive recomputation distance
+  UnsignedIntOption _fail;      ///< Cutoff for number of failures
+  UnsignedIntOption _time;      ///< Cutoff for time
   //@}
 
   /// \name Execution options
   //@{
-  StringOption _mode;       ///< Example mode to run
-  UIntOption   _samples;    ///< How many samples
-  UIntOption   _iterations; ///< How many iterations per sample
+  StringOption      _mode;       ///< Example mode to run
+  UnsignedIntOption _samples;    ///< How many samples
+  UnsignedIntOption _iterations; ///< How many iterations per sample
   //@}
 
 public:
-  bool         naive;      ///< use naive version
   unsigned int size;       ///< problem size/variant
 
 public:
@@ -178,8 +177,10 @@ public:
   Options(const char* s);
   /// Add new option \a o
   void add(BaseOption& o);
+  /// Print help text
+  virtual void help(void);
   /// Parse options from arguments \a argv (number is \a argc)
-  void parse(int argc, char* argv[]);
+  void parse(int& argc, char* argv[]);
 
   /// Return name of example
   const char* name(void) const;
@@ -265,6 +266,9 @@ public:
   /// Return number of samples
   unsigned int samples(void) const;
   //@}
+
+  /// Destructor
+  virtual ~Options(void);
 };
 
 #include "examples/support/options.icc"
@@ -287,7 +291,7 @@ public:
   /// Print a solution
   virtual void print(void) {}
   /// Run example with search engine \a Engine and options \a opt
-  template <class Script, template<class> class Engine>
+  template <class Script, template<class> class Engine, class Options>
   static void run(const Options& opt);
 private:
   /// Catch wrong definitions of copy constructor

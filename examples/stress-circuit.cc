@@ -103,7 +103,7 @@ main(int argc, char* argv[]) {
   Options opt("StressCircuit");
   opt.size = 6;
   opt.parse(argc,argv);
-  Example::run<StressCircuit,DFS>(opt);
+  Example::run<StressCircuit,DFS,Options>(opt);
   return 0;
 }
 

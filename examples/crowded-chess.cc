@@ -322,7 +322,7 @@ main(int argc, char* argv[]) {
     std::cerr << "Error: size must be at least 5" << std::endl;
     return 1;
   }
-  Example::run<CrowdedChess,DFS>(opt);
+  Example::run<CrowdedChess,DFS,Options>(opt);
   return 0;
 }
 
