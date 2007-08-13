@@ -53,10 +53,10 @@ protected:
   IntVarArray x;
 public:
   /// The actual problem
-  StressDistinct(const Options& opt)
-    : x(this,opt.size+1,0,opt.size) {
+  StressDistinct(const SizeOptions& opt)
+    : x(this,opt.size()+1,0,opt.size()) {
     distinct(this, x, opt.icl());
-    for (int i=0; i<opt.size; i++)
+    for (int i=0; i<opt.size(); i++)
       rel(this, x[i], IRT_LQ, i);
   }
   /// Constructor for cloning \a s
@@ -83,10 +83,10 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("StressDistinct");
-  opt.size = 1000;
+  SizeOptions opt("StressDistinct");
+  opt.size(1000);
   opt.parse(argc,argv);
-  Example::run<StressDistinct,DFS,Options>(opt);
+  Example::run<StressDistinct,DFS,SizeOptions>(opt);
   return 0;
 }
 

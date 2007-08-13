@@ -79,8 +79,8 @@ public:
     PROP_REGULAR  ///< Use regular constraints
   };
   /// Construction of model
-  Domino(const Options& opt)
-    : spec(specs[opt.size]), 
+  Domino(const SizeOptions& opt)
+    : spec(specs[opt.size()]), 
       width(spec[0]), height(spec[1]),
       x(this, (width+1)*height, 0, 28)
   {
@@ -221,18 +221,18 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("Domino");
-  opt.size  = 0;
+  SizeOptions opt("Domino");
+  opt.size(0);
   opt.propagation(Domino::PROP_ELEMENT);  
   opt.propagation(Domino::PROP_ELEMENT, "element");  
   opt.propagation(Domino::PROP_REGULAR, "regular");  
   opt.parse(argc,argv);
-  if (opt.size >= n_examples) {
+  if (opt.size() >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
 	      << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<Domino,DFS,Options>(opt);
+  Example::run<Domino,DFS,SizeOptions>(opt);
   return 0;
 }
 

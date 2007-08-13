@@ -88,8 +88,8 @@ protected:
   IntVar       k;
 public:
   /// Actual model
-  IndSet(const Options& opt)
-    : g(opt.size == 0 ?  g_20_10 : g_40_20),
+  IndSet(const SizeOptions& opt)
+    : g(opt.size() == 0 ?  g_20_10 : g_40_20),
       v(this,g.n_v,0,1), k(this,0,g.n_e) {
     const int* e = g.e;
     const int* e1 = e++; const int* e2 = e++;
@@ -133,12 +133,12 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("IndSet");
+  SizeOptions opt("IndSet");
   opt.solutions(0);
-  opt.size       = 1;
+  opt.size(1);
   opt.iterations(2000);
   opt.parse(argc,argv);
-  Example::run<IndSet,BAB,Options>(opt);
+  Example::run<IndSet,BAB,SizeOptions>(opt);
   return 0;
 }
 

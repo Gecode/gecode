@@ -51,8 +51,8 @@ protected:
   IntVarArray x;
 public:
   /// The actual problem
-  StressMin(const Options& opt)
-    : n(opt.size), x(this,n,0,2*n-1) {
+  StressMin(const SizeOptions& opt)
+    : n(opt.size()), x(this,n,0,2*n-1) {
     for (int i=1; i<n; i++) {
       IntVarArgs y(i);
       for (int j=0; j<i; j++)
@@ -90,10 +90,10 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("StressMin");
+  SizeOptions opt("StressMin");
   opt.parse(argc,argv);
-  opt.size = 200;
-  Example::run<StressMin,DFS,Options>(opt);
+  opt.size(200);
+  Example::run<StressMin,DFS,SizeOptions>(opt);
   return 0;
 }
 

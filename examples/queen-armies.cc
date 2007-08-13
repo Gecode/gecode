@@ -81,8 +81,8 @@ public:
     BRANCH_SPECIFIC ///< Choose variable with problem specific strategy
   };
   /// Constructor
-  QueenArmies(const Options& opt) :
-    n(opt.size),
+  QueenArmies(const SizeOptions& opt) :
+    n(opt.size()),
     U(this, IntSet::empty, IntSet(0, n*n)),
     W(this, IntSet::empty, IntSet(0, n*n)),
     w(this, n*n, 0, 1),
@@ -218,8 +218,8 @@ int pos(int i, int j, int n) {
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("QueenArmies");
-  opt.size      = 6;
+  SizeOptions opt("QueenArmies");
+  opt.size(6);
   opt.branching(QueenArmies::BRANCH_SPECIFIC);
   opt.branching(QueenArmies::BRANCH_NAIVE, "naive");
   opt.branching(QueenArmies::BRANCH_SPECIFIC, "specific");
@@ -228,7 +228,7 @@ main(int argc, char* argv[]) {
 
   // Set up the A-sets
   // A[i] will contain the values attacked by a queen at position i
-  int n = o.size;
+  int n = opt.size();
   A = new IntSet[n*n];
   int *p = new int[std::max(n*n, 25)];
   int pn = 0;
@@ -260,7 +260,7 @@ main(int argc, char* argv[]) {
   }
   delete [] p;
 
-  Example::run<QueenArmies,BAB,Options>(opt);
+  Example::run<QueenArmies,BAB,SizeOptions>(opt);
   return 0;
 }
 

@@ -50,10 +50,10 @@ protected:
   IntVarArray y;
 public:
   /// Actual model
-  Partition(const Options& opt)
-    : x(this,opt.size,1,2*opt.size),
-      y(this,opt.size,1,2*opt.size) {
-    const int n = opt.size;
+  Partition(const SizeOptions& opt)
+    : x(this,opt.size(),1,2*opt.size()),
+      y(this,opt.size(),1,2*opt.size()) {
+    const int n = opt.size();
     // Break symmetries by ordering numbers in each group
     rel(this, x, IRT_LE);
     rel(this, y, IRT_LE);
@@ -128,11 +128,11 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("Partition");
-  opt.size = 32;
+  SizeOptions opt("Partition");
+  opt.size(32);
   opt.icl(ICL_DOM);
   opt.parse(argc,argv);
-  Example::run<Partition,DFS,Options>(opt);
+  Example::run<Partition,DFS,SizeOptions>(opt);
   return 0;
 }
 

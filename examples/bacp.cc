@@ -93,7 +93,7 @@ protected:
   /// Period to which a course is assigned
   IntVarArray x;
 public:
-  BACP(const Options& opt) : curr(curriculum[opt.size]) {
+  BACP(const SizeOptions& opt) : curr(curriculum[opt.size()]) {
     int p = curr.p;
     int a = curr.a;
     int b = curr.b;
@@ -179,17 +179,17 @@ public:
 
 int
 main(int argc, char* argv[]) {
-  Options opt("BACP");
-  opt.size = 2;
+  SizeOptions opt("BACP");
+  opt.size(2);
   opt.solutions(0);
   opt.iterations(20);
   opt.parse(argc,argv);
-  if (opt.size >= n_examples) {
+  if (opt.size() >= n_examples) {
     std::cerr << "Error: size must be between 0 and " << n_examples - 1
               << std::endl;
     return 1;
   }
-  Example::run<BACP,BAB,Options>(opt);
+  Example::run<BACP,BAB,SizeOptions>(opt);
   return 0;
 }
 

@@ -90,16 +90,16 @@ public:
     return d;
   }
   /// The actual problem
-  StressRegular(const Options& opt)
-    : x(this,4*opt.size,0,opt.size) {
-    DFA a = construct(opt.size);
-    IntVarArgs y(opt.size);
-    for (unsigned int i=0; i <= 3*opt.size; i++) {
-      for (int j = opt.size; j--; )
+  StressRegular(const SizeOptions& opt)
+    : x(this,4*opt.size(),0,opt.size()) {
+    DFA a = construct(opt.size());
+    IntVarArgs y(opt.size());
+    for (unsigned int i=0; i <= 3*opt.size(); i++) {
+      for (int j = opt.size(); j--; )
         y[j] = x[i+j];
       regular(this, y, a);
     }
-    for (int j=opt.size; j--; )
+    for (int j=opt.size(); j--; )
       y[j] = x[j];
     branch(this, y, BVAR_NONE, BVAL_MED);
   }
@@ -127,10 +127,10 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("StressRegular");
-  opt.size = 7;
+  SizeOptions opt("StressRegular");
+  opt.size(7);
   opt.parse(argc,argv);
-  Example::run<StressRegular,DFS,Options>(opt);
+  Example::run<StressRegular,DFS,SizeOptions>(opt);
   return 0;
 }
 

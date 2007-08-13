@@ -81,8 +81,8 @@ protected:
 public:
 
   /// Actual model
-  Sudoku(const Options& opt)
-    : n(example_size(examples[opt.size])),
+  Sudoku(const SizeOptions& opt)
+    : n(example_size(examples[opt.size()])),
       x(this,n*n*n*n,1,n*n) {
     const int nn = n*n;
     MiniModel::Matrix<IntVarArray> m(x, nn, nn);
@@ -143,7 +143,7 @@ public:
     // Fill-in predefined fields
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++)
-        if (int v = value_at(examples[opt.size], nn, i, j))
+        if (int v = value_at(examples[opt.size()], nn, i, j))
           rel(this, m(i,j), IRT_EQ, v );
 
     branch(this, x, BVAR_SIZE_MIN, BVAL_SPLIT_MIN);
@@ -186,18 +186,18 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("Sudoku");
-  opt.size       = 0;
+  SizeOptions opt("Sudoku");
+  opt.size(0);
   opt.icl(ICL_DOM);
   opt.solutions(1);
   //  opt.naive      = true;
   opt.parse(argc,argv);
-  if (opt.size >= n_examples) {
+  if (opt.size() >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
               << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<Sudoku,DFS,Options>(opt);
+  Example::run<Sudoku,DFS,SizeOptions>(opt);
   return 0;
 }
 

@@ -43,15 +43,15 @@
 #include "gecode/minimodel.hh"
 
 /**
- * \brief Extended Options taking two parameters instead of only one
+ * \brief Extended SizeOptions taking two parameters instead of only one
  *
  * This is needed in order to parameters
  *
  * \relates LangfordNum
  */
-class ExtOptions : public Options {
+class ExtSizeOptions : public SizeOptions {
 public:
-  ExtOptions(const char* s) : Options(s) {}
+  ExtSizeOptions(const char* s) : SizeOptions(s) {}
   int n;
   int k;
 };
@@ -89,10 +89,10 @@ public:
   }
 
 
-  LangfordNum(const Options& op) {
+  LangfordNum(const SizeOptions& op) {
 
-    const ExtOptions* eop = NULL;
-    eop = reinterpret_cast<const ExtOptions*> (&op);
+    const ExtSizeOptions* eop = NULL;
+    eop = reinterpret_cast<const ExtSizeOptions*> (&op);
     n = eop->n;
     k = eop->k;
 
@@ -156,7 +156,7 @@ public:
 };
 
 int main(int argc, char* argv[]){
-  ExtOptions o("Langford Numbers");
+  ExtSizeOptions o("Langford Numbers");
   if (argc < 2) {
     std::cerr << "specify parameters k and n\n";
     std::cerr << "usage is: ./langfordnum k n [gecode options] \n";
@@ -179,7 +179,7 @@ int main(int argc, char* argv[]){
   }
   o.icl(ICL_BND);
   o.parse(argc, argv);
-  Example::run<LangfordNum,DFS,Options>(o);
+  Example::run<LangfordNum,DFS,SizeOptions>(o);
   return 0;
 }
 

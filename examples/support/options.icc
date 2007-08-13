@@ -252,4 +252,17 @@ Options::samples(void) const {
 inline
 Options::~Options(void) {}
 
+/*
+ * Options with additional size argument
+ *
+ */
+inline void
+SizeOptions::size(unsigned int s) {
+  _size = s;
+}
+inline unsigned int
+SizeOptions::size(void) const {
+  return _size;
+}
+
 // STATISTICS: example-any

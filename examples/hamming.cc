@@ -61,8 +61,8 @@ public:
   static const int bits = 20;
   static const int dist = 3;
 
-  Hamming(const Options& o) :
-    xs(this,o.size,IntSet::empty,1,bits) {
+  Hamming(const SizeOptions& opt) :
+    xs(this,opt.size(),IntSet::empty,1,bits) {
     SetVarArray cxs(this,xs.size());
     for (int i=0; i<xs.size(); i++)
       rel(this, xs[i], SRT_CMPL, cxs[i]);
@@ -111,10 +111,10 @@ public:
 
 int
 main(int argc, char* argv[]) {
-  Options o("Hamming");
-  o.size = 32;
-  o.parse(argc,argv);
-  Example::run<Hamming,DFS,Options>(o);
+  SizeOptions opt("Hamming");
+  opt.size(32);
+  opt.parse(argc,argv);
+  Example::run<Hamming,DFS,SizeOptions>(opt);
   return 0;
 }
 

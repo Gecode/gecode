@@ -90,10 +90,10 @@ public:
     return groupsSInv[w*players+p];
   }
 
-  Golf(const Options& o) :
-    groups(t[o.size].groups),
-    playersInGroup(t[o.size].playersInGroup),
-    weeks(t[o.size].weeks),
+  Golf(const SizeOptions& opt) :
+    groups(t[opt.size()].groups),
+    playersInGroup(t[opt.size()].playersInGroup),
+    weeks(t[opt.size()].weeks),
     players(groups*playersInGroup),
     groupsS(this,groups*weeks,IntSet::empty,0,players-1,
             playersInGroup,playersInGroup),
@@ -121,7 +121,7 @@ public:
       }
     }
 
-    //    if (!o.naive) {
+    //    if (!opt.naive) {
     if (false) {
 
       /*
@@ -239,15 +239,15 @@ public:
 
 int
 main(int argc, char* argv[]) {
-  Options o("Golf");
-  o.parse(argc,argv);
-  o.solutions(1);
-  if (o.size >= n_examples) {
+  SizeOptions opt("Golf");
+  opt.parse(argc,argv);
+  opt.solutions(1);
+  if (opt.size() >= n_examples) {
     std::cerr << "Error: size must be between 0 and " << n_examples - 1
               << std::endl;
     return 1;
   }
-  Example::run<Golf,DFS,Options>(o);
+  Example::run<Golf,DFS,SizeOptions>(opt);
   return 0;
 }
 

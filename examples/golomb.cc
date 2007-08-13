@@ -76,8 +76,8 @@ public:
   }
 
   /// Actual model
-  Golomb(const Options& opt)
-    : n(opt.size), m(this,n,0,n*n) {
+  Golomb(const SizeOptions& opt)
+    : n(opt.size()), m(this,n,0,n*n) {
     const int dn = (n*n-n)/2;
 
     IntVarArgs d(dn);
@@ -165,9 +165,9 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("Golomb");
+  SizeOptions opt("Golomb");
   opt.solutions(0);
-  opt.size      = 10;
+  opt.size(10);
   opt.icl(ICL_BND);
   opt.model(Golomb::MODEL_SUM);
   opt.model(Golomb::MODEL_NONE, "none",
@@ -181,14 +181,14 @@ main(int argc, char* argv[]) {
   opt.search(Golomb::SEARCH_BAB, "bab");
   opt.search(Golomb::SEARCH_RESTART, "restart");
   opt.parse(argc,argv);
-  if (opt.size > 0)
+  if (opt.size() > 0)
     switch (opt.search()) {
     case Golomb::SEARCH_DFS:
-      Example::run<Golomb,DFS,Options>(opt); break;
+      Example::run<Golomb,DFS,SizeOptions>(opt); break;
     case Golomb::SEARCH_BAB:
-      Example::run<Golomb,BAB,Options>(opt); break;
+      Example::run<Golomb,BAB,SizeOptions>(opt); break;
     case Golomb::SEARCH_RESTART:
-      Example::run<Golomb,Restart,Options>(opt); break;
+      Example::run<Golomb,Restart,SizeOptions>(opt); break;
     }
   return 0;
 }

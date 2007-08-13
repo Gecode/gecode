@@ -89,8 +89,8 @@ private:
 
 public:
   /// Construction of the model.
-  PicturePuzzle(const Options& o)
-    : spec(specs[o.size]), width(spec[0]), height(spec[1]),
+  PicturePuzzle(const SizeOptions& opt)
+    : spec(specs[opt.size()]), width(spec[0]), height(spec[1]),
       b(this,width*height,0,1) {
     int spos = 2;
     MiniModel::Matrix<BoolVarArray> m(b, width, height);
@@ -151,15 +151,15 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options o("PicturePuzzle");
-  o.size  = 8;
-  o.parse(argc,argv);
-  if (o.size >= n_examples) {
+  SizeOptions opt("PicturePuzzle");
+  opt.size(8);
+  opt.parse(argc,argv);
+  if (opt.size() >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
               << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<PicturePuzzle,DFS,Options>(o);
+  Example::run<PicturePuzzle,DFS,SizeOptions>(opt);
   return 0;
 }
 

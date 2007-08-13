@@ -198,8 +198,8 @@ protected:
 
 public:
   /// The model of the problem
-  CrowdedChessTable(const Options& opt)
-    : n(opt.size), s(this, n*n, 0, PMAX-1), queens(this, n, 0, n-1),
+  CrowdedChessTable(const SizeOptions& opt)
+    : n(opt.size()), s(this, n*n, 0, PMAX-1), queens(this, n, 0, n-1),
       rooks(this, n, 0, n-1), knights(this, n*n, 0, 1) {
     const int nn = n*n, q = n, r = n, b = (2*n)-2,
       k = n <= nkval ? kval[n-1] : kval[nkval-1];
@@ -358,20 +358,20 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("CrowdedChessTable");
+  SizeOptions opt("CrowdedChessTable");
   opt.icl(ICL_DOM);
-  opt.size       = 6;
+  opt.size(6);
   opt.parse(argc,argv);
 
-  if(opt.size < 5) {
+  if(opt.size() < 5) {
     std::cerr << "Error: Size must be at least 5" << std::endl;
     return 1;
   }
 
-  init_knight(opt.size);
-  init_bishop(opt.size);
+  init_knight(opt.size());
+  init_bishop(opt.size());
 
-  Example::run<CrowdedChessTable,DFS,Options>(opt);
+  Example::run<CrowdedChessTable,DFS,SizeOptions>(opt);
   return 0;
 }
 

@@ -324,8 +324,8 @@ public:
     BRANCH_SIZE    ///< Choose variable with smallest size
   };
   /// The actual model
-  GraphColor(const Options& opt)
-    : g(opt.size == 1 ? g2 : g1),
+  GraphColor(const SizeOptions& opt)
+    : g(opt.size() == 1 ? g2 : g1),
       v(this,g.n_v,0,g.n_v),
       m(this,0,g.n_v) {
     for (int i = g.n_v; i--; )
@@ -384,7 +384,7 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("GraphColor");
+  SizeOptions opt("GraphColor");
   opt.icl(ICL_DOM);
   opt.iterations(20);
   opt.model(GraphColor::MODEL_NONE);
@@ -396,7 +396,7 @@ main(int argc, char* argv[]) {
   opt.branching(GraphColor::BRANCH_DEGREE, "degree");
   opt.branching(GraphColor::BRANCH_SIZE, "size");
   opt.parse(argc,argv);
-  Example::run<GraphColor,DFS,Options>(opt);
+  Example::run<GraphColor,DFS,SizeOptions>(opt);
   return 0;
 }
 

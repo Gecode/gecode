@@ -75,8 +75,8 @@ public:
     linear(this, b, IRT_EQ, x);
   }
   /// The actual model
-  MagicSequence(const Options& opt)
-    : n(opt.size), s(this,n,0,n-1) {
+  MagicSequence(const SizeOptions& opt)
+    : n(opt.size()), s(this,n,0,n-1) {
     switch (opt.propagation()) {
     case PROP_REIFIED:
       for (int i=n; i--; )
@@ -127,16 +127,16 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("MagicSequence");
+  SizeOptions opt("MagicSequence");
   opt.solutions(0);
   opt.iterations(4);
-  opt.size       = 500;
+  opt.size(500);
   opt.propagation(MagicSequence::PROP_COUNT);
   opt.propagation(MagicSequence::PROP_REIFIED, "reified");
   opt.propagation(MagicSequence::PROP_COUNT,   "count");
   opt.propagation(MagicSequence::PROP_GCC,     "gcc");
   opt.parse(argc,argv);
-  Example::run<MagicSequence,DFS,Options>(opt);
+  Example::run<MagicSequence,DFS,SizeOptions>(opt);
   return 0;
 }
 

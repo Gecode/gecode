@@ -72,7 +72,7 @@ public:
   }
 
   /// Actual model
-  BIBD(const Options& opt)
+  BIBD(const SizeOptions& opt)
     : _p(this,par.v*par.b,0,1) {
     // r ones per row
     for (int i=par.v; i--; ) {
@@ -159,11 +159,11 @@ BIBD::Par BIBD::par;
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("BIBD");
+  SizeOptions opt("BIBD");
   opt.solutions(1);
-  opt.size      = 9;
+  opt.size(9);
   opt.parse(argc,argv);
-  switch (opt.size) {
+  switch (opt.size()) {
   case  0: { BIBD::Par p(7,3,1);   BIBD::par = p; break; }
   case  1: { BIBD::Par p(6,3,2);   BIBD::par = p; break; }
   case  2: { BIBD::Par p(8,4,3);   BIBD::par = p; break; }
@@ -181,7 +181,7 @@ main(int argc, char* argv[]) {
     return 1;
   }
 
-  Example::run<BIBD,DFS,Options>(opt);
+  Example::run<BIBD,DFS,SizeOptions>(opt);
   return 0;
 }
 

@@ -73,8 +73,8 @@ public:
     }
   }
   /// Constructor
-  Knights(const Options& opt)
-    : n(opt.size), succ(this,n*n,0,n*n-1) {}
+  Knights(const SizeOptions& opt)
+    : n(opt.size()), succ(this,n*n,0,n*n-1) {}
   /// Constructor for cloning \a s
   Knights(bool share, Knights& s) : Example(share,s), n(s.n) {
     succ.update(this, share, s.succ);
@@ -114,7 +114,7 @@ public:
  */
 class KnightsReified : public Knights {
 public:
-  KnightsReified(const Options& opt) : Knights(opt) {
+  KnightsReified(const SizeOptions& opt) : Knights(opt) {
     const int nn = n*n;
 
     // Map knight to its predecessor of succesor on board
@@ -172,7 +172,7 @@ public:
  */
 class KnightsCircuit : public Knights {
 public:
-  KnightsCircuit(const Options& opt) : Knights(opt) {
+  KnightsCircuit(const SizeOptions& opt) : Knights(opt) {
     // Fix the first move
     rel(this, succ[0], IRT_EQ, field(1,2));
 
@@ -201,17 +201,17 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("Knights");
+  SizeOptions opt("Knights");
   opt.iterations(100);
-  opt.size       = 8;
+  opt.size(8);
   opt.propagation(Knights::PROP_CIRCUIT);
   opt.propagation(Knights::PROP_REIFIED, "reified");
   opt.propagation(Knights::PROP_CIRCUIT, "circuit");
   opt.parse(argc,argv);
   if (opt.propagation() == Knights::PROP_REIFIED) {
-    Example::run<KnightsReified,DFS,Options>(opt);
+    Example::run<KnightsReified,DFS,SizeOptions>(opt);
   } else {
-    Example::run<KnightsCircuit,DFS,Options>(opt);
+    Example::run<KnightsCircuit,DFS,SizeOptions>(opt);
   }
   return 0;
 }

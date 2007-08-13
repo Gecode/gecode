@@ -55,8 +55,8 @@ protected:
   SetVarArray x;
 public:
   /// Actual model
-  SudokuSet(const Options& opt)
-    : n(example_size(examples[opt.size])),
+  SudokuSet(const SizeOptions& opt)
+    : n(example_size(examples[opt.size()])),
     x(this,n*n,IntSet::empty,1,n*n*n*n,9,9) {
 
     const int nn = n*n;
@@ -109,7 +109,7 @@ public:
     // Fill-in predefined fields
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++)
-        if (int idx = value_at(examples[opt.size], nn, i, j))
+        if (int idx = value_at(examples[opt.size()], nn, i, j))
           dom(this, x[idx-1], SRT_SUP, (i+1)+(j*nn) );
 
     branch(this, x, SETBVAR_NONE, SETBVAL_MIN);
@@ -153,22 +153,22 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("Sudoku (Set)");
+  SizeOptions opt("Sudoku (Set)");
   opt.iterations(100);
-  opt.size       = 0;
+  opt.size(0);
   opt.solutions(1);
   opt.parse(argc,argv);
-  if (opt.size >= n_examples) {
+  if (opt.size() >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
               << n_examples-1 << std::endl;
     return 1;
   }
-  if (example_size(examples[opt.size]) != 3) {
+  if (example_size(examples[opt.size()]) != 3) {
     std::cerr << "Set-based version only available with exmples of size 9*9"
               << std::endl;
     return 2;
   }
-  Example::run<SudokuSet,DFS,Options>(opt);
+  Example::run<SudokuSet,DFS,SizeOptions>(opt);
   return 0;
 }
 

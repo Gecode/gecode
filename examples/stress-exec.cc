@@ -54,10 +54,10 @@ protected:
   static const int n = 1000000;
 public:
   /// The actual problem
-  StressExec(const Options& opt)
+  StressExec(const SizeOptions& opt)
     : x(this,2,0,n) {
 
-    for (unsigned int i=0; i<opt.size; i++) {
+    for (unsigned int i=0; i<opt.size(); i++) {
       rel(this, x[0], IRT_LE, x[1]);
       rel(this, x[1], IRT_LE, x[0]);
     }
@@ -85,11 +85,11 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("StressExec");
+  SizeOptions opt("StressExec");
   opt.iterations(20);
-  opt.size       = 1;
+  opt.size(1);
   opt.parse(argc,argv);
-  Example::run<StressExec,DFS,Options>(opt);
+  Example::run<StressExec,DFS,SizeOptions>(opt);
   return 0;
 }
 

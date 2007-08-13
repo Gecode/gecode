@@ -242,8 +242,8 @@ public:
     }
   }
 
-  SportsLeague(const Options& op) :
-    t       (op.size),
+  SportsLeague(const SizeOptions& opt) :
+    t       (opt.size()),
     weeks   (t - 1),
     eweeks  (t),
     periods (t / 2),
@@ -286,9 +286,9 @@ public:
       distinct(this, n, ICL_DOM);
         
       for (int p = 0; p < periods; p++) {
-        element(this, gamenum, n[p], g(p, w), 0, op.icl());
-        element(this, fst,     n[p], h(p, w), 0, op.icl());
-        element(this, snd,     n[p], a(p, w), 0, op.icl());
+        element(this, gamenum, n[p], g(p, w), 0, opt.icl());
+        element(this, fst,     n[p], h(p, w), 0, opt.icl());
+        element(this, snd,     n[p], a(p, w), 0, opt.icl());
       }
     }
 
@@ -342,7 +342,7 @@ public:
         row[w]     = h(p, w / 2);
         row[w + 1] = a(p, w / 2);
       }
-      gcc(this, row, 2, op.icl());
+      gcc(this, row, 2, opt.icl());
     }
 
 
@@ -437,18 +437,18 @@ public:
 
 
 int main(int argc, char* argv[]){
-  Options opt("Sports League Scheduling ");
-  opt.size      = 18;
+  SizeOptions opt("Sports League Scheduling ");
+  opt.size(18);
   opt.parse(argc, argv);
-  if (opt.size == 4) {
+  if (opt.size() == 4) {
     std::cerr<< "No Solution for 4 teams!" << std::endl;
     return 1;
   }
-  if (opt.size % 2 != 0) {
+  if (opt.size() % 2 != 0) {
     std::cerr << "Number of teams has to be even!" << std::endl;
     return 1;
   }
-  Example::run<SportsLeague, DFS,Options>(opt);
+  Example::run<SportsLeague, DFS,SizeOptions>(opt);
   return 0;
 }
 

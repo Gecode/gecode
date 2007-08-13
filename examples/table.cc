@@ -171,17 +171,17 @@ int
 main(int argc, char* argv[]) {
   Options opt("Extensional");
   opt.solutions(1);
-  opt.size      = 1000000;
+  opt.size(1000000);
   opt.parse(argc,argv);
-  if (opt.size == 1000000)
+  if (opt.size() == 1000000)
     read_spec(std::cin);
   else {
-    if (opt.size < 0 || opt.size >= 20) {
+    if (opt.size() < 0 || opt.size() >= 20) {
       std::cerr << "size must be between 0 and 19 or 100000 (=read from standard input)" << std::endl;
       return -1;
     }
     std::ostringstream s;
-    s << "examples/tables/" << opt.size << ".tab";
+    s << "examples/tables/" << opt.size() << ".tab";
     std::ifstream file(s.str().c_str());
     read_spec(file);
   }

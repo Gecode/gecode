@@ -162,8 +162,8 @@ protected:
 
 public:
   /// The model of the problem
-  CrowdedChess(const Options& opt)
-    : n(opt.size), 
+  CrowdedChess(const SizeOptions& opt)
+    : n(opt.size()), 
       s(this, n*n, 0, PMAX-1), 
       queens(this, n, 0, n-1),
       rooks(this, n, 0, n-1), 
@@ -314,15 +314,15 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("CrowdedChess");
+  SizeOptions opt("CrowdedChess");
   opt.icl(ICL_DOM);
-  opt.size       = 7;
+  opt.size(7);
   opt.parse(argc,argv);
-  if (opt.size < 5) {
+  if (opt.size() < 5) {
     std::cerr << "Error: size must be at least 5" << std::endl;
     return 1;
   }
-  Example::run<CrowdedChess,DFS,Options>(opt);
+  Example::run<CrowdedChess,DFS,SizeOptions>(opt);
   return 0;
 }
 

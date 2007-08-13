@@ -134,12 +134,13 @@ public:
   virtual void help(void);
 };
 
+
 /**
  * \brief Options for examples
  *
  */
 class Options {
-private:
+protected:
   BaseOption* fst;   ///< First registered option
   BaseOption* lst;   ///< Last registered option
   const char* _name; ///< Example name
@@ -168,9 +169,6 @@ private:
   UnsignedIntOption _samples;    ///< How many samples
   UnsignedIntOption _iterations; ///< How many iterations per sample
   //@}
-
-public:
-  unsigned int size;       ///< problem size/variant
 
 public:
   /// Initialize options for example with name \a s
@@ -269,6 +267,27 @@ public:
 
   /// Destructor
   virtual ~Options(void);
+};
+
+/**
+ * \brief Options for examples with additional size parameter
+ *
+ */
+class SizeOptions : public Options {
+protected:
+  unsigned int _size; ///< Size value
+public:
+  /// Initialize options for example with name \a s
+  SizeOptions(const char* s);
+  /// Print help text
+  virtual void help(void);
+  /// Parse options from arguments \a argv (number is \a argc)
+  void parse(int& argc, char* argv[]);
+
+  /// Set default size
+  void size(unsigned int s);
+  /// Return size
+  unsigned int size(void) const;
 };
 
 #include "examples/support/options.icc"

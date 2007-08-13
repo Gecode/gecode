@@ -49,8 +49,8 @@ protected:
   IntVarArray x;
 public:
   /// The actual problem
-  StressCircuit(const Options& opt)
-    : x(this,opt.size,0,opt.size-1) {
+  StressCircuit(const SizeOptions& opt)
+    : x(this,opt.size(),0,opt.size()-1) {
 
     circuit(this, x, opt.icl());
     //	x[]={[3..5], [3..4], 0, 2, 1, [1..4], ;
@@ -100,10 +100,10 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("StressCircuit");
-  opt.size = 6;
+  SizeOptions opt("StressCircuit");
+  opt.size(6);
   opt.parse(argc,argv);
-  Example::run<StressCircuit,DFS,Options>(opt);
+  Example::run<StressCircuit,DFS,SizeOptions>(opt);
   return 0;
 }
 

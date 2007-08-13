@@ -226,8 +226,8 @@ protected:
   IntVar      cost;
 public:
   /// Actual model
-  TSP(const Options& opt) 
-    : p(ps[opt.size]),
+  TSP(const SizeOptions& opt) 
+    : p(ps[opt.size()]),
       succ(this, p.size(), 0, p.size()-1),
       cost(this, 0, p.max()) {
 
@@ -299,18 +299,18 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("TSP");
+  SizeOptions opt("TSP");
   opt.solutions(0);
   opt.icl(ICL_DOM);
   opt.parse(argc,argv);
 
-  if (opt.size >= ps_n) {
+  if (opt.size() >= ps_n) {
     std::cerr << "Error: size must be between 0 and "
               << ps_n-1 << std::endl;
     return 1;
   }
 
-  Example::run<TSP,BAB,Options>(opt);
+  Example::run<TSP,BAB,SizeOptions>(opt);
   return 0;
 }
 

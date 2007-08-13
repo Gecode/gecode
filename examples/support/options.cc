@@ -156,9 +156,7 @@ Options::Options(const char* n)
 
     _mode("-mode","how to execute example",EM_SOLUTION),
     _samples("-samples","how many samples (time mode)") ,
-    _iterations("-iterations","iterations per sample (time mode)"),
-
-    size(0)
+    _iterations("-iterations","iterations per sample (time mode)")
 {
 
   _icl.add(ICL_DEF, "def"); _icl.add(ICL_VAL, "val");
@@ -180,31 +178,40 @@ Options::help(void) {
             << "\t\tprint this help message" << std::endl;
   for (BaseOption* o = fst; o != NULL; o = o->next)
     o->help();
-  std::cerr << "\t(unsigned int) default: " << size << std::endl
-            << "\t\twhich version/size for example" << std::endl;
-  
 }
 
 void
 Options::parse(int& argc, char* argv[]) {
   while (argc > 1) {
+    for (BaseOption* o = fst; o != NULL; o = o->next)
+      if (o->parse(argc,argv))
+        continue;
     if (!strcmp(argv[1],"-help") || !strcmp(argv[1],"--help") ||
         !strcmp(argv[1],"-?")) {
       help();
       exit(EXIT_SUCCESS);
     }
-    for (BaseOption* o = fst; o != NULL; o = o->next)
-      if (o->parse(argc,argv))
-        continue;
-    if (argc < 2)
-      break;
-    char* unused;
-    size = strtol(argv[1], &unused, 10);
-    if ('\0' != *unused) {
-      std::cerr << "Erroneous value (" << argv[1] << ")" << std::endl;
-      exit(EXIT_FAILURE);
-    }
+    return;
   }
+}
+
+
+SizeOptions::SizeOptions(const char* e) 
+  : Options(e), _size(0) {}
+
+void
+SizeOptions::help(void) {
+  Options::help();
+  std::cerr << "\t(unsigned int) default: " << size() << std::endl
+            << "\t\twhich version/size for example" << std::endl;
+}
+
+void
+SizeOptions::parse(int& argc, char* argv[]) {
+  Options::parse(argc,argv);
+  if (argc < 2)
+    return;
+  size(atoi(argv[1]));
 }
 
 

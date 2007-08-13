@@ -58,8 +58,8 @@ public:
 
   SetVarArray root;
 
-  Steiner(const Options& o)
-    : n(o.size),
+  Steiner(const SizeOptions& opt)
+    : n(opt.size()),
       n1(n+1), n1n1(n1*n1), len((n*(n-1))/6),
       root(this,len, IntSet::empty, 1, n, 3, 3) {
 
@@ -79,7 +79,7 @@ public:
         IntVar y2(this,1,n);
         IntVar y3(this,1,n);
 
-        //        if (o.naive) {
+        //        if (opt.naive) {
         if (true) {
         
           /* Naive alternative:
@@ -151,12 +151,12 @@ public:
 
 int
 main(int argc, char* argv[]) {
-  Options o("Steiner");
-  o.size = 9;
-  //  o.naive = true;
-  o.iterations(20);
-  o.parse(argc,argv);
-  Example::run<Steiner,DFS,Options>(o);
+  SizeOptions opt("Steiner");
+  opt.size(9);
+  //  opt.naive = true;
+  opt.iterations(20);
+  opt.parse(argc,argv);
+  Example::run<Steiner,DFS,SizeOptions>(opt);
   return 0;
 }
 

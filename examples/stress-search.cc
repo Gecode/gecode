@@ -49,8 +49,8 @@ protected:
   IntVarArray x;
 public:
   /// The actual problem
-  StressSearch(const Options& opt)
-    : x(this,opt.size,0,opt.size) {
+  StressSearch(const SizeOptions& opt)
+    : x(this,opt.size(),0,opt.size()) {
     branch(this, x, BVAR_NONE, BVAL_MIN);
   }
 
@@ -75,12 +75,12 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("StressSearch");
+  SizeOptions opt("StressSearch");
   opt.iterations(20);
-  opt.size       = 6;
+  opt.size(6);
   opt.solutions(0);
   opt.parse(argc,argv);
-  Example::run<StressSearch,DFS,Options>(opt);
+  Example::run<StressSearch,DFS,SizeOptions>(opt);
   return 0;
 }
 

@@ -49,18 +49,18 @@ protected:
   BoolVarArray x;
 public:
   /// Constructor for the model
-  StressLinearBool(const Options& opt)
-    : x(this,4*opt.size+1,0,1) {
+  StressLinearBool(const SizeOptions& opt)
+    : x(this,4*opt.size()+1,0,1) {
     
-    linear(this, x, IRT_GQ, 2*opt.size);
+    linear(this, x, IRT_GQ, 2*opt.size());
 
-    for (int i=0; i<opt.size; i++) {
+    for (int i=0; i<opt.size(); i++) {
       // Assign a variable
-      rel(this, x[opt.size-1-i], IRT_EQ, 0);
+      rel(this, x[opt.size()-1-i], IRT_EQ, 0);
       // Propagate
       (void) status();
       // Assign a variable
-      rel(this, x[opt.size+i], IRT_EQ, 0);
+      rel(this, x[opt.size()+i], IRT_EQ, 0);
       // Propagate
       (void) status();
     }
@@ -90,10 +90,10 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("StressLinearBool");
-  opt.size = 1000;
+  SizeOptions opt("StressLinearBool");
+  opt.size(1000);
   opt.parse(argc,argv);
-  Example::run<StressLinearBool,DFS,Options>(opt);
+  Example::run<StressLinearBool,DFS,SizeOptions>(opt);
   return 0;
 }
 

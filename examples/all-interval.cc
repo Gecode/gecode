@@ -66,8 +66,8 @@ private:
   IntVarArray x;
 public:
   /// Actual model
-  AllInterval(const Options& opt) :
-    x(this, opt.size, 0, opt.size - 1) {
+  AllInterval(const SizeOptions& opt) :
+    x(this, opt.size(), 0, opt.size() - 1) {
     const int n = x.size();
 
     IntVarArgs d(n-1);
@@ -112,16 +112,16 @@ public:
 
 
 int main(int argc, char* argv[]){
-  Options opt("All-interval Series");
-  opt.size       = 1000;
+  SizeOptions opt("All-interval Series");
+  opt.size(1000);
   opt.iterations(5);
   opt.icl(ICL_BND);
   opt.parse(argc, argv);
-  if (opt.size < 2) {
-    std::cerr << "n must be at least 2!" << std::endl;
+  if (opt.size() < 2) {
+    std::cerr << "size must be at least 2!" << std::endl;
     return -1;
   }
-  Example::run<AllInterval,DFS,Options>(opt);
+  Example::run<AllInterval,DFS,SizeOptions>(opt);
   return 0;
 }
 

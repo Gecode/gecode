@@ -90,8 +90,8 @@ public:
     BRANCH_DEGREE ///< Choose variable with largest degree
   };
   /// Actual model
-  Photo(const Options& opt) :
-    spec(opt.size == 0 ? p_small : p_large),
+  Photo(const SizeOptions& opt) :
+    spec(opt.size() == 0 ? p_small : p_large),
     pos(this,spec.n_names, 0, spec.n_names-1),
     sat(this,0,spec.n_prefs)
   {
@@ -154,16 +154,16 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("Photo");
+  SizeOptions opt("Photo");
   opt.solutions(0);
-  opt.size       = 1;
+  opt.size(1);
   opt.iterations(10);
   opt.icl(ICL_BND);
   opt.branching(Photo::BRANCH_DEGREE);
   opt.branching(Photo::BRANCH_NONE, "none");
   opt.branching(Photo::BRANCH_DEGREE, "degree");
   opt.parse(argc,argv);
-  Example::run<Photo,BAB,Options>(opt);
+  Example::run<Photo,BAB,SizeOptions>(opt);
   return 0;
 }
 

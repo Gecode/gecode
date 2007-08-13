@@ -55,8 +55,8 @@ private:
 
 public:
   /// Post constraints
-  MagicSquare(const Options& opt)
-    : n(opt.size), x(this,n*n,1,n*n) {
+  MagicSquare(const SizeOptions& opt)
+    : n(opt.size()), x(this,n*n,1,n*n) {
     // Number of fields on square
     const int nn = n*n;
 
@@ -124,11 +124,11 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("MagicSquare");
+  SizeOptions opt("MagicSquare");
   opt.iterations(1);
-  opt.size       = 7;
+  opt.size(7);
   opt.parse(argc,argv);
-  Example::run<MagicSquare,DFS,Options>(opt);
+  Example::run<MagicSquare,DFS,SizeOptions>(opt);
   return 0;
 }
 

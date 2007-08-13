@@ -170,7 +170,7 @@ public:
     MODEL_SYMMETRY ///< Breaking conditional symmetries
   };
   /// Actual model
-  BlackHole(const Options& opt) 
+  BlackHole(const SizeOptions& opt) 
     : x(this, 52, 0,51), y(this, 52, 0,51) 
   {
     // Black ace at bottom
@@ -289,15 +289,15 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("Black Hole patience");
+  SizeOptions opt("Black Hole patience");
   opt.model(BlackHole::MODEL_SYMMETRY);
   opt.model(BlackHole::MODEL_NONE,"none");
   opt.model(BlackHole::MODEL_SYMMETRY,"symmetry");
   opt.icl(ICL_DOM);
   opt.parse(argc,argv);
   // Generates the new board
-  generate(opt.size);
-  Example::run<BlackHole,DFS,Options>(opt);
+  generate(opt.size());
+  Example::run<BlackHole,DFS,SizeOptions>(opt);
   return 0;
 }
 

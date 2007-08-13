@@ -49,23 +49,23 @@ protected:
   IntVarArray x;
 public:
   /// The actual problem
-  StressDomain(const Options& opt)
-    : x(this,5,0,5*opt.size) {
+  StressDomain(const SizeOptions& opt)
+    : x(this,5,0,5*opt.size()) {
 
     // Cut holes: expand
     for (int i = 5; i--; ) {
-      for (unsigned int j = 0; j <= 5*opt.size; j++)
+      for (unsigned int j = 0; j <= 5*opt.size(); j++)
         rel(this, x[i], IRT_NQ, 5*j);
-      for (unsigned int j = 0; j <= 5*opt.size; j++)
+      for (unsigned int j = 0; j <= 5*opt.size(); j++)
         rel(this, x[i], IRT_NQ, 5*j+2);
-      for (unsigned int j = 0; j <= 5*opt.size; j++)
+      for (unsigned int j = 0; j <= 5*opt.size(); j++)
         rel(this, x[i], IRT_NQ, 5*j+4);
     }
     // Contract
-    for (unsigned int j = 0; j <= 5*opt.size/2; j++)
+    for (unsigned int j = 0; j <= 5*opt.size()/2; j++)
       for (unsigned int i = 5; i--; ) {
         rel(this, x[i], IRT_GQ, 5*j);
-        rel(this, x[i], IRT_LQ, 5*(j + (5*opt.size/2)));
+        rel(this, x[i], IRT_LQ, 5*(j + (5*opt.size()/2)));
       }
   }
   /// Constructor for cloning \a s
@@ -87,11 +87,11 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("StressDomain");
+  SizeOptions opt("StressDomain");
   opt.iterations(200);
-  opt.size       = 1000;
+  opt.size(1000);
   opt.parse(argc,argv);
-  Example::run<StressDomain,DFS,Options>(opt);
+  Example::run<StressDomain,DFS,SizeOptions>(opt);
   return 0;
 }
 

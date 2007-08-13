@@ -59,8 +59,8 @@ public:
     PROP_DISTINCT ///< Use three distinct constraints
   };
   /// The actual problem
-  Queens(const Options& opt)
-    : q(this,opt.size,0,opt.size-1) {
+  Queens(const SizeOptions& opt)
+    : q(this,opt.size(),0,opt.size()-1) {
     const int n = q.size();
     switch (opt.propagation()) {
     case PROP_BINARY:
@@ -122,9 +122,9 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("Queens");
+  SizeOptions opt("Queens");
   opt.iterations(500);
-  opt.size       = 100;
+  opt.size(100);
   opt.propagation(Queens::PROP_DISTINCT);
   opt.propagation(Queens::PROP_BINARY, "binary",
                       "only binary disequality constraints");
@@ -133,7 +133,7 @@ main(int argc, char* argv[]) {
   opt.propagation(Queens::PROP_DISTINCT, "distinct",
                       "three distinct constraints");
   opt.parse(argc,argv);
-  Example::run<Queens,DFS,Options>(opt);
+  Example::run<Queens,DFS,SizeOptions>(opt);
   return 0;
 }
 

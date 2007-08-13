@@ -62,8 +62,8 @@ public:
   }
 
   /// Actual model
-  OrthoLatinSquare(const Options& opt)
-    : n(opt.size),
+  OrthoLatinSquare(const SizeOptions& opt)
+    : n(opt.size()),
       x1(this,n*n,1,n), x2(this,n*n,1,n) {
     const int nn = n*n;
     IntVarArray z(this,nn,0,n*n-1);
@@ -160,11 +160,11 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("OrthoLatinSquare");
-  opt.size = 7;
+  SizeOptions opt("OrthoLatinSquare");
+  opt.size(7);
   opt.icl(ICL_DOM);
   opt.parse(argc,argv);
-  Example::run<OrthoLatinSquare,DFS,Options>(opt);
+  Example::run<OrthoLatinSquare,DFS,SizeOptions>(opt);
   return 0;
 }
 

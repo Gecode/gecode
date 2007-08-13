@@ -318,12 +318,13 @@ private:
 
 public:
   /// Construction of the model.
-  PlacementPuzzle(const Options& o)
-    : spec(specs[o.size].tiles), 
-      width(specs[o.size].width+1), height(specs[o.size].height),
-      ntiles(specs[o.size].ntiles),
+  PlacementPuzzle(const SizeOptions& opt)
+    : spec(specs[opt.size()].tiles), 
+      width(specs[opt.size()].width+1), 
+      height(specs[opt.size()].height),
+      ntiles(specs[opt.size()].ntiles),
       b(this, width*height, 0,ntiles) {
-    bool filled = specs[o.size].filled;
+    bool filled = specs[opt.size()].filled;
     
     // Set end-of-line markers
     for (int h = 0; h < height; ++h) {
@@ -417,16 +418,16 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options o("PlacementPuzzle");
-  o.size  = 1;
+  SizeOptions opt("PlacementPuzzle");
+  opt.size(1);
   //  o.naive = true;
-  o.parse(argc,argv);
-  if (o.size >= n_examples) {
+  opt.parse(argc,argv);
+  if (opt.size() >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
 	      << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<PlacementPuzzle,DFS,Options>(o);
+  Example::run<PlacementPuzzle,DFS,SizeOptions>(opt);
   return 0;
 }
 

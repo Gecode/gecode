@@ -111,8 +111,8 @@ public:
     PROP_CUMULATIVES, ///< Use cumulatives constraint
   };
   /// Actual model
-  PerfectSquare(const Options& opt)
-    : s(*specs[opt.size]),
+  PerfectSquare(const SizeOptions& opt)
+    : s(*specs[opt.size()]),
       x(this,s.n,0,s.x-1), y(this,s.n,0,s.y-1) {
 
     // Restrict position according to square size
@@ -217,18 +217,18 @@ public:
  */
 int
 main(int argc, char* argv[]) {
-  Options opt("PerfectSquare");
-  opt.size  = 7;
+  SizeOptions opt("PerfectSquare");
+  opt.size(7);
   opt.propagation(PerfectSquare::PROP_REIFIED);
   opt.propagation(PerfectSquare::PROP_REIFIED,     "reified");
   opt.propagation(PerfectSquare::PROP_CUMULATIVES, "cumulatives");
   opt.parse(argc,argv);
-  if (opt.size >= n_examples) {
+  if (opt.size() >= n_examples) {
     std::cerr << "Error: size must be between 0 and " << n_examples - 1
               << std::endl;
     return 1;
   }
-  Example::run<PerfectSquare,DFS,Options>(opt);
+  Example::run<PerfectSquare,DFS,SizeOptions>(opt);
   return 0;
 }
 
