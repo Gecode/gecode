@@ -132,6 +132,15 @@ Options::propagation(void) const {
 }
 
 inline void
+Options::pk(PropKind p) {
+  _pk.value(p);
+}
+inline PropKind
+Options::pk(void) const {
+  return static_cast<PropKind>(_pk.value());
+}
+
+inline void
 Options::icl(IntConLevel i) {
   _icl.value(i);
 }
