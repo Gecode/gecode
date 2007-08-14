@@ -89,8 +89,8 @@ namespace Gecode {
   BAB<T>::next(void) {
     Space *s1, *s2;
     while (e.explore(s1,s2) == Search::BabEngine::ES_CONSTRAIN)
-      static_cast<T*>(s1)->constrain(static_cast<T*>(s2));
-    return static_cast<T*>(s1);
+      dynamic_cast<T*>(s1)->constrain(dynamic_cast<T*>(s2));
+    return dynamic_cast<T*>(s1);
   }
 
 

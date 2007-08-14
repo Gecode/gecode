@@ -58,14 +58,14 @@ namespace Gecode {
   forceinline T*
   Restart<T>::next(void) {
     if (best != NULL) {
-      static_cast<T*>(root)->constrain(static_cast<T*>(best));
+      dynamic_cast<T*>(root)->constrain(dynamic_cast<T*>(best));
       this->e.clone++;
       this->e.reset(root->clone(true,this->e.propagate));
     }
     Space* b = this->e.explore();
     delete best;
     best = (b != NULL) ? b->clone() : NULL;
-    return static_cast<T*>(b);
+    return dynamic_cast<T*>(b);
   }
 
 
