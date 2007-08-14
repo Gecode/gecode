@@ -146,13 +146,16 @@ namespace Gecode {
  *
  */
 
-#if defined(__GNUC__) && (! defined(_WIN32) )
-
+// The variable-sized arrays gcc extension is broken on
+// i386/Apple gcc prior to 4.2
+#if defined(__GNUC__) && (! defined(_WIN32) ) && \
+    (! (defined(__APPLE__) && defined(__i386) && \
+        __GNUC__ == 4 && __GNUC_MINOR__ < 2))
 #include "gecode/support/cast.hh"
 
-#define GECODE_AUTOARRAY(T,X,N)                                  \
-char __GECODE__ ## X ## __LINE__ [(N)*sizeof(T)];                \
-T* X = Support::ptr_cast<T*>(__GECODE__ ## X ## __LINE__);
+#define GECODE_AUTOARRAY(T,X,N)                    \
+char GECODE_FRESH(X) [(N)*sizeof(T)];              \
+T* X = Support::ptr_cast<T*>(GECODE_FRESH(X));
 
 #elif defined(_MSC_VER) || (defined(__GNUC__) && defined(_WIN32))
 
