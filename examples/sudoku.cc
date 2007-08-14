@@ -1,9 +1,13 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *     Guido Tack <tack@gecode.org>
  *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
+ *     Mikael Lagerkvist, 2005
+ *     Guido Tack, 2005
  *     Christian Schulte, 2005
  *
  *  Last modified:
@@ -43,6 +47,10 @@
 
 #include "gecode/minimodel.hh"
 
+#include <string>
+#include <cmath>
+#include <cctype>
+
 namespace {
   extern const char* examples[];
   extern const unsigned int n_examples;
@@ -56,15 +64,14 @@ protected:
   /// The size of the problem
   const int n;
 public:
+#ifdef GECODE_HAVE_SET_VARS
   /// Model variants
   enum {
-    MODEL_INT   ///< Use integer constraints
-#ifdef GECODE_HAVE_SET_VARS
-    ,
+    MODEL_INT,  ///< Use integer constraints
     MODEL_SET,  ///< Use set constraints
     MODEL_MIXED ///< Use both integer and set constraints
-#endif
   };
+#endif
   
   /// Constructor
   Sudoku(const SizeOptions& opt) : n(example_size(examples[opt.size()])) {}
@@ -376,9 +383,9 @@ main(int argc, char* argv[]) {
   opt.size(0);
   opt.icl(ICL_DOM);
   opt.solutions(1);
+#ifdef GECODE_HAVE_SET_VARS
   opt.model(Sudoku::MODEL_INT);
   opt.model(Sudoku::MODEL_INT, "int", "use integer constraints");
-#ifdef GECODE_HAVE_SET_VARS
   opt.model(Sudoku::MODEL_SET, "set", "use set constraints");
   opt.model(Sudoku::MODEL_MIXED, "mixed", 
             "use both integer and set constraints");
@@ -393,19 +400,21 @@ main(int argc, char* argv[]) {
               << n_examples-1 << std::endl;
     return 1;
   }
+#ifdef GECODE_HAVE_SET_VARS
   switch (opt.model()) {
   case Sudoku::MODEL_INT:
     Example::run<SudokuInt,DFS,SizeOptions>(opt);
     break;
-#ifdef GECODE_HAVE_SET_VARS
   case Sudoku::MODEL_SET:
     Example::run<SudokuSet,DFS,SizeOptions>(opt);
     break;
   case Sudoku::MODEL_MIXED:
     Example::run<SudokuMixed,DFS,SizeOptions>(opt);
     break;
-#endif
   }
+#else
+  Example::run<SudokuInt,DFS,SizeOptions>(opt);
+#endif
   return 0;
 }
 
