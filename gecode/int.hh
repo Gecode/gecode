@@ -813,7 +813,7 @@ namespace Gecode {
     REG(void);
     /// Initialize as single integer
     REG(int);
-    /// Return expression for: this expression at least \a n times, at most \a m times
+    /// Return expression for: this expression at least \a n and at most \a m times
     REG operator()(unsigned int n, unsigned int m);
     /// Return expression for: this expression at least \a n times
     REG operator()(unsigned int n);
@@ -821,11 +821,9 @@ namespace Gecode {
     REG operator|(const REG& r);
     /// Return expression for: this expression followed by \a r
     REG operator+(const REG& r);
-    /// Repeat expression for this expression arbitrarily often (Kleene star)
+    /// Return expression for: this expression arbitrarily often (Kleene star)
     REG operator*(void);
-    /** \brief Repeat expression for this expression arbitrarily often, but
-     *        at least once
-     */
+    /// Return expression for: this expression at least once
     REG operator+(void);
     /// Print expression
     std::ostream& print(std::ostream&) const;
