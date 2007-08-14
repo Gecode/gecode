@@ -2,8 +2,6 @@
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
- *
- *  Contributing author:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *     Christian Schulte <schulte@gecode.org>
  *
@@ -51,10 +49,10 @@
  */
 class LangfordNumberOptions : public Options {
 public:
-  int n, k; /// Parameters to be given on the command line
+  int k, n; /// Parameters to be given on the command line
   /// Initialize options for example with name \a s
-  LangfordNumberOptions(const char* s, int n0, int k0) 
-    : Options(s), n(n0), k(k0) {}
+  LangfordNumberOptions(const char* s, int k0, int n0) 
+    : Options(s), k(k0), n(n0) {}
   /// Parse options from arguments \a argv (number is \a argc)
   void parse(int& argc, char* argv[]) {
     Options::parse(argc,argv);
@@ -73,58 +71,88 @@ public:
   }
 };
 
-/// Propagation to use for model
-enum {
-  PROP_REIFIED,  ///< Use only binary disequality constraints
-  PROP_REGULAR   ///< Use regular constraints
-};
-
 /**
- * \brief %Example: Langford's number problem (naive version)
+ * \brief %Example: Langford's number problem
  *
  * See problem 24 at http://www.csplib.org/.
  *
  * \ingroup ExProblem
  */
-class LangfordNumberReified : public Example {
+class LangfordNumber : public Example {
 protected:
-  int k, n;        ///< Problem parameters
-  IntVarArray pos; ///< Position of values in sequence
-  IntVarArray y;   ///< Sequence variables
+  int k, n;      ///< Problem parameters
+  IntVarArray y; ///< Sequence variables
 
 public:
-  /// Returns position of \f$j\f$-th occurence of value \f$ i + 1\f$
-  IntVar& p(int i, int j) {
-    return pos[i * k + j];
-  }
+  /// Propagation to use for model
+  enum {
+    PROP_REIFIED,  ///< Use only binary disequality constraints
+    PROP_REGULAR   ///< Use regular constraints
+  };
   /// Construct model
-  LangfordNumberReified(const LangfordNumberOptions& opt)
-    : n(opt.n), k(opt.k), pos(this,k*n,0,k*n-1), y(this,k*n,1,n) {
+  LangfordNumber(const LangfordNumberOptions& opt)
+    : n(opt.n), k(opt.k), y(this,k*n,1,n) {
 
-    /* 
-     * The occurences of value v in the Langford sequence are v numbers apart.
-     *
-     * Let \#(i, v) denote the position of the i-th occurence of 
-     * value v in the Langford Sequence. Then the constraint are posted
-     * that
-     * \f$ \forall i, j \in \{1, \dots, k\}, i \neq j:
-     *     \forall v \in \{1, \dots, n\}: \#(i, v) + (v + 1) = \#(j, v)\f$
-     *
-     */
-    for (int i = 0; i < n; i++)
-      for (int j = 0; j < k - 1; j++)
-        post(this, p(i,j) + ((i+1)+1) == p(i,j+1));
+    if (opt.propagation() == PROP_REIFIED) {
 
-    distinct(this, pos, opt.icl());
+      /// Position of values in sequence
+      IntVarArgs p(k*n);
+      for (int i=k*n; i--; )
+        p[i].init(this,0,k*n-1);
+      
+      /* 
+       * The occurences of v in the Langford sequence are v numbers apart.
+       *
+       * Let \#(i, v) denote the position of the i-th occurence of 
+       * value v in the Langford Sequence. Then 
+       *
+       * \f$ \forall i, j \in \{1, \dots, k\}, i \neq j:
+       *     \forall v \in \{1, \dots, n\}: \#(i, v) + (v + 1) = \#(j, v)\f$
+       *
+       */
+      for (int i=n; i--; )
+        for (int j=k-1; j--; )
+          post(this, p[i*k+j] + (i+2) == p[i*k+j+1]);
 
+      distinct(this, p, opt.icl());
+
+      // Channel positions <-> values
+      for (int i=n; i--; )
+        for (int j=k; j--; )
+          element(this, y, p[i*k+j], i+1);
+
+    } else {
+
+      // Boolean variables for channeling
+      BoolVarArgs b(k*n*n);
+      for (int i=n*n*k; i--; )
+        b[i].init(this,0,1);
+
+      // Post channel constraints
+      for (int i=n*k; i--; ) {
+        BoolVarArgs c(n);
+        for (int j=n; j--; ) 
+          c[j]=b[i*n+j];
+        channel(this, c, y[i], 1);
+      }
+
+      // For placing two numbers three steps apart, we construct the
+      // regular expression 0*100010*, and apply it to the projection of
+      // the sequence on the value.
+      for (int v=1; v<=n; v++) {
+        // Projection for value v
+        BoolVarArgs c(k*n);
+        for (int i = k*n; i--; )
+          c[i] = b[i*n+(v-1)];
+        DFA dfa = *REG(0) + REG(1) + (REG(0)(v,v) + REG(1))(k-1,k-1) + *REG(0);
+        regular(this, c, dfa);
+      } 
+
+    }
+      
     // Symmetry breaking
     rel(this, y[0], IRT_LE, y[n*k-1]);
-
-    // Channeling positions <-> values
-    for (int i = 0; i < n; i++)
-      for (int j = 0; j < k; j++)
-        element(this, y, p(i,j), i+1);
-
+    
     // Branching
     branch(this, y, BVAR_SIZE_MIN, BVAL_MAX);
   }
@@ -138,97 +166,18 @@ public:
   }
 
   /// Constructor for cloning \a l
-  LangfordNumberReified(bool share, LangfordNumberReified& l)
+  LangfordNumber(bool share, LangfordNumber& l)
     : Example(share, l), n(l.n), k(l.k) {
-    pos.update(this, share, l.pos);
     y.update(this, share, l.y);
 
   }
   /// Copy during cloning
   virtual Space*
   copy(bool share) {
-    return new LangfordNumberReified(share, *this);
+    return new LangfordNumber(share, *this);
   }
 };
 
-
-/**
- * \brief %Example: Langford's number problem (regular version)
- *
- * See problem 24 at http://www.csplib.org/.
- *
- * \ingroup ExProblem
- */
-class LangfordNumberRegular : public Example {
-protected:
-  int n, k;        ///< Problem parameters
-  IntVarArray y;   ///< Sequence variables
-
-public:
-  /// Construct model
-  LangfordNumberRegular(const LangfordNumberOptions& opt)
-    : n(opt.n), k(opt.k), y(this,k*n,1,n) {
-    // Boolean variables for channeling
-    BoolVarArgs b(k*n*n);
-
-    // Initialize
-    for (int i=n*n*k; i--; ) {
-      BoolVar bc(this,0,1); b[i]=bc;
-    }
-
-    // Post channel constraints
-    for (int i=0; i<n*k; i++) {
-      BoolVarArgs c(n);
-      for (int j=n; j--; ) 
-        c[j]=b[i*n+j];
-      channel(this, c, y[i], 1);
-    }
-
-    // For placing two numbers three steps apart, we construct the
-    // regular expression 0*100010*, and apply it to the projection of
-    // the sequence on the value.
-    for (int i = 1; i <= n; i++) {
-      // Start of regular expression
-      REG reg = *REG(0) + REG(1);
-      // For each next number to place
-      for (int ki = 1; ki < k; ++ki) {
-        reg = reg + REG(0)(i, i) + REG(1);
-      }
-      // End of expression
-      reg = reg + *REG(0);
-      // Projection for value i
-      BoolVarArgs cv(k*n);
-      for (int cvi = k*n; cvi--; )
-        cv[cvi] = b[cvi*n+(i-1)];
-      DFA dfa = reg;
-      regular(this, cv, dfa);
-    } 
-
-    // Symmetry breaking
-    post(this, y[0] < y[n*k - 1]);
-
-    // Branching
-    branch(this, y, BVAR_SIZE_MIN, BVAL_MAX);
-  }
-
-  /// Print solution
-  virtual void print(void){
-    std::cout << "\t";
-    for (int i = 0; i < y.size(); ++i)
-      std::cout << y[i] << " ";
-    std::cout << std::endl;
-  }
-  /// Constructor for cloning \a l
-  LangfordNumberRegular(bool share, LangfordNumberRegular& l)
-    : Example(share, l), n(l.n), k(l.k) {
-    y.update(this, share, l.y);
-  }
-  /// Copy during cloning
-  virtual Space*
-  copy(bool share) {
-    return new LangfordNumberRegular(share, *this);
-  }
-};
 
 /** \brief Main-function
  *  \relates LangfordNumber
@@ -237,9 +186,9 @@ int
 main(int argc, char* argv[]) {
   LangfordNumberOptions opt("Langford Numbers",3,9);
   opt.icl(ICL_DOM);
-  opt.propagation(PROP_REIFIED);
-  opt.propagation(PROP_REIFIED, "reified");
-  opt.propagation(PROP_REGULAR, "regular");
+  opt.propagation(LangfordNumber::PROP_REGULAR);
+  opt.propagation(LangfordNumber::PROP_REIFIED, "reified");
+  opt.propagation(LangfordNumber::PROP_REGULAR, "regular");
   opt.parse(argc, argv);
   if (opt.k < 1) {
     std::cerr << "k must be at least 1!" << std::endl;
@@ -249,10 +198,7 @@ main(int argc, char* argv[]) {
     std::cerr << "n must be at least k!" << std::endl;
     return 1;
   }
-  if (opt.propagation() == PROP_REIFIED)
-    Example::run<LangfordNumberReified,DFS,LangfordNumberOptions>(opt);
-  else
-    Example::run<LangfordNumberRegular,DFS,LangfordNumberOptions>(opt);
+  Example::run<LangfordNumber,DFS,LangfordNumberOptions>(opt);
   return 0;
 }
 
