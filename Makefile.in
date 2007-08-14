@@ -555,7 +555,7 @@ INTEXAMPLESBJ  = $(INTEXAMPLESRC:%.cc=%$(SBJSUFFIX))
 INTEXAMPLEEXE  = $(INTEXAMPLESRC:%.cc=%$(EXESUFFIX))
 
 SETEXAMPLESRC0 = \
-	crew golf hamming steiner sudoku-set sudoku-mixed queen-armies
+	crew golf hamming steiner queen-armies
 SETEXAMPLESRC  = $(SETEXAMPLESRC0:%=examples/%.cc)
 SETEXAMPLEOBJ  = $(SETEXAMPLESRC:%.cc=%$(OBJSUFFIX))
 SETEXAMPLESBJ  = $(SETEXAMPLESRC:%.cc=%$(SBJSUFFIX))
