@@ -57,9 +57,9 @@ namespace Gecode { namespace Support {
     /// Allocate for \a n elements
     SAO(int n);
     /// Create copy of elements
-    SAO* copy(void) const;
+    virtual SharedObject* copy(void) const;
     /// Delete object
-    ~SAO(void);
+    virtual ~SAO(void);
 
     /// Access element at position \a i
     T& operator[](int i);
@@ -77,7 +77,7 @@ namespace Gecode { namespace Support {
   }
 
   template <class T>
-  forceinline SAO<T>*
+  forceinline SharedObject*
   SAO<T>::copy(void) const {
     SAO<T>* o = new SAO<T>(n);
     for (int i=n; i--;)
@@ -127,9 +127,8 @@ namespace Gecode { namespace Support {
    * \ingroup FuncSupport
    */
   template <class T>
-  class SharedArray : public SharedHandle<SAO<T> > {
+  class SharedArray : public SharedHandle {
   public:
-    using SharedHandle<SAO<T> >::object;
     /** 
      * \brief Construct as not yet intialized
      *
@@ -168,12 +167,12 @@ namespace Gecode { namespace Support {
   template <class T>
   forceinline
   SharedArray<T>::SharedArray(int n) 
-    : SharedHandle<SAO<T> >(new SAO<T>(n)) {}
+    : SharedHandle(new SAO<T>(n)) {}
 
   template <class T>
   forceinline
   SharedArray<T>::SharedArray(const SharedArray<T>& sa) 
-    : SharedHandle<SAO<T> >(sa) {}
+    : SharedHandle(sa) {}
 
   template <class T>
   forceinline void
@@ -186,21 +185,21 @@ namespace Gecode { namespace Support {
   forceinline T&
   SharedArray<T>::operator[](int i) {
     assert(object() != NULL);
-    return (*object())[i];
+    return (*static_cast<SAO<T>*>(object()))[i];
   }
 
   template <class T>
   forceinline const T&
   SharedArray<T>::operator[](int i) const {
     assert(object() != NULL);
-    return (*object())[i];
+    return (*static_cast<SAO<T>*>(object()))[i];
   }
 
   template <class T>
   forceinline int
   SharedArray<T>::size(void) const {
     assert(object() != NULL);
-    return object()->size();
+    return static_cast<SAO<T>*>(object())->size();
   }
 
 }}

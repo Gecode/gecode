@@ -72,9 +72,9 @@ namespace Gecode {
       /// Initialize automation implementation with \nt transitions
       DFAI(unsigned int nt);
       /// Delete automation implemenentation
-      ~DFAI(void);
+      virtual ~DFAI(void);
       /// Create a copy
-      GECODE_INT_EXPORT DFAI* copy(void);
+      GECODE_INT_EXPORT virtual SharedObject* copy(void) const;
     };
 
     forceinline
@@ -103,43 +103,44 @@ namespace Gecode {
 
   forceinline
   DFA::DFA(const DFA& d)
-    : SharedHandle<Int::Regular::DFAI>(d) {}
+    : SharedHandle(d) {}
 
   forceinline unsigned int
   DFA::n_states(void) const {
-    return object()->n_states;
+    return static_cast<Int::Regular::DFAI*>(object())->n_states;
   }
 
   forceinline unsigned int
   DFA::n_symbols(void) const {
-    return object()->n_symbols;
+    return static_cast<Int::Regular::DFAI*>(object())->n_symbols;
   }
 
   forceinline unsigned int
   DFA::n_transitions(void) const {
-    return object()->n_trans;
+    return static_cast<Int::Regular::DFAI*>(object())->n_trans;
   }
 
   forceinline int
   DFA::final_fst(void) const {
-    return object()->final_fst;
+    return static_cast<Int::Regular::DFAI*>(object())->final_fst;
   }
 
   forceinline int
   DFA::final_lst(void) const {
-    return object()->final_lst;
+    return static_cast<Int::Regular::DFAI*>(object())->final_lst;
   }
 
   forceinline int
   DFA::symbol_min(void) const {
-    unsigned int n = object()->n_trans;
-    return (n > 0) ? object()->trans[0].symbol : Limits::Int::int_min;
+    const Int::Regular::DFAI* o = static_cast<Int::Regular::DFAI*>(object());
+    return (o->n_trans > 0) ? o->trans[0].symbol : Limits::Int::int_min;
   }
 
   forceinline int
   DFA::symbol_max(void) const {
-    unsigned int n = object()->n_trans;
-    return (n > 0) ? object()->trans[n-1].symbol : Limits::Int::int_max;
+    const Int::Regular::DFAI* o = static_cast<Int::Regular::DFAI*>(object());
+    return (o->n_trans > 0) ? 
+      o->trans[o->n_trans-1].symbol : Limits::Int::int_max;
   }
 
 
@@ -151,18 +152,18 @@ namespace Gecode {
 
   forceinline
   DFA::Transitions::Transitions(const DFA& d)
-    : c_trans(&d.object()->trans[0]), 
-      e_trans(c_trans+d.object()->n_trans) {}
+    : c_trans(&static_cast<Int::Regular::DFAI*>(d.object())->trans[0]), 
+      e_trans(c_trans+static_cast<Int::Regular::DFAI*>(d.object())->n_trans) {}
 
   forceinline
   DFA::Transitions::Transitions(const DFA& d, int n) {
-    int mask = (1<<d.object()->n_log)-1;
+    const Int::Regular::DFAI* o = static_cast<Int::Regular::DFAI*>(d.object());
+    int mask = (1<<o->n_log)-1;
     int p = n & mask;
-    while ((d.object()->table[p].symbol != n) &&
-           (d.object()->table[p].fst != NULL))
+    while ((o->table[p].symbol != n) && (o->table[p].fst != NULL))
       p = (p+1) & mask;
-    c_trans = d.object()->table[p].fst;
-    e_trans = d.object()->table[p].lst;
+    c_trans = o->table[p].fst;
+    e_trans = o->table[p].lst;
   }
 
   forceinline bool
@@ -197,8 +198,8 @@ namespace Gecode {
 
   forceinline
   DFA::Symbols::Symbols(const DFA& d)
-    : c_trans(&d.object()->trans[0]), 
-      e_trans(c_trans+d.object()->n_trans) {}
+    : c_trans(&static_cast<Int::Regular::DFAI*>(d.object())->trans[0]), 
+      e_trans(c_trans+static_cast<Int::Regular::DFAI*>(d.object())->n_trans) {}
 
   forceinline bool
   DFA::Symbols::operator()(void) const {

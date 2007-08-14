@@ -52,7 +52,7 @@ namespace Gecode {
   /**
    * \defgroup FuncSupportShared Support for shared objects and handles
    *
-   * Shared handles provide access to reference counted objects
+   * Shared handles provide access to reference-counted objects
    * used by entities inside spaces. In particular, they support
    * updates with and without sharing. An update with sharing
    * just updates the handle. An update without sharing creates
@@ -64,15 +64,13 @@ namespace Gecode {
   /**
    * \brief The shared object
    *
-   * Shared objects must inherit from this base class. In addition
-   * to the member functions from this class, object must add a
-   * copy(void) member function returning a copy of the object.
+   * Shared objects must inherit from this base class. 
    *
    * \ingroup FuncSupportShared
    */
   class SharedObject {
     friend class Space;
-    template <class Object> friend class SharedHandle;
+    friend class SharedHandle;
   private:
     /// The counter used for reference counting
     unsigned int use_cnt;
@@ -83,6 +81,10 @@ namespace Gecode {
   public:
     /// Initialize but do not regard object as being used!
     SharedObject(void);
+    /// Return fresh copy for unshared update
+    virtual SharedObject* copy(void) const = 0;
+    /// Delete shared object
+    virtual ~SharedObject(void);
     /// Allocate memory from heap
     static void* operator new(size_t s);
     /// Free memory allocated from heap
@@ -99,11 +101,10 @@ namespace Gecode {
    *
    * \ingroup FuncSupportShared
    */
-  template <class Object>
   class SharedHandle {
   private:
     /// The shared object
-    Object* o;
+    SharedObject* o;
     /// Subscribe handle to object
     void subscribe(void);
     /// Cancel subscription of handle to object
@@ -112,7 +113,7 @@ namespace Gecode {
     /// Create shared handle with no object pointing to
     SharedHandle(void);
     /// Create shared handle that points to shared object \a so
-    SharedHandle(Object* so);
+    SharedHandle(SharedObject* so);
     /// Copy constructor maintaining reference count
     SharedHandle(const SharedHandle& sh);
     /// Assignment operator mainitaining reference count
@@ -123,9 +124,9 @@ namespace Gecode {
     ~SharedHandle(void);
   protected:
     /// Access to the shared object
-    Object* object(void) const;
+    SharedObject* object(void) const;
     /// Modify shared object
-    void object(Object* n);
+    void object(SharedObject* n);
   };
 
 
@@ -1001,7 +1002,7 @@ namespace Gecode {
     friend class Reflection::SpecIter;
     template <VarTypeId VTI, PropCond PC, class MED> friend class Variable;
     template <VarTypeId VTI, PropCond PC, class MED> friend class VarTypeProcessor;
-    template <class Object> friend class SharedHandle;
+    friend class SharedHandle;
   private:
     MemoryManager   mm; ///< Performs memory management for space
 
@@ -1444,49 +1445,46 @@ namespace Gecode {
   forceinline
   SharedObject::SharedObject(void) 
     : use_cnt(0), fwd(NULL) {}
+  forceinline
+  SharedObject::~SharedObject(void) {
+    assert(use_cnt == 0);
+  }
 
-  template<class Object>
   forceinline void 
-  SharedHandle<Object>::subscribe(void) {
+  SharedHandle::subscribe(void) {
     if (o != NULL) o->use_cnt++;
   }
-  template<class Object>
   forceinline void 
-  SharedHandle<Object>::cancel(void) {
+  SharedHandle::cancel(void) {
     if ((o != NULL) && (--o->use_cnt == 0))
       delete o;
     o = NULL;
   }
-  template<class Object>
   forceinline 
-  SharedHandle<Object>::SharedHandle(void) : o(NULL) {}
-  template<class Object>
+  SharedHandle::SharedHandle(void) : o(NULL) {}
   forceinline 
-  SharedHandle<Object>::SharedHandle(Object* so) : o(so) {
+  SharedHandle::SharedHandle(SharedObject* so) : o(so) {
     subscribe();
   }
-  template<class Object>
   forceinline 
-  SharedHandle<Object>::SharedHandle(const SharedHandle& sh) : o(sh.o) {
+  SharedHandle::SharedHandle(const SharedHandle& sh) : o(sh.o) {
     subscribe();
   }
-  template<class Object>
-  forceinline SharedHandle<Object>& 
-  SharedHandle<Object>::operator=(const SharedHandle& sh) {
+  forceinline SharedHandle& 
+  SharedHandle::operator=(const SharedHandle& sh) {
     if (&sh != this) {
       cancel(); o = sh.o; subscribe();
     }
     return *this;
   }
-  template<class Object>
   forceinline void 
-  SharedHandle<Object>::update(Space* home, bool share, SharedHandle& sh) {
+  SharedHandle::update(Space* home, bool share, SharedHandle& sh) {
     if (sh.o == NULL) {
       o = NULL;
     } else if (share) {
       o = sh.o; subscribe();
     } else if (sh.o->fwd != NULL) {
-      o = static_cast<Object*>(sh.o->fwd); subscribe();
+      o = sh.o->fwd; subscribe();
     } else {
       o = sh.o->copy(); 
       sh.o->fwd = o;
@@ -1495,19 +1493,16 @@ namespace Gecode {
       subscribe();
     }
   }
-  template<class Object>
   forceinline 
-  SharedHandle<Object>::~SharedHandle(void) {
+  SharedHandle::~SharedHandle(void) {
     cancel();
   }
-  template<class Object>
-  forceinline Object* 
-  SharedHandle<Object>::object(void) const {
+  forceinline SharedObject* 
+  SharedHandle::object(void) const {
     return o;
   }
-  template<class Object>
   forceinline void 
-  SharedHandle<Object>::object(Object* n) {
+  SharedHandle::object(SharedObject* n) {
     if (n != o) {
       cancel(); o=n; subscribe();
     }

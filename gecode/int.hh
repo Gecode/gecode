@@ -845,7 +845,7 @@ namespace Gecode {
     class DFAI;
   }}
 
-  class DFA : public SharedHandle<Int::Regular::DFAI> {
+  class DFA : public SharedHandle {
   public:
     /// Specification of a %DFA transition
     class Transition {

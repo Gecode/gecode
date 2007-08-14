@@ -502,8 +502,8 @@ operator<<(std::ostream& os, const Gecode::DFA& dfa) {
 
 namespace Gecode { namespace Int { namespace Regular {
 
-  DFAI*
-  DFAI::copy(void) {
+  SharedObject*
+  DFAI::copy(void) const {
     DFAI* d = new DFAI(n_trans);
     d->n_states  = n_states;
     d->n_trans   = n_trans;
