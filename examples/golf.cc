@@ -75,6 +75,11 @@ static const unsigned int n_examples = sizeof(t) / sizeof(Tournament);
  */
 class Golf : public Example {
 public:
+  /// Model variants
+  enum {
+    MODEL_PLAIN,   ///< A simple model
+    MODEL_SYMMETRY ///< Model with symmetry breaking
+  };
   int groups;
   int playersInGroup;
   int weeks;
@@ -121,8 +126,7 @@ public:
       }
     }
 
-    //    if (!opt.naive) {
-    if (false) {
+    if (opt.model() == MODEL_SYMMETRY) {
 
       /*
        * Redundant constraints and static symmetry breaking from
@@ -240,8 +244,11 @@ public:
 int
 main(int argc, char* argv[]) {
   SizeOptions opt("Golf");
-  opt.parse(argc,argv);
+  opt.model(Golf::MODEL_PLAIN);
+  opt.model(Golf::MODEL_PLAIN, "none", "no symmetry breaking");
+  opt.model(Golf::MODEL_SYMMETRY, "symmetry", "static symmetry breaking");
   opt.solutions(1);
+  opt.parse(argc,argv);
   if (opt.size() >= n_examples) {
     std::cerr << "Error: size must be between 0 and " << n_examples - 1
               << std::endl;

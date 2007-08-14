@@ -51,6 +51,12 @@
 class Steiner : public Example {
 public:
 
+  /// Model variants
+  enum {
+    MODEL_NONE,   ///< Use simple relation constraint
+    MODEL_MATCHING ///< Use matching constraints
+  };
+
   int n;
   int n1;
   int n1n1;
@@ -79,8 +85,7 @@ public:
         IntVar y2(this,1,n);
         IntVar y3(this,1,n);
 
-        //        if (opt.naive) {
-        if (true) {
+        if (opt.model() == MODEL_NONE) {
         
           /* Naive alternative:
            * just including the ints in the set
@@ -152,8 +157,10 @@ public:
 int
 main(int argc, char* argv[]) {
   SizeOptions opt("Steiner");
+  opt.model(Steiner::MODEL_NONE);
+  opt.model(Steiner::MODEL_NONE, "rel", "Use simple relation constraints");
+  opt.model(Steiner::MODEL_MATCHING, "matching", "Use matching constraints");
   opt.size(9);
-  //  opt.naive = true;
   opt.iterations(20);
   opt.parse(argc,argv);
   Example::run<Steiner,DFS,SizeOptions>(opt);
