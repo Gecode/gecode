@@ -537,7 +537,7 @@ OTHERHDR = gecode/iter.hh \
 
 INTEXAMPLESRC0 =							\
 	alpha bacp bibd cars donald					\
-	eq20 golomb tsp							\
+	eq20 golomb-ruler tsp						\
 	graph-color grocery ind-set knights				\
 	magic-sequence magic-square			\
 	money ortho-latin perfect-square				\
@@ -545,7 +545,7 @@ INTEXAMPLESRC0 =							\
 	sudoku picture-puzzle placement-puzzle placement-puzzle-01	\
 	crowded-chess black-hole minesweeper domino			\
 	sports-league all-interval			\
-	langfordnum langfordnum-regular warehouses			\
+	langford-number warehouses			\
 	stress-domain stress-exec stress-search baseline		\
 	stress-element stress-min stress-distinct			\
 	stress-regular stress-circuit stress-linear-bool
