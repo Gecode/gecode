@@ -234,8 +234,7 @@ namespace Gecode {
    *
    * \ingroup TaskIntIntVars TaskSetSetVars
    */
-  class IntSetValues
-    : public Iter::Ranges::ToValues<IntSetRanges> {
+  class IntSetValues : public Iter::Ranges::ToValues<IntSetRanges> {
   public:
     /// \name Constructors and initialization
     //@{

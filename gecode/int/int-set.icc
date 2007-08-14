@@ -129,10 +129,10 @@ namespace Gecode {
   IntSetRanges::IntSetRanges(void) {}
   forceinline
   IntSetRanges::IntSetRanges(const IntSet& s)
-    : i(&s.sar[0]), e(&s.sar[s.size()]) {}
+    : i(&s.sar[0]), e(i+s.size()) {}
   forceinline void
   IntSetRanges::init(const IntSet& s) {
-    i = &s.sar[0]; e = &s.sar[s.size()];
+    i=&s.sar[0]; e=i+s.size();
   }
 
   forceinline void

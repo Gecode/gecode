@@ -98,14 +98,14 @@ namespace Gecode { namespace Support {
   template <class T>
   forceinline T&
   SAO<T>::operator[](int i) {
-    //    assert((i>=0) && (i<n));
+    assert((i>=0) && (i<n));
     return a[i];
   }
 
   template <class T>
   forceinline const T&
   SAO<T>::operator[](int i) const {
-    //    assert((i>=0) && (i<n));
+    assert((i>=0) && (i<n));
     return a[i];
   }
 
