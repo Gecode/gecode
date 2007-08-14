@@ -50,7 +50,7 @@
  * \ingroup ExProblem
  *
  */
-class Golomb : public Example {
+class GolombRuler : public Example {
 protected:
   /// Number of marks
   const int n;
@@ -76,7 +76,7 @@ public:
   }
 
   /// Actual model
-  Golomb(const SizeOptions& opt)
+  GolombRuler(const SizeOptions& opt)
     : n(opt.size()), m(this,n,0,n*n) {
     const int dn = (n*n-n)/2;
 
@@ -136,7 +136,7 @@ public:
   /// Add constraint for next better solution
   void
   constrain(Space* s) {
-    rel(this, m[n-1], IRT_LE, static_cast<Golomb*>(s)->m[n-1].val());
+    rel(this, m[n-1], IRT_LE, static_cast<GolombRuler*>(s)->m[n-1].val());
   }
 
   /// Print solution
@@ -148,47 +148,47 @@ public:
   }
 
   /// Constructor for cloning \a s
-  Golomb(bool share, Golomb& s)
+  GolombRuler(bool share, GolombRuler& s)
     : Example(share,s), n(s.n) {
     m.update(this, share, s.m);
   }
   /// Copy during cloning
   virtual Space*
   copy(bool share) {
-    return new Golomb(share,*this);
+    return new GolombRuler(share,*this);
   }
 
 };
 
 /** \brief Main-function
- *  \relates Golomb
+ *  \relates GolombRuler
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("Golomb");
+  SizeOptions opt("GolombRuler");
   opt.solutions(0);
   opt.size(10);
   opt.icl(ICL_BND);
-  opt.model(Golomb::MODEL_SUM);
-  opt.model(Golomb::MODEL_NONE, "none",
+  opt.model(GolombRuler::MODEL_SUM);
+  opt.model(GolombRuler::MODEL_NONE, "none",
             "no lower bound");
-  opt.model(Golomb::MODEL_SUM, "sum",
+  opt.model(GolombRuler::MODEL_SUM, "sum",
             "use sum of ticks as lower bound");
-  opt.model(Golomb::MODEL_RULER, "ruler",
+  opt.model(GolombRuler::MODEL_RULER, "ruler",
             "use size of smaller rulers as lower bound");
-  opt.search(Golomb::SEARCH_BAB);
-  opt.search(Golomb::SEARCH_DFS, "dfs");
-  opt.search(Golomb::SEARCH_BAB, "bab");
-  opt.search(Golomb::SEARCH_RESTART, "restart");
+  opt.search(GolombRuler::SEARCH_BAB);
+  opt.search(GolombRuler::SEARCH_DFS, "dfs");
+  opt.search(GolombRuler::SEARCH_BAB, "bab");
+  opt.search(GolombRuler::SEARCH_RESTART, "restart");
   opt.parse(argc,argv);
   if (opt.size() > 0)
     switch (opt.search()) {
-    case Golomb::SEARCH_DFS:
-      Example::run<Golomb,DFS,SizeOptions>(opt); break;
-    case Golomb::SEARCH_BAB:
-      Example::run<Golomb,BAB,SizeOptions>(opt); break;
-    case Golomb::SEARCH_RESTART:
-      Example::run<Golomb,Restart,SizeOptions>(opt); break;
+    case GolombRuler::SEARCH_DFS:
+      Example::run<GolombRuler,DFS,SizeOptions>(opt); break;
+    case GolombRuler::SEARCH_BAB:
+      Example::run<GolombRuler,BAB,SizeOptions>(opt); break;
+    case GolombRuler::SEARCH_RESTART:
+      Example::run<GolombRuler,Restart,SizeOptions>(opt); break;
     }
   return 0;
 }
