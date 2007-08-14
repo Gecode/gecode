@@ -420,16 +420,16 @@ main(int argc, char* argv[]) {
 
 namespace {
 
-/** \name %Sudoku specifications
- *
- * Each specification gives the initial positions that are filled in,
- * with blank squares represented as zeroes.
- *
- * \relates Sudoku
- */
-//@{
-const char* examples[] = {
-  // 0
+  /** \name %Sudoku specifications
+   *
+   * Each specification gives the initial positions that are filled in,
+   * with blank squares represented as zeroes.
+   *
+   * \relates Sudoku
+   */
+  //@{
+  const char* examples[] = {
+    // 0
     "...2.5..."
     ".9....73."
     "..2..9.6."
@@ -439,8 +439,8 @@ const char* examples[] = {
     ".8.4..1.."
     ".63....8."
     "...6.8..."
-  ,
-  // 1
+    ,
+    // 1
     "3..9.4..1"
     "..2...4.."
     ".61...79."
@@ -450,8 +450,8 @@ const char* examples[] = {
     ".46...23."
     "..9...6.."
     "5..3.9..8"
-  ,
-  // 2
+    ,
+    // 2
     "....1...."
     "3.14..86."
     "9..5..2.."
@@ -461,8 +461,8 @@ const char* examples[] = {
     "..3..4..6"
     ".48..69.7"
     "....8...."
-  ,
-  // 3
+    ,
+    // 3
     // Fiendish puzzle April 21 2005 Times London
     "..4..3.7."
     ".8..7...."
@@ -473,8 +473,8 @@ const char* examples[] = {
     "1.69...3."
     "....2..6."
     ".2.4..5.."
-  ,
-  // 4
+    ,
+    // 4
     // This one requires search
     ".43.8.25."
     "6........"
@@ -485,8 +485,8 @@ const char* examples[] = {
     "82.5....."
     "........5"
     ".34.9.71."
-  ,
-  // 5
+    ,
+    // 5
     // Hard one from http://www.cs.mu.oz.au/671/proj3/node5.html
     ".....3.6."
     ".......1."
@@ -499,8 +499,8 @@ const char* examples[] = {
     ".1...289."
     ".4......."
     ".5.1....."
-  , // Puzzle 1 from http://www.sudoku.org.uk/bifurcation.htm
-  // 6
+    , // Puzzle 1 from http://www.sudoku.org.uk/bifurcation.htm
+    // 6
     "1..9.7..3"
     ".8.....7."
     "..9...6.."
@@ -510,8 +510,8 @@ const char* examples[] = {
     "..3...7.."
     ".5.....4."
     "2..8.6..9"
-  , // Puzzle 2 from http://www.sudoku.org.uk/bifurcation.htm
-  // 7
+    , // Puzzle 2 from http://www.sudoku.org.uk/bifurcation.htm
+    // 7
     "...3.2..."
     ".5.798.3."
     "..7...8.."
@@ -521,8 +521,8 @@ const char* examples[] = {
     "..5...6.."
     ".2.419.5."
     "...8.6..."
-  , // Puzzle 3 from http://www.sudoku.org.uk/bifurcation.htm
-  // 8
+    , // Puzzle 3 from http://www.sudoku.org.uk/bifurcation.htm
+    // 8
     "...8....6"
     "..162.43."
     "4...71..2"
@@ -532,8 +532,8 @@ const char* examples[] = {
     "1..73...4"
     ".26.481.."
     "3....5..."
-  , // Puzzle 4 from http://www.sudoku.org.uk/bifurcation.htm
-  // 9
+    , // Puzzle 4 from http://www.sudoku.org.uk/bifurcation.htm
+    // 9
     "3.5..4.7."
     ".7......1"
     ".4.9...3."
@@ -543,8 +543,8 @@ const char* examples[] = {
     ".2...7.6."
     "8......9."
     ".6.4..2.8"
-  , // Puzzle 5 from http://www.sudoku.org.uk/bifurcation.htm
-  // 10
+    , // Puzzle 5 from http://www.sudoku.org.uk/bifurcation.htm
+    // 10
     "...7..3.."
     ".6....57."
     ".738..41."
@@ -554,8 +554,8 @@ const char* examples[] = {
     ".98..715."
     ".54....6."
     "..1..9..."
-  , // Puzzle 6 from http://www.sudoku.org.uk/bifurcation.htm
-  // 11
+    , // Puzzle 6 from http://www.sudoku.org.uk/bifurcation.htm
+    // 11
     "...6....4"
     ".3..9..2."
     ".6.8..7.."
@@ -565,8 +565,8 @@ const char* examples[] = {
     "..6..3.9."
     ".1..8..6."
     "2....6..."
-  , // Puzzle 7 from http://www.sudoku.org.uk/bifurcation.htm
-  // 12
+    , // Puzzle 7 from http://www.sudoku.org.uk/bifurcation.htm
+    // 12
     "8....1.4."
     "2.6.9..1."
     "..9..6.8."
@@ -576,8 +576,8 @@ const char* examples[] = {
     ".5.4..1.."
     ".8..7.2.5"
     ".9.5....7"
-  , // Puzzle 8 from http://www.sudoku.org.uk/bifurcation.htm
-  // 13
+    , // Puzzle 8 from http://www.sudoku.org.uk/bifurcation.htm
+    // 13
     "652.48..7"
     ".7.2.54.."
     "........."
@@ -587,8 +587,8 @@ const char* examples[] = {
     "........."
     "..86.7.2."
     "2..89.751"
-  , // Puzzle 9 from http://www.sudoku.org.uk/bifurcation.htm
-  // 14
+    , // Puzzle 9 from http://www.sudoku.org.uk/bifurcation.htm
+    // 14
     "..6..2..9"
     "1..5...2."
     ".473.6..1"
@@ -598,8 +598,8 @@ const char* examples[] = {
     "4..8.321."
     ".6...1..4"
     "3..4..9.."
-  , // Puzzle 10 from http://www.sudoku.org.uk/bifurcation.htm
-  // 15
+    , // Puzzle 10 from http://www.sudoku.org.uk/bifurcation.htm
+    // 15
     "..4.5.9.."
     "....7...6"
     "37......2"
@@ -609,8 +609,8 @@ const char* examples[] = {
     "2......93"
     "1...4...."
     "..6.2.7.."
-  , // Puzzle 11 from http://www.sudoku.org.uk/bifurcation.htm
-  // 16
+    , // Puzzle 11 from http://www.sudoku.org.uk/bifurcation.htm
+    // 16
     "....3.79."
     "3.......5"
     "...4.73.6"
@@ -620,8 +620,8 @@ const char* examples[] = {
     "7.19.8..."
     "8.......1"
     ".94.1...."
-  , // From http://www.sudoku.org.uk/discus/messages/29/51.html?1131034031
-  // 17
+    , // From http://www.sudoku.org.uk/discus/messages/29/51.html?1131034031
+    // 17
     "2581.4.37"
     "936827514"
     "47153.28."
@@ -631,8 +631,8 @@ const char* examples[] = {
     "1249..753"
     "593742168"
     "687351492"
-  ,
-  // 18
+    ,
+    // 18
     // The following minimal 25*25 Sudokus are from Alain Frisch
     // Sudoku website http://www.eleves.ens.fr/home/frisch/sudoku.html
     "...G...9..4.....6F..L8..."
@@ -660,8 +660,8 @@ const char* examples[] = {
     "48NK..5.M......JL.......9"
     ".I.OG....835.A.DH..P....."
     "35......L.J..E....8IG.67B"
-  ,
-  // 19
+    ,
+    // 19
     ".N..JG..O7591...8I....L.."
     "FG.M.B8...P.E...CJ..H...."
     "...........G.4.H.D.O.NJA2"
@@ -687,8 +687,8 @@ const char* examples[] = {
     "G6M...N4FI8...K..H.E....."
     ".L..4.917....BE.G8F.M.I.."
     "8F......5.O3..4...9.....K"
-  ,
-  // 20
+    ,
+    // 20
     "5.PC..7..J..I...3..H.M.2L"
     "H.......F..DA..N.G...9..P"
     "...3LCP2.54.71.B....J.8.."
@@ -714,8 +714,8 @@ const char* examples[] = {
     "...F...5....N..J9......I."
     ".J...P..O.BK....I.M.3..5."
     "9...8.B.6.D.M.I..H.5G.J4."
-  ,
-  // 21
+    ,
+    // 21
     "..6F.....5..3.....H..A.M2"
     ".....3....I8.A.MC.KJ.LNG."
     ".I.7N..K.2..6...3D..B.O85"
@@ -741,8 +741,8 @@ const char* examples[] = {
     "K.O.62.PM...N..H...18C.9."
     "LC..8.3...2...H.G...J..4E"
     ".B..9NK.E....C6.P.4D.71OI"
-  ,
-  // 22
+    ,
+    // 22
     "A..F.N......M28DC.LI7..OJ"
     "..B...D.M.6....9.....2A.."
     ".2..I.56.B...J.MEH......."
@@ -768,8 +768,8 @@ const char* examples[] = {
     "..F...3C.7.P..5N..B..DMH9"
     "291D..6..M..H.7.3.J.N..B."
     "....MK..29F.G.DO4...6.E35"
-  ,
-  // 23
+    ,
+    // 23
     "....B12O3..D..F..KPL.E4.7"
     "1M..GL..H..K.A.....39.P.."
     ".8.3.4.....7..6.F.....CK."
@@ -795,8 +795,8 @@ const char* examples[] = {
     "C.P.....M8.9O..5A..N.JK.D"
     "H...N...FOA4..73....5..CM"
     ".D4..3...6BE..N.2JH8..L.."
-  ,
-  // 24
+    ,
+    // 24
     "LJ.FH2...K....359.E.B6.N."
     "...EML1FC.PJ.A.8I....2.K4"
     "9........G1..6..K...PAL3C"
@@ -822,8 +822,8 @@ const char* examples[] = {
     "..65DJ..L..C.4.1...BGF..."
     "OF..E..7.B.......634...D."
     "G.3..N.I9D7PM8KF2....4..."
-  ,
-  // 25
+    ,
+    // 25
     ".1..I8.P..6.N...BD...3O.."
     ".9.6...E.M43.8..AK.2J.1.."
     "...JKL...FA...P.I4...DB.."
@@ -849,8 +849,8 @@ const char* examples[] = {
     "......FAC..5M..I6J.B4...G"
     "...F..82..P.E......36HK.L"
     "B.J.G5...O.H2..98.7......"
-  ,
-  // 26
+    ,
+    // 26
     ".CNPHK.53.O9F..D.78..J..."
     "J.....F.DB...7.G..PAE...L"
     ".6.........5.4A......I..."
@@ -876,8 +876,8 @@ const char* examples[] = {
     "M..O....9K2..6..1.N.FE.L."
     "....E...A..N.J.IG8...C.9."
     "6KL.4...FCI.A.....5J.2D.N"
-  ,
-  // 27
+    ,
+    // 27
     "E..I...M......L....D...BK"
     "F..BH9.K.A2.7..E4.P.6..M."
     ".6.J..PD8FE.IM...K...54.."
@@ -903,8 +903,8 @@ const char* examples[] = {
     "....1...O..A2..DCH8B..KE."
     "3.HA.6BP.....J1957O..28.."
     "42JO.I...K5C......6.P.B.."
-  ,
-  // 28
+    ,
+    // 28
     "...G87..O..F.N..CH6..D..2"
     "C16..N....DL.3.E........."
     ".LN.EK..D..O.G6.412....5H"
@@ -930,8 +930,8 @@ const char* examples[] = {
     "B...I....9K..6..2...G.H1."
     "O...7.CJMI25N...HDKBPFAE."
     ".....28.F..C........O.JK."
-  ,
-  // 29
+    ,
+    // 29
     "9.K..6D.I5...........H..."
     ".I.E..BK...GN...6.L...3.."
     "7....2..L8E.K.D1.P5I.6..A"
@@ -957,8 +957,8 @@ const char* examples[] = {
     ".A..9N.8.E...73O..H....4."
     ".M.C.3....DK..EI......JG."
     ".HP..D..FB...NO.1KJ8.AL.."
-  ,
-  // 30
+    ,
+    // 30
     "....L.1.8H.CO..P....FA..."
     "P1.2.4CO...K..A..3H8...7."
     "I..H.G.5.B.6.M..A24.K..9."
@@ -984,8 +984,8 @@ const char* examples[] = {
     "1......P.N9..D..5........"
     ".I.P..FGOCMA.......J.5..2"
     ".GK....7...3.....92..B.L4"
-  ,
-  // 31
+    ,
+    // 31
     "...H....GKM.43..B.D......"
     "15I.C....8B.6D.7G....A.H4"
     ".7...F..B...J.E16.N....3."
@@ -1011,7 +1011,7 @@ const char* examples[] = {
     ".C9L..A..J.....6.2..I..F."
     "BK...4..F.A.CL..87.1.O.M."
     "6..P.I.5...M..N....F....D"
-  ,
+    ,
     // 32
     ".6OL.3GB.I.1F.EP..9..24.."
     "..1.P.....K....N.2.....ID"
@@ -1038,8 +1038,8 @@ const char* examples[] = {
     "KG.62..1.....L3.....IJE.F"
     "....D.6.AC4.9.....OL.HP.."
     "..EA.5O.L.6.......D...9N."
-  ,
-  // 33
+    ,
+    // 33
     ".CH3.L..D4F..I.........1."
     "G..K.....7.O.......L.42N."
     "A.D...5O8B...39G.4..I...L"
@@ -2166,35 +2166,35 @@ const char* examples[] = {
     ".2..741.....3..8"
     "D6....5.92B..1.."
     ".A.EB.....C6...."
-};
+  };
 
 
-const unsigned int n_examples = sizeof(examples)/sizeof(char*);
+  const unsigned int n_examples = sizeof(examples)/sizeof(char*);
 
-int example_size(const char *s) {
-  int l = std::strlen(s);
-  int res = static_cast<int>(std::sqrt(std::sqrt(static_cast<float>(l))));
-  assert(res*res*res*res == l);
-  return res;
-}
+  int example_size(const char *s) {
+    int l = std::strlen(s);
+    int res = static_cast<int>(std::sqrt(std::sqrt(static_cast<float>(l))));
+    assert(res*res*res*res == l);
+    return res;
+  }
 
 
-int value_at(const char *s, int n, int i, int j) {
-  assert(example_size(s) == std::sqrt(static_cast<float>(n)));
-  assert(i >= 0 && i < n);
-  assert(j >= 0 && j < n);
-  char c = s[j*n + i];
-  if (!std::isalnum(c))
-    return 0;
-  if (std::isdigit(c))
-    return c - '0';
-  if (std::islower(c))
-    c = static_cast<char>(std::toupper(c));
-  // std::alpha(c) == true && std::isupper(c)
-  int res = (c - 'A') + 10;
-  if (res > n) return 0;
-  else return res;
-}
+  int value_at(const char *s, int n, int i, int j) {
+    assert(example_size(s) == std::sqrt(static_cast<float>(n)));
+    assert(i >= 0 && i < n);
+    assert(j >= 0 && j < n);
+    char c = s[j*n + i];
+    if (!std::isalnum(c))
+      return 0;
+    if (std::isdigit(c))
+      return c - '0';
+    if (std::islower(c))
+      c = static_cast<char>(std::toupper(c));
+    // std::alpha(c) == true && std::isupper(c)
+    int res = (c - 'A') + 10;
+    if (res > n) return 0;
+    else return res;
+  }
 //@}
 }
 
