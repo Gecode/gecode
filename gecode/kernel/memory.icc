@@ -202,6 +202,7 @@ namespace Gecode { namespace Memory {
       ::free(_x);
     }
     T &operator [](const int i){ return _x[i]; }
+    T &operator [](const unsigned int i){ return _x[i]; }
     operator T*(void) { return _x; }
   };
 
