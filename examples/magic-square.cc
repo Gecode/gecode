@@ -43,6 +43,8 @@
  *
  * Compute magic squares of arbitrary size
  *
+ * See problem 19 at http://www.csplib.org/.
+ *
  * \ingroup ExProblem
  *
  */

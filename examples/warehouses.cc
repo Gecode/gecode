@@ -81,6 +81,12 @@ static const int cost_matrix[n_stores][n_suppliers] = {
  * warehouse should supply which store such that overall cost
  * (transportation cost plus construction cost) is smallest.
  *
+ * Taken from:
+ *   Pascal Van Hentenryck, The OPL Optmization Programming Language,
+ *   The MIT Press, 1999.
+ *
+ * See also problem 34 at http://www.csplib.org/.
+ *
  * \ingroup ExProblem
  *
  */

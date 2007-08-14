@@ -5,10 +5,12 @@
  *
  *  Contributing author:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
  *     Patrick Pekczynski, 2004
  *     Mikael Lagerkvist, 2006
+ *     Christian Schulte, 2007
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -43,88 +45,82 @@
 #include "gecode/minimodel.hh"
 
 /**
- * \brief Extended SizeOptions taking two parameters instead of only one
+ * \brief Options taking two additional parameters
  *
- * This is needed in order to parameters
- *
- * \relates LangfordNum
+ * \relates LangfordNumber
  */
-class ExtSizeOptions : public SizeOptions {
+class LangfordNumberOptions : public Options {
 public:
-  ExtSizeOptions(const char* s) : SizeOptions(s) {}
-  int n;
-  int k;
+  int n, k; /// Parameters to be given on the command line
+  /// Initialize options for example with name \a s
+  LangfordNumberOptions(const char* s, int n0, int k0) 
+    : Options(s), n(n0), k(k0) {}
+  /// Parse options from arguments \a argv (number is \a argc)
+  void parse(int& argc, char* argv[]) {
+    Options::parse(argc,argv);
+    if (argc < 3)
+      return;
+    n = atoi(argv[1]);
+    k = atoi(argv[2]);
+  }
+  /// Print help message
+  virtual void help(void) {
+    Options::help();
+    std::cerr << "\t(unsigned int) default: " << n << std::endl
+              << "\t\tparameter n" << std::endl
+              << "\t(unsigned int) default: " << k << std::endl
+              << "\t\tparameter k" << std::endl;
+  }
+};
+
+/// Propagation to use for model
+enum {
+  PROP_REIFIED,  ///< Use only binary disequality constraints
+  PROP_REGULAR   ///< Use regular constraints
 };
 
 /**
- * \brief %Example: Langford's number problem
-
- * Problem 024 in the categoy "combinatorial mathematics"
- * of http://www.csplib.org/.
+ * \brief %Example: Langford's number problem (naive version)
  *
- * For a detailed problem analysis see
- * http://www.lclark.edu/~miller/langford.html
+ * See problem 24 at http://www.csplib.org/.
  *
  * \ingroup ExProblem
  */
-class LangfordNum : public Example {
-private:
-  int n;
-  int k;
-
-  /// Problem variables
-  /// pos contains the position of the values in seqence
-  IntVarArray pos;
-  IntVarArray y;
+class LangfordNumberReified : public Example {
+protected:
+  int n, k;        ///< Problem parameters
+  IntVarArray pos; ///< Position of values in sequence
+  IntVarArray y;   ///< Sequence variables
 
 public:
-
-
-  /**
-   * \brief Returns the position of the j-th occurence of value \f$ v =(i + 1)\f$
-   *
-   */
+  /// Returns position of \f$j\f$-th occurence of value \f$ i + 1\f$
   IntVar& p(int i, int j) {
     return pos[i * k + j];
   }
+  /// Construct model
+  LangfordNumberReified(const LangfordNumberOptions& opt)
+    : n(opt.n), k(opt.k), pos(this,k*n,0,k*n-1), y(this,k*n,1,n) {
 
-
-  LangfordNum(const SizeOptions& op) {
-
-    const ExtSizeOptions* eop = NULL;
-    eop = reinterpret_cast<const ExtSizeOptions*> (&op);
-    n = eop->n;
-    k = eop->k;
-
-    y    = IntVarArray(this, k * n, 1, n);
-    pos  = IntVarArray(this, k * n, 0, k*n-1);
-
-
-    /* The occurences of a value v in the Langford sequence are v numbers apart.
+    /* 
+     * The occurences of value v in the Langford sequence are v numbers apart.
      *
-     * Let \f$ \#(i, v) \f$ denote the position of the i-th occurence of value v
-     * in the Langford Sequence. Then this function posts the constraint that
+     * Let \#(i, v) denote the position of the i-th occurence of 
+     * value v in the Langford Sequence. Then the constraint are posted
+     * that
      * \f$ \forall i, j \in \{1, \dots, k\}, i \neq j:
      *     \forall v \in \{1, \dots, n\}: \#(i, v) + (v + 1) = \#(j, v)\f$
      *
      */
-    for (int i = 0; i < n; i++) {
-      int v = i + 1;
+    for (int i = 0; i < n; i++)
       for (int j = 0; j < k - 1; j++)
-        post(this, p(i, j) + (v + 1) == p(i, j + 1));
-    }
+        post(this, p(i,j) + ((i+1)+1) == p(i,j+1));
 
-    /* Constrain x to be a permutation of \f$ S_{kn} = \{0, \dots, n*k - 1\}\f$
-     *
-     * \f$ \forall i, j\in S_{kn}, i\neq j: x_i \neq x_j \f$
-     */
-    distinct(this, pos, op.icl());
-
+    distinct(this, pos, opt.icl());
 
     // Symmetry breaking
-    post(this, y[0] < y[n*k - 1]);
+    rel(this, y[0], IRT_LE, y[n*k-1]);
 
-    // channeling positions <-> values
+    // Channeling positions <-> values
     for (int i = 0; i < n; i++)
       for (int j = 0; j < k; j++)
         element(this, y, p(i,j), i+1);
@@ -133,53 +129,114 @@ public:
     branch(this, pos, BVAR_SIZE_MIN, BVAL_MIN);
   }
 
-  LangfordNum(bool share, LangfordNum& l)
+  /// Print solution
+  virtual void print(void){
+    std::cout << "\t";
+    for (int i = 0; i < y.size(); ++i)
+      std::cout << y[i] << " ";
+    std::cout << std::endl;
+  }
+
+  /// Constructor for cloning \a l
+  LangfordNumberReified(bool share, LangfordNumberReified& l)
     : Example(share, l), n(l.n), k(l.k) {
     pos.update(this, share, l.pos);
     y.update(this, share, l.y);
 
   }
-
+  /// Copy during cloning
   virtual Space*
   copy(bool share) {
-    return new LangfordNum(share, *this);
-  }
-
-  virtual void print(void){
-    std::cout << "\nL(" << k << "," << n <<"):\n";
-
-    for (int i = 0; i < y.size(); ++i)
-      std::cout << y[i] << " ";
-
-    std::cout << std::endl;
+    return new LangfordNumberReified(share, *this);
   }
 };
 
-int main(int argc, char* argv[]){
-  ExtSizeOptions o("Langford Numbers");
-  if (argc < 2) {
-    std::cerr << "specify parameters k and n\n";
-    std::cerr << "usage is: ./langfordnum k n [gecode options] \n";
-    return -1;
+
+/**
+ * \brief %Example: Langford's number problem (regular version)
+ *
+ * See problem 24 at http://www.csplib.org/.
+ *
+ * \ingroup ExProblem
+ */
+class LangfordNumberRegular : public Example {
+protected:
+  int n, k;        ///< Problem parameters
+  IntVarArray y;   ///< Sequence variables
+
+public:
+  /// Construct model
+  LangfordNumberRegular(const LangfordNumberOptions& opt)
+    : n(opt.n), k(opt.k), y(this,k*n,1,n) {
+    // For placing two numbers 3 three steps apart, we construct the
+    // regular expression 0*100010*, and apply it to the projection of
+    // the sequence on the value.
+    for (int i = 1; i <= n; ++i) {
+      // Start of regular expression
+      REG reg = *REG(0) + REG(1);
+      // For each next number to place
+      for (int ki = 1; ki < k; ++ki) {
+        reg = reg + REG(0)(i, i) + REG(1);
+      }
+      // End of expression
+      reg = reg + *REG(0);
+      // Projection for value i
+      BoolVarArgs cv(k*n);
+      for (int cvi = k*n; cvi--; )
+        cv[cvi] = post(this, ~(y[cvi] == i));
+      DFA dfa = reg;
+      regular(this, cv, dfa);
+    } 
+
+    // Symmetry breaking
+    post(this, y[0] < y[n*k - 1]);
+
+    // Branching
+    branch(this, y, BVAR_SIZE_MIN, BVAL_MAX);
   }
-  char* name = argv[0];
-  o.k = atoi(argv[1]);
-  o.n = atoi(argv[2]);
-  argv[2] = name;
-  argv++;
-  argv++;
-  argc -= 2;
-  if (o.k < 1) {
-    std::cerr << "k must be at least 1!\n";
-    return -1;
+
+  /// Print solution
+  virtual void print(void){
+    std::cout << "\t";
+    for (int i = 0; i < y.size(); ++i)
+      std::cout << y[i] << " ";
+    std::cout << std::endl;
   }
-  if (o.k > o.n) {
-    std::cerr << "n must be at least k!\n";
-    return -1;
+  /// Constructor for cloning \a l
+  LangfordNumberRegular(bool share, LangfordNumberRegular& l)
+    : Example(share, l), n(l.n), k(l.k) {
+    y.update(this, share, l.y);
   }
-  o.icl(ICL_BND);
-  o.parse(argc, argv);
-  Example::run<LangfordNum,DFS,SizeOptions>(o);
+  /// Copy during cloning
+  virtual Space*
+  copy(bool share) {
+    return new LangfordNumberRegular(share, *this);
+  }
+};
+
+/** \brief Main-function
+ *  \relates LangfordNumber
+ */
+int 
+main(int argc, char* argv[]) {
+  LangfordNumberOptions opt("Langford Numbers",8,2);
+  opt.icl(ICL_DOM);
+  opt.propagation(PROP_REIFIED);
+  opt.propagation(PROP_REIFIED, "reified");
+  opt.propagation(PROP_REGULAR, "regular");
+  opt.parse(argc, argv);
+  if (opt.k < 1) {
+    std::cerr << "k must be at least 1!" << std::endl;
+    return 1;
+  }
+  if (opt.k > opt.n) {
+    std::cerr << "n must be at least k!" << std::endl;
+    return 1;
+  }
+  if (opt.propagation() == PROP_REIFIED)
+    Example::run<LangfordNumberReified,DFS,LangfordNumberOptions>(opt);
+  else
+    Example::run<LangfordNumberRegular,DFS,LangfordNumberOptions>(opt);
   return 0;
 }
 

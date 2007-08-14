@@ -47,6 +47,8 @@
  *   In IJCAI 99 Workshop on Non-binary Constraints,
  *   1999.
  *
+ * See also problem 6 at http://www.csplib.org/.
+ *
  * \ingroup ExProblem
  *
  */
