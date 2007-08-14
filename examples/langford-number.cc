@@ -60,8 +60,8 @@ public:
     Options::parse(argc,argv);
     if (argc < 3)
       return;
-    n = atoi(argv[1]);
-    k = atoi(argv[2]);
+    k = atoi(argv[1]);
+    n = atoi(argv[2]);
   }
   /// Print help message
   virtual void help(void) {
@@ -88,7 +88,7 @@ enum {
  */
 class LangfordNumberReified : public Example {
 protected:
-  int n, k;        ///< Problem parameters
+  int k, n;        ///< Problem parameters
   IntVarArray pos; ///< Position of values in sequence
   IntVarArray y;   ///< Sequence variables
 
@@ -126,7 +126,7 @@ public:
         element(this, y, p(i,j), i+1);
 
     // Branching
-    branch(this, pos, BVAR_SIZE_MIN, BVAL_MIN);
+    branch(this, y, BVAR_SIZE_MIN, BVAL_MAX);
   }
 
   /// Print solution
@@ -168,10 +168,26 @@ public:
   /// Construct model
   LangfordNumberRegular(const LangfordNumberOptions& opt)
     : n(opt.n), k(opt.k), y(this,k*n,1,n) {
-    // For placing two numbers 3 three steps apart, we construct the
+    // Boolean variables for channeling
+    BoolVarArgs b(k*n*n);
+
+    // Initialize
+    for (int i=n*n*k; i--; ) {
+      BoolVar bc(this,0,1); b[i]=bc;
+    }
+
+    // Post channel constraints
+    for (int i=0; i<n*k; i++) {
+      BoolVarArgs c(n);
+      for (int j=n; j--; ) 
+        c[j]=b[i*n+j];
+      channel(this, c, y[i], 1);
+    }
+
+    // For placing two numbers three steps apart, we construct the
     // regular expression 0*100010*, and apply it to the projection of
     // the sequence on the value.
-    for (int i = 1; i <= n; ++i) {
+    for (int i = 1; i <= n; i++) {
       // Start of regular expression
       REG reg = *REG(0) + REG(1);
       // For each next number to place
@@ -183,7 +199,7 @@ public:
       // Projection for value i
       BoolVarArgs cv(k*n);
       for (int cvi = k*n; cvi--; )
-        cv[cvi] = post(this, ~(y[cvi] == i));
+        cv[cvi] = b[cvi*n+(i-1)];
       DFA dfa = reg;
       regular(this, cv, dfa);
     } 
@@ -219,7 +235,7 @@ public:
  */
 int 
 main(int argc, char* argv[]) {
-  LangfordNumberOptions opt("Langford Numbers",8,2);
+  LangfordNumberOptions opt("Langford Numbers",3,9);
   opt.icl(ICL_DOM);
   opt.propagation(PROP_REIFIED);
   opt.propagation(PROP_REIFIED, "reified");
