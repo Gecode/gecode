@@ -63,27 +63,22 @@ private:
   int width, height;
   BoolVarArray b;
 
-  /// Access position (h,w) in the matrix.
+  /// Access position (h,w) in matrix
   BoolVar pos(int h, int w) {
     return b[h*width + w];
   }
 
-  /// Returns the next regular expression starting from spos.
+  /// Returns next regular expression starting from spos
   REG get_constraint(int& spos) {
-    // Useful to check that a new specification was entered correctly.
-    const bool print_spec = false;
-    REG r = *REG(0);
+    REG r0(0), r1(1);
+    REG border = *r0;
+    REG between = +r0;
     int size = spec[spos++];
-    if (print_spec) std::cout << size << "(" << spos << "): ";
-    for (int i = 0; i < size; ++i, ++spos) {
-      if (i) r = r + +REG(0);
-      if (print_spec) std::cout << spec[spos] << " ";
-      r = r + REG(1)(spec[spos],spec[spos]);
-    }
-    if (print_spec) std::cout << std::endl;
-    r = r + *REG(0);
-
-    return r;
+    REG r = border + r1(spec[spos],spec[spos]);
+    spos++;
+    for (int i=size-1; i--; spos++)
+      r = r + between + r1(spec[spos],spec[spos]);
+    return r + border;
   }
 
 
