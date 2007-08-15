@@ -220,6 +220,48 @@ namespace Gecode {
     e->data.symbol = s;
   }
 
+  REG::REG(const IntArgs& x) {
+    int n = x.size();
+    if (n < 1)
+      throw Int::TooFewArguments("REG");
+    GECODE_AUTOARRAY(Exp*,a,n);
+    // Initialize with symbols
+    for (int i=n; i--; ) {
+      a[i] = new Exp();
+      a[i]->use_cnt     = 1;
+      a[i]->_n_pos      = 1;
+      a[i]->type        = REG::Exp::ET_SYMBOL;
+      a[i]->data.symbol = x[i];
+    }
+    // Build a balanced tree of alternative nodes
+    while (n > 1) {
+      if (n & 1) {
+        n -= 1;
+        Exp* e1 = a[n];
+        Exp* e2 = a[0];
+        a[0] = new Exp;
+        a[0]->use_cnt      = 1;
+        a[0]->_n_pos       = e1->n_pos() + e2->n_pos();
+        a[0]->type         = REG::Exp::ET_OR;
+        a[0]->data.kids[0] = e1;
+        a[0]->data.kids[1] = e2;
+      } else {
+        n >>= 1;
+        for (int i=0; i<n; i++) {
+          Exp* e1 = a[2*i];
+          Exp* e2 = a[2*i+1];
+          a[i] = new Exp;
+          a[i]->use_cnt      = 1;
+          a[i]->_n_pos       = e1->n_pos() + e2->n_pos();
+          a[i]->type         = REG::Exp::ET_OR;
+          a[i]->data.kids[0] = e1;
+          a[i]->data.kids[1] = e2;
+        }
+      }
+    }
+    e = a[0];
+  }
+
   REG
   REG::operator|(const REG& r2) {
     if (e == r2.e)

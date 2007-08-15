@@ -806,13 +806,20 @@ namespace Gecode {
   public:
     /// Initialize from regular expression \a r
     REG(const REG& r);
-    /// Initialize from regular expression \a r
+    /// Assign to regular expression \a r
     const REG& operator=(const REG& r);
 
-    /// Initialize as empty sequence
+    /// Initialize as empty sequence (epsilon)
     REG(void);
-    /// Initialize as single integer
-    REG(int);
+    /// Initialize as single integer \a s
+    REG(int s);
+    /**
+     * \brief Initialize as alternative of integers
+     *
+     * Throws an exception of type Int::TooFewArguments if \a x
+     * is empty.
+     */
+    REG(const IntArgs& x);
     /// Return expression for: this expression at least \a n and at most \a m times
     REG operator()(unsigned int n, unsigned int m);
     /// Return expression for: this expression at least \a n times
