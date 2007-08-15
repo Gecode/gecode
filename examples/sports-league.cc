@@ -43,6 +43,7 @@
 #include "gecode/minimodel.hh"
 
 #include <algorithm>
+#include <iomanip>
 
 /// Entry in round robin schedule
 class Play {

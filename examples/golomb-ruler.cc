@@ -38,6 +38,8 @@
 #include "examples/support.hh"
 #include "gecode/minimodel.hh"
 
+#include <iomanip>
+
 /**
  * \brief %Example: Finding optimal %Golomb rulers
  *
