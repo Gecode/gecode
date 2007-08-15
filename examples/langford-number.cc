@@ -86,68 +86,89 @@ protected:
 public:
   /// Propagation to use for model
   enum {
-    PROP_REIFIED,  ///< Use only binary disequality constraints
-    PROP_REGULAR   ///< Use regular constraints
+    PROP_REIFIED,        ///< Use reified constraints
+    PROP_REGULAR,        ///< Use regular constraints
+    PROP_REGULAR_CHANNEL ///< Use regular and channel constraints
   };
   /// Construct model
   LangfordNumber(const LangfordNumberOptions& opt)
     : n(opt.n), k(opt.k), y(this,k*n,1,n) {
 
-    if (opt.propagation() == PROP_REIFIED) {
-
-      /// Position of values in sequence
-      IntVarArgs p(k*n);
-      for (int i=k*n; i--; )
-        p[i].init(this,0,k*n-1);
-      
-      /* 
-       * The occurences of v in the Langford sequence are v numbers apart.
-       *
-       * Let \#(i, v) denote the position of the i-th occurence of 
-       * value v in the Langford Sequence. Then 
-       *
-       * \f$ \forall i, j \in \{1, \dots, k\}, i \neq j:
-       *     \forall v \in \{1, \dots, n\}: \#(i, v) + (v + 1) = \#(j, v)\f$
-       *
-       */
-      for (int i=n; i--; )
-        for (int j=k-1; j--; )
-          post(this, p[i*k+j] + (i+2) == p[i*k+j+1]);
-
-      distinct(this, p, opt.icl());
-
-      // Channel positions <-> values
-      for (int i=n; i--; )
-        for (int j=k; j--; )
-          element(this, y, p[i*k+j], i+1);
-
-    } else {
-
-      // Boolean variables for channeling
-      BoolVarArgs b(k*n*n);
-      for (int i=n*n*k; i--; )
-        b[i].init(this,0,1);
-
-      // Post channel constraints
-      for (int i=n*k; i--; ) {
-        BoolVarArgs c(n);
-        for (int j=n; j--; ) 
-          c[j]=b[i*n+j];
-        channel(this, c, y[i], 1);
+    switch (opt.propagation()) {
+    case PROP_REIFIED:
+      {
+        /// Position of values in sequence
+        IntVarArgs p(k*n);
+        for (int i=k*n; i--; )
+          p[i].init(this,0,k*n-1);
+        
+        /* 
+         * The occurences of v in the Langford sequence are v numbers apart.
+         *
+         * Let \#(i, v) denote the position of the i-th occurence of 
+         * value v in the Langford Sequence. Then 
+         *
+         * \f$ \forall i, j \in \{1, \dots, k\}, i \neq j:
+         *     \forall v \in \{1, \dots, n\}: \#(i, v) + (v + 1) = \#(j, v)\f$
+         *
+         */
+        for (int i=n; i--; )
+          for (int j=k-1; j--; )
+            post(this, p[i*k+j] + (i+2) == p[i*k+j+1]);
+        
+        distinct(this, p, opt.icl());
+        
+        // Channel positions <-> values
+        for (int i=n; i--; )
+          for (int j=k; j--; )
+            element(this, y, p[i*k+j], i+1);
       }
-
-      // For placing two numbers three steps apart, we construct the
-      // regular expression 0*100010*, and apply it to the projection of
-      // the sequence on the value.
-      for (int v=1; v<=n; v++) {
-        // Projection for value v
-        BoolVarArgs c(k*n);
-        for (int i = k*n; i--; )
-          c[i] = b[i*n+(v-1)];
-        DFA dfa = *REG(0) + REG(1) + (REG(0)(v,v) + REG(1))(k-1,k-1) + *REG(0);
-        regular(this, c, dfa);
-      } 
-
+      break;
+    case PROP_REGULAR:
+      {
+        for (int v=1; v<=n; v++) {
+          // Construct regular expression for all symbols but v
+          IntArgs a(n-1);
+          for (int i=1; i<v; i++)
+            a[i-1]=i;
+          for (int i=v+1; i<=n; i++)
+            a[i-2]=i;
+          REG ra(a), rv(v);
+          // Regular expression
+          DFA dfa = *ra+rv+(ra(v,v)+rv)(k-1,k-1)+*ra;
+          regular(this, y, dfa);
+        }
+      }
+      break;
+    case PROP_REGULAR_CHANNEL:
+      {
+        // Boolean variables for channeling
+        BoolVarArgs b(k*n*n);
+        for (int i=n*n*k; i--; )
+          b[i].init(this,0,1);
+        
+        // Post channel constraints
+        for (int i=n*k; i--; ) {
+          BoolVarArgs c(n);
+          for (int j=n; j--; ) 
+            c[j]=b[i*n+j];
+          channel(this, c, y[i], 1);
+        }
+        
+        // For placing two numbers three steps apart, we construct the
+        // regular expression 0*100010*, and apply it to the projection of
+        // the sequence on the value.
+        REG r0(0), r1(1);
+        for (int v=1; v<=n; v++) {
+          // Projection for value v
+          BoolVarArgs c(k*n);
+          for (int i = k*n; i--; )
+            c[i] = b[i*n+(v-1)];
+          DFA dfa = *r0 + r1 + (r0(v,v) + r1)(k-1,k-1) + *r0;
+          regular(this, c, dfa);
+        }
+      }
+      break;
     }
       
     // Symmetry breaking
@@ -186,9 +207,10 @@ int
 main(int argc, char* argv[]) {
   LangfordNumberOptions opt("Langford Numbers",3,9);
   opt.icl(ICL_DOM);
-  opt.propagation(LangfordNumber::PROP_REGULAR);
+  opt.propagation(LangfordNumber::PROP_REGULAR_CHANNEL);
   opt.propagation(LangfordNumber::PROP_REIFIED, "reified");
   opt.propagation(LangfordNumber::PROP_REGULAR, "regular");
+  opt.propagation(LangfordNumber::PROP_REGULAR_CHANNEL, "regular-channel");
   opt.parse(argc, argv);
   if (opt.k < 1) {
     std::cerr << "k must be at least 1!" << std::endl;
