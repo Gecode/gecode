@@ -182,7 +182,7 @@ namespace Gecode {
     /// Memory Management
     void setmaxinc(int max);
     // void operator delete(void* p);
-    BMI* copy(void);
+    virtual SharedObject* copy(void) const;
     /// Check whether the buddy library has already been initialized 
     bool available(void);
   };
@@ -526,7 +526,7 @@ namespace Gecode {
   /**
    * \brief Manager for binary decision diagrams, using the buddy library
    */
-  class BuddyMgr : public SharedHandle<BMI> {
+  class BuddyMgr : public SharedHandle {
   public:
     
     /// Default constructor
@@ -563,8 +563,8 @@ namespace Gecode {
     void clear(void);
   };
   
-  forceinline BMI*
-  BMI::copy(void) {
+  forceinline SharedObject*
+  BMI::copy(void) const {
     throw BuddyException("Copying not allowed!");
   }
 
@@ -582,19 +582,19 @@ namespace Gecode {
   }
   
   forceinline
-  BuddyMgr::BuddyMgr(const BuddyMgr& m) : SharedHandle<BMI>(m) {}
+  BuddyMgr::BuddyMgr(const BuddyMgr& m) : SharedHandle(m) {}
 
   forceinline
-  BuddyMgr::BuddyMgr(BMI* m) : SharedHandle<BMI>(m){} 
+  BuddyMgr::BuddyMgr(BMI* m) : SharedHandle(m){} 
 
   forceinline void 
   BuddyMgr::level(CpltSetOutput l) { 
     assert(object() != NULL);
-    object()->level(l); 
+    static_cast<BMI*>(object())->level(l); 
   }
 
   forceinline CpltSetOutput
-  BuddyMgr::level(void) { return object()->level(); }
+  BuddyMgr::level(void) { return static_cast<BMI*>(object())->level(); }
 
   forceinline void
   BuddyMgr::init(int n, int c) { 
@@ -602,8 +602,8 @@ namespace Gecode {
       BMI* bm = new BMI(n, c);
       object(bm);
     } else {
-      if (!object()->available()) {
-        object()->init(n,c); 
+      if (!static_cast<BMI*>(object())->available()) {
+        static_cast<BMI*>(object())->init(n,c); 
       } 
     }
   }
@@ -613,7 +613,7 @@ namespace Gecode {
     if (object() == NULL) {
       throw BuddyException("Trying disposal on empty manager");
     } else {
-      object()->dispose();
+      static_cast<BMI*>(object())->dispose();
     }
   }
 
@@ -622,7 +622,7 @@ namespace Gecode {
     if (object() == NULL) {
       throw BuddyException("Trying setmaxinc on empty manager");
     } else {
-      object()->setmaxinc(max); 
+      static_cast<BMI*>(object())->setmaxinc(max); 
     }
   }
 
@@ -631,7 +631,7 @@ namespace Gecode {
     if (object() == NULL) {
       throw BuddyException("Trying debug on empty manager");
     } else {
-      object()->debug(out);
+      static_cast<BMI*>(object())->debug(out);
     }
   }
 
@@ -640,7 +640,7 @@ namespace Gecode {
     if (object() == NULL) {
       throw BuddyException("Trying available on empty manager");
     }
-    return object()->available();
+    return static_cast<BMI*>(object())->available();
   }
 
   forceinline void 
@@ -648,12 +648,12 @@ namespace Gecode {
     if (object() == NULL) {
       throw BuddyException("Trying to set debug on empty manager");
     } else {
-      object()->debug();
+      static_cast<BMI*>(object())->debug();
     }
   }
 
   forceinline BMI*
-  BuddyMgr::manager(void) { return object(); }
+  BuddyMgr::manager(void) { return static_cast<BMI*>(object()); }
 
   forceinline void
   BuddyMgr::clear(void) { object(NULL); }
