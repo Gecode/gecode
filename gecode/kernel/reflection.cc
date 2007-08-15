@@ -50,17 +50,22 @@ namespace Gecode { namespace Reflection {
   public:
     /// Map variable names to variable implementations
     std::map<std::string,VarBase*> nameToVar;
-    /// Map variable implementations to indices in the VarSpec vector
+    /// Map variable implementations to variable names
+    std::map<VarBase*,std::string> varToName;
+    /// Map variable implementations to indices
     std::map<VarBase*,int> m;
-    /// Vector of variable specifications
-    std::vector<VarSpec*>  v;
+    /// Map indices to variable implementations
+    std::vector<VarBase*>  var;
+    /// Map indices to variable specifications
+    std::vector<VarSpec*>  spec;
+        
     /// Destructor, deleting all specifications stored in \a v
     ~VarMapImp(void);
   };
   
   VarMap::VarMapImp::~VarMapImp(void) {
-    for (int i=v.size(); i--;)
-      delete v[i];
+    for (int i=spec.size(); i--;)
+      delete spec[i];
   }
   
   VarMap::VarMap(void) {
@@ -71,28 +76,8 @@ namespace Gecode { namespace Reflection {
     delete m;
   }
 
-  VarSpec&
-  VarMap::get(VarBase* x) {
-    std::map<VarBase*,int>::const_iterator i = m->m.find(x);
-    if (i==m->m.end())
-      throw new ReflectionException("Variable not in VarMap");
-    return *m->v[i->second];
-  }
-
-  void
-  VarMap::name(VarBase* x, const char* n) {
-    VarSpec& vs = get(x);
-    vs.name(n);
-    m->nameToVar[std::string(n)] = x;
-  }
-
-  VarSpec&
-  VarMap::get(int i) {
-    return *m->v[i];
-  }
-
   int
-  VarMap::getIndex(VarBase* x) {
+  VarMap::index(VarBase* x) const {
     std::map<VarBase*,int>::const_iterator i = m->m.find(x);
     if (i==m->m.end())
       return -1;
@@ -100,36 +85,114 @@ namespace Gecode { namespace Reflection {
   }
 
   int
-  VarMap::put(VarBase* x, VarSpec* spec) {
-    assert(m->m.find(x)==m->m.end());
-    m->m[x] = m->v.size();
-    m->v.push_back(spec);
-    if (spec->name() != NULL)
-      m->nameToVar[std::string(spec->name())] = x;
-    return m->v.size() - 1;
+  VarMap::index(const std::string& n) const {
+    std::map<std::string,VarBase*>::const_iterator i =
+      m->nameToVar.find(n);
+    if (i == m->nameToVar.end())
+      return -1;
+    return index(i->second);
+  }
+
+  bool
+  VarMap::nameIsKnown(const std::string& n) const {
+    std::map<std::string,VarBase*>::const_iterator i =
+      m->nameToVar.find(n);
+    return i != m->nameToVar.end();
+  }
+
+  bool
+  VarMap::hasName(VarBase* x) const {
+    std::map<VarBase*,std::string>::const_iterator i =
+      m->varToName.find(x);
+    return i != m->varToName.end();    
+  }
+
+  bool
+  VarMap::hasName(int i) const {
+    std::map<VarBase*,std::string>::const_iterator it =
+      m->varToName.find(m->var[i]);
+    return it != m->varToName.end();
+  }
+
+  std::string
+  VarMap::name(VarBase* x) const {
+    std::map<VarBase*,std::string>::const_iterator i =
+      m->varToName.find(x);
+    return i->second;
+  }
+
+  std::string
+  VarMap::name(int i) const {
+    std::map<VarBase*,std::string>::const_iterator it =
+      m->varToName.find(m->var[i]);
+    return it->second;
   }
 
   VarBase*
-  VarMap::variableByName(const char* n) {
+  VarMap::var(const std::string& n) const {
     std::map<std::string,VarBase*>::const_iterator i =
-      m->nameToVar.find(std::string(n));
+      m->nameToVar.find(n);
     if (i == m->nameToVar.end())
       return NULL;
     return i->second;
   }
-  
+
+  VarBase*
+  VarMap::var(int i) const {
+    return m->var[i];
+  }
+
+  VarSpec&
+  VarMap::spec(VarBase* x) const {
+    std::map<VarBase*,int>::const_iterator i = m->m.find(x);
+    if (i==m->m.end())
+      throw new ReflectionException("Variable not in VarMap");
+    return *m->spec[i->second];
+  }
+
+  VarSpec&
+  VarMap::spec(int i) const {
+    return *m->spec[i];
+  }
+
+  VarSpec&
+  VarMap::spec(const std::string& n) const {
+    return spec(var(n));
+  }
+
+  void
+  VarMap::name(VarBase* x, const std::string& n) {
+    m->nameToVar[n] = x;
+    m->varToName[x] = n;
+  }
+
+  int
+  VarMap::put(VarBase* x, VarSpec* spec) {
+    assert(m->m.find(x)==m->m.end());
+    m->m[x] = m->spec.size();
+    m->spec.push_back(spec);
+    m->var.push_back(x);
+    if (hasName(x)) {
+      spec->name(name(x).c_str());
+    } else if (spec->name() != NULL) {
+      m->nameToVar[std::string(spec->name())] = x;
+      m->varToName[x] = std::string(spec->name());
+    }
+    return m->spec.size() - 1;
+  }
+
   /* Variable map iterator */
 
   VarMapIter::VarMapIter(VarMap& m0) : m(m0), i(0) {}
 
   bool
   VarMapIter::operator()(void) const {
-    return i<m.m->v.size();
+    return i<m.m->spec.size();
   }
 
   VarSpec&
   VarMapIter::var(void) const {
-    return *m.m->v[i];
+    return *m.m->spec[i];
   }
 
   void
@@ -171,6 +234,48 @@ namespace Gecode { namespace Reflection {
     std::ostringstream s;
     print(s);
     return s.str();
+  }
+
+  // Registry
+  
+  Registry registry;
+  
+  VarBase*
+  Registry::createVar(Space* home, VarSpec& spec) {
+    std::map<int, varCreator>::iterator i = varCreators.find(spec.vti());
+    if (i == varCreators.end()) {
+      throw Reflection::ReflectionException("VTI not found");
+    }
+    return i->second(home, spec);
+  }
+
+  void
+  Registry::post(Space* home, const VarMap& vm, const ActorSpec& spec) {
+    std::map<std::string, poster>::iterator i = 
+      posters.find(std::string(spec.name()));
+    if (i == posters.end()) {
+      throw Reflection::ReflectionException("Constraint not found");
+    }
+    i->second(home, vm, spec);
+  }
+
+  void
+  Registry::add(int vti, varCreator vc) {
+    varCreators[vti] = vc;
+  }
+
+  void
+  Registry::add(const std::string& id, poster p) {
+    posters[id] = p;
+  }
+
+  void
+  Registry::print(std::ostream& out) {
+    out << "Posters: " << std::endl;
+    std::map<std::string, poster>::iterator i = posters.begin();
+    for (; i != posters.end(); ++i) {
+      out << i->first << std::endl;
+    }
   }
 
 }}

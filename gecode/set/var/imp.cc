@@ -136,7 +136,7 @@ namespace Gecode { namespace Set {
 
   Reflection::Arg*
   SetVarImp::spec(Space* home, Reflection::VarMap& m) {
-    int specIndex = m.getIndex(this);
+    int specIndex = m.index(this);
     if (specIndex != -1)
       return new Reflection::VarArg(specIndex);
 
@@ -146,7 +146,7 @@ namespace Gecode { namespace Set {
       while (lrs()) { glbsize++; ++lrs; }
     }
     
-    Reflection::ArrayArg<int>* glbdom = new Reflection::ArrayArg<int>(glbsize*2);
+    Reflection::IntArrayArg* glbdom = new Reflection::IntArrayArg(glbsize*2);
     BndSetRanges lr(glb);
     for (int count=0; lr(); ++lr) {
       (*glbdom)[count++] = lr.min();
@@ -160,7 +160,7 @@ namespace Gecode { namespace Set {
     }
     
     BndSetRanges ur(lub);
-    Reflection::ArrayArg<int>* lubdom = new Reflection::ArrayArg<int>(lubsize*2);
+    Reflection::IntArrayArg* lubdom = new Reflection::IntArrayArg(lubsize*2);
     for (int count=0; ur(); ++ur) {
       (*lubdom)[count++] = ur.min();
       (*lubdom)[count++] = ur.max();

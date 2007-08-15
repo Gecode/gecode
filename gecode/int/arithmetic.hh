@@ -83,6 +83,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus  propagate(Space* home);
     /// Post bounds-consistent propagator \f$ |x_0|=x_1\f$
     static  ExecStatus  post(Space* home, View x0, View x1);
+    /// Post propagator for specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
@@ -130,6 +133,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus  propagate(Space* home);
     /// Post domain-consistent propagator \f$ |x_0|=x_1\f$
     static  ExecStatus  post(Space* home, View x0, View x1);
+    /// Post propagator for specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
@@ -162,6 +168,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ \max\{x_0,x_1\}=x_2\f$
     static  ExecStatus post(Space* home, View x0, View x1, View x2);
+    /// Post propagator for specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
@@ -191,6 +200,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus propagate(Space* home);
     /// Post propagator \f$ \max x=y\f$
     static  ExecStatus post(Space* home, ViewArray<View>& x, View y);
+    /// Post propagator for specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
@@ -217,6 +229,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   public:
     /// Post propagator \f$x_0\cdot x_0=x_1\f$
     static ExecStatus post(Space* home, VA x0, VB x1);
+    /// Post propagator for specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
@@ -250,6 +265,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     virtual ExecStatus propagate(Space* home);
     /// Cost function (defined as PC_BINARY_HI)
     virtual PropCost cost(void) const;
+    /// Post propagator for specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Post propagator \f$x_0\cdot x_0=x_1\f$
     static  ExecStatus post(Space* home, View x0, View x1);
     /// Specification for this propagator
@@ -277,6 +295,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     MultPlus(Space* home, bool share, MultPlus<Val,VA,VB,VC>& p);
     /// Post propagator \f$x_0\cdot x_1=x_2\f$
     static ExecStatus post(Space* home, VA x0, VB x1, VC x2);
+    /// Post propagator for specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation
@@ -308,6 +329,9 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     Mult(Space* home, View x0, View x1, View x2);
     /// Post propagator \f$x_0\cdot x_1=x_2\f$
     static  ExecStatus post(Space* home, View x0, View x1, View x2);
+    /// Post propagator for specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Copy propagator during cloning
     virtual Actor* copy(Space* home, bool share);
     /// Perform propagation

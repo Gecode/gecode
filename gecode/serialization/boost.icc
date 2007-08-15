@@ -184,11 +184,11 @@ namespace boost { namespace serialization {
   }
 
   /////////////////////////////////////////////////////////////////////////
-  // Gecode::Reflection::ArrayArg<int>
+  // Gecode::Reflection::IntArrayArg
 
   template<class Archive>
   inline void save_construct_data(
-      Archive & ar, const Gecode::Reflection::ArrayArg<int>* t,
+      Archive & ar, const Gecode::Reflection::IntArrayArg* t,
       const unsigned int file_version
   ){
     // save data required to construct instance
@@ -197,19 +197,19 @@ namespace boost { namespace serialization {
   }
   template<class Archive>
   inline void load_construct_data(
-      Archive & ar, Gecode::Reflection::ArrayArg<int>* t,
+      Archive & ar, Gecode::Reflection::IntArrayArg* t,
       const unsigned int file_version
   ){
       // retrieve data from archive required to construct new instance
       int m;
       ar >> m;
       // invoke inplace constructor to initialize instance of my_class
-      ::new(t)Gecode::Reflection::ArrayArg<int>(m);
+      ::new(t)Gecode::Reflection::IntArrayArg(m);
   }
   template<class Archive>
   void save(
     Archive& ar,
-    const Gecode::Reflection::ArrayArg<int>& arg,
+    const Gecode::Reflection::IntArrayArg& arg,
     const unsigned int file_version
   ) {
     ar << boost::serialization::base_object<Gecode::Reflection::Arg>(arg);
@@ -221,7 +221,7 @@ namespace boost { namespace serialization {
   template<class Archive>
   void load(
     Archive& ar,
-    Gecode::Reflection::ArrayArg<int>& arg,
+    Gecode::Reflection::IntArrayArg& arg,
     const unsigned int file_version
   ) {
     ar >> boost::serialization::base_object<Gecode::Reflection::Arg>(arg);
@@ -234,7 +234,7 @@ namespace boost { namespace serialization {
   template<class Archive>
   void serialize(
     Archive& ar,
-    Gecode::Reflection::ArrayArg<int>& arg,
+    Gecode::Reflection::IntArrayArg& arg,
     const unsigned int file_version
   ) {
     split_free(ar, arg, file_version);
@@ -464,7 +464,7 @@ namespace boost { namespace serialization {
 BOOST_CLASS_EXPORT(Gecode::Reflection::Type)
 BOOST_CLASS_EXPORT(Gecode::Reflection::IntArg)
 BOOST_CLASS_EXPORT(Gecode::Reflection::VarArg)
-BOOST_CLASS_EXPORT(Gecode::Reflection::ArrayArg<int>)
+BOOST_CLASS_EXPORT(Gecode::Reflection::IntArrayArg)
 BOOST_CLASS_EXPORT(Gecode::Reflection::ArrayArg<Gecode::Reflection::Arg*>)
 BOOST_CLASS_EXPORT(Gecode::Reflection::TypedArg)
 BOOST_CLASS_EXPORT(Gecode::Reflection::StringArg)

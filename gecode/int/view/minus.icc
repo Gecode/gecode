@@ -52,6 +52,10 @@ namespace Gecode {
     MinusView::init(const IntView& x) {
       view = x;
     }
+    forceinline
+    MinusView::MinusView(Space* home, const Reflection::VarMap& vars,
+                         Reflection::Arg* arg)
+    : DerivedViewBase<IntView>(IntView(home, vars, arg)) {}
 
 
 

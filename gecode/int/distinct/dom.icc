@@ -671,6 +671,14 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
+  void
+  Dom<View>::post(Space* home, const Reflection::VarMap& vars,
+                  const Reflection::ActorSpec& spec) {
+    ViewArray<View> x(home, vars, spec[0]);
+    (void) new (home) Dom<View>(home, x);
+  }
+
+  template <class View>
   forceinline
   Dom<View>::Dom(Space* home, bool share, Dom<View>& p)
     : NaryPropagator<View,PC_INT_DOM>(home,share,p) {}

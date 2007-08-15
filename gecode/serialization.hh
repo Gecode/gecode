@@ -77,42 +77,6 @@ namespace Gecode {
 
   namespace Serialization {
 
-    /// Registry of constraint posting and variable creation functions
-    class Registry {
-    public:
-      /// The type of constraint posting functions
-      typedef void (*poster) (Space*,
-                              const std::vector<VarBase*>&,
-                              Reflection::ActorSpec&);
-      /// The type of variable creation functions
-      typedef VarBase* (*varCreator) (Space*,
-                                      Reflection::VarSpec&);
-
-      /// Create a new variable in \a home from \a spec and return it
-      GECODE_SERIALIZATION_EXPORT
-      VarBase* createVar(Space* home, Reflection::VarSpec& spec);
-
-      /// Post constraint in \a home for \a spec using variables \a vars
-      GECODE_SERIALIZATION_EXPORT
-      void post(Space* home, const std::vector<VarBase*>& vars,
-                Reflection::ActorSpec& spec);
-
-      /// Register variable creation function for variable type identifier \a vti
-      GECODE_SERIALIZATION_EXPORT
-      void add(int vti, varCreator vc);
-      /// Register constraint posting function for constraint name \a id
-      GECODE_SERIALIZATION_EXPORT
-      void add(const char* id, poster p);
-    private:
-      /// The registry of constraint posting functions
-      std::map<std::string, poster> posters;
-      /// The registry of variable creation functions
-      std::map<int, varCreator> varCreators;
-    };
-    
-    /// The registry object
-    extern Registry registry;
-
     /// Deserialization from VarSpec and ActorSpec
     class Deserializer {
     private:
@@ -120,8 +84,6 @@ namespace Gecode {
       Space* home;
       /// The VarMap that indicates which variables to reuse
       Reflection::VarMap& m;
-      /// A vector of newly created variables
-      std::vector<VarBase*> v;
       
     public:
       /// Constructor

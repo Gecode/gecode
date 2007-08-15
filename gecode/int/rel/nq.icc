@@ -157,14 +157,14 @@ namespace Gecode { namespace Int { namespace Rel {
     Reflection::ActorSpec& s =
       BinaryPropagator<ViewTuple<View,2>,PC_INT_DOM>
       ::spec(home, m, Reflection::mangle<View>("Int::Rel::NaryNq"));
-    Reflection::ArrayArg<Reflection::Arg*>* a = new Reflection::ArrayArg<Reflection::Arg*>(x.size()+2);
+    Reflection::ArrayArg* a = new Reflection::ArrayArg(x.size()+2);
     int count = 0;
     for (int i=0; i<x.size(); i++)
       (*a)[count++] = x[i][0].spec(home, m);
     (*a)[count++] = x0[0].spec(home, m);
     (*a)[count++] = x1[0].spec(home, m);
 
-    Reflection::ArrayArg<Reflection::Arg*>* b = new Reflection::ArrayArg<Reflection::Arg*>(x.size()+2);
+    Reflection::ArrayArg* b = new Reflection::ArrayArg(x.size()+2);
     count = 0;
     for (int i=0; i<x.size(); i++)
       (*b)[count++] = x[i][1].spec(home, m);

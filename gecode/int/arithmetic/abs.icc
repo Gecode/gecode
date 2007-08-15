@@ -106,6 +106,14 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     return ES_OK;
   }
 
+  template <class View>
+  forceinline void
+  AbsBnd<View>::post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec) {
+     View x0(home, vars, spec[0]->typedArg());
+     View x1(home, vars, spec[1]->typedArg());
+     (void) new (home) AbsBnd<View>(home,x0,x1);
+  }
 
   template <class View>
   forceinline
@@ -168,6 +176,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       }
     }
     return ES_OK;
+  }
+
+  template <class View>
+  forceinline void
+  AbsDom<View>::post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec) {
+     View x0(home, vars, spec[0]->typedArg());
+     View x1(home, vars, spec[1]->typedArg());
+     (void) new (home) AbsDom<View>(home,x0,x1);
   }
 
   template <class View>

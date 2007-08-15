@@ -269,7 +269,7 @@ namespace Gecode { namespace Set {
     for (ArrayRanges ars(ranges, size); ars(); ++ars) {
       count++;
     }
-    Reflection::ArrayArg<int>* args = new Reflection::ArrayArg<int>(count*2);
+    Reflection::IntArrayArg* args = new Reflection::IntArrayArg(count*2);
     count = 0;
     for (ArrayRanges ars(ranges, size); ars(); ++ars) {
       (*args)[count++] = ars.min();

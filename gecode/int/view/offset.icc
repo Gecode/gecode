@@ -56,7 +56,11 @@ namespace Gecode {
     OffsetView::offset(void) const {
       return c;
     }
-
+    forceinline
+    OffsetView::OffsetView(Space* home, const Reflection::VarMap& vars,
+                           Reflection::Arg* arg)
+    : DerivedViewBase<IntView>(IntView(home, vars, arg->second())),
+      c(arg->first()->toInt()) {}
 
     /*
      * Value access

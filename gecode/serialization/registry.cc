@@ -45,50 +45,15 @@
 #include "gecode/int/element.hh"
 
 namespace Gecode { namespace Serialization {  
-  
-  Registry registry;
-  
-  VarBase*
-  Registry::createVar(Space* home, Reflection::VarSpec& spec) {
-    std::map<int, varCreator>::iterator i = varCreators.find(spec.vti());
-    if (i == varCreators.end()) {
-      /// TODO: throw exception
-      std::cout << "VTI " << spec.vti() << " not found. Aborting." << std::endl;
-      std::exit(2);
-    }
-    return i->second(home, spec);
-  }
 
-  void
-  Registry::post(Space* home, const std::vector<VarBase*>& v,
-                 Reflection::ActorSpec& spec) {
-    std::map<std::string, poster>::iterator i = posters.find(std::string(spec.name()));
-    if (i == posters.end()) {
-      std::cout << "Constraint " << spec.name() << " not found. Aborting." << std::endl;
-      /// TODO: throw exception
-      std::exit(2);
-    }
-    i->second(home, v, spec);
-  }
-
-  void
-  Registry::add(int vti, varCreator vc) {
-    varCreators[vti] = vc;
-  }
-
-  void
-  Registry::add(const char* id, poster p) {
-    posters[std::string(id)] = p;
-  }
-    
   namespace {
 
     class ArrayArgIter {
     private:
-      Reflection::ArrayArg<int>& a;
+      Reflection::IntArrayArg& a;
       int n;
     public:
-      ArrayArgIter(Reflection::ArrayArg<int>* a0) : a(*a0), n(0) {}
+      ArrayArgIter(Reflection::IntArrayArg* a0) : a(*a0), n(0) {}
       bool operator()(void) { return n < a.size(); }
       void operator++(void) { n += 2; }
       int min(void) const { return a[n]; }
@@ -97,11 +62,8 @@ namespace Gecode { namespace Serialization {
     };
     
     VarBase* createIntVar(Space* home, Reflection::VarSpec& spec) {
-      ArrayArgIter ai(spec.dom()->toArray<int>());
-      IntSet dom(ai);
-      IntVar v(home, dom);
-      Int::IntView iv(v);
-      return iv.variable();
+      ArrayArgIter ai(spec.dom()->toIntArray());
+      return Int::IntView(IntVar(home, IntSet(ai))).variable();
     }
     VarBase* createBoolVar(Space* home, Reflection::VarSpec& spec) {
       return NULL;
@@ -115,10 +77,10 @@ namespace Gecode { namespace Serialization {
     class VariableCreators {
     public:
         VariableCreators() {
-        registry.add(VTI_INT, createIntVar);
-        registry.add(VTI_BOOL, createBoolVar);
+        Reflection::registry.add(VTI_INT, createIntVar);
+        Reflection::registry.add(VTI_BOOL, createBoolVar);
 #ifdef GECODE_HAVE_SET_VARS
-        registry.add(VTI_SET, createSetVar);
+        Reflection::registry.add(VTI_SET, createSetVar);
 #endif
       }
     };

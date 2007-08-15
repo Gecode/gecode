@@ -149,6 +149,9 @@ namespace Gecode {
     ViewArray(Space* home, int m);
     /// Initialize from view array \a a (share elements)
     ViewArray(const ViewArray<View>& a);
+    /// Initialize from specification \a spec with variables \a vars
+    ViewArray(Space* home, const Reflection::VarMap& vars,
+              Reflection::Arg* spec);
     /// Initialize from view array \a a (copy elements)
     ViewArray(Space* home, const ViewArray<View>& a);
     /// Initialize from view array \a a (share elements)
@@ -610,6 +613,18 @@ namespace Gecode {
   }
 
   template <class View>
+  ViewArray<View>::ViewArray(Space* home, const Reflection::VarMap& vars,
+                             Reflection::Arg* spec) {
+    Reflection::Arg* aa = spec->typedArg();
+    Reflection::ArrayArg* a = 
+      aa->toArray();
+    n = a->size();
+    x = (n>0) ? static_cast<View*>(home->alloc(sizeof(View)*n)) : NULL;
+    for (int i=n; i--;)
+      x[i] = View(home, vars, (*a)[i]);
+  }
+
+  template <class View>
   forceinline
   ViewArray<View>::ViewArray(const ViewArray<View>& a)
     : n(a.n), x(a.x) {}
@@ -889,7 +904,7 @@ namespace Gecode {
   ViewArray<View>::spec(Space* home, Reflection::VarMap& m) {
     if (n == 0)
       return NULL;
-    Reflection::ArrayArg<Reflection::Arg*>* s = new Reflection::ArrayArg<Reflection::Arg*>(n);
+    Reflection::ArrayArg* s = new Reflection::ArrayArg(n);
     for (int i = 0; i<n; i++)
       (*s)[i] = x[i].spec(home, m);
     Reflection::TypedArg* ta = new Reflection::TypedArg(View::type(), s);

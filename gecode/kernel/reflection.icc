@@ -38,6 +38,8 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
+#include <string>
+#include <map>
 
 namespace Gecode { namespace Reflection {
   
@@ -48,7 +50,8 @@ namespace Gecode { namespace Reflection {
     ReflectionException(const char* what) : Exception("Reflection", what) {}
   };
   
-  template <class T> class ArrayArg;
+  class ArrayArg;
+  class IntArrayArg;
   class StringArg;
   
   /**
@@ -114,11 +117,13 @@ namespace Gecode { namespace Reflection {
     /// Return the variable number that this argument represents
     int          toVar(void);
     /// Test if this represents an array
-    template <class T>
     bool         isArray(void);
     /// Return the array that this argument represents
-    template <class T>
-    ArrayArg<T>* toArray(void);
+    ArrayArg*    toArray(void);
+    /// Test if this represents an array
+    bool         isIntArray(void);
+    /// Return the array that this argument represents
+    IntArrayArg* toIntArray(void);
     /// Test if this represents a string
     bool         isString(void);
     /// Return the string that this argument represents
@@ -167,25 +172,44 @@ namespace Gecode { namespace Reflection {
     * \brief Array arguments
     * \ingroup TaskIntReflect
     */
-  template <class T>
   class ArrayArg : public Arg {
   private:
     /// Size of the array
     int  n;
     /// The actual array
-    T* a;    
+    Arg** a;
   public:
     /// Constructor
     ArrayArg(int n0);
-    /// Construct from given array
-    template <class A> ArrayArg(const A& a);
     /// Destructor
     virtual ~ArrayArg(void);
     
-    const T& operator[](int i) const;
-    T& operator[](int i);
+    // const Arg*& operator[](int i) const;
+    Arg*& operator[](int i);
     int size(void) const;
+  };
+
+  /**
+    * \brief Integer array arguments
+    * \ingroup TaskIntReflect
+    */
+  class IntArrayArg : public Arg {
+  private:
+    /// Size of the array
+    int  n;
+    /// The actual array
+    int* a;    
+  public:
+    /// Constructor
+    IntArrayArg(int n0);
+    /// Construct from given array \a a
+    template <class A> IntArrayArg(const A& a);
+    /// Destructor
+    virtual ~IntArrayArg(void);
     
+    const int& operator[](int i) const;
+    int& operator[](int i);
+    int size(void) const;
   };
 
   /**
@@ -360,6 +384,61 @@ namespace Gecode { namespace Reflection {
     ActorSpec& actor(void) const;
   };
 
+  /// Registry of constraint posting and variable creation functions
+  class Registry {
+  public:
+    /// The type of constraint posting functions
+    typedef void (*poster) (Space*, const VarMap&, const ActorSpec&);
+    /// The type of variable creation functions
+    typedef VarBase* (*varCreator) (Space*, VarSpec&);
+
+    /// Create a new variable in \a home from \a spec and return it
+    GECODE_KERNEL_EXPORT
+    VarBase* createVar(Space* home, VarSpec& spec);
+
+    /// Post constraint in \a home for \a spec using variables \a vars
+    GECODE_KERNEL_EXPORT
+    void post(Space* home, const VarMap& vm, const ActorSpec& spec);
+
+    /// Register variable creation function for variable type identifier \a vti
+    GECODE_KERNEL_EXPORT
+    void add(int vti, varCreator vc);
+    /// Register constraint posting function for constraint name \a id
+    GECODE_KERNEL_EXPORT
+    void add(const std::string& id, poster p);
+    /// Print list of all registered posters to \a out
+    GECODE_KERNEL_EXPORT void print(std::ostream& out);
+  private:
+    /// The registry of constraint posting functions
+    std::map<std::string, poster> posters;
+    /// The registry of variable creation functions
+    std::map<int, varCreator> varCreators;
+  };
+  
+  /// The registry object
+  extern Registry registry;
+
+  /** \brief Class used for registering propagators
+    *
+    * The registered Propagator class \a P has to provide two functions:
+    *  - static std::string name(void)
+    *  - static void post(Space*, const VarMap&, const ActorSpec&)
+    */
+  template <class P>
+  class Registrar {
+  public:
+    /// Default constructor
+    Registrar(void);
+  };
+
+#define GECODE_REGISTER1(P) \
+  ::Gecode::Reflection::Registrar< P > GECODE_FRESH(r);
+#define GECODE_REGISTER2(P1,P2) \
+  ::Gecode::Reflection::Registrar< P1,P2 > GECODE_FRESH(r);
+#define GECODE_REGISTER3(P1,P2,P3) \
+  ::Gecode::Reflection::Registrar< P1,P2,P3 > GECODE_FRESH(r);
+#define GECODE_REGISTER4(P1,P2,P3,P4) \
+  ::Gecode::Reflection::Registrar< P1,P2,P3,P4 > GECODE_FRESH(r);
 
   /**************************************
    * Implementations
@@ -389,15 +468,21 @@ namespace Gecode { namespace Reflection {
     return static_cast<VarArg*>(this)->i;
   }
 
-  template <class T>
   forceinline bool
   Arg::isArray(void) {
-    return (dynamic_cast<ArrayArg<T>*>(this) != NULL);
+    return (dynamic_cast<ArrayArg*>(this) != NULL);
   }
-  template <class T>
-  forceinline ArrayArg<T>*
+  forceinline ArrayArg*
   Arg::toArray(void) {
-    return static_cast<ArrayArg<T>*>(this);
+    return static_cast<ArrayArg*>(this);
+  }
+  forceinline bool
+  Arg::isIntArray(void) {
+    return (dynamic_cast<IntArrayArg*>(this) != NULL);
+  }
+  forceinline IntArrayArg*
+  Arg::toIntArray(void) {
+    return static_cast<IntArrayArg*>(this);
   }
 
   forceinline bool
@@ -441,51 +526,59 @@ namespace Gecode { namespace Reflection {
   forceinline
   IntArg::IntArg(int i0) : i(i0) {}
 
-  template <class T>
-  forceinline const T&
-  ArrayArg<T>::operator[](int i) const {
+  // forceinline const Arg*&
+  // ArrayArg::operator[](int i) const {
+  //   assert(i < n);
+  //   return a[i];
+  // }
+  forceinline Arg*&
+  ArrayArg::operator[](int i) {
     assert(i < n);
     return a[i];
   }
-  template <class T>
-  forceinline T&
-  ArrayArg<T>::operator[](int i) {
-    assert(i < n);
-    return a[i];
-  }
-  template <class T>
   forceinline int
-  ArrayArg<T>::size(void) const {
+  ArrayArg::size(void) const {
     return n;
   }
-
-
-  template <class T>
   forceinline
-  ArrayArg<T>::ArrayArg(int n0) : n(n0) {
-    a = static_cast<T*>(Memory::malloc(sizeof(T)*n));
+  ArrayArg::ArrayArg(int n0) : n(n0) {
+    a = static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*n));
   }
-
-  template <class T> template<class A>
   forceinline
-  ArrayArg<T>::ArrayArg(const A& a0) : n(a0.size()) {
-    a = static_cast<T*>(Memory::malloc(sizeof(T)*n));
-    for (int i=n; i--;)
-      a[i] = a0[i];
-  }
-  
-  template <class T>
-  forceinline
-  ArrayArg<T>::~ArrayArg(void) {
-    Memory::free(a);
-  }
-
-  template<>
-  forceinline
-  ArrayArg<Arg*>::~ArrayArg(void) {
+  ArrayArg::~ArrayArg(void) {
     for (int i=n; i--;)
       delete a[i];
     Memory::free(a);
+  }
+
+  forceinline const int&
+  IntArrayArg::operator[](int i) const {
+    assert(i < n);
+    return a[i];
+  }
+  forceinline int&
+  IntArrayArg::operator[](int i) {
+    assert(i < n);
+    return a[i];
+  }
+  forceinline int
+  IntArrayArg::size(void) const {
+    return n;
+  }
+  forceinline
+  IntArrayArg::IntArrayArg(int n0) : n(n0) {
+    a = static_cast<int*>(Memory::malloc(sizeof(int)*n));
+  }
+  forceinline
+  IntArrayArg::~IntArrayArg(void) {
+    Memory::free(a);
+  }
+  template<class A>
+  forceinline
+  IntArrayArg::IntArrayArg(const A& a0) : n(a0.size()) {
+    a = static_cast<int*>(Memory::malloc(sizeof(int)*n));
+    for (int i=n; i--;)
+      a[i] = a0[i];
   }
 
   forceinline
@@ -774,51 +867,70 @@ namespace Gecode { namespace Reflection {
     return *curSpec;
   }
 
+  /** \brief String representation for View types, used for name mangling
+    */
   template <class View>
   class TypeOf {
   public:
+    /// Return string representation
     static std::string t(void) { return View::type()->toString(); }
   };
   
+  /** \brief String representation for bool, used for name mangling
+    */
   template <>
   class TypeOf<bool> {
   public:
+    /// Return string representation
     static std::string t(void) { return std::string("bool"); }
   };
 
+  /** \brief String representation for ints, used for name mangling
+    */
   template <>
   class TypeOf<int> {
   public:
+    /// Return string representation
     static std::string t(void) { return std::string("int"); }
   };
 
+  /** \brief String representation for doubles, used for name mangling
+    */
   template <>
   class TypeOf<double> {
   public:
+    /// Return string representation
     static std::string t(void) { return std::string("double"); }
   };
 
 }
   class IntSet;
 namespace Reflection {
+
+  /** \brief String representation for IntSets, used for name mangling
+    */
   template <>
   class TypeOf<const IntSet> {
   public:
+    /// Return string representation
     static std::string t(void) { return std::string("IntSet"); }    
   };
 
+  /// Mangle name with type information
   template <class View0>
   forceinline std::string
   mangle(const char* name) {
     return std::string(name) + "<" + std::string(TypeOf<View0>::t())
            + ">";    
   }
+  /// Mangle name with type information
   template <class View0, class View1>
   forceinline std::string
   mangle(const char* name) {
     return std::string(name) + "<" + TypeOf<View0>::t()
          + "," + TypeOf<View1>::t() + ">";
   }
+  /// Mangle name with type information
   template <class View0, class View1, class View2>
   forceinline std::string
   mangle(const char* name) {
@@ -826,6 +938,7 @@ namespace Reflection {
          + "," + TypeOf<View1>::t() + ","
          + TypeOf<View2>::t() + ">";
   }
+  /// Mangle name with type information
   template <class View0, class View1, class View2, class View3>
   forceinline std::string
   mangle(const char* name) {
@@ -833,6 +946,12 @@ namespace Reflection {
          + "," + TypeOf<View1>::t() + ","
          + "," + TypeOf<View2>::t() + ","
          + TypeOf<View3>::t() + ">";
+  }
+  
+  template <class P>
+  forceinline
+  Registrar<P>::Registrar(void) {
+    registry.add(P::name(), &P::post);
   }
 
 }}

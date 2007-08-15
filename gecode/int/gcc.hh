@@ -112,8 +112,8 @@ namespace Gecode { namespace Int { namespace GCC {
     /**
      * \brief Post propagator for views \a x and cardinalities \a k
      *
-     * \a all denotes whether the propagator uses all value occuring
-     * in the domains of the problem vies specified in \a x. Also
+     * \a all denotes whether the propagator uses all values occuring
+     * in the domains of the problem views specified in \a x. Also
      * checks whether \a x and \a k contain shared views.
      */
     static  ExecStatus  post(Space* home,
@@ -282,8 +282,8 @@ namespace Gecode { namespace Int { namespace GCC {
     /**
      * \brief Post propagator for views \a x and cardinalities \a k
      *
-     * \a all denotes whether the propagator uses all value occuring
-     * in the domains of the problem vies specified in \a x.
+     * \a all denotes whether the propagator uses all values occuring
+     * in the domains of the problem views specified in \a x.
      */
     static  ExecStatus  post(Space* home,
                              ViewArray<View>& x, ViewArray<Card>& k,
@@ -331,8 +331,8 @@ namespace Gecode { namespace Int { namespace GCC {
     /**
      * \brief Post propagator for views \a x and cardinalities \a k
      *
-     * \a all denotes whether the propagator uses all value occuring
-     * in the domains of the problem vies specified in \a x.
+     * \a all denotes whether the propagator uses all values occuring
+     * in the domains of the problem views specified in \a x.
      */
     static  ExecStatus  post(Space* home,
                              ViewArray<View>& x, ViewArray<Card>& k,

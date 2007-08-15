@@ -149,6 +149,9 @@ namespace Gecode {
       IntView(const IntVar& x);
       /// Initialize from integer variable \a x
       IntView(IntVarImp* x);
+      /// Initialize from specification
+      IntView(Space* home, const Reflection::VarMap& vars,
+              Reflection::Arg* arg);
       //@}
 
       /// \name Value access
@@ -325,6 +328,9 @@ namespace Gecode {
       MinusView(void);
       /// Initialize with integer view \a x
       MinusView(const IntView& x);
+      /// Initialize from specification
+      MinusView(Space* home, const Reflection::VarMap& vars,
+                Reflection::Arg* arg);
       /// Initialize with integer view \a x
       void init(const IntView& x);
       //@}
@@ -528,6 +534,9 @@ namespace Gecode {
       OffsetView(void);
       /// Initialize with integer view \a x and offset \a c
       OffsetView(const IntView& x, int c);
+      /// Initialize from specification
+      OffsetView(Space* home, const Reflection::VarMap& vars,
+                 Reflection::Arg* arg);
       /// Initialize with integer view \a x and offset \a c
       void init(const IntView& x, int c);
       /// Return offset

@@ -148,6 +148,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class VA, class VB>
+  forceinline void
+  SquarePlus<VA,VB>::post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec) {
+     VA x0(home, vars, spec[0]->typedArg());
+     VB x1(home, vars, spec[1]->typedArg());
+     (void) new (home) SquarePlus<VA,VB>(home,x0,x1);
+  }
+
+  template <class VA, class VB>
   forceinline
   SquarePlus<VA,VB>::SquarePlus(Space* home, bool share, SquarePlus<VA,VB>& p)
     : MixBinaryPropagator<VA,PC_INT_BND,VB,PC_INT_BND>(home,share,p) {}
@@ -225,6 +234,15 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       return SquarePlus<MinusView,IntView>::post(home,x0,x1);
     (void) new (home) Square<View>(home,x0,x1);
     return ES_OK;
+  }
+
+  template <class View>
+  forceinline void
+  Square<View>::post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec) {
+     View x0(home, vars, spec[0]->typedArg());
+     View x1(home, vars, spec[1]->typedArg());
+     (void) new (home) Square<View>(home,x0,x1);
   }
 
   template <class View>
@@ -359,6 +377,16 @@ namespace Gecode { namespace Int { namespace Arithmetic {
       (void) new (home) MultPlus<int,VA,VB,VC>(home,x0,x1,x2);
     }
     return ES_OK;
+  }
+
+  template <class Val, class VA, class VB, class VC>
+  forceinline void
+  MultPlus<Val,VA,VB,VC>::post(Space* home, const Reflection::VarMap& vars,
+                               const Reflection::ActorSpec& spec) {
+     VA x0(home, vars, spec[0]->typedArg());
+     VB x1(home, vars, spec[1]->typedArg());
+     VC x2(home, vars, spec[2]->typedArg());
+     (void) new (home) MultPlus<Val,VA,VB,VC>(home,x0,x1,x2);
   }
 
   template <class Val, class VA, class VB, class VC>
@@ -529,6 +557,16 @@ namespace Gecode { namespace Int { namespace Arithmetic {
     std::swap(x0,x1);
   post_npn:
     return MultPlus<double,MinusView,IntView,MinusView>::post(home,x0,x1,x2);
+  }
+
+  template <class View>
+  forceinline void
+  Mult<View>::post(Space* home, const Reflection::VarMap& vars,
+                   const Reflection::ActorSpec& spec) {
+     View x0(home, vars, spec[0]->typedArg());
+     View x1(home, vars, spec[1]->typedArg());
+     View x2(home, vars, spec[2]->typedArg());
+     (void) new (home) Mult<View>(home,x0,x1,x2);
   }
 
   template <class View>

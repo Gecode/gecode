@@ -51,32 +51,60 @@ namespace Gecode { namespace Reflection {
     class VarMapImp;
     /// The actual map
     VarMapImp* m;
-    /// Register name \a n for variable \a x
-    GECODE_KERNEL_EXPORT void name(VarBase* x, const char* n);
   public:
     /// Default constructor
     GECODE_KERNEL_EXPORT VarMap(void);
     /// Destructor
     GECODE_KERNEL_EXPORT ~VarMap(void);
-    /// Return variable specification for variable \a x
-    GECODE_KERNEL_EXPORT VarSpec& get(VarBase* x);
-    /// Return the index of variable \a x in the table
-    GECODE_KERNEL_EXPORT int      getIndex(VarBase* x);
-    /// Return the variable at index \a i in the table
-    GECODE_KERNEL_EXPORT VarSpec& get(int i);
-    /// Insert specification \a vs for variable \a x
-    GECODE_KERNEL_EXPORT int      put(VarBase* x, VarSpec* vs);
-    /// Get variable with name \a n
-    GECODE_KERNEL_EXPORT VarBase* variableByName(const char* n);
+    
+    /// Return index for variable \a x
+    GECODE_KERNEL_EXPORT int index(VarBase* x) const;
+    /// Return index for variable with name \a n
+    GECODE_KERNEL_EXPORT int index(const std::string& n) const;
+
+    /// Return if variable with name \a n is known
+    GECODE_KERNEL_EXPORT bool nameIsKnown(const std::string& n) const;
+
+    /// Return if variable \a x has a name
+    GECODE_KERNEL_EXPORT bool hasName(VarBase* x) const;
+    /// Return if variable at index \a i has a name
+    GECODE_KERNEL_EXPORT bool hasName(int i) const;
+
+    /// Return name for variable \a x
+    GECODE_KERNEL_EXPORT std::string name(VarBase* x) const;
+    /// Return name for variable at index \a i
+    GECODE_KERNEL_EXPORT std::string name(int i) const;
+
+    /// Return variable with name \a n
+    GECODE_KERNEL_EXPORT VarBase* var(const std::string& n) const;
+    /// Return variable at index \a i
+    GECODE_KERNEL_EXPORT VarBase* var(int i) const;
+
+    /// Return specification for variable \a x
+    GECODE_KERNEL_EXPORT VarSpec& spec(VarBase* x) const;
+    /// Return specification for variable at index \a i
+    GECODE_KERNEL_EXPORT VarSpec& spec(int i) const;
+    /// Return specification for variable with name \a n
+    GECODE_KERNEL_EXPORT VarSpec& spec(const std::string& n) const;
+
+    /// Register name \a n for variable \a x
+    GECODE_KERNEL_EXPORT void name(VarBase* x, const std::string& n);
+
+    /// Insert specification \a vs for variable \a x, return index
+    GECODE_KERNEL_EXPORT int put(VarBase* x, VarSpec* vs);
+
+    /// \name Interface for modeling
+    //@{
     /// Insert specification for variable \a v with name \a n
     template <class Var> void
-    put(Space* home, const Var& v, const char* n);
+    put(Space* home, const Var& v, const std::string& n);
     /// Insert specifications for variables in \a x with name \a n
     template <class Var> void
-    putArray(Space* home, const VarArgArray<Var>& v, const char* n);
+    putArray(Space* home, const VarArgArray<Var>& v, const std::string& n);
     /// Insert specifications for variables in \a x with name \a n
     template <class Var> void
-    putArray(Space* home, const VarArray<Var>& v, const char* n);
+    putArray(Space* home, const VarArray<Var>& v, const std::string& n);
+    //@}
   };
   
   /**
@@ -112,27 +140,27 @@ namespace Gecode { namespace Reflection {
    */
 
   template <class Var> void
-  VarMap::put(Space* home, const Var& x, const char* n) {
+  VarMap::put(Space* home, const Var& x, const std::string& n) {
     typename VarViewTraits<Var>::View v(x);
-    Arg* a = v.spec(home, *this);
     name(v.variable(), n);
-    delete a;
   }
 
   template <class Var> void
-  VarMap::putArray(Space* home, const VarArgArray<Var>& x, const char* n) {
+  VarMap::putArray(Space* home, const VarArgArray<Var>& x,
+                   const std::string& n) {
     for (int i=0; i<x.size(); i++) {
       std::stringstream s;
       s << i;
-      put(home, x[i], (std::string(n)+s.str()).c_str());
+      put(home, x[i], n+s.str());
     }
   }
   template <class Var> void
-  VarMap::putArray(Space* home, const VarArray<Var>& x, const char* n) {
+  VarMap::putArray(Space* home, const VarArray<Var>& x,
+                   const std::string& n) {
     for (int i=0; i<x.size(); i++) {
       std::stringstream s;
       s << i;
-      put(home, x[i], (std::string(n)+s.str()).c_str());
+      put(home, x[i], n+s.str());
     }
   }
 

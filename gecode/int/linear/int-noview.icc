@@ -227,7 +227,7 @@ namespace Gecode {
     Reflection::Arg* spec(Space* home, Reflection::VarMap& m) {
       return new Reflection::TypedArg(
         new Reflection::Type("Int::Linear::NoView"),
-        new Reflection::ArrayArg<Reflection::Arg*>(0));
+        new Reflection::ArrayArg(0));
     }
     //@}
 

@@ -203,10 +203,10 @@ namespace Gecode { namespace Int { namespace Linear {
                                        const std::string& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
 
-    Reflection::ArrayArg<int>* coeff =
-      new Reflection::ArrayArg<int>(p.size()+n.size());
-    Reflection::ArrayArg<Reflection::Arg*>* a =
-      new Reflection::ArrayArg<Reflection::Arg*>(p.size()+n.size());
+    Reflection::IntArrayArg* coeff =
+      new Reflection::IntArrayArg(p.size()+n.size());
+    Reflection::ArrayArg* a =
+      new Reflection::ArrayArg(p.size()+n.size());
     int count = 0;
     for (ScaleBool* f = p.fst(); f != p.lst(); f++) {
       (*coeff)[count] = f->a;

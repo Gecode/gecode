@@ -257,7 +257,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     int count = 0;
     for (BndSetRanges iod(intOfDets); iod(); ++iod)
       count++;
-    Reflection::ArrayArg<int>* a = new Reflection::ArrayArg<int>(count*2);
+    Reflection::IntArrayArg* a = new Reflection::IntArrayArg(count*2);
     count = 0;
     for (BndSetRanges iod(intOfDets); iod(); ++iod) {
       (*a)[count++] = iod.min();

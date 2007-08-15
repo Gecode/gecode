@@ -43,19 +43,20 @@ namespace Gecode { namespace Serialization {
   Deserializer::var(Reflection::VarSpec& spec) {
 	  VarBase* vb;
     if (spec.name() != NULL &&
-        (vb = m.variableByName(spec.name())) != NULL) {
+        (vb = m.var(spec.name())) != NULL) {
       // TODO: assert that spec and original var are compatible,
       // constrain domain of var to spec
-      v.push_back(vb);
+      // m.newVar(vb);
     } else {
-      v.push_back(registry.createVar(home, spec));
-      (void) m.put(v[v.size()-1], new Reflection::VarSpec(spec));
+      vb = Reflection::registry.createVar(home, spec);
+      // m.newVar(vb);
+      // (void) m.put(vb, new Reflection::VarSpec(spec));
     }
   }
 
   void
   Deserializer::post(Reflection::ActorSpec& spec) {
-    registry.post(home, v, spec);
+    Reflection::registry.post(home, m, spec);
   }
   
     

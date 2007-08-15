@@ -194,6 +194,14 @@ namespace Gecode { namespace Int { namespace Distinct {
     return ES_OK;
   }
 
+  template <class View>
+  void
+  Val<View>::post(Space* home, const Reflection::VarMap& vars,
+                  const Reflection::ActorSpec& spec) {
+    ViewArray<View> x(home, vars, spec[0]);
+    (void) new (home) Val<View>(home, x);
+  }
+
 }}}
 
 // STATISTICS: int-prop

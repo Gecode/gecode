@@ -200,8 +200,8 @@ namespace Gecode { namespace Set { namespace Int {
   Reflection::ActorSpec&
   Weights::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name());
-    return s << new Reflection::ArrayArg<int>(elements)
-             << new Reflection::ArrayArg<int>(weights)
+    return s << new Reflection::IntArrayArg(elements)
+             << new Reflection::IntArrayArg(weights)
              << Reflection::typedSpec(home, m, x)
              << Reflection::typedSpec(home, m, y);
   }

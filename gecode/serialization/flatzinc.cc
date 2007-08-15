@@ -47,10 +47,10 @@ namespace Gecode {
     void emitIntVar(ostream& os, int varNo, VarSpec& vs) {
       os << "var ";
       Arg* dom = vs.dom();
-      if (!dom->isArray<int>())
+      if (!dom->isIntArray())
         throw Exception("Serialization",
         "Internal error: invalid domain specification for IntVar.");
-      ArrayArg<int>* a = dom->toArray<int>();
+      IntArrayArg* a = dom->toIntArray();
       if (a->size() == 2) {
         os << (*a)[0] << ".." << (*a)[1];
       } else {
@@ -91,8 +91,8 @@ namespace Gecode {
       Arg* dom = vs.dom();
       if (! (dom->isPair() && 
              dom->first()->isPair() && dom->second()->isPair() &&
-             dom->first()->first()->isArray<int>() &&
-             dom->second()->first()->isArray<int>() &&
+             dom->first()->first()->isIntArray() &&
+             dom->second()->first()->isIntArray() &&
              dom->first()->second()->isInt() &&
              dom->second()->second()->isInt()))
         throw Exception("Serialization",
@@ -102,7 +102,7 @@ namespace Gecode {
       int ubCard = 0;
       
       // Output upper bound
-      ArrayArg<int>* a = dom->second()->first()->toArray<int>();
+      IntArrayArg* a = dom->second()->first()->toIntArray();
       if (a->size() == 2) {
         os << (*a)[0] << ".." << (*a)[1];
         ubCard = (*a)[1] - (*a)[0];
@@ -124,9 +124,9 @@ namespace Gecode {
       // Output additional constraints if lower bound is given and/or
       // cardinality is tighter than bounds
 
-      if (dom->first()->first()->toArray<int>()->size() != 0) {
+      if (dom->first()->first()->toIntArray()->size() != 0) {
         os << "constraint subset(";
-        a = dom->first()->first()->toArray<int>();
+        a = dom->first()->first()->toIntArray();
         if (a->size() == 2) {
           os << (*a)[0] << ".." << (*a)[1];
         } else {
@@ -158,19 +158,19 @@ namespace Gecode {
 #endif
     
     void emitVar(ostream& os, int v, VarMap& vm) {
-      VarSpec& vs = vm.get(v);
+      VarSpec& vs = vm.spec(v);
       if (vs.name() == NULL)
         os << "_v" << v;
       else
         os << vs.name();
     }
     
-    void emitVarArray(ostream& os, ArrayArg<Arg*>* a, VarMap& vm) {
+    void emitVarArray(ostream& os, ArrayArg* a, VarMap& vm) {
       for (int i=0; i<a->size(); i++)
         emitVar(os, (*a)[i]->toVar(), vm);
     }
     
-    void emitArray(ostream& os, ArrayArg<Arg*>* a, VarMap& vm) {
+    void emitArray(ostream& os, ArrayArg* a, VarMap& vm) {
       if ((*a)[0]->isInt()) {
         os << "[";
         for (int i=0; i<a->size(); i++) {
@@ -194,8 +194,8 @@ namespace Gecode {
       }
       
       if ((*a)[0]->isPair()) {
-        ArrayArg<Arg*>* aa = new ArrayArg<Arg*>(a->size());
-        ArrayArg<Arg*>* ab = new ArrayArg<Arg*>(a->size());
+        ArrayArg* aa = new ArrayArg(a->size());
+        ArrayArg* ab = new ArrayArg(a->size());
         for (int i=0; i<a->size(); i++) {
           (*aa)[i] = (*a)[i]->first();
           (*ab)[i] = (*a)[i]->second();
@@ -230,15 +230,15 @@ namespace Gecode {
         return;
       }
       if (arg->isVar()) {
-        VarSpec& s = vm.get(arg->toVar());
+        VarSpec& s = vm.spec(arg->toVar());
         if (s.name() == NULL)
           os << "_v" << arg->toVar();
         else
           os << s.name();
         return;
       }
-      if (arg->isArray<int>()) {
-        ArrayArg<int>* a = arg->toArray<int>();
+      if (arg->isIntArray()) {
+        IntArrayArg* a = arg->toIntArray();
         os << "[";
         for (int i=0; i<a->size(); i++) {
           os << (*a)[i];
@@ -248,8 +248,8 @@ namespace Gecode {
         os << "]";
         return;
       }
-      if (arg->isArray<Arg*>()) {
-        ArrayArg<Arg*>* a = arg->toArray<Arg*>();
+      if (arg->isArray()) {
+        ArrayArg* a = arg->toArray();
         if (a->size() == 0) {
           os << "[]";
           return;
