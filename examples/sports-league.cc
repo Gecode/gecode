@@ -71,12 +71,11 @@ protected:
   int gn(int h, int a) const {
     return teams*(h-1) + a;
   }
-
-public:
-  /// Round robin schedule for period \a p and week \a w
-  Play& rrs(int p, int w) {
+  /// Play for period \a p and week \a w
+  Play& play(int p, int w) {
     return plays[p*weeks() + w];
   }
+public:
   /**
    * \brief Build a feasible schedule
    *
@@ -106,77 +105,54 @@ public:
     // Initialize array
     for (int p=0; p<periods(); p++)
       for (int w=0; w<weeks(); w++)
-        rrs(p,w).h = rrs(p,w).a = rrs(p,w).g = 0;
+        play(p,w).h = play(p,w).a = play(p,w).g = 0;
     
     // Determine the first game (week 0 period 0)
-    rrs(0,0).h = 1;
-    rrs(0,0).a = 2;
-    rrs(0,0).g = 2;
+    play(0,0).h = 1;
+    play(0,0).a = 2;
+    play(0,0).g = 2;
 
     // Determine the other games of the first week
     for (int p=1; p<periods(); p++) {
-      rrs(p,0).h = (p + 1) + 1;
-      rrs(p,0).a = teams - (p + 1 - 2);
-      rrs(p,0).g = gn(rrs(p,0).h,rrs(p,0).a);
+      play(p,0).h = (p + 1) + 1;
+      play(p,0).a = teams - (p + 1 - 2);
+      play(p,0).g = gn(play(p,0).h,play(p,0).a);
     }
 
     // Compute the games for the subsequent weeks
     for (int w=1; w<weeks(); w++) {
       for (int p=0; p<periods(); p++) {
-        if (rrs(p,w-1).h == teams) {
-          rrs(p,w).h = 2;
-        } else if (rrs(p,w-1).h == 1) {
-          rrs(p,w).h = 1;
+        if (play(p,w-1).h == teams) {
+          play(p,w).h = 2;
+        } else if (play(p,w-1).h == 1) {
+          play(p,w).h = 1;
         } else {
-          rrs(p,w).h = rrs(p,w-1).h + 1;
+          play(p,w).h = play(p,w-1).h + 1;
         }
 
-        if (rrs(p,w-1).a == teams) {
-          rrs(p,w).a = 2;
+        if (play(p,w-1).a == teams) {
+          play(p,w).a = 2;
         } else {
-          rrs(p,w).a = rrs(p,w-1).a + 1;
+          play(p,w).a = play(p,w-1).a + 1;
         }
 
         // maintain symmetry for (h,a): h < a
-        if (rrs(p,w).h > rrs(p,w).a)
-          std::swap(rrs(p,w).h,rrs(p,w).a);
+        if (play(p,w).h > play(p,w).a)
+          std::swap(play(p,w).h,play(p,w).a);
 
-        rrs(p,w).g = gn(rrs(p,w).h,rrs(p,w).a);
+        play(p,w).g = gn(play(p,w).h,play(p,w).a);
       }
     }
 
   }
-  /// Home information
-  IntArgs home(int w) {
-    IntArgs h(periods());
-    for (int p=0; p<periods(); p++)
-      h[p] = rrs(p,w).h;
-    return h;
-  }
-  /*
-    // Domain for gamenumber of period
-    for (int w=0; w<weeks(); w++) {
-      IntArgs gamenum(periods());
-      IntArgs fst(periods());
-      IntArgs snd(periods());
-      IntVarArgs n(periods());
-
-      for (int p=0; p<periods(); p++) {
-        n[p].init(this,0,periods()-1);
-        gamenum[p] = r.rrs(p,w).g;
-        fst[p]     = r.rrs(p,w).h;
-        snd[p]     = r.rrs(p,w).a;
-      }
-
-      distinct(this, n, opt.icl());
-        
-      for (int p=0; p<periods(); p++) {
-        element(this, gamenum, n[p], g(p,w), 0);
-        element(this, fst,     n[p], h(p,w), 0);
-        element(this, snd,     n[p], a(p,w), 0);
-      }
+  /// Home, away, and game information
+  void hag(int w, IntArgs& h, IntArgs& a, IntArgs& g) {
+    for (int p=0; p<periods(); p++) {
+      h[p] = play(p,w).h;
+      a[p] = play(p,w).a;
+      g[p] = play(p,w).g;
     }
-  */
+  }
   /// Delete schedule
   ~RRS(void) {
     delete [] plays;
@@ -188,9 +164,6 @@ public:
 /**
  * \brief %Example: %Sports League Scheduling
  *
- * Prob026: round robin tournaments from http://www.csplip.org
- *
- *
  * -# There are \f$ t \f$ teams (\f$ t \f$  even).
  * -# The season lasts \f$ t - 1 \f$ weeks.
  * -# Each game between two different teams occurs exactly once.
@@ -199,6 +172,8 @@ public:
  *    every period is scheduled for one game.
  * -# No team plays more than twice in the same period over
  *    the course of the season.
+ *
+ * See also problem 26 at http://www.csplib.org/.
  *
  * \ingroup ExProblem
  */
@@ -231,46 +206,35 @@ protected:
   }
 
 public:
+  /// Setup model
   SportsLeague(const SizeOptions& opt) :
     teams(opt.size()),
     home(this, periods() * teams, 1, weeks()),
     away(this, periods() * teams, 2, weeks()+1),
     game(this, weeks()*periods(), 2, teams*weeks())
   {
-
     // Initialize round robin schedule
     RRS r(teams);
 
     // Domain for gamenumber of period
     for (int w=0; w<weeks(); w++) {
-      IntArgs gamenum(periods());
-      IntArgs fst(periods());
-      IntArgs snd(periods());
+      IntArgs rh(periods()), ra(periods()), rg(periods());
       IntVarArgs n(periods());
 
-      for (int p=0; p<periods(); p++) {
+      for (int p=0; p<periods(); p++)
         n[p].init(this,0,periods()-1);
-        gamenum[p] = r.rrs(p,w).g;
-        fst[p]     = r.rrs(p,w).h;
-        snd[p]     = r.rrs(p,w).a;
-      }
-
       distinct(this, n, opt.icl());
+
+      r.hag(w,rh,ra,rg);
         
       for (int p=0; p<periods(); p++) {
-        element(this, gamenum, n[p], g(p,w), 0);
-        //        element(this, r.home(p), n[p], h(p,w), 0);
-        element(this, fst, n[p], h(p,w), 0);
-        element(this, snd,     n[p], a(p,w), 0);
+        element(this, rh, n[p], h(p,w), 0);
+        element(this, ra, n[p], a(p,w), 0);
+        element(this, rg, n[p], g(p,w), 0);
       }
     }
 
-
-    /*
-     * Symmetry breaking:
-     * we consider (h, a) and (a, h) as the same game and focus
-     * on the home game for h, i.e. (h, a) with h < a
-     */
+    /// (h,a) and (a,h) are the same game, focus on home (that is, h<a)
     for (int p=0; p<periods(); p++)
       for (int w=0; w<teams; w++)
         rel(this, h(p,w), IRT_LE, a(p,w));
@@ -282,8 +246,6 @@ public:
     // Fix first pair
     rel(this, h(0,0), IRT_EQ, 1);
     rel(this, a(0,0), IRT_EQ, 2);
-
-    
 
     /// Column constraint: each team occurs exactly once
     for (int w=0; w<teams; w++) {
@@ -297,14 +259,14 @@ public:
     /// Row constraint: no team appears more than twice
     for (int p=0; p<periods(); p++) {
       IntVarArgs r(2*teams);
-      for (int w=0; w<2*teams; w+=2) {
-        r[w]     = h(p, w / 2);
-        r[w + 1] = a(p, w / 2);
+      for (int t=0; t<teams; t++) {
+        r[2*t]   = h(p,t);
+        r[2*t+1] = a(p,t);
       }
       gcc(this, r, 2, opt.icl());
     }
 
-
+    // Redundant constraint
     for (int p=0; p<periods(); p++)
       for (int w=0; w<weeks(); w ++)
         post(this, teams * h(p,w) + a(p,w) - g(p,w) == teams);
@@ -313,79 +275,42 @@ public:
 
     branch(this, game, BVAR_NONE, BVAL_MIN);
   }
-
+  /// Constructor for cloning \a s
   SportsLeague(bool share, SportsLeague& s)
     : Example(share, s), teams(s.teams) {
     home.update(this, share, s.home);
     away.update(this, share, s.away);
     game.update(this, share, s.game);
   }
-
+  /// Copy during cloning
   virtual Space*
   copy(bool share) {
     return new SportsLeague(share, *this);
   }
-
-  // return the number of digits of n
-  int digit(int n) {
-    int f = n;
-    int fdigit = 0;
-    while (f / 10) {
-      fdigit++;
-      f = f / 10;
-    }
-    return fdigit;
-  }
-
-  // printing function that makes the schedule more readable
-  void blank(int n) {
-    for (int d = digit(teams) - digit(n); d--; ) {
-      std::cout << " ";
-    }
-    std::cout << n;
-  }
-
-  void blank_only(int n) {
-    for (int i = digit(n); i--; ) {
-      std::cout << " ";
-    }
-  }
-
+  /// Print solution
   virtual void print(void) {
+    using namespace std;
     // print period index
-    std::cout << " ";
-    blank_only(teams);
-    std::cout << "     ";
+    cout << "\t       ";
     for (int p=0; p<periods(); p++) {
-      blank_only(teams);
-      std::cout << "P[";
-      blank(p);
-      std::cout <<"]";
-      blank_only(teams);
-    }
-    std::cout <<"\n";
-
+      cout << "P[";
+      cout.width(2);
+      cout << p << "] ";
+      }
+    cout << endl;
     // print entries
     for (int w=0; w<weeks(); w++) {
-      std::cout << "W[";
-      blank(w+1);
-      std::cout <<"]: ";
+      cout << "\tW[";
+      cout.width(2);
+      cout << w+1 << "]: ";
       for (int p=0; p<periods(); p++) {
-        if (h(p, w).assigned() && a(p, w).assigned()) {
-          std::cout <<" ";
-          blank(h(p,w).val());
-          std::cout <<",";
-          blank(a(p,w).val());
-          std::cout <<" ";
-        } else {
-          blank_only(teams);
-          std::cout << " x ";
-          blank_only(teams);
-        }
+        cout.width(2); 
+        cout << h(p,w).val() << '-';
+        cout.width(2);
+        cout << a(p,w).val() << " ";
       }
-      std::cout << "\n";
+      cout << endl;
     }
-    std::cout << "\n";
   }
 };
 
@@ -412,4 +337,3 @@ main(int argc, char* argv[]) {
 }
 
 // STATISTICS: example-any
-
