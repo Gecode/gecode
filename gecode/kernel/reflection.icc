@@ -416,7 +416,7 @@ namespace Gecode { namespace Reflection {
   };
   
   /// The registry object
-  extern Registry registry;
+  GECODE_KERNEL_EXPORT extern Registry registry;
 
   /** \brief Class used for registering propagators
     *
