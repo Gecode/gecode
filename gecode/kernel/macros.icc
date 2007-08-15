@@ -35,6 +35,13 @@
  *
  */
 
+/// Concatenate \a R and \a LINE
+#define GECODE_CAT2(R,LINE) R ## LINE
+/// Concatenate macro-expanded \a R and \a LINE
+#define GECODE_CAT(R,LINE) GECODE_CAT2(R,LINE)
+/// Generate fresh name with prefix P
+#define GECODE_FRESH(P) GECODE_CAT(_GECODE_ ## P, __LINE__)
+
 /**
  * \brief Check whether modification event \a me is failed, and forward failure.
  *
