@@ -141,7 +141,7 @@ namespace Gecode { namespace Reflection {
     /// Return argument of typed argument
     Arg*         typedArg(void);
     /// Destructor
-    virtual ~Arg(void);
+    GECODE_KERNEL_EXPORT virtual ~Arg(void);
   };
   
   /**
@@ -182,7 +182,7 @@ namespace Gecode { namespace Reflection {
     /// Constructor
     ArrayArg(int n0);
     /// Destructor
-    virtual ~ArrayArg(void);
+    GECODE_KERNEL_EXPORT virtual ~ArrayArg(void);
     
     // const Arg*& operator[](int i) const;
     Arg*& operator[](int i);
@@ -205,7 +205,7 @@ namespace Gecode { namespace Reflection {
     /// Construct from given array \a a
     template <class A> IntArrayArg(const A& a);
     /// Destructor
-    virtual ~IntArrayArg(void);
+    GECODE_KERNEL_EXPORT virtual ~IntArrayArg(void);
     
     const int& operator[](int i) const;
     int& operator[](int i);
@@ -221,7 +221,7 @@ namespace Gecode { namespace Reflection {
     /// Constructor
     TypedArg(Type* t0, Arg* a0);
     /// Destructor
-    virtual ~TypedArg(void);
+    GECODE_KERNEL_EXPORT virtual ~TypedArg(void);
     /// The type of this argument
     Type* t;
     /// The argument
@@ -249,7 +249,7 @@ namespace Gecode { namespace Reflection {
     /// Constructor
     PairArg(Arg* a0, Arg* b0);
     /// Destructor
-    virtual ~PairArg(void);
+    GECODE_KERNEL_EXPORT virtual ~PairArg(void);
     /// The first component
     Arg* a;
     /// The second component
@@ -520,9 +520,7 @@ namespace Gecode { namespace Reflection {
     return static_cast<TypedArg*>(this)->a;
   }
 
-  forceinline
-  Arg::~Arg(void) {}
-  
+
   forceinline
   IntArg::IntArg(int i0) : i(i0) {}
 
@@ -544,12 +542,6 @@ namespace Gecode { namespace Reflection {
   ArrayArg::ArrayArg(int n0) : n(n0) {
     a = static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*n));
   }
-  forceinline
-  ArrayArg::~ArrayArg(void) {
-    for (int i=n; i--;)
-      delete a[i];
-    Memory::free(a);
-  }
 
   forceinline const int&
   IntArrayArg::operator[](int i) const {
@@ -569,10 +561,6 @@ namespace Gecode { namespace Reflection {
   IntArrayArg::IntArrayArg(int n0) : n(n0) {
     a = static_cast<int*>(Memory::malloc(sizeof(int)*n));
   }
-  forceinline
-  IntArrayArg::~IntArrayArg(void) {
-    Memory::free(a);
-  }
   template<class A>
   forceinline
   IntArrayArg::IntArrayArg(const A& a0) : n(a0.size()) {
@@ -588,22 +576,10 @@ namespace Gecode { namespace Reflection {
   PairArg::PairArg(Arg* a0, Arg* b0) : a(a0), b(b0) {}
 
   forceinline
-  PairArg::~PairArg(void) {
-    delete a;
-    delete b;
-  }
-
-  forceinline
   VarArg::VarArg(int i0) : i(i0) {}
   
   forceinline
   TypedArg::TypedArg(Type* t0, Arg* a0) : t(t0), a(a0) {}
-
-  forceinline
-  TypedArg::~TypedArg(void) {
-    delete t;
-    delete a;
-  }
 
   template <class View>
   forceinline TypedArg*
@@ -640,6 +616,7 @@ namespace Gecode { namespace Reflection {
     if (this != &s) {
       if (--_dom->r == 0)
         delete _dom;
+      _vti = s._vti;
       _dom = s._dom;
       _dom->r++;
     }
@@ -657,7 +634,7 @@ namespace Gecode { namespace Reflection {
     if (_dom->_n != NULL)
       Memory::free(_dom->_n);
     int size = strlen(n);
-    _dom->_n = (char*) Memory::malloc(size+1);
+    _dom->_n = static_cast<char*>(Memory::malloc(size+1));
     memcpy(_dom->_n, n, size);
     _dom->_n[size] = 0;
   }
@@ -693,6 +670,8 @@ namespace Gecode { namespace Reflection {
   forceinline
   Type::Type(int n0) : n(n0) {
     u.t = static_cast<Type**>(Memory::malloc(sizeof(Type*)*n));
+    for (int i=n; i--;)
+      u.t[i] = NULL;
   }
   
   forceinline

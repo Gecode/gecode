@@ -278,6 +278,28 @@ namespace Gecode { namespace Reflection {
     }
   }
 
+  Arg::~Arg(void) {}
+
+  ArrayArg::~ArrayArg(void) {
+    for (int i=n; i--;)
+      delete a[i];
+    Memory::free(a);
+  }
+
+  IntArrayArg::~IntArrayArg(void) {
+    Memory::free(a);
+  }
+
+  PairArg::~PairArg(void) {
+    delete a;
+    delete b;
+  }
+
+  TypedArg::~TypedArg(void) {
+    delete t;
+    delete a;
+  }
+
 }}
 
 // STATISTICS: kernel-core
