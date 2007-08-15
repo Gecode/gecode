@@ -712,7 +712,7 @@ namespace Gecode {
 
   }}
 
-  DFA::DFA(REG& r0) {
+  REG::operator DFA(void) {
     using Int::Regular::PosSetAllocator;
     using Int::Regular::StatePoolAllocator;
     using Int::Regular::PosInfo;
@@ -729,7 +729,7 @@ namespace Gecode {
 
     PosSetAllocator    psm;
     StatePoolAllocator spm;
-    REG r = r0 + REG(Limits::Int::int_max+1);
+    REG r = *this + REG(Limits::Int::int_max+1);
     int n_pos = r.e->n_pos();
 
     GECODE_AUTOARRAY(PosInfo, pi, n_pos);
@@ -775,7 +775,7 @@ namespace Gecode {
         fb.add(n->state);
     fb.finish();
 
-    init(0,tb.transitions(),fb.finals(),true);
+    return DFA(0,tb.transitions(),fb.finals(),true);
   }
 
 }

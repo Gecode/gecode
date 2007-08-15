@@ -96,12 +96,6 @@ namespace Gecode {
   }
 
   forceinline
-  DFA::DFA(int start, Transition t_spec[], int f_spec[], bool minimize) {
-    init(start,t_spec,f_spec,minimize);
-  }
-
-
-  forceinline
   DFA::DFA(const DFA& d)
     : SharedHandle(d) {}
 

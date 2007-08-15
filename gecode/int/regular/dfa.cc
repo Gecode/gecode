@@ -154,8 +154,7 @@ namespace Gecode { namespace Int { namespace Regular {
 
 namespace Gecode {
 
-  void
-  DFA::init(int start, Transition t_spec[], int f_spec[], bool minimize) {
+  DFA::DFA(int start, Transition t_spec[], int f_spec[], bool minimize) {
     using namespace Int;
     using namespace Regular;
     // Compute number of states and transitions

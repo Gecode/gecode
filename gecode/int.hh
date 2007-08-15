@@ -790,54 +790,7 @@ namespace Gecode {
    * \ingroup TaskIntInt
    */
 
-  class DFA;
-
   //@{
-  /// %Regular expressions
-  class GECODE_INT_EXPORT REG {
-    friend class DFA;
-  private:
-    /// Implementation of the actual expression tree
-    class Exp;
-    /// The expression tree
-    Exp* e;
-    /// Initialize with given expression tree \a
-    REG(Exp* e);
-  public:
-    /// Initialize from regular expression \a r
-    REG(const REG& r);
-    /// Assign to regular expression \a r
-    const REG& operator=(const REG& r);
-
-    /// Initialize as empty sequence (epsilon)
-    REG(void);
-    /// Initialize as single integer \a s
-    REG(int s);
-    /**
-     * \brief Initialize as alternative of integers
-     *
-     * Throws an exception of type Int::TooFewArguments if \a x
-     * is empty.
-     */
-    REG(const IntArgs& x);
-    /// Return expression for: this expression at least \a n and at most \a m times
-    REG operator()(unsigned int n, unsigned int m);
-    /// Return expression for: this expression at least \a n times
-    REG operator()(unsigned int n);
-    /// Return expression for: this expression or \a r
-    REG operator|(const REG& r);
-    /// Return expression for: this expression followed by \a r
-    REG operator+(const REG& r);
-    /// Return expression for: this expression arbitrarily often (Kleene star)
-    REG operator*(void);
-    /// Return expression for: this expression at least once
-    REG operator+(void);
-    /// Print expression
-    std::ostream& print(std::ostream&) const;
-    /// Destructor
-    ~REG(void);
-  };
-
   /**
    * \brief Deterministic finite automaton
    *
@@ -898,23 +851,12 @@ namespace Gecode {
       /// Return current symbol
       int val(void) const;
     };
-  protected:
-    /**
-     * \brief Initialize automaton
-     *
-     * Start state \a start, transition specification t_spec,
-     * final state specification \a f_spec and a flag \a minimize whether
-     * the automaton should be minimized
-     */
-    GECODE_INT_EXPORT
-    void init(int start, Transition t_spec[], int f_spec[],
-              bool minimize);
   public:
     friend class Transitions;
-    /// Default constructor (empty DFA)
+    /// Default constructor
     DFA(void);
     /**
-     * \brief Initialize DFA by transitions
+     * \brief Initialize DFA
      *
      * - Start state is given by \a s.
      * - %Transitions are described by \a t, where the last element
@@ -923,10 +865,8 @@ namespace Gecode {
      *   must be -1.
      * - Minimizes the DFA, if \a minimize is true.
      */
-    DFA(int s, Transition t[], int f[], bool minimize=true);
-    /// Initialize DFA by regular expression \a r
     GECODE_INT_EXPORT
-    DFA(REG& r);
+    DFA(int s, Transition t[], int f[], bool minimize=true);
     /// Initialize by DFA \a d (DFA is shared)
     DFA(const DFA& d);
     /// Return the number of states
@@ -943,6 +883,53 @@ namespace Gecode {
     int symbol_min(void) const;
     /// Return largest symbol in DFA
     int symbol_max(void) const;
+  };
+
+  /// %Regular expressions
+  class GECODE_INT_EXPORT REG {
+  private:
+    /// Implementation of the actual expression tree
+    class Exp;
+    /// The expression tree
+    Exp* e;
+    /// Initialize with given expression tree \a
+    REG(Exp* e);
+  public:
+    /// Initialize as empty sequence (epsilon)
+    REG(void);
+    /// Initialize as single integer \a s
+    REG(int s);
+    /**
+     * \brief Initialize as alternative of integers
+     *
+     * Throws an exception of type Int::TooFewArguments if \a x
+     * is empty.
+     */
+    REG(const IntArgs& x);
+
+    /// Initialize from regular expression \a r
+    REG(const REG& r);
+    /// Assign to regular expression \a r
+    const REG& operator=(const REG& r);
+
+    /// Return expression for: this expression at least \a n and at most \a m times
+    REG operator()(unsigned int n, unsigned int m);
+    /// Return expression for: this expression at least \a n times
+    REG operator()(unsigned int n);
+    /// Return expression for: this expression or \a r
+    REG operator|(const REG& r);
+    /// Return expression for: this expression followed by \a r
+    REG operator+(const REG& r);
+    /// Return expression for: this expression arbitrarily often (Kleene star)
+    REG operator*(void);
+    /// Return expression for: this expression at least once
+    REG operator+(void);
+    /// Print expression
+    std::ostream& print(std::ostream&) const;
+    /// Return DFA for regular expression
+    operator DFA(void);
+    /// Destructor
+    ~REG(void);
   };
 
   /**
