@@ -646,6 +646,68 @@ namespace Gecode {
 namespace Gecode {
 
   /**
+   * \brief Regular expressions over integer values
+   *
+   * \ingroup TaskMiniModel
+   */
+  class GECODE_MINIMODEL_EXPORT REG {
+  private:
+    /// Implementation of the actual expression tree
+    class Exp;
+    /// The expression tree
+    Exp* e;
+    /// Initialize with given expression tree \a
+    REG(Exp* e);
+  public:
+    /// Initialize as empty sequence (epsilon)
+    REG(void);
+    /// Initialize as single integer \a s
+    REG(int s);
+    /**
+     * \brief Initialize as alternative of integers
+     *
+     * Throws an exception of type Int::TooFewArguments if \a x
+     * is empty.
+     */
+    REG(const IntArgs& x);
+
+    /// Initialize from regular expression \a r
+    REG(const REG& r);
+    /// Assign to regular expression \a r
+    const REG& operator=(const REG& r);
+
+    /// Return expression for: this expression at least \a n and at most \a m times
+    REG operator()(unsigned int n, unsigned int m);
+    /// Return expression for: this expression at least \a n times
+    REG operator()(unsigned int n);
+    /// Return expression for: this expression or \a r
+    REG operator|(const REG& r);
+    /// Return expression for: this expression followed by \a r
+    REG operator+(const REG& r);
+    /// Return expression for: this expression arbitrarily often (Kleene star)
+    REG operator*(void);
+    /// Return expression for: this expression at least once
+    REG operator+(void);
+    /// Print expression
+    std::ostream& print(std::ostream&) const;
+    /// Return DFA for regular expression
+    operator DFA(void);
+    /// Destructor
+    ~REG(void);
+  };
+
+}
+
+/** \relates Gecode::REG
+ * Print regular expression \a r
+ */
+GECODE_MINIMODEL_EXPORT std::ostream&
+operator<<(std::ostream&, const Gecode::REG& r);
+
+
+namespace Gecode {
+
+  /**
    * \defgroup TaskMiniModelArith Arithmetic functions
    *
    * \ingroup TaskMiniModel

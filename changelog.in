@@ -69,6 +69,14 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Regular expressions (REG) have been moved from the integer module to
+the minimodel module.
+
+[ENTRY]
 Module: example
 What:   change
 Rank:   minor

@@ -35,7 +35,7 @@
  *
  */
 
-#include "gecode/int.hh"
+#include "gecode/minimodel.hh"
 
 #include "gecode/support/sort.hh"
 #include "gecode/support/block-allocator.hh"
