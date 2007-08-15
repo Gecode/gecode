@@ -676,18 +676,22 @@ namespace Gecode {
     /// Assign to regular expression \a r
     const REG& operator=(const REG& r);
 
-    /// Return expression for: this expression at least \a n and at most \a m times
-    REG operator()(unsigned int n, unsigned int m);
-    /// Return expression for: this expression at least \a n times
-    REG operator()(unsigned int n);
-    /// Return expression for: this expression or \a r
-    REG operator|(const REG& r);
     /// Return expression for: this expression followed by \a r
     REG operator+(const REG& r);
+    /// This expression is followed by \a r
+    REG& operator+=(const REG& r);
+    /// Return expression for: this expression or \a r
+    REG operator|(const REG& r);
+    /// This expression or \a r
+    REG& operator|=(const REG& r);
     /// Return expression for: this expression arbitrarily often (Kleene star)
     REG operator*(void);
     /// Return expression for: this expression at least once
     REG operator+(void);
+    /// Return expression for: this expression at least \a n and at most \a m times
+    REG operator()(unsigned int n, unsigned int m);
+    /// Return expression for: this expression at least \a n times
+    REG operator()(unsigned int n);
     /// Print expression
     std::ostream& print(std::ostream&) const;
     /// Return DFA for regular expression

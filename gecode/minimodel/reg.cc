@@ -276,6 +276,20 @@ namespace Gecode {
     return r;
   }
 
+  REG&
+  REG::operator|=(const REG& r2) {
+    if (e == r2.e)
+      return *this;
+    Exp* f = new Exp();
+    f->use_cnt      = 1;
+    f->_n_pos       = e->n_pos() + r2.e->n_pos();
+    f->type         = REG::Exp::ET_OR;
+    f->data.kids[0] = e;
+    f->data.kids[1] = r2.e; r2.e->inc();
+    e=f;
+    return *this;
+  }
+
   REG
   REG::operator+(const REG& r2) {
     if (e == NULL)    return r2;
@@ -288,6 +302,24 @@ namespace Gecode {
     f->data.kids[1] = r2.e; r2.e->inc();
     REG r(f);
     return r;
+  }
+
+  REG&
+  REG::operator+=(const REG& r2) {
+    if (r2.e == NULL) 
+      return *this;
+    if (e == NULL) {
+      e=r2.e; e->inc();
+    } else {
+      Exp* f = new Exp();
+      f->use_cnt      = 1;
+      f->_n_pos       = e->n_pos() + r2.e->n_pos();
+      f->type         = REG::Exp::ET_CONC;
+      f->data.kids[0] = e;
+      f->data.kids[1] = r2.e; r2.e->inc();
+      e=f;
+    }
+    return *this;
   }
 
   REG

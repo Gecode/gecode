@@ -69,7 +69,7 @@ private:
   }
 
   /// Returns next regular expression starting from spos
-  REG get_constraint(int& spos) {
+  DFA get_constraint(int& spos) {
     REG r0(0), r1(1);
     REG border = *r0;
     REG between = +r0;
@@ -77,7 +77,7 @@ private:
     REG r = border + r1(spec[spos],spec[spos]);
     spos++;
     for (int i=size-1; i--; spos++)
-      r = r + between + r1(spec[spos],spec[spos]);
+      r += between + r1(spec[spos],spec[spos]);
     return r + border;
   }
 
@@ -91,20 +91,12 @@ public:
     MiniModel::Matrix<BoolVarArray> m(b, width, height);
 
     // Post constraints for columns
-    for (int w = 0; w < width; ++w) {
-      // Post constraint
-      REG r = get_constraint(spos);
-      DFA d = r;
-      regular(this, m.col(w), d);
-    }
+    for (int w = 0; w < width; ++w)
+      regular(this, m.col(w), get_constraint(spos));
 
     // Post constraints for rows
-    for (int h = 0; h < height; ++h) {
-      // Post constraint
-      REG r = get_constraint(spos);
-      DFA d = r;
-      regular(this, m.row(h), d);
-    }
+    for (int h = 0; h < height; ++h)
+      regular(this, m.row(h), get_constraint(spos));
 
     // Install branchings
     branch(this, b, BVAR_NONE, BVAL_MAX);

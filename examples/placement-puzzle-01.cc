@@ -281,38 +281,33 @@ private:
   /// Returns the regular expression for placing a specific tile \a
   /// tile in a specific rotation.
   REG tile_reg(int twidth, int theight, const char* tile) {
-    REG res = *REG(0);
+    REG r = *REG(0);
     for (int h = 0; h < theight; ++h) {
-      for (int w = 0; w < twidth; ++w) {
-	int which = tile[h*twidth + w] == 'X';
-	res = res + REG(which);
-      }
-      if (h < theight-1) {
-	res = res + REG(0)(width-twidth, width-twidth);
-      }
+      for (int w = 0; w < twidth; ++w)
+	r += REG(tile[h*twidth + w] == 'X');
+      if (h < theight-1)
+	r += REG(0)(width-twidth, width-twidth);
     }
-    res = res + *REG(0);
-
-    return res;
+    return r + *REG(0);
   } 
 
-  /// Returns the regular expression for placing tile number \a t in
-  /// any rotation.
-  REG get_constraint(const tilespec tile) {
+  /// Returns DFA for placing tile number \a t in any rotation
+  DFA get_constraint(const tilespec tile) {
     // Resulting regular expression
-    REG res;
+    REG r = tile_reg(tile.width, tile.height, tile.tile);
     // Tile specification for tile under symmetry operations
     GECODE_AUTOARRAY(char, t2, width*height);
     int w2, h2;
     // Symmetry functions
-    tsymmfunc syms[] = {id, flipx, flipy, flipd1, flipd2, rot90, rot180, rot270};
+    tsymmfunc syms[] = {flipx, flipy, flipd1, flipd2, 
+                        rot90, rot180, rot270};
     int symscnt = sizeof(syms)/sizeof(tsymmfunc);
     for (int i = 0; i < symscnt; ++i) {
       syms[i](tile.tile, tile.width, tile.height, t2, w2, h2);
-      res = res | tile_reg(w2, h2, t2);
+      r |= tile_reg(w2, h2, t2);
     }
 
-    return res;
+    return r;
   }
 
 
@@ -347,11 +342,8 @@ public:
         BoolVarArgs cm(b.size());
         for (int p = b.size(); p--; )
           cm[p] = post(this, ~(b[p] == col));
-        // Get constraint for color i+1
-        REG reg = get_constraint(spec[i]);
-        DFA dfa = reg;
-        // Post constraint
-        regular(this, cm, dfa);
+        // Post constraint for color i+1
+        regular(this, cm, get_constraint(spec[i]));
       }
     }
 

@@ -217,7 +217,7 @@ Rank:	major
 [DESCRIPTION]
 Support for reference-counted shared objects added: they handle
 both reference counting as well as non-shared copying. This fixes
-some bugs with the handling os shared arrays, integer sets, and
+some bugs with the handling of shared arrays, integer sets, and
 finite automata.
 
 
