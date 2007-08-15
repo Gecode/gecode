@@ -69,6 +69,21 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: example
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Most examples have been cleaned up.
+
+[ENTRY]
+Module: example
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The parsing of commandline arguments has been completely redone and
+is much more extensible and flexible.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   minor
