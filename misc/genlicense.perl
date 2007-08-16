@@ -61,10 +61,11 @@ print <<EOF
 \\section SectLicLic GECODE LICENSE AGREEMENT
 			 
 This software and its documentation are copyrighted by the
-individual authors as listed in each file. The following
-terms apply to all files associated with the software unless
-explicitly disclaimed in individual files.
+individual authors as listed in each file. All files, unless explicitly disclaimed in individual files, may be used according to the terms of the
+<a href="http://www.opensource.org/licenses/mit-license.php">
+MIT license</a>, which reads as follows:
 
+<TT>
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
 "Software"), to deal in the Software without restriction, including
@@ -83,6 +84,7 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+</TT>
 
 \\section SecLicAuthors Gecode authors
 
