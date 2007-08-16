@@ -41,10 +41,10 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView, bool shared>
   inline
   BndImp<View, Card, isView, shared>::
-  BndImp(Space* home, ViewArray<View>& x0, ViewArray<Card>& k0,
-         bool cf,  bool all, bool nolbc) :
+  BndImp(Space* home, ViewArray<View>& x0, ViewArray<Card>& k0, 
+         bool cf,  bool nolbc) :
     Propagator(home), x(x0), k(k0), lps(NULL), ups(NULL),
-    card_fixed(cf), card_all(all), skip_lbc(nolbc) {
+    card_fixed(cf), skip_lbc(nolbc) {
     force(home);
     x.subscribe(home, this, PC_INT_BND);
     k.subscribe(home, this, PC_INT_BND);
@@ -56,8 +56,7 @@ namespace Gecode { namespace Int { namespace GCC {
   BndImp<View, Card, isView, shared>::
   BndImp(Space* home, bool share, BndImp<View, Card, isView, shared>& p)
     : Propagator(home, share, p), lps(NULL), ups(NULL),
-      card_fixed(p.card_fixed), card_all(p.card_all),
-      skip_lbc(p.skip_lbc) {
+      card_fixed(p.card_fixed), skip_lbc(p.skip_lbc) {
     x.update(home, share, p.x);
     k.update(home, share, p.k);
   }
@@ -140,7 +139,7 @@ namespace Gecode { namespace Int { namespace GCC {
       int m = k.size();
       bool locut = k[0].max() == 0;
       bool hicut = k[m - 1].max() == 0;
-
+      
       if (locut) {
         int low = k[0].card();
         for (int i = 0; i < x.size(); i++) {
@@ -188,7 +187,6 @@ namespace Gecode { namespace Int { namespace GCC {
     int single = 0;
     int xlb = 0;
     int xub = 0;
-
     for (int i = x.size(); i--; ) {
       bool b = x[i].assigned();
       xlb += x[i].min();
@@ -230,7 +228,7 @@ namespace Gecode { namespace Int { namespace GCC {
         }
       }
 
-      if (!card_consistent<View, Card>(smin, smax, x, k, card_all))
+      if (!card_consistent<View, Card>(smin, smax, x, k))
         return ES_FAILED;
 
       // can only modified cardinality variables
@@ -450,7 +448,8 @@ namespace Gecode { namespace Int { namespace GCC {
     assert(lps->minValue() <= x[nu[0]].min());
     // assert that the maximal value of the partial sum structure for
     // UBC is consistent with the largest value a variable can take
-    assert(x[mu[x.size() - 1]].max() <= ups->maxValue());
+    //std::cerr << x[mu[x.size() - 1]].max() <<"<="<< ups->maxValue() << "\n";
+    //assert(x[mu[x.size() - 1]].max() <= ups->maxValue());
 
     /*
      *  Setup rank and bounds info
@@ -615,21 +614,19 @@ namespace Gecode { namespace Int { namespace GCC {
   ExecStatus
   Bnd<View, Card, isView>::post(Space* home,
                                 ViewArray<View>& x0,
-                                ViewArray<Card>& k0,
-                                bool all) {
+                                ViewArray<Card>& k0) {
     bool cardfix = true;
     bool nolbc = true;
     for (int i = k0.size(); i--; ) {
       cardfix &= k0[i].assigned();
       nolbc &= (k0[i].min() == 0);
     }
-
     if (SharingTest<View,Card>::shared(home,x0,k0)) {
       new (home) BndImp<View, Card, isView, true>
-        (home, x0, k0, cardfix, all, nolbc);
+        (home, x0, k0, cardfix, nolbc);
     } else {
       new (home) BndImp<View, Card, isView, false>
-        (home, x0, k0, cardfix, all, nolbc);
+        (home, x0, k0, cardfix, nolbc);
     }
     return ES_OK;
   }

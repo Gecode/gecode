@@ -118,8 +118,7 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     static  ExecStatus  post(Space* home,
                              ViewArray<View>& x,
-                             ViewArray<Card>& k,
-                             bool all);
+                             ViewArray<Card>& k);
   };
 
   /**
@@ -150,18 +149,13 @@ namespace Gecode { namespace Int { namespace GCC {
      */
     bool card_fixed;
     /**
-     * \brief Stores whether all values in domains of the x-views are used
-     * for cardinality reasoning or whether we only use a subset of them.
-     */
-    bool card_all;
-    /**
      * \brief Stores whether the minium required occurences of
      *        the cardinalities are all zero. If so, we do not need
      *        to perform lower bounds propagation.
      */
     bool skip_lbc;
     /// Constructor for posting
-    BndImp(Space* home, ViewArray<View>&, ViewArray<Card>&, bool, bool, bool);
+    BndImp(Space* home, ViewArray<View>&, ViewArray<Card>&, bool, bool);
     /// Constructor for cloning \a p
     BndImp(Space* home, bool share, BndImp<View, Card, isView, shared>& p);
 
@@ -181,20 +175,6 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Perform propagation
     virtual ExecStatus  propagate(Space* home);
   };
-
-  /**
-   * \brief Performs bounds-consistent global cardinality propagation
-   *
-   * This function implements the propagation algorithm for
-   * the bounds-consistent global cardinality propagator implemented
-   * in GCC::Bnd. It is available as seperate function in order
-   * to allow staging for GCC::Dom and GCC::Bnd though staging is
-   * currently not used due to technical difficulties.
-   */
-  template <class View, class Card, bool isView, bool shared>
-  ExecStatus prop_bnd(Space* home, ViewArray<View>&, ViewArray<Card>&,
-                      PartialSum<Card>*&, PartialSum<Card>*&,
-                      bool, bool, bool);
 
   /**
    * \brief Domain-consistent global cardinality propagator
@@ -243,15 +223,10 @@ namespace Gecode { namespace Int { namespace GCC {
      * only has to perform propagation for the upper bounds.
      */
     bool card_fixed;
-    /**
-     * \brief Stores whether all values in domains of the x-views are used
-     * for cardinality reasoning or whether we only use a subset of them.
-     */
-    bool card_all;
     /// Constructor for cloning \a p
     Dom(Space* home, bool share, Dom<View, Card, isView>& p);
     /// Constructor for posting
-    Dom(Space* home, ViewArray<View>&, ViewArray<Card>&, bool, bool);
+    Dom(Space* home, ViewArray<View>&, ViewArray<Card>&, bool);
 
   public:
     /// Destructor including deallocation of variable-value graph
@@ -286,8 +261,7 @@ namespace Gecode { namespace Int { namespace GCC {
      * in the domains of the problem views specified in \a x.
      */
     static  ExecStatus  post(Space* home,
-                             ViewArray<View>& x, ViewArray<Card>& k,
-                             bool all);
+                             ViewArray<View>& x, ViewArray<Card>& k);
   };
 
   /**
@@ -305,15 +279,10 @@ namespace Gecode { namespace Int { namespace GCC {
     ViewArray<View> x;
     /// Array containing either fixed cardinalities or CardViews
     ViewArray<Card> k;
-    /**
-     * \brief Stores whether all values in domains of the x-views are used
-     * for cardinality reasoning or whether we only use a subset of them.
-     */
-    bool card_all;
     /// Constructor for cloning \a p
     Val(Space* home, bool share, Val<View, Card, isView>& p );
     /// Constructor for posting
-    Val(Space* home, ViewArray<View>&, ViewArray<Card>&, bool);
+    Val(Space* home, ViewArray<View>&, ViewArray<Card>&);
 
   public:
     /// Destructor
@@ -335,21 +304,8 @@ namespace Gecode { namespace Int { namespace GCC {
      * in the domains of the problem views specified in \a x.
      */
     static  ExecStatus  post(Space* home,
-                             ViewArray<View>& x, ViewArray<Card>& k,
-                             bool all);
+                             ViewArray<View>& x, ViewArray<Card>& k);
   };
-
-  /**
-   * \brief Performs value-consistent global cardinality propagation
-   *
-   * This function implements the propagation algorithm for
-   * the value-consistent global cardinality propagator implemented
-   * in GCC::Val.
-   */
-
-  template <class View, class Card, bool isView>
-  ExecStatus prop_val(Space* home, ViewArray<View>&, ViewArray<Card>&,
-                      bool&);
 
 }}}
 

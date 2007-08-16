@@ -64,9 +64,9 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   inline
   Dom<View, Card, isView>::Dom(Space* home, ViewArray<View>& x0,
-                               ViewArray<Card>& k0, bool cf, bool all)
+                               ViewArray<Card>& k0, bool cf)
     : Propagator(home), x(x0),  y(home, x0),
-      k(k0), vvg(NULL), card_fixed(cf), card_all(all) {
+      k(k0), vvg(NULL), card_fixed(cf){
     // y is used for bounds propagation since prop_bnd needs all variables
     // values within the domain bounds
     force(home);
@@ -78,8 +78,7 @@ namespace Gecode { namespace Int { namespace GCC {
   forceinline
   Dom<View, Card, isView>::Dom(Space* home, bool share,
                                Dom<View, Card, isView>& p)
-    : Propagator(home, share, p), vvg(NULL),
-      card_fixed(p.card_fixed), card_all(p.card_all) {
+    : Propagator(home, share, p), vvg(NULL), card_fixed(p.card_fixed) {
     x.update(home, share, p.x);
     y.update(home, share, p.y);
     k.update(home, share, p.k);
@@ -152,7 +151,7 @@ namespace Gecode { namespace Int { namespace GCC {
   Dom<View,Card,isView>::spec(Space* home, Reflection::VarMap& m) {
     return Propagator::spec(home, m, name())
       << x.spec(home, m) << y.spec(home, m) << k.spec(home, m) << isView
-      << card_fixed << card_all;
+      << card_fixed;
   }
   
   /// \brief Perform domain propagation.
@@ -240,7 +239,7 @@ namespace Gecode { namespace Int { namespace GCC {
 
       int smin = 0;
       int smax = 0;
-      if (!card_consistent<View, Card>(smin, smax, y, k, card_all)) {
+      if (!card_consistent<View, Card>(smin, smax, y, k)) {
         return ES_FAILED;
       }
     }
@@ -308,11 +307,10 @@ namespace Gecode { namespace Int { namespace GCC {
       return ES_FAILED;
     }
 
-    if (card_all) {
-      if (smax < x.size()) {
+    if (smax < x.size()) {
       return ES_FAILED;
-      }
     }
+
 
     if (vvg == NULL) {
       assert(noe > 0);
@@ -513,14 +511,13 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View, class Card, bool isView>
   inline ExecStatus
   Dom<View, Card, isView>::post(Space* home, ViewArray<View>& x0,
-                                ViewArray<Card>& k0, bool all){
-
+                                ViewArray<Card>& k0){
     bool cardfix = true;
     for (int i = k0.size(); i--; ) {
       cardfix &= k0[i].assigned();
     }
 
-    (void) new (home) Dom<View, Card, isView>(home, x0, k0, cardfix, all);
+    (void) new (home) Dom<View, Card, isView>(home, x0, k0, cardfix);
     return ES_OK;
   }
 

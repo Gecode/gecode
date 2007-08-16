@@ -113,28 +113,15 @@ public:
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
-    gcc(home, x, 0, 2, icl);
-  }
-};
-
-class GCC_FC_AllTriple : public IntTest {
-public:
-  GCC_FC_AllTriple(const char* t, IntConLevel icl)
-    : IntTest(t, 4, ds_14, false, icl) {}
-  virtual bool solution(const Assignment& x) const {
-    int n[4];
-    for (int i=4; i--; )
-      n[i] = 0;
-    for (int i=x.size(); i--; )
-      n[x[i] - 1]++;
-    for (int i=4; i--;)
-      if (n[i] > 2)
-        return false;
-    return true;
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    IntArgs card(12, 1,0,2, 2,0,2, 3,0,2, 4,0,2);
-    gcc(home, x, card, 12, 2, true, 1, 4, icl);
+    IntArgs values(4);
+    IntSet fixed(0,2);
+    IntSetArgs cards(4);
+    for (int i = 1; i < 5; i++) {
+      values[i - 1] = i;
+      cards[i - 1] = fixed;
+    }
+    //gcc(home, x, 0, 2, icl);
+    gcc(home, cards, values, x, icl);
   }
 };
 
@@ -148,14 +135,21 @@ public:
       n[i] = 0;
     for (int i=x.size(); i--; )
       n[x[i] - 1]++;
-    if (n[0] < 2 || n[1] < 2 ||
-        n[2] > 0 || n[3] > 0)
+    if (n[0] < 2 || n[1] < 2 || n[2] > 0 || n[3] > 0)
       return false;
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
-    IntArgs card(6, 1,0,2, 2,0,2);
-    gcc(home, x, card, 6, 0, false, 1, 4, icl);
+
+    IntArgs values(2);
+    IntSet fixed(0,2);
+    IntSetArgs cards(2);
+    for (int i = 1; i < 3; i++) {
+      values[i - 1] = i;
+      cards[i - 1] = fixed;
+    }
+    //gcc(home, x, card, 6, 0, false, 1, 4, icl);
+    gcc(home, cards, values, x, icl);
   }
 };
 
@@ -199,7 +193,15 @@ public:
         y[i] = x[1];
       }
     }
-    gcc(home, y, 0, 3, icl);
+    IntArgs values(4);
+    IntSet fixed(0,3);
+    IntSetArgs cards(4);
+    for (int i = 1; i < 5; i++) {
+      values[i - 1] = i;
+      cards[i - 1] = fixed;
+    }
+    gcc(home, cards, values, x, icl);
+
   }
 };
 
@@ -215,13 +217,20 @@ public:
     }
   }
   virtual void post(Space* home, IntVarArray& x) {
-    IntArgs c(3, 1,4,4);
 
-    IntVarArgs y(4);
+    IntVarArgs vars(4);
     for (int i = 0; i < 4; i++) {
-      y[i] = x[0];
+      vars[i] = x[0];
     }
-    gcc(home, y, c, 3, 0, false, 1, 4, icl);
+
+    //gcc(home, y, c, 3, 0, false, 1, 4, icl);
+    IntArgs values(1);
+    IntSet fixed(4,4);
+    IntSetArgs cards(1);
+    values[0] = 1;
+    cards[0] = fixed;
+    gcc(home, cards, values, vars, icl);
+
   }
 };
 
@@ -280,7 +289,6 @@ public:
         return false;
       }
     }
-
 //     std::cout << "valid\n";
     return true;
   }
@@ -306,21 +314,22 @@ public:
 
 //     std::cout << "nov = "<<nov<<"\n";
 //     for (int i = ve; i < ve + nov; i++) {
-    IntVarArgs y(xs - ve);
+    IntVarArgs cards(xs - ve);
     for (int i = ve; i < xs; i++) {
-      y[i - ve] = x[i];
+      cards[i - ve] = x[i];
 //       rel(home, y[i - ve], IRT_LQ, maxocc);
 //       rel(home, y[i - ve], IRT_GQ, minocc);
     }
 
-    IntVarArgs z(ve);
+    IntVarArgs vars(ve);
     for (int i = 0; i < ve; i++) {
 //       std::cout << x[i] << " ";
-      z[i] = x[i];
+      vars[i] = x[i];
     }
 //     std::cout <<"\n";
 //     gcc(home, z, c, 12, 2, icl);
-    gcc(home, z, y, 0, 2, icl);
+    
+    gcc(home, cards, vars, icl);
   }
 };
 
@@ -372,11 +381,11 @@ public:
       count[x[i]]++;
     }
 
-    // std::cout << "count: ";
-    for (int i = 0; i < xs - ve; i++) {
-      // std::cout << count[i] << " ";
-    }
-    // std::cout << "\n";
+//     std::cout << "count: ";
+//     for (int i = 0; i < xs - ve; i++) {
+//       std::cout << count[i] << " ";
+//     }
+//     std::cout << "\n";
 
     for (int i = 0; i < xs - ve; i++) {
       // std::cout << "comp: "<< count[i] <<" & "<<x[i + ve] << "\n";
@@ -399,22 +408,23 @@ public:
       done[i] = false;
     }
 
-    IntVarArgs y(xs - ve);
+    IntVarArgs cards(xs - ve);
     for (int i = ve; i < xs; i++) {
-      y[i - ve] = x[i];
-      rel(home, y[i - ve], IRT_LQ, maxocc);
-      rel(home, y[i - ve], IRT_GQ, minocc);
+      cards[i - ve] = x[i];
+      rel(home, cards[i - ve], IRT_LQ, maxocc);
+      rel(home, cards[i - ve], IRT_GQ, minocc);
+//       if (i - ve == 0)
+//         rel(home, cards[i - ve], IRT_GQ, 1);
     }
 
-    IntVarArgs z(ve);
+    IntVarArgs vars(ve);
     for (int i = 0; i < ve; i++) {
-      z[i] = x[i];
+      vars[i] = x[i];
     }
-
-    IntArgs value(3, 0, 1, 2);
-//     std::cout <<"\n";
-//     gcc(home, z, c, 12, 2, icl);
-    gcc(home, z, value, y, 3, 2, true, 0,2,  icl);
+    
+    // gcc(home, z, value, y, 3, 2, true, 0,2,  icl);
+    gcc(home, cards, vars, icl);
+    
   }
 };
 
@@ -492,20 +502,24 @@ public:
 
   virtual void post(Space* home, IntVarArray& x) {
 
-    IntVarArgs y(xs - ve);
+    IntVarArgs cards(xs - ve);
     for (int i = ve; i < xs; i++) {
-      y[i - ve] = x[i];
-      rel(home, y[i - ve], IRT_LQ, maxocc);
-      rel(home, y[i - ve], IRT_GQ, minocc);
+      cards[i - ve] = x[i];
+//       rel(home, cards[i - ve], IRT_LQ, maxocc);
+//       rel(home, cards[i - ve], IRT_GQ, minocc);
     }
 
-    IntVarArgs z(ve);
+    IntVarArgs vars(ve);
     for (int i = 0; i < ve; i++) {
-      z[i] = x[i];
+      vars[i] = x[i];
     }
 
-    IntArgs value(2, 0, 1);
-    gcc(home, z, value, y, 2, 0, false, 0,2,  icl);
+    IntArgs values(2);
+    for (int i = 0; i < 2; i++)
+      values[i] = i;
+
+    // gcc(home, z, value, y, 2, 0, false, 0,2,  icl);
+    gcc(home, cards, values, vars, icl);
   }
 };
 
@@ -515,8 +529,7 @@ public:
   GCC_VC_Shared_SomeTriple(const char* t, IntConLevel icl)
     : IntTest(t,3,ds_04,false,icl) {}
   virtual bool solution(const Assignment& x) const {
-    if ( (x[0] != 1 && x[0] != 3) ||
-         (x[1] != 1 && x[1] != 3)) {
+    if ( (x[0] != 1 && x[0] != 3) || (x[1] != 1 && x[1] != 3)) {
       return false;
     }
     if (x[0] == x[1]) {
@@ -531,23 +544,41 @@ public:
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
-    IntVarArgs y(6);
+    IntVarArgs vars(6);
     for (int i = 0; i < 6; i++) {
       if (i < 3) {
-        y[i] = x[0];
+        vars[i] = x[0];
       } else {
-        y[i] = x[1];
+        vars[i] = x[1];
       }
-      rel(home, y[i], IRT_GQ, 1);
+      rel(home, vars[i], IRT_GQ, 1);
     }
-    IntArgs value(2, 1, 3);
-    IntVarArgs z(2);
-    z[0] = x[2];
-    z[1] = x[2];
-    rel(home, z[0], IRT_EQ, 3);
-    rel(home, z[1], IRT_EQ, 3);
 
-    gcc(home, y, value, z, 2, 0, false, 1, 4, icl);
+//     IntArgs values(2);
+//     values[0] = 1;
+//     values[1] = 3;
+
+//     IntVarArgs cards(2);
+//     cards[0] = x[2];
+//     cards[1] = x[2];
+//     rel(home, cards[0], IRT_EQ, 3);
+//     rel(home, cards[1], IRT_EQ, 3);
+    
+    // problems because of hole ?
+
+
+    IntArgs values(2);
+    values[0] = 1;
+    values[1] = 3;
+
+    IntVarArgs cards(2);
+    cards[0] = x[2];
+    cards[1] = x[2];
+    rel(home, cards[0], IRT_EQ, 3);
+    rel(home, cards[1], IRT_EQ, 3);
+    
+    // gcc(home, y, value, z, 2, 0, false, 1, 4, icl);
+    gcc(home, cards, values, vars, icl);
   }
 };
 
@@ -566,10 +597,6 @@ GCC_FC_AllLbUb _gccval_all("GCC::FixCard::Val::All::(lb,ub)",ICL_VAL);
 GCC_FC_AllEqUb _gccbnd_alleq("GCC::FixCard::Bnd::All::ub",ICL_BND);
 GCC_FC_AllEqUb _gccdom_alleq("GCC::FixCard::Dom::All::ub",ICL_DOM);
 GCC_FC_AllEqUb _gccval_alleq("GCC::FixCard::Val::All::ub",ICL_VAL);
-
-GCC_FC_AllTriple _gccbnd_alltrip("GCC::FixCard::Bnd::All::(v,lb,ub)",ICL_BND);
-GCC_FC_AllTriple _gccdom_alltrip("GCC::FixCard::Dom::All::(v,lb,ub)",ICL_DOM);
-GCC_FC_AllTriple _gccval_alltrip("GCC::FixCard::Val::All::(v,lb,ub)",ICL_VAL);
 
 GCC_FC_SomeTriple _gccbnd_sometrip("GCC::FixCard::Bnd::Some::(v,lb,ub)",ICL_BND);
 GCC_FC_SomeTriple _gccdom_sometrip("GCC::FixCard::Dom::Some::(v,lb,ub)",ICL_DOM);

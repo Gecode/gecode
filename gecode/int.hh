@@ -1028,238 +1028,27 @@ namespace Gecode {
         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
 
-  /**
-   *  \brief Post propagator for
-   *  \f{eqnarray*}
-   *       \forall t=(v, lb, ub) \in c: & &
-   *       lb \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq ub \\
-   *           \forall t=(v, unspec_{low}, unspec_{up}) \not\in c: & &
-   *           unspec_{low} \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq unspec_{up}
-   *  \f}
-   *
-   *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
-   *  and domain-consistency (\a icl = ICL_DOM).
-   *
-   *  \exception Int::ArgumentSame thrown if \a x contains shared variables.
-   *
-   *  \param x variables on which to perform propagation
-   *  \param c specifying cardinality information as shown below
-   *  \param m denotes the size of c
-   *  \param unspec_low denotes the lower bound for those values
-   *         not specified in c
-   *  \param unspec_up denotes the upper bound for those values
-   *         not specified in c
-   *  \param min smallest domain value of \a x
-   *  \param max largest domain value of \a x
-   *  \param icl consistency level
-   *
-   *  Let \f$ D:=\displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} dom(x_i)\f$ and
-   *  \f$ V \f$ the set of values represented by \a c. Then this progator allows
-   *  sets \f$ V\subset D\f$ as well as \f$ V=D\f$.
-   *
-   *  In this interface values \f$ v\f$ and their cardinality bounds
-   *  have to specified such that \a c looks as follows (for example):
-   *  \f$ c=[ (1,0,1), (2,1,3), \dots, (10,4,5)]\f$, where the value 1 may occur
-   *  zero times or once, the value 2 must occur at least once at most three times
-   *  and the value 10 must occur at least 4 times and at most 5 times.
-   *
-   *  Furthermore, this interface requires that
-   *  \f$ \forall {i\in\{0, \dots, |x|-1\}}: dom(x_i)
-   *  \subseteq I=[min;max]\f$.
-   *
-   */
-
+  // new interface
   GECODE_INT_EXPORT void
-  gcc(Space* home, const IntVarArgs& x, const IntArgs& c,
-      int m, int unspec_low, int unspec_up, int min, int max,
+  gcc(Space* home, const IntVarArgs& cards, const IntVarArgs& vars, 
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
-  /**
-   *  \brief Post propagator for
-   *  \f{eqnarray*}
-   *      \forall t=(v, lb, ub) \in c: & &
-   *      lb \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq ub \\
-   *          \forall t=(v, 0, unspec) \not\in c: & &
-   *          0 \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq unspec
-   *  \f}
-   *
-   *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
-   *  and domain-consistency (\a icl = ICL_DOM).
-   *
-   *  \exception Int::ArgumentSame thrown if \a x contains shared variables.
-   *
-   *  \param x variables on which to perform propagation
-   *  \param c specifying cardinality information as shown below
-   *  \param m denotes the size of \a c
-   *  \param unspec denotes the upper bound for those values
-   *         not specified in \a c
-   *  \param min smallest domain value of \a x
-   *  \param max largest domain value of \a x
-   *  \param icl consistency level
-   *
-   *  Let \f$ D:=\displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} dom(x_i)\f$ and
-   *  \f$ V \f$ the set of values represented by \a c. Then this interface allows
-   *  to specify sets \f$ V\subset D\f$ as well as \f$ V=D\f$.
-   *
-   *  In this interface values \f$ v\f$ and their cardinality bounds
-   *  have to be specified such that \a c looks as follows (for example):
-   *  \f$ c=[ (1,0,1), (2,1,3), \dots, (10,4,5)]\f$, where the value 1 may occur
-   *  zero times or once, the value 2 must occur at least once at most three times
-   *  and the value 10 must occur at least 4 times and at most 5 times.
-   */
+  GECODE_INT_EXPORT void
+  gcc(Space* home, const  IntVarArgs& cards, const  IntArgs& values, 
+      const  IntVarArgs& vars, IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
   GECODE_INT_EXPORT void
-  gcc(Space* home, const IntVarArgs& x, const IntArgs& c,
-      int m, int unspec, int min, int max,
+  gcc(Space* home, const  IntSetArgs& cards, const  IntVarArgs& vars, 
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-
-  /**
-   *  \brief Post propagator for \f$ \forall v
-   *         \in \displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} dom(x_i):
-   *         lb \leq \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} \leq ub \f$
-   *
-   *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
-   *  and domain-consistency (\a icl = ICL_DOM).
-   *
-   *  \exception Int::ArgumentSame thrown if \a x contains shared variables.
-   *
-   *  \param x variables on which to perform propagation
-   *  \param lb denotes the lower bound for all values
-   *         specified in the array \a c,
-   *  \param ub denotes the upper bound for all values
-   *         specified in the array \a c,
-   *         where this interface allows only value sets
-   *         \f$ V=D \displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}}
-   *         dom(x_i)\f$
-   *  \param icl consistency level
-   */
 
   GECODE_INT_EXPORT void
-  gcc(Space* home, const IntVarArgs& x, int lb, int ub, 
+  gcc(Space* home, const  IntSetArgs& cards, const  IntArgs& values, 
+      const  IntVarArgs& vars, IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF); 
+
+ GECODE_INT_EXPORT void
+  gcc(Space* home, const IntVarArgs& vars, int eq, 
       IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
-  /**
-   *  \brief Post propagator for \f$ \forall v
-   *         \in \displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}} dom(x_i):
-   *         lb = \#\{i\in\{0, \dots, |x| - 1\} | x_i = v\} = ub \f$
-   *
-   *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
-   *  and domain-consistency (\a icl = ICL_DOM).
-   *
-   *  \exception Int::ArgumentSame thrown if \a x contains shared variables.
-   *
-   *  \param x variables on which to perform propagation
-   *  \param ub denotes the upper bound for all values specified
-   *            in the array \a c, where this interface
-   *            allows only value sets
-   *            \f$ V=D \displaystyle \bigcup_{i\in\{0, \dots, |x|-1\}}
-   *            dom(x_i)\f$
-   *  \param icl consistency level
-   *
-   */
-
-  GECODE_INT_EXPORT void
-  gcc(Space* home, const IntVarArgs& x, int ub, 
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-
-
-  /**
-   *  \brief Post propagator for
-   *  \f{eqnarray*}
-   *    v_j \in I=[min;max] & & \\
-   *    \forall j \in \{0, \dots, |I| - 1\}: & &
-   *    \#\{i\in\{0, \dots, |x| - 1\} | x_i = v_j\} = c_j
-   *  \f}
-   *
-   *  \param x variables on which to perform propagation
-   *  \param c cardinality variables
-   *  \param min smallest domain value of \a x
-   *  \param max largest domain value of \a x
-   *  \param icl consistency level
-   *
-   *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
-   *  and domain-consistency (\a icl = ICL_DOM).
-   *
-   *  This interface requires that
-   *  \f$ \forall {i\in\{0, \dots, |x|-1\}}: dom(x_i)
-   *  \subseteq I=[min;max]\f$.
-   */
-
-  GECODE_INT_EXPORT void
-  gcc(Space* home,  const IntVarArgs& x, const IntVarArgs& c,
-      int min, int max,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-
-  /**
-   *  \brief Post propagator for \f$ \forall j \in \{0, \dots, |v| - 1\}:
-   *  \#\{i\in\{0, \dots, |x| - 1\} | x_i = v_j\} = c_j \f$
-   *
-   *  \param x variables on which to perform propagation
-   *  \param v containing the values connected to the cardinality
-   *         variables as specified below
-   *  \param c cardinality variables
-   *  \param m denotes the size of \a v and \a c
-   *  \param unspec_low denotes the lower bound for those values
-   *         not specified in \a v and \a c
-   *  \param unspec_up denotes the upper bound for those values
-   *         not specified in \a v and \a c
-   *  \param all specifies whether the propagator uses all values in
-   *         the interval \f$ I=[min;max]\f$
-   *  \param min smallest domain value of \a x
-   *  \param max largest domain value of \a x
-   *  \param icl consistency level
-   *
-   *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
-   *  and domain-consistency (\a icl = ICL_DOM).
-   *
-   *  This interface requires that
-   *  \f$ \forall {i\in\{0, \dots, |x|-1\}}: dom(x_i)
-   *  \subseteq I=[min;max]\f$.
-   *  If \a all is set to true, every value from the interval
-   *  \f$ I=[min;max]\f$ is specified with cardinalities.
-   *  Otherwise, only specified values in \a v are used and unspecified values
-   *  may occur between \a unspec_low and \a unspec_up times.
-   */
-
-  GECODE_INT_EXPORT void
-  gcc(Space* home,
-      const IntVarArgs& x, const IntArgs& v, const IntVarArgs& c,
-      int m, int unspec_low, int unspec_up, bool all, int min, int max,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-
-  /**
-   *  \brief Post propagator for \f$ \forall j \in \{0, \dots, |v| - 1\}:
-   *  \#\{i\in\{0, \dots, |x| - 1\} | x_i = v_j\} = c_j \f$
-   *
-   *  \param x variables on which to perform propagation
-   *  \param v containing the values connected to the cardinality
-   *         variables as specified below
-   *  \param c cardinality variables
-   *  \param m denotes the size of \a v and \a c
-   *  \param unspec denotes the upper bound for those values
-   *         not specified in \a v and \a c
-   *  \param all specifies whether the propagator uses all values in
-   *         the interval \f$ I=[min;max]\f$
-   *  \param min smallest domain value of \a x
-   *  \param max largest domain value of \a x
-   *  \param icl consistency level
-   *
-   *  Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
-   *  and domain-consistency (\a icl = ICL_DOM).
-   *
-   *  This interface requires that
-   *  \f$ \forall {i\in\{0, \dots, |x|-1\}}: dom(x_i)
-   *  \subseteq [min, \dots, max]\f$.
-   *  If \a all is set to true, every value from the interval
-   *  \f$ I=[min;max]\f$ is specified with cardinalities.
-   *  Otherwise, only specified values in \a v are used and unspecified values
-   *  may occur between 0 and \a unspec times.
-   */
-  GECODE_INT_EXPORT void
-  gcc(Space* home,
-      const IntVarArgs& x, const IntArgs& v, const IntVarArgs& c,
-      int m, int unspec, bool all, int min, int max,
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   //@}
 
 #if 0

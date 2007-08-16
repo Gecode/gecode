@@ -1,3 +1,4 @@
+
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
@@ -52,6 +53,8 @@ namespace Gecode {
   typedef VarArgArray<IntVar>  IntVarArgs;
   /// Passing Boolean variables
   typedef VarArgArray<BoolVar> BoolVarArgs;
+  /// Passing set arguments
+  typedef PrimArgArray<IntSet> IntSetArgs;
   //@}
 
   /**
