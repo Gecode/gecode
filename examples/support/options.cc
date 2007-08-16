@@ -190,6 +190,8 @@ Options::parse(int& argc, char* argv[]) {
   for (BaseOption* o = fst; o != NULL; o = o->next)
     if (o->parse(argc,argv))
       goto next;
+  if (argc < 2)
+    return;
   if (!strcmp(argv[1],"-help") || !strcmp(argv[1],"--help") ||
       !strcmp(argv[1],"-?")) {
     help();
