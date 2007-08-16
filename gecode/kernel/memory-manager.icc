@@ -221,8 +221,6 @@ namespace Gecode {
   public:
     /// Store for reusal, if of sufficient size for free list
     void reuse(void* p, size_t s);
-    /// Try to allocate from slack
-    void* reusealloc(size_t s);
   };
 
 
