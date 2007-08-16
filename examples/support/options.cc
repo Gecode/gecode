@@ -186,17 +186,16 @@ Options::help(void) {
 
 void
 Options::parse(int& argc, char* argv[]) {
-  while (argc > 1) {
-    for (BaseOption* o = fst; o != NULL; o = o->next)
-      if (o->parse(argc,argv))
-        continue;
-    if (!strcmp(argv[1],"-help") || !strcmp(argv[1],"--help") ||
-        !strcmp(argv[1],"-?")) {
-      help();
-      exit(EXIT_SUCCESS);
-    }
-    return;
+ next:
+  for (BaseOption* o = fst; o != NULL; o = o->next)
+    if (o->parse(argc,argv))
+      goto next;
+  if (!strcmp(argv[1],"-help") || !strcmp(argv[1],"--help") ||
+      !strcmp(argv[1],"-?")) {
+    help();
+    exit(EXIT_SUCCESS);
   }
+  return;
 }
 
 
