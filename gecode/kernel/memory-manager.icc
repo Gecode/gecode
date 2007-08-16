@@ -206,7 +206,7 @@ namespace Gecode {
     /// Release all free list elements of size \a s between f and l (inclusive)
     template <size_t> void  fl_dispose(FreeList* f, FreeList* l);
 
-  public:
+  private:
     /// Memory-chunks for reusing slack memory
     class ReuseChunk {
     public:
@@ -215,7 +215,6 @@ namespace Gecode {
       /// Next chunk for reusal
       ReuseChunk* next;
     };
-  private:
     /// Slack memory chunks
     ReuseChunk* slack;
   public:
@@ -248,7 +247,6 @@ namespace Gecode {
 
   forceinline size_t
   MemoryManager::sz2i(size_t s) {
-    assert((s % (1 << Memory::Config::fl_unit_size)) == 0);
     assert(s >= (Memory::Config::fl_size_min << Memory::Config::fl_unit_size));
     assert(s <= (Memory::Config::fl_size_max << Memory::Config::fl_unit_size));
     return (s >> Memory::Config::fl_unit_size) - Memory::Config::fl_size_min;
@@ -361,6 +359,7 @@ namespace Gecode {
   }
 
 
+
   /*
    * Slack memory management
    *
@@ -376,11 +375,17 @@ namespace Gecode {
       }
     }
 #endif
-    if (s >= (Memory::Config::fl_size_max<<Memory::Config::fl_unit_size)) {
+    if (s < (Memory::Config::fl_size_min<<Memory::Config::fl_unit_size))
+      return;
+    if (s > (Memory::Config::fl_size_max<<Memory::Config::fl_unit_size)) {
       ReuseChunk* rc = static_cast<ReuseChunk*>(p);
       rc->next = slack;
       rc->size = s;
       slack = rc;
+    } else {
+      size_t i = sz2i(s);
+      FreeList* f = static_cast<FreeList*>(p);
+      f->next(fl[i]); fl[i]=f;
     }
   }
 

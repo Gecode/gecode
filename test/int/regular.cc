@@ -38,16 +38,17 @@
 #include "test/int.hh"
 #include "test/log.hh"
 
+#include "gecode/minimodel.hh"
+
 namespace {
 
   IntSet ds_22(-2,2);
   IntSet ds_14(-1,4);
 
-  REG ra = ((REG(0) | REG(2)) +
+  DFA da = ((REG(0) | REG(2)) +
             (REG(-1) | REG(1)) +
             (REG(7) | REG(0) | REG(1)) +
             (REG(0) | REG(1)));
-  DFA da(ra);
 
   class RegularA : public IntTest {
   public:
@@ -64,12 +65,11 @@ namespace {
     }
   };
   
-  REG rb = ((REG(-2) + REG(-1) + REG(0) + REG(1)) |
+  DFA db = ((REG(-2) + REG(-1) + REG(0) + REG(1)) |
             (REG(-2) + REG(-1) + REG(0) + REG(2)) |
             (REG(-2) + REG(-1) + REG(1) + REG(2)) |
             (REG(-2) + REG(0) + REG(1) + REG(2)) |
             (REG(-1) + REG(0) + REG(1) + REG(2)));
-  DFA db(rb);
 
   class RegularB : public IntTest {
   public:
@@ -83,7 +83,7 @@ namespace {
     }
   };
   
-  REG rd = ((REG(0)+REG(1)+REG(2)+REG(3)) |
+  DFA dd = ((REG(0)+REG(1)+REG(2)+REG(3)) |
             (REG(0)+REG(1)+REG(3)+REG(2)) |
             (REG(0)+REG(2)+REG(1)+REG(3)) |
             (REG(0)+REG(2)+REG(3)+REG(1)) |
@@ -107,8 +107,6 @@ namespace {
             (REG(3)+REG(1)+REG(2)+REG(0)) |
             (REG(3)+REG(2)+REG(0)+REG(1)) |
             (REG(3)+REG(2)+REG(1)+REG(0)));
-
-  DFA dd(rd);
 
   class RegularDistinct : public IntTest {
   public:
