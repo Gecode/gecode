@@ -440,8 +440,8 @@ namespace Gecode {
         n_log++;
       d->n_log = n_log;
       // Allocate memory
-      HashEntry* table = static_cast<HashEntry*>
-        (Memory::malloc(sizeof(HashEntry)*(1<<n_log)));
+      DFAI::HashEntry* table = static_cast<DFAI::HashEntry*>
+        (Memory::malloc(sizeof(DFAI::HashEntry)*(1<<n_log)));
       d->table = table;
       // Initialize table
       for (int i=(1<<n_log); i--; ) {
@@ -452,11 +452,11 @@ namespace Gecode {
       // Enter transitions to table
       for (int i = 0; i<m_trans; ) {
         int s = d->trans[i].symbol;
-        DFA::Transition* fst = &d->trans[i];
+        Transition* fst = &d->trans[i];
         i++;
         while ((i<m_trans) && (d->trans[i].symbol == s))
           i++;
-        DFA::Transition* lst = &d->trans[i];
+        Transition* lst = &d->trans[i];
         // Enter with linear collision resolution
         int p = s & mask;
         while (table[p].fst != NULL)
@@ -467,6 +467,17 @@ namespace Gecode {
       }
     }
     object(d);
+  }
+
+  SharedHandle::Object*
+  DFA::DFAI::copy(void) const {
+    DFAI* d = new DFAI(n_trans);
+    d->n_states  = n_states;
+    d->n_trans   = n_trans;
+    d->final_fst = final_fst;
+    d->final_lst = final_lst;
+    memcpy(&d->trans[0], &trans[0], sizeof(Transition)*n_trans);
+    return d;
   }
 
 }
@@ -498,21 +509,6 @@ operator<<(std::ostream& os, const Gecode::DFA& dfa) {
      << std::endl;
   return os;
 }
-
-namespace Gecode { namespace Int { namespace Regular {
-
-  SharedObject*
-  DFAI::copy(void) const {
-    DFAI* d = new DFAI(n_trans);
-    d->n_states  = n_states;
-    d->n_trans   = n_trans;
-    d->final_fst = final_fst;
-    d->final_lst = final_lst;
-    memcpy(&d->trans[0], &trans[0], sizeof(DFA::Transition)*n_trans);
-    return d;
-  }
-
-}}}
 
 // STATISTICS: int-prop
 

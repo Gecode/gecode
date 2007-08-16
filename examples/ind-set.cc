@@ -94,8 +94,8 @@ public:
     const int* e = g.e;
     const int* e1 = e++; const int* e2 = e++;
     for (int i = g.n_e; i--; )
-      rel(this, v[*e1], BOT_AND, v[*e2], 0);
-    linear(this, v, IRT_EQ, k);
+      rel(this, v[*e1], BOT_AND, v[*e2], 0, ICL_DEF, opt.pk());
+    linear(this, v, IRT_EQ, k, ICL_DEF, opt.pk());
     branch(this, v, BVAR_NONE, BVAL_MIN);
   }
 

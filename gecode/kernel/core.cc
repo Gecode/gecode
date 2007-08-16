@@ -435,7 +435,7 @@ namespace Gecode {
     }
     assert(c_a->prev() == p_a);
     // Reset links for shared objects
-    for (SharedObject* s = c->shared; s != NULL; s = s->next)
+    for (SharedHandle::Object* s = c->shared; s != NULL; s = s->next)
       s->fwd = NULL;
     c->shared = NULL;
     return c;

@@ -126,13 +126,13 @@ public:
       break;
     case PROP_REGULAR:
       {
+        IntArgs a(n-1);
+        for (int v=2; v<=n; v++)
+          a[v-2]=v;
         for (int v=1; v<=n; v++) {
           // Construct regular expression for all symbols but v
-          IntArgs a(n-1);
-          for (int i=1; i<v; i++)
-            a[i-1]=i;
-          for (int i=v+1; i<=n; i++)
-            a[i-2]=i;
+          if (v > 1)
+            a[v-2]=v-1;
           REG ra(a), rv(v);
           // Regular expression
           DFA dfa = *ra+rv+(ra(v,v)+rv)(k-1,k-1)+*ra;

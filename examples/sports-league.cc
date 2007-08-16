@@ -274,7 +274,7 @@ public:
 
     distinct(this, game, opt.icl());
 
-    branch(this, game, BVAR_NONE, BVAL_MIN);
+    branch(this, game, BVAR_NONE, BVAL_SPLIT_MIN);
   }
   /// Constructor for cloning \a s
   SportsLeague(bool share, SportsLeague& s)

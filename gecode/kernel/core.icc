@@ -62,36 +62,6 @@ namespace Gecode {
    */
   
   /**
-   * \brief The shared object
-   *
-   * Shared objects must inherit from this base class. 
-   *
-   * \ingroup FuncSupportShared
-   */
-  class SharedObject {
-    friend class Space;
-    friend class SharedHandle;
-  private:
-    /// The counter used for reference counting
-    unsigned int use_cnt;
-    /// The next shared object collected during copying
-    SharedObject* next;
-    /// The forwarding pointer used for forwarding
-    SharedObject* fwd;
-  public:
-    /// Initialize but do not regard object as being used!
-    SharedObject(void);
-    /// Return fresh copy for unshared update
-    virtual SharedObject* copy(void) const = 0;
-    /// Delete shared object
-    virtual ~SharedObject(void);
-    /// Allocate memory from heap
-    static void* operator new(size_t s);
-    /// Free memory allocated from heap
-    static void  operator delete(void* p);
-  };
-  
-  /**
    * \brief The shared handle
    *
    * Shared handles must inherit from this base class where
@@ -102,9 +72,39 @@ namespace Gecode {
    * \ingroup FuncSupportShared
    */
   class SharedHandle {
+  public:
+    /**
+     * \brief The shared object
+     *
+     * Shared objects must inherit from this base class. 
+     *
+     * \ingroup FuncSupportShared
+     */
+    class Object {
+      friend class Space;
+      friend class SharedHandle;
+    private:
+      /// The counter used for reference counting
+      unsigned int use_cnt;
+      /// The next shared object collected during copying
+      Object* next;
+      /// The forwarding pointer used for forwarding
+      Object* fwd;
+    public:
+      /// Initialize but do not regard object as being used!
+      Object(void);
+      /// Return fresh copy for unshared update
+      virtual Object* copy(void) const = 0;
+      /// Delete shared object
+      virtual ~Object(void);
+      /// Allocate memory from heap
+      static void* operator new(size_t s);
+      /// Free memory allocated from heap
+      static void  operator delete(void* p);
+    };
   private:
     /// The shared object
-    SharedObject* o;
+    Object* o;
     /// Subscribe handle to object
     void subscribe(void);
     /// Cancel subscription of handle to object
@@ -113,7 +113,7 @@ namespace Gecode {
     /// Create shared handle with no object pointing to
     SharedHandle(void);
     /// Create shared handle that points to shared object \a so
-    SharedHandle(SharedObject* so);
+    SharedHandle(Object* o);
     /// Copy constructor maintaining reference count
     SharedHandle(const SharedHandle& sh);
     /// Assignment operator mainitaining reference count
@@ -124,9 +124,9 @@ namespace Gecode {
     ~SharedHandle(void);
   protected:
     /// Access to the shared object
-    SharedObject* object(void) const;
+    Object* object(void) const;
     /// Modify shared object
-    void object(SharedObject* n);
+    void object(Object* n);
   };
 
 
@@ -1088,7 +1088,7 @@ namespace Gecode {
     unsigned int n_sub;
 
     /// Linked list of shared objects
-    SharedObject* shared;
+    SharedHandle::Object* shared;
 
     /// Used for default arguments
     GECODE_KERNEL_EXPORT static unsigned long int unused_uli;
@@ -1434,19 +1434,19 @@ namespace Gecode {
    *
    */
   forceinline void* 
-  SharedObject::operator new(size_t s) {
+  SharedHandle::Object::operator new(size_t s) {
     return Memory::malloc(s);
   }
   forceinline void
-  SharedObject::operator delete(void* p) {
+  SharedHandle::Object::operator delete(void* p) {
     Memory::free(p);
   }
 
   forceinline
-  SharedObject::SharedObject(void) 
+  SharedHandle::Object::Object(void) 
     : use_cnt(0), fwd(NULL) {}
   forceinline
-  SharedObject::~SharedObject(void) {
+  SharedHandle::Object::~Object(void) {
     assert(use_cnt == 0);
   }
 
@@ -1463,7 +1463,7 @@ namespace Gecode {
   forceinline 
   SharedHandle::SharedHandle(void) : o(NULL) {}
   forceinline 
-  SharedHandle::SharedHandle(SharedObject* so) : o(so) {
+  SharedHandle::SharedHandle(SharedHandle::Object* so) : o(so) {
     subscribe();
   }
   forceinline 
@@ -1497,12 +1497,12 @@ namespace Gecode {
   SharedHandle::~SharedHandle(void) {
     cancel();
   }
-  forceinline SharedObject* 
+  forceinline SharedHandle::Object* 
   SharedHandle::object(void) const {
     return o;
   }
   forceinline void 
-  SharedHandle::object(SharedObject* n) {
+  SharedHandle::object(SharedHandle::Object* n) {
     if (n != o) {
       cancel(); o=n; subscribe();
     }

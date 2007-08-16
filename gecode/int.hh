@@ -798,11 +798,10 @@ namespace Gecode {
    * The final states are contiguous ranging from the first to the
    * last final state.
    */
-  namespace Int { namespace Regular {
-    class DFAI;
-  }}
-
   class DFA : public SharedHandle {
+  private:
+    /// Implementation of DFA
+    class DFAI;
   public:
     /// Specification of a %DFA transition
     class Transition {

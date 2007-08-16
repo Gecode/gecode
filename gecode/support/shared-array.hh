@@ -44,79 +44,6 @@
 
 namespace Gecode { namespace Support {
 
-  /// Implementation of object for shared arrays
-  template <class T>
-  class SAO : public SharedObject {
-  private:
-    /// Elements
-    T*  a;
-    /// Number of elements
-    int n;
-
-  public:
-    /// Allocate for \a n elements
-    SAO(int n);
-    /// Create copy of elements
-    virtual SharedObject* copy(void) const;
-    /// Delete object
-    virtual ~SAO(void);
-
-    /// Access element at position \a i
-    T& operator[](int i);
-    /// Access element at position \a i
-    const T& operator[](int i) const;
-
-    /// Return number of elements
-    int size(void) const;
-  };
-
-  template <class T>
-  forceinline
-  SAO<T>::SAO(int n0) : n(n0) {
-    a = (n>0) ? static_cast<T*>(Memory::malloc(sizeof(T)*n)) : NULL;
-  }
-
-  template <class T>
-  forceinline SharedObject*
-  SAO<T>::copy(void) const {
-    SAO<T>* o = new SAO<T>(n);
-    for (int i=n; i--;)
-      new (&(o->a[i])) T(a[i]);
-    return o;
-  }
-
-  template <class T>
-  forceinline
-  SAO<T>::~SAO(void) {
-    if (n>0) {
-      for (int i=n; i--;)
-        a[i].~T();
-      Memory::free(a);
-    }
-  }
-
-  template <class T>
-  forceinline T&
-  SAO<T>::operator[](int i) {
-    assert((i>=0) && (i<n));
-    return a[i];
-  }
-
-  template <class T>
-  forceinline const T&
-  SAO<T>::operator[](int i) const {
-    assert((i>=0) && (i<n));
-    return a[i];
-  }
-
-  template <class T>
-  forceinline int
-  SAO<T>::size(void) const {
-    return n;
-  }
-
-
-
   /**
    * \brief Shared array with arbitrary number of elements
    *
@@ -128,6 +55,30 @@ namespace Gecode { namespace Support {
    */
   template <class T>
   class SharedArray : public SharedHandle {
+  protected:
+    /// Implementation of object for shared arrays
+    class SAO : public SharedHandle::Object {
+    private:
+      /// Elements
+      T*  a;
+      /// Number of elements
+      int n;
+    public:
+      /// Allocate for \a n elements
+      SAO(int n);
+      /// Create copy of elements
+      virtual SharedHandle::Object* copy(void) const;
+      /// Delete object
+      virtual ~SAO(void);
+      
+      /// Access element at position \a i
+      T& operator[](int i);
+      /// Access element at position \a i
+      const T& operator[](int i) const;
+      
+      /// Return number of elements
+      int size(void) const;
+    };
   public:
     /** 
      * \brief Construct as not yet intialized
@@ -162,12 +113,58 @@ namespace Gecode { namespace Support {
 
   template <class T>
   forceinline
+  SharedArray<T>::SAO::SAO(int n0) : n(n0) {
+    a = (n>0) ? static_cast<T*>(Memory::malloc(sizeof(T)*n)) : NULL;
+  }
+
+  template <class T>
+  SharedHandle::Object*
+  SharedArray<T>::SAO::copy(void) const {
+    SAO* o = new SAO(n);
+    for (int i=n; i--;)
+      new (&(o->a[i])) T(a[i]);
+    return o;
+  }
+
+  template <class T>
+  SharedArray<T>::SAO::~SAO(void) {
+    if (n>0) {
+      for (int i=n; i--;)
+        a[i].~T();
+      Memory::free(a);
+    }
+  }
+
+  template <class T>
+  forceinline T&
+  SharedArray<T>::SAO::operator[](int i) {
+    assert((i>=0) && (i<n));
+    return a[i];
+  }
+
+  template <class T>
+  forceinline const T&
+  SharedArray<T>::SAO::operator[](int i) const {
+    assert((i>=0) && (i<n));
+    return a[i];
+  }
+
+  template <class T>
+  forceinline int
+  SharedArray<T>::SAO::size(void) const {
+    return n;
+  }
+
+
+
+  template <class T>
+  forceinline
   SharedArray<T>::SharedArray(void) {}
 
   template <class T>
   forceinline
   SharedArray<T>::SharedArray(int n) 
-    : SharedHandle(new SAO<T>(n)) {}
+    : SharedHandle(new SAO(n)) {}
 
   template <class T>
   forceinline
@@ -178,28 +175,28 @@ namespace Gecode { namespace Support {
   forceinline void
   SharedArray<T>::init(int n) {
     assert(object() == NULL);
-    object(new SAO<T>(n));
+    object(new SAO(n));
   }
 
   template <class T>
   forceinline T&
   SharedArray<T>::operator[](int i) {
     assert(object() != NULL);
-    return (*static_cast<SAO<T>*>(object()))[i];
+    return (*static_cast<SAO*>(object()))[i];
   }
 
   template <class T>
   forceinline const T&
   SharedArray<T>::operator[](int i) const {
     assert(object() != NULL);
-    return (*static_cast<SAO<T>*>(object()))[i];
+    return (*static_cast<SAO*>(object()))[i];
   }
 
   template <class T>
   forceinline int
   SharedArray<T>::size(void) const {
     assert(object() != NULL);
-    return static_cast<SAO<T>*>(object())->size();
+    return static_cast<SAO*>(object())->size();
   }
 
 }}
