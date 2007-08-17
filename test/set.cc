@@ -116,7 +116,8 @@ operator<<(std::ostream& os, const SetAssignment& a) {
   os << "{";
   for (int i=0; i<n; i++) {
     CountableSetRanges csv(a.lub, a[i]);
-    os << csv << ((i!=n-1) ? "," : "}");
+    IntSet icsv(csv);
+    os << icsv << ((i!=n-1) ? "," : "}");
   }
   if (a.withInt > 0)
     os << a.ints();

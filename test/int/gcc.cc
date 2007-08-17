@@ -121,7 +121,7 @@ public:
       cards[i - 1] = fixed;
     }
     //gcc(home, x, 0, 2, icl);
-    gcc(home, cards, values, x, icl);
+    count(home, x, cards, values, icl);
   }
 };
 
@@ -149,7 +149,7 @@ public:
       cards[i - 1] = fixed;
     }
     //gcc(home, x, card, 6, 0, false, 1, 4, icl);
-    gcc(home, cards, values, x, icl);
+    count(home, x, cards, values, icl);
   }
 };
 
@@ -168,7 +168,8 @@ public:
     return true;
   }
   virtual void post(Space* home, IntVarArray& x) {
-    gcc(home, x, 2, icl);
+    IntArgs values(2); values[0] = 1; values[1] = 2;
+    count(home, x, IntSet(2,2), values, icl);
   }
 };
 
@@ -200,36 +201,7 @@ public:
       values[i - 1] = i;
       cards[i - 1] = fixed;
     }
-    gcc(home, cards, values, x, icl);
-
-  }
-};
-
-class GCC_FC_Shared_SomeTrip : public IntTest {
-public:
-  GCC_FC_Shared_SomeTrip(const char* t, IntConLevel icl)
-    : IntTest(t,1,ds_14,false,icl) {}
-  virtual bool solution(const Assignment& x) const {
-    if (x[0] == 1) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-
-    IntVarArgs vars(4);
-    for (int i = 0; i < 4; i++) {
-      vars[i] = x[0];
-    }
-
-    //gcc(home, y, c, 3, 0, false, 1, 4, icl);
-    IntArgs values(1);
-    IntSet fixed(4,4);
-    IntSetArgs cards(1);
-    values[0] = 1;
-    cards[0] = fixed;
-    gcc(home, cards, values, vars, icl);
+    count(home, x, cards, values, icl);
 
   }
 };
@@ -329,7 +301,7 @@ public:
 //     std::cout <<"\n";
 //     gcc(home, z, c, 12, 2, icl);
     
-    gcc(home, cards, vars, icl);
+    count(home, vars, cards, icl);
   }
 };
 
@@ -423,7 +395,7 @@ public:
     }
     
     // gcc(home, z, value, y, 3, 2, true, 0,2,  icl);
-    gcc(home, cards, vars, icl);
+    count(home, vars, cards, icl);
     
   }
 };
@@ -519,71 +491,9 @@ public:
       values[i] = i;
 
     // gcc(home, z, value, y, 2, 0, false, 0,2,  icl);
-    gcc(home, cards, values, vars, icl);
+    count(home, vars, cards, values, icl);
   }
 };
-
-
-class GCC_VC_Shared_SomeTriple : public IntTest {
-public:
-  GCC_VC_Shared_SomeTriple(const char* t, IntConLevel icl)
-    : IntTest(t,3,ds_04,false,icl) {}
-  virtual bool solution(const Assignment& x) const {
-    if ( (x[0] != 1 && x[0] != 3) || (x[1] != 1 && x[1] != 3)) {
-      return false;
-    }
-    if (x[0] == x[1]) {
-      return false;
-    }
-    if (x[0] < 1 || x[1] < 1) {
-      return false;
-    }
-    if (x[2] != 3) {
-      return false;
-    }
-    return true;
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    IntVarArgs vars(6);
-    for (int i = 0; i < 6; i++) {
-      if (i < 3) {
-        vars[i] = x[0];
-      } else {
-        vars[i] = x[1];
-      }
-      rel(home, vars[i], IRT_GQ, 1);
-    }
-
-//     IntArgs values(2);
-//     values[0] = 1;
-//     values[1] = 3;
-
-//     IntVarArgs cards(2);
-//     cards[0] = x[2];
-//     cards[1] = x[2];
-//     rel(home, cards[0], IRT_EQ, 3);
-//     rel(home, cards[1], IRT_EQ, 3);
-    
-    // problems because of hole ?
-
-
-    IntArgs values(2);
-    values[0] = 1;
-    values[1] = 3;
-
-    IntVarArgs cards(2);
-    cards[0] = x[2];
-    cards[1] = x[2];
-    rel(home, cards[0], IRT_EQ, 3);
-    rel(home, cards[1], IRT_EQ, 3);
-    
-    // gcc(home, y, value, z, 2, 0, false, 1, 4, icl);
-    gcc(home, cards, values, vars, icl);
-  }
-};
-
-
-
 
 
 // Testing with Fixed Cardinalities
@@ -607,10 +517,6 @@ GCC_FC_SomeTriple _gccval_sometrip("GCC::FixCard::Val::Some::(v,lb,ub)",ICL_VAL)
 // GCC_FC_Shared_AllLbUb _gccdom_shared_all("GCC::FixCard::Dom::Shared::All::(lb,ub)",ICL_DOM);
 // GCC_FC_Shared_AllLbUb _gccval_shared_all("GCC::FixCard::Val::Shared::All::(lb,ub)",ICL_VAL);
 
-// GCC_FC_Shared_SomeTrip _gccbnd_shared_tripsome("GCC::FixCard::Bnd::Shared::Some::(v,lb,ub)",ICL_BND);
-// GCC_FC_Shared_SomeTrip _gccdom_shared_tripsome("GCC::FixCard::Dom::Shared::Some::(v,lb,ub)",ICL_DOM);
-// GCC_FC_Shared_SomeTrip _gccval_shared_tripsome("GCC::FixCard::Val::Shared::Some::(v,lb,ub)",ICL_VAL);
-
 // Testing with Cardinality Variables
 
 GCC_VC_AllLbUb _gccbnd_all_var("GCC::VarCard::Bnd::All::(lb,ub)",ICL_BND);
@@ -624,12 +530,6 @@ GCC_VC_AllTriple _gccval_alltrip_var("GCC::VarCard::Val::All::(v,lb,ub)",ICL_VAL
 GCC_VC_SomeTriple _gccbnd_sometrip__var("GCC::VarCard::Bnd::Some::(v,lb,ub)",ICL_BND);
 GCC_VC_SomeTriple _gccdom_sometrip__var("GCC::VarCard::Dom::Some::(v,lb,ub)",ICL_DOM);
 GCC_VC_SomeTriple _gccval_sometrip__var("GCC::VarCard::Val::Some::(v,lb,ub)",ICL_VAL);
-
-GCC_VC_Shared_SomeTriple _gccbnd_shared_sometrip_var("GCC::VarCard::Bnd::Shared::Some::(lb,ub)",ICL_BND);
-GCC_VC_Shared_SomeTriple _gccdom_shared_sometrip_var("GCC::VarCard::Dom::Shared::Some::(lb,ub)", ICL_DOM);
-GCC_VC_Shared_SomeTriple _gccval_shared_sometrip_var("GCC::VarCard::Val::Shared::Some::(lb,ub)", ICL_VAL);
-
-
 
 // STATISTICS: test-int
 

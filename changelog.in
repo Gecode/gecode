@@ -73,6 +73,14 @@ Module: int
 What:   change
 Rank:   minor
 [DESCRIPTION]
+The interface for the global cardinality constraint has been simplified.
+The constraint is now called count.
+
+[ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
 Regular expressions (REG) have been moved from the integer module to
 the minimodel module.
 
