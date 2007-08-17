@@ -48,8 +48,8 @@ namespace Gecode {
     template <class Var>
     forceinline bool
     varbefore(Var x, Var y) {
-      VarViewTraits<Var>::View vx;
-      VarViewTraits<Var>::View vy;
+      typename VarViewTraits<Var>::View vx;
+      typename VarViewTraits<Var>::View vy;
       return before(vx,vy);
     }
 
@@ -57,8 +57,8 @@ namespace Gecode {
     template <class Var>
     forceinline bool
     varshared(Var x, Var y) {
-      VarViewTraits<Var>::View vx;
-      VarViewTraits<Var>::View vy;
+      typename VarViewTraits<Var>::View vx;
+      typename VarViewTraits<Var>::View vy;
       return shared(vx,vy);
     }
 
