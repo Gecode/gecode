@@ -948,7 +948,7 @@ namespace Gecode {
   ArgArrayBase<T>::ArgArrayBase(const ArgArrayBase<T>& aa)
     : n(aa.n), a(allocate(aa.n)) {
     for (int i = n; i--; )
-      a[i] = aa.a[i];
+      new (&a[i]) T(aa.a[i]);
   }
 
   template <class T>
