@@ -666,7 +666,7 @@ namespace Gecode {
     /**
      * \brief Initialize as alternative of integers
      *
-     * Throws an exception of type Int::TooFewArguments if \a x
+     * Throws an exception of type MiniModel::TooFewArguments if \a x
      * is empty.
      */
     REG(const IntArgs& x);

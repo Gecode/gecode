@@ -223,7 +223,7 @@ namespace Gecode {
   REG::REG(const IntArgs& x) {
     int n = x.size();
     if (n < 1)
-      throw Int::TooFewArguments("REG");
+      throw MiniModel::TooFewArguments("REG");
     GECODE_AUTOARRAY(Exp*,a,n);
     // Initialize with symbols
     for (int i=n; i--; ) {

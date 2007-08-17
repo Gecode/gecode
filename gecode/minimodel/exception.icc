@@ -53,6 +53,13 @@ namespace Gecode { namespace MiniModel {
     ReificationNotSupported(const char* l);
   };
 
+  /// %Exception: Too few arguments available in argument array
+  class TooFewArguments : public Exception  {
+  public:
+    /// Initialize with location \a l
+    TooFewArguments(const char* l);
+  };
+
   /// %Exception: Sizes of arguments does not match
   class ArgumentSizeMismatch : public Exception  {
   public:
@@ -72,6 +79,10 @@ namespace Gecode { namespace MiniModel {
   inline
   ReificationNotSupported::ReificationNotSupported(const char* l)
     : Exception(l,"Reification not supported") {}
+
+  inline
+  TooFewArguments::TooFewArguments(const char* l)
+    : Exception(l,"Passed argument array has too few elements") {}
 
   inline
   ArgumentSizeMismatch::ArgumentSizeMismatch(const char* l)
