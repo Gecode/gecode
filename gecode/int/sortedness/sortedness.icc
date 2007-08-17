@@ -439,7 +439,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
   }
 
   template<class View, class Tuple, bool Perm>
-  std::string Sortedness<View, Tuple, Perm>::name(void) {
+  Support::String Sortedness<View, Tuple, Perm>::name(void) {
     return Reflection::mangle<View,Tuple,Perm>("Int::Sortedness::Sortedness");
   }
 

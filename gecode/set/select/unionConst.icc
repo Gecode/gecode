@@ -69,7 +69,7 @@ namespace Gecode { namespace Set { namespace Select {
   }
 
   template <class SView, class RView>
-  std::string
+  Support::String
   SelectUnionConst<SView,RView>::name(void) {
     return Reflection::mangle<SView,RView>("Set::Select::UnionConst");
   }

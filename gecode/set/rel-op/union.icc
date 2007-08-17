@@ -75,7 +75,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   }
 
   template <class View0, class View1, class View2>
-  std::string
+  Support::String
   Union<View0,View1,View2>::name(void) {
     return Reflection::mangle<View0,View1,View2>("Set::RelOp::Union");
   }
@@ -281,7 +281,7 @@ namespace Gecode { namespace Set { namespace RelOp {
   }
 
   template <class View0, class View1>
-  std::string
+  Support::String
   UnionN<View0,View1>::name(void) {
     return Reflection::mangle<View0,View1>("Set::RelOp::UnionN");
   }

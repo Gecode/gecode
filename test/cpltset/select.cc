@@ -93,7 +93,7 @@ public:
     CpltSetVarArgs xs(vars);
     for (int i=vars; i--;)
       xs[i]=x[i];
-    Gecode::selectUnion(home, xs, x[selector_pos], x[union_pos], SCL_DOM);
+    Gecode::selectUnion(home, xs, x[selector_pos], x[union_pos]);
   }
 };
 BddSelectUnion _bddselectUnion("Select::SelectUnion");
@@ -190,7 +190,7 @@ public:
     // lm.debug();
 
 
-    Gecode::findNonEmptySub(home, xs, x[selector_pos], x[union_pos], SCL_DOM);
+    Gecode::findNonEmptySub(home, xs, x[selector_pos], x[union_pos]);
   }
 };
 BddFindNonEmptySub _bddfindNonEmptySub("Select::FindNonEmptySub");

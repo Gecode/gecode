@@ -65,9 +65,9 @@ namespace Gecode { namespace Set { namespace Projection {
     return new (home) ReNaryProjection(home,share,*this);
   }
 
-  std::string
+  Support::String
   ReNaryProjection::name(void) {
-    return std::string("set.projectors.ReNaryProjection");
+    return Support::String("set.projectors.ReNaryProjection");
   }
 
   Reflection::ActorSpec&

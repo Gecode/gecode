@@ -44,7 +44,7 @@ namespace Gecode {
 
 
   void
-  exactly(Space* home, CpltSetVar x, IntSet& is, int c,  SetConLevel scl) {
+  exactly(Space* home, CpltSetVar x, IntSet& is, int c) {
     if (home->failed()) return;
 
     ViewArray<CpltSetView> bv(home, 1);
@@ -109,13 +109,13 @@ namespace Gecode {
     GecodeBdd d = cardConst(mgr, xtab, xoff, xmin, c, c, si);
     // std::cerr << "exactly: tell...";
     // GECODE_ME_FAIL(home, bv[0].tell_formula(home, d));
-    GECODE_ES_FAIL(home, UnaryBddProp<CpltSetView>::post(home, bv[0], d, scl));
+    GECODE_ES_FAIL(home, UnaryBddProp<CpltSetView>::post(home, bv[0], d));
     // std::cerr << "TELL-OK\n";
 
   }
 
   void
-  atmost(Space* home, CpltSetVar x, IntSet& is, int c,  SetConLevel scl) {
+  atmost(Space* home, CpltSetVar x, IntSet& is, int c) {
     if (home->failed()) return;
 
     // SUBSUMPTION CHECK
@@ -137,44 +137,43 @@ namespace Gecode {
 
     //GECODE_ME_FAIL(home, bv[0].tell_formula(home, d));
 
-    GECODE_ES_FAIL(home, UnaryBddProp<CpltSetView>::post(home, bv[0], d, scl));
+    GECODE_ES_FAIL(home, UnaryBddProp<CpltSetView>::post(home, bv[0], d));
 
   }
 
   void 
-  atmost(Space* home, CpltSetVar x, CpltSetVar y, int c,  SetConLevel scl) {
-    // std::cout << "call atmost\n";
-    atmost_con(home, x, y, c, SRT_EQ, -1, scl);
+  atmost(Space* home, CpltSetVar x, CpltSetVar y, int c) {
+    atmost_con(home, x, y, c, SRT_EQ, -1);
   }
 
   void 
   atmostLex(Space* home, CpltSetVar x, CpltSetVar y, int c, 
-            CpltSetRelType lex, SetConLevel scl) {
-    atmost_con(home, x, y, c, lex, -1, scl);
+            CpltSetRelType lex) {
+    atmost_con(home, x, y, c, lex, -1);
   }
 
   void 
   atmostLexCard(Space* home, CpltSetVar x, CpltSetVar y, int c, 
-                CpltSetRelType lex, int d, SetConLevel scl) {
-    atmost_con(home, x, y, c, lex, d, scl);
+                CpltSetRelType lex, int d) {
+    atmost_con(home, x, y, c, lex, d);
   }
 
   void 
-  atmostCard(Space* home, CpltSetVar x, CpltSetVar y, int c, int d, SetConLevel scl) {
-    atmost_con(home, x, y, c, SRT_EQ, d, scl);
+  atmostCard(Space* home, CpltSetVar x, CpltSetVar y, int c, int d) {
+    atmost_con(home, x, y, c, SRT_EQ, d);
   }
 
   void 
-  atmost(Space* home, CpltSetVar x, CpltSetVar y, CpltSetVar z, int c, SetConLevel scl) {
-    atmost_con(home, x, y, z, c, SRT_EQ, -1, scl);
+  atmost(Space* home, CpltSetVar x, CpltSetVar y, CpltSetVar z, int c) {
+    atmost_con(home, x, y, z, c, SRT_EQ, -1);
   }
 
   void 
-  atmostOne(Space* home, const CpltSetVarArgs& x, int c, SetConLevel scl) {
-    atmostOne_con(home, x, c, scl);
+  atmostOne(Space* home, const CpltSetVarArgs& x, int c) {
+    atmostOne_con(home, x, c);
   }
 
 
 }
 
-// STATISTICS: bdd-post
+// STATISTICS: cpltset-post

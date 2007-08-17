@@ -100,7 +100,7 @@ namespace Gecode {
     /// Return specification for this branching given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this branching
-    static std::string name(void);
+    static Support::String name(void);
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
   };
@@ -142,7 +142,7 @@ namespace Gecode {
     /// Return specification for this assignment given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this assignment
-    static std::string name(void);
+    static Support::String name(void);
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
   };
@@ -291,7 +291,7 @@ namespace Gecode {
   }
 
   template <class View, class Val, class ViewSel, class ValSel>
-  std::string
+  Support::String
   ViewValBranching<View,Val,ViewSel,ValSel>::name(void) {
     return Reflection::mangle<View,Val,ViewSel,ValSel>("ViewValBranching");
   }
@@ -369,7 +369,7 @@ namespace Gecode {
   }
 
   template <class View, class Val, class ValSel>
-  std::string
+  Support::String
   ViewValAssignment<View,Val,ValSel>::name(void) {
     return Reflection::mangle<View,Val,ValSel>("ViewValAssignment");
   }

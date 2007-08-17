@@ -98,9 +98,9 @@ namespace Gecode { namespace Int { namespace Channel {
       PC_UNARY_LO : cost_lo(x.size(),PC_LINEAR_LO);
   }
 
-  std::string
+  Support::String
   LinkMulti::name(void) {
-    return std::string("Int::Channel::LinkMulti");
+    return Support::String("Int::Channel::LinkMulti");
   }
   
   Reflection::ActorSpec&

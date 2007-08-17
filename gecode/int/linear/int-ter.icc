@@ -90,7 +90,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, class C, PropCond pc>
   Reflection::ActorSpec&
   LinTer<Val,A,B,C,pc>::spec(Space* home, Reflection::VarMap& m,
-                             const std::string& name) {
+                             const Support::String& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << Reflection::typedSpec(home, m, x0)
              << Reflection::typedSpec(home, m, x1)
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, class C>
-  std::string
+  Support::String
   EqTer<Val,A,B,C>::name(void) {
     return Reflection::mangle<Val,A,B,C>("Int::Linear::EqTer");
   }
@@ -220,7 +220,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, class C>
-  std::string
+  Support::String
   NqTer<Val,A,B,C>::name(void) {
     return Reflection::mangle<Val,A,B,C>("Int::Linear::NqTer");
   }
@@ -289,7 +289,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   template <class Val, class A, class B, class C>
-  std::string
+  Support::String
   LqTer<Val,A,B,C>::name(void) {
     return Reflection::mangle<Val,A,B,C>("Int::Linear::LqTer");
   }

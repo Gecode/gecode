@@ -141,7 +141,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  std::string
+  Support::String
   AbsBnd<View>::name(void) {
     return Reflection::mangle<View>("Int::Arithmetic::AbsBnd");
   }
@@ -262,7 +262,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  std::string
+  Support::String
   AbsDom<View>::name(void) {
     return Reflection::mangle<View>("Int::Arithmetic::AbsDom");
   }

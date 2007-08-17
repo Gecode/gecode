@@ -96,4 +96,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: bdd-other
+// STATISTICS: cpltset-other

@@ -416,7 +416,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class View>
-  std::string
+  Support::String
   DomEq<Val,View>::name(void) {
     return Reflection::mangle<Val,View>("Int::Linear::DomEq");
   }

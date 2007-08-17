@@ -235,4 +235,4 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
 #endif
 
-// STATISTICS: bdd-branch
+// STATISTICS: cpltset-branch

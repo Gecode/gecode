@@ -91,8 +91,9 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline
-  NaryBddProp<View>::NaryBddProp(Space* home, ViewArray<View>& x0, GecodeBdd& d0, SetConLevel scl0)
-    : Propagator(home), x(x0), d(d0), scl(scl0) {
+  NaryBddProp<View>::NaryBddProp(Space* home, ViewArray<View>& x0,
+                                 GecodeBdd& d0)
+    : Propagator(home), x(x0), d(d0) {
     force(home);
     for (int i = x.size(); i--;) {
       x[i].subscribe(home, this, PC_CPLTSET_DOM);
@@ -104,7 +105,6 @@ namespace Gecode { namespace CpltSet {
   NaryBddProp<View>::NaryBddProp(Space* home, bool share, NaryBddProp& p)
     : Propagator(home,share,p) {
     d = p.d;
-    scl = p.scl;
     x.update(home,share,p.x);
   }
   
@@ -119,7 +119,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View>
-  std::string
+  Support::String
   NaryBddProp<View>::name(void) {
     return Reflection::mangle<View>("CpltSet::NaryBddProp");
   }
@@ -148,8 +148,8 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline ExecStatus
-  NaryBddProp<View>::post(Space* home, ViewArray<View>& x, GecodeBdd& d, SetConLevel scl) {
-    (void) new (home) NaryBddProp(home,x, d, scl);
+  NaryBddProp<View>::post(Space* home, ViewArray<View>& x, GecodeBdd& d) {
+    (void) new (home) NaryBddProp(home,x, d);
     return ES_OK;
   }
 
@@ -677,7 +677,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View0, class View1>
-  std::string
+  Support::String
   NaryOneBdd<View0, View1>::name(void) {
     return Reflection::mangle<View0,View1>("CpltSet::NaryOneBdd");
   }
@@ -734,4 +734,4 @@ namespace Gecode { namespace CpltSet {
 
 }}
 
-// STATISTICS: bdd-prop
+// STATISTICS: cpltset-prop

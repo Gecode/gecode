@@ -2,19 +2,13 @@
 /*
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
- *     Christian Schulte <schulte@gecode.org>
- *
- *  Contributing authors:
- *     Gabor Szokoli <szokoli@gecode.org>
  *
  *  Copyright:
- *     Guido Tack, 2004
- *     Christian Schulte, 2004
- *     Gabor Szokoli, 2004
+ *     Guido Tack, 2007
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2007-08-09 15:30:21 +0200 (Thu, 09 Aug 2007) $ by $Author: tack $
+ *     $Revision: 4790 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -41,49 +35,61 @@
  *
  */
 
+#ifndef __GECODE_SUPPORT_MAP_HH__
+#define __GECODE_SUPPORT_MAP_HH__
 
+#include "gecode/support/string.hh"
+#include "gecode/support/dynamic-array.hh"
 
-#include "gecode/set/int.hh"
+namespace Gecode { namespace Support {
+  
+  template <class Key, class KeyCmp, class Value>
+  class Map {
+  private:
+    struct Pair {
+      Key k; Value v;
+      Pair(const Key& k0, const Value& v0) : k(k0), v(v0) {}
+    };
+    Support::DynamicArray<Pair> a;
+    int n;
+  public:
+    Map() : n(0) {}
+    void put(const Key& k, Value v) { a[n++] = Pair(k,v); };
+    bool get(const Key& k, Value& v) {
+      for (int i=n; i--;) {
+        if (a[i].k == k) {
+          v = a[i].v; return true;
+        }
+      }
+      return false;
+    };
+  };
+  
+  template <class Value>
+  class StringMap : public Map<String,StringCmp,Value> {
+    
+  };
 
-#include "gecode/iter.hh"
+  template <class N>
+  class Cmp {
+  public:
+    int cmp(N i, N j) {
+      if (i>j) return 1;
+      if (i<j) return -1;
+      return 0;
+    }
+  };
 
-#include "gecode/set/rel.hh"
+  template <class Value>
+  class IntMap : public Map<int,Cmp<int>,Value> {
+  };
 
-namespace Gecode { namespace Set { namespace Int {
+  template <class P, class Value>
+  class PtrMap : public Map<P*,Cmp<P*>,Value> {    
+  };
+  
+}}
 
-  Actor*
-  Card::copy(Space* home, bool share) {
-    return new (home) Card(home,share,*this);
-  }
+#endif
 
-  std::string
-  Card::name(void) {
-    return std::string("Set::Int::Card");
-  }
-
-  Reflection::ActorSpec&
-  Card::spec(Space* home, Reflection::VarMap& m) {
-    return IntSetPropagator<SetView,PC_SET_CARD,Gecode::Int::PC_INT_BND>
-      ::spec(home, m, name());
-  }
-
-
-  ExecStatus
-  Card::propagate(Space* home) {
-    int x1min, x1max;
-    do {
-      x1min = x1.min();
-      x1max = x1.max();
-      GECODE_ME_CHECK(x0.cardMin(home,x1min));
-      GECODE_ME_CHECK(x0.cardMax(home,x1max));
-      GECODE_ME_CHECK(x1.gq(home,(int)x0.cardMin()));
-      GECODE_ME_CHECK(x1.lq(home,(int)x0.cardMax()));
-    } while (x1.min() > x1min || x1.max() < x1max);
-    if (x1.assigned())
-      return ES_SUBSUMED(this,home);
-    return ES_FIX;
-  }
-
-}}}
-
-// STATISTICS: set-prop
+// STATISTICS: support-any

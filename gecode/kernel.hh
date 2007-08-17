@@ -116,6 +116,13 @@
 #include "gecode/kernel/macros.icc"
 
 /*
+ * Strings
+ *
+ */
+
+#include "gecode/support/string.hh"
+
+/*
  * Gecode kernel
  *
  */
@@ -129,6 +136,7 @@
  *
  */
 
+#include "gecode/support/map.hh"
 #include "gecode/kernel/reflection.icc"
 
 /*

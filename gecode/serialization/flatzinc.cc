@@ -61,8 +61,8 @@ namespace Gecode {
         }
         os << "}";
       }
-      if (vs.name() != NULL)
-        os << ": " << vs.name() << ";" << endl;
+      if (!vs.name().empty())
+        os << ": " << vs.name().c_str() << ";" << endl;
       else
         os << ": _v" << varNo << ";" << endl;      
     }
@@ -80,8 +80,8 @@ namespace Gecode {
           throw Exception("Serialization",
             "Internal error: invalid domain specification for BoolVar.");
       }
-      if (vs.name() != NULL)
-        os << ": " << vs.name() << ";" << endl;
+      if (!vs.name().empty())
+        os << ": " << vs.name().c_str() << ";" << endl;
       else
         os << ": _v" << varNo << ";" << endl;
     }
@@ -116,8 +116,8 @@ namespace Gecode {
         }
         os << "}";
       }
-      if (vs.name() != NULL)
-        os << ": " << vs.name() << ";" << endl;
+      if (!vs.name().empty())
+        os << ": " << vs.name().c_str() << ";" << endl;
       else
         os << ": _v" << varNo << ";" << endl;
 
@@ -137,8 +137,8 @@ namespace Gecode {
           }
           os << "}";
         }
-        if (vs.name() != NULL)
-          os << "," << vs.name() << ");" << endl;
+        if (!vs.name().empty())
+          os << "," << vs.name().c_str() << ");" << endl;
         else
           os << ", _v" << varNo << ");" << endl;
       }
@@ -146,8 +146,8 @@ namespace Gecode {
       if (lbCard != dom->first()->second()->toInt() ||
           ubCard != dom->second()->second()->toInt()) {
         os << "constraint cardinality(";
-        if (vs.name() != NULL)
-          os << vs.name() << ", ";
+        if (!vs.name().empty())
+          os << vs.name().c_str() << ", ";
         else
           os << "_v" << varNo;
         os << ", " << lbCard << ", " << ubCard << ");" << endl;
@@ -159,10 +159,10 @@ namespace Gecode {
     
     void emitVar(ostream& os, int v, VarMap& vm) {
       VarSpec& vs = vm.spec(v);
-      if (vs.name() == NULL)
+      if (vs.name().empty())
         os << "_v" << v;
       else
-        os << vs.name();
+        os << vs.name().c_str();
     }
     
     void emitVarArray(ostream& os, ArrayArg* a, VarMap& vm) {
@@ -222,7 +222,7 @@ namespace Gecode {
         return;
       }
       if (arg->isString()) {
-        os << "\"" << arg->toString() << "\"";
+        os << "\"" << arg->toString().c_str() << "\"";
         return;
       }
       if (arg->isTypedArg()) {
@@ -231,10 +231,10 @@ namespace Gecode {
       }
       if (arg->isVar()) {
         VarSpec& s = vm.spec(arg->toVar());
-        if (s.name() == NULL)
+        if (s.name().empty())
           os << "_v" << arg->toVar();
         else
-          os << s.name();
+          os << s.name().c_str();
         return;
       }
       if (arg->isIntArray()) {
@@ -281,7 +281,7 @@ namespace Gecode {
         }
       }
 
-      os << "constraint " << s.name();
+      os << "constraint " << s.name().c_str();
       os << "(";
       for (int i=0; i<s.noOfArgs(); i++) {
         emitArg(os, s[i], vm);

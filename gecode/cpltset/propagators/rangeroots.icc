@@ -40,8 +40,8 @@ namespace Gecode { namespace CpltSet {
   /// Constructs \a d0 as the bdd representing the Range constraint for the given variables
   template <class View0, class View1>
   forceinline void
-  buildRange(Space* home, ViewArray<View0>& seq, View1 selview, View1 unionview, 
-             SetConLevel scl, GecodeBdd& d0) {
+  buildRange(Space* home, ViewArray<View0>& seq, View1 selview,
+             View1 unionview, GecodeBdd& d0) {
 
     if (home->failed()) return;
     int n = seq.size();
@@ -182,18 +182,19 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline void 
-  range_post(Space* home, ViewArray<View0>& seq, View1 selview, View1 unionview, SetConLevel scl) {
+  range_post(Space* home, ViewArray<View0>& seq, View1 selview,
+             View1 unionview) {
     if (home->failed())  return;
 
     GecodeBdd d0 = BDDTOP;
-    buildRange(home, seq, selview, unionview, scl, d0);
+    buildRange(home, seq, selview, unionview, d0);
     if (home->failed())  return;
     GECODE_ES_FAIL(home, (Range<View0, View1>::post(home, seq, selview, unionview, d0)));
   }
 
   forceinline void 
-  range_con(Space* home, const IntVarArgs& x, const CpltSetVar& s, const CpltSetVar& t, 
-            SetConLevel scl) {
+  range_con(Space* home, const IntVarArgs& x, const CpltSetVar& s,
+            const CpltSetVar& t) {
     BMI* mgr = s.manager();
     int n = x.size();
     CpltSetView selview(s);
@@ -209,21 +210,15 @@ namespace Gecode { namespace CpltSet {
       int rmax = std::max(unionview.mgr_max(), iv[i].max());
       sbv[i].init(mgr, rmin, rmax, iv[i]);
     }
-    
 
-    switch(scl) {
-    default:
-      {
-        range_post(home, sbv, selview, unionview, scl);
-      }
-    }
+    range_post(home, sbv, selview, unionview);
   }
 
   /// Constructs \a d0 as the bdd representing the Roots constraint for the given variables
   template <class View0, class View1>
   forceinline void
-  buildRoots(Space* home, ViewArray<View0>& seq, View1 selview, View1 unionview, SetConLevel scl, 
-             GecodeBdd& d0) {
+  buildRoots(Space* home, ViewArray<View0>& seq, View1 selview,
+             View1 unionview, GecodeBdd& d0) {
     BMI* mgr = unionview.manager();
     if (home->failed()) return;
     int n = seq.size();
@@ -304,19 +299,19 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline void 
-  roots_post(Space* home, ViewArray<View0>& seq, View1 selview, View1 unionview, SetConLevel scl) {
+  roots_post(Space* home, ViewArray<View0>& seq, View1 selview,
+             View1 unionview) {
     if (home->failed()) return;
 
     GecodeBdd d0 = BDDTOP;
-    buildRoots(home, seq, selview, unionview, scl, d0);
+    buildRoots(home, seq, selview, unionview, d0);
     if (home->failed()) return;
     GECODE_ES_FAIL(home, (Range<View0, View1>::post(home, seq, selview, unionview, d0)));
   }
 
   forceinline void 
-  roots_con(Space* home, const IntVarArgs& x, const CpltSetVar& s, const CpltSetVar& t, 
-            const CpltSetVarArgs& allvars, 
-            SetConLevel scl) {
+  roots_con(Space* home, const IntVarArgs& x, const CpltSetVar& s,
+            const CpltSetVar& t, const CpltSetVarArgs& allvars) {
 
     BMI* mgr = s.manager();
     int n = x.size();
@@ -344,13 +339,7 @@ namespace Gecode { namespace CpltSet {
     }
 
     variableorder(vars, sbv);
-
-    switch(scl) {
-    default:
-      {
-        roots_post(home, sbv, selview, unionview, scl);
-      }
-    }
+    roots_post(home, sbv, selview, unionview);
     
   }
 
@@ -384,7 +373,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View0, class View1>
-  std::string
+  Support::String
   Range<View0, View1>::name(void) {
     return Reflection::mangle<View0,View1>("CpltSet::Range");
   }
@@ -519,8 +508,8 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline void 
-  nvalue_post(Space* home, ViewArray<View0>& seq, View1 selview, View1 unionview, 
-              int usedvalues, SetConLevel scl) {
+  nvalue_post(Space* home, ViewArray<View0>& seq, View1 selview,
+              View1 unionview, int usedvalues) {
     std::cout << "nvalue_post\n";
     if (home->failed())  return;
     // WE HAVE TO ORDER ALL BDD VARS AVAILABLE SO FAR
@@ -534,7 +523,7 @@ namespace Gecode { namespace CpltSet {
     // n values must be used (alldiff uses all |seq| values)
     GECODE_ME_FAIL(home, unionview.cardinality(home, usedvalues, usedvalues));
     // build the bdd for the range constraint
-    buildRange(home, seq, selview, unionview, scl, d0);
+    buildRange(home, seq, selview, unionview, d0);
     if (home->failed())  return;
     GECODE_ES_FAIL(home, (Range<View0, View1>::post(home, seq, selview, unionview, d0)));
   }
@@ -542,7 +531,7 @@ namespace Gecode { namespace CpltSet {
 
   forceinline void 
   nvalue_con(Space* home, const IntVarArgs& x, const CpltSetVar& s, const CpltSetVar& t, 
-            int usedvalues, const CpltSetVarArgs& allvars, SetConLevel scl) {
+            int usedvalues, const CpltSetVarArgs& allvars) {
     std::cout << "nvalue con\n";
     BMI* mgr = s.manager();
     int n = x.size();
@@ -567,20 +556,15 @@ namespace Gecode { namespace CpltSet {
     }
 
     variableorder(vars, sbv);
-
-    switch(scl) {
-    default:
-      {
-        nvalue_post(home, sbv, selview, unionview, usedvalues, scl);
-      }
-    }
+    nvalue_post(home, sbv, selview, unionview, usedvalues);
   }
 
   template <class View0, class View1>
   forceinline void 
-  uses_post(Space* home, ViewArray<View0>& seq, View1 selview, View1 unionview, 
-            ViewArray<View0>& seqprime, View1 selviewprime, View1 unionviewprime, 
-            SetConLevel scl) {
+  uses_post(Space* home, ViewArray<View0>& seq, View1 selview,
+            View1 unionview, 
+            ViewArray<View0>& seqprime, View1 selviewprime,
+            View1 unionviewprime) {
     std::cout << "usespost\n";
     if (home->failed())  return;
 
@@ -592,7 +576,7 @@ namespace Gecode { namespace CpltSet {
 
     std::cout << "selection intersected ok\n";
     // build the bdd for the range constraint
-    buildRange(home, seq, selview, unionview, scl, d0);
+    buildRange(home, seq, selview, unionview, d0);
     if (home->failed())  return;
     std::cout << "first range built ok\n";
 
@@ -605,7 +589,7 @@ namespace Gecode { namespace CpltSet {
     // build the bdd for the range constraint
 
     GecodeBdd e0 = BDDTOP;
-    buildRange(home, seqprime, selviewprime, unionviewprime, scl, e0);
+    buildRange(home, seqprime, selviewprime, unionviewprime, e0);
     if (home->failed())  return;
 
     std::cout << "second range ok\n";
@@ -639,15 +623,15 @@ namespace Gecode { namespace CpltSet {
     
    GECODE_ES_FAIL(home, (Range<View0, View1>::post(home, seq, selview, unionview, d0)));
    GECODE_ES_FAIL(home, (Range<View0, View1>::post(home, seqprime, selviewprime, unionviewprime, e0)));
-   GECODE_ES_FAIL(home, (BinBddProp<View1>::post(home, unionview, unionviewprime, r0, scl)));
+   GECODE_ES_FAIL(home, (BinBddProp<View1>::post(home, unionview, unionviewprime, r0)));
        
   }
 
 
   forceinline void 
-  uses_con(Space* home, const IntVarArgs& x, const CpltSetVar& s, const CpltSetVar& t, 
-           const IntVarArgs& y, const CpltSetVar& u, const CpltSetVar& v,
-           SetConLevel scl) {
+  uses_con(Space* home, const IntVarArgs& x, const CpltSetVar& s,
+           const CpltSetVar& t, 
+           const IntVarArgs& y, const CpltSetVar& u, const CpltSetVar& v) {
     BMI* mgr = s.manager();
     int n = x.size();
     CpltSetView selview(s);
@@ -678,16 +662,10 @@ namespace Gecode { namespace CpltSet {
       sbvprime[i].init(mgr, rmin, rmax, ivprime[i]);
     }
 
-    switch(scl) {
-    default:
-      {
-        uses_post(home, sbv, selview, unionview, 
-                  sbvprime, selviewprime, unionviewprime,
-                  scl);
-      }
-    }
+    uses_post(home, sbv, selview, unionview, 
+              sbvprime, selviewprime, unionviewprime);
   }
 
 }}
 
-// STATISTICS: bdd-prop
+// STATISTICS: cpltset-prop

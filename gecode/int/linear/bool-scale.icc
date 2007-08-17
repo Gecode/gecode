@@ -200,7 +200,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class SBAP, class SBAN, class VX, PropCond pcx>
   Reflection::ActorSpec&
   LinBoolScale<SBAP,SBAN,VX,pcx>::spec(Space* home, Reflection::VarMap& m,
-                                       const std::string& name) {
+                                       const Support::String& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
 
     Reflection::IntArrayArg* coeff =
@@ -270,7 +270,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class SBAP, class SBAN, class VX>
-  std::string
+  Support::String
   EqBoolScale<SBAP,SBAN,VX>::name(void) {
     return Reflection::mangle<SBAP,SBAN,VX>("Int::Linear::EqBoolScale");
   }
@@ -497,7 +497,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class SBAP, class SBAN, class VX>
-  std::string
+  Support::String
   LqBoolScale<SBAP,SBAN,VX>::name(void) {
     return Reflection::mangle<SBAP,SBAN,VX>("Int::Linear::LqBoolScale");
   }
@@ -663,7 +663,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class SBAP, class SBAN, class VX>
-  std::string
+  Support::String
   NqBoolScale<SBAP,SBAN,VX>::name(void) {
     return Reflection::mangle<SBAP,SBAN,VX>("Int::Linear::NqBoolScale");
   }

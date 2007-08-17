@@ -39,20 +39,8 @@
 
 namespace Gecode {
   
-  void
-  dom(Space* home, CpltSetVar x, SetRelType r, int i, SetConLevel) {
-    IntSet d(i,i);
-    dom(home, x, r, d);
-  }
-
-  void
-  dom(Space* home, CpltSetVar x, SetRelType r, int i, int j, SetConLevel) {
-    IntSet d(i,j);
-    dom(home, x, r, d);
-  }
-
   void 
-  dom(Space* home, CpltSetVar x, SetRelType r, const IntSet& s, SetConLevel) {
+  dom(Space* home, CpltSetVar x, SetRelType r, const IntSet& s) {
     if (home->failed()) return;
     CpltSet::CpltSetView bv(x);
 
@@ -69,12 +57,12 @@ namespace Gecode {
       break;
     case SRT_DISJ:
       {
-              if (s.size() == 1) {
-                GECODE_ME_FAIL(home,bv.exclude(home, s.min(), s.max()));
-              } else {
-                IntSetRanges rd(s);
-                GECODE_ME_FAIL(home,bv.excludeI(home, rd));
-              }
+        if (s.size() == 1) {
+          GECODE_ME_FAIL(home,bv.exclude(home, s.min(), s.max()));
+        } else {
+          IntSetRanges rd(s);
+          GECODE_ME_FAIL(home,bv.excludeI(home, rd));
+        }
       }
       break;
     case SRT_NQ:
@@ -92,8 +80,8 @@ namespace Gecode {
          if (s.size() == 1) {
            GECODE_ME_FAIL(home,bv.intersect(home, s.min(), s.max()));
          } else {
-          IntSetRanges rd(s);
-          GECODE_ME_FAIL(home,bv.intersectI(home, rd));
+           IntSetRanges rd(s);
+           GECODE_ME_FAIL(home,bv.intersectI(home, rd));
          }
       }
       break;
@@ -140,6 +128,19 @@ namespace Gecode {
     }
   }
 
+  void
+  dom(Space* home, CpltSetVar x, SetRelType r, int i) {
+    IntSet d(i,i);
+    dom(home, x, r, d);
+  }
+
+  void
+  dom(Space* home, CpltSetVar x, SetRelType r, int i, int j) {
+    IntSet d(i,j);
+    dom(home, x, r, d);
+  }
+
+
 }
 
-// STATISTICS: bdd-post
+// STATISTICS: cpltset-post

@@ -74,28 +74,28 @@ namespace Gecode {
       {
         IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
         rel(home, tmp, IRT_LQ, x);
-        GECODE_ES_FAIL(home,Set::Int::MaxElement::post(home,s,tmp));
+        GECODE_ES_FAIL(home,Set::Int::MaxElement<Set::SetView>::post(home,s,tmp));
       }
       break;
     case IRT_LE:
       {
         IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
         rel(home, tmp, IRT_LE, x);
-        GECODE_ES_FAIL(home,Set::Int::MaxElement::post(home,s,tmp));
+        GECODE_ES_FAIL(home,Set::Int::MaxElement<Set::SetView>::post(home,s,tmp));
       }
       break;
     case IRT_GQ:
       {
         IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
         rel(home, tmp, IRT_GQ, x);
-        GECODE_ES_FAIL(home,Set::Int::MinElement::post(home,s,tmp));
+        GECODE_ES_FAIL(home,Set::Int::MinElement<Set::SetView>::post(home,s,tmp));
       }
       break;
     case IRT_GR:
       {
         IntVar tmp(home, Limits::Int::int_min, Limits::Int::int_max);
         rel(home, tmp, IRT_GR, x);
-        GECODE_ES_FAIL(home,Set::Int::MinElement::post(home,s,tmp));
+        GECODE_ES_FAIL(home,Set::Int::MinElement<Set::SetView>::post(home,s,tmp));
       }
       break;
     }
@@ -118,19 +118,19 @@ namespace Gecode {
   void
   min(Space* home, SetVar s, IntVar x){
     if (home->failed()) return;
-    GECODE_ES_FAIL(home,Set::Int::MinElement::post(home,s,x));
+    GECODE_ES_FAIL(home,Set::Int::MinElement<Set::SetView>::post(home,s,x));
   }
   void
   max(Space* home, SetVar s, IntVar x){
     if (home->failed()) return;
-    GECODE_ES_FAIL(home,Set::Int::MaxElement::post(home,s,x));
+    GECODE_ES_FAIL(home,Set::Int::MaxElement<Set::SetView>::post(home,s,x));
   }
 
   void
   match(Space* home, SetVar s, const IntVarArgs& x) {
     if (home->failed()) return;
     ViewArray<IntView> xa(home,x);
-    GECODE_ES_FAIL(home,Set::Int::Match::post(home,s,xa));
+    GECODE_ES_FAIL(home,Set::Int::Match<Set::SetView>::post(home,s,xa));
   }
 
   void
@@ -138,7 +138,7 @@ namespace Gecode {
     if (home->failed()) return;
     ViewArray<Int::IntView> xa(home,x);
     ViewArray<Set::SetView> ya(home,y);
-    GECODE_ES_FAIL(home,(Set::Int::Channel<Set::SetView, Gecode::Set::PC_SET_ANY>
+    GECODE_ES_FAIL(home,(Set::Int::Channel<Set::SetView>
                          ::post(home,xa,ya)));
   }
 
@@ -147,7 +147,7 @@ namespace Gecode {
     if (home->failed()) return;
     Set::SetView xv(x);
     Int::IntView yv(y);
-    GECODE_ES_FAIL(home,Set::Int::Weights::post(home,elements,weights,x,y));
+    GECODE_ES_FAIL(home,Set::Int::Weights<Set::SetView>::post(home,elements,weights,x,y));
   }
 
 }

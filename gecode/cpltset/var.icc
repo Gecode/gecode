@@ -41,14 +41,13 @@
 
 namespace Gecode { namespace CpltSet {
 
-  enum NodeStatus {INIT = -1, FIX_GLB = 1, FIX_NOT_LUB = 0, FIX_UNKNOWN = 2, UNDET = 5};
-  /**
-   * \brief Types for complete bdd iteration of the bdd \a dom of a variable
-   *
-   * - BDD_FULL   \f$ dom = \top  \f$ 
-   * - BDD_LESS,  \f$ |x| > |dom| \f$ 
-   * - BDD_SAME,  \f$ |x| = |dom| \f$ 
-   */
+  enum NodeStatus {
+    INIT = -1,
+    FIX_GLB = 1,
+    FIX_NOT_LUB = 0,
+    FIX_UNKNOWN = 2,
+    UNDET = 5
+  };
 
   template <class T> class DomValues {
   public:
@@ -164,10 +163,6 @@ namespace Gecode { namespace CpltSet {
   class CpltSetVarImp : public CpltSetVarImpBase {
     friend class BddIterator;
     friend class DomBddIterator;
-    friend class SplitCpltSetView;
-    friend class BndCpltSetView;
-    friend class CrdCpltSetView;
-    friend class LexCpltSetView;
 
     friend class DomValues<CpltSetVarImp*>;
     friend class GlbValues<CpltSetVarImp*>;
@@ -891,4 +886,4 @@ GECODE_CPLTSET_EXPORT std::ostream&
 operator<<(std::ostream&, Gecode::BMI* x);
 
 #include "gecode/cpltset/var/cpltset.icc"
-// STATISTICS: bdd-var
+// STATISTICS: cpltset-var

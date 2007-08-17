@@ -42,13 +42,12 @@ using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
-  void distinct(Space* home, const CpltSetVarArgs& x, SetConLevel scl) {
+  void distinct(Space* home, const CpltSetVarArgs& x) {
     if (home->failed()) return;
     ViewArray<CpltSetView> y(home, x);
-
-    distinct(home, y, scl);
+    distinct(home, y);
   }
 
 }
 
-// STATISTICS: bdd-post
+// STATISTICS: cpltset-post

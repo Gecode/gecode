@@ -40,7 +40,7 @@ using namespace Gecode::CpltSet;
 namespace Gecode {
 
   template <class View>
-  void distinct(Space* home, ViewArray<View>& x, SetConLevel scl) {
+  void distinct(Space* home, ViewArray<View>& x) {
   
     int n = x.size();
     // build partition
@@ -58,9 +58,9 @@ namespace Gecode {
       }
     } 
 
-    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
+    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0));
   }
 }
 
-// STATISTICS: bdd-prop
+// STATISTICS: cpltset-prop
 

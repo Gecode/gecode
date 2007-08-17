@@ -55,6 +55,8 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    static Support::String name(void);    
   };
 
 
@@ -83,10 +85,15 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BV>
+  inline Support::String
+  OrTrueSubsumed<BV>::name(void) {
+    return Reflection::mangle<BV>("Int::Bool::OrTrueSubsumed");
+  }
+
+  template <class BV>
   Reflection::ActorSpec&
   OrTrueSubsumed<BV>::spec(Space* home, Reflection::VarMap& m) {
-    return BoolBinary<BV,BV>::spec(home, m, 
-      Reflection::mangle<BV>("Int::Bool::OrTrueSubsumed"));
+    return BoolBinary<BV,BV>::spec(home, m, name());
   }
 
 
@@ -172,10 +179,15 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BVA, class BVB>
+  Support::String
+  BinOrTrue<BVA,BVB>::name(void) {
+    return Reflection::mangle<BVA,BVB>("Int::Bool::BinOrTrue");
+  }
+
+  template <class BVA, class BVB>
   Reflection::ActorSpec&
   BinOrTrue<BVA,BVB>::spec(Space* home, Reflection::VarMap& m) {
-    return BoolBinary<BVA,BVB>::spec(home, m, 
-      Reflection::mangle<BVA,BVB>("Int::Bool::BinOrTrue"));
+    return BoolBinary<BVA,BVB>::spec(home, m, name());
   }
 
   /*
@@ -285,11 +297,16 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BV>
+  Support::String
+  TerOrTrue<BV>::name(void) {
+    return Reflection::mangle<BV>("Int::Bool::TerOrTrue");
+  }
+
+  template <class BV>
   Reflection::ActorSpec&
   TerOrTrue<BV>::spec(Space* home, Reflection::VarMap& m) {
-    return BoolBinary<BV,BV>::spec(home, m, 
-      Reflection::mangle<BV>("Int::Bool::TerOrTrue"))
-      << Reflection::typedSpec(home, m, x2);;
+    return BoolBinary<BV,BV>::spec(home, m, name())
+           << Reflection::typedSpec(home, m, x2);;
   }
 
   /*
@@ -472,10 +489,15 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BV>
+  Support::String
+  QuadOrTrue<BV>::name(void) {
+    return Reflection::mangle<BV>("Int::Bool::QuadOrTrue");
+  }
+
+  template <class BV>
   Reflection::ActorSpec&
   QuadOrTrue<BV>::spec(Space* home, Reflection::VarMap& m) {
-    return BoolBinary<BV,BV>::spec(home, m, 
-      Reflection::mangle<BV>("Int::Bool::QuadOrTrue"))
+    return BoolBinary<BV,BV>::spec(home, m, name())
       << Reflection::typedSpec(home, m, x2)
       << Reflection::typedSpec(home, m, x3);
   }
@@ -624,10 +646,15 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BVA, class BVB, class BVC>
+  Support::String
+  Or<BVA,BVB,BVC>::name(void) {
+    return Reflection::mangle<BVA,BVB,BVC>("Int::Bool::Or");
+  }
+
+  template <class BVA, class BVB, class BVC>
   Reflection::ActorSpec&
   Or<BVA,BVB,BVC>::spec(Space* home, Reflection::VarMap& m) {
-    return BoolTernary<BVA,BVB,BVC>::spec(home, m, 
-      Reflection::mangle<BVA,BVB,BVC>("Int::Bool::Or"));
+    return BoolTernary<BVA,BVB,BVC>::spec(home, m, name());      
   }
 
   /*
@@ -759,11 +786,16 @@ namespace Gecode { namespace Int { namespace Bool {
     return ES_FIX;
   }
 
+  template <class BV>
+  Support::String
+  NaryOrTrue<BV>::name(void) {
+    return Reflection::mangle<BV>("Int::Bool::NaryOrTrue");
+  }
+
   template<class BV>
   Reflection::ActorSpec&
   NaryOrTrue<BV>::spec(Space* home, Reflection::VarMap& m) {
-    return BinaryPropagator<BV,PC_BOOL_VAL>::spec(home, m, 
-      Reflection::mangle<BV>("Int::Bool::NaryOrTrue"))
+    return BinaryPropagator<BV,PC_BOOL_VAL>::spec(home, m, name())
       << x.spec(home, m);
   }
 
@@ -846,11 +878,16 @@ namespace Gecode { namespace Int { namespace Bool {
     return ES_FIX;
   }
 
+  template <class BV>
+  Support::String
+  NaryOr<BV>::name(void) {
+    return Reflection::mangle<BV>("Int::Bool::NaryOr");
+  }
+
   template<class BV>
   Reflection::ActorSpec&
   NaryOr<BV>::spec(Space* home, Reflection::VarMap& m) {
-    return NaryOnePropagator<BV,PC_BOOL_VAL>::spec(home, m, 
-      Reflection::mangle<BV>("Int::Bool::NaryOr"));
+    return NaryOnePropagator<BV,PC_BOOL_VAL>::spec(home, m, name());      
   }
 
 }}}

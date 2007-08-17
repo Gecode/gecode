@@ -273,4 +273,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: bdd-var
+// STATISTICS: cpltset-var

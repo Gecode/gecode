@@ -50,9 +50,9 @@ namespace Gecode { namespace Set { namespace Convex {
     return new (home) ConvexHull(home,share,*this);
   }
 
-  std::string
+  Support::String
   ConvexHull::name(void) {
-    return std::string("Set::Convex::ConvexHull");
+    return Support::String("Set::Convex::ConvexHull");
   }
 
   Reflection::ActorSpec&

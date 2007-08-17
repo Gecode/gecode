@@ -42,34 +42,30 @@ using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
-  void partition(Space* home, const CpltSetVarArgs& x, SetConLevel scl) {
-    partition_con(home, x, false, SRT_EQ, false, -1, scl);
+  void partition(Space* home, const CpltSetVarArgs& x) {
+    partition_con(home, x, false, SRT_EQ, false, -1);
   }
 
-  void partition(Space* home, const CpltSetVarArgs& x, const CpltSetVar& y, 
-                 SetConLevel scl) {
-    partition_con(home, x, y, false, SRT_EQ, false, -1, scl);
+  void partition(Space* home, const CpltSetVarArgs& x, const CpltSetVar& y) {
+    partition_con(home, x, y, false, SRT_EQ, false, -1);
   }
 
-  void partition(Space* home, const IntVarArgs& x, const CpltSetVar& y, 
-                 SetConLevel scl) {
-    partition_con(home, x, y, false, SRT_EQ, false, -1, scl);
+  void partition(Space* home, const IntVarArgs& x, const CpltSetVar& y) {
+    partition_con(home, x, y, false, SRT_EQ, false, -1);
   }
 
-  void partitionLex(Space* home, const CpltSetVarArgs& x, CpltSetRelType lex, 
-                    SetConLevel scl) {
-    partition_con(home, x, true, lex, false, -1, scl);
+  void partitionLex(Space* home, const CpltSetVarArgs& x, CpltSetRelType lex) {
+    partition_con(home, x, true, lex, false, -1);
   }
 
-  void partitionLexCard(Space* home, const CpltSetVarArgs& x, CpltSetRelType lex, 
-                        int c, SetConLevel scl) {
-    partition_con(home, x, true, lex, true, c, scl);
+  void partitionLexCard(Space* home, const CpltSetVarArgs& x,
+                        CpltSetRelType lex, int c) {
+    partition_con(home, x, true, lex, true, c);
   }
 
-  void partitionCard(Space* home, const CpltSetVarArgs& x, int c, 
-                     SetConLevel scl) {
-    partition_con(home, x, false, SRT_EQ, true, c, scl);
+  void partitionCard(Space* home, const CpltSetVarArgs& x, int c) {
+    partition_con(home, x, false, SRT_EQ, true, c);
   }
 }
 
-// STATISTICS: bdd-post
+// STATISTICS: cpltset-post

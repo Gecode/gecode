@@ -38,8 +38,7 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
-#include <string>
-#include <map>
+#include "gecode/support/map.hh"
 
 namespace Gecode { namespace Reflection {
   
@@ -63,15 +62,13 @@ namespace Gecode { namespace Reflection {
   private:
     /// Number of arguments
     int n;
-    union {
-      /// If n==0, this is the name of the view type
-      char* n;
-      /// If n>0, this is the tuple representing the type
-      Type** t;
-    } u;
+    /// If n==0, this is the name of the view type
+    Support::String _name;
+    /// If n>0, this is the tuple representing the type
+    Type** t;
   public:
     /// Construct singleton type with \a name
-    Type(const char* name);
+    Type(const Support::String& name);
     /// Construct \a n -ary tuple type
     Type(int n);
 
@@ -91,13 +88,13 @@ namespace Gecode { namespace Reflection {
     Type*& operator[](int);
 
     /// Return name of primitive type
-    const char* name(void) const;
+    Support::String name(void) const;
     
     /// Print string representation to \a os
     GECODE_KERNEL_EXPORT void print(std::ostream& os);
 
     /// Return string representation
-    GECODE_KERNEL_EXPORT std::string toString(void);
+    GECODE_KERNEL_EXPORT Support::String toString(void);
   };
 
 
@@ -127,7 +124,7 @@ namespace Gecode { namespace Reflection {
     /// Test if this represents a string
     bool         isString(void);
     /// Return the string that this argument represents
-    const char*  toString(void);
+    Support::String toString(void);
     /// Test if this represents a pair
     bool         isPair(void);
     /// Return the first component of the pair that this argument represents
@@ -235,9 +232,9 @@ namespace Gecode { namespace Reflection {
   class StringArg : public Arg {
   public:
     /// Constructor
-    StringArg(const char* s0);
+    StringArg(const Support::String& s0);
     /// The string represented by this argument
-    const char* s;
+    Support::String s;
   };
   
   /**
@@ -268,7 +265,7 @@ namespace Gecode { namespace Reflection {
     class Domain {
     public:
       /// The name of this variable
-      char* _n;
+      Support::String _n;
       /// A representation of the domain of this variable
       Arg* _dom;
       /// Reference count
@@ -290,9 +287,11 @@ namespace Gecode { namespace Reflection {
     /// Destructor
     ~VarSpec(void);
     /// Set the name for this variable
-    void name(const char* n0);
+    void name(const Support::String& n0);
     /// Get the name of this variable
-    const char* name(void) const;
+    Support::String name(void) const;
+    /// Return if variable has a name
+    bool hasName(void) const;
     /// Get the domain of this variable
     Arg* dom(void) const;
     // Get the variable type identifier for this variable
@@ -308,7 +307,7 @@ namespace Gecode { namespace Reflection {
     class Arguments {
     public:
       /// The name of this actor
-      char* _name;
+      Support::String _name;
       /// The size of the argument array
       int   size;
       /// The number of arguments of this actor
@@ -318,14 +317,14 @@ namespace Gecode { namespace Reflection {
       /// Reference counter
       int r;
       /// Construct empty arguments
-      Arguments(const char*);
+      Arguments(const Support::String&);
       /// Destructor
       ~Arguments(void);
     };
     Arguments* _args;
   public:
     /// Construct actor specification with \a name
-    ActorSpec(const char* name);
+    ActorSpec(const Support::String& name);
     /// Copy constructor
     ActorSpec(const ActorSpec& s);
     /// Assignment operator
@@ -340,7 +339,9 @@ namespace Gecode { namespace Reflection {
     /// Add \a arg to the specification (as last argument)
     void add(Arg* arg);
     /// Return name
-    const char* name(void) const;
+    Support::String name(void) const;
+    /// Return if name is not empty
+    bool hasName(void) const;
   };
   
   /// Add \a a to specification \a spec
@@ -405,14 +406,14 @@ namespace Gecode { namespace Reflection {
     void add(int vti, varCreator vc);
     /// Register constraint posting function for constraint name \a id
     GECODE_KERNEL_EXPORT
-    void add(const std::string& id, poster p);
+    void add(const Support::String& id, poster p);
     /// Print list of all registered posters to \a out
     GECODE_KERNEL_EXPORT void print(std::ostream& out);
   private:
     /// The registry of constraint posting functions
-    std::map<std::string, poster> posters;
+    Support::StringMap<poster> posters;
     /// The registry of variable creation functions
-    std::map<int, varCreator> varCreators;
+    Support::IntMap<varCreator> varCreators;
   };
   
   /// The registry object
@@ -421,7 +422,7 @@ namespace Gecode { namespace Reflection {
   /** \brief Class used for registering propagators
     *
     * The registered Propagator class \a P has to provide two functions:
-    *  - static std::string name(void)
+    *  - static Support::String name(void)
     *  - static void post(Space*, const VarMap&, const ActorSpec&)
     */
   template <class P>
@@ -489,7 +490,7 @@ namespace Gecode { namespace Reflection {
   Arg::isString(void) {
     return (dynamic_cast<StringArg*>(this) != NULL);
   }
-  forceinline const char*
+  forceinline Support::String
   Arg::toString(void) {
     return static_cast<StringArg*>(this)->s;
   }
@@ -570,7 +571,7 @@ namespace Gecode { namespace Reflection {
   }
 
   forceinline
-  StringArg::StringArg(const char* s0) : s(s0) {}
+  StringArg::StringArg(const Support::String& s0) : s(s0) {}
 
   forceinline
   PairArg::PairArg(Arg* a0, Arg* b0) : a(a0), b(b0) {}
@@ -593,12 +594,10 @@ namespace Gecode { namespace Reflection {
    */
 
   forceinline
-  VarSpec::Domain::Domain(Arg* domain) : _n(NULL), _dom(domain), r(1) {}
+  VarSpec::Domain::Domain(Arg* domain) : _dom(domain), r(1) {}
 
   forceinline
   VarSpec::Domain::~Domain(void) {
-    if (_n != NULL)
-      Memory::free(_n);
     delete _dom;    
   }
 
@@ -630,18 +629,18 @@ namespace Gecode { namespace Reflection {
   }
 
   forceinline void
-  VarSpec::name(const char* n) {
-    if (_dom->_n != NULL)
-      Memory::free(_dom->_n);
-    int size = strlen(n);
-    _dom->_n = static_cast<char*>(Memory::malloc(size+1));
-    memcpy(_dom->_n, n, size);
-    _dom->_n[size] = 0;
+  VarSpec::name(const Support::String& n) {
+    _dom->_n = n;
   }
-
-  forceinline const char*
+  
+  forceinline Support::String
   VarSpec::name(void) const {
     return _dom->_n;
+  }
+
+  forceinline bool
+  VarSpec::hasName(void) const {
+    return !_dom->_n.empty();
   }
 
   forceinline int
@@ -660,28 +659,22 @@ namespace Gecode { namespace Reflection {
    */
 
   forceinline
-  Type::Type(const char* s) : n(0) {
-    int size = strlen(s);
-    u.n = (char*) Memory::malloc(size+1);
-    memcpy(u.n, s, size);
-    u.n[size] = 0;
+  Type::Type(const Support::String& s) : n(0), _name(s), t(NULL) {
   }
   
   forceinline
   Type::Type(int n0) : n(n0) {
-    u.t = static_cast<Type**>(Memory::malloc(sizeof(Type*)*n));
+    t = static_cast<Type**>(Memory::malloc(sizeof(Type*)*n));
     for (int i=n; i--;)
-      u.t[i] = NULL;
+      t[i] = NULL;
   }
   
   forceinline
   Type::~Type(void) {
     if (n>0) {
       for (int i=n; i--;)
-        delete u.t[i];
-      Memory::free(u.t);
-    } else {
-      Memory::free(u.n);
+        delete t[i];
+      Memory::free(t);
     }
   }
 
@@ -697,17 +690,17 @@ namespace Gecode { namespace Reflection {
   
   forceinline Type*
   Type::operator[](int i) const {
-    return u.t[i];
+    return t[i];
   }
   
   forceinline Type*&
   Type::operator[](int i) {
-    return u.t[i];
+    return t[i];
   }
 
-  forceinline const char*
+  forceinline Support::String
   Type::name(void) const {
-    return u.n;
+    return _name;
   }
 
 
@@ -717,25 +710,20 @@ namespace Gecode { namespace Reflection {
    */
 
   forceinline
-  ActorSpec::Arguments::Arguments(const char* name)
-   :  size(4), n(0), r(1) {
-    a = static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*size));
-    int size = strlen(name);
-    _name = (char*) Memory::malloc(size+1);
-    memcpy(_name, name, size);
-    _name[size] = 0;
+  ActorSpec::Arguments::Arguments(const Support::String& name)
+   :  _name(name), size(4), n(0), r(1) {
+     a = static_cast<Arg**>(Memory::malloc(sizeof(Arg*)*size));
   }
 
   forceinline
   ActorSpec::Arguments::~Arguments(void) {
-    Memory::free(_name);
     for (int i=n; i--;)
       delete a[i];
     Memory::free(a);
   }
 
   forceinline
-  ActorSpec::ActorSpec(const char* name) {
+  ActorSpec::ActorSpec(const Support::String& name) {
     _args = new Arguments(name);
   }
 
@@ -767,9 +755,14 @@ namespace Gecode { namespace Reflection {
     return _args->n;
   }
 
-  forceinline const char*
+  forceinline Support::String
   ActorSpec::name(void) const {
     return _args->_name;
+  }
+
+  forceinline bool
+  ActorSpec::hasName(void) const {
+    return !_args->_name.empty();
   }
 
   forceinline
@@ -852,7 +845,7 @@ namespace Gecode { namespace Reflection {
   class TypeOf {
   public:
     /// Return string representation
-    static std::string t(void) { return View::type()->toString(); }
+    static Support::String t(void) { return View::type()->toString(); }
   };
   
   /** \brief String representation for bool, used for name mangling
@@ -861,7 +854,7 @@ namespace Gecode { namespace Reflection {
   class TypeOf<bool> {
   public:
     /// Return string representation
-    static std::string t(void) { return std::string("bool"); }
+    static Support::String t(void) { return Support::String("bool"); }
   };
 
   /** \brief String representation for ints, used for name mangling
@@ -870,7 +863,7 @@ namespace Gecode { namespace Reflection {
   class TypeOf<int> {
   public:
     /// Return string representation
-    static std::string t(void) { return std::string("int"); }
+    static Support::String t(void) { return Support::String("int"); }
   };
 
   /** \brief String representation for doubles, used for name mangling
@@ -879,7 +872,7 @@ namespace Gecode { namespace Reflection {
   class TypeOf<double> {
   public:
     /// Return string representation
-    static std::string t(void) { return std::string("double"); }
+    static Support::String t(void) { return Support::String("double"); }
   };
 
 }
@@ -892,39 +885,37 @@ namespace Reflection {
   class TypeOf<const IntSet> {
   public:
     /// Return string representation
-    static std::string t(void) { return std::string("IntSet"); }    
+    static Support::String t(void) { return Support::String("IntSet"); }    
   };
 
   /// Mangle name with type information
   template <class View0>
-  forceinline std::string
-  mangle(const char* name) {
-    return std::string(name) + "<" + std::string(TypeOf<View0>::t())
-           + ">";    
+  forceinline Support::String
+  mangle(const Support::String& name) {
+    return name + "<" + TypeOf<View0>::t() + ">";    
   }
   /// Mangle name with type information
   template <class View0, class View1>
-  forceinline std::string
-  mangle(const char* name) {
-    return std::string(name) + "<" + TypeOf<View0>::t()
-         + "," + TypeOf<View1>::t() + ">";
+  forceinline Support::String
+  mangle(const Support::String& name) {
+    return name + "<" + TypeOf<View0>::t() + "," + TypeOf<View1>::t() + ">";
   }
   /// Mangle name with type information
   template <class View0, class View1, class View2>
-  forceinline std::string
-  mangle(const char* name) {
-    return std::string(name) + "<" + TypeOf<View0>::t()
+  forceinline Support::String
+  mangle(const Support::String& name) {
+    return name + "<" + TypeOf<View0>::t()
          + "," + TypeOf<View1>::t() + ","
          + TypeOf<View2>::t() + ">";
   }
   /// Mangle name with type information
   template <class View0, class View1, class View2, class View3>
-  forceinline std::string
-  mangle(const char* name) {
-    return std::string(name) + "<" + TypeOf<View0>::t()
-         + "," + TypeOf<View1>::t() + ","
-         + "," + TypeOf<View2>::t() + ","
-         + TypeOf<View3>::t() + ">";
+  forceinline Support::String
+  mangle(const Support::String& name) {
+    return name + "<" + TypeOf<View0>::t()
+         + "," + TypeOf<View1>::t()
+         + "," + TypeOf<View2>::t()
+         + "," + TypeOf<View3>::t() + ">";
   }
   
   template <class P>

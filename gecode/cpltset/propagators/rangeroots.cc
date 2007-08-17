@@ -42,35 +42,32 @@ using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
-  void range(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
-             SetConLevel scl) {
-    range_con(home, x, s, t, scl);
+  void range(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t) {
+    range_con(home, x, s, t);
   }
 
   void roots(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
-             const CpltSetVarArgs& allvars, 
-             SetConLevel scl) {
-    roots_con(home, x, s, t, allvars, scl);
+             const CpltSetVarArgs& allvars) {
+    roots_con(home, x, s, t, allvars);
   }
 
   // constraints using the range constraint
   void alldifferent(Space* home, const IntVarArgs& x, CpltSetVar s, 
-                    CpltSetVar t, const CpltSetVarArgs& allvars, SetConLevel scl) {
-    nvalue_con(home, x, s, t, x.size(), allvars, scl);
+                    CpltSetVar t, const CpltSetVarArgs& allvars) {
+    nvalue_con(home, x, s, t, x.size(), allvars);
   }
 
   void nvalue(Space* home, const IntVarArgs& x, CpltSetVar s, 
-                    CpltSetVar t, int n, const CpltSetVarArgs& allvars, SetConLevel scl) {
-    nvalue_con(home, x, s, t, n, allvars, scl);
+                    CpltSetVar t, int n, const CpltSetVarArgs& allvars) {
+    nvalue_con(home, x, s, t, n, allvars);
   }
 
   void uses(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
-            const IntVarArgs& y, CpltSetVar u, CpltSetVar v,
-            SetConLevel scl) {
-    uses_con(home, x, s, t, y, u, v, scl);
+            const IntVarArgs& y, CpltSetVar u, CpltSetVar v) {
+    uses_con(home, x, s, t, y, u, v);
   }
 
 
 }
 
-// STATISTICS: bdd-post
+// STATISTICS: cpltset-post

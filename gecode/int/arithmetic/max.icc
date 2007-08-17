@@ -125,7 +125,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  std::string
+  Support::String
   Max<View>::name(void) {
     return Reflection::mangle<View>("Int::Arithmetic::Max");
   }
@@ -233,7 +233,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  std::string
+  Support::String
   NaryMax<View>::name(void) {
     return Reflection::mangle<View>("Int::Arithmetic::NaryMax");
   }

@@ -49,9 +49,9 @@ namespace Gecode { namespace Set { namespace Convex {
     return new (home) Convex(home,share,*this);
   }
 
-  std::string
+  Support::String
   Convex::name(void) {
-    return std::string("Set::Convex::Convex");
+    return Support::String("Set::Convex::Convex");
   }
 
   Reflection::ActorSpec&

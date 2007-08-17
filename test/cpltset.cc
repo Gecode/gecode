@@ -146,7 +146,6 @@ public:
     : mgr(ivs, ics), 
       x(this, mgr.manager(), n, IntSet::empty, d), y(this, _withInt, d),
       opt(o), withInt(_withInt) {  
-    mgr.level(CPLTSET_BND);
     Log::initial(x, "x");
   }
   BddTestSpace(bool share, BddTestSpace& s) 

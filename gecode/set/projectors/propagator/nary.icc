@@ -76,12 +76,12 @@ namespace Gecode { namespace Set { namespace Projection {
   }
 
   template <bool negated>
-  std::string
+  Support::String
   NaryProjection<negated>::name(void) {
     if (negated)
-      return std::string("set.projectors.NaryProjection<true>");
+      return Support::String("set.projectors.NaryProjection<true>");
     else
-      return std::string("set.projectors.NaryProjection<false>");
+      return Support::String("set.projectors.NaryProjection<false>");
   }
 
   template <bool negated>

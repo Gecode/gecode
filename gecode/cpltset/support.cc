@@ -42,8 +42,6 @@ using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
-  // \todo FIXME similar replace intset with dynamicarray
-
   /** \brief Set variable order as presented in HLS for CpltSetVars in \a x 
    *  It is possible to already order \a add additional variables not yet declared
    *  as needed in the case of SingletonCpltSetViews, i.e. while using hybrid 
@@ -1238,4 +1236,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: bdd-support
+// STATISTICS: cpltset-support

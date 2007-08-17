@@ -43,27 +43,27 @@
 
 namespace Gecode { namespace Set { namespace Int {
       
-  template <class View, PropCond pc>
+  template <class View>
   forceinline
-  Channel<View, pc>::Channel(Space* home, 
+  Channel<View>::Channel(Space* home, 
                              ViewArray<Gecode::Int::IntView>& xs0,
                              ViewArray<View>& ys0)
     : Propagator(home), xs(xs0), ys(ys0) {
     xs.subscribe(home,this, Gecode::Int::PC_INT_DOM);
-    ys.subscribe(home,this, pc);
+    ys.subscribe(home,this, PC_SET_ANY);
   }
       
-  template <class View, PropCond pc>
+  template <class View>
   forceinline
-  Channel<View, pc>::Channel(Space* home, bool share, Channel& p)
+  Channel<View>::Channel(Space* home, bool share, Channel& p)
     : Propagator(home,share,p) {
     xs.update(home,share,p.xs);
     ys.update(home,share,p.ys);
   }
 
-  template <class View, PropCond pc>
+  template <class View>
   forceinline ExecStatus
-  Channel<View, pc>::post(Space* home, ViewArray<Gecode::Int::IntView>& xs,
+  Channel<View>::post(Space* home, ViewArray<Gecode::Int::IntView>& xs,
                           ViewArray<View>& ys) {
     // Sharing of ys is taken care of in the propagator:
     // The ys are propagated to be disjoint, so shared variables
@@ -85,29 +85,29 @@ namespace Gecode { namespace Set { namespace Int {
     return ES_OK;
   }
 
-  template <class View, PropCond pc>
+  template <class View>
   PropCost
-  Channel<View, pc>::cost(void) const { return PC_QUADRATIC_LO; }
+  Channel<View>::cost(void) const { return PC_QUADRATIC_LO; }
 
-  template <class View, PropCond pc>
+  template <class View>
   size_t
-  Channel<View, pc>::dispose(Space* home) {
+  Channel<View>::dispose(Space* home) {
     assert(!home->failed());
     xs.cancel(home,this, Gecode::Int::PC_INT_DOM);
-    ys.cancel(home,this, pc);
+    ys.cancel(home,this, PC_SET_ANY);
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
-  template <class View, PropCond pc>
+  template <class View>
   Actor*
-  Channel<View, pc>::copy(Space* home, bool share) {
+  Channel<View>::copy(Space* home, bool share) {
     return new (home) Channel(home,share,*this);
   }
 
-  template <class View, PropCond pc>
+  template <class View>
   ExecStatus
-  Channel<View, pc>::propagate(Space* home) {
+  Channel<View>::propagate(Space* home) {
     int assigned = 0;
     for (int v=xs.size(); v--;) {
       if (xs[v].assigned()) {
@@ -146,15 +146,15 @@ namespace Gecode { namespace Set { namespace Int {
     return (assigned==xs.size()) ? ES_SUBSUMED(this,home) : ES_NOFIX;
   }
 
-  template <class View, PropCond pc>
-  std::string
-  Channel<View,pc>::name(void) {
+  template <class View>
+  Support::String
+  Channel<View>::name(void) {
     return Reflection::mangle<View>("Set::Int::Channel");
   }
 
-  template <class View, PropCond pc>
+  template <class View>
   Reflection::ActorSpec&
-  Channel<View,pc>::spec(Space* home, Reflection::VarMap& m) {
+  Channel<View>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name());
     return s << xs.spec(home, m) << ys.spec(home, m);
   }

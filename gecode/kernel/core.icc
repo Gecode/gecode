@@ -43,7 +43,6 @@
  */
 
 #include <algorithm>
-#include <string>
 
 namespace Gecode {
 
@@ -587,7 +586,7 @@ namespace Gecode {
     /// Return specification given a variable map \a m and \a name
     GECODE_KERNEL_EXPORT
     Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
-                                const std::string& name);
+                                const Support::String& name);
   private:
 #ifndef __GNUC__
     /// Not used (uses dispose instead)

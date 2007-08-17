@@ -55,12 +55,10 @@ namespace Gecode { namespace CpltSet {
     ViewArray<View> x;
     /// Bdd representation of the constraint
     GecodeBdd d;
-    /// Consistency level determining which propagation function is used
-    SetConLevel scl;
     /// Constructor for cloning \a p
     NaryBddProp(Space* home, bool share, NaryBddProp& p);
     /// Constructor for creation
-    NaryBddProp(Space* home, ViewArray<View>& x, GecodeBdd& d, SetConLevel scl);
+    NaryBddProp(Space* home, ViewArray<View>& x, GecodeBdd& d);
     /// (EEQ) Earliest Existential Quantification for set bounds propagation
     GecodeBdd bnd_phi(BMI* mgr, int j);
     /// (EEQ) Earliest Existential Quantification
@@ -86,7 +84,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -113,8 +111,7 @@ namespace Gecode { namespace CpltSet {
 //     /// Perform lexicographic propagation
 //     ExecStatus propagate_lex(Space* home);
 
-    static  ExecStatus post(Space* home, ViewArray<View>& x, GecodeBdd& d, 
-                            SetConLevel scl);
+    static  ExecStatus post(Space* home, ViewArray<View>& x, GecodeBdd& d);
   };
 
 
@@ -130,19 +127,17 @@ namespace Gecode { namespace CpltSet {
     View y;
     /// Bdd representation of the constraint
     GecodeBdd d;
-    /// Consistency level determining which propagation function is used
-    SetConLevel scl;
     /// Constructor for cloning \a p
     BinBddProp(Space* home, bool share, BinBddProp& p);
     /// Constructor for posting
-    BinBddProp(Space* home, View& x0, View& y0, GecodeBdd& d, SetConLevel scl);
+    BinBddProp(Space* home, View& x0, View& y0, GecodeBdd& d);
   public:
     /// Cost function
     virtual PropCost cost(void) const;
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -150,7 +145,7 @@ namespace Gecode { namespace CpltSet {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, View& x0, View& y0, GecodeBdd& d, SetConLevel scl);
+    static  ExecStatus post(Space* home, View& x0, View& y0, GecodeBdd& d);
   };
 
   /**
@@ -164,19 +159,17 @@ namespace Gecode { namespace CpltSet {
     View x;
     /// Bdd representation of the constraint
     GecodeBdd d;
-    /// Consistency level determining which propagation function is used
-    SetConLevel scl;
     /// Constructor for cloning \a p
     UnaryBddProp(Space* home, bool share, UnaryBddProp& p);
     /// Constructor for posting
-    UnaryBddProp(Space* home, View& x0, GecodeBdd& d, SetConLevel scl);
+    UnaryBddProp(Space* home, View& x0, GecodeBdd& d);
   public:
     /// Cost function
     virtual PropCost cost(void) const;
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -184,7 +177,7 @@ namespace Gecode { namespace CpltSet {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, View& x0, GecodeBdd& d, SetConLevel scl);
+    static  ExecStatus post(Space* home, View& x0, GecodeBdd& d);
   };
 
 
@@ -198,11 +191,10 @@ namespace Gecode { namespace CpltSet {
     using BinBddProp<View>::d;
     using BinBddProp<View>::x;
     using BinBddProp<View>::y;
-    using BinBddProp<View>::scl;
     /// Constructor for cloning \a p
     BinRelDisj(Space* home, bool share, BinRelDisj& p);
     /// Constructor for posting
-    BinRelDisj(Space* home, View& x0, View& y0, GecodeBdd& d, SetConLevel scl);
+    BinRelDisj(Space* home, View& x0, View& y0, GecodeBdd& d);
   public:
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -210,7 +202,7 @@ namespace Gecode { namespace CpltSet {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, View& x0, View& y0, GecodeBdd& d, SetConLevel scl);
+    static  ExecStatus post(Space* home, View& x0, View& y0, GecodeBdd& d);
   };
 
   /**
@@ -234,7 +226,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -269,7 +261,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -301,7 +293,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -332,7 +324,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -391,7 +383,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -423,7 +415,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -456,7 +448,6 @@ namespace Gecode { namespace CpltSet {
 
 // check whether we need this in other propagators too
 #include "gecode/support/dynamic-array.hh"
-#include "gecode/cpltset/propagators/disjointglb.icc"
 #endif
 
-// STATISTICS: bdd-prop
+// STATISTICS: cpltset-prop

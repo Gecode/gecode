@@ -42,30 +42,16 @@ using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
-  void selectUnion(Space* home, const CpltSetVarArgs& x, CpltSetVar s, CpltSetVar t, 
-                   SetConLevel scl) {
-    selectUnion_con(home, x, s, t, scl);
+  void selectUnion(Space* home, const CpltSetVarArgs& x, CpltSetVar s, 
+                   CpltSetVar t) {
+    selectUnion_con(home, x, s, t);
   }
 
-//   void range(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t, 
-//              SetConLevel scl) {
-//     ViewArray<IntView> iv(home, x.size());
-//     ViewArray<SingletonCpltSetView> sbv(home, iv.size());
-//     for (int i = sbv.size(); i--; ) {
-//       sbv[i].init(iv[i]);
-//       GECODE_ME_FAIL(home, sbv[i].cardinality(home, 1));
-//     }
-//     CpltSetView selview(s);
-//     CpltSetView unionview(t);
-    
-//     selectUnion_post(home, sbv, selview, unionview, scl);
-//   }
-
   void findNonEmptySub(Space* home, const CpltSetVarArgs& x, CpltSetVar s, 
-                       CpltSetVar t, SetConLevel scl) {
-    findNonEmptySub_con(home, x, s, t, scl);
+                       CpltSetVar t) {
+    findNonEmptySub_con(home, x, s, t);
   }
 
 }
 
-// STATISTICS: bdd-post
+// STATISTICS: cpltset-post

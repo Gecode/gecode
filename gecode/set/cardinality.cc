@@ -57,7 +57,7 @@ namespace Gecode {
   void
   cardinality(Space* home, SetVar s, IntVar x) {
     if (home->failed()) return;
-    GECODE_ES_FAIL(home,Set::Int::Card::post(home,s, x));
+    GECODE_ES_FAIL(home,Set::Int::Card<Set::SetView>::post(home,s, x));
   }
 
 }

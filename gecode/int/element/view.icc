@@ -191,7 +191,7 @@ namespace Gecode { namespace Int { namespace Element {
   template <class VA, class VB, class VC, PropCond pc_ac>
   Reflection::ActorSpec&
   View<VA,VB,VC,pc_ac>::spec(Space* home, Reflection::VarMap& m,
-                             const std::string& name) {
+                             const Support::String& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     Reflection::IntArrayArg* ai = new Reflection::IntArrayArg(n);
     for (int i=n; i--;)
@@ -371,7 +371,7 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class VA, class VB, class VC>
-  std::string
+  Support::String
   ViewBnd<VA,VB,VC>::name(void) {
     return "Int::Element::ViewBnd";
   }
@@ -475,7 +475,7 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class VA, class VB, class VC>
-  std::string
+  Support::String
   ViewDom<VA,VB,VC>::name(void) {
     return "Int::Element::ViewDom";
   }

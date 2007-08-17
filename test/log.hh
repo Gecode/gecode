@@ -63,9 +63,9 @@ namespace Log {
   void initial(const IntVarArray& a, const char* name);
   void initial(const BoolVar& a, const char* name);
   void log(std::string hlog, const std::string clog);
-  void assign(std::string name, int val);
-  void assign(std::string name, const IntSet& val);
-  void prune(const IntVar& v, std::string name, IntRelType irt, int val);
+  void assign(Support::String name, int val);
+  void assign(Support::String name, const IntSet& val);
+  void prune(const IntVar& v, Support::String name, IntRelType irt, int val);
   void prune_result(const IntVar& v);
   void flush();
   void fixpoint();
@@ -74,8 +74,8 @@ namespace Log {
 
 #ifdef GECODE_HAVE_SET_VARS
   void initial(const SetVarArray& a, const char*name);
-  void prune(const SetVar& v, std::string name, SetRelType irt, int val);
-  void prune(const SetVar& v, std::string name,
+  void prune(const SetVar& v, Support::String name, SetRelType irt, int val);
+  void prune(const SetVar& v, Support::String name,
              unsigned int cardMin, unsigned int cardMax);
   void prune_result(const SetVar& v);
   void print(const SetVarArray& a, const char* name=NULL);
@@ -83,8 +83,8 @@ namespace Log {
 
 #ifdef GECODE_HAVE_CPLTSET_VARS
   void initial(const CpltSetVarArray& a, const char*name);
-  void prune(const CpltSetVar& v, std::string name, SetRelType irt, int val);
-  void prune(const CpltSetVar& v, std::string name,
+  void prune(const CpltSetVar& v, Support::String name, SetRelType irt, int val);
+  void prune(const CpltSetVar& v, Support::String name,
 	     unsigned int cardMin, unsigned int cardMax);
   void prune_result(const CpltSetVar& v);
   void print(const CpltSetVarArray& a, const char* name=NULL);

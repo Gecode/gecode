@@ -77,7 +77,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  std::string
+  Support::String
   TerDom<View>::name(void) {
     return Reflection::mangle<View>("Int::Distinct::TerDom");
   }

@@ -45,9 +45,7 @@ namespace Gecode {
   }
 
   CpltSetVar::CpltSetVar(Space* home, BMI* m, int min, int max) {
-    assert( m->level() < 4);
     var = new (home) CpltSet::CpltSetVarImp(home,m, min,max);
-    assert( var->manager()->level() < 4);
   } 
 
   CpltSetVar::CpltSetVar(Space* home, BMI* m, int glbMin,int glbMax,
@@ -80,4 +78,4 @@ namespace Gecode {
 }
 
 
-// STATISTICS: bdd-var
+// STATISTICS: cpltset-var

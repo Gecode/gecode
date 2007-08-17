@@ -55,25 +55,28 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include "gecode/set/int.hh" \endcode
    * \ingroup FuncSetProp
    */
+  template <class View>
   class MinElement :
-    public IntSetPropagator<SetView,PC_SET_ANY,Gecode::Int::PC_INT_BND> {
+    public IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND> {
   protected:
+    using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>::x0;
+    using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>::x1;
     /// Constructor for cloning \a p
     MinElement(Space* home, bool share,MinElement& p);
     /// Constructor for posting
-    MinElement(Space* home,SetView, Gecode::Int::IntView);
+    MinElement(Space* home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator for \a x is the minimal element of \a s 
-    static ExecStatus post(Space* home,SetView s, Gecode::Int::IntView x);
+    static ExecStatus post(Space* home, View s, Gecode::Int::IntView x);
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
   };
 
   /**
@@ -82,25 +85,28 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include "gecode/set/int.hh" \endcode
    * \ingroup FuncSetProp
    */
+  template <class View>
   class MaxElement :
-    public IntSetPropagator<SetView,PC_SET_ANY,Gecode::Int::PC_INT_BND> {
+    public IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND> {
   protected:
+    using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>::x0;
+    using IntSetPropagator<View,PC_SET_ANY,Gecode::Int::PC_INT_BND>::x1;
     /// Constructor for cloning \a p
     MaxElement(Space* home, bool share,MaxElement& p);
     /// Constructor for posting
-    MaxElement(Space* home,SetView, Gecode::Int::IntView);
+    MaxElement(Space* home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator for \a x is the largest element of \a s 
-    static ExecStatus post(Space* home,SetView s, Gecode::Int::IntView x);
+    static ExecStatus post(Space* home, View s, Gecode::Int::IntView x);
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
   };
 
   /**
@@ -109,25 +115,28 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include "gecode/set/int.hh" \endcode
    * \ingroup FuncSetProp
    */
+  template <class View>
   class Card :
-    public IntSetPropagator<SetView,PC_SET_CARD,Gecode::Int::PC_INT_BND> {
+    public IntSetPropagator<View,PC_SET_CARD,Gecode::Int::PC_INT_BND> {
   protected:
+    using IntSetPropagator<View,PC_SET_CARD,Gecode::Int::PC_INT_BND>::x0;
+    using IntSetPropagator<View,PC_SET_CARD,Gecode::Int::PC_INT_BND>::x1;
     /// Constructor for cloning \a p
     Card(Space* home, bool share,Card& p);
     /// Constructor for posting
-    Card(Space* home,SetView, Gecode::Int::IntView);
+    Card(Space* home, View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$ |s|=x \f$ 
-    static ExecStatus post(Space* home,SetView s, Gecode::Int::IntView x);
+    static ExecStatus post(Space* home, View s, Gecode::Int::IntView x);
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
   };
 
 
@@ -137,17 +146,18 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include "gecode/set/int.hh" \endcode
    * \ingroup FuncSetProp
    */
+  template <class View>
   class Match : public Propagator {
   protected:
     /// SetView for the match
-    SetView x0;
+    View x0;
     /// IntViews that together form the set \a x0
-    ViewArray< Gecode::Int::IntView > xs;
+    ViewArray<Gecode::Int::IntView> xs;
 
     /// Constructor for cloning \a p
     Match(Space* home, bool share,Match& p);
     /// Constructor for posting
-    Match(Space* home,SetView, ViewArray< Gecode::Int::IntView >&);
+    Match(Space* home, View, ViewArray<Gecode::Int::IntView>&);
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*   copy(Space* home,bool);
@@ -158,13 +168,13 @@ namespace Gecode { namespace Set { namespace Int {
     /// Perform propagation
     GECODE_SET_EXPORT virtual ExecStatus propagate(Space* home);
     /// Post propagator that propagates that \a s contains the \f$x_i\f$, which are sorted in non-descending order 
-    static ExecStatus post(Space* home,SetView s,
-                           ViewArray< Gecode::Int::IntView >& x);
+    static ExecStatus post(Space* home, View s,
+                           ViewArray<Gecode::Int::IntView>& x);
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
   };
 
   /**
@@ -184,18 +194,18 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include "gecode/set/int.hh" \endcode
    * \ingroup FuncSetProp
    */
-  template <class View, PropCond pc>
+  template <class View>
   class Channel : public Propagator {
   protected:
     /// IntViews, \f$x_i\f$ reflects which set contains element \f$i\f$
-    ViewArray< Gecode::Int::IntView > xs;
+    ViewArray<Gecode::Int::IntView> xs;
     /// SetViews that are constrained to be disjoint
-    ViewArray< View > ys;
+    ViewArray<View> ys;
 
     /// Constructor for cloning \a p
     Channel(Space* home, bool share,Channel& p);
     /// Constructor for posting
-    Channel(Space* home,ViewArray< Gecode::Int::IntView >&, ViewArray< View >&);
+    Channel(Space* home,ViewArray<Gecode::Int::IntView>&, ViewArray<View>&);
   public:
     /// Copy propagator during cloning
     virtual Actor*   copy(Space* home,bool);
@@ -206,13 +216,13 @@ namespace Gecode { namespace Set { namespace Int {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
-    static ExecStatus post(Space* home,ViewArray< Gecode::Int::IntView >& x,
-                           ViewArray< View >& y);
+    static ExecStatus post(Space* home,ViewArray<Gecode::Int::IntView>& x,
+                           ViewArray<View>& y);
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
   };
 
   /**
@@ -221,6 +231,7 @@ namespace Gecode { namespace Set { namespace Int {
    * Requires \code #include "gecode/set/int.hh" \endcode
    * \ingroup FuncSetProp
    */
+  template <class View>
   class Weights : public Propagator {
   protected:
     /// List of elements in the upper bound
@@ -229,7 +240,7 @@ namespace Gecode { namespace Set { namespace Int {
     Support::SharedArray<int> weights;
 
     /// The set view
-    SetView x;
+    View x;
     /// The integer view
     Gecode::Int::IntView y;
 
@@ -237,7 +248,7 @@ namespace Gecode { namespace Set { namespace Int {
     Weights(Space* home, bool share,Weights& p);
     /// Constructor for posting
     Weights(Space* home, const IntArgs&, const IntArgs&,
-            SetView, Gecode::Int::IntView);
+            View, Gecode::Int::IntView);
   public:
     /// Copy propagator during cloning
     GECODE_SET_EXPORT virtual Actor*   copy(Space* home,bool);
@@ -250,12 +261,12 @@ namespace Gecode { namespace Set { namespace Int {
     /// Post propagator for \f$\sum_{i\in x} weights_i = y \f$
     static ExecStatus post(Space* home,
                            const IntArgs& elements, const IntArgs& weights,
-                           SetView x, Gecode::Int::IntView y);
+                           View x, Gecode::Int::IntView y);
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
   };
 
 }}}

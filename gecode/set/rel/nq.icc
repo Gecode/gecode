@@ -80,7 +80,7 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template <class View0, class View1>
-  std::string
+  Support::String
   Distinct<View0,View1>::name(void) {
     return Reflection::mangle<View0,View1>("Set::Rel::Distinct");
   }
@@ -123,7 +123,7 @@ namespace Gecode { namespace Set { namespace Rel {
   }
 
   template <class View0>
-  std::string
+  Support::String
   DistinctDoit<View0>::name(void) {
     return Reflection::mangle<View0>("Set::Rel::DistinctDoit");
   }

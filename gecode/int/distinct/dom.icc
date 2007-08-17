@@ -692,7 +692,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  std::string
+  Support::String
   Dom<View>::name(void) {
     return Reflection::mangle<View>("Int::Distinct::Dom");
   }

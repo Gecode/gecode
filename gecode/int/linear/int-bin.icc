@@ -75,7 +75,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, PropCond pc>
   Reflection::ActorSpec&
   LinBin<Val,A,B,pc>::spec(Space* home, Reflection::VarMap& m,
-                           const std::string& name) {
+                           const Support::String& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << Reflection::typedSpec(home, m, x0)
              << Reflection::typedSpec(home, m, x1)
@@ -137,7 +137,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class A, class B, PropCond pc, class Ctrl>
   Reflection::ActorSpec&
   ReLinBin<Val,A,B,pc,Ctrl>::spec(Space* home, Reflection::VarMap& m,
-                                  const std::string& name) {
+                                  const Support::String& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << Reflection::typedSpec(home, m, x0)
              << Reflection::typedSpec(home, m, x1)
@@ -181,7 +181,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B>
-  std::string
+  Support::String
   EqBin<Val,A,B>::name(void) {
     return Reflection::mangle<Val,A,B>("Int::Linear::EqBin");
   }
@@ -258,7 +258,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, class Ctrl>
-  std::string
+  Support::String
   ReEqBin<Val,A,B,Ctrl>::name(void) {
     return Reflection::mangle<Val,A,B,Ctrl>("Int::Linear::ReEqBin");
   }
@@ -332,7 +332,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B>
-  std::string
+  Support::String
   NqBin<Val,A,B>::name(void) {
     return Reflection::mangle<Val,A,B>("Int::Linear::NqBin");
   }
@@ -392,7 +392,7 @@ namespace Gecode { namespace Int { namespace Linear {
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
 
   template <class Val, class A, class B>
-  std::string
+  Support::String
   LqBin<Val,A,B>::name(void) {
     return Reflection::mangle<Val,A,B>("Int::Linear::LqBin");
   }
@@ -450,7 +450,7 @@ namespace Gecode { namespace Int { namespace Linear {
     : LinBin<Val,A,B,PC_INT_BND>(home,share,p,x0,x1,c) {}
 
   template <class Val, class A, class B>
-  std::string
+  Support::String
   GqBin<Val,A,B>::name(void) {
     return Reflection::mangle<Val,A,B>("Int::Linear::GqBin");
   }
@@ -502,7 +502,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B>
-  std::string
+  Support::String
   ReLqBin<Val,A,B>::name(void) {
     return Reflection::mangle<Val,A,B>("Int::Linear::ReLqBin");
   }

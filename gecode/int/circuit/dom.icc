@@ -64,7 +64,7 @@ namespace Gecode { namespace Int { namespace Circuit {
   }
 
   template <class View>
-  std::string
+  Support::String
   Dom<View>::name(void) {
     return Reflection::mangle<View>("Int::Circuit::Dom");
   }

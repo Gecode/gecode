@@ -980,4 +980,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: bdd-support
+// STATISTICS: cpltset-support

@@ -97,7 +97,7 @@ public:
 
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
-    Gecode::atmostLex(home, x[0], x[1], 1, SRT_LE, SCL_DOM);
+    Gecode::atmostLex(home, x[0], x[1], 1, SRT_LE);
   }
 };
 BddAtmostLexLe _bddatmostlexle("Atmost::Lex::Le");
@@ -121,7 +121,7 @@ public:
 
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
-    Gecode::atmost(home, x[0], ds_33, 1, SCL_DOM);
+    Gecode::atmost(home, x[0], ds_33, 1);
   }
 };
 BddAtmostIntSet _bddatmostintset("Atmost::IntSet");

@@ -72,9 +72,9 @@ namespace Gecode { namespace Set { namespace Projection {
     }
   }
 
-  forceinline std::string
+  forceinline Support::String
   CardProjection::name(void) {
-    return std::string("set.projectors.CardProjection");
+    return Support::String("set.projectors.CardProjection");
   }
 
   forceinline Reflection::ActorSpec&

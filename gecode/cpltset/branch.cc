@@ -42,8 +42,8 @@ namespace Gecode {
   using namespace CpltSet;
 
   void
-  branch(Space* home, const CpltSetVarArgs& xa, CpltSetBvarSel vars, CpltSetBvalSel vals, 
-         SetConLevel scl) {
+  branch(Space* home, const CpltSetVarArgs& xa, CpltSetBvarSel vars, 
+         CpltSetBvalSel vals) {
     // std::cout << "bdd branching\n";
 
     if (home->failed()) return;
@@ -71,4 +71,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: bdd-post
+// STATISTICS: cpltset-post

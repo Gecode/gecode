@@ -40,8 +40,8 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline
   BinBddProp<View>::BinBddProp(Space* home, View& x0, View& y0, 
-                               GecodeBdd& d0, SetConLevel scl0)
-    : Propagator(home), x(x0), y(y0), d(d0), scl(scl0) {
+                               GecodeBdd& d0)
+    : Propagator(home), x(x0), y(y0), d(d0) {
     force(home);
     x.subscribe(home, this, PC_CPLTSET_DOM);
     y.subscribe(home, this, PC_CPLTSET_DOM);
@@ -52,7 +52,6 @@ namespace Gecode { namespace CpltSet {
   BinBddProp<View>::BinBddProp(Space* home, bool share, BinBddProp& p)
     : Propagator(home,share,p) {
     d = p.d;
-    scl = p.scl;
     x.update(home, share, p.x);
     y.update(home, share, p.y);
   }
@@ -69,7 +68,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View>
-  std::string
+  Support::String
   BinBddProp<View>::name(void) {
     return Reflection::mangle<View>("CpltSet::BinBddProp");
   }
@@ -96,9 +95,8 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline ExecStatus
-  BinBddProp<View>::post(Space* home, View& x0, View& y0, GecodeBdd& d0, 
-                         SetConLevel scl) {
-    (void) new (home) BinBddProp(home, x0, y0, d0, scl);
+  BinBddProp<View>::post(Space* home, View& x0, View& y0, GecodeBdd& d0) {
+    (void) new (home) BinBddProp(home, x0, y0, d0);
     return ES_OK;
   }
 
@@ -144,8 +142,8 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline
   BinRelDisj<View>::BinRelDisj(Space* home, View& x0, View& y0, 
-                               GecodeBdd& d0, SetConLevel scl0)
-    : BinBddProp<View>(home, x0, y0, d0, scl0) { }
+                               GecodeBdd& d0)
+    : BinBddProp<View>(home, x0, y0, d0) { }
 
   template <class View>
   forceinline
@@ -163,8 +161,8 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline ExecStatus
   BinRelDisj<View>::post(Space* home, View& x0, View& y0, 
-                         GecodeBdd& d0, SetConLevel scl) {
-    (void) new (home) BinRelDisj(home, x0, y0, d0, scl);
+                         GecodeBdd& d0) {
+    (void) new (home) BinRelDisj(home, x0, y0, d0);
     return ES_OK;
   }
 
@@ -258,4 +256,4 @@ namespace Gecode { namespace CpltSet {
 
 }}
 
-// STATISTICS: bdd-prop
+// STATISTICS: cpltset-prop

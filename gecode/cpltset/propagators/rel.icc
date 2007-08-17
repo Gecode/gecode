@@ -40,8 +40,7 @@ using namespace Gecode::CpltSet;
 namespace Gecode {
 
   template <class View>
-  void rel_post(Space* home, View x, CpltSetRelType r, View y, 
-                SetConLevel scl) {
+  void rel_post(Space* home, View x, CpltSetRelType r, View y) {
 
     if (home->failed()) return;
     // important:
@@ -104,12 +103,11 @@ namespace Gecode {
       }
     }
 
-    GECODE_ES_FAIL(home, (BinBddProp<View>::post(home, x, y, d0, scl)));
+    GECODE_ES_FAIL(home, (BinBddProp<View>::post(home, x, y, d0)));
   }
 
   template <class View>
-  void rel_post(Space* home, View x, SetRelType r, View y, 
-                SetConLevel scl) {
+  void rel_post(Space* home, View x, SetRelType r, View y) {
 
     if (home->failed()) return;
     // important:
@@ -174,7 +172,7 @@ namespace Gecode {
             d0 &= (!(x.getbdd(v - minx) & y.getbdd(v - miny)));
           }
         }
-        GECODE_ES_FAIL(home, (BinRelDisj<View>::post(home, x, y, d0, scl)));
+        GECODE_ES_FAIL(home, (BinRelDisj<View>::post(home, x, y, d0)));
         return;
       }
       break;
@@ -225,12 +223,11 @@ namespace Gecode {
       }
     }
 
-    GECODE_ES_FAIL(home, (BinBddProp<View>::post(home, x, y, d0, scl)));
+    GECODE_ES_FAIL(home, (BinBddProp<View>::post(home, x, y, d0)));
   }
 
   template <class View0, class View1>
-  void rel_post(Space* home, View0 x, CpltSetRelType r, View1 s, 
-                SetConLevel scl) {
+  void rel_post(Space* home, View0 x, CpltSetRelType r, View1 s) {
 
     if (home->failed()) return;
     // important:
@@ -281,8 +278,7 @@ namespace Gecode {
 
 
   template <class View0, class View1>
-  void rel_post(Space* home, View0 x, SetRelType r, View1 s, 
-                SetConLevel scl) {
+  void rel_post(Space* home, View0 x, SetRelType r, View1 s) {
 
     if (home->failed()) return;
     // important:
@@ -365,15 +361,15 @@ namespace Gecode {
   // BddOp and BddRel
   // 
   template <class View>
-  void rel_post(Space* home, ViewArray<View>& x, CpltSetOpType o, CpltSetRelType r, 
-                SetConLevel scl) {
+  void rel_post(Space* home, ViewArray<View>& x, CpltSetOpType o,   
+                CpltSetRelType r) {
     throw CpltSet::InvalidRelation(" no bdd rel implemented lex smaller ....");
   }
 
   // BddOp and SetRel
   template <class View>
-  void rel_post(Space* home, ViewArray<View>& x, CpltSetOpType o, SetRelType r, 
-                SetConLevel scl) {
+  void rel_post(Space* home, ViewArray<View>& x, CpltSetOpType o, 
+                SetRelType r) {
     if (home->failed()) return;
     // important:
     // the offset order is linear from left to right for the viewarray
@@ -412,22 +408,21 @@ namespace Gecode {
       }
     }
     
-    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
+    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0));
   }
   
   // SetOp and BddRel
   // 
   template <class View>
-  void rel_post(Space* home, ViewArray<View>& x, SetOpType o, CpltSetRelType r, 
-                SetConLevel scl) {
+  void rel_post(Space* home, ViewArray<View>& x, SetOpType o,
+                CpltSetRelType r) {
     throw CpltSet::InvalidRelation(" no bdd rel implemented lex smaller with setoptype....");
   }
   // not yet implemented Bddrel SRT_LE and lex-stuff
   
   // SetOp and SetRel
   template <class View>
-  void rel_post(Space* home, ViewArray<View>& x, SetOpType o, SetRelType r, 
-                SetConLevel scl) {
+  void rel_post(Space* home, ViewArray<View>& x, SetOpType o, SetRelType r) {
     if (home->failed()) return;
     // important:
     // the offset order is linear from left to right for the viewarray
@@ -482,150 +477,40 @@ namespace Gecode {
         }
       }
     }
-    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
+    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0));
   }
 
 
   template <class Rel>
-  void rel_con(Space* home, const CpltSetVar& x, Rel r, const CpltSetVar& y, 
-               SetConLevel scl) {
+  void rel_con(Space* home, const CpltSetVar& x, Rel r, const CpltSetVar& y) {
     CpltSetView xv(x);
     CpltSetView yv(y);
-    switch (scl) {
-    case SCL_SPL:
-      {
-        SplitCpltSetView spx(xv);
-        SplitCpltSetView spy(yv);
-        rel_post(home, spx, r, spy, scl);
-        break;
-      }
-    case SCL_BND_BDD:
-      {
-        BndCpltSetView bndx(xv);
-        BndCpltSetView bndy(yv);
-        rel_post(home, bndx, r, bndy, scl);
-        break;
-      }
-    case SCL_CRD:
-      {
-        CrdCpltSetView crdx(xv);
-        CrdCpltSetView crdy(yv);
-        rel_post(home, crdx, r, crdy, scl);
-        break;
-      }
-    case SCL_LEX:
-      {
-        LexCpltSetView lexx(xv);
-        LexCpltSetView lexy(yv);
-        rel_post(home, lexx, r, lexy, scl);
-        break;
-      }
-    default:
-      {
-        rel_post(home, xv, r, yv, scl);
-      }
-    }
+    rel_post(home, xv, r, yv);
   }  
 
 
   template <class Rel>
-  void rel_con(Space* home, const IntVar& x, Rel r, const CpltSetVar& s, 
-          SetConLevel scl) {
+  void rel_con(Space* home, const IntVar& x, Rel r, const CpltSetVar& s) {
     Gecode::Int::IntView iv(x);
     CpltSetView bv(s);
 //     int rmin = std::min(iv.min(), bv.mgr_min());
 //     int rmax = std::max(iv.max(), bv.mgr_max());
 //     SingletonCpltSetView single(s.manager(), rmin, rmax, iv);
     SingletonCpltSetView single(s.manager(), iv.min(), iv.max(), iv);
-    rel_post(home, single, r, bv, scl);
+    rel_post(home, single, r, bv);
   }  
-
-  forceinline void
-  rel_con_sbr(Space* home, const CpltSetVar& x, SetOpType o, const CpltSetVar& y, 
-              SetRelType r, const CpltSetVar& z, SetConLevel scl) {
-    ViewArray<CpltSetView> bv(home, 3);
-    bv[0] = x;
-    bv[1] = y;
-    bv[2] = z;
-    switch (scl) {
-    case SCL_BND_SBR:
-      {
-        CpltSetView xv(x); 
-        CpltSetView yv(y); 
-        CpltSetView zv(z); 
-        
-        CrdCpltSetView cx(xv); 
-        CrdCpltSetView cy(yv); 
-        CrdCpltSetView cz(zv); 
-        
-        SetCpltSetView sx(cx); 
-        SetCpltSetView sy(cy); 
-        SetCpltSetView sz(cz); 
-        
-//         Gecode::Set::RelOp::rel_op_post<SetCpltSetView, SetCpltSetView, SetCpltSetView>(home, sx, o, sy, r, sz);
-        break;
-      }
-    default:
-      {
-          throw CpltSet::InvalidRelation("wrong relation for setconlevel SCL_BND_SBR ");
-      }
-    }
-
-  }
-
 
   template <class Rel, class Op>
   forceinline void
-  rel_con_bdd(Space* home, const CpltSetVar& x, Op o, const CpltSetVar& y, Rel r, 
-          const CpltSetVar& z, SetConLevel scl) {
+  rel_con_bdd(Space* home, const CpltSetVar& x, Op o, const CpltSetVar& y,
+              Rel r, const CpltSetVar& z) {
     ViewArray<CpltSetView> bv(home, 3);
     bv[0] = x;
     bv[1] = y;
     bv[2] = z;
-    switch (scl) {
-    case SCL_SPL:
-      {
-        ViewArray<SplitCpltSetView> sv(home, 3);
-        for (int i = 3; i--; ) {
-          sv[i].init(bv[i]);
-        }
-        rel_post(home, sv, o, r, scl);
-        break;
-      }
-    case SCL_BND_BDD:
-      {
-        ViewArray<BndCpltSetView> bndv(home, 3);
-        for (int i = 3; i--; ) {
-          bndv[i].init(bv[i]);
-        }
-        rel_post(home, bndv, o, r, scl);
-        break;
-      }
-    case SCL_CRD:
-      {
-        ViewArray<CrdCpltSetView> crdv(home, 3);
-        for (int i = 3; i--; ) {
-          crdv[i].init(bv[i]);
-        }
-        rel_post(home, crdv, o, r, scl);
-        break;
-      }
-    case SCL_LEX:
-      {
-        ViewArray<LexCpltSetView> lexv(home, 3);
-        for (int i = 3; i--; ) {
-          lexv[i].init(bv[i]);
-        }
-        rel_post(home, lexv, o, r, scl);
-        break;
-      }
-    default:
-      {
-        rel_post(home, bv, o, r, scl);
-      }
-    }
+    rel_post(home, bv, o, r);
   }
 
 }
 
-// STATISTICS: bdd-post
+// STATISTICS: cpltset-post

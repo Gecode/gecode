@@ -41,7 +41,7 @@ namespace Gecode {
 
   template <class View>
   void 
-  atmostOne_post(Space* home, ViewArray<View>& x, int c, SetConLevel scl) {
+  atmostOne_post(Space* home, ViewArray<View>& x, int c) {
     if (home->failed()) return;
     int n = x.size();
     BMI* mgr = x[0].manager();
@@ -81,13 +81,13 @@ namespace Gecode {
       }
     }
     // std::cout << "bddsize = " << mgr->bddsize(d0) << "\n";
-    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
+    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0));
   }
 
   template <class View>
   void 
   atmost_post(Space* home, ViewArray<View>& x, int c, 
-              SetRelType lex, int card, SetConLevel scl) {
+              SetRelType lex, int card) {
     if (home->failed()) return;
     BMI* mgr = x[0].manager();
 
@@ -113,14 +113,14 @@ namespace Gecode {
     // combination of intersection and cardinality
     d0 &= c0;
       
-    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
+    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0));
       
   }
 
   template <class View>
   void 
   atmost_post(Space* home, ViewArray<View>& x, int c, 
-              CpltSetRelType lex, int card, SetConLevel scl) {
+              CpltSetRelType lex, int card) {
     if (home->failed()) return;
     BMI* mgr = x[0].manager();
 
@@ -201,13 +201,14 @@ namespace Gecode {
     }
 
       
-    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
+    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0));
       
   }
 
   template <class View>
   void 
-  atmost_post(Space* home, View& x, View& y, int c, CpltSetRelType lex, int card, SetConLevel scl) {
+  atmost_post(Space* home, View& x, View& y, int c, CpltSetRelType lex,
+              int card) {
     if (home->failed()) return;
     BMI* mgr = x.manager();
 
@@ -285,12 +286,13 @@ namespace Gecode {
       d0 &= y.bdd_domain();
     }
     // std::cerr << "star prop\n";
-    GECODE_ES_FAIL(home, BinBddProp<View>::post(home, x, y, d0, scl));
+    GECODE_ES_FAIL(home, BinBddProp<View>::post(home, x, y, d0));
   }
 
   template <class View>
   void 
-  atmost_post(Space* home, View& x, View& y, int c, SetRelType lex, int card, SetConLevel scl) {
+  atmost_post(Space* home, View& x, View& y, int c, SetRelType lex,
+              int card) {
     if (home->failed()) return;
     BMI* mgr = x.manager();
 
@@ -321,156 +323,40 @@ namespace Gecode {
       d0 &= y.bdd_domain();
     }
     // std::cerr << "star prop\n";
-    GECODE_ES_FAIL(home, BinBddProp<View>::post(home, x, y, d0, scl));
+    GECODE_ES_FAIL(home, BinBddProp<View>::post(home, x, y, d0));
   }
 
   template <class Rel>
   forceinline void 
   atmost_con(Space* home, const CpltSetVar& x, const CpltSetVar& y, int c, 
-             Rel lex, int card, SetConLevel scl) {
+             Rel lex, int card) {
     CpltSetView xv(x);
     CpltSetView yv(y);
-
-    switch (scl) {
-    case SCL_SPL:
-      {
-        SplitCpltSetView spx(xv);
-        SplitCpltSetView spy(yv);
-        atmost_post(home, spx, spy, c, lex, card, scl);
-        break;
-      }
-    case SCL_BND_BDD:
-      {
-        BndCpltSetView bndx(xv);
-        BndCpltSetView bndy(yv);
-        atmost_post(home, bndx, bndy, c, lex, card, scl);
-        break;
-      }
-    case SCL_CRD:
-      {
-        CrdCpltSetView crdx(xv);
-        CrdCpltSetView crdy(yv);
-        atmost_post(home, crdx, crdy, c, lex, card, scl);
-        break;
-      }
-    case SCL_LEX:
-      {
-        LexCpltSetView lexx(xv);
-        LexCpltSetView lexy(yv);
-        atmost_post(home, lexx, lexy, c, lex, card, scl);
-        break;
-      }
-    default:
-      {
-        atmost_post(home, xv, yv, c, lex, card, scl);
-      }
-    }
+    atmost_post(home, xv, yv, c, lex, card);
   }
 
   template <class Rel>
   forceinline void 
   atmost_con(Space* home, const CpltSetVar& x, const CpltSetVar& y, const CpltSetVar& z, 
-             int c, Rel lex, int card, SetConLevel scl) {
+             int c, Rel lex, int card) {
     ViewArray<CpltSetView> bv(home, 3);
     bv[0] = x;
     bv[1] = y;
     bv[2] = z;
-    switch (scl) {
-    case SCL_SPL:
-      {
-        ViewArray<SplitCpltSetView> sv(home, 3);
-        for (int i = 3; i--; ) {
-          sv[i].init(bv[i]);
-        }
-        atmost_post(home, sv, c, lex, card, scl);
-        break;
-      }
-    case SCL_BND_BDD:
-      {
-        ViewArray<BndCpltSetView> bndv(home, 3);
-        for (int i = 3; i--; ) {
-          bndv[i].init(bv[i]);
-        }
-        atmost_post(home, bndv, c, lex, card, scl);
-        break;
-      }
-    case SCL_CRD:
-      {
-        ViewArray<CrdCpltSetView> crdv(home, 3);
-        for (int i = 3; i--; ) {
-          crdv[i].init(bv[i]);
-        }
-        atmost_post(home, crdv, c, lex, card, scl);
-        break;
-      }
-    case SCL_LEX:
-      {
-        ViewArray<LexCpltSetView> lexv(home, 3);
-        for (int i = 3; i--; ) {
-          lexv[i].init(bv[i]);
-        }
-        atmost_post(home, lexv, c, lex, card, scl);
-        break;
-      }
-    default:
-      {
-        atmost_post(home, bv, c, lex, card, scl);
-      }
-    }
+    atmost_post(home, bv, c, lex, card);
   }
 
 
   forceinline void 
-  atmostOne_con(Space* home, const CpltSetVarArgs& x, int c, SetConLevel scl) {
+  atmostOne_con(Space* home, const CpltSetVarArgs& x, int c) {
     int n = x.size();
     ViewArray<CpltSetView> bv(home, n);
     for (int i = 0; i < n; i++) {
       bv[i] = x[i];
     }
-    switch (scl) {
-    case SCL_SPL:
-      {
-        ViewArray<SplitCpltSetView> sv(home, n);
-        for (int i = n; i--; ) {
-          sv[i].init(bv[i]);
-        }
-        atmostOne_post(home, sv, c, scl);
-        break;
-      }
-    case SCL_BND_BDD:
-      {
-        ViewArray<BndCpltSetView> bndv(home, n);
-        for (int i = n; i--; ) {
-          bndv[i].init(bv[i]);
-        }
-        atmostOne_post(home, bndv, c, scl);
-        break;
-      }
-    case SCL_CRD:
-      {
-        ViewArray<CrdCpltSetView> crdv(home, n);
-        for (int i = n; i--; ) {
-          crdv[i].init(bv[i]);
-        }
-        atmostOne_post(home, crdv, c, scl);
-        break;
-      }
-    case SCL_LEX:
-      {
-        ViewArray<LexCpltSetView> lexv(home, n);
-        for (int i = n; i--; ) {
-          lexv[i].init(bv[i]);
-        }
-        atmostOne_post(home, lexv, c, scl);
-        break;
-      }
-    default:
-      {
-        atmostOne_post(home, bv, c, scl);
-      }
-    }
+    atmostOne_post(home, bv, c);
   }
 
 }
 
-// STATISTICS: bdd-post
+// STATISTICS: cpltset-post

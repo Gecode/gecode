@@ -60,10 +60,10 @@ namespace Gecode { namespace Reflection {
     /// Return index for variable \a x
     GECODE_KERNEL_EXPORT int index(VarBase* x) const;
     /// Return index for variable with name \a n
-    GECODE_KERNEL_EXPORT int index(const std::string& n) const;
+    GECODE_KERNEL_EXPORT int index(const Support::String& n) const;
 
     /// Return if variable with name \a n is known
-    GECODE_KERNEL_EXPORT bool nameIsKnown(const std::string& n) const;
+    GECODE_KERNEL_EXPORT bool nameIsKnown(const Support::String& n) const;
 
     /// Return if variable \a x has a name
     GECODE_KERNEL_EXPORT bool hasName(VarBase* x) const;
@@ -71,12 +71,12 @@ namespace Gecode { namespace Reflection {
     GECODE_KERNEL_EXPORT bool hasName(int i) const;
 
     /// Return name for variable \a x
-    GECODE_KERNEL_EXPORT std::string name(VarBase* x) const;
+    GECODE_KERNEL_EXPORT Support::String name(VarBase* x) const;
     /// Return name for variable at index \a i
-    GECODE_KERNEL_EXPORT std::string name(int i) const;
+    GECODE_KERNEL_EXPORT Support::String name(int i) const;
 
     /// Return variable with name \a n
-    GECODE_KERNEL_EXPORT VarBase* var(const std::string& n) const;
+    GECODE_KERNEL_EXPORT VarBase* var(const Support::String& n) const;
     /// Return variable at index \a i
     GECODE_KERNEL_EXPORT VarBase* var(int i) const;
 
@@ -85,10 +85,10 @@ namespace Gecode { namespace Reflection {
     /// Return specification for variable at index \a i
     GECODE_KERNEL_EXPORT VarSpec& spec(int i) const;
     /// Return specification for variable with name \a n
-    GECODE_KERNEL_EXPORT VarSpec& spec(const std::string& n) const;
+    GECODE_KERNEL_EXPORT VarSpec& spec(const Support::String& n) const;
 
     /// Register name \a n for variable \a x
-    GECODE_KERNEL_EXPORT void name(VarBase* x, const std::string& n);
+    GECODE_KERNEL_EXPORT void name(VarBase* x, const Support::String& n);
 
     /// Insert specification \a vs for variable \a x, return index
     GECODE_KERNEL_EXPORT int put(VarBase* x, VarSpec* vs);
@@ -97,13 +97,14 @@ namespace Gecode { namespace Reflection {
     //@{
     /// Insert specification for variable \a v with name \a n
     template <class Var> void
-    put(Space* home, const Var& v, const std::string& n);
+    put(Space* home, const Var& v, const Support::String& n);
     /// Insert specifications for variables in \a x with name \a n
     template <class Var> void
-    putArray(Space* home, const VarArgArray<Var>& v, const std::string& n);
+    putArray(Space* home, const VarArgArray<Var>& v,
+             const Support::String& n);
     /// Insert specifications for variables in \a x with name \a n
     template <class Var> void
-    putArray(Space* home, const VarArray<Var>& v, const std::string& n);
+    putArray(Space* home, const VarArray<Var>& v, const Support::String& n);
     //@}
   };
   
@@ -140,27 +141,27 @@ namespace Gecode { namespace Reflection {
    */
 
   template <class Var> void
-  VarMap::put(Space* home, const Var& x, const std::string& n) {
+  VarMap::put(Space* home, const Var& x, const Support::String& n) {
     typename VarViewTraits<Var>::View v(x);
     name(v.variable(), n);
   }
 
   template <class Var> void
   VarMap::putArray(Space* home, const VarArgArray<Var>& x,
-                   const std::string& n) {
+                   const Support::String& n) {
     for (int i=0; i<x.size(); i++) {
       std::stringstream s;
       s << i;
-      put(home, x[i], n+s.str());
+      put(home, x[i], n+Support::String(s.str().c_str()));
     }
   }
   template <class Var> void
   VarMap::putArray(Space* home, const VarArray<Var>& x,
-                   const std::string& n) {
+                   const Support::String& n) {
     for (int i=0; i<x.size(); i++) {
       std::stringstream s;
       s << i;
-      put(home, x[i], n+s.str());
+      put(home, x[i], n+Support::String(s.str().c_str()));
     }
   }
 

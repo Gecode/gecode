@@ -55,9 +55,9 @@ namespace Gecode { namespace Set { namespace Sequence {
     return new (home) SeqU(home,share,*this);
   }
 
-  std::string
+  Support::String
   SeqU::name(void) {
-    return std::string("Set::Sequence::Union");
+    return Support::String("Set::Sequence::Union");
   }
 
   Reflection::ActorSpec&

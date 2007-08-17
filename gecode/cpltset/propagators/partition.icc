@@ -245,8 +245,7 @@ namespace Gecode {
 
   template <class View>
   void partition_post(Space* home, ViewArray<View>& x, bool withlex, 
-                      CpltSetRelType lex, bool withcard, int d, 
-                      SetConLevel scl) {
+                      CpltSetRelType lex, bool withcard, int d) {
 
     if (home->failed()) return;
 
@@ -269,14 +268,13 @@ namespace Gecode {
     }
 
     // std::cerr << "start propagation\n";
-    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
+    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0));
   }
 
   template <class View>
   void partition_post(Space* home, ViewArray<View>& x, View& y, 
                       bool withlex, SetRelType lex, 
-                      bool withcard, int d, 
-                      SetConLevel scl) {
+                      bool withcard, int d) {
     if (home->failed()) return;
 
     int n = x.size();
@@ -289,14 +287,13 @@ namespace Gecode {
       naryone[i] = x[i]; 
     naryone[n] = y;
 
-    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, naryone, d0, scl));
+    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, naryone, d0));
   }
 
   template <class View0, class View1>
   void partition_post(Space* home, ViewArray<View0>& x, View1& y, 
                       bool withlex, SetRelType lex, 
-                      bool withcard, int d, 
-                      SetConLevel scl) {
+                      bool withcard, int d) {
     if (home->failed()) return;
 
     GecodeBdd d0 = BDDTOP;     
@@ -307,8 +304,7 @@ namespace Gecode {
 
   template <class View>
   void partition_post(Space* home, ViewArray<View>& x, bool withlex, 
-                      SetRelType lex, bool withcard, int d, 
-                      SetConLevel scl) {
+                      SetRelType lex, bool withcard, int d) {
     // std::cerr << "partition_post()" << "\n";
     if (home->failed()) return;
 
@@ -396,81 +392,32 @@ namespace Gecode {
       }
       
       // std::cerr << "start propagation\n";
-      GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0, scl));
+      GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0));
   }
 
   template <class Rel>
   forceinline void 
   partition_con(Space* home, const CpltSetVarArgs& x, bool withlex, Rel lex, 
-                bool withcard, int d, SetConLevel scl) {
+                bool withcard, int d) {
     ViewArray<CpltSetView> bv(home, x);
-    switch(scl) {
-    case SCL_SPL:
-      {
-        int n = bv.size();
-        ViewArray<SplitCpltSetView> sv(home, n);
-        for (int i = n; i--; ) {
-          sv[i].init(bv[i]);
-        }
-        partition_post(home, sv, withlex, lex, withcard, d, scl);
-        break;
-      }
-    case SCL_BND_BDD:
-      {
-        int n = bv.size();
-        ViewArray<BndCpltSetView> bndv(home, n);
-        for (int i = n; i--; ) {
-          bndv[i].init(bv[i]);
-        }
-        partition_post(home, bndv, withlex, lex, withcard, d, scl);
-        break;
-      }
-    case SCL_CRD:
-      {
-        int n = bv.size();
-        ViewArray<CrdCpltSetView> crdv(home, n);
-        for (int i = n; i--; ) {
-          crdv[i].init(bv[i]);
-        }
-        partition_post(home, crdv, withlex, lex, withcard, d, scl);
-        break;
-      }
-    case SCL_LEX:
-      {
-        int n = bv.size();
-        ViewArray<LexCpltSetView> lexv(home, n);
-        for (int i = n; i--; ) {
-          lexv[i].init(bv[i]);
-        }
-        partition_post(home, lexv, withlex, lex, withcard, d, scl);
-        break;
-      }
-    default:
-      {
-        partition_post(home, bv, withlex, lex, withcard, d, scl);
-      }
-    }
+    partition_post(home, bv, withlex, lex, withcard, d);
   }
 
   // For testing purposes only supported for bddviews
   template <class Rel>
   forceinline void 
   partition_con(Space* home, const CpltSetVarArgs& x, const CpltSetVar& y, 
-                bool withlex, Rel lex, bool withcard, int d, 
-                SetConLevel scl) {
-
+                bool withlex, Rel lex, bool withcard, int d) {
     ViewArray<CpltSetView> bv(home, x);
     CpltSetView yv(y);
-    partition_post(home, bv, yv, withlex, lex, withcard, d, scl);
+    partition_post(home, bv, yv, withlex, lex, withcard, d);
   }
 
   // For testing purposes only supported for bddviews
   template <class Rel>
   forceinline void 
   partition_con(Space* home, const IntVarArgs& x, const CpltSetVar& y, 
-                bool withlex, Rel lex, bool withcard, int d, 
-                SetConLevel scl) {
-
+                bool withlex, Rel lex, bool withcard, int d) {
     BMI* mgr = y.manager();
     ViewArray<Int::IntView> bv(home, x);
     int n = x.size();
@@ -489,9 +436,9 @@ namespace Gecode {
     // this wont work as there is no post function for different views
     // i.e. bddsingleton + bddview
     
-    partition_post(home, sv, yv, withlex, lex, withcard, d, scl);
+    partition_post(home, sv, yv, withlex, lex, withcard, d);
   }
 
 }
 
-// STATISTICS: bdd-post
+// STATISTICS: cpltset-post

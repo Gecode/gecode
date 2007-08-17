@@ -482,4 +482,4 @@ namespace Gecode { namespace CpltSet {
   
   }}
 
-// STATISTICS: bdd-var
+// STATISTICS: cpltset-var

@@ -107,7 +107,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
     /// Post propagator for the views \a xz and \a y
     static  ExecStatus post(Space*, ViewArray<Tuple>&, ViewArray<View>&);
   };

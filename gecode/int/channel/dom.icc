@@ -197,7 +197,7 @@ namespace Gecode { namespace Int { namespace Channel {
   }
 
   template <class View, bool shared>
-  std::string
+  Support::String
   Dom<View,shared>::name(void) {
     return Reflection::mangle<View>("Int::Channel::Dom");
   }

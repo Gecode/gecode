@@ -62,7 +62,7 @@ public:
   }
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
-    Gecode::rel(home, x[0], SRT_LE, x[1],SCL_DOM);
+    Gecode::rel(home, x[0], SRT_LE, x[1]);
   }
 //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_LE, d1, b,SCL_DOM);
@@ -87,7 +87,7 @@ public:
   }
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
-    Gecode::rel(home, x[0], SRT_LQ, x[1],SCL_DOM);
+    Gecode::rel(home, x[0], SRT_LQ, x[1]);
   }
 //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_LQ, d1, b,SCL_DOM);
@@ -114,7 +114,7 @@ public:
     // Test lex-bit order
     Gecode::dom(home, x[0], SRT_DISJ, ds_13);
     Gecode::dom(home, x[1], SRT_SUB, ds_13);
-    Gecode::rel(home, x[0], SRT_LE, x[1],SCL_DOM);
+    Gecode::rel(home, x[0], SRT_LE, x[1]);
   }
 //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b,SCL_DOM);
@@ -137,7 +137,7 @@ public:
   }
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
-    Gecode::rel(home, x[0], SRT_DISJ, x[1], SCL_DOM);
+    Gecode::rel(home, x[0], SRT_DISJ, x[1]);
   }
 };
 BddRelDisj _bddreldisj("Rel::Disj");

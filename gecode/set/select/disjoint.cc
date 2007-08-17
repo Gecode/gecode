@@ -52,9 +52,9 @@ namespace Gecode { namespace Set { namespace Select {
     return PC_QUADRATIC_LO;
   }
 
-  std::string
+  Support::String
   SelectDisjoint::name(void) {
-    return std::string("Set::Select::Disjoint");
+    return Support::String("Set::Select::Disjoint");
   }
 
   Reflection::ActorSpec&

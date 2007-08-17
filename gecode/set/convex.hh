@@ -77,7 +77,7 @@ namespace Gecode { namespace Set { namespace Convex {
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
   };
 
   /**
@@ -104,7 +104,7 @@ namespace Gecode { namespace Set { namespace Convex {
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static std::string name(void);
+    static Support::String name(void);
   };
 
 

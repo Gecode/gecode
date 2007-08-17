@@ -87,7 +87,7 @@ namespace boost { namespace serialization {
     int n = t->arity();
     ar << n;
     if (t->primitive()) {
-      std::string name(t->name());
+      Support::String name(t->name());
       ar << name;
     }
   }
@@ -101,7 +101,7 @@ namespace boost { namespace serialization {
       int m;
       ar >> m;
       if (m == 0) {
-        std::string name;
+        Support::String name;
         ar >> name;
         ::new(t)Gecode::Reflection::Type(name.c_str());
       } else {

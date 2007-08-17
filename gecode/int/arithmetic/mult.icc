@@ -198,7 +198,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class VA, class VB>
-  std::string
+  Support::String
   SquarePlus<VA,VB>::name(void) {
     return Reflection::mangle<VA,VB>("Int::Arithmetic::SquarePlus");
   }
@@ -288,7 +288,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  std::string
+  Support::String
   Square<View>::name(void) {
     return Reflection::mangle<View>("Int::Arithmetic::Square");
   }
@@ -390,7 +390,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class Val, class VA, class VB, class VC>
-  std::string
+  Support::String
   MultPlus<Val,VA,VB,VC>::name(void) {
     return Reflection::mangle<VA,VB,VC>("Int::Arithmetic::MultPlus");
   }
@@ -570,7 +570,7 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   }
 
   template <class View>
-  std::string
+  Support::String
   Mult<View>::name(void) {
     return Reflection::mangle<View>("Int::Arithmetic::Mult");
   }

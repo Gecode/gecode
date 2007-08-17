@@ -142,7 +142,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
   }
 
   template <class ViewM, class ViewD, class ViewH, class View>
-  std::string
+  Support::String
   Val<ViewM,ViewD,ViewH,View>::name(void) {
     return 
       Reflection::mangle<ViewM,ViewD,ViewH,View>("Int::Cumulatives::Val");

@@ -166,9 +166,10 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  std::string
+  Support::String
   Val<View>::name(void) {
-    return Reflection::mangle<View>("Int::Distinct::Val");
+    Support::String ret = Reflection::mangle<View>("Int::Distinct::Val");
+    return ret;
   }
 
   template <class View>

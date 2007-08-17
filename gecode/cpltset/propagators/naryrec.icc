@@ -322,4 +322,4 @@ namespace Gecode { namespace CpltSet {
   }
 }
 
-// STATISTICS: bdd-prop
+// STATISTICS: cpltset-prop

@@ -68,7 +68,6 @@
 #include "gecode/kernel.hh"
 #include <iostream>
 #include <vector>
-#include <map>
 
 namespace Gecode {
 

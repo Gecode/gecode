@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY>
   Reflection::ActorSpec&
   BaseInt<VX,VY>::spec(Space* home, Reflection::VarMap& m,
-                       const std::string& name) {
+                       const Support::String& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x.spec(home, m)
              << Reflection::typedSpec(home, m, y)
@@ -140,7 +140,7 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY>
-  std::string
+  Support::String
   EqInt<VX,VY>::name(void) {
     return Reflection::mangle<VX,VY>("Int::Count::EqInt");
   }
@@ -250,7 +250,7 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY>
-  std::string
+  Support::String
   GqInt<VX,VY>::name(void) {
     return Reflection::mangle<VX,VY>("Int::Count::GqInt");
   }
@@ -357,7 +357,7 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY>
-  std::string
+  Support::String
   LqInt<VX,VY>::name(void) {
     return Reflection::mangle<VX,VY>("Int::Count::LqInt");
   }
@@ -485,7 +485,7 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY>
-  std::string
+  Support::String
   NqInt<VX,VY>::name(void) {
     return Reflection::mangle<VX,VY>("Int::Count::NqInt");
   }
