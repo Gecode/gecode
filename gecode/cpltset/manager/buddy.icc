@@ -58,7 +58,7 @@ namespace Gecode {
    */
 
   // the implementation
-  class BMI : public SharedObject {
+  class BMI : public SharedHandle::Object {
   private:
     CpltSetOutput _level;
     bddStat info;
@@ -182,7 +182,7 @@ namespace Gecode {
     /// Memory Management
     void setmaxinc(int max);
     // void operator delete(void* p);
-    virtual SharedObject* copy(void) const;
+    virtual SharedHandle::Object* copy(void) const;
     /// Check whether the buddy library has already been initialized 
     bool available(void);
   };
@@ -563,7 +563,7 @@ namespace Gecode {
     void clear(void);
   };
   
-  forceinline SharedObject*
+  forceinline SharedHandle::Object*
   BMI::copy(void) const {
     throw BuddyException("Copying not allowed!");
   }
