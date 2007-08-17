@@ -133,7 +133,7 @@ namespace Gecode {
   }
 
   void
-  regular(Space* home, const IntVarArgs& x, DFA& dfa, 
+  regular(Space* home, const IntVarArgs& x, DFA dfa, 
           IntConLevel, PropKind) {
     if (home->failed()) return;
     ViewArray<IntView> xv(home,x);
@@ -142,7 +142,7 @@ namespace Gecode {
   }
 
   void
-  regular(Space* home, const BoolVarArgs& x, DFA& dfa, 
+  regular(Space* home, const BoolVarArgs& x, DFA dfa, 
           IntConLevel, PropKind) {
     if (home->failed()) return;
     ViewArray<BoolView> xv(home,x);

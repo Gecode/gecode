@@ -2,9 +2,11 @@
 /*
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *     Guido Tack <tack@gecode.org>
  *
  *  Copyright:
  *     Patrick Pekczynski, 2004
+ *     Guido Tack, 2006
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -49,47 +51,21 @@ namespace Gecode { namespace Int { namespace GCC {
    * and atmost once, otherwise, there is no rewriting possible.
    */
 
-  template<class Card>
+  template<class Card, bool isView>
   forceinline bool
   check_alldiff(int n, ViewArray<Card>& k){
-    int left     = 0;
-    int right    = k.size() - 1;
-    bool alldiff = true;
-
-    if (k.size() == 1) {
-      return (n == 1 && k[0].min() == 1 && k[0].max() == 1);
-    }
-    if (n == k.size()) {
-      while (left < right) {
-        alldiff &= (k[left].max()  == 1 &&
-                    k[left].min()  == 1 &&
-                    k[right].max() == 1 &&
-                    k[left].max()  == 1);
-        if (!alldiff) {
-          break;
-        }
-
-        left++;
-        right--;
-      }
+    if (k.size() == n) {
+      for (int i=k.size(); i--;)
+        if (k[i].min() != 1 || k[i].max() != 1)
+          return false;      
+    } else if (k.size() > n && !isView) {
+      for (int i=k.size(); i--;)
+        if (k[i].min() != 0 || k[i].max() != 1)
+          return false;
     } else {
-      if (n < k.size()) {
-        while (left < right) {
-          alldiff &= (k[left].max()  == 1 &&
-                      k[left].min()  == 0 &&
-                      k[right].max() == 1 &&
-                      k[left].max()  == 0);
-          if (!alldiff) {
-            break;
-          }
-          left++;
-          right--;
-        }
-      } else {
-        return false;
-      }
+      return false;
     }
-    return alldiff;
+    return true;
   }
 
   /**
@@ -99,23 +75,15 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class View>
   forceinline int
   x_card(ViewArray<View>& x, IntConLevel icl) {
-
     int n = x.size();
-
     GECODE_AUTOARRAY(ViewRanges<View>, xrange, n);
     for (int i = n; i--; ){
       ViewRanges<View> iter(x[i]);
       xrange[i] = iter;
     }
 
-    Gecode::Iter::Ranges::NaryUnion<ViewRanges<View> > drl(&xrange[0], x.size());
-    int r = 0;
-    Gecode::Iter::Ranges::ToValues<
-      Gecode::Iter::Ranges::NaryUnion<ViewRanges<View> >
-        > val(drl);
-    for ( ; val(); ++val, r++);
-
-    return r;
+    Iter::Ranges::NaryUnion<ViewRanges<View> > drl(&xrange[0], x.size());
+    return Iter::Ranges::size(drl);
   }
 
   /**
@@ -126,8 +94,7 @@ namespace Gecode { namespace Int { namespace GCC {
   template <class Card, class View>
   forceinline void
   initcard(Space* home, ViewArray<View>& x, ViewArray<Card>& k,
-           int lb, int ub,
-           IntConLevel icl) {
+           int lb, int ub, IntConLevel icl) {
     GECODE_AUTOARRAY(ViewRanges<View>, xrange, x.size());
     for (int i = x.size(); i--; ){
       ViewRanges<View> iter(x[i]);
@@ -252,17 +219,15 @@ namespace Gecode { namespace Int { namespace GCC {
    *  for the different interfaces.
    *
    */
-  template<class View, class Card, bool isView>
+  template<class Card, bool isView>
   forceinline void
-  post_template(Space* home, ViewArray<View>& x, ViewArray<Card>& k,
+  post_template(Space* home, ViewArray<IntView>& x, ViewArray<Card>& k,
                 IntConLevel& icl){
     int  n        = x_card(x, icl);
     bool rewrite  = false;
-    if (!isView) {
-     rewrite = check_alldiff(n, k);
-    }
+    rewrite = check_alldiff<Card,isView>(n, k);
     GECODE_ES_FAIL(home, (card_cons<Card, isView>(home, k, x.size())));
-    if (!isView && rewrite) {
+    if (rewrite) {
       IntVarArgs xv(x.size());
       for (int i = 0; i < x.size(); i++) {
         IntVar iv(x[i]);
@@ -272,15 +237,15 @@ namespace Gecode { namespace Int { namespace GCC {
     } else {
       switch (icl) {
       case ICL_BND: {
-        GECODE_ES_FAIL(home, (GCC::Bnd<View, Card, isView>::post(home, x, k)));
+        GECODE_ES_FAIL(home, (GCC::Bnd<IntView, Card, isView>::post(home, x, k)));
         break;
       }
       case ICL_DOM: {
-        GECODE_ES_FAIL(home, (GCC::Dom<View, Card, isView>::post(home, x, k)));
+        GECODE_ES_FAIL(home, (GCC::Dom<IntView, Card, isView>::post(home, x, k)));
         break;
       }
       default: {
-        GECODE_ES_FAIL(home, (GCC::Val<View, Card, isView>::post(home, x, k)));
+        GECODE_ES_FAIL(home, (GCC::Val<IntView, Card, isView>::post(home, x, k)));
       }
       }
     }
@@ -294,98 +259,91 @@ namespace Gecode { namespace Int { namespace GCC {
 
   // variable cardinality
 
-  void gcc(Space* home, const  IntVarArgs& cards, const  IntArgs& values, 
-           const  IntVarArgs& vars, IntConLevel icl, PropKind) {
-    if (home->failed()) {
+  void count(Space* home, const  IntVarArgs& x,
+             const  IntVarArgs& c, const  IntArgs& v, 
+             IntConLevel icl, PropKind) {
+    if (home->failed())
       return;
-    }
 
     // c = |cards| \forall i\in \{0, \dots, c - 1\}:  cards[i] = \#\{j\in\{0, \dots, |x| - 1\}  | vars_j = values_i\}
     
     // |cards| = |values|
-    unsigned int vsize = values.size();
-    unsigned int csize = cards.size();
+    unsigned int vsize = v.size();
+    unsigned int csize = c.size();
     if (vsize != csize) {
-      home->fail();
+      throw ArgumentSizeMismatch("Int::gcc");
     }
     
-    ViewArray<IntView> xv(home, vars);
+    ViewArray<IntView> xv(home, x);
+    if (xv.shared()) {
+      throw ArgumentSame("Int::gcc");
+    }
     
     // valid values for the variables in vars
-    IntSet valid(&values[0], vsize);
+    IntSet valid(&v[0], vsize);
 
     // \forall v \not\in values:  \#(v) = 0
     // remove all values from the domains of the variables in vars that are not mentionned in the array \a values   
-    IntSetRanges ir(valid);
-    Iter::Ranges::Cache<IntSetRanges> cache(ir);
     for (int i = xv.size(); i--; ) {
-      GECODE_ME_FAIL(home, xv[i].inter_r(home, cache));
-      cache.reset();
+      IntSetRanges ir(valid);
+      GECODE_ME_FAIL(home, xv[i].inter_r(home, ir));
     }
 
-    linear(home, cards, IRT_EQ, xv.size());
+    linear(home, c, IRT_EQ, xv.size());
 
-    ViewArray<CardView> cv(home, cards);
+    ViewArray<CardView> cv(home, c);
 
     // set the cardinality
     for (int i = vsize; i--; ) {
-      cv[i].card(values[i]);
+      cv[i].card(v[i]);
       cv[i].counter(0);
     }
-    GCC::post_template<IntView, CardView, true>(home, xv, cv, icl);
-
+    GCC::post_template<CardView, true>(home, xv, cv, icl);
   }
 
   // domain is 0..|cards|- 1
-  void gcc(Space* home, const IntVarArgs& cards, const IntVarArgs& vars, 
-           IntConLevel icl, PropKind) {
-    IntArgs values(cards.size());
-    for (int i = cards.size(); i--; )
+  void count(Space* home, const IntVarArgs& x, const IntVarArgs& c,
+             IntConLevel icl, PropKind) {
+    IntArgs values(c.size());
+    for (int i = c.size(); i--; )
       values[i] = i;
-    gcc(home, cards, values, vars, icl);
+    count(home, x, c, values, icl);
   }
 
-
-
   // constant cards
-  void gcc(Space* home, const  IntSetArgs& cards, const  IntArgs& values, 
-           const  IntVarArgs& vars, IntConLevel icl, PropKind) {
-    if (home->failed()) {
+  void count(Space* home, const IntVarArgs& x,
+             const IntSetArgs& c, const IntArgs& v,
+             IntConLevel icl, PropKind) {
+    if (home->failed())
       return;
-    }
- 
+       
     // c = |cards| \forall i\in \{0, \dots, c - 1\}:  cards[i] = \#\{j\in\{0, \dots, |x| - 1\}  | vars_j = values_i\}
     
     // |cards| = |values|
-    unsigned int vsize = values.size();
-    unsigned int csize = cards.size();
+    unsigned int vsize = v.size();
+    unsigned int csize = c.size();
     if (vsize != csize) {
-      home->fail();
+      throw ArgumentSizeMismatch("Int::gcc");
     }
     
-    ViewArray<IntView> xv(home, vars);
+    ViewArray<IntView> xv(home, x);
     if (xv.shared()) {
-      throw ArgumentSame("Int::GCC");
+      throw ArgumentSame("Int::gcc");
     }
     
     // valid values for the variables in vars
-    IntSet valid(&values[0], vsize);
+    IntSet valid(&v[0], vsize);
 
     // \forall v \not\in values:  \#(v) = 0
     // remove all values from the domains of the variables in vars that are not mentionned in the array \a values   
-    IntSetRanges ir(valid);
-    Iter::Ranges::Cache<IntSetRanges> cache(ir);
-    
-
     for (int i = xv.size(); i--; ) {
-      GECODE_ME_FAIL(home, xv[i].inter_r(home, cache));
-      cache.reset();
+      IntSetRanges ir(valid);
+      GECODE_ME_FAIL(home, xv[i].inter_r(home, ir));
     }
     
     bool hole_found = false;
     for (int i = vsize; i--; ) {
-      IntSetRanges ir(cards[i]);
-      hole_found |= ( (ir.max() - ir.min() +1) != ir.width() );
+      hole_found |= (c[i].size() > 1);
     }
 
     if (hole_found) {
@@ -393,21 +351,21 @@ namespace Gecode { namespace Int { namespace GCC {
       ViewArray<CardView> cv(home, vsize);
       IntVarArgs cvargs(vsize);
       for (int i = vsize; i--; ) {
-        IntVar c(home, cards[i]);
-        cvargs[i] = c;
-        IntView viewc(c);
+        IntVar card(home, c[i]);
+        cvargs[i] = card;
+        IntView viewc(card);
         cv[i] = viewc;
       }
 
       // set the cardinality
       for (int i = vsize; i--; ) {
-        cv[i].card(values[i]);
+        cv[i].card(v[i]);
         cv[i].counter(0);
       }
 
       linear(home, cvargs, IRT_EQ, xv.size());
 
-      GCC::post_template<IntView, CardView, true>(home, xv, cv, icl);
+      GCC::post_template<CardView, true>(home, xv, cv, icl);
     } else {
       // all specified cardinalites are ranges
 
@@ -416,10 +374,10 @@ namespace Gecode { namespace Int { namespace GCC {
       int z = 0;
 
       for (int i = csize; i--; ) {
-        cv[i].card(values[i]);
+        cv[i].card(v[i]);
         cv[i].counter(0);
-        cv[i].min(cards[i].min());
-        cv[i].max(cards[i].max());
+        cv[i].min(c[i].min());
+        cv[i].max(c[i].max());
         if (cv[i].max() == 0){
           z++;
         }
@@ -450,54 +408,29 @@ namespace Gecode { namespace Int { namespace GCC {
           IntSetRanges remzero(zero);
           GECODE_ME_FAIL(home, xv[i].minus_r(home, remzero, false));
         }
-        GCC::post_template<IntView,OccurBndsView,false>(home, xv, red, icl);
+        GCC::post_template<OccurBndsView,false>(home, xv, red, icl);
       } else {
-        GCC::post_template<IntView,OccurBndsView,false>(home, xv, cv, icl);
+        GCC::post_template<OccurBndsView,false>(home, xv, cv, icl);
       }
-
     }
-
-
   }
 
   // domain is 0..|cards|- 1
-  void gcc(Space* home, const  IntSetArgs& cards, const  IntVarArgs& vars, 
-           IntConLevel icl, PropKind) {
-
-    IntArgs values(cards.size());
-    for (int i = cards.size(); i--; ) 
+  void count(Space* home, const IntVarArgs& x, const IntSetArgs& c,
+             IntConLevel icl, PropKind) {
+    IntArgs values(c.size());
+    for (int i = c.size(); i--; ) 
       values[i] = i;
-    gcc(home, cards, values, vars, icl);   
+    count(home, x, c, values, icl);   
   }
 
-  void gcc(Space* home, const IntVarArgs& vars, int eq, IntConLevel icl, 
-           PropKind) {
-
-    ViewArray<IntView> xv(home, vars);
-    int n = xv.size();
-    int r = x_card(xv, icl);
-
-    GECODE_AUTOARRAY(ViewRanges<IntView>, xrange, n);
-    for (int i = n; i--; ){
-      ViewRanges<IntView> iter(vars[i]);
-      xrange[i] = iter;
-    }
-
-    Gecode::Iter::Ranges::NaryUnion<ViewRanges<IntView> > drl(&xrange[0], n);
-    Gecode::Iter::Ranges::ToValues<
-    Gecode::Iter::Ranges::NaryUnion<ViewRanges<IntView> >  > val(drl);
-       
-    IntArgs values(r);
-    IntSet fixed(eq, eq);
-    IntSetArgs cards(r);
-
-    for (int i = 0; i < r; i++) {
-      values[i] = val.val();
-      cards[i] = fixed;
-      ++val;
-    }
-    gcc(home, cards, values, vars, icl);
-    
+  void count(Space* home, const IntVarArgs& x,
+             const IntSet& c, const IntArgs& v,
+             IntConLevel icl, PropKind) {
+    IntSetArgs cards(v.size());
+    for (int i = v.size(); i--; )
+      cards[i] = c;
+    count(home, x, cards, v, icl);    
   }
 
 

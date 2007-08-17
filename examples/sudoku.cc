@@ -354,7 +354,10 @@ public:
 
     channel(this, xs, ys);
 
-    gcc(this, x, 9, ICL_DOM);    
+    IntArgs values(9);
+    for (int i=9; i--;)
+      values[i] = i+1;
+    count(this, x, IntSet(9,9), values, ICL_DOM);    
   }
   
   /// Constructor for cloning \a s

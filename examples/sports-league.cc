@@ -264,7 +264,10 @@ public:
         r[2*t]   = h(p,t);
         r[2*t+1] = a(p,t);
       }
-      gcc(this, r, 2, opt.icl());
+      IntArgs values(teams);
+      for (int i=1; i<=teams; i++)
+        values[i-1] = i;
+      count(this, r, IntSet(2,2), values, opt.icl());
     }
 
     // Redundant constraint

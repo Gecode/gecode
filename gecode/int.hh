@@ -144,7 +144,7 @@ namespace Gecode {
     IntSet(const int r[][2], int n);
     /// Initialize with range iterator \a i
     template <class I>
-    IntSet(I& i);
+    explicit IntSet(I& i);
     //@}
 
     /// \name Range length
@@ -891,7 +891,7 @@ namespace Gecode {
    * the DFA \a d.
    */
   GECODE_INT_EXPORT void
-  regular(Space* home, const IntVarArgs& x, DFA& d,
+  regular(Space* home, const IntVarArgs& x, DFA d,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
   /**
@@ -901,7 +901,7 @@ namespace Gecode {
    * the DFA \a d.
    */
   GECODE_INT_EXPORT void
-  regular(Space* home, const BoolVarArgs& x, DFA& d,
+  regular(Space* home, const BoolVarArgs& x, DFA d,
           IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
   //@}
@@ -1027,27 +1027,99 @@ namespace Gecode {
   count(Space* home, const IntVarArgs& x, const IntArgs& y, IntRelType r, IntVar z,
         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
-
-  // new interface
+  /** \brief Posts a global count (cardinality) constraint
+    *
+    * Posts the constraint that
+    * \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=j\}=c_j\f$ and
+    * \f$ \bigcup_i x_i \subseteq \{0,\ldots,|c|-1\}\f$
+    * (no other value occurs).
+    * 
+    * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
+    * and domain-consistency (\a icl = ICL_DOM).
+    *
+    * Throws an exception of type Int::ArgumentSame, if \a x contains
+    * the same variable multiply.
+    */
   GECODE_INT_EXPORT void
-  gcc(Space* home, const IntVarArgs& cards, const IntVarArgs& vars, 
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  count(Space* home, const IntVarArgs& x, const IntVarArgs& c,
+        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
+  /** \brief Posts a global count (cardinality) constraint
+    *
+    * Posts the constraint that
+    * \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=j\}\in c_j\f$ and
+    * \f$ \bigcup_i x_i \subseteq \{0,\ldots,|c|-1\}\f$
+    * (no other value occurs).
+    * 
+    * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
+    * and domain-consistency (\a icl = ICL_DOM).
+    *
+    * Throws an exception of type Int::ArgumentSame, if \a x contains
+    * the same variable multiply.
+    */
   GECODE_INT_EXPORT void
-  gcc(Space* home, const  IntVarArgs& cards, const  IntArgs& values, 
-      const  IntVarArgs& vars, IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  count(Space* home, const IntVarArgs& x, const IntSetArgs& c,
+        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
+  /** \brief Posts a global count (cardinality) constraint
+    *
+    * Posts the constraint that
+    * \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=v_j\}=c_j\f$ and 
+    * \f$ \bigcup_i x_i \subseteq \bigcup_j v_j\f$ (no other value occurs).
+    * 
+    * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
+    * and domain-consistency (\a icl = ICL_DOM).
+    *
+    * Throws an exception of type Int::ArgumentSame, if \a x contains
+    * the same variable multiply.
+    *
+    * Throws an exception of type Int::ArgumentSizeMismatch, if
+    *  \a cards and \a values are of different size.
+    */
   GECODE_INT_EXPORT void
-  gcc(Space* home, const  IntSetArgs& cards, const  IntVarArgs& vars, 
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  count(Space* home, const IntVarArgs& x,
+        const IntVarArgs& c, const IntArgs& v, 
+        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
+  /** \brief Posts a global count (cardinality) constraint
+    *
+    * Posts the constraint that
+    * \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=v_j\}\in c_j\f$ and
+    * \f$ \bigcup_i x_i \subseteq \bigcup_j v_j\f$ (no other value occurs).
+    * 
+    * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
+    * and domain-consistency (\a icl = ICL_DOM).
+    *
+    * Throws an exception of type Int::ArgumentSame, if \a x contains
+    * the same variable multiply.
+    *
+    * Throws an exception of type Int::ArgumentSizeMismatch, if
+    *  \a cards and \a values are of different size.
+    */
   GECODE_INT_EXPORT void
-  gcc(Space* home, const  IntSetArgs& cards, const  IntArgs& values, 
-      const  IntVarArgs& vars, IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF); 
+  count(Space* home, const IntVarArgs& x,
+        const IntSetArgs& c, const IntArgs& v, 
+        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF); 
 
- GECODE_INT_EXPORT void
-  gcc(Space* home, const IntVarArgs& vars, int eq, 
-      IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  /** \brief Posts a global count (cardinality) constraint
+    *
+    * Posts the constraint that
+    * \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=v_j\}=c\f$ and
+    * \f$ \bigcup_i x_i \subseteq \bigcup_j v_j\f$ (no other value occurs).
+    * 
+    * Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
+    * and domain-consistency (\a icl = ICL_DOM).
+    *
+    * Throws an exception of type Int::ArgumentSame, if \a x contains
+    * the same variable multiply.
+    *
+    * Throws an exception of type Int::ArgumentSizeMismatch, if
+    *  \a cards and \a values are of different size.
+    */
+  GECODE_INT_EXPORT void
+  count(Space* home, const IntVarArgs& x,
+        const IntSet& c, const IntArgs& v,
+        IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
   //@}
 
