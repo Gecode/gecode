@@ -193,7 +193,7 @@ INTSRC0 = \
 	distinct.cc cumulatives.cc \
 	sortedness.cc gcc.cc \
 	channel.cc channel/link-single.cc channel/link-multi.cc \
-	circuit.cc
+	circuit.cc unshare.cc
 INTVARIMP = \
         gecode/int/var/imp-int-hdr.icc gecode/int/var/imp-int-body.icc \
         gecode/int/var/imp-bool-hdr.icc gecode/int/var/imp-bool-body.icc

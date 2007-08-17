@@ -142,6 +142,7 @@ namespace {
     virtual void post(Space* home, IntVarArray& x) {
       IntVarArgs y(4);
       y[0]=x[0]; y[1]=x[1]; y[2]=x[0]; y[3]=x[1];
+      unshare(home,y);
       DFA da = ((REG(0) | REG(2)) +
                 (REG(-1) | REG(1)) +
                 (REG(7) | REG(0) | REG(1)) +

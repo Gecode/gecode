@@ -889,6 +889,10 @@ namespace Gecode {
    *
    * The elements of \a x must be a word of the language described by
    * the DFA \a d.
+   *
+   * Throws an exception of type Int::ArgumentSame, if \a x contains
+   * the same variable multiply. If shared occurences of variables
+   * are required, unshare should be used.
    */
   GECODE_INT_EXPORT void
   regular(Space* home, const IntVarArgs& x, DFA d,
@@ -899,6 +903,10 @@ namespace Gecode {
    *
    * The elements of \a x must be a word of the language described by
    * the DFA \a d.
+   *
+   * Throws an exception of type Int::ArgumentSame, if \a x contains
+   * the same variable multiply. If shared occurences of variables
+   * are required, unshare should be used.
    */
   GECODE_INT_EXPORT void
   regular(Space* home, const BoolVarArgs& x, DFA d,
@@ -1424,6 +1432,37 @@ namespace Gecode {
   linear(Space* home, const IntArgs& a, const BoolVarArgs& x,
          IntRelType r, IntVar y,
          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  //@}
+
+
+  /**
+   * \defgroup TaskIntIntUnshare Unsharing variables
+   *
+   * Unsharing replaces multiple occurences of the same variable by
+   * fresh yet equal (enforced through propagators for equality)
+   * variables: after unsharing a variable appears at most once.
+   *
+   * Unsharing is useful for constraints that only accept variable
+   * arrays without multiple occurences of the same variable, for
+   * example regular.
+   *
+   * \ingroup TaskIntInt
+   */
+  //@{
+  /**
+   * \brief Replace multiple variable occurences in \a x by fresh variables
+   *
+   * Supports domain-consistency (\a icl = ICL_DOM, default) and
+   * bounds-consistency (\a icl = ICL_BND).
+   *
+   */
+  GECODE_INT_EXPORT void
+  unshare(Space* home, IntVarArgs& x,
+          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  /// Replace multiple variable occurences in \a x by fresh variables
+  GECODE_INT_EXPORT void
+  unshare(Space* home, BoolVarArgs& x,
+          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   //@}
 
 
