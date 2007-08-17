@@ -938,7 +938,10 @@ namespace Gecode {
   template <class T>
   forceinline
   ArgArrayBase<T>::ArgArrayBase(int n0)
-    : n(n0), a(allocate(n0)) {}
+    : n(n0), a(allocate(n0)) {
+    for (int i=n; i--;)
+      new (&a[i]) T();
+  }
 
   template <class T>
   inline
@@ -951,6 +954,8 @@ namespace Gecode {
   template <class T>
   forceinline
   ArgArrayBase<T>::~ArgArrayBase(void) {
+    for (int i=n; i--;)
+      a[i].~T();
     if (n > onstack_size)
       Memory::free(a);
   }
