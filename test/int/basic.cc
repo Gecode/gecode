@@ -36,23 +36,28 @@
  */
 
 #include "test/int.hh"
-#include "test/log.hh"
 
-#include <cmath>
-#include <algorithm>
+namespace {
 
-static IntSet s(-3,3);
+  IntSet s(-3,3);
 
-class Basic : public IntTest {
-public:
-  Basic(void)
-    : IntTest("Basic",3,s) {}
-  virtual bool solution(const Assignment& x) const {
-    return true;
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-  }
-};
-static Basic _basic;
+  /// Test whether testing infrastruture works
+  class Basic : public IntTest {
+  public:
+    /// Initialize test
+    Basic(void)
+      : IntTest("Basic",3,s) {}
+    /// Check whether \a x is a solution
+    virtual bool solution(const Assignment& x) const {
+      return true;
+    }
+    /// Post constraints
+    virtual void post(Space* home, IntVarArray& x) {
+    }
+  };
+
+  Basic b;
+
+}
 
 // STATISTICS: test-int

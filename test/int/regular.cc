@@ -36,7 +36,6 @@
  */
 
 #include "test/int.hh"
-#include "test/log.hh"
 
 #include "gecode/minimodel.hh"
 
@@ -45,15 +44,10 @@ namespace {
   IntSet ds_22(-2,2);
   IntSet ds_14(-1,4);
 
-  DFA da = ((REG(0) | REG(2)) +
-            (REG(-1) | REG(1)) +
-            (REG(7) | REG(0) | REG(1)) +
-            (REG(0) | REG(1)));
-
   class RegularA : public IntTest {
   public:
-    RegularA(const char* t)
-      : IntTest(t,4,ds_22,false,ICL_DOM) {}
+    RegularA(void)
+      : IntTest("Regular::Simple::A",4,ds_22,false,ICL_DOM) {}
     virtual bool solution(const Assignment& x) const {
       return (((x[0] == 0) || (x[0] == 2)) &&
               ((x[1] == -1) || (x[1] == 1)) &&
@@ -61,57 +55,39 @@ namespace {
               ((x[3] == 0) || (x[3] == 1)));
     }
     virtual void post(Space* home, IntVarArray& x) {
+      DFA da = ((REG(0) | REG(2)) +
+                (REG(-1) | REG(1)) +
+                (REG(7) | REG(0) | REG(1)) +
+                (REG(0) | REG(1)));
       regular(home, x, da);
     }
   };
   
-  DFA db = ((REG(-2) + REG(-1) + REG(0) + REG(1)) |
-            (REG(-2) + REG(-1) + REG(0) + REG(2)) |
-            (REG(-2) + REG(-1) + REG(1) + REG(2)) |
-            (REG(-2) + REG(0) + REG(1) + REG(2)) |
-            (REG(-1) + REG(0) + REG(1) + REG(2)));
+  RegularA ra;
 
   class RegularB : public IntTest {
   public:
-    RegularB(const char* t)
-      : IntTest(t,4,ds_22,false,ICL_DOM) {}
+    RegularB(void)
+      : IntTest("Regular::Simple::B",4,ds_22,false,ICL_DOM) {}
     virtual bool solution(const Assignment& x) const {
       return (x[0]<x[1]) && (x[1]<x[2]) && (x[2]<x[3]);
     }
     virtual void post(Space* home, IntVarArray& x) {
+      DFA db = ((REG(-2) + REG(-1) + REG(0) + REG(1)) |
+                (REG(-2) + REG(-1) + REG(0) + REG(2)) |
+                (REG(-2) + REG(-1) + REG(1) + REG(2)) |
+                (REG(-2) + REG(0) + REG(1) + REG(2)) |
+                (REG(-1) + REG(0) + REG(1) + REG(2)));
       regular(home, x, db);
     }
   };
   
-  DFA dd = ((REG(0)+REG(1)+REG(2)+REG(3)) |
-            (REG(0)+REG(1)+REG(3)+REG(2)) |
-            (REG(0)+REG(2)+REG(1)+REG(3)) |
-            (REG(0)+REG(2)+REG(3)+REG(1)) |
-            (REG(0)+REG(3)+REG(1)+REG(2)) |
-            (REG(0)+REG(3)+REG(2)+REG(1)) |
-            (REG(1)+REG(0)+REG(2)+REG(3)) |
-            (REG(1)+REG(0)+REG(3)+REG(2)) |
-            (REG(1)+REG(2)+REG(0)+REG(3)) |
-            (REG(1)+REG(2)+REG(3)+REG(0)) |
-            (REG(1)+REG(3)+REG(0)+REG(2)) |
-            (REG(1)+REG(3)+REG(2)+REG(0)) |
-            (REG(2)+REG(0)+REG(1)+REG(3)) |
-            (REG(2)+REG(0)+REG(3)+REG(1)) |
-            (REG(2)+REG(1)+REG(0)+REG(3)) |
-            (REG(2)+REG(1)+REG(3)+REG(0)) |
-            (REG(2)+REG(3)+REG(0)+REG(1)) |
-            (REG(2)+REG(3)+REG(1)+REG(0)) |
-            (REG(3)+REG(0)+REG(1)+REG(2)) |
-            (REG(3)+REG(0)+REG(2)+REG(1)) |
-            (REG(3)+REG(1)+REG(0)+REG(2)) |
-            (REG(3)+REG(1)+REG(2)+REG(0)) |
-            (REG(3)+REG(2)+REG(0)+REG(1)) |
-            (REG(3)+REG(2)+REG(1)+REG(0)));
+  RegularB rb;
 
   class RegularDistinct : public IntTest {
   public:
-    RegularDistinct(const char* t)
-      : IntTest(t,4,ds_14,false,ICL_DOM) {}
+    RegularDistinct(void)
+      : IntTest("Regular::Distinct",4,ds_14,false,ICL_DOM) {}
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<x.size(); i++) {
         if ((x[i] < 0) || (x[i] > 3))
@@ -123,14 +99,40 @@ namespace {
       return true;
     }
     virtual void post(Space* home, IntVarArray& x) {
+      DFA dd = ((REG(0)+REG(1)+REG(2)+REG(3)) |
+                (REG(0)+REG(1)+REG(3)+REG(2)) |
+                (REG(0)+REG(2)+REG(1)+REG(3)) |
+                (REG(0)+REG(2)+REG(3)+REG(1)) |
+                (REG(0)+REG(3)+REG(1)+REG(2)) |
+                (REG(0)+REG(3)+REG(2)+REG(1)) |
+                (REG(1)+REG(0)+REG(2)+REG(3)) |
+                (REG(1)+REG(0)+REG(3)+REG(2)) |
+                (REG(1)+REG(2)+REG(0)+REG(3)) |
+                (REG(1)+REG(2)+REG(3)+REG(0)) |
+                (REG(1)+REG(3)+REG(0)+REG(2)) |
+                (REG(1)+REG(3)+REG(2)+REG(0)) |
+                (REG(2)+REG(0)+REG(1)+REG(3)) |
+                (REG(2)+REG(0)+REG(3)+REG(1)) |
+                (REG(2)+REG(1)+REG(0)+REG(3)) |
+                (REG(2)+REG(1)+REG(3)+REG(0)) |
+                (REG(2)+REG(3)+REG(0)+REG(1)) |
+                (REG(2)+REG(3)+REG(1)+REG(0)) |
+                (REG(3)+REG(0)+REG(1)+REG(2)) |
+                (REG(3)+REG(0)+REG(2)+REG(1)) |
+                (REG(3)+REG(1)+REG(0)+REG(2)) |
+                (REG(3)+REG(1)+REG(2)+REG(0)) |
+                (REG(3)+REG(2)+REG(0)+REG(1)) |
+                (REG(3)+REG(2)+REG(1)+REG(0)));
       regular(home, x, dd);
     }
   };
   
+  RegularDistinct rd;
+
   class RegularShared : public IntTest {
   public:
-    RegularShared(const char* t)
-      : IntTest(t,2,ds_22,false,ICL_DOM) {}
+    RegularShared(void)
+      : IntTest("Regular::Shared",2,ds_22,false,ICL_DOM) {}
     virtual bool solution(const Assignment& x) const {
       return (((x[0] == 0) || (x[0] == 2)) &&
               ((x[1] == -1) || (x[1] == 1)) &&
@@ -140,29 +142,15 @@ namespace {
     virtual void post(Space* home, IntVarArray& x) {
       IntVarArgs y(4);
       y[0]=x[0]; y[1]=x[1]; y[2]=x[0]; y[3]=x[1];
+      DFA da = ((REG(0) | REG(2)) +
+                (REG(-1) | REG(1)) +
+                (REG(7) | REG(0) | REG(1)) +
+                (REG(0) | REG(1)));
       regular(home, y, da);
-    }
-    virtual void description(std::ostream& h, std::ostream& c) {
-      h << "post regular: x[0]x[1]x[0]x[1] in (0|2)(-1|1)(7|0|1)(0|1)" << std::endl;
-      c << "\tREG r = \n"
-        << "\t  (REG(0) | REG(2)) +\n"
-        << "\t  (REG(-1) | REG(1)) +\n"
-        << "\t  (REG(7) | REG(0) | REG(1)) +\n"
-        << "\t  (REG(0) | REG(1));\n"
-        << "\tDFA d(r);\n"
-        << "\tIntVarArgs y(4);\n"
-        << "\ty[0]=x[0]; y[1]=x[1]; y[2]=x[0]; y[3]=x[1];\n"
-        << "\tregular(home, y, d);\n" << std::endl;
     }
   };
 
-
-  RegularA _rega("Regular::A");
-  RegularB _regb("Regular::B");
-
-  RegularDistinct _regd("Regular::Distinct");
-
-  RegularShared _regs("Regular::Shared");
+  RegularShared rs;
 
 }
 
