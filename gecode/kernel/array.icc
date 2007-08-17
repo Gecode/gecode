@@ -1024,11 +1024,9 @@ namespace Gecode {
   }
 
   template <class T>
+  forceinline
   PrimArgArray<T>::PrimArgArray(const PrimArgArray<T>& aa)
-    : ArgArrayBase<T>(aa.size()) {
-    for (int i = size(); i--; )
-      a[i] = aa.a[i];
-  }
+    : ArgArrayBase<T>(aa) {}
 
 
 
@@ -1043,12 +1041,9 @@ namespace Gecode {
     : ArgArrayBase<T>(n) {}
 
   template <class T>
-  inline
+  forceinline
   VarArgArray<T>::VarArgArray(const VarArgArray<T>& aa)
-    : ArgArrayBase<T>(aa.size()) {
-    for (int i = size(); i--; )
-      a[i] = aa.a[i];
-  }
+    : ArgArrayBase<T>(aa) {}
 
   template <class T>
   inline
