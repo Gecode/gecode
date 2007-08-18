@@ -39,81 +39,227 @@
 #define __GECODE_SUPPORT_STRING_HH__
 
 #include "gecode/kernel.hh"
+#include <iostream>
 
 namespace Gecode { namespace Support {
   
   class String {
   private:
-    char* s;
-    int n;
+
+    class SO;
+    
+    class SOIter {
+    private:
+      SOIter* left;
+      SOIter* right;
+      const SO* so;
+      int size;
+      int n;
+    public:
+      SOIter(const SO* so);
+      ~SOIter(void);
+      bool operator()(void);
+      void operator++(void);
+      char c(void) const;
+    };
+    
+    class SO {
+    public:
+      unsigned int use_cnt;
+      const char* s;
+      SO* left;
+      SO* right;
+      SO(const char* s0) : s(s0), left(NULL), right(NULL) {}
+      bool cancel(void) { return --use_cnt == 0; }
+      void subscribe(void) { ++use_cnt; }
+      SO(SO* l, SO* r) : s(NULL), left(l), right(r) {
+        assert(l != NULL); assert(r != NULL);
+        left->subscribe(); right->subscribe();
+      }
+      ~SO(void) {
+        if (left && left->cancel())
+          delete left;
+        if (right && right->cancel())
+          delete right;
+      }
+      bool cmp(SO* other) const;
+      unsigned int size(void) const {
+        if (s)
+          return strlen(s);
+        if (!left)
+          return 0;
+        return left->size() + right->size();
+      }
+      std::ostream& print(std::ostream& os) const {
+        if (s) {
+          return os << s;
+        }
+        if (left) {
+          return right->print(left->print(os));
+        }
+        return os;
+      }
+      int fill(char* to, int i) const {
+        if (s) {
+          int l = strlen(s);
+          memcpy(to+i, s, l);
+          return i+l;
+        }
+        if (!left)
+          return i;
+        int l = left->fill(to, i);
+        return right->fill(to, l);
+      }
+      char* c_str() const {
+        int s = size();
+        char* ret = 
+          static_cast<char*>(Memory::malloc(sizeof(char)*(s+1)));
+        (void) fill(ret, 0);
+        ret[s] = 0;
+        return ret;
+      }
+    };
+    
+    SO* so;
   public:
-    String(void) : s(NULL), n(0) {}
+    String(void) : so(NULL) {}
     String(const char* s0) {
-      n = strlen(s0);
-      if (n>0) {
-        s = static_cast<char*>(Memory::malloc(sizeof(char)*(n+1)));
-        memcpy(s, s0, n);
-        s[n] = 0;
-      }
+      so = new SO(s0);
+      so->subscribe();
     }
-    ~String(void) { if (n>0) Memory::free(s); }
+    ~String(void) {
+      if (so && so->cancel())
+        delete so;
+    }
     String(const String& s0) {
-      n = s0.n;
-      if (n>0) {
-        s = static_cast<char*>(Memory::malloc(sizeof(char)*(n+1)));
-        memcpy(s, s0.s, n);
-        s[n] = 0;
-      }
+      so = s0.so;
+      if (so)
+        so->subscribe();
     }
     const String& operator=(const String& s0) {
       if (this != &s0) {
-        if (n>0)
-          Memory::free(s);
-        n = s0.n;
-        if (n>0) {
-          s = static_cast<char*>(Memory::malloc(sizeof(char)*(n+1)));
-          memcpy(s, s0.s, n);
-          s[n] = 0;
-        }
+        if (so && so->cancel())
+          delete so;
+        so = s0.so;
+        if (so)
+          so->subscribe();
       }
       return *this;
-    }
-    const char*
-    c_str(void) const {
-      return s;
     }
     
     bool
     empty(void) const {
-      return n==0;
+      return so==NULL;
     }
     
     String operator+(const String& s0) const {
       String ret;
-      ret.n = n + s0.n;
-      if (ret.n>0) {
-        ret.s = static_cast<char*>(Memory::malloc(sizeof(char)*(ret.n+1)));
-        memcpy(ret.s, s, n);
-        memcpy(ret.s+n, s0.s, s0.n);
-        ret.s[ret.n] = 0;
+      if (so == NULL) {
+        ret.so = s0.so;
+        if (ret.so)
+          ret.so->subscribe();
+        return ret;
       }
+      if (s0.so == NULL) {
+        ret.so = so;
+        ret.so->subscribe();
+        return ret;
+      }
+      ret.so = new SO(so, s0.so);
+      ret.so->subscribe();
       return ret;
     }
     
-    bool operator==(const String& s0) {
-      return !strcmp(s, s0.s);
+    bool operator==(const String& s0) const {
+      if (so == NULL)
+        return (s0.so == NULL);
+      return so->cmp(s0.so)==0;
+    }
+    int cmp(const String& s0) const {
+      if (so == NULL)
+        return (s0.so == NULL ? 0 : -1);
+      return so->cmp(s0.so);
+    }
+    
+    std::ostream& print(std::ostream& os) const {
+      if (so)
+        return so->print(os);
+      return os;
     }
     
   };
 
+  forceinline
+  String::SOIter::SOIter(const String::SO* so0) : n(0) {
+    if (so0->s) {
+      so = so0; size = strlen(so->s); left = NULL; right = NULL;
+    } else {
+      so = NULL;
+      left  = new SOIter(so0->left);
+      right = new SOIter(so0->right);
+    }
+  }
+  forceinline
+  String::SOIter::~SOIter(void) {
+    if (left)  delete left;
+    if (right) delete right;
+  }
+  forceinline bool
+  String::SOIter::operator()(void) {
+    if (so)
+      return n < size;
+    return (*left)() || (*right)();
+  }
+  forceinline void
+  String::SOIter::operator++(void) {
+    if (so) {
+      n++;
+      return;
+    }
+    if ((*left)()) {
+      ++(*left);
+      return;
+    }
+    ++(*right);
+  }
+  forceinline char
+  String::SOIter::c(void) const {
+    if (so)
+      return so->s[n];
+    if ((*left)())
+      return left->c();
+    return right->c();
+  }
+
+  forceinline
+  bool
+  String::SO::cmp(SO* other) const {
+    if (s && other->s)
+      return (s==other->s ? 0 : strcmp(s,other->s));
+    SOIter me(this); SOIter notme(other);
+    for (; me() && notme(); ++me, ++notme)
+      if (me.c() != notme.c())
+        return me.c() < notme.c() ? -1 : 1;
+    if (me())
+      return -1;
+    if (notme())
+      return 1;
+    return 0;
+  }
+
   class StringCmp {
   public:
     int cmp(const String& s0, const String& s1) {
-      return strcmp(s0.c_str(), s1.c_str());
+      return s0.cmp(s1);
     }
   };
   
 }}
+
+forceinline std::ostream&
+operator<<(std::ostream& os, const Gecode::Support::String& x) {
+  return x.print(os);
+}
 
 #endif
 

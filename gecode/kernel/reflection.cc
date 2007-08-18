@@ -36,9 +36,7 @@
  */
 
 #include "gecode/kernel.hh"
-
-#include <vector>
-#include <sstream>
+#include "gecode/support/dynamic-array.hh"
 
 namespace Gecode { namespace Reflection {
   
@@ -53,17 +51,21 @@ namespace Gecode { namespace Reflection {
     Support::PtrMap<VarBase,Support::String> varToName;
     /// Map variable implementations to indices
     Support::PtrMap<VarBase,int> m;
+    /// Number of indices in use
+    int n;
     /// Map indices to variable implementations
-    std::vector<VarBase*>  var;
+    Support::DynamicArray<VarBase*>  var;
     /// Map indices to variable specifications
-    std::vector<VarSpec*>  spec;
-        
+    Support::DynamicArray<VarSpec*>  spec;
+    
+    /// Default constructor
+    VarMapImp(void) : n(0) {}
     /// Destructor, deleting all specifications stored in \a v
     ~VarMapImp(void);
   };
   
   VarMap::VarMapImp::~VarMapImp(void) {
-    for (int i=spec.size(); i--;)
+    for (int i=n; i--;)
       delete spec[i];
   }
   
@@ -162,16 +164,17 @@ namespace Gecode { namespace Reflection {
 
   int
   VarMap::put(VarBase* x, VarSpec* spec) {
-    m->m.put(x, m->spec.size());
-    m->spec.push_back(spec);
-    m->var.push_back(x);
+    int newIndex = m->n++;
+    m->m.put(x, newIndex);
+    m->spec[newIndex] = spec;
+    m->var[newIndex] = x;
     if (hasName(x)) {
-      spec->name(name(x).c_str());
+      spec->name(name(x));
     } else if (spec->hasName()) {
       m->nameToVar.put(spec->name(), x);
       m->varToName.put(x, spec->name());
     }
-    return m->spec.size() - 1;
+    return newIndex;
   }
 
   /* Variable map iterator */
@@ -180,7 +183,7 @@ namespace Gecode { namespace Reflection {
 
   bool
   VarMapIter::operator()(void) const {
-    return i<m.m->spec.size();
+    return i<m.m->n;
   }
 
   VarSpec&
@@ -207,7 +210,7 @@ namespace Gecode { namespace Reflection {
 
   void Type::print(std::ostream& os) {
     if (n == 0) {
-      os << _name.c_str();
+      _name.print(os);
     } else {
       os << "<";
       for (int i=0; i<n; i++) {
@@ -224,9 +227,18 @@ namespace Gecode { namespace Reflection {
 
   Support::String
   Type::toString(void) {
-    std::ostringstream s;
-    print(s);
-    return Support::String(s.str().c_str());
+    if (n == 0)
+      return _name;
+    Support::String ret = "<";
+    for (int i=0; i<n; i++) {
+      if (t[i])
+        ret = ret + t[i]->toString();
+      else
+        ret = ret +"NULL";
+      if (i<n-1)
+        ret = ret + ",";
+    }
+    return ret+">";
   }
 
   // Registry

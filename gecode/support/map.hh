@@ -54,7 +54,7 @@ namespace Gecode { namespace Support {
     int n;
   public:
     Map() : n(0) {}
-    void put(const Key& k, Value v) { a[n++] = Pair(k,v); };
+    void put(const Key& k, Value v) { new (&a[n++]) Pair(k,v); };
     bool get(const Key& k, Value& v) {
       for (int i=n; i--;) {
         if (a[i].k == k) {
