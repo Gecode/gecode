@@ -43,65 +43,113 @@
 
 namespace Gecode { namespace Support {
   
+  /** \brief Immutable strings
+    *
+    */
   class String {
   private:
     
+    /** \brief Reference-counted string objects
+      *
+      */
     class SO {
     public:
+      /// The reference count
       unsigned int use_cnt;
-      union {
-        const char* c;
-        char* o;
-      } s;
-      bool own;
-      SO* left;
-      SO* right;
-      SO(const char* s0, bool copy);
+      /// Reference counting: cancel subscription
       bool cancel(void);
+      /// Reference counting: subscribe to an SO
       void subscribe(void);
+
+      union {
+        const char* c; ///< Used if the SO does not own the string
+        char* o;       ///< Used if the SO owns the string
+      } s;
+      /// Whether the SO owns the string
+      bool own;
+      /// Left branch of a string tree, or NULL if the SO has an actual string
+      SO* left;
+      /// Right branch of a string tree
+      SO* right;
+
+      /// Construct from a given string \a s0, which is copied if \a copy is true.
+      SO(const char* s0, bool copy);
+      /// Construct an SO representing the concatenation of \a l and \a r
       SO(SO* l, SO* r);
+      /// Destructor
       ~SO(void);
+      /// Compare with \a other
       int cmp(SO* other) const;
+      /// Return size of the string
       unsigned int size(void) const;
+      /// Output to \a os
       std::ostream& print(std::ostream& os) const;
+      /// Copy this string into \a to starting at position \a i
       int fill(char* to, int i) const;
+      /// Return a newly allocated copy of this string
       char* c_str() const;
     };
     
+    /** \brief Character-wise iterator for string objects
+      *
+      */
     class SOIter {
     private:
+      /// Iterate left subtree
       SOIter* left;
+      /// Iterate right subtree
       SOIter* right;
+      /// Iterate string object
       const SO* so;
+      /// Size of string to iterate
       int size;
+      /// Current position of iteration
       int n;
     public:
+      /// Constructor
       SOIter(const SO* so);
+      /// Destructor
       ~SOIter(void);
+      /// Test if iterator is still at a valid position
       bool operator()(void);
+      /// Advance iterator to next position
       void operator++(void);
+      /// Return character at current iterator position
       char c(void) const;
     };
 
+    /// The string object
     SO* so;
   public:
+    /// Construct empty string
     String(void);
+    /// Construct string from \a s0, make a copy if \a copy is true.
     String(const char* s0, bool copy = false);
+    /// Destructor
     ~String(void);
+    /// Copy constructor
     String(const String& s0);
+    /// Assignment operator
     const String& operator=(const String& s0);
     
+    /// Compare with \a s0
     int cmp(const String& s0) const;
+    /// Test if this string is equal to \a s0
+    bool operator==(const String& s0) const;
+    /// Return if string is empty
     bool empty(void) const;
     
+    /// Return concatenation with \a s0
     String operator+(const String& s0) const;
-    bool operator==(const String& s0) const;
-
+    /// Print this string to \a os
     std::ostream& print(std::ostream& os) const;    
   };
 
+  /** \brief Comparison for string objects
+    */
   class StringCmp {
   public:
+    /// Compare \a s0 with \a s1
     int cmp(const String& s0, const String& s1);
   };
 
