@@ -82,7 +82,7 @@ namespace Gecode { namespace Support {
         if (right && right->cancel())
           delete right;
       }
-      bool cmp(SO* other) const;
+      int cmp(SO* other) const;
       unsigned int size(void) const {
         if (s)
           return strlen(s);
@@ -232,7 +232,7 @@ namespace Gecode { namespace Support {
   }
 
   forceinline
-  bool
+  int
   String::SO::cmp(SO* other) const {
     if (s && other->s)
       return (s==other->s ? 0 : strcmp(s,other->s));
