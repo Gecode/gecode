@@ -404,7 +404,7 @@ namespace Log {
       cops.push_back(clog);
   }
 
-  void assign(Support::String name, int val) {
+  void assign(std::string name, int val) {
     if (!do_logging) return;
     ostringstream h;
     h << "Assign val=" << val << " to " << name;
@@ -415,7 +415,7 @@ namespace Log {
     cops.push_back(c.str());
   }
 
-  void assign(Support::String name, const IntSet& val) {
+  void assign(std::string name, const IntSet& val) {
     if (!do_logging) return;
     ostringstream h;
     h << "Assign val=" << val << " to " << name;
@@ -439,7 +439,7 @@ namespace Log {
     cops.push_back(c.str());
   }
 
-  void prune(const IntVar& v, Support::String name, IntRelType irt, int val) {
+  void prune(const IntVar& v, std::string name, IntRelType irt, int val) {
     if (!do_logging) return;
     ostringstream h;
     switch (irt) {
@@ -473,7 +473,7 @@ namespace Log {
   }
 
 #ifdef GECODE_HAVE_SET_VARS
-  void prune(const SetVar& v, Support::String name, SetRelType srt, int val) {
+  void prune(const SetVar& v, std::string name, SetRelType srt, int val) {
     if(!do_logging) return;
     ostringstream h;
     switch(srt) {
@@ -500,7 +500,7 @@ namespace Log {
     cops.push_back(c.str());
   }
 
-  void prune(const SetVar& v, Support::String name,
+  void prune(const SetVar& v, std::string name,
              unsigned int cardMin, unsigned int cardMax) {
     if(!do_logging) return;
     ostringstream h;
@@ -516,7 +516,7 @@ namespace Log {
 #endif
 
 #ifdef GECODE_HAVE_CPLTSET_VARS
-  void prune(const CpltSetVar& v, Support::String name, SetRelType brt, int val) {
+  void prune(const CpltSetVar& v, std::string name, SetRelType brt, int val) {
     if(!do_logging) return;
     ostringstream h;
     switch(brt) {
@@ -544,7 +544,7 @@ namespace Log {
   }
 
 
-  void prune(const CpltSetVar& v, Support::String name,
+  void prune(const CpltSetVar& v, std::string name,
 	     unsigned int cardMin, unsigned int cardMax) {
     if(!do_logging) return;
     ostringstream h;

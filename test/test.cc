@@ -65,7 +65,7 @@ Support::RandomGenerator Test::randgen = Support::RandomGenerator();
 
 namespace {
 
-  void report_error(const Options& o, Support::String name) {
+  void report_error(const Options& o, std::string name) {
     std::cout << "Options: -seed " << o.seed;
     if (o.fixprob != o.deffixprob)
       std::cout << "  -fixprob " << o.fixprob;
@@ -98,7 +98,7 @@ main(int argc, char** argv) {
     if (o.skip-- == 0)
       break;
   for ( ; t != NULL; counter++, t = t->next() ) {
-    Support::String name(t->module()); name += "::"; name += t->test();
+    std::string name(t->module()); name += "::"; name += t->test();
     try {
       if (testpat.size() != 0) {
         bool match_found   = false;
