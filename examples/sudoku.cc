@@ -343,10 +343,16 @@ protected:
 public:
   /// Constructor
   SudokuCpltSet(const SizeOptions& opt)
-    : Sudoku(opt), m(5000000,1000000),
+    : Sudoku(opt), m(500000,100000),
       y(this,m.manager(),n*n,IntSet::empty,1,n*n*n*n) {
 
     const int nn = n*n;
+
+    // Fill-in predefined fields
+    for (int i=0; i<nn; i++)
+      for (int j=0; j<nn; j++)
+        if (int idx = value_at(examples[opt.size()], nn, i, j))
+          dom(this, y[idx-1], SRT_SUP, (i+1)+(j*nn) );
 
     for (int i=0; i<nn; i++)
       cardinality(this, y[i], nn);
@@ -380,9 +386,17 @@ public:
       }
     }
 
-    IntSet full(1, nn*nn);
     // All x must be pairwise disjoint and partition the field indices
-    partition(this, y, CpltSetVar(this, m.manager(), full, full));
+
+    // the partition constraint currently does not work
+    // IntSet full(1, nn*nn);
+    // partition(this, y, CpltSetVar(this, m.manager(), full, full));
+    // Use naive implementation instead:
+    for (int i = 0; i < nn - 1; i++) {
+      for (int j = i + 1; j < nn; j++) {
+        rel(this, y[i], SRT_DISJ, y[j]);
+      }
+    }
 
     // The x must intersect in exactly one element with each
     // row, column, and block
@@ -393,11 +407,6 @@ public:
         exactly(this, y[i], block[j], 1);
       }
 
-    // Fill-in predefined fields
-    for (int i=0; i<nn; i++)
-      for (int j=0; j<nn; j++)
-        if (int idx = value_at(examples[opt.size()], nn, i, j))
-          dom(this, y[idx-1], SRT_SUP, (i+1)+(j*nn) );
 
     branch(this, y, CPLTSET_BVAR_NONE, CPLTSET_BVAL_MIN_UNKNOWN);
   }
