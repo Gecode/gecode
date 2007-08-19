@@ -45,8 +45,28 @@ namespace Gecode { namespace Support {
   
   class String {
   private:
-
-    class SO;
+    
+    class SO {
+    public:
+      unsigned int use_cnt;
+      union {
+        const char* c;
+        char* o;
+      } s;
+      bool own;
+      SO* left;
+      SO* right;
+      SO(const char* s0, bool copy);
+      bool cancel(void);
+      void subscribe(void);
+      SO(SO* l, SO* r);
+      ~SO(void);
+      int cmp(SO* other) const;
+      unsigned int size(void) const;
+      std::ostream& print(std::ostream& os) const;
+      int fill(char* to, int i) const;
+      char* c_str() const;
+    };
     
     class SOIter {
     private:
@@ -62,137 +82,189 @@ namespace Gecode { namespace Support {
       void operator++(void);
       char c(void) const;
     };
-    
-    class SO {
-    public:
-      unsigned int use_cnt;
-      const char* s;
-      SO* left;
-      SO* right;
-      SO(const char* s0) : s(s0), left(NULL), right(NULL) {}
-      bool cancel(void) { return --use_cnt == 0; }
-      void subscribe(void) { ++use_cnt; }
-      SO(SO* l, SO* r) : s(NULL), left(l), right(r) {
-        assert(l != NULL); assert(r != NULL);
-        left->subscribe(); right->subscribe();
-      }
-      ~SO(void) {
-        if (left && left->cancel())
-          delete left;
-        if (right && right->cancel())
-          delete right;
-      }
-      int cmp(SO* other) const;
-      unsigned int size(void) const {
-        if (s)
-          return strlen(s);
-        if (!left)
-          return 0;
-        return left->size() + right->size();
-      }
-      std::ostream& print(std::ostream& os) const {
-        if (s) {
-          return os << s;
-        }
-        if (left) {
-          return right->print(left->print(os));
-        }
-        return os;
-      }
-      int fill(char* to, int i) const {
-        if (s) {
-          int l = strlen(s);
-          memcpy(to+i, s, l);
-          return i+l;
-        }
-        if (!left)
-          return i;
-        int l = left->fill(to, i);
-        return right->fill(to, l);
-      }
-      char* c_str() const {
-        int s = size();
-        char* ret = 
-          static_cast<char*>(Memory::malloc(sizeof(char)*(s+1)));
-        (void) fill(ret, 0);
-        ret[s] = 0;
-        return ret;
-      }
-    };
-    
+
     SO* so;
   public:
-    String(void) : so(NULL) {}
-    String(const char* s0) {
-      so = new SO(s0);
-      so->subscribe();
+    String(void);
+    String(const char* s0, bool copy = false);
+    ~String(void);
+    String(const String& s0);
+    const String& operator=(const String& s0);
+    
+    int cmp(const String& s0) const;
+    bool empty(void) const;
+    
+    String operator+(const String& s0) const;
+    bool operator==(const String& s0) const;
+
+    std::ostream& print(std::ostream& os) const;    
+  };
+
+  class StringCmp {
+  public:
+    int cmp(const String& s0, const String& s1);
+  };
+
+  forceinline
+  String::SO::SO(const char* s0, bool copy)
+  : own(copy), left(NULL), right(NULL) {
+    if (own) {
+      int size = strlen(s0);
+      s.o = static_cast<char*>(Memory::malloc(sizeof(char*)*(size+1)));
+      memcpy(s.o, s0, size);
+      s.o[size] = 0;
+    } else {
+      s.c = s0;
     }
-    ~String(void) {
+  }
+
+  forceinline bool
+  String::SO::cancel(void) { return --use_cnt == 0; }
+
+  forceinline void
+  String::SO::subscribe(void) { ++use_cnt; }
+
+  forceinline
+  String::SO::SO(SO* l, SO* r) : own(false), left(l), right(r) {
+    s.c = NULL; assert(l != NULL); assert(r != NULL);
+    left->subscribe(); right->subscribe();
+  }
+
+  forceinline
+  String::SO::~SO(void) {
+    if (own)
+      Memory::free(s.o);
+    if (left && left->cancel())
+      delete left;
+    if (right && right->cancel())
+      delete right;
+  }
+
+  forceinline unsigned int
+  String::SO::size(void) const {
+    if (s.c)
+      return strlen(s.c);
+    if (!left)
+      return 0;
+    return left->size() + right->size();
+  }
+
+  forceinline std::ostream&
+  String::SO::print(std::ostream& os) const {
+    if (s.c) {
+      return os << s.c;
+    }
+    if (left) {
+      return right->print(left->print(os));
+    }
+    return os;
+  }
+
+  forceinline int
+  String::SO::fill(char* to, int i) const {
+    if (s.c) {
+      int l = strlen(s.c);
+      memcpy(to+i, s.c, l);
+      return i+l;
+    }
+    if (!left)
+      return i;
+    int l = left->fill(to, i);
+    return right->fill(to, l);
+  }
+
+  forceinline char*
+  String::SO::c_str() const {
+    int s = size();
+    char* ret = 
+      static_cast<char*>(Memory::malloc(sizeof(char)*(s+1)));
+    (void) fill(ret, 0);
+    ret[s] = 0;
+    return ret;
+  }
+
+  forceinline
+  String::String(void) : so(NULL) {}
+
+  forceinline
+  String::String(const char* s0, bool copy) {
+    so = new SO(s0, copy);
+    so->subscribe();
+  }
+
+  forceinline
+  String::~String(void) {
+    if (so && so->cancel())
+      delete so;
+  }
+
+  forceinline
+  String::String(const String& s0) {
+    so = s0.so;
+    if (so)
+      so->subscribe();
+  }
+
+  forceinline const String&
+  String::operator=(const String& s0) {
+    if (this != &s0) {
       if (so && so->cancel())
         delete so;
-    }
-    String(const String& s0) {
       so = s0.so;
       if (so)
         so->subscribe();
     }
-    const String& operator=(const String& s0) {
-      if (this != &s0) {
-        if (so && so->cancel())
-          delete so;
-        so = s0.so;
-        if (so)
-          so->subscribe();
-      }
-      return *this;
-    }
-    
-    bool
-    empty(void) const {
-      return so==NULL;
-    }
-    
-    String operator+(const String& s0) const {
-      String ret;
-      if (so == NULL) {
-        ret.so = s0.so;
-        if (ret.so)
-          ret.so->subscribe();
-        return ret;
-      }
-      if (s0.so == NULL) {
-        ret.so = so;
+    return *this;
+  }
+  
+  forceinline bool
+  String::empty(void) const {
+    return so==NULL;
+  }
+  
+  forceinline String
+  String::operator+(const String& s0) const {
+    String ret;
+    if (so == NULL) {
+      ret.so = s0.so;
+      if (ret.so)
         ret.so->subscribe();
-        return ret;
-      }
-      ret.so = new SO(so, s0.so);
+      return ret;
+    }
+    if (s0.so == NULL) {
+      ret.so = so;
       ret.so->subscribe();
       return ret;
     }
-    
-    bool operator==(const String& s0) const {
-      if (so == NULL)
-        return (s0.so == NULL);
-      return so->cmp(s0.so)==0;
-    }
-    int cmp(const String& s0) const {
-      if (so == NULL)
-        return (s0.so == NULL ? 0 : -1);
-      return so->cmp(s0.so);
-    }
-    
-    std::ostream& print(std::ostream& os) const {
-      if (so)
-        return so->print(os);
-      return os;
-    }
-    
-  };
+    ret.so = new SO(so, s0.so);
+    ret.so->subscribe();
+    return ret;
+  }
+  
+  forceinline bool
+  String::operator==(const String& s0) const {
+    if (so == NULL)
+      return (s0.so == NULL);
+    return so->cmp(s0.so)==0;
+  }
+
+  forceinline int
+  String::cmp(const String& s0) const {
+    if (so == NULL)
+      return (s0.so == NULL ? 0 : -1);
+    return so->cmp(s0.so);
+  }
+  
+  forceinline std::ostream&
+  String::print(std::ostream& os) const {
+    if (so) return so->print(os);
+    return os;
+  }
 
   forceinline
   String::SOIter::SOIter(const String::SO* so0) : n(0) {
-    if (so0->s) {
-      so = so0; size = strlen(so->s); left = NULL; right = NULL;
+    if (so0->s.c) {
+      so = so0; size = strlen(so->s.c); left = NULL; right = NULL;
     } else {
       so = NULL;
       left  = new SOIter(so0->left);
@@ -225,7 +297,7 @@ namespace Gecode { namespace Support {
   forceinline char
   String::SOIter::c(void) const {
     if (so)
-      return so->s[n];
+      return so->s.c[n];
     if ((*left)())
       return left->c();
     return right->c();
@@ -234,8 +306,8 @@ namespace Gecode { namespace Support {
   forceinline
   int
   String::SO::cmp(SO* other) const {
-    if (s && other->s)
-      return (s==other->s ? 0 : strcmp(s,other->s));
+    if (s.c && other->s.c)
+      return (s.c==other->s.c ? 0 : strcmp(s.c,other->s.c));
     SOIter me(this); SOIter notme(other);
     for (; me() && notme(); ++me, ++notme)
       if (me.c() != notme.c())
@@ -247,16 +319,15 @@ namespace Gecode { namespace Support {
     return 0;
   }
 
-  class StringCmp {
-  public:
-    int cmp(const String& s0, const String& s1) {
-      return s0.cmp(s1);
-    }
-  };
+  forceinline int
+  StringCmp::cmp(const String& s0, const String& s1) {
+    return s0.cmp(s1);
+  }
   
 }}
 
-forceinline std::ostream&
+forceinline
+std::ostream&
 operator<<(std::ostream& os, const Gecode::Support::String& x) {
   return x.print(os);
 }

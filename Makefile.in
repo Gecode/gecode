@@ -510,8 +510,8 @@ SERBUILDDIRS	= serialization
 
 SUPPORTHDR0 =							\
 	bitset cast block-allocator dynamic-array dynamic-stack	\
-	random search shared-array sort				\
-	static-pqueue static-stack sentinel-stack
+	map random search shared-array sort			\
+	static-pqueue static-stack sentinel-stack string
 ITERHDR0 =							\
 	ranges-add ranges-append ranges-array ranges-cache	\
 	ranges-compl ranges-diff ranges-empty			\
