@@ -290,25 +290,41 @@ namespace Gecode {
 
     /// \name View equality
     //@{
-    /// Test whether array has same views
-    bool same(void) const;
-    /// Test whether array contains a view being the same as \a y
-    bool same(const View& y) const;
+    /**
+     * \brief Test whether array has multiple occurence of the same view
+     * 
+     * If \a strict is false, assigned views are ignored.
+     */
+    bool same(bool strict=false) const;
+    /**
+     * \brief Test whether array contains a view being the same as \a y
+     *
+     * If \a strict is false, assigned views are ignored.
+     */
+    bool same(const View& y, bool strict=false) const;
     /// Remove all duplicate views from array (changes element order)
     void unique(void);
     //@}
 
     /// \name View sharing
     //@{
-    /// Test whether array has shared views
-    bool shared(void) const;
-    /// Test whether array contains view shared with \a y
-    bool shared(const View& y) const;
+    /**
+     * \brief Test whether array contains shared views
+     * 
+     * If \a strict is false, assigned views are ignored.
+     */
+    bool shared(bool strict=false) const;
+    /**
+     * \brief Test whether array contains a view being shared with \a y
+     *
+     * If \a strict is false, assigned views are ignored.
+     */
+    bool shared(const View& y, bool strict=false) const;
     //@}
 
     /// \name Serialization
     //@{
-    Reflection::Arg*  spec(Space* home, Reflection::VarMap& m);
+    Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
     //@}
 
   private:
@@ -442,12 +458,24 @@ namespace Gecode {
     //@}
     /// \name Variable equality
     //@{
-    /// Test whether array contains same variable multiply
-    bool same(void) const;
-    /// Test whether array contains variable \a y
-    bool same(const Var& y) const;
-    /// Test whether all elements from array and \a y contains same variable multiply
-    bool same(const VarArgArray<Var>& y) const;
+    /**
+     * \brief Test whether array contains same variable multiply
+     * 
+     * If \a strict is false, assigned variables are ignored.
+     */
+    bool same(bool strict=false) const;
+    /**
+     * \brief Test whether array contains variable \a y
+     *
+     * If \a strict is false, assigned ariables are ignored.
+     */
+    bool same(const Var& y, bool strict=false) const;
+    /**
+     * \brief Test whether all elements from array and \a y contains same variable multiply
+     * 
+     * If \a strict is false, assigned variables are ignored.
+     */
+    bool same(const VarArgArray<Var>& y, bool strict=false) const;
     //@}
   };
 
@@ -840,22 +868,30 @@ namespace Gecode {
 
   template <class View>
   bool
-  ViewArray<View>::same(void) const {
+  ViewArray<View>::same(bool strict) const {
     if (n < 2)
       return false;
     GECODE_AUTOARRAY(View,y,n);
     for (int i = n; i--; )
       y[i] = x[i];
     sort(y,n);
-    for (int i = n-1; i--; )
-      if (__same(y[i+1],y[i]))
-        return true;
+    if (strict) {
+      for (int i = n-1; i--; )
+        if (__same(y[i+1],y[i]))
+          return true;
+    } else {
+      for (int i = n-1; i--; )
+        if (!y[i].assigned() && __same(y[i+1],y[i]))
+          return true;
+    }
     return false;
   }
 
   template <class View>
   bool
-  ViewArray<View>::same(const View& y) const {
+  ViewArray<View>::same(const View& y, bool strict) const {
+    if (!strict && y.assigned())
+      return false;
     for (int i = n; i--; )
       if (__same(x[i],y))
         return true;
@@ -877,22 +913,30 @@ namespace Gecode {
 
   template <class View>
   bool
-  ViewArray<View>::shared(void) const {
+  ViewArray<View>::shared(bool strict) const {
     if (n < 2)
       return false;
     GECODE_AUTOARRAY(View,y,n);
     for (int i = n; i--; )
       y[i] = x[i];
     sort(y,n);
-    for (int i = n-1; i--; )
-      if (__shared(y[i+1],y[i]))
-        return true;
+    if (strict) {
+      for (int i = n-1; i--; )
+        if (__shared(y[i+1],y[i]))
+          return true;
+    } else {
+      for (int i = n-1; i--; )
+        if (!y[i].assigned() && __shared(y[i+1],y[i]))
+          return true;
+    }
     return false;
   }
 
   template <class View>
   bool
-  ViewArray<View>::shared(const View& y) const {
+  ViewArray<View>::shared(const View& y, bool strict) const {
+    if (!strict && y.assigned())
+      return false;
     for (int i = n; i--; )
       if (__shared(x[i],y))
         return true;
@@ -1061,7 +1105,7 @@ namespace Gecode {
 
   template <class Var>
   bool
-  VarArgArray<Var>::same(void) const {
+  VarArgArray<Var>::same(bool strict) const {
     if (n < 2)
       return false;
     GECODE_AUTOARRAY(Var,y,n);
@@ -1069,15 +1113,21 @@ namespace Gecode {
       y[i] = a[i];
     VarLess vl;
     Support::quicksort<Var,VarLess>(y,n,vl);
-    for (int i = n-1; i--; )
-      if (y[i+1].variable() == y[i].variable())
-        return true;
+    if (strict) {
+      for (int i = n-1; i--; )
+        if (y[i+1].variable() == y[i].variable())
+          return true;
+    } else {
+      for (int i = n-1; i--; )
+        if (!y[i].assigned() && (y[i+1].variable() == y[i].variable()))
+          return true;
+    }
     return false;
   }
 
   template <class Var>
   bool
-  VarArgArray<Var>::same(const VarArgArray<Var>& y) const {
+  VarArgArray<Var>::same(const VarArgArray<Var>& y, bool strict) const {
     int m = n + y.n;
     if (m < 2)
       return false;
@@ -1088,15 +1138,23 @@ namespace Gecode {
       z[i+n] = y.a[i];
     VarLess vl;
     Support::quicksort<Var,VarLess>(z,m,vl);
-    for (int i = m-1; i--; )
-      if (z[i+1].variable() == z[i].variable())
-        return true;
+    if (strict) {
+      for (int i = m-1; i--; )
+        if (z[i+1].variable() == z[i].variable())
+          return true;
+    } else {
+      for (int i = m-1; i--; )
+        if (!z[i].assigned() && (z[i+1].variable() == z[i].variable()))
+          return true;
+    }
     return false;
   }
 
   template <class Var>
   bool
-  VarArgArray<Var>::same(const Var& y) const {
+  VarArgArray<Var>::same(const Var& y, bool strict) const {
+    if (!strict && y.assigned())
+      return false;
     for (int i = n; i--; )
       if (a[i].variable() == y.variable())
         return true;

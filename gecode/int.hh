@@ -397,7 +397,7 @@ namespace Gecode {
    *    Supports value (\a icl = ICL_VAL, default), bounds (\a icl = ICL_BND),
    *    and domain-consistency (\a icl = ICL_DOM).
    *    Throws an exception of type Int::ArgumentSame, if \a x contains
-   *    the same variable multiply.
+   *    the same unassigned variable multiply.
    *
    */
   GECODE_INT_EXPORT void
@@ -578,7 +578,7 @@ namespace Gecode {
    * and domain-consistency (\a icl = ICL_DOM).
    *
    * Throws an exception of type Int::ArgumentSame, if \a x contains
-   * the same variable multiply.
+   * the same unassigned variable multiply.
    */
   GECODE_INT_EXPORT void
   distinct(Space* home, const IntVarArgs& x,
@@ -592,7 +592,7 @@ namespace Gecode {
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a n are of different size.
    * \li Throws an exception of type Int::ArgumentSame, if \a x contains
-   *     the same variable multiply.
+   *     the same unassigned variable multiply.
    */
   GECODE_INT_EXPORT void
   distinct(Space* home, const IntArgs& n, const IntVarArgs& x,
@@ -613,7 +613,7 @@ namespace Gecode {
    * \li Throws an exception of type Int::ArgumentSizeMismatch, if
    *     \a x and \a y are of different size.
    * \li Throws an exception of type Int::ArgumentSame, if \a x or
-   *     \a y contain the same variable multiply. Note that a
+   *     \a y contain the same unassigned variable multiply. Note that a
    *     variable can occur in both \a x and \a y, but not more than
    *     once in either \a x or \a y.
    */
@@ -655,7 +655,7 @@ namespace Gecode {
    * domain-consistent distinct in enforced on \a x.
    *
    * Throws an exception of type Int::ArgumentSame, if \a x 
-   * contains the same variable multiply.
+   * contains the same unassigned variable multiply.
    */
   GECODE_INT_EXPORT void
   circuit(Space* home, const IntVarArgs& x, 
@@ -891,7 +891,7 @@ namespace Gecode {
    * the DFA \a d.
    *
    * Throws an exception of type Int::ArgumentSame, if \a x contains
-   * the same variable multiply. If shared occurences of variables
+   * the same unassigned variable multiply. If shared occurences of variables
    * are required, unshare should be used.
    */
   GECODE_INT_EXPORT void
@@ -905,7 +905,7 @@ namespace Gecode {
    * the DFA \a d.
    *
    * Throws an exception of type Int::ArgumentSame, if \a x contains
-   * the same variable multiply. If shared occurences of variables
+   * the same unassigned variable multiply. If shared occurences of variables
    * are required, unshare should be used.
    */
   GECODE_INT_EXPORT void
@@ -940,7 +940,7 @@ namespace Gecode {
    *  \exception Int::ArgumentSizeMismatch thrown if \a x and \a y
    *             differ in size.
    *  \exception Int::ArgumentSame thrown if \a x or \a y contain
-   *             shared variables.
+   *             shared unassigned variables.
    *
    *  Taking only two arguments, this interface for Sortedness leaves
    *  the sorting permutation \f$\pi\f$ implicit.
@@ -957,7 +957,7 @@ namespace Gecode {
    *  \exception Int::ArgumentSizeMismatch thrown if \a x, \a y or \a z
    *             differ in size.
    *  \exception Int::ArgumentSame thrown if \a x, \a y or \a z contain
-   *             shared variables.
+   *             shared unassigned variables.
    *
    * Providing a third argument \f$z_0, \dots, z_{|x|-1} \f$, this
    * interface for Sortedness models the sorting permutation
@@ -1046,7 +1046,7 @@ namespace Gecode {
     * and domain-consistency (\a icl = ICL_DOM).
     *
     * Throws an exception of type Int::ArgumentSame, if \a x contains
-    * the same variable multiply.
+    * the same unassigned variable multiply.
     */
   GECODE_INT_EXPORT void
   count(Space* home, const IntVarArgs& x, const IntVarArgs& c,
@@ -1063,7 +1063,7 @@ namespace Gecode {
     * and domain-consistency (\a icl = ICL_DOM).
     *
     * Throws an exception of type Int::ArgumentSame, if \a x contains
-    * the same variable multiply.
+    * the same unassigned variable multiply.
     */
   GECODE_INT_EXPORT void
   count(Space* home, const IntVarArgs& x, const IntSetArgs& c,
@@ -1079,7 +1079,7 @@ namespace Gecode {
     * and domain-consistency (\a icl = ICL_DOM).
     *
     * Throws an exception of type Int::ArgumentSame, if \a x contains
-    * the same variable multiply.
+    * the same unassigned variable multiply.
     *
     * Throws an exception of type Int::ArgumentSizeMismatch, if
     *  \a cards and \a values are of different size.
@@ -1099,7 +1099,7 @@ namespace Gecode {
     * and domain-consistency (\a icl = ICL_DOM).
     *
     * Throws an exception of type Int::ArgumentSame, if \a x contains
-    * the same variable multiply.
+    * the same unassigned variable multiply.
     *
     * Throws an exception of type Int::ArgumentSizeMismatch, if
     *  \a cards and \a values are of different size.
@@ -1119,7 +1119,7 @@ namespace Gecode {
     * and domain-consistency (\a icl = ICL_DOM).
     *
     * Throws an exception of type Int::ArgumentSame, if \a x contains
-    * the same variable multiply.
+    * the same unassigned variable multiply.
     *
     * Throws an exception of type Int::ArgumentSizeMismatch, if
     *  \a cards and \a values are of different size.
@@ -1440,7 +1440,10 @@ namespace Gecode {
    *
    * Unsharing replaces multiple occurences of the same variable by
    * fresh yet equal (enforced through propagators for equality)
-   * variables: after unsharing a variable appears at most once.
+   * variables: after unsharing a variable appears at most once. Note
+   * that this is only done for not yet assigned variables (as all
+   * propagators can handle multiple occurences of the same variable
+   * provided it is already assigned).
    *
    * Unsharing is useful for constraints that only accept variable
    * arrays without multiple occurences of the same variable, for
