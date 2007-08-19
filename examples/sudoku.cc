@@ -43,6 +43,7 @@
 
 #ifdef GECODE_HAVE_SET_VARS
 #include "gecode/set.hh"
+#include "gecode/cpltset.hh"
 #endif
 
 #include "gecode/minimodel.hh"
@@ -67,9 +68,12 @@ public:
 #ifdef GECODE_HAVE_SET_VARS
   /// Model variants
   enum {
-    MODEL_INT,  ///< Use integer constraints
-    MODEL_SET,  ///< Use set constraints
-    MODEL_MIXED ///< Use both integer and set constraints
+    MODEL_INT,   ///< Use integer constraints
+    MODEL_SET,   ///< Use set constraints
+    MODEL_MIXED  ///< Use both integer and set constraints
+#ifdef GECODE_HAVE_CPLTSET_VARS
+    ,MODEL_CPLT  ///< Use CpltSet constraints
+#endif
   };
 #endif
   
@@ -325,6 +329,114 @@ public:
   }
 };
 
+#ifdef GECODE_HAVE_CPLTSET_VARS
+/**
+ * \brief %Example: Solving %Sudoku puzzles using CpltSet constraints
+ *
+ * \ingroup ExProblem
+ */
+class SudokuCpltSet : virtual public Sudoku {
+protected:
+  BuddyMgr m;
+  /// The fields occupied by a certain number
+  CpltSetVarArray y;
+public:
+  /// Constructor
+  SudokuCpltSet(const SizeOptions& opt)
+    : Sudoku(opt), m(5000000,1000000),
+      y(this,m.manager(),n*n,IntSet::empty,1,n*n*n*n) {
+
+    const int nn = n*n;
+
+    for (int i=0; i<nn; i++)
+      cardinality(this, y[i], nn);
+
+    GECODE_AUTOARRAY(IntSet, row, nn);
+    GECODE_AUTOARRAY(IntSet, col, nn);
+    GECODE_AUTOARRAY(IntSet, block, nn);
+
+    // Set up the row and column set constants
+    for (int i=0; i<nn; i++) {
+      new (&row[i]) IntSet((i*nn)+1, (i+1)*nn);
+
+      GECODE_AUTOARRAY(int, dsc, nn);
+      for (int j=0; j<nn; j++) {
+        dsc[j] = (j*nn)+1+i;
+      }
+      new (&col[i]) IntSet (dsc, nn);
+    }
+
+    // Set up the block set constants
+    for (int i=0; i<n; i++) {
+      for (int j=0; j<n; j++) {
+        GECODE_AUTOARRAY(int, dsb_arr, nn);
+        
+        for (int ii=0; ii<n; ii++) {
+          for (int jj=0; jj<n; jj++) {
+            dsb_arr[ii*n+jj] = j*nn*n+i*n+jj*nn+ii+1;
+          }
+        }
+        new (&block[i*n+j]) IntSet(dsb_arr, nn);
+      }
+    }
+
+    IntSet full(1, nn*nn);
+    // All x must be pairwise disjoint and partition the field indices
+    partition(this, y, CpltSetVar(this, m.manager(), full, full));
+
+    // The x must intersect in exactly one element with each
+    // row, column, and block
+    for (int i=0; i<nn; i++)
+      for (int j=0; j<nn; j++) {
+        exactly(this, y[i], row[j], 1);
+        exactly(this, y[i], col[j], 1);
+        exactly(this, y[i], block[j], 1);
+      }
+
+    // Fill-in predefined fields
+    for (int i=0; i<nn; i++)
+      for (int j=0; j<nn; j++)
+        if (int idx = value_at(examples[opt.size()], nn, i, j))
+          dom(this, y[idx-1], SRT_SUP, (i+1)+(j*nn) );
+
+    branch(this, y, CPLTSET_BVAR_NONE, CPLTSET_BVAL_MIN_UNKNOWN);
+  }
+
+  /// Constructor for cloning \a s
+  SudokuCpltSet(bool share, SudokuCpltSet& s) : Sudoku(share,s) {
+    m.update(this, share, s.m);
+    y.update(this, share, s.y);
+  }
+
+  /// Perform copying during cloning
+  virtual Space*
+  copy(bool share) {
+    return new SudokuCpltSet(share,*this);
+  }
+
+  /// Print solution
+  virtual void
+  print(void) {
+    std::cout << '\t';
+    for (int i = 0; i<n*n*n*n; i++) {
+      for (int j=0; j<n*n; j++) {
+        if (y[j].contains(i+1)) {
+          if (j+1<10)
+            std::cout << j+1 << " ";
+          else
+            std::cout << (char)(j+1+'A'-10) << " ";        
+          break;
+        }
+      }
+      if((i+1)%(n*n) == 0)
+        std::cout << std::endl << '\t';
+    }
+    std::cout << std::endl;
+  }
+};
+
+#endif
+
 /**
  * \brief %Example: Solving %Sudoku puzzles using both set and integer 
  * constraints
@@ -390,6 +502,10 @@ main(int argc, char* argv[]) {
   opt.model(Sudoku::MODEL_SET, "set", "use set constraints");
   opt.model(Sudoku::MODEL_MIXED, "mixed", 
             "use both integer and set constraints");
+#ifdef GECODE_HAVE_CPLTSET_VARS
+  opt.model(Sudoku::MODEL_CPLT, "cpltset", 
+            "use CpltSet constraints");
+#endif
   opt.propagation(SudokuInt::PROP_NONE);
   opt.propagation(SudokuInt::PROP_NONE, "none", "no additional constraints");
   opt.propagation(SudokuInt::PROP_SAME, "same",
@@ -412,6 +528,11 @@ main(int argc, char* argv[]) {
   case Sudoku::MODEL_MIXED:
     Example::run<SudokuMixed,DFS,SizeOptions>(opt);
     break;
+#ifdef GECODE_HAVE_CPLTSET_VARS
+  case Sudoku::MODEL_CPLT:
+    Example::run<SudokuCpltSet,DFS,SizeOptions>(opt);
+    break;
+#endif
   }
 #else
   Example::run<SudokuInt,DFS,SizeOptions>(opt);
