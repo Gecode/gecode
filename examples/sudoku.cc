@@ -235,54 +235,52 @@ public:
   /// Constructor
   SudokuSet(const SizeOptions& opt)
     : Sudoku(opt),
-      y(this,n*n,IntSet::empty,1,n*n*n*n,9,9) {
+      y(this,n*n,IntSet::empty,1,n*n*n*n,n*n,n*n) {
 
     const int nn = n*n;
 
-    IntSet row[9];
-    IntSet col[9];
-    IntSet block[9];
+    GECODE_AUTOARRAY(IntSet, row, nn);
+    GECODE_AUTOARRAY(IntSet, col, nn);
+    GECODE_AUTOARRAY(IntSet, block, nn);
 
     // Set up the row and column set constants
-    for (int i=0; i<9; i++) {
-      IntSet dsr((i*nn)+1, (i*nn)+9);
-      row[i] = dsr;
+    for (int i=0; i<nn; i++) {
+      new (&row[i]) IntSet((i*nn)+1, (i+1)*nn);
 
-      int dsc_arr[9] =
-        { 1+i, 10+i, 19+i, 28+i, 37+i, 46+i, 55+i, 64+i, 73+i };
-      IntSet dsc(dsc_arr, 9);
-
-      col[i] = dsc;
+      GECODE_AUTOARRAY(int, dsc, nn);
+      for (int j=0; j<nn; j++) {
+        dsc[j] = (j*nn)+1+i;
+      }
+      new (&col[i]) IntSet (dsc, nn);
     }
 
     // Set up the block set constants
-    for (int i=0; i<3; i++) {
-      for (int j=0; j<3; j++) {
-        int dsb_arr[9] = {
-          (j*27)+(i*3)+1, (j*27)+(i*3)+2, (j*27)+(i*3)+3,
-          (j*27)+(i*3)+10, (j*27)+(i*3)+11, (j*27)+(i*3)+12,
-          (j*27)+(i*3)+19, (j*27)+(i*3)+20, (j*27)+(i*3)+21
-        };
-        IntSet dsb(dsb_arr, 9);
-        block[i*3+j]=dsb;
+    for (int i=0; i<n; i++) {
+      for (int j=0; j<n; j++) {
+        GECODE_AUTOARRAY(int, dsb_arr, nn);
+        
+        for (int ii=0; ii<n; ii++) {
+          for (int jj=0; jj<n; jj++) {
+            dsb_arr[ii*n+jj] = j*nn*n+i*n+jj*nn+ii+1;
+          }
+        }
+        new (&block[i*n+j]) IntSet(dsb_arr, nn);
       }
     }
 
-    // All x must be pairwise disjoint
-    for (int i=0; i<nn-1; i++)
-      for (int j=i+1; j<nn; j++)
-         rel(this, y[i], SRT_DISJ, y[j]);
-    distinct(this, y, nn);
+    IntSet full(1, nn*nn);
+    // All x must be pairwise disjoint and partition the field indices
+    rel(this, SOT_DUNION, y, SetVar(this, full, full));
 
     // The x must intersect in exactly one element with each
     // row, column, and block
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++) {
-        SetVar inter_row(this, IntSet::empty, 1, 9*9, 1, 1);
+        SetVar inter_row(this, IntSet::empty, full, 1, 1);
         rel(this, y[i], SOT_INTER, row[j], SRT_EQ, inter_row);
-        SetVar inter_col(this, IntSet::empty, 1, 9*9, 1, 1);
+        SetVar inter_col(this, IntSet::empty, full, 1, 1);
         rel(this, y[i], SOT_INTER, col[j], SRT_EQ, inter_col);
-        SetVar inter_block(this, IntSet::empty, 1, 9*9, 1, 1);
+        SetVar inter_block(this, IntSet::empty, full, 1, 1);
         rel(this, y[i], SOT_INTER, block[j], SRT_EQ, inter_block);
       }
 
@@ -354,10 +352,10 @@ public:
 
     channel(this, xs, ys);
 
-    IntArgs values(9);
-    for (int i=9; i--;)
+    IntArgs values(nn);
+    for (int i=nn; i--;)
       values[i] = i+1;
-    count(this, x, IntSet(9,9), values, ICL_DOM);    
+    count(this, x, IntSet(nn,nn), values, ICL_DOM);
   }
   
   /// Constructor for cloning \a s
