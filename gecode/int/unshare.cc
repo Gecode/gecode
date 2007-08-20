@@ -48,78 +48,72 @@ namespace Gecode {
     template <class Var>
     forceinline bool
     varbefore(Var x, Var y) {
-      typename VarViewTraits<Var>::View vx;
-      typename VarViewTraits<Var>::View vy;
+      typename VarViewTraits<Var>::View vx(x);
+      typename VarViewTraits<Var>::View vy(y);
       return before(vx,vy);
     }
 
     /// Check sharing for variables
     template <class Var>
     forceinline bool
-    varshared(Var x, Var y) {
-      typename VarViewTraits<Var>::View vx;
-      typename VarViewTraits<Var>::View vy;
-      return shared(vx,vy);
+    varsame(Var x, Var y) {
+      typename VarViewTraits<Var>::View vx(x);
+      typename VarViewTraits<Var>::View vy(y);
+      return same(vx,vy);
     }
 
-
-    /// Store variable and its position for sorting
-    template <class Var>
-    class VarPos {
-    protected:
-      /// Sort order for views
-      class VarLess {
-      public:
-        bool operator()(const VarPos<Var>&, const VarPos<Var>&);
-      };
+    /// Sort order for variables
+    template<class Var>
+    class VarPtrLess {
     public:
-      Var x; ///< The variable
-      int i; ///< Position of variable in original array
-      /// Sort array according to variable
-      static void sort(VarPos<Var>* x, int n);
+      forceinline bool 
+      operator()(const Var* a, const Var* b) {
+        return varbefore(*a,*b);
+      }
     };
     
     
-    template <class Var>
-    forceinline bool
-    VarPos<Var>::VarLess::operator()(const VarPos<Var>& a, 
-                                     const VarPos<Var>& b) {
-      return varbefore(a.x,b.x);
-    }
-    
-    template <class Var>
-    inline void
-    VarPos<Var>::sort(VarPos<Var>* x, int n) { 
-      VarLess vl;
-      Support::quicksort<VarPos<Var>,VarLess>(x,n,vl);
-    }
-    
     /// Return a fresh yet equal integer variable
     forceinline ExecStatus
-    link(Space* home, IntVar x, IntVar& y, IntConLevel icl) {
-      if (x.assigned()) {
-        y=x;
-      } else {
-        IntVar z(home,x.min(),x.max());
-        if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
-          GECODE_ES_CHECK((Rel::EqDom<IntView,IntView>::post(home,x,z)));
-        } else {
-          GECODE_ES_CHECK((Rel::EqBnd<IntView,IntView>::post(home,x,z)));
+    link(Space* home, IntVar** x, int n, IntConLevel icl) {
+      if (n > 2) {
+        ViewArray<IntView> y(home,n);
+        y[0]=*x[0];
+        for (int i=1; i<n; i++) {
+          x[i]->init(home,x[0]->min(),x[0]->max()); y[i]=*x[i];
         }
-        y=z;
+        if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
+          GECODE_ES_CHECK(Rel::NaryEqDom<IntView>::post(home,y));
+        } else {
+          GECODE_ES_CHECK(Rel::NaryEqBnd<IntView>::post(home,y));
+        }
+      } else if (n == 2) {
+        IntVar z(home,x[0]->min(),x[0]->max());
+        *x[1]=z;
+        if ((icl == ICL_DOM) || (icl == ICL_DEF)) {
+          GECODE_ES_CHECK((Rel::EqDom<IntView,IntView>::post
+                           (home,*x[0],*x[1])));
+        } else {
+          GECODE_ES_CHECK((Rel::EqBnd<IntView,IntView>::post
+                           (home,*x[0],*x[1])));
+        }
       }
       return ES_OK;
     }
     
     /// Return a fresh yet equal Boolean variable
     forceinline ExecStatus
-    link(Space* home, BoolVar x, BoolVar& y, IntConLevel) {
-      if (x.assigned()) {
-        y=x;
-      } else {
-        BoolVar z(home,0,1);
-        GECODE_ES_CHECK((Bool::Eq<BoolView,BoolView>::post(home,x,z)));
-        y=z;
+    link(Space* home, BoolVar** x, int n, IntConLevel) {
+      if (n > 2) {
+        ViewArray<BoolView> y(home,n);
+        y[0]=*x[0];
+        for (int i=1; i<n; i++) {
+          x[i]->init(home,0,1); y[i]=*x[i];
+        }
+        GECODE_ES_CHECK(Bool::NaryEq<BoolView>::post(home,y));
+      } else if (n == 2) {
+        x[1]->init(home,0,1);
+        GECODE_ES_CHECK((Bool::Eq<BoolView,BoolView>::post(home,*x[0],*x[1])));
       }
       return ES_OK;
     }
@@ -131,17 +125,21 @@ namespace Gecode {
       int n=x.size();
       if (n < 2)
         return ES_OK;
-      // Initialize array with views and positions
-      GECODE_AUTOARRAY(VarPos<Var>,y,n);
-      for (int i=n; i--; ) {
-        y[i].x=x[i]; y[i].i=i;
-      }
-      VarPos<Var>::sort(y,n);
+
+      GECODE_AUTOARRAY(Var*,y,n);
+      for (int i=n; i--; )
+        y[i]=&x[i];
+
+      VarPtrLess<Var> vpl;
+      Support::quicksort<Var*,VarPtrLess<Var> >(y,n,vpl);
+
       // Replace all shared variables with new and equal variables
       for (int i=0; i<n;) {
-        Var z = y[i++].x;
-        while ((i<n) && varshared(z,y[i].x))
-          GECODE_ES_CHECK(link(home,z,x[y[i++].i],icl));
+        int j=i++;
+        while ((i<n) && varsame(*y[j],*y[i]))
+          i++;
+        if (!y[j]->assigned())
+          link(home,&y[j],i-j,icl);
       }
       return ES_OK;
     }

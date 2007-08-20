@@ -41,6 +41,7 @@
 
 namespace {
 
+  IntSet ds_01(0,1);
   IntSet ds_22(-2,2);
   IntSet ds_14(-1,4);
 
@@ -129,29 +130,93 @@ namespace {
   
   RegularDistinct rd;
 
-  class RegularShared : public IntTest {
+  class RegularSharedA : public IntTest {
   public:
-    RegularShared(void)
-      : IntTest("Regular::Shared",2,ds_22,false,ICL_DOM) {}
+    RegularSharedA(void)
+      : IntTest("Regular::Shared::A",4,ds_22,false,ICL_DOM) {}
     virtual bool solution(const Assignment& x) const {
       return (((x[0] == 0) || (x[0] == 2)) &&
               ((x[1] == -1) || (x[1] == 1)) &&
-              ((x[0] == 0) || (x[0] == 1)) &&
-              ((x[1] == 0) || (x[1] == 1)));
+              ((x[2] == 0) || (x[2] == 1)) &&
+              ((x[3] == 0) || (x[3] == 1)));
     }
     virtual void post(Space* home, IntVarArray& x) {
-      IntVarArgs y(4);
-      y[0]=x[0]; y[1]=x[1]; y[2]=x[0]; y[3]=x[1];
-      unshare(home,y);
       DFA da = ((REG(0) | REG(2)) +
                 (REG(-1) | REG(1)) +
                 (REG(7) | REG(0) | REG(1)) +
-                (REG(0) | REG(1)));
+                (REG(0) | REG(1)))(2,2);
+      IntVarArgs y(8);
+      for (int i=0; i<4; i++)
+        y[i]=y[i+4]=x[i];
+      unshare(home,y);
       regular(home, y, da);
     }
   };
 
-  RegularShared rs;
+  RegularSharedA rsa;
+
+  class RegularSharedB : public IntTest {
+  public:
+    RegularSharedB(void)
+      : IntTest("Regular::Shared::B",4,ds_22,false,ICL_DOM) {}
+    virtual bool solution(const Assignment& x) const {
+      return (((x[0] == 0) || (x[0] == 2)) &&
+              ((x[1] == -1) || (x[1] == 1)) &&
+              ((x[2] == 0) || (x[2] == 1)) &&
+              ((x[3] == 0) || (x[3] == 1)));
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      DFA da = ((REG(0) | REG(2)) +
+                (REG(-1) | REG(1)) +
+                (REG(7) | REG(0) | REG(1)) +
+                (REG(0) | REG(1)))(3,3);
+      IntVarArgs y(12);
+      for (int i=0; i<4; i++)
+        y[i]=y[i+4]=y[i+8]=x[i];
+      unshare(home,y);
+      regular(home, y, da);
+    }
+  };
+
+  RegularSharedB rsb;
+
+  class RegularSharedC : public IntTest {
+  public:
+    RegularSharedC(void)
+      : IntTest("Regular::Shared::C",4,ds_01,false,ICL_DOM) {}
+    virtual bool solution(const Assignment& x) const {
+      return (x[1]==1) && (x[2]==0) && (x[3]==1);
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      DFA da = ((REG(0) | REG(1)) + REG(1) + REG(0) + REG(1))(2,2);
+      BoolVarArgs y(8);
+      for (int i=0; i<4; i++)
+        y[i]=y[i+4]=channel(home,x[i]);
+      unshare(home,y);
+      regular(home, y, da);
+    }
+  };
+
+  RegularSharedC rsc;
+
+  class RegularSharedD : public IntTest {
+  public:
+    RegularSharedD(void)
+      : IntTest("Regular::Shared::D",4,ds_01,false,ICL_DOM) {}
+    virtual bool solution(const Assignment& x) const {
+      return (x[1]==1) && (x[2]==0) && (x[3]==1);
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      DFA da = ((REG(0) | REG(1)) + REG(1) + REG(0) + REG(1))(3,3);
+      BoolVarArgs y(12);
+      for (int i=0; i<4; i++)
+        y[i]=y[i+4]=y[i+8]=channel(home,x[i]);
+      unshare(home,y);
+      regular(home, y, da);
+    }
+  };
+
+  RegularSharedD rsd;
 
 }
 
