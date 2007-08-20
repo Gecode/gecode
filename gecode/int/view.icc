@@ -1348,6 +1348,9 @@ namespace Gecode {
       BoolView(const BoolVar& x);
       /// Initialize from Boolean variable \a x
       BoolView(BoolVarImp* x);
+      /// Initialize from specification
+      BoolView(Space* home, const Reflection::VarMap& vars,
+               Reflection::Arg* arg);
       //@}
 
       /// \name Domain status access

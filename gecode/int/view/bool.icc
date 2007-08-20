@@ -51,6 +51,11 @@ namespace Gecode {
     forceinline
     BoolView::BoolView(BoolVarImp* x)
       : VariableViewBase<BoolVarImp>(x) {}
+    forceinline
+    BoolView::BoolView(Space* /*home*/, const Reflection::VarMap& vars,
+                       Reflection::Arg* arg)
+    : VariableViewBase<BoolVarImp>(
+        static_cast<BoolVarImp*>(vars.var(arg->toVar()))) {}
     
 
     /*

@@ -101,6 +101,9 @@ namespace Gecode {
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this branching
     static Support::String name(void);
+    /// Post branching according to specification
+    static void post(Space* home, const Reflection::VarMap& m,
+                     const Reflection::ActorSpec& spec);
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
   };
@@ -143,6 +146,9 @@ namespace Gecode {
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this assignment
     static Support::String name(void);
+    /// Post assignment according to specification
+    static void post(Space* home, const Reflection::VarMap& m,
+                     const Reflection::ActorSpec& spec);
     /// Perform cloning
     virtual Actor* copy(Space* home, bool share);
   };
@@ -297,14 +303,20 @@ namespace Gecode {
   }
 
   template <class View, class Val, class ViewSel, class ValSel>
+  void
+  ViewValBranching<View,Val,ViewSel,ValSel>
+    ::post(Space* home, const Reflection::VarMap& vars,
+           const Reflection::ActorSpec& spec) {
+    ViewArray<View> x(home, vars, spec[0]);
+    (void) new (home) ViewValBranching<View,Val,ViewSel,ValSel>(home, x);
+  }
+
+  template <class View, class Val, class ViewSel, class ValSel>
   Reflection::ActorSpec&
   ViewValBranching<View,Val,ViewSel,ValSel>::spec(Space* home,
     Reflection::VarMap& m) {
     Reflection::ActorSpec& s = Branching::spec(home, m, name());
-    Reflection::Type* t = new Reflection::Type(2);
-    (*t)[0] = ViewSel::type();
-    (*t)[1] = ValSel::type();
-    return s << new Reflection::TypedArg(t, x.spec(home, m));
+    return s << x.spec(home, m);
   }
 
 
@@ -375,11 +387,20 @@ namespace Gecode {
   }
 
   template <class View, class Val, class ValSel>
+  void
+  ViewValAssignment<View,Val,ValSel>
+    ::post(Space* home, const Reflection::VarMap& vars,
+           const Reflection::ActorSpec& spec) {
+    ViewArray<View> x(home, vars, spec[0]);
+    (void) new (home) ViewValAssignment<View,Val,ValSel>(home, x);
+  }
+
+  template <class View, class Val, class ValSel>
   Reflection::ActorSpec&
   ViewValAssignment<View,Val,ValSel>::spec(Space* home,
     Reflection::VarMap& m) {
     Reflection::ActorSpec& s = Branching::spec(home, m, name());
-    return s << new Reflection::TypedArg(ValSel::type(), x.spec(home, m));
+    return s << x.spec(home, m);
   }
 
 }

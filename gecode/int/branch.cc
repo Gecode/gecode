@@ -206,6 +206,63 @@ namespace Gecode {
     }
   }
 
+  namespace Int { namespace Branch {
+
+    template<class View, class Val, template <class> class SelView>
+    class Creator {
+    public:
+      Reflection::Registrar<ViewValBranching<View,Val,SelView<View>,
+        Branch::ValMin<View> > > r1;
+      Reflection::Registrar<ViewValBranching<View,Val,SelView<View>,
+        ValMed<View> > > r2;
+      Reflection::Registrar<ViewValBranching<View,Val,SelView<View>,
+        ValMax<View> > > r3;
+      Reflection::Registrar<ViewValBranching<View,Val,SelView<View>,
+        ValSplitMin<View> > > r4;
+      Reflection::Registrar<ViewValBranching<View,Val,SelView<View>,
+        ValSplitMax<View> > > r5;
+    };
+
+    Creator<IntView,int,BySizeMin> c1;
+    Creator<IntView,int,BySizeMax> c2;
+    Creator<IntView,int,ByMinMin> c3;
+    Creator<IntView,int,ByMinMax> c4;
+    Creator<IntView,int,ByMaxMin> c5;
+    Creator<IntView,int,ByMaxMax> c6;
+    Creator<IntView,int,ByNone> c7;
+    Creator<IntView,int,ByRegretMinMin> c8;
+    Creator<IntView,int,ByRegretMinMax> c9;
+    Creator<IntView,int,ByRegretMaxMin> c10;
+    Creator<IntView,int,ByRegretMaxMax> c11;
+    Creator<IntView,int,ByDegreeMin> c12;
+    Creator<IntView,int,ByDegreeMax> c13;
+
+    Reflection::Registrar<ViewValBranching<BoolView,NoValue,
+      ByDegreeMaxNoTies<BoolView>,ValOneZero<BoolView> > > r1;
+    Reflection::Registrar<ViewValBranching<BoolView,NoValue,
+      ByDegreeMaxNoTies<BoolView>,ValZeroOne<BoolView> > > r2;
+    Reflection::Registrar<ViewValBranching<BoolView,NoValue,
+      ByDegreeMinNoTies<BoolView>,ValOneZero<BoolView> > > r3;
+    Reflection::Registrar<ViewValBranching<BoolView,NoValue,
+      ByDegreeMinNoTies<BoolView>,ValZeroOne<BoolView> > > r4;
+    Reflection::Registrar<ViewValBranching<BoolView,NoValue,
+      ByNone<BoolView>,ValOneZero<BoolView> > > r5;
+    Reflection::Registrar<ViewValBranching<BoolView,NoValue,
+      ByNone<BoolView>,ValZeroOne<BoolView> > > r6;
+
+    Reflection::Registrar<ViewValAssignment<IntView,int,
+      ValMax<IntView> > > r7;
+    Reflection::Registrar<ViewValAssignment<IntView,int,
+      ValMed<IntView> > > r8;
+    Reflection::Registrar<ViewValAssignment<IntView,int,
+      ValMin<IntView> > > r9;
+    Reflection::Registrar<ViewValAssignment<BoolView,NoValue,
+      ValOneZero<BoolView> > > r10;
+    Reflection::Registrar<ViewValAssignment<BoolView,NoValue,
+      ValZeroOne<BoolView> > > r11;
+
+  }}
+
 }
 
 
