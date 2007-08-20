@@ -107,10 +107,24 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template<class BV>
+  inline Support::String
+  Lq<BV>::name(void) {
+    return Reflection::mangle<BV>("Int::Bool::Lq");
+  }
+
+  template<class BV>
   Reflection::ActorSpec&
   Lq<BV>::spec(Space* home, Reflection::VarMap& m) {
-    return BoolBinary<BV,BV>::spec(home, m, 
-      Reflection::mangle<BV>("Int::Bool::Lq"));
+    return BoolBinary<BV,BV>::spec(home, m, name());
+  }
+
+  template<class BV>
+  void
+  Lq<BV>::post(Space* home, const Reflection::VarMap& vars,
+               const Reflection::ActorSpec& spec) {
+    BV b0(home, vars, spec[0]->typedArg());
+    BV b1(home, vars, spec[1]->typedArg());
+    (void) new (home) Lq<BV>(home,b0,b1);
   }
 
   /*

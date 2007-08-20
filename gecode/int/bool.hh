@@ -128,6 +128,9 @@ namespace Gecode { namespace Int { namespace Bool {
     static  ExecStatus post(Space* home, BVA b0, BVB b1);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::String name(void);
   };
@@ -190,6 +193,9 @@ namespace Gecode { namespace Int { namespace Bool {
     static  ExecStatus post(Space* home, BV b0, BV b1);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::String name(void);
   };
@@ -236,6 +242,9 @@ namespace Gecode { namespace Int { namespace Bool {
     static  ExecStatus post(Space* home, BVA b0, BVB b1);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::String name(void);
   };
@@ -271,6 +280,9 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual size_t dispose(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::String name(void);
   };
@@ -308,6 +320,9 @@ namespace Gecode { namespace Int { namespace Bool {
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
     static Support::String name(void);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
   };
@@ -339,6 +354,9 @@ namespace Gecode { namespace Int { namespace Bool {
     static  ExecStatus post(Space* home, BVA b0, BVB b1, BVC b2);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::String name(void);
   };
@@ -367,6 +385,9 @@ namespace Gecode { namespace Int { namespace Bool {
     static  ExecStatus post(Space* home, ViewArray<BV>& b, BV c);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::String name(void);
   };
@@ -402,6 +423,9 @@ namespace Gecode { namespace Int { namespace Bool {
     static  ExecStatus post(Space* home, ViewArray<BV>& b);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::String name(void);
   };
@@ -432,6 +456,9 @@ namespace Gecode { namespace Int { namespace Bool {
     static  ExecStatus post(Space* home, BVA b0, BVB b1, BVC b2);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post using specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::String name(void);
   };

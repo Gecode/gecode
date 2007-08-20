@@ -1566,6 +1566,9 @@ namespace Gecode {
       NegBoolView(const BoolView& b);
       /// Initialize with Boolean view \a b
       void init(const BoolView& b);
+      /// Initialize from specification
+      NegBoolView(Space* home, const Reflection::VarMap& vars,
+                  Reflection::Arg* arg);
       //@}
 
       /// \name Domain status access

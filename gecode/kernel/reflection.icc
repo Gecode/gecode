@@ -180,7 +180,7 @@ namespace Gecode { namespace Reflection {
     /// Destructor
     GECODE_KERNEL_EXPORT virtual ~ArrayArg(void);
     
-    // const Arg*& operator[](int i) const;
+    const Arg* operator[](int i) const;
     Arg*& operator[](int i);
     int size(void) const;
   };
@@ -551,6 +551,12 @@ namespace Gecode { namespace Reflection {
   forceinline
   IntArg::IntArg(int i0) : i(i0) {}
 
+  forceinline const Arg*
+  ArrayArg::operator[](int i) const {
+    if (i >= n)
+      throw ReflectionException("Array index out of range");
+    return a[i];
+  }
   forceinline Arg*&
   ArrayArg::operator[](int i) {
     if (i >= n)

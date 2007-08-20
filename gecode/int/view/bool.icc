@@ -323,6 +323,10 @@ namespace Gecode {
     NegBoolView::init(const BoolView& b) {
       view = b;
     }
+    forceinline
+    NegBoolView::NegBoolView(Space* home, const Reflection::VarMap& vars,
+                             Reflection::Arg* arg)
+    : DerivedViewBase<BoolView>(BoolView(home, vars, arg)) {}
 
 
     /*

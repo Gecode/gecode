@@ -153,10 +153,24 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BVA, class BVB, class BVC>
+  inline Support::String
+  Eqv<BVA,BVB,BVC>::name(void) {
+    return Reflection::mangle<BVA,BVB,BVC>("Int::Bool::Eqv");
+  }
+  template <class BVA, class BVB, class BVC>
   Reflection::ActorSpec&
   Eqv<BVA,BVB,BVC>::spec(Space* home, Reflection::VarMap& m) {
-    return BoolTernary<BVA,BVB,BVC>::spec(home, m, 
-      Reflection::mangle<BVA,BVB,BVC>("Int::Bool::Eqv"));
+    return BoolTernary<BVA,BVB,BVC>::spec(home, m, name());
+  }
+
+  template <class BVA, class BVB, class BVC>
+  void
+  Eqv<BVA,BVB,BVC>::post(Space* home, const Reflection::VarMap& vars,
+                         const Reflection::ActorSpec& spec) {
+    BVA b0(home, vars, spec[0]->typedArg());
+    BVB b1(home, vars, spec[1]->typedArg());
+    BVC b2(home, vars, spec[2]->typedArg());
+    (void) new (home) Eqv<BVA,BVB,BVC>(home,b0,b1,b2);
   }
 
 }}}

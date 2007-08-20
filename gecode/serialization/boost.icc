@@ -40,6 +40,8 @@
 #include <boost/serialization/split_free.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/base_object.hpp>
+#include "gecode/support/string.hh"
+#include <sstream>
 
 namespace boost { namespace serialization {
   
@@ -87,7 +89,9 @@ namespace boost { namespace serialization {
     int n = t->arity();
     ar << n;
     if (t->primitive()) {
-      Support::String name(t->name());
+      std::stringstream oss;
+      oss << t->name();
+      std::string name = oss.str();
       ar << name;
     }
   }
@@ -101,9 +105,10 @@ namespace boost { namespace serialization {
       int m;
       ar >> m;
       if (m == 0) {
-        Support::String name;
+        std::string name;
         ar >> name;
-        ::new(t)Gecode::Reflection::Type(name.c_str());
+        ::new(t)Gecode::Reflection::Type(
+          Gecode::Support::String(name.c_str(),true));
       } else {
         ::new(t)Gecode::Reflection::Type(m);
       }
@@ -246,7 +251,7 @@ namespace boost { namespace serialization {
   template<class Archive>
   inline void save_construct_data(
       Archive & ar,
-      const Gecode::Reflection::ArrayArg<Gecode::Reflection::Arg*>* t,
+      const Gecode::Reflection::ArrayArg* t,
       const unsigned int file_version
   ){
     // save data required to construct instance
@@ -255,31 +260,31 @@ namespace boost { namespace serialization {
   }
   template<class Archive>
   inline void load_construct_data(
-      Archive & ar, Gecode::Reflection::ArrayArg<Gecode::Reflection::Arg*>* t,
+      Archive & ar, Gecode::Reflection::ArrayArg* t,
       const unsigned int file_version
   ){
       // retrieve data from archive required to construct new instance
       int m;
       ar >> m;
       // invoke inplace constructor to initialize instance of my_class
-      ::new(t)Gecode::Reflection::ArrayArg<Gecode::Reflection::Arg*>(m);
+      ::new(t)Gecode::Reflection::ArrayArg(m);
   }
   template<class Archive>
   void save(
     Archive& ar,
-    const Gecode::Reflection::ArrayArg<Gecode::Reflection::Arg*>& arg,
+    const Gecode::Reflection::ArrayArg& arg,
     const unsigned int file_version
   ) {
     ar << boost::serialization::base_object<Gecode::Reflection::Arg>(arg);
     for (int i=0; i<arg.size(); i++) {
-      Gecode::Reflection::Arg* const k = arg[i];
+      const Gecode::Reflection::Arg* const k = arg[i];
       ar << k;
     }
   }
   template<class Archive>
   void load(
     Archive& ar,
-    Gecode::Reflection::ArrayArg<Gecode::Reflection::Arg*>& arg,
+    Gecode::Reflection::ArrayArg& arg,
     const unsigned int file_version
   ) {
     ar >> boost::serialization::base_object<Gecode::Reflection::Arg>(arg);
@@ -292,7 +297,7 @@ namespace boost { namespace serialization {
   template<class Archive>
   void serialize(
     Archive& ar,
-    Gecode::Reflection::ArrayArg<Gecode::Reflection::Arg*>& arg,
+    Gecode::Reflection::ArrayArg& arg,
     const unsigned int file_version
   ) {
     split_free(ar, arg, file_version);
@@ -343,7 +348,9 @@ namespace boost { namespace serialization {
       const unsigned int file_version
   ){
     // save data required to construct instance
-    std::string s(t->s);
+    std::stringstream oss;
+    oss << t->s;
+    std::string s = oss.str();
     ar << s;
   }
   template<class Archive>
@@ -355,7 +362,8 @@ namespace boost { namespace serialization {
     std::string s;
     ar >> s;
     // invoke inplace constructor to initialize instance of my_class
-    ::new(t)Gecode::Reflection::StringArg(s.c_str());
+    ::new(t)Gecode::Reflection::StringArg(
+      Gecode::Support::String(s.c_str(),true));
   }
   template<class Archive>
   void serialize(
@@ -411,7 +419,9 @@ namespace boost { namespace serialization {
       const unsigned int file_version
   ){
     // save data required to construct instance
-    std::string n(t->name());
+    std::stringstream oss;
+    oss << t->name();
+    std::string n = oss.str();
     ar << n;
   }
   template<class Archive>
@@ -423,7 +433,8 @@ namespace boost { namespace serialization {
     std::string n;
     ar >> n;
     // invoke inplace constructor to initialize instance of my_class
-    ::new(t)Gecode::Reflection::ActorSpec(n.c_str());
+    ::new(t)Gecode::Reflection::ActorSpec(
+      Gecode::Support::String(n.c_str(),true));
   }
   template<class Archive>
   void save(
@@ -465,7 +476,7 @@ BOOST_CLASS_EXPORT(Gecode::Reflection::Type)
 BOOST_CLASS_EXPORT(Gecode::Reflection::IntArg)
 BOOST_CLASS_EXPORT(Gecode::Reflection::VarArg)
 BOOST_CLASS_EXPORT(Gecode::Reflection::IntArrayArg)
-BOOST_CLASS_EXPORT(Gecode::Reflection::ArrayArg<Gecode::Reflection::Arg*>)
+BOOST_CLASS_EXPORT(Gecode::Reflection::ArrayArg)
 BOOST_CLASS_EXPORT(Gecode::Reflection::TypedArg)
 BOOST_CLASS_EXPORT(Gecode::Reflection::StringArg)
 BOOST_CLASS_EXPORT(Gecode::Reflection::PairArg)
