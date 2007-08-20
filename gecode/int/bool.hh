@@ -134,6 +134,39 @@ namespace Gecode { namespace Int { namespace Bool {
 
 
   /**
+   * \brief n-ary Boolean equality propagator
+   *
+   * Requires \code #include "gecode/int/bool.hh" \endcode
+   * \ingroup FuncIntProp
+   */
+  template<class BV>
+  class NaryEq : public NaryPropagator<BV,PC_BOOL_VAL> {
+  protected:
+    using NaryPropagator<BV,PC_BOOL_VAL>::x;
+    /// Constructor for posting
+    NaryEq(Space* home, ViewArray<BV>& x);
+    /// Constructor for cloning \a p
+    NaryEq(Space* home, bool share, NaryEq& p);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor* copy(Space* home, bool share);
+    /// Cost function (defined as PC_UNARY_LO)
+    virtual PropCost cost(void) const;
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
+    static  ExecStatus post(Space* home, ViewArray<BV>& x);
+    /// Post propagator for specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    static Support::String name(void);
+  };
+
+
+  /**
    * \brief Boolean less or equal propagator
    *
    * Requires \code #include "gecode/int/bool.hh" \endcode

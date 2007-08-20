@@ -120,6 +120,104 @@ namespace Gecode { namespace Int { namespace Bool {
     return BoolBinary<BVA,BVB>::spec(home, m, 
       Reflection::mangle<BVA,BVB>("Int::Bool::Eq"));
   }
+
+
+  
+  template<class BV>
+  forceinline
+  NaryEq<BV>::NaryEq(Space* home, ViewArray<BV>& x)
+    : NaryPropagator<BV,PC_BOOL_VAL>(home,x) {}
+
+  template<class BV>
+  forceinline
+  NaryEq<BV>::NaryEq(Space* home, bool share, NaryEq<BV>& p)
+    : NaryPropagator<BV,PC_BOOL_VAL>(home,share,p) {}
+
+  template<class BV>
+  Actor*
+  NaryEq<BV>::copy(Space* home, bool share) {
+    return new (home) NaryEq<BV>(home,share,*this);
+  }
+
+  template<class BV>
+  inline ExecStatus
+  NaryEq<BV>::post(Space* home, ViewArray<BV>& x) {
+    x.unique();
+    int n = x.size();
+    if (n < 2)
+      return ES_OK;
+    if (n == 2)
+      return Eq<BV,BV>::post(home,x[0],x[1]);
+    for (int i=n; i--; )
+      if (x[i].assigned()) {
+        if (x[i].one()) {
+          for (int j=i; j--; )
+            GECODE_ME_CHECK(x[j].one(home));
+          for (int j=i+1; j<n; j++)
+            GECODE_ME_CHECK(x[j].one_none(home));
+        } else {
+          for (int j=i; j--; )
+            GECODE_ME_CHECK(x[j].zero(home));
+          for (int j=i+1; j<n; j++)
+            GECODE_ME_CHECK(x[j].zero_none(home));
+        }
+        return ES_OK;
+      }
+    (void) new (home) NaryEq<BV>(home,x);
+    return ES_OK;
+  }
+
+  template<class BV>
+  void
+  NaryEq<BV>::post(Space* home, const Reflection::VarMap& vars,
+                   const Reflection::ActorSpec& spec) {
+    ViewArray<View> x(home, vars, spec[0]);
+    (void) new (home) NaryEq<BV>(home, x);
+  }
+
+  template<class BV>
+  PropCost
+  NaryEq<BV>::cost(void) const {
+    return PC_UNARY_LO;
+  }
+
+  template<class BV>
+  ExecStatus
+  NaryEq<BV>::propagate(Space* home) {
+    int n=x.size();
+    int i=0;
+    while (true) {
+      if (x[i].assigned()) {
+        if (x[i].one()) {
+          for (int j=0; j<i; j++)
+            GECODE_ME_CHECK(x[j].one_none(home));
+          for (int j=i+1; j<n; j++)
+            GECODE_ME_CHECK(x[j].one(home));
+        } else {
+          for (int j=0; j<i; j++)
+            GECODE_ME_CHECK(x[j].zero_none(home));
+          for (int j=i+1; j<n; j++)
+            GECODE_ME_CHECK(x[j].zero(home));
+        }
+        return ES_SUBSUMED(this,sizeof(*this));
+      }
+      i++;
+    }
+    GECODE_NEVER;
+    return ES_FIX;
+  }
+
+  template<class BV>
+  forceinline Support::String
+  NaryEq<BV>::name(void) {
+    return Reflection::mangle<BV>("Int::Bool::NaryEq");
+  }
+  
+  template<class BV>
+  Reflection::ActorSpec&
+  NaryEq<BV>::spec(Space* home, Reflection::VarMap& m) {
+    return NaryPropagator<BV,PC_BOOL_VAL>::spec(home, m, name());
+  }
   
 }}}
 
