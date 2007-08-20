@@ -62,7 +62,10 @@ namespace Gecode { namespace Support {
         }
       }
       return false;
-    };
+    }
+    int size(void) { return n; }
+    const Key& key(int i) const { return a[i].k; }
+    const Key& value(int i) const { return a[i].v; }
   };
   
   template <class Value>

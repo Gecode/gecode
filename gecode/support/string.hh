@@ -61,10 +61,8 @@ namespace Gecode { namespace Support {
       /// Reference counting: subscribe to an SO
       void subscribe(void);
 
-      union {
-        const char* c; ///< Used if the SO does not own the string
-        char* o;       ///< Used if the SO owns the string
-      } s;
+      /// The actual string
+      const char* s;
       /// Whether the SO owns the string
       bool own;
       /// Left branch of a string tree, or NULL if the SO has an actual string
@@ -84,10 +82,6 @@ namespace Gecode { namespace Support {
       unsigned int size(void) const;
       /// Output to \a os
       std::ostream& print(std::ostream& os) const;
-      /// Copy this string into \a to starting at position \a i
-      int fill(char* to, int i) const;
-      /// Return a newly allocated copy of this string
-      char* c_str() const;
     };
     
     /** \brief Character-wise iterator for string objects
@@ -155,16 +149,7 @@ namespace Gecode { namespace Support {
 
   forceinline
   String::SO::SO(const char* s0, bool copy)
-  : own(copy), left(NULL), right(NULL) {
-    if (own) {
-      int size = strlen(s0);
-      s.o = static_cast<char*>(Memory::malloc(sizeof(char*)*(size+1)));
-      memcpy(s.o, s0, size);
-      s.o[size] = 0;
-    } else {
-      s.c = s0;
-    }
-  }
+  : s(copy ? strdup(s0) : s0), own(copy), left(NULL), right(NULL) {}
 
   forceinline bool
   String::SO::cancel(void) { return --use_cnt == 0; }
@@ -173,15 +158,15 @@ namespace Gecode { namespace Support {
   String::SO::subscribe(void) { ++use_cnt; }
 
   forceinline
-  String::SO::SO(SO* l, SO* r) : own(false), left(l), right(r) {
-    s.c = NULL; assert(l != NULL); assert(r != NULL);
+  String::SO::SO(SO* l, SO* r) : s(NULL), own(false), left(l), right(r) {
+    assert(l != NULL); assert(r != NULL);
     left->subscribe(); right->subscribe();
   }
 
   forceinline
   String::SO::~SO(void) {
     if (own)
-      Memory::free(s.o);
+      free(const_cast<char*>(s));
     if (left && left->cancel())
       delete left;
     if (right && right->cancel())
@@ -190,8 +175,8 @@ namespace Gecode { namespace Support {
 
   forceinline unsigned int
   String::SO::size(void) const {
-    if (s.c)
-      return strlen(s.c);
+    if (s)
+      return strlen(s);
     if (!left)
       return 0;
     return left->size() + right->size();
@@ -199,36 +184,11 @@ namespace Gecode { namespace Support {
 
   forceinline std::ostream&
   String::SO::print(std::ostream& os) const {
-    if (s.c) {
-      return os << s.c;
-    }
-    if (left) {
+    if (s)
+      return os << s;
+    if (left)
       return right->print(left->print(os));
-    }
     return os;
-  }
-
-  forceinline int
-  String::SO::fill(char* to, int i) const {
-    if (s.c) {
-      int l = strlen(s.c);
-      memcpy(to+i, s.c, l);
-      return i+l;
-    }
-    if (!left)
-      return i;
-    int l = left->fill(to, i);
-    return right->fill(to, l);
-  }
-
-  forceinline char*
-  String::SO::c_str() const {
-    int s = size();
-    char* ret = 
-      static_cast<char*>(Memory::malloc(sizeof(char)*(s+1)));
-    (void) fill(ret, 0);
-    ret[s] = 0;
-    return ret;
   }
 
   forceinline
@@ -311,8 +271,8 @@ namespace Gecode { namespace Support {
 
   forceinline
   String::SOIter::SOIter(const String::SO* so0) : n(0) {
-    if (so0->s.c) {
-      so = so0; size = strlen(so->s.c); left = NULL; right = NULL;
+    if (so0->s) {
+      so = so0; size = strlen(so->s); left = NULL; right = NULL;
     } else {
       so = NULL;
       left  = new SOIter(so0->left);
@@ -345,7 +305,7 @@ namespace Gecode { namespace Support {
   forceinline char
   String::SOIter::c(void) const {
     if (so)
-      return so->s.c[n];
+      return so->s[n];
     if ((*left)())
       return left->c();
     return right->c();
@@ -354,8 +314,8 @@ namespace Gecode { namespace Support {
   forceinline
   int
   String::SO::cmp(SO* other) const {
-    if (s.c && other->s.c)
-      return (s.c==other->s.c ? 0 : strcmp(s.c,other->s.c));
+    if (s && other->s)
+      return (s==other->s ? 0 : strcmp(s,other->s));
     SOIter me(this); SOIter notme(other);
     for (; me() && notme(); ++me, ++notme)
       if (me.c() != notme.c())

@@ -210,7 +210,7 @@ namespace Gecode { namespace Reflection {
 
   void Type::print(std::ostream& os) {
     if (n == 0) {
-      _name.print(os);
+      os << _name;
     } else {
       os << "<";
       for (int i=0; i<n; i++) {
@@ -277,10 +277,14 @@ namespace Gecode { namespace Reflection {
   void
   Registry::print(std::ostream& out) {
     out << "Posters: " << std::endl;
-    // std::map<std::string, poster>::iterator i = posters.begin();
-    // for (; i != posters.end(); ++i) {
-    //   out << i->first << std::endl;
-    // }
+    for (int i=0; i<posters.size(); i++) {
+      out << posters.key(i) << std::endl;
+    }
+    out << "Varcreators: " << std::endl;
+    for (int i=0; i<varCreators.size(); i++) {
+      out << varCreators.key(i) << std::endl;
+    }
+    
   }
 
   Arg::~Arg(void) {}

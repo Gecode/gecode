@@ -63,8 +63,7 @@ namespace Gecode {
         os << "}";
       }
       if (!vs.name().empty()) {
-        os << ": ";
-        vs.name().print(os) << ";" << endl;
+        os << ": " << vs.name() << ";" << endl;
       }
       else
         os << ": _v" << varNo << ";" << endl;      
@@ -84,8 +83,7 @@ namespace Gecode {
             "Internal error: invalid domain specification for BoolVar.");
       }
       if (!vs.name().empty()) {
-        os << ": ";
-        vs.name().print(os) << ";" << endl;
+        os << ": " << vs.name() << ";" << endl;
       }
       else
         os << ": _v" << varNo << ";" << endl;
@@ -122,8 +120,7 @@ namespace Gecode {
         os << "}";
       }
       if (!vs.name().empty()) {
-        os << ": ";
-        vs.name().print(os) << ";" << endl;
+        os << ": " << vs.name() << ";" << endl;
       }
       else
         os << ": _v" << varNo << ";" << endl;
@@ -145,8 +142,7 @@ namespace Gecode {
           os << "}";
         }
         if (!vs.name().empty()) {
-          os << ",";
-          vs.name().print(os) << ");" << endl;
+          os << "," << vs.name() << ");" << endl;
         }
         else
           os << ", _v" << varNo << ");" << endl;
@@ -156,7 +152,7 @@ namespace Gecode {
           ubCard != dom->second()->second()->toInt()) {
         os << "constraint cardinality(";
         if (!vs.name().empty())
-          vs.name().print(os) << ", ";
+          os << vs.name() << ", ";
         else
           os << "_v" << varNo;
         os << ", " << lbCard << ", " << ubCard << ");" << endl;
@@ -171,7 +167,7 @@ namespace Gecode {
       if (vs.name().empty())
         os << "_v" << v;
       else
-        vs.name().print(os);
+        os << vs.name();
     }
     
     void emitVarArray(ostream& os, ArrayArg* a, VarMap& vm) {
@@ -231,8 +227,7 @@ namespace Gecode {
         return;
       }
       if (arg->isString()) {
-        os << "\"";
-        arg->toString().print(os) << "\"";
+        os << "\"" << arg->toString() << "\"";
         return;
       }
       if (arg->isTypedArg()) {
@@ -244,7 +239,7 @@ namespace Gecode {
         if (s.name().empty())
           os << "_v" << arg->toVar();
         else
-          s.name().print(os);
+          os << s.name();
         return;
       }
       if (arg->isIntArray()) {
@@ -291,9 +286,7 @@ namespace Gecode {
         }
       }
 
-      os << "constraint ";
-      s.name().print(os);
-      os << "(";
+      os << "constraint " << s.name() << "(";
       for (int i=0; i<s.noOfArgs(); i++) {
         emitArg(os, s[i], vm);
         if (i<s.noOfArgs()-1)

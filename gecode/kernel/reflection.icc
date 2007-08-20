@@ -97,7 +97,6 @@ namespace Gecode { namespace Reflection {
     GECODE_KERNEL_EXPORT Support::String toString(void);
   };
 
-
   /**
     * \brief Arguments for actor and variable specifications
     *
@@ -342,17 +341,17 @@ namespace Gecode { namespace Reflection {
     Support::String name(void) const;
     /// Return if name is not empty
     bool hasName(void) const;
+
+    /// Add \a a to specification \a spec
+    ActorSpec& operator<<(Arg* a);
+    /// Add \a i to specification \a spec
+    ActorSpec& operator<<(int i);
+    /// Add \a i to specification \a spec
+    ActorSpec& operator<<(unsigned int i);
+    /// Add \a d to specification \a spec, where \a d is cast into an integer
+    ActorSpec& operator<<(double d);
   };
-  
-  /// Add \a a to specification \a spec
-  ActorSpec& operator<<(ActorSpec& spec, Arg* a);
-  /// Add \a i to specification \a spec
-  ActorSpec& operator<<(ActorSpec& spec, int i);
-  /// Add \a i to specification \a spec
-  ActorSpec& operator<<(ActorSpec& spec, unsigned int i);
-  /// Add \a d to specification \a spec, where \a d is cast into an integer
-  ActorSpec& operator<<(ActorSpec& spec, double d);
-  
+    
   class VarMap;
 
   /**
@@ -457,7 +456,10 @@ namespace Gecode { namespace Reflection {
   }
   forceinline int
   Arg::toInt(void) {
-    return static_cast<IntArg*>(this)->i;
+    IntArg* ia = dynamic_cast<IntArg*>(this);
+    if (ia == NULL)
+      throw ReflectionException("not an IntArg");
+    return ia->i;
   }
 
   forceinline bool
@@ -466,7 +468,10 @@ namespace Gecode { namespace Reflection {
   }
   forceinline int
   Arg::toVar(void) {
-    return static_cast<VarArg*>(this)->i;
+    VarArg* va = dynamic_cast<VarArg*>(this);
+    if (va == NULL)
+      throw ReflectionException("not a VarArg");
+    return va->i;
   }
 
   forceinline bool
@@ -475,7 +480,10 @@ namespace Gecode { namespace Reflection {
   }
   forceinline ArrayArg*
   Arg::toArray(void) {
-    return static_cast<ArrayArg*>(this);
+    ArrayArg* aa = dynamic_cast<ArrayArg*>(this);
+    if (aa == NULL)
+      throw ReflectionException("not an ArrayArg");
+    return aa;
   }
   forceinline bool
   Arg::isIntArray(void) {
@@ -483,7 +491,10 @@ namespace Gecode { namespace Reflection {
   }
   forceinline IntArrayArg*
   Arg::toIntArray(void) {
-    return static_cast<IntArrayArg*>(this);
+    IntArrayArg* aa = dynamic_cast<IntArrayArg*>(this);
+    if (aa == NULL)
+      throw ReflectionException("not an IntArrayArg");
+    return aa;
   }
 
   forceinline bool
@@ -492,7 +503,10 @@ namespace Gecode { namespace Reflection {
   }
   forceinline Support::String
   Arg::toString(void) {
-    return static_cast<StringArg*>(this)->s;
+    StringArg* sa = dynamic_cast<StringArg*>(this);
+    if (sa == NULL)
+      throw ReflectionException("not a StringArg");
+    return sa->s;
   }
 
   forceinline bool
@@ -501,11 +515,17 @@ namespace Gecode { namespace Reflection {
   }
   forceinline Arg*
   Arg::first(void) {
-    return static_cast<PairArg*>(this)->a;
+    PairArg* pa = dynamic_cast<PairArg*>(this);
+    if (pa == NULL)
+      throw ReflectionException("not a PairArg");
+    return pa->a;
   }
   forceinline Arg*
   Arg::second(void) {
-    return static_cast<PairArg*>(this)->b;
+    PairArg* pa = dynamic_cast<PairArg*>(this);
+    if (pa == NULL)
+      throw ReflectionException("not a PairArg");
+    return pa->b;
   }
 
   forceinline bool
@@ -514,25 +534,27 @@ namespace Gecode { namespace Reflection {
   }
   forceinline Type*
   Arg::type(void) {
-    return static_cast<TypedArg*>(this)->t;
+    TypedArg* ta = dynamic_cast<TypedArg*>(this);
+    if (ta == NULL)
+      throw ReflectionException("not a TypedArg");
+    return ta->t;
   }
   forceinline Arg*
   Arg::typedArg(void) {
-    return static_cast<TypedArg*>(this)->a;
+    TypedArg* ta = dynamic_cast<TypedArg*>(this);
+    if (ta == NULL)
+      throw ReflectionException("not a TypedArg");
+    return ta->a;
   }
 
 
   forceinline
   IntArg::IntArg(int i0) : i(i0) {}
 
-  // forceinline const Arg*&
-  // ArrayArg::operator[](int i) const {
-  //   assert(i < n);
-  //   return a[i];
-  // }
   forceinline Arg*&
   ArrayArg::operator[](int i) {
-    assert(i < n);
+    if (i >= n)
+      throw ReflectionException("Array index out of range");
     return a[i];
   }
   forceinline int
@@ -546,12 +568,14 @@ namespace Gecode { namespace Reflection {
 
   forceinline const int&
   IntArrayArg::operator[](int i) const {
-    assert(i < n);
+    if (i >= n)
+      throw ReflectionException("Array index out of range");
     return a[i];
   }
   forceinline int&
   IntArrayArg::operator[](int i) {
-    assert(i < n);
+    if (i >= n)
+      throw ReflectionException("Array index out of range");
     return a[i];
   }
   forceinline int
@@ -690,16 +714,22 @@ namespace Gecode { namespace Reflection {
   
   forceinline Type*
   Type::operator[](int i) const {
+    if (i >= n)
+      throw ReflectionException("Array index out of range");
     return t[i];
   }
   
   forceinline Type*&
   Type::operator[](int i) {
+    if (i >= n)
+      throw ReflectionException("Array index out of range");
     return t[i];
   }
 
   forceinline Support::String
   Type::name(void) const {
+    if (n > 0)
+      throw ReflectionException("Type argument is not a primitive type");
     return _name;
   }
 
@@ -746,7 +776,8 @@ namespace Gecode { namespace Reflection {
 
   forceinline Arg*
   ActorSpec::operator[](int i) const {
-    assert(i < _args->n);
+    if (i >= _args->n)
+      throw ReflectionException("Array index out of range");
     return _args->a[i];
   }
 
@@ -787,25 +818,25 @@ namespace Gecode { namespace Reflection {
     _args->n++;
   }
 
-  forceinline
-  ActorSpec& operator<<(ActorSpec& spec, Arg* arg) {
-    spec.add(arg);
-    return spec;
+  forceinline ActorSpec&
+  ActorSpec::operator<<(Arg* arg) {
+    add(arg);
+    return (*this);
   }
   
-  forceinline
-  ActorSpec& operator<<(ActorSpec& spec, int i) {
-    return spec << new IntArg(i);
+  forceinline ActorSpec&
+  ActorSpec::operator<<(int i) {
+    return (*this) << new IntArg(i);
   }
 
-  forceinline
-  ActorSpec& operator<<(ActorSpec& spec, unsigned int i) {
-    return spec << new IntArg(static_cast<int>(i));
+  forceinline ActorSpec&
+  ActorSpec::operator<<(unsigned int i) {
+    return (*this) << new IntArg(static_cast<int>(i));
   }
 
-  forceinline
-  ActorSpec& operator<<(ActorSpec& spec, double i) {
-    return spec << new IntArg(static_cast<int>(i));
+  forceinline ActorSpec&
+  ActorSpec::operator<<(double i) {
+    return (*this) << new IntArg(static_cast<int>(i));
   }
   
   /*
