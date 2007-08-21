@@ -149,7 +149,7 @@ public:
       dom(this, succ[f], ds);
       rel(this, succ[f], IRT_NQ, pred[f]);
     }
-    branch(this, succ, BVAR_NONE, BVAL_MIN);
+    branch(this, succ, INT_VAR_NONE, INT_VAL_MIN);
   }
   /// Constructor for cloning \a s
   KnightsReified(bool share, KnightsReified& s) : Knights(share,s) {}
@@ -185,7 +185,7 @@ public:
       IntSet ds(nbs, n_nbs);
       dom(this, succ[f], ds);
     }
-    branch(this, succ, BVAR_NONE, BVAL_MIN);
+    branch(this, succ, INT_VAR_NONE, INT_VAL_MIN);
   }
   /// Constructor for cloning \a s
   KnightsCircuit(bool share, KnightsCircuit& s) : Knights(share,s) {}

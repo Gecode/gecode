@@ -150,7 +150,7 @@ public:
       rel(this, col1, IRT_GQ, col2);
     }
 
-    branch(this, _p, BVAR_NONE, BVAL_MIN);
+    branch(this, _p, INT_VAR_NONE, INT_VAL_MIN);
   }
 
   /// Print solution

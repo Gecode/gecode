@@ -78,12 +78,12 @@ namespace Gecode { namespace Set { namespace Branch {
 
   template <class SelView>
   static void
-  create(Space* home, ViewArray<SetView>& x, SetBvalSel vals) {
+  create(Space* home, ViewArray<SetView>& x, SetValBranch vals) {
     switch (vals) {
-    case SETBVAL_MIN:
+    case SET_VAL_MIN:
       (void) new (home) ViewValBranching<SetView,int,SelView,ValMin>(home,x);
       break;
-    case SETBVAL_MAX:
+    case SET_VAL_MAX:
       (void) new (home) ViewValBranching<SetView,int,SelView,ValMax>(home,x);
       break;
     default:

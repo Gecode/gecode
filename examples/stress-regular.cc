@@ -101,7 +101,7 @@ public:
     }
     for (int j=opt.size(); j--; )
       y[j] = x[j];
-    branch(this, y, BVAR_NONE, BVAL_MED);
+    branch(this, y, INT_VAR_NONE, INT_VAL_MED);
   }
   /// Constructor for cloning \a s
   StressRegular(bool share, StressRegular& s) : Example(share,s) {

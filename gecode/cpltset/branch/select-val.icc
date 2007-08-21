@@ -40,25 +40,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   template <bool exclude>
   forceinline IntSet
   ValMin<exclude>::val(const Space*, CpltSetView x) {
-//     std::cout << "************* val  *************\n";
-//     DomValues<CpltSetView> domt(x);
-//     while(domt()) {
-//       std::cout << domt.val() << " ";
-//       ++domt;
-//     }
-//     std::cout << "\n";
     DomValues<CpltSetView> dom(x);
-//     std::cout << "returning: ";
-//     std::cout << "dom.val() =" << dom.val() << "\n";
-//     is = IntSetRanges(dom.val());
-//     IntSetRanges t;
-//     t = IntSetRanges(dom.val());
-//     std::cout << "returning\n";
-//     while(t()) {
-//       std::cout << t.min() <<".." << t.max() << ",";
-//       ++t;
-//     }
-//     std::cout << "\n";
     return dom.val();
   }
 
@@ -200,35 +182,34 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
   template <class SelView>
   static void
-  create(Space* home, ViewArray<CpltSetView>& x, CpltSetBvalSel vals) {
-    // std::cout << "create branch \n";
+  create(Space* home, ViewArray<CpltSetView>& x, CpltSetValBranch vals) {
     switch (vals) {
-    case CPLTSET_BVAL_MIN:
+    case CPLTSET_VAL_MIN:
       (void) new (home) ViewValBranching<CpltSetView,const IntSet,SelView,ValMin<false> >(home,x);
       break;
-    case CPLTSET_BVAL_MIN_EX_FIRST:
+    case CPLTSET_VAL_MIN_EX_FIRST:
       (void) new (home) ViewValBranching<CpltSetView,const IntSet,SelView,ValMin<true> >(home,x);
       break;
-    case CPLTSET_BVAL_MAX:
+    case CPLTSET_VAL_MAX:
       (void) new (home) ViewValBranching<CpltSetView,const IntSet,SelView,ValMax<false> >(home,x);
       break;
-    case CPLTSET_BVAL_MAX_EX_FIRST:
+    case CPLTSET_VAL_MAX_EX_FIRST:
       (void) new (home) ViewValBranching<CpltSetView,const IntSet,SelView,ValMax<true> >(home,x);
       break;
-    case CPLTSET_BVAL_MIN_UNKNOWN:
+    case CPLTSET_VAL_MIN_UNKNOWN:
       (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMinUnknown<false> >(home,x);
       break;
-    case CPLTSET_BVAL_MIN_UNKNOWN_EX_FIRST:
+    case CPLTSET_VAL_MIN_UNKNOWN_EX_FIRST:
       (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMinUnknown<true> >(home,x);
       break;
-    case CPLTSET_BVAL_MAX_UNKNOWN:
+    case CPLTSET_VAL_MAX_UNKNOWN:
       (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMaxUnknown<false> >(home,x);
       break;
-    case CPLTSET_BVAL_MAX_UNKNOWN_EX_FIRST:
+    case CPLTSET_VAL_MAX_UNKNOWN_EX_FIRST:
       (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMaxUnknown<true> >(home,x);
       break;
-//     default:
-//       throw UnknownBranching("Int::branch");
+    default:
+      throw UnknownBranching("CpltSet::branch");
     }
   }
 

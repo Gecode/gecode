@@ -202,7 +202,7 @@ public:
 
     }
 
-    branch(this, groupsS, SETBVAR_MIN_UNKNOWN_ELEM, SETBVAL_MIN);
+    branch(this, groupsS, SET_VAR_MIN_UNKNOWN_ELEM, SET_VAL_MIN);
   }
 
   Golf(bool share, Golf& s) : Example(share,s),

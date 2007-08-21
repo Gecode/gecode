@@ -96,7 +96,7 @@ public:
     for (int i = g.n_e; i--; )
       rel(this, v[*e1], BOT_AND, v[*e2], 0, ICL_DEF, opt.pk());
     linear(this, v, IRT_EQ, k, ICL_DEF, opt.pk());
-    branch(this, v, BVAR_NONE, BVAL_MIN);
+    branch(this, v, INT_VAR_NONE, INT_VAL_MIN);
   }
 
   /// Constructor for cloning \a s

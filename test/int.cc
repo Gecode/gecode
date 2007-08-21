@@ -319,7 +319,7 @@ IntTest::run(const Options& opt) {
   IntTestSpace* search_s = new IntTestSpace(arity,dom,opt);
   post(search_s,search_s->x);
   log_posting();
-  branch(search_s,search_s->x,BVAR_NONE,BVAL_MIN);
+  branch(search_s,search_s->x,INT_VAR_NONE,INT_VAL_MIN);
   Gecode::DFS<IntTestSpace> e_s(search_s);
   delete search_s;
   while (a()) {

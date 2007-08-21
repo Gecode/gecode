@@ -48,19 +48,20 @@ namespace Gecode {
   using namespace Set;
 
   void
-  branch(Space* home, const SetVarArgs& xa, SetBvarSel vars, SetBvalSel vals) {
+  branch(Space* home, const SetVarArgs& xa, 
+         SetVarBranch vars, SetValBranch vals) {
     if (home->failed()) return;
     ViewArray<SetView> x(home,xa);
     switch (vars) {
-    case SETBVAR_NONE:
+    case SET_VAR_NONE:
       Branch::create<Branch::ByNone>(home,x,vals); break;
-    case SETBVAR_MIN_CARD:
+    case SET_VAR_MIN_CARD:
       Branch::create<Branch::ByMinCard>(home,x,vals); break;
-    case SETBVAR_MAX_CARD:
+    case SET_VAR_MAX_CARD:
       Branch::create<Branch::ByMaxCard>(home,x,vals); break;
-    case SETBVAR_MIN_UNKNOWN_ELEM:
+    case SET_VAR_MIN_UNKNOWN_ELEM:
       Branch::create<Branch::ByMinUnknown>(home,x,vals); break;
-    case SETBVAR_MAX_UNKNOWN_ELEM:
+    case SET_VAR_MAX_UNKNOWN_ELEM:
       Branch::create<Branch::ByMaxUnknown>(home,x,vals); break;
     default:
       throw UnknownBranching("Set::branch");

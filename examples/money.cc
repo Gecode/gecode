@@ -69,7 +69,7 @@ public:
          opt.icl());
 
     distinct(this, le, opt.icl());
-    branch(this, le, BVAR_SIZE_MIN, BVAL_MIN);
+    branch(this, le, INT_VAR_SIZE_MIN, INT_VAL_MIN);
   }
   /// Print solution
   virtual void

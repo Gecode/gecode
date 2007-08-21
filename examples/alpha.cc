@@ -91,8 +91,8 @@ public:
     distinct(this, le, opt.icl());
 
     branch(this, le, 
-           (opt.branching() == BRANCH_NONE) ? BVAR_NONE : BVAR_SIZE_MIN,
-           BVAL_MIN);
+           (opt.branching() == BRANCH_NONE) ? INT_VAR_NONE : INT_VAR_SIZE_MIN,
+           INT_VAL_MIN);
   }
 
   /// Constructor for cloning \a s

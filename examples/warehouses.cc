@@ -143,7 +143,7 @@ public:
       rel(this, store_by_supplier, BOT_OR, open[i]);
     }
 
-    branch(this, cost, BVAR_REGRET_MIN_MAX, BVAL_MIN);
+    branch(this, cost, INT_VAR_REGRET_MIN_MAX, INT_VAL_MIN);
   }
 
   /// Add constraint for next better solution

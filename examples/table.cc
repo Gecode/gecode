@@ -138,7 +138,7 @@ public:
       extensional(this, iva, tab[cons[i][0]], ea);
     }
     //std::cerr << "constraints posted" << std::endl;
-    branch(this, x, BVAR_SIZE_MIN, BVAL_MIN);
+    branch(this, x, INT_VAR_SIZE_MIN, INT_VAL_MIN);
   }
 
   /// Print solution

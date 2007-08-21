@@ -86,7 +86,7 @@ public:
                 eqs[i][5],eqs[i][6],eqs[i][7]);
       linear(this, c, x, IRT_EQ, eqs[i][0], opt.icl());
     }
-    branch(this, x, BVAR_NONE, BVAL_MIN);
+    branch(this, x, INT_VAR_NONE, INT_VAL_MIN);
   }
 
   /// Constructor for cloning \a s

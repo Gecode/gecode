@@ -125,7 +125,7 @@ public:
       }
 
     // Install branching
-    branch(this, b, BVAR_NONE, BVAL_MAX);
+    branch(this, b, INT_VAR_NONE, INT_VAL_MAX);
   }
 
   /// Constructor for cloning \a s

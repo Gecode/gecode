@@ -83,55 +83,55 @@ namespace {
    */
   //@{
   /// Integer variable selections
-  const BvarSel bvarsel[] = {
-    BVAR_NONE,
-    BVAR_MIN_MIN,       
-    BVAR_MIN_MAX,
-    BVAR_MAX_MIN,
-    BVAR_MAX_MAX,
-    BVAR_SIZE_MIN,
-    BVAR_SIZE_MAX,
-    BVAR_DEGREE_MIN,
-    BVAR_DEGREE_MAX,
-    BVAR_REGRET_MIN_MIN,
-    BVAR_REGRET_MIN_MAX/*,
-                         // These two crash the system
-    BVAR_REGRET_MAX_MIN,
-    BVAR_REGRET_MAX_MAX*/};
+  const IntVarBranch bvarsel[] = {
+    INT_VAR_NONE,
+    INT_VAR_MIN_MIN,       
+    INT_VAR_MIN_MAX,
+    INT_VAR_MAX_MIN,
+    INT_VAR_MAX_MAX,
+    INT_VAR_SIZE_MIN,
+    INT_VAR_SIZE_MAX,
+    INT_VAR_DEGREE_MIN,
+    INT_VAR_DEGREE_MAX,
+    INT_VAR_REGRET_MIN_MIN,
+    INT_VAR_REGRET_MIN_MAX,
+    INT_VAR_REGRET_MAX_MIN,
+    INT_VAR_REGRET_MAX_MAX
+  };
   /// Number of integer variable selections
-  const int nbvarsel = sizeof(bvarsel)/sizeof(BvarSel);
+  const int nbvarsel = sizeof(bvarsel)/sizeof(IntVarBranch);
   /// Names for integer variable selections
   const char* bvarsel_name[] = {
-    "BVAR_NONE",
-    "BVAR_MIN_MIN",       
-    "BVAR_MIN_MAX",
-    "BVAR_MAX_MIN",
-    "BVAR_MAX_MAX",
-    "BVAR_SIZE_MIN",
-    "BVAR_SIZE_MAX",
-    "BVAR_DEGREE_MIN",
-    "BVAR_DEGREE_MAX",
-    "BVAR_REGRET_MIN_MIN",
-    "BVAR_REGRET_MIN_MAX",
-    "BVAR_REGRET_MAX_MIN",
-    "BVAR_REGRET_MAX_MAX"};
+    "INT_VAR_NONE",
+    "INT_VAR_MIN_MIN",       
+    "INT_VAR_MIN_MAX",
+    "INT_VAR_MAX_MIN",
+    "INT_VAR_MAX_MAX",
+    "INT_VAR_SIZE_MIN",
+    "INT_VAR_SIZE_MAX",
+    "INT_VAR_DEGREE_MIN",
+    "INT_VAR_DEGREE_MAX",
+    "INT_VAR_REGRET_MIN_MIN",
+    "INT_VAR_REGRET_MIN_MAX",
+    "INT_VAR_REGRET_MAX_MIN",
+    "INT_VAR_REGRET_MAX_MAX"
+  };
   /// Integer value selections
-  const BvalSel bvalsel[] = {
-    BVAL_MIN,
-    BVAL_MED,
-    BVAL_MAX,
-    BVAL_SPLIT_MIN,
-    BVAL_SPLIT_MAX};
+  const IntValBranch bvalsel[] = {
+    INT_VAL_MIN,
+    INT_VAL_MED,
+    INT_VAL_MAX,
+    INT_VAL_SPLIT_MIN,
+    INT_VAL_SPLIT_MAX};
   /// Number of integer value selections
-  const int nbvalsel = sizeof(bvalsel)/sizeof(BvalSel);
+  const int nbvalsel = sizeof(bvalsel)/sizeof(IntValBranch);
   /// Names for integer value selections
   const char* bvalsel_name[] = {
-    "BVAL_MIN",
-    "BVAL_MED",
-    "BVAL_MAX",
-    "BVAL_SPLIT_MIN",
-    "BVAL_SPLIT_MAX"};
-  //@}
+    "INT_VAL_MIN",
+    "INT_VAL_MED",
+    "INT_VAL_MAX",
+    "INT_VAL_SPLIT_MIN",
+    "INT_VAL_SPLIT_MAX"};
   /// Information about one test-run
   struct RunInfo {
     string var, val;

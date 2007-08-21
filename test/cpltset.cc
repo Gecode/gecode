@@ -487,7 +487,7 @@ BddTest::run(const Options& opt) {
       // std::cerr << "passed manager\n";
       post(search_s,search_s->x, search_s->y);
     
-    //   branch(search_s,search_s->x,SETBVAR_NONE,SETBVAL_MIN);
+    //   branch(search_s,search_s->x,SET_VAR_NONE,SET_VAL_MIN);
     //   Gecode::DFS<BddTestSpace> e_s(search_s);
       is_sol = solution(a);    
     // std::cerr << "finished search\n";

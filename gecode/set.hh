@@ -444,23 +444,24 @@ namespace Gecode {
   //@{
   
   /// Which variable to select for branching
-  enum SetBvarSel {
-    SETBVAR_NONE,               ///< First unassigned
-    SETBVAR_MIN_CARD,           ///< With smallest unknown set
-    SETBVAR_MAX_CARD,           ///< With largest unknown set
-    SETBVAR_MIN_UNKNOWN_ELEM,   ///< With smallest unknown element
-    SETBVAR_MAX_UNKNOWN_ELEM,   ///< With largest unknown element
+  enum SetVarBranch {
+    SET_VAR_NONE,               ///< First unassigned
+    SET_VAR_MIN_CARD,           ///< With smallest unknown set
+    SET_VAR_MAX_CARD,           ///< With largest unknown set
+    SET_VAR_MIN_UNKNOWN_ELEM,   ///< With smallest unknown element
+    SET_VAR_MAX_UNKNOWN_ELEM,   ///< With largest unknown element
   };
   
   /// Which values to select first for branching
-  enum SetBvalSel {
-    SETBVAL_MIN,                ///< Select smallest value in unknown set
-    SETBVAL_MAX,                ///< Select largest value in unknown set
+  enum SetValBranch {
+    SET_VAL_MIN,                ///< Select smallest value in unknown set
+    SET_VAL_MAX,                ///< Select largest value in unknown set
   };
 
-  /// Branch over all \a x with variable selection \a vars and value selection \a vals
+  /// Branch over \a x with variable selection \a vars and value selection \a vals
   GECODE_SET_EXPORT void
-  branch(Space* home, const SetVarArgs& x, SetBvarSel vars, SetBvalSel vals);
+  branch(Space* home, const SetVarArgs& x, 
+         SetVarBranch vars, SetValBranch vals);
   //@}
 
 }

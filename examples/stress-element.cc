@@ -73,7 +73,7 @@ public:
       element(this, e, x[i], s[i]);
 
     distinct(this, x);
-    branch(this, x, BVAR_SIZE_MIN, BVAL_MIN);
+    branch(this, x, INT_VAR_SIZE_MIN, INT_VAL_MIN);
   }
 
   /// Constructor for cloning \a s

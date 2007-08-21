@@ -368,7 +368,7 @@ public:
       }
     }
 
-    branch(this, b, BVAR_NONE, BVAL_MIN);
+    branch(this, b, INT_VAR_NONE, INT_VAL_MIN);
   }
 
   /// Constructor for cloning \a s

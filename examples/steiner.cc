@@ -131,7 +131,7 @@ public:
     }
 
 
-    branch(this, root, SETBVAR_NONE, SETBVAL_MIN);
+    branch(this, root, SET_VAR_NONE, SET_VAL_MIN);
   }
 
   Steiner(bool share, Steiner& s) : Example(share,s),

@@ -51,7 +51,7 @@ public:
   /// The actual problem
   Baseline(const Options& opt)
     : x(this,1,0,1) {
-    branch(this, x, BVAR_NONE, BVAL_MIN);
+    branch(this, x, INT_VAR_NONE, INT_VAL_MIN);
   }
 
   /// Constructor for cloning \a s

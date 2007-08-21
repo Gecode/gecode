@@ -69,6 +69,16 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: other
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The values (and types) for selecting how to branch have been made
+uniform for all variables types: they start with INT_ (or SET_ or
+CPLTSET_), followed by either VAL or VAR and the respective
+strategy.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   minor

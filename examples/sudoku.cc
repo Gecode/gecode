@@ -43,6 +43,8 @@
 
 #ifdef GECODE_HAVE_SET_VARS
 #include "gecode/set.hh"
+#endif
+#ifdef GECODE_HAVE_CPLTSET_VARS
 #include "gecode/cpltset.hh"
 #endif
 
@@ -167,7 +169,7 @@ public:
     }
 #endif
 
-    branch(this, x, BVAR_SIZE_MIN, BVAL_SPLIT_MIN);    
+    branch(this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);    
   }
   
   /// Constructor for cloning \a s
@@ -294,7 +296,7 @@ public:
         if (int idx = value_at(examples[opt.size()], nn, i, j))
           dom(this, y[idx-1], SRT_SUP, (i+1)+(j*nn) );
 
-    branch(this, y, SETBVAR_NONE, SETBVAL_MIN);
+    branch(this, y, SET_VAR_NONE, SET_VAL_MIN);
   }
 
   /// Constructor for cloning \a s
@@ -416,7 +418,7 @@ public:
         exactly(this, y[i], block[j], 1);
       }
 
-    branch(this, y, CPLTSET_BVAR_MIN_CARD, CPLTSET_BVAL_MIN_UNKNOWN);
+    branch(this, y, CPLTSET_VAR_MIN_CARD, CPLTSET_VAL_MIN_UNKNOWN);
   }
 
   /// Constructor for cloning \a s

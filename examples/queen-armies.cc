@@ -110,11 +110,11 @@ public:
     linear(this, b, IRT_EQ, unknowns);
 
     if (opt.branching() == BRANCH_NAIVE) {
-      branch(this, w, BVAR_NONE, BVAL_MAX);
-      branch(this, b, BVAR_NONE, BVAL_MAX);
+      branch(this, w, INT_VAR_NONE, INT_VAL_MAX);
+      branch(this, b, INT_VAR_NONE, INT_VAL_MAX);
     } else {
       QueenBranch::post(this);
-      assign(this, b, AVAL_MAX);
+      assign(this, b, INT_ASSIGN_MAX);
     }
   }
 

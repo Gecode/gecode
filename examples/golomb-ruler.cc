@@ -131,10 +131,10 @@ public:
     if (opt.search() == SEARCH_DFS) {
       IntVarArgs max(1);
       max[0]=m[n-1];
-      branch(this, max, BVAR_NONE, BVAL_SPLIT_MIN);
+      branch(this, max, INT_VAR_NONE, INT_VAL_SPLIT_MIN);
     }
 
-    branch(this, m, BVAR_NONE, BVAL_MIN);
+    branch(this, m, INT_VAR_NONE, INT_VAL_MIN);
   }
 
   /// Add constraint for next better solution

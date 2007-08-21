@@ -142,10 +142,10 @@ namespace Gecode { namespace Int { namespace Branch {
     static Reflection::Type* type(void);
   };
 
-  /// Create branchings for a given view selection strategy \a ViewSel
+  /// Create branchings for a given view selection strategy \a SelView
   template<class View, class SelView>
   static void
-  create(Space* home, ViewArray<View>&, BvalSel);
+  create(Space* home, ViewArray<View>&, IntValBranch);
 
   /// For Boolean branchings not needing a value
   class NoValue {

@@ -157,9 +157,9 @@ public:
    
     if (s > 0) {
       if (opt.naive) {
-	branch(this, x, CPLTSET_BVAR_NONE, CPLTSET_BVAL_MIN_UNKNOWN);
+	branch(this, x, CPLTSET_VAR_NONE, CPLTSET_VAL_MIN_UNKNOWN);
       } else {
-	branch(this, x, CPLTSET_BVAR_MIN_CARD, CPLTSET_BVAL_MIN_UNKNOWN);
+	branch(this, x, CPLTSET_VAR_MIN_CARD, CPLTSET_VAL_MIN_UNKNOWN);
       }
     }
   }

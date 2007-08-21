@@ -1476,68 +1476,71 @@ namespace Gecode {
 
   //@{
   /// Which variable to select for branching
-  enum BvarSel {
-    BVAR_NONE,          ///< First unassigned
-    BVAR_MIN_MIN,       ///< With smallest min
-    BVAR_MIN_MAX,       ///< With largest min
-    BVAR_MAX_MIN,       ///< With smallest max
-    BVAR_MAX_MAX,       ///< With largest max
-    BVAR_SIZE_MIN,      ///< With smallest domain size
-    BVAR_SIZE_MAX,      ///< With largest domain size
+  enum IntVarBranch {
+    INT_VAR_NONE,          ///< First unassigned
+    INT_VAR_MIN_MIN,       ///< With smallest min
+    INT_VAR_MIN_MAX,       ///< With largest min
+    INT_VAR_MAX_MIN,       ///< With smallest max
+    INT_VAR_MAX_MAX,       ///< With largest max
+    INT_VAR_SIZE_MIN,      ///< With smallest domain size
+    INT_VAR_SIZE_MAX,      ///< With largest domain size
     /** \brief With smallest degree
      *
      * The degree of a variable is defined as the number of dependant
      * propagators. In case of ties, choose the variable with smallest
      * domain.
      */
-    BVAR_DEGREE_MIN,
+    INT_VAR_DEGREE_MIN,
     /** \brief With largest degree
      *
      * The degree of a variable is defined as the number of dependant
      * propagators. In case of ties, choose the variable with smallest
      * domain.
      */
-    BVAR_DEGREE_MAX,
+    INT_VAR_DEGREE_MAX,
     /** \brief With smallest min-regret
      *
      * The min-regret of a variable is the difference between the
      * smallest and second-smallest value still in the domain.
      */
-    BVAR_REGRET_MIN_MIN,
+    INT_VAR_REGRET_MIN_MIN,
     /** \brief With largest min-regret
      *
      * The min-regret of a variable is the difference between the
      * smallest and second-smallest value still in the domain.
      */
-    BVAR_REGRET_MIN_MAX,
+    INT_VAR_REGRET_MIN_MAX,
     /** \brief With smallest max-regret
      *
      * The max-regret of a variable is the difference between the
      * largest and second-largest value still in the domain.
      */
-    BVAR_REGRET_MAX_MIN,
+    INT_VAR_REGRET_MAX_MIN,
     /** \brief With largest max-regret
      *
      * The max-regret of a variable is the difference between the
      * largest and second-largest value still in the domain.
      */
-    BVAR_REGRET_MAX_MAX
+    INT_VAR_REGRET_MAX_MAX
   };
 
   /// Which values to select first for branching
-  enum BvalSel {
-    BVAL_MIN,      ///< Select smallest value
-    BVAL_MED,      ///< Select median value
-    BVAL_MAX,      ///< Select maximal value
-    BVAL_SPLIT_MIN, ///< Select lower half of domain
-    BVAL_SPLIT_MAX  ///< Select upper half of domain
+  enum IntValBranch {
+    INT_VAL_MIN,       ///< Select smallest value
+    INT_VAL_MED,       ///< Select median value
+    INT_VAL_MAX,       ///< Select maximal value
+    INT_VAL_SPLIT_MIN, ///< Select lower half of domain
+    INT_VAL_SPLIT_MAX  ///< Select upper half of domain
   };
 
-  /// Branch over all \a x with variable selection \a vars and value selection \a vals
+  /// Branch over \a x with variable selection \a vars and value selection \a vals
   GECODE_INT_EXPORT void
-  branch(Space* home, const IntVarArgs& x, BvarSel vars, BvalSel vals);
+  branch(Space* home, const IntVarArgs& x, 
+         IntVarBranch vars, IntValBranch vals);
+  /// Branch over \a x with variable selection \a vars and value selection \a vals
   GECODE_INT_EXPORT void
-  branch(Space* home, const BoolVarArgs& x, BvarSel vars, BvalSel vals);
+  branch(Space* home, const BoolVarArgs& x, 
+         IntVarBranch vars, IntValBranch vals);
   //@}
 
   /**
@@ -1546,18 +1549,18 @@ namespace Gecode {
    */
   //@{
   /// Which value to select for assignment
-  enum AvalSel {
-    AVAL_MIN, ///< Select smallest value
-    AVAL_MED, ///< Select median value
-    AVAL_MAX  ///< Select maximum value
+  enum IntAssign {
+    INT_ASSIGN_MIN, ///< Select smallest value
+    INT_ASSIGN_MED, ///< Select median value
+    INT_ASSIGN_MAX  ///< Select maximum value
   };
 
   /// Assign all \a x with value selection \a vals
   GECODE_INT_EXPORT void
-  assign(Space* home, const IntVarArgs& x, AvalSel vals);
+  assign(Space* home, const IntVarArgs& x, IntAssign vals);
   /// Assign all \a x with value selection \a vals
   GECODE_INT_EXPORT void
-  assign(Space* home, const BoolVarArgs& x, AvalSel vals);
+  assign(Space* home, const BoolVarArgs& x, IntAssign vals);
 
   //@}
 

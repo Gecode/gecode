@@ -128,27 +128,6 @@ namespace Gecode {
     SOT_SYMDIFF,  ///< Symmetric Difference
   };
 
-  /// Which variable to select for branching
-  enum CpltSetBvarSel {
-    CPLTSET_BVAR_NONE,             ///< First unassigned
-    CPLTSET_BVAR_MIN_CARD,         ///< With smallest unknown set
-    CPLTSET_BVAR_MAX_CARD,         ///< With largest unknown set
-    CPLTSET_BVAR_MIN_UNKNOWN_ELEM, ///< With smallest unknown element
-    CPLTSET_BVAR_MAX_UNKNOWN_ELEM  ///< With largest unknown element 
-  };
-  
-  /// Which values to select first for branching. 
-  enum CpltSetBvalSel { 
-    CPLTSET_BVAL_MIN,                  ///< Select first domain value and try equality
-    CPLTSET_BVAL_MAX,                  ///< Select last  domain value and try equality
-    CPLTSET_BVAL_MIN_EX_FIRST,         ///< Select first domain value and try disequality
-    CPLTSET_BVAL_MAX_EX_FIRST,         ///< Select last  domain value and try disequality
-    CPLTSET_BVAL_MIN_UNKNOWN,          ///< Select smallest element in unknown set and try to include it
-    CPLTSET_BVAL_MAX_UNKNOWN,          ///< Select largest  element in unknown set and try to include it
-    CPLTSET_BVAL_MIN_UNKNOWN_EX_FIRST, ///< Select smallest element in unknown set and try to exclude it
-    CPLTSET_BVAL_MAX_UNKNOWN_EX_FIRST  ///< Select largest  element in unknown set and try to exclude it
-  };
-
   ///\name Posting bdd propagators
   //@{
 
@@ -341,10 +320,39 @@ namespace Gecode {
   hls_order(Space* home, const CpltSetVarArray& x);
   //@}
 
-  /// Branch over all \a x with variable selection \a vars and value selection \a vals
+
+  /**
+   * \defgroup TaskIntCpltSetBranch Branching
+   * \ingroup TaskIntCpltSet
+   */
+  //@{
+  
+  /// Which variable to select for branching
+  enum CpltSetVarBranch {
+    CPLTSET_VAR_NONE,             ///< First unassigned
+    CPLTSET_VAR_MIN_CARD,         ///< With smallest unknown set
+    CPLTSET_VAR_MAX_CARD,         ///< With largest unknown set
+    CPLTSET_VAR_MIN_UNKNOWN_ELEM, ///< With smallest unknown element
+    CPLTSET_VAR_MAX_UNKNOWN_ELEM  ///< With largest unknown element 
+  };
+  
+  /// Which values to select first for branching 
+  enum CpltSetValBranch { 
+    CPLTSET_VAL_MIN,                  ///< Select first domain value and try equality
+    CPLTSET_VAL_MAX,                  ///< Select last  domain value and try equality
+    CPLTSET_VAL_MIN_EX_FIRST,         ///< Select first domain value and try disequality
+    CPLTSET_VAL_MAX_EX_FIRST,         ///< Select last  domain value and try disequality
+    CPLTSET_VAL_MIN_UNKNOWN,          ///< Select smallest element in unknown set and try to include it
+    CPLTSET_VAL_MAX_UNKNOWN,          ///< Select largest  element in unknown set and try to include it
+    CPLTSET_VAL_MIN_UNKNOWN_EX_FIRST, ///< Select smallest element in unknown set and try to exclude it
+    CPLTSET_VAL_MAX_UNKNOWN_EX_FIRST  ///< Select largest  element in unknown set and try to exclude it
+  };
+
+  /// Branch on \a x with variable selection \a vars and value selection \a vals
   GECODE_CPLTSET_EXPORT void
-  branch(Space* home, const CpltSetVarArgs& x, CpltSetBvarSel vars,     
-         CpltSetBvalSel vals);
+  branch(Space* home, const CpltSetVarArgs& x, 
+         CpltSetVarBranch vars, CpltSetValBranch vals);
+  //@}
 
 }
 

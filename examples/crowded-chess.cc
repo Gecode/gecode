@@ -259,7 +259,7 @@ public:
     // Branchings
     // ***********************
     //Place each piece in turn
-    branch(this, s, BVAR_MIN_MIN, BVAL_MIN);
+    branch(this, s, INT_VAR_MIN_MIN, INT_VAL_MIN);
   }
 
   /// Constructor for cloning e

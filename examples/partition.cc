@@ -87,7 +87,7 @@ public:
     linear(this, y, IRT_EQ, 2*n*(2*n+1)/4);
     linear(this, sx, IRT_EQ, 2*n*(2*n+1)*(4*n+1)/12);
     linear(this, sy, IRT_EQ, 2*n*(2*n+1)*(4*n+1)/12);
-    branch(this, xy, BVAR_SIZE_MIN, BVAL_MIN);
+    branch(this, xy, INT_VAR_SIZE_MIN, INT_VAL_MIN);
   }
 
   /// Constructor used during cloning \a s

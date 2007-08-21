@@ -87,7 +87,7 @@ public:
     // Break symmetry of dual solution
     rel(this, d[0], IRT_GR, d[n-2]);
 
-    branch(this, x, BVAR_SIZE_MIN, BVAL_SPLIT_MIN);
+    branch(this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MIN);
   }
   /// Constructor for cloning \a e
   AllInterval(bool share, AllInterval& e)

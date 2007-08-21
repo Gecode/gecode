@@ -144,7 +144,7 @@ public:
       O15+O25+O35+O45+O55             #>= 1,
     */
 
-    branch(this, x, BVAR_SIZE_MIN, BVAL_MIN);
+    branch(this, x, INT_VAR_SIZE_MIN, INT_VAL_MIN);
   }
 
   Cars(bool share, Cars& s)

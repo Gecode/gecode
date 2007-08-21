@@ -347,11 +347,11 @@ public:
     }
     IntVarArgs ma(1);
     ma[0] = m;
-    branch(this, ma, BVAR_NONE, BVAL_MIN);
+    branch(this, ma, INT_VAR_NONE, INT_VAL_MIN);
     if (opt.branching() == BRANCH_SIZE) {
-      branch(this, v, BVAR_SIZE_MIN, BVAL_MIN);
+      branch(this, v, INT_VAR_SIZE_MIN, INT_VAL_MIN);
     } else {
-      branch(this, v, BVAR_DEGREE_MAX, BVAL_MIN);
+      branch(this, v, INT_VAR_DEGREE_MAX, INT_VAL_MIN);
     }
   }
   /// Constructor for cloning \a s

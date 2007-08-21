@@ -187,7 +187,7 @@ public:
     }
     rel(this, root[len-2], SRT_DISJ, root[len-1]);
 
-    branch(this, root, SETBVAR_NONE, SETBVAL_MIN);
+    branch(this, root, SET_VAR_NONE, SET_VAL_MIN);
   }
 
   Crew(bool share, Crew& s)

@@ -138,7 +138,7 @@ public:
     linear(this, l, IRT_EQ, maxCredit);
     linear(this, q, IRT_EQ, numberOfCourses);
 
-    branch(this, x, BVAR_SIZE_MIN, BVAL_MIN);
+    branch(this, x, INT_VAR_SIZE_MIN, INT_VAL_MIN);
 }
 
   BACP(bool share, BACP& bacp) : Example(share,bacp),

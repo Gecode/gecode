@@ -68,7 +68,7 @@ public:
     rel(this, x[5], IRT_NQ, 5);
     //    rel(this, x[1], IRT_EQ; 0);
 
-    //    branch(this, x, BVAR_NONE, BVAL_MIN);
+    //    branch(this, x, INT_VAR_NONE, INT_VAL_MIN);
   }
 
   /// Constructor for cloning \a s

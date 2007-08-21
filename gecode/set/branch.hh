@@ -94,10 +94,10 @@ namespace Gecode { namespace Set { namespace Branch {
     static Reflection::Type* type(void);
   };
 
-  /// Create branchings for a given view selection strategy \a ViewSel
+  /// Create branchings for a given view selection strategy \a SelView
   template <class SelView>
   static void
-  create(Space* home, ViewArray<SetView>&, SetBvalSel);
+  create(Space* home, ViewArray<SetView>&, SetValBranch);
 
   /*
    * View selection classes

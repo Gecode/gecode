@@ -113,9 +113,9 @@ public:
     rel(this, pos[0], IRT_LE, pos[1]);
 
     if (opt.branching() == BRANCH_NONE) {
-      branch(this, pos, BVAR_NONE, BVAL_MIN);
+      branch(this, pos, INT_VAR_NONE, INT_VAL_MIN);
     } else {
-      branch(this, pos, BVAR_DEGREE_MAX, BVAL_MIN);
+      branch(this, pos, INT_VAR_DEGREE_MAX, INT_VAL_MIN);
     }
   }
 

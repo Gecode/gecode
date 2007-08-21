@@ -180,9 +180,9 @@ public:
     }
 
     // std::cout << "branch\n";
-    branch(this, root, CPLTSET_BVAR_NONE, CPLTSET_BVAL_MAX_UNKNOWN_EX_FIRST); 
+    branch(this, root, CPLTSET_VAR_NONE, CPLTSET_VAL_MAX_UNKNOWN_EX_FIRST); 
     // needed to simulate gecode branching
-    //branch(this, root, CPLTSET_BVAR_NONE, CPLTSET_BVAL_MIN_UNKNOWN); 
+    //branch(this, root, CPLTSET_VAR_NONE, CPLTSET_VAL_MIN_UNKNOWN); 
     // std::cout << "finished branching\n";
   }
   

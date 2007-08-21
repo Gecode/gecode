@@ -129,7 +129,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   /// Create branchings for a given view selection strategy \a ViewSel
   template <class SelView>
   static void
-  create(Space* home, ViewArray<CpltSetView>&, CpltSetBvalSel);
+  create(Space* home, ViewArray<CpltSetView>&, CpltSetValBranch);
 
   /*
    * View selection classes

@@ -124,25 +124,25 @@ namespace Gecode { namespace Int { namespace Branch {
 
   template<class View, template <class> class SelView>
   void
-  create(Space* home, ViewArray<View>& x, BvalSel vals) {
+  create(Space* home, ViewArray<View>& x, IntValBranch vals) {
     switch (vals) {
-    case BVAL_MIN:
+    case INT_VAL_MIN:
       (void) new (home) 
         ViewValBranching<View,int,SelView<View>,ValMin<View> >(home,x);
       break;
-    case BVAL_MED:
+    case INT_VAL_MED:
       (void) new (home) 
         ViewValBranching<View,int,SelView<View>,ValMed<View> >(home,x);
       break;
-    case BVAL_MAX:
+    case INT_VAL_MAX:
       (void) new (home) 
         ViewValBranching<View,int,SelView<View>,ValMax<View> >(home,x);
       break;
-    case BVAL_SPLIT_MIN:
+    case INT_VAL_SPLIT_MIN:
       (void) new (home)
         ViewValBranching<View,int,SelView<View>,ValSplitMin<View> >(home,x);
       break;
-    case BVAL_SPLIT_MAX:
+    case INT_VAL_SPLIT_MAX:
       (void) new (home)
         ViewValBranching<View,int,SelView<View>,ValSplitMax<View> >(home,x);
       break;

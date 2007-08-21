@@ -71,7 +71,7 @@ namespace {
         //if (i+4 < n) {
         //   post(this, x[i] <= x[i+4]);
         //}
-        branch(this, x, BVAR_NONE, BVAL_MIN);
+        branch(this, x, INT_VAR_NONE, INT_VAL_MIN);
       }
     }
     Ass(bool share, Ass& s) : Space(share,s) {

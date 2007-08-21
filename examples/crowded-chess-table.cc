@@ -77,7 +77,7 @@ namespace {
       // Incorporate bishop-negation
       rel(this, kb(n-1,   0), IRT_NQ, 1);
       rel(this, kb(n-1, n-1), IRT_NQ, 1);
-      branch(this, k, BVAR_DEGREE_MAX, BVAL_MAX);
+      branch(this, k, INT_VAR_DEGREE_MAX, INT_VAL_MAX);
     }
     Knights(bool share, Knights& s) : Space(share,s), n(s.n) {
       k.update(this, share, s.k);
@@ -137,7 +137,7 @@ namespace {
       // Incorporate bishop-placement
       rel(this, kb(n-1,   0), IRT_EQ, 1);
       rel(this, kb(n-1, n-1), IRT_EQ, 1);
-      branch(this, k, BVAR_DEGREE_MAX, BVAL_MAX);
+      branch(this, k, INT_VAR_DEGREE_MAX, INT_VAL_MAX);
     }
     Bishops(bool share, Bishops& s) : Space(share,s), n(s.n) {
       k.update(this, share, s.k);
@@ -305,7 +305,7 @@ public:
     // Branchings
     // ***********************
     //Place each piece in turn
-    branch(this, s, BVAR_MIN_MIN, BVAL_MIN);
+    branch(this, s, INT_VAR_MIN_MIN, INT_VAL_MIN);
   }
 
   /// Constructor for cloning e

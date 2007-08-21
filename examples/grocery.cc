@@ -83,7 +83,7 @@ public:
     rel(this, x[1], IRT_LQ, x[2]);
     rel(this, x[2], IRT_LQ, x[3]);
 
-    branch(this, x, BVAR_SIZE_MIN, BVAL_SPLIT_MAX);
+    branch(this, x, INT_VAR_SIZE_MIN, INT_VAL_SPLIT_MAX);
   }
 
   /// Constructor for cloning \a s

@@ -51,7 +51,7 @@ public:
   /// The actual problem
   StressSearch(const SizeOptions& opt)
     : x(this,opt.size(),0,opt.size()) {
-    branch(this, x, BVAR_NONE, BVAL_MIN);
+    branch(this, x, INT_VAR_NONE, INT_VAL_MIN);
   }
 
   /// Constructor for cloning \a s
