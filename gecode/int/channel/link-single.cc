@@ -65,6 +65,14 @@ namespace Gecode { namespace Int { namespace Channel {
       ::spec(home, m, name());
   }
 
+  void
+  LinkSingle::post(Space* home, const Reflection::VarMap& vars,
+                   const Reflection::ActorSpec& spec) {
+    BoolView b(home, vars, spec[0]->typedArg());
+    IntView x(home, vars, spec[1]->typedArg());
+    (void) new (home) LinkSingle(home, b, x);
+  }
+
   ExecStatus
   LinkSingle::propagate(Space* home) {
     if (x0.zero()) {

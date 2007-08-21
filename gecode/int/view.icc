@@ -953,6 +953,9 @@ namespace Gecode {
       ConstIntView(int n);
       /// Initialize with integer value \a n
       void init(int n);
+      /// Initialize from specification
+      ConstIntView(Space* home, const Reflection::VarMap& vars,
+                   Reflection::Arg* arg);
       //@}
 
       /// \name Value access
@@ -1149,6 +1152,9 @@ namespace Gecode {
       ZeroIntView(void);
       /// Initialize
       void init(void);
+      /// Initialize from specification
+      ZeroIntView(Space* home, const Reflection::VarMap& vars,
+                  Reflection::Arg* arg);
       //@}
 
       /// \name Value access

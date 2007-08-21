@@ -199,13 +199,26 @@ namespace Gecode { namespace Int { namespace Channel {
   template <class View, bool shared>
   Support::String
   Dom<View,shared>::name(void) {
-    return Reflection::mangle<View>("Int::Channel::Dom");
+    return Reflection::mangle<View,shared>("Int::Channel::Dom");
   }
 
   template <class View, bool shared>
   Reflection::ActorSpec&
   Dom<View,shared>::spec(Space* home, Reflection::VarMap& m) {
     return Base<DomInfo<View>,PC_INT_DOM>::spec(home, m, name());
+  }
+
+  template <class View, bool shared>
+  void
+  Dom<View,shared>::post(Space* home, const Reflection::VarMap& vars,
+                         const Reflection::ActorSpec& spec) {
+    int n = spec.noOfArgs();
+    DomInfo<View>* vi
+      = DomInfo<View>::allocate(home,2*n);
+    for (int i=0; i<n; i++) {
+      vi[i].init(View(home, vars, spec[i]->typedArg()),n);
+    }
+    (void) new (home) Dom<View,shared>(home,n,vi);
   }
 
   template <class View, bool shared>

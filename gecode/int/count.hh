@@ -139,6 +139,9 @@ namespace Gecode { namespace Int { namespace Count {
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::String name(void);
   };
@@ -172,6 +175,9 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
     static Support::String name(void);
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
   };
@@ -205,6 +211,9 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
     static Support::String name(void);
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
   };
@@ -246,6 +255,9 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
     static Support::String name(void);
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\neq c\f$
     static  ExecStatus post(Space* home, ViewArray<VX>& x, VY y, int c);
     /// Delete propagator and return its size
@@ -330,6 +342,9 @@ namespace Gecode { namespace Int { namespace Count {
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
     static Support::String name(void);
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}=z+c\f$
     static ExecStatus post(Space* home, ViewArray<VX>& x, VY y, VZ z, int c);
   };
@@ -365,6 +380,9 @@ namespace Gecode { namespace Int { namespace Count {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::String name(void);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\neq z+c\f$
@@ -402,6 +420,9 @@ namespace Gecode { namespace Int { namespace Count {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::String name(void);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\leq z+c\f$
@@ -439,6 +460,9 @@ namespace Gecode { namespace Int { namespace Count {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::String name(void);
     /// Post propagator for \f$\#\{i\in\{0,\ldots,|x|-1\}\;|\;x_i=y\}\geq z+c\f$

@@ -76,6 +76,14 @@ namespace Gecode { namespace Int { namespace Circuit {
   }
 
   template <class View>
+  void
+  Dom<View>::post(Space* home, const Reflection::VarMap& vars,
+                  const Reflection::ActorSpec& spec) {
+    ViewArray<View> x(home, vars, spec[0]);
+    (void) new (home) Dom<View>(home, x);
+  }
+
+  template <class View>
   ExecStatus
   Dom<View>::propagate(Space* home) {
     if (View::pme(this) == ME_INT_VAL) {

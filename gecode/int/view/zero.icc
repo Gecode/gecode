@@ -47,6 +47,9 @@ namespace Gecode {
     ZeroIntView::ZeroIntView(void) {}
     forceinline void
     ZeroIntView::init(void) {}
+    forceinline
+    ZeroIntView::ZeroIntView(Space*, const Reflection::VarMap&,
+                             Reflection::Arg*) {}
 
     /*
      * Value access

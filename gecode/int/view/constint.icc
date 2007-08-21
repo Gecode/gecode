@@ -51,6 +51,9 @@ namespace Gecode {
     ConstIntView::init(int n) {
       x=n;
     }
+    forceinline
+    ConstIntView::ConstIntView(Space* home, const Reflection::VarMap& vars,
+                               Reflection::Arg* arg) : x(arg->toInt()) {}
 
 
     /*

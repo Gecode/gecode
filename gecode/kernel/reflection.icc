@@ -938,12 +938,27 @@ namespace Reflection {
     return name + "<" + TypeOf<View0>::t() + "," + TypeOf<View1>::t() + ">";
   }
   /// Mangle name with type information
+  template <class View0, bool b>
+  forceinline Support::String
+  mangle(const Support::String& name) {
+    return name + "<" + TypeOf<View0>::t()
+         + "," + (b ? "true" : "false") + ">";
+  }
+  /// Mangle name with type information
   template <class View0, class View1, class View2>
   forceinline Support::String
   mangle(const Support::String& name) {
     return name + "<" + TypeOf<View0>::t()
          + "," + TypeOf<View1>::t() + ","
          + TypeOf<View2>::t() + ">";
+  }
+  /// Mangle name with type information
+  template <class View0, class View1, bool b>
+  forceinline Support::String
+  mangle(const Support::String& name) {
+    return name + "<" + TypeOf<View0>::t()
+         + "," + TypeOf<View1>::t()
+         + "," + (b ? "true" : "false") + ">";
   }
   /// Mangle name with type information
   template <class View0, class View1, class View2, class View3>
@@ -953,6 +968,15 @@ namespace Reflection {
          + "," + TypeOf<View1>::t()
          + "," + TypeOf<View2>::t()
          + "," + TypeOf<View3>::t() + ">";
+  }
+  /// Mangle name with type information
+  template <class View0, class View1, class View2, bool b>
+  forceinline Support::String
+  mangle(const Support::String& name) {
+    return name + "<" + TypeOf<View0>::t()
+         + "," + TypeOf<View1>::t()
+         + "," + TypeOf<View2>::t()
+         + "," + (b ? "true" : "false") + ">";
   }
   
   template <class P>

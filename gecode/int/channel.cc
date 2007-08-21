@@ -96,6 +96,16 @@ namespace Gecode {
     GECODE_ES_FAIL(home,Channel::LinkMulti::post(home,xv,y,o));
   }
 
+  namespace {
+    using namespace Int;
+    GECODE_REGISTER2(Channel::Dom<IntView, false>);
+    GECODE_REGISTER2(Channel::Dom<IntView, true>);
+    GECODE_REGISTER2(Channel::Val<IntView, false>);
+    GECODE_REGISTER2(Channel::Val<IntView, true>);
+    GECODE_REGISTER1(Channel::LinkSingle);
+    GECODE_REGISTER1(Channel::LinkMulti);
+  }
+
 }
 
 // STATISTICS: int-post

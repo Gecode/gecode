@@ -116,6 +116,9 @@ namespace Gecode { namespace Int { namespace Channel {
     static  ExecStatus post(Space* home, int n, ValInfo<View>* xy);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::String name(void);
   };
@@ -158,6 +161,9 @@ namespace Gecode { namespace Int { namespace Channel {
     static  ExecStatus post(Space* home, int n, DomInfo<View>* xy);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::String name(void);
   };
@@ -189,7 +195,12 @@ namespace Gecode { namespace Int { namespace Channel {
     static  ExecStatus post(Space* home, BoolView x0, IntView x1);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post according to specification
+    GECODE_INT_EXPORT
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
+    GECODE_INT_EXPORT
     static Support::String name(void);
   };
 
@@ -218,11 +229,16 @@ namespace Gecode { namespace Int { namespace Channel {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     /// Post propagator for \f$ x_i = 1\leftrightarrow y=i+o\f$
+    GECODE_INT_EXPORT
     static  ExecStatus post(Space* home, 
                             ViewArray<BoolView>& x, IntView y, int o);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
+    GECODE_INT_EXPORT
     static Support::String name(void);
   };
 

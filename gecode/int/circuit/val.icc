@@ -76,6 +76,14 @@ namespace Gecode { namespace Int { namespace Circuit {
   }
 
   template <class View>
+  void
+  Val<View>::post(Space* home, const Reflection::VarMap& vars,
+                  const Reflection::ActorSpec& spec) {
+    ViewArray<View> x(home, vars, spec[0]);
+    (void) new (home) Val<View>(home, x);
+  }
+
+  template <class View>
   ExecStatus
   Val<View>::propagate(Space* home) {
     GECODE_ES_CHECK((Distinct::prop_val<View,true>(home,y)));
