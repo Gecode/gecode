@@ -149,6 +149,91 @@ namespace Gecode {
     Linear::post(home,t,x.size()+1,r,0,b);
   }
 
+    namespace {
+      using namespace Int;
+      GECODE_REGISTER3(Linear::DomEq<double,ScaleView<double,double> >);
+      GECODE_REGISTER3(Linear::DomEq<int,ScaleView<int,unsigned int> >);
+      GECODE_REGISTER3(Linear::Eq<double,Linear::NoView,Linear::NoView>);
+      GECODE_REGISTER4(Linear::Eq<double,ScaleView<double,double>,Linear::NoView>);
+      GECODE_REGISTER5(Linear::Eq<double,ScaleView<double,double>,ScaleView<double,double> >);
+      GECODE_REGISTER3(Linear::Eq<int,IntView,IntView>);
+      GECODE_REGISTER3(Linear::Eq<int,IntView,Linear::NoView>);
+      GECODE_REGISTER3(Linear::Eq<int,Linear::NoView,Linear::NoView>);
+      GECODE_REGISTER4(Linear::Eq<int,ScaleView<int,unsigned int>,Linear::NoView>);
+      GECODE_REGISTER5(Linear::Eq<int,ScaleView<int,unsigned int>,ScaleView<int,unsigned int> >);
+      GECODE_REGISTER3(Linear::EqBin<int,IntView,IntView>);
+      GECODE_REGISTER3(Linear::EqBin<int,IntView,MinusView>);
+      GECODE_REGISTER3(Linear::EqBin<int,MinusView,MinusView>);
+      GECODE_REGISTER4(Linear::EqTer<int,IntView,IntView,IntView>);
+      GECODE_REGISTER4(Linear::EqTer<int,IntView,IntView,MinusView>);
+      GECODE_REGISTER4(Linear::EqTer<int,IntView,MinusView,MinusView>);
+      GECODE_REGISTER4(Linear::EqTer<int,MinusView,MinusView,MinusView>);
+      GECODE_REGISTER3(Linear::GqBin<int,IntView,IntView>);
+      GECODE_REGISTER3(Linear::GqBin<int,IntView,MinusView>);
+      GECODE_REGISTER3(Linear::GqBin<int,MinusView,MinusView>);
+      GECODE_REGISTER3(Linear::Lq<double,Linear::NoView,Linear::NoView>);
+      GECODE_REGISTER4(Linear::Lq<double,Linear::NoView,ScaleView<double,double> >);
+      GECODE_REGISTER4(Linear::Lq<double,ScaleView<double,double>,Linear::NoView>);
+      GECODE_REGISTER5(Linear::Lq<double,ScaleView<double,double>,ScaleView<double,double> >);
+      GECODE_REGISTER3(Linear::Lq<int,IntView,IntView>);
+      GECODE_REGISTER3(Linear::Lq<int,IntView,Linear::NoView>);
+      GECODE_REGISTER3(Linear::Lq<int,Linear::NoView,IntView>);
+      GECODE_REGISTER3(Linear::Lq<int,Linear::NoView,Linear::NoView>);
+      GECODE_REGISTER4(Linear::Lq<int,Linear::NoView,ScaleView<int,unsigned int> >);
+      GECODE_REGISTER4(Linear::Lq<int,ScaleView<int,unsigned int>,Linear::NoView>);
+      GECODE_REGISTER5(Linear::Lq<int,ScaleView<int,unsigned int>,ScaleView<int,unsigned int> >);
+      GECODE_REGISTER3(Linear::LqBin<int,IntView,IntView>);
+      GECODE_REGISTER3(Linear::LqBin<int,IntView,MinusView>);
+      GECODE_REGISTER3(Linear::LqBin<int,MinusView,MinusView>);
+      GECODE_REGISTER4(Linear::LqTer<int,IntView,IntView,IntView>);
+      GECODE_REGISTER4(Linear::LqTer<int,IntView,IntView,MinusView>);
+      GECODE_REGISTER4(Linear::LqTer<int,IntView,MinusView,MinusView>);
+      GECODE_REGISTER4(Linear::LqTer<int,MinusView,MinusView,MinusView>);
+      GECODE_REGISTER3(Linear::Nq<double,Linear::NoView,Linear::NoView>);
+      GECODE_REGISTER4(Linear::Nq<double,ScaleView<double,double>,Linear::NoView>);
+      GECODE_REGISTER5(Linear::Nq<double,ScaleView<double,double>,ScaleView<double,double> >);
+      GECODE_REGISTER3(Linear::Nq<int,IntView,IntView>);
+      GECODE_REGISTER3(Linear::Nq<int,IntView,Linear::NoView>);
+      GECODE_REGISTER3(Linear::Nq<int,Linear::NoView,Linear::NoView>);
+      GECODE_REGISTER4(Linear::Nq<int,ScaleView<int,unsigned int>,Linear::NoView>);
+      GECODE_REGISTER5(Linear::Nq<int,ScaleView<int,unsigned int>,ScaleView<int,unsigned int> >);
+      GECODE_REGISTER3(Linear::NqBin<int,IntView,IntView>);
+      GECODE_REGISTER3(Linear::NqBin<int,IntView,MinusView>);
+      GECODE_REGISTER3(Linear::NqBin<int,MinusView,MinusView>);
+      GECODE_REGISTER4(Linear::NqTer<int,IntView,IntView,IntView>);
+      GECODE_REGISTER4(Linear::NqTer<int,IntView,IntView,MinusView>);
+      GECODE_REGISTER4(Linear::NqTer<int,IntView,MinusView,MinusView>);
+      GECODE_REGISTER4(Linear::NqTer<int,MinusView,MinusView,MinusView>);
+      GECODE_REGISTER5(Linear::ReEq<double,ScaleView<double,double>,Linear::NoView,BoolView>);
+      GECODE_REGISTER5(Linear::ReEq<double,ScaleView<double,double>,Linear::NoView,NegBoolView>);
+      GECODE_REGISTER6(Linear::ReEq<double,ScaleView<double,double>,ScaleView<double,double>,BoolView>);
+      GECODE_REGISTER6(Linear::ReEq<double,ScaleView<double,double>,ScaleView<double,double>,NegBoolView>);
+      GECODE_REGISTER4(Linear::ReEq<int,IntView,IntView,BoolView>);
+      GECODE_REGISTER4(Linear::ReEq<int,IntView,IntView,NegBoolView>);
+      GECODE_REGISTER4(Linear::ReEq<int,IntView,Linear::NoView,BoolView>);
+      GECODE_REGISTER4(Linear::ReEq<int,IntView,Linear::NoView,NegBoolView>);
+      GECODE_REGISTER5(Linear::ReEq<int,ScaleView<int,unsigned int>,Linear::NoView,BoolView>);
+      GECODE_REGISTER5(Linear::ReEq<int,ScaleView<int,unsigned int>,Linear::NoView,NegBoolView>);
+      GECODE_REGISTER6(Linear::ReEq<int,ScaleView<int,unsigned int>,ScaleView<int,unsigned int>,BoolView>);
+      GECODE_REGISTER6(Linear::ReEq<int,ScaleView<int,unsigned int>,ScaleView<int,unsigned int>,NegBoolView>);
+      GECODE_REGISTER4(Linear::ReEqBin<int,IntView,IntView,BoolView>);
+      GECODE_REGISTER4(Linear::ReEqBin<int,IntView,IntView,NegBoolView>);
+      GECODE_REGISTER4(Linear::ReEqBin<int,IntView,MinusView,BoolView>);
+      GECODE_REGISTER4(Linear::ReEqBin<int,IntView,MinusView,NegBoolView>);
+      GECODE_REGISTER4(Linear::ReLq<double,Linear::NoView,ScaleView<double,double> >);
+      GECODE_REGISTER4(Linear::ReLq<double,ScaleView<double,double>,Linear::NoView>);
+      GECODE_REGISTER5(Linear::ReLq<double,ScaleView<double,double>,ScaleView<double,double> >);
+      GECODE_REGISTER3(Linear::ReLq<int,IntView,IntView>);
+      GECODE_REGISTER3(Linear::ReLq<int,IntView,Linear::NoView>);
+      GECODE_REGISTER3(Linear::ReLq<int,Linear::NoView,IntView>);
+      GECODE_REGISTER4(Linear::ReLq<int,Linear::NoView,ScaleView<int,unsigned int> >);
+      GECODE_REGISTER4(Linear::ReLq<int,ScaleView<int,unsigned int>,Linear::NoView>);
+      GECODE_REGISTER5(Linear::ReLq<int,ScaleView<int,unsigned int>,ScaleView<int,unsigned int> >);
+      GECODE_REGISTER3(Linear::ReLqBin<int,IntView,IntView>);
+      GECODE_REGISTER3(Linear::ReLqBin<int,IntView,MinusView>);
+      GECODE_REGISTER3(Linear::ReLqBin<int,MinusView,MinusView>);
+    }
+
 }
 
 // STATISTICS: int-post

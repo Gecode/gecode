@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, class C>
-  Support::String
+  inline Support::String
   EqTer<Val,A,B,C>::name(void) {
     return Reflection::mangle<Val,A,B,C>("Int::Linear::EqTer");
   }
@@ -145,6 +145,16 @@ namespace Gecode { namespace Int { namespace Linear {
     return LinTer<Val,A,B,C,PC_INT_BND>::spec(home, m, name());
   }
 
+  template <class Val, class A, class B, class C>
+  void
+  EqTer<Val,A,B,C>::post(Space* home, const Reflection::VarMap& vars,
+                         const Reflection::ActorSpec& spec) {
+    A x0(home, vars, spec[0]->typedArg());
+    B x1(home, vars, spec[1]->typedArg());
+    C x2(home, vars, spec[2]->typedArg());
+    Val c = spec[3]->toInt();
+    (void) new (home) EqTer<Val,A,B,C>(home, x0, x1, x2, c);
+  }
 
   /// Describe which view has been modified how
   enum TerMod {
@@ -220,7 +230,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class A, class B, class C>
-  Support::String
+  inline Support::String
   NqTer<Val,A,B,C>::name(void) {
     return Reflection::mangle<Val,A,B,C>("Int::Linear::NqTer");
   }
@@ -229,6 +239,17 @@ namespace Gecode { namespace Int { namespace Linear {
   Reflection::ActorSpec&
   NqTer<Val,A,B,C>::spec(Space* home, Reflection::VarMap& m) {
     return LinTer<Val,A,B,C,PC_INT_VAL>::spec(home, m, name());
+  }
+
+  template <class Val, class A, class B, class C>
+  void
+  NqTer<Val,A,B,C>::post(Space* home, const Reflection::VarMap& vars,
+                         const Reflection::ActorSpec& spec) {
+    A x0(home, vars, spec[0]->typedArg());
+    B x1(home, vars, spec[1]->typedArg());
+    C x2(home, vars, spec[2]->typedArg());
+    Val c = spec[3]->toInt();
+    (void) new (home) NqTer<Val,A,B,C>(home, x0, x1, x2, c);
   }
 
   template <class Val, class A, class B, class C>
@@ -289,7 +310,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   template <class Val, class A, class B, class C>
-  Support::String
+  inline Support::String
   LqTer<Val,A,B,C>::name(void) {
     return Reflection::mangle<Val,A,B,C>("Int::Linear::LqTer");
   }
@@ -298,6 +319,17 @@ namespace Gecode { namespace Int { namespace Linear {
   Reflection::ActorSpec&
   LqTer<Val,A,B,C>::spec(Space* home, Reflection::VarMap& m) {
     return LinTer<Val,A,B,C,PC_INT_BND>::spec(home, m, name());
+  }
+
+  template <class Val, class A, class B, class C>
+  void
+  LqTer<Val,A,B,C>::post(Space* home, const Reflection::VarMap& vars,
+                         const Reflection::ActorSpec& spec) {
+    A x0(home, vars, spec[0]->typedArg());
+    B x1(home, vars, spec[1]->typedArg());
+    C x2(home, vars, spec[2]->typedArg());
+    Val c = spec[3]->toInt();
+    (void) new (home) LqTer<Val,A,B,C>(home, x0, x1, x2, c);
   }
 
   template <class Val, class A, class B, class C>

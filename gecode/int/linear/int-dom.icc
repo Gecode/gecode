@@ -416,7 +416,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class View>
-  Support::String
+  inline Support::String
   DomEq<Val,View>::name(void) {
     return Reflection::mangle<Val,View>("Int::Linear::DomEq");
   }
@@ -426,6 +426,16 @@ namespace Gecode { namespace Int { namespace Linear {
   DomEq<Val,View>::spec(Space* home, Reflection::VarMap& m) {
     return Lin<Val,View,View,PC_INT_DOM>::spec(home, m, name());
   }
+  
+  template <class Val, class View>
+  void
+  DomEq<Val,View>::post(Space* home, const Reflection::VarMap& vars,
+                        const Reflection::ActorSpec& spec) {
+    ViewArray<View> x(home, vars, spec[0]);
+    ViewArray<View> y(home, vars, spec[1]);
+    Val c = spec[2]->toInt();
+    (void) new (home) DomEq<Val,View>(home, x, y, c);
+  }  
 
   template <class Val, class View>
   ExecStatus

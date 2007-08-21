@@ -780,6 +780,9 @@ namespace Gecode {
       ScaleView(void);
       /// Initialize as \f$b\cdot y\f$
       ScaleView(int b, const IntView& y);
+      /// Initialize from specification
+      ScaleView(Space* home, const Reflection::VarMap& vars,
+                Reflection::Arg* arg);
       /// Initialize as \f$b\cdot y\f$
       void init(int b, const IntView& y);
       /// Return scale factor of scale view

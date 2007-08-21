@@ -184,6 +184,8 @@ namespace Gecode {
     /// Initialize
     ViewArray(Space*, const ViewArray<Int::Linear::NoView>&) {}
     /// Initialize
+    ViewArray(Space*, const Reflection::VarMap&, Reflection::Arg*) {}
+    /// Initialize
     const ViewArray<Int::Linear::NoView>& operator=(const ViewArray<Int::Linear::NoView>&) { return *this; }
     //@}
 

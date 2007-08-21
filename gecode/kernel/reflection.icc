@@ -466,6 +466,10 @@ namespace Gecode { namespace Reflection {
   ::Gecode::Reflection::Registrar< P1,P2,P3 > GECODE_FRESH(r);
 #define GECODE_REGISTER4(P1,P2,P3,P4) \
   ::Gecode::Reflection::Registrar< P1,P2,P3,P4 > GECODE_FRESH(r);
+#define GECODE_REGISTER5(P1,P2,P3,P4,P5) \
+  ::Gecode::Reflection::Registrar< P1,P2,P3,P4,P5 > GECODE_FRESH(r);
+#define GECODE_REGISTER6(P1,P2,P3,P4,P5,P6) \
+  ::Gecode::Reflection::Registrar< P1,P2,P3,P4,P5,P6 > GECODE_FRESH(r);
 
   /**************************************
    * Implementations

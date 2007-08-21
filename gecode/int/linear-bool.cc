@@ -105,6 +105,53 @@ namespace Gecode {
     Linear::post(home,t,n,r,y,0,ICL_DEF,pk);
   }
 
+  namespace {
+    using namespace Int;
+    GECODE_REGISTER1(Linear::EqBoolInt<BoolView>::Memory);
+    GECODE_REGISTER1(Linear::EqBoolInt<BoolView>::Speed);
+    GECODE_REGISTER3(Linear::EqBoolScale<Linear::EmptyScaleBoolArray,Linear::EmptyScaleBoolArray,IntView>);
+    GECODE_REGISTER3(Linear::EqBoolScale<Linear::EmptyScaleBoolArray,Linear::EmptyScaleBoolArray,ZeroIntView>);
+    GECODE_REGISTER3(Linear::EqBoolScale<Linear::EmptyScaleBoolArray,Linear::ScaleBoolArray,IntView>);
+    GECODE_REGISTER3(Linear::EqBoolScale<Linear::EmptyScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>);
+    GECODE_REGISTER3(Linear::EqBoolScale<Linear::ScaleBoolArray,Linear::EmptyScaleBoolArray,IntView>);
+    GECODE_REGISTER3(Linear::EqBoolScale<Linear::ScaleBoolArray,Linear::EmptyScaleBoolArray,ZeroIntView>);
+    GECODE_REGISTER3(Linear::EqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,IntView>);
+    GECODE_REGISTER3(Linear::EqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>);
+    GECODE_REGISTER2(Linear::EqBoolView<BoolView,IntView>);
+    GECODE_REGISTER2(Linear::EqBoolView<BoolView,MinusView>);
+    GECODE_REGISTER1(Linear::GqBoolInt<BoolView>::Memory);
+    GECODE_REGISTER1(Linear::GqBoolInt<BoolView>::Speed);
+    GECODE_REGISTER1(Linear::GqBoolInt<NegBoolView>::Memory);
+    GECODE_REGISTER1(Linear::GqBoolInt<NegBoolView>::Speed);
+    GECODE_REGISTER2(Linear::GqBoolView<BoolView,IntView>);
+    GECODE_REGISTER2(Linear::GqBoolView<BoolView,MinusView>);
+    GECODE_REGISTER2(Linear::GqBoolView<NegBoolView,IntView>);
+    GECODE_REGISTER2(Linear::GqBoolView<NegBoolView,MinusView>);
+    GECODE_REGISTER3(Linear::LqBoolScale<Linear::EmptyScaleBoolArray,Linear::EmptyScaleBoolArray,IntView>);
+    GECODE_REGISTER3(Linear::LqBoolScale<Linear::EmptyScaleBoolArray,Linear::EmptyScaleBoolArray,MinusView>);
+    GECODE_REGISTER3(Linear::LqBoolScale<Linear::EmptyScaleBoolArray,Linear::EmptyScaleBoolArray,ZeroIntView>);
+    GECODE_REGISTER3(Linear::LqBoolScale<Linear::EmptyScaleBoolArray,Linear::ScaleBoolArray,IntView>);
+    GECODE_REGISTER3(Linear::LqBoolScale<Linear::EmptyScaleBoolArray,Linear::ScaleBoolArray,MinusView>);
+    GECODE_REGISTER3(Linear::LqBoolScale<Linear::EmptyScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>);
+    GECODE_REGISTER3(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::EmptyScaleBoolArray,IntView>);
+    GECODE_REGISTER3(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::EmptyScaleBoolArray,MinusView>);
+    GECODE_REGISTER3(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::EmptyScaleBoolArray,ZeroIntView>);
+    GECODE_REGISTER3(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,IntView>);
+    GECODE_REGISTER3(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,MinusView>);
+    GECODE_REGISTER3(Linear::LqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>);
+    GECODE_REGISTER1(Linear::NqBoolInt<BoolView>);
+    GECODE_REGISTER3(Linear::NqBoolScale<Linear::EmptyScaleBoolArray,Linear::EmptyScaleBoolArray,IntView>);
+    GECODE_REGISTER3(Linear::NqBoolScale<Linear::EmptyScaleBoolArray,Linear::EmptyScaleBoolArray,ZeroIntView>);
+    GECODE_REGISTER3(Linear::NqBoolScale<Linear::EmptyScaleBoolArray,Linear::ScaleBoolArray,IntView>);
+    GECODE_REGISTER3(Linear::NqBoolScale<Linear::EmptyScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>);
+    GECODE_REGISTER3(Linear::NqBoolScale<Linear::ScaleBoolArray,Linear::EmptyScaleBoolArray,IntView>);
+    GECODE_REGISTER3(Linear::NqBoolScale<Linear::ScaleBoolArray,Linear::EmptyScaleBoolArray,ZeroIntView>);
+    GECODE_REGISTER3(Linear::NqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,IntView>);
+    GECODE_REGISTER3(Linear::NqBoolScale<Linear::ScaleBoolArray,Linear::ScaleBoolArray,ZeroIntView>);
+    GECODE_REGISTER2(Linear::NqBoolView<BoolView,IntView>);
+    GECODE_REGISTER2(Linear::NqBoolView<BoolView,MinusView>);
+  }
+
 }
 
 // STATISTICS: int-post

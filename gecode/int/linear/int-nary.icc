@@ -405,7 +405,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   template <class Val, class P, class N>
-  Support::String
+  inline Support::String
   Eq<Val,P,N>::name(void) {
     return Reflection::mangle<Val,P,N>("Int::Linear::Eq");
   }
@@ -415,6 +415,16 @@ namespace Gecode { namespace Int { namespace Linear {
   Eq<Val,P,N>::spec(Space* home, Reflection::VarMap& m) {
     return Lin<Val,P,N,PC_INT_BND>::spec(home, m, name());
   }
+
+  template <class Val, class P, class N>
+  void
+  Eq<Val,P,N>::post(Space* home, const Reflection::VarMap& vars,
+                    const Reflection::ActorSpec& spec) {
+    ViewArray<P> x(home, vars, spec[0]);
+    ViewArray<N> y(home, vars, spec[1]);
+    Val c = spec[2]->toInt();
+    (void) new (home) Eq<Val,P,N>(home, x, y, c);
+  }  
 
   template <class Val, class P, class N>
   ExecStatus
@@ -461,7 +471,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N, class Ctrl>
-  Support::String
+  inline Support::String
   ReEq<Val,P,N,Ctrl>::name(void) {
     return Reflection::mangle<Val,P,N,Ctrl>("Int::Linear::ReEq");
   }
@@ -471,6 +481,17 @@ namespace Gecode { namespace Int { namespace Linear {
   ReEq<Val,P,N,Ctrl>::spec(Space* home, Reflection::VarMap& m) {
     return ReLin<Val,P,N,PC_INT_BND,Ctrl>::spec(home, m, name());
   }
+
+  template <class Val, class P, class N, class Ctrl>
+  void
+  ReEq<Val,P,N,Ctrl>::post(Space* home, const Reflection::VarMap& vars,
+                           const Reflection::ActorSpec& spec) {
+    ViewArray<P> x(home, vars, spec[0]);
+    ViewArray<N> y(home, vars, spec[1]);
+    Val c = spec[2]->toInt();
+    Ctrl b(home, vars, spec[3]->typedArg());
+    (void) new (home) ReEq<Val,P,N,Ctrl>(home, x, y, c, b);
+  }  
 
   template <class Val, class P, class N, class Ctrl>
   ExecStatus
@@ -635,6 +656,16 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N>
+  void
+  Nq<Val,P,N>::post(Space* home, const Reflection::VarMap& vars,
+                    const Reflection::ActorSpec& spec) {
+    ViewArray<P> x(home, vars, spec[0]);
+    ViewArray<N> y(home, vars, spec[1]);
+    Val c = spec[2]->toInt();
+    (void) new (home) Nq<Val,P,N>(home, x, y, c);
+  }  
+
+  template <class Val, class P, class N>
   ExecStatus
   Nq<Val,P,N>::propagate(Space* home) {
     for (int i = x.size(); i--; )
@@ -784,7 +815,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N>
-  Support::String
+  inline Support::String
   Lq<Val,P,N>::name(void) {
     return Reflection::mangle<Val,P,N>("Int::Linear::Lq");
   }
@@ -794,6 +825,16 @@ namespace Gecode { namespace Int { namespace Linear {
   Lq<Val,P,N>::spec(Space* home, Reflection::VarMap& m) {
     return Lin<Val,P,N,PC_INT_BND>::spec(home, m, name());
   }
+
+  template <class Val, class P, class N>
+  void
+  Lq<Val,P,N>::post(Space* home, const Reflection::VarMap& vars,
+                    const Reflection::ActorSpec& spec) {
+    ViewArray<P> x(home, vars, spec[0]);
+    ViewArray<N> y(home, vars, spec[1]);
+    Val c = spec[2]->toInt();
+    (void) new (home) Lq<Val,P,N>(home, x, y, c);
+  }  
 
   template <class Val, class P, class N>
   ExecStatus
@@ -906,7 +947,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N>
-  Support::String
+  inline Support::String
   ReLq<Val,P,N>::name(void) {
     return Reflection::mangle<Val,P,N>("Int::Linear::ReLq");
   }
@@ -916,6 +957,17 @@ namespace Gecode { namespace Int { namespace Linear {
   ReLq<Val,P,N>::spec(Space* home, Reflection::VarMap& m) {
     return ReLin<Val,P,N,PC_INT_BND,BoolView>::spec(home, m, name());
   }
+
+  template <class Val, class P, class N>
+  void
+  ReLq<Val,P,N>::post(Space* home, const Reflection::VarMap& vars,
+                      const Reflection::ActorSpec& spec) {
+    ViewArray<P> x(home, vars, spec[0]);
+    ViewArray<N> y(home, vars, spec[1]);
+    Val c = spec[2]->toInt();
+    BoolView b(home, vars, spec[3]->typedArg());
+    (void) new (home) ReLq<Val,P,N>(home, x, y, c, b);
+  }  
 
   template <class Val, class P, class N>
   ExecStatus

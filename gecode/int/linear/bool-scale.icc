@@ -203,22 +203,27 @@ namespace Gecode { namespace Int { namespace Linear {
                                        const Support::String& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
 
-    Reflection::IntArrayArg* coeff =
-      new Reflection::IntArrayArg(p.size()+n.size());
-    Reflection::ArrayArg* a =
-      new Reflection::ArrayArg(p.size()+n.size());
+    Reflection::IntArrayArg* c_p =
+      new Reflection::IntArrayArg(p.size());
+    ViewArray<BoolView> b_p(home, p.size());
     int count = 0;
     for (ScaleBool* f = p.fst(); f != p.lst(); f++) {
-      (*coeff)[count] = f->a;
-      (*a)[count++] = f->x.spec(home, m);
-    }
-    for (ScaleBool* f = n.fst(); f != n.lst(); f++) {
-      (*coeff)[count] = -(f->a);
-      (*a)[count++] = f->x.spec(home, m);
+      (*c_p)[count] = f->a;
+      b_p[count++]  = f->x;
     }
 
-    return s << coeff << a << Reflection::typedSpec(home, m, x)
-             << new Reflection::IntArg(static_cast<int>(c));
+    Reflection::IntArrayArg* c_n =
+      new Reflection::IntArrayArg(n.size());
+    ViewArray<BoolView> b_n(home, n.size());
+    count = 0;
+    for (ScaleBool* f = n.fst(); f != n.lst(); f++) {
+      (*c_n)[count] = f->a;
+      b_n[count++]  = f->x;
+    }
+
+    return s << c_p << b_p.spec(home, m)
+             << c_n << b_n.spec(home, m) << Reflection::typedSpec(home, m, x)
+             << c;
   }
 
   /*
@@ -270,7 +275,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class SBAP, class SBAN, class VX>
-  Support::String
+  inline Support::String
   EqBoolScale<SBAP,SBAN,VX>::name(void) {
     return Reflection::mangle<SBAP,SBAN,VX>("Int::Linear::EqBoolScale");
   }
@@ -279,6 +284,33 @@ namespace Gecode { namespace Int { namespace Linear {
   Reflection::ActorSpec&
   EqBoolScale<SBAP,SBAN,VX>::spec(Space* home, Reflection::VarMap& m) {
     return LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::spec(home, m, name());
+  }
+
+  template<class SBAP, class SBAN, class VX>
+  void
+  EqBoolScale<SBAP,SBAN,VX>::post(Space* home, const Reflection::VarMap& vars,
+                                  const Reflection::ActorSpec& spec) {
+    Reflection::IntArrayArg* c_p = spec[0]->toIntArray();
+    ViewArray<BoolView> b_pv(home, vars, spec[1]);
+    Reflection::IntArrayArg* c_n = spec[2]->toIntArray();
+    ViewArray<BoolView> b_nv(home, vars, spec[3]);
+    VX x(home, vars, spec[4]->typedArg());
+    int c = spec[5]->toInt();
+    SBAP b_p(home,b_pv.size());
+    {
+      ScaleBool* f=b_p.fst();
+      for (int i=b_pv.size(); i--; ) {
+        f[i].x=b_pv[i]; f[i].a=(*c_p)[i];
+      }
+    }
+    SBAN b_n(home,b_nv.size());
+    {
+      ScaleBool* f=b_n.fst();
+      for (int i=b_nv.size(); i--; ) {
+        f[i].x=b_nv[i]; f[i].a=(*c_n)[i];
+      }
+    }
+    (void) new (home) EqBoolScale<SBAP,SBAN,VX>(home,b_p,b_n,x,c);
   }
   
   template<class SBAP, class SBAN, class VX>
@@ -497,7 +529,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class SBAP, class SBAN, class VX>
-  Support::String
+  inline Support::String
   LqBoolScale<SBAP,SBAN,VX>::name(void) {
     return Reflection::mangle<SBAP,SBAN,VX>("Int::Linear::LqBoolScale");
   }
@@ -506,6 +538,33 @@ namespace Gecode { namespace Int { namespace Linear {
   Reflection::ActorSpec&
   LqBoolScale<SBAP,SBAN,VX>::spec(Space* home, Reflection::VarMap& m) {
     return LinBoolScale<SBAP,SBAN,VX,PC_INT_BND>::spec(home, m, name());
+  }
+
+  template<class SBAP, class SBAN, class VX>
+  void
+  LqBoolScale<SBAP,SBAN,VX>::post(Space* home, const Reflection::VarMap& vars,
+                                  const Reflection::ActorSpec& spec) {
+    Reflection::IntArrayArg* c_p = spec[0]->toIntArray();
+    ViewArray<BoolView> b_pv(home, vars, spec[1]);
+    Reflection::IntArrayArg* c_n = spec[2]->toIntArray();
+    ViewArray<BoolView> b_nv(home, vars, spec[3]);
+    VX x(home, vars, spec[4]->typedArg());
+    int c = spec[5]->toInt();
+    SBAP b_p(home,b_pv.size());
+    {
+      ScaleBool* f=b_p.fst();
+      for (int i=b_pv.size(); i--; ) {
+        f[i].x=b_pv[i]; f[i].a=(*c_p)[i];
+      }
+    }
+    SBAN b_n(home,b_nv.size());
+    {
+      ScaleBool* f=b_n.fst();
+      for (int i=b_nv.size(); i--; ) {
+        f[i].x=b_nv[i]; f[i].a=(*c_n)[i];
+      }
+    }
+    (void) new (home) LqBoolScale<SBAP,SBAN,VX>(home,b_p,b_n,x,c);
   }
 
   template<class SBAP, class SBAN, class VX>
@@ -663,7 +722,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class SBAP, class SBAN, class VX>
-  Support::String
+  inline Support::String
   NqBoolScale<SBAP,SBAN,VX>::name(void) {
     return Reflection::mangle<SBAP,SBAN,VX>("Int::Linear::NqBoolScale");
   }
@@ -672,6 +731,33 @@ namespace Gecode { namespace Int { namespace Linear {
   Reflection::ActorSpec&
   NqBoolScale<SBAP,SBAN,VX>::spec(Space* home, Reflection::VarMap& m) {
     return LinBoolScale<SBAP,SBAN,VX,PC_INT_VAL>::spec(home, m, name());
+  }
+
+  template<class SBAP, class SBAN, class VX>
+  void
+  NqBoolScale<SBAP,SBAN,VX>::post(Space* home, const Reflection::VarMap& vars,
+                                  const Reflection::ActorSpec& spec) {
+    Reflection::IntArrayArg* c_p = spec[0]->toIntArray();
+    ViewArray<BoolView> b_pv(home, vars, spec[1]);
+    Reflection::IntArrayArg* c_n = spec[2]->toIntArray();
+    ViewArray<BoolView> b_nv(home, vars, spec[3]);
+    VX x(home, vars, spec[4]->typedArg());
+    int c = spec[5]->toInt();
+    SBAP b_p(home,b_pv.size());
+    {
+      ScaleBool* f=b_p.fst();
+      for (int i=b_pv.size(); i--; ) {
+        f[i].x=b_pv[i]; f[i].a=(*c_p)[i];
+      }
+    }
+    SBAN b_n(home,b_nv.size());
+    {
+      ScaleBool* f=b_n.fst();
+      for (int i=b_nv.size(); i--; ) {
+        f[i].x=b_nv[i]; f[i].a=(*c_n)[i];
+      }
+    }
+    (void) new (home) NqBoolScale<SBAP,SBAN,VX>(home,b_p,b_n,x,c);
   }
 
   template<class SBAP, class SBAN, class VX>
