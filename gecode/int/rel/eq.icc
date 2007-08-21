@@ -686,7 +686,7 @@ namespace Gecode { namespace Int { namespace Rel {
   template <class View, class CtrlView>
   inline Support::String
   ReEqDomInt<View,CtrlView>::name(void) {
-    return Reflection::mangle<View,CtrlView>("Int::Rel::ReEqDom");
+    return Reflection::mangle<View,CtrlView>("Int::Rel::ReEqDomInt");
   }
 
   template <class View, class CtrlView>

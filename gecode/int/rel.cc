@@ -296,7 +296,6 @@ namespace Gecode {
   namespace {
     using namespace Int;
     GECODE_REGISTER2(Rel::EqBnd<IntView,IntView>);
-    GECODE_REGISTER2(Rel::EqBnd<IntView,IntView>);
     GECODE_REGISTER2(Rel::EqBnd<IntView,ConstIntView>);
     GECODE_REGISTER2(Rel::EqBnd<BoolView,ConstIntView>);
     GECODE_REGISTER2(Rel::EqBnd<BoolView,BoolView>);
@@ -314,6 +313,7 @@ namespace Gecode {
     GECODE_REGISTER2(Rel::ReEqDomInt<IntView,BoolView>);
     GECODE_REGISTER2(Rel::ReEqDom<IntView,NegBoolView>);
     GECODE_REGISTER2(Rel::ReEqDom<IntView,BoolView>);
+
     GECODE_REGISTER2(Rel::ReEqBndInt<IntView,NegBoolView>);
     GECODE_REGISTER2(Rel::ReEqBndInt<IntView,BoolView>);
     GECODE_REGISTER2(Rel::ReEqBnd<IntView,NegBoolView>);
