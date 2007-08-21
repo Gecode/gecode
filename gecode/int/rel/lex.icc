@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
-  Support::String
+  inline Support::String
   Lex<View>::name(void) {
     return Reflection::mangle<View>("Int::Rel::Lex");
   }
@@ -66,6 +66,15 @@ namespace Gecode { namespace Int { namespace Rel {
   Lex<View>::spec(Space* home, Reflection::VarMap& m) {
     return NaryPropagator<ViewTuple<View,2>,PC_INT_BND>
       ::spec(home, m, name()) << strict;
+  }
+
+  template <class View>
+  void
+  Lex<View>::post(Space* home, const Reflection::VarMap& vars,
+  const Reflection::ActorSpec& spec) {
+    ViewArray<ViewTuple<View,2> > x(home, vars, spec[0]);
+    bool strict = spec[1]->toInt();
+    (void) new (home) Lex<View>(home, x, strict);
   }
 
   template <class View>

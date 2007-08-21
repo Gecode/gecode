@@ -47,22 +47,9 @@
 namespace Gecode { namespace Serialization {  
 
   namespace {
-
-    class ArrayArgIter {
-    private:
-      Reflection::IntArrayArg& a;
-      int n;
-    public:
-      ArrayArgIter(Reflection::IntArrayArg* a0) : a(*a0), n(0) {}
-      bool operator()(void) { return n < a.size(); }
-      void operator++(void) { n += 2; }
-      int min(void) const { return a[n]; }
-      int max(void) const { return a[n+1]; }
-      unsigned int width(void) const { return max() - min() + 1; }
-    };
     
     VarBase* createIntVar(Space* home, Reflection::VarSpec& spec) {
-      ArrayArgIter ai(spec.dom()->toIntArray());
+      Reflection::IntArrayArgRanges ai(spec.dom()->toIntArray());
       return Int::IntView(IntVar(home, IntSet(ai))).variable();
     }
     VarBase* createBoolVar(Space* home, Reflection::VarSpec& spec) {

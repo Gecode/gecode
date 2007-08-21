@@ -77,6 +77,11 @@ namespace Gecode { namespace Int { namespace Dom {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Mangled name
+    static Support::String name(void);
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Post propagator for \f$ (l\leq x \leq m) \Leftrightarrow b\f$
     static ExecStatus post(Space* home, View x, int min, int max, BoolView b);
   };
@@ -106,6 +111,11 @@ namespace Gecode { namespace Int { namespace Dom {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Mangled name
+    static Support::String name(void);
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Post propagator for \f$ (x \in d) \Leftrightarrow b\f$
     static ExecStatus post(Space* home, View x, const IntSet& s, BoolView b);
     /// Delete propagator and return its size

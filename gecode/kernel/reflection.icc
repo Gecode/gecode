@@ -209,6 +209,33 @@ namespace Gecode { namespace Reflection {
   };
 
   /**
+    * \brief Iterate over an IntArrayArg, interpreting consecutive
+    * pairs of integers as ranges
+    *
+    * \ingroup TaskIntReflect
+    */
+  class IntArrayArgRanges {
+  private:
+    /// The array
+    Reflection::IntArrayArg& a;
+    /// The current position
+    int n;
+  public:
+    /// Constructor
+    IntArrayArgRanges(Reflection::IntArrayArg* a0) : a(*a0), n(0) {}
+    /// Test whether iterator is still at a valid range
+    bool operator()(void) { return n < a.size(); }
+    /// Move iterator to next range
+    void operator++(void) { n += 2; }
+    /// Minimum of current range
+    int min(void) const { return a[n]; }
+    /// Maximum of current range
+    int max(void) const { return a[n+1]; }
+    /// Width of current range
+    unsigned int width(void) const { return max() - min() + 1; }
+  };
+
+  /**
     * \brief Argument paired with a type
     * \ingroup TaskIntReflect
     */

@@ -371,15 +371,35 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class VA, class VB, class VC>
-  Support::String
+  inline Support::String
   ViewBnd<VA,VB,VC>::name(void) {
-    return "Int::Element::ViewBnd";
+    return Reflection::mangle<VA,VB,VC>("Int::Element::ViewBnd");
   }
 
   template <class VA, class VB, class VC>
   Reflection::ActorSpec&
   ViewBnd<VA,VB,VC>::spec(Space* home, Reflection::VarMap& m) {
     return View<VA,VB,VC,PC_INT_BND>::spec(home, m, name());
+  }
+
+  template <class VA, class VB, class VC>
+  void
+  ViewBnd<VA,VB,VC>::post(Space* home, const Reflection::VarMap& vars,
+                          const Reflection::ActorSpec& spec)
+  {
+    VB x0(home, vars, spec[0]->typedArg());
+    VC x1(home, vars, spec[1]->typedArg());
+    Reflection::IntArrayArg* ia = spec[2]->toIntArray();
+    GECODE_AUTOARRAY(int,idx,ia->size());
+    for (int i=ia->size(); i--; )
+      idx[i] = (*ia)[i];
+    ViewArray<VA> y(home, vars, spec[3]);
+    IdxView<VA>* iv = IdxView<VA>::allocate(home, ia->size());
+    for (int i=ia->size(); i--; ) {
+      iv[i].view = y[i];
+      iv[i].idx  = idx[i];
+    }
+    (void) new (home) ViewBnd<VA,VB,VC>(home, iv, ia->size(), x0, x1);
   }
 
   template <class VA, class VB, class VC>
@@ -475,15 +495,35 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class VA, class VB, class VC>
-  Support::String
+  inline Support::String
   ViewDom<VA,VB,VC>::name(void) {
-    return "Int::Element::ViewDom";
+    return Reflection::mangle<VA,VB,VC>("Int::Element::ViewDom");
   }
 
   template <class VA, class VB, class VC>
   Reflection::ActorSpec&
   ViewDom<VA,VB,VC>::spec(Space* home, Reflection::VarMap& m) {
     return View<VA,VB,VC,PC_INT_DOM>::spec(home, m, name());
+  }
+
+  template <class VA, class VB, class VC>
+  void
+  ViewDom<VA,VB,VC>::post(Space* home, const Reflection::VarMap& vars,
+                          const Reflection::ActorSpec& spec)
+  {
+    VB x0(home, vars, spec[0]->typedArg());
+    VC x1(home, vars, spec[1]->typedArg());
+    Reflection::IntArrayArg* ia = spec[2]->toIntArray();
+    GECODE_AUTOARRAY(int,idx,ia->size());
+    for (int i=ia->size(); i--; )
+      idx[i] = (*ia)[i];
+    ViewArray<VA> y(home, vars, spec[3]);
+    IdxView<VA>* iv = IdxView<VA>::allocate(home, ia->size());
+    for (int i=ia->size(); i--; ) {
+      iv[i].view = y[i];
+      iv[i].idx  = idx[i];
+    }
+    (void) new (home) ViewDom<VA,VB,VC>(home, iv, ia->size(), x0, x1);
   }
 
   template <class VA, class VB, class VC>

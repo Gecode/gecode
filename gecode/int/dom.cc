@@ -93,6 +93,11 @@ namespace Gecode {
     GECODE_ES_FAIL(home,Dom::ReIntSet<IntView>::post(home,x,is,b));
   }
 
+  namespace {
+    GECODE_REGISTER1(Dom::ReRange<IntView>);
+    GECODE_REGISTER1(Dom::ReIntSet<IntView>);
+  }
+
 }
 
 // STATISTICS: int-post

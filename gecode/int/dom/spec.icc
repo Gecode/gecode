@@ -82,11 +82,16 @@ namespace Gecode { namespace Int { namespace Dom {
   }
 
   template <class View>
+  inline Support::String
+  ReIntSet<View>::name(void) {
+    return Reflection::mangle<View>("Int::Dom::ReIntSet");
+  }
+
+  template <class View>
   Reflection::ActorSpec&
   ReIntSet<View>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s =
-      ReUnaryPropagator<View,PC_INT_DOM,BoolView>
-      ::spec(home, m, Reflection::mangle<View>("Int::Dom::ReIntSet"));
+      ReUnaryPropagator<View,PC_INT_DOM,BoolView>::spec(home, m, name());
     int count=0;
     for (IntSetRanges isr(is); isr(); ++isr)
       count++;
@@ -97,6 +102,16 @@ namespace Gecode { namespace Int { namespace Dom {
       (*a)[count++] = isr.max();
     }
     return s << a;
+  }
+
+  template <class View>
+  void
+  ReIntSet<View>::post(Space* home, const Reflection::VarMap& vars,
+                       const Reflection::ActorSpec& spec) {
+    View x0(home, vars, spec[0]->typedArg());
+    BoolView b(home, vars, spec[1]->typedArg());
+    Reflection::IntArrayArgRanges r(spec[2]->toIntArray());
+    (void) new (home) ReIntSet<View>(home, x0, IntSet(r), b);
   }
 
   template <class View>

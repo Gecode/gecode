@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
-  Support::String
+  inline Support::String
   Nq<View>::name(void) {
     return Reflection::mangle<View>("Int::Rel::Nq");
   }
@@ -88,6 +88,15 @@ namespace Gecode { namespace Int { namespace Rel {
   Reflection::ActorSpec&
   Nq<View>::spec(Space* home, Reflection::VarMap& m) {
     return BinaryPropagator<View,PC_INT_VAL>::spec(home, m, name());
+  }
+
+  template <class View>
+  void
+  Nq<View>::post(Space* home, const Reflection::VarMap& vars,
+  const Reflection::ActorSpec& spec) {
+    View x0(home, vars, spec[0]->typedArg());
+    View x1(home, vars, spec[0]->typedArg());
+    (void) new (home) Nq<View>(home, x0, x1);
   }
 
   template <class View>
@@ -157,27 +166,45 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
+  inline Support::String
+  NaryNq<View>::name(void) {
+    return Reflection::mangle<View>("Int::Rel::NaryNq");
+  }
+
+  template <class View>
   Reflection::ActorSpec&
   NaryNq<View>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s =
-      BinaryPropagator<ViewTuple<View,2>,PC_INT_DOM>
-      ::spec(home, m, Reflection::mangle<View>("Int::Rel::NaryNq"));
-    Reflection::ArrayArg* a = new Reflection::ArrayArg(x.size()+2);
-    int count = 0;
-    for (int i=0; i<x.size(); i++)
-      (*a)[count++] = x[i][0].spec(home, m);
-    (*a)[count++] = x0[0].spec(home, m);
-    (*a)[count++] = x1[0].spec(home, m);
+      BinaryPropagator<ViewTuple<View,2>,PC_INT_DOM>::spec(home, m, name());
+    ViewArray<View> a(home, x.size()+2);
+    for (int i=x.size(); i--; )
+      a[i] = x[i][0];
+    a[x.size()] = x0[0];
+    a[x.size()+1] = x1[0];
+    s << a.spec(home, m);
 
-    Reflection::ArrayArg* b = new Reflection::ArrayArg(x.size()+2);
-    count = 0;
-    for (int i=0; i<x.size(); i++)
-      (*b)[count++] = x[i][1].spec(home, m);
-    (*b)[count++] = x0[1].spec(home, m);
-    (*b)[count++] = x1[1].spec(home, m);
+    for (int i=x.size(); i--; )
+      a[i] = x[i][1];
+    a[x.size()] = x0[1];
+    a[x.size()+1] = x1[1];
+    s << a.spec(home, m);
 
-    return s << new Reflection::TypedArg(View::type(), a)
-             << new Reflection::TypedArg(View::type(), b);
+    return s;
+  }
+
+  template <class View>
+  void
+  NaryNq<View>::post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec) {
+    ViewArray<View> x(home, vars, spec[0]);
+    ViewArray<View> y(home, vars, spec[1]);
+    
+    ViewArray<ViewTuple<View,2> > xy(home, x.size());
+    for (int i=x.size(); i--; ) {
+      xy[i][0] = x[i];
+      xy[i][1] = y[i];
+    }
+    (void) new (home) NaryNq<View>(home, xy);
   }
 
   template<class View>

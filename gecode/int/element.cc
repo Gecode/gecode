@@ -186,6 +186,29 @@ namespace Gecode {
     }
   }
 
+  namespace {
+    using namespace Int;
+    GECODE_REGISTER2(Element::Int<OffsetView,ConstIntView>);
+    GECODE_REGISTER2(Element::Int<OffsetView,IntView>);
+    GECODE_REGISTER2(Element::Int<IntView,ConstIntView>);
+    GECODE_REGISTER2(Element::Int<IntView,BoolView>);
+    GECODE_REGISTER2(Element::Int<IntView,IntView>);
+
+    GECODE_REGISTER3(Element::ViewBnd<IntView,OffsetView,ConstIntView>);
+    GECODE_REGISTER3(Element::ViewBnd<IntView,OffsetView,IntView>);
+    GECODE_REGISTER3(Element::ViewBnd<IntView,IntView,ConstIntView>);
+    GECODE_REGISTER3(Element::ViewBnd<IntView,IntView,IntView>);
+    GECODE_REGISTER3(Element::ViewBnd<BoolView,OffsetView,ConstIntView>);
+    GECODE_REGISTER3(Element::ViewBnd<BoolView,OffsetView,BoolView>);
+    GECODE_REGISTER3(Element::ViewBnd<BoolView,IntView,ConstIntView>);
+    GECODE_REGISTER3(Element::ViewBnd<BoolView,IntView,BoolView>);
+
+    GECODE_REGISTER3(Element::ViewDom<IntView,OffsetView,ConstIntView>);
+    GECODE_REGISTER3(Element::ViewDom<IntView,OffsetView,IntView>);
+    GECODE_REGISTER3(Element::ViewDom<IntView,IntView,ConstIntView>);
+    GECODE_REGISTER3(Element::ViewDom<IntView,IntView,IntView>);
+  }
+
 }
 
 // STATISTICS: int-post

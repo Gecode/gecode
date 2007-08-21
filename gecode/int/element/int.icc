@@ -388,6 +388,12 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class ViewA, class ViewB>
+  inline Support::String
+  Int<ViewA,ViewB>::name(void) {
+    return Reflection::mangle<ViewA,ViewB>("Int::Element::Int");
+  }
+
+  template <class ViewA, class ViewB>
   Reflection::ActorSpec&
   Int<ViewA,ViewB>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name());
@@ -397,9 +403,16 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class ViewA, class ViewB>
-  Support::String
-  Int<ViewA,ViewB>::name(void) {
-    return Reflection::mangle<ViewA,ViewB>("Int::Element::Int");
+  void
+  Int<ViewA,ViewB>::post(Space* home, const Reflection::VarMap& vars,
+                         const Reflection::ActorSpec& spec) {
+    ViewA x0(home, vars, spec[0]->typedArg());
+    ViewB x1(home, vars, spec[1]->typedArg());
+    Reflection::IntArrayArg* ia = spec[2]->toIntArray();
+    IntSharedArray is(ia->size());
+    for (int i=ia->size(); i--; )
+      is[i] = (*ia)[i];
+    (void) new (home) Int<ViewA,ViewB>(home, is, x0, x1);
   }
 
   template <class ViewA, class ViewB>

@@ -95,7 +95,10 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of the propagator
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled propagator name
     static Support::String name(void);
     /// Post domain-consistent propagator \f$ x_0 = x_1\f$
     static  ExecStatus post(Space* home, View0 x0, View1 x1);
@@ -127,7 +130,10 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of the propagator
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled propagator name
     static Support::String name(void);
     /// Post bounds-consistent propagator \f$ x_0 = x_1\f$
     static  ExecStatus post(Space* home, View0 x0, View1 x1);
@@ -166,7 +172,10 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of the propagator
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled propagator name
     static Support::String name(void);
     /// Post domain-consistent propagator \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
     static  ExecStatus post(Space* home, ViewArray<View>& x);
@@ -201,7 +210,10 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of the propagator
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled propagator name
     static Support::String name(void);
     /// Post bounds-consistent propagator \f$ x_0 = x_1=\ldots =x_{|x|-1}\f$
     static  ExecStatus post(Space* home, ViewArray<View>& x);
@@ -231,7 +243,10 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of the propagator
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled propagator name
     static Support::String name(void);
     /// Post domain-consistent propagator \f$ (x_0 = x_1)\Leftrightarrow b\f$
     static  ExecStatus post(Space* home, View x0, View x1, CtrlView b);
@@ -261,7 +276,10 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of the propagator
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled propagator name
     static Support::String name(void);
     /// Post bounds-consistent propagator \f$ (x_0 = x_1)\Leftrightarrow b\f$
     static  ExecStatus post(Space* home, View x0, View x1, CtrlView b);
@@ -292,7 +310,10 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of the propagator
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled propagator name
     static Support::String name(void);
     /// Post domain-consistent propagator \f$ (x = c)\Leftrightarrow b\f$
     static  ExecStatus post(Space* home, View x, int c, CtrlView b);
@@ -323,7 +344,10 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of the propagator
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled propagator name
     static Support::String name(void);
     /// Post bounds-consistent propagator \f$ (x = c)\Leftrightarrow b\f$
     static  ExecStatus post(Space* home, View x, int c, CtrlView b);
@@ -362,7 +386,10 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of the propagator
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled propagator name
     static Support::String name(void);
     /// Post propagator \f$x_0\neq x_1\f$
     static  ExecStatus post(Space* home, View x0, View x1);
@@ -397,7 +424,10 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of the propagator
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled propagator name
     static Support::String name(void);
     /// Post propagator \f$x_0 \leq x_1\f$
     static  ExecStatus post(Space* home, View x0, View x1);
@@ -426,7 +456,10 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of the propagator
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled propagator name
     static Support::String name(void);
     /// Post propagator \f$x_0 \le x_1\f$
     static  ExecStatus post(Space* home, View x0, View x1);
@@ -463,7 +496,10 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of the propagator
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled propagator name
     static Support::String name(void);
     /// Post propagator for \f$ (x_0 \leq x_1)\Leftrightarrow b\f$
     static  ExecStatus post(Space* home, View x0, View x1, CtrlView b);
@@ -495,7 +531,10 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of the propagator
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled propagator name
     static Support::String name(void);
     /// Post propagator for \f$ (x \leq c)\Leftrightarrow b\f$
     static  ExecStatus post(Space* home, View x, int c, CtrlView b);
@@ -546,7 +585,10 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of the propagator
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled propagator name
     static Support::String name(void);
     /// Post propagator for lexical order on \a xy
     static  ExecStatus post(Space* home,
@@ -578,7 +620,10 @@ namespace Gecode { namespace Int { namespace Rel {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of the propagator
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
+    /// Mangled propagator name
     static Support::String name(void);
     /// Post propagator for \f$\exists i\in\{0,\ldots,|x|-1\}:\;x_i\neq y_i\f$
     static  ExecStatus post(Space* home, ViewArray<ViewTuple<View,2> >& x);

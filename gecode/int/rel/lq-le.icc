@@ -71,10 +71,24 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
+  inline Support::String
+  Lq<View>::name(void) {
+    return Reflection::mangle<View>("Int::Rel::Lq");
+  }
+
+  template <class View>
   Reflection::ActorSpec&
   Lq<View>::spec(Space* home, Reflection::VarMap& m) {
-    return BinaryPropagator<View,PC_INT_BND>
-      ::spec(home, m, Reflection::mangle<View>("Int::Rel::Lq"));
+    return BinaryPropagator<View,PC_INT_BND>::spec(home, m, name());
+  }
+
+  template <class View>
+  void
+  Lq<View>::post(Space* home, const Reflection::VarMap& vars,
+                 const Reflection::ActorSpec& spec) {
+    View x0(home, vars, spec[0]->typedArg());
+    View x1(home, vars, spec[1]->typedArg());
+    (void) new (home) Lq<View>(home, x0, x1);
   }
 
   template <class View>
@@ -121,10 +135,25 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
+  inline Support::String
+  Le<View>::name(void) {
+    return Reflection::mangle<View>("Int::Rel::Le");
+  }
+
+  template <class View>
   Reflection::ActorSpec&
   Le<View>::spec(Space* home, Reflection::VarMap& m) {
     return BinaryPropagator<View,PC_INT_BND>
-      ::spec(home, m, Reflection::mangle<View>("Int::Rel::Le"));
+      ::spec(home, m, name());
+  }
+
+  template <class View>
+  void
+  Le<View>::post(Space* home, const Reflection::VarMap& vars,
+                 const Reflection::ActorSpec& spec) {
+    View x0(home, vars, spec[0]->typedArg());
+    View x1(home, vars, spec[1]->typedArg());
+    (void) new (home) Le<View>(home, x0, x1);
   }
 
   template <class View>
@@ -182,10 +211,26 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View, class CtrlView>
+  inline Support::String
+  ReLq<View,CtrlView>::name(void) {
+    return Reflection::mangle<View,CtrlView>("Int::Rel::ReLq");
+  }
+
+  template <class View, class CtrlView>
   Reflection::ActorSpec&
   ReLq<View,CtrlView>::spec(Space* home, Reflection::VarMap& m) {
-    return ReBinaryPropagator<View,PC_INT_BND,CtrlView>
-      ::spec(home, m, Reflection::mangle<View,CtrlView>("Int::Rel::ReLq"));
+    return
+      ReBinaryPropagator<View,PC_INT_BND,CtrlView>::spec(home, m, name());
+  }
+
+  template <class View, class CtrlView>
+  void
+  ReLq<View,CtrlView>::post(Space* home, const Reflection::VarMap& vars,
+                            const Reflection::ActorSpec& spec) {
+    View x0(home, vars, spec[0]->typedArg());
+    View x1(home, vars, spec[1]->typedArg());
+    CtrlView b(home, vars, spec[2]->typedArg());
+    (void) new (home) ReLq<View,CtrlView>(home, x0, x1, b);
   }
 
   template <class View, class CtrlView>
@@ -251,11 +296,26 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View, class CtrlView>
+  inline Support::String
+  ReLqInt<View,CtrlView>::name(void) {
+    return Reflection::mangle<View,CtrlView>("Int::Rel::ReLqInt");
+  }
+  
+  template <class View, class CtrlView>
   Reflection::ActorSpec&
   ReLqInt<View,CtrlView>::spec(Space* home, Reflection::VarMap& m) {
     return ReUnaryPropagator<View,PC_INT_BND,CtrlView>
-      ::spec(home, m, Reflection::mangle<View,CtrlView>("Int::Rel::ReLqInt"))
-      << c;
+      ::spec(home, m, name()) << c;
+  }
+
+  template <class View, class CtrlView>
+  void
+  ReLqInt<View,CtrlView>::post(Space* home, const Reflection::VarMap& vars,
+                               const Reflection::ActorSpec& spec) {
+    View x0(home, vars, spec[0]->typedArg());
+    CtrlView b(home, vars, spec[1]->typedArg());
+    int c = spec[2]->toInt();
+    (void) new (home) ReLqInt<View,CtrlView>(home, x0, c, b);
   }
 
   template <class View, class CtrlView>

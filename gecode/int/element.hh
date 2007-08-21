@@ -95,6 +95,9 @@ namespace Gecode { namespace Int { namespace Element {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Mangled name of this propagator
     static Support::String name(void);
     /// Post propagator for \f$i_{x_0}=x_1\f$
@@ -169,6 +172,9 @@ namespace Gecode { namespace Int { namespace Element {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::String name(void);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
@@ -213,6 +219,9 @@ namespace Gecode { namespace Int { namespace Element {
     virtual ExecStatus propagate(Space* home);
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Post propagator according to specification
+    static void post(Space* home, const Reflection::VarMap& vars,
+                     const Reflection::ActorSpec& spec);
     /// Name of this propagator
     static Support::String name(void);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
