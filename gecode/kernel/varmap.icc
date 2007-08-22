@@ -100,7 +100,7 @@ namespace Gecode { namespace Reflection {
     void name(VarBase* x, const Support::String& n);
 
     /// Insert specification \a vs for variable \a x, return index
-    int put(VarBase* x, VarSpec* vs);
+    GECODE_KERNEL_EXPORT int put(VarBase* x, VarSpec* vs);
 
     /// \name Interface for modeling
     //@{
