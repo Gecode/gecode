@@ -64,10 +64,10 @@ namespace Gecode { namespace Serialization {
     class VariableCreators {
     public:
         VariableCreators() {
-        Reflection::registry.add(VTI_INT, createIntVar);
-        Reflection::registry.add(VTI_BOOL, createBoolVar);
+        Reflection::registry.add("VTI_INT", createIntVar);
+        Reflection::registry.add("VTI_BOOL", createBoolVar);
 #ifdef GECODE_HAVE_SET_VARS
-        Reflection::registry.add(VTI_SET, createSetVar);
+        Reflection::registry.add("VTI_SET", createSetVar);
 #endif
       }
     };

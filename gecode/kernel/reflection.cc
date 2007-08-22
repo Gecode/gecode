@@ -64,7 +64,7 @@ namespace Gecode { namespace Reflection {
   }
 
   void
-  Registry::add(int vti, varCreator vc) {
+  Registry::add(Support::String vti, varCreator vc) {
     varCreators.put(vti, vc);
   }
 

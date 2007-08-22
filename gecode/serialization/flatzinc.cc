@@ -273,13 +273,14 @@ namespace Gecode {
       ActorSpec& s = si.actor();
       for (; vmi(); ++vmi, ++varCount) {
         VarSpec& vs = vmi.var();
-        switch (vs.vti()) {
-        case VTI_INT: emitIntVar(os, varCount, vs); break;
-        case VTI_BOOL: emitBoolVar(os, varCount, vs); break;
+        if (vs.vti() == "VTI_INT")
+          emitIntVar(os, varCount, vs);
+        else if (vs.vti() == "VTI_BOOL")
+          emitBoolVar(os, varCount, vs);
 #ifdef GECODE_HAVE_SET_VARS
-        case VTI_SET: emitSetVar(os, varCount, vs); break;
-#endif
-        }
+        else if (vs.vti() == "VTI_SET")
+          emitSetVar(os, varCount, vs);
+#endif        
       }
 
       os << "constraint " << s.name() << "(";

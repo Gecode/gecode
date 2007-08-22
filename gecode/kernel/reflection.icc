@@ -221,11 +221,10 @@ namespace Gecode { namespace Reflection {
     */
   class VarSpec {
   private:
-    /// The variable type identifier for this variable
-    int  _vti;
-
     class Domain {
     public:
+      /// The variable type identifier for this variable
+      Support::String _vti;
       /// The name of this variable
       Support::String _n;
       /// A representation of the domain of this variable
@@ -233,7 +232,7 @@ namespace Gecode { namespace Reflection {
       /// Reference count
       int r;
       /// Constructor
-      Domain(Arg* domain);
+      Domain(Support::String vti, Arg* domain);
       /// Destructor
       ~Domain(void);
     };
@@ -241,7 +240,7 @@ namespace Gecode { namespace Reflection {
     Domain* _dom;
   public:
     /// Construct specification for a variable
-    VarSpec(int vti, Arg* domain);
+    VarSpec(Support::String vti, Arg* domain);
     /// Copy constructor
     VarSpec(const VarSpec& s);
     /// Assignment operator
@@ -257,7 +256,7 @@ namespace Gecode { namespace Reflection {
     /// Get the domain of this variable
     Arg* dom(void) const;
     // Get the variable type identifier for this variable
-    int vti(void) const;
+    Support::String vti(void) const;
   };
   
   /**
@@ -365,7 +364,7 @@ namespace Gecode { namespace Reflection {
 
     /// Register variable creation function for variable type identifier \a vti
     GECODE_KERNEL_EXPORT
-    void add(int vti, varCreator vc);
+    void add(Support::String vti, varCreator vc);
     /// Register constraint posting function for constraint name \a id
     GECODE_KERNEL_EXPORT
     void add(const Support::String& id, poster p);
@@ -375,7 +374,7 @@ namespace Gecode { namespace Reflection {
     /// The registry of constraint posting functions
     Support::StringMap<poster> posters;
     /// The registry of variable creation functions
-    Support::IntMap<varCreator> varCreators;
+    Support::StringMap<varCreator> varCreators;
   };
   
   /// The registry object
@@ -563,7 +562,8 @@ namespace Gecode { namespace Reflection {
    */
 
   forceinline
-  VarSpec::Domain::Domain(Arg* domain) : _dom(domain), r(1) {}
+  VarSpec::Domain::Domain(Support::String vti, Arg* domain)
+  : _vti(vti), _dom(domain), r(1) {}
 
   forceinline
   VarSpec::Domain::~Domain(void) {
@@ -571,11 +571,11 @@ namespace Gecode { namespace Reflection {
   }
 
   forceinline
-  VarSpec::VarSpec(int vti, Arg* dom) 
-  : _vti(vti), _dom(new Domain(dom)) {}
+  VarSpec::VarSpec(Support::String vti, Arg* dom) 
+  : _dom(new Domain(vti,dom)) {}
 
   forceinline
-  VarSpec::VarSpec(const VarSpec& s) : _vti(s._vti), _dom(s._dom) {
+  VarSpec::VarSpec(const VarSpec& s) : _dom(s._dom) {
     _dom->r++;
   }
   
@@ -584,7 +584,6 @@ namespace Gecode { namespace Reflection {
     if (this != &s) {
       if (--_dom->r == 0)
         delete _dom;
-      _vti = s._vti;
       _dom = s._dom;
       _dom->r++;
     }
@@ -612,9 +611,9 @@ namespace Gecode { namespace Reflection {
     return !_dom->_n.empty();
   }
 
-  forceinline int
+  forceinline Support::String
   VarSpec::vti(void) const {
-    return _vti;
+    return _dom->_vti;
   }
 
   forceinline Arg*
