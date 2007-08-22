@@ -179,16 +179,16 @@ namespace Gecode { namespace Reflection {
 
   /* Variable map iterator */
 
-  VarMapIter::VarMapIter(VarMap& m0) : m(m0), i(0) {}
+  VarMapIter::VarMapIter(VarMap& m0) : m(&m0), i(0) {}
 
   bool
   VarMapIter::operator()(void) const {
-    return i<m.m->n;
+    return i<m->m->n;
   }
 
   VarSpec&
   VarMapIter::var(void) const {
-    return *m.m->spec[i];
+    return *m->m->spec[i];
   }
 
   void

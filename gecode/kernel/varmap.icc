@@ -121,7 +121,7 @@ namespace Gecode { namespace Reflection {
   class VarMapIter {
   private:
     /// The variable map to iterate
-    VarMap& m;
+    VarMap* m;
     /// The current index
     int i;
   public:

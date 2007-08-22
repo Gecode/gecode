@@ -84,7 +84,7 @@ namespace Gecode { namespace Support {
   template <class T>
   forceinline
   DynamicArray<T>::DynamicArray(int m)
-    : n(m), x(Memory::bmalloc<T>(n)) {}
+    : n(m), x(Memory::bmalloc<T>(static_cast<size_t>(n))) {}
 
   template <class T>
   forceinline

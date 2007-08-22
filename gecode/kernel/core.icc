@@ -2166,7 +2166,7 @@ namespace Gecode {
      * forward direction.
      */
     ActorLink** f = idx[pc];
-#if GECODE_AUDIT
+#ifdef GECODE_AUDIT
     while (f < idx[pc+1])
       if (*f == a)
         goto found;

@@ -217,22 +217,24 @@ namespace Gecode { namespace Reflection {
   class IntArrayArgRanges {
   private:
     /// The array
-    Reflection::IntArrayArg& a;
+    Reflection::IntArrayArg* a;
     /// The current position
     int n;
   public:
     /// Constructor
-    IntArrayArgRanges(Reflection::IntArrayArg* a0) : a(*a0), n(0) {}
+    IntArrayArgRanges(Reflection::IntArrayArg* a0) : a(a0), n(0) {}
     /// Test whether iterator is still at a valid range
-    bool operator()(void) { return n < a.size(); }
+    bool operator()(void) { return n < a->size(); }
     /// Move iterator to next range
     void operator++(void) { n += 2; }
     /// Minimum of current range
-    int min(void) const { return a[n]; }
+    int min(void) const { return (*a)[n]; }
     /// Maximum of current range
-    int max(void) const { return a[n+1]; }
+    int max(void) const { return (*a)[n+1]; }
     /// Width of current range
-    unsigned int width(void) const { return max() - min() + 1; }
+    unsigned int width(void) const { 
+      return static_cast<unsigned int>(max() - min()) + 1; 
+    }
   };
 
   /**
@@ -393,7 +395,7 @@ namespace Gecode { namespace Reflection {
   class SpecIter {
   private:
     /// The variable map used by this iterator
-    VarMap&    m;
+    VarMap*    m;
     /// The space for which to iterate the actors
     Space*     s;
     /// The current actor
@@ -887,11 +889,11 @@ namespace Gecode { namespace Reflection {
   }
 
   forceinline
-  SpecIter::SpecIter(Space* s0, VarMap& m0) : m(m0), s(s0),
+  SpecIter::SpecIter(Space* s0, VarMap& m0) : m(&m0), s(s0),
     curSpec(NULL) {
     cur = s->a_actors.next();
     if ((*this)())
-      curSpec = &static_cast<Actor*>(cur)->spec(s,m);
+      curSpec = &static_cast<Actor*>(cur)->spec(s,*m);
   }
 
   forceinline void
@@ -899,7 +901,7 @@ namespace Gecode { namespace Reflection {
     delete curSpec;
     cur = cur->next();
     if ((*this)())
-      curSpec = &static_cast<Actor*>(cur)->spec(s,m);
+      curSpec = &static_cast<Actor*>(cur)->spec(s,*m);
   }
 
   forceinline ActorSpec&

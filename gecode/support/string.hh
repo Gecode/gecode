@@ -54,6 +54,8 @@ namespace Gecode { namespace Support {
       */
     class SO {
     public:
+      /// Duplicate string \a s
+      static char* strdup(const char* s);
       /// The reference count
       unsigned int use_cnt;
       /// Reference counting: cancel subscription
@@ -146,6 +148,15 @@ namespace Gecode { namespace Support {
     /// Compare \a s0 with \a s1
     int cmp(const String& s0, const String& s1);
   };
+
+  inline char*
+  String::SO::strdup(const char* s) {
+    unsigned int n = strlen(s);
+    char* d = static_cast<char*>(Memory::malloc(sizeof(char)*n));
+    for (unsigned int i=n+1; i--; )
+      d[i]=s[i];
+    return d;
+  }
 
   forceinline
   String::SO::SO(const char* s0, bool copy)
@@ -272,7 +283,8 @@ namespace Gecode { namespace Support {
   forceinline
   String::SOIter::SOIter(const String::SO* so0) : n(0) {
     if (so0->s) {
-      so = so0; size = strlen(so->s); left = NULL; right = NULL;
+      so = so0; size = static_cast<int>(strlen(so->s)); 
+      left = NULL; right = NULL;
     } else {
       so = NULL;
       left  = new SOIter(so0->left);
