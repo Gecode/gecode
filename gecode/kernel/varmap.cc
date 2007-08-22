@@ -7,8 +7,8 @@
  *     Guido Tack, 2007
  *
  *  Last modified:
- *     $Date: 2007-08-09 15:30:21 +0200 (Thu, 09 Aug 2007) $ by $Author: tack $
- *     $Revision: 4790 $
+ *     $Date: 2007-08-19 16:45:21 +0200 (Sun, 19 Aug 2007) $ by $Author: tack $
+ *     $Revision: 4875 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,64 +35,26 @@
  *
  */
 
-#ifndef __GECODE_SUPPORT_MAP_HH__
-#define __GECODE_SUPPORT_MAP_HH__
+#include "gecode/kernel.hh"
 
-#include "gecode/support/string.hh"
-#include "gecode/support/dynamic-array.hh"
+namespace Gecode { namespace Reflection {
 
-namespace Gecode { namespace Support {
-  
-  template <class Key, class KeyCmp, class Value>
-  class Map {
-  private:
-    struct Pair {
-      Key k; Value v;
-      Pair(const Key& k0, const Value& v0) : k(k0), v(v0) {}
-    };
-    Support::DynamicArray<Pair> a;
-    int n;
-  public:
-    Map() : n(0) {}
-    void put(const Key& k, Value v) { new (&a[n++]) Pair(k,v); };
-    bool get(const Key& k, Value& v) const {
-      for (int i=n; i--;) {
-        if (a[i].k == k) {
-          v = a[i].v; return true;
-        }
-      }
-      return false;
+  int
+  VarMap::put(VarBase* x, VarSpec* spec) {
+    int newIndex = n++;
+    m.put(x, newIndex);
+    specs[newIndex] = spec;
+    vars[newIndex] = x;
+    if (hasName(x)) {
+      spec->name(name(x));
+    } else if (spec->hasName()) {
+      nameToVar.put(spec->name(), x);
+      varToName.put(x, spec->name());
     }
-    int size(void) { return n; }
-    const Key& key(int i) const { return a[i].k; }
-    const Key& value(int i) const { return a[i].v; }
-  };
+    return newIndex;
+  }
   
-  template <class Value>
-  class StringMap : public Map<String,StringCmp,Value> {
-    
-  };
-
-  template <class N>
-  class Cmp {
-  public:
-    int cmp(N i, N j) {
-      if (i>j) return 1;
-      if (i<j) return -1;
-      return 0;
-    }
-  };
-
-  template <class Value>
-  class IntMap : public Map<int,Cmp<int>,Value> {
-  };
-
-  template <class P, class Value>
-  class PtrMap : public Map<P*,Cmp<P*>,Value> {    
-  };
   
 }}
 
-#endif
-
-// STATISTICS: support-any
+// STATISTICS: kernel-core

@@ -48,50 +48,59 @@ namespace Gecode { namespace Reflection {
   class VarMap {
     friend class VarMapIter;
   private:
-    class VarMapImp;
-    /// The actual map
-    VarMapImp* m;
+    /// Map variable names to variable implementations
+    Support::StringMap<VarBase*> nameToVar;
+    /// Map variable implementations to variable names
+    Support::PtrMap<VarBase,Support::String> varToName;
+    /// Map variable implementations to indices
+    Support::PtrMap<VarBase,int> m;
+    /// Number of indices in use
+    int n;
+    /// Map indices to variable implementations
+    Support::DynamicArray<VarBase*>  vars;
+    /// Map indices to variable specifications
+    Support::DynamicArray<VarSpec*>  specs;
   public:
     /// Default constructor
-    GECODE_KERNEL_EXPORT VarMap(void);
+    VarMap(void);
     /// Destructor
-    GECODE_KERNEL_EXPORT ~VarMap(void);
+    ~VarMap(void);
     
     /// Return index for variable \a x
-    GECODE_KERNEL_EXPORT int index(VarBase* x) const;
+    int index(VarBase* x) const;
     /// Return index for variable with name \a n
-    GECODE_KERNEL_EXPORT int index(const Support::String& n) const;
+    int index(const Support::String& n) const;
 
     /// Return if variable with name \a n is known
-    GECODE_KERNEL_EXPORT bool nameIsKnown(const Support::String& n) const;
+    bool nameIsKnown(const Support::String& n) const;
 
     /// Return if variable \a x has a name
-    GECODE_KERNEL_EXPORT bool hasName(VarBase* x) const;
+    bool hasName(VarBase* x) const;
     /// Return if variable at index \a i has a name
-    GECODE_KERNEL_EXPORT bool hasName(int i) const;
+    bool hasName(int i) const;
 
     /// Return name for variable \a x
-    GECODE_KERNEL_EXPORT Support::String name(VarBase* x) const;
+    Support::String name(VarBase* x) const;
     /// Return name for variable at index \a i
-    GECODE_KERNEL_EXPORT Support::String name(int i) const;
+    Support::String name(int i) const;
 
     /// Return variable with name \a n
-    GECODE_KERNEL_EXPORT VarBase* var(const Support::String& n) const;
+    VarBase* var(const Support::String& n) const;
     /// Return variable at index \a i
-    GECODE_KERNEL_EXPORT VarBase* var(int i) const;
+    VarBase* var(int i) const;
 
     /// Return specification for variable \a x
-    GECODE_KERNEL_EXPORT VarSpec& spec(VarBase* x) const;
+    VarSpec& spec(VarBase* x) const;
     /// Return specification for variable at index \a i
-    GECODE_KERNEL_EXPORT VarSpec& spec(int i) const;
+    VarSpec& spec(int i) const;
     /// Return specification for variable with name \a n
-    GECODE_KERNEL_EXPORT VarSpec& spec(const Support::String& n) const;
+    VarSpec& spec(const Support::String& n) const;
 
     /// Register name \a n for variable \a x
-    GECODE_KERNEL_EXPORT void name(VarBase* x, const Support::String& n);
+    void name(VarBase* x, const Support::String& n);
 
     /// Insert specification \a vs for variable \a x, return index
-    GECODE_KERNEL_EXPORT int put(VarBase* x, VarSpec* vs);
+    int put(VarBase* x, VarSpec* vs);
 
     /// \name Interface for modeling
     //@{
@@ -106,6 +115,11 @@ namespace Gecode { namespace Reflection {
     template <class Var> void
     putArray(Space* home, const VarArray<Var>& v, const Support::String& n);
     //@}
+  private:
+    /// Copy constructor must not be used
+    VarMap(const VarMap&);
+    /// Assignment operator must not be used
+    VarMap& operator=(const VarMap&);
   };
   
   /**
@@ -121,24 +135,112 @@ namespace Gecode { namespace Reflection {
   class VarMapIter {
   private:
     /// The variable map to iterate
-    VarMap* m;
+    VarMap& m;
     /// The current index
     int i;
   public:
     /// Construct iterator for variable map \a m
-    GECODE_KERNEL_EXPORT VarMapIter(VarMap& m);
+    VarMapIter(VarMap& m);
     /// Test whether iterator still has variables or is done
-    GECODE_KERNEL_EXPORT bool operator()(void) const;
+    bool operator()(void) const;
     /// Return variable specification for current iterator position
-    GECODE_KERNEL_EXPORT VarSpec& var(void) const;
+    VarSpec& var(void) const;
     /// Move iterator to next variable
-    GECODE_KERNEL_EXPORT void operator++(void);
+    void operator++(void);
   };
 
   /*
    * Variable maps
    *
    */
+
+  forceinline
+  VarMap::VarMap(void) : n(0) {}
+
+  inline
+  VarMap::~VarMap(void) {
+    for (int i=n; i--;)
+      delete specs[i];
+  }
+
+  forceinline int
+  VarMap::index(VarBase* x) const {
+    int i;
+    return m.get(x,i) ? i : -1;
+  }
+
+  forceinline int
+  VarMap::index(const Support::String& n) const {
+    VarBase* v;      
+    return nameToVar.get(n, v) ? index(v) : -1;
+  }
+
+  forceinline bool
+  VarMap::nameIsKnown(const Support::String& n) const {
+    VarBase* v;
+    return nameToVar.get(n,v);
+  }
+
+  forceinline bool
+  VarMap::hasName(VarBase* x) const {
+    Support::String s;
+    return varToName.get(x,s);
+  }
+
+  forceinline bool
+  VarMap::hasName(int i) const {
+    Support::String s;
+    return varToName.get(vars[i], s);
+  }
+
+  forceinline Support::String
+  VarMap::name(VarBase* x) const {
+    Support::String s;
+    varToName.get(x,s);
+    return s;
+  }
+
+  forceinline Support::String
+  VarMap::name(int i) const {
+    Support::String s;
+    varToName.get(vars[i],s);
+    return s;
+  }
+
+  forceinline VarBase*
+  VarMap::var(const Support::String& n) const {
+    VarBase* v;
+    return nameToVar.get(n,v) ? v : NULL;
+  }
+
+  forceinline VarBase*
+  VarMap::var(int i) const {
+    return vars[i];
+  }
+
+  forceinline VarSpec&
+  VarMap::spec(VarBase* x) const {
+    int i;
+    if (!m.get(x,i))
+      throw new ReflectionException("Variable not in VarMap");
+    return *specs[i];
+  }
+
+  forceinline VarSpec&
+  VarMap::spec(int i) const {
+    return *specs[i];
+  }
+
+  forceinline VarSpec&
+  VarMap::spec(const Support::String& n) const {
+    return spec(var(n));
+  }
+
+  inline void
+  VarMap::name(VarBase* x, const Support::String& n) {
+    nameToVar.put(n, x);
+    varToName.put(x, n);
+  }
 
   template <class Var> void
   VarMap::put(Space* home, const Var& x, const Support::String& n) {
@@ -164,6 +266,20 @@ namespace Gecode { namespace Reflection {
       put(home, x[i], n+Support::String(s.str().c_str(), true));
     }
   }
+
+  /* Variable map iterator */
+
+  forceinline
+  VarMapIter::VarMapIter(VarMap& m0) : m(m0), i(0) {}
+
+  forceinline bool
+  VarMapIter::operator()(void) const { return i<m.n; }
+
+  forceinline VarSpec&
+  VarMapIter::var(void) const { return *m.specs[i]; }
+
+  forceinline void
+  VarMapIter::operator++(void) { i++; }  
 
 }}
 

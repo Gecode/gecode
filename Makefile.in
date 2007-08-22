@@ -118,7 +118,7 @@ endif
 #
 
 KERNELSRC0 = \
-	exception core memory-manager reflection
+	exception core memory-manager reflection varmap
 KERNELHDR0 = \
 	array branching core exception \
 	macros memory-manager memory modevent \
