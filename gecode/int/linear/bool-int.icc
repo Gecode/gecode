@@ -696,7 +696,7 @@ namespace Gecode { namespace Int { namespace Linear {
     ViewArray<VX> xx(home, vars, spec[2]);
     int c = spec[3]->toInt();
     
-    ViewArray<VX> x(home, x.size()+2);
+    ViewArray<VX> x(home, xx.size()+2);
     for (int i=x.size(); i--; )
       x[i] = xx[i];
     x[x.size()]   = x0;
