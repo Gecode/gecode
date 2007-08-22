@@ -904,20 +904,18 @@ namespace Gecode {
   class BranchingDesc {
     friend class Space;
   private:
-    const unsigned int id;  ///< Identity to match creating branching
-    const unsigned int alt; ///< Number of alternatives
+    unsigned int id;  ///< Identity to match creating branching
+    unsigned int alt; ///< Number of alternatives
   protected:
     /// Initialize for particular branching \a b and alternatives \a a
     BranchingDesc(const Branching* b, const unsigned int a);
   public:
-    /// Destructor
-    GECODE_KERNEL_EXPORT virtual ~BranchingDesc(void);
-
     /// Return number of alternatives
     unsigned int alternatives(void) const;
-
     /// Report size occupied by branching description
     virtual size_t size(void) const = 0;
+    /// Destructor
+    GECODE_KERNEL_EXPORT virtual ~BranchingDesc(void);
     /// Allocate memory from heap
     static void* operator new(size_t);
     /// Return memory to heap
