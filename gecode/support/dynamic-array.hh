@@ -115,7 +115,7 @@ namespace Gecode { namespace Support {
   void
   DynamicArray<T>::resize(int i) {
     int m = std::max(i+1, (3*n)/2);
-    x = Memory::brealloc(x,n,m);
+    x = Memory::brealloc(x,static_cast<size_t>(n),static_cast<size_t>(m));
     n = m;
   }
 

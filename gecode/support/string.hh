@@ -82,9 +82,9 @@ namespace Gecode { namespace Support {
       /// Construct an SO representing the concatenation of \a l and \a r
       SO(SO* l, SO* r);
       /// Destructor
-      ~SO(void);
+      GECODE_SUPPORT_EXPORT ~SO(void);
       /// Compare with \a other
-      int cmp(SO* other) const;
+      GECODE_SUPPORT_EXPORT int cmp(SO* other) const;
       /// Return size of the string
       unsigned int size(void) const;
       /// Output to \a os
@@ -94,7 +94,7 @@ namespace Gecode { namespace Support {
     /** \brief Character-wise iterator for string objects
       *
       */
-    class SOIter {
+    class GECODE_SUPPORT_EXPORT SOIter {
     private:
       /// Iterate left subtree
       SOIter* left;
@@ -109,14 +109,14 @@ namespace Gecode { namespace Support {
     public:
       /// Constructor
       SOIter(const SO* so);
-      /// Destructor
-      ~SOIter(void);
       /// Test if iterator is still at a valid position
       bool operator()(void);
       /// Advance iterator to next position
       void operator++(void);
       /// Return character at current iterator position
       char c(void) const;
+      /// Destructor
+      ~SOIter(void);
     };
 
     /// The string object
@@ -170,17 +170,7 @@ namespace Gecode { namespace Support {
     left->subscribe(); right->subscribe();
   }
 
-  forceinline
-  String::SO::~SO(void) {
-    if (own)
-      free(const_cast<char*>(s));
-    if (left && left->cancel())
-      delete left;
-    if (right && right->cancel())
-      delete right;
-  }
-
-  forceinline unsigned int
+  inline unsigned int
   String::SO::size(void) const {
     if (s)
       return strlen(s);
@@ -201,13 +191,13 @@ namespace Gecode { namespace Support {
   forceinline
   String::String(void) : so(NULL) {}
 
-  forceinline
+  inline
   String::String(const char* s0, bool copy) {
     so = new SO(s0, copy);
     so->subscribe();
   }
 
-  forceinline
+  inline
   String::~String(void) {
     if (so && so->cancel())
       delete so;
@@ -237,7 +227,7 @@ namespace Gecode { namespace Support {
     return so==NULL;
   }
   
-  forceinline String
+  inline String
   String::operator+(const String& s0) const {
     String ret;
     if (so == NULL) {
@@ -274,65 +264,6 @@ namespace Gecode { namespace Support {
   String::print(std::ostream& os) const {
     if (so) return so->print(os);
     return os;
-  }
-
-  forceinline
-  String::SOIter::SOIter(const String::SO* so0) : n(0) {
-    if (so0->s) {
-      so = so0; size = static_cast<int>(strlen(so->s)); 
-      left = NULL; right = NULL;
-    } else {
-      so = NULL;
-      left  = new SOIter(so0->left);
-      right = new SOIter(so0->right);
-    }
-  }
-  forceinline
-  String::SOIter::~SOIter(void) {
-    if (left)  delete left;
-    if (right) delete right;
-  }
-  forceinline bool
-  String::SOIter::operator()(void) {
-    if (so)
-      return n < size;
-    return (*left)() || (*right)();
-  }
-  forceinline void
-  String::SOIter::operator++(void) {
-    if (so) {
-      n++;
-      return;
-    }
-    if ((*left)()) {
-      ++(*left);
-      return;
-    }
-    ++(*right);
-  }
-  forceinline char
-  String::SOIter::c(void) const {
-    if (so)
-      return so->s[n];
-    if ((*left)())
-      return left->c();
-    return right->c();
-  }
-
-  forceinline
-  int
-  String::SO::cmp(SO* other) const {
-    if (s && other->s)
-      return (s==other->s ? 0 : strcmp(s,other->s));
-    SOIter me(this); SOIter notme(other);
-    for (; me() && notme(); ++me, ++notme)
-      if (me.c() != notme.c())
-        return me.c() < notme.c() ? -1 : 1;
-    if (me())
-      return -1;
-    if (notme())
-      return 1;
-    return 0;
   }
 
   forceinline int
