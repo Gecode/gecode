@@ -3,12 +3,16 @@
  *  Main authors:
  *     Guido Tack <tack@gecode.org>
  *
+ *  Contributing authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
  *  Copyright:
  *     Guido Tack, 2007
+ *     Christian Schulte, 2007
  *
  *  Last modified:
- *     $Date: 2007-08-09 15:30:21 +0200 (Thu, 09 Aug 2007) $ by $Author: tack $
- *     $Revision: 4790 $
+ *     $Date$ by $Author$
+ *     $Revision$
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -38,7 +42,8 @@
 #ifndef __GECODE_SUPPORT_STRING_HH__
 #define __GECODE_SUPPORT_STRING_HH__
 
-#include "gecode/kernel.hh"
+#include "gecode/support.hh"
+
 #include <iostream>
 
 namespace Gecode { namespace Support {
@@ -55,7 +60,7 @@ namespace Gecode { namespace Support {
     class SO {
     public:
       /// Duplicate string \a s
-      static char* strdup(const char* s);
+      GECODE_SUPPORT_EXPORT static char* strdup(const char* s);
       /// The reference count
       unsigned int use_cnt;
       /// Reference counting: cancel subscription
@@ -149,18 +154,9 @@ namespace Gecode { namespace Support {
     int cmp(const String& s0, const String& s1);
   };
 
-  inline char*
-  String::SO::strdup(const char* s) {
-    unsigned int n = strlen(s);
-    char* d = static_cast<char*>(Memory::malloc(sizeof(char)*n));
-    for (unsigned int i=n+1; i--; )
-      d[i]=s[i];
-    return d;
-  }
-
   forceinline
   String::SO::SO(const char* s0, bool copy)
-  : s(copy ? strdup(s0) : s0), own(copy), left(NULL), right(NULL) {}
+    : s(copy ? strdup(s0) : s0), own(copy), left(NULL), right(NULL) {}
 
   forceinline bool
   String::SO::cancel(void) { return --use_cnt == 0; }

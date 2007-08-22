@@ -1,13 +1,14 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.org>
- *
- *  Contributing authors:
  *     Guido Tack <tack@gecode.org>
  *
+ *  Contributing authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
  *  Copyright:
- *     Christian Schulte, 2004
- *     Guido Tack, 2004
+ *     Guido Tack, 2007
+ *     Christian Schulte, 2007
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -38,37 +39,20 @@
  *
  */
 
-/* How to tell the compiler to really, really inline */
-#undef forceinline
+#include "gecode/support/string.hh"
 
-/* Heap memory alignment */
-#undef GECODE_MEMORY_ALIGNMENT
+namespace Gecode { namespace Support {
 
-/* Whether integer variables are built */
-#undef GECODE_HAVE_INT_VARS
+  char*
+  String::SO::strdup(const char* s) {
+    unsigned int n = strlen(s);
+    //    char* d = static_cast<char*>(Memory::malloc(sizeof(char)*n));
+    char* d = static_cast<char*>(::malloc(sizeof(char)*n));
+    for (unsigned int i=n+1; i--; )
+      d[i]=s[i];
+    return d;
+  }
 
-/* Whether set variables are built */
-#undef GECODE_HAVE_SET_VARS
+}}
 
-/* Whether set variables are built */
-#undef GECODE_HAVE_SET_VARS
-
-/* Whether bdd variables are built */
-#undef GECODE_HAVE_CPLTSET_VARS
-
-/* Whether we are compiling static libraries */
-#undef GECODE_STATIC_LIBS
-
-/* Whether we have mtrace for memory leak debugging*/
-#undef GECODE_HAVE_MTRACE
-
-/* Whether gcc understands visibility attributes */
-#undef GCC_HASCLASSVISIBILITY
-
-/* Whether to include audit code */
-#undef GECODE_AUDIT
-
-/* Whether to compile with boost serialization support */
-#undef GECODE_HAVE_BOOST_SERIALIZATION
-
-// STATISTICS: kernel-other
+// STATISTICS: support-any

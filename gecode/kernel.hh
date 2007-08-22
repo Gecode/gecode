@@ -47,7 +47,7 @@
 #include <cstring>
 #include <cassert>
 
-#include "gecode/config.icc"
+#include "gecode/config.hh"
 
 /*
  * Support for DLLs under Windows

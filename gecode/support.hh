@@ -1,10 +1,10 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Guido Tack <tack@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
- *     Guido Tack, 2007
+ *     Christian Schulte, 2007
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -35,63 +35,38 @@
  *
  */
 
-#ifndef __GECODE_SUPPORT_MAP_HH__
-#define __GECODE_SUPPORT_MAP_HH__
+#ifndef __GECODE_SUPPORT_HH__
+#define __GECODE_SUPPORT_HH__
 
-#include "gecode/support/string.hh"
-#include "gecode/support/dynamic-array.hh"
+/*
+ * Support for DLLs under Windows
+ *
+ */
+#if !defined(GECODE_STATIC_LIBS) && \
+    (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 
-namespace Gecode { namespace Support {
-  
-  template <class Key, class KeyCmp, class Value>
-  class Map {
-  private:
-    struct Pair {
-      Key k; Value v;
-      Pair(const Key& k0, const Value& v0) : k(k0), v(v0) {}
-    };
-    Support::DynamicArray<Pair> a;
-    int n;
-  public:
-    Map() : n(0) {}
-    void put(const Key& k, Value v) { new (&a[n++]) Pair(k,v); };
-    bool get(const Key& k, Value& v) const {
-      for (int i=n; i--;) {
-        if (a[i].k == k) {
-          v = a[i].v; return true;
-        }
-      }
-      return false;
-    }
-    int size(void) { return n; }
-    const Key& key(int i) const { return a[i].k; }
-    const Key& value(int i) const { return a[i].v; }
-  };
-  
-  template <class Value>
-  class StringMap : public Map<String,StringCmp,Value> {
-    
-  };
+#ifdef GECODE_BUILD_SUPPORT
+#define GECODE_SUPPORT_EXPORT __declspec( dllexport )
+#else
+#define GECODE_SUPPORT_EXPORT __declspec( dllimport )
+#endif
 
-  template <class N>
-  class Cmp {
-  public:
-    int cmp(N i, N j) {
-      if (i>j) return 1;
-      if (i<j) return -1;
-      return 0;
-    }
-  };
+#else
 
-  template <class Value>
-  class IntMap : public Map<int,Cmp<int>,Value> {
-  };
+#ifdef GCC_HASCLASSVISIBILITY
 
-  template <class P, class Value>
-  class PtrMap : public Map<P*,Cmp<P*>,Value> {    
-  };
-  
-}}
+#define GECODE_SUPPORT_EXPORT __attribute__ ((visibility("default")))
+
+#else
+
+#define GECODE_SUPPORT_EXPORT
+
+#endif
+#endif
+
+#include <cassert>
+
+#include "gecode/config.hh"
 
 #endif
 
