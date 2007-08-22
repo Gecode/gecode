@@ -167,9 +167,9 @@ namespace Gecode { namespace Int { namespace Bool {
   void
   Eqv<BVA,BVB,BVC>::post(Space* home, const Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
-    BVA b0(home, vars, spec[0]->typedArg());
-    BVB b1(home, vars, spec[1]->typedArg());
-    BVC b2(home, vars, spec[2]->typedArg());
+    BVA b0(home, vars, spec[0]);
+    BVB b1(home, vars, spec[1]);
+    BVC b2(home, vars, spec[2]);
     (void) new (home) Eqv<BVA,BVB,BVC>(home,b0,b1,b2);
   }
 

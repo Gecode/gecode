@@ -91,9 +91,9 @@ namespace Gecode { namespace Set { namespace Select {
       (*a)[count++] = ur.max();
     }
     return s << a
-             << Reflection::typedSpec(home, m, x0)
+             << x0.spec(home, m)
              << iv.spec(home, m)
-             << Reflection::typedSpec(home, m, x1);
+             << x1.spec(home, m);
   }
 
   template <class SView, class RView>

@@ -92,9 +92,9 @@ namespace Gecode { namespace Int { namespace Linear {
   LinTer<Val,A,B,C,pc>::spec(Space* home, Reflection::VarMap& m,
                              const Support::String& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
-    return s << Reflection::typedSpec(home, m, x0)
-             << Reflection::typedSpec(home, m, x1)
-             << Reflection::typedSpec(home, m, x2)
+    return s << x0.spec(home, m)
+             << x1.spec(home, m)
+             << x2.spec(home, m)
              << c;
   }
 
@@ -149,9 +149,9 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   EqTer<Val,A,B,C>::post(Space* home, const Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
-    A x0(home, vars, spec[0]->typedArg());
-    B x1(home, vars, spec[1]->typedArg());
-    C x2(home, vars, spec[2]->typedArg());
+    A x0(home, vars, spec[0]);
+    B x1(home, vars, spec[1]);
+    C x2(home, vars, spec[2]);
     Val c = spec[3]->toInt();
     (void) new (home) EqTer<Val,A,B,C>(home, x0, x1, x2, c);
   }
@@ -245,9 +245,9 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   NqTer<Val,A,B,C>::post(Space* home, const Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
-    A x0(home, vars, spec[0]->typedArg());
-    B x1(home, vars, spec[1]->typedArg());
-    C x2(home, vars, spec[2]->typedArg());
+    A x0(home, vars, spec[0]);
+    B x1(home, vars, spec[1]);
+    C x2(home, vars, spec[2]);
     Val c = spec[3]->toInt();
     (void) new (home) NqTer<Val,A,B,C>(home, x0, x1, x2, c);
   }
@@ -325,9 +325,9 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   LqTer<Val,A,B,C>::post(Space* home, const Reflection::VarMap& vars,
                          const Reflection::ActorSpec& spec) {
-    A x0(home, vars, spec[0]->typedArg());
-    B x1(home, vars, spec[1]->typedArg());
-    C x2(home, vars, spec[2]->typedArg());
+    A x0(home, vars, spec[0]);
+    B x1(home, vars, spec[1]);
+    C x2(home, vars, spec[2]);
     Val c = spec[3]->toInt();
     (void) new (home) LqTer<Val,A,B,C>(home, x0, x1, x2, c);
   }

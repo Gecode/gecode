@@ -216,7 +216,7 @@ namespace Gecode { namespace Int { namespace Channel {
     DomInfo<View>* vi
       = DomInfo<View>::allocate(home,2*n);
     for (int i=0; i<n; i++) {
-      vi[i].init(View(home, vars, spec[i]->typedArg()),n);
+      vi[i].init(View(home, vars, spec[i]),n);
     }
     (void) new (home) Dom<View,shared>(home,n,vi);
   }

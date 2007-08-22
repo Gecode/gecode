@@ -407,8 +407,7 @@ namespace Gecode {
   Reflection::ActorSpec&
   UnaryPropagator<View,pc>::spec(Space* home, Reflection::VarMap& m,
                                  const Support::String& name) {
-    return Propagator::spec(home, m, name)
-           << Reflection::typedSpec(home, m, x0);
+    return Propagator::spec(home, m, name) << x0.spec(home, m);
   }
   
 
@@ -466,8 +465,8 @@ namespace Gecode {
   BinaryPropagator<View,pc>::spec(Space* home, Reflection::VarMap& m,
                                   const Support::String& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
-    return s << Reflection::typedSpec(home, m, x0)
-             << Reflection::typedSpec(home, m, x1);
+    return s << x0.spec(home, m)
+             << x1.spec(home, m);
   }
 
   /*
@@ -529,9 +528,9 @@ namespace Gecode {
   TernaryPropagator<View,pc>::spec(Space* home, Reflection::VarMap& m,
                                    const Support::String& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
-    return s << Reflection::typedSpec(home, m, x0)
-             << Reflection::typedSpec(home, m, x1)
-             << Reflection::typedSpec(home, m, x2);
+    return s << x0.spec(home, m)
+             << x1.spec(home, m)
+             << x2.spec(home, m);
   }
 
   /*
@@ -642,7 +641,7 @@ namespace Gecode {
                                    const Support::String& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x.spec(home, m)
-             << Reflection::typedSpec(home, m, y);
+             << y.spec(home, m);
   }
 
   /*
@@ -700,8 +699,8 @@ namespace Gecode {
   MixBinaryPropagator<View0,pc0,View1,pc1>
   ::spec(Space* home, Reflection::VarMap& m, const Support::String& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
-    return s << Reflection::typedSpec(home, m, x0)
-             << Reflection::typedSpec(home, m, x1);
+    return s << x0.spec(home, m)
+             << x1.spec(home, m);
   }
 
   /*
@@ -773,9 +772,9 @@ namespace Gecode {
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>
   ::spec(Space* home, Reflection::VarMap& m, const Support::String& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
-    return s << Reflection::typedSpec(home, m, x0)
-             << Reflection::typedSpec(home, m, x1)
-             << Reflection::typedSpec(home, m, x2);
+    return s << x0.spec(home, m)
+             << x1.spec(home, m)
+             << x2.spec(home, m);
   }
 
   /*
@@ -834,7 +833,7 @@ namespace Gecode {
   ::spec(Space* home, Reflection::VarMap& m, const Support::String& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x.spec(home, m)
-             << Reflection::typedSpec(home, m, y);
+             << y.spec(home, m);
   }
 
 }

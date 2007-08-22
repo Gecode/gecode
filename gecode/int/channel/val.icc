@@ -250,7 +250,7 @@ namespace Gecode { namespace Int { namespace Channel {
     ValInfo<View>* vi
       = ValInfo<View>::allocate(home,2*n);
     for (int i=0; i<n; i++) {
-      vi[i].init(View(home, vars, spec[i]->typedArg()),n);
+      vi[i].init(View(home, vars, spec[i]),n);
     }
     (void) new (home) Val<View,shared>(home,n,vi);
   }

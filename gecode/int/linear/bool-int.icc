@@ -691,8 +691,8 @@ namespace Gecode { namespace Int { namespace Linear {
   void
   NqBoolInt<VX>::post(Space* home, const Reflection::VarMap& vars,
                       const Reflection::ActorSpec& spec) {
-    VX x0(home, vars, spec[0]->typedArg());
-    VX x1(home, vars, spec[1]->typedArg());
+    VX x0(home, vars, spec[0]);
+    VX x1(home, vars, spec[1]);
     ViewArray<VX> xx(home, vars, spec[2]);
     int c = spec[3]->toInt();
     

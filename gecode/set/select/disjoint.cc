@@ -60,7 +60,7 @@ namespace Gecode { namespace Set { namespace Select {
   Reflection::ActorSpec&
   SelectDisjoint::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name());
-    return s << iv.spec(home, m) << Reflection::typedSpec(home, m, x1);
+    return s << iv.spec(home, m) << x1.spec(home, m);
   }
 
   size_t

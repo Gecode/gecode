@@ -122,8 +122,8 @@ namespace Gecode { namespace Int { namespace Bool {
   void
   Lq<BV>::post(Space* home, const Reflection::VarMap& vars,
                const Reflection::ActorSpec& spec) {
-    BV b0(home, vars, spec[0]->typedArg());
-    BV b1(home, vars, spec[1]->typedArg());
+    BV b0(home, vars, spec[0]);
+    BV b1(home, vars, spec[1]);
     (void) new (home) Lq<BV>(home,b0,b1);
   }
 

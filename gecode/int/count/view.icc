@@ -74,8 +74,8 @@ namespace Gecode { namespace Int { namespace Count {
                                const Support::String& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x.spec(home, m)
-             << Reflection::typedSpec(home, m, y)
-             << Reflection::typedSpec(home, m, z)
+             << y.spec(home, m)
+             << z.spec(home, m)
              << c;
   }
 
@@ -188,8 +188,8 @@ namespace Gecode { namespace Int { namespace Count {
   EqView<VX,VY,VZ,shr>::post(Space* home, const Reflection::VarMap& vars,
                              const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
-    VY y(home, vars, spec[1]->typedArg());
-    VZ z(home, vars, spec[2]->typedArg());
+    VY y(home, vars, spec[1]);
+    VZ z(home, vars, spec[2]);
     int c = spec[3]->toInt();
     (void) new (home) EqView(home, x, y, z, c);
   }
@@ -265,8 +265,8 @@ namespace Gecode { namespace Int { namespace Count {
   NqView<VX,VY,VZ,shr>::post(Space* home, const Reflection::VarMap& vars,
                              const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
-    VY y(home, vars, spec[1]->typedArg());
-    VZ z(home, vars, spec[2]->typedArg());
+    VY y(home, vars, spec[1]);
+    VZ z(home, vars, spec[2]);
     int c = spec[3]->toInt();
     (void) new (home) NqView(home, x, y, z, c);
   }
@@ -343,8 +343,8 @@ namespace Gecode { namespace Int { namespace Count {
   LqView<VX,VY,VZ,shr>::post(Space* home, const Reflection::VarMap& vars,
                              const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
-    VY y(home, vars, spec[1]->typedArg());
-    VZ z(home, vars, spec[2]->typedArg());
+    VY y(home, vars, spec[1]);
+    VZ z(home, vars, spec[2]);
     int c = spec[3]->toInt();
     (void) new (home) LqView(home, x, y, z, c);
   }
@@ -417,8 +417,8 @@ namespace Gecode { namespace Int { namespace Count {
   GqView<VX,VY,VZ,shr>::post(Space* home, const Reflection::VarMap& vars,
                              const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
-    VY y(home, vars, spec[1]->typedArg());
-    VZ z(home, vars, spec[2]->typedArg());
+    VY y(home, vars, spec[1]);
+    VZ z(home, vars, spec[2]);
     int c = spec[3]->toInt();
     (void) new (home) GqView(home, x, y, z, c);
   }

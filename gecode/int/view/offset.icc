@@ -299,11 +299,12 @@ namespace Gecode {
      */
     forceinline Reflection::Arg*
     OffsetView::spec(Space* home, Reflection::VarMap& m) {
-      return new Reflection::PairArg(new Reflection::IntArg(c), view.spec(home, m));
+      return new Reflection::PairArg(new Reflection::IntArg(c), 
+                                     view.spec(home, m));
     }
-    forceinline Reflection::Type*
+    forceinline Support::String
     OffsetView::type(void) {
-      return new Reflection::Type("Int::OffsetView");
+      return Support::String("Int::OffsetView");
     }
 
     /**

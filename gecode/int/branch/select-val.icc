@@ -48,9 +48,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.eq(home,n) : x.gr(home,n);
   }
   template<class View>
-  forceinline Reflection::Type*
+  forceinline Support::String
   ValMin<View>::type(void) {
-    return new Reflection::Type("Int::Branch::ValMin");
+    return Support::String("Int::Branch::ValMin");
   }
 
 
@@ -65,9 +65,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.eq(home,n) : x.nq(home,n);
   }
   template<class View>
-  forceinline Reflection::Type*
+  forceinline Support::String
   ValMed<View>::type(void) {
-    return new Reflection::Type("Int::Branch::ValMed");
+    return Support::String("Int::Branch::ValMed");
   }
 
 
@@ -82,9 +82,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.eq(home,n) : x.le(home,n);
   }
   template<class View>
-  forceinline Reflection::Type*
+  forceinline Support::String
   ValMax<View>::type(void) {
-    return new Reflection::Type("Int::Branch::ValMax");
+    return Support::String("Int::Branch::ValMax");
   }
 
 
@@ -99,9 +99,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.lq(home,n) : x.gr(home,n);
   }
   template<class View>
-  forceinline Reflection::Type*
+  forceinline Support::String
   ValSplitMin<View>::type(void) {
-    return new Reflection::Type("Int::Branch::ValSplitMin");
+    return Support::String("Int::Branch::ValSplitMin");
   }
 
 
@@ -116,9 +116,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.gr(home,n) : x.lq(home,n);
   }
   template<class View>
-  forceinline Reflection::Type*
+  forceinline Support::String
   ValSplitMax<View>::type(void) {
-    return new Reflection::Type("Int::Branch::ValSplitMax");
+    return Support::String("Int::Branch::ValSplitMax");
   }
 
 
@@ -152,8 +152,8 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
   forceinline
-  Reflection::Type* NoValue::type(void) {
-    return new Reflection::Type("Int::Branch::NoValue");
+  Support::String NoValue::type(void) {
+    return Support::String("Int::Branch::NoValue");
   }
 
   template<class View>
@@ -167,9 +167,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.zero(home) : x.one(home);
   }
   template<class View>
-  forceinline Reflection::Type*
+  forceinline Support::String
   ValZeroOne<View>::type(void) {
-    return new Reflection::Type("Int::Branch::ValZeroOne");
+    return Support::String("Int::Branch::ValZeroOne");
   }
 
 
@@ -184,9 +184,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return (a == 0) ? x.one(home) : x.zero(home);
   }
   template<class View>
-  forceinline Reflection::Type*
+  forceinline Support::String
   ValOneZero<View>::type(void) {
-    return new Reflection::Type("Int::Branch::ValOneZero");
+    return Support::String("Int::Branch::ValOneZero");
   }
 
 

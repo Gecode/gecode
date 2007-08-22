@@ -351,9 +351,9 @@ namespace Gecode {
       return new Reflection::PairArg(new Reflection::IntArg(a), view.spec(home, m));
     }
     template <class Val, class UnsVal>
-    forceinline Reflection::Type*
+    forceinline Support::String
     ScaleView<Val,UnsVal>::type(void) {
-      return new Reflection::Type("Int::ScaleView");
+      return Support::String("Int::ScaleView");
     }
 
 

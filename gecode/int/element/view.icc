@@ -199,10 +199,10 @@ namespace Gecode { namespace Int { namespace Element {
     Reflection::ArrayArg* a = new Reflection::ArrayArg(n);
     for (int i=n; i--;)
       (*a)[i] = iv[i].view.spec(home, m);
-    return s << Reflection::typedSpec(home, m, x0)
-             << Reflection::typedSpec(home, m, x1)
+    return s << x0.spec(home, m)
+             << x1.spec(home, m)
              << ai
-             << new Reflection::TypedArg(VC::type(), a);
+             << a;
   }
 
   template <class VA, class VB, class VC, PropCond pc_ac>
@@ -387,8 +387,8 @@ namespace Gecode { namespace Int { namespace Element {
   ViewBnd<VA,VB,VC>::post(Space* home, const Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec)
   {
-    VB x0(home, vars, spec[0]->typedArg());
-    VC x1(home, vars, spec[1]->typedArg());
+    VB x0(home, vars, spec[0]);
+    VC x1(home, vars, spec[1]);
     Reflection::IntArrayArg* ia = spec[2]->toIntArray();
     GECODE_AUTOARRAY(int,idx,ia->size());
     for (int i=ia->size(); i--; )
@@ -511,8 +511,8 @@ namespace Gecode { namespace Int { namespace Element {
   ViewDom<VA,VB,VC>::post(Space* home, const Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec)
   {
-    VB x0(home, vars, spec[0]->typedArg());
-    VC x1(home, vars, spec[1]->typedArg());
+    VB x0(home, vars, spec[0]);
+    VC x1(home, vars, spec[1]);
     Reflection::IntArrayArg* ia = spec[2]->toIntArray();
     GECODE_AUTOARRAY(int,idx,ia->size());
     for (int i=ia->size(); i--; )

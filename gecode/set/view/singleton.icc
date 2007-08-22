@@ -268,9 +268,9 @@ namespace Gecode {
       return view.spec(home, m);
     }
 
-    forceinline Reflection::Type*
+    forceinline Support::String
     SingletonView::type(void) {
-      return new Reflection::Type("Set::SingletonView");
+      return Support::String("Set::SingletonView");
     }
 
     /*

@@ -89,8 +89,8 @@ namespace Gecode { namespace Int { namespace Dom {
   void
   ReRange<View>::post(Space* home, const Reflection::VarMap& vars,
                       const Reflection::ActorSpec& spec) {
-    View x0(home, vars, spec[0]->typedArg());
-    BoolView b(home, vars, spec[1]->typedArg());
+    View x0(home, vars, spec[0]);
+    BoolView b(home, vars, spec[1]);
     int min = spec[2]->toInt();
     int max = spec[3]->toInt();
     (void) new (home) ReRange<View>(home, x0, min, max, b);

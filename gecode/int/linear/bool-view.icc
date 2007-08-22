@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace Linear {
                            const Support::String& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x.spec(home, m)
-             << Reflection::typedSpec(home, m, y)
+             << y.spec(home, m)
              << c;
   }
 
@@ -154,7 +154,7 @@ namespace Gecode { namespace Int { namespace Linear {
   EqBoolView<XV,YV>::post(Space* home, const Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec) {
     ViewArray<XV> x(home, vars, spec[0]);
-    YV y(home, vars, spec[1]->typedArg());
+    YV y(home, vars, spec[1]);
     int c = spec[2]->toInt();
     (void) new (home) EqBoolView<XV,YV>(home, x, y, c);
   }
@@ -262,7 +262,7 @@ namespace Gecode { namespace Int { namespace Linear {
   NqBoolView<XV,YV>::post(Space* home, const Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec) {
     ViewArray<XV> x(home, vars, spec[0]);
-    YV y(home, vars, spec[1]->typedArg());
+    YV y(home, vars, spec[1]);
     int c = spec[2]->toInt();
     (void) new (home) NqBoolView<XV,YV>(home, x, y, c);
   }
@@ -361,7 +361,7 @@ namespace Gecode { namespace Int { namespace Linear {
   GqBoolView<XV,YV>::post(Space* home, const Reflection::VarMap& vars,
                           const Reflection::ActorSpec& spec) {
     ViewArray<XV> x(home, vars, spec[0]);
-    YV y(home, vars, spec[1]->typedArg());
+    YV y(home, vars, spec[1]);
     int c = spec[2]->toInt();
     (void) new (home) GqBoolView<XV,YV>(home, x, y, c);
   }

@@ -300,9 +300,9 @@ namespace Gecode {
     BoolView::spec(Space* home, Reflection::VarMap& m) {
       return var->spec(home, m);
     }
-    forceinline Reflection::Type*
+    forceinline Support::String
     BoolView::type(void) {
-      return new Reflection::Type("Int::BoolView");
+      return Support::String("Int::BoolView");
     }
 
     /*
@@ -482,9 +482,9 @@ namespace Gecode {
     NegBoolView::spec(Space* home, Reflection::VarMap& m) {
       return view.spec(home, m);
     }
-    forceinline Reflection::Type*
+    forceinline Support::String
     NegBoolView::type(void) {
-      return new Reflection::Type("Int::NegBoolView");
+      return Support::String("Int::NegBoolView");
     }
 
     /**

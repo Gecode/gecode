@@ -230,10 +230,6 @@ namespace Gecode {
         os << "\"" << arg->toString() << "\"";
         return;
       }
-      if (arg->isTypedArg()) {
-        emitArg(os, arg->typedArg(), vm);
-        return;
-      }
       if (arg->isVar()) {
         VarSpec& s = vm.spec(arg->toVar());
         if (s.name().empty())

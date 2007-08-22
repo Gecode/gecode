@@ -133,7 +133,7 @@ namespace Gecode { namespace Set { namespace Rel {
   DistinctDoit<View0>::spec(Space* home, Reflection::VarMap& m) {
     Reflection::ActorSpec& s =
       UnaryPropagator<View0,PC_SET_ANY>::spec(home, m, name());
-    return s << Reflection::typedSpec(home, m, y);
+    return s << y.spec(home, m);
   }
 
   template <class View0>

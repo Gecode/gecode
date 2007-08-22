@@ -50,9 +50,9 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     return VSS_NONE;
   }
 
-  forceinline Reflection::Type*
+  forceinline Support::String
   ByNone::type(void) {
-    return new Reflection::Type("CpltSet::Branch::ByNone");
+    return Support::String("CpltSet::Branch::ByNone");
   }
 
   forceinline ViewSelStatus
@@ -69,9 +69,9 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     }
     return VSS_NONE;
   }
-  forceinline Reflection::Type*
+  forceinline Support::String
   ByMinCard::type(void) {
-    return new Reflection::Type("CpltSet::Branch::ByMinCard");
+    return Support::String("CpltSet::Branch::ByMinCard");
   }
 
   forceinline ViewSelStatus
@@ -87,9 +87,9 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     }
     return VSS_NONE;
   }
-  forceinline Reflection::Type*
+  forceinline Support::String
   ByMaxCard::type(void) {
-    return new Reflection::Type("CpltSet::Branch::ByMaxCard");
+    return Support::String("CpltSet::Branch::ByMaxCard");
   }
 
   forceinline ViewSelStatus
@@ -107,9 +107,9 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     }
     return VSS_NONE;
   }
-  forceinline Reflection::Type*
+  forceinline Support::String
   ByMinUnknown::type(void) {
-    return new Reflection::Type("CpltSet::Branch::ByMinUnknown");
+    return Support::String("CpltSet::Branch::ByMinUnknown");
   }
 
   forceinline ViewSelStatus
@@ -135,9 +135,9 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     }
     return VSS_NONE;
   }
-  forceinline Reflection::Type*
+  forceinline Support::String
   ByMaxUnknown::type(void) {
-    return new Reflection::Type("CpltSet::Branch::ByMaxUnknown");
+    return Support::String("CpltSet::Branch::ByMaxUnknown");
   }
 
 }}}

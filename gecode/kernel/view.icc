@@ -306,7 +306,7 @@ namespace Gecode {
     //@{
     /// Return specification for this view, using variable map \a m
     Reflection::Arg*  spec(Space* home, Reflection::VarMap& m);
-    static Reflection::Type* type(void);
+    static Support::String type(void);
     //@}
 
   private:
@@ -627,10 +627,10 @@ namespace Gecode {
     return a;
   }
   template <class View, unsigned int n>
-  forceinline Reflection::Type*
+  forceinline Support::String
   ViewTuple<View,n>::type(void) {
-    assert(false); /// TODO!
-    return NULL;
+    /// TODO! FIXME!
+    return "<"+View::type()+","+">";
   }
 
   template <class View, unsigned int n>

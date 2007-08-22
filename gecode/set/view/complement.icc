@@ -295,12 +295,11 @@ namespace Gecode { namespace Set {
   }
 
   template <class View>
-  forceinline Reflection::Type*
+  forceinline Support::String
   ComplementView<View>::type(void) {
-    Reflection::Type* t = new Reflection::Type(2);
-    (*t)[0] = new Reflection::Type("Set::ComplementView");
-    (*t)[1] = View::type();
-    return t;
+    return
+      Support::String("Set::ComplementView<") +
+      View::type() + ">";
   }
 
   /*

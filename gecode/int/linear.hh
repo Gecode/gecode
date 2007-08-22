@@ -1290,7 +1290,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Return number of elements
     int size(void) const;
     /// Return type of array
-    static Reflection::Type* type(void);
+    static Support::String type(void);
   private:
     /// For sorting array in decreasing order of coefficients
     class ScaleDec {
@@ -1332,7 +1332,7 @@ namespace Gecode { namespace Int { namespace Linear {
     /// Sort array in decreasing order of coefficients
     void sort(void);
     /// Return type of array
-    static Reflection::Type* type(void);
+    static Support::String type(void);
   };
 
 

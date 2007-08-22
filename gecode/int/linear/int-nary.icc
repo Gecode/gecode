@@ -139,7 +139,7 @@ namespace Gecode { namespace Int { namespace Linear {
     return s << Lin<Val,P,N,pc>::x.spec(home, m)
              << Lin<Val,P,N,pc>::y.spec(home, m)
              << Lin<Val,P,N,pc>::c
-             << Reflection::typedSpec(home, m, b);
+             << b.spec(home, m);
   }
 
   /*
@@ -489,7 +489,7 @@ namespace Gecode { namespace Int { namespace Linear {
     ViewArray<P> x(home, vars, spec[0]);
     ViewArray<N> y(home, vars, spec[1]);
     Val c = spec[2]->toInt();
-    Ctrl b(home, vars, spec[3]->typedArg());
+    Ctrl b(home, vars, spec[3]);
     (void) new (home) ReEq<Val,P,N,Ctrl>(home, x, y, c, b);
   }  
 
@@ -965,7 +965,7 @@ namespace Gecode { namespace Int { namespace Linear {
     ViewArray<P> x(home, vars, spec[0]);
     ViewArray<N> y(home, vars, spec[1]);
     Val c = spec[2]->toInt();
-    BoolView b(home, vars, spec[3]->typedArg());
+    BoolView b(home, vars, spec[3]);
     (void) new (home) ReLq<Val,P,N>(home, x, y, c, b);
   }  
 

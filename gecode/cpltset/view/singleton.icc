@@ -496,9 +496,9 @@ namespace Gecode {
     SingletonCpltSetView::spec(Space* home, Reflection::VarMap& m) {
       return view.spec(home, m);
     }
-    forceinline Reflection::Type*
+    forceinline Support::String
     SingletonCpltSetView::type(void) {
-      return new Reflection::Type("CpltSet::SingletonCpltSetView");
+      return Support::String("CpltSet::SingletonCpltSetView");
     }
 
     /*

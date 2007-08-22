@@ -146,8 +146,13 @@ namespace Gecode {
       /// \name Serialization
       //@{
       /// Return specification for this view, using variable map \a m
-      Reflection::Arg* spec(Space* home, Reflection::VarMap& m) { return NULL; }
-      static Reflection::Type* type(void) { return new Reflection::Type("Int::Linear::NoView"); }
+      Reflection::Arg* spec(Space* home, Reflection::VarMap& m) {
+        return NULL;
+      }
+      /// Type of this view
+      static Support::String type(void) {
+        return Support::String("Int::Linear::NoView");
+      }
       //@}
 
       /// \name View comparison
@@ -227,9 +232,7 @@ namespace Gecode {
     //@{
     /// Return specification for this array, using variable map \a m
     Reflection::Arg* spec(Space* home, Reflection::VarMap& m) {
-      return new Reflection::TypedArg(
-        new Reflection::Type("Int::Linear::NoView"),
-        new Reflection::ArrayArg(0));
+      return new Reflection::ArrayArg(0);
     }
     //@}
 

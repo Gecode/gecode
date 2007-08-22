@@ -114,9 +114,9 @@ namespace Gecode { namespace Int { namespace Linear {
     Support::quicksort<ScaleBool,ScaleDec>(fst(), size(), scale_dec);
   }
 
-  forceinline Reflection::Type*
+  forceinline Support::String
   ScaleBoolArray::type(void) {
-    return new Reflection::Type("Int::Linear::ScaleBoolArray");
+    return Support::String("Int::Linear::ScaleBoolArray");
   }
 
   /*
@@ -147,9 +147,9 @@ namespace Gecode { namespace Int { namespace Linear {
   EmptyScaleBoolArray::size(void) const { return 0; }
   forceinline void 
   EmptyScaleBoolArray::sort(void) {}
-  forceinline Reflection::Type*
+  forceinline Support::String
   EmptyScaleBoolArray::type(void) {
-    return new Reflection::Type("Int::Linear::EmptyScaleBoolArray");
+    return Support::String("Int::Linear::EmptyScaleBoolArray");
   }
 
 
@@ -222,7 +222,7 @@ namespace Gecode { namespace Int { namespace Linear {
     }
 
     return s << c_p << b_p.spec(home, m)
-             << c_n << b_n.spec(home, m) << Reflection::typedSpec(home, m, x)
+             << c_n << b_n.spec(home, m) << x.spec(home, m)
              << c;
   }
 
@@ -294,7 +294,7 @@ namespace Gecode { namespace Int { namespace Linear {
     ViewArray<BoolView> b_pv(home, vars, spec[1]);
     Reflection::IntArrayArg* c_n = spec[2]->toIntArray();
     ViewArray<BoolView> b_nv(home, vars, spec[3]);
-    VX x(home, vars, spec[4]->typedArg());
+    VX x(home, vars, spec[4]);
     int c = spec[5]->toInt();
     SBAP b_p(home,b_pv.size());
     {
@@ -548,7 +548,7 @@ namespace Gecode { namespace Int { namespace Linear {
     ViewArray<BoolView> b_pv(home, vars, spec[1]);
     Reflection::IntArrayArg* c_n = spec[2]->toIntArray();
     ViewArray<BoolView> b_nv(home, vars, spec[3]);
-    VX x(home, vars, spec[4]->typedArg());
+    VX x(home, vars, spec[4]);
     int c = spec[5]->toInt();
     SBAP b_p(home,b_pv.size());
     {
@@ -741,7 +741,7 @@ namespace Gecode { namespace Int { namespace Linear {
     ViewArray<BoolView> b_pv(home, vars, spec[1]);
     Reflection::IntArrayArg* c_n = spec[2]->toIntArray();
     ViewArray<BoolView> b_nv(home, vars, spec[3]);
-    VX x(home, vars, spec[4]->typedArg());
+    VX x(home, vars, spec[4]);
     int c = spec[5]->toInt();
     SBAP b_p(home,b_pv.size());
     {

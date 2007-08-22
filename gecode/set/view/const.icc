@@ -278,9 +278,9 @@ namespace Gecode { namespace Set {
     return args;
   }
 
-  forceinline Reflection::Type*
+  forceinline Support::String
   ConstantView::type(void) {
-    return new Reflection::Type("Set::ConstantView");
+    return Support::String("Set::ConstantView");
   }
 
   forceinline
@@ -401,9 +401,9 @@ namespace Gecode { namespace Set {
     return NULL;
   }
 
-  forceinline Reflection::Type*
+  forceinline Support::String
   EmptyView::type(void) {
-    return new Reflection::Type("Set::EmptyView");
+    return Support::String("Set::EmptyView");
   }
 
   // Constant universe variable
@@ -530,9 +530,9 @@ namespace Gecode { namespace Set {
     return NULL;
   }
 
-  forceinline Reflection::Type*
+  forceinline Support::String
   UniverseView::type(void) {
-    return new Reflection::Type("Set::UniverseView");
+    return Support::String("Set::UniverseView");
   }
 
   /*

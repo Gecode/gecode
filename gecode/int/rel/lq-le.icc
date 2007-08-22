@@ -86,8 +86,8 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   Lq<View>::post(Space* home, const Reflection::VarMap& vars,
                  const Reflection::ActorSpec& spec) {
-    View x0(home, vars, spec[0]->typedArg());
-    View x1(home, vars, spec[1]->typedArg());
+    View x0(home, vars, spec[0]);
+    View x1(home, vars, spec[1]);
     (void) new (home) Lq<View>(home, x0, x1);
   }
 
@@ -151,8 +151,8 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   Le<View>::post(Space* home, const Reflection::VarMap& vars,
                  const Reflection::ActorSpec& spec) {
-    View x0(home, vars, spec[0]->typedArg());
-    View x1(home, vars, spec[1]->typedArg());
+    View x0(home, vars, spec[0]);
+    View x1(home, vars, spec[1]);
     (void) new (home) Le<View>(home, x0, x1);
   }
 
@@ -227,9 +227,9 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   ReLq<View,CtrlView>::post(Space* home, const Reflection::VarMap& vars,
                             const Reflection::ActorSpec& spec) {
-    View x0(home, vars, spec[0]->typedArg());
-    View x1(home, vars, spec[1]->typedArg());
-    CtrlView b(home, vars, spec[2]->typedArg());
+    View x0(home, vars, spec[0]);
+    View x1(home, vars, spec[1]);
+    CtrlView b(home, vars, spec[2]);
     (void) new (home) ReLq<View,CtrlView>(home, x0, x1, b);
   }
 
@@ -312,8 +312,8 @@ namespace Gecode { namespace Int { namespace Rel {
   void
   ReLqInt<View,CtrlView>::post(Space* home, const Reflection::VarMap& vars,
                                const Reflection::ActorSpec& spec) {
-    View x0(home, vars, spec[0]->typedArg());
-    CtrlView b(home, vars, spec[1]->typedArg());
+    View x0(home, vars, spec[0]);
+    CtrlView b(home, vars, spec[1]);
     int c = spec[2]->toInt();
     (void) new (home) ReLqInt<View,CtrlView>(home, x0, c, b);
   }

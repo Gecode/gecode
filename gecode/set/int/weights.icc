@@ -345,8 +345,8 @@ namespace Gecode { namespace Set { namespace Int {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name());
     return s << new Reflection::IntArrayArg(elements)
              << new Reflection::IntArrayArg(weights)
-             << Reflection::typedSpec(home, m, x)
-             << Reflection::typedSpec(home, m, y);
+             << x.spec(home, m)
+             << y.spec(home, m);
   }
 
 }}}

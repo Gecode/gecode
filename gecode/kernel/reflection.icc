@@ -54,50 +54,6 @@ namespace Gecode { namespace Reflection {
   class StringArg;
   
   /**
-    * \brief View types of actor arguments
-    *
-    * \ingroup TaskIntReflect
-    */
-  class Type {
-  private:
-    /// Number of arguments
-    int n;
-    /// If n==0, this is the name of the view type
-    Support::String _name;
-    /// If n>0, this is the tuple representing the type
-    Type** t;
-  public:
-    /// Construct singleton type with \a name
-    Type(const Support::String& name);
-    /// Construct \a n -ary tuple type
-    Type(int n);
-
-    GECODE_KERNEL_EXPORT bool equal(Type* t);
-
-    /// Destructor
-    ~Type(void);
-
-    /// Return whether this is a primitive type or a tuple of types
-    bool primitive(void) const;
-    /// Return arity of tuple type (or 0 for primitive type)
-    int arity(void) const;
-    
-    /// Access element of tuple type
-    Type* operator[](int) const;
-    /// Access element of tuple type
-    Type*& operator[](int);
-
-    /// Return name of primitive type
-    Support::String name(void) const;
-    
-    /// Print string representation to \a os
-    GECODE_KERNEL_EXPORT void print(std::ostream& os);
-
-    /// Return string representation
-    GECODE_KERNEL_EXPORT Support::String toString(void);
-  };
-
-  /**
     * \brief Arguments for actor and variable specifications
     *
     * \ingroup TaskIntReflect
@@ -130,12 +86,6 @@ namespace Gecode { namespace Reflection {
     Arg*         first(void);
     /// Return the second component of the pair that this argument represents
     Arg*         second(void);
-    /// Test if this represents a typed argument
-    bool         isTypedArg(void);
-    /// Return type of typed argument
-    Type*        type(void);
-    /// Return argument of typed argument
-    Arg*         typedArg(void);
     /// Destructor
     GECODE_KERNEL_EXPORT virtual ~Arg(void);
   };
@@ -235,22 +185,6 @@ namespace Gecode { namespace Reflection {
     unsigned int width(void) const { 
       return static_cast<unsigned int>(max() - min()) + 1; 
     }
-  };
-
-  /**
-    * \brief Argument paired with a type
-    * \ingroup TaskIntReflect
-    */
-  class TypedArg : public Arg {
-  public:
-    /// Constructor
-    TypedArg(Type* t0, Arg* a0);
-    /// Destructor
-    GECODE_KERNEL_EXPORT virtual ~TypedArg(void);
-    /// The type of this argument
-    Type* t;
-    /// The argument
-    Arg* a;
   };
 
   /**
@@ -561,25 +495,6 @@ namespace Gecode { namespace Reflection {
     return pa->b;
   }
 
-  forceinline bool
-  Arg::isTypedArg(void) {
-    return (dynamic_cast<TypedArg*>(this) != NULL);    
-  }
-  forceinline Type*
-  Arg::type(void) {
-    TypedArg* ta = dynamic_cast<TypedArg*>(this);
-    if (ta == NULL)
-      throw ReflectionException("not a TypedArg");
-    return ta->t;
-  }
-  forceinline Arg*
-  Arg::typedArg(void) {
-    TypedArg* ta = dynamic_cast<TypedArg*>(this);
-    if (ta == NULL)
-      throw ReflectionException("not a TypedArg");
-    return ta->a;
-  }
-
 
   forceinline
   IntArg::IntArg(int i0) : i(i0) {}
@@ -642,15 +557,6 @@ namespace Gecode { namespace Reflection {
   forceinline
   VarArg::VarArg(int i0) : i(i0) {}
   
-  forceinline
-  TypedArg::TypedArg(Type* t0, Arg* a0) : t(t0), a(a0) {}
-
-  template <class View>
-  forceinline TypedArg*
-  typedSpec(Space* home, VarMap& m, View& v) {
-    return new TypedArg(View::type(), v.spec(home, m));
-  }
-
   /*
    * Variable specifications
    *
@@ -714,62 +620,6 @@ namespace Gecode { namespace Reflection {
   forceinline Arg*
   VarSpec::dom(void) const {
     return _dom->_dom;
-  }
-
-  /*
-   * Types
-   *
-   */
-
-  forceinline
-  Type::Type(const Support::String& s) : n(0), _name(s), t(NULL) {
-  }
-  
-  forceinline
-  Type::Type(int n0) : n(n0) {
-    t = static_cast<Type**>(Memory::malloc(sizeof(Type*)*n));
-    for (int i=n; i--;)
-      t[i] = NULL;
-  }
-  
-  forceinline
-  Type::~Type(void) {
-    if (n>0) {
-      for (int i=n; i--;)
-        delete t[i];
-      Memory::free(t);
-    }
-  }
-
-  forceinline bool
-  Type::primitive(void) const {
-    return n == 0;
-  }
-
-  forceinline int
-  Type::arity(void) const {
-    return n;
-  }
-  
-  forceinline Type*
-  Type::operator[](int i) const {
-    if (i >= n)
-      throw ReflectionException("Array index out of range");
-    return t[i];
-  }
-  
-  forceinline Type*&
-  Type::operator[](int i) {
-    if (i >= n)
-      throw ReflectionException("Array index out of range");
-    return t[i];
-  }
-
-  forceinline Support::String
-  Type::name(void) const {
-    if (n > 0)
-      throw ReflectionException("Type argument is not a primitive type");
-    return _name;
   }
 
 
@@ -915,7 +765,7 @@ namespace Gecode { namespace Reflection {
   class TypeOf {
   public:
     /// Return string representation
-    static Support::String t(void) { return View::type()->toString(); }
+    static Support::String t(void) { return View::type(); }
   };
   
   /** \brief String representation for bool, used for name mangling

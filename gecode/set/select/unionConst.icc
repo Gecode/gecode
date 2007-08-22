@@ -92,9 +92,9 @@ namespace Gecode { namespace Set { namespace Select {
       (*a)[i] = aa;
     }
 
-    return s << Reflection::typedSpec(home, m, x0)
+    return s << x0.spec(home, m)
              << a
-             << Reflection::typedSpec(home, m, x1);
+             << x1.spec(home, m);
   }
 
   template <class SView, class RView>

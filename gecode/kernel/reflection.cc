@@ -39,51 +39,6 @@
 #include "gecode/support/dynamic-array.hh"
 
 namespace Gecode { namespace Reflection {
-  
-  bool
-  Type::equal(Type* t0) {
-    if (n != t0->n)
-      return false;
-    if (n == 0)
-      return _name == t0->_name;
-    for (int i=n; i--;)
-      if (!t[i]->equal(t0->t[i]))
-        return false;
-    return true;
-  }
-
-  void Type::print(std::ostream& os) {
-    if (n == 0) {
-      os << _name;
-    } else {
-      os << "<";
-      for (int i=0; i<n; i++) {
-        if (t[i])
-          t[i]->print(os);
-        else
-          os << "NULL";
-        if (i<n-1)
-          os << ",";
-      }
-      os << ">";
-    }
-  }
-
-  Support::String
-  Type::toString(void) {
-    if (n == 0)
-      return _name;
-    Support::String ret = "<";
-    for (int i=0; i<n; i++) {
-      if (t[i])
-        ret = ret + t[i]->toString();
-      else
-        ret = ret +"NULL";
-      if (i<n-1)
-        ret = ret + ",";
-    }
-    return ret+">";
-  }
 
   // Registry
   
@@ -146,11 +101,6 @@ namespace Gecode { namespace Reflection {
   PairArg::~PairArg(void) {
     delete a;
     delete b;
-  }
-
-  TypedArg::~TypedArg(void) {
-    delete t;
-    delete a;
   }
 
 }}

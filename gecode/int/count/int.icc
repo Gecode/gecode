@@ -83,7 +83,7 @@ namespace Gecode { namespace Int { namespace Count {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x.spec(home, m)
              << n_s
-             << Reflection::typedSpec(home, m, y)
+             << y.spec(home, m)
              << c;
   }
 
@@ -158,7 +158,7 @@ namespace Gecode { namespace Int { namespace Count {
                      const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
     int n_s = spec[1]->toInt();
-    VY y(home, vars, spec[2]->typedArg());
+    VY y(home, vars, spec[2]);
     int c = spec[3]->toInt();
     (void) new (home) EqInt(home, x, n_s, y, c);
   }
@@ -279,7 +279,7 @@ namespace Gecode { namespace Int { namespace Count {
                      const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
     int n_s = spec[1]->toInt();
-    VY y(home, vars, spec[2]->typedArg());
+    VY y(home, vars, spec[2]);
     int c = spec[3]->toInt();
     (void) new (home) GqInt(home, x, n_s, y, c);
   }
@@ -397,7 +397,7 @@ namespace Gecode { namespace Int { namespace Count {
                      const Reflection::ActorSpec& spec) {
     ViewArray<VX> x(home, vars, spec[0]);
     int n_s = spec[1]->toInt();
-    VY y(home, vars, spec[2]->typedArg());
+    VY y(home, vars, spec[2]);
     int c = spec[3]->toInt();
     (void) new (home) LqInt(home, x, n_s, y, c);
   }
@@ -530,7 +530,7 @@ namespace Gecode { namespace Int { namespace Count {
     Reflection::ActorSpec& s =
       BinaryPropagator<VX, PC_INT_DOM>::spec(home, m, name());
     return s << x.spec(home, m)
-             << Reflection::typedSpec(home, m, y)
+             << y.spec(home, m)
              << c;
   }
 
@@ -538,15 +538,15 @@ namespace Gecode { namespace Int { namespace Count {
   void
   NqInt<VX,VY>::post(Space* home, const Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
-    VX x0(home, vars, spec[0]->typedArg());
-    VX x1(home, vars, spec[1]->typedArg());
+    VX x0(home, vars, spec[0]);
+    VX x1(home, vars, spec[1]);
     ViewArray<VX> xx(home, vars, spec[2]);
     ViewArray<VX> x(home, xx.size()+2);
     for (int i=xx.size(); i--; )
       x[i] = xx[i];
     x[xx.size()]   = x0;
     x[xx.size()+1] = x1;
-    VY y(home, vars, spec[3]->typedArg());
+    VY y(home, vars, spec[3]);
     int c = spec[4]->toInt();
     (void) new (home) NqInt(home, x, y, c);
   }

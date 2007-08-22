@@ -129,8 +129,7 @@ namespace Gecode { namespace Set { namespace Select {
     Reflection::ArrayArg* s = new Reflection::ArrayArg(n);
     for (int i = 0; i<n; i++)
       (*s)[i] = xs[i].var.spec(home, m);
-    Reflection::TypedArg* ta = new Reflection::TypedArg(View::type(), s);
-    return ta;
+    return s;
   }
 
 }}}

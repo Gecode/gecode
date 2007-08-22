@@ -110,8 +110,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   forceinline void
   AbsBnd<View>::post(Space* home, const Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
-     View x0(home, vars, spec[0]->typedArg());
-     View x1(home, vars, spec[1]->typedArg());
+     View x0(home, vars, spec[0]);
+     View x1(home, vars, spec[1]);
      (void) new (home) AbsBnd<View>(home,x0,x1);
   }
 
@@ -182,8 +182,8 @@ namespace Gecode { namespace Int { namespace Arithmetic {
   forceinline void
   AbsDom<View>::post(Space* home, const Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec) {
-     View x0(home, vars, spec[0]->typedArg());
-     View x1(home, vars, spec[1]->typedArg());
+     View x0(home, vars, spec[0]);
+     View x1(home, vars, spec[1]);
      (void) new (home) AbsDom<View>(home,x0,x1);
   }
 

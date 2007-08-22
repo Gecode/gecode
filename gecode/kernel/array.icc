@@ -643,9 +643,7 @@ namespace Gecode {
   template <class View>
   ViewArray<View>::ViewArray(Space* home, const Reflection::VarMap& vars,
                              Reflection::Arg* spec) {
-    Reflection::Arg* aa = spec->typedArg();
-    Reflection::ArrayArg* a = 
-      aa->toArray();
+    Reflection::ArrayArg* a = spec->toArray();
     n = a->size();
     x = (n>0) ? static_cast<View*>(home->alloc(sizeof(View)*n)) : NULL;
     for (int i=n; i--;)
@@ -951,8 +949,7 @@ namespace Gecode {
     Reflection::ArrayArg* s = new Reflection::ArrayArg(n);
     for (int i = 0; i<n; i++)
       (*s)[i] = x[i].spec(home, m);
-    Reflection::TypedArg* ta = new Reflection::TypedArg(View::type(), s);
-    return ta;
+    return s;
   }
 
   template <class View>

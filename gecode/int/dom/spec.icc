@@ -108,8 +108,8 @@ namespace Gecode { namespace Int { namespace Dom {
   void
   ReIntSet<View>::post(Space* home, const Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
-    View x0(home, vars, spec[0]->typedArg());
-    BoolView b(home, vars, spec[1]->typedArg());
+    View x0(home, vars, spec[0]);
+    BoolView b(home, vars, spec[1]);
     Reflection::IntArrayArgRanges r(spec[2]->toIntArray());
     (void) new (home) ReIntSet<View>(home, x0, IntSet(r), b);
   }

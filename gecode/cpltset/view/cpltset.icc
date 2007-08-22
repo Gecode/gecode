@@ -249,9 +249,9 @@ namespace Gecode { namespace CpltSet {
   CpltSetView::spec(Space* home, Reflection::VarMap& m) {
     return var->spec(home, m);
   }
-  forceinline Reflection::Type*
+  forceinline Support::String
   CpltSetView::type(void) {
-    return new Reflection::Type("CpltSet::CpltSetView");
+    return Support::String("CpltSet::CpltSetView");
   }
 
   forceinline void 

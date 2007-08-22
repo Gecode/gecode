@@ -193,7 +193,7 @@ namespace Gecode {
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg*  spec(Space* home, Reflection::VarMap& m);
-      static Reflection::Type* type(void);
+      static Support::String type(void);
       //@}
 
 
@@ -413,7 +413,7 @@ namespace Gecode {
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
-      static Reflection::Type* type(void);
+      static Support::String type(void);
       //@}
 
       /// Debug output

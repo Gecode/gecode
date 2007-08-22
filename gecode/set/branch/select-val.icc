@@ -52,9 +52,9 @@ namespace Gecode { namespace Set { namespace Branch {
   ValMin::tell(Space* home, unsigned int a, SetView x, int v) {
     return (a == 0) ? x.include(home,v) : x.exclude(home,v);
   }
-  forceinline Reflection::Type*
+  forceinline Support::String
   ValMin::type(void) {
-    return new Reflection::Type("Set::Branch::ValMin");
+    return Support::String("Set::Branch::ValMin");
   }
 
   forceinline int
@@ -71,9 +71,9 @@ namespace Gecode { namespace Set { namespace Branch {
   ValMax::tell(Space* home, unsigned int a, SetView x, int v) {
     return (a == 0) ? x.include(home,v) : x.exclude(home,v);
   }
-  forceinline Reflection::Type*
+  forceinline Support::String
   ValMax::type(void) {
-    return new Reflection::Type("Set::Branch::ValMax");
+    return Support::String("Set::Branch::ValMax");
   }
 
   template <class SelView>

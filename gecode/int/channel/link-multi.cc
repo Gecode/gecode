@@ -115,7 +115,7 @@ namespace Gecode { namespace Int { namespace Channel {
   LinkMulti::post(Space* home, const Reflection::VarMap& vars,
                   const Reflection::ActorSpec& spec) {
     ViewArray<BoolView> b(home, vars, spec[0]);
-    IntView x(home, vars, spec[1]->typedArg());
+    IntView x(home, vars, spec[1]);
     int o = spec[2]->toInt();
     (void) new (home) LinkMulti(home, b, x, o);
   }

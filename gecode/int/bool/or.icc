@@ -110,8 +110,8 @@ namespace Gecode { namespace Int { namespace Bool {
   void
   OrTrueSubsumed<BV>::post(Space* home, const Reflection::VarMap& vars,
                            const Reflection::ActorSpec& spec) {
-    BV b0(home, vars, spec[0]->typedArg());
-    BV b1(home, vars, spec[1]->typedArg());
+    BV b0(home, vars, spec[0]);
+    BV b1(home, vars, spec[1]);
     (void) new (home) OrTrueSubsumed<BV>(home,b0,b1);
   }
 
@@ -213,8 +213,8 @@ namespace Gecode { namespace Int { namespace Bool {
   void
   BinOrTrue<BVA,BVB>::post(Space* home, const Reflection::VarMap& vars,
                            const Reflection::ActorSpec& spec) {
-    BVA b0(home, vars, spec[0]->typedArg());
-    BVB b1(home, vars, spec[1]->typedArg());
+    BVA b0(home, vars, spec[0]);
+    BVB b1(home, vars, spec[1]);
     (void) new (home) BinOrTrue<BVA,BVB>(home,b0,b1);
   }
 
@@ -334,16 +334,16 @@ namespace Gecode { namespace Int { namespace Bool {
   Reflection::ActorSpec&
   TerOrTrue<BV>::spec(Space* home, Reflection::VarMap& m) {
     return BoolBinary<BV,BV>::spec(home, m, name())
-           << Reflection::typedSpec(home, m, x2);;
+           << x2.spec(home, m);
   }
 
   template<class BV>
   void
   TerOrTrue<BV>::post(Space* home, const Reflection::VarMap& vars,
                       const Reflection::ActorSpec& spec) {
-    BV b0(home, vars, spec[0]->typedArg());
-    BV b1(home, vars, spec[1]->typedArg());
-    BV b2(home, vars, spec[2]->typedArg());
+    BV b0(home, vars, spec[0]);
+    BV b1(home, vars, spec[1]);
+    BV b2(home, vars, spec[2]);
     (void) new (home) TerOrTrue<BV>(home,b0,b1,b2);
   }
 
@@ -536,18 +536,18 @@ namespace Gecode { namespace Int { namespace Bool {
   Reflection::ActorSpec&
   QuadOrTrue<BV>::spec(Space* home, Reflection::VarMap& m) {
     return BoolBinary<BV,BV>::spec(home, m, name())
-      << Reflection::typedSpec(home, m, x2)
-      << Reflection::typedSpec(home, m, x3);
+      << x2.spec(home, m)
+      << x3.spec(home, m);
   }
 
   template<class BV>
   void
   QuadOrTrue<BV>::post(Space* home, const Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
-    BV b0(home, vars, spec[0]->typedArg());
-    BV b1(home, vars, spec[1]->typedArg());
-    BV b2(home, vars, spec[2]->typedArg());
-    BV b3(home, vars, spec[3]->typedArg());
+    BV b0(home, vars, spec[0]);
+    BV b1(home, vars, spec[1]);
+    BV b2(home, vars, spec[2]);
+    BV b3(home, vars, spec[3]);
     (void) new (home) QuadOrTrue<BV>(home,b0,b1,b2,b3);
   }
 
@@ -710,9 +710,9 @@ namespace Gecode { namespace Int { namespace Bool {
   void
   Or<BVA,BVB,BVC>::post(Space* home, const Reflection::VarMap& vars,
                         const Reflection::ActorSpec& spec) {
-    BVA b0(home, vars, spec[0]->typedArg());
-    BVB b1(home, vars, spec[1]->typedArg());
-    BVB b2(home, vars, spec[2]->typedArg());
+    BVA b0(home, vars, spec[0]);
+    BVB b1(home, vars, spec[1]);
+    BVB b2(home, vars, spec[2]);
     (void) new (home) Or<BVA,BVB,BVC>(home,b0,b1,b2);
   }
 
@@ -862,8 +862,8 @@ namespace Gecode { namespace Int { namespace Bool {
   void
   NaryOrTrue<BV>::post(Space* home, const Reflection::VarMap& vars,
                        const Reflection::ActorSpec& spec) {
-    BV b0(home, vars, spec[0]->typedArg());
-    BV b1(home, vars, spec[1]->typedArg());
+    BV b0(home, vars, spec[0]);
+    BV b1(home, vars, spec[1]);
     ViewArray<BV> b(home, vars, spec[2]);
     ViewArray<BV> bb(home, b.size()+2);
     for (int i=b.size(); i--;)
@@ -969,7 +969,7 @@ namespace Gecode { namespace Int { namespace Bool {
   NaryOr<BV>::post(Space* home, const Reflection::VarMap& vars,
                    const Reflection::ActorSpec& spec) {
     ViewArray<BV> b(home, vars, spec[0]);
-    BV b0(home, vars, spec[1]->typedArg());
+    BV b0(home, vars, spec[1]);
     (void) new (home) NaryOr<BV>(home,b,b0);
   }
   
