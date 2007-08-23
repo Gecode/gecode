@@ -111,17 +111,18 @@ protected:
   /// Consistency level of the propagator
   IntConLevel icl;
   /// Whether to test for domain-consistency
-  bool testdom;
+  bool testdomcon;
+  /// Whether to perform search test
+  bool testsearch;
 
-  virtual Assignment* make_assignment(void);
-  virtual bool do_search_test(void) { return true; }
 public:
   /// Constructor
   IntTest(const char* t, int a, const IntSet& d,
-          bool r=false, IntConLevel i=ICL_DEF,
-          bool td=true)
-    : Test("Int",t), arity(a), dom(d), reified(r), icl(i), testdom(td)  {
-  }
+          bool r=false, IntConLevel i=ICL_DEF)
+    : Test("Int",t), arity(a), dom(d), reified(r), icl(i), 
+      testdomcon(true), testsearch(true) {}
+  /// Create assignment
+  virtual Assignment* assignment(void) const;
   /// Check for solution
   virtual bool solution(const Assignment&) const = 0;
   /// Post propagator

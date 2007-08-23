@@ -215,11 +215,6 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     count(home, x, 0, irt, x[2]);
   }
-  virtual void description(std::ostream& h, std::ostream& c) {
-    h << "count(number of x's == 0) " << Log::irth(irt) << " x[2]" << std::endl;
-    c << "count(home, x, 0, " << Log::irtc(irt) << ", x[2]);" << std::endl;
-  }
-
 };
 
 CountIntVarShared _ceqivs("Count::Eq::IntVarShared",IRT_EQ);

@@ -71,10 +71,6 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     mult(home, x[0], x[1], x[2]);
   }
-  virtual void description(std::ostream& h, std::ostream& c) {
-    h << "x[0]*x[1] == x[2]" << std::endl;
-    c << "mult(this, x[0], x[1], x[2]);" << std::endl;
-  }
 };
 namespace {
   Mult _multmax("Arithmetic::Mult::A",s1);
@@ -112,10 +108,6 @@ public:
   }
   virtual void post(Space* home, IntVarArray& x) {
     abs(home, x[0], x[1], icl);
-  }
-  virtual void description(std::ostream& h, std::ostream& c) {
-    h << "abs(x[0]) == x[1]" << std::endl;
-    c << "abs(this, x[0], x[1], icl);" << std::endl;
   }
 };
 namespace {
@@ -208,11 +200,6 @@ public:
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     min(home, m, x[3]);
   }
-  virtual void description(std::ostream& h, std::ostream& c) {
-    h << "min(x[0], x[1], x[2]) == x[3]" << std::endl;
-    c << "IntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];" << std::endl;
-    c << "\tmin(this, m, x[3]);" << std::endl;
-  }
 };
 namespace {
   MinNary _minnary("Arithmetic::Min::Nary",s4);
@@ -230,11 +217,6 @@ public:
     IntVarArgs m(3);
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     min(home, m, x[1]);
-  }
-  virtual void description(std::ostream& h, std::ostream& c) {
-    h << "min(x[0], x[1], x[2]) == x[1]" << std::endl;
-    c << "IntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];" << std::endl;
-    c << "\tmin(this, m, x[1]);" << std::endl;
   }
 };
 namespace {
@@ -254,11 +236,6 @@ public:
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     max(home, m, x[3]);
   }
-  virtual void description(std::ostream& h, std::ostream& c) {
-    h << "max(x[0], x[1], x[2]) == x[3]" << std::endl;
-    c << "IntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];" << std::endl;
-    c << "\tmax(this, m, x[3]);" << std::endl;
-  }
 };
 namespace {
   MaxNary _maxnary("Arithmetic::Max::Nary",s4);
@@ -276,11 +253,6 @@ public:
     IntVarArgs m(3);
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     max(home, m, x[1]);
-  }
-  virtual void description(std::ostream& h, std::ostream& c) {
-    h << "max(x[0], x[1], x[2]) == x[1]" << std::endl;
-    c << "IntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];" << std::endl;
-    c << "\tmax(this, m, x[1]);" << std::endl;
   }
 };
 namespace {

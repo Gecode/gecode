@@ -219,12 +219,12 @@ private:
   static const int maxocc = 2;
 
 
-  Assignment* make_assignment() {
+
+public:
+  virtual Assignment* assignment(void) const {
     return new GCCAssignment(lb, rb, minocc, maxocc, ve, xs, dom);
   }
 
-
-public:
   GCC_VC_AllLbUb(const char* t, IntConLevel icl)
     : IntTest(t, xs, ds_02, false,icl) {}
   virtual bool solution(const Assignment& x) const {
@@ -317,12 +317,12 @@ private:
   static const int minocc = 0;
   static const int maxocc = 2;
 
-  Assignment* make_assignment() {
+public:
+  virtual Assignment* assignment(void) const {
     return new GCCAssignment(lb, rb, minocc, maxocc, ve, xs, dom);
   }
 
 
-public:
   GCC_VC_AllTriple(const char* t, IntConLevel icl)
     : IntTest(t, xs, ds_02, false,icl) {}
   virtual bool solution(const Assignment& x) const {
@@ -412,7 +412,7 @@ private:
   static const int minocc = 0;
   static const int maxocc = 2;
 
-  Assignment* make_assignment() {
+  virtual Assignment* assignment(void) const {
     return new GCCAssignment(lb, rb, minocc, maxocc, ve, xs, dom);
   }
 

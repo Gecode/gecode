@@ -296,7 +296,7 @@ BoolVar IntTestSpace::unused;
 
 
 Assignment*
-IntTest::make_assignment() {
+IntTest::assignment(void) const {
   return new Assignment(arity, dom);
 }
 
@@ -313,7 +313,7 @@ IntTest::run(const Options& opt) {
   const char* problem = "NONE";
   bool has_assignment = true;
   // Set up assignments
-  Assignment* ap = make_assignment();
+  Assignment* ap = assignment();
   Assignment& a = *ap;
   // Set up space for all solution search
   IntTestSpace* search_s = new IntTestSpace(arity,dom,opt);
@@ -511,7 +511,7 @@ IntTest::run(const Options& opt) {
       }
       delete s;
     }
-    if (do_search_test()) {
+    if (testsearch) {
       Log::reset();
       test = "Search";
       if (is_sol) {
@@ -527,14 +527,14 @@ IntTest::run(const Options& opt) {
     }
     ++a;
   }
-  if (do_search_test()) {
+  if (testsearch) {
     test = "Search";
     if (e_s.next() != NULL) {
       problem = "Excess solutions";
       goto failed;
     }
   }
-  if ((icl == ICL_DOM) && testdom) {
+  if ((icl == ICL_DOM) && testdomcon) {
     has_assignment = false;
     test = "Full domain consistency";
     Log::reset();

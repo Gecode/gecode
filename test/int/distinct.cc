@@ -78,14 +78,15 @@ private:
   int size;
   IntSet ds;
 protected:
-  virtual Assignment* make_assignment() {
-    return new RandomAssignment(size, ds, 100);
-  }
-  virtual bool do_search_test() { return false; }
 public:
   DistinctRandom(const char* t, int size0, const IntSet& ds0, IntConLevel icl0)
     : IntTest(t,size0,ds0,false),
-      icl(icl0), size(size0), ds(ds0) {}
+      icl(icl0), size(size0), ds(ds0) {
+    testsearch = false;
+  }
+  virtual Assignment* assignment(void) const {
+    return new RandomAssignment(size, ds, 100);
+  }
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<x.size(); i++)
       for (int j=i+1; j<x.size(); j++)

@@ -124,16 +124,6 @@ public:
       ia[i]=x[2+i];
     element(home, ia, x[0], x[1], 0, icl);
   }
-  virtual void description(std::ostream& h, std::ostream& c) {
-    h << "post element" << std::endl;
-    c << "IntConLevel icl = " << Log::iclc(icl) << ";\n"
-      << "\tint n = x.size()-2;\n" 
-      << "\tIntVarArgs ia(n);\n" 
-      << "\tfor (int i = 0; i < n; ++i)\n"
-      << "\t    ia[i] = x[2+i];\n"
-      << "\telement(this, ia, x[0], x[1], icl);\n"
-      << std::endl;
-  }
 };
 
 class ElementShareVar : public IntTest {
@@ -152,16 +142,6 @@ public:
     for (int i=0;i<n;i++)
       ia[i]=x[1+i];
     element(home, ia, x[0], x[0], 0, icl);
-  }
-  virtual void description(std::ostream& h, std::ostream& c) {
-    h << "post element" << std::endl;
-    c << "IntConLevel icl = " << Log::iclc(icl) << ";\n"
-      << "\tint n = x.size()-1;\n" 
-      << "\tIntVarArgs ia(n);\n" 
-      << "\tfor (int i = 0; i < n; ++i)\n"
-      << "\t    ia[i] = x[1+i];\n"
-      << "\telement(this, ia, x[0], x[0], icl);\n"
-      << std::endl;
   }
 };
 static IntSet iv1(-1,3);

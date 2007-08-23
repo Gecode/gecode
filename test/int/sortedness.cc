@@ -176,13 +176,13 @@ private:
   static const int pup   = 2;
   static const int xsize = 3;
 
-  Assignment* make_assignment() {
-    return new SortPermAssignment(1, 3, 0, 2, 3, 9, dom);
-  }
-
 public:
   Sortedness_PermVar(const char* t, IntConLevel icl0)
     : IntTest(t, xs, ds_03), icl(icl0) {}
+  virtual Assignment* assignment(void) const {
+    return new SortPermAssignment(1,3,0,2,3,9,dom);
+  }
+
   virtual bool solution(const Assignment& x) const {
 
 
@@ -277,11 +277,6 @@ public:
     }
     sortedness(home, z, y, p, icl);
   }
-  virtual void description(std::ostream& h, std::ostream& c) {
-    h << "post sortedness" << std::endl;
-    c << "sortedness(this, ...);" << std::endl;
-  }
-
 };
 
 

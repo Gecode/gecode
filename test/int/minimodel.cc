@@ -354,11 +354,6 @@ public:
     IntVar y = mult(home, x[0], x[1]);
     rel(home, y, IRT_EQ, x[2], ICL_DOM);
   }
-  virtual void description(std::ostream& h, std::ostream& c) {
-    h << "x[0]*x[1] == y == x[2]" << std::endl;
-    c << "IntVar y = mult(home, x[0], x[1]);\n" 
-      << "\trel(home, y, IRT_EQ, x[2], ICL_DOM);" << std::endl;
-  }
 };
 namespace {
   Mult _mmmultmax("MiniModel::Mult::A",s1);
@@ -398,11 +393,6 @@ public:
   virtual void post(Space* home, IntVarArray& x) {
     IntVar y = abs(home, x[0], icl);
     rel(home, y, IRT_EQ, x[1], ICL_DOM);
-  }
-  virtual void description(std::ostream& h, std::ostream& c) {
-    h << "abs(x[0]) == y == x[1]" << std::endl;
-    c << "IntVar y = abs(home, x[0]," << Log::iclc(icl) << ");\n" 
-      << "\trel(home, y, IRT_EQ, x[2], ICL_DOM);" << std::endl;
   }
 };
 namespace {
@@ -464,12 +454,6 @@ public:
     IntVar y = min(home, m);
     rel(home, y, IRT_EQ, x[3], ICL_DOM);
   }
-  virtual void description(std::ostream& h, std::ostream& c) {
-    h << "min(x[0:2]) == y == x[3]" << std::endl;
-    c << "IntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
-      << "\tIntVar y = min(home, m);\n" 
-      << "\trel(home, y, IRT_EQ, x[3], ICL_DOM);" << std::endl;
-  }
 };
 namespace {
   MinNary _mmminnary("MiniModel::Min::Nary",s4);
@@ -488,12 +472,6 @@ public:
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     IntVar y = max(home, m);
     rel(home, y, IRT_EQ, x[3], ICL_DOM);
-  }
-  virtual void description(std::ostream& h, std::ostream& c) {
-    h << "max(x[0:2]) == y == x[3]" << std::endl;
-    c << "IntVarArgs m(3); m[0]=x[0]; m[1]=x[1]; m[2]=x[2];\n"
-      << "\tIntVar y = max(home, m);\n" 
-      << "\trel(home, y, IRT_EQ, x[3], ICL_DOM);" << std::endl;
   }
 };
 namespace {

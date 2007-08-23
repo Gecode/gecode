@@ -126,33 +126,17 @@ public:
   virtual bool run(const Options& opt) = 0;
   virtual ~Test(void) {}
 
-  /**
-   * \brief Provides human-readable string-descriptions and code for the logging
-   * infrastructure.
-   *
-   * By overriding this member, a test can output a human-readable
-   * description and corresponding code of the constraint posted.
-   */
-  virtual void description(std::ostream& human, std::ostream& code) {
-    human << "Constraint posted"    << std::endl;
-
-    code << "//////////////////////////" << std::endl;
-    code << "\t// Post constraint here //" << std::endl;
-    code << "\t//////////////////////////" << std::endl;
-  }
 protected:
   /** \brief Log start of test.
    */
   void log_posting(void) {
     if (Log::logging()) {
       std::ostringstream h, c;
-      description(h, c);
       Log::log(h.str(), c.str());
     }
   }
 };
 
 #endif
-
 
 // STATISTICS: test-core

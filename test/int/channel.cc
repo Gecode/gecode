@@ -92,7 +92,9 @@ namespace {
   class ChannelShared : public IntTest {
   public:
     ChannelShared(const char* t, IntConLevel icl)
-      : IntTest(t,6,ds_05,false,icl,false) {}
+      : IntTest(t,6,ds_05,false,icl) {
+      testdomcon = false;
+    }
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<6; i++)
         if (x[x[i]] != i)
@@ -107,7 +109,9 @@ namespace {
   class ChannelLinkSingle : public IntTest {
   public:
     ChannelLinkSingle(void)
-      : IntTest("Channel::Bool::Single",2,ds_12,false,ICL_DEF,false) {}
+      : IntTest("Channel::Bool::Single",2,ds_12,false,ICL_DEF) {
+      testdomcon = false;
+    }
     virtual bool solution(const Assignment& x) const {
       return ((x[0]==0) || (x[0]==1)) && (x[0]==x[1]);
     }
@@ -123,7 +127,9 @@ namespace {
     int o;
   public:
     ChannelLinkMulti(const char* t, IntSet& ds, int o0)
-      : IntTest(t,7,ds,false,ICL_DEF,false), o(o0) {}
+      : IntTest(t,7,ds,false,ICL_DEF), o(o0) {
+      testdomcon = false;
+    }
     virtual bool solution(const Assignment& x) const {
       int n = x.size()-1;
       for (int i=n; i--; )

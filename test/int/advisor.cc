@@ -36,13 +36,9 @@
  */
 
 #include "test/int.hh"
+
 #include "gecode/minimodel.hh"
-#include "test/log.hh"
-
 #include "gecode/int/distinct.hh"
-
-#include <cmath>
-#include <algorithm>
 
 namespace {
 
@@ -88,7 +84,9 @@ namespace {
         return ES_FIX;
       return ES_NOFIX;
     }
-    virtual const char* name(void) const { return "Keep"; }
+    virtual const char* name(void) const { 
+      return "Keep"; 
+    }
     /// Perform propagation
     virtual ExecStatus propagate(Space* home) {
       if (n == 0)

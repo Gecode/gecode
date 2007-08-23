@@ -42,7 +42,9 @@ namespace {
   class Circuit : public IntTest {
   public:
     Circuit(const char* t, int n, const IntSet& ds, IntConLevel icl)
-      : IntTest(t,n,ds,false,icl,false) {}
+      : IntTest(t,n,ds,false,icl) {
+      testdomcon = false;
+    }
     virtual bool solution(const Assignment& x) const {
       int n = x.size();
       for (int i=n; i--; )
