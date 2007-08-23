@@ -89,14 +89,14 @@ namespace Gecode { namespace Reflection {
 
   void
   Registry::print(std::ostream& out) {
-    out << "Posters: " << std::endl;
-    for (int i=0; i<posters.size(); i++) {
-      out << posters.key(i) << std::endl;
-    }
-    out << "Varcreators: " << std::endl;
-    for (int i=0; i<varCreators.size(); i++) {
-      out << varCreators.key(i) << std::endl;
-    }
+    // out << "Posters: " << std::endl;
+    // for (int i=0; i<posters.size(); i++) {
+    //   out << posters.key(i) << std::endl;
+    // }
+    // out << "Varcreators: " << std::endl;
+    // for (int i=0; i<varCreators.size(); i++) {
+    //   out << varCreators.key(i) << std::endl;
+    // }
     
   }
 

@@ -483,7 +483,7 @@ namespace Gecode {
    */
   Reflection::ActorSpec&
   Actor::spec(Space*, Reflection::VarMap&) {
-    throw Reflection::ReflectionException("No reflection defined");
+    throw Reflection::NoReflectionDefinedException();
   }
 
   Reflection::ActorSpec&

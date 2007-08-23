@@ -36,6 +36,7 @@
  */
 
 #include <sstream>
+#include "gecode/support/dynamic-array.hh"
 
 namespace Gecode { namespace Reflection {
   
@@ -269,16 +270,17 @@ namespace Gecode { namespace Reflection {
     for (int i=0; i<x.size(); i++) {
       std::stringstream s;
       s << i;
-      put(home, x[i], n+Support::String(s.str().c_str(), true));
+      put(home, x[i], n.copy()+Support::String(s.str().c_str(), true));
     }
   }
   template <class Var> void
   VarMap::putArray(Space* home, const VarArray<Var>& x,
                    const Support::String& n) {
+    Support::String nn = n.copy();
     for (int i=0; i<x.size(); i++) {
       std::stringstream s;
       s << i;
-      put(home, x[i], n+Support::String(s.str().c_str(), true));
+      put(home, x[i], n.copy()+Support::String(s.str().c_str(), true));
     }
   }
 

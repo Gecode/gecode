@@ -72,51 +72,27 @@ namespace Gecode { namespace Support {
       const char* s;
       /// Whether the SO owns the string
       bool own;
-      /// Left branch of a string tree, or NULL if the SO has an actual string
-      SO* left;
-      /// Right branch of a string tree
-      SO* right;
+      /// Next SO in the list
+      SO* next;
+      /// Tail of the list
+      SO* tail;
 
       /// Construct from a given string \a s0, which is copied if \a copy is true.
       SO(const char* s0, bool copy);
-      /// Construct an SO representing the concatenation of \a l and \a r
-      SO(SO* l, SO* r);
+      /// Append \a s0
+      void append(SO* s0);
       /// Destructor
       GECODE_SUPPORT_EXPORT ~SO(void);
-      /// Compare with \a other
-      GECODE_SUPPORT_EXPORT int cmp(SO* other) const;
+      /// Compare with \a other for equality
+      bool eq(const SO* other) const;
       /// Return size of the string
       unsigned int size(void) const;
+      /// Return a copy
+      SO* copy(void) const;
+      /// Hash value according to modulo \a M
+      int hash(int m) const;
       /// Output to \a os
       std::ostream& print(std::ostream& os) const;
-    };
-    
-    /** \brief Character-wise iterator for string objects
-      *
-      */
-    class GECODE_SUPPORT_EXPORT SOIter {
-    private:
-      /// Iterate left subtree
-      SOIter* left;
-      /// Iterate right subtree
-      SOIter* right;
-      /// Iterate string object
-      const SO* so;
-      /// Size of string to iterate
-      int size;
-      /// Current position of iteration
-      int n;
-    public:
-      /// Constructor
-      SOIter(const SO* so);
-      /// Test if iterator is still at a valid position
-      bool operator()(void);
-      /// Advance iterator to next position
-      void operator++(void);
-      /// Return character at current iterator position
-      char c(void) const;
-      /// Destructor
-      ~SOIter(void);
     };
 
     /// The string object
@@ -133,30 +109,24 @@ namespace Gecode { namespace Support {
     /// Assignment operator
     const String& operator=(const String& s0);
     
-    /// Compare with \a s0
-    int cmp(const String& s0) const;
     /// Test if this string is equal to \a s0
     bool operator==(const String& s0) const;
     /// Return if string is empty
     bool empty(void) const;
     
-    /// Return concatenation with \a s0
-    String operator+(const String& s0) const;
+    /// Concatenate with \a s0, making \a s0 unusable!
+    String& operator+(const String& s0);
+    /// Make a copy
+    String copy(void) const;
+    /// Hash value according to modulo \a M
+    int hash(int m) const;
     /// Print this string to \a os
     std::ostream& print(std::ostream& os) const;    
   };
 
-  /** \brief Comparison for string objects
-    */
-  class StringCmp {
-  public:
-    /// Compare \a s0 with \a s1
-    int cmp(const String& s0, const String& s1);
-  };
-
   forceinline
   String::SO::SO(const char* s0, bool copy)
-    : s(copy ? strdup(s0) : s0), own(copy), left(NULL), right(NULL) {}
+    : s(copy ? strdup(s0) : s0), own(copy), next(NULL), tail(this) {}
 
   forceinline bool
   String::SO::cancel(void) { return --use_cnt == 0; }
@@ -164,27 +134,95 @@ namespace Gecode { namespace Support {
   forceinline void
   String::SO::subscribe(void) { ++use_cnt; }
 
-  forceinline
-  String::SO::SO(SO* l, SO* r) : s(NULL), own(false), left(l), right(r) {
-    assert(l != NULL); assert(r != NULL);
-    left->subscribe(); right->subscribe();
+  forceinline void
+  String::SO::append(SO* so0) {
+    assert(tail->next == NULL);
+    tail->next = so0;
+    so0->subscribe();
+    tail = so0->tail;
+  }
+
+  forceinline String::SO*
+  String::SO::copy(void) const {
+    SO* head = new SO(s, own);
+    head->subscribe();
+    SO* last = head;
+    SO* cur = next;
+    while (cur != NULL) {
+      last->next = new SO(cur->s, cur->own);
+      last->next->subscribe();
+      last = last->next;
+      cur = cur->next;
+    }
+    if (last != head)
+      head->tail = last;
+    return head;
+  }
+
+  inline int
+  String::SO::hash(int m) const {
+    int h = 0;
+    const SO* cur = this;
+    int pos = 0;
+    while (true) {
+      if (cur->s[pos] == 0) {
+        cur = cur->next;
+        pos = 0;
+        if (cur == NULL)
+          break;
+      }
+      h = (127 * h + cur->s[pos++]) % m;
+    }
+    return h;
   }
 
   inline unsigned int
   String::SO::size(void) const {
-    if (s)
-      return strlen(s);
-    if (!left)
-      return 0;
-    return left->size() + right->size();
+    unsigned int len = 0;
+    const SO* cur = this;
+    while (cur != NULL) {
+      len += strlen(cur->s);
+      cur = cur->next;
+    }
+    return len;
   }
 
+  inline bool
+  String::SO::eq(const SO* other) const {
+    if (this == other)
+      return true;
+    const SO* c = this;
+    const SO* oc = other;
+    int cpos = 0;
+    int opos = 0;
+    
+    while(true) {
+      if (c->s[cpos] == 0) {
+        c = c->next; cpos = 0;
+        if (c == NULL)
+          return oc->s[opos] == 0 && oc->next == 0;
+      }
+      if (oc->s[opos] == 0) {
+        oc = oc->next; opos = 0;
+        if (oc == NULL)
+          return false;
+      }
+      if (c->s[cpos] != oc->s[opos])
+        return false;
+      cpos++;
+      opos++;
+    }
+    assert(false);
+    return false;
+  }
+  
   forceinline std::ostream&
   String::SO::print(std::ostream& os) const {
-    if (s)
-      return os << s;
-    if (left)
-      return right->print(left->print(os));
+    const SO* cur = this;
+    while (cur != NULL) {
+      os << cur->s;
+      cur = cur->next;
+    }
     return os;
   }
 
@@ -227,48 +265,44 @@ namespace Gecode { namespace Support {
     return so==NULL;
   }
   
-  inline String
-  String::operator+(const String& s0) const {
-    String ret;
+  inline String&
+  String::operator+(const String& s0) {
     if (so == NULL) {
-      ret.so = s0.so;
-      if (ret.so)
-        ret.so->subscribe();
-      return ret;
+      so = s0.so;
+      if (so)
+        so->subscribe();
+    } else if (s0.so != NULL) {
+      so->append(s0.so);
     }
-    if (s0.so == NULL) {
-      ret.so = so;
-      ret.so->subscribe();
-      return ret;
-    }
-    ret.so = new SO(so, s0.so);
-    ret.so->subscribe();
-    return ret;
+    return *this;
   }
   
+  inline String
+  String::copy(void) const {
+    String ret;
+    if (so)
+      ret.so = so->copy();
+    return ret;
+  }
+
+  inline int
+  String::hash(int m) const {
+    if (so == NULL)
+      return 0;
+    return so->hash(m);
+  }
+
   forceinline bool
   String::operator==(const String& s0) const {
     if (so == NULL)
       return (s0.so == NULL);
-    return so->cmp(s0.so)==0;
-  }
-
-  forceinline int
-  String::cmp(const String& s0) const {
-    if (so == NULL)
-      return (s0.so == NULL ? 0 : -1);
-    return so->cmp(s0.so);
+    return so->eq(s0.so);
   }
   
   forceinline std::ostream&
   String::print(std::ostream& os) const {
     if (so) return so->print(os);
     return os;
-  }
-
-  forceinline int
-  StringCmp::cmp(const String& s0, const String& s1) {
-    return s0.cmp(s1);
   }
   
 }}
