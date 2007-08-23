@@ -44,6 +44,8 @@ static IntSet ds_13(1,3);
 static IntSet ds_14(1,4);
 static IntSet ds_03(0,3);
 
+/*
+
 class IntSortMin {
 public:
   bool operator()(const int& x, const int& y) {
@@ -282,6 +284,8 @@ public:
 
 Sortedness_NoVar  _sort_novar("Sortedness::NoPermutationVariables::Bnd",ICL_BND);
 Sortedness_PermVar  _sort_permvar("Sortedness::WithPermutationVariables::Bnd",ICL_BND);
+
+*/
 
 // STATISTICS: test-int
 

@@ -46,6 +46,8 @@ static IntSet ds_12(1,2);
 static IntSet ds_14(1,4);
 static IntSet ds_18(1,8);
 
+/*
+
 class GCCAssignment : public Assignment {
   int problow;
   int probup;
@@ -96,6 +98,8 @@ public:
   }
 };
 
+
+*/
 
 class GCC_FC_AllLbUb : public IntTest {
 public:
@@ -207,6 +211,7 @@ public:
 };
 
 
+/*
 class GCC_VC_AllLbUb : public IntTest {
 private:
   static const int lb = 0;
@@ -495,6 +500,7 @@ public:
   }
 };
 
+*/
 
 // Testing with Fixed Cardinalities
 // FixCard::\(\(Shared::\)*\(All\|Some\)::\([lubv,()]+\)\)::\(Bnd\|Dom\|Val\)
@@ -519,6 +525,7 @@ GCC_FC_SomeTriple _gccval_sometrip("GCC::FixCard::Val::Some::(v,lb,ub)",ICL_VAL)
 
 // Testing with Cardinality Variables
 
+/*
 GCC_VC_AllLbUb _gccbnd_all_var("GCC::VarCard::Bnd::All::(lb,ub)",ICL_BND);
 GCC_VC_AllLbUb _gccdom_all_var("GCC::VarCard::Dom::All::(lb,ub)",ICL_DOM);
 GCC_VC_AllLbUb _gccval_all_var("GCC::VarCard::Val::All::(lb,ub)",ICL_VAL);
@@ -530,6 +537,7 @@ GCC_VC_AllTriple _gccval_alltrip_var("GCC::VarCard::Val::All::(v,lb,ub)",ICL_VAL
 GCC_VC_SomeTriple _gccbnd_sometrip__var("GCC::VarCard::Bnd::Some::(v,lb,ub)",ICL_BND);
 GCC_VC_SomeTriple _gccdom_sometrip__var("GCC::VarCard::Dom::Some::(v,lb,ub)",ICL_DOM);
 GCC_VC_SomeTriple _gccval_sometrip__var("GCC::VarCard::Val::Some::(v,lb,ub)",ICL_VAL);
+*/
 
 // STATISTICS: test-int
 

@@ -46,55 +46,68 @@
 using namespace Gecode;
 using namespace Int;
 
+/// Base class for assignments
 class Assignment {
 protected:
-  int n;
-  IntSetValues* dsv;
-  IntSet d;
-  bool done;
+  int n;    ///< Number of variables
+  IntSet d; ///< Domain for each variable
 public:
-  Assignment(int, const IntSet&);
-  virtual void reset(void);
-  virtual bool operator()(void) const {
-    return !done;
-  }
-  virtual void operator++(void);
-  virtual int  operator[](int i) const {
-    assert((i>=0) && (i<n));
-    return dsv[i].val();
-  }
-  int size(void) const {
-    return n;
-  }
-  virtual ~Assignment(void) {
-    delete [] dsv;
-  }
+  /// Initialize assignments for \a n0 variables and values \a d0
+  Assignment(int n0, const IntSet& d0);
+  /// Test whether all assignments have been iterated
+  virtual bool operator()(void) const = 0;
+  /// Move to next assignment
+  virtual void operator++(void) = 0;
+  /// Return value for variable \a i
+  virtual int operator[](int i) const = 0;
+  /// Return number of variables
+  int size(void) const;
+  /// Destructor
+  virtual ~Assignment(void);
 };
 
+/// Generate all assignments
+class CpltAssignment : public Assignment {
+protected:
+  IntSetValues* dsv; ///< Iterator for each variable
+public:
+  /// Initialize assignments for \a n0 variables and values \a d0
+  CpltAssignment(int n, const IntSet& d);
+  /// Test whether all assignments have been iterated
+  virtual bool operator()(void) const;
+  /// Move to next assignment
+  virtual void operator++(void);
+  /// Return value for variable \a i
+  virtual int operator[](int i) const;
+  /// Destructor
+  virtual ~CpltAssignment(void);
+};
+
+/// Generate random selection of assignments
 class RandomAssignment : public Assignment {
 protected:
-  int *vals;
-  int count;
-  int left;
-  virtual int randval(void);
+  int* vals; ///< The current values for the variables
+  int  a;    ///< How many assigments still to be generated
+  /// Generate new value according to domain
+  int randval(void);
 public:
-  RandomAssignment(int, const IntSet&, int);
-  virtual void reset(void);
-  virtual bool operator()(void) const {
-    return left > 0;
-  }
-  virtual int  operator[](int i) const {
-    assert((i>=0) && (i<n));
-    return vals[i];
-  }
+  /// Initialize for \a a assignments for \a n0 variables and values \a d0
+  RandomAssignment(int n, const IntSet& d, int a);
+  /// Test whether all assignments have been iterated
+  virtual bool operator()(void) const;
+  /// Move to next assignment
   virtual void operator++(void);
-  virtual ~RandomAssignment(void) {
-    delete [] vals;
-  }
+  /// Return value for variable \a i
+  virtual int operator[](int i) const;
+  /// Destructor
+  virtual ~RandomAssignment(void);
 };
 
-std::ostream&
-operator<<(std::ostream&, const Assignment&);
+/**
+ * \brief Print assignment \a
+ * \relates Assignment
+ */
+std::ostream& operator<<(std::ostream& os, const Assignment& a);
 
 /**
  * \brief Base class for tests with integer constraints
@@ -116,11 +129,16 @@ protected:
   bool testsearch;
 
 public:
-  /// Constructor
-  IntTest(const char* t, int a, const IntSet& d,
-          bool r=false, IntConLevel i=ICL_DEF)
-    : Test("Int",t), arity(a), dom(d), reified(r), icl(i), 
-      testdomcon(true), testsearch(true) {}
+  /**
+   * \brief Constructor
+   *
+   * Constructs a test with name \a t and arity \a a and variable
+   * domains \a d. The test also tests for a reified constraint, 
+   * if \a r is true. The consistency level \a is maintained for
+   * convenience.
+   */
+  IntTest(const char* t, int a, const IntSet& d, 
+          bool r=false, IntConLevel i=ICL_DEF);
   /// Create assignment
   virtual Assignment* assignment(void) const;
   /// Check for solution
@@ -128,10 +146,12 @@ public:
   /// Post propagator
   virtual void post(Space* home, IntVarArray& x) = 0;
   /// Post reified propagator
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {}
+  virtual void post(Space* home, IntVarArray& x, BoolVar b);
   /// Perform test
   virtual bool run(const Options& opt);
 };
+
+#include "test/int.icc"
 
 #endif
 

@@ -41,68 +41,30 @@
 #include "test/log.hh"
 #include <algorithm>
 
-Assignment::Assignment(int n0, const IntSet& d0)
-  : n(n0), dsv(new IntSetValues[n]), d(d0) {
-  reset();
-}
-
+/*
+ * Complete assignments
+ *
+ */
 void
-Assignment::reset(void) {
-  done = false;
-  for (int i=n; i--; )
-    dsv[i].init(d);
-}
-
-void
-Assignment::operator++(void) {
+CpltAssignment::operator++(void) {
   int i = n-1;
   while (true) {
     ++dsv[i];
-    if (dsv[i]())
+    if (dsv[i]() || (i == 0))
       return;
-    dsv[i].init(d);
-    --i;
-    if (i<0) {
-      done = true;
-      return;
-    }
+    dsv[i--].init(d);
   }
 }
 
-RandomAssignment::RandomAssignment(int n0, const IntSet& d0, int count0)
-  : Assignment(n0, d0), vals(new int[n0]),
-    count(count0), left(count0) {
-  reset();
-}
-
-void
-RandomAssignment::reset(void) {
-  left = count;
-  for (int i=n; i--; )
-    vals[i] = randval();
-}
-
+/*
+ * Random assignments
+ *
+ */
 void
 RandomAssignment::operator++(void) {
   for (int i = n; i--; )
-    vals[i] = randval();
-  --left;
-}
-
-int
-RandomAssignment::randval(void) {
-  int v;
-  IntSetRanges it(d);
-  unsigned int skip = Test::randgen(d.size());
-  while (true) {
-    if (it.width() > skip) {
-      v = it.min() + skip;
-      break;
-    }
-    skip -= it.width();
-    ++it;
-  }
-  return v;
+    vals[i]=randval();
+  a--;
 }
 
 std::ostream&
@@ -297,7 +259,7 @@ BoolVar IntTestSpace::unused;
 
 Assignment*
 IntTest::assignment(void) const {
-  return new Assignment(arity, dom);
+  return new CpltAssignment(arity,dom);
 }
 
 #define CHECK(T,M)                                \
@@ -306,6 +268,9 @@ if (!(T)) {                                       \
   delete s;                                       \
   goto failed;                                    \
 }
+
+void 
+IntTest::post(Space* home, IntVarArray& x, BoolVar b) {}
 
 bool
 IntTest::run(const Options& opt) {

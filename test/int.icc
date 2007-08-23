@@ -1,0 +1,124 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *
+ *  Copyright:
+ *     Christian Schulte, 2005
+ *     Mikael Lagerkvist, 2006
+ *
+ *  Last modified:
+ *     $Date: 2007-08-23 12:59:58 +0200 (Thu, 23 Aug 2007) $ by $Author: schulte $
+ *     $Revision: 4909 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+/*
+ * Assignments
+ *
+ */
+inline
+Assignment::Assignment(int n0, const IntSet& d0)
+  : n(n0), d(d0) {}
+inline int
+Assignment::size(void) const {
+  return n;
+}
+inline
+Assignment::~Assignment(void) {}
+
+
+inline
+CpltAssignment::CpltAssignment(int n, const IntSet& d)
+  : Assignment(n,d), dsv(new IntSetValues[n]) {
+  for (int i=n; i--; )
+    dsv[i].init(d);
+}
+inline bool
+CpltAssignment::operator()(void) const {
+  return dsv[0]();
+}
+inline int
+CpltAssignment::operator[](int i) const {
+  assert((i>=0) && (i<n));
+  return dsv[i].val();
+}
+inline 
+CpltAssignment::~CpltAssignment(void) {
+  delete [] dsv;
+}
+
+
+forceinline int
+RandomAssignment::randval(void) {
+  unsigned int skip = Test::randgen(d.size());
+  for (IntSetRanges it(d); true; ++it) {
+    if (it.width() > skip)
+      return it.min() + static_cast<int>(skip);
+    skip -= it.width();
+  }
+  GECODE_NEVER;
+  return 0;
+}
+
+inline
+RandomAssignment::RandomAssignment(int n, const IntSet& d, int a0)
+  : Assignment(n,d), vals(new int[n]), a(a0) {
+  for (int i=n; i--; )
+    vals[i] = randval();
+}
+
+inline bool
+RandomAssignment::operator()(void) const {
+  return a>0;
+}
+inline int
+RandomAssignment::operator[](int i) const {
+  assert((i>=0) && (i<n));
+  return vals[i];
+}
+inline
+RandomAssignment::~RandomAssignment(void) {
+  delete [] vals;
+}
+
+
+
+/*
+ * Base class for tests with integer constraints
+ *
+ */
+inline
+IntTest::IntTest(const char* t, int a, const IntSet& d, bool r, IntConLevel i)
+  : Test("Int",t), arity(a), dom(d), reified(r), icl(i), 
+    testdomcon(true), testsearch(true) {}
+
+
+
+
+// STATISTICS: test-int
+
