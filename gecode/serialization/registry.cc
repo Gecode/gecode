@@ -50,10 +50,34 @@ namespace Gecode { namespace Serialization {
     
     VarBase* createIntVar(Space* home, Reflection::VarSpec& spec) {
       Reflection::IntArrayArgRanges ai(spec.dom()->toIntArray());
-      return Int::IntView(IntVar(home, IntSet(ai))).variable();
+      VarBase* ret = Int::IntView(IntVar(home, IntSet(ai))).variable();
+      return ret;
+    }
+    void constrainIntVar(Space* home, VarBase* v, Reflection::VarSpec& spec) {
+      Reflection::IntArrayArgRanges ai(spec.dom()->toIntArray());
+      dom(home, IntVar(Int::IntView(static_cast<Int::IntVarImp*>(v))), 
+          IntSet(ai));
     }
     VarBase* createBoolVar(Space* home, Reflection::VarSpec& spec) {
-      return NULL;
+      int dom = spec.dom()->toInt();
+      int min = 0;
+      int max = 1;
+      if (dom == Int::BoolVarImp::ZERO)
+        max = 0;
+      else if (dom == Int::BoolVarImp::ONE)
+        min = 1;
+      VarBase* ret = Int::BoolView(BoolVar(home, min, max)).variable();
+      return ret;
+    }
+    void constrainBoolVar(Space* home, VarBase* v,
+                          Reflection::VarSpec& spec) {
+      int d = spec.dom()->toInt();
+      if (d == Int::BoolVarImp::ZERO)
+        rel(home, BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v))),
+            IRT_EQ, 0);
+      else if (d == Int::BoolVarImp::ONE)
+        rel(home, BoolVar(Int::BoolView(static_cast<Int::BoolVarImp*>(v))),
+            IRT_EQ, 1);
     }
 #ifdef GECODE_HAVE_SET_VARS
     VarBase* createSetVar(Space* home, Reflection::VarSpec& spec) {
@@ -65,7 +89,9 @@ namespace Gecode { namespace Serialization {
     public:
         VariableCreators() {
         Reflection::registry.add("VTI_INT", createIntVar);
+        Reflection::registry.add("VTI_INT", constrainIntVar);
         Reflection::registry.add("VTI_BOOL", createBoolVar);
+        Reflection::registry.add("VTI_BOOL", constrainBoolVar);
 #ifdef GECODE_HAVE_SET_VARS
         Reflection::registry.add("VTI_SET", createSetVar);
 #endif

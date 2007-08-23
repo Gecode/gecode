@@ -46,6 +46,7 @@ namespace Gecode { namespace Serialization {
         (vb = m.var(spec.name())) != NULL) {
       // TODO: assert that spec and original var are compatible,
       // constrain domain of var to spec
+      Reflection::registry.constrainVar(home, vb, spec);
     } else {
       vb = Reflection::registry.createVar(home, spec);
     }

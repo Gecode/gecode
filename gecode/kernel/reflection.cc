@@ -54,6 +54,15 @@ namespace Gecode { namespace Reflection {
   }
 
   void
+  Registry::constrainVar(Space* home, VarBase* v, VarSpec& spec) {
+    varConstrainer vc;
+    if (!varConstrainers.get(spec.vti(),vc)) {
+      throw Reflection::ReflectionException("VTI not found");
+    }
+    vc(home, v, spec);
+  }
+
+  void
   Registry::post(Space* home, const VarMap& vm, const ActorSpec& spec) {
     poster p;
       
@@ -66,6 +75,11 @@ namespace Gecode { namespace Reflection {
   void
   Registry::add(Support::String vti, varCreator vc) {
     varCreators.put(vti, vc);
+  }
+
+  void
+  Registry::add(Support::String vti, varConstrainer vc) {
+    varConstrainers.put(vti, vc);
   }
 
   void

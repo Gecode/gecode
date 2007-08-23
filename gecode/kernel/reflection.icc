@@ -353,18 +353,27 @@ namespace Gecode { namespace Reflection {
     typedef void (*poster) (Space*, const VarMap&, const ActorSpec&);
     /// The type of variable creation functions
     typedef VarBase* (*varCreator) (Space*, VarSpec&);
+    /// The type of variable domain constraint functions
+    typedef void (*varConstrainer) (Space*, VarBase*, VarSpec&);
 
     /// Create a new variable in \a home from \a spec and return it
     GECODE_KERNEL_EXPORT
     VarBase* createVar(Space* home, VarSpec& spec);
 
+    /// Constrain \a v to \a spec
+    GECODE_KERNEL_EXPORT
+    void constrainVar(Space* home, VarBase* v, VarSpec& spec);
+
     /// Post constraint in \a home for \a spec using variables \a vars
     GECODE_KERNEL_EXPORT
     void post(Space* home, const VarMap& vm, const ActorSpec& spec);
 
-    /// Register variable creation function for variable type identifier \a vti
+    /// Register variable creation function for \a vti
     GECODE_KERNEL_EXPORT
     void add(Support::String vti, varCreator vc);
+    /// Register variable domain constraining function for \a vti
+    GECODE_KERNEL_EXPORT
+    void add(Support::String vti, varConstrainer vc);
     /// Register constraint posting function for constraint name \a id
     GECODE_KERNEL_EXPORT
     void add(const Support::String& id, poster p);
@@ -375,6 +384,8 @@ namespace Gecode { namespace Reflection {
     Support::StringMap<poster> posters;
     /// The registry of variable creation functions
     Support::StringMap<varCreator> varCreators;
+    /// The registry of variable creation functions
+    Support::StringMap<varConstrainer> varConstrainers;
   };
   
   /// The registry object

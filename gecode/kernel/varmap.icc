@@ -114,6 +114,19 @@ namespace Gecode { namespace Reflection {
     /// Insert specifications for variables in \a x with name \a n
     template <class Var> void
     putArray(Space* home, const VarArray<Var>& v, const Support::String& n);
+
+    /// Insert variable \a v with name \a n
+    template <class Var> void
+    registerVar(Space* home, const Var& v, const Support::String& n);
+    /// Insert variables in \a x with name \a n
+    template <class Var> void
+    registerArray(Space* home, const VarArgArray<Var>& v,
+                  const Support::String& n);
+    /// Insert variables in \a x with name \a n
+    template <class Var> void
+    registerArray(Space* home, const VarArray<Var>& v, 
+                  const Support::String& n);
+
     //@}
   private:
     /// Copy constructor must not be used
@@ -246,6 +259,8 @@ namespace Gecode { namespace Reflection {
   VarMap::put(Space* home, const Var& x, const Support::String& n) {
     typename VarViewTraits<Var>::View v(x);
     name(v.variable(), n);
+    Reflection::Arg* a = v.spec(home, *this);
+    delete a;
   }
 
   template <class Var> void
@@ -264,6 +279,31 @@ namespace Gecode { namespace Reflection {
       std::stringstream s;
       s << i;
       put(home, x[i], n+Support::String(s.str().c_str(), true));
+    }
+  }
+
+  template <class Var> void
+  VarMap::registerVar(Space* home, const Var& x, const Support::String& n) {
+    typename VarViewTraits<Var>::View v(x);
+    name(v.variable(), n);
+  }
+
+  template <class Var> void
+  VarMap::registerArray(Space* home, const VarArgArray<Var>& x,
+                        const Support::String& n) {
+    for (int i=0; i<x.size(); i++) {
+      std::stringstream s;
+      s << i;
+      registerVar(home, x[i], n+Support::String(s.str().c_str(), true));
+    }
+  }
+  template <class Var> void
+  VarMap::registerArray(Space* home, const VarArray<Var>& x,
+                        const Support::String& n) {
+    for (int i=0; i<x.size(); i++) {
+      std::stringstream s;
+      s << i;
+      registerVar(home, x[i], n+Support::String(s.str().c_str(), true));
     }
   }
 
