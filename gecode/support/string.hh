@@ -126,7 +126,8 @@ namespace Gecode { namespace Support {
 
   forceinline
   String::SO::SO(const char* s0, bool copy)
-    : s(copy ? strdup(s0) : s0), own(copy), next(NULL), tail(this) {}
+    : use_cnt(0),
+      s(copy ? strdup(s0) : s0), own(copy), next(NULL), tail(this) {}
 
   forceinline bool
   String::SO::cancel(void) { return --use_cnt == 0; }
