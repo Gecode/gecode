@@ -69,7 +69,27 @@ namespace Gecode { namespace Set { namespace Sequence {
         int glbMin = x[lastElem-i].glbMin();
         cur_min = std::min(cur_min, glbMin);
         if (x[lastElem-i].cardMin() > 0) {
-          cur_min = std::min(cur_min, x[lastElem-i].lubMaxN(x[lastElem-i].cardMin()-1));
+          // Compute n-th largest element in x[lastElem-i].lub
+          // for n = x[lastElem-i].cardMin()-1
+          int size = 0;
+          int maxN = BndSet::MAX_OF_EMPTY;
+          for (LubRanges<SetView> ubr(x[lastElem-i]); ubr(); ++ubr, ++size) {}
+          GECODE_AUTOARRAY(int, ub, size*2);
+          int j=0;
+          for (LubRanges<SetView> ubr(x[lastElem-i]); ubr(); ++ubr, ++j) {
+            ub[2*j]   = ubr.min();
+            ub[2*j+1] = ubr.max();
+          }
+          int xcm = x[lastElem-i].cardMin()-1;
+          for (int j=size; j--;) {
+            int width = ub[2*j+1]-ub[2*j]+1;
+            if (width > xcm) {
+              maxN = ub[2*j+1]-xcm;
+              break;
+            }
+            xcm -= width;
+          }
+          cur_min = std::min(cur_min, maxN);
         }
       }
       if (Limits::Set::int_max>=cur_min)

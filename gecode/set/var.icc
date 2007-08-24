@@ -107,8 +107,8 @@ namespace Gecode { namespace Set {
     //@{
     /// Default constructor (noop)
     RangeList(void);
-    /// Initialize with minimum \a min and maximum \a max and predecessor \a p and successor \a n
-    RangeList(int min, int max, RangeList* p, RangeList* n);
+    /// Initialize with minimum \a min and maximum \a max and successor \a n
+    RangeList(int min, int max, RangeList* n);
     //@}
 
     /// \name Access
@@ -120,10 +120,8 @@ namespace Gecode { namespace Set {
     /// Return width (distance between maximum and minimum)
     unsigned int width(void) const;
 
-    /// Return next element (from previous \a p)
-    RangeList* next(const RangeList* p) const;
-    /// Return previous element (from next \a n)
-    RangeList* prev(const RangeList* n) const;
+    /// Return next element
+    RangeList* next(void) const;
     //@}
 
     /// \name Update
@@ -132,25 +130,16 @@ namespace Gecode { namespace Set {
     void min(int n);
     /// Set maximum to \a n
     void max(int n);
-
-    /// Set previous element to \a p and next element to \a n
-    void prevnext(RangeList* p, RangeList* n);
-    /// Set next element from \a o to \a n
-    void next(RangeList* o, RangeList* n);
-    /// Set previous element from \a o to \a n
-    void prev(RangeList* o, RangeList* n);
-    /// Restore simple link to next element (so that it becomes a true free list)
-    void fix(RangeList* n);
+    /// Set next rane to \a n
+    void next(RangeList* n);
     //@}
 
     /// \name Memory management
     //@{
     /**
      * \brief Free memory for all elements between this and \a l (inclusive)
-     *
-     * \a p must be the pointer to the previous element of \c this.
      */
-    void dispose(Space* home, RangeList* p, RangeList* l);
+    void dispose(Space* home, RangeList* l);
     
     /// Allocate memory from space
     static void* operator new(size_t s, Space* home);
@@ -212,8 +201,6 @@ namespace Gecode { namespace Set {
     int max(void) const;
     /// Return \a n -th smallest element
     int minN(unsigned int n) const;
-    /// Return \a n -th greatest element
-    int maxN(unsigned int n) const;
     /// Return size
     unsigned int size(void) const;
     //@}
@@ -259,8 +246,6 @@ namespace Gecode { namespace Set {
    */
   class BndSetRanges {
   private:
-    /// Previous range
-    const RangeList* p;
     /// Current range
     const RangeList* c;
   public:
@@ -599,8 +584,6 @@ namespace Gecode { namespace Set {
     int lubMax(void) const;
     /// Return \a n -th smallest element in the least upper bound
     int lubMinN(int n) const;
-    /// Return \a n -th largest element in the least upper bound
-    int lubMaxN(int n) const;
     /// Return minimum of the greatest lower bound
     int glbMin(void) const;
     /// Return maximum of the greatest lower bound

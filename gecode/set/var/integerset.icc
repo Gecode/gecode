@@ -46,45 +46,18 @@ namespace Gecode { namespace Set {
    *
    */
 
-#define GECODE_SET_RL2PD(r) reinterpret_cast<ptrdiff_t>(r)
-#define GECODE_SET_PD2RL(p) reinterpret_cast<RangeList*>(p)
-
   forceinline
   RangeList::RangeList(void) {}
 
   forceinline
-  RangeList::RangeList(int min, int max, RangeList* p, RangeList* n)
-    : _min(min), _max(max) {
-    _next = GECODE_SET_PD2RL(GECODE_SET_RL2PD(p)^GECODE_SET_RL2PD(n));     
-  }
+  RangeList::RangeList(int min, int max, RangeList* n)
+    : FreeList(n), _min(min), _max(max) {}
 
   forceinline RangeList*
-  RangeList::next(const RangeList* p) const {
-    return GECODE_SET_PD2RL(GECODE_SET_RL2PD(_next)^GECODE_SET_RL2PD(p));
+  RangeList::next() const {
+    return static_cast<RangeList*>(FreeList::next());
   }
-  forceinline RangeList*
-  RangeList::prev(const RangeList* n) const {
-    return GECODE_SET_PD2RL(GECODE_SET_RL2PD(_next)^GECODE_SET_RL2PD(n));
-  }
-  forceinline void
-  RangeList::prevnext(RangeList* p, RangeList* n) {
-    _next = GECODE_SET_PD2RL(GECODE_SET_RL2PD(p)^GECODE_SET_RL2PD(n));
-  }
-  forceinline void
-  RangeList::next(RangeList* o, RangeList* n) {
-    _next = GECODE_SET_PD2RL(GECODE_SET_RL2PD(_next)^
-                             (GECODE_SET_RL2PD(o)^GECODE_SET_RL2PD(n)));
-  }
-  forceinline void
-  RangeList::prev(RangeList* o, RangeList* n) {
-    _next = GECODE_SET_PD2RL(GECODE_SET_RL2PD(_next)^
-                             (GECODE_SET_RL2PD(o)^GECODE_SET_RL2PD(n)));
-  }
-  forceinline void
-  RangeList::fix(RangeList* n) {
-    _next = n;
-  }
-
+  
   forceinline void
   RangeList::min(int n) {
     _min = n;
@@ -92,6 +65,10 @@ namespace Gecode { namespace Set {
   forceinline void
   RangeList::max(int n) {
     _max = n;
+  }
+  forceinline void
+  RangeList::next(RangeList* n) {
+    FreeList::next(n);
   }
 
   forceinline int
@@ -123,18 +100,9 @@ namespace Gecode { namespace Set {
   }
 
   forceinline void
-  RangeList::dispose(Space* home, RangeList* p, RangeList* l) {
-    RangeList* c = this;
-    while (c != l) {
-      RangeList* n = c->next(p);
-      c->fix(n);
-      p=c; c=n;
-    }
+  RangeList::dispose(Space* home, RangeList* l) {
     home->fl_dispose<sizeof(RangeList)>(this,l);
   }
-
-#undef GECODE_SET_RL2PD
-#undef GECODE_SET_PD2RL
 
 
   /*
@@ -159,7 +127,7 @@ namespace Gecode { namespace Set {
   forceinline void
   BndSet::dispose(Space* home) {
     if (fst()!=NULL)
-      fst()->dispose(home,NULL,lst());
+      fst()->dispose(home,lst());
   }
 
   forceinline void
@@ -175,7 +143,7 @@ namespace Gecode { namespace Set {
   forceinline
   BndSet::BndSet(Space* home, int mn, int mx) {
     RangeList* p = 
-      new (home) RangeList(mn,mx,NULL,NULL);
+      new (home) RangeList(mn,mx,NULL);
     fst(p); lst(p);
     _size = mx-mn+1;
   }
@@ -210,72 +178,41 @@ namespace Gecode { namespace Set {
   // nth smallest element
   forceinline int
   BndSet::minN(unsigned int n) const {
-    RangeList* p=NULL;
-    RangeList* c=fst();
-    while (c!=NULL){
-      if (c->width() > n){
-        return(c->min()+n);
-      } else {
-        n-=c->width();
-        RangeList* nc=c->next(p);
-        p=c; c=nc;
-      }
+    for (RangeList* c = fst(); c != NULL; c = c->next()) {
+      if (c->width() > n)
+        return c->min() + n;
+      n -= c->width();
     }
     return MIN_OF_EMPTY;
   }
 
-  // nth largest element
-  forceinline int
-  BndSet::maxN(unsigned int n) const {
-    RangeList* p=NULL;
-    RangeList* c=lst();
-    while (c!=NULL){
-      if (c->width() > n){
-        return(c->max()-n);
-      } else {
-        n-=c->width();
-        RangeList* nc=c->next(p);
-        p=c; c=nc;
-      }
-    }
-    return MAX_OF_EMPTY;
-  }
-
   forceinline void
   BndSet::update(Space* home, BndSet& d) {
-    if ( d.fst() == fst()) { return; }
-    if (fst()!=NULL) { fst()->dispose(home,NULL,lst()); }
+    if ( d.fst() == fst())
+      return;
+    if (fst()!=NULL)
+      fst()->dispose(home,lst());
     _size = d.size();
-    if (_size==0) { fst(NULL); lst(NULL); return ; }
+    if (_size==0) {
+      fst(NULL); lst(NULL);
+      return;
+    }
 
     int n=0;
-    {
-      RangeList* p = NULL;
-      RangeList* c = d.fst();
-      while (c!=NULL) {
-        RangeList* nc=c->next(p);
-        p=c; c=nc; n++;
-      }
-    }
+    for (RangeList* c = d.fst(); c != NULL; c = c->next())
+      n++;
 
     RangeList* r = static_cast<RangeList*>(home->alloc(sizeof(RangeList)*n));
     fst(r); lst(r+n-1);
 
-    {
-      RangeList* p = NULL;
-      RangeList* c = d.lst();
-      for (int i=n; i--; ) {
-        r[i].min(c->min());
-        r[i].max(c->max());
-        r[i].prevnext(&r[i-1],&r[i+1]);
-
-        RangeList* nc=c->next(p);
-        p=c; c=nc;
-      }
-      r[0].prev(&r[-1],NULL); 
-      r[n-1].next(&r[n],NULL);
+    RangeList* c = d.fst();
+    for (int i=0; i<n; i++) {
+      r[i].min(c->min());
+      r[i].max(c->max());
+      r[i].next(&r[i+1]);
+      c = c->next();
     }
-
+    r[n-1].next(NULL);
   }
 
   template <class I> forceinline bool
@@ -285,28 +222,28 @@ namespace Gecode { namespace Set {
       //Was it empty?
       if (fst()==NULL)
         return false;
-      fst()->dispose(home,NULL,lst());
+      fst()->dispose(home,lst());
       _size=0; fst(NULL); lst(NULL);
       return true;
     }
 
     RangeList* f =
-      new (home) RangeList(ri.min(),ri.max(),NULL,NULL);
+      new (home) RangeList(ri.min(),ri.max(),NULL);
     RangeList* l = f;
     unsigned int s = ri.width();
 
     ++ri;
     
     while (ri()){
-      RangeList *n = new (home) RangeList(ri.min(),ri.max(),l,NULL);
-      l->next(NULL,n);
+      RangeList *n = new (home) RangeList(ri.min(),ri.max(),NULL);
+      l->next(n);
       l=n;
       s += ri.width();
       ++ri;
     }
 
     if (fst() != NULL)
-      fst()->dispose(home,NULL,lst());
+      fst()->dispose(home,lst());
     fst(f); lst(l);
 
     // If the size did not change, nothing changed, as overwriting
@@ -323,7 +260,7 @@ namespace Gecode { namespace Set {
     if (fst()!=NULL){
       assert(lst()!=NULL);
       assert(fst()!= that.fst());
-      fst()->dispose(home,NULL,lst());
+      fst()->dispose(home,lst());
     }
     fst(that.fst());
     lst(that.lst());
@@ -333,21 +270,17 @@ namespace Gecode { namespace Set {
 
   forceinline bool
   BndSet::in(int i) const {
-    RangeList *p = NULL;
-    RangeList *c = fst();
-    while (c) {
+    for (RangeList* c = fst(); c != NULL; c = c->next()) {
       if (c->min() <= i && c->max() >= i)
         return true;
       if (c->min() > i)
-        return false;
-      RangeList* nc = c->next(p);
-      p=c; c=nc;
+        return false;      
     }
     return false;
   }
 
   /*
-   * Forward range iterator for BndSets
+   * Range iterator for BndSets
    *
    */
 
@@ -355,22 +288,17 @@ namespace Gecode { namespace Set {
   BndSetRanges::BndSetRanges(void) {}
 
   forceinline
-  BndSetRanges::BndSetRanges(const BndSet& s) :
-    p(NULL), c(s.ranges()) {}
+  BndSetRanges::BndSetRanges(const BndSet& s) : c(s.ranges()) {}
 
   forceinline void
-  BndSetRanges::init(const BndSet& s) {
-    p = NULL;
-    c = s.ranges();
-  }
+  BndSetRanges::init(const BndSet& s) { c = s.ranges(); }
 
   forceinline bool
-  BndSetRanges::operator()(void) const {
-    return c != NULL;
-  }
+  BndSetRanges::operator()(void) const { return c != NULL; }
+  
   forceinline void
   BndSetRanges::operator++(void) {
-    const RangeList* n=c->next(p); p=c; c=n;
+    c = c->next();
   }
 
   forceinline int
@@ -409,7 +337,7 @@ namespace Gecode { namespace Set {
   GLBndSet::include(Space* home, int mi, int ma, SetDelta& d) {
     assert(ma >= mi);
     if (fst()==NULL) {
-      RangeList* p = new (home) RangeList(mi,ma,NULL,NULL);
+      RangeList* p = new (home) RangeList(mi,ma,NULL);
       fst(p);
       lst(p);
       _size=ma-mi+1;
@@ -459,7 +387,7 @@ namespace Gecode { namespace Set {
     RangeList *p =
       new (home) RangeList(Limits::Set::int_min,
                            Limits::Set::int_max,
-                           NULL,NULL);
+                           NULL);
     fst(p);
     lst(p);
     _size = Limits::Set::card_max;
@@ -472,7 +400,7 @@ namespace Gecode { namespace Set {
     if (mi <= min() && ma >= max() ) { //the range covers the whole set
       d._lubMin = min();
       d._lubMax = max();
-      fst()->dispose(home,NULL,lst()); fst(NULL); lst(NULL);
+      fst()->dispose(home,lst()); fst(NULL); lst(NULL);
       _size=0;
       return true;
     }
@@ -487,23 +415,20 @@ namespace Gecode { namespace Set {
     if ((mi <= min()) && (ma >= max())) { return false; }
     if (_size == 0) return false;
     if (ma < min() || mi > max() ) { // empty the whole set
-     fst()->dispose(home,NULL,lst()); fst(NULL); lst(NULL);
+     fst()->dispose(home,lst()); fst(NULL); lst(NULL);
      _size=0;
      return true;
     }
     bool ret = intersect_full(home, mi, ma);
     assert(isConsistent());
     return ret;
-    // bool changed = exclude(home, Limits::Set::int_min-1,mi-1);
-    // changed |= exclude(home, ma+1, Limits::Set::int_max+1);
-    // return changed;
   }
 
   template <class I> bool
   LUBndSet::intersectI(Space* home, I& i) {
     if (fst()==NULL) { return false; }
     if (!i()) {
-      fst()->dispose(home,NULL,lst()); fst(NULL); lst(NULL);
+      fst()->dispose(home,lst()); fst(NULL); lst(NULL);
       _size=0;
       return true;
     }
@@ -526,7 +451,7 @@ namespace Gecode { namespace Set {
 
   forceinline void
   LUBndSet::excludeAll(Space* home) {
-    fst()->dispose(home,NULL,lst()); fst(NULL); lst(NULL);
+    fst()->dispose(home,lst()); fst(NULL); lst(NULL);
     _size=0;    
   }
 

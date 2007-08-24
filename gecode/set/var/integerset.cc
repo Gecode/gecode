@@ -46,16 +46,16 @@ namespace Gecode { namespace Set {
       fst(NULL); lst(NULL); _size = 0;
     } else {
       int n = is.size();
-      RangeList* r = static_cast<RangeList*>(home->alloc(sizeof(RangeList)*n));
+      RangeList* r = 
+        static_cast<RangeList*>(home->alloc(sizeof(RangeList)*n));
       fst(r); lst(r+n-1);
       unsigned int s = 0;
       for (int i = n; i--; ) {
         s += is.width(i);
         r[i].min(is.min(i)); r[i].max(is.max(i));
-        r[i].prevnext(&r[i-1],&r[i+1]);
+        r[i].next(&r[i+1]);
       }
-      r[0].prev(&r[-1],NULL); 
-      r[n-1].next(&r[n],NULL);
+      r[n-1].next(NULL);
       _size = s;
     }
     assert(isConsistent());
@@ -68,22 +68,19 @@ namespace Gecode { namespace Set {
     
     RangeList* p = NULL;
     RangeList* c = fst();
+
     while (c != NULL) {
       if (c->max() >= mi-1){
         if (c->min() > ma+1) {  //in a hole before c
           _size+=(ma-mi+1);
           d._glbMin = mi;
           d._glbMax = ma;
-          RangeList* q=new (home) RangeList(mi,ma,NULL,c);
-          if (p==NULL){ //the new range is the first
-            assert(c==fst());
-            c->prev(NULL,q);
+          RangeList* q=new (home) RangeList(mi,ma,c);
+          if (p==NULL)
+            //the new range is the first
             fst(q);
-            return true;
-          }
-          q->prev(NULL, p);
-          p->next(c, q);
-          c->prev(p, q);
+          else
+            p->next(q);
           return true;
         }
         //if the range starts before c, update c->min and size
@@ -102,48 +99,44 @@ namespace Gecode { namespace Set {
           d._glbMax = c->min()-1;
           return result;
         }
-        RangeList* qp = p;
         RangeList* q = c;
         //sum up the size of holes eaten
         int prevMax = c->max();
-        int growth =0;
+        int growth = 0;
         // invariant: q->min()<=ma+1
-        while (q->next(qp)!=NULL && q->next(qp)->min()<=ma+1){
-          RangeList* nq = q->next(qp);
-          qp = q; q = nq;
-          growth+=q->min()-prevMax-1;
-          prevMax=q->max();
+        while (q->next() != NULL && q->next()->min() <= ma+1) {
+          q = q->next();
+          growth += q->min()-prevMax-1;
+          prevMax = q->max();
         }
         assert(growth>=0);
         _size+=growth;
         if (q->max() < ma) {
-          _size+=ma-q->max();
+          _size += ma-q->max();
           d._glbMax = ma;
         } else {
           d._glbMax = q->min()-1;          
         }
         c->max(std::max(ma,q->max()));
         if (c!=q) {
-          RangeList* oldCNext = c->next(p);
+          RangeList* oldCNext = c->next();
           assert(oldCNext!=NULL); //q would have stayed c if c was last.
-          c->next(oldCNext, q->next(qp));
-          if (q->next(qp)==NULL){
+          c->next(q->next());
+          if (q->next()==NULL){
             assert(q==lst());
             lst(c);
-          } else {
-            q->next(qp)->prev(q,c);
           }
-          oldCNext->dispose(home,c,q);
+          oldCNext->dispose(home,q);
         }
         return true;
       }
-      RangeList* nc = c->next(p);
+      RangeList* nc = c->next();
       p=c; c=nc;
     }
     //the new range is disjoint from the old domain and we add it as last:
     assert(mi>max()+1);
-    RangeList* q = new (home) RangeList(mi, ma, lst(), NULL);
-    lst()->next(NULL, q);
+    RangeList* q = new (home) RangeList(mi, ma, NULL);
+    lst()->next(q);
     lst(q);
     _size+= q->width();
     d._glbMin = mi;
@@ -161,20 +154,19 @@ namespace Gecode { namespace Set {
     // Skip ranges that are before mi
     while (c != NULL && c->max() < mi) {
       _size -= c->width();
-      RangeList *nc = c->next(p);
+      RangeList *nc = c->next();
       p=c; c=nc;
     }
     if (c == NULL) {
       // Delete entire domain
-      fst()->dispose(home, NULL, lst());
+      fst()->dispose(home, lst());
       fst(NULL); lst(NULL);
       return true;
     }
 
     bool changed = false;
     if (c != fst()) {
-      c->prev(p, NULL);
-      fst()->dispose(home, NULL, p);
+      fst()->dispose(home, p);
       fst(c);
       p = NULL;
       changed = true;
@@ -187,35 +179,28 @@ namespace Gecode { namespace Set {
     }
 
     while (c != NULL && c->max() <= ma) {
-      RangeList *nc = c->next(p);
+      RangeList *nc = c->next();
       p=c; c=nc;      
     }
     
-    if (c == NULL) {
+    if (c == NULL)
       return changed;
-    }
 
     RangeList* newlst = p;
     if (ma >= c->min()) {
       _size -= c->max() - ma;
       c->max(ma);
       newlst = c;
-      RangeList* nc = c->next(p);
-      c->next(nc, NULL);
+      RangeList* nc = c->next();
+      c->next(NULL);
       p=c; c=nc;
-    } else {
-      if (p != NULL)
-        p->next(c, NULL);
+    } else if (p != NULL) {
+      p->next(NULL);
     }
     if (c != NULL) {
-      RangeList* del = c;
-      RangeList* delp = p;
-      while (c != NULL) {
-        _size -= c->width();
-        RangeList* nc = c->next(p);
-        p=c; c=nc;
-      }
-      del->dispose(home, delp, lst());
+      for (RangeList* cc = c ; cc != NULL; cc = cc->next())
+        _size -= cc->width();
+      c->dispose(home, lst());
     }
     lst(newlst);
     if (newlst==NULL)
@@ -239,14 +224,12 @@ namespace Gecode { namespace Set {
 
         if (c->min()<mi && c->max() > ma) {  //Range split:
           RangeList* q =
-            new (home) RangeList(ma+1,c->max(),c,c->next(p));
+            new (home) RangeList(ma+1,c->max(),c->next());
           c->max(mi-1);
-          if (c != lst()) {
-            c->next(p)->prev(c,q);
-          } else {
+          if (c == lst()) {
             lst(q);
           }
-          c->next(c->next(p),q);
+          c->next(q);
           _size -= (ma-mi+1);
           d._lubMin = mi;
           d._lubMax = ma;
@@ -270,29 +253,25 @@ namespace Gecode { namespace Set {
         } else { //range *c destroyed
           d._lubMin = c->min();
           _size-=c->width();
-          RangeList *cendp = p;
           RangeList *cend = c;
-          while ((cend->next(cendp)!=NULL) && (cend->next(cendp)->max()<=ma)){
-            RangeList *ncend = cend->next(cendp);
-            cendp=cend; cend=ncend;
+          while ((cend->next()!=NULL) && (cend->next()->max()<=ma)){
+            cend = cend->next();
             _size-=cend->width();
           }
           d._lubMax = cend->max();
           if (fst()==c) {
-            fst(cend->next(cendp));
+            fst(cend->next());
           } else {
-            p->next(c, cend->next(cendp));
+            p->next(cend->next());
           }
           if (lst()==cend) {
             lst(p);
-          } else {
-            cend->next(cendp)->prev(cend,p);
           }
-          RangeList* nc=cend->next(cendp); //performs loop step!
-          c->dispose(home,p,cend);
+          RangeList* nc=cend->next(); //performs loop step!
+          c->dispose(home,cend);
           p=cend;
           c=nc;
-          if (c!=NULL && c->min() <= ma ) {
+          if (c != NULL && c->min() <= ma ) {
             //start of range clipped, end remains
             _size-=(ma-c->min()+1);
             c->min(ma+1);
@@ -301,7 +280,7 @@ namespace Gecode { namespace Set {
           return true;
         }
       }
-      RangeList *nc = c->next(p);
+      RangeList *nc = c->next();
       p=c; c=nc;
     }
     return result;
@@ -337,7 +316,7 @@ namespace Gecode { namespace Set {
       return false;
     }
 
-    RangeList *nc=c->next(p);
+    RangeList *nc=c->next();
     p=c; c=nc;
     while (c) {
       if (max<min) {
@@ -348,21 +327,15 @@ namespace Gecode { namespace Set {
         std::cerr << "2";
         return false;
       }
-      if (c->next(p)==NULL && c!=lst()) {
+      if (c->next()==NULL && c!=lst()) {
         std::cerr << "3";
-        return false;
-      }
-
-      if (c->next(p)!=NULL && c->next(p)->prev(c->next(p)->next(c))!=c) {
-        std::cerr<<"Prev of next not self.\n";
-        ((RangeList *)NULL)->min();
         return false;
       }
 
       min = c->min();
       max = c->max();
       
-      nc=c->next(p);
+      nc=c->next();
       p=c; c=nc;
     }
 #endif

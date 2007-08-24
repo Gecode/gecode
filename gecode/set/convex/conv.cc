@@ -76,7 +76,8 @@ namespace Gecode { namespace Set { namespace Convex {
       //becomes a single range then.
        LubRanges<SetView> ubRangeIt(x0);
        unsigned int maxWidth = 0;
-       for (;ubRangeIt();++ubRangeIt){
+       for (;ubRangeIt();++ubRangeIt) {
+         assert(ubRangeIt());
          maxWidth = std::max(maxWidth, ubRangeIt.width());
        }
        GECODE_ME_CHECK( x0.cardMax(home,maxWidth) );

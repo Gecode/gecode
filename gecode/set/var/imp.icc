@@ -122,9 +122,6 @@ namespace Gecode { namespace Set {
   SetVarImp::lubMinN(int n) const { return lub.minN(n); }
 
   forceinline int
-  SetVarImp::lubMaxN(int n) const { return lub.maxN(n); }
-
-  forceinline int
   SetVarImp::glbMin(void) const { return glb.min(); }
 
   forceinline int

@@ -97,9 +97,6 @@ namespace Gecode { namespace Set {
   SetView::lubMinN(int n) const { return var->lubMinN(n); }
 
   forceinline int
-  SetView::lubMaxN(int n) const { return var->lubMaxN(n); }
-
-  forceinline int
   SetView::glbMin(void) const { return var->glbMin(); }
 
   forceinline int

@@ -88,34 +88,59 @@ namespace Gecode { namespace Set { namespace Int {
   template <class View>
   ExecStatus
   MinElement<View>::propagate(Space* home) {
-   //x1 is an element of x0.ub
-   //x1 =< smallest element of x0.lb
-   //x1 =< x0.cardinialityMin-est largest element of x0.ub
-   //(these 2 take care of determined x0)
-   //No element in x0 is smaller than x1
-   //if x1 is determined, it is part of the ub.
+    //x1 is an element of x0.ub
+    //x1 =< smallest element of x0.lb
+    //x1 =< x0.cardinialityMin-est largest element of x0.ub
+    //(these 2 take care of determined x0)
+    //No element in x0 is smaller than x1
+    //if x1 is determined, it is part of the ub.
 
-   //Consequently:
-   //The domain of x1 is a subset of x0.ub up to the first element in x0.lb.
-   //x0 lacks everything smaller than smallest possible x1.
+    //Consequently:
+    //The domain of x1 is a subset of x0.ub up to the first element in x0.lb.
+    //x0 lacks everything smaller than smallest possible x1.
 
-   LubRanges<View> ub(x0);
-   GECODE_ME_CHECK(x1.inter_r(home,ub,false));
-   GECODE_ME_CHECK(x1.lq(home,x0.glbMin()));
-   //if cardMin>lbSize?
-   assert(x0.cardMin()>=1);
-   GECODE_ME_CHECK(x1.lq(home,x0.lubMaxN(x0.cardMin()-1)));
-   GECODE_ME_CHECK( x0.exclude(home,
-                               Limits::Set::int_min, x1.min()-1) );
+    {
+      LubRanges<View> ub(x0);
+      GECODE_ME_CHECK(x1.inter_r(home,ub,false));
+    }
+    GECODE_ME_CHECK(x1.lq(home,x0.glbMin()));
+    //if cardMin>lbSize?
+    assert(x0.cardMin()>=1);
 
-   if (x1.assigned()) {
-     GECODE_ME_CHECK(x0.include(home,x1.val()));
-     GECODE_ME_CHECK(x0.exclude(home,
-                                Limits::Set::int_min, x1.val()-1));
-     return ES_SUBSUMED(this,home);
-   }
+    {
+      /// Compute n-th largest element in x0.lub for n = x0.cardMin()-1
+      int size = 0;
+      int maxN = BndSet::MAX_OF_EMPTY;
+      for (LubRanges<View> ubr(x0); ubr(); ++ubr, ++size) {}
+      GECODE_AUTOARRAY(int, ub, size*2);
+      int i=0;
+      for (LubRanges<View> ubr(x0); ubr(); ++ubr, ++i) {
+        ub[2*i]   = ubr.min();
+        ub[2*i+1] = ubr.max();
+      }
+      int x0cm = x0.cardMin()-1;
+      for (int i=size; i--;) {
+        int width = ub[2*i+1]-ub[2*i]+1;
+        if (width > x0cm) {
+          maxN = ub[2*i+1]-x0cm;
+          break;
+        }
+        x0cm -= width;
+      }
+      GECODE_ME_CHECK(x1.lq(home,maxN));
+    }
 
-   return ES_FIX;
+    GECODE_ME_CHECK( x0.exclude(home,
+                                Limits::Set::int_min, x1.min()-1) );
+
+    if (x1.assigned()) {
+      GECODE_ME_CHECK(x0.include(home,x1.val()));
+      GECODE_ME_CHECK(x0.exclude(home,
+                                 Limits::Set::int_min, x1.val()-1));
+      return ES_SUBSUMED(this,home);
+    }
+
+    return ES_FIX;
   }
 
   template <class View>
