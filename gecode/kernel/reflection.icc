@@ -881,7 +881,7 @@ namespace Reflection {
   template <class P>
   forceinline
   Registrar<P>::Registrar(void) {
-    registry.add(P::name(), &P::post);
+    // registry.add(P::name(), &P::post);
   }
 
 }}
