@@ -54,6 +54,13 @@
 
 using namespace Gecode;
 
+/**
+ * \defgroup TaskTestTest General test support
+ *
+ * \ingroup TaskTest
+ */
+//@{
+/// Commandline options
 class Options {
 public:
   static const int defiter = 5,
@@ -79,6 +86,7 @@ public:
   void parse(int argc, char **argv);
 };
 
+/// Main test driver
 class Test {
 private:
   const char* m;
@@ -136,6 +144,7 @@ protected:
     }
   }
 };
+//@}
 
 #endif
 

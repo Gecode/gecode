@@ -155,6 +155,11 @@
  */
 
 /**
+ * \defgroup TaskTest Testing
+ * \ingroup Task
+ */
+
+/**
  * \defgroup Func Common functionality
  */
 
@@ -321,27 +326,12 @@
 /**
  * \defgroup Example Example scripts (models)
  *
- * All scripts are compiled into simple standalone programs. These
- * programs understand the following options given on the 
- * commandline:
- *  - <code>-mode (solution, time, stat)</code>
- *    - <code>solution</code>: print solutions.
- *    - <code>time</code>: measure time.
- *    - <code>stat</code>: print statistics.
- *  - <code>-naive</code>, <code>-smart</code>: if there is a naive and
- *    a smart model of the problem, select which to use
- *  - <code>-solutions</code>: give the maximum number of solutions after which
- *    the search stops. 0 means all solutions.
- *  - <code>-icl (def, val, bnd, dom)</code>: give the consistency level of
- *    integer constraints such as <code>distinct</code>.
- *  - <code>-c_d</code>, <code>-a_c</code>: copying and adaptive recomputation
- *    distance to be used by the search engine.
- *  - <code>-samples</code>, <code>-iterations</code>: how many samples and
- *    iterations per sample to compute in time mode.
- *  - <code>-help</code>: print usage information and default values for
- *    all options.
+ * All scripts are compiled into simple standalone programs. All
+ * programs understand the several generic and problem-specific
+ * commandline options. An overview of the options is available
+ * by invoking the standalone programs with the <code>-help</code>
+ * commandline option.
  *
- * Many scripts can be given the problem size as an extra argument.
  */
 
 /**
@@ -391,6 +381,7 @@
  *  - \ref TaskSearch
  *  - \ref TaskActor "Programming propagators and branchings"
  *  - \ref TaskVar
+ *  - \ref TaskTest
  *
  * \section SecByFunc Common functionality
  *

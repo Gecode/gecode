@@ -46,6 +46,17 @@
 using namespace Gecode;
 using namespace Int;
 
+/**
+ * \defgroup TaskTestInt Testing finite domain integers
+ *
+ * \ingroup TaskTest
+ */
+
+/**
+ * \defgroup TaskTestIntInt General test support
+ * \ingroup TaskTestInt
+ */
+//@{
 /// Base class for assignments
 class Assignment {
 protected:
@@ -150,6 +161,7 @@ public:
   /// Perform test
   virtual bool run(const Options& opt);
 };
+//@}
 
 #include "test/int.icc"
 
