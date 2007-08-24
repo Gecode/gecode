@@ -274,6 +274,37 @@ namespace Gecode {
     }
 
     /*
+     * Delta information for advisors
+     *
+     * For SingletonViews, a glb change means that the view is assigned.
+     * Thus, the delta for the glb is always equal to the delta for the lub.
+     *
+     */
+
+    forceinline ModEvent
+    SingletonView::modevent(const Delta* d) {
+      return me_inttoset(Int::IntView::modevent(d));
+    }
+
+    forceinline int
+    SingletonView::glbMin(const Delta* d) const { return view.min(d); }
+
+    forceinline int
+    SingletonView::glbMax(const Delta* d) const { return view.max(d); }
+
+    forceinline bool
+    SingletonView::glbAny(const Delta* d) const { return view.any(d); }
+
+    forceinline int
+    SingletonView::lubMin(const Delta* d) const { return view.min(d); }
+
+    forceinline int
+    SingletonView::lubMax(const Delta* d) const { return view.max(d); }
+
+    forceinline bool
+    SingletonView::lubAny(const Delta* d) const { return view.any(d); }
+
+    /*
      * Iterators
      *
      */

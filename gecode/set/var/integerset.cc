@@ -62,7 +62,7 @@ namespace Gecode { namespace Set {
   }
 
   bool
-  GLBndSet::include_full(Space* home, int mi, int ma) {
+  GLBndSet::include_full(Space* home, int mi, int ma, SetDelta& d) {
     assert(ma >= mi);
     assert(fst() != NULL);
     
@@ -72,6 +72,8 @@ namespace Gecode { namespace Set {
       if (c->max() >= mi-1){
         if (c->min() > ma+1) {  //in a hole before c
           _size+=(ma-mi+1);
+          d._glbMin = mi;
+          d._glbMax = ma;
           RangeList* q=new (home) RangeList(mi,ma,NULL,c);
           if (p==NULL){ //the new range is the first
             assert(c==fst());
@@ -89,13 +91,17 @@ namespace Gecode { namespace Set {
         if (c->min()>mi) {
           _size+=(c->min()-mi);
           c->min(mi);
+          d._glbMin = mi;
           result = true;
+        } else {
+          d._glbMin = c->max()+1;
         }
         assert(c->min()<=mi);
         assert(c->max()+1>=mi);
         if (c->max() >= ma) { 
-          return result; }
-
+          d._glbMax = c->min()-1;
+          return result;
+        }
         RangeList* qp = p;
         RangeList* q = c;
         //sum up the size of holes eaten
@@ -110,20 +116,25 @@ namespace Gecode { namespace Set {
         }
         assert(growth>=0);
         _size+=growth;
-        if (q->max() < ma) {_size+=ma-q->max(); }
-        c->max(std::max(ma,q->max()));
-        if (c==q) {
-          return true; }
-        RangeList* oldCNext = c->next(p);
-        assert(oldCNext!=NULL); //q would have stayed c if c was last.
-        c->next(oldCNext, q->next(qp));
-        if (q->next(qp)==NULL){
-          assert(q==lst());
-          lst(c);
+        if (q->max() < ma) {
+          _size+=ma-q->max();
+          d._glbMax = ma;
         } else {
-          q->next(qp)->prev(q,c);
+          d._glbMax = q->min()-1;          
         }
-        oldCNext->dispose(home,c,q);
+        c->max(std::max(ma,q->max()));
+        if (c!=q) {
+          RangeList* oldCNext = c->next(p);
+          assert(oldCNext!=NULL); //q would have stayed c if c was last.
+          c->next(oldCNext, q->next(qp));
+          if (q->next(qp)==NULL){
+            assert(q==lst());
+            lst(c);
+          } else {
+            q->next(qp)->prev(q,c);
+          }
+          oldCNext->dispose(home,c,q);
+        }
         return true;
       }
       RangeList* nc = c->next(p);
@@ -135,6 +146,8 @@ namespace Gecode { namespace Set {
     lst()->next(NULL, q);
     lst(q);
     _size+= q->width();
+    d._glbMin = mi;
+    d._glbMax = ma;
     return true;
   }
 
@@ -211,7 +224,7 @@ namespace Gecode { namespace Set {
   }
 
   bool
-  LUBndSet::exclude_full(Space* home, int mi, int ma) {
+  LUBndSet::exclude_full(Space* home, int mi, int ma, SetDelta& d) {
     assert(ma >= mi);
     assert(mi <= max() && ma >= min() &&
            (mi > min() || ma < max()));
@@ -219,6 +232,7 @@ namespace Gecode { namespace Set {
 
     RangeList* p = NULL;
     RangeList* c = fst();
+    d._lubMin = Limits::Set::int_max+1;
     while (c != NULL) {
       if (c->max() >= mi){
         if (c->min() > ma) { return result; } //in a hole
@@ -227,14 +241,21 @@ namespace Gecode { namespace Set {
           RangeList* q =
             new (home) RangeList(ma+1,c->max(),c,c->next(p));
           c->max(mi-1);
-          if (c != lst()) {c->next(p)->prev(c,q); }
-          else { lst(q); }
+          if (c != lst()) {
+            c->next(p)->prev(c,q);
+          } else {
+            lst(q);
+          }
           c->next(c->next(p),q);
           _size -= (ma-mi+1);
+          d._lubMin = mi;
+          d._lubMax = ma;
           return true;
         }
 
         if (c->max() > ma) { //start of range clipped, end remains
+          d._lubMin = std::min(d._lubMin, c->min());
+          d._lubMax = ma;
           _size-=(ma-c->min()+1);
           c->min(ma+1);
           return true;
@@ -242,9 +263,12 @@ namespace Gecode { namespace Set {
 
         if (c->min() < mi) { //end of range clipped, start remains
           _size-=(c->max()-mi+1);
+          d._lubMin = mi;
+          d._lubMax = c->max();
           c->max(mi-1);
           result=true;
         } else { //range *c destroyed
+          d._lubMin = c->min();
           _size-=c->width();
           RangeList *cendp = p;
           RangeList *cend = c;
@@ -253,17 +277,26 @@ namespace Gecode { namespace Set {
             cendp=cend; cend=ncend;
             _size-=cend->width();
           }
-          if (fst()==c) { fst(cend->next(cendp)); }
-          else { p->next(c, cend->next(cendp)); }
-          if (lst()==cend) { lst(p); }
-          else { cend->next(cendp)->prev(cend,p); }
+          d._lubMax = cend->max();
+          if (fst()==c) {
+            fst(cend->next(cendp));
+          } else {
+            p->next(c, cend->next(cendp));
+          }
+          if (lst()==cend) {
+            lst(p);
+          } else {
+            cend->next(cendp)->prev(cend,p);
+          }
           RangeList* nc=cend->next(cendp); //performs loop step!
           c->dispose(home,p,cend);
           p=cend;
           c=nc;
-          if (c!=NULL && c->min() <= ma ) { //start of range clipped, end remains
+          if (c!=NULL && c->min() <= ma ) {
+            //start of range clipped, end remains
             _size-=(ma-c->min()+1);
             c->min(ma+1);
+            d._lubMax = ma;
           }
           return true;
         }

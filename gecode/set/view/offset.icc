@@ -267,6 +267,53 @@ namespace Gecode { namespace Set {
       View::type() + ">";
   }
 
+  /*
+   * Delta information for advisors
+   *
+   */
+
+  template <class View>
+  forceinline ModEvent
+  OffsetSetView<View>::modevent(const Delta* d) {
+    return View::modevent(d);
+  }
+  
+  template <class View>
+  forceinline int
+  OffsetSetView<View>::glbMin(const Delta* d) const {
+    return view.glbMin(d)+k;
+  }
+
+  template <class View>
+  forceinline int
+  OffsetSetView<View>::glbMax(const Delta* d) const {
+    return view.glbMax(d)+k;
+  }
+
+  template <class View>
+  forceinline bool
+  OffsetSetView<View>::glbAny(const Delta* d) const {
+    return view.glbAny(d);
+  }
+
+  template <class View>
+  forceinline int
+  OffsetSetView<View>::lubMin(const Delta* d) const {
+    return view.lubMin(d)+k;
+  }
+
+  template <class View>
+  forceinline int
+  OffsetSetView<View>::lubMax(const Delta* d) const {
+    return view.lubMax(d)+k;
+  }
+
+  template <class View>
+  forceinline bool
+  OffsetSetView<View>::lubAny(const Delta* d) const {
+    return view.lubAny(d);
+  }
+
   /**
    * \brief %Range iterator for least upper bound of offset set views
    * \ingroup TaskActorSetView

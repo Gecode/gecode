@@ -54,7 +54,8 @@ namespace Gecode { namespace Set {
       glb.become(home, lub);
       me = ME_SET_VAL;
     }
-    notify(home, me);
+    SetDelta d;
+    notify(home, me, &d);
     return me;
   }
 
@@ -65,12 +66,13 @@ namespace Gecode { namespace Set {
       lub.become(home, glb);
       me = ME_SET_VAL;
     }
-    notify(home, me);
+    SetDelta d;
+    notify(home, me, &d);
     return me;
   }
 
   ModEvent
-  SetVarImp::processLubChange(Space* home) {
+  SetVarImp::processLubChange(Space* home, SetDelta& d) {
     ModEvent me = ME_SET_LUB;
     if (_cardMax > lub.size()) {
       _cardMax = lub.size();
@@ -85,13 +87,15 @@ namespace Gecode { namespace Set {
     if (_cardMax == lub.size() && _cardMin == _cardMax) {
       glb.become(home, lub);
       me = ME_SET_VAL;
+      d._glbMin = glb.min();
+      d._glbMax = glb.max();
     }
-    notify(home, me);
+    notify(home, me, &d);
     return me;
   }
 
   ModEvent
-  SetVarImp::processGlbChange(Space* home) {
+  SetVarImp::processGlbChange(Space* home, SetDelta& d) {
     ModEvent me = ME_SET_GLB;
     if (_cardMin < glb.size()) {
       _cardMin = glb.size();
@@ -106,8 +110,10 @@ namespace Gecode { namespace Set {
     if (_cardMin == glb.size() && _cardMin == _cardMax) {
       lub.become(home, glb);
       me = ME_SET_VAL;
+      d._lubMin = lub.min();
+      d._lubMax = lub.max();
     }
-    notify(home, me);
+    notify(home, me, &d);
     return me;
   }
 

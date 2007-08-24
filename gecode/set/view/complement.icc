@@ -303,6 +303,53 @@ namespace Gecode { namespace Set {
   }
 
   /*
+   * Delta information for advisors
+   *
+   */
+
+  template <class View>
+  forceinline ModEvent
+  ComplementView<View>::modevent(const Delta* d) {
+    return me_negateset(View::modevent(d));
+  }
+  
+  template <class View>
+  forceinline int
+  ComplementView<View>::glbMin(const Delta* d) const {
+    return view.lubMin(d);
+  }
+
+  template <class View>
+  forceinline int
+  ComplementView<View>::glbMax(const Delta* d) const {
+    return view.lubMax(d);
+  }
+
+  template <class View>
+  forceinline bool
+  ComplementView<View>::glbAny(const Delta* d) const {
+    return view.lubAny(d);
+  }
+
+  template <class View>
+  forceinline int
+  ComplementView<View>::lubMin(const Delta* d) const {
+    return view.glbMin(d);
+  }
+
+  template <class View>
+  forceinline int
+  ComplementView<View>::lubMax(const Delta* d) const {
+    return view.glbMax(d);
+  }
+
+  template <class View>
+  forceinline bool
+  ComplementView<View>::lubAny(const Delta* d) const {
+    return view.glbAny(d);
+  }
+
+  /*
    * Specialization for double negation
    *
    */

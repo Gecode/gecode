@@ -166,6 +166,24 @@ namespace Gecode {
       static Support::String type(void);
       //@}
       
+      /// \name Delta information for advisors
+      //@{
+      /// Return modification event
+      static ModEvent modevent(const Delta* d);
+      /// Return minimum value just pruned from glb
+      int glbMin(const Delta* d) const;
+      /// Return maximum value just pruned from glb
+      int glbMax(const Delta* d) const;
+      /// Test whether arbitrary values got pruned from glb
+      bool glbAny(const Delta* d) const;
+      /// Return minimum value just pruned from lub
+      int lubMin(const Delta* d) const;
+      /// Return maximum value just pruned from lub
+      int lubMax(const Delta* d) const;
+      /// Test whether arbitrary values got pruned from lub
+      bool lubAny(const Delta* d) const;
+      //@}
+      
     };
 
   }
@@ -349,6 +367,24 @@ namespace Gecode {
       static Support::String type(void);
       //@}
       
+      /// \name Delta information for advisors
+      //@{
+      /// Return modification event
+      static ModEvent modevent(const Delta* d);
+      /// Return minimum value just pruned from glb
+      int glbMin(const Delta* d) const;
+      /// Return maximum value just pruned from glb
+      int glbMax(const Delta* d) const;
+      /// Test whether arbitrary values got pruned from glb
+      bool glbAny(const Delta* d) const;
+      /// Return minimum value just pruned from lub
+      int lubMin(const Delta* d) const;
+      /// Return maximum value just pruned from lub
+      int lubMax(const Delta* d) const;
+      /// Test whether arbitrary values got pruned from lub
+      bool lubAny(const Delta* d) const;
+      //@}
+      
     };
 
   }
@@ -512,6 +548,24 @@ namespace Gecode {
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
       static Support::String type(void);
+      //@}
+      
+      /// \name Delta information for advisors
+      //@{
+      /// Return modification event
+      static ModEvent modevent(const Delta* d);
+      /// Return minimum value just pruned from glb
+      int glbMin(const Delta* d) const;
+      /// Return maximum value just pruned from glb
+      int glbMax(const Delta* d) const;
+      /// Test whether arbitrary values got pruned from glb
+      bool glbAny(const Delta* d) const;
+      /// Return minimum value just pruned from lub
+      int lubMin(const Delta* d) const;
+      /// Return maximum value just pruned from lub
+      int lubMax(const Delta* d) const;
+      /// Test whether arbitrary values got pruned from lub
+      bool lubAny(const Delta* d) const;
       //@}
       
     };
@@ -678,6 +732,24 @@ namespace Gecode {
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
       static Support::String type(void);
+      //@}
+      
+      /// \name Delta information for advisors
+      //@{
+      /// Return modification event
+      static ModEvent modevent(const Delta* d);
+      /// Return minimum value just pruned from glb
+      int glbMin(const Delta* d) const;
+      /// Return maximum value just pruned from glb
+      int glbMax(const Delta* d) const;
+      /// Test whether arbitrary values got pruned from glb
+      bool glbAny(const Delta* d) const;
+      /// Return minimum value just pruned from lub
+      int lubMin(const Delta* d) const;
+      /// Return maximum value just pruned from lub
+      int lubMax(const Delta* d) const;
+      /// Test whether arbitrary values got pruned from lub
+      bool lubAny(const Delta* d) const;
       //@}
       
     };
@@ -861,6 +933,24 @@ namespace Gecode {
       static Support::String type(void);
       //@}
       
+      /// \name Delta information for advisors
+      //@{
+      /// Return modification event
+      static ModEvent modevent(const Delta* d);
+      /// Return minimum value just pruned from glb
+      int glbMin(const Delta* d) const;
+      /// Return maximum value just pruned from glb
+      int glbMax(const Delta* d) const;
+      /// Test whether arbitrary values got pruned from glb
+      bool glbAny(const Delta* d) const;
+      /// Return minimum value just pruned from lub
+      int lubMin(const Delta* d) const;
+      /// Return maximum value just pruned from lub
+      int lubMax(const Delta* d) const;
+      /// Test whether arbitrary values got pruned from lub
+      bool lubAny(const Delta* d) const;
+      //@}
+      
     };
 
   }
@@ -1039,6 +1129,24 @@ namespace Gecode {
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
       static Support::String type(void);
+      //@}
+      
+      /// \name Delta information for advisors
+      //@{
+      /// Return modification event
+      static ModEvent modevent(const Delta* d);
+      /// Return minimum value just pruned from glb
+      int glbMin(const Delta* d) const;
+      /// Return maximum value just pruned from glb
+      int glbMax(const Delta* d) const;
+      /// Test whether arbitrary values got pruned from glb
+      bool glbAny(const Delta* d) const;
+      /// Return minimum value just pruned from lub
+      int lubMin(const Delta* d) const;
+      /// Return maximum value just pruned from lub
+      int lubMax(const Delta* d) const;
+      /// Test whether arbitrary values got pruned from lub
+      bool lubAny(const Delta* d) const;
       //@}
       
     };
@@ -1273,6 +1381,24 @@ namespace Gecode {
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
       static Support::String type(void);
+      //@}
+      
+      /// \name Delta information for advisors
+      //@{
+      /// Return modification event
+      static ModEvent modevent(const Delta* d);
+      /// Return minimum value just pruned from glb
+      int glbMin(const Delta* d) const;
+      /// Return maximum value just pruned from glb
+      int glbMax(const Delta* d) const;
+      /// Test whether arbitrary values got pruned from glb
+      bool glbAny(const Delta* d) const;
+      /// Return minimum value just pruned from lub
+      int lubMin(const Delta* d) const;
+      /// Return maximum value just pruned from lub
+      int lubMax(const Delta* d) const;
+      /// Test whether arbitrary values got pruned from lub
+      bool lubAny(const Delta* d) const;
       //@}
       
     };

@@ -54,6 +54,45 @@
 namespace Gecode { namespace Set {
 
   /**
+   * \brief Finite set delta information for advisors
+   *
+   */
+  class SetDelta : public Delta {
+    friend class SetVarImp;
+    friend class LUBndSet;
+    friend class GLBndSet;
+  private:
+    int _glbMin; ///< Minimum glb value just pruned
+    int _glbMax; ///< Largest glb value just pruned
+    int _lubMin; ///< Minimum lub value just pruned
+    int _lubMax; ///< Largest lub value just pruned
+  public:
+    /// Create set delta as providing no information (if \a any is true)
+    SetDelta(void);
+    /// Create set delta with \a min and \a max
+    SetDelta(int glbMin, int glbMax, int lubMin, int lubMax);
+  private:
+    /// Return glb minimum
+    int glbMin(void) const;
+    /// Return glb maximum
+    int glbMax(void) const;
+    /// Return lub minimum
+    int lubMin(void) const;
+    /// Return lub maximum
+    int lubMax(void) const;
+    /// Test whether delta represents any domain change in glb
+    bool glbAny(void) const;
+    /// Test whether delta represents any domain change in lub
+    bool lubAny(void) const;
+  };
+
+}}
+
+#include "gecode/set/var/delta.icc"
+
+namespace Gecode { namespace Set {
+
+  /**
    * \brief Lists of ranges (intervals)
    *
    */
@@ -264,7 +303,7 @@ namespace Gecode { namespace Set {
   class GLBndSet : public BndSet {
   private:
     /// Include the set \f$\{i,\dots,j\}\f$ in this set
-    GECODE_SET_EXPORT bool include_full(Space* home,int,int);
+    GECODE_SET_EXPORT bool include_full(Space* home,int,int,SetDelta&);
   public:
     /// \name Constructors and initialization
     //@{
@@ -281,7 +320,7 @@ namespace Gecode { namespace Set {
     /// \name Update operations
     //@{
     /// Include the set \f$\{i,\dots,j\}\f$ in this set
-    bool include(Space* home,int i,int j);
+    bool include(Space* home,int i,int j,SetDelta& d);
     /// Include the set represented by \a i in this set
     template <class I> bool includeI(Space* home,I& i);
     //@}
@@ -299,7 +338,7 @@ namespace Gecode { namespace Set {
    */
   class LUBndSet: public BndSet{
   private:
-    GECODE_SET_EXPORT bool exclude_full(Space* home, int, int);
+    GECODE_SET_EXPORT bool exclude_full(Space* home, int, int, SetDelta&);
     GECODE_SET_EXPORT bool intersect_full(Space* home, int i, int j);
   public:
     /// \name Constructors and initialization
@@ -319,7 +358,7 @@ namespace Gecode { namespace Set {
     /// \name Update operations
     //@{
     /// Exclude the set \f$\{i,\dots,j\}\f$ from this set
-    bool exclude(Space* home, int i, int j);
+    bool exclude(Space* home, int i, int j, SetDelta& d);
     /// Intersect this set with the set \f$\{i,\dots,j\}\f$
     bool intersect(Space* home, int i, int j);
     /// Exclude all elements not in the set represented by \a i from this set
@@ -500,14 +539,6 @@ namespace Gecode { namespace Set {
   protected:
     /// Constructor for cloning \a x
     SetVarImp(Space* home, bool share, SetVarImp& x);
-    /*
-     * FIXME: JUST A HACK FOR MISSING ADVISORS
-     */
-    forceinline
-    void notify(Space* home, ModEvent me) {
-      Delta d;
-      (void) SetVarImpBase::notify(home,me,&d);
-    }
   public:
     /// \name Constructors and initialization
     //@{
@@ -601,8 +632,8 @@ namespace Gecode { namespace Set {
     template <class I> ModEvent intersectI_full(Space* home,int mi, int ma, I& i);
     //@}
 
-    GECODE_SET_EXPORT ModEvent processLubChange(Space* home);
-    GECODE_SET_EXPORT ModEvent processGlbChange(Space* home);
+    GECODE_SET_EXPORT ModEvent processLubChange(Space* home, SetDelta& d);
+    GECODE_SET_EXPORT ModEvent processGlbChange(Space* home, SetDelta& d);
 
     /// \name Cardinality update implementation
     //@{
@@ -678,6 +709,24 @@ namespace Gecode { namespace Set {
     //@{
     GECODE_SET_EXPORT Reflection::Arg*
     spec(Space* home, Reflection::VarMap& m);
+    //@}
+
+    /// \name Delta information for advisors
+    //@{
+    /// Return modification event
+    static ModEvent modevent(const Delta* d);
+    /// Return minimum value just pruned from glb
+    int glbMin(const Delta* d) const;
+    /// Return maximum value just pruned from glb
+    int glbMax(const Delta* d) const;
+    /// Test whether arbitrary values got pruned from glb
+    bool glbAny(const Delta* d) const;
+    /// Return minimum value just pruned from lub
+    int lubMin(const Delta* d) const;
+    /// Return maximum value just pruned from lub
+    int lubMax(const Delta* d) const;
+    /// Test whether arbitrary values got pruned from lub
+    bool lubAny(const Delta* d) const;
     //@}
 
   };

@@ -406,16 +406,18 @@ namespace Gecode { namespace Set {
   GLBndSet::init(Space* home) { fst(NULL); lst(NULL); _size = 0; }
 
   forceinline bool
-  GLBndSet::include(Space* home, int mi, int ma) {
+  GLBndSet::include(Space* home, int mi, int ma, SetDelta& d) {
     assert(ma >= mi);
     if (fst()==NULL) {
       RangeList* p = new (home) RangeList(mi,ma,NULL,NULL);
       fst(p);
       lst(p);
       _size=ma-mi+1;
+      d._glbMin = mi;
+      d._glbMax = ma;
       return true;
     }
-    bool ret = include_full(home, mi, ma);
+    bool ret = include_full(home, mi, ma, d);
     assert(isConsistent());
     return ret;
   }
@@ -464,15 +466,17 @@ namespace Gecode { namespace Set {
   }
 
   forceinline bool
-  LUBndSet::exclude(Space* home, int mi, int ma) {
+  LUBndSet::exclude(Space* home, int mi, int ma, SetDelta& d) {
     assert(ma >= mi);
     if ((mi > max()) || (ma < min())) { return false; }
     if (mi <= min() && ma >= max() ) { //the range covers the whole set
+      d._lubMin = min();
+      d._lubMax = max();
       fst()->dispose(home,NULL,lst()); fst(NULL); lst(NULL);
       _size=0;
       return true;
     }
-    bool ret =  exclude_full(home, mi, ma);
+    bool ret =  exclude_full(home, mi, ma, d);
     assert(isConsistent());
     return ret;
   }

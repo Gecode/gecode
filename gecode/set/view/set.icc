@@ -180,6 +180,33 @@ namespace Gecode { namespace Set {
     return Support::String("Set::SetView");
   }
 
+  /*
+   * Delta information for advisors
+   *
+   */
+
+  forceinline ModEvent
+  SetView::modevent(const Delta* d) { return SetVarImp::modevent(d); }
+  
+  forceinline int
+  SetView::glbMin(const Delta* d) const { return var->glbMin(d); }
+
+  forceinline int
+  SetView::glbMax(const Delta* d) const { return var->glbMax(d); }
+
+  forceinline bool
+  SetView::glbAny(const Delta* d) const { return var->glbAny(d); }
+
+  forceinline int
+  SetView::lubMin(const Delta* d) const { return var->lubMin(d); }
+
+  forceinline int
+  SetView::lubMax(const Delta* d) const { return var->lubMax(d); }
+
+  forceinline bool
+  SetView::lubAny(const Delta* d) const { return var->lubAny(d); }
+
+
   /**
    * \brief %Range iterator for least upper bound of set variable views
    * \ingroup TaskActorSetView
