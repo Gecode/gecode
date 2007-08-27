@@ -36,39 +36,47 @@
  */
 
 #include "test/int.hh"
+
 #include "gecode/minimodel.hh"
 
-namespace {
+namespace Test { namespace Int { namespace Channel {
 
-  IntSet ds_12(-1,2);
-  IntSet ds_03(0,3);
-  IntSet ds_05(0,5);
-
+  /**
+   * \defgroup TaskTestIntChannel Channel constraints
+   * \ingroup TaskTestInt
+   */
+  //@{
+  /// Simple test for channel (testing all variables)
   class ChannelFull : public IntTest {
   public:
-    ChannelFull(const char* t, IntConLevel icl)
-      : IntTest(t,8,ds_03,false,icl) {}
+    /// Construct and register test
+    ChannelFull(const char* t, Gecode::IntConLevel icl)
+      : IntTest(t,8,0,3,false,icl) {}
+    /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<4; i++)
         if (x[4+x[i]] != i)
           return false;
       return true;
     }
-    virtual void post(Space* home, IntVarArray& x) {
-      IntVarArgs xa(4);
-      IntVarArgs ya(4);
+    /// Post channel constraint
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      IntVarArgs xa(4); IntVarArgs ya(4);
       for (int i=4; i--; ) {
-        xa[i] = x[i];
-        ya[i] = x[4+i];
+        xa[i] = x[i]; ya[i] = x[4+i];
       }
       channel(home, xa, ya, icl);
     }
   };
   
+  /// Simple test for channel (testing single set of variables)
   class ChannelHalf : public IntTest {
   public:
-    ChannelHalf(const char* t, IntConLevel icl)
-      : IntTest(t,6,ds_05,false,icl) {}
+    /// Construct and register test
+    ChannelHalf(const char* t, Gecode::IntConLevel icl)
+      : IntTest(t,6,0,5,false,icl) {}
+    /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<6; i++)
         for (int j=i+1; j<6; j++)
@@ -76,60 +84,75 @@ namespace {
             return false;
       return true;
     }
-    virtual void post(Space* home, IntVarArray& x) {
-      IntVarArray y(home,6,dom);
+    /// Post channel constraint
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      Gecode::IntVarArray y(home,6,dom);
       for (int i=0; i<6; i++) {
         for (int j=0; j<6; j++) {
-          BoolVar b(home,0,1);
-          rel(home, x[i], IRT_EQ, j, b);
-          rel(home, y[j], IRT_EQ, i, b);
+          Gecode::BoolVar b(home,0,1);
+          rel(home, x[i], Gecode::IRT_EQ, j, b);
+          rel(home, y[j], Gecode::IRT_EQ, i, b);
         }
       }
       channel(home, x, y, icl);
     }
   };
   
+  /// Test channel with shared variables
   class ChannelShared : public IntTest {
   public:
-    ChannelShared(const char* t, IntConLevel icl)
-      : IntTest(t,6,ds_05,false,icl) {
+    /// Construct and register test
+    ChannelShared(const char* t, Gecode::IntConLevel icl)
+      : IntTest(t,6,0,5,false,icl) {
       testdomcon = false;
     }
+    /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<6; i++)
         if (x[x[i]] != i)
           return false;
       return true;
     }
-    virtual void post(Space* home, IntVarArray& x) {
+    /// Post channel constraint
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
       channel(home, x, x, icl);
     }
   };
   
+  /// Test channel between integer and Boolean variable
   class ChannelLinkSingle : public IntTest {
   public:
+    /// Construct and register test
     ChannelLinkSingle(void)
-      : IntTest("Channel::Bool::Single",2,ds_12,false,ICL_DEF) {
+      : IntTest("Channel::Bool::Single",2,-1,2) {
       testdomcon = false;
     }
+    /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return ((x[0]==0) || (x[0]==1)) && (x[0]==x[1]);
     }
-    virtual void post(Space* home, IntVarArray& x) {
-      BoolVar b(home,0,1);
+    /// Post channel constraint
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      Gecode::BoolVar b(home,0,1);
       channel(home, x[0], b);
       channel(home, x[1], b);
     }
   };
   
+  /// Test channel between integer variable and array of Boolean variables
   class ChannelLinkMulti : public IntTest {
   private:
     int o;
   public:
-    ChannelLinkMulti(const char* t, IntSet& ds, int o0)
-      : IntTest(t,7,ds,false,ICL_DEF), o(o0) {
+    /// Construct and register test
+    ChannelLinkMulti(const char* t, int min, int max, int o0)
+      : IntTest(t,7,min,max), o(o0) {
       testdomcon = false;
     }
+    /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       int n = x.size()-1;
       for (int i=n; i--; )
@@ -146,34 +169,36 @@ namespace {
           return false;
       return x[k] == 1;
     }
-    virtual void post(Space* home, IntVarArray& x) {
+    /// Post channel constraint
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
       int n=x.size()-1;
-      BoolVarArgs b(n);
+      Gecode::BoolVarArgs b(n);
       for (int i=n; i--; )
         b[i]=channel(home,x[i]);
       channel(home, b, x[n], o);
     }
   };
   
-  ChannelFull cfd("Channel::Int::Full::Dom",ICL_DOM);
-  ChannelFull cfv("Channel::Int::Full::Val",ICL_VAL);
 
-  ChannelHalf chd("Channel::Int::Half::Dom",ICL_DOM);
-  ChannelHalf chv("Channel::Int::Half::Val",ICL_VAL);
 
-  ChannelShared csd("Channel::Int::Shared::Dom",ICL_DOM);
-  ChannelShared csv("Channel::Int::Shared::Val",ICL_VAL);
+  ChannelFull cfd("Channel::Int::Full::Dom",Gecode::ICL_DOM);
+  ChannelFull cfv("Channel::Int::Full::Val",Gecode::ICL_VAL);
+
+  ChannelHalf chd("Channel::Int::Half::Dom",Gecode::ICL_DOM);
+  ChannelHalf chv("Channel::Int::Half::Val",Gecode::ICL_VAL);
+
+  ChannelShared csd("Channel::Int::Shared::Dom",Gecode::ICL_DOM);
+  ChannelShared csv("Channel::Int::Shared::Val",Gecode::ICL_VAL);
 
   ChannelLinkSingle cls;
 
-  IntSet dlm_05(0,5);
-  IntSet dlm_16(1,6);
-  IntSet dlm_14(-1,4);
-  ChannelLinkMulti clma("Channel::Bool::Multi::A",dlm_05, 0);
-  ChannelLinkMulti clmb("Channel::Bool::Multi::B",dlm_16, 1);
-  ChannelLinkMulti clmc("Channel::Bool::Multi::C",dlm_14,-1);
+  ChannelLinkMulti clma("Channel::Bool::Multi::A", 0, 5, 0);
+  ChannelLinkMulti clmb("Channel::Bool::Multi::B", 1, 6, 1);
+  ChannelLinkMulti clmc("Channel::Bool::Multi::C",-1, 4,-1);
+  //@}
 
-}
+}}}
 
 // STATISTICS: test-int
 

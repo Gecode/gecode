@@ -52,8 +52,6 @@
 #include <iostream>
 #include <sstream>
 
-using namespace Gecode;
-
 /**
  * \defgroup TaskTestTest General test support
  *
@@ -95,7 +93,7 @@ private:
   static TestBase* all;
 public:
   /// Return number between 0..m-1
-  static Support::RandomGenerator randgen;
+  static Gecode::Support::RandomGenerator randgen;
 
   TestBase(const char* module, const char* test)
     : m(module), t(test) {

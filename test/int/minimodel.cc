@@ -36,10 +36,12 @@
  */
 
 #include "test/int.hh"
-#include "test/log.hh"
+
 #include "gecode/minimodel.hh"
 
-static IntSet is(-2,2);
+using namespace Gecode;
+
+static Gecode::IntSet is(-2,2);
 
 class MmLinEqA : public IntTest {
 public:
@@ -48,10 +50,10 @@ public:
   virtual bool solution(const Assignment& x) const {
     return (2*x[0]+1) == (x[1]-1);
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     Gecode::post(home, 2*x[0]+1 == x[1]-1);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
     Gecode::post(home, tt(eqv(2*x[0]+1 == x[1]-1,b)));
   }
 };
@@ -64,10 +66,10 @@ public:
   virtual bool solution(const Assignment& x) const {
     return (2*x[0]+1) == (x[1]-1);
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     Gecode::post(home, 2*x[0]+1-x[1] == -1);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
     Gecode::post(home, tt(eqv(2*x[0]+1-x[1] == -1,b)));
   }
 };
@@ -80,10 +82,10 @@ public:
   virtual bool solution(const Assignment& x) const {
     return -(1-(1-x[1])) == x[0];
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     Gecode::post(home, -(1-(1-x[1])) == x[0]);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
     Gecode::post(home, tt(eqv(-(1-(1-x[1])) == x[0],b)));
   }
 };
@@ -96,10 +98,10 @@ public:
   virtual bool solution(const Assignment& x) const {
     return 2*(1-x[1]) == x[0];
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     Gecode::post(home, 2*(1-x[1]) == x[0]);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
     Gecode::post(home, tt(eqv(2*(1-x[1]) == x[0],b)));
   }
 };
@@ -112,10 +114,10 @@ public:
   virtual bool solution(const Assignment& x) const {
     return 1>x[0];
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     Gecode::post(home, 1>x[0]);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
     Gecode::post(home, tt(eqv(1>x[0],b)));
   }
 };
@@ -128,10 +130,10 @@ public:
   virtual bool solution(const Assignment& x) const {
     return 1<x[0];
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     Gecode::post(home, 1<x[0]);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
     Gecode::post(home, tt(eqv(1<x[0],b)));
   }
 };
@@ -144,10 +146,10 @@ public:
   virtual bool solution(const Assignment& x) const {
     return -1==x[0];
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     Gecode::post(home, -1==x[0]);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
     Gecode::post(home, tt(eqv(-1==x[0],b)));
   }
 };
@@ -163,8 +165,8 @@ public:
         return false;
     return (2*x[0]+1) == (x[1]+x[2]-1);
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    BoolVarArray y(home,x.size());
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    Gecode::BoolVarArray y(home,x.size());
     for (int i=x.size(); i--; )
       y[i] = channel(home,x[i]);
     Gecode::post(home, 2*y[0]+1 == y[1]+y[2]-1);
@@ -179,9 +181,9 @@ public:
   virtual bool solution(const Assignment& x) const {
     return 2*x[0]+3*x[1]-x[2] == x[3];
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVar y = Gecode::post(home, 2*x[0] + 3*x[1] - x[2]);
-    Gecode::rel(home,y,IRT_EQ,x[3]);
+    Gecode::rel(home,y,Gecode::IRT_EQ,x[3]);
   }
 };
 MmLinExprInt _mmlinexprint;
@@ -196,17 +198,17 @@ public:
         return false;
     return -2*x[0]+3*x[1]-x[2] == x[3];
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    BoolVarArray y(home,x.size()-1);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    Gecode::BoolVarArray y(home,x.size()-1);
     for (int i=x.size()-1; i--; )
       y[i] = channel(home,x[i]);
     IntVar z = Gecode::post(home, -2*y[0] + 3*y[1] - y[2]);
-    Gecode::rel(home,z,IRT_EQ,x[3]);
+    Gecode::rel(home,z,Gecode::IRT_EQ,x[3]);
   }
 };
 MmLinExprBool _mmlinexprbool;
 
-static IntSet b(0,1);
+static Gecode::IntSet b(0,1);
 
 class MmBoolA : public IntTest {
 public:
@@ -218,8 +220,8 @@ public:
         return false;
     return ((x[0]==1) && (x[1]==1)) || ((x[2]==1)!=(x[3]==1));
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    BoolVarArgs b(4);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    Gecode::BoolVarArgs b(4);
     for (int i=x.size(); i--; )
       b[i]=channel(home,x[i]);
     Gecode::post(home, tt((b[0] && b[1]) || !eqv(b[2],b[3])));
@@ -237,8 +239,8 @@ public:
         return false;
     return ((x[0]==1) && (x[1]==1)) && ((x[2]==1) && (x[3]==1));
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    BoolVarArgs b(4);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    Gecode::BoolVarArgs b(4);
     for (int i=x.size(); i--; )
       b[i]=channel(home,x[i]);
     Gecode::post(home, tt((b[0] && b[1]) && (b[2] && b[3])));
@@ -256,8 +258,8 @@ public:
         return false;
     return ((x[0]==1) && (x[1]==1)) && ((x[2]==1) && (x[3]==1));
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    BoolVarArgs b(4);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    Gecode::BoolVarArgs b(4);
     for (int i=x.size(); i--; )
       b[i]=channel(home,x[i]);
     Gecode::post(home, tt(!!(b[0] && b[1]) && !(!b[2] || !b[3])));
@@ -275,8 +277,8 @@ public:
         return false;
     return (((x[0]&x[1])==x[2]) && (x[0]==x[3]));
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    BoolVarArgs b(4);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    Gecode::BoolVarArgs b(4);
     for (int i=x.size(); i--; )
       b[i]=channel(home,x[i]);
     Gecode::post(home, tt(eqv(b[0] && b[1], b[2]) && eqv(b[0],b[3])));
@@ -294,8 +296,8 @@ public:
         return false;
     return !(((x[0]==1) && (x[1]==1)) && ((x[2]==1) && (x[3]==1)));
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    BoolVarArgs b(4);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    Gecode::BoolVarArgs b(4);
     for (int i=x.size(); i--; )
       b[i]=channel(home,x[i]);
     Gecode::post(home, ff(b[0] && b[1] && b[2] && b[3]));
@@ -313,8 +315,8 @@ public:
         return false;
     return ((x[0]==1) || (x[1]==1)) || ((x[2]==1) || (x[3]==1));
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    BoolVarArgs b(4);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    Gecode::BoolVarArgs b(4);
     for (int i=x.size(); i--; )
       b[i]=channel(home,x[i]);
     Gecode::post(home, tt(b[0] || b[1] || b[2] || b[3]));
@@ -334,15 +336,15 @@ namespace {
     -4,-2,-1,0,1,2,4,
     static_cast<int>(sqrt(static_cast<double>(Limits::Int::int_max)))
   };
-  IntSet s1(s1r,7);
-  IntSet s2(s2r,9);
-  IntSet s3(-8,8);
-  IntSet s4(-3,3);
+  Gecode::IntSet s1(s1r,7);
+  Gecode::IntSet s2(s2r,9);
+  Gecode::IntSet s3(-8,8);
+  Gecode::IntSet s4(-3,3);
 }
 
 class Mult : public IntTest {
 public:
-  Mult(const char* t, const IntSet& is)
+  Mult(const char* t, const Gecode::IntSet& is)
     : IntTest(t,3,is) {}
   virtual bool solution(const Assignment& x) const {
     double d0 = static_cast<double>(x[0]);
@@ -350,9 +352,9 @@ public:
     double d2 = static_cast<double>(x[2]);
     return d0*d1 == d2;
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVar y = mult(home, x[0], x[1]);
-    rel(home, y, IRT_EQ, x[2], ICL_DOM);
+    rel(home, y, Gecode::IRT_EQ, x[2], Gecode::ICL_DOM);
   }
 };
 namespace {
@@ -363,16 +365,16 @@ namespace {
 
 class Square : public IntTest {
 public:
-  Square(const char* t, const IntSet& is)
+  Square(const char* t, const Gecode::IntSet& is)
     : IntTest(t,2,is) {}
   virtual bool solution(const Assignment& x) const {
     double d0 = static_cast<double>(x[0]);
     double d1 = static_cast<double>(x[1]);
     return d0*d0 == d1;
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVar y = sqr(home, x[0]);
-    rel(home, y, IRT_EQ, x[1], ICL_DOM);
+    rel(home, y, Gecode::IRT_EQ, x[1], Gecode::ICL_DOM);
   }
 };
 namespace {
@@ -383,37 +385,37 @@ namespace {
 
 class Abs : public IntTest {
 public:
-  Abs(const char* t, IntConLevel icl, const IntSet& is)
+  Abs(const char* t, Gecode::IntConLevel icl, const Gecode::IntSet& is)
     : IntTest(t,2,is,false,icl) {}
   virtual bool solution(const Assignment& x) const {
     double d0 = static_cast<double>(x[0]);
     double d1 = static_cast<double>(x[1]);
     return (d0<0 ? -d0 : d0) == d1;
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVar y = abs(home, x[0], icl);
-    rel(home, y, IRT_EQ, x[1], ICL_DOM);
+    rel(home, y, Gecode::IRT_EQ, x[1], Gecode::ICL_DOM);
   }
 };
 namespace {
-  Abs _mmabsbndmax("MiniModel::Abs::Bnd::A",ICL_BND,s1);
-  Abs _mmabsbndmed("MiniModel::Abs::Bnd::B",ICL_BND,s2);
-  Abs _mmabsbndmin("MiniModel::Abs::Bnd::C",ICL_BND,s3);
-  Abs _mmabsdommax("MiniModel::Abs::Dom::A",ICL_DOM,s1);
-  Abs _mmabsdommed("MiniModel::Abs::Dom::B",ICL_DOM,s2);
-  Abs _mmabsdommin("MiniModel::Abs::Dom::C",ICL_DOM,s3);
+  Abs _mmabsbndmax("MiniModel::Abs::Bnd::A",Gecode::ICL_BND,s1);
+  Abs _mmabsbndmed("MiniModel::Abs::Bnd::B",Gecode::ICL_BND,s2);
+  Abs _mmabsbndmin("MiniModel::Abs::Bnd::C",Gecode::ICL_BND,s3);
+  Abs _mmabsdommax("MiniModel::Abs::Dom::A",Gecode::ICL_DOM,s1);
+  Abs _mmabsdommed("MiniModel::Abs::Dom::B",Gecode::ICL_DOM,s2);
+  Abs _mmabsdommin("MiniModel::Abs::Dom::C",Gecode::ICL_DOM,s3);
 }
 
 class Min : public IntTest {
 public:
-  Min(const char* t, const IntSet& is)
+  Min(const char* t, const Gecode::IntSet& is)
     : IntTest(t,3,is) {}
   virtual bool solution(const Assignment& x) const {
     return std::min(x[0],x[1]) == x[2];
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVar y = min(home, x[0], x[1]);
-    rel(home, y, IRT_EQ, x[2], ICL_DOM);
+    rel(home, y, Gecode::IRT_EQ, x[2], Gecode::ICL_DOM);
   }
 };
 namespace {
@@ -424,14 +426,14 @@ namespace {
 
 class Max : public IntTest {
 public:
-  Max(const char* t, const IntSet& is)
+  Max(const char* t, const Gecode::IntSet& is)
     : IntTest(t,3,is) {}
   virtual bool solution(const Assignment& x) const {
     return std::max(x[0],x[1]) == x[2];
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVar y = max(home, x[0], x[1]);
-    rel(home, y, IRT_EQ, x[2], ICL_DOM);
+    rel(home, y, Gecode::IRT_EQ, x[2], Gecode::ICL_DOM);
   }
 };
 namespace {
@@ -442,17 +444,17 @@ namespace {
 
 class MinNary : public IntTest {
 public:
-  MinNary(const char* t, const IntSet& is)
+  MinNary(const char* t, const Gecode::IntSet& is)
     : IntTest(t,4,is) {}
   virtual bool solution(const Assignment& x) const {
     return std::min(std::min(x[0],x[1]),
                     x[2]) == x[3];
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs m(3);
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     IntVar y = min(home, m);
-    rel(home, y, IRT_EQ, x[3], ICL_DOM);
+    rel(home, y, Gecode::IRT_EQ, x[3], Gecode::ICL_DOM);
   }
 };
 namespace {
@@ -461,17 +463,17 @@ namespace {
 
 class MaxNary : public IntTest {
 public:
-  MaxNary(const char* t, const IntSet& is)
+  MaxNary(const char* t, const Gecode::IntSet& is)
     : IntTest(t,4,is) {}
   virtual bool solution(const Assignment& x) const {
     return std::max(std::max(x[0],x[1]),
                     x[2]) == x[3];
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs m(3);
     m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
     IntVar y = max(home, m);
-    rel(home, y, IRT_EQ, x[3], ICL_DOM);
+    rel(home, y, Gecode::IRT_EQ, x[3], Gecode::ICL_DOM);
   }
 };
 namespace {

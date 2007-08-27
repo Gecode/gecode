@@ -37,27 +37,31 @@
 
 #include "test/int.hh"
 
-namespace {
+namespace Test { namespace Int { namespace Basic {
 
-  IntSet s(-3,3);
-
-  /// Test whether testing infrastruture works
+  /**
+   * \defgroup TaskTestIntBasic Basic setup
+   * \ingroup TaskTestInt
+   */
+  //@{
+  /// Test whether testing infrastructure for integer variables works
   class Basic : public IntTest {
   public:
     /// Initialize test
     Basic(void)
-      : IntTest("Basic",3,s) {}
+      : IntTest("Basic",3,-3,3) {}
     /// Check whether \a x is a solution
-    virtual bool solution(const Assignment& x) const {
+    virtual bool solution(const Assignment&) const {
       return true;
     }
     /// Post constraints
-    virtual void post(Space* home, IntVarArray& x) {
+    virtual void post(Gecode::Space*, Gecode::IntVarArray&) {
     }
   };
 
   Basic b;
+  //@}
 
-}
+}}}
 
 // STATISTICS: test-int

@@ -39,10 +39,10 @@
 #include "test/log.hh"
 #include "gecode/support/sort.hh"
 
-static IntSet ds_12(1,2);
-static IntSet ds_13(1,3);
-static IntSet ds_14(1,4);
-static IntSet ds_03(0,3);
+static Gecode::IntSet ds_12(1,2);
+static Gecode::IntSet ds_13(1,3);
+static Gecode::IntSet ds_14(1,4);
+static Gecode::IntSet ds_03(0,3);
 
 /*
 
@@ -63,7 +63,7 @@ public:
   SortPermAssignment(int xlow, int xup,
                      int plow, int pup,
                      int xs,
-                     int n0, const IntSet& d0)
+                     int n0, const Gecode::IntSet& d0)
     : Assignment(n0, d0),
       problow(xlow), probup(xup),
       permlow(plow), permup(pup),
@@ -72,8 +72,8 @@ public:
   }
   void reset(void) {
     done = false;
-    IntSet perm_dom(permlow, permup);
-    IntSet var_dom(problow, probup);
+    Gecode::IntSet perm_dom(permlow, permup);
+    Gecode::IntSet var_dom(problow, probup);
     for (int i = 2*xsize; i < n; i++) {
       dsv[i].init(perm_dom);
     }
@@ -81,8 +81,8 @@ public:
       dsv[i].init(var_dom);
   }
   void operator++(void) {
-    IntSet perm_dom(permlow, permup);
-    IntSet var_dom(problow, probup);
+    Gecode::IntSet perm_dom(permlow, permup);
+    Gecode::IntSet var_dom(problow, probup);
     int i = n-1;
     while (true) {
       ++dsv[i];
@@ -105,12 +105,12 @@ public:
 
 class Sortedness_NoVar : public IntTest {
 private:
-  IntConLevel icl;
+  Gecode::IntConLevel icl;
   static const int xs = 6;
   static const int ve = xs /2;
 
 public:
-  Sortedness_NoVar(const char* t, IntConLevel icl0)
+  Sortedness_NoVar(const char* t, Gecode::IntConLevel icl0)
     : IntTest(t, xs, ds_13), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     int sortx[ve];
@@ -149,7 +149,7 @@ public:
     // std::cout << "valid\n";
     return true;
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs z(ve);
     for (int i = 0; i < ve; i++) {
       z[i] = x[i];
@@ -167,7 +167,7 @@ public:
 
 class Sortedness_PermVar : public IntTest {
 private:
-  IntConLevel icl;
+  Gecode::IntConLevel icl;
   static const int xs = 9;
   static const int ve1 = xs / 3;
   static const int ve2 = 2 * ve1;
@@ -179,7 +179,7 @@ private:
   static const int xsize = 3;
 
 public:
-  Sortedness_PermVar(const char* t, IntConLevel icl0)
+  Sortedness_PermVar(const char* t, Gecode::IntConLevel icl0)
     : IntTest(t, xs, ds_03), icl(icl0) {}
   virtual Assignment* assignment(void) const {
     return new SortPermAssignment(1,3,0,2,3,9,dom);
@@ -256,7 +256,7 @@ public:
 //     std::cout << "valid\n";
     return true;
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs z(ve1);
     for (int i = 0; i < ve1; i++) {
       z[i] = x[i];
@@ -273,17 +273,17 @@ public:
     }
 
     for (int i = 0; i < ve1; i++) {
-      rel(home, z[i], IRT_GQ, 1);
-      rel(home, y[i], IRT_GQ, 1);
-      rel(home, p[i], IRT_LQ, 2);
+      rel(home, z[i], Gecode::IRT_GQ, 1);
+      rel(home, y[i], Gecode::IRT_GQ, 1);
+      rel(home, p[i], Gecode::IRT_LQ, 2);
     }
     sortedness(home, z, y, p, icl);
   }
 };
 
 
-Sortedness_NoVar  _sort_novar("Sortedness::NoPermutationVariables::Bnd",ICL_BND);
-Sortedness_PermVar  _sort_permvar("Sortedness::WithPermutationVariables::Bnd",ICL_BND);
+Sortedness_NoVar  _sort_novar("Sortedness::NoPermutationVariables::Bnd",Gecode::ICL_BND);
+Sortedness_PermVar  _sort_permvar("Sortedness::WithPermutationVariables::Bnd",Gecode::ICL_BND);
 
 */
 

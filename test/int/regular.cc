@@ -41,54 +41,51 @@
 
 namespace {
 
-  IntSet ds_01(0,1);
-  IntSet ds_22(-2,2);
-  IntSet ds_14(-1,4);
-
-  class RegularA : public IntTest {
+  class SimpleA : public IntTest {
   public:
-    RegularA(void)
-      : IntTest("Regular::Simple::A",4,ds_22,false,ICL_DOM) {}
+    SimpleA(void)
+      : IntTest("Regular::Simple::A",4,2,2) {}
     virtual bool solution(const Assignment& x) const {
       return (((x[0] == 0) || (x[0] == 2)) &&
               ((x[1] == -1) || (x[1] == 1)) &&
               ((x[2] == 0) || (x[2] == 1)) &&
               ((x[3] == 0) || (x[3] == 1)));
     }
-    virtual void post(Space* home, IntVarArray& x) {
-      DFA da = ((REG(0) | REG(2)) +
-                (REG(-1) | REG(1)) +
-                (REG(7) | REG(0) | REG(1)) +
-                (REG(0) | REG(1)));
-      regular(home, x, da);
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      regular(home, x,
+              (REG(0) | REG(2)) +
+              (REG(-1) | REG(1)) +
+              (REG(7) | REG(0) | REG(1)) +
+              (REG(0) | REG(1)));
     }
   };
   
-  RegularA ra;
 
-  class RegularB : public IntTest {
+
+
+  class SimpleB : public IntTest {
   public:
-    RegularB(void)
-      : IntTest("Regular::Simple::B",4,ds_22,false,ICL_DOM) {}
+    SimpleB(void)
+      : IntTest("Regular::Simple::B",4,2,2) {}
     virtual bool solution(const Assignment& x) const {
       return (x[0]<x[1]) && (x[1]<x[2]) && (x[2]<x[3]);
     }
-    virtual void post(Space* home, IntVarArray& x) {
-      DFA db = ((REG(-2) + REG(-1) + REG(0) + REG(1)) |
-                (REG(-2) + REG(-1) + REG(0) + REG(2)) |
-                (REG(-2) + REG(-1) + REG(1) + REG(2)) |
-                (REG(-2) + REG(0) + REG(1) + REG(2)) |
-                (REG(-1) + REG(0) + REG(1) + REG(2)));
-      regular(home, x, db);
-    }
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      regular(home, x,
+              (REG(-2) + REG(-1) + REG(0) + REG(1)) |
+              (REG(-2) + REG(-1) + REG(0) + REG(2)) |
+              (REG(-2) + REG(-1) + REG(1) + REG(2)) |
+              (REG(-2) + REG(0) + REG(1) + REG(2)) |
+              (REG(-1) + REG(0) + REG(1) + REG(2)));
+      }
   };
   
-  RegularB rb;
-
-  class RegularDistinct : public IntTest {
+  class Distinct : public IntTest {
   public:
-    RegularDistinct(void)
-      : IntTest("Regular::Distinct",4,ds_14,false,ICL_DOM) {}
+    Distinct(void)
+      : IntTest("Regular::Distinct",4,-1,4) {}
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<x.size(); i++) {
         if ((x[i] < 0) || (x[i] > 3))
@@ -99,124 +96,129 @@ namespace {
       }
       return true;
     }
-    virtual void post(Space* home, IntVarArray& x) {
-      DFA dd = ((REG(0)+REG(1)+REG(2)+REG(3)) |
-                (REG(0)+REG(1)+REG(3)+REG(2)) |
-                (REG(0)+REG(2)+REG(1)+REG(3)) |
-                (REG(0)+REG(2)+REG(3)+REG(1)) |
-                (REG(0)+REG(3)+REG(1)+REG(2)) |
-                (REG(0)+REG(3)+REG(2)+REG(1)) |
-                (REG(1)+REG(0)+REG(2)+REG(3)) |
-                (REG(1)+REG(0)+REG(3)+REG(2)) |
-                (REG(1)+REG(2)+REG(0)+REG(3)) |
-                (REG(1)+REG(2)+REG(3)+REG(0)) |
-                (REG(1)+REG(3)+REG(0)+REG(2)) |
-                (REG(1)+REG(3)+REG(2)+REG(0)) |
-                (REG(2)+REG(0)+REG(1)+REG(3)) |
-                (REG(2)+REG(0)+REG(3)+REG(1)) |
-                (REG(2)+REG(1)+REG(0)+REG(3)) |
-                (REG(2)+REG(1)+REG(3)+REG(0)) |
-                (REG(2)+REG(3)+REG(0)+REG(1)) |
-                (REG(2)+REG(3)+REG(1)+REG(0)) |
-                (REG(3)+REG(0)+REG(1)+REG(2)) |
-                (REG(3)+REG(0)+REG(2)+REG(1)) |
-                (REG(3)+REG(1)+REG(0)+REG(2)) |
-                (REG(3)+REG(1)+REG(2)+REG(0)) |
-                (REG(3)+REG(2)+REG(0)+REG(1)) |
-                (REG(3)+REG(2)+REG(1)+REG(0)));
-      regular(home, x, dd);
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      regular(home, x,
+              (REG(0)+REG(1)+REG(2)+REG(3)) |
+              (REG(0)+REG(1)+REG(3)+REG(2)) |
+              (REG(0)+REG(2)+REG(1)+REG(3)) |
+              (REG(0)+REG(2)+REG(3)+REG(1)) |
+              (REG(0)+REG(3)+REG(1)+REG(2)) |
+              (REG(0)+REG(3)+REG(2)+REG(1)) |
+              (REG(1)+REG(0)+REG(2)+REG(3)) |
+              (REG(1)+REG(0)+REG(3)+REG(2)) |
+              (REG(1)+REG(2)+REG(0)+REG(3)) |
+              (REG(1)+REG(2)+REG(3)+REG(0)) |
+              (REG(1)+REG(3)+REG(0)+REG(2)) |
+              (REG(1)+REG(3)+REG(2)+REG(0)) |
+              (REG(2)+REG(0)+REG(1)+REG(3)) |
+              (REG(2)+REG(0)+REG(3)+REG(1)) |
+              (REG(2)+REG(1)+REG(0)+REG(3)) |
+              (REG(2)+REG(1)+REG(3)+REG(0)) |
+              (REG(2)+REG(3)+REG(0)+REG(1)) |
+              (REG(2)+REG(3)+REG(1)+REG(0)) |
+              (REG(3)+REG(0)+REG(1)+REG(2)) |
+              (REG(3)+REG(0)+REG(2)+REG(1)) |
+              (REG(3)+REG(1)+REG(0)+REG(2)) |
+              (REG(3)+REG(1)+REG(2)+REG(0)) |
+              (REG(3)+REG(2)+REG(0)+REG(1)) |
+              (REG(3)+REG(2)+REG(1)+REG(0)));
     }
   };
   
-  RegularDistinct rd;
-
-  class RegularSharedA : public IntTest {
+  class SharedA : public IntTest {
   public:
-    RegularSharedA(void)
-      : IntTest("Regular::Shared::A",4,ds_22,false,ICL_DOM) {}
+    SharedA(void)
+      : IntTest("Regular::Shared::A",4,2,2) {}
     virtual bool solution(const Assignment& x) const {
       return (((x[0] == 0) || (x[0] == 2)) &&
               ((x[1] == -1) || (x[1] == 1)) &&
               ((x[2] == 0) || (x[2] == 1)) &&
               ((x[3] == 0) || (x[3] == 1)));
     }
-    virtual void post(Space* home, IntVarArray& x) {
-      DFA da = ((REG(0) | REG(2)) +
-                (REG(-1) | REG(1)) +
-                (REG(7) | REG(0) | REG(1)) +
-                (REG(0) | REG(1)))(2,2);
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
       IntVarArgs y(8);
       for (int i=0; i<4; i++)
         y[i]=y[i+4]=x[i];
       unshare(home,y);
-      regular(home, y, da);
+      regular(home, y,
+              ((REG(0) | REG(2)) +
+               (REG(-1) | REG(1)) +
+               (REG(7) | REG(0) | REG(1)) +
+               (REG(0) | REG(1)))(2,2));
     }
   };
 
-  RegularSharedA rsa;
-
-  class RegularSharedB : public IntTest {
+  class SharedB : public IntTest {
   public:
-    RegularSharedB(void)
-      : IntTest("Regular::Shared::B",4,ds_22,false,ICL_DOM) {}
+    SharedB(void)
+      : IntTest("Regular::Shared::B",4,2,2) {}
     virtual bool solution(const Assignment& x) const {
       return (((x[0] == 0) || (x[0] == 2)) &&
               ((x[1] == -1) || (x[1] == 1)) &&
               ((x[2] == 0) || (x[2] == 1)) &&
               ((x[3] == 0) || (x[3] == 1)));
     }
-    virtual void post(Space* home, IntVarArray& x) {
-      DFA da = ((REG(0) | REG(2)) +
-                (REG(-1) | REG(1)) +
-                (REG(7) | REG(0) | REG(1)) +
-                (REG(0) | REG(1)))(3,3);
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
       IntVarArgs y(12);
       for (int i=0; i<4; i++)
         y[i]=y[i+4]=y[i+8]=x[i];
       unshare(home,y);
-      regular(home, y, da);
+      regular(home, y,
+              ((REG(0) | REG(2)) +
+               (REG(-1) | REG(1)) +
+               (REG(7) | REG(0) | REG(1)) +
+               (REG(0) | REG(1)))(3,3));
     }
   };
 
-  RegularSharedB rsb;
-
-  class RegularSharedC : public IntTest {
+  class SharedC : public IntTest {
   public:
-    RegularSharedC(void)
-      : IntTest("Regular::Shared::C",4,ds_01,false,ICL_DOM) {}
+    SharedC(void)
+      : IntTest("Regular::Shared::C",4,0,1) {}
     virtual bool solution(const Assignment& x) const {
       return (x[1]==1) && (x[2]==0) && (x[3]==1);
     }
-    virtual void post(Space* home, IntVarArray& x) {
-      DFA da = ((REG(0) | REG(1)) + REG(1) + REG(0) + REG(1))(2,2);
-      BoolVarArgs y(8);
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      Gecode::BoolVarArgs y(8);
       for (int i=0; i<4; i++)
         y[i]=y[i+4]=channel(home,x[i]);
       unshare(home,y);
-      regular(home, y, da);
+      regular(home,y,
+              ((REG(0) | REG(1)) + REG(1) + REG(0) + REG(1))(2,2));
     }
   };
 
-  RegularSharedC rsc;
-
-  class RegularSharedD : public IntTest {
+  class SharedD : public IntTest {
   public:
-    RegularSharedD(void)
-      : IntTest("Regular::Shared::D",4,ds_01,false,ICL_DOM) {}
+    SharedD(void)
+      : IntTest("Regular::Shared::D",4,0,1) {}
     virtual bool solution(const Assignment& x) const {
       return (x[1]==1) && (x[2]==0) && (x[3]==1);
     }
-    virtual void post(Space* home, IntVarArray& x) {
-      DFA da = ((REG(0) | REG(1)) + REG(1) + REG(0) + REG(1))(3,3);
-      BoolVarArgs y(12);
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      Gecode::BoolVarArgs y(12);
       for (int i=0; i<4; i++)
         y[i]=y[i+4]=y[i+8]=channel(home,x[i]);
-      unshare(home,y);
-      regular(home, y, da);
+      unshare(home, y);
+      regular(home, y,
+              ((REG(0) | REG(1)) + REG(1) + REG(0) + REG(1))(3,3));
     }
   };
 
-  RegularSharedD rsd;
+  SimpleA a;
+  SimpleB b;
+
+  Distinct d;
+
+  SharedA sa;
+  SharedB sb;
+  SharedC sc;
+  SharedD sd;
 
 }
 

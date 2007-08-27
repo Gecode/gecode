@@ -38,83 +38,85 @@
 #include "test/int.hh"
 #include "gecode/minimodel.hh"
 
-static IntSet ds_22(-2,2);
-static IntSet ds_01(0,1);
+      using namespace Gecode;
+
+static Gecode::IntSet ds_22(-2,2);
+static Gecode::IntSet ds_01(0,1);
 
 class RelEqBin : public IntTest {
 private:
-  IntConLevel icl;
+  Gecode::IntConLevel icl;
 public:
-  RelEqBin(const char* t, IntConLevel icl0)
+  RelEqBin(const char* t, Gecode::IntConLevel icl0)
     : IntTest(t,2,ds_22,true), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     return x[0]==x[1];
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    rel(home, x[0], IRT_EQ, x[1], icl);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    rel(home, x[0], Gecode::IRT_EQ, x[1], icl);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
-    rel(home, x[0], IRT_EQ, x[1], b, icl);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
+    rel(home, x[0], Gecode::IRT_EQ, x[1], b, icl);
   }
 };
-RelEqBin _releqbinbnd("Rel::EqBinBnd",ICL_BND);
-RelEqBin _releqbindom("Rel::EqBinDom",ICL_DOM);
+RelEqBin _releqbinbnd("Rel::EqBinBnd",Gecode::ICL_BND);
+RelEqBin _releqbindom("Rel::EqBinDom",Gecode::ICL_DOM);
 
 class RelEqBinInt : public IntTest {
 private:
-  IntConLevel icl;
+  Gecode::IntConLevel icl;
 public:
-  RelEqBinInt(const char* t, IntConLevel icl0)
+  RelEqBinInt(const char* t, Gecode::IntConLevel icl0)
     : IntTest(t,1,ds_22,true), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     return x[0]==0;
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    rel(home, x[0], IRT_EQ, 0, icl);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    rel(home, x[0], Gecode::IRT_EQ, 0, icl);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
-    rel(home, x[0], IRT_EQ, 0, b, icl);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
+    rel(home, x[0], Gecode::IRT_EQ, 0, b, icl);
   }
 };
-RelEqBinInt _releqbinbndint("Rel::EqBinBndInt",ICL_BND);
-RelEqBinInt _releqbindomint("Rel::EqBinDomInt",ICL_DOM);
+RelEqBinInt _releqbinbndint("Rel::EqBinBndInt",Gecode::ICL_BND);
+RelEqBinInt _releqbindomint("Rel::EqBinDomInt",Gecode::ICL_DOM);
 
 
 class RelEqNary : public IntTest {
 private:
-  IntConLevel icl;
+  Gecode::IntConLevel icl;
 public:
-  RelEqNary(const char* t, IntConLevel icl0)
+  RelEqNary(const char* t, Gecode::IntConLevel icl0)
     : IntTest(t,4,ds_22,false), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     return (x[0]==x[1]) && (x[1]==x[2]) && (x[2]==x[3]);
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    rel(home, x, IRT_EQ, icl);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    rel(home, x, Gecode::IRT_EQ, icl);
   }
 };
-RelEqNary _releqnarybnd("Rel::EqNaryBnd", ICL_BND);
-RelEqNary _releqnarydom("Rel::EqNaryDom", ICL_DOM);
+RelEqNary _releqnarybnd("Rel::EqNaryBnd", Gecode::ICL_BND);
+RelEqNary _releqnarydom("Rel::EqNaryDom", Gecode::ICL_DOM);
 
 
 class RelNq : public IntTest {
 private:
-  IntConLevel icl;
+  Gecode::IntConLevel icl;
 public:
-  RelNq(const char* t, IntConLevel icl0)
+  RelNq(const char* t, Gecode::IntConLevel icl0)
     : IntTest(t,2,ds_22,true), icl(icl0) {}
   virtual bool solution(const Assignment& x) const {
     return x[0]!=x[1];
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    rel(home, x[0], IRT_NQ, x[1], icl);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    rel(home, x[0], Gecode::IRT_NQ, x[1], icl);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
-    rel(home, x[0], IRT_NQ, x[1], b, icl);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
+    rel(home, x[0], Gecode::IRT_NQ, x[1], b, icl);
   }
 };
-RelNq _relnqbnd("Rel::NqBnd",ICL_BND);
-RelNq _relnqdom("Rel::NqDom",ICL_DOM);
+RelNq _relnqbnd("Rel::NqBnd",Gecode::ICL_BND);
+RelNq _relnqdom("Rel::NqDom",Gecode::ICL_DOM);
 
 
 class RelLq : public IntTest {
@@ -124,11 +126,11 @@ public:
   virtual bool solution(const Assignment& x) const {
     return x[0] <= x[1];
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    rel(home, x[0], IRT_LQ, x[1]);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    rel(home, x[0], Gecode::IRT_LQ, x[1]);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
-    rel(home, x[0], IRT_LQ, x[1], b);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
+    rel(home, x[0], Gecode::IRT_LQ, x[1], b);
   }
 };
 RelLq _rellq;
@@ -140,11 +142,11 @@ public:
   virtual bool solution(const Assignment& x) const {
     return x[0] <= 0;
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    rel(home, x[0], IRT_LQ, 0);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    rel(home, x[0], Gecode::IRT_LQ, 0);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
-    rel(home, x[0], IRT_LQ, 0, b);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
+    rel(home, x[0], Gecode::IRT_LQ, 0, b);
   }
 };
 RelLqInt _rellqint;
@@ -157,11 +159,11 @@ public:
   virtual bool solution(const Assignment& x) const {
     return x[0] < x[1];
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    rel(home, x[0], IRT_LE, x[1]);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    rel(home, x[0], Gecode::IRT_LE, x[1]);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
-    rel(home, x[0], IRT_LE, x[1], b);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
+    rel(home, x[0], Gecode::IRT_LE, x[1], b);
   }
 };
 RelLe _relle;
@@ -173,11 +175,11 @@ public:
   virtual bool solution(const Assignment& x) const {
     return x[0] < 0;
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    rel(home, x[0], IRT_LE, 0);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    rel(home, x[0], Gecode::IRT_LE, 0);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
-    rel(home, x[0], IRT_LE, 0, b);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
+    rel(home, x[0], Gecode::IRT_LE, 0, b);
   }
 };
 RelLeInt _relleint;
@@ -189,11 +191,11 @@ public:
   virtual bool solution(const Assignment& x) const {
     return x[0] >= x[1];
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    rel(home, x[0], IRT_GQ, x[1]);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    rel(home, x[0], Gecode::IRT_GQ, x[1]);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
-    rel(home, x[0], IRT_GQ, x[1], b);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
+    rel(home, x[0], Gecode::IRT_GQ, x[1], b);
   }
 };
 RelGq _relgq;
@@ -205,11 +207,11 @@ public:
   virtual bool solution(const Assignment& x) const {
     return x[0] >= 0;
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    rel(home, x[0], IRT_GQ, 0);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    rel(home, x[0], Gecode::IRT_GQ, 0);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
-    rel(home, x[0], IRT_GQ, 0, b);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
+    rel(home, x[0], Gecode::IRT_GQ, 0, b);
   }
 };
 RelGqInt _relgqint;
@@ -222,11 +224,11 @@ public:
   virtual bool solution(const Assignment& x) const {
     return x[0] > x[1];
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    rel(home, x[0], IRT_GR, x[1]);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    rel(home, x[0], Gecode::IRT_GR, x[1]);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
-    rel(home, x[0], IRT_GR, x[1], b);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
+    rel(home, x[0], Gecode::IRT_GR, x[1], b);
   }
 };
 RelGr _relgr;
@@ -238,11 +240,11 @@ public:
   virtual bool solution(const Assignment& x) const {
     return x[0] > 0;
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    rel(home, x[0], IRT_GR, 0);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    rel(home, x[0], Gecode::IRT_GR, 0);
   }
-  virtual void post(Space* home, IntVarArray& x, BoolVar b) {
-    rel(home, x[0], IRT_GR, 0, b);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
+    rel(home, x[0], Gecode::IRT_GR, 0, b);
   }
 };
 RelGrInt _relgrint;
@@ -263,12 +265,12 @@ public:
       }
     return !strict;
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs y(n); IntVarArgs z(n);
     for (int i=0; i<n; i++) {
       y[i]=x[i]; z[i]=x[n+i];
     }
-    rel(home, y, strict ? IRT_LE : IRT_LQ, z);
+    rel(home, y, strict ? Gecode::IRT_LE : Gecode::IRT_LQ, z);
   }
 };
 LexInt _lexlqi("Lex::Lq::Int",3,false);
@@ -290,12 +292,12 @@ public:
       }
     return !strict;
   }
-  virtual void post(Space* home, IntVarArray& x) {
-    BoolVarArgs y(n); BoolVarArgs z(n);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    Gecode::BoolVarArgs y(n); Gecode::BoolVarArgs z(n);
     for (int i=0; i<n; i++) {
       y[i]=channel(home,x[i]);; z[i]=channel(home,x[n+i]);
     }
-    rel(home, y, strict ? IRT_LE : IRT_LQ, z);
+    rel(home, y, strict ? Gecode::IRT_LE : Gecode::IRT_LQ, z);
   }
 };
 LexBool _lexlq("Lex::Lq::Bool",3,false);
@@ -314,12 +316,12 @@ public:
         return true;
     return false;
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs y(n); IntVarArgs z(n);
     for (int i=0; i<n; i++) {
       y[i]=x[i]; z[i]=x[n+i];
     }
-    rel(home, y, IRT_NQ, z);
+    rel(home, y, Gecode::IRT_NQ, z);
   }
 };
 NaryNq _nnq("NaryNq",3);

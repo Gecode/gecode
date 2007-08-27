@@ -50,10 +50,10 @@ namespace Test { namespace Int { namespace Distinct {
   class Distinct : public IntTest {
   public:
     /// Create and register test
-    Distinct(const char* t, const IntSet& d, IntConLevel icl)
+    Distinct(const char* t, const Gecode::IntSet& d, Gecode::IntConLevel icl)
       : IntTest(t,6,d,false,icl) {}
     /// Create and register test
-    Distinct(const char* t, int min, int max, IntConLevel icl)
+    Distinct(const char* t, int min, int max, Gecode::IntConLevel icl)
       : IntTest(t,6,min,max,false,icl) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
@@ -64,8 +64,8 @@ namespace Test { namespace Int { namespace Distinct {
       return true;
     }
     /// Post distinct constraint on \a x
-    virtual void post(Space* home, IntVarArray& x) {
-      distinct(home, x, icl);
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::distinct(home, x, icl);
     }
   };
   
@@ -73,7 +73,7 @@ namespace Test { namespace Int { namespace Distinct {
   class DistinctRandom : public IntTest {
   public:
     /// Create and register test
-    DistinctRandom(const char* t, int a, int min, int max, IntConLevel icl)
+    DistinctRandom(const char* t, int a, int min, int max, Gecode::IntConLevel icl)
       : IntTest(t,a,min,max,false,icl) {
       testsearch = false;
     }
@@ -90,8 +90,8 @@ namespace Test { namespace Int { namespace Distinct {
       return true;
     }
     /// Post distinct constraint on \a x
-    virtual void post(Space* home, IntVarArray& x) {
-      distinct(home, x, icl);
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::distinct(home, x, icl);
     }
   };
   
@@ -99,10 +99,10 @@ namespace Test { namespace Int { namespace Distinct {
   class DistinctOffset : public IntTest {
   public:
     /// Create and register test
-    DistinctOffset(const char* t, const IntSet& d, IntConLevel icl)
+    DistinctOffset(const char* t, const Gecode::IntSet& d, Gecode::IntConLevel icl)
       : IntTest(t,6,d,false,icl) {}
     /// Create and register test
-    DistinctOffset(const char* t, int min, int max, IntConLevel icl)
+    DistinctOffset(const char* t, int min, int max, Gecode::IntConLevel icl)
       : IntTest(t,6,min,max,false,icl) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
@@ -113,11 +113,11 @@ namespace Test { namespace Int { namespace Distinct {
       return true;
     }
     /// Post distinct constraint on \a x
-    virtual void post(Space* home, IntVarArray& x) {
-      IntArgs c(x.size());
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::IntArgs c(x.size());
       for (int i=0; i<x.size(); i++)
         c[i]=i;
-      distinct(home, c, x, icl);
+      Gecode::distinct(home, c, x, icl);
     }
   };
 
@@ -125,23 +125,23 @@ namespace Test { namespace Int { namespace Distinct {
   const int v[7] = {-1001,-1000,-10,0,10,1000,1001};
   Gecode::IntSet d(v,7);
 
-  Distinct dom_d("Distinct::Dom::Dense",-3,3,ICL_DOM);
-  Distinct bnd_d("Distinct::Bnd::Dense",-3,3,ICL_BND);
-  Distinct val_d("Distinct::Val::Dense",-3,3,ICL_VAL);
-  Distinct dom_s("Distinct::Dom::Sparse",d,ICL_DOM);
-  Distinct bnd_s("Distinct::Bnd::Sparse",d,ICL_BND);
-  Distinct val_s("Distinct::Val::Sparse",d,ICL_VAL);
+  Distinct dom_d("Distinct::Dom::Dense",-3,3,Gecode::ICL_DOM);
+  Distinct bnd_d("Distinct::Bnd::Dense",-3,3,Gecode::ICL_BND);
+  Distinct val_d("Distinct::Val::Dense",-3,3,Gecode::ICL_VAL);
+  Distinct dom_s("Distinct::Dom::Sparse",d,Gecode::ICL_DOM);
+  Distinct bnd_s("Distinct::Bnd::Sparse",d,Gecode::ICL_BND);
+  Distinct val_s("Distinct::Val::Sparse",d,Gecode::ICL_VAL);
 
-  DistinctRandom dom_r("Distinct::Dom::Random",20,-50,50,ICL_DOM);
-  DistinctRandom bnd_r("Distinct::Bnd::Random",50,-500,500,ICL_BND);
-  DistinctRandom val_r("Distinct::Val::Random",50,-500,500,ICL_VAL);
+  DistinctRandom dom_r("Distinct::Dom::Random",20,-50,50,Gecode::ICL_DOM);
+  DistinctRandom bnd_r("Distinct::Bnd::Random",50,-500,500,Gecode::ICL_BND);
+  DistinctRandom val_r("Distinct::Val::Random",50,-500,500,Gecode::ICL_VAL);
 
-  DistinctOffset dom_od("Distinct::Dom::Offset::Dense",-3,3,ICL_DOM);
-  DistinctOffset bnd_od("Distinct::Bnd::Offset::Dense",-3,3,ICL_BND);
-  DistinctOffset val_od("Distinct::Val::Offset::Dense",-3,3,ICL_VAL);
-  DistinctOffset dom_os("Distinct::Dom::Offset::Sparse",d,ICL_DOM);
-  DistinctOffset bnd_os("Distinct::Bnd::Offset::Sparse",d,ICL_BND);
-  DistinctOffset val_os("Distinct::Val::Offset::Sparse",d,ICL_VAL);
+  DistinctOffset dom_od("Distinct::Dom::Offset::Dense",-3,3,Gecode::ICL_DOM);
+  DistinctOffset bnd_od("Distinct::Bnd::Offset::Dense",-3,3,Gecode::ICL_BND);
+  DistinctOffset val_od("Distinct::Val::Offset::Dense",-3,3,Gecode::ICL_VAL);
+  DistinctOffset dom_os("Distinct::Dom::Offset::Sparse",d,Gecode::ICL_DOM);
+  DistinctOffset bnd_os("Distinct::Bnd::Offset::Sparse",d,Gecode::ICL_BND);
+  DistinctOffset val_os("Distinct::Val::Offset::Sparse",d,Gecode::ICL_VAL);
   //@}
 
 }}}

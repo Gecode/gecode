@@ -36,15 +36,17 @@
  */        
 
 #include "test/int.hh"
-#include "test/log.hh"
+
 #include "gecode/int/gcc.hh"
 
-static IntSet ds_02(0,2);
-static IntSet ds_03(0,3);
-static IntSet ds_04(0,4);
-static IntSet ds_12(1,2);
-static IntSet ds_14(1,4);
-static IntSet ds_18(1,8);
+using namespace Gecode;
+
+static Gecode::IntSet ds_02(0,2);
+static Gecode::IntSet ds_03(0,3);
+static Gecode::IntSet ds_04(0,4);
+static Gecode::IntSet ds_12(1,2);
+static Gecode::IntSet ds_14(1,4);
+static Gecode::IntSet ds_18(1,8);
 
 /*
 
@@ -58,7 +60,7 @@ public:
   GCCAssignment(int xlow, int xup,
                 int clow, int cup,
                 int xs,
-                int n0, const IntSet& d0)
+                int n0, const Gecode::IntSet& d0)
     : Assignment(n0, d0),
       problow(xlow), probup(xup),
       cardlow(clow), cardup(cup),
@@ -68,8 +70,8 @@ public:
 
   void reset(void) {
     done = false;
-    IntSet card_dom(cardlow, cardup);
-    IntSet var_dom(problow, probup);
+    Gecode::IntSet card_dom(cardlow, cardup);
+    Gecode::IntSet var_dom(problow, probup);
     for (int i = xsize; i < n; i++) {
       dsv[i].init(card_dom);
     }
@@ -77,8 +79,8 @@ public:
       dsv[i].init(var_dom);
   }
   void operator++(void) {
-    IntSet card_dom(cardlow, cardup);
-    IntSet var_dom(problow, probup);
+    Gecode::IntSet card_dom(cardlow, cardup);
+    Gecode::IntSet var_dom(problow, probup);
     int i = n-1;
     while (true) {
       ++dsv[i];
@@ -103,7 +105,7 @@ public:
 
 class GCC_FC_AllLbUb : public IntTest {
 public:
-  GCC_FC_AllLbUb(const char* t, IntConLevel icl)
+  GCC_FC_AllLbUb(const char* t, Gecode::IntConLevel icl)
     : IntTest(t, 4, ds_14, false, icl) {}
   virtual bool solution(const Assignment& x) const {
     int n[4];
@@ -116,10 +118,10 @@ public:
         return false;
     return true;
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntArgs values(4);
-    IntSet fixed(0,2);
-    IntSetArgs cards(4);
+    Gecode::IntSet fixed(0,2);
+    Gecode::IntSetArgs cards(4);
     for (int i = 1; i < 5; i++) {
       values[i - 1] = i;
       cards[i - 1] = fixed;
@@ -131,7 +133,7 @@ public:
 
 class GCC_FC_SomeTriple : public IntTest {
 public:
-  GCC_FC_SomeTriple(const char* t, IntConLevel icl)
+  GCC_FC_SomeTriple(const char* t, Gecode::IntConLevel icl)
     : IntTest(t, 4, ds_14, false, icl) {}
   virtual bool solution(const Assignment& x) const {
     int n[4];
@@ -143,11 +145,11 @@ public:
       return false;
     return true;
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
 
     IntArgs values(2);
-    IntSet fixed(0,2);
-    IntSetArgs cards(2);
+    Gecode::IntSet fixed(0,2);
+    Gecode::IntSetArgs cards(2);
     for (int i = 1; i < 3; i++) {
       values[i - 1] = i;
       cards[i - 1] = fixed;
@@ -159,7 +161,7 @@ public:
 
 class GCC_FC_AllEqUb : public IntTest {
 public:
-  GCC_FC_AllEqUb(const char* t, IntConLevel icl)
+  GCC_FC_AllEqUb(const char* t, Gecode::IntConLevel icl)
     : IntTest(t, 4, ds_12, false, icl) {}
   virtual bool solution(const Assignment& x) const {
     int n[2];
@@ -171,16 +173,16 @@ public:
       return false;
     return true;
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntArgs values(2); values[0] = 1; values[1] = 2;
-    count(home, x, IntSet(2,2), values, icl);
+    count(home, x, Gecode::IntSet(2,2), values, icl);
   }
 };
 
 
 class GCC_FC_Shared_AllLbUb : public IntTest {
 public:
-  GCC_FC_Shared_AllLbUb(const char* t, IntConLevel icl)
+  GCC_FC_Shared_AllLbUb(const char* t, Gecode::IntConLevel icl)
     : IntTest(t,2,ds_14,false, icl) {}
   virtual bool solution(const Assignment& x) const {
     if (x[0] != x[1]) {
@@ -189,7 +191,7 @@ public:
       return false;
     }
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs y(6);
     for (int i = 0; i < 6; i++) {
       if (i < 3) {
@@ -199,8 +201,8 @@ public:
       }
     }
     IntArgs values(4);
-    IntSet fixed(0,3);
-    IntSetArgs cards(4);
+    Gecode::IntSet fixed(0,3);
+    Gecode::IntSetArgs cards(4);
     for (int i = 1; i < 5; i++) {
       values[i - 1] = i;
       cards[i - 1] = fixed;
@@ -230,7 +232,7 @@ public:
     return new GCCAssignment(lb, rb, minocc, maxocc, ve, xs, dom);
   }
 
-  GCC_VC_AllLbUb(const char* t, IntConLevel icl)
+  GCC_VC_AllLbUb(const char* t, Gecode::IntConLevel icl)
     : IntTest(t, xs, ds_02, false,icl) {}
   virtual bool solution(const Assignment& x) const {
 //     std::cout << "GCC-Sol: ";
@@ -270,7 +272,7 @@ public:
     return true;
   }
 
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     // std::cout << "test_post\n";
 
     // get the number of used values
@@ -294,8 +296,8 @@ public:
     IntVarArgs cards(xs - ve);
     for (int i = ve; i < xs; i++) {
       cards[i - ve] = x[i];
-//       rel(home, y[i - ve], IRT_LQ, maxocc);
-//       rel(home, y[i - ve], IRT_GQ, minocc);
+//       rel(home, y[i - ve], Gecode::IRT_LQ, maxocc);
+//       rel(home, y[i - ve], Gecode::IRT_GQ, minocc);
     }
 
     IntVarArgs vars(ve);
@@ -328,7 +330,7 @@ public:
   }
 
 
-  GCC_VC_AllTriple(const char* t, IntConLevel icl)
+  GCC_VC_AllTriple(const char* t, Gecode::IntConLevel icl)
     : IntTest(t, xs, ds_02, false,icl) {}
   virtual bool solution(const Assignment& x) const {
 //     std::cout << "GCC-Sol: ";
@@ -376,7 +378,7 @@ public:
     return true;
   }
 
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     // std::cout << "test_post\n";
 
     // get the number of used values
@@ -388,10 +390,10 @@ public:
     IntVarArgs cards(xs - ve);
     for (int i = ve; i < xs; i++) {
       cards[i - ve] = x[i];
-      rel(home, cards[i - ve], IRT_LQ, maxocc);
-      rel(home, cards[i - ve], IRT_GQ, minocc);
+      rel(home, cards[i - ve], Gecode::IRT_LQ, maxocc);
+      rel(home, cards[i - ve], Gecode::IRT_GQ, minocc);
 //       if (i - ve == 0)
-//         rel(home, cards[i - ve], IRT_GQ, 1);
+//         rel(home, cards[i - ve], Gecode::IRT_GQ, 1);
     }
 
     IntVarArgs vars(ve);
@@ -422,7 +424,7 @@ private:
   }
 
 public:
-  GCC_VC_SomeTriple(const char* t, IntConLevel icl)
+  GCC_VC_SomeTriple(const char* t, Gecode::IntConLevel icl)
     : IntTest(t, xs, ds_02, false,icl) {}
   virtual bool solution(const Assignment& x) const {
 //     std::cout << "GCC-Sol: ";
@@ -477,13 +479,13 @@ public:
     return true;
   }
 
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
 
     IntVarArgs cards(xs - ve);
     for (int i = ve; i < xs; i++) {
       cards[i - ve] = x[i];
-//       rel(home, cards[i - ve], IRT_LQ, maxocc);
-//       rel(home, cards[i - ve], IRT_GQ, minocc);
+//       rel(home, cards[i - ve], Gecode::IRT_LQ, maxocc);
+//       rel(home, cards[i - ve], Gecode::IRT_GQ, minocc);
     }
 
     IntVarArgs vars(ve);
@@ -506,37 +508,37 @@ public:
 // FixCard::\(\(Shared::\)*\(All\|Some\)::\([lubv,()]+\)\)::\(Bnd\|Dom\|Val\)
 // VarCard::\(\(Shared::\)*\(All\|Some\)::\([lubv,()]+\)\)::\(Bnd\|Dom\|Val\)
 
-GCC_FC_AllLbUb _gccbnd_all("GCC::FixCard::Bnd::All::(lb,ub)",ICL_BND);
-GCC_FC_AllLbUb _gccdom_all("GCC::FixCard::Dom::All::(lb,ub)",ICL_DOM);
-GCC_FC_AllLbUb _gccval_all("GCC::FixCard::Val::All::(lb,ub)",ICL_VAL);
+GCC_FC_AllLbUb _gccbnd_all("GCC::FixCard::Bnd::All::(lb,ub)",Gecode::ICL_BND);
+GCC_FC_AllLbUb _gccdom_all("GCC::FixCard::Dom::All::(lb,ub)",Gecode::ICL_DOM);
+GCC_FC_AllLbUb _gccval_all("GCC::FixCard::Val::All::(lb,ub)",Gecode::ICL_VAL);
 
-GCC_FC_AllEqUb _gccbnd_alleq("GCC::FixCard::Bnd::All::ub",ICL_BND);
-GCC_FC_AllEqUb _gccdom_alleq("GCC::FixCard::Dom::All::ub",ICL_DOM);
-GCC_FC_AllEqUb _gccval_alleq("GCC::FixCard::Val::All::ub",ICL_VAL);
+GCC_FC_AllEqUb _gccbnd_alleq("GCC::FixCard::Bnd::All::ub",Gecode::ICL_BND);
+GCC_FC_AllEqUb _gccdom_alleq("GCC::FixCard::Dom::All::ub",Gecode::ICL_DOM);
+GCC_FC_AllEqUb _gccval_alleq("GCC::FixCard::Val::All::ub",Gecode::ICL_VAL);
 
-GCC_FC_SomeTriple _gccbnd_sometrip("GCC::FixCard::Bnd::Some::(v,lb,ub)",ICL_BND);
-GCC_FC_SomeTriple _gccdom_sometrip("GCC::FixCard::Dom::Some::(v,lb,ub)",ICL_DOM);
-GCC_FC_SomeTriple _gccval_sometrip("GCC::FixCard::Val::Some::(v,lb,ub)",ICL_VAL);
+GCC_FC_SomeTriple _gccbnd_sometrip("GCC::FixCard::Bnd::Some::(v,lb,ub)",Gecode::ICL_BND);
+GCC_FC_SomeTriple _gccdom_sometrip("GCC::FixCard::Dom::Some::(v,lb,ub)",Gecode::ICL_DOM);
+GCC_FC_SomeTriple _gccval_sometrip("GCC::FixCard::Val::Some::(v,lb,ub)",Gecode::ICL_VAL);
 
 
-// GCC_FC_Shared_AllLbUb _gccbnd_shared_all("GCC::FixCard::Bnd::Shared::All::(lb,ub)",ICL_BND);
-// GCC_FC_Shared_AllLbUb _gccdom_shared_all("GCC::FixCard::Dom::Shared::All::(lb,ub)",ICL_DOM);
-// GCC_FC_Shared_AllLbUb _gccval_shared_all("GCC::FixCard::Val::Shared::All::(lb,ub)",ICL_VAL);
+// GCC_FC_Shared_AllLbUb _gccbnd_shared_all("GCC::FixCard::Bnd::Shared::All::(lb,ub)",Gecode::ICL_BND);
+// GCC_FC_Shared_AllLbUb _gccdom_shared_all("GCC::FixCard::Dom::Shared::All::(lb,ub)",Gecode::ICL_DOM);
+// GCC_FC_Shared_AllLbUb _gccval_shared_all("GCC::FixCard::Val::Shared::All::(lb,ub)",Gecode::ICL_VAL);
 
 // Testing with Cardinality Variables
 
 /*
-GCC_VC_AllLbUb _gccbnd_all_var("GCC::VarCard::Bnd::All::(lb,ub)",ICL_BND);
-GCC_VC_AllLbUb _gccdom_all_var("GCC::VarCard::Dom::All::(lb,ub)",ICL_DOM);
-GCC_VC_AllLbUb _gccval_all_var("GCC::VarCard::Val::All::(lb,ub)",ICL_VAL);
+GCC_VC_AllLbUb _gccbnd_all_var("GCC::VarCard::Bnd::All::(lb,ub)",Gecode::ICL_BND);
+GCC_VC_AllLbUb _gccdom_all_var("GCC::VarCard::Dom::All::(lb,ub)",Gecode::ICL_DOM);
+GCC_VC_AllLbUb _gccval_all_var("GCC::VarCard::Val::All::(lb,ub)",Gecode::ICL_VAL);
 
-GCC_VC_AllTriple _gccbnd_alltrip_var("GCC::VarCard::Bnd::All::(v,lb,ub)",ICL_BND);
-GCC_VC_AllTriple _gccdom_alltrip_var("GCC::VarCard::Dom::All::(v,lb,ub)",ICL_DOM);
-GCC_VC_AllTriple _gccval_alltrip_var("GCC::VarCard::Val::All::(v,lb,ub)",ICL_VAL);
+GCC_VC_AllTriple _gccbnd_alltrip_var("GCC::VarCard::Bnd::All::(v,lb,ub)",Gecode::ICL_BND);
+GCC_VC_AllTriple _gccdom_alltrip_var("GCC::VarCard::Dom::All::(v,lb,ub)",Gecode::ICL_DOM);
+GCC_VC_AllTriple _gccval_alltrip_var("GCC::VarCard::Val::All::(v,lb,ub)",Gecode::ICL_VAL);
 
-GCC_VC_SomeTriple _gccbnd_sometrip__var("GCC::VarCard::Bnd::Some::(v,lb,ub)",ICL_BND);
-GCC_VC_SomeTriple _gccdom_sometrip__var("GCC::VarCard::Dom::Some::(v,lb,ub)",ICL_DOM);
-GCC_VC_SomeTriple _gccval_sometrip__var("GCC::VarCard::Val::Some::(v,lb,ub)",ICL_VAL);
+GCC_VC_SomeTriple _gccbnd_sometrip__var("GCC::VarCard::Bnd::Some::(v,lb,ub)",Gecode::ICL_BND);
+GCC_VC_SomeTriple _gccdom_sometrip__var("GCC::VarCard::Dom::Some::(v,lb,ub)",Gecode::ICL_DOM);
+GCC_VC_SomeTriple _gccval_sometrip__var("GCC::VarCard::Val::Some::(v,lb,ub)",Gecode::ICL_VAL);
 */
 
 // STATISTICS: test-int

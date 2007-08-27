@@ -43,9 +43,6 @@
 #include "gecode/int.hh"
 #include "test.hh"
 
-using namespace Gecode;
-using namespace Int;
-
 /**
  * \defgroup TaskTestInt Testing finite domain integers
  * \ingroup TaskTest
@@ -59,11 +56,11 @@ using namespace Int;
 /// Base class for assignments
 class Assignment {
 protected:
-  int n;    ///< Number of variables
-  IntSet d; ///< Domain for each variable
+  int n;            ///< Number of variables
+  Gecode::IntSet d; ///< Domain for each variable
 public:
   /// Initialize assignments for \a n0 variables and values \a d0
-  Assignment(int n0, const IntSet& d0);
+  Assignment(int n0, const Gecode::IntSet& d0);
   /// Test whether all assignments have been iterated
   virtual bool operator()(void) const = 0;
   /// Move to next assignment
@@ -79,10 +76,10 @@ public:
 /// Generate all assignments
 class CpltAssignment : public Assignment {
 protected:
-  IntSetValues* dsv; ///< Iterator for each variable
+  Gecode::IntSetValues* dsv; ///< Iterator for each variable
 public:
   /// Initialize assignments for \a n0 variables and values \a d0
-  CpltAssignment(int n, const IntSet& d);
+  CpltAssignment(int n, const Gecode::IntSet& d);
   /// Test whether all assignments have been iterated
   virtual bool operator()(void) const;
   /// Move to next assignment
@@ -102,7 +99,7 @@ protected:
   int randval(void);
 public:
   /// Initialize for \a a assignments for \a n0 variables and values \a d0
-  RandomAssignment(int n, const IntSet& d, int a);
+  RandomAssignment(int n, const Gecode::IntSet& d, int a);
   /// Test whether all assignments have been iterated
   virtual bool operator()(void) const;
   /// Move to next assignment
@@ -128,11 +125,11 @@ protected:
   /// Number of variables
   int arity;
   /// Domain of variables
-  IntSet dom;
+  Gecode::IntSet dom;
   /// Does the constraint also exist as reified constraint
   bool reified;
   /// Consistency level of the propagator
-  IntConLevel icl;
+  Gecode::IntConLevel icl;
   /// Whether to test for domain-consistency
   bool testdomcon;
   /// Whether to perform search test
@@ -147,8 +144,8 @@ public:
    * if \a r is true. The consistency level \a is maintained for
    * convenience.
    */
-  IntTest(const char* t, int a, const IntSet& d, 
-          bool r=false, IntConLevel i=ICL_DEF);
+  IntTest(const char* t, int a, const Gecode::IntSet& d, 
+          bool r=false, Gecode::IntConLevel i=Gecode::ICL_DEF);
   /**
    * \brief Constructor
    *
@@ -158,15 +155,16 @@ public:
    * convenience.
    */
   IntTest(const char* t, int a, int min, int max, 
-          bool r=false, IntConLevel i=ICL_DEF);
+          bool r=false, Gecode::IntConLevel i=Gecode::ICL_DEF);
   /// Create assignment
   virtual Assignment* assignment(void) const;
   /// Check for solution
   virtual bool solution(const Assignment&) const = 0;
   /// Post propagator
-  virtual void post(Space* home, IntVarArray& x) = 0;
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) = 0;
   /// Post reified propagator
-  virtual void post(Space* home, IntVarArray& x, BoolVar b);
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+                    Gecode::BoolVar b);
   /// Perform test
   virtual bool run(const Options& opt);
 };

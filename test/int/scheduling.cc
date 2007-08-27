@@ -47,7 +47,9 @@
 #include <string>
 #include <sstream>
 
-static IntSet ds_12(-1,2);
+using namespace Gecode;
+
+static Gecode::IntSet ds_12(-1,2);
 
 namespace {
   using namespace Gecode::Iter::Ranges;
@@ -59,9 +61,9 @@ namespace {
    *   - The tasks are ordered to remove some symmetries, i.e.,
    *     s_i <= s_{i+1}
    */
-  struct Ass : public Space {
-    IntVarArray x;
-    Ass(int n, const IntSet& d) : x(this, n, d) {
+  struct Ass : public Gecode::Space {
+    Gecode::IntVarArray x;
+    Ass(int n, const Gecode::IntSet& d) : x(this, n, d) {
       for (int i = 0; i < n; i += 4) {
         post(this, x[i+0] >= 0);
         post(this, x[i+1] >= 0);
@@ -74,10 +76,10 @@ namespace {
         branch(this, x, INT_VAR_NONE, INT_VAL_MIN);
       }
     }
-    Ass(bool share, Ass& s) : Space(share,s) {
+    Ass(bool share, Ass& s) : Gecode::Space(share,s) {
       x.update(this, share, s.x);
     }
-    virtual Space* copy(bool share) {
+    virtual Gecode::Space* copy(bool share) {
       return new Ass(share,*this);
     }
   };
@@ -87,7 +89,7 @@ namespace {
     Ass *cur, *nxt;
     DFS<Ass> *e;
   public:
-    CumulativeAssignment(int, const IntSet&);
+    CumulativeAssignment(int, const Gecode::IntSet&);
     virtual void reset(void);
     virtual void operator++(void);
     virtual int  operator[](int i) const;
@@ -99,7 +101,7 @@ namespace {
     }
   };
 
-  CumulativeAssignment::CumulativeAssignment(int n0, const IntSet& d0)
+  CumulativeAssignment::CumulativeAssignment(int n0, const Gecode::IntSet& d0)
     : Assignment(n0, d0), cur(NULL), nxt(NULL), e(NULL)
   {
     reset();
@@ -210,15 +212,15 @@ public:
     }
   }
 
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntArgs m(ntasks), l(1, limit);
     IntVarArgs s(ntasks), d(ntasks), e(ntasks), h(ntasks);
     for (int i = 0; i < ntasks; ++i) {
       int p = i*4;
       m[i] = 0;
-      s[i] = x[p+0]; rel(home, x[p+0], IRT_GQ, 0);
-      d[i] = x[p+1]; rel(home, x[p+1], IRT_GQ, 1);
-      e[i] = x[p+2]; rel(home, x[p+2], IRT_GQ, 1);
+      s[i] = x[p+0]; rel(home, x[p+0], Gecode::IRT_GQ, 0);
+      d[i] = x[p+1]; rel(home, x[p+1], Gecode::IRT_GQ, 1);
+      e[i] = x[p+2]; rel(home, x[p+2], Gecode::IRT_GQ, 1);
       h[i] = x[p+3];
     }
     cumulatives(home, m, s, d, e, h, l, at_most);

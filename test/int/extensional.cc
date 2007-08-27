@@ -38,13 +38,13 @@
 #include "test/int.hh"
 #include "test/log.hh"
 
-static IntSet ds_14(1, 5);
+static Gecode::IntSet ds_14(1, 5);
 
 class Table1 : public IntTest {
   ExtensionalAlgorithm ea;
 public:
   Table1(const char* t, ExtensionalAlgorithm ea0)
-    : IntTest(t,4,ds_14,false,ICL_DOM), ea(ea0) {}
+    : IntTest(t,4,ds_14,false,Gecode::ICL_DOM), ea(ea0) {}
   virtual bool solution(const Assignment& x) const {
     return (
             (x[0] == 1 && x[1] == 3 && x[2] == 2 && x[3] == 3) ||
@@ -54,7 +54,7 @@ public:
             (x[0] == 4 && x[1] == 3 && x[2] == 4 && x[3] == 1)
             );
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     Table t;
     IntArgs t1(4,  2, 1, 2, 4);
     IntArgs t2(4,  2, 2, 1, 4);
@@ -81,7 +81,7 @@ class Table2 : public IntTest {
   mutable Table t;
 public:
   Table2(const char* name, ExtensionalAlgorithm ea0)
-    : IntTest(name,4,ds_14,false,ICL_DOM), ea(ea0) {
+    : IntTest(name,4,ds_14,false,Gecode::ICL_DOM), ea(ea0) {
     IntArgs t1 (4,  2, 1, 2, 4);
     IntArgs t2 (4,  2, 2, 1, 4);
     IntArgs t3 (4,  4, 3, 4, 1);
@@ -114,7 +114,7 @@ public:
     }
     return false;
   }
-  virtual void post(Space* home, IntVarArray& x) {
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     extensional(home, x, t, ea);
   }
 };

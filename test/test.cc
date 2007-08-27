@@ -60,7 +60,8 @@ using std::pair;
 vector<pair<bool, const char*> > testpat;
 
 TestBase* TestBase::all = NULL;
-Support::RandomGenerator TestBase::randgen = Support::RandomGenerator();
+Gecode::Support::RandomGenerator TestBase::randgen = 
+Gecode::Support::RandomGenerator();
 
 
 namespace {

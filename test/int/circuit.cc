@@ -48,7 +48,7 @@ namespace Test { namespace Int { namespace Circuit {
   class Circuit : public IntTest {
   public:
     /// Create and register test
-    Circuit(const char* t, int n, int min, int max, IntConLevel icl)
+    Circuit(const char* t, int n, int min, int max, Gecode::IntConLevel icl)
       : IntTest(t,n,min,max,false,icl) {
       testdomcon = false;
     }
@@ -70,24 +70,24 @@ namespace Test { namespace Int { namespace Circuit {
       return true;
     }
     /// Post circuit constraint on \a x
-    virtual void post(Space* home, IntVarArray& x) {
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       circuit(home, x, icl);
     }
   };
 
-  Circuit c1v("Circuit::Val::1",1,0,0,ICL_VAL);
-  Circuit c2v("Circuit::Val::2",2,0,1,ICL_VAL);
-  Circuit c3v("Circuit::Val::3",3,0,2,ICL_VAL);
-  Circuit c4v("Circuit::Val::4",4,0,3,ICL_VAL);
-  Circuit c5v("Circuit::Val::5",5,0,4,ICL_VAL);
-  Circuit c6v("Circuit::Val::6",6,0,5,ICL_VAL);
+  Circuit c1v("Circuit::Val::1",1,0,0,Gecode::ICL_VAL);
+  Circuit c2v("Circuit::Val::2",2,0,1,Gecode::ICL_VAL);
+  Circuit c3v("Circuit::Val::3",3,0,2,Gecode::ICL_VAL);
+  Circuit c4v("Circuit::Val::4",4,0,3,Gecode::ICL_VAL);
+  Circuit c5v("Circuit::Val::5",5,0,4,Gecode::ICL_VAL);
+  Circuit c6v("Circuit::Val::6",6,0,5,Gecode::ICL_VAL);
 
-  Circuit c1d("Circuit::Dom::1",1,0,0,ICL_DOM);
-  Circuit c2d("Circuit::Dom::2",2,0,1,ICL_DOM);
-  Circuit c3d("Circuit::Dom::3",3,0,2,ICL_DOM);
-  Circuit c4d("Circuit::Dom::4",4,0,3,ICL_DOM);
-  Circuit c5d("Circuit::Dom::5",5,0,4,ICL_DOM);
-  Circuit c6d("Circuit::Dom::6",6,0,5,ICL_DOM);
+  Circuit c1d("Circuit::Dom::1",1,0,0,Gecode::ICL_DOM);
+  Circuit c2d("Circuit::Dom::2",2,0,1,Gecode::ICL_DOM);
+  Circuit c3d("Circuit::Dom::3",3,0,2,Gecode::ICL_DOM);
+  Circuit c4d("Circuit::Dom::4",4,0,3,Gecode::ICL_DOM);
+  Circuit c5d("Circuit::Dom::5",5,0,4,Gecode::ICL_DOM);
+  Circuit c6d("Circuit::Dom::6",6,0,5,Gecode::ICL_DOM);
   //@}
 
 }}}

@@ -85,29 +85,32 @@ do {                                              \
   }                                               \
 } while(0)
 
-class IntTestSpace : public Space {
+class IntTestSpace : public Gecode::Space {
 public:
-  IntVarArray x;
+  Gecode::IntVarArray x;
 private:
   const Options opt;
 
 public:
-  IntTestSpace(int n, IntSet& d, const Options& o)
+  IntTestSpace(int n, Gecode::IntSet& d, const Options& o)
     : x(this, n, d), opt(o) {
     Log::initial(x, "x");
   }
-  IntTestSpace(bool share, IntTestSpace& s) : Space(share,s), opt(s.opt) {
+  IntTestSpace(bool share, IntTestSpace& s) 
+    : Gecode::Space(share,s), opt(s.opt) {
     x.update(this, share, s.x);
   }
-  virtual Space* copy(bool share) {
+  virtual Gecode::Space* copy(bool share) {
     return new IntTestSpace(share,*this);
   }
   
   bool is_failed(void) {
+    using namespace Gecode;
     Log::fixpoint();
     return status() == SS_FAILED;
   }
   void assign(const Assignment& a) {
+    using namespace Gecode;
     for (int i=a.size(); i--; ) {
       Log::assign(Log::mk_name("x", i), a[i]);
       rel(this, x[i], IRT_EQ, a[i]);
@@ -115,6 +118,7 @@ public:
     }
   }
   void assign(const Assignment& a, int skip_lo, int skip_hi) {
+    using namespace Gecode;
     for (int i=a.size()-skip_hi; i-->skip_lo; ) {
       Log::assign(Log::mk_name("x", i), a[i]);
       rel(this, x[i], IRT_EQ, a[i]);
@@ -128,6 +132,7 @@ public:
     return true;
   }
   void prune(void) {
+    using namespace Gecode;
     // Select variable to be pruned
     int i = TestBase::randgen(x.size());
     while (x[i].assigned()) {
@@ -152,10 +157,11 @@ public:
     }
   }
 
-  static BoolVar unused;
+  static Gecode::BoolVar unused;
 
   bool prune(const Assignment& a, IntTest& it,
-             bool r, BoolVar& b = unused) {
+             bool r, Gecode::BoolVar& b = unused) {
+    using namespace Gecode;
     // Select variable to be pruned
     int i = TestBase::randgen(x.size());
     while (x[i].assigned()) {
@@ -255,7 +261,7 @@ public:
 
 };
 
-BoolVar IntTestSpace::unused;
+Gecode::BoolVar IntTestSpace::unused;
 
 
 
@@ -272,10 +278,12 @@ if (!(T)) {                                       \
 }
 
 void 
-IntTest::post(Space* home, IntVarArray& x, BoolVar b) {}
+IntTest::post(Gecode::Space* home, Gecode::IntVarArray& x, 
+              Gecode::BoolVar b) {}
 
 bool
 IntTest::run(const Options& opt) {
+  using namespace Gecode;
   const char* test    = "NONE";
   const char* problem = "NONE";
   bool has_assignment = true;

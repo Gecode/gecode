@@ -127,7 +127,7 @@ operator<<(std::ostream& os, const SetAssignment& a) {
 
 #define FORCE_FIX                               \
 do {                                            \
-  if (Test::randgen(opt.fixprob) == 0) {        \
+  if (TestBase::randgen(opt.fixprob) == 0) {        \
     Log::fixpoint();                            \
     if (status() == SS_FAILED) return;          \
   }                                             \
@@ -289,11 +289,11 @@ public:
     // Select variable to be pruned
     int i;
     if (intsAssigned) {
-      i = Test::randgen(x.size());
+      i = TestBase::randgen(x.size());
     } else if (setsAssigned) {
-      i = Test::randgen(y.size());
+      i = TestBase::randgen(y.size());
     } else {
-      i = Test::randgen(x.size()+y.size());
+      i = TestBase::randgen(x.size()+y.size());
     }
 
     if (setsAssigned || i>=x.size()) {
@@ -306,17 +306,17 @@ public:
 
 
       // Select mode for pruning
-      int m=Test::randgen(3);
+      int m=TestBase::randgen(3);
       if ((m == 0) && (a.ints()[i] < y[i].max())) {
         int v=a.ints()[i]+1+
-          Test::randgen(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
+          TestBase::randgen(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
         assert((v > a.ints()[i]) && (v <= y[i].max()));
         Log::prune(y[i], Log::mk_name("y", i), IRT_LE, v);
         rel(this, y[i], IRT_LE, v);
         Log::prune_result(y[i]);
       } else if ((m == 1) && (a.ints()[i] > y[i].min())) {
         int v=y[i].min()+
-          Test::randgen(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
+          TestBase::randgen(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
         assert((v < a.ints()[i]) && (v >= y[i].min()));
         Log::prune(y[i], Log::mk_name("y", i), IRT_GR, v);
         rel(this, y[i], IRT_GR, v);
@@ -324,7 +324,7 @@ public:
       } else  {
         int v;
         Int::ViewRanges<Int::IntView> it(y[i]);
-        unsigned int skip = Test::randgen(y[i].size()-1);
+        unsigned int skip = TestBase::randgen(y[i].size()-1);
         while (true) {
           if (it.width() > skip) {
             v = it.min() + skip;
@@ -346,7 +346,7 @@ public:
         rel(this, y[i], IRT_NQ, v);
         Log::prune_result(y[i]);
       }
-      if (Test::randgen(opt.fixprob) == 0 && !fixprob(st, r, b))
+      if (TestBase::randgen(opt.fixprob) == 0 && !fixprob(st, r, b))
         return false;
       return true;
     }
@@ -366,16 +366,16 @@ public:
     unsigned int aisize = Iter::Ranges::size(aisizer);
 
     // Select mode for pruning
-    int m=Test::randgen(5);
+    int m=TestBase::randgen(5);
     if (m==0 && inter()) {
-      int v = Test::randgen(Iter::Ranges::size(inter));
+      int v = TestBase::randgen(Iter::Ranges::size(inter));
       addToGlb(v, x[i], i, a);
     } else if (m==1 && diff()) {
-      int v = Test::randgen(Iter::Ranges::size(diff));
+      int v = TestBase::randgen(Iter::Ranges::size(diff));
       removeFromLub(v, x[i], i, a);
     } else if (m==2 && x[i].cardMin() < aisize) {
       unsigned int newc = x[i].cardMin() + 1 +
-        Test::randgen(aisize - x[i].cardMin());
+        TestBase::randgen(aisize - x[i].cardMin());
       assert( newc > x[i].cardMin() );
       assert( newc <= aisize );
       Log::prune(x[i], Log::mk_name("x", i), newc, Limits::Set::card_max);
@@ -383,7 +383,7 @@ public:
       Log::prune_result(x[i]);
     } else if (m==3 && x[i].cardMax() > aisize) {
       unsigned int newc = x[i].cardMax() - 1 -
-        Test::randgen(x[i].cardMax() - aisize);
+        TestBase::randgen(x[i].cardMax() - aisize);
       assert( newc < x[i].cardMax() );
       assert( newc >= aisize );
       Log::prune(x[i], Log::mk_name("x", i), 0, newc);
@@ -391,14 +391,14 @@ public:
       Log::prune_result(x[i]);
     } else {
       if (inter()) {
-        int v = Test::randgen(Iter::Ranges::size(inter));
+        int v = TestBase::randgen(Iter::Ranges::size(inter));
         addToGlb(v, x[i], i, a);
       } else {
-        int v = Test::randgen(Iter::Ranges::size(diff));
+        int v = TestBase::randgen(Iter::Ranges::size(diff));
         removeFromLub(v, x[i], i, a);
       }
     }
-    if (Test::randgen(opt.fixprob) == 0 && !fixprob(st, r, b))
+    if (TestBase::randgen(opt.fixprob) == 0 && !fixprob(st, r, b))
       return false;
 
     return true;

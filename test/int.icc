@@ -42,7 +42,7 @@
  *
  */
 inline
-Assignment::Assignment(int n0, const IntSet& d0)
+Assignment::Assignment(int n0, const Gecode::IntSet& d0)
   : n(n0), d(d0) {}
 inline int
 Assignment::size(void) const {
@@ -53,8 +53,8 @@ Assignment::~Assignment(void) {}
 
 
 inline
-CpltAssignment::CpltAssignment(int n, const IntSet& d)
-  : Assignment(n,d), dsv(new IntSetValues[n]) {
+CpltAssignment::CpltAssignment(int n, const Gecode::IntSet& d)
+  : Assignment(n,d), dsv(new Gecode::IntSetValues[n]) {
   for (int i=n; i--; )
     dsv[i].init(d);
 }
@@ -76,7 +76,7 @@ CpltAssignment::~CpltAssignment(void) {
 forceinline int
 RandomAssignment::randval(void) {
   unsigned int skip = TestBase::randgen(d.size());
-  for (IntSetRanges it(d); true; ++it) {
+  for (Gecode::IntSetRanges it(d); true; ++it) {
     if (it.width() > skip)
       return it.min() + static_cast<int>(skip);
     skip -= it.width();
@@ -86,7 +86,7 @@ RandomAssignment::randval(void) {
 }
 
 inline
-RandomAssignment::RandomAssignment(int n, const IntSet& d, int a0)
+RandomAssignment::RandomAssignment(int n, const Gecode::IntSet& d, int a0)
   : Assignment(n,d), vals(new int[n]), a(a0) {
   for (int i=n; i--; )
     vals[i] = randval();
@@ -113,17 +113,16 @@ RandomAssignment::~RandomAssignment(void) {
  *
  */
 inline
-IntTest::IntTest(const char* t, int a, const IntSet& d, bool r, IntConLevel i)
+IntTest::IntTest(const char* t, int a, const Gecode::IntSet& d, 
+                 bool r, Gecode::IntConLevel i)
   : TestBase("Int",t), arity(a), dom(d), reified(r), icl(i), 
     testdomcon(true), testsearch(true) {}
 
 inline
-IntTest::IntTest(const char* t, int a, int min, int max, bool r, IntConLevel i)
+IntTest::IntTest(const char* t, int a, int min, int max, 
+                 bool r, Gecode::IntConLevel i)
   : TestBase("Int",t), arity(a), dom(min,max), reified(r), icl(i), 
     testdomcon(true), testsearch(true) {}
-
-
-
 
 // STATISTICS: test-int
 
