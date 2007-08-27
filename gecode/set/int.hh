@@ -195,7 +195,7 @@ namespace Gecode { namespace Set { namespace Int {
    * \ingroup FuncSetProp
    */
   template <class View>
-  class Channel : public Propagator {
+  class ChannelInt : public Propagator {
   protected:
     /// IntViews, \f$x_i\f$ reflects which set contains element \f$i\f$
     ViewArray<Gecode::Int::IntView> xs;
@@ -203,9 +203,10 @@ namespace Gecode { namespace Set { namespace Int {
     ViewArray<View> ys;
 
     /// Constructor for cloning \a p
-    Channel(Space* home, bool share,Channel& p);
+    ChannelInt(Space* home, bool share,ChannelInt& p);
     /// Constructor for posting
-    Channel(Space* home,ViewArray<Gecode::Int::IntView>&, ViewArray<View>&);
+    ChannelInt(Space* home,ViewArray<Gecode::Int::IntView>&, 
+               ViewArray<View>&);
   public:
     /// Copy propagator during cloning
     virtual Actor*   copy(Space* home,bool);
@@ -218,6 +219,53 @@ namespace Gecode { namespace Set { namespace Int {
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
     static ExecStatus post(Space* home,ViewArray<Gecode::Int::IntView>& x,
                            ViewArray<View>& y);
+    /// Specification for this propagator
+    GECODE_SET_EXPORT
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    static Support::String name(void);
+  };
+
+  /**
+   * \brief %Propagator for channelling between set variable and its
+   * characteristic function
+   *
+   * Implements channelling constraints between BoolVar and a SetVar.
+   * For BoolVars \f$x_0,\dots,x_n\f$ and SetVar \f$y\f$ it
+   * propagates the constraint \f$x_i=1 \Leftrightarrow i\in y\f$.
+   *
+   * Requires \code #include "gecode/set/int.hh" \endcode
+   * \ingroup FuncSetProp
+   */
+  template <class View>
+  class ChannelBool
+  : public MixNaryOnePropagator<Gecode::Int::BoolView,
+                                Gecode::Int::PC_BOOL_VAL,
+                                View,PC_SET_ANY> {
+  protected:
+    typedef MixNaryOnePropagator<Gecode::Int::BoolView,
+                                  Gecode::Int::PC_BOOL_VAL,
+                                  View,PC_SET_ANY> Super;
+    using Super::x;
+    using Super::y;
+
+    /// Constructor for cloning \a p
+    ChannelBool(Space* home, bool share,ChannelBool& p);
+    /// Constructor for posting
+    ChannelBool(Space* home,ViewArray<Gecode::Int::BoolView>&, 
+                View);
+  public:
+    /// Copy propagator during cloning
+    virtual Actor*   copy(Space* home,bool);
+    /// Cost function (defined as PC_QUADRATIC_LO)
+    virtual PropCost cost(void) const;
+    /// Delete propagator and return its size
+    virtual size_t dispose(Space* home);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
+    static ExecStatus post(Space* home,ViewArray<Gecode::Int::BoolView>& x,
+                           View y);
     /// Specification for this propagator
     GECODE_SET_EXPORT
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
@@ -274,7 +322,8 @@ namespace Gecode { namespace Set { namespace Int {
 #include "gecode/set/int/minmax.icc"
 #include "gecode/set/int/card.icc"
 #include "gecode/set/int/match.icc"
-#include "gecode/set/int/channel.icc"
+#include "gecode/set/int/channel-int.icc"
+#include "gecode/set/int/channel-bool.icc"
 #include "gecode/set/int/weights.icc"
 
 #endif

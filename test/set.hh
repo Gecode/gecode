@@ -111,7 +111,7 @@ class SetAssignment {
 private:
   int n;
   CountableSet* dsv;
-  Assignment ir;
+  CpltAssignment ir;
   bool done;
 public:
   IntSet lub;

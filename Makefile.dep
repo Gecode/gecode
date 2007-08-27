@@ -1050,18 +1050,19 @@ gecode/set/cardinality$(OBJSUFFIX) gecode/set/cardinality$(SBJSUFFIX): \
 	./gecode/kernel/reflection.icc ./gecode/kernel/var.icc ./gecode/kernel/varmap.icc \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/set.hh \
 	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/int.hh \
-	./gecode/set/int/card.icc ./gecode/set/int/channel.icc ./gecode/set/int/match.icc \
-	./gecode/set/int/minmax.icc ./gecode/set/int/weights.icc ./gecode/set/propagator.icc \
-	./gecode/set/rel.hh ./gecode/set/rel/common.icc ./gecode/set/rel/eq.icc \
-	./gecode/set/rel/nosubset.icc ./gecode/set/rel/nq.icc ./gecode/set/rel/re-eq.icc \
-	./gecode/set/rel/re-subset.icc ./gecode/set/rel/subset.icc ./gecode/set/var.icc \
-	./gecode/set/var/delta.icc ./gecode/set/var/imp-hdr.icc ./gecode/set/var/imp.icc \
-	./gecode/set/var/integerset.icc ./gecode/set/var/iter.icc ./gecode/set/var/set.icc \
-	./gecode/set/view.icc ./gecode/set/view/complement.icc ./gecode/set/view/const.icc \
-	./gecode/set/view/offset.icc ./gecode/set/view/set.icc ./gecode/set/view/singleton.icc \
-	./gecode/support.hh ./gecode/support/cast.hh ./gecode/support/dynamic-array.hh \
-	./gecode/support/map.hh ./gecode/support/shared-array.hh ./gecode/support/sort.hh \
-	./gecode/support/static-pqueue.hh ./gecode/support/string.hh ./gecode/vti.icc 
+	./gecode/set/int/card.icc ./gecode/set/int/channel-bool.icc ./gecode/set/int/channel-int.icc \
+	./gecode/set/int/match.icc ./gecode/set/int/minmax.icc ./gecode/set/int/weights.icc \
+	./gecode/set/propagator.icc ./gecode/set/rel.hh ./gecode/set/rel/common.icc \
+	./gecode/set/rel/eq.icc ./gecode/set/rel/nosubset.icc ./gecode/set/rel/nq.icc \
+	./gecode/set/rel/re-eq.icc ./gecode/set/rel/re-subset.icc ./gecode/set/rel/subset.icc \
+	./gecode/set/var.icc ./gecode/set/var/delta.icc ./gecode/set/var/imp-hdr.icc \
+	./gecode/set/var/imp.icc ./gecode/set/var/integerset.icc ./gecode/set/var/iter.icc \
+	./gecode/set/var/set.icc ./gecode/set/view.icc ./gecode/set/view/complement.icc \
+	./gecode/set/view/const.icc ./gecode/set/view/offset.icc ./gecode/set/view/set.icc \
+	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/cast.hh \
+	./gecode/support/dynamic-array.hh ./gecode/support/map.hh ./gecode/support/shared-array.hh \
+	./gecode/support/sort.hh ./gecode/support/static-pqueue.hh ./gecode/support/string.hh \
+	./gecode/vti.icc 
 gecode/set/convex$(OBJSUFFIX) gecode/set/convex$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
@@ -1229,21 +1230,21 @@ gecode/set/rel$(OBJSUFFIX) gecode/set/rel$(SBJSUFFIX): \
 	./gecode/kernel/reflection.icc ./gecode/kernel/var.icc ./gecode/kernel/varmap.icc \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/set.hh \
 	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/int.hh \
-	./gecode/set/int/card.icc ./gecode/set/int/channel.icc ./gecode/set/int/match.icc \
-	./gecode/set/int/minmax.icc ./gecode/set/int/weights.icc ./gecode/set/propagator.icc \
-	./gecode/set/rel-op.hh ./gecode/set/rel-op/common.icc ./gecode/set/rel-op/inter.icc \
-	./gecode/set/rel-op/partition.icc ./gecode/set/rel-op/post.icc ./gecode/set/rel-op/subofunion.icc \
-	./gecode/set/rel-op/superofinter.icc ./gecode/set/rel-op/union.icc ./gecode/set/rel.hh \
-	./gecode/set/rel/common.icc ./gecode/set/rel/eq.icc ./gecode/set/rel/nosubset.icc \
-	./gecode/set/rel/nq.icc ./gecode/set/rel/re-eq.icc ./gecode/set/rel/re-subset.icc \
-	./gecode/set/rel/subset.icc ./gecode/set/var.icc ./gecode/set/var/delta.icc \
-	./gecode/set/var/imp-hdr.icc ./gecode/set/var/imp.icc ./gecode/set/var/integerset.icc \
-	./gecode/set/var/iter.icc ./gecode/set/var/set.icc ./gecode/set/view.icc \
-	./gecode/set/view/complement.icc ./gecode/set/view/const.icc ./gecode/set/view/offset.icc \
-	./gecode/set/view/set.icc ./gecode/set/view/singleton.icc ./gecode/support.hh \
-	./gecode/support/cast.hh ./gecode/support/dynamic-array.hh ./gecode/support/map.hh \
-	./gecode/support/shared-array.hh ./gecode/support/sort.hh ./gecode/support/static-pqueue.hh \
-	./gecode/support/string.hh ./gecode/vti.icc 
+	./gecode/set/int/card.icc ./gecode/set/int/channel-bool.icc ./gecode/set/int/channel-int.icc \
+	./gecode/set/int/match.icc ./gecode/set/int/minmax.icc ./gecode/set/int/weights.icc \
+	./gecode/set/propagator.icc ./gecode/set/rel-op.hh ./gecode/set/rel-op/common.icc \
+	./gecode/set/rel-op/inter.icc ./gecode/set/rel-op/partition.icc ./gecode/set/rel-op/post.icc \
+	./gecode/set/rel-op/subofunion.icc ./gecode/set/rel-op/superofinter.icc ./gecode/set/rel-op/union.icc \
+	./gecode/set/rel.hh ./gecode/set/rel/common.icc ./gecode/set/rel/eq.icc \
+	./gecode/set/rel/nosubset.icc ./gecode/set/rel/nq.icc ./gecode/set/rel/re-eq.icc \
+	./gecode/set/rel/re-subset.icc ./gecode/set/rel/subset.icc ./gecode/set/var.icc \
+	./gecode/set/var/delta.icc ./gecode/set/var/imp-hdr.icc ./gecode/set/var/imp.icc \
+	./gecode/set/var/integerset.icc ./gecode/set/var/iter.icc ./gecode/set/var/set.icc \
+	./gecode/set/view.icc ./gecode/set/view/complement.icc ./gecode/set/view/const.icc \
+	./gecode/set/view/offset.icc ./gecode/set/view/set.icc ./gecode/set/view/singleton.icc \
+	./gecode/support.hh ./gecode/support/cast.hh ./gecode/support/dynamic-array.hh \
+	./gecode/support/map.hh ./gecode/support/shared-array.hh ./gecode/support/sort.hh \
+	./gecode/support/static-pqueue.hh ./gecode/support/string.hh ./gecode/vti.icc 
 gecode/set/rel-op$(OBJSUFFIX) gecode/set/rel-op$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \
@@ -1348,18 +1349,19 @@ gecode/set/int$(OBJSUFFIX) gecode/set/int$(SBJSUFFIX): \
 	./gecode/kernel/reflection.icc ./gecode/kernel/var.icc ./gecode/kernel/varmap.icc \
 	./gecode/kernel/view.icc ./gecode/limits.hh ./gecode/set.hh \
 	./gecode/set/array.icc ./gecode/set/exception.icc ./gecode/set/int.hh \
-	./gecode/set/int/card.icc ./gecode/set/int/channel.icc ./gecode/set/int/match.icc \
-	./gecode/set/int/minmax.icc ./gecode/set/int/weights.icc ./gecode/set/propagator.icc \
-	./gecode/set/rel.hh ./gecode/set/rel/common.icc ./gecode/set/rel/eq.icc \
-	./gecode/set/rel/nosubset.icc ./gecode/set/rel/nq.icc ./gecode/set/rel/re-eq.icc \
-	./gecode/set/rel/re-subset.icc ./gecode/set/rel/subset.icc ./gecode/set/var.icc \
-	./gecode/set/var/delta.icc ./gecode/set/var/imp-hdr.icc ./gecode/set/var/imp.icc \
-	./gecode/set/var/integerset.icc ./gecode/set/var/iter.icc ./gecode/set/var/set.icc \
-	./gecode/set/view.icc ./gecode/set/view/complement.icc ./gecode/set/view/const.icc \
-	./gecode/set/view/offset.icc ./gecode/set/view/set.icc ./gecode/set/view/singleton.icc \
-	./gecode/support.hh ./gecode/support/cast.hh ./gecode/support/dynamic-array.hh \
-	./gecode/support/map.hh ./gecode/support/shared-array.hh ./gecode/support/sort.hh \
-	./gecode/support/static-pqueue.hh ./gecode/support/string.hh ./gecode/vti.icc 
+	./gecode/set/int/card.icc ./gecode/set/int/channel-bool.icc ./gecode/set/int/channel-int.icc \
+	./gecode/set/int/match.icc ./gecode/set/int/minmax.icc ./gecode/set/int/weights.icc \
+	./gecode/set/propagator.icc ./gecode/set/rel.hh ./gecode/set/rel/common.icc \
+	./gecode/set/rel/eq.icc ./gecode/set/rel/nosubset.icc ./gecode/set/rel/nq.icc \
+	./gecode/set/rel/re-eq.icc ./gecode/set/rel/re-subset.icc ./gecode/set/rel/subset.icc \
+	./gecode/set/var.icc ./gecode/set/var/delta.icc ./gecode/set/var/imp-hdr.icc \
+	./gecode/set/var/imp.icc ./gecode/set/var/integerset.icc ./gecode/set/var/iter.icc \
+	./gecode/set/var/set.icc ./gecode/set/view.icc ./gecode/set/view/complement.icc \
+	./gecode/set/view/const.icc ./gecode/set/view/offset.icc ./gecode/set/view/set.icc \
+	./gecode/set/view/singleton.icc ./gecode/support.hh ./gecode/support/cast.hh \
+	./gecode/support/dynamic-array.hh ./gecode/support/map.hh ./gecode/support/shared-array.hh \
+	./gecode/support/sort.hh ./gecode/support/static-pqueue.hh ./gecode/support/string.hh \
+	./gecode/vti.icc 
 gecode/set/select$(OBJSUFFIX) gecode/set/select$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/table.icc ./gecode/int/int-set.icc \

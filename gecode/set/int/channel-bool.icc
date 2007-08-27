@@ -1,0 +1,125 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Guido Tack, 2004
+ *
+ *  Last modified:
+ *     $Date: 2007-08-17 17:27:05 +0200 (Fri, 17 Aug 2007) $ by $Author: tack $
+ *     $Revision: 4870 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+#include "gecode/int.hh"
+
+namespace Gecode { namespace Set { namespace Int {
+      
+  template <class View>
+  forceinline
+  ChannelBool<View>::ChannelBool(Space* home, 
+                                 ViewArray<Gecode::Int::BoolView>& x,
+                                 View y)
+    : Super(home,x,y) {}
+      
+  template <class View>
+  forceinline
+  ChannelBool<View>::ChannelBool(Space* home, bool share, ChannelBool& p)
+    : Super(home,share,p) {}
+
+  template <class View>
+  forceinline ExecStatus
+  ChannelBool<View>::post(Space* home, ViewArray<Gecode::Int::BoolView>& x,
+                          View y) {
+    GECODE_ME_CHECK(y.intersect(home, 0, x.size()-1));
+    (void) new (home) ChannelBool(home,x,y);
+    return ES_OK;
+  }
+
+  template <class View>
+  PropCost
+  ChannelBool<View>::cost(void) const { return PC_QUADRATIC_LO; }
+
+  template <class View>
+  size_t
+  ChannelBool<View>::dispose(Space* home) {
+    assert(!home->failed());
+    (void) Super::dispose(home);
+    return sizeof(*this);
+  }
+
+  template <class View>
+  Actor*
+  ChannelBool<View>::copy(Space* home, bool share) {
+    return new (home) ChannelBool(home,share,*this);
+  }
+
+  template <class View>
+  ExecStatus
+  ChannelBool<View>::propagate(Space* home) {
+    
+    for (int i=x.size(); i--;) {
+      if (x[i].zero()) {
+        GECODE_ME_CHECK(y.exclude(home, i));
+      } else if (x[i].one()) {
+        GECODE_ME_CHECK(y.include(home, i));        
+      }
+    }
+    
+    int cur = 0;
+    for (LubRanges<View> lub(y); lub(); ++lub) {
+      for (; cur < lub.min(); cur++)
+        GECODE_ME_CHECK(x[cur].zero(home));
+      cur = lub.max() + 1;
+    }
+    for (; cur < x.size(); cur++)
+      GECODE_ME_CHECK(x[cur].zero(home));
+
+    GlbRanges<View> glb(y);
+    for (Iter::Ranges::ToValues<GlbRanges<View> > gv(glb); gv(); ++gv) {
+      GECODE_ME_CHECK(x[gv.val()].one(home))
+    }
+    
+    return y.assigned() ? ES_SUBSUMED(this,home) : ES_FIX;
+  }
+
+  template <class View>
+  Support::String
+  ChannelBool<View>::name(void) {
+    return Reflection::mangle<View>("Set::Int::ChannelBool");
+  }
+
+  template <class View>
+  Reflection::ActorSpec&
+  ChannelBool<View>::spec(Space* home, Reflection::VarMap& m) {
+    return Super::spec(home, m, name());
+  }
+
+
+}}}
+
+// STATISTICS: set-prop

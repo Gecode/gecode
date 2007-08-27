@@ -337,6 +337,10 @@ namespace Gecode {
   /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
   GECODE_SET_EXPORT void
   channel(Space* home, const IntVarArgs& x,const SetVarArgs& y);
+
+  /// Post propagator for \f$x_i=1 \Leftrightarrow i\in y\f$
+  GECODE_SET_EXPORT void
+  channel(Space* home, const BoolVarArgs& x, SetVar y);
   
   /// Post propagator for \f$ |s|=x \f$ 
   GECODE_SET_EXPORT void

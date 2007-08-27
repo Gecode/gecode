@@ -69,6 +69,21 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: set
+What:   new
+Rank:   minor
+[DESCRIPTION]
+Added channeling propagator between a SetVar and a BoolVarArray that 
+propagates the characteristic function of the set to the Boolean variables.
+
+[ENTRY]
+Module: set
+What:   performance
+Rank:   minor
+[DESCRIPTION]
+Changed the datastructure for set variables to use singly-linked lists.
+
+[ENTRY]
 Module: other
 What:   change
 Rank:   minor

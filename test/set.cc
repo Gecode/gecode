@@ -80,7 +80,8 @@ SetAssignment::reset(void) {
   done = false;
   for (int i=n; i--; )
     dsv[i].init(lub);
-  ir.reset();
+  ir.~CpltAssignment();
+  new (&ir) CpltAssignment(withInt, lub);
 }
 
 void

@@ -37,6 +37,7 @@
  *
  */
 
+#include "gecode/serialization.hh"
 #include "test/int.hh"
 #include "test/log.hh"
 #include <algorithm>
@@ -101,6 +102,31 @@ public:
   virtual Space* copy(bool share) {
     return new IntTestSpace(share,*this);
   }
+  
+  IntTestSpace* copyReflection(int n, IntSet& d, const Options& o) {
+    IntTestSpace* c = new IntTestSpace(n,d,o);
+    Reflection::VarMap vm;
+    vm.putArray(this, x, "x");
+    std::vector<Reflection::ActorSpec> as;
+    try {
+      for (Reflection::SpecIter si(this, vm); si(); ++si) {
+        as.push_back(si.actor());
+      }
+    } catch (Reflection::NoReflectionDefinedException) {
+      return NULL;
+    }
+    Reflection::VarMap newVm;
+    newVm.registerArray(c, c->x, "x");
+    Serialization::Deserializer ds(c, newVm);
+    for (Reflection::VarMapIter vmi(vm); vmi(); ++vmi) {
+      ds.var(vmi.var());
+    }
+    for (unsigned int i=0; i<as.size(); i++) {
+      ds.post(as[i]);
+    }
+    return c;
+  }
+  
   bool is_failed(void) {
     Log::fixpoint();
     return status() == SS_FAILED;
@@ -304,6 +330,29 @@ IntTest::run(const Options& opt) {
       }
       delete s;
     }
+    {
+       test = "Assignment (after reflection and posting)";
+
+       IntTestSpace * s = new IntTestSpace(arity,dom,opt);
+       post(s,s->x);
+       log_posting();
+       if (s->is_failed()) {
+         CHECK(!is_sol, "Failed on solution");
+         delete s;
+       } else {
+         IntTestSpace * sc = s->copyReflection(arity,dom,opt);
+         if (sc != NULL) {
+           sc->assign(a);
+           if (is_sol) {
+             CHECK(!sc->is_failed(), "Failed on solution");
+             CHECK(sc->propagators()==0, "No subsumtion");
+           } else {
+             CHECK(sc->is_failed(), "Solved on non-solution");
+           }
+         }
+         delete s; delete sc;        
+       }
+     }
     {
       test = "Assignment (before posting)";
       Log::reset();

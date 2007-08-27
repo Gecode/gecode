@@ -37,6 +37,7 @@
 
 #include "test/set.hh"
 #include "test/log.hh"
+#include "gecode/minimodel.hh"
 
 namespace TestsForSetsAndInts {
 
@@ -47,6 +48,8 @@ namespace TestsForSetsAndInts {
 
   static IntSet d2(-1,3);
   static IntSet d3(0,3);
+
+  static IntSet d4(0,4);
 
   static IntSet ds_33(-3,3);
 
@@ -224,11 +227,11 @@ namespace TestsForSetsAndInts {
   };
   Match _match("Int::Match");
 
-  class Channel : public SetTest {
+  class ChannelInt : public SetTest {
   private:
     int ssize, isize;
   public:
-    Channel(const char* t, const IntSet& d, int _ssize, int _isize)
+    ChannelInt(const char* t, const IntSet& d, int _ssize, int _isize)
       : SetTest(t,_ssize,d,false,_isize), ssize(_ssize), isize(_isize) {}
     virtual bool solution(const SetAssignment& x) const {
       for (int i=0; i<isize; i++) {
@@ -254,9 +257,44 @@ namespace TestsForSetsAndInts {
     }
   };
 
-  Channel _channel1("Int::Channel::1", d2, 2, 3);
-  Channel _channel2("Int::Channel::2", d3, 3, 3);
+  ChannelInt _channelint1("Int::Channel::Int::1", d2, 2, 3);
+  ChannelInt _channelint2("Int::Channel::Int::2", d3, 3, 3);
 
+  class ChannelBool : public SetTest {
+  private:
+    int isize;
+  public:
+    ChannelBool(const char* t, const IntSet& d, int _isize)
+      : SetTest(t,1,d,false,_isize), isize(_isize) {}
+    virtual bool solution(const SetAssignment& x) const {
+      for (int i=0; i<isize; i++) {
+        if (x.ints()[i] < 0 || x.ints()[i] > 1)
+          return false;
+      }
+      int cur = 0;
+      for (CountableSetValues csv(x.lub, x[0]); csv(); ++csv) {
+        if (csv.val() < 0 || csv.val() >= isize) return false;
+        if (x.ints()[csv.val()] != 1) return false;
+        for (; cur<csv.val(); cur++)
+          if (x.ints()[cur] != 0) return false;
+        cur = csv.val() + 1;
+      }
+      for (; cur<isize; cur++)
+        if (x.ints()[cur] != 0) return false;
+      return true;
+    }
+    virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
+      BoolVarArgs b(y.size());
+      for (int i=y.size(); i--;)
+        b[i] = channel(home, y[i]);
+      Gecode::channel(home, b, x[0]);
+    }
+  };
+
+  ChannelBool _channelbool1("Int::Channel::Bool::1", d2, 3);
+  ChannelBool _channelbool2("Int::Channel::Bool::2", d3, 3);
+  ChannelBool _channelbool3("Int::Channel::Bool::3", d4, 5);
+  
 }
 
 // STATISTICS: test-set

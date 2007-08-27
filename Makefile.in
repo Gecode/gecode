@@ -308,7 +308,7 @@ SETVARIMP = \
         gecode/set/var/imp-hdr.icc gecode/set/var/imp-body.icc
 SETHDR0 =								     \
 	view.icc exception.icc int.hh select.hh var.icc int/card.icc	     \
-	int/match.icc int/channel.icc int/minmax.icc int/weights.icc	     \
+	int/match.icc int/channel-int.icc int/minmax.icc int/weights.icc     \
 	select/idxarray.hh						     \
 	select/idxarray.icc select/inter.icc select/union.icc \
 	select/unionConst.icc \
