@@ -37,57 +37,59 @@
 
 #include "test/int.hh"
 
-namespace {
+namespace Test { namespace Int { namespace Circuit {
 
+  /**
+   * \defgroup TaskTestIntGraph Graph constraints
+   * \ingroup TaskTestInt
+   */
+  //@{
+  /// Simple test for circuit constraint
   class Circuit : public IntTest {
   public:
+    /// Create test
     Circuit(const char* t, int n, const IntSet& ds, IntConLevel icl)
       : IntTest(t,n,ds,false,icl) {
       testdomcon = false;
     }
+    /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
-      int n = x.size();
-      for (int i=n; i--; )
+      for (int i=x.size(); i--; )
         if ((x[i] < 0) || (x[i] > n-1))
           return false;
       int reachable = 0;
       {
         int j=0;
-        for (int i=n; i--; ) {
+        for (int i=x.size(); i--; ) {
           j=x[j]; reachable |= (1 << j);
         }
       }
-      for (int i=n; i--; )
+      for (int i=x.size(); i--; )
         if (!(reachable & (1 << i)))
           return false;
       return true;
     }
+    /// Post circuit constraint on \a x
     virtual void post(Space* home, IntVarArray& x) {
       circuit(home, x, icl);
     }
   };
 
-  IntSet ds_00(0,0);
-  IntSet ds_01(0,1);
-  IntSet ds_02(0,2);
-  IntSet ds_03(0,3);
-  IntSet ds_04(0,4);
-  IntSet ds_05(0,5);
+  Circuit c1v("Circuit::Val::1",1,0,0,ICL_VAL);
+  Circuit c2v("Circuit::Val::2",2,0,1,ICL_VAL);
+  Circuit c3v("Circuit::Val::3",3,0,2,ICL_VAL);
+  Circuit c4v("Circuit::Val::4",4,0,3,ICL_VAL);
+  Circuit c5v("Circuit::Val::5",5,0,4,ICL_VAL);
+  Circuit c6v("Circuit::Val::6",6,0,5,ICL_VAL);
 
-  Circuit c1v("Circuit::Val::1",1,ds_00,ICL_VAL);
-  Circuit c2v("Circuit::Val::2",2,ds_01,ICL_VAL);
-  Circuit c3v("Circuit::Val::3",3,ds_02,ICL_VAL);
-  Circuit c4v("Circuit::Val::4",4,ds_03,ICL_VAL);
-  Circuit c5v("Circuit::Val::5",5,ds_04,ICL_VAL);
-  Circuit c6v("Circuit::Val::6",6,ds_05,ICL_VAL);
+  Circuit c1d("Circuit::Dom::1",1,0,0,ICL_DOM);
+  Circuit c2d("Circuit::Dom::2",2,0,1,ICL_DOM);
+  Circuit c3d("Circuit::Dom::3",3,0,2,ICL_DOM);
+  Circuit c4d("Circuit::Dom::4",4,0,3,ICL_DOM);
+  Circuit c5d("Circuit::Dom::5",5,0,4,ICL_DOM);
+  Circuit c6d("Circuit::Dom::6",6,0,5,ICL_DOM);
+  //@}
 
-  Circuit c1d("Circuit::Dom::1",1,ds_00,ICL_DOM);
-  Circuit c2d("Circuit::Dom::2",2,ds_01,ICL_DOM);
-  Circuit c3d("Circuit::Dom::3",3,ds_02,ICL_DOM);
-  Circuit c4d("Circuit::Dom::4",4,ds_03,ICL_DOM);
-  Circuit c5d("Circuit::Dom::5",5,ds_04,ICL_DOM);
-  Circuit c6d("Circuit::Dom::6",6,ds_05,ICL_DOM);
-
-}
+}}}
 
 // STATISTICS: test-int

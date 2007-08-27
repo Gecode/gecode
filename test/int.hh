@@ -48,7 +48,6 @@ using namespace Int;
 
 /**
  * \defgroup TaskTestInt Testing finite domain integers
- *
  * \ingroup TaskTest
  */
 
@@ -144,11 +143,21 @@ public:
    * \brief Constructor
    *
    * Constructs a test with name \a t and arity \a a and variable
-   * domains \a d. The test also tests for a reified constraint, 
+   * domain \a d. Also tests for a reified constraint, 
    * if \a r is true. The consistency level \a is maintained for
    * convenience.
    */
   IntTest(const char* t, int a, const IntSet& d, 
+          bool r=false, IntConLevel i=ICL_DEF);
+  /**
+   * \brief Constructor
+   *
+   * Constructs a test with name \a t and arity \a a and variable
+   * domain \a min ... \a max. Also tests for a reified constraint, 
+   * if \a r is true. The consistency level \a is maintained for
+   * convenience.
+   */
+  IntTest(const char* t, int a, int min, int max, 
           bool r=false, IntConLevel i=ICL_DEF);
   /// Create assignment
   virtual Assignment* assignment(void) const;
