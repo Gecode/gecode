@@ -40,7 +40,7 @@
 
 #include "gecode/int.hh"
 
-#include "test.hh"
+#include "test/test.hh"
 
 using namespace Gecode;
 using namespace Int;
@@ -50,15 +50,15 @@ using namespace Int;
  * \brief Base class for tests for branching completeness.
  *
  */
-class BranchCompleteTest : public Test {
+class BranchCompleteTest : public TestBase {
 protected:
   /// Number of variables
   int arity;
   /// Domain of variables
   IntSet dom;
 
-  IntConLevel randicl() {
-    switch(Test::randgen(4)) {
+  IntConLevel randicl(void) {
+    switch (TestBase::randgen(4)) {
     case 0: return ICL_DEF;
     case 1: return ICL_VAL;
     case 2: return ICL_BND;
@@ -69,7 +69,7 @@ protected:
 public:
   /// Constructor
   BranchCompleteTest(const char* t, int a, const IntSet& d)
-    : Test("Branch::Complete",t), arity(a), dom(d) {
+    : TestBase("Branch::Complete",t), arity(a), dom(d) {
   }
   /// Perform test
   virtual bool run(const Options& opt);

@@ -75,7 +75,7 @@ CpltAssignment::~CpltAssignment(void) {
 
 forceinline int
 RandomAssignment::randval(void) {
-  unsigned int skip = Test::randgen(d.size());
+  unsigned int skip = TestBase::randgen(d.size());
   for (IntSetRanges it(d); true; ++it) {
     if (it.width() > skip)
       return it.min() + static_cast<int>(skip);
@@ -114,12 +114,12 @@ RandomAssignment::~RandomAssignment(void) {
  */
 inline
 IntTest::IntTest(const char* t, int a, const IntSet& d, bool r, IntConLevel i)
-  : Test("Int",t), arity(a), dom(d), reified(r), icl(i), 
+  : TestBase("Int",t), arity(a), dom(d), reified(r), icl(i), 
     testdomcon(true), testsearch(true) {}
 
 inline
 IntTest::IntTest(const char* t, int a, int min, int max, bool r, IntConLevel i)
-  : Test("Int",t), arity(a), dom(min,max), reified(r), icl(i), 
+  : TestBase("Int",t), arity(a), dom(min,max), reified(r), icl(i), 
     testdomcon(true), testsearch(true) {}
 
 

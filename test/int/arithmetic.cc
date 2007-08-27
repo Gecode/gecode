@@ -36,227 +36,231 @@
  */
 
 #include "test/int.hh"
-#include "test/log.hh"
 
 #include <cmath>
 #include <algorithm>
 
-namespace {
-  const int s1r[7] = {
-    Limits::Int::int_min, Limits::Int::int_min+1,
+namespace Test { namespace Int { namespace Arithmetic {
+
+  /**
+   * \defgroup TaskTestIntArithmetic Arithmetic constraints
+   * \ingroup TaskTestInt
+   */
+  //@{
+  /// Test for multiplication constraint
+  class Mult : public IntTest {
+  public:
+    Mult(const char* t, const IntSet& d)
+      : IntTest(t,3,d) {}
+    virtual bool solution(const Assignment& x) const {
+      double d0 = static_cast<double>(x[0]);
+      double d1 = static_cast<double>(x[1]);
+      double d2 = static_cast<double>(x[2]);
+      return d0*d1 == d2;
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      mult(home, x[0], x[1], x[2]);
+    }
+  };
+
+  /// Test for squaring constraint
+  class Square : public IntTest {
+  public:
+    Square(const char* t, const IntSet& d)
+      : IntTest(t,2,d) {}
+    virtual bool solution(const Assignment& x) const {
+      double d0 = static_cast<double>(x[0]);
+      double d1 = static_cast<double>(x[1]);
+      return d0*d0 == d1;
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      mult(home, x[0], x[0], x[1]);
+    }
+  };
+
+  /// Test for absolute value constraint
+  class Abs : public IntTest {
+  public:
+    Abs(const char* t, const IntSet& d, IntConLevel icl)
+      : IntTest(t,2,d,false,icl) {}
+    virtual bool solution(const Assignment& x) const {
+      double d0 = static_cast<double>(x[0]);
+      double d1 = static_cast<double>(x[1]);
+      return (d0<0 ? -d0 : d0) == d1;
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      abs(home, x[0], x[1], icl);
+    }
+  };
+
+  /// Test for binary minimum constraint  
+  class Min : public IntTest {
+  public:
+    Min(const char* t, const IntSet& d)
+      : IntTest(t,3,d) {}
+    virtual bool solution(const Assignment& x) const {
+      return std::min(x[0],x[1]) == x[2];
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      min(home, x[0], x[1], x[2]);
+    }
+  };
+
+  /// Test for binary minimum constraint with shared variables
+  class MinShared : public IntTest {
+  public:
+    MinShared(const char* t, const IntSet& d)
+      : IntTest(t,2,d) {}
+    virtual bool solution(const Assignment& x) const {
+      return std::min(x[0],x[1]) == x[0];
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      min(home, x[0], x[1], x[0]);
+    }
+  };
+
+  /// Test for binary maximum constraint  
+  class Max : public IntTest {
+  public:
+    Max(const char* t, const IntSet& d)
+      : IntTest(t,3,d) {}
+    virtual bool solution(const Assignment& x) const {
+      return std::max(x[0],x[1]) == x[2];
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      max(home, x[0], x[1], x[2]);
+    }
+  };
+
+  /// Test for binary maximum constraint with shared variables
+  class MaxShared : public IntTest {
+  public:
+    MaxShared(const char* t, const IntSet& d)
+      : IntTest(t,2,d) {}
+    virtual bool solution(const Assignment& x) const {
+      return std::max(x[0],x[1]) == x[0];
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      max(home, x[0], x[1], x[0]);
+    }
+  };
+
+  /// Test for n-ary minimmum constraint  
+  class MinNary : public IntTest {
+  public:
+    MinNary(void)
+      : IntTest("Arithmetic::Min::Nary",4,-4,4) {}
+    virtual bool solution(const Assignment& x) const {
+      return std::min(std::min(x[0],x[1]), x[2]) == x[3];
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      IntVarArgs m(3);
+      m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
+      min(home, m, x[3]);
+    }
+  };
+
+  /// Test for n-ary minimmum constraint with shared variables  
+  class MinNaryShared : public IntTest {
+  public:
+    MinNaryShared(void)
+      : IntTest("Arithmetic::Min::Nary::Shared",3,-4,4) {}
+    virtual bool solution(const Assignment& x) const {
+      return std::min(std::min(x[0],x[1]), x[2]) == x[1];
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      IntVarArgs m(3);
+      m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
+      min(home, m, x[1]);
+    }
+  };
+
+  /// Test for n-ary maximum constraint  
+  class MaxNary : public IntTest {
+  public:
+    MaxNary(void)
+      : IntTest("Arithmetic::Max::Nary",4,-4,4) {}
+    virtual bool solution(const Assignment& x) const {
+      return std::max(std::max(x[0],x[1]), x[2]) == x[3];
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      IntVarArgs m(3);
+      m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
+      max(home, m, x[3]);
+    }
+  };
+
+  /// Test for n-ary maximum constraint with shared variables
+  class MaxNaryShared : public IntTest {
+  public:
+    MaxNaryShared(void)
+      : IntTest("Arithmetic::Max::Nary::Shared",3,-4,4) {}
+    virtual bool solution(const Assignment& x) const {
+      return std::max(std::max(x[0],x[1]), x[2]) == x[1];
+    }
+    virtual void post(Space* home, IntVarArray& x) {
+      IntVarArgs m(3);
+      m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
+      max(home, m, x[1]);
+    }
+  };
+
+
+
+  const int v1[7] = {
+    Gecode::Limits::Int::int_min, Gecode::Limits::Int::int_min+1,
     -1,0,1,
     Limits::Int::int_max-1, Limits::Int::int_max
   };
-  const int s2r[9] = {
-    static_cast<int>(-sqrt(static_cast<double>(-Limits::Int::int_min))),
+  const int v2[9] = {
+    static_cast<int>(-sqrt(static_cast<double>
+                           (-Gecode::Limits::Int::int_min))),
     -4,-2,-1,0,1,2,4,
-    static_cast<int>(sqrt(static_cast<double>(Limits::Int::int_max)))
+    static_cast<int>(sqrt(static_cast<double>
+                          (Gecode::Limits::Int::int_max)))
   };
-  IntSet s1(s1r,7);
-  IntSet s2(s2r,9);
-  IntSet s3(-8,8);
-  IntSet s4(-3,3);
-}
+  
+  Gecode::IntSet d1(v1,7);
+  Gecode::IntSet d2(v2,9);
+  Gecode::IntSet d3(-8,8);
 
-class Mult : public IntTest {
-public:
-  Mult(const char* t, const IntSet& is)
-    : IntTest(t,3,is) {}
-  virtual bool solution(const Assignment& x) const {
-    double d0 = static_cast<double>(x[0]);
-    double d1 = static_cast<double>(x[1]);
-    double d2 = static_cast<double>(x[2]);
-    return d0*d1 == d2;
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    mult(home, x[0], x[1], x[2]);
-  }
-};
-namespace {
-  Mult _multmax("Arithmetic::Mult::A",s1);
-  Mult _multmed("Arithmetic::Mult::B",s2);
-  Mult _multmin("Arithmetic::Mult::C",s3);
-}
+  Mult mult_max("Arithmetic::Mult::A",d1);
+  Mult mult_med("Arithmetic::Mult::B",d2);
+  Mult mult_min("Arithmetic::Mult::C",d3);
 
-class Square : public IntTest {
-public:
-  Square(const char* t, const IntSet& is)
-    : IntTest(t,2,is) {}
-  virtual bool solution(const Assignment& x) const {
-    double d0 = static_cast<double>(x[0]);
-    double d1 = static_cast<double>(x[1]);
-    return d0*d0 == d1;
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    mult(home, x[0], x[0], x[1]);
-  }
-};
-namespace {
-  Square _squaremax("Arithmetic::Square::A",s1);
-  Square _squaremed("Arithmetic::Square::B",s2);
-  Square _squaremin("Arithmetic::Square::C",s3);
-}
+  Square square_max("Arithmetic::Square::A",d1);
+  Square square_med("Arithmetic::Square::B",d2);
+  Square square_min("Arithmetic::Square::C",d3);
 
-class Abs : public IntTest {
-public:
-  Abs(const char* t, IntConLevel icl, const IntSet& is)
-    : IntTest(t,2,is,false,icl) {}
-  virtual bool solution(const Assignment& x) const {
-    double d0 = static_cast<double>(x[0]);
-    double d1 = static_cast<double>(x[1]);
-    return (d0<0 ? -d0 : d0) == d1;
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    abs(home, x[0], x[1], icl);
-  }
-};
-namespace {
-  Abs _absbndmax("Arithmetic::Abs::Bnd::A",ICL_BND,s1);
-  Abs _absbndmed("Arithmetic::Abs::Bnd::B",ICL_BND,s2);
-  Abs _absbndmin("Arithmetic::Abs::Bnd::C",ICL_BND,s3);
-  Abs _absdommax("Arithmetic::Abs::Dom::A",ICL_DOM,s1);
-  Abs _absdommed("Arithmetic::Abs::Dom::B",ICL_DOM,s2);
-  Abs _absdommin("Arithmetic::Abs::Dom::C",ICL_DOM,s3);
-}
+  Abs abs_bnd_max("Arithmetic::Abs::Bnd::A",d1,ICL_BND);
+  Abs abs_bnd_med("Arithmetic::Abs::Bnd::B",d2,ICL_BND);
+  Abs abs_bnd_min("Arithmetic::Abs::Bnd::C",d3,ICL_BND);
+  Abs abs_dom_max("Arithmetic::Abs::Dom::A",d1,ICL_DOM);
+  Abs abs_dom_med("Arithmetic::Abs::Dom::B",d2,ICL_DOM);
+  Abs abs_dom_min("Arithmetic::Abs::Dom::C",d3,ICL_DOM);
 
-class Min : public IntTest {
-public:
-  Min(const char* t, const IntSet& is)
-    : IntTest(t,3,is) {}
-  virtual bool solution(const Assignment& x) const {
-    return std::min(x[0],x[1]) == x[2];
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    min(home, x[0], x[1], x[2]);
-  }
-};
-namespace {
-  Min _minmax("Arithmetic::Min::Bin::A",s1);
-  Min _minmed("Arithmetic::Min::Bin::B",s2);
-  Min _minmin("Arithmetic::Min::Bin::C",s3);
-}
+  Min min_max("Arithmetic::Min::Bin::A",d1);
+  Min min_med("Arithmetic::Min::Bin::B",d2);
+  Min min_min("Arithmetic::Min::Bin::C",d3);
 
-class MinShared : public IntTest {
-public:
-  MinShared(const char* t, const IntSet& is)
-    : IntTest(t,2,is) {}
-  virtual bool solution(const Assignment& x) const {
-    return std::min(x[0],x[1]) == x[0];
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    min(home, x[0], x[1], x[0]);
-  }
-};
-namespace {
-  MinShared _minsmax("Arithmetic::Min::Bin::Shared::A",s1);
-  MinShared _minsmed("Arithmetic::Min::Bin::Shared::B",s2);
-  MinShared _minsmin("Arithmetic::Min::Bin::Shared::C",s3);
-}
+  MinShared min_s_max("Arithmetic::Min::Bin::Shared::A",d1);
+  MinShared min_s_med("Arithmetic::Min::Bin::Shared::B",d2);
+  MinShared min_s_min("Arithmetic::Min::Bin::Shared::C",d3);
 
-class Max : public IntTest {
-public:
-  Max(const char* t, const IntSet& is)
-    : IntTest(t,3,is) {}
-  virtual bool solution(const Assignment& x) const {
-    return std::max(x[0],x[1]) == x[2];
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    max(home, x[0], x[1], x[2]);
-  }
-};
-namespace {
-  Max _maxmax("Arithmetic::Max::Bin::A",s1);
-  Max _maxmed("Arithmetic::Max::Bin::B",s2);
-  Max _maxmin("Arithmetic::Max::Bin::C",s3);
-}
+  Max max_max("Arithmetic::Max::Bin::A",d1);
+  Max max_med("Arithmetic::Max::Bin::B",d2);
+  Max max_min("Arithmetic::Max::Bin::C",d3);
 
-class MaxShared : public IntTest {
-public:
-  MaxShared(const char* t, const IntSet& is)
-    : IntTest(t,2,is) {}
-  virtual bool solution(const Assignment& x) const {
-    return std::max(x[0],x[1]) == x[0];
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    max(home, x[0], x[1], x[0]);
-  }
-};
-namespace {
-  MaxShared _maxsmax("Arithmetic::Max::Bin::Shared::A",s1);
-  MaxShared _maxsmed("Arithmetic::Max::Bin::Shared::B",s2);
-  MaxShared _maxsmin("Arithmetic::Max::Bin::Shared::C",s3);
-}
+  MaxShared max_s_max("Arithmetic::Max::Bin::Shared::A",d1);
+  MaxShared max_s_med("Arithmetic::Max::Bin::Shared::B",d2);
+  MaxShared max_s_min("Arithmetic::Max::Bin::Shared::C",d3);
 
-class MinNary : public IntTest {
-public:
-  MinNary(const char* t, const IntSet& is)
-    : IntTest(t,4,is) {}
-  virtual bool solution(const Assignment& x) const {
-    return std::min(std::min(x[0],x[1]),
-                    x[2]) == x[3];
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    IntVarArgs m(3);
-    m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-    min(home, m, x[3]);
-  }
-};
-namespace {
-  MinNary _minnary("Arithmetic::Min::Nary",s4);
-}
+  MinNary min_nary;
+  MinNaryShared min_s_nary;
+  MaxNary max_nary;
+  MaxNaryShared max_s_nary;
+  //@}
 
-class MinNaryShared : public IntTest {
-public:
-  MinNaryShared(const char* t, const IntSet& is)
-    : IntTest(t,3,is) {}
-  virtual bool solution(const Assignment& x) const {
-    return std::min(std::min(x[0],x[1]),
-                    x[2]) == x[1];
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    IntVarArgs m(3);
-    m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-    min(home, m, x[1]);
-  }
-};
-namespace {
-  MinNaryShared _minsnary("Arithmetic::Min::Nary::Shared",s4);
-}
-
-class MaxNary : public IntTest {
-public:
-  MaxNary(const char* t, const IntSet& is)
-    : IntTest(t,4,is) {}
-  virtual bool solution(const Assignment& x) const {
-    return std::max(std::max(x[0],x[1]),
-                    x[2]) == x[3];
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    IntVarArgs m(3);
-    m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-    max(home, m, x[3]);
-  }
-};
-namespace {
-  MaxNary _maxnary("Arithmetic::Max::Nary",s4);
-}
-
-class MaxNaryShared : public IntTest {
-public:
-  MaxNaryShared(const char* t, const IntSet& is)
-    : IntTest(t,3,is) {}
-  virtual bool solution(const Assignment& x) const {
-    return std::max(std::max(x[0],x[1]),
-                    x[2]) == x[1];
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    IntVarArgs m(3);
-    m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-    max(home, m, x[1]);
-  }
-};
-namespace {
-  MaxNaryShared _maxsnary("Arithmetic::Max::Nary::Shared",s4);
-}
+}}}
 
 // STATISTICS: test-int

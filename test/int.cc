@@ -79,7 +79,7 @@ operator<<(std::ostream& os, const Assignment& a) {
 
 #define FORCE_FIX                                 \
 do {                                              \
-  if (Test::randgen(opt.fixprob) == 0) {          \
+  if (TestBase::randgen(opt.fixprob) == 0) {          \
     Log::fixpoint();                              \
     if (status() == SS_FAILED) return;            \
   }                                               \
@@ -129,15 +129,15 @@ public:
   }
   void prune(void) {
     // Select variable to be pruned
-    int i = Test::randgen(x.size());
+    int i = TestBase::randgen(x.size());
     while (x[i].assigned()) {
       i = (i+1) % x.size();
     }
     // Prune values
-    for (int vals = Test::randgen(x[i].size()-1)+1; vals--; ) {
+    for (int vals = TestBase::randgen(x[i].size()-1)+1; vals--; ) {
       int v;
       Int::ViewRanges<Int::IntView> it(x[i]);
-      unsigned int skip = Test::randgen(x[i].size()-1);
+      unsigned int skip = TestBase::randgen(x[i].size()-1);
       while (true) {
         if (it.width() > skip) {
           v = it.min() + skip;
@@ -157,20 +157,20 @@ public:
   bool prune(const Assignment& a, IntTest& it,
              bool r, BoolVar& b = unused) {
     // Select variable to be pruned
-    int i = Test::randgen(x.size());
+    int i = TestBase::randgen(x.size());
     while (x[i].assigned()) {
       i = (i+1) % x.size();
     }
     // Select mode for pruning
-    int m=Test::randgen(3);
+    int m=TestBase::randgen(3);
     if ((m == 0) && (a[i] < x[i].max())) {
-      int v=a[i]+1+Test::randgen(static_cast<unsigned int>(x[i].max()-a[i]));
+      int v=a[i]+1+TestBase::randgen(static_cast<unsigned int>(x[i].max()-a[i]));
       assert((v > a[i]) && (v <= x[i].max()));
       Log::prune(x[i], Log::mk_name("x", i), IRT_LE, v);
       rel(this, x[i], IRT_LE, v);
       Log::prune_result(x[i]);
     } else if ((m == 1) && (a[i] > x[i].min())) {
-      int v=x[i].min()+Test::randgen(static_cast<unsigned int>(a[i]-x[i].min()));
+      int v=x[i].min()+TestBase::randgen(static_cast<unsigned int>(a[i]-x[i].min()));
       assert((v < a[i]) && (v >= x[i].min()));
       Log::prune(x[i], Log::mk_name("x", i), IRT_GR, v);
       rel(this, x[i], IRT_GR, v);
@@ -178,7 +178,7 @@ public:
     } else  {
       int v;
       Int::ViewRanges<Int::IntView> it(x[i]);
-      unsigned int skip = Test::randgen(x[i].size()-1);
+      unsigned int skip = TestBase::randgen(x[i].size()-1);
       while (true) {
         if (it.width() > skip) {
           v = it.min() + skip;
@@ -200,7 +200,7 @@ public:
       rel(this, x[i], IRT_NQ, v);
       Log::prune_result(x[i]);
     }
-    if (Test::randgen(opt.fixprob) == 0) {                
+    if (TestBase::randgen(opt.fixprob) == 0) {                
       Log::fixpoint();
       Log::print(x, "x");
       if (status() == SS_FAILED)
@@ -329,8 +329,8 @@ IntTest::run(const Options& opt) {
       IntTestSpace *s = new IntTestSpace(arity,dom,opt);
       int lo = 0, hi = 0;
       while (lo + hi == 0) {
-        lo = Test::randgen(2);
-        hi = Test::randgen(2);
+        lo = TestBase::randgen(2);
+        hi = TestBase::randgen(2);
       }
       s->assign(a,lo,hi); 
       post(s,s->x);

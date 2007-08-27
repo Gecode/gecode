@@ -39,100 +39,111 @@
 
 #include "test/int.hh"
 
-namespace {
-  IntSet ds_dense(-3,3);
-  const int v_sparse[7] = {-1001,-1000,-10,0,10,1000,1001};
-  IntSet ds_sparse(v_sparse,7);
-  IntSet ds_rn(-500,500);
-  IntSet ds_rnsmall(-50,50);
-}
+namespace Test { namespace Int { namespace Distinct {
 
-class Distinct : public IntTest {
-public:
-  Distinct(const char* t, const IntSet& ds, IntConLevel icl)
-    : IntTest(t,6,ds,false,icl) {}
-  virtual bool solution(const Assignment& x) const {
-    for (int i=0; i<x.size(); i++)
-      for (int j=i+1; j<x.size(); j++)
-        if (x[i]==x[j])
-          return false;
-    return true;
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    distinct(home, x, icl);
-  }
-};
+  /**
+   * \defgroup TaskTestIntDistinct Distinct constraints
+   * \ingroup TaskTestInt
+   */
+  //@{
+  /// Simple test for distinct constraint
+  class Distinct : public IntTest {
+  public:
+    /// Create and register test
+    Distinct(const char* t, const IntSet& d, IntConLevel icl)
+      : IntTest(t,6,d,false,icl) {}
+    /// Create and register test
+    Distinct(const char* t, int min, int max, IntConLevel icl)
+      : IntTest(t,6,min,max,false,icl) {}
+    /// Check whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      for (int i=0; i<x.size(); i++)
+        for (int j=i+1; j<x.size(); j++)
+          if (x[i]==x[j])
+            return false;
+      return true;
+    }
+    /// Post distinct constraint on \a x
+    virtual void post(Space* home, IntVarArray& x) {
+      distinct(home, x, icl);
+    }
+  };
+  
+  /// Randomized test for distinct constraint
+  class DistinctRandom : public IntTest {
+  public:
+    /// Create and register test
+    DistinctRandom(const char* t, int a, int min, int max, IntConLevel icl)
+      : IntTest(t,a,min,max,false,icl) {
+      testsearch = false;
+    }
+    /// Create and register initial assignment
+    virtual Assignment* assignment(void) const {
+      return new RandomAssignment(arity,dom,100);
+    }
+    /// Check whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      for (int i=0; i<x.size(); i++)
+        for (int j=i+1; j<x.size(); j++)
+          if (x[i]==x[j])
+            return false;
+      return true;
+    }
+    /// Post distinct constraint on \a x
+    virtual void post(Space* home, IntVarArray& x) {
+      distinct(home, x, icl);
+    }
+  };
+  
+  /// Simple test for distinct constraint with offsets
+  class DistinctOffset : public IntTest {
+  public:
+    /// Create and register test
+    DistinctOffset(const char* t, const IntSet& d, IntConLevel icl)
+      : IntTest(t,6,d,false,icl) {}
+    /// Create and register test
+    DistinctOffset(const char* t, int min, int max, IntConLevel icl)
+      : IntTest(t,6,min,max,false,icl) {}
+    /// Check whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      for (int i=0; i<x.size(); i++)
+        for (int j=i+1; j<x.size(); j++)
+          if (x[i]+i==x[j]+j)
+            return false;
+      return true;
+    }
+    /// Post distinct constraint on \a x
+    virtual void post(Space* home, IntVarArray& x) {
+      IntArgs c(x.size());
+      for (int i=0; i<x.size(); i++)
+        c[i]=i;
+      distinct(home, c, x, icl);
+    }
+  };
 
-namespace {
-  Distinct _dist_dom_d("Distinct::Dom::Dense",ds_dense,ICL_DOM);
-  Distinct _dist_bnd_d("Distinct::Bnd::Dense",ds_dense,ICL_BND);
-  Distinct _dist_val_d("Distinct::Val::Dense",ds_dense,ICL_VAL);
-  Distinct _dist_dom_s("Distinct::Dom::Sparse",ds_sparse,ICL_DOM);
-  Distinct _dist_bnd_s("Distinct::Bnd::Sparse",ds_sparse,ICL_BND);
-  Distinct _dist_val_s("Distinct::Val::Sparse",ds_sparse,ICL_VAL);
-}
 
-class DistinctRandom : public IntTest {
-private:
-  IntConLevel icl;
-  int size;
-  IntSet ds;
-protected:
-public:
-  DistinctRandom(const char* t, int size0, const IntSet& ds0, IntConLevel icl0)
-    : IntTest(t,size0,ds0,false),
-      icl(icl0), size(size0), ds(ds0) {
-    testsearch = false;
-  }
-  virtual Assignment* assignment(void) const {
-    return new RandomAssignment(size, ds, 100);
-  }
-  virtual bool solution(const Assignment& x) const {
-    for (int i=0; i<x.size(); i++)
-      for (int j=i+1; j<x.size(); j++)
-        if (x[i]==x[j])
-          return false;
-    return true;
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    distinct(home, x, icl);
-  }
-};
+  const int v[7] = {-1001,-1000,-10,0,10,1000,1001};
+  Gecode::IntSet d(v,7);
 
-namespace {
-  DistinctRandom _domr("Distinct::Dom::Random", 20, ds_rnsmall, ICL_DOM);
-  DistinctRandom _bndr("Distinct::Bnd::Random", 50, ds_rn, ICL_BND);
-  DistinctRandom _valr("Distinct::Val::Random", 50, ds_rn, ICL_VAL);
-}
+  Distinct dom_d("Distinct::Dom::Dense",-3,3,ICL_DOM);
+  Distinct bnd_d("Distinct::Bnd::Dense",-3,3,ICL_BND);
+  Distinct val_d("Distinct::Val::Dense",-3,3,ICL_VAL);
+  Distinct dom_s("Distinct::Dom::Sparse",d,ICL_DOM);
+  Distinct bnd_s("Distinct::Bnd::Sparse",d,ICL_BND);
+  Distinct val_s("Distinct::Val::Sparse",d,ICL_VAL);
 
-class DistinctOffset : public IntTest {
-public:
-  DistinctOffset(const char* t, const IntSet& ds, IntConLevel icl)
-    : IntTest(t,6,ds,false,icl) {}
-  virtual bool solution(const Assignment& x) const {
-    for (int i=0; i<x.size(); i++)
-      for (int j=i+1; j<x.size(); j++)
-        if (x[i]+i==x[j]+j)
-          return false;
-    return true;
-  }
-  virtual void post(Space* home, IntVarArray& x) {
-    IntArgs c(x.size());
-    for (int i=0; i<x.size(); i++)
-      c[i]=i;
-    distinct(home, c, x, icl);
-  }
-};
+  DistinctRandom dom_r("Distinct::Dom::Random",20,-50,50,ICL_DOM);
+  DistinctRandom bnd_r("Distinct::Bnd::Random",50,-500,500,ICL_BND);
+  DistinctRandom val_r("Distinct::Val::Random",50,-500,500,ICL_VAL);
 
-namespace {
-  DistinctOffset _disto_dom_d("Distinct::Dom::Offset::Dense",ds_dense,ICL_DOM);
-  DistinctOffset _disto_bnd_d("Distinct::Bnd::Offset::Dense",ds_dense,ICL_BND);
-  DistinctOffset _disto_val_d("Distinct::Val::Offset::Dense",ds_dense,ICL_VAL);
-  DistinctOffset _disto_dom_s("Distinct::Dom::Offset::Sparse",ds_sparse,ICL_DOM);
-  DistinctOffset _disto_bnd_s("Distinct::Bnd::Offset::Sparse",ds_sparse,ICL_BND);
-  DistinctOffset _disto_val_s("Distinct::Val::Offset::Sparse",ds_sparse,ICL_VAL);
-}
+  DistinctOffset dom_od("Distinct::Dom::Offset::Dense",-3,3,ICL_DOM);
+  DistinctOffset bnd_od("Distinct::Bnd::Offset::Dense",-3,3,ICL_BND);
+  DistinctOffset val_od("Distinct::Val::Offset::Dense",-3,3,ICL_VAL);
+  DistinctOffset dom_os("Distinct::Dom::Offset::Sparse",d,ICL_DOM);
+  DistinctOffset bnd_os("Distinct::Bnd::Offset::Sparse",d,ICL_BND);
+  DistinctOffset val_os("Distinct::Val::Offset::Sparse",d,ICL_VAL);
+  //@}
 
+}}}
 
 // STATISTICS: test-int
-

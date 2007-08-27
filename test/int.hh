@@ -123,7 +123,7 @@ std::ostream& operator<<(std::ostream& os, const Assignment& a);
  * \brief Base class for tests with integer constraints
  *
  */
-class IntTest : public Test {
+class IntTest : public TestBase {
 protected:
   /// Number of variables
   int arity;

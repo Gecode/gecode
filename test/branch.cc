@@ -167,8 +167,9 @@ BranchCompleteTest::run(const Options& opt) {
   for (int var = nbvarsel; var--; ) {
     for (int val = nbvalsel; val--; ) {
       BranchTestSpace* clone = static_cast<BranchTestSpace*>(root->clone(false));
-      int a_c = Test::randgen(10),
-        c_d = Test::randgen(10);
+      int 
+        a_c = TestBase::randgen(10),
+        c_d = TestBase::randgen(10);
       branch(clone, clone->x, bvarsel[var], bvalsel[val]);
       Gecode::DFS<BranchTestSpace> e_s(clone, a_c, c_d);
       delete clone;

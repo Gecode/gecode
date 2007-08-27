@@ -87,24 +87,24 @@ public:
 };
 
 /// Main test driver
-class Test {
+class TestBase {
 private:
   const char* m;
   const char* t;
-  Test* n;
-  static Test* all;
+  TestBase* n;
+  static TestBase* all;
 public:
   /// Return number between 0..m-1
   static Support::RandomGenerator randgen;
 
-  Test(const char* module, const char* test)
+  TestBase(const char* module, const char* test)
     : m(module), t(test) {
     if (all == NULL) {
       all = this; n = NULL;
     } else {
       // Search alphabetically
-      Test* p = NULL;
-      Test* c = all;
+      TestBase* p = NULL;
+      TestBase* c = all;
       while ((c != NULL) &&
              ((strcmp(m,c->m)>0)
               || ((strcmp(m,c->m)==0) && (strcmp(t,c->t)>0)))) {
@@ -119,10 +119,10 @@ public:
       }
     }
   }
-  static Test* tests(void) {
+  static TestBase* tests(void) {
     return all;
   }
-  Test* next(void) const {
+  TestBase* next(void) const {
     return n;
   }
   const char* module(void) const {
@@ -132,7 +132,7 @@ public:
     return t;
   }
   virtual bool run(const Options& opt) = 0;
-  virtual ~Test(void) {}
+  virtual ~TestBase(void) {}
 
 protected:
   /** \brief Log start of test.

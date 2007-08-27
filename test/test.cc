@@ -59,8 +59,8 @@ using std::pair;
 
 vector<pair<bool, const char*> > testpat;
 
-Test* Test::all = NULL;
-Support::RandomGenerator Test::randgen = Support::RandomGenerator();
+TestBase* TestBase::all = NULL;
+Support::RandomGenerator TestBase::randgen = Support::RandomGenerator();
 
 
 namespace {
@@ -83,17 +83,17 @@ main(int argc, char** argv) {
 
   Options o;
   o.parse(argc, argv);
-  Test::randgen.seed(o.seed);
+  TestBase::randgen.seed(o.seed);
   Log::logging(o.log);
 
   unsigned int testCount = 0;
-  for ( Test* t = Test::tests(); t != NULL; t = t->next() )
+  for (TestBase* t = TestBase::tests(); t != NULL; t = t->next() )
     testCount++;
   int digits = 
     static_cast<int>(std::ceil(std::log10(static_cast<double>(testCount))));
   
   unsigned int counter = 1;
-  Test* t = Test::tests();
+  TestBase* t = TestBase::tests();
   for ( ; t != NULL; counter++, t = t->next() )
     if (o.skip-- == 0)
       break;
@@ -120,7 +120,7 @@ main(int argc, char** argv) {
       std::cout << name << ": ";
       std::cout.flush();
       for (int i = o.iter; i--; ) {
-        o.seed = Test::randgen.seed();
+        o.seed = TestBase::randgen.seed();
         if (i % o.noofmachines != o.machine-1)
           continue;
         if (t->run(o)) {

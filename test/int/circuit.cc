@@ -47,15 +47,15 @@ namespace Test { namespace Int { namespace Circuit {
   /// Simple test for circuit constraint
   class Circuit : public IntTest {
   public:
-    /// Create test
-    Circuit(const char* t, int n, const IntSet& ds, IntConLevel icl)
-      : IntTest(t,n,ds,false,icl) {
+    /// Create and register test
+    Circuit(const char* t, int n, int min, int max, IntConLevel icl)
+      : IntTest(t,n,min,max,false,icl) {
       testdomcon = false;
     }
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=x.size(); i--; )
-        if ((x[i] < 0) || (x[i] > n-1))
+        if ((x[i] < 0) || (x[i] > x.size()-1))
           return false;
       int reachable = 0;
       {
