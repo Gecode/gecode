@@ -40,7 +40,7 @@
 namespace Test { namespace Int { namespace Circuit {
 
   /**
-   * \defgroup TaskTestIntGraph Graph constraints
+   * \defgroup TaskTestIntCircuit Circuit constraints
    * \ingroup TaskTestInt
    */
   //@{
@@ -48,8 +48,9 @@ namespace Test { namespace Int { namespace Circuit {
   class Circuit : public IntTest {
   public:
     /// Create and register test
-    Circuit(const char* t, int n, int min, int max, Gecode::IntConLevel icl)
-      : IntTest(t,n,min,max,false,icl) {
+    Circuit(int n, int min, int max, Gecode::IntConLevel icl)
+      : IntTest("Circuit::" + icl2str(icl) + "::" + str(n),
+                n,min,max,false,icl) {
       testdomcon = false;
     }
     /// Check whether \a x is solution
@@ -75,19 +76,19 @@ namespace Test { namespace Int { namespace Circuit {
     }
   };
 
-  Circuit c1v("Circuit::Val::1",1,0,0,Gecode::ICL_VAL);
-  Circuit c2v("Circuit::Val::2",2,0,1,Gecode::ICL_VAL);
-  Circuit c3v("Circuit::Val::3",3,0,2,Gecode::ICL_VAL);
-  Circuit c4v("Circuit::Val::4",4,0,3,Gecode::ICL_VAL);
-  Circuit c5v("Circuit::Val::5",5,0,4,Gecode::ICL_VAL);
-  Circuit c6v("Circuit::Val::6",6,0,5,Gecode::ICL_VAL);
+  Circuit c1v(1,0,0,Gecode::ICL_VAL);
+  Circuit c2v(2,0,1,Gecode::ICL_VAL);
+  Circuit c3v(3,0,2,Gecode::ICL_VAL);
+  Circuit c4v(4,0,3,Gecode::ICL_VAL);
+  Circuit c5v(5,0,4,Gecode::ICL_VAL);
+  Circuit c6v(6,0,5,Gecode::ICL_VAL);
 
-  Circuit c1d("Circuit::Dom::1",1,0,0,Gecode::ICL_DOM);
-  Circuit c2d("Circuit::Dom::2",2,0,1,Gecode::ICL_DOM);
-  Circuit c3d("Circuit::Dom::3",3,0,2,Gecode::ICL_DOM);
-  Circuit c4d("Circuit::Dom::4",4,0,3,Gecode::ICL_DOM);
-  Circuit c5d("Circuit::Dom::5",5,0,4,Gecode::ICL_DOM);
-  Circuit c6d("Circuit::Dom::6",6,0,5,Gecode::ICL_DOM);
+  Circuit c1d(1,0,0,Gecode::ICL_DOM);
+  Circuit c2d(2,0,1,Gecode::ICL_DOM);
+  Circuit c3d(3,0,2,Gecode::ICL_DOM);
+  Circuit c4d(4,0,3,Gecode::ICL_DOM);
+  Circuit c5d(5,0,4,Gecode::ICL_DOM);
+  Circuit c6d(6,0,5,Gecode::ICL_DOM);
   //@}
 
 }}}

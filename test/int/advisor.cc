@@ -201,7 +201,6 @@ namespace {
 
   AdviseDistinct _ad;
 
-  Gecode::IntSet s(-5,5);
 
   class Eq : public Propagator {
   protected:
@@ -284,7 +283,7 @@ namespace {
   class BasicIntAdvisor : public IntTest {
   public:
     BasicIntAdvisor(void)
-      : IntTest("Advisor::Eq::Int",2,s) {}
+      : IntTest("Advisor::Eq::Int",2,-5,5) {}
     virtual bool solution(const Assignment& x) const {
       return x[0] == x[1];
     }

@@ -50,8 +50,8 @@ namespace Test { namespace Int { namespace Channel {
   class ChannelFull : public IntTest {
   public:
     /// Construct and register test
-    ChannelFull(const char* t, Gecode::IntConLevel icl)
-      : IntTest(t,8,0,3,false,icl) {}
+    ChannelFull(Gecode::IntConLevel icl)
+      : IntTest("Channel::Full::"+icl2str(icl),8,0,3,false,icl) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<4; i++)
@@ -74,8 +74,8 @@ namespace Test { namespace Int { namespace Channel {
   class ChannelHalf : public IntTest {
   public:
     /// Construct and register test
-    ChannelHalf(const char* t, Gecode::IntConLevel icl)
-      : IntTest(t,6,0,5,false,icl) {}
+    ChannelHalf(Gecode::IntConLevel icl)
+      : IntTest("Channel::Half::"+icl2str(icl),6,0,5,false,icl) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<6; i++)
@@ -103,8 +103,8 @@ namespace Test { namespace Int { namespace Channel {
   class ChannelShared : public IntTest {
   public:
     /// Construct and register test
-    ChannelShared(const char* t, Gecode::IntConLevel icl)
-      : IntTest(t,6,0,5,false,icl) {
+    ChannelShared(Gecode::IntConLevel icl)
+      : IntTest("Channel::Shared::"+icl2str(icl),6,0,5,false,icl) {
       testdomcon = false;
     }
     /// Check whether \a x is solution
@@ -148,8 +148,8 @@ namespace Test { namespace Int { namespace Channel {
     int o;
   public:
     /// Construct and register test
-    ChannelLinkMulti(const char* t, int min, int max, int o0)
-      : IntTest(t,7,min,max), o(o0) {
+    ChannelLinkMulti(const std::string& s, int min, int max, int o0)
+      : IntTest("Channel::Bool::Multi::"+s,7,min,max), o(o0) {
       testdomcon = false;
     }
     /// Check whether \a x is solution
@@ -182,20 +182,20 @@ namespace Test { namespace Int { namespace Channel {
   
 
 
-  ChannelFull cfd("Channel::Int::Full::Dom",Gecode::ICL_DOM);
-  ChannelFull cfv("Channel::Int::Full::Val",Gecode::ICL_VAL);
+  ChannelFull cfd(Gecode::ICL_DOM);
+  ChannelFull cfv(Gecode::ICL_VAL);
 
-  ChannelHalf chd("Channel::Int::Half::Dom",Gecode::ICL_DOM);
-  ChannelHalf chv("Channel::Int::Half::Val",Gecode::ICL_VAL);
+  ChannelHalf chd(Gecode::ICL_DOM);
+  ChannelHalf chv(Gecode::ICL_VAL);
 
-  ChannelShared csd("Channel::Int::Shared::Dom",Gecode::ICL_DOM);
-  ChannelShared csv("Channel::Int::Shared::Val",Gecode::ICL_VAL);
+  ChannelShared csd(Gecode::ICL_DOM);
+  ChannelShared csv(Gecode::ICL_VAL);
 
   ChannelLinkSingle cls;
 
-  ChannelLinkMulti clma("Channel::Bool::Multi::A", 0, 5, 0);
-  ChannelLinkMulti clmb("Channel::Bool::Multi::B", 1, 6, 1);
-  ChannelLinkMulti clmc("Channel::Bool::Multi::C",-1, 4,-1);
+  ChannelLinkMulti clma("A", 0, 5, 0);
+  ChannelLinkMulti clmb("B", 1, 6, 1);
+  ChannelLinkMulti clmc("C",-1, 4,-1);
   //@}
 
 }}}

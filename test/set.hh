@@ -150,9 +150,9 @@ private:
   void addToGlb(int, SetVar&, int, const IntSet&);
   SetAssignment* make_assignment(void);
 public:
-  SetTest(const char* t,
+  SetTest(const std::string& s,
           int a, const IntSet& d, bool r=false, int w=0)
-    : TestBase("Set",t), arity(a), lub(d), reified(r), withInt(w)  {}
+    : TestBase("Set::"+s), arity(a), lub(d), reified(r), withInt(w)  {}
   /// Check for solution
   virtual bool solution(const SetAssignment&) const = 0;
   /// Post propagator

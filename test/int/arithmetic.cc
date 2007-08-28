@@ -50,8 +50,8 @@ namespace Test { namespace Int { namespace Arithmetic {
   /// Test for multiplication constraint
   class Mult : public IntTest {
   public:
-    Mult(const char* t, const Gecode::IntSet& d)
-      : IntTest(t,3,d) {}
+    Mult(const std::string& s, const Gecode::IntSet& d)
+      : IntTest("Arithmetic::Mult::"+s,3,d) {}
     virtual bool solution(const Assignment& x) const {
       double d0 = static_cast<double>(x[0]);
       double d1 = static_cast<double>(x[1]);
@@ -66,8 +66,8 @@ namespace Test { namespace Int { namespace Arithmetic {
   /// Test for squaring constraint
   class Square : public IntTest {
   public:
-    Square(const char* t, const Gecode::IntSet& d)
-      : IntTest(t,2,d) {}
+    Square(const std::string& s, const Gecode::IntSet& d)
+      : IntTest("Arithmetic::Square::"+s,2,d) {}
     virtual bool solution(const Assignment& x) const {
       double d0 = static_cast<double>(x[0]);
       double d1 = static_cast<double>(x[1]);
@@ -81,8 +81,9 @@ namespace Test { namespace Int { namespace Arithmetic {
   /// Test for absolute value constraint
   class Abs : public IntTest {
   public:
-    Abs(const char* t, const Gecode::IntSet& d, Gecode::IntConLevel icl)
-      : IntTest(t,2,d,false,icl) {}
+    Abs(const std::string& s, const Gecode::IntSet& d, Gecode::IntConLevel icl)
+      : IntTest("Arithmetic::Abs::"+icl2str(icl)+"::"+s,
+                2,d,false,icl) {}
     virtual bool solution(const Assignment& x) const {
       double d0 = static_cast<double>(x[0]);
       double d1 = static_cast<double>(x[1]);
@@ -96,8 +97,8 @@ namespace Test { namespace Int { namespace Arithmetic {
   /// Test for binary minimum constraint  
   class Min : public IntTest {
   public:
-    Min(const char* t, const Gecode::IntSet& d)
-      : IntTest(t,3,d) {}
+    Min(const std::string& s, const Gecode::IntSet& d)
+      : IntTest("Arithmetic::Min::Bin::"+s,3,d) {}
     virtual bool solution(const Assignment& x) const {
       return std::min(x[0],x[1]) == x[2];
     }
@@ -109,8 +110,8 @@ namespace Test { namespace Int { namespace Arithmetic {
   /// Test for binary minimum constraint with shared variables
   class MinShared : public IntTest {
   public:
-    MinShared(const char* t, const Gecode::IntSet& d)
-      : IntTest(t,2,d) {}
+    MinShared(const std::string& s, const Gecode::IntSet& d)
+      : IntTest("Arithmetic::Min::Bin::Shared::"+s,2,d) {}
     virtual bool solution(const Assignment& x) const {
       return std::min(x[0],x[1]) == x[0];
     }
@@ -122,8 +123,8 @@ namespace Test { namespace Int { namespace Arithmetic {
   /// Test for binary maximum constraint  
   class Max : public IntTest {
   public:
-    Max(const char* t, const Gecode::IntSet& d)
-      : IntTest(t,3,d) {}
+    Max(const std::string& s, const Gecode::IntSet& d)
+      : IntTest("Arithmetic::Max::Bin::"+s,3,d) {}
     virtual bool solution(const Assignment& x) const {
       return std::max(x[0],x[1]) == x[2];
     }
@@ -135,8 +136,8 @@ namespace Test { namespace Int { namespace Arithmetic {
   /// Test for binary maximum constraint with shared variables
   class MaxShared : public IntTest {
   public:
-    MaxShared(const char* t, const Gecode::IntSet& d)
-      : IntTest(t,2,d) {}
+    MaxShared(const std::string& s, const Gecode::IntSet& d)
+      : IntTest("Arithmetic::Max::Bin::Shared"+s,2,d) {}
     virtual bool solution(const Assignment& x) const {
       return std::max(x[0],x[1]) == x[0];
     }
@@ -224,36 +225,36 @@ namespace Test { namespace Int { namespace Arithmetic {
   Gecode::IntSet d2(v2,9);
   Gecode::IntSet d3(-8,8);
 
-  Mult mult_max("Arithmetic::Mult::A",d1);
-  Mult mult_med("Arithmetic::Mult::B",d2);
-  Mult mult_min("Arithmetic::Mult::C",d3);
+  Mult mult_max("A",d1);
+  Mult mult_med("B",d2);
+  Mult mult_min("C",d3);
 
-  Square square_max("Arithmetic::Square::A",d1);
-  Square square_med("Arithmetic::Square::B",d2);
-  Square square_min("Arithmetic::Square::C",d3);
+  Square square_max("A",d1);
+  Square square_med("B",d2);
+  Square square_min("C",d3);
 
-  Abs abs_bnd_max("Arithmetic::Abs::Bnd::A",d1,Gecode::ICL_BND);
-  Abs abs_bnd_med("Arithmetic::Abs::Bnd::B",d2,Gecode::ICL_BND);
-  Abs abs_bnd_min("Arithmetic::Abs::Bnd::C",d3,Gecode::ICL_BND);
-  Abs abs_dom_max("Arithmetic::Abs::Dom::A",d1,Gecode::ICL_DOM);
-  Abs abs_dom_med("Arithmetic::Abs::Dom::B",d2,Gecode::ICL_DOM);
-  Abs abs_dom_min("Arithmetic::Abs::Dom::C",d3,Gecode::ICL_DOM);
+  Abs abs_bnd_max("A",d1,Gecode::ICL_BND);
+  Abs abs_bnd_med("B",d2,Gecode::ICL_BND);
+  Abs abs_bnd_min("C",d3,Gecode::ICL_BND);
+  Abs abs_dom_max("A",d1,Gecode::ICL_DOM);
+  Abs abs_dom_med("B",d2,Gecode::ICL_DOM);
+  Abs abs_dom_min("C",d3,Gecode::ICL_DOM);
 
-  Min min_max("Arithmetic::Min::Bin::A",d1);
-  Min min_med("Arithmetic::Min::Bin::B",d2);
-  Min min_min("Arithmetic::Min::Bin::C",d3);
+  Min min_max("A",d1);
+  Min min_med("B",d2);
+  Min min_min("C",d3);
 
-  MinShared min_s_max("Arithmetic::Min::Bin::Shared::A",d1);
-  MinShared min_s_med("Arithmetic::Min::Bin::Shared::B",d2);
-  MinShared min_s_min("Arithmetic::Min::Bin::Shared::C",d3);
+  MinShared min_s_max("A",d1);
+  MinShared min_s_med("B",d2);
+  MinShared min_s_min("C",d3);
 
-  Max max_max("Arithmetic::Max::Bin::A",d1);
-  Max max_med("Arithmetic::Max::Bin::B",d2);
-  Max max_min("Arithmetic::Max::Bin::C",d3);
+  Max max_max("A",d1);
+  Max max_med("B",d2);
+  Max max_min("C",d3);
 
-  MaxShared max_s_max("Arithmetic::Max::Bin::Shared::A",d1);
-  MaxShared max_s_med("Arithmetic::Max::Bin::Shared::B",d2);
-  MaxShared max_s_min("Arithmetic::Max::Bin::Shared::C",d3);
+  MaxShared max_s_max("A",d1);
+  MaxShared max_s_med("B",d2);
+  MaxShared max_s_min("C",d3);
 
   MinNary min_nary;
   MinNaryShared min_s_nary;

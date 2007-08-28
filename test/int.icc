@@ -113,15 +113,15 @@ RandomAssignment::~RandomAssignment(void) {
  *
  */
 inline
-IntTest::IntTest(const char* t, int a, const Gecode::IntSet& d, 
+IntTest::IntTest(const std::string& s, int a, const Gecode::IntSet& d, 
                  bool r, Gecode::IntConLevel i)
-  : TestBase("Int",t), arity(a), dom(d), reified(r), icl(i), 
+  : TestBase("Int::"+s), arity(a), dom(d), reified(r), icl(i), 
     testdomcon(true), testsearch(true) {}
 
 inline
-IntTest::IntTest(const char* t, int a, int min, int max, 
+IntTest::IntTest(const std::string& s, int a, int min, int max, 
                  bool r, Gecode::IntConLevel i)
-  : TestBase("Int",t), arity(a), dom(min,max), reified(r), icl(i), 
+  : TestBase("Int::"+s), arity(a), dom(min,max), reified(r), icl(i), 
     testdomcon(true), testsearch(true) {}
 
 // STATISTICS: test-int

@@ -99,18 +99,17 @@ main(int argc, char** argv) {
     if (o.skip-- == 0)
       break;
   for ( ; t != NULL; counter++, t = t->next() ) {
-    std::string name(t->module()); name += "::"; name += t->test();
     try {
       if (testpat.size() != 0) {
         bool match_found   = false;
         bool some_positive = false;
         for (unsigned int i = 0; i < testpat.size(); ++i) {
           if (testpat[i].first) { // Negative pattern
-            if (name.find(testpat[i].second) != std::string::npos)
+            if (t->name().find(testpat[i].second) != std::string::npos)
               goto next;
           } else {               // Positive pattern
             some_positive = true;
-            if (name.find(testpat[i].second) != std::string::npos)
+            if (t->name().find(testpat[i].second) != std::string::npos)
               match_found = true;
           }
         }
@@ -118,7 +117,7 @@ main(int argc, char** argv) {
       }
       std::cout.width(digits);
       std::cout << counter << " ";
-      std::cout << name << ": ";
+      std::cout << t->name() << ": ";
       std::cout.flush();
       for (int i = o.iter; i--; ) {
         o.seed = TestBase::randgen.seed();
@@ -129,7 +128,7 @@ main(int argc, char** argv) {
           std::cout.flush();
         } else {
           std::cout << "-" << std::endl;
-          report_error(o, name);
+          report_error(o, t->name());
           if(o.stop_on_error) return 1;
         }
       }
@@ -138,7 +137,7 @@ main(int argc, char** argv) {
       std::cout << "Exception in \"Gecode::" << e.what()
                 << "." << std::endl
                 << "Stopping..." << std::endl;
-          report_error(o, name);
+          report_error(o, t->name());
           if(o.stop_on_error) return 1;
     }
   next:;

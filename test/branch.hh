@@ -68,8 +68,8 @@ protected:
   }
 public:
   /// Constructor
-  BranchCompleteTest(const char* t, int a, const IntSet& d)
-    : TestBase("Branch::Complete",t), arity(a), dom(d) {
+  BranchCompleteTest(const std::string& s, int a, const IntSet& d)
+    : TestBase("Branch::Complete::"+s), arity(a), dom(d) {
   }
   /// Perform test
   virtual bool run(const Options& opt);

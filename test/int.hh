@@ -144,7 +144,7 @@ public:
    * if \a r is true. The consistency level \a is maintained for
    * convenience.
    */
-  IntTest(const char* t, int a, const Gecode::IntSet& d, 
+  IntTest(const std::string& s, int a, const Gecode::IntSet& d, 
           bool r=false, Gecode::IntConLevel i=Gecode::ICL_DEF);
   /**
    * \brief Constructor
@@ -154,7 +154,7 @@ public:
    * if \a r is true. The consistency level \a is maintained for
    * convenience.
    */
-  IntTest(const char* t, int a, int min, int max, 
+  IntTest(const std::string& s, int a, int min, int max, 
           bool r=false, Gecode::IntConLevel i=Gecode::ICL_DEF);
   /// Create assignment
   virtual Assignment* assignment(void) const;
@@ -167,6 +167,10 @@ public:
                     Gecode::BoolVar b);
   /// Perform test
   virtual bool run(const Options& opt);
+  /// Map integer consistency level to string representation
+  static std::string icl2str(Gecode::IntConLevel icl, bool verbose=false);
+  /// Map integer to string
+  static std::string str(int i);
 };
 //@}
 

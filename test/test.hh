@@ -51,6 +51,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <string>
 
 /**
  * \defgroup TaskTestTest General test support
@@ -87,25 +88,22 @@ public:
 /// Main test driver
 class TestBase {
 private:
-  const char* m;
-  const char* t;
+  std::string s;
   TestBase* n;
   static TestBase* all;
 public:
   /// Return number between 0..m-1
   static Gecode::Support::RandomGenerator randgen;
 
-  TestBase(const char* module, const char* test)
-    : m(module), t(test) {
+  TestBase(const std::string& s0)
+    : s(s0) {
     if (all == NULL) {
       all = this; n = NULL;
     } else {
       // Search alphabetically
       TestBase* p = NULL;
       TestBase* c = all;
-      while ((c != NULL) &&
-             ((strcmp(m,c->m)>0)
-              || ((strcmp(m,c->m)==0) && (strcmp(t,c->t)>0)))) {
+      while ((c != NULL) && (c->s < s)) {
         p = c; c = c->n;
       }
       if (c == NULL) {
@@ -123,11 +121,8 @@ public:
   TestBase* next(void) const {
     return n;
   }
-  const char* module(void) const {
-    return m;
-  }
-  const char* test(void) const {
-    return t;
+  const std::string& name(void) const {
+    return s;
   }
   virtual bool run(const Options& opt) = 0;
   virtual ~TestBase(void) {}
