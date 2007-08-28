@@ -37,49 +37,67 @@
 
 #include "test/int.hh"
 
-static const int d1r[4][2] = {
-  {-4,-3},{-1,-1},{1,1},{3,5}
-};
-static Gecode::IntSet d1(d1r,4);
+namespace Test { namespace Int { namespace Dom {
 
-static Gecode::IntSet ds_66(-6,6);
+  /**
+   * \defgroup TaskTestIntDom Domain constraints
+   * \ingroup TaskTestInt
+   */
+  //@{
+  /// Test for domain constraint (range)
+  class DomRange : public IntTest {
+  public:
+    /// Create and register test
+    DomRange(void) : IntTest("Dom::Range",1,-6,6,true) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return (x[0] >= -2) && (x[0] <= 2);
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::dom(home, x[0], -2, 2);
+    }
+    /// Post reified constraint on \a x for \a b
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+                      Gecode::BoolVar b) {
+      Gecode::dom(home, x[0], -2, 2, b);
+    }
+  };
 
-class DomRange : public IntTest {
-public:
-  DomRange(const char* t)
-    : IntTest(t,1,ds_66,true) {}
-  virtual bool solution(const Assignment& x) const {
-    return (x[0] >= -2) && (x[0] <= 2);
-  }
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    Gecode::dom(home, x[0], -2, 2);
-  }
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
-    Gecode::dom(home, x[0], -2, 2, b);
-  }
-};
-DomRange _domrange("Dom::Range");
 
+  const int r[4][2] = {
+    {-4,-3},{-1,-1},{1,1},{3,5}
+  };
+  Gecode::IntSet d(r,4);
 
-class DomDom : public IntTest {
-public:
-  DomDom(const char* t)
-    : IntTest(t,1,ds_66,true) {}
-  virtual bool solution(const Assignment& x) const {
-    return
-      (((x[0] >= -4) && (x[0] <= -3)) ||
-       ((x[0] >= -1) && (x[0] <= -1)) ||
-       ((x[0] >=  1) && (x[0] <=  1)) ||
-       ((x[0] >=  3) && (x[0] <=  5)));
-  }
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    Gecode::dom(home, x[0], d1);
-  }
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
-    Gecode::dom(home, x[0], d1, b);
-  }
-};
-DomDom _domdom("Dom::Dom");
+  /// Test for domain constraint (full integer set)
+  class DomDom : public IntTest {
+  public:
+    /// Create and register test
+    DomDom(void) : IntTest("Dom::Dom",1,-6,6,true) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return (((x[0] >= -4) && (x[0] <= -3)) ||
+              ((x[0] >= -1) && (x[0] <= -1)) ||
+              ((x[0] >=  1) && (x[0] <=  1)) ||
+              ((x[0] >=  3) && (x[0] <=  5)));
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::dom(home, x[0], d);
+    }
+    /// Post reified constraint on \a x for \a b
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x,
+                      Gecode::BoolVar b) {
+      Gecode::dom(home, x[0], d, b);
+    }
+  };
+
+  DomRange dr;
+  DomDom dd;
+  //@}
+
+}}}
 
 // STATISTICS: test-int
 

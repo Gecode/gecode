@@ -63,7 +63,7 @@ namespace Test { namespace Int { namespace Distinct {
             return false;
       return true;
     }
-    /// Post distinct constraint on \a x
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       Gecode::distinct(home, x, icl);
     }
@@ -89,7 +89,7 @@ namespace Test { namespace Int { namespace Distinct {
             return false;
       return true;
     }
-    /// Post distinct constraint on \a x
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       Gecode::distinct(home, x, icl);
     }
@@ -112,7 +112,7 @@ namespace Test { namespace Int { namespace Distinct {
             return false;
       return true;
     }
-    /// Post distinct constraint on \a x
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       Gecode::IntArgs c(x.size());
       for (int i=0; i<x.size(); i++)

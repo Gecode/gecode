@@ -160,15 +160,15 @@ public:
   virtual Assignment* assignment(void) const;
   /// Check for solution
   virtual bool solution(const Assignment&) const = 0;
-  /// Post propagator
+  /// Post constraint
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) = 0;
-  /// Post reified propagator
+  /// Post reified constraint
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
                     Gecode::BoolVar b);
   /// Perform test
   virtual bool run(const Options& opt);
   /// Map integer consistency level to string representation
-  static std::string icl2str(Gecode::IntConLevel icl, bool verbose=false);
+  static std::string str(Gecode::IntConLevel icl, bool verbose=false);
   /// Map integer to string
   static std::string str(int i);
 };

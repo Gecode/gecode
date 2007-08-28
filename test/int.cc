@@ -271,7 +271,7 @@ IntTest::assignment(void) const {
 }
 
 std::string
-IntTest::icl2str(Gecode::IntConLevel icl, bool verbose) {
+IntTest::str(Gecode::IntConLevel icl, bool verbose) {
   using namespace Gecode;
   if (verbose) {
     switch (icl) {
@@ -282,10 +282,10 @@ IntTest::icl2str(Gecode::IntConLevel icl, bool verbose) {
     }
   } else {
     switch (icl) {
-    case ICL_VAL: return "VAL";
-    case ICL_BND: return "BND";
-    case ICL_DOM: return "DOM";
-    default: return "DEF";
+    case ICL_VAL: return "Val";
+    case ICL_BND: return "Bnd";
+    case ICL_DOM: return "Dom";
+    default: return "Def";
     }
   }
 }

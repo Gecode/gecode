@@ -51,7 +51,7 @@ namespace Test { namespace Int { namespace Channel {
   public:
     /// Construct and register test
     ChannelFull(Gecode::IntConLevel icl)
-      : IntTest("Channel::Full::"+icl2str(icl),8,0,3,false,icl) {}
+      : IntTest("Channel::Full::"+str(icl),8,0,3,false,icl) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<4; i++)
@@ -59,7 +59,7 @@ namespace Test { namespace Int { namespace Channel {
           return false;
       return true;
     }
-    /// Post channel constraint
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       using namespace Gecode;
       IntVarArgs xa(4); IntVarArgs ya(4);
@@ -75,7 +75,7 @@ namespace Test { namespace Int { namespace Channel {
   public:
     /// Construct and register test
     ChannelHalf(Gecode::IntConLevel icl)
-      : IntTest("Channel::Half::"+icl2str(icl),6,0,5,false,icl) {}
+      : IntTest("Channel::Half::"+str(icl),6,0,5,false,icl) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<6; i++)
@@ -84,7 +84,7 @@ namespace Test { namespace Int { namespace Channel {
             return false;
       return true;
     }
-    /// Post channel constraint
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       using namespace Gecode;
       Gecode::IntVarArray y(home,6,dom);
@@ -104,7 +104,7 @@ namespace Test { namespace Int { namespace Channel {
   public:
     /// Construct and register test
     ChannelShared(Gecode::IntConLevel icl)
-      : IntTest("Channel::Shared::"+icl2str(icl),6,0,5,false,icl) {
+      : IntTest("Channel::Shared::"+str(icl),6,0,5,false,icl) {
       testdomcon = false;
     }
     /// Check whether \a x is solution
@@ -114,7 +114,7 @@ namespace Test { namespace Int { namespace Channel {
           return false;
       return true;
     }
-    /// Post channel constraint
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       using namespace Gecode;
       channel(home, x, x, icl);
@@ -133,7 +133,7 @@ namespace Test { namespace Int { namespace Channel {
     virtual bool solution(const Assignment& x) const {
       return ((x[0]==0) || (x[0]==1)) && (x[0]==x[1]);
     }
-    /// Post channel constraint
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       using namespace Gecode;
       Gecode::BoolVar b(home,0,1);
@@ -169,7 +169,7 @@ namespace Test { namespace Int { namespace Channel {
           return false;
       return x[k] == 1;
     }
-    /// Post channel constraint
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       using namespace Gecode;
       int n=x.size()-1;

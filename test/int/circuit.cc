@@ -49,7 +49,7 @@ namespace Test { namespace Int { namespace Circuit {
   public:
     /// Create and register test
     Circuit(int n, int min, int max, Gecode::IntConLevel icl)
-      : IntTest("Circuit::" + icl2str(icl) + "::" + str(n),
+      : IntTest("Circuit::" + str(icl) + "::" + str(n),
                 n,min,max,false,icl) {
       testdomcon = false;
     }
