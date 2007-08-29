@@ -265,23 +265,19 @@ namespace Test { namespace Int { namespace Rel {
     /// Perform creation and registration
     Create(void) {
       using namespace Gecode;
-      const IntRelType irts[] = {IRT_EQ,IRT_NQ,IRT_LQ,IRT_LE,IRT_GQ,IRT_GR};
-      const IntConLevel icls[] = {ICL_VAL,ICL_BND,ICL_DOM};
-      for (int i=sizeof(irts)/sizeof(IntRelType); i--; ) {
-        IntRelType irt=irts[i];
-        for (int j=sizeof(icls)/sizeof(IntConLevel); j--; ) {
-          IntConLevel icl=icls[j];
-          (void) new IntBinVar(irt,icl);
-          (void) new IntPairwise(irt,icl);
+      for (IntRelTypes irts; irts(); ++irts) {
+        for (IntConLevels icls; icls(); ++icls) {
+          (void) new IntBinVar(irts.irt(),icls.icl());
+          (void) new IntPairwise(irts.irt(),icls.icl());
         }
-        (void) new BoolBinVar(irt);
-        (void) new BoolPairwise(irt);
+        (void) new BoolBinVar(irts.irt());
+        (void) new BoolPairwise(irts.irt());
         for (int c=-4; c<=4; c++)
-          (void) new IntBinInt(irt,c);
+          (void) new IntBinInt(irts.irt(),c);
         for (int c=0; c<=1; c++)
-          (void) new BoolBinInt(irt,c);
-        (void) new IntArray(irt);
-        (void) new BoolArray(irt);
+          (void) new BoolBinInt(irts.irt(),c);
+        (void) new IntArray(irts.irt());
+        (void) new BoolArray(irts.irt());
       }      
     }
   };

@@ -140,7 +140,7 @@ namespace Test { namespace Int { namespace Bool {
   class AndNary : public IntTest {
   public:
     /// Construct and register test
-    AndNary(void) : IntTest("Bool::And::Nary",14,0,1) {}
+    AndNary(void) : IntTest("Bool::And::Nary",10,0,1) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i = x.size()-1; i--; )
@@ -159,16 +159,16 @@ namespace Test { namespace Int { namespace Bool {
   };
   
   /// Test for Boolean n-ary conjunction that is false
-  class AndFalseNary : public IntTest {
+  class AndNaryFalse : public IntTest {
   public:
     /// Construct and register test
-    AndFalseNary(void) : IntTest("Bool::And::False::Nary",14,0,1) {}
+    AndNaryFalse(void) : IntTest("Bool::And::Nary::False",10,0,1) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i = x.size(); i--; )
-        if (x[i] == 1)
-          return false;
-      return true;
+        if (x[i] == 0)
+          return true;
+      return false;
     }
     /// Post constraint
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
@@ -184,7 +184,7 @@ namespace Test { namespace Int { namespace Bool {
   class OrNary : public IntTest {
   public:
     /// Construct and register test
-    OrNary(void) : IntTest("Bool::Or::Nary",14,0,1) {}
+    OrNary(void) : IntTest("Bool::Or::Nary",10,0,1) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i = x.size()-1; i--; )
@@ -203,10 +203,10 @@ namespace Test { namespace Int { namespace Bool {
   };
   
   /// Test for Boolean n-ary disjunction that is true
-  class OrTrueNary : public IntTest {
+  class OrNaryTrue : public IntTest {
   public:
     /// Construct and register test
-    OrTrueNary(void) : IntTest("Bool::Or::True::Nary",14,0,1) {}
+    OrNaryTrue(void) : IntTest("Bool::Or::Nary::True",10,0,1) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i = x.size(); i--; )
@@ -231,9 +231,9 @@ namespace Test { namespace Int { namespace Bool {
   Xor bxor;
 
   AndNary      bandnary;
-  AndFalseNary bandtruenary;
+  AndNaryFalse bandnaryfalse;
   OrNary       bornary;
-  OrTrueNary   bortruenary;
+  OrNaryTrue   bornarytrue;
 
   //@}
 

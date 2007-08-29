@@ -264,6 +264,12 @@ public:
 Gecode::BoolVar IntTestSpace::unused;
 
 
+const Gecode::IntConLevel IntConLevels::icls[] =
+  {Gecode::ICL_DOM,Gecode::ICL_BND,Gecode::ICL_VAL};
+
+const Gecode::IntRelType IntRelTypes::irts[] = 
+  {Gecode::IRT_EQ,Gecode::IRT_NQ,Gecode::IRT_LQ,
+   Gecode::IRT_LE,Gecode::IRT_GQ,Gecode::IRT_GR};
 
 Assignment*
 IntTest::assignment(void) const {

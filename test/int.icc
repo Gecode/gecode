@@ -187,5 +187,39 @@ IntTest::cmp(T x, Gecode::IntRelType r, T y) {
   return false;
 }
 
+
+inline
+IntConLevels::IntConLevels(void) 
+  : i(sizeof(icls)/sizeof(Gecode::IntConLevel)-1) {}
+inline bool 
+IntConLevels::operator()(void) const {
+  return i>=0;
+}
+inline void 
+IntConLevels::operator++(void) {
+  i--;
+}
+inline Gecode::IntConLevel 
+IntConLevels::icl(void) const {
+  return icls[i];
+}
+
+
+inline
+IntRelTypes::IntRelTypes(void) 
+  : i(sizeof(irts)/sizeof(Gecode::IntRelType)-1) {}
+inline bool 
+IntRelTypes::operator()(void) const {
+  return i>=0;
+}
+inline void 
+IntRelTypes::operator++(void) {
+  i--;
+}
+inline Gecode::IntRelType
+IntRelTypes::irt(void) const {
+  return irts[i];
+}
+
 // STATISTICS: test-int
 

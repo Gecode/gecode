@@ -182,13 +182,49 @@ public:
   /// Map integer to string
   static std::string str(int i);
   //@}
-  /// \name General support functions
+  /// \name General support
   //@{
   /// Compare \a x and \a y with respect to \a r
   template <class T> static bool cmp(T x, Gecode::IntRelType r, T y);
   //@}
 };
 //@}
+
+/// Iterator for integer consistency levels
+class IntConLevels {
+private:
+  /// Array of consistency levels
+  static const Gecode::IntConLevel icls[3];
+  /// Current position in level array
+  int i; 
+public:
+  /// Initialize iterator
+  IntConLevels(void);
+  /// Test whether iterator is done
+  bool operator()(void) const;
+  /// Increment to next level
+  void operator++(void);
+  /// Return current level
+  Gecode::IntConLevel icl(void) const;
+};
+
+/// Iterator for integer relation types
+class IntRelTypes {
+private:
+  /// Array of relation types
+  static const Gecode::IntRelType irts[6];
+  /// Current position in relation type array
+  int i; 
+public:
+  /// Initialize iterator
+  IntRelTypes(void);
+  /// Test whether iterator is done
+  bool operator()(void) const;
+  /// Increment to next relation type
+  void operator++(void);
+  /// Return current relation type
+  Gecode::IntRelType irt(void) const;
+};
 
 #include "test/int.icc"
 
