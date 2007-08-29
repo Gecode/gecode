@@ -42,8 +42,10 @@ static IntSet ds_22(-1,2);
 
 class RelUnionEq : public SetTest {
 public:
+  /// Create and register test
   RelUnionEq(const char* t)
     : SetTest(t,3,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
@@ -51,6 +53,7 @@ public:
     Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> u(xr0,xr1);
     return Iter::Ranges::equal(xr2, u);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_UNION, x[1], SRT_EQ, x[2]);
   }
@@ -59,13 +62,16 @@ RelUnionEq _relunioneq("RelOp::UnionEq");
 
 class RelUnionEqS1 : public SetTest {
 public:
+  /// Create and register test
   RelUnionEqS1(const char* t)
     : SetTest(t,2,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
     return Iter::Ranges::equal(xr0, xr1);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_UNION, x[0], SRT_EQ, x[1]);
   }
@@ -74,13 +80,16 @@ RelUnionEqS1 _relunioneqs1("RelOp::Sharing::UnionEqS1");
 
 class RelUnionEqS2 : public SetTest {
 public:
+  /// Create and register test
   RelUnionEqS2(const char* t)
     : SetTest(t,2,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
     return Iter::Ranges::subset(xr1, xr0);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_UNION, x[1], SRT_EQ, x[0]);
   }
@@ -89,11 +98,14 @@ RelUnionEqS2 _relunioneqs2("RelOp::Sharing::UnionEqS2");
 
 class RelUnionEqS3 : public SetTest {
 public:
+  /// Create and register test
   RelUnionEqS3(const char* t)
     : SetTest(t,1,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     return true;
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_UNION, x[0], SRT_EQ, x[0]);
   }
@@ -102,8 +114,10 @@ RelUnionEqS3 _relunioneqs3("RelOp::Sharing::UnionEqS3");
 
 class RelDUnionEq : public SetTest {
 public:
+  /// Create and register test
   RelDUnionEq(const char* t)
     : SetTest(t,3,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
@@ -117,6 +131,7 @@ public:
       Iter::Ranges::equal(xr2, u) &&
       Iter::Ranges::disjoint(xr02, xr12);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_DUNION, x[1], SRT_EQ, x[2]);
   }
@@ -125,13 +140,16 @@ RelDUnionEq _reldunioneq("RelOp::DUnionEq");
 
 class RelDUnionEqS1 : public SetTest {
 public:
+  /// Create and register test
   RelDUnionEqS1(const char* t)
     : SetTest(t,2,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
     return !xr0() && !xr1();
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_DUNION, x[0], SRT_EQ, x[1]);
   }
@@ -140,12 +158,15 @@ RelDUnionEqS1 _reldunioneqs1("RelOp::Sharing::DUnionEqS1");
 
 class RelDUnionEqS2 : public SetTest {
 public:
+  /// Create and register test
   RelDUnionEqS2(const char* t)
     : SetTest(t,2,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     return !xr0();
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_DUNION, x[1], SRT_EQ, x[1]);
   }
@@ -154,12 +175,15 @@ RelDUnionEqS2 _reldunioneqs2("RelOp::Sharing::DUnionEqS2");
 
 class RelDUnionEqS3 : public SetTest {
 public:
+  /// Create and register test
   RelDUnionEqS3(const char* t)
     : SetTest(t,1,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     return !xr0();
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_DUNION, x[0], SRT_EQ, x[0]);
   }
@@ -168,8 +192,10 @@ RelDUnionEqS3 _reldunioneqs3("RelOp::Sharing::DUnionEqS3");
 
 class RelInterEq : public SetTest {
 public:
+  /// Create and register test
   RelInterEq(const char* t)
     : SetTest(t,3,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
@@ -178,6 +204,7 @@ public:
 
     return Iter::Ranges::equal(xr2, u);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_INTER, x[1], SRT_EQ, x[2]);
   }
@@ -186,13 +213,16 @@ RelInterEq _relintereq("RelOp::InterEq");
 
 class RelInterEqS1 : public SetTest {
 public:
+  /// Create and register test
   RelInterEqS1(const char* t)
     : SetTest(t,2,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
     return Iter::Ranges::subset(xr0, xr1);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_INTER, x[1], SRT_EQ, x[0]);
   }
@@ -201,13 +231,16 @@ RelInterEqS1 _relintereqs1("RelOp::Sharing::InterEqS1");
 
 class RelInterEqS2 : public SetTest {
 public:
+  /// Create and register test
   RelInterEqS2(const char* t)
     : SetTest(t,2,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
     return Iter::Ranges::equal(xr0, xr1);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_INTER, x[0], SRT_EQ, x[1]);
   }
@@ -216,11 +249,14 @@ RelInterEqS2 _relintereqs2("RelOp::Sharing::InterEqS2");
 
 class RelInterEqS3 : public SetTest {
 public:
+  /// Create and register test
   RelInterEqS3(const char* t)
     : SetTest(t,1,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     return true;
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_INTER, x[0], SRT_EQ, x[0]);
   }
@@ -229,8 +265,10 @@ RelInterEqS3 _relintereqs3("RelOp::Sharing::InterEqS3");
 
 class RelInterSub : public SetTest {
 public:
+  /// Create and register test
   RelInterSub(const char* t)
     : SetTest(t,3,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
@@ -239,6 +277,7 @@ public:
 
     return Iter::Ranges::subset(u, xr2);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_INTER, x[1], SRT_SUB, x[2]);
   }
@@ -247,11 +286,14 @@ RelInterSub _relintersub("RelOp::InterSub");
 
 class RelInterSubS1 : public SetTest {
 public:
+  /// Create and register test
   RelInterSubS1(const char* t)
     : SetTest(t,2,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     return true;
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_INTER, x[1], SRT_SUB, x[1]);
   }
@@ -260,13 +302,16 @@ RelInterSubS1 _relintersub1("RelOp::Sharing::InterSub1");
 
 class RelInterSubS2 : public SetTest {
 public:
+  /// Create and register test
   RelInterSubS2(const char* t)
     : SetTest(t,2,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
     return Iter::Ranges::subset(xr0, xr1);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_INTER, x[0], SRT_SUB, x[1]);
   }
@@ -275,11 +320,14 @@ RelInterSubS2 _relintersub2("RelOp::Sharing::InterSub2");
 
 class RelInterSubS3 : public SetTest {
 public:
+  /// Create and register test
   RelInterSubS3(const char* t)
     : SetTest(t,1,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     return true;
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_INTER, x[0], SRT_SUB, x[0]);
   }
@@ -288,8 +336,10 @@ RelInterSubS3 _relintersub3("RelOp::Sharing::InterSub3");
 
 class RelMinusEq : public SetTest {
 public:
+  /// Create and register test
   RelMinusEq(const char* t)
     : SetTest(t,3,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
@@ -298,6 +348,7 @@ public:
 
     return Iter::Ranges::equal(xr2, u);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_MINUS, x[1], SRT_EQ, x[2]);
   }
@@ -306,8 +357,10 @@ RelMinusEq _relminuseq("RelOp::MinusEq");
 
 class RelMinusEqS1 : public SetTest {
 public:
+  /// Create and register test
   RelMinusEqS1(const char* t)
     : SetTest(t,2,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
@@ -316,6 +369,7 @@ public:
 
     return Iter::Ranges::equal(xr12, u);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_MINUS, x[1], SRT_EQ, x[1]);
   }
@@ -324,12 +378,15 @@ RelMinusEqS1 _relminuseqs1("RelOp::Sharing::MinusEqS1");
 
 class RelMinusEqS2 : public SetTest {
 public:
+  /// Create and register test
   RelMinusEqS2(const char* t)
     : SetTest(t,2,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[1]);
     return !xr1();
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_MINUS, x[0], SRT_EQ, x[1]);
   }
@@ -338,12 +395,15 @@ RelMinusEqS2 _relminuseqs2("RelOp::Sharing::MinusEqS2");
 
 class RelMinusEqS3 : public SetTest {
 public:
+  /// Create and register test
   RelMinusEqS3(const char* t)
     : SetTest(t,1,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     return !xr0();
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_MINUS, x[0], SRT_EQ, x[0]);
   }
@@ -352,8 +412,10 @@ RelMinusEqS3 _relminuseqs3("RelOp::Sharing::MinusEqS3");
 
 class RelUnionSup : public SetTest {
 public:
+  /// Create and register test
   RelUnionSup(const char* t)
     : SetTest(t,3,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
@@ -361,6 +423,7 @@ public:
     Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> u(xr0,xr1);
     return Iter::Ranges::subset(xr2, u);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_UNION, x[1], SRT_SUP, x[2]);
   }
@@ -369,11 +432,14 @@ RelUnionSup _relunionsup("RelOp::UnionSup");
 
 class RelUnionSupS1 : public SetTest {
 public:
+  /// Create and register test
   RelUnionSupS1(const char* t)
     : SetTest(t,2,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     return true;
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_UNION, x[1], SRT_SUP, x[1]);
   }
@@ -382,13 +448,16 @@ RelUnionSupS1 _relunionsups1("RelOp::Sharing::UnionSupS1");
 
 class RelUnionSupS2 : public SetTest {
 public:
+  /// Create and register test
   RelUnionSupS2(const char* t)
     : SetTest(t,2,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
     return Iter::Ranges::subset(xr1, xr0);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_UNION, x[0], SRT_SUP, x[1]);
   }
@@ -397,11 +466,14 @@ RelUnionSupS2 _relunionsups2("RelOp::Sharing::UnionSupS2");
 
 class RelUnionSupS3 : public SetTest {
 public:
+  /// Create and register test
   RelUnionSupS3(const char* t)
     : SetTest(t,1,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     return true;
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SOT_UNION, x[0], SRT_SUP, x[0]);
   }
@@ -410,8 +482,10 @@ RelUnionSupS3 _relunionsups3("RelOp::Sharing::UnionSupS3");
 
 class RelDUnionN : public SetTest {
 public:
+  /// Create and register test
   RelDUnionN(const char* t)
     : SetTest(t,4,ds_22,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     {
       CountableSetRanges x0r(x.lub, x[0]);
@@ -441,6 +515,7 @@ public:
     return Iter::Ranges::equal(u, x3r);
 
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     SetVarArgs xs(x.size()-1);
     for (int i=x.size()-1; i--;)
@@ -452,14 +527,17 @@ RelDUnionN _reldunionn("RelOp::DUnionN");
 
 class RelDUnionNS1 : public SetTest {
 public:
+  /// Create and register test
   RelDUnionNS1(const char* t)
     : SetTest(t,3,ds_22,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
     CountableSetRanges xr2(x.lub, x[2]);
     return !xr0() && Iter::Ranges::equal(xr1,xr2);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     SetVarArgs xs(3);
     xs[0]=x[0];
@@ -472,13 +550,16 @@ RelDUnionNS1 _reldunionns1("RelOp::Sharing::DUnionNS1");
 
 class RelDUnionNS2 : public SetTest {
 public:
+  /// Create and register test
   RelDUnionNS2(const char* t)
     : SetTest(t,3,ds_22,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
     return !xr0() && !xr1();
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     SetVarArgs xs(3);
     xs[0]=x[0];
@@ -491,13 +572,16 @@ RelDUnionNS2 _reldunionns2("RelOp::Sharing::DUnionNS2");
 
 class RelDUnionNS3 : public SetTest {
 public:
+  /// Create and register test
   RelDUnionNS3(const char* t)
     : SetTest(t,2,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
     return !xr0() && !xr1();
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     SetVarArgs xs(3);
     xs[0]=x[0];
@@ -510,8 +594,10 @@ RelDUnionNS3 _reldunionns3("RelOp::Sharing::DUnionNS3");
 
 class RelUnionN : public SetTest {
 public:
+  /// Create and register test
   RelUnionN(const char* t)
     : SetTest(t,4,ds_22,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     GECODE_AUTOARRAY(CountableSetRanges, isrs, 3);
     isrs[0].init(x.lub, x[0]);
@@ -521,6 +607,7 @@ public:
     CountableSetRanges x3r(x.lub, x[3]);
     return Iter::Ranges::equal(u, x3r);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     SetVarArgs xs(x.size()-1);
     for (int i=x.size()-1; i--;)
@@ -532,8 +619,10 @@ RelUnionN _relunionn("RelOp::UnionN");
 
 class RelUnionNS1 : public SetTest {
 public:
+  /// Create and register test
   RelUnionNS1(const char* t)
     : SetTest(t,3,ds_22,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
@@ -541,6 +630,7 @@ public:
     CountableSetRanges xr2(x.lub, x[2]);
     return Iter::Ranges::equal(u,xr2);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     SetVarArgs xs(3);
     xs[0]=x[0];
@@ -553,8 +643,10 @@ RelUnionNS1 _relunionns1("RelOp::Sharing::UnionNS1");
 
 class RelUnionNS2 : public SetTest {
 public:
+  /// Create and register test
   RelUnionNS2(const char* t)
     : SetTest(t,3,ds_22,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
@@ -562,6 +654,7 @@ public:
     CountableSetRanges xr22(x.lub, x[2]);
     return Iter::Ranges::subset(xr0,xr21) && Iter::Ranges::subset(xr1,xr22);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     SetVarArgs xs(3);
     xs[0]=x[0];
@@ -574,13 +667,16 @@ RelUnionNS2 _relunionns2("RelOp::Sharing::UnionNS2");
 
 class RelUnionNS3 : public SetTest {
 public:
+  /// Create and register test
   RelUnionNS3(const char* t)
     : SetTest(t,2,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
     return Iter::Ranges::subset(xr1,xr0);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     SetVarArgs xs(3);
     xs[0]=x[0];
@@ -593,8 +689,10 @@ RelUnionNS3 _relunionns3("RelOp::Sharing::UnionNS3");
 
 class RelInterN : public SetTest {
 public:
+  /// Create and register test
   RelInterN(const char* t)
     : SetTest(t,4,ds_22,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     GECODE_AUTOARRAY(CountableSetRanges, isrs, 3);
     isrs[0].init(x.lub, x[0]);
@@ -605,6 +703,7 @@ public:
     return Iter::Ranges::equal(u, x3r);
 
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     SetVarArgs xs(x.size()-1);
     for (int i=x.size()-1; i--;)
@@ -616,8 +715,10 @@ RelInterN _relintern("RelOp::InterN");
 
 class RelInterNS1 : public SetTest {
 public:
+  /// Create and register test
   RelInterNS1(const char* t)
     : SetTest(t,3,ds_22,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
@@ -625,6 +726,7 @@ public:
     CountableSetRanges xr2(x.lub, x[2]);
     return Iter::Ranges::equal(u,xr2);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     SetVarArgs xs(3);
     xs[0]=x[0];
@@ -637,8 +739,10 @@ RelInterNS1 _relinterns1("RelOp::Sharing::InterNS1");
 
 class RelInterNS2 : public SetTest {
 public:
+  /// Create and register test
   RelInterNS2(const char* t)
     : SetTest(t,3,ds_22,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
@@ -646,6 +750,7 @@ public:
     CountableSetRanges xr22(x.lub, x[2]);
     return Iter::Ranges::subset(xr21,xr0) && Iter::Ranges::subset(xr22,xr1);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     SetVarArgs xs(3);
     xs[0]=x[0];
@@ -658,13 +763,16 @@ RelInterNS2 _relinterns2("RelOp::Sharing::InterNS2");
 
 class RelInterNS3 : public SetTest {
 public:
+  /// Create and register test
   RelInterNS3(const char* t)
     : SetTest(t,2,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
     return Iter::Ranges::subset(xr0,xr1);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     SetVarArgs xs(3);
     xs[0]=x[0];

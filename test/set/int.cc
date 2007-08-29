@@ -55,8 +55,10 @@ namespace TestsForSetsAndInts {
 
   class Card : public SetTest {
   public:
+    /// Create and register test
     Card(const char* t)
       : SetTest(t,1,ds_33,false,1) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       unsigned int s = 0;
       for (CountableSetRanges xr(x.lub, x[0]);xr();++xr) s+= xr.width();
@@ -64,6 +66,7 @@ namespace TestsForSetsAndInts {
         return false;
       return s==(unsigned int)x.intval();
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
       Gecode::cardinality(home, x[0], y[0]);
     }
@@ -72,12 +75,15 @@ namespace TestsForSetsAndInts {
 
   class Min : public SetTest {
   public:
+    /// Create and register test
     Min(const char* t)
       : SetTest(t,1,ds_33,false,1) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
       return xr0() && xr0.min()==x.intval();
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
       Gecode::min(home, x[0], y[0]);
     }
@@ -86,13 +92,16 @@ namespace TestsForSetsAndInts {
 
   class Max : public SetTest {
   public:
+    /// Create and register test
     Max(const char* t)
       : SetTest(t,1,ds_33,false,1) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
       IntSet x0(xr0);
       return x0.size() > 0 && x0.max()==x.intval();
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
       Gecode::max(home, x[0], y[0]);
     }
@@ -101,17 +110,21 @@ namespace TestsForSetsAndInts {
 
   class Elem : public SetTest {
   public:
+    /// Create and register test
     Elem(const char* t)
       : SetTest(t,1,ds_33,true,1) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       for(CountableSetValues xr(x.lub, x[0]);xr();++xr)
         if (xr.val()==x.intval())
           return true;
       return false;
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
       Gecode::rel(home, x[0], SRT_SUP, y[0]);
     }
+    /// Post reified constraint on \a x for \a b
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y, BoolVar b) {
       Gecode::rel(home, x[0], SRT_SUP, y[0], b);
     }
@@ -120,14 +133,17 @@ namespace TestsForSetsAndInts {
 
   class NoElem : public SetTest {
   public:
+    /// Create and register test
     NoElem(const char* t)
       : SetTest(t,1,ds_33,false,1) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       for(CountableSetValues xr(x.lub, x[0]);xr();++xr)
         if (xr.val()==x.intval())
           return false;
       return true;
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
       Gecode::rel(home, x[0], SRT_DISJ, y[0]);
     }
@@ -136,17 +152,21 @@ namespace TestsForSetsAndInts {
 
   class The : public SetTest {
   public:
+    /// Create and register test
     The(const char* t)
       : SetTest(t,1,ds_33,true,1) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
       IntSet x0(xr0);
       return x0.size()==1 && x0.min()==x0.max() &&
         x0.max()==x.intval();
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
       Gecode::rel(home, x[0], SRT_EQ, y[0]);
     }
+    /// Post reified constraint on \a x for \a b
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y, BoolVar b) {
       Gecode::rel(home, x[0], SRT_EQ, y[0], b);
     }
@@ -173,6 +193,7 @@ namespace TestsForSetsAndInts {
     IntArgs elements;
     IntArgs weights;
 
+    /// Create and register test
     Weights(const char* t)
       : SetTest(t,1,ds_33,false,1),
         elements(7), weights(7) {
@@ -183,10 +204,12 @@ namespace TestsForSetsAndInts {
       weights[1] = -2;
       weights[5] = 6;
     }
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges x0(x.lub, x[0]);
       return x.intval()==weightI(elements,weights,x0);
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
       Gecode::weights(home, elements, weights, x[0], y[0]);
     }
@@ -195,8 +218,10 @@ namespace TestsForSetsAndInts {
 
   class Match : public SetTest {
   public:
+    /// Create and register test
     Match(const char* t)
       : SetTest(t,1,ds_33,false,3) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       if (x.ints()[0]>=x.ints()[1] ||
           x.ints()[1]>=x.ints()[2])
@@ -221,6 +246,7 @@ namespace TestsForSetsAndInts {
         return false;
       return true;
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
       Gecode::match(home, x[0], y);
     }
@@ -231,8 +257,10 @@ namespace TestsForSetsAndInts {
   private:
     int ssize, isize;
   public:
+    /// Create and register test
     ChannelInt(const char* t, const IntSet& d, int _ssize, int _isize)
       : SetTest(t,_ssize,d,false,_isize), ssize(_ssize), isize(_isize) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       for (int i=0; i<isize; i++) {
         if (x.ints()[i] < 0 || x.ints()[i] >= ssize)
@@ -252,6 +280,7 @@ namespace TestsForSetsAndInts {
       }
       return true;
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
       Gecode::channel(home, y, x);
     }
@@ -264,8 +293,10 @@ namespace TestsForSetsAndInts {
   private:
     int isize;
   public:
+    /// Create and register test
     ChannelBool(const char* t, const IntSet& d, int _isize)
       : SetTest(t,1,d,false,_isize), isize(_isize) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       for (int i=0; i<isize; i++) {
         if (x.ints()[i] < 0 || x.ints()[i] > 1)
@@ -283,6 +314,7 @@ namespace TestsForSetsAndInts {
         if (x.ints()[cur] != 0) return false;
       return true;
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
       BoolVarArgs b(y.size());
       for (int i=y.size(); i--;)

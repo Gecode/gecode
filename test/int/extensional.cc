@@ -43,8 +43,10 @@ static Gecode::IntSet ds_14(1, 5);
 class Table1 : public IntTest {
   ExtensionalAlgorithm ea;
 public:
+  /// Create and register test
   Table1(const char* t, ExtensionalAlgorithm ea0)
     : IntTest(t,4,ds_14,false,Gecode::ICL_DOM), ea(ea0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     return (
             (x[0] == 1 && x[1] == 3 && x[2] == 2 && x[3] == 3) ||
@@ -54,6 +56,7 @@ public:
             (x[0] == 4 && x[1] == 3 && x[2] == 4 && x[3] == 1)
             );
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     Table t;
     IntArgs t1(4,  2, 1, 2, 4);
@@ -80,6 +83,7 @@ class Table2 : public IntTest {
   ExtensionalAlgorithm ea;
   mutable Table t;
 public:
+  /// Create and register test
   Table2(const char* name, ExtensionalAlgorithm ea0)
     : IntTest(name,4,ds_14,false,Gecode::ICL_DOM), ea(ea0) {
     IntArgs t1 (4,  2, 1, 2, 4);
@@ -103,6 +107,7 @@ public:
     t.add(t9);
     t.add(t10);
   }
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     for (int i = 0; i < t.tuples(); ++i) {
       Table::tuple l = t[i];
@@ -114,6 +119,7 @@ public:
     }
     return false;
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     extensional(home, x, t, ea);
   }

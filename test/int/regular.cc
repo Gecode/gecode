@@ -43,14 +43,17 @@ namespace {
 
   class SimpleA : public IntTest {
   public:
+    /// Create and register test
     SimpleA(void)
       : IntTest("Regular::Simple::A",4,2,2) {}
+    /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (((x[0] == 0) || (x[0] == 2)) &&
               ((x[1] == -1) || (x[1] == 1)) &&
               ((x[2] == 0) || (x[2] == 1)) &&
               ((x[3] == 0) || (x[3] == 1)));
     }
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       using namespace Gecode;
       regular(home, x,
@@ -66,11 +69,14 @@ namespace {
 
   class SimpleB : public IntTest {
   public:
+    /// Create and register test
     SimpleB(void)
       : IntTest("Regular::Simple::B",4,2,2) {}
+    /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (x[0]<x[1]) && (x[1]<x[2]) && (x[2]<x[3]);
     }
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       using namespace Gecode;
       regular(home, x,
@@ -84,8 +90,10 @@ namespace {
   
   class Distinct : public IntTest {
   public:
+    /// Create and register test
     Distinct(void)
       : IntTest("Regular::Distinct",4,-1,4) {}
+    /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<x.size(); i++) {
         if ((x[i] < 0) || (x[i] > 3))
@@ -96,6 +104,7 @@ namespace {
       }
       return true;
     }
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       using namespace Gecode;
       regular(home, x,
@@ -128,14 +137,17 @@ namespace {
   
   class SharedA : public IntTest {
   public:
+    /// Create and register test
     SharedA(void)
       : IntTest("Regular::Shared::A",4,2,2) {}
+    /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (((x[0] == 0) || (x[0] == 2)) &&
               ((x[1] == -1) || (x[1] == 1)) &&
               ((x[2] == 0) || (x[2] == 1)) &&
               ((x[3] == 0) || (x[3] == 1)));
     }
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       using namespace Gecode;
       IntVarArgs y(8);
@@ -152,14 +164,17 @@ namespace {
 
   class SharedB : public IntTest {
   public:
+    /// Create and register test
     SharedB(void)
       : IntTest("Regular::Shared::B",4,2,2) {}
+    /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (((x[0] == 0) || (x[0] == 2)) &&
               ((x[1] == -1) || (x[1] == 1)) &&
               ((x[2] == 0) || (x[2] == 1)) &&
               ((x[3] == 0) || (x[3] == 1)));
     }
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       using namespace Gecode;
       IntVarArgs y(12);
@@ -176,11 +191,14 @@ namespace {
 
   class SharedC : public IntTest {
   public:
+    /// Create and register test
     SharedC(void)
       : IntTest("Regular::Shared::C",4,0,1) {}
+    /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (x[1]==1) && (x[2]==0) && (x[3]==1);
     }
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       using namespace Gecode;
       Gecode::BoolVarArgs y(8);
@@ -194,11 +212,14 @@ namespace {
 
   class SharedD : public IntTest {
   public:
+    /// Create and register test
     SharedD(void)
       : IntTest("Regular::Shared::D",4,0,1) {}
+    /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (x[1]==1) && (x[2]==0) && (x[3]==1);
     }
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       using namespace Gecode;
       Gecode::BoolVarArgs y(12);

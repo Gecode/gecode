@@ -47,7 +47,9 @@ static IntSet ds_13(1,3);
 
 class BddDistinct : public BddTest {
 public:
+  /// Create and register test
   BddDistinct(const char* t) : BddTest(t,3,ds_13) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     {
       CountableSetRanges xr0(x.lub, x[0]);
@@ -69,6 +71,7 @@ public:
     }
     return true;
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     Gecode::hls_order(home, x);
     Gecode::distinct(home, x);

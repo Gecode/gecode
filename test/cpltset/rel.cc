@@ -47,8 +47,10 @@ static IntSet ds_13(1,3);
 
 class BddRelLe : public BddTest {
 public:
+  /// Create and register test
   BddRelLe(const char* t) : BddTest(t,2,ds_13,false) {}
 
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetValues xr1(x.lub, x[0]);
     CountableSetValues xr2(x.lub, x[1]);
@@ -60,10 +62,12 @@ public:
     return a < b;
 //     return false;
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::rel(home, x[0], SRT_LE, x[1]);
   }
+/// Post reified constraint on \a x for \a b
 //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_LE, d1, b,SCL_DOM);
 //   }
@@ -72,8 +76,10 @@ BddRelLe _bddrelle("Rel::Le");
 
 class BddRelLq : public BddTest {
 public:
+  /// Create and register test
   BddRelLq(const char* t) : BddTest(t,2,ds_13,false) {}
 
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetValues xr1(x.lub, x[0]);
     CountableSetValues xr2(x.lub, x[1]);
@@ -85,10 +91,12 @@ public:
     return a <= b;
 //     return false;
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::rel(home, x[0], SRT_LQ, x[1]);
   }
+/// Post reified constraint on \a x for \a b
 //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_LQ, d1, b,SCL_DOM);
 //   }
@@ -98,7 +106,9 @@ BddRelLq _bddrellq("Rel::Lq");
 
 class BddRelLeDiff : public BddTest {
 public:
+  /// Create and register test
   BddRelLeDiff(const char* t) : BddTest(t,2,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetValues xr1(x.lub, x[0]);
     CountableSetValues xr2(x.lub, x[1]);
@@ -110,12 +120,14 @@ public:
     return a < b;
 //     return false;
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::dom(home, x[0], SRT_DISJ, ds_13);
     Gecode::dom(home, x[1], SRT_SUB, ds_13);
     Gecode::rel(home, x[0], SRT_LE, x[1]);
   }
+/// Post reified constraint on \a x for \a b
 //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b,SCL_DOM);
 //   }
@@ -125,8 +137,10 @@ BddRelLe _bddrellediff("Rel::Le::Diff");
 
 class BddRelDisj : public BddTest {
 public:
+  /// Create and register test
   BddRelDisj(const char* t) : BddTest(t,2,ds_13,false) {}
 
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     // std::cerr << "solution  reldisj\n";
     CountableSetRanges xr1(x.lub, x[0]);
@@ -135,6 +149,7 @@ public:
     // if (!xr1() && !xr2()) return true;
     return !inter();
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::rel(home, x[0], SRT_DISJ, x[1]);

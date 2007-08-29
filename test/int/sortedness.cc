@@ -60,6 +60,7 @@ class SortPermAssignment : public Assignment{
   int permup;
   int xsize;
 public:
+  /// Create and register test
   SortPermAssignment(int xlow, int xup,
                      int plow, int pup,
                      int xs,
@@ -110,8 +111,10 @@ private:
   static const int ve = xs /2;
 
 public:
+  /// Create and register test
   Sortedness_NoVar(const char* t, Gecode::IntConLevel icl0)
     : IntTest(t, xs, ds_13), icl(icl0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int sortx[ve];
     for (int i = 0; i < ve; i++) {
@@ -149,6 +152,7 @@ public:
     // std::cout << "valid\n";
     return true;
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs z(ve);
     for (int i = 0; i < ve; i++) {
@@ -179,12 +183,14 @@ private:
   static const int xsize = 3;
 
 public:
+  /// Create and register test
   Sortedness_PermVar(const char* t, Gecode::IntConLevel icl0)
     : IntTest(t, xs, ds_03), icl(icl0) {}
   virtual Assignment* assignment(void) const {
     return new SortPermAssignment(1,3,0,2,3,9,dom);
   }
 
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
 
 
@@ -256,6 +262,7 @@ public:
 //     std::cout << "valid\n";
     return true;
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs z(ve1);
     for (int i = 0; i < ve1; i++) {

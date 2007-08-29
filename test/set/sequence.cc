@@ -41,8 +41,10 @@ static IntSet ds_33(-1,2);
 
 class Sequence : public SetTest {
 public:
+  /// Create and register test
   Sequence(const char* t)
     : SetTest(t,4,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     int max = Limits::Set::int_min - 1;
     for (int i=0; i<4; i++) {
@@ -57,6 +59,7 @@ public:
     }
     return true;
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::sequence(home, x);
   }
@@ -65,8 +68,10 @@ Sequence _sequence("Sequence::Sequence");
 
 class SeqU : public SetTest {
 public:
+  /// Create and register test
   SeqU(const char* t)
     : SetTest(t,4,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     int max = Limits::Set::int_min - 1;
     for (int i=0; i<3; i++) {
@@ -87,6 +92,7 @@ public:
     CountableSetRanges x3r(x.lub, x[3]);
     return Iter::Ranges::equal(u, x3r);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     SetVarArgs xs(x.size()-1);
     for (int i=x.size()-1; i--;)

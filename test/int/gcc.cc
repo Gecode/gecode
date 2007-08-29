@@ -57,6 +57,7 @@ class GCCAssignment : public Assignment {
   int cardup;
   int xsize;
 public:
+  /// Create and register test
   GCCAssignment(int xlow, int xup,
                 int clow, int cup,
                 int xs,
@@ -105,8 +106,10 @@ public:
 
 class GCC_FC_AllLbUb : public IntTest {
 public:
+  /// Create and register test
   GCC_FC_AllLbUb(const char* t, Gecode::IntConLevel icl)
     : IntTest(t, 4, ds_14, false, icl) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int n[4];
     for (int i=4; i--; )
@@ -118,6 +121,7 @@ public:
         return false;
     return true;
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntArgs values(4);
     Gecode::IntSet fixed(0,2);
@@ -133,8 +137,10 @@ public:
 
 class GCC_FC_SomeTriple : public IntTest {
 public:
+  /// Create and register test
   GCC_FC_SomeTriple(const char* t, Gecode::IntConLevel icl)
     : IntTest(t, 4, ds_14, false, icl) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int n[4];
     for (int i=4; i--; )
@@ -145,6 +151,7 @@ public:
       return false;
     return true;
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
 
     IntArgs values(2);
@@ -161,8 +168,10 @@ public:
 
 class GCC_FC_AllEqUb : public IntTest {
 public:
+  /// Create and register test
   GCC_FC_AllEqUb(const char* t, Gecode::IntConLevel icl)
     : IntTest(t, 4, ds_12, false, icl) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int n[2];
     for (int i=2; i--; )
@@ -173,6 +182,7 @@ public:
       return false;
     return true;
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntArgs values(2); values[0] = 1; values[1] = 2;
     count(home, x, Gecode::IntSet(2,2), values, icl);
@@ -182,8 +192,10 @@ public:
 
 class GCC_FC_Shared_AllLbUb : public IntTest {
 public:
+  /// Create and register test
   GCC_FC_Shared_AllLbUb(const char* t, Gecode::IntConLevel icl)
     : IntTest(t,2,ds_14,false, icl) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     if (x[0] != x[1]) {
       return true;
@@ -191,6 +203,7 @@ public:
       return false;
     }
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs y(6);
     for (int i = 0; i < 6; i++) {
@@ -232,8 +245,10 @@ public:
     return new GCCAssignment(lb, rb, minocc, maxocc, ve, xs, dom);
   }
 
+  /// Create and register test
   GCC_VC_AllLbUb(const char* t, Gecode::IntConLevel icl)
     : IntTest(t, xs, ds_02, false,icl) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
 //     std::cout << "GCC-Sol: ";
 //     for (int i = 0; i < xs; i++) {
@@ -272,6 +287,7 @@ public:
     return true;
   }
 
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     // std::cout << "test_post\n";
 
@@ -330,8 +346,10 @@ public:
   }
 
 
+  /// Create and register test
   GCC_VC_AllTriple(const char* t, Gecode::IntConLevel icl)
     : IntTest(t, xs, ds_02, false,icl) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
 //     std::cout << "GCC-Sol: ";
 //     for (int i = 0; i < xs; i++) {
@@ -378,6 +396,7 @@ public:
     return true;
   }
 
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     // std::cout << "test_post\n";
 
@@ -424,8 +443,10 @@ private:
   }
 
 public:
+  /// Create and register test
   GCC_VC_SomeTriple(const char* t, Gecode::IntConLevel icl)
     : IntTest(t, xs, ds_02, false,icl) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
 //     std::cout << "GCC-Sol: ";
 //     for (int i = 0; i < xs; i++) {
@@ -479,6 +500,7 @@ public:
     return true;
   }
 
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
 
     IntVarArgs cards(xs - ve);

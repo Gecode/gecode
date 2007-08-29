@@ -48,7 +48,9 @@ static IntSet ds_13(1,3);
 
 class BddPartition : public BddTest {
 public:
+  /// Create and register test
   BddPartition(const char* t) : BddTest(t,2,ds_13,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
     CountableSetRanges xr2(x.lub, x[1]);
@@ -65,10 +67,12 @@ public:
     return empty && same;
   }
 
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::partition(home, x);
   }
+/// Post reified constraint on \a x for \a b
 //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
@@ -78,6 +82,7 @@ BddPartition _bddpartition("Partition");
 
 class BddPartitionLex : public BddTest {
 public:
+  /// Create and register test
   BddPartitionLex(const char* t) : BddTest(t,2,ds_13,false) {}
 //   template <class I>
 //   int iter2int(I& r) const{
@@ -98,6 +103,7 @@ public:
 
 //   }
 
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
     CountableSetRanges xr2(x.lub, x[1]);
@@ -119,10 +125,12 @@ public:
     return empty && same && (a < b);
   }
 
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::partitionLex(home, x, SRT_LE);
   }
+/// Post reified constraint on \a x for \a b
 //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
@@ -132,7 +140,9 @@ BddPartitionLex _bddpartitionlex("Partition::Lex");
 
 class BddPartitionNaryOne : public BddTest {
 public:
+  /// Create and register test
   BddPartitionNaryOne(const char* t) : BddTest(t,3,ds_13,false, 0, 200, 10) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
     CountableSetRanges xr2(x.lub, x[1]);
@@ -149,6 +159,7 @@ public:
     return empty && same;
   }
 
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     int n = x.size() - 1;
@@ -163,9 +174,11 @@ BddPartitionNaryOne _bddpartitionnaryone("Partition::NaryOne");
 
 class BddPartitionNaryOneSmaller : public BddTest {
 public:
+  /// Create and register test
   BddPartitionNaryOneSmaller(const char* t) : BddTest(t,3,d1,false, 200, 80) {
     
   }
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
     CountableSetRanges xr2(x.lub, x[1]);
@@ -188,6 +201,7 @@ public:
     return empty && same && fixed;
   }
 
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     int n = x.size() - 1;
     CpltSetVarArgs z(n);
@@ -203,7 +217,9 @@ BddPartitionNaryOneSmaller _bddpartitionnaryonesmaller("Partition::NaryOne::Smal
 
 class BddPartitionNaryOneInt : public BddTest {
 public:
+  /// Create and register test
   BddPartitionNaryOneInt(const char* t) : BddTest(t,1,ds_13,false, 2, 200, 10) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
 
     Assignment y = x.ints();
@@ -220,6 +236,7 @@ public:
     return disjoint && isunion;
   }
 
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray& y) {
     CpltSetVar z = x[0];
     partition(home, y, z);

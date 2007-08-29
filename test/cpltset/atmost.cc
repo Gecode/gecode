@@ -47,7 +47,9 @@ static IntSet ds_13(1,3);
 
 class BddAtmost : public BddTest {
 public:
+  /// Create and register test
   BddAtmost(const char* t) : BddTest(t,2,ds_13,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
     CountableSetRanges xr2(x.lub, x[1]);
@@ -62,10 +64,12 @@ public:
     return (c <= 1);
   }
 
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::atmost(home, x[0], x[1], 1);
   }
+/// Post reified constraint on \a x for \a b
 //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
@@ -74,7 +78,9 @@ BddAtmost _bddatmost("Atmost::1");
 
 class BddAtmostLexLe : public BddTest {
 public:
+  /// Create and register test
   BddAtmostLexLe(const char* t) : BddTest(t,2,ds_13,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
     CountableSetRanges xr2(x.lub, x[1]);
@@ -95,6 +101,7 @@ public:
     return (c <= 1) && a < b;
   }
 
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::atmostLex(home, x[0], x[1], 1, SRT_LE);
@@ -105,7 +112,9 @@ BddAtmostLexLe _bddatmostlexle("Atmost::Lex::Le");
 
 class BddAtmostIntSet : public BddTest {
 public:
+  /// Create and register test
   BddAtmostIntSet(const char* t) : BddTest(t,1,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
     IntSetRanges ir(ds_33);
@@ -119,6 +128,7 @@ public:
     return (c <= 1);
   }
 
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::atmost(home, x[0], ds_33, 1);

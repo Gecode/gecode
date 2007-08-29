@@ -48,11 +48,14 @@ private:
   const int* c;
   const int n;
 public:
+  /// Create and register test
   ElementInt(const char* t, const Gecode::IntSet& is, const int* c0, int n0)
     : IntTest(t,2,is), c(c0), n(n0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     return (x[0]>= 0) && (x[0]<n) && c[x[0]]==x[1];
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntArgs ia(n,c);
     element(home, ia, x[0], x[1], 0);
@@ -73,11 +76,14 @@ private:
   const int* c;
   const int n;
 public:
+  /// Create and register test
   ElementShareInt(const char* t, const Gecode::IntSet& is, const int* c0, int n0)
     : IntTest(t,1,is), c(c0), n(n0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     return (x[0]>= 0) && (x[0]<n) && c[x[0]]==x[0];
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntArgs ia(n,c);
     element(home, ia, x[0], x[0], 0);
@@ -94,11 +100,14 @@ private:
   const int* c;
   const int n;
 public:
+  /// Create and register test
   ElementBool(const char* t, const Gecode::IntSet& is, const int* c0, int n0)
     : IntTest(t,2,is), c(c0), n(n0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     return (x[0]>= 0) && (x[0]<n) && c[x[0]]==x[1];
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntArgs ia(n,c);
     element(home, ia, x[0], channel(home,x[1]), 0);
@@ -115,11 +124,14 @@ class ElementVar : public IntTest {
 private:
   const int n;
 public:
+  /// Create and register test
   ElementVar(const char* t, const Gecode::IntSet& is, int n0, Gecode::IntConLevel icl)
     : IntTest(t,n0+2,is,false,icl), n(n0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     return (x[0]>= 0) && (x[0]<n) && x[2+x[0]]==x[1];
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs ia(n);
     for (int i=0;i<n;i++)
@@ -134,11 +146,14 @@ private:
   Gecode::IntConLevel icl;
 public:
   // This is actually not domain consistent!
+  /// Create and register test
   ElementShareVar(const char* t, const Gecode::IntSet& is, int n0, Gecode::IntConLevel icl0)
     : IntTest(t,n0+1,is,false), n(n0), icl(icl0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     return (x[0]>= 0) && (x[0]<n) && x[1+x[0]]==x[0];
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs ia(n);
     for (int i=0;i<n;i++)
@@ -157,8 +172,10 @@ class ElementVarBool : public IntTest {
 private:
   const int n;
 public:
+  /// Create and register test
   ElementVarBool(const char* t, const Gecode::IntSet& is, int n0)
     : IntTest(t,n0+2,is,false), n(n0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     for (int i=0;i<n;i++)
       if ((x[2+i] < 0) || (x[2+i]>1))
@@ -166,6 +183,7 @@ public:
     return (x[0]>= 0) && (x[0]<n) && x[2+x[0]]==x[1] 
       && (x[1]>=0) && (x[1]<=1);
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     Gecode::BoolVarArgs ia(n);
     for (int i=0;i<n;i++)

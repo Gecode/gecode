@@ -50,10 +50,12 @@ private:
   int xsize;
 public:
   // using cache size of 10000 gives fastest time of 0m48s per iteration
+  /// Create and register test
   BddSelectUnion(const char* t) : BddTest(t, 4, ds_012, false, 0, 100, 10000), xsize(4) {
     union_pos = xsize - 1;
     selector_pos = xsize - 2;
   }
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     // std::cout << "solution...";
     int selected = 0;
@@ -84,6 +86,7 @@ public:
     // std::cout << (valid ? "valid\n" : "INVALID\n");
     return valid;
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // access the space manager
     BuddyMgr lm = this->manager();
@@ -105,11 +108,13 @@ private:
   int union_pos;
   int xsize;
 public:
+  /// Create and register test
   BddFindNonEmptySub(const char* t) : BddTest(t, 4, ds_1012,false, 0, 800, 1000), xsize(4) {
     /// using 1012 leads to 5min testtime for ONE iteration !
     union_pos = xsize - 1;
     selector_pos = xsize - 2;   
   }
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     int selected = 0;
     // count the number of selected sets
@@ -179,6 +184,7 @@ public:
     return valid;
   }
 
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     int vars = selector_pos;
     CpltSetVarArgs xs(vars);

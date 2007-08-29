@@ -52,6 +52,7 @@ namespace {
     Council<ViewAdvisor<IntView> > c;
     int n;
     /// Constructor for posting
+    /// Create and register test
     Keep(Gecode::Space* home, ViewArray<IntView>& x)
       : NaryPropagator<IntView,PC_INT_NONE>(home,x), c(home), n(0) {
       for (int i=x.size(); i--; ) {
@@ -67,6 +68,7 @@ namespace {
       }
     }
     /// Constructor for cloning \a p
+    /// Create and register test
     Keep(Gecode::Space* home, bool share, Keep& p) 
       : NaryPropagator<IntView,PC_INT_NONE>(home,share,p), n(p.n) {
       c.update(home,share,p.c);
@@ -97,6 +99,7 @@ namespace {
       return ES_FIX;
     }
     /// Post propagator for view array \a x
+    /// Post constraint on \a x
     static ExecStatus post(Gecode::Space* home, ViewArray<IntView>& x) {
       (void) new (home) Keep(home,x);
       return ES_OK;
@@ -110,17 +113,21 @@ namespace {
 
   class AdviseKeep : public IntTest {
   public:
+    /// Create and register test
     AdviseKeep(void)
       : IntTest("Advisor::Keep",4,nl,false,Gecode::ICL_DEF) {}
+    /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return true;
     }
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       if (home->failed())
         return;
       ViewArray<IntView> xv(home,x.size());
       for (int i=x.size(); i--; )
         xv[i]=x[i];
+      /// Post constraint on \a x
       Keep::post(home,xv);
     }
   };
@@ -134,6 +141,7 @@ namespace {
     using NaryPropagator<IntView,PC_INT_NONE>::x;
     Council<ViewAdvisor<IntView> > c;
     /// Constructor for posting
+    /// Create and register test
     AD(Gecode::Space* home, ViewArray<IntView>& x)
       : NaryPropagator<IntView,PC_INT_NONE>(home,x), c(home) {
       for (int i=x.size(); i--; ) {
@@ -143,6 +151,7 @@ namespace {
       }
     }
     /// Constructor for cloning \a p
+    /// Create and register test
     AD(Gecode::Space* home, bool share, AD& p) 
       : NaryPropagator<IntView,PC_INT_NONE>(home,share,p) {
       c.update(home,share,p.c);
@@ -166,6 +175,7 @@ namespace {
       return (x.size() < 2) ? ES_SUBSUMED(this,home) : ES_FIX;
     }
     /// Post propagator for view array \a x
+    /// Post constraint on \a x
     static ExecStatus post(Gecode::Space* home, ViewArray<IntView>& x) {
       if (x.size() > 1)
         (void) new (home) AD(home,x);
@@ -180,8 +190,10 @@ namespace {
 
   class AdviseDistinct : public IntTest {
   public:
+    /// Create and register test
     AdviseDistinct(void)
       : IntTest("Advisor::Distinct",5,ds,false,Gecode::ICL_DEF) {}
+    /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<x.size(); i++)
         for (int j=i+1; j<x.size(); j++)
@@ -189,12 +201,14 @@ namespace {
             return false;
       return true;
     }
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       if (home->failed())
         return;
       ViewArray<IntView> xv(home,x.size());
       for (int i=x.size(); i--; )
         xv[i]=x[i];
+      /// Post constraint on \a x
       AD::post(home,xv);
     }
   };
@@ -208,6 +222,7 @@ namespace {
     class BndAdvisor : public ViewAdvisor<IntView> {
       using ViewAdvisor<IntView>::x;
     public:
+      /// Create and register test
       BndAdvisor(Gecode::Space* home, Propagator* p, 
                  Council<BndAdvisor>& c, IntView v) 
         : ViewAdvisor<IntView>(home,p,c,v) {
@@ -216,6 +231,7 @@ namespace {
         else
           IntView::schedule(home,p,ME_INT_BND);
       }
+      /// Create and register test
       BndAdvisor(Gecode::Space* home, bool share, BndAdvisor& a) 
         : ViewAdvisor<IntView>(home,share,a) {}
     };
@@ -268,6 +284,7 @@ namespace {
       return ES_NOFIX;
     }
     /// Post bounds-consistent propagator \f$ x_0=x_1\f$
+    /// Post constraint on \a x
     static  ExecStatus  post(Gecode::Space* home, IntView x0, IntView x1) {
       (void) new (home) Eq(home, x0, x1);
       return ES_OK;
@@ -282,13 +299,17 @@ namespace {
 
   class BasicIntAdvisor : public IntTest {
   public:
+    /// Create and register test
     BasicIntAdvisor(void)
       : IntTest("Advisor::Eq::Int",2,-5,5) {}
+    /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return x[0] == x[1];
     }
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       Int::IntView x0(x[0]), x1(x[1]);
+      /// Post constraint on \a x
       Eq::post(home, x0, x1);
     }
   };
@@ -302,12 +323,14 @@ namespace {
     class BndAdvisor : public ViewAdvisor<BoolView> {
       using ViewAdvisor<BoolView>::x;
     public:
+      /// Create and register test
       BndAdvisor(Gecode::Space* home, Propagator* p, Council<BndAdvisor>& c, 
                  BoolView v) 
         : ViewAdvisor<BoolView>(home,p,c,v) {
         if (x.assigned())
           BoolView::schedule(home,p,ME_INT_BND);
       }
+      /// Create and register test
       BndAdvisor(Gecode::Space* home, bool share, BndAdvisor& a) 
         : ViewAdvisor<BoolView>(home,share,a) {}
     };
@@ -354,6 +377,7 @@ namespace {
       return ES_SUBSUMED(this, dispose(home));
     }
     /// Post bounds-consistent propagator \f$ x_0=x_1\f$
+    /// Post constraint on \a x
     static  ExecStatus  post(Gecode::Space* home, BoolView x0, BoolView x1) {
       (void) new (home) BoolEq(home, x0, x1);
       return ES_OK;
@@ -368,13 +392,17 @@ namespace {
 
   class BasicBoolAdvisor : public IntTest {
   public:
+    /// Create and register test
     BasicBoolAdvisor(void)
       : IntTest("Advisor::Eq::Bool",2,bs) {}
+    /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return x[0] == x[1];
     }
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       Int::BoolView x0(channel(home,x[0])), x1(channel(home,x[1]));
+      /// Post constraint on \a x
       BoolEq::post(home, x0, x1);
     }
   };

@@ -46,13 +46,16 @@ namespace Projection {
 
   class RelBinNEq : public SetTest {
   public:
+    /// Create and register test
     RelBinNEq(const char* t)
       : SetTest(t,2,ds_33) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
       CountableSetRanges xr1(x.lub, x[1]);
       return !Iter::Ranges::equal(xr0, xr1);
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
       Gecode::Projector p(0, Gecode::SetExpr(1), Gecode::SetExpr(1));
       Gecode::Projector q(1, Gecode::SetExpr(0), Gecode::SetExpr(0));
@@ -65,13 +68,16 @@ namespace Projection {
 
   class RelBinEq : public SetTest {
   public:
+    /// Create and register test
     RelBinEq(const char* t)
       : SetTest(t,2,ds_33,true) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
       CountableSetRanges xr1(x.lub, x[1]);
       return Iter::Ranges::equal(xr0, xr1);
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
       Gecode::SetExpr xe(0);
       Gecode::SetExpr ye(1);
@@ -82,6 +88,7 @@ namespace Projection {
       ps.add(q);
       Gecode::projector(home, x[0], x[1], ps);
     }
+    /// Post reified constraint on \a x for \a b
     virtual void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
       Gecode::Projector p(0, Gecode::SetExpr(1), Gecode::SetExpr(1));
       Gecode::Projector q(1, Gecode::SetExpr(0), Gecode::SetExpr(0));
@@ -94,13 +101,16 @@ namespace Projection {
 
   class RelBinSub : public SetTest {
   public:
+    /// Create and register test
     RelBinSub(const char* t)
       : SetTest(t,2,ds_33,true) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
       CountableSetRanges xr1(x.lub, x[1]);
       return Iter::Ranges::subset(xr0, xr1);
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
       Gecode::Projector p(0, Gecode::SetExpr(), Gecode::SetExpr(1));
       Gecode::Projector q(1, Gecode::SetExpr(0), -Gecode::SetExpr());
@@ -108,6 +118,7 @@ namespace Projection {
       ps.add(p); ps.add(q);
       Gecode::projector(home, x[0], x[1], ps);
     }
+    /// Post reified constraint on \a x for \a b
     virtual void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
       Gecode::Projector p(0, Gecode::SetExpr(), Gecode::SetExpr(1));
       Gecode::Projector q(1, Gecode::SetExpr(0), -Gecode::SetExpr());
@@ -120,13 +131,16 @@ namespace Projection {
 
   class RelBinDisj : public SetTest {
   public:
+    /// Create and register test
     RelBinDisj(const char* t)
       : SetTest(t,2,ds_33,true) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
       CountableSetRanges xr1(x.lub, x[1]);
       return Iter::Ranges::disjoint(xr0, xr1);
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
       Gecode::Projector p(0, Gecode::SetExpr(), -Gecode::SetExpr(1));
       Gecode::Projector q(1, Gecode::SetExpr(), -Gecode::SetExpr(0));
@@ -134,6 +148,7 @@ namespace Projection {
       ps.add(p); ps.add(q);
       Gecode::projector(home, x[0], x[1], ps);
     }
+    /// Post reified constraint on \a x for \a b
     virtual void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
       Gecode::Projector p(0, Gecode::SetExpr(), -Gecode::SetExpr(1));
       Gecode::Projector q(1, Gecode::SetExpr(), -Gecode::SetExpr(0));
@@ -146,14 +161,17 @@ namespace Projection {
 
   class RelBinCompl : public SetTest {
   public:
+    /// Create and register test
     RelBinCompl(const char* t)
     : SetTest(t,2,ds_33,true) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
       CountableSetRanges xr1(x.lub, x[1]);
       Set::RangesCompl<CountableSetRanges> xr1c(xr1);
       return Iter::Ranges::equal(xr0, xr1c);
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
       Gecode::Projector p(0, -Gecode::SetExpr(1), -Gecode::SetExpr(1));
       Gecode::Projector q(1, -Gecode::SetExpr(0), -Gecode::SetExpr(0));
@@ -161,6 +179,7 @@ namespace Projection {
       ps.add(p); ps.add(q);
       Gecode::projector(home, x[0], x[1], ps);
     }
+    /// Post reified constraint on \a x for \a b
     virtual void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
       Gecode::Projector p(0, -Gecode::SetExpr(1), -Gecode::SetExpr(1));
       Gecode::Projector q(1, -Gecode::SetExpr(0), -Gecode::SetExpr(0));
@@ -173,8 +192,10 @@ namespace Projection {
 
   class RelUnionEq : public SetTest {
   public:
+    /// Create and register test
     RelUnionEq(const char* t)
       : SetTest(t,3,ds_22,true) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
       CountableSetRanges xr1(x.lub, x[1]);
@@ -182,6 +203,7 @@ namespace Projection {
       Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> u(xr0,xr1);
       return Iter::Ranges::equal(xr2, u);
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
       Gecode::Projector p0(0,
                            Gecode::SetExpr(2) - Gecode::SetExpr(1),
@@ -212,6 +234,7 @@ namespace Projection {
                            );
       IntVar x0ix1c(home, 0, 20);
       Gecode::projector(home, x[0], x[1], x[2], x0ix1c, p3);
+      /// Post constraint on \a x
       Gecode::post(home, x2c == x0c + x1c - x0ix1c);
 
       Gecode::Projector p4(2,
@@ -220,6 +243,7 @@ namespace Projection {
                            );
       IntVar x0mx1c(home, 0, 20);
       Gecode::projector(home, x[0], x[1], x[2], x0mx1c, p4);
+      /// Post constraint on \a x
       Gecode::post(home, x1c == x2c - x0mx1c);
 
       Gecode::Projector p5(2,
@@ -228,8 +252,10 @@ namespace Projection {
                            );
       IntVar x1mx0c(home, 0, 20);
       Gecode::projector(home, x[0], x[1], x[2], x1mx0c, p5);
+      /// Post constraint on \a x
       Gecode::post(home, x0c == x2c - x1mx0c);
     }
+    /// Post reified constraint on \a x for \a b
     virtual void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
       Gecode::Projector p0(0,
                            Gecode::SetExpr(2) - Gecode::SetExpr(1),
@@ -252,8 +278,10 @@ namespace Projection {
 
   class RelUnionEqFormula : public SetTest {
   public:
+    /// Create and register test
     RelUnionEqFormula(const char* t)
       : SetTest(t,3,ds_22,false) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
       CountableSetRanges xr1(x.lub, x[1]);
@@ -261,6 +289,7 @@ namespace Projection {
       Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> u(xr0,xr1);
       return Iter::Ranges::equal(xr2, u);
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
       Formula f = (Formula(0) | Formula(1)) == Formula(2);
       Gecode::ProjectorSet ps = f.projectors();
@@ -271,8 +300,10 @@ namespace Projection {
   
   class RelInterEqCard : public SetTest {
   public:
+    /// Create and register test
     RelInterEqCard(const char* t)
       : SetTest(t,3,ds_22,false) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
       CountableSetRanges xr1(x.lub, x[1]);
@@ -280,6 +311,7 @@ namespace Projection {
       Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> u(xr0,xr1);
       return Iter::Ranges::equal(xr2, u);
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
       Gecode::Projector p0(0,
                            Gecode::SetExpr(2),
@@ -310,6 +342,7 @@ namespace Projection {
                            );
       IntVar x0ux1c(home, 0, 20);
       Gecode::projector(home, x[0], x[1], x[2], x0ux1c, p3);
+      /// Post constraint on \a x
       Gecode::post(home, x2c == x0c + x1c - x0ux1c);
 
       Gecode::Projector p4(2,
@@ -318,6 +351,7 @@ namespace Projection {
                            );
       IntVar x0mx1c(home, 0, 20);
       Gecode::projector(home, x[0], x[1], x[2], x0mx1c, p4);
+      /// Post constraint on \a x
       Gecode::post(home, x2c == x0c - x0mx1c);
 
       Gecode::Projector p5(2,
@@ -326,6 +360,7 @@ namespace Projection {
                            );
       IntVar x1mx0c(home, 0, 20);
       Gecode::projector(home, x[0], x[1], x[2], x1mx0c, p5);
+      /// Post constraint on \a x
       Gecode::post(home, x2c == x1c - x1mx0c);
 
     }
@@ -334,8 +369,10 @@ namespace Projection {
 
   class NegRelUnionEq : public SetTest {
   public:
+    /// Create and register test
     NegRelUnionEq(const char* t)
       : SetTest(t,3,ds_22) {}
+    /// Test whether \a x is solution
     virtual bool solution(const SetAssignment& x) const {
       CountableSetRanges xr0(x.lub, x[0]);
       CountableSetRanges xr1(x.lub, x[1]);
@@ -343,6 +380,7 @@ namespace Projection {
       Iter::Ranges::Union<CountableSetRanges, CountableSetRanges> u(xr0,xr1);
       return !Iter::Ranges::equal(xr2, u);
     }
+    /// Post constraint on \a x
     virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
       Gecode::Projector p0(0,
                            Gecode::SetExpr(2) - Gecode::SetExpr(1),

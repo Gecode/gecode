@@ -59,22 +59,26 @@ private:
   const int* c;
   const IntRelType irt;
 public:
+  /// Create and register test
   LinearInt(const char* t,
             const Gecode::IntSet& is,
             const int* c0, int n, IntRelType irt0, Gecode::IntConLevel icl)
     : IntTest(t,n,is,icl != Gecode::ICL_DOM,icl), c(c0), irt(irt0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     double e = 0.0;
     for (int i=0; i<x.size(); i++)
       e += c[i]*x[i];
     return compare(e, irt, static_cast<double>(0));
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntArgs ca(x.size());
     for (int i=0; i<x.size(); i++)
       ca[i]=c[i];
     linear(home, ca, x, irt, 0, icl);
   }
+  /// Post reified constraint on \a x for \a b
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
     IntArgs ca(x.size());
     for (int i=0; i<x.size(); i++)
@@ -218,15 +222,18 @@ private:
   const IntRelType irt;
   const PropKind pk;
 public:
+  /// Create and register test
   LinearBoolIntUnitPos(const char* t, int n, int rhs0, 
                        IntRelType irt0, PropKind pk0)
     : IntTest(t,n,db,false), rhs(rhs0), irt(irt0), pk(pk0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     double m = 0;
     for (int i=0; i<x.size(); i++)
       m += x[i];
     return compare(m, irt, static_cast<double>(rhs));
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     Gecode::BoolVarArgs b(x.size());
     for (int i=x.size(); i--; )
@@ -326,15 +333,18 @@ private:
   const IntRelType irt;
   const PropKind pk;
 public:
+  /// Create and register test
   LinearBoolIntUnitNeg(const char* t, int n, int rhs0, 
                        IntRelType irt0, PropKind pk0)
     : IntTest(t,n,db,false), rhs(rhs0), irt(irt0), pk(pk0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     double m = 0;
     for (int i=0; i<x.size(); i++)
       m -= x[i];
     return compare(m, irt, -static_cast<double>(rhs));
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     Gecode::BoolVarArgs b(x.size());
     for (int i=x.size(); i--; )
@@ -437,8 +447,10 @@ class LinearBoolVarUnitPos : public IntTest {
 private:
   const IntRelType irt;
 public:
+  /// Create and register test
   LinearBoolVarUnitPos(const char* t, int n, IntRelType irt0)
     : IntTest(t,n+1,dbv,false), irt(irt0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<x.size()-1; i++)
       if ((x[i] != 0) && (x[i] != 1))
@@ -448,6 +460,7 @@ public:
       m += x[i];
     return compare(m, irt, static_cast<double>(x[x.size()-1]));
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     BoolVarArgs b(x.size()-1);
     for (int i=x.size()-1; i--; )
@@ -482,8 +495,10 @@ class LinearBoolVarUnitNeg : public IntTest {
 private:
   const IntRelType irt;
 public:
+  /// Create and register test
   LinearBoolVarUnitNeg(const char* t, int n, IntRelType irt0)
     : IntTest(t,n+1,dbv,false), irt(irt0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<x.size()-1; i++)
       if ((x[i] != 0) && (x[i] != 1))
@@ -493,6 +508,7 @@ public:
       m -= x[i];
     return compare(m, irt, static_cast<double>(x[x.size()-1]));
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     Gecode::BoolVarArgs b(x.size()-1);
     for (int i=x.size()-1; i--; )
@@ -532,15 +548,18 @@ private:
   int* a;
   int c;
 public:
+  /// Create and register test
   LinearBoolScaleInt(const char* t, 
                      int* a0, int n, IntRelType irt0, int c0)
     : IntTest(t,n,db,false), irt(irt0), a(a0), c(c0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     double m = 0;
     for (int i=0; i<x.size(); i++)
       m += a[i]*x[i];
     return compare(m, irt, static_cast<double>(c));
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntArgs ia(x.size());
     Gecode::BoolVarArgs b(x.size());
@@ -565,6 +584,7 @@ public:
     }
     *s = 0;
   }
+  /// Create and register test
   LBSIC(void) {
     for (int r=Gecode::IRT_EQ; r<=Gecode::IRT_GR;r++)
       for (int i=0; i<16; i++)
@@ -612,9 +632,11 @@ private:
   const IntRelType irt;
   int* a;
 public:
+  /// Create and register test
   LinearBoolScaleView(const char* t, 
                      int* a0, int n, const Gecode::IntSet& is, IntRelType irt0)
     : IntTest(t,n+1,is,false), irt(irt0), a(a0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     for (int i=0; i<x.size()-1; i++)
       if ((x[i] < 0) || (x[i] > 1))
@@ -624,6 +646,7 @@ public:
       m += a[i]*x[i];
     return compare(m, irt, static_cast<double>(x[x.size()-1]));
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntArgs ia(x.size()-1);
     Gecode::BoolVarArgs b(x.size()-1);

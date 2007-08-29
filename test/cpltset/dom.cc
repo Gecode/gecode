@@ -46,15 +46,19 @@ static IntSet ds_4(4,4);
 
 class BddDomEqRange : public BddTest {
 public:
+  /// Create and register test
   BddDomEqRange(const char* t) : BddTest(t,1,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr(x.lub, x[0]);
     IntSetRanges dr(ds_33);
     return Iter::Ranges::equal(xr, dr);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     Gecode::dom(home, x[0], SRT_EQ, ds_33);
   }
+/// Post reified constraint on \a x for \a b
 //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, ds_33, b);
 //   }
@@ -63,15 +67,19 @@ BddDomEqRange _bdddomeqrange("Dom::EqRange");
 
 class BddDomEqDom : public BddTest {
 public:
+  /// Create and register test
   BddDomEqDom(const char* t) : BddTest(t,1,d1,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr(x.lub, x[0]);
     IntSetRanges dr(d1);
     return Iter::Ranges::equal(xr, dr);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     Gecode::dom(home, x[0], SRT_EQ, d1);
   }
+/// Post reified constraint on \a x for \a b
 //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
@@ -82,15 +90,19 @@ BddDomEqDom _bdddomeq("Dom::EqDom");
 
 class BddDomSupRange : public BddTest {
 public:
+  /// Create and register test
   BddDomSupRange(const char* t) : BddTest(t,1,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr(x.lub, x[0]);
     IntSetRanges dr(ds_33);
     return Iter::Ranges::subset(dr, xr);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     Gecode::dom(home, x[0], SRT_SUP, ds_33);
   }
+/// Post reified constraint on \a x for \a b
 //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_SUP, ds_33, b);
 //   }
@@ -99,15 +111,19 @@ BddDomSupRange _bdddomsuprange("Dom::SupRange");
 
 class BddDomSupDom : public BddTest {
 public:
+  /// Create and register test
   BddDomSupDom(const char* t) : BddTest(t,1,d1,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr(x.lub, x[0]);
     IntSetRanges dr(d1);
     return Iter::Ranges::subset(dr, xr);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     Gecode::dom(home, x[0], SRT_SUP, d1);
   }
+/// Post reified constraint on \a x for \a b
 //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_SUP, d1, b);
 //   }

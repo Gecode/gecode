@@ -65,12 +65,17 @@ namespace {
     Gecode::IntVarArray x;
     Ass(int n, const Gecode::IntSet& d) : x(this, n, d) {
       for (int i = 0; i < n; i += 4) {
+        /// Post constraint on \a x
         post(this, x[i+0] >= 0);
+        /// Post constraint on \a x
         post(this, x[i+1] >= 0);
+        /// Post constraint on \a x
         post(this, x[i+2] >= 0);
+        /// Post constraint on \a x
         post(this, x[i] + x[i+1] == x[i+2]);
         // The following doesn't work with search-based tests
         //if (i+4 < n) {
+        /// Post constraint on \a x
         //   post(this, x[i] <= x[i+4]);
         //}
         branch(this, x, INT_VAR_NONE, INT_VAL_MIN);
@@ -89,6 +94,7 @@ namespace {
     Ass *cur, *nxt;
     DFS<Ass> *e;
   public:
+    /// Create and register test
     CumulativeAssignment(int, const Gecode::IntSet&);
     virtual void reset(void);
     virtual void operator++(void);
@@ -181,6 +187,7 @@ protected:
   int limit;
 
 public:
+  /// Create and register test
   Cumulatives(const char* t, int nt, bool am, int l)
     : IntTest(t,nt*4,ds_12), ntasks(nt), at_most(am), limit(l) {}
 
@@ -188,6 +195,7 @@ public:
     assert(arity == 4*ntasks);
     return new CumulativeAssignment(arity, dom);
   }
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     eventv e;
     for (int i = 0; i < ntasks; ++i) {
@@ -212,6 +220,7 @@ public:
     }
   }
 
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntArgs m(ntasks), l(1, limit);
     IntVarArgs s(ntasks), d(ntasks), e(ntasks), h(ntasks);

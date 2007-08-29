@@ -41,8 +41,10 @@ static IntSet ds_012(-1,2);
 
 class SelectUnion : public SetTest {
 public:
+  /// Create and register test
   SelectUnion(const char* t)
     : SetTest(t,5,ds_012,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     int selected = 0;
     for (CountableSetValues sel2(x.lub, x[3]); sel2(); ++sel2, selected++);
@@ -61,6 +63,7 @@ public:
     CountableSetRanges z(x.lub, x[4]);
     return Iter::Ranges::equal(u, z);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     SetVarArgs xs(x.size()-2);
     for (int i=x.size()-2; i--;)
@@ -72,8 +75,10 @@ SelectUnion _selectunion("Select::Union");
 
 class SelectInter : public SetTest {
 public:
+  /// Create and register test
   SelectInter(const char* t)
     : SetTest(t,5,ds_012,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     int selected = 0;
     for (CountableSetValues sel2(x.lub, x[3]); sel2(); ++sel2, selected++);
@@ -92,6 +97,7 @@ public:
     CountableSetRanges z(x.lub, x[4]);
     return Iter::Ranges::equal(u, z);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     SetVarArgs xs(x.size()-2);
     for (int i=x.size()-2; i--;)
@@ -103,8 +109,10 @@ SelectInter _selectinter("Select::Inter");
 
 class SelectSet : public SetTest {
 public:
+  /// Create and register test
   SelectSet(const char* t)
     : SetTest(t,4,ds_012,false,true) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     if (x.intval() < 0 || x.intval() > 2)
       return false;
@@ -112,6 +120,7 @@ public:
     CountableSetRanges y(x.lub, x[x.intval()]);
     return Iter::Ranges::equal(y, z);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
     SetVarArgs xs(x.size()-1);
     for (int i=x.size()-1; i--;)

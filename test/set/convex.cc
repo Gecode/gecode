@@ -41,8 +41,10 @@ static IntSet ds_33(-4,4);
 
 class Convex : public SetTest {
 public:
+  /// Create and register test
   Convex(const char* t)
     : SetTest(t,1,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     if (!xr0())
@@ -52,6 +54,7 @@ public:
       return true;
     return false;
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::convex(home, x[0]);
   }
@@ -60,8 +63,10 @@ Convex _convex("Convex::Convex");
 
 class ConvexHull : public SetTest {
 public:
+  /// Create and register test
   ConvexHull(const char* t)
     : SetTest(t,2,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     CountableSetRanges xr1(x.lub, x[1]);
@@ -82,6 +87,7 @@ public:
     }
     return false;
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::convexHull(home, x[1], x[0]);
   }
@@ -90,8 +96,10 @@ ConvexHull _convexhull("Convex::ConvexHull");
 
 class ConvexHullS : public SetTest {
 public:
+  /// Create and register test
   ConvexHullS(const char* t)
     : SetTest(t,1,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr0(x.lub, x[0]);
     if (!xr0())
@@ -101,6 +109,7 @@ public:
       return true;
     return false;
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::convexHull(home, x[0], x[0]);
   }

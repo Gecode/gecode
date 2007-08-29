@@ -42,8 +42,10 @@ static IntSet ds_44(-4,4);
 
 class AtmostOne : public SetTest {
 public:
+  /// Create and register test
   AtmostOne(const char* t)
     : SetTest(t,3,ds_33,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     {
       CountableSetRanges xr0(x.lub, x[0]);
@@ -77,6 +79,7 @@ public:
     }
     return true;
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     SetVar s1(home, IntSet::empty, -2, 2, 0,1);
     Gecode::rel(home, x[0], SOT_INTER, x[1], SRT_EQ, s1);
@@ -91,8 +94,10 @@ AtmostOne _atmostone("Distinct::AtmostOne");
 
 class Distinct : public SetTest {
 public:
+  /// Create and register test
   Distinct(const char* t)
     : SetTest(t,4,ds_44,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     {
       CountableSetRanges xr0(x.lub, x[0]);
@@ -149,6 +154,7 @@ public:
     }
     return true;
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::rel(home, x[0], SRT_NQ, x[1]);
     Gecode::rel(home, x[0], SRT_NQ, x[2]);

@@ -47,7 +47,9 @@ static IntSet ds_13(1,3);
 
 class BddCardMinMax : public BddTest {
 public:
+  /// Create and register test
   BddCardMinMax(const char* t) : BddTest(t,1,d1,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
 
@@ -59,11 +61,13 @@ public:
     return (0<= c && c <= 3);
   }
 
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::hls_order(home, x);
     Gecode::cardinality(home, x[0], 0, 3);
   }
+/// Post reified constraint on \a x for \a b
 //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
@@ -72,7 +76,9 @@ BddCardMinMax _bddcardminmax("Card::MinMax");
 
 class BddCardEq : public BddTest {
 public:
+  /// Create and register test
   BddCardEq(const char* t) : BddTest(t,1,d1,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
     
@@ -84,11 +90,13 @@ public:
     return (c == 3);
   }
 
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::hls_order(home, x);
     Gecode::cardinality(home, x[0], 3, 3);
   }
+/// Post reified constraint on \a x for \a b
 //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
@@ -98,7 +106,9 @@ BddCardEq _bddcardeq("Card::Eq");
 
 class BddCardMinInf : public BddTest {
 public:
+  /// Create and register test
   BddCardMinInf(const char* t) : BddTest(t,1,d1,false) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
     
@@ -110,11 +120,13 @@ public:
     return (c >= 1);
   }
 
+  /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
     Gecode::hls_order(home, x);
     Gecode::cardinality(home, x[0], 1, Gecode::Limits::Set::int_max);
   }
+/// Post reified constraint on \a x for \a b
 //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }

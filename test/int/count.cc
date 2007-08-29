@@ -62,8 +62,10 @@ class CountIntInt : public IntTest {
 private:
   IntRelType irt;
 public:
+  /// Create and register test
   CountIntInt(const char* t, IntRelType irt0)
     : IntTest(t,4,ds_22), irt(irt0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<4; i++)
@@ -71,6 +73,7 @@ public:
         m++;
     return compare(m,irt,2);
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     count(home, x, 0, irt, 2);
   }
@@ -87,8 +90,10 @@ class CountIntsInt : public IntTest {
 private:
   IntRelType irt;
 public:
+  /// Create and register test
   CountIntsInt(const char* t, IntRelType irt0)
     : IntTest(t,5,ds_22), irt(irt0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<4; i++)
@@ -96,6 +101,7 @@ public:
         m++;
     return compare(m,irt,2);
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs y(4); IntArgs a(4);
     for (int i=0; i<4; i++) {
@@ -117,8 +123,10 @@ class CountIntIntDup : public IntTest {
 private:
   IntRelType irt;
 public:
+  /// Create and register test
   CountIntIntDup(const char* t, IntRelType irt0)
     : IntTest(t,4,ds_22), irt(irt0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<4; i++)
@@ -126,6 +134,7 @@ public:
         m += 2;
     return compare(m,irt,4);
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs y(8);
     for (int i=0; i<4; i++) {
@@ -146,8 +155,10 @@ class CountIntVar : public IntTest {
 private:
   IntRelType irt;
 public:
+  /// Create and register test
   CountIntVar(const char* t, IntRelType irt0)
     : IntTest(t,5,ds_22), irt(irt0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<4; i++)
@@ -155,6 +166,7 @@ public:
         m++;
     return compare(m,irt,x[4]);
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs y(4);
     for (int i=0; i<4; i++)
@@ -175,8 +187,10 @@ class CountIntsVar : public IntTest {
 private:
   IntRelType irt;
 public:
+  /// Create and register test
   CountIntsVar(const char* t, IntRelType irt0)
     : IntTest(t,5,ds_22), irt(irt0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<4; i++)
@@ -184,6 +198,7 @@ public:
         m++;
     return compare(m,irt,x[4]);
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs y(4); IntArgs a(4);
     for (int i=0; i<4; i++) {
@@ -205,8 +220,10 @@ class CountIntVarShared : public IntTest {
 private:
   IntRelType irt;
 public:
+  /// Create and register test
   CountIntVarShared(const char* t, IntRelType irt0)
     : IntTest(t,4,ds_22), irt(irt0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<4; i++)
@@ -214,6 +231,7 @@ public:
         m++;
     return compare(m,irt,x[2]);
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     count(home, x, 0, irt, x[2]);
   }
@@ -230,8 +248,10 @@ class CountVarVar : public IntTest {
 private:
   IntRelType irt;
 public:
+  /// Create and register test
   CountVarVar(const char* t, IntRelType irt0)
     : IntTest(t,5,ds_22), irt(irt0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<3; i++)
@@ -239,6 +259,7 @@ public:
         m++;
     return compare(m,irt,x[4]);
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs y(3);
     for (int i=0; i<3; i++)
@@ -258,8 +279,10 @@ class CountVarVarSharedA : public IntTest {
 private:
   IntRelType irt;
 public:
+  /// Create and register test
   CountVarVarSharedA(const char* t, IntRelType irt0)
     : IntTest(t,5,ds_22), irt(irt0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<4; i++)
@@ -267,6 +290,7 @@ public:
         m++;
     return compare(m,irt,x[4]);
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs y(4);
     for (int i=0; i<4; i++)
@@ -286,8 +310,10 @@ class CountVarVarSharedB : public IntTest {
 private:
   IntRelType irt;
 public:
+  /// Create and register test
   CountVarVarSharedB(const char* t, IntRelType irt0)
     : IntTest(t,5,ds_22), irt(irt0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<4; i++)
@@ -295,6 +321,7 @@ public:
         m++;
     return compare(m,irt,x[3]);
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     IntVarArgs y(4);
     for (int i=0; i<4; i++)
@@ -314,8 +341,10 @@ class CountVarVarSharedC : public IntTest {
 private:
   IntRelType irt;
 public:
+  /// Create and register test
   CountVarVarSharedC(const char* t, IntRelType irt0)
     : IntTest(t,4,ds_22), irt(irt0) {}
+  /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
     for (int i=0; i<4; i++)
@@ -323,6 +352,7 @@ public:
         m++;
     return compare(m,irt,x[3]);
   }
+  /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
     count(home, x, x[1], irt, x[3]);
   }

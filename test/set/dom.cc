@@ -46,16 +46,20 @@ static IntSet ds_33(-3,3);
 
 class DomEqRange : public SetTest {
 public:
+  /// Create and register test
   DomEqRange(const char* t)
     : SetTest(t,1,ds_33,true) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr(x.lub, x[0]);
     IntSetRanges dr(ds_33);
     return Iter::Ranges::equal(xr, dr);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::dom(home, x[0], SRT_EQ, ds_33);
   }
+  /// Post reified constraint on \a x for \a b
   virtual void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
     Gecode::dom(home, x[0], SRT_EQ, ds_33, b);
   }
@@ -64,16 +68,20 @@ DomEqRange _domeqrange("Dom::EqRange");
 
 class DomEqDom : public SetTest {
 public:
+  /// Create and register test
   DomEqDom(const char* t)
     : SetTest(t,1,d1,true) {}
+  /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr(x.lub, x[0]);
     IntSetRanges dr(d1);
     return Iter::Ranges::equal(xr, dr);
   }
+  /// Post constraint on \a x
   virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
     Gecode::dom(home, x[0], SRT_EQ, d1);
   }
+  /// Post reified constraint on \a x for \a b
   virtual void post(Space* home, SetVarArray& x, IntVarArray&, BoolVar b) {
     Gecode::dom(home, x[0], SRT_EQ, d1, b);
   }
