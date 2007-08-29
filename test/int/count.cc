@@ -44,20 +44,6 @@ static Gecode::IntSet ds_22(-2,2);
 
 static const int ints[4] = {1,0,3,2};
 
-static inline int
-compare(int x, IntRelType r, int y) {
-  switch (r) {
-  case Gecode::IRT_EQ: return x == y;
-  case Gecode::IRT_NQ: return x != y;
-  case Gecode::IRT_LQ: return x <= y;
-  case Gecode::IRT_LE: return x < y;
-  case Gecode::IRT_GR: return x > y;
-  case Gecode::IRT_GQ: return x >= y;
-  default: ;
-  }
-  return false;
-}
-
 class CountIntInt : public IntTest {
 private:
   IntRelType irt;
@@ -71,7 +57,7 @@ public:
     for (int i=0; i<4; i++)
       if (x[i] == 0)
         m++;
-    return compare(m,irt,2);
+    return cmp(m,irt,2);
   }
   /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
@@ -99,7 +85,7 @@ public:
     for (int i=0; i<4; i++)
       if (x[i] == ints[i])
         m++;
-    return compare(m,irt,2);
+    return cmp(m,irt,2);
   }
   /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
@@ -132,7 +118,7 @@ public:
     for (int i=0; i<4; i++)
       if (x[i] == 0)
         m += 2;
-    return compare(m,irt,4);
+    return cmp(m,irt,4);
   }
   /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
@@ -164,7 +150,7 @@ public:
     for (int i=0; i<4; i++)
       if (x[i] == 0)
         m++;
-    return compare(m,irt,x[4]);
+    return cmp(m,irt,x[4]);
   }
   /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
@@ -196,7 +182,7 @@ public:
     for (int i=0; i<4; i++)
       if (x[i] == ints[i])
         m++;
-    return compare(m,irt,x[4]);
+    return cmp(m,irt,x[4]);
   }
   /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
@@ -229,7 +215,7 @@ public:
     for (int i=0; i<4; i++)
       if (x[i] == 0)
         m++;
-    return compare(m,irt,x[2]);
+    return cmp(m,irt,x[2]);
   }
   /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
@@ -257,7 +243,7 @@ public:
     for (int i=0; i<3; i++)
       if (x[i] == x[3])
         m++;
-    return compare(m,irt,x[4]);
+    return cmp(m,irt,x[4]);
   }
   /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
@@ -288,7 +274,7 @@ public:
     for (int i=0; i<4; i++)
       if (x[i] == x[1])
         m++;
-    return compare(m,irt,x[4]);
+    return cmp(m,irt,x[4]);
   }
   /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
@@ -319,7 +305,7 @@ public:
     for (int i=0; i<4; i++)
       if (x[i] == x[4])
         m++;
-    return compare(m,irt,x[3]);
+    return cmp(m,irt,x[3]);
   }
   /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
@@ -350,7 +336,7 @@ public:
     for (int i=0; i<4; i++)
       if (x[i] == x[1])
         m++;
-    return compare(m,irt,x[3]);
+    return cmp(m,irt,x[3]);
   }
   /// Post constraint on \a x
   virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {

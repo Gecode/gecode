@@ -46,347 +46,247 @@ namespace Test { namespace Int { namespace Rel {
    * \ingroup TaskTestInt
    */
   //@{
-  /// Test for equality constraint
-  class EqBin : public IntTest {
+  /// Test for simple relation involving two integer variables
+  class IntBinVar : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
   public:
     /// Create and register test
-    EqBin(Gecode::IntConLevel icl)
-      : IntTest("Rel::Eq::Bin::"+str(icl),2,-2,2,true,icl) {}
+    IntBinVar(Gecode::IntRelType irt0, 
+              Gecode::IntConLevel icl=Gecode::ICL_DEF)
+      : IntTest("Rel::Int::Var::"+str(irt0)+"::"+str(icl),
+                2,-3,3,true,icl), 
+        irt(irt0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
-      return x[0]==x[1];
+      return cmp(x[0],irt,x[1]);
     }
     /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      Gecode::rel(home, x[0], Gecode::IRT_EQ, x[1], icl);
+      Gecode::rel(home, x[0], irt, x[1], icl);
     }
     /// Post reified constraint on \a x for \a b
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
                       Gecode::BoolVar b) {
-      Gecode::rel(home, x[0], Gecode::IRT_EQ, x[1], b, icl);
+      Gecode::rel(home, x[0], irt, x[1], b, icl);
     }
   };
 
-  /// Test for equal to integer value constraint
-  class EqBinInt : public IntTest {
+  /// Test for simple relation involving two Boolean variables
+  class BoolBinVar : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
   public:
     /// Create and register test
-    EqBinInt(Gecode::IntConLevel icl)
-      : IntTest("Rel::Eq::Bin::Int::"+str(icl),1,-2,2,true,icl) {}
+    BoolBinVar(Gecode::IntRelType irt0) 
+      : IntTest("Rel::Bool::Var::"+str(irt0),2,0,1), irt(irt0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
-      return x[0]==0;
+      return cmp(x[0],irt,x[1]);
     }
     /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      Gecode::rel(home, x[0], Gecode::IRT_EQ, 0, icl);
+      using namespace Gecode;
+      rel(home, channel(home,x[0]), irt, channel(home,x[1]));
+    }
+  };
+
+  /// Test for simple relation involving integer variable and integer constant
+  class IntBinInt : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
+    /// Integer constant
+    int c;
+  public:
+    /// Create and register test
+    IntBinInt(Gecode::IntRelType irt0, int c0) 
+      : IntTest("Rel::Int::Int::"+str(irt0)+"::"+str(c0),1,-3,3,true), 
+        irt(irt0), c(c0) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return cmp(x[0],irt,c);
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::rel(home, x[0], irt, c);
     }
     /// Post reified constraint on \a x for \a b
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
                       Gecode::BoolVar b) {
-      Gecode::rel(home, x[0], Gecode::IRT_EQ, 0, b, icl);
+      Gecode::rel(home, x[0], irt, c, b);
     }
   };
 
-  /// Test for n-ary equality constraint
-  class EqNary : public IntTest {
+  /// Test for simple relation involving Boolean variable and integer constant
+  class BoolBinInt : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
+    /// Integer constant
+    int c;
   public:
     /// Create and register test
-    EqNary(Gecode::IntConLevel icl)
-      : IntTest("Rel::Eq::Nary::"+str(icl),4,-2,2,false,icl) {}
+    BoolBinInt(Gecode::IntRelType irt0, int c0) 
+      : IntTest("Rel::Bool::Int::"+str(irt0)+"::"+str(c0),1,0,1), 
+        irt(irt0), c(c0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
-      return (x[0]==x[1]) && (x[1]==x[2]) && (x[2]==x[3]);
+      return cmp(x[0],irt,c);
     }
     /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      Gecode::rel(home, x, Gecode::IRT_EQ, icl);
+      Gecode::rel(home, Gecode::channel(home,x[0]), irt, c);
     }
   };
-  
-  class Nq : public IntTest {
-  private:
-    Gecode::IntConLevel icl;
+
+  /// Test for pairwise relation between integer variables
+  class IntPairwise : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
   public:
     /// Create and register test
-    Nq(const char* t, Gecode::IntConLevel icl0)
-      : IntTest(t,2,-2,2,true), icl(icl0) {}
+    IntPairwise(Gecode::IntRelType irt0, Gecode::IntConLevel icl)
+      : IntTest("Rel::Int::Pairwise::"+str(irt0)+"::"+str(icl),
+                4,-3,3,false,icl), 
+        irt(irt0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
-      return x[0]!=x[1];
+      for (int i=0; i<x.size(); i++)
+        for (int j=i+1; j<x.size(); j++)
+          if (!cmp(x[i],irt,x[j]))
+            return false;
+      return true;
     }
     /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      Gecode::rel(home, x[0], Gecode::IRT_NQ, x[1], icl);
-    }
-    /// Post reified constraint on \a x for \a b
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
-      Gecode::rel(home, x[0], Gecode::IRT_NQ, x[1], b, icl);
+      Gecode::rel(home, x, irt, icl);
     }
   };
-  Nq nqbnd("Rel::NqBnd",Gecode::ICL_BND);
-  Nq nqdom("Rel::NqDom",Gecode::ICL_DOM);
 
-
-  class Lq : public IntTest {
+  /// Test for pairwise relation between Boolean variables
+  class BoolPairwise : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
   public:
     /// Create and register test
-    Lq(void)
-      : IntTest("Rel::Lq",2,-2,2,true) {}
+    BoolPairwise(Gecode::IntRelType irt0)
+      : IntTest("Rel::Bool::Pairwise::"+str(irt0),8,0,1), 
+        irt(irt0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
-      return x[0] <= x[1];
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      Gecode::rel(home, x[0], Gecode::IRT_LQ, x[1]);
-    }
-    /// Post reified constraint on \a x for \a b
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
-      Gecode::rel(home, x[0], Gecode::IRT_LQ, x[1], b);
-    }
-  };
-  Lq lq;
-
-  class LqInt : public IntTest {
-  public:
-    /// Create and register test
-    LqInt(void)
-      : IntTest("Rel::LqInt",1,-2,2,true) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      return x[0] <= 0;
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      Gecode::rel(home, x[0], Gecode::IRT_LQ, 0);
-    }
-    /// Post reified constraint on \a x for \a b
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
-      Gecode::rel(home, x[0], Gecode::IRT_LQ, 0, b);
-    }
-  };
-  LqInt lqint;
-
-
-  class Le : public IntTest {
-  public:
-    /// Create and register test
-    Le(void)
-      : IntTest("Rel::Le",2,-2,2,true) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      return x[0] < x[1];
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      Gecode::rel(home, x[0], Gecode::IRT_LE, x[1]);
-    }
-    /// Post reified constraint on \a x for \a b
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
-      Gecode::rel(home, x[0], Gecode::IRT_LE, x[1], b);
-    }
-  };
-  Le le;
-
-  class LeInt : public IntTest {
-  public:
-    /// Create and register test
-    LeInt(void)
-      : IntTest("Rel::LeInt",1,-2,2,true) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      return x[0] < 0;
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      Gecode::rel(home, x[0], Gecode::IRT_LE, 0);
-    }
-    /// Post reified constraint on \a x for \a b
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
-      Gecode::rel(home, x[0], Gecode::IRT_LE, 0, b);
-    }
-  };
-  LeInt leint;
-
-  class Gq : public IntTest {
-  public:
-    /// Create and register test
-    Gq(void)
-      : IntTest("Rel::Gq",2,-2,2,true) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      return x[0] >= x[1];
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      Gecode::rel(home, x[0], Gecode::IRT_GQ, x[1]);
-    }
-    /// Post reified constraint on \a x for \a b
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
-      Gecode::rel(home, x[0], Gecode::IRT_GQ, x[1], b);
-    }
-  };
-  Gq gq;
-
-  class GqInt : public IntTest {
-  public:
-    /// Create and register test
-    GqInt(void)
-      : IntTest("Rel::GqInt",1,-2,2,true) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      return x[0] >= 0;
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      Gecode::rel(home, x[0], Gecode::IRT_GQ, 0);
-    }
-    /// Post reified constraint on \a x for \a b
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
-      Gecode::rel(home, x[0], Gecode::IRT_GQ, 0, b);
-    }
-  };
-  GqInt gqint;
-
-
-  class Gr : public IntTest {
-  public:
-    /// Create and register test
-    Gr(void)
-      : IntTest("Rel::Gr",2,-2,2,true) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      return x[0] > x[1];
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      Gecode::rel(home, x[0], Gecode::IRT_GR, x[1]);
-    }
-    /// Post reified constraint on \a x for \a b
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
-      Gecode::rel(home, x[0], Gecode::IRT_GR, x[1], b);
-    }
-  };
-  Gr gr;
-
-  class GrInt : public IntTest {
-  public:
-    /// Create and register test
-    GrInt(void)
-      : IntTest("Rel::GrInt",1,-2,2,true) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      return x[0] > 0;
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      Gecode::rel(home, x[0], Gecode::IRT_GR, 0);
-    }
-    /// Post reified constraint on \a x for \a b
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
-      Gecode::rel(home, x[0], Gecode::IRT_GR, 0, b);
-    }
-  };
-  GrInt grint;
-
-  class LexInt : public IntTest {
-  private:
-    int  n;
-    bool strict;
-  public:
-    /// Create and register test
-    LexInt(const char* t, int m, bool _strict)
-      : IntTest(t,m*2,-2,2), n(m), strict(_strict) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      for (int i=0; i<n; i++)
-        if (x[i]<x[n+i]) {
-          return true;
-        } else if (x[i]>x[n+i]) {
-          return false;
-        }
-      return !strict;
+      for (int i=0; i<x.size(); i++)
+        for (int j=i+1; j<x.size(); j++)
+          if (!cmp(x[i],irt,x[j]))
+            return false;
+      return true;
     }
     /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       using namespace Gecode;
-      IntVarArgs y(n); IntVarArgs z(n);
-      for (int i=0; i<n; i++) {
-        y[i]=x[i]; z[i]=x[n+i];
-      }
-      rel(home, y, strict ? IRT_LE : IRT_LQ, z);
+      BoolVarArgs b(x.size());
+      for (int i=x.size(); i--; )
+        b[i]=channel(home,x[i]);
+      rel(home, b, irt);
     }
   };
-  LexInt lexlqi("Lex::Lq::Int",3,false);
-  LexInt lexlei("Lex::Le::Int",3,true);
 
-  class LexBool : public IntTest {
-  private:
-    int  n;
-    bool strict;
+  /// Test for relation between arrays of integer variables
+  class IntArray : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
   public:
     /// Create and register test
-    LexBool(const char* t, int m, bool _strict)
-      : IntTest(t,m*2,0,1), n(m), strict(_strict) {}
+    IntArray(Gecode::IntRelType irt0)
+      : IntTest("Rel::Int::Array::"+str(irt0),6,-2,2), irt(irt0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
-      for (int i=0; i<n; i++)
-        if (x[i]<x[n+i]) {
-          return true;
-        } else if (x[i]>x[n+i]) {
-          return false;
-        }
-      return !strict;
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      using namespace Gecode;
-      BoolVarArgs y(n); BoolVarArgs z(n);
-      for (int i=0; i<n; i++) {
-        y[i]=channel(home,x[i]);; z[i]=channel(home,x[n+i]);
-      }
-      rel(home, y, strict ? IRT_LE : IRT_LQ, z);
-    }
-  };
-  LexBool lexlq("Lex::Lq::Bool",3,false);
-  LexBool lexle("Lex::Le::Bool",3,true);
-
-
-  class NaryNq : public IntTest {
-  private:
-    int  n;
-  public:
-    /// Create and register test
-    NaryNq(const char* t, int m)
-      : IntTest(t,m*2,-2,2), n(m) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
+      int n=x.size() >> 1;
       for (int i=0; i<n; i++)
         if (x[i] != x[n+i])
-          return true;
+          return cmp(x[i],irt,x[n+i]);
+      return ((irt == Gecode::IRT_LQ) || (irt == Gecode::IRT_GQ) || 
+              (irt == Gecode::IRT_EQ));
+      GECODE_NEVER;
       return false;
     }
     /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       using namespace Gecode;
+      int n=x.size() >> 1;
       IntVarArgs y(n); IntVarArgs z(n);
       for (int i=0; i<n; i++) {
         y[i]=x[i]; z[i]=x[n+i];
       }
-      rel(home, y, IRT_NQ, z);
+      rel(home, y, irt, z);
     }
   };
-  NaryNq _nnq("NaryNq",3);
 
-  EqBin eqbinbnd(Gecode::ICL_BND);
-  EqBin eqbindom(Gecode::ICL_DOM);
+  /// Test for relation between arrays of Boolean variables
+  class BoolArray : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
+  public:
+    /// Create and register test
+    BoolArray(Gecode::IntRelType irt0)
+      : IntTest("Rel::Bool::Array::"+str(irt0),10,0,1), irt(irt0) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      int n=x.size() >> 1;
+      for (int i=0; i<n; i++)
+        if (x[i] != x[n+i])
+          return cmp(x[i],irt,x[n+i]);
+      return ((irt == Gecode::IRT_LQ) || (irt == Gecode::IRT_GQ) || 
+              (irt == Gecode::IRT_EQ));
+      GECODE_NEVER;
+      return false;
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      int n=x.size() >> 1;
+      BoolVarArgs y(n); BoolVarArgs z(n);
+      for (int i=0; i<n; i++) {
+        y[i]=channel(home,x[i]); z[i]=channel(home,x[n+i]);
+      }
+      rel(home, y, irt, z);
+    }
+  };
 
-  EqBinInt eqbinbndint(Gecode::ICL_BND);
-  EqBinInt eqbindomint(Gecode::ICL_DOM);
+  /// Help class to create and register tests
+  class Create {
+  public:
+    /// Perform creation and registration
+    Create(void) {
+      using namespace Gecode;
+      const IntRelType irts[] = {IRT_EQ,IRT_NQ,IRT_LQ,IRT_LE,IRT_GQ,IRT_GR};
+      const IntConLevel icls[] = {ICL_VAL,ICL_BND,ICL_DOM};
+      for (int i=sizeof(irts)/sizeof(IntRelType); i--; ) {
+        IntRelType irt=irts[i];
+        for (int j=sizeof(icls)/sizeof(IntConLevel); j--; ) {
+          IntConLevel icl=icls[j];
+          (void) new IntBinVar(irt,icl);
+          (void) new IntPairwise(irt,icl);
+        }
+        (void) new BoolBinVar(irt);
+        (void) new BoolPairwise(irt);
+        for (int c=-4; c<=4; c++)
+          (void) new IntBinInt(irt,c);
+        for (int c=0; c<=1; c++)
+          (void) new BoolBinInt(irt,c);
+        (void) new IntArray(irt);
+        (void) new BoolArray(irt);
+      }      
+    }
+  };
 
-  EqNary eqnarybnd(Gecode::ICL_BND);
-  EqNary eqnarydom(Gecode::ICL_DOM);
+  Create c;
   //@}
 
 }}}

@@ -114,15 +114,78 @@ RandomAssignment::~RandomAssignment(void) {
  */
 inline
 IntTest::IntTest(const std::string& s, int a, const Gecode::IntSet& d, 
-                 bool r, Gecode::IntConLevel i)
-  : TestBase("Int::"+s), arity(a), dom(d), reified(r), icl(i), 
+                 bool r, Gecode::IntConLevel i, Gecode::PropKind p)
+  : TestBase("Int::"+s), arity(a), dom(d), reified(r), icl(i), pk(p),
     testdomcon(true), testsearch(true) {}
 
 inline
 IntTest::IntTest(const std::string& s, int a, int min, int max, 
-                 bool r, Gecode::IntConLevel i)
-  : TestBase("Int::"+s), arity(a), dom(min,max), reified(r), icl(i), 
+                 bool r, Gecode::IntConLevel i, Gecode::PropKind p)
+  : TestBase("Int::"+s), arity(a), dom(min,max), reified(r), icl(i), pk(p), 
     testdomcon(true), testsearch(true) {}
+
+inline
+std::string
+IntTest::str(Gecode::PropKind pk) {
+  using namespace Gecode;
+  switch (pk) {
+  case PK_MEMORY: return "Memory";
+  case PK_SPEED:  return "Speed";
+  default: return "Def";
+  }
+}
+
+inline
+std::string
+IntTest::str(Gecode::IntConLevel icl) {
+  using namespace Gecode;
+  switch (icl) {
+  case ICL_VAL: return "Val";
+  case ICL_BND: return "Bnd";
+  case ICL_DOM: return "Dom";
+  default: return "Def";
+  }
+}
+
+inline
+std::string
+IntTest::str(Gecode::IntRelType irt) {
+  using namespace Gecode;
+  switch (irt) {
+  case IRT_LQ: return "Lq";
+  case IRT_LE: return "Le";
+  case IRT_GQ: return "Gq";
+  case IRT_GR: return "Gr";
+  case IRT_EQ: return "Eq";
+  case IRT_NQ: return "Nq";
+  default: ;
+  }
+  GECODE_NEVER;
+  return "NONE";
+}
+
+inline
+std::string
+IntTest::str(int i) {
+  std::stringstream s;
+  s << i;
+  return s.str();
+}
+
+template<class T>
+inline bool
+IntTest::cmp(T x, Gecode::IntRelType r, T y) {
+  switch (r) {
+  case Gecode::IRT_EQ: return x == y;
+  case Gecode::IRT_NQ: return x != y;
+  case Gecode::IRT_LQ: return x <= y;
+  case Gecode::IRT_LE: return x < y;
+  case Gecode::IRT_GR: return x > y;
+  case Gecode::IRT_GQ: return x >= y;
+  default: ;
+  }
+  return false;
+}
 
 // STATISTICS: test-int
 

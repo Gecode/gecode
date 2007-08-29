@@ -46,38 +46,6 @@ namespace Test { namespace Int { namespace Bool {
    * \ingroup TaskTestInt
    */
   //@{
-  /// Test for Boolean equality
-  class Eq : public IntTest {
-  public:
-    /// Construct and register test
-    Eq(void) : IntTest("Bool::Eq",2,0,1) {}
-    /// Check whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      return x[0]==x[1];
-    }
-    /// Post constraint
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      using namespace Gecode;
-      rel(home, channel(home,x[0]), IRT_EQ, channel(home,x[1]));
-    }
-  };
-
-  /// Test for Boolean negation
-  class Not : public IntTest {
-  public:
-    /// Construct and register test
-    Not(void) : IntTest("Bool::Not",2,0,1) {}
-    /// Check whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      return x[0]!=x[1];
-    }
-    /// Post constraint
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      using namespace Gecode;
-      rel(home, channel(home,x[0]), IRT_NQ, channel(home,x[1]));
-    }
-  };
-  
   /// Test for Boolean conjunction
   class And : public IntTest {
   public:
@@ -190,6 +158,28 @@ namespace Test { namespace Int { namespace Bool {
     }
   };
   
+  /// Test for Boolean n-ary conjunction that is false
+  class AndFalseNary : public IntTest {
+  public:
+    /// Construct and register test
+    AndFalseNary(void) : IntTest("Bool::And::False::Nary",14,0,1) {}
+    /// Check whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      for (int i = x.size(); i--; )
+        if (x[i] == 1)
+          return false;
+      return true;
+    }
+    /// Post constraint
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      BoolVarArgs b(2*x.size());
+      for (int i=x.size(); i--; )
+        b[2*i+0]=b[2*i+1]=channel(home,x[i]);
+      rel(home, b, BOT_AND, 0);
+    }
+  };
+
   /// Test for Boolean n-ary disjunction
   class OrNary : public IntTest {
   public:
@@ -227,24 +217,23 @@ namespace Test { namespace Int { namespace Bool {
     /// Post constraint
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       using namespace Gecode;
-      BoolVarArgs b(2*(x.size()));
+      BoolVarArgs b(2*x.size());
       for (int i=x.size(); i--; )
         b[2*i+0]=b[2*i+1]=channel(home,x[i]);
       rel(home, b, BOT_OR, 1);
     }
   };
 
-
-  Eq beq;
-  Not bnot;
   And band;
-  Or bor;
+  Or  bor;
   Imp bimp;
   Eqv beqv;
   Xor bxor;
-  AndNary bandnary;
-  OrNary bornary;
-  OrTrueNary bortruenary;
+
+  AndNary      bandnary;
+  AndFalseNary bandtruenary;
+  OrNary       bornary;
+  OrTrueNary   bortruenary;
 
   //@}
 

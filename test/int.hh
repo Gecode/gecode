@@ -128,8 +128,10 @@ protected:
   Gecode::IntSet dom;
   /// Does the constraint also exist as reified constraint
   bool reified;
-  /// Consistency level of the propagator
+  /// Consistency level
   Gecode::IntConLevel icl;
+  /// Propagation kind
+  Gecode::PropKind pk;
   /// Whether to test for domain-consistency
   bool testdomcon;
   /// Whether to perform search test
@@ -141,21 +143,23 @@ public:
    *
    * Constructs a test with name \a t and arity \a a and variable
    * domain \a d. Also tests for a reified constraint, 
-   * if \a r is true. The consistency level \a is maintained for
-   * convenience.
+   * if \a r is true. Consistency level and propagation kind are maintained 
+   * for convenience.
    */
-  IntTest(const std::string& s, int a, const Gecode::IntSet& d, 
-          bool r=false, Gecode::IntConLevel i=Gecode::ICL_DEF);
+  IntTest(const std::string& s, int a, const Gecode::IntSet& d, bool r=false, 
+          Gecode::IntConLevel i=Gecode::ICL_DEF,
+          Gecode::PropKind p=Gecode::PK_DEF);
   /**
    * \brief Constructor
    *
    * Constructs a test with name \a t and arity \a a and variable
    * domain \a min ... \a max. Also tests for a reified constraint, 
-   * if \a r is true. The consistency level \a is maintained for
-   * convenience.
+   * if \a r is true. Consistency level and propagation kind are maintained 
+   * for convenience.
    */
-  IntTest(const std::string& s, int a, int min, int max, 
-          bool r=false, Gecode::IntConLevel i=Gecode::ICL_DEF);
+  IntTest(const std::string& s, int a, int min, int max, bool r=false,
+          Gecode::IntConLevel i=Gecode::ICL_DEF,
+          Gecode::PropKind p=Gecode::PK_DEF);
   /// Create assignment
   virtual Assignment* assignment(void) const;
   /// Check for solution
@@ -167,10 +171,22 @@ public:
                     Gecode::BoolVar b);
   /// Perform test
   virtual bool run(const Options& opt);
-  /// Map integer consistency level to string representation
-  static std::string str(Gecode::IntConLevel icl, bool verbose=false);
+  /// \name Mapping scalar values to strings
+  //@{
+  /// Map propagation kind to string
+  static std::string str(Gecode::PropKind pk);
+  /// Map integer consistency level to string
+  static std::string str(Gecode::IntConLevel icl);
+  /// Map integer relation to string
+  static std::string str(Gecode::IntRelType pk);
   /// Map integer to string
   static std::string str(int i);
+  //@}
+  /// \name General support functions
+  //@{
+  /// Compare \a x and \a y with respect to \a r
+  template <class T> static bool cmp(T x, Gecode::IntRelType r, T y);
+  //@}
 };
 //@}
 

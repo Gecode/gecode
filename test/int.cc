@@ -270,33 +270,6 @@ IntTest::assignment(void) const {
   return new CpltAssignment(arity,dom);
 }
 
-std::string
-IntTest::str(Gecode::IntConLevel icl, bool verbose) {
-  using namespace Gecode;
-  if (verbose) {
-    switch (icl) {
-    case ICL_VAL: return "ICL_VAL";
-    case ICL_BND: return "ICL_BND";
-    case ICL_DOM: return "ICL_DOM";
-    default: return "ICL_DEF";
-    }
-  } else {
-    switch (icl) {
-    case ICL_VAL: return "Val";
-    case ICL_BND: return "Bnd";
-    case ICL_DOM: return "Dom";
-    default: return "Def";
-    }
-  }
-}
-
-std::string
-IntTest::str(int i) {
-  std::stringstream s;
-  s << i;
-  return s.str();
-}
-
 #define CHECK(T,M)                                \
 if (!(T)) {                                       \
   problem = (M);                                  \
