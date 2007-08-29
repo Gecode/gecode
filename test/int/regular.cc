@@ -39,8 +39,14 @@
 
 #include "gecode/minimodel.hh"
 
-namespace {
+namespace Test { namespace Int { namespace Regular {
 
+  /**
+   * \defgroup TaskTestIntRegular Regular (relation) constraints
+   * \ingroup TaskTestInt
+   */
+  //@{
+  /// Test with simple regular expression
   class SimpleA : public IntTest {
   public:
     /// Create and register test
@@ -64,9 +70,7 @@ namespace {
     }
   };
   
-
-
-
+  /// Test with simple regular expression
   class SimpleB : public IntTest {
   public:
     /// Create and register test
@@ -88,6 +92,7 @@ namespace {
       }
   };
   
+  /// Test with regular expression for distinct constraint
   class Distinct : public IntTest {
   public:
     /// Create and register test
@@ -135,6 +140,7 @@ namespace {
     }
   };
   
+  /// Test with simple regular expression and shared variables (uses unsharing)
   class SharedA : public IntTest {
   public:
     /// Create and register test
@@ -162,6 +168,7 @@ namespace {
     }
   };
 
+  /// Test with simple regular expression and shared variables (uses unsharing)
   class SharedB : public IntTest {
   public:
     /// Create and register test
@@ -189,6 +196,7 @@ namespace {
     }
   };
 
+  /// Test with simple regular expression and shared variables (uses unsharing)
   class SharedC : public IntTest {
   public:
     /// Create and register test
@@ -210,6 +218,7 @@ namespace {
     }
   };
 
+  /// Test with simple regular expression and shared variables (uses unsharing)
   class SharedD : public IntTest {
   public:
     /// Create and register test
@@ -240,8 +249,9 @@ namespace {
   SharedB sb;
   SharedC sc;
   SharedD sd;
+  //@}
 
-}
+}}}
 
 // STATISTICS: test-int
 

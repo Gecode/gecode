@@ -37,327 +37,291 @@
 
 #include "test/int.hh"
 
-using namespace Gecode;
+namespace Test { namespace Int { namespace Count {
 
-static const int ints[4] = {1,0,3,2};
-
-class CountIntInt : public IntTest {
-protected:
-  /// Integer relation type to propagate
-  IntRelType irt;
-public:
-  /// Create and register test
-  CountIntInt(const char* t, IntRelType irt0)
-    : IntTest(t,4,-2,2), irt(irt0) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    int m = 0;
-    for (int i=0; i<4; i++)
-      if (x[i] == 0)
-        m++;
-    return cmp(m,irt,2);
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    count(home, x, 0, irt, 2);
-  }
-};
-
-CountIntInt _ceqii("Count::Eq::IntInt",Gecode::IRT_EQ);
-CountIntInt _cnqii("Count::Nq::IntInt",Gecode::IRT_NQ);
-CountIntInt _clqii("Count::Lq::IntInt",Gecode::IRT_LQ);
-CountIntInt _cleii("Count::Le::IntInt",Gecode::IRT_LE);
-CountIntInt _cgrii("Count::Gr::IntInt",Gecode::IRT_GR);
-CountIntInt _cgqii("Count::Gq::IntInt",Gecode::IRT_GQ);
-
-class CountIntsInt : public IntTest {
-protected:
-  /// Integer relation type to propagate
-  IntRelType irt;
-public:
-  /// Create and register test
-  CountIntsInt(const char* t, IntRelType irt0)
-    : IntTest(t,5,-2,2), irt(irt0) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    int m = 0;
-    for (int i=0; i<4; i++)
-      if (x[i] == ints[i])
-        m++;
-    return cmp(m,irt,2);
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntVarArgs y(4); IntArgs a(4);
-    for (int i=0; i<4; i++) {
-      y[i]=x[i]; a[i]=ints[i];
+  /**
+   * \defgroup TaskTestIntCount Count constraints
+   * \ingroup TaskTestInt
+   */
+  //@{
+  /// Test number of equal integers equal to integer
+  class IntInt : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
+  public:
+    /// Create and register test
+    IntInt(Gecode::IntRelType irt0)
+      : IntTest("Count::Int::Int::"+str(irt0),4,-2,2), irt(irt0) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      int m = 0;
+      for (int i=x.size(); i--; )
+        if (x[i] == 0)
+          m++;
+      return cmp(m,irt,2);
     }
-    count(home, y, a, irt, 2);
-  }
-};
-
-CountIntsInt _ceqiis("Count::Eq::IntsInt",Gecode::IRT_EQ);
-CountIntsInt _cnqiis("Count::Nq::IntsInt",Gecode::IRT_NQ);
-CountIntsInt _clqiis("Count::Lq::IntsInt",Gecode::IRT_LQ);
-CountIntsInt _cleiis("Count::Le::IntsInt",Gecode::IRT_LE);
-CountIntsInt _cgriis("Count::Gr::IntsInt",Gecode::IRT_GR);
-CountIntsInt _cgqiis("Count::Gq::IntsInt",Gecode::IRT_GQ);
-
-
-class CountIntIntDup : public IntTest {
-protected:
-  /// Integer relation type to propagate
-  IntRelType irt;
-public:
-  /// Create and register test
-  CountIntIntDup(const char* t, IntRelType irt0)
-    : IntTest(t,4,-2,2), irt(irt0) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    int m = 0;
-    for (int i=0; i<4; i++)
-      if (x[i] == 0)
-        m += 2;
-    return cmp(m,irt,4);
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntVarArgs y(8);
-    for (int i=0; i<4; i++) {
-      y[i]=x[i]; y[4+i]=x[i];
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::count(home, x,0,irt,2);
     }
-    count(home, y, 0, irt, 4);
-  }
-};
+  };
 
-CountIntIntDup _ceqiid("Count::Eq::IntInt::Dup",Gecode::IRT_EQ);
-CountIntIntDup _cnqiid("Count::Nq::IntInt::Dup",Gecode::IRT_NQ);
-CountIntIntDup _clqiid("Count::Lq::IntInt::Dup",Gecode::IRT_LQ);
-CountIntIntDup _cleiid("Count::Le::IntInt::Dup",Gecode::IRT_LE);
-CountIntIntDup _cgriid("Count::Gr::IntInt::Dup",Gecode::IRT_GR);
-CountIntIntDup _cgqiid("Count::Gq::IntInt::Dup",Gecode::IRT_GQ);
-
-class CountIntVar : public IntTest {
-protected:
-  /// Integer relation type to propagate
-  IntRelType irt;
-public:
-  /// Create and register test
-  CountIntVar(const char* t, IntRelType irt0)
-    : IntTest(t,5,-2,2), irt(irt0) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    int m = 0;
-    for (int i=0; i<4; i++)
-      if (x[i] == 0)
-        m++;
-    return cmp(m,irt,x[4]);
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntVarArgs y(4);
-    for (int i=0; i<4; i++)
-      y[i]=x[i];
-    count(home, y, 0, irt, x[4]);
-  }
-};
-
-CountIntVar _ceqiv("Count::Eq::IntVar",Gecode::IRT_EQ);
-CountIntVar _cnqiv("Count::Nq::IntVar",Gecode::IRT_NQ);
-CountIntVar _clqiv("Count::Lq::IntVar",Gecode::IRT_LQ);
-CountIntVar _cleiv("Count::Le::IntVar",Gecode::IRT_LE);
-CountIntVar _cgriv("Count::Gr::IntVar",Gecode::IRT_GR);
-CountIntVar _cgqiv("Count::Gq::IntVar",Gecode::IRT_GQ);
-
-
-class CountIntsVar : public IntTest {
-protected:
-  /// Integer relation type to propagate
-  IntRelType irt;
-public:
-  /// Create and register test
-  CountIntsVar(const char* t, IntRelType irt0)
-    : IntTest(t,5,-2,2), irt(irt0) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    int m = 0;
-    for (int i=0; i<4; i++)
-      if (x[i] == ints[i])
-        m++;
-    return cmp(m,irt,x[4]);
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntVarArgs y(4); IntArgs a(4);
-    for (int i=0; i<4; i++) {
-      y[i]=x[i]; a[i]=ints[i];
+  /// Test number of equal integers equal to integer with duplicate variables
+  class IntIntDup : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
+  public:
+    /// Create and register test
+    IntIntDup(Gecode::IntRelType irt0)
+      : IntTest("Count::Int::Int::Dup::"+str(irt0),4,-2,2), irt(irt0) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      int m = 0;
+      for (int i=x.size(); i--; )
+        if (x[i] == 0)
+          m += 2;
+      return cmp(m,irt,4);
     }
-    count(home, y, a, irt, x[4]);
-  }
-};
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::IntVarArgs y(8);
+      for (int i=x.size(); i--; )
+        y[i]=y[4+i]=x[i];
+      Gecode::count(home, y, 0, irt, 4);
+    }
+  };
 
-CountIntsVar _ceqisv("Count::Eq::IntsVar",Gecode::IRT_EQ);
-CountIntsVar _cnqisv("Count::Nq::IntsVar",Gecode::IRT_NQ);
-CountIntsVar _clqisv("Count::Lq::IntsVar",Gecode::IRT_LQ);
-CountIntsVar _cleisv("Count::Le::IntsVar",Gecode::IRT_LE);
-CountIntsVar _cgrisv("Count::Gr::IntsVar",Gecode::IRT_GR);
-CountIntsVar _cgqisv("Count::Gq::IntsVar",Gecode::IRT_GQ);
+  /// Test number of equal integers equal to integer variable
+  class IntVar : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
+  public:
+    /// Create and register test
+    IntVar(Gecode::IntRelType irt0)
+      : IntTest("Count::Int::Var::"+str(irt0),5,-2,2), irt(irt0) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      int m = 0;
+      for (int i=0; i<4; i++)
+        if (x[i] == 0)
+          m++;
+      return cmp(m,irt,x[4]);
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::IntVarArgs y(4);
+      for (int i=0; i<4; i++)
+        y[i]=x[i];
+      Gecode::count(home, y, 0, irt, x[4]);
+    }
+  };
+
+  Gecode::IntArgs ints(4, 1,0,3,2);
+
+  /// Test number of several equal integers equal to integer
+  class IntArrayInt : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
+  public:
+    /// Create and register test
+    IntArrayInt(Gecode::IntRelType irt0)
+      : IntTest("Count::IntArray::Int::"+str(irt0),5,-2,2), irt(irt0) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      int m = 0;
+      for (int i=0; i<4; i++)
+        if (x[i] == ints[i])
+          m++;
+      return cmp(m,irt,2);
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::IntVarArgs y(4);
+      for (int i=0; i<4; i++)
+        y[i]=x[i];
+      Gecode::count(home, y, ints, irt, 2);
+    }
+  };
+
+  /// Test number of several equal integers equal to integer variable
+  class IntArrayVar : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
+  public:
+    /// Create and register test
+    IntArrayVar(Gecode::IntRelType irt0)
+      : IntTest("Count::IntArray::Var::"+str(irt0),5,-2,2), irt(irt0) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      int m = 0;
+      for (int i=0; i<4; i++)
+        if (x[i] == ints[i])
+          m++;
+      return cmp(m,irt,x[4]);
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::IntVarArgs y(4);
+      for (int i=0; i<4; i++)
+        y[i]=x[i];
+      Gecode::count(home, y, ints, irt, x[4]);
+    }
+  };
 
 
-class CountIntVarShared : public IntTest {
-protected:
-  /// Integer relation type to propagate
-  IntRelType irt;
-public:
-  /// Create and register test
-  CountIntVarShared(const char* t, IntRelType irt0)
-    : IntTest(t,4,-2,2), irt(irt0) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    int m = 0;
-    for (int i=0; i<4; i++)
-      if (x[i] == 0)
-        m++;
-    return cmp(m,irt,x[2]);
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    count(home, x, 0, irt, x[2]);
-  }
-};
+  /// Test number of equal integers equal to integer variable with sharing
+  class IntVarShared : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
+  public:
+    /// Create and register test
+    IntVarShared(Gecode::IntRelType irt0)
+      : IntTest("Count::Int::Var::Shared::"+str(irt0),4,-2,2), irt(irt0) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      int m = 0;
+      for (int i=0; i<4; i++)
+        if (x[i] == 0)
+          m++;
+      return cmp(m,irt,x[2]);
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::count(home, x, 0, irt, x[2]);
+    }
+  };
 
-CountIntVarShared _ceqivs("Count::Eq::IntVarShared",Gecode::IRT_EQ);
-CountIntVarShared _cnqivs("Count::Nq::IntVarShared",Gecode::IRT_NQ);
-CountIntVarShared _clqivs("Count::Lq::IntVarShared",Gecode::IRT_LQ);
-CountIntVarShared _cleivs("Count::Le::IntVarShared",Gecode::IRT_LE);
-CountIntVarShared _cgrivs("Count::Gr::IntVarShared",Gecode::IRT_GR);
-CountIntVarShared _cgqivs("Count::Gq::IntVarShared",Gecode::IRT_GQ);
+  /// Test number of equal variables equal to integer variable
+  class VarVar : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
+  public:
+    /// Create and register test
+    VarVar(Gecode::IntRelType irt0)
+      : IntTest("Count::Var:Var::"+str(irt0),5,-2,2), irt(irt0) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      int m = 0;
+      for (int i=0; i<3; i++)
+        if (x[i] == x[3])
+          m++;
+      return cmp(m,irt,x[4]);
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::IntVarArgs y(3);
+      for (int i=0; i<3; i++)
+        y[i]=x[i];
+      Gecode::count(home, y, x[3], irt, x[4]);
+    }
+  };
 
-class CountVarVar : public IntTest {
-protected:
-  /// Integer relation type to propagate
-  IntRelType irt;
-public:
-  /// Create and register test
-  CountVarVar(const char* t, IntRelType irt0)
-    : IntTest(t,5,-2,2), irt(irt0) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    int m = 0;
-    for (int i=0; i<3; i++)
-      if (x[i] == x[3])
-        m++;
-    return cmp(m,irt,x[4]);
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntVarArgs y(3);
-    for (int i=0; i<3; i++)
-      y[i]=x[i];
-    count(home, y, x[3], irt, x[4]);
-  }
-};
+  /// Test number of equal variables equal to integer variable with sharing
+  class VarVarSharedA : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
+  public:
+    /// Create and register test
+    VarVarSharedA(Gecode::IntRelType irt0)
+      : IntTest("Count::Var::Var::Shared::A::"+str(irt0),5,-2,2), irt(irt0) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      int m = 0;
+      for (int i=0; i<4; i++)
+        if (x[i] == x[1])
+          m++;
+      return cmp(m,irt,x[4]);
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::IntVarArgs y(4);
+      for (int i=0; i<4; i++)
+        y[i]=x[i];
+      Gecode::count(home, y, x[1], irt, x[4]);
+    }
+  };
 
-CountVarVar _ceqvv("Count::Eq::VarVar",Gecode::IRT_EQ);
-CountVarVar _cnqvv("Count::Nq::VarVar",Gecode::IRT_NQ);
-CountVarVar _clqvv("Count::Lq::VarVar",Gecode::IRT_LQ);
-CountVarVar _clevv("Count::Le::VarVar",Gecode::IRT_LE);
-CountVarVar _cgrvv("Count::Gr::VarVar",Gecode::IRT_GR);
-CountVarVar _cgqvv("Count::Gq::VarVar",Gecode::IRT_GQ);
+  /// Test number of equal variables equal to integer variable with sharing
+  class VarVarSharedB : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
+  public:
+    /// Create and register test
+    VarVarSharedB(Gecode::IntRelType irt0)
+      : IntTest("Count::Var::Var::Shared::B::"+str(irt0),5,-2,2), irt(irt0) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      int m = 0;
+      for (int i=0; i<4; i++)
+        if (x[i] == x[4])
+          m++;
+      return cmp(m,irt,x[3]);
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::IntVarArgs y(4);
+      for (int i=0; i<4; i++)
+        y[i]=x[i];
+      Gecode::count(home, y, x[4], irt, x[3]);
+    }
+  };
 
-class CountVarVarSharedA : public IntTest {
-protected:
-  /// Integer relation type to propagate
-  IntRelType irt;
-public:
-  /// Create and register test
-  CountVarVarSharedA(const char* t, IntRelType irt0)
-    : IntTest(t,5,-2,2), irt(irt0) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    int m = 0;
-    for (int i=0; i<4; i++)
-      if (x[i] == x[1])
-        m++;
-    return cmp(m,irt,x[4]);
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntVarArgs y(4);
-    for (int i=0; i<4; i++)
-      y[i]=x[i];
-    count(home, y, x[1], irt, x[4]);
-  }
-};
+  /// Test number of equal variables equal to integer variable with sharing
+  class VarVarSharedC : public IntTest {
+  protected:
+    /// Integer relation type to propagate
+    Gecode::IntRelType irt;
+  public:
+    /// Create and register test
+    VarVarSharedC(Gecode::IntRelType irt0)
+      : IntTest("Count::Var::Var::Shared::A::"+str(irt0),4,-2,2), irt(irt0) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      int m = 0;
+      for (int i=0; i<4; i++)
+        if (x[i] == x[1])
+          m++;
+      return cmp(m,irt,x[3]);
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::count(home, x, x[1], irt, x[3]);
+    }
+  };
 
-CountVarVarSharedA _ceqvvsa("Count::Eq::VarVarShared::A",Gecode::IRT_EQ);
-CountVarVarSharedA _cnqvvsa("Count::Nq::VarVarShared::A",Gecode::IRT_NQ);
-CountVarVarSharedA _clqvvsa("Count::Lq::VarVarShared::A",Gecode::IRT_LQ);
-CountVarVarSharedA _clevvsa("Count::Le::VarVarShared::A",Gecode::IRT_LE);
-CountVarVarSharedA _cgrvvsa("Count::Gr::VarVarShared::A",Gecode::IRT_GR);
-CountVarVarSharedA _cgqvvsa("Count::Gq::VarVarShared::A",Gecode::IRT_GQ);
+  /// Help class to create and register tests
+  class Create {
+  public:
+    /// Perform creation and registration
+    Create(void) {
+      for (IntRelTypes irts; irts(); ++irts) {
+        (void) new IntInt(irts.irt());
+        (void) new IntIntDup(irts.irt());
+        (void) new IntVar(irts.irt());
+        (void) new IntArrayInt(irts.irt());
+        (void) new IntArrayVar(irts.irt());
+        (void) new IntVarShared(irts.irt());
+        (void) new VarVar(irts.irt());
+        (void) new VarVarSharedA(irts.irt());
+        (void) new VarVarSharedB(irts.irt());
+        (void) new VarVarSharedC(irts.irt());
+      }
+    }
+  };
 
-class CountVarVarSharedB : public IntTest {
-protected:
-  /// Integer relation type to propagate
-  IntRelType irt;
-public:
-  /// Create and register test
-  CountVarVarSharedB(const char* t, IntRelType irt0)
-    : IntTest(t,5,-2,2), irt(irt0) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    int m = 0;
-    for (int i=0; i<4; i++)
-      if (x[i] == x[4])
-        m++;
-    return cmp(m,irt,x[3]);
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntVarArgs y(4);
-    for (int i=0; i<4; i++)
-      y[i]=x[i];
-    count(home, y, x[4], irt, x[3]);
-  }
-};
+  Create c;
+  //@}
 
-CountVarVarSharedB _ceqvvsb("Count::Eq::VarVarShared::B",Gecode::IRT_EQ);
-CountVarVarSharedB _cnqvvsb("Count::Nq::VarVarShared::B",Gecode::IRT_NQ);
-CountVarVarSharedB _clqvvsb("Count::Lq::VarVarShared::B",Gecode::IRT_LQ);
-CountVarVarSharedB _clevvsb("Count::Le::VarVarShared::B",Gecode::IRT_LE);
-CountVarVarSharedB _cgrvvsb("Count::Gr::VarVarShared::B",Gecode::IRT_GR);
-CountVarVarSharedB _cgqvvsb("Count::Gq::VarVarShared::B",Gecode::IRT_GQ);
-
-class CountVarVarSharedC : public IntTest {
-protected:
-  /// Integer relation type to propagate
-  IntRelType irt;
-public:
-  /// Create and register test
-  CountVarVarSharedC(const char* t, IntRelType irt0)
-    : IntTest(t,4,-2,2), irt(irt0) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    int m = 0;
-    for (int i=0; i<4; i++)
-      if (x[i] == x[1])
-        m++;
-    return cmp(m,irt,x[3]);
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    count(home, x, x[1], irt, x[3]);
-  }
-};
-
-CountVarVarSharedC _ceqvvsc("Count::Eq::VarVarShared::C",Gecode::IRT_EQ);
-CountVarVarSharedC _cnqvvsc("Count::Nq::VarVarShared::C",Gecode::IRT_NQ);
-CountVarVarSharedC _clqvvsc("Count::Lq::VarVarShared::C",Gecode::IRT_LQ);
-CountVarVarSharedC _clevvsc("Count::Le::VarVarShared::C",Gecode::IRT_LE);
-CountVarVarSharedC _cgrvvsc("Count::Gr::VarVarShared::C",Gecode::IRT_GR);
-CountVarVarSharedC _cgqvvsc("Count::Gq::VarVarShared::C",Gecode::IRT_GQ);
-
+}}}
 
 // STATISTICS: test-int
 
