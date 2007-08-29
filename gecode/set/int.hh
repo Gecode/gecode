@@ -241,11 +241,11 @@ namespace Gecode { namespace Set { namespace Int {
   class ChannelBool
   : public MixNaryOnePropagator<Gecode::Int::BoolView,
                                 Gecode::Int::PC_BOOL_VAL,
-                                View,PC_SET_ANY> {
+                                View,PC_GEN_NONE> {
   protected:
     typedef MixNaryOnePropagator<Gecode::Int::BoolView,
                                   Gecode::Int::PC_BOOL_VAL,
-                                  View,PC_SET_ANY> Super;
+                                  View,PC_GEN_NONE> Super;
     using Super::x;
     using Super::y;
 
@@ -254,6 +254,36 @@ namespace Gecode { namespace Set { namespace Int {
     /// Constructor for posting
     ChannelBool(Space* home,ViewArray<Gecode::Int::BoolView>&, 
                 View);
+
+    /// Advisor storing a single index
+    class IndexAdvisor : public Advisor {
+    protected:
+      /// The single index
+      int idx;
+    public: 
+      /// Constructor for creation
+      template <class A>
+      IndexAdvisor(Space* home, ChannelBool<View>* p, Council<A>& c,
+                   int index);
+      /// Constructor for cloning \a a
+      IndexAdvisor(Space* home, bool share, IndexAdvisor& a);
+      /// Access index
+      int index(void) const;
+      /// Delete advisor
+      template <class A>
+      void dispose(Space* home, Council<A>& c);
+    };
+
+    /// Council for managing advisors
+    Council<IndexAdvisor> co;
+    /// Accumulated delta information
+    SetDelta delta;
+    /// Accumulated zero Booleans
+    GLBndSet zeros;
+    /// Accumulated one Booleans
+    GLBndSet ones;
+    /// Flag whether propagation is currently running
+    bool running;
   public:
     /// Copy propagator during cloning
     virtual Actor*   copy(Space* home,bool);
@@ -263,6 +293,8 @@ namespace Gecode { namespace Set { namespace Int {
     virtual size_t dispose(Space* home);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
+    /// Give advice to propagator
+    virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
     /// Post propagator for \f$x_i=j \Leftrightarrow i\in y_j\f$
     static ExecStatus post(Space* home,ViewArray<Gecode::Int::BoolView>& x,
                            View y);
