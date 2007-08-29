@@ -828,6 +828,7 @@ namespace Gecode {
   private:
     /// Is the advisor disposed?
     bool disposed(void) const;
+  protected:
     /// Return the advisor's propagator
     Propagator* propagator(void) const; 
   public:
