@@ -331,7 +331,12 @@ namespace Gecode { namespace Set {
     : BndSet(home,s) {}
 
   forceinline void
-  GLBndSet::init(Space* home) { fst(NULL); lst(NULL); _size = 0; }
+  GLBndSet::init(Space* home) {
+    dispose(home);
+    fst(NULL);
+    lst(NULL);
+    _size = 0;
+  }
 
   forceinline bool
   GLBndSet::include(Space* home, int mi, int ma, SetDelta& d) {

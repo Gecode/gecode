@@ -71,7 +71,6 @@ namespace Gecode { namespace Set {
     SetDelta(void);
     /// Create set delta with \a min and \a max
     SetDelta(int glbMin, int glbMax, int lubMin, int lubMax);
-  private:
     /// Return glb minimum
     int glbMin(void) const;
     /// Return glb maximum

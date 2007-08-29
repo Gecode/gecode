@@ -200,11 +200,11 @@ namespace Gecode { namespace Set {
     if (lub.intersect(home, i, j)) {
       SetDelta d;
       if (i == oldMin) {
-        d._lubMin = lub.max();
+        d._lubMin = lub.max()+1;
         d._lubMax = oldMax;
       } else if (j == oldMax) {
         d._lubMin = oldMin;
-        d._lubMax = lub.min();        
+        d._lubMax = lub.min()-1;        
       }
       return processLubChange(home, d);
     }

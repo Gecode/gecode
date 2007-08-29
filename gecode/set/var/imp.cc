@@ -87,8 +87,8 @@ namespace Gecode { namespace Set {
     if (_cardMax == lub.size() && _cardMin == _cardMax) {
       glb.become(home, lub);
       me = ME_SET_VAL;
-      d._glbMin = glb.min();
-      d._glbMax = glb.max();
+      assert(d.glbMin() == 1);
+      assert(d.glbMax() == 0);
     }
     notify(home, me, &d);
     return me;
@@ -110,8 +110,8 @@ namespace Gecode { namespace Set {
     if (_cardMin == glb.size() && _cardMin == _cardMax) {
       lub.become(home, glb);
       me = ME_SET_VAL;
-      d._lubMin = lub.min();
-      d._lubMax = lub.max();
+      assert(d.lubMin() == 1);
+      assert(d.lubMax() == 0);
     }
     notify(home, me, &d);
     return me;
