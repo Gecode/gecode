@@ -36,7 +36,7 @@
  */        
 
 #include "test/int.hh"
-#include "test/log.hh"
+
 #include "gecode/support/sort.hh"
 
 static Gecode::IntSet ds_12(1,2);

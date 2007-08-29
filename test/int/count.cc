@@ -36,21 +36,19 @@
  */
 
 #include "test/int.hh"
-#include "test/log.hh"
 
 using namespace Gecode;
-
-static Gecode::IntSet ds_22(-2,2);
 
 static const int ints[4] = {1,0,3,2};
 
 class CountIntInt : public IntTest {
-private:
+protected:
+  /// Integer relation type to propagate
   IntRelType irt;
 public:
   /// Create and register test
   CountIntInt(const char* t, IntRelType irt0)
-    : IntTest(t,4,ds_22), irt(irt0) {}
+    : IntTest(t,4,-2,2), irt(irt0) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
@@ -73,12 +71,13 @@ CountIntInt _cgrii("Count::Gr::IntInt",Gecode::IRT_GR);
 CountIntInt _cgqii("Count::Gq::IntInt",Gecode::IRT_GQ);
 
 class CountIntsInt : public IntTest {
-private:
+protected:
+  /// Integer relation type to propagate
   IntRelType irt;
 public:
   /// Create and register test
   CountIntsInt(const char* t, IntRelType irt0)
-    : IntTest(t,5,ds_22), irt(irt0) {}
+    : IntTest(t,5,-2,2), irt(irt0) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
@@ -106,12 +105,13 @@ CountIntsInt _cgqiis("Count::Gq::IntsInt",Gecode::IRT_GQ);
 
 
 class CountIntIntDup : public IntTest {
-private:
+protected:
+  /// Integer relation type to propagate
   IntRelType irt;
 public:
   /// Create and register test
   CountIntIntDup(const char* t, IntRelType irt0)
-    : IntTest(t,4,ds_22), irt(irt0) {}
+    : IntTest(t,4,-2,2), irt(irt0) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
@@ -138,12 +138,13 @@ CountIntIntDup _cgriid("Count::Gr::IntInt::Dup",Gecode::IRT_GR);
 CountIntIntDup _cgqiid("Count::Gq::IntInt::Dup",Gecode::IRT_GQ);
 
 class CountIntVar : public IntTest {
-private:
+protected:
+  /// Integer relation type to propagate
   IntRelType irt;
 public:
   /// Create and register test
   CountIntVar(const char* t, IntRelType irt0)
-    : IntTest(t,5,ds_22), irt(irt0) {}
+    : IntTest(t,5,-2,2), irt(irt0) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
@@ -170,12 +171,13 @@ CountIntVar _cgqiv("Count::Gq::IntVar",Gecode::IRT_GQ);
 
 
 class CountIntsVar : public IntTest {
-private:
+protected:
+  /// Integer relation type to propagate
   IntRelType irt;
 public:
   /// Create and register test
   CountIntsVar(const char* t, IntRelType irt0)
-    : IntTest(t,5,ds_22), irt(irt0) {}
+    : IntTest(t,5,-2,2), irt(irt0) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
@@ -203,12 +205,13 @@ CountIntsVar _cgqisv("Count::Gq::IntsVar",Gecode::IRT_GQ);
 
 
 class CountIntVarShared : public IntTest {
-private:
+protected:
+  /// Integer relation type to propagate
   IntRelType irt;
 public:
   /// Create and register test
   CountIntVarShared(const char* t, IntRelType irt0)
-    : IntTest(t,4,ds_22), irt(irt0) {}
+    : IntTest(t,4,-2,2), irt(irt0) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
@@ -231,12 +234,13 @@ CountIntVarShared _cgrivs("Count::Gr::IntVarShared",Gecode::IRT_GR);
 CountIntVarShared _cgqivs("Count::Gq::IntVarShared",Gecode::IRT_GQ);
 
 class CountVarVar : public IntTest {
-private:
+protected:
+  /// Integer relation type to propagate
   IntRelType irt;
 public:
   /// Create and register test
   CountVarVar(const char* t, IntRelType irt0)
-    : IntTest(t,5,ds_22), irt(irt0) {}
+    : IntTest(t,5,-2,2), irt(irt0) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
@@ -262,12 +266,13 @@ CountVarVar _cgrvv("Count::Gr::VarVar",Gecode::IRT_GR);
 CountVarVar _cgqvv("Count::Gq::VarVar",Gecode::IRT_GQ);
 
 class CountVarVarSharedA : public IntTest {
-private:
+protected:
+  /// Integer relation type to propagate
   IntRelType irt;
 public:
   /// Create and register test
   CountVarVarSharedA(const char* t, IntRelType irt0)
-    : IntTest(t,5,ds_22), irt(irt0) {}
+    : IntTest(t,5,-2,2), irt(irt0) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
@@ -293,12 +298,13 @@ CountVarVarSharedA _cgrvvsa("Count::Gr::VarVarShared::A",Gecode::IRT_GR);
 CountVarVarSharedA _cgqvvsa("Count::Gq::VarVarShared::A",Gecode::IRT_GQ);
 
 class CountVarVarSharedB : public IntTest {
-private:
+protected:
+  /// Integer relation type to propagate
   IntRelType irt;
 public:
   /// Create and register test
   CountVarVarSharedB(const char* t, IntRelType irt0)
-    : IntTest(t,5,ds_22), irt(irt0) {}
+    : IntTest(t,5,-2,2), irt(irt0) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
@@ -324,12 +330,13 @@ CountVarVarSharedB _cgrvvsb("Count::Gr::VarVarShared::B",Gecode::IRT_GR);
 CountVarVarSharedB _cgqvvsb("Count::Gq::VarVarShared::B",Gecode::IRT_GQ);
 
 class CountVarVarSharedC : public IntTest {
-private:
+protected:
+  /// Integer relation type to propagate
   IntRelType irt;
 public:
   /// Create and register test
   CountVarVarSharedC(const char* t, IntRelType irt0)
-    : IntTest(t,4,ds_22), irt(irt0) {}
+    : IntTest(t,4,-2,2), irt(irt0) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     int m = 0;
