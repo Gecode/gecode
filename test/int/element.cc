@@ -39,93 +39,80 @@
 
 #include "gecode/minimodel.hh"
 
-using namespace Gecode;
+namespace Test { namespace Int { namespace Element {
 
-static Gecode::IntSet is_01(0,1);
+  /**
+   * \defgroup TaskTestIntElement Element constraints
+   * \ingroup TaskTestInt
+   */
+  //@{
+  /// Test for element with integer array and integer variables
+  class IntInt : public IntTest {
+  protected:
+    /// Array of integers
+    Gecode::IntArgs c;
+  public:
+    /// Create and register test
+    IntInt(const std::string& s, const Gecode::IntArgs& c0)
+      : IntTest("Element::Int::Int::"+s,2,-4,8), c(c0) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==x[1];
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::element(home, c, x[0], x[1], 0);
+    }
+  };
 
-class ElementInt : public IntTest {
-private:
-  const int* c;
-  const int n;
-public:
-  /// Create and register test
-  ElementInt(const char* t, const Gecode::IntSet& is, const int* c0, int n0)
-    : IntTest(t,2,is), c(c0), n(n0) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    return (x[0]>= 0) && (x[0]<n) && c[x[0]]==x[1];
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntArgs ia(n,c);
-    element(home, ia, x[0], x[1], 0);
-  }
-};
-static Gecode::IntSet is1(-4,8);
-static const int c1[5] = {-1,1,-3,3,-4};
-static ElementInt _elinta("Element::Int::Int::A",is1,&c1[0],5);
-static Gecode::IntSet is2(-4,8);
-static const int c2[8] = {-1,1,-1,1,-1,1,0,0};
-static ElementInt _elintb("Element::Int::Int::B",is2,&c2[0],8);
-static Gecode::IntSet is3(-4,8);
-static const int c3[1] = {-1};
-static ElementInt _elintc("Element::Int::Int::C",is3,&c3[0],1);
+  /// Test for element with integer array and single shared integer variable
+  class IntIntShared : public IntTest {
+  protected:
+    /// Array of integers
+    Gecode::IntArgs c;
+  public:
+    /// Create and register test
+    IntIntShared(const std::string& s, const Gecode::IntArgs& c0)
+      : IntTest("Element::Int::Int::Shared::"+s,1,-4,8), c(c0) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==x[0];
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::element(home, c, x[0], x[0], 0);
+    }
+  };
 
-class ElementShareInt : public IntTest {
-private:
-  const int* c;
-  const int n;
-public:
-  /// Create and register test
-  ElementShareInt(const char* t, const Gecode::IntSet& is, const int* c0, int n0)
-    : IntTest(t,1,is), c(c0), n(n0) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    return (x[0]>= 0) && (x[0]<n) && c[x[0]]==x[0];
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntArgs ia(n,c);
-    element(home, ia, x[0], x[0], 0);
-  }
-};
-
-static Gecode::IntSet is4(-4,8);
-static const int c4[7] = {0,-1,2,-2,4,-3,6};
-static ElementShareInt _elintd("Element::Int::Int::D",is3,&c4[0],7);
+  /// Test for element with integer array and integer and Boolean variable
+  class IntBool : public IntTest {
+  protected:
+    /// Array of integers
+    Gecode::IntArgs c;
+  public:
+    /// Create and register test
+    IntBool(const std::string& s, const Gecode::IntArgs& c0)
+      : IntTest("Element::Int::Bool::"+s,2,-4,8), c(c0) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==x[1];
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::element(home, c, x[0], Gecode::channel(home,x[1]), 0);
+    }
+  };
 
 
-class ElementBool : public IntTest {
-private:
-  const int* c;
-  const int n;
-public:
-  /// Create and register test
-  ElementBool(const char* t, const Gecode::IntSet& is, const int* c0, int n0)
-    : IntTest(t,2,is), c(c0), n(n0) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    return (x[0]>= 0) && (x[0]<n) && c[x[0]]==x[1];
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntArgs ia(n,c);
-    element(home, ia, x[0], channel(home,x[1]), 0);
-  }
-};
-static const int bc1[5] = {0,1,1,0,1};
-static ElementInt _elintba("Element::Int::Bool::A",is1,&bc1[0],5);
-static const int bc2[8] = {-1,1,0,1,0,1,0,0};
-static ElementInt _elintbb("Element::Int::Bool::B",is2,&bc2[0],8);
-static const int bc3[1] = {1};
-static ElementInt _elintbc("Element::Int::Bool::C",is3,&bc3[0],1);
+  /*
 
-class ElementVar : public IntTest {
+
+class Var : public IntTest {
 private:
   const int n;
 public:
   /// Create and register test
-  ElementVar(const char* t, const Gecode::IntSet& is, int n0, Gecode::IntConLevel icl)
+  Var(const char* t, const Gecode::IntSet& is, int n0, Gecode::IntConLevel icl)
     : IntTest(t,n0+2,is,false,icl), n(n0) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
@@ -140,14 +127,14 @@ public:
   }
 };
 
-class ElementShareVar : public IntTest {
+class ShareVar : public IntTest {
 private:
   const int n;
   Gecode::IntConLevel icl;
 public:
   // This is actually not domain consistent!
   /// Create and register test
-  ElementShareVar(const char* t, const Gecode::IntSet& is, int n0, Gecode::IntConLevel icl0)
+  ShareVar(const char* t, const Gecode::IntSet& is, int n0, Gecode::IntConLevel icl0)
     : IntTest(t,n0+1,is,false), n(n0), icl(icl0) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
@@ -161,19 +148,19 @@ public:
     element(home, ia, x[0], x[0], 0, icl);
   }
 };
-static Gecode::IntSet iv1(-1,3);
-static ElementVar _elvarbnda("Element::Var::Bnd::A",iv1,3,Gecode::ICL_BND);
-static ElementVar _elvardoma("Element::Var::Dom::A",iv1,3,Gecode::ICL_DOM);
-static ElementShareVar _elsvarbnda("Element::Var::Bnd::B",iv1,3,Gecode::ICL_BND);
-static ElementShareVar _elsvardoma("Element::Var::Dom::B",iv1,3,Gecode::ICL_DOM);
+Gecode::IntSet iv1(-1,3);
+Var _elvarbnda("Element::Var::Bnd::A",iv1,3,Gecode::ICL_BND);
+Var _elvardoma("Element::Var::Dom::A",iv1,3,Gecode::ICL_DOM);
+ShareVar _elsvarbnda("Element::Var::Bnd::B",iv1,3,Gecode::ICL_BND);
+ShareVar _elsvardoma("Element::Var::Dom::B",iv1,3,Gecode::ICL_DOM);
 
 
-class ElementVarBool : public IntTest {
+class VarBool : public IntTest {
 private:
   const int n;
 public:
   /// Create and register test
-  ElementVarBool(const char* t, const Gecode::IntSet& is, int n0)
+  VarBool(const char* t, const Gecode::IntSet& is, int n0)
     : IntTest(t,n0+2,is,false), n(n0) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
@@ -192,8 +179,34 @@ public:
   }
 };
 
-static ElementVarBool _elvarbbnda("Element::Var::Bool",iv1,3);
+VarBool _elvarbbnda("Element::Var::Bool",iv1,3);
 
+  */
+
+  Gecode::IntArgs ic1(5, -1,1,-3,3,-4);
+  Gecode::IntArgs ic2(8, -1,1,-1,1,-1,1,0,0);
+  Gecode::IntArgs ic3(1, -1);
+  Gecode::IntArgs ic4(7, 0,-1,2,-2,4,-3,6);
+
+  Gecode::IntArgs bc1(5, 0,1,1,0,1);
+  Gecode::IntArgs bc2(8, 1,1,0,1,0,1,0,0);
+  Gecode::IntArgs bc3(1, 1);
+
+  IntInt ii1("A",ic1);
+  IntInt ii2("B",ic2);
+  IntInt ii3("C",ic3);
+  IntInt ii4("D",ic4);
+
+  IntIntShared iis1("A",ic1);
+  IntIntShared iis2("B",ic2);
+  IntIntShared iis3("C",ic3);
+  IntIntShared iis4("D",ic4);
+
+  IntBool ib1("A",bc1);
+  IntBool ib2("B",bc2);
+  IntBool ib3("C",bc3);
+  //@}
+
+}}}
 
 // STATISTICS: test-int
-
