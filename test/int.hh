@@ -41,7 +41,7 @@
 #define __GECODE_TEST_INT_HH__
 
 #include "gecode/int.hh"
-#include "test.hh"
+#include "test/test.hh"
 
 /**
  * \defgroup TaskTestInt Testing finite domain integers

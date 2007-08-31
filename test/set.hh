@@ -41,8 +41,8 @@
 #define __GECODE_TEST_SET_HH__
 
 #include "gecode/set.hh"
-#include "test.hh"
-#include "int.hh"
+#include "test/test.hh"
+#include "test/int.hh"
 
 using namespace Gecode;
 using namespace Set;

@@ -257,4 +257,8 @@ Options::parse(int argc, char** argv) {
   exit(EXIT_FAILURE);
 }
 
+const Gecode::PropKind PropKinds::pks[] =
+  {Gecode::PK_MEMORY,Gecode::PK_SPEED};
+
+
 // STATISTICS: test-core

@@ -139,6 +139,42 @@ protected:
 };
 //@}
 
+/// Iterator for propagation kinds
+class PropKinds {
+private:
+  /// Array of propagation kinds
+  static const Gecode::PropKind pks[2];
+  /// Current position in array
+  int i; 
+public:
+  /// Initialize iterator
+  PropKinds(void);
+  /// Test whether iterator is done
+  bool operator()(void) const;
+  /// Increment to next propagation kind
+  void operator++(void);
+  /// Return current propagation kind
+  Gecode::PropKind pk(void) const;
+};
+
+inline
+PropKinds::PropKinds(void) 
+  : i(sizeof(pks)/sizeof(Gecode::PropKind)-1) {}
+inline bool 
+PropKinds::operator()(void) const {
+  return i>=0;
+}
+inline void 
+PropKinds::operator++(void) {
+  i--;
+}
+inline Gecode::PropKind
+PropKinds::pk(void) const {
+  return pks[i];
+}
+
+
+
 #endif
 
 // STATISTICS: test-core
