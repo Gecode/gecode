@@ -76,19 +76,19 @@ namespace Test { namespace Int { namespace Circuit {
     }
   };
 
-  Circuit c1v(1,0,0,Gecode::ICL_VAL);
-  Circuit c2v(2,0,1,Gecode::ICL_VAL);
-  Circuit c3v(3,0,2,Gecode::ICL_VAL);
-  Circuit c4v(4,0,3,Gecode::ICL_VAL);
-  Circuit c5v(5,0,4,Gecode::ICL_VAL);
-  Circuit c6v(6,0,5,Gecode::ICL_VAL);
+  /// Help class to create and register tests
+  class Create {
+  public:
+    /// Perform creation and registration
+    Create(void) {
+      for (int i=1; i<=6; i++) {
+        (void) new Circuit(i,0,i-1,Gecode::ICL_VAL);
+        (void) new Circuit(i,0,i-1,Gecode::ICL_DOM);
+      }
+    }
+  };
 
-  Circuit c1d(1,0,0,Gecode::ICL_DOM);
-  Circuit c2d(2,0,1,Gecode::ICL_DOM);
-  Circuit c3d(3,0,2,Gecode::ICL_DOM);
-  Circuit c4d(4,0,3,Gecode::ICL_DOM);
-  Circuit c5d(5,0,4,Gecode::ICL_DOM);
-  Circuit c6d(6,0,5,Gecode::ICL_DOM);
+  Create c;
   //@}
 
 }}}

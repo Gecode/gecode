@@ -145,8 +145,7 @@ namespace Test { namespace Int { namespace Element {
   class VarBool : public IntTest {
   public:
     /// Create and register test
-    VarBool(void)
-      : IntTest("Element::Var::Bool",6,-1,3,false) {}
+    VarBool(void) : IntTest("Element::Var::Bool",6,-1,3,false) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<x.size()-2; i++)

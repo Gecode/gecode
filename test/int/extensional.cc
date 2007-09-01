@@ -4,7 +4,7 @@
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
  *  Copyright:
- *     Mikael Lagerkvis, 2007
+ *     Mikael Lagerkvist, 2007
  *
  *  Last modified:
  *     $Date$ by $Author$

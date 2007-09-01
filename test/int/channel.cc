@@ -87,14 +87,15 @@ namespace Test { namespace Int { namespace Channel {
     /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       using namespace Gecode;
-      Gecode::IntVarArray y(home,6,dom);
-      for (int i=0; i<6; i++) {
+      Gecode::IntVarArgs y(6);
+      for (int i=0; i<6; i++)
+        y[i].init(home,dom);
+      for (int i=0; i<6; i++)
         for (int j=0; j<6; j++) {
           Gecode::BoolVar b(home,0,1);
           rel(home, x[i], Gecode::IRT_EQ, j, b);
           rel(home, y[j], Gecode::IRT_EQ, i, b);
         }
-      }
       channel(home, x, y, icl);
     }
   };

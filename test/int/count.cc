@@ -173,7 +173,6 @@ namespace Test { namespace Int { namespace Count {
     }
   };
 
-
   /// Test number of equal integers equal to integer variable with sharing
   class IntVarShared : public IntTest {
   protected:

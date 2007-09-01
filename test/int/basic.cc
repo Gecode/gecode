@@ -49,13 +49,18 @@ namespace Test { namespace Int { namespace Basic {
   public:
     /// Initialize test
     Basic(void)
-      : IntTest("Basic",3,-3,3) {}
+      : IntTest("Basic",3,-3,3,true) {}
     /// Check whether \a x is a solution
     virtual bool solution(const Assignment&) const {
       return true;
     }
-    /// Post constraints
+    /// Post constraint on \a x
     virtual void post(Gecode::Space*, Gecode::IntVarArray&) {
+    }
+    /// Post reified constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray&, 
+                      Gecode::BoolVar b) {
+      Gecode::rel(home, b, Gecode::IRT_EQ, 1);
     }
   };
 

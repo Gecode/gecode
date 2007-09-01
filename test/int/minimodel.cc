@@ -39,547 +39,523 @@
 
 #include "gecode/minimodel.hh"
 
-using namespace Gecode;
+namespace Test { namespace Int { namespace MiniModel {
 
-static Gecode::IntSet is(-2,2);
+  /**
+   * \defgroup TaskTestIntMiniModel Minimal modelling constraints
+   * \ingroup TaskTestInt
+   */
+  //@{
+  /// Test for equality
+  class LinEqA : public IntTest {
+  public:
+    /// Create and register test
+    LinEqA(void) : IntTest("MiniModel::Lin::Eq::A",2,-2,2,true) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return (2*x[0]+1) == (x[1]-1);
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::post(home, 2*x[0]+1 == x[1]-1);
+    }
+    /// Post reified constraint on \a x for \a b
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+                      Gecode::BoolVar b) {
+      Gecode::post(home, Gecode::tt(eqv(2*x[0]+1 == x[1]-1,b)));
+    }
+  };
 
-class MmLinEqA : public IntTest {
-public:
-  /// Create and register test
-  MmLinEqA(void)
-    : IntTest("MiniModel::Lin::Eq::A",2,is,true) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    return (2*x[0]+1) == (x[1]-1);
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+  /// Test for linear equality
+  class LinEqB : public IntTest {
+  public:
+    /// Create and register test
+    LinEqB(void) : IntTest("MiniModel::Lin::Eq::B",2,-2,2,true) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return (2*x[0]+1) == (x[1]-1);
+    }
     /// Post constraint on \a x
-    Gecode::post(home, 2*x[0]+1 == x[1]-1);
-  }
-  /// Post reified constraint on \a x for \a b
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
-    /// Post constraint on \a x
-    Gecode::post(home, tt(eqv(2*x[0]+1 == x[1]-1,b)));
-  }
-};
-MmLinEqA _mmlineqa;
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::post(home, 2*x[0]+1-x[1] == -1);
+    }
+    /// Post reified constraint on \a x for \a b
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+                      Gecode::BoolVar b) {
+      Gecode::post(home, Gecode::tt(eqv(2*x[0]+1-x[1] == -1,b)));
+    }
+  };
 
-class MmLinEqB : public IntTest {
-public:
-  /// Create and register test
-  MmLinEqB(void)
-    : IntTest("MiniModel::Lin::Eq::B",2,is,true) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    return (2*x[0]+1) == (x[1]-1);
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+  /// Test for linear equality
+  class LinEqC : public IntTest {
+  public:
+    /// Create and register test
+    LinEqC(void) : IntTest("MiniModel::Lin::Eq::C",2,-2,2,true) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return -(1-(1-x[1])) == x[0];
+    }
     /// Post constraint on \a x
-    Gecode::post(home, 2*x[0]+1-x[1] == -1);
-  }
-  /// Post reified constraint on \a x for \a b
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
-    /// Post constraint on \a x
-    Gecode::post(home, tt(eqv(2*x[0]+1-x[1] == -1,b)));
-  }
-};
-MmLinEqB _mmlineqb;
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::post(home, -(1-(1-x[1])) == x[0]);
+    }
+    /// Post reified constraint on \a x for \a b
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+                      Gecode::BoolVar b) {
+      Gecode::post(home, Gecode::tt(eqv(-(1-(1-x[1])) == x[0],b)));
+    }
+  };
 
-class MmLinEqC : public IntTest {
-public:
-  /// Create and register test
-  MmLinEqC(void)
-    : IntTest("MiniModel::Lin::Eq::C",2,is,true) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    return -(1-(1-x[1])) == x[0];
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+  /// Test for linear equality
+  class LinEqD : public IntTest {
+  public:
+    /// Create and register test
+    LinEqD(void) : IntTest("MiniModel::Lin::Eq::D",2,-2,2,true) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return 2*(1-x[1]) == x[0];
+    }
     /// Post constraint on \a x
-    Gecode::post(home, -(1-(1-x[1])) == x[0]);
-  }
-  /// Post reified constraint on \a x for \a b
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
-    /// Post constraint on \a x
-    Gecode::post(home, tt(eqv(-(1-(1-x[1])) == x[0],b)));
-  }
-};
-MmLinEqC _mmlineqc;
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::post(home, 2*(1-x[1]) == x[0]);
+    }
+    /// Post reified constraint on \a x for \a b
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+                      Gecode::BoolVar b) {
+      Gecode::post(home, Gecode::tt(eqv(2*(1-x[1]) == x[0],b)));
+    }
+  };
 
-class MmLinEqD : public IntTest {
-public:
-  /// Create and register test
-  MmLinEqD(void)
-    : IntTest("MiniModel::Lin::Eq::D",2,is,true) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    return 2*(1-x[1]) == x[0];
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+  /// Test for linear equality
+  class LinEqE : public IntTest {
+  public:
+    /// Create and register test
+    LinEqE(void) : IntTest("MiniModel::Lin::Eq::E",1,-2,2,true) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return -1==x[0];
+    }
     /// Post constraint on \a x
-    Gecode::post(home, 2*(1-x[1]) == x[0]);
-  }
-  /// Post reified constraint on \a x for \a b
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
-    /// Post constraint on \a x
-    Gecode::post(home, tt(eqv(2*(1-x[1]) == x[0],b)));
-  }
-};
-MmLinEqD _mmlineqd;
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::post(home, -1==x[0]);
+    }
+    /// Post reified constraint on \a x for \a b
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+                      Gecode::BoolVar b) {
+      Gecode::post(home, Gecode::tt(eqv(-1==x[0],b)));
+    }
+  };
 
-class MmLinEqE : public IntTest {
-public:
-  /// Create and register test
-  MmLinEqE(void)
-    : IntTest("MiniModel::Lin::Eq::E",1,is,true) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    return 1>x[0];
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+  /// Test for linear inequality
+  class LinGr : public IntTest {
+  public:
+    /// Create and register test
+    LinGr(void) : IntTest("MiniModel::Lin::Gr",1,-2,2,true) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return 1>x[0];
+    }
     /// Post constraint on \a x
-    Gecode::post(home, 1>x[0]);
-  }
-  /// Post reified constraint on \a x for \a b
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
-    /// Post constraint on \a x
-    Gecode::post(home, tt(eqv(1>x[0],b)));
-  }
-};
-MmLinEqE _mmlineqe;
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::post(home, 1>x[0]);
+    }
+    /// Post reified constraint on \a x for \a b
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+                      Gecode::BoolVar b) {
+      Gecode::post(home, Gecode::tt(eqv(1>x[0],b)));
+    }
+  };
 
-class MmLinEqF : public IntTest {
-public:
-  /// Create and register test
-  MmLinEqF(void)
-    : IntTest("MiniModel::Lin::Eq::F",1,is,true) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    return 1<x[0];
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+  /// Test for linear inequality
+  class LinLe : public IntTest {
+  public:
+    /// Create and register test
+    LinLe(void) : IntTest("MiniModel::Lin::Le",1,-2,2,true) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return 1<x[0];
+    }
     /// Post constraint on \a x
-    Gecode::post(home, 1<x[0]);
-  }
-  /// Post reified constraint on \a x for \a b
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::post(home, 1<x[0]);
+    }
+    /// Post reified constraint on \a x for \a b
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, 
+                      Gecode::BoolVar b) {
+      Gecode::post(home, Gecode::tt(eqv(1<x[0],b)));
+    }
+  };
+
+  /// Test for linear equality over Boolean variables
+  class LinEqBool : public IntTest {
+  public:
+    /// Create and register test
+    LinEqBool(void) : IntTest("MiniModel::Lin::Eq::Bool",3,-2,2,false) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      for (int i=x.size(); i--; )
+        if ((x[i] < 0) || (x[i] > 1))
+          return false;
+      return (2*x[0]+1) == (x[1]+x[2]-1);
+    }
     /// Post constraint on \a x
-    Gecode::post(home, tt(eqv(1<x[0],b)));
-  }
-};
-MmLinEqF _mmlineqf;
-
-class MmLinEqG : public IntTest {
-public:
-  /// Create and register test
-  MmLinEqG(void)
-    : IntTest("MiniModel::Lin::Eq::G",1,is,true) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    return -1==x[0];
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      BoolVarArgs y(x.size());
+      for (int i=x.size(); i--; )
+        y[i] = channel(home,x[i]);
+      Gecode::post(home, 2*y[0]+1 == y[1]+y[2]-1);
+    }
+  };
+  
+  /// Test for posting linear expressions
+  class LinExprInt : public IntTest {
+  public:
+    /// Create and register test
+    LinExprInt(void) : IntTest("MiniModel::Lin::Expr::Int",4,-2,2,false) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return 2*x[0]+3*x[1]-x[2] == x[3];
+    }
     /// Post constraint on \a x
-    Gecode::post(home, -1==x[0]);
-  }
-  /// Post reified constraint on \a x for \a b
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x, Gecode::BoolVar b) {
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      IntVar y = Gecode::post(home, 2*x[0] + 3*x[1] - x[2]);
+      rel(home,y,IRT_EQ,x[3],ICL_DOM);
+    }
+  };
+
+  /// Test for posting linear expressions over Boolean variables
+  class LinExprBool : public IntTest {
+  public:
+    /// Create and register test
+    LinExprBool(void) : IntTest("MiniModel::Lin::Expr::Bool",4,-2,2,false) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      for (int i=x.size()-1; i--; )
+        if ((x[i] < 0) || (x[i] > 1))
+          return false;
+      return -2*x[0]+3*x[1]-x[2] == x[3];
+    }
     /// Post constraint on \a x
-    Gecode::post(home, tt(eqv(-1==x[0],b)));
-  }
-};
-MmLinEqG _mmlineqg;
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      BoolVarArgs y(x.size()-1);
+      for (int i=x.size()-1; i--; )
+        y[i] = channel(home,x[i]);
+      IntVar z = Gecode::post(home, -2*y[0] + 3*y[1] - y[2]);
+      rel(home,z,Gecode::IRT_EQ,x[3]);
+    }
+  };
 
-class MmLinEqBool : public IntTest {
-public:
-  /// Create and register test
-  MmLinEqBool(void)
-    : IntTest("MiniModel::Lin::Eq::Bool",3,is,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    for (int i=x.size(); i--; )
-      if ((x[i] < 0) || (x[i] > 1))
-        return false;
-    return (2*x[0]+1) == (x[1]+x[2]-1);
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    Gecode::BoolVarArray y(home,x.size());
-    for (int i=x.size(); i--; )
-      y[i] = channel(home,x[i]);
+  /// Test Boolean expressions
+  class BoolA : public IntTest {
+  public:
+    /// Create and register test
+    BoolA(void) : IntTest("MiniModel::Bool::A",4,0,1) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return ((x[0]==1) && (x[1]==1)) || ((x[2]==1)!=(x[3]==1));
+    }
     /// Post constraint on \a x
-    Gecode::post(home, 2*y[0]+1 == y[1]+y[2]-1);
-  }
-};
-MmLinEqBool _mmlineqbool;
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      BoolVarArgs b(4);
+      for (int i=x.size(); i--; )
+        b[i]=channel(home,x[i]);
+      Gecode::post(home, tt((b[0] && b[1]) || !eqv(b[2],b[3])));
+    }
+  };
 
-class MmLinExprInt : public IntTest {
-public:
-  /// Create and register test
-  MmLinExprInt(void)
-    : IntTest("MiniModel::Lin::Expr::Int",4,is,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    return 2*x[0]+3*x[1]-x[2] == x[3];
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+  /// Test Boolean expressions
+  class BoolB : public IntTest {
+  public:
+    /// Create and register test
+    BoolB(void) : IntTest("MiniModel::Bool::B",4,0,1) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return ((x[0]==1) && (x[1]==1)) && ((x[2]==1) && (x[3]==1));
+    }
     /// Post constraint on \a x
-    IntVar y = Gecode::post(home, 2*x[0] + 3*x[1] - x[2]);
-    Gecode::rel(home,y,Gecode::IRT_EQ,x[3]);
-  }
-};
-MmLinExprInt _mmlinexprint;
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      BoolVarArgs b(4);
+      for (int i=x.size(); i--; )
+        b[i]=channel(home,x[i]);
+      Gecode::post(home, tt((b[0] && b[1]) && (b[2] && b[3])));
+    }
+  };
 
-class MmLinExprBool : public IntTest {
-public:
-  /// Create and register test
-  MmLinExprBool(void)
-    : IntTest("MiniModel::Lin::Expr::Bool",4,is,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    for (int i=x.size()-1; i--; )
-      if ((x[i] < 0) || (x[i] > 1))
-        return false;
-    return -2*x[0]+3*x[1]-x[2] == x[3];
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    Gecode::BoolVarArray y(home,x.size()-1);
-    for (int i=x.size()-1; i--; )
-      y[i] = channel(home,x[i]);
+  /// Test Boolean expressions
+  class BoolC : public IntTest {
+  public:
+    /// Create and register test
+    BoolC(void) : IntTest("MiniModel::Bool::C",4,0,1) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return ((x[0]==1) && (x[1]==1)) && ((x[2]==1) && (x[3]==1));
+    }
     /// Post constraint on \a x
-    IntVar z = Gecode::post(home, -2*y[0] + 3*y[1] - y[2]);
-    Gecode::rel(home,z,Gecode::IRT_EQ,x[3]);
-  }
-};
-MmLinExprBool _mmlinexprbool;
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      BoolVarArgs b(4);
+      for (int i=x.size(); i--; )
+        b[i]=channel(home,x[i]);
+      Gecode::post(home, tt(!!(b[0] && b[1]) && !(!b[2] || !b[3])));
+    }
+  };
 
-static Gecode::IntSet b(0,1);
-
-class MmBoolA : public IntTest {
-public:
-  /// Create and register test
-  MmBoolA(void)
-    : IntTest("MiniModel::Bool::A",4,b,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    for (int i=0; i<x.size(); i++)
-      if ((x[i] <0) || (x[i]>1))
-        return false;
-    return ((x[0]==1) && (x[1]==1)) || ((x[2]==1)!=(x[3]==1));
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    Gecode::BoolVarArgs b(4);
-    for (int i=x.size(); i--; )
-      b[i]=channel(home,x[i]);
+  /// Test Boolean expressions
+  class BoolD : public IntTest {
+  public:
+    /// Create and register test
+    BoolD(void) : IntTest("MiniModel::Bool::D",4,0,1) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return (((x[0]&x[1])==x[2]) && (x[0]==x[3]));
+    }
     /// Post constraint on \a x
-    Gecode::post(home, tt((b[0] && b[1]) || !eqv(b[2],b[3])));
-  }
-};
-MmBoolA _mmboola;
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      BoolVarArgs b(4);
+      for (int i=x.size(); i--; )
+        b[i]=channel(home,x[i]);
+      Gecode::post(home, tt(eqv(b[0] && b[1], b[2]) && eqv(b[0],b[3])));
+    }
+  };
 
-class MmBoolB : public IntTest {
-public:
-  /// Create and register test
-  MmBoolB(void)
-    : IntTest("MiniModel::Bool::B",4,b,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    for (int i=0; i<x.size(); i++)
-      if ((x[i] <0) || (x[i]>1))
-        return false;
-    return ((x[0]==1) && (x[1]==1)) && ((x[2]==1) && (x[3]==1));
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    Gecode::BoolVarArgs b(4);
-    for (int i=x.size(); i--; )
-      b[i]=channel(home,x[i]);
+  /// Test Boolean expressions
+  class BoolE : public IntTest {
+  public:
+    /// Create and register test
+    BoolE(void) : IntTest("MiniModel::Bool::E",4,0,1) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return !(((x[0]==1) && (x[1]==1)) && ((x[2]==1) && (x[3]==1)));
+    }
     /// Post constraint on \a x
-    Gecode::post(home, tt((b[0] && b[1]) && (b[2] && b[3])));
-  }
-};
-MmBoolB _mmboolb;
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      BoolVarArgs b(4);
+      for (int i=x.size(); i--; )
+        b[i]=channel(home,x[i]);
+      Gecode::post(home, ff(b[0] && b[1] && b[2] && b[3]));
+    }
+  };
 
-class MmBoolC : public IntTest {
-public:
-  /// Create and register test
-  MmBoolC(void)
-    : IntTest("MiniModel::Bool::C",4,b,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    for (int i=0; i<x.size(); i++)
-      if ((x[i] <0) || (x[i]>1))
-        return false;
-    return ((x[0]==1) && (x[1]==1)) && ((x[2]==1) && (x[3]==1));
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    Gecode::BoolVarArgs b(4);
-    for (int i=x.size(); i--; )
-      b[i]=channel(home,x[i]);
+  /// Test Boolean expressions
+  class BoolF : public IntTest {
+  public:
+    /// Create and register test
+    BoolF(void) : IntTest("MiniModel::Bool::F",4,0,1) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return ((x[0]==1) || (x[1]==1)) || ((x[2]==1) || (x[3]==1));
+    }
     /// Post constraint on \a x
-    Gecode::post(home, tt(!!(b[0] && b[1]) && !(!b[2] || !b[3])));
-  }
-};
-MmBoolC _mmboolc;
-
-class MmBoolD : public IntTest {
-public:
-  /// Create and register test
-  MmBoolD(void)
-    : IntTest("MiniModel::Bool::D",4,b,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    for (int i=0; i<x.size(); i++)
-      if ((x[i] <0) || (x[i]>1))
-        return false;
-    return (((x[0]&x[1])==x[2]) && (x[0]==x[3]));
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    Gecode::BoolVarArgs b(4);
-    for (int i=x.size(); i--; )
-      b[i]=channel(home,x[i]);
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      BoolVarArgs b(4);
+      for (int i=x.size(); i--; )
+        b[i]=channel(home,x[i]);
+      Gecode::post(home, tt(b[0] || b[1] || b[2] || b[3]));
+    }
+  };
+  
+  /// Test for multiplication constraint
+  class Mult : public IntTest {
+  public:
+    /// Create and register test
+    Mult(const std::string& s, const Gecode::IntSet& d)
+      : IntTest("MiniModel::Mult::"+s,3,d) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      double d0 = static_cast<double>(x[0]);
+      double d1 = static_cast<double>(x[1]);
+      double d2 = static_cast<double>(x[2]);
+      return d0*d1 == d2;
+    }
     /// Post constraint on \a x
-    Gecode::post(home, tt(eqv(b[0] && b[1], b[2]) && eqv(b[0],b[3])));
-  }
-};
-MmBoolD _mmboold;
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      rel(home, mult(home, x[0], x[1]), IRT_EQ, x[2], ICL_DOM);
+    }
+  };
 
-class MmBoolE : public IntTest {
-public:
-  /// Create and register test
-  MmBoolE(void)
-    : IntTest("MiniModel::Bool::E",4,b,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    for (int i=0; i<x.size(); i++)
-      if ((x[i] <0) || (x[i]>1))
-        return false;
-    return !(((x[0]==1) && (x[1]==1)) && ((x[2]==1) && (x[3]==1)));
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    Gecode::BoolVarArgs b(4);
-    for (int i=x.size(); i--; )
-      b[i]=channel(home,x[i]);
+  /// Test for squaring constraint
+  class Square : public IntTest {
+  public:
+    /// Create and register test
+    Square(const std::string& s, const Gecode::IntSet& d)
+      : IntTest("MiniModel::Square::"+s,2,d) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      double d0 = static_cast<double>(x[0]);
+      double d1 = static_cast<double>(x[1]);
+      return d0*d0 == d1;
+    }
     /// Post constraint on \a x
-    Gecode::post(home, ff(b[0] && b[1] && b[2] && b[3]));
-  }
-};
-MmBoolE _mmboole;
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      rel(home, mult(home, x[0], x[0]), IRT_EQ, x[1], ICL_DOM);
+    }
+  };
 
-class MmBoolF : public IntTest {
-public:
-  /// Create and register test
-  MmBoolF(void)
-    : IntTest("MiniModel::Bool::F",4,b,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    for (int i=0; i<x.size(); i++)
-      if ((x[i] <0) || (x[i]>1))
-        return false;
-    return ((x[0]==1) || (x[1]==1)) || ((x[2]==1) || (x[3]==1));
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    Gecode::BoolVarArgs b(4);
-    for (int i=x.size(); i--; )
-      b[i]=channel(home,x[i]);
+  /// Test for absolute value constraint
+  class Abs : public IntTest {
+  public:
+    /// Create and register test
+    Abs(const std::string& s, const Gecode::IntSet& d, Gecode::IntConLevel icl)
+      : IntTest("MiniModel::Abs::"+str(icl)+"::"+s,
+                2,d,false,icl) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      double d0 = static_cast<double>(x[0]);
+      double d1 = static_cast<double>(x[1]);
+      return (d0<0 ? -d0 : d0) == d1;
+    }
     /// Post constraint on \a x
-    Gecode::post(home, tt(b[0] || b[1] || b[2] || b[3]));
-  }
-};
-MmBoolF _mmboolf;
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      rel(home, abs(home, x[0], icl), IRT_EQ, x[1], ICL_DOM);
+    }
+  };
 
+  /// Test for binary minimum constraint  
+  class Min : public IntTest {
+  public:
+    /// Create and register test
+    Min(const std::string& s, const Gecode::IntSet& d)
+      : IntTest("MiniModel::Min::Bin::"+s,3,d) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return std::min(x[0],x[1]) == x[2];
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      rel(home, min(home, x[0], x[1]), IRT_EQ, x[2], ICL_DOM);
+    }
+  };
 
-namespace {
-  const int s1r[7] = {
-    Limits::Int::int_min, Limits::Int::int_min+1,
+  /// Test for binary maximum constraint  
+  class Max : public IntTest {
+  public:
+    /// Create and register test
+    Max(const std::string& s, const Gecode::IntSet& d) 
+      : IntTest("MiniModel::Max::Bin::"+s,3,d) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return std::max(x[0],x[1]) == x[2];
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      rel(home, max(home, x[0], x[1]), IRT_EQ, x[2], ICL_DOM);
+    }
+  };
+
+  /// Test for n-ary minimmum constraint  
+  class MinNary : public IntTest {
+  public:
+    /// Create and register test
+    MinNary(void) : IntTest("MiniModel::Min::Nary",4,-4,4) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return std::min(std::min(x[0],x[1]), x[2]) == x[3];
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      IntVarArgs m(3);
+      m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
+      rel(home, min(home, m), IRT_EQ, x[3], ICL_DOM);
+    }
+  };
+
+  /// Test for n-ary maximum constraint  
+  class MaxNary : public IntTest {
+  public:
+    /// Create and register test
+    MaxNary(void) : IntTest("MiniModel::Max::Nary",4,-4,4) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      return std::max(std::max(x[0],x[1]), x[2]) == x[3];
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      IntVarArgs m(3);
+      m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
+      rel(home, max(home, m), IRT_EQ, x[3], ICL_DOM);
+    }
+  };
+
+  LinEqA lineqa;
+  LinEqB lineqb;
+  LinEqC lineqc;
+  LinEqD lineqd;
+  LinEqE lineqe;
+
+  LinGr lingr;
+  LinLe linle;
+
+  LinEqBool lineqbool;
+  LinExprInt linexprint;
+  LinExprBool linexprbool;
+
+  BoolA boola;
+  BoolB boolb;
+  BoolC boolc;
+  BoolD boold;
+  BoolE boole;
+  BoolF boolf;
+
+  const int v1[7] = {
+    Gecode::Limits::Int::int_min, Gecode::Limits::Int::int_min+1,
     -1,0,1,
-    Limits::Int::int_max-1, Limits::Int::int_max
+    Gecode::Limits::Int::int_max-1, Gecode::Limits::Int::int_max
   };
-  const int s2r[9] = {
-    static_cast<int>(-sqrt(static_cast<double>(-Limits::Int::int_min))),
+  const int v2[9] = {
+    static_cast<int>(-sqrt(static_cast<double>
+                           (-Gecode::Limits::Int::int_min))),
     -4,-2,-1,0,1,2,4,
-    static_cast<int>(sqrt(static_cast<double>(Limits::Int::int_max)))
+    static_cast<int>(sqrt(static_cast<double>
+                          (Gecode::Limits::Int::int_max)))
   };
-  Gecode::IntSet s1(s1r,7);
-  Gecode::IntSet s2(s2r,9);
-  Gecode::IntSet s3(-8,8);
-  Gecode::IntSet s4(-3,3);
-}
+  
+  Gecode::IntSet d1(v1,7);
+  Gecode::IntSet d2(v2,9);
+  Gecode::IntSet d3(-8,8);
 
-class Mult : public IntTest {
-public:
-  /// Create and register test
-  Mult(const char* t, const Gecode::IntSet& is)
-    : IntTest(t,3,is) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    double d0 = static_cast<double>(x[0]);
-    double d1 = static_cast<double>(x[1]);
-    double d2 = static_cast<double>(x[2]);
-    return d0*d1 == d2;
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntVar y = mult(home, x[0], x[1]);
-    rel(home, y, Gecode::IRT_EQ, x[2], Gecode::ICL_DOM);
-  }
-};
-namespace {
-  Mult _mmmultmax("MiniModel::Mult::A",s1);
-  Mult _mmmultmed("MiniModel::Mult::B",s2);
-  Mult _mmmultmin("MiniModel::Mult::C",s3);
-}
+  Mult mult_max("A",d1);
+  Mult mult_med("B",d2);
+  Mult mult_min("C",d3);
 
-class Square : public IntTest {
-public:
-  /// Create and register test
-  Square(const char* t, const Gecode::IntSet& is)
-    : IntTest(t,2,is) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    double d0 = static_cast<double>(x[0]);
-    double d1 = static_cast<double>(x[1]);
-    return d0*d0 == d1;
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntVar y = sqr(home, x[0]);
-    rel(home, y, Gecode::IRT_EQ, x[1], Gecode::ICL_DOM);
-  }
-};
-namespace {
-  Square _mmsquaremax("MiniModel::Square::A",s1);
-  Square _mmsquaremed("MiniModel::Square::B",s2);
-  Square _mmsquaremin("MiniModel::Square::C",s3);
-}
+  Square square_max("A",d1);
+  Square square_med("B",d2);
+  Square square_min("C",d3);
 
-class Abs : public IntTest {
-public:
-  /// Create and register test
-  Abs(const char* t, Gecode::IntConLevel icl, const Gecode::IntSet& is)
-    : IntTest(t,2,is,false,icl) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    double d0 = static_cast<double>(x[0]);
-    double d1 = static_cast<double>(x[1]);
-    return (d0<0 ? -d0 : d0) == d1;
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntVar y = abs(home, x[0], icl);
-    rel(home, y, Gecode::IRT_EQ, x[1], Gecode::ICL_DOM);
-  }
-};
-namespace {
-  Abs _mmabsbndmax("MiniModel::Abs::Bnd::A",Gecode::ICL_BND,s1);
-  Abs _mmabsbndmed("MiniModel::Abs::Bnd::B",Gecode::ICL_BND,s2);
-  Abs _mmabsbndmin("MiniModel::Abs::Bnd::C",Gecode::ICL_BND,s3);
-  Abs _mmabsdommax("MiniModel::Abs::Dom::A",Gecode::ICL_DOM,s1);
-  Abs _mmabsdommed("MiniModel::Abs::Dom::B",Gecode::ICL_DOM,s2);
-  Abs _mmabsdommin("MiniModel::Abs::Dom::C",Gecode::ICL_DOM,s3);
-}
+  Abs abs_bnd_max("A",d1,Gecode::ICL_BND);
+  Abs abs_bnd_med("B",d2,Gecode::ICL_BND);
+  Abs abs_bnd_min("C",d3,Gecode::ICL_BND);
+  Abs abs_dom_max("A",d1,Gecode::ICL_DOM);
+  Abs abs_dom_med("B",d2,Gecode::ICL_DOM);
+  Abs abs_dom_min("C",d3,Gecode::ICL_DOM);
 
-class Min : public IntTest {
-public:
-  /// Create and register test
-  Min(const char* t, const Gecode::IntSet& is)
-    : IntTest(t,3,is) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    return std::min(x[0],x[1]) == x[2];
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntVar y = min(home, x[0], x[1]);
-    rel(home, y, Gecode::IRT_EQ, x[2], Gecode::ICL_DOM);
-  }
-};
-namespace {
-  Min _mmminmax("MiniModel::Min::Bin::A",s1);
-  Min _mmminmed("MiniModel::Min::Bin::B",s2);
-  Min _mmminmin("MiniModel::Min::Bin::C",s3);
-}
+  Min min_max("A",d1);
+  Min min_med("B",d2);
+  Min min_min("C",d3);
 
-class Max : public IntTest {
-public:
-  /// Create and register test
-  Max(const char* t, const Gecode::IntSet& is)
-    : IntTest(t,3,is) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    return std::max(x[0],x[1]) == x[2];
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntVar y = max(home, x[0], x[1]);
-    rel(home, y, Gecode::IRT_EQ, x[2], Gecode::ICL_DOM);
-  }
-};
-namespace {
-  Max _mmmaxmax("MiniModel::Max::Bin::A",s1);
-  Max _mmmaxmed("MiniModel::Max::Bin::B",s2);
-  Max _mmmaxmin("MiniModel::Max::Bin::C",s3);
-}
+  Max max_max("A",d1);
+  Max max_med("B",d2);
+  Max max_min("C",d3);
 
-class MinNary : public IntTest {
-public:
-  /// Create and register test
-  MinNary(const char* t, const Gecode::IntSet& is)
-    : IntTest(t,4,is) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    return std::min(std::min(x[0],x[1]),
-                    x[2]) == x[3];
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntVarArgs m(3);
-    m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-    IntVar y = min(home, m);
-    rel(home, y, Gecode::IRT_EQ, x[3], Gecode::ICL_DOM);
-  }
-};
-namespace {
-  MinNary _mmminnary("MiniModel::Min::Nary",s4);
-}
+  MinNary min_nary;
+  MaxNary max_nary;
 
-class MaxNary : public IntTest {
-public:
-  /// Create and register test
-  MaxNary(const char* t, const Gecode::IntSet& is)
-    : IntTest(t,4,is) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    return std::max(std::max(x[0],x[1]),
-                    x[2]) == x[3];
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntVarArgs m(3);
-    m[0]=x[0]; m[1]=x[1]; m[2]=x[2];
-    IntVar y = max(home, m);
-    rel(home, y, Gecode::IRT_EQ, x[3], Gecode::ICL_DOM);
-  }
-};
-namespace {
-  MaxNary _mmmaxnary("MiniModel::Max::Nary",s4);
-}
+  //@}
 
-
+}}}
 
 // STATISTICS: test-int
-

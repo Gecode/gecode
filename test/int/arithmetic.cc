@@ -60,7 +60,7 @@ namespace Test { namespace Int { namespace Arithmetic {
       double d2 = static_cast<double>(x[2]);
       return d0*d1 == d2;
     }
-    /// Post on \a x
+    /// Post constraint on \a x
     virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
       Gecode::mult(home, x[0], x[1], x[2]);
     }
@@ -171,8 +171,7 @@ namespace Test { namespace Int { namespace Arithmetic {
   class MinNary : public IntTest {
   public:
     /// Create and register test
-    MinNary(void)
-      : IntTest("Arithmetic::Min::Nary",4,-4,4) {}
+    MinNary(void) : IntTest("Arithmetic::Min::Nary",4,-4,4) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return std::min(std::min(x[0],x[1]), x[2]) == x[3];
@@ -189,8 +188,7 @@ namespace Test { namespace Int { namespace Arithmetic {
   class MinNaryShared : public IntTest {
   public:
     /// Create and register test
-    MinNaryShared(void)
-      : IntTest("Arithmetic::Min::Nary::Shared",3,-4,4) {}
+    MinNaryShared(void) : IntTest("Arithmetic::Min::Nary::Shared",3,-4,4) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return std::min(std::min(x[0],x[1]), x[2]) == x[1];
@@ -207,8 +205,7 @@ namespace Test { namespace Int { namespace Arithmetic {
   class MaxNary : public IntTest {
   public:
     /// Create and register test
-    MaxNary(void)
-      : IntTest("Arithmetic::Max::Nary",4,-4,4) {}
+    MaxNary(void) : IntTest("Arithmetic::Max::Nary",4,-4,4) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return std::max(std::max(x[0],x[1]), x[2]) == x[3];
@@ -225,8 +222,7 @@ namespace Test { namespace Int { namespace Arithmetic {
   class MaxNaryShared : public IntTest {
   public:
     /// Create and register test
-    MaxNaryShared(void)
-      : IntTest("Arithmetic::Max::Nary::Shared",3,-4,4) {}
+    MaxNaryShared(void) : IntTest("Arithmetic::Max::Nary::Shared",3,-4,4) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return std::max(std::max(x[0],x[1]), x[2]) == x[1];
