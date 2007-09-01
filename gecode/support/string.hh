@@ -84,15 +84,15 @@ namespace Gecode { namespace Support {
       /// Destructor
       GECODE_SUPPORT_EXPORT ~SO(void);
       /// Compare with \a other for equality
-      bool eq(const SO* other) const;
+      GECODE_SUPPORT_EXPORT bool eq(const SO* other) const;
       /// Return size of the string
       unsigned int size(void) const;
       /// Return a copy
-      SO* copy(void) const;
+      GECODE_SUPPORT_EXPORT SO* copy(void) const;
       /// Hash value according to modulo \a M
       int hash(int m) const;
       /// Output to \a os
-      std::ostream& print(std::ostream& os) const;
+      GECODE_SUPPORT_EXPORT std::ostream& print(std::ostream& os) const;
     };
 
     /// The string object
@@ -117,11 +117,11 @@ namespace Gecode { namespace Support {
     /// Concatenate with \a s0, making \a s0 unusable!
     String& operator+(const String& s0);
     /// Make a copy
-    String copy(void) const;
+    GECODE_SUPPORT_EXPORT String copy(void) const;
     /// Hash value according to modulo \a M
     int hash(int m) const;
     /// Print this string to \a os
-    std::ostream& print(std::ostream& os) const;    
+    GECODE_SUPPORT_EXPORT std::ostream& print(std::ostream& os) const;    
   };
 
   forceinline
@@ -143,24 +143,7 @@ namespace Gecode { namespace Support {
     tail = so0->tail;
   }
 
-  forceinline String::SO*
-  String::SO::copy(void) const {
-    SO* head = new SO(s, own);
-    head->subscribe();
-    SO* last = head;
-    SO* cur = next;
-    while (cur != NULL) {
-      last->next = new SO(cur->s, cur->own);
-      last->next->subscribe();
-      last = last->next;
-      cur = cur->next;
-    }
-    if (last != head)
-      head->tail = last;
-    return head;
-  }
-
-  inline int
+  forceinline int
   String::SO::hash(int m) const {
     int h = 0;
     const SO* cur = this;
@@ -188,55 +171,16 @@ namespace Gecode { namespace Support {
     return len;
   }
 
-  inline bool
-  String::SO::eq(const SO* other) const {
-    if (this == other)
-      return true;
-    const SO* c = this;
-    const SO* oc = other;
-    int cpos = 0;
-    int opos = 0;
-    
-    while(true) {
-      if (c->s[cpos] == 0) {
-        c = c->next; cpos = 0;
-        if (c == NULL)
-          return oc->s[opos] == 0 && oc->next == 0;
-      }
-      if (oc->s[opos] == 0) {
-        oc = oc->next; opos = 0;
-        if (oc == NULL)
-          return false;
-      }
-      if (c->s[cpos] != oc->s[opos])
-        return false;
-      cpos++;
-      opos++;
-    }
-    assert(false);
-    return false;
-  }
-  
-  forceinline std::ostream&
-  String::SO::print(std::ostream& os) const {
-    const SO* cur = this;
-    while (cur != NULL) {
-      os << cur->s;
-      cur = cur->next;
-    }
-    return os;
-  }
-
   forceinline
   String::String(void) : so(NULL) {}
 
-  inline
+  forceinline
   String::String(const char* s0, bool copy) {
     so = new SO(s0, copy);
     so->subscribe();
   }
 
-  inline
+  forceinline
   String::~String(void) {
     if (so && so->cancel())
       delete so;
@@ -266,7 +210,7 @@ namespace Gecode { namespace Support {
     return so==NULL;
   }
   
-  inline String&
+  forceinline String&
   String::operator+(const String& s0) {
     if (so == NULL) {
       so = s0.so;
@@ -278,7 +222,7 @@ namespace Gecode { namespace Support {
     return *this;
   }
   
-  inline String
+  forceinline String
   String::copy(void) const {
     String ret;
     if (so)
@@ -286,7 +230,7 @@ namespace Gecode { namespace Support {
     return ret;
   }
 
-  inline int
+  forceinline int
   String::hash(int m) const {
     if (so == NULL)
       return 0;

@@ -2236,7 +2236,7 @@ namespace Gecode {
   Variable<VTI,PC,MED>::notify(Space* home, ModEvent new_me, Delta* d) {
     if (modified()) {
       MED med;
-      u.free_me ^= med(new_me,u.free_me & 15);
+      u.free_me ^= med(new_me,static_cast<ModEvent>(u.free_me & 15));
     } else {
       _next = static_cast<Variable<VTI,PC,MED>*>(home->vars[VTI].entry);
       home->vars[VTI].entry = this;

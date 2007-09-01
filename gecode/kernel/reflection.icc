@@ -363,7 +363,7 @@ namespace Gecode { namespace Reflection {
     typedef void (*varConstrainer) (Space*, VarBase*, VarSpec&);
 
     /// Create a new variable in \a home from \a spec and return it
-    GECODE_KERNEL_EXPORT
+    GECODE_KERNEL_EXPORT    
     VarBase* createVar(Space* home, VarSpec& spec);
 
     /// Constrain \a v to \a spec

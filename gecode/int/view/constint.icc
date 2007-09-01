@@ -52,7 +52,7 @@ namespace Gecode {
       x=n;
     }
     forceinline
-    ConstIntView::ConstIntView(Space* home, const Reflection::VarMap& vars,
+    ConstIntView::ConstIntView(Space*, const Reflection::VarMap&,
                                Reflection::Arg* arg) : x(arg->toInt()) {}
 
 
@@ -295,7 +295,7 @@ namespace Gecode {
      *
      */
     forceinline Reflection::Arg*
-    ConstIntView::spec(Space* home, Reflection::VarMap& m) {
+    ConstIntView::spec(Space*, Reflection::VarMap&) {
       return new Reflection::IntArg(x);
     }
     forceinline Support::String

@@ -52,7 +52,8 @@ namespace Gecode { namespace Support {
   class Map {
   private:
     /// Key-value pairs stored in the hash table
-    struct Pair {
+    class Pair {
+    public:
       Key k; Value v;
       Pair(const Key& k0, const Value& v0) : k(k0), v(v0) {}
     };
@@ -68,12 +69,12 @@ namespace Gecode { namespace Support {
   public:
     /// Constructor
     Map(void);
-    /// Destructor
-    ~Map(void);
     /// Insert \a v at key \a k
     void put(const Key& k, Value v);
     /// Check if entry with key \a k exists and return it in \a v
     bool get(const Key& k, Value& v) const;
+    /// Destructor
+    ~Map(void);
   };
   
   /// Hash table for strings
@@ -84,15 +85,18 @@ namespace Gecode { namespace Support {
   /// Pointer wrapper class to make pointers hashable
   template <class P>
   class Pointer {
-  public:
+  protected:
     /// The actual pointer
     P* p;
+  public:
     /// Constructor
     Pointer(P* p0) : p(p0) {}
     /// Cast
     P* operator()(void) { return p; }
     /// Comparison
-    bool operator==(const Pointer<P> p0) const { return p == p0.p; }
+    bool operator==(const Pointer<P>& p0) const { 
+      return p == p0.p; 
+    }
     /// Hash function
     int hash(int m) const {
       return reinterpret_cast<ptrdiff_t>(p) % m;
@@ -120,8 +124,7 @@ namespace Gecode { namespace Support {
   }
   
   template <class Key, class Value>
-  inline
-  Map<Key,Value>::Map() : n(0) {
+  Map<Key,Value>::Map(void) : n(0) {
     a = static_cast<Pair**>(::malloc(sizeof(Pair*)*modulo()));
     for (int i=modulo(); i--; )
       a[i] = NULL;
@@ -160,7 +163,7 @@ namespace Gecode { namespace Support {
   }
   
   template <class Key, class Value>
-  bool
+  inline bool
   Map<Key,Value>::get(const Key& k, Value& v) const {
     for (int i=k.hash(modulo()); i<modulo() && a[i] != NULL; i++) {
       if (a[i]->k == k) {
@@ -171,7 +174,6 @@ namespace Gecode { namespace Support {
   }
   
   template <class Key, class Value>
-  inline
   Map<Key,Value>::~Map(void) {
     for (int i=modulo(); i--; )
       delete a[i];

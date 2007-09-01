@@ -53,6 +53,62 @@ namespace Gecode { namespace Support {
     return d;
   }
 
+  bool
+  String::SO::eq(const SO* other) const {
+    if (this == other)
+      return true;
+    const SO* c = this;
+    const SO* oc = other;
+    int cpos = 0;
+    int opos = 0;
+    
+    while (true) {
+      if (c->s[cpos] == 0) {
+        c = c->next; cpos = 0;
+        if (c == NULL)
+          return oc->s[opos] == 0 && oc->next == 0;
+      }
+      if (oc->s[opos] == 0) {
+        oc = oc->next; opos = 0;
+        if (oc == NULL)
+          return false;
+      }
+      if (c->s[cpos] != oc->s[opos])
+        return false;
+      cpos++;
+      opos++;
+    }
+    assert(false);
+    return false;
+  }
+  
+  String::SO*
+  String::SO::copy(void) const {
+    SO* head = new SO(s, own);
+    head->subscribe();
+    SO* last = head;
+    SO* cur = next;
+    while (cur != NULL) {
+      last->next = new SO(cur->s, cur->own);
+      last->next->subscribe();
+      last = last->next;
+      cur = cur->next;
+    }
+    if (last != head)
+      head->tail = last;
+    return head;
+  }
+
+  std::ostream&
+  String::SO::print(std::ostream& os) const {
+    const SO* cur = this;
+    while (cur != NULL) {
+      os << cur->s;
+      cur = cur->next;
+    }
+    return os;
+  }
+
   String::SO::~SO(void) {
     if (own)
       ::free(const_cast<char*>(s));
