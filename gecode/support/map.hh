@@ -62,6 +62,8 @@ namespace Gecode { namespace Support {
     Pair** a;
     /// The size of the table (approximately \f$2^n\f$)
     int n;
+    /// How many table entries are actually used
+    int usage;
     /// Compute the actual size from \a n
     int modulo(void) const;
     /// Resize and rehash the table
@@ -116,7 +118,7 @@ namespace Gecode { namespace Support {
   template <class Key, class Value>
   forceinline int
   Map<Key,Value>::modulo(void) const {
-    const int primes[] = { 1021, 2039, 4093, 8191,
+    const int primes[] = { 17, 1021, 2039, 4093, 8191,
                            16381, 32749, 65521, 131071,
                            262139, 524287, 1048573, 2097143,
                            4194301, 8388593 };
@@ -124,7 +126,7 @@ namespace Gecode { namespace Support {
   }
   
   template <class Key, class Value>
-  Map<Key,Value>::Map(void) : n(0) {
+  Map<Key,Value>::Map(void) : n(0), usage(0) {
     a = static_cast<Pair**>(::malloc(sizeof(Pair*)*modulo()));
     for (int i=modulo(); i--; )
       a[i] = NULL;
@@ -150,24 +152,36 @@ namespace Gecode { namespace Support {
   template <class Key, class Value>
   void
   Map<Key,Value>::put(const Key& k, Value v) {
+    // If more than 75% are used, make some room
+    if (usage * 3 >= modulo() * 2)
+      rehash();
+      
     int i = k.hash(modulo());
     for (; i < modulo() && a[i] != NULL; i++) {}
     if (i >= modulo()) {
-      rehash();
-      i = k.hash(modulo());
-      for (; a[i] != NULL; i++) {}
+      for (i=0; a[i] != NULL; i++) {}
+      assert(i<k.hash(modulo()));
     }
     assert(i < modulo());
     assert(a[i] == NULL);
     a[i] = new Pair(k,v);
+    usage++;
   }
   
   template <class Key, class Value>
   inline bool
   Map<Key,Value>::get(const Key& k, Value& v) const {
-    for (int i=k.hash(modulo()); i<modulo() && a[i] != NULL; i++) {
+    int i=k.hash(modulo());
+    for (; i<modulo() && a[i] != NULL; i++) {
       if (a[i]->k == k) {
         v = a[i]->v; return true;
+      }
+    }
+    if (i >= modulo()) {
+      for (i=0; a[i] != NULL; i++) {
+        if (a[i]->k == k) {
+          v = a[i]->v; return true;
+        }        
       }
     }
     return false;
