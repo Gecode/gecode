@@ -39,8 +39,8 @@
  *
  */
 
-#ifndef __GECODE_SUPPORT_STRING_HH__
-#define __GECODE_SUPPORT_STRING_HH__
+#ifndef __GECODE_SUPPORT_SYMBOL_HH__
+#define __GECODE_SUPPORT_SYMBOL_HH__
 
 #include "gecode/support.hh"
 
@@ -48,18 +48,18 @@
 
 namespace Gecode { namespace Support {
   
-  /** \brief Immutable strings
+  /** \brief Immutable Symbols
     *
     */
-  class String {
+  class Symbol {
   private:
     
-    /** \brief Reference-counted string objects
+    /** \brief Reference-counted Symbol objects
       *
       */
     class SO {
     public:
-      /// Duplicate string \a s
+      /// Duplicate Symbol \a s
       GECODE_SUPPORT_EXPORT static char* strdup(const char* s);
       /// The reference count
       unsigned int use_cnt;
@@ -68,16 +68,16 @@ namespace Gecode { namespace Support {
       /// Reference counting: subscribe to an SO
       void subscribe(void);
 
-      /// The actual string
+      /// The actual Symbol
       const char* s;
-      /// Whether the SO owns the string
+      /// Whether the SO owns the Symbol
       bool own;
       /// Next SO in the list
       SO* next;
       /// Tail of the list
       SO* tail;
 
-      /// Construct from a given string \a s0, which is copied if \a copy is true.
+      /// Construct from a given Symbol \a s0, which is copied if \a copy is true.
       SO(const char* s0, bool copy);
       /// Append \a s0
       void append(SO* s0);
@@ -85,7 +85,7 @@ namespace Gecode { namespace Support {
       GECODE_SUPPORT_EXPORT ~SO(void);
       /// Compare with \a other for equality
       GECODE_SUPPORT_EXPORT bool eq(const SO* other) const;
-      /// Return size of the string
+      /// Return size of the Symbol
       unsigned int size(void) const;
       /// Return a copy
       GECODE_SUPPORT_EXPORT SO* copy(void) const;
@@ -95,48 +95,48 @@ namespace Gecode { namespace Support {
       GECODE_SUPPORT_EXPORT std::ostream& print(std::ostream& os) const;
     };
 
-    /// The string object
+    /// The Symbol object
     SO* so;
   public:
-    /// Construct empty string
-    String(void);
-    /// Construct string from \a s0, make a copy if \a copy is true.
-    String(const char* s0, bool copy = false);
+    /// Construct empty Symbol
+    Symbol(void);
+    /// Construct Symbol from \a s0, make a copy if \a copy is true.
+    Symbol(const char* s0, bool copy = false);
     /// Destructor
-    ~String(void);
+    ~Symbol(void);
     /// Copy constructor
-    String(const String& s0);
+    Symbol(const Symbol& s0);
     /// Assignment operator
-    const String& operator=(const String& s0);
+    const Symbol& operator=(const Symbol& s0);
     
-    /// Test if this string is equal to \a s0
-    bool operator==(const String& s0) const;
-    /// Return if string is empty
+    /// Test if this Symbol is equal to \a s0
+    bool operator==(const Symbol& s0) const;
+    /// Return if Symbol is empty
     bool empty(void) const;
     
     /// Concatenate with \a s0, making \a s0 unusable!
-    String& operator+(const String& s0);
+    Symbol& operator+(const Symbol& s0);
     /// Make a copy
-    GECODE_SUPPORT_EXPORT String copy(void) const;
+    GECODE_SUPPORT_EXPORT Symbol copy(void) const;
     /// Hash value according to modulo \a M
     int hash(int m) const;
-    /// Print this string to \a os
+    /// Print this Symbol to \a os
     GECODE_SUPPORT_EXPORT std::ostream& print(std::ostream& os) const;    
   };
 
   forceinline
-  String::SO::SO(const char* s0, bool copy)
+  Symbol::SO::SO(const char* s0, bool copy)
     : use_cnt(0),
       s(copy ? strdup(s0) : s0), own(copy), next(NULL), tail(this) {}
 
   forceinline bool
-  String::SO::cancel(void) { return --use_cnt == 0; }
+  Symbol::SO::cancel(void) { return --use_cnt == 0; }
 
   forceinline void
-  String::SO::subscribe(void) { ++use_cnt; }
+  Symbol::SO::subscribe(void) { ++use_cnt; }
 
   forceinline void
-  String::SO::append(SO* so0) {
+  Symbol::SO::append(SO* so0) {
     assert(tail->next == NULL);
     tail->next = so0;
     so0->subscribe();
@@ -144,7 +144,7 @@ namespace Gecode { namespace Support {
   }
 
   forceinline int
-  String::SO::hash(int m) const {
+  Symbol::SO::hash(int m) const {
     int h = 0;
     const SO* cur = this;
     int pos = 0;
@@ -161,7 +161,7 @@ namespace Gecode { namespace Support {
   }
 
   inline unsigned int
-  String::SO::size(void) const {
+  Symbol::SO::size(void) const {
     unsigned int len = 0;
     const SO* cur = this;
     while (cur != NULL) {
@@ -172,29 +172,29 @@ namespace Gecode { namespace Support {
   }
 
   forceinline
-  String::String(void) : so(NULL) {}
+  Symbol::Symbol(void) : so(NULL) {}
 
   forceinline
-  String::String(const char* s0, bool copy) {
+  Symbol::Symbol(const char* s0, bool copy) {
     so = new SO(s0, copy);
     so->subscribe();
   }
 
   forceinline
-  String::~String(void) {
+  Symbol::~Symbol(void) {
     if (so && so->cancel())
       delete so;
   }
 
   forceinline
-  String::String(const String& s0) {
+  Symbol::Symbol(const Symbol& s0) {
     so = s0.so;
     if (so)
       so->subscribe();
   }
 
-  forceinline const String&
-  String::operator=(const String& s0) {
+  forceinline const Symbol&
+  Symbol::operator=(const Symbol& s0) {
     if (this != &s0) {
       if (so && so->cancel())
         delete so;
@@ -206,12 +206,12 @@ namespace Gecode { namespace Support {
   }
   
   forceinline bool
-  String::empty(void) const {
+  Symbol::empty(void) const {
     return so==NULL;
   }
   
-  forceinline String&
-  String::operator+(const String& s0) {
+  forceinline Symbol&
+  Symbol::operator+(const Symbol& s0) {
     if (so == NULL) {
       so = s0.so;
       if (so)
@@ -222,30 +222,30 @@ namespace Gecode { namespace Support {
     return *this;
   }
   
-  forceinline String
-  String::copy(void) const {
-    String ret;
+  forceinline Symbol
+  Symbol::copy(void) const {
+    Symbol ret;
     if (so)
       ret.so = so->copy();
     return ret;
   }
 
   forceinline int
-  String::hash(int m) const {
+  Symbol::hash(int m) const {
     if (so == NULL)
       return 0;
     return so->hash(m);
   }
 
   forceinline bool
-  String::operator==(const String& s0) const {
+  Symbol::operator==(const Symbol& s0) const {
     if (so == NULL)
       return (s0.so == NULL);
     return so->eq(s0.so);
   }
   
   forceinline std::ostream&
-  String::print(std::ostream& os) const {
+  Symbol::print(std::ostream& os) const {
     if (so) return so->print(os);
     return os;
   }
@@ -254,7 +254,7 @@ namespace Gecode { namespace Support {
 
 forceinline
 std::ostream&
-operator<<(std::ostream& os, const Gecode::Support::String& x) {
+operator<<(std::ostream& os, const Gecode::Support::Symbol& x) {
   return x.print(os);
 }
 

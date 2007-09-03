@@ -75,9 +75,9 @@ namespace Gecode { namespace Set { namespace Distinct {
     return new (home) Distinct(home,share,*this);
   }
 
-  Support::String
+  Support::Symbol
   Distinct::name(void) {
-    return Support::String("Set::Distinct::Distinct");
+    return Support::Symbol("Set::Distinct::Distinct");
   }
 
   Reflection::ActorSpec&

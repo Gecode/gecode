@@ -150,8 +150,8 @@ namespace Gecode {
         return NULL;
       }
       /// Type of this view
-      static Support::String type(void) {
-        return Support::String("Int::Linear::NoView");
+      static Support::Symbol type(void) {
+        return Support::Symbol("Int::Linear::NoView");
       }
       //@}
 

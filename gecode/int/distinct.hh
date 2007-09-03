@@ -81,7 +81,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
     /// Post propagator for specification
     static void post(Space* home, const Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -165,7 +165,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
   };
 
   /**
@@ -284,7 +284,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
     /// Post propagator for views \a x
     static  ExecStatus post(Space* home, ViewArray<View>& x);
     /// Post propagator for specification
@@ -317,7 +317,7 @@ namespace Gecode { namespace Int { namespace Distinct {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
     /// Post propagator for views \a x
     static  ExecStatus post(Space* home, View x0, View x1, View x2);
     /// Post propagator for specification

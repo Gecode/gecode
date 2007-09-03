@@ -50,7 +50,7 @@ namespace Gecode { namespace Int {
       return new Reflection::VarArg(specIndex);
     Reflection::VarSpec* spec =
       new Reflection::VarSpec(
-        Support::String("VTI_BOOL"), new Reflection::IntArg(dom));
+        Support::Symbol("VTI_BOOL"), new Reflection::IntArg(dom));
     return (new Reflection::VarArg(m.put(this, spec)));
   }
 

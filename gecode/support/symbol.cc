@@ -39,12 +39,12 @@
  *
  */
 
-#include "gecode/support/string.hh"
+#include "gecode/support/Symbol.hh"
 
 namespace Gecode { namespace Support {
 
   char*
-  String::SO::strdup(const char* s) {
+  Symbol::SO::strdup(const char* s) {
     unsigned int n = strlen(s);
     //    char* d = static_cast<char*>(Memory::malloc(sizeof(char)*n));
     char* d = static_cast<char*>(::malloc(sizeof(char)*n));
@@ -54,7 +54,7 @@ namespace Gecode { namespace Support {
   }
 
   bool
-  String::SO::eq(const SO* other) const {
+  Symbol::SO::eq(const SO* other) const {
     if (this == other)
       return true;
     const SO* c = this;
@@ -82,8 +82,8 @@ namespace Gecode { namespace Support {
     return false;
   }
   
-  String::SO*
-  String::SO::copy(void) const {
+  Symbol::SO*
+  Symbol::SO::copy(void) const {
     SO* head = new SO(s, own);
     head->subscribe();
     SO* last = head;
@@ -100,7 +100,7 @@ namespace Gecode { namespace Support {
   }
 
   std::ostream&
-  String::SO::print(std::ostream& os) const {
+  Symbol::SO::print(std::ostream& os) const {
     const SO* cur = this;
     while (cur != NULL) {
       os << cur->s;
@@ -109,7 +109,7 @@ namespace Gecode { namespace Support {
     return os;
   }
 
-  String::SO::~SO(void) {
+  Symbol::SO::~SO(void) {
     if (own)
       ::free(const_cast<char*>(s));
     if (next && next->cancel())

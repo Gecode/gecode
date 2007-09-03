@@ -105,7 +105,7 @@ namespace Gecode {
     virtual size_t dispose(Space* home);
     /// Return specification given a variable map \a m and a \a name
     Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
-                                const Support::String& name);
+                                const Support::Symbol& name);
   };
 
   /**
@@ -136,7 +136,7 @@ namespace Gecode {
     virtual size_t dispose(Space* home);
     /// Return specification given a variable map \a m and a \a name
     Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
-                                const Support::String& name);
+                                const Support::Symbol& name);
   };
 
   /**
@@ -167,7 +167,7 @@ namespace Gecode {
     virtual size_t dispose(Space* home);
     /// Return specification given a variable map \a m and a \a name
     Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
-                                const Support::String& name);
+                                const Support::Symbol& name);
   };
 
   /**
@@ -198,7 +198,7 @@ namespace Gecode {
     virtual size_t dispose(Space* home);
     /// Return specification given a variable map \a m and a \a name
     Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
-                                const Support::String& name);
+                                const Support::Symbol& name);
   };
 
   /**
@@ -232,7 +232,7 @@ namespace Gecode {
     virtual size_t dispose(Space* home);
     /// Return specification given a variable map \a m and a \a name
     Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
-                                const Support::String& name);
+                                const Support::Symbol& name);
   };
 
   /**
@@ -264,7 +264,7 @@ namespace Gecode {
     virtual size_t dispose(Space* home);
     /// Return specification given a variable map \a m and a \a name
     Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
-                                const Support::String& name);
+                                const Support::Symbol& name);
   };
 
   /**
@@ -298,7 +298,7 @@ namespace Gecode {
     virtual size_t dispose(Space* home);
     /// Return specification given a variable map \a m and a \a name
     Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
-                                const Support::String& name);
+                                const Support::Symbol& name);
   };
 
   /**
@@ -332,7 +332,7 @@ namespace Gecode {
     virtual size_t dispose(Space* home);
     /// Return specification given a variable map \a m and a \a name
     Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
-                                const Support::String& name);
+                                const Support::Symbol& name);
   };
   //@}
 
@@ -406,7 +406,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   Reflection::ActorSpec&
   UnaryPropagator<View,pc>::spec(Space* home, Reflection::VarMap& m,
-                                 const Support::String& name) {
+                                 const Support::Symbol& name) {
     return Propagator::spec(home, m, name) << x0.spec(home, m);
   }
   
@@ -463,7 +463,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   Reflection::ActorSpec&
   BinaryPropagator<View,pc>::spec(Space* home, Reflection::VarMap& m,
-                                  const Support::String& name) {
+                                  const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x0.spec(home, m)
              << x1.spec(home, m);
@@ -526,7 +526,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   Reflection::ActorSpec&
   TernaryPropagator<View,pc>::spec(Space* home, Reflection::VarMap& m,
-                                   const Support::String& name) {
+                                   const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x0.spec(home, m)
              << x1.spec(home, m)
@@ -580,7 +580,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   Reflection::ActorSpec&
   NaryPropagator<View,pc>::spec(Space* home, Reflection::VarMap& m,
-                                const Support::String& name) {
+                                const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x.spec(home, m);
   }
@@ -638,7 +638,7 @@ namespace Gecode {
   template <class View, PropCond pc>
   Reflection::ActorSpec&
   NaryOnePropagator<View,pc>::spec(Space* home, Reflection::VarMap& m,
-                                   const Support::String& name) {
+                                   const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x.spec(home, m)
              << y.spec(home, m);
@@ -697,7 +697,7 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   Reflection::ActorSpec&
   MixBinaryPropagator<View0,pc0,View1,pc1>
-  ::spec(Space* home, Reflection::VarMap& m, const Support::String& name) {
+  ::spec(Space* home, Reflection::VarMap& m, const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x0.spec(home, m)
              << x1.spec(home, m);
@@ -770,7 +770,7 @@ namespace Gecode {
             class View2, PropCond pc2>
   Reflection::ActorSpec&
   MixTernaryPropagator<View0,pc0,View1,pc1,View2,pc2>
-  ::spec(Space* home, Reflection::VarMap& m, const Support::String& name) {
+  ::spec(Space* home, Reflection::VarMap& m, const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x0.spec(home, m)
              << x1.spec(home, m)
@@ -830,7 +830,7 @@ namespace Gecode {
   template <class View0, PropCond pc0, class View1, PropCond pc1>
   Reflection::ActorSpec&
   MixNaryOnePropagator<View0,pc0,View1,pc1>
-  ::spec(Space* home, Reflection::VarMap& m, const Support::String& name) {
+  ::spec(Space* home, Reflection::VarMap& m, const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x.spec(home, m)
              << y.spec(home, m);

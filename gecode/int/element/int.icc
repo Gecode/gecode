@@ -388,7 +388,7 @@ namespace Gecode { namespace Int { namespace Element {
   }
 
   template <class ViewA, class ViewB>
-  inline Support::String
+  inline Support::Symbol
   Int<ViewA,ViewB>::name(void) {
     return Reflection::mangle<ViewA,ViewB>("Int::Element::Int");
   }

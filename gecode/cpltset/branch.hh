@@ -69,7 +69,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, CpltSetView x, IntSet v);
     /// Type of this value selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -87,7 +87,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, CpltSetView x, IntSet v);
     /// Type of this value selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -105,7 +105,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, CpltSetView x, int v);
     /// Type of this value selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -123,7 +123,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// Tell \f$v\in x\f$ (\a a = 0) or \f$v\notin x\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, CpltSetView x, int v);
     /// Type of this value selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /// Create branchings for a given view selection strategy \a ViewSel
@@ -149,7 +149,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space*, CpltSetView);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -168,7 +168,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space*, CpltSetView x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -187,7 +187,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space*, CpltSetView x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -206,7 +206,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space*, CpltSetView x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -225,7 +225,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space*, CpltSetView x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
 }}}

@@ -99,7 +99,7 @@ namespace Gecode { namespace Int { namespace Element {
     static void post(Space* home, const Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Mangled name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
     /// Post propagator for \f$i_{x_0}=x_1\f$
     static  ExecStatus post(Space* home, IntSharedArray& i,
                             ViewA x0, ViewB x1);
@@ -138,7 +138,7 @@ namespace Gecode { namespace Int { namespace Element {
     View(Space* home, IdxView<VA>* iv, int n, VB x0, VC x1);
     /// Specification for this propagator
     Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
-      const Support::String& name);
+      const Support::Symbol& name);
   public:
     // Cost function (defined as dynamic PC_LINEAR_LO)
     virtual PropCost cost(void) const;
@@ -176,7 +176,7 @@ namespace Gecode { namespace Int { namespace Element {
     static void post(Space* home, const Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
     static  ExecStatus post(Space* home, IdxView<VA>* iv, int n,
                             VB x0, VC x1);
@@ -223,7 +223,7 @@ namespace Gecode { namespace Int { namespace Element {
     static void post(Space* home, const Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
     /// Post propagator for \f$iv_{x_0}=x_1\f$
     static  ExecStatus post(Space* home, IdxView<VA>* iv, int n,
                             VB x0, VC x1);

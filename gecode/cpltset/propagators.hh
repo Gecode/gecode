@@ -84,7 +84,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -137,7 +137,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -169,7 +169,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -226,7 +226,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -261,7 +261,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -293,7 +293,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -324,7 +324,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -383,7 +383,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -415,7 +415,7 @@ namespace Gecode { namespace CpltSet {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
 
     /// Delete propagator
     virtual size_t dispose(Space* home);

@@ -95,7 +95,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class P, class N, PropCond pc>
   Reflection::ActorSpec&
   Lin<Val,P,N,pc>::spec(Space* home, Reflection::VarMap& m,
-                        const Support::String& name) {
+                        const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x.spec(home, m)
              << y.spec(home, m)
@@ -134,7 +134,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class Val, class P, class N, PropCond pc, class Ctrl>
   Reflection::ActorSpec&
   ReLin<Val,P,N,pc,Ctrl>::spec(Space* home, Reflection::VarMap& m,
-                               const Support::String& name) {
+                               const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << Lin<Val,P,N,pc>::x.spec(home, m)
              << Lin<Val,P,N,pc>::y.spec(home, m)
@@ -405,7 +405,7 @@ namespace Gecode { namespace Int { namespace Linear {
 
 
   template <class Val, class P, class N>
-  inline Support::String
+  inline Support::Symbol
   Eq<Val,P,N>::name(void) {
     return Reflection::mangle<Val,P,N>("Int::Linear::Eq");
   }
@@ -471,7 +471,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N, class Ctrl>
-  inline Support::String
+  inline Support::Symbol
   ReEq<Val,P,N,Ctrl>::name(void) {
     return Reflection::mangle<Val,P,N,Ctrl>("Int::Linear::ReEq");
   }
@@ -644,7 +644,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N>
-  Support::String
+  Support::Symbol
   Nq<Val,P,N>::name(void) {
     return Reflection::mangle<Val,P,N>("Int::Linear::Nq");
   }
@@ -815,7 +815,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N>
-  inline Support::String
+  inline Support::Symbol
   Lq<Val,P,N>::name(void) {
     return Reflection::mangle<Val,P,N>("Int::Linear::Lq");
   }
@@ -947,7 +947,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class Val, class P, class N>
-  inline Support::String
+  inline Support::Symbol
   ReLq<Val,P,N>::name(void) {
     return Reflection::mangle<Val,P,N>("Int::Linear::ReLq");
   }

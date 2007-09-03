@@ -100,7 +100,7 @@ namespace Gecode {
     /// Return specification for this branching given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this branching
-    static Support::String name(void);
+    static Support::Symbol name(void);
     /// Post branching according to specification
     static void post(Space* home, const Reflection::VarMap& m,
                      const Reflection::ActorSpec& spec);
@@ -145,7 +145,7 @@ namespace Gecode {
     /// Return specification for this assignment given a variable map \a m
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this assignment
-    static Support::String name(void);
+    static Support::Symbol name(void);
     /// Post assignment according to specification
     static void post(Space* home, const Reflection::VarMap& m,
                      const Reflection::ActorSpec& spec);
@@ -297,7 +297,7 @@ namespace Gecode {
   }
 
   template <class View, class Val, class ViewSel, class ValSel>
-  Support::String
+  Support::Symbol
   ViewValBranching<View,Val,ViewSel,ValSel>::name(void) {
     return Reflection::mangle<View,Val,ViewSel,ValSel>("ViewValBranching");
   }
@@ -381,7 +381,7 @@ namespace Gecode {
   }
 
   template <class View, class Val, class ValSel>
-  Support::String
+  Support::Symbol
   ViewValAssignment<View,Val,ValSel>::name(void) {
     return Reflection::mangle<View,Val,ValSel>("ViewValAssignment");
   }

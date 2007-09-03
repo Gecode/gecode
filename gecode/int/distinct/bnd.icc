@@ -82,7 +82,7 @@ namespace Gecode { namespace Int { namespace Distinct {
   }
 
   template <class View>
-  Support::String
+  Support::Symbol
   Bnd<View>::name(void) {
     return Reflection::mangle<View>("Int::Distinct::Bnd");
   }

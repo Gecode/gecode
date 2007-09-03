@@ -153,7 +153,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BVA, class BVB, class BVC>
-  inline Support::String
+  inline Support::Symbol
   Eqv<BVA,BVB,BVC>::name(void) {
     return Reflection::mangle<BVA,BVB,BVC>("Int::Bool::Eqv");
   }

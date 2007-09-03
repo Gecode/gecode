@@ -298,9 +298,9 @@ namespace Gecode {
     ConstIntView::spec(Space*, Reflection::VarMap&) {
       return new Reflection::IntArg(x);
     }
-    forceinline Support::String
+    forceinline Support::Symbol
     ConstIntView::type(void) {
-      return Support::String("Int::ConstIntView");
+      return Support::Symbol("Int::ConstIntView");
     }
 
     /**

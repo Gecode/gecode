@@ -40,7 +40,7 @@
 #include <boost/serialization/split_free.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/base_object.hpp>
-#include "gecode/support/string.hh"
+#include "gecode/support/symbol.hh"
 #include <sstream>
 
 namespace boost { namespace serialization {
@@ -260,7 +260,7 @@ namespace boost { namespace serialization {
     ar >> s;
     // invoke inplace constructor to initialize instance of my_class
     ::new(t)Gecode::Reflection::StringArg(
-      Gecode::Support::String(s.c_str(),true));
+      Gecode::Support::Symbol(s.c_str(),true));
   }
   template<class Archive>
   void serialize(
@@ -331,7 +331,7 @@ namespace boost { namespace serialization {
     ar >> n;
     // invoke inplace constructor to initialize instance of my_class
     ::new(t)Gecode::Reflection::ActorSpec(
-      Gecode::Support::String(n.c_str(),true));
+      Gecode::Support::Symbol(n.c_str(),true));
   }
   template<class Archive>
   void save(

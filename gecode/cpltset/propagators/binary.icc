@@ -68,7 +68,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View>
-  Support::String
+  Support::Symbol
   BinBddProp<View>::name(void) {
     return Reflection::mangle<View>("CpltSet::BinBddProp");
   }

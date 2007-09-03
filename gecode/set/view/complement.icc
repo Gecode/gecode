@@ -295,10 +295,10 @@ namespace Gecode { namespace Set {
   }
 
   template <class View>
-  forceinline Support::String
+  forceinline Support::Symbol
   ComplementView<View>::type(void) {
     return
-      Support::String("Set::ComplementView<") +
+      Support::Symbol("Set::ComplementView<") +
       View::type() + ">";
   }
 

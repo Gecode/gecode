@@ -67,7 +67,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, View x, int n);
     /// Type of this value selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -85,7 +85,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, View x, int n);
     /// Type of this value selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -103,7 +103,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Tell \f$x=n\f$ (\a a = 0) or \f$x\neq n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, View x, int n);
     /// Type of this value selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -121,7 +121,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Tell \f$x\leq n\f$ (\a a = 0) or \f$x >n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, View x, int n);
     /// Type of this value selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -139,7 +139,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Tell \f$x>n\f$ (\a a = 0) or \f$x\leq n\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, View x, int n);
     /// Type of this value selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /// Create branchings for a given view selection strategy \a SelView
@@ -151,7 +151,7 @@ namespace Gecode { namespace Int { namespace Branch {
   class NoValue {
   public:
     /// Type of this value selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -169,7 +169,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Tell \f$x=0\f$ (\a a = 0) or \f$x=1\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, View x, NoValue n);
     /// Type of this value selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -187,7 +187,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Tell \f$x=1\f$ (\a a = 0) or \f$x=0\f$ (\a a = 1)
     ModEvent tell(Space* home, unsigned int a, View x, NoValue n);
     /// Type of this value selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
 
@@ -210,7 +210,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, View x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -230,7 +230,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, View x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -250,7 +250,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, View x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -270,7 +270,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, View x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -290,7 +290,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, View x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -310,7 +310,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, View x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -330,7 +330,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, View x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -352,7 +352,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, View x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -374,7 +374,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, View x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -394,7 +394,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, View x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -414,7 +414,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, View x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -434,7 +434,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, View x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -454,7 +454,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, View x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -474,7 +474,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, View x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
   /**
@@ -494,7 +494,7 @@ namespace Gecode { namespace Int { namespace Branch {
     /// Possibly select better view \a x
     ViewSelStatus select(const Space* home, View x);
     /// Type of this view selection (for reflection)
-    static Support::String type(void);
+    static Support::Symbol type(void);
   };
 
 }}}

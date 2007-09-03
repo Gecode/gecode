@@ -277,7 +277,7 @@ namespace Gecode {
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
-      static Support::String type(void);
+      static Support::Symbol type(void);
       //@}
       
     };
@@ -482,7 +482,7 @@ namespace Gecode {
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
-      static Support::String type(void);
+      static Support::Symbol type(void);
       //@}
     };
 
@@ -690,7 +690,7 @@ namespace Gecode {
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
-      static Support::String type(void);
+      static Support::Symbol type(void);
       //@}
     };
 
@@ -887,7 +887,7 @@ namespace Gecode {
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
-      static Support::String type(void);
+      static Support::Symbol type(void);
       //@}
     };
 
@@ -1108,7 +1108,7 @@ namespace Gecode {
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
-      static Support::String type(void);
+      static Support::Symbol type(void);
       //@}
     };
 
@@ -1307,7 +1307,7 @@ namespace Gecode {
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
-      static Support::String type(void);
+      static Support::Symbol type(void);
       //@}
     };
 
@@ -1522,7 +1522,7 @@ namespace Gecode {
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
-      static Support::String type(void);
+      static Support::Symbol type(void);
       //@}
     };
 
@@ -1682,7 +1682,7 @@ namespace Gecode {
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg*  spec(Space* home, Reflection::VarMap& m);
-      static Support::String type(void);
+      static Support::Symbol type(void);
       //@}
     };
 

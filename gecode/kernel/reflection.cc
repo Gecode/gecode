@@ -73,17 +73,17 @@ namespace Gecode { namespace Reflection {
   }
 
   void
-  Registry::add(Support::String vti, varCreator vc) {
+  Registry::add(Support::Symbol vti, varCreator vc) {
     varCreators.put(vti, vc);
   }
 
   void
-  Registry::add(Support::String vti, varConstrainer vc) {
+  Registry::add(Support::Symbol vti, varConstrainer vc) {
     varConstrainers.put(vti, vc);
   }
 
   void
-  Registry::add(const Support::String& id, poster p) {
+  Registry::add(const Support::Symbol& id, poster p) {
     posters.put(id, p);
   }
 

@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
-  inline Support::String
+  inline Support::Symbol
   Lex<View>::name(void) {
     return Reflection::mangle<View>("Int::Rel::Lex");
   }

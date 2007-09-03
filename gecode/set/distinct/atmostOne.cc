@@ -58,9 +58,9 @@ namespace Gecode { namespace Set { namespace Distinct {
     return new (home) AtmostOne(home,share,*this);
   }
 
-  Support::String
+  Support::Symbol
   AtmostOne::name(void) {
-    return Support::String("Set::Distinct::AtmostOne");
+    return Support::Symbol("Set::Distinct::AtmostOne");
   }
 
   Reflection::ActorSpec&

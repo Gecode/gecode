@@ -61,7 +61,7 @@ namespace Gecode { namespace Int { namespace Bool {
     static void post(Space* home, const Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::String name(void);    
+    static Support::Symbol name(void);    
   };
 
   template <class BV>
@@ -95,7 +95,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BV>
-  inline Support::String
+  inline Support::Symbol
   OrTrueSubsumed<BV>::name(void) {
     return Reflection::mangle<BV>("Int::Bool::OrTrueSubsumed");
   }
@@ -198,7 +198,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BVA, class BVB>
-  Support::String
+  Support::Symbol
   BinOrTrue<BVA,BVB>::name(void) {
     return Reflection::mangle<BVA,BVB>("Int::Bool::BinOrTrue");
   }
@@ -325,7 +325,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BV>
-  Support::String
+  Support::Symbol
   TerOrTrue<BV>::name(void) {
     return Reflection::mangle<BV>("Int::Bool::TerOrTrue");
   }
@@ -527,7 +527,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BV>
-  Support::String
+  Support::Symbol
   QuadOrTrue<BV>::name(void) {
     return Reflection::mangle<BV>("Int::Bool::QuadOrTrue");
   }
@@ -695,7 +695,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BVA, class BVB, class BVC>
-  Support::String
+  Support::Symbol
   Or<BVA,BVB,BVC>::name(void) {
     return Reflection::mangle<BVA,BVB,BVC>("Int::Bool::Or");
   }
@@ -846,7 +846,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BV>
-  Support::String
+  Support::Symbol
   NaryOrTrue<BV>::name(void) {
     return Reflection::mangle<BV>("Int::Bool::NaryOrTrue");
   }
@@ -953,7 +953,7 @@ namespace Gecode { namespace Int { namespace Bool {
   }
 
   template <class BV>
-  Support::String
+  Support::Symbol
   NaryOr<BV>::name(void) {
     return Reflection::mangle<BV>("Int::Bool::NaryOr");
   }

@@ -72,7 +72,7 @@ namespace Gecode { namespace Int { namespace Dom {
   }
 
   template <class View>
-  inline Support::String
+  inline Support::Symbol
   ReRange<View>::name(void) {
     return Reflection::mangle<View>("Int::Dom::ReRange");
   }

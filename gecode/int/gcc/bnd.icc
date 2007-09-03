@@ -111,7 +111,7 @@ namespace Gecode { namespace Int { namespace GCC {
   }
 
   template <class View, class Card, bool isView, bool shared>
-  Support::String
+  Support::Symbol
   BndImp<View, Card, isView, shared>::name(void) {
     return Reflection::mangle<View,Card,bool,bool>("Int::GCC::Bnd");
   }

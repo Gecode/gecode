@@ -114,9 +114,9 @@ namespace Gecode { namespace Int { namespace Linear {
     Support::quicksort<ScaleBool,ScaleDec>(fst(), size(), scale_dec);
   }
 
-  forceinline Support::String
+  forceinline Support::Symbol
   ScaleBoolArray::type(void) {
-    return Support::String("Int::Linear::ScaleBoolArray");
+    return Support::Symbol("Int::Linear::ScaleBoolArray");
   }
 
   /*
@@ -147,9 +147,9 @@ namespace Gecode { namespace Int { namespace Linear {
   EmptyScaleBoolArray::size(void) const { return 0; }
   forceinline void 
   EmptyScaleBoolArray::sort(void) {}
-  forceinline Support::String
+  forceinline Support::Symbol
   EmptyScaleBoolArray::type(void) {
-    return Support::String("Int::Linear::EmptyScaleBoolArray");
+    return Support::Symbol("Int::Linear::EmptyScaleBoolArray");
   }
 
 
@@ -200,7 +200,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template<class SBAP, class SBAN, class VX, PropCond pcx>
   Reflection::ActorSpec&
   LinBoolScale<SBAP,SBAN,VX,pcx>::spec(Space* home, Reflection::VarMap& m,
-                                       const Support::String& name) {
+                                       const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
 
     Reflection::IntArrayArg* c_p =
@@ -275,7 +275,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class SBAP, class SBAN, class VX>
-  inline Support::String
+  inline Support::Symbol
   EqBoolScale<SBAP,SBAN,VX>::name(void) {
     return Reflection::mangle<SBAP,SBAN,VX>("Int::Linear::EqBoolScale");
   }
@@ -529,7 +529,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class SBAP, class SBAN, class VX>
-  inline Support::String
+  inline Support::Symbol
   LqBoolScale<SBAP,SBAN,VX>::name(void) {
     return Reflection::mangle<SBAP,SBAN,VX>("Int::Linear::LqBoolScale");
   }
@@ -722,7 +722,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class SBAP, class SBAN, class VX>
-  inline Support::String
+  inline Support::Symbol
   NqBoolScale<SBAP,SBAN,VX>::name(void) {
     return Reflection::mangle<SBAP,SBAN,VX>("Int::Linear::NqBoolScale");
   }

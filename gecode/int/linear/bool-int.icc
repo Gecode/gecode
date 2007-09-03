@@ -97,7 +97,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX>
   Reflection::ActorSpec&
   MemoryLinBoolInt<VX>::spec(Space* home, Reflection::VarMap& m,
-                             const Support::String& name) {
+                             const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x.spec(home, m) << c;
   }
@@ -157,7 +157,7 @@ namespace Gecode { namespace Int { namespace Linear {
   template <class VX>
   Reflection::ActorSpec&
   SpeedLinBoolInt<VX>::spec(Space* home, Reflection::VarMap& m,
-                            const Support::String& name) {
+                            const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x.spec(home, m) << c;
   }
@@ -185,7 +185,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class VX>
-  inline Support::String
+  inline Support::Symbol
   GqBoolInt<VX>::Memory::name(void) {
     return Reflection::mangle<VX>("Int::Linear::GqBoolInt::Memory");
   }
@@ -269,7 +269,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class VX>
-  inline Support::String
+  inline Support::Symbol
   GqBoolInt<VX>::Speed::name(void) {
     return Reflection::mangle<VX>("Int::Linear::GqBoolInt::Speed");
   }
@@ -400,7 +400,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class VX>
-  inline Support::String
+  inline Support::Symbol
   EqBoolInt<VX>::Memory::name(void) {
     return Reflection::mangle<VX>("Int::Linear::EqBoolInt::Memory");
   }
@@ -491,7 +491,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template <class VX>
-  inline Support::String
+  inline Support::Symbol
   EqBoolInt<VX>::Speed::name(void) {
     return Reflection::mangle<VX>("Int::Linear::GqBoolInt::Speed");
   }
@@ -674,7 +674,7 @@ namespace Gecode { namespace Int { namespace Linear {
   }
 
   template<class VX>
-  inline Support::String
+  inline Support::Symbol
   NqBoolInt<VX>::name(void) {
     return Reflection::mangle<VX>("Int::Linear::NqBoolInt");
   }

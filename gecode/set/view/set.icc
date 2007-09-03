@@ -172,9 +172,9 @@ namespace Gecode { namespace Set {
     return var->spec(home, m);
   }
 
-  forceinline Support::String
+  forceinline Support::Symbol
   SetView::type(void) {
-    return Support::String("Set::SetView");
+    return Support::Symbol("Set::SetView");
   }
 
   /*

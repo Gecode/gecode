@@ -54,9 +54,9 @@ namespace Gecode { namespace Int { namespace Channel {
     return PC_UNARY_LO;
   }
 
-  Support::String
+  Support::Symbol
   LinkSingle::name(void) {
-    return Support::String("Int::Channel::Val");
+    return Support::Symbol("Int::Channel::Val");
   }
 
   Reflection::ActorSpec&

@@ -75,7 +75,7 @@ namespace Gecode {
     virtual size_t dispose(Space* home);
     /// Return specification given a variable map \a m and a \a name
     Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
-                                const Support::String& name);
+                                const Support::Symbol& name);
   };
 
   /**
@@ -109,7 +109,7 @@ namespace Gecode {
     virtual size_t dispose(Space* home);
     /// Return specification given a variable map \a m and a \a name
     Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
-                                const Support::String& name);
+                                const Support::Symbol& name);
   };
   //@}
 
@@ -165,7 +165,7 @@ namespace Gecode {
   template <class View, PropCond pc, class CtrlView>
   Reflection::ActorSpec&
   ReUnaryPropagator<View,pc,CtrlView>::spec(Space* home,
-    Reflection::VarMap& m, const Support::String& name) {
+    Reflection::VarMap& m, const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x0.spec(home, m)
              << b.spec(home, m);
@@ -227,7 +227,7 @@ namespace Gecode {
   template <class View, PropCond pc, class CtrlView>
   Reflection::ActorSpec&
   ReBinaryPropagator<View,pc,CtrlView>::spec(Space* home,
-    Reflection::VarMap& m, const Support::String& name) {
+    Reflection::VarMap& m, const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x0.spec(home, m)
              << x1.spec(home, m)

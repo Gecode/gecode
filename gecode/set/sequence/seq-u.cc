@@ -55,9 +55,9 @@ namespace Gecode { namespace Set { namespace Sequence {
     return new (home) SeqU(home,share,*this);
   }
 
-  Support::String
+  Support::Symbol
   SeqU::name(void) {
-    return Support::String("Set::Sequence::Union");
+    return Support::Symbol("Set::Sequence::Union");
   }
 
   Reflection::ActorSpec&

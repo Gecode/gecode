@@ -36,7 +36,7 @@
  */
 
 #include "gecode/serialization.hh"
-#include "gecode/support/string.hh"
+#include "gecode/support/symbol.hh"
 
 using namespace std;
 

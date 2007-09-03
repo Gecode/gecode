@@ -73,7 +73,7 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
   template <class View>
-  Support::String
+  Support::Symbol
   MinElement<View>::name(void) {
    return Reflection::mangle<View>("Set::Int::MinElement");
   }
@@ -171,7 +171,7 @@ namespace Gecode { namespace Set { namespace Int {
   }
 
   template <class View>
-  Support::String
+  Support::Symbol
   MaxElement<View>::name(void) {
     return Reflection::mangle<View>("Set::Int::MaxElement");
   }

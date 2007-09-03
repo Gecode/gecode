@@ -169,7 +169,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
     /// Cost funtion returning dynamic PC_LINEAR_HI.
     virtual PropCost    cost (void) const;
     /// Perform propagation
@@ -253,7 +253,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
     /**
      * \brief Post propagator for views \a x and cardinalities \a k
      *
@@ -296,7 +296,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
     /**
      * \brief Post propagator for views \a x and cardinalities \a k
      *

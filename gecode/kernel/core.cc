@@ -487,7 +487,7 @@ namespace Gecode {
   }
 
   Reflection::ActorSpec&
-  Actor::spec(Space*, Reflection::VarMap&, const Support::String& name) {
+  Actor::spec(Space*, Reflection::VarMap&, const Support::Symbol& name) {
     return *new Reflection::ActorSpec(name);
   }
 

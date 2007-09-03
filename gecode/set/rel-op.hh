@@ -87,7 +87,7 @@ namespace Gecode { namespace Set { namespace RelOp {
      /// Specification for this propagator
      virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
      /// Name of this propagator
-     static Support::String name(void);
+     static Support::Symbol name(void);
    };
 
   /**
@@ -121,7 +121,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
   };
 
 
@@ -156,7 +156,7 @@ namespace Gecode { namespace Set { namespace RelOp {
      /// Specification for this propagator
      virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
      /// Name of this propagator
-     static Support::String name(void);
+     static Support::Symbol name(void);
    };
 
   /**
@@ -190,7 +190,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
   };
 
    /**
@@ -229,7 +229,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
   };
 
   /**
@@ -268,7 +268,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
   };
 
 
@@ -308,7 +308,7 @@ namespace Gecode { namespace Set { namespace RelOp {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
   };
 
 }}}

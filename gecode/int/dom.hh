@@ -78,7 +78,7 @@ namespace Gecode { namespace Int { namespace Dom {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Mangled name
-    static Support::String name(void);
+    static Support::Symbol name(void);
     /// Post propagator according to specification
     static void post(Space* home, const Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
@@ -112,7 +112,7 @@ namespace Gecode { namespace Int { namespace Dom {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Mangled name
-    static Support::String name(void);
+    static Support::Symbol name(void);
     /// Post propagator according to specification
     static void post(Space* home, const Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);

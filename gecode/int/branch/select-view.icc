@@ -50,9 +50,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::String
+  forceinline Support::Symbol
   ByNone<View>::type(void) {
-    return Support::String("Int::Branch::ByNone");
+    return Support::Symbol("Int::Branch::ByNone");
   }
 
   // Select variable with smallest min
@@ -71,9 +71,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::String
+  forceinline Support::Symbol
   ByMinMin<View>::type(void) {
-    return Support::String("Int::Branch::ByMinMin");
+    return Support::Symbol("Int::Branch::ByMinMin");
   }
 
   // Select variable with largest min
@@ -92,9 +92,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::String
+  forceinline Support::Symbol
   ByMinMax<View>::type(void) {
-    return Support::String("Int::Branch::ByMinMax");
+    return Support::Symbol("Int::Branch::ByMinMax");
   }
 
   // Select variable with smallest max
@@ -113,9 +113,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::String
+  forceinline Support::Symbol
   ByMaxMin<View>::type(void) {
-    return Support::String("Int::Branch::ByMaxMin");
+    return Support::Symbol("Int::Branch::ByMaxMin");
   }
 
   // Select variable with largest max
@@ -134,9 +134,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::String
+  forceinline Support::Symbol
   ByMaxMax<View>::type(void) {
-    return Support::String("Int::Branch::ByMaxMax");
+    return Support::Symbol("Int::Branch::ByMaxMax");
   }
 
   // Select variable with smallest size
@@ -156,9 +156,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::String
+  forceinline Support::Symbol
   BySizeMin<View>::type(void) {
-    return Support::String("Int::Branch::BySizeMin");
+    return Support::Symbol("Int::Branch::BySizeMin");
   }
 
   // Select variable with largest size
@@ -177,9 +177,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::String
+  forceinline Support::Symbol
   BySizeMax<View>::type(void) {
-    return Support::String("Int::Branch::BySizeMax");
+    return Support::Symbol("Int::Branch::BySizeMax");
   }
 
   // Select variable with smallest degree (and smallest size in case of ties)
@@ -203,9 +203,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::String
+  forceinline Support::Symbol
   ByDegreeMin<View>::type(void) {
-    return Support::String("Int::Branch::ByDegreeMin");
+    return Support::Symbol("Int::Branch::ByDegreeMin");
   }
 
   // Select variable with smallest degree (and smallest size in case of ties)
@@ -229,9 +229,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::String
+  forceinline Support::Symbol
   ByDegreeMax<View>::type(void) {
-    return Support::String("Int::Branch::ByDegreeMax");
+    return Support::Symbol("Int::Branch::ByDegreeMax");
   }
 
 
@@ -251,9 +251,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::String
+  forceinline Support::Symbol
   ByDegreeMinNoTies<View>::type(void) {
-    return Support::String("Int::Branch::ByDegreeMinNoTies");
+    return Support::Symbol("Int::Branch::ByDegreeMinNoTies");
   }
 
   // Select variable with smallest degree
@@ -272,9 +272,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::String
+  forceinline Support::Symbol
   ByDegreeMaxNoTies<View>::type(void) {
-    return Support::String("Int::Branch::ByDegreeMaxNoTies");
+    return Support::Symbol("Int::Branch::ByDegreeMaxNoTies");
   }
 
 
@@ -295,9 +295,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::String
+  forceinline Support::Symbol
   ByRegretMinMin<View>::type(void) {
-    return Support::String("Int::Branch::ByRegretMinMin");
+    return Support::Symbol("Int::Branch::ByRegretMinMin");
   }
 
   // Select variable with largest min-regret
@@ -316,9 +316,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::String
+  forceinline Support::Symbol
   ByRegretMinMax<View>::type(void) {
-    return Support::String("Int::Branch::ByRegretMinMax");
+    return Support::Symbol("Int::Branch::ByRegretMinMax");
   }
 
   // Select variable with smallest max-regret
@@ -338,9 +338,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::String
+  forceinline Support::Symbol
   ByRegretMaxMin<View>::type(void) {
-    return Support::String("Int::Branch::ByRegretMaxMin");
+    return Support::Symbol("Int::Branch::ByRegretMaxMin");
   }
 
   // Select variable with smallest min-regret
@@ -359,9 +359,9 @@ namespace Gecode { namespace Int { namespace Branch {
     return VSS_NONE;
   }
   template<class View>
-  forceinline Support::String
+  forceinline Support::Symbol
   ByRegretMaxMax<View>::type(void) {
-    return Support::String("Int::Branch::ByRegretMaxMax");
+    return Support::Symbol("Int::Branch::ByRegretMaxMax");
   }
 
 }}}

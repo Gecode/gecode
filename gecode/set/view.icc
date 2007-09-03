@@ -161,7 +161,7 @@ namespace Gecode {
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg*  spec(Space* home, Reflection::VarMap& m);
-      static Support::String type(void);
+      static Support::Symbol type(void);
       //@}
       
       /// \name Delta information for advisors
@@ -360,7 +360,7 @@ namespace Gecode {
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
-      static Support::String type(void);
+      static Support::Symbol type(void);
       //@}
       
       /// \name Delta information for advisors
@@ -541,7 +541,7 @@ namespace Gecode {
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
-      static Support::String type(void);
+      static Support::Symbol type(void);
       //@}
       
       /// \name Delta information for advisors
@@ -723,7 +723,7 @@ namespace Gecode {
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
-      static Support::String type(void);
+      static Support::Symbol type(void);
       //@}
       
       /// \name Delta information for advisors
@@ -920,7 +920,7 @@ namespace Gecode {
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
-      static Support::String type(void);
+      static Support::Symbol type(void);
       //@}
       
       /// \name Delta information for advisors
@@ -1116,7 +1116,7 @@ namespace Gecode {
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
-      static Support::String type(void);
+      static Support::Symbol type(void);
       //@}
       
       /// \name Delta information for advisors
@@ -1366,7 +1366,7 @@ namespace Gecode {
       //@{
       /// Return specification for this view, using variable map \a m
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
-      static Support::String type(void);
+      static Support::Symbol type(void);
       //@}
       
       /// \name Delta information for advisors

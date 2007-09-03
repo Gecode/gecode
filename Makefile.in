@@ -118,11 +118,11 @@ endif
 # SUPPORT COMPONENTS
 #
 SUPPORTSRC0 = \
-	string
+	symbol
 SUPPORTHDR0 =							\
 	bitset cast block-allocator dynamic-array dynamic-stack	\
 	map random search shared-array sort			\
-	static-pqueue static-stack sentinel-stack string
+	static-pqueue static-stack sentinel-stack symbol
 
 SUPPORTSRC = 	$(SUPPORTSRC0:%=gecode/support/%.cc)
 SUPPORTHDR = 	gecode/support.hh $(SUPPORTHDR0:%=gecode/support/%.hh)

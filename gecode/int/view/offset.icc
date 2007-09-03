@@ -302,9 +302,9 @@ namespace Gecode {
       return new Reflection::PairArg(new Reflection::IntArg(c), 
                                      view.spec(home, m));
     }
-    forceinline Support::String
+    forceinline Support::Symbol
     OffsetView::type(void) {
-      return Support::String("Int::OffsetView");
+      return Support::Symbol("Int::OffsetView");
     }
 
     /**

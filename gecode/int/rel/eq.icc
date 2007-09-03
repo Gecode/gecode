@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View0, class View1>
-  inline Support::String
+  inline Support::Symbol
   EqBnd<View0,View1>::name(void) {
     return Reflection::mangle<View0,View1>("Int::Rel::EqBnd");
   }
@@ -163,7 +163,7 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View0, class View1>
-  inline Support::String
+  inline Support::Symbol
   EqDom<View0,View1>::name(void) {
     return Reflection::mangle<View0,View1>("Int::Rel::EqDom");
   }
@@ -265,7 +265,7 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
-  inline Support::String
+  inline Support::Symbol
   NaryEqDom<View>::name(void) {
     return Reflection::mangle<View>("Int::Rel::NaryEqDom");
   }
@@ -415,7 +415,7 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
-  inline Support::String
+  inline Support::Symbol
   NaryEqBnd<View>::name(void) {
     return Reflection::mangle<View>("Int::Rel::NaryEqBnd");
   }
@@ -515,7 +515,7 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View, class CtrlView>
-  inline Support::String
+  inline Support::Symbol
   ReEqDom<View,CtrlView>::name(void) {
     return Reflection::mangle<View,CtrlView>("Int::Rel::ReEqDom");
   }
@@ -596,7 +596,7 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View, class CtrlView>
-  inline Support::String
+  inline Support::Symbol
   ReEqBnd<View,CtrlView>::name(void) {
     return Reflection::mangle<View,CtrlView>("Int::Rel::ReEqBnd");
   }
@@ -684,7 +684,7 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View, class CtrlView>
-  inline Support::String
+  inline Support::Symbol
   ReEqDomInt<View,CtrlView>::name(void) {
     return Reflection::mangle<View,CtrlView>("Int::Rel::ReEqDomInt");
   }
@@ -784,7 +784,7 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View, class CtrlView>
-  inline Support::String
+  inline Support::Symbol
   ReEqBndInt<View,CtrlView>::name(void) {
     return Reflection::mangle<View,CtrlView>("Int::Rel::ReEqBndInt");
   }

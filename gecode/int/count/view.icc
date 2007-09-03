@@ -71,7 +71,7 @@ namespace Gecode { namespace Int { namespace Count {
   template <class VX, class VY, class VZ, bool shr>
   Reflection::ActorSpec&
   BaseView<VX,VY,VZ,shr>::spec(Space* home, Reflection::VarMap& m,
-                               const Support::String& name) {
+                               const Support::Symbol& name) {
     Reflection::ActorSpec& s = Propagator::spec(home, m, name);
     return s << x.spec(home, m)
              << y.spec(home, m)
@@ -172,7 +172,7 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, bool shr>
-  Support::String
+  Support::Symbol
   EqView<VX,VY,VZ,shr>::name(void) {
     return Reflection::mangle<VX,VY,VZ,shr>("Int::Count::EqView");
   }
@@ -249,7 +249,7 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, bool shr>
-  Support::String
+  Support::Symbol
   NqView<VX,VY,VZ,shr>::name(void) {
     return Reflection::mangle<VX,VY,VZ,shr>("Int::Count::NqView");
   }
@@ -327,7 +327,7 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, bool shr>
-  Support::String
+  Support::Symbol
   LqView<VX,VY,VZ,shr>::name(void) {
     return Reflection::mangle<VX,VY,VZ,shr>("Int::Count::LqView");
   }
@@ -401,7 +401,7 @@ namespace Gecode { namespace Int { namespace Count {
   }
 
   template <class VX, class VY, class VZ, bool shr>
-  Support::String
+  Support::Symbol
   GqView<VX,VY,VZ,shr>::name(void) {
     return Reflection::mangle<VX,VY,VZ>("Int::Count::GqView");
   }

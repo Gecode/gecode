@@ -67,7 +67,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View>
-  Support::String
+  Support::Symbol
   UnaryBddProp<View>::name(void) {
     return Reflection::mangle<View>("CpltSet::UnaryBddProp");
   }

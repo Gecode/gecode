@@ -586,7 +586,7 @@ namespace Gecode {
     /// Return specification given a variable map \a m and \a name
     GECODE_KERNEL_EXPORT
     Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
-                                const Support::String& name);
+                                const Support::Symbol& name);
   private:
 #ifndef __GNUC__
     /// Not used (uses dispose instead)

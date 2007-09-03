@@ -59,7 +59,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View0, class View1>
-  Support::String
+  Support::Symbol
   Bin<View0,View1>::name(void) {
     return Reflection::mangle<View0,View1>("CpltSet::Bin");
   }

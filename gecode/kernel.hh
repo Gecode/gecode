@@ -120,7 +120,7 @@
  *
  */
 
-#include "gecode/support/string.hh"
+#include "gecode/support/symbol.hh"
 
 /*
  * Gecode kernel

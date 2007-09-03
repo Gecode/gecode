@@ -79,7 +79,7 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
-  inline Support::String
+  inline Support::Symbol
   Nq<View>::name(void) {
     return Reflection::mangle<View>("Int::Rel::Nq");
   }
@@ -166,7 +166,7 @@ namespace Gecode { namespace Int { namespace Rel {
   }
 
   template <class View>
-  inline Support::String
+  inline Support::Symbol
   NaryNq<View>::name(void) {
     return Reflection::mangle<View>("Int::Rel::NaryNq");
   }

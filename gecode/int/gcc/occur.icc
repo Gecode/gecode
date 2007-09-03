@@ -77,7 +77,7 @@ namespace Gecode { namespace Int { namespace GCC {
     void update(Space*, bool, OccurBndsView&);
 
     Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
-    static Support::String type(void);
+    static Support::Symbol type(void);
     
   };
 
@@ -209,9 +209,9 @@ namespace Gecode { namespace Int { namespace GCC {
       new Reflection::PairArg(new Reflection::IntArg(c),
         new Reflection::IntArg(count)));
   }
-  forceinline Support::String
+  forceinline Support::Symbol
   OccurBndsView::type(void) {
-    return Support::String("Int::GCC::OccurBndsView");
+    return Support::Symbol("Int::GCC::OccurBndsView");
   }
 
   /**
@@ -428,7 +428,7 @@ namespace Gecode { namespace Int { namespace GCC {
     /// Return specification for this view, using variable map \a m
     Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
     /// Return type of this view
-    static Support::String type(void);
+    static Support::Symbol type(void);
     ///@}
 
     /// \name View comparison
@@ -738,9 +738,9 @@ namespace Gecode { namespace Int { namespace GCC {
       new Reflection::PairArg(new Reflection::IntArg(c),
         new Reflection::IntArg(count)), view.spec(home, m));
   }
-  forceinline Support::String
+  forceinline Support::Symbol
   CardView::type(void) {
-    return Support::String("Int::GCC::CardView");
+    return Support::Symbol("Int::GCC::CardView");
   }
 
 

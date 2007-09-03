@@ -71,7 +71,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     ExecStatus path(Space* home);
     /// Specification for this propagator
     Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m,
-                                const Support::String& name);
+                                const Support::Symbol& name);
   public:
     /// Delete propagator and return its size
     virtual size_t dispose(Space* home);
@@ -113,7 +113,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     static void post(Space* home, const Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
   };
 
   /**
@@ -154,7 +154,7 @@ namespace Gecode { namespace Int { namespace Circuit {
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
-    static Support::String name(void);
+    static Support::Symbol name(void);
     /// Post propagator according to specification
     static void post(Space* home, const Reflection::VarMap& vars,
                      const Reflection::ActorSpec& spec);

@@ -253,7 +253,7 @@ namespace Gecode { namespace Int { namespace Circuit {
   template <class View>
   Reflection::ActorSpec&
   Base<View>::spec(Space* home, Reflection::VarMap& m,
-                   const Support::String& name) {
+                   const Support::Symbol& name) {
     return NaryPropagator<View,PC_INT_DOM>::spec(home, m, name);                   
   }
 

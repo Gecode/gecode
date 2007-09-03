@@ -254,9 +254,9 @@ namespace Gecode { namespace Int {
   IntView::spec(Space* home, Reflection::VarMap& m) {
     return var->spec(home, m);
   }
-  forceinline Support::String
+  forceinline Support::Symbol
   IntView::type(void) {
-    return Support::String("Int::IntView");
+    return Support::Symbol("Int::IntView");
   }
 
 

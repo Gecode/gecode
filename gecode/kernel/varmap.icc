@@ -50,9 +50,9 @@ namespace Gecode { namespace Reflection {
     friend class VarMapIter;
   private:
     /// Map variable names to variable implementations
-    Support::StringMap<VarBase*> nameToVar;
+    Support::SymbolMap<VarBase*> nameToVar;
     /// Map variable implementations to variable names
-    Support::PtrMap<VarBase,Support::String> varToName;
+    Support::PtrMap<VarBase,Support::Symbol> varToName;
     /// Map variable implementations to indices
     Support::PtrMap<VarBase,int> m;
     /// Number of indices in use
@@ -70,10 +70,10 @@ namespace Gecode { namespace Reflection {
     /// Return index for variable \a x
     int index(VarBase* x) const;
     /// Return index for variable with name \a n
-    int index(const Support::String& n) const;
+    int index(const Support::Symbol& n) const;
 
     /// Return if variable with name \a n is known
-    bool nameIsKnown(const Support::String& n) const;
+    bool nameIsKnown(const Support::Symbol& n) const;
 
     /// Return if variable \a x has a name
     bool hasName(VarBase* x) const;
@@ -81,12 +81,12 @@ namespace Gecode { namespace Reflection {
     bool hasName(int i) const;
 
     /// Return name for variable \a x
-    Support::String name(VarBase* x) const;
+    Support::Symbol name(VarBase* x) const;
     /// Return name for variable at index \a i
-    Support::String name(int i) const;
+    Support::Symbol name(int i) const;
 
     /// Return variable with name \a n
-    VarBase* var(const Support::String& n) const;
+    VarBase* var(const Support::Symbol& n) const;
     /// Return variable at index \a i
     VarBase* var(int i) const;
 
@@ -95,10 +95,10 @@ namespace Gecode { namespace Reflection {
     /// Return specification for variable at index \a i
     VarSpec& spec(int i) const;
     /// Return specification for variable with name \a n
-    VarSpec& spec(const Support::String& n) const;
+    VarSpec& spec(const Support::Symbol& n) const;
 
     /// Register name \a n for variable \a x
-    void name(VarBase* x, const Support::String& n);
+    void name(VarBase* x, const Support::Symbol& n);
 
     /// Insert specification \a vs for variable \a x, return index
     GECODE_KERNEL_EXPORT int put(VarBase* x, VarSpec* vs);
@@ -107,26 +107,26 @@ namespace Gecode { namespace Reflection {
     //@{
     /// Insert specification for variable \a v with name \a n
     template <class Var> void
-    put(Space* home, const Var& v, const Support::String& n);
+    put(Space* home, const Var& v, const Support::Symbol& n);
     /// Insert specifications for variables in \a x with name \a n
     template <class Var> void
     putArray(Space* home, const VarArgArray<Var>& v,
-             const Support::String& n);
+             const Support::Symbol& n);
     /// Insert specifications for variables in \a x with name \a n
     template <class Var> void
-    putArray(Space* home, const VarArray<Var>& v, const Support::String& n);
+    putArray(Space* home, const VarArray<Var>& v, const Support::Symbol& n);
 
     /// Insert variable \a v with name \a n
     template <class Var> void
-    registerVar(Space* home, const Var& v, const Support::String& n);
+    registerVar(Space* home, const Var& v, const Support::Symbol& n);
     /// Insert variables in \a x with name \a n
     template <class Var> void
     registerArray(Space* home, const VarArgArray<Var>& v,
-                  const Support::String& n);
+                  const Support::Symbol& n);
     /// Insert variables in \a x with name \a n
     template <class Var> void
     registerArray(Space* home, const VarArray<Var>& v, 
-                  const Support::String& n);
+                  const Support::Symbol& n);
 
     //@}
   private:
@@ -184,45 +184,45 @@ namespace Gecode { namespace Reflection {
   }
 
   forceinline int
-  VarMap::index(const Support::String& n) const {
+  VarMap::index(const Support::Symbol& n) const {
     VarBase* v;      
     return nameToVar.get(n, v) ? index(v) : -1;
   }
 
   forceinline bool
-  VarMap::nameIsKnown(const Support::String& n) const {
+  VarMap::nameIsKnown(const Support::Symbol& n) const {
     VarBase* v;
     return nameToVar.get(n,v);
   }
 
   forceinline bool
   VarMap::hasName(VarBase* x) const {
-    Support::String s;
+    Support::Symbol s;
     return varToName.get(x,s);
   }
 
   forceinline bool
   VarMap::hasName(int i) const {
-    Support::String s;
+    Support::Symbol s;
     return varToName.get(vars[i], s);
   }
 
-  forceinline Support::String
+  forceinline Support::Symbol
   VarMap::name(VarBase* x) const {
-    Support::String s;
+    Support::Symbol s;
     varToName.get(x,s);
     return s;
   }
 
-  forceinline Support::String
+  forceinline Support::Symbol
   VarMap::name(int i) const {
-    Support::String s;
+    Support::Symbol s;
     varToName.get(vars[i],s);
     return s;
   }
 
   forceinline VarBase*
-  VarMap::var(const Support::String& n) const {
+  VarMap::var(const Support::Symbol& n) const {
     VarBase* v;
     return nameToVar.get(n,v) ? v : NULL;
   }
@@ -246,18 +246,18 @@ namespace Gecode { namespace Reflection {
   }
 
   forceinline VarSpec&
-  VarMap::spec(const Support::String& n) const {
+  VarMap::spec(const Support::Symbol& n) const {
     return spec(var(n));
   }
 
   inline void
-  VarMap::name(VarBase* x, const Support::String& n) {
+  VarMap::name(VarBase* x, const Support::Symbol& n) {
     nameToVar.put(n, x);
     varToName.put(x, n);
   }
 
   template <class Var> void
-  VarMap::put(Space* home, const Var& x, const Support::String& n) {
+  VarMap::put(Space* home, const Var& x, const Support::Symbol& n) {
     typename VarViewTraits<Var>::View v(x);
     name(v.variable(), n);
     Reflection::Arg* a = v.spec(home, *this);
@@ -266,48 +266,48 @@ namespace Gecode { namespace Reflection {
 
   template <class Var> void
   VarMap::putArray(Space* home, const VarArgArray<Var>& x,
-                   const Support::String& n) {
+                   const Support::Symbol& n) {
     for (int i=0; i<x.size(); i++) {
       std::stringstream s;
       s << i;
-      put(home, x[i], n.copy()+Support::String(s.str().c_str(), true));
+      put(home, x[i], n.copy()+Support::Symbol(s.str().c_str(), true));
     }
   }
   template <class Var> void
   VarMap::putArray(Space* home, const VarArray<Var>& x,
-                   const Support::String& n) {
-    Support::String nn = n.copy();
+                   const Support::Symbol& n) {
+    Support::Symbol nn = n.copy();
     for (int i=0; i<x.size(); i++) {
       std::stringstream s;
       s << i;
-      put(home, x[i], n.copy()+Support::String(s.str().c_str(), true));
+      put(home, x[i], n.copy()+Support::Symbol(s.str().c_str(), true));
     }
   }
 
   template <class Var> void
-  VarMap::registerVar(Space* home, const Var& x, const Support::String& n) {
+  VarMap::registerVar(Space* home, const Var& x, const Support::Symbol& n) {
     typename VarViewTraits<Var>::View v(x);
     name(v.variable(), n);
   }
 
   template <class Var> void
   VarMap::registerArray(Space* home, const VarArgArray<Var>& x,
-                        const Support::String& n) {
+                        const Support::Symbol& n) {
     for (int i=0; i<x.size(); i++) {
       std::stringstream s;
       s << i;
       registerVar(home, x[i],
-                  n.copy()+Support::String(s.str().c_str(), true));
+                  n.copy()+Support::Symbol(s.str().c_str(), true));
     }
   }
   template <class Var> void
   VarMap::registerArray(Space* home, const VarArray<Var>& x,
-                        const Support::String& n) {
+                        const Support::Symbol& n) {
     for (int i=0; i<x.size(); i++) {
       std::stringstream s;
       s << i;
       registerVar(home, x[i],
-                  n.copy()+Support::String(s.str().c_str(), true));
+                  n.copy()+Support::Symbol(s.str().c_str(), true));
     }
   }
 

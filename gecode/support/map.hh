@@ -39,7 +39,7 @@
 #define __GECODE_SUPPORT_MAP_HH__
 
 #include "gecode/support.hh"
-#include "gecode/support/string.hh"
+#include "gecode/support/symbol.hh"
 
 namespace Gecode { namespace Support {
   
@@ -79,7 +79,7 @@ namespace Gecode { namespace Support {
   
   /// Hash table for strings
   template <class Value>
-  class StringMap : public Map<String,Value> {
+  class SymbolMap : public Map<Symbol,Value> {
   };
 
   /// Pointer wrapper class to make pointers hashable
