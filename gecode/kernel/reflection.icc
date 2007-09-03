@@ -178,19 +178,17 @@ namespace Gecode { namespace Reflection {
     int n;
   public:
     /// Constructor
-    IntArrayArgRanges(Reflection::IntArrayArg* a0) : a(a0), n(0) {}
+	IntArrayArgRanges(Reflection::IntArrayArg* a0);
     /// Test whether iterator is still at a valid range
-    bool operator()(void) { return n < a->size(); }
+	bool operator()(void);
     /// Move iterator to next range
-    void operator++(void) { n += 2; }
+	void operator++(void);
     /// Minimum of current range
-    int min(void) const { return (*a)[n]; }
+	int min(void) const;
     /// Maximum of current range
-    int max(void) const { return (*a)[n+1]; }
+	int max(void) const;
     /// Width of current range
-    unsigned int width(void) const { 
-      return static_cast<unsigned int>(max() - min()) + 1; 
-    }
+	unsigned int width(void) const;
   };
 
   /**
@@ -562,6 +560,26 @@ namespace Gecode { namespace Reflection {
     a = static_cast<int*>(Memory::malloc(sizeof(int)*n));
     for (int i=n; i--;)
       a[i] = a0[i];
+  }
+
+  forceinline
+  IntArrayArgRanges::IntArrayArgRanges(Reflection::IntArrayArg* a0) : a(a0), n(0) {}
+
+  forceinline bool
+  IntArrayArgRanges::operator()(void) { return n < a->size(); }
+
+  forceinline void
+  IntArrayArgRanges::operator++(void) { n += 2; }
+
+  forceinline int
+  IntArrayArgRanges::min(void) const { return (*a)[n]; }
+
+  forceinline int
+  IntArrayArgRanges::max(void) const { return (*a)[n+1]; }
+
+  forceinline unsigned int
+  IntArrayArgRanges::width(void) const { 
+    return static_cast<unsigned int>(max() - min()) + 1; 
   }
 
   forceinline
