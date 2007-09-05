@@ -58,7 +58,7 @@ namespace Gecode {
         os << "{";
         for (int i=0; i<a->size(); i+=2) {
           for (int j=(*a)[i]; j<=(*a)[i+1]; j++)
-            os << j << (i==a->size()-2 && j==(*a)[i+1]-1 ? "" : ",");
+            os << j << (i==a->size()-2 && j==(*a)[i+1] ? "" : ",");
         }
         os << "}";
       }
