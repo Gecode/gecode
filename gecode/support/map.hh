@@ -118,7 +118,7 @@ namespace Gecode { namespace Support {
   template <class Key, class Value>
   forceinline int
   Map<Key,Value>::modulo(void) const {
-    const int primes[] = { 17, 1021, 2039, 4093, 8191,
+    const int primes[] = { 17, 47, 1021, 2039, 4093, 8191,
                            16381, 32749, 65521, 131071,
                            262139, 524287, 1048573, 2097143,
                            4194301, 8388593 };
@@ -137,16 +137,30 @@ namespace Gecode { namespace Support {
   Map<Key,Value>::rehash(void) {
     int oldM = modulo();
     n++;
-    Pair** aa = static_cast<Pair**>(::malloc(sizeof(Pair*)*modulo()));
+    Pair** olda = a;
+    a = static_cast<Pair**>(::malloc(sizeof(Pair*)*modulo()));
     for (int i=modulo(); i--; )
-      aa[i] = NULL;
+      a[i] = NULL;
     for (int i=oldM; i--;) {
-      if (a[i] != NULL) {
-        aa[a[i]->k.hash(modulo())] = a[i];
+      if (olda[i] != NULL) {
+        int j = olda[i]->k.hash(modulo());
+        for (; j < modulo() && a[j] != NULL; j++) {}
+        if (j >= modulo()) {
+          for (j=0; a[j] != NULL; j++) {}
+          assert(j<olda[i]->k.hash(modulo()));
+        }
+        assert(j < modulo());
+        assert(a[j] == NULL);
+        a[j] = olda[i];
       }
     }
-    ::free(a);
-    a = aa;
+#ifndef NDEBUG
+    int actualUsage = 0;
+    for (int i=modulo(); i--;)
+      if (a[i]) actualUsage++;
+    assert(actualUsage == usage);
+#endif
+    ::free(olda);
   }
   
   template <class Key, class Value>
