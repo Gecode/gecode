@@ -37,18 +37,115 @@
 
 #include "test/int.hh"
 
-#include "gecode/int/gcc.hh"
+namespace Test { namespace Int { namespace GCC {
+
+  /**
+   * \defgroup TaskTestIntGCC Counting constraints (global cardinality)
+   * \ingroup TaskTestInt
+   */
+  //@{
+  /// Test for integer cardinality with lower and upper bound for all variables
+  class IntAllLbUb : public IntTest {
+  public:
+    /// Create and register test
+    IntAllLbUb(Gecode::IntConLevel icl)
+      : IntTest("GCC::Int::All::(lb,ub)::"+str(icl),4,1,4,false,icl) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      int n[4];
+      for (int i=4; i--; )
+        n[i]=0;
+      for (int i=x.size(); i--; )
+        n[x[i]-1]++;
+      for (int i=4; i--;)
+        if (n[i]>2)
+          return false;
+      return true;
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      IntArgs values(4);
+      IntSet fixed(0,2);
+      IntSetArgs cards(4);
+      for (int i=0; i<4; i++) {
+        values[i] = i+1; cards[i] = fixed;
+      }
+      count(home, x, cards, values, icl);
+    }
+  };
+  
+  /// Test for integer cardinality with upper bound for all variables
+  class IntAllEqUb : public IntTest {
+  public:
+    /// Create and register test
+    IntAllEqUb(Gecode::IntConLevel icl)
+      : IntTest("GCC::Int::All::ub::"+str(icl), 4, 1,2, false, icl) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      int n[2];
+      for (int i=2; i--; )
+        n[i] = 0;
+      for (int i=x.size(); i--; )
+        n[x[i] - 1]++;
+      if (n[0] != 2 || n[1] != 2)
+        return false;
+      return true;
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::IntArgs values(2, 1,2);
+      Gecode::count(home, x, Gecode::IntSet(2,2), values, icl);
+    }
+  };
+  
+  
+  /// Test for integer cardinality with for some variables
+  class IntSome : public IntTest {
+  public:
+    /// Create and register test
+    IntSome(Gecode::IntConLevel icl)
+      : IntTest("GCC::Int::Some::(v,lb,ub)::"+str(icl),4,1,4,false,icl) {}
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      int n[4];
+      for (int i=4; i--; )
+        n[i]=0;
+      for (int i=x.size(); i--; )
+        n[x[i]-1]++;
+      if ((n[0] < 2) || (n[1] < 2) || (n[2] > 0) || (n[3] > 0))
+        return false;
+      return true;
+    }
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      IntArgs values(2, 1,2);
+      Gecode::IntSet fixed(0,2);
+      Gecode::IntSetArgs cards(2);
+      cards[0]=fixed; cards[1]=fixed;
+      count(home, x, cards, values, icl);
+    }
+  };
+  
+  IntAllLbUb val_all(Gecode::ICL_VAL);
+  IntAllLbUb bnd_all(Gecode::ICL_BND);
+  IntAllLbUb dom_all(Gecode::ICL_DOM);
+  
+  IntAllEqUb bnd_alleq(Gecode::ICL_BND);
+  IntAllEqUb dom_alleq(Gecode::ICL_DOM);
+  IntAllEqUb val_alleq(Gecode::ICL_VAL);
+
+  IntSome bnd_some(Gecode::ICL_BND);
+  IntSome dom_some(Gecode::ICL_DOM);
+  IntSome val_some(Gecode::ICL_VAL);
+
+
+/*
 
 using namespace Gecode;
 
 static Gecode::IntSet ds_02(0,2);
-static Gecode::IntSet ds_03(0,3);
-static Gecode::IntSet ds_04(0,4);
-static Gecode::IntSet ds_12(1,2);
-static Gecode::IntSet ds_14(1,4);
-static Gecode::IntSet ds_18(1,8);
-
-/*
 
 class GCCAssignment : public Assignment {
   int problow;
@@ -104,130 +201,9 @@ public:
 
 */
 
-class GCC_FC_AllLbUb : public IntTest {
-public:
-  /// Create and register test
-  GCC_FC_AllLbUb(const char* t, Gecode::IntConLevel icl)
-    : IntTest(t, 4, ds_14, false, icl) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    int n[4];
-    for (int i=4; i--; )
-      n[i] = 0;
-    for (int i=x.size(); i--; )
-      n[x[i] - 1]++;
-    for (int i=4; i--;)
-      if (n[i] > 2)
-        return false;
-    return true;
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntArgs values(4);
-    Gecode::IntSet fixed(0,2);
-    Gecode::IntSetArgs cards(4);
-    for (int i = 1; i < 5; i++) {
-      values[i - 1] = i;
-      cards[i - 1] = fixed;
-    }
-    //gcc(home, x, 0, 2, icl);
-    count(home, x, cards, values, icl);
-  }
-};
-
-class GCC_FC_SomeTriple : public IntTest {
-public:
-  /// Create and register test
-  GCC_FC_SomeTriple(const char* t, Gecode::IntConLevel icl)
-    : IntTest(t, 4, ds_14, false, icl) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    int n[4];
-    for (int i=4; i--; )
-      n[i] = 0;
-    for (int i=x.size(); i--; )
-      n[x[i] - 1]++;
-    if (n[0] < 2 || n[1] < 2 || n[2] > 0 || n[3] > 0)
-      return false;
-    return true;
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-
-    IntArgs values(2);
-    Gecode::IntSet fixed(0,2);
-    Gecode::IntSetArgs cards(2);
-    for (int i = 1; i < 3; i++) {
-      values[i - 1] = i;
-      cards[i - 1] = fixed;
-    }
-    //gcc(home, x, card, 6, 0, false, 1, 4, icl);
-    count(home, x, cards, values, icl);
-  }
-};
-
-class GCC_FC_AllEqUb : public IntTest {
-public:
-  /// Create and register test
-  GCC_FC_AllEqUb(const char* t, Gecode::IntConLevel icl)
-    : IntTest(t, 4, ds_12, false, icl) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    int n[2];
-    for (int i=2; i--; )
-      n[i] = 0;
-    for (int i=x.size(); i--; )
-      n[x[i] - 1]++;
-    if (n[0] != 2 || n[1] != 2)
-      return false;
-    return true;
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntArgs values(2); values[0] = 1; values[1] = 2;
-    count(home, x, Gecode::IntSet(2,2), values, icl);
-  }
-};
-
-
-class GCC_FC_Shared_AllLbUb : public IntTest {
-public:
-  /// Create and register test
-  GCC_FC_Shared_AllLbUb(const char* t, Gecode::IntConLevel icl)
-    : IntTest(t,2,ds_14,false, icl) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    if (x[0] != x[1]) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntVarArgs y(6);
-    for (int i = 0; i < 6; i++) {
-      if (i < 3) {
-        y[i] = x[0];
-      } else {
-        y[i] = x[1];
-      }
-    }
-    IntArgs values(4);
-    Gecode::IntSet fixed(0,3);
-    Gecode::IntSetArgs cards(4);
-    for (int i = 1; i < 5; i++) {
-      values[i - 1] = i;
-      cards[i - 1] = fixed;
-    }
-    count(home, x, cards, values, icl);
-
-  }
-};
-
 
 /*
-class GCC_VC_AllLbUb : public IntTest {
+class VC_AllLbUb : public IntTest {
 private:
   static const int lb = 0;
   static const int rb = 2;
@@ -246,7 +222,7 @@ public:
   }
 
   /// Create and register test
-  GCC_VC_AllLbUb(const char* t, Gecode::IntConLevel icl)
+  VC_AllLbUb(const char* t, Gecode::IntConLevel icl)
     : IntTest(t, xs, ds_02, false,icl) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
@@ -329,7 +305,7 @@ public:
 };
 
 
-class GCC_VC_AllTriple : public IntTest {
+class VC_AllTriple : public IntTest {
 private:
   static const int lb = 0;
   static const int rb = 2;
@@ -347,7 +323,7 @@ public:
 
 
   /// Create and register test
-  GCC_VC_AllTriple(const char* t, Gecode::IntConLevel icl)
+  VC_AllTriple(const char* t, Gecode::IntConLevel icl)
     : IntTest(t, xs, ds_02, false,icl) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
@@ -427,7 +403,7 @@ public:
 };
 
 
-class GCC_VC_SomeTriple : public IntTest {
+class VC_SomeTriple : public IntTest {
 private:
   static const int lb = 0;
   static const int rb = 2;
@@ -444,7 +420,7 @@ private:
 
 public:
   /// Create and register test
-  GCC_VC_SomeTriple(const char* t, Gecode::IntConLevel icl)
+  VC_SomeTriple(const char* t, Gecode::IntConLevel icl)
     : IntTest(t, xs, ds_02, false,icl) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
@@ -526,42 +502,70 @@ public:
 
 */
 
-// Testing with Fixed Cardinalities
-// FixCard::\(\(Shared::\)*\(All\|Some\)::\([lubv,()]+\)\)::\(Bnd\|Dom\|Val\)
-// VarCard::\(\(Shared::\)*\(All\|Some\)::\([lubv,()]+\)\)::\(Bnd\|Dom\|Val\)
 
-GCC_FC_AllLbUb _gccbnd_all("GCC::FixCard::Bnd::All::(lb,ub)",Gecode::ICL_BND);
-GCC_FC_AllLbUb _gccdom_all("GCC::FixCard::Dom::All::(lb,ub)",Gecode::ICL_DOM);
-GCC_FC_AllLbUb _gccval_all("GCC::FixCard::Val::All::(lb,ub)",Gecode::ICL_VAL);
 
-GCC_FC_AllEqUb _gccbnd_alleq("GCC::FixCard::Bnd::All::ub",Gecode::ICL_BND);
-GCC_FC_AllEqUb _gccdom_alleq("GCC::FixCard::Dom::All::ub",Gecode::ICL_DOM);
-GCC_FC_AllEqUb _gccval_alleq("GCC::FixCard::Val::All::ub",Gecode::ICL_VAL);
+// Testing with Cardinality Variables
 
-GCC_FC_SomeTriple _gccbnd_sometrip("GCC::FixCard::Bnd::Some::(v,lb,ub)",Gecode::ICL_BND);
-GCC_FC_SomeTriple _gccdom_sometrip("GCC::FixCard::Dom::Some::(v,lb,ub)",Gecode::ICL_DOM);
-GCC_FC_SomeTriple _gccval_sometrip("GCC::FixCard::Val::Some::(v,lb,ub)",Gecode::ICL_VAL);
+/*
+VC_AllLbUb bnd_all_var("GCC::VarCard::Bnd::All::(lb,ub)",Gecode::ICL_BND);
+VC_AllLbUb dom_all_var("GCC::VarCard::Dom::All::(lb,ub)",Gecode::ICL_DOM);
+VC_AllLbUb val_all_var("GCC::VarCard::Val::All::(lb,ub)",Gecode::ICL_VAL);
+
+VC_AllTriple bnd_alltrip_var("GCC::VarCard::Bnd::All::(v,lb,ub)",Gecode::ICL_BND);
+VC_AllTriple dom_alltrip_var("GCC::VarCard::Dom::All::(v,lb,ub)",Gecode::ICL_DOM);
+VC_AllTriple val_alltrip_var("GCC::VarCard::Val::All::(v,lb,ub)",Gecode::ICL_VAL);
+
+VC_SomeTriple bnd_sometrip__var("GCC::VarCard::Bnd::Some::(v,lb,ub)",Gecode::ICL_BND);
+VC_SomeTriple dom_sometrip__var("GCC::VarCard::Dom::Some::(v,lb,ub)",Gecode::ICL_DOM);
+VC_SomeTriple val_sometrip__var("GCC::VarCard::Val::Some::(v,lb,ub)",Gecode::ICL_VAL);
+*/
+
+  //@}
+
+}}}
+
+// STATISTICS: test-int
+
+/*****
+
+class GCC_FC_Shared_AllLbUb : public IntTest {
+public:
+  /// Create and register test
+  GCC_FC_Shared_AllLbUb(const char* t, Gecode::IntConLevel icl)
+    : IntTest(t,2,ds_14,false, icl) {}
+  /// Test whether \a x is solution
+  virtual bool solution(const Assignment& x) const {
+    if (x[0] != x[1]) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  /// Post constraint on \a x
+  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+    IntVarArgs y(6);
+    for (int i = 0; i < 6; i++) {
+      if (i < 3) {
+        y[i] = x[0];
+      } else {
+        y[i] = x[1];
+      }
+    }
+    IntArgs values(4);
+    Gecode::IntSet fixed(0,3);
+    Gecode::IntSetArgs cards(4);
+    for (int i = 1; i < 5; i++) {
+      values[i - 1] = i;
+      cards[i - 1] = fixed;
+    }
+    count(home, x, cards, values, icl);
+
+  }
+};
 
 
 // GCC_FC_Shared_AllLbUb _gccbnd_shared_all("GCC::FixCard::Bnd::Shared::All::(lb,ub)",Gecode::ICL_BND);
 // GCC_FC_Shared_AllLbUb _gccdom_shared_all("GCC::FixCard::Dom::Shared::All::(lb,ub)",Gecode::ICL_DOM);
 // GCC_FC_Shared_AllLbUb _gccval_shared_all("GCC::FixCard::Val::Shared::All::(lb,ub)",Gecode::ICL_VAL);
 
-// Testing with Cardinality Variables
-
-/*
-GCC_VC_AllLbUb _gccbnd_all_var("GCC::VarCard::Bnd::All::(lb,ub)",Gecode::ICL_BND);
-GCC_VC_AllLbUb _gccdom_all_var("GCC::VarCard::Dom::All::(lb,ub)",Gecode::ICL_DOM);
-GCC_VC_AllLbUb _gccval_all_var("GCC::VarCard::Val::All::(lb,ub)",Gecode::ICL_VAL);
-
-GCC_VC_AllTriple _gccbnd_alltrip_var("GCC::VarCard::Bnd::All::(v,lb,ub)",Gecode::ICL_BND);
-GCC_VC_AllTriple _gccdom_alltrip_var("GCC::VarCard::Dom::All::(v,lb,ub)",Gecode::ICL_DOM);
-GCC_VC_AllTriple _gccval_alltrip_var("GCC::VarCard::Val::All::(v,lb,ub)",Gecode::ICL_VAL);
-
-GCC_VC_SomeTriple _gccbnd_sometrip__var("GCC::VarCard::Bnd::Some::(v,lb,ub)",Gecode::ICL_BND);
-GCC_VC_SomeTriple _gccdom_sometrip__var("GCC::VarCard::Dom::Some::(v,lb,ub)",Gecode::ICL_DOM);
-GCC_VC_SomeTriple _gccval_sometrip__var("GCC::VarCard::Val::Some::(v,lb,ub)",Gecode::ICL_VAL);
 */
-
-// STATISTICS: test-int
-
