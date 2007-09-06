@@ -39,260 +39,122 @@
 
 #include "gecode/support/sort.hh"
 
-static Gecode::IntSet ds_12(1,2);
-static Gecode::IntSet ds_13(1,3);
-static Gecode::IntSet ds_14(1,4);
-static Gecode::IntSet ds_03(0,3);
+namespace Test { namespace Int { namespace Sortedness {
 
-/*
+  /**
+   * \defgroup TaskTestIntSortedness Sortedness constraints
+   * \ingroup TaskTestInt
+   */
+  //@{
 
-class IntSortMin {
-public:
-  bool operator()(const int& x, const int& y) {
-    return x < y;
-  }
-};
-
-class SortPermAssignment : public Assignment{
-  int problow;
-  int probup;
-  int permlow;
-  int permup;
-  int xsize;
-public:
-  /// Create and register test
-  SortPermAssignment(int xlow, int xup,
-                     int plow, int pup,
-                     int xs,
-                     int n0, const Gecode::IntSet& d0)
-    : Assignment(n0, d0),
-      problow(xlow), probup(xup),
-      permlow(plow), permup(pup),
-      xsize(xs) {
-    reset();
-  }
-  void reset(void) {
-    done = false;
-    Gecode::IntSet perm_dom(permlow, permup);
-    Gecode::IntSet var_dom(problow, probup);
-    for (int i = 2*xsize; i < n; i++) {
-      dsv[i].init(perm_dom);
+  /// Relation for sorting integers in increasing order
+  class SortIntMin {
+  public:
+    /// Test whether \a x is less than \a y
+    bool operator()(const int x, const int y) {
+      return x<y;
     }
-    for (int i=0; i < 2*xsize; i++)
-      dsv[i].init(var_dom);
-  }
-  void operator++(void) {
-    Gecode::IntSet perm_dom(permlow, permup);
-    Gecode::IntSet var_dom(problow, probup);
-    int i = n-1;
-    while (true) {
-      ++dsv[i];
-      if (dsv[i]())
-        return;
-      dsv[i].init(d);
-      if (i >= 2*xsize && i < n) {
-        dsv[i].init(perm_dom);
-      } else {
-        dsv[i].init(var_dom);
+  };
+
+  /// Test sortedness without permutation variables
+  class NoVar : public IntTest {
+  protected:
+    /// Number of variables to be sorted
+    static const int n = 3;
+  public:
+    /// Create and register test
+    NoVar(void) : IntTest("Sortedness::NoVar",2*n,0,3) {}
+    /// Test whether \a xy is solution
+    virtual bool solution(const Assignment& xy) const {
+      int x[n], y[n];
+      for (int i=0;i<3; i++) {
+        x[i]=xy[i]; y[i]=xy[n+i];
       }
-      --i;
-      if (i<0) {
-        done = true;
-        return;
-      }
-    }
-  }
-};
-
-class Sortedness_NoVar : public IntTest {
-private:
-  Gecode::IntConLevel icl;
-  static const int xs = 6;
-  static const int ve = xs /2;
-
-public:
-  /// Create and register test
-  Sortedness_NoVar(const char* t, Gecode::IntConLevel icl0)
-    : IntTest(t, xs, ds_13), icl(icl0) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    int sortx[ve];
-    for (int i = 0; i < ve; i++) {
-      sortx[i] = x[i];
-    }
-    IntSortMin min_inc;
-    Support::quicksort<int, IntSortMin> (&sortx[0], ve, min_inc);
-
-//     std::cout << "defined sol: ";
-//     for (int i = 0; i < xs; i++) {
-//       if (i == ve) std::cout << "||";
-//       if (i < ve) {
-//         std::cout << sortx[i]<<" ";
-//       } else {
-//         std::cout <<x[i] << " ";
-//       }
-//     }
-//     std::cout <<"...";
-
-
-    for (int i = ve; i < xs - 1; i++) {
-      if ( !(x[i] <= x[i + 1]) ) {
-        // std::cout << "y not sorted\n";
-        return false;
-      }
-    }
-
-    for (int i = ve; i < xs; i++) {
-      if (sortx[i - ve] != x[i]) {
-        // std::cout << "no sorting poss\n";
-        return false;
-      }
-    }
-
-    // std::cout << "valid\n";
-    return true;
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntVarArgs z(ve);
-    for (int i = 0; i < ve; i++) {
-      z[i] = x[i];
-    }
-
-    IntVarArgs y(ve);
-    for (int i = ve; i < xs; i++) {
-      y[i - ve] = x[i];
-    }
-
-    sortedness(home, z, y, icl);
-  }
-};
-
-
-class Sortedness_PermVar : public IntTest {
-private:
-  Gecode::IntConLevel icl;
-  static const int xs = 9;
-  static const int ve1 = xs / 3;
-  static const int ve2 = 2 * ve1;
-
-  static const int xlow  = 1;
-  static const int xup   = 3;
-  static const int plow  = 0;
-  static const int pup   = 2;
-  static const int xsize = 3;
-
-public:
-  /// Create and register test
-  Sortedness_PermVar(const char* t, Gecode::IntConLevel icl0)
-    : IntTest(t, xs, ds_03), icl(icl0) {}
-  virtual Assignment* assignment(void) const {
-    return new SortPermAssignment(1,3,0,2,3,9,dom);
-  }
-
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-
-
-    int sortx[ve1];
-    for (int i = 0; i < ve1; i++) {
-      sortx[i] = x[i];
-    }
-
-    IntSortMin imin;
-    Support::quicksort<int, IntSortMin> (&sortx[0], ve1, imin);
-
-//     std::cout << "perm issol: ";
-//     for (int i = 0; i < xs; i++) {
-//       if (i == ve1 || i == ve2) std::cout << "||";
-//       std::cout <<x[i] << " ";
-//         }
-//     std::cout <<"...";
-
-    // ys have to be sorted
-    for (int i = ve1; i < ve2 - 1; i++) {
-      if ( !(x[i] <= x[i + 1]) ) {
-//         std::cout << "y not sorted\n";
-        return false;
-      }
-    }
-
-
-    // assert correct domains
-    for (int i = 0; i < ve2; i++) {
-      if (!(x[i] > 0)) {
-//         std::cout << "false domain\n";
-        return false;
-      }
-    }
-
-    for (int i = ve2; i < xs; i++) {
-      if (! (x[i] < 3)) {
-//         std::cout << "false domain 2\n";
-        return false;
-      }
-    }
-
-    // perm index
-    for (int i = 0; i < ve1; i++) {
-      if (x[i] != x[ve1 + x[i + ve2]]) {
-//         std::cout << "wrong index\n";
-        return false;
-      }
-    }
-
-    // perm distinct
-    for (int i = ve2; i < xs - 1; i++) {
-      for (int j = i + 1; j < xs; j++) {
-        if (x[i] == x[j]) {
-//           std::cout << "no perm\n";
+        
+      for (int i=0; i<n-1; i++)
+        if (y[i]>y[i+1])
           return false;
-        }
+
+      SortIntMin sim;
+      Gecode::Support::quicksort<int,SortIntMin>(x,n,sim);
+
+      for (int i=0; i<n; i++)
+        if (x[i] != y[i])
+          return false;
+      return true;
+    }
+    /// Post constraint on \a xy
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& xy) {
+      Gecode::IntVarArgs x(n), y(n);
+      for (int i=0; i<n; i++) {
+        x[i]=xy[i]; y[i]=xy[n+i];
       }
+      Gecode::sortedness(home,x,y);
     }
+  };
 
 
-    for (int i = ve1; i < ve2; i++) {
-      if (sortx[i - ve1] != x[i]) {
-//         std::cout << "no sorting poss\n";
-        return false;
+  /// Test sortedness with permutation variables
+  class PermVar : public IntTest {
+  protected:
+    /// Number of variables to be sorted
+    static const int n = 3;
+  public:    
+    /// Create and register test
+    PermVar(void) : IntTest("Sortedness::PermVar",3*n,0,2) {}
+    /// Test whether \a xyz is solution
+    virtual bool solution(const Assignment& xyz) const {
+      int x[n], y[n], z[n];
+      for (int i=0; i<n; i++) {
+        x[i]=xyz[i]; y[i]=xyz[n+i]; z[i]=xyz[2*n+i];
       }
+
+      // check for permutation
+      for (int i=0; i<n; i++)
+        for (int j=i+1; j<n; j++)
+          if (z[i]==z[j])
+            return false;
+
+      // y must to be sorted
+      for (int i=0; i<n; i++)
+        if (y[i]>y[i+1])
+          return false;
+
+      // check whether permutation is in range
+      for (int i=0; i<n; i++)
+        if ((z[i] < 0) || (z[i] >= n))
+          return false;
+
+      // check whether permutation info is correct
+      for (int i=0; i<n; i++)
+        if (x[i] != y[z[i]])
+          return false;
+
+      // check for sorting
+      SortIntMin sim;
+      Gecode::Support::quicksort<int,SortIntMin>(x,n,sim);
+      for (int i=0; i<n; i++)
+        if (x[i] != y[i])
+          return false;
+
+      return true;
     }
-
-//     std::cout << "valid\n";
-    return true;
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntVarArgs z(ve1);
-    for (int i = 0; i < ve1; i++) {
-      z[i] = x[i];
+    /// Post constraint on \a xyz
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& xyz) {
+      Gecode::IntVarArgs x(n), y(n), z(n);
+      for (int i=0; i<n; i++) {
+        x[i]=xyz[i]; y[i]=xyz[n+i]; z[i]=xyz[2*n+i];
+      }
+      Gecode::sortedness(home,x,y,z);
     }
+  };
+  
 
-    IntVarArgs y(ve1);
-    for (int i = ve1; i < ve2; i++) {
-      y[i - ve1] = x[i];
-    }
+  NoVar novar;
+  PermVar permvar;
+  //@}
 
-    IntVarArgs p(ve1);
-    for (int i = ve2; i < xs; i++) {
-      p[i - ve2] = x[i];
-    }
-
-    for (int i = 0; i < ve1; i++) {
-      rel(home, z[i], Gecode::IRT_GQ, 1);
-      rel(home, y[i], Gecode::IRT_GQ, 1);
-      rel(home, p[i], Gecode::IRT_LQ, 2);
-    }
-    sortedness(home, z, y, p, icl);
-  }
-};
-
-
-Sortedness_NoVar  _sort_novar("Sortedness::NoPermutationVariables::Bnd",Gecode::ICL_BND);
-Sortedness_PermVar  _sort_permvar("Sortedness::WithPermutationVariables::Bnd",Gecode::ICL_BND);
-
-*/
+}}}
 
 // STATISTICS: test-int
 
