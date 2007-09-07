@@ -49,11 +49,17 @@ if (home->failed()) {                           \
   IntVar
   abs(Space* home, IntVar x, IntConLevel icl) {
     GECODE_MM_RETURN_FAILED;
-    if (x.min() >= 0)
+    if ((icl == ICL_DOM) && (x.min() >= 0))
       return x;
-    IntVar y(home,
-             std::min(-x.max(),x.min()),
-             std::max(-x.min(),x.max()));
+    int min, max;
+    if (x.min() >= 0) {
+      min = x.min(); max = x.max();
+    } else if (x.max() <= 0) {
+      min = -x.max(); max = -x.min();
+    } else {
+      min = 0; max = std::max(-x.min(),x.max());
+    }
+    IntVar y(home, min, max);
     abs(home, x, y, icl);
     return y;
   }

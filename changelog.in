@@ -69,6 +69,13 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: minimodel
+What:   bug
+Rank:   minor
+[DESCRIPTION]
+Fixed small quirk in posting an absolute propagator via a function.
+
+[ENTRY]
 Module: set
 What:   new
 Rank:   minor
