@@ -44,6 +44,7 @@
 #include "test/test.hh"
 #include "test/int.hh"
 
+using namespace Test;
 using namespace Gecode;
 using namespace Set;
 
@@ -101,7 +102,6 @@ public:
   CountableSet(const IntSet&);
   CountableSet(void) {}
   void init(const IntSet&);
-  void reset(void) { cur = 0; }
   bool operator()(void) const { return cur<lubmax; }
   void operator++(void);
   int val(void) const;
@@ -111,13 +111,12 @@ class SetAssignment {
 private:
   int n;
   CountableSet* dsv;
-  CpltAssignment ir;
+  Test::Int::CpltAssignment ir;
   bool done;
 public:
   IntSet lub;
   int withInt;
   SetAssignment(int, const IntSet&, int withInt = 0);
-  void reset(void);
   bool operator()(void) const {
     return !done;
   }
@@ -127,7 +126,7 @@ public:
     return dsv[i].val();
   }
   int intval(void) const { return ir[0]; }
-  const Assignment& ints(void) const { return ir; }
+  const Test::Int::Assignment& ints(void) const { return ir; }
   int size(void) const {
     return n;
   }

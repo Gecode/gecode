@@ -37,6 +37,9 @@
  *
  */
 
+namespace Test { namespace Int {
+
+
 /*
  * Assignments
  *
@@ -75,7 +78,7 @@ CpltAssignment::~CpltAssignment(void) {
 
 forceinline int
 RandomAssignment::randval(void) {
-  unsigned int skip = TestBase::randgen(d.size());
+  unsigned int skip = TestBase::rand(d.size());
   for (Gecode::IntSetRanges it(d); true; ++it) {
     if (it.width() > skip)
       return it.min() + static_cast<int>(skip);
@@ -220,6 +223,8 @@ inline Gecode::IntRelType
 IntRelTypes::irt(void) const {
   return irts[i];
 }
+
+}}
 
 // STATISTICS: test-int
 

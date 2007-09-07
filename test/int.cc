@@ -42,6 +42,8 @@
 #include "test/log.hh"
 #include <algorithm>
 
+namespace Test { namespace Int {
+
 /*
  * Complete assignments
  *
@@ -111,7 +113,7 @@ public:
     for (int i=a.size(); i--; ) {
       Log::assign(Log::mk_name("x", i), a[i]);
       rel(this, x[i], IRT_EQ, a[i]);
-      if ((TestBase::randgen(opt.fixprob) == 0) && failed())
+      if ((TestBase::rand(opt.fixprob) == 0) && failed())
         return;
     }
   }
@@ -126,15 +128,15 @@ public:
   void prune(void) {
     using namespace Gecode;
     // Select variable to be pruned
-    int i = TestBase::randgen(x.size());
+    int i = TestBase::rand(x.size());
     while (x[i].assigned()) {
       i = (i+1) % x.size();
     }
     // Prune values
-    for (int vals = TestBase::randgen(x[i].size()-1)+1; vals--; ) {
+    for (int vals = TestBase::rand(x[i].size()-1)+1; vals--; ) {
       int v;
-      Int::ViewRanges<Int::IntView> it(x[i]);
-      unsigned int skip = TestBase::randgen(x[i].size()-1);
+      Gecode::Int::ViewRanges<Gecode::Int::IntView> it(x[i]);
+      unsigned int skip = TestBase::rand(x[i].size()-1);
       while (true) {
         if (it.width() > skip) {
           v = it.min() + skip;
@@ -155,28 +157,28 @@ public:
              bool r, Gecode::BoolVar& b = unused) {
     using namespace Gecode;
     // Select variable to be pruned
-    int i = TestBase::randgen(x.size());
+    int i = TestBase::rand(x.size());
     while (x[i].assigned()) {
       i = (i+1) % x.size();
     }
     // Select mode for pruning
-    int m=TestBase::randgen(3);
+    int m=TestBase::rand(3);
     if ((m == 0) && (a[i] < x[i].max())) {
-      int v=a[i]+1+TestBase::randgen(static_cast<unsigned int>(x[i].max()-a[i]));
+      int v=a[i]+1+TestBase::rand(static_cast<unsigned int>(x[i].max()-a[i]));
       assert((v > a[i]) && (v <= x[i].max()));
       Log::prune(x[i], Log::mk_name("x", i), IRT_LE, v);
       rel(this, x[i], IRT_LE, v);
       Log::prune_result(x[i]);
     } else if ((m == 1) && (a[i] > x[i].min())) {
-      int v=x[i].min()+TestBase::randgen(static_cast<unsigned int>(a[i]-x[i].min()));
+      int v=x[i].min()+TestBase::rand(static_cast<unsigned int>(a[i]-x[i].min()));
       assert((v < a[i]) && (v >= x[i].min()));
       Log::prune(x[i], Log::mk_name("x", i), IRT_GR, v);
       rel(this, x[i], IRT_GR, v);
       Log::prune_result(x[i]);
     } else  {
       int v;
-      Int::ViewRanges<Int::IntView> it(x[i]);
-      unsigned int skip = TestBase::randgen(x[i].size()-1);
+      Gecode::Int::ViewRanges<Gecode::Int::IntView> it(x[i]);
+      unsigned int skip = TestBase::rand(x[i].size()-1);
       while (true) {
         if (it.width() > skip) {
           v = it.min() + skip;
@@ -198,7 +200,7 @@ public:
       rel(this, x[i], IRT_NQ, v);
       Log::prune_result(x[i]);
     }
-    if (TestBase::randgen(opt.fixprob) == 0) {                
+    if (TestBase::rand(opt.fixprob) == 0) {                
       Log::fixpoint();
       Log::print(x, "x");
       if (status() == SS_FAILED)
@@ -515,6 +517,8 @@ IntTest::run(const Options& opt) {
 
   return false;
 }
+
+}}
 
 #undef CHECK
 

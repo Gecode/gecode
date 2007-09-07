@@ -53,18 +53,20 @@
 #include <sstream>
 #include <string>
 
-/**
- * \defgroup TaskTestTest General test support
- *
- * \ingroup TaskTest
- */
-//@{
-/// Commandline options
+namespace Test {
+
+  /**
+   * \defgroup TaskTestTest General test support
+   *
+   * \ingroup TaskTest
+   */
+  //@{
+  /// Commandline options
 class Options {
 public:
   static const int defiter = 5,
     deffixprob = 10;
-
+  
   int   seed;
   int   iter;
   int   fixprob;
@@ -86,7 +88,7 @@ private:
   static TestBase* all;
 public:
   /// Return number between 0..m-1
-  static Gecode::Support::RandomGenerator randgen;
+  static Gecode::Support::RandomGenerator rand;
 
   TestBase(const std::string& s)
     : _name(s) {
@@ -166,7 +168,7 @@ PropKinds::pk(void) const {
   return pks[i];
 }
 
-
+}
 
 #endif
 

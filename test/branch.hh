@@ -42,6 +42,8 @@
 
 #include "test/test.hh"
 
+namespace Test {
+
 using namespace Gecode;
 using namespace Int;
 
@@ -58,7 +60,7 @@ protected:
   IntSet dom;
 
   IntConLevel randicl(void) {
-    switch (TestBase::randgen(4)) {
+    switch (TestBase::rand(4)) {
     case 0: return ICL_DEF;
     case 1: return ICL_VAL;
     case 2: return ICL_BND;
@@ -77,6 +79,7 @@ public:
   virtual void post(Space* home, IntVarArray& x) = 0;
 };
 
+}
 
 #endif
 

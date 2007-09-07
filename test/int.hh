@@ -43,6 +43,8 @@
 #include "gecode/int.hh"
 #include "test/test.hh"
 
+namespace Test { namespace Int {
+
 /**
  * \defgroup TaskTestInt Testing finite domain integers
  * \ingroup TaskTest
@@ -225,6 +227,8 @@ public:
   /// Return current relation type
   Gecode::IntRelType irt(void) const;
 };
+
+}}
 
 #include "test/int.icc"
 

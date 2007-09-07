@@ -37,6 +37,8 @@
 
 #include "test/branch.hh"
 
+namespace Test {
+
 namespace {
   IntSet ds_dense(-2,2);
   const int v_sparse[5] = {-100,-10,0,10,100};
@@ -61,6 +63,8 @@ namespace {
   BDistinct _dist_s_5("Distinct::Sparse::5",ds_sparse,5);
   BDistinct _dist_l_2("Distinct::Large::2",ds_large,2);
   BDistinct _dist_l_3("Distinct::Large::3",ds_large,3);
+}
+
 }
 
 // STATISTICS: test-branch

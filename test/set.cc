@@ -76,15 +76,6 @@ SetAssignment::SetAssignment(int n0, const IntSet& d0, int _withInt)
 }
 
 void
-SetAssignment::reset(void) {
-  done = false;
-  for (int i=n; i--; )
-    dsv[i].init(lub);
-  ir.~CpltAssignment();
-  new (&ir) CpltAssignment(withInt, lub);
-}
-
-void
 SetAssignment::operator++(void) {
   int i = n-1;
   while (true) {
@@ -127,7 +118,7 @@ operator<<(std::ostream& os, const SetAssignment& a) {
 
 #define FORCE_FIX                               \
 do {                                            \
-  if (TestBase::randgen(opt.fixprob) == 0) {        \
+  if (TestBase::rand(opt.fixprob) == 0) {        \
     Log::fixpoint();                            \
     if (status() == SS_FAILED) return;          \
   }                                             \
@@ -289,11 +280,11 @@ public:
     // Select variable to be pruned
     int i;
     if (intsAssigned) {
-      i = TestBase::randgen(x.size());
+      i = TestBase::rand(x.size());
     } else if (setsAssigned) {
-      i = TestBase::randgen(y.size());
+      i = TestBase::rand(y.size());
     } else {
-      i = TestBase::randgen(x.size()+y.size());
+      i = TestBase::rand(x.size()+y.size());
     }
 
     if (setsAssigned || i>=x.size()) {
@@ -306,25 +297,25 @@ public:
 
 
       // Select mode for pruning
-      int m=TestBase::randgen(3);
+      int m=TestBase::rand(3);
       if ((m == 0) && (a.ints()[i] < y[i].max())) {
         int v=a.ints()[i]+1+
-          TestBase::randgen(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
+          TestBase::rand(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
         assert((v > a.ints()[i]) && (v <= y[i].max()));
         Log::prune(y[i], Log::mk_name("y", i), IRT_LE, v);
         rel(this, y[i], IRT_LE, v);
         Log::prune_result(y[i]);
       } else if ((m == 1) && (a.ints()[i] > y[i].min())) {
         int v=y[i].min()+
-          TestBase::randgen(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
+          TestBase::rand(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
         assert((v < a.ints()[i]) && (v >= y[i].min()));
         Log::prune(y[i], Log::mk_name("y", i), IRT_GR, v);
         rel(this, y[i], IRT_GR, v);
         Log::prune_result(y[i]);
       } else  {
         int v;
-        Int::ViewRanges<Int::IntView> it(y[i]);
-        unsigned int skip = TestBase::randgen(y[i].size()-1);
+        Gecode::Int::ViewRanges<Gecode::Int::IntView> it(y[i]);
+        unsigned int skip = TestBase::rand(y[i].size()-1);
         while (true) {
           if (it.width() > skip) {
             v = it.min() + skip;
@@ -346,7 +337,7 @@ public:
         rel(this, y[i], IRT_NQ, v);
         Log::prune_result(y[i]);
       }
-      if (TestBase::randgen(opt.fixprob) == 0 && !fixprob(st, r, b))
+      if (TestBase::rand(opt.fixprob) == 0 && !fixprob(st, r, b))
         return false;
       return true;
     }
@@ -366,16 +357,16 @@ public:
     unsigned int aisize = Iter::Ranges::size(aisizer);
 
     // Select mode for pruning
-    int m=TestBase::randgen(5);
+    int m=TestBase::rand(5);
     if (m==0 && inter()) {
-      int v = TestBase::randgen(Iter::Ranges::size(inter));
+      int v = TestBase::rand(Iter::Ranges::size(inter));
       addToGlb(v, x[i], i, a);
     } else if (m==1 && diff()) {
-      int v = TestBase::randgen(Iter::Ranges::size(diff));
+      int v = TestBase::rand(Iter::Ranges::size(diff));
       removeFromLub(v, x[i], i, a);
     } else if (m==2 && x[i].cardMin() < aisize) {
       unsigned int newc = x[i].cardMin() + 1 +
-        TestBase::randgen(aisize - x[i].cardMin());
+        TestBase::rand(aisize - x[i].cardMin());
       assert( newc > x[i].cardMin() );
       assert( newc <= aisize );
       Log::prune(x[i], Log::mk_name("x", i), newc, Limits::Set::card_max);
@@ -383,7 +374,7 @@ public:
       Log::prune_result(x[i]);
     } else if (m==3 && x[i].cardMax() > aisize) {
       unsigned int newc = x[i].cardMax() - 1 -
-        TestBase::randgen(x[i].cardMax() - aisize);
+        TestBase::rand(x[i].cardMax() - aisize);
       assert( newc < x[i].cardMax() );
       assert( newc >= aisize );
       Log::prune(x[i], Log::mk_name("x", i), 0, newc);
@@ -391,14 +382,14 @@ public:
       Log::prune_result(x[i]);
     } else {
       if (inter()) {
-        int v = TestBase::randgen(Iter::Ranges::size(inter));
+        int v = TestBase::rand(Iter::Ranges::size(inter));
         addToGlb(v, x[i], i, a);
       } else {
-        int v = TestBase::randgen(Iter::Ranges::size(diff));
+        int v = TestBase::rand(Iter::Ranges::size(diff));
         removeFromLub(v, x[i], i, a);
       }
     }
-    if (TestBase::randgen(opt.fixprob) == 0 && !fixprob(st, r, b))
+    if (TestBase::rand(opt.fixprob) == 0 && !fixprob(st, r, b))
       return false;
 
     return true;

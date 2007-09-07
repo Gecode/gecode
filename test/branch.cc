@@ -47,6 +47,7 @@
 //#include "gecode/set.hh"
 #include "gecode/search.hh"
 
+namespace Test {
 
 using std::map;
 using std::vector;
@@ -168,8 +169,8 @@ BranchCompleteTest::run(const Options& opt) {
     for (int val = nbvalsel; val--; ) {
       BranchTestSpace* clone = static_cast<BranchTestSpace*>(root->clone(false));
       int 
-        a_c = TestBase::randgen(10),
-        c_d = TestBase::randgen(10);
+        a_c = TestBase::rand(10),
+        c_d = TestBase::rand(10);
       branch(clone, clone->x, bvarsel[var], bvalsel[val]);
       Gecode::DFS<BranchTestSpace> e_s(clone, a_c, c_d);
       delete clone;
@@ -200,6 +201,8 @@ BranchCompleteTest::run(const Options& opt) {
   }
 
   return results.size() == 1;
+}
+
 }
 
 // STATISTICS: test-branch

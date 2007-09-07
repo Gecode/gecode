@@ -53,6 +53,8 @@
 #include <vector>
 #include <utility>
 
+namespace Test {
+
 using std::vector;
 using std::make_pair;
 using std::pair;
@@ -60,7 +62,7 @@ using std::pair;
 vector<pair<bool, const char*> > testpat;
 
 TestBase* TestBase::all = NULL;
-Gecode::Support::RandomGenerator TestBase::randgen = 
+Gecode::Support::RandomGenerator TestBase::rand = 
 Gecode::Support::RandomGenerator();
 
 
@@ -74,62 +76,6 @@ namespace {
     if (o.log)
       Log::print(o.display);
   }
-}
-
-int
-main(int argc, char** argv) {
-#ifdef GECODE_HAVE_MTRACE
-  mtrace();
-#endif
-
-  Options o;
-  o.parse(argc, argv);
-  TestBase::randgen.seed(o.seed);
-  Log::logging(o.log);
-
-  for (TestBase* t = TestBase::tests() ; t != NULL; t = t->next() ) {
-    try {
-      if (testpat.size() != 0) {
-        bool match_found   = false;
-        bool some_positive = false;
-        for (unsigned int i = 0; i < testpat.size(); ++i) {
-          if (testpat[i].first) { // Negative pattern
-            if (t->name().find(testpat[i].second) != std::string::npos)
-              goto next;
-          } else {               // Positive pattern
-            some_positive = true;
-            if (t->name().find(testpat[i].second) != std::string::npos)
-              match_found = true;
-          }
-        }
-        if (some_positive && !match_found) goto next;
-      }
-      std::cout << t->name() << " ";
-      std::cout.flush();
-      for (int i = o.iter; i--; ) {
-        o.seed = TestBase::randgen.seed();
-        if (t->run(o)) {
-          std::cout << "+";
-          std::cout.flush();
-        } else {
-          std::cout << "-" << std::endl;
-          report_error(o, t->name());
-          if (o.stop_on_error) 
-            return 1;
-        }
-      }
-    std::cout << std::endl;
-    } catch (Gecode::Exception e) {
-      std::cout << "Exception in \"Gecode::" << e.what()
-                << "." << std::endl
-                << "Stopping..." << std::endl;
-          report_error(o, t->name());
-          if (o.stop_on_error) 
-            return 1;
-    }
-  next:;
-  }
-  return 0;
 }
 
 void
@@ -223,6 +169,66 @@ Options::parse(int argc, char** argv) {
 
 const Gecode::PropKind PropKinds::pks[] =
   {Gecode::PK_MEMORY,Gecode::PK_SPEED};
+
+}
+
+int
+main(int argc, char** argv) {
+  using namespace Test;
+#ifdef GECODE_HAVE_MTRACE
+  mtrace();
+#endif
+
+  Options o;
+  o.parse(argc, argv);
+  TestBase::rand.seed(o.seed);
+  Log::logging(o.log);
+
+  for (TestBase* t = TestBase::tests() ; t != NULL; t = t->next() ) {
+    try {
+      if (testpat.size() != 0) {
+        bool match_found   = false;
+        bool some_positive = false;
+        for (unsigned int i = 0; i < testpat.size(); ++i) {
+          if (testpat[i].first) { // Negative pattern
+            if (t->name().find(testpat[i].second) != std::string::npos)
+              goto next;
+          } else {               // Positive pattern
+            some_positive = true;
+            if (t->name().find(testpat[i].second) != std::string::npos)
+              match_found = true;
+          }
+        }
+        if (some_positive && !match_found) goto next;
+      }
+      std::cout << t->name() << " ";
+      std::cout.flush();
+      for (int i = o.iter; i--; ) {
+        o.seed = TestBase::rand.seed();
+        if (t->run(o)) {
+          std::cout << "+";
+          std::cout.flush();
+        } else {
+          std::cout << "-" << std::endl;
+          report_error(o, t->name());
+          if (o.stop_on_error) 
+            return 1;
+        }
+      }
+    std::cout << std::endl;
+    } catch (Gecode::Exception e) {
+      std::cout << "Exception in \"Gecode::" << e.what()
+                << "." << std::endl
+                << "Stopping..." << std::endl;
+          report_error(o, t->name());
+          if (o.stop_on_error) 
+            return 1;
+    }
+  next:;
+  }
+  return 0;
+}
+
 
 
 // STATISTICS: test-core

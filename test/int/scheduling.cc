@@ -47,6 +47,8 @@
 #include <string>
 #include <sstream>
 
+namespace Test { namespace Int { namespace Scheduling {
+
 using namespace Gecode;
 
 static Gecode::IntSet ds_12(-1,2);
@@ -264,4 +266,7 @@ namespace {
   Cumulatives _cumu4f3("Cumulatives::4f3", 4, false, 3);
   */
 }
+
+}}}
+
 // STATISTICS: test-int
