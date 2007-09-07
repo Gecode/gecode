@@ -77,13 +77,9 @@ operator<<(std::ostream& os, const Assignment& a) {
   return os;
 }
 
-#define FORCE_FIX                                 \
-do {                                              \
-  if (TestBase::randgen(opt.fixprob) == 0) {          \
-    Log::fixpoint();                              \
-    if (status() == SS_FAILED) return;            \
-  }                                               \
-} while(0)
+
+
+
 
 class IntTestSpace : public Gecode::Space {
 public:
@@ -104,33 +100,29 @@ public:
     return new IntTestSpace(share,*this);
   }
   
-  bool is_failed(void) {
+  bool failed(void) {
     using namespace Gecode;
     Log::fixpoint();
     return status() == SS_FAILED;
   }
+
   void assign(const Assignment& a) {
     using namespace Gecode;
     for (int i=a.size(); i--; ) {
       Log::assign(Log::mk_name("x", i), a[i]);
       rel(this, x[i], IRT_EQ, a[i]);
-      FORCE_FIX;
+      if ((TestBase::randgen(opt.fixprob) == 0) && failed())
+        return;
     }
   }
-  void assign(const Assignment& a, int skip_lo, int skip_hi) {
-    using namespace Gecode;
-    for (int i=a.size()-skip_hi; i-->skip_lo; ) {
-      Log::assign(Log::mk_name("x", i), a[i]);
-      rel(this, x[i], IRT_EQ, a[i]);
-      FORCE_FIX;
-    }
-  }
+
   bool assigned(void) const {
     for (int i=x.size(); i--; )
       if (!x[i].assigned())
         return false;
     return true;
   }
+
   void prune(void) {
     using namespace Gecode;
     // Select variable to be pruned
@@ -292,10 +284,11 @@ IntTest::run(const Options& opt) {
   using namespace Gecode;
   const char* test    = "NONE";
   const char* problem = "NONE";
-  bool has_assignment = true;
+
   // Set up assignments
   Assignment* ap = assignment();
   Assignment& a = *ap;
+
   // Set up space for all solution search
   IntTestSpace* search_s = new IntTestSpace(arity,dom,opt);
   post(search_s,search_s->x);
@@ -303,20 +296,23 @@ IntTest::run(const Options& opt) {
   branch(search_s,search_s->x,INT_VAR_NONE,INT_VAL_MIN);
   Gecode::DFS<IntTestSpace> e_s(search_s);
   delete search_s;
+
   while (a()) {
-    bool is_sol = solution(a);
-   {
+
+    bool sol = solution(a);
+
+    {
       test = "Assignment (after posting)";
       
-      IntTestSpace * s = new IntTestSpace(arity,dom,opt);
+      IntTestSpace* s = new IntTestSpace(arity,dom,opt);
       post(s,s->x);
       log_posting();
       s->assign(a);
-      if (is_sol) {
-        CHECK(!s->is_failed(), "Failed on solution");
+      if (sol) {
+        CHECK(!s->failed(), "Failed on solution");
         CHECK(s->propagators()==0, "No subsumtion");
       } else {
-        CHECK(s->is_failed(), "Solved on non-solution");
+        CHECK(s->failed(), "Solved on non-solution");
       }
       delete s;
     }
@@ -324,124 +320,15 @@ IntTest::run(const Options& opt) {
       test = "Assignment (before posting)";
       Log::reset();
       
-      IntTestSpace * s = new IntTestSpace(arity,dom,opt);
+      IntTestSpace* s = new IntTestSpace(arity,dom,opt);
       s->assign(a); 
       post(s,s->x);
       log_posting();
-      if (is_sol) {
-        CHECK(!s->is_failed(), "Failed on solution");
+      if (sol) {
+        CHECK(!s->failed(), "Failed on solution");
         CHECK(s->propagators()==0, "No subsumtion");
       } else {
-        CHECK(s->is_failed(), "Solved on non-solution");
-      }
-      delete s;
-    }
-    {
-      test = "Partial assignment (before posting)";
-      Log::reset();
-      
-      IntTestSpace *s = new IntTestSpace(arity,dom,opt);
-      int lo = 0, hi = 0;
-      while (lo + hi == 0) {
-        lo = TestBase::randgen(2);
-        hi = TestBase::randgen(2);
-      }
-      s->assign(a,lo,hi); 
-      post(s,s->x);
-      log_posting();
-      while (!s->failed() && !s->assigned())
-        if (!s->prune(a,*this,false)) {
-          problem = "No fixpoint";
-          delete s;
-          goto failed;
-        }
-
-      // Check whether it agrees with assignment
-      s->assign(a);
-      
-      if (is_sol) {
-        CHECK(!s->is_failed(), "Failed on solution");
-        CHECK(s->propagators()==0, "No subsumtion");
-      } else {
-        CHECK(s->is_failed(), "Solved on non-solution");
-      }
-      delete s;
-    }
-    if (reified) {
-      test = "Assignment reified (rewrite after post)";
-      Log::reset();
-      
-      IntTestSpace * s = new IntTestSpace(arity,dom,opt);
-      BoolVar b(s,0,1);
-      Log::initial(b, "b");
-      post(s,s->x,b);
-      log_posting();
-      if (is_sol) {
-        rel(s, b, IRT_EQ, 1);
-      } else {
-        rel(s, b, IRT_EQ, 0);
-      }
-      s->assign(a);
-      CHECK(!s->is_failed(), "Failed");
-      CHECK(s->propagators()==0, "No subsumtion");
-      delete s;
-    }
-    if (reified) {
-      test = "Assignment reified (immediate rewrite)";
-      Log::reset();
-      
-      IntTestSpace * s = new IntTestSpace(arity,dom,opt);
-      BoolVar b(s,0,1);
-      Log::initial(b, "b");
-      if (is_sol) {
-        rel(s, b, IRT_EQ, 1);
-      } else {
-        rel(s, b, IRT_EQ, 0);
-      }
-      post(s,s->x,b);
-      log_posting();
-      s->assign(a);
-      CHECK(!s->is_failed(), "Failed");
-      CHECK(s->propagators()==0, "No subsumtion");
-      delete s;
-    }
-    if (reified) {
-      test = "Assignment reified (before posting)";
-      Log::reset();
-      
-      IntTestSpace * s = new IntTestSpace(arity,dom,opt);
-      BoolVar b(s,0,1);
-      Log::initial(b, "b");
-      s->assign(a); 
-      post(s,s->x,b);
-      log_posting();
-      CHECK(!s->is_failed(), "Failed");
-      CHECK(s->propagators()==0, "No subsumtion");
-      CHECK(b.assigned(), "Control variable unassigned");
-      if (is_sol) {
-        CHECK(b.val()==1, "Zero on solution");
-      } else {
-        CHECK(b.val()==0, "One on non-solution");
-      }
-      delete s;
-    }
-    if (reified) {
-      test = "Assignment reified (after posting)";
-      Log::reset();
-
-      IntTestSpace * s = new IntTestSpace(arity,dom,opt);
-      BoolVar b(s,0,1);
-      Log::initial(b, "b");
-      post(s,s->x,b);
-      log_posting();
-      s->assign(a);
-      CHECK(!s->is_failed(), "Failed");
-      CHECK(s->propagators()==0, "No subsumtion");
-      CHECK(b.assigned(), "Control variable unassigned");
-      if (is_sol) {
-        CHECK(b.val()==1, "Zero on solution");
-      } else {
-        CHECK(b.val()==0, "One on non-solution");
+        CHECK(s->failed(), "Solved on non-solution");
       }
       delete s;
     }
@@ -449,7 +336,7 @@ IntTest::run(const Options& opt) {
       test = "Prune";
       Log::reset();
       
-      IntTestSpace * s = new IntTestSpace(arity,dom,opt);
+      IntTestSpace* s = new IntTestSpace(arity,dom,opt);
       post(s,s->x);
       log_posting();
       while (!s->failed() && !s->assigned())
@@ -459,44 +346,126 @@ IntTest::run(const Options& opt) {
           goto failed;
         }
       s->assign(a);
-      if (is_sol) {
-        CHECK(!s->is_failed(), "Failed on solution");
+      if (sol) {
+        CHECK(!s->failed(), "Failed on solution");
         CHECK(s->propagators()==0, "No subsumtion");
       } else {
-        CHECK(s->is_failed(), "Solved on non-solution");
+        CHECK(s->failed(), "Solved on non-solution");
       }
       delete s;
     }
+
     if (reified) {
-      test = "Prune reified";
-      Log::reset();
+      {
+        test = "Assignment reified (rewrite after post)";
+        Log::reset();
       
-      IntTestSpace * s = new IntTestSpace(arity,dom,opt);
-      BoolVar b(s,0,1);
-      Log::initial(b, "b");
-      post(s,s->x,b);
-      log_posting();
-      while (!s->failed() && !s->assigned() && !b.assigned())
-        if (!s->prune(a,*this,true,b)) {
-          problem = "No fixpoint";
-          delete s;
-          goto failed;
+        IntTestSpace* s = new IntTestSpace(arity,dom,opt);
+        BoolVar b(s,0,1);
+        Log::initial(b, "b");
+        post(s,s->x,b);
+        log_posting();
+        if (sol) {
+          rel(s, b, IRT_EQ, 1);
+        } else {
+          rel(s, b, IRT_EQ, 0);
         }
-      CHECK(!s->is_failed(), "Failed");
-      CHECK(s->propagators()==0, "No subsumtion");
-      CHECK(b.assigned(), "Control variable unassigned");
-      if (is_sol) {
-        CHECK(b.val()==1, "Zero on solution");
-      } else {
-        CHECK(b.val()==0, "One on non-solution");
+        s->assign(a);
+        CHECK(!s->failed(), "Failed");
+        CHECK(s->propagators()==0, "No subsumtion");
+        delete s;
       }
-      delete s;
+      {
+        test = "Assignment reified (immediate rewrite)";
+        Log::reset();
+        
+        IntTestSpace* s = new IntTestSpace(arity,dom,opt);
+        BoolVar b(s,0,1);
+        Log::initial(b, "b");
+        if (sol) {
+          rel(s, b, IRT_EQ, 1);
+        } else {
+          rel(s, b, IRT_EQ, 0);
+        }
+        post(s,s->x,b);
+        log_posting();
+        s->assign(a);
+        CHECK(!s->failed(), "Failed");
+        CHECK(s->propagators()==0, "No subsumtion");
+        delete s;
+      }
+      {
+        test = "Assignment reified (before posting)";
+        Log::reset();
+        
+        IntTestSpace* s = new IntTestSpace(arity,dom,opt);
+        BoolVar b(s,0,1);
+        Log::initial(b, "b");
+        s->assign(a); 
+        post(s,s->x,b);
+        log_posting();
+        CHECK(!s->failed(), "Failed");
+        CHECK(s->propagators()==0, "No subsumtion");
+        CHECK(b.assigned(), "Control variable unassigned");
+        if (sol) {
+          CHECK(b.val()==1, "Zero on solution");
+        } else {
+          CHECK(b.val()==0, "One on non-solution");
+        }
+        delete s;
+      }
+      {
+        test = "Assignment reified (after posting)";
+        Log::reset();
+        
+        IntTestSpace* s = new IntTestSpace(arity,dom,opt);
+        BoolVar b(s,0,1);
+        Log::initial(b, "b");
+        post(s,s->x,b);
+        log_posting();
+        s->assign(a);
+        CHECK(!s->failed(), "Failed");
+        CHECK(s->propagators()==0, "No subsumtion");
+        CHECK(b.assigned(), "Control variable unassigned");
+        if (sol) {
+          CHECK(b.val()==1, "Zero on solution");
+        } else {
+          CHECK(b.val()==0, "One on non-solution");
+        }
+        delete s;
+      }
+      {
+        test = "Prune reified";
+        Log::reset();
+        
+        IntTestSpace* s = new IntTestSpace(arity,dom,opt);
+        BoolVar b(s,0,1);
+        Log::initial(b, "b");
+        post(s,s->x,b);
+        log_posting();
+        while (!s->failed() && !s->assigned() && !b.assigned())
+          if (!s->prune(a,*this,true,b)) {
+            problem = "No fixpoint";
+            delete s;
+            goto failed;
+          }
+        CHECK(!s->failed(), "Failed");
+        CHECK(s->propagators()==0, "No subsumtion");
+        CHECK(b.assigned(), "Control variable unassigned");
+        if (sol) {
+          CHECK(b.val()==1, "Zero on solution");
+        } else {
+          CHECK(b.val()==0, "One on non-solution");
+        }
+        delete s;
+      }
     }
+
     if (testsearch) {
       Log::reset();
       test = "Search";
-      if (is_sol) {
-        IntTestSpace * s = e_s.next();
+      if (sol) {
+        IntTestSpace* s = e_s.next();
         CHECK(s != NULL,    "Solutions exhausted");
         CHECK(s->propagators()==0, "No subsumtion");
         for (int i=a.size(); i--; ) {
@@ -506,8 +475,10 @@ IntTest::run(const Options& opt) {
         delete s;
       }
     }
+
     ++a;
   }
+
   if (testsearch) {
     test = "Search";
     if (e_s.next() != NULL) {
@@ -515,30 +486,33 @@ IntTest::run(const Options& opt) {
       goto failed;
     }
   }
+
   if ((icl == ICL_DOM) && testdomcon) {
-    has_assignment = false;
     test = "Full domain consistency";
     Log::reset();
-    IntTestSpace * s = new IntTestSpace(arity,dom,opt);
+    IntTestSpace* s = new IntTestSpace(arity,dom,opt);
     post(s,s->x);
     log_posting();
-    while (!s->is_failed() && !s->assigned()) {
+    while (!s->failed() && !s->assigned()) {
       s->prune();
     }
-    CHECK(!s->is_failed(), "Failed");
+    CHECK(!s->failed(), "Failed");
     CHECK(s->propagators()==0, "No subsumtion");
     delete s;
-    has_assignment = true;
   }
+
   delete ap;
   return true;
+
  failed:
   std::cout   << "FAILURE" << std::endl
               << "\t" << "Test:       " << test << std::endl
               << "\t" << "Problem:    " << problem << std::endl;
-  if (has_assignment)
+  if (a())
     std::cout << "\t" << "Assignment: " << a << std::endl;
+
   delete ap;
+
   return false;
 }
 

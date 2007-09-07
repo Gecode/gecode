@@ -63,23 +63,16 @@
 class Options {
 public:
   static const int defiter = 5,
-    deffixprob = 10,
-    defnoofmachines = 1,
-    defmachine = 1,
-    defskip = 0;
+    deffixprob = 10;
 
   int   seed;
   int   iter;
   int   fixprob;
   bool  log, display;
   bool  stop_on_error;
-  unsigned int   noofmachines;
-  unsigned int   machine;
-  unsigned int   skip;
   Options(void)
     : seed(0), iter(defiter), fixprob(deffixprob), 
-      log(false), display(true), stop_on_error(true),
-      noofmachines(defnoofmachines), machine(defmachine), skip(defskip)
+      log(false), display(true), stop_on_error(true)
   {}
 
   void parse(int argc, char **argv);
@@ -88,22 +81,22 @@ public:
 /// Main test driver
 class TestBase {
 private:
-  std::string s;
+  std::string _name;
   TestBase* n;
   static TestBase* all;
 public:
   /// Return number between 0..m-1
   static Gecode::Support::RandomGenerator randgen;
 
-  TestBase(const std::string& s0)
-    : s(s0) {
+  TestBase(const std::string& s)
+    : _name(s) {
     if (all == NULL) {
       all = this; n = NULL;
     } else {
       // Search alphabetically
       TestBase* p = NULL;
       TestBase* c = all;
-      while ((c != NULL) && (c->s < s)) {
+      while ((c != NULL) && (c->_name < s)) {
         p = c; c = c->n;
       }
       if (c == NULL) {
@@ -122,7 +115,7 @@ public:
     return n;
   }
   const std::string& name(void) const {
-    return s;
+    return _name;
   }
   virtual bool run(const Options& opt) = 0;
   virtual ~TestBase(void) {}
