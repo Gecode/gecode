@@ -163,7 +163,7 @@ namespace {
  * \section ExamplePlacementPuzzleOnePiece Placing one piece
  *
  * The constraint for each piece placement uses regular expressions
- * (and consequently the \ref regular constraint) for expressing
+ * (and consequently the \ref extensional constraint) for expressing
  * placement of (rotated) pieces on the grid. Consider the simple
  * example of placing the piece
  * \code
@@ -343,7 +343,7 @@ public:
         for (int p = b.size(); p--; )
           cm[p] = post(this, ~(b[p] == col));
         // Post constraint for color i+1
-        regular(this, cm, get_constraint(spec[i]));
+        extensional(this, cm, get_constraint(spec[i]));
       }
     }
 

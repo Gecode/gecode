@@ -189,7 +189,7 @@ namespace {
  * \section ExamplePlacementPuzzleOnePiece Placing one piece
  *
  * The constraint for each piece placement uses regular expressions
- * (and consequently the \ref regular constraint) for expressing
+ * (and consequently the \ref extensional constraint) for expressing
  * placement of (rotated) pieces on the grid. Consider the simple
  * example of placing the piece
  * \code
@@ -316,14 +316,13 @@ private:
     for (int h = 0; h < theight; ++h) {
       for (int w = 0; w < twidth; ++w) {
 	int which = tile[h*twidth + w] == 'X';
-	res = res + color[which];
+	res += color[which];
       }
       if (h < theight-1) {
-	res = res + eol(width-twidth, width-twidth);
+	res += eol(width-twidth, width-twidth);
       }
     }
-    res = res + *eol;
-
+    res += *eol;
     return res;
   } 
 
@@ -377,11 +376,8 @@ public:
     }
 
     // Post constraints
-    for (int i = 0; i < ntiles; ++i) {
-      REG reg = get_constraint(i);
-      DFA dfa = reg;
-      regular(this, b, dfa);
-    }
+    for (int i = 0; i < ntiles; ++i) 
+      extensional(this, b, get_constraint(i));
 
     // Remove symmetrical boards
     //    if (!o.naive) {

@@ -86,9 +86,9 @@ protected:
 public:
   /// Propagation to use for model
   enum {
-    PROP_REIFIED,        ///< Use reified constraints
-    PROP_REGULAR,        ///< Use regular constraints
-    PROP_REGULAR_CHANNEL ///< Use regular and channel constraints
+    PROP_REIFIED,            ///< Use reified constraints
+    PROP_EXTENSIONAL,        ///< Use extensional constraints
+    PROP_EXTENSIONAL_CHANNEL ///< Use extensional and channel constraints
   };
   /// Construct model
   LangfordNumber(const LangfordNumberOptions& opt)
@@ -124,7 +124,7 @@ public:
             element(this, y, p[i*k+j], i+1);
       }
       break;
-    case PROP_REGULAR:
+    case PROP_EXTENSIONAL:
       {
         IntArgs a(n-1);
         for (int v=2; v<=n; v++)
@@ -134,13 +134,11 @@ public:
           if (v > 1)
             a[v-2]=v-1;
           REG ra(a), rv(v);
-          // Regular expression
-          DFA dfa = *ra+rv+(ra(v,v)+rv)(k-1,k-1)+*ra;
-          regular(this, y, dfa);
+          extensional(this, y, *ra+rv+(ra(v,v)+rv)(k-1,k-1)+*ra);
         }
       }
       break;
-    case PROP_REGULAR_CHANNEL:
+    case PROP_EXTENSIONAL_CHANNEL:
       {
         // Boolean variables for channeling
         BoolVarArgs b(k*n*n);
@@ -164,8 +162,7 @@ public:
           BoolVarArgs c(k*n);
           for (int i = k*n; i--; )
             c[i] = b[i*n+(v-1)];
-          DFA dfa = *r0 + r1 + (r0(v,v) + r1)(k-1,k-1) + *r0;
-          regular(this, c, dfa);
+          extensional(this, c, *r0 + r1 + (r0(v,v) + r1)(k-1,k-1) + *r0);
         }
       }
       break;
@@ -207,10 +204,13 @@ int
 main(int argc, char* argv[]) {
   LangfordNumberOptions opt("Langford Numbers",3,9);
   opt.icl(ICL_DOM);
-  opt.propagation(LangfordNumber::PROP_REGULAR_CHANNEL);
-  opt.propagation(LangfordNumber::PROP_REIFIED, "reified");
-  opt.propagation(LangfordNumber::PROP_REGULAR, "regular");
-  opt.propagation(LangfordNumber::PROP_REGULAR_CHANNEL, "regular-channel");
+  opt.propagation(LangfordNumber::PROP_EXTENSIONAL_CHANNEL);
+  opt.propagation(LangfordNumber::PROP_REIFIED, 
+                  "reified");
+  opt.propagation(LangfordNumber::PROP_EXTENSIONAL, 
+                  "extensional");
+  opt.propagation(LangfordNumber::PROP_EXTENSIONAL_CHANNEL, 
+                  "extensional-channel");
   opt.parse(argc, argv);
   if (opt.k < 1) {
     std::cerr << "k must be at least 1!" << std::endl;

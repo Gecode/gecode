@@ -786,141 +786,6 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntIntRegular Regular constraints
-   * \ingroup TaskIntInt
-   */
-
-  //@{
-  /**
-   * \brief Deterministic finite automaton
-   *
-   * After initialization, the start state is always zero.
-   * The final states are contiguous ranging from the first to the
-   * last final state.
-   */
-  class DFA : public SharedHandle {
-  private:
-    /// Implementation of DFA
-    class DFAI;
-  public:
-    /// Specification of a %DFA transition
-    class Transition {
-    public:
-      int i_state; ///< input state
-      int symbol;  ///< symbol
-      int o_state; ///< output state
-    };
-    /// Iterator for %DFA transitions (sorted by symbols)
-    class Transitions {
-    private:
-      /// Current transition
-      const Transition* c_trans;
-      /// End of transitions
-      const Transition* e_trans;
-    public:
-      /// Initialize to all transitions of DFA \a d
-      Transitions(const DFA& d);
-      /// Initialize to transitions of DFA \a d for symbol \a n
-      Transitions(const DFA& d, int n);
-      /// Test whether iterator still at a transition
-      bool operator()(void) const;
-      /// Move iterator to next transition
-      void operator++(void);
-      /// Return in-state of current transition
-      int i_state(void) const;
-      /// Return symbol of current transition
-      int symbol(void) const;
-      /// Return out-state of current transition
-      int o_state(void) const;
-    };
-    /// Iterator for %DFA symbols
-    class Symbols {
-    private:
-      /// Current transition
-      const Transition* c_trans;
-      /// End of transitions
-      const Transition* e_trans;
-    public:
-      /// Initialize to symbols of DFA \a d
-      Symbols(const DFA& d);
-      /// Test whether iterator still at a symbol
-      bool operator()(void) const;
-      /// Move iterator to next symbol
-      void operator++(void);
-      /// Return current symbol
-      int val(void) const;
-    };
-  public:
-    friend class Transitions;
-    /// Default constructor
-    DFA(void);
-    /**
-     * \brief Initialize DFA
-     *
-     * - Start state is given by \a s.
-     * - %Transitions are described by \a t, where the last element
-     *   must have -1 as value for \c i_state.
-     * - Final states are given by \a f, where the last final element
-     *   must be -1.
-     * - Minimizes the DFA, if \a minimize is true.
-     */
-    GECODE_INT_EXPORT
-    DFA(int s, Transition t[], int f[], bool minimize=true);
-    /// Initialize by DFA \a d (DFA is shared)
-    DFA(const DFA& d);
-    /// Return the number of states
-    unsigned int n_states(void) const;
-    /// Return the number of symbols
-    unsigned int n_symbols(void) const;
-    /// Return the number of transitions
-    unsigned int n_transitions(void) const;
-    /// Return the number of the first final state
-    int final_fst(void) const;
-    /// Return the number of the last final state
-    int final_lst(void) const;
-    /// Return smallest symbol in DFA
-    int symbol_min(void) const;
-    /// Return largest symbol in DFA
-    int symbol_max(void) const;
-  };
-
-  /**
-   * \brief Post propagator for regular constraint
-   *
-   * The elements of \a x must be a word of the language described by
-   * the DFA \a d.
-   *
-   * Throws an exception of type Int::ArgumentSame, if \a x contains
-   * the same unassigned variable multiply. If shared occurences of variables
-   * are required, unshare should be used.
-   */
-  GECODE_INT_EXPORT void
-  regular(Space* home, const IntVarArgs& x, DFA d,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-
-  /**
-   * \brief Post propagator for regular constraint
-   *
-   * The elements of \a x must be a word of the language described by
-   * the DFA \a d.
-   *
-   * Throws an exception of type Int::ArgumentSame, if \a x contains
-   * the same unassigned variable multiply. If shared occurences of variables
-   * are required, unshare should be used.
-   */
-  GECODE_INT_EXPORT void
-  regular(Space* home, const BoolVarArgs& x, DFA d,
-          IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-
-  //@}
-
-}
-
-#include "gecode/int/regular/dfa.icc"
-
-namespace Gecode {
-
-  /**
    * \note The Sortedness propagator described in this section only
    *       supports bounds-consistency no matter what value for the
    *       argument \a icl is given!
@@ -1131,12 +996,147 @@ namespace Gecode {
 
   //@}
 
-#if 0
   /**
    * \defgroup TaskIntIntExt Extensional constraints
    * \ingroup TaskIntInt
+   *
+   * Extensional constraints support different ways of how the
+   * extensionally defined relation between the variables is defined.
+   * Examples include specification by a %DFA or a table.
+   *
+   * A %DFA can be defined by a regular expression, for regular expressions
+   * see the module MiniModel.
    */
   //@{
+
+  /**
+   * \brief Deterministic finite automaton (%DFA)
+   *
+   * After initialization, the start state is always zero.
+   * The final states are contiguous ranging from the first to the
+   * last final state.
+   */
+  class DFA : public SharedHandle {
+  private:
+    /// Implementation of DFA
+    class DFAI;
+  public:
+    /// Specification of a %DFA transition
+    class Transition {
+    public:
+      int i_state; ///< input state
+      int symbol;  ///< symbol
+      int o_state; ///< output state
+    };
+    /// Iterator for %DFA transitions (sorted by symbols)
+    class Transitions {
+    private:
+      /// Current transition
+      const Transition* c_trans;
+      /// End of transitions
+      const Transition* e_trans;
+    public:
+      /// Initialize to all transitions of DFA \a d
+      Transitions(const DFA& d);
+      /// Initialize to transitions of DFA \a d for symbol \a n
+      Transitions(const DFA& d, int n);
+      /// Test whether iterator still at a transition
+      bool operator()(void) const;
+      /// Move iterator to next transition
+      void operator++(void);
+      /// Return in-state of current transition
+      int i_state(void) const;
+      /// Return symbol of current transition
+      int symbol(void) const;
+      /// Return out-state of current transition
+      int o_state(void) const;
+    };
+    /// Iterator for %DFA symbols
+    class Symbols {
+    private:
+      /// Current transition
+      const Transition* c_trans;
+      /// End of transitions
+      const Transition* e_trans;
+    public:
+      /// Initialize to symbols of DFA \a d
+      Symbols(const DFA& d);
+      /// Test whether iterator still at a symbol
+      bool operator()(void) const;
+      /// Move iterator to next symbol
+      void operator++(void);
+      /// Return current symbol
+      int val(void) const;
+    };
+  public:
+    friend class Transitions;
+    /// Default constructor
+    DFA(void);
+    /**
+     * \brief Initialize DFA
+     *
+     * - Start state is given by \a s.
+     * - %Transitions are described by \a t, where the last element
+     *   must have -1 as value for \c i_state.
+     * - Final states are given by \a f, where the last final element
+     *   must be -1.
+     * - Minimizes the DFA, if \a minimize is true.
+     */
+    GECODE_INT_EXPORT
+    DFA(int s, Transition t[], int f[], bool minimize=true);
+    /// Initialize by DFA \a d (DFA is shared)
+    DFA(const DFA& d);
+    /// Return the number of states
+    unsigned int n_states(void) const;
+    /// Return the number of symbols
+    unsigned int n_symbols(void) const;
+    /// Return the number of transitions
+    unsigned int n_transitions(void) const;
+    /// Return the number of the first final state
+    int final_fst(void) const;
+    /// Return the number of the last final state
+    int final_lst(void) const;
+    /// Return smallest symbol in DFA
+    int symbol_min(void) const;
+    /// Return largest symbol in DFA
+    int symbol_max(void) const;
+  };
+
+  /**
+   * \brief Post propagator for extensional constraint described by a DFA
+   *
+   * The elements of \a x must be a word of the language described by
+   * the DFA \a d.
+   *
+   * Throws an exception of type Int::ArgumentSame, if \a x contains
+   * the same unassigned variable multiply. If shared occurences of variables
+   * are required, unshare should be used.
+   */
+  GECODE_INT_EXPORT void
+  extensional(Space* home, const IntVarArgs& x, DFA d,
+              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+
+  /**
+   * \brief Post propagator for extensional constraint described by a DFA
+   *
+   * The elements of \a x must be a word of the language described by
+   * the DFA \a d.
+   *
+   * Throws an exception of type Int::ArgumentSame, if \a x contains
+   * the same unassigned variable multiply. If shared occurences of variables
+   * are required, unshare should be used.
+   */
+  GECODE_INT_EXPORT void
+  extensional(Space* home, const BoolVarArgs& x, DFA d,
+              IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+
+}
+
+#include "gecode/int/regular/dfa.icc"
+
+namespace Gecode {
+
+#if 0
   /** \brief Options for choosing the algorithm for extensional constraints
    */
   enum ExtensionalAlgorithm {
@@ -1233,6 +1233,7 @@ namespace Gecode {
 #include "gecode/int/extensional/table.icc"
 
 namespace Gecode {
+
 #endif /* removal of extensional */
 
   /**
@@ -1447,7 +1448,7 @@ namespace Gecode {
    *
    * Unsharing is useful for constraints that only accept variable
    * arrays without multiple occurences of the same variable, for
-   * example regular.
+   * example extensional.
    *
    * \ingroup TaskIntInt
    */

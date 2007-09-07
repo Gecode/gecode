@@ -75,8 +75,8 @@ private:
 public:
   /// Propagation to use for model
   enum {
-    PROP_ELEMENT, ///< Use element constraints
-    PROP_REGULAR  ///< Use regular constraints
+    PROP_ELEMENT,    ///< Use element constraints
+    PROP_EXTENSIONAL ///< Use extensional constraints
   };
   /// Construction of model
   Domino(const SizeOptions& opt)
@@ -142,30 +142,29 @@ public:
       for (int i=0; i<=6; i++)
         for (int j=i; j<=6; j++) {
           // Find valid placements for piece i-j
-          // Regular is used as a table-constraint listing all valid
+          // Extensional is used as a table-constraint listing all valid
           // tuples.
           // Note that when i == j, only one of the orientations are used.
           REG valids;
           for (int pos = 0; pos < (width+1)*height; ++pos) {
             if ((pos+1) % width+1 != 0) { // not end-col
               if (board[pos] == i && board[pos+1] == j)
-                valids = valids | REG(pos) + REG(pos+1);
+                valids |= REG(pos) + REG(pos+1);
               if (board[pos] == j && board[pos+1] == i && i != j)
-                valids = valids | REG(pos+1) + REG(pos);
+                valids |= REG(pos+1) + REG(pos);
             }
             if (pos/(width+1) < height) { // not end-row
               if (board[pos] == i && board[pos+width+1] == j)
-                valids = valids | REG(pos) + REG(pos+width+1);
+                valids |= REG(pos) + REG(pos+width+1);
               if (board[pos] == j && board[pos+width+1] == i && i != j)
-                valids = valids | REG(pos+width+1) + REG(pos);
+                valids |= REG(pos+width+1) + REG(pos);
             }
 
           }
           IntVarArgs piece(2); 
           piece[0] = p1[dominoCount];
           piece[1] = p2[dominoCount];
-          DFA dfa = valids;
-          regular(this, piece, dfa);
+          extensional(this, piece, valids);
 
 
           // Link the current piece to the array where its
@@ -225,7 +224,7 @@ main(int argc, char* argv[]) {
   opt.size(0);
   opt.propagation(Domino::PROP_ELEMENT);  
   opt.propagation(Domino::PROP_ELEMENT, "element");  
-  opt.propagation(Domino::PROP_REGULAR, "regular");  
+  opt.propagation(Domino::PROP_EXTENSIONAL, "extensional");  
   opt.parse(argc,argv);
   if (opt.size() >= n_examples) {
     std::cerr << "Error: size must be between 0 and "

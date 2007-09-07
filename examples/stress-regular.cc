@@ -39,14 +39,14 @@
 #include "gecode/support/dynamic-array.hh"
 
 /**
- * \brief %Example: Stress regular propagator
+ * \brief %Example: Stress extensional propagator
  *
  * Creates a huge DFA specifying that all values are pairwise distinct
  * and use the DFA for propagation.
  *
  * \ingroup ExStress
  */
-class StressRegular : public Example {
+class StressExtensional : public Example {
 protected:
   /// Variables
   IntVarArray x;
@@ -90,27 +90,27 @@ public:
     return d;
   }
   /// The actual problem
-  StressRegular(const SizeOptions& opt)
+  StressExtensional(const SizeOptions& opt)
     : x(this,4*opt.size(),0,opt.size()) {
     DFA a = construct(opt.size());
     IntVarArgs y(opt.size());
     for (unsigned int i=0; i <= 3*opt.size(); i++) {
       for (int j = opt.size(); j--; )
         y[j] = x[i+j];
-      regular(this, y, a);
+      extensional(this, y, a);
     }
     for (int j=opt.size(); j--; )
       y[j] = x[j];
     branch(this, y, INT_VAR_NONE, INT_VAL_MED);
   }
   /// Constructor for cloning \a s
-  StressRegular(bool share, StressRegular& s) : Example(share,s) {
+  StressExtensional(bool share, StressExtensional& s) : Example(share,s) {
     x.update(this, share, s.x);
   }
   /// Perform copying during cloning
   virtual Space*
   copy(bool share) {
-    return new StressRegular(share,*this);
+    return new StressExtensional(share,*this);
   }
   /// Print solution
   virtual void
@@ -123,14 +123,14 @@ public:
 };
 
 /** \brief Main-function
- *  \relates StressRegular
+ *  \relates StressExtensional
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("StressRegular");
+  SizeOptions opt("StressExtensional");
   opt.size(7);
   opt.parse(argc,argv);
-  Example::run<StressRegular,DFS,SizeOptions>(opt);
+  Example::run<StressExtensional,DFS,SizeOptions>(opt);
   return 0;
 }
 

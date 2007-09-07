@@ -92,11 +92,11 @@ public:
 
     // Post constraints for columns
     for (int w = 0; w < width; ++w)
-      regular(this, m.col(w), get_constraint(spos));
+      extensional(this, m.col(w), get_constraint(spos));
 
     // Post constraints for rows
     for (int h = 0; h < height; ++h)
-      regular(this, m.row(h), get_constraint(spos));
+      extensional(this, m.row(h), get_constraint(spos));
 
     // Install branchings
     branch(this, b, INT_VAR_NONE, INT_VAL_MAX);
