@@ -40,12 +40,11 @@
 #define __GECODE_TEST_BDD_HH__
 
 #include "gecode/cpltset.hh"
-#include "test.hh"
-#include "int.hh"
+#include "test/test.hh"
+#include "test/int.hh"
 #ifdef GECODE_HAVE_SET_VARS
-#include "set.hh"
+#include "test/set.hh"
 #endif
-#include "log.hh"
 
 using namespace Gecode;
 using namespace CpltSet;

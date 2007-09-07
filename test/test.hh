@@ -62,113 +62,83 @@ namespace Test {
    */
   //@{
   /// Commandline options
-class Options {
-public:
-  static const int defiter = 5,
-    deffixprob = 10;
+  class Options {
+  public:
+    static const int defiter = 5,
+      deffixprob = 10;
+    
+    int   seed;
+    int   iter;
+    int   fixprob;
+    bool  stop_on_error;
+
+    bool  log, display;
+    Options(void)
+      : seed(0), iter(defiter), fixprob(deffixprob), 
+        log(false), display(true), stop_on_error(true)
+    {}
+    
+    void parse(int argc, char **argv);
+  };
   
-  int   seed;
-  int   iter;
-  int   fixprob;
-  bool  log, display;
-  bool  stop_on_error;
-  Options(void)
-    : seed(0), iter(defiter), fixprob(deffixprob), 
-      log(false), display(true), stop_on_error(true)
-  {}
+  /// Base class for all tests to be run
+  class TestBase {
+  private:
+    /// Name of the test
+    std::string _name;
+    /// Next test
+    TestBase* n;
+    /// All tests
+    static TestBase* all;
+  public:
+    /// Create and register test with name \a s
+    TestBase(const std::string& s);
+    /// Return name of test
+    const std::string& name(void) const;
+    /// Return all tests
+    static TestBase* tests(void);
+    /// Return next test
+    TestBase* next(void) const;
+    /// Run test
+    virtual bool run(const Options& opt) = 0;
+    /// Destructor
+    virtual ~TestBase(void);
 
-  void parse(int argc, char **argv);
-};
-
-/// Main test driver
-class TestBase {
-private:
-  std::string _name;
-  TestBase* n;
-  static TestBase* all;
-public:
-  /// Return number between 0..m-1
-  static Gecode::Support::RandomGenerator rand;
-
-  TestBase(const std::string& s)
-    : _name(s) {
-    if (all == NULL) {
-      all = this; n = NULL;
-    } else {
-      // Search alphabetically
-      TestBase* p = NULL;
-      TestBase* c = all;
-      while ((c != NULL) && (c->_name < s)) {
-        p = c; c = c->n;
-      }
-      if (c == NULL) {
-        p->n = this; n = NULL;
-      } else if (c == all) {
-        n = all; all = this;
-      } else {
-        p->n = this; n = c;
+    /// Random number generator
+    static Gecode::Support::RandomGenerator rand;
+  protected:
+    /** \brief Log start of test.
+     */
+    void log_posting(void) {
+      if (Log::logging()) {
+        std::ostringstream h, c;
+        Log::log(h.str(), c.str());
       }
     }
-  }
-  static TestBase* tests(void) {
-    return all;
-  }
-  TestBase* next(void) const {
-    return n;
-  }
-  const std::string& name(void) const {
-    return _name;
-  }
-  virtual bool run(const Options& opt) = 0;
-  virtual ~TestBase(void) {}
+  };
 
-protected:
-  /** \brief Log start of test.
-   */
-  void log_posting(void) {
-    if (Log::logging()) {
-      std::ostringstream h, c;
-      Log::log(h.str(), c.str());
-    }
-  }
-};
-//@}
-
-/// Iterator for propagation kinds
-class PropKinds {
-private:
-  /// Array of propagation kinds
-  static const Gecode::PropKind pks[2];
-  /// Current position in array
-  int i; 
-public:
-  /// Initialize iterator
-  PropKinds(void);
-  /// Test whether iterator is done
-  bool operator()(void) const;
-  /// Increment to next propagation kind
-  void operator++(void);
-  /// Return current propagation kind
-  Gecode::PropKind pk(void) const;
-};
-
-inline
-PropKinds::PropKinds(void) 
-  : i(sizeof(pks)/sizeof(Gecode::PropKind)-1) {}
-inline bool 
-PropKinds::operator()(void) const {
-  return i>=0;
-}
-inline void 
-PropKinds::operator++(void) {
-  i--;
-}
-inline Gecode::PropKind
-PropKinds::pk(void) const {
-  return pks[i];
-}
+  /// Iterator for propagation kinds
+  class PropKinds {
+  private:
+    /// Array of propagation kinds
+    static const Gecode::PropKind pks[2];
+    /// Current position in array
+    int i; 
+  public:
+    /// Initialize iterator
+    PropKinds(void);
+    /// Test whether iterator is done
+    bool operator()(void) const;
+    /// Increment to next propagation kind
+    void operator++(void);
+    /// Return current propagation kind
+    Gecode::PropKind pk(void) const;
+  };
+  //@}
 
 }
+
+#include "test/test.icc"
 
 #endif
 

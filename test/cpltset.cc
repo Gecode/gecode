@@ -39,7 +39,7 @@
  */
 
 #include "test/cpltset.hh"
-#include "test/log.hh"
+
 #include "gecode/iter.hh"
 #include <algorithm>
 

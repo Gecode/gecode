@@ -719,7 +719,7 @@ endif
 
 TESTSRC	= $(TESTSRC0:%=test/%.cc)
 TESTHDR0 = \
-	test.hh int.hh int.icc set.hh cpltset.hh branch.hh
+	test.hh test.icc int.hh int.icc set.hh cpltset.hh branch.hh
 TESTHDR = $(TESTHDR0:%=test/%)
 TESTOBJ	= $(TESTSRC:%.cc=%$(OBJSUFFIX))
 TESTSBJ	= $(TESTSRC:%.cc=%$(SBJSUFFIX))
