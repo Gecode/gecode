@@ -2,9 +2,11 @@
 /*
  *  Main authors:
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
+ *     Christian Schulte <schulte@gecode.org>
  *
  *  Copyright:
  *     Mikael Lagerkvist, 2007
+ *     Christian Schulte, 2004
  *
  *  Last modified:
  *     $Date$ by $Author$
@@ -38,6 +40,32 @@
 #include "gecode/int/extensional.hh"
 
 namespace Gecode {
+
+  void
+  extensional(Space* home, const IntVarArgs& x, DFA dfa, 
+              IntConLevel, PropKind) {
+    using namespace Int;
+    if (x.same())
+      throw ArgumentSame("Int::extensional");
+    if (home->failed()) return;
+    ViewArray<IntView> xv(home,x);
+    GECODE_ES_FAIL(home,(Extensional::LayeredGraph<IntView>
+                         ::post(home,xv,dfa)));
+  }
+
+  void
+  extensional(Space* home, const BoolVarArgs& x, DFA dfa, 
+              IntConLevel, PropKind) {
+    using namespace Int;
+    if (x.same())
+      throw ArgumentSame("Int::extensional");
+    if (home->failed()) return;
+    ViewArray<BoolView> xv(home,x);
+    GECODE_ES_FAIL(home,(Extensional::LayeredGraph<BoolView>
+                         ::post(home,xv,dfa)));
+  }
+
+#if 0
 
   using namespace Int;
 
@@ -98,6 +126,8 @@ namespace Gecode {
       break;
     }
   }
+
+#endif
 
 }
 

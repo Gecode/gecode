@@ -1132,7 +1132,7 @@ namespace Gecode {
 
 }
 
-#include "gecode/int/regular/dfa.icc"
+#include "gecode/int/extensional/dfa.icc"
 
 namespace Gecode {
 

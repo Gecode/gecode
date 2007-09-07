@@ -213,7 +213,7 @@ SEARCHBUILDDIRS = search
 INTSRC0 = \
 	int-set.cc var/imp-int.cc var/imp-bool.cc var/int.cc var/bool.cc \
 	view/print.cc array.cc bool.cc \
-	regular/dfa.cc regular.cc \
+	extensional/dfa.cc extensional.cc \
 	dom.cc rel.cc element.cc count.cc arithmetic.cc \
 	linear/int-post.cc linear-int.cc \
 	linear/bool-post.cc linear-bool.cc \
@@ -242,7 +242,7 @@ INTHDR0 = \
 	linear/int-noview.icc linear/int-bin.icc linear/int-ter.icc \
 	linear/int-nary.icc linear/int-dom.icc \
 	linear/bool-int.icc linear/bool-view.icc linear/bool-scale.icc \
-	regular/dfa.icc regular/dom.icc \
+	extensional/dfa.icc extensional/layered-graph.icc \
 	rel/eq.icc rel/lex.icc rel/lq-le.icc rel/nq.icc \
 	sortedness/matching.icc sortedness/narrowing.icc \
 	sortedness/order.icc sortedness/sortedness.icc sortedness/sortsup.icc \
@@ -254,7 +254,7 @@ INTHDR0 = \
 	arithmetic.hh array.icc bool.hh branch.hh \
 	count.hh cumulatives.hh distinct.hh dom.hh \
 	element.hh exception.icc  gcc.hh linear.hh \
-	propagator.icc regular.hh rel.hh \
+	propagator.icc extensional.hh rel.hh \
 	sortedness.hh var.icc view.icc \
 	channel.hh channel/dom.icc channel/val.icc \
 	channel/base.icc channel/link-single.icc channel/link-multi.icc \
@@ -282,7 +282,7 @@ export INTLIB		=
 export LINKINT      	=
 endif
 INTBUILDDIRS	= \
-	int int/var int/view int/regular \
+	int int/var int/view int/extensional \
 	int/channel int/linear int/bool int/branch
 
 #
@@ -568,7 +568,7 @@ INTEXAMPLESRC0 =							\
 	langford-number warehouses			\
 	stress-domain stress-exec stress-search baseline		\
 	stress-element stress-min stress-distinct			\
-	stress-regular stress-circuit stress-linear-bool
+	stress-extensional stress-circuit stress-linear-bool
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cc)
 INTEXAMPLEOBJ  = $(INTEXAMPLESRC:%.cc=%$(OBJSUFFIX))
 INTEXAMPLESBJ  = $(INTEXAMPLESRC:%.cc=%$(SBJSUFFIX))
