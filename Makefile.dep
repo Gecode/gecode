@@ -5327,7 +5327,7 @@ test/int/element$(OBJSUFFIX) test/int/element$(SBJSUFFIX): \
 	./gecode/support/sort.hh ./gecode/support/static-pqueue.hh ./gecode/support/symbol.hh \
 	./gecode/vti.icc ./test/int.hh ./test/int.icc \
 	./test/log.hh ./test/test.hh 
-test/int/regular$(OBJSUFFIX) test/int/regular$(SBJSUFFIX): \
+test/int/extensional$(OBJSUFFIX) test/int/extensional$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/cpltset.hh ./gecode/cpltset/array.icc \
 	./gecode/cpltset/exception.icc ./gecode/cpltset/manager/buddy.icc ./gecode/cpltset/propagator.icc \
 	./gecode/cpltset/support.icc ./gecode/cpltset/var.icc ./gecode/cpltset/var/cpltset.icc \

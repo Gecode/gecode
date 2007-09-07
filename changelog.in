@@ -69,6 +69,15 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: int
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The extensional constraint specified by a DFA or a regular
+expression (formerly known as regular) is now named "extensional"
+rather than "regular".
+
+[ENTRY]
 Module: minimodel
 What:   bug
 Rank:   minor

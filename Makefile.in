@@ -678,7 +678,7 @@ endif
 #
 
 INTTESTSRC0 = \
-	channel arithmetic basic bool count dom distinct element regular \
+	channel arithmetic basic bool count dom distinct element extensional \
 	rel linear scheduling minimodel gcc sortedness circuit
 ifeq "@enable_set_vars@" "yes"
 SETTESTSRC0 = \
