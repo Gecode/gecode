@@ -182,7 +182,7 @@ namespace {
   }
 }
 
-class Cumulatives : public IntTest {
+class Cumulatives : public Test {
 protected:
   int ntasks;
   bool at_most;
@@ -191,7 +191,7 @@ protected:
 public:
   /// Create and register test
   Cumulatives(const char* t, int nt, bool am, int l)
-    : IntTest(t,nt*4,ds_12), ntasks(nt), at_most(am), limit(l) {}
+    : Test(t,nt*4,ds_12), ntasks(nt), at_most(am), limit(l) {}
 
   virtual Assignment* assignment(void) const {
     assert(arity == 4*ntasks);

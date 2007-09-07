@@ -118,7 +118,7 @@ operator<<(std::ostream& os, const SetAssignment& a) {
 
 #define FORCE_FIX                               \
 do {                                            \
-  if (TestBase::rand(opt.fixprob) == 0) {        \
+  if (Base::rand(opt.fixprob) == 0) {        \
     Log::fixpoint();                            \
     if (status() == SS_FAILED) return;          \
   }                                             \
@@ -280,11 +280,11 @@ public:
     // Select variable to be pruned
     int i;
     if (intsAssigned) {
-      i = TestBase::rand(x.size());
+      i = Base::rand(x.size());
     } else if (setsAssigned) {
-      i = TestBase::rand(y.size());
+      i = Base::rand(y.size());
     } else {
-      i = TestBase::rand(x.size()+y.size());
+      i = Base::rand(x.size()+y.size());
     }
 
     if (setsAssigned || i>=x.size()) {
@@ -297,17 +297,17 @@ public:
 
 
       // Select mode for pruning
-      int m=TestBase::rand(3);
+      int m=Base::rand(3);
       if ((m == 0) && (a.ints()[i] < y[i].max())) {
         int v=a.ints()[i]+1+
-          TestBase::rand(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
+          Base::rand(static_cast<unsigned int>(y[i].max()-a.ints()[i]));
         assert((v > a.ints()[i]) && (v <= y[i].max()));
         Log::prune(y[i], Log::mk_name("y", i), IRT_LE, v);
         rel(this, y[i], IRT_LE, v);
         Log::prune_result(y[i]);
       } else if ((m == 1) && (a.ints()[i] > y[i].min())) {
         int v=y[i].min()+
-          TestBase::rand(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
+          Base::rand(static_cast<unsigned int>(a.ints()[i]-y[i].min()));
         assert((v < a.ints()[i]) && (v >= y[i].min()));
         Log::prune(y[i], Log::mk_name("y", i), IRT_GR, v);
         rel(this, y[i], IRT_GR, v);
@@ -315,7 +315,7 @@ public:
       } else  {
         int v;
         Gecode::Int::ViewRanges<Gecode::Int::IntView> it(y[i]);
-        unsigned int skip = TestBase::rand(y[i].size()-1);
+        unsigned int skip = Base::rand(y[i].size()-1);
         while (true) {
           if (it.width() > skip) {
             v = it.min() + skip;
@@ -337,7 +337,7 @@ public:
         rel(this, y[i], IRT_NQ, v);
         Log::prune_result(y[i]);
       }
-      if (TestBase::rand(opt.fixprob) == 0 && !fixprob(st, r, b))
+      if (Base::rand(opt.fixprob) == 0 && !fixprob(st, r, b))
         return false;
       return true;
     }
@@ -357,16 +357,16 @@ public:
     unsigned int aisize = Iter::Ranges::size(aisizer);
 
     // Select mode for pruning
-    int m=TestBase::rand(5);
+    int m=Base::rand(5);
     if (m==0 && inter()) {
-      int v = TestBase::rand(Iter::Ranges::size(inter));
+      int v = Base::rand(Iter::Ranges::size(inter));
       addToGlb(v, x[i], i, a);
     } else if (m==1 && diff()) {
-      int v = TestBase::rand(Iter::Ranges::size(diff));
+      int v = Base::rand(Iter::Ranges::size(diff));
       removeFromLub(v, x[i], i, a);
     } else if (m==2 && x[i].cardMin() < aisize) {
       unsigned int newc = x[i].cardMin() + 1 +
-        TestBase::rand(aisize - x[i].cardMin());
+        Base::rand(aisize - x[i].cardMin());
       assert( newc > x[i].cardMin() );
       assert( newc <= aisize );
       Log::prune(x[i], Log::mk_name("x", i), newc, Limits::Set::card_max);
@@ -374,7 +374,7 @@ public:
       Log::prune_result(x[i]);
     } else if (m==3 && x[i].cardMax() > aisize) {
       unsigned int newc = x[i].cardMax() - 1 -
-        TestBase::rand(x[i].cardMax() - aisize);
+        Base::rand(x[i].cardMax() - aisize);
       assert( newc < x[i].cardMax() );
       assert( newc >= aisize );
       Log::prune(x[i], Log::mk_name("x", i), 0, newc);
@@ -382,14 +382,14 @@ public:
       Log::prune_result(x[i]);
     } else {
       if (inter()) {
-        int v = TestBase::rand(Iter::Ranges::size(inter));
+        int v = Base::rand(Iter::Ranges::size(inter));
         addToGlb(v, x[i], i, a);
       } else {
-        int v = TestBase::rand(Iter::Ranges::size(diff));
+        int v = Base::rand(Iter::Ranges::size(diff));
         removeFromLub(v, x[i], i, a);
       }
     }
-    if (TestBase::rand(opt.fixprob) == 0 && !fixprob(st, r, b))
+    if (Base::rand(opt.fixprob) == 0 && !fixprob(st, r, b))
       return false;
 
     return true;

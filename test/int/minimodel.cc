@@ -47,10 +47,10 @@ namespace Test { namespace Int { namespace MiniModel {
    */
   //@{
   /// Test for equality
-  class LinEqA : public IntTest {
+  class LinEqA : public Test {
   public:
     /// Create and register test
-    LinEqA(void) : IntTest("MiniModel::Lin::Eq::A",2,-2,2,true) {}
+    LinEqA(void) : Test("MiniModel::Lin::Eq::A",2,-2,2,true) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (2*x[0]+1) == (x[1]-1);
@@ -67,10 +67,10 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test for linear equality
-  class LinEqB : public IntTest {
+  class LinEqB : public Test {
   public:
     /// Create and register test
-    LinEqB(void) : IntTest("MiniModel::Lin::Eq::B",2,-2,2,true) {}
+    LinEqB(void) : Test("MiniModel::Lin::Eq::B",2,-2,2,true) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (2*x[0]+1) == (x[1]-1);
@@ -87,10 +87,10 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test for linear equality
-  class LinEqC : public IntTest {
+  class LinEqC : public Test {
   public:
     /// Create and register test
-    LinEqC(void) : IntTest("MiniModel::Lin::Eq::C",2,-2,2,true) {}
+    LinEqC(void) : Test("MiniModel::Lin::Eq::C",2,-2,2,true) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return -(1-(1-x[1])) == x[0];
@@ -107,10 +107,10 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test for linear equality
-  class LinEqD : public IntTest {
+  class LinEqD : public Test {
   public:
     /// Create and register test
-    LinEqD(void) : IntTest("MiniModel::Lin::Eq::D",2,-2,2,true) {}
+    LinEqD(void) : Test("MiniModel::Lin::Eq::D",2,-2,2,true) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return 2*(1-x[1]) == x[0];
@@ -127,10 +127,10 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test for linear equality
-  class LinEqE : public IntTest {
+  class LinEqE : public Test {
   public:
     /// Create and register test
-    LinEqE(void) : IntTest("MiniModel::Lin::Eq::E",1,-2,2,true) {}
+    LinEqE(void) : Test("MiniModel::Lin::Eq::E",1,-2,2,true) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return -1==x[0];
@@ -147,10 +147,10 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test for linear inequality
-  class LinGr : public IntTest {
+  class LinGr : public Test {
   public:
     /// Create and register test
-    LinGr(void) : IntTest("MiniModel::Lin::Gr",1,-2,2,true) {}
+    LinGr(void) : Test("MiniModel::Lin::Gr",1,-2,2,true) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return 1>x[0];
@@ -167,10 +167,10 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test for linear inequality
-  class LinLe : public IntTest {
+  class LinLe : public Test {
   public:
     /// Create and register test
-    LinLe(void) : IntTest("MiniModel::Lin::Le",1,-2,2,true) {}
+    LinLe(void) : Test("MiniModel::Lin::Le",1,-2,2,true) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return 1<x[0];
@@ -187,10 +187,10 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test for linear equality over Boolean variables
-  class LinEqBool : public IntTest {
+  class LinEqBool : public Test {
   public:
     /// Create and register test
-    LinEqBool(void) : IntTest("MiniModel::Lin::Eq::Bool",3,-2,2,false) {}
+    LinEqBool(void) : Test("MiniModel::Lin::Eq::Bool",3,-2,2,false) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=x.size(); i--; )
@@ -209,10 +209,10 @@ namespace Test { namespace Int { namespace MiniModel {
   };
   
   /// Test for posting linear expressions
-  class LinExprInt : public IntTest {
+  class LinExprInt : public Test {
   public:
     /// Create and register test
-    LinExprInt(void) : IntTest("MiniModel::Lin::Expr::Int",4,-2,2,false) {}
+    LinExprInt(void) : Test("MiniModel::Lin::Expr::Int",4,-2,2,false) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return 2*x[0]+3*x[1]-x[2] == x[3];
@@ -226,10 +226,10 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test for posting linear expressions over Boolean variables
-  class LinExprBool : public IntTest {
+  class LinExprBool : public Test {
   public:
     /// Create and register test
-    LinExprBool(void) : IntTest("MiniModel::Lin::Expr::Bool",4,-2,2,false) {}
+    LinExprBool(void) : Test("MiniModel::Lin::Expr::Bool",4,-2,2,false) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=x.size()-1; i--; )
@@ -249,10 +249,10 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test Boolean expressions
-  class BoolA : public IntTest {
+  class BoolA : public Test {
   public:
     /// Create and register test
-    BoolA(void) : IntTest("MiniModel::Bool::A",4,0,1) {}
+    BoolA(void) : Test("MiniModel::Bool::A",4,0,1) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return ((x[0]==1) && (x[1]==1)) || ((x[2]==1)!=(x[3]==1));
@@ -268,10 +268,10 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test Boolean expressions
-  class BoolB : public IntTest {
+  class BoolB : public Test {
   public:
     /// Create and register test
-    BoolB(void) : IntTest("MiniModel::Bool::B",4,0,1) {}
+    BoolB(void) : Test("MiniModel::Bool::B",4,0,1) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return ((x[0]==1) && (x[1]==1)) && ((x[2]==1) && (x[3]==1));
@@ -287,10 +287,10 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test Boolean expressions
-  class BoolC : public IntTest {
+  class BoolC : public Test {
   public:
     /// Create and register test
-    BoolC(void) : IntTest("MiniModel::Bool::C",4,0,1) {}
+    BoolC(void) : Test("MiniModel::Bool::C",4,0,1) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return ((x[0]==1) && (x[1]==1)) && ((x[2]==1) && (x[3]==1));
@@ -306,10 +306,10 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test Boolean expressions
-  class BoolD : public IntTest {
+  class BoolD : public Test {
   public:
     /// Create and register test
-    BoolD(void) : IntTest("MiniModel::Bool::D",4,0,1) {}
+    BoolD(void) : Test("MiniModel::Bool::D",4,0,1) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (((x[0]&x[1])==x[2]) && (x[0]==x[3]));
@@ -325,10 +325,10 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test Boolean expressions
-  class BoolE : public IntTest {
+  class BoolE : public Test {
   public:
     /// Create and register test
-    BoolE(void) : IntTest("MiniModel::Bool::E",4,0,1) {}
+    BoolE(void) : Test("MiniModel::Bool::E",4,0,1) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return !(((x[0]==1) && (x[1]==1)) && ((x[2]==1) && (x[3]==1)));
@@ -344,10 +344,10 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test Boolean expressions
-  class BoolF : public IntTest {
+  class BoolF : public Test {
   public:
     /// Create and register test
-    BoolF(void) : IntTest("MiniModel::Bool::F",4,0,1) {}
+    BoolF(void) : Test("MiniModel::Bool::F",4,0,1) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return ((x[0]==1) || (x[1]==1)) || ((x[2]==1) || (x[3]==1));
@@ -363,11 +363,11 @@ namespace Test { namespace Int { namespace MiniModel {
   };
   
   /// Test for multiplication constraint
-  class Mult : public IntTest {
+  class Mult : public Test {
   public:
     /// Create and register test
     Mult(const std::string& s, const Gecode::IntSet& d)
-      : IntTest("MiniModel::Mult::"+s,3,d) {}
+      : Test("MiniModel::Mult::"+s,3,d) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       double d0 = static_cast<double>(x[0]);
@@ -383,11 +383,11 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test for squaring constraint
-  class Square : public IntTest {
+  class Square : public Test {
   public:
     /// Create and register test
     Square(const std::string& s, const Gecode::IntSet& d)
-      : IntTest("MiniModel::Square::"+s,2,d) {}
+      : Test("MiniModel::Square::"+s,2,d) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       double d0 = static_cast<double>(x[0]);
@@ -402,11 +402,11 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test for absolute value constraint
-  class Abs : public IntTest {
+  class Abs : public Test {
   public:
     /// Create and register test
     Abs(const std::string& s, const Gecode::IntSet& d, Gecode::IntConLevel icl)
-      : IntTest("MiniModel::Abs::"+str(icl)+"::"+s,
+      : Test("MiniModel::Abs::"+str(icl)+"::"+s,
                 2,d,false,icl) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
@@ -422,11 +422,11 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test for binary minimum constraint  
-  class Min : public IntTest {
+  class Min : public Test {
   public:
     /// Create and register test
     Min(const std::string& s, const Gecode::IntSet& d)
-      : IntTest("MiniModel::Min::Bin::"+s,3,d) {}
+      : Test("MiniModel::Min::Bin::"+s,3,d) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return std::min(x[0],x[1]) == x[2];
@@ -439,11 +439,11 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test for binary maximum constraint  
-  class Max : public IntTest {
+  class Max : public Test {
   public:
     /// Create and register test
     Max(const std::string& s, const Gecode::IntSet& d) 
-      : IntTest("MiniModel::Max::Bin::"+s,3,d) {}
+      : Test("MiniModel::Max::Bin::"+s,3,d) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return std::max(x[0],x[1]) == x[2];
@@ -456,10 +456,10 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test for n-ary minimmum constraint  
-  class MinNary : public IntTest {
+  class MinNary : public Test {
   public:
     /// Create and register test
-    MinNary(void) : IntTest("MiniModel::Min::Nary",4,-4,4) {}
+    MinNary(void) : Test("MiniModel::Min::Nary",4,-4,4) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return std::min(std::min(x[0],x[1]), x[2]) == x[3];
@@ -474,10 +474,10 @@ namespace Test { namespace Int { namespace MiniModel {
   };
 
   /// Test for n-ary maximum constraint  
-  class MaxNary : public IntTest {
+  class MaxNary : public Test {
   public:
     /// Create and register test
-    MaxNary(void) : IntTest("MiniModel::Max::Nary",4,-4,4) {}
+    MaxNary(void) : Test("MiniModel::Max::Nary",4,-4,4) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return std::max(std::max(x[0],x[1]), x[2]) == x[3];

@@ -45,11 +45,11 @@ namespace Test { namespace Int { namespace GCC {
    */
   //@{
   /// Test for integer cardinality with lower and upper bound for all variables
-  class IntAllLbUb : public IntTest {
+  class IntAllLbUb : public Test {
   public:
     /// Create and register test
     IntAllLbUb(Gecode::IntConLevel icl)
-      : IntTest("GCC::Int::All::(lb,ub)::"+str(icl),4,1,4,false,icl) {}
+      : Test("GCC::Int::All::(lb,ub)::"+str(icl),4,1,4,false,icl) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       int n[4];
@@ -76,11 +76,11 @@ namespace Test { namespace Int { namespace GCC {
   };
   
   /// Test for integer cardinality with upper bound for all variables
-  class IntAllEqUb : public IntTest {
+  class IntAllEqUb : public Test {
   public:
     /// Create and register test
     IntAllEqUb(Gecode::IntConLevel icl)
-      : IntTest("GCC::Int::All::ub::"+str(icl), 4, 1,2, false, icl) {}
+      : Test("GCC::Int::All::ub::"+str(icl), 4, 1,2, false, icl) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       int n[2];
@@ -101,11 +101,11 @@ namespace Test { namespace Int { namespace GCC {
   
   
   /// Test for integer cardinality with for some variables
-  class IntSome : public IntTest {
+  class IntSome : public Test {
   public:
     /// Create and register test
     IntSome(Gecode::IntConLevel icl)
-      : IntTest("GCC::Int::Some::(v,lb,ub)::"+str(icl),4,1,4,false,icl) {}
+      : Test("GCC::Int::Some::(v,lb,ub)::"+str(icl),4,1,4,false,icl) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       int n[4];
@@ -203,7 +203,7 @@ public:
 
 
 /*
-class VC_AllLbUb : public IntTest {
+class VC_AllLbUb : public Test {
 private:
   static const int lb = 0;
   static const int rb = 2;
@@ -223,7 +223,7 @@ public:
 
   /// Create and register test
   VC_AllLbUb(const char* t, Gecode::IntConLevel icl)
-    : IntTest(t, xs, ds_02, false,icl) {}
+    : Test(t, xs, ds_02, false,icl) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
 //     std::cout << "GCC-Sol: ";
@@ -305,7 +305,7 @@ public:
 };
 
 
-class VC_AllTriple : public IntTest {
+class VC_AllTriple : public Test {
 private:
   static const int lb = 0;
   static const int rb = 2;
@@ -324,7 +324,7 @@ public:
 
   /// Create and register test
   VC_AllTriple(const char* t, Gecode::IntConLevel icl)
-    : IntTest(t, xs, ds_02, false,icl) {}
+    : Test(t, xs, ds_02, false,icl) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
 //     std::cout << "GCC-Sol: ";
@@ -403,7 +403,7 @@ public:
 };
 
 
-class VC_SomeTriple : public IntTest {
+class VC_SomeTriple : public Test {
 private:
   static const int lb = 0;
   static const int rb = 2;
@@ -421,7 +421,7 @@ private:
 public:
   /// Create and register test
   VC_SomeTriple(const char* t, Gecode::IntConLevel icl)
-    : IntTest(t, xs, ds_02, false,icl) {}
+    : Test(t, xs, ds_02, false,icl) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
 //     std::cout << "GCC-Sol: ";
@@ -528,11 +528,11 @@ VC_SomeTriple val_sometrip__var("GCC::VarCard::Val::Some::(v,lb,ub)",Gecode::ICL
 
 /*****
 
-class GCC_FC_Shared_AllLbUb : public IntTest {
+class GCC_FC_Shared_AllLbUb : public Test {
 public:
   /// Create and register test
   GCC_FC_Shared_AllLbUb(const char* t, Gecode::IntConLevel icl)
-    : IntTest(t,2,ds_14,false, icl) {}
+    : Test(t,2,ds_14,false, icl) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     if (x[0] != x[1]) {

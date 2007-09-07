@@ -37,20 +37,10 @@
 
 namespace Test {
 
-  inline const std::string& 
-  TestBase::name(void) const {
-    return _name;
-  }
-  inline TestBase* 
-  TestBase::tests(void) {
-    return all;
-  }
-  inline TestBase* 
-  TestBase::next(void) const {
-    return n;
-  }
-
-
+  /*
+   * Iterator for propagation kinds
+   *
+   */
   inline
   PropKinds::PropKinds(void) 
     : i(sizeof(pks)/sizeof(Gecode::PropKind)-1) {}
@@ -65,6 +55,24 @@ namespace Test {
   inline Gecode::PropKind
   PropKinds::pk(void) const {
     return pks[i];
+  }
+
+
+  /*
+   * Base class for tests
+   *
+   */
+  inline const std::string& 
+  Base::name(void) const {
+    return _name;
+  }
+  inline Base* 
+  Base::tests(void) {
+    return _tests;
+  }
+  inline Base* 
+  Base::next(void) const {
+    return _next;
   }
 
 }

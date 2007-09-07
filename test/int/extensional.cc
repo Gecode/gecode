@@ -49,10 +49,10 @@ namespace Test { namespace Int { namespace Extensional {
    */
   //@{
   /// Test with simple regular expression
-  class RegSimpleA : public IntTest {
+  class RegSimpleA : public Test {
   public:
     /// Create and register test
-    RegSimpleA(void) : IntTest("Extensional::Reg::Simple::A",4,2,2) {}
+    RegSimpleA(void) : Test("Extensional::Reg::Simple::A",4,2,2) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (((x[0] == 0) || (x[0] == 2)) &&
@@ -72,10 +72,10 @@ namespace Test { namespace Int { namespace Extensional {
   };
   
   /// Test with simple regular expression
-  class RegSimpleB : public IntTest {
+  class RegSimpleB : public Test {
   public:
     /// Create and register test
-    RegSimpleB(void) : IntTest("Extensional::Reg::Simple::B",4,2,2) {}
+    RegSimpleB(void) : Test("Extensional::Reg::Simple::B",4,2,2) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (x[0]<x[1]) && (x[1]<x[2]) && (x[2]<x[3]);
@@ -93,10 +93,10 @@ namespace Test { namespace Int { namespace Extensional {
   };
   
   /// Test with regular expression for distinct constraint
-  class RegDistinct : public IntTest {
+  class RegDistinct : public Test {
   public:
     /// Create and register test
-    RegDistinct(void) : IntTest("Extensional::Reg::Distinct",4,-1,4) {}
+    RegDistinct(void) : Test("Extensional::Reg::Distinct",4,-1,4) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<x.size(); i++) {
@@ -140,10 +140,10 @@ namespace Test { namespace Int { namespace Extensional {
   };
   
   /// Test with simple regular expression and shared variables (uses unsharing)
-  class RegSharedA : public IntTest {
+  class RegSharedA : public Test {
   public:
     /// Create and register test
-    RegSharedA(void) : IntTest("Extensional::Reg::Shared::A",4,2,2) {}
+    RegSharedA(void) : Test("Extensional::Reg::Shared::A",4,2,2) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (((x[0] == 0) || (x[0] == 2)) &&
@@ -167,10 +167,10 @@ namespace Test { namespace Int { namespace Extensional {
   };
 
   /// Test with simple regular expression and shared variables (uses unsharing)
-  class RegSharedB : public IntTest {
+  class RegSharedB : public Test {
   public:
     /// Create and register test
-    RegSharedB(void) : IntTest("Extensional::Reg::Shared::B",4,2,2) {}
+    RegSharedB(void) : Test("Extensional::Reg::Shared::B",4,2,2) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (((x[0] == 0) || (x[0] == 2)) &&
@@ -194,10 +194,10 @@ namespace Test { namespace Int { namespace Extensional {
   };
 
   /// Test with simple regular expression and shared variables (uses unsharing)
-  class RegSharedC : public IntTest {
+  class RegSharedC : public Test {
   public:
     /// Create and register test
-    RegSharedC(void) : IntTest("Extensional::Reg::Shared::C",4,0,1) {}
+    RegSharedC(void) : Test("Extensional::Reg::Shared::C",4,0,1) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (x[1]==1) && (x[2]==0) && (x[3]==1);
@@ -215,10 +215,10 @@ namespace Test { namespace Int { namespace Extensional {
   };
 
   /// Test with simple regular expression and shared variables (uses unsharing)
-  class RegSharedD : public IntTest {
+  class RegSharedD : public Test {
   public:
     /// Create and register test
-    RegSharedD(void) : IntTest("Extensional::Reg::Shared::D",4,0,1) {}
+    RegSharedD(void) : Test("Extensional::Reg::Shared::D",4,0,1) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (x[1]==1) && (x[2]==0) && (x[3]==1);
@@ -250,12 +250,12 @@ namespace Test { namespace Int { namespace Extensional {
 
 /*
 
-class Table1 : public IntTest {
+class Table1 : public Test {
   ExtensionalAlgorithm ea;
 public:
   /// Create and register test
   Table1(const char* t, ExtensionalAlgorithm ea0)
-    : IntTest(t,4,1,5,false,Gecode::ICL_DOM), ea(ea0) {}
+    : Test(t,4,1,5,false,Gecode::ICL_DOM), ea(ea0) {}
   /// Test whether \a x is solution
   virtual bool solution(const Assignment& x) const {
     return (
@@ -289,13 +289,13 @@ namespace {
   Table1 _tab1i("Extensional::Table::Incremental::1", EA_INCREMENTAL);
 }
 
-class Table2 : public IntTest {
+class Table2 : public Test {
   ExtensionalAlgorithm ea;
   mutable Table t;
 public:
   /// Create and register test
   Table2(const char* name, ExtensionalAlgorithm ea0)
-    : IntTest(name,4,1,5,false,Gecode::ICL_DOM), ea(ea0) {
+    : Test(name,4,1,5,false,Gecode::ICL_DOM), ea(ea0) {
     IntArgs t1 (4,  2, 1, 2, 4);
     IntArgs t2 (4,  2, 2, 1, 4);
     IntArgs t3 (4,  4, 3, 4, 1);

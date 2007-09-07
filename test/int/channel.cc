@@ -47,11 +47,11 @@ namespace Test { namespace Int { namespace Channel {
    */
   //@{
   /// Simple test for channel (testing all variables)
-  class ChannelFull : public IntTest {
+  class ChannelFull : public Test {
   public:
     /// Construct and register test
     ChannelFull(Gecode::IntConLevel icl)
-      : IntTest("Channel::Full::"+str(icl),8,0,3,false,icl) {}
+      : Test("Channel::Full::"+str(icl),8,0,3,false,icl) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<4; i++)
@@ -71,11 +71,11 @@ namespace Test { namespace Int { namespace Channel {
   };
   
   /// Simple test for channel (testing single set of variables)
-  class ChannelHalf : public IntTest {
+  class ChannelHalf : public Test {
   public:
     /// Construct and register test
     ChannelHalf(Gecode::IntConLevel icl)
-      : IntTest("Channel::Half::"+str(icl),6,0,5,false,icl) {}
+      : Test("Channel::Half::"+str(icl),6,0,5,false,icl) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<6; i++)
@@ -101,11 +101,11 @@ namespace Test { namespace Int { namespace Channel {
   };
   
   /// Test channel with shared variables
-  class ChannelShared : public IntTest {
+  class ChannelShared : public Test {
   public:
     /// Construct and register test
     ChannelShared(Gecode::IntConLevel icl)
-      : IntTest("Channel::Shared::"+str(icl),6,0,5,false,icl) {
+      : Test("Channel::Shared::"+str(icl),6,0,5,false,icl) {
       testdomcon = false;
     }
     /// Check whether \a x is solution
@@ -123,11 +123,11 @@ namespace Test { namespace Int { namespace Channel {
   };
   
   /// Test channel between integer and Boolean variable
-  class ChannelLinkSingle : public IntTest {
+  class ChannelLinkSingle : public Test {
   public:
     /// Construct and register test
     ChannelLinkSingle(void)
-      : IntTest("Channel::Bool::Single",2,-1,2) {
+      : Test("Channel::Bool::Single",2,-1,2) {
       testdomcon = false;
     }
     /// Check whether \a x is solution
@@ -144,13 +144,13 @@ namespace Test { namespace Int { namespace Channel {
   };
   
   /// Test channel between integer variable and array of Boolean variables
-  class ChannelLinkMulti : public IntTest {
+  class ChannelLinkMulti : public Test {
   private:
     int o;
   public:
     /// Construct and register test
     ChannelLinkMulti(const std::string& s, int min, int max, int o0)
-      : IntTest("Channel::Bool::Multi::"+s,7,min,max), o(o0) {
+      : Test("Channel::Bool::Multi::"+s,7,min,max), o(o0) {
       testdomcon = false;
     }
     /// Check whether \a x is solution

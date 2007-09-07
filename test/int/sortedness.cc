@@ -57,13 +57,13 @@ namespace Test { namespace Int { namespace Sortedness {
   };
 
   /// Test sortedness without permutation variables
-  class NoVar : public IntTest {
+  class NoVar : public Test {
   protected:
     /// Number of variables to be sorted
     static const int n = 3;
   public:
     /// Create and register test
-    NoVar(void) : IntTest("Sortedness::NoVar",2*n,0,3) {}
+    NoVar(void) : Test("Sortedness::NoVar",2*n,0,3) {}
     /// Test whether \a xy is solution
     virtual bool solution(const Assignment& xy) const {
       int x[n], y[n];
@@ -95,13 +95,13 @@ namespace Test { namespace Int { namespace Sortedness {
 
 
   /// Test sortedness with permutation variables
-  class PermVar : public IntTest {
+  class PermVar : public Test {
   protected:
     /// Number of variables to be sorted
     static const int n = 3;
   public:    
     /// Create and register test
-    PermVar(void) : IntTest("Sortedness::PermVar",3*n,0,2) {}
+    PermVar(void) : Test("Sortedness::PermVar",3*n,0,2) {}
     /// Test whether \a xyz is solution
     virtual bool solution(const Assignment& xyz) const {
       int x[n], y[n], z[n];

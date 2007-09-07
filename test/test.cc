@@ -39,6 +39,8 @@
 
 #include "test/test.hh"
 
+#include "test/log.hh"
+
 
 #ifdef GECODE_HAVE_MTRACE
 #include <mcheck.h>
@@ -47,7 +49,6 @@
 #include <iostream>
 
 #include <cstdlib>
-#include <string>
 #include <cstring>
 #include <ctime>
 #include <vector>
@@ -55,33 +56,45 @@
 
 namespace Test {
 
-  TestBase::TestBase(const std::string& s)
+  /*
+   * Iterator for propagation kinds
+   *
+   */
+  const Gecode::PropKind PropKinds::pks[] =
+    {Gecode::PK_MEMORY,Gecode::PK_SPEED};
+  
+
+  /*
+   * Base class for tests
+   *
+   */
+  Base::Base(const std::string& s)
     : _name(s) {
-    if (all == NULL) {
-      all = this; n = NULL;
+    if (_tests == NULL) {
+      _tests = this; _next = NULL;
     } else {
-      // Search alphabetically
-      TestBase* p = NULL;
-      TestBase* c = all;
+      // Search alphabetic_testsy
+      Base* p = NULL;
+      Base* c = _tests;
       while ((c != NULL) && (c->name() < s)) {
-        p = c; c = c->n;
+        p = c; c = c->_next;
       }
       if (c == NULL) {
-        p->n = this; n = NULL;
-      } else if (c == all) {
-        n = all; all = this;
+        p->_next = this; _next = NULL;
+      } else if (c == _tests) {
+        _next = _tests; _tests = this;
       } else {
-        p->n = this; n = c;
+        p->_next = this; _next = c;
       }
     }
   }
 
-  TestBase* TestBase::all = NULL;
+  Base* Base::_tests = NULL;
   
-  TestBase::~TestBase(void) {}
+  Base::~Base(void) {}
   
   Gecode::Support::RandomGenerator 
-  TestBase::rand = Gecode::Support::RandomGenerator();
+  Base::rand = Gecode::Support::RandomGenerator();
   
 
 
@@ -105,7 +118,7 @@ namespace Test {
   }
 
   void
-  Options::parse(int argc, char** argv) {
+  Options::parse(int argc, char* argv[]) {
     using namespace std;
     static const char* bool2str[] =
       { "false", "true" };
@@ -193,13 +206,10 @@ namespace Test {
     exit(EXIT_FAILURE);
   }
 
-  const Gecode::PropKind PropKinds::pks[] =
-    {Gecode::PK_MEMORY,Gecode::PK_SPEED};
-  
 }
 
 int
-main(int argc, char** argv) {
+main(int argc, char* argv[]) {
   using namespace Test;
 #ifdef GECODE_HAVE_MTRACE
   mtrace();
@@ -207,10 +217,10 @@ main(int argc, char** argv) {
 
   Options o;
   o.parse(argc, argv);
-  TestBase::rand.seed(o.seed);
+  Base::rand.seed(o.seed);
   Log::logging(o.log);
 
-  for (TestBase* t = TestBase::tests() ; t != NULL; t = t->next() ) {
+  for (Base* t = Base::tests() ; t != NULL; t = t->next() ) {
     try {
       if (testpat.size() != 0) {
         bool match_found   = false;
@@ -230,7 +240,7 @@ main(int argc, char** argv) {
       std::cout << t->name() << " ";
       std::cout.flush();
       for (int i = o.iter; i--; ) {
-        o.seed = TestBase::rand.seed();
+        o.seed = Base::rand.seed();
         if (t->run(o)) {
           std::cout << "+";
           std::cout.flush();
@@ -254,7 +264,5 @@ main(int argc, char** argv) {
   }
   return 0;
 }
-
-
 
 // STATISTICS: test-core

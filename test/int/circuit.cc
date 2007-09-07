@@ -45,11 +45,11 @@ namespace Test { namespace Int { namespace Circuit {
    */
   //@{
   /// Simple test for circuit constraint
-  class Circuit : public IntTest {
+  class Circuit : public Test {
   public:
     /// Create and register test
     Circuit(int n, int min, int max, Gecode::IntConLevel icl)
-      : IntTest("Circuit::" + str(icl) + "::" + str(n),
+      : Test("Circuit::" + str(icl) + "::" + str(n),
                 n,min,max,false,icl) {
       testdomcon = false;
     }

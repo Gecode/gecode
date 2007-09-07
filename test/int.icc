@@ -39,190 +39,189 @@
 
 namespace Test { namespace Int {
 
-
-/*
- * Assignments
- *
- */
-inline
-Assignment::Assignment(int n0, const Gecode::IntSet& d0)
-  : n(n0), d(d0) {}
-inline int
-Assignment::size(void) const {
-  return n;
-}
-inline
-Assignment::~Assignment(void) {}
-
-
-inline
-CpltAssignment::CpltAssignment(int n, const Gecode::IntSet& d)
-  : Assignment(n,d), dsv(new Gecode::IntSetValues[n]) {
-  for (int i=n; i--; )
-    dsv[i].init(d);
-}
-inline bool
-CpltAssignment::operator()(void) const {
-  return dsv[0]();
-}
-inline int
-CpltAssignment::operator[](int i) const {
-  assert((i>=0) && (i<n));
-  return dsv[i].val();
-}
-inline 
-CpltAssignment::~CpltAssignment(void) {
-  delete [] dsv;
-}
-
-
-forceinline int
-RandomAssignment::randval(void) {
-  unsigned int skip = TestBase::rand(d.size());
-  for (Gecode::IntSetRanges it(d); true; ++it) {
-    if (it.width() > skip)
-      return it.min() + static_cast<int>(skip);
-    skip -= it.width();
+  /*
+   * Assignments
+   *
+   */
+  inline
+  Assignment::Assignment(int n0, const Gecode::IntSet& d0)
+    : n(n0), d(d0) {}
+  inline int
+  Assignment::size(void) const {
+    return n;
   }
-  GECODE_NEVER;
-  return 0;
-}
-
-inline
-RandomAssignment::RandomAssignment(int n, const Gecode::IntSet& d, int a0)
-  : Assignment(n,d), vals(new int[n]), a(a0) {
-  for (int i=n; i--; )
-    vals[i] = randval();
-}
-
-inline bool
-RandomAssignment::operator()(void) const {
-  return a>0;
-}
-inline int
-RandomAssignment::operator[](int i) const {
-  assert((i>=0) && (i<n));
-  return vals[i];
-}
-inline
-RandomAssignment::~RandomAssignment(void) {
-  delete [] vals;
-}
-
-
-
-/*
- * Base class for tests with integer constraints
- *
- */
-inline
-IntTest::IntTest(const std::string& s, int a, const Gecode::IntSet& d, 
-                 bool r, Gecode::IntConLevel i, Gecode::PropKind p)
-  : TestBase("Int::"+s), arity(a), dom(d), reified(r), icl(i), pk(p),
-    testdomcon(true), testsearch(true) {}
-
-inline
-IntTest::IntTest(const std::string& s, int a, int min, int max, 
-                 bool r, Gecode::IntConLevel i, Gecode::PropKind p)
-  : TestBase("Int::"+s), arity(a), dom(min,max), reified(r), icl(i), pk(p), 
-    testdomcon(true), testsearch(true) {}
-
-inline
-std::string
-IntTest::str(Gecode::PropKind pk) {
-  using namespace Gecode;
-  switch (pk) {
-  case PK_MEMORY: return "Memory";
-  case PK_SPEED:  return "Speed";
-  default: return "Def";
+  inline
+  Assignment::~Assignment(void) {}
+  
+  
+  inline
+  CpltAssignment::CpltAssignment(int n, const Gecode::IntSet& d)
+    : Assignment(n,d), dsv(new Gecode::IntSetValues[n]) {
+    for (int i=n; i--; )
+      dsv[i].init(d);
   }
-}
-
-inline
-std::string
-IntTest::str(Gecode::IntConLevel icl) {
-  using namespace Gecode;
-  switch (icl) {
-  case ICL_VAL: return "Val";
-  case ICL_BND: return "Bnd";
-  case ICL_DOM: return "Dom";
-  default: return "Def";
+  inline bool
+  CpltAssignment::operator()(void) const {
+    return dsv[0]();
   }
-}
-
-inline
-std::string
-IntTest::str(Gecode::IntRelType irt) {
-  using namespace Gecode;
-  switch (irt) {
-  case IRT_LQ: return "Lq";
-  case IRT_LE: return "Le";
-  case IRT_GQ: return "Gq";
-  case IRT_GR: return "Gr";
-  case IRT_EQ: return "Eq";
-  case IRT_NQ: return "Nq";
-  default: ;
+  inline int
+  CpltAssignment::operator[](int i) const {
+    assert((i>=0) && (i<n));
+    return dsv[i].val();
   }
-  GECODE_NEVER;
-  return "NONE";
-}
-
-inline
-std::string
-IntTest::str(int i) {
-  std::stringstream s;
-  s << i;
-  return s.str();
-}
-
-template<class T>
-inline bool
-IntTest::cmp(T x, Gecode::IntRelType r, T y) {
-  switch (r) {
-  case Gecode::IRT_EQ: return x == y;
-  case Gecode::IRT_NQ: return x != y;
-  case Gecode::IRT_LQ: return x <= y;
-  case Gecode::IRT_LE: return x < y;
-  case Gecode::IRT_GR: return x > y;
-  case Gecode::IRT_GQ: return x >= y;
-  default: ;
+  inline 
+  CpltAssignment::~CpltAssignment(void) {
+    delete [] dsv;
   }
-  return false;
-}
+  
+  
+  forceinline int
+  RandomAssignment::randval(void) {
+    unsigned int skip = Base::rand(d.size());
+    for (Gecode::IntSetRanges it(d); true; ++it) {
+      if (it.width() > skip)
+        return it.min() + static_cast<int>(skip);
+      skip -= it.width();
+    }
+    GECODE_NEVER;
+    return 0;
+  }
+
+  inline
+  RandomAssignment::RandomAssignment(int n, const Gecode::IntSet& d, int a0)
+    : Assignment(n,d), vals(new int[n]), a(a0) {
+    for (int i=n; i--; )
+      vals[i] = randval();
+  }
+  
+  inline bool
+  RandomAssignment::operator()(void) const {
+    return a>0;
+  }
+  inline int
+  RandomAssignment::operator[](int i) const {
+    assert((i>=0) && (i<n));
+    return vals[i];
+  }
+  inline
+  RandomAssignment::~RandomAssignment(void) {
+    delete [] vals;
+  }
 
 
-inline
-IntConLevels::IntConLevels(void) 
-  : i(sizeof(icls)/sizeof(Gecode::IntConLevel)-1) {}
-inline bool 
-IntConLevels::operator()(void) const {
-  return i>=0;
-}
-inline void 
-IntConLevels::operator++(void) {
-  i--;
-}
-inline Gecode::IntConLevel 
-IntConLevels::icl(void) const {
-  return icls[i];
-}
+
+  /*
+   * Tests with integer constraints
+   *
+   */
+  inline
+  Test::Test(const std::string& s, int a, const Gecode::IntSet& d, 
+             bool r, Gecode::IntConLevel i, Gecode::PropKind p)
+    : Base("Int::"+s), arity(a), dom(d), reified(r), icl(i), pk(p),
+      testdomcon(true), testsearch(true) {}
+
+  inline
+  Test::Test(const std::string& s, int a, int min, int max, 
+             bool r, Gecode::IntConLevel i, Gecode::PropKind p)
+    : Base("Int::"+s), arity(a), dom(min,max), reified(r), icl(i), pk(p), 
+      testdomcon(true), testsearch(true) {}
+
+  inline
+  std::string
+  Test::str(Gecode::PropKind pk) {
+    using namespace Gecode;
+    switch (pk) {
+    case PK_MEMORY: return "Memory";
+    case PK_SPEED:  return "Speed";
+    default: return "Def";
+    }
+  }
+  
+  inline
+  std::string
+  Test::str(Gecode::IntConLevel icl) {
+    using namespace Gecode;
+    switch (icl) {
+    case ICL_VAL: return "Val";
+    case ICL_BND: return "Bnd";
+    case ICL_DOM: return "Dom";
+    default: return "Def";
+    }
+  }
+  
+  inline
+  std::string
+  Test::str(Gecode::IntRelType irt) {
+    using namespace Gecode;
+    switch (irt) {
+    case IRT_LQ: return "Lq";
+    case IRT_LE: return "Le";
+    case IRT_GQ: return "Gq";
+    case IRT_GR: return "Gr";
+    case IRT_EQ: return "Eq";
+    case IRT_NQ: return "Nq";
+    default: ;
+    }
+    GECODE_NEVER;
+    return "NONE";
+  }
+  
+  inline
+  std::string
+  Test::str(int i) {
+    std::stringstream s;
+    s << i;
+    return s.str();
+  }
+  
+  template<class T>
+  inline bool
+  Test::cmp(T x, Gecode::IntRelType r, T y) {
+    switch (r) {
+    case Gecode::IRT_EQ: return x == y;
+    case Gecode::IRT_NQ: return x != y;
+    case Gecode::IRT_LQ: return x <= y;
+    case Gecode::IRT_LE: return x < y;
+    case Gecode::IRT_GR: return x > y;
+    case Gecode::IRT_GQ: return x >= y;
+    default: ;
+    }
+    return false;
+  }
+  
+  
+  inline
+  IntConLevels::IntConLevels(void) 
+    : i(sizeof(icls)/sizeof(Gecode::IntConLevel)-1) {}
+  inline bool 
+  IntConLevels::operator()(void) const {
+    return i>=0;
+  }
+  inline void 
+  IntConLevels::operator++(void) {
+    i--;
+  }
+  inline Gecode::IntConLevel 
+  IntConLevels::icl(void) const {
+    return icls[i];
+  }
 
 
-inline
-IntRelTypes::IntRelTypes(void) 
-  : i(sizeof(irts)/sizeof(Gecode::IntRelType)-1) {}
-inline bool 
-IntRelTypes::operator()(void) const {
-  return i>=0;
-}
-inline void 
-IntRelTypes::operator++(void) {
-  i--;
-}
-inline Gecode::IntRelType
-IntRelTypes::irt(void) const {
-  return irts[i];
-}
+  inline
+  IntRelTypes::IntRelTypes(void) 
+    : i(sizeof(irts)/sizeof(Gecode::IntRelType)-1) {}
+  inline bool 
+  IntRelTypes::operator()(void) const {
+    return i>=0;
+  }
+  inline void 
+  IntRelTypes::operator++(void) {
+    i--;
+  }
+  inline Gecode::IntRelType
+  IntRelTypes::irt(void) const {
+    return irts[i];
+  }
 
 }}
 

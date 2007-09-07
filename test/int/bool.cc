@@ -47,10 +47,10 @@ namespace Test { namespace Int { namespace Bool {
    */
   //@{
   /// Test for Boolean conjunction
-  class And : public IntTest {
+  class And : public Test {
   public:
     /// Construct and register test
-    And(void) : IntTest("Bool::And",3,0,1) {}
+    And(void) : Test("Bool::And",3,0,1) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (x[0]&x[1])==x[2];
@@ -65,10 +65,10 @@ namespace Test { namespace Int { namespace Bool {
   };
   
   /// Test for Boolean disjunction
-  class Or : public IntTest {
+  class Or : public Test {
   public:
     /// Construct and register test
-    Or(void) : IntTest("Bool::Or",3,0,1) {}
+    Or(void) : Test("Bool::Or",3,0,1) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (x[0]|x[1])==x[2];
@@ -83,10 +83,10 @@ namespace Test { namespace Int { namespace Bool {
   };
   
   /// Test for Boolean implication
-  class Imp : public IntTest {
+  class Imp : public Test {
   public:
     /// Construct and register test
-    Imp(void) : IntTest("Bool::Imp",3,0,1) {}
+    Imp(void) : Test("Bool::Imp",3,0,1) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return ((x[0] == 0 ? 1 : 0)|x[1])==x[2];
@@ -101,10 +101,10 @@ namespace Test { namespace Int { namespace Bool {
   };
   
   /// Test for Boolean equivalence
-  class Eqv : public IntTest {
+  class Eqv : public Test {
   public:
     /// Construct and register test
-    Eqv(void) : IntTest("Bool::Eqv",3,0,1) {}
+    Eqv(void) : Test("Bool::Eqv",3,0,1) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (x[0] == x[1])==x[2];
@@ -119,10 +119,10 @@ namespace Test { namespace Int { namespace Bool {
   };
   
   /// Test for Boolean exclusive or
-  class Xor : public IntTest {
+  class Xor : public Test {
   public:
     /// Construct and register test
-    Xor(void) : IntTest("Bool::Xor",3,0,1) {}
+    Xor(void) : Test("Bool::Xor",3,0,1) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (x[0] != x[1])==x[2];
@@ -137,10 +137,10 @@ namespace Test { namespace Int { namespace Bool {
   };
   
   /// Test for Boolean n-ary conjunction
-  class AndNary : public IntTest {
+  class AndNary : public Test {
   public:
     /// Construct and register test
-    AndNary(void) : IntTest("Bool::And::Nary",10,0,1) {}
+    AndNary(void) : Test("Bool::And::Nary",10,0,1) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i = x.size()-1; i--; )
@@ -159,10 +159,10 @@ namespace Test { namespace Int { namespace Bool {
   };
   
   /// Test for Boolean n-ary conjunction that is false
-  class AndNaryFalse : public IntTest {
+  class AndNaryFalse : public Test {
   public:
     /// Construct and register test
-    AndNaryFalse(void) : IntTest("Bool::And::Nary::False",10,0,1) {}
+    AndNaryFalse(void) : Test("Bool::And::Nary::False",10,0,1) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i = x.size(); i--; )
@@ -181,10 +181,10 @@ namespace Test { namespace Int { namespace Bool {
   };
 
   /// Test for Boolean n-ary disjunction
-  class OrNary : public IntTest {
+  class OrNary : public Test {
   public:
     /// Construct and register test
-    OrNary(void) : IntTest("Bool::Or::Nary",10,0,1) {}
+    OrNary(void) : Test("Bool::Or::Nary",10,0,1) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i = x.size()-1; i--; )
@@ -203,10 +203,10 @@ namespace Test { namespace Int { namespace Bool {
   };
   
   /// Test for Boolean n-ary disjunction that is true
-  class OrNaryTrue : public IntTest {
+  class OrNaryTrue : public Test {
   public:
     /// Construct and register test
-    OrNaryTrue(void) : IntTest("Bool::Or::Nary::True",10,0,1) {}
+    OrNaryTrue(void) : Test("Bool::Or::Nary::True",10,0,1) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i = x.size(); i--; )

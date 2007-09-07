@@ -48,11 +48,11 @@ namespace Test { namespace Int { namespace Arithmetic {
    */
   //@{
   /// Test for multiplication constraint
-  class Mult : public IntTest {
+  class Mult : public Test {
   public:
     /// Create and register test
     Mult(const std::string& s, const Gecode::IntSet& d)
-      : IntTest("Arithmetic::Mult::"+s,3,d) {}
+      : Test("Arithmetic::Mult::"+s,3,d) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       double d0 = static_cast<double>(x[0]);
@@ -67,11 +67,11 @@ namespace Test { namespace Int { namespace Arithmetic {
   };
 
   /// Test for squaring constraint
-  class Square : public IntTest {
+  class Square : public Test {
   public:
     /// Create and register test
     Square(const std::string& s, const Gecode::IntSet& d)
-      : IntTest("Arithmetic::Square::"+s,2,d) {}
+      : Test("Arithmetic::Square::"+s,2,d) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       double d0 = static_cast<double>(x[0]);
@@ -85,11 +85,11 @@ namespace Test { namespace Int { namespace Arithmetic {
   };
 
   /// Test for absolute value constraint
-  class Abs : public IntTest {
+  class Abs : public Test {
   public:
     /// Create and register test
     Abs(const std::string& s, const Gecode::IntSet& d, Gecode::IntConLevel icl)
-      : IntTest("Arithmetic::Abs::"+str(icl)+"::"+s,
+      : Test("Arithmetic::Abs::"+str(icl)+"::"+s,
                 2,d,false,icl) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
@@ -104,11 +104,11 @@ namespace Test { namespace Int { namespace Arithmetic {
   };
 
   /// Test for binary minimum constraint  
-  class Min : public IntTest {
+  class Min : public Test {
   public:
     /// Create and register test
     Min(const std::string& s, const Gecode::IntSet& d)
-      : IntTest("Arithmetic::Min::Bin::"+s,3,d) {}
+      : Test("Arithmetic::Min::Bin::"+s,3,d) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return std::min(x[0],x[1]) == x[2];
@@ -120,11 +120,11 @@ namespace Test { namespace Int { namespace Arithmetic {
   };
 
   /// Test for binary minimum constraint with shared variables
-  class MinShared : public IntTest {
+  class MinShared : public Test {
   public:
     /// Create and register test
     MinShared(const std::string& s, const Gecode::IntSet& d)
-      : IntTest("Arithmetic::Min::Bin::Shared::"+s,2,d) {}
+      : Test("Arithmetic::Min::Bin::Shared::"+s,2,d) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return std::min(x[0],x[1]) == x[0];
@@ -136,11 +136,11 @@ namespace Test { namespace Int { namespace Arithmetic {
   };
 
   /// Test for binary maximum constraint  
-  class Max : public IntTest {
+  class Max : public Test {
   public:
     /// Create and register test
     Max(const std::string& s, const Gecode::IntSet& d)
-      : IntTest("Arithmetic::Max::Bin::"+s,3,d) {}
+      : Test("Arithmetic::Max::Bin::"+s,3,d) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return std::max(x[0],x[1]) == x[2];
@@ -152,11 +152,11 @@ namespace Test { namespace Int { namespace Arithmetic {
   };
 
   /// Test for binary maximum constraint with shared variables
-  class MaxShared : public IntTest {
+  class MaxShared : public Test {
   public:
     /// Create and register test
     MaxShared(const std::string& s, const Gecode::IntSet& d)
-      : IntTest("Arithmetic::Max::Bin::Shared::"+s,2,d) {}
+      : Test("Arithmetic::Max::Bin::Shared::"+s,2,d) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return std::max(x[0],x[1]) == x[0];
@@ -168,10 +168,10 @@ namespace Test { namespace Int { namespace Arithmetic {
   };
 
   /// Test for n-ary minimmum constraint  
-  class MinNary : public IntTest {
+  class MinNary : public Test {
   public:
     /// Create and register test
-    MinNary(void) : IntTest("Arithmetic::Min::Nary",4,-4,4) {}
+    MinNary(void) : Test("Arithmetic::Min::Nary",4,-4,4) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return std::min(std::min(x[0],x[1]), x[2]) == x[3];
@@ -185,10 +185,10 @@ namespace Test { namespace Int { namespace Arithmetic {
   };
 
   /// Test for n-ary minimmum constraint with shared variables  
-  class MinNaryShared : public IntTest {
+  class MinNaryShared : public Test {
   public:
     /// Create and register test
-    MinNaryShared(void) : IntTest("Arithmetic::Min::Nary::Shared",3,-4,4) {}
+    MinNaryShared(void) : Test("Arithmetic::Min::Nary::Shared",3,-4,4) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return std::min(std::min(x[0],x[1]), x[2]) == x[1];
@@ -202,10 +202,10 @@ namespace Test { namespace Int { namespace Arithmetic {
   };
 
   /// Test for n-ary maximum constraint  
-  class MaxNary : public IntTest {
+  class MaxNary : public Test {
   public:
     /// Create and register test
-    MaxNary(void) : IntTest("Arithmetic::Max::Nary",4,-4,4) {}
+    MaxNary(void) : Test("Arithmetic::Max::Nary",4,-4,4) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return std::max(std::max(x[0],x[1]), x[2]) == x[3];
@@ -219,10 +219,10 @@ namespace Test { namespace Int { namespace Arithmetic {
   };
 
   /// Test for n-ary maximum constraint with shared variables
-  class MaxNaryShared : public IntTest {
+  class MaxNaryShared : public Test {
   public:
     /// Create and register test
-    MaxNaryShared(void) : IntTest("Arithmetic::Max::Nary::Shared",3,-4,4) {}
+    MaxNaryShared(void) : Test("Arithmetic::Max::Nary::Shared",3,-4,4) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return std::max(std::max(x[0],x[1]), x[2]) == x[1];

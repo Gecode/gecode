@@ -47,14 +47,14 @@ namespace Test { namespace Int { namespace Distinct {
    */
   //@{
   /// Simple test for distinct constraint
-  class Distinct : public IntTest {
+  class Distinct : public Test {
   public:
     /// Create and register test
     Distinct(const Gecode::IntSet& d, Gecode::IntConLevel icl)
-      : IntTest("Distinct::Sparse::"+str(icl),6,d,false,icl) {}
+      : Test("Distinct::Sparse::"+str(icl),6,d,false,icl) {}
     /// Create and register test
     Distinct(int min, int max, Gecode::IntConLevel icl)
-      : IntTest("Distinct::Dense::"+str(icl),6,min,max,false,icl) {}
+      : Test("Distinct::Dense::"+str(icl),6,min,max,false,icl) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<x.size(); i++)
@@ -70,14 +70,14 @@ namespace Test { namespace Int { namespace Distinct {
   };
   
   /// Simple test for distinct constraint with offsets
-  class DistinctOffset : public IntTest {
+  class DistinctOffset : public Test {
   public:
     /// Create and register test
     DistinctOffset(const Gecode::IntSet& d, Gecode::IntConLevel icl)
-      : IntTest("Distinct::Offset::Sparse::"+str(icl),6,d,false,icl) {}
+      : Test("Distinct::Offset::Sparse::"+str(icl),6,d,false,icl) {}
     /// Create and register test
     DistinctOffset(int min, int max, Gecode::IntConLevel icl)
-      : IntTest("Distinct::Offset::Dense::"+str(icl),6,min,max,false,icl) {}
+      : Test("Distinct::Offset::Dense::"+str(icl),6,min,max,false,icl) {}
     /// Check whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<x.size(); i++)
@@ -96,11 +96,11 @@ namespace Test { namespace Int { namespace Distinct {
   };
 
   /// Randomized test for distinct constraint
-  class DistinctRandom : public IntTest {
+  class DistinctRandom : public Test {
   public:
     /// Create and register test
     DistinctRandom(int n, int min, int max, Gecode::IntConLevel icl)
-      : IntTest("Distinct::Random::"+str(icl),n,min,max,false,icl) {
+      : Test("Distinct::Random::"+str(icl),n,min,max,false,icl) {
       testsearch = false;
     }
     /// Create and register initial assignment

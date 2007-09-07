@@ -45,10 +45,10 @@ namespace Test { namespace Int { namespace Dom {
    */
   //@{
   /// Test for domain constraint (range)
-  class DomRange : public IntTest {
+  class DomRange : public Test {
   public:
     /// Create and register test
-    DomRange(void) : IntTest("Dom::Range",1,-6,6,true) {}
+    DomRange(void) : Test("Dom::Range",1,-6,6,true) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (x[0] >= -2) && (x[0] <= 2);
@@ -71,10 +71,10 @@ namespace Test { namespace Int { namespace Dom {
   Gecode::IntSet d(r,4);
 
   /// Test for domain constraint (full integer set)
-  class DomDom : public IntTest {
+  class DomDom : public Test {
   public:
     /// Create and register test
-    DomDom(void) : IntTest("Dom::Dom",1,-6,6,true) {}
+    DomDom(void) : Test("Dom::Dom",1,-6,6,true) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (((x[0] >= -4) && (x[0] <= -3)) ||

@@ -52,7 +52,7 @@ using namespace Int;
  * \brief Base class for tests for branching completeness.
  *
  */
-class BranchCompleteTest : public TestBase {
+class BranchCompleteTest : public Base {
 protected:
   /// Number of variables
   int arity;
@@ -60,7 +60,7 @@ protected:
   IntSet dom;
 
   IntConLevel randicl(void) {
-    switch (TestBase::rand(4)) {
+    switch (Base::rand(4)) {
     case 0: return ICL_DEF;
     case 1: return ICL_VAL;
     case 2: return ICL_BND;
@@ -71,7 +71,7 @@ protected:
 public:
   /// Constructor
   BranchCompleteTest(const std::string& s, int a, const IntSet& d)
-    : TestBase("Branch::Complete::"+s), arity(a), dom(d) {
+    : Base("Branch::Complete::"+s), arity(a), dom(d) {
   }
   /// Perform test
   virtual bool run(const Options& opt);

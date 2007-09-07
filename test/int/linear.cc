@@ -47,7 +47,7 @@ namespace Test { namespace Int { namespace Linear {
    */
   //@{
   /// Test linear relation over integer variables
-  class Int : public IntTest {
+  class Int : public Test {
   protected:
     /// Coefficients
     Gecode::IntArgs a;
@@ -58,7 +58,7 @@ namespace Test { namespace Int { namespace Linear {
     Int(const std::string& s, const Gecode::IntSet& d,
         const Gecode::IntArgs& a0, Gecode::IntRelType irt0, 
         Gecode::IntConLevel icl=Gecode::ICL_BND)
-      : IntTest("Linear::Int::"+
+      : Test("Linear::Int::"+
                 str(irt0)+"::"+str(icl)+"::"+s+"::"+str(a0.size()),
                 a0.size(),d,icl != Gecode::ICL_DOM,icl), 
         a(a0), irt(irt0) {}
@@ -81,7 +81,7 @@ namespace Test { namespace Int { namespace Linear {
   };
 
   /// Test linear relation over Boolean variables equal to constant
-  class BoolInt : public IntTest {
+  class BoolInt : public Test {
   protected:
     /// Coefficients
     Gecode::IntArgs a;
@@ -94,7 +94,7 @@ namespace Test { namespace Int { namespace Linear {
     BoolInt(const std::string& s, const Gecode::IntArgs& a0, 
             Gecode::IntRelType irt0, int c0,
             Gecode::PropKind pk=Gecode::PK_DEF)
-      : IntTest("Linear::Bool::Int::"+
+      : Test("Linear::Bool::Int::"+
                 str(irt0)+"::"+s+"::"+str(a0.size())+"::"+str(c0)+"::"+str(pk),
                 a0.size(),0,1,false,Gecode::ICL_DEF,pk), 
         a(a0), irt(irt0), c(c0) {}
@@ -115,7 +115,7 @@ namespace Test { namespace Int { namespace Linear {
   };
 
   /// Test linear relation over Boolean variables equal to integer variable
-  class BoolVar : public IntTest {
+  class BoolVar : public Test {
   protected:
     /// Coefficients
     Gecode::IntArgs a;
@@ -126,7 +126,7 @@ namespace Test { namespace Int { namespace Linear {
     BoolVar(const std::string& s, 
             int min, int max, const Gecode::IntArgs& a0, 
             Gecode::IntRelType irt0)
-      : IntTest("Linear::Bool::Var::"+str(irt0)+"::"+s,
+      : Test("Linear::Bool::Var::"+str(irt0)+"::"+s,
                 a0.size()+1,min,max), 
         a(a0), irt(irt0) {}
     /// Test whether \a x is solution

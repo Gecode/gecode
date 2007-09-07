@@ -138,7 +138,7 @@ public:
 std::ostream&
 operator<<(std::ostream&, const SetAssignment&);
 
-class SetTest : public TestBase {
+class SetTest : public Base {
 private:
   int     arity;
   IntSet  lub;
@@ -151,7 +151,7 @@ private:
 public:
   SetTest(const std::string& s,
           int a, const IntSet& d, bool r=false, int w=0)
-    : TestBase("Set::"+s), arity(a), lub(d), reified(r), withInt(w)  {}
+    : Base("Set::"+s), arity(a), lub(d), reified(r), withInt(w)  {}
   /// Check for solution
   virtual bool solution(const SetAssignment&) const = 0;
   /// Post propagator

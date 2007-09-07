@@ -45,11 +45,11 @@ namespace Test { namespace Int { namespace Basic {
    */
   //@{
   /// Test whether testing infrastructure for integer variables works
-  class Basic : public IntTest {
+  class Basic : public Test {
   public:
     /// Initialize test
     Basic(void)
-      : IntTest("Basic",3,-3,3,true) {}
+      : Test("Basic",3,-3,3,true) {}
     /// Check whether \a x is a solution
     virtual bool solution(const Assignment&) const {
       return true;

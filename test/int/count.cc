@@ -45,14 +45,14 @@ namespace Test { namespace Int { namespace Count {
    */
   //@{
   /// Test number of equal integers equal to integer
-  class IntInt : public IntTest {
+  class IntInt : public Test {
   protected:
     /// Integer relation type to propagate
     Gecode::IntRelType irt;
   public:
     /// Create and register test
     IntInt(Gecode::IntRelType irt0)
-      : IntTest("Count::Int::Int::"+str(irt0),4,-2,2), irt(irt0) {}
+      : Test("Count::Int::Int::"+str(irt0),4,-2,2), irt(irt0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       int m = 0;
@@ -68,14 +68,14 @@ namespace Test { namespace Int { namespace Count {
   };
 
   /// Test number of equal integers equal to integer with duplicate variables
-  class IntIntDup : public IntTest {
+  class IntIntDup : public Test {
   protected:
     /// Integer relation type to propagate
     Gecode::IntRelType irt;
   public:
     /// Create and register test
     IntIntDup(Gecode::IntRelType irt0)
-      : IntTest("Count::Int::Int::Dup::"+str(irt0),4,-2,2), irt(irt0) {}
+      : Test("Count::Int::Int::Dup::"+str(irt0),4,-2,2), irt(irt0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       int m = 0;
@@ -94,14 +94,14 @@ namespace Test { namespace Int { namespace Count {
   };
 
   /// Test number of equal integers equal to integer variable
-  class IntVar : public IntTest {
+  class IntVar : public Test {
   protected:
     /// Integer relation type to propagate
     Gecode::IntRelType irt;
   public:
     /// Create and register test
     IntVar(Gecode::IntRelType irt0)
-      : IntTest("Count::Int::Var::"+str(irt0),5,-2,2), irt(irt0) {}
+      : Test("Count::Int::Var::"+str(irt0),5,-2,2), irt(irt0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       int m = 0;
@@ -122,14 +122,14 @@ namespace Test { namespace Int { namespace Count {
   Gecode::IntArgs ints(4, 1,0,3,2);
 
   /// Test number of several equal integers equal to integer
-  class IntArrayInt : public IntTest {
+  class IntArrayInt : public Test {
   protected:
     /// Integer relation type to propagate
     Gecode::IntRelType irt;
   public:
     /// Create and register test
     IntArrayInt(Gecode::IntRelType irt0)
-      : IntTest("Count::IntArray::Int::"+str(irt0),5,-2,2), irt(irt0) {}
+      : Test("Count::IntArray::Int::"+str(irt0),5,-2,2), irt(irt0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       int m = 0;
@@ -148,14 +148,14 @@ namespace Test { namespace Int { namespace Count {
   };
 
   /// Test number of several equal integers equal to integer variable
-  class IntArrayVar : public IntTest {
+  class IntArrayVar : public Test {
   protected:
     /// Integer relation type to propagate
     Gecode::IntRelType irt;
   public:
     /// Create and register test
     IntArrayVar(Gecode::IntRelType irt0)
-      : IntTest("Count::IntArray::Var::"+str(irt0),5,-2,2), irt(irt0) {}
+      : Test("Count::IntArray::Var::"+str(irt0),5,-2,2), irt(irt0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       int m = 0;
@@ -174,14 +174,14 @@ namespace Test { namespace Int { namespace Count {
   };
 
   /// Test number of equal integers equal to integer variable with sharing
-  class IntVarShared : public IntTest {
+  class IntVarShared : public Test {
   protected:
     /// Integer relation type to propagate
     Gecode::IntRelType irt;
   public:
     /// Create and register test
     IntVarShared(Gecode::IntRelType irt0)
-      : IntTest("Count::Int::Var::Shared::"+str(irt0),4,-2,2), irt(irt0) {}
+      : Test("Count::Int::Var::Shared::"+str(irt0),4,-2,2), irt(irt0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       int m = 0;
@@ -197,14 +197,14 @@ namespace Test { namespace Int { namespace Count {
   };
 
   /// Test number of equal variables equal to integer variable
-  class VarVar : public IntTest {
+  class VarVar : public Test {
   protected:
     /// Integer relation type to propagate
     Gecode::IntRelType irt;
   public:
     /// Create and register test
     VarVar(Gecode::IntRelType irt0)
-      : IntTest("Count::Var:Var::"+str(irt0),5,-2,2), irt(irt0) {}
+      : Test("Count::Var:Var::"+str(irt0),5,-2,2), irt(irt0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       int m = 0;
@@ -223,14 +223,14 @@ namespace Test { namespace Int { namespace Count {
   };
 
   /// Test number of equal variables equal to integer variable with sharing
-  class VarVarSharedA : public IntTest {
+  class VarVarSharedA : public Test {
   protected:
     /// Integer relation type to propagate
     Gecode::IntRelType irt;
   public:
     /// Create and register test
     VarVarSharedA(Gecode::IntRelType irt0)
-      : IntTest("Count::Var::Var::Shared::A::"+str(irt0),5,-2,2), irt(irt0) {}
+      : Test("Count::Var::Var::Shared::A::"+str(irt0),5,-2,2), irt(irt0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       int m = 0;
@@ -249,14 +249,14 @@ namespace Test { namespace Int { namespace Count {
   };
 
   /// Test number of equal variables equal to integer variable with sharing
-  class VarVarSharedB : public IntTest {
+  class VarVarSharedB : public Test {
   protected:
     /// Integer relation type to propagate
     Gecode::IntRelType irt;
   public:
     /// Create and register test
     VarVarSharedB(Gecode::IntRelType irt0)
-      : IntTest("Count::Var::Var::Shared::B::"+str(irt0),5,-2,2), irt(irt0) {}
+      : Test("Count::Var::Var::Shared::B::"+str(irt0),5,-2,2), irt(irt0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       int m = 0;
@@ -275,14 +275,14 @@ namespace Test { namespace Int { namespace Count {
   };
 
   /// Test number of equal variables equal to integer variable with sharing
-  class VarVarSharedC : public IntTest {
+  class VarVarSharedC : public Test {
   protected:
     /// Integer relation type to propagate
     Gecode::IntRelType irt;
   public:
     /// Create and register test
     VarVarSharedC(Gecode::IntRelType irt0)
-      : IntTest("Count::Var::Var::Shared::A::"+str(irt0),4,-2,2), irt(irt0) {}
+      : Test("Count::Var::Var::Shared::A::"+str(irt0),4,-2,2), irt(irt0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       int m = 0;

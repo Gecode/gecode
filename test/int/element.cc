@@ -47,14 +47,14 @@ namespace Test { namespace Int { namespace Element {
    */
   //@{
   /// Test for element with integer array and integer variables
-  class IntInt : public IntTest {
+  class IntInt : public Test {
   protected:
     /// Array of integers
     Gecode::IntArgs c;
   public:
     /// Create and register test
     IntInt(const std::string& s, const Gecode::IntArgs& c0)
-      : IntTest("Element::Int::Int::"+s,2,-4,8), c(c0) {}
+      : Test("Element::Int::Int::"+s,2,-4,8), c(c0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==x[1];
@@ -66,14 +66,14 @@ namespace Test { namespace Int { namespace Element {
   };
 
   /// Test for element with integer array and single shared integer variable
-  class IntIntShared : public IntTest {
+  class IntIntShared : public Test {
   protected:
     /// Array of integers
     Gecode::IntArgs c;
   public:
     /// Create and register test
     IntIntShared(const std::string& s, const Gecode::IntArgs& c0)
-      : IntTest("Element::Int::Int::Shared::"+s,1,-4,8), c(c0) {}
+      : Test("Element::Int::Int::Shared::"+s,1,-4,8), c(c0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==x[0];
@@ -85,14 +85,14 @@ namespace Test { namespace Int { namespace Element {
   };
 
   /// Test for element with integer array and integer and Boolean variable
-  class IntBool : public IntTest {
+  class IntBool : public Test {
   protected:
     /// Array of integers
     Gecode::IntArgs c;
   public:
     /// Create and register test
     IntBool(const std::string& s, const Gecode::IntArgs& c0)
-      : IntTest("Element::Int::Bool::"+s,2,-4,8), c(c0) {}
+      : Test("Element::Int::Bool::"+s,2,-4,8), c(c0) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (x[0]>= 0) && (x[0]<c.size()) && c[x[0]]==x[1];
@@ -104,11 +104,11 @@ namespace Test { namespace Int { namespace Element {
   };
 
   /// Test for element with variable array and integer variables
-  class VarInt : public IntTest {
+  class VarInt : public Test {
   public:
     /// Create and register test
     VarInt(Gecode::IntConLevel icl)
-      : IntTest("Element::Var::Int::"+str(icl),6,-1,3,false,icl) {}
+      : Test("Element::Var::Int::"+str(icl),6,-1,3,false,icl) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (x[0]>= 0) && (x[0]<x.size()-2) && x[2+x[0]]==x[1];
@@ -123,11 +123,11 @@ namespace Test { namespace Int { namespace Element {
   };
 
   /// Test for element with variable array and shared integer variable
-  class VarIntShared : public IntTest {
+  class VarIntShared : public Test {
   public:
     /// Create and register test
     VarIntShared(Gecode::IntConLevel icl)
-      : IntTest("Element::Var::Int::Shared::"+str(icl),5,-1,3,false,icl) {}
+      : Test("Element::Var::Int::Shared::"+str(icl),5,-1,3,false,icl) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       return (x[0]>= 0) && (x[0]<x.size()-1) && x[1+x[0]]==x[0];
@@ -142,10 +142,10 @@ namespace Test { namespace Int { namespace Element {
   };
 
   /// Test for element with Boolean variable array and integer variable
-  class VarBool : public IntTest {
+  class VarBool : public Test {
   public:
     /// Create and register test
-    VarBool(void) : IntTest("Element::Var::Bool",6,-1,3,false) {}
+    VarBool(void) : Test("Element::Var::Bool",6,-1,3,false) {}
     /// Test whether \a x is solution
     virtual bool solution(const Assignment& x) const {
       for (int i=0; i<x.size()-2; i++)

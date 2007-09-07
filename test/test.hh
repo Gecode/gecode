@@ -47,8 +47,6 @@
 
 #include "gecode/support/random.hh"
 
-#include "test/log.hh"
-
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -61,62 +59,6 @@ namespace Test {
    * \ingroup TaskTest
    */
   //@{
-  /// Commandline options
-  class Options {
-  public:
-    static const int defiter = 5,
-      deffixprob = 10;
-    
-    int   seed;
-    int   iter;
-    int   fixprob;
-    bool  stop_on_error;
-
-    bool  log, display;
-    Options(void)
-      : seed(0), iter(defiter), fixprob(deffixprob), 
-        log(false), display(true), stop_on_error(true)
-    {}
-    
-    void parse(int argc, char **argv);
-  };
-  
-  /// Base class for all tests to be run
-  class TestBase {
-  private:
-    /// Name of the test
-    std::string _name;
-    /// Next test
-    TestBase* n;
-    /// All tests
-    static TestBase* all;
-  public:
-    /// Create and register test with name \a s
-    TestBase(const std::string& s);
-    /// Return name of test
-    const std::string& name(void) const;
-    /// Return all tests
-    static TestBase* tests(void);
-    /// Return next test
-    TestBase* next(void) const;
-    /// Run test
-    virtual bool run(const Options& opt) = 0;
-    /// Destructor
-    virtual ~TestBase(void);
-
-    /// Random number generator
-    static Gecode::Support::RandomGenerator rand;
-  protected:
-    /** \brief Log start of test.
-     */
-    void log_posting(void) {
-      if (Log::logging()) {
-        std::ostringstream h, c;
-        Log::log(h.str(), c.str());
-      }
-    }
-  };
-
   /// Iterator for propagation kinds
   class PropKinds {
   private:
@@ -134,9 +76,64 @@ namespace Test {
     /// Return current propagation kind
     Gecode::PropKind pk(void) const;
   };
+
+  /// Commandline options
+  class Options {
+  public:
+    static const int defiter = 5,
+      deffixprob = 10;
+    
+    int   seed;
+    int   iter;
+    int   fixprob;
+    bool  stop_on_error;
+
+    bool  log, display;
+
+    Options(void)
+      : seed(0), iter(defiter), fixprob(deffixprob), 
+        log(false), display(true), stop_on_error(true)
+    {}
+    
+    /// Parse commandline arguments
+    void parse(int argc, char* argv[]);
+  };
+  
+  /// Base class for all tests to be run
+  class Base {
+  private:
+    /// Name of the test
+    std::string _name;
+    /// Next test
+    Base* _next;
+    /// All tests
+    static Base* _tests;
+  public:
+    /// Create and register test with name \a s
+    Base(const std::string& s);
+    /// Return name of test
+    const std::string& name(void) const;
+    /// Return all tests
+    static Base* tests(void);
+    /// Return next test
+    Base* next(void) const;
+    /// Run test
+    virtual bool run(const Options& opt) = 0;
+    /// Destructor
+    virtual ~Base(void);
+
+    /// Random number generator
+    static Gecode::Support::RandomGenerator rand;
+  };
   //@}
 
 }
+
+/**
+ * \brief Main function 
+ * \relates Test::Base
+ */
+int main(int argc, char* argv[]);
 
 #include "test/test.icc"
 
