@@ -54,7 +54,7 @@ namespace Gecode { namespace Support {
       */
     class SO {
     public:
-      /// Duplicate Symbol \a s
+      /// Duplicate string \a s
       GECODE_SUPPORT_EXPORT static char* strdup(const char* s);
       /// The reference count
       unsigned int use_cnt;
@@ -64,20 +64,14 @@ namespace Gecode { namespace Support {
       void subscribe(void);
 
       /// The actual Symbol
-      const char* s;
+      char* s;
       /// Whether the SO owns the Symbol
       bool own;
-      /// Next SO in the list
-      SO* next;
-      /// Tail of the list
-      SO* tail;
 
       /// Construct from a given Symbol \a s0, which is copied if \a copy is true.
       SO(const char* s0, bool copy);
       /// Append \a s0
-      void append(SO* s0);
-      /// Destructor
-      GECODE_SUPPORT_EXPORT ~SO(void);
+      GECODE_SUPPORT_EXPORT void append(SO* s0);
       /// Compare with \a other for equality
       GECODE_SUPPORT_EXPORT bool eq(const SO* other) const;
       /// Return size of the Symbol
@@ -103,6 +97,8 @@ namespace Gecode { namespace Support {
     Symbol(const Symbol& s0);
     /// Assignment operator
     const Symbol& operator=(const Symbol& s0);
+    /// Deallocate memory
+    GECODE_SUPPORT_EXPORT void dispose(void);
     
     /// Test if this Symbol is equal to \a s0
     bool operator==(const Symbol& s0) const;
@@ -122,7 +118,7 @@ namespace Gecode { namespace Support {
   forceinline
   Symbol::SO::SO(const char* s0, bool copy)
     : use_cnt(0),
-      s(copy ? strdup(s0) : s0), own(copy), next(NULL), tail(this) {}
+      s(copy ? strdup(s0) : const_cast<char*>(s0)), own(copy) {}
 
   forceinline bool
   Symbol::SO::cancel(void) { return --use_cnt == 0; }
@@ -130,40 +126,19 @@ namespace Gecode { namespace Support {
   forceinline void
   Symbol::SO::subscribe(void) { ++use_cnt; }
 
-  forceinline void
-  Symbol::SO::append(SO* so0) {
-    assert(tail->next == NULL);
-    tail->next = so0;
-    so0->subscribe();
-    tail = so0->tail;
-  }
-
   forceinline int
   Symbol::SO::hash(int m) const {
     int h = 0;
-    const SO* cur = this;
     int pos = 0;
-    while (true) {
-      if (cur->s[pos] == 0) {
-        cur = cur->next;
-        pos = 0;
-        if (cur == NULL)
-          break;
-      }
-      h = (127 * h + cur->s[pos++]) % m;
+    while (s[pos] != 0) {
+      h = (127 * h + s[pos++]) % m;
     }
     return h;
   }
 
   inline unsigned int
   Symbol::SO::size(void) const {
-    unsigned int len = 0;
-    const SO* cur = this;
-    while (cur != NULL) {
-      len += strlen(cur->s);
-      cur = cur->next;
-    }
-    return len;
+    return strlen(s);
   }
 
   forceinline
@@ -177,8 +152,7 @@ namespace Gecode { namespace Support {
 
   forceinline
   Symbol::~Symbol(void) {
-    if (so && so->cancel())
-      delete so;
+    dispose();
   }
 
   forceinline
@@ -191,8 +165,7 @@ namespace Gecode { namespace Support {
   forceinline const Symbol&
   Symbol::operator=(const Symbol& s0) {
     if (this != &s0) {
-      if (so && so->cancel())
-        delete so;
+      dispose();
       so = s0.so;
       if (so)
         so->subscribe();

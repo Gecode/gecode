@@ -45,74 +45,56 @@ namespace Gecode { namespace Support {
 
   char*
   Symbol::SO::strdup(const char* s) {
-    unsigned int n = strlen(s);
+    unsigned int n = strlen(s)+1;
     char* d = static_cast<char*>(Memory::malloc(sizeof(char)*n));
-    for (unsigned int i=n+1; i--; )
+    for (unsigned int i=n; i--; )
       d[i]=s[i];
     return d;
+  }
+
+  void
+  Symbol::SO::append(SO* so0) {
+    if (so0 == NULL)
+      return;
+    unsigned int n1 = strlen(s);
+    unsigned int n2 = strlen(so0->s);
+    char* d = static_cast<char*>(Memory::malloc(sizeof(char)*(n1+n2+1)));
+    for (unsigned int i=n1; i--; )
+      d[i] = s[i];
+    for (unsigned int i=n2+1; i--; )
+      d[n1+i] = so0->s[i];
+    if (own)
+      Memory::free(s);
+    s = d;
+    own = true;
   }
 
   bool
   Symbol::SO::eq(const SO* other) const {
     if (this == other)
       return true;
-    const SO* c = this;
-    const SO* oc = other;
-    int cpos = 0;
-    int opos = 0;
-    
-    while (true) {
-      if (c->s[cpos] == 0) {
-        c = c->next; cpos = 0;
-        if (c == NULL)
-          return oc->s[opos] == 0 && oc->next == 0;
-      }
-      if (oc->s[opos] == 0) {
-        oc = oc->next; opos = 0;
-        if (oc == NULL)
-          return false;
-      }
-      if (c->s[cpos] != oc->s[opos])
-        return false;
-      cpos++;
-      opos++;
-    }
-    assert(false);
-    return false;
+    if (other == NULL)
+      return false;
+    return (!strcmp(s, other->s));
   }
   
   Symbol::SO*
   Symbol::SO::copy(void) const {
-    SO* head = new SO(s, own);
-    head->subscribe();
-    SO* last = head;
-    SO* cur = next;
-    while (cur != NULL) {
-      last->next = new SO(cur->s, cur->own);
-      last->next->subscribe();
-      last = last->next;
-      cur = cur->next;
-    }
-    if (last != head)
-      head->tail = last;
-    return head;
+    return new SO(s, own);
   }
 
   std::ostream&
   Symbol::SO::print(std::ostream& os) const {
-    const SO* cur = this;
-    while (cur != NULL) {
-      os << cur->s;
-      cur = cur->next;
-    }
-    return os;
+    return os << s;
   }
 
-  Symbol::SO::~SO(void) {
-    if (own)
-      Memory::free(const_cast<char*>(s));
-    if (next && next->cancel())
-      delete next;
+  void
+  Symbol::dispose(void) {
+    if (so && so->cancel()) {
+      if (so->own)
+        Memory::free(so->s);
+      delete so;
+    }
   }
 
 }}
