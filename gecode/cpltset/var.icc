@@ -37,7 +37,6 @@
 
 #include <iostream>
 #include "gecode/cpltset/var/imp-hdr.icc"
-#include "gecode/support/shared-array.hh"
 
 namespace Gecode { namespace CpltSet {
 

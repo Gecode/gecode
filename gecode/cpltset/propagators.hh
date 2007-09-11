@@ -446,8 +446,6 @@ namespace Gecode { namespace CpltSet {
 #include "gecode/cpltset/propagators/rangerec.icc"
 #include "gecode/cpltset/propagators/rangeroots.icc"
 
-// check whether we need this in other propagators too
-#include "gecode/support/dynamic-array.hh"
 #endif
 
 // STATISTICS: cpltset-prop

@@ -42,7 +42,6 @@
 #include "gecode/kernel.hh"
 #include "gecode/int.hh"
 #include "gecode/iter.hh"
-#include "gecode/support/shared-array.hh"
 #include "gecode/set.hh"
 #include "gecode/support/buddy/bdd.h"
 

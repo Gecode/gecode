@@ -855,19 +855,19 @@ namespace Gecode {
 
   // mark all nodes in the dqueue
   GECODE_CPLTSET_EXPORT void
-  extcache_mark(BMI* mgr, Support::SharedArray<GecodeBdd>& nodes, 
+  extcache_mark(BMI* mgr, SharedArray<GecodeBdd>& nodes, 
                 int n, int& l, int& r, int& markref);
 
   // unmark all nodes in the dqueue
   GECODE_CPLTSET_EXPORT void
-  extcache_unmark(BMI* mgr, Support::SharedArray<GecodeBdd>& nodes, 
+  extcache_unmark(BMI* mgr, SharedArray<GecodeBdd>& nodes, 
                   int n, int& l, int& r, int& markref);
 
   // iterate to the next level of nodes
   GECODE_CPLTSET_EXPORT void 
   extcardbounds(BMI* mgr, int& markref, GecodeBdd& c, int& n, int& l, int& r,
                 bool& singleton, int& _level, 
-                Support::SharedArray<GecodeBdd>& nodes, 
+                SharedArray<GecodeBdd>& nodes, 
                 int& curmin, int& curmax, Gecode::IntSet& out);
 
 
