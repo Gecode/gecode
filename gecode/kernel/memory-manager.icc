@@ -39,8 +39,6 @@
  *
  */
 
-#include "gecode/support/cast.hh"
-
 namespace Gecode {
 
   namespace Memory {

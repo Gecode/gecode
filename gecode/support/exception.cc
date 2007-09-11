@@ -35,7 +35,7 @@
  *
  */
 
-#include "gecode/kernel.hh"
+#include "gecode/support.hh"
 
 namespace Gecode {
 
@@ -62,4 +62,4 @@ namespace Gecode {
 
 }
 
-// STATISTICS: kernel-other
+// STATISTICS: support-any

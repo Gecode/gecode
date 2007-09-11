@@ -47,7 +47,7 @@
 #include <cstring>
 #include <cassert>
 
-#include "gecode/config.hh"
+#include "gecode/support.hh"
 
 /*
  * Support for DLLs under Windows
@@ -103,7 +103,6 @@
  *
  */
 
-#include "gecode/kernel/memory.icc"
 #include "gecode/kernel/memory-manager.icc"
 
 
@@ -136,7 +135,6 @@
  *
  */
 
-#include "gecode/support/map.hh"
 #include "gecode/kernel/reflection.icc"
 
 /*

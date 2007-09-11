@@ -68,6 +68,20 @@
 
 #include "gecode/config.hh"
 
+/*
+ * Basic support needed everywhere
+ *
+ */
+
+#include "gecode/support/exception.icc"
+#include "gecode/support/cast.icc"
+#include "gecode/support/memory.icc"
+
+/*
+ * Common datastructures and algorithms
+ *
+ */
+
 #endif
 
 // STATISTICS: support-any

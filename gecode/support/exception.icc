@@ -7,8 +7,8 @@
  *     Christian Schulte, 2004
  *
  *  Last modified:
- *     $Date$ by $Author$
- *     $Revision$
+ *     $Date: 2007-08-09 15:30:21 +0200 (Thu, 09 Aug 2007) $ by $Author: tack $
+ *     $Revision: 4790 $
  *
  *  This file is part of Gecode, the generic constraint
  *  development environment:
@@ -35,57 +35,48 @@
  *
  */
 
+#include <exception>
+
 namespace Gecode {
 
   /**
-   * \defgroup FuncThrowKernel Kernel exceptions
+   * \brief %Exception: Base-class for exceptions
+   * \ingroup FuncThrow
+   */
+  class GECODE_SUPPORT_EXPORT Exception : public std::exception {
+  private:
+    static const int li_max = 128;
+    char li[li_max+1];
+  public:
+    /// Initialize with location \a l and information \a i
+    Exception(const char* l, const char* i) throw ();
+    /// Return information
+    virtual const char* what(void) const throw();
+  };
+
+
+  /**
+   * \defgroup FuncThrowSupport Support exceptions
    * \ingroup FuncThrow
    */
 
   //@{
-
-  /// %Exception: Operation on failed space invoked
-  class SpaceFailed : public Exception {
-  public:
-    /// Initialize with location \a l
-    SpaceFailed(const char* l);
-  };
-
-  /// %Exception: Commit when no branching present
-  class SpaceNoBranching : public Exception {
+  /// %Exception: %Memory exhausted
+  class MemoryExhausted : public Exception {
   public:
     /// Initialize
-    SpaceNoBranching(void);
+    MemoryExhausted(void);
   };
-
-  /// %Exception: Commit with illegal alternative
-  class SpaceIllegalAlternative : public Exception {
-  public:
-    /// Initialize
-    SpaceIllegalAlternative(void);
-  };
-
   //@}
 
   /*
-   * Classes for exceptions raised by kernel
+   * Classes for exceptions raised by support
    *
    */
-
   inline
-  SpaceFailed::SpaceFailed(const char* l)
-    : Exception(l,"Attempt to invoke operation on failed space") {}
-
-  inline
-  SpaceNoBranching::SpaceNoBranching(void)
-    : Exception("Space::commit",
-                "Attempt to commit with no branching") {}
-
-  inline
-  SpaceIllegalAlternative::SpaceIllegalAlternative(void)
-    : Exception("Space::commit",
-                "Attempt to commit with illegal alternative") {}
+  MemoryExhausted::MemoryExhausted(void)
+    : Exception("Memory","Heap memory exhausted") {}
 
 }
 
-// STATISTICS: kernel-other
+// STATISTICS: support-any

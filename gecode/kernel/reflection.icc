@@ -35,10 +35,11 @@
  *
  */
 
+#include "gecode/support/map.hh"
+
 #include <iostream>
 #include <cstring>
 #include <vector>
-#include "gecode/support/map.hh"
 
 namespace Gecode { namespace Reflection {
   

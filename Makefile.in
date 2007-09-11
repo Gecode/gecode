@@ -117,9 +117,9 @@ endif
 # SUPPORT COMPONENTS
 #
 SUPPORTSRC0 = \
-	symbol
+	exception symbol
 SUPPORTHDR0 =							\
-	bitset cast block-allocator dynamic-array dynamic-stack	\
+	bitset block-allocator dynamic-array dynamic-stack	\
 	map random search shared-array sort			\
 	static-pqueue static-stack sentinel-stack symbol
 
@@ -153,7 +153,12 @@ BUDDYOBJ0 = $(BUDDYSRC:%.c=%$(OBJSUFFIX))
 BUDDYOBJ = $(BUDDYOBJ0:%.cc=%$(OBJSUFFIX))
 
 SUPPORTSRC1 =  $(SUPPORTSRC0:%=gecode/support/%.cc)
-SUPPORTHDR  =  gecode/support.hh $(SUPPORTHDR0:%=gecode/support/%.hh) $(BUDDYHDR)
+SUPPORTHDR  =  gecode/support.hh \
+	gecode/support/exception.icc \
+	gecode/support/memory.icc \
+	gecode/support/cast.icc \
+	$(SUPPORTHDR0:%=gecode/support/%.hh) \
+	$(BUDDYHDR)
 SUPPORTOBJ  =  $(SUPPORTSRC1:%.cc=%$(OBJSUFFIX)) $(BUDDYOBJ)
 SUPPORTSRC  =  $(SUPPORTSRC1) $(BUDDYSRC)
 
@@ -175,7 +180,7 @@ SUPPORTBUILDDIRS = support support/buddy
 #
 
 KERNELSRC0 = \
-	exception core memory-manager reflection varmap
+	core memory-manager reflection varmap
 KERNELHDR0 = \
 	array branching core exception \
 	macros memory-manager memory modevent \

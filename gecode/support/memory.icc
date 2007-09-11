@@ -151,7 +151,6 @@ namespace Gecode {
 #if defined(__GNUC__) && (! defined(_WIN32) ) && \
     (! (defined(__APPLE__) && defined(__i386) && \
         __GNUC__ == 4 && __GNUC_MINOR__ < 2))
-#include "gecode/support/cast.hh"
 
 #define GECODE_AUTOARRAY(T,X,N)                    \
 char GECODE_FRESH(X) [(N)*sizeof(T)];              \
@@ -215,4 +214,4 @@ namespace Gecode { namespace Memory {
 
 #endif
 
-// STATISTICS: kernel-core
+// STATISTICS: support-any

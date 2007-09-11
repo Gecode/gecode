@@ -35,8 +35,6 @@
  *
  */
 
-#include "gecode/support/cast.hh"
-
 namespace Gecode { namespace Int { namespace GCC {
 
   /// \name GCC-Bnd-Support
