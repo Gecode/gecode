@@ -38,6 +38,8 @@
 #ifndef __GECODE_SUPPORT_BLOCK_ALLOCATOR_HH__
 #define __GECODE_SUPPORT_BLOCK_ALLOCATOR_HH__
 
+#include "gecode/support.hh"
+
 #include "gecode/kernel.hh"
 
 namespace Gecode { namespace Support {

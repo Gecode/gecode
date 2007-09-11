@@ -38,6 +38,8 @@
 #ifndef __GECODE_SUPPORT_DYNAMIC_STACK_HH__
 #define __GECODE_SUPPORT_DYNAMIC_STACK_HH__
 
+#include "gecode/support.hh"
+
 #include "gecode/kernel.hh"
 
 namespace Gecode { namespace Support {

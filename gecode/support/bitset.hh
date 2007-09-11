@@ -38,6 +38,8 @@
 #ifndef __GECODE_SUPPORT_BITSET_HH__
 #define __GECODE_SUPPORT_BITSET_HH__
 
+#include "gecode/support.hh"
+
 #define GECODE_RAND_MAX
 
 namespace Gecode { namespace Support {

@@ -38,6 +38,8 @@
 #ifndef __GECODE_SUPPORT_SORT_HH__
 #define __GECODE_SUPPORT_SORT_HH__
 
+#include "gecode/support.hh"
+
 #include <algorithm>
 
 namespace Gecode { namespace Support {

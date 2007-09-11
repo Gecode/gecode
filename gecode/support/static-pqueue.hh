@@ -40,6 +40,8 @@
 #ifndef __GECODE_SUPPORT_PQUEUE_HH__
 #define __GECODE_SUPPORT_PQUEUE_HH__
 
+#include "gecode/support.hh"
+
 #include "gecode/kernel.hh"
 
 #include <cassert>

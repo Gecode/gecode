@@ -38,6 +38,8 @@
 #ifndef __GECODE_SUPPORT_SEARCH_HH__
 #define __GECODE_SUPPORT_SEARCH_HH__
 
+#include "gecode/support.hh"
+
 #include <algorithm>
 
 namespace Gecode { namespace Support {

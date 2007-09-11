@@ -38,32 +38,7 @@
 #ifndef _BDD_H
 #define _BDD_H
 
-/*
- * Support for DLLs under Windows
- *
- */
-
-#if !defined(GECODE_STATIC_LIBS) && \
-    (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
-
-#ifdef GECODE_BUILD_BUDDY
-#define GECODE_SUPPORT_EXPORT __declspec( dllexport )
-#else
-#define GECODE_SUPPORT_EXPORT __declspec( dllimport )
-#endif
-
-#else
-
-#ifdef GCC_HASCLASSVISIBILITY
-
-#define GECODE_SUPPORT_EXPORT __attribute__ ((visibility("default")))
-
-#else
-
-#define GECODE_SUPPORT_EXPORT
-
-#endif
-#endif
+#include "gecode/support.hh"
 
    /* Allow this headerfile to define C++ constructs if requested */
 #ifdef __cplusplus

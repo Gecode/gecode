@@ -38,6 +38,8 @@
 #ifndef __GECODE_SUPPORT_CAST_HH__
 #define __GECODE_SUPPORT_CAST_HH__
 
+#include "gecode/support.hh"
+
 namespace Gecode { namespace Support {
 
   /// Cast \a p into pointer of type \a T
