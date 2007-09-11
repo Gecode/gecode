@@ -40,7 +40,6 @@ namespace Gecode { namespace Iter { namespace Ranges {  namespace Virt {
   /**
    * \brief Range iterator for computing union (binary)
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRangesVirt
    */
 

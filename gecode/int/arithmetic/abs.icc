@@ -37,7 +37,6 @@
  *
  */
 
-#include "gecode/iter.hh"
 #include <algorithm>
 
 namespace Gecode { namespace Int { namespace Arithmetic {

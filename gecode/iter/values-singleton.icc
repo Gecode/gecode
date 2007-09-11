@@ -40,7 +40,6 @@ namespace Gecode { namespace Iter { namespace Values {
   /**
    * \brief Value iterator for single value
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterValues
    */
 

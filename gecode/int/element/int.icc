@@ -35,8 +35,6 @@
  *
  */
 
-#include "gecode/iter.hh"
-
 namespace Gecode { namespace Int { namespace Element {
 
   /**

@@ -40,7 +40,6 @@
  */
 
 #include <iostream>
-#include "gecode/iter.hh"
 
 namespace Gecode { 
 

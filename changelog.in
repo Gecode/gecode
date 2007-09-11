@@ -69,6 +69,27 @@ Date:		unknown
 The best Gecode ever... Done with supernatural powers!
 
 [ENTRY]
+Module: other
+What:   change
+Rank:   minor
+[DESCRIPTION]
+The structure of includes has been drastically
+simplified. Support for iterators ("gecode/iter.hh") is
+automatically included with integers ("gecode/int.hh") and sets
+("gecode/set.hh"). Likewise, all support functionality becomes
+available by including "gecode/support.hh" (one can assume that
+this is included in "gecode/kernel.hh").
+
+[ENTRY]
+Module: kernel
+What:   change
+Rank:   minor
+[DESCRIPTION]
+Shared arrays are now available in the kernel (where the properly
+belong). This entails that they are avilable in the Gecode
+namespace and not in Gecode::Support.
+
+[ENTRY]
 Module: int
 What:   change
 Rank:   minor

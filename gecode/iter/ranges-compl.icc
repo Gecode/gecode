@@ -46,7 +46,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * provided as template arguments (\a UMIN ... \a UMAX). The universe
    * must always be a superset!
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRanges
    */
 
@@ -83,7 +82,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * provided as arguments upon initialization. The universe
    * must always be a superset!
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRanges
    */
 

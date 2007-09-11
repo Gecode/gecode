@@ -40,7 +40,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
   /**
    * \brief Value iterator from range iterator
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterValues
    */
   template <class I>

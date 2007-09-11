@@ -35,8 +35,6 @@
  *
  */
 
-#include "gecode/iter.hh"
-
 #include <iostream>
 
 #if (-17 / 7) == -2

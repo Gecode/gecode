@@ -46,7 +46,6 @@ namespace Gecode { namespace Iter { namespace Values {
    * all values of the input iterator are stored in an array
    * which later allows iteration in inverse direction.
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterValues
    */
 

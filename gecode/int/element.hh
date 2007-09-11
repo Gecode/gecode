@@ -43,8 +43,6 @@
 #include "gecode/int.hh"
 #include "gecode/int/rel.hh"
 
-#include "gecode/iter.hh"
-
 /**
  * \namespace Gecode::Int::Element
  * \brief %Element propagators

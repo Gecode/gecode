@@ -44,7 +44,6 @@ namespace Gecode { namespace Iter { namespace Values {
    * iterates values in increasing order. Duplicates in the
    * iterated value sequence are okay.
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterValues
    */
   template <class I>

@@ -44,7 +44,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    *
    * The singleton is not allowed to be adjacent to the iterator.
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRanges
    */
 

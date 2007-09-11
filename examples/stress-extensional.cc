@@ -36,7 +36,7 @@
  */
 
 #include "examples/support.hh"
-#include "gecode/support/dynamic-array.hh"
+
 
 /**
  * \brief %Example: Stress extensional propagator

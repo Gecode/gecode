@@ -46,8 +46,6 @@
 
 #include "gecode/int.hh"
 
-#include "gecode/iter.hh"
-
 /**
  * \namespace Gecode::Int::Rel
  * \brief Simple relation propagators

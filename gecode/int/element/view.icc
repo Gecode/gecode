@@ -41,8 +41,6 @@
 
 #include <algorithm>
 
-#include "gecode/iter.hh"
-
 namespace Gecode { namespace Int { namespace Element {
 
   /// Class to get VarArg type for view

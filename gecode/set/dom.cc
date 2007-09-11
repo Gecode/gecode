@@ -39,7 +39,6 @@
  */
 
 #include "gecode/set.hh"
-#include "gecode/iter.hh"
 #include "gecode/set/rel.hh"
 
 namespace Gecode {

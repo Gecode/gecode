@@ -61,6 +61,7 @@ namespace Gecode { namespace Set {
 
 #include "gecode/kernel.hh"
 #include "gecode/int.hh"
+#include "gecode/iter.hh"
 
 /*
  * Support for DLLs under Windows

@@ -44,7 +44,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * The ranges can be iterated several times provided the iterator
    * is %reset by the reset member function.
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRanges
    */
   class Array  {

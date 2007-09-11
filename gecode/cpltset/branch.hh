@@ -39,7 +39,6 @@
 #define __GECODE_CPLTSET_BRANCH_HH__
 
 #include "gecode/cpltset.hh"
-#include "gecode/iter.hh"
 
 /**
  * \namespace Gecode::CpltSet::Branch

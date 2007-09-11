@@ -45,7 +45,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * continues until \a mi becomes greater than \a ma. The member function
    * finish does exactly that.
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRanges
    */
 

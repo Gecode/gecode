@@ -43,7 +43,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * The iterators are allowed to be adjacent but not to
    * overlap (in this case, use Gecode::Iter::Union).
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRanges
    */
 
@@ -79,7 +78,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * The iterators are allowed to be adjacent but not to
    * overlap (in this case, use Gecode::Iter::NaryUnion)
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRanges
    */
 

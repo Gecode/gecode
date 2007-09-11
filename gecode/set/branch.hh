@@ -45,7 +45,6 @@
 #define __GECODE_SET_BRANCH_HH__
 
 #include "gecode/set.hh"
-#include "gecode/iter.hh"
 
 /**
  * \namespace Gecode::Set::Branch

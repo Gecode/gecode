@@ -45,7 +45,6 @@
 #define __GECODE_SET_RELOP_HH__
 
 #include "gecode/set.hh"
-#include "gecode/iter.hh"
 #include "gecode/set/rel.hh"
 
 namespace Gecode { namespace Set { namespace RelOp {

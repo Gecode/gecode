@@ -40,7 +40,6 @@
  */
 
 #include "gecode/set/convex.hh"
-#include "gecode/iter.hh"
 
 namespace Gecode { namespace Set { namespace Convex {
 

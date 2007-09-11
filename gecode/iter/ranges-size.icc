@@ -44,7 +44,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * and access the size of the set already iterated. After complete
    * iteration, the reported size is thus the size of the set.
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRanges
    */
   template <class I>

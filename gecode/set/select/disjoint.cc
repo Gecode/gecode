@@ -37,13 +37,9 @@
  *
  */
 
-
-
 #include "gecode/set/select.hh"
 #include "gecode/set/rel.hh"
 #include "gecode/set/rel-op.hh"
-
-#include "gecode/iter.hh"
 
 namespace Gecode { namespace Set { namespace Select {
 

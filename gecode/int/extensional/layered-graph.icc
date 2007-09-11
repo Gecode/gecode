@@ -35,8 +35,6 @@
  *
  */
 
-#include "gecode/iter.hh"
-
 #include <climits>
 #include <algorithm>
 

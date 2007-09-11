@@ -36,8 +36,8 @@
  */
 
 #include "examples/support.hh"
+
 #include "gecode/minimodel.hh"
-#include "gecode/support/random.hh"
 
 #include <vector>
 #include <algorithm>

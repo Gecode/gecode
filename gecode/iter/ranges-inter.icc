@@ -42,7 +42,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
   /**
    * \brief Range iterator for computing intersection (binary)
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRanges
    */
   template <class I, class J>
@@ -74,7 +73,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
   /**
    * \brief Range iterator for intersection for any number of iterators
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRanges
    */
   template <class I>

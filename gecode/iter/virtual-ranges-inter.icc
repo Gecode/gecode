@@ -42,7 +42,6 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
   /**
    * \brief Range iterator for computing intersection (binary)
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRangesVirt
    */
   class Inter : public MinMax, public Iterator {
@@ -87,7 +86,6 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
   /**
    * \brief Range iterator for intersection for any number of iterators
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRangesVirt
    */
   class NaryInter : public MinMax, public Iterator {

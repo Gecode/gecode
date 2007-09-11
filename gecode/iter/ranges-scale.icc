@@ -47,7 +47,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * on the type \a Val (\c int or \c double) and
    * on the type \a UnsVal (\c unsigned \c int or \c double).
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRanges
    */
   template <class Val, class UnsVal, class I>
@@ -94,7 +93,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
   /**
    * \brief Range iterator for pointwise division by a positive integer
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRanges
    */
   template <class I>

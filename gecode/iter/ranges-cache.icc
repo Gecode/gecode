@@ -44,7 +44,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * several times provided the Cache is %reset by the reset member
    * function.
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRanges
    */
   template <class I>
@@ -158,7 +157,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
    * several times provided the ValCache is %reset by the reset member
    * function.
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRanges
    */
 

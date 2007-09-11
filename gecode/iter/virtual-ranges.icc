@@ -40,7 +40,6 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
   /**
    * \brief Abstract base class for range iterators
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRangesVirt
    */
   class Iterator {
@@ -75,7 +74,6 @@ namespace Gecode { namespace Iter { namespace Ranges { namespace Virt {
    * Provides an iterator with virtual member functions for any template-based
    * iterator.
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRangesVirt
    */
   template <class I>

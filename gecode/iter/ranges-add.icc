@@ -40,7 +40,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
   /**
    * \brief Range iterator for adding a single range to a range iterator
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRanges
    */
   template <class I>
@@ -74,7 +73,6 @@ namespace Gecode { namespace Iter { namespace Ranges {
   /**
    * \brief Range iterator for subtracting a single range from a range iterator
    *
-   * Requires \code #include "gecode/iter.hh" \endcode
    * \ingroup FuncIterRanges
    */
   template <class I>
