@@ -36,38 +36,32 @@
  *
  */
 
-#ifndef __GECODE_INT_SORTEDNESS_HH__
-#define __GECODE_INT_SORTEDNESS_HH__
-
+#ifndef __GECODE_INT_SORTED_HH__
+#define __GECODE_INT_SORTED_HH__
 
 #include "gecode/int.hh"
 #include "gecode/int/rel.hh"
 
 /**
- * \namespace Gecode::Int::Sortedness
- * \brief %Sortedness propagators
+ * \namespace Gecode::Int::Sorted
+ * \brief %Sorted propagators
  */
 
-namespace Gecode { namespace Int { namespace Sortedness {
+namespace Gecode { namespace Int { namespace Sorted {
 
   /**
-   * \brief Bounds consistent sortedness propagator
-   * \par [Reference]
-   *  The algorithm is taken from: \n
-   *  Sven Thiel: Efficient Algorithms for Constraint Propagation
-   *  and for Processing Tree Descriptions (pages 39 to 59)
-   *  [http://www.mpi-sb.mpg.de/~sthiel/thesis.pdf]
+   * \brief Bounds-consistent sortedness propagator
    *
-   * Requires \code #include "gecode/int/sortedness.hh" \endcode
-   * and \code #include "gecode/int/distinct.hh" \endcode.
-   * The latter is required for the extended version of sortedness
-   * including permutation views.
+   * The algorithm is taken from: Sven Thiel, Efficient Algorithms 
+   * for Constraint Propagation and for Processing Tree Descriptions,
+   * PhD thesis, Universität des Saarlandes, Germany, 2004, pages 39-59.
+   *
+   * Requires \code #include "gecode/int/sorted.hh" \endcode
    * \ingroup FuncIntProp
-   * \note The sortedness propagator does not support sharing!
    */
 
   template<class View, class Tuple, bool Perm>
-  class Sortedness : public Propagator {
+  class Sorted : public Propagator {
   protected:
 
     /**
@@ -91,9 +85,9 @@ namespace Gecode { namespace Int { namespace Sortedness {
     /// connection to dropped view
     int reachable;
     /// Constructor for posting
-    Sortedness(Space*, ViewArray<Tuple>&, ViewArray<View>&);
+    Sorted(Space*, ViewArray<Tuple>&, ViewArray<View>&);
     /// Constructor for cloning
-    Sortedness(Space* home, bool share, Sortedness<View, Tuple, Perm>& p);
+    Sorted(Space* home, bool share, Sorted<View, Tuple, Perm>& p);
 
   public:
     /// Delete propagator and return its size
@@ -115,11 +109,11 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
 }}}
 
-#include "gecode/int/sortedness/sortsup.icc"
-#include "gecode/int/sortedness/order.icc"
-#include "gecode/int/sortedness/matching.icc"
-#include "gecode/int/sortedness/narrowing.icc"
-#include "gecode/int/sortedness/sortedness.icc"
+#include "gecode/int/sorted/sortsup.icc"
+#include "gecode/int/sorted/order.icc"
+#include "gecode/int/sorted/matching.icc"
+#include "gecode/int/sorted/narrowing.icc"
+#include "gecode/int/sorted/propagate.icc"
 
 #endif
 

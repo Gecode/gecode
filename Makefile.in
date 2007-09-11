@@ -251,7 +251,7 @@ INTSRC0 = \
 	linear/bool-post.cc linear-bool.cc \
 	branch.cc \
 	distinct.cc cumulatives.cc \
-	sortedness.cc gcc.cc \
+	sorted.cc gcc.cc \
 	channel.cc channel/link-single.cc channel/link-multi.cc \
 	circuit.cc unshare.cc
 INTVARIMP = \
@@ -276,8 +276,8 @@ INTHDR0 = \
 	linear/bool-int.icc linear/bool-view.icc linear/bool-scale.icc \
 	extensional/dfa.icc extensional/layered-graph.icc \
 	rel/eq.icc rel/lex.icc rel/lq-le.icc rel/nq.icc \
-	sortedness/matching.icc sortedness/narrowing.icc \
-	sortedness/order.icc sortedness/sortedness.icc sortedness/sortsup.icc \
+	sorted/matching.icc sorted/narrowing.icc \
+	sorted/order.icc sorted/propagate.icc sorted/sortsup.icc \
 	int-set.icc var/delta.icc var/bool.icc \
 	var/imp-int.icc var/imp-bool.icc var/int.icc \
 	view/bool.icc view/constint.icc view/zero.icc view/int.icc \
@@ -287,7 +287,7 @@ INTHDR0 = \
 	count.hh cumulatives.hh distinct.hh dom.hh \
 	element.hh exception.icc  gcc.hh linear.hh \
 	propagator.icc extensional.hh rel.hh \
-	sortedness.hh var.icc view.icc \
+	sorted.hh var.icc view.icc \
 	channel.hh channel/dom.icc channel/val.icc \
 	channel/base.icc channel/link-single.icc channel/link-multi.icc \
 	circuit.hh circuit/base.icc circuit/val.icc circuit/dom.icc
@@ -666,7 +666,7 @@ endif
 
 INTTESTSRC0 = \
 	channel arithmetic basic bool count dom distinct element extensional \
-	rel linear scheduling minimodel gcc sortedness circuit
+	rel linear scheduling minimodel gcc sorted circuit
 ifeq "@enable_set_vars@" "yes"
 SETTESTSRC0 = \
 	dom rel rel-op convex sequence int select distinct projection 

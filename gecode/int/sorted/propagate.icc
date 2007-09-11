@@ -35,7 +35,7 @@
  *
  */        
 
-namespace Gecode { namespace Int { namespace Sortedness {
+namespace Gecode { namespace Int { namespace Sorted {
 
 
   /*
@@ -56,7 +56,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
   /**
    * \brief Perform bounds consistent sortedness propagation
    *
-   * Implements the propagation algorithm for Sortedness::Sortedness
+   * Implements the propagation algorithm for Sorted::Sorted
    * and is provided as seperate function, because a second pass of
    * the propagation algorithm is needed in order to achieve idempotency
    * in case explicit permutation variables are provided.
@@ -400,8 +400,8 @@ namespace Gecode { namespace Int { namespace Sortedness {
   }
 
   template<class View, class Tuple, bool Perm>
-  forceinline Sortedness<View, Tuple, Perm>::
-  Sortedness(Space* home, bool share, Sortedness<View, Tuple, Perm>& p):
+  forceinline Sorted<View, Tuple, Perm>::
+  Sorted(Space* home, bool share, Sorted<View, Tuple, Perm>& p):
     Propagator(home, share, p),
     reachable(p.reachable) {
     xz.update(home, share, p.xz);
@@ -410,8 +410,8 @@ namespace Gecode { namespace Int { namespace Sortedness {
   }
 
   template<class View, class Tuple, bool Perm>
-  Sortedness<View, Tuple, Perm>::
-  Sortedness(Space* home, ViewArray<Tuple>& xz0, ViewArray<View>& y0):
+  Sorted<View, Tuple, Perm>::
+  Sorted(Space* home, ViewArray<Tuple>& xz0, ViewArray<View>& y0):
     Propagator(home), xz(xz0), y(y0), w(home, y0), reachable(-1) {
     xz.subscribe(home, this, PC_INT_BND);
     y.subscribe(home, this, PC_INT_BND);
@@ -420,7 +420,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
   template<class View, class Tuple, bool Perm>
   size_t
-  Sortedness<View, Tuple, Perm>::dispose(Space* home) {
+  Sorted<View, Tuple, Perm>::dispose(Space* home) {
     assert(!home->failed());
     xz.cancel(home,this, PC_INT_BND);
     y.cancel(home,this, PC_INT_BND);
@@ -429,29 +429,29 @@ namespace Gecode { namespace Int { namespace Sortedness {
   }
 
   template<class View, class Tuple, bool Perm>
-  Actor* Sortedness<View, Tuple, Perm>::copy(Space* home, bool share) {
-    return new (home) Sortedness<View, Tuple, Perm>(home, share, *this);
+  Actor* Sorted<View, Tuple, Perm>::copy(Space* home, bool share) {
+    return new (home) Sorted<View, Tuple, Perm>(home, share, *this);
   }
 
   template<class View, class Tuple, bool Perm>
-  PropCost Sortedness<View, Tuple, Perm>::cost(void) const {
+  PropCost Sorted<View, Tuple, Perm>::cost(void) const {
     return cost_hi(xz.size(), PC_LINEAR_HI);
   }
 
   template<class View, class Tuple, bool Perm>
-  Support::Symbol Sortedness<View, Tuple, Perm>::name(void) {
-    return Reflection::mangle<View,Tuple,Perm>("Int::Sortedness::Sortedness");
+  Support::Symbol Sorted<View, Tuple, Perm>::name(void) {
+    return Reflection::mangle<View,Tuple,Perm>("Int::Sorted::Sorted");
   }
 
   template<class View, class Tuple, bool Perm>
   Reflection::ActorSpec&
-  Sortedness<View,Tuple,Perm>::spec(Space* home, Reflection::VarMap& m) {
+  Sorted<View,Tuple,Perm>::spec(Space* home, Reflection::VarMap& m) {
     throw Reflection::ReflectionException("Not implemented");
   }
 
   template<class View, class Tuple, bool Perm>
   ExecStatus
-  Sortedness<View, Tuple, Perm>::propagate(Space* home) {
+  Sorted<View, Tuple, Perm>::propagate(Space* home) {
 
     int  n           = xz.size();
     bool secondpass  = false;
@@ -696,7 +696,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
 
   template<class View, class Tuple, bool Perm>
   ExecStatus
-  Sortedness<View, Tuple, Perm>::
+  Sorted<View, Tuple, Perm>::
   post(Space* home, ViewArray<Tuple>& xz0, ViewArray<View>& y0) {
     int n = xz0.size();
     if (n < 2) {
@@ -707,7 +707,7 @@ namespace Gecode { namespace Int { namespace Sortedness {
         GECODE_ME_CHECK(xz0[0][1].eq(home, 0));
       }
     } else {
-      new (home) Sortedness<View, Tuple, Perm>(home, xz0, y0);
+      new (home) Sorted<View, Tuple, Perm>(home, xz0, y0);
     }
     return ES_OK;
   }

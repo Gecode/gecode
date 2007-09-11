@@ -37,8 +37,6 @@
 
 #include "test/int.hh"
 
-#include "gecode/support/sort.hh"
-
 namespace Test { namespace Int { namespace Sortedness {
 
   /**

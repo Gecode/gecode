@@ -785,56 +785,42 @@ namespace Gecode {
 
 
   /**
-   * \note The Sortedness propagator described in this section only
-   *       supports bounds-consistency no matter what value for the
-   *       argument \a icl is given!
+   * \defgroup TaskIntIntSorted Sorted constraints
    *
-   * \defgroup TaskIntIntSort Sorting constraints
+   * All sorted constraints support bounds-consistency.
+   *
    * \ingroup TaskIntInt
    */
-
-
   //@{
   /**
-   *  \brief Post propagator \f$\exists\pi:\forall i\in\{0,\dots,|x|-1\}:
-   *         y_0 \leq\dots\leq y_{|x|-1} \wedge  x_i=y_{\pi(i)}\f$
+   * \brief Post propagator that \a y is \a x sorted in increasing order
    *
-   *  \anchor SortednessSemantics
-   *
-   *  \exception Int::ArgumentSizeMismatch thrown if \a x and \a y
-   *             differ in size.
-   *  \exception Int::ArgumentSame thrown if \a x or \a y contain
+   * Might throw the following exceptions:
+   *  - Int::ArgumentSizeMismatch, if \a x and \a y differ in size.
+   *  - Int::ArgumentSame, if \a x or \a y contain
    *             shared unassigned variables.
-   *
-   *  Taking only two arguments, this interface for Sortedness leaves
-   *  the sorting permutation \f$\pi\f$ implicit.
-   *
    */
   GECODE_INT_EXPORT void
-  sortedness(Space* home, const IntVarArgs& x, const IntVarArgs& y,
-             IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  sorted(Space* home, const IntVarArgs& x, const IntVarArgs& y,
+         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
   /**
-   *  \brief Post propagator \f$\forall i\in\{0,\dots,|x|-1\}:
-   *         y_0 \leq\dots\leq y_{|x|-1} \wedge x_i=y_{z_i} \f$ \n
+   * \brief Post propagator that \a y is \a x sorted in increasing order
+   * 
+   * The values in \a z describe the sorting permutation, that is
+   * \f$\forall i\in\{0,\dots,|x|-1\}: x_i=y_{z_i} \f$.
    *
-   *  \exception Int::ArgumentSizeMismatch thrown if \a x, \a y or \a z
-   *             differ in size.
-   *  \exception Int::ArgumentSame thrown if \a x, \a y or \a z contain
+   * Might throw the following exceptions:
+   *  - Int::ArgumentSizeMismatch, if \a x and \a y differ in size.
+   *  - Int::ArgumentSame, if \a x or \a y contain
    *             shared unassigned variables.
-   *
-   * Providing a third argument \f$z_0, \dots, z_{|x|-1} \f$, this
-   * interface for Sortedness models the sorting permutation
-   * \f$\pi\f$ explicitly, such that
-   * \f$\forall i\in\{0,\dots,|x|-1\}:\pi(i) = z_i\f$ holds.
-   *
    */
-
   GECODE_INT_EXPORT void
-  sortedness(Space*, const IntVarArgs& x, const IntVarArgs& y,
-             const IntVarArgs& z,
-             IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  sorted(Space*, const IntVarArgs& x, const IntVarArgs& y,
+         const IntVarArgs& z,
+         IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   //@}
+
 
   /**
    * \defgroup TaskIntIntCard Cardinality constraints

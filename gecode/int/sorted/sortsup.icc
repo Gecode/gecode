@@ -35,66 +35,7 @@
  *
  */        
 
-namespace Gecode { namespace Int { namespace Sortedness {
-
-  /// Debugging: Print a View
-  template<class View>
-  void pview(View& v){
-    if (v.min() == v.max()) {
-      std::cout << v.min() <<" ";
-    } else {
-      if (v.range()){
-        std::cout << "["<<v.min() <<".."<<v.max()<<"] ";
-      } else {
-        std::cout << "{";
-        ViewValues<View> iter(v);
-        while(iter()){
-          std::cout << iter.val() <<",";
-          ++iter;
-        }
-        std::cout << "} ";
-      }
-    }
-  }
-
-  /// Debugging: Print a ViewTuple
-  template <class T, unsigned int n>
-  inline std::ostream&
-  operator<<(std::ostream& os, ViewTuple<T,n>& xs) {
-    if (n > 1) { os << "<";}
-    if (xs[0].min() == xs[0].max()) {
-      os << xs[0].min();
-      if (n > 1) {
-        std::cout << ",";
-        if (xs[1].min() == xs[1].max()) {
-          os << xs[1].min() <<" ";
-        } else {
-          os << "["<<xs[1].min() <<".."<<xs[1].max()<<"]("<<xs[1].range()<<") ";
-        }
-      }
-    } else {
-      os << "["<<xs[0].min() <<".."<<xs[0].max()<<"]("<<xs[0].range()<<")";
-      if (n > 1) {
-        std::cout << ", ";
-        if (xs[1].min() == xs[1].max()) {
-          os << xs[1].min() <<" ";
-        } else {
-          os << "["<<xs[1].min() <<".."<<xs[1].max()<<"]("<<xs[1].range()<<") ";
-        }
-      }
-    }
-//  else {
-//         os << "{";
-//         ViewValues<View> iter(xs[0]);
-//         while(iter()){
-//           os << iter.val() <<",";
-//           ++iter;
-//         }
-//         os << "} ";
-//       }
-    if (n > 1) { os << ">";}
-    return os;
-  }
+namespace Gecode { namespace Int { namespace Sorted {
 
   /**
    * \brief Storage class for mininmum and maximum of a variable.
@@ -128,11 +69,9 @@ namespace Gecode { namespace Int { namespace Sortedness {
   /**
    * \brief Subsumption test
    *
-   * The propagator for Sortedness is subsumed if all
+   * The propagator for sorted is subsumed if all
    * variables of the ViewArrays
-   * \a x, \a y and \a z are determined and
-   * \ref SortednessSemantics "the Semantics of Sortedness"
-   * are respected. \n
+   * \a x, \a y and \a z are determined and the constraint holds.
    * In addition to the subsumption test check_subsumption
    * determines, whether we can reduce the orginial problem
    * to a smaller one, by dropping already matched variables.
@@ -314,21 +253,6 @@ namespace Gecode { namespace Int { namespace Sortedness {
   forceinline OfflineMinItem&
   OfflineMin::operator [](int i){
     return sequence[i];
-  }
-
-  /// Print an OfflineMin sequence
-  inline std::ostream&
-  operator<<(std::ostream& os,  OfflineMin seq){
-    for (int i = 0; i < seq.size();i++) {
-      os << "Succ(" <<seq[i].succ   << ") "
-         << "Pred(" <<seq[i].pred   << ") "
-         << "Root(" <<seq[i].root   << ") "
-         << "Par (" <<seq[i].parent << ") "
-         << "Rank(" <<seq[i].rank   << ") "
-         << "Name(" <<seq[i].name   << ") "
-         << "Set (" <<seq[i].iset   << ") \n";
-    }
-    return os;
   }
 
   /**

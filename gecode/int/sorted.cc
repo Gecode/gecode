@@ -35,18 +35,16 @@
  *
  */        
 
-#include "gecode/int/sortedness.hh"
+#include "gecode/int/sorted.hh"
+
 namespace Gecode {
 
   using namespace Int;
-  void sortedness(Space* home,
-                  const IntVarArgs& x,
-                  const IntVarArgs& y,
-                  IntConLevel, PropKind) {
-
-    if (home->failed()) {
+  void 
+  sorted(Space* home, const IntVarArgs& x, const IntVarArgs& y,
+         IntConLevel, PropKind) {
+    if (home->failed())
       return;
-    }
 
     int n  = x.size();
     int n2 = 2*n;
@@ -66,30 +64,29 @@ namespace Gecode {
       xy[i] = y0[i - n];
     }
     if (xy.shared()) {
-      throw ArgumentSame("Int::Sortedness");
+      throw ArgumentSame("Int::Sorted");
     }
     if (n != y.size()) {
-      throw ArgumentSizeMismatch("Int::Sortedness");
+      throw ArgumentSizeMismatch("Int::Sorted");
     }
 
 
     GECODE_ES_FAIL(home,
-                   (Sortedness::
-                    Sortedness<IntView, ViewTuple<IntView,1>, false>::
+                   (Sorted::
+                    Sorted<IntView, ViewTuple<IntView,1>, false>::
                     post(home, x0, y0)));
   }
 
-  void sortedness(Space* home,
-                  const IntVarArgs& x,
-                  const IntVarArgs& y,
-                  const IntVarArgs& z,
-                  IntConLevel, PropKind) {
+  void 
+  sorted(Space* home, const IntVarArgs& x, const IntVarArgs& y, 
+         const IntVarArgs& z,
+         IntConLevel, PropKind) {
     int n = x.size();
     int n2 = 2*n;
     int n3 = 3*n;
-
+    
     if ((n != y.size()) || (n != z.size())) {
-      throw ArgumentSizeMismatch("Int::sortedness");
+      throw ArgumentSizeMismatch("Int::sorted");
     }
     if (home->failed()) {
       return;
@@ -127,12 +124,12 @@ namespace Gecode {
     }
 
     if (xyz.shared()) {
-      throw ArgumentSame("Int::sortedness");
+      throw ArgumentSame("Int::sorted");
     }
 
     GECODE_ES_FAIL(home,
-                   (Sortedness::
-                    Sortedness<IntView, ViewTuple<IntView,2>, true>::
+                   (Sorted::
+                    Sorted<IntView, ViewTuple<IntView,2>, true>::
                     post(home, xz0, y0)));
   }
 }

@@ -65,7 +65,18 @@ gecode/kernel/memory-manager$(OBJSUFFIX) gecode/kernel/memory-manager$(SBJSUFFIX
 	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
 	./gecode/vti.icc 
-gecode/kernel/reflection$(OBJSUFFIX) gecode/kernel/reflection$(SBJSUFFIX): 
+gecode/kernel/reflection$(OBJSUFFIX) gecode/kernel/reflection$(SBJSUFFIX): \
+	./gecode/config.hh ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
+	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
+	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
+	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
+	./gecode/kernel/var.icc ./gecode/kernel/varmap.icc ./gecode/kernel/view.icc \
+	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
+	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
+	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
+	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
+	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
+	./gecode/vti.icc 
 gecode/kernel/varmap$(OBJSUFFIX) gecode/kernel/varmap$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
 	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
@@ -847,14 +858,14 @@ gecode/int/cumulatives$(OBJSUFFIX) gecode/int/cumulatives$(SBJSUFFIX): \
 	./gecode/support/random.icc ./gecode/support/search.icc ./gecode/support/sentinel-stack.icc \
 	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
 	./gecode/support/symbol.icc ./gecode/vti.icc 
-gecode/int/sortedness$(OBJSUFFIX) gecode/int/sortedness$(SBJSUFFIX): \
+gecode/int/sorted$(OBJSUFFIX) gecode/int/sorted$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/rel.hh \
 	./gecode/int/rel/eq.icc ./gecode/int/rel/lex.icc ./gecode/int/rel/lq-le.icc \
-	./gecode/int/rel/nq.icc ./gecode/int/sortedness.hh ./gecode/int/sortedness/matching.icc \
-	./gecode/int/sortedness/narrowing.icc ./gecode/int/sortedness/order.icc ./gecode/int/sortedness/sortedness.icc \
-	./gecode/int/sortedness/sortsup.icc ./gecode/int/var.icc ./gecode/int/var/bool.icc \
+	./gecode/int/rel/nq.icc ./gecode/int/sorted.hh ./gecode/int/sorted/matching.icc \
+	./gecode/int/sorted/narrowing.icc ./gecode/int/sorted/order.icc ./gecode/int/sorted/propagate.icc \
+	./gecode/int/sorted/sortsup.icc ./gecode/int/var.icc ./gecode/int/var/bool.icc \
 	./gecode/int/var/delta.icc ./gecode/int/var/imp-bool-hdr.icc ./gecode/int/var/imp-bool.icc \
 	./gecode/int/var/imp-int-hdr.icc ./gecode/int/var/imp-int.icc ./gecode/int/var/int.icc \
 	./gecode/int/view.icc ./gecode/int/view/bool.icc ./gecode/int/view/constint.icc \
@@ -5822,7 +5833,7 @@ test/int/gcc$(OBJSUFFIX) test/int/gcc$(SBJSUFFIX): \
 	./gecode/support/sort.icc ./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc \
 	./gecode/support/symbol.icc ./gecode/vti.icc ./test/int.hh \
 	./test/int.icc ./test/test.hh ./test/test.icc 
-test/int/sortedness$(OBJSUFFIX) test/int/sortedness$(SBJSUFFIX): \
+test/int/sorted$(OBJSUFFIX) test/int/sorted$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/int.hh ./gecode/int/array.icc \
 	./gecode/int/exception.icc ./gecode/int/extensional/dfa.icc ./gecode/int/extensional/table.icc \
 	./gecode/int/int-set.icc ./gecode/int/propagator.icc ./gecode/int/var.icc \
