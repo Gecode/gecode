@@ -35,6 +35,9 @@
  *
  */
 
+#include <cstring>
+#include <cstdlib>
+
 namespace Gecode {
 
   /// Heap and automatic memory management
