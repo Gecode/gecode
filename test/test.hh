@@ -80,21 +80,23 @@ namespace Test {
   /// Commandline options
   class Options {
   public:
-    static const int defiter = 5,
-      deffixprob = 10;
-    
-    int   seed;
-    int   iter;
-    int   fixprob;
-    bool  stop_on_error;
+    /// The random seed to be used
+    int seed;
+    /// Number of iterations for each test
+    int iter;
+    /// Default number of iterations
+    static const int defiter = 5;
+    /// The probability for computing a fixpoint
+    int fixprob;
+    /// Default fixpoint probaibility
+    static const int deffixprob = 10;
+    /// Whether to stop on an error
+    bool stop;
+    /// Whether to log the tests
+    bool log;
 
-    bool  log, display;
-
-    Options(void)
-      : seed(0), iter(defiter), fixprob(deffixprob), 
-        log(false), display(true), stop_on_error(true)
-    {}
-    
+    /// Initialize options with defaults
+    Options(void);
     /// Parse commandline arguments
     void parse(int argc, char* argv[]);
   };

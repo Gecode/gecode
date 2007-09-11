@@ -114,7 +114,7 @@ namespace Test {
       std::cout << "  -fixprob " << o.fixprob;
     std::cout << "  -test " << name << std::endl;
     if (o.log)
-      Log::print(o.display);
+      Log::print();
   }
 
   void
@@ -143,16 +143,16 @@ namespace Test {
                   << "\t\tprefixing the pattern by a - negates the pattern"
                   << std::endl
                   << "\t\tmultiple pattern-options may be given" << std::endl
-                  << "\t-log (opt \"text\"|\"code\") default: off"
+                  << "\t-log"
                   << std::endl
-                  << "\t\tif given, logging will be printed for failures"
+                  << "\t\tlog execution of tests"
                   << std::endl
                   << "\t\tthe optional argument determines the style of the log"
                   << std::endl
                   << "\t\twith text as the default style"
                   << std::endl
                   << "\t-stop (boolean) default: "
-                  << bool2str[stop_on_error] << std::endl
+                  << bool2str[stop] << std::endl
                   << "\t\tstop on first error or continue" << std::endl
           ;
         exit(EXIT_SUCCESS);
@@ -180,19 +180,12 @@ namespace Test {
         testpat.push_back(make_pair(negative, argv[i] + offset));
       } else if (!strcmp(argv[i],"-log")) {
         log = true;
-        if (i+1 != argc) {
-          if(argv[i+1][0] == 't') {
-            display = true; ++i;
-          } else if (argv[i+1][0] == 'c') {
-            display = false; ++i;
-          }
-        }
       } else if (!strcmp(argv[i],"-stop")) {
         if (++i == argc) goto missing;
         if(argv[i][0] == 't') {
-          stop_on_error = true;
+          stop = true;
         } else if (argv[i][0] == 'f') {
-          stop_on_error = false;
+          stop = false;
         }
       }
       i++;
@@ -247,7 +240,7 @@ main(int argc, char* argv[]) {
         } else {
           std::cout << "-" << std::endl;
           report_error(o, t->name());
-          if (o.stop_on_error) 
+          if (o.stop) 
             return 1;
         }
       }
@@ -257,7 +250,7 @@ main(int argc, char* argv[]) {
                 << "." << std::endl
                 << "Stopping..." << std::endl;
           report_error(o, t->name());
-          if (o.stop_on_error) 
+          if (o.stop) 
             return 1;
     }
   next:;

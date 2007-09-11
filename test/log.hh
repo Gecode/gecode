@@ -56,13 +56,13 @@ namespace Log {
   bool logging();
   void reset();
 
-  void print(bool for_display = true);
+  void print(void);
 
   std::string mk_name(const char* arr, int idx);
 
   void initial(const IntVarArray& a, const char* name);
   void initial(const BoolVar& a, const char* name);
-  void log(std::string hlog, const std::string clog);
+  void log(std::string hlog);
   void assign(std::string name, int val);
   void assign(std::string name, const IntSet& val);
   void prune(const IntVar& v, std::string name, IntRelType irt, int val);
@@ -91,9 +91,7 @@ namespace Log {
 #endif
 
   std::string iclh(IntConLevel icl);
-  std::string iclc(IntConLevel icl);
   std::string irth(IntRelType  irt);
-  std::string irtc(IntRelType  irt);
 }
 
 #endif /* __GECODE_LOG_HH__ */
