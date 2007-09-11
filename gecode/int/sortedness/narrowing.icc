@@ -35,8 +35,6 @@
  *
  */        
 
-#include "gecode/support/static-stack.hh"
-
 namespace Gecode { namespace Int { namespace Sortedness {
 
   /**

@@ -44,8 +44,6 @@
 #ifndef __GECODE_SET_VAR_ICC__
 #define __GECODE_SET_VAR_ICC__
 
-#include "gecode/support/shared-array.hh"
-
 #include <iostream>
 
 #include "gecode/set/var/imp-hdr.icc"

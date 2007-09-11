@@ -45,8 +45,6 @@
 #include "gecode/kernel.hh"
 #include "gecode/search.hh"
 
-#include "gecode/support/random.hh"
-
 #include <iostream>
 #include <sstream>
 #include <string>

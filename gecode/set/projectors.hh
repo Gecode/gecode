@@ -43,8 +43,6 @@
 #define __GECODE_GENERATOR_PROJECTORS_HH
 
 #include "gecode/set.hh"
-#include "gecode/support/dynamic-array.hh"
-#include "gecode/support/shared-array.hh"
 
 namespace Gecode {
 
@@ -65,7 +63,7 @@ namespace Gecode {
   class SetExprCode {
   private:
     /// The actual instructions
-    Support::SharedArray<int> c;
+    SharedArray<int> c;
   public:
     /// Instructions for set-valued expression code
     enum Instruction {
@@ -227,7 +225,7 @@ namespace Gecode {
    */
   class ProjectorSet {
   private:
-    Support::SharedArray<Projector> _ps; ///< The projectors
+    SharedArray<Projector> _ps; ///< The projectors
     int _count; ///< The number of projectors in the set
     int _arity; ///< The maximum arity of the projectors in the set
   public:

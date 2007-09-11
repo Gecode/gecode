@@ -44,9 +44,6 @@
 
 #include "gecode/int/rel.hh"
 
-#include "gecode/support/bitset.hh"
-#include "gecode/support/dynamic-stack.hh"
-
 /**
  * \namespace Gecode::Int::Extensional
  * \brief %Extensional propagators

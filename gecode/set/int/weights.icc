@@ -39,8 +39,6 @@
  *
  */
 
-
-
 #include "gecode/set.hh"
 #include "gecode/int.hh"
 
@@ -55,9 +53,9 @@ namespace Gecode { namespace Set { namespace Int {
     /// The value iterator
     I iter;
     /// A superset of the elements found in the iterator
-    const Support::SharedArray<int> elements;
+    const SharedArray<int> elements;
     /// Weights for all the possible elements
-    const Support::SharedArray<int> weights;
+    const SharedArray<int> weights;
     /// The current index into the elements and weights
     int index;
     /// Move to the next element
@@ -69,13 +67,13 @@ namespace Gecode { namespace Set { namespace Int {
     OverweightValues(void);
     /// Initialize with elements/weights pairs, threshold \a t and iterator \a i
     OverweightValues(int t,
-                     Support::SharedArray<int>& elements0,
-                     Support::SharedArray<int>& weights0,
+                     SharedArray<int>& elements0,
+                     SharedArray<int>& weights0,
                      I& i);
     /// Initialize with elements/weights pairs, threshold \a t and iterator \a i
     void init(int t,
-              Support::SharedArray<int>& elements0,
-              Support::SharedArray<int>& weights0,
+              SharedArray<int>& elements0,
+              SharedArray<int>& weights0,
               I& i);
     //@}
 
@@ -113,8 +111,8 @@ namespace Gecode { namespace Set { namespace Int {
   template <class I>
   forceinline
   OverweightValues<I>::OverweightValues(int t,
-                                        Support::SharedArray<int>& elements0,
-                                        Support::SharedArray<int>& weights0,
+                                        SharedArray<int>& elements0,
+                                        SharedArray<int>& weights0,
                                         I& i) : threshold(t),
                                                 iter(i),
                                                 elements(elements0),
@@ -126,8 +124,8 @@ namespace Gecode { namespace Set { namespace Int {
   template <class I>
   forceinline void
   OverweightValues<I>::init(int t,
-                            Support::SharedArray<int>& elements0,
-                            Support::SharedArray<int>& weights0,
+                            SharedArray<int>& elements0,
+                            SharedArray<int>& weights0,
                             I& i) {
     threshold = t; iter = i;
     elements = elements0; weights = weights0;
@@ -214,8 +212,8 @@ namespace Gecode { namespace Set { namespace Int {
 
   template <class I, CostType c>
   forceinline
-  int weightI(Support::SharedArray<int>& elements,
-              Support::SharedArray<int>& weights,
+  int weightI(SharedArray<int>& elements,
+              SharedArray<int>& weights,
               I& iter) {
     int sum = 0;
     int i = 0;

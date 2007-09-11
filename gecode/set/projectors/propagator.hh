@@ -51,7 +51,7 @@ namespace Gecode { namespace Set { namespace Projection {
     /// Array of views
     ViewArray<SetView> x;
     /// Array of PropConds
-    Support::SharedArray<PropCond> pc;
+    SharedArray<PropCond> pc;
     /// The projector set to propagate
     ProjectorSet ps;
     /// Constructor for cloning \a p
@@ -123,7 +123,7 @@ namespace Gecode { namespace Set { namespace Projection {
     /// Integer view for cardinality
     Gecode::Int::IntView i;
     /// Array of PropConds
-    Support::SharedArray<PropCond> pc;
+    SharedArray<PropCond> pc;
     /// The projector to propagate
     Projector proj;
     /// Constructor for cloning \a p

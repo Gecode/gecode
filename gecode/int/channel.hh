@@ -41,8 +41,6 @@
 #include "gecode/int.hh"
 #include "gecode/int/distinct.hh"
 
-#include "gecode/support/sentinel-stack.hh"
-
 /**
  * \namespace Gecode::Int::Channel
  * \brief %Channel propagators

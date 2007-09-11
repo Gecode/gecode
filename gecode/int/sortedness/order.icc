@@ -35,8 +35,6 @@
  *
  */        
 
-#include "gecode/support/sort.hh"
-
 namespace Gecode { namespace Int { namespace Sortedness {
 
   /**

@@ -35,9 +35,6 @@
  *
  */
 
-#include "gecode/support/shared-array.hh"
-#include "gecode/support/dynamic-array.hh"
-
 namespace Gecode { namespace Iter { namespace Values {
 
   /**
@@ -57,7 +54,7 @@ namespace Gecode { namespace Iter { namespace Values {
   class Minus  {
   private:
     /// %Values stored
-    Support::SharedArray<int> v;
+    SharedArray<int> v;
     /// Current value position
     int c;
   public:

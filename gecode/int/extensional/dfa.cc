@@ -36,8 +36,6 @@
  */
 
 #include "gecode/int.hh"
-#include "gecode/support/sort.hh"
-#include "gecode/support/sentinel-stack.hh"
 
 namespace Gecode { namespace Int { namespace Regular {
 

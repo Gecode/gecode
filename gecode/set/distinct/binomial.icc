@@ -43,7 +43,7 @@ namespace Gecode { namespace Set { namespace Distinct {
   class Binomial {
   private:
     /// The array holding the precomputed binomial coefficients
-    Support::SharedArray<int> sar;
+    SharedArray<int> sar;
     /// The maximum binomial coefficient computed so far
     unsigned int nmax;
     

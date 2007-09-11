@@ -38,8 +38,6 @@
 #include "gecode/int/rel.hh"
 #include "gecode/int/bool.hh"
 
-#include "gecode/support/sort.hh"
-
 namespace Gecode { 
 
   namespace Int { namespace Unshare {

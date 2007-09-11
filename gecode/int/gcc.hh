@@ -39,8 +39,7 @@
 #define __GECODE_INT_GCC_HH__
 
 #include "gecode/int.hh"
-#include "gecode/support/sort.hh"
-#include "gecode/support/static-stack.hh"
+
 #include "gecode/int/gcc/gccbndsup.icc"
 #include "gecode/int/gcc/graphsup.icc"
 #include "gecode/int/gcc/occur.icc"

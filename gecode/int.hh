@@ -92,7 +92,6 @@ namespace Gecode { namespace Int {
 #include <iostream>
 
 #include "gecode/iter.hh"
-#include "gecode/support/shared-array.hh"
 
 #include "gecode/int/exception.icc"
 
@@ -116,7 +115,7 @@ namespace Gecode {
       int min, max;
     };
     /// Shared array that stores the ranges of the domain
-    Support::SharedArray<Range> sar;
+    SharedArray<Range> sar;
     /// Sort ranges according to increasing minimum
     class MinInc;
     /// Normalize the first \a n elements of \a r

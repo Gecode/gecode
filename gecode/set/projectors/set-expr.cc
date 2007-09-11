@@ -36,7 +36,6 @@
  */
 
 #include "gecode/set/projectors.hh"
-#include "gecode/support/dynamic-stack.hh"
 
 using namespace Gecode::Set;
 

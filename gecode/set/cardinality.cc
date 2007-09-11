@@ -39,8 +39,6 @@
  *
  */
 
-
-
 #include "gecode/set.hh"
 #include "gecode/set/int.hh"
 

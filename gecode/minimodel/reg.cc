@@ -37,11 +37,6 @@
 
 #include "gecode/minimodel.hh"
 
-#include "gecode/support/sort.hh"
-#include "gecode/support/block-allocator.hh"
-#include "gecode/support/dynamic-stack.hh"
-#include "gecode/support/dynamic-array.hh"
-
 namespace Gecode {
 
   namespace Int { namespace Regular {

@@ -39,9 +39,9 @@
 
 #include "gecode/set/select.hh"
 
-using namespace Gecode::Set;
-
 namespace Gecode {
+
+  using namespace Gecode::Set;
 
   void
   selectUnion(Space* home, const SetVarArgs& x, SetVar y, SetVar z, int offset) {
@@ -62,7 +62,7 @@ namespace Gecode {
 
   void
   selectUnion(Space* home, const IntSetArgs& s, SetVar y, SetVar z, int offset) {
-    Support::SharedArray<IntSet> x(s.size());
+    SharedArray<IntSet> x(s.size());
     for (int i=s.size(); i--;)
       new (&x[i]) IntSet(s[i]);
     if (home->failed()) return;
@@ -142,7 +142,7 @@ namespace Gecode {
   selectSet(Space* home, const IntSetArgs& s, IntVar y, SetVar z, int offset) {
     if (home->failed()) return;
     SetView zv(z);
-    Support::SharedArray<IntSet> x(s.size());
+    SharedArray<IntSet> x(s.size());
     for (int i=s.size(); i--;)
       new (&x[i]) IntSet(s[i]);
 

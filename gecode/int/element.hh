@@ -43,9 +43,6 @@
 #include "gecode/int.hh"
 #include "gecode/int/rel.hh"
 
-#include "gecode/support/shared-array.hh"
-#include "gecode/support/sort.hh"
-
 #include "gecode/iter.hh"
 
 /**
@@ -60,7 +57,7 @@ namespace Gecode { namespace Int { namespace Element {
    *
    */
 
-  typedef Support::SharedArray<int> IntSharedArray;
+  typedef SharedArray<int> IntSharedArray;
 
   /// Class for index-value ma
   class IdxValMap;

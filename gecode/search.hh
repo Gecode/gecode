@@ -71,8 +71,6 @@
 #endif
 #endif
 
-#include "gecode/support/dynamic-stack.hh"
-
 namespace Gecode {
 
   /// %Search engines

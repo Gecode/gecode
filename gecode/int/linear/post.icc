@@ -35,8 +35,6 @@
  *
  */
 
-#include "gecode/support/sort.hh"
-
 #include <algorithm>
 #include <climits>
 

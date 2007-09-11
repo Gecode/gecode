@@ -35,9 +35,6 @@
  *
  */
 
-#include "gecode/support/shared-array.hh"
-#include "gecode/support/dynamic-array.hh"
-
 namespace Gecode { namespace Iter { namespace Ranges {
 
   /**
@@ -59,7 +56,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
       int min; int max;
     };
     /// Array for ranges
-    Support::SharedArray<Range> r;
+    SharedArray<Range> r;
     /// Current range
     int c;
   public:
@@ -169,7 +166,7 @@ namespace Gecode { namespace Iter { namespace Ranges {
   class ValCache  {
   protected:
     /// Array for ranges
-    Support::SharedArray<int> r;
+    SharedArray<int> r;
     /// Current range
     int c;
     /// Number of ranges in cache

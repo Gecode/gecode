@@ -47,7 +47,6 @@
 #include "gecode/int.hh"
 
 #include "gecode/int/rel.hh"
-#include "gecode/support/sentinel-stack.hh"
 
 /**
  * \namespace Gecode::Int::Distinct

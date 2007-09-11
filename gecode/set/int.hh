@@ -315,9 +315,9 @@ namespace Gecode { namespace Set { namespace Int {
   class Weights : public Propagator {
   protected:
     /// List of elements in the upper bound
-    Support::SharedArray<int> elements;
+    SharedArray<int> elements;
     /// Weights for the elements in the upper bound
-    Support::SharedArray<int> weights;
+    SharedArray<int> weights;
 
     /// The set view
     View x;

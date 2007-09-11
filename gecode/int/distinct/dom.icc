@@ -37,8 +37,6 @@
 
 #include <climits>
 
-#include "gecode/support/dynamic-array.hh"
-
 #include "gecode/iter.hh"
 
 namespace Gecode { namespace Int { namespace Distinct {

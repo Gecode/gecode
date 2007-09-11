@@ -144,13 +144,13 @@ namespace Gecode { namespace Set { namespace Select {
     public Propagator {
   protected:
     SView x0;
-    Support::SharedArray<IntSet> iv;
+    SharedArray<IntSet> iv;
     RView x1;
 
     /// Constructor for cloning \a p
     SelectUnionConst(Space* home, bool share,SelectUnionConst& p);
     /// Constructor for posting
-    SelectUnionConst(Space* home,SView,Support::SharedArray<IntSet>&,RView);
+    SelectUnionConst(Space* home,SView,SharedArray<IntSet>&,RView);
   public:
     /// Copy propagator during cloning
     virtual Actor*      copy(Space* home,bool);
@@ -168,7 +168,7 @@ namespace Gecode { namespace Set { namespace Select {
      * If \a y is empty, \a z will be constrained to be empty
      * (as an empty union is the empty set).
      */
-    static  ExecStatus  post(Space* home,SView z,Support::SharedArray<IntSet>& x,
+    static  ExecStatus  post(Space* home,SView z,SharedArray<IntSet>& x,
                              RView y);
   };
 

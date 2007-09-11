@@ -37,8 +37,6 @@
 
 #include "gecode/int.hh"
 
-#include "gecode/support/sort.hh"
-
 namespace Gecode {
 
   /// Sort ranges according to increasing minimum

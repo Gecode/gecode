@@ -43,7 +43,6 @@
 
 #include "gecode/int.hh"
 
-#include "gecode/support/shared-array.hh"
 #include <vector>
 #include <list>
 
@@ -100,7 +99,7 @@ namespace Gecode { namespace Int { namespace Cumulatives {
     ViewArray<ViewD>  duration;
     ViewArray<View>   end;
     ViewArray<ViewH>  height;
-    Support::SharedArray<int>  limit;
+    SharedArray<int>  limit;
     const bool        at_most;
 
     Val(Space* home, bool share, Val<ViewM, ViewD, ViewH, View>& p);
