@@ -39,37 +39,22 @@
 
 namespace Gecode {
 
-  using namespace Int;
   void 
   sorted(Space* home, const IntVarArgs& x, const IntVarArgs& y,
          IntConLevel, PropKind) {
-    if (home->failed())
-      return;
-
-    int n  = x.size();
-    int n2 = 2*n;
+    using namespace Int;
+    if (x.size() != y.size())
+      throw ArgumentSizeMismatch("Int::Sorted");
+    if (x.same(y))
+      throw ArgumentSame("Int::Sorted");
+      
+    if (home->failed()) return;
 
     // construct single tuple for propagation without permutation variables
-    ViewArray<ViewTuple<IntView,1> > x0(home, n);
-    for (int i = n; i--; ) {
+    ViewArray<ViewTuple<IntView,1> > x0(home, x.size());
+    for (int i = x.size(); i--; )
       x0[i][0] = x[i];
-    }
     ViewArray<IntView> y0(home, y);
-
-    ViewArray<IntView> xy(home, n2);
-    for (int i = 0; i < n; i++) {
-      xy[i] = x0[i][0];
-    }
-    for (int i = n; i < n2; i++) {
-      xy[i] = y0[i - n];
-    }
-    if (xy.shared()) {
-      throw ArgumentSame("Int::Sorted");
-    }
-    if (n != y.size()) {
-      throw ArgumentSizeMismatch("Int::Sorted");
-    }
-
 
     GECODE_ES_FAIL(home,
                    (Sorted::
@@ -79,52 +64,21 @@ namespace Gecode {
 
   void 
   sorted(Space* home, const IntVarArgs& x, const IntVarArgs& y, 
-         const IntVarArgs& z,
-         IntConLevel, PropKind) {
-    int n = x.size();
-    int n2 = 2*n;
-    int n3 = 3*n;
+         const IntVarArgs& z, IntConLevel, PropKind) {
+    using namespace Int;
+    if ((x.size() != y.size()) || (x.size() != z.size()))
+      throw ArgumentSizeMismatch("Int::Sorted");
+    if (x.same(y) || x.same(z) || y.same(z))
+      throw ArgumentSame("Int::Sorted");
     
-    if ((n != y.size()) || (n != z.size())) {
-      throw ArgumentSizeMismatch("Int::sorted");
-    }
-    if (home->failed()) {
-      return;
-    }
+    if (home->failed()) return;
 
-    ViewArray<ViewTuple<IntView, 2> > xz0(home, n);
+    ViewArray<ViewTuple<IntView, 2> > xz0(home, x.size());
 
     // assert that permutation variables encode a permutation
-    ViewArray<IntView> pz0(home, n);
     ViewArray<IntView> y0(home, y);
-    ViewArray<IntView> xyz(home, n3);
-
-
-
-    for (int i = n; i--; ) {
-      xz0[i][0] = x[i];
-      xz0[i][1] = z[i];
-      pz0[i]    = z[i];
-      // Constrain z_i to a valid index
-      GECODE_ME_FAIL(home,xz0[i][1].gq(home,0));
-      GECODE_ME_FAIL(home,xz0[i][1].lq(home,n - 1));
-    }
-
-    // assert permutation
-    distinct(home, z, ICL_BND);
-
-    for (int i = 0; i < n; i++) {
-      xyz[i] = xz0[i][0];
-    }
-    for (int i = n; i < n2; i++) {
-      xyz[i] = y0[i - n];
-    }
-    for (int i = n2; i < n3; i++) {
-      xyz[i] = xz0[i - n2][1];
-    }
-
-    if (xyz.shared()) {
-      throw ArgumentSame("Int::sorted");
+    for (int i = x.size(); i--; ) {
+      xz0[i][0]=x[i]; xz0[i][1] = z[i];
     }
 
     GECODE_ES_FAIL(home,

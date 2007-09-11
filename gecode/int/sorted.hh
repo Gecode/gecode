@@ -40,7 +40,6 @@
 #define __GECODE_INT_SORTED_HH__
 
 #include "gecode/int.hh"
-#include "gecode/int/rel.hh"
 
 /**
  * \namespace Gecode::Int::Sorted

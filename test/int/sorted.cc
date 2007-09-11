@@ -37,10 +37,10 @@
 
 #include "test/int.hh"
 
-namespace Test { namespace Int { namespace Sortedness {
+namespace Test { namespace Int { namespace Sorted {
 
   /**
-   * \defgroup TaskTestIntSortedness Sortedness constraints
+   * \defgroup TaskTestIntSorted Sorted constraints
    * \ingroup TaskTestInt
    */
   //@{
@@ -54,14 +54,14 @@ namespace Test { namespace Int { namespace Sortedness {
     }
   };
 
-  /// Test sortedness without permutation variables
+  /// Test sorted without permutation variables
   class NoVar : public Test {
   protected:
     /// Number of variables to be sorted
     static const int n = 3;
   public:
     /// Create and register test
-    NoVar(void) : Test("Sortedness::NoVar",2*n,0,3) {}
+    NoVar(void) : Test("Sorted::NoVar",2*n,0,3) {}
     /// Test whether \a xy is solution
     virtual bool solution(const Assignment& xy) const {
       int x[n], y[n];
@@ -87,19 +87,19 @@ namespace Test { namespace Int { namespace Sortedness {
       for (int i=0; i<n; i++) {
         x[i]=xy[i]; y[i]=xy[n+i];
       }
-      Gecode::sortedness(home,x,y);
+      Gecode::sorted(home,x,y);
     }
   };
 
 
-  /// Test sortedness with permutation variables
+  /// Test sorted with permutation variables
   class PermVar : public Test {
   protected:
     /// Number of variables to be sorted
     static const int n = 3;
   public:    
     /// Create and register test
-    PermVar(void) : Test("Sortedness::PermVar",3*n,0,2) {}
+    PermVar(void) : Test("Sorted::PermVar",3*n,0,2) {}
     /// Test whether \a xyz is solution
     virtual bool solution(const Assignment& xyz) const {
       int x[n], y[n], z[n];
@@ -143,7 +143,7 @@ namespace Test { namespace Int { namespace Sortedness {
       for (int i=0; i<n; i++) {
         x[i]=xyz[i]; y[i]=xyz[n+i]; z[i]=xyz[2*n+i];
       }
-      Gecode::sortedness(home,x,y,z);
+      Gecode::sorted(home,x,y,z);
     }
   };
   

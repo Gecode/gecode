@@ -42,9 +42,9 @@ namespace Gecode { namespace Int { namespace Sorted {
    */
   class Rank {
   public:
-    // stores the mininmum of a variable
+    /// stores the mininmum of a variable
     int min;
-    // stores the mininmum of a variable
+    /// stores the mininmum of a variable
     int max;
   };
 
@@ -121,7 +121,7 @@ namespace Gecode { namespace Int { namespace Sorted {
    *
    */
 
-  class OfflineMinItem{
+  class OfflineMinItem {
   public:
     /// Root node representing the set the vertex belongs to
     int root;

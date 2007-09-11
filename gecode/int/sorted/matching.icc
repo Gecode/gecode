@@ -72,7 +72,6 @@ namespace Gecode { namespace Int { namespace Sorted {
     for (int z = 0; z < xs; z++) {  // forall y nodes
       int maxy = y[z].max();
       // creating the sequence of inserts and extractions from the queue
-//       for( ; s <xs && xz[s][0].min() <= maxy; s++) {
       for( ; s <xs && xz[s][0].min() <= maxy; s++) {
         seq[s].iset = z;
         seq[z].rank++;
@@ -85,24 +84,21 @@ namespace Gecode { namespace Int { namespace Sorted {
       int perm = tau[i];
       // find the iteration where \tau(i) became a maching candidate
       int iter = seq[perm].iset;
-      if (iter<0) {
+      if (iter<0)
         return false;
-      }
       int j = 0;
       j = seq.find_pc(iter);
       // check whether the sequence is valid
-      if (j >= xs) {
+      if (j >= xs)
         return false;
-      }
       // if there is no intersection between the matching candidate
       // and the y node then there exists NO perfect matching
-      if (xz[perm][0].max() < y[j].min()) {
+      if (xz[perm][0].max() < y[j].min())
         return false;
-      }
       phi[j]         = perm;
       seq[perm].iset = -5;           //remove from candidate set
       int sqjsucc    = seq[j].succ;
-      if (sqjsucc < xs){
+      if (sqjsucc < xs) {
         seq.unite(j,sqjsucc,sqjsucc);
       } else {
         seq[seq[j].root].name = sqjsucc; // end of sequence achieved
@@ -110,12 +106,10 @@ namespace Gecode { namespace Int { namespace Sorted {
 
       // adjust tree list
       int pr = seq[j].pred;
-      if (pr != -1) {
+      if (pr != -1)
         seq[pr].succ = sqjsucc;
-      }
-      if (sqjsucc != xs) {
+      if (sqjsucc != xs)
         seq[sqjsucc].pred = pr;
-      }
     }
     return true;
   }
@@ -153,19 +147,16 @@ namespace Gecode { namespace Int { namespace Sorted {
     for (int i = xs; i--; ) {
       int perm = i;
       int iter = seq[perm].iset;
-      if (iter < 0) {
+      if (iter < 0)
         return false;
-      }
       int j = 0;
       j = seq.find_pc(iter);
-      if (j <= -1) {
+      if (j <= -1)
         return false;
-      }
       // if there is no intersection between the matching candidate
       // and the y node then there exists NO perfect matching
-      if (xz[perm][0].min() > y[j].max()) {
+      if (xz[perm][0].min() > y[j].max())
         return false;
-      }
       phiprime[j]    = perm;
       seq[perm].iset = -5;
       int sqjsucc    = seq[j].pred;
@@ -177,12 +168,10 @@ namespace Gecode { namespace Int { namespace Sorted {
 
       // adjust tree list
       int pr = seq[j].succ;
-      if (pr != xs) {
+      if (pr != xs)
         seq[pr].pred = sqjsucc;
-      }
-      if (sqjsucc != -1) {
+      if (sqjsucc != -1)
         seq[sqjsucc].succ = pr;
-      }
     }
     return true;
   }

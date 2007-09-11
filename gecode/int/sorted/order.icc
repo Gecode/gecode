@@ -50,28 +50,9 @@ namespace Gecode { namespace Int { namespace Sorted {
     int xs = xz.size();
 
     // test for equal bounds
-
     if (Perm) {
-      bool eqbnd = true;
-      for (int i = xs - 1; i--; ) {
-        eqbnd &= ( (xz[i][0].min() == xz[i + 1][0].min()) &&
-                   (xz[i][0].max() == xz[i + 1][0].max()));
-      }
-//       std::cout << "what sort\n";
-//       if (eqbnd || fixed) {
-//         std::cout << "eqbnd & fixed";
-//         TupleMinIncPerm<Tuple> min_inc;
-//         Support::quicksort<Tuple, TupleMinIncPerm<Tuple> >
-//           (&xz[0], xs, min_inc);
-//       } else {
-//         std::cout << "normal sort";
-//         TupleMinInc<Tuple> min_inc;
-//         Support::quicksort<Tuple, TupleMinInc<Tuple> >(&xz[0], xs, min_inc);
-//       }
-//       std::cout << "\n";
-        TupleMinIncExt<Tuple> min_inc;
-        Support::quicksort<Tuple, TupleMinIncExt<Tuple> >(&xz[0], xs, min_inc);
-
+      TupleMinIncExt<Tuple> min_inc;
+      Support::quicksort<Tuple, TupleMinIncExt<Tuple> >(&xz[0], xs, min_inc);
     } else {
       TupleMinInc<Tuple> min_inc;
       Support::quicksort<Tuple, TupleMinInc<Tuple> >(&xz[0], xs, min_inc);
@@ -92,23 +73,8 @@ namespace Gecode { namespace Int { namespace Sorted {
     int xs = xz.size();
 
     if (Perm) {
-//       bool eqbnd = true;
-//       for (int i = xs - 1; i--;) {
-//         eqbnd &= ( (xz[i][0].min() == xz[i + 1][0].min()) &&
-//                    (xz[i][0].max() == xz[i + 1][0].max()));
-//       }
-
-//       if (eqbnd) {
-//         TupleMaxIncPerm<Tuple> max_inc;
-//         Support::quicksort<Tuple, TupleMaxIncPerm<Tuple> >
-//           (&xz[0], xs, max_inc);
-//       } else {
-//         TupleMaxInc<Tuple> ltmax(xz);
-//         Support::quicksort(&(*tau), xs, ltmax);
-//       }
-        TupleMaxIncExt<Tuple> ltmax(xz);
-        Support::quicksort(&(*tau), xs, ltmax);
-
+      TupleMaxIncExt<Tuple> ltmax(xz);
+      Support::quicksort(&(*tau), xs, ltmax);
     } else {
       TupleMaxInc<Tuple> ltmax(xz);
       Support::quicksort(&(*tau), xs, ltmax);
@@ -132,32 +98,28 @@ namespace Gecode { namespace Int { namespace Sorted {
     int ys = y.size();
     for (int i = 1; i < ys; i++) {
       ModEvent me_lb = y[i].gq(home, y[i - 1].min());
-      if (me_failed(me_lb)) {
+      if (me_failed(me_lb))
         return false;
-      }
       nofix |= (me_modified(me_lb) && y[i - 1].min() != y[i].min());
     }
 
     for (int i = ys - 1; i--; ) {
       ModEvent me_ub = y[i].lq(home, y[i + 1].max());
-      if (me_failed(me_ub)) {
+      if (me_failed(me_ub))
         return false;
-      }
       nofix |= (me_modified(me_ub) && y[i + 1].max() != y[i].max());
     }
 
     int xs = xz.size();
     for (int i = xs; i--; ) {
       ModEvent me = xz[i][0].gq(home, y[0].min());
-      if (me_failed(me)) {
+      if (me_failed(me))
         return false;
-      }
       nofix |= (me_modified(me) && xz[i][0].min() != y[0].min());
 
       me = xz[i][0].lq(home, y[xs - 1].max());
-      if (me_failed(me)) {
+      if (me_failed(me))
         return false;
-      }
       nofix |= (me_modified(me) && xz[i][0].max() != y[xs - 1].max());
     }
     return true;
