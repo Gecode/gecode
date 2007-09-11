@@ -40,16 +40,20 @@
 #include "examples/support.hh"
 #include "gecode/minimodel.hh"
 
-/** \brief Board specifications
- *
- * \relates Domino
- */
-extern const int *specs[];
-/** \brief Number of board specifications
- *
- * \relates Domino
- */
-extern const unsigned int n_examples;
+namespace {
+
+  /** \brief Board specifications
+   *
+   * \relates Domino
+   */
+  extern const int *specs[];
+  /** \brief Number of board specifications
+   *
+   * \relates Domino
+   */
+  extern const unsigned int n_examples;
+
+}
 
 /**
  * \brief %Example: Solitaire Domino
@@ -236,95 +240,99 @@ main(int argc, char* argv[]) {
 }
 
 
-/** \name Puzzle specifications
- *
- * \relates Domino
- */
-//@{
+namespace {
 
-const int domino0[] =
-  { // width*height of the board
-    8,7,
-    // the board itself
-    2,1,0,3,0,4,5,5,
-    6,2,0,6,3,1,4,0,
-    3,2,3,6,2,5,4,3,
-    5,4,5,1,1,2,1,2,
-    0,0,1,5,0,5,4,4,
-    4,6,2,1,3,6,6,1,
-    4,2,0,6,5,3,3,6
-  };
+  /** \name Puzzle specifications
+   *
+   * \relates Domino
+   */
+  //@{
+  
+  const int domino0[] =
+    { // width*height of the board
+      8,7,
+      // the board itself
+      2,1,0,3,0,4,5,5,
+      6,2,0,6,3,1,4,0,
+      3,2,3,6,2,5,4,3,
+      5,4,5,1,1,2,1,2,
+      0,0,1,5,0,5,4,4,
+      4,6,2,1,3,6,6,1,
+      4,2,0,6,5,3,3,6
+    };
+  
+  const int domino1[] =
+    { // width*height of the board
+      8,7,
+      // the board itself
+      5,1,2,4,6,2,0,5,
+      6,6,4,3,5,0,1,5,
+      2,0,4,0,4,0,5,0,
+      6,1,3,6,3,5,4,3,
+      3,1,0,1,2,2,1,4,
+      3,6,6,2,4,0,5,4,
+      1,3,6,1,2,3,5,2
+    };
+  
+  const int domino2[] =
+    { // width*height of the board
+      8,7,
+      // the board itself
+      4,4,5,4,0,3,6,5,
+      1,6,0,1,5,3,4,1,
+      2,6,2,2,5,3,6,0,
+      1,3,0,6,4,4,2,3,
+      3,5,5,2,4,2,2,1,
+      2,1,3,3,5,6,6,1,
+      5,1,6,0,0,0,4,0
+    };
+  
+  const int domino3[] =
+    { // width*height of the board
+      8,7,
+      // the board itself
+      3,0,2,3,3,4,4,3,
+      6,5,3,4,2,0,2,1,
+      6,5,1,2,3,0,2,0,
+      4,5,4,1,6,6,2,5,
+      4,3,6,1,0,4,5,5,
+      1,3,2,5,6,0,0,1,
+      0,5,4,6,2,1,6,1
+    };
+  
+  const int domino4[] =
+    { // width*height of the board
+      8,7,
+      // the board itself
+      4,1,5,2,4,4,6,2,
+      2,5,6,1,4,6,0,2,
+      6,5,1,1,0,1,4,3,
+      6,2,1,1,3,2,0,6,
+      3,6,3,3,5,5,0,5,
+      3,0,1,0,0,5,4,3,
+      3,2,4,5,4,2,6,0
+    };
+  
+  const int domino5[] =
+    { // width*height of the board
+      8,7,
+      // the board itself
+      4,1,2,1,0,2,4,4,
+      5,5,6,6,0,4,6,3,
+      6,0,5,1,1,0,5,3,
+      3,4,2,2,0,3,1,2,
+      3,6,5,6,1,2,3,2,
+      2,5,0,6,6,3,3,5,
+      4,1,0,0,4,1,4,5
+    };
+  
+  /// List of specifications
+  const int *specs[] =
+    {domino0,domino1,domino2,domino3,domino4,domino5};
+  /// Number of specifications
+  const unsigned n_examples = sizeof(specs)/sizeof(int*);
+  //@}
 
-const int domino1[] =
-  { // width*height of the board
-    8,7,
-    // the board itself
-    5,1,2,4,6,2,0,5,
-    6,6,4,3,5,0,1,5,
-    2,0,4,0,4,0,5,0,
-    6,1,3,6,3,5,4,3,
-    3,1,0,1,2,2,1,4,
-    3,6,6,2,4,0,5,4,
-    1,3,6,1,2,3,5,2
-  };
-
-const int domino2[] =
-  { // width*height of the board
-    8,7,
-    // the board itself
-    4,4,5,4,0,3,6,5,
-    1,6,0,1,5,3,4,1,
-    2,6,2,2,5,3,6,0,
-    1,3,0,6,4,4,2,3,
-    3,5,5,2,4,2,2,1,
-    2,1,3,3,5,6,6,1,
-    5,1,6,0,0,0,4,0
-  };
-
-const int domino3[] =
-  { // width*height of the board
-    8,7,
-    // the board itself
-    3,0,2,3,3,4,4,3,
-    6,5,3,4,2,0,2,1,
-    6,5,1,2,3,0,2,0,
-    4,5,4,1,6,6,2,5,
-    4,3,6,1,0,4,5,5,
-    1,3,2,5,6,0,0,1,
-    0,5,4,6,2,1,6,1
-  };
-
-const int domino4[] =
-  { // width*height of the board
-    8,7,
-    // the board itself
-    4,1,5,2,4,4,6,2,
-    2,5,6,1,4,6,0,2,
-    6,5,1,1,0,1,4,3,
-    6,2,1,1,3,2,0,6,
-    3,6,3,3,5,5,0,5,
-    3,0,1,0,0,5,4,3,
-    3,2,4,5,4,2,6,0
-  };
-
-const int domino5[] =
-  { // width*height of the board
-    8,7,
-    // the board itself
-    4,1,2,1,0,2,4,4,
-    5,5,6,6,0,4,6,3,
-    6,0,5,1,1,0,5,3,
-    3,4,2,2,0,3,1,2,
-    3,6,5,6,1,2,3,2,
-    2,5,0,6,6,3,3,5,
-    4,1,0,0,4,1,4,5
-  };
-
-/// List of specifications
-const int *specs[] =
-  {domino0,domino1,domino2,domino3,domino4,domino5};
-/// Number of specifications
-const unsigned n_examples = sizeof(specs)/sizeof(int*);
-//@}
+}
 
 // STATISTICS: example-any

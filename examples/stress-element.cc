@@ -37,10 +37,6 @@
 
 #include "examples/support.hh"
 
-static const int n = 15;
-static const int m = 90;
-static const int p[n] = {16,35,90,42,88,6,40,42,64,48,46,5,90,29,70};
-
 /**
  * \brief %Example: Stress test for element constraint (involving integers)
  *
@@ -52,6 +48,13 @@ static const int p[n] = {16,35,90,42,88,6,40,42,64,48,46,5,90,29,70};
  */
 class StressElement : public Example {
 protected:
+  /// Number of elements in array
+  static const int n = 15;
+  /// Largest number
+  static const int m = 90;
+  /// Array arguments
+  static const int p[n];
+
   /// Variables
   IntVarArray x;
 public:
@@ -60,12 +63,10 @@ public:
     : x(this,n,0,n-1) {
 
     IntVarArgs s(n);
-    for (int i=0; i<n; i++) {
-      IntVar si(this,0,m); s[i]=si;
-    }
+    for (int i=0; i<n; i++)
+      s[i].init(this,0,m);
 
-    for (int i=0; i<n-1; i++)
-      rel(this, s[i], IRT_LQ, s[i+1]);
+    rel(this, s, IRT_LQ);
 
     IntArgs e(n,p);
 
@@ -95,6 +96,8 @@ public:
       std::cout << x[i] << ((i<n-1)?",":"};\n");
   }
 };
+
+const int StressElement::p[15] = {16,35,90,42,88,6,40,42,64,48,46,5,90,29,70};
 
 /** \brief Main-function
  *  \relates StressElement

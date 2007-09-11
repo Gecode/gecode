@@ -41,82 +41,86 @@
 #include "gecode/set.hh"
 #include "examples/support.hh"
 
-typedef enum {
-  Tom, David, Jeremy, Ron,
-  Joe, Bill, Fred,
-  Bob, Mario, Ed,
-  Carol, Janet, Tracy,
-  Marilyn, Carolyn, Cathy,
-  Inez, Jean, Heather, Juliet
-} Employees;
+namespace {
 
-const Employees employees[] =
-  { Tom, David, Jeremy, Ron,
+  typedef enum {
+    Tom, David, Jeremy, Ron,
     Joe, Bill, Fred,
     Bob, Mario, Ed,
     Carol, Janet, Tracy,
     Marilyn, Carolyn, Cathy,
-    Inez, Jean, Heather, Juliet };
-const int lastEmployee = Juliet;
-
-const char*
-employeeToName(Employees e) {
-  switch(e) {
-  case Tom : return "Tom";
-  case David : return "David";
-  case Jeremy: return "Jeremy";
-  case Ron: return "Ron";
-  case Joe: return "Joe";
-  case Bill: return "Bill";
-  case Fred: return "Fred";
-  case Bob: return "Bob";
-  case Mario: return "Mario";
-  case Ed: return "Ed";
-  case Carol: return "Carol";
-  case Janet: return "Janet";
-  case Tracy: return "Tracy";
-  case Marilyn: return "Marilyn";
-  case Carolyn: return "Carolyn";
-  case Cathy: return "Cathy";
-  case Inez: return "Inez";
-  case Jean: return "Jean";
-  case Heather: return "Heather";
-  case Juliet: return "Juliet";
+    Inez, Jean, Heather, Juliet
+  } Employees;
+  
+  const Employees employees[] =
+    { Tom, David, Jeremy, Ron,
+      Joe, Bill, Fred,
+      Bob, Mario, Ed,
+      Carol, Janet, Tracy,
+      Marilyn, Carolyn, Cathy,
+      Inez, Jean, Heather, Juliet };
+  const int lastEmployee = Juliet;
+  
+  const char*
+  employeeToName(Employees e) {
+    switch(e) {
+    case Tom : return "Tom";
+    case David : return "David";
+    case Jeremy: return "Jeremy";
+    case Ron: return "Ron";
+    case Joe: return "Joe";
+    case Bill: return "Bill";
+    case Fred: return "Fred";
+    case Bob: return "Bob";
+    case Mario: return "Mario";
+    case Ed: return "Ed";
+    case Carol: return "Carol";
+    case Janet: return "Janet";
+    case Tracy: return "Tracy";
+    case Marilyn: return "Marilyn";
+    case Carolyn: return "Carolyn";
+    case Cathy: return "Cathy";
+    case Inez: return "Inez";
+    case Jean: return "Jean";
+    case Heather: return "Heather";
+    case Juliet: return "Juliet";
+    }
+    return "None";
   }
-  return "None";
+
+  // these have to be sorted!
+  const Employees stewards[] =
+    {Tom, David, Jeremy, Ron, Joe, Bill, Fred, Bob, Mario, Ed};
+  const int noOfStewards = 10;
+  const Employees hostesses[] =
+    { Carol, Janet, Tracy, Marilyn, Carolyn, Cathy, Inez,
+      Jean, Heather, Juliet };
+  const int noOfHostesses = 10;
+  const Employees frenchSpeaking[] =
+    { Bill, Inez, Jean, Juliet };
+  const int noOfFrenchSpeaking = 4;
+  const Employees germanSpeaking[] =
+    { Tom, Jeremy, Mario, Cathy, Juliet };
+  const int noOfGermanSpeaking = 5;
+  const Employees spanishSpeaking[] =
+    { Joe, Bill, Fred, Mario, Marilyn, Inez, Heather };
+  const int noOfSpanishSpeaking = 7;
+  
+  const int flights[][7] =
+    { {1,4,1,1,1,1,1},
+      {2,5,1,1,1,1,1},
+      {3,5,1,1,1,1,1},
+      {4,6,2,2,1,1,1},
+      {5,7,3,3,1,1,1},
+      {6,4,1,1,1,1,1},
+      {7,5,1,1,1,1,1},
+      {8,6,1,1,1,1,1},
+      {9,6,2,2,1,1,1},
+      {10,7,3,3,1,1,1} };
+  
+  const int len = 10;
+
 }
-
-// these have to be sorted!
-const Employees stewards[] =
-  {Tom, David, Jeremy, Ron, Joe, Bill, Fred, Bob, Mario, Ed};
-const int noOfStewards = 10;
-const Employees hostesses[] =
-  { Carol, Janet, Tracy, Marilyn, Carolyn, Cathy, Inez,
-    Jean, Heather, Juliet };
-const int noOfHostesses = 10;
-const Employees frenchSpeaking[] =
-  { Bill, Inez, Jean, Juliet };
-const int noOfFrenchSpeaking = 4;
-const Employees germanSpeaking[] =
-  { Tom, Jeremy, Mario, Cathy, Juliet };
-const int noOfGermanSpeaking = 5;
-const Employees spanishSpeaking[] =
-  { Joe, Bill, Fred, Mario, Marilyn, Inez, Heather };
-const int noOfSpanishSpeaking = 7;
-
-const int flights[][7] =
-  { {1,4,1,1,1,1,1},
-    {2,5,1,1,1,1,1},
-    {3,5,1,1,1,1,1},
-    {4,6,2,2,1,1,1},
-    {5,7,3,3,1,1,1},
-    {6,4,1,1,1,1,1},
-    {7,5,1,1,1,1,1},
-    {8,6,1,1,1,1,1},
-    {9,6,2,2,1,1,1},
-    {10,7,3,3,1,1,1} };
-
-const int len = 10;
 
 
 /**

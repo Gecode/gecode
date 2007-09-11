@@ -53,6 +53,7 @@ private:
   /// Array of letters
   IntVarArray le;
 public:
+  /// Actual model
   Donald(const Options& opt) :
     le(this,nl,0,9) {
     IntVar
@@ -71,16 +72,16 @@ public:
 
     branch(this, le, INT_VAR_SIZE_MIN, INT_VAL_MIN);
   }
-
+  /// Constructor for cloning \a s
   Donald(bool share, Donald& s) : Example(share,s) {
     le.update(this, share, s.le);
   }
-
+  /// Copy during cloning
   virtual Space*
   copy(bool share) {
     return new Donald(share,*this);
   }
-
+  /// Print solution
   virtual void
   print(void) {
     std::cout << "\t";

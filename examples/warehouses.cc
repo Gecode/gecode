@@ -39,20 +39,20 @@
 #include "gecode/minimodel.hh"
 
 /// Number of warehouses
-static const int n_suppliers = 5;
+const int n_suppliers = 5;
 /// Number of stores
-static const int n_stores = 10;
+const int n_stores = 10;
 
 /// Cost of building one warehouse
-static const int building_cost = 30;
+const int building_cost = 30;
 
 /// Capacity of a single warehouse
-static const int capacity[n_suppliers] = {
+const int capacity[n_suppliers] = {
   1, 4, 2, 1, 3
 };
 
 /// Cost for store to warehouse
-static const int cost_matrix[n_stores][n_suppliers] = {
+const int cost_matrix[n_stores][n_suppliers] = {
   {20, 24, 11, 25, 30},
   {28, 27, 82, 83, 74},
   {74, 97, 71, 96, 70},

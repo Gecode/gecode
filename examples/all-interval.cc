@@ -111,8 +111,12 @@ public:
 };
 
 
-int main(int argc, char* argv[]){
-  SizeOptions opt("All-interval Series");
+/** \brief Main-function
+ *  \relates AllInterval
+ */
+int 
+main(int argc, char* argv[]){
+  SizeOptions opt("AllInterval");
   opt.size(1000);
   opt.iterations(5);
   opt.icl(ICL_BND);
