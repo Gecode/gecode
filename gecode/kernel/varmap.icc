@@ -36,7 +36,6 @@
  */
 
 #include <sstream>
-#include "gecode/support/dynamic-array.hh"
 
 namespace Gecode { namespace Reflection {
   

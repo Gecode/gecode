@@ -39,7 +39,7 @@
  *
  */
 
-#include "gecode/support/symbol.hh"
+#include "gecode/support.hh"
 
 namespace Gecode { namespace Support {
 

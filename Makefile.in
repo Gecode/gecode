@@ -118,10 +118,11 @@ endif
 #
 SUPPORTSRC0 = \
 	exception symbol
-SUPPORTHDR0 =							\
-	bitset block-allocator dynamic-array dynamic-stack	\
-	map random search shared-array sort			\
-	static-pqueue static-stack sentinel-stack symbol
+SUPPORTHDR0 = \
+	block-allocator cast dynamic-array \
+	dynamic-stack exception map memory \
+	random search sentinel-stack sort \
+	static-pqueue static-stack symbol
 
 BUDDYSRC0 = \
 	bddio.c \
@@ -154,10 +155,7 @@ BUDDYOBJ = $(BUDDYOBJ0:%.cc=%$(OBJSUFFIX))
 
 SUPPORTSRC1 =  $(SUPPORTSRC0:%=gecode/support/%.cc)
 SUPPORTHDR  =  gecode/support.hh \
-	gecode/support/exception.icc \
-	gecode/support/memory.icc \
-	gecode/support/cast.icc \
-	$(SUPPORTHDR0:%=gecode/support/%.hh) \
+	$(SUPPORTHDR0:%=gecode/support/%.icc) \
 	$(BUDDYHDR)
 SUPPORTOBJ  =  $(SUPPORTSRC1:%.cc=%$(OBJSUFFIX)) $(BUDDYOBJ)
 SUPPORTSRC  =  $(SUPPORTSRC1) $(BUDDYSRC)

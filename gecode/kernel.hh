@@ -115,13 +115,6 @@
 #include "gecode/kernel/macros.icc"
 
 /*
- * Strings
- *
- */
-
-#include "gecode/support/symbol.hh"
-
-/*
  * Gecode kernel
  *
  */

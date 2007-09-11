@@ -79,7 +79,6 @@ namespace Gecode { namespace Support {
    *
    * Provides memory management for objects of type \a T.
    *
-   * Requires \code #include "gecode/support/block-allocator.hh" \endcode
    * \ingroup FuncSupport
    */
   template <class T>

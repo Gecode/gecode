@@ -82,6 +82,18 @@
  *
  */
 
+#include "gecode/support/block-allocator.icc"
+#include "gecode/support/dynamic-array.icc"
+#include "gecode/support/dynamic-stack.icc"
+#include "gecode/support/random.icc"
+#include "gecode/support/search.icc"
+#include "gecode/support/sentinel-stack.icc"
+#include "gecode/support/sort.icc"
+#include "gecode/support/static-pqueue.icc"
+#include "gecode/support/static-stack.icc"
+#include "gecode/support/symbol.icc"
+#include "gecode/support/map.icc"
+
 #endif
 
 // STATISTICS: support-any

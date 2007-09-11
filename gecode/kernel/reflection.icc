@@ -35,8 +35,6 @@
  *
  */
 
-#include "gecode/support/map.hh"
-
 #include <iostream>
 #include <cstring>
 #include <vector>
