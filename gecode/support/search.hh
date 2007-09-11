@@ -35,11 +35,6 @@
  *
  */
 
-#ifndef __GECODE_SUPPORT_SEARCH_HH__
-#define __GECODE_SUPPORT_SEARCH_HH__
-
-#include "gecode/support.hh"
-
 #include <algorithm>
 
 namespace Gecode { namespace Support {
@@ -54,7 +49,6 @@ namespace Gecode { namespace Support {
    *
    * If the key is not found in the array, NULL is returned.
    *
-   * Requires \code #include "gecode/support/search.hh" \endcode
    * \ingroup FuncSupport
    */
   template <class Type, class Key, class LessThan>
@@ -112,7 +106,5 @@ namespace Gecode { namespace Support {
   }
 #undef derr
 }}
-
-#endif
 
 // STATISTICS: support-any

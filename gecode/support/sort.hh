@@ -35,11 +35,6 @@
  *
  */
 
-#ifndef __GECODE_SUPPORT_SORT_HH__
-#define __GECODE_SUPPORT_SORT_HH__
-
-#include "gecode/support.hh"
-
 #include <algorithm>
 
 namespace Gecode { namespace Support {
@@ -177,7 +172,6 @@ namespace Gecode { namespace Support {
    * The algorithm is largely based on the following book:
    * Robert Sedgewick, Algorithms in C++, 3rd edition, 1998, Addison Wesley.
    *
-   * Requires \code #include "gecode/support/sort.hh" \endcode
    * \ingroup FuncSupport
    */
   template <class Type, class LessThan>
@@ -200,7 +194,6 @@ namespace Gecode { namespace Support {
    * The algorithm is largely based on the following book:
    * Robert Sedgewick, Algorithms in C++, 3rd edition, 1998, Addison Wesley.
    *
-   * Requires \code #include "gecode/support/sort.hh" \endcode
    * \ingroup FuncSupport
    */
   template <class Type, class LessThan>
@@ -214,7 +207,5 @@ namespace Gecode { namespace Support {
   }
 
 }}
-
-#endif
 
 // STATISTICS: support-any

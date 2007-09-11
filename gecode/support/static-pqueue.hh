@@ -37,20 +37,7 @@
  *
  */
 
-#ifndef __GECODE_SUPPORT_PQUEUE_HH__
-#define __GECODE_SUPPORT_PQUEUE_HH__
-
-#include "gecode/support.hh"
-
-#include "gecode/kernel.hh"
-
-#include <cassert>
 #include <algorithm>
-
-/*
- * The shared queue
- *
- */
 
 namespace Gecode { namespace Support {
 
@@ -62,7 +49,6 @@ namespace Gecode { namespace Support {
    * \code bool operator()(const T&, const T&) \endcode
    * for comparing elements.
    *
-   * Requires \code #include "gecode/support/static-pqueue.hh" \endcode
    * \ingroup FuncSupport
    */
   template <class T, class Less>
@@ -252,7 +238,5 @@ namespace Gecode { namespace Support {
   }
 
 }}
-
-#endif
 
 // STATISTICS: support-any

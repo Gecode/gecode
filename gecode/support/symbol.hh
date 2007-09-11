@@ -39,11 +39,6 @@
  *
  */
 
-#ifndef __GECODE_SUPPORT_SYMBOL_HH__
-#define __GECODE_SUPPORT_SYMBOL_HH__
-
-#include "gecode/support.hh"
-
 #include <iostream>
 
 namespace Gecode { namespace Support {
@@ -257,7 +252,5 @@ std::ostream&
 operator<<(std::ostream& os, const Gecode::Support::Symbol& x) {
   return x.print(os);
 }
-
-#endif
 
 // STATISTICS: support-any

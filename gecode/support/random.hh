@@ -37,13 +37,6 @@
  *
  */
 
-#ifndef __GECODE_SUPPORT_RANDOM_HH__
-#define __GECODE_SUPPORT_RANDOM_HH__
-
-#include "gecode/support.hh"
-
-#define GECODE_RAND_MAX
-
 namespace Gecode { namespace Support {
 
   /** \brief Template for linear congruential generators.
@@ -53,7 +46,6 @@ namespace Gecode { namespace Support {
    *
    * The values used for calculation shouldbe specified so that
    *
-   * Requires \code #include "gecode/support/random.hh" \endcode
    * \ingroup FuncSupport
    */
   template<unsigned int m, unsigned int a, unsigned int q, unsigned int r>
@@ -105,14 +97,11 @@ namespace Gecode { namespace Support {
    * The Art of Computer Programming, Vol 2, Seminumerical Algorithms,
    * 3rd edition.
    *
-   * Requires \code #include "gecode/support/random.hh" \endcode
    * \ingroup FuncSupport
    */
   typedef LinearCongruentialGenerator<2147483647, 48271, 44488, 3399>
   RandomGenerator;
 
 }}
-
-#endif /* __GECODE_SUPPORT_RANDOM_HH__ */
 
 // STATISTICS: support-any

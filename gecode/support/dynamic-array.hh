@@ -35,22 +35,13 @@
  *
  */
 
-#ifndef __GECODE_SUPPORT_DYNAMICARRAY_HH__
-#define __GECODE_SUPPORT_DYNAMICARRAY_HH__
-
-#include "gecode/support.hh"
-
-#include "gecode/kernel.hh"
-
 #include <algorithm>
-#include <cassert>
 
 namespace Gecode { namespace Support {
 
   /**
    * \brief Array with arbitrary number of elements
    *
-   * Requires \code #include "gecode/support/dynamic-array.hh" \endcode
    * \ingroup FuncSupport
    */
   template <class T>
@@ -143,7 +134,5 @@ namespace Gecode { namespace Support {
   }
 
 }}
-
-#endif
 
 // STATISTICS: support-any

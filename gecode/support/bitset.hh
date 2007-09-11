@@ -35,18 +35,11 @@
  *
  */
 
-#ifndef __GECODE_SUPPORT_BITSET_HH__
-#define __GECODE_SUPPORT_BITSET_HH__
-
-#include "gecode/support.hh"
-
-#define GECODE_RAND_MAX
-
 namespace Gecode { namespace Support {
 
-  /** \brief 
+  /** 
+   * \brief Simple bitsets
    *
-   * Requires \code #include "gecode/support/bitset.hh" \endcode
    * \ingroup FuncSupport
    */
   template<typename Base>
@@ -107,8 +100,7 @@ namespace Gecode { namespace Support {
     else
       data[pos] &= ~(1 << bit);
   }
-}}
 
-#endif /* __GECODE_SUPPORT_BITSET_HH__ */
+}}
 
 // STATISTICS: support-any

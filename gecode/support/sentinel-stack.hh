@@ -35,13 +35,6 @@
  *
  */
 
-#ifndef __GECODE_SUPPORT_SENTINEL_STACK_HH__
-#define __GECODE_SUPPORT_SENTINEL_STACK_HH__
-
-#include "gecode/support.hh"
-
-#include "gecode/kernel.hh"
-
 namespace Gecode { namespace Support {
 
   /**
@@ -54,7 +47,6 @@ namespace Gecode { namespace Support {
    * is so simple it is ment to be used with automatically allocated
    * memory.
    *
-   * Requires \code #include "gecode/support/sentinel-stack.hh" \endcode
    * \ingroup FuncSupport
    */
   template<class T>
@@ -126,7 +118,5 @@ namespace Gecode { namespace Support {
 #define GECODE_AUTOSTACK(T,S,X,N)                                          \
   GECODE_AUTOARRAY(T,__GECODE__AS__ ## X ## __LINE__,(N)+1);               \
   Gecode::Support::SentinelStack<T> X(__GECODE__AS__ ## X ## __LINE__,(S));
-
-#endif
 
 // STATISTICS: support-any

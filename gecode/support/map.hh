@@ -35,12 +35,6 @@
  *
  */
 
-#ifndef __GECODE_SUPPORT_MAP_HH__
-#define __GECODE_SUPPORT_MAP_HH__
-
-#include "gecode/support.hh"
-#include "gecode/support/symbol.hh"
-
 namespace Gecode { namespace Support {
   
   /** \brief Hash map
@@ -209,7 +203,5 @@ namespace Gecode { namespace Support {
   }
 
 }}
-
-#endif
 
 // STATISTICS: support-any

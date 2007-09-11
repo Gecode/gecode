@@ -35,13 +35,6 @@
  *
  */
 
-#ifndef __GECODE_SUPPORT_BLOCK_ALLOCATOR_HH__
-#define __GECODE_SUPPORT_BLOCK_ALLOCATOR_HH__
-
-#include "gecode/support.hh"
-
-#include "gecode/kernel.hh"
-
 namespace Gecode { namespace Support {
 
   /**
@@ -50,7 +43,6 @@ namespace Gecode { namespace Support {
    * The allocation policy is to free all memory allocated when
    * the block allocator is deleted.
    *
-   * Requires \code #include "gecode/support/block-allocator.hh" \endcode
    * \ingroup FuncSupport
    */
   template <class T>
@@ -163,7 +155,5 @@ namespace Gecode { namespace Support {
   }
 
 }}
-
-#endif
 
 // STATISTICS: support-any
