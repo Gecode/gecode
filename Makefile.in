@@ -78,7 +78,6 @@ export BOOST_LINK = @BOOST_LINK@
 
 export LINKFLAGS = @LDFLAGS@
 export DLLFLAGS = @DLLFLAGS@
-export BUDDYDLLFLAGS = @BUDDYDLLFLAGS@
 export DLLPATH = @DLLPATH@
 
 export RANLIB = @RANLIB@
@@ -124,9 +123,39 @@ SUPPORTHDR0 =							\
 	map random search shared-array sort			\
 	static-pqueue static-stack sentinel-stack symbol
 
-SUPPORTSRC = 	$(SUPPORTSRC0:%=gecode/support/%.cc)
-SUPPORTHDR = 	gecode/support.hh $(SUPPORTHDR0:%=gecode/support/%.hh)
-SUPPORTOBJ = 	$(SUPPORTSRC:%.cc=%$(OBJSUFFIX))
+BUDDYSRC0 = \
+	bddio.c \
+	bddop.c \
+	bvec.c \
+	cache.c \
+	cppext.cc \
+	fdd.c \
+	imatrix.c \
+	kernel.c \
+	pairs.c \
+	prime.c \
+	reorder.c \
+	tree.c
+
+BUDDYHDR0 = \
+	bdd.h \
+	bddtree.h \
+	bvec.h \
+	cache.h \
+	fdd.h \
+	imatrix.h \
+	kernel.h \
+	prime.h
+
+BUDDYSRC = $(BUDDYSRC0:%=gecode/support/buddy/%)
+BUDDYHDR = $(BUDDYHDR0:%=gecode/support/buddy/%)
+BUDDYOBJ0 = $(BUDDYSRC:%.c=%$(OBJSUFFIX))
+BUDDYOBJ = $(BUDDYOBJ0:%.cc=%$(OBJSUFFIX))
+
+SUPPORTSRC1 =  $(SUPPORTSRC0:%=gecode/support/%.cc)
+SUPPORTHDR  =  gecode/support.hh $(SUPPORTHDR0:%=gecode/support/%.hh) $(BUDDYHDR)
+SUPPORTOBJ  =  $(SUPPORTSRC1:%.cc=%$(OBJSUFFIX)) $(BUDDYOBJ)
+SUPPORTSRC  =  $(SUPPORTSRC1) $(BUDDYSRC)
 
 export SUPPORTDLL	= $(LIBPREFIX)@SUPPORT@$(DLLSUFFIX)
 export SUPPORTLIB	= $(LIBPREFIX)@SUPPORT@$(LIBSUFFIX)
@@ -138,7 +167,7 @@ export SUPPORTSONAME     =
 endif
 export SUPPORTSTATICLIB	= $(LIBPREFIX)@SUPPORT@$(STATICLIBSUFFIX)
 export LINKSUPPORT      = $(LINKPREFIX)@SUPPORT@$(LINKSUFFIX)
-SUPPORTBUILDDIRS = support
+SUPPORTBUILDDIRS = support support/buddy
 
 
 #
@@ -421,51 +450,6 @@ CPLTSETBUILDDIRS	=						\
 	cpltset/branch cpltset/manager
 
 #
-# BUDDY CPLTSET LIBRARY COMPONENTS
-#
-
-BUDDYSRC0 = \
-	bddio.c \
-	bddop.c \
-	bvec.c \
-	cache.c \
-	cppext.cc \
-	fdd.c \
-	imatrix.c \
-	kernel.c \
-	pairs.c \
-	prime.c \
-	reorder.c \
-	tree.c
-
-BUDDYHDR0 = \
-	bdd.h \
-	bddtree.h \
-	bvec.h \
-	cache.h \
-	fdd.h \
-	imatrix.h \
-	kernel.h \
-	prime.h
-
-BUDDYSRC = $(BUDDYSRC0:%=gecode/support/buddy/%)
-BUDDYHDR = $(BUDDYHDR0:%=gecode/support/buddy/%)
-BUDDYOBJ0 = $(BUDDYSRC:%.c=%$(OBJSUFFIX))
-BUDDYOBJ = $(BUDDYOBJ0:%.cc=%$(OBJSUFFIX))
-
-export BUDDYDLL		= $(LIBPREFIX)@BUDDY@$(DLLSUFFIX)
-export BUDDYLIB		= $(LIBPREFIX)@BUDDY@$(LIBSUFFIX)
-export BUDDYSTATICLIB	= $(LIBPREFIX)@BUDDY@$(STATICLIBSUFFIX)
-export LINKBUDDY      	= $(LINKPREFIX)@BUDDY@$(LINKSUFFIX)
-ifeq "@need_soname@" "yes"
-export BUDDYSONAME     = \
-	@WLSONAME@$(LIBPREFIX)@BUDDY@$(SOSUFFIX)
-else
-export BUDDYSONAME     = 
-endif
-BUDDYBUILDDIRS = support/buddy
-
-#
 # MINIMODEL COMPONENTS
 #
 
@@ -616,13 +600,13 @@ EXSUPPORTSBJ = $(EXSUPPORTSRC:%.cc=%$(SBJSUFFIX))
 
 ALLSRC = \
 	$(SUPPORTSRC) $(KERNELSRC) $(SEARCHSRC) $(INTSRC) $(SETSRC) \
-	$(BUDDYSRC) $(CPLTSETSRC) $(MMSRC) $(SERSRC) \
+	$(CPLTSETSRC) $(MMSRC) $(SERSRC) \
 	$(INTEXAMPLESRC) $(SETEXAMPLESRC) $(CPLTSETEXAMPLESRC) \
 	$(EXSUPPORTSRC)
 ALLVARIMP = $(INTVARIMP) $(SETVARIMP) $(CPLTSETVARIMP)
 ALLHDR = \
 	$(SUPPORTHDR) $(KERNELHDR) $(SEARCHHDR) $(INTHDR) $(SETHDR) \
-	$(BUDDYHDR) $(CPLTSETHDR) $(MMHDR) $(SERHDR) \
+	$(CPLTSETHDR) $(MMHDR) $(SERHDR) \
 	$(ITERHDR) $(ALLVARIMP)
 ALLOBJ0 = $(ALLSRC:%.cc=%$(OBJSUFFIX))
 ALLOBJ  = $(ALLOBJ0:%.c=%$(OBJSUFFIX))
@@ -631,28 +615,28 @@ ALLSBJ  = $(ALLSBJ0:%.c=%$(SBJSUFFIX))
 
 export LINKALL = \
 	$(LINKSUPPORT) $(LINKKERNEL) $(LINKSEARCH) $(LINKINT) $(LINKSET) \
-	$(LINKCPLTSET) $(LINKMM) $(LINKBUDDY) $(LINKSER) 
+	$(LINKCPLTSET) $(LINKMM) $(LINKSER) 
 
 ifeq "@BUILDDLL@" "yes"
 DLLTARGETS= \
 	$(SUPPORTDLL) $(KERNELDLL) $(SEARCHDLL) $(INTDLL) $(SETDLL) \
-	$(CPLTSETDLL) $(MMDLL) $(SERDLL) $(BUDDYDLL)
+	$(CPLTSETDLL) $(MMDLL) $(SERDLL)
 export ALLLIB = \
 	$(SUPPORTLIB) $(KERNELLIB) $(SEARCHLIB) $(INTLIB) $(SETLIB) \
-	$(CPLTSETLIB) $(MMLIB) $(SERLIB) $(BUDDYLIB)
+	$(CPLTSETLIB) $(MMLIB) $(SERLIB)
 else
 DLLTARGETS=
 export ALLLIB = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) $(CPLTSETSTATICLIB) \
-	$(MMSTATICLIB) $(SERSTATICLIB) $(BUDDYSTATICLIB)
+	$(MMSTATICLIB) $(SERSTATICLIB)
 endif
 
 ifeq "@BUILDSTATIC@" "yes"
 STATICTARGETS = \
 	$(SUPPORTSTATICLIB) $(KERNELSTATICLIB) $(SEARCHSTATICLIB) \
 	$(INTSTATICLIB) $(SETSTATICLIB) $(CPLTSETSTATICLIB) \
-	$(MMSTATICLIB) $(SERSTATICLIB) $(BUDDYSTATICLIB)
+	$(MMSTATICLIB) $(SERSTATICLIB)
 else
 STATICTARGETS=
 endif
@@ -730,7 +714,7 @@ BUILDDIRS = \
 	$(SUPPORTBUILDDIRS:%=gecode/%) \
 	$(KERNELBUILDDIRS:%=gecode/%) $(SEARCHBUILDDIRS:%=gecode/%) \
 	$(INTBUILDDIRS:%=gecode/%) $(SETBUILDDIRS:%=gecode/%) \
-	$(BUDDYBUILDDIRS:%=gecode/%) $(CPLTSETBUILDDIRS:%=gecode/%) \
+	$(CPLTSETBUILDDIRS:%=gecode/%) \
 	$(MMBUILDDIRS:%=gecode/%) $(EXAMPLEBUILDDIRS) $(TESTBUILDDIRS)
 
 ifeq "@enable_examples@" "yes"
@@ -830,6 +814,12 @@ gecode/support/%$(OBJSUFFIX): $(top_srcdir)/gecode/support/%.cc
 gecode/support/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SUPPORT_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
+gecode/support/%$(OBJSUFFIX): $(top_srcdir)/gecode/support/%.c
+	$(CC) $(CFLAGS) @GECODE_BUILD_SUPPORT_FLAG@ \
+	@COMPILEOBJ@$@ @CCIN@$<
+gecode/support/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/%.c
+	$(CC) $(CFLAGS) @GECODE_BUILD_SUPPORT_FLAG@ \
+	@COMPILESBJ@$@ @CCIN@$<
 
 gecode/kernel/%$(OBJSUFFIX): $(top_srcdir)/gecode/kernel/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_KERNEL_FLAG@ \
@@ -858,19 +848,6 @@ gecode/set/%$(OBJSUFFIX): $(top_srcdir)/gecode/set/%.cc
 gecode/set/%$(SBJSUFFIX): $(top_srcdir)/gecode/set/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_SET_FLAG@ \
 	@COMPILESBJ@$@ @CXXIN@$<
-
-gecode/support/buddy/%$(OBJSUFFIX): $(top_srcdir)/gecode/support/buddy/%.cc
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_BUDDY_FLAG@ \
-	@COMPILEOBJ@$@ @CXXIN@$<
-gecode/support/buddy/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/buddy/%.cc
-	$(CXX) $(CXXFLAGS) @GECODE_BUILD_BUDDY_FLAG@ \
-	@COMPILESBJ@$@ @CXXIN@$<
-gecode/support/buddy/%$(OBJSUFFIX): $(top_srcdir)/gecode/support/buddy/%.c
-	$(CC) $(CFLAGS) @GECODE_BUILD_BUDDY_FLAG@ \
-	@COMPILEOBJ@$@ @CCIN@$<
-gecode/support/buddy/%$(SBJSUFFIX): $(top_srcdir)/gecode/support/buddy/%.c
-	$(CC) $(CFLAGS) @GECODE_BUILD_BUDDY_FLAG@ \
-	@COMPILESBJ@$@ @CCIN@$<
 
 gecode/cpltset/%$(OBJSUFFIX): $(top_srcdir)/gecode/cpltset/%.cc
 	$(CXX) $(CXXFLAGS) @GECODE_BUILD_CPLTSET_FLAG@ \
@@ -939,21 +916,16 @@ $(INTDLL): $(INTOBJ) $(SUPPORTDLL) $(KERNELDLL)
 		@LINKOUTPUT@$(INTDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(SETDLL): $(SETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(BUDDYDLL)
+$(SETDLL): $(SETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(SETOBJ) $(SETSONAME) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKBUDDY) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
 		@LINKOUTPUT@$(SETDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(BUDDYDLL): $(BUDDYOBJ)
-	$(CXX) $(DLLFLAGS) $(BUDDYDLLFLAGS) $(BUDDYOBJ) $(BUDDYSONAME) \
-		@LINKOUTPUT@$(BUDDYDLL)
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
-	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
-$(CPLTSETDLL): $(CPLTSETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(BUDDYDLL)
+$(CPLTSETDLL): $(CPLTSETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL)
 	$(CXX) $(DLLFLAGS) $(CPLTSETOBJ) $(CPLTSETSONAME)  \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
-		$(LINKSET) $(LINKBUDDY)\
+		$(LINKSET)\
 		@LINKOUTPUT@$(CPLTSETDLL) 
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
@@ -966,7 +938,7 @@ $(MMDLL): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 $(SERDLL): $(SEROBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL)
 	$(CXX) $(DLLFLAGS) $(SEROBJ) $(SERSONAME) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
-		$(LINKSET) $(LINKBUDDY) $(BOOST_LINK) \
+		$(LINKSET) $(BOOST_LINK) \
 		@LINKOUTPUT@$(SERDLL)
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOLINKSUFFIX))
 	$(CREATELINK) $@ $(@:%$(DLLSUFFIX)=%$(SOSUFFIX))
@@ -986,16 +958,13 @@ $(INTDLL) $(INTLIB): $(INTOBJ) $(SUPPORTDLL) $(KERNELDLL)
 	$(CXX) $(DLLFLAGS) $(INTOBJ) \
 		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) \
 		@LINKOUTPUT@$(INTDLL)
-$(SETDLL) $(SETLIB): $(SETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(BUDDYDLL)
+$(SETDLL) $(SETLIB): $(SETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(SETOBJ) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKBUDDY) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) \
 		@LINKOUTPUT@$(SETDLL)
-$(BUDDYDLL) $(BUDDYLIB): $(BUDDYOBJ)
-	$(CXX) $(DLLFLAGS) $(BUDDYDLLFLAGS) $(BUDDYOBJ) \
-		@LINKOUTPUT@$(BUDDYDLL)
-$(CPLTSETDLL) $(CPLTSETLIB): $(CPLTSETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL) $(BUDDYDLL)
+$(CPLTSETDLL) $(CPLTSETLIB): $(CPLTSETOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL) $(SETDLL)
 	$(CXX) $(DLLFLAGS) $(CPLTSETOBJ) \
-		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKSET) $(LINKBUDDY) \
+		@DLLPATH@ $(LINKSUPPORT) $(LINKKERNEL) $(LINKINT) $(LINKSET) \
 		@LINKOUTPUT@$(CPLTSETDLL)
 $(MMDLL) $(MMLIB): $(MMOBJ) $(SUPPORTDLL) $(KERNELDLL) $(INTDLL)
 	$(CXX) $(DLLFLAGS) $(MMOBJ) \
@@ -1025,9 +994,6 @@ $(INTSTATICLIB): $(INTOBJ)
 	$(RANLIB) $@
 $(SETSTATICLIB): $(SETOBJ)
 	$(AR) $(ARFLAGS) $@ $(SETOBJ)
-	$(RANLIB) $@
-$(BUDDYSTATICLIB): $(BUDDYOBJ)
-	$(AR) $(ARFLAGS) $@ $(BUDDYOBJ)
 	$(RANLIB) $@
 $(CPLTSETSTATICLIB): $(CPLTSETOBJ)
 	$(AR) $(ARFLAGS) $@ $(CPLTSETOBJ)

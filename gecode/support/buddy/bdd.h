@@ -47,20 +47,20 @@
     (defined(__CYGWIN__) || defined(__MINGW32__) || defined(_MSC_VER))
 
 #ifdef GECODE_BUILD_BUDDY
-#define GECODE_BUDDY_EXPORT __declspec( dllexport )
+#define GECODE_SUPPORT_EXPORT __declspec( dllexport )
 #else
-#define GECODE_BUDDY_EXPORT __declspec( dllimport )
+#define GECODE_SUPPORT_EXPORT __declspec( dllimport )
 #endif
 
 #else
 
 #ifdef GCC_HASCLASSVISIBILITY
 
-#define GECODE_BUDDY_EXPORT __attribute__ ((visibility("default")))
+#define GECODE_SUPPORT_EXPORT __attribute__ ((visibility("default")))
 
 #else
 
-#define GECODE_BUDDY_EXPORT
+#define GECODE_SUPPORT_EXPORT
 
 #endif
 #endif
@@ -248,148 +248,148 @@ typedef int  (*bddsizehandler)(void);
 typedef void (*bddfilehandler)(FILE *, int);
 typedef void (*bddallsathandler)(char*, int);
    
-extern GECODE_BUDDY_EXPORT bddinthandler  bdd_error_hook(bddinthandler);
-extern GECODE_BUDDY_EXPORT bddgbchandler  bdd_gbc_hook(bddgbchandler);
-extern GECODE_BUDDY_EXPORT bdd2inthandler bdd_resize_hook(bdd2inthandler);
-extern GECODE_BUDDY_EXPORT bddinthandler  bdd_reorder_hook(bddinthandler);
-extern GECODE_BUDDY_EXPORT bddfilehandler bdd_file_hook(bddfilehandler);
+extern GECODE_SUPPORT_EXPORT bddinthandler  bdd_error_hook(bddinthandler);
+extern GECODE_SUPPORT_EXPORT bddgbchandler  bdd_gbc_hook(bddgbchandler);
+extern GECODE_SUPPORT_EXPORT bdd2inthandler bdd_resize_hook(bdd2inthandler);
+extern GECODE_SUPPORT_EXPORT bddinthandler  bdd_reorder_hook(bddinthandler);
+extern GECODE_SUPPORT_EXPORT bddfilehandler bdd_file_hook(bddfilehandler);
 
-extern GECODE_BUDDY_EXPORT int      bdd_init(int, int);
-extern GECODE_BUDDY_EXPORT void     bdd_done(void);
-extern GECODE_BUDDY_EXPORT int      bdd_setvarnum(int);
-extern GECODE_BUDDY_EXPORT int      bdd_extvarnum(int);
-extern GECODE_BUDDY_EXPORT int      bdd_isrunning(void);
-extern GECODE_BUDDY_EXPORT int      bdd_setmaxnodenum(int);
-extern GECODE_BUDDY_EXPORT int      bdd_setmaxincrease(int);
-extern GECODE_BUDDY_EXPORT int      bdd_setminfreenodes(int);
-extern GECODE_BUDDY_EXPORT int      bdd_getnodenum(void);
-extern GECODE_BUDDY_EXPORT int      bdd_getallocnum(void);
-extern GECODE_BUDDY_EXPORT char*    bdd_versionstr(void);
-extern GECODE_BUDDY_EXPORT int      bdd_versionnum(void);
-extern GECODE_BUDDY_EXPORT void     bdd_stats(bddStat *);
-extern GECODE_BUDDY_EXPORT void     bdd_cachestats(bddCacheStat *);
-extern GECODE_BUDDY_EXPORT void     bdd_fprintstat(FILE *);
-extern GECODE_BUDDY_EXPORT void     bdd_printstat(void);
-extern GECODE_BUDDY_EXPORT void     bdd_default_gbchandler(int, bddGbcStat *);
-extern GECODE_BUDDY_EXPORT void     bdd_default_errhandler(int);
-extern GECODE_BUDDY_EXPORT const char *bdd_errstring(int);
-extern GECODE_BUDDY_EXPORT void     bdd_clear_error(void);
+extern GECODE_SUPPORT_EXPORT int      bdd_init(int, int);
+extern GECODE_SUPPORT_EXPORT void     bdd_done(void);
+extern GECODE_SUPPORT_EXPORT int      bdd_setvarnum(int);
+extern GECODE_SUPPORT_EXPORT int      bdd_extvarnum(int);
+extern GECODE_SUPPORT_EXPORT int      bdd_isrunning(void);
+extern GECODE_SUPPORT_EXPORT int      bdd_setmaxnodenum(int);
+extern GECODE_SUPPORT_EXPORT int      bdd_setmaxincrease(int);
+extern GECODE_SUPPORT_EXPORT int      bdd_setminfreenodes(int);
+extern GECODE_SUPPORT_EXPORT int      bdd_getnodenum(void);
+extern GECODE_SUPPORT_EXPORT int      bdd_getallocnum(void);
+extern GECODE_SUPPORT_EXPORT char*    bdd_versionstr(void);
+extern GECODE_SUPPORT_EXPORT int      bdd_versionnum(void);
+extern GECODE_SUPPORT_EXPORT void     bdd_stats(bddStat *);
+extern GECODE_SUPPORT_EXPORT void     bdd_cachestats(bddCacheStat *);
+extern GECODE_SUPPORT_EXPORT void     bdd_fprintstat(FILE *);
+extern GECODE_SUPPORT_EXPORT void     bdd_printstat(void);
+extern GECODE_SUPPORT_EXPORT void     bdd_default_gbchandler(int, bddGbcStat *);
+extern GECODE_SUPPORT_EXPORT void     bdd_default_errhandler(int);
+extern GECODE_SUPPORT_EXPORT const char *bdd_errstring(int);
+extern GECODE_SUPPORT_EXPORT void     bdd_clear_error(void);
 #ifndef CPLUSPLUS
-extern GECODE_BUDDY_EXPORT BDD      bdd_true(void);
-extern GECODE_BUDDY_EXPORT BDD      bdd_false(void);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_true(void);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_false(void);
 #endif
-extern GECODE_BUDDY_EXPORT int      bdd_varnum(void);
-extern GECODE_BUDDY_EXPORT BDD      bdd_ithvar(int);
-extern GECODE_BUDDY_EXPORT BDD      bdd_nithvar(int);
-extern GECODE_BUDDY_EXPORT int      bdd_var(BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_low(BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_high(BDD);
-extern GECODE_BUDDY_EXPORT int      bdd_varlevel(int);
-extern GECODE_BUDDY_EXPORT BDD      bdd_addref(BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_delref(BDD);
-extern GECODE_BUDDY_EXPORT void     bdd_gbc(void);
-extern GECODE_BUDDY_EXPORT int      bdd_scanset(BDD, int**, int*);
-extern GECODE_BUDDY_EXPORT BDD      bdd_makeset(int *, int);
-extern GECODE_BUDDY_EXPORT bddPair* bdd_newpair(void);
-extern GECODE_BUDDY_EXPORT int      bdd_setpair(bddPair*, int, int);
-extern GECODE_BUDDY_EXPORT int      bdd_setpairs(bddPair*, int*, int*, int);
-extern GECODE_BUDDY_EXPORT int      bdd_setbddpair(bddPair*, int, BDD);
-extern GECODE_BUDDY_EXPORT int      bdd_setbddpairs(bddPair*, int*, BDD*, int);
-extern GECODE_BUDDY_EXPORT void     bdd_resetpair(bddPair *);
-extern GECODE_BUDDY_EXPORT void     bdd_freepair(bddPair*);
+extern GECODE_SUPPORT_EXPORT int      bdd_varnum(void);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_ithvar(int);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_nithvar(int);
+extern GECODE_SUPPORT_EXPORT int      bdd_var(BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_low(BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_high(BDD);
+extern GECODE_SUPPORT_EXPORT int      bdd_varlevel(int);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_addref(BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_delref(BDD);
+extern GECODE_SUPPORT_EXPORT void     bdd_gbc(void);
+extern GECODE_SUPPORT_EXPORT int      bdd_scanset(BDD, int**, int*);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_makeset(int *, int);
+extern GECODE_SUPPORT_EXPORT bddPair* bdd_newpair(void);
+extern GECODE_SUPPORT_EXPORT int      bdd_setpair(bddPair*, int, int);
+extern GECODE_SUPPORT_EXPORT int      bdd_setpairs(bddPair*, int*, int*, int);
+extern GECODE_SUPPORT_EXPORT int      bdd_setbddpair(bddPair*, int, BDD);
+extern GECODE_SUPPORT_EXPORT int      bdd_setbddpairs(bddPair*, int*, BDD*, int);
+extern GECODE_SUPPORT_EXPORT void     bdd_resetpair(bddPair *);
+extern GECODE_SUPPORT_EXPORT void     bdd_freepair(bddPair*);
 
   /* get marking info */
-extern GECODE_BUDDY_EXPORT void     bdd_mark_node(BDD);
-extern GECODE_BUDDY_EXPORT void     bdd_unmark_node(BDD);
-extern GECODE_BUDDY_EXPORT int      bdd_marked_node(BDD);
-extern GECODE_BUDDY_EXPORT int      bdd_level_node(BDD);
+extern GECODE_SUPPORT_EXPORT void     bdd_mark_node(BDD);
+extern GECODE_SUPPORT_EXPORT void     bdd_unmark_node(BDD);
+extern GECODE_SUPPORT_EXPORT int      bdd_marked_node(BDD);
+extern GECODE_SUPPORT_EXPORT int      bdd_level_node(BDD);
   /* set card info */
-extern GECODE_BUDDY_EXPORT void     bdd_set_card_lo(BDD b, int l);
-extern GECODE_BUDDY_EXPORT void     bdd_set_card_hi(BDD b, int h);
+extern GECODE_SUPPORT_EXPORT void     bdd_set_card_lo(BDD b, int l);
+extern GECODE_SUPPORT_EXPORT void     bdd_set_card_hi(BDD b, int h);
   /* get card info */
-extern GECODE_BUDDY_EXPORT int      bdd_card_lo(BDD b);
-extern GECODE_BUDDY_EXPORT int      bdd_card_hi(BDD b);
+extern GECODE_SUPPORT_EXPORT int      bdd_card_lo(BDD b);
+extern GECODE_SUPPORT_EXPORT int      bdd_card_hi(BDD b);
 
   /* In bddop.c */
 
-extern GECODE_BUDDY_EXPORT int      bdd_setcacheratio(int);
-extern GECODE_BUDDY_EXPORT BDD      bdd_buildcube(int, int, BDD *);
-extern GECODE_BUDDY_EXPORT BDD      bdd_ibuildcube(int, int, int *);
-extern GECODE_BUDDY_EXPORT BDD      bdd_not(BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_apply(BDD, BDD, int);
-extern GECODE_BUDDY_EXPORT BDD      bdd_and(BDD, BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_or(BDD, BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_xor(BDD, BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_imp(BDD, BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_biimp(BDD, BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_ite(BDD, BDD, BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_restrict(BDD, BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_constrain(BDD, BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_replace(BDD, bddPair*);
-extern GECODE_BUDDY_EXPORT BDD      bdd_compose(BDD, BDD, BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_veccompose(BDD, bddPair*);
-extern GECODE_BUDDY_EXPORT BDD      bdd_simplify(BDD, BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_exist(BDD, BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_forall(BDD, BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_unique(BDD, BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_appex(BDD, BDD, int, BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_appall(BDD, BDD, int, BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_appuni(BDD, BDD, int, BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_support(BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_satone(BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_satoneset(BDD, BDD, BDD);
-extern GECODE_BUDDY_EXPORT BDD      bdd_fullsatone(BDD);
-extern GECODE_BUDDY_EXPORT void     bdd_allsat(BDD r, bddallsathandler handler);
-extern GECODE_BUDDY_EXPORT double   bdd_satcount(BDD);
-extern GECODE_BUDDY_EXPORT double   bdd_satcountset(BDD, BDD);
-extern GECODE_BUDDY_EXPORT double   bdd_satcountln(BDD);
-extern GECODE_BUDDY_EXPORT double   bdd_satcountlnset(BDD, BDD);
-extern GECODE_BUDDY_EXPORT int      bdd_nodecount(BDD);
-extern GECODE_BUDDY_EXPORT int      bdd_anodecount(BDD *, int);
-extern GECODE_BUDDY_EXPORT int*     bdd_varprofile(BDD);
-extern GECODE_BUDDY_EXPORT double   bdd_pathcount(BDD);
+extern GECODE_SUPPORT_EXPORT int      bdd_setcacheratio(int);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_buildcube(int, int, BDD *);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_ibuildcube(int, int, int *);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_not(BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_apply(BDD, BDD, int);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_and(BDD, BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_or(BDD, BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_xor(BDD, BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_imp(BDD, BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_biimp(BDD, BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_ite(BDD, BDD, BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_restrict(BDD, BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_constrain(BDD, BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_replace(BDD, bddPair*);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_compose(BDD, BDD, BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_veccompose(BDD, bddPair*);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_simplify(BDD, BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_exist(BDD, BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_forall(BDD, BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_unique(BDD, BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_appex(BDD, BDD, int, BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_appall(BDD, BDD, int, BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_appuni(BDD, BDD, int, BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_support(BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_satone(BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_satoneset(BDD, BDD, BDD);
+extern GECODE_SUPPORT_EXPORT BDD      bdd_fullsatone(BDD);
+extern GECODE_SUPPORT_EXPORT void     bdd_allsat(BDD r, bddallsathandler handler);
+extern GECODE_SUPPORT_EXPORT double   bdd_satcount(BDD);
+extern GECODE_SUPPORT_EXPORT double   bdd_satcountset(BDD, BDD);
+extern GECODE_SUPPORT_EXPORT double   bdd_satcountln(BDD);
+extern GECODE_SUPPORT_EXPORT double   bdd_satcountlnset(BDD, BDD);
+extern GECODE_SUPPORT_EXPORT int      bdd_nodecount(BDD);
+extern GECODE_SUPPORT_EXPORT int      bdd_anodecount(BDD *, int);
+extern GECODE_SUPPORT_EXPORT int*     bdd_varprofile(BDD);
+extern GECODE_SUPPORT_EXPORT double   bdd_pathcount(BDD);
 
    
 /* In file "bddio.c" */
 
-extern GECODE_BUDDY_EXPORT void     bdd_printall(void);
-extern GECODE_BUDDY_EXPORT void     bdd_fprintall(FILE *);
-extern GECODE_BUDDY_EXPORT void     bdd_fprinttable(FILE *, BDD);
-extern GECODE_BUDDY_EXPORT void     bdd_printtable(BDD);
-extern GECODE_BUDDY_EXPORT void     bdd_fprintset(FILE *, BDD);
-extern GECODE_BUDDY_EXPORT void     bdd_printset(BDD);
-extern GECODE_BUDDY_EXPORT int      bdd_fnprintdot(char *, BDD);
-extern GECODE_BUDDY_EXPORT void     bdd_fprintdot(FILE *, BDD);
-extern GECODE_BUDDY_EXPORT void     bdd_printdot(BDD);
-extern GECODE_BUDDY_EXPORT int      bdd_fnsave(char *, BDD);
-extern GECODE_BUDDY_EXPORT int      bdd_save(FILE *, BDD);
-extern GECODE_BUDDY_EXPORT int      bdd_fnload(char *, BDD *);
-extern GECODE_BUDDY_EXPORT int      bdd_load(FILE *ifile, BDD *);
+extern GECODE_SUPPORT_EXPORT void     bdd_printall(void);
+extern GECODE_SUPPORT_EXPORT void     bdd_fprintall(FILE *);
+extern GECODE_SUPPORT_EXPORT void     bdd_fprinttable(FILE *, BDD);
+extern GECODE_SUPPORT_EXPORT void     bdd_printtable(BDD);
+extern GECODE_SUPPORT_EXPORT void     bdd_fprintset(FILE *, BDD);
+extern GECODE_SUPPORT_EXPORT void     bdd_printset(BDD);
+extern GECODE_SUPPORT_EXPORT int      bdd_fnprintdot(char *, BDD);
+extern GECODE_SUPPORT_EXPORT void     bdd_fprintdot(FILE *, BDD);
+extern GECODE_SUPPORT_EXPORT void     bdd_printdot(BDD);
+extern GECODE_SUPPORT_EXPORT int      bdd_fnsave(char *, BDD);
+extern GECODE_SUPPORT_EXPORT int      bdd_save(FILE *, BDD);
+extern GECODE_SUPPORT_EXPORT int      bdd_fnload(char *, BDD *);
+extern GECODE_SUPPORT_EXPORT int      bdd_load(FILE *ifile, BDD *);
 
 /* In file reorder.c */
 
-extern GECODE_BUDDY_EXPORT int      bdd_swapvar(int v1, int v2);
-extern GECODE_BUDDY_EXPORT void     bdd_default_reohandler(int);
-extern GECODE_BUDDY_EXPORT void     bdd_reorder(int);
-extern GECODE_BUDDY_EXPORT int      bdd_reorder_gain(void);
-extern GECODE_BUDDY_EXPORT bddsizehandler bdd_reorder_probe(bddsizehandler);
-extern GECODE_BUDDY_EXPORT void     bdd_clrvarblocks(void);
-extern GECODE_BUDDY_EXPORT int      bdd_addvarblock(BDD, int);
-extern GECODE_BUDDY_EXPORT int      bdd_intaddvarblock(int, int, int);
-extern GECODE_BUDDY_EXPORT void     bdd_varblockall(void);
-extern GECODE_BUDDY_EXPORT bddfilehandler bdd_blockfile_hook(bddfilehandler);
-extern GECODE_BUDDY_EXPORT int      bdd_autoreorder(int);
-extern GECODE_BUDDY_EXPORT int      bdd_autoreorder_times(int, int);
-extern GECODE_BUDDY_EXPORT int      bdd_var2level(int);
-extern GECODE_BUDDY_EXPORT int      bdd_level2var(int);
-extern GECODE_BUDDY_EXPORT int      bdd_getreorder_times(void);
-extern GECODE_BUDDY_EXPORT int      bdd_getreorder_method(void);
-extern GECODE_BUDDY_EXPORT void     bdd_enable_reorder(void);
-extern GECODE_BUDDY_EXPORT void     bdd_disable_reorder(void);
-extern GECODE_BUDDY_EXPORT int      bdd_reorder_verbose(int);
-extern GECODE_BUDDY_EXPORT void     bdd_setvarorder(int *);
-extern GECODE_BUDDY_EXPORT void     bdd_printorder(void);
-extern GECODE_BUDDY_EXPORT void     bdd_fprintorder(FILE *);
+extern GECODE_SUPPORT_EXPORT int      bdd_swapvar(int v1, int v2);
+extern GECODE_SUPPORT_EXPORT void     bdd_default_reohandler(int);
+extern GECODE_SUPPORT_EXPORT void     bdd_reorder(int);
+extern GECODE_SUPPORT_EXPORT int      bdd_reorder_gain(void);
+extern GECODE_SUPPORT_EXPORT bddsizehandler bdd_reorder_probe(bddsizehandler);
+extern GECODE_SUPPORT_EXPORT void     bdd_clrvarblocks(void);
+extern GECODE_SUPPORT_EXPORT int      bdd_addvarblock(BDD, int);
+extern GECODE_SUPPORT_EXPORT int      bdd_intaddvarblock(int, int, int);
+extern GECODE_SUPPORT_EXPORT void     bdd_varblockall(void);
+extern GECODE_SUPPORT_EXPORT bddfilehandler bdd_blockfile_hook(bddfilehandler);
+extern GECODE_SUPPORT_EXPORT int      bdd_autoreorder(int);
+extern GECODE_SUPPORT_EXPORT int      bdd_autoreorder_times(int, int);
+extern GECODE_SUPPORT_EXPORT int      bdd_var2level(int);
+extern GECODE_SUPPORT_EXPORT int      bdd_level2var(int);
+extern GECODE_SUPPORT_EXPORT int      bdd_getreorder_times(void);
+extern GECODE_SUPPORT_EXPORT int      bdd_getreorder_method(void);
+extern GECODE_SUPPORT_EXPORT void     bdd_enable_reorder(void);
+extern GECODE_SUPPORT_EXPORT void     bdd_disable_reorder(void);
+extern GECODE_SUPPORT_EXPORT int      bdd_reorder_verbose(int);
+extern GECODE_SUPPORT_EXPORT void     bdd_setvarorder(int *);
+extern GECODE_SUPPORT_EXPORT void     bdd_printorder(void);
+extern GECODE_SUPPORT_EXPORT void     bdd_fprintorder(FILE *);
 
 #ifdef CPLUSPLUS
 }
@@ -400,8 +400,8 @@ extern GECODE_BUDDY_EXPORT void     bdd_fprintorder(FILE *);
 
 #ifndef CPLUSPLUS
 
-extern GECODE_BUDDY_EXPORT const BDD bddfalse;
-extern GECODE_BUDDY_EXPORT const BDD bddtrue;
+extern GECODE_SUPPORT_EXPORT const BDD bddfalse;
+extern GECODE_SUPPORT_EXPORT const BDD bddtrue;
 
 #endif /* CPLUSPLUS */
 
@@ -474,7 +474,7 @@ class bdd {
 
    int id(void) const;
    
-   GECODE_BUDDY_EXPORT bdd operator=(const bdd &r);
+   GECODE_SUPPORT_EXPORT bdd operator=(const bdd &r);
    // declare own biimp operator % is almost <=>
    bdd operator%(const bdd &r) const;
    // end declare
@@ -503,8 +503,8 @@ private:
    bdd(BDD r) { bdd_addref(root=r); }
    bdd operator=(BDD r);
 
-   GECODE_BUDDY_EXPORT friend int      bdd_init(int, int);
-   GECODE_BUDDY_EXPORT friend int      bdd_setvarnum(int);
+   GECODE_SUPPORT_EXPORT friend int      bdd_init(int, int);
+   GECODE_SUPPORT_EXPORT friend int      bdd_setvarnum(int);
    friend bdd      bdd_true(void);
    friend bdd      bdd_false(void);
    friend bdd      bdd_ithvarpp(int);
@@ -606,15 +606,15 @@ private:
 
 /*=== BDD constants ====================================================*/
 
-extern GECODE_BUDDY_EXPORT const bdd bddfalsepp;
-extern GECODE_BUDDY_EXPORT const bdd bddtruepp;
+extern GECODE_SUPPORT_EXPORT const bdd bddfalsepp;
+extern GECODE_SUPPORT_EXPORT const bdd bddtruepp;
 
 #define bddtrue bddtruepp
 #define bddfalse bddfalsepp
 
 /*=== C++ interface ====================================================*/
 
-extern GECODE_BUDDY_EXPORT int bdd_cpp_init(int, int);
+extern GECODE_SUPPORT_EXPORT int bdd_cpp_init(int, int);
 
 
 
@@ -911,15 +911,15 @@ class bdd_ioformat {
 std::ostream &operator<<(std::ostream &, const bdd &);
 std::ostream &operator<<(std::ostream &, const bdd_ioformat &);
 
-extern GECODE_BUDDY_EXPORT bdd_ioformat bddset;
-extern GECODE_BUDDY_EXPORT bdd_ioformat bddtable;
-extern GECODE_BUDDY_EXPORT bdd_ioformat bdddot;
-extern GECODE_BUDDY_EXPORT bdd_ioformat bddall;
-extern GECODE_BUDDY_EXPORT bdd_ioformat fddset;
+extern GECODE_SUPPORT_EXPORT bdd_ioformat bddset;
+extern GECODE_SUPPORT_EXPORT bdd_ioformat bddtable;
+extern GECODE_SUPPORT_EXPORT bdd_ioformat bdddot;
+extern GECODE_SUPPORT_EXPORT bdd_ioformat bddall;
+extern GECODE_SUPPORT_EXPORT bdd_ioformat fddset;
 
 typedef void (*bddstrmhandler)(std::ostream &, int);
 
-extern GECODE_BUDDY_EXPORT bddstrmhandler bdd_strm_hook(bddstrmhandler);
+extern GECODE_SUPPORT_EXPORT bddstrmhandler bdd_strm_hook(bddstrmhandler);
 
 #endif /* CPLUSPLUS */
 

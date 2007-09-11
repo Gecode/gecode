@@ -511,8 +511,7 @@ AC_DEFUN([AC_GECODE_GCC_GENERAL_SWITCHES],
   AC_SUBST(SET,     "set")
   AC_SUBST(CPLTSET, "cpltset")
   AC_SUBST(MM,      "minimodel")
-  AC_SUBST(SER,     "serialization")
-  AC_SUBST(BUDDY,   "buddy")])
+  AC_SUBST(SER,     "serialization")])
 
 
 AC_DEFUN([AC_GECODE_GCC_OPTIMIZED_SWITCHES],
@@ -546,7 +545,6 @@ AC_DEFUN([AC_GECODE_NO_BUILDFLAGS],
    AC_SUBST(GECODE_BUILD_INT_FLAG, "")
    AC_SUBST(GECODE_BUILD_SET_FLAG, "")
    AC_SUBST(GECODE_BUILD_CPLTSET_FLAG, "")
-   AC_SUBST(GECODE_BUILD_BUDDY_FLAG, "")
    AC_SUBST(GECODE_BUILD_MINIMODEL_FLAG, "")
    AC_SUBST(GECODE_BUILD_SERIALIZATION_FLAG, "")])
 
@@ -557,7 +555,6 @@ AC_DEFUN([AC_GECODE_BUILDFLAGS],
    AC_SUBST(GECODE_BUILD_INT_FLAG, "-DGECODE_BUILD_INT")
    AC_SUBST(GECODE_BUILD_SET_FLAG, "-DGECODE_BUILD_SET")
    AC_SUBST(GECODE_BUILD_CPLTSET_FLAG, "-DGECODE_BUILD_CPLTSET")
-   AC_SUBST(GECODE_BUILD_BUDDY_FLAG, "-DGECODE_BUILD_BUDDY")
    AC_SUBST(GECODE_BUILD_MINIMODEL_FLAG, "-DGECODE_BUILD_MINIMODEL")
    AC_SUBST(GECODE_BUILD_SERIALIZATION_FLAG, "-DGECODE_BUILD_SERIALIZATION")])
 
@@ -568,11 +565,11 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
   case $host_os in
      darwin*)
        AC_SUBST(need_soname, "yes")
-       AC_GECODE_ADD_TO_DLLFLAGS("-dynamiclib")
+       AC_GECODE_ADD_TO_DLLFLAGS([-Wl,-single_module])
+			 AC_GECODE_ADD_TO_DLLFLAGS("-dynamiclib")
        AC_SUBST(DLLEXT, "${ac_gecode_soversion}.0.dylib")
        AC_SUBST(SOSUFFIX, ".${ac_gecode_soversion}.dylib")
        AC_SUBST(SOLINKSUFFIX, ".dylib")
-       AC_SUBST(BUDDYDLLFLAGS, ['-Wl,-single_module'])
        AC_SUBST(sharedlibdir, "${libdir}")
        AC_SUBST(WLSONAME, "-compatibility_version ${ac_gecode_soversion}.0 -current_version ${ac_gecode_soversion}.0 -install_name ${libdir}/")
        AC_GECODE_NO_BUILDFLAGS
@@ -584,7 +581,6 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
          AC_MSG_ERROR([Only either static or shared libraries can be built.])
        fi
        AC_GECODE_ADD_TO_DLLFLAGS("-shared")
-       AC_SUBST(BUDDYDLLFLAGS, "")
        AC_SUBST(DLLEXT, "dll")
        AC_SUBST(SOSUFFIX, "")
        AC_SUBST(SOLINKSUFFIX, "")
@@ -599,7 +595,6 @@ AC_DEFUN([AC_GECODE_UNIX_PATHS],
      *)
        AC_SUBST(need_soname, "yes")
        AC_GECODE_ADD_TO_DLLFLAGS("-shared")
-       AC_SUBST(BUDDYDLLFLAGS, "")
        AC_SUBST(DLLEXT, "so.${ac_gecode_soversion}.0")
        AC_SUBST(SOSUFFIX, ".so.${ac_gecode_soversion}")
        AC_SUBST(SOLINKSUFFIX, ".so")
@@ -640,7 +635,6 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   dnl linker flags
   AC_GECODE_ADD_TO_LDFLAGS([-link])
   AC_SUBST(DLLPATH, "")
-  AC_SUBST(BUDDYDLLFLAGS, "")
 
   dnl file extensions
   AC_SUBST(SBJEXT, "sbj")
@@ -685,8 +679,7 @@ AC_DEFUN([AC_GECODE_MSVC_SWITCHES],
   AC_SUBST(SET,     "Set")
   AC_SUBST(CPLTSET, "CpltSet")
   AC_SUBST(MM,      "Minimodel")
-  AC_SUBST(SER,     "Serialization")
-  AC_SUBST(BUDDY,   "Buddy")])
+  AC_SUBST(SER,     "Serialization")])
 
 dnl Macro:
 dnl   AC_GECODE_DOC_SWITCHES
