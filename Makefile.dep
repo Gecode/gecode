@@ -65,18 +65,7 @@ gecode/kernel/memory-manager$(OBJSUFFIX) gecode/kernel/memory-manager$(SBJSUFFIX
 	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
 	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
 	./gecode/vti.icc 
-gecode/kernel/reflection$(OBJSUFFIX) gecode/kernel/reflection$(SBJSUFFIX): \
-	./gecode/config.hh ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
-	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \
-	./gecode/kernel/exception.icc ./gecode/kernel/macros.icc ./gecode/kernel/memory-manager.icc \
-	./gecode/kernel/modevent.icc ./gecode/kernel/propagator.icc ./gecode/kernel/reflection.icc \
-	./gecode/kernel/var.icc ./gecode/kernel/varmap.icc ./gecode/kernel/view.icc \
-	./gecode/support.hh ./gecode/support/block-allocator.icc ./gecode/support/cast.icc \
-	./gecode/support/dynamic-array.icc ./gecode/support/dynamic-stack.icc ./gecode/support/exception.icc \
-	./gecode/support/map.icc ./gecode/support/memory.icc ./gecode/support/random.icc \
-	./gecode/support/search.icc ./gecode/support/sentinel-stack.icc ./gecode/support/sort.icc \
-	./gecode/support/static-pqueue.icc ./gecode/support/static-stack.icc ./gecode/support/symbol.icc \
-	./gecode/vti.icc 
+gecode/kernel/reflection$(OBJSUFFIX) gecode/kernel/reflection$(SBJSUFFIX): 
 gecode/kernel/varmap$(OBJSUFFIX) gecode/kernel/varmap$(SBJSUFFIX): \
 	./gecode/config.hh ./gecode/kernel.hh ./gecode/kernel/advisor.icc \
 	./gecode/kernel/array.icc ./gecode/kernel/branching.icc ./gecode/kernel/core.icc \

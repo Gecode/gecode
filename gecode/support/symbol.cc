@@ -46,8 +46,7 @@ namespace Gecode { namespace Support {
   char*
   Symbol::SO::strdup(const char* s) {
     unsigned int n = strlen(s);
-    //    char* d = static_cast<char*>(Memory::malloc(sizeof(char)*n));
-    char* d = static_cast<char*>(::malloc(sizeof(char)*n));
+    char* d = static_cast<char*>(Memory::malloc(sizeof(char)*n));
     for (unsigned int i=n+1; i--; )
       d[i]=s[i];
     return d;
@@ -111,7 +110,7 @@ namespace Gecode { namespace Support {
 
   Symbol::SO::~SO(void) {
     if (own)
-      ::free(const_cast<char*>(s));
+      Memory::free(const_cast<char*>(s));
     if (next && next->cancel())
       delete next;
   }

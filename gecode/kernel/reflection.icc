@@ -37,7 +37,6 @@
 
 #include <iostream>
 #include <cstring>
-#include <vector>
 
 namespace Gecode { namespace Reflection {
   

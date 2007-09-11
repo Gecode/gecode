@@ -35,8 +35,6 @@
  *
  */
 
-#include "gecode/kernel.hh"
-
 namespace Gecode { namespace Reflection {
 
   // Registry
