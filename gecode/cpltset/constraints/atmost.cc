@@ -41,8 +41,6 @@ using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
-
-
   void
   exactly(Space* home, CpltSetVar x, IntSet& is, int c) {
     if (home->failed()) return;
@@ -108,7 +106,7 @@ namespace Gecode {
     bdd d = cardConst(xtab, xoff, xmin, c, c, si);
     // std::cerr << "exactly: tell...";
     // GECODE_ME_FAIL(home, bv[0].tell_formula(home, d));
-    GECODE_ES_FAIL(home, UnaryBddProp<CpltSetView>::post(home, bv[0], d));
+    GECODE_ES_FAIL(home, UnaryCpltSetPropagator<CpltSetView>::post(home, bv[0], d));
     // std::cerr << "TELL-OK\n";
 
   }
@@ -135,7 +133,7 @@ namespace Gecode {
 
     //GECODE_ME_FAIL(home, bv[0].tell_formula(home, d));
 
-    GECODE_ES_FAIL(home, UnaryBddProp<CpltSetView>::post(home, bv[0], d));
+    GECODE_ES_FAIL(home, UnaryCpltSetPropagator<CpltSetView>::post(home, bv[0], d));
 
   }
 

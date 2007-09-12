@@ -68,34 +68,6 @@ namespace Gecode {
     virtual size_t dispose(Space* home);
   };
 
-  /**
-   * \brief Inhomogeneous (2*n)-ary propagator
-   *
-   * Stores array of views of type \a View0 with propagation condition \a pc0
-   * and arry of views of type \a View1 with propagation condition \a pc1.
-   */
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
-  class MixNaryTwicePropagator : public Propagator {
-  protected:
-    /// Array of views with View0
-    ViewArray<View0> x;
-    /// Array of views with View1
-    ViewArray<View1> y;
-    /// Constructor for cloning \a p
-    MixNaryTwicePropagator(Space* home, bool share, 
-                           MixNaryTwicePropagator& p);
-    /// Constructor for creation
-    MixNaryTwicePropagator(Space* home, ViewArray<View0>& x, ViewArray<View1>& y);
-    /// Constructor for rewriting \a p during cloning
-    MixNaryTwicePropagator(Space* home, bool share, Propagator& p, 
-                           ViewArray<View0>& x, ViewArray<View1>& y);
-  public:
-    /// Cost function (defined as dynamic PC_LINEAR_LO)
-    virtual PropCost cost(void) const;
-    /// Delete propagator and return its size
-    virtual size_t dispose(Space* home);
-  };
-
   //@}
 
   /*
@@ -149,56 +121,6 @@ namespace Gecode {
     (void) Propagator::dispose(home);
     return sizeof(*this);
   }
-
-
-  /*
-   * InhomNaryTwice (two arrays with two different views) propagators
-   *
-   */
-
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
-  MixNaryTwicePropagator<View0,pc0,View1,pc1>::MixNaryTwicePropagator
-  (Space* home, ViewArray<View0>& x0, ViewArray<View1>& y0)
-    : Propagator(home), x(x0), y(y0) {
-    x.subscribe(home, this, pc0);
-    y.subscribe(home, this, pc1);
-  }
-
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
-  forceinline
-  MixNaryTwicePropagator<View0,pc0,View1,pc1>::MixNaryTwicePropagator
-  (Space* home, bool share, MixNaryTwicePropagator<View0,pc0,View1,pc1>& p)
-    : Propagator(home, share, p) {
-    x.update(home,share,p.x);
-    y.update(home,share,p.y);
-  }
-
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
-  forceinline
-  MixNaryTwicePropagator<View0,pc0,View1,pc1>::MixNaryTwicePropagator
-  (Space* home, bool share, Propagator& p, ViewArray<View0>& x0, ViewArray<View1>&  y0)
-    : Propagator(home,share,p) {
-    x.update(home,share,x0);
-    y.update(home,share,y0);
-  }
-
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
-  PropCost
-  MixNaryTwicePropagator<View0,pc0,View1,pc1>::cost(void) const {
-    return cost_lo(2 * x.size(), PC_LINEAR_HI);
-  }
-
-  template <class View0, PropCond pc0, class View1, PropCond pc1>
-  size_t
-  MixNaryTwicePropagator<View0,pc0,View1,pc1>::dispose(Space* home) {
-    if (!home->failed()) {
-      x.cancel(home,this,pc0);
-      y.cancel(home,this,pc1);
-    }
-    (void) Propagator::dispose(home);
-    return sizeof(*this);
-  }
-
 
 }
 

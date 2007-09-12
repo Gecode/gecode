@@ -37,6 +37,149 @@
 
 namespace Gecode { namespace CpltSet {
 
+  /*
+   * Range Propagators
+   *
+   */
+
+  template <class View0, class View1>
+  ExecStatus
+  Range<View0, View1>::divide_conquer(Space* home, bdd& p, 
+                                      int l, int r, int ypos, int zpos) {
+    if (l == r) {
+      ModEvent me = ME_CPLTSET_NONE;
+      if (l == ypos) {
+        me  = y.tell_formula(home, p);
+      } else {
+        if (l == zpos) {
+          me = z.tell_formula(home, p);
+        } else {
+          me = x[l].tell_formula(home, p);
+        }
+      }
+      if (me_failed(me)) {
+        return ES_FAILED;
+      }
+      return ES_OK;
+    }
+    int h = (r + l) / 2;
+
+    // computing psi without recursion
+    bdd left = p;
+    for (int i = r; i >= h + 1; i--) {
+      if (i == zpos) {
+        quantify(left, z);
+      } else {
+        if (i == ypos) {
+          quantify(left, y);
+        } else {
+          quantify(left, x[i]);
+        }
+      }
+    }
+   
+    ExecStatus es = ES_OK;
+    GECODE_ES_CHECK(es = divide_conquer(home, left, l, h, ypos, zpos));
+
+    bdd right = p;
+    for (int i = h; i >= l; i-- ) {
+      if (i == zpos) {
+        quantify(right, z);
+      } else {
+        if (i == ypos) {
+          quantify(right, y);
+        } else {
+          quantify(right, x[i]);
+        }
+      }
+    }
+
+    GECODE_ES_CHECK(es = divide_conquer(home, right, h + 1, r , ypos, zpos));
+    return es;
+  }
+  
+  template <class View0, class View1>
+  forceinline
+  Range<View0, View1>::Range(Space* home, ViewArray<View0>& x, 
+                             View1& y, View1& z, bdd& d0)
+    : MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, x, y, z), 
+      d(d0) {
+    MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::force(home);
+  }
+
+  template <class View0, class View1>
+  forceinline
+  Range<View0, View1>::Range(Space* home, bool share, Range& p)
+    : MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, share, p), 
+      d(p.d) {}
+
+  template <class View0, class View1>
+  forceinline ExecStatus
+  Range<View0, View1>::post(Space* home, ViewArray<View0>& x, 
+                            View1& y, View1& z, bdd& d0) {
+    (void) new (home) Range(home, x, y, z, d0);
+    return ES_OK;
+  }
+
+  template <class View0, class View1>
+  Support::Symbol
+  Range<View0, View1>::name(void) {
+    return Reflection::mangle<View0,View1>("CpltSet::Range");
+  }
+
+  template <class View0, class View1>
+  Reflection::ActorSpec&
+  Range<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
+    throw Reflection::ReflectionException("Not implemented");
+  } 
+
+  template <class View0, class View1>
+  forceinline Actor*
+  Range<View0, View1>::copy(Space* home, bool share) {
+    return new (home) Range(home, share, *this);
+  }
+  
+  template <class View0, class View1>
+  forceinline ExecStatus 
+  Range<View0, View1>::propagate(Space* home) {
+    bool assigned = true;
+    int n = x.size();
+    ExecStatus es = ES_OK;
+    int ypos = n;
+    int zpos = n + 1;
+
+    GECODE_ES_CHECK(es = divide_conquer(home, d, 0, n + 1, ypos, zpos));
+
+    assigned = true;
+    for (int i = x.size(); i--; ) {
+      assigned &= x[i].assigned();
+    }
+    if (assigned) {
+      return ES_SUBSUMED(this, home);
+    }
+
+    return ES_FIX;
+  }
+
+  template <class View0, class View1>
+  size_t
+  Range<View0, View1>::dispose(Space* home) {
+    MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::unforce(home);
+    if (!home->failed()) {
+      x.cancel(home, this, PC_CPLTSET_DOM);
+      y.cancel(home, this, PC_CPLTSET_DOM);
+      z.cancel(home, this, PC_CPLTSET_DOM);
+    }
+    manager.dispose(d);
+    MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::dispose(home);
+    return sizeof(*this);
+  }
+
+  /*
+   * Posting functions
+   *
+   */
+
   /// Constructs \a d0 as the bdd representing the Range constraint for the given variables
   template <class View0, class View1>
   forceinline void
@@ -45,7 +188,7 @@ namespace Gecode { namespace CpltSet {
 
     if (home->failed()) return;
     int n = seq.size();
-    
+
     unsigned int xrange = seq[0].table_width();
     int xmax            = seq[0].mgr_max();
     int xmin            = seq[0].mgr_min();
@@ -64,52 +207,7 @@ namespace Gecode { namespace CpltSet {
 
     GECODE_ME_FAIL(home, unionview.intersect(home, xmin, xmax));
 
-//     if (unionview.mgr_min() < xmin) {
-//       int a = unionview.mgr_min();
-//       int b = xmin - 1;
-//       GECODE_ME_FAIL(home, unionview.exclude(home, a, b));
-//     }
-
-//     if (unionview.mgr_max() > xmax) {
-//       int a = xmax + 1;
-//       int b = unionview.mgr_max();
-//       GECODE_ME_FAIL(home, unionview.exclude(home, a, b));
-//     }
-
-    // std::cout << "X("<<xmin << ".." << xmax <<")[" << xrange << "]\n";
-
     int unionmin = unionview.mgr_min();
-//     int unionmax = unionview.mgr_max();
-
-//     if (unionview.assigned()) {
-//       xmin = unionview.glbMin();
-//       xmax = unionview.glbMax();
-//       xrange = xmax - xmin + 1;
-//     } else {
-//       if (unionmin < xmin) { xmin = unionmin; }
-//       if (unionmax < xmax) { xmax = unionmax; }
-//       if (unionview.table_width() > xrange) {
-//         xrange = unionview.table_width();
-//       }
-//     }
-//     std::cout << "U("<<unionmin << ".." << unionmax <<")["<<unionview.table_width() << "]\n";
-//     std::cout << "changed \n";
-//     std::cout << "X("<<xmin << ".." << xmax <<")[" << xrange << "]\n";
-
-
-//     int unionshift = 0;
-//     if (unionview.mgr_min() < xmin) {
-//       unionshift = xmin - unionview.mgr_min();
-//       int a = unionview.mgr_min();
-//       int b = xmin - 1;
-//       GECODE_ME_FAIL(home, unionview.exclude(home, a, b));
-//     }
-
-//     if (unionview.mgr_max() > xmax) {
-//       int a = xmax + 1;
-//       int b = unionview.mgr_max();
-//       GECODE_ME_FAIL(home, unionview.exclude(home, a, b));
-//     }
 
     // restrict selector variable s to be \f$ s\subseteq \{0, n - 1\}\f$
     Iter::Ranges::Singleton idx(0, n - 1);
@@ -174,10 +272,6 @@ namespace Gecode { namespace CpltSet {
       d0 &= unionview.bdd_domain();
     }
 
-//     std::cout << "d0 = ";
-//     selview.manager()->bdd2dot(d0);
-//     std::cout << "\n";
-//     std::cout << "buildRange size = " << selview.manager()->bddsize(d0) << "\n";
   }
 
   template <class View0, class View1>
@@ -212,7 +306,7 @@ namespace Gecode { namespace CpltSet {
 
     range_post(home, sbv, selview, unionview);
   }
-
+    
   /// Constructs \a d0 as the bdd representing the Roots constraint for the given variables
   template <class View0, class View1>
   forceinline void
@@ -326,8 +420,8 @@ namespace Gecode { namespace CpltSet {
 //       sbv[i].init(mgr, rmin, rmax, iv[i]);
       sbv[i].init(iv[i].min(), iv[i].max(), iv[i]);
     }
-    
-    
+
+
     // do ordering
     ViewArray<CpltSetView> vars(home, allvars.size());
     for (int i = allvars.size(); i--; ) {
@@ -336,165 +430,8 @@ namespace Gecode { namespace CpltSet {
 
     variableorder(vars, sbv);
     roots_post(home, sbv, selview, unionview);
-    
+
   }
-
-
-  /*
-   * Range Propagators
-   *
-   */
-
-  template <class View0, class View1>
-  forceinline
-  Range<View0, View1>::Range(Space* home, ViewArray<View0>& x, 
-                             View1& y, View1& z, bdd& d0)
-    : MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, x, y, z), 
-      d(d0) {
-    MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::force(home);
-  }
-
-  template <class View0, class View1>
-  forceinline
-  Range<View0, View1>::Range(Space* home, bool share, Range& p)
-    : MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, share, p), 
-      d(p.d) {}
-
-  template <class View0, class View1>
-  forceinline ExecStatus
-  Range<View0, View1>::post(Space* home, ViewArray<View0>& x, 
-                            View1& y, View1& z, bdd& d0) {
-    (void) new (home) Range(home, x, y, z, d0);
-    return ES_OK;
-  }
-
-  template <class View0, class View1>
-  Support::Symbol
-  Range<View0, View1>::name(void) {
-    return Reflection::mangle<View0,View1>("CpltSet::Range");
-  }
-
-  template <class View0, class View1>
-  Reflection::ActorSpec&
-  Range<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
-    throw Reflection::ReflectionException("Not implemented");
-  } 
-
-  template <class View0, class View1>
-  forceinline Actor*
-  Range<View0, View1>::copy(Space* home, bool share) {
-    return new (home) Range(home, share, *this);
-  }
-  
-  template <class View0, class View1>
-  forceinline ExecStatus 
-  Range<View0, View1>::propagate(Space* home) {
-    bool assigned = true;
-    int n = x.size();
-    ExecStatus es = ES_OK;
-    int ypos = n;
-    int zpos = n + 1;
-
-    GECODE_ES_CHECK(es = divide_conquer(home, d, 0, n + 1, ypos, zpos));
-
-    assigned = true;
-    for (int i = x.size(); i--; ) {
-      assigned &= x[i].assigned();
-    }
-    if (assigned) {
-      return ES_SUBSUMED(this, home);
-    }
-
-    return ES_FIX;
-  }
-
-  template <class View0, class View1>
-  size_t
-  Range<View0, View1>::dispose(Space* home) {
-    MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::unforce(home);
-    if (!home->failed()) {
-      x.cancel(home, this, PC_CPLTSET_DOM);
-      y.cancel(home, this, PC_CPLTSET_DOM);
-      z.cancel(home, this, PC_CPLTSET_DOM);
-    }
-    manager.dispose(d);
-    MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::dispose(home);
-    return sizeof(*this);
-  }
-
-
-  template <class View0, class View1>
-  forceinline
-  RangeTwice<View0, View1>::RangeTwice(Space* home, ViewArray<View0>& x, 
-                                       ViewArray<View1>& y, bdd& d0)
-    : MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, x, y), 
-      d(d0) {
-    MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::force(home);
-  }
-
-  template <class View0, class View1>
-  forceinline
-  RangeTwice<View0, View1>::RangeTwice(Space* home, bool share, RangeTwice& p)
-    : MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, share, p), 
-      d(p.d) {
-    MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::force(home);
-  }
-
-  template <class View0, class View1>
-  forceinline ExecStatus
-  RangeTwice<View0, View1>::post(Space* home, ViewArray<View0>& x, ViewArray<View1>& y,
-                                 bdd& d0) {
-    (void) new (home) RangeTwice(home, x, y, d0);
-    return ES_OK;
-  }
-
-  template <class View0, class View1>
-  forceinline Actor*
-  RangeTwice<View0, View1>::copy(Space* home, bool share) {
-    return new (home) RangeTwice(home, share, *this);
-  }
-  
-  template <class View0, class View1>
-  forceinline ExecStatus 
-  RangeTwice<View0, View1>::propagate(Space* home) {
-    bool assigned = true;
-    int n = x.size();
-    ExecStatus es = ES_OK;
-    int ypos = n;
-
-    GECODE_ES_CHECK(es = divide_conquer(home, d, 0, 2 * n, ypos));
-
-    assigned = true;
-    for (int i = n; i--; ) {
-      assigned &= x[i].assigned();
-      assigned &= y[i].assigned();
-    }
-
-    if (assigned) {
-      return ES_SUBSUMED(this, home);
-    }
-
-    return ES_FIX;
-  }
-
-  template <class View0, class View1>
-  size_t
-  RangeTwice<View0, View1>::dispose(Space* home) {
-    MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::unforce(home);
-    if (!home->failed()) {
-      x.cancel(home, this, PC_CPLTSET_DOM);
-      y.cancel(home, this, PC_CPLTSET_DOM);
-    }
-    manager.dispose(d);
-    MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::dispose(home);
-    return sizeof(*this);
-  }
-
-
-  /*
-   * Posting functions
-   *
-   */
 
   template <class View0, class View1>
   forceinline void 
@@ -589,30 +526,10 @@ namespace Gecode { namespace CpltSet {
       r0 &= (unionviewprime.getbdd(i)) >>= (unionview.getbdd(i));
     }
     std::cout << "subset ok\n";
-
-//     std::cout << "join ranges\n";
-//     d0 &= e0;
-//     std::cout << "joining done\n";
-
-//     ViewArray<View0> intsetviews(home, 2 * n);
-//     for (int i = 0; i < n; i++) {
-//       intsetviews[i] = seq[i];
-//       intsetviews[i + n] = seqprime[i];
-//     }
-
-//     ViewArray<View1> setviews(home, 4);
-//     setviews[0] = selview;
-//     setviews[1] = unionview;
-//     setviews[2] = selviewprime;
-//     setviews[3] = unionviewprime;
-
-//     std::cout << "post\n";
-//     GECODE_ES_FAIL(home, (RangeTwice<View0, View1>::post(home, intsetviews, setviews, d0)));
-
     
    GECODE_ES_FAIL(home, (Range<View0, View1>::post(home, seq, selview, unionview, d0)));
    GECODE_ES_FAIL(home, (Range<View0, View1>::post(home, seqprime, selviewprime, unionviewprime, e0)));
-   GECODE_ES_FAIL(home, (BinBddProp<View1>::post(home, unionview, unionviewprime, r0)));
+   GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View1,View1>::post(home, unionview, unionviewprime, r0)));
        
   }
 

@@ -58,7 +58,7 @@ namespace Gecode {
       }
     } 
 
-    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0));
+    GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
   }
 }
 

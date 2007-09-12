@@ -266,7 +266,7 @@ namespace Gecode {
     }
 
     // std::cerr << "start propagation\n";
-    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0));
+    GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
   }
 
   template <class View>
@@ -285,7 +285,7 @@ namespace Gecode {
       naryone[i] = x[i]; 
     naryone[n] = y;
 
-    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, naryone, d0));
+    GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, naryone, d0));
   }
 
   template <class View0, class View1>
@@ -297,7 +297,7 @@ namespace Gecode {
     bdd d0 = bdd_true();     
     build_partition(x, y, d0);
 
-    GECODE_ES_FAIL(home, (NaryOneBdd<View0, View1>::post(home, x, y, d0)));
+    GECODE_ES_FAIL(home, (NaryOneCpltSetPropagator<View0, View1>::post(home, x, y, d0)));
   }
 
   template <class View>
@@ -389,7 +389,7 @@ namespace Gecode {
       }
       
       // std::cerr << "start propagation\n";
-      GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0));
+      GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
   }
 
   template <class Rel>

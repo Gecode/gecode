@@ -101,7 +101,7 @@ namespace Gecode {
       }
     }
 
-    GECODE_ES_FAIL(home, (BinBddProp<View>::post(home, x, y, d0)));
+    GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
   }
 
   template <class View>
@@ -170,7 +170,7 @@ namespace Gecode {
             d0 &= (!(x.getbdd(v - minx) & y.getbdd(v - miny)));
           }
         }
-        GECODE_ES_FAIL(home, (BinRelDisj<View>::post(home, x, y, d0)));
+        GECODE_ES_FAIL(home, (BinRelDisj<View,View>::post(home, x, y, d0)));
         return;
       }
       break;
@@ -221,7 +221,7 @@ namespace Gecode {
       }
     }
 
-    GECODE_ES_FAIL(home, (BinBddProp<View>::post(home, x, y, d0)));
+    GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
   }
 
   template <class View0, class View1>
@@ -269,7 +269,7 @@ namespace Gecode {
       }
     }
 
-    GECODE_ES_FAIL(home, (Bin<View0, View1>::post(home, x, s, d0)));
+    GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View0, View1>::post(home, x, s, d0)));
   }
 
 
@@ -351,7 +351,7 @@ namespace Gecode {
       }
     }
 
-    GECODE_ES_FAIL(home, (Bin<View0, View1>::post(home, x, s, d0)));
+    GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View0, View1>::post(home, x, s, d0)));
   }
 
   // BddOp and BddRel
@@ -404,7 +404,7 @@ namespace Gecode {
       }
     }
     
-    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0));
+    GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
   }
   
   // SetOp and BddRel
@@ -473,7 +473,7 @@ namespace Gecode {
         }
       }
     }
-    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0));
+    GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
   }
 
 

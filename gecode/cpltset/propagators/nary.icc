@@ -38,7 +38,7 @@
 namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline bdd 
-  NaryBddProp<View>::bnd_phi(int j) {
+  NaryCpltSetPropagator<View>::bnd_phi(int j) {
     // std::cout << "bnd_phi\n";
     /// \f$ B(c)\f$
     if (j == -1) {
@@ -66,7 +66,7 @@ namespace Gecode { namespace CpltSet {
   // used in eeq propagation with n*n and-abstractions
   template <class View>
   forceinline bdd 
-  NaryBddProp<View>::phi(int i, int j) {
+  NaryCpltSetPropagator<View>::phi(int i, int j) {
     /// \f$ B(c)\f$
     if (j == -1) {
       return d;
@@ -91,7 +91,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline
-  NaryBddProp<View>::NaryBddProp(Space* home, ViewArray<View>& x0,
+  NaryCpltSetPropagator<View>::NaryCpltSetPropagator(Space* home, ViewArray<View>& x0,
                                  bdd& d0)
     : Propagator(home), x(x0), d(d0) {
     force(home);
@@ -102,7 +102,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline
-  NaryBddProp<View>::NaryBddProp(Space* home, bool share, NaryBddProp& p)
+  NaryCpltSetPropagator<View>::NaryCpltSetPropagator(Space* home, bool share, NaryCpltSetPropagator& p)
     : Propagator(home,share,p) {
     d = p.d;
     x.update(home,share,p.x);
@@ -110,7 +110,7 @@ namespace Gecode { namespace CpltSet {
   
   template <class View>
   forceinline PropCost
-  NaryBddProp<View>::cost(void) const {
+  NaryCpltSetPropagator<View>::cost(void) const {
 //     if (x.size() == 1) {
 //       // std::cout << "unary low card cost\n";
 //       return PC_UNARY_LO;
@@ -120,19 +120,19 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   Support::Symbol
-  NaryBddProp<View>::name(void) {
-    return Reflection::mangle<View>("CpltSet::NaryBddProp");
+  NaryCpltSetPropagator<View>::name(void) {
+    return Reflection::mangle<View>("CpltSet::NaryCpltSetPropagator");
   }
 
   template <class View>
   Reflection::ActorSpec&
-  NaryBddProp<View>::spec(Space* home, Reflection::VarMap& m) {
+  NaryCpltSetPropagator<View>::spec(Space* home, Reflection::VarMap& m) {
     throw Reflection::ReflectionException("Not implemented");
   } 
  
   template <class View>
   size_t
-  NaryBddProp<View>::dispose(Space* home) {
+  NaryCpltSetPropagator<View>::dispose(Space* home) {
     unforce(home);
     // std::cout << "dispose propagator\n";
     if (!home->failed()) {
@@ -147,20 +147,20 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline ExecStatus
-  NaryBddProp<View>::post(Space* home, ViewArray<View>& x, bdd& d) {
-    (void) new (home) NaryBddProp(home,x, d);
+  NaryCpltSetPropagator<View>::post(Space* home, ViewArray<View>& x, bdd& d) {
+    (void) new (home) NaryCpltSetPropagator(home,x, d);
     return ES_OK;
   }
 
   template <class View>
   forceinline Actor*
-  NaryBddProp<View>::copy(Space* home, bool share) {
-    return new (home) NaryBddProp(home,share,*this);
+  NaryCpltSetPropagator<View>::copy(Space* home, bool share) {
+    return new (home) NaryCpltSetPropagator(home,share,*this);
   }
 
   template <class View>
   forceinline ExecStatus
-  NaryBddProp<View>::propagate_ddc(Space* home) {
+  NaryCpltSetPropagator<View>::propagate_ddc(Space* home) {
     // std::cout << "propagate_ddc\n";
 
     bool assigned = true;
@@ -209,7 +209,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline ExecStatus
-  NaryBddProp<View>::propagate_eeq(Space* home) {
+  NaryCpltSetPropagator<View>::propagate_eeq(Space* home) {
     int n = x.size();
     for (int i = 0; i < n; i++) {
       ModEvent me;
@@ -224,7 +224,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline ExecStatus
-  NaryBddProp<View>::propagate_bnd_eeq(Space* home) {
+  NaryCpltSetPropagator<View>::propagate_bnd_eeq(Space* home) {
     int n = x.size();
 
     // compute \f$\phi_n\f$
@@ -304,7 +304,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline ExecStatus
-  NaryBddProp<View>::propagate_bnd_ddc(Space* home) {
+  NaryCpltSetPropagator<View>::propagate_bnd_ddc(Space* home) {
     // std::cout << "propagate_ddc\n";
 
     bool assigned = true;
@@ -334,7 +334,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline ExecStatus 
-  NaryBddProp<View>::propagate(Space* home) {
+  NaryCpltSetPropagator<View>::propagate(Space* home) {
     bool assigned = true;
     int n = x.size();
     
@@ -382,7 +382,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline
-  NaryOneBdd<View0, View1>::NaryOneBdd(Space* home, ViewArray<View0>& x, 
+  NaryOneCpltSetPropagator<View0, View1>::NaryOneCpltSetPropagator(Space* home, ViewArray<View0>& x, 
                                        View1& y, bdd& d0)
     : MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, x, y),
       d(d0) {
@@ -391,39 +391,39 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline
-  NaryOneBdd<View0, View1>::NaryOneBdd(Space* home, bool share, NaryOneBdd& p)
+  NaryOneCpltSetPropagator<View0, View1>::NaryOneCpltSetPropagator(Space* home, bool share, NaryOneCpltSetPropagator& p)
     : MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, share, p), 
       d(p.d) {}
 
   template <class View0, class View1>
   forceinline ExecStatus
-  NaryOneBdd<View0, View1>::post(Space* home, ViewArray<View0>& x, View1& y, 
+  NaryOneCpltSetPropagator<View0, View1>::post(Space* home, ViewArray<View0>& x, View1& y, 
                                  bdd& d0) {
-    (void) new (home) NaryOneBdd(home, x, y, d0);
+    (void) new (home) NaryOneCpltSetPropagator(home, x, y, d0);
     return ES_OK;
   }
 
   template <class View0, class View1>
   Support::Symbol
-  NaryOneBdd<View0, View1>::name(void) {
-    return Reflection::mangle<View0,View1>("CpltSet::NaryOneBdd");
+  NaryOneCpltSetPropagator<View0, View1>::name(void) {
+    return Reflection::mangle<View0,View1>("CpltSet::NaryOneCpltSetPropagator");
   }
 
   template <class View0, class View1>
   Reflection::ActorSpec&
-  NaryOneBdd<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
+  NaryOneCpltSetPropagator<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
     throw Reflection::ReflectionException("Not implemented");
   } 
 
   template <class View0, class View1>
   forceinline Actor*
-  NaryOneBdd<View0, View1>::copy(Space* home, bool share) {
-    return new (home) NaryOneBdd(home, share, *this);
+  NaryOneCpltSetPropagator<View0, View1>::copy(Space* home, bool share) {
+    return new (home) NaryOneCpltSetPropagator(home, share, *this);
   }
   
   template <class View0, class View1>
   forceinline ExecStatus 
-  NaryOneBdd<View0, View1>::propagate(Space* home) {
+  NaryOneCpltSetPropagator<View0, View1>::propagate(Space* home) {
     bool assigned = true;
     int n = x.size();
     ExecStatus es = ES_OK;
@@ -444,7 +444,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   size_t
-  NaryOneBdd<View0, View1>::dispose(Space* home) {
+  NaryOneCpltSetPropagator<View0, View1>::dispose(Space* home) {
     MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::unforce(home);
     if (!home->failed()) {
       x.cancel(home, this, PC_CPLTSET_DOM);

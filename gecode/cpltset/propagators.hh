@@ -46,16 +46,16 @@ namespace Gecode { namespace CpltSet {
    * \brief Nary bdd propagator
    */
   template <class View>
-  class NaryBddProp : public Propagator {
+  class NaryCpltSetPropagator : public Propagator {
   protected:
     /// Array of views
     ViewArray<View> x;
     /// Bdd representation of the constraint
     bdd d;
     /// Constructor for cloning \a p
-    NaryBddProp(Space* home, bool share, NaryBddProp& p);
+    NaryCpltSetPropagator(Space* home, bool share, NaryCpltSetPropagator& p);
     /// Constructor for creation
-    NaryBddProp(Space* home, ViewArray<View>& x, bdd& d);
+    NaryCpltSetPropagator(Space* home, ViewArray<View>& x, bdd& d);
     /// (EEQ) Earliest Existential Quantification for set bounds propagation
     bdd bnd_phi(int j);
     /// (EEQ) Earliest Existential Quantification
@@ -95,19 +95,19 @@ namespace Gecode { namespace CpltSet {
   /**
    * \brief Binary bdd propagator
    */
-  template <class View>
-  class BinBddProp : public Propagator {
+  template <class View0, class View1>
+  class BinaryCpltSetPropagator : public Propagator {
   protected:
     /// First view
-    View x;
+    View0 x;
     /// Second view
-    View y;
+    View1 y;
     /// Bdd representation of the constraint
     bdd d;
     /// Constructor for cloning \a p
-    BinBddProp(Space* home, bool share, BinBddProp& p);
+    BinaryCpltSetPropagator(Space* home, bool share, BinaryCpltSetPropagator& p);
     /// Constructor for posting
-    BinBddProp(Space* home, View& x0, View& y0, bdd& d);
+    BinaryCpltSetPropagator(Space* home, View0& x0, View1& y0, bdd& d);
   public:
     /// Cost function
     virtual PropCost cost(void) const;
@@ -122,7 +122,7 @@ namespace Gecode { namespace CpltSet {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, View& x0, View& y0, bdd& d);
+    static  ExecStatus post(Space* home, View0& x0, View1& y0, bdd& d);
   };
 
   /**
@@ -130,16 +130,16 @@ namespace Gecode { namespace CpltSet {
    */
 
   template <class View>
-  class UnaryBddProp : public Propagator {
+  class UnaryCpltSetPropagator : public Propagator {
   protected:
     /// View to propagate on
     View x;
     /// Bdd representation of the constraint
     bdd d;
     /// Constructor for cloning \a p
-    UnaryBddProp(Space* home, bool share, UnaryBddProp& p);
+    UnaryCpltSetPropagator(Space* home, bool share, UnaryCpltSetPropagator& p);
     /// Constructor for posting
-    UnaryBddProp(Space* home, View& x0, bdd& d);
+    UnaryCpltSetPropagator(Space* home, View& x0, bdd& d);
   public:
     /// Cost function
     virtual PropCost cost(void) const;
@@ -161,17 +161,17 @@ namespace Gecode { namespace CpltSet {
   /**
    * \brief Binary Rel Disjoint Propagator
    */
-  template <class View>
-  class BinRelDisj : public BinBddProp<View> {
+  template <class View0, class View1>
+  class BinRelDisj : public BinaryCpltSetPropagator<View0,View1> {
   protected:
     /// Bdd representation of the constraint
-    using BinBddProp<View>::d;
-    using BinBddProp<View>::x;
-    using BinBddProp<View>::y;
+    using BinaryCpltSetPropagator<View0,View1>::d;
+    using BinaryCpltSetPropagator<View0,View1>::x;
+    using BinaryCpltSetPropagator<View0,View1>::y;
     /// Constructor for cloning \a p
-    BinRelDisj(Space* home, bool share, BinRelDisj& p);
+    BinRelDisj(Space* home, bool share, BinRelDisj<View0,View1>& p);
     /// Constructor for posting
-    BinRelDisj(Space* home, View& x0, View& y0, bdd& d);
+    BinRelDisj(Space* home, View0& x0, View1& y0, bdd& d);
   public:
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -179,7 +179,7 @@ namespace Gecode { namespace CpltSet {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, View& x0, View& y0, bdd& d);
+    static  ExecStatus post(Space* home, View0& x0, View1& y0, bdd& d);
   };
 
   /**
@@ -221,38 +221,10 @@ namespace Gecode { namespace CpltSet {
    */
 
   /**
-   * \brief Binary bdd propagator
-   */
-  template <class View0, class View1>
-  class Bin : public MixBinaryPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM> {
-  protected:
-    /// Bdd representation of the constraint
-    bdd d;
-    using MixBinaryPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::x0;
-    using MixBinaryPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::x1;
-    /// Constructor for cloning \a p
-    Bin(Space* home, bool share,Bin& p);
-    /// Constructor for posting
-    Bin(Space* home, View0&, View1&, bdd& d);
-  public:
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of this propagator
-    static Support::Symbol name(void);
-    /// Delete propagator
-    virtual size_t dispose(Space* home);
-    /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, View0& x, View1& s, bdd& d);
-  }; 
-
-  /**
    * \brief Bdd propagator with n+1 arguments
    */
   template <class View0, class View1>
-  class NaryOneBdd : 
+  class NaryOneCpltSetPropagator : 
     public MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM> {
   protected:
     /// Bdd representation of the constraint
@@ -260,9 +232,9 @@ namespace Gecode { namespace CpltSet {
     using MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::x;
     using MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::y;
     /// Constructor for cloning \a p
-    NaryOneBdd(Space* home, bool share, NaryOneBdd& p);
+    NaryOneCpltSetPropagator(Space* home, bool share, NaryOneCpltSetPropagator& p);
     /// Constructor for posting
-    NaryOneBdd(Space* home, ViewArray<View0>&, View1&, bdd&);
+    NaryOneCpltSetPropagator(Space* home, ViewArray<View0>&, View1&, bdd&);
     /// Divide and conquer method including additional view \a y
     ExecStatus divide_conquer(Space* home, bdd& p, 
                               int l, int r, int ypos);
@@ -313,104 +285,7 @@ namespace Gecode { namespace CpltSet {
   };
 
 
-  template <class View0, class View1>
-  class RangeTwice : 
-    public MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM> {
-  protected:
-    /// Bdd representation of the constraint
-    bdd d;
-    using MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::x;
-    using MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::y;
-    /// Constructor for cloning \a p
-    RangeTwice(Space* home, bool share, RangeTwice& p);
-    /// Constructor for posting
-    RangeTwice(Space* home, ViewArray<View0>&, ViewArray<View1>&, bdd&);
-    /// Divide and conquer method including additional array \a y
-    ExecStatus divide_conquer(Space* home, bdd& p, 
-                              int l, int r, int ypos);
-  public:
-    /// Delete propagator
-    virtual size_t dispose(Space* home);
-    /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, ViewArray<View0>& x, 
-                            ViewArray<View1>&y, bdd& d);
-  };
-
-
-  /**
-   * \brief Propagator for DisjointGlb
-   */
-  template <class View>
-  class DisjointGlb : public Propagator {
-  protected:
-    /// Array of views
-    ViewArray<View> x;
-    /// Index to be kept disjoint
-    int idx;
-    /// Constructor for cloning \a p
-    DisjointGlb(Space* home, bool share, DisjointGlb& p);
-    /// Constructor for posting
-    DisjointGlb(Space* home, ViewArray<View>& x0, int& index);
-  public:
-    /// Cost function
-    virtual PropCost cost(void) const;
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of this propagator
-    static Support::Symbol name(void);
-
-    /// Delete propagator
-    virtual size_t dispose(Space* home);
-    /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, ViewArray<View>& x0, int& index);
-  };
-
-
-  /**
-   * \brief Propagator for DisjointSudoku
-   */
-  template <class View>
-  class DisjointSudoku : public Propagator {
-  protected:
-    /// Array of views
-    View x;
-    /// Order of the sudoku
-    int order;
-    /// Constructor for cloning \a p
-    DisjointSudoku(Space* home, bool share, DisjointSudoku& p);
-    /// Constructor for posting
-    DisjointSudoku(Space* home, View& x0, int& order);
-  public:
-    /// Cost function
-    virtual PropCost cost(void) const;
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of this propagator
-    static Support::Symbol name(void);
-
-    /// Delete propagator
-    virtual size_t dispose(Space* home);
-    /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, View& x0, int& order);
-  };
-
-
 }}
-
-#include "gecode/cpltset/propagators/distinct.icc"
-#include "gecode/cpltset/propagators/partition.icc"
-#include "gecode/cpltset/propagators/atmost.icc"
-#include "gecode/cpltset/propagators/rel.icc"
-#include "gecode/cpltset/propagators/select.icc"
 
 #include "gecode/cpltset/propagators/common.icc"
 
@@ -419,9 +294,14 @@ namespace Gecode { namespace CpltSet {
 #include "gecode/cpltset/propagators/binary.icc"
 #include "gecode/cpltset/propagators/unary.icc"
 #include "gecode/cpltset/propagators/singleton.icc" 
-#include "gecode/cpltset/propagators/bin.icc"
-#include "gecode/cpltset/propagators/rangerec.icc"
-#include "gecode/cpltset/propagators/rangeroots.icc"
+
+#include "gecode/cpltset/constraints/rangeroots.icc"
+#include "gecode/cpltset/constraints/distinct.icc"
+#include "gecode/cpltset/constraints/partition.icc"
+#include "gecode/cpltset/constraints/atmost.icc"
+#include "gecode/cpltset/constraints/rel.icc"
+#include "gecode/cpltset/constraints/select.icc"
+
 
 #endif
 

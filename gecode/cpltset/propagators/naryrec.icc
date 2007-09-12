@@ -39,7 +39,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   ExecStatus
-  NaryBddProp<View>::divide_conquer(Space* home,
+  NaryCpltSetPropagator<View>::divide_conquer(Space* home,
                                     bdd& p, int l, int r) {
     if (l == r) {
       GECODE_ME_CHECK(x[l].tell_formula(home, p));
@@ -69,7 +69,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   ExecStatus
-  NaryOneBdd<View0, View1>::divide_conquer(Space* home, bdd& p,
+  NaryOneCpltSetPropagator<View0, View1>::divide_conquer(Space* home, bdd& p,
                                            int l, int r, int ypos) {
     if (l == r) {
       ModEvent me = ME_CPLTSET_NONE;

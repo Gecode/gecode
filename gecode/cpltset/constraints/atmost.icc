@@ -80,7 +80,7 @@ namespace Gecode {
       }
     }
     // std::cout << "bddsize = " << mgr->bddsize(d0) << "\n";
-    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0));
+    GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
   }
 
   template <class View>
@@ -111,7 +111,7 @@ namespace Gecode {
     // combination of intersection and cardinality
     d0 &= c0;
       
-    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0));
+    GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
       
   }
 
@@ -198,7 +198,7 @@ namespace Gecode {
     }
 
       
-    GECODE_ES_FAIL(home, NaryBddProp<View>::post(home, x, d0));
+    GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
       
   }
 
@@ -282,7 +282,7 @@ namespace Gecode {
       d0 &= y.bdd_domain();
     }
     // std::cerr << "star prop\n";
-    GECODE_ES_FAIL(home, BinBddProp<View>::post(home, x, y, d0));
+    GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
   }
 
   template <class View>
@@ -318,7 +318,7 @@ namespace Gecode {
       d0 &= y.bdd_domain();
     }
     // std::cerr << "star prop\n";
-    GECODE_ES_FAIL(home, BinBddProp<View>::post(home, x, y, d0));
+    GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
   }
 
   template <class Rel>

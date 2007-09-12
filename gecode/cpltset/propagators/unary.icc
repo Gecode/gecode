@@ -39,7 +39,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline
-  UnaryBddProp<View>::UnaryBddProp(Space* home, View& x0, bdd& d0)
+  UnaryCpltSetPropagator<View>::UnaryCpltSetPropagator(Space* home, View& x0, bdd& d0)
     : Propagator(home), x(x0), d(d0) {
     force(home);
     x.subscribe(home, this, PC_CPLTSET_DOM);
@@ -47,7 +47,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline
-  UnaryBddProp<View>::UnaryBddProp(Space* home, bool share, UnaryBddProp& p)
+  UnaryCpltSetPropagator<View>::UnaryCpltSetPropagator(Space* home, bool share, UnaryCpltSetPropagator& p)
     : Propagator(home,share,p) {
     d = p.d;
     x.update(home, share, p.x);
@@ -55,7 +55,7 @@ namespace Gecode { namespace CpltSet {
   
   template <class View>
   forceinline PropCost
-  UnaryBddProp<View>::cost(void) const {
+  UnaryCpltSetPropagator<View>::cost(void) const {
     // we have only linear costs (in terms of the size of a bdd) 
     // if one of the bdds is constant
     if (manager.ctrue(x.bdd_domain()) || manager.ctrue(d)) {
@@ -67,19 +67,19 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   Support::Symbol
-  UnaryBddProp<View>::name(void) {
-    return Reflection::mangle<View>("CpltSet::UnaryBddProp");
+  UnaryCpltSetPropagator<View>::name(void) {
+    return Reflection::mangle<View>("CpltSet::UnaryCpltSetPropagator");
   }
 
   template <class View>
   Reflection::ActorSpec&
-  UnaryBddProp<View>::spec(Space* home, Reflection::VarMap& m) {
+  UnaryCpltSetPropagator<View>::spec(Space* home, Reflection::VarMap& m) {
     throw Reflection::ReflectionException("Not implemented");
   } 
   
   template <class View>
   size_t
-  UnaryBddProp<View>::dispose(Space* home) {
+  UnaryCpltSetPropagator<View>::dispose(Space* home) {
     // std::cout << "dispose propagator\n";
     unforce(home);
     if (!home->failed()) {
@@ -92,20 +92,20 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline ExecStatus
-  UnaryBddProp<View>::post(Space* home, View& x0, bdd& d0) {
-    (void) new (home) UnaryBddProp(home, x0, d0);
+  UnaryCpltSetPropagator<View>::post(Space* home, View& x0, bdd& d0) {
+    (void) new (home) UnaryCpltSetPropagator(home, x0, d0);
     return ES_OK;
   }
 
   template <class View>
   forceinline Actor*
-  UnaryBddProp<View>::copy(Space* home, bool share) {
-    return new (home) UnaryBddProp(home, share, *this);
+  UnaryCpltSetPropagator<View>::copy(Space* home, bool share) {
+    return new (home) UnaryCpltSetPropagator(home, share, *this);
   }
 
   template <class View>
   forceinline ExecStatus 
-  UnaryBddProp<View>::propagate(Space* home) {
+  UnaryCpltSetPropagator<View>::propagate(Space* home) {
     // std::cerr << "propagate unary: \n";
     // std::cerr << x << " " << x.glbSize() << " " << x.unknownSize() << "\n";
 //     UnknownRanges<CpltSetView> delta(x);
