@@ -43,29 +43,29 @@
 
 /** \brief Specification of one tile
  *
- * This structure can be used to specify  tile with specified width
+ * This structure can be used to specify a tile with specified width
  * and height, and a char-array tile consiting of spaces and X's
  * showing the tile in row-major order.
  *
- * \relates PlacementPuzzle
+ * \relates Pentominoes
  */
-struct tilespec {
+struct TileSpec {
   int width, height;
   const char *tile;
 };
 
 /** \brief Board specifications
  *
- * Each board specification repurposes the first two tilespecs to
- * record width and height of the board (tilespec 0) as well as the
- * number of tiles and whether the board is filled (tilespec 1).
+ * Each board specification repurposes the first two TileSpecs to
+ * record width and height of the board (TileSpec 0) as well as the
+ * number of tiles and whether the board is filled (TileSpec 1).
  *
- * \relates PlacementPuzzle
+ * \relates Pentominoes
  */
-extern const tilespec *specs[];
+extern const TileSpec *specs[];
 /** \brief Number of board specifications
  *
- * \relates PlacementPuzzle
+ * \relates Pentominoes
  */
 extern const unsigned int n_examples;
 
@@ -76,97 +76,48 @@ namespace {
    * functions are templatized so that they can be used both for the
    * pieces (defined using C-strings) and for arrays of variables.
    *
-   * \relates PlacementPuzzle
+   * \relates Pentominoes
    */
   //@{
-  /// Return index of (\a h, \a w) in the row-major layout of a matrix with
-  /// width w\a w1 and height \a h1.
-  int pos(int h, int w, int h1, int w1) {
-    if (!(0 <= h && h < h1) ||
-        !(0 <= w && w < w1)) {
-      std::cerr << "Cannot place (" << h << "," << w << ") on board of size " << h1 << "x" << w1 << std::endl;
-    }
-    return h * w1 + w;
-  }
+  /** Return index of (\a h, \a w) in the row-major layout of a matrix with
+   * width \a w1 and height \a h1.
+   */
+  int pos(int h, int w, int h1, int w1);
   /// Type for tile symmetry functions
   typedef void (*tsymmfunc)(const char*, int, int, char*, int&, int&);
   /// Type for board symmetry functions
   typedef void (*bsymmfunc)(const IntVarArgs, int, int, IntVarArgs&, int&, int&);
   /// Identity symmetry
   template <class CArray, class Array>
-  void id(CArray t1, int w1, int h1, Array t2, int& w2, int&h2) {
-    w2 = w1; h2 = h1;
-    for (int h = 0; h < h1; ++h)
-      for (int w = 0; w < w1; ++w)
-	t2[pos(h, w, h2, w2)] = t1[pos(h, w, h1, w1)];
-  }
+  void id(CArray t1, int w1, int h1, Array t2, int& w2, int&h2);
   /// Rotate 90 degrees
   template <class CArray, class Array>
-  void rot90(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
-    w2 = h1; h2 = w1;
-    for (int h = 0; h < h1; ++h)
-      for (int w = 0; w < w1; ++w)
-	t2[pos(w, w2-h-1, h2, w2)] = t1[pos(h, w, h1, w1)];
-  }
+  void rot90(CArray t1, int w1, int h1, Array t2, int& w2, int& h2);
   /// Rotate 180 degrees
   template <class CArray, class Array>
-  void rot180(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
-    w2 = w1; h2 = h1;
-    for (int h = 0; h < h1; ++h)
-      for (int w = 0; w < w1; ++w)
-	t2[pos(h2-h-1, w2-w-1, h2, w2)] = t1[pos(h, w, h1, w1)];
-  }
+  void rot180(CArray t1, int w1, int h1, Array t2, int& w2, int& h2);
   /// Rotate 270 degrees
   template <class CArray, class Array>
-  void rot270(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
-    w2 = h1; h2 = w1;
-    for (int h = 0; h < h1; ++h)
-      for (int w = 0; w < w1; ++w)
-	t2[pos(h2-w-1, h, h2, w2)] = t1[pos(h, w, h1, w1)];
-  }
-
+  void rot270(CArray t1, int w1, int h1, Array t2, int& w2, int& h2);
   /// Flip x-wise
   template <class CArray, class Array>
-  void flipx(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
-    w2 = w1; h2 = h1;
-    for (int h = 0; h < h1; ++h)
-      for (int w = 0; w < w1; ++w)
-	t2[pos(h, w2-w-1, h2, w2)] = t1[pos(h, w, h1, w1)];
-  }
-
+  void flipx(CArray t1, int w1, int h1, Array t2, int& w2, int& h2);
   /// Flip y-wise
   template <class CArray, class Array>
-  void flipy(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
-    w2 = w1; h2 = h1;
-    for (int h = 0; h < h1; ++h)
-      for (int w = 0; w < w1; ++w)
-	t2[pos(h2-h-1, w, h2, w2)] = t1[pos(h, w, h1, w1)];
-  }
-
+  void flipy(CArray t1, int w1, int h1, Array t2, int& w2, int& h2);
   /// Flip diagonal 1
   template <class CArray, class Array>
-  void flipd1(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
-    w2 = h1; h2 = w1;
-    for (int h = 0; h < h1; ++h)
-      for (int w = 0; w < w1; ++w)
-	t2[pos(w, h, h2, w2)] = t1[pos(h, w, h1, w1)];
-  }
-
+  void flipd1(CArray t1, int w1, int h1, Array t2, int& w2, int& h2);
   /// Flip diagonal 2
   template <class CArray, class Array>
-  void flipd2(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
-    w2 = h1; h2 = w1;
-    for (int h = 0; h < h1; ++h)
-      for (int w = 0; w < w1; ++w)
-	t2[pos(h2-w-1, w2-h-1, h2, w2)] = t1[pos(h, w, h1, w1)];
-  }
+  void flipd2(CArray t1, int w1, int h1, Array t2, int& w2, int& h2);
   //@}
 }
 
 /**
- * \brief %Example: Placement puzzles
+ * \brief %Example: %Pentominoes
  *
- * \section ExamplePlacementPuzzleProblem The Problem
+ * \section ExamplePentominoesProblem The Problem
  *
  * This example places pieces of a puzzle, where each piece is
  * composed of a collection of squares, onto a grid. The pieces may
@@ -180,13 +131,19 @@ namespace {
  * \endcode
  * in one of its rotations.
  *
- * \section ExamplePlacementPuzzleVariables The Variables
+ * The most famous instance of such a puzzle is the Pentominoes
+ * puzzle, where the peces are all pieces formed by 5 four-connected
+ * squares.
+ *
+ *
+ * \section ExamplePentominoesVariables The Variables
  *
  * The variables for the model is the grid of squares that the  pieces
  * are placed on, where each of the variables for the squares takes
  * the value of the number of the piece which is placed over it.
+ *
  * 
- * \section ExamplePlacementPuzzleOnePiece Placing one piece
+ * \section ExamplePentominoesOnePiece Placing one piece
  *
  * The constraint for each piece placement uses regular expressions
  * (and consequently the \ref extensional constraint) for expressing
@@ -233,7 +190,7 @@ namespace {
  * include the extra column, \f$0^*1100001000010^*\f$.
  *
  * 
- * \section ExamplePlacementPuzzleRotatingPiece Rotating pieces
+ * \section ExamplePentominoesRotatingPiece Rotating pieces
  *
  * To handle rotations of the piece, we can use disjunctions of
  * regular expressions for all the relevant rotations. Consider the
@@ -255,29 +212,34 @@ namespace {
  * is computed, since it is minimized.
  *
  *
- * \section ExamplePlacementPuzzleSeveral Placing several pieces
+ * \section ExamplePentominoesSeveral Placing several pieces
  *
  * To generalize the above model to several pieces, we let the
  * variables range from 0 to n, where n is the number of pieces to
  * place. Given that we place three pieces, and that the above shown
  * piece is number one, we will replace each \f$0\f$-expression with
  * the expression \f$(0|2|3)\f$. Thus, the second regular expression
- * becomes \f$(0|2|3)^*1(0|2|3)(0|2|3)111(0|2|3)^*\f$.
+ * becomes \f$(0|2|3)^*1(0|2|3)(0|2|3)111(0|2|3)^*\f$. Additionaly,
+ * the end of line marker gets its own value.
  *
- * Additionaly, the end of line marker gets its own value.
+ * This generalization suffers from the fact that the automata become
+ * much more complex. This problem can be solved by instead
+ * projecting out each component, which gives a new board of
+ * 0/1-variables for each piece to place.
  * 
- * \section ExamplePlacementPuzzleHeuristic The Branching
+ *
+ * \section ExamplePentominoesHeuristic The Branching
  * 
  * This model does not use any advanced heuristic for the
- * branching. The variables selection is simply minimum domain
- * size, and the value selection minimum first. 
+ * branching. The variables selection is simply in order, and the
+ * value selection is minimum value first.
  *
  * The static value selection allows us to order the pieces in the
- * specification of the problem. We use approximately "largest first"
- * ordering for the pieces.
+ * specification of the problem. The pieces are approximately order by
+ * largness of hardness to place.
  *
  *
- * \section ExamplePlacementPuzzleSymmetries Removing board symmetries
+ * \section ExamplePentominoesSymmetries Removing board symmetries
  *
  * Especially when searching for all solutions of a puzzle instance,
  * we might want to remove the symmetrical boards from the
@@ -288,70 +250,63 @@ namespace {
  * \ingroup ExProblem
  *
  */
-class PlacementPuzzle : public Example {
+class Pentominoes : public Example {
+public:
+  /// Choice of propagators
+  enum {
+    PROPAGATION_INT,       ///< Use integer propagators
+    PROPAGATION_BOOLEAN,   ///< Use Boolean propagators
+  };
+  /// Choice of symmetry breaking
+  enum {
+    MODEL_NONE, ///< Do not remove symmetric solutions
+    MODEL_SYMMETRY, ///< Remove symmetric solutions
+  };
 private:
   /// Specification of the tiles to place.
-  const tilespec *spec;
+  const TileSpec *spec;
   /// Width and height of the board
   int width, height;
   /// Number of tiles to place
   int ntiles;
-  /// Whether the board is fileld or not
+  /// Whether the board is filled or not
   bool filled;
 
   /// The variables for the board.
-  IntVarArray b;
-
-  /// Access position (h,w) in the board matrix.
-  IntVar board(int h, int w) {
-    return b[h*width + w];
-  }
+  IntVarArray board;
 
   /// Returns the regular expression for placing a specific tile \a
   /// tile in a specific rotation.
-  REG tile_reg(int col, int twidth, int theight, const char* tile, REG other) {
-    REG eol = other | REG(ntiles+1);
-    REG res = *eol;
-    REG color[] = {other, REG(col)};
+  REG tile_reg(int twidth, int theight, const char* tile, 
+               REG mark, REG other, REG eol) {
+    REG oe = other | eol;
+    REG res = *oe;
+    REG color[] = {other, mark};
     for (int h = 0; h < theight; ++h) {
       for (int w = 0; w < twidth; ++w) {
 	int which = tile[h*twidth + w] == 'X';
 	res += color[which];
       }
       if (h < theight-1) {
-	res += eol(width-twidth, width-twidth);
+	res += oe(width-twidth, width-twidth);
       }
     }
-    res += *eol;
+    res += *oe + oe;
     return res;
   } 
 
   /// Returns the regular expression for placing tile number \a t in
   /// any rotation.
-  REG get_constraint(int t) {
-    int col = t+1;
-    // Build expression for complement to color t+1
-    REG other; 
-    bool first = true;
-    for (int i = filled; i <= ntiles; ++i) {
-      if (i == col) continue;
-      if (first) {
-	other = REG(i);
-	first = false;
-      } else {
-	other = other | REG(i);
-      }
-    }
-
+  REG get_constraint(int t, REG mark, REG other, REG eol) {
     // This should be done for all rotations
     REG res;
     char *t2 = new char[width*height];
     int w2, h2;
-    tsymmfunc syms[] = {id, flipx, flipy, flipd1, flipd2, rot90, rot180, rot270};
+    tsymmfunc syms[] = {id};//, flipx, flipy, flipd1, flipd2, rot90, rot180, rot270};
     int symscnt = sizeof(syms)/sizeof(tsymmfunc);
     for (int i = 0; i < symscnt; ++i) {
       syms[i](spec[t].tile, spec[t].width, spec[t].height, t2, w2, h2);
-      res = res | tile_reg(col, w2, h2, t2, other);
+      res = res | tile_reg(w2, h2, t2, mark, other, eol);
     }
     delete [] t2;
 
@@ -361,32 +316,81 @@ private:
 
 public:
   /// Construction of the model.
-  PlacementPuzzle(const SizeOptions& opt)
+  Pentominoes(const SizeOptions& opt)
     : spec(specs[opt.size()]), 
       width(spec[0].width+1), height(spec[0].height),
       ntiles(spec[1].width), filled(spec[1].height),
-      b(this, width*height, filled,ntiles+1) {
+      board(this, width*height, filled,ntiles+1) {
     spec += 2; // No need for the specification-part any longer
     
     // Set end-of-line markers
     for (int h = 0; h < height; ++h) {
       for (int w = 0; w < width-1; ++w)
-	rel(this, b[h*width + w], IRT_NQ, ntiles+1);
-      rel(this, b[h*width + width - 1], IRT_EQ, ntiles+1);
+	rel(this, board[h*width + w], IRT_NQ, ntiles+1);
+      rel(this, board[h*width + width - 1], IRT_EQ, ntiles+1);
     }
 
     // Post constraints
-    for (int i = 0; i < ntiles; ++i) 
-      extensional(this, b, get_constraint(i));
+    if (opt.propagation() == PROPAGATION_INT) {
+      for (int i = 0; i < ntiles; ++i) {
+        // Color
+        int col = i+1;
+        // Expression for color col
+        REG mark(col);
+        // Build expression for complement to color col
+        REG other; 
+        bool first = true;
+        for (int j = filled; j <= ntiles; ++j) {
+          if (j == col) continue;
+          if (first) {
+            other = REG(j);
+            first = false;
+          } else {
+            other |= REG(j);
+          }
+        }
+        // End of line marker
+        REG eol(ntiles+1);
+        extensional(this, board, get_constraint(i, mark, other, eol));
+      }
+    } else { // opt.propagation() == PROPAGATION_BOOLEAN
+      int ncolors = ntiles + 2;
+      // Boolean variables for channeling
+      BoolVarArgs p(ncolors * board.size());
+      for (int i=p.size(); i--; )
+        p[i].init(this,0,1);
+      
+      // Post channel constraints
+      for (int i=board.size(); i--; ) {
+        BoolVarArgs c(ncolors);
+        for (int j=ncolors; j--; ) 
+          c[j]=p[i*ncolors+j];
+        channel(this, c, board[i]);
+      }
+      
+      // For placing tile i, we construct the expression over
+      // 0/1-variables and apply it to the projection of
+      // the board on the color for the tile.
+      REG other(0), mark(1);
+      for (int i = 0; i < ntiles; ++i) {
+        // Projection for color c
+        BoolVarArgs c(board.size());
 
-    // Remove symmetrical boards
-    //    if (!o.naive) {
-    if (true) {
-      IntVarArgs orig(b.size()-height), symm(b.size()-height);
+        for (int j = board.size(); j--; ) {
+          c[j] = p[j*ncolors+i+1];
+        }
+        
+        extensional(this, c, get_constraint(i, mark, other, other));
+      }
+    }
+    
+    if (opt.model() == MODEL_SYMMETRY) {
+      // Remove symmetrical boards
+      IntVarArgs orig(board.size()-height), symm(board.size()-height);
       int pos = 0;
-      for (int i = 0; i < b.size(); ++i) {
+      for (int i = 0; i < board.size(); ++i) {
         if ((i+1)%width==0) continue;
-        orig[pos++] = b[i];
+        orig[pos++] = board[i];
       }
       
       int w2, h2;
@@ -398,30 +402,30 @@ public:
           rel(this, orig, IRT_LQ, symm);
       }
     }
-
+      
     // Install branchings
-    branch(this, b, INT_VAR_NONE, INT_VAL_MIN);
+    branch(this, board, INT_VAR_NONE, INT_VAL_MIN);
   }
-
+  
   /// Constructor for cloning \a s
-  PlacementPuzzle(bool share, PlacementPuzzle& s) :
+  Pentominoes(bool share, Pentominoes& s) :
     Example(share,s), spec(s.spec), width(s.width), height(s.height) {
-    b.update(this, share, s.b);
+    board.update(this, share, s.board);
   }
-
+  
   /// Copy space during cloning
   virtual Space*
   copy(bool share) {
-    return new PlacementPuzzle(share,*this);
+    return new Pentominoes(share,*this);
   }
-
+  
   /// Print solution
   virtual void
   print(void) {
     for (int h = 0; h < height; ++h) {
       std::cout << "\t";
       for (int w = 0; w < width-1; ++w) {
-	int val =  board(h,w).val();
+	int val =  board[h*width + w].val();
 	char c = val < 10 ? '0'+val : 'A' + (val-10);
 	std::cout << c;
       }
@@ -433,31 +437,42 @@ public:
 
 
 /** \brief Main-function
- *  \relates PlacementPuzzle
+ *  \relates Pentominoes
  */
 int
 main(int argc, char* argv[]) {
-  SizeOptions opt("PlacementPuzzle");
+  SizeOptions opt("Pentominoes");
   opt.size(1);
-  //  o.naive = true;
+  opt.model(Pentominoes::MODEL_SYMMETRY);
+  opt.model(Pentominoes::MODEL_NONE,
+            "none", "do not remove symmetric solutions");
+  opt.model(Pentominoes::MODEL_SYMMETRY,
+            "sym", "remove symmetric solutions");
+
+  opt.propagation(Pentominoes::PROPAGATION_BOOLEAN);
+  opt.propagation(Pentominoes::PROPAGATION_INT, 
+                  "int", "use integer propagators");
+  opt.propagation(Pentominoes::PROPAGATION_BOOLEAN, 
+                  "bool", "use Boolean propagators");  
+
   opt.parse(argc,argv);
   if (opt.size() >= n_examples) {
     std::cerr << "Error: size must be between 0 and "
 	      << n_examples-1 << std::endl;
     return 1;
   }
-  Example::run<PlacementPuzzle,DFS,SizeOptions>(opt);
+  Example::run<Pentominoes,DFS,SizeOptions>(opt);
   return 0;
 }
 
 
 /** \name Puzzle specifications
  *
- * \relates PlacementPuzzle
+ * \relates Pentominoes
  */
 //@{
 /// Small specification
-static const tilespec puzzle0[] = 
+static const TileSpec puzzle0[] = 
   {
     // Width and height of board
     {4, 4, ""},
@@ -479,7 +494,7 @@ static const tilespec puzzle0[] =
      "XXX"}
   };
 /// Standard specification
-static const tilespec puzzle1[] =
+static const TileSpec puzzle1[] =
   {
     // Width and height of board
     {8, 8, ""},
@@ -531,7 +546,7 @@ static const tilespec puzzle1[] =
   };
 
 // Packing number 2 from examples/packing.cc
-static const tilespec packing2[] =
+static const TileSpec packing2[] =
   {
     // Width and height of board
     {10, 10, ""},
@@ -574,7 +589,7 @@ static const tilespec packing2[] =
      "XX"}
   };
 
-static const tilespec pentomino6x10[] =
+static const TileSpec pentomino6x10[] =
   {
     // Width and height of board
     {10, 6, ""},
@@ -628,7 +643,7 @@ static const tilespec pentomino6x10[] =
      "XXX"}
   };
 
-static const tilespec pentomino5x12[] =
+static const TileSpec pentomino5x12[] =
   {
     // Width and height of board
     {12, 5, ""},
@@ -682,7 +697,7 @@ static const tilespec pentomino5x12[] =
      "XXX"}
   };
 
-static const tilespec pentomino4x15[] =
+static const TileSpec pentomino4x15[] =
   {
     // Width and height of board
     {15, 4, ""},
@@ -736,7 +751,7 @@ static const tilespec pentomino4x15[] =
      "XXX"}
   };
 
-static const tilespec pentomino3x20[] =
+static const TileSpec pentomino3x20[] =
   {
     // Width and height of board
     {20, 3, ""},
@@ -791,11 +806,79 @@ static const tilespec pentomino3x20[] =
   };
 
 /// List of specifications
-const tilespec *specs[] = {puzzle0, puzzle1, packing2,
+const TileSpec *specs[] = {puzzle0, puzzle1, packing2,
                            pentomino6x10,pentomino5x12,
                            pentomino4x15,pentomino3x20};
 /// Number of specifications
-const unsigned n_examples = sizeof(specs)/sizeof(tilespec*);
+const unsigned n_examples = sizeof(specs)/sizeof(TileSpec*);
 //@}
+
+// Symmetry functions
+namespace {
+  int pos(int h, int w, int h1, int w1) {
+    if (!(0 <= h && h < h1) ||
+        !(0 <= w && w < w1)) {
+      std::cerr << "Cannot place (" << h << "," << w 
+                << ") on board of size " << h1 << "x" << w1 << std::endl;
+    }
+    return h * w1 + w;
+  }
+  template <class CArray, class Array>
+  void id(CArray t1, int w1, int h1, Array t2, int& w2, int&h2) {
+    w2 = w1; h2 = h1;
+    for (int h = 0; h < h1; ++h)
+      for (int w = 0; w < w1; ++w)
+	t2[pos(h, w, h2, w2)] = t1[pos(h, w, h1, w1)];
+  }
+  template <class CArray, class Array>
+  void rot90(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
+    w2 = h1; h2 = w1;
+    for (int h = 0; h < h1; ++h)
+      for (int w = 0; w < w1; ++w)
+	t2[pos(w, w2-h-1, h2, w2)] = t1[pos(h, w, h1, w1)];
+  }
+  template <class CArray, class Array>
+  void rot180(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
+    w2 = w1; h2 = h1;
+    for (int h = 0; h < h1; ++h)
+      for (int w = 0; w < w1; ++w)
+	t2[pos(h2-h-1, w2-w-1, h2, w2)] = t1[pos(h, w, h1, w1)];
+  }
+  template <class CArray, class Array>
+  void rot270(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
+    w2 = h1; h2 = w1;
+    for (int h = 0; h < h1; ++h)
+      for (int w = 0; w < w1; ++w)
+	t2[pos(h2-w-1, h, h2, w2)] = t1[pos(h, w, h1, w1)];
+  }
+  template <class CArray, class Array>
+  void flipx(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
+    w2 = w1; h2 = h1;
+    for (int h = 0; h < h1; ++h)
+      for (int w = 0; w < w1; ++w)
+	t2[pos(h, w2-w-1, h2, w2)] = t1[pos(h, w, h1, w1)];
+  }
+  template <class CArray, class Array>
+  void flipy(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
+    w2 = w1; h2 = h1;
+    for (int h = 0; h < h1; ++h)
+      for (int w = 0; w < w1; ++w)
+	t2[pos(h2-h-1, w, h2, w2)] = t1[pos(h, w, h1, w1)];
+  }
+  template <class CArray, class Array>
+  void flipd1(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
+    w2 = h1; h2 = w1;
+    for (int h = 0; h < h1; ++h)
+      for (int w = 0; w < w1; ++w)
+	t2[pos(w, h, h2, w2)] = t1[pos(h, w, h1, w1)];
+  }
+  template <class CArray, class Array>
+  void flipd2(CArray t1, int w1, int h1, Array t2, int& w2, int& h2) {
+    w2 = h1; h2 = w1;
+    for (int h = 0; h < h1; ++h)
+      for (int w = 0; w < w1; ++w)
+	t2[pos(h2-w-1, w2-h-1, h2, w2)] = t1[pos(h, w, h1, w1)];
+  }
+}
 
 // STATISTICS: example-any

@@ -543,19 +543,19 @@ ITERHDR = gecode/iter.hh \
 # EXAMPLES
 #
 
-INTEXAMPLESRC0 =							\
+INTEXAMPLESRC0 =						\
 	alpha bacp bibd donald					\
-	eq20 golomb-ruler tsp						\
-	graph-color grocery ind-set knights				\
-	magic-sequence magic-square			\
-	money ortho-latin perfect-square				\
-	partition photo queens						\
-	sudoku nonogram placement-puzzle placement-puzzle-01	\
-	crowded-chess black-hole minesweeper domino			\
-	sports-league all-interval			\
-	langford-number warehouses			\
-	stress-domain stress-exec stress-search baseline		\
-	stress-element stress-min stress-distinct			\
+	eq20 golomb-ruler tsp					\
+	graph-color grocery ind-set knights			\
+	magic-sequence magic-square				\
+	money ortho-latin perfect-square			\
+	partition photo queens					\
+	sudoku nonogram pentominoes				\
+	crowded-chess black-hole minesweeper domino		\
+	sports-league all-interval				\
+	langford-number warehouses				\
+	stress-domain stress-exec stress-search baseline	\
+	stress-element stress-min stress-distinct		\
 	stress-extensional stress-linear-bool
 INTEXAMPLESRC  = $(INTEXAMPLESRC0:%=examples/%.cc)
 INTEXAMPLEOBJ  = $(INTEXAMPLESRC:%.cc=%$(OBJSUFFIX))

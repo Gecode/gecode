@@ -40,14 +40,16 @@
 #include "examples/support.hh"
 #include "gecode/minimodel.hh"
 
-/// The maximum number of knights placeable
+/** The maximum number of knights placeable.
+ *
+ * \relates QueensArmies
+ */
 const int kval[] = {
   0,   0,  0,  0,  5,
   9,  15, 21, 29, 37,
   47, 57, 69, 81, 94,
   109
 };
-const int nkval = 16;
 
 /**
    \brief %Example: Crowded Chessboard
@@ -111,9 +113,6 @@ const int nkval = 16;
    <TD>R</TD><TD>K</TD><TD>B</TD><TD>B</TD></TR>
  </TABLE>
 
- \todo Currently this script finds a solution. Instead, it should find
- the maximum number of knights for a given size.
-
    \ingroup ExProblem
 */
 class CrowdedChess : public Example {
@@ -168,6 +167,7 @@ public:
       queens(this, n, 0, n-1),
       rooks(this, n, 0, n-1), 
       knights(this, n*n, 0, 1) {
+    const int nkval = sizeof(kval)/(sizeof(int);
     const int nn = n*n, q = n, r = n, b = (2*n)-2,
       k = n <= nkval ? kval[n-1] : kval[nkval-1];
     const int e = nn - (q + r + b + k);

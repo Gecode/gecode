@@ -51,20 +51,28 @@ namespace {
   /// information for locating particular cards in the layout
   vector<int> layer, pile;
 
-  /// Generates the \ref layout and intializes \ref layer and \ref pile from it.
+  /** \brief Generates\ref layout.
+   *
+   * This function generates the layeout and intializes \ref layer and
+   * \ref pile from it. The layout is randomly generated from the
+   * supplied seed.
+   */
   void generate(int seed) {
     // The layout consists of 17 piles of 3 cards each
     layout = vector<vector<int> >(17, vector<int>(3));
-    vector<int> nums(51);
-    for (int i = 51; i--; ) nums[i] = i+1;
+    // Deck without the Ace of Spades
+    vector<int> deck(51);
+    for (int i = 51; i--; ) deck[i] = i+1;
     Support::RandomGenerator rnd(seed+1);
-    std::random_shuffle(nums.begin(), nums.end(), rnd);
+    std::random_shuffle(deck.begin(), deck.end(), rnd);
+
+    // Place cards from deck
     int pos = 0;
     for (int i = 17; i--; )
       for (int j = 3; j--; )
-        layout[i][j] = nums[pos++];
+        layout[i][j] = deck[pos++];
 
-    // Location-information for each value
+    // Location-information for each card
     layer = vector<int>(52);
     pile  = vector<int>(52);
     for (int i = 17; i--; ) {
@@ -77,21 +85,31 @@ namespace {
 }
 
 
-/** Custom branching for BlackHole that instantiates the variables in
- *  lexical order, and chooses the value with the most cards under it.
+/** \brief Custom branching for black hole patience. 
+ *
+ * This class implements a custom branching for BlackHole that
+ * instantiates the variables in lexical order, and chooses the value
+ * with the most cards under it.
+ *
+ * \relates BlackHole
  */
 class BlackHoleBranch : Branching {
+  /// Views of the branching
   ViewArray<Int::IntView> x;
+  /// Cache of last computed decision
   mutable int pos, val;
  
+  /// Construct branching
   BlackHoleBranch(Space* home, ViewArray<Int::IntView>& xv) 
     : Branching(home), x(xv), pos(-1), val(-1) {}
+  /// Copy constructor
   BlackHoleBranch(Space* home, bool share, BlackHoleBranch& b) 
     : Branching(home, share, b), pos(b.pos), val(b.val) {
     x.update(home, share, b.x);
   }
   
 public:
+  /// Check status of branching, return true if alternatives left. 
   virtual bool status(const Space* home) const {
     for (pos = 0; pos < x.size(); ++pos) {
       if (!x[pos].assigned()) {
@@ -108,10 +126,12 @@ public:
     // No non-assigned variables left
     return false;
   }
+  /// Return branching description
   virtual BranchingDesc* description(const Space* home) const {
     assert(pos >= 0 && pos < x.size() && val >= 1 && val < 52);
     return new PosValDesc<int>(this, pos, val);
   }
+  /// Perform commit for branching description \a d and alternative \a a. 
   virtual ExecStatus commit(Space* home, const BranchingDesc* d, 
                             unsigned int a) {
     const PosValDesc<int> *desc = static_cast<const PosValDesc<int>*>(d);
@@ -123,9 +143,15 @@ public:
       return me_failed(x[desc->pos()].eq(home, desc->val())) 
         ? ES_FAILED : ES_OK;
   }
+  /// Copy branching
   virtual Actor* copy(Space *home, bool share) {
     return new (home) BlackHoleBranch(home, share, *this);
   }
+  /// Reflection name
+  virtual const char* name(void) const {
+    return "BlackHoleBranch";
+  }
+  /// Post branching
   static void post(Space* home, IntVarArgs x) {
     ViewArray<Int::IntView> xv(home, x);
     (void) new (home) BlackHoleBranch(home, xv);
@@ -143,8 +169,8 @@ public:
  * Kelsey, Inês Lynce, Ian Miguel, Peter Nightingale, Barbara
  * M. Smith, and S. Armagan Tarim. 
  *
- * The smart version breaks the conditional symmetry identified in the
- * above paper (enabled by default). 
+ * The conditional symmetry identified in the above paper can be
+ * eliminated (enabled by default).
  *
  * \ingroup ExProblem
  *
@@ -169,6 +195,11 @@ public:
     MODEL_NONE,    ///< No symmetry breaking
     MODEL_SYMMETRY ///< Breaking conditional symmetries
   };
+  /// Propagation of palcement-rules
+  enum {
+    PROPAGATION_REIFIED,    ///< Reified propagation
+    PROPAGATION_EXTENSIONAL ///< Extensional propagation
+  };
   /// Actual model
   BlackHole(const SizeOptions& opt) 
     : x(this, 52, 0,51), y(this, 52, 0,51) 
@@ -179,23 +210,47 @@ public:
     // x is order and y is placement
     channel(this, x, y, opt.icl());
 
-    // Build table for accessing the rank of a card
-    IntArgs modtable(52);
-    for (int i = 0; i < 52; ++i) {
-      modtable[i] = i%13;
-    }
     // The placement rules: the absolute value of the difference
     // between two consecutive cards is 1 or 12.
-    for (int i = 0; i < 51; ++i) {
-      IntVar x1(this, 0, 12), x2(this, 0, 12);
-      element(this, modtable, x[i], x1);
-      element(this, modtable, x[i+1], x2);
-      const int dr[2] = {1, 12};
-      IntVar diff(this, IntSet(dr, 2));
-      post(this, abs(this, minus(this, x1, x2, ICL_DOM), ICL_DOM) 
-           == diff, ICL_DOM);
-    }
+    if (opt.propagation() == PROPAGATION_REIFIED) {
+      // Build table for accessing the rank of a card
+      IntArgs modtable(52);
+      for (int i = 0; i < 52; ++i) {
+        modtable[i] = i%13;
+      }
+      for (int i = 0; i < 51; ++i) {
+        IntVar x1(this, 0, 12), x2(this, 0, 12);
+        element(this, modtable, x[i], x1);
+        element(this, modtable, x[i+1], x2);
+        const int dr[2] = {1, 12};
+        IntVar diff(this, IntSet(dr, 2));
+        post(this, abs(this, minus(this, x1, x2, ICL_DOM), ICL_DOM) 
+             == diff, ICL_DOM);
+      }
+    } else { // opt.propagation() == PROPAGATION_EXTENSIONAL
+      // Build table for allowed tuples
+      REG expression;
+      for (int r = 13; r--; ) {
+        for (int s1 = 4; s1--; ) {
+          for (int s2 = 4; s2--; ) {
+            for (int i = -1; i <= 1; i+=2) {
+              REG r1 = REG(r+13*s1);
+              REG r2 = REG((r+i+52+13*s2)%52);
+              REG r = r1 + r2;
+              expression |= r;
+            }
+          }
+        }
+      }
+      DFA table(expression);
 
+      for (int i = 51; i--; ) {
+        IntVarArgs iva(2);
+        iva[0] = x[i]; iva[1] = x[i+1];
+        extensional(this, iva, table);
+      }
+
+    }
     // A card must be played before the one under it.
     for (int i = 17; i--; )
       for (int j = 2; j--; )
@@ -293,6 +348,11 @@ main(int argc, char* argv[]) {
   opt.model(BlackHole::MODEL_SYMMETRY);
   opt.model(BlackHole::MODEL_NONE,"none");
   opt.model(BlackHole::MODEL_SYMMETRY,"symmetry");
+  opt.propagation(BlackHole::PROPAGATION_EXTENSIONAL);
+  opt.propagation(BlackHole::PROPAGATION_REIFIED,
+                  "reified", "use reified propagation");
+  opt.propagation(BlackHole::PROPAGATION_EXTENSIONAL,
+                  "ext", "use extensional propagation");
   opt.icl(ICL_DOM);
   opt.parse(argc,argv);
   // Generates the new board

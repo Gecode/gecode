@@ -48,7 +48,7 @@
 IntSet *A;
 
 /**
- * \brief %Example: Peacable co-existing armies of queens.
+ * \brief %Example: Peaceable co-existing armies of queens.
  *
  * The goal of this problem is to place as many white and black queens
  * on a chess-board without any two queens of different color
@@ -94,7 +94,7 @@ public:
       // w[i] means that no blacks are allowed on A[i]
       dom(this, U, SRT_DISJ, A[i], w[i]);
       // Make sure blacks and whites are disjoint.
-      post(this, tt(!(w[i] && b[i])));
+      post(this, tt(!w[i] || !b[i]));
       // If i in U, then b[i] has a piece.
       dom(this, U, SRT_SUP, i, b[i]);
     }
@@ -117,7 +117,7 @@ public:
       assign(this, b, INT_ASSIGN_MAX);
     }
   }
-
+  /// Constructor for cloning
   QueenArmies(bool share, QueenArmies& s)
     : Example(share,s), n(s.n)
   {
@@ -151,19 +151,25 @@ public:
     std::cout << "Number of white queens: " << q << std::endl << std::endl;
   }
 
-  /** \brief Custom branching for Peacable queens.
+  /** \brief Custom branching for Peacaeble queens.
    *
    *  Custom branching that tries to place white queens so that they
    *  maximise the amount of un-attacked squares that become attacked.
+   *
+   * \relates QueenArmies
    */
   class QueenBranch : Branching {
+    /// Cache of last computed decision
     mutable int pos;
+    // Construct branching
     QueenBranch(Space* home)
       : Branching(home), pos(-1) {}
+    // Constructor for cloning
     QueenBranch(Space* home, bool share, QueenBranch& b)
       : Branching(home, share, b), pos(b.pos) {}
 
   public:
+    /// Check status of branching, return true if alternatives left. 
     virtual bool status(const Space* home) const {
       const QueenArmies *q = static_cast<const QueenArmies*>(home);
       int maxsize = -1;
@@ -183,11 +189,16 @@ public:
       if (pos == -1) return false;
       return true;
     }
+    /// Return branching description
     virtual BranchingDesc* description(const Space*) const {
       assert(pos != -1);
       return new PosValDesc<bool>(this, pos, true);
     }
-    virtual ExecStatus commit(Space* home, const BranchingDesc* d, unsigned int a) {
+    /** \brief Perform commit for branching description \a d and
+     * alternative \a a.
+     */
+    virtual ExecStatus commit(Space* home, const BranchingDesc* d, 
+                              unsigned int a) {
       QueenArmies *q = static_cast<QueenArmies*>(home);
       const PosValDesc<bool> *pvd = static_cast<const PosValDesc<bool>*>(d);
       bool val = a == 0 ? pvd->val() : !pvd->val();
@@ -195,9 +206,11 @@ public:
         ? ES_FAILED
         : ES_OK;
     }
+    /// Clone
     virtual Actor* copy(Space *home, bool share) {
       return new (home) QueenBranch(home, share, *this);
     }
+    /// Reflection name
     virtual const char* name(void) const {
       return "QueenBranching";
     }
@@ -208,7 +221,10 @@ public:
   };
 };
 
-/// Position of a piece in a square board
+/** \brief Position of a piece in a square board.
+ *
+ * \relates QueenArmies
+ */
 int pos(int i, int j, int n) {
   return i*n + j;
 }
