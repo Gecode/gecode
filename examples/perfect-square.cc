@@ -49,8 +49,11 @@
 /// PerfectSquare problem specification
 class SquareSpec {
 public:
-  int x; int y;
-  int n; const int* s;
+  int x;        ///< Size in x-direction
+  int y;        ///< Size in y-direction
+  int n;        ///< Number of squares
+  const int* s; ///< Array of square sizes
+  /// Initialize specification
   SquareSpec(int x0, int y0, const int s0[]) :
     x(x0), y(y0), s(s0) {
     int i = 0;
@@ -59,34 +62,34 @@ public:
   }
 };
 
-static const int s0_s[] = {2,2,2,2,0};
-static const SquareSpec s0(4,4,s0_s);
+const int s0_s[] = {2,2,2,2,0};
+const SquareSpec s0(4,4,s0_s);
 
-static const int s1_s[] = {3,2,2,1,1,1,0};
-static const SquareSpec s1(5,4,s1_s);
+const int s1_s[] = {3,2,2,1,1,1,0};
+const SquareSpec s1(5,4,s1_s);
 
-static const int s2_s[] = {6,4,4,4,2,2,2,2,0};
-static SquareSpec s2(10,10,s2_s);
+const int s2_s[] = {6,4,4,4,2,2,2,2,0};
+SquareSpec s2(10,10,s2_s);
 
-static const int s3_s[] = {9,8,8,7,5,4,4,4,4,4,3,3,3,2,2,1,1,0};
-static const SquareSpec s3(20,20,s3_s);
+const int s3_s[] = {9,8,8,7,5,4,4,4,4,4,3,3,3,2,2,1,1,0};
+const SquareSpec s3(20,20,s3_s);
 
-static const int s4_s[] = {18,15,14,10,9,8,7,4,1,0};
-static const SquareSpec s4(32,33,s4_s);
+const int s4_s[] = {18,15,14,10,9,8,7,4,1,0};
+const SquareSpec s4(32,33,s4_s);
 
-static const int s5_s[] = {25,24,23,22,19,17,11,6,5,3,0};
-static const SquareSpec s5(65,47,s5_s);
+const int s5_s[] = {25,24,23,22,19,17,11,6,5,3,0};
+const SquareSpec s5(65,47,s5_s);
 
-static const int s6_s[] = {50,42,37,35,33,29,27,25,24,19,18,
+const int s6_s[] = {50,42,37,35,33,29,27,25,24,19,18,
                            17,16,15,11,9,8,7,6,4,2,0};
-static const SquareSpec s6(112,112,s6_s);
+const SquareSpec s6(112,112,s6_s);
 
-static const int s7_s[] = {81,64,56,55,51,43,39,38,35,33,31,30,29,20,
+const int s7_s[] = {81,64,56,55,51,43,39,38,35,33,31,30,29,20,
                            18,16,14,9,8,5,4,3,2,1,0};
-static const SquareSpec s7(175,175,s7_s);
+const SquareSpec s7(175,175,s7_s);
 
-static const SquareSpec* specs[] = {&s0,&s1,&s2,&s3,&s4,&s5,&s6,&s7};
-static const unsigned int n_examples = sizeof(specs) / sizeof(SquareSpec*);
+const SquareSpec* specs[] = {&s0,&s1,&s2,&s3,&s4,&s5,&s6,&s7};
+const unsigned int n_examples = sizeof(specs) / sizeof(SquareSpec*);
 //@}
 
 /**
@@ -128,7 +131,7 @@ public:
                       ~(y[j]-y[i] >= s.s[i]) || ~(y[i]-y[j] >= s.s[j])));
 
     /*
-     * Symmetry breaking
+     * Symmetry breaking (assumes that square size are sorted)
      *
      */
     for (int i=s.n-1; i--; )
@@ -144,44 +147,37 @@ public:
       BoolVarArgs b(s.n);
       for (int cx=0; cx<s.x; cx++) {
         for (int i=0; i<s.n; i++) {
-          BoolVar b_cx(this,0,1);
-          dom(this, x[i], cx-s.s[i]+1, cx, b_cx);
-          b[i] = b_cx;
+          b[i].init(this,0,1);
+          dom(this, x[i], cx-s.s[i]+1, cx, b[i]);
         }
         linear(this, sa, b, IRT_EQ, s.y);
       }
       for (int cy=0; cy<s.y; cy++) {
         for (int i=0; i<s.n; i++) {
-          BoolVar b_cy(this,0,1);
-          dom(this, y[i], cy-s.s[i]+1, cy, b_cy);
-          b[i] = b_cy;
+          b[i].init(this,0,1);
+          dom(this, y[i], cy-s.s[i]+1, cy, b[i]);
         }
         linear(this, sa, b, IRT_EQ, s.x);
       }
     } else {
       IntArgs m(s.n), dh(s.n);
       for (int i = s.n; i--; ) {
-        m[i]  = 0;
-        dh[i] = s.s[i];
+        m[i]  = 0; dh[i] = s.s[i];
       }
       IntVarArgs e(s.n);
       IntArgs limit(1);
       {
         // x-direction
-        for (int i = s.n; i--; ) {
-          IntVar ei(this, 0, s.x);
-          e[i] = ei;
-        }
+        for (int i = s.n; i--; )
+          e[i].init(this, 0, s.x);
         limit[0] = s.y;
         cumulatives(this, m, x, dh, e, dh, limit,  true);
         cumulatives(this, m, x, dh, e, dh, limit, false);
       }
       {
         // y-direction
-        for (int i = s.n; i--; ) {
-          IntVar ei(this, 0, s.y);
-          e[i] = ei;
-        }
+        for (int i = s.n; i--; )
+          e[i].init(this, 0, s.y);
         limit[0] = s.x;
         cumulatives(this, m, y, dh, e, dh, limit,  true);
         cumulatives(this, m, y, dh, e, dh, limit, false);
