@@ -70,8 +70,10 @@ class Domino : public Example {
 private:
   /// Specification of the board
   const int *spec;
-  /// Width and height of the board
-  int width, height;
+  /// Width of the board
+  int width
+  /// Height of the board
+  int height;
   
   /// The board representing the number of the piece at each position
   IntVarArray x;
@@ -82,12 +84,12 @@ public:
     PROP_ELEMENT,    ///< Use element constraints
     PROP_EXTENSIONAL ///< Use extensional constraints
   };
-  /// Construction of model
+
+  /// Actual model
   Domino(const SizeOptions& opt)
     : spec(specs[opt.size()]), 
       width(spec[0]), height(spec[1]),
-      x(this, (width+1)*height, 0, 28)
-  {
+      x(this, (width+1)*height, 0, 28) {
     spec+=2; // skip board size information
     
     // Copy spec information to the board
@@ -190,18 +192,6 @@ public:
     branch(this, ps, INT_VAR_NONE, INT_VAL_MIN);
   }
 
-  /// Constructor for cloning \a s
-  Domino(bool share, Domino& s) :
-    Example(share,s), spec(s.spec), width(s.width), height(s.height) {
-      x.update(this, share, s.x);
-  }
-
-  /// Copy space during cloning
-  virtual Space*
-  copy(bool share) {
-    return new Domino(share,*this);
-  }
-
   /// Print solution
   virtual void
   print(void) {
@@ -216,6 +206,17 @@ public:
     }
     std::cout << std::endl;
   }
+  /// Constructor for cloning \a s
+  Domino(bool share, Domino& s) :
+    Example(share,s), spec(s.spec), width(s.width), height(s.height) {
+      x.update(this, share, s.x);
+  }
+  /// Copy space during cloning
+  virtual Space*
+  copy(bool share) {
+    return new Domino(share,*this);
+  }
+
 };
 
 
@@ -248,6 +249,7 @@ namespace {
    */
   //@{
   
+  /// %Example 0
   const int domino0[] =
     { // width*height of the board
       8,7,
@@ -261,6 +263,7 @@ namespace {
       4,2,0,6,5,3,3,6
     };
   
+  /// %Example 1
   const int domino1[] =
     { // width*height of the board
       8,7,
@@ -274,6 +277,7 @@ namespace {
       1,3,6,1,2,3,5,2
     };
   
+  /// %Example 2
   const int domino2[] =
     { // width*height of the board
       8,7,
@@ -287,6 +291,7 @@ namespace {
       5,1,6,0,0,0,4,0
     };
   
+  /// %Example 3
   const int domino3[] =
     { // width*height of the board
       8,7,
@@ -300,6 +305,7 @@ namespace {
       0,5,4,6,2,1,6,1
     };
   
+  /// %Example 4
   const int domino4[] =
     { // width*height of the board
       8,7,
@@ -313,6 +319,7 @@ namespace {
       3,2,4,5,4,2,6,0
     };
   
+  /// %Example 5
   const int domino5[] =
     { // width*height of the board
       8,7,
