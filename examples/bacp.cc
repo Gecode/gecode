@@ -42,37 +42,38 @@
 #include <list>
 #include <vector>
 
+/// A course \relates BACP
+class Course {
+public:
+  const char* name; ///< Course name
+  int credit;       ///< Course credit
+};
+
+/// A curriculum \relates BACP
+class Curriculum {
+public:
+  /// Number of periods
+  int p;
+  /// Minimum academic load
+  int a;
+  /// Maximum academic load
+  int b;
+  /// Minimum amount of courses
+  int c;
+  /// Maximum amount of courses
+  int d;
+
+  /// Courses
+  const Course *courses;
+  /// Prerequisites
+  const char **prereqs;
+};
+
 namespace {
   
-  /// A course
-  class Course {
-  public:
-    const char* name; ///< Course name
-    int credit;       ///< Course credit
-  };
-
-  /// A curriculum
-  class Curriculum {
-  public:
-    /// Number of periods
-    int p;
-    /// Minimum academic load
-    int a;
-    /// Maximum academic load
-    int b;
-    /// Minimum amount of courses
-    int c;
-    /// Maximum amount of courses
-    int d;
-  
-    /// Courses
-    const Course *courses;
-    /// Prerequisites
-    const char **prereqs;
-  };
-
   extern const Curriculum curriculum[];
   extern const unsigned int n_examples;
+
 }
 
 /**
