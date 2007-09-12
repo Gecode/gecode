@@ -78,29 +78,27 @@ public:
     MODEL_PLAIN,   ///< A simple model
     MODEL_SYMMETRY ///< Model with symmetry breaking
   };
-  int groups;
-  int playersInGroup;
-  int weeks;
-  int players;
+  int groups;          ///< Number of groups in a week
+  int playersInGroup;  ///< Number of players in a group
+  int weeks;           ///< Number of weeks
+  int players;         ///< Overall number of players
 
+  /// The sets representing the groups
   SetVarArray groupsS;
-  IntVarArray groupsSInv;
 
+  /// Return group number \a g in week \a w
   SetVar& group(int w, int g) {
     return groupsS[w*groups+g];
   }
-  IntVar& groupInv(int w, int p) {
-    return groupsSInv[w*players+p];
-  }
 
+  /// Actual model
   Golf(const SizeOptions& opt) :
     groups(t[opt.size()].groups),
     playersInGroup(t[opt.size()].playersInGroup),
     weeks(t[opt.size()].weeks),
     players(groups*playersInGroup),
     groupsS(this,groups*weeks,IntSet::empty,0,players-1,
-            playersInGroup,playersInGroup),
-    groupsSInv(this, weeks*players, 0, groups-1) {
+            playersInGroup,playersInGroup) {
 
     SetVar allPlayers(this, 0, players-1, 0, players-1);
 
@@ -119,7 +117,7 @@ public:
               SetVar v = group(w,g);
               for (int i=(w+1)*groups; i<weeks*groups; i++) {
                 SetVar atMostOne(this,IntSet::empty,0,players-1,0,1);
-          rel(this, v, SOT_INTER, groupsS[i], SRT_EQ, atMostOne);
+                rel(this, v, SOT_INTER, groupsS[i], SRT_EQ, atMostOne);
               }
       }
     }
@@ -179,22 +177,23 @@ public:
       }
 
       // Initialize the dual variables:
-      // groupInv(w,p) is player p's group in week w
+      // groupsSInv[w*players+p] is player p's group in week w
+      IntVarArray groupsSInv(this, weeks*players, 0, groups-1);
       for (int w=0; w<weeks; w++) {
         for (int p=0; p<players; p++) {
           SetVar thisPlayer(this, p,p, 0, players-1);
           SetVarArgs thisWeek(groups);
           for (int g=0; g<groups; g++)
             thisWeek[g] = group(w,g);
-          selectSet(this, thisWeek, groupInv(w,p), thisPlayer);
+          selectSet(this, thisWeek, groupsSInv[w*players+p], thisPlayer);
         }
       }
 
       // Symmetry breaking: order players
-      // For all p<groups : groupInv(w,p) <= p
+      // For all p<groups : groupsSInv[w*players+p] <= p
       for (int w=0; w<weeks; w++) {
         for (int p=0; p<groups; p++) {
-          rel(this, groupInv(w,p), IRT_LQ, p);
+          rel(this, groupsSInv[w*players+p], IRT_LQ, p);
         }
       }
 
@@ -203,20 +202,9 @@ public:
     branch(this, groupsS, SET_VAR_MIN_UNKNOWN_ELEM, SET_VAL_MIN);
   }
 
-  Golf(bool share, Golf& s) : Example(share,s),
-      groups(s.groups), playersInGroup(s.playersInGroup),
-      weeks(s.weeks), players(s.players) {
-    groupsS.update(this, share, s.groupsS);
-  }
-
-  virtual Space*
-  copy(bool share) {
-    return new Golf(share,*this);
-  }
-
+  /// Print solution
   virtual void
   print(void) {
-
     std::cout << "Tournament plan" << std::endl;
 
     for (int w=0; w<weeks; w++) {
@@ -235,10 +223,25 @@ public:
       }
       std::cout << std::endl;
     }
-
   }
+
+  /// Constructor for copying \a s
+  Golf(bool share, Golf& s) : Example(share,s),
+      groups(s.groups), playersInGroup(s.playersInGroup),
+      weeks(s.weeks), players(s.players) {
+    groupsS.update(this, share, s.groupsS);
+  }
+  /// Copy during cloning
+  virtual Space*
+  copy(bool share) {
+    return new Golf(share,*this);
+  }
+
 };
 
+/** \brief Main-function
+ *  \relates Golf
+ */
 int
 main(int argc, char* argv[]) {
   SizeOptions opt("Golf");

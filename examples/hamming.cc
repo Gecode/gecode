@@ -54,11 +54,15 @@
  */
 class Hamming : public Example {
 public:
+  /// The hamming code
   SetVarArray xs;
 
+  /// Number of bits
   static const int bits = 20;
+  /// Minimum distance between two codes
   static const int dist = 3;
 
+  /// Actual model
   Hamming(const SizeOptions& opt) :
     xs(this,opt.size(),IntSet::empty,1,bits) {
     SetVarArray cxs(this,xs.size());
@@ -82,31 +86,35 @@ public:
         cardinality(this, xIntCy,diff1);
         cardinality(this, yIntCx,diff2);
         post(this, diff1+diff2 >= dist);
-
       }
     }
 
     branch(this, xs, SET_VAR_NONE, SET_VAL_MIN);
   }
 
-  Hamming(bool share, Hamming& s) : Example(share,s) {
-    xs.update(this, share, s.xs);
-  }
-
-  virtual Space*
-  copy(bool share) {
-    return new Hamming(share,*this);
-  }
-
+  /// Print solution
   virtual void
   print(void) {
     for (int i=0; i<xs.size(); i++) {
       std::cout << "\t[" << i << "]" << xs[i] << std::endl;
     }
   }
+
+  /// Constructor for copying \a s
+  Hamming(bool share, Hamming& s) : Example(share,s) {
+    xs.update(this, share, s.xs);
+  }
+  /// Copy during cloning
+  virtual Space*
+  copy(bool share) {
+    return new Hamming(share,*this);
+  }
+
 };
 
-
+/** \brief Main-function
+ *  \relates Hamming
+ */
 int
 main(int argc, char* argv[]) {
   SizeOptions opt("Hamming");

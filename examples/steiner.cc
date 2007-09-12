@@ -41,7 +41,7 @@
 /**
  * \brief %Example: Steiner triples
  *
- * This is problem 044 from csplib.
+ * See also problem 044 at http://www.csplib.org/.
  *
  * \ingroup ExProblem
  *
@@ -55,22 +55,23 @@ public:
     MODEL_MATCHING ///< Use matching constraints
   };
 
+  /// Order of the Steiner problem
   int n;
-  int n1;
-  int n1n1;
-  int len;
+  /// Number of Steiner triples
+  int noOfTriples;
 
-  SetVarArray root;
+  /// The steiner triples
+  SetVarArray triples;
 
+  /// Actual model
   Steiner(const SizeOptions& opt)
-    : n(opt.size()),
-      n1(n+1), n1n1(n1*n1), len((n*(n-1))/6),
-      root(this,len, IntSet::empty, 1, n, 3, 3) {
+    : n(opt.size()), noOfTriples((n*(n-1))/6),
+      triples(this, noOfTriples, IntSet::empty, 1, n, 3, 3) {
 
-    for (int i=0; i<len; i++) {
-      for (int j=i+1; j<len; j++) {
-        SetVar x = root[i];
-        SetVar y = root[j];
+    for (int i=0; i<noOfTriples; i++) {
+      for (int j=i+1; j<noOfTriples; j++) {
+        SetVar x = triples[i];
+        SetVar y = triples[j];
 
         SetVar atmostOne(this,IntSet::empty,1,n,0,1);
         cardinality(this, atmostOne,0,1);
@@ -84,7 +85,6 @@ public:
         IntVar y3(this,1,n);
 
         if (opt.model() == MODEL_NONE) {
-        
           /* Naive alternative:
            * just including the ints in the set
            */
@@ -95,7 +95,6 @@ public:
           rel(this, y, SRT_SUP, y2);
           rel(this, y, SRT_SUP, y3);
         } else {
-
           /* Smart alternative:
            * Using matching constraints
            */
@@ -107,7 +106,6 @@ public:
           IntVarArgs yargs(3);
           yargs[0] = y1; yargs[1] = y2; yargs[2] = y3;
           match(this, y,yargs);
-        
         }
         
         /* Breaking symmetries */
@@ -120,7 +118,7 @@ public:
         rel(this, y2,IRT_LE,y3);
         rel(this, y1,IRT_LE,y3);
         
-        IntArgs ia(6,n1n1,n1,1,-n1n1,-n1,-1);
+        IntArgs ia(6,(n+1)*(n+1),n+1,1,-(n+1)*(n+1),-(n+1),-1);
         IntVarArgs iva(6);
         iva[0]=x1; iva[1]=x2; iva[2]=x3;
         iva[3]=y1; iva[4]=y2; iva[5]=y3;
@@ -128,30 +126,32 @@ public:
       }
     }
 
-
-    branch(this, root, SET_VAR_NONE, SET_VAL_MIN);
+    branch(this, triples, SET_VAR_NONE, SET_VAL_MIN);
   }
 
-  Steiner(bool share, Steiner& s) : Example(share,s),
-                                    n(s.n), n1(s.n1), n1n1(s.n1n1), len(s.len)
-  {
-    root.update(this, share, s.root);
+  /// Print solution
+  virtual void
+  print(void) {
+    for (int i=0; i<noOfTriples; i++) {
+      std::cout << "\t[" << i << "]" << triples[i] << std::endl;
+    }
   }
 
+  /// Constructor for copying \a s
+  Steiner(bool share, Steiner& s) : Example(share,s), n(s.n), noOfTriples(s.noOfTriples) {
+    triples.update(this, share, s.triples);
+  }
+  /// Copy during cloning
   virtual Space*
   copy(bool share) {
     return new Steiner(share,*this);
   }
 
-  virtual void
-  print(void) {
-    for (int i=0; i<len; i++) {
-      std::cout << "\t[" << i << "]" << root[i] << std::endl;
-    }
-  }
-
 };
 
+/** \brief Main-function
+ *  \relates Steiner
+ */
 int
 main(int argc, char* argv[]) {
   SizeOptions opt("Steiner");
