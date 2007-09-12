@@ -79,8 +79,6 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline ExecStatus 
   Bin<View0, View1>::propagate(Space* home) {
-
-    BMI* mgr   = x0.manager();
     bool assigned = true;
     
     std::cout << "bin inhom propagate\n";
@@ -89,7 +87,7 @@ namespace Gecode { namespace CpltSet {
       bdd dom = x1.bdd_domain();
       int s = x1.offset();
       int w = s + x1.table_width() - 1;
-      mgr->existquant(dom, d, s, w);
+      manager.existquant(dom, d, s, w);
       std::cout << "check x0 ...";
       GECODE_ME_CHECK(x0.tell_formula(home, dom));
       std::cout << "DONE\n";
@@ -99,7 +97,7 @@ namespace Gecode { namespace CpltSet {
       bdd dom = x0.bdd_domain();
       int s = x0.offset();
       int w = s + x0.table_width() - 1;
-      mgr->existquant(dom, d, s, w);
+      manager.existquant(dom, d, s, w);
       std::cout << "check x1...";
       GECODE_ME_CHECK(x1.tell_formula(home, dom));
       std::cout << "DONE";
@@ -123,8 +121,7 @@ namespace Gecode { namespace CpltSet {
       x0.cancel(home, this, PC_CPLTSET_DOM);
       x1.cancel(home, this, PC_CPLTSET_DOM);
     }
-    BMI* mgr = x0.manager();
-    mgr->dispose(d);
+    manager.dispose(d);
     MixBinaryPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::dispose(home);
     return sizeof(*this);
   }

@@ -43,49 +43,49 @@ namespace Gecode {
   CpltSetVar::CpltSetVar(void) : var(NULL) {}
 
   forceinline void
-  CpltSetVar::init(Space* home, BddMgr& m) { 
-    var = new (home) CpltSet::CpltSetVarImp(home, m.manager());
+  CpltSetVar::init(Space* home) { 
+    var = new (home) CpltSet::CpltSetVarImp(home);
   }
   
   forceinline void
-  CpltSetVar::init(Space* home, BddMgr& m, int min, int max) {
-    var = new (home) CpltSet::CpltSetVarImp(home, m.manager(), min, max);
+  CpltSetVar::init(Space* home, int min, int max) {
+    var = new (home) CpltSet::CpltSetVarImp(home, min, max);
   }
 
 
   forceinline void
-  CpltSetVar::init(Space* home, BddMgr& m, int glbMin, int glbMax, 
+  CpltSetVar::init(Space* home, int glbMin, int glbMax, 
                int lubMin, int lubMax,
                unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) CpltSet::CpltSetVarImp(home, m.manager(),
+    var = new (home) CpltSet::CpltSetVarImp(home,
                                             glbMin, glbMax, 
                                             lubMin, lubMax, cardMin, cardMax);
   }
 
 
   forceinline void
-  CpltSetVar::init(Space* home, BddMgr& m,
+  CpltSetVar::init(Space* home,
                    int glbMin, int glbMax, const IntSet& lubD,
                    unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) CpltSet::CpltSetVarImp(home, m.manager(),
+    var = new (home) CpltSet::CpltSetVarImp(home,
                                             glbMin, glbMax,
                                             lubD, cardMin, cardMax);
   }
 
   forceinline void
-  CpltSetVar::init(Space* home, BddMgr& m, const IntSet& glbD,
+  CpltSetVar::init(Space* home, const IntSet& glbD,
                    int lubMin, int lubMax,
                    unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) CpltSet::CpltSetVarImp(home, m.manager(),
+    var = new (home) CpltSet::CpltSetVarImp(home,
                                             glbD, lubMin, lubMax,
                                             cardMin, cardMax);
   }
 
   forceinline void
-  CpltSetVar::init(Space* home, BddMgr& m,
+  CpltSetVar::init(Space* home, 
                    const IntSet& glbD, const IntSet& lubD,
                    unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) CpltSet::CpltSetVarImp(home, m.manager(),
+    var = new (home) CpltSet::CpltSetVarImp(home,
                                             glbD, lubD, cardMin, cardMax);
   }
 

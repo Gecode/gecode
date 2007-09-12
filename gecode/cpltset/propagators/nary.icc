@@ -38,7 +38,7 @@
 namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline bdd 
-  NaryBddProp<View>::bnd_phi(BMI* mgr, int j) {
+  NaryBddProp<View>::bnd_phi(int j) {
     // std::cout << "bnd_phi\n";
     /// \f$ B(c)\f$
     if (j == -1) {
@@ -49,14 +49,14 @@ namespace Gecode { namespace CpltSet {
     /// \f$ D_j \f$
     bdd cur = x[j].bdd_domain();
     /// \f$ \phi_{j - 1}\f$
-    bdd phires = bnd_phi(mgr, j - 1);
+    bdd phires = bnd_phi(j - 1);
     /// \f$ \exists_{V(D_j)} D_j \wedge phi_{j - 1}\f$
     // std::cout << "eliminate on phi\n";
 
     // strange
-    if (!mgr->ctrue(cur)) {    
-      bdd outvars = bdd_vars(mgr, cur);
-      mgr->existquant(cur, phires, outvars);
+    if (!manager.ctrue(cur)) {    
+      bdd outvars = bdd_vars(cur);
+      manager.existquant(cur, phires, outvars);
     } else {
       cur &= phires;
     }
@@ -66,7 +66,7 @@ namespace Gecode { namespace CpltSet {
   // used in eeq propagation with n*n and-abstractions
   template <class View>
   forceinline bdd 
-  NaryBddProp<View>::phi(BMI* mgr, int i, int j) {
+  NaryBddProp<View>::phi(int i, int j) {
     /// \f$ B(c)\f$
     if (j == -1) {
       return d;
@@ -74,19 +74,19 @@ namespace Gecode { namespace CpltSet {
     /// \f$ phi_i^{j - 1}\f$
     // 
     if (j == i) {
-      return phi(mgr, i, j - 1);
+      return phi(i, j - 1);
     }
 
     bdd cur = bdd_true();
     /// \f$ D_j \f$
     x[j].dom_and(cur);
     /// \f$ \phi_i^{j - 1}\f$
-    cur &= phi(mgr, i, j - 1);
+    cur &= phi(i, j - 1);
     /// \f$ \exists_{V(x_j)} D_j \wedge phi_i^{j - 1}\f$
     int start = x[j].offset();
     int end   = start + x[j].table_width() - 1;
     // std::cout << "eliminate on phi\n";
-    return mgr->eliminate(cur, start, end);
+    return manager.eliminate(cur, start, end);
   }
 
   template <class View>
@@ -140,8 +140,7 @@ namespace Gecode { namespace CpltSet {
         x[i].cancel(home, this, PC_CPLTSET_DOM);
       }
     }
-    BMI* mgr = x[0].manager();
-    mgr->dispose(d);
+    manager.dispose(d);
     Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -164,7 +163,6 @@ namespace Gecode { namespace CpltSet {
   NaryBddProp<View>::propagate_ddc(Space* home) {
     // std::cout << "propagate_ddc\n";
 
-    BMI* mgr = x[0].manager();
     bool assigned = true;
     int n = x.size();
 
@@ -181,7 +179,7 @@ namespace Gecode { namespace CpltSet {
     ExecStatus es = ES_OK;
 //     if (!assigned) {
     // std::cout << "divide " << 0 << ".." << n - 1<< "\n";
-      es = divide_conquer(home, mgr, d, 0, n - 1);
+      es = divide_conquer(home, d, 0, n - 1);
       if (es == ES_FAILED) {
         // std::cout << "propagation failed\n";
         return es;
@@ -212,92 +210,37 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline ExecStatus
   NaryBddProp<View>::propagate_eeq(Space* home) {
-    // std::cout << "propagate_eeq\n";
-
-    BMI* mgr = x[0].manager();
-
-//     bool assigned = true;
-//     bdd xs = bdd_true();
-//     for (int i = x.size(); i--;) {
-//       x[i].dom_and(xs);
-//       assigned &= x[i].assigned();
-//     }
-
-//     d &= xs;
-//     if (mgr->cfalse(d)) {
-//       return ES_FAILED;
-//     }
-
-//     if (assigned) {
-//       return ES_SUBSUMED(this, home);
-//     }
-
-
     int n = x.size();
     for (int i = 0; i < n; i++) {
       ModEvent me;
-      bdd xphi = phi(mgr, i, n - 1);
+      bdd xphi = phi(i, n - 1);
       me = x[i].tell_formula(home, xphi);
       if (me_failed(me)) {
         return ES_FAILED;
       }
     }
-
-
-//     // std::cout << "again test subsumption\n";
-//     assigned = true;
-//     for (int i = x.size(); i--; ) {
-//       assigned &= x[i].assigned();
-//       // std::cout << x[i] << " assigned = " << assigned << "\n";
-//     }
-
-//     d &= xs;
-//     if (mgr->cfalse(d)) {
-//       return ES_FAILED;
-//     }
-//     if (assigned) {
-//       return ES_SUBSUMED(this, home);
-//     }
-
     return ES_FIX;
   }
 
   template <class View>
   forceinline ExecStatus
   NaryBddProp<View>::propagate_bnd_eeq(Space* home) {
-    BMI* mgr = x[0].manager();
-
     int n = x.size();
-//     // ensure that domains are sticks
-//     for (int i = n; i--; ) {
-//       bdd dom  = x[i].bdd_domain();
-//       bdd hull = bdd_true();
-    //   conv_hull(mgr, dom, hull);
-//       ModEvent me = x[i].tell_formula(home, hull);
-//       if (me_failed(me)) {
-//         std::cout << "not convex hull\n";
-//         return ES_FAILED;
-//       }
-//     }
-
 
     // compute \f$\phi_n\f$
-    bdd xphi_n = bnd_phi(mgr, n - 1);
+    bdd xphi_n = bnd_phi(n - 1);
 
     if (xphi_n == bdd_false()) {
       std::cout << "xphi_n = bot\n";
       return ES_FAILED;
     }
 
-    // std::cout << "xphi_n = " << xphi_n << "\n";
-    // mgr->bdd2dot(xphi_n);
-
     //  compute the fixed variables of \f$\phi_n\f$, 
     //  \f$\lbracket\phi_n\rbracketf$, 
     bdd conv_hull_xphi = bdd_true();
-    conv_hull(mgr, xphi_n, conv_hull_xphi);
+    conv_hull(xphi_n, conv_hull_xphi);
     // std::cout << "conv_xphi_n = " << conv_hull_xphi << "\n";
-    // mgr->bdd2dot(conv_hull_xphi);
+    // manager.bdd2dot(conv_hull_xphi);
 
     // project on x_i
     for (int i = 0; i < n; i++) {
@@ -323,7 +266,7 @@ namespace Gecode { namespace CpltSet {
       }
 
       // me = x[i].tell_project(home, conv_hull_xphi, &var[0], s);
-      bdd proj = mgr->eliminate(conv_hull_xphi, &var[0], s);
+      bdd proj = manager.eliminate(conv_hull_xphi, &var[0], s);
       me = x[i].tell_formula(home, proj);
       if (me_failed(me)) {
         std::cout << "tell formula failed\n";
@@ -333,16 +276,16 @@ namespace Gecode { namespace CpltSet {
 
     // after propgation update B(C)
     // ensures that the fixed parts of all variables have been projected out
-    if (!mgr->ctrue(xphi_n)) {
+    if (!manager.ctrue(xphi_n)) {
       // strongly depends on update rule
       d = xphi_n;
       
 
 // //       bdd hull_proj = conv_project(mgr, xphi_n);
-// //       d = mgr->eliminate(d, hull_proj);
+// //       d = manager.eliminate(d, hull_proj);
     }
     // std::cout << "new constraint description\n";
-//     mgr->bdd2dot(d);
+//     manager.bdd2dot(d);
 
 
     bool assigned = true;
@@ -364,73 +307,19 @@ namespace Gecode { namespace CpltSet {
   NaryBddProp<View>::propagate_bnd_ddc(Space* home) {
     // std::cout << "propagate_ddc\n";
 
-    BMI* mgr = x[0].manager();
     bool assigned = true;
     int n = x.size();
 
-    // ensure that domains are sticks
-    // std::cout << "ensure that domains are sticks...";
-
-//     for (int i = n; i--; ) {
-//       bdd dom  = x[i].bdd_domain();
-//       bdd hull = bdd_true();
-    //   conv_hull(mgr, dom, hull);
-//       ModEvent me = x[i].replace_formula(home, hull);
-//       if (me_failed(me)) {
-//         return ES_FAILED;
-//       }
-//     }
-
-    // std::cout << "DONE\n";
-
-      // projecting fixed domain parts out of B(c)
-//       bdd fixed = bdd_true();
-//       bdd xs = bdd_true();
-//       for (int i = n; i--; ) {
-//         bdd dom = x[i].bdd_domain();
-// //         std::cout << "DOM(x["<<i<<"])="<< dom << "\n";
-//         bdd fp  = bdd_true();
-    //  conv_project(mgr, dom, fp);
-// //         std::cout << "FP(x["<<i<<"])="<< fp << "\n";
-//         fixed &= fp;
-//         x[i].dom_and(xs);
-//       }
-
-//       if (!mgr->ctrue(fixed)) {
-//         mgr->existquant(d, xs, fixed);
-//       }
-
-
-
     // std::cout << "divide_conquer_conv...";
     ExecStatus es = ES_OK;
-//     std::cout << "starting with descrip\n";
-//     mgr->bdd2dot(d);
-
-//     if (n == 1) {
-//       std::cout << "new unary conjunction\n";
-//       // IMPORTANT: in the unary case (bounds consistent)
-//       // where we have propagators instead of direct tells
-//       // divide_and_conquer does not do the domain conjunction for us 
-//       d &= x[0].bdd_domain();
-//     }
-
-//     es = divide_conquer_conv(home, mgr, d, 0, n - 1);
-//     es = divide_conquer(home, mgr, d, 0, n - 1);
-    if (es == ES_FAILED) {
-      // std::cout << "ES_FAILED\n";
-      return es;
-    }
-    // std::cout << "DONE\n";
-
 
     bdd fixed = bdd_true();
     for (int i = 0; i < n; i++) {
       bdd dom = x[i].bdd_domain();
       bdd fp  = bdd_true();
-      conv_project(mgr, dom, fp);
+      conv_project(dom, fp);
       fixed &= fp;
-      mgr->eliminate(d, fp);
+      manager.eliminate(d, fp);
     }
 
     assigned = true;
@@ -438,176 +327,14 @@ namespace Gecode { namespace CpltSet {
       assigned &= x[i].assigned();
     }
     if (assigned) {
-      // std::cout << "SUBSUMED\n";
       return ES_SUBSUMED(this, home);
     } 
-
-    // std::cout << "FIX\n";
     return ES_FIX;
   }
-
-
-//   forceinline ExecStatus
-//   NaryBddProp<View>::propagate_split(Space* home) {
-//     BMI* mgr = x[0].manager();
-//     bool assigned = true;
-//     int n = x.size();
-//     ExecStatus es = ES_OK;
-
-//     // computing phi
-//     bdd phi_n = d;
-//     for (int i = n; i--; ) {
-//       bdd bnd = x[i].bdd_bounds();
-//       bdd proj = bdd_true();
-  //     conv_project(mgr, bnd, proj);
-//       mgr->existquant(phi_n, bnd, proj);
-//     }
-   
-//     // using divide and conquer to compute the remainder part of the variables
-//     es = divide_conquer_split(home, mgr, phi_n, 0, n - 1);
-//     if (es == ES_FAILED) {
-//       return ES_FAILED;
-//     }
-
-//     // update the description
-//     d = phi_n;
-
-//     assigned = true;
-//     for (int i = n; i--; ) {
-//       assigned &= x[i].assigned();
-//     }
-//     if (assigned) {
-//       // std::cout << "SUBSUMED\n";
-//       return ES_SUBSUMED(this, home);
-//     } 
-
-//     // std::cout << "FIX\n";
-//     return ES_FIX;
-
-//   }
-
-
-//   forceinline ExecStatus
-//   NaryBddProp<View>::propagate_card(Space* home) {
-//     // std::cout << "propagate card\n";
-//     BMI* mgr = x[0].manager();
-//     bool assigned = true;
-//     int n = x.size();
-//     ExecStatus es = ES_OK;
-
-// //     // computing phi
-// //     bdd phi_n = d;
-// //     for (int i = n; i--; ) {
-// //       bdd bnd = x[i].bdd_bounds();
-// //       phi_n &= bnd;
-// //       bdd proj = bdd_true();
-  // //     conv_project(mgr, bnd, proj);
-// //       mgr->eliminate(phi_n, proj);
-// //     }
-
-//     // computing phi
-//     bdd phi_n = d;
-//     for (int i = n; i--; ) {
-//       bdd bnd = x[i].bdd_bounds();
-//       bdd proj = bdd_true();
-  //     conv_project(mgr, bnd, proj);
-//       mgr->existquant(phi_n, bnd, proj);
-//     }
-    
-//     // using divide and conquer to compute the remainder part of the variables
-//     es = divide_conquer_split_card(home, mgr, phi_n, 0, n - 1);
-//     if (es == ES_FAILED) {
-//       return ES_FAILED;
-//     }
-
-//     // update the description
-//     d = phi_n;
-
-// //     for (int i = n; i--; ) {
-// //       bdd rem = x[i].bdd_remain();
-// //       bdd conv = bdd_true();
-  // //     conv_hull(mgr, rem, conv);
-// //       ModEvent me = x[i].tell_bounds(home, conv);
-// //       if (me_failed(me)) {
-// //         return ES_FAILED;
-// //       }
-// //       bdd bnd = x[i].bdd_bounds();
-// //       bdd proj = bdd_true();
-  // //     conv_project(mgr, bnd, proj);
-// //       rem = mgr->eliminate(rem, proj);
-// //       unsigned int off = x[i].offset();
-// //       unsigned int range = x[i].table_width();
-// //       bdd card = card_bounds(mgr, rem, bnd, off, range);
-// //       me = x[i].tell_remain(home, card);
-// //       if (me_failed(me)) {
-// //         return ES_FAILED;
-// //       }
-// //     }
-
-//     assigned = true;
-//     for (int i = n; i--; ) {
-//       assigned &= x[i].assigned();
-//     }
-//     if (assigned) {
-//       // std::cout << "SUBSUMED\n";
-//       return ES_SUBSUMED(this, home);
-//     } 
-
-//     // std::cout << "FIX\n";
-//     return ES_FIX;
-
-//   }
-
-
-//   forceinline ExecStatus
-//   NaryBddProp<View>::propagate_lex(Space* home) {
-//     // std::cout << "propagate card\n";
-//     BMI* mgr = x[0].manager();
-//     bool assigned = true;
-//     int n = x.size();
-//     ExecStatus es = ES_OK;
-
-//     // computing phi
-//     bdd phi_n = d;
-//     for (int i = n; i--;) {
-//       bdd bnd = x[i].bdd_bounds();
-//       bdd proj = bdd_true();
-  //     conv_project(mgr, bnd, proj);
-//       mgr->existquant(phi_n, bnd, proj);
-//     }
-
-
-//     // using divide and conquer to compute the remainder part of the variables
-//     es = divide_conquer_split_lex(home, mgr, phi_n, 0, n - 1);
-//     if (es == ES_FAILED) {
-//       return ES_FAILED;
-//     }
-
-//     // update the description
-//     d = phi_n;
-
-//     assigned = true;
-//     for (int i = n; i--; ) {
-//       assigned &= x[i].assigned();
-//     }
-//     if (assigned) {
-//       // std::cout << "SUBSUMED\n";
-//       return ES_SUBSUMED(this, home);
-//     } 
-
-//     // std::cout << "FIX\n";
-//     return ES_FIX;
-
-//   }
 
   template <class View>
   forceinline ExecStatus 
   NaryBddProp<View>::propagate(Space* home) {
-
-
-    // std::cerr << "prop-n\t";
-//     std::cerr << x[0] << "\n";
-    BMI* mgr   = x[0].manager();
     bool assigned = true;
     int n = x.size();
     
@@ -624,7 +351,7 @@ namespace Gecode { namespace CpltSet {
 //       std::cout << "\n";
 
 //       std::cout << "check div conquer...";
-        GECODE_ES_CHECK(es = divide_conquer(home, mgr, d, 0, n - 1));
+        GECODE_ES_CHECK(es = divide_conquer(home, d, 0, n - 1));
 //       std::cout << "DONE\n";
     }
 
@@ -697,14 +424,12 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline ExecStatus 
   NaryOneBdd<View0, View1>::propagate(Space* home) {
-
-    BMI* mgr   = x[0].manager();
     bool assigned = true;
     int n = x.size();
     ExecStatus es = ES_OK;
     int ypos = n;
 
-    GECODE_ES_CHECK(es = divide_conquer(home, mgr, d, 0, n, ypos));
+    GECODE_ES_CHECK(es = divide_conquer(home, d, 0, n, ypos));
 
     assigned = true;
     for (int i = x.size(); i--; ) {
@@ -725,8 +450,7 @@ namespace Gecode { namespace CpltSet {
       x.cancel(home, this, PC_CPLTSET_DOM);
       y.cancel(home, this, PC_CPLTSET_DOM);
     }
-    BMI* mgr = y.manager();
-    mgr->dispose(d);
+    manager.dispose(d);
     MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::dispose(home);
     return sizeof(*this);
   }

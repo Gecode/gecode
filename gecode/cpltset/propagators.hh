@@ -60,24 +60,12 @@ namespace Gecode { namespace CpltSet {
     /// Constructor for creation
     NaryBddProp(Space* home, ViewArray<View>& x, bdd& d);
     /// (EEQ) Earliest Existential Quantification for set bounds propagation
-    bdd bnd_phi(BMI* mgr, int j);
+    bdd bnd_phi(int j);
     /// (EEQ) Earliest Existential Quantification
-    bdd phi(BMI* mgr, int i, int j);
+    bdd phi(int i, int j);
     /// Apply existential quantification for all variables
     ExecStatus 
-    divide_conquer(Space* home, BMI* mgr, bdd& p, int i, int j);
-    /// Apply bounds consistent existential quantification for all variables
-//     GECODE_CPLTSET_EXPORT ExecStatus 
-//     divide_conquer_conv(Space* home, BMI* mgr, bdd& p, int i, int j);
-//     /// Apply existential quantification for the remainder part
-//     GECODE_CPLTSET_EXPORT ExecStatus 
-//     divide_conquer_split(Space* home, BMI* mgr, bdd& p, int i, int j);
-//     /// Apply cardinality bounds existential quantification for the remainder part
-//     GECODE_CPLTSET_EXPORT ExecStatus 
-//     divide_conquer_split_card(Space* home, BMI* mgr, bdd& p, int i, int j);
-//     /// Apply lexicographic bounds existential quantification for the remainder part
-//     GECODE_CPLTSET_EXPORT ExecStatus 
-//     divide_conquer_split_lex(Space* home, BMI* mgr, bdd& p, int i, int j);
+    divide_conquer(Space* home, bdd& p, int i, int j);
   public:
     /// Cost function
     virtual PropCost cost(void) const;
@@ -92,8 +80,6 @@ namespace Gecode { namespace CpltSet {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-//     /// Use naive mathematical definition for domain propagation
-//     ExecStatus propagate_naive(Space* home);
     /// Use naive mathematical definition for bounds propagation
     ExecStatus propagate_naive_bnd(Space* home);
     /// Use eeq to perform domain propagation with n^2 and-abstractions
@@ -104,12 +90,6 @@ namespace Gecode { namespace CpltSet {
     ExecStatus propagate_ddc(Space* home);
     /// Use ddc to perform bounds propagation with nlog(n) and-abstractions
     ExecStatus propagate_bnd_ddc(Space* home);
-//     /// Perform split propagation
-//     ExecStatus propagate_split(Space* home);
-//     /// Perform cardinality propagation
-//     ExecStatus propagate_card(Space* home);
-//     /// Perform lexicographic propagation
-//     ExecStatus propagate_lex(Space* home);
 
     static  ExecStatus post(Space* home, ViewArray<View>& x, bdd& d);
   };
@@ -287,7 +267,7 @@ namespace Gecode { namespace CpltSet {
     /// Constructor for posting
     NaryOneBdd(Space* home, ViewArray<View0>&, View1&, bdd&);
     /// Divide and conquer method including additional view \a y
-    ExecStatus divide_conquer(Space* home, BMI* m, bdd& p, 
+    ExecStatus divide_conquer(Space* home, bdd& p, 
                               int l, int r, int ypos);
   public:
     /// Specification for this propagator
@@ -318,7 +298,7 @@ namespace Gecode { namespace CpltSet {
     /// Constructor for posting
     Range(Space* home, ViewArray<View0>&, View1&, View1&, bdd&);
     /// Divide and conquer method including additional \a y and \a z views
-    ExecStatus divide_conquer(Space* home, BMI* m, bdd& p, int l, int r, 
+    ExecStatus divide_conquer(Space* home, bdd& p, int l, int r, 
                         int ypos, int zpos);
   public:
     /// Specification for this propagator
@@ -349,7 +329,7 @@ namespace Gecode { namespace CpltSet {
     /// Constructor for posting
     RangeTwice(Space* home, ViewArray<View0>&, ViewArray<View1>&, bdd&);
     /// Divide and conquer method including additional array \a y
-    ExecStatus divide_conquer(Space* home, BMI* m, bdd& p, 
+    ExecStatus divide_conquer(Space* home, bdd& p, 
                               int l, int r, int ypos);
   public:
     /// Delete propagator

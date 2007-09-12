@@ -50,14 +50,13 @@ namespace Gecode {
     SingletonCpltSetView::SingletonCpltSetView(void) {}
 
     forceinline
-    SingletonCpltSetView::SingletonCpltSetView(BMI* manager, int a, int b, 
-                                       const Int::IntView& i0)
+    SingletonCpltSetView::SingletonCpltSetView(int a, int b, 
+                                               const Int::IntView& i0)
       : DerivedViewBase<Int::IntView>(i0) {
-      mgr     = manager;
       min     = a;
       max     = b;
       range   = max - min + 1;
-      _offset = mgr->allocate(range);
+      _offset = manager.allocate(range);
       domain.init();
       domain  = bdd_true();
 
@@ -81,20 +80,19 @@ namespace Gecode {
         }
       }
       
-      bdd card = cardcheck(mgr, range, _offset, 1, 1);
+      bdd card = cardcheck(range, _offset, 1, 1);
       domain &= card;
     }
 
 
     forceinline void
-    SingletonCpltSetView::init(BMI* manager, int a, int b, const Int::IntView& i0) {
+    SingletonCpltSetView::init(int a, int b, const Int::IntView& i0) {
       view = i0;
-      mgr     = manager;
       min     = a;
       max     = b;
       // range   = view.width();
       range   = max - min + 1;
-      _offset = mgr->allocate(range);
+      _offset = manager.allocate(range);
       domain.init();
       domain  = bdd_true();
 
@@ -118,14 +116,14 @@ namespace Gecode {
         }
       }
       
-      bdd card = cardcheck(mgr, range, _offset, 1, 1);
+      bdd card = cardcheck(range, _offset, 1, 1);
       domain &= card;
     }
 
     forceinline
     SingletonCpltSetView::~SingletonCpltSetView(void) {
-      mgr->dispose(domain);
-      mgr->dispose(_offset, (int) range);
+      manager.dispose(domain);
+      manager.dispose(_offset, (int) range);
     }
 
     forceinline PropCond
@@ -220,27 +218,24 @@ namespace Gecode {
     SingletonCpltSetView::table_width(void)  const { return range; }
 
     forceinline bdd
-    SingletonCpltSetView::getbdd(int i)  const { return mgr->bddpos(_offset + i); }
+    SingletonCpltSetView::getbdd(int i)  const { return manager.bddpos(_offset + i); }
 
     forceinline bdd
     SingletonCpltSetView::getnegbdd(int i)  const { 
-      return mgr->negbddpos(_offset + i); 
+      return manager.negbddpos(_offset + i); 
     }
 
     forceinline int
-    SingletonCpltSetView::getlevel(int i) { return mgr->var2bdd(_offset + i); }
+    SingletonCpltSetView::getlevel(int i) { return manager.var2bdd(_offset + i); }
     
     forceinline int
-    SingletonCpltSetView::getvar(int i) { return mgr->bdd2var(_offset + i); }
+    SingletonCpltSetView::getvar(int i) { return manager.bdd2var(_offset + i); }
 
     forceinline void
     SingletonCpltSetView::dom_and(bdd& d) { d &= bdd_domain(); }
     
     forceinline void
     SingletonCpltSetView::dom_or(bdd& d) { d |= bdd_domain(); }
-    
-    forceinline BMI*
-    SingletonCpltSetView::manager(void) const { return mgr; }
     
     forceinline int
     SingletonCpltSetView::mgr_min(void)  const { return min; }
@@ -431,14 +426,14 @@ namespace Gecode {
         return ME_CPLTSET_VAL;
       }
       d &= domain;
-      if (mgr->cfalse(d)) 
+      if (manager.cfalse(d)) 
         return ME_CPLTSET_FAILED;
 
       ModEvent me = Int::ME_INT_NONE;
       bdd conv = bdd_true();
-      conv_hull(mgr, d, conv);
-      if (!mgr->ctrue(conv)) {
-        BddIterator iter(mgr, conv);
+      conv_hull(d, conv);
+      if (!manager.ctrue(conv)) {
+        BddIterator iter(conv);
         while (iter()) {
           if (iter.status() == FIX_NOT_LUB) {
             int idx = iter.label() - _offset;
@@ -479,7 +474,6 @@ namespace Gecode {
     forceinline void
     SingletonCpltSetView::update(Space* home, bool share, SingletonCpltSetView& y) {
       view.update(home,share,y.view);
-      mgr = y.mgr;
       min = y.min;
       max = y.max;
       range = y.range;

@@ -111,9 +111,8 @@ namespace Gecode { namespace CpltSet {
   hls_order(Space* home, CpltSetVarArray** x, int xs) {
     // std::cerr << "start order\n";
     
-    BMI* mgr = (*(x[0]))[0].variable()->manager();
     // std::cerr << "allocated \n";
-    unsigned int var_in_tab = mgr->allocated();
+    unsigned int var_in_tab = manager.allocated();
     
     // std::cerr << "var_in_tab = " << var_in_tab << "\n";
 
@@ -190,36 +189,36 @@ namespace Gecode { namespace CpltSet {
 
 
     // std::cerr << "set order\n";
-    mgr->setorder(&hls_order[0]);
+    manager.setorder(&hls_order[0]);
     // std::cerr << "ordering done\n";
   }
 
   void
-  conv_hull_project(BMI* mgr, bdd& robdd, 
+  conv_hull_project(bdd& robdd, 
                     bdd& hull, bdd& poshull) {
-    if (mgr->leaf(robdd)) { hull = robdd; return; }
-    if (mgr->leaf(robdd)) { poshull = robdd; return; }
+    if (manager.leaf(robdd)) { hull = robdd; return; }
+    if (manager.leaf(robdd)) { poshull = robdd; return; }
     assert(robdd != bdd_true());
     assert(robdd != bdd_false());
 
-    BddIterator bi(mgr, robdd);
-    // int label_shift = mgr->bddidx(robdd);
+    BddIterator bi(robdd);
+    // int label_shift = manager.bddidx(robdd);
     // // std::cout << "computed shift\n";
     while(bi()) {
       int stat = bi.status();
       int lev  = bi.label();
-      bdd cur = mgr->bddpos(lev);
+      bdd cur = manager.bddpos(lev);
       // in order to be able to quantify ALL bounds out
       // we have to store the variables not in the lub
       // in their positive form
       if (stat == FIX_GLB) {
-        assert(!mgr->marked(cur));
+        assert(!manager.marked(cur));
         hull    &= cur;
         poshull &= cur;
       }
       if (stat == FIX_NOT_LUB) {
         poshull &= cur;
-        hull    &= mgr->negbddpos(lev);
+        hull    &= manager.negbddpos(lev);
       }
       ++bi;
     }
@@ -227,51 +226,51 @@ namespace Gecode { namespace CpltSet {
   }
 
   void
-  conv_hull(BMI* mgr, bdd& robdd, bdd& hull) {
-    if (mgr->leaf(robdd)) { hull = robdd; return; }
-    BddIterator bi(mgr, robdd);
+  conv_hull(bdd& robdd, bdd& hull) {
+    if (manager.leaf(robdd)) { hull = robdd; return; }
+    BddIterator bi(robdd);
     while(bi()) {
       int stat = bi.status();
       int lev  = bi.label();
       // in order to be able to quantify ALL bounds out
       // we have to store the variables not in the lub
       // in their positive form
-      if (stat == FIX_GLB)     { hull &= mgr->bddpos(lev); }
-      if (stat == FIX_NOT_LUB) { hull &= mgr->negbddpos(lev); }
+      if (stat == FIX_GLB)     { hull &= manager.bddpos(lev); }
+      if (stat == FIX_NOT_LUB) { hull &= manager.negbddpos(lev); }
       ++bi;
     }
     return;
   }
   
   void
-  conv_project(BMI* mgr, bdd& robdd, bdd& poshull) {
-    if (mgr->leaf(robdd)) { poshull = robdd; return; }
-    BddIterator bi(mgr, robdd);
+  conv_project(bdd& robdd, bdd& poshull) {
+    if (manager.leaf(robdd)) { poshull = robdd; return; }
+    BddIterator bi(robdd);
     while(bi()) {
       int stat = bi.status();
       int lev  = bi.label();
       // in order to be able to quantify ALL bounds out
       // we have to store the variables not in the lub
       // in their positive form
-      if (stat == FIX_GLB)     { poshull &= mgr->bddpos(lev); }
-      if (stat == FIX_NOT_LUB) { poshull &= mgr->bddpos(lev); }
+      if (stat == FIX_GLB)     { poshull &= manager.bddpos(lev); }
+      if (stat == FIX_NOT_LUB) { poshull &= manager.bddpos(lev); }
       ++bi;
     }
     return;
   }
 
   bdd 
-  bdd_vars(BMI* mgr, bdd& robdd) {
+  bdd_vars(bdd& robdd) {
 
     bdd allvars    = bdd_true();
-    BddIterator bi(mgr, robdd);
+    BddIterator bi(robdd);
     while(bi()) {
       int lev  = bi.label();
       // in order to be able to quantify ALL bounds out
       // we have to store the variables not in the lub
       // in their positive form
-      bdd cur = mgr->bddpos(lev);
-      assert(!mgr->marked(cur));
+      bdd cur = manager.bddpos(lev);
+      assert(!manager.marked(cur));
       allvars &= cur;
       ++bi;
     }
@@ -280,7 +279,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   bdd 
-  cardeq(BMI* mgr, int offset, int c, int n, int r) {
+  cardeq(int offset, int c, int n, int r) {
     // std::cout << "cardeq:" <<  offset << ","  << c << " " << n << " " << r << "\n";
 
     GECODE_AUTOARRAY(bdd, layer, n);
@@ -293,12 +292,12 @@ namespace Gecode { namespace CpltSet {
     layer[0] = bdd_true();
     for (int i = 1; i <= c; i++) {
       layer[i].init();
-      layer[i] = mgr->bddpos(offset + r - i + 1);
+      layer[i] = manager.bddpos(offset + r - i + 1);
     }
 
     // connect the lowest layer
     for (int i = 1; i < n; i++) {
-      layer[i] = mgr->ite(layer[i], layer[i - 1], bdd_false());
+      layer[i] = manager.ite(layer[i], layer[i - 1], bdd_false());
     }
 
     // build layers on top
@@ -311,7 +310,7 @@ namespace Gecode { namespace CpltSet {
         } else {
           t = layer[i-1]; 
         }
-        layer[i] = mgr->ite(mgr->bddpos(offset + col), t,layer[i]);
+        layer[i] = manager.ite(manager.bddpos(offset + col), t,layer[i]);
         col--;
         if (col < 0) { k = 1; break;}
       }
@@ -321,7 +320,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   bdd 
-  cardlqgq(BMI* mgr, int offset, int cl, int cr, int n, int r) {
+  cardlqgq(int offset, int cl, int cr, int n, int r) {
     //std::cout << "cardlqgq:" <<  offset << "," << cl << "," << cr << " " << n << " " << r << "\n";
 
     GECODE_AUTOARRAY(bdd, layer, n);
@@ -334,7 +333,7 @@ namespace Gecode { namespace CpltSet {
     layer[n - cl - 1] = bdd_true();
     int k = r;
     for (int i = n - cl ; i < n; i++) {
-        layer[i] = mgr->ite(mgr->bddpos(offset + k), layer[i - 1], bdd_false());
+        layer[i] = manager.ite(manager.bddpos(offset + k), layer[i - 1], bdd_false());
       k--;
     }
 
@@ -346,7 +345,7 @@ namespace Gecode { namespace CpltSet {
       for (int i = n - cl; i < n; i++) { 
         //std::cerr << "i= " << i << " col test= " << col << " < " << (r + 1 - cr) << " and " << layer[i] << "\n";
         bdd t = layer[i-1]; 
-        layer[i] = mgr->ite(mgr->bddpos(offset + col), t, layer[i]);
+        layer[i] = manager.ite(manager.bddpos(offset + col), t, layer[i]);
         col--;
         if (col < r + 1 - cr) { k = 0; break;}
       }
@@ -373,7 +372,7 @@ namespace Gecode { namespace CpltSet {
             f = layer[i];
           }
         }
-        layer[i] = mgr->ite(mgr->bddpos(offset + col), t ,f);
+        layer[i] = manager.ite(manager.bddpos(offset + col), t ,f);
         col--;
         if (col < 0) { break;}
       }
@@ -397,7 +396,7 @@ namespace Gecode { namespace CpltSet {
             f = layer[i];
           }
         }
-        layer[i] = mgr->ite(mgr->bddpos(offset + col), t ,f);
+        layer[i] = manager.ite(manager.bddpos(offset + col), t ,f);
         col--;
         if (col < 0) { break;}
       }
@@ -414,7 +413,7 @@ namespace Gecode { namespace CpltSet {
         } else {
           t = layer[i-1]; 
         }
-        layer[i] = mgr->ite(mgr->bddpos(offset + col), t, layer[i]);
+        layer[i] = manager.ite(manager.bddpos(offset + col), t, layer[i]);
         col--;
         if (col < 0) { k = 1; break;}
       }
@@ -423,7 +422,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   bdd 
-  cardcheck(BMI* mgr, int xtab, int offset, int cl, int cr) {
+  cardcheck(int xtab, int offset, int cl, int cr) {
     // std::cout << "cardcheck:" << xtab << "," << offset << "," << cl << "," << cr << "\n";
     if (cr > xtab) { 
       cr = xtab;
@@ -437,7 +436,7 @@ namespace Gecode { namespace CpltSet {
       // build the emptyset
       bdd empty = bdd_true();
       for (int i = xtab; i--; ) {
-        empty &= mgr->negbddpos(offset + i);
+        empty &= manager.negbddpos(offset + i);
       }
       return empty;
     }
@@ -447,11 +446,11 @@ namespace Gecode { namespace CpltSet {
         // build the full set
         bdd full = bdd_true();
         for (int i = xtab; i--; ) {
-          full &= mgr->bddpos(offset + i);
+          full &= manager.bddpos(offset + i);
         }
         return full;
       } else {
-        return cardeq(mgr, offset, cr, n, r);
+        return cardeq(offset, cr, n, r);
       }
     }
 
@@ -461,11 +460,11 @@ namespace Gecode { namespace CpltSet {
         return bdd_true();
       }
     }
-    return cardlqgq(mgr, offset, cl, cr, n, r);
+    return cardlqgq(offset, cl, cr, n, r);
   }
 
   bdd 
-  cardrec_bin(BMI*& mgr, int j, unsigned int& off1, unsigned int& range1, 
+  cardrec_bin(int j, unsigned int& off1, unsigned int& range1, 
               unsigned int& off2, unsigned int& range2, int l, int u) {
     if ((l <= 0) && ((int) range1 <= u)) {
       return bdd_true();
@@ -475,7 +474,7 @@ namespace Gecode { namespace CpltSet {
     }
     bdd cur = bdd_true();
     if (j < (int) range1) {      
-      cur = ( mgr->bddpos(off1 + j) & mgr->bddpos(off2 + j) );
+      cur = ( manager.bddpos(off1 + j) & manager.bddpos(off2 + j) );
       j++;
     } else {
       if (l > 0 ) {
@@ -486,9 +485,9 @@ namespace Gecode { namespace CpltSet {
     }
 
     bdd neg = bdd_true();
-    neg &= (!cur & cardrec_bin(mgr, j, off1, range1, off2, range2, l, u));
+    neg &= (!cur & cardrec_bin(j, off1, range1, off2, range2, l, u));
     bdd pos = bdd_true();
-    pos &= (cur  & cardrec_bin(mgr, j, off1, range1, off2, range2, l - 1, u - 1));
+    pos &= (cur  & cardrec_bin(j, off1, range1, off2, range2, l - 1, u - 1));
     bdd cv = bdd_true();
     cv &= (neg | pos);
     return cv;
@@ -496,21 +495,21 @@ namespace Gecode { namespace CpltSet {
 
 
   bdd 
-  cardrec(BMI*& mgr, bdd& boundvars, 
+  cardrec(bdd& boundvars, 
           int j, unsigned int& offset, unsigned int& range, int l, int u) {
   // std::cout << "cardrec withthout boundvars\n";
     bdd b = boundvars;
-    if (!mgr->leaf(boundvars)) {
-      int idx = mgr->bddidx(boundvars) - offset;
+    if (!manager.leaf(boundvars)) {
+      int idx = manager.bddidx(boundvars) - offset;
     // std::cout << "out j=" << j << " idx = " << idx << "\n";
       while ( j == idx ) {
         // std::cout  << "in j=" << j << " idx = " << idx << "\n";
         j++;
-        boundvars = mgr->iftrue(boundvars);
-        if (mgr->leaf(boundvars)) {
+        boundvars = manager.iftrue(boundvars);
+        if (manager.leaf(boundvars)) {
           break;
         }
-        idx = mgr->bddidx(boundvars) - offset;
+        idx = manager.bddidx(boundvars) - offset;
       }
     }
 
@@ -522,7 +521,7 @@ namespace Gecode { namespace CpltSet {
     }
     bdd cur = bdd_true();
     if (j < (int) range) {      
-      cur = mgr->bddpos(offset + j);
+      cur = manager.bddpos(offset + j);
       j++;
     } else {
       if (l > 0 ) {
@@ -532,79 +531,79 @@ namespace Gecode { namespace CpltSet {
       }
     }
     b = boundvars;
-    bdd neg = (!cur & cardrec(mgr, b, j, offset, range, l, u));
+    bdd neg = (!cur & cardrec(b, j, offset, range, l, u));
     b = boundvars;
-    bdd pos = (cur  & cardrec(mgr, b, j, offset, range, l - 1, u - 1));
+    bdd pos = (cur  & cardrec(b, j, offset, range, l - 1, u - 1));
     bdd cv = bdd_true();
     cv &= (neg | pos);
     return cv;
   }
 
   bdd 
-  lexlt(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, unsigned int& range, int n) {
+  lexlt(unsigned int& xoff, unsigned int& yoff, unsigned int& range, int n) {
 //     if (n > (int) range - 1) { return bdd_false(); }
     if (n < 0) { return bdd_false(); }
 
     bdd cur = bdd_true();
-    cur &= ((mgr->negbddpos(xoff + n)) & (mgr->bddpos(yoff + n)));
-    cur |= ( ((mgr->bddpos(xoff + n)) % (mgr->bddpos(yoff + n))) & lexlt(mgr, xoff, yoff, range, n - 1));
+    cur &= ((manager.negbddpos(xoff + n)) & (manager.bddpos(yoff + n)));
+    cur |= ( ((manager.bddpos(xoff + n)) % (manager.bddpos(yoff + n))) & lexlt(xoff, yoff, range, n - 1));
     return cur;
   }
 
   bdd 
-  lexlq(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, unsigned int& range, int n) {
+  lexlq(unsigned int& xoff, unsigned int& yoff, unsigned int& range, int n) {
     // only difference to lexlt
 //     if (n > static_cast<int> (range) - 1) { return bdd_true(); }
     if (n < 0) { return bdd_true(); }
 
     bdd cur = bdd_true();
-    cur &= ((mgr->negbddpos(xoff + n)) & (mgr->bddpos(yoff + n)));
-    cur |= ( ((mgr->bddpos(xoff + n)) % (mgr->bddpos(yoff + n))) & lexlq(mgr, xoff, yoff, range, n - 1));
+    cur &= ((manager.negbddpos(xoff + n)) & (manager.bddpos(yoff + n)));
+    cur |= ( ((manager.bddpos(xoff + n)) % (manager.bddpos(yoff + n))) & lexlq(xoff, yoff, range, n - 1));
     return cur;
   }
 
 
   bdd 
-  lexltrev(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, unsigned int& range, int n) {
+  lexltrev(unsigned int& xoff, unsigned int& yoff, unsigned int& range, int n) {
     if (n > (int) range - 1) { return bdd_false(); }
     bdd cur = bdd_true();
-    cur &= ((mgr->negbddpos(xoff + n)) & (mgr->bddpos(yoff + n)));
-    cur |= ( ((mgr->bddpos(xoff + n)) % (mgr->bddpos(yoff + n))) & lexltrev(mgr, xoff, yoff, range, n + 1));
+    cur &= ((manager.negbddpos(xoff + n)) & (manager.bddpos(yoff + n)));
+    cur |= ( ((manager.bddpos(xoff + n)) % (manager.bddpos(yoff + n))) & lexltrev(xoff, yoff, range, n + 1));
     return cur;
   }
 
   bdd 
-  lexlqrev(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, unsigned int& range, int n) {
+  lexlqrev(unsigned int& xoff, unsigned int& yoff, unsigned int& range, int n) {
     // only difference to lexlt
     if (n > static_cast<int> (range) - 1) { return bdd_true(); }
 
     bdd cur = bdd_true();
-    cur &= ((mgr->negbddpos(xoff + n)) & (mgr->bddpos(yoff + n)));
-    cur |= ( ((mgr->bddpos(xoff + n)) % (mgr->bddpos(yoff + n))) & lexlqrev(mgr, xoff, yoff, range, n + 1));
+    cur &= ((manager.negbddpos(xoff + n)) & (manager.bddpos(yoff + n)));
+    cur |= ( ((manager.bddpos(xoff + n)) % (manager.bddpos(yoff + n))) & lexlqrev(xoff, yoff, range, n + 1));
     return cur;
   }
 
-  void card_count(BMI* mgr, bdd& remain, bdd& boundvars,
+  void card_count(bdd& remain, bdd& boundvars,
                   unsigned int n, unsigned int& offset, 
                   unsigned int& range, int& l, int& u) {
 
    // std::cout << "cc: " << "n= " << n << " offset = " << offset << " range = " << range << " l = " << l << " u= " << u << "\n";
     // skip variables in the boolean vector that 
     // belong to the fixed part of the bdd
-    if (!mgr->leaf(boundvars)) {
-      unsigned int idx = mgr->bddidx(boundvars) - offset;
+    if (!manager.leaf(boundvars)) {
+      unsigned int idx = manager.bddidx(boundvars) - offset;
       while ( n == idx ) {
         n++;
-        boundvars = mgr->iftrue(boundvars);
-        if (mgr->leaf(boundvars)) {
+        boundvars = manager.iftrue(boundvars);
+        if (manager.leaf(boundvars)) {
           break;
         }
-        idx = mgr->bddidx(boundvars) - offset;
+        idx = manager.bddidx(boundvars) - offset;
       }
     }
 
    // std::cout << "skipped: " << "n= " << n << " offset = " << offset << " range = " << range << " l = " << l << " u= " << u << "\n";
-    if (mgr->cfalse(remain)) {
+    if (manager.cfalse(remain)) {
       // mark false branch by 
       // (Limits::Set::card_max, -Limits::Set::card_max)
 
@@ -614,7 +613,7 @@ namespace Gecode { namespace CpltSet {
        // std::cout << "computed values l=" << l << " and u= " << u <<"\n";
       return;
     } else {
-      if (mgr->ctrue(remain)) {
+      if (manager.ctrue(remain)) {
         if (n == range) {
           // if we have seen all variables in the tree
           // mark the true branch with (0,0)
@@ -637,21 +636,21 @@ namespace Gecode { namespace CpltSet {
 //          // std::cout << "boundvars = " << boundvars << "\n ";
 //          // std::cout << "remain    = " << remain << "\n";
 
-         // std::cout << "idx = "<< mgr->bddidx(remain) - offset<< "\n";
+         // std::cout << "idx = "<< manager.bddidx(remain) - offset<< "\n";
             bdd b = boundvars;
-        if (mgr->bddidx(remain) - offset == n) {
+        if (manager.bddidx(remain) - offset == n) {
           int lt = 0;
           int ut = 0;
-          bdd t = mgr->iftrue(remain);
+          bdd t = manager.iftrue(remain);
           
-          card_count(mgr, t,  b, n + 1, offset, range, lt, ut);
+          card_count(t,  b, n + 1, offset, range, lt, ut);
            // std::cout << "TB(" << lt << "," << ut <<")\n";
 
           int lf = 0;
           int uf = 0;
           b = boundvars;
-          bdd f = mgr->iffalse(remain);
-          card_count(mgr, f,  b, n + 1, offset, range, lf, uf);
+          bdd f = manager.iffalse(remain);
+          card_count(f,  b, n + 1, offset, range, lf, uf);
            // std::cout << "FB(" << lf << "," << uf <<")\n";
           
           l = std::min(lt + 1, lf);
@@ -661,7 +660,7 @@ namespace Gecode { namespace CpltSet {
         } else {
            // std::cout << "tree smaller than vector\n";
           b = boundvars;
-          card_count(mgr, remain,  b, n + 1, offset, range, l, u);
+          card_count(remain,  b, n + 1, offset, range, l, u);
           u++;
            // std::cout << "RES(" << l << "," << u <<")\n";
           return;
@@ -675,14 +674,14 @@ namespace Gecode { namespace CpltSet {
 
   // mark all nodes in the dqueue
   void
-  extcache_mark(BMI* mgr, Support::DynamicArray<bdd>& nodes, 
+  extcache_mark(Support::DynamicArray<bdd>& nodes, 
                 int n, int& l, int& r, int& markref) {
     // std::cout << "CACHE_MARK\n";
     // the left side
     if (l > 0) {
       for (int i = 0; i < l; i++) {
-        if (!mgr->marked(nodes[i])) {
-          mgr->mark(nodes[i]);
+        if (!manager.marked(nodes[i])) {
+          manager.mark(nodes[i]);
           markref++;
         }
       }
@@ -690,8 +689,8 @@ namespace Gecode { namespace CpltSet {
     // the right side
     if (r < n - 1) {
       for (int i = r + 1; i < n; i++) {
-        if (!mgr->marked(nodes[i])) {
-          mgr->mark(nodes[i]);
+        if (!manager.marked(nodes[i])) {
+          manager.mark(nodes[i]);
           markref++;
         }
       }
@@ -700,21 +699,21 @@ namespace Gecode { namespace CpltSet {
 
   // unmark all nodes in the dqueue
   void
-  extcache_unmark(BMI* mgr, Support::DynamicArray<bdd>& nodes, 
+  extcache_unmark(Support::DynamicArray<bdd>& nodes, 
                   int n, int& l, int& r, int& markref) {
     // std::cout << "CACHE_UNMARK\n";
     if (l > 0) {
       for (int i = 0; i < l; i++) {
-        if (mgr->marked(nodes[i])) {
-          mgr->unmark(nodes[i]);
+        if (manager.marked(nodes[i])) {
+          manager.unmark(nodes[i]);
           markref--;
         } 
       }
     }
     if (r < n - 1) {
       for (int i = r + 1; i < n; i++) {
-        if (mgr->marked(nodes[i])) {
-          mgr->unmark(nodes[i]);
+        if (manager.marked(nodes[i])) {
+          manager.unmark(nodes[i]);
           markref--;
         } 
       }
@@ -724,7 +723,7 @@ namespace Gecode { namespace CpltSet {
 
   // iterate to the next level of nodes
   void 
-  extcardbounds(BMI* mgr, int& markref, bdd& c, int& n, int& l, int& r,
+  extcardbounds(int& markref, bdd& c, int& n, int& l, int& r,
                 bool& singleton, int& _level, 
                 Support::DynamicArray<bdd>& nodes, 
                 int& curmin, int& curmax) {
@@ -734,13 +733,13 @@ namespace Gecode { namespace CpltSet {
 
     if (((l == 0) && (r == n - 1))){ // no more nodes on the stack to be iterated
       singleton = false;
-      extcache_unmark(mgr, nodes, n, l, r, markref);
+      extcache_unmark(nodes, n, l, r, markref);
       assert(markref == 0);
       return;
     }
 
     // mark nodes under exploration
-    extcache_mark(mgr, nodes, n, l, r,markref);
+    extcache_mark(nodes, n, l, r,markref);
     if (l > 0) {
       _level++;
     }
@@ -750,7 +749,7 @@ namespace Gecode { namespace CpltSet {
     while (l > 0) {
 
       // std::cout << "left: " << l << "\n";
-      // stackprint(mgr, nodes, cards, cardvar, n, l, r, maxcard);
+      // stackprint(nodes, cards, cardvar, n, l, r, maxcard);
       stackleft = true;
       // std::cout << "stackprint done\n";
       /* 
@@ -763,21 +762,21 @@ namespace Gecode { namespace CpltSet {
        */
       // std::cout << "check shift1-LEFT\n";
       while ((l > 1) && 
-             mgr->bddidx(nodes[l - 1]) < mgr->bddidx(nodes[l - 2])) {
+             manager.bddidx(nodes[l - 1]) < manager.bddidx(nodes[l - 2])) {
         // std::cout << "shift1 left: " << l << "\n";
         int shift = l - 2;
         int norm  = l - 1;
-        mgr->unmark(nodes[shift]); markref--;
+        manager.unmark(nodes[shift]); markref--;
         //flag = Gecode::CpltSet::UNDET;
         if (r == n - 1) {
           nodes[r] = nodes[shift];
-          mgr->mark(nodes[r]); markref++;
+          manager.mark(nodes[r]); markref++;
         } else {    
           for (int i = r; i < n - 1; i++) {
             nodes[i] = nodes[i + 1];
           }
           nodes[n - 1] = nodes[shift];
-          mgr->mark(nodes[n - 1]); markref++;
+          manager.mark(nodes[n - 1]); markref++;
         }
         r--;
         nodes[shift] = nodes[norm];
@@ -787,20 +786,20 @@ namespace Gecode { namespace CpltSet {
       // symmetric case
       // std::cout << "check shift2-LEFT\n";
       while ((l > 1) && 
-             mgr->bddidx(nodes[l - 1]) > mgr->bddidx(nodes[l - 2])) {
+             manager.bddidx(nodes[l - 1]) > manager.bddidx(nodes[l - 2])) {
         // std::cout << "shift2 left: " << l << "\n";
         int shift = l - 1;
-        mgr->unmark(nodes[shift]); markref--;
+        manager.unmark(nodes[shift]); markref--;
         //flag = Gecode::CpltSet::UNDET;
         if (r == n - 1) {
           nodes[r] = nodes[shift];
-          mgr->mark(nodes[r]); markref++;
+          manager.mark(nodes[r]); markref++;
         } else {    
           for (int i = r; i < n - 1; i++) {
             nodes[i] = nodes[i + 1];
           }
           nodes[n - 1] = nodes[shift];
-          mgr->mark(nodes[n - 1]); markref++;
+          manager.mark(nodes[n - 1]); markref++;
         }
         r--;
         nodes[shift].init();
@@ -809,51 +808,51 @@ namespace Gecode { namespace CpltSet {
       // std::cout << "shift checked\n";
       //
       l--;
-      mgr->unmark(nodes[l]);
+      manager.unmark(nodes[l]);
       markref--; 
       cur = nodes[l];
-      // std::cout << "cur lev: " << _level << " and card: " << mgr->lbCard(cur) << ".." << mgr->ubCard(cur) << "\n";
-      assert(!mgr->marked(cur));
+      // std::cout << "cur lev: " << _level << " and card: " << manager.lbCard(cur) << ".." << manager.ubCard(cur) << "\n";
+      assert(!manager.marked(cur));
       nodes[l].init();
 
       // cur is an internal node 
-      if (!mgr->leaf(cur)) {
-        bdd t   = mgr->iftrue(cur);
-        bdd f   = mgr->iffalse(cur);
-        // unsigned int cur_idx = mgr->bddidx(cur);
+      if (!manager.leaf(cur)) {
+        bdd t   = manager.iftrue(cur);
+        bdd f   = manager.iffalse(cur);
+        // unsigned int cur_idx = manager.bddidx(cur);
 
-        bool leaf_t = mgr->leaf(t);
-        bool leaf_f = mgr->leaf(f);
+        bool leaf_t = manager.leaf(t);
+        bool leaf_f = manager.leaf(f);
 
         if (!leaf_t) {
-          if (!mgr->marked(t)) {
+          if (!manager.marked(t)) {
             // if we encounter different indices in the child nodes
             // we delay inserting the larger one in the dqueue
             nodes[r] = t;
-            mgr->lbCard(t, mgr->lbCard(cur) + 1);
-            mgr->ubCard(t, mgr->ubCard(cur) + 1);
-            // std::cout << "set card: " << mgr->lbCard(cur) + 1 << ".." << mgr->ubCard(cur) + 1 << "\n";
-            // std::cout << "test1: " << mgr->lbCard(t) << ".." << mgr->ubCard(t) << "\n";
-            // std::cout << "test2: " << mgr->lbCard(nodes[r]) << ".." << mgr->ubCard(nodes[r]) << "\n";
+            manager.lbCard(t, manager.lbCard(cur) + 1);
+            manager.ubCard(t, manager.ubCard(cur) + 1);
+            // std::cout << "set card: " << manager.lbCard(cur) + 1 << ".." << manager.ubCard(cur) + 1 << "\n";
+            // std::cout << "test1: " << manager.lbCard(t) << ".." << manager.ubCard(t) << "\n";
+            // std::cout << "test2: " << manager.lbCard(nodes[r]) << ".." << manager.ubCard(nodes[r]) << "\n";
 
-            mgr->mark(nodes[r]);
+            manager.mark(nodes[r]);
             markref++;
             r--;
           } else {
-            int lc = std::min(mgr->lbCard(cur) + 1, mgr->lbCard(t));
-            int uc = std::max(mgr->ubCard(cur) + 1, mgr->ubCard(t));
+            int lc = std::min(manager.lbCard(cur) + 1, manager.lbCard(t));
+            int uc = std::max(manager.ubCard(cur) + 1, manager.ubCard(t));
             // std::cout << "min/max update to " << lc << ".." << uc << "\n";
-            mgr->lbCard(t, lc);
-            mgr->ubCard(t, uc);
+            manager.lbCard(t, lc);
+            manager.ubCard(t, uc);
           }
         } else {
           // leaf_t true
-          if (mgr->ctrue(t)) {
+          if (manager.ctrue(t)) {
             // std::cout << "t = true leaf\t ";
-            // std::cout << " " << mgr->lbCard(cur) + 1<< ".." << mgr->ubCard(cur) + 1 << "\n";
+            // std::cout << " " << manager.lbCard(cur) + 1<< ".." << manager.ubCard(cur) + 1 << "\n";
 
-            int minval = mgr->lbCard(cur) + 1;
-            int maxval = mgr->ubCard(cur) + 1;
+            int minval = manager.lbCard(cur) + 1;
+            int maxval = manager.ubCard(cur) + 1;
 
 //             Gecode::IntSetRanges ir(out);
 //             Gecode::Iter::Ranges::Singleton s(minval, maxval);
@@ -868,29 +867,29 @@ namespace Gecode { namespace CpltSet {
         }
 
         if (!leaf_f) {
-          if (!mgr->marked(f)) {
+          if (!manager.marked(f)) {
             nodes[r] = f;
-            mgr->lbCard(f, mgr->lbCard(cur));
-            mgr->ubCard(f, mgr->ubCard(cur));
-            // std::cout << "set card: " << mgr->lbCard(cur) << ".." << mgr->ubCard(cur) << "\n";
-            mgr->mark(nodes[r]);
+            manager.lbCard(f, manager.lbCard(cur));
+            manager.ubCard(f, manager.ubCard(cur));
+            // std::cout << "set card: " << manager.lbCard(cur) << ".." << manager.ubCard(cur) << "\n";
+            manager.mark(nodes[r]);
             markref++; 
             r--;
           } else {
-            int lc = std::min(mgr->lbCard(cur), mgr->lbCard(f));
-            int uc = std::max(mgr->ubCard(cur), mgr->ubCard(f));
+            int lc = std::min(manager.lbCard(cur), manager.lbCard(f));
+            int uc = std::max(manager.ubCard(cur), manager.ubCard(f));
             // std::cout << "min/max update to " << lc << ".." << uc << "\n";
-            mgr->lbCard(f, lc);
-            mgr->ubCard(f, uc);
+            manager.lbCard(f, lc);
+            manager.ubCard(f, uc);
           }
         } else {
           // leaf_f true
-          if (mgr->ctrue(f)) {
+          if (manager.ctrue(f)) {
             // std::cout << "f = true leaf (F)\t";
-            // std::cout << " " << mgr->lbCard(cur) << ".." << mgr->ubCard(cur) << "\n";
+            // std::cout << " " << manager.lbCard(cur) << ".." << manager.ubCard(cur) << "\n";
 
-            int minval = mgr->lbCard(cur);
-            int maxval = mgr->ubCard(cur);
+            int minval = manager.lbCard(cur);
+            int maxval = manager.ubCard(cur);
 
 //             // std::cout << "current out: " << out << "\n";
 //             Gecode::IntSetRanges ir(out);
@@ -920,7 +919,7 @@ namespace Gecode { namespace CpltSet {
     // ensure that iterations processes alternately 
     // left and right altnerately
     if (stackleft) {
-      extcache_unmark(mgr, nodes, n, l, r, markref);
+      extcache_unmark(nodes, n, l, r, markref);
       assert(markref == 0);
       // std::cout << "return 1 _level=" << _level << "\n";
       return;
@@ -935,21 +934,21 @@ namespace Gecode { namespace CpltSet {
 
       // std::cout << "right: " << r << "\n";
       // std::cout << "check shift1-RIGHT\n";
-      while ((r < n - 2) && mgr->bddidx(nodes[r + 1]) < mgr->bddidx(nodes[r + 2])) {
+      while ((r < n - 2) && manager.bddidx(nodes[r + 1]) < manager.bddidx(nodes[r + 2])) {
         // std::cout << "shift1 right: " << l << "\n";
         int shift = r + 2;
         int norm  = r + 1;
-        mgr->unmark(nodes[shift]); markref--;
+        manager.unmark(nodes[shift]); markref--;
         //flag = Gecode::CpltSet::UNDET;
         if (l == 0) {
           nodes[l] = nodes[shift];
-          mgr->mark(nodes[l]); markref++;
+          manager.mark(nodes[l]); markref++;
         } else {    
           for (int i = l; i > 0; i--) {
             nodes[i] = nodes[i - 1];
           }
           nodes[0] = nodes[shift];
-          mgr->mark(nodes[0]); markref++;
+          manager.mark(nodes[0]); markref++;
         }
         l++;
         nodes[shift] = nodes[norm];
@@ -958,20 +957,20 @@ namespace Gecode { namespace CpltSet {
       }
 
       // std::cout << "check shift2-RIGHT\n";
-      while ((r < n - 2) && mgr->bddidx(nodes[r + 1]) > mgr->bddidx(nodes[r + 2])) {
+      while ((r < n - 2) && manager.bddidx(nodes[r + 1]) > manager.bddidx(nodes[r + 2])) {
         // std::cout << "shift2 right: " << l << "\n";
         int shift = r + 1;
-        mgr->unmark(nodes[shift]); markref--;
+        manager.unmark(nodes[shift]); markref--;
         //flag = Gecode::CpltSet::UNDET;
         if (l == 0) {
           nodes[l] = nodes[shift];
-          mgr->mark(nodes[l]); markref++;
+          manager.mark(nodes[l]); markref++;
         } else {
           for (int i = l; i > 0; i--) {
             nodes[i] = nodes[i - 1];
           }
           nodes[0] = nodes[shift];
-          mgr->mark(nodes[0]); markref++;
+          manager.mark(nodes[0]); markref++;
         }
         l++;
         nodes[shift].init();
@@ -981,46 +980,46 @@ namespace Gecode { namespace CpltSet {
 
       // check whether right-hand side nodes has fixed vars
       r++;
-      mgr->unmark(nodes[r]);
+      manager.unmark(nodes[r]);
       markref--; 
       cur = nodes[r];
-      // std::cout << "cur lev: " << _level << " and card: " << mgr->lbCard(cur) << ".." << mgr->ubCard(cur) << "\n";
-      assert(!mgr->marked(cur));
+      // std::cout << "cur lev: " << _level << " and card: " << manager.lbCard(cur) << ".." << manager.ubCard(cur) << "\n";
+      assert(!manager.marked(cur));
 
       nodes[r].init();
       // cur is internal node, that is cur is neither bdd_false() nor bdd_true()
-      if (!mgr->leaf(cur)) {
-        bdd t   = mgr->iftrue(cur);
-        bdd f   = mgr->iffalse(cur);
+      if (!manager.leaf(cur)) {
+        bdd t   = manager.iftrue(cur);
+        bdd f   = manager.iffalse(cur);
 
-        bool leaf_t = mgr->leaf(t);
-        bool leaf_f = mgr->leaf(f);
+        bool leaf_t = manager.leaf(t);
+        bool leaf_f = manager.leaf(f);
 
         if (!leaf_t) {
-          if (!mgr->marked(t)) {
+          if (!manager.marked(t)) {
             nodes[l] = t;
-            mgr->lbCard(t, mgr->lbCard(cur) + 1);
-            mgr->ubCard(t, mgr->ubCard(cur) + 1);
-            // std::cout << "set card: " << mgr->lbCard(cur) + 1 << ".." << mgr->ubCard(cur) + 1 << "\n";
-            mgr->mark(nodes[l]);
+            manager.lbCard(t, manager.lbCard(cur) + 1);
+            manager.ubCard(t, manager.ubCard(cur) + 1);
+            // std::cout << "set card: " << manager.lbCard(cur) + 1 << ".." << manager.ubCard(cur) + 1 << "\n";
+            manager.mark(nodes[l]);
             markref++;
             l++;
           } else {
-            int lc = std::min(mgr->lbCard(cur) + 1, mgr->lbCard(t));
-            int uc = std::max(mgr->ubCard(cur) + 1, mgr->ubCard(t));
+            int lc = std::min(manager.lbCard(cur) + 1, manager.lbCard(t));
+            int uc = std::max(manager.ubCard(cur) + 1, manager.ubCard(t));
             // std::cout << "min/max update to " << lc << ".." << uc << "\n";
-            mgr->lbCard(t, lc);
-            mgr->ubCard(t, uc);
+            manager.lbCard(t, lc);
+            manager.ubCard(t, uc);
           }
 
         } else {
           // leaf_t true
-          if (mgr->ctrue(t)) {
+          if (manager.ctrue(t)) {
             // std::cout << "t = true leaf\t ";
-            // std::cout << " " << mgr->lbCard(cur) + 1 << ".." << mgr->ubCard(cur) + 1 << "\n";
+            // std::cout << " " << manager.lbCard(cur) + 1 << ".." << manager.ubCard(cur) + 1 << "\n";
             
-            int minval = mgr->lbCard(cur) + 1;
-            int maxval = mgr->ubCard(cur) + 1;
+            int minval = manager.lbCard(cur) + 1;
+            int maxval = manager.ubCard(cur) + 1;
 
 //             Gecode::IntSetRanges ir(out);
 //             Gecode::Iter::Ranges::Singleton s(minval, maxval);
@@ -1035,29 +1034,29 @@ namespace Gecode { namespace CpltSet {
         }
 
         if (!leaf_f) {
-          if (!mgr->marked(f)) {
+          if (!manager.marked(f)) {
             nodes[l] = f;
-            mgr->lbCard(f, mgr->lbCard(cur));
-            mgr->ubCard(f, mgr->ubCard(cur));
-            // std::cout << "set card: " << mgr->lbCard(cur) << ".." << mgr->ubCard(cur) << "\n";
-            mgr->mark(nodes[l]);
+            manager.lbCard(f, manager.lbCard(cur));
+            manager.ubCard(f, manager.ubCard(cur));
+            // std::cout << "set card: " << manager.lbCard(cur) << ".." << manager.ubCard(cur) << "\n";
+            manager.mark(nodes[l]);
             markref++;
             l++;
           } else {
-            int lc = std::min(mgr->lbCard(cur), mgr->lbCard(f));
-            int uc = std::max(mgr->ubCard(cur), mgr->ubCard(f));
+            int lc = std::min(manager.lbCard(cur), manager.lbCard(f));
+            int uc = std::max(manager.ubCard(cur), manager.ubCard(f));
             // std::cout << "min/max update to " << lc << ".." << uc << "\n";
-            mgr->lbCard(f, lc);
-            mgr->ubCard(f, uc);
+            manager.lbCard(f, lc);
+            manager.ubCard(f, uc);
           }
         }  else {
           // leaf_f true
-          if (mgr->ctrue(f)) {
+          if (manager.ctrue(f)) {
             // std::cout << "f = true leaf (S) \t ";
-            // std::cout << " " << mgr->lbCard(cur) << ".." << mgr->ubCard(cur) << "\n";
+            // std::cout << " " << manager.lbCard(cur) << ".." << manager.ubCard(cur) << "\n";
 
-            int minval = mgr->lbCard(cur);
-            int maxval = mgr->ubCard(cur);
+            int minval = manager.lbCard(cur);
+            int maxval = manager.ubCard(cur);
 
 //             Gecode::IntSetRanges ir(out);
 //             Gecode::Iter::Ranges::Singleton s(minval, maxval);
@@ -1079,8 +1078,8 @@ namespace Gecode { namespace CpltSet {
 
     } // end processing right stack
 
-    // stackprint(mgr, nodes, cards, cardvar, n, l, r, maxcard);
-    extcache_unmark(mgr, nodes, n, l, r, markref);
+    // stackprint(nodes, cards, cardvar, n, l, r, maxcard);
+    extcache_unmark(nodes, n, l, r, markref);
     assert(markref == 0);
     // std::cout << "return2 _level=" << _level << "\n";
 
@@ -1092,10 +1091,10 @@ namespace Gecode { namespace CpltSet {
 
 
   // START EXT CARD INFO
-  void getcardbounds(BMI* mgr, bdd& c, int& curmin, int& curmax) {
+  void getcardbounds(bdd& c, int& curmin, int& curmax) {
     // try to extract the card info
     int markref = 0;
-    int csize   = mgr->bddsize(c);
+    int csize   = manager.bddsize(c);
     int l       = 0;
     int r       = csize - 1;
     bool singleton = (csize == 1);
@@ -1103,16 +1102,16 @@ namespace Gecode { namespace CpltSet {
     Support::DynamicArray<bdd> nodes(csize);
     
     // the given ROBDD c has internal nodes
-    if (!mgr->leaf(c)) {
+    if (!manager.leaf(c)) {
 
       for (int i = csize; i--; ) {       
         nodes[i].init();
       }
 
       nodes[l] = c;
-      mgr->lbCard(nodes[l], 0);
-      mgr->ubCard(nodes[l], 0);
-      mgr->mark(nodes[l]);
+      manager.lbCard(nodes[l], 0);
+      manager.ubCard(nodes[l], 0);
+      manager.mark(nodes[l]);
       markref++;
       l++;      
     } else {
@@ -1126,7 +1125,7 @@ namespace Gecode { namespace CpltSet {
     if (! ((l == 0) && (r == csize - 1)) // ! empty
         || singleton) {
       while (! ((l == 0) && (r == csize - 1)) || singleton) {
-        extcardbounds(mgr, markref, c, csize, l, r, 
+        extcardbounds(markref, c, csize, l, r, 
                       singleton, _level, nodes, 
                       curmin, curmax// , out
                       );
@@ -1143,91 +1142,91 @@ namespace Gecode { namespace CpltSet {
   // END CARDINALITY COUNTING FOR EXTRACTING BOUNDS
 
   
-  bdd lex_lb(BMI*& mgr, bdd& remain, bdd& boundvars, 
+  bdd lex_lb(bdd& remain, bdd& boundvars, 
               unsigned int n, unsigned int& offset, unsigned int& range) {
     // std::cout << "lexlb: " << "n= " << n << " offset = " << offset << " range = " << range << "\n";
     // std::cout << "bounds = \n" << boundvars << "\n";
     // skip variables in the boolean vector that 
     // belong to the fixed part of the bdd
-    if (!mgr->leaf(boundvars)) {
-      unsigned int idx = mgr->bddidx(boundvars) - offset;
+    if (!manager.leaf(boundvars)) {
+      unsigned int idx = manager.bddidx(boundvars) - offset;
       while ( n == idx ) {
         n++;
-        boundvars = mgr->iftrue(boundvars);
-        if (mgr->leaf(boundvars)) {
+        boundvars = manager.iftrue(boundvars);
+        if (manager.leaf(boundvars)) {
           break;
         }
-        idx = mgr->bddidx(boundvars) - offset;
+        idx = manager.bddidx(boundvars) - offset;
       }
     }
     // std::cout << "skipped: " << "n= " << n << " offset = " << offset << " range = " << range << "\n";
     // std::cout << "bounds = \n" << boundvars << "\n";
-    if (n == range || mgr->ctrue(remain)) {
+    if (n == range || manager.ctrue(remain)) {
       // std::cout << "result &= TOP\n";
       return bdd_true();
     }
     
-    assert(!mgr->leaf(remain));
+    assert(!manager.leaf(remain));
     bdd recresult = bdd_true();
-    unsigned int cidx = mgr->bddidx(remain);
-    bdd cur     = mgr->bddpos(cidx);
+    unsigned int cidx = manager.bddidx(remain);
+    bdd cur     = manager.bddpos(cidx);
     if (n == cidx - offset) {
-      // std::cout << "n= " << n << "idx = " << mgr->bddidx(remain) - offset << "\n";
+      // std::cout << "n= " << n << "idx = " << manager.bddidx(remain) - offset << "\n";
 
-      bdd t   = mgr->iftrue(remain);
-      bdd f   = mgr->iffalse(remain);
+      bdd t   = manager.iftrue(remain);
+      bdd f   = manager.iffalse(remain);
 
-      if (mgr->cfalse(f)) {
+      if (manager.cfalse(f)) {
         // std::cout << "else is false\n";
-        return (cur & lex_lb(mgr, t, boundvars, n + 1, offset, range));
+        return (cur & lex_lb(t, boundvars, n + 1, offset, range));
       } else {
         // std::cout << "else is not false\n";
-        return (cur | (!cur & lex_lb(mgr, f, boundvars, n + 1, offset, range)));
+        return (cur | (!cur & lex_lb(f, boundvars, n + 1, offset, range)));
       }
     } else {
       // std::cout << "different vector and bdd\n";     
-      return (cur | (!cur & lex_lb(mgr, remain, boundvars, n + 1, offset, range)));
+      return (cur | (!cur & lex_lb(remain, boundvars, n + 1, offset, range)));
     }
   }
 
 
-  bdd lex_ub(BMI*& mgr, bdd& remain, bdd& boundvars, 
+  bdd lex_ub(bdd& remain, bdd& boundvars, 
               unsigned int n, unsigned int& offset, unsigned int& range) {
     // std::cout << "lexub: " << "n= " << n << " offset = " << offset << " range = " << range << "\n";
     // skip variables in the boolean vector that 
     // belong to the fixed part of the bdd
-    if (!mgr->leaf(boundvars)) {
-      unsigned int idx = mgr->bddidx(boundvars) - offset;
+    if (!manager.leaf(boundvars)) {
+      unsigned int idx = manager.bddidx(boundvars) - offset;
       while ( n == idx ) {
         n++;
-        boundvars = mgr->iftrue(boundvars);
-        if (mgr->leaf(boundvars)) {
+        boundvars = manager.iftrue(boundvars);
+        if (manager.leaf(boundvars)) {
           break;
         }
-        idx = mgr->bddidx(boundvars) - offset;
+        idx = manager.bddidx(boundvars) - offset;
       }
     }
 
-    if (n == range || mgr->ctrue(remain)) {
+    if (n == range || manager.ctrue(remain)) {
       return bdd_true();
     }
     
-    assert(!mgr->leaf(remain));
-    unsigned int cidx = mgr->bddidx(remain);
-    bdd cur     = mgr->bddpos(cidx);
+    assert(!manager.leaf(remain));
+    unsigned int cidx = manager.bddidx(remain);
+    bdd cur     = manager.bddpos(cidx);
     bdd recresult = bdd_true();
 
     if (n == cidx - offset) {
-      bdd t   = mgr->iftrue(remain);
-      bdd f   = mgr->iffalse(remain);
+      bdd t   = manager.iftrue(remain);
+      bdd f   = manager.iffalse(remain);
 
-      if (mgr->cfalse(t)) {
-        return !cur & lex_ub(mgr, f, boundvars,  n + 1, offset, range);
+      if (manager.cfalse(t)) {
+        return !cur & lex_ub(f, boundvars,  n + 1, offset, range);
       } else {
-        return (!cur | (cur & lex_ub(mgr, t, boundvars,  n + 1, offset, range)));
+        return (!cur | (cur & lex_ub(t, boundvars,  n + 1, offset, range)));
       }
     } else {     
-      return (!cur | (cur & lex_ub(mgr, remain, boundvars,  n + 1, offset, range)));
+      return (!cur | (cur & lex_ub(remain, boundvars,  n + 1, offset, range)));
     }
   }
 

@@ -59,8 +59,7 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline PropCost
   BinBddProp<View>::cost(void) const {
-    BMI* mgr = x.manager();
-    if (mgr->ctrue(x.bdd_domain()) || mgr->ctrue(d)) {
+    if (manager.ctrue(x.bdd_domain()) || manager.ctrue(d)) {
       return PC_LINEAR_LO;
     } else {
       return PC_QUADRATIC_HI;
@@ -87,8 +86,7 @@ namespace Gecode { namespace CpltSet {
       x.cancel(home, this, PC_CPLTSET_DOM);
       y.cancel(home, this, PC_CPLTSET_DOM);
     }
-    BMI* mgr = x.manager();
-    mgr->dispose(d);
+    manager.dispose(d);
     Propagator::dispose(home);
     return sizeof(*this);
   }
@@ -109,13 +107,12 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline ExecStatus 
   BinBddProp<View>::propagate(Space* home) {
-    BMI* mgr   = x.manager();
     bool assigned = true;
     {
       bdd dom = y.bdd_domain();
       int s = y.offset();
       int w = s + y.table_width() - 1;
-      mgr->existquant(dom, d, s, w);
+      manager.existquant(dom, d, s, w);
       ModEvent me = x.tell_formula(home, dom);
       GECODE_ME_CHECK(me);
     }
@@ -123,7 +120,7 @@ namespace Gecode { namespace CpltSet {
       bdd dom = x.bdd_domain();
       int s = x.offset();
       int w = s + x.table_width() - 1;
-      mgr->existquant(dom, d, s, w);
+      manager.existquant(dom, d, s, w);
       ModEvent me = y.tell_formula(home, dom);
       GECODE_ME_CHECK(me);
     }
@@ -175,7 +172,6 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline ExecStatus 
   BinRelDisj<View>::propagate(Space* home) {
-    BMI* mgr   = x.manager();
     bool assigned = true;
 
     if (x.assigned()) {
@@ -230,7 +226,7 @@ namespace Gecode { namespace CpltSet {
       bdd dom = y.bdd_domain();
       int s = y.offset();
       int w = s + y.table_width() - 1;
-      mgr->existquant(dom, d, s, w);
+      manager.existquant(dom, d, s, w);
       ModEvent me = x.tell_formula(home, dom);
       GECODE_ME_CHECK(me);
     }
@@ -238,7 +234,7 @@ namespace Gecode { namespace CpltSet {
       bdd dom = x.bdd_domain();
       int s = x.offset();
       int w = s + x.table_width() - 1;
-      mgr->existquant(dom, d, s, w);
+      manager.existquant(dom, d, s, w);
       ModEvent me = y.tell_formula(home, dom);
       GECODE_ME_CHECK(me);
     }

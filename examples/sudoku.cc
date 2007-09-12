@@ -339,15 +339,13 @@ public:
  */
 class SudokuCpltSet : virtual public Sudoku {
 protected:
-  BddMgr m;
   /// The fields occupied by a certain number
   CpltSetVarArray y;
 public:
   /// Constructor
   SudokuCpltSet(const SizeOptions& opt)
-    : Sudoku(opt), m(5000000, 2000000),
-      y(this,m,n*n,IntSet::empty,1,n*n*n*n) {
-
+    : Sudoku(opt),
+      y(this,n*n,IntSet::empty,1,n*n*n*n) {
     const int nn = n*n;
 
     // Fill-in predefined fields
@@ -423,7 +421,6 @@ public:
 
   /// Constructor for cloning \a s
   SudokuCpltSet(bool share, SudokuCpltSet& s) : Sudoku(share,s) {
-    m.update(this, share, s.m);
     y.update(this, share, s.y);
   }
 
@@ -522,6 +519,7 @@ main(int argc, char* argv[]) {
   opt.model(Sudoku::MODEL_MIXED, "mixed", 
             "use both integer and set constraints");
 #ifdef GECODE_HAVE_CPLTSET_VARS
+  CpltSet::manager.init(5000000, 2000000);
   opt.model(Sudoku::MODEL_CPLT, "cpltset", 
             "use CpltSet constraints");
 #endif

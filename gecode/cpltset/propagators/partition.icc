@@ -181,7 +181,6 @@ namespace Gecode {
 
     int n = x.size();
     unsigned int xtab = x[0].table_width();  
-    BMI* mgr = x[0].manager();
 
     for (int i = n; i--;) 
       if (x[i].table_width() > xtab)
@@ -195,42 +194,42 @@ namespace Gecode {
         switch (lex) {
         case SRT_LE: 
           {
-            d0 &= lexlt(mgr, xai_off, xaj_off, xtab, xtab - 1);
+            d0 &= lexlt(xai_off, xaj_off, xtab, xtab - 1);
             break;
           }
         case SRT_GR: 
           {
-            d0 &= lexlt(mgr, xaj_off, xai_off, xtab, xtab - 1);
+            d0 &= lexlt(xaj_off, xai_off, xtab, xtab - 1);
             break;
           }
         case SRT_LQ: 
           {
-            d0 &= lexlq(mgr, xai_off, xaj_off, xtab, xtab - 1);
+            d0 &= lexlq(xai_off, xaj_off, xtab, xtab - 1);
             break;
           }
         case SRT_GQ: 
           {
-            d0 &= lexlq(mgr, xaj_off, xai_off, xtab, xtab - 1);
+            d0 &= lexlq(xaj_off, xai_off, xtab, xtab - 1);
             break;
           }
         case SRT_LE_REV: 
           {
-            d0 &= lexltrev(mgr, xai_off, xaj_off, xtab, 0);
+            d0 &= lexltrev(xai_off, xaj_off, xtab, 0);
             break;
           }
         case SRT_GR_REV: 
           {
-            d0 &= lexltrev(mgr, xaj_off, xai_off, xtab, 0);
+            d0 &= lexltrev(xaj_off, xai_off, xtab, 0);
             break;
           }
         case SRT_LQ_REV: 
           {
-            d0 &= lexlqrev(mgr, xai_off, xaj_off, xtab, 0);
+            d0 &= lexlqrev(xai_off, xaj_off, xtab, 0);
             break;
           }
         case SRT_GQ_REV: 
           {
-            d0 &= lexlqrev(mgr, xaj_off, xai_off, xtab, 0);
+            d0 &= lexlqrev(xaj_off, xai_off, xtab, 0);
             break;
           }
         default:
@@ -249,7 +248,6 @@ namespace Gecode {
 
     if (home->failed()) return;
 
-    BMI* mgr = x[0].manager();
     int n = x.size();
    
     bdd d0 = bdd_true();     
@@ -263,7 +261,7 @@ namespace Gecode {
       for (int i = n; i--; ) {
         unsigned int off   = x[i].offset();
         unsigned int range = x[i].table_width();
-        d0 &= cardcheck(mgr, range, off, d, d);
+        d0 &= cardcheck(range, off, d, d);
       }
     }
 
@@ -309,7 +307,6 @@ namespace Gecode {
     if (home->failed()) return;
 
     int n = x.size();
-    BMI* mgr = x[0].manager();
 
     int minx = x[0].mgr_min();
     int maxx = x[0].mgr_max(); 
@@ -387,7 +384,7 @@ namespace Gecode {
           // std::cerr << "card= " << i << "\n";
           unsigned int off   = x[i].offset();
           unsigned int range = x[i].table_width();
-          d0 &= cardcheck(mgr, range, off, d, d);
+          d0 &= cardcheck(range, off, d, d);
         }
       }
       
@@ -418,12 +415,11 @@ namespace Gecode {
   forceinline void 
   partition_con(Space* home, const IntVarArgs& x, const CpltSetVar& y, 
                 bool withlex, Rel lex, bool withcard, int d) {
-    BMI* mgr = y.variable()->manager();
     ViewArray<Int::IntView> bv(home, x);
     int n = x.size();
     ViewArray<SingletonCpltSetView> sv(home, n);
     for (int i = 0; i < n; i++) {
-      sv[i].init(mgr, bv[i].min(), bv[i].max(), bv[i]);
+      sv[i].init(bv[i].min(), bv[i].max(), bv[i]);
     }
 //     std::cerr << "partition_con with intvars\n";
 //     // add first shot on ordering the intvars

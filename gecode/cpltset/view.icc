@@ -102,8 +102,6 @@ namespace Gecode {
       void dom_and(bdd& d);
       /// Build the disjunction of \a d and the current view
       void dom_or(bdd& d);
-      /// Get a pointer to the current manager
-      BMI* manager(void) const;
 
       /// Return the initial minimum of the variable
       int mgr_min(void) const; 
@@ -228,7 +226,6 @@ namespace Gecode {
     class SingletonCpltSetView : public DerivedViewBase<Gecode::Int::IntView> {
     protected:
       using DerivedViewBase<Gecode::Int::IntView>::view;
-      BMI* mgr;
       int min;
       int max;
       unsigned int range;
@@ -244,9 +241,9 @@ namespace Gecode {
       /// Default constructor
       SingletonCpltSetView(void);
       /// Initialize from IntView \a x
-      SingletonCpltSetView(BMI* manager, int min, int max, const Gecode::Int::IntView& x);
+      SingletonCpltSetView(int min, int max, const Gecode::Int::IntView& x);
       /// Initialize from IntView \a x
-      void init(BMI* manager, int min, int max, const Gecode::Int::IntView& x);
+      void init(int min, int max, const Gecode::Int::IntView& x);
       //@}
       /// \name Destructor
       //@{
@@ -296,8 +293,6 @@ namespace Gecode {
       void dom_and(bdd& d);
       /// Build the disjunction of \a d and the current view
       void dom_or(bdd& d);
-      /// Get a pointer to the current manager
-      BMI* manager(void) const;
       
       /// Return the initial minimum of the variable
       int mgr_min(void) const; 

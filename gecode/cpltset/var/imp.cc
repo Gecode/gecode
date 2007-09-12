@@ -46,7 +46,6 @@ namespace Gecode { namespace CpltSet {
       : CpltSetVarImpBase(home,share,x), 
         domain(x.domain), min(x.min), max(x.max),
         _offset(x._offset), assignment(false) {
-      mgr = x.mgr;
     }
   
     CpltSetVarImp*
@@ -62,19 +61,19 @@ namespace Gecode { namespace CpltSet {
     }
 
   
-#define OLDPRINTF(b) (mgr->cfalse(b) ? 0 : mgr->bddidx(b))
-#define OLDPRINTT(b) std::cout << (mgr->ctrue(b) ? 1 : OLDPRINTF(b)) <<" ";
-#define OLDPRINTBDD(b) std::cout << mgr->bddidx(b) << " " ; OLDPRINTT(mgr->iftrue(b)) OLDPRINTT(mgr->iffalse(b)) std::cout << "";
+#define OLDPRINTF(b) (manager.cfalse(b) ? 0 : manager.bddidx(b))
+#define OLDPRINTT(b) std::cout << (manager.ctrue(b) ? 1 : OLDPRINTF(b)) <<" ";
+#define OLDPRINTBDD(b) std::cout << manager.bddidx(b) << " " ; OLDPRINTT(manager.iftrue(b)) OLDPRINTT(manager.iffalse(b)) std::cout << "";
   
 
-#define PRINTF(b) (mgr->cfalse(b) ? 0 : b.getroot())
-#define PRINTT(b) std::cout << (mgr->ctrue(b) ? 1 : PRINTF(b)) <<" ";
-#define PRINTBDD(b) std::cout << b.getroot() << " " ; PRINTT(mgr->iftrue(b)) PRINTT(mgr->iffalse(b)) std::cout << "\n";
+#define PRINTF(b) (manager.cfalse(b) ? 0 : b.getroot())
+#define PRINTT(b) std::cout << (manager.ctrue(b) ? 1 : PRINTF(b)) <<" ";
+#define PRINTBDD(b) std::cout << b.getroot() << " " ; PRINTT(manager.iftrue(b)) PRINTT(manager.iffalse(b)) std::cout << "\n";
 
 #define STACKPRINT//                                        \
 // std::cout << "stack is= ";                                \
 //   for (int i = 0; i < n; i++){                        \
-//    if (mgr->cfalse(nodes[i])) {                        \
+//    if (manager.cfalse(nodes[i])) {                        \
 // std::cout << "x";                                        \
 //     } else {                                                \
 //        OLDPRINTBDD(nodes[i])                                \
@@ -90,11 +89,10 @@ namespace Gecode { namespace CpltSet {
 
     // initialize the iterator structure
     void
-    BddIterator::init(BMI* manager, const bdd& b) {
+    BddIterator::init(const bdd& b) {
       markref = 0;
-      mgr = manager;
       c = b;
-      n = mgr->bddsize(c);
+      n = manager.bddsize(c);
       l = 0;
       r = n - 1;
       bypassed = false;
@@ -102,7 +100,7 @@ namespace Gecode { namespace CpltSet {
       singleton = (n == 1);
       _level = -1;
 
-      if (!mgr->leaf(c)) {
+      if (!manager.leaf(c)) {
         Support::DynamicArray<bdd> dummy(n);
         nodes = dummy;
       
@@ -111,10 +109,10 @@ namespace Gecode { namespace CpltSet {
         }
         STACKPRINT;
 
-        assert(!mgr->leaf(c));
+        assert(!manager.leaf(c));
         // insert bdd root into dqueue
         nodes[l] = c;
-        mgr->mark(nodes[l]);
+        manager.mark(nodes[l]);
         markref++;
         l++;      
       }
@@ -129,8 +127,8 @@ namespace Gecode { namespace CpltSet {
       // the left side
       if (l > 0) {
         for (int i = 0; i < l; i++) {
-          if (!mgr->marked(nodes[i])) {
-            mgr->mark(nodes[i]);
+          if (!manager.marked(nodes[i])) {
+            manager.mark(nodes[i]);
             markref++;
           }
         }
@@ -138,8 +136,8 @@ namespace Gecode { namespace CpltSet {
       // the right side
       if (r < n - 1) {
         for (int i = r + 1; i < n; i++) {
-          if (!mgr->marked(nodes[i])) {
-            mgr->mark(nodes[i]);
+          if (!manager.marked(nodes[i])) {
+            manager.mark(nodes[i]);
             markref++;
           }
         }
@@ -151,16 +149,16 @@ namespace Gecode { namespace CpltSet {
     BddIterator::cache_unmark(void) {
       if (l > 0) {
         for (int i = 0; i < l; i++) {
-          if (mgr->marked(nodes[i])) {
-            mgr->unmark(nodes[i]);
+          if (manager.marked(nodes[i])) {
+            manager.unmark(nodes[i]);
             markref--;
           } 
         }
       }
       if (r < n - 1) {
         for (int i = r + 1; i < n; i++) {
-          if (mgr->marked(nodes[i])) {
-            mgr->unmark(nodes[i]);
+          if (manager.marked(nodes[i])) {
+            manager.unmark(nodes[i]);
             markref--;
           } 
         }
@@ -207,20 +205,20 @@ namespace Gecode { namespace CpltSet {
          * difference detected set UNDET
          */
         while ((l > 1) && 
-               mgr->bddidx(nodes[l - 1]) < mgr->bddidx(nodes[l - 2])) {
+               manager.bddidx(nodes[l - 1]) < manager.bddidx(nodes[l - 2])) {
           int shift = l - 2;
           int norm  = l - 1;
-          mgr->unmark(nodes[shift]); markref--;
+          manager.unmark(nodes[shift]); markref--;
           flag = UNDET;
           if (r == n - 1) {
             nodes[r] = nodes[shift];
-            mgr->mark(nodes[r]); markref++;
+            manager.mark(nodes[r]); markref++;
           } else {    
             for (int i = r; i < n - 1; i++) {
               nodes[i] = nodes[i + 1];
             }
             nodes[n - 1] = nodes[shift];
-            mgr->mark(nodes[n - 1]); markref++;
+            manager.mark(nodes[n - 1]); markref++;
           }
           r--;
           nodes[shift] = nodes[norm];
@@ -229,19 +227,19 @@ namespace Gecode { namespace CpltSet {
         }
         // symmetric case
         while ((l > 1) && 
-               mgr->bddidx(nodes[l - 1]) > mgr->bddidx(nodes[l - 2])) {
+               manager.bddidx(nodes[l - 1]) > manager.bddidx(nodes[l - 2])) {
           int shift = l - 1;
-          mgr->unmark(nodes[shift]); markref--;
+          manager.unmark(nodes[shift]); markref--;
           flag = UNDET;
           if (r == n - 1) {
             nodes[r] = nodes[shift];
-            mgr->mark(nodes[r]); markref++;
+            manager.mark(nodes[r]); markref++;
           } else {    
             for (int i = r; i < n - 1; i++) {
               nodes[i] = nodes[i + 1];
             }
             nodes[n - 1] = nodes[shift];
-            mgr->mark(nodes[n - 1]); markref++;
+            manager.mark(nodes[n - 1]); markref++;
           }
           r--;
           nodes[shift].init();
@@ -249,23 +247,23 @@ namespace Gecode { namespace CpltSet {
         }
 
         l--;
-        mgr->unmark(nodes[l]);
+        manager.unmark(nodes[l]);
         markref--; 
         cur = nodes[l];
-        assert(!mgr->marked(cur));
+        assert(!manager.marked(cur));
         nodes[l].init();
 
         // cur is an internal node, 
         // that is nor true nor else branch are leaves
-        if (!mgr->leaf(cur)) {
-          bdd t   = mgr->iftrue(cur);
-          bdd f   = mgr->iffalse(cur);
-          // unsigned int cur_idx = mgr->bddidx(cur);
-          bool fixed_glb       = mgr->cfalse(f);
-          bool fixed_not_lub   = mgr->cfalse(t);
+        if (!manager.leaf(cur)) {
+          bdd t   = manager.iftrue(cur);
+          bdd f   = manager.iffalse(cur);
+          // unsigned int cur_idx = manager.bddidx(cur);
+          bool fixed_glb       = manager.cfalse(f);
+          bool fixed_not_lub   = manager.cfalse(t);
 
-          bool leaf_t = mgr->leaf(t);
-          bool leaf_f = mgr->leaf(f);
+          bool leaf_t = manager.leaf(t);
+          bool leaf_f = manager.leaf(f);
         
           if (flag != UNDET) {
             // REMOVED FROM LUB
@@ -298,33 +296,33 @@ namespace Gecode { namespace CpltSet {
           }
         
           if (!leaf_t) {
-            if (!mgr->marked(t)) {
+            if (!manager.marked(t)) {
               // if we encounter different indices in the child nodes
               // we delay inserting the larger one in the dqueue
               nodes[r] = t;
-              mgr->mark(nodes[r]);
+              manager.mark(nodes[r]);
               markref++;
               r--;
             }
             // else child leads directly to true 
-            if (mgr->ctrue(f)) {
+            if (manager.ctrue(f)) {
               bypassed = true;
             } 
           } else {
             // larger levels cannot be fixed as they do not lie
             // on all paths leading towards a true leaf
-            // leaf_t && leaf_f  => (mgr->ctrue(t) || mgr->ctrue(f))
+            // leaf_t && leaf_f  => (manager.ctrue(t) || manager.ctrue(f))
             onlyleaves |= leaf_f;
           }
 
           if (!leaf_f) {
-            if (!mgr->marked(f)) {
+            if (!manager.marked(f)) {
               nodes[r] = f;
-              mgr->mark(nodes[r]);
+              manager.mark(nodes[r]);
               markref++; 
               r--;
             }
-            if (mgr->ctrue(t)) {
+            if (manager.ctrue(t)) {
               // std::cout << "bypassed f left\n";
               bypassed = true;
               // std::cout << "bypass " << "["<<_level<<"]= UNDET\n";
@@ -355,39 +353,39 @@ namespace Gecode { namespace CpltSet {
       // process right stack half
       while (r < n - 1) {
         STACKPRINT
-          while ((r < n - 2) && mgr->bddidx(nodes[r + 1]) < mgr->bddidx(nodes[r + 2])) {
+          while ((r < n - 2) && manager.bddidx(nodes[r + 1]) < manager.bddidx(nodes[r + 2])) {
             int shift = r + 2;
             int norm  = r + 1;
-            mgr->unmark(nodes[shift]); markref--;
+            manager.unmark(nodes[shift]); markref--;
             flag = UNDET;
             if (l == 0) {
               nodes[l] = nodes[shift];
-              mgr->mark(nodes[l]); markref++;
+              manager.mark(nodes[l]); markref++;
             } else {    
               for (int i = l; i > 0; i--) {
                 nodes[i] = nodes[i - 1];
               }
               nodes[0] = nodes[shift];
-              mgr->mark(nodes[0]); markref++;
+              manager.mark(nodes[0]); markref++;
             }
             l++;
             nodes[shift] = nodes[norm];
             nodes[norm].init();
             r++;
           }
-        while ((r < n - 2) && mgr->bddidx(nodes[r + 1]) > mgr->bddidx(nodes[r + 2])) {
+        while ((r < n - 2) && manager.bddidx(nodes[r + 1]) > manager.bddidx(nodes[r + 2])) {
           int shift = r + 1;
-          mgr->unmark(nodes[shift]); markref--;
+          manager.unmark(nodes[shift]); markref--;
           flag = UNDET;
           if (l == 0) {
             nodes[l] = nodes[shift];
-            mgr->mark(nodes[l]); markref++;
+            manager.mark(nodes[l]); markref++;
           } else {
             for (int i = l; i > 0; i--) {
               nodes[i] = nodes[i - 1];
             }
             nodes[0] = nodes[shift];
-            mgr->mark(nodes[0]); markref++;
+            manager.mark(nodes[0]); markref++;
           }
           l++;
           nodes[shift].init();
@@ -395,22 +393,22 @@ namespace Gecode { namespace CpltSet {
         }
         // check whether right-hand side nodes has fixed vars
         r++;
-        mgr->unmark(nodes[r]);
+        manager.unmark(nodes[r]);
         markref--; 
         cur = nodes[r];
-        assert(!mgr->marked(cur));
+        assert(!manager.marked(cur));
 
         nodes[r].init();
         // cur is internal node, that is cur is neither bdd_false() nor bdd_true()
-        if (!mgr->leaf(cur)) {
-          bdd t   = mgr->iftrue(cur);
-          bdd f   = mgr->iffalse(cur);
+        if (!manager.leaf(cur)) {
+          bdd t   = manager.iftrue(cur);
+          bdd f   = manager.iffalse(cur);
 
-          bool fixed_glb = mgr->cfalse(f);
-          bool fixed_not_lub = mgr->cfalse(t);
+          bool fixed_glb = manager.cfalse(f);
+          bool fixed_not_lub = manager.cfalse(t);
 
-          bool leaf_t = mgr->leaf(t);
-          bool leaf_f = mgr->leaf(f);
+          bool leaf_t = manager.leaf(t);
+          bool leaf_f = manager.leaf(f);
 
           if (flag != UNDET) {
             if (fixed_not_lub) {
@@ -437,15 +435,15 @@ namespace Gecode { namespace CpltSet {
           }
 
           if (!leaf_t) {
-            if (!mgr->marked(t)) {
+            if (!manager.marked(t)) {
               nodes[l] = t;
-              mgr->mark(nodes[l]);
+              manager.mark(nodes[l]);
               markref++;
               l++;
             }
 
             // bypassed t right
-            if (mgr->ctrue(f)) {
+            if (manager.ctrue(f)) {
               bypassed = true;
             }
           } else {
@@ -456,14 +454,14 @@ namespace Gecode { namespace CpltSet {
           }
 
           if (!leaf_f) {
-            if (!mgr->marked(f)) {
+            if (!manager.marked(f)) {
               nodes[l] = f;
-              mgr->mark(nodes[l]);
+              manager.mark(nodes[l]);
               markref++;
               l++;
             } 
             // bypassed f right
-            if (mgr->ctrue(t)) {
+            if (manager.ctrue(t)) {
               bypassed = true;
             }
           }

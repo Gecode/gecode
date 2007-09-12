@@ -136,10 +136,4 @@ operator<< (std::ostream& os, const CpltSetVar& x) {
   return os;
 }
 
-std::ostream&
-operator<< (std::ostream& os, BMI* m) {
-  m->debug(os);
-  return os;
-}
-
 // STATISTICS: cpltset-var

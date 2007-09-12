@@ -121,9 +121,6 @@ namespace Gecode { namespace CpltSet {
   forceinline void
   CpltSetView::dom_or(bdd& d) { return var->dom_or(d); }
 
-  forceinline BMI*
-  CpltSetView::manager(void) const { return var->manager(); }
-
   forceinline int
   CpltSetView::mgr_min(void)  const { return var->mgr_min(); }
 

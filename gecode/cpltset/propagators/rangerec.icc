@@ -39,7 +39,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   ExecStatus
-  Range<View0, View1>::divide_conquer(Space* home, BMI* m, bdd& p, 
+  Range<View0, View1>::divide_conquer(Space* home, bdd& p, 
                                       int l, int r, int ypos, int zpos) {
     if (l == r) {
       ModEvent me = ME_CPLTSET_NONE;
@@ -74,7 +74,7 @@ namespace Gecode { namespace CpltSet {
     }
    
     ExecStatus es = ES_OK;
-    GECODE_ES_CHECK(es = divide_conquer(home, m, left, l, h, ypos, zpos));
+    GECODE_ES_CHECK(es = divide_conquer(home, left, l, h, ypos, zpos));
 
     bdd right = p;
     for (int i = h; i >= l; i-- ) {
@@ -89,13 +89,13 @@ namespace Gecode { namespace CpltSet {
       }
     }
 
-    GECODE_ES_CHECK(es = divide_conquer(home, m, right, h + 1, r , ypos, zpos));
+    GECODE_ES_CHECK(es = divide_conquer(home, right, h + 1, r , ypos, zpos));
     return es;
   }
 
   template <class View0, class View1>
   ExecStatus
-  RangeTwice<View0, View1>::divide_conquer(Space* home, BMI* m, bdd& p, 
+  RangeTwice<View0, View1>::divide_conquer(Space* home, bdd& p, 
                                            int l, int r, int ypos) {
     std::cout << "twice div conqu: " << l << " " << r << " " << ypos << "\n";
     if (l == r) {
@@ -123,7 +123,7 @@ namespace Gecode { namespace CpltSet {
     }
    
     ExecStatus es = ES_OK;
-    GECODE_ES_CHECK(es = divide_conquer(home, m, left, l, h, ypos));
+    GECODE_ES_CHECK(es = divide_conquer(home, left, l, h, ypos));
 
     bdd right = p;
     for (int i = h; i >= l; i-- ) {
@@ -134,7 +134,7 @@ namespace Gecode { namespace CpltSet {
       }
     }
 
-    GECODE_ES_CHECK(es = divide_conquer(home, m, right, h + 1, r , ypos));
+    GECODE_ES_CHECK(es = divide_conquer(home, right, h + 1, r , ypos));
     return es;
   }
 }}

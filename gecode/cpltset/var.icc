@@ -177,9 +177,6 @@ namespace Gecode { namespace CpltSet {
     void printdom(void) const;
     void printall(void) const;
   private:
-    /// pointer to the space-allocated bdd manager instance
-    BMI* mgr;
-
     /**
      * \brief Bdd representing the set of all possible sets the variable can
      *        be instantiated to
@@ -197,7 +194,7 @@ namespace Gecode { namespace CpltSet {
     bool assignment;
   public:
     /// Construct empty CpltSetVar without allocation for boolean vector
-    CpltSetVarImp(Space* home, BMI* m);
+    CpltSetVarImp(Space* home);
   protected:
     /// Constructor for cloning \a x
     CpltSetVarImp(Space* home, bool share, CpltSetVarImp& x);
@@ -216,16 +213,16 @@ namespace Gecode { namespace CpltSet {
 
   public:
     /// Constructing the powerset of $\f {a, \dots, b} \f$
-    CpltSetVarImp(Space* home, BMI* m, int a, int b);
-    void init(Space* home, BMI* m, int a, int b);
-    CpltSetVarImp(Space* home, BMI* m, int glbMin, int glbMax, int lubMin, int lubMax, 
-              unsigned int cardMin, unsigned int cardMax);
-    CpltSetVarImp(Space* home, BMI* m, const IntSet& glbD, int lubMin, int lubMax, 
-              unsigned int cardMin, unsigned int cardMax);
-    CpltSetVarImp(Space* home, BMI* m, int glbMin, int glbMax, const IntSet& lubD,
-              unsigned int cardMin, unsigned int cardMax);
-    CpltSetVarImp(Space* home, BMI* m, const IntSet& glbD,const IntSet& lubD,
-              unsigned int cardMin, unsigned int cardMax);
+    CpltSetVarImp(Space* home, int a, int b);
+    void init(Space* home, int a, int b);
+    CpltSetVarImp(Space* home, int glbMin, int glbMax, int lubMin, int lubMax, 
+                  unsigned int cardMin, unsigned int cardMax);
+    CpltSetVarImp(Space* home, const IntSet& glbD, int lubMin, int lubMax, 
+                  unsigned int cardMin, unsigned int cardMax);
+    CpltSetVarImp(Space* home, int glbMin, int glbMax, const IntSet& lubD,
+                  unsigned int cardMin, unsigned int cardMax);
+    CpltSetVarImp(Space* home, const IntSet& glbD,const IntSet& lubD,
+                  unsigned int cardMin, unsigned int cardMax);
     // Delete a bdd variable
     void dispose(Space* home);
   public:
@@ -333,8 +330,6 @@ namespace Gecode { namespace CpltSet {
 
     /// \name Bdd information 
     //@{
-    /// Return a pointer to the bdd manager
-    BMI* manager(void) const;
     /// Return the initial minimum of the implementation
     int mgr_min(void) const;
     /// Return the initial maximum of the implementation
@@ -445,8 +440,6 @@ namespace Gecode { namespace CpltSet {
     bool onlyleaves;
     // The number of the current level in the bdd
     int _level;
-    // The manager
-    BMI* mgr;
     
     // marks all nodes in the cache 
     GECODE_CPLTSET_EXPORT void cache_mark(void);
@@ -456,8 +449,8 @@ namespace Gecode { namespace CpltSet {
     /// \name Constructors and initialization
     //@{
     BddIterator(void);
-    BddIterator(BMI*, const bdd&);
-    GECODE_CPLTSET_EXPORT void init(BMI*, const bdd&);
+    BddIterator(const bdd&);
+    GECODE_CPLTSET_EXPORT void init(const bdd&);
     //@}
     /// \name Iteration control
     //@{
@@ -541,14 +534,14 @@ namespace Gecode {
     CpltSetVar(void);
     /// Construct CpltSetVar from range $\f {Min set limit, \dots, Max setlimit } \f$
     GECODE_CPLTSET_EXPORT
-    CpltSetVar(Space* home, BddMgr& m);
+    CpltSetVar(Space* home);
     /// Initialize from range $\f {Min set limit, \dots, Max setlimit } \f$
-    void init(Space* home, BddMgr& m);
+    void init(Space* home);
     /// Construct a Bdd for P(U=[min,...,max]) 
     GECODE_CPLTSET_EXPORT
-    CpltSetVar(Space* home, BddMgr& m, int min ,int max);
+    CpltSetVar(Space* home, int min ,int max);
     /// Initialize from range $\f {min, \dots, \max } \f$
-    void init(Space* home, BddMgr& m, int min ,int max);
+    void init(Space* home, int min ,int max);
     /// Deallocate memory
     void dispose(Space* home);
 
@@ -570,7 +563,7 @@ namespace Gecode {
      *    Gecode::Set::VariableFailedDomain is thrown.
      */
     GECODE_CPLTSET_EXPORT 
-    CpltSetVar(Space* home, BddMgr& m,
+    CpltSetVar(Space* home,
                int glbMin,int glbMax,int lubMin,int lubMax,
                unsigned int cardMin = 0,
                unsigned int cardMax = Limits::Set::card_max);
@@ -591,7 +584,7 @@ namespace Gecode {
      *  - If \a minCard > \a maxCard, an exception of type
      *    Gecode::Set::VariableFailedDomain is thrown.
      */
-    void init(Space* home, BddMgr& m,
+    void init(Space* home,
               int glbMin,int glbMax,int lubMin,int lubMax,
               unsigned int cardMin = 0,
               unsigned int cardMax = Limits::Set::card_max);
@@ -614,7 +607,7 @@ namespace Gecode {
      *    Gecode::Set::VariableFailedDomain is thrown.
      */
     GECODE_CPLTSET_EXPORT 
-    CpltSetVar(Space* home, BddMgr& m,
+    CpltSetVar(Space* home,
                const IntSet& glbD,int lubMin,int lubMax,
                unsigned int cardMin = 0,
                unsigned int cardMax = Limits::Set::card_max);
@@ -635,7 +628,7 @@ namespace Gecode {
      *  - If \a minCard > \a maxCard, an exception of type
      *    Gecode::Set::VariableFailedDomain is thrown.
      */
-    void init(Space* home, BddMgr& m,
+    void init(Space* home,
               const IntSet& glbD,int lubMin,int lubMax,
               unsigned int cardMin = 0,
               unsigned int cardMax = Limits::Set::card_max);
@@ -658,7 +651,7 @@ namespace Gecode {
      *    Gecode::Set::VariableFailedDomain is thrown.
      */
     GECODE_CPLTSET_EXPORT 
-    CpltSetVar(Space* home, BddMgr& m,
+    CpltSetVar(Space* home,
                int glbMin,int glbMax,const IntSet& lubD,
                unsigned int cardMin = 0,
                unsigned int cardMax = Limits::Set::card_max);
@@ -679,7 +672,7 @@ namespace Gecode {
      *  - If \a minCard > \a maxCard, an exception of type
      *    Gecode::Set::VariableFailedDomain is thrown.
      */
-    void init(Space* home, BddMgr& m,
+    void init(Space* home,
               int glbMin,int glbMax,const IntSet& lubD,
               unsigned int cardMin = 0,
               unsigned int cardMax = Limits::Set::card_max);
@@ -702,7 +695,7 @@ namespace Gecode {
      *    Gecode::Set::VariableFailedDomain is thrown.
      */
     GECODE_CPLTSET_EXPORT 
-    CpltSetVar(Space* home, BddMgr& m,
+    CpltSetVar(Space* home,
                const IntSet& glbD,const IntSet& lubD,
                unsigned int cardMin = 0,
                unsigned int cardMax = Limits::Set::card_max);
@@ -722,13 +715,12 @@ namespace Gecode {
      *  - If \a minCard > \a maxCard, an exception of type
      *    Gecode::Set::VariableFailedDomain is thrown.
      */
-    void init(Space* home, BddMgr& m,
+    void init(Space* home,
               const IntSet& glbD,const IntSet& lubD,
               unsigned int cardMin = 0,
               unsigned int cardMax = Limits::Set::card_max);
     //@}
 
-    // BMI* manager(void) const;
     /// \name Variable implementation access
     //@{
     /// Return bdd variable implementation
@@ -888,13 +880,6 @@ namespace Gecode {
  */
 GECODE_CPLTSET_EXPORT std::ostream&
 operator<<(std::ostream&, const Gecode::CpltSetVar& x);
-
-/**
- * \brief Print debug information from the bdd manager \a m
- * \relates Gecode::BMI
- */
-GECODE_CPLTSET_EXPORT std::ostream&
-operator<<(std::ostream&, Gecode::BddMgr& x);
 
 #include "gecode/cpltset/var/cpltset.icc"
 // STATISTICS: cpltset-var

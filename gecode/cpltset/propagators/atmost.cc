@@ -101,12 +101,11 @@ namespace Gecode {
       Gecode::Iter::Ranges::Inter<CpltSetVarUnknownRanges, IntSetRanges>
       > si(mi,ma,interdel);
 
-    BMI* mgr = bv[0].manager();
     unsigned int xtab = bv[0].table_width();
     unsigned int xoff = bv[0].offset();
     int xmin = bv[0].mgr_min();
     
-    bdd d = cardConst(mgr, xtab, xoff, xmin, c, c, si);
+    bdd d = cardConst(xtab, xoff, xmin, c, c, si);
     // std::cerr << "exactly: tell...";
     // GECODE_ME_FAIL(home, bv[0].tell_formula(home, d));
     GECODE_ES_FAIL(home, UnaryBddProp<CpltSetView>::post(home, bv[0], d));
@@ -128,12 +127,11 @@ namespace Gecode {
     ViewArray<CpltSetView> bv(home, 1);
     bv[0] = x;
 
-    BMI* mgr = bv[0].manager();
     unsigned int xtab = bv[0].table_width();
     unsigned int xoff = bv[0].offset();
     int xmin = bv[0].mgr_min();
     IntSetRanges ir(is);
-    bdd d = cardConst(mgr, xtab, xoff, xmin, 0, c, ir);
+    bdd d = cardConst(xtab, xoff, xmin, 0, c, ir);
 
     //GECODE_ME_FAIL(home, bv[0].tell_formula(home, d));
 

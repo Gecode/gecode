@@ -54,7 +54,6 @@ namespace Gecode {
       int mi;
       int ma;
       int i;
-      BMI* mgr;
       int range;
       int total;
 
@@ -182,7 +181,7 @@ namespace Gecode {
     forceinline
     DomValues<CpltSetVarImp*>::DomValues(const CpltSetVarImp* x)
       : valid(false), d((x->bdd_domain())), o(x->_offset), 
-        mi(x->min), ma(x->max), i(-1), mgr(x->mgr), 
+        mi(x->min), ma(x->max), i(-1),
         range(ma - mi + 1),
         total(static_cast<int> (std::pow(2.0, static_cast<double> (range)))) {
       // std::cerr << "DomValues(x): ";
@@ -201,7 +200,6 @@ namespace Gecode {
       mi = x->min;
       ma = x->max;
       i = -1;
-      mgr = x->mgr;
       range = (ma - mi + 1);
       total = static_cast<int> (std::pow(2.0, static_cast<double> (range)));
       operator++();
@@ -553,7 +551,7 @@ namespace Gecode {
     CpltSetVarImp::printdom(void) const {
       // std::cout << "printdom: ";
       // mgr->print_set(bounds & remain);
-      mgr->print_set(domain);
+      manager.print_set(domain);
     }
 
     forceinline void 
@@ -597,8 +595,8 @@ namespace Gecode {
     }
 
     forceinline
-    CpltSetVarImp::CpltSetVarImp(Space* home, BMI* m) 
-      : CpltSetVarImpBase(home), mgr(m), domain(bdd_true()),
+    CpltSetVarImp::CpltSetVarImp(Space* home) 
+      : CpltSetVarImpBase(home), domain(bdd_true()),
         min(Limits::Int::int_min), max(Limits::Int::int_max), 
         _offset(0), assignment(false) {}
 
@@ -608,42 +606,42 @@ namespace Gecode {
     // does not give the desired result
 
     forceinline
-    CpltSetVarImp::CpltSetVarImp(Space* home, BMI* m, int a, int b)
-      : CpltSetVarImpBase(home), mgr(m), domain(bdd_true()), min(a), max(b), 
+    CpltSetVarImp::CpltSetVarImp(Space* home, int a, int b)
+      : CpltSetVarImpBase(home), domain(bdd_true()), min(a), max(b), 
         assignment(false) {
-      _offset = mgr->allocate(table_width());
+      _offset = manager.allocate(table_width());
     }
 
     forceinline
-    CpltSetVarImp::CpltSetVarImp(Space* home, BMI* m, 
+    CpltSetVarImp::CpltSetVarImp(Space* home, 
                          int glbMin, int glbMax, int lubMin, int lubMax,
                          unsigned int cardMin, unsigned int cardMax) 
-      : CpltSetVarImpBase(home), mgr(m), domain(bdd_true()), 
+      : CpltSetVarImpBase(home), domain(bdd_true()), 
         min(lubMin), max(lubMax), assignment(false) {
 
       IntSet glb(glbMin, glbMax);
       IntSet lub(lubMin, lubMax);
       testConsistency(glb, lub, cardMin, cardMax, "CpltSetVarImp");
 
-      _offset = mgr->allocate(table_width());
+      _offset = manager.allocate(table_width());
 
       for (int i = glbMax; i >= glbMin; i--) {
         domain &= getbdd(i - min);
       } 
 
       unsigned int range = table_width();
-      domain &= cardcheck(mgr, range, _offset,
+      domain &= cardcheck(range, _offset,
                           static_cast<int> (cardMin), 
                           static_cast<int> (cardMax));   
 
-      assert(!mgr->cfalse(domain));
+      assert(!manager.cfalse(domain));
     }
 
     forceinline
-    CpltSetVarImp::CpltSetVarImp(Space* home, BMI* m, 
+    CpltSetVarImp::CpltSetVarImp(Space* home,
                          int glbMin, int glbMax, const IntSet& lubD,
                          unsigned int cardMin, unsigned int cardMax) 
-      : CpltSetVarImpBase(home), mgr(m), domain(bdd_true()), 
+      : CpltSetVarImpBase(home), domain(bdd_true()), 
         min(lubD.min()), max(lubD.max()),
         assignment(false) {
 
@@ -654,7 +652,7 @@ namespace Gecode {
       Iter::Ranges::ToValues<IntSetRanges> lval(lub);
       Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> > vc(lval);
 
-      _offset = mgr->allocate(table_width());
+      _offset = manager.allocate(table_width());
       vc.last();
       
       int c = glbMax;
@@ -674,18 +672,18 @@ namespace Gecode {
       }
 
       unsigned int range = table_width();
-      domain &= cardcheck(mgr, range, _offset,
+      domain &= cardcheck(range, _offset,
                           static_cast<int> (cardMin), 
                           static_cast<int> (cardMax));   
 
-      assert(!mgr->cfalse(domain));
+      assert(!manager.cfalse(domain));
     }
 
     forceinline
-    CpltSetVarImp::CpltSetVarImp(Space* home, BMI* m, 
+    CpltSetVarImp::CpltSetVarImp(Space* home,
                          const IntSet& glbD, int lubMin, int lubMax,
                          unsigned int cardMin, unsigned int cardMax) 
-      : CpltSetVarImpBase(home), mgr(m), domain(bdd_true()), 
+      : CpltSetVarImpBase(home), domain(bdd_true()), 
         min(lubMin), max(lubMax), assignment(false) {
 
       IntSet lub(lubMin, lubMax);
@@ -696,25 +694,25 @@ namespace Gecode {
       Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> > vc(gval);
       
       vc.last();
-      _offset = mgr->allocate(table_width());
+      _offset = manager.allocate(table_width());
 
       for (vc.last(); vc(); --vc) {
         domain &= getbdd(vc.val() - min);
       } 
 
       unsigned int range = table_width();
-      domain &= cardcheck(mgr, range, _offset,
+      domain &= cardcheck(range, _offset,
                           static_cast<int> (cardMin), 
                           static_cast<int> (cardMax));
 
-      assert(!mgr->cfalse(domain));
+      assert(!manager.cfalse(domain));
     }
 
     forceinline
-    CpltSetVarImp::CpltSetVarImp(Space* home, BMI* m, 
+    CpltSetVarImp::CpltSetVarImp(Space* home,
                          const IntSet& glbD,const IntSet& lubD,
                          unsigned int cardMin, unsigned int cardMax) 
-      : CpltSetVarImpBase(home), mgr(m), domain(bdd_true()), 
+      : CpltSetVarImpBase(home), domain(bdd_true()), 
         min(lubD.min()), max(lubD.max()),
         assignment(false) {
 
@@ -727,7 +725,7 @@ namespace Gecode {
       Iter::Ranges::ToValues<IntSetRanges> lval(lub);
       Iter::Ranges::ValCache<Iter::Ranges::ToValues<IntSetRanges> > vclub(lval);
     
-      _offset = mgr->allocate(table_width());
+      _offset = manager.allocate(table_width());
 
       vcglb.last();
       vclub.last();
@@ -747,23 +745,21 @@ namespace Gecode {
       }
 
       unsigned int range = table_width();
-      domain &= cardcheck(mgr, range, _offset,
+      domain &= cardcheck(range, _offset,
                           static_cast<int> (cardMin), 
                           static_cast<int> (cardMax));   
 
-      assert(!mgr->cfalse(domain));
+      assert(!manager.cfalse(domain));
     }
 
     forceinline void 
-    CpltSetVarImp::init(Space* home, BMI* m, int a, int b) {
+    CpltSetVarImp::init(Space* home, int a, int b) {
       // allocate (b - a + 1) indices in the manager
-      mgr     = m;
       domain  = bdd_true();
       min     = a;
       max     = b;
       assignment = false;
-      _offset  = mgr->allocate(table_width());
-      assert(mgr == m);
+      _offset  = manager.allocate(table_width());
     }
 
     forceinline bdd 
@@ -771,13 +767,13 @@ namespace Gecode {
 
     forceinline void 
     CpltSetVarImp::dispose(Space* home) {
-      mgr->dispose(domain);
+      manager.dispose(domain);
       // only variables with nodes in the table need to dipose them 
       if (!(_offset == 0 && 
             min == Limits::Int::int_min &&
             max == Limits::Int::int_max)
           ) {
-        mgr->dispose(_offset, (int) table_width());
+        manager.dispose(_offset, (int) table_width());
       }
     }
 
@@ -787,11 +783,11 @@ namespace Gecode {
     CpltSetVarImp::assigned(void) {
       if (!assignment) {
         // (C1) there is only one solution (i.e. only one path)
-        bool cond1 = (unsigned int) mgr->bddpath(domain) == 1;
+        bool cond1 = (unsigned int) manager.bddpath(domain) == 1;
         // (C2) the solution talks about all elements 
         //      (i.e. the number of nodes used for the bdd uses the bdd nodes
         //      of all elements for the CpltSetVar)
-        bool cond2 = (unsigned int) mgr->bddsize(domain) == table_width();
+        bool cond2 = (unsigned int) manager.bddsize(domain) == table_width();
         assignment = cond1 && cond2;
       } 
       return assignment;
@@ -803,17 +799,19 @@ namespace Gecode {
     forceinline bdd
     CpltSetVarImp::getbdd(int i) const { 
       // std::cout << "bdd var imp: " << _offset << "+" << i << "\n";
-      return mgr->bddpos(_offset + i); 
+      return manager.bddpos(_offset + i); 
     }
 
     forceinline bdd
-    CpltSetVarImp::getnegbdd(int i) const { return mgr->negbddpos(_offset + i); }
+    CpltSetVarImp::getnegbdd(int i) const {
+      return manager.negbddpos(_offset + i);
+    }
 
     forceinline int
-    CpltSetVarImp::getlevel(int i) { return mgr->var2bdd(_offset + i); }
+    CpltSetVarImp::getlevel(int i) { return manager.var2bdd(_offset + i); }
 
     forceinline int
-    CpltSetVarImp::getvar(int i) { return mgr->bdd2var(_offset + i); }
+    CpltSetVarImp::getvar(int i) { return manager.bdd2var(_offset + i); }
 
     forceinline int
     CpltSetVarImp::mgr_min(void) const { return min; }
@@ -830,39 +828,36 @@ namespace Gecode {
     forceinline unsigned int 
     CpltSetVarImp::table_width(void) const { return max - min + 1; }
 
-    forceinline BMI*
-    CpltSetVarImp::manager(void) const { return mgr; }
-
     forceinline unsigned int 
     CpltSetVarImp::cardMin(void) const {
-      if (mgr->ctrue(domain)) { return 0; }
+      if (manager.ctrue(domain)) { return 0; }
       bdd d = domain;
       int l = 0;
       int u = 0;
-      getcardbounds(mgr, d, l, u);
+      getcardbounds(d, l, u);
       return l;
     }
 
     forceinline unsigned int 
     CpltSetVarImp::cardMax(void) const {
-      if (mgr->ctrue(domain)) { return table_width(); }
+      if (manager.ctrue(domain)) { return table_width(); }
       bdd d = domain;
       int l = 0;
       int u = 0;
-      getcardbounds(mgr, d, l, u);
+      getcardbounds(d, l, u);
       return u;
     }
 
     forceinline int 
     CpltSetVarImp::lubMin(void) const {
-      if (mgr->ctrue(domain)) { return mgr_min(); }
+      if (manager.ctrue(domain)) { return mgr_min(); }
       Gecode::Set::LubRanges<CpltSetVarImp*> lub(this);
       return !lub() ? MIN_OF_EMPTY : lub.min();
     }
 
     forceinline int 
     CpltSetVarImp::lubMax(void) const {
-      if (mgr->ctrue(domain)) { return mgr_max(); }
+      if (manager.ctrue(domain)) { return mgr_max(); }
       Gecode::Set::LubRanges<CpltSetVarImp*> lub(this);
       if (!lub()) { return MAX_OF_EMPTY; }
       int maxlub = mgr_max();
@@ -875,7 +870,7 @@ namespace Gecode {
 
     forceinline int 
     CpltSetVarImp::lubMinN(int n) const {
-      if (mgr->ctrue(domain)) 
+      if (manager.ctrue(domain)) 
         return mgr_min() + n; 
 
       Gecode::Set::LubRanges<CpltSetVarImp*> lub(this);
@@ -898,7 +893,7 @@ namespace Gecode {
 
     forceinline int 
     CpltSetVarImp::lubMaxN(int n) const {
-      if (mgr->ctrue(domain)) 
+      if (manager.ctrue(domain)) 
         return mgr_max() - n;
 
       GECODE_AUTOARRAY(NodeStatus, status, table_width());
@@ -925,10 +920,10 @@ namespace Gecode {
 
     forceinline unsigned int
     CpltSetVarImp::lubSize(void) const {
-      if (mgr->ctrue(domain)) 
+      if (manager.ctrue(domain)) 
         return table_width();
       
-      BddIterator iter(mgr, domain);
+      BddIterator iter(domain);
       int out = 0;
       while (iter()) {
         if (iter.status() == FIX_NOT_LUB)
@@ -940,10 +935,10 @@ namespace Gecode {
 
     forceinline int 
     CpltSetVarImp::glbMin(void) const {
-      if (mgr->ctrue(domain)) 
+      if (manager.ctrue(domain)) 
         return mgr_min();
 
-      BddIterator iter(mgr, domain);
+      BddIterator iter(domain);
       while (iter()) {
         if (iter.status() == FIX_GLB) {
           int idx = iter.label() - offset();
@@ -956,10 +951,10 @@ namespace Gecode {
 
     forceinline int 
     CpltSetVarImp::glbMax(void) const {
-      if (mgr->ctrue(domain)) 
+      if (manager.ctrue(domain)) 
         return mgr_max();
     
-      BddIterator iter(mgr, domain);
+      BddIterator iter(domain);
       int lastglb = -1;
       while (iter()) {
         if (iter.status() == FIX_GLB) {
@@ -973,8 +968,8 @@ namespace Gecode {
 
     forceinline unsigned int
     CpltSetVarImp::glbSize(void) const {
-      if (mgr->ctrue(domain)) { return 0; }
-      BddIterator iter(mgr, domain);
+      if (manager.ctrue(domain)) { return 0; }
+      BddIterator iter(domain);
       int size = 0;
       while (iter()) {
         if (iter.status() == FIX_GLB) { size++; }
@@ -985,8 +980,8 @@ namespace Gecode {
 
     forceinline int 
     CpltSetVarImp::unknownMin(void) const {
-      if (mgr->ctrue(domain)) { return mgr_min(); } 
-      BddIterator iter(mgr, domain);
+      if (manager.ctrue(domain)) { return mgr_min(); } 
+      BddIterator iter(domain);
       while (iter()) {
         NodeStatus status = iter.status();
         if (status == FIX_UNKNOWN || status == UNDET) {
@@ -1000,10 +995,10 @@ namespace Gecode {
 
     forceinline int 
     CpltSetVarImp::unknownMax(void) const {
-      if (mgr->ctrue(domain)) 
+      if (manager.ctrue(domain)) 
         return mgr_max();
 
-      BddIterator iter(mgr, domain);
+      BddIterator iter(domain);
       int lastunknown = -1;
       while (iter()) {
         NodeStatus status = iter.status();
@@ -1019,10 +1014,10 @@ namespace Gecode {
     forceinline unsigned int
     CpltSetVarImp::unknownSize(void) const {
       int size = table_width();
-      if (mgr->ctrue(domain))
+      if (manager.ctrue(domain))
         return size;
 
-      BddIterator iter(mgr, domain);
+      BddIterator iter(domain);
       while (iter()) {
         NodeStatus status = iter.status();
         if (status == FIX_GLB || status == FIX_NOT_LUB) { size--; }
@@ -1192,7 +1187,7 @@ namespace Gecode {
     CpltSetVarImp::cardinality(Space* home, int l, int u) {
       unsigned int maxcard = table_width();
       // compute the cardinality formula
-      bdd c = cardcheck(mgr, maxcard, _offset, l, u);
+      bdd c = cardcheck(maxcard, _offset, l, u);
       return tell_formula(home, c);
     }
 
@@ -1215,7 +1210,7 @@ namespace Gecode {
       domain &= d;
 
       bool assigned_new = assigned();
-      if (mgr->cfalse(domain)) 
+      if (manager.cfalse(domain)) 
         return ME_CPLTSET_FAILED; 
 
       ModEvent me = ME_CPLTSET_NONE;
@@ -1265,7 +1260,7 @@ namespace Gecode {
     }
 
     forceinline bool
-    CpltSetVarImp::range(void) const { return mgr->ctrue(domain); }
+    CpltSetVarImp::range(void) const { return manager.ctrue(domain); }
 
     /*
      * Copying a variable
@@ -1293,7 +1288,7 @@ namespace Gecode {
     }
 
     forceinline void
-    CpltSetVarImp::viewdot(void) const { mgr->bdd2dot(domain); }
+    CpltSetVarImp::viewdot(void) const { manager.bdd2dot(domain); }
 
     forceinline int 
     CpltSetVarImp::valididx(int v) const{
@@ -1308,24 +1303,24 @@ namespace Gecode {
 
     forceinline bool
     CpltSetVarImp::knownIn(int v) const {
-      if (mgr->ctrue(domain)) 
+      if (manager.ctrue(domain)) 
         return false;
       int idx = valididx(v);
       if (idx < 0) 
         return false;
-      bdd bv = mgr->negbddpos(idx);
-      return (mgr->cfalse(domain & bv));
+      bdd bv = manager.negbddpos(idx);
+      return (manager.cfalse(domain & bv));
     }
 
     forceinline bool
     CpltSetVarImp::knownOut(int v) const {
-      if (mgr->ctrue(domain)) 
+      if (manager.ctrue(domain)) 
         return false;
       int idx = valididx(v);
       if (idx < 0) 
         return false;
-      bdd bv = mgr->bddpos(idx);
-      return (mgr->cfalse(domain & bv));
+      bdd bv = manager.bddpos(idx);
+      return (manager.cfalse(domain & bv));
     }
 
     /*
@@ -1337,8 +1332,8 @@ namespace Gecode {
     BddIterator::BddIterator(void) {}
 
     forceinline
-    BddIterator::BddIterator(BMI* manager, const bdd& b) {
-      init(manager, b);
+    BddIterator::BddIterator(const bdd& b) {
+      init(b);
     }
 
     forceinline NodeStatus 
@@ -1352,7 +1347,7 @@ namespace Gecode {
       if (!operator()()) { 
         return -1; 
       } else {
-        return mgr->bddidx(cur); 
+        return manager.bddidx(cur); 
       }
     }
   
@@ -1393,7 +1388,7 @@ namespace Gecode {
       if (dom != remain) {
         dom &= remain;
       }
-      BddIterator::init(x->mgr, dom);
+      BddIterator::init(dom);
       bdd_level = BddIterator::label() - off;
     }
 
@@ -1414,7 +1409,7 @@ namespace Gecode {
       if (dom != remain)
         dom &= remain;
       
-      BddIterator::init(x->mgr, dom);
+      BddIterator::init(dom);
       bdd_level   = BddIterator::label() - off;
     }
 

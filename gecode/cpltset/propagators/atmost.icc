@@ -44,7 +44,6 @@ namespace Gecode {
   atmostOne_post(Space* home, ViewArray<View>& x, int c) {
     if (home->failed()) return;
     int n = x.size();
-    BMI* mgr = x[0].manager();
 
     int minx = x[0].mgr_min();
     int maxx = x[0].mgr_max(); 
@@ -66,7 +65,7 @@ namespace Gecode {
       unsigned int xoff = x[i].offset();
       unsigned int xtab = x[i].table_width();
       //d0 &= cardrec(mgr, 0, xoff, xtab, c, c);    
-      d0 &= cardcheck(mgr, xtab, xoff, c, c);    
+      d0 &= cardcheck(xtab, xoff, c, c);    
     }
     // std::cout << "cardrec done = " << mgr->bddsize(d0) << "\n";
 
@@ -89,7 +88,6 @@ namespace Gecode {
   atmost_post(Space* home, ViewArray<View>& x, int c, 
               SetRelType lex, int card) {
     if (home->failed()) return;
-    BMI* mgr = x[0].manager();
 
     unsigned int x1_tab = x[1].table_width();
 
@@ -108,7 +106,7 @@ namespace Gecode {
     unsigned int tab = x[2].table_width();
       
     // c0 = cardrec(mgr, 0, off, tab, 0, c);
-    c0 = cardcheck(mgr, tab, off, 0, c);
+    c0 = cardcheck(tab, off, 0, c);
       
     // combination of intersection and cardinality
     d0 &= c0;
@@ -122,7 +120,6 @@ namespace Gecode {
   atmost_post(Space* home, ViewArray<View>& x, int c, 
               CpltSetRelType lex, int card) {
     if (home->failed()) return;
-    BMI* mgr = x[0].manager();
 
     unsigned int x1_tab = x[1].table_width();
 
@@ -141,7 +138,7 @@ namespace Gecode {
     unsigned int tab = x[2].table_width();
       
     // c0 = cardrec(mgr, 0, off, tab, 0, c);
-    c0 = cardcheck(mgr, tab, off, 0, c);
+    c0 = cardcheck(tab, off, 0, c);
       
     // combination of intersection and cardinality
     d0 &= c0;
@@ -155,42 +152,42 @@ namespace Gecode {
     switch (lex) {
     case SRT_LE:
       {
-        d0 &= lexlt(mgr, xoff, yoff, xtab, xtab - 1);
+        d0 &= lexlt(xoff, yoff, xtab, xtab - 1);
         break;
       }
     case SRT_GR:
       {
-        d0 &= lexlt(mgr, yoff, xoff, xtab, xtab - 1);
+        d0 &= lexlt(yoff, xoff, xtab, xtab - 1);
         break;
       }
     case SRT_LQ:
       {
-        d0 &= lexlq(mgr, xoff, yoff, xtab, xtab - 1);
+        d0 &= lexlq(xoff, yoff, xtab, xtab - 1);
         break;
       }
     case SRT_GQ:
       {
-        d0 &= lexlq(mgr, yoff, xoff, xtab, xtab - 1);
+        d0 &= lexlq(yoff, xoff, xtab, xtab - 1);
         break;
       }
     case SRT_LE_REV:
       {
-        d0 &= lexltrev(mgr, xoff, yoff, xtab, 0);
+        d0 &= lexltrev(xoff, yoff, xtab, 0);
         break;
       }
     case SRT_GR_REV:
       {
-        d0 &= lexltrev(mgr, yoff, xoff, xtab, 0);
+        d0 &= lexltrev(yoff, xoff, xtab, 0);
         break;
       }
     case SRT_LQ_REV:
       {
-        d0 &= lexlqrev(mgr, xoff, yoff, xtab, 0);
+        d0 &= lexlqrev(xoff, yoff, xtab, 0);
         break;
       }
     case SRT_GQ_REV:
       {
-        d0 &= lexlqrev(mgr, yoff, xoff, xtab, 0);
+        d0 &= lexlqrev(yoff, xoff, xtab, 0);
         break;
       }
     default:
@@ -210,7 +207,6 @@ namespace Gecode {
   atmost_post(Space* home, View& x, View& y, int c, CpltSetRelType lex,
               int card) {
     if (home->failed()) return;
-    BMI* mgr = x.manager();
 
     unsigned int xoff = x.offset();
     unsigned int yoff = y.offset();
@@ -225,42 +221,42 @@ namespace Gecode {
     switch (lex) {
     case SRT_LE:
       {
-        d0 &= lexlt(mgr, xoff, yoff, xtab, xtab - 1);
+        d0 &= lexlt(xoff, yoff, xtab, xtab - 1);
         break;
       }
     case SRT_GR:
       {
-        d0 &= lexlt(mgr, yoff, xoff, xtab, xtab - 1);
+        d0 &= lexlt(yoff, xoff, xtab, xtab - 1);
         break;
       }
     case SRT_LQ:
       {
-        d0 &= lexlq(mgr, xoff, yoff, xtab, xtab - 1);
+        d0 &= lexlq(xoff, yoff, xtab, xtab - 1);
         break;
       }
     case SRT_GQ:
       {
-        d0 &= lexlq(mgr, yoff, xoff, xtab, xtab - 1);
+        d0 &= lexlq(yoff, xoff, xtab, xtab - 1);
         break;
       }
     case SRT_LE_REV:
       {
-        d0 &= lexltrev(mgr, xoff, yoff, xtab, 0);
+        d0 &= lexltrev(xoff, yoff, xtab, 0);
         break;
       }
     case SRT_GR_REV:
       {
-        d0 &= lexltrev(mgr, yoff, xoff, xtab, 0);
+        d0 &= lexltrev(yoff, xoff, xtab, 0);
         break;
       }
     case SRT_LQ_REV:
       {
-        d0 &= lexlqrev(mgr, xoff, yoff, xtab, 0);
+        d0 &= lexlqrev(xoff, yoff, xtab, 0);
         break;
       }
     case SRT_GQ_REV:
       {
-        d0 &= lexlqrev(mgr, yoff, xoff, xtab, 0);
+        d0 &= lexlqrev(yoff, xoff, xtab, 0);
         break;
       }
     default:
@@ -272,8 +268,8 @@ namespace Gecode {
     
     // extra cardinality information on x and y
     if (card > -1) {
-      d0 &= cardcheck(mgr, xtab, xoff, card, card);
-      d0 &= cardcheck(mgr, ytab, yoff, card, card);
+      d0 &= cardcheck(xtab, xoff, card, card);
+      d0 &= cardcheck(ytab, yoff, card, card);
     }
 
     if (x.assigned()) {
@@ -294,7 +290,6 @@ namespace Gecode {
   atmost_post(Space* home, View& x, View& y, int c, SetRelType lex,
               int card) {
     if (home->failed()) return;
-    BMI* mgr = x.manager();
 
     unsigned int xoff = x.offset();
     unsigned int yoff = y.offset();
@@ -309,8 +304,8 @@ namespace Gecode {
     
     // extra cardinality information on x and y
     if (card > -1) {
-      d0 &= cardcheck(mgr, xtab, xoff, card, card);
-      d0 &= cardcheck(mgr, ytab, yoff, card, card);
+      d0 &= cardcheck(xtab, xoff, card, card);
+      d0 &= cardcheck(ytab, yoff, card, card);
     }
 
     if (x.assigned()) {

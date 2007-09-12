@@ -58,8 +58,7 @@ namespace Gecode { namespace CpltSet {
   UnaryBddProp<View>::cost(void) const {
     // we have only linear costs (in terms of the size of a bdd) 
     // if one of the bdds is constant
-    BMI* mgr = x.manager();
-    if (mgr->ctrue(x.bdd_domain()) || mgr->ctrue(d)) {
+    if (manager.ctrue(x.bdd_domain()) || manager.ctrue(d)) {
       return PC_LINEAR_LO;
     } else {
       return PC_QUADRATIC_HI;
@@ -86,8 +85,7 @@ namespace Gecode { namespace CpltSet {
     if (!home->failed()) {
       x.cancel(home, this, PC_CPLTSET_DOM);
     }
-    BMI* mgr = x.manager();
-    mgr->dispose(d);
+    manager.dispose(d);
     Propagator::dispose(home);
     return sizeof(*this);
   }

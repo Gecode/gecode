@@ -100,9 +100,8 @@ namespace Gecode { namespace CpltSet {
   void 
   variableorder(ViewArray<View>& x) {
     // std::cerr << "start order on"<< x.size() << "\n";
-    BMI* mgr = x[0].manager();
     // std::cerr << "allocated \n";
-    unsigned int var_in_tab = mgr->allocated();
+    unsigned int var_in_tab = manager.allocated();
     
     // std::cerr << "var_in_tab = " << var_in_tab << "\n";
 
@@ -155,7 +154,7 @@ namespace Gecode { namespace CpltSet {
     }   
     
     // std::cerr << "set order\n";
-    mgr->setorder(&hls_order[0]);
+    manager.setorder(&hls_order[0]);
     // std::cerr << "ordering done\n";
   }
 
@@ -163,9 +162,8 @@ namespace Gecode { namespace CpltSet {
   void 
   variableorder(ViewArray<View>& x, ViewArray<View1>& y = NULL) {
     // std::cerr << "start order\n";
-    BMI* mgr = x[0].manager();
     // std::cerr << "allocated \n";
-    unsigned int var_in_tab = mgr->allocated();
+    unsigned int var_in_tab = manager.allocated();
     
     // std::cerr << "var_in_tab = " << var_in_tab << "\n";
 
@@ -242,7 +240,7 @@ namespace Gecode { namespace CpltSet {
 
 
     // std::cerr << "set order\n";
-    mgr->setorder(&hls_order[0]);
+    manager.setorder(&hls_order[0]);
     // std::cerr << "ordering done\n";
   }
 
@@ -251,9 +249,8 @@ namespace Gecode { namespace CpltSet {
   variableorder(ViewArray<View>** x, int xs) {
     // std::cerr << "start order\n";
     
-    BMI* mgr = (*(x[0]))[0].manager();
     // std::cerr << "allocated \n";
-    unsigned int var_in_tab = mgr->allocated();
+    unsigned int var_in_tab = manager.allocated();
     
     // std::cerr << "var_in_tab = " << var_in_tab << "\n";
 
@@ -330,43 +327,42 @@ namespace Gecode { namespace CpltSet {
 
 
     // std::cerr << "set order\n";
-    mgr->setorder(&hls_order[0]);
+    manager.setorder(&hls_order[0]);
     // std::cerr << "ordering done\n";
   }
 
   /// Function used for computing the convex_hull and the variables of it
-  GECODE_CPLTSET_EXPORT void conv_hull_project(BMI* mgr, bdd& robdd, 
-                                           bdd& hull, bdd& poshull);
+  GECODE_CPLTSET_EXPORT void conv_hull_project(bdd& robdd, 
+                                               bdd& hull, bdd& poshull);
   /// Returns a bdd representing all variables taking part in the convex hull of \a domain
-  GECODE_CPLTSET_EXPORT void conv_project(BMI* mgr, bdd& robdd, 
-                                      bdd& poshull);
+  GECODE_CPLTSET_EXPORT void conv_project(bdd& robdd, 
+                                          bdd& poshull);
   /// Returns a bdd representing the convex hull of \a robdd
-  GECODE_CPLTSET_EXPORT void conv_hull(BMI* mgr, bdd& robdd, 
-                                        bdd& hull);
+  GECODE_CPLTSET_EXPORT void conv_hull(bdd& robdd, bdd& hull);
 
   /// Returns a bdd representing all variables of \a domain
-  GECODE_CPLTSET_EXPORT bdd bdd_vars(BMI* mgr, bdd& domain);
+  GECODE_CPLTSET_EXPORT bdd bdd_vars(bdd& domain);
 
 
   /// Build the ROBDD for $\f |x|=c\f$
   GECODE_CPLTSET_EXPORT bdd 
-  cardeq(BMI* mgr, int offset, int c, int n, int r);
+  cardeq(int offset, int c, int n, int r);
 
   /// Build the ROBDD for $\f cl \leq |x| \leq cr\f$
   GECODE_CPLTSET_EXPORT bdd 
-  cardlqgq(BMI* mgr, int offset, int cl, int cr, int n, int r);
+  cardlqgq(int offset, int cl, int cr, int n, int r);
 
   /// Build the ROBDD for $\f cl \leq |x| \leq cr\f$
   GECODE_CPLTSET_EXPORT bdd 
-  cardcheck(BMI* mgr, int xtab, int offset, int cl, int cr);
+  cardcheck(int xtab, int offset, int cl, int cr);
 
   /// Computes the cardinality bdd excluding variables represented in the bdd \a boundvars
   GECODE_CPLTSET_EXPORT bdd 
-  cardrec(BMI*& mgr, bdd& boundvars, int j, unsigned int& offset, 
+  cardrec(bdd& boundvars, int j, unsigned int& offset, 
           unsigned int& range, int l, int u);
   
   GECODE_CPLTSET_EXPORT bdd 
-  cardrec_bin(BMI*& mgr, int j, unsigned int& off1, unsigned int& range1, 
+  cardrec_bin(int j, unsigned int& off1, unsigned int& range1, 
               unsigned int& off2, unsigned int& range2, int l, int u);
 
 
@@ -381,7 +377,6 @@ namespace Gecode { namespace CpltSet {
             View0& x, View1& y, unsigned int c, int n, int r) {
     // std::cerr << "start extcardeq()\n";
     // std::cerr << x << " " << y << " " << c << " " << n << " " << r << "\n";
-    BMI* mgr = x.manager();
     int xmin = x.mgr_min();
     int ymin = y.mgr_min();
 
@@ -405,7 +400,7 @@ namespace Gecode { namespace CpltSet {
     // std::cerr << "connect nodes in lowest layer\n";
     // connect nodes in lowest layer
     for (int i = 1; i < n; i++) {
-      layer[i] = mgr->ite(layer[i], layer[i - 1], bdd_false());
+      layer[i] = manager.ite(layer[i], layer[i - 1], bdd_false());
     }
 
     inter.last();
@@ -422,8 +417,8 @@ namespace Gecode { namespace CpltSet {
         } else {
           t = layer[i-1]; 
         }
-        bdd both = mgr->ite(y.getbdd(col - ymin), t,layer[i]);
-        layer[i] = mgr->ite(x.getbdd(col - xmin), both ,layer[i]);
+        bdd both = manager.ite(y.getbdd(col - ymin), t,layer[i]);
+        layer[i] = manager.ite(x.getbdd(col - xmin), both ,layer[i]);
         --inter;
         if (!inter()) { break;}
       }
@@ -443,7 +438,6 @@ namespace Gecode { namespace CpltSet {
     // std::cerr << "start extcardlqgq() yoff\n";
     // std::cerr << x << " " << y << "\n";
     // std::cerr << "cl: " << cl << " cr: " << cr << " n:" << n << " r:" << r << "\n";
-    BMI* mgr = x.manager();
 
     GECODE_AUTOARRAY(bdd, layer, n);
     // the use of autoarray now requires explicit initialization
@@ -464,8 +458,8 @@ namespace Gecode { namespace CpltSet {
     // std::cerr << "build nodes for lowest layer\n";
     for (int i = n - cl ; i < n; i++, --inter) {
       k    = inter.min();
-      bdd both = mgr->ite(y.getbdd(k - ymin), layer[i - 1], bdd_false());
-      layer[i] = mgr->ite(x.getbdd(k - xmin), both, bdd_false());
+      bdd both = manager.ite(y.getbdd(k - ymin), layer[i - 1], bdd_false());
+      layer[i] = manager.ite(x.getbdd(k - xmin), both, bdd_false());
     }
 
     // std::cerr << "testoutput: \n";
@@ -496,8 +490,8 @@ namespace Gecode { namespace CpltSet {
         int col = inter.min();
         // std::cerr << "col = " << col << "\n";
         bdd t = layer[i-1]; 
-        bdd both = mgr->ite(y.getbdd(col - ymin), t, layer[i]);
-        layer[i] = mgr->ite(x.getbdd(col - xmin), both, layer[i]);
+        bdd both = manager.ite(y.getbdd(col - ymin), t, layer[i]);
+        layer[i] = manager.ite(x.getbdd(col - xmin), both, layer[i]);
         --inter;
         if ((int) inter.index() + 1 < r + 1 - (int) cr) { 
           // std::cerr << "break\n"; 
@@ -536,8 +530,8 @@ namespace Gecode { namespace CpltSet {
               f = layer[i];
             }
           }
-          bdd both = mgr->ite(y.getbdd(col - ymin), t ,f);
-          layer[i] = mgr->ite(x.getbdd(col - xmin), both ,f);
+          bdd both = manager.ite(y.getbdd(col - ymin), t ,f);
+          layer[i] = manager.ite(x.getbdd(col - xmin), both ,f);
           --inter;
           if (!inter()) { break;}
         }
@@ -565,8 +559,8 @@ namespace Gecode { namespace CpltSet {
             f = layer[i];
           }
         }
-        bdd both = mgr->ite(y.getbdd(col - ymin), t ,f);
-        layer[i] = mgr->ite(x.getbdd(col - xmin), both ,f);
+        bdd both = manager.ite(y.getbdd(col - ymin), t ,f);
+        layer[i] = manager.ite(x.getbdd(col - xmin), both ,f);
         --inter;
         if (!inter()) { break;}
       }
@@ -589,10 +583,10 @@ namespace Gecode { namespace CpltSet {
           t = layer[i-1]; 
         }
         // i guess here we do a little too much
-//         bdd both = mgr->ite(y.getbdd(col - ymin), t, layer[i]);
-//         layer[i] = mgr->ite(x.getbdd(col - xmin), both, layer[i]);
+//         bdd both = manager.ite(y.getbdd(col - ymin), t, layer[i]);
+//         layer[i] = manager.ite(x.getbdd(col - xmin), both, layer[i]);
         bdd both = y.getbdd(col - ymin) & x.getbdd(col - xmin);
-        layer[i] = mgr->ite(both, t, layer[i]);
+        layer[i] = manager.ite(both, t, layer[i]);
 
         --inter;
         if (!inter()) { 
@@ -711,7 +705,7 @@ namespace Gecode { namespace CpltSet {
   // extcard with const intset
   template <class I>
   bdd 
-  cardConst(BMI* mgr, int xtab, int xoff, int xmin, int cl, int cr, I& is) {
+  cardConst(int xtab, int xoff, int xmin, int cl, int cr, I& is) {
     // Invariant: We require that the IntSet provided is a subset of the variable range
     Gecode::Iter::Ranges::ToValues<I> ir(is);
     Gecode::Iter::Ranges::ValCache<Gecode::Iter::Ranges::ToValues<I> > inter(ir);
@@ -738,7 +732,7 @@ namespace Gecode { namespace CpltSet {
     // build nodes for lowest layer
     for (int i = n - cl ; i < n; i++, --inter) {
       k    = inter.min();
-      layer[i] = mgr->ite(mgr->bddpos(xoff + k - xmin), layer[i - 1], bdd_false());
+      layer[i] = manager.ite(manager.bddpos(xoff + k - xmin), layer[i - 1], bdd_false());
     }
 
     // start with a shift and build layers up to the connection layer
@@ -753,7 +747,7 @@ namespace Gecode { namespace CpltSet {
       for (int i = n - cl; i < n; i++) { 
         int col = inter.min();
         bdd t = layer[i-1]; 
-        layer[i] = mgr->ite(mgr->bddpos(xoff + col - xmin), t, layer[i]);
+        layer[i] = manager.ite(manager.bddpos(xoff + col - xmin), t, layer[i]);
         --inter;
         if ((int) inter.index() + 1 < r + 1 - (int) cr) { 
           inter.finish(); break;
@@ -788,7 +782,7 @@ namespace Gecode { namespace CpltSet {
               f = layer[i];
             }
           }
-          layer[i] = mgr->ite(mgr->bddpos(xoff + col - xmin), t ,f);
+          layer[i] = manager.ite(manager.bddpos(xoff + col - xmin), t ,f);
           --inter;
           if (!inter()) { break;}
         }
@@ -812,7 +806,7 @@ namespace Gecode { namespace CpltSet {
             f = layer[i];
           }
         }
-        layer[i] = mgr->ite(mgr->bddpos(xoff + col - xmin), t ,f);
+        layer[i] = manager.ite(manager.bddpos(xoff + col - xmin), t ,f);
         --inter;
         if (!inter()) { break;}
       }
@@ -831,7 +825,7 @@ namespace Gecode { namespace CpltSet {
         } else {
           t = layer[i-1]; 
         }
-        layer[i] = mgr->ite(mgr->bddpos(xoff + col - xmin), t, layer[i]);
+        layer[i] = manager.ite(manager.bddpos(xoff + col - xmin), t, layer[i]);
         --inter;
         if (!inter()) { 
           break;
@@ -855,104 +849,102 @@ namespace Gecode { namespace CpltSet {
 
   // mark all nodes in the dqueue
   GECODE_CPLTSET_EXPORT void
-  extcache_mark(BMI* mgr, SharedArray<bdd>& nodes, 
+  extcache_mark(SharedArray<bdd>& nodes, 
                 int n, int& l, int& r, int& markref);
 
   // unmark all nodes in the dqueue
   GECODE_CPLTSET_EXPORT void
-  extcache_unmark(BMI* mgr, SharedArray<bdd>& nodes, 
+  extcache_unmark(SharedArray<bdd>& nodes, 
                   int n, int& l, int& r, int& markref);
 
   // iterate to the next level of nodes
   GECODE_CPLTSET_EXPORT void 
-  extcardbounds(BMI* mgr, int& markref, bdd& c, int& n, int& l, int& r,
+  extcardbounds(int& markref, bdd& c, int& n, int& l, int& r,
                 bool& singleton, int& _level, 
                 SharedArray<bdd>& nodes, 
                 int& curmin, int& curmax, Gecode::IntSet& out);
 
 
   GECODE_CPLTSET_EXPORT void 
-  getcardbounds(BMI* mgr, bdd& c, int& curmin, int& curmax);
+  getcardbounds(bdd& c, int& curmin, int& curmax);
   // END EXTRACT CARDINALITY
 
   GECODE_CPLTSET_EXPORT bdd 
-  lexlt(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, 
+  lexlt(unsigned int& xoff, unsigned int& yoff, 
         unsigned int& range, int n);
 
   GECODE_CPLTSET_EXPORT bdd 
-  lexlq(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, 
+  lexlq(unsigned int& xoff, unsigned int& yoff, 
         unsigned int& range, int n);
 
   GECODE_CPLTSET_EXPORT bdd 
-  lexltrev(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, 
-        unsigned int& range, int n);
+  lexltrev(unsigned int& xoff, unsigned int& yoff, 
+           unsigned int& range, int n);
 
   GECODE_CPLTSET_EXPORT bdd 
-  lexlqrev(BMI*& mgr, unsigned int& xoff, unsigned int& yoff, 
-        unsigned int& range, int n);
+  lexlqrev(unsigned int& xoff, unsigned int& yoff, 
+           unsigned int& range, int n);
 
 
   /// Counts the minium and maximum cardinality of the set represented by \a remain
   GECODE_CPLTSET_EXPORT 
-  void card_count(BMI* mgr, bdd& remain, bdd& boundvars,
+  void card_count(bdd& remain, bdd& boundvars,
                   unsigned int n, unsigned int& offset, 
                   unsigned int& range, int& l, int& u);
 
   /// Computes a bdd representing the lower and upper cardinality bounds of the bdd \a remain
   forceinline
-  bdd card_bounds(BMI* mgr, bdd& remain, bdd& boundvars,
+  bdd card_bounds(bdd& remain, bdd& boundvars,
                   unsigned int& offset, unsigned int& range) {
     int l = 0;
     int u = 0;
     bdd b = boundvars;
-    card_count(mgr, remain, b, 0, offset, range, l, u);
+    card_count(remain, b, 0, offset, range, l, u);
     if (l == static_cast<int> (Limits::Set::card_max)) {
       return bdd_false();
     }
     b = boundvars;
     // std::cout << "card("<< offset <<")=["<<l <<".."<<u<<"]\n";
-    return cardrec(mgr, b, 0, offset, range, l, u);
+    return cardrec(b, 0, offset, range, l, u);
   }
 
   /// Compute the lexicographic lower bound of a bdd
   GECODE_CPLTSET_EXPORT
-  bdd lex_lb(BMI*& mgr, bdd& remain, 
-              bdd& bounds, 
-              unsigned int n, unsigned int& offset, unsigned int& range);
+  bdd lex_lb(bdd& remain, bdd& bounds, 
+             unsigned int n, unsigned int& offset, unsigned int& range);
 
   /// Compute the lexicographic upper bound of a bdd
   GECODE_CPLTSET_EXPORT
-  bdd lex_ub(BMI*& mgr, bdd& remain, bdd& bounds, 
-              unsigned int n, unsigned int& offset, unsigned int& range);
+  bdd lex_ub(bdd& remain, bdd& bounds, 
+             unsigned int n, unsigned int& offset, unsigned int& range);
 
   forceinline bdd 
-  lex_bounds(BMI*& mgr, bdd& remain, 
-             bdd& bounds, 
+  lex_bounds(bdd& remain, bdd& bounds, 
              unsigned int& offset, unsigned int& range) {
-    if (mgr->cfalse(remain) || mgr->cfalse(bounds)) {
+    if (manager.cfalse(remain) || manager.cfalse(bounds)) {
       return bdd_false();
     }
     bdd b = bounds;
     // std::cout << "doing lower lex bounds\n";
-    bdd lexlb = lex_lb(mgr, remain, b, 0, offset, range);
+    bdd lexlb = lex_lb(remain, b, 0, offset, range);
     b = bounds;
     // std::cout << "doing upper lex bounds\n";
-    bdd lexub = lex_ub(mgr, remain, b, 0, offset, range);
+    bdd lexub = lex_ub(remain, b, 0, offset, range);
     // std::cout << "returning\n";
 
 //     bdd low = lexlb;
 //     std::cout << "lex("<<offset<<")=[";
 //     std::cout << lexlb;
-//     while (!mgr->leaf(low)) {
-//       bdd tlow = mgr->iftrue(low);
-//       bdd flow = mgr->iffalse(low);
-//       if (mgr->cfalse(flow)) {
+//     while (!manager.leaf(low)) {
+//       bdd tlow = manager.iftrue(low);
+//       bdd flow = manager.iffalse(low);
+//       if (manager.cfalse(flow)) {
 //         // + 1 works for simple domains 1#... just for steiner example tests
-//         std::cout << mgr->bddidx(low) - offset + 1<<",";
+//         std::cout << manager.bddidx(low) - offset + 1<<",";
 //         // std::cout << "1";
 //         low = tlow;
 //       } else {
-//         std::cout << "N("<<mgr->bddidx(low) - offset<<"),";
+//         std::cout << "N("<<manager.bddidx(low) - offset<<"),";
 //         // std::cout << "0";
 //         low = flow;
 //       } 
@@ -960,15 +952,15 @@ namespace Gecode { namespace CpltSet {
 //     std::cout << "..";
 
 //     bdd hi = lexub;
-//     while (!mgr->leaf(hi)) {
-//       bdd thi = mgr->iftrue(hi);
-//       bdd fhi = mgr->iffalse(hi);
-//       if (mgr->cfalse(thi)) {
-//         std::cout << "N("<<mgr->bddidx(hi) - offset<<"),";
+//     while (!manager.leaf(hi)) {
+//       bdd thi = manager.iftrue(hi);
+//       bdd fhi = manager.iffalse(hi);
+//       if (manager.cfalse(thi)) {
+//         std::cout << "N("<<manager.bddidx(hi) - offset<<"),";
 //         // std::cout << "0";
 //         hi = fhi;
 //       } else {
-//         std::cout << mgr->bddidx(hi) - offset + 1<<",";
+//         std::cout << manager.bddidx(hi) - offset + 1<<",";
 //         // std::cout << "1";
 //         hi = thi;
 //       }
