@@ -43,7 +43,6 @@
 #include "gecode/int.hh"
 #include "gecode/iter.hh"
 #include "gecode/set.hh"
-#include "gecode/support/buddy/bdd.h"
 
 /*
  * Support for DLLs under Windows
@@ -73,35 +72,25 @@
 #include "gecode/cpltset/exception.icc"
 #include "gecode/cpltset/propagator.icc"
 
-namespace Gecode { 
-  //@{
-  /// Passing external bdd variables
-  typedef bdd  GecodeBdd;
-
-  //@}
-
-namespace CpltSet {
+namespace Gecode { namespace CpltSet {
 
   /** 
    * \namespace Gecode::CpltSet
    * \brief Complete representation of finite integer sets using ROBDD's
    * 
    * The Gecode::CpltSet namespace contains all functionality required
-   * to program propagators and branchings for finite integer sets.
-   * In addition, all propagators and branchings for finite integer
-   * sets provided by %Gecode are contained as nested namespaces.
+   * to program propagators and branchings for finite integer set variables,
+   * where the variables' domains are represented completely (without 
+   * approximation) using reduced ordered binary decision diagrams (ROBDDs).
+   *
+   * In addition, all propagators and branchings for these variables
+   * provided by %Gecode are contained as nested namespaces.
    *
    */
-  const GecodeBdd Empty = bdd_false();
-  const GecodeBdd Full = bdd_true();
 
 }}
 
-#define BDDTOP  CpltSet::Full
-#define BDDBOT  CpltSet::Empty
-
-#include "gecode/cpltset/manager/buddy.icc"
-typedef Gecode::BuddyMgr BddMgr;
+#include "gecode/cpltset/bddmanager.icc"
 
 #include "gecode/cpltset/support.icc"
 #include "gecode/set/var.icc"
@@ -112,22 +101,38 @@ typedef Gecode::BuddyMgr BddMgr;
 
 namespace Gecode {
 
+  /**
+   * \brief Common relation types for sets
+   * \ingroup TaskIntCpltSet
+   */
   enum CpltSetRelType {
-    SRT_LE,    ///< Lexicographically less than on bitstring(\f$\prec_{lex}\f$)
-    SRT_GR,    ///< Lexicographically greater than on bitstring (\f$\succ_{lex}\f$)
-    SRT_LQ,    ///< Lexicographically less than or equal  (\f$\preceq_{lex}\f$)
-    SRT_GQ,    ///< Lexicographically greater than or equal  (\f$\preceq_{lex}\f$)
-    SRT_LE_REV,    ///< Lexicographically less than on reversed bitstring(\f$\prec_{lex}\f$)
-    SRT_GR_REV,    ///< Lexicographically greater than on reversed bitstring (\f$\succ_{lex}\f$)
-    SRT_LQ_REV,    ///< Lexicographically reversed less than or equal  (\f$\preceq_{lex}\f$)
-    SRT_GQ_REV,    ///< Lexicographically reversed greater than or equal  (\f$\preceq_{lex}\f$)
+    /// Lexicographically less than on bitstring(\f$\prec_{lex}\f$)
+    SRT_LE,    
+    /// Lexicographically less than on bitstring(\f$\prec_{lex}\f$)
+    SRT_GR,
+    /// Lexicographically less than or equal  (\f$\preceq_{lex}\f$)
+    SRT_LQ,
+    /// Lexicographically greater than or equal  (\f$\preceq_{lex}\f$)    
+    SRT_GQ,
+    /// Lexicographically less than on reversed bitstring(\f$\prec_{lex}\f$)
+    SRT_LE_REV,
+    /// Lexicographically greater than on reversed bitstring (\f$\succ_{lex}\f$)
+    SRT_GR_REV,
+    /// Lexicographically reversed less than or equal (\f$\preceq_{lex}\f$)
+    SRT_LQ_REV,
+    /// Lexicographically reversed greater than or equal  (\f$\preceq_{lex}\f$)
+    SRT_GQ_REV
   };
 
+  /**
+   * \brief Common operations for sets
+   * \ingroup TaskIntCpltSet
+   */
   enum CpltSetOpType {
     SOT_SYMDIFF,  ///< Symmetric Difference
   };
 
-  ///\name Posting bdd propagators
+  ///\name Posting propagators on CpltSet variables
   //@{
 
   /// Propagates \f$ x \sim_r \{i\}\f$
@@ -310,14 +315,16 @@ namespace Gecode {
   GECODE_CPLTSET_EXPORT void
   uses(Space* home, const IntVarArgs& x, CpltSetVar s, CpltSetVar t,
        const IntVarArgs& y, CpltSetVar u, CpltSetVar v);
-  
-  /**
-   * \brief Ordering all declared bdd variables \f$ x_0, \dots, x_{n-1}\f$ such that 
-   * \f$ \forall i\in \{0, \dots, n - 1\}: x_{0_{1}} \prec x_{{n-1}_{1}}, \dots, x_{0_{k-1}} \prec x_{{n-1}_{k-1}}\f$
-   */
-  GECODE_CPLTSET_EXPORT void
-  hls_order(Space* home, const CpltSetVarArray& x);
   //@}
+
+  namespace CpltSet {
+    /**
+     * \brief Ordering all declared bdd variables \f$ x_0, \dots, x_{n-1}\f$ such that 
+     * \f$ \forall i\in \{0, \dots, n - 1\}: x_{0_{1}} \prec x_{{n-1}_{1}}, \dots, x_{0_{k-1}} \prec x_{{n-1}_{k-1}}\f$
+     */
+    GECODE_CPLTSET_EXPORT void
+    hls_order(Space* home, const CpltSetVarArray& x);
+}
 
 
   /**
