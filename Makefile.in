@@ -398,6 +398,7 @@ SETBUILDDIRS	=						\
 
 CPLTSETSRC0 =	\
 	branch.cc array.cc support.cc             \
+	bddmanager.cc \
 	var/imp.cc var/cpltset.cc  view/print.cc                  \
 	propagators/dom.cc propagators/rel.cc propagators/cardinality.cc  \
 	propagators/atmost.cc propagators/partition.cc \
@@ -409,7 +410,7 @@ CPLTSETVARIMP = \
         gecode/cpltset/var/imp-hdr.icc gecode/cpltset/var/imp-body.icc
 
 CPLTSETHDR0 =		                \
-	view.icc manager/buddy.icc exception.icc array.icc \
+	view.icc bddmanager.icc exception.icc array.icc \
 	support.icc \
 	var.icc  propagator.icc \
         var/imp.icc var/cpltset.icc view/cpltset.icc view/singleton.icc \
