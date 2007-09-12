@@ -3,8 +3,12 @@
  *  Main authors:
  *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
  *
+ *  Contributing authors:
+ *     Christian Schulte <schulte@gecode.org>
+ *
  *  Copyright:
  *     Patrick Pekczynski, 2005
+ *     Christian Schulte, 2007
  *
  *  Last modified:
  *     $Date$ by $Author$

@@ -1,11 +1,9 @@
 /* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
 /*
  *  Main authors:
- *     Christian Schulte <schulte@gecode.org>
  *     Mikael Lagerkvist <lagerkvist@gecode.org>
  *
  *  Copyright:
- *     Christian Schulte, 2005
  *     Mikael Lagerkvist, 2005
  *
  *  Last modified:
