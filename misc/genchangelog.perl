@@ -95,6 +95,7 @@ while ($l = <>) {
       $sid = "PageChanges_$version";
       $sid =~ s|\.|_|g;
       $versions = $versions . "\n - \\ref $sid \"Gecode $version ($date)\"";
+      print "*/\n/**\n";
       print "\\page $sid Changes in Version $version ($date)\n\n";
 
       print "$info\n\n";
@@ -176,7 +177,8 @@ while ($l = <>) {
 }
 
 print <<EOF
-
+*/
+/**
 \\page PageChanges_1_0_0 Changes in Version 1.0.0 (2005-12-06, initial release)
 
 No changes, of course.
