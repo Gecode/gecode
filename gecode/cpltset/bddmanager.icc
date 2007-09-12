@@ -72,7 +72,7 @@ namespace Gecode {
     /// Default constructor
     BddMgr(void);
     /// Destructor
-    ~BddMgr(void);
+    GECODE_CPLTSET_EXPORT ~BddMgr(void);
     
     /// Initialize manager with initial nodesize \a n and cachesize \a c.
     void init(int n, int c);
@@ -90,7 +90,7 @@ namespace Gecode {
     /// Return the number of paths of bdd leading to a true node\a b
     unsigned int bddpath(const bdd& b) const;
     /// Return the total number of paths of bdd \a b
-    unsigned int number_of_paths(bdd& b);
+    GECODE_CPLTSET_EXPORT unsigned int numberOfPaths(bdd& b);
     /// Return bdd at position \a i in bdd lookup table
     bdd bddpos(int i) const;
     /// Return negated bdd at position \a i in bdd lookup table
@@ -192,9 +192,15 @@ namespace Gecode {
   BddMgr::BddMgr(void)
   : _size(0), _offset(0), dummy_offset( -1), dummy_range(-1), _debug(false) {}
 
-  forceinline
-  BddMgr::~BddMgr(void) {
-    dispose();
+  forceinline void
+  BddMgr::dispose(void) {
+    if (available()) { 
+      bdd_done(); 
+    }
+    _size = 0;
+    _offset = 0;
+    dummy_offset = -1; 
+    dummy_range = -1;
   }
    
   forceinline void
@@ -220,6 +226,9 @@ namespace Gecode {
   BddMgr::print_set(const bdd& b) {
     bdd_printset(b);
   }
+
+  forceinline bdd
+  BddMgr::bddpos(int i) const{ return bdd_ithvarpp(i); }
 
   forceinline int 
   BddMgr::allocate(int r) {
@@ -257,8 +266,6 @@ namespace Gecode {
     return info.varnum;
   }
 
-  forceinline bdd
-  BddMgr::bddpos(int i) const{ return bdd_ithvarpp(i); }
 
   forceinline bdd
   BddMgr::negbddpos(int i) const{ return bdd_nithvarpp(i); }
@@ -313,14 +320,6 @@ namespace Gecode {
   forceinline unsigned int
   BddMgr::bddpath(const bdd& b) const{
     return static_cast<unsigned int> (bdd_pathcount(b));
-  }
-
-  forceinline unsigned int
-  BddMgr::number_of_paths(bdd& b){
-    if (leaf(b)) { return 1; }
-    bdd t = iftrue(b);
-    bdd f = iffalse(b);
-    return number_of_paths(t) + number_of_paths(f);
   }
 
   forceinline bdd 
@@ -399,17 +398,6 @@ namespace Gecode {
   }
 
   forceinline void
-  BddMgr::dispose(void) {
-    if (available()) { 
-      bdd_done(); 
-    }
-    _size = 0;
-    _offset = 0;
-    dummy_offset = -1; 
-    dummy_range = -1;
-  }
-
-  forceinline void
   BddMgr::dispose(int offset, int range, int freenodes) {
     if (available()) {
       for (int i = 0; i < range; i++) {  bddpos(offset + i).dispose(); }
@@ -478,7 +466,7 @@ namespace Gecode {
     o = bdd_setmaxincrease(max);
   }
 
-  GECODE_SUPPORT_EXPORT extern BddMgr manager;
+  GECODE_CPLTSET_EXPORT extern BddMgr manager;
 
 }}
 

@@ -175,7 +175,6 @@ namespace Gecode { namespace CpltSet {
     static const int MIN_OF_EMPTY = Gecode::Limits::Set::int_max+1;
 
     void printdom(void) const;
-    void printall(void) const;
   private:
     /**
      * \brief Bdd representing the set of all possible sets the variable can

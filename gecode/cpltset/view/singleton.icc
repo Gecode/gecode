@@ -43,6 +43,11 @@ namespace Gecode {
 
   namespace CpltSet {
 
+    forceinline bdd
+    SingletonCpltSetView::getnegbdd(int i)  const { 
+      return manager.negbddpos(_offset + i); 
+    }
+
     // Unfortunately using an IntView as CpltSetView
     // requires us to allocate boolean bdd nodes in the manager
     // note that these nodes are NOT ordered
@@ -220,16 +225,14 @@ namespace Gecode {
     forceinline bdd
     SingletonCpltSetView::getbdd(int i)  const { return manager.bddpos(_offset + i); }
 
-    forceinline bdd
-    SingletonCpltSetView::getnegbdd(int i)  const { 
-      return manager.negbddpos(_offset + i); 
-    }
-
     forceinline int
     SingletonCpltSetView::getlevel(int i) { return manager.var2bdd(_offset + i); }
     
     forceinline int
     SingletonCpltSetView::getvar(int i) { return manager.bdd2var(_offset + i); }
+
+    forceinline bdd 
+    SingletonCpltSetView::bdd_domain(void) const { return domain; };
 
     forceinline void
     SingletonCpltSetView::dom_and(bdd& d) { d &= bdd_domain(); }
@@ -248,9 +251,6 @@ namespace Gecode {
       if (v < min || v > max) return -1 ;
       return offset() +v - min;
     }
-
-    forceinline bdd 
-    SingletonCpltSetView::bdd_domain(void) const { return domain; };
 
     forceinline ModEvent
     SingletonCpltSetView::cardinality(Space* home,unsigned int l, unsigned int u) {
