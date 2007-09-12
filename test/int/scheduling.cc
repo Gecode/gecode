@@ -47,119 +47,124 @@
 
 namespace Test { namespace Int { namespace Scheduling {
 
-using namespace Gecode;
-
-static Gecode::IntSet ds_12(-1,2);
-
-namespace {
-  using namespace Gecode::Iter::Ranges;
-
-  /* We are only interested in assignments that represent tasks (s_i,
+  /**
+   * \defgroup TaskTestIntScheduling Scheduling constraints
+   * \ingroup TaskTestInt
+   */
+  //@{
+  /**
+   * \brief Script for generating assignments
+   *
+   * We are only interested in assignments that represent tasks (s_i,
    * d_i, e_i, h_i) such that the following hold:
    *   - The task starts at a positive time and has some extension.
    *   - The equation s_i + d_i = e_i holds.
    *   - The tasks are ordered to remove some symmetries, i.e.,
    *     s_i <= s_{i+1}
    */
-  struct Ass : public Gecode::Space {
+  class Ass : public Gecode::Space {
+  public:
+    /// Store task information
     Gecode::IntVarArray x;
+    /// Initialize model for assignments
     Ass(int n, const Gecode::IntSet& d) : x(this, n, d) {
+      using namespace Gecode;
       for (int i = 0; i < n; i += 4) {
-        /// Post constraint on \a x
         post(this, x[i+0] >= 0);
-        /// Post constraint on \a x
         post(this, x[i+1] >= 0);
-        /// Post constraint on \a x
         post(this, x[i+2] >= 0);
-        /// Post constraint on \a x
         post(this, x[i] + x[i+1] == x[i+2]);
-        // The following doesn't work with search-based tests
-        //if (i+4 < n) {
-        /// Post constraint on \a x
-        //   post(this, x[i] <= x[i+4]);
-        //}
         branch(this, x, INT_VAR_NONE, INT_VAL_MIN);
       }
     }
+    /// Constructor for cloning \a s
     Ass(bool share, Ass& s) : Gecode::Space(share,s) {
       x.update(this, share, s.x);
     }
+    /// Create copy during cloning
     virtual Gecode::Space* copy(bool share) {
       return new Ass(share,*this);
     }
   };
 
-  // Class for generating reasonable assignements (i.e. s+d=e)
+  /// Class for generating reasonable assignments
   class CumulativeAssignment : public Assignment {
-    Ass *cur, *nxt;
-    DFS<Ass> *e;
+    /// Current assignment
+    Ass* cur;
+    /// Next assignment
+    Ass* nxt;
+    /// Search engine to find assignments
+    Gecode::DFS<Ass>* e;
   public:
-    /// Create and register test
-    CumulativeAssignment(int, const Gecode::IntSet&);
-    virtual void reset(void);
-    virtual void operator++(void);
-    virtual int  operator[](int i) const;
-    virtual bool operator()(void)  const;
-    virtual ~CumulativeAssignment() {
-      if (cur) delete cur;
-      if (nxt) delete nxt;
-      if (e  ) delete e;
+    /// Initialize assignments for \a n0 variables and values \a d0
+    CumulativeAssignment(int n, const Gecode::IntSet& d) : Assignment(n,d) {
+      Ass* a = new Ass(n, d);
+      e = new Gecode::DFS<Ass>(a);
+      delete a;
+      nxt = cur = e->next();
+      if (cur != NULL) 
+        nxt = e->next();
+    }
+    /// Test whether all assignments have been iterated
+    virtual bool operator()(void) const {
+      return nxt != NULL;
+    }
+    /// Move to next assignment
+    virtual void operator++(void) {
+      delete cur;
+      cur = nxt;
+      if (cur != NULL) nxt = e->next();
+    }
+    /// Return value for variable \a i
+    virtual int  operator[](int i) const {
+      assert((i>=0) && (i<n) && (cur != NULL));
+      return cur->x[i].val();
+    }
+    /// Destructor
+    virtual ~CumulativeAssignment(void) {
+      delete cur; delete nxt; delete e;
     }
   };
 
-  CumulativeAssignment::CumulativeAssignment(int n0, const Gecode::IntSet& d0)
-    : Assignment(n0, d0), cur(NULL), nxt(NULL), e(NULL)
-  {
-    reset();
-  }
-  void
-  CumulativeAssignment::reset(void) {
-    Ass *a = new Ass(n, d);
-    delete e;
-    e = new DFS<Ass>(a);
-    delete a;
-    nxt = cur = e->next();
-    if (cur != NULL) nxt = e->next();
-  }
-  int
-  CumulativeAssignment::operator[](int i) const {
-    assert((i>=0) && (i<n) && cur != NULL);
-    return cur->x[i].val();
-  }
-  void
-  CumulativeAssignment::operator++(void) {
-    if(cur) delete cur;
-    cur = nxt;
-    if (nxt != NULL) nxt = e->next();
-  }
-  bool
-  CumulativeAssignment::operator()(void) const {
-    return nxt != NULL;
-  }
-
-  // Classes and functions for checking an assignment
-  struct Event {
-    int p, h;
-    bool start;
+  /// Event to be scheduled
+  class Event {
+  public:
+    int p, h; ///< Position and height of event
+    bool start; ///< Whether event has just started
+    /// Initialize event
     Event(int pos, int height, bool s) : p(pos), h(height), start(s) {}
-    bool operator<(const Event& e) const { return p<e.p; }
+    /// Test whether this event is before event \a e 
+    bool operator<(const Event& e) const { 
+      return p<e.p; 
+    }
   };
 
-  struct Below {
-    int limit;
+  /// Describe that event is below a certain limit
+  class Below {
+  public:
+    int limit; ///< limit
+    /// Initialize
     Below(int l) : limit(l) {}
-    bool operator()(int val) { return val <= limit; }
+    /// Test whether \a val is below limit
+    bool operator()(int val) { 
+      return val <= limit; 
+    }
   };
-  struct Above {
-    int limit;
+  /// Describe that event is above a certain limit
+  class Above {
+  public:
+    int limit; ///< limit
+    /// Initialize
     Above(int l) : limit(l) {}
-    bool operator()(int val) { return val >= limit; }
+    /// Test whether \a val is above limit
+    bool operator()(int val) { 
+      return val >= limit; 
+    }
   };
-
-  typedef std::vector<Event> eventv;
 
   template <class C>
-  bool valid(eventv e, C comp) {
+  /// Check whether event \a e is valid
+  bool valid(std::vector<Event> e, C comp) {
     std::sort(e.begin(), e.end());
     unsigned int i = 0;
     int p = 0;
@@ -172,98 +177,89 @@ namespace {
         n += (e[i].start ? +1 : -1);
         ++i;
       }
-      if (n && !comp(h)) {
+      if (n && !comp(h))
         return false;
-      }
     }
     return true;
   }
-}
 
-class Cumulatives : public Test {
-protected:
-  int ntasks;
-  bool at_most;
-  int limit;
-
-public:
-  /// Create and register test
-  Cumulatives(const char* t, int nt, bool am, int l)
-    : Test(t,nt*4,ds_12), ntasks(nt), at_most(am), limit(l) {}
-
-  virtual Assignment* assignment(void) const {
-    assert(arity == 4*ntasks);
-    return new CumulativeAssignment(arity, dom);
-  }
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    eventv e;
-    for (int i = 0; i < ntasks; ++i) {
-      int p = i*4;
-      // Positive start, duration and end
-      if (x[p+0] < 0 || x[p+1] < 1 || x[p+2] < 1) return false;
-      // Start + Duration == End
-      if (x[p+0] + x[p+1] != x[p+2]) {
-        return false;
+  /// Test for cumulatives constraint
+  class Cumulatives : public Test {
+  protected:
+    int ntasks;   ///< Number of tasks
+    bool at_most; ///< Whether to use atmost reasoning
+    int limit;    ///< Limit
+  public:
+    /// Create and register test
+    Cumulatives(const std::string& s, int nt, bool am, int l)
+      : Test("Cumulatives::"+s,nt*4,1,2), ntasks(nt), at_most(am), limit(l) {
+      testsearch = false;
+    }
+    /// Create first assignment
+    virtual Assignment* assignment(void) const {
+      assert(arity == 4*ntasks);
+      return new CumulativeAssignment(arity, dom);
+    }
+    /// Test whether \a x is solution
+    virtual bool solution(const Assignment& x) const {
+      std::vector<Event> e;
+      for (int i = 0; i < ntasks; ++i) {
+        int p = i*4;
+        // Positive start, duration and end
+        if (x[p+0] < 0 || x[p+1] < 1 || x[p+2] < 1) return false;
+        // Start + Duration == End
+        if (x[p+0] + x[p+1] != x[p+2]) {
+          return false;
+        }
+      }
+      for (int i = 0; i < ntasks; ++i) {
+        int p = i*4;
+        // Up at start, down at end.
+        e.push_back(Event(x[p+0], +x[p+3],  true));
+        e.push_back(Event(x[p+2], -x[p+3], false));
+      }
+      if (at_most) {
+        return valid(e, Below(limit));
+      } else {
+        return valid(e, Above(limit));
       }
     }
-    for (int i = 0; i < ntasks; ++i) {
-      int p = i*4;
-      // Up at start, down at end.
-      e.push_back(Event(x[p+0], +x[p+3],  true));
-      e.push_back(Event(x[p+2], -x[p+3], false));
+    /// Post constraint on \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      using namespace Gecode;
+      IntArgs m(ntasks), l(1, limit);
+      IntVarArgs s(ntasks), d(ntasks), e(ntasks), h(ntasks);
+      for (int i = 0; i < ntasks; ++i) {
+        int p = i*4;
+        m[i] = 0;
+        s[i] = x[p+0]; rel(home, x[p+0], Gecode::IRT_GQ, 0);
+        d[i] = x[p+1]; rel(home, x[p+1], Gecode::IRT_GQ, 1);
+        e[i] = x[p+2]; rel(home, x[p+2], Gecode::IRT_GQ, 1);
+        h[i] = x[p+3];
+      }
+      cumulatives(home, m, s, d, e, h, l, at_most);
     }
-    if (at_most) {
-      return valid(e, Below(limit));
-    } else {
-      return valid(e, Above(limit));
-    }
-  }
-
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    IntArgs m(ntasks), l(1, limit);
-    IntVarArgs s(ntasks), d(ntasks), e(ntasks), h(ntasks);
-    for (int i = 0; i < ntasks; ++i) {
-      int p = i*4;
-      m[i] = 0;
-      s[i] = x[p+0]; rel(home, x[p+0], Gecode::IRT_GQ, 0);
-      d[i] = x[p+1]; rel(home, x[p+1], Gecode::IRT_GQ, 1);
-      e[i] = x[p+2]; rel(home, x[p+2], Gecode::IRT_GQ, 1);
-      h[i] = x[p+3];
-    }
-    cumulatives(home, m, s, d, e, h, l, at_most);
-  }
-};
-
-namespace {
-  Cumulatives _cumu1t1("Cumulatives::1t1", 1,  true, 1);
-  Cumulatives _cumu1f1("Cumulatives::1f1", 1, false, 1);
-  Cumulatives _cumu1t2("Cumulatives::1t2", 1,  true, 2);
-  Cumulatives _cumu1f2("Cumulatives::1f2", 1, false, 2);
-  Cumulatives _cumu1t3("Cumulatives::1t3", 1,  true, 3);
-  Cumulatives _cumu1f3("Cumulatives::1f3", 1, false, 3);
-  Cumulatives _cumu2t1("Cumulatives::2t1", 2,  true, 1);
-  Cumulatives _cumu2f1("Cumulatives::2f1", 2, false, 1);
-  Cumulatives _cumu2t2("Cumulatives::2t2", 2,  true, 2);
-  Cumulatives _cumu2f2("Cumulatives::2f2", 2, false, 2);
-  Cumulatives _cumu2t3("Cumulatives::2t3", 2,  true, 3);
-  Cumulatives _cumu2f3("Cumulatives::2f3", 2, false, 3);
-  Cumulatives _cumu3t1("Cumulatives::3t1", 3,  true, 1);
-  Cumulatives _cumu3f1("Cumulatives::3f1", 3, false, 1);
-  Cumulatives _cumu3t2("Cumulatives::3t2", 3,  true, 2);
-  Cumulatives _cumu3f2("Cumulatives::3f2", 3, false, 2);
-  Cumulatives _cumu3t3("Cumulatives::3t3", 3,  true, 3);
-  Cumulatives _cumu3f3("Cumulatives::3f3", 3, false, 3);
-  /* These tests take quite some time to run.
-  Cumulatives _cumu4t1("Cumulatives::4t1", 4,  true, 1);
-  Cumulatives _cumu4f1("Cumulatives::4f1", 4, false, 1);
-  Cumulatives _cumu4t2("Cumulatives::4t2", 4,  true, 2);
-  Cumulatives _cumu4f2("Cumulatives::4f2", 4, false, 2);
-  Cumulatives _cumu4t3("Cumulatives::4t3", 4,  true, 3);
-  Cumulatives _cumu4f3("Cumulatives::4f3", 4, false, 3);
-  */
-}
+  };
+  
+  Cumulatives c1t1("1t1", 1,  true, 1);
+  Cumulatives c1f1("1f1", 1, false, 1);
+  Cumulatives c1t2("1t2", 1,  true, 2);
+  Cumulatives c1f2("1f2", 1, false, 2);
+  Cumulatives c1t3("1t3", 1,  true, 3);
+  Cumulatives c1f3("1f3", 1, false, 3);
+  Cumulatives c2t1("2t1", 2,  true, 1);
+  Cumulatives c2f1("2f1", 2, false, 1);
+  Cumulatives c2t2("2t2", 2,  true, 2);
+  Cumulatives c2f2("2f2", 2, false, 2);
+  Cumulatives c2t3("2t3", 2,  true, 3);
+  Cumulatives c2f3("2f3", 2, false, 3);
+  Cumulatives c3t1("3t1", 3,  true, 1);
+  Cumulatives c3f1("3f1", 3, false, 1);
+  Cumulatives c3t2("3t2", 3,  true, 2);
+  Cumulatives c3f2("3f2", 3, false, 2);
+  Cumulatives c3t3("3t3", 3,  true, 3);
+  Cumulatives c3f3("3f3", 3, false, 3);
+  //@}
 
 }}}
 
