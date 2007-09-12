@@ -181,7 +181,7 @@ KERNELSRC0 = \
 	core reflection varmap memory-manager
 KERNELHDR0 = \
 	array branching core exception \
-	macros modevent \
+	macros memory-manager modevent \
 	propagator advisor view var varmap reflection
 
 KERNELSRC	= $(KERNELSRC0:%=gecode/kernel/%.cc)
