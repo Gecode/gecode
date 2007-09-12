@@ -178,7 +178,7 @@ SUPPORTBUILDDIRS = support support/buddy
 #
 
 KERNELSRC0 = \
-	core reflection varmap
+	core reflection varmap memory-manager
 KERNELHDR0 = \
 	array branching core exception \
 	macros modevent \
