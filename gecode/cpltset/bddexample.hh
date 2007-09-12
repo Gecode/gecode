@@ -44,7 +44,7 @@
 /// Extending %Gecode options for passing a manager for bdds 
 class BddOptions : public Options {
 public:
-  BuddyMgr mgr;
+  BddMgr mgr;
   CpltSetOutput level;
   bool debug;
 public:
@@ -58,7 +58,7 @@ public:
  */
 class BddExample : public Example {
 public:
-  BuddyMgr m;
+  BddMgr m;
   const BddOptions* bop;
   bool ordered;
   int  vn;

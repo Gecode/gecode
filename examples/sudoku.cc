@@ -339,14 +339,14 @@ public:
  */
 class SudokuCpltSet : virtual public Sudoku {
 protected:
-  BuddyMgr m;
+  BddMgr m;
   /// The fields occupied by a certain number
   CpltSetVarArray y;
 public:
   /// Constructor
   SudokuCpltSet(const SizeOptions& opt)
     : Sudoku(opt), m(5000000, 2000000),
-      y(this,m.manager(),n*n,IntSet::empty,1,n*n*n*n) {
+      y(this,m,n*n,IntSet::empty,1,n*n*n*n) {
 
     const int nn = n*n;
 

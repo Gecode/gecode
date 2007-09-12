@@ -40,7 +40,7 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   ExecStatus
   NaryBddProp<View>::divide_conquer(Space* home, BMI* m, 
-                                    GecodeBdd& p, int l, int r) {
+                                    bdd& p, int l, int r) {
     if (l == r) {
       GECODE_ME_CHECK(x[l].tell_formula(home, p));
       return ES_OK;
@@ -49,7 +49,7 @@ namespace Gecode { namespace CpltSet {
     int h = (r + l) / 2;
 
     // computing psi without recursion
-    GecodeBdd left = p;
+    bdd left = p;
     for (int i = r; i >= h + 1; i--) {
       quantify(left, x[i]);
     }
@@ -57,7 +57,7 @@ namespace Gecode { namespace CpltSet {
     ExecStatus es = ES_OK;
     GECODE_ES_CHECK(es = divide_conquer(home, m, left, l, h));
 
-    GecodeBdd right = p;
+    bdd right = p;
     for (int i = h; i >= l; i-- ) {
       quantify(right, x[i]);
     }
@@ -69,12 +69,12 @@ namespace Gecode { namespace CpltSet {
 //   template <class View>
 //   ExecStatus
 //   NaryBddProp<View>::divide_conquer_conv(Space* home, BMI* m, 
-//                                          GecodeBdd& p, int l, int r) {
+//                                          bdd& p, int l, int r) {
 //     // std::cout << "divide_conquer_conv LR[" << l<< "," << r << "]\n";
 //     // m->bdd2dot(p);
 //     if (l == r) {
-//       GecodeBdd dom_p = x[l].bdd_domain() & p;
-//       GecodeBdd conv_p = conv_hull(m, dom_p);
+//       bdd dom_p = x[l].bdd_domain() & p;
+//       bdd conv_p = conv_hull(m, dom_p);
 // //       std::cout << "conjunct\n";
 // //       m->bdd2dot(dom_p);
 // //       std::cout << "conv hull\n";
@@ -96,11 +96,11 @@ namespace Gecode { namespace CpltSet {
 //     }
 //     int h = (r + l) / 2;
 
-//     GecodeBdd left = p;
+//     bdd left = p;
 //     // std::cout << "quant left: ";
 //     for (int i = r; i >= h + 1; i--) {
 //       // std::cout << i << ",";
-//       GecodeBdd dom = x[i].bdd_domain();
+//       bdd dom = x[i].bdd_domain();
 //       int s = x[i].offset();
 //       int w = s + x[i].table_width() - 1;
 //       m->existquant(dom, left, s, w);
@@ -115,10 +115,10 @@ namespace Gecode { namespace CpltSet {
 //     }
 
 //     // std::cout << "quant right: ";
-//     GecodeBdd right = p;
+//     bdd right = p;
 //     for (int i = h; i >= l; i-- ) {
 //       // std::cout << i << ",";
-//       GecodeBdd dom = x[i].bdd_domain();
+//       bdd dom = x[i].bdd_domain();
 //       int s = x[i].offset();
 //       int w = s + x[i].table_width() - 1;
 //       m->existquant(dom, right, s, w);
@@ -131,14 +131,14 @@ namespace Gecode { namespace CpltSet {
 
   // template <class View>
 //   ExecStatus
-//   NaryBddProp<View>::divide_conquer_split(Space* home, BMI* m, GecodeBdd& p, int l, int r) {
+//   NaryBddProp<View>::divide_conquer_split(Space* home, BMI* m, bdd& p, int l, int r) {
 //     // std::cout << "dc: " << l <<" " << r << "\n";
 //     if (l == r) {
 //       // std::cout << "telling on " << "x["<<l<<"]"<< x[l].variable() << "\n";
 //       // std::cout << "assigned ? " << x[l].assigned() << "\n";
-//       GecodeBdd delta = p & x[l].bdd_remain();
-//       GecodeBdd beta  = conv_hull(m, delta) & x[l].bdd_bounds();
-//       GecodeBdd boundvars  = conv_project(m, beta);
+//       bdd delta = p & x[l].bdd_remain();
+//       bdd beta  = conv_hull(m, delta) & x[l].bdd_bounds();
+//       bdd boundvars  = conv_project(m, beta);
 //       delta = m->eliminate(delta, boundvars);
 //       ModEvent me;
 //       me = x[l].tell_formula(home, beta, delta);
@@ -151,9 +151,9 @@ namespace Gecode { namespace CpltSet {
 //     int h = (r + l) / 2;
 
 //     // computing psi without recursion
-//     GecodeBdd left = p;
+//     bdd left = p;
 //     for (int i = r; i >= h + 1; i--) {
-//       GecodeBdd dom = x[i].bdd_domain();
+//       bdd dom = x[i].bdd_domain();
 //       int s = x[i].offset();
 //       int w = s + x[i].table_width() - 1;
 //       m->existquant(dom, left, s, w);
@@ -169,9 +169,9 @@ namespace Gecode { namespace CpltSet {
 //       return es;
 //     }
 
-//     GecodeBdd right = p;
+//     bdd right = p;
 //     for (int i = h; i >= l; i-- ) {
-//       GecodeBdd dom = x[i].bdd_domain();
+//       bdd dom = x[i].bdd_domain();
 //       int s = x[i].offset();
 //       int w = s + x[i].table_width() - 1;
 //       m->existquant(dom, right, s, w);
@@ -189,7 +189,7 @@ namespace Gecode { namespace CpltSet {
 
 //   template <class View>
 //   ExecStatus
-//   NaryBddProp<View>::divide_conquer_split_card(Space* home, BMI* m, GecodeBdd& p, int l, int r) {
+//   NaryBddProp<View>::divide_conquer_split_card(Space* home, BMI* m, bdd& p, int l, int r) {
 //     if (l == r) {
 //       ModEvent me = x[l].tell_formula(home, p);
 //       if (me_failed(me)) {
@@ -200,9 +200,9 @@ namespace Gecode { namespace CpltSet {
 //     int h = (r + l) / 2;
 
 //     // computing psi without recursion
-//     GecodeBdd left = p;
+//     bdd left = p;
 //     for (int i = r; i >= h + 1; i--) {
-//       GecodeBdd rem = x[i].bdd_remain();
+//       bdd rem = x[i].bdd_remain();
 //       int s = x[i].offset();
 //       int w = s + x[i].table_width() - 1;
 //       m->existquant(rem, left, s, w);
@@ -215,9 +215,9 @@ namespace Gecode { namespace CpltSet {
 //       return es;
 //     }
 
-//     GecodeBdd right = p;
+//     bdd right = p;
 //     for (int i = h; i >= l; i-- ) {
-//       GecodeBdd rem = x[i].bdd_remain();
+//       bdd rem = x[i].bdd_remain();
 //       int s = x[i].offset();
 //       int w = s + x[i].table_width() - 1;
 //       m->existquant(rem, right, s, w);
@@ -230,7 +230,7 @@ namespace Gecode { namespace CpltSet {
 
 //   template <class View>
 //   ExecStatus
-//   NaryBddProp<View>::divide_conquer_split_lex(Space* home, BMI* m, GecodeBdd& p, int l, int r) {
+//   NaryBddProp<View>::divide_conquer_split_lex(Space* home, BMI* m, bdd& p, int l, int r) {
 //     if (l == r) {
 //       ModEvent me = x[l].tell_formula_lex(home, p);
 //       if (me_failed(me)) {
@@ -241,9 +241,9 @@ namespace Gecode { namespace CpltSet {
 //     int h = (r + l) / 2;
 
 //     // computing psi without recursion
-//     GecodeBdd left = p;
+//     bdd left = p;
 //     for (int i = r; i >= h + 1; i--) {
-//       GecodeBdd dom = x[i].bdd_domain();
+//       bdd dom = x[i].bdd_domain();
 //       int s = x[i].offset();
 //       int w = s + x[i].table_width() - 1;
 //       m->existquant(dom, left, s, w);
@@ -259,9 +259,9 @@ namespace Gecode { namespace CpltSet {
 //       return es;
 //     }
 
-//     GecodeBdd right = p;
+//     bdd right = p;
 //     for (int i = h; i >= l; i-- ) {
-//       GecodeBdd dom = x[i].bdd_domain();
+//       bdd dom = x[i].bdd_domain();
 //       int s = x[i].offset();
 //       int w = s + x[i].table_width() - 1;
 //       m->existquant(dom, right, s, w);
@@ -279,7 +279,7 @@ namespace Gecode { namespace CpltSet {
 
     template <class View0, class View1>
     ExecStatus
-    NaryOneBdd<View0, View1>::divide_conquer(Space* home, BMI* m, GecodeBdd& p,
+    NaryOneBdd<View0, View1>::divide_conquer(Space* home, BMI* m, bdd& p,
                                              int l, int r, int ypos) {
       if (l == r) {
         ModEvent me = ME_CPLTSET_NONE;
@@ -294,7 +294,7 @@ namespace Gecode { namespace CpltSet {
       int h = (r + l) / 2;
 
       // computing psi without recursion
-      GecodeBdd left = p;
+      bdd left = p;
       for (int i = r; i >= h + 1; i--) {
         if (i == ypos) {
           quantify(left, y);
@@ -306,7 +306,7 @@ namespace Gecode { namespace CpltSet {
       ExecStatus es = ES_OK;
       GECODE_ES_CHECK(es = divide_conquer(home, m, left, l, h, ypos));
 
-      GecodeBdd right = p;
+      bdd right = p;
       for (int i = h; i >= l; i-- ) {
         if (i == ypos) {
           quantify(right, y);

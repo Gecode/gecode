@@ -59,7 +59,7 @@ namespace Gecode {
       range   = max - min + 1;
       _offset = mgr->allocate(range);
       domain.init();
-      domain  = BDDTOP;
+      domain  = bdd_true();
 
       // exclude values not in dom(i0)     
       Int::ViewValues<Int::IntView> values(view);
@@ -81,7 +81,7 @@ namespace Gecode {
         }
       }
       
-      GecodeBdd card = cardcheck(mgr, range, _offset, 1, 1);
+      bdd card = cardcheck(mgr, range, _offset, 1, 1);
       domain &= card;
     }
 
@@ -96,7 +96,7 @@ namespace Gecode {
       range   = max - min + 1;
       _offset = mgr->allocate(range);
       domain.init();
-      domain  = BDDTOP;
+      domain  = bdd_true();
 
       // exclude values not in dom(i0)     
       Int::ViewValues<Int::IntView> values(view);
@@ -118,7 +118,7 @@ namespace Gecode {
         }
       }
       
-      GecodeBdd card = cardcheck(mgr, range, _offset, 1, 1);
+      bdd card = cardcheck(mgr, range, _offset, 1, 1);
       domain &= card;
     }
 
@@ -219,10 +219,10 @@ namespace Gecode {
     forceinline unsigned int
     SingletonCpltSetView::table_width(void)  const { return range; }
 
-    forceinline GecodeBdd
+    forceinline bdd
     SingletonCpltSetView::getbdd(int i)  const { return mgr->bddpos(_offset + i); }
 
-    forceinline GecodeBdd
+    forceinline bdd
     SingletonCpltSetView::getnegbdd(int i)  const { 
       return mgr->negbddpos(_offset + i); 
     }
@@ -234,10 +234,10 @@ namespace Gecode {
     SingletonCpltSetView::getvar(int i) { return mgr->bdd2var(_offset + i); }
 
     forceinline void
-    SingletonCpltSetView::dom_and(GecodeBdd& d) { d &= bdd_domain(); }
+    SingletonCpltSetView::dom_and(bdd& d) { d &= bdd_domain(); }
     
     forceinline void
-    SingletonCpltSetView::dom_or(GecodeBdd& d) { d |= bdd_domain(); }
+    SingletonCpltSetView::dom_or(bdd& d) { d |= bdd_domain(); }
     
     forceinline BMI*
     SingletonCpltSetView::manager(void) const { return mgr; }
@@ -254,7 +254,7 @@ namespace Gecode {
       return offset() +v - min;
     }
 
-    forceinline GecodeBdd 
+    forceinline bdd 
     SingletonCpltSetView::bdd_domain(void) const { return domain; };
 
     forceinline ModEvent
@@ -288,7 +288,7 @@ namespace Gecode {
       ModEvent me1 = me_inttobdd(view.gq(home,i));
       ModEvent me2 = me_inttobdd(view.lq(home,j));
       if (me_failed(me1) || me_failed(me2)) {
-        domain = BDDBOT;
+        domain = bdd_false();
         return ME_CPLTSET_FAILED;
       }
       
@@ -326,7 +326,7 @@ namespace Gecode {
       ModEvent me1 = me_inttobdd(view.gr(home,j));
       ModEvent me2 = me_inttobdd(view.le(home,k));
       if (me_failed(me1) || me_failed(me2)) {
-        domain = BDDBOT;
+        domain = bdd_false();
         return ME_CPLTSET_FAILED;
       }
       
@@ -418,7 +418,7 @@ namespace Gecode {
     SingletonCpltSetView::eqI(Space* home, I& i) { return includeI(home, i); }
 
     forceinline ModEvent 
-    SingletonCpltSetView::tell_formula(Space* home, GecodeBdd& d) {
+    SingletonCpltSetView::tell_formula(Space* home, bdd& d) {
       if (assigned()) {
         int v = view.val();
         for (int i = max; i >= min; i--) {
@@ -435,7 +435,7 @@ namespace Gecode {
         return ME_CPLTSET_FAILED;
 
       ModEvent me = Int::ME_INT_NONE;
-      GecodeBdd conv = BDDTOP;
+      bdd conv = bdd_true();
       conv_hull(mgr, d, conv);
       if (!mgr->ctrue(conv)) {
         BddIterator iter(mgr, conv);

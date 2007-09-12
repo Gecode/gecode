@@ -40,7 +40,7 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline
   BinBddProp<View>::BinBddProp(Space* home, View& x0, View& y0, 
-                               GecodeBdd& d0)
+                               bdd& d0)
     : Propagator(home), x(x0), y(y0), d(d0) {
     force(home);
     x.subscribe(home, this, PC_CPLTSET_DOM);
@@ -95,7 +95,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline ExecStatus
-  BinBddProp<View>::post(Space* home, View& x0, View& y0, GecodeBdd& d0) {
+  BinBddProp<View>::post(Space* home, View& x0, View& y0, bdd& d0) {
     (void) new (home) BinBddProp(home, x0, y0, d0);
     return ES_OK;
   }
@@ -112,7 +112,7 @@ namespace Gecode { namespace CpltSet {
     BMI* mgr   = x.manager();
     bool assigned = true;
     {
-      GecodeBdd dom = y.bdd_domain();
+      bdd dom = y.bdd_domain();
       int s = y.offset();
       int w = s + y.table_width() - 1;
       mgr->existquant(dom, d, s, w);
@@ -120,7 +120,7 @@ namespace Gecode { namespace CpltSet {
       GECODE_ME_CHECK(me);
     }
     {
-      GecodeBdd dom = x.bdd_domain();
+      bdd dom = x.bdd_domain();
       int s = x.offset();
       int w = s + x.table_width() - 1;
       mgr->existquant(dom, d, s, w);
@@ -142,7 +142,7 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline
   BinRelDisj<View>::BinRelDisj(Space* home, View& x0, View& y0, 
-                               GecodeBdd& d0)
+                               bdd& d0)
     : BinBddProp<View>(home, x0, y0, d0) { }
 
   template <class View>
@@ -161,7 +161,7 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline ExecStatus
   BinRelDisj<View>::post(Space* home, View& x0, View& y0, 
-                         GecodeBdd& d0) {
+                         bdd& d0) {
     (void) new (home) BinRelDisj(home, x0, y0, d0);
     return ES_OK;
   }
@@ -216,7 +216,7 @@ namespace Gecode { namespace CpltSet {
     if (!cache()) {
       return ES_SUBSUMED(this, home);
     } else {
-      d = BDDTOP;
+      d = bdd_true();
       cache.last();
       for (; cache(); --cache) {
         int v = cache.min();
@@ -227,7 +227,7 @@ namespace Gecode { namespace CpltSet {
     }
 
     {
-      GecodeBdd dom = y.bdd_domain();
+      bdd dom = y.bdd_domain();
       int s = y.offset();
       int w = s + y.table_width() - 1;
       mgr->existquant(dom, d, s, w);
@@ -235,7 +235,7 @@ namespace Gecode { namespace CpltSet {
       GECODE_ME_CHECK(me);
     }
     {
-      GecodeBdd dom = x.bdd_domain();
+      bdd dom = x.bdd_domain();
       int s = x.offset();
       int w = s + x.table_width() - 1;
       mgr->existquant(dom, d, s, w);

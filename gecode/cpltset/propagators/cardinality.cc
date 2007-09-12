@@ -49,13 +49,13 @@ namespace Gecode {
 
     ViewArray<CpltSetView> bv(home, 1);
     bv[0] = x;
-    BMI* mgr = x.manager();
+    BMI* mgr = x.variable()->manager();
     unsigned int off = bv[0].offset();
     unsigned int range = bv[0].table_width();
 
     // std::cout << "post cardinality for x=" << x << "\n";
 
-    GecodeBdd c = cardcheck(mgr, range, off, static_cast<int> (l), static_cast<int> (u));
+    bdd c = cardcheck(mgr, range, off, static_cast<int> (l), static_cast<int> (u));
 
     CpltSetView v(x);
     GECODE_ME_FAIL(home, v.cardinality(home, l, u));

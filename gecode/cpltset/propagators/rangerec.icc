@@ -39,7 +39,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   ExecStatus
-  Range<View0, View1>::divide_conquer(Space* home, BMI* m, GecodeBdd& p, 
+  Range<View0, View1>::divide_conquer(Space* home, BMI* m, bdd& p, 
                                       int l, int r, int ypos, int zpos) {
     if (l == r) {
       ModEvent me = ME_CPLTSET_NONE;
@@ -60,7 +60,7 @@ namespace Gecode { namespace CpltSet {
     int h = (r + l) / 2;
 
     // computing psi without recursion
-    GecodeBdd left = p;
+    bdd left = p;
     for (int i = r; i >= h + 1; i--) {
       if (i == zpos) {
         quantify(left, z);
@@ -76,7 +76,7 @@ namespace Gecode { namespace CpltSet {
     ExecStatus es = ES_OK;
     GECODE_ES_CHECK(es = divide_conquer(home, m, left, l, h, ypos, zpos));
 
-    GecodeBdd right = p;
+    bdd right = p;
     for (int i = h; i >= l; i-- ) {
       if (i == zpos) {
         quantify(right, z);
@@ -95,7 +95,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   ExecStatus
-  RangeTwice<View0, View1>::divide_conquer(Space* home, BMI* m, GecodeBdd& p, 
+  RangeTwice<View0, View1>::divide_conquer(Space* home, BMI* m, bdd& p, 
                                            int l, int r, int ypos) {
     std::cout << "twice div conqu: " << l << " " << r << " " << ypos << "\n";
     if (l == r) {
@@ -113,7 +113,7 @@ namespace Gecode { namespace CpltSet {
     int h = (r + l) / 2;
 
     // computing psi without recursion
-    GecodeBdd left = p;
+    bdd left = p;
     for (int i = r; i >= h + 1; i--) {
       if (i >= ypos) {
         quantify(left, y[i - ypos]);
@@ -125,7 +125,7 @@ namespace Gecode { namespace CpltSet {
     ExecStatus es = ES_OK;
     GECODE_ES_CHECK(es = divide_conquer(home, m, left, l, h, ypos));
 
-    GecodeBdd right = p;
+    bdd right = p;
     for (int i = h; i >= l; i-- ) {
       if (i >= ypos) {
         quantify(right, y[i - ypos]);

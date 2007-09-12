@@ -46,14 +46,14 @@ namespace Gecode {
     // important:
     // the offset order is linear from left to right for the viewarray
 
-    BMI* mgr = x.manager();
+    BMI* mgr = x.variable()->manager();
 
     unsigned int xoff = x.offset();
     unsigned int yoff = y.offset();
     unsigned int tab = std::max(x.table_width(), y.table_width());
     
     // Initialize the bdd representing the constraint
-    GecodeBdd d0 = BDDTOP;
+    bdd d0 = bdd_true();
 
     switch(r) {
     case SRT_LE: 
@@ -116,7 +116,7 @@ namespace Gecode {
     unsigned int tab = std::max(x.table_width(), y.table_width());
     
     // Initialize the bdd representing the constraint
-    GecodeBdd d0 = BDDTOP;
+    bdd d0 = bdd_true();
 
     switch(r) {
     case SRT_SUB: 
@@ -181,7 +181,7 @@ namespace Gecode {
         int xshift = 0;
         for (int i = 0; i < (int) tab; i++) {
           if (y.mgr_min() + i < x.mgr_min() || y.mgr_min() + i > x.mgr_max()) {
-            d0 &= (BDDBOT % y.getbdd(i));
+            d0 &= (bdd_false() % y.getbdd(i));
             xshift++;
           } else {
             d0 &= (x.getbdd(i - xshift) % y.getbdd(i));
@@ -233,14 +233,14 @@ namespace Gecode {
     // important:
     // the offset order is linear from left to right for the viewarray
 
-    BMI* mgr = x.manager();
+    BMI* mgr = NULL;
 
     unsigned int xoff = x.offset();
     unsigned int yoff = s.offset();
     unsigned int tab = std::max(x.table_width(), s.table_width());
     
     // Initialize the bdd representing the constraint
-    GecodeBdd d0 = BDDTOP;
+    bdd d0 = bdd_true();
 
     switch(r) {
       // introducing lexicographic ordering constraint
@@ -287,7 +287,7 @@ namespace Gecode {
     unsigned int tab = std::max(x.table_width(), s.table_width());
     
     // Initialize the bdd representing the constraint
-    GecodeBdd d0 = BDDTOP;
+    bdd d0 = bdd_true();
 
     switch(r) {
     case SRT_SUB: 
@@ -332,7 +332,7 @@ namespace Gecode {
         int xshift = 0;
         for (int i = 0; i < (int) tab; i++) {
           if (s.mgr_min() + i < x.mgr_min() || s.mgr_min() + i > x.mgr_max()) {
-            d0 &= (BDDBOT % s.getbdd(i));
+            d0 &= (bdd_false() % s.getbdd(i));
             xshift++;
           } else {
             d0 &= (x.getbdd(i - xshift) % s.getbdd(i));
@@ -377,10 +377,10 @@ namespace Gecode {
     int x0_tab = x[0].table_width();
     
     // Initialize the bdd representing the constraint
-    GecodeBdd d0 = BDDTOP;
+    bdd d0 = bdd_true();
 
     for (int i = x0_tab; i--; ) {
-      GecodeBdd op = BDDTOP;
+      bdd op = bdd_true();
       switch(o) {
       case SOT_SYMDIFF:
         {
@@ -430,10 +430,10 @@ namespace Gecode {
     int x0_tab = x[0].table_width();
     
     // Initialize the bdd representing the constraint
-    GecodeBdd d0 = BDDTOP;
+    bdd d0 = bdd_true();
 
     for (int i = x0_tab; i--; ) {
-      GecodeBdd op = BDDTOP;
+      bdd op = bdd_true();
       switch(o) {
       case SOT_UNION:
         {     
@@ -496,7 +496,7 @@ namespace Gecode {
 //     int rmin = std::min(iv.min(), bv.mgr_min());
 //     int rmax = std::max(iv.max(), bv.mgr_max());
 //     SingletonCpltSetView single(s.manager(), rmin, rmax, iv);
-    SingletonCpltSetView single(s.manager(), iv.min(), iv.max(), iv);
+    SingletonCpltSetView single(s.variable()->manager(), iv.min(), iv.max(), iv);
     rel_post(home, single, r, bv);
   }  
 

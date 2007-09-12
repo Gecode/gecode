@@ -39,7 +39,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline
-  UnaryBddProp<View>::UnaryBddProp(Space* home, View& x0, GecodeBdd& d0)
+  UnaryBddProp<View>::UnaryBddProp(Space* home, View& x0, bdd& d0)
     : Propagator(home), x(x0), d(d0) {
     force(home);
     x.subscribe(home, this, PC_CPLTSET_DOM);
@@ -94,7 +94,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline ExecStatus
-  UnaryBddProp<View>::post(Space* home, View& x0, GecodeBdd& d0) {
+  UnaryBddProp<View>::post(Space* home, View& x0, bdd& d0) {
     (void) new (home) UnaryBddProp(home, x0, d0);
     return ES_OK;
   }

@@ -37,7 +37,7 @@
 
 namespace Gecode { namespace CpltSet {
   template <class View>
-  forceinline GecodeBdd 
+  forceinline bdd 
   NaryBddProp<View>::bnd_phi(BMI* mgr, int j) {
     // std::cout << "bnd_phi\n";
     /// \f$ B(c)\f$
@@ -47,15 +47,15 @@ namespace Gecode { namespace CpltSet {
     }
 
     /// \f$ D_j \f$
-    GecodeBdd cur = x[j].bdd_domain();
+    bdd cur = x[j].bdd_domain();
     /// \f$ \phi_{j - 1}\f$
-    GecodeBdd phires = bnd_phi(mgr, j - 1);
+    bdd phires = bnd_phi(mgr, j - 1);
     /// \f$ \exists_{V(D_j)} D_j \wedge phi_{j - 1}\f$
     // std::cout << "eliminate on phi\n";
 
     // strange
     if (!mgr->ctrue(cur)) {    
-      GecodeBdd outvars = bdd_vars(mgr, cur);
+      bdd outvars = bdd_vars(mgr, cur);
       mgr->existquant(cur, phires, outvars);
     } else {
       cur &= phires;
@@ -65,7 +65,7 @@ namespace Gecode { namespace CpltSet {
 
   // used in eeq propagation with n*n and-abstractions
   template <class View>
-  forceinline GecodeBdd 
+  forceinline bdd 
   NaryBddProp<View>::phi(BMI* mgr, int i, int j) {
     /// \f$ B(c)\f$
     if (j == -1) {
@@ -77,7 +77,7 @@ namespace Gecode { namespace CpltSet {
       return phi(mgr, i, j - 1);
     }
 
-    GecodeBdd cur = BDDTOP;
+    bdd cur = bdd_true();
     /// \f$ D_j \f$
     x[j].dom_and(cur);
     /// \f$ \phi_i^{j - 1}\f$
@@ -92,7 +92,7 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline
   NaryBddProp<View>::NaryBddProp(Space* home, ViewArray<View>& x0,
-                                 GecodeBdd& d0)
+                                 bdd& d0)
     : Propagator(home), x(x0), d(d0) {
     force(home);
     for (int i = x.size(); i--;) {
@@ -148,7 +148,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline ExecStatus
-  NaryBddProp<View>::post(Space* home, ViewArray<View>& x, GecodeBdd& d) {
+  NaryBddProp<View>::post(Space* home, ViewArray<View>& x, bdd& d) {
     (void) new (home) NaryBddProp(home,x, d);
     return ES_OK;
   }
@@ -187,11 +187,11 @@ namespace Gecode { namespace CpltSet {
         return es;
       }
 //     } else {
-//       GecodeBdd xs = BDDTOP;
+//       bdd xs = bdd_true();
 //       for (int i = 0; i < n; i++) {
 //         x[i].dom_and(xs);
 //       }
-//       if ( (!d & xs) != BDDBOT) {
+//       if ( (!d & xs) != bdd_false()) {
 //         return ES_FAILED;
 //       }
 //     }
@@ -217,7 +217,7 @@ namespace Gecode { namespace CpltSet {
     BMI* mgr = x[0].manager();
 
 //     bool assigned = true;
-//     bdd xs = BDDTOP;
+//     bdd xs = bdd_true();
 //     for (int i = x.size(); i--;) {
 //       x[i].dom_and(xs);
 //       assigned &= x[i].assigned();
@@ -236,7 +236,7 @@ namespace Gecode { namespace CpltSet {
     int n = x.size();
     for (int i = 0; i < n; i++) {
       ModEvent me;
-      GecodeBdd xphi = phi(mgr, i, n - 1);
+      bdd xphi = phi(mgr, i, n - 1);
       me = x[i].tell_formula(home, xphi);
       if (me_failed(me)) {
         return ES_FAILED;
@@ -270,8 +270,8 @@ namespace Gecode { namespace CpltSet {
     int n = x.size();
 //     // ensure that domains are sticks
 //     for (int i = n; i--; ) {
-//       GecodeBdd dom  = x[i].bdd_domain();
-//       GecodeBdd hull = BDDTOP;
+//       bdd dom  = x[i].bdd_domain();
+//       bdd hull = bdd_true();
     //   conv_hull(mgr, dom, hull);
 //       ModEvent me = x[i].tell_formula(home, hull);
 //       if (me_failed(me)) {
@@ -282,9 +282,9 @@ namespace Gecode { namespace CpltSet {
 
 
     // compute \f$\phi_n\f$
-    GecodeBdd xphi_n = bnd_phi(mgr, n - 1);
+    bdd xphi_n = bnd_phi(mgr, n - 1);
 
-    if (xphi_n == BDDBOT) {
+    if (xphi_n == bdd_false()) {
       std::cout << "xphi_n = bot\n";
       return ES_FAILED;
     }
@@ -294,7 +294,7 @@ namespace Gecode { namespace CpltSet {
 
     //  compute the fixed variables of \f$\phi_n\f$, 
     //  \f$\lbracket\phi_n\rbracketf$, 
-    GecodeBdd conv_hull_xphi = BDDTOP;
+    bdd conv_hull_xphi = bdd_true();
     conv_hull(mgr, xphi_n, conv_hull_xphi);
     // std::cout << "conv_xphi_n = " << conv_hull_xphi << "\n";
     // mgr->bdd2dot(conv_hull_xphi);
@@ -323,7 +323,7 @@ namespace Gecode { namespace CpltSet {
       }
 
       // me = x[i].tell_project(home, conv_hull_xphi, &var[0], s);
-      GecodeBdd proj = mgr->eliminate(conv_hull_xphi, &var[0], s);
+      bdd proj = mgr->eliminate(conv_hull_xphi, &var[0], s);
       me = x[i].tell_formula(home, proj);
       if (me_failed(me)) {
         std::cout << "tell formula failed\n";
@@ -338,7 +338,7 @@ namespace Gecode { namespace CpltSet {
       d = xphi_n;
       
 
-// //       GecodeBdd hull_proj = conv_project(mgr, xphi_n);
+// //       bdd hull_proj = conv_project(mgr, xphi_n);
 // //       d = mgr->eliminate(d, hull_proj);
     }
     // std::cout << "new constraint description\n";
@@ -372,8 +372,8 @@ namespace Gecode { namespace CpltSet {
     // std::cout << "ensure that domains are sticks...";
 
 //     for (int i = n; i--; ) {
-//       GecodeBdd dom  = x[i].bdd_domain();
-//       GecodeBdd hull = BDDTOP;
+//       bdd dom  = x[i].bdd_domain();
+//       bdd hull = bdd_true();
     //   conv_hull(mgr, dom, hull);
 //       ModEvent me = x[i].replace_formula(home, hull);
 //       if (me_failed(me)) {
@@ -384,12 +384,12 @@ namespace Gecode { namespace CpltSet {
     // std::cout << "DONE\n";
 
       // projecting fixed domain parts out of B(c)
-//       GecodeBdd fixed = BDDTOP;
-//       GecodeBdd xs = BDDTOP;
+//       bdd fixed = bdd_true();
+//       bdd xs = bdd_true();
 //       for (int i = n; i--; ) {
-//         GecodeBdd dom = x[i].bdd_domain();
+//         bdd dom = x[i].bdd_domain();
 // //         std::cout << "DOM(x["<<i<<"])="<< dom << "\n";
-//         GecodeBdd fp  = BDDTOP;
+//         bdd fp  = bdd_true();
     //  conv_project(mgr, dom, fp);
 // //         std::cout << "FP(x["<<i<<"])="<< fp << "\n";
 //         fixed &= fp;
@@ -424,10 +424,10 @@ namespace Gecode { namespace CpltSet {
     // std::cout << "DONE\n";
 
 
-    GecodeBdd fixed = BDDTOP;
+    bdd fixed = bdd_true();
     for (int i = 0; i < n; i++) {
-      GecodeBdd dom = x[i].bdd_domain();
-      GecodeBdd fp  = BDDTOP;
+      bdd dom = x[i].bdd_domain();
+      bdd fp  = bdd_true();
       conv_project(mgr, dom, fp);
       fixed &= fp;
       mgr->eliminate(d, fp);
@@ -455,10 +455,10 @@ namespace Gecode { namespace CpltSet {
 //     ExecStatus es = ES_OK;
 
 //     // computing phi
-//     GecodeBdd phi_n = d;
+//     bdd phi_n = d;
 //     for (int i = n; i--; ) {
-//       GecodeBdd bnd = x[i].bdd_bounds();
-//       GecodeBdd proj = BDDTOP;
+//       bdd bnd = x[i].bdd_bounds();
+//       bdd proj = bdd_true();
   //     conv_project(mgr, bnd, proj);
 //       mgr->existquant(phi_n, bnd, proj);
 //     }
@@ -496,20 +496,20 @@ namespace Gecode { namespace CpltSet {
 //     ExecStatus es = ES_OK;
 
 // //     // computing phi
-// //     GecodeBdd phi_n = d;
+// //     bdd phi_n = d;
 // //     for (int i = n; i--; ) {
-// //       GecodeBdd bnd = x[i].bdd_bounds();
+// //       bdd bnd = x[i].bdd_bounds();
 // //       phi_n &= bnd;
-// //       GecodeBdd proj = BDDTOP;
+// //       bdd proj = bdd_true();
   // //     conv_project(mgr, bnd, proj);
 // //       mgr->eliminate(phi_n, proj);
 // //     }
 
 //     // computing phi
-//     GecodeBdd phi_n = d;
+//     bdd phi_n = d;
 //     for (int i = n; i--; ) {
-//       GecodeBdd bnd = x[i].bdd_bounds();
-//       GecodeBdd proj = BDDTOP;
+//       bdd bnd = x[i].bdd_bounds();
+//       bdd proj = bdd_true();
   //     conv_project(mgr, bnd, proj);
 //       mgr->existquant(phi_n, bnd, proj);
 //     }
@@ -524,20 +524,20 @@ namespace Gecode { namespace CpltSet {
 //     d = phi_n;
 
 // //     for (int i = n; i--; ) {
-// //       GecodeBdd rem = x[i].bdd_remain();
-// //       GecodeBdd conv = BDDTOP;
+// //       bdd rem = x[i].bdd_remain();
+// //       bdd conv = bdd_true();
   // //     conv_hull(mgr, rem, conv);
 // //       ModEvent me = x[i].tell_bounds(home, conv);
 // //       if (me_failed(me)) {
 // //         return ES_FAILED;
 // //       }
-// //       GecodeBdd bnd = x[i].bdd_bounds();
-// //       GecodeBdd proj = BDDTOP;
+// //       bdd bnd = x[i].bdd_bounds();
+// //       bdd proj = bdd_true();
   // //     conv_project(mgr, bnd, proj);
 // //       rem = mgr->eliminate(rem, proj);
 // //       unsigned int off = x[i].offset();
 // //       unsigned int range = x[i].table_width();
-// //       GecodeBdd card = card_bounds(mgr, rem, bnd, off, range);
+// //       bdd card = card_bounds(mgr, rem, bnd, off, range);
 // //       me = x[i].tell_remain(home, card);
 // //       if (me_failed(me)) {
 // //         return ES_FAILED;
@@ -568,10 +568,10 @@ namespace Gecode { namespace CpltSet {
 //     ExecStatus es = ES_OK;
 
 //     // computing phi
-//     GecodeBdd phi_n = d;
+//     bdd phi_n = d;
 //     for (int i = n; i--;) {
-//       GecodeBdd bnd = x[i].bdd_bounds();
-//       GecodeBdd proj = BDDTOP;
+//       bdd bnd = x[i].bdd_bounds();
+//       bdd proj = bdd_true();
   //     conv_project(mgr, bnd, proj);
 //       mgr->existquant(phi_n, bnd, proj);
 //     }
@@ -656,7 +656,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline
   NaryOneBdd<View0, View1>::NaryOneBdd(Space* home, ViewArray<View0>& x, 
-                                       View1& y, GecodeBdd& d0)
+                                       View1& y, bdd& d0)
     : MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, x, y),
       d(d0) {
     MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::force(home);
@@ -671,7 +671,7 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   forceinline ExecStatus
   NaryOneBdd<View0, View1>::post(Space* home, ViewArray<View0>& x, View1& y, 
-                                 GecodeBdd& d0) {
+                                 bdd& d0) {
     (void) new (home) NaryOneBdd(home, x, y, d0);
     return ES_OK;
   }

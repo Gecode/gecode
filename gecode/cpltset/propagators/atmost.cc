@@ -106,7 +106,7 @@ namespace Gecode {
     unsigned int xoff = bv[0].offset();
     int xmin = bv[0].mgr_min();
     
-    GecodeBdd d = cardConst(mgr, xtab, xoff, xmin, c, c, si);
+    bdd d = cardConst(mgr, xtab, xoff, xmin, c, c, si);
     // std::cerr << "exactly: tell...";
     // GECODE_ME_FAIL(home, bv[0].tell_formula(home, d));
     GECODE_ES_FAIL(home, UnaryBddProp<CpltSetView>::post(home, bv[0], d));
@@ -133,7 +133,7 @@ namespace Gecode {
     unsigned int xoff = bv[0].offset();
     int xmin = bv[0].mgr_min();
     IntSetRanges ir(is);
-    GecodeBdd d = cardConst(mgr, xtab, xoff, xmin, 0, c, ir);
+    bdd d = cardConst(mgr, xtab, xoff, xmin, 0, c, ir);
 
     //GECODE_ME_FAIL(home, bv[0].tell_formula(home, d));
 

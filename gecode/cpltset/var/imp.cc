@@ -90,7 +90,7 @@ namespace Gecode { namespace CpltSet {
 
     // initialize the iterator structure
     void
-    BddIterator::init(BMI* manager, const GecodeBdd& b) {
+    BddIterator::init(BMI* manager, const bdd& b) {
       markref = 0;
       mgr = manager;
       c = b;
@@ -103,7 +103,7 @@ namespace Gecode { namespace CpltSet {
       _level = -1;
 
       if (!mgr->leaf(c)) {
-        Support::DynamicArray<GecodeBdd> dummy(n);
+        Support::DynamicArray<bdd> dummy(n);
         nodes = dummy;
       
         for (int i = n; i--; ){
@@ -258,8 +258,8 @@ namespace Gecode { namespace CpltSet {
         // cur is an internal node, 
         // that is nor true nor else branch are leaves
         if (!mgr->leaf(cur)) {
-          GecodeBdd t   = mgr->iftrue(cur);
-          GecodeBdd f   = mgr->iffalse(cur);
+          bdd t   = mgr->iftrue(cur);
+          bdd f   = mgr->iffalse(cur);
           // unsigned int cur_idx = mgr->bddidx(cur);
           bool fixed_glb       = mgr->cfalse(f);
           bool fixed_not_lub   = mgr->cfalse(t);
@@ -401,10 +401,10 @@ namespace Gecode { namespace CpltSet {
         assert(!mgr->marked(cur));
 
         nodes[r].init();
-        // cur is internal node, that is cur is neither BDDBOT nor BDDTOP
+        // cur is internal node, that is cur is neither bdd_false() nor bdd_true()
         if (!mgr->leaf(cur)) {
-          GecodeBdd t   = mgr->iftrue(cur);
-          GecodeBdd f   = mgr->iffalse(cur);
+          bdd t   = mgr->iftrue(cur);
+          bdd f   = mgr->iffalse(cur);
 
           bool fixed_glb = mgr->cfalse(f);
           bool fixed_not_lub = mgr->cfalse(t);

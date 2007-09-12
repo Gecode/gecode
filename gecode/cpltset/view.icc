@@ -91,17 +91,17 @@ namespace Gecode {
       /// Return size (cardinality) of the domain
       int size(void) const;
       /// Return the bdd at position i
-      GecodeBdd getbdd(int i) const;    
+      bdd getbdd(int i) const;    
       /// Return the negated bdd at position i
-      GecodeBdd getnegbdd(int i) const;    
+      bdd getnegbdd(int i) const;    
       /// Returns the variable placed at position \a i in the current variable order
       int getlevel(int i);    
       /// Returns the position of the variable \a i in the current variable order
       int getvar(int i);    
       /// Build the conjunction of \a d and the current view
-      void dom_and(GecodeBdd& d);
+      void dom_and(bdd& d);
       /// Build the disjunction of \a d and the current view
-      void dom_or(GecodeBdd& d);
+      void dom_or(bdd& d);
       /// Get a pointer to the current manager
       BMI* manager(void) const;
 
@@ -110,7 +110,7 @@ namespace Gecode {
       /// Return the initial minimum of the variable
       int mgr_max(void) const; 
       /// Return the bdd representing the current domain
-      GecodeBdd bdd_domain(void) const;
+      bdd bdd_domain(void) const;
       /// Return the corresponding bdd table index for set element v in the bdd node representation.
       int valididx(int v) const;
       
@@ -165,7 +165,7 @@ namespace Gecode {
       ModEvent intersect(Space* home,int i);
 
       /// Restrict domain values to be a solution to the logical formula described by the bdd \a d
-      ModEvent tell_formula(Space* home, GecodeBdd& d);   
+      ModEvent tell_formula(Space* home, bdd& d);   
       //@}
 
       /// \name Domain update by range iterator
@@ -233,7 +233,7 @@ namespace Gecode {
       int max;
       unsigned int range;
       unsigned int _offset;     
-      GecodeBdd domain;
+      bdd domain;
       /// Convert bdd variable PropCond \a pc to a PropCond for integer variables
       static PropCond pc_bddtoint(PropCond pc);
       /// Convert integer variable ModEvent \a me to a ModEvent for bdd variables
@@ -285,17 +285,17 @@ namespace Gecode {
       /// Return size (cardinality) of the domain
       int size(void) const;
       /// Return the bdd at position i
-      GecodeBdd getbdd(int i) const;    
+      bdd getbdd(int i) const;    
       /// Return the negated bdd at position i
-      GecodeBdd getnegbdd(int i) const;    
+      bdd getnegbdd(int i) const;    
       /// Returns the variable placed at position \a i in the current variable order
       int getlevel(int i);    
       /// Returns the position of the variable \a i in the current variable order
       int getvar(int i);    
       /// Build the conjunction of \a d and the current view
-      void dom_and(GecodeBdd& d);
+      void dom_and(bdd& d);
       /// Build the disjunction of \a d and the current view
-      void dom_or(GecodeBdd& d);
+      void dom_or(bdd& d);
       /// Get a pointer to the current manager
       BMI* manager(void) const;
       
@@ -307,11 +307,11 @@ namespace Gecode {
       int valididx(int v) const;
 
       /// Return the bdd representing the current domain
-      GecodeBdd bdd_domain(void) const;
+      bdd bdd_domain(void) const;
       /// Return the bdd representing the unfixed part of the variable domain
-      GecodeBdd bdd_remain(void) const;
+      bdd bdd_remain(void) const;
       /// Return the bdd representing the fixed part of the variable domain
-      GecodeBdd bdd_bounds(void) const;
+      bdd bdd_bounds(void) const;
 
       //@}
 
@@ -359,7 +359,7 @@ namespace Gecode {
       ModEvent eq(Space* home, int a, int b);
    
       /// Restrict domain values to be a solution to the logical formula described by the bdd \a d
-      ModEvent tell_formula(Space* home, GecodeBdd& d);   
+      ModEvent tell_formula(Space* home, bdd& d);   
 
       /// Restrict least upper bound to contain at most all elements in the range \f$ [a,b] \f$
       ModEvent intersect(Space* home,int i,int j);

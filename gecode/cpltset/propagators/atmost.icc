@@ -61,7 +61,7 @@ namespace Gecode {
       }
     }
 
-    GecodeBdd d0 = BDDTOP;     
+    bdd d0 = bdd_true();     
     for (int i = 0; i < n; i++) {
       unsigned int xoff = x[i].offset();
       unsigned int xtab = x[i].table_width();
@@ -94,7 +94,7 @@ namespace Gecode {
     unsigned int x1_tab = x[1].table_width();
 
     // cardinality description for the intersection x \cap y
-    GecodeBdd d0 = BDDTOP;
+    bdd d0 = bdd_true();
 
     // equivalence of intersection x \cap y with intermediate variable z
     //for (unsigned int i = 0; i < x1_tab; i++) {
@@ -103,7 +103,7 @@ namespace Gecode {
     }
       
     // cardinality description of intermediate variable z
-    GecodeBdd c0 = BDDTOP;
+    bdd c0 = bdd_true();
     unsigned int off = x[2].offset();
     unsigned int tab = x[2].table_width();
       
@@ -127,7 +127,7 @@ namespace Gecode {
     unsigned int x1_tab = x[1].table_width();
 
     // cardinality description for the intersection x \cap y
-    GecodeBdd d0 = BDDTOP;
+    bdd d0 = bdd_true();
 
     // equivalence of intersection x \cap y with intermediate variable z
     //for (unsigned int i = 0; i < x1_tab; i++) {
@@ -136,7 +136,7 @@ namespace Gecode {
     }
       
     // cardinality description of intermediate variable z
-    GecodeBdd c0 = BDDTOP;
+    bdd c0 = bdd_true();
     unsigned int off = x[2].offset();
     unsigned int tab = x[2].table_width();
       
@@ -218,7 +218,7 @@ namespace Gecode {
     unsigned int ytab = y.table_width();
 
     // cardinality description for the intersection x \cap y
-    GecodeBdd d0 = BDDTOP;
+    bdd d0 = bdd_true();
     d0 = extcardcheck(x, y, 0, c);
     
     // extra lexicographic order on bit strings x \sim_{lex} y
@@ -302,7 +302,7 @@ namespace Gecode {
     unsigned int ytab = y.table_width();
 
     // cardinality description for the intersection x \cap y
-    GecodeBdd d0 = BDDTOP;
+    bdd d0 = bdd_true();
     d0 = extcardcheck(x, y, 0, c);
 
     // dont use additional lexicographic ordering

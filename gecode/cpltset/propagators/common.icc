@@ -38,9 +38,9 @@
 namespace Gecode { namespace CpltSet {
 
   template <class View>
-  void quantify(GecodeBdd& p, View& x) {
+  void quantify(bdd& p, View& x) {
     BMI* m = x.manager();
-    GecodeBdd dom = x.bdd_domain();
+    bdd dom = x.bdd_domain();
     int s = x.offset();
     int w = s + x.table_width() - 1;
     m->existquant(p, dom, s, w);

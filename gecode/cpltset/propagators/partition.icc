@@ -41,7 +41,7 @@ namespace Gecode {
 
 
   template <class View>
-  void build_partition(ViewArray<View>& x, GecodeBdd& d0) {
+  void build_partition(ViewArray<View>& x, bdd& d0) {
     // make it more readable
     typedef Set::LubRanges<View> SetLub;
     namespace IR = Iter::Ranges;
@@ -74,17 +74,17 @@ namespace Gecode {
     // just state that the union of all sets is us
     // iff all the variables have the same initial minimum and maximum
     for (unsigned int k = 0; k < xtab; k++) {
-      GecodeBdd c0 = BDDBOT;
+      bdd c0 = bdd_false();
       for (int i = 0; i < n; i++) {
         if (k < x[i].table_width())
           c0 |= x[i].getbdd(k);
       }
-      d0 &= (c0  % BDDTOP);
+      d0 &= (c0  % bdd_true());
     }
   }
 
   template <class View>
-  void build_partition(ViewArray<View>& x, View& y, GecodeBdd& d0) {
+  void build_partition(ViewArray<View>& x, View& y, bdd& d0) {
     // make it more readable
     typedef Set::LubRanges<View> SetLub;
     namespace IR = Iter::Ranges;
@@ -111,7 +111,7 @@ namespace Gecode {
     unsigned int ytab = y.table_width();
     int ymin = y.mgr_min();
     for (unsigned int k = 0; k < ytab; k++) {
-      GecodeBdd c0 = BDDBOT;
+      bdd c0 = bdd_false();
       for (int i = 0; i < n; i++) {
         int xmin = x[i].mgr_min();
         int xmax = x[i].mgr_max();
@@ -126,7 +126,7 @@ namespace Gecode {
   }
 
   template <class View0, class View1>
-  void build_partition(ViewArray<View0>& x, View1& y, GecodeBdd& d0) {
+  void build_partition(ViewArray<View0>& x, View1& y, bdd& d0) {
     // make it more readable
     typedef Set::LubRanges<View0> SetLub;
     namespace IR = Iter::Ranges;
@@ -158,7 +158,7 @@ namespace Gecode {
     // std::cerr << "check union\n";
     for (unsigned int k = 0; k < ytab; k++) {
       // std::cerr << "k=" << k<< " ";
-      GecodeBdd c0 = BDDBOT;
+      bdd c0 = bdd_false();
       for (int i = 0; i < n; i++) {
         // std::cerr << "i=" << i << " " << x[i];
         // std::cerr << " " << x[i].offset() << " " << x[i].table_width() << "\n";
@@ -177,7 +177,7 @@ namespace Gecode {
   }
 
   template <class View>
-  void build_lexorder(ViewArray<View>& x, GecodeBdd& d0, CpltSetRelType lex) {
+  void build_lexorder(ViewArray<View>& x, bdd& d0, CpltSetRelType lex) {
 
     int n = x.size();
     unsigned int xtab = x[0].table_width();  
@@ -252,7 +252,7 @@ namespace Gecode {
     BMI* mgr = x[0].manager();
     int n = x.size();
    
-    GecodeBdd d0 = BDDTOP;     
+    bdd d0 = bdd_true();     
     build_partition(x, d0);
 
     // forall i: x_{i - 1} \prec_{lex_{bit}} x_i
@@ -279,7 +279,7 @@ namespace Gecode {
 
     int n = x.size();
    
-    GecodeBdd d0 = BDDTOP;     
+    bdd d0 = bdd_true();     
     build_partition(x, y, d0);
 
     ViewArray<View> naryone(home, x.size() + 1);
@@ -296,7 +296,7 @@ namespace Gecode {
                       bool withcard, int d) {
     if (home->failed()) return;
 
-    GecodeBdd d0 = BDDTOP;     
+    bdd d0 = bdd_true();     
     build_partition(x, y, d0);
 
     GECODE_ES_FAIL(home, (NaryOneBdd<View0, View1>::post(home, x, y, d0)));
@@ -327,7 +327,7 @@ namespace Gecode {
     }
     
     // build partition
-    GecodeBdd d0 = BDDTOP;     
+    bdd d0 = bdd_true();     
 
     // Guidos formula of disjointness does not need
     // dummy variables quite nice
@@ -371,13 +371,13 @@ namespace Gecode {
       // std::cerr << "union of all ";
       for (unsigned int k = 0; k < xtab; k++) {
       // std::cerr << "k=" << k << " ";
-        GecodeBdd c0 = BDDBOT;
+        bdd c0 = bdd_false();
         for (int i = 0; i < n; i++) {
           if (k < x[i].table_width()) {
             c0 |= x[i].getbdd(k);
           }
         }
-        d0 &= (c0  % BDDTOP);
+        d0 &= (c0  % bdd_true());
       }
       // std::cerr << "\n";
       
@@ -418,7 +418,7 @@ namespace Gecode {
   forceinline void 
   partition_con(Space* home, const IntVarArgs& x, const CpltSetVar& y, 
                 bool withlex, Rel lex, bool withcard, int d) {
-    BMI* mgr = y.manager();
+    BMI* mgr = y.variable()->manager();
     ViewArray<Int::IntView> bv(home, x);
     int n = x.size();
     ViewArray<SingletonCpltSetView> sv(home, n);

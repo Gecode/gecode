@@ -43,46 +43,50 @@ namespace Gecode {
   CpltSetVar::CpltSetVar(void) : var(NULL) {}
 
   forceinline void
-  CpltSetVar::init(Space* home, BMI* m) { 
-    var = new (home) CpltSet::CpltSetVarImp(home, m); 
+  CpltSetVar::init(Space* home, BddMgr& m) { 
+    var = new (home) CpltSet::CpltSetVarImp(home, m.manager());
   }
   
   forceinline void
-  CpltSetVar::init(Space* home, BMI* m, int min, int max) {
-    var = new (home) CpltSet::CpltSetVarImp(home,m, min, max);
-    assert(m == var->manager());
+  CpltSetVar::init(Space* home, BddMgr& m, int min, int max) {
+    var = new (home) CpltSet::CpltSetVarImp(home, m.manager(), min, max);
   }
 
 
   forceinline void
-  CpltSetVar::init(Space* home, BMI* m, int glbMin, int glbMax, 
+  CpltSetVar::init(Space* home, BddMgr& m, int glbMin, int glbMax, 
                int lubMin, int lubMax,
                unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) CpltSet::CpltSetVarImp(home, m, glbMin, glbMax, 
-                                    lubMin, lubMax, cardMin, cardMax);
-    assert(m == var->manager());
+    var = new (home) CpltSet::CpltSetVarImp(home, m.manager(),
+                                            glbMin, glbMax, 
+                                            lubMin, lubMax, cardMin, cardMax);
   }
 
 
   forceinline void
-  CpltSetVar::init(Space* home, BMI* m, int glbMin, int glbMax, const IntSet& lubD,
-               unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) CpltSet::CpltSetVarImp(home, m, glbMin, glbMax, lubD, cardMin, cardMax);
-    assert(m == var->manager());
+  CpltSetVar::init(Space* home, BddMgr& m,
+                   int glbMin, int glbMax, const IntSet& lubD,
+                   unsigned int cardMin, unsigned int cardMax) {
+    var = new (home) CpltSet::CpltSetVarImp(home, m.manager(),
+                                            glbMin, glbMax,
+                                            lubD, cardMin, cardMax);
   }
 
   forceinline void
-  CpltSetVar::init(Space* home, BMI* m, const IntSet& glbD, int lubMin, int lubMax,
-               unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) CpltSet::CpltSetVarImp(home, m, glbD, lubMin, lubMax, cardMin, cardMax);
-    assert(m == var->manager());
+  CpltSetVar::init(Space* home, BddMgr& m, const IntSet& glbD,
+                   int lubMin, int lubMax,
+                   unsigned int cardMin, unsigned int cardMax) {
+    var = new (home) CpltSet::CpltSetVarImp(home, m.manager(),
+                                            glbD, lubMin, lubMax,
+                                            cardMin, cardMax);
   }
 
   forceinline void
-  CpltSetVar::init(Space* home, BMI* m, const IntSet& glbD,const IntSet& lubD,
-               unsigned int cardMin, unsigned int cardMax) {
-    var = new (home) CpltSet::CpltSetVarImp(home, m, glbD, lubD, cardMin, cardMax);
-    assert(m == var->manager());
+  CpltSetVar::init(Space* home, BddMgr& m,
+                   const IntSet& glbD, const IntSet& lubD,
+                   unsigned int cardMin, unsigned int cardMax) {
+    var = new (home) CpltSet::CpltSetVarImp(home, m.manager(),
+                                            glbD, lubD, cardMin, cardMax);
   }
 
   forceinline void
@@ -91,8 +95,8 @@ namespace Gecode {
     var = NULL;
   }
 
-  forceinline BMI*
-  CpltSetVar::manager(void) const { return var->manager(); }    
+  // forceinline BMI*
+  // CpltSetVar::manager(void) const { return var->manager(); }    
 
   forceinline CpltSet::CpltSetVarImp*
   CpltSetVar::variable(void) const { return var; }
@@ -115,10 +119,10 @@ namespace Gecode {
   forceinline unsigned int
   CpltSetVar::table_width(void) const { return var->table_width(); }
 
-  forceinline GecodeBdd
+  forceinline bdd
   CpltSetVar::getbdd(int i) const { return var->getbdd(i); }
 
-  forceinline GecodeBdd
+  forceinline bdd
   CpltSetVar::getnegbdd(int i) const { return var->getnegbdd(i); }
 
   forceinline int
@@ -165,11 +169,11 @@ namespace Gecode {
   forceinline unsigned int 
   CpltSetVar::unknownSize(void) const { return var->unknownSize(); };
 
-  forceinline GecodeBdd 
+  forceinline bdd 
   CpltSetVar::bdd_domain(void) const { return var->bdd_domain();}
 
   forceinline void
-  CpltSetVar::dom_and(GecodeBdd& b) { var->dom_and(b); };
+  CpltSetVar::dom_and(bdd& b) { var->dom_and(b); };
 
   forceinline
   CpltSetVarGlbRanges::CpltSetVarGlbRanges(void) {}

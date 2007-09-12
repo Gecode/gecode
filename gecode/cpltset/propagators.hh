@@ -54,30 +54,30 @@ namespace Gecode { namespace CpltSet {
     /// Array of views
     ViewArray<View> x;
     /// Bdd representation of the constraint
-    GecodeBdd d;
+    bdd d;
     /// Constructor for cloning \a p
     NaryBddProp(Space* home, bool share, NaryBddProp& p);
     /// Constructor for creation
-    NaryBddProp(Space* home, ViewArray<View>& x, GecodeBdd& d);
+    NaryBddProp(Space* home, ViewArray<View>& x, bdd& d);
     /// (EEQ) Earliest Existential Quantification for set bounds propagation
-    GecodeBdd bnd_phi(BMI* mgr, int j);
+    bdd bnd_phi(BMI* mgr, int j);
     /// (EEQ) Earliest Existential Quantification
-    GecodeBdd phi(BMI* mgr, int i, int j);
+    bdd phi(BMI* mgr, int i, int j);
     /// Apply existential quantification for all variables
     ExecStatus 
-    divide_conquer(Space* home, BMI* mgr, GecodeBdd& p, int i, int j);
+    divide_conquer(Space* home, BMI* mgr, bdd& p, int i, int j);
     /// Apply bounds consistent existential quantification for all variables
 //     GECODE_CPLTSET_EXPORT ExecStatus 
-//     divide_conquer_conv(Space* home, BMI* mgr, GecodeBdd& p, int i, int j);
+//     divide_conquer_conv(Space* home, BMI* mgr, bdd& p, int i, int j);
 //     /// Apply existential quantification for the remainder part
 //     GECODE_CPLTSET_EXPORT ExecStatus 
-//     divide_conquer_split(Space* home, BMI* mgr, GecodeBdd& p, int i, int j);
+//     divide_conquer_split(Space* home, BMI* mgr, bdd& p, int i, int j);
 //     /// Apply cardinality bounds existential quantification for the remainder part
 //     GECODE_CPLTSET_EXPORT ExecStatus 
-//     divide_conquer_split_card(Space* home, BMI* mgr, GecodeBdd& p, int i, int j);
+//     divide_conquer_split_card(Space* home, BMI* mgr, bdd& p, int i, int j);
 //     /// Apply lexicographic bounds existential quantification for the remainder part
 //     GECODE_CPLTSET_EXPORT ExecStatus 
-//     divide_conquer_split_lex(Space* home, BMI* mgr, GecodeBdd& p, int i, int j);
+//     divide_conquer_split_lex(Space* home, BMI* mgr, bdd& p, int i, int j);
   public:
     /// Cost function
     virtual PropCost cost(void) const;
@@ -111,7 +111,7 @@ namespace Gecode { namespace CpltSet {
 //     /// Perform lexicographic propagation
 //     ExecStatus propagate_lex(Space* home);
 
-    static  ExecStatus post(Space* home, ViewArray<View>& x, GecodeBdd& d);
+    static  ExecStatus post(Space* home, ViewArray<View>& x, bdd& d);
   };
 
 
@@ -126,11 +126,11 @@ namespace Gecode { namespace CpltSet {
     /// Second view
     View y;
     /// Bdd representation of the constraint
-    GecodeBdd d;
+    bdd d;
     /// Constructor for cloning \a p
     BinBddProp(Space* home, bool share, BinBddProp& p);
     /// Constructor for posting
-    BinBddProp(Space* home, View& x0, View& y0, GecodeBdd& d);
+    BinBddProp(Space* home, View& x0, View& y0, bdd& d);
   public:
     /// Cost function
     virtual PropCost cost(void) const;
@@ -145,7 +145,7 @@ namespace Gecode { namespace CpltSet {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, View& x0, View& y0, GecodeBdd& d);
+    static  ExecStatus post(Space* home, View& x0, View& y0, bdd& d);
   };
 
   /**
@@ -158,11 +158,11 @@ namespace Gecode { namespace CpltSet {
     /// View to propagate on
     View x;
     /// Bdd representation of the constraint
-    GecodeBdd d;
+    bdd d;
     /// Constructor for cloning \a p
     UnaryBddProp(Space* home, bool share, UnaryBddProp& p);
     /// Constructor for posting
-    UnaryBddProp(Space* home, View& x0, GecodeBdd& d);
+    UnaryBddProp(Space* home, View& x0, bdd& d);
   public:
     /// Cost function
     virtual PropCost cost(void) const;
@@ -177,7 +177,7 @@ namespace Gecode { namespace CpltSet {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, View& x0, GecodeBdd& d);
+    static  ExecStatus post(Space* home, View& x0, bdd& d);
   };
 
 
@@ -194,7 +194,7 @@ namespace Gecode { namespace CpltSet {
     /// Constructor for cloning \a p
     BinRelDisj(Space* home, bool share, BinRelDisj& p);
     /// Constructor for posting
-    BinRelDisj(Space* home, View& x0, View& y0, GecodeBdd& d);
+    BinRelDisj(Space* home, View& x0, View& y0, bdd& d);
   public:
     /// Delete propagator
     virtual size_t dispose(Space* home);
@@ -202,7 +202,7 @@ namespace Gecode { namespace CpltSet {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, View& x0, View& y0, GecodeBdd& d);
+    static  ExecStatus post(Space* home, View& x0, View& y0, bdd& d);
   };
 
   /**
@@ -250,13 +250,13 @@ namespace Gecode { namespace CpltSet {
   class Bin : public MixBinaryPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM> {
   protected:
     /// Bdd representation of the constraint
-    GecodeBdd d;
+    bdd d;
     using MixBinaryPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::x0;
     using MixBinaryPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::x1;
     /// Constructor for cloning \a p
     Bin(Space* home, bool share,Bin& p);
     /// Constructor for posting
-    Bin(Space* home, View0&, View1&, GecodeBdd& d);
+    Bin(Space* home, View0&, View1&, bdd& d);
   public:
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
@@ -268,7 +268,7 @@ namespace Gecode { namespace CpltSet {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, View0& x, View1& s, GecodeBdd& d);
+    static  ExecStatus post(Space* home, View0& x, View1& s, bdd& d);
   }; 
 
   /**
@@ -279,15 +279,15 @@ namespace Gecode { namespace CpltSet {
     public MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM> {
   protected:
     /// Bdd representation of the constraint
-    GecodeBdd d;
+    bdd d;
     using MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::x;
     using MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::y;
     /// Constructor for cloning \a p
     NaryOneBdd(Space* home, bool share, NaryOneBdd& p);
     /// Constructor for posting
-    NaryOneBdd(Space* home, ViewArray<View0>&, View1&, GecodeBdd&);
+    NaryOneBdd(Space* home, ViewArray<View0>&, View1&, bdd&);
     /// Divide and conquer method including additional view \a y
-    ExecStatus divide_conquer(Space* home, BMI* m, GecodeBdd& p, 
+    ExecStatus divide_conquer(Space* home, BMI* m, bdd& p, 
                               int l, int r, int ypos);
   public:
     /// Specification for this propagator
@@ -301,7 +301,7 @@ namespace Gecode { namespace CpltSet {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     static  ExecStatus post(Space* home, ViewArray<View0>& x, View1& y, 
-                            GecodeBdd& d);
+                            bdd& d);
   };
 
   template <class View0, class View1>
@@ -309,16 +309,16 @@ namespace Gecode { namespace CpltSet {
     public MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM> {
   protected:
     /// Bdd representation of the constraint
-    GecodeBdd d;
+    bdd d;
     using MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::x;
     using MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::y;
     using MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::z;
     /// Constructor for cloning \a p
     Range(Space* home, bool share, Range& p);
     /// Constructor for posting
-    Range(Space* home, ViewArray<View0>&, View1&, View1&, GecodeBdd&);
+    Range(Space* home, ViewArray<View0>&, View1&, View1&, bdd&);
     /// Divide and conquer method including additional \a y and \a z views
-    ExecStatus divide_conquer(Space* home, BMI* m, GecodeBdd& p, int l, int r, 
+    ExecStatus divide_conquer(Space* home, BMI* m, bdd& p, int l, int r, 
                         int ypos, int zpos);
   public:
     /// Specification for this propagator
@@ -332,7 +332,7 @@ namespace Gecode { namespace CpltSet {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     static  ExecStatus post(Space* home, ViewArray<View0>& x, 
-                            View1& y, View1& z, GecodeBdd& d);
+                            View1& y, View1& z, bdd& d);
   };
 
 
@@ -341,15 +341,15 @@ namespace Gecode { namespace CpltSet {
     public MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM> {
   protected:
     /// Bdd representation of the constraint
-    GecodeBdd d;
+    bdd d;
     using MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::x;
     using MixNaryTwicePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::y;
     /// Constructor for cloning \a p
     RangeTwice(Space* home, bool share, RangeTwice& p);
     /// Constructor for posting
-    RangeTwice(Space* home, ViewArray<View0>&, ViewArray<View1>&, GecodeBdd&);
+    RangeTwice(Space* home, ViewArray<View0>&, ViewArray<View1>&, bdd&);
     /// Divide and conquer method including additional array \a y
-    ExecStatus divide_conquer(Space* home, BMI* m, GecodeBdd& p, 
+    ExecStatus divide_conquer(Space* home, BMI* m, bdd& p, 
                               int l, int r, int ypos);
   public:
     /// Delete propagator
@@ -359,7 +359,7 @@ namespace Gecode { namespace CpltSet {
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
     static  ExecStatus post(Space* home, ViewArray<View0>& x, 
-                            ViewArray<View1>&y, GecodeBdd& d);
+                            ViewArray<View1>&y, bdd& d);
   };
 
 

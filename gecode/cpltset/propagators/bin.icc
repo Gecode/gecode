@@ -39,7 +39,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline
-  Bin<View0, View1>::Bin(Space* home, View0& x, View1& y, GecodeBdd& d0)
+  Bin<View0, View1>::Bin(Space* home, View0& x, View1& y, bdd& d0)
     : MixBinaryPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, x, y), 
       d(d0) {
     MixBinaryPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::force(home);
@@ -53,7 +53,7 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline ExecStatus
-  Bin<View0, View1>::post(Space* home, View0& x, View1& y, GecodeBdd& d0) {
+  Bin<View0, View1>::post(Space* home, View0& x, View1& y, bdd& d0) {
     (void) new (home) Bin(home, x, y, d0);
     return ES_OK;
   }
@@ -86,7 +86,7 @@ namespace Gecode { namespace CpltSet {
     std::cout << "bin inhom propagate\n";
     {
       std::cout << "tell x0\n";
-      GecodeBdd dom = x1.bdd_domain();
+      bdd dom = x1.bdd_domain();
       int s = x1.offset();
       int w = s + x1.table_width() - 1;
       mgr->existquant(dom, d, s, w);
@@ -96,7 +96,7 @@ namespace Gecode { namespace CpltSet {
     }
     {
       std::cout << "tell x1\n";
-      GecodeBdd dom = x0.bdd_domain();
+      bdd dom = x0.bdd_domain();
       int s = x0.offset();
       int w = s + x0.table_width() - 1;
       mgr->existquant(dom, d, s, w);

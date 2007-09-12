@@ -44,7 +44,7 @@ namespace Gecode {
   selectUnion_post(Space* home, ViewArray<View>& x) {
     if (home->failed()) return;   
 
-    GecodeBdd d0 = BDDTOP;
+    bdd d0 = bdd_true();
     int n = x.size() - 2;
     ViewArray<View> seq(home, n);
     for (int i = 0; i < n; i++) {
@@ -94,7 +94,7 @@ namespace Gecode {
       GECODE_ME_FAIL(home, x[t].exclude(home, a, b));
     } 
     
-    GecodeBdd d0 = BDDTOP;
+    bdd d0 = bdd_true();
 
     // restrict selector variable s to be \f$ s\subseteq \{0, n - 1\}\f$
     // int range = xrange;
@@ -107,8 +107,8 @@ namespace Gecode {
     GECODE_ME_FAIL(home, x[s].intersectI(home, idx));
 
     for (int j = 0; j < n; j++) {    
-      GecodeBdd subset = BDDTOP;
-      GecodeBdd inter  = BDDBOT;
+      bdd subset = bdd_true();
+      bdd inter  = bdd_false();
       for (unsigned int k = 0; k < xrange; k++) {
         subset &= (x[j].getbdd(k) >>= x[t].getbdd(k));
         inter  |= (x[j].getbdd(k) & x[t].getbdd(k));

@@ -70,46 +70,49 @@ namespace Gecode {
     CpltSetVarArray(void);
     CpltSetVarArray(const CpltSetVarArray&);
     /// Create an uninitialized array of size \a n
-    CpltSetVarArray(Space* home, BMI* m,int n);
+    CpltSetVarArray(Space* home, BddMgr& m,int n);
     /// Create an uninitialized array of size \a n
-    CpltSetVarArray(Space* home, BMI* m,int n, int a, int b);
+    CpltSetVarArray(Space* home, BddMgr& m, int n, int a, int b);
     /**
      * \brief Create an array of size \a n.
      *
      * Each variable is initialized with the bounds and cardinality as
      * given by the arguments.
      */
-    CpltSetVarArray(Space* home, BMI* m, int n,int glbMin,int glbMax,int lubMin,int lubMax,
-                unsigned int minCard = 0,
-                unsigned int maxCard = Limits::Set::card_max);
+    CpltSetVarArray(Space* home, BddMgr& m,
+                    int n,int glbMin,int glbMax,int lubMin,int lubMax,
+                    unsigned int minCard = 0,
+                    unsigned int maxCard = Limits::Set::card_max);
     /**
      * \brief Create an array of size \a n.
      *
      * Each variable is initialized with the bounds and cardinality as
      * given by the arguments.
      */
-    CpltSetVarArray(Space* home, BMI* m, int n,const IntSet& glb, int lubMin, int lubMax,
-                unsigned int minCard = 0,
-                unsigned int maxCard = Limits::Set::card_max);
+    CpltSetVarArray(Space* home, BddMgr& m,
+                    int n,const IntSet& glb, int lubMin, int lubMax,
+                    unsigned int minCard = 0,
+                    unsigned int maxCard = Limits::Set::card_max);
     /**
      * \brief Create an array of size \a n.
      *
      * Each variable is initialized with the bounds and cardinality as
      * given by the arguments.
      */
-    CpltSetVarArray(Space* home, BMI* m, int n,int glbMin,int glbMax,const IntSet& lub,
-                unsigned int minCard = 0,
-                unsigned int maxCard = Limits::Set::card_max);
+    CpltSetVarArray(Space* home, BddMgr& m,
+                    int n,int glbMin,int glbMax,const IntSet& lub,
+                    unsigned int minCard = 0,
+                    unsigned int maxCard = Limits::Set::card_max);
     /**
      * \brief Create an array of size \a n.
      *
      * Each variable is initialized with the bounds and cardinality as
      * given by the arguments.
      */
-    CpltSetVarArray(Space* home, BMI* m, int n,
-                const IntSet& glb,const IntSet& lub,
-                unsigned int minCard = 0,
-                unsigned int maxCard = Limits::Set::card_max);
+    CpltSetVarArray(Space* home, BddMgr& m, int n,
+                    const IntSet& glb,const IntSet& lub,
+                    unsigned int minCard = 0,
+                    unsigned int maxCard = Limits::Set::card_max);
   };
   
   /// Traits of CpltSetVarArray
