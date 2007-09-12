@@ -317,15 +317,6 @@ namespace Gecode {
        const IntVarArgs& y, CpltSetVar u, CpltSetVar v);
   //@}
 
-  namespace CpltSet {
-    /**
-     * \brief Ordering all declared bdd variables \f$ x_0, \dots, x_{n-1}\f$ such that 
-     * \f$ \forall i\in \{0, \dots, n - 1\}: x_{0_{1}} \prec x_{{n-1}_{1}}, \dots, x_{0_{k-1}} \prec x_{{n-1}_{k-1}}\f$
-     */
-    GECODE_CPLTSET_EXPORT void
-    hls_order(Space* home, const CpltSetVarArray& x);
-}
-
 
   /**
    * \defgroup TaskIntCpltSetBranch Branching
