@@ -262,22 +262,21 @@ namespace Gecode { namespace Int { namespace GCC {
   void count(Space* home, const  IntVarArgs& x,
              const  IntVarArgs& c, const  IntArgs& v, 
              IntConLevel icl, PropKind) {
-    if (home->failed())
-      return;
 
     // c = |cards| \forall i\in \{0, \dots, c - 1\}:  cards[i] = \#\{j\in\{0, \dots, |x| - 1\}  | vars_j = values_i\}
     
     // |cards| = |values|
     unsigned int vsize = v.size();
     unsigned int csize = c.size();
-    if (vsize != csize) {
-      throw ArgumentSizeMismatch("Int::gcc");
-    }
+    if (vsize != csize)
+      throw ArgumentSizeMismatch("Int::count");
+    if (x.same())
+      throw ArgumentSame("Int::count");
     
+    if (home->failed())
+      return;
+
     ViewArray<IntView> xv(home, x);
-    if (xv.shared()) {
-      throw ArgumentSame("Int::gcc");
-    }
     
     // valid values for the variables in vars
     IntSet valid(&v[0], vsize);
@@ -314,22 +313,21 @@ namespace Gecode { namespace Int { namespace GCC {
   void count(Space* home, const IntVarArgs& x,
              const IntSetArgs& c, const IntArgs& v,
              IntConLevel icl, PropKind) {
+    unsigned int vsize = v.size();
+    unsigned int csize = c.size();
+    if (vsize != csize)
+      throw ArgumentSizeMismatch("Int::count");
+    
+    if (x.same())
+      throw ArgumentSame("Int::count");
+
     if (home->failed())
       return;
        
     // c = |cards| \forall i\in \{0, \dots, c - 1\}:  cards[i] = \#\{j\in\{0, \dots, |x| - 1\}  | vars_j = values_i\}
     
     // |cards| = |values|
-    unsigned int vsize = v.size();
-    unsigned int csize = c.size();
-    if (vsize != csize) {
-      throw ArgumentSizeMismatch("Int::gcc");
-    }
-    
     ViewArray<IntView> xv(home, x);
-    if (xv.shared()) {
-      throw ArgumentSame("Int::gcc");
-    }
     
     // valid values for the variables in vars
     IntSet valid(&v[0], vsize);
