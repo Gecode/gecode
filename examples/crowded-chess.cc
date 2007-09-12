@@ -167,7 +167,7 @@ public:
       queens(this, n, 0, n-1),
       rooks(this, n, 0, n-1), 
       knights(this, n*n, 0, 1) {
-    const int nkval = sizeof(kval)/(sizeof(int);
+    const int nkval = sizeof(kval)/sizeof(int);
     const int nn = n*n, q = n, r = n, b = (2*n)-2,
       k = n <= nkval ? kval[n-1] : kval[nkval-1];
     const int e = nn - (q + r + b + k);
