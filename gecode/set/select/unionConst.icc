@@ -217,7 +217,7 @@ namespace Gecode { namespace Set { namespace Select {
             GECODE_ME_CHECK(me);
             ++vx1;
           }
-          before[i].init(home);
+          new (&before[i]) GLBndSet(home);
           before[i].update(home,sofarBefore);
           IntSetRanges cub(iv[i]);
           sofarBefore.includeI(home,cub);

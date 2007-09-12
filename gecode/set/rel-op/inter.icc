@@ -318,14 +318,14 @@ namespace Gecode { namespace Set { namespace RelOp {
       // xi.exclude (Intersection(xj.lb) - y.ub)
       {
         GECODE_AUTOARRAY(GLBndSet, rightSet, xsize);
-        rightSet[xsize-1].init(home);
+        new (&rightSet[xsize-1]) GLBndSet(home);
         rightSet[xsize-1].update(home,intOfDets);
         for (int i=xsize-1;i--;) {
           GlbRanges<View0> xilb(x[i+1]);
           BndSetRanges prev(rightSet[i+1]);
           Iter::Ranges::Inter<GlbRanges<View0>,
             BndSetRanges> inter(xilb,prev);
-          rightSet[i].init(home);
+          new (&rightSet[i]) GLBndSet(home);
           rightSet[i].includeI(home,inter);
         }
 

@@ -219,7 +219,7 @@ namespace Gecode { namespace Set { namespace Select {
             GECODE_ME_CHECK(me);
             ++vx1;
           }
-          before[j].init(home);
+          new (&before[j]) GLBndSet(home);
           before[j].update(home,sofarBefore);
           LubRanges<SView> cub(candidate);
           sofarBefore.includeI(home,cub);

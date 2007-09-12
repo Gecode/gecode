@@ -214,7 +214,7 @@ namespace Gecode { namespace Set { namespace Select {
             GECODE_ME_CHECK(me);
             ++vx1;
           }
-          before[j].init(home);
+          new (&before[j]) LUBndSet(home);
           before[j].update(home,sofarBefore);
           GlbRanges<SView> clb(candidate);
           sofarBefore.intersectI(home,clb);

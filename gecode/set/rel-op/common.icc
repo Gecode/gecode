@@ -191,13 +191,13 @@ namespace Set { namespace RelOp {
 
     {
       GECODE_AUTOARRAY(GLBndSet, rightUnion, xsize);
-      rightUnion[xsize-1].init(home);
+      new (&rightUnion[xsize-1]) GLBndSet(home);
       for (int i=xsize-1;i--;){
         BndSetRanges prev(rightUnion[i+1]);
         LubRanges<View0> prevX(x[i+1]);
         Iter::Ranges::Union< BndSetRanges,LubRanges<View0> >
           iter(prev,prevX);
-        rightUnion[i].init(home);
+        new (&rightUnion[i]) GLBndSet(home);
         rightUnion[i].includeI(home, iter);
       }
 
@@ -344,8 +344,8 @@ namespace Set { namespace RelOp {
       GLBndSet sofarAfterUB;
       GLBndSet sofarAfterLB;
       for (int i=xsize; i--;) {
-        afterUB[i].init(home);
-        afterLB[i].init(home);
+        new (&afterUB[i]) GLBndSet(home);
+        new (&afterLB[i]) GLBndSet(home);
         afterUB[i].update(home,sofarAfterUB);
         afterLB[i].update(home,sofarAfterLB);
         LubRanges<View0> xiub(x[i]);
@@ -410,7 +410,7 @@ namespace Set { namespace RelOp {
     {
       GLBndSet sofarAfterLB;
       for (int i=xsize; i--;) {
-        afterLB[i].init(home);
+        new (&afterLB[i]) GLBndSet(home);
         afterLB[i].update(home,sofarAfterLB);
         GlbRanges<View0> xilb(x[i]);
         sofarAfterLB.includeI(home,xilb);
@@ -454,7 +454,7 @@ namespace Set { namespace RelOp {
     {
       GLBndSet sofarAfterUB;
       for (int i=xsize; i--;) {
-        afterUB[i].init(home);
+        new (&afterUB[i]) GLBndSet(home);
         afterUB[i].update(home,sofarAfterUB);
         LubRanges<View0> xiub(x[i]);
         sofarAfterUB.includeI(home,xiub);
