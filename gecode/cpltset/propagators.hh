@@ -294,8 +294,8 @@ namespace Gecode { namespace CpltSet {
 #include "gecode/cpltset/propagators/binary.icc"
 #include "gecode/cpltset/propagators/unary.icc"
 #include "gecode/cpltset/propagators/singleton.icc" 
+#include "gecode/cpltset/propagators/rangeroots.icc"
 
-#include "gecode/cpltset/constraints/rangeroots.icc"
 #include "gecode/cpltset/constraints/distinct.icc"
 #include "gecode/cpltset/constraints/partition.icc"
 #include "gecode/cpltset/constraints/atmost.icc"

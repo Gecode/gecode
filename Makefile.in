@@ -400,11 +400,10 @@ CPLTSETSRC0 =	\
 	branch.cc array.cc support.cc             \
 	bddmanager.cc \
 	var/imp.cc var/cpltset.cc  view/print.cc                  \
-	propagators/dom.cc propagators/singleton.cc \
+	propagators/dom.cc propagators/singleton.cc propagators/rangeroots.cc \
 	constraints/rel.cc constraints/cardinality.cc  \
 	constraints/atmost.cc constraints/partition.cc \
-	constraints/select.cc  constraints/rangeroots.cc \
-	constraints/distinct.cc
+	constraints/select.cc constraints/distinct.cc
 
 CPLTSETVARIMP = \
 	gecode/cpltset/var/imp-hdr.icc gecode/cpltset/var/imp-body.icc
@@ -417,7 +416,7 @@ CPLTSETHDR0 =		                \
 	propagators.hh \
 	propagators/unary.icc propagators/binary.icc \
 	propagators/nary.icc propagators/naryrec.icc \
-	constraints/rangeroots.icc propagators/rangerec.icc  \
+	propagators/rangeroots.icc propagators/rangerec.icc  \
 	constraints/atmost.icc constraints/partition.icc constraints/rel.icc \
 	constraints/select.icc propagators/singleton.icc \
 	constraints/distinct.icc \

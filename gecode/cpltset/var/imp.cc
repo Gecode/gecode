@@ -70,23 +70,6 @@ namespace Gecode { namespace CpltSet {
 #define PRINTT(b) std::cout << (manager.ctrue(b) ? 1 : PRINTF(b)) <<" ";
 #define PRINTBDD(b) std::cout << b.getroot() << " " ; PRINTT(manager.iftrue(b)) PRINTT(manager.iffalse(b)) std::cout << "\n";
 
-#define STACKPRINT//                                        \
-// std::cout << "stack is= ";                                \
-//   for (int i = 0; i < n; i++){                        \
-//    if (manager.cfalse(nodes[i])) {                        \
-// std::cout << "x";                                        \
-//     } else {                                                \
-//        OLDPRINTBDD(nodes[i])                                \
-//     }                                                \
-//   }                                                        \
-// std::cout << "LR("<<l << "," << r << ")\n"; //        \
-// // //   for (int i = 0; i < m; i++){                        \
-// // //     assert(flags[i]>= -1);                        \
-// // //     assert(flags[i] <= 5);                        \
-// // // std::cout << flags[i] << " ";                        \
-// // //   }                                                \
-// // // std::cout << "\n";
-
     // initialize the iterator structure
     void
     BddIterator::init(const bdd& b) {
@@ -107,7 +90,6 @@ namespace Gecode { namespace CpltSet {
         for (int i = n; i--; ){
           nodes[i].init();
         }
-        STACKPRINT;
 
         assert(!manager.leaf(c));
         // insert bdd root into dqueue
@@ -193,7 +175,6 @@ namespace Gecode { namespace CpltSet {
 
       bool stackleft = false;
       while (l > 0) {
-        STACKPRINT;
         stackleft = true;
 
         /* 
@@ -352,7 +333,6 @@ namespace Gecode { namespace CpltSet {
 
       // process right stack half
       while (r < n - 1) {
-        STACKPRINT
           while ((r < n - 2) && manager.bddidx(nodes[r + 1]) < manager.bddidx(nodes[r + 2])) {
             int shift = r + 2;
             int norm  = r + 1;
@@ -473,7 +453,6 @@ namespace Gecode { namespace CpltSet {
         }
       } // end processing right stack
 
-      STACKPRINT;
       cache_unmark();
       assert(markref == 0);
     } // end increment op
