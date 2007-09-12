@@ -44,7 +44,7 @@ namespace {
   extern const char *specs[];
   extern const unsigned int n_examples;
   int spec_size(const char *s);
-  int value_at(const char *s, int n, int i, int j);
+  int mineField(const char *s, int n, int i, int j);
 }
 
 /**
@@ -98,7 +98,7 @@ public:
     // Initialize matrix and post constraints
     for (int h=0; h<size; h++)
       for (int w=0; w<size; w++) {
-        int v = value_at(spec, size, h, w);
+        int v = mineField(spec, size, h, w);
         if (v != -1) {
           rel(this, m(w, h), IRT_EQ, 0);
           linear(this, fieldsAround(m, w, h), IRT_EQ, v);
@@ -115,7 +115,7 @@ public:
     for (int h = 0; h < size; ++h) {
       std::cout << '\t';
       for (int w = 0; w < size; ++w) {
-        int v = value_at(spec, size, h, w);
+        int v = mineField(spec, size, h, w);
         if ( v != -1)
           std::cout << v << " ";
         else if (pos(h,w).val() == 1)
@@ -160,7 +160,7 @@ main(int argc, char* argv[]) {
 }
 
 
-namespace {
+namespace  {
 
   /** \name Minesweeper specifications
     *
@@ -281,9 +281,8 @@ namespace {
     return res;
   }
 
-  /** \brief Return the value at position (\a i,\a j) in the example \a s of size \a n
-    */
-  int value_at(const char *s, int n, int i, int j) {
+  /// Return value at position (\a i,\a j) in the example \a s of size \a n
+  int mineField(const char *s, int n, int i, int j) {
     assert(spec_size(s) == n);
     assert(i >= 0 && i < n);
     assert(j >= 0 && j < n);

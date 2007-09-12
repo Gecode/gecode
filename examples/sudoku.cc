@@ -58,7 +58,7 @@ namespace {
   extern const char* examples[];
   extern const unsigned int n_examples;
   int example_size(const char *s);
-  int value_at(const char *s, int n, int i, int j);
+  int sudokuField(const char *s, int n, int i, int j);
 }
 
 /// Base class for %Sudoku puzzles
@@ -126,7 +126,7 @@ public:
     // Fill-in predefined fields
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++)
-        if (int v = value_at(examples[opt.size()], nn, i, j))
+        if (int v = sudokuField(examples[opt.size()], nn, i, j))
           rel(this, m(i,j), IRT_EQ, v );
 
 #ifdef GECODE_HAVE_SET_VARS
@@ -293,7 +293,7 @@ public:
     // Fill-in predefined fields
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++)
-        if (int idx = value_at(examples[opt.size()], nn, i, j))
+        if (int idx = sudokuField(examples[opt.size()], nn, i, j))
           dom(this, y[idx-1], SRT_SUP, (i+1)+(j*nn) );
 
     branch(this, y, SET_VAR_NONE, SET_VAL_MIN);
@@ -351,7 +351,7 @@ public:
     // Fill-in predefined fields
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++)
-        if (int idx = value_at(examples[opt.size()], nn, i, j)) {
+        if (int idx = sudokuField(examples[opt.size()], nn, i, j)) {
           dom(this, y[idx-1], SRT_SUP, (i+1)+(j*nn) );
 
 	  for (int z = 0; z < nn; z++) {
@@ -2320,9 +2320,8 @@ namespace {
     return res;
   }
 
-  /** \brief Return the value at position (\a i,\a j) in the example \a s of size \a n
-    */
-  int value_at(const char *s, int n, int i, int j) {
+  /// Return value at position (\a i,\a j) in the example \a s of size \a n
+  int sudokuField(const char *s, int n, int i, int j) {
     assert(example_size(s) == std::sqrt(static_cast<float>(n)));
     assert(i >= 0 && i < n);
     assert(j >= 0 && j < n);
