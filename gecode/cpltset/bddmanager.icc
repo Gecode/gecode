@@ -106,7 +106,7 @@ namespace Gecode {
     /// Set upper cardinality bound for breadth-first iteration
     void ubCard(const bdd& b, int r);
 
-    /// Construct the Bdd for \f$ \mbox{if} v \mbox{then} t \mbox{else} f
+    /// Construct the Bdd for \f$ \mbox{if} v \mbox{then} t \mbox{else} f\f$
     bdd ite(const bdd& v, const bdd& t, const bdd& f);
     /// Marks the bdd \a b
     void mark(const bdd& b);

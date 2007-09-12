@@ -64,7 +64,7 @@ namespace Gecode {
    *
    * The class \a ViewSel must implement two member functions:
    *  - Gecode::ViewSelStatus init(const Space* \a home, \a View \a x)
-   *    Initializes view selection with the \a View \x. If \a x
+   *    Initializes view selection with the \a View \a x. If \a x
    *    is known to be a best one, VSS_COMMIT should be returned.
    *    Otherwise, either VSS_NONE or VSS_SELECT should be returned.
    *  - Gecode::ViewSelStatus select(const Space* \a home, \a View \a x)

@@ -678,13 +678,13 @@ same propagator. Examples of views are \ref TaskActorIntView and
  * library, different filename suffixes are used on different Unix platforms.
  * All library names follow the following scheme:
  *
- *  - Kernel library: libgecodekernel.<EXT>
- *  - Search library: libgecodesearch.<EXT>
- *  - Integer library: libgecodeint.<EXT>
- *  - Set library: libgecodeset.<EXT>
- *  - Minimodel library: libgecodeminimodel.<EXT>
+ *  - Kernel library: libgecodekernel.&lt;EXT&gt;
+ *  - Search library: libgecodesearch.&lt;EXT&gt;
+ *  - Integer library: libgecodeint.&lt;EXT&gt;
+ *  - Set library: libgecodeset.&lt;EXT&gt;
+ *  - Minimodel library: libgecodeminimodel.&lt;EXT&gt;
  *
- * where <EXT> depends on the library type and platform:
+ * where &lt;EXT&gt; depends on the library type and platform:
  *
  *  - libgecode[...].a for static libaries on all Unix flavors
  *  - libgecode[...].so for shared libraries on Linux

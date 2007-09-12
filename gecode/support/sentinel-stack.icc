@@ -108,7 +108,7 @@ namespace Gecode { namespace Support {
  * \def GECODE_AUTOSTACK(T,S,X,N)
  * \brief Simple sentinel stack using automatic memory
  *
- * Allocates automatic memory for a sentinel stack \A X with 
+ * Allocates automatic memory for a sentinel stack \a X with 
  * \a N objects of type \a T with sentinel \a S.
  *
  * As soon as the current scope is left, the memory is freed.

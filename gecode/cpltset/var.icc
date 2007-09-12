@@ -212,7 +212,7 @@ namespace Gecode { namespace CpltSet {
     }
 
   public:
-    /// Constructing the powerset of $\f {a, \dots, b} \f$
+    /// Constructing the powerset of \f$ {a, \dots, b} \f$
     CpltSetVarImp(Space* home, int a, int b);
     void init(Space* home, int a, int b);
     CpltSetVarImp(Space* home, int glbMin, int glbMax, int lubMin, int lubMax, 
@@ -532,15 +532,15 @@ namespace Gecode {
     /// Default constructor
     GECODE_CPLTSET_EXPORT
     CpltSetVar(void);
-    /// Construct CpltSetVar from range $\f {Min set limit, \dots, Max setlimit } \f$
+    /// Construct CpltSetVar from range \f$ {Min set limit, \dots, Max setlimit } \f$
     GECODE_CPLTSET_EXPORT
     CpltSetVar(Space* home);
-    /// Initialize from range $\f {Min set limit, \dots, Max setlimit } \f$
+    /// Initialize from range \f$ {Min set limit, \dots, Max setlimit } \f$
     void init(Space* home);
     /// Construct a Bdd for P(U=[min,...,max]) 
     GECODE_CPLTSET_EXPORT
     CpltSetVar(Space* home, int min ,int max);
-    /// Initialize from range $\f {min, \dots, \max } \f$
+    /// Initialize from range \f$ {min, \dots, \max } \f$
     void init(Space* home, int min ,int max);
     /// Deallocate memory
     void dispose(Space* home);

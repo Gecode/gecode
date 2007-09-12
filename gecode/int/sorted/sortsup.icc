@@ -256,7 +256,7 @@ namespace Gecode { namespace Int { namespace Sorted {
   }
 
   /**
-   *  \brief Index comparison for %ViewArray<Tuple>
+   *  \brief Index comparison for %ViewArray&lt;Tuple&gt;
    *
    *  Checks whether for two indices \a i and \a j
    *  the first component of the corresponding viewtuples
@@ -281,7 +281,7 @@ namespace Gecode { namespace Int { namespace Sorted {
 
 
   /**
-   *  \brief Extended Index comparison for %ViewArray<Tuple>
+   *  \brief Extended Index comparison for %ViewArray&lt;Tuple&gt;
    *
    *  Checks whether for two indices \a i and \a j
    *  the first component of the corresponding viewtuples

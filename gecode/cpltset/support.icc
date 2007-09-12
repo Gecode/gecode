@@ -344,15 +344,15 @@ namespace Gecode { namespace CpltSet {
   GECODE_CPLTSET_EXPORT bdd bdd_vars(bdd& domain);
 
 
-  /// Build the ROBDD for $\f |x|=c\f$
+  /// Build the ROBDD for \f$ |x|=c\f$
   GECODE_CPLTSET_EXPORT bdd 
   cardeq(int offset, int c, int n, int r);
 
-  /// Build the ROBDD for $\f cl \leq |x| \leq cr\f$
+  /// Build the ROBDD for \f$ cl \leq |x| \leq cr\f$
   GECODE_CPLTSET_EXPORT bdd 
   cardlqgq(int offset, int cl, int cr, int n, int r);
 
-  /// Build the ROBDD for $\f cl \leq |x| \leq cr\f$
+  /// Build the ROBDD for \f$ cl \leq |x| \leq cr\f$
   GECODE_CPLTSET_EXPORT bdd 
   cardcheck(int xtab, int offset, int cl, int cr);
 
@@ -370,7 +370,7 @@ namespace Gecode { namespace CpltSet {
   // using namespace Gecode::Iter::Ranges;
   // typedef ValCache<ToValues<Inter<Gecode::CpltSetVarLubRanges, Gecode::CpltSetVarLubRanges> > > BddInter;
 
-  /// Build the ROBDD for $\f |x|=c\f$
+  /// Build the ROBDD for \f$ |x|=c\f$
   template <class I, class View0, class View1>
   bdd 
   extcardeq(Gecode::Iter::Ranges::ValCache<I>& inter, 
@@ -430,7 +430,7 @@ namespace Gecode { namespace CpltSet {
   }
 
  
-  /// Build the ROBDD for $\f cl \leq |x| \leq cr\f$
+  /// Build the ROBDD for \f$ cl \leq |x| \leq cr\f$
   template <class I, class View0, class View1>
   bdd 
   extcardlqgq(Gecode::Iter::Ranges::ValCache<I>& inter, View0& x, View1& y, 
@@ -606,7 +606,7 @@ namespace Gecode { namespace CpltSet {
     return layer[n - 1];
   }
   
-  /// Build the ROBDD for $\f cl \leq |x \cap y| \leq cr\f$
+  /// Build the ROBDD for \f$ cl \leq |x \cap y| \leq cr\f$
   template <class View0, class View1>
   bdd 
   extcardcheck(View0& x, View1& y, unsigned int cl, unsigned int cr) {

@@ -1212,7 +1212,6 @@ namespace Gecode {
   extensional(Space* home, const IntArgs& c, const IntVarArgs& x, const Table& t, 
               ExtensionalAlgorithm ea=EA_BASIC,
               IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
-  //@}
 }
 
 #include "gecode/int/extensional/table.icc"
@@ -1220,6 +1219,7 @@ namespace Gecode {
 namespace Gecode {
 
 #endif /* removal of extensional */
+  //@}
 
   /**
    * \defgroup TaskIntIntArith Arithmetic constraints

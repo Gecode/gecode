@@ -42,7 +42,7 @@
 namespace Test { namespace Int { namespace Bool {
 
   /**
-   * \defgroup TaskTestIntChannel Boolean constraints
+   * \defgroup TaskTestIntBool Boolean constraints
    * \ingroup TaskTestInt
    */
   //@{
