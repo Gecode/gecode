@@ -178,10 +178,10 @@ SUPPORTBUILDDIRS = support support/buddy
 #
 
 KERNELSRC0 = \
-	core memory-manager reflection varmap
+	core reflection varmap
 KERNELHDR0 = \
 	array branching core exception \
-	macros memory-manager memory modevent \
+	macros modevent \
 	propagator advisor view var varmap reflection
 
 KERNELSRC	= $(KERNELSRC0:%=gecode/kernel/%.cc)
