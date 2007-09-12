@@ -71,7 +71,7 @@ private:
   /// Specification of the board
   const int *spec;
   /// Width of the board
-  int width
+  int width;
   /// Height of the board
   int height;
   
