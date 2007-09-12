@@ -40,30 +40,11 @@
 #include "examples/support.hh"
 #include "gecode/minimodel.hh"
 
-extern const char *specs[];
-extern const unsigned int n_examples;
-
-int spec_size(const char *s) {
-  int l = std::strlen(s);
-  int res = static_cast<int>(std::sqrt(static_cast<float>(l)));
-  return res;
-}
-
-int value_at(const char *s, int n, int i, int j) {
-  assert(spec_size(s) == n);
-  assert(i >= 0 && i < n);
-  assert(j >= 0 && j < n);
-  char c = s[i*n + j];
-  if (!std::isalnum(c))
-    return -1;
-  if (std::isdigit(c))
-    return c - '0';
-  if (std::islower(c))
-    c = static_cast<char>(std::toupper(c));
-  // std::alpha(c) == true
-  int res = (c - 'A') + 10;
-  if (res > n) return 0;
-  else return res;
+namespace {
+  extern const char *specs[];
+  extern const unsigned int n_examples;
+  int spec_size(const char *s);
+  int value_at(const char *s, int n, int i, int j);
 }
 
 /**
@@ -107,7 +88,7 @@ private:
   }
 
 public:
-  /// Construction of the model.
+  /// Actual model
   MineSweeper(const SizeOptions& opt)
     : spec(specs[opt.size()]), 
       size(spec_size(spec)),
@@ -128,18 +109,6 @@ public:
     branch(this, b, INT_VAR_NONE, INT_VAL_MAX);
   }
 
-  /// Constructor for cloning \a s
-  MineSweeper(bool share, MineSweeper& s) :
-    Example(share,s), spec(s.spec), size(s.size) {
-    b.update(this, share, s.b);
-  }
-
-  /// Copy space during cloning
-  virtual Space*
-  copy(bool share) {
-    return new MineSweeper(share,*this);
-  }
-
   /// Print solution
   virtual void
   print(void) {
@@ -158,6 +127,18 @@ public:
     }
     std::cout << std::endl;
   }
+
+  /// Constructor for cloning \a s
+  MineSweeper(bool share, MineSweeper& s) :
+    Example(share,s), spec(s.spec), size(s.size) {
+    b.update(this, share, s.b);
+  }
+  /// Copy space during cloning
+  virtual Space*
+  copy(bool share) {
+    return new MineSweeper(share,*this);
+  }
+
 };
 
 
@@ -179,113 +160,146 @@ main(int argc, char* argv[]) {
 }
 
 
-/** \name Puzzle specifications
- *
- * \relates MineSweeper
- */
+namespace {
 
-/// List of specifications
-const char* specs[] = {
-    // 0
-    "..2.3."
-    "2....."
-    "..24.3"
-    "1.34.."
-    ".....3"
-    ".3.3..",
-    // 1
-    ".2.211.."
-    "..4.2..2"
-    "2..2..3."
-    "2.22.3.3"
-    "..1...4."
-    "1...2..3"
-    ".2.22.3."
-    "1.1..1.1",
-    // 2
-    "1..2.2.2.."
-    ".32...4..1"
-    "...13...4."
-    "3.1...3..."
-    ".21.1..3.2"
-    ".3.2..2.1."
-    "2..32..2.."
-    ".3...32..3"
-    "..3.33...."
-    ".2.2...22.",
-    // 3
-    "2...3.1."
-    ".5.4...1"
-    "..5..4.."
-    "2...4.5."
-    ".2.4...2"
-    "..5..4.."
-    "2...5.4."
-    ".3.3...2",
-    // 4
-    "0.0.1..11."
-    "1.2.2.22.."
-    "......2..2"
-    ".23.11...."
-    "0......2.1"
-    "...22.1..."
-    ".....3.32."
-    ".5.2...3.1"
-    ".3.1..3..."
-    ".2...12..0",
-    // 5
-    ".21.2.2..."
-    ".4..3...53"
-    "...4.44..3"
-    "4.4..5.6.."
-    "..45....54"
-    "34....55.."
-    "..4.4..5.5"
-    "2..33.6..."
-    "36...3..4."
-    "...4.2.21.",
-    // 6
-    ".32..1.."
-    "....1..3"
-    "3..2...4"
-    ".5...5.."
-    "..6...5."
-    "3...5..4"
-    "2..5...."
-    "..2..34.",
-    // 7
-    ".1.....3."
-    "...343..."
-    "244...443"
-    "...4.4..."
-    ".4.4.3.6."
-    "...4.3..."
-    "123...133"
-    "...322..."
-    ".2.....3.",
-    // 8
-    "......."
-    ".23435."
-    ".1...3."
-    "...5..."
-    ".1...3."
-    ".12234."
-    ".......",
-    // 9
-    "2...2...2"
-    ".4.4.3.4."
-    "..4...1.."
-    ".4.3.3.4."
-    "2.......2"
-    ".5.4.5.4."
-    "..3...3.."
-    ".4.3.5.6."
-    "2...1...2"
-  };
+  /** \name Minesweeper specifications
+    *
+    * A specification is a square matrix of characters. Alphanumeric characters represent
+    * the number of mines adjacent to that field. Dots represent fields with an unknown number
+    * of mines adjacent to it (or an actual mine).
+    *
+    * \relates MineSweeper
+    */
+  //@{
+  
+  /// The specifications
+  const char* specs[] = {
+      // 0
+      "..2.3."
+      "2....."
+      "..24.3"
+      "1.34.."
+      ".....3"
+      ".3.3..",
+      // 1
+      ".2.211.."
+      "..4.2..2"
+      "2..2..3."
+      "2.22.3.3"
+      "..1...4."
+      "1...2..3"
+      ".2.22.3."
+      "1.1..1.1",
+      // 2
+      "1..2.2.2.."
+      ".32...4..1"
+      "...13...4."
+      "3.1...3..."
+      ".21.1..3.2"
+      ".3.2..2.1."
+      "2..32..2.."
+      ".3...32..3"
+      "..3.33...."
+      ".2.2...22.",
+      // 3
+      "2...3.1."
+      ".5.4...1"
+      "..5..4.."
+      "2...4.5."
+      ".2.4...2"
+      "..5..4.."
+      "2...5.4."
+      ".3.3...2",
+      // 4
+      "0.0.1..11."
+      "1.2.2.22.."
+      "......2..2"
+      ".23.11...."
+      "0......2.1"
+      "...22.1..."
+      ".....3.32."
+      ".5.2...3.1"
+      ".3.1..3..."
+      ".2...12..0",
+      // 5
+      ".21.2.2..."
+      ".4..3...53"
+      "...4.44..3"
+      "4.4..5.6.."
+      "..45....54"
+      "34....55.."
+      "..4.4..5.5"
+      "2..33.6..."
+      "36...3..4."
+      "...4.2.21.",
+      // 6
+      ".32..1.."
+      "....1..3"
+      "3..2...4"
+      ".5...5.."
+      "..6...5."
+      "3...5..4"
+      "2..5...."
+      "..2..34.",
+      // 7
+      ".1.....3."
+      "...343..."
+      "244...443"
+      "...4.4..."
+      ".4.4.3.6."
+      "...4.3..."
+      "123...133"
+      "...322..."
+      ".2.....3.",
+      // 8
+      "......."
+      ".23435."
+      ".1...3."
+      "...5..."
+      ".1...3."
+      ".12234."
+      ".......",
+      // 9
+      "2...2...2"
+      ".4.4.3.4."
+      "..4...1.."
+      ".4.3.3.4."
+      "2.......2"
+      ".5.4.5.4."
+      "..3...3.."
+      ".4.3.5.6."
+      "2...1...2"
+    };
 
-/// Number of specifications
-const unsigned int n_examples = sizeof(specs)/sizeof(char*);
+  /// Number of specifications
+  const unsigned int n_examples = sizeof(specs)/sizeof(char*);
 
-//@}
+  /// Compute the size of a specification
+  int spec_size(const char *s) {
+    int l = std::strlen(s);
+    int res = static_cast<int>(std::sqrt(static_cast<float>(l)));
+    return res;
+  }
+
+  /** \brief Return the value at position (\a i,\a j) in the example \a s of size \a n
+    */
+  int value_at(const char *s, int n, int i, int j) {
+    assert(spec_size(s) == n);
+    assert(i >= 0 && i < n);
+    assert(j >= 0 && j < n);
+    char c = s[i*n + j];
+    if (!std::isalnum(c))
+      return -1;
+    if (std::isdigit(c))
+      return c - '0';
+    if (std::islower(c))
+      c = static_cast<char>(std::toupper(c));
+    // std::alpha(c) == true
+    int res = (c - 'A') + 10;
+    if (res > n) return 0;
+    else return res;
+  }
+  //@}
+}
 
 // STATISTICS: example-any

@@ -569,6 +569,8 @@ namespace {
    * \relates Sudoku
    */
   //@{
+  
+  /// The specifications
   const char* examples[] = {
     // 0
     "...2.5..."
@@ -2309,9 +2311,10 @@ namespace {
     ".A.EB.....C6...."
   };
 
-
+  /// The number of instances
   const unsigned int n_examples = sizeof(examples)/sizeof(char*);
 
+  /// The size of an instance
   int example_size(const char *s) {
     int l = std::strlen(s);
     int res = static_cast<int>(std::sqrt(std::sqrt(static_cast<float>(l))));
@@ -2319,7 +2322,8 @@ namespace {
     return res;
   }
 
-
+  /** \brief Return the value at position (\a i,\a j) in the example \a s of size \a n
+    */
   int value_at(const char *s, int n, int i, int j) {
     assert(example_size(s) == std::sqrt(static_cast<float>(n)));
     assert(i >= 0 && i < n);
@@ -2336,7 +2340,7 @@ namespace {
     if (res > n) return 0;
     else return res;
   }
-//@}
+  //@}
 }
 
 // STATISTICS: example-any
