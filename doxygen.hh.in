@@ -47,31 +47,31 @@
  */
 
 /**
- * \defgroup TaskInt Interfacing to Gecode
+ * \defgroup TaskModel Programming models
  * \ingroup Task
  */
 
 /**
- * \defgroup TaskIntScript Setting up scripts
+ * \defgroup TaskModelScript Setting up scripts
  *
  * Scripts (or models) are programmed by inheriting from the class
  * Gecode::Space. For many examples see \ref Example.
  *
- * \ingroup TaskInt
+ * \ingroup TaskModel
  */
 
 /**
- * \defgroup TaskIntInt Using finite domain integers
- * \ingroup TaskInt
+ * \defgroup TaskModelInt Using finite domain integers
+ * \ingroup TaskModel
  */
 
 /**
- * \defgroup TaskIntIntVars Integer variables
- * \ingroup TaskIntInt
+ * \defgroup TaskModelIntVars Integer variables
+ * \ingroup TaskModelInt
  */
 
 /**
- * \defgroup TaskIntSearch Search engines
+ * \defgroup TaskModelSearch Search engines
  *
  * Defines search engines. All search engines (but Gecode::LDS, where
  * it is not needed) support recomputation. The behaviour of recomputation
@@ -96,32 +96,42 @@
  * used in recomputation.
  *
  * Requires \code #include "gecode/search.hh" \endcode
- * \ingroup TaskInt
+ * \ingroup TaskModel
  */
 
 /**
- * \defgroup TaskIntSet Using finite integer sets
- * \ingroup TaskInt
+ * \defgroup TaskModelSet Using finite integer sets
+ * \ingroup TaskModel
  */
 
 /**
- * \defgroup TaskIntReflect Reflection API
+ * \defgroup TaskModelSetVars Set variables
+ * \ingroup TaskModelSet
+ */
+
+/**
+ * \defgroup TaskModelCpltSet Using finite integer sets with complete domain representation
+ * \ingroup TaskModel
+ */
+
+/**
+ * \defgroup TaskModelCpltSetVars Set variables with complete domain representation
+ * \ingroup TaskModelCpltSet
+ */
+
+/**
+ * \defgroup TaskModelMiniModel Direct modelling
+ * \ingroup TaskModel
+ */
+
+/**
+ * \defgroup TaskModelReflect Reflection API
  *
  * The reflection API provides information about the propagators, branchings,
  * and variables in a space.
  * Requires \code #include "gecode/kernel.hh" \endcode
  *
- * \ingroup TaskInt
- */
-
-/**
- * \defgroup TaskIntSetVars Set variables
- * \ingroup TaskIntSet
- */
-
-/**
- * \defgroup TaskMiniModel Direct modelling
- * \ingroup Task
+ * \ingroup TaskModel
  */
 
 /**
@@ -141,6 +151,11 @@
 
 /**
  * \defgroup TaskActorSet Programming set actors
+ * \ingroup TaskActor
+ */
+
+/**
+ * \defgroup TaskActorCpltSet Programming CpltSet actors
  * \ingroup TaskActor
  */
 
@@ -324,6 +339,40 @@
  */
 
 /**
+ * \defgroup FuncCpltSetProp CpltSet propagators
+ *
+ * This module contains a description of all predefined
+ * propagators for CpltSet variables. They can be reused, for example, for 
+ * rewriting newly defined CpltSet propagators into already available
+ * propagators.
+ * \ingroup Other
+ */
+
+/**
+ * \defgroup FuncCpltSetSelView %CpltSet view selection for branching
+ *
+ * Contains a description of view selection strategies on CpltSet
+ * views that can be used together with the generic view/value
+ * branching class Gecode::ViewValBranching (argument \a ViewSel).
+ *
+ * All view selection classes require 
+ * \code #include "gecode/cpltset/branch.hh" \endcode
+ * \ingroup Other
+ */
+
+/**
+ * \defgroup FuncCpltSetSelVal %CpltSet value selection for branching
+ *
+ * Contains a description of value selection strategies on CpltSet
+ * views that can be used together with the generic view/value
+ * branching class Gecode::ViewValBranching (argument \a ValSel).
+ *
+ * All value selection classes require 
+ * \code #include "gecode/cpltset/branch.hh" \endcode
+ * \ingroup Other
+ */
+
+/**
  * \defgroup Example Example scripts (models)
  *
  * All scripts are compiled into simple standalone programs. All
@@ -368,22 +417,32 @@
  * This document provides reference information about
  * <A HREF="http://www.gecode.org">%Gecode</A>.
  * The documentation is structured into three major groups: 
- * common programming tasks, common functionality, and other 
+ * getting started, common programming tasks, and  
  * available functionality.
  *
  * This document corresponds to %Gecode version @VERSION@.
  *
+ * \section SecStart Getting started
+ *
+ * For your first steps with %Gecode, the following pages may be of interest:
+ *  - \ref PageComp
+ *  - \ref PageUsage
+ *  - \ref PageNotation
+ *  - \ref PageGlossary
+ *
+ * To get started with modelling in Gecode, you may also want to have a look 
+ * at our \ref Example.
+ *
  * \section SecByTask Programming tasks
  *
  * Documentation is available for the following tasks:
- *  - \ref TaskInt
- *  - \ref TaskMiniModel
+ *  - \ref TaskModel
  *  - \ref TaskSearch
  *  - \ref TaskActor "Programming propagators and branchings"
  *  - \ref TaskVar
  *  - \ref TaskTest
  *
- * \section SecByFunc Common functionality
+ * \section SecByFunc Available functionality
  *
  * The most important functionality is:
  *  - \ref FuncMem
@@ -391,26 +450,14 @@
  *
  * The complete functionality can be found \ref Func "here".
  *
- * \section SecByOther Other available functionality
- *
  * The part \ref Other documents existing propagators, variable 
  * implementations, and so on which serves as documentation of examples.
  *
- * \section SecStart Getting started
- *
- * For your first steps with %Gecode, the following pages may be of interest:
- *  - \ref PageNotation
- *  - \ref PageGlossary
- *  - \ref PageComp
- *  - \ref PageUsage
- *
- * \section SecMore More content
+ * \section SecIndex List and index content
  *
  * Additionally, the documentation also features the following parts:
  *  - \ref PageLic
  *  - \ref PageChange
- *
- * \section SecIndex List and index content
  *
  * The following lists and indices are available
  *  - \ref PageCodeStat
@@ -473,7 +520,7 @@
  * control.
  *
  * As examples for data structures which are sensitive to sharing, consider
- * Gecode::Support::SharedArray, Gecode::IntSet, and Gecode::DFA.
+ * Gecode::SharedArray, Gecode::IntSet, and Gecode::DFA.
  */
 
 /**
@@ -523,7 +570,7 @@ be seen as corresponding to a node in the search tree. It
 organizes constraint propagation, the branching process,
 exploration, and memory management. Spaces are implemented by the
 class Gecode::Space. They provide functionality for \ref
-TaskIntScript, \ref TaskSearch, and \ref FuncMemSpace.
+TaskModelScript, \ref TaskSearch, and \ref FuncMemSpace.
 
 \section GlossaryME Modification event
 
@@ -615,7 +662,7 @@ same propagator. Examples of views are \ref TaskActorIntView and
 */
  
 /**
- * \page PageUsage Using Gecode
+ * \page PageUsage Compiling and linking against Gecode
  *
  * \section SecUsageInclude Including header files
  *
@@ -624,13 +671,13 @@ same propagator. Examples of views are \ref TaskActorIntView and
  *  - gecode/kernel.hh must always be included (the header files below
  *    also always include kernel.hh).
  *  - gecode/search.hh must be included, if search engines are used 
- *    (see for example \ref TaskIntSearch).
+ *    (see for example \ref TaskModelSearch).
  *  - gecode/int.hh must be included, if any integer functionality is used
- *    (see for example \ref TaskIntInt and \ref TaskActorInt).
+ *    (see for example \ref TaskModelInt and \ref TaskActorInt).
  *  - gecode/set.hh must be included, if any finite set functionality is used
- *    (see for example \ref TaskIntSet and \ref TaskActorSet).
+ *    (see for example \ref TaskModelSet and \ref TaskActorSet).
  *  - gecode/minimodel.hh must be included, if direct modelling support
- *    is used (see for example \ref TaskMiniModel).
+ *    is used (see for example \ref TaskModelMiniModel).
  *
  * Other functionality is available through a set of header files. For example
  * to access the implementation of particular propagators, a particular header

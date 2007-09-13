@@ -44,6 +44,11 @@ namespace Gecode { namespace CpltSet {
 
   /**
    * \brief Nary propagator for CpltSet variables
+   *
+   * Propagates a constraint specified as a bdd.
+   *
+   * Requires \code #include "gecode/cpltset/propagators.hh" \endcode
+   * \ingroup FuncCpltSetProp
    */
   template <class View>
   class NaryCpltSetPropagator : public Propagator {
@@ -92,6 +97,11 @@ namespace Gecode { namespace CpltSet {
 
   /**
    * \brief Binary propagator for CpltSet variables
+   *
+   * Propagates a constraint specified as a bdd.
+   *
+   * Requires \code #include "gecode/cpltset/propagators.hh" \endcode
+   * \ingroup FuncCpltSetProp
    */
   template <class View0, class View1>
   class BinaryCpltSetPropagator : public Propagator {
@@ -155,70 +165,17 @@ namespace Gecode { namespace CpltSet {
     static  ExecStatus post(Space* home, View& x0, bdd& d);
   };
 
-
-  /**
-   * \brief Binary Rel Disjoint Propagator
-   */
-  template <class View0, class View1>
-  class BinRelDisj : public BinaryCpltSetPropagator<View0,View1> {
-  protected:
-    /// Bdd representation of the constraint
-    using BinaryCpltSetPropagator<View0,View1>::d;
-    using BinaryCpltSetPropagator<View0,View1>::x;
-    using BinaryCpltSetPropagator<View0,View1>::y;
-    /// Constructor for cloning \a p
-    BinRelDisj(Space* home, bool share, BinRelDisj<View0,View1>& p);
-    /// Constructor for posting
-    BinRelDisj(Space* home, View0& x0, View1& y0, bdd& d);
-  public:
-    /// Delete propagator
-    virtual size_t dispose(Space* home);
-    /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, View0& x0, View1& y0, bdd& d);
-  };
-
-  /**
-   * \brief Singleton channel propagator from IntVar to CpltSetVar
-   */
-
-  template <class View1, class View2>
-  class Singleton : public Propagator {
-  protected:
-    /// View for the IntVar
-    View1 x;
-    /// View for the CpltSetVar
-    View2 s;
-    /// Constructor for cloning \a p
-    Singleton(Space* home, bool share, Singleton& p);
-    /// Constructor for creation
-    Singleton(Space* home, View1& x, View2& s);
-  public:
-    /// Cost function
-    virtual PropCost cost(void) const;
-    /// Specification for this propagator
-    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
-    /// Name of this propagator
-    static Support::Symbol name(void);
-
-    /// Delete propagator
-    virtual size_t dispose(Space* home);
-    /// Copy propagator during cloning
-    virtual Actor*      copy(Space* home,bool);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    static  ExecStatus post(Space* home, View1& x, View2& s);
-  }; 
-
-
   /**
    * \brief Propagator for CpltSet variables with n+1 arguments
+   *
+   * Propagates a constraint specified as a bdd.
+   *
+   * Requires \code #include "gecode/cpltset/propagators.hh" \endcode
+   * \ingroup FuncCpltSetProp
    */
   template <class View0, class View1>
   class NaryOneCpltSetPropagator : 
-    public MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM> {
+    public MixNaryOnePropagator<View0,PC_CPLTSET_DOM,View1,PC_CPLTSET_DOM> {
   protected:
     typedef MixNaryOnePropagator<View0, PC_CPLTSET_DOM,
                                  View1, PC_CPLTSET_DOM> Super;
@@ -251,6 +208,11 @@ namespace Gecode { namespace CpltSet {
 
   /**
    * \brief Propagator for CpltSet variables with n+2 arguments
+   *
+   * Propagates a constraint specified as a bdd.
+   *
+   * Requires \code #include "gecode/cpltset/propagators.hh" \endcode
+   * \ingroup FuncCpltSetProp
    */
   template <class View0, class View1>
   class NaryTwoCpltSetPropagator : 
@@ -289,7 +251,69 @@ namespace Gecode { namespace CpltSet {
     static  ExecStatus post(Space* home, ViewArray<View0>& x, 
                             View1& y, View1& z, bdd& d);
   };
+  
+  /**
+   * \brief Binary Rel Disjoint Propagator
+   *
+   * Propagates a constraint specified as a bdd.
+   *
+   * Requires \code #include "gecode/cpltset/propagators.hh" \endcode
+   * \ingroup FuncCpltSetProp
+   */
+  template <class View0, class View1>
+  class BinRelDisj : public BinaryCpltSetPropagator<View0,View1> {
+  protected:
+    /// Bdd representation of the constraint
+    using BinaryCpltSetPropagator<View0,View1>::d;
+    using BinaryCpltSetPropagator<View0,View1>::x;
+    using BinaryCpltSetPropagator<View0,View1>::y;
+    /// Constructor for cloning \a p
+    BinRelDisj(Space* home, bool share, BinRelDisj<View0,View1>& p);
+    /// Constructor for posting
+    BinRelDisj(Space* home, View0& x0, View1& y0, bdd& d);
+  public:
+    /// Delete propagator
+    virtual size_t dispose(Space* home);
+    /// Copy propagator during cloning
+    virtual Actor*      copy(Space* home,bool);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    static  ExecStatus post(Space* home, View0& x0, View1& y0, bdd& d);
+  };
 
+  /**
+   * \brief Singleton channel propagator from IntVar to CpltSetVar
+   *
+   * Requires \code #include "gecode/cpltset/propagators.hh" \endcode
+   * \ingroup FuncCpltSetProp
+   */
+  template <class View1, class View2>
+  class Singleton : public Propagator {
+  protected:
+    /// View for the IntVar
+    View1 x;
+    /// View for the CpltSetVar
+    View2 s;
+    /// Constructor for cloning \a p
+    Singleton(Space* home, bool share, Singleton& p);
+    /// Constructor for creation
+    Singleton(Space* home, View1& x, View2& s);
+  public:
+    /// Cost function
+    virtual PropCost cost(void) const;
+    /// Specification for this propagator
+    virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
+    /// Name of this propagator
+    static Support::Symbol name(void);
+
+    /// Delete propagator
+    virtual size_t dispose(Space* home);
+    /// Copy propagator during cloning
+    virtual Actor*      copy(Space* home,bool);
+    /// Perform propagation
+    virtual ExecStatus propagate(Space* home);
+    static  ExecStatus post(Space* home, View1& x, View2& s);
+  }; 
 
 }}
 

@@ -178,7 +178,7 @@ namespace Gecode {
 }
 
 /**
- * \defgroup TaskMiniModelLin Linear expressions and relations
+ * \defgroup TaskModelMiniModelLin Linear expressions and relations
  *
  * Linear expressions can be freely composed of sums and differences of
  * integer variables (Gecode::IntVar) possibly with integer coefficients
@@ -190,7 +190,7 @@ namespace Gecode {
  * Linear relations are obtained from linear expressions with the normal
  * relation operators.
  *
- * \ingroup TaskMiniModel
+ * \ingroup TaskModelMiniModel
  */
 
 //@{
@@ -538,7 +538,7 @@ namespace Gecode {
 }
 
 /**
- * \defgroup TaskMiniModelBool Boolean expressions and relations
+ * \defgroup TaskModelMiniModelBool Boolean expressions and relations
  *
  * Boolean expressions can be freely composed of variables with
  * the usual connectives and reified linear expressions.
@@ -547,7 +547,7 @@ namespace Gecode {
  * functions \a tt (stating that the expression must be true)
  * and \a ff (stating that the expression must be false).
  *
- * \ingroup TaskMiniModel
+ * \ingroup TaskModelMiniModel
  */
 
 //@{
@@ -601,9 +601,9 @@ namespace Gecode {
 namespace Gecode {
 
   /**
-   * \defgroup TaskMiniModelPost Posting of expressions and relations
+   * \defgroup TaskModelMiniModelPost Posting of expressions and relations
    *
-   * \ingroup TaskMiniModel
+   * \ingroup TaskModelMiniModel
    */
   //@{
   /// Post linear expression and return its value
@@ -648,7 +648,7 @@ namespace Gecode {
   /**
    * \brief Regular expressions over integer values
    *
-   * \ingroup TaskMiniModel
+   * \ingroup TaskModelMiniModel
    */
   class GECODE_MINIMODEL_EXPORT REG {
   private:
@@ -712,9 +712,9 @@ operator<<(std::ostream&, const Gecode::REG& r);
 namespace Gecode {
 
   /**
-   * \defgroup TaskMiniModelArith Arithmetic functions
+   * \defgroup TaskModelMiniModelArith Arithmetic functions
    *
-   * \ingroup TaskMiniModel
+   * \ingroup TaskModelMiniModel
    */
   //@{
   /// Return variable constrained to \f$|x|\f$
@@ -751,9 +751,9 @@ namespace Gecode {
 namespace Gecode {
 
   /**
-   * \defgroup TaskMiniModelChannel Channel functions
+   * \defgroup TaskModelMiniModelChannel Channel functions
    *
-   * \ingroup TaskMiniModel
+   * \ingroup TaskModelMiniModel
    */
   //@{
   /// Return Boolean variable equal to \f$x\f$
@@ -775,12 +775,12 @@ namespace Gecode {
 namespace Gecode {
 
   /**
-   * \defgroup TaskMiniModelIntAlias Aliases for integer constraints
+   * \defgroup TaskModelMiniModelIntAlias Aliases for integer constraints
    *
    * Contains definitions of common constraints which have different
    * names in Gecode.
    *
-   * \ingroup TaskMiniModel
+   * \ingroup TaskModelMiniModel
    */
 
   //@{
@@ -984,9 +984,9 @@ namespace Gecode {
 namespace Gecode {
 
   /**
-   * \defgroup TaskMiniModelScheduling Alternative interfaces to scheduling constraints
+   * \defgroup TaskModelMiniModelScheduling Alternative interfaces to scheduling constraints
    *
-   * \ingroup TaskMiniModel
+   * \ingroup TaskModelMiniModel
    */
 
   //@{
@@ -1115,11 +1115,11 @@ namespace Gecode {
 }
 
 /**
- * \addtogroup TaskMiniModelMatrix Matrix interface for arrays
+ * \addtogroup TaskModelMiniModelMatrix Matrix interface for arrays
  *
  * Wrapper for arrays to act as a two-dimensional matrix.
  *
- * \ingroup TaskMiniModel
+ * \ingroup TaskModelMiniModel
  */
 //@{
 namespace Gecode { namespace MiniModel {
@@ -1132,7 +1132,7 @@ namespace Gecode { namespace MiniModel {
    * \note This is a light-weight wrapper, and is not intended for
    * storing variables directly instead of in an array.
    *
-   * \ingroup TaskMiniModelMatrix
+   * \ingroup TaskModelMiniModelMatrix
    */
   template <class A>
   class Matrix {

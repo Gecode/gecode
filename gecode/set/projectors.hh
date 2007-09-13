@@ -47,8 +47,8 @@
 namespace Gecode {
 
   /**
-   * \defgroup TaskIntSetProjector Projector constraints
-   * \ingroup TaskIntSet
+   * \defgroup TaskModelSetProjector Projector constraints
+   * \ingroup TaskModelSet
    *
    */
 

@@ -100,7 +100,7 @@ namespace Gecode {
 
   /**
    * \brief Common relation types for sets
-   * \ingroup TaskIntSet
+   * \ingroup TaskModelSet
    */
   enum SetRelType {
     SRT_EQ,   ///< Equality (\f$=\f$)
@@ -113,7 +113,7 @@ namespace Gecode {
 
   /**
    * \brief Common operations for sets
-   * \ingroup TaskIntSet
+   * \ingroup TaskModelSet
    */
   enum SetOpType {
     SOT_UNION,  ///< Union
@@ -123,8 +123,8 @@ namespace Gecode {
   };
 
   /**
-   * \defgroup TaskIntSetDom Domain constraints
-   * \ingroup TaskIntSet
+   * \defgroup TaskModelSetDom Domain constraints
+   * \ingroup TaskModelSet
    *
    */
 
@@ -162,8 +162,8 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntSetRel Relation constraints
-   * \ingroup TaskIntSet
+   * \defgroup TaskModelSetRel Relation constraints
+   * \ingroup TaskModelSet
    *
    */
 
@@ -208,8 +208,8 @@ namespace Gecode {
   //@}
 
   /**
-   * \defgroup TaskIntSetRelOp Set operation/relation constraints
-   * \ingroup TaskIntSet
+   * \defgroup TaskModelSetRelOp Set operation/relation constraints
+   * \ingroup TaskModelSet
    *
    */
 
@@ -264,8 +264,8 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntSetConvex Convexity constraints
-   * \ingroup TaskIntSet
+   * \defgroup TaskModelSetConvex Convexity constraints
+   * \ingroup TaskModelSet
    *
    */
   //@{
@@ -281,8 +281,8 @@ namespace Gecode {
   //@}
 
   /**
-   * \defgroup TaskIntSetSequence Sequence constraints
-   * \ingroup TaskIntSet
+   * \defgroup TaskModelSetSequence Sequence constraints
+   * \ingroup TaskModelSet
    *
    */
   //@{
@@ -298,8 +298,8 @@ namespace Gecode {
   //@}
 
   /**
-   * \defgroup TaskIntSetDistinct Distinctness constraints
-   * \ingroup TaskIntSet
+   * \defgroup TaskModelSetDistinct Distinctness constraints
+   * \ingroup TaskModelSet
    *
    */
   //@{
@@ -316,8 +316,8 @@ namespace Gecode {
   //@}
 
   /**
-   * \defgroup TaskIntSetConnect Connection constraints to finite domain variables
-   * \ingroup TaskIntSet
+   * \defgroup TaskModelSetConnect Connection constraints to finite domain variables
+   * \ingroup TaskModelSet
    *
    */
 
@@ -365,8 +365,8 @@ namespace Gecode {
   //@}
 
   /**
-   * \defgroup TaskIntSetSelection Selection constraints
-   * \ingroup TaskIntSet
+   * \defgroup TaskModelSetSelection Selection constraints
+   * \ingroup TaskModelSet
    *
    * A selection constraint selects zero, one or more elements out of a 
    * sequence. We write \f$ \langle x_0,\dots, x_{n-1} \rangle \f$ for the
@@ -442,8 +442,8 @@ namespace Gecode {
   //@}
 
   /**
-   * \defgroup TaskIntSetBranch Branching
-   * \ingroup TaskIntSet
+   * \defgroup TaskModelSetBranch Branching
+   * \ingroup TaskModelSet
    */
 
   //@{

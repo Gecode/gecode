@@ -1120,12 +1120,12 @@ namespace Gecode {
   public:
     /**
      * \brief Default constructor
-     * \ingroup TaskIntScript
+     * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT Space(void);
     /**
      * \brief Destructor
-     * \ingroup TaskIntScript
+     * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT virtual ~Space(void);
     /**
@@ -1136,24 +1136,24 @@ namespace Gecode {
      *
      * If \a share is true, share all data structures among copies.
      * Otherwise, make independent copies.
-     * \ingroup TaskIntScript
+     * \ingroup TaskModelScript
      */
     GECODE_KERNEL_EXPORT Space(bool share, Space& s);
     /**
      * \brief Copying member function
      *
      * Must create a new object using the constructor for cloning.
-     * \ingroup TaskIntScript
+     * \ingroup TaskModelScript
      */
     virtual Space* copy(bool share) = 0;
     /**
      * \brief Allocate memory from heap for new space
-     * \ingroup TaskIntScript
+     * \ingroup TaskModelScript
      */
     static void* operator new(size_t);
     /**
      * \brief Free memory allocated from heap
-     * \ingroup TaskIntScript
+     * \ingroup TaskModelScript
      */
     static void  operator delete(void*);
 

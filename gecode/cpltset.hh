@@ -102,7 +102,7 @@ namespace Gecode {
 
   /**
    * \brief Common relation types for sets
-   * \ingroup TaskIntCpltSet
+   * \ingroup TaskModelCpltSet
    */
   enum CpltSetRelType {
     /// Lexicographically less than on bitstring(\f$\prec_{lex}\f$)
@@ -125,13 +125,17 @@ namespace Gecode {
 
   /**
    * \brief Common operations for sets
-   * \ingroup TaskIntCpltSet
+   * \ingroup TaskModelCpltSet
    */
   enum CpltSetOpType {
     SOT_SYMDIFF,  ///< Symmetric Difference
   };
 
-  ///\name Posting propagators on CpltSet variables
+  /**
+   * \defgroup TaskModelCpltSetDom Domain constraints
+   * \ingroup TaskModelCpltSet
+   *
+   */
   //@{
 
   /// Propagates \f$ x \sim_r \{i\}\f$
@@ -145,6 +149,24 @@ namespace Gecode {
   /// Propagates \f$ x \sim_r s\f$
   GECODE_CPLTSET_EXPORT void
   dom(Space* home, CpltSetVar x, SetRelType r, const IntSet& s);
+
+  /// Post propagator for \f$ l \leq |x| \leq u \f$ 
+  GECODE_CPLTSET_EXPORT void
+  cardinality(Space* home, CpltSetVar x, unsigned int l, unsigned int u);
+
+  /// Post propagator for \f$ l |x| = c \f$ 
+  GECODE_CPLTSET_EXPORT void
+  cardinality(Space* home, CpltSetVar x, unsigned int c);
+  
+  //@}
+
+  /**
+   * \defgroup TaskModelCpltSetRel Relation constraints
+   * \ingroup TaskModelCpltSet
+   *
+   */
+
+  //@{
   
   /// Post propagator for \f$ dom(x) \sim_r y\f$
   GECODE_CPLTSET_EXPORT void
@@ -153,6 +175,19 @@ namespace Gecode {
   /// Post propagator for \f$ x \sim_r y\f$
   GECODE_CPLTSET_EXPORT void
   rel(Space* home, CpltSetVar x, CpltSetRelType r, CpltSetVar y);
+
+  GECODE_CPLTSET_EXPORT void
+  rel(Space* home, CpltSetVar x, SetRelType r, CpltSetVar y);
+
+  //@}
+
+  /**
+   * \defgroup TaskModelCpltSetRelOp CpltSet operation/relation constraints
+   * \ingroup TaskModelCpltSet
+   *
+   */
+
+  //@{
 
   /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_CPLTSET_EXPORT void
@@ -171,24 +206,30 @@ namespace Gecode {
   rel(Space* home, CpltSetVar x, SetOpType o, CpltSetVar y, 
       SetRelType r, CpltSetVar z);
 
-  GECODE_CPLTSET_EXPORT void
-  rel(Space* home, CpltSetVar x, SetRelType r, CpltSetVar y);
+  //@}
 
-  /// Post propagator for \f$ l \leq |x| \leq u \f$ 
+  /**
+   * \defgroup TaskModelCpltSetConnect Connection constraints to finite domain variables
+   * \ingroup TaskModelCpltSet
+   *
+   */
+
+  //@{
+    
+  /// Post propagator for \f$ s = \{x\} \f$
   GECODE_CPLTSET_EXPORT void
-  cardinality(Space* home, CpltSetVar x, unsigned int l, unsigned int u);
-  
-  /// Post propagator for \f$ l |x| = c \f$ 
-  GECODE_CPLTSET_EXPORT void
-  cardinality(Space* home, CpltSetVar x, unsigned int c);
-  
-  GECODE_CPLTSET_EXPORT void 
   singleton(Space* home, IntVar x, CpltSetVar s);
   
-  /// Post propagator for \f$ \bigcup_{i\neq index} glb(x_{i}) \parallel x_{index} \f$ 
-  GECODE_CPLTSET_EXPORT void
-  disjointsudoku(Space* home,  CpltSetVar x, int order);
+  //@}
 
+  /**
+   * \defgroup TaskModelCpltSetInter Intersection and partition constraints
+   * \ingroup TaskModelCpltSet
+   *
+   */
+
+  //@{
+  
   /// Post propagator for \f$ |x \cap is| =  c \f$ 
   GECODE_CPLTSET_EXPORT void
   exactly(Space* home, CpltSetVar x, IntSet& is, int c);
@@ -267,7 +308,16 @@ namespace Gecode {
   GECODE_CPLTSET_EXPORT void
   partitionCard(Space* home, const CpltSetVarArgs& x, int c);
 
+  //@}
+  
+  /**
+   * \defgroup TaskModelCpltSetSelect Selection constraints
+   * \ingroup TaskModelCpltSet
+   *
+   */
 
+  //@{
+  
   /// Post propagator for \f$ t = \bigcup_{i\in s}  x_i \f$
   GECODE_CPLTSET_EXPORT void
   selectUnion(Space* home, const CpltSetVarArgs& x, CpltSetVar s,
@@ -277,10 +327,6 @@ namespace Gecode {
   GECODE_CPLTSET_EXPORT void
   selectNonEmptySub(Space* home, const CpltSetVarArgs& x,
                     CpltSetVar s, CpltSetVar t);
-
-  /// Post propagator for \f$ s = \{x\} \f$
-  GECODE_CPLTSET_EXPORT void
-  singleton(Space* home, IntVar x, CpltSetVar s);
 
   /// Post propagator for \f$ t = \bigcup_{i\in s}  x_i \f$
   GECODE_CPLTSET_EXPORT void
@@ -318,8 +364,8 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntCpltSetBranch Branching
-   * \ingroup TaskIntCpltSet
+   * \defgroup TaskModelCpltSetBranch Branching
+   * \ingroup TaskModelCpltSet
    */
   //@{
   

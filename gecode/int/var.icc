@@ -699,7 +699,7 @@ namespace Gecode {
   /**
    * \brief Integer variables
    *
-   * \ingroup TaskIntIntVars
+   * \ingroup TaskModelIntVars
    */
   class IntVar {
     friend class IntVarArray;
@@ -825,7 +825,7 @@ namespace Gecode {
 
   /**
    * \brief %Range iterator for integer variables
-   * \ingroup TaskIntIntVars
+   * \ingroup TaskModelIntVars
    */
   class IntVarRanges : public Int::IntVarImpFwd {
   public:
@@ -842,7 +842,7 @@ namespace Gecode {
 
   /**
    * \brief Value iterator for integer variables
-   * \ingroup TaskIntIntVars
+   * \ingroup TaskModelIntVars
    */
   class IntVarValues
     : public Iter::Ranges::ToValues<IntVarRanges> {
@@ -861,7 +861,7 @@ namespace Gecode {
   /**
    * \brief Boolean integer variables
    *
-   * \ingroup TaskIntIntVars
+   * \ingroup TaskModelIntVars
    */
   class BoolVar {
     friend class BoolVarArray;

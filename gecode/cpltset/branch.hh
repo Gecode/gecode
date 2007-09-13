@@ -42,7 +42,7 @@
 
 /**
  * \namespace Gecode::CpltSet::Branch
- * \brief %Bdd branchings
+ * \brief %CpltSet branchings
  */
 
 namespace Gecode { namespace CpltSet { namespace Branch {
@@ -58,7 +58,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    *
    * All value selection classes require 
    * \code #include "gecode/cpltset/branch.hh" \endcode
-   * \ingroup FuncSetSelVal
+   * \ingroup FuncCpltSetSelVal
    */
   template <bool exclude>
   class ValMin {
@@ -76,7 +76,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    *
    * All value selection classes require 
    * \code #include "gecode/set/branch.hh" \endcode
-   * \ingroup FuncSetSelVal
+   * \ingroup FuncCpltSetSelVal
    */
   template <bool exclude>
   class ValMax {
@@ -94,7 +94,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    *
    * All value selection classes require 
    * \code #include "gecode/set/branch.hh" \endcode
-   * \ingroup FuncSetSelVal
+   * \ingroup FuncCpltSetSelVal
    */
   template <bool exclude>
   class ValMinUnknown {
@@ -112,7 +112,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    *
    * All value selection classes require 
    * \code #include "gecode/set/branch.hh" \endcode
-   * \ingroup FuncSetSelVal
+   * \ingroup FuncCpltSetSelVal
    */
   template <bool exclude>
   class ValMaxUnknown {
@@ -139,7 +139,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * \brief View selection class for first view
    *
    * Requires \code #include "gecode/set/branch.hh" \endcode
-   * \ingroup FuncSetSelView
+   * \ingroup FuncCpltSetSelView
    */
   class ByNone {
   public:
@@ -155,7 +155,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * \brief View selection class for view with smallest cardinality of lub-glb
    *
    * Requires \code #include "gecode/set/branch.hh" \endcode
-   * \ingroup FuncSetSelView
+   * \ingroup FuncCpltSetSelView
    */
   class ByMinCard {
   private:
@@ -174,7 +174,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * \brief View selection class for view with greatest cardinality of lub-glb
    *
    * Requires \code #include "gecode/set/branch.hh" \endcode
-   * \ingroup FuncSetSelView
+   * \ingroup FuncCpltSetSelView
    */
   class ByMaxCard {
   private:
@@ -193,7 +193,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * \brief View selection class for view with smallest element in lub-glb
    *
    * Requires \code #include "gecode/cpltset/branch.hh" \endcode
-   * \ingroup FuncSetSelView
+   * \ingroup FuncCpltSetSelView
    */
   class ByMinUnknown {
   private:
@@ -212,7 +212,7 @@ namespace Gecode { namespace CpltSet { namespace Branch {
    * \brief View selection class for view with greatest element in lub-glb
    *
    * Requires \code #include "gecode/set/branch.hh" \endcode
-   * \ingroup FuncSetSelView
+   * \ingroup FuncCpltSetSelView
    */
   class ByMaxUnknown {
   private:

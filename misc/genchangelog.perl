@@ -196,7 +196,7 @@ Gecode version numbers <em>x</em>.<em>y</em>.<em>z</em> change
 according to the following rules (of thumb):
 
  - when \\e z changes, the programming interfaces for 
-   \\ref TaskInt, \\ref TaskMiniModel, and \\ref TaskSearch remain
+   \\ref TaskModel, and \\ref TaskSearch remain
    stable and only minor additions or improvements are included.
  - when \\e y changes, the above mentioned interfaces might have changed
    and medium to major additions or improvements are included.

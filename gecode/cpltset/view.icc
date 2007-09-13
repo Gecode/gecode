@@ -40,10 +40,18 @@ namespace Gecode {
   namespace CpltSet {
 
     /**
-     * \brief %Bdd view for bdd set variables
-     * \ingroup TaskActorSetView
+     * \defgroup TaskActorCpltSetView CpltSet views
+     *
+     * CpltSet propagators and branchings compute with CpltSet views.
+     * CpltSet views provide views on CpltSet variable implementations and 
+     * integer variable implementations.
+     * \ingroup TaskActorCpltSet
      */
 
+    /**
+     * \brief %CpltSet view for %CpltSet variables
+     * \ingroup TaskActorCpltSetView
+     */
     class CpltSetView : public VariableViewBase<CpltSetVarImp> {
     protected:
       using VariableViewBase<CpltSetVarImp>::var;
@@ -214,15 +222,12 @@ namespace Gecode {
   };
 
   namespace CpltSet {
+
     /**
-     * \brief Singleton Bdd View
+     * \brief %Singleton %CpltSet View
      *
-     * A bnd bdd view \f$s\f$ for a bdd view \f$x\f$ and
-     * a bdd \f$r\f$ provides operations such that 
-     * \f$dom(s) = conv(dom(x))\f$.
      * \ingroup TaskActorCpltSetView
      */
-
     class SingletonCpltSetView : public DerivedViewBase<Gecode::Int::IntView> {
     protected:
       using DerivedViewBase<Gecode::Int::IntView>::view;

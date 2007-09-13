@@ -79,7 +79,7 @@ namespace Gecode {
     /**
      * \brief %Search configuration
      *
-     * \ingroup TaskIntSearch
+     * \ingroup TaskModelSearch
      */
     namespace Config {
       /// Create a clone after every \a c_d commits
@@ -90,7 +90,7 @@ namespace Gecode {
 
     /**
      * \brief %Search engine statistics
-     * \ingroup TaskIntSearch
+     * \ingroup TaskModelSearch
      */
     class Statistics {
     public:
@@ -110,8 +110,8 @@ namespace Gecode {
 
 
     /**
-     * \defgroup TaskIntSearchStop Stop-objects for stopping search
-     * \ingroup TaskIntSearch
+     * \defgroup TaskModelSearchStop Stop-objects for stopping search
+     * \ingroup TaskModelSearch
      *
      * Allows to specify various criteria when a search engine should
      * stop exploration. Only exploration but neither recomputation
@@ -121,7 +121,7 @@ namespace Gecode {
 
     /**
      * \brief Base-class for %Stop-object
-     * \ingroup TaskIntSearchStop
+     * \ingroup TaskModelSearchStop
      */
     class GECODE_SEARCH_EXPORT Stop {
     public:
@@ -136,7 +136,7 @@ namespace Gecode {
     /**
      * \brief %Stop-object based on memory consumption
      *
-     * \ingroup TaskIntSearchStop
+     * \ingroup TaskModelSearchStop
      */
     class GECODE_SEARCH_EXPORT MemoryStop : public Stop {
     protected:
@@ -159,7 +159,7 @@ namespace Gecode {
      * The number of failures reported (by the statistics) is the
      * number since the engine started exploration. It is not the
      * number since the last stop!
-     * \ingroup TaskIntSearchStop
+     * \ingroup TaskModelSearchStop
      */
     class GECODE_SEARCH_EXPORT FailStop : public Stop {
     protected:
@@ -178,7 +178,7 @@ namespace Gecode {
 
     /**
      * \brief %Stop-object based on time
-     * \ingroup TaskIntSearchStop
+     * \ingroup TaskModelSearchStop
      */
     class GECODE_SEARCH_EXPORT TimeStop : public Stop {
     protected:
@@ -397,7 +397,7 @@ namespace Gecode {
    *
    * This class supports depth-first search for subclasses \a T of
    * Space.
-   * \ingroup TaskIntSearch
+   * \ingroup TaskModelSearch
    */
   template <class T>
   class DFS : public Search::DFS {
@@ -423,7 +423,7 @@ namespace Gecode {
    * \param c_d minimal recomputation distance
    * \param a_d adaptive recomputation distance
    * \param st %Stop-object
-   * \ingroup TaskIntSearch
+   * \ingroup TaskModelSearch
    */
   template <class T>
   T* dfs(T* s,
@@ -515,7 +515,7 @@ namespace Gecode {
 
   /**
    * \brief Limited discrepancy search engine
-   * \ingroup TaskIntSearch
+   * \ingroup TaskModelSearch
    */
   template <class T>
   class LDS : public Search::LDS {
@@ -535,7 +535,7 @@ namespace Gecode {
    * \param s root node (subclass \a T of Space)
    * \param d maximum number of discrepancies
    * \param st %Stop-object
-   * \ingroup TaskIntSearch
+   * \ingroup TaskModelSearch
    */
   template <class T>
   T* lds(T* s,unsigned int d, Search::Stop* st=NULL);
@@ -639,7 +639,7 @@ namespace Gecode {
 
   /**
    * \brief Depth-first branch-and-bound search engine
-   * \ingroup TaskIntSearch
+   * \ingroup TaskModelSearch
    */
   template <class T>
   class BAB : public Search::BAB {
@@ -677,7 +677,7 @@ namespace Gecode {
    * \param c_d minimal recomputation distance
    * \param a_d adaptive recomputation distance
    * \param st %Stop-object
-   * \ingroup TaskIntSearch
+   * \ingroup TaskModelSearch
    */
   template <class T>
   T* bab(T* s,
@@ -689,7 +689,7 @@ namespace Gecode {
 
   /**
    * \brief Depth-first restart best solution search engine
-   * \ingroup TaskIntSearch
+   * \ingroup TaskModelSearch
    */
   template <class T>
   class Restart : public DFS<T> {

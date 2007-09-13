@@ -104,7 +104,7 @@ namespace Gecode {
    *
    * Integer sets are the means to specify arbitrary sets
    * of integers to be used as domains for integer variables.
-   * \ingroup TaskIntIntVars TaskSetSetVars
+   * \ingroup TaskModelIntVars TaskModelSetVars
    */
   class IntSet {
     friend class IntSetRanges;
@@ -190,7 +190,7 @@ namespace Gecode {
   /**
    * \brief Range iterator for integer sets
    *
-   * \ingroup TaskIntIntVars TaskSetSetVars
+   * \ingroup TaskModelIntVars TaskModelSetVars
    */
   class IntSetRanges {
   private:
@@ -231,7 +231,7 @@ namespace Gecode {
   /**
    * \brief Value iterator for integer sets
    *
-   * \ingroup TaskIntIntVars TaskSetSetVars
+   * \ingroup TaskModelIntVars TaskModelSetVars
    */
   class IntSetValues : public Iter::Ranges::ToValues<IntSetRanges> {
   public:
@@ -268,7 +268,7 @@ namespace Gecode {
 
   /**
    * \brief Relation types for integers
-   * \ingroup TaskIntInt
+   * \ingroup TaskModelInt
    */
   enum IntRelType {
     IRT_EQ, ///< Equality (\f$=\f$)
@@ -281,7 +281,7 @@ namespace Gecode {
 
   /**
    * \brief Operation types for Booleans
-   * \ingroup TaskIntInt
+   * \ingroup TaskModelInt
    */
   enum BoolOpType {
     BOT_AND, ///< Conjunction
@@ -302,7 +302,7 @@ namespace Gecode {
    * If in the description of a constraint below no consistency level
    * is mentioned, the propagator for the constraint implements
    * domain-consistency.
-   * \ingroup TaskIntInt
+   * \ingroup TaskModelInt
    */
   enum IntConLevel {
     ICL_VAL, ///< Value consistency (naive)
@@ -314,8 +314,8 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntIntDomain Domain constraints
-   * \ingroup TaskIntInt
+   * \defgroup TaskModelIntDomain Domain constraints
+   * \ingroup TaskModelInt
    *
    */
 
@@ -350,8 +350,8 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntIntRelInt Simple relation constraints over integer variables
-   * \ingroup TaskIntInt
+   * \defgroup TaskModelIntRelInt Simple relation constraints over integer variables
+   * \ingroup TaskModelInt
    */
   //@{
   /** \brief Post propagator for \f$ x_0 \sim_r x_1\f$
@@ -420,8 +420,8 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntIntRelBool Simple relation constraints over Boolean variables
-   * \ingroup TaskIntInt
+   * \defgroup TaskModelIntRelBool Simple relation constraints over Boolean variables
+   * \ingroup TaskModelInt
    */
   //@{
   /// Post propagator for \f$ x_0 \sim_r x_1\f$
@@ -507,8 +507,8 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntIntElement Element constraints
-   * \ingroup TaskIntInt
+   * \defgroup TaskModelIntElement Element constraints
+   * \ingroup TaskModelInt
    */
 
   //@{
@@ -566,8 +566,8 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntIntDistinct Distinct constraints
-   * \ingroup TaskIntInt
+   * \defgroup TaskModelIntDistinct Distinct constraints
+   * \ingroup TaskModelInt
    */
 
   //@{
@@ -600,8 +600,8 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntIntChannel Channel constraints
-   * \ingroup TaskIntInt
+   * \defgroup TaskModelIntChannel Channel constraints
+   * \ingroup TaskModelInt
    */
 
   //@{
@@ -639,8 +639,8 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntIntGraph Graph constraints
-   * \ingroup TaskIntInt
+   * \defgroup TaskModelIntGraph Graph constraints
+   * \ingroup TaskModelInt
    */
 
   //@{
@@ -663,8 +663,8 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntIntScheduling Scheduling constraints
-   * \ingroup TaskIntInt
+   * \defgroup TaskModelIntScheduling Scheduling constraints
+   * \ingroup TaskModelInt
    */
   //@{
   /**
@@ -785,11 +785,11 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntIntSorted Sorted constraints
+   * \defgroup TaskModelIntSorted Sorted constraints
    *
    * All sorted constraints support bounds-consistency.
    *
-   * \ingroup TaskIntInt
+   * \ingroup TaskModelInt
    */
   //@{
   /**
@@ -823,8 +823,8 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntIntCard Cardinality constraints
-   * \ingroup TaskIntInt
+   * \defgroup TaskModelIntCard Cardinality constraints
+   * \ingroup TaskModelInt
    *
    *  \note
    *    Domain consistency on the extended cardinality variables of
@@ -982,8 +982,8 @@ namespace Gecode {
   //@}
 
   /**
-   * \defgroup TaskIntIntExt Extensional constraints
-   * \ingroup TaskIntInt
+   * \defgroup TaskModelIntExt Extensional constraints
+   * \ingroup TaskModelInt
    *
    * Extensional constraints support different ways of how the
    * extensionally defined relation between the variables is defined.
@@ -1222,8 +1222,8 @@ namespace Gecode {
   //@}
 
   /**
-   * \defgroup TaskIntIntArith Arithmetic constraints
-   * \ingroup TaskIntInt
+   * \defgroup TaskModelIntArith Arithmetic constraints
+   * \ingroup TaskModelInt
    */
 
   //@{
@@ -1277,8 +1277,8 @@ namespace Gecode {
   //@}
 
   /**
-   * \defgroup TaskIntIntLinearInt Linear constraints over integer variables
-   * \ingroup TaskIntInt
+   * \defgroup TaskModelIntLinearInt Linear constraints over integer variables
+   * \ingroup TaskModelInt
    *
    * All variants for linear constraints over integer variables share
    * the following properties:
@@ -1366,8 +1366,8 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntIntLinearBool Linear constraints over Boolean variables
-   * \ingroup TaskIntInt
+   * \defgroup TaskModelIntLinearBool Linear constraints over Boolean variables
+   * \ingroup TaskModelInt
    *
    * All variants for linear constraints over Boolean variables share 
    * the following properties:
@@ -1422,7 +1422,7 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntIntUnshare Unsharing variables
+   * \defgroup TaskModelIntUnshare Unsharing variables
    *
    * Unsharing replaces multiple occurences of the same variable by
    * fresh yet equal (enforced through propagators for equality)
@@ -1435,7 +1435,7 @@ namespace Gecode {
    * arrays without multiple occurences of the same variable, for
    * example extensional.
    *
-   * \ingroup TaskIntInt
+   * \ingroup TaskModelInt
    */
   //@{
   /**
@@ -1456,8 +1456,8 @@ namespace Gecode {
 
 
   /**
-   * \defgroup TaskIntIntBranch Branching
-   * \ingroup TaskIntInt
+   * \defgroup TaskModelIntBranch Branching
+   * \ingroup TaskModelInt
    */
 
   //@{
@@ -1530,8 +1530,8 @@ namespace Gecode {
   //@}
 
   /**
-   * \defgroup TaskIntIntAssign Assigning
-   * \ingroup TaskIntInt
+   * \defgroup TaskModelIntAssign Assigning
+   * \ingroup TaskModelInt
    */
   //@{
   /// Which value to select for assignment

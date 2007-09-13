@@ -721,7 +721,7 @@ namespace Gecode {
   /**
    * \brief %Set variables
    * 
-   * \ingroup TaskIntSetVars
+   * \ingroup TaskModelSetVars
    */
   class SetVar {
   private:
@@ -956,8 +956,8 @@ namespace Gecode {
   };
 
   /**
-   * \defgroup TaskIntSetIter Range and value iterators for set variables
-   * \ingroup TaskIntSet
+   * \defgroup TaskModelSetIter Range and value iterators for set variables
+   * \ingroup TaskModelSet
    */
   //@{
 

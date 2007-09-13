@@ -44,11 +44,11 @@
 namespace Gecode {
 
   /**
-   * \defgroup TaskIntSetArgs Argument arrays
+   * \defgroup TaskModelSetArgs Argument arrays
    * 
    * Argument arrays are just good enough for passing arguments
    * with automatic memory management.
-   * \ingroup TaskIntSet
+   * \ingroup TaskModelSet
    */
 
   //@{
@@ -59,19 +59,19 @@ namespace Gecode {
   //@}
 
   /**
-   * \defgroup TaskIntSetVarArrays Variable arrays
+   * \defgroup TaskModelSetVarArrays Variable arrays
    * 
    * Variable arrays can store variables. They are typically used
    * for storing the variables being part of a solution. However,
    * they can also be used for temporary purposes (even though
    * memory is not reclaimed until the space it is created for
    * is deleted).
-   * \ingroup TaskIntSet
+   * \ingroup TaskModelSet
    */
 
   /**
    * \brief %Set variable array
-   * \ingroup TaskIntSetVarArrays
+   * \ingroup TaskModelSetVarArrays
    */
   class GECODE_SET_EXPORT SetVarArray : public VarArray<SetVar> {
   public:

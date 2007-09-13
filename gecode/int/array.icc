@@ -39,11 +39,11 @@
 namespace Gecode {
 
   /**
-   * \defgroup TaskIntIntArgs Argument arrays
+   * \defgroup TaskModelIntArgs Argument arrays
    *
    * Argument arrays are just good enough for passing arguments
    * with automatic memory management.
-   * \ingroup TaskIntInt
+   * \ingroup TaskModelInt
    */
 
   //@{
@@ -58,19 +58,19 @@ namespace Gecode {
   //@}
 
   /**
-   * \defgroup TaskIntIntVarArrays Variable arrays
+   * \defgroup TaskModelIntVarArrays Variable arrays
    *
    * Variable arrays can store variables. They are typically used
    * for storing the variables being part of a solution (script). However,
    * they can also be used for temporary purposes (even though
    * memory is not reclaimed until the space it is created for
    * is deleted).
-   * \ingroup TaskIntInt
+   * \ingroup TaskModelInt
    */
 
   /**
    * \brief Integer variable array
-   * \ingroup TaskIntIntVarArrays
+   * \ingroup TaskModelIntVarArrays
    */
   class IntVarArray : public VarArray<IntVar> {
   public:
@@ -112,7 +112,7 @@ namespace Gecode {
   };
   /**
    * \brief Boolean variable array
-   * \ingroup TaskIntIntVarArrays
+   * \ingroup TaskModelIntVarArrays
    */
   class BoolVarArray : public VarArray<BoolVar> {
   public:

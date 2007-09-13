@@ -60,7 +60,7 @@ namespace Gecode { namespace Reflection {
   /**
     * \brief Arguments for actor and variable specifications
     *
-    * \ingroup TaskIntReflect
+    * \ingroup TaskModelReflect
     */
   class Arg {
   public:
@@ -96,7 +96,7 @@ namespace Gecode { namespace Reflection {
   
   /**
     * \brief Integer arguments
-    * \ingroup TaskIntReflect
+    * \ingroup TaskModelReflect
     */
   class IntArg : public Arg {
   public:
@@ -108,7 +108,7 @@ namespace Gecode { namespace Reflection {
 
   /**
     * \brief %Variable arguments
-    * \ingroup TaskIntReflect
+    * \ingroup TaskModelReflect
     */
   class VarArg : public Arg {
   public:
@@ -120,7 +120,7 @@ namespace Gecode { namespace Reflection {
 
   /**
     * \brief Array arguments
-    * \ingroup TaskIntReflect
+    * \ingroup TaskModelReflect
     */
   class ArrayArg : public Arg {
   private:
@@ -141,7 +141,7 @@ namespace Gecode { namespace Reflection {
 
   /**
     * \brief Integer array arguments
-    * \ingroup TaskIntReflect
+    * \ingroup TaskModelReflect
     */
   class IntArrayArg : public Arg {
   private:
@@ -166,7 +166,7 @@ namespace Gecode { namespace Reflection {
     * \brief Iterate over an IntArrayArg, interpreting consecutive
     * pairs of integers as ranges
     *
-    * \ingroup TaskIntReflect
+    * \ingroup TaskModelReflect
     */
   class IntArrayArgRanges {
   private:
@@ -191,7 +191,7 @@ namespace Gecode { namespace Reflection {
 
   /**
     * \brief String arguments
-    * \ingroup TaskIntReflect
+    * \ingroup TaskModelReflect
     */
   class StringArg : public Arg {
   public:
@@ -203,7 +203,7 @@ namespace Gecode { namespace Reflection {
   
   /**
     * \brief Pair arguments
-    * \ingroup TaskIntReflect
+    * \ingroup TaskModelReflect
     */
   class PairArg : public Arg {
   public:
@@ -219,7 +219,7 @@ namespace Gecode { namespace Reflection {
   
   /**
     * \brief %Variable specification
-    * \ingroup TaskIntReflect
+    * \ingroup TaskModelReflect
     */
   class VarSpec {
   private:
@@ -263,7 +263,7 @@ namespace Gecode { namespace Reflection {
   
   /**
     * \brief %Actor specification
-    * \ingroup TaskIntReflect
+    * \ingroup TaskModelReflect
     */
   class ActorSpec {
   private:
@@ -325,7 +325,7 @@ namespace Gecode { namespace Reflection {
     * and branchings) of a space. The iterator also provides access to the
     * corresponding variables map.
     *
-    * \ingroup TaskIntReflect
+    * \ingroup TaskModelReflect
     */
   class SpecIter {
   private:
