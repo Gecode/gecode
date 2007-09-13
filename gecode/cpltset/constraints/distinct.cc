@@ -42,10 +42,34 @@ using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
+  namespace CpltSet { namespace Distinct {
+    template <class View>
+    void distinct(Space* home, ViewArray<View>& x) {
+  
+      int n = x.size();
+      // build partition
+      bdd d0 = bdd_true();     
+
+      unsigned int width = x[0].table_width();
+
+      for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+          bdd nq = bdd_false();
+          for (unsigned int k = 0; k < width; k++) {
+            nq |= !(x[i].getbdd(k) % x[j].getbdd(k));
+          }
+          d0 &= nq;
+        }
+      } 
+
+      GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
+    }    
+  }}
+
   void distinct(Space* home, const CpltSetVarArgs& x) {
     if (home->failed()) return;
     ViewArray<CpltSetView> y(home, x);
-    distinct(home, y);
+    Distinct::distinct(home, y);
   }
 
 }

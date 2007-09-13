@@ -40,6 +40,326 @@
 using namespace Gecode::CpltSet;
 
 namespace Gecode {
+  
+  namespace CpltSet { namespace AtMost {
+    
+    template <class View>
+    void 
+    atmostOne_post(Space* home, ViewArray<View>& x, int c) {
+      if (home->failed()) return;
+      int n = x.size();
+
+      int minx = x[0].mgr_min();
+      int maxx = x[0].mgr_max(); 
+      unsigned int xtab = x[0].table_width();  
+      for (int i = n; i--;) {
+        if (x[i].mgr_min() < minx) {
+          minx = x[i].mgr_min();
+        }
+        if (x[i].mgr_max() > maxx) {
+          maxx = x[i].mgr_max();
+        }
+        if (x[i].table_width() > xtab) {
+          xtab = x[i].table_width();
+        }
+      }
+
+      bdd d0 = bdd_true();     
+      for (int i = 0; i < n; i++) {
+        unsigned int xoff = x[i].offset();
+        unsigned int xtab = x[i].table_width();
+        //d0 &= cardrec(mgr, 0, xoff, xtab, c, c);    
+        d0 &= cardcheck(xtab, xoff, c, c);    
+      }
+      // std::cout << "cardrec done = " << mgr->bddsize(d0) << "\n";
+
+      for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+  //         unsigned int xoff = x[i].offset();
+  //         unsigned int xtab = x[i].table_width();
+  //         unsigned int yoff = x[j].offset();
+  //         unsigned int ytab = x[j].table_width();
+          //d0 &= cardrec_bin(mgr, 0, xoff, xtab, yoff, ytab, 0, 1);
+          d0 &= extcardcheck(x[i], x[j], 0, 1);
+        }
+      }
+      // std::cout << "bddsize = " << mgr->bddsize(d0) << "\n";
+      GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
+    }
+
+    template <class View>
+    void 
+    atmost_post(Space* home, ViewArray<View>& x, int c, 
+                SetRelType lex, int card) {
+      if (home->failed()) return;
+
+      unsigned int x1_tab = x[1].table_width();
+
+      // cardinality description for the intersection x \cap y
+      bdd d0 = bdd_true();
+
+      // equivalence of intersection x \cap y with intermediate variable z
+      //for (unsigned int i = 0; i < x1_tab; i++) {
+      for (unsigned int i = x1_tab; i--;) {
+        d0 &= ((x[0].getbdd(i) & x[1].getbdd(i)) % (x[2].getbdd(i)));
+      }
+
+      // cardinality description of intermediate variable z
+      bdd c0 = bdd_true();
+      unsigned int off = x[2].offset();
+      unsigned int tab = x[2].table_width();
+
+      // c0 = cardrec(mgr, 0, off, tab, 0, c);
+      c0 = cardcheck(tab, off, 0, c);
+
+      // combination of intersection and cardinality
+      d0 &= c0;
+
+      GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
+
+    }
+
+    template <class View>
+    void 
+    atmost_post(Space* home, ViewArray<View>& x, int c, 
+                CpltSetRelType lex, int card) {
+      if (home->failed()) return;
+
+      unsigned int x1_tab = x[1].table_width();
+
+      // cardinality description for the intersection x \cap y
+      bdd d0 = bdd_true();
+
+      // equivalence of intersection x \cap y with intermediate variable z
+      //for (unsigned int i = 0; i < x1_tab; i++) {
+      for (unsigned int i = x1_tab; i--;) {
+        d0 &= ((x[0].getbdd(i) & x[1].getbdd(i)) % (x[2].getbdd(i)));
+      }
+
+      // cardinality description of intermediate variable z
+      bdd c0 = bdd_true();
+      unsigned int off = x[2].offset();
+      unsigned int tab = x[2].table_width();
+
+      // c0 = cardrec(mgr, 0, off, tab, 0, c);
+      c0 = cardcheck(tab, off, 0, c);
+
+      // combination of intersection and cardinality
+      d0 &= c0;
+
+      // lexicographic constraint x[0] < x[1]
+
+      unsigned int xoff = x[0].offset();
+      unsigned int yoff = x[1].offset();
+      unsigned int xtab = x[0].table_width();
+      unsigned int ytab = x[1].table_width();
+      switch (lex) {
+      case SRT_LE:
+        {
+          d0 &= lexlt(xoff, yoff, xtab, xtab - 1);
+          break;
+        }
+      case SRT_GR:
+        {
+          d0 &= lexlt(yoff, xoff, xtab, xtab - 1);
+          break;
+        }
+      case SRT_LQ:
+        {
+          d0 &= lexlq(xoff, yoff, xtab, xtab - 1);
+          break;
+        }
+      case SRT_GQ:
+        {
+          d0 &= lexlq(yoff, xoff, xtab, xtab - 1);
+          break;
+        }
+      case SRT_LE_REV:
+        {
+          d0 &= lexltrev(xoff, yoff, xtab, 0);
+          break;
+        }
+      case SRT_GR_REV:
+        {
+          d0 &= lexltrev(yoff, xoff, xtab, 0);
+          break;
+        }
+      case SRT_LQ_REV:
+        {
+          d0 &= lexlqrev(xoff, yoff, xtab, 0);
+          break;
+        }
+      case SRT_GQ_REV:
+        {
+          d0 &= lexlqrev(yoff, xoff, xtab, 0);
+          break;
+        }
+      default:
+        {
+          // dont use additional lexicographic ordering
+          break;
+        }
+      }
+
+
+      GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
+
+    }
+
+    template <class View>
+    void 
+    atmost_post(Space* home, View& x, View& y, int c, CpltSetRelType lex,
+                int card) {
+      if (home->failed()) return;
+
+      unsigned int xoff = x.offset();
+      unsigned int yoff = y.offset();
+      unsigned int xtab = x.table_width();
+      unsigned int ytab = y.table_width();
+
+      // cardinality description for the intersection x \cap y
+      bdd d0 = bdd_true();
+      d0 = extcardcheck(x, y, 0, c);
+
+      // extra lexicographic order on bit strings x \sim_{lex} y
+      switch (lex) {
+      case SRT_LE:
+        {
+          d0 &= lexlt(xoff, yoff, xtab, xtab - 1);
+          break;
+        }
+      case SRT_GR:
+        {
+          d0 &= lexlt(yoff, xoff, xtab, xtab - 1);
+          break;
+        }
+      case SRT_LQ:
+        {
+          d0 &= lexlq(xoff, yoff, xtab, xtab - 1);
+          break;
+        }
+      case SRT_GQ:
+        {
+          d0 &= lexlq(yoff, xoff, xtab, xtab - 1);
+          break;
+        }
+      case SRT_LE_REV:
+        {
+          d0 &= lexltrev(xoff, yoff, xtab, 0);
+          break;
+        }
+      case SRT_GR_REV:
+        {
+          d0 &= lexltrev(yoff, xoff, xtab, 0);
+          break;
+        }
+      case SRT_LQ_REV:
+        {
+          d0 &= lexlqrev(xoff, yoff, xtab, 0);
+          break;
+        }
+      case SRT_GQ_REV:
+        {
+          d0 &= lexlqrev(yoff, xoff, xtab, 0);
+          break;
+        }
+      default:
+        {
+          // dont use additional lexicographic ordering
+          break;
+        }
+      }
+
+      // extra cardinality information on x and y
+      if (card > -1) {
+        d0 &= cardcheck(xtab, xoff, card, card);
+        d0 &= cardcheck(ytab, yoff, card, card);
+      }
+
+      if (x.assigned()) {
+        // std::cout << "atmost: x assigned\n";
+        d0 &= x.bdd_domain();
+      }
+
+      if (y.assigned()) {
+        // std::cout << "atmost: y assigned\n";
+        d0 &= y.bdd_domain();
+      }
+      // std::cerr << "star prop\n";
+      GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
+    }
+
+    template <class View>
+    void 
+    atmost_post(Space* home, View& x, View& y, int c, SetRelType lex,
+                int card) {
+      if (home->failed()) return;
+
+      unsigned int xoff = x.offset();
+      unsigned int yoff = y.offset();
+      unsigned int xtab = x.table_width();
+      unsigned int ytab = y.table_width();
+
+      // cardinality description for the intersection x \cap y
+      bdd d0 = bdd_true();
+      d0 = extcardcheck(x, y, 0, c);
+
+      // dont use additional lexicographic ordering
+
+      // extra cardinality information on x and y
+      if (card > -1) {
+        d0 &= cardcheck(xtab, xoff, card, card);
+        d0 &= cardcheck(ytab, yoff, card, card);
+      }
+
+      if (x.assigned()) {
+        // std::cout << "atmost: x assigned\n";
+        d0 &= x.bdd_domain();
+      }
+
+      if (y.assigned()) {
+        // std::cout << "atmost: y assigned\n";
+        d0 &= y.bdd_domain();
+      }
+      // std::cerr << "star prop\n";
+      GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
+    }
+
+    template <class Rel>
+    forceinline void 
+    atmost_con(Space* home, const CpltSetVar& x, const CpltSetVar& y, int c, 
+               Rel lex, int card) {
+      CpltSetView xv(x);
+      CpltSetView yv(y);
+      atmost_post(home, xv, yv, c, lex, card);
+    }
+
+    template <class Rel>
+    forceinline void 
+    atmost_con(Space* home, const CpltSetVar& x, const CpltSetVar& y, const CpltSetVar& z, 
+               int c, Rel lex, int card) {
+      ViewArray<CpltSetView> bv(home, 3);
+      bv[0] = x;
+      bv[1] = y;
+      bv[2] = z;
+      atmost_post(home, bv, c, lex, card);
+    }
+
+
+    forceinline void 
+    atmostOne_con(Space* home, const CpltSetVarArgs& x, int c) {
+      int n = x.size();
+      ViewArray<CpltSetView> bv(home, n);
+      for (int i = 0; i < n; i++) {
+        bv[i] = x[i];
+      }
+      atmostOne_post(home, bv, c);
+    }
+  
+    
+  }} // end namespace CpltSet::AtMost
+
+  using namespace CpltSet::AtMost;
 
   void
   exactly(Space* home, CpltSetVar x, IntSet& is, int c) {

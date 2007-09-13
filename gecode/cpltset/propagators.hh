@@ -255,7 +255,7 @@ namespace Gecode { namespace CpltSet {
   };
 
   template <class View0, class View1>
-  class Range : 
+  class NaryTwoCpltSetPropagator : 
     public Propagator {
   protected:
     /// Array of views of type View0
@@ -267,9 +267,11 @@ namespace Gecode { namespace CpltSet {
     /// Bdd representation of the constraint
     bdd d;
     /// Constructor for cloning \a p
-    Range(Space* home, bool share, Range& p);
+    NaryTwoCpltSetPropagator(Space* home, bool share, 
+                             NaryTwoCpltSetPropagator& p);
     /// Constructor for posting
-    Range(Space* home, ViewArray<View0>&, View1&, View1&, bdd&);
+    NaryTwoCpltSetPropagator(Space* home,
+                             ViewArray<View0>&, View1&, View1&, bdd&);
     /// Divide and conquer method including additional \a y and \a z views
     ExecStatus divide_conquer(Space* home, bdd& p, int l, int r, 
                               int ypos, int zpos);
@@ -294,17 +296,11 @@ namespace Gecode { namespace CpltSet {
 }}
 
 #include "gecode/cpltset/propagators/nary.icc"
+#include "gecode/cpltset/propagators/naryone.icc"
+#include "gecode/cpltset/propagators/narytwo.icc"
 #include "gecode/cpltset/propagators/binary.icc"
 #include "gecode/cpltset/propagators/unary.icc"
 #include "gecode/cpltset/propagators/singleton.icc" 
-#include "gecode/cpltset/propagators/rangeroots.icc"
-
-#include "gecode/cpltset/constraints/distinct.icc"
-#include "gecode/cpltset/constraints/partition.icc"
-#include "gecode/cpltset/constraints/atmost.icc"
-#include "gecode/cpltset/constraints/rel.icc"
-#include "gecode/cpltset/constraints/select.icc"
-
 
 #endif
 

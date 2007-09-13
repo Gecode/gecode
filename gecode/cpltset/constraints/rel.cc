@@ -41,6 +41,480 @@ using namespace Gecode::CpltSet;
 
 namespace Gecode {
 
+  namespace CpltSet { namespace Rel {
+
+    template <class View>
+    void rel_post(Space* home, View x, CpltSetRelType r, View y) {
+
+      if (home->failed()) return;
+      // important:
+      // the offset order is linear from left to right for the viewarray
+
+      unsigned int xoff = x.offset();
+      unsigned int yoff = y.offset();
+      unsigned int tab = std::max(x.table_width(), y.table_width());
+
+      // Initialize the bdd representing the constraint
+      bdd d0 = bdd_true();
+
+      switch(r) {
+      case SRT_LE: 
+        {
+          d0 = lexlt(xoff, yoff, tab, tab - 1);
+        }
+        break;
+      case SRT_GR: 
+        {
+          d0 = lexlt(yoff, xoff, tab, tab - 1);
+        }
+        break;
+      case SRT_LQ: 
+        {
+          d0 = lexlq(xoff, yoff, tab, tab - 1);
+        }
+        break;
+      case SRT_GQ: 
+        {
+          d0 = lexlt(yoff, xoff, tab, tab - 1);
+        }
+        break;
+      case SRT_LE_REV: 
+        {
+          d0 = lexltrev(xoff, yoff, tab, 0);
+        }
+        break;
+      case SRT_GR_REV: 
+        {
+          d0 = lexltrev(yoff, xoff, tab, 0);
+        }
+        break;
+      case SRT_LQ_REV: 
+        {
+          d0 = lexlqrev(xoff, yoff, tab, 0);
+        }
+        break;
+      case SRT_GQ_REV: 
+        {
+          d0 = lexltrev(yoff, xoff, tab, 0);
+        }
+        break;
+      default:
+        {
+          throw CpltSet::InvalidRelation (" COMPL = EQ NEG y ??? ");
+          return;
+        }
+      }
+
+      GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
+    }
+
+    template <class View>
+    void rel_post(Space* home, View x, SetRelType r, View y) {
+
+      if (home->failed()) return;
+      // important:
+      // the offset order is linear from left to right for the viewarray
+
+      unsigned int tab = std::max(x.table_width(), y.table_width());
+
+      // Initialize the bdd representing the constraint
+      bdd d0 = bdd_true();
+
+      switch(r) {
+      case SRT_SUB: 
+        {
+          for (int i = 0; i < (int) tab; i++) {
+            d0 &= (x.getbdd(i)) >>= (y.getbdd(i));
+          }
+        }
+        break;
+      case SRT_SUP: 
+        {
+          for (int i = 0; i < (int) tab; i++) {
+            d0 &= (y.getbdd(i)) >>= (x.getbdd(i));
+          }
+        }
+        break;
+        // try whether changing the bit order is faster for conjunction
+      case SRT_DISJ: 
+        {
+  //         for (int i = 0; i < (int) tab; i++) {
+  //           d0 &= !(y.getbdd(i) & x.getbdd(i));
+  //         }
+
+  //         std::cerr << "DISJ: " << x << " and " << y << "\n";
+
+  //         for (int i = (int) tab ; i--; ) {
+  //           d0 &= !(y.getbdd(i) & x.getbdd(i));
+  //         }
+
+          Set::LubRanges<View> lubx(x);
+          Set::LubRanges<View> luby(y);
+          Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+            inter(lubx, luby);
+          Gecode::Iter::Ranges::ToValues<
+            Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+            > ival(inter);
+
+          Gecode::Iter::Ranges::ValCache<
+            Gecode::Iter::Ranges::ToValues<
+                   Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+            >
+            > cache(ival);
+
+          if (!cache()) {
+            // std::cerr << "no post SRT_DISJ needed\n";
+            return; 
+          } else {
+            cache.last();
+            for (; cache(); --cache) {
+              int v = cache.min();
+              int minx = x.mgr_min();
+              int miny = y.mgr_min();
+              d0 &= (!(x.getbdd(v - minx) & y.getbdd(v - miny)));
+            }
+          }
+          GECODE_ES_FAIL(home, (BinRelDisj<View,View>::post(home, x, y, d0)));
+          return;
+        }
+        break;
+      case SRT_EQ: 
+        {
+          int xshift = 0;
+          for (int i = 0; i < (int) tab; i++) {
+            if (y.mgr_min() + i < x.mgr_min() || y.mgr_min() + i > x.mgr_max()) {
+              d0 &= (bdd_false() % y.getbdd(i));
+              xshift++;
+            } else {
+              d0 &= (x.getbdd(i - xshift) % y.getbdd(i));
+            }
+          }
+        }
+        break;
+      case SRT_NQ: 
+        {
+          Set::LubRanges<View> lubx(x);
+          Set::LubRanges<View> luby(y);
+          Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+            inter(lubx, luby);
+          Gecode::Iter::Ranges::ToValues<
+            Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
+            > ival(inter);
+          if (!ival()) {
+            std::cerr << "no post SRT_NQ needed\n";
+            return; 
+          } else {
+            for (; ival(); ++ival) {
+              int v = ival.val();
+              int ix = x.valididx(v);
+              int iy = y.valididx(v);
+              d0 &= (x.getbdd(ix) % y.getbdd(iy));
+            }
+          }
+          d0 = !d0;
+  //         for (int i = 0; i < (int) tab; i++) {
+  //           d0 &= ((x.getbdd(i)) % (y.getbdd(i)));
+  //         }
+  //         d0 = !d0;
+        }
+        break;
+      default:
+        {
+          throw CpltSet::InvalidRelation (" COMPL = EQ NEG y ??? ");
+          return;
+        }
+      }
+
+      GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
+    }
+
+    template <class View0, class View1>
+    void rel_post(Space* home, View0 x, CpltSetRelType r, View1 s) {
+
+      if (home->failed()) return;
+      // important:
+      // the offset order is linear from left to right for the viewarray
+
+      unsigned int xoff = x.offset();
+      unsigned int yoff = s.offset();
+      unsigned int tab = std::max(x.table_width(), s.table_width());
+
+      // Initialize the bdd representing the constraint
+      bdd d0 = bdd_true();
+
+      switch(r) {
+        // introducing lexicographic ordering constraint
+        // over the bitvectors of the corresponding sets
+        // x[0] <_lex x[1], i.e. {2} <_lex {1} because 010 <_lex 100
+      case SRT_LE: 
+        {
+          d0 = lexlt(xoff, yoff, tab, tab - 1);
+        }
+        break;
+      case SRT_GR: 
+        {
+          d0 = lexlt(yoff, xoff, tab, tab - 1);
+        }
+        break;
+      case SRT_LQ: 
+        {
+          d0 = lexlq(xoff, yoff, tab, tab - 1);
+        }
+        break;
+      case SRT_GQ: 
+        {
+          d0 = lexlt(yoff, xoff, tab, tab - 1);
+        }
+        break;
+      default:
+        {
+          throw CpltSet::InvalidRelation (" COMPL = EQ NEG y ??? ");
+          return;
+        }
+      }
+
+      GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View0, View1>::post(home, x, s, d0)));
+    }
+
+
+    template <class View0, class View1>
+    void rel_post(Space* home, View0 x, SetRelType r, View1 s) {
+
+      if (home->failed()) return;
+      // important:
+      // the offset order is linear from left to right for the viewarray
+
+      unsigned int tab = std::max(x.table_width(), s.table_width());
+
+      // Initialize the bdd representing the constraint
+      bdd d0 = bdd_true();
+
+      switch(r) {
+      case SRT_SUB: 
+        {
+
+          // x < s
+          int xshift = x.mgr_min() - s.mgr_min();
+          for (int i = 0; i < (int) tab; i++) {
+            if (s.mgr_min() + i >= x.mgr_min()) {
+              if (s.mgr_min() + i <= x.mgr_max()) {
+                d0 &= (x.getbdd(i - xshift)) >>= (s.getbdd(i));
+              } else {
+                // d0 &= s.getbdd(i);
+              }
+            } else {
+              // d0 &= s.getbdd(i);
+            }
+          }
+        }
+
+        if (s.assigned()) {
+          // assigned
+          d0 &= s.bdd_domain();
+        }
+        break;
+      case SRT_SUP: 
+        {
+          for (int i = 0; i < (int) tab; i++) {
+            d0 &= (s.getbdd(i)) >>= (x.getbdd(i));
+          }
+        }
+        break;
+      case SRT_DISJ: 
+        {
+          for (int i = 0; i < (int) tab; i++) {
+            d0 &= !(s.getbdd(i) & x.getbdd(i));
+          }
+        }
+        break;
+      case SRT_EQ: 
+        {
+          int xshift = 0;
+          for (int i = 0; i < (int) tab; i++) {
+            if (s.mgr_min() + i < x.mgr_min() || s.mgr_min() + i > x.mgr_max()) {
+              d0 &= (bdd_false() % s.getbdd(i));
+              xshift++;
+            } else {
+              d0 &= (x.getbdd(i - xshift) % s.getbdd(i));
+            }
+          }
+        }
+        break;
+      case SRT_NQ: 
+        {
+          for (int i = 0; i < (int) tab; i++) {
+            d0 &= ((x.getbdd(i)) % (s.getbdd(i)));
+          }
+          d0 = !d0;
+        }
+        break;
+      default:
+        {
+          throw CpltSet::InvalidRelation (" COMPL = EQ NEG y ??? ");
+          return;
+        }
+      }
+
+      GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View0, View1>::post(home, x, s, d0)));
+    }
+
+    // BddOp and BddRel
+    // 
+    template <class View>
+    void rel_post(Space* home, ViewArray<View>& x, CpltSetOpType o,   
+                  CpltSetRelType r) {
+      throw CpltSet::InvalidRelation(" no bdd rel implemented lex smaller ....");
+    }
+
+    // BddOp and SetRel
+    template <class View>
+    void rel_post(Space* home, ViewArray<View>& x, CpltSetOpType o, 
+                  SetRelType r) {
+      if (home->failed()) return;
+      // important:
+      // the offset order is linear from left to right for the viewarray
+
+      int x0_tab = x[0].table_width();
+
+      // Initialize the bdd representing the constraint
+      bdd d0 = bdd_true();
+
+      for (int i = x0_tab; i--; ) {
+        bdd op = bdd_true();
+        switch(o) {
+        case SOT_SYMDIFF:
+          {
+            op = ((x[0].getbdd(i) & (!x[1].getbdd(i))) | 
+                  (!x[0].getbdd(i) & (x[1].getbdd(i)))) ;
+            break;
+          }
+        default:
+          {
+            throw CpltSet::InvalidRelation(" other op rel relations not yet implemented ");
+            return;
+          }
+        }
+        switch (r) {
+        case SRT_EQ:
+          {
+            d0 &= (op % x[2].getbdd(i));
+            break;
+          }
+        default:
+          {
+            throw CpltSet::InvalidRelation(" other rel relations not yet implemented ");
+            return;
+          }
+        }
+      }
+
+      GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
+    }
+
+    // SetOp and BddRel
+    // 
+    template <class View>
+    void rel_post(Space* home, ViewArray<View>& x, SetOpType o,
+                  CpltSetRelType r) {
+      throw CpltSet::InvalidRelation(" no bdd rel implemented lex smaller with setoptype....");
+    }
+    // not yet implemented Bddrel SRT_LE and lex-stuff
+
+    // SetOp and SetRel
+    template <class View>
+    void rel_post(Space* home, ViewArray<View>& x, SetOpType o, SetRelType r) {
+      if (home->failed()) return;
+      // important:
+      // the offset order is linear from left to right for the viewarray
+
+      int x0_tab = x[0].table_width();
+
+      // Initialize the bdd representing the constraint
+      bdd d0 = bdd_true();
+
+      for (int i = x0_tab; i--; ) {
+        bdd op = bdd_true();
+        switch(o) {
+        case SOT_UNION:
+          {     
+            op = (x[0].getbdd(i) | x[1].getbdd(i));
+            break;
+          }
+        case SOT_DUNION:
+          {
+            op = (x[0].getbdd(i) | x[1].getbdd(i));
+            // for disjointness see below
+            break;
+          }
+        case SOT_INTER:
+          { 
+            op = x[0].getbdd(i) & x[1].getbdd(i);
+            break; 
+          }
+        case SOT_MINUS:
+          {
+            op = x[0].getbdd(i) & (!x[1].getbdd(i)); 
+            break;
+          }
+        default:
+          {
+            throw CpltSet::InvalidRelation(" other op rel relations not yet implemented ");
+            return;
+          }
+        }
+        switch (r) {
+        case SRT_EQ:
+          {
+            d0 &= (op % x[2].getbdd(i));
+            if (o == SOT_DUNION)
+              d0 &= !(x[0].getbdd(i) &  x[1].getbdd(i));
+            break;
+          }
+        default:
+          {
+            throw CpltSet::InvalidRelation(" other rel relations not yet implemented ");
+            return;
+          }
+        }
+      }
+      GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
+    }
+
+
+    template <class Rel>
+    void rel_con(Space* home, const CpltSetVar& x, Rel r, const CpltSetVar& y) {
+      CpltSetView xv(x);
+      CpltSetView yv(y);
+      rel_post(home, xv, r, yv);
+    }  
+
+
+    template <class Rel>
+    void rel_con(Space* home, const IntVar& x, Rel r, const CpltSetVar& s) {
+      Gecode::Int::IntView iv(x);
+      CpltSetView bv(s);
+  //     int rmin = std::min(iv.min(), bv.mgr_min());
+  //     int rmax = std::max(iv.max(), bv.mgr_max());
+  //     SingletonCpltSetView single(s.manager(), rmin, rmax, iv);
+      SingletonCpltSetView single(iv.min(), iv.max(), iv);
+      rel_post(home, single, r, bv);
+    }  
+
+    template <class Rel, class Op>
+    forceinline void
+    rel_con_bdd(Space* home, const CpltSetVar& x, Op o, const CpltSetVar& y,
+                Rel r, const CpltSetVar& z) {
+      ViewArray<CpltSetView> bv(home, 3);
+      bv[0] = x;
+      bv[1] = y;
+      bv[2] = z;
+      rel_post(home, bv, o, r);
+    }    
+    
+  }} // end namespace CpltSet::Rel
+  
+  using namespace CpltSet::Rel;
+
   void rel(Space* home, IntVar x, CpltSetRelType r, CpltSetVar y) {
     rel_con(home, x, r, y);
   }

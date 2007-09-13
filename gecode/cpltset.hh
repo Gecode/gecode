@@ -275,8 +275,8 @@ namespace Gecode {
 
   /// Post propagator for \f$ s = \bigcup_{(x_i \subseteq t) \wedge x_i \neq \emptyset } i \f$
   GECODE_CPLTSET_EXPORT void
-  findNonEmptySub(Space* home, const CpltSetVarArgs& x,
-                  CpltSetVar s, CpltSetVar t);
+  selectNonEmptySub(Space* home, const CpltSetVarArgs& x,
+                    CpltSetVar s, CpltSetVar t);
 
   /// Post propagator for \f$ s = \{x\} \f$
   GECODE_CPLTSET_EXPORT void
