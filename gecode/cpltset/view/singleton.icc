@@ -181,13 +181,17 @@ namespace Gecode {
      */
 
     forceinline unsigned int
-    SingletonCpltSetView::glbSize(void) const { return view.assigned() ? 1 : 0; }
+    SingletonCpltSetView::glbSize(void) const {
+      return view.assigned() ? 1 : 0;
+    }
 
     forceinline unsigned int
     SingletonCpltSetView::lubSize(void) const { return view.size(); }
 
     forceinline unsigned int
-    SingletonCpltSetView::unknownSize(void) const { return lubSize() - glbSize(); }
+    SingletonCpltSetView::unknownSize(void) const {
+      return lubSize() - glbSize();
+    }
 
     forceinline unsigned int
     SingletonCpltSetView::cardMin() const { return 1; }
@@ -223,13 +227,19 @@ namespace Gecode {
     SingletonCpltSetView::table_width(void)  const { return range; }
 
     forceinline bdd
-    SingletonCpltSetView::getbdd(int i)  const { return manager.bddpos(_offset + i); }
+    SingletonCpltSetView::getbdd(int i)  const {
+      return manager.bddpos(_offset + i);
+    }
 
     forceinline int
-    SingletonCpltSetView::getlevel(int i) { return manager.var2bdd(_offset + i); }
+    SingletonCpltSetView::getlevel(int i) {
+      return manager.var2bdd(_offset + i);
+    }
     
     forceinline int
-    SingletonCpltSetView::getvar(int i) { return manager.bdd2var(_offset + i); }
+    SingletonCpltSetView::getvar(int i) {
+      return manager.bdd2var(_offset + i);
+    }
 
     forceinline bdd 
     SingletonCpltSetView::bdd_domain(void) const { return domain; };
@@ -253,8 +263,9 @@ namespace Gecode {
     }
 
     forceinline ModEvent
-    SingletonCpltSetView::cardinality(Space* home,unsigned int l, unsigned int u) {
-      return u <=1 ? ME_CPLTSET_NONE : ME_CPLTSET_FAILED;
+    SingletonCpltSetView::cardinality(Space* home,
+                                      unsigned int l, unsigned int u) {
+      return (l<=1 && u>=1) ? ME_CPLTSET_NONE : ME_CPLTSET_FAILED;
     }
     
     forceinline ModEvent
@@ -472,7 +483,8 @@ namespace Gecode {
     SingletonCpltSetView::pme(ModEvent me) { return CpltSetView::pme(me); }
 
     forceinline void
-    SingletonCpltSetView::update(Space* home, bool share, SingletonCpltSetView& y) {
+    SingletonCpltSetView::update(Space* home, bool share, 
+                                 SingletonCpltSetView& y) {
       view.update(home,share,y.view);
       min = y.min;
       max = y.max;
@@ -507,7 +519,8 @@ namespace Gecode {
      * \ingroup TaskActorSetView
      */
     template <>
-    class LubRanges<CpltSet::SingletonCpltSetView> : public Int::IntVarImpFwd {
+    class LubRanges<CpltSet::SingletonCpltSetView>
+    : public Int::IntVarImpFwd {
     public:
       /// \name Constructors and initialization
       //@{
@@ -524,11 +537,13 @@ namespace Gecode {
     LubRanges<CpltSet::SingletonCpltSetView>::LubRanges(void) {}
 
     forceinline
-    LubRanges<CpltSet::SingletonCpltSetView>::LubRanges(const CpltSet::SingletonCpltSetView& s) :
+    LubRanges<CpltSet::SingletonCpltSetView>
+    ::LubRanges(const CpltSet::SingletonCpltSetView& s) :
       Int::IntVarImpFwd(s.base().variable()) {}
 
     forceinline void
-    LubRanges<CpltSet::SingletonCpltSetView>::init(const CpltSet::SingletonCpltSetView& s) {
+    LubRanges<CpltSet::SingletonCpltSetView>
+    ::init(const CpltSet::SingletonCpltSetView& s) {
       Int::IntVarImpFwd::init(s.base().variable());
     }
   }
@@ -557,15 +572,18 @@ namespace Gecode {
     LubValues<SingletonCpltSetView>::LubValues(void) {}
 
     forceinline
-    LubValues<SingletonCpltSetView>::LubValues(const SingletonCpltSetView& s) {
+    LubValues<SingletonCpltSetView>
+    ::LubValues(const SingletonCpltSetView& s) {
       Set::LubRanges<SingletonCpltSetView> lub(s);
       Iter::Ranges::ToValues<Set::LubRanges<SingletonCpltSetView> >::init(lub);
     }
 
     forceinline void
-    LubValues<SingletonCpltSetView>::init(const SingletonCpltSetView& s) {
+    LubValues<SingletonCpltSetView>
+    ::init(const SingletonCpltSetView& s) {
       Set::LubRanges<SingletonCpltSetView> lub(s);
-      Iter::Ranges::ToValues<Set::LubRanges<SingletonCpltSetView> >::init(lub);
+      Iter::Ranges::ToValues<
+        Set::LubRanges<SingletonCpltSetView> >::init(lub);
     }
   }
   namespace Set {
@@ -611,7 +629,8 @@ namespace Gecode {
     GlbRanges<CpltSet::SingletonCpltSetView>::GlbRanges(void) {}
 
     forceinline void
-    GlbRanges<CpltSet::SingletonCpltSetView>::init(const CpltSet::SingletonCpltSetView& s) {
+    GlbRanges<CpltSet::SingletonCpltSetView>
+    ::init(const CpltSet::SingletonCpltSetView& s) {
       if (s.base().assigned()) {
         val = s.base().val();
         flag = true;
@@ -622,12 +641,15 @@ namespace Gecode {
     }
 
     forceinline
-    GlbRanges<CpltSet::SingletonCpltSetView>::GlbRanges(const CpltSet::SingletonCpltSetView& s) {
+    GlbRanges<CpltSet::SingletonCpltSetView>
+    ::GlbRanges(const CpltSet::SingletonCpltSetView& s) {
       init(s);
     }
 
     forceinline bool
-    GlbRanges<CpltSet::SingletonCpltSetView>::operator()(void) const { return flag; }
+    GlbRanges<CpltSet::SingletonCpltSetView>::operator()(void) const {
+      return flag;
+    }
 
     forceinline void
     GlbRanges<CpltSet::SingletonCpltSetView>::operator++(void) { flag=false; }
@@ -646,11 +668,13 @@ namespace Gecode {
    *
    */
   forceinline bool
-  same(const CpltSet::SingletonCpltSetView& x, const CpltSet::SingletonCpltSetView& y) {
+  same(const CpltSet::SingletonCpltSetView& x,
+       const CpltSet::SingletonCpltSetView& y) {
     return same(x.base(),y.base());
   }
   forceinline bool
-  before(const CpltSet::SingletonCpltSetView& x, const CpltSet::SingletonCpltSetView& y) {
+  before(const CpltSet::SingletonCpltSetView& x,
+         const CpltSet::SingletonCpltSetView& y) {
     return before(x.base(),y.base());
   }
 
