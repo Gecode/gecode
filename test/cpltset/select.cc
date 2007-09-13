@@ -44,13 +44,20 @@ namespace Test { namespace CpltSet {
   /// Tests for selection constraints
   namespace Selection {
 
+    /**
+      * \defgroup TaskTestCpltSetSelect Selection constraints
+      * \ingroup TaskTestCpltSet
+      */
+    //@{
+
     static IntSet ds_012(0,2);
     static IntSet ds_1012(-1,2);
-
 
     // BE CAREFUL with number of variables and domain size
     // current instance ( |ds_012 = {-1#2}| = 4 and |x| = 2 + 2 = 4 ) => 2^16
     // takes at least 5 min to test
+
+    /// Test for selected union constraint
     class CpltSetSelectUnion : public CpltSetTest {
     private:
       int selector_pos;
@@ -59,13 +66,13 @@ namespace Test { namespace CpltSet {
     public:
       // using cache size of 10000 gives fastest time of 0m48s per iteration
       /// Create and register test
-      CpltSetSelectUnion(const char* t) : CpltSetTest(t, 4, ds_012, false, 0, 100, 10000), xsize(4) {
+      CpltSetSelectUnion(const char* t)
+      : CpltSetTest(t, 4, ds_012, false, 0, 100, 10000), xsize(4) {
         union_pos = xsize - 1;
         selector_pos = xsize - 2;
       }
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
-        // std::cout << "solution...";
         int selected = 0;
         // count the number of selected sets
         CountableSetValues count_sel(x.lub, x[selector_pos]);
@@ -74,7 +81,6 @@ namespace Test { namespace CpltSet {
         CountableSetValues xunion(x.lub, x[union_pos]);
         if (selected==0) {
           bool valid = !xunion();
-          // std::cout << (valid ? "valid\n" : "INVALID\n");
           return valid;
         }
 
@@ -82,7 +88,6 @@ namespace Test { namespace CpltSet {
         CountableSetValues selector(x.lub, x[selector_pos]);
         for (int i=selected; i--;++selector) {
           if (selector.val()>=selector_pos || selector.val()<0) {
-            // std::cout << "INVALID\n";
             return false;
           }
           sel[i].init(x.lub, x[selector.val()]);
@@ -91,7 +96,6 @@ namespace Test { namespace CpltSet {
 
         CountableSetRanges z(x.lub, x[union_pos]);
         bool valid = Iter::Ranges::equal(u,z);
-        // std::cout << (valid ? "valid\n" : "INVALID\n");
         return valid;
       }
       /// Post constraint on \a x
@@ -105,15 +109,16 @@ namespace Test { namespace CpltSet {
     };
     CpltSetSelectUnion _cpltsetselectUnion("Select::SelectUnion");
 
-
-    class CpltSetFindNonEmptySub : public CpltSetTest {
+    /// Test for selected non-empty subset constraint
+    class CpltSetSelectNonEmptySub : public CpltSetTest {
     private:
       int selector_pos;
       int union_pos;
       int xsize;
     public:
       /// Create and register test
-      CpltSetFindNonEmptySub(const char* t) : CpltSetTest(t, 4, ds_1012,false, 0, 800, 1000), xsize(4) {
+      CpltSetFindNonEmptySub(const char* t)
+      : CpltSetTest(t, 4, ds_1012,false, 0, 800, 1000), xsize(4) {
         /// using 1012 leads to 5min testtime for ONE iteration !
         union_pos = xsize - 1;
         selector_pos = xsize - 2;   
@@ -198,7 +203,10 @@ namespace Test { namespace CpltSet {
         Gecode::selectNonEmptySub(home, xs, x[selector_pos], x[union_pos]);
       }
     };
-    CpltSetFindNonEmptySub _cpltsetfindNonEmptySub("Select::FindNonEmptySub");
+    CpltSetSelectNonEmptySub 
+      _cpltsetselectNonEmptySub("Select::SelectNonEmptySub");
+
+    //@}
 
 }}}
 

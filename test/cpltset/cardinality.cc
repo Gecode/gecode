@@ -44,6 +44,12 @@ namespace Test { namespace CpltSet {
   /// Tests for cardinality constraints
   namespace Cardinality {
 
+    /**
+      * \defgroup TaskTestCpltSetCardinality Cardinality constraints
+      * \ingroup TaskTestCpltSet
+      */
+    //@{
+
     static const int d1r[4][2] = {
       {-4,-3},{-1,-1},{1,1},{3,5}
     };
@@ -53,6 +59,7 @@ namespace Test { namespace CpltSet {
     static IntSet ds_4(4,4);
     static IntSet ds_13(1,3);
 
+    /// Test for simple cardinality range constraint
     class CpltSetCardMinMax : public CpltSetTest {
     public:
       /// Create and register test
@@ -71,17 +78,12 @@ namespace Test { namespace CpltSet {
 
       /// Post constraint on \a x
       virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
-        // Test lex-bit order
-        // Gecode::hls_order(home, x);
         Gecode::cardinality(home, x[0], 0, 3);
       }
-    /// Post reified constraint on \a x for \a b
-    //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-    //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
-    //   }
     };
     CpltSetCardMinMax _cpltsetcardminmax("Card::MinMax");
 
+    /// Test for simple cardinality constraint
     class CpltSetCardEq : public CpltSetTest {
     public:
       /// Create and register test
@@ -100,18 +102,12 @@ namespace Test { namespace CpltSet {
 
       /// Post constraint on \a x
       virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
-        // Test lex-bit order
-        // Gecode::hls_order(home, x);
         Gecode::cardinality(home, x[0], 3, 3);
       }
-    /// Post reified constraint on \a x for \a b
-    //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-    //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
-    //   }
     };
     CpltSetCardEq _cpltsetcardeq("Card::Eq");
 
-
+    /// Test for simple cardinality range constraint
     class CpltSetCardMinInf : public CpltSetTest {
     public:
       /// Create and register test
@@ -130,16 +126,12 @@ namespace Test { namespace CpltSet {
 
       /// Post constraint on \a x
       virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
-        // Test lex-bit order
-        // Gecode::hls_order(home, x);
         Gecode::cardinality(home, x[0], 1, Gecode::Limits::Set::int_max);
       }
-    /// Post reified constraint on \a x for \a b
-    //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-    //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
-    //   }
     };
     CpltSetCardMinInf _cpltsetcardmininf("Card::MinInf");
+
+    //@}
 
 }}}
 

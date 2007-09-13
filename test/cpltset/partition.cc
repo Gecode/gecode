@@ -45,6 +45,12 @@ namespace Test { namespace CpltSet {
   /// Tests for partition constraints
   namespace Partition {
 
+    /**
+      * \defgroup TaskTestCpltSetPartition Partition constraints
+      * \ingroup TaskTestCpltSet
+      */
+    //@{
+
     static const int d1r[4][2] = {
       {-4,-3},{-1,-1},{1,1},{3,5}
     };
@@ -54,6 +60,7 @@ namespace Test { namespace CpltSet {
     static IntSet ds_4(4,4);
     static IntSet ds_13(1,3);
 
+    /// Test for partition constraint
     class CpltSetPartition : public CpltSetTest {
     public:
       /// Create and register test
@@ -80,37 +87,14 @@ namespace Test { namespace CpltSet {
         // Test lex-bit order
         Gecode::partition(home, x);
       }
-    /// Post reified constraint on \a x for \a b
-    //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-    //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
-    //   }
     };
     CpltSetPartition _cpltsetpartition("Partition");
 
-
+    /// Test for partition with lexicographic order constraint
     class CpltSetPartitionLex : public CpltSetTest {
     public:
       /// Create and register test
       CpltSetPartitionLex(const char* t) : CpltSetTest(t,2,ds_13,false) {}
-    //   template <class I>
-    //   int iter2int(I& r) const{
-    //     // std::cout << "iter2int\n";
-    //     // using ds_13 u = 3;
-    //     int u = 3;
-    //     if (!r()) {
-    //       return 0;
-    //     }
-    //     int v = 0;
-    //     // compute the bit representation of the assignment 
-    //     // and convert it to the corresponding integer
-    //     while(r()) {
-    //       v  |= ( 1 << (u - r.val()));
-    //       ++r;
-    //     }
-    //     return v;
-
-    //   }
-
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr1(x.lub, x[0]);
@@ -135,21 +119,17 @@ namespace Test { namespace CpltSet {
 
       /// Post constraint on \a x
       virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
-        // Test lex-bit order
         Gecode::partitionLex(home, x, SRT_LE);
       }
-    /// Post reified constraint on \a x for \a b
-    //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-    //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
-    //   }
     };
     CpltSetPartitionLex _cpltsetpartitionlex("Partition::Lex");
 
-
+    /// Test for partition with result constraint
     class CpltSetPartitionNaryOne : public CpltSetTest {
     public:
       /// Create and register test
-      CpltSetPartitionNaryOne(const char* t) : CpltSetTest(t,3,ds_13,false, 0, 200, 10) {}
+      CpltSetPartitionNaryOne(const char* t)
+      : CpltSetTest(t,3,ds_13,false, 0, 200, 10) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr1(x.lub, x[0]);
@@ -180,12 +160,12 @@ namespace Test { namespace CpltSet {
     };
     CpltSetPartitionNaryOne _cpltsetpartitionnaryone("Partition::NaryOne");
 
+    /// Test for smaller instance of partition constraint
     class CpltSetPartitionNaryOneSmaller : public CpltSetTest {
     public:
       /// Create and register test
-      CpltSetPartitionNaryOneSmaller(const char* t) : CpltSetTest(t,3,d1,false, 200, 80) {
-    
-      }
+      CpltSetPartitionNaryOneSmaller(const char* t)
+      : CpltSetTest(t,3,d1,false, 200, 80) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
         CountableSetRanges xr1(x.lub, x[0]);
@@ -220,19 +200,21 @@ namespace Test { namespace CpltSet {
         dom(home, y, SRT_EQ, 3, 5);
       }
     };
-    CpltSetPartitionNaryOneSmaller _cpltsetpartitionnaryonesmaller("Partition::NaryOne::Smaller");
+    CpltSetPartitionNaryOneSmaller 
+      _cpltsetpartitionnaryonesmaller("Partition::NaryOne::Smaller");
 
-
+    /// Test for partition of integer variables constraint
     class CpltSetPartitionNaryOneInt : public CpltSetTest {
     public:
       /// Create and register test
-      CpltSetPartitionNaryOneInt(const char* t) : CpltSetTest(t,1,ds_13,false, 2, 200, 10) {}
+      CpltSetPartitionNaryOneInt(const char* t)
+      : CpltSetTest(t,1,ds_13,false, 2, 200, 10) {}
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
-
         Iter::Ranges::Singleton y0(x.ints()[0], x.ints()[0]);
         Iter::Ranges::Singleton y1(x.ints()[1], x.ints()[1]);
-        Iter::Ranges::Union<Iter::Ranges::Singleton, Iter::Ranges::Singleton> u(y0, y1);
+        Iter::Ranges::Union<Iter::Ranges::Singleton, Iter::Ranges::Singleton> 
+          u(y0, y1);
 
         CountableSetRanges xr(x.lub, x[0]);
 
@@ -251,6 +233,8 @@ namespace Test { namespace CpltSet {
 
     CpltSetPartitionNaryOneInt 
       _cpltsetpartitionnaryoneint("Partition::NaryOne::Int");
+
+    //@}
 
 }}}
 

@@ -44,6 +44,12 @@ namespace Test { namespace CpltSet {
   /// Tests for intersection constraints
   namespace AtMost {
 
+    /**
+      * \defgroup TaskTestCpltSetAtMost Intersection constraints
+      * \ingroup TaskTestCpltSet
+      */
+    //@{
+
     static const int d1r[4][2] = {
       {-4,-3},{-1,-1},{1,1},{3,5}
     };
@@ -53,6 +59,7 @@ namespace Test { namespace CpltSet {
     static IntSet ds_4(4,4);
     static IntSet ds_13(1,3);
 
+    /// Test for atmost intersection constraint
     class CpltSetAtmost : public CpltSetTest {
     public:
       /// Create and register test
@@ -77,13 +84,10 @@ namespace Test { namespace CpltSet {
         // Test lex-bit order
         Gecode::atmost(home, x[0], x[1], 1);
       }
-    /// Post reified constraint on \a x for \a b
-    //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-    //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
-    //   }
     };
     CpltSetAtmost _cpltsetatmost("Atmost::1");
 
+    /// Test for atmost intersection with lexicographic order constraint
     class CpltSetAtmostLexLe : public CpltSetTest {
     public:
       /// Create and register test
@@ -117,7 +121,7 @@ namespace Test { namespace CpltSet {
     };
     CpltSetAtmostLexLe _cpltsetatmostlexle("Atmost::Lex::Le");
 
-
+    /// Test for atmost intersection with IntSet constraint
     class CpltSetAtmostIntSet : public CpltSetTest {
     public:
       /// Create and register test
@@ -143,6 +147,8 @@ namespace Test { namespace CpltSet {
       }
     };
     CpltSetAtmostIntSet _cpltsetatmostintset("Atmost::IntSet");
+
+    //@}
 
 }}}
 

@@ -44,6 +44,12 @@ namespace Test { namespace CpltSet {
   /// Tests for domain constraints
   namespace Dom {
 
+    /**
+      * \defgroup TaskTestCpltSetDom Domain constraints
+      * \ingroup TaskTestCpltSet
+      */
+    //@{
+
     static const int d1r[4][2] = {
       {-4,-3},{-1,-1},{1,1},{3,5}
     };
@@ -52,6 +58,7 @@ namespace Test { namespace CpltSet {
     static IntSet ds_33(-3,3);
     static IntSet ds_4(4,4);
 
+    /// Test for domain equality with range constraint
     class CpltSetDomEqRange : public CpltSetTest {
     public:
       /// Create and register test
@@ -66,13 +73,10 @@ namespace Test { namespace CpltSet {
       virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
         Gecode::dom(home, x[0], SRT_EQ, ds_33);
       }
-    /// Post reified constraint on \a x for \a b
-    //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-    //     Gecode::dom(home, x[0], SRT_EQ, ds_33, b);
-    //   }
     };
     CpltSetDomEqRange _cpltsetdomeqrange("Dom::EqRange");
 
+    /// Test for domain equality with full domain constraint
     class CpltSetDomEqDom : public CpltSetTest {
     public:
       /// Create and register test
@@ -87,15 +91,10 @@ namespace Test { namespace CpltSet {
       virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
         Gecode::dom(home, x[0], SRT_EQ, d1);
       }
-    /// Post reified constraint on \a x for \a b
-    //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-    //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
-    //   }
     };
     CpltSetDomEqDom _cpltsetdomeq("Dom::EqDom");
 
-
-
+    /// Test for domain superset with range constraint
     class CpltSetDomSupRange : public CpltSetTest {
     public:
       /// Create and register test
@@ -110,13 +109,10 @@ namespace Test { namespace CpltSet {
       virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
         Gecode::dom(home, x[0], SRT_SUP, ds_33);
       }
-    /// Post reified constraint on \a x for \a b
-    //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-    //     Gecode::dom(home, x[0], SRT_SUP, ds_33, b);
-    //   }
     };
     CpltSetDomSupRange _cpltsetdomsuprange("Dom::SupRange");
 
+    /// Test for domain superset with full domain constraint
     class CpltSetDomSupDom : public CpltSetTest {
     public:
       /// Create and register test
@@ -131,12 +127,10 @@ namespace Test { namespace CpltSet {
       virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
         Gecode::dom(home, x[0], SRT_SUP, d1);
       }
-    /// Post reified constraint on \a x for \a b
-    //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-    //     Gecode::dom(home, x[0], SRT_SUP, d1, b);
-    //   }
     };
     CpltSetDomSupDom _cpltsetdomsup("Dom::SupDom");
+
+    //@}
 
 }}}
 

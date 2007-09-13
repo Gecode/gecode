@@ -44,6 +44,12 @@ namespace Test { namespace CpltSet {
   /// Tests for relation constraints
   namespace Rel {
 
+    /**
+      * \defgroup TaskTestCpltSetRel Relation constraints
+      * \ingroup TaskTestCpltSet
+      */
+    //@{
+
     static const int d1r[4][2] = {
       {-4,-3},{-1,-1},{1,1},{3,5}
     };
@@ -53,6 +59,7 @@ namespace Test { namespace CpltSet {
     static IntSet ds_4(4,4);
     static IntSet ds_13(1,3);
 
+    /// Test for lexicographic less relation constraint
     class CpltSetRelLe : public CpltSetTest {
     public:
       /// Create and register test
@@ -63,25 +70,19 @@ namespace Test { namespace CpltSet {
         CountableSetValues xr1(x.lub, x[0]);
         CountableSetValues xr2(x.lub, x[1]);
         // in lex-bit order empty is the smallest
-        // std::cout << x[0] << " and " << x[1] << "\n";
         int a = (iter2int(xr1, 3));
         int b = (iter2int(xr2, 3));
-        // std::cout << a << " < " << b << "\n";
         return a < b;
-    //     return false;
       }
       /// Post constraint on \a x
       virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
         // Test lex-bit order
         Gecode::rel(home, x[0], SRT_LE, x[1]);
       }
-    /// Post reified constraint on \a x for \a b
-    //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-    //     Gecode::dom(home, x[0], SRT_LE, d1, b,SCL_DOM);
-    //   }
     };
     CpltSetRelLe _cpltsetrelle("Rel::Le");
 
+    /// Test for lexicographic less-or-equal relation constraint
     class CpltSetRelLq : public CpltSetTest {
     public:
       /// Create and register test
@@ -92,26 +93,19 @@ namespace Test { namespace CpltSet {
         CountableSetValues xr1(x.lub, x[0]);
         CountableSetValues xr2(x.lub, x[1]);
         // in lex-bit order empty is the smallest
-        // std::cout << x[0] << " and " << x[1] << "\n";
         int a = (iter2int(xr1, 3));
         int b = (iter2int(xr2, 3));
-        // std::cout << a << " < " << b << "\n";
         return a <= b;
-    //     return false;
       }
       /// Post constraint on \a x
       virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
         // Test lex-bit order
         Gecode::rel(home, x[0], SRT_LQ, x[1]);
       }
-    /// Post reified constraint on \a x for \a b
-    //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-    //     Gecode::dom(home, x[0], SRT_LQ, d1, b,SCL_DOM);
-    //   }
     };
     CpltSetRelLq _cpltsetrellq("Rel::Lq");
 
-
+    /// Test for lexicographic less diff constraint
     class CpltSetRelLeDiff : public CpltSetTest {
     public:
       /// Create and register test
@@ -121,12 +115,9 @@ namespace Test { namespace CpltSet {
         CountableSetValues xr1(x.lub, x[0]);
         CountableSetValues xr2(x.lub, x[1]);
         // in lex-bit order empty is the smallest
-        // std::cout << x[0] << " and " << x[1] << "\n";
         int a = (iter2int(xr1,3));
         int b = (iter2int(xr2,3));
-        // std::cout << a << " < " << b << "\n";
         return a < b;
-    //     return false;
       }
       /// Post constraint on \a x
       virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
@@ -135,14 +126,10 @@ namespace Test { namespace CpltSet {
         Gecode::dom(home, x[1], SRT_SUB, ds_13);
         Gecode::rel(home, x[0], SRT_LE, x[1]);
       }
-    /// Post reified constraint on \a x for \a b
-    //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-    //     Gecode::dom(home, x[0], SRT_EQ, d1, b,SCL_DOM);
-    //   }
     };
     CpltSetRelLe _cpltsetrellediff("Rel::Le::Diff");
 
-
+    /// Test for disjoint constraint
     class CpltSetRelDisj : public CpltSetTest {
     public:
       /// Create and register test
@@ -150,11 +137,10 @@ namespace Test { namespace CpltSet {
 
       /// Test whether \a x is solution
       virtual bool solution(const SetAssignment& x) const {
-        // std::cerr << "solution  reldisj\n";
         CountableSetRanges xr1(x.lub, x[0]);
         CountableSetRanges xr2(x.lub, x[1]);
-        Gecode::Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> inter(xr1, xr2);
-        // if (!xr1() && !xr2()) return true;
+        Gecode::Iter::Ranges::Inter<CountableSetRanges, CountableSetRanges> 
+          inter(xr1, xr2);
         return !inter();
       }
       /// Post constraint on \a x
@@ -164,6 +150,8 @@ namespace Test { namespace CpltSet {
       }
     };
     CpltSetRelDisj _cpltsetreldisj("Rel::Disj");
+
+    //@}
 
 }}}
 
