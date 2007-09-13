@@ -68,22 +68,14 @@ namespace Gecode {
       for (int i = 0; i < n; i++) {
         unsigned int xoff = x[i].offset();
         unsigned int xtab = x[i].table_width();
-        //d0 &= cardrec(mgr, 0, xoff, xtab, c, c);    
         d0 &= cardcheck(xtab, xoff, c, c);    
       }
-      // std::cout << "cardrec done = " << mgr->bddsize(d0) << "\n";
 
       for (int i = 0; i < n - 1; i++) {
         for (int j = i + 1; j < n; j++) {
-  //         unsigned int xoff = x[i].offset();
-  //         unsigned int xtab = x[i].table_width();
-  //         unsigned int yoff = x[j].offset();
-  //         unsigned int ytab = x[j].table_width();
-          //d0 &= cardrec_bin(mgr, 0, xoff, xtab, yoff, ytab, 0, 1);
           d0 &= extcardcheck(x[i], x[j], 0, 1);
         }
       }
-      // std::cout << "bddsize = " << mgr->bddsize(d0) << "\n";
       GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
     }
 
@@ -99,7 +91,6 @@ namespace Gecode {
       bdd d0 = bdd_true();
 
       // equivalence of intersection x \cap y with intermediate variable z
-      //for (unsigned int i = 0; i < x1_tab; i++) {
       for (unsigned int i = x1_tab; i--;) {
         d0 &= ((x[0].getbdd(i) & x[1].getbdd(i)) % (x[2].getbdd(i)));
       }
@@ -131,7 +122,6 @@ namespace Gecode {
       bdd d0 = bdd_true();
 
       // equivalence of intersection x \cap y with intermediate variable z
-      //for (unsigned int i = 0; i < x1_tab; i++) {
       for (unsigned int i = x1_tab; i--;) {
         d0 &= ((x[0].getbdd(i) & x[1].getbdd(i)) % (x[2].getbdd(i)));
       }
@@ -277,16 +267,14 @@ namespace Gecode {
       }
 
       if (x.assigned()) {
-        // std::cout << "atmost: x assigned\n";
         d0 &= x.bdd_domain();
       }
 
       if (y.assigned()) {
-        // std::cout << "atmost: y assigned\n";
         d0 &= y.bdd_domain();
       }
-      // std::cerr << "star prop\n";
-      GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
+      GECODE_ES_FAIL(home,
+        (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
     }
 
     template <class View>
@@ -313,16 +301,14 @@ namespace Gecode {
       }
 
       if (x.assigned()) {
-        // std::cout << "atmost: x assigned\n";
         d0 &= x.bdd_domain();
       }
 
       if (y.assigned()) {
-        // std::cout << "atmost: y assigned\n";
         d0 &= y.bdd_domain();
       }
-      // std::cerr << "star prop\n";
-      GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
+      GECODE_ES_FAIL(home,
+        (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
     }
 
     template <class Rel>
@@ -336,8 +322,8 @@ namespace Gecode {
 
     template <class Rel>
     forceinline void 
-    atmost_con(Space* home, const CpltSetVar& x, const CpltSetVar& y, const CpltSetVar& z, 
-               int c, Rel lex, int card) {
+    atmost_con(Space* home, const CpltSetVar& x, const CpltSetVar& y,
+               const CpltSetVar& z, int c, Rel lex, int card) {
       ViewArray<CpltSetView> bv(home, 3);
       bv[0] = x;
       bv[1] = y;
@@ -367,27 +353,22 @@ namespace Gecode {
 
     ViewArray<CpltSetView> bv(home, 1);
     bv[0] = x;
-    // std::cerr << "exactly on " << x << "\n";
-    // SUBSUMPTION CHECK
+    // Subsumption check
     CpltSetVarGlbRanges glb(x);
     if (glb()) {
       IntSetRanges ir(is);
-      Gecode::Iter::Ranges::Inter<CpltSetVarGlbRanges, IntSetRanges> inter(glb, ir);
+      Gecode::Iter::Ranges::Inter<CpltSetVarGlbRanges, IntSetRanges> 
+        inter(glb, ir);
       if (inter()) {
-        // int v = inter.min();
         int s = inter.width();
         ++inter;
         if (!inter() && s == 1) {
-          // std::cerr << "EXACTLY SUBSUMED!\n";
-          // std::cerr << "IntSet = " << is << "\n";
-          // std::cerr << "val = " << v << " and width = " << s << "\n";        
           return;
         } else {
           home->fail();
           return;
         }
       }
-      // std::cerr << "DONE\n";
     }
 
     CpltSetVarUnknownRanges delta(x);
@@ -395,7 +376,6 @@ namespace Gecode {
     Gecode::Iter::Ranges::Inter<CpltSetVarUnknownRanges, IntSetRanges> 
       interdel(delta, irange);
     if (!interdel()) {
-      // std::cerr << "EMPTY INTERSECT\n";
       home->fail();
       return;
     } 
@@ -405,15 +385,9 @@ namespace Gecode {
     int s = interdel.width();
     ++interdel;
     if (!interdel() && s == 1) {
-      // std::cerr << "EXACTLY INCLUDE!\n";
-      // std::cerr << "EXACTLY SUBSUMED!\n";
-      // std::cerr << "IntSet = " << is << "\n";
-      // std::cerr << "val = " << mi << " and width = " << s << "\n";        
       GECODE_ME_FAIL(home, bv[0].include(home, mi));
-      // std::cerr << "OKDONE\n";
       return;
     }
-    // std::cerr << "DONE\n";
 
     Iter::Ranges::SingletonAppend<
       Gecode::Iter::Ranges::Inter<CpltSetVarUnknownRanges, IntSetRanges>
@@ -424,24 +398,13 @@ namespace Gecode {
     int xmin = bv[0].mgr_min();
     
     bdd d = cardConst(xtab, xoff, xmin, c, c, si);
-    // std::cerr << "exactly: tell...";
-    // GECODE_ME_FAIL(home, bv[0].tell_formula(home, d));
-    GECODE_ES_FAIL(home, UnaryCpltSetPropagator<CpltSetView>::post(home, bv[0], d));
-    // std::cerr << "TELL-OK\n";
-
+    GECODE_ES_FAIL(home,
+      UnaryCpltSetPropagator<CpltSetView>::post(home, bv[0], d));
   }
 
   void
   atmost(Space* home, CpltSetVar x, IntSet& is, int c) {
     if (home->failed()) return;
-
-    // SUBSUMPTION CHECK
-//     CpltSetVarLubRanges lub(x);
-//     IntSetRanges ir(is);
-//     if (!Gecode::Iter::Ranges::subset(ir, lub)) {
-//       std::cout << "SUBSUMED\n";
-//     }
-
     ViewArray<CpltSetView> bv(home, 1);
     bv[0] = x;
 
@@ -451,10 +414,8 @@ namespace Gecode {
     IntSetRanges ir(is);
     bdd d = cardConst(xtab, xoff, xmin, 0, c, ir);
 
-    //GECODE_ME_FAIL(home, bv[0].tell_formula(home, d));
-
-    GECODE_ES_FAIL(home, UnaryCpltSetPropagator<CpltSetView>::post(home, bv[0], d));
-
+    GECODE_ES_FAIL(home,
+      UnaryCpltSetPropagator<CpltSetView>::post(home, bv[0], d));
   }
 
   void 

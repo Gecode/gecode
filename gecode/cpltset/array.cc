@@ -56,7 +56,6 @@ namespace Gecode {
     for (int i = size(); i--; ) {
       x[i].init(home);
     }
-    CpltSet::manager.debug(std::cerr);
     // at this place we MUST NOT use the ordering function
     // since we did not allocate a variable so far
   }
@@ -64,7 +63,7 @@ namespace Gecode {
   CpltSetVarArray::CpltSetVarArray(Space* home,
                                    int n, int a, int b)
     : VarArray<CpltSetVar>(home,n) {
-    // dangerous! use correct offsets
+    /// TODO: dangerous! use correct offsets
     for (int i = 0; i < size();i++) {
       x[i].init(home, a, b);
     }

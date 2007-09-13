@@ -67,7 +67,6 @@ namespace Gecode {
     int _offset;
     int dummy_offset;
     int dummy_range;
-    bool _debug;
   public:
     /// Default constructor
     BddMgr(void);
@@ -155,9 +154,6 @@ namespace Gecode {
      *  Returns the offset where the first node starts.
      */
     int allocate(int r);
-    void debug(std::ostream&);
-    // show budd debug output after space has been destroyed
-    void debug(void);
     /// return the number of used bdd variables
     int varnum(void);
     /// Prints a bdd node \a b with its true edge and its false edge.
@@ -190,7 +186,7 @@ namespace Gecode {
 
   forceinline
   BddMgr::BddMgr(void)
-  : _size(0), _offset(0), dummy_offset( -1), dummy_range(-1), _debug(false) {}
+  : _size(0), _offset(0), dummy_offset( -1), dummy_range(-1) {}
 
   forceinline void
   BddMgr::dispose(void) {
@@ -209,7 +205,6 @@ namespace Gecode {
     _offset = 0;
     dummy_offset = -1; 
     dummy_range = -1;
-    _debug = false;
     bdd_init(n, c);
     
     info.produced = -1;
@@ -434,26 +429,6 @@ namespace Gecode {
     return info.varnum;
   }
   
-  forceinline void
-  BddMgr::debug(std::ostream& os) {
-    bdd_stats(&info);
-    os << "Buddy-Information:\n" 
-       << "\tregistered vars: " << _size << "\n"
-       << "\tallocated nodes: " << info.nodenum << "\n"
-       << "\tused for vars:   " << info.varnum << "\n"
-       << "\tfree nodes:      " << info.freenodes << "\n" 
-       << "\tused nodes:      " << info.nodenum - info.freenodes << "\n";
-
-    if (dummy_offset > -1) {
-      os << " Dummy from " << dummy_offset << " to "<< dummy_range<<"\n";
-    }
-  }
-
-  forceinline void
-  BddMgr::debug(void) {
-    _debug = true;
-  }
-
   forceinline int
   BddMgr::offset(void) const{
     assert(_offset <= bdd_varnum());

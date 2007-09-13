@@ -36,69 +36,71 @@
  */
 
 #include "gecode/cpltset.hh"
+
+namespace Gecode { namespace CpltSet {
+
+  template <class I>
+  static void
+  printRange(std::ostream& os, I& i) {
+    os << "{";
+    if (i()) {
+      if (i.min() == i.max()) {
+        os << i.min();
+      } else {
+        os << i.min() << "#"<< i.max();
+      }
+      ++i;
+    }
+    while(i()) {
+      os << ",";
+      if (i.min() == i.max()) {
+        os << i.min();
+      } else {
+        os << i.min() << "#"<< i.max();
+      }
+      ++i;
+    }
+    os << "}";
+  }
+
+  template <class I>
+  static void
+  printValue(std::ostream& os, I& i) {
+    os << "{";
+    if (i()) {
+      os << i.val();
+      ++i;
+    }
+    while(i()) {
+      os << ",";
+      os << i.val();
+      ++i;
+    }
+    os << "}";
+  }
+
+  template <class I, class J>
+  static void
+  printVar(bool assigned, std::ostream& os, I& glb, J& lub) {
+    if (assigned) {
+      printRange(os, lub);
+    } else {
+      // std::cout << "not assigned print glb and lub";
+      printRange(os, glb);
+      os << "..";
+      printRange(os, lub);
+    }
+  }
+
+}}
+
 using namespace Gecode;
 using namespace Gecode::CpltSet;
-
-template <class I>
-static void
-printRange(std::ostream& os, I& i) {
-  // std::cout << "inside test is running: " << bdd_isrunning() << "\n";
-  // std::cout << "printImp\n";
-  os << "{";
-  if (i()) {
-    if (i.min() == i.max()) {
-      os << i.min();
-    } else {
-      os << i.min() << "#"<< i.max();
-    }
-    ++i;
-  }
-  while(i()) {
-    os << ",";
-    if (i.min() == i.max()) {
-      os << i.min();
-    } else {
-      os << i.min() << "#"<< i.max();
-    }
-    ++i;
-  }
-  os << "}";
-}
-
-template <class I>
-static void
-printValue(std::ostream& os, I& i) {
-  os << "{";
-  if (i()) {
-    os << i.val();
-    ++i;
-  }
-  while(i()) {
-    os << ",";
-    os << i.val();
-    ++i;
-  }
-  os << "}";
-}
-
-template <class I, class J>
-static void
-printVar(bool assigned, std::ostream& os, I& glb, J& lub) {
-  if (assigned) {
-    printRange(os, lub);
-  } else {
-    // std::cout << "not assigned print glb and lub";
-    printRange(os, glb);
-    os << "..";
-    printRange(os, lub);
-  }
-}
 
 /**
  * \brief Print set variable view
  * \relates Gecode::CpltSet::CpltSetView
  */
-
 std::ostream&
 operator<<(std::ostream& os, const CpltSetView& x) {
   bool assigned = x.assigned();
@@ -116,7 +118,6 @@ operator<<(std::ostream& os, const CpltSetView& x) {
 /**
  * \brief Print set variable view
  */
-
 std::ostream&
 operator<<(std::ostream& os, const SingletonCpltSetView& x) {
   os << x.base();

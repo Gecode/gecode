@@ -99,11 +99,7 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   void 
   variableorder(ViewArray<View>& x) {
-    // std::cerr << "start order on"<< x.size() << "\n";
-    // std::cerr << "allocated \n";
     unsigned int var_in_tab = manager.allocated();
-    
-    // std::cerr << "var_in_tab = " << var_in_tab << "\n";
 
     unsigned int min_offset = x[0].offset();
     unsigned int max_width  = x[0].table_width();
@@ -115,8 +111,6 @@ namespace Gecode { namespace CpltSet {
         max_width = x[i].table_width();
       }
     }
-    
-    // std::cerr << "max_width = " << max_width  << " min_offset = " << min_offset << "\n";
 
     // constraint order as specified by Hawkins, Lagoon and Stuckey
     GECODE_AUTOARRAY(int, hls_order, var_in_tab);
@@ -130,17 +124,11 @@ namespace Gecode { namespace CpltSet {
 
     // ordering those that lie in the scope
     for (unsigned int f = 0; f < max_width; f++) {
-      // std::cerr << "f="<<f << " ";
       for (int i = 0; i < x.size(); i++) {
-        // std::cerr << "i="<<i << " " << x[i] << " ";
         int xo = x[i].offset();
-        // std::cerr << "order " << xo << "\t";
         int xw = x[i].table_width();
         int cur= xo + f;
-        // std::cerr << "cur " << cur << "\t" << xw << "\t" << xo + xw << "\t";
-        // std::cerr << " test " << (cur < xo + xw ) << "\n";
         if (cur < xo + xw) {
-          // std::cerr << "set\n";
           hls_order[c] = cur;
           c++;
         }
@@ -149,23 +137,16 @@ namespace Gecode { namespace CpltSet {
 
     // IMPORTANT DO NOT FORGET REMAINING LARGER VARIABLES
     for (unsigned int i = c; i < var_in_tab; i++, c++) {
-      // std::cerr << "rem = " <<i<<"\n";
       hls_order[i] = i;
     }   
     
-    // std::cerr << "set order\n";
     manager.setorder(&hls_order[0]);
-    // std::cerr << "ordering done\n";
   }
 
   template <class View, class View1>
   void 
-  variableorder(ViewArray<View>& x, ViewArray<View1>& y = NULL) {
-    // std::cerr << "start order\n";
-    // std::cerr << "allocated \n";
+  variableorder(ViewArray<View>& x, ViewArray<View1>& y) {
     unsigned int var_in_tab = manager.allocated();
-    
-    // std::cerr << "var_in_tab = " << var_in_tab << "\n";
 
     unsigned int min_offset = x[0].offset();
     unsigned int max_width  = x[0].table_width();
@@ -177,14 +158,8 @@ namespace Gecode { namespace CpltSet {
         max_width = x[i].table_width();
       }
     }
-    
-    // std::cerr << "max_width = " << max_width  << " min_offset = " << min_offset << "\n";
 
     // constraint order as specified by Hawkins, Lagoon and Stuckey
-//     for (int i = 0; i < y.size(); i++) {
-//       var_in_tab += y[i].table_width();
-//     }
-
     GECODE_AUTOARRAY(int, hls_order, var_in_tab);
 
     // we do not care about variables 
@@ -198,7 +173,6 @@ namespace Gecode { namespace CpltSet {
     for (unsigned int f = 0; f < max_width; f++) {
       for (int i = 0; i < x.size(); i++) {
         int xo = x[i].offset();
-        // std::cerr << "order " << xo << "\n";
         int xw = x[i].table_width();
         int cur= xo + f;
         if (cur < xo + xw) {
@@ -206,110 +180,20 @@ namespace Gecode { namespace CpltSet {
           c++;
         }
       }
-      // INVARIANT: Here we should assume that variables of the same array
-      //            have the same initial values for min and max of the set bounds
-      // std::cerr << "check \t";
-      // std::cerr << "f=" << f << " xmin: " << x[0].mgr_min() << " and ymin " << y[0].mgr_min() << "\n";
+      // INVARIANT: Here we assume that variables of the same array
+      //            have the same initial values for min and max of the set 
+      //            bounds
       // invariant new arrays have subranges of old arrays
-        for (int i = 0; i < y.size(); i++) {
-          if ( (x[0].mgr_min() + (int) f >= y[i].mgr_min()) &&
-               (x[0].mgr_min() + (int) f <= y[i].mgr_max())) {
-            // std::cerr << "do y \t";
-            int xyshift = y[i].mgr_min()  - x[0].mgr_min();
-            int yo = y[i].offset();
-            // std::cerr << "order " << yo << "\n";
-            int yw = y[i].table_width();
-            int cur= yo + f - xyshift;
-            if (cur <= yo + yw) {
-              hls_order[c] = cur;
-              c++;
-            }
-          }
-        }
-    }
-
-    // IMPORTANT DO NOT FORGET REMAINING LARGER VARIABLES
-    for (unsigned int i = c; i < var_in_tab; i++, c++) {
-      hls_order[i] = i;
-    }   
-
-    for (unsigned int i = 0; i < var_in_tab; i++) {
-      // std::cerr << hls_order[i] << " ";
-    }   
-    // std::cerr << "\n";
-
-
-    // std::cerr << "set order\n";
-    manager.setorder(&hls_order[0]);
-    // std::cerr << "ordering done\n";
-  }
-
-  template <class View>
-  void 
-  variableorder(ViewArray<View>** x, int xs) {
-    // std::cerr << "start order\n";
-    
-    // std::cerr << "allocated \n";
-    unsigned int var_in_tab = manager.allocated();
-    
-    // std::cerr << "var_in_tab = " << var_in_tab << "\n";
-
-    unsigned int min_offset = (*(x[0]))[0].offset();
-    unsigned int max_width  = (*(x[0]))[0].table_width();
-    unsigned int minv = (*(x[0]))[0].mgr_min();
-    unsigned int maxv = (*(x[0]))[0].mgr_max();
-
-    for (int i = 0; i < xs; i++) {
-
-      int n = x[i]->size();
-      for (int j = 0; j < n; j++) {
-        int off   = (*(x[i]))[j].offset();
-        int width = (*(x[i]))[j].table_width();
-        int cmin  = (*(x[i]))[j].mgr_min();
-        int cmax  = (*(x[i]))[j].mgr_max();
-        // std::cerr << "off= " << off << " width=" << width << " cmin=" << cmin << " cmax= " << cmax << "\n";
-        if (off < min_offset) {
-          min_offset = off;
-        }
-        if (width > max_width) {
-          max_width = width;
-        }
-        if (cmax > maxv) {
-          maxv = cmax;
-        }
-        if (cmin < minv) {
-          minv = cmin;
-        }
-      }
-    }
-    
-    // std::cerr << "max_width = " << max_width  << " min_offset = " << min_offset << "\n";
-
-    GECODE_AUTOARRAY(int, hls_order, var_in_tab);
-
-    // we do not care about variables 
-    // that are not in the scope of the constraint
-    int c = 0;
-    for (unsigned int i = 0; i < min_offset; i++, c++) {
-      hls_order[i] = i;
-    }
-
-    // ordering those that lie in the scope
-    for (unsigned int f = 0; f < max_width; f++) {
-      for (int z = 0; z < xs; z++) {
-        for (int i = 0; i < x[z]->size(); i++) {
-          if ( ((*(x[z]))[i].mgr_min() <= minv + f) && 
-               (minv + f <= (*(x[z]))[i].mgr_max())) {
-            // std::cerr << "do (*(x[z])) \t";
-            int xshift = (*(x[z]))[i].mgr_min() - minv;
-            int xo = (*(x[z]))[i].offset();
-            // std::cerr << "order " << xo << "\n";
-            int xw = (*(x[z]))[i].table_width();
-            int cur= xo + f - xshift;
-            if (cur < xo + xw) {
-              hls_order[c] = cur;
-              c++;
-            }
+      for (int i = 0; i < y.size(); i++) {
+        if ( (x[0].mgr_min() + (int) f >= y[i].mgr_min()) &&
+             (x[0].mgr_min() + (int) f <= y[i].mgr_max())) {
+          int xyshift = y[i].mgr_min()  - x[0].mgr_min();
+          int yo = y[i].offset();
+          int yw = y[i].table_width();
+          int cur= yo + f - xyshift;
+          if (cur <= yo + yw) {
+            hls_order[c] = cur;
+            c++;
           }
         }
       }
@@ -320,15 +204,7 @@ namespace Gecode { namespace CpltSet {
       hls_order[i] = i;
     }   
 
-//     for (unsigned int i = 0; i < var_in_tab; i++) {
-//       std::cerr << hls_order[i] << " ";
-//     }   
-//     std::cerr << "\n";
-
-
-    // std::cerr << "set order\n";
     manager.setorder(&hls_order[0]);
-    // std::cerr << "ordering done\n";
   }
 
   /// Function used for computing the convex_hull and the variables of it
@@ -367,16 +243,12 @@ namespace Gecode { namespace CpltSet {
 
 
   // EXTENDED CARDINALITY FOR REPLACING INTERMEDIATE VARIABLES
-  // using namespace Gecode::Iter::Ranges;
-  // typedef ValCache<ToValues<Inter<Gecode::CpltSetVarLubRanges, Gecode::CpltSetVarLubRanges> > > BddInter;
 
   /// Build the ROBDD for \f$ |x|=c\f$
   template <class I, class View0, class View1>
   bdd 
   extcardeq(Gecode::Iter::Ranges::ValCache<I>& inter, 
             View0& x, View1& y, unsigned int c, int n, int r) {
-    // std::cerr << "start extcardeq()\n";
-    // std::cerr << x << " " << y << " " << c << " " << n << " " << r << "\n";
     int xmin = x.mgr_min();
     int ymin = y.mgr_min();
 
@@ -387,7 +259,6 @@ namespace Gecode { namespace CpltSet {
       layer[i].init();
 
     // build nodes for lowest layer
-    // std::cerr << "build lowest layer\n";
     layer[0] = bdd_true();
     inter.last();
     for (unsigned int i = 1; i <= c; i++) {
@@ -397,7 +268,6 @@ namespace Gecode { namespace CpltSet {
       layer[i] &= y.getbdd(k - ymin);
     }
 
-    // std::cerr << "connect nodes in lowest layer\n";
     // connect nodes in lowest layer
     for (int i = 1; i < n; i++) {
       layer[i] = manager.ite(layer[i], layer[i - 1], bdd_false());
@@ -405,7 +275,6 @@ namespace Gecode { namespace CpltSet {
 
     inter.last();
 
-    // std::cerr << "build the remaining layers on top\n";
     // build the remaining layers on top
     for (; inter(); --inter) {
       unsigned int pos = inter.index();
@@ -425,7 +294,6 @@ namespace Gecode { namespace CpltSet {
       if (!inter()) { break;}
       inter.index(pos);
     }
-    // std::cerr << "end extcardeq()\n";
     return layer[n - 1];
   }
 
@@ -435,10 +303,6 @@ namespace Gecode { namespace CpltSet {
   bdd 
   extcardlqgq(Gecode::Iter::Ranges::ValCache<I>& inter, View0& x, View1& y, 
               unsigned int cl, unsigned int cr, int n, int r) {
-    // std::cerr << "start extcardlqgq() yoff\n";
-    // std::cerr << x << " " << y << "\n";
-    // std::cerr << "cl: " << cl << " cr: " << cr << " n:" << n << " r:" << r << "\n";
-
     GECODE_AUTOARRAY(bdd, layer, n);
     // the use of autoarray now requires explicit initialization
     // otherwise the bdd nodes are not known in the global table
@@ -455,21 +319,11 @@ namespace Gecode { namespace CpltSet {
     int ymin = y.mgr_min();
 
     // build nodes for lowest layer
-    // std::cerr << "build nodes for lowest layer\n";
     for (int i = n - cl ; i < n; i++, --inter) {
       k    = inter.min();
       bdd both = manager.ite(y.getbdd(k - ymin), layer[i - 1], bdd_false());
       layer[i] = manager.ite(x.getbdd(k - xmin), both, bdd_false());
     }
-
-    // std::cerr << "testoutput: \n";
-    // std::cerr << "x =  " << x << " and y =" << y << "\n";
-//     inter.reset();
-//     while (inter()) {
-//       std::cerr << inter.min() << ".." << inter.max() << "\n";
-//       ++inter;
-//     }
-//     inter.reset();
 
     // start with a shift and build layers up to the connection layer
     inter.last();
@@ -479,39 +333,31 @@ namespace Gecode { namespace CpltSet {
     // an array with index acces k = kth range in the cache
     // hence we need an additional function that returns the index c
     // of the cache iterator
-    // I changed the WRONG class (CACHEREQ) instead of CACHE
 
-    // for (k = r - 1; k > 0; k--) {
     for (; inter(); --inter) {
       unsigned int pos = inter.index(); // save position of k
-      // std::cerr << "inter position = " << pos << "\n";
       // cl < cr <= tab  ==> n - cl > 0 
       for (int i = n - cl; i < n; i++) { 
         int col = inter.min();
-        // std::cerr << "col = " << col << "\n";
         bdd t = layer[i-1]; 
         bdd both = manager.ite(y.getbdd(col - ymin), t, layer[i]);
         layer[i] = manager.ite(x.getbdd(col - xmin), both, layer[i]);
         --inter;
         if ((int) inter.index() + 1 < r + 1 - (int) cr) { 
-          // std::cerr << "break\n"; 
           inter.finish(); break;
         }
       }
       if (!inter()) break;
       inter.index(pos);     
-      // std::cerr << "k=" << k << "\n";
     }
 
     if ((int) cr == r + 1) { 
       // max card equals table width, all elements allowed
-      // std::cerr << "all elements allowed\n";      
       return layer[n - 1];
     }
     
     if ((int) cr == r) {
       // only one single layer
-      // std::cerr << "only one single at the end\n";      
       inter.last();
       int col  = inter.min();
       {
@@ -541,20 +387,16 @@ namespace Gecode { namespace CpltSet {
   
     inter.last();
     // connection layer between cl and cr
-    // std::cerr << "connection layer\n";      
-    // std::cerr << inter.min() << ".." << inter.max() << "\n";
     {
       bdd t = bdd_true();
       bdd f = bdd_true();
       for (int i = 0; i < n; i++) {
         int col = inter.min();
-        // std::cerr << inter.min() << ".." << inter.max() << "\n";
         if (i == 0) {
           t = bdd_false();
         } else {
           t = layer[i-1];
           // NOTE: ONLY CONNECT if cl > 0
-          // std::cerr << "(" << i << " " << (n - cl - 1) << " " << cl << "\n";
           if (i > n - (int) cl - 1 && cl > 0) { // connect lower layer
             f = layer[i];
           }
@@ -569,13 +411,10 @@ namespace Gecode { namespace CpltSet {
     // the remaining layers for cr
     inter.last();
     --inter;
-    // std::cerr << "remaining layers for cr\n";      
     for (; inter(); --inter) {
       unsigned int pos = inter.index();
-      // std::cerr << "start at pos: " << pos << "\n";
       for (int i = 0; i < n; i++) {
         int col  = inter.min();
-        // std::cerr << inter.min() << ".." << inter.max() << "\n";
         bdd t = bdd_true();
         if (i == 0) {
           t = bdd_false();
@@ -583,25 +422,19 @@ namespace Gecode { namespace CpltSet {
           t = layer[i-1]; 
         }
         // i guess here we do a little too much
-//         bdd both = manager.ite(y.getbdd(col - ymin), t, layer[i]);
-//         layer[i] = manager.ite(x.getbdd(col - xmin), both, layer[i]);
         bdd both = y.getbdd(col - ymin) & x.getbdd(col - xmin);
         layer[i] = manager.ite(both, t, layer[i]);
 
         --inter;
         if (!inter()) { 
-          // std::cerr << "inner break\n";
           break;
         }
       }
       if (!inter()) { 
-        // std::cerr << "outer break\n";
         break;
       }
       inter.index(pos);
     }
-
-    // std::cerr << "returning\n";
     
     return layer[n - 1];
   }
@@ -610,57 +443,50 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   bdd 
   extcardcheck(View0& x, View1& y, unsigned int cl, unsigned int cr) {
-    // std::cerr << "extcardcheck x y\n";
-  // Ad 1)
-  // we need bddview instead of bddvar in the interface
-  // this requires us to publish the protected valididx function
-  //
-  // Ad 2)
-  // we need manager and variable offset for the bddtable
-  // because we do not want to rewrite the code for the simple checks
-  // everytime
+    // Ad 1)
+    // we need bddview instead of bddvar in the interface
+    // this requires us to publish the protected valididx function
+    //
+    // Ad 2)
+    // we need manager and variable offset for the bddtable
+    // because we do not want to rewrite the code for the simple checks
+    // everytime
 
-  // Ad 3) 
-  // the same extensions for the respective proper cardinality functions
+    // Ad 3) 
+    // the same extensions for the respective proper cardinality functions
   
     // Compute the intersection of x and y  and bring it into a data structure
     // where iteration may start with the greatest element of the intersection
     Set::LubRanges<View0> lubx(x);
     Set::LubRanges<View1> luby(y);
     // common values
-    Gecode::Iter::Ranges::Inter<Set::LubRanges<View0>, Set::LubRanges<View1> > common(lubx, luby);
+    Gecode::Iter::Ranges::Inter<Set::LubRanges<View0>, Set::LubRanges<View1> > 
+      common(lubx, luby);
     // get it cached
     Gecode::Iter::Ranges::ToValues<
-      Gecode::Iter::Ranges::Inter<Set::LubRanges<View0>, Set::LubRanges<View1> >
-      > values(common);
+      Gecode::Iter::Ranges::Inter<Set::LubRanges<View0>,
+        Set::LubRanges<View1> > > values(common);
 
     Gecode::Iter::Ranges::ValCache<
       Gecode::Iter::Ranges::ToValues<
-        Gecode::Iter::Ranges::Inter<Set::LubRanges<View0>, Set::LubRanges<View1> >
-        > 
-      > inter(values);
+        Gecode::Iter::Ranges::Inter<Set::LubRanges<View0>, 
+          Set::LubRanges<View1> > > > inter(values);
 
     // compute the size of the intersection
     unsigned int isize = inter.size();
-    
-    // std::cerr << "parameters:" << isize << "," << x.offset()  << "," << y.offset();
-    // std::cerr << "," << cl << "," << cr << "\n";
+
     if (cr > isize) { 
       cr = isize;
     }
     int r = isize - 1; // rightmost bit in bitvector
     int n = cr + 1; // layer size
     if (cl > isize || cl > cr) { // inconsistent cardinality
-      // std::cerr << "inconsistenc cardinality\n";
       return bdd_false();
     }
 
     if (cr == 0) {    // cl <= cr
       // build the emptyset
-      // std::cerr << "build empty set\n";
       bdd empty = bdd_true();
-
-      // maybe backwards iteration would be more efficient here
       for (; inter(); ++inter) {
         int v = inter.min();
         int xidx = x.valididx(v);
@@ -673,10 +499,8 @@ namespace Gecode { namespace CpltSet {
   
     if (cl == cr) {
       if (cr == isize) {
-        // std::cerr << "build full set\n";
         // build the full set
         bdd full = bdd_true();
-        // maybe backwards iteration would be more efficient here
         for (; inter(); ++inter) {
           int v = inter.min();
           int xidx = x.valididx(v);
@@ -686,7 +510,6 @@ namespace Gecode { namespace CpltSet {
         }
         return full;
       } else {
-        // std::cerr << "extcardeq()\n";
         return extcardeq(inter, x, y, cr, n, r);
       }
     }
@@ -697,7 +520,6 @@ namespace Gecode { namespace CpltSet {
         return bdd_true();
       }
     }
-    // std::cerr << "extcardlqgq()\n";
     return extcardlqgq(inter, x, y, cl, cr, n, r);
   }
 
@@ -706,16 +528,14 @@ namespace Gecode { namespace CpltSet {
   template <class I>
   bdd 
   cardConst(int xtab, int xoff, int xmin, int cl, int cr, I& is) {
-    // Invariant: We require that the IntSet provided is a subset of the variable range
+    // Invariant: We require that the IntSet provided is a subset of the 
+    // variable range
     Gecode::Iter::Ranges::ToValues<I> ir(is);
     Gecode::Iter::Ranges::ValCache<Gecode::Iter::Ranges::ToValues<I> > inter(ir);
 
     int r = inter.size() - 1;    
     int n = cr + 1;
 
-    // if (n > r) return bdd_false();
-    // WHY IS THIS WRONG ?
-    
     GECODE_AUTOARRAY(bdd, layer, n);
     // the use of autoarray now requires explicit initialization
     // otherwise the bdd nodes are not known in the global table
@@ -732,7 +552,8 @@ namespace Gecode { namespace CpltSet {
     // build nodes for lowest layer
     for (int i = n - cl ; i < n; i++, --inter) {
       k    = inter.min();
-      layer[i] = manager.ite(manager.bddpos(xoff + k - xmin), layer[i - 1], bdd_false());
+      layer[i] = manager.ite(manager.bddpos(xoff + k - xmin), layer[i - 1], 
+                             bdd_false());
     }
 
     // start with a shift and build layers up to the connection layer
@@ -747,7 +568,8 @@ namespace Gecode { namespace CpltSet {
       for (int i = n - cl; i < n; i++) { 
         int col = inter.min();
         bdd t = layer[i-1]; 
-        layer[i] = manager.ite(manager.bddpos(xoff + col - xmin), t, layer[i]);
+        layer[i] = manager.ite(manager.bddpos(xoff + col - xmin), t, 
+                               layer[i]);
         --inter;
         if ((int) inter.index() + 1 < r + 1 - (int) cr) { 
           inter.finish(); break;
@@ -825,7 +647,8 @@ namespace Gecode { namespace CpltSet {
         } else {
           t = layer[i-1]; 
         }
-        layer[i] = manager.ite(manager.bddpos(xoff + col - xmin), t, layer[i]);
+        layer[i] = manager.ite(manager.bddpos(xoff + col - xmin), t,  
+                               layer[i]);
         --inter;
         if (!inter()) { 
           break;
@@ -839,13 +662,6 @@ namespace Gecode { namespace CpltSet {
 
     return layer[n - 1];
   }
-
-  // end extcard
-
-  // END EXTENDED CARDINALITY FOR REPLACING INTERMEDIATE VARIABLES
-
-
-  // EXTRACT CARDINALITY
 
   // mark all nodes in the dqueue
   GECODE_CPLTSET_EXPORT void
@@ -904,7 +720,6 @@ namespace Gecode { namespace CpltSet {
       return bdd_false();
     }
     b = boundvars;
-    // std::cout << "card("<< offset <<")=["<<l <<".."<<u<<"]\n";
     return cardrec(b, 0, offset, range, l, u);
   }
 
@@ -925,48 +740,9 @@ namespace Gecode { namespace CpltSet {
       return bdd_false();
     }
     bdd b = bounds;
-    // std::cout << "doing lower lex bounds\n";
     bdd lexlb = lex_lb(remain, b, 0, offset, range);
     b = bounds;
-    // std::cout << "doing upper lex bounds\n";
     bdd lexub = lex_ub(remain, b, 0, offset, range);
-    // std::cout << "returning\n";
-
-//     bdd low = lexlb;
-//     std::cout << "lex("<<offset<<")=[";
-//     std::cout << lexlb;
-//     while (!manager.leaf(low)) {
-//       bdd tlow = manager.iftrue(low);
-//       bdd flow = manager.iffalse(low);
-//       if (manager.cfalse(flow)) {
-//         // + 1 works for simple domains 1#... just for steiner example tests
-//         std::cout << manager.bddidx(low) - offset + 1<<",";
-//         // std::cout << "1";
-//         low = tlow;
-//       } else {
-//         std::cout << "N("<<manager.bddidx(low) - offset<<"),";
-//         // std::cout << "0";
-//         low = flow;
-//       } 
-//     }
-//     std::cout << "..";
-
-//     bdd hi = lexub;
-//     while (!manager.leaf(hi)) {
-//       bdd thi = manager.iftrue(hi);
-//       bdd fhi = manager.iffalse(hi);
-//       if (manager.cfalse(thi)) {
-//         std::cout << "N("<<manager.bddidx(hi) - offset<<"),";
-//         // std::cout << "0";
-//         hi = fhi;
-//       } else {
-//         std::cout << manager.bddidx(hi) - offset + 1<<",";
-//         // std::cout << "1";
-//         hi = thi;
-//       }
-//     }
-//     std::cout << lexub;
-//     std::cout << "]";
     return (lexlb & lexub);
   }
 

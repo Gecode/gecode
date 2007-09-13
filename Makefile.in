@@ -415,9 +415,7 @@ CPLTSETHDR0 =		                \
 	propagators.hh \
 	propagators/unary.icc propagators/binary.icc \
 	propagators/nary.icc propagators/naryone.icc propagators/narytwo.icc \
-	constraints/atmost.icc constraints/partition.icc constraints/rel.icc \
-	constraints/select.icc propagators/singleton.icc \
-	constraints/distinct.icc \
+	propagators/singleton.icc \
 	branch.hh branch/select-val.icc branch/select-view.icc	
 
 CPLTSETSRC	= $(CPLTSETSRC0:%=gecode/cpltset/%)

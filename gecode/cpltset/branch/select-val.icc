@@ -46,45 +46,27 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
   template <bool exclude>
   forceinline ModEvent
-  ValMin<exclude>::tell(Space* home, unsigned int a, CpltSetView x, IntSet v) {
-//     std::cout << "telling on: " << x << "\n";
-//     IntSetRanges ir(v);
-//     while (ir()) {
-//       std::cout << ir.min() << ".." << ir.max() << ", ";
-//       ++ir;
-//     }
+  ValMin<exclude>::tell(Space* home, unsigned int a,
+                        CpltSetView x, IntSet v) {
     ModEvent me = ME_CPLTSET_NONE;
     // try to exclude first
     if (a == (int) exclude) {
       if (v.size() == 1) {
-        // std::cout << "v = " << v << " " ;
-        // std::cout << "tell eq..";
         me = x.eq(home, v.min(), v.max());
-        // std::cout << "me = " << me << "DONE\n";
       } else {
         IntSetRanges ir(v);
-        // std::cout << "v = " << v << " " ;
-        // std::cout << "tell eq..";
         me = x.eqI(home,ir);
-        // std::cout << "me = " << me << "DONE\n";
       }
     } else {
 
       if (v.size() == 1) {
-        // std::cout << "v = " << v << " " ;
-        // std::cout << "tell nq..";
         me = x.nq(home, v.min(), v.max());
-        // std::cout << "me = " << me << "DONE\n";
       } else {
         IntSetRanges ir(v);
-        // std::cout << "v = " << v << " " ;
-        // std::cout << "tell nq..";
         me = x.nqI(home, ir);
-        // std::cout << "me = " << me << "DONE\n";
       }
     }
     return me;
-//     return (a == 0) ?  x.eq(home,ir) : x.nq(home,ir);
   }
 
   template<bool exclude>
@@ -96,7 +78,6 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   template <bool exclude>
   forceinline IntSet
   ValMax<exclude>::val(const Space*, CpltSetView x) const{
-    // std::cout << "max val \n";
     IntSetRanges ir = IntSet::empty;
     DomValues<CpltSetView> dom(x);
     while (dom()) {
@@ -110,8 +91,8 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
   template <bool exclude>
   forceinline ModEvent
-  ValMax<exclude>::tell(Space* home, unsigned int a, CpltSetView x, IntSet v) {
-    // std::cout << "telling max\n";
+  ValMax<exclude>::tell(Space* home, unsigned int a,
+                        CpltSetView x, IntSet v) {
     IntSetRanges ir(v);
     return (a == (int) exclude) ? x.eqI(home,ir) : x.nqI(home,ir);
   }
@@ -125,16 +106,15 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   template <bool exclude>
   forceinline int
   ValMinUnknown<exclude>::val(const Space*, CpltSetView x) const {
-//     std::cout << "x range?" << x.manager()->leaf(x.bdd_domain()) << " assigned? " << x.assigned() << "\n";
     UnknownValues<CpltSetView> unknown(x);
     int v = unknown.val();
-//     std::cout << "val min un select: " << v  << "\n";
     return v;
   }
 
   template <bool exclude>
   forceinline ModEvent
-  ValMinUnknown<exclude>::tell(Space* home, unsigned int a, CpltSetView x, int v) {
+  ValMinUnknown<exclude>::tell(Space* home, unsigned int a,
+                               CpltSetView x, int v) {
     return (a == (int) exclude) ? x.include(home,v) : x.exclude(home,v);
   }
 
@@ -158,7 +138,8 @@ namespace Gecode { namespace CpltSet { namespace Branch {
 
   template <bool exclude>
   forceinline ModEvent
-  ValMaxUnknown<exclude>::tell(Space* home, unsigned int a, CpltSetView x, int v) {
+  ValMaxUnknown<exclude>::tell(Space* home, unsigned int a,
+                               CpltSetView x, int v) {
     return (a == (int) exclude) ? x.include(home,v) : x.exclude(home,v);
   }
 
@@ -167,18 +148,6 @@ namespace Gecode { namespace CpltSet { namespace Branch {
   ValMaxUnknown<exclude>::type(void) {
     return Support::Symbol("CpltSet::Branch::ValMaxUnknown");
   }
-
-//   template <class SelView>
-//   static void
-//   create(Space* home, ViewArray<CpltSetView>& x, CpltSetBvalSel vals) {
-//     switch (vals) {
-//     case SETBVAL_MAX:
-//       (void) new (home) ViewValBranching<CpltSetView,int,SelView,ValMax>(home,x);
-//       break;
-//     default:
-//       throw UnknownBranching("Int::branch");
-//     }
-//   }
 
   template <class SelView>
   static void

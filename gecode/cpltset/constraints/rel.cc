@@ -105,7 +105,8 @@ namespace Gecode {
         }
       }
 
-      GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
+      GECODE_ES_FAIL(home,
+        (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
     }
 
     template <class View>
@@ -138,32 +139,20 @@ namespace Gecode {
         // try whether changing the bit order is faster for conjunction
       case SRT_DISJ: 
         {
-  //         for (int i = 0; i < (int) tab; i++) {
-  //           d0 &= !(y.getbdd(i) & x.getbdd(i));
-  //         }
-
-  //         std::cerr << "DISJ: " << x << " and " << y << "\n";
-
-  //         for (int i = (int) tab ; i--; ) {
-  //           d0 &= !(y.getbdd(i) & x.getbdd(i));
-  //         }
-
           Set::LubRanges<View> lubx(x);
           Set::LubRanges<View> luby(y);
-          Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
-            inter(lubx, luby);
+          Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, 
+            Set::LubRanges<View> > inter(lubx, luby);
           Gecode::Iter::Ranges::ToValues<
-            Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
-            > ival(inter);
+            Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, 
+              Set::LubRanges<View> > > ival(inter);
 
           Gecode::Iter::Ranges::ValCache<
             Gecode::Iter::Ranges::ToValues<
-                   Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
-            >
-            > cache(ival);
+              Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, 
+                Set::LubRanges<View> > > > cache(ival);
 
           if (!cache()) {
-            // std::cerr << "no post SRT_DISJ needed\n";
             return; 
           } else {
             cache.last();
@@ -182,7 +171,8 @@ namespace Gecode {
         {
           int xshift = 0;
           for (int i = 0; i < (int) tab; i++) {
-            if (y.mgr_min() + i < x.mgr_min() || y.mgr_min() + i > x.mgr_max()) {
+            if (y.mgr_min() + i < x.mgr_min() ||
+                y.mgr_min() + i > x.mgr_max()) {
               d0 &= (bdd_false() % y.getbdd(i));
               xshift++;
             } else {
@@ -195,13 +185,12 @@ namespace Gecode {
         {
           Set::LubRanges<View> lubx(x);
           Set::LubRanges<View> luby(y);
-          Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
-            inter(lubx, luby);
+          Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, 
+            Set::LubRanges<View> > inter(lubx, luby);
           Gecode::Iter::Ranges::ToValues<
-            Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> > 
-            > ival(inter);
+            Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, 
+              Set::LubRanges<View> > > ival(inter);
           if (!ival()) {
-            std::cerr << "no post SRT_NQ needed\n";
             return; 
           } else {
             for (; ival(); ++ival) {
@@ -212,10 +201,6 @@ namespace Gecode {
             }
           }
           d0 = !d0;
-  //         for (int i = 0; i < (int) tab; i++) {
-  //           d0 &= ((x.getbdd(i)) % (y.getbdd(i)));
-  //         }
-  //         d0 = !d0;
         }
         break;
       default:
@@ -225,12 +210,12 @@ namespace Gecode {
         }
       }
 
-      GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
+      GECODE_ES_FAIL(home,
+        (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
     }
 
     template <class View0, class View1>
     void rel_post(Space* home, View0 x, CpltSetRelType r, View1 s) {
-
       if (home->failed()) return;
       // important:
       // the offset order is linear from left to right for the viewarray
@@ -273,13 +258,13 @@ namespace Gecode {
         }
       }
 
-      GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View0, View1>::post(home, x, s, d0)));
+      GECODE_ES_FAIL(home,
+        (BinaryCpltSetPropagator<View0, View1>::post(home, x, s, d0)));
     }
 
 
     template <class View0, class View1>
     void rel_post(Space* home, View0 x, SetRelType r, View1 s) {
-
       if (home->failed()) return;
       // important:
       // the offset order is linear from left to right for the viewarray
@@ -292,7 +277,6 @@ namespace Gecode {
       switch(r) {
       case SRT_SUB: 
         {
-
           // x < s
           int xshift = x.mgr_min() - s.mgr_min();
           for (int i = 0; i < (int) tab; i++) {
@@ -331,7 +315,8 @@ namespace Gecode {
         {
           int xshift = 0;
           for (int i = 0; i < (int) tab; i++) {
-            if (s.mgr_min() + i < x.mgr_min() || s.mgr_min() + i > x.mgr_max()) {
+            if (s.mgr_min() + i < x.mgr_min() ||
+                s.mgr_min() + i > x.mgr_max()) {
               d0 &= (bdd_false() % s.getbdd(i));
               xshift++;
             } else {
@@ -355,7 +340,8 @@ namespace Gecode {
         }
       }
 
-      GECODE_ES_FAIL(home, (BinaryCpltSetPropagator<View0, View1>::post(home, x, s, d0)));
+      GECODE_ES_FAIL(home,
+        (BinaryCpltSetPropagator<View0, View1>::post(home, x, s, d0)));
     }
 
     // BddOp and BddRel
@@ -422,7 +408,8 @@ namespace Gecode {
 
     // SetOp and SetRel
     template <class View>
-    void rel_post(Space* home, ViewArray<View>& x, SetOpType o, SetRelType r) {
+    void rel_post(Space* home, ViewArray<View>& x,
+                  SetOpType o, SetRelType r) {
       if (home->failed()) return;
       // important:
       // the offset order is linear from left to right for the viewarray
@@ -458,7 +445,7 @@ namespace Gecode {
           }
         default:
           {
-            throw CpltSet::InvalidRelation(" other op rel relations not yet implemented ");
+            GECODE_NEVER;
             return;
           }
         }
@@ -482,7 +469,8 @@ namespace Gecode {
 
 
     template <class Rel>
-    void rel_con(Space* home, const CpltSetVar& x, Rel r, const CpltSetVar& y) {
+    void rel_con(Space* home, const CpltSetVar& x, Rel r,
+                 const CpltSetVar& y) {
       CpltSetView xv(x);
       CpltSetView yv(y);
       rel_post(home, xv, r, yv);
@@ -493,9 +481,6 @@ namespace Gecode {
     void rel_con(Space* home, const IntVar& x, Rel r, const CpltSetVar& s) {
       Gecode::Int::IntView iv(x);
       CpltSetView bv(s);
-  //     int rmin = std::min(iv.min(), bv.mgr_min());
-  //     int rmax = std::max(iv.max(), bv.mgr_max());
-  //     SingletonCpltSetView single(s.manager(), rmin, rmax, iv);
       SingletonCpltSetView single(iv.min(), iv.max(), iv);
       rel_post(home, single, r, bv);
     }  

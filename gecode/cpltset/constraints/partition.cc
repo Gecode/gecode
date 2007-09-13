@@ -58,7 +58,8 @@ namespace Gecode {
           SetLub luby(x[j]);
           IR::Inter<SetLub, SetLub> inter(lubx, luby);
           IR::ToValues<IR::Inter<SetLub, SetLub> > values(inter);
-          IR::ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > > cache(values);
+          IR::ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > > 
+            cache(values);
 
           for (cache.last(); cache(); --cache) {
             int ximin = x[i].mgr_min();
@@ -87,54 +88,12 @@ namespace Gecode {
       }
     }
 
-    template <class View>
-    void build_partition(ViewArray<View>& x, View& y, bdd& d0) {
-      // make it more readable
-      typedef Set::LubRanges<View> SetLub;
-      namespace IR = Iter::Ranges;
-
-      // disjoint
-      int n = x.size();
-      for (int i = 0; i < n - 1; i++) {
-        for (int j = i + 1; j < n; j++) {
-          SetLub lubx(x[i]);
-          SetLub luby(x[j]);
-          IR::Inter<SetLub, SetLub> inter(lubx, luby);
-          IR::ToValues<IR::Inter<SetLub, SetLub> > values(inter);
-          IR::ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > > cache(values);
-
-          for (cache.last(); cache(); --cache) {
-            int ximin = x[i].mgr_min();
-            int xjmin = x[j].mgr_min();
-            int v = cache.min();
-            d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
-          }
-        }
-      }
-
-      unsigned int ytab = y.table_width();
-      int ymin = y.mgr_min();
-      for (unsigned int k = 0; k < ytab; k++) {
-        bdd c0 = bdd_false();
-        for (int i = 0; i < n; i++) {
-          int xmin = x[i].mgr_min();
-          int xmax = x[i].mgr_max();
-          int shift = std::max(ymin, xmin) - std::min(xmin, ymin);
-          if (xmin <= ymin + (int) k && ymin + (int) k <= xmax) {
-            c0 |= x[i].getbdd(k - shift);
-          }
-        }
-        d0 &= (c0  % y.getbdd(k));
-      }
-
-    }
-
     template <class View0, class View1>
     void build_partition(ViewArray<View0>& x, View1& y, bdd& d0) {
       // make it more readable
       typedef Set::LubRanges<View0> SetLub;
       namespace IR = Iter::Ranges;
-      // std::cerr << "build partition\n";
+
       // disjoint
       int n = x.size();
       for (int i = 0; i < n - 1; i++) {
@@ -143,7 +102,8 @@ namespace Gecode {
           SetLub luby(x[j]);
           IR::Inter<SetLub, SetLub> inter(lubx, luby);
           IR::ToValues<IR::Inter<SetLub, SetLub> > values(inter);
-          IR::ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > > cache(values);
+          IR::ValCache<IR::ToValues<IR::Inter<SetLub, SetLub> > > 
+            cache(values);
 
           for (cache.last(); cache(); --cache) {
             int ximin = x[i].mgr_min();
@@ -156,26 +116,16 @@ namespace Gecode {
 
       unsigned int ytab = y.table_width();
       int ymin = y.mgr_min();
-      // std::cerr << "y:\t"; 
-      // std::cerr << y << " " << y.mgr_min() << ".." << y.mgr_max() << "\n";
-      // std::cerr << y.offset() << " " <<y.table_width() << "\n";
-      // std::cerr << "check union\n";
       for (unsigned int k = 0; k < ytab; k++) {
-        // std::cerr << "k=" << k<< " ";
         bdd c0 = bdd_false();
         for (int i = 0; i < n; i++) {
-          // std::cerr << "i=" << i << " " << x[i];
-          // std::cerr << " " << x[i].offset() << " " << x[i].table_width() << "\n";
           int xmin = x[i].mgr_min();
           int xmax = x[i].mgr_max();
           int shift = std::max(ymin, xmin) - std::min(xmin, ymin);
-          // std::cerr << " check\t" << xmin << ".." << xmax << " " << ymin << "\n";
           if (xmin <= ymin + (int) k && ymin + (int) k <= xmax) {
-            // std::cerr << "in\n";
             c0 |= x[i].getbdd(k - shift);
           }
         }
-        // std::cerr << "d0 and\n";
         d0 &= (c0  % y.getbdd(k));
       }
     }
@@ -238,7 +188,8 @@ namespace Gecode {
             }
           default:
             {
-              throw CpltSet::InvalidRelation(" partition rel not yet implemented ");
+              throw
+                CpltSet::InvalidRelation("partition rel not implemented");
               break;
             }
           }
@@ -269,7 +220,6 @@ namespace Gecode {
         }
       }
 
-      // std::cerr << "start propagation\n";
       GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
     }
 
@@ -289,7 +239,8 @@ namespace Gecode {
         naryone[i] = x[i]; 
       naryone[n] = y;
 
-      GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, naryone, d0));
+      GECODE_ES_FAIL(home,
+        NaryCpltSetPropagator<View>::post(home, naryone, d0));
     }
 
     template <class View0, class View1>
@@ -301,13 +252,13 @@ namespace Gecode {
       bdd d0 = bdd_true();     
       build_partition(x, y, d0);
 
-      GECODE_ES_FAIL(home, (NaryOneCpltSetPropagator<View0, View1>::post(home, x, y, d0)));
+      GECODE_ES_FAIL(home,
+        (NaryOneCpltSetPropagator<View0, View1>::post(home, x, y, d0)));
     }
 
     template <class View>
     void partition_post(Space* home, ViewArray<View>& x, bool withlex, 
                         SetRelType lex, bool withcard, int d) {
-      // std::cerr << "partition_post()" << "\n";
       if (home->failed()) return;
 
       int n = x.size();
@@ -330,70 +281,52 @@ namespace Gecode {
       // build partition
       bdd d0 = bdd_true();     
 
-      // Guidos formula of disjointness does not need
-      // dummy variables quite nice
-
-      // NOTE do only & over variables in the intersection !!
-
-      // std::cerr << "start disjointness" << "\n";
-      // std::cerr << "k=" << k << " ";
-        for (int i = 0; i < n - 1; i++) {
-          for (int j = i + 1; j < n; j++) {
-            // std::cerr << "x["<< i <<"]=" << x[i] << "\n";
-            // std::cerr << "y["<< j <<"]=" << x[j] << "\n";
-            Set::LubRanges<View> lubx(x[i]);
-            Set::LubRanges<View> luby(x[j]);
-            Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> >
-              inter(lubx, luby);
+      for (int i = 0; i < n - 1; i++) {
+        for (int j = i + 1; j < n; j++) {
+          Set::LubRanges<View> lubx(x[i]);
+          Set::LubRanges<View> luby(x[j]);
+          Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, 
+            Set::LubRanges<View> > inter(lubx, luby);
+          Gecode::Iter::Ranges::ToValues<
+            Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, 
+              Set::LubRanges<View> > > values(inter);
+          Gecode::Iter::Ranges::ValCache<
             Gecode::Iter::Ranges::ToValues<
-              Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> >
-              > values(inter);
-            Gecode::Iter::Ranges::ValCache<
-              Gecode::Iter::Ranges::ToValues<
-                  Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, Set::LubRanges<View> >
-              >
-              > cache(values);
-
-            cache.last();
-            for (; cache(); --cache) {
-              int ximin = x[i].mgr_min();
-              int xjmin = x[j].mgr_min();
-              int v = cache.min();
-              d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
-            }
-
+                Gecode::Iter::Ranges::Inter<Set::LubRanges<View>, 
+                  Set::LubRanges<View> > > > cache(values);
+          cache.last();
+          for (; cache(); --cache) {
+            int ximin = x[i].mgr_min();
+            int xjmin = x[j].mgr_min();
+            int v = cache.min();
+            d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
           }
-          //std::cerr << "\n";
+
         }
+      }
 
-        // no lex ordering
+      // no lex ordering
 
-        // just state that the union of all sets is us
-        // std::cerr << "union of all ";
-        for (unsigned int k = 0; k < xtab; k++) {
-        // std::cerr << "k=" << k << " ";
-          bdd c0 = bdd_false();
-          for (int i = 0; i < n; i++) {
-            if (k < x[i].table_width()) {
-              c0 |= x[i].getbdd(k);
-            }
-          }
-          d0 &= (c0  % bdd_true());
-        }
-        // std::cerr << "\n";
-
-        if (withcard) {
-          // std::cerr << "with card";
-          for (int i = n; i--; ) {
-            // std::cerr << "card= " << i << "\n";
-            unsigned int off   = x[i].offset();
-            unsigned int range = x[i].table_width();
-            d0 &= cardcheck(range, off, d, d);
+      // just state that the union of all sets is us
+      for (unsigned int k = 0; k < xtab; k++) {
+        bdd c0 = bdd_false();
+        for (int i = 0; i < n; i++) {
+          if (k < x[i].table_width()) {
+            c0 |= x[i].getbdd(k);
           }
         }
+        d0 &= (c0  % bdd_true());
+      }
 
-        // std::cerr << "start propagation\n";
-        GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
+      if (withcard) {
+        for (int i = n; i--; ) {
+          unsigned int off   = x[i].offset();
+          unsigned int range = x[i].table_width();
+          d0 &= cardcheck(range, off, d, d);
+        }
+      }
+
+      GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));
     }
 
     template <class Rel>
@@ -425,12 +358,6 @@ namespace Gecode {
       for (int i = 0; i < n; i++) {
         sv[i].init(bv[i].min(), bv[i].max(), bv[i]);
       }
-  //     std::cerr << "partition_con with intvars\n";
-  //     // add first shot on ordering the intvars
-  //     for (int i = 0; i < n; i++) 
-  //       std::cerr << x[i] << " ";
-  //     std::cerr << "\n";
-  //     variableorder(sv);
 
       CpltSetView yv(y);
       // this wont work as there is no post function for different views

@@ -65,7 +65,6 @@ namespace Gecode {
       if (x[t].table_width() > xrange) {
         int a = x[t].mgr_min() + xrange;
         int b = x[t].mgr_min() + x[t].table_width();
-        // std::cout << "t=" << t << " " << a << ","<< b << "\n";
         GECODE_ME_FAIL(home, x[t].exclude(home, a, b));
       } 
     

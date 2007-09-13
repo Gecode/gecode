@@ -98,14 +98,15 @@ namespace Gecode {
               ++lub;
             }
             if (lub() && cur == lub.val()) {
-              inter |= (selview.getbdd(j + shift) & seq[j].getbdd(k - (seqmin - xmin)));
+              inter |= (selview.getbdd(j + shift) & 
+                        seq[j].getbdd(k - (seqmin - xmin)));
               ++lub;
             }
           }
         }
 
-        // shouldnt we allow inter to be bdd_false() ?
-          d0 &= (unionview.getbdd(k - (unionmin - xmin)) % inter);
+        /// TODO: shouldnt we allow inter to be bdd_false() ?
+        d0 &= (unionview.getbdd(k - (unionmin - xmin)) % inter);
       }
 
       for (int i = 0; i < n; i++) {
@@ -214,7 +215,8 @@ namespace Gecode {
             }
             if (lub() && cur == lub.val()) {
               if (unionmin <= cur && cur <= unionmax) {
-                subset &= (seq[j].getbdd(k - (seqmin - xmin)) >>= unionview.getbdd(k - (unionmin - xmin)));
+                subset &= (seq[j].getbdd(k - (seqmin - xmin)) >>= 
+                           unionview.getbdd(k - (unionmin - xmin)));
               }
               ++lub;
             }
@@ -234,9 +236,6 @@ namespace Gecode {
       if (selview.assigned()) {
         d0 &= selview.bdd_domain();
       }
-
-      std::cout << "d0 size = " << manager.bddsize(d0) << "\n";
-  //     std::cout << "d0 = " << d0 << "\n";
     }
 
     template <class View0, class View1>
@@ -267,12 +266,8 @@ namespace Gecode {
       }
       ViewArray<SingletonCpltSetView> sbv(home, n);
       for (int i = 0; i < n; i++) {
-  //       int rmin = std::min(unionview.mgr_min(), iv[i].min());
-  //       int rmax = std::max(unionview.mgr_max(), iv[i].max());
-  //       sbv[i].init(mgr, rmin, rmax, iv[i]);
         sbv[i].init(iv[i].min(), iv[i].max(), iv[i]);
       }
-
 
       // do ordering
       ViewArray<CpltSetView> vars(home, allvars.size());
@@ -282,7 +277,6 @@ namespace Gecode {
 
       variableorder(vars, sbv);
       roots_post(home, sbv, selview, unionview);
-
     }
 
     template <class View0, class View1>
@@ -291,7 +285,7 @@ namespace Gecode {
                 View1 unionview, int usedvalues) {
       std::cout << "nvalue_post\n";
       if (home->failed())  return;
-      // WE HAVE TO ORDER ALL BDD VARS AVAILABLE SO FAR
+      /// TODO: WE HAVE TO ORDER ALL BDD VARS AVAILABLE SO FAR
       variableorder(seq);
 
       bdd d0 = bdd_true();
@@ -300,7 +294,8 @@ namespace Gecode {
       // select all variables in the sequence
       GECODE_ME_FAIL(home, selview.eqI(home, idx));
       // n values must be used (alldiff uses all |seq| values)
-      GECODE_ME_FAIL(home, unionview.cardinality(home, usedvalues, usedvalues));
+      GECODE_ME_FAIL(home,
+        unionview.cardinality(home, usedvalues, usedvalues));
       // build the bdd for the range constraint
       buildRange(home, seq, selview, unionview, d0);
       if (home->failed())  return;
@@ -311,9 +306,9 @@ namespace Gecode {
 
 
     forceinline void 
-    nvalue_con(Space* home, const IntVarArgs& x, const CpltSetVar& s, const CpltSetVar& t, 
-              int usedvalues, const CpltSetVarArgs& allvars) {
-      std::cout << "nvalue con\n";
+    nvalue_con(Space* home, const IntVarArgs& x, const CpltSetVar& s,
+               const CpltSetVar& t, 
+               int usedvalues, const CpltSetVarArgs& allvars) {
       int n = x.size();
       CpltSetView selview(s);
       CpltSetView unionview(t);
@@ -345,7 +340,6 @@ namespace Gecode {
               View1 unionview, 
               ViewArray<View0>& seqprime, View1 selviewprime,
               View1 unionviewprime) {
-      std::cout << "usespost\n";
       if (home->failed())  return;
 
       bdd d0 = bdd_true();
@@ -354,32 +348,28 @@ namespace Gecode {
       // select all variables in the sequence
       GECODE_ME_FAIL(home, selview.eqI(home, idx));
 
-      std::cout << "selection intersected ok\n";
       // build the bdd for the range constraint
       buildRange(home, seq, selview, unionview, d0);
       if (home->failed())  return;
-      std::cout << "first range built ok\n";
 
       int m = seqprime.size();
       Iter::Ranges::Singleton idx2(0, m - 1);
       // select all variables in the sequence
       GECODE_ME_FAIL(home, selviewprime.eqI(home, idx2));
 
-      std::cout << "second selection intersection ok\n";
       // build the bdd for the range constraint
 
       bdd e0 = bdd_true();
       buildRange(home, seqprime, selviewprime, unionviewprime, e0);
       if (home->failed())  return;
 
-      std::cout << "second range ok\n";
       // unionviewprime is a subset of unionview
       bdd r0 = bdd_true();
-      int tab = std::max(unionview.table_width(), unionviewprime.table_width());
+      int tab = std::max(unionview.table_width(), 
+                         unionviewprime.table_width());
       for (int i = 0; i < (int) tab; i++) {
         r0 &= (unionviewprime.getbdd(i)) >>= (unionview.getbdd(i));
       }
-      std::cout << "subset ok\n";
 
      GECODE_ES_FAIL(home,
        (NaryTwoCpltSetPropagator<View0, View1>::post(home, seq, selview, 

@@ -95,9 +95,6 @@ namespace Gecode {
     var = NULL;
   }
 
-  // forceinline BMI*
-  // CpltSetVar::manager(void) const { return var->manager(); }    
-
   forceinline CpltSet::CpltSetVarImp*
   CpltSetVar::variable(void) const { return var; }
 
@@ -179,7 +176,8 @@ namespace Gecode {
   CpltSetVarGlbRanges::CpltSetVarGlbRanges(void) {}
 
   forceinline
-  CpltSetVarGlbRanges::CpltSetVarGlbRanges(const CpltSetVar& x) : iter(x.variable()) {}
+  CpltSetVarGlbRanges::CpltSetVarGlbRanges(const CpltSetVar& x)
+  : iter(x.variable()) {}
   
   forceinline bool
   CpltSetVarGlbRanges::operator()(void) const { return iter(); }
@@ -197,7 +195,8 @@ namespace Gecode {
   CpltSetVarGlbValues::CpltSetVarGlbValues(void) {}
 
   forceinline
-  CpltSetVarGlbValues::CpltSetVarGlbValues(const CpltSetVar& x) : iter(x.variable()) {}
+  CpltSetVarGlbValues::CpltSetVarGlbValues(const CpltSetVar& x)
+  : iter(x.variable()) {}
   
   forceinline bool
   CpltSetVarGlbValues::operator()(void) const { return iter(); }
@@ -212,7 +211,8 @@ namespace Gecode {
   CpltSetVarLubRanges::CpltSetVarLubRanges(void) {}
 
   forceinline
-  CpltSetVarLubRanges::CpltSetVarLubRanges(const CpltSetVar& x) : iter(x.variable()) {}
+  CpltSetVarLubRanges::CpltSetVarLubRanges(const CpltSetVar& x)
+  : iter(x.variable()) {}
   
   forceinline bool
   CpltSetVarLubRanges::operator()(void) const { return iter(); }
@@ -230,7 +230,8 @@ namespace Gecode {
   CpltSetVarLubValues::CpltSetVarLubValues(void) {}
 
   forceinline
-  CpltSetVarLubValues::CpltSetVarLubValues(const CpltSetVar& x) : iter(x.variable()) {}
+  CpltSetVarLubValues::CpltSetVarLubValues(const CpltSetVar& x)
+  : iter(x.variable()) {}
   
   forceinline bool
   CpltSetVarLubValues::operator()(void) const { return iter(); }
@@ -245,7 +246,8 @@ namespace Gecode {
   CpltSetVarDomValues::CpltSetVarDomValues(void) {}
 
   forceinline
-  CpltSetVarDomValues::CpltSetVarDomValues(const CpltSetVar& x) : iter(x.variable()) {}
+  CpltSetVarDomValues::CpltSetVarDomValues(const CpltSetVar& x)
+  : iter(x.variable()) {}
   
   forceinline bool
   CpltSetVarDomValues::operator()(void) const { return iter(); }
@@ -261,7 +263,7 @@ namespace Gecode {
 
   forceinline
   CpltSetVarUnknownRanges::CpltSetVarUnknownRanges(const CpltSetVar& x) 
-    : iter(x.variable()) {}
+  : iter(x.variable()) {}
   
   forceinline bool
   CpltSetVarUnknownRanges::operator()(void) const { return iter(); }

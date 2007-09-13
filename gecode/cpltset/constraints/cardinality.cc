@@ -44,15 +44,12 @@ namespace Gecode {
 
   void
   cardinality(Space* home, CpltSetVar x, unsigned int l, unsigned int u) {
-    // std::cerr << "calling card: " << l << "/" << u << " on " << x << "\n";
     if (home->failed()) return;
 
     ViewArray<CpltSetView> bv(home, 1);
     bv[0] = x;
     unsigned int off = bv[0].offset();
     unsigned int range = bv[0].table_width();
-
-    // std::cout << "post cardinality for x=" << x << "\n";
 
     bdd c = cardcheck(range, off, static_cast<int> (l), static_cast<int> (u));
 

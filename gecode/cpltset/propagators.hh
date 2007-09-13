@@ -43,7 +43,7 @@
 namespace Gecode { namespace CpltSet { 
 
   /**
-   * \brief Nary bdd propagator
+   * \brief Nary propagator for CpltSet variables
    */
   template <class View>
   class NaryCpltSetPropagator : public Propagator {
@@ -91,7 +91,7 @@ namespace Gecode { namespace CpltSet {
 
 
   /**
-   * \brief Binary bdd propagator
+   * \brief Binary propagator for CpltSet variables
    */
   template <class View0, class View1>
   class BinaryCpltSetPropagator : public Propagator {
@@ -103,7 +103,8 @@ namespace Gecode { namespace CpltSet {
     /// Bdd representation of the constraint
     bdd d;
     /// Constructor for cloning \a p
-    BinaryCpltSetPropagator(Space* home, bool share, BinaryCpltSetPropagator& p);
+    BinaryCpltSetPropagator(Space* home, bool share,
+                            BinaryCpltSetPropagator& p);
     /// Constructor for posting
     BinaryCpltSetPropagator(Space* home, View0& x0, View1& y0, bdd& d);
   public:
@@ -124,9 +125,8 @@ namespace Gecode { namespace CpltSet {
   };
 
   /**
-   * \brief Unary bdd propagator
+   * \brief Unary propagator for CpltSet variables
    */
-
   template <class View>
   class UnaryCpltSetPropagator : public Propagator {
   protected:
@@ -213,13 +213,8 @@ namespace Gecode { namespace CpltSet {
   }; 
 
 
-  /*
-   * Inhomogenuous bdd propagators
-   *
-   */
-
   /**
-   * \brief Bdd propagator with n+1 arguments
+   * \brief Propagator for CpltSet variables with n+1 arguments
    */
   template <class View0, class View1>
   class NaryOneCpltSetPropagator : 
@@ -254,6 +249,9 @@ namespace Gecode { namespace CpltSet {
                             bdd& d);
   };
 
+  /**
+   * \brief Propagator for CpltSet variables with n+2 arguments
+   */
   template <class View0, class View1>
   class NaryTwoCpltSetPropagator : 
     public Propagator {
