@@ -1,0 +1,165 @@
+/* -*- mode: C++; c-basic-offset: 2; indent-tabs-mode: nil -*- */
+/*
+ *  Main authors:
+ *     Patrick Pekczynski <pekczynski@ps.uni-sb.de>
+ *     Guido Tack <tack@gecode.org>
+ *
+ *  Copyright:
+ *     Patrick Pekczynski, 2006
+ *     Guido Tack, 2007
+ *
+ *  Last modified:
+ *     $Date: 2007-09-13 09:13:50 +0200 (Thu, 13 Sep 2007) $ by $Author: tack $
+ *     $Revision: 5014 $
+ *
+ *  This file is part of Gecode, the generic constraint
+ *  development environment:
+ *     http://www.gecode.org
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining
+ *  a copy of this software and associated documentation files (the
+ *  "Software"), to deal in the Software without restriction, including
+ *  without limitation the rights to use, copy, modify, merge, publish,
+ *  distribute, sublicense, and/or sell copies of the Software, and to
+ *  permit persons to whom the Software is furnished to do so, subject to
+ *  the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be
+ *  included in all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ *  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *  NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ *  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ *  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+ *  WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ */
+
+namespace Gecode { namespace CpltSet {
+
+  template <class View0, class View1>
+  forceinline
+  NaryOneCpltSetPropagator<View0, View1>
+  ::NaryOneCpltSetPropagator(Space* home, ViewArray<View0>& x, 
+                             View1& y, bdd& d0) : Super(home, x, y), d(d0) {
+    Super::force(home);
+  }
+
+  template <class View0, class View1>
+  forceinline
+  NaryOneCpltSetPropagator<View0, View1>
+  ::NaryOneCpltSetPropagator(Space* home, bool share, 
+                             NaryOneCpltSetPropagator& p)
+    : Super(home, share, p), d(p.d) {}
+
+  template <class View0, class View1>
+  forceinline ExecStatus
+  NaryOneCpltSetPropagator<View0, View1>::post(Space* home,
+                                               ViewArray<View0>& x, View1& y, 
+                                               bdd& d0) {
+    (void) new (home) NaryOneCpltSetPropagator(home, x, y, d0);
+    return ES_OK;
+  }
+
+  template <class View0, class View1>
+  Support::Symbol
+  NaryOneCpltSetPropagator<View0, View1>::name(void) {
+    return 
+      Reflection::mangle<View0,View1>("CpltSet::NaryOneCpltSetPropagator");
+  }
+
+  template <class View0, class View1>
+  Reflection::ActorSpec&
+  NaryOneCpltSetPropagator<View0,View1>::spec(Space* home,
+                                              Reflection::VarMap& m) {
+    throw Reflection::ReflectionException("Not implemented");
+  } 
+
+  template <class View0, class View1>
+  forceinline Actor*
+  NaryOneCpltSetPropagator<View0, View1>::copy(Space* home, bool share) {
+    return new (home) NaryOneCpltSetPropagator(home, share, *this);
+  }
+
+  template <class View0, class View1>
+  ExecStatus
+  NaryOneCpltSetPropagator<View0, View1>::divide_conquer(Space* home, bdd& p,
+                                                         int l, int r,
+                                                         int ypos) {
+    if (l == r) {
+      ModEvent me = ME_CPLTSET_NONE;
+      if (l == ypos) {
+        GECODE_ME_CHECK(me = y.tell_formula(home, p));
+      } else {
+        GECODE_ME_CHECK(me = x[l].tell_formula(home, p));
+      }
+      return ES_OK;
+    }
+
+    int h = (r + l) / 2;
+
+    // computing psi without recursion
+    bdd left = p;
+    for (int i = r; i >= h + 1; i--) {
+      if (i == ypos) {
+        quantify(left, y);
+      } else {
+        quantify(left, x[i]);
+      }
+    }
+ 
+    ExecStatus es = ES_OK;
+    GECODE_ES_CHECK(es = divide_conquer(home, left, l, h, ypos));
+
+    bdd right = p;
+    for (int i = h; i >= l; i-- ) {
+      if (i == ypos) {
+        quantify(right, y);
+      } else {
+        quantify(right, x[i]);
+      }
+    }
+
+    GECODE_ES_CHECK(es = divide_conquer(home, right, h + 1, r, ypos));
+    return es;
+  }
+  
+  template <class View0, class View1>
+  forceinline ExecStatus 
+  NaryOneCpltSetPropagator<View0, View1>::propagate(Space* home) {
+    bool assigned = true;
+    int n = x.size();
+    ExecStatus es = ES_OK;
+    int ypos = n;
+
+    GECODE_ES_CHECK(es = divide_conquer(home, d, 0, n, ypos));
+
+    assigned = true;
+    for (int i = x.size(); i--; ) {
+      assigned &= x[i].assigned();
+    }
+    if (assigned) {
+      return ES_SUBSUMED(this, home);
+    }
+
+    return ES_FIX;
+  }
+
+  template <class View0, class View1>
+  size_t
+  NaryOneCpltSetPropagator<View0, View1>::dispose(Space* home) {
+    Super::unforce(home);
+    if (!home->failed()) {
+      x.cancel(home, this, PC_CPLTSET_DOM);
+      y.cancel(home, this, PC_CPLTSET_DOM);
+    }
+    manager.dispose(d);
+    Super::dispose(home);
+    return sizeof(*this);
+  }
+
+}}
+
+// STATISTICS: cpltset-prop
