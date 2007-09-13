@@ -430,7 +430,7 @@
  *  - \ref PageNotation
  *  - \ref PageGlossary
  *
- * To get started with modelling in Gecode, you may also want to have a look 
+ * To get started with modelling in %Gecode, you may also want to have a look 
  * at our \ref Example.
  *
  * \section SecByTask Programming tasks
