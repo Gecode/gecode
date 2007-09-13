@@ -354,12 +354,11 @@ public:
         if (int idx = sudokuField(examples[opt.size()], nn, i, j)) {
           dom(this, y[idx-1], SRT_SUP, (i+1)+(j*nn) );
 
-	  for (int z = 0; z < nn; z++) {
-	    if (z != idx - 1) {
-	      dom(this, y[z], SRT_DISJ, (i+1)+(j*nn));
-	    }
-	  }
-
+          for (int z = 0; z < nn; z++) {
+            if (z != idx - 1) {
+              dom(this, y[z], SRT_DISJ, (i+1)+(j*nn));
+            }
+          }
         }
 
     for (int i=0; i<nn; i++)
@@ -410,7 +409,6 @@ public:
     // row, column, and block
     for (int i=0; i<nn; i++)
       for (int j=0; j<nn; j++) {
-
         exactly(this, y[i], row[j], 1);
         exactly(this, y[i], col[j], 1);
         exactly(this, y[i], block[j], 1);
