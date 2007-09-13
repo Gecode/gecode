@@ -36,117 +36,21 @@
  *
  */
 
-#ifndef __GECODE_TEST_BDD_HH__
-#define __GECODE_TEST_BDD_HH__
+#ifndef __GECODE_TEST_CPLTSET_HH__
+#define __GECODE_TEST_CPLTSET_HH__
 
 #include "gecode/cpltset.hh"
 #include "test/test.hh"
-#include "test/int.hh"
-#ifdef GECODE_HAVE_SET_VARS
 #include "test/set.hh"
-#endif
+#include "test/int.hh"
 
+using namespace Test;
 using namespace Gecode;
+using namespace Set;
 using namespace CpltSet;
 
-#ifdef GECODE_HAVE_SET_VARS
-
-#else
-
-class CountableSetValues {
+class CpltSetTest : public Base {
 private:
-  IntSetValues dv;
-  int cur;
-  int i;
-public:
-  CountableSetValues(void) {}
-  CountableSetValues(const IntSet& d0, int cur0) : dv(d0), cur(cur0), i(1) {
-    if (! (i & cur))
-      operator++();
-  }
-  void init(const IntSet& d0, int cur0) {
-    dv = d0;
-    cur = cur0;
-    i = 1;
-    if (! (i & cur))
-      operator++();
-  }
-  bool operator()(void) const {
-    return i<=cur;
-  }
-  void operator++(void) {
-    do {
-      ++dv;
-      i = i<<1;
-    } while (! (i & cur) && i<cur);
-  }
-  int val(void) const { return dv.val(); }
-};
-
-class CountableSetRanges : public Iter::Values::ToRanges<CountableSetValues> {
-private:
-  CountableSetValues v;
-public:
-  CountableSetRanges(void) {}
-  CountableSetRanges(const IntSet& d, int cur) : v(d, cur) {
-    Iter::Values::ToRanges<CountableSetValues>::init(v);
-  }
-  void init(const IntSet& d, int cur) {
-    v.init(d, cur);
-    Iter::Values::ToRanges<CountableSetValues>::init(v);
-  }
-};
-
-class CountableSet {
-private:
-  IntSet d;
-  //  IntSet curd;
-  unsigned int cur;
-  unsigned int lubmax;
-public:
-  CountableSet(const IntSet&);
-  CountableSet(void) {}
-  void init(const IntSet&);
-  void reset(void) { cur = 0; }
-  bool operator()(void) const { return cur<lubmax; }
-  void operator++(void);
-  int val(void) const;
-};
-
-class SetAssignment {
-private:
-  int n;
-  CountableSet* dsv;
-  Assignment ir;
-  bool done;
-public:
-  IntSet lub;
-  int withInt;
-  SetAssignment(int, const IntSet&, int withInt = 0);
-  void reset(void);
-  bool operator()(void) const {
-    return !done;
-  }
-  void operator++(void);
-  int operator[](int i) const {
-    assert((i>=0) && (i<n));
-    return dsv[i].val();
-  }
-  int intval(void) const { return ir[0]; }
-  const Assignment& ints(void) const { return ir; }
-  int size(void) const {
-    return n;
-  }
-  ~SetAssignment(void) {
-    delete [] dsv;
-  }
-};
-
-#endif
-
-class BddTest : public Test {
-private:
-  BuddyMgr   mgr;
   int     arity;
   IntSet  lub;
   bool    reified;
@@ -158,17 +62,21 @@ private:
   void addToGlb(int, CpltSetVar&, int, const IntSet&);
   SetAssignment* make_assignment(void);
 public:
-  BddTest(const char* t, int a, const IntSet& d, bool r=false, int w=0, 
-	  int mn=10000, int mc=1000) 
-    : Test("Bdd",t), arity(a), lub(d), reified(r), withInt(w), 
-      ivs(mn), ics(mc)  {}
+  CpltSetTest(const std::string& s, int a, const IntSet& d, bool r=false,
+              int w=0, int mn=10000, int mc=1000) 
+    : Base("CpltSet::"+s), arity(a), lub(d), reified(r), withInt(w), 
+      ivs(mn), ics(mc)  {
+    CpltSet::manager.dispose();
+    CpltSet::manager.init(mn, mc);
+  }
 
   /// Check for solution
   virtual bool solution(const SetAssignment&) const = 0;
   /// Post propagator
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray& y) = 0;
   /// Post reified propagator
-  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray& y, BoolVar b) {}
+  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray& y,
+                    BoolVar b) {}
   /// Perform test
   virtual bool run(const Options& opt);
 
@@ -188,8 +96,6 @@ public:
   }
   
   /// Provide manager access
-  BuddyMgr& manager(void) { return mgr; }
-  void manager( BuddyMgr& m) { mgr = m; }
   int varsize(void) { return ivs; }
   int cachesize(void) { return ics; }
 
@@ -197,4 +103,4 @@ public:
 
 #endif
 
-// STATISTICS: test-bdd
+// STATISTICS: test-cpltset

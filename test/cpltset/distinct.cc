@@ -34,7 +34,7 @@
  *
  */
 
-#include "test/bdd.hh"
+#include "test/cpltset.hh"
 
 static const int d1r[4][2] = {
   {-4,-3},{-1,-1},{1,1},{3,5}
@@ -45,10 +45,10 @@ static IntSet ds_33(-3,3);
 static IntSet ds_4(4,4);
 static IntSet ds_13(1,3);
 
-class BddDistinct : public BddTest {
+class CpltSetDistinct : public CpltSetTest {
 public:
   /// Create and register test
-  BddDistinct(const char* t) : BddTest(t,3,ds_13) {}
+  CpltSetDistinct(const char* t) : CpltSetTest(t,3,ds_13) {}
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     {
@@ -77,7 +77,7 @@ public:
     Gecode::distinct(home, x);
   }
 };
-BddDistinct _bdddistinct("Distinct");
+CpltSetDistinct _cpltsetdistinct("Distinct");
 
 
-// STATISTICS: test-bdd
+// STATISTICS: test-cpltset

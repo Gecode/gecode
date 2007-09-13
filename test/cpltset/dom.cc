@@ -44,10 +44,10 @@ static IntSet d1(d1r,4);
 static IntSet ds_33(-3,3);
 static IntSet ds_4(4,4);
 
-class BddDomEqRange : public BddTest {
+class CpltSetDomEqRange : public CpltSetTest {
 public:
   /// Create and register test
-  BddDomEqRange(const char* t) : BddTest(t,1,ds_33,false) {}
+  CpltSetDomEqRange(const char* t) : CpltSetTest(t,1,ds_33,false) {}
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr(x.lub, x[0]);
@@ -63,12 +63,12 @@ public:
 //     Gecode::dom(home, x[0], SRT_EQ, ds_33, b);
 //   }
 };
-BddDomEqRange _bdddomeqrange("Dom::EqRange");
+CpltSetDomEqRange _cpltsetdomeqrange("Dom::EqRange");
 
-class BddDomEqDom : public BddTest {
+class CpltSetDomEqDom : public CpltSetTest {
 public:
   /// Create and register test
-  BddDomEqDom(const char* t) : BddTest(t,1,d1,false) {}
+  CpltSetDomEqDom(const char* t) : CpltSetTest(t,1,d1,false) {}
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr(x.lub, x[0]);
@@ -84,14 +84,14 @@ public:
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
 };
-BddDomEqDom _bdddomeq("Dom::EqDom");
+CpltSetDomEqDom _cpltsetdomeq("Dom::EqDom");
 
 
 
-class BddDomSupRange : public BddTest {
+class CpltSetDomSupRange : public CpltSetTest {
 public:
   /// Create and register test
-  BddDomSupRange(const char* t) : BddTest(t,1,ds_33,false) {}
+  CpltSetDomSupRange(const char* t) : CpltSetTest(t,1,ds_33,false) {}
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr(x.lub, x[0]);
@@ -107,12 +107,12 @@ public:
 //     Gecode::dom(home, x[0], SRT_SUP, ds_33, b);
 //   }
 };
-BddDomSupRange _bdddomsuprange("Dom::SupRange");
+CpltSetDomSupRange _cpltsetdomsuprange("Dom::SupRange");
 
-class BddDomSupDom : public BddTest {
+class CpltSetDomSupDom : public CpltSetTest {
 public:
   /// Create and register test
-  BddDomSupDom(const char* t) : BddTest(t,1,d1,false) {}
+  CpltSetDomSupDom(const char* t) : CpltSetTest(t,1,d1,false) {}
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr(x.lub, x[0]);
@@ -128,6 +128,6 @@ public:
 //     Gecode::dom(home, x[0], SRT_SUP, d1, b);
 //   }
 };
-BddDomSupDom _bdddomsup("Dom::SupDom");
+CpltSetDomSupDom _cpltsetdomsup("Dom::SupDom");
 
-// STATISTICS: test-bdd
+// STATISTICS: test-cpltset

@@ -46,10 +46,10 @@ static IntSet ds_33(-3,3);
 static IntSet ds_4(4,4);
 static IntSet ds_13(1,3);
 
-class BddPartition : public BddTest {
+class CpltSetPartition : public CpltSetTest {
 public:
   /// Create and register test
-  BddPartition(const char* t) : BddTest(t,2,ds_13,false) {}
+  CpltSetPartition(const char* t) : CpltSetTest(t,2,ds_13,false) {}
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
@@ -77,13 +77,13 @@ public:
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
 };
-BddPartition _bddpartition("Partition");
+CpltSetPartition _cpltsetpartition("Partition");
 
 
-class BddPartitionLex : public BddTest {
+class CpltSetPartitionLex : public CpltSetTest {
 public:
   /// Create and register test
-  BddPartitionLex(const char* t) : BddTest(t,2,ds_13,false) {}
+  CpltSetPartitionLex(const char* t) : CpltSetTest(t,2,ds_13,false) {}
 //   template <class I>
 //   int iter2int(I& r) const{
 //     // std::cout << "iter2int\n";
@@ -135,13 +135,13 @@ public:
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
 };
-BddPartitionLex _bddpartitionlex("Partition::Lex");
+CpltSetPartitionLex _cpltsetpartitionlex("Partition::Lex");
 
 
-class BddPartitionNaryOne : public BddTest {
+class CpltSetPartitionNaryOne : public CpltSetTest {
 public:
   /// Create and register test
-  BddPartitionNaryOne(const char* t) : BddTest(t,3,ds_13,false, 0, 200, 10) {}
+  CpltSetPartitionNaryOne(const char* t) : CpltSetTest(t,3,ds_13,false, 0, 200, 10) {}
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
@@ -170,12 +170,12 @@ public:
     partition(home, z, y);
   }
 };
-BddPartitionNaryOne _bddpartitionnaryone("Partition::NaryOne");
+CpltSetPartitionNaryOne _cpltsetpartitionnaryone("Partition::NaryOne");
 
-class BddPartitionNaryOneSmaller : public BddTest {
+class CpltSetPartitionNaryOneSmaller : public CpltSetTest {
 public:
   /// Create and register test
-  BddPartitionNaryOneSmaller(const char* t) : BddTest(t,3,d1,false, 200, 80) {
+  CpltSetPartitionNaryOneSmaller(const char* t) : CpltSetTest(t,3,d1,false, 200, 80) {
     
   }
   /// Test whether \a x is solution
@@ -212,25 +212,23 @@ public:
     dom(home, y, SRT_EQ, 3, 5);
   }
 };
-BddPartitionNaryOneSmaller _bddpartitionnaryonesmaller("Partition::NaryOne::Smaller");
+CpltSetPartitionNaryOneSmaller _cpltsetpartitionnaryonesmaller("Partition::NaryOne::Smaller");
 
 
-class BddPartitionNaryOneInt : public BddTest {
+class CpltSetPartitionNaryOneInt : public CpltSetTest {
 public:
   /// Create and register test
-  BddPartitionNaryOneInt(const char* t) : BddTest(t,1,ds_13,false, 2, 200, 10) {}
+  CpltSetPartitionNaryOneInt(const char* t) : CpltSetTest(t,1,ds_13,false, 2, 200, 10) {}
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
 
-    Assignment y = x.ints();
-
-    Iter::Ranges::Singleton y0(y[0], y[0]);
-    Iter::Ranges::Singleton y1(y[1], y[1]);
+    Iter::Ranges::Singleton y0(x.ints()[0], x.ints()[0]);
+    Iter::Ranges::Singleton y1(x.ints()[1], x.ints()[1]);
     Iter::Ranges::Union<Iter::Ranges::Singleton, Iter::Ranges::Singleton> u(y0, y1);
 
     CountableSetRanges xr(x.lub, x[0]);
 
-    bool disjoint = y[0] != y[1];
+    bool disjoint = x.ints()[0] != x.ints()[1];
     bool isunion  = Iter::Ranges::equal(u, xr);
 
     return disjoint && isunion;
@@ -243,5 +241,5 @@ public:
   }
 };
 
-BddPartitionNaryOneInt _bddpartitionnaryoneint("Partition::NaryOne::Int");
-// STATISTICS: test-bdd
+CpltSetPartitionNaryOneInt _cpltsetpartitionnaryoneint("Partition::NaryOne::Int");
+// STATISTICS: test-cpltset

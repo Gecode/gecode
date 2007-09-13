@@ -45,10 +45,10 @@ static IntSet ds_33(-3,3);
 static IntSet ds_4(4,4);
 static IntSet ds_13(1,3);
 
-class BddAtmost : public BddTest {
+class CpltSetAtmost : public CpltSetTest {
 public:
   /// Create and register test
-  BddAtmost(const char* t) : BddTest(t,2,ds_13,false) {}
+  CpltSetAtmost(const char* t) : CpltSetTest(t,2,ds_13,false) {}
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
@@ -74,12 +74,12 @@ public:
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
 };
-BddAtmost _bddatmost("Atmost::1");
+CpltSetAtmost _cpltsetatmost("Atmost::1");
 
-class BddAtmostLexLe : public BddTest {
+class CpltSetAtmostLexLe : public CpltSetTest {
 public:
   /// Create and register test
-  BddAtmostLexLe(const char* t) : BddTest(t,2,ds_13,false) {}
+  CpltSetAtmostLexLe(const char* t) : CpltSetTest(t,2,ds_13,false) {}
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
@@ -107,13 +107,13 @@ public:
     Gecode::atmostLex(home, x[0], x[1], 1, SRT_LE);
   }
 };
-BddAtmostLexLe _bddatmostlexle("Atmost::Lex::Le");
+CpltSetAtmostLexLe _cpltsetatmostlexle("Atmost::Lex::Le");
 
 
-class BddAtmostIntSet : public BddTest {
+class CpltSetAtmostIntSet : public CpltSetTest {
 public:
   /// Create and register test
-  BddAtmostIntSet(const char* t) : BddTest(t,1,ds_33,false) {}
+  CpltSetAtmostIntSet(const char* t) : CpltSetTest(t,1,ds_33,false) {}
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
@@ -134,6 +134,6 @@ public:
     Gecode::atmost(home, x[0], ds_33, 1);
   }
 };
-BddAtmostIntSet _bddatmostintset("Atmost::IntSet");
+CpltSetAtmostIntSet _cpltsetatmostintset("Atmost::IntSet");
 
-// STATISTICS: test-bdd
+// STATISTICS: test-cpltset

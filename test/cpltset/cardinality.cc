@@ -45,10 +45,10 @@ static IntSet ds_33(-3,3);
 static IntSet ds_4(4,4);
 static IntSet ds_13(1,3);
 
-class BddCardMinMax : public BddTest {
+class CpltSetCardMinMax : public CpltSetTest {
 public:
   /// Create and register test
-  BddCardMinMax(const char* t) : BddTest(t,1,d1,false) {}
+  CpltSetCardMinMax(const char* t) : CpltSetTest(t,1,d1,false) {}
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
@@ -64,7 +64,7 @@ public:
   /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
-    Gecode::hls_order(home, x);
+    // Gecode::hls_order(home, x);
     Gecode::cardinality(home, x[0], 0, 3);
   }
 /// Post reified constraint on \a x for \a b
@@ -72,12 +72,12 @@ public:
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
 };
-BddCardMinMax _bddcardminmax("Card::MinMax");
+CpltSetCardMinMax _cpltsetcardminmax("Card::MinMax");
 
-class BddCardEq : public BddTest {
+class CpltSetCardEq : public CpltSetTest {
 public:
   /// Create and register test
-  BddCardEq(const char* t) : BddTest(t,1,d1,false) {}
+  CpltSetCardEq(const char* t) : CpltSetTest(t,1,d1,false) {}
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
@@ -93,7 +93,7 @@ public:
   /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
-    Gecode::hls_order(home, x);
+    // Gecode::hls_order(home, x);
     Gecode::cardinality(home, x[0], 3, 3);
   }
 /// Post reified constraint on \a x for \a b
@@ -101,13 +101,13 @@ public:
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
 };
-BddCardEq _bddcardeq("Card::Eq");
+CpltSetCardEq _cpltsetcardeq("Card::Eq");
 
 
-class BddCardMinInf : public BddTest {
+class CpltSetCardMinInf : public CpltSetTest {
 public:
   /// Create and register test
-  BddCardMinInf(const char* t) : BddTest(t,1,d1,false) {}
+  CpltSetCardMinInf(const char* t) : CpltSetTest(t,1,d1,false) {}
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetRanges xr1(x.lub, x[0]);
@@ -123,7 +123,7 @@ public:
   /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
     // Test lex-bit order
-    Gecode::hls_order(home, x);
+    // Gecode::hls_order(home, x);
     Gecode::cardinality(home, x[0], 1, Gecode::Limits::Set::int_max);
   }
 /// Post reified constraint on \a x for \a b
@@ -131,6 +131,6 @@ public:
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
 //   }
 };
-BddCardMinInf _bddcardmininf("Card::MinInf");
+CpltSetCardMinInf _cpltsetcardmininf("Card::MinInf");
 
-// STATISTICS: test-bdd
+// STATISTICS: test-cpltset

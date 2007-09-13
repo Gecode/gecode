@@ -45,10 +45,10 @@ static IntSet ds_33(-3,3);
 static IntSet ds_4(4,4);
 static IntSet ds_13(1,3);
 
-class BddRelLe : public BddTest {
+class CpltSetRelLe : public CpltSetTest {
 public:
   /// Create and register test
-  BddRelLe(const char* t) : BddTest(t,2,ds_13,false) {}
+  CpltSetRelLe(const char* t) : CpltSetTest(t,2,ds_13,false) {}
 
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
@@ -72,12 +72,12 @@ public:
 //     Gecode::dom(home, x[0], SRT_LE, d1, b,SCL_DOM);
 //   }
 };
-BddRelLe _bddrelle("Rel::Le");
+CpltSetRelLe _cpltsetrelle("Rel::Le");
 
-class BddRelLq : public BddTest {
+class CpltSetRelLq : public CpltSetTest {
 public:
   /// Create and register test
-  BddRelLq(const char* t) : BddTest(t,2,ds_13,false) {}
+  CpltSetRelLq(const char* t) : CpltSetTest(t,2,ds_13,false) {}
 
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
@@ -101,13 +101,13 @@ public:
 //     Gecode::dom(home, x[0], SRT_LQ, d1, b,SCL_DOM);
 //   }
 };
-BddRelLq _bddrellq("Rel::Lq");
+CpltSetRelLq _cpltsetrellq("Rel::Lq");
 
 
-class BddRelLeDiff : public BddTest {
+class CpltSetRelLeDiff : public CpltSetTest {
 public:
   /// Create and register test
-  BddRelLeDiff(const char* t) : BddTest(t,2,ds_33,false) {}
+  CpltSetRelLeDiff(const char* t) : CpltSetTest(t,2,ds_33,false) {}
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
     CountableSetValues xr1(x.lub, x[0]);
@@ -132,13 +132,13 @@ public:
 //     Gecode::dom(home, x[0], SRT_EQ, d1, b,SCL_DOM);
 //   }
 };
-BddRelLe _bddrellediff("Rel::Le::Diff");
+CpltSetRelLe _cpltsetrellediff("Rel::Le::Diff");
 
 
-class BddRelDisj : public BddTest {
+class CpltSetRelDisj : public CpltSetTest {
 public:
   /// Create and register test
-  BddRelDisj(const char* t) : BddTest(t,2,ds_13,false) {}
+  CpltSetRelDisj(const char* t) : CpltSetTest(t,2,ds_13,false) {}
 
   /// Test whether \a x is solution
   virtual bool solution(const SetAssignment& x) const {
@@ -155,6 +155,6 @@ public:
     Gecode::rel(home, x[0], SRT_DISJ, x[1]);
   }
 };
-BddRelDisj _bddreldisj("Rel::Disj");
+CpltSetRelDisj _cpltsetreldisj("Rel::Disj");
 
-// STATISTICS: test-bdd
+// STATISTICS: test-cpltset

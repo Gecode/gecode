@@ -43,7 +43,7 @@ static IntSet ds_1012(-1,2);
 // BE CAREFUL with number of variables and domain size
 // current instance ( |ds_012 = {-1#2}| = 4 and |x| = 2 + 2 = 4 ) => 2^16
 // takes at least 5 min to test
-class BddSelectUnion : public BddTest {
+class CpltSetSelectUnion : public CpltSetTest {
 private:
   int selector_pos;
   int union_pos;
@@ -51,7 +51,7 @@ private:
 public:
   // using cache size of 10000 gives fastest time of 0m48s per iteration
   /// Create and register test
-  BddSelectUnion(const char* t) : BddTest(t, 4, ds_012, false, 0, 100, 10000), xsize(4) {
+  CpltSetSelectUnion(const char* t) : CpltSetTest(t, 4, ds_012, false, 0, 100, 10000), xsize(4) {
     union_pos = xsize - 1;
     selector_pos = xsize - 2;
   }
@@ -88,10 +88,6 @@ public:
   }
   /// Post constraint on \a x
   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
-    // access the space manager
-    BuddyMgr lm = this->manager();
-    // lm.debug();
-
     int vars = selector_pos;
     CpltSetVarArgs xs(vars);
     for (int i=vars; i--;)
@@ -99,17 +95,17 @@ public:
     Gecode::selectUnion(home, xs, x[selector_pos], x[union_pos]);
   }
 };
-BddSelectUnion _bddselectUnion("Select::SelectUnion");
+CpltSetSelectUnion _cpltsetselectUnion("Select::SelectUnion");
 
 
-class BddFindNonEmptySub : public BddTest {
+class CpltSetFindNonEmptySub : public CpltSetTest {
 private:
   int selector_pos;
   int union_pos;
   int xsize;
 public:
   /// Create and register test
-  BddFindNonEmptySub(const char* t) : BddTest(t, 4, ds_1012,false, 0, 800, 1000), xsize(4) {
+  CpltSetFindNonEmptySub(const char* t) : CpltSetTest(t, 4, ds_1012,false, 0, 800, 1000), xsize(4) {
     /// using 1012 leads to 5min testtime for ONE iteration !
     union_pos = xsize - 1;
     selector_pos = xsize - 2;   
@@ -191,15 +187,10 @@ public:
     for (int i=vars; i--;)
       xs[i]=x[i];
 
-    // access the space manager
-    BuddyMgr lm = this->manager();
-    // lm.debug();
-
-
-    Gecode::findNonEmptySub(home, xs, x[selector_pos], x[union_pos]);
+    Gecode::selectNonEmptySub(home, xs, x[selector_pos], x[union_pos]);
   }
 };
-BddFindNonEmptySub _bddfindNonEmptySub("Select::FindNonEmptySub");
+CpltSetFindNonEmptySub _cpltsetfindNonEmptySub("Select::FindNonEmptySub");
 
 
-// STATISTICS: test-bdd
+// STATISTICS: test-cpltset
