@@ -37,60 +37,64 @@
 
 #include "test/int.hh"
 
-namespace Test { namespace Int { namespace Circuit {
+namespace Test { namespace Int {
 
-  /**
-   * \defgroup TaskTestIntCircuit Circuit constraints
-   * \ingroup TaskTestInt
-   */
-  //@{
-  /// Simple test for circuit constraint
-  class Circuit : public Test {
-  public:
-    /// Create and register test
-    Circuit(int n, int min, int max, Gecode::IntConLevel icl)
-      : Test("Circuit::" + str(icl) + "::" + str(n),
-                n,min,max,false,icl) {
-      testdomcon = false;
-    }
-    /// Check whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      for (int i=x.size(); i--; )
-        if ((x[i] < 0) || (x[i] > x.size()-1))
-          return false;
-      int reachable = 0;
-      {
-        int j=0;
-        for (int i=x.size(); i--; ) {
-          j=x[j]; reachable |= (1 << j);
-        }
-      }
-      for (int i=x.size(); i--; )
-        if (!(reachable & (1 << i)))
-          return false;
-      return true;
-    }
-    /// Post circuit constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      circuit(home, x, icl);
-    }
-  };
-
-  /// Help class to create and register tests
-  class Create {
-  public:
-    /// Perform creation and registration
-    Create(void) {
-      for (int i=1; i<=6; i++) {
-        (void) new Circuit(i,0,i-1,Gecode::ICL_VAL);
-        (void) new Circuit(i,0,i-1,Gecode::ICL_DOM);
-      }
-    }
-  };
-
-  Create c;
-  //@}
-
-}}}
+   /// Tests for circuit constraints
+   namespace Circuit {
+   
+     /**
+      * \defgroup TaskTestIntCircuit Circuit constraints
+      * \ingroup TaskTestInt
+      */
+     //@{
+     /// Simple test for circuit constraint
+     class Circuit : public Test {
+     public:
+       /// Create and register test
+       Circuit(int n, int min, int max, Gecode::IntConLevel icl)
+         : Test("Circuit::" + str(icl) + "::" + str(n),
+                   n,min,max,false,icl) {
+         testdomcon = false;
+       }
+       /// Check whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         for (int i=x.size(); i--; )
+           if ((x[i] < 0) || (x[i] > x.size()-1))
+             return false;
+         int reachable = 0;
+         {
+           int j=0;
+           for (int i=x.size(); i--; ) {
+             j=x[j]; reachable |= (1 << j);
+           }
+         }
+         for (int i=x.size(); i--; )
+           if (!(reachable & (1 << i)))
+             return false;
+         return true;
+       }
+       /// Post circuit constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         circuit(home, x, icl);
+       }
+     };
+   
+     /// Help class to create and register tests
+     class Create {
+     public:
+       /// Perform creation and registration
+       Create(void) {
+         for (int i=1; i<=6; i++) {
+           (void) new Circuit(i,0,i-1,Gecode::ICL_VAL);
+           (void) new Circuit(i,0,i-1,Gecode::ICL_DOM);
+         }
+       }
+     };
+   
+     Create c;
+     //@}
+   
+   }
+}}
 
 // STATISTICS: test-int

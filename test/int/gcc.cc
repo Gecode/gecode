@@ -41,203 +41,207 @@
 
 #include "test/int.hh"
 
-namespace Test { namespace Int { namespace GCC {
+namespace Test { namespace Int {
 
-  /**
-   * \defgroup TaskTestIntGCC Counting constraints (global cardinality)
-   * \ingroup TaskTestInt
-   */
-  //@{
-  /// Test for integer cardinality with min and max for all variables
-  class IntAllMinMax : public Test {
-  public:
-    /// Create and register test
-    IntAllMinMax(Gecode::IntConLevel icl)
-      : Test("GCC::Int::All::MinMax::"+str(icl),4,1,4,false,icl) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      int n[4];
-      for (int i=4; i--; )
-        n[i]=0;
-      for (int i=x.size(); i--; )
-        n[x[i]-1]++;
-      for (int i=4; i--;)
-        if (n[i]>2)
-          return false;
-      return true;
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      using namespace Gecode;
-      IntArgs values(4);
-      IntSet fixed(0,2);
-      IntSetArgs cards(4);
-      for (int i=0; i<4; i++) {
-        values[i] = i+1; cards[i] = fixed;
-      }
-      count(home, x, cards, values, icl);
-    }
-  };
-  
-  /// Test for integer cardinality with max cardinality for all variables
-  class IntAllMax : public Test {
-  public:
-    /// Create and register test
-    IntAllMax(Gecode::IntConLevel icl)
-      : Test("GCC::Int::All::Max::"+str(icl), 4, 1,2, false, icl) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      int n[2];
-      for (int i=2; i--; )
-        n[i] = 0;
-      for (int i=x.size(); i--; )
-        n[x[i] - 1]++;
-      if (n[0] != 2 || n[1] != 2)
-        return false;
-      return true;
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      Gecode::IntArgs values(2, 1,2);
-      Gecode::count(home, x, Gecode::IntSet(2,2), values, icl);
-    }
-  };
-  
-  
-  /// Test for integer cardinality with for some variables
-  class IntSome : public Test {
-  public:
-    /// Create and register test
-    IntSome(Gecode::IntConLevel icl)
-      : Test("GCC::Int::Some::"+str(icl),4,1,4,false,icl) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      int n[4];
-      for (int i=4; i--; )
-        n[i]=0;
-      for (int i=x.size(); i--; )
-        n[x[i]-1]++;
-      if ((n[0] < 2) || (n[1] < 2) || (n[2] > 0) || (n[3] > 0))
-        return false;
-      return true;
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      using namespace Gecode;
-      IntArgs values(2, 1,2);
-      Gecode::IntSet fixed(0,2);
-      Gecode::IntSetArgs cards(2);
-      cards[0]=fixed; cards[1]=fixed;
-      count(home, x, cards, values, icl);
-    }
-  };
-  
-  /// Test for variable cardinality for all cardinality values
-  class VarAll : public Test {
-  protected:
-    /// Number of non-cardinality variables
-    static const int n = 4;
-  public:
-    /// Create and register test
-    VarAll(Gecode::IntConLevel icl)
-      : Test("GCC::Var::All::"+str(icl),7,0,2,false,icl) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      // Number of cardinality variables
-      int m = x.size()-n;
-      for (int i=0; i<n; i++)
-        if ((x[i] < 0) || (x[i] > 2))
-          return false;
-      GECODE_AUTOARRAY(int, card, m);
-      for (int i=0; i<m; i++) {
-        card[i] = 0;
-        if ((x[n+i] < 0) || (x[n+i] > 2))
-          return false;
-      }
-      for (int i=0; i<n; i++)
-        card[x[i]]++;
-      for (int i=0; i<m; i++)
-        if (card[i] != x[n+i])
-          return false;
-      return true;
-    }
-    /// Post constraint on \a xy
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& xy) {
-      using namespace Gecode;
-      // Number of cardinality variables
-      int m = xy.size()-n;
-
-      IntVarArgs x(n), y(m);
-      for (int i=0; i<n; i++)
-        x[i]=xy[i];
-      for (int i=0; i<m; i++)
-        y[i]=xy[n+i];
-      count(home, x, y, icl);
-    }
-  };
-
-  /// Test for variable cardinality for some cardinality values
-  class VarSome : public Test {
-  protected:
-    /// Number of non-cardinality variables
-    static const int n = 4;
-  public:
-    /// Create and register test
-    VarSome(Gecode::IntConLevel icl)
-      : Test("GCC::Var::Some::"+str(icl),6,0,2,false,icl) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      // Number of cardinality variables
-      int m = x.size()-n;
-      for (int i=0; i<n; i++)
-        if ((x[i] < 0) || (x[i] > 1))
-          return false;
-      GECODE_AUTOARRAY(int, card, m);
-      for (int i=0; i<m; i++) {
-        card[i] = 0;
-        if ((x[n+i] < 0) || (x[n+i] > 2))
-          return false;
-      }
-      for (int i=0; i<n; i++)
-        card[x[i]]++;
-      for (int i=0; i<m; i++)
-        if (card[i] != x[n+i])
-          return false;
-      return true;
-    }
-    /// Post constraint on \a xy
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& xy) {
-      using namespace Gecode;
-      // Number of cardinality variables
-      int m = xy.size()-n;
-      IntVarArgs x(n), y(m);
-      for (int i=0; i<n; i++)
-        x[i]=xy[i];
-      for (int i=0; i<m; i++)
-        y[i]=xy[n+i];
-      IntArgs values(2, 0,1);
-      count(home,x,y,values,icl);
-    }
-  };
-
-  /// Help class to create and register tests
-  class Create {
-  public:
-    /// Perform creation and registration
-    Create(void) {
-      for (IntConLevels icls; icls(); ++icls) {
-        (void) new IntAllMinMax(icls.icl());
-        (void) new IntAllMax(icls.icl());
-        (void) new IntSome(icls.icl());
-        (void) new VarAll(icls.icl());
-        (void) new VarSome(icls.icl());
-      }
-    }
-  };
-
-  Create c;
-  //@}
-
-}}}
+   /// Tests for counting constraints (global cardinality)
+   namespace GCC {
+   
+     /**
+      * \defgroup TaskTestIntGCC Counting constraints (global cardinality)
+      * \ingroup TaskTestInt
+      */
+     //@{
+     /// Test for integer cardinality with min and max for all variables
+     class IntAllMinMax : public Test {
+     public:
+       /// Create and register test
+       IntAllMinMax(Gecode::IntConLevel icl)
+         : Test("GCC::Int::All::MinMax::"+str(icl),4,1,4,false,icl) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n[4];
+         for (int i=4; i--; )
+           n[i]=0;
+         for (int i=x.size(); i--; )
+           n[x[i]-1]++;
+         for (int i=4; i--;)
+           if (n[i]>2)
+             return false;
+         return true;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         IntArgs values(4);
+         IntSet fixed(0,2);
+         IntSetArgs cards(4);
+         for (int i=0; i<4; i++) {
+           values[i] = i+1; cards[i] = fixed;
+         }
+         count(home, x, cards, values, icl);
+       }
+     };
+     
+     /// Test for integer cardinality with max cardinality for all variables
+     class IntAllMax : public Test {
+     public:
+       /// Create and register test
+       IntAllMax(Gecode::IntConLevel icl)
+         : Test("GCC::Int::All::Max::"+str(icl), 4, 1,2, false, icl) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n[2];
+         for (int i=2; i--; )
+           n[i] = 0;
+         for (int i=x.size(); i--; )
+           n[x[i] - 1]++;
+         if (n[0] != 2 || n[1] != 2)
+           return false;
+         return true;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         Gecode::IntArgs values(2, 1,2);
+         Gecode::count(home, x, Gecode::IntSet(2,2), values, icl);
+       }
+     };
+     
+     
+     /// Test for integer cardinality with for some variables
+     class IntSome : public Test {
+     public:
+       /// Create and register test
+       IntSome(Gecode::IntConLevel icl)
+         : Test("GCC::Int::Some::"+str(icl),4,1,4,false,icl) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         int n[4];
+         for (int i=4; i--; )
+           n[i]=0;
+         for (int i=x.size(); i--; )
+           n[x[i]-1]++;
+         if ((n[0] < 2) || (n[1] < 2) || (n[2] > 0) || (n[3] > 0))
+           return false;
+         return true;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         IntArgs values(2, 1,2);
+         Gecode::IntSet fixed(0,2);
+         Gecode::IntSetArgs cards(2);
+         cards[0]=fixed; cards[1]=fixed;
+         count(home, x, cards, values, icl);
+       }
+     };
+     
+     /// Test for variable cardinality for all cardinality values
+     class VarAll : public Test {
+     protected:
+       /// Number of non-cardinality variables
+       static const int n = 4;
+     public:
+       /// Create and register test
+       VarAll(Gecode::IntConLevel icl)
+         : Test("GCC::Var::All::"+str(icl),7,0,2,false,icl) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         // Number of cardinality variables
+         int m = x.size()-n;
+         for (int i=0; i<n; i++)
+           if ((x[i] < 0) || (x[i] > 2))
+             return false;
+         GECODE_AUTOARRAY(int, card, m);
+         for (int i=0; i<m; i++) {
+           card[i] = 0;
+           if ((x[n+i] < 0) || (x[n+i] > 2))
+             return false;
+         }
+         for (int i=0; i<n; i++)
+           card[x[i]]++;
+         for (int i=0; i<m; i++)
+           if (card[i] != x[n+i])
+             return false;
+         return true;
+       }
+       /// Post constraint on \a xy
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& xy) {
+         using namespace Gecode;
+         // Number of cardinality variables
+         int m = xy.size()-n;
+   
+         IntVarArgs x(n), y(m);
+         for (int i=0; i<n; i++)
+           x[i]=xy[i];
+         for (int i=0; i<m; i++)
+           y[i]=xy[n+i];
+         count(home, x, y, icl);
+       }
+     };
+   
+     /// Test for variable cardinality for some cardinality values
+     class VarSome : public Test {
+     protected:
+       /// Number of non-cardinality variables
+       static const int n = 4;
+     public:
+       /// Create and register test
+       VarSome(Gecode::IntConLevel icl)
+         : Test("GCC::Var::Some::"+str(icl),6,0,2,false,icl) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         // Number of cardinality variables
+         int m = x.size()-n;
+         for (int i=0; i<n; i++)
+           if ((x[i] < 0) || (x[i] > 1))
+             return false;
+         GECODE_AUTOARRAY(int, card, m);
+         for (int i=0; i<m; i++) {
+           card[i] = 0;
+           if ((x[n+i] < 0) || (x[n+i] > 2))
+             return false;
+         }
+         for (int i=0; i<n; i++)
+           card[x[i]]++;
+         for (int i=0; i<m; i++)
+           if (card[i] != x[n+i])
+             return false;
+         return true;
+       }
+       /// Post constraint on \a xy
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& xy) {
+         using namespace Gecode;
+         // Number of cardinality variables
+         int m = xy.size()-n;
+         IntVarArgs x(n), y(m);
+         for (int i=0; i<n; i++)
+           x[i]=xy[i];
+         for (int i=0; i<m; i++)
+           y[i]=xy[n+i];
+         IntArgs values(2, 0,1);
+         count(home,x,y,values,icl);
+       }
+     };
+   
+     /// Help class to create and register tests
+     class Create {
+     public:
+       /// Perform creation and registration
+       Create(void) {
+         for (IntConLevels icls; icls(); ++icls) {
+           (void) new IntAllMinMax(icls.icl());
+           (void) new IntAllMax(icls.icl());
+           (void) new IntSome(icls.icl());
+           (void) new VarAll(icls.icl());
+           (void) new VarSome(icls.icl());
+         }
+       }
+     };
+   
+     Create c;
+     //@}
+   
+   }
+}}
 
 // STATISTICS: test-int

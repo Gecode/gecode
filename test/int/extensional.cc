@@ -41,212 +41,216 @@
 
 #include "gecode/minimodel.hh"
 
-namespace Test { namespace Int { namespace Extensional {
+namespace Test { namespace Int {
 
-  /**
-   * \defgroup TaskTestIntExtensional Extensional (relation) constraints
-   * \ingroup TaskTestInt
-   */
-  //@{
-  /// Test with simple regular expression
-  class RegSimpleA : public Test {
-  public:
-    /// Create and register test
-    RegSimpleA(void) : Test("Extensional::Reg::Simple::A",4,2,2) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      return (((x[0] == 0) || (x[0] == 2)) &&
-              ((x[1] == -1) || (x[1] == 1)) &&
-              ((x[2] == 0) || (x[2] == 1)) &&
-              ((x[3] == 0) || (x[3] == 1)));
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      using namespace Gecode;
-      extensional(home, x,
-                  (REG(0) | REG(2)) +
-                  (REG(-1) | REG(1)) +
-                  (REG(7) | REG(0) | REG(1)) +
-                  (REG(0) | REG(1)));
-    }
-  };
-  
-  /// Test with simple regular expression
-  class RegSimpleB : public Test {
-  public:
-    /// Create and register test
-    RegSimpleB(void) : Test("Extensional::Reg::Simple::B",4,2,2) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      return (x[0]<x[1]) && (x[1]<x[2]) && (x[2]<x[3]);
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      using namespace Gecode;
-      extensional(home, x,
-                  (REG(-2) + REG(-1) + REG(0) + REG(1)) |
-                  (REG(-2) + REG(-1) + REG(0) + REG(2)) |
-                  (REG(-2) + REG(-1) + REG(1) + REG(2)) |
-                  (REG(-2) + REG(0) + REG(1) + REG(2)) |
-                  (REG(-1) + REG(0) + REG(1) + REG(2)));
-      }
-  };
-  
-  /// Test with regular expression for distinct constraint
-  class RegDistinct : public Test {
-  public:
-    /// Create and register test
-    RegDistinct(void) : Test("Extensional::Reg::Distinct",4,-1,4) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      for (int i=0; i<x.size(); i++) {
-        if ((x[i] < 0) || (x[i] > 3))
-          return false;
-        for (int j=i+1; j<x.size(); j++)
-          if (x[i]==x[j])
-            return false;
-      }
-      return true;
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      using namespace Gecode;
-      extensional(home, x,
-                  (REG(0)+REG(1)+REG(2)+REG(3)) |
-                  (REG(0)+REG(1)+REG(3)+REG(2)) |
-                  (REG(0)+REG(2)+REG(1)+REG(3)) |
-                  (REG(0)+REG(2)+REG(3)+REG(1)) |
-                  (REG(0)+REG(3)+REG(1)+REG(2)) |
-                  (REG(0)+REG(3)+REG(2)+REG(1)) |
-                  (REG(1)+REG(0)+REG(2)+REG(3)) |
-                  (REG(1)+REG(0)+REG(3)+REG(2)) |
-                  (REG(1)+REG(2)+REG(0)+REG(3)) |
-                  (REG(1)+REG(2)+REG(3)+REG(0)) |
-                  (REG(1)+REG(3)+REG(0)+REG(2)) |
-                  (REG(1)+REG(3)+REG(2)+REG(0)) |
-                  (REG(2)+REG(0)+REG(1)+REG(3)) |
-                  (REG(2)+REG(0)+REG(3)+REG(1)) |
-                  (REG(2)+REG(1)+REG(0)+REG(3)) |
-                  (REG(2)+REG(1)+REG(3)+REG(0)) |
-                  (REG(2)+REG(3)+REG(0)+REG(1)) |
-                  (REG(2)+REG(3)+REG(1)+REG(0)) |
-                  (REG(3)+REG(0)+REG(1)+REG(2)) |
-                  (REG(3)+REG(0)+REG(2)+REG(1)) |
-                  (REG(3)+REG(1)+REG(0)+REG(2)) |
-                  (REG(3)+REG(1)+REG(2)+REG(0)) |
-                  (REG(3)+REG(2)+REG(0)+REG(1)) |
-                  (REG(3)+REG(2)+REG(1)+REG(0)));
-    }
-  };
-  
-  /// Test with simple regular expression and shared variables (uses unsharing)
-  class RegSharedA : public Test {
-  public:
-    /// Create and register test
-    RegSharedA(void) : Test("Extensional::Reg::Shared::A",4,2,2) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      return (((x[0] == 0) || (x[0] == 2)) &&
-              ((x[1] == -1) || (x[1] == 1)) &&
-              ((x[2] == 0) || (x[2] == 1)) &&
-              ((x[3] == 0) || (x[3] == 1)));
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      using namespace Gecode;
-      IntVarArgs y(8);
-      for (int i=0; i<4; i++)
-        y[i]=y[i+4]=x[i];
-      unshare(home,y);
-      extensional(home, y,
-                  ((REG(0) | REG(2)) +
-                   (REG(-1) | REG(1)) +
-                   (REG(7) | REG(0) | REG(1)) +
-                   (REG(0) | REG(1)))(2,2));
-    }
-  };
-
-  /// Test with simple regular expression and shared variables (uses unsharing)
-  class RegSharedB : public Test {
-  public:
-    /// Create and register test
-    RegSharedB(void) : Test("Extensional::Reg::Shared::B",4,2,2) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      return (((x[0] == 0) || (x[0] == 2)) &&
-              ((x[1] == -1) || (x[1] == 1)) &&
-              ((x[2] == 0) || (x[2] == 1)) &&
-              ((x[3] == 0) || (x[3] == 1)));
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      using namespace Gecode;
-      IntVarArgs y(12);
-      for (int i=0; i<4; i++)
-        y[i]=y[i+4]=y[i+8]=x[i];
-      unshare(home,y);
-      extensional(home, y,
-                  ((REG(0) | REG(2)) +
-                   (REG(-1) | REG(1)) +
-                   (REG(7) | REG(0) | REG(1)) +
-                   (REG(0) | REG(1)))(3,3));
-    }
-  };
-
-  /// Test with simple regular expression and shared variables (uses unsharing)
-  class RegSharedC : public Test {
-  public:
-    /// Create and register test
-    RegSharedC(void) : Test("Extensional::Reg::Shared::C",4,0,1) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      return (x[1]==1) && (x[2]==0) && (x[3]==1);
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      using namespace Gecode;
-      Gecode::BoolVarArgs y(8);
-      for (int i=0; i<4; i++)
-        y[i]=y[i+4]=channel(home,x[i]);
-      unshare(home,y);
-      extensional(home,y,
-                  ((REG(0) | REG(1)) + REG(1) + REG(0) + REG(1))(2,2));
-    }
-  };
-
-  /// Test with simple regular expression and shared variables (uses unsharing)
-  class RegSharedD : public Test {
-  public:
-    /// Create and register test
-    RegSharedD(void) : Test("Extensional::Reg::Shared::D",4,0,1) {}
-    /// Test whether \a x is solution
-    virtual bool solution(const Assignment& x) const {
-      return (x[1]==1) && (x[2]==0) && (x[3]==1);
-    }
-    /// Post constraint on \a x
-    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-      using namespace Gecode;
-      Gecode::BoolVarArgs y(12);
-      for (int i=0; i<4; i++)
-        y[i]=y[i+4]=y[i+8]=channel(home,x[i]);
-      unshare(home, y);
-      extensional(home, y,
-                  ((REG(0) | REG(1)) + REG(1) + REG(0) + REG(1))(3,3));
-    }
-  };
-
-  RegSimpleA ra;
-  RegSimpleB rb;
-
-  RegDistinct rd;
-
-  RegSharedA rsa;
-  RegSharedB rsb;
-  RegSharedC rsc;
-  RegSharedD rsd;
-  //@}
-
-}}}
+   /// Tests for extensional (relation) constraints
+   namespace Extensional {
+   
+     /**
+      * \defgroup TaskTestIntExtensional Extensional (relation) constraints
+      * \ingroup TaskTestInt
+      */
+     //@{
+     /// Test with simple regular expression
+     class RegSimpleA : public Test {
+     public:
+       /// Create and register test
+       RegSimpleA(void) : Test("Extensional::Reg::Simple::A",4,2,2) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (((x[0] == 0) || (x[0] == 2)) &&
+                 ((x[1] == -1) || (x[1] == 1)) &&
+                 ((x[2] == 0) || (x[2] == 1)) &&
+                 ((x[3] == 0) || (x[3] == 1)));
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         extensional(home, x,
+                     (REG(0) | REG(2)) +
+                     (REG(-1) | REG(1)) +
+                     (REG(7) | REG(0) | REG(1)) +
+                     (REG(0) | REG(1)));
+       }
+     };
+     
+     /// Test with simple regular expression
+     class RegSimpleB : public Test {
+     public:
+       /// Create and register test
+       RegSimpleB(void) : Test("Extensional::Reg::Simple::B",4,2,2) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[0]<x[1]) && (x[1]<x[2]) && (x[2]<x[3]);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         extensional(home, x,
+                     (REG(-2) + REG(-1) + REG(0) + REG(1)) |
+                     (REG(-2) + REG(-1) + REG(0) + REG(2)) |
+                     (REG(-2) + REG(-1) + REG(1) + REG(2)) |
+                     (REG(-2) + REG(0) + REG(1) + REG(2)) |
+                     (REG(-1) + REG(0) + REG(1) + REG(2)));
+         }
+     };
+     
+     /// Test with regular expression for distinct constraint
+     class RegDistinct : public Test {
+     public:
+       /// Create and register test
+       RegDistinct(void) : Test("Extensional::Reg::Distinct",4,-1,4) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         for (int i=0; i<x.size(); i++) {
+           if ((x[i] < 0) || (x[i] > 3))
+             return false;
+           for (int j=i+1; j<x.size(); j++)
+             if (x[i]==x[j])
+               return false;
+         }
+         return true;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         extensional(home, x,
+                     (REG(0)+REG(1)+REG(2)+REG(3)) |
+                     (REG(0)+REG(1)+REG(3)+REG(2)) |
+                     (REG(0)+REG(2)+REG(1)+REG(3)) |
+                     (REG(0)+REG(2)+REG(3)+REG(1)) |
+                     (REG(0)+REG(3)+REG(1)+REG(2)) |
+                     (REG(0)+REG(3)+REG(2)+REG(1)) |
+                     (REG(1)+REG(0)+REG(2)+REG(3)) |
+                     (REG(1)+REG(0)+REG(3)+REG(2)) |
+                     (REG(1)+REG(2)+REG(0)+REG(3)) |
+                     (REG(1)+REG(2)+REG(3)+REG(0)) |
+                     (REG(1)+REG(3)+REG(0)+REG(2)) |
+                     (REG(1)+REG(3)+REG(2)+REG(0)) |
+                     (REG(2)+REG(0)+REG(1)+REG(3)) |
+                     (REG(2)+REG(0)+REG(3)+REG(1)) |
+                     (REG(2)+REG(1)+REG(0)+REG(3)) |
+                     (REG(2)+REG(1)+REG(3)+REG(0)) |
+                     (REG(2)+REG(3)+REG(0)+REG(1)) |
+                     (REG(2)+REG(3)+REG(1)+REG(0)) |
+                     (REG(3)+REG(0)+REG(1)+REG(2)) |
+                     (REG(3)+REG(0)+REG(2)+REG(1)) |
+                     (REG(3)+REG(1)+REG(0)+REG(2)) |
+                     (REG(3)+REG(1)+REG(2)+REG(0)) |
+                     (REG(3)+REG(2)+REG(0)+REG(1)) |
+                     (REG(3)+REG(2)+REG(1)+REG(0)));
+       }
+     };
+     
+     /// Test with simple regular expression and shared variables (uses unsharing)
+     class RegSharedA : public Test {
+     public:
+       /// Create and register test
+       RegSharedA(void) : Test("Extensional::Reg::Shared::A",4,2,2) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (((x[0] == 0) || (x[0] == 2)) &&
+                 ((x[1] == -1) || (x[1] == 1)) &&
+                 ((x[2] == 0) || (x[2] == 1)) &&
+                 ((x[3] == 0) || (x[3] == 1)));
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         IntVarArgs y(8);
+         for (int i=0; i<4; i++)
+           y[i]=y[i+4]=x[i];
+         unshare(home,y);
+         extensional(home, y,
+                     ((REG(0) | REG(2)) +
+                      (REG(-1) | REG(1)) +
+                      (REG(7) | REG(0) | REG(1)) +
+                      (REG(0) | REG(1)))(2,2));
+       }
+     };
+   
+     /// Test with simple regular expression and shared variables (uses unsharing)
+     class RegSharedB : public Test {
+     public:
+       /// Create and register test
+       RegSharedB(void) : Test("Extensional::Reg::Shared::B",4,2,2) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (((x[0] == 0) || (x[0] == 2)) &&
+                 ((x[1] == -1) || (x[1] == 1)) &&
+                 ((x[2] == 0) || (x[2] == 1)) &&
+                 ((x[3] == 0) || (x[3] == 1)));
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         IntVarArgs y(12);
+         for (int i=0; i<4; i++)
+           y[i]=y[i+4]=y[i+8]=x[i];
+         unshare(home,y);
+         extensional(home, y,
+                     ((REG(0) | REG(2)) +
+                      (REG(-1) | REG(1)) +
+                      (REG(7) | REG(0) | REG(1)) +
+                      (REG(0) | REG(1)))(3,3));
+       }
+     };
+   
+     /// Test with simple regular expression and shared variables (uses unsharing)
+     class RegSharedC : public Test {
+     public:
+       /// Create and register test
+       RegSharedC(void) : Test("Extensional::Reg::Shared::C",4,0,1) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[1]==1) && (x[2]==0) && (x[3]==1);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         Gecode::BoolVarArgs y(8);
+         for (int i=0; i<4; i++)
+           y[i]=y[i+4]=channel(home,x[i]);
+         unshare(home,y);
+         extensional(home,y,
+                     ((REG(0) | REG(1)) + REG(1) + REG(0) + REG(1))(2,2));
+       }
+     };
+   
+     /// Test with simple regular expression and shared variables (uses unsharing)
+     class RegSharedD : public Test {
+     public:
+       /// Create and register test
+       RegSharedD(void) : Test("Extensional::Reg::Shared::D",4,0,1) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (x[1]==1) && (x[2]==0) && (x[3]==1);
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         Gecode::BoolVarArgs y(12);
+         for (int i=0; i<4; i++)
+           y[i]=y[i+4]=y[i+8]=channel(home,x[i]);
+         unshare(home, y);
+         extensional(home, y,
+                     ((REG(0) | REG(1)) + REG(1) + REG(0) + REG(1))(3,3));
+       }
+     };
+   
+     RegSimpleA ra;
+     RegSimpleB rb;
+   
+     RegDistinct rd;
+   
+     RegSharedA rsa;
+     RegSharedB rsb;
+     RegSharedC rsc;
+     RegSharedD rsd;
+     //@}
+   
+   }
+}}
 
 /*
 

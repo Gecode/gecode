@@ -49,6 +49,7 @@
 #include <sstream>
 #include <string>
 
+/// General test support
 namespace Test {
 
   /**
