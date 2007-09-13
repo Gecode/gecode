@@ -287,8 +287,8 @@ namespace Gecode { namespace CpltSet {
     /// \name Common methods for the tell operations
     //@{
 
-    /// Compute modified variable domain \f$ dom'\f$ as \f$ dom' = dom \wedge d \f$
-    ModEvent tell_formula(Space* home, bdd& d);
+    /// Compute modified variable domain \f$ d'\f$ as \f$ d' = d \wedge d0 \f$
+    ModEvent tell_formula(Space* home, bdd& d0);
 
     //@}
     

@@ -40,7 +40,8 @@ namespace Gecode { namespace CpltSet {
   /// Check whether range specifications for initialization are consistent
   forceinline void
   testConsistency(const IntSet& glb, const IntSet& lub,
-                  const int cardMin, const int cardMax, const char* location) {
+                  const int cardMin, const int cardMax,
+                  const char* location) {
 
     bool glbNonZero = glb.size() > 0;
     bool lubNonZero = lub.size() > 0;
@@ -199,7 +200,7 @@ namespace Gecode { namespace CpltSet {
       }
     }
 
-    // IMPORTANT DO NOT FORGET REMAINING LARGER VARIABLES
+    // Order remaining variables
     for (unsigned int i = c; i < var_in_tab; i++, c++) {
       hls_order[i] = i;
     }   
@@ -207,12 +208,6 @@ namespace Gecode { namespace CpltSet {
     manager.setorder(&hls_order[0]);
   }
 
-  /// Function used for computing the convex_hull and the variables of it
-  GECODE_CPLTSET_EXPORT void conv_hull_project(bdd& robdd, 
-                                               bdd& hull, bdd& poshull);
-  /// Returns a bdd representing all variables taking part in the convex hull of \a domain
-  GECODE_CPLTSET_EXPORT void conv_project(bdd& robdd, 
-                                          bdd& poshull);
   /// Returns a bdd representing the convex hull of \a robdd
   GECODE_CPLTSET_EXPORT void conv_hull(bdd& robdd, bdd& hull);
 
@@ -231,16 +226,6 @@ namespace Gecode { namespace CpltSet {
   /// Build the ROBDD for \f$ cl \leq |x| \leq cr\f$
   GECODE_CPLTSET_EXPORT bdd 
   cardcheck(int xtab, int offset, int cl, int cr);
-
-  /// Computes the cardinality bdd excluding variables represented in the bdd \a boundvars
-  GECODE_CPLTSET_EXPORT bdd 
-  cardrec(bdd& boundvars, int j, unsigned int& offset, 
-          unsigned int& range, int l, int u);
-  
-  GECODE_CPLTSET_EXPORT bdd 
-  cardrec_bin(int j, unsigned int& off1, unsigned int& range1, 
-              unsigned int& off2, unsigned int& range2, int l, int u);
-
 
   // EXTENDED CARDINALITY FOR REPLACING INTERMEDIATE VARIABLES
 
@@ -700,51 +685,6 @@ namespace Gecode { namespace CpltSet {
   GECODE_CPLTSET_EXPORT bdd 
   lexlqrev(unsigned int& xoff, unsigned int& yoff, 
            unsigned int& range, int n);
-
-
-  /// Counts the minium and maximum cardinality of the set represented by \a remain
-  GECODE_CPLTSET_EXPORT 
-  void card_count(bdd& remain, bdd& boundvars,
-                  unsigned int n, unsigned int& offset, 
-                  unsigned int& range, int& l, int& u);
-
-  /// Computes a bdd representing the lower and upper cardinality bounds of the bdd \a remain
-  forceinline
-  bdd card_bounds(bdd& remain, bdd& boundvars,
-                  unsigned int& offset, unsigned int& range) {
-    int l = 0;
-    int u = 0;
-    bdd b = boundvars;
-    card_count(remain, b, 0, offset, range, l, u);
-    if (l == static_cast<int> (Limits::Set::card_max)) {
-      return bdd_false();
-    }
-    b = boundvars;
-    return cardrec(b, 0, offset, range, l, u);
-  }
-
-  /// Compute the lexicographic lower bound of a bdd
-  GECODE_CPLTSET_EXPORT
-  bdd lex_lb(bdd& remain, bdd& bounds, 
-             unsigned int n, unsigned int& offset, unsigned int& range);
-
-  /// Compute the lexicographic upper bound of a bdd
-  GECODE_CPLTSET_EXPORT
-  bdd lex_ub(bdd& remain, bdd& bounds, 
-             unsigned int n, unsigned int& offset, unsigned int& range);
-
-  forceinline bdd 
-  lex_bounds(bdd& remain, bdd& bounds, 
-             unsigned int& offset, unsigned int& range) {
-    if (manager.cfalse(remain) || manager.cfalse(bounds)) {
-      return bdd_false();
-    }
-    bdd b = bounds;
-    bdd lexlb = lex_lb(remain, b, 0, offset, range);
-    b = bounds;
-    bdd lexub = lex_ub(remain, b, 0, offset, range);
-    return (lexlb & lexub);
-  }
 
   template <class View>
   void quantify(bdd& p, View& x) {

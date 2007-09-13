@@ -74,8 +74,8 @@ namespace Gecode { namespace CpltSet {
 
   forceinline
   CpltSetVarImp::CpltSetVarImp(Space* home, 
-                       int glbMin, int glbMax, int lubMin, int lubMax,
-                       unsigned int cardMin, unsigned int cardMax) 
+                               int glbMin, int glbMax, int lubMin, int lubMax,
+                               unsigned int cardMin, unsigned int cardMax) 
     : CpltSetVarImpBase(home), domain(bdd_true()), 
       min(lubMin), max(lubMax), assignment(false) {
 
@@ -99,8 +99,8 @@ namespace Gecode { namespace CpltSet {
 
   forceinline
   CpltSetVarImp::CpltSetVarImp(Space* home,
-                       int glbMin, int glbMax, const IntSet& lubD,
-                       unsigned int cardMin, unsigned int cardMax) 
+                               int glbMin, int glbMax, const IntSet& lubD,
+                               unsigned int cardMin, unsigned int cardMax) 
     : CpltSetVarImpBase(home), domain(bdd_true()), 
       min(lubD.min()), max(lubD.max()),
       assignment(false) {
@@ -141,8 +141,8 @@ namespace Gecode { namespace CpltSet {
 
   forceinline
   CpltSetVarImp::CpltSetVarImp(Space* home,
-                       const IntSet& glbD, int lubMin, int lubMax,
-                       unsigned int cardMin, unsigned int cardMax) 
+                               const IntSet& glbD, int lubMin, int lubMax,
+                               unsigned int cardMin, unsigned int cardMax) 
     : CpltSetVarImpBase(home), domain(bdd_true()), 
       min(lubMin), max(lubMax), assignment(false) {
 
@@ -170,8 +170,8 @@ namespace Gecode { namespace CpltSet {
 
   forceinline
   CpltSetVarImp::CpltSetVarImp(Space* home,
-                       const IntSet& glbD,const IntSet& lubD,
-                       unsigned int cardMin, unsigned int cardMax) 
+                               const IntSet& glbD,const IntSet& lubD,
+                               unsigned int cardMin, unsigned int cardMax) 
     : CpltSetVarImpBase(home), domain(bdd_true()), 
       min(lubD.min()), max(lubD.max()),
       assignment(false) {

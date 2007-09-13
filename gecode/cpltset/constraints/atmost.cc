@@ -100,7 +100,6 @@ namespace Gecode {
       unsigned int off = x[2].offset();
       unsigned int tab = x[2].table_width();
 
-      // c0 = cardrec(mgr, 0, off, tab, 0, c);
       c0 = cardcheck(tab, off, 0, c);
 
       // combination of intersection and cardinality
@@ -131,7 +130,6 @@ namespace Gecode {
       unsigned int off = x[2].offset();
       unsigned int tab = x[2].table_width();
 
-      // c0 = cardrec(mgr, 0, off, tab, 0, c);
       c0 = cardcheck(tab, off, 0, c);
 
       // combination of intersection and cardinality
