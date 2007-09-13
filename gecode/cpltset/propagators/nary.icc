@@ -36,13 +36,12 @@
  */
 
 namespace Gecode { namespace CpltSet {
+
   template <class View>
   forceinline bdd 
   NaryCpltSetPropagator<View>::bnd_phi(int j) {
-    // std::cout << "bnd_phi\n";
     /// \f$ B(c)\f$
     if (j == -1) {
-      // std::cout << "return d\n";
       return d;
     }
 
@@ -51,7 +50,6 @@ namespace Gecode { namespace CpltSet {
     /// \f$ \phi_{j - 1}\f$
     bdd phires = bnd_phi(j - 1);
     /// \f$ \exists_{V(D_j)} D_j \wedge phi_{j - 1}\f$
-    // std::cout << "eliminate on phi\n";
 
     // strange
     if (!manager.ctrue(cur)) {    
@@ -67,32 +65,31 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline bdd 
   NaryCpltSetPropagator<View>::phi(int i, int j) {
-    /// \f$ B(c)\f$
+    // \f$ B(c)\f$
     if (j == -1) {
       return d;
     }
-    /// \f$ phi_i^{j - 1}\f$
-    // 
+    // \f$ phi_i^{j - 1}\f$
     if (j == i) {
       return phi(i, j - 1);
     }
 
     bdd cur = bdd_true();
-    /// \f$ D_j \f$
+    // \f$ D_j \f$
     x[j].dom_and(cur);
-    /// \f$ \phi_i^{j - 1}\f$
+    // \f$ \phi_i^{j - 1}\f$
     cur &= phi(i, j - 1);
-    /// \f$ \exists_{V(x_j)} D_j \wedge phi_i^{j - 1}\f$
+    // \f$ \exists_{V(x_j)} D_j \wedge phi_i^{j - 1}\f$
     int start = x[j].offset();
     int end   = start + x[j].table_width() - 1;
-    // std::cout << "eliminate on phi\n";
     return manager.eliminate(cur, start, end);
   }
 
   template <class View>
   forceinline
-  NaryCpltSetPropagator<View>::NaryCpltSetPropagator(Space* home, ViewArray<View>& x0,
-                                 bdd& d0)
+  NaryCpltSetPropagator<View>::NaryCpltSetPropagator(Space* home, 
+                                                     ViewArray<View>& x0,
+                                                     bdd& d0)
     : Propagator(home), x(x0), d(d0) {
     force(home);
     for (int i = x.size(); i--;) {
@@ -102,7 +99,8 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   forceinline
-  NaryCpltSetPropagator<View>::NaryCpltSetPropagator(Space* home, bool share, NaryCpltSetPropagator& p)
+  NaryCpltSetPropagator<View>::NaryCpltSetPropagator(Space* home, bool share, 
+                                                     NaryCpltSetPropagator& p)
     : Propagator(home,share,p) {
     d = p.d;
     x.update(home,share,p.x);
@@ -111,10 +109,6 @@ namespace Gecode { namespace CpltSet {
   template <class View>
   forceinline PropCost
   NaryCpltSetPropagator<View>::cost(void) const {
-//     if (x.size() == 1) {
-//       // std::cout << "unary low card cost\n";
-//       return PC_UNARY_LO;
-//     }
     return PC_CRAZY_HI;
   }
 
@@ -134,7 +128,6 @@ namespace Gecode { namespace CpltSet {
   size_t
   NaryCpltSetPropagator<View>::dispose(Space* home) {
     unforce(home);
-    // std::cout << "dispose propagator\n";
     if (!home->failed()) {
       for (int i = x.size(); i--;) {
         x[i].cancel(home, this, PC_CPLTSET_DOM);
@@ -159,177 +152,32 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View>
-  forceinline ExecStatus
-  NaryCpltSetPropagator<View>::propagate_ddc(Space* home) {
-    // std::cout << "propagate_ddc\n";
+  ExecStatus
+  NaryCpltSetPropagator<View>::divide_conquer(Space* home,
+                                              bdd& p, int l, int r) {
+    if (l == r) {
+      GECODE_ME_CHECK(x[l].tell_formula(home, p));
+      return ES_OK;
+    }
 
-    bool assigned = true;
-    int n = x.size();
+    int h = (r + l) / 2;
 
-    // for (int i = x.size(); i--; ) {
-//       assigned &= x[i].assigned();
-//     }
-
-    // std::cout << "all assigned = " << assigned << "\n";
-    
-    // if we do not check for assignment
-    // quantification tries to quantify values
-    // not in the domain --> check that
-
+    // computing psi without recursion
+    bdd left = p;
+    for (int i = r; i >= h + 1; i--) {
+      quantify(left, x[i]);
+    }
+   
     ExecStatus es = ES_OK;
-//     if (!assigned) {
-    // std::cout << "divide " << 0 << ".." << n - 1<< "\n";
-      es = divide_conquer(home, d, 0, n - 1);
-      if (es == ES_FAILED) {
-        // std::cout << "propagation failed\n";
-        return es;
-      }
-//     } else {
-//       bdd xs = bdd_true();
-//       for (int i = 0; i < n; i++) {
-//         x[i].dom_and(xs);
-//       }
-//       if ( (!d & xs) != bdd_false()) {
-//         return ES_FAILED;
-//       }
-//     }
+    GECODE_ES_CHECK(es = divide_conquer(home, left, l, h));
 
-    assigned = true;
-    for (int i = x.size(); i--; ) {
-      assigned &= x[i].assigned();
-    }
-    if (assigned) {
-      // std::cout << "SUBSUMED\n";
-      return ES_SUBSUMED(this, home);
+    bdd right = p;
+    for (int i = h; i >= l; i-- ) {
+      quantify(right, x[i]);
     }
 
-    // std::cout << "FIX\n";
-    return ES_FIX;
-  }
-
-  template <class View>
-  forceinline ExecStatus
-  NaryCpltSetPropagator<View>::propagate_eeq(Space* home) {
-    int n = x.size();
-    for (int i = 0; i < n; i++) {
-      ModEvent me;
-      bdd xphi = phi(i, n - 1);
-      me = x[i].tell_formula(home, xphi);
-      if (me_failed(me)) {
-        return ES_FAILED;
-      }
-    }
-    return ES_FIX;
-  }
-
-  template <class View>
-  forceinline ExecStatus
-  NaryCpltSetPropagator<View>::propagate_bnd_eeq(Space* home) {
-    int n = x.size();
-
-    // compute \f$\phi_n\f$
-    bdd xphi_n = bnd_phi(n - 1);
-
-    if (xphi_n == bdd_false()) {
-      std::cout << "xphi_n = bot\n";
-      return ES_FAILED;
-    }
-
-    //  compute the fixed variables of \f$\phi_n\f$, 
-    //  \f$\lbracket\phi_n\rbracketf$, 
-    bdd conv_hull_xphi = bdd_true();
-    conv_hull(xphi_n, conv_hull_xphi);
-    // std::cout << "conv_xphi_n = " << conv_hull_xphi << "\n";
-    // manager.bdd2dot(conv_hull_xphi);
-
-    // project on x_i
-    for (int i = 0; i < n; i++) {
-      ModEvent me;
-
-      int s = 0;     
-      for (int j = 0; j < n; j++) {
-        if (j != i) {
-          s += x[j].table_width();
-        }
-      }
-      // collect all bdd nodes that have to be projected out
-      int c = 0;     
-      GECODE_AUTOARRAY(int, var, s);
-      for (int j = 0; j < n; j++) {
-        if (j != i) {
-          int o = x[j].offset();
-          int w = x[j].table_width();
-          for (int k = o; k < o + w; k++, c++) {
-            var[c] = k;
-          }
-        }
-      }
-
-      // me = x[i].tell_project(home, conv_hull_xphi, &var[0], s);
-      bdd proj = manager.eliminate(conv_hull_xphi, &var[0], s);
-      me = x[i].tell_formula(home, proj);
-      if (me_failed(me)) {
-        std::cout << "tell formula failed\n";
-        return ES_FAILED;
-      }
-    }
-
-    // after propgation update B(C)
-    // ensures that the fixed parts of all variables have been projected out
-    if (!manager.ctrue(xphi_n)) {
-      // strongly depends on update rule
-      d = xphi_n;
-      
-
-// //       bdd hull_proj = conv_project(mgr, xphi_n);
-// //       d = manager.eliminate(d, hull_proj);
-    }
-    // std::cout << "new constraint description\n";
-//     manager.bdd2dot(d);
-
-
-    bool assigned = true;
-    for (int i = n; i--; ) {
-      assigned &= x[i].assigned();
-    }
-
-    if (assigned) {
-      std::cout << "ES_SUBSUMED\n";
-      return ES_SUBSUMED(this, home);
-    }
-
-    std::cout << "ES_FIX\n";
-    return ES_FIX;
-  }
-
-  template <class View>
-  forceinline ExecStatus
-  NaryCpltSetPropagator<View>::propagate_bnd_ddc(Space* home) {
-    // std::cout << "propagate_ddc\n";
-
-    bool assigned = true;
-    int n = x.size();
-
-    // std::cout << "divide_conquer_conv...";
-    ExecStatus es = ES_OK;
-
-    bdd fixed = bdd_true();
-    for (int i = 0; i < n; i++) {
-      bdd dom = x[i].bdd_domain();
-      bdd fp  = bdd_true();
-      conv_project(dom, fp);
-      fixed &= fp;
-      manager.eliminate(d, fp);
-    }
-
-    assigned = true;
-    for (int i = n; i--; ) {
-      assigned &= x[i].assigned();
-    }
-    if (assigned) {
-      return ES_SUBSUMED(this, home);
-    } 
-    return ES_FIX;
+    GECODE_ES_CHECK(es = divide_conquer(home, right, h + 1, r));
+    return es;
   }
 
   template <class View>
@@ -340,19 +188,9 @@ namespace Gecode { namespace CpltSet {
     
     ExecStatus es = ES_OK;
     if (n == 1) {
-      // std::cerr << "tell direct\n";
       GECODE_ME_CHECK(x[0].tell_formula(home, d));
     } else {
-      // std::cerr << "xprop\n";
-//       std::cout << "XPROP: ";
-//       for (int k = 0; k < x.size(); k++) {
-//         std::cout << x[k] << "["<<x[k].offset() << "] ";
-//       }
-//       std::cout << "\n";
-
-//       std::cout << "check div conquer...";
-        GECODE_ES_CHECK(es = divide_conquer(home, d, 0, n - 1));
-//       std::cout << "DONE\n";
+      GECODE_ES_CHECK(es = divide_conquer(home, d, 0, n - 1));
     }
 
     assigned = true;
@@ -360,13 +198,6 @@ namespace Gecode { namespace CpltSet {
       assigned &= x[i].assigned();
     }
 
-//     std::cout << "AFTERXPROP: ";
-//     for (int k = 0; k < x.size(); k++) {
-//       std::cout << x[k] << "["<<x[k].offset() << "] ";
-//     }
-//     std::cout << "\n";
-
-    // std::cerr << "end prop-n\t";
     if (assigned) {
       return ES_SUBSUMED(this, home);
     }
@@ -382,23 +213,24 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   forceinline
-  NaryOneCpltSetPropagator<View0, View1>::NaryOneCpltSetPropagator(Space* home, ViewArray<View0>& x, 
-                                       View1& y, bdd& d0)
-    : MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, x, y),
-      d(d0) {
-    MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::force(home);
+  NaryOneCpltSetPropagator<View0, View1>
+  ::NaryOneCpltSetPropagator(Space* home, ViewArray<View0>& x, 
+                             View1& y, bdd& d0) : Super(home, x, y), d(d0) {
+    Super::force(home);
   }
 
   template <class View0, class View1>
   forceinline
-  NaryOneCpltSetPropagator<View0, View1>::NaryOneCpltSetPropagator(Space* home, bool share, NaryOneCpltSetPropagator& p)
-    : MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, share, p), 
-      d(p.d) {}
+  NaryOneCpltSetPropagator<View0, View1>
+  ::NaryOneCpltSetPropagator(Space* home, bool share, 
+                             NaryOneCpltSetPropagator& p)
+    : Super(home, share, p), d(p.d) {}
 
   template <class View0, class View1>
   forceinline ExecStatus
-  NaryOneCpltSetPropagator<View0, View1>::post(Space* home, ViewArray<View0>& x, View1& y, 
-                                 bdd& d0) {
+  NaryOneCpltSetPropagator<View0, View1>::post(Space* home,
+                                               ViewArray<View0>& x, View1& y, 
+                                               bdd& d0) {
     (void) new (home) NaryOneCpltSetPropagator(home, x, y, d0);
     return ES_OK;
   }
@@ -406,12 +238,14 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   Support::Symbol
   NaryOneCpltSetPropagator<View0, View1>::name(void) {
-    return Reflection::mangle<View0,View1>("CpltSet::NaryOneCpltSetPropagator");
+    return 
+      Reflection::mangle<View0,View1>("CpltSet::NaryOneCpltSetPropagator");
   }
 
   template <class View0, class View1>
   Reflection::ActorSpec&
-  NaryOneCpltSetPropagator<View0,View1>::spec(Space* home, Reflection::VarMap& m) {
+  NaryOneCpltSetPropagator<View0,View1>::spec(Space* home,
+                                              Reflection::VarMap& m) {
     throw Reflection::ReflectionException("Not implemented");
   } 
 
@@ -419,6 +253,49 @@ namespace Gecode { namespace CpltSet {
   forceinline Actor*
   NaryOneCpltSetPropagator<View0, View1>::copy(Space* home, bool share) {
     return new (home) NaryOneCpltSetPropagator(home, share, *this);
+  }
+
+  template <class View0, class View1>
+  ExecStatus
+  NaryOneCpltSetPropagator<View0, View1>::divide_conquer(Space* home, bdd& p,
+                                                         int l, int r,
+                                                         int ypos) {
+    if (l == r) {
+      ModEvent me = ME_CPLTSET_NONE;
+      if (l == ypos) {
+        GECODE_ME_CHECK(me = y.tell_formula(home, p));
+      } else {
+        GECODE_ME_CHECK(me = x[l].tell_formula(home, p));
+      }
+      return ES_OK;
+    }
+
+    int h = (r + l) / 2;
+
+    // computing psi without recursion
+    bdd left = p;
+    for (int i = r; i >= h + 1; i--) {
+      if (i == ypos) {
+        quantify(left, y);
+      } else {
+        quantify(left, x[i]);
+      }
+    }
+ 
+    ExecStatus es = ES_OK;
+    GECODE_ES_CHECK(es = divide_conquer(home, left, l, h, ypos));
+
+    bdd right = p;
+    for (int i = h; i >= l; i-- ) {
+      if (i == ypos) {
+        quantify(right, y);
+      } else {
+        quantify(right, x[i]);
+      }
+    }
+
+    GECODE_ES_CHECK(es = divide_conquer(home, right, h + 1, r, ypos));
+    return es;
   }
   
   template <class View0, class View1>
@@ -445,13 +322,13 @@ namespace Gecode { namespace CpltSet {
   template <class View0, class View1>
   size_t
   NaryOneCpltSetPropagator<View0, View1>::dispose(Space* home) {
-    MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::unforce(home);
+    Super::unforce(home);
     if (!home->failed()) {
       x.cancel(home, this, PC_CPLTSET_DOM);
       y.cancel(home, this, PC_CPLTSET_DOM);
     }
     manager.dispose(d);
-    MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::dispose(home);
+    Super::dispose(home);
     return sizeof(*this);
   }
 

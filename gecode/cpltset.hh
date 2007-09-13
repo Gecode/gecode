@@ -70,7 +70,6 @@
 #endif
 
 #include "gecode/cpltset/exception.icc"
-#include "gecode/cpltset/propagator.icc"
 
 namespace Gecode { namespace CpltSet {
 

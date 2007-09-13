@@ -77,8 +77,6 @@ namespace Gecode { namespace CpltSet {
     virtual Actor*      copy(Space* home,bool);
     /// Perform propagation
     virtual ExecStatus propagate(Space* home);
-    /// Use naive mathematical definition for bounds propagation
-    ExecStatus propagate_naive_bnd(Space* home);
     /// Use eeq to perform domain propagation with n^2 and-abstractions
     ExecStatus propagate_eeq(Space* home);
     /// Use eeq to perform bounds propagation 
@@ -227,12 +225,15 @@ namespace Gecode { namespace CpltSet {
   class NaryOneCpltSetPropagator : 
     public MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM> {
   protected:
+    typedef MixNaryOnePropagator<View0, PC_CPLTSET_DOM,
+                                 View1, PC_CPLTSET_DOM> Super;
     /// Bdd representation of the constraint
     bdd d;
-    using MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::x;
-    using MixNaryOnePropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::y;
+    using Super::x;
+    using Super::y;
     /// Constructor for cloning \a p
-    NaryOneCpltSetPropagator(Space* home, bool share, NaryOneCpltSetPropagator& p);
+    NaryOneCpltSetPropagator(Space* home, bool share, 
+                             NaryOneCpltSetPropagator& p);
     /// Constructor for posting
     NaryOneCpltSetPropagator(Space* home, ViewArray<View0>&, View1&, bdd&);
     /// Divide and conquer method including additional view \a y
@@ -255,25 +256,30 @@ namespace Gecode { namespace CpltSet {
 
   template <class View0, class View1>
   class Range : 
-    public MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM> {
+    public Propagator {
   protected:
+    /// Array of views of type View0
+    ViewArray<View0> x;
+    /// First view of type View1
+    View1 y;
+    /// Second view of type View1
+    View1 z;
     /// Bdd representation of the constraint
     bdd d;
-    using MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::x;
-    using MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::y;
-    using MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::z;
     /// Constructor for cloning \a p
     Range(Space* home, bool share, Range& p);
     /// Constructor for posting
     Range(Space* home, ViewArray<View0>&, View1&, View1&, bdd&);
     /// Divide and conquer method including additional \a y and \a z views
     ExecStatus divide_conquer(Space* home, bdd& p, int l, int r, 
-                        int ypos, int zpos);
+                              int ypos, int zpos);
   public:
     /// Specification for this propagator
     virtual Reflection::ActorSpec& spec(Space* home, Reflection::VarMap& m);
     /// Name of this propagator
     static Support::Symbol name(void);
+    /// Cost function (defined as dynamic PC_LINEAR_LO)
+    virtual PropCost cost(void) const;
     /// Delete propagator
     virtual size_t dispose(Space* home);
     /// Copy propagator during cloning
@@ -287,9 +293,6 @@ namespace Gecode { namespace CpltSet {
 
 }}
 
-#include "gecode/cpltset/propagators/common.icc"
-
-#include "gecode/cpltset/propagators/naryrec.icc"
 #include "gecode/cpltset/propagators/nary.icc"
 #include "gecode/cpltset/propagators/binary.icc"
 #include "gecode/cpltset/propagators/unary.icc"

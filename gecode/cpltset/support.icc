@@ -970,6 +970,15 @@ namespace Gecode { namespace CpltSet {
     return (lexlb & lexub);
   }
 
+  template <class View>
+  void quantify(bdd& p, View& x) {
+    bdd dom = x.bdd_domain();
+    int s = x.offset();
+    int w = s + x.table_width() - 1;
+    manager.existquant(p, dom, s, w);
+    // \todo check the update line from naryrec.icc "dom = p" ()
+  }
+
 }}
 
 // STATISTICS: cpltset-support

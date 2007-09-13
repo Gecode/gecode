@@ -100,18 +100,23 @@ namespace Gecode { namespace CpltSet {
   
   template <class View0, class View1>
   forceinline
-  Range<View0, View1>::Range(Space* home, ViewArray<View0>& x, 
-                             View1& y, View1& z, bdd& d0)
-    : MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, x, y, z), 
-      d(d0) {
-    MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::force(home);
+  Range<View0, View1>::Range(Space* home, ViewArray<View0>& x0,
+                             View1& y0, View1& z0, bdd& d0)
+  : Propagator(home), x(x0), y(y0), z(z0) {
+    Propagator::force(home);
+    x.subscribe(home, this, PC_CPLTSET_DOM);
+    y.subscribe(home, this, PC_CPLTSET_DOM);
+    z.subscribe(home, this, PC_CPLTSET_DOM);
   }
 
   template <class View0, class View1>
   forceinline
   Range<View0, View1>::Range(Space* home, bool share, Range& p)
-    : MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>(home, share, p), 
-      d(p.d) {}
+    : Propagator(home, share, p), d(p.d) {
+    x.update(home,share,p.x);
+    y.update(home,share,p.y);
+    z.update(home,share,p.z);
+  }
 
   template <class View0, class View1>
   forceinline ExecStatus
@@ -162,16 +167,22 @@ namespace Gecode { namespace CpltSet {
   }
 
   template <class View0, class View1>
+  PropCost
+  Range<View0,View1>::cost(void) const {
+    return cost_lo(x.size()+2, PC_LINEAR_LO);
+  }
+
+  template <class View0, class View1>
   size_t
   Range<View0, View1>::dispose(Space* home) {
-    MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::unforce(home);
+    unforce(home);
     if (!home->failed()) {
       x.cancel(home, this, PC_CPLTSET_DOM);
       y.cancel(home, this, PC_CPLTSET_DOM);
       z.cancel(home, this, PC_CPLTSET_DOM);
     }
     manager.dispose(d);
-    MixNaryTwoPropagator<View0, PC_CPLTSET_DOM, View1, PC_CPLTSET_DOM>::dispose(home);
+    (void) Propagator::dispose(home);
     return sizeof(*this);
   }
 
@@ -217,14 +228,9 @@ namespace Gecode { namespace CpltSet {
 
     // check for different ranges
 
-    // std::cout << (int) xrange << " bits and " << n << " seq vars\n";
     for (int k = 0; k < (int) xrange; k++) {
-      // std::cout << "bit k=" << k << "\t";
-
       bdd inter = bdd_false();
-//       bool kthbitempty = true;
       for (int j = 0; j < n; j++) {
-      // std::cout << "seq j=" << j << ": ";
         LubValues<View0> lub(seq[j]);
         int seqmin = seq[j].mgr_min();
         int seqmax = seq[j].mgr_max();
@@ -234,29 +240,14 @@ namespace Gecode { namespace CpltSet {
             ++lub;
           }
           if (lub() && cur == lub.val()) {
-            // check & or %
-            // std::cout << "inter or (" << j + shift << " and " << (k - (seqmin - xmin)) << "\n";
             inter |= (selview.getbdd(j + shift) & seq[j].getbdd(k - (seqmin - xmin)));
             ++lub;
           }
-//           kthbitempty &= !lub();
         }
-
-//         if (xmin + k >= seq[j].mgr_min() && xmin + k <= seq[j].mgr_max()) {
-//           cur |= (selview.getbdd(j + shift) & seq[j].getbdd(k));
-//         }
       }
 
       // shouldnt we allow inter to be bdd_false() ?
-//       if (inter != bdd_false()) {
-//         d0 &= (unionview.getbdd(k - (unionmin - xmin)) % inter);
-//       }
         d0 &= (unionview.getbdd(k - (unionmin - xmin)) % inter);
-
-//       if (kthbitempty) {
-//         std::cout << "kthbitempty\n";
-//         d0 &= (!unionview.getbdd(k - (unionmin - xmin)));
-//       }
     }
 
     for (int i = 0; i < n; i++) {
@@ -265,7 +256,6 @@ namespace Gecode { namespace CpltSet {
       }
     }
     if (selview.assigned()) {
-      // std::cout << "selview: " << selview.bdd_domain() << "\n";
       d0 &= selview.bdd_domain();
     }
     if (unionview.assigned()) {
@@ -283,7 +273,8 @@ namespace Gecode { namespace CpltSet {
     bdd d0 = bdd_true();
     buildRange(home, seq, selview, unionview, d0);
     if (home->failed())  return;
-    GECODE_ES_FAIL(home, (Range<View0, View1>::post(home, seq, selview, unionview, d0)));
+    GECODE_ES_FAIL(home,
+      (Range<View0, View1>::post(home, seq, selview, unionview, d0)));
   }
 
   forceinline void 
