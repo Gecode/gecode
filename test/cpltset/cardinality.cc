@@ -36,101 +36,111 @@
 
 #include "test/cpltset.hh"
 
-static const int d1r[4][2] = {
-  {-4,-3},{-1,-1},{1,1},{3,5}
-};
-static IntSet d1(d1r,4);
+using namespace Gecode;
+using namespace Test::Set;
 
-static IntSet ds_33(-3,3);
-static IntSet ds_4(4,4);
-static IntSet ds_13(1,3);
+namespace Test { namespace CpltSet {
 
-class CpltSetCardMinMax : public CpltSetTest {
-public:
-  /// Create and register test
-  CpltSetCardMinMax(const char* t) : CpltSetTest(t,1,d1,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const SetAssignment& x) const {
-    CountableSetRanges xr1(x.lub, x[0]);
+  /// Tests for cardinality constraints
+  namespace Cardinality {
 
-    int c = 0;
-    while (xr1()) {
-      c += xr1.width();
-      ++xr1;
-    }
-    return (0<= c && c <= 3);
-  }
+    static const int d1r[4][2] = {
+      {-4,-3},{-1,-1},{1,1},{3,5}
+    };
+    static IntSet d1(d1r,4);
 
-  /// Post constraint on \a x
-  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
-    // Test lex-bit order
-    // Gecode::hls_order(home, x);
-    Gecode::cardinality(home, x[0], 0, 3);
-  }
-/// Post reified constraint on \a x for \a b
-//   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-//     Gecode::dom(home, x[0], SRT_EQ, d1, b);
-//   }
-};
-CpltSetCardMinMax _cpltsetcardminmax("Card::MinMax");
+    static IntSet ds_33(-3,3);
+    static IntSet ds_4(4,4);
+    static IntSet ds_13(1,3);
 
-class CpltSetCardEq : public CpltSetTest {
-public:
-  /// Create and register test
-  CpltSetCardEq(const char* t) : CpltSetTest(t,1,d1,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const SetAssignment& x) const {
-    CountableSetRanges xr1(x.lub, x[0]);
+    class CpltSetCardMinMax : public CpltSetTest {
+    public:
+      /// Create and register test
+      CpltSetCardMinMax(const char* t) : CpltSetTest(t,1,d1,false) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        CountableSetRanges xr1(x.lub, x[0]);
+
+        int c = 0;
+        while (xr1()) {
+          c += xr1.width();
+          ++xr1;
+        }
+        return (0<= c && c <= 3);
+      }
+
+      /// Post constraint on \a x
+      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+        // Test lex-bit order
+        // Gecode::hls_order(home, x);
+        Gecode::cardinality(home, x[0], 0, 3);
+      }
+    /// Post reified constraint on \a x for \a b
+    //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
+    //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
+    //   }
+    };
+    CpltSetCardMinMax _cpltsetcardminmax("Card::MinMax");
+
+    class CpltSetCardEq : public CpltSetTest {
+    public:
+      /// Create and register test
+      CpltSetCardEq(const char* t) : CpltSetTest(t,1,d1,false) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        CountableSetRanges xr1(x.lub, x[0]);
     
-    int c = 0;
-    while (xr1()) {
-      c += xr1.width();
-      ++xr1;
-    }
-    return (c == 3);
-  }
+        int c = 0;
+        while (xr1()) {
+          c += xr1.width();
+          ++xr1;
+        }
+        return (c == 3);
+      }
 
-  /// Post constraint on \a x
-  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
-    // Test lex-bit order
-    // Gecode::hls_order(home, x);
-    Gecode::cardinality(home, x[0], 3, 3);
-  }
-/// Post reified constraint on \a x for \a b
-//   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-//     Gecode::dom(home, x[0], SRT_EQ, d1, b);
-//   }
-};
-CpltSetCardEq _cpltsetcardeq("Card::Eq");
+      /// Post constraint on \a x
+      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+        // Test lex-bit order
+        // Gecode::hls_order(home, x);
+        Gecode::cardinality(home, x[0], 3, 3);
+      }
+    /// Post reified constraint on \a x for \a b
+    //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
+    //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
+    //   }
+    };
+    CpltSetCardEq _cpltsetcardeq("Card::Eq");
 
 
-class CpltSetCardMinInf : public CpltSetTest {
-public:
-  /// Create and register test
-  CpltSetCardMinInf(const char* t) : CpltSetTest(t,1,d1,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const SetAssignment& x) const {
-    CountableSetRanges xr1(x.lub, x[0]);
+    class CpltSetCardMinInf : public CpltSetTest {
+    public:
+      /// Create and register test
+      CpltSetCardMinInf(const char* t) : CpltSetTest(t,1,d1,false) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        CountableSetRanges xr1(x.lub, x[0]);
     
-    int c = 0;
-    while (xr1()) {
-      c += xr1.width();
-      ++xr1;
-    }
-    return (c >= 1);
-  }
+        int c = 0;
+        while (xr1()) {
+          c += xr1.width();
+          ++xr1;
+        }
+        return (c >= 1);
+      }
 
-  /// Post constraint on \a x
-  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
-    // Test lex-bit order
-    // Gecode::hls_order(home, x);
-    Gecode::cardinality(home, x[0], 1, Gecode::Limits::Set::int_max);
-  }
-/// Post reified constraint on \a x for \a b
-//   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
-//     Gecode::dom(home, x[0], SRT_EQ, d1, b);
-//   }
-};
-CpltSetCardMinInf _cpltsetcardmininf("Card::MinInf");
+      /// Post constraint on \a x
+      virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&) {
+        // Test lex-bit order
+        // Gecode::hls_order(home, x);
+        Gecode::cardinality(home, x[0], 1, Gecode::Limits::Set::int_max);
+      }
+    /// Post reified constraint on \a x for \a b
+    //   virtual void post(Space* home, CpltSetVarArray& x, IntVarArray&, BoolVar b) {
+    //     Gecode::dom(home, x[0], SRT_EQ, d1, b);
+    //   }
+    };
+    CpltSetCardMinInf _cpltsetcardmininf("Card::MinInf");
+
+}}}
 
 // STATISTICS: test-cpltset

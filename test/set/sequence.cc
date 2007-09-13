@@ -37,69 +37,86 @@
 
 #include "test/set.hh"
 
-static IntSet ds_33(-1,2);
+using namespace Gecode;
 
-class Sequence : public SetTest {
-public:
-  /// Create and register test
-  Sequence(const char* t)
-    : SetTest(t,4,ds_33,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const SetAssignment& x) const {
-    int max = Limits::Set::int_min - 1;
-    for (int i=0; i<4; i++) {
-      CountableSetRanges xir(x.lub, x[i]);
-      IntSet xi(xir);
-      if (xi.size() > 0) {
-        int oldMax = max;
-        max = xi.max();
-        if (xi.min() <= oldMax)
-          return false;
-      }
-    }
-    return true;
-  }
-  /// Post constraint on \a x
-  virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
-    Gecode::sequence(home, x);
-  }
-};
-Sequence _sequence("Sequence::Sequence");
+namespace Test { namespace Set {
 
-class SeqU : public SetTest {
-public:
-  /// Create and register test
-  SeqU(const char* t)
-    : SetTest(t,4,ds_33,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const SetAssignment& x) const {
-    int max = Limits::Set::int_min - 1;
-    for (int i=0; i<3; i++) {
-      CountableSetRanges xir(x.lub, x[i]);
-      IntSet xi(xir);
-      if (xi.size() > 0) {
-        int oldMax = max;
-        max = xi.max();
-        if (xi.min() <= oldMax)
-          return false;
+  /// Tests for sequence constraints
+  namespace Sequence {
+
+    /**
+      * \defgroup TaskTestSetSequence Sequence constraints
+      * \ingroup TaskTestSet
+      */
+    //@{
+
+    static IntSet ds_33(-1,2);
+
+    /// Test for sequence constraint
+    class Sequence : public SetTest {
+    public:
+      /// Create and register test
+      Sequence(const char* t)
+        : SetTest(t,4,ds_33,false) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        int max = Limits::Set::int_min - 1;
+        for (int i=0; i<4; i++) {
+          CountableSetRanges xir(x.lub, x[i]);
+          IntSet xi(xir);
+          if (xi.size() > 0) {
+            int oldMax = max;
+            max = xi.max();
+            if (xi.min() <= oldMax)
+              return false;
+          }
+        }
+        return true;
       }
-    }
-    GECODE_AUTOARRAY(CountableSetRanges, isrs, 3);
-    isrs[0].init(x.lub, x[0]);
-    isrs[1].init(x.lub, x[1]);
-    isrs[2].init(x.lub, x[2]);
-    Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, 3);
-    CountableSetRanges x3r(x.lub, x[3]);
-    return Iter::Ranges::equal(u, x3r);
-  }
-  /// Post constraint on \a x
-  virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
-    SetVarArgs xs(x.size()-1);
-    for (int i=x.size()-1; i--;)
-      xs[i]=x[i];
-    Gecode::sequentialUnion(home, xs, x[x.size()-1]);
-  }
-};
-SeqU _sequ("Sequence::SeqU");
+      /// Post constraint on \a x
+      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+        Gecode::sequence(home, x);
+      }
+    };
+    Sequence _sequence("Sequence::Sequence");
+
+    /// Test for sequential-union constraint
+    class SeqU : public SetTest {
+    public:
+      /// Create and register test
+      SeqU(const char* t)
+        : SetTest(t,4,ds_33,false) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        int max = Limits::Set::int_min - 1;
+        for (int i=0; i<3; i++) {
+          CountableSetRanges xir(x.lub, x[i]);
+          IntSet xi(xir);
+          if (xi.size() > 0) {
+            int oldMax = max;
+            max = xi.max();
+            if (xi.min() <= oldMax)
+              return false;
+          }
+        }
+        GECODE_AUTOARRAY(CountableSetRanges, isrs, 3);
+        isrs[0].init(x.lub, x[0]);
+        isrs[1].init(x.lub, x[1]);
+        isrs[2].init(x.lub, x[2]);
+        Iter::Ranges::NaryUnion<CountableSetRanges> u(isrs, 3);
+        CountableSetRanges x3r(x.lub, x[3]);
+        return Iter::Ranges::equal(u, x3r);
+      }
+      /// Post constraint on \a x
+      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+        SetVarArgs xs(x.size()-1);
+        for (int i=x.size()-1; i--;)
+          xs[i]=x[i];
+        Gecode::sequentialUnion(home, xs, x[x.size()-1]);
+      }
+    };
+    SeqU _sequ("Sequence::SeqU");
+
+}}}
 
 // STATISTICS: test-set

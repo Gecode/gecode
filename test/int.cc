@@ -70,16 +70,18 @@ namespace Test { namespace Int {
     a--;
   }
 
-  std::ostream&
-  operator<<(std::ostream& os, const Assignment& a) {
-    int n = a.size();
-    os << "{";
-    for (int i=0; i<n; i++)
-      os << a[i] << ((i!=n-1) ? "," : "}");
-    return os;
-  }
+}}
 
+std::ostream&
+operator<<(std::ostream& os, const Test::Int::Assignment& a) {
+  int n = a.size();
+  os << "{";
+  for (int i=0; i<n; i++)
+    os << a[i] << ((i!=n-1) ? "," : "}");
+  return os;
+}
 
+namespace Test { namespace Int {
 
 
 

@@ -37,83 +37,102 @@
 
 #include "test/set.hh"
 
-static IntSet ds_33(-4,4);
+using namespace Gecode;
 
-class Convex : public SetTest {
-public:
-  /// Create and register test
-  Convex(const char* t)
-    : SetTest(t,1,ds_33,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const SetAssignment& x) const {
-    CountableSetRanges xr0(x.lub, x[0]);
-    if (!xr0())
-      return true;
-    ++xr0;
-    if (!xr0())
-      return true;
-    return false;
-  }
-  /// Post constraint on \a x
-  virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
-    Gecode::convex(home, x[0]);
-  }
-};
-Convex _convex("Convex::Convex");
+namespace Test { namespace Set {
 
-class ConvexHull : public SetTest {
-public:
-  /// Create and register test
-  ConvexHull(const char* t)
-    : SetTest(t,2,ds_33,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const SetAssignment& x) const {
-    CountableSetRanges xr0(x.lub, x[0]);
-    CountableSetRanges xr1(x.lub, x[1]);
+  /// Tests for convexity constraints
+  namespace Convex {
 
-    if (!xr0())
-      return !xr1();
+    /**
+      * \defgroup TaskTestSetConvex Convexity constraints
+      * \ingroup TaskTestSet
+      */
+    //@{
 
-    int x0min = xr0.min();
-    int x0max = xr0.max();
-    ++xr0;
-    if (!xr0()) {
-      if (!xr1()) return false;
-      if (x0min != xr1.min()) return false;
-      int x1max = Limits::Set::int_min;
-      while (xr1()) { x1max = xr1.max(); ++xr1;}
-      if (x0max != x1max) return false;
-      return true;
-    }
-    return false;
-  }
-  /// Post constraint on \a x
-  virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
-    Gecode::convexHull(home, x[1], x[0]);
-  }
-};
-ConvexHull _convexhull("Convex::ConvexHull");
+    static IntSet ds_33(-4,4);
 
-class ConvexHullS : public SetTest {
-public:
-  /// Create and register test
-  ConvexHullS(const char* t)
-    : SetTest(t,1,ds_33,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const SetAssignment& x) const {
-    CountableSetRanges xr0(x.lub, x[0]);
-    if (!xr0())
-      return true;
-    ++xr0;
-    if (!xr0())
-      return true;
-    return false;
-  }
-  /// Post constraint on \a x
-  virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
-    Gecode::convexHull(home, x[0], x[0]);
-  }
-};
-ConvexHullS _convexhulls("Convex::Sharing::ConvexHullS");
+    /// Test for convexity propagator
+    class Convex : public SetTest {
+    public:
+      /// Create and register test
+      Convex(const char* t)
+        : SetTest(t,1,ds_33,false) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        CountableSetRanges xr0(x.lub, x[0]);
+        if (!xr0())
+          return true;
+        ++xr0;
+        if (!xr0())
+          return true;
+        return false;
+      }
+      /// Post constraint on \a x
+      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+        Gecode::convex(home, x[0]);
+      }
+    };
+    Convex _convex("Convex::Convex");
+
+    /// Test for convex hull propagator
+    class ConvexHull : public SetTest {
+    public:
+      /// Create and register test
+      ConvexHull(const char* t)
+        : SetTest(t,2,ds_33,false) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        CountableSetRanges xr0(x.lub, x[0]);
+        CountableSetRanges xr1(x.lub, x[1]);
+
+        if (!xr0())
+          return !xr1();
+
+        int x0min = xr0.min();
+        int x0max = xr0.max();
+        ++xr0;
+        if (!xr0()) {
+          if (!xr1()) return false;
+          if (x0min != xr1.min()) return false;
+          int x1max = Limits::Set::int_min;
+          while (xr1()) { x1max = xr1.max(); ++xr1;}
+          if (x0max != x1max) return false;
+          return true;
+        }
+        return false;
+      }
+      /// Post constraint on \a x
+      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+        Gecode::convexHull(home, x[1], x[0]);
+      }
+    };
+    ConvexHull _convexhull("Convex::ConvexHull");
+
+    class ConvexHullS : public SetTest {
+    public:
+      /// Create and register test
+      ConvexHullS(const char* t)
+        : SetTest(t,1,ds_33,false) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        CountableSetRanges xr0(x.lub, x[0]);
+        if (!xr0())
+          return true;
+        ++xr0;
+        if (!xr0())
+          return true;
+        return false;
+      }
+      /// Post constraint on \a x
+      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+        Gecode::convexHull(home, x[0], x[0]);
+      }
+    };
+    ConvexHullS _convexhulls("Convex::Sharing::ConvexHullS");
+
+    //@}
+
+}}}
 
 // STATISTICS: test-set

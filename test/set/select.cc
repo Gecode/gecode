@@ -37,97 +37,119 @@
 
 #include "test/set.hh"
 
-static IntSet ds_012(-1,2);
+using namespace Gecode;
 
-class SelectUnion : public SetTest {
-public:
-  /// Create and register test
-  SelectUnion(const char* t)
-    : SetTest(t,5,ds_012,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const SetAssignment& x) const {
-    int selected = 0;
-    for (CountableSetValues sel2(x.lub, x[3]); sel2(); ++sel2, selected++);
-    CountableSetValues x4v(x.lub, x[4]);
-    if (selected==0)
-      return !x4v();
-    GECODE_AUTOARRAY(CountableSetRanges, sel, selected);
-    CountableSetValues selector(x.lub, x[3]);
-    for (int i=selected; i--;++selector) {
-      if (selector.val()>=3 || selector.val()<0)
-        return false;
-      sel[i].init(x.lub, x[selector.val()]);
-    }
-    Iter::Ranges::NaryUnion<CountableSetRanges> u(sel, selected);
+namespace Test { namespace Set {
 
-    CountableSetRanges z(x.lub, x[4]);
-    return Iter::Ranges::equal(u, z);
-  }
-  /// Post constraint on \a x
-  virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
-    SetVarArgs xs(x.size()-2);
-    for (int i=x.size()-2; i--;)
-      xs[i]=x[i];
-    Gecode::selectUnion(home, xs, x[x.size()-2], x[x.size()-1]);
-  }
-};
-SelectUnion _selectunion("Select::Union");
+  /// Tests for selection constraints
+  namespace Select {
 
-class SelectInter : public SetTest {
-public:
-  /// Create and register test
-  SelectInter(const char* t)
-    : SetTest(t,5,ds_012,false) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const SetAssignment& x) const {
-    int selected = 0;
-    for (CountableSetValues sel2(x.lub, x[3]); sel2(); ++sel2, selected++);
-    CountableSetRanges x4r(x.lub, x[4]);
-    if (selected==0)
-      return Iter::Ranges::size(x4r)==Limits::Set::card_max;
-    GECODE_AUTOARRAY(CountableSetRanges, sel, selected);
-    CountableSetValues selector(x.lub, x[3]);
-    for (int i=selected; i--;++selector) {
-      if (selector.val()>=3 || selector.val()<0)
-        return false;
-      sel[i].init(x.lub, x[selector.val()]);
-    }
-    Iter::Ranges::NaryInter<CountableSetRanges> u(sel, selected);
+    /**
+      * \defgroup TaskTestSetSelect Selection constraints
+      * \ingroup TaskTestSet
+      */
+    //@{
 
-    CountableSetRanges z(x.lub, x[4]);
-    return Iter::Ranges::equal(u, z);
-  }
-  /// Post constraint on \a x
-  virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
-    SetVarArgs xs(x.size()-2);
-    for (int i=x.size()-2; i--;)
-      xs[i]=x[i];
-    Gecode::selectInter(home, xs, x[x.size()-2], x[x.size()-1]);
-  }
-};
-SelectInter _selectinter("Select::Inter");
+    static IntSet ds_012(-1,2);
 
-class SelectSet : public SetTest {
-public:
-  /// Create and register test
-  SelectSet(const char* t)
-    : SetTest(t,4,ds_012,false,true) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const SetAssignment& x) const {
-    if (x.intval() < 0 || x.intval() > 2)
-      return false;
-    CountableSetRanges z(x.lub, x[3]);
-    CountableSetRanges y(x.lub, x[x.intval()]);
-    return Iter::Ranges::equal(y, z);
-  }
-  /// Post constraint on \a x
-  virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
-    SetVarArgs xs(x.size()-1);
-    for (int i=x.size()-1; i--;)
-      xs[i]=x[i];
-    Gecode::selectSet(home, xs, y[0], x[x.size()-1]);
-  }
-};
-SelectSet _selectset("Select::Set");
+    /// Test for SelectUnion constraint
+    class SelectUnion : public SetTest {
+    public:
+      /// Create and register test
+      SelectUnion(const char* t)
+        : SetTest(t,5,ds_012,false) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        int selected = 0;
+        for (CountableSetValues sel2(x.lub, x[3]); sel2();
+             ++sel2, selected++);
+        CountableSetValues x4v(x.lub, x[4]);
+        if (selected==0)
+          return !x4v();
+        GECODE_AUTOARRAY(CountableSetRanges, sel, selected);
+        CountableSetValues selector(x.lub, x[3]);
+        for (int i=selected; i--;++selector) {
+          if (selector.val()>=3 || selector.val()<0)
+            return false;
+          sel[i].init(x.lub, x[selector.val()]);
+        }
+        Iter::Ranges::NaryUnion<CountableSetRanges> u(sel, selected);
+
+        CountableSetRanges z(x.lub, x[4]);
+        return Iter::Ranges::equal(u, z);
+      }
+      /// Post constraint on \a x
+      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+        SetVarArgs xs(x.size()-2);
+        for (int i=x.size()-2; i--;)
+          xs[i]=x[i];
+        Gecode::selectUnion(home, xs, x[x.size()-2], x[x.size()-1]);
+      }
+    };
+    SelectUnion _selectunion("Select::Union");
+
+    /// Test for SelectInter constraint
+    class SelectInter : public SetTest {
+    public:
+      /// Create and register test
+      SelectInter(const char* t)
+        : SetTest(t,5,ds_012,false) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        int selected = 0;
+        for (CountableSetValues sel2(x.lub, x[3]); sel2();
+             ++sel2, selected++);
+        CountableSetRanges x4r(x.lub, x[4]);
+        if (selected==0)
+          return Iter::Ranges::size(x4r)==Limits::Set::card_max;
+        GECODE_AUTOARRAY(CountableSetRanges, sel, selected);
+        CountableSetValues selector(x.lub, x[3]);
+        for (int i=selected; i--;++selector) {
+          if (selector.val()>=3 || selector.val()<0)
+            return false;
+          sel[i].init(x.lub, x[selector.val()]);
+        }
+        Iter::Ranges::NaryInter<CountableSetRanges> u(sel, selected);
+
+        CountableSetRanges z(x.lub, x[4]);
+        return Iter::Ranges::equal(u, z);
+      }
+      /// Post constraint on \a x
+      virtual void post(Space* home, SetVarArray& x, IntVarArray&) {
+        SetVarArgs xs(x.size()-2);
+        for (int i=x.size()-2; i--;)
+          xs[i]=x[i];
+        Gecode::selectInter(home, xs, x[x.size()-2], x[x.size()-1]);
+      }
+    };
+    SelectInter _selectinter("Select::Inter");
+
+    /// Test for SelectSet constraint
+    class SelectSet : public SetTest {
+    public:
+      /// Create and register test
+      SelectSet(const char* t)
+        : SetTest(t,4,ds_012,false,true) {}
+      /// Test whether \a x is solution
+      virtual bool solution(const SetAssignment& x) const {
+        if (x.intval() < 0 || x.intval() > 2)
+          return false;
+        CountableSetRanges z(x.lub, x[3]);
+        CountableSetRanges y(x.lub, x[x.intval()]);
+        return Iter::Ranges::equal(y, z);
+      }
+      /// Post constraint on \a x
+      virtual void post(Space* home, SetVarArray& x, IntVarArray& y) {
+        SetVarArgs xs(x.size()-1);
+        for (int i=x.size()-1; i--;)
+          xs[i]=x[i];
+        Gecode::selectSet(home, xs, y[0], x[x.size()-1]);
+      }
+    };
+    SelectSet _selectset("Select::Set");
+
+    //@}
+
+}}}
 
 // STATISTICS: test-set

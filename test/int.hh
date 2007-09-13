@@ -115,13 +115,7 @@ namespace Test {
       /// Destructor
       virtual ~RandomAssignment(void);
     };
-    
-    /**
-     * \brief Print assignment \a
-     * \relates Assignment
-     */
-    std::ostream& operator<<(std::ostream& os, const Assignment& a);
-    
+        
     /**
      * \brief Base class for tests with integer constraints
      *
@@ -234,6 +228,12 @@ namespace Test {
     
   }
 }
+
+/**
+ * \brief Print assignment \a
+ * \relates Assignment
+ */
+std::ostream& operator<<(std::ostream& os, const Test::Int::Assignment& a);
 
 #include "test/int.icc"
 

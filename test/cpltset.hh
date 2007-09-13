@@ -44,62 +44,80 @@
 #include "test/set.hh"
 #include "test/int.hh"
 
-using namespace Test;
-using namespace Gecode;
-using namespace Set;
-using namespace CpltSet;
-
-class CpltSetTest : public Base {
-private:
-  int     arity;
-  IntSet  lub;
-  bool    reified;
-  int    withInt;
-  int ivs;
-  int ics;
-
-  void removeFromLub(int, CpltSetVar&, int, const IntSet&);
-  void addToGlb(int, CpltSetVar&, int, const IntSet&);
-  SetAssignment* make_assignment(void);
-public:
-  CpltSetTest(const std::string& s, int a, const IntSet& d, bool r=false,
-              int w=0, int mn=10000, int mc=1000) 
-    : Base("CpltSet::"+s), arity(a), lub(d), reified(r), withInt(w), 
-      ivs(mn), ics(mc)  {
-    CpltSet::manager.dispose();
-    CpltSet::manager.init(mn, mc);
-  }
-
-  /// Check for solution
-  virtual bool solution(const SetAssignment&) const = 0;
-  /// Post propagator
-  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray& y) = 0;
-  /// Post reified propagator
-  virtual void post(Space* home, CpltSetVarArray& x, IntVarArray& y,
-                    BoolVar b) {}
-  /// Perform test
-  virtual bool run(const Options& opt);
-
-  template <class I>
-  int iter2int(I& r, int u) const{
-    if (!r()) {
-      return 0;
-    }
-    int v = 0;
-    // compute the bit representation of the assignment 
-    // and convert it to the corresponding integer
-    while(r()) {
-      v  |= (1 << r.val()); // due to reversed lex ordering
-      ++r;
-    }
-    return v;
-  }
+namespace Test {
   
-  /// Provide manager access
-  int varsize(void) { return ivs; }
-  int cachesize(void) { return ics; }
+  /// Testing finite sets with complete domain representation
+  namespace CpltSet {
 
-};
+    /**
+     * \defgroup TaskTestCpltSet Testing finite sets with complete domain representation
+     * \ingroup TaskTest
+     */
+
+    /**
+     * \defgroup TaskTestCpltSetSupport General CpltSet test support
+     * \ingroup TaskTestCpltSet
+     */
+    //@{
+
+    /**
+     * \brief Base class for tests with CpltSet constraints
+     *
+     */
+    class CpltSetTest : public Base {
+    private:
+      int     arity;
+      Gecode::IntSet  lub;
+      bool    reified;
+      int    withInt;
+      int ivs;
+      int ics;
+
+      void removeFromLub(int, Gecode::CpltSetVar&, int,
+                         const Gecode::IntSet&);
+      void addToGlb(int, Gecode::CpltSetVar&, int, const Gecode::IntSet&);
+    public:
+      CpltSetTest(const std::string& s, int a, const Gecode::IntSet& d,
+                  bool r=false, int w=0, int mn=10000, int mc=1000) 
+        : Base("CpltSet::"+s), arity(a), lub(d), reified(r), withInt(w), 
+          ivs(mn), ics(mc)  {
+        Gecode::CpltSet::manager.dispose();
+        Gecode::CpltSet::manager.init(mn, mc);
+      }
+
+      /// Check for solution
+      virtual bool solution(const Test::Set::SetAssignment&) const = 0;
+      /// Post propagator
+      virtual void post(Gecode::Space* home, Gecode::CpltSetVarArray& x,
+                        Gecode::IntVarArray& y) = 0;
+      /// Post reified propagator
+      virtual void post(Gecode::Space* home, Gecode::CpltSetVarArray& x,
+                        Gecode::IntVarArray& y, Gecode::BoolVar b) {}
+      /// Perform test
+      virtual bool run(const Options& opt);
+
+      template <class I>
+      int iter2int(I& r, int u) const{
+        if (!r()) {
+          return 0;
+        }
+        int v = 0;
+        // compute the bit representation of the assignment 
+        // and convert it to the corresponding integer
+        while(r()) {
+          v  |= (1 << r.val()); // due to reversed lex ordering
+          ++r;
+        }
+        return v;
+      }
+  
+      /// Provide manager access
+      int varsize(void) { return ivs; }
+      int cachesize(void) { return ics; }
+
+    };
+    //@}
+}}
 
 #endif
 
