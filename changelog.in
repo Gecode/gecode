@@ -728,8 +728,9 @@ Module: example
 What:   new
 Rank:   major
 [DESCRIPTION]
-New example: PlacementPuzzle. The example uses
-regular-constraints to place irregular-shaped pieces on a board.
+New example: Pentominoes. The example uses extensional-constraints
+specifed as regular expressions to place irregular-shaped pieces on a
+board.
 
 
 

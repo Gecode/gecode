@@ -36,8 +36,6 @@
  */
 
 #include "gecode/int.hh"
-#include "gecode/support/sort.hh"
-#include "gecode/support/search.hh"
 
 #include "gecode/int/extensional/table.icc"
 

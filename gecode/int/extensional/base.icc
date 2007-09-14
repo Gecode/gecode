@@ -72,13 +72,14 @@ namespace Gecode { namespace Int { namespace Extensional {
       for (int i = literals; i--; ) {
         last_data[i] = source[i];
       }
+      /*
       for (int i = 0; i < x.size(); ++i) {
         int domsize = table.tablei->domsize;
         for (int d = 0; d < domsize; ++d) {
           tuple* l = last_data[(i*domsize) + d];
         }
       }
-
+      */
     }
   }
 
@@ -148,13 +149,15 @@ namespace Gecode { namespace Int { namespace Extensional {
   size_t
   Base<View,subscribe>::dispose(Space* home) {
     this->unforce(home);
-    if (subscribe)
-      x.cancel(home,this,PC_INT_DOM);
     (void) Propagator::dispose(home);
     (void) table.~Table();    
-    // take care of last_data
-    int literals = table.tablei->domsize*x.size();    
-    home->reuse(last_data, sizeof(tuple*)*literals);
+    if (!home->failed()) {
+      if (subscribe)
+        x.cancel(home,this,PC_INT_DOM);
+      // take care of last_data
+      int literals = table.tablei->domsize*x.size();    
+      home->reuse(last_data, sizeof(tuple*)*literals);
+    }
     return sizeof(*this);
   }
 }}}

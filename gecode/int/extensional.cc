@@ -65,14 +65,13 @@ namespace Gecode {
                          ::post(home,xv,dfa)));
   }
 
-#if 0
-
-  using namespace Int;
-
   void
   extensional(Space* home, const IntVarArgs& x, const Table& table, 
-              ExtensionalAlgorithm ea, IntConLevel icl) {
+              IntConLevel icl, PropKind pk) {
+    using namespace Int;
     if (home->failed()) return;
+
+    // Construct view array
     ViewArray<IntView> xv(home,x);
 
     // All variables in the correct domain
@@ -81,25 +80,22 @@ namespace Gecode {
       GECODE_ME_FAIL(home, xv[i].lq(home, table.tablei->max));
     }
 
-    switch (icl) {
-    default:
-      switch (ea) {
-#ifdef GECODE_USE_ADVISORS
-      case EA_INCREMENTAL:
-        GECODE_ES_FAIL(home,(Extensional::Incremental<IntView>::post(home,xv,table)));
-        break;
-#endif
-      default:
-        GECODE_ES_FAIL(home,Extensional::Basic<IntView>::post(home,xv,table));
+    switch (pk) {
+    case PK_SPEED:
+      GECODE_ES_FAIL(home,(Extensional::Incremental<IntView>::
+                           post(home,xv,table)));
       break;
-      }
+    default:
+      GECODE_ES_FAIL(home,(Extensional::Basic<IntView>::
+                           post(home,xv,table)));
+      break;
     }
   }
 
   void
   extensional(Space* home, const IntArgs& c, const IntVarArgs& x, 
-              const Table& table, ExtensionalAlgorithm ea, 
-              IntConLevel icl) {
+              const Table& table, IntConLevel icl, PropKind pk) {
+    using namespace Int;
     if (c.size() != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
     if (!table.tablei->finalized())
@@ -107,6 +103,8 @@ namespace Gecode {
     if (table.tablei->arity != x.size())
       throw ArgumentSizeMismatch("Int::extensional");
     if (home->failed()) return;
+
+    // Construct view array
     ViewArray<OffsetView> cx(home,x.size());
     for (int i = c.size(); i--; )
       if ((c[i] < Limits::Int::int_min) || (c[i] > Limits::Int::int_max))
@@ -120,14 +118,17 @@ namespace Gecode {
       GECODE_ME_FAIL(home, cx[i].lq(home, table.tablei->max));
     }
 
-    switch (icl) {
+    switch (pk) {
+    case PK_SPEED:
+      GECODE_ES_FAIL(home,(Extensional::Incremental<OffsetView>::
+                           post(home,cx,table)));
+      break;
     default:
-      GECODE_ES_FAIL(home,Extensional::Basic<OffsetView>::post(home,cx,table));
+      GECODE_ES_FAIL(home,(Extensional::Basic<OffsetView>::
+                           post(home,cx,table)));
       break;
     }
   }
-
-#endif
 
 }
 

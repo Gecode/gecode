@@ -35,8 +35,6 @@
  *
  */
 
-#include "gecode/support/bitset.hh"
-
 namespace Gecode { namespace Int { namespace Extensional {
   /*
    * Support entries
@@ -96,7 +94,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       work(x.size()), unassigned(x.size()), ac(home) {
     init_support(home);
 
-    GECODE_AUTOARRAY(Support::BitSet<unsigned long>, dom, x.size());
+    GECODE_AUTOARRAY(BitSet<unsigned long>, dom, x.size());
     init_dom(home, dom);
     for (int i = x.size(); i--; ) {
       if (x[i].assigned()) {
@@ -126,7 +124,9 @@ namespace Gecode { namespace Int { namespace Extensional {
   forceinline
   Incremental<View>::Incremental(Space* home, bool share, Incremental<View>& p)
     : Base<View,false>(home,share,p), support_data(NULL), 
-      work(2), unassigned(p.unassigned), ac(home,share,p.ac) {
+      work(2), unassigned(p.unassigned) {
+    ac.update(home,share,p.ac);
+
     init_support(home);
     int literals = table.tablei->domsize*x.size();    
     for (int i = literals; i--; ) {
@@ -171,7 +171,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
     /// Set up datastructures
     /// Bit-sets for amortized O(1) access to domains
-    GECODE_AUTOARRAY(Support::BitSet<unsigned long>, dom, x.size());
+    GECODE_AUTOARRAY(BitSet<unsigned long>, dom, x.size());
     init_dom(home, dom);
 
     /// Work loop
@@ -223,11 +223,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
   template <class View>
   forceinline void
-  Incremental<View>::remove_support(Space* home, tuple l, int var, int val
-#if defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
-                                    , Domain dom
-#endif
-                                    ) {
+  Incremental<View>::remove_support(Space* home, tuple l, int var, int val) {
     for (int i = x.size(); i--; ) {
       int v = l[i];
       int ov = v - table.tablei->min;
@@ -245,11 +241,7 @@ namespace Gecode { namespace Int { namespace Extensional {
       
       old->dispose(home);
       if (i != var && support_data[pos] == NULL) {
-#if defined(SYSTEM_ADVISOR_IMPROVE_CHEAP)
         work.push(Work(WT_FIND_SUPPORT, i, v));
-#elif defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
-        find_support(home, dom, i, v);
-#endif
       }
     }
   }
@@ -296,79 +288,39 @@ namespace Gecode { namespace Int { namespace Extensional {
   //
   template <class View>
   ExecStatus
-  Incremental<View>::advise(Space *home, Advisor& a0, const Delta& d) {
-    SupportAdvisor& a = static_cast<SupportAdvisor&>(a0);
-    ModEvent me = a.x.modevent(d);
-    int lo = a.x.min(d);
-    int hi = a.x.max(d);
+  Incremental<View>::advise(Space *home, Advisor* a0, const Delta* d) {
+    SupportAdvisor* a = static_cast<SupportAdvisor*>(a0);
+    ModEvent me = View::modevent(d);
+    int lo = a->x.min(d);
+    int hi = a->x.max(d);
     bool westart = work.empty();
 
-#if defined(SYSTEM_ADVISOR_IMPROVE_CHEAP) || defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
-#if defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
-    GECODE_AUTOARRAY(Support::BitSet<unsigned long>, dom, x.size());
-    init_dom(home, dom);
-#endif
     if (lo <= hi) {
       for (int val = lo; val <= hi; ++val) {
-        while (SupportEntry* s = support(a.pos, val)) {
-#if defined(SYSTEM_ADVISOR_IMPROVE_CHEAP)
-          remove_support(home, s->t, a.pos, val);
-#else //defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
-          remove_support(home, s->t, a.pos, val, dom);
-#endif
+        while (SupportEntry* s = support(a->pos, val)) {
+          remove_support(home, s->t, a->pos, val);
         }
       }
     } else {
-      ViewValues<View> vv(a.x);
+      ViewValues<View> vv(a->x);
       for (int i = table.tablei->min; i <= table.tablei->max; ++i) {
          if (vv() && i == vv.val()) {
           ++vv;  
            continue;
         }
-         while (SupportEntry* s = support(a.pos, i)) {
-#if defined(SYSTEM_ADVISOR_IMPROVE_CHEAP)
-          remove_support(home, s->t, a.pos, i);
-#else //defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
-          remove_support(home, s->t, a.pos, i, dom);
-#endif
+         while (SupportEntry* s = support(a->pos, i)) {
+          remove_support(home, s->t, a->pos, i);
         }
       }
     }
-#elif defined(SYSTEM_ADVISOR_BASE_AVOID)
-    assert(0);
-    // Slow and imprecise
-    if (a.x.any(d)) {
-      for (unsigned int var = x.size(); var--; ) {
-        if (var == a.pos) continue;
-        for (int val = table.tablei->domsize; val--; ) {
-          tuple l = last(var, val);
-          if (l != NULL && 
-              ((me != ME_INT_VAL && l[a.pos] >= lo && l[a.pos] <= hi) ||
-               (me == ME_INT_VAL && l[a.pos] != a.x.val()))) {
-            if (me == ME_INT_VAL) {
-              --unassigned;
-              return ES_SUBSUMED_NOFIX(a,home);
-            }
-            return ES_NOFIX;
-          }
-        }
-      }
-    } else {
-      if (me == ME_INT_VAL) {
-        --unassigned;
-        return ES_SUBSUMED_NOFIX(a,home);
-      }
-      return ES_NOFIX;
-    }
-#endif
     
     if (me == ME_INT_VAL) {
       --unassigned;
       if ((work.empty() || !westart) && unassigned!=0) {
         // nothing to do or already scheduled
-        return ES_SUBSUMED_FIX(a,home);
+        return ES_SUBSUMED_FIX(a,home,ac);
       }
-      return ES_SUBSUMED_NOFIX(a,home);
+      return ES_SUBSUMED_NOFIX(a,home,ac);
     }
     if (work.empty() || !westart) {
       // nothing to do or already scheduled
@@ -382,18 +334,24 @@ namespace Gecode { namespace Int { namespace Extensional {
   size_t
   Incremental<View>::dispose(Space* home) {
     (void) Base<View,false>::dispose(home);
-    /// @todo take care of support    
-    int literals = table.tablei->domsize*x.size();    
-    for (int i = literals; i--; ) {
-      if (support_data[i]) {
-        SupportEntry* lastse = support_data[i];
-        while (lastse->next) lastse = lastse->next;
-        support_data[i]->dispose(home, lastse);
+    //(void) table.~Table(home);
+
+    assert(home->failed() || ac.empty());
+
+    /// @todo take care of support
+    if (!home->failed()) {
+      int literals = table.tablei->domsize*x.size();    
+      for (int i = literals; i--; ) {
+        if (support_data[i]) {
+          SupportEntry* lastse = support_data[i];
+          while (lastse->next) lastse = lastse->next;
+          support_data[i]->dispose(home, lastse);
+        }
       }
+      home->reuse(support_data, sizeof(SupportEntry*)*literals);
+      (void) ac.dispose(home);
+      //(void) work.~DynamicStack<Work>();
     }
-    home->reuse(support_data, sizeof(SupportEntry*)*literals);
-    (void) ac.dispose(home);
-    (void) work.~DynamicStack<Work>();
     return sizeof(*this);
   }
 

@@ -83,24 +83,14 @@ namespace Gecode { namespace Int { namespace Extensional {
   template <class View>
   ExecStatus
   Basic<View>::propagate(Space* home) {
-    /// Staging...
-#if 0
-    if (View::pme(this) == ME_INT_VAL) {
-      ExecStatus es = prop_val<View>(home,x);
-      GECODE_ES_CHECK(es);
-      if (es == ES_FIX)
-        return ES_FIX_PARTIAL(this,View::pme(ME_INT_DOM));
-      return ES_NOFIX_PARTIAL(this,View::pme(ME_INT_DOM));
-    }
-#endif
     ///// Domain consistent propagation
     //// Set up datastructures
     /// Bit-sets for amortized O(1) access to domains
-    GECODE_AUTOARRAY(Support::BitSet<unsigned long>, dom, x.size());
+    GECODE_AUTOARRAY(BitSet<unsigned long>, dom, x.size());
     init_dom(home, dom);
 
     /// Bit-sets for processed values.
-    GECODE_AUTOARRAY(Support::BitSet<unsigned long>, has_support, x.size());
+    GECODE_AUTOARRAY(BitSet<unsigned long>, has_support, x.size());
     for (int i = x.size(); i--; ) has_support[i].init(home, table.tablei->domsize);
  
 

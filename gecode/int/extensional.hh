@@ -152,52 +152,12 @@ namespace Gecode { namespace Int { namespace Extensional {
 #include "gecode/int/extensional/layered-graph.icc"
 
 
-#if 0
+#include "gecode/int/extensional/bitset.hh"
 
 namespace Gecode { namespace Int { namespace Extensional {
 
   typedef Table::tuple tuple;
-  typedef Support::BitSet<unsigned long>* Domain;
-
-  /**
-   * \brief Naive value extensional propagator
-   *
-   * Eliminates values of assigned views of type \a View.
-   *
-   * Requires \code #include "gecode/int/extensional.hh" \endcode
-   * \ingroup FuncIntProp
-   */
-  template <class View>
-  class Val : public NaryPropagator<View,PC_INT_VAL> {
-  protected:
-    using NaryPropagator<View,PC_INT_VAL>::x;
-    Table& table;
-
-    /// Constructor for posting
-    Val(Space* home, ViewArray<View>& x, const Table& t);
-    /// Constructor for cloning \a p
-    Val(Space* home, bool share, Val<View>& p);
-  public:
-    /// Copy propagator during cloning
-    virtual Actor* copy(Space* home, bool share);
-    /// Perform propagation
-    virtual ExecStatus propagate(Space* home);
-    /// Name of this propagator
-    virtual const char* name(void) const;    
-    /// Post propagator for view array \a x
-    static ExecStatus post(Space* home, ViewArray<View>& x, const Table& t);
-  };
-
-  /**
-   * \brief Eliminate singletons by naive value propagation
-   *
-   * This is actually the propagation algorithm for Extensional::Val.
-   * It is available as separate function as it is reused for
-   * the domain-consistent extensional propagators.
-   */
-  template <class View>
-  ExecStatus prop_val(Space* home, ViewArray<View>& x, const Table& t);
-
+  typedef BitSet<unsigned long>* Domain;
 
   /**
    * \brief Base for domain-consistent extensional proipagation.
@@ -234,7 +194,12 @@ namespace Gecode { namespace Int { namespace Extensional {
     // Dispose propagator
     virtual size_t dispose(Space* home);
   };
+}}}
 
+#include "gecode/int/extensional/base.icc"
+
+
+namespace Gecode { namespace Int { namespace Extensional {
 
   /**
    * \brief Domain-consistent extensional propagator
@@ -281,23 +246,10 @@ namespace Gecode { namespace Int { namespace Extensional {
   };
 }}}
 
-#include "gecode/int/extensional/val.icc"
-#include "gecode/int/extensional/base.icc"
 #include "gecode/int/extensional/basic.icc"
 
 
-#ifdef GECODE_USE_ADVISORS
-
 namespace Gecode { namespace Int { namespace Extensional {
-  /*
-  struct SupportEntry {
-    tuple t;
-    SupportEntry* next;
-    SupportEntry(tuple t0=NULL, SupportEntry* n0=NULL)
-      : t(t0), next(n0) {}
-  };
-  */
-
   /**
    * \brief Domain-consistent extensional propagator
    *
@@ -364,7 +316,7 @@ namespace Gecode { namespace Int { namespace Extensional {
 
 
 
-    typedef Support::DynamicStack<Work> WorkStack;
+    typedef ::Gecode::Support::DynamicStack<Work> WorkStack;
     SupportEntry** support_data;
     WorkStack work;
     int unassigned;
@@ -377,11 +329,7 @@ namespace Gecode { namespace Int { namespace Extensional {
     void   find_support(Space* home, Domain dom, int var, int val);
     void   init_support(Space* home);
     void    add_support(Space* home, tuple l);
-    void remove_support(Space* home, tuple l, int var, int val
-#if defined(SYSTEM_ADVISOR_IMPROVE_EXPENSIVE)
-                        , Domain dom
-#endif
-                        );
+    void remove_support(Space* home, tuple l, int var, int val);
     SupportEntry* support(int var, int val);
   public:
     /// Perform propagation
@@ -411,24 +359,26 @@ namespace Gecode { namespace Int { namespace Extensional {
     public:
       using ViewAdvisor<View>::x;
       unsigned int pos;
-      SupportAdvisor(Space* home, Propagator* p, CouncilBase& c,
+      SupportAdvisor(Space* home, Propagator* p, Council<SupportAdvisor>& c,
                      View v, unsigned int position) 
         : ViewAdvisor<View>(home,p,c,v), pos(position) {}
       SupportAdvisor(Space* home, bool share, SupportAdvisor& a) 
         : ViewAdvisor<View>(home, share, a), pos(a.pos) {
       }
+      /// Dispose advisor
+      void dispose(Space* home, Council<SupportAdvisor>& c) {
+            ViewAdvisor<View>::dispose(home,c);
+      }
     };
     Council<SupportAdvisor> ac;
   public:
-    virtual ExecStatus advise(Space* home, Advisor& a, const Delta& d);
+    virtual ExecStatus advise(Space* home, Advisor* a, const Delta* d);
   };
   
 }}}
 
 #include "gecode/int/extensional/incremental.icc"
-#endif
 
-#endif
 
 #endif
 

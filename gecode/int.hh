@@ -1121,16 +1121,6 @@ namespace Gecode {
 
 namespace Gecode {
 
-#if 0
-  /** \brief Options for choosing the algorithm for extensional constraints
-   */
-  enum ExtensionalAlgorithm {
-    EA_BASIC,       ///< Basic algorithm
-    EA_INCREMENTAL ///< Based on GAC-Schema
-    //,EA_REGULAR      ///< Rewrite constraint to regular
-  };
-
-
   /** \brief Class represeting table of tuples.
    */
   class Table {
@@ -1176,24 +1166,26 @@ namespace Gecode {
 
   /** \brief Post propagator for \f$x\in T\f$.
    *
-   *
+   * \li Supports implementations optimized for memory (\a pk = \a
+   * PK_MEMORY, default) and speed (\a pk = \a PK_SPEED).
    * \li Supports domain-consistency (\a icl = ICL_DOM, default) only.
    *
    * \warning If the domains for the \f$x_i\f$ are not dense and
    * have similar bounds, lots of memory will be wasted (memory
    * consumption is in \f$
    * O\left(|x|\cdot\min_i(\underline{x_i})\cdot\max_i(\overline{x_i})\right)\f$
-   * for the basic algorithm and additionally \f$
+   * for the basic algorithm (\a pk = \a PK_MEMORY) and additionally \f$
    * O\left(|x|^2\cdot\min_i(\underline{x_i})\cdot\max_i(\overline{x_i})\right)\f$
-   * for the incremental algorithm.
+   * for the incremental algorithm (\a pk = \a PK_SPEED).
    */
   GECODE_INT_EXPORT void
   extensional(Space* home, const IntVarArgs& x, const Table& t, 
-              ExtensionalAlgorithm ea=EA_BASIC,
               IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   
   /** \brief Post propagator for \f$\rangle x_0+O_0, x_1+O_1, \cdots, x_{n-1}+O_{n-1}\langle\in T\f$.
    *
+   * \li Supports implementations optimized for memory (\a pk = \a
+   * PK_MEMORY, default) and speed (\a pk = \a PK_SPEED).
    * \li Supports domain-consistency (\a icl = ICL_DOM, default) only.
    * \li Throws an exception of type Int::NumericalOverflow, if
    *     the integers in \a n exceed the limits in Limits::Int.
@@ -1204,22 +1196,18 @@ namespace Gecode {
    * have similar bounds, lots of memory will be wasted (memory
    * consumption is in \f$
    * O\left(|x|\cdot\min_i(\underline{x_i})\cdot\max_i(\overline{x_i})\right)\f$
-   * for the basic algorithm and additionally \f$
+   * for the basic algorithm (\a pk = \a PK_MEMORY) and additionally \f$
    * O\left(|x|^2\cdot\min_i(\underline{x_i})\cdot\max_i(\overline{x_i})\right)\f$
-   * for the incremental algorithm.
+   * for the incremental algorithm (\a pk = \a PK_SPEED).
    */
   GECODE_INT_EXPORT void
   extensional(Space* home, const IntArgs& c, const IntVarArgs& x, const Table& t, 
-              ExtensionalAlgorithm ea=EA_BASIC,
               IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 }
 
 #include "gecode/int/extensional/table.icc"
 
 namespace Gecode {
-
-#endif /* removal of extensional */
-  //@}
 
   /**
    * \defgroup TaskModelIntArith Arithmetic constraints

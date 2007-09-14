@@ -249,102 +249,102 @@ namespace Test { namespace Int {
      RegSharedD rsd;
      //@}
    
+
+
+     class Table1 : public Test {
+     public:
+       /// Create and register test
+       Table1(const char* t, Gecode::PropKind pk0)
+         : Test(t,4,1,5,false,Gecode::ICL_DOM,pk0) {}
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         return (
+                 (x[0] == 1 && x[1] == 3 && x[2] == 2 && x[3] == 3) ||
+                 (x[0] == 2 && x[1] == 1 && x[2] == 2 && x[3] == 4) ||
+                 (x[0] == 2 && x[1] == 2 && x[2] == 1 && x[3] == 4) ||
+                 (x[0] == 3 && x[1] == 3 && x[2] == 3 && x[3] == 2) ||
+                 (x[0] == 4 && x[1] == 3 && x[2] == 4 && x[3] == 1)
+                 );
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         Table t;
+         IntArgs t1(4,  2, 1, 2, 4);
+         IntArgs t2(4,  2, 2, 1, 4);
+         IntArgs t3(4,  4, 3, 4, 1);
+         IntArgs t4(4,  1, 3, 2, 3);
+         IntArgs t5(4,  3, 3, 3, 2);
+         t.add(t1);
+         t.add(t2);
+         t.add(t3);
+         t.add(t4);
+         t.add(t5);
+
+         extensional(home, x, t, ICL_DEF, pk);
+       }
+     };
+
+     namespace {
+       Table1 _tab1b("Extensional::Table::Basic::1", Gecode::PK_MEMORY);
+       Table1 _tab1i("Extensional::Table::Incremental::1", Gecode::PK_SPEED);
+     }
+
+     class Table2 : public Test {
+       mutable Gecode::Table t;
+     public:
+       /// Create and register test
+       Table2(const char* name, Gecode::PropKind pk0)
+         : Test(name,4,1,5,false,Gecode::ICL_DOM,pk0) {
+         using namespace Gecode;
+         IntArgs t1 (4,  2, 1, 2, 4);
+         IntArgs t2 (4,  2, 2, 1, 4);
+         IntArgs t3 (4,  4, 3, 4, 1);
+         IntArgs t4 (4,  1, 3, 2, 3);
+         IntArgs t5 (4,  3, 3, 3, 2);
+         IntArgs t6 (4,  5, 1, 4, 4);
+         IntArgs t7 (4,  2, 5, 1, 5);
+         IntArgs t8 (4,  4, 3, 5, 1);
+         IntArgs t9 (4,  1, 5, 2, 5);
+         IntArgs t10(4,  5, 3, 3, 2);
+         t.add(t1);
+         t.add(t2);
+         t.add(t3);
+         t.add(t4);
+         t.add(t5);
+         t.add(t6);
+         t.add(t7);
+         t.add(t8);
+         t.add(t9);
+         t.add(t10);
+       }
+       /// Test whether \a x is solution
+       virtual bool solution(const Assignment& x) const {
+         using namespace Gecode;
+         for (int i = 0; i < t.tuples(); ++i) {
+           Table::tuple l = t[i];
+           bool same = true;
+           for (int j = 0; j < x.size() && same; ++j) {
+             if (l[j] != x[j]) same = false;
+           }
+           if (same) return true;
+         }
+         return false;
+       }
+       /// Post constraint on \a x
+       virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+         using namespace Gecode;
+         extensional(home, x, t, ICL_DEF, pk);
+       }
+     };
+
+     namespace {
+       Table2 _tab2b("Extensional::Table::Basic::2", Gecode::PK_MEMORY);
+       Table2 _tab2i("Extensional::Table::Incremental::2", Gecode::PK_SPEED);
+     }
    }
 }}
 
-/*
-
-class Table1 : public Test {
-  ExtensionalAlgorithm ea;
-public:
-  /// Create and register test
-  Table1(const char* t, ExtensionalAlgorithm ea0)
-    : Test(t,4,1,5,false,Gecode::ICL_DOM), ea(ea0) {}
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    return (
-            (x[0] == 1 && x[1] == 3 && x[2] == 2 && x[3] == 3) ||
-            (x[0] == 2 && x[1] == 1 && x[2] == 2 && x[3] == 4) ||
-            (x[0] == 2 && x[1] == 2 && x[2] == 1 && x[3] == 4) ||
-            (x[0] == 3 && x[1] == 3 && x[2] == 3 && x[3] == 2) ||
-            (x[0] == 4 && x[1] == 3 && x[2] == 4 && x[3] == 1)
-            );
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    Table t;
-    IntArgs t1(4,  2, 1, 2, 4);
-    IntArgs t2(4,  2, 2, 1, 4);
-    IntArgs t3(4,  4, 3, 4, 1);
-    IntArgs t4(4,  1, 3, 2, 3);
-    IntArgs t5(4,  3, 3, 3, 2);
-    t.add(t1);
-    t.add(t2);
-    t.add(t3);
-    t.add(t4);
-    t.add(t5);
-
-    extensional(home, x, t, ea);
-  }
-};
-
-namespace {
-  Table1 _tab1b("Extensional::Table::Basic::1", EA_BASIC);
-  Table1 _tab1i("Extensional::Table::Incremental::1", EA_INCREMENTAL);
-}
-
-class Table2 : public Test {
-  ExtensionalAlgorithm ea;
-  mutable Table t;
-public:
-  /// Create and register test
-  Table2(const char* name, ExtensionalAlgorithm ea0)
-    : Test(name,4,1,5,false,Gecode::ICL_DOM), ea(ea0) {
-    IntArgs t1 (4,  2, 1, 2, 4);
-    IntArgs t2 (4,  2, 2, 1, 4);
-    IntArgs t3 (4,  4, 3, 4, 1);
-    IntArgs t4 (4,  1, 3, 2, 3);
-    IntArgs t5 (4,  3, 3, 3, 2);
-    IntArgs t6 (4,  5, 1, 4, 4);
-    IntArgs t7 (4,  2, 5, 1, 5);
-    IntArgs t8 (4,  4, 3, 5, 1);
-    IntArgs t9 (4,  1, 5, 2, 5);
-    IntArgs t10(4,  5, 3, 3, 2);
-    t.add(t1);
-    t.add(t2);
-    t.add(t3);
-    t.add(t4);
-    t.add(t5);
-    t.add(t6);
-    t.add(t7);
-    t.add(t8);
-    t.add(t9);
-    t.add(t10);
-  }
-  /// Test whether \a x is solution
-  virtual bool solution(const Assignment& x) const {
-    for (int i = 0; i < t.tuples(); ++i) {
-      Table::tuple l = t[i];
-      bool same = true;
-      for (int j = 0; j < x.size() && same; ++j) {
-        if (l[j] != x[j]) same = false;
-      }
-      if (same) return true;
-    }
-    return false;
-  }
-  /// Post constraint on \a x
-  virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
-    extensional(home, x, t, ea);
-  }
-};
-
-namespace {
-  Table2 _tab2b("Extensional::Table::Basic::2", EA_BASIC);
-  Table2 _tab2i("Extensional::Table::Incremental::2", EA_INCREMENTAL);
-}
-
-*/
 
 // STATISTICS: test-int
 
