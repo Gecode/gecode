@@ -113,7 +113,7 @@ namespace Gecode { namespace CpltSet {
 //       std::cerr << delta.min() << ".." << delta.max() <<",";
 //     }
 //     std::cerr << "\n";
-    ModEvent me = x.tell_formula(home, d);
+    ModEvent me = x.intersect(home, d);
     GECODE_ME_CHECK(me);
 //     if (x.assigned()) {
 //       std::cerr << "SUBS-ASSIGNED\n";

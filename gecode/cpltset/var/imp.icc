@@ -50,12 +50,12 @@ namespace Gecode { namespace CpltSet {
   CpltSetVarImp::tableWidth(void) const { return max - min + 1; }
 
   forceinline bdd
-  CpltSetVarImp::getbdd(int i) const { 
+  CpltSetVarImp::element(int i) const { 
     return manager.bddpos(_offset + i); 
   }
 
   forceinline bdd
-  CpltSetVarImp::getnegbdd(int i) const {
+  CpltSetVarImp::elementNeg(int i) const {
     return manager.negbddpos(_offset + i);
   }
 
@@ -73,7 +73,7 @@ namespace Gecode { namespace CpltSet {
     _offset = manager.allocate(tableWidth());
 
     for (int i = glbMax; i >= glbMin; i--) {
-      domain &= getbdd(i - min);
+      domain &= element(i - min);
     } 
 
     unsigned int range = tableWidth();
@@ -108,10 +108,10 @@ namespace Gecode { namespace CpltSet {
         if (c >= glbMin && c == i) {
           throw CpltSet::GlbLubSpecNoSubset("CpltSetVarImp");
         }
-        domain &= getnegbdd(i - min);
+        domain &= elementNeg(i - min);
       } else {
         if (c >= glbMin && c == i) {
-          domain &= getbdd(i - min);
+          domain &= element(i - min);
           c--;
         }
         --vc;
@@ -144,7 +144,7 @@ namespace Gecode { namespace CpltSet {
     _offset = manager.allocate(tableWidth());
 
     for (vc.last(); vc(); --vc) {
-      domain &= getbdd(vc.val() - min);
+      domain &= element(vc.val() - min);
     } 
 
     unsigned int range = tableWidth();
@@ -184,10 +184,10 @@ namespace Gecode { namespace CpltSet {
         if (vcglb() && vcglb.val() == i) {
           throw CpltSet::GlbLubSpecNoSubset("CpltSetVarImp");
         }
-        domain &= getnegbdd(i - min);
+        domain &= elementNeg(i - min);
       } else {
         if (vcglb() && vcglb.val() == i) {
-          domain &= getbdd(i - min);
+          domain &= element(i - min);
         }
         --vclub;
       }
@@ -264,7 +264,7 @@ namespace Gecode { namespace CpltSet {
   }
 
   forceinline ModEvent 
-  CpltSetVarImp::tell_formula(Space* home, bdd& d) {
+  CpltSetVarImp::intersect(Space* home, bdd& d) {
     bool assigned_before = assigned();
     bdd olddom = domain;
     domain &= d;
@@ -303,9 +303,9 @@ namespace Gecode { namespace CpltSet {
     bdd notinlub  = bdd_true();
     // get the negated bdds for value i in [a..b]
     for (int i = ma; i >= mi; i--)         
-      notinlub &= getnegbdd(i - min);
+      notinlub &= elementNeg(i - min);
 
-    return tell_formula(home, notinlub);
+    return intersect(home, notinlub);
   }
 
   forceinline ModEvent 
@@ -335,9 +335,9 @@ namespace Gecode { namespace CpltSet {
   
     for (cache.last(); cache(); --cache) {
       int v = cache.min();
-      not_lub &= getnegbdd(v - min);
+      not_lub &= elementNeg(v - min);
     }
-    return tell_formula(home, not_lub);
+    return intersect(home, not_lub);
   }
 
   forceinline ModEvent 
@@ -347,9 +347,9 @@ namespace Gecode { namespace CpltSet {
 
     bdd in_glb  = bdd_true();
     for (int i = b; i >= a; i--)
-      in_glb &= getbdd(i - min);
+      in_glb &= element(i - min);
 
-    return tell_formula(home, in_glb);
+    return intersect(home, in_glb);
   }
 
   forceinline ModEvent 
@@ -369,9 +369,9 @@ namespace Gecode { namespace CpltSet {
       int v = cache.min();
       if (v < min || max < v) 
         return ME_CPLTSET_FAILED;
-      in_glb &= getbdd(v - min);
+      in_glb &= element(v - min);
     }
-    return tell_formula(home, in_glb);  
+    return intersect(home, in_glb);  
   }
 
 
@@ -382,7 +382,7 @@ namespace Gecode { namespace CpltSet {
 
     Iter::Ranges::Singleton m(a, b);
     bdd ass = !(iterToBdd(m));    
-    return tell_formula(home, ass);
+    return intersect(home, ass);
   }
 
   forceinline ModEvent
@@ -392,7 +392,7 @@ namespace Gecode { namespace CpltSet {
   forceinline ModEvent
   CpltSetVarImp::nqI(Space* home, I& i) {
     bdd ass = !(iterToBdd(i));
-    return tell_formula(home, ass);
+    return intersect(home, ass);
   }
 
   forceinline ModEvent
@@ -402,7 +402,7 @@ namespace Gecode { namespace CpltSet {
 
     Iter::Ranges::Singleton m(a, b);
     bdd ass = iterToBdd(m);
-    return tell_formula(home, ass);
+    return intersect(home, ass);
   }
 
   forceinline ModEvent
@@ -419,7 +419,7 @@ namespace Gecode { namespace CpltSet {
         return ME_CPLTSET_FAILED;
     }
     bdd ass = iterToBdd(i);
-    return tell_formula(home, ass);
+    return intersect(home, ass);
   }
 
   forceinline ModEvent 
@@ -458,7 +458,7 @@ namespace Gecode { namespace CpltSet {
     unsigned int maxcard = tableWidth();
     // compute the cardinality formula
     bdd c = cardcheck(maxcard, _offset, l, u);
-    return tell_formula(home, c);
+    return intersect(home, c);
   }
 
   forceinline ModEvent 
@@ -486,13 +486,13 @@ namespace Gecode { namespace CpltSet {
     for (int v = max; v >= min; v--) {
       if (vc()) {
         if (vc.val() == v) {
-          ass &= getbdd(v - min);
+          ass &= element(v - min);
           --vc;
         } else {
-          ass &= getnegbdd(v - min);
+          ass &= elementNeg(v - min);
         }
       } else {
-        ass &= getnegbdd(v - min);
+        ass &= elementNeg(v - min);
       }
     }
 
@@ -527,9 +527,6 @@ namespace Gecode { namespace CpltSet {
   CpltSetVarImp::cancel(Space* home, Propagator* p, PropCond pc) {
     CpltSetVarImpBase::cancel(home,p,pc,assigned());
   }
-
-  forceinline void
-  CpltSetVarImp::viewdot(void) const { manager.bdd2dot(domain); }
 
   forceinline bool
   CpltSetVarImp::knownIn(int v) const {

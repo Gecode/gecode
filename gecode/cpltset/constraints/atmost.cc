@@ -92,7 +92,7 @@ namespace Gecode {
 
       // equivalence of intersection x \cap y with intermediate variable z
       for (unsigned int i = x1_tab; i--;) {
-        d0 &= ((x[0].getbdd(i) & x[1].getbdd(i)) % (x[2].getbdd(i)));
+        d0 &= ((x[0].element(i) & x[1].element(i)) % (x[2].element(i)));
       }
 
       // cardinality description of intermediate variable z
@@ -122,7 +122,7 @@ namespace Gecode {
 
       // equivalence of intersection x \cap y with intermediate variable z
       for (unsigned int i = x1_tab; i--;) {
-        d0 &= ((x[0].getbdd(i) & x[1].getbdd(i)) % (x[2].getbdd(i)));
+        d0 &= ((x[0].element(i) & x[1].element(i)) % (x[2].element(i)));
       }
 
       // cardinality description of intermediate variable z

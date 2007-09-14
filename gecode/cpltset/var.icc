@@ -277,12 +277,10 @@ namespace Gecode { namespace CpltSet {
     template <class I> ModEvent eqI(Space* home, I& i);
     //@}
 
-    /// \name Common methods for the tell operations
+    /// \name Set domain update by bdd
     //@{
-
-    /// Compute modified variable domain \f$ d'\f$ as \f$ d' = d \wedge d0 \f$
-    ModEvent tell_formula(Space* home, bdd& d0);
-
+    /// Intersect domain with the domain represented by \a d
+    ModEvent intersect(Space* home, bdd& d);
     //@}
     
     /// \name Value access
@@ -322,19 +320,22 @@ namespace Gecode { namespace CpltSet {
 
     /// \name Bdd information 
     //@{
-    /// Return the initial minimum of the implementation
+    /// Return the initial minimum of the least upper bound
     int initialLubMin(void) const;
-    /// Return the initial maximum of the implementation
+    /// Return the initial maximum of the least upper bound
     int initialLubMax(void) const;
-    /// Return the number of variables allocated in the table
+    /** \brief Return the number of bdd variables allocated for this variable 
+      * (initialLubMax-initialLubMin) */
     unsigned int tableWidth(void) const;
     /** \brief Return the offset in the global bdd table where the variable's 
       * domain starts */
     unsigned int offset(void) const;
-    /// Return the i-th boolean bdd variable starting with the variable's offset
-    bdd getbdd(int i) const;
-    /// Return the negated i-th boolean bdd variable starting with the variable's offset
-    bdd getnegbdd(int i) const;
+    /** \brief Return bdd for the \a i -th element of this variable (counting 
+      * from initialLubMin) */
+    bdd element(int i) const;
+    /** \brief Return negated bdd for the \a i -th element of this variable 
+      * (counting from initialLubMin) */
+    bdd elementNeg(int i) const;
     /// Return the bdd representing the current domain
     bdd dom(void) const;
     //@}
@@ -377,9 +378,6 @@ namespace Gecode { namespace CpltSet {
     spec(Space* home, Reflection::VarMap& m);
     //@}
 
-    /// Print the domain of the variable in Dot-output format
-    void viewdot(void) const;
-    
   };
 
 
@@ -422,7 +420,7 @@ namespace Gecode { namespace CpltSet {
     
     // marks all nodes in the cache 
     GECODE_CPLTSET_EXPORT void cache_mark(void);
-    // marks all nodes in the cache 
+    // unmarks all nodes in the cache 
     GECODE_CPLTSET_EXPORT void cache_unmark(void);
   public:
     /// \name Constructors and initialization

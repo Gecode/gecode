@@ -44,12 +44,12 @@ namespace Gecode { namespace CpltSet {
     if (l == r) {
       ModEvent me = ME_CPLTSET_NONE;
       if (l == ypos) {
-        me  = y.tell_formula(home, p);
+        me  = y.intersect(home, p);
       } else {
         if (l == zpos) {
-          me = z.tell_formula(home, p);
+          me = z.intersect(home, p);
         } else {
-          me = x[l].tell_formula(home, p);
+          me = x[l].intersect(home, p);
         }
       }
       if (me_failed(me)) {

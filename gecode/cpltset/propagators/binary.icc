@@ -118,7 +118,7 @@ namespace Gecode { namespace CpltSet {
       int s = y.offset();
       int w = s + y.tableWidth() - 1;
       manager.existquant(dom, d, s, w);
-      ModEvent me = x.tell_formula(home, dom);
+      ModEvent me = x.intersect(home, dom);
       GECODE_ME_CHECK(me);
     }
     {
@@ -126,7 +126,7 @@ namespace Gecode { namespace CpltSet {
       int s = x.offset();
       int w = s + x.tableWidth() - 1;
       manager.existquant(dom, d, s, w);
-      ModEvent me = y.tell_formula(home, dom);
+      ModEvent me = y.intersect(home, dom);
       GECODE_ME_CHECK(me);
     }
 
@@ -223,7 +223,7 @@ namespace Gecode { namespace CpltSet {
         int v = cache.min();
         int xmin = x.initialLubMin();
         int ymin = y.initialLubMin();
-        d &= (!(x.getbdd(v - xmin) & y.getbdd(v - ymin)));
+        d &= (!(x.element(v - xmin) & y.element(v - ymin)));
       }
     }
 
@@ -232,7 +232,7 @@ namespace Gecode { namespace CpltSet {
       int s = y.offset();
       int w = s + y.tableWidth() - 1;
       manager.existquant(dom, d, s, w);
-      ModEvent me = x.tell_formula(home, dom);
+      ModEvent me = x.intersect(home, dom);
       GECODE_ME_CHECK(me);
     }
     {
@@ -240,7 +240,7 @@ namespace Gecode { namespace CpltSet {
       int s = x.offset();
       int w = s + x.tableWidth() - 1;
       manager.existquant(dom, d, s, w);
-      ModEvent me = y.tell_formula(home, dom);
+      ModEvent me = y.intersect(home, dom);
       GECODE_ME_CHECK(me);
     }
 

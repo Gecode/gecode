@@ -98,15 +98,15 @@ namespace Gecode {
               ++lub;
             }
             if (lub() && cur == lub.val()) {
-              inter |= (selview.getbdd(j + shift) & 
-                        seq[j].getbdd(k - (seqmin - xmin)));
+              inter |= (selview.element(j + shift) & 
+                        seq[j].element(k - (seqmin - xmin)));
               ++lub;
             }
           }
         }
 
         /// TODO: shouldnt we allow inter to be bdd_false() ?
-        d0 &= (unionview.getbdd(k - (unionmin - xmin)) % inter);
+        d0 &= (unionview.element(k - (unionmin - xmin)) % inter);
       }
 
       for (int i = 0; i < n; i++) {
@@ -215,15 +215,15 @@ namespace Gecode {
             }
             if (lub() && cur == lub.val()) {
               if (unionmin <= cur && cur <= unionmax) {
-                subset &= (seq[j].getbdd(k - (seqmin - xmin)) >>= 
-                           unionview.getbdd(k - (unionmin - xmin)));
+                subset &= (seq[j].element(k - (seqmin - xmin)) >>= 
+                           unionview.element(k - (unionmin - xmin)));
               }
               ++lub;
             }
           }
         }
         if (!manager.ctrue(subset)) {
-          d0 &= (selview.getbdd(j + shift) % (subset));
+          d0 &= (selview.element(j + shift) % (subset));
         }
         if (seq[j].assigned()) {
           d0 &= seq[j].dom();
@@ -368,7 +368,7 @@ namespace Gecode {
       int tab = std::max(unionview.tableWidth(), 
                          unionviewprime.tableWidth());
       for (int i = 0; i < (int) tab; i++) {
-        r0 &= (unionviewprime.getbdd(i)) >>= (unionview.getbdd(i));
+        r0 &= (unionviewprime.element(i)) >>= (unionview.element(i));
       }
 
      GECODE_ES_FAIL(home,

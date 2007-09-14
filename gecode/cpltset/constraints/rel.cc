@@ -125,14 +125,14 @@ namespace Gecode {
       case SRT_SUB: 
         {
           for (int i = 0; i < (int) tab; i++) {
-            d0 &= (x.getbdd(i)) >>= (y.getbdd(i));
+            d0 &= (x.element(i)) >>= (y.element(i));
           }
         }
         break;
       case SRT_SUP: 
         {
           for (int i = 0; i < (int) tab; i++) {
-            d0 &= (y.getbdd(i)) >>= (x.getbdd(i));
+            d0 &= (y.element(i)) >>= (x.element(i));
           }
         }
         break;
@@ -160,7 +160,7 @@ namespace Gecode {
               int v = cache.min();
               int minx = x.initialLubMin();
               int miny = y.initialLubMin();
-              d0 &= (!(x.getbdd(v - minx) & y.getbdd(v - miny)));
+              d0 &= (!(x.element(v - minx) & y.element(v - miny)));
             }
           }
           GECODE_ES_FAIL(home, (BinRelDisj<View,View>::post(home, x, y, d0)));
@@ -173,10 +173,10 @@ namespace Gecode {
           for (int i = 0; i < (int) tab; i++) {
             if (y.initialLubMin() + i < x.initialLubMin() ||
                 y.initialLubMin() + i > x.initialLubMax()) {
-              d0 &= (bdd_false() % y.getbdd(i));
+              d0 &= (bdd_false() % y.element(i));
               xshift++;
             } else {
-              d0 &= (x.getbdd(i - xshift) % y.getbdd(i));
+              d0 &= (x.element(i - xshift) % y.element(i));
             }
           }
         }
@@ -197,8 +197,8 @@ namespace Gecode {
               int v = ival.val();
               assert(v >= x.initialLubMin());
               assert(v <= x.initialLubMax());
-              d0 &= (x.getbdd(v - x.initialLubMin()) %
-                     y.getbdd(v - x.initialLubMax()));
+              d0 &= (x.element(v - x.initialLubMin()) %
+                     y.element(v - x.initialLubMax()));
             }
           }
           d0 = !d0;
@@ -283,12 +283,12 @@ namespace Gecode {
           for (int i = 0; i < (int) tab; i++) {
             if (s.initialLubMin() + i >= x.initialLubMin()) {
               if (s.initialLubMin() + i <= x.initialLubMax()) {
-                d0 &= (x.getbdd(i - xshift)) >>= (s.getbdd(i));
+                d0 &= (x.element(i - xshift)) >>= (s.element(i));
               } else {
-                // d0 &= s.getbdd(i);
+                // d0 &= s.element(i);
               }
             } else {
-              // d0 &= s.getbdd(i);
+              // d0 &= s.element(i);
             }
           }
         }
@@ -301,14 +301,14 @@ namespace Gecode {
       case SRT_SUP: 
         {
           for (int i = 0; i < (int) tab; i++) {
-            d0 &= (s.getbdd(i)) >>= (x.getbdd(i));
+            d0 &= (s.element(i)) >>= (x.element(i));
           }
         }
         break;
       case SRT_DISJ: 
         {
           for (int i = 0; i < (int) tab; i++) {
-            d0 &= !(s.getbdd(i) & x.getbdd(i));
+            d0 &= !(s.element(i) & x.element(i));
           }
         }
         break;
@@ -318,10 +318,10 @@ namespace Gecode {
           for (int i = 0; i < (int) tab; i++) {
             if (s.initialLubMin() + i < x.initialLubMin() ||
                 s.initialLubMin() + i > x.initialLubMax()) {
-              d0 &= (bdd_false() % s.getbdd(i));
+              d0 &= (bdd_false() % s.element(i));
               xshift++;
             } else {
-              d0 &= (x.getbdd(i - xshift) % s.getbdd(i));
+              d0 &= (x.element(i - xshift) % s.element(i));
             }
           }
         }
@@ -329,7 +329,7 @@ namespace Gecode {
       case SRT_NQ: 
         {
           for (int i = 0; i < (int) tab; i++) {
-            d0 &= ((x.getbdd(i)) % (s.getbdd(i)));
+            d0 &= ((x.element(i)) % (s.element(i)));
           }
           d0 = !d0;
         }
@@ -371,8 +371,8 @@ namespace Gecode {
         switch(o) {
         case SOT_SYMDIFF:
           {
-            op = ((x[0].getbdd(i) & (!x[1].getbdd(i))) | 
-                  (!x[0].getbdd(i) & (x[1].getbdd(i)))) ;
+            op = ((x[0].element(i) & (!x[1].element(i))) | 
+                  (!x[0].element(i) & (x[1].element(i)))) ;
             break;
           }
         default:
@@ -384,7 +384,7 @@ namespace Gecode {
         switch (r) {
         case SRT_EQ:
           {
-            d0 &= (op % x[2].getbdd(i));
+            d0 &= (op % x[2].element(i));
             break;
           }
         default:
@@ -425,23 +425,23 @@ namespace Gecode {
         switch(o) {
         case SOT_UNION:
           {     
-            op = (x[0].getbdd(i) | x[1].getbdd(i));
+            op = (x[0].element(i) | x[1].element(i));
             break;
           }
         case SOT_DUNION:
           {
-            op = (x[0].getbdd(i) | x[1].getbdd(i));
+            op = (x[0].element(i) | x[1].element(i));
             // for disjointness see below
             break;
           }
         case SOT_INTER:
           { 
-            op = x[0].getbdd(i) & x[1].getbdd(i);
+            op = x[0].element(i) & x[1].element(i);
             break; 
           }
         case SOT_MINUS:
           {
-            op = x[0].getbdd(i) & (!x[1].getbdd(i)); 
+            op = x[0].element(i) & (!x[1].element(i)); 
             break;
           }
         default:
@@ -453,9 +453,9 @@ namespace Gecode {
         switch (r) {
         case SRT_EQ:
           {
-            d0 &= (op % x[2].getbdd(i));
+            d0 &= (op % x[2].element(i));
             if (o == SOT_DUNION)
-              d0 &= !(x[0].getbdd(i) &  x[1].getbdd(i));
+              d0 &= !(x[0].element(i) &  x[1].element(i));
             break;
           }
         default:

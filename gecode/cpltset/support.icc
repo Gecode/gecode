@@ -249,8 +249,8 @@ namespace Gecode { namespace CpltSet {
     for (unsigned int i = 1; i <= c; i++) {
       int k = inter.min();
       layer[i].init();
-      layer[i] = x.getbdd(k - xmin);
-      layer[i] &= y.getbdd(k - ymin);
+      layer[i] = x.element(k - xmin);
+      layer[i] &= y.element(k - ymin);
     }
 
     // connect nodes in lowest layer
@@ -271,8 +271,8 @@ namespace Gecode { namespace CpltSet {
         } else {
           t = layer[i-1]; 
         }
-        bdd both = manager.ite(y.getbdd(col - ymin), t,layer[i]);
-        layer[i] = manager.ite(x.getbdd(col - xmin), both ,layer[i]);
+        bdd both = manager.ite(y.element(col - ymin), t,layer[i]);
+        layer[i] = manager.ite(x.element(col - xmin), both ,layer[i]);
         --inter;
         if (!inter()) { break;}
       }
@@ -306,8 +306,8 @@ namespace Gecode { namespace CpltSet {
     // build nodes for lowest layer
     for (int i = n - cl ; i < n; i++, --inter) {
       k    = inter.min();
-      bdd both = manager.ite(y.getbdd(k - ymin), layer[i - 1], bdd_false());
-      layer[i] = manager.ite(x.getbdd(k - xmin), both, bdd_false());
+      bdd both = manager.ite(y.element(k - ymin), layer[i - 1], bdd_false());
+      layer[i] = manager.ite(x.element(k - xmin), both, bdd_false());
     }
 
     // start with a shift and build layers up to the connection layer
@@ -325,8 +325,8 @@ namespace Gecode { namespace CpltSet {
       for (int i = n - cl; i < n; i++) { 
         int col = inter.min();
         bdd t = layer[i-1]; 
-        bdd both = manager.ite(y.getbdd(col - ymin), t, layer[i]);
-        layer[i] = manager.ite(x.getbdd(col - xmin), both, layer[i]);
+        bdd both = manager.ite(y.element(col - ymin), t, layer[i]);
+        layer[i] = manager.ite(x.element(col - xmin), both, layer[i]);
         --inter;
         if ((int) inter.index() + 1 < r + 1 - (int) cr) { 
           inter.finish(); break;
@@ -361,8 +361,8 @@ namespace Gecode { namespace CpltSet {
               f = layer[i];
             }
           }
-          bdd both = manager.ite(y.getbdd(col - ymin), t ,f);
-          layer[i] = manager.ite(x.getbdd(col - xmin), both ,f);
+          bdd both = manager.ite(y.element(col - ymin), t ,f);
+          layer[i] = manager.ite(x.element(col - xmin), both ,f);
           --inter;
           if (!inter()) { break;}
         }
@@ -386,8 +386,8 @@ namespace Gecode { namespace CpltSet {
             f = layer[i];
           }
         }
-        bdd both = manager.ite(y.getbdd(col - ymin), t ,f);
-        layer[i] = manager.ite(x.getbdd(col - xmin), both ,f);
+        bdd both = manager.ite(y.element(col - ymin), t ,f);
+        layer[i] = manager.ite(x.element(col - xmin), both ,f);
         --inter;
         if (!inter()) { break;}
       }
@@ -407,7 +407,7 @@ namespace Gecode { namespace CpltSet {
           t = layer[i-1]; 
         }
         // i guess here we do a little too much
-        bdd both = y.getbdd(col - ymin) & x.getbdd(col - xmin);
+        bdd both = y.element(col - ymin) & x.element(col - xmin);
         layer[i] = manager.ite(both, t, layer[i]);
 
         --inter;
@@ -478,8 +478,8 @@ namespace Gecode { namespace CpltSet {
         assert(v <= x.initialLubMax());
         assert(v >= y.initialLubMin());
         assert(v <= y.initialLubMax());
-        empty &= (x.getnegbdd(v - x.initialLubMin()) &
-                  y.getnegbdd(v - y.initialLubMin()));
+        empty &= (x.elementNeg(v - x.initialLubMin()) &
+                  y.elementNeg(v - y.initialLubMin()));
       }
       return empty;
     }
@@ -494,8 +494,8 @@ namespace Gecode { namespace CpltSet {
           assert(v <= x.initialLubMax());
           assert(v >= y.initialLubMin());
           assert(v <= y.initialLubMax());
-          full &= (x.getbdd(v - x.initialLubMin()) &
-                   y.getbdd(v - y.initialLubMin()));
+          full &= (x.element(v - x.initialLubMin()) &
+                   y.element(v - y.initialLubMin()));
         }
         return full;
       } else {

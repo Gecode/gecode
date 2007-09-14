@@ -44,7 +44,7 @@ namespace Gecode {
   namespace CpltSet {
 
     forceinline bdd
-    SingletonCpltSetView::getnegbdd(int i)  const { 
+    SingletonCpltSetView::elementNeg(int i)  const { 
       return manager.negbddpos(_offset + i); 
     }
 
@@ -76,12 +76,12 @@ namespace Gecode {
       for (int i = max; i >= min; i--) {
         if (vc()) {
           if (vc.val() != i) {
-            domain &= getnegbdd(i - min);
+            domain &= elementNeg(i - min);
           } else {
             --vc;
           }
         } else {
-          domain &= getnegbdd(i - min);
+          domain &= elementNeg(i - min);
         }
       }
       
@@ -112,12 +112,12 @@ namespace Gecode {
       for (int i = max; i >= min; i--) {
         if (vc()) {
           if (vc.val() != i) {
-            domain &= getnegbdd(i - min);
+            domain &= elementNeg(i - min);
           } else {
             --vc;
           }
         } else {
-          domain &= getnegbdd(i - min);
+          domain &= elementNeg(i - min);
         }
       }
       
@@ -227,7 +227,7 @@ namespace Gecode {
     SingletonCpltSetView::tableWidth(void)  const { return range; }
 
     forceinline bdd
-    SingletonCpltSetView::getbdd(int i)  const {
+    SingletonCpltSetView::element(int i)  const {
       return manager.bddpos(_offset + i);
     }
 
@@ -278,7 +278,7 @@ namespace Gecode {
       
       for (int r = max; r >= min; r--) {
         if (r <= i || j <= r) 
-          domain &= getnegbdd(r - min);
+          domain &= elementNeg(r - min);
       }
       
       switch (me1) {
@@ -295,7 +295,7 @@ namespace Gecode {
 
     forceinline ModEvent
     SingletonCpltSetView::exclude(Space* home,int c) { 
-      domain &= getnegbdd(c - min);
+      domain &= elementNeg(c - min);
       return me_inttobdd(view.nq(home,c)); 
     }
 
@@ -315,7 +315,7 @@ namespace Gecode {
       }
       
       for (int i = k; i >= j; i--) {
-        domain &= getnegbdd(i - min);
+        domain &= elementNeg(i - min);
       }
 
       switch (me1) {
@@ -335,7 +335,7 @@ namespace Gecode {
       Iter::Ranges::ValCache<I> vci(iter);
       for (vci.last(); vci(); --vci) {
         for (int i = vci.max(); i>= vci.min(); i--) {
-          domain &= getnegbdd(i - min);
+          domain &= elementNeg(i - min);
         }
       }
       vci.reset();
@@ -367,12 +367,12 @@ namespace Gecode {
       for (int i = max; i >= min; i--) {
         if (vc()) {
           if (vc.val() != i) {
-            domain &= getnegbdd(i - min);
+            domain &= elementNeg(i - min);
           } else {
             --vc;
           }
         } else {
-          domain &= getnegbdd(i - min);
+          domain &= elementNeg(i - min);
         }
       }
 
@@ -402,14 +402,14 @@ namespace Gecode {
     SingletonCpltSetView::eqI(Space* home, I& i) { return includeI(home, i); }
 
     forceinline ModEvent 
-    SingletonCpltSetView::tell_formula(Space* home, bdd& d) {
+    SingletonCpltSetView::intersect(Space* home, bdd& d) {
       if (assigned()) {
         int v = view.val();
         for (int i = max; i >= min; i--) {
           if (i != v) {
-            domain &= getnegbdd(i - min);
+            domain &= elementNeg(i - min);
           } else {
-            domain &= getbdd(i - min);
+            domain &= element(i - min);
           }
         }
         return ME_CPLTSET_VAL;

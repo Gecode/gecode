@@ -62,6 +62,8 @@ namespace Gecode {
       CpltSetView(void);
       /// Initialize from set variable \a x
       CpltSetView(const CpltSetVar& x);
+      /// Initialize from set variable \a x
+      CpltSetView(CpltSetVarImp* x);
       //@}
 
       /// \name Value access
@@ -90,27 +92,6 @@ namespace Gecode {
       unsigned int unknownSize(void) const;
       //@}
 
-      /// \name View information
-      //@{
-      /// Return the offset in the bdd table where bdd nodes for this view start.
-      unsigned int offset(void) const;
-      /// Return distance between minimum and maximum
-      unsigned int tableWidth(void) const;
-      /// Return size (cardinality) of the domain
-      int size(void) const;
-      /// Return the bdd at position i
-      bdd getbdd(int i) const;    
-      /// Return the negated bdd at position i
-      bdd getnegbdd(int i) const;    
-
-      /// Return the initial minimum of the variable
-      int initialLubMin(void) const; 
-      /// Return the initial minimum of the variable
-      int initialLubMax(void) const; 
-      /// Return the bdd representing the current domain
-      bdd dom(void) const;
-      //@}
-
       /// \name Domain tests
       //@{
       /// Test whether view is assigned
@@ -119,6 +100,28 @@ namespace Gecode {
       bool contains(int i) const;
       /// Test whether \a i is not in the least upper bound
       bool notContains(int i) const;
+      //@}
+
+      /// \name Bdd information 
+      //@{
+      /// Return the initial minimum of the least upper bound
+      int initialLubMin(void) const;
+      /// Return the initial maximum of the least upper bound
+      int initialLubMax(void) const;
+      /** \brief Return the number of bdd variables allocated for this 
+        * variable (initialLubMax-initialLubMin) */
+      unsigned int tableWidth(void) const;
+      /** \brief Return the offset in the global bdd table where the 
+        * variable's domain starts */
+      unsigned int offset(void) const;
+      /** \brief Return bdd for the \a i -th element of this variable 
+        * (counting from initialLubMin) */
+      bdd element(int i) const;
+      /** \brief Return negated bdd for the \a i -th element of this variable 
+        * (counting from initialLubMin) */
+      bdd elementNeg(int i) const;
+      /// Return the bdd representing the current domain
+      bdd dom(void) const;
       //@}
 
 
@@ -160,7 +163,7 @@ namespace Gecode {
       ModEvent intersect(Space* home,int i);
 
       /// Restrict domain values to be a solution to the logical formula described by the bdd \a d
-      ModEvent tell_formula(Space* home, bdd& d);   
+      ModEvent intersect(Space* home, bdd& d);   
       //@}
 
       /// \name Domain update by range iterator
@@ -190,10 +193,6 @@ namespace Gecode {
       Reflection::Arg*  spec(Space* home, Reflection::VarMap& m);
       static Support::Symbol type(void);
       //@}
-
-
-      /// Debug output
-      void viewdot(void) const;
     };
 
   }
@@ -267,31 +266,26 @@ namespace Gecode {
       unsigned int unknownSize(void) const;
       //@}
 
-      /// \name View information
+      /// \name Bdd information 
       //@{
-      /// Return the offset in the bdd table where bdd nodes for this view start.
-      unsigned int offset(void) const;
-      /// Return distance between minimum and maximum
+      /// Return the initial minimum of the least upper bound
+      int initialLubMin(void) const;
+      /// Return the initial maximum of the least upper bound
+      int initialLubMax(void) const;
+      /** \brief Return the number of bdd variables allocated for this 
+        * variable (initialLubMax-initialLubMin) */
       unsigned int tableWidth(void) const;
-      /// Return size (cardinality) of the domain
-      int size(void) const;
-      /// Return the bdd at position i
-      bdd getbdd(int i) const;    
-      /// Return the negated bdd at position i
-      bdd getnegbdd(int i) const;    
-      
-      /// Return the initial minimum of the variable
-      int initialLubMin(void) const; 
-      /// Return the initial minimum of the variable
-      int initialLubMax(void) const; 
-
+      /** \brief Return the offset in the global bdd table where the 
+        * variable's domain starts */
+      unsigned int offset(void) const;
+      /** \brief Return bdd for the \a i -th element of this variable 
+        * (counting from initialLubMin) */
+      bdd element(int i) const;
+      /** \brief Return negated bdd for the \a i -th element of this variable 
+        * (counting from initialLubMin) */
+      bdd elementNeg(int i) const;
       /// Return the bdd representing the current domain
       bdd dom(void) const;
-      /// Return the bdd representing the unfixed part of the variable domain
-      bdd bdd_remain(void) const;
-      /// Return the bdd representing the fixed part of the variable domain
-      bdd bdd_bounds(void) const;
-
       //@}
 
       /// \name Domain tests
@@ -338,7 +332,7 @@ namespace Gecode {
       ModEvent eq(Space* home, int a, int b);
    
       /// Restrict domain values to be a solution to the logical formula described by the bdd \a d
-      ModEvent tell_formula(Space* home, bdd& d);   
+      ModEvent intersect(Space* home, bdd& d);   
 
       /// Restrict least upper bound to contain at most all elements in the range \f$ [a,b] \f$
       ModEvent intersect(Space* home,int i,int j);
@@ -394,9 +388,6 @@ namespace Gecode {
       Reflection::Arg* spec(Space* home, Reflection::VarMap& m);
       static Support::Symbol type(void);
       //@}
-
-      /// Debug output
-      void viewdot(void) const;
     };
 
 

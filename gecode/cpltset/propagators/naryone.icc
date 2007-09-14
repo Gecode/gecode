@@ -91,9 +91,9 @@ namespace Gecode { namespace CpltSet {
     if (l == r) {
       ModEvent me = ME_CPLTSET_NONE;
       if (l == ypos) {
-        GECODE_ME_CHECK(me = y.tell_formula(home, p));
+        GECODE_ME_CHECK(me = y.intersect(home, p));
       } else {
-        GECODE_ME_CHECK(me = x[l].tell_formula(home, p));
+        GECODE_ME_CHECK(me = x[l].intersect(home, p));
       }
       return ES_OK;
     }

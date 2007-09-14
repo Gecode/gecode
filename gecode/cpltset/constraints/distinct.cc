@@ -56,7 +56,7 @@ namespace Gecode {
         for (int j = i + 1; j < n; j++) {
           bdd nq = bdd_false();
           for (unsigned int k = 0; k < width; k++) {
-            nq |= !(x[i].getbdd(k) % x[j].getbdd(k));
+            nq |= !(x[i].element(k) % x[j].element(k));
           }
           d0 &= nq;
         }

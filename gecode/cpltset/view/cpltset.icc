@@ -104,10 +104,10 @@ namespace Gecode { namespace CpltSet {
   CpltSetView::tableWidth(void)  const { return var->tableWidth(); }
 
   forceinline bdd
-  CpltSetView::getbdd(int i)  const { return var->getbdd(i); }
+  CpltSetView::element(int i)  const { return var->element(i); }
 
   forceinline bdd
-  CpltSetView::getnegbdd(int i)  const { return var->getnegbdd(i); }
+  CpltSetView::elementNeg(int i)  const { return var->elementNeg(i); }
 
   forceinline int
   CpltSetView::initialLubMin(void)  const { return var->initialLubMin(); }
@@ -209,8 +209,8 @@ namespace Gecode { namespace CpltSet {
   CpltSetView::eqI(Space* home, I& i) { return var->eqI(home, i); }
 
   forceinline ModEvent 
-  CpltSetView::tell_formula(Space* home, bdd& d) {
-    return var->tell_formula(home, d);
+  CpltSetView::intersect(Space* home, bdd& d) {
+    return var->intersect(home, d);
   }
 
   /*
@@ -234,11 +234,6 @@ namespace Gecode { namespace CpltSet {
   forceinline Support::Symbol
   CpltSetView::type(void) {
     return Support::Symbol("CpltSet::CpltSetView");
-  }
-
-  forceinline void 
-  CpltSetView::viewdot(void) const {
-    var->viewdot();
   }
 
   /// Iterator for the values of a bdd view

@@ -84,10 +84,10 @@ namespace Gecode {
         bdd subset = bdd_true();
         bdd inter  = bdd_false();
         for (unsigned int k = 0; k < xrange; k++) {
-          subset &= (x[j].getbdd(k) >>= x[t].getbdd(k));
-          inter  |= (x[j].getbdd(k) & x[t].getbdd(k));
+          subset &= (x[j].element(k) >>= x[t].element(k));
+          inter  |= (x[j].element(k) & x[t].element(k));
         }     
-        d0 &= (x[s].getbdd(j + shift) % (subset & inter));
+        d0 &= (x[s].element(j + shift) % (subset & inter));
       }
     
       GECODE_ES_FAIL(home, NaryCpltSetPropagator<View>::post(home, x, d0));

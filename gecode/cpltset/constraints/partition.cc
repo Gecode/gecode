@@ -65,7 +65,7 @@ namespace Gecode {
             int ximin = x[i].initialLubMin();
             int xjmin = x[j].initialLubMin();
             int v = cache.min();
-            d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
+            d0 &= !(x[i].element(v - ximin) & x[j].element(v - xjmin));
           }
         }
       }
@@ -82,7 +82,7 @@ namespace Gecode {
         bdd c0 = bdd_false();
         for (int i = 0; i < n; i++) {
           if (k < x[i].tableWidth())
-            c0 |= x[i].getbdd(k);
+            c0 |= x[i].element(k);
         }
         d0 &= (c0  % bdd_true());
       }
@@ -109,7 +109,7 @@ namespace Gecode {
             int ximin = x[i].initialLubMin();
             int xjmin = x[j].initialLubMin();
             int v = cache.min();
-            d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
+            d0 &= !(x[i].element(v - ximin) & x[j].element(v - xjmin));
           }
         }
       }
@@ -123,10 +123,10 @@ namespace Gecode {
           int xmax = x[i].initialLubMax();
           int shift = std::max(ymin, xmin) - std::min(xmin, ymin);
           if (xmin <= ymin + (int) k && ymin + (int) k <= xmax) {
-            c0 |= x[i].getbdd(k - shift);
+            c0 |= x[i].element(k - shift);
           }
         }
-        d0 &= (c0  % y.getbdd(k));
+        d0 &= (c0  % y.element(k));
       }
     }
 
@@ -299,7 +299,7 @@ namespace Gecode {
             int ximin = x[i].initialLubMin();
             int xjmin = x[j].initialLubMin();
             int v = cache.min();
-            d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
+            d0 &= !(x[i].element(v - ximin) & x[j].element(v - xjmin));
           }
 
         }
@@ -312,7 +312,7 @@ namespace Gecode {
         bdd c0 = bdd_false();
         for (int i = 0; i < n; i++) {
           if (k < x[i].tableWidth()) {
-            c0 |= x[i].getbdd(k);
+            c0 |= x[i].element(k);
           }
         }
         d0 &= (c0  % bdd_true());

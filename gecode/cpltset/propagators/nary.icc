@@ -156,7 +156,7 @@ namespace Gecode { namespace CpltSet {
   NaryCpltSetPropagator<View>::divide_conquer(Space* home,
                                               bdd& p, int l, int r) {
     if (l == r) {
-      GECODE_ME_CHECK(x[l].tell_formula(home, p));
+      GECODE_ME_CHECK(x[l].intersect(home, p));
       return ES_OK;
     }
 
@@ -188,7 +188,7 @@ namespace Gecode { namespace CpltSet {
     
     ExecStatus es = ES_OK;
     if (n == 1) {
-      GECODE_ME_CHECK(x[0].tell_formula(home, d));
+      GECODE_ME_CHECK(x[0].intersect(home, d));
     } else {
       GECODE_ES_CHECK(es = divide_conquer(home, d, 0, n - 1));
     }
