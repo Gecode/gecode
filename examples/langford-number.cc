@@ -177,10 +177,7 @@ public:
 
   /// Print solution
   virtual void print(void){
-    std::cout << "\t";
-    for (int i = 0; i < y.size(); ++i)
-      std::cout << y[i] << " ";
-    std::cout << std::endl;
+    std::cout << "\t" << y << std::endl;
   }
 
   /// Constructor for cloning \a l

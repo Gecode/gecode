@@ -115,10 +115,7 @@ public:
   /// Print solution
   virtual void
   print(void) {
-    int n = x.size();
-    std::cout << "\tx[" << n << "] = {";
-    for (int i = 0; i < n; i++)
-      std::cout << x[i] << ((i<n-1)?",":"};\n");
+    std::cout << "\tx[" << x.size() << "] = " << x << std::endl;
   }
 };
 

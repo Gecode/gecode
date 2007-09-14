@@ -133,7 +133,7 @@ public:
   virtual void
   print(void) {
     for (int i=0; i<noOfTriples; i++) {
-      std::cout << "\t[" << i << "]" << triples[i] << std::endl;
+      std::cout << "\t[" << i << "] = " << triples[i] << std::endl;
     }
   }
 

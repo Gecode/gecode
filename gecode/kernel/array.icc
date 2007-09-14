@@ -38,6 +38,7 @@
  */
 
 #include <cstdarg>
+#include <iostream>
 
 namespace Gecode {
 
@@ -152,7 +153,7 @@ namespace Gecode {
       * \brief Insert or remove (uninitialized!) elements at the end such 
       * that size becomes \a m
       */
-    void resize(Space*, int m);
+    void resize(Space* home, int m);
     //@}
 
     /// \name Array elements
@@ -162,7 +163,7 @@ namespace Gecode {
     /// Return variable at position \a i
     const Var& operator[](int i) const;
     /// Insert a new element \a v at the end of the array (increase size by 1)
-    void add(Space*, const Var& v);
+    void add(Space* home, const Var& v);
     //@}
 
     /// \name Cloning
@@ -542,6 +543,31 @@ namespace Gecode {
     //@}
   };
 
+}
+
+/**
+ * \brief Print array elements enclosed in curly brackets
+ * \relates VarArray
+ */
+template<class Var>
+std::ostream& operator<<(std::ostream& os, const Gecode::VarArray<Var>& x);
+
+/**
+ * \brief Print array elements enclosed in curly brackets
+ * \relates ViewArray
+ */
+template<class View>
+std::ostream& operator<<(std::ostream& os, const Gecode::ViewArray<View>& x);
+
+/**
+ * \brief Print array elements enclosed in curly brackets
+ * \relates VarArray
+ */
+template<class T>
+std::ostream& operator<<(std::ostream& os, const Gecode::ArgArrayBase<T>& x);
+
+
+namespace Gecode {
   /** \brief Traits of arrays in Gecode
    *
    * This class collects the traits of an array in Gecode.
@@ -1336,6 +1362,55 @@ namespace Gecode {
     }
   }
 
+}
+
+
+/*
+ * Printing of arrays
+ *
+ */
+template<class Var>
+std::ostream& 
+operator<<(std::ostream& os, const Gecode::VarArray<Var>& x) {
+  os << '{';
+  if (x.size() > 0) {
+    os << x[0];
+    for (int i=1; i<x.size(); i++)
+      os << ", " << x[i];
+  }
+  return os << '}';
+}
+
+/**
+ * \brief Print array elements enclosed in curly brackets
+ * \relates ViewArray
+ */
+template<class View>
+std::ostream& 
+operator<<(std::ostream& os, const Gecode::ViewArray<View>& x) {
+  os << '{';
+  if (x.size() > 0) {
+    os << x[0];
+    for (int i=1; i<x.size(); i++)
+      os << ", " << x[i];
+  }
+  return os << '}';
+}
+
+/**
+ * \brief Print array elements enclosed in curly brackets
+ * \relates VarArray
+ */
+template<class T>
+std::ostream& 
+operator<<(std::ostream& os, const Gecode::ArgArrayBase<T>& x) {
+  os << '{';
+  if (x.size() > 0) {
+    os << x[0];
+    for (int i=1; i<x.size(); i++)
+      os << ", " << x[i];
+  }
+  return os << '}';
 }
 
 // STATISTICS: kernel-other

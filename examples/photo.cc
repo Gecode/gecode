@@ -135,10 +135,8 @@ public:
   /// Print solution
   virtual void
   print(void) {
-    std::cout << "\tpos[] = {";
-    for (int i = 0; i < spec.n_names; i++)
-      std::cout << pos[i] << ((i<spec.n_names-1)?",":"};\n");
-    std::cout << "\tsat: " << sat << std::endl;
+    std::cout << "\tpos[] = " << pos << std::endl
+              << "\tsat: " << sat << std::endl;
   }
 
   /// Add constraint for next better solution

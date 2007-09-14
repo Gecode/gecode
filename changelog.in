@@ -73,6 +73,14 @@ Module: other
 What:   change
 Rank:   minor
 [DESCRIPTION]
+Variable arrays, view arrays, and argument arrays can directly be printed
+on standard output streams.
+
+[ENTRY]
+Module: other
+What:   change
+Rank:   minor
+[DESCRIPTION]
 The structure of includes has been drastically
 simplified. Support for iterators ("gecode/iter.hh") is
 automatically included with integers ("gecode/int.hh") and sets

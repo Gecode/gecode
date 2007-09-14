@@ -146,9 +146,7 @@ public:
   /// Print solution
   virtual void
   print(void) {
-    std::cout << "\tm[" << n << "] = {";
-    for (int i = 0; i < n; i++)
-      std::cout << m[i] << ((i<n-1)?",":"};\n");
+    std::cout << "\tm[" << n << "] = " << m << std::endl;
   }
 
   /// Constructor for cloning \a s

@@ -84,10 +84,7 @@ public:
   /// Print solution
   virtual void
   print(void) {
-    std::cout << "\t";
-    for (int i = 0; i < nl; i++)
-      std::cout << le[i] << ' ';
-    std::cout << std::endl;
+    std::cout << "\t" << le << std::endl;;
   }
 
 };

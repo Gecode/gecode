@@ -167,16 +167,10 @@ public:
   /// Print solution
   virtual void
   print(void) {
-    std::cout << "\tSupplier: {";
-    for (int i=0; i<n_stores; i++) {
-      std::cout << supplier[i] << ((i<n_stores-1)?", ":"};\n");
-    }
-    std::cout << "\tCost: {";
-    for (int i=0; i<n_stores; i++) {
-      std::cout << cost[i] << ((i<n_stores-1)?", ":"};\n");
-    }
-    std::cout << "\tTotal cost: " << total << std::endl;
-    std::cout << std::endl;
+    std::cout << "\tSupplier: " << supplier << std::endl
+              << "\tCost: " << cost << std::endl
+              << "\tTotal cost: " << total << std::endl
+              << std::endl;
   }
 };
 

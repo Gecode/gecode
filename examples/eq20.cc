@@ -101,9 +101,7 @@ public:
   /// Print solution
   virtual void
   print(void) {
-    std::cout << "\tx[] = {";
-    for (int i = 0; i < x_n; i++)
-      std::cout << x[i] << ((i<x_n-1)?",":"};\n");
+    std::cout << "\tx[] = " << x << std::endl;
   }
 
 };

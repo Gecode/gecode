@@ -100,10 +100,7 @@ public:
   /// Print solution
   virtual void
   print(void) {
-    std::cout << "\t";
-    for (int i = 0; i < x.size(); i++)
-      std::cout << x[i] << ", ";
-    std::cout << std::endl;
+    std::cout << "\t" << x << std::endl;
   }
 };
 
