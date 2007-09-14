@@ -52,7 +52,7 @@ namespace Gecode {
 
       unsigned int xoff = x.offset();
       unsigned int yoff = y.offset();
-      unsigned int tab = std::max(x.table_width(), y.table_width());
+      unsigned int tab = std::max(x.tableWidth(), y.tableWidth());
 
       // Initialize the bdd representing the constraint
       bdd d0 = bdd_true();
@@ -116,7 +116,7 @@ namespace Gecode {
       // important:
       // the offset order is linear from left to right for the viewarray
 
-      unsigned int tab = std::max(x.table_width(), y.table_width());
+      unsigned int tab = std::max(x.tableWidth(), y.tableWidth());
 
       // Initialize the bdd representing the constraint
       bdd d0 = bdd_true();
@@ -158,8 +158,8 @@ namespace Gecode {
             cache.last();
             for (; cache(); --cache) {
               int v = cache.min();
-              int minx = x.mgr_min();
-              int miny = y.mgr_min();
+              int minx = x.initialLubMin();
+              int miny = y.initialLubMin();
               d0 &= (!(x.getbdd(v - minx) & y.getbdd(v - miny)));
             }
           }
@@ -171,8 +171,8 @@ namespace Gecode {
         {
           int xshift = 0;
           for (int i = 0; i < (int) tab; i++) {
-            if (y.mgr_min() + i < x.mgr_min() ||
-                y.mgr_min() + i > x.mgr_max()) {
+            if (y.initialLubMin() + i < x.initialLubMin() ||
+                y.initialLubMin() + i > x.initialLubMax()) {
               d0 &= (bdd_false() % y.getbdd(i));
               xshift++;
             } else {
@@ -195,9 +195,10 @@ namespace Gecode {
           } else {
             for (; ival(); ++ival) {
               int v = ival.val();
-              int ix = x.valididx(v);
-              int iy = y.valididx(v);
-              d0 &= (x.getbdd(ix) % y.getbdd(iy));
+              assert(v >= x.initialLubMin());
+              assert(v <= x.initialLubMax());
+              d0 &= (x.getbdd(v - x.initialLubMin()) %
+                     y.getbdd(v - x.initialLubMax()));
             }
           }
           d0 = !d0;
@@ -222,7 +223,7 @@ namespace Gecode {
 
       unsigned int xoff = x.offset();
       unsigned int yoff = s.offset();
-      unsigned int tab = std::max(x.table_width(), s.table_width());
+      unsigned int tab = std::max(x.tableWidth(), s.tableWidth());
 
       // Initialize the bdd representing the constraint
       bdd d0 = bdd_true();
@@ -269,7 +270,7 @@ namespace Gecode {
       // important:
       // the offset order is linear from left to right for the viewarray
 
-      unsigned int tab = std::max(x.table_width(), s.table_width());
+      unsigned int tab = std::max(x.tableWidth(), s.tableWidth());
 
       // Initialize the bdd representing the constraint
       bdd d0 = bdd_true();
@@ -278,10 +279,10 @@ namespace Gecode {
       case SRT_SUB: 
         {
           // x < s
-          int xshift = x.mgr_min() - s.mgr_min();
+          int xshift = x.initialLubMin() - s.initialLubMin();
           for (int i = 0; i < (int) tab; i++) {
-            if (s.mgr_min() + i >= x.mgr_min()) {
-              if (s.mgr_min() + i <= x.mgr_max()) {
+            if (s.initialLubMin() + i >= x.initialLubMin()) {
+              if (s.initialLubMin() + i <= x.initialLubMax()) {
                 d0 &= (x.getbdd(i - xshift)) >>= (s.getbdd(i));
               } else {
                 // d0 &= s.getbdd(i);
@@ -294,7 +295,7 @@ namespace Gecode {
 
         if (s.assigned()) {
           // assigned
-          d0 &= s.bdd_domain();
+          d0 &= s.dom();
         }
         break;
       case SRT_SUP: 
@@ -315,8 +316,8 @@ namespace Gecode {
         {
           int xshift = 0;
           for (int i = 0; i < (int) tab; i++) {
-            if (s.mgr_min() + i < x.mgr_min() ||
-                s.mgr_min() + i > x.mgr_max()) {
+            if (s.initialLubMin() + i < x.initialLubMin() ||
+                s.initialLubMin() + i > x.initialLubMax()) {
               d0 &= (bdd_false() % s.getbdd(i));
               xshift++;
             } else {
@@ -360,7 +361,7 @@ namespace Gecode {
       // important:
       // the offset order is linear from left to right for the viewarray
 
-      int x0_tab = x[0].table_width();
+      int x0_tab = x[0].tableWidth();
 
       // Initialize the bdd representing the constraint
       bdd d0 = bdd_true();
@@ -414,7 +415,7 @@ namespace Gecode {
       // important:
       // the offset order is linear from left to right for the viewarray
 
-      int x0_tab = x[0].table_width();
+      int x0_tab = x[0].tableWidth();
 
       // Initialize the bdd representing the constraint
       bdd d0 = bdd_true();

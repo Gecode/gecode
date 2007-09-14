@@ -53,18 +53,18 @@ namespace Gecode {
       int t = n + 1;
       // just assume that they all have the same range
     
-      unsigned int xrange = x[0].table_width();
+      unsigned int xrange = x[0].tableWidth();
 
       // compute maximum value
       for (int i = n; i--; ) {
-        if (x[i].table_width() > xrange) {
-          xrange = x[i].table_width();
+        if (x[i].tableWidth() > xrange) {
+          xrange = x[i].tableWidth();
         }
       }
 
-      if (x[t].table_width() > xrange) {
-        int a = x[t].mgr_min() + xrange;
-        int b = x[t].mgr_min() + x[t].table_width();
+      if (x[t].tableWidth() > xrange) {
+        int a = x[t].initialLubMin() + xrange;
+        int b = x[t].initialLubMin() + x[t].tableWidth();
         GECODE_ME_FAIL(home, x[t].exclude(home, a, b));
       } 
     
@@ -73,8 +73,8 @@ namespace Gecode {
       // restrict selector variable s to be \f$ s\subseteq \{0, n - 1\}\f$
       // int range = xrange;
       int shift = 0;
-      if (x[s].mgr_min() < 0) {
-        shift = 0 - x[s].mgr_min();
+      if (x[s].initialLubMin() < 0) {
+        shift = 0 - x[s].initialLubMin();
       }
 
       Iter::Ranges::Singleton idx(0, n - 1);

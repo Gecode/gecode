@@ -176,6 +176,7 @@ namespace Gecode {
   GECODE_CPLTSET_EXPORT void
   rel(Space* home, CpltSetVar x, CpltSetRelType r, CpltSetVar y);
 
+  /// Post propagator for \f$ x \sim_r y\f$
   GECODE_CPLTSET_EXPORT void
   rel(Space* home, CpltSetVar x, SetRelType r, CpltSetVar y);
 
@@ -194,14 +195,17 @@ namespace Gecode {
   rel(Space* home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, 
       CpltSetRelType r, CpltSetVar z);
 
+  /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_CPLTSET_EXPORT void
   rel(Space* home, CpltSetVar x, CpltSetOpType o, CpltSetVar y, 
       SetRelType r, CpltSetVar z);
 
+  /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_CPLTSET_EXPORT void
   rel(Space* home, CpltSetVar x, SetOpType o, CpltSetVar y, 
       CpltSetRelType r, CpltSetVar z);
 
+  /// Post propagator for \f$ (x \diamond_{\mathit{op}} y) \sim_r z \f$
   GECODE_CPLTSET_EXPORT void
   rel(Space* home, CpltSetVar x, SetOpType o, CpltSetVar y, 
       SetRelType r, CpltSetVar z);

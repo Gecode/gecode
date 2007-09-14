@@ -137,7 +137,7 @@ namespace Gecode { namespace CpltSet {
       }
     }
 
-    if (cr == r + 1) { // cardinality equals table_width, all elements allowed
+    if (cr == r + 1) { // cardinality equals tableWidth, all elements allowed
       return layer[n - 1];
     }
 

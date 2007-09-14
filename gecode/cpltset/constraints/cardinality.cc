@@ -49,7 +49,7 @@ namespace Gecode {
     ViewArray<CpltSetView> bv(home, 1);
     bv[0] = x;
     unsigned int off = bv[0].offset();
-    unsigned int range = bv[0].table_width();
+    unsigned int range = bv[0].tableWidth();
 
     bdd c = cardcheck(range, off, static_cast<int> (l), static_cast<int> (u));
 

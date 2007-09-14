@@ -46,7 +46,7 @@ namespace Gecode { namespace CpltSet {
     }
 
     /// \f$ D_j \f$
-    bdd cur = x[j].bdd_domain();
+    bdd cur = x[j].dom();
     /// \f$ \phi_{j - 1}\f$
     bdd phires = bnd_phi(j - 1);
     /// \f$ \exists_{V(D_j)} D_j \wedge phi_{j - 1}\f$
@@ -76,12 +76,12 @@ namespace Gecode { namespace CpltSet {
 
     bdd cur = bdd_true();
     // \f$ D_j \f$
-    x[j].dom_and(cur);
+    cur &= x[j].dom();
     // \f$ \phi_i^{j - 1}\f$
     cur &= phi(i, j - 1);
     // \f$ \exists_{V(x_j)} D_j \wedge phi_i^{j - 1}\f$
     int start = x[j].offset();
-    int end   = start + x[j].table_width() - 1;
+    int end   = start + x[j].tableWidth() - 1;
     return manager.eliminate(cur, start, end);
   }
 

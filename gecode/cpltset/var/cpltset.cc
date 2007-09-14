@@ -39,15 +39,6 @@
 
 namespace Gecode {
 
-  
-  CpltSetVar::CpltSetVar(Space* home) { 
-    var = new (home) CpltSet::CpltSetVarImp(home);
-  }
-
-  CpltSetVar::CpltSetVar(Space* home, int min, int max) {
-    var = new (home) CpltSet::CpltSetVarImp(home,min,max);
-  } 
-
   CpltSetVar::CpltSetVar(Space* home, int glbMin,int glbMax,
                  int lubMin,int lubMax, 
                  unsigned int cardMin, unsigned int cardMax) {

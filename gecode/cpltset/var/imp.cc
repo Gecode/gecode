@@ -45,7 +45,7 @@ namespace Gecode { namespace CpltSet {
   CpltSetVarImp::CpltSetVarImp(Space* home, bool share, CpltSetVarImp& x)
     : CpltSetVarImpBase(home,share,x), 
       domain(x.domain), min(x.min), max(x.max),
-      _offset(x._offset), assignment(false) {
+      _offset(x._offset), _assigned(false) {
   }
 
   CpltSetVarImp*

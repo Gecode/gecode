@@ -62,18 +62,18 @@ namespace Gecode {
             cache(values);
 
           for (cache.last(); cache(); --cache) {
-            int ximin = x[i].mgr_min();
-            int xjmin = x[j].mgr_min();
+            int ximin = x[i].initialLubMin();
+            int xjmin = x[j].initialLubMin();
             int v = cache.min();
             d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
           }
         }
       }
 
-      unsigned int xtab = x[0].table_width();  
+      unsigned int xtab = x[0].tableWidth();  
       for (int i = n; i--;) {
-        if (x[i].table_width() > xtab)
-          xtab = x[i].table_width();
+        if (x[i].tableWidth() > xtab)
+          xtab = x[i].tableWidth();
       }
 
       // just state that the union of all sets is us
@@ -81,7 +81,7 @@ namespace Gecode {
       for (unsigned int k = 0; k < xtab; k++) {
         bdd c0 = bdd_false();
         for (int i = 0; i < n; i++) {
-          if (k < x[i].table_width())
+          if (k < x[i].tableWidth())
             c0 |= x[i].getbdd(k);
         }
         d0 &= (c0  % bdd_true());
@@ -106,21 +106,21 @@ namespace Gecode {
             cache(values);
 
           for (cache.last(); cache(); --cache) {
-            int ximin = x[i].mgr_min();
-            int xjmin = x[j].mgr_min();
+            int ximin = x[i].initialLubMin();
+            int xjmin = x[j].initialLubMin();
             int v = cache.min();
             d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
           }
         }
       }
 
-      unsigned int ytab = y.table_width();
-      int ymin = y.mgr_min();
+      unsigned int ytab = y.tableWidth();
+      int ymin = y.initialLubMin();
       for (unsigned int k = 0; k < ytab; k++) {
         bdd c0 = bdd_false();
         for (int i = 0; i < n; i++) {
-          int xmin = x[i].mgr_min();
-          int xmax = x[i].mgr_max();
+          int xmin = x[i].initialLubMin();
+          int xmax = x[i].initialLubMax();
           int shift = std::max(ymin, xmin) - std::min(xmin, ymin);
           if (xmin <= ymin + (int) k && ymin + (int) k <= xmax) {
             c0 |= x[i].getbdd(k - shift);
@@ -134,11 +134,11 @@ namespace Gecode {
     void build_lexorder(ViewArray<View>& x, bdd& d0, CpltSetRelType lex) {
 
       int n = x.size();
-      unsigned int xtab = x[0].table_width();  
+      unsigned int xtab = x[0].tableWidth();  
 
       for (int i = n; i--;) 
-        if (x[i].table_width() > xtab)
-          xtab = x[i].table_width();
+        if (x[i].tableWidth() > xtab)
+          xtab = x[i].tableWidth();
 
       // std::cerr << "with lex \n";
       for (int i = 0; i < n - 1; i++) {
@@ -215,7 +215,7 @@ namespace Gecode {
       if (withcard) {
         for (int i = n; i--; ) {
           unsigned int off   = x[i].offset();
-          unsigned int range = x[i].table_width();
+          unsigned int range = x[i].tableWidth();
           d0 &= cardcheck(range, off, d, d);
         }
       }
@@ -263,18 +263,18 @@ namespace Gecode {
 
       int n = x.size();
 
-      int minx = x[0].mgr_min();
-      int maxx = x[0].mgr_max(); 
-      unsigned int xtab = x[0].table_width();  
+      int minx = x[0].initialLubMin();
+      int maxx = x[0].initialLubMax(); 
+      unsigned int xtab = x[0].tableWidth();  
       for (int i = n; i--;) {
-        if (x[i].mgr_min() < minx) {
-          minx = x[i].mgr_min();
+        if (x[i].initialLubMin() < minx) {
+          minx = x[i].initialLubMin();
         }
-        if (x[i].mgr_max() > maxx) {
-          maxx = x[i].mgr_max();
+        if (x[i].initialLubMax() > maxx) {
+          maxx = x[i].initialLubMax();
         }
-        if (x[i].table_width() > xtab) {
-          xtab = x[i].table_width();
+        if (x[i].tableWidth() > xtab) {
+          xtab = x[i].tableWidth();
         }
       }
 
@@ -296,8 +296,8 @@ namespace Gecode {
                   Set::LubRanges<View> > > > cache(values);
           cache.last();
           for (; cache(); --cache) {
-            int ximin = x[i].mgr_min();
-            int xjmin = x[j].mgr_min();
+            int ximin = x[i].initialLubMin();
+            int xjmin = x[j].initialLubMin();
             int v = cache.min();
             d0 &= !(x[i].getbdd(v - ximin) & x[j].getbdd(v - xjmin));
           }
@@ -311,7 +311,7 @@ namespace Gecode {
       for (unsigned int k = 0; k < xtab; k++) {
         bdd c0 = bdd_false();
         for (int i = 0; i < n; i++) {
-          if (k < x[i].table_width()) {
+          if (k < x[i].tableWidth()) {
             c0 |= x[i].getbdd(k);
           }
         }
@@ -321,7 +321,7 @@ namespace Gecode {
       if (withcard) {
         for (int i = n; i--; ) {
           unsigned int off   = x[i].offset();
-          unsigned int range = x[i].table_width();
+          unsigned int range = x[i].tableWidth();
           d0 &= cardcheck(range, off, d, d);
         }
       }

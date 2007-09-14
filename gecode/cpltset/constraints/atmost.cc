@@ -49,25 +49,25 @@ namespace Gecode {
       if (home->failed()) return;
       int n = x.size();
 
-      int minx = x[0].mgr_min();
-      int maxx = x[0].mgr_max(); 
-      unsigned int xtab = x[0].table_width();  
+      int minx = x[0].initialLubMin();
+      int maxx = x[0].initialLubMax(); 
+      unsigned int xtab = x[0].tableWidth();  
       for (int i = n; i--;) {
-        if (x[i].mgr_min() < minx) {
-          minx = x[i].mgr_min();
+        if (x[i].initialLubMin() < minx) {
+          minx = x[i].initialLubMin();
         }
-        if (x[i].mgr_max() > maxx) {
-          maxx = x[i].mgr_max();
+        if (x[i].initialLubMax() > maxx) {
+          maxx = x[i].initialLubMax();
         }
-        if (x[i].table_width() > xtab) {
-          xtab = x[i].table_width();
+        if (x[i].tableWidth() > xtab) {
+          xtab = x[i].tableWidth();
         }
       }
 
       bdd d0 = bdd_true();     
       for (int i = 0; i < n; i++) {
         unsigned int xoff = x[i].offset();
-        unsigned int xtab = x[i].table_width();
+        unsigned int xtab = x[i].tableWidth();
         d0 &= cardcheck(xtab, xoff, c, c);    
       }
 
@@ -85,7 +85,7 @@ namespace Gecode {
                 SetRelType lex, int card) {
       if (home->failed()) return;
 
-      unsigned int x1_tab = x[1].table_width();
+      unsigned int x1_tab = x[1].tableWidth();
 
       // cardinality description for the intersection x \cap y
       bdd d0 = bdd_true();
@@ -98,7 +98,7 @@ namespace Gecode {
       // cardinality description of intermediate variable z
       bdd c0 = bdd_true();
       unsigned int off = x[2].offset();
-      unsigned int tab = x[2].table_width();
+      unsigned int tab = x[2].tableWidth();
 
       c0 = cardcheck(tab, off, 0, c);
 
@@ -115,7 +115,7 @@ namespace Gecode {
                 CpltSetRelType lex, int card) {
       if (home->failed()) return;
 
-      unsigned int x1_tab = x[1].table_width();
+      unsigned int x1_tab = x[1].tableWidth();
 
       // cardinality description for the intersection x \cap y
       bdd d0 = bdd_true();
@@ -128,7 +128,7 @@ namespace Gecode {
       // cardinality description of intermediate variable z
       bdd c0 = bdd_true();
       unsigned int off = x[2].offset();
-      unsigned int tab = x[2].table_width();
+      unsigned int tab = x[2].tableWidth();
 
       c0 = cardcheck(tab, off, 0, c);
 
@@ -139,8 +139,8 @@ namespace Gecode {
 
       unsigned int xoff = x[0].offset();
       unsigned int yoff = x[1].offset();
-      unsigned int xtab = x[0].table_width();
-      unsigned int ytab = x[1].table_width();
+      unsigned int xtab = x[0].tableWidth();
+      unsigned int ytab = x[1].tableWidth();
       switch (lex) {
       case SRT_LE:
         {
@@ -202,8 +202,8 @@ namespace Gecode {
 
       unsigned int xoff = x.offset();
       unsigned int yoff = y.offset();
-      unsigned int xtab = x.table_width();
-      unsigned int ytab = y.table_width();
+      unsigned int xtab = x.tableWidth();
+      unsigned int ytab = y.tableWidth();
 
       // cardinality description for the intersection x \cap y
       bdd d0 = bdd_true();
@@ -265,11 +265,11 @@ namespace Gecode {
       }
 
       if (x.assigned()) {
-        d0 &= x.bdd_domain();
+        d0 &= x.dom();
       }
 
       if (y.assigned()) {
-        d0 &= y.bdd_domain();
+        d0 &= y.dom();
       }
       GECODE_ES_FAIL(home,
         (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
@@ -283,8 +283,8 @@ namespace Gecode {
 
       unsigned int xoff = x.offset();
       unsigned int yoff = y.offset();
-      unsigned int xtab = x.table_width();
-      unsigned int ytab = y.table_width();
+      unsigned int xtab = x.tableWidth();
+      unsigned int ytab = y.tableWidth();
 
       // cardinality description for the intersection x \cap y
       bdd d0 = bdd_true();
@@ -299,11 +299,11 @@ namespace Gecode {
       }
 
       if (x.assigned()) {
-        d0 &= x.bdd_domain();
+        d0 &= x.dom();
       }
 
       if (y.assigned()) {
-        d0 &= y.bdd_domain();
+        d0 &= y.dom();
       }
       GECODE_ES_FAIL(home,
         (BinaryCpltSetPropagator<View,View>::post(home, x, y, d0)));
@@ -391,9 +391,9 @@ namespace Gecode {
       Gecode::Iter::Ranges::Inter<CpltSetVarUnknownRanges, IntSetRanges>
       > si(mi,ma,interdel);
 
-    unsigned int xtab = bv[0].table_width();
+    unsigned int xtab = bv[0].tableWidth();
     unsigned int xoff = bv[0].offset();
-    int xmin = bv[0].mgr_min();
+    int xmin = bv[0].initialLubMin();
     
     bdd d = cardConst(xtab, xoff, xmin, c, c, si);
     GECODE_ES_FAIL(home,
@@ -406,9 +406,9 @@ namespace Gecode {
     ViewArray<CpltSetView> bv(home, 1);
     bv[0] = x;
 
-    unsigned int xtab = bv[0].table_width();
+    unsigned int xtab = bv[0].tableWidth();
     unsigned int xoff = bv[0].offset();
-    int xmin = bv[0].mgr_min();
+    int xmin = bv[0].initialLubMin();
     IntSetRanges ir(is);
     bdd d = cardConst(xtab, xoff, xmin, 0, c, ir);
 

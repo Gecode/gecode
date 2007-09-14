@@ -48,6 +48,7 @@ namespace Gecode { namespace CpltSet {
     UNDET = 5
   };
 
+  /// Iterate all sets in the domain of a CpltSet variable
   template <class T> class DomValues {
   public:
     /// \name Constructors and initialization
@@ -74,7 +75,7 @@ namespace Gecode { namespace CpltSet {
     //@}
   };
 
-  /// Iterator for the values in the greatest lower bound of a bdd set variable
+  /// Iterate the values in the greatest lower bound of a CpltSetvariable
   template <class T> class GlbValues {
   public:
     /// \name Constructors and initialization
@@ -100,7 +101,7 @@ namespace Gecode { namespace CpltSet {
     //@}
   };
 
-  /// Iterator for the values in the least upper bound of a bdd set variable
+  /// Iterate the values in the least upper bound of a bdd set variable
   template <class T> class LubValues {
   public:
     /// \name Constructors and initialization
@@ -128,7 +129,7 @@ namespace Gecode { namespace CpltSet {
     //@}
   };
 
-  /// Iterator for the values lub-glb of a bdd set variable
+  /// Iterate the values lub-glb of a bdd set variable
   template <class T> class UnknownValues {
   public:
     /// \name Constructors and initialization
@@ -155,7 +156,8 @@ namespace Gecode { namespace CpltSet {
   };
 
   /**
-   * \brief Finite integer set variable implementation using bdds
+   * \brief Finite integer set variable implementation using a complete domain 
+   * representation
    *
    * \ingroup Other
    */  
@@ -176,30 +178,24 @@ namespace Gecode { namespace CpltSet {
 
     void printdom(void) const;
   private:
-    /**
-     * \brief Bdd representing the set of all possible sets the variable can
-     *        be instantiated to
-     */
+    /// Binary decision diagram representing the domain of this variable
     bdd domain;
-    /// initial minimum
+    /// Initial minimum of the domain, needed for bdd operations
     int min;
-    /// initial maximum
+    /// Initial maximum of the domain, needed for bdd operations
     int max;
-    /** \brief Starting position of the boolean vector in the bdd table
-     *         
-     */
+    /** \brief Starting index of the bdd variable vector for this CpltSet 
+      * variable in the bdd table
+      */
     unsigned int _offset;
-    /// cache whether variable is already assigned
-    bool assignment;
-  public:
-    /// Construct empty CpltSetVar without allocation for boolean vector
-    CpltSetVarImp(Space* home);
+    /// Cache whether the variable is assigned
+    bool _assigned;
   protected:
     /// Constructor for cloning \a x
     CpltSetVarImp(Space* home, bool share, CpltSetVarImp& x);
-    /// Generate assignment to in or exclude from the set of values
+    /// Produce bdd representing \a i for this variable
     template <class I>
-    bdd gen_assignment(I& i);
+    bdd iterToBdd(I& i);
 
     /*
      * \todo FIXME: JUST A HACK FOR MISSING ADVISORS
@@ -211,9 +207,6 @@ namespace Gecode { namespace CpltSet {
     }
 
   public:
-    /// Constructing the powerset of \f$ {a, \dots, b} \f$
-    CpltSetVarImp(Space* home, int a, int b);
-    void init(Space* home, int a, int b);
     CpltSetVarImp(Space* home, int glbMin, int glbMax, int lubMin, int lubMax, 
                   unsigned int cardMin, unsigned int cardMax);
     CpltSetVarImp(Space* home, const IntSet& glbD, int lubMin, int lubMax, 
@@ -330,31 +323,20 @@ namespace Gecode { namespace CpltSet {
     /// \name Bdd information 
     //@{
     /// Return the initial minimum of the implementation
-    int mgr_min(void) const;
+    int initialLubMin(void) const;
     /// Return the initial maximum of the implementation
-    int mgr_max(void) const;
+    int initialLubMax(void) const;
     /// Return the number of variables allocated in the table
-    unsigned int table_width(void) const;
-    /// Return the offset in the table where the CpltSetVariable starts
+    unsigned int tableWidth(void) const;
+    /** \brief Return the offset in the global bdd table where the variable's 
+      * domain starts */
     unsigned int offset(void) const;
-    /// Returns the variable placed at position \a i in the current variable order
-    int getlevel(int i) ;
-    /// Returns the position of the variable \a i in the current variable order
-    int getvar(int i) ;
     /// Return the i-th boolean bdd variable starting with the variable's offset
     bdd getbdd(int i) const;
     /// Return the negated i-th boolean bdd variable starting with the variable's offset
     bdd getnegbdd(int i) const;
     /// Return the bdd representing the current domain
-    bdd bdd_domain(void) const;
-    //@}
-
-    /// \name Bdd operations 
-    //@{
-    /// Build the conjunction \f$ dom \wedge d \f$ and store the result in \a d
-    void dom_and(bdd& d);
-    /// Build the disjunction \f$ dom \vee d \f$ and store the result in \a d
-    void dom_or(bdd& d);
+    bdd dom(void) const;
     //@}
 
     /// \name Domain tests
@@ -367,8 +349,6 @@ namespace Gecode { namespace CpltSet {
     bool knownOut(int i) const;
     /// Test whether domain is a range 
     bool range(void) const;
-    /// Compute a valid index for set element v in the bdd node representation or return -1.
-    int valididx(int v) const;
     //@}
     
     /// \name Dependencies
@@ -507,8 +487,6 @@ namespace Gecode { namespace CpltSet {
     //@{
     /// Retrieves the status of the current level
     NodeStatus status(void) const;
-    /// Retrieves the current position in the boolean vector
-    int getlevel(void) const;
     /// Retrieves the current value
     int val(void) const;
     //@}
@@ -529,18 +507,8 @@ namespace Gecode {
     CpltSet::CpltSetVarImp* var;  
   public:
     /// Default constructor
-    GECODE_CPLTSET_EXPORT
     CpltSetVar(void);
-    /// Construct CpltSetVar from range \f$ {Min set limit, \dots, Max setlimit } \f$
-    GECODE_CPLTSET_EXPORT
-    CpltSetVar(Space* home);
-    /// Initialize from range \f$ {Min set limit, \dots, Max setlimit } \f$
-    void init(Space* home);
-    /// Construct a Bdd for P(U=[min,...,max]) 
-    GECODE_CPLTSET_EXPORT
-    CpltSetVar(Space* home, int min ,int max);
-    /// Initialize from range \f$ {min, \dots, \max } \f$
-    void init(Space* home, int min ,int max);
+
     /// Deallocate memory
     void dispose(Space* home);
 
@@ -728,16 +696,11 @@ namespace Gecode {
 
     /// \name Value access
     //@{
-    /// Returns the initial domain minimum
-    int mgr_min(void) const;
-    /// Returns the initial domain maximum
-    int mgr_max(void) const;
-
     /// Return the size of the greatest lower bound
     unsigned int glbSize(void) const;
     /// Return the size of the least upper bound
     unsigned int lubSize(void) const;
-    /// Return the size of the least upper bound
+    /// Return the size of lub-glb
     unsigned int unknownSize(void) const;
     /// Return current cardinality minimum
     unsigned int cardMin(void) const;
@@ -753,25 +716,6 @@ namespace Gecode {
     int glbMax(void) const;
     //@}
 
-    /// Return the bdd representing the current domain
-    bdd bdd_domain(void) const;
-
-    /// Build the conjunction \f$ b \wedge dom \f$
-    void dom_and(bdd& b);
-
-    /// Return the offset where the variable starts in the bdd table
-    unsigned int offset(void) const;
-    /// Return the number of boolean bdd variables a CpltSetVar is using
-    unsigned int table_width(void) const;
-    /// Return the i-th boolean bdd variable this variable uses
-    bdd getbdd(int i) const;
-    /// Return the i-th boolean bdd variable this variable uses
-    bdd getnegbdd(int i) const;
-    /// Returns the variable placed at position \a i in the current variable order
-    int getlevel(int i) ;
-    /// Returns the position of the variable \a i in the current variable order
-    int getvar(int i) ;
-
     /// \name Domain tests
     //@{
     /// Test whether \a i is in greatest lower bound
@@ -781,10 +725,6 @@ namespace Gecode {
     /// Test whether this variable is assigned
     bool assigned(void) const;
     //@}
-
-    /// Compute a valid index for set element v in the bdd node representation or return -1.
-    int valididx(int v) const;
-
     
     /// \name Cloning
     //@{

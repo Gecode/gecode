@@ -58,30 +58,30 @@ namespace Gecode {
       if (home->failed()) return;
       int n = seq.size();
 
-      unsigned int xrange = seq[0].table_width();
-      int xmax            = seq[0].mgr_max();
-      int xmin            = seq[0].mgr_min();
+      unsigned int xrange = seq[0].tableWidth();
+      int xmax            = seq[0].initialLubMax();
+      int xmin            = seq[0].initialLubMin();
       // compute maximum value
       for (int i = n; i--; ) {
-        if (seq[i].mgr_max() > xmax) {
-          xmax = seq[i].mgr_max();
+        if (seq[i].initialLubMax() > xmax) {
+          xmax = seq[i].initialLubMax();
         }
-        if (seq[i].mgr_min() < xmin) {
-          xmin = seq[i].mgr_min();
+        if (seq[i].initialLubMin() < xmin) {
+          xmin = seq[i].initialLubMin();
         }
-        if (seq[i].table_width() > xrange) {
-          xrange = seq[i].table_width();
+        if (seq[i].tableWidth() > xrange) {
+          xrange = seq[i].tableWidth();
         }
       }
 
       GECODE_ME_FAIL(home, unionview.intersect(home, xmin, xmax));
 
-      int unionmin = unionview.mgr_min();
+      int unionmin = unionview.initialLubMin();
 
       // restrict selector variable s to be \f$ s\subseteq \{0, n - 1\}\f$
       Iter::Ranges::Singleton idx(0, n - 1);
       // shift selection view to the right index
-      int shift = 0 - selview.mgr_min();
+      int shift = 0 - selview.initialLubMin();
       GECODE_ME_FAIL(home, selview.intersectI(home, idx));
 
       // check for different ranges
@@ -90,8 +90,8 @@ namespace Gecode {
         bdd inter = bdd_false();
         for (int j = 0; j < n; j++) {
           LubValues<View0> lub(seq[j]);
-          int seqmin = seq[j].mgr_min();
-          int seqmax = seq[j].mgr_max();
+          int seqmin = seq[j].initialLubMin();
+          int seqmax = seq[j].initialLubMax();
           int cur    = xmin + k;
           if (seqmin <= cur && cur <= seqmax) {
             while (lub() && cur != lub.val()) {
@@ -111,14 +111,14 @@ namespace Gecode {
 
       for (int i = 0; i < n; i++) {
         if (seq[i].assigned()) {
-          d0 &= seq[i].bdd_domain();
+          d0 &= seq[i].dom();
         }
       }
       if (selview.assigned()) {
-        d0 &= selview.bdd_domain();
+        d0 &= selview.dom();
       }
       if (unionview.assigned()) {
-        d0 &= unionview.bdd_domain();
+        d0 &= unionview.dom();
       }
 
     }
@@ -150,8 +150,8 @@ namespace Gecode {
       }
       ViewArray<SingletonCpltSetView> sbv(home, n);
       for (int i = 0; i < n; i++) {
-        int rmin = std::min(unionview.mgr_min(), iv[i].min());
-        int rmax = std::max(unionview.mgr_max(), iv[i].max());
+        int rmin = std::min(unionview.initialLubMin(), iv[i].min());
+        int rmax = std::max(unionview.initialLubMax(), iv[i].max());
         sbv[i].init(rmin, rmax, iv[i]);
       }
 
@@ -166,24 +166,24 @@ namespace Gecode {
       if (home->failed()) return;
       int n = seq.size();
 
-      unsigned int xrange = seq[0].table_width();
-      int xmax            = seq[0].mgr_max();
-      int xmin            = seq[0].mgr_min();
+      unsigned int xrange = seq[0].tableWidth();
+      int xmax            = seq[0].initialLubMax();
+      int xmin            = seq[0].initialLubMin();
       // compute maximum value
       for (int i = n; i--; ) {
-        if (seq[i].table_width() > xrange) {
-          xrange = seq[i].table_width();
+        if (seq[i].tableWidth() > xrange) {
+          xrange = seq[i].tableWidth();
         }
-        if (seq[i].mgr_max() > xmax) {
-          xmax = seq[i].mgr_max();
+        if (seq[i].initialLubMax() > xmax) {
+          xmax = seq[i].initialLubMax();
         }
-        if (seq[i].mgr_min() < xmin) {
-          xmin = seq[i].mgr_min();
+        if (seq[i].initialLubMin() < xmin) {
+          xmin = seq[i].initialLubMin();
         }
       }
 
-      int unionmin = unionview.mgr_min();
-      int unionmax = unionview.mgr_max();
+      int unionmin = unionview.initialLubMin();
+      int unionmax = unionview.initialLubMax();
       if (unionview.assigned()) {
         xmin = unionview.glbMin();
         xmax = unionview.glbMax();
@@ -191,8 +191,8 @@ namespace Gecode {
       } else {
         if (unionmin < xmin) { xmin = unionmin; }
         if (unionmax < xmax) { xmax = unionmax; }
-        if (unionview.table_width() > xrange) {
-          xrange = unionview.table_width();
+        if (unionview.tableWidth() > xrange) {
+          xrange = unionview.tableWidth();
         }
       }
 
@@ -200,14 +200,14 @@ namespace Gecode {
       Iter::Ranges::Singleton idx(0, n - 1);
       GECODE_ME_FAIL(home, selview.intersectI(home, idx));
       // in case the selection variable ranges over negative values
-      int shift = 0 - selview.mgr_min();
+      int shift = 0 - selview.initialLubMin();
 
       for (int j = 0; j < n; j++) {    
         bdd subset = bdd_true();
         LubValues<SingletonCpltSetView> lub(seq[j]);
         for (unsigned int k = 0; k < xrange; k++) {
-          int seqmin = seq[j].mgr_min();
-          int seqmax = seq[j].mgr_max();
+          int seqmin = seq[j].initialLubMin();
+          int seqmax = seq[j].initialLubMax();
           int cur    = xmin + k;
           if (seqmin <= cur && cur <= seqmax) {
             while (lub() && cur != lub.val()) {
@@ -226,15 +226,15 @@ namespace Gecode {
           d0 &= (selview.getbdd(j + shift) % (subset));
         }
         if (seq[j].assigned()) {
-          d0 &= seq[j].bdd_domain();
+          d0 &= seq[j].dom();
         }
       }
 
       if (unionview.assigned()) {
-        d0 &= unionview.bdd_domain();
+        d0 &= unionview.dom();
       }   
       if (selview.assigned()) {
-        d0 &= selview.bdd_domain();
+        d0 &= selview.dom();
       }
     }
 
@@ -319,8 +319,8 @@ namespace Gecode {
       }
       ViewArray<SingletonCpltSetView> sbv(home, n);
       for (int i = 0; i < n; i++) {
-        int rmin = std::min(unionview.mgr_min(), iv[i].min());
-        int rmax = std::max(unionview.mgr_max(), iv[i].max());
+        int rmin = std::min(unionview.initialLubMin(), iv[i].min());
+        int rmax = std::max(unionview.initialLubMax(), iv[i].max());
         sbv[i].init(rmin, rmax, iv[i]);
       }
 
@@ -365,8 +365,8 @@ namespace Gecode {
 
       // unionviewprime is a subset of unionview
       bdd r0 = bdd_true();
-      int tab = std::max(unionview.table_width(), 
-                         unionviewprime.table_width());
+      int tab = std::max(unionview.tableWidth(), 
+                         unionviewprime.tableWidth());
       for (int i = 0; i < (int) tab; i++) {
         r0 &= (unionviewprime.getbdd(i)) >>= (unionview.getbdd(i));
       }
@@ -398,8 +398,8 @@ namespace Gecode {
       }
       ViewArray<SingletonCpltSetView> sbv(home, n);
       for (int i = 0; i < n; i++) {
-        int rmin = std::min(unionview.mgr_min(), iv[i].min());
-        int rmax = std::max(unionview.mgr_max(), iv[i].max());
+        int rmin = std::min(unionview.initialLubMin(), iv[i].min());
+        int rmax = std::max(unionview.initialLubMax(), iv[i].max());
         sbv[i].init(rmin, rmax, iv[i]);
       }
 
@@ -412,8 +412,8 @@ namespace Gecode {
       }
       ViewArray<SingletonCpltSetView> sbvprime(home, m);
       for (int i = 0; i < m; i++) {
-        int rmin = std::min(unionviewprime.mgr_min(), ivprime[i].min());
-        int rmax = std::max(unionviewprime.mgr_max(), ivprime[i].max());
+        int rmin = std::min(unionviewprime.initialLubMin(), ivprime[i].min());
+        int rmax = std::max(unionviewprime.initialLubMax(), ivprime[i].max());
         sbvprime[i].init(rmin, rmax, ivprime[i]);
       }
 

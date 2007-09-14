@@ -101,7 +101,7 @@ namespace Gecode { namespace CpltSet {
   CpltSetView::offset(void)  const { return var->offset(); }
 
   forceinline unsigned int
-  CpltSetView::table_width(void)  const { return var->table_width(); }
+  CpltSetView::tableWidth(void)  const { return var->tableWidth(); }
 
   forceinline bdd
   CpltSetView::getbdd(int i)  const { return var->getbdd(i); }
@@ -110,28 +110,13 @@ namespace Gecode { namespace CpltSet {
   CpltSetView::getnegbdd(int i)  const { return var->getnegbdd(i); }
 
   forceinline int
-  CpltSetView::getlevel(int i)  { return var->getlevel(i); }
+  CpltSetView::initialLubMin(void)  const { return var->initialLubMin(); }
 
   forceinline int
-  CpltSetView::getvar(int i)  { return var->getvar(i); }
-
-  forceinline void
-  CpltSetView::dom_and(bdd& d) { return var->dom_and(d); }
-
-  forceinline void
-  CpltSetView::dom_or(bdd& d) { return var->dom_or(d); }
-
-  forceinline int
-  CpltSetView::mgr_min(void)  const { return var->mgr_min(); }
-
-  forceinline int
-  CpltSetView::valididx(int v)  const { return var->valididx(v); }
-
-  forceinline int
-  CpltSetView::mgr_max(void)  const { return var->mgr_max(); }
+  CpltSetView::initialLubMax(void)  const { return var->initialLubMax(); }
   
   forceinline bdd 
-  CpltSetView::bdd_domain(void) const {  return var->bdd_domain(); };
+  CpltSetView::dom(void) const {  return var->dom(); };
 
 
   /*

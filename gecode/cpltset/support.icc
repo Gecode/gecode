@@ -103,13 +103,13 @@ namespace Gecode { namespace CpltSet {
     unsigned int var_in_tab = manager.allocated();
 
     unsigned int min_offset = x[0].offset();
-    unsigned int max_width  = x[0].table_width();
+    unsigned int max_width  = x[0].tableWidth();
     for (int i = 0; i < x.size(); i++) {
       if (x[i].offset() < min_offset) {
         min_offset = x[i].offset();
       }
-      if (x[i].table_width() > max_width) {
-        max_width = x[i].table_width();
+      if (x[i].tableWidth() > max_width) {
+        max_width = x[i].tableWidth();
       }
     }
 
@@ -127,7 +127,7 @@ namespace Gecode { namespace CpltSet {
     for (unsigned int f = 0; f < max_width; f++) {
       for (int i = 0; i < x.size(); i++) {
         int xo = x[i].offset();
-        int xw = x[i].table_width();
+        int xw = x[i].tableWidth();
         int cur= xo + f;
         if (cur < xo + xw) {
           hls_order[c] = cur;
@@ -150,13 +150,13 @@ namespace Gecode { namespace CpltSet {
     unsigned int var_in_tab = manager.allocated();
 
     unsigned int min_offset = x[0].offset();
-    unsigned int max_width  = x[0].table_width();
+    unsigned int max_width  = x[0].tableWidth();
     for (int i = 0; i < x.size(); i++) {
       if (x[i].offset() < min_offset) {
         min_offset = x[i].offset();
       }
-      if (x[i].table_width() > max_width) {
-        max_width = x[i].table_width();
+      if (x[i].tableWidth() > max_width) {
+        max_width = x[i].tableWidth();
       }
     }
 
@@ -174,7 +174,7 @@ namespace Gecode { namespace CpltSet {
     for (unsigned int f = 0; f < max_width; f++) {
       for (int i = 0; i < x.size(); i++) {
         int xo = x[i].offset();
-        int xw = x[i].table_width();
+        int xw = x[i].tableWidth();
         int cur= xo + f;
         if (cur < xo + xw) {
           hls_order[c] = cur;
@@ -186,11 +186,11 @@ namespace Gecode { namespace CpltSet {
       //            bounds
       // invariant new arrays have subranges of old arrays
       for (int i = 0; i < y.size(); i++) {
-        if ( (x[0].mgr_min() + (int) f >= y[i].mgr_min()) &&
-             (x[0].mgr_min() + (int) f <= y[i].mgr_max())) {
-          int xyshift = y[i].mgr_min()  - x[0].mgr_min();
+        if ( (x[0].initialLubMin() + (int) f >= y[i].initialLubMin()) &&
+             (x[0].initialLubMin() + (int) f <= y[i].initialLubMax())) {
+          int xyshift = y[i].initialLubMin()  - x[0].initialLubMin();
           int yo = y[i].offset();
-          int yw = y[i].table_width();
+          int yw = y[i].tableWidth();
           int cur= yo + f - xyshift;
           if (cur <= yo + yw) {
             hls_order[c] = cur;
@@ -234,8 +234,8 @@ namespace Gecode { namespace CpltSet {
   bdd 
   extcardeq(Gecode::Iter::Ranges::ValCache<I>& inter, 
             View0& x, View1& y, unsigned int c, int n, int r) {
-    int xmin = x.mgr_min();
-    int ymin = y.mgr_min();
+    int xmin = x.initialLubMin();
+    int ymin = y.initialLubMin();
 
     GECODE_AUTOARRAY(bdd, layer, n);
     // the use of autoarray now requires explicit initialization
@@ -300,8 +300,8 @@ namespace Gecode { namespace CpltSet {
     inter.last();
 
     int k    = inter.min();
-    int xmin = x.mgr_min();
-    int ymin = y.mgr_min();
+    int xmin = x.initialLubMin();
+    int ymin = y.initialLubMin();
 
     // build nodes for lowest layer
     for (int i = n - cl ; i < n; i++, --inter) {
@@ -474,10 +474,12 @@ namespace Gecode { namespace CpltSet {
       bdd empty = bdd_true();
       for (; inter(); ++inter) {
         int v = inter.min();
-        int xidx = x.valididx(v);
-        int yidx = y.valididx(v);
-        assert(xidx > -1 && yidx > -1);
-        empty &= (x.getnegbdd(xidx) & y.getnegbdd(yidx));
+        assert(v >= x.initialLubMin());
+        assert(v <= x.initialLubMax());
+        assert(v >= y.initialLubMin());
+        assert(v <= y.initialLubMax());
+        empty &= (x.getnegbdd(v - x.initialLubMin()) &
+                  y.getnegbdd(v - y.initialLubMin()));
       }
       return empty;
     }
@@ -488,10 +490,12 @@ namespace Gecode { namespace CpltSet {
         bdd full = bdd_true();
         for (; inter(); ++inter) {
           int v = inter.min();
-          int xidx = x.valididx(v);
-          int yidx = y.valididx(v);
-          assert(xidx > -1 && yidx > -1);
-          full &= (x.getbdd(xidx) & y.getbdd(yidx));
+          assert(v >= x.initialLubMin());
+          assert(v <= x.initialLubMax());
+          assert(v >= y.initialLubMin());
+          assert(v <= y.initialLubMax());
+          full &= (x.getbdd(v - x.initialLubMin()) &
+                   y.getbdd(v - y.initialLubMin()));
         }
         return full;
       } else {
@@ -688,9 +692,9 @@ namespace Gecode { namespace CpltSet {
 
   template <class View>
   void quantify(bdd& p, View& x) {
-    bdd dom = x.bdd_domain();
+    bdd dom = x.dom();
     int s = x.offset();
-    int w = s + x.table_width() - 1;
+    int w = s + x.tableWidth() - 1;
     manager.existquant(p, dom, s, w);
     // \todo check the update line from naryrec.icc "dom = p" ()
   }

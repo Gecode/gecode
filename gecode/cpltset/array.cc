@@ -51,31 +51,11 @@ namespace Gecode {
     }
   }
 
-  CpltSetVarArray::CpltSetVarArray(Space* home, int n) 
-    : VarArray<CpltSetVar>(home,n) {
-    for (int i = size(); i--; ) {
-      x[i].init(home);
-    }
-    // at this place we MUST NOT use the ordering function
-    // since we did not allocate a variable so far
-  }
-
-  CpltSetVarArray::CpltSetVarArray(Space* home,
-                                   int n, int a, int b)
-    : VarArray<CpltSetVar>(home,n) {
-    /// TODO: dangerous! use correct offsets
-    for (int i = 0; i < size();i++) {
-      x[i].init(home, a, b);
-    }
-    CpltSet::setVariableOrderFromArray(home, *this);
-  }
-
   CpltSetVarArray::CpltSetVarArray(Space* home, int n,
                                    int lbMin,int lbMax,int ubMin,int ubMax,
                                    unsigned int minCard,
                                    unsigned int maxCard)
-    : VarArray<CpltSetVar>(home,n) {
-    
+    : VarArray<CpltSetVar>(home,n) {    
     IntSet glb(lbMin, lbMax);
     IntSet lub(ubMin, ubMax);      
     CpltSet::testConsistency(glb, lub, minCard, maxCard, "CpltSetVarArray");
@@ -90,7 +70,6 @@ namespace Gecode {
                                    const IntSet& glb,int ubMin,int ubMax,
                                    unsigned int minCard,unsigned int maxCard)
     : VarArray<CpltSetVar>(home,n) {
-
     IntSet lub(ubMin, ubMax);      
     CpltSet::testConsistency(glb, lub, minCard, maxCard, "CpltSetVarArray");
 
@@ -104,7 +83,6 @@ namespace Gecode {
                                    int lbMin,int lbMax,const IntSet& lub,
                                    unsigned int minCard,unsigned int maxCard)
     : VarArray<CpltSetVar>(home,n) {
-
     IntSet glb(lbMin, lbMax);      
     CpltSet::testConsistency(glb, lub, minCard, maxCard, "CpltSetVarArray");
 
@@ -116,7 +94,6 @@ namespace Gecode {
                                    const IntSet& glb, const IntSet& lub,
                                    unsigned int minCard, unsigned int maxCard)
     : VarArray<CpltSetVar>(home,n) {
-
     CpltSet::testConsistency(glb, lub, minCard, maxCard, "CpltSetVarArray");
 
     for (int i = 0; i < size(); i++)

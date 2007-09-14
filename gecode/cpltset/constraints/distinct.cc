@@ -50,7 +50,7 @@ namespace Gecode {
       // build partition
       bdd d0 = bdd_true();     
 
-      unsigned int width = x[0].table_width();
+      unsigned int width = x[0].tableWidth();
 
       for (int i = 0; i < n - 1; i++) {
         for (int j = i + 1; j < n; j++) {

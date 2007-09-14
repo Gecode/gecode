@@ -71,8 +71,6 @@ namespace Gecode {
     CpltSetVarArray(const CpltSetVarArray&);
     /// Create an uninitialized array of size \a n
     CpltSetVarArray(Space* home, int n);
-    /// Create an uninitialized array of size \a n
-    CpltSetVarArray(Space* home, int n, int a, int b);
     /**
      * \brief Create an array of size \a n.
      *

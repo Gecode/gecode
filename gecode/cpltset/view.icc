@@ -95,31 +95,20 @@ namespace Gecode {
       /// Return the offset in the bdd table where bdd nodes for this view start.
       unsigned int offset(void) const;
       /// Return distance between minimum and maximum
-      unsigned int table_width(void) const;
+      unsigned int tableWidth(void) const;
       /// Return size (cardinality) of the domain
       int size(void) const;
       /// Return the bdd at position i
       bdd getbdd(int i) const;    
       /// Return the negated bdd at position i
       bdd getnegbdd(int i) const;    
-      /// Returns the variable placed at position \a i in the current variable order
-      int getlevel(int i);    
-      /// Returns the position of the variable \a i in the current variable order
-      int getvar(int i);    
-      /// Build the conjunction of \a d and the current view
-      void dom_and(bdd& d);
-      /// Build the disjunction of \a d and the current view
-      void dom_or(bdd& d);
 
       /// Return the initial minimum of the variable
-      int mgr_min(void) const; 
+      int initialLubMin(void) const; 
       /// Return the initial minimum of the variable
-      int mgr_max(void) const; 
+      int initialLubMax(void) const; 
       /// Return the bdd representing the current domain
-      bdd bdd_domain(void) const;
-      /// Return the corresponding bdd table index for set element v in the bdd node representation.
-      int valididx(int v) const;
-      
+      bdd dom(void) const;
       //@}
 
       /// \name Domain tests
@@ -283,31 +272,21 @@ namespace Gecode {
       /// Return the offset in the bdd table where bdd nodes for this view start.
       unsigned int offset(void) const;
       /// Return distance between minimum and maximum
-      unsigned int table_width(void) const;
+      unsigned int tableWidth(void) const;
       /// Return size (cardinality) of the domain
       int size(void) const;
       /// Return the bdd at position i
       bdd getbdd(int i) const;    
       /// Return the negated bdd at position i
       bdd getnegbdd(int i) const;    
-      /// Returns the variable placed at position \a i in the current variable order
-      int getlevel(int i);    
-      /// Returns the position of the variable \a i in the current variable order
-      int getvar(int i);    
-      /// Build the conjunction of \a d and the current view
-      void dom_and(bdd& d);
-      /// Build the disjunction of \a d and the current view
-      void dom_or(bdd& d);
       
       /// Return the initial minimum of the variable
-      int mgr_min(void) const; 
+      int initialLubMin(void) const; 
       /// Return the initial minimum of the variable
-      int mgr_max(void) const; 
-      /// Return the corresponding bdd table index for set element v in the bdd node representation.
-      int valididx(int v) const;
+      int initialLubMax(void) const; 
 
       /// Return the bdd representing the current domain
-      bdd bdd_domain(void) const;
+      bdd dom(void) const;
       /// Return the bdd representing the unfixed part of the variable domain
       bdd bdd_remain(void) const;
       /// Return the bdd representing the fixed part of the variable domain

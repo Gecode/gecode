@@ -58,7 +58,7 @@ namespace Gecode { namespace CpltSet {
   UnaryCpltSetPropagator<View>::cost(void) const {
     // we have only linear costs (in terms of the size of a bdd) 
     // if one of the bdds is constant
-    if (manager.ctrue(x.bdd_domain()) || manager.ctrue(d)) {
+    if (manager.ctrue(x.dom()) || manager.ctrue(d)) {
       return PC_LINEAR_LO;
     } else {
       return PC_QUADRATIC_HI;
