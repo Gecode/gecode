@@ -117,7 +117,7 @@ namespace Test { namespace CpltSet {
       int xsize;
     public:
       /// Create and register test
-      CpltSetFindNonEmptySub(const char* t)
+      CpltSetSelectNonEmptySub(const char* t)
       : CpltSetTest(t, 4, ds_1012,false, 0, 800, 1000), xsize(4) {
         /// using 1012 leads to 5min testtime for ONE iteration !
         union_pos = xsize - 1;
