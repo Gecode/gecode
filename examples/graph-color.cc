@@ -320,8 +320,9 @@ public:
   };
   /// Branching to use for model
   enum {
-    BRANCH_DEGREE, ///< Choose variable with largest degree
-    BRANCH_SIZE    ///< Choose variable with smallest size
+    BRANCH_DEGREE,      ///< Choose variable with largest degree
+    BRANCH_SIZE,        ///< Choose variable with smallest size
+    BRANCH_SIZE_DEGREE  ///< Choose variable with smallest size/degree
   };
   /// The actual model
   GraphColor(const SizeOptions& opt)
@@ -350,8 +351,10 @@ public:
     branch(this, ma, INT_VAR_NONE, INT_VAL_MIN);
     if (opt.branching() == BRANCH_SIZE) {
       branch(this, v, INT_VAR_SIZE_MIN, INT_VAL_MIN);
-    } else {
+    } else if (opt.branching() == BRANCH_DEGREE) {
       branch(this, v, INT_VAR_DEGREE_MAX, INT_VAL_MIN);
+    } else {
+      branch(this, v, INT_VAR_SIZE_DEGREE_MIN, INT_VAL_MIN);
     }
   }
   /// Constructor for cloning \a s
@@ -395,6 +398,7 @@ main(int argc, char* argv[]) {
   opt.branching(GraphColor::BRANCH_DEGREE);
   opt.branching(GraphColor::BRANCH_DEGREE, "degree");
   opt.branching(GraphColor::BRANCH_SIZE, "size");
+  opt.branching(GraphColor::BRANCH_SIZE_DEGREE, "sizedegree");
   opt.parse(argc,argv);
   Example::run<GraphColor,DFS,SizeOptions>(opt);
   return 0;

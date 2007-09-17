@@ -65,6 +65,10 @@ namespace Gecode {
       Branch::create<IntView,Branch::ByDegreeMin>(home,xv,vals); break;
     case INT_VAR_DEGREE_MAX:
       Branch::create<IntView,Branch::ByDegreeMax>(home,xv,vals); break;
+    case INT_VAR_SIZE_DEGREE_MIN:
+      Branch::create<IntView,Branch::BySizeDegreeMin>(home,xv,vals); break;
+    case INT_VAR_SIZE_DEGREE_MAX:
+      Branch::create<IntView,Branch::BySizeDegreeMax>(home,xv,vals); break;
     case INT_VAR_REGRET_MIN_MIN:
       Branch::create<IntView,Branch::ByRegretMinMin>(home,xv,vals); break;
     case INT_VAR_REGRET_MIN_MAX:

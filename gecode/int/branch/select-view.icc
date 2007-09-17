@@ -278,6 +278,56 @@ namespace Gecode { namespace Int { namespace Branch {
   }
 
 
+  // Select variable with smallest size/degree
+  template<class View>
+  forceinline ViewSelStatus
+  BySizeDegreeMin<View>::init(const Space*, View x) {
+    sizedegree = 
+      static_cast<double>(x.size())/static_cast<double>(x.degree());
+    return VSS_SELECT;
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  BySizeDegreeMin<View>::select(const Space*, View x) {
+    double sd = 
+      static_cast<double>(x.size())/static_cast<double>(x.degree());
+    if (sd < sizedegree) {
+      sizedegree = sd;
+      return VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+  template<class View>
+  forceinline Support::Symbol
+  BySizeDegreeMin<View>::type(void) {
+    return Support::Symbol("Int::Branch::BySizeDegreeMin");
+  }
+
+  // Select variable with largest size/degree
+  template<class View>
+  forceinline ViewSelStatus
+  BySizeDegreeMax<View>::init(const Space*, View x) {
+    sizedegree = 
+      static_cast<double>(x.size())/static_cast<double>(x.degree());
+    return VSS_SELECT;
+  }
+  template<class View>
+  forceinline ViewSelStatus
+  BySizeDegreeMax<View>::select(const Space*, View x) {
+    double sd = 
+      static_cast<double>(x.size())/static_cast<double>(x.degree());
+    if (sd > sizedegree) {
+      sizedegree = sd; 
+      return VSS_SELECT;
+    }
+    return VSS_NONE;
+  }
+  template<class View>
+  forceinline Support::Symbol
+  BySizeDegreeMax<View>::type(void) {
+    return Support::Symbol("Int::Branch::BySizeDegreeMax");
+  }
+
   // Select variable with smallest min-regret
   template<class View>
   forceinline ViewSelStatus

@@ -418,6 +418,47 @@ namespace Gecode { namespace Int { namespace Branch {
   };
 
   /**
+   * \brief View selection class for view with smallest size divided
+   * by degree.
+   *
+   * Requires \code #include "gecode/int/branch.hh" \endcode
+   * \ingroup FuncIntSelView
+   */
+  template<class View>
+  class BySizeDegreeMin {
+  protected:
+    /// So-far smallest size/degree
+    double sizedegree;
+  public:
+    /// Intialize with view \a x
+    ViewSelStatus init(const Space* home, View x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(const Space* home, View x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /**
+   * \brief View selection class for view with largest size divided by degree.
+   *
+   * Requires \code #include "gecode/int/branch.hh" \endcode
+   * \ingroup FuncIntSelView
+   */
+  template<class View>
+  class BySizeDegreeMax {
+  protected:
+    /// So-far largest size/degree
+    double sizedegree;
+  public:
+    /// Intialize with view \a x
+    ViewSelStatus init(const Space* home, View x);
+    /// Possibly select better view \a x
+    ViewSelStatus select(const Space* home, View x);
+    /// Type of this view selection (for reflection)
+    static Support::Symbol type(void);
+  };
+
+  /**
    * \brief View selection class for view with smallest min-regret
    *
    * Requires \code #include "gecode/int/branch.hh" \endcode

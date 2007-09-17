@@ -1115,12 +1115,6 @@ namespace Gecode {
   extensional(Space* home, const BoolVarArgs& x, DFA d,
               IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
 
-}
-
-#include "gecode/int/extensional/dfa.icc"
-
-namespace Gecode {
-
   /** \brief Class represeting table of tuples.
    */
   class Table {
@@ -1182,7 +1176,7 @@ namespace Gecode {
   extensional(Space* home, const IntVarArgs& x, const Table& t, 
               IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
   
-  /** \brief Post propagator for \f$\rangle x_0+O_0, x_1+O_1, \cdots, x_{n-1}+O_{n-1}\langle\in T\f$.
+  /** \brief Post propagator for \f$\langle x_0+O_0, x_1+O_1, \cdots, x_{n-1}+O_{n-1}\rangle\in T\f$.
    *
    * \li Supports implementations optimized for memory (\a pk = \a
    * PK_MEMORY, default) and speed (\a pk = \a PK_SPEED).
@@ -1203,8 +1197,10 @@ namespace Gecode {
   GECODE_INT_EXPORT void
   extensional(Space* home, const IntArgs& c, const IntVarArgs& x, const Table& t, 
               IntConLevel icl=ICL_DEF, PropKind pk=PK_DEF);
+  //@}
 }
 
+#include "gecode/int/extensional/dfa.icc"
 #include "gecode/int/extensional/table.icc"
 
 namespace Gecode {
@@ -1451,13 +1447,13 @@ namespace Gecode {
   //@{
   /// Which variable to select for branching
   enum IntVarBranch {
-    INT_VAR_NONE,          ///< First unassigned
-    INT_VAR_MIN_MIN,       ///< With smallest min
-    INT_VAR_MIN_MAX,       ///< With largest min
-    INT_VAR_MAX_MIN,       ///< With smallest max
-    INT_VAR_MAX_MAX,       ///< With largest max
-    INT_VAR_SIZE_MIN,      ///< With smallest domain size
-    INT_VAR_SIZE_MAX,      ///< With largest domain size
+    INT_VAR_NONE,            ///< First unassigned
+    INT_VAR_MIN_MIN,         ///< With smallest min
+    INT_VAR_MIN_MAX,         ///< With largest min
+    INT_VAR_MAX_MIN,         ///< With smallest max
+    INT_VAR_MAX_MAX,         ///< With largest max
+    INT_VAR_SIZE_MIN,        ///< With smallest domain size
+    INT_VAR_SIZE_MAX,        ///< With largest domain size
     /** \brief With smallest degree
      *
      * The degree of a variable is defined as the number of dependant
@@ -1472,6 +1468,8 @@ namespace Gecode {
      * domain.
      */
     INT_VAR_DEGREE_MAX,
+    INT_VAR_SIZE_DEGREE_MIN, ///< With smallest domain size divided by degree
+    INT_VAR_SIZE_DEGREE_MAX, ///< With largest domain size divided by degree
     /** \brief With smallest min-regret
      *
      * The min-regret of a variable is the difference between the
