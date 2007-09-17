@@ -44,40 +44,29 @@
 
 namespace Test {
 
-using namespace Gecode;
-using namespace Int;
+  /// Tests for branchings
+  namespace Branch {
 
+    /**
+     * \brief Base class for tests for branching completeness
+     *
+     */
+    class CompleteTest : public Base {
+    protected:
+      /// Number of variables
+      int arity;
+      /// Domain of variables
+      Gecode::IntSet dom;
+    public:
+      /// Construct and register test
+      CompleteTest(const std::string& s, int a, const Gecode::IntSet& d);
+      /// Perform test
+      virtual bool run(const Options& opt);
+      /// Post propagators on variables \a x
+      virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) = 0;
+    };
 
-/**
- * \brief Base class for tests for branching completeness.
- *
- */
-class BranchCompleteTest : public Base {
-protected:
-  /// Number of variables
-  int arity;
-  /// Domain of variables
-  IntSet dom;
-
-  IntConLevel randicl(void) {
-    switch (Base::rand(4)) {
-    case 0: return ICL_DEF;
-    case 1: return ICL_VAL;
-    case 2: return ICL_BND;
-    case 3: return ICL_DOM;
-    }
-    return ICL_DEF;
   }
-public:
-  /// Constructor
-  BranchCompleteTest(const std::string& s, int a, const IntSet& d)
-    : Base("Branch::Complete::"+s), arity(a), dom(d) {
-  }
-  /// Perform test
-  virtual bool run(const Options& opt);
-  /// Post propagators
-  virtual void post(Space* home, IntVarArray& x) = 0;
-};
 
 }
 

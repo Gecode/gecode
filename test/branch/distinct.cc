@@ -37,35 +37,34 @@
 
 #include "test/branch.hh"
 
-namespace Test {
+namespace Test { namespace Branch {
 
-namespace {
-  IntSet ds_dense(-2,2);
+  /// Test branching with distinct propagator
+  class Distinct : public CompleteTest {
+  public:
+    /// Create and register test
+    Distinct(const std::string& s, const Gecode::IntSet& d, int n)
+      : CompleteTest("Distinct::"+s,n,d) {}
+    /// Post propagators on variables \a x
+    virtual void post(Gecode::Space* home, Gecode::IntVarArray& x) {
+      Gecode::distinct(home, x);
+    }
+  };
+
+  Gecode::IntSet d_dense(-2,2);
   const int v_sparse[5] = {-100,-10,0,10,100};
-  IntSet ds_sparse(v_sparse,5);
+  Gecode::IntSet d_sparse(v_sparse,5);
 
-  IntSet ds_large(-2,10);
-}
+  Gecode::IntSet d_large(-2,10);
 
-class BDistinct : public BranchCompleteTest {
-public:
-  BDistinct(const char* t, const IntSet& ds, int size)
-    : BranchCompleteTest(t,size,ds) {}
-  virtual void post(Space* home, IntVarArray& x) {
-    distinct(home, x, randicl());
-  }
-};
+  Distinct d_3("Dense::3",d_dense,3);
+  Distinct d_5("Dense::5",d_dense,5);
+  Distinct s_3("Sparse::3",d_sparse,3);
+  Distinct s_5("Sparse::5",d_sparse,5);
+  Distinct l_2("Large::2",d_large,2);
+  Distinct l_3("Large::3",d_large,3);
 
-namespace {
-  BDistinct _dist_d_3("Distinct::Dense::3",ds_dense,3);
-  BDistinct _dist_d_5("Distinct::Dense::5",ds_dense,5);
-  BDistinct _dist_s_3("Distinct::Sparse::3",ds_sparse,3);
-  BDistinct _dist_s_5("Distinct::Sparse::5",ds_sparse,5);
-  BDistinct _dist_l_2("Distinct::Large::2",ds_large,2);
-  BDistinct _dist_l_3("Distinct::Large::3",ds_large,3);
-}
-
-}
+}}
 
 // STATISTICS: test-branch
 
